@@ -60,6 +60,8 @@ typedef union {
 } SIGNAT;
 
 #pragma pack()
+EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE   *Fadt;
+
 
 VOID
 InstallLegacyTables (
@@ -73,126 +75,154 @@ InstallLegacyTables (
 	UINTN                           TableSize;
 	UINT32							EntryCount;
 	UINT32							*EntryPtr;
+	UINT64							Entry64;
 	EFI_ACPI_DESCRIPTION_HEADER		*Table;
 	RSDT_TABLE						*Rsdt;
 	XSDT_TABLE						*Xsdt;
 //	EFI_ACPI_COMMON_HEADER          *Dsdt;
 //	EFI_ACPI_2_0_FIRMWARE_ACPI_CONTROL_STRUCTURE *Facs;
-//	UINTN							BasePtr;
+	UINTN							BasePtr;
 	//	UINT32                       Signature;
-//	SIGNAT							Signature;
+	SIGNAT							Signature;
 	
-	EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE   *Fadt;
 //	BOOLEAN							Found = FALSE;
 	
 	TableHandle = 0;
 	
-//	if ((int)gHob->Acpi20.Table != -1) {
-//		Rsdp = (EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER *)(UINTN)gHob->Acpi20.Table;
-		Rsdt = (RSDT_TABLE *)Rsdp->RsdtAddress; //(UINTN)
-		Xsdt = NULL;
-		if ((Rsdp->Revision >= 2) && (Rsdp->XsdtAddress < (UINT64)(UINTN)-1)) {
-			Xsdt = (XSDT_TABLE *)(UINTN)Rsdp->XsdtAddress;
+	Rsdt = (RSDT_TABLE *)Rsdp->RsdtAddress; //(UINTN)
+	Xsdt = NULL;
+	if ((Rsdp->Revision >= 2) && (Rsdp->XsdtAddress < (UINT64)(UINTN)-1)) {
+		Xsdt = (XSDT_TABLE *)(UINTN)Rsdp->XsdtAddress;
+	}
+	//Begin patching from Xsdt
+	//Install Xsdt if any	
+	if (Xsdt) {
+		TableSize = Xsdt->Header.Length;
+		Signature.Sign = Xsdt->Header.Signature;
+		Print(L"Install table: %c%c%c%c\n",
+			  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
+		
+		Status = AcpiTable->InstallAcpiTable (
+											  AcpiTable,
+											  Xsdt,
+											  TableSize,
+											  &TableHandle
+											  );
+		if (EFI_ERROR(Status)) {
+			return;
 		}
-		if (Rsdt) {
-			//Install Rsdt
-			TableSize = Rsdt->Header.Length;
-//			Signature.Sign = Rsdt->Header.Signature;
-//			Print(L"Install table: %c%c%c%c\n",
-//				  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
-			Status = AcpiTable->InstallAcpiTable (
-												  AcpiTable,
-												  Rsdt,
-												  TableSize,
-												  &TableHandle
-												  );
-			if (EFI_ERROR(Status)) {
-				return;
+		//First scan for Xsdt
+		EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
+		
+		BasePtr = (UINTN)(&(Xsdt->Entry));
+		for (Index = 0; Index < EntryCount; Index ++) {
+			CopyMem (&Entry64, (VOID *)(BasePtr + Index * sizeof(UINT64)), sizeof(UINT64));
+			Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Entry64));
+			if (Index == 0) {
+				Fadt = (EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE*)Table;
 			}
-			//First scan for RSDT
-			EntryCount = (Rsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT32);
-			
-			EntryPtr = &Rsdt->Entry;
-			Fadt = (EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE   *)EntryPtr;
-			for (Index = 0; Index < EntryCount; Index ++, EntryPtr ++) {
-				Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
-				TableSize = Table->Length;
-//				Signature.Sign = Table->Signature;
-//				Print(L"Install table: %c%c%c%c\n", 
-//					  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
-				Status = AcpiTable->InstallAcpiTable (
-													  AcpiTable,
-													  Table,
-													  TableSize,
-													  &TableHandle
-													  );
-				if (EFI_ERROR(Status)) {
-					continue;
-				}
-			}
-			//Now find Fadt and install dsdt and facs
-			EntryPtr = &Fadt->Dsdt;
-			Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
-			TableSize = Table->Length;
-//			Signature.Sign = Table->Signature;
-//			Print(L"Install table: %c%c%c%c\n", 
-//				  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
-			
 			Status = AcpiTable->InstallAcpiTable (
 												  AcpiTable,
 												  Table,
 												  TableSize,
 												  &TableHandle
 												  );
-			EntryPtr++; //nows facs
+			if (EFI_ERROR(Status)) {
+				continue;
+			}
+		}
+		//Now find Fadt and install dsdt and facs
+		EntryPtr = &Fadt->Dsdt;
+		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
+		TableSize = Table->Length;
+		Signature.Sign = Table->Signature;
+		Print(L"Install table: %c%c%c%c\n", 
+			  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
+		
+		Status = AcpiTable->InstallAcpiTable (
+											  AcpiTable,
+											  Table,
+											  TableSize,
+											  &TableHandle
+											  );
+		EntryPtr++; //nows facs
+		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
+		TableSize = Table->Length;
+		Signature.Sign = Table->Signature;
+		Print(L"Install table: %c%c%c%c\n", 
+			  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
+		Status = AcpiTable->InstallAcpiTable (
+											  AcpiTable,
+											  Table,
+											  TableSize,
+											  &TableHandle
+											  );		
+	}
+	if (!Xsdt && Rsdt) {
+		//Install Rsdt
+		Print(L"Xsdt not found, patch Rsdt\n");
+		TableSize = Rsdt->Header.Length;
+		Signature.Sign = Rsdt->Header.Signature;
+		Print(L"Install table: %c%c%c%c\n",
+			  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
+		Status = AcpiTable->InstallAcpiTable (
+											  AcpiTable,
+											  Rsdt,
+											  TableSize,
+											  &TableHandle
+											  );
+		if (EFI_ERROR(Status)) {
+			return;
+		}
+		//First scan for RSDT
+		EntryCount = (Rsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT32);
+		
+		EntryPtr = &Rsdt->Entry;
+		Fadt = (EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE*)EntryPtr;
+		for (Index = 0; Index < EntryCount; Index ++, EntryPtr ++) {
 			Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
 			TableSize = Table->Length;
-//			Signature.Sign = Table->Signature;
-//			Print(L"Install table: %c%c%c%c\n", 
-//				  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
+			Signature.Sign = Table->Signature;
+			Print(L"Install table: %c%c%c%c\n", 
+				  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
 			Status = AcpiTable->InstallAcpiTable (
 												  AcpiTable,
 												  Table,
 												  TableSize,
 												  &TableHandle
-												  );			
-		}
-		//Install Xsdt if any	
-		if (Xsdt) {
-			TableSize = Xsdt->Header.Length;
-//			Signature.Sign = Xsdt->Header.Signature;
-//			Print(L"Install table: %c%c%c%c\n",
-//				  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
-			
-			Status = AcpiTable->InstallAcpiTable (
-												  AcpiTable,
-												  Xsdt,
-												  TableSize,
-												  &TableHandle
 												  );
 			if (EFI_ERROR(Status)) {
-				return;
+				continue;
 			}
-			//Second scan for Xsdt
-/*			EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
-			
-			BasePtr = (UINTN)(&(Xsdt->Entry));
-			for (Index = 0; Index < EntryCount; Index ++) {
-				CopyMem (&EntryPtr, (VOID *)(BasePtr + Index * sizeof(UINT64)), sizeof(UINT64));
-				Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(EntryPtr));
-				Status = AcpiTable->InstallAcpiTable (
-													  AcpiTable,
-													  Table,
-													  TableSize,
-													  &TableHandle
-													  );
-				if (EFI_ERROR(Status)) {
-					continue;
-				}
-			}
- */
 		}
-//	}
+		//Now find Fadt and install dsdt and facs
+		EntryPtr = &Fadt->Dsdt;
+		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
+		TableSize = Table->Length;
+		Signature.Sign = Table->Signature;
+		Print(L"Install table: %c%c%c%c\n", 
+			  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
+		
+		Status = AcpiTable->InstallAcpiTable (
+											  AcpiTable,
+											  Table,
+											  TableSize,
+											  &TableHandle
+											  );
+		EntryPtr++; //nows facs
+		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
+		TableSize = Table->Length;
+		Signature.Sign = Table->Signature;
+		Print(L"Install table: %c%c%c%c\n", 
+			  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
+		Status = AcpiTable->InstallAcpiTable (
+											  AcpiTable,
+											  Table,
+											  TableSize,
+											  &TableHandle
+											  );			
+	}
+	
 }
 
 CHAR16* ACPInames[] = {
@@ -208,6 +238,7 @@ CHAR16* ACPInames[] = {
 };
 
 // Slice: New signature compare function
+/*
 BOOLEAN tableSign(CHAR8 *table, CONST CHAR8 *sgn)
 {
 	int i;
@@ -218,7 +249,7 @@ BOOLEAN tableSign(CHAR8 *table, CONST CHAR8 *sgn)
 	}
 	return TRUE;
 }
-
+*/
 /**
   This function calculates and updates an UINT8 checksum.
 
@@ -232,19 +263,17 @@ AcpiPlatformChecksum (
   IN UINTN      Size
   )
 {
-  UINTN ChecksumOffset;
-
-  ChecksumOffset = OFFSET_OF (EFI_ACPI_DESCRIPTION_HEADER, Checksum);
-
-  //
-  // Set checksum to 0 first
-  //
-  Buffer[ChecksumOffset] = 0;
-
-  //
-  // Update checksum value
-  //
-  Buffer[ChecksumOffset] = CalculateCheckSum8(Buffer, Size);
+	UINTN ChecksumOffset;
+	
+	ChecksumOffset = OFFSET_OF (EFI_ACPI_DESCRIPTION_HEADER, Checksum);
+	//
+	// Set checksum to 0 first
+	//
+	Buffer[ChecksumOffset] = 0;
+	//
+	// Update checksum value
+	//
+	Buffer[ChecksumOffset] = CalculateCheckSum8(Buffer, Size);
 }
 
 
@@ -270,8 +299,8 @@ AcpiPlatformEntryPoint (
 	EFI_ACPI_TABLE_PROTOCOL         *AcpiTable;
 	INTN                            Instance;
 	EFI_ACPI_COMMON_HEADER          *CurrentTable;
+	EFI_ACPI_COMMON_HEADER			*oldDSDT;
 	UINTN                           TableHandle;
-//	UINT32                          FvStatus;
 	UINTN                           TableSize;
 //	UINTN                           Size;
 	UINTN							Index;
@@ -288,9 +317,9 @@ AcpiPlatformEntryPoint (
 	EFI_PHYSICAL_ADDRESS			*Acpi20;
 	EFI_PEI_HOB_POINTERS        GuidHob;
 	EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER *Rsdp;
-/*	EFI_ACPI_DESCRIPTION_HEADER *Rsdt, *Xsdt;
-	EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt;
-*/
+//	EFI_ACPI_DESCRIPTION_HEADER *Rsdt, *Xsdt;
+//	EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt;
+
 	
 	Instance     = 0;
 	CurrentTable = NULL;
@@ -318,7 +347,9 @@ AcpiPlatformEntryPoint (
 	}
 	Rsdp = (EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER *)(UINTN)*Acpi20;		
 	InstallLegacyTables(AcpiTable, Rsdp);
-//	Print(L"LegacyTables installed\n");
+	Print(L"LegacyTables installed\n");
+	oldDSDT = (EFI_ACPI_COMMON_HEADER*)(UINTN)Fadt->Dsdt;
+	
 //  Looking for a volume from what we boot
 	
 /*	TODO - look for a volume we want to boot System
@@ -387,7 +418,7 @@ AcpiPlatformEntryPoint (
 		if (EFI_ERROR(Status) && Status != EFI_BUFFER_TOO_SMALL) {
 			continue;
 		}
-//		Print(L"Buffer size %d\n", BufferSize);
+		Print(L"Buffer size %d\n", BufferSize);
 		//		Print(L"GetInfo success!\n");
 		Status = gBS->AllocatePool (EfiBootServicesData, BufferSize, (VOID **) &Info);
 		if (EFI_ERROR (Status)) {
@@ -401,7 +432,7 @@ AcpiPlatformEntryPoint (
 									Info
 									);
 		FileSize = Info->FileSize;
-//				Print(L"FileSize = %d!\n", FileSize);
+				Print(L"FileSize = %d!\n", FileSize);
 		gBS->FreePool (Info);
 		
 		FileBuffer = AllocateZeroPool(FileSize);
@@ -414,8 +445,7 @@ AcpiPlatformEntryPoint (
 									 );
  */
 		Status = ThisFile->Read (ThisFile, &FileSize, FileBuffer); //(VOID**)&
-//				Print(L"FileRead success! \n");
-				
+				Print(L"FileRead success! \n");
 		if (!EFI_ERROR(Status)) {
 			//
 			// Add the table
@@ -433,6 +463,9 @@ AcpiPlatformEntryPoint (
 			// Checksum ACPI table
 			//
 			AcpiPlatformChecksum ((UINT8*)FileBuffer, TableSize);			
+			if (Index==0) {  //DSDT always at index 0
+				CopyMem(FileBuffer, oldDSDT, TableSize);
+			}		
 			//
 			// Install ACPI table
 			//
@@ -443,9 +476,9 @@ AcpiPlatformEntryPoint (
 												  &TableHandle
 												  );
 			if (EFI_ERROR(Status)) {
-				return EFI_ABORTED;
+				continue;
 			}
-//			Print(L"Table installed \n");
+			Print(L"Table installed #%d\n", Index);
 			//
 			// Increment the instance
 			//

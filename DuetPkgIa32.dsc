@@ -269,7 +269,8 @@
   #IntelFrameworkModulePkg/Bus/Isa/IsaFloppyDxe/IsaFloppyDxe.inf
  
   # ACPI Support
-  MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
+  #MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
+  DuetPkg/cloverefiboot/OsxAcpiTableDxe/AcpiTableDxe.inf
   #MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
   DuetPkg/cloverefiboot/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
 
