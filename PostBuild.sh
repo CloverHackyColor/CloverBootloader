@@ -62,7 +62,7 @@ case "$2" in
 	echo Welcome to XCode!
 esac
 
-export BUILD_DIR=$WORKSPACE/Build/DuetPkg$PROCESSOR/DEBUG_XCODE32
+export BUILD_DIR=$WORKSPACE/Build/Clover$PROCESSOR/DEBUG_XCODE32
 
 
 #

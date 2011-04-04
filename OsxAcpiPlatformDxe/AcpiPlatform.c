@@ -37,7 +37,7 @@
 #include <Library/PcdLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/HobLib.h>
-#include <Library/PrintLib.h>
+//#include <Library/PrintLib.h>
 
 #include <IndustryStandard/Acpi.h>
 //#include "HobGeneration.h"
@@ -80,7 +80,7 @@ InstallLegacyTables (
 //	EFI_ACPI_2_0_FIRMWARE_ACPI_CONTROL_STRUCTURE *Facs;
 //	UINTN							BasePtr;
 	//	UINT32                       Signature;
-	SIGNAT							Signature;
+//	SIGNAT							Signature;
 	
 	EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE   *Fadt;
 //	BOOLEAN							Found = FALSE;
@@ -97,9 +97,9 @@ InstallLegacyTables (
 		if (Rsdt) {
 			//Install Rsdt
 			TableSize = Rsdt->Header.Length;
-			Signature.Sign = Rsdt->Header.Signature;
-			Print(L"Install table: %c%c%c%c\n",
-				  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
+//			Signature.Sign = Rsdt->Header.Signature;
+//			Print(L"Install table: %c%c%c%c\n",
+//				  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
 			Status = AcpiTable->InstallAcpiTable (
 												  AcpiTable,
 												  Rsdt,
@@ -117,9 +117,9 @@ InstallLegacyTables (
 			for (Index = 0; Index < EntryCount; Index ++, EntryPtr ++) {
 				Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
 				TableSize = Table->Length;
-				Signature.Sign = Table->Signature;
-				Print(L"Install table: %c%c%c%c\n", 
-					  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
+//				Signature.Sign = Table->Signature;
+//				Print(L"Install table: %c%c%c%c\n", 
+//					  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
 				Status = AcpiTable->InstallAcpiTable (
 													  AcpiTable,
 													  Table,
@@ -134,9 +134,9 @@ InstallLegacyTables (
 			EntryPtr = &Fadt->Dsdt;
 			Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
 			TableSize = Table->Length;
-			Signature.Sign = Table->Signature;
-			Print(L"Install table: %c%c%c%c\n", 
-				  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
+//			Signature.Sign = Table->Signature;
+//			Print(L"Install table: %c%c%c%c\n", 
+//				  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
 			
 			Status = AcpiTable->InstallAcpiTable (
 												  AcpiTable,
@@ -147,9 +147,9 @@ InstallLegacyTables (
 			EntryPtr++; //nows facs
 			Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
 			TableSize = Table->Length;
-			Signature.Sign = Table->Signature;
-			Print(L"Install table: %c%c%c%c\n", 
-				  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
+//			Signature.Sign = Table->Signature;
+//			Print(L"Install table: %c%c%c%c\n", 
+//				  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
 			Status = AcpiTable->InstallAcpiTable (
 												  AcpiTable,
 												  Table,
@@ -160,9 +160,9 @@ InstallLegacyTables (
 		//Install Xsdt if any	
 		if (Xsdt) {
 			TableSize = Xsdt->Header.Length;
-			Signature.Sign = Xsdt->Header.Signature;
-			Print(L"Install table: %c%c%c%c\n",
-				  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
+//			Signature.Sign = Xsdt->Header.Signature;
+//			Print(L"Install table: %c%c%c%c\n",
+//				  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
 			
 			Status = AcpiTable->InstallAcpiTable (
 												  AcpiTable,
@@ -318,7 +318,7 @@ AcpiPlatformEntryPoint (
 	}
 	Rsdp = (EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER *)(UINTN)*Acpi20;		
 	InstallLegacyTables(AcpiTable, Rsdp);
-	Print(L"LegacyTables installed\n");
+//	Print(L"LegacyTables installed\n");
 //  Looking for a volume from what we boot
 	
 /*	TODO - look for a volume we want to boot System
@@ -356,7 +356,7 @@ AcpiPlatformEntryPoint (
 	if (EFI_ERROR (Status)) {
 		return EFI_ABORTED;
 	}
-		Print(L"Volume found\n");
+//		Print(L"Volume found\n");
 	//
 	// Open the root directory of the volume
 	//
@@ -372,7 +372,7 @@ AcpiPlatformEntryPoint (
 	//
 	for (Index=0; Index<9; Index++) {
 		StrCpy(FileName, ACPInames[Index]);
-		Print(L"File probe %s\n", FileName);
+//		Print(L"File probe %s\n", FileName);
 		Status = Root->Open (Root, &ThisFile, FileName, EFI_FILE_MODE_READ, 0);
 		if (EFI_ERROR (Status)) {
 			continue;
@@ -387,7 +387,7 @@ AcpiPlatformEntryPoint (
 		if (EFI_ERROR(Status) && Status != EFI_BUFFER_TOO_SMALL) {
 			continue;
 		}
-		Print(L"Buffer size %d\n", BufferSize);
+//		Print(L"Buffer size %d\n", BufferSize);
 		//		Print(L"GetInfo success!\n");
 		Status = gBS->AllocatePool (EfiBootServicesData, BufferSize, (VOID **) &Info);
 		if (EFI_ERROR (Status)) {
@@ -401,7 +401,7 @@ AcpiPlatformEntryPoint (
 									Info
 									);
 		FileSize = Info->FileSize;
-				Print(L"FileSize = %d!\n", FileSize);
+//				Print(L"FileSize = %d!\n", FileSize);
 		gBS->FreePool (Info);
 		
 		FileBuffer = AllocateZeroPool(FileSize);
@@ -414,7 +414,7 @@ AcpiPlatformEntryPoint (
 									 );
  */
 		Status = ThisFile->Read (ThisFile, &FileSize, FileBuffer); //(VOID**)&
-				Print(L"FileRead success! \n");
+//				Print(L"FileRead success! \n");
 				
 		if (!EFI_ERROR(Status)) {
 			//
@@ -445,7 +445,7 @@ AcpiPlatformEntryPoint (
 			if (EFI_ERROR(Status)) {
 				return EFI_ABORTED;
 			}
-			Print(L"Table installed \n");
+//			Print(L"Table installed \n");
 			//
 			// Increment the instance
 			//

@@ -26,11 +26,11 @@
   PLATFORM_GUID                  = 199E24E0-0989-42aa-87F2-611A8C397E72
   PLATFORM_VERSION               = 0.3
   DSC_SPECIFICATION              = 0x00010005
-  OUTPUT_DIRECTORY               = Build/DuetPkgIA32
+  OUTPUT_DIRECTORY               = Build/CloverIA32
   SUPPORTED_ARCHITECTURES        = IA32
   BUILD_TARGETS                  = DEBUG
   SKUID_IDENTIFIER               = DEFAULT
-  FLASH_DEFINITION               = DuetPkg/DuetPkg.fdf
+  FLASH_DEFINITION               = DuetPkg/cloverefiboot/DuetPkg.fdf
 
 ################################################################################
 #
@@ -59,7 +59,7 @@
   PciExpressLib|MdePkg/Library/BasePciExpressLib/BasePciExpressLib.inf
   CacheMaintenanceLib|MdePkg/Library/BaseCacheMaintenanceLib/BaseCacheMaintenanceLib.inf
   #PeCoffLib|MdePkg/Library/BasePeCoffLib/BasePeCoffLib.inf
-  PeCoffLib|DuetPkg/VBoxPeCoffLib/VBoxPeCoffLib.inf
+  PeCoffLib|DuetPkg/cloverefiboot/VBoxPeCoffLib/VBoxPeCoffLib.inf
   PeCoffExtraActionLib|MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
   PeCoffGetEntryPointLib|MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
   #
@@ -83,7 +83,7 @@
   UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
   OemHookStatusCodeLib|MdeModulePkg/Library/OemHookStatusCodeLibNull/OemHookStatusCodeLibNull.inf
   #GenericBdsLib|IntelFrameworkModulePkg/Library/GenericBdsLib/GenericBdsLib.inf
-  GenericBdsLib|DuetPkg/OsxBdsLib/GenericBdsLib.inf
+  GenericBdsLib|DuetPkg/cloverefiboot/OsxBdsLib/GenericBdsLib.inf
   SecurityManagementLib|MdeModulePkg/Library/DxeSecurityManagementLib/DxeSecurityManagementLib.inf
   CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibNull/DxeCapsuleLibNull.inf
   PeCoffExtraActionLib|MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
@@ -91,7 +91,7 @@
   # Platform
   #
   #PlatformBdsLib|DuetPkg/Library/DuetBdsLib/PlatformBds.inf
-  PlatformBdsLib|DuetPkg/OsxBdsPlatformLib/PlatformBds.inf
+  PlatformBdsLib|DuetPkg/cloverefiboot/OsxBdsPlatformLib/PlatformBds.inf
   TimerLib|DuetPkg/Library/DuetTimerLib/DuetTimerLib.inf
   #
   # Misc
@@ -153,7 +153,7 @@
 	#DuetPkg/BootSector/BootSector.inf
 
   #DuetPkg/DxeIpl/DxeIpl.inf {
-  DuetPkg/OsxDxeIpl/DxeIpl.inf {
+  DuetPkg/cloverefiboot/OsxDxeIpl/DxeIpl.inf {
     <LibraryClasses>
       #
       # If no following overriden for ReportStatusCodeLib library class,
@@ -208,10 +208,10 @@
 
 
   #DuetPkg/SmbiosGenDxe/SmbiosGen.inf
-  DuetPkg/OsxSmbiosGenDxe/SmbiosGen.inf
+  DuetPkg/cloverefiboot/OsxSmbiosGenDxe/SmbiosGen.inf
   #DuetPkg/FvbRuntimeService/DUETFwh.inf
   #DuetPkg/EfiLdr/EfiLdr.inf {
-  DuetPkg/OsxEfiLdr/EfiLdr.inf {
+  DuetPkg/cloverefiboot/OsxEfiLdr/EfiLdr.inf {
     <LibraryClasses>
       DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
       NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
@@ -223,7 +223,7 @@
   #MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
   UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
   #UefiCpuPkg/CpuDxe/CpuDxe.inf
-  DuetPkg/CpuDxe/Cpu.inf
+  DuetPkg/cloverefiboot/CpuDxe/Cpu.inf
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
   DuetPkg/AcpiResetDxe/Reset.inf
   DuetPkg/LegacyMetronome/Metronome.inf
@@ -233,21 +233,21 @@
   DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
   DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
   	#Vbox additions
-	DuetPkg/VBoxAppleSim/VBoxAppleSim.inf
+	DuetPkg/cloverefiboot/VBoxAppleSim/VBoxAppleSim.inf
 	IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
   
   	# foreign file system support
-	#DuetPkg/VBoxFsDxe/VBoxHfs.inf
-	DuetPkg/VBoxFsDxe/VBoxIso9660.inf
-	#DuetPkg/VBoxFsDxe/VBoxFsDxe.inf
-	DuetPkg/VBoxFsDxe/VBoxExt2.inf
+	#DuetPkg/cloverefiboot/VBoxFsDxe/VBoxHfs.inf
+	DuetPkg/cloverefiboot/VBoxFsDxe/VBoxIso9660.inf
+	#DuetPkg/cloverefiboot/VBoxFsDxe/VBoxFsDxe.inf
+	DuetPkg/cloverefiboot/VBoxFsDxe/VBoxExt2.inf
 
   IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
   IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
 
   # IDE/AHCI Support
-  DuetPkg/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
-  DuetPkg/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
+  DuetPkg/cloverefiboot/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
+  DuetPkg/cloverefiboot/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
   #DuetPkg/SataControllerDxe/SataControllerDxe.inf
   #MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
   #MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
@@ -271,12 +271,12 @@
   # ACPI Support
   MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
   #MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
-  DuetPkg/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
+  DuetPkg/cloverefiboot/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
 
   MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
   MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
   #MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
-  DuetPkg/OsxPartitionDxe/PartitionDxe.inf
+  DuetPkg/cloverefiboot/OsxPartitionDxe/PartitionDxe.inf
 
   # Bios Thunk
   DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
