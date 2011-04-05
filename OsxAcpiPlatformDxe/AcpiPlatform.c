@@ -98,7 +98,7 @@ InstallLegacyTables (
 	//Install Xsdt if any	
 	if (Xsdt) {
 		TableSize = Xsdt->Header.Length;
-		Signature.Sign = Xsdt->Header.Signature;
+/*		Signature.Sign = Xsdt->Header.Signature;
 		Print(L"Install table: %c%c%c%c\n",
 			  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
 		
@@ -111,6 +111,7 @@ InstallLegacyTables (
 		if (EFI_ERROR(Status)) {
 			return;
 		}
+ */
 		//First scan for Xsdt
 		EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
 		
@@ -143,7 +144,8 @@ InstallLegacyTables (
 											  TableSize,
 											  &TableHandle
 											  );
-/* do not install legacy DSDT		
+		
+// do not install legacy DSDT		
 		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Fadt->Dsdt));
 		TableSize = Table->Length;
 		Signature.Sign = Table->Signature;
@@ -156,12 +158,12 @@ InstallLegacyTables (
 											  TableSize,
 											  &TableHandle
 											  );
- */
+ 
 	}
 	if (!Xsdt && Rsdt) {
 		//Install Rsdt
 		Print(L"Xsdt not found, patch Rsdt\n");
-		TableSize = Rsdt->Header.Length;
+/*		TableSize = Rsdt->Header.Length;
 		Signature.Sign = Rsdt->Header.Signature;
 		Print(L"Install table: %c%c%c%c\n",
 			  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
@@ -174,11 +176,14 @@ InstallLegacyTables (
 		if (EFI_ERROR(Status)) {
 			return;
 		}
+ */
 		//First scan for RSDT
 		EntryCount = (Rsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT32);
 		
 		EntryPtr = &Rsdt->Entry;
 		Fadt = (EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE*)((UINTN)(*EntryPtr));
+		//Skip Fadt
+//		EntryPtr++;
 		for (Index = 0; Index < EntryCount; Index ++, EntryPtr ++) {
 			Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
 			TableSize = Table->Length;
@@ -209,7 +214,8 @@ InstallLegacyTables (
 											  TableSize,
 											  &TableHandle
 											  );
-/*		
+ 
+		
 		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Fadt->Dsdt));
 		TableSize = Table->Length;
 		Signature.Sign = Table->Signature;
@@ -222,7 +228,7 @@ InstallLegacyTables (
 											  TableSize,
 											  &TableHandle
 											  );
-*/
+
     }
 	
 }
@@ -473,9 +479,9 @@ AcpiPlatformEntryPoint (
 			// Checksum ACPI table
 			//
 			AcpiPlatformChecksum ((UINT8*)FileBuffer, TableSize);			
-			if ((Index==0) && oldDSDT) {  //DSDT always at index 0
-				CopyMem(FileBuffer, oldDSDT, TableSize);
-			}		
+	//		if ((Index==0) && oldDSDT) {  //DSDT always at index 0
+	//			CopyMem(FileBuffer, oldDSDT, TableSize);
+	//		}		
 			//
 			// Install ACPI table
 			//

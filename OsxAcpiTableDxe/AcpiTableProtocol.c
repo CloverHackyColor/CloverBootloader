@@ -323,9 +323,10 @@ InstallAcpiTable (
   //
   // Check for invalid input parameters
   //
-  if ((AcpiTableBuffer == NULL) || (TableKey == NULL)
-     || (((EFI_ACPI_DESCRIPTION_HEADER *) AcpiTableBuffer)->Length != AcpiTableBufferSize)) {
-    return EFI_INVALID_PARAMETER;
+	if (AcpiTableBuffer == NULL) return  EFI_ACCESS_DENIED;
+	if (TableKey == NULL)  return EFI_NO_MEDIA;
+  if ((UINTN)(((EFI_ACPI_DESCRIPTION_HEADER *) AcpiTableBuffer)->Length) != AcpiTableBufferSize) {
+	  return  EFI_MEDIA_CHANGED;  //EFI_INVALID_PARAMETER;
   }
 
   Length   = ((EFI_ACPI_COMMON_HEADER *) AcpiTableBuffer)->Length;
@@ -1236,7 +1237,7 @@ RemoveTableFromRsdt (
       //
       // At the last entry, and table not found
       //
-      return EFI_INVALID_PARAMETER;
+		return EFI_VOLUME_FULL; //EFI_INVALID_PARAMETER;
     }
   }
   //
