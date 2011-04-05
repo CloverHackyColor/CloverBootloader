@@ -143,7 +143,7 @@ InstallLegacyTables (
 											  TableSize,
 											  &TableHandle
 											  );
-		
+/* do not install legacy DSDT		
 		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Fadt->Dsdt));
 		TableSize = Table->Length;
 		Signature.Sign = Table->Signature;
@@ -156,6 +156,7 @@ InstallLegacyTables (
 											  TableSize,
 											  &TableHandle
 											  );
+ */
 	}
 	if (!Xsdt && Rsdt) {
 		//Install Rsdt
@@ -208,7 +209,7 @@ InstallLegacyTables (
 											  TableSize,
 											  &TableHandle
 											  );
-		
+/*		
 		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Fadt->Dsdt));
 		TableSize = Table->Length;
 		Signature.Sign = Table->Signature;
@@ -221,7 +222,8 @@ InstallLegacyTables (
 											  TableSize,
 											  &TableHandle
 											  );
-	}
+*/
+    }
 	
 }
 
@@ -460,16 +462,18 @@ AcpiPlatformEntryPoint (
 				  ((CHAR8*)FileBuffer)[0], ((CHAR8*)FileBuffer)[1], ((CHAR8*)FileBuffer)[2], ((CHAR8*)FileBuffer)[3]);
 			TableSize = ((EFI_ACPI_DESCRIPTION_HEADER *) FileBuffer)->Length;
 			//ASSERT (BufferSize >= TableSize);
+			Print(L"Table size=%d\n", TableSize);
 			if (FileSize < TableSize) {
 				//Data incorrect. What TODO? Quick fix
-				((EFI_ACPI_DESCRIPTION_HEADER *) FileBuffer)->Length = FileSize;
-				TableSize = FileSize;
+//				((EFI_ACPI_DESCRIPTION_HEADER *) FileBuffer)->Length = FileSize;
+//				TableSize = FileSize;
+				Print(L"Table size > file size :(\n");
 			}			
 			//
 			// Checksum ACPI table
 			//
 			AcpiPlatformChecksum ((UINT8*)FileBuffer, TableSize);			
-			if (Index==0) {  //DSDT always at index 0
+			if ((Index==0) && oldDSDT) {  //DSDT always at index 0
 				CopyMem(FileBuffer, oldDSDT, TableSize);
 			}		
 			//
@@ -481,6 +485,7 @@ AcpiPlatformEntryPoint (
 												  TableSize,
 												  &TableHandle
 												  );
+			Print(L"Table install status=%x\n", 	Status);
 			if (EFI_ERROR(Status)) {
 				continue;
 			}
