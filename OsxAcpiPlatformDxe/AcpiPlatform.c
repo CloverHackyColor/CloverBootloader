@@ -132,8 +132,19 @@ InstallLegacyTables (
 			}
 		}
 		//Now find Fadt and install dsdt and facs
-		EntryPtr = &Fadt->Dsdt;
-		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
+		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Fadt->FirmwareCtrl));
+		TableSize = Table->Length;
+		Signature.Sign = Table->Signature;
+		Print(L"Install table: %c%c%c%c\n", 
+			  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
+		Status = AcpiTable->InstallAcpiTable (
+											  AcpiTable,
+											  Table,
+											  TableSize,
+											  &TableHandle
+											  );
+		
+		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Fadt->Dsdt));
 		TableSize = Table->Length;
 		Signature.Sign = Table->Signature;
 		Print(L"Install table: %c%c%c%c\n", 
@@ -145,18 +156,6 @@ InstallLegacyTables (
 											  TableSize,
 											  &TableHandle
 											  );
-		EntryPtr++; //nows facs
-		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
-		TableSize = Table->Length;
-		Signature.Sign = Table->Signature;
-		Print(L"Install table: %c%c%c%c\n", 
-			  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
-		Status = AcpiTable->InstallAcpiTable (
-											  AcpiTable,
-											  Table,
-											  TableSize,
-											  &TableHandle
-											  );		
 	}
 	if (!Xsdt && Rsdt) {
 		//Install Rsdt
@@ -178,7 +177,7 @@ InstallLegacyTables (
 		EntryCount = (Rsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT32);
 		
 		EntryPtr = &Rsdt->Entry;
-		Fadt = (EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE*)EntryPtr;
+		Fadt = (EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE*)((UINTN)(*EntryPtr));
 		for (Index = 0; Index < EntryCount; Index ++, EntryPtr ++) {
 			Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
 			TableSize = Table->Length;
@@ -196,8 +195,21 @@ InstallLegacyTables (
 			}
 		}
 		//Now find Fadt and install dsdt and facs
-		EntryPtr = &Fadt->Dsdt;
-		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
+//		EntryPtr = &Fadt->Dsdt;
+//		EntryPtr++; //nows facs
+		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Fadt->FirmwareCtrl));
+		TableSize = Table->Length;
+		Signature.Sign = Table->Signature;
+		Print(L"Install table: %c%c%c%c\n", 
+			  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
+		Status = AcpiTable->InstallAcpiTable (
+											  AcpiTable,
+											  Table,
+											  TableSize,
+											  &TableHandle
+											  );
+		
+		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Fadt->Dsdt));
 		TableSize = Table->Length;
 		Signature.Sign = Table->Signature;
 		Print(L"Install table: %c%c%c%c\n", 
@@ -209,18 +221,6 @@ InstallLegacyTables (
 											  TableSize,
 											  &TableHandle
 											  );
-		EntryPtr++; //nows facs
-		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
-		TableSize = Table->Length;
-		Signature.Sign = Table->Signature;
-		Print(L"Install table: %c%c%c%c\n", 
-			  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
-		Status = AcpiTable->InstallAcpiTable (
-											  AcpiTable,
-											  Table,
-											  TableSize,
-											  &TableHandle
-											  );			
 	}
 	
 }
@@ -444,14 +444,20 @@ AcpiPlatformEntryPoint (
 									 &FileBuffer
 									 );
  */
+		
 		Status = ThisFile->Read (ThisFile, &FileSize, FileBuffer); //(VOID**)&
-				Print(L"FileRead success! \n");
+		Print(L"FileRead status=%x\n", 	Status);	
 		if (!EFI_ERROR(Status)) {
 			//
 			// Add the table
 			//
 			TableHandle = 0;
+			if (ThisFile != NULL) {
+				ThisFile->Close (ThisFile); //close file before use buffer?! Flush?!
+			}
 			
+			Print(L"FileRead success: %c%c%c%c\n",
+				  ((CHAR8*)FileBuffer)[0], ((CHAR8*)FileBuffer)[1], ((CHAR8*)FileBuffer)[2], ((CHAR8*)FileBuffer)[3]);
 			TableSize = ((EFI_ACPI_DESCRIPTION_HEADER *) FileBuffer)->Length;
 			//ASSERT (BufferSize >= TableSize);
 			if (FileSize < TableSize) {
@@ -485,6 +491,9 @@ AcpiPlatformEntryPoint (
 			Instance++;   //for a what?
 			FileBuffer = NULL;
 		}
+	}
+	if (Root != NULL) {
+		Root->Close (Root);
 	}
 	
 	return EFI_SUCCESS;
