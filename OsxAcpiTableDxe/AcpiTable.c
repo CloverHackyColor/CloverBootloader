@@ -65,7 +65,7 @@ InitializeAcpiTableDxe (
   //
   // Install ACPI Table protocol
   //
-  if (FeaturePcdGet (PcdInstallAcpiSdtProtocol)) {
+/*  if (FeaturePcdGet (PcdInstallAcpiSdtProtocol)) {
     mPrivateData = PrivateData;
     Status = gBS->InstallMultipleProtocolInterfaces (
                     &mHandle,
@@ -76,13 +76,14 @@ InitializeAcpiTableDxe (
                     NULL
                     );
   } else {
+*/	  
     Status = gBS->InstallMultipleProtocolInterfaces (
                     &mHandle,
                     &gEfiAcpiTableProtocolGuid,
                     &PrivateData->AcpiTableProtocol,
                     NULL
                     );
-  }
+//  }
   ASSERT_EFI_ERROR (Status);
 
   return Status;

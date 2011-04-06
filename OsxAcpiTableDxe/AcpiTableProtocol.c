@@ -353,13 +353,15 @@ InstallAcpiTable (
              AcpiTableInstance,
              AcpiTableBufferConst,
              FALSE,
-             EFI_ACPI_TABLE_VERSION_1_0B | EFI_ACPI_TABLE_VERSION_2_0 | EFI_ACPI_TABLE_VERSION_3_0,
+            // EFI_ACPI_TABLE_VERSION_1_0B |
+						 EFI_ACPI_TABLE_VERSION_2_0 | EFI_ACPI_TABLE_VERSION_3_0,
              TableKey
              );
   if (!EFI_ERROR (Status)) {
     Status = PublishTables (
                AcpiTableInstance,
-               EFI_ACPI_TABLE_VERSION_1_0B | EFI_ACPI_TABLE_VERSION_2_0 | EFI_ACPI_TABLE_VERSION_3_0
+           //    EFI_ACPI_TABLE_VERSION_1_0B |
+							EFI_ACPI_TABLE_VERSION_2_0 | EFI_ACPI_TABLE_VERSION_3_0
                );
   }
   FreePool (AcpiTableBufferConst);
@@ -367,6 +369,7 @@ InstallAcpiTable (
   //
   // Add a new table successfully, notify registed callback
   //
+/*	
   if (FeaturePcdGet (PcdInstallAcpiSdtProtocol)) {
     if (!EFI_ERROR (Status)) {
       SdtNotifyAcpiList (
@@ -376,7 +379,7 @@ InstallAcpiTable (
         );
     }
   }
-
+*/
   return Status;
 }
 
@@ -413,13 +416,15 @@ UninstallAcpiTable (
              AcpiTableInstance,
              NULL,
              FALSE,
-             EFI_ACPI_TABLE_VERSION_1_0B | EFI_ACPI_TABLE_VERSION_2_0 | EFI_ACPI_TABLE_VERSION_3_0,
+           //  EFI_ACPI_TABLE_VERSION_1_0B |
+						 EFI_ACPI_TABLE_VERSION_2_0 | EFI_ACPI_TABLE_VERSION_3_0,
              &TableKey
              );
   if (!EFI_ERROR (Status)) {
     Status = PublishTables (
                AcpiTableInstance,
-               EFI_ACPI_TABLE_VERSION_1_0B | EFI_ACPI_TABLE_VERSION_2_0 | EFI_ACPI_TABLE_VERSION_3_0
+              // EFI_ACPI_TABLE_VERSION_1_0B |
+							EFI_ACPI_TABLE_VERSION_2_0 | EFI_ACPI_TABLE_VERSION_3_0
                );
   }
 
@@ -1733,10 +1738,10 @@ AcpiTableAcpiTableConstructor (
   AcpiTableInstance->AcpiTableProtocol.InstallAcpiTable   = InstallAcpiTable;
   AcpiTableInstance->AcpiTableProtocol.UninstallAcpiTable = UninstallAcpiTable;
 
-  if (FeaturePcdGet (PcdInstallAcpiSdtProtocol)) {
+/*  if (FeaturePcdGet (PcdInstallAcpiSdtProtocol)) {
     SdtAcpiTableAcpiSdtConstructor (AcpiTableInstance);
   }
-
+*/
   //
   // Create RSDP, RSDT, XSDT structures
   // Allocate all buffers
