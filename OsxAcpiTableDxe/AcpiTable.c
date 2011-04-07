@@ -86,6 +86,18 @@ InitializeAcpiTableDxe (
 //  }
   ASSERT_EFI_ERROR (Status);
 
+	//
+	// Register the event to install ACPI Table into EFI System Table
+	//
+/*	Status = gBS->CreateEventEx (
+								 EVT_NOTIFY_SIGNAL,
+								 TPL_NOTIFY,
+								 AcpiTableAcpiTableConstructor,
+								 NULL,
+								 &gEfiEventReadyToBootGuid,
+								 &ReadyToBootEvent
+								 );
+*/	
   return Status;
 }
 

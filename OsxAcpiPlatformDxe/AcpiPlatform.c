@@ -83,7 +83,7 @@ InstallLegacyTables (
 //	EFI_ACPI_2_0_FIRMWARE_ACPI_CONTROL_STRUCTURE *Facs;
 	UINTN							BasePtr;
 	//	UINT32                       Signature;
-//	SIGNAT							Signature;
+	SIGNAT							Signature;
 	
 //	BOOLEAN							Found = FALSE;
 	
@@ -97,8 +97,8 @@ InstallLegacyTables (
 	//Begin patching from Xsdt
 	//Install Xsdt if any	
 	if (Xsdt) {
-//		TableSize = Xsdt->Header.Length;
-/*		Signature.Sign = Xsdt->Header.Signature;
+		TableSize = Xsdt->Header.Length;
+		Signature.Sign = Xsdt->Header.Signature;
 		Print(L"Install table: %c%c%c%c\n",
 			  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
 		
@@ -111,7 +111,7 @@ InstallLegacyTables (
 		if (EFI_ERROR(Status)) {
 			return;
 		}
- */
+
 		//First scan for Xsdt
 		EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
 		
@@ -136,9 +136,9 @@ InstallLegacyTables (
 		//Now find Fadt and install dsdt and facs
 		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Fadt->FirmwareCtrl));
 		TableSize = Table->Length;
-//		Signature.Sign = Table->Signature;
-//		Print(L"Install table: %c%c%c%c\n", 
-//			  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
+		Signature.Sign = Table->Signature;
+		Print(L"Install table: %c%c%c%c\n", 
+			  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
 		Status = AcpiTable->InstallAcpiTable (
 											  AcpiTable,
 											  Table,
@@ -166,8 +166,8 @@ InstallLegacyTables (
 	}
 	if (!Xsdt && Rsdt) {
 		//Install Rsdt
-//		Print(L"Xsdt not found, patch Rsdt\n");
-/*		TableSize = Rsdt->Header.Length;
+		Print(L"Xsdt not found, patch Rsdt\n");
+		TableSize = Rsdt->Header.Length;
 		Signature.Sign = Rsdt->Header.Signature;
 		Print(L"Install table: %c%c%c%c\n",
 			  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
@@ -180,7 +180,7 @@ InstallLegacyTables (
 		if (EFI_ERROR(Status)) {
 			return;
 		}
- */
+ 
 		//First scan for RSDT
 		EntryCount = (Rsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT32);
 		
@@ -189,9 +189,9 @@ InstallLegacyTables (
 		for (Index = 0; Index < EntryCount; Index ++, EntryPtr ++) {
 			Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
 			TableSize = Table->Length;
-//			Signature.Sign = Table->Signature;
-//			Print(L"Install table: %c%c%c%c\n", 
-//				  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
+			Signature.Sign = Table->Signature;
+			Print(L"Install table: %c%c%c%c\n", 
+				  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
 			Status = AcpiTable->InstallAcpiTable (
 												  AcpiTable,
 												  Table,
@@ -205,9 +205,9 @@ InstallLegacyTables (
 		//Now find Fadt and install dsdt and facs
 		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Fadt->FirmwareCtrl));
 		TableSize = Table->Length;
-//		Signature.Sign = Table->Signature;
-//		Print(L"Install table: %c%c%c%c\n", 
-//		Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
+		Signature.Sign = Table->Signature;
+		Print(L"Install table: %c%c%c%c\n", 
+		Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
 		Status = AcpiTable->InstallAcpiTable (
 											  AcpiTable,
 											  Table,
@@ -330,7 +330,15 @@ AcpiPlatformEntryPoint (
 //	EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt;
 	EFI_ACPI_DESCRIPTION_HEADER		*Table;
 	SIGNAT							Signature;
-
+	
+	//
+	// Find the AcpiTable protocol
+	//
+	Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid, NULL, (VOID**)&AcpiTable);
+	if (EFI_ERROR (Status)) {
+		return EFI_ABORTED;
+	}
+	
 	
 	Instance     = 0;
 	CurrentTable = NULL;
@@ -347,14 +355,6 @@ AcpiPlatformEntryPoint (
 	}
 	Acpi20 = GET_GUID_HOB_DATA (GuidHob.Guid);
 	if (Acpi20 == NULL) {
-		return EFI_ABORTED;
-	}
-	
-	//
-	// Find the AcpiTable protocol
-	//
-	Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid, NULL, (VOID**)&AcpiTable);
-	if (EFI_ERROR (Status)) {
 		return EFI_ABORTED;
 	}
 /*	Status = gBS->HandleProtocol (ImageHandle, &gEfiAcpiTableProtocolGuid, (VOID*)&AcpiTable);

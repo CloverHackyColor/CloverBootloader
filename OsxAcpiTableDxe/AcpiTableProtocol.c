@@ -1777,7 +1777,9 @@ AcpiTableAcpiTableConstructor (
   }
 
   Pointer = (UINT8 *) (UINTN) PageAddress;
-  ZeroMem (Pointer, TotalSize);
+  ZeroMem (Pointer, TotalSize); 
+	
+	
 
   AcpiTableInstance->Rsdp1 = (EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER *) Pointer;
   Pointer += sizeof (EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER);
