@@ -146,7 +146,7 @@ InstallLegacyTables (
 											  &TableHandle
 											  );
 		
-// do not install legacy DSDT		
+// do not install legacy DSDT yet	
 /*		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Fadt->Dsdt));
 		TableSize = Table->Length;
 		Signature.Sign = Table->Signature;
@@ -336,13 +336,6 @@ AcpiPlatformEntryPoint (
 	CurrentTable = NULL;
 	TableHandle  = 0;
 	
-	//
-	// Find the AcpiTable protocol
-	//
-	Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid, NULL, (VOID**)&AcpiTable);
-	if (EFI_ERROR (Status)) {
-		return EFI_ABORTED;
-	}
 	GuidHob.Raw = GetFirstGuidHob (&gEfiAcpi20TableGuid);
 	if (GuidHob.Raw == NULL) {
 		GuidHob.Raw = GetFirstGuidHob (&gEfiAcpiTableGuid);
@@ -356,6 +349,18 @@ AcpiPlatformEntryPoint (
 	if (Acpi20 == NULL) {
 		return EFI_ABORTED;
 	}
+	
+	//
+	// Find the AcpiTable protocol
+	//
+	Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid, NULL, (VOID**)&AcpiTable);
+	if (EFI_ERROR (Status)) {
+		return EFI_ABORTED;
+	}
+/*	Status = gBS->HandleProtocol (ImageHandle, &gEfiAcpiTableProtocolGuid, (VOID*)&AcpiTable);
+	if (EFI_ERROR (Status)) {
+		return EFI_ABORTED;
+	}	*/
 	Rsdp = (EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER *)(UINTN)*Acpi20;	
 	Print(L"Rsdp @ %x\n", (UINTN)Rsdp);
 	InstallLegacyTables(AcpiTable, Rsdp);
@@ -431,7 +436,7 @@ AcpiPlatformEntryPoint (
 		if (EFI_ERROR(Status) && Status != EFI_BUFFER_TOO_SMALL) {
 			continue;
 		}
-//		Print(L"Buffer size %d\n", BufferSize);
+		Print(L"Buffer size %d\n", BufferSize);
 		//		Print(L"GetInfo success!\n");
 		Status = gBS->AllocatePool (EfiBootServicesData, BufferSize, (VOID **) &Info);
 		if (EFI_ERROR (Status)) {
@@ -460,7 +465,7 @@ AcpiPlatformEntryPoint (
  */
 		
 		Status = ThisFile->Read (ThisFile, &FileSize, FileBuffer); //(VOID**)&
-//		Print(L"FileRead status=%x\n", 	Status);	
+		Print(L"FileRead status=%x\n", 	Status);	
 		if (!EFI_ERROR(Status)) {
 			//
 			// Add the table
@@ -470,11 +475,11 @@ AcpiPlatformEntryPoint (
 				ThisFile->Close (ThisFile); //close file before use buffer?! Flush?!
 			}
 			
-//			Print(L"FileRead success: %c%c%c%c\n",
-//				  ((CHAR8*)FileBuffer)[0], ((CHAR8*)FileBuffer)[1], ((CHAR8*)FileBuffer)[2], ((CHAR8*)FileBuffer)[3]);
+			Print(L"FileRead success: %c%c%c%c\n",
+				  ((CHAR8*)FileBuffer)[0], ((CHAR8*)FileBuffer)[1], ((CHAR8*)FileBuffer)[2], ((CHAR8*)FileBuffer)[3]);
 			TableSize = ((EFI_ACPI_DESCRIPTION_HEADER *) FileBuffer)->Length;
 			//ASSERT (BufferSize >= TableSize);
-//			Print(L"Table size=%d\n", TableSize);
+			Print(L"Table size=%d\n", TableSize);
 			if (FileSize < TableSize) {
 				//Data incorrect. What TODO? Quick fix
 //				((EFI_ACPI_DESCRIPTION_HEADER *) FileBuffer)->Length = FileSize;
@@ -498,12 +503,20 @@ AcpiPlatformEntryPoint (
 			// Install ACPI table
 			//
 			TmpHandler = &FileBuffer;
-			Status = AcpiTable->InstallAcpiTable (
-												  AcpiTable,
-												  *TmpHandler,
-												  TableSize,
-												  &TableHandle
-												  );
+			if (Index) {
+				Status = AcpiTable->InstallAcpiTable (
+													  AcpiTable,
+													  *TmpHandler,
+													  TableSize,
+													  &TableHandle
+													  );
+			} else {
+				//DSDT - nuegonah acpiprotocol
+				Fadt->Dsdt = (UINT32)FileBuffer;
+				Fadt->XDsdt = (UINT64)(UINTN)FileBuffer;
+				Status = EFI_SUCCESS;
+			}
+
 			Print(L"Table install status=%x\n", 	Status);
 			if (EFI_ERROR(Status)) {
 				continue;

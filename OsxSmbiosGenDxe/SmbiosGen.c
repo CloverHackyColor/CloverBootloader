@@ -426,7 +426,8 @@ InstallOemProcessorBusSpeed		(//132
 		SmbiosTable.Type132->Hdr.Length = sizeof(SMBIOS_STRUCTURE)+2; 
 		//    return ;
 	}
-	SmbiosTable.Type132->ProcessorBusSpeed = gBusSpeed;
+	UINT16 res = (gBusSpeed % 10) / 3;
+	SmbiosTable.Type132->ProcessorBusSpeed = (gBusSpeed << 2) + res;
 	//
 	// Log Smbios Record Type132
 	//
@@ -708,7 +709,7 @@ SmbiosGenEntrypoint (
 		}
 	}
 	if (gCpuType == 0) {
-		gCpuType = (cpuid_cpu_info.core_count > 4)?0x701:0x601;
+		gCpuType = (cpuid_cpu_info.core_count >= 4)?0x701:0x601;
 	}
 
 	
@@ -741,16 +742,16 @@ SmbiosTableLength (
   IN SMBIOS_STRUCTURE_POINTER SmbiosTable
   )
 {
-  CHAR8  *AChar;
-  UINTN  Length;
-
-  AChar = (CHAR8 *)(SmbiosTable.Raw + SmbiosTable.Hdr->Length);
-  while ((*AChar != 0) || (*(AChar + 1) != 0)) {
-    AChar ++;
-  }
-  Length = ((UINTN)AChar - (UINTN)SmbiosTable.Raw + 2);
-  
-  return Length;
+	CHAR8  *AChar;
+	UINTN  Length;
+	
+	AChar = (CHAR8 *)(SmbiosTable.Raw + SmbiosTable.Hdr->Length);
+	while ((*AChar != 0) || (*(AChar + 1) != 0)) {
+		AChar ++;
+	}
+	Length = ((UINTN)AChar - (UINTN)SmbiosTable.Raw + 2);
+	
+	return Length;
 }
 
 SMBIOS_STRUCTURE_POINTER
@@ -760,26 +761,26 @@ GetSmbiosTableFromType (
   IN UINTN                     Index
   )
 {
-  SMBIOS_STRUCTURE_POINTER SmbiosTable;
-  UINTN                    SmbiosTypeIndex;
-  
-  SmbiosTypeIndex = 0;
-  SmbiosTable.Raw = (UINT8 *)(UINTN)Smbios->TableAddress;
-  if (SmbiosTable.Raw == NULL) {
-    return SmbiosTable;
-  }
-  while ((SmbiosTypeIndex != Index) || (SmbiosTable.Hdr->Type != Type)) {
-    if (SmbiosTable.Hdr->Type == 127) {
-      SmbiosTable.Raw = NULL;
-      return SmbiosTable;
-    }
-    if (SmbiosTable.Hdr->Type == Type) {
-      SmbiosTypeIndex ++;
-    }
-    SmbiosTable.Raw = (UINT8 *)(SmbiosTable.Raw + SmbiosTableLength (SmbiosTable));
-  }
-
-  return SmbiosTable;
+	SMBIOS_STRUCTURE_POINTER SmbiosTable;
+	UINTN                    SmbiosTypeIndex;
+	
+	SmbiosTypeIndex = 0;
+	SmbiosTable.Raw = (UINT8 *)(UINTN)Smbios->TableAddress;
+	if (SmbiosTable.Raw == NULL) {
+		return SmbiosTable;
+	}
+	while ((SmbiosTypeIndex != Index) || (SmbiosTable.Hdr->Type != Type)) {
+		if (SmbiosTable.Hdr->Type == 127) {
+			SmbiosTable.Raw = NULL;
+			return SmbiosTable;
+		}
+		if (SmbiosTable.Hdr->Type == Type) {
+			SmbiosTypeIndex ++;
+		}
+		SmbiosTable.Raw = (UINT8 *)(SmbiosTable.Raw + SmbiosTableLength (SmbiosTable));
+	}
+	
+	return SmbiosTable;
 }
 
 CHAR8 *
@@ -788,23 +789,23 @@ GetSmbiosString (
   IN SMBIOS_TABLE_STRING       String
   )
 {
-  CHAR8      *AString;
-  UINT8      Index;
-
-  Index = 1;
-  AString = (CHAR8 *)(SmbiosTable.Raw + SmbiosTable.Hdr->Length);
-  while (Index != String) {
-    while (*AString != 0) {
-      AString ++;
-    }
-    AString ++;
-    if (*AString == 0) {
-      return AString;
-    }
-    Index ++;
-  }
-
-  return AString;
+	CHAR8      *AString;
+	UINT8      Index;
+	
+	Index = 1;
+	AString = (CHAR8 *)(SmbiosTable.Raw + SmbiosTable.Hdr->Length);
+	while (Index != String) {
+		while (*AString != 0) {
+			AString ++;
+		}
+		AString ++;
+		if (*AString == 0) {
+			return AString;
+		}
+		Index ++;
+	}
+	
+	return AString;
 }
 
 
@@ -821,16 +822,16 @@ LogSmbiosData (
   IN   UINT8                      *Buffer
   )
 {
-  EFI_STATUS         Status;
-  EFI_SMBIOS_HANDLE  SmbiosHandle;
-  
-  SmbiosHandle = 0;
-  Status = Smbios->Add (
-                     Smbios,
-                     NULL,
-                     &SmbiosHandle,
-                     (EFI_SMBIOS_TABLE_HEADER*)Buffer
-                     );
-  ASSERT_EFI_ERROR (Status);
+	EFI_STATUS         Status;
+	EFI_SMBIOS_HANDLE  SmbiosHandle;
+	
+	SmbiosHandle = 0;
+	Status = Smbios->Add (
+						  Smbios,
+						  NULL,
+						  &SmbiosHandle,
+						  (EFI_SMBIOS_TABLE_HEADER*)Buffer
+						  );
+	ASSERT_EFI_ERROR (Status);
 	return SmbiosHandle;
 }
