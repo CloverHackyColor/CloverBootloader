@@ -1518,45 +1518,6 @@ Returns:
   } else {
     AcpiTableNew = AcpiTableOri;
   }
-//Slice - here we can replace DSDT TODO
-/*
- BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
- dsdt_len = Read("DSDT.aml", new_dsdt);
- Status = gBS->AllocatePages (
-	AllocateMaxAddress,
-	EfiACPIMemoryNVS,
-	EFI_SIZE_TO_PAGES(dsdt_len),
-	&BufferPtr
- );
- CopyMem (new_dsdt, BufferPtr, dsdt_len); 
- rsdt=(struct acpi_2_rsdt *)(AcpiTableNew->RsdtAddress);
- rsdt_entries_num=(rsdt_mod->Length-sizeof(struct acpi_2_rsdt))/4;
- rsdt_entries=(uint32_t *)(rsdt+1);
- for (i=0;i<rsdt_entries_num;i++)
- {
-	char *table=(char *)(rsdt_entries[i]);
-	if (!table)
-		continue;
-	if (tableSign(table, "DSDT"))
-	{
-		 DBG("DSDT found\n");
-		 
-		 if(new_dsdt)
-			 rsdt_entries[i]=(uint32_t)new_dsdt;
-		 
-		 continue;
-	}
-	 if (tableSign(table, "FACP"))
-	 {
-		 fadt=(struct acpi_2_fadt *)table;
-		 fadt->DSDT = (uint32_t)new_dsdt;
-		fadt->Checksum = 0;
-		fadt->Checksum = 256-checksum8(fadt,fadt->Length);
-	 }
- }
- rsdt->Checksum = 0;
- rsdt->Checksum = 256-checksum8(rsdt,rsdt->Length);
- */
   //
   // Change configuration table Pointer
   //

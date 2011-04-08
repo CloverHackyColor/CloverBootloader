@@ -18,7 +18,8 @@
 #include <Uefi.h>
 #include <PiDxe.h>
 
-#include <Protocol/AcpiTable.h>
+
+//#include <Protocol/AcpiTable.h>
 //#include <Protocol/FirmwareVolume2.h>
 #include <Protocol/DevicePath.h>
 #include <Protocol/LoadedImage.h>
@@ -34,14 +35,14 @@
 #include <Library/UefiDriverEntryPoint.h>
 #include <Library/UefiBootServicesTableLib.h>
 //#include <Library/DebugLib.h>
-#include <Library/PcdLib.h>
+//#include <Library/PcdLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/HobLib.h>
 //#include <Library/PrintLib.h>
 
 #include <IndustryStandard/Acpi.h>
 //#include "HobGeneration.h"
-#include "AcpiTable.h"
+//#include "AcpiTable.h"
 
 #pragma pack(1)
 
@@ -60,13 +61,20 @@ typedef union {
 		CHAR8  ASign[4];
 } SIGNAT;
 
-#pragma pack()
-EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE   *Fadt;
-extern EFI_ACPI_TABLE_INSTANCE   *mPrivateData;
+VOID
+AcpiPlatformChecksum (
+					  IN UINT8      *Buffer,
+					  IN UINTN      Size
+					  );
 
+
+#pragma pack()
+//EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE   *Fadt;
+//extern EFI_ACPI_TABLE_INSTANCE   *mPrivateData;
+#if 0
 VOID
 InstallLegacyTables (
-	EFI_ACPI_TABLE_PROTOCOL         *AcpiTable,
+//	EFI_ACPI_TABLE_PROTOCOL         *AcpiTable,
 	EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER *Rsdp
 					 )
 {
@@ -236,6 +244,8 @@ InstallLegacyTables (
     }
 	
 }
+#endif
+
 #define NUM_TABLES 12
 CHAR16* ACPInames[NUM_TABLES] = {
 	L"DSDT.aml",
@@ -311,7 +321,7 @@ AcpiPlatformEntryPoint (
   )
 {
 	EFI_STATUS                      Status;
-	EFI_ACPI_TABLE_PROTOCOL         *AcpiTable;
+//	EFI_ACPI_TABLE_PROTOCOL         *AcpiTable;
 	INTN                            Instance;
 	EFI_ACPI_COMMON_HEADER          *CurrentTable;
 	EFI_ACPI_COMMON_HEADER			*oldDSDT;
@@ -334,11 +344,11 @@ AcpiPlatformEntryPoint (
 	EFI_PEI_HOB_POINTERS        GuidHob;
 	EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER *Rsdp;
 	EFI_ACPI_DESCRIPTION_HEADER *Rsdt, *Xsdt;
-//	EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt;
-	EFI_ACPI_DESCRIPTION_HEADER		*Table;
-	SIGNAT							Signature;
-	EFI_ACPI_TABLE_INSTANCE			*AcpiInstance;
-	
+	EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt;
+//	EFI_ACPI_DESCRIPTION_HEADER		*Table;
+//	SIGNAT							Signature;
+//	EFI_ACPI_TABLE_INSTANCE			*AcpiInstance;
+/*	
 	//
 	// Find the AcpiTable protocol
 	//
@@ -354,7 +364,7 @@ AcpiPlatformEntryPoint (
 	Print(L"Xsdt %x\n", AcpiInstance->Xsdt);
 	Print(L"Fadt1 %x\n", AcpiInstance->Fadt1);
 	Print(L"Fadt3 %x\n", AcpiInstance->Fadt3);
-	
+*/	
 	Instance     = 0;
 	CurrentTable = NULL;
 	TableHandle  = 0;
@@ -382,21 +392,20 @@ AcpiPlatformEntryPoint (
 	if ((Rsdp->Revision >= 2) && (Rsdp->XsdtAddress < (UINT64)(UINTN)-1)) {
 		Xsdt = (EFI_ACPI_DESCRIPTION_HEADER *)(UINTN)Rsdp->XsdtAddress;
 	}
-	
-	Print(L"Rsdp @ %x\n", (UINTN)Rsdp);
-	Print(L"Rsdt @ %x\n", (UINTN)Rsdt);
-	Print(L"Xsdt @ %x\n", (UINTN)Xsdt);
-//Now we patch empty acpiProtocol with legacy tables
-	AcpiInstance->Rsdp3 = Rsdp;
-	AcpiInstance->Rsdt1 = Rsdt;
-	AcpiInstance->Rsdt3 = Rsdt;
-	AcpiInstance->Xsdt = Xsdt;
-	
-	InstallLegacyTables(AcpiTable, Rsdp);
+	if (Xsdt) {
+//		TableSize = ((XSDT_TABLE*)Xsdt)->Header.Length;
+		Fadt = (EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(((XSDT_TABLE*)Xsdt)->Entry);
+	} else {
+		Fadt = (EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(((RSDT_TABLE*)Rsdt)->Entry);
+	}
+
+//	Print(L"Rsdp @ %x\n", (UINTN)Rsdp);
+//	Print(L"Rsdt @ %x\n", (UINTN)Rsdt);
+//	Print(L"Xsdt @ %x\n", (UINTN)Xsdt);
 //	Print(L"LegacyTables installed\n");
 	oldDSDT = (EFI_ACPI_COMMON_HEADER*)(UINTN)Fadt->Dsdt;
-	Print(L"Fadt @ %x\n", (UINTN)Fadt);
-	Print(L"oldDSDT @ %x\n", (UINTN)oldDSDT);
+//	Print(L"Fadt @ %x\n", (UINTN)Fadt);
+//	Print(L"oldDSDT @ %x\n", (UINTN)oldDSDT);
 //  Looking for a volume from what we boot
 	
 /*	TODO - look for a volume we want to boot System
@@ -465,7 +474,7 @@ AcpiPlatformEntryPoint (
 		if (EFI_ERROR(Status) && Status != EFI_BUFFER_TOO_SMALL) {
 			continue;
 		}
-		Print(L"Buffer size %d\n", BufferSize);
+//		Print(L"Buffer size %d\n", BufferSize);
 		//		Print(L"GetInfo success!\n");
 		Status = gBS->AllocatePool (EfiBootServicesData, BufferSize, (VOID **) &Info);
 		if (EFI_ERROR (Status)) {
@@ -479,11 +488,11 @@ AcpiPlatformEntryPoint (
 									Info
 									);
 		FileSize = Info->FileSize;
-				Print(L"FileSize = %d!\n", FileSize);
+//				Print(L"FileSize = %d!\n", FileSize);
 		gBS->FreePool (Info);
 		
 		FileBuffer = AllocatePool(FileSize);
-		Print(L"FileBuffer @ %x\n", (UINTN)FileBuffer);
+//		Print(L"FileBuffer @ %x\n", (UINTN)FileBuffer);
 		//Slice - may be this is more correct memory for ACPI tables?
 /*		Status = gBS->AllocatePages (
 									 AllocateMaxAddress,
@@ -494,7 +503,7 @@ AcpiPlatformEntryPoint (
  */
 		
 		Status = ThisFile->Read (ThisFile, &FileSize, FileBuffer); //(VOID**)&
-		Print(L"FileRead status=%x\n", 	Status);	
+//		Print(L"FileRead status=%x\n", 	Status);	
 		if (!EFI_ERROR(Status)) {
 			//
 			// Add the table
@@ -504,16 +513,16 @@ AcpiPlatformEntryPoint (
 				ThisFile->Close (ThisFile); //close file before use buffer?! Flush?!
 			}
 			
-			Print(L"FileRead success: %c%c%c%c\n",
-				  ((CHAR8*)FileBuffer)[0], ((CHAR8*)FileBuffer)[1], ((CHAR8*)FileBuffer)[2], ((CHAR8*)FileBuffer)[3]);
+//			Print(L"FileRead success: %c%c%c%c\n",
+//		((CHAR8*)FileBuffer)[0], ((CHAR8*)FileBuffer)[1], ((CHAR8*)FileBuffer)[2], ((CHAR8*)FileBuffer)[3]);
 			TableSize = ((EFI_ACPI_DESCRIPTION_HEADER *) FileBuffer)->Length;
 			//ASSERT (BufferSize >= TableSize);
-			Print(L"Table size=%d\n", TableSize);
+//			Print(L"Table size=%d\n", TableSize);
 			if (FileSize < TableSize) {
 				//Data incorrect. What TODO? Quick fix
 //				((EFI_ACPI_DESCRIPTION_HEADER *) FileBuffer)->Length = FileSize;
 //				TableSize = FileSize;
-				Print(L"Table size > file size :(\n");
+//				Print(L"Table size > file size :(\n");
 				continue; //do nothing with broken table
 			}			
 			//
@@ -523,30 +532,33 @@ AcpiPlatformEntryPoint (
 			if ((Index==0) && oldDSDT) {  //DSDT always at index 0
 				if (((EFI_ACPI_DESCRIPTION_HEADER *) oldDSDT)->Length > TableSize) {
 					CopyMem(oldDSDT, FileBuffer, TableSize);
-					Print(L"New DSDT copied to old place\n");
+//					Print(L"New DSDT copied to old place\n");
 				}
-				Fadt->Dsdt = 0;  //exclude old one - looks like a final trick
-				Fadt->XDsdt = 0;
+//				Fadt->Dsdt = 0;  //exclude old one - looks like a final trick
+//				Fadt->XDsdt = 0;
 			}		
 			//
 			// Install ACPI table
 			//
 			TmpHandler = &FileBuffer;
 			if (Index) {
-				Status = AcpiTable->InstallAcpiTable (
+/*				Status = AcpiTable->InstallAcpiTable (
 													  AcpiTable,
 													  *TmpHandler,
 													  TableSize,
 													  &TableHandle
 													  );
+ */
+//				Print(L"Install SSDT is not implemented yet\n");
 			} else {
 				//DSDT - nuegonah acpiprotocol
 				Fadt->Dsdt = (UINT32)FileBuffer;
 				Fadt->XDsdt = (UINT64)(UINTN)FileBuffer;
 				Status = EFI_SUCCESS;
 			}
-
-			Print(L"Table install status=%x\n", 	Status);
+			TableSize = ((EFI_ACPI_DESCRIPTION_HEADER *) Fadt)->Length;
+			AcpiPlatformChecksum ((UINT8*)Fadt, TableSize);
+//			Print(L"Table install status=%x\n", 	Status);
 			if (EFI_ERROR(Status)) {
 				continue;
 			}
@@ -556,7 +568,8 @@ AcpiPlatformEntryPoint (
 			//
 			Instance++;   //for a what?
 			FileBuffer = NULL;
-		} else if (oldDSDT && (Index==0)) {
+		} 
+/*		else if (oldDSDT && (Index==0)) {
 			//if new DSDT not found then install legacy one
 			Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Fadt->Dsdt));
 			TableSize = Table->Length;
@@ -569,8 +582,9 @@ AcpiPlatformEntryPoint (
 												  Table,
 												  TableSize,
 												  &TableHandle
-												  );
+			);
 		}
+ */
 	}
 	if (Root != NULL) {
 		Root->Close (Root);
