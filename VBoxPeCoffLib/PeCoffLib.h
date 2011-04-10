@@ -20,7 +20,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #ifndef __BASE_PE_COFF_LIB_H__
 #define __BASE_PE_COFF_LIB_H__
 
-#include <IndustryStandard/PeImage.h>
+//#include <IndustryStandard/PeImage.h>
+#include "PeImage.h"
 //
 // Return status codes from the PE/COFF Loader services
 //
