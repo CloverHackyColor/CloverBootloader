@@ -38,7 +38,7 @@
   DxeServicesLib
   PcdLib
   BaseMemoryLib
-  DebugLib
+#  DebugLib
   UefiBootServicesTableLib
   MemoryAllocationLib
   UefiDriverEntryPoint
@@ -48,7 +48,7 @@
 [Guids]
   gEfiGlobalVariableGuid
 #  gEfiPciExpressBaseAddressGuid
-  gEfiAcpi20TableGuid
+  gEfiAcpi10TableGuid
 #  gEfiMpsTableGuid
   gEfiSmbiosTableGuid
   gEfiAcpiTableGuid
@@ -60,7 +60,7 @@
   gEfiSimpleFileSystemProtocolGuid
 
 [Pcd]
-  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiTableStorageFile
+#  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiTableStorageFile
 
 [Depex]
   gEfiAcpiTableProtocolGuid

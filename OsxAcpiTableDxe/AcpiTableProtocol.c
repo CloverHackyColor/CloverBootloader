@@ -16,10 +16,13 @@
 // Includes
 //
 #include "AcpiTable.h"
+//#include <Library/HobLib.h>
 //
 // The maximum number of tables that pre-allocated. 
 //
 UINTN         mEfiAcpiMaxNumTables = EFI_ACPI_MAX_NUM_TABLES; 
+
+#define NEWTABLES 1
 
 /**
   This function adds an ACPI table to the table list.  It will detect FACS and
@@ -220,71 +223,71 @@ PublishTables (
   IN EFI_ACPI_TABLE_VERSION               Version
   )
 {
-  EFI_STATUS                Status;
-  UINT32                    *CurrentRsdtEntry;
-  VOID                      *CurrentXsdtEntry;
-  UINT64                    Buffer64;
-
-  //
-  // Reorder tables as some operating systems don't seem to find the
-  // FADT correctly if it is not in the first few entries
-  //
-
-  //
-  // Add FADT as the first entry
-  //
-  if ((Version & EFI_ACPI_TABLE_VERSION_1_0B) != 0) {
-    CurrentRsdtEntry  = (UINT32 *) ((UINT8 *) AcpiTableInstance->Rsdt1 + sizeof (EFI_ACPI_DESCRIPTION_HEADER));
-    *CurrentRsdtEntry = (UINT32) (UINTN) AcpiTableInstance->Fadt1;
-  }
-  if ((Version & EFI_ACPI_TABLE_VERSION_2_0) != 0 ||
-      (Version & EFI_ACPI_TABLE_VERSION_3_0) != 0) {
-    CurrentRsdtEntry  = (UINT32 *) ((UINT8 *) AcpiTableInstance->Rsdt3 + sizeof (EFI_ACPI_DESCRIPTION_HEADER));
-    *CurrentRsdtEntry = (UINT32) (UINTN) AcpiTableInstance->Fadt3;
-    CurrentXsdtEntry  = (VOID *) ((UINT8 *) AcpiTableInstance->Xsdt + sizeof (EFI_ACPI_DESCRIPTION_HEADER));
-    //
-    // Add entry to XSDT, XSDT expects 64 bit pointers, but
-    // the table pointers in XSDT are not aligned on 8 byte boundary.
-    //
-    Buffer64 = (UINT64) (UINTN) AcpiTableInstance->Fadt3;
-    CopyMem (
-      CurrentXsdtEntry,
-      &Buffer64,
-      sizeof (UINT64)
-      );
-  }
-
-  //
-  // Do checksum again because Dsdt/Xsdt is updated.
-  //
-  ChecksumCommonTables (AcpiTableInstance);
-
-  //
-  // Add the RSD_PTR to the system table and store that we have installed the
-  // tables.
-  //
-  if (((Version & EFI_ACPI_TABLE_VERSION_1_0B) != 0) &&
-      !AcpiTableInstance->TablesInstalled1) {
-    Status = gBS->InstallConfigurationTable (&gEfiAcpi10TableGuid, AcpiTableInstance->Rsdp1);
-    if (EFI_ERROR (Status)) {
-      return EFI_ABORTED;
-    }
-
-    AcpiTableInstance->TablesInstalled1 = TRUE;
-  }
-
-  if (((Version & EFI_ACPI_TABLE_VERSION_2_0) != 0 ||
-       (Version & EFI_ACPI_TABLE_VERSION_3_0) != 0) &&
-      !AcpiTableInstance->TablesInstalled3) {
-    Status = gBS->InstallConfigurationTable (&gEfiAcpiTableGuid, AcpiTableInstance->Rsdp3);
-    if (EFI_ERROR (Status)) {
-      return EFI_ABORTED;
-    }
-
-    AcpiTableInstance->TablesInstalled3= TRUE;
-  }
-
-  return EFI_SUCCESS;
+	EFI_STATUS                Status;
+	UINT32                    *CurrentRsdtEntry;
+	VOID                      *CurrentXsdtEntry;
+	UINT64                    Buffer64;
+	
+	//
+	// Reorder tables as some operating systems don't seem to find the
+	// FADT correctly if it is not in the first few entries
+	//
+	
+	//
+	// Add FADT as the first entry
+	//
+	if ((Version & EFI_ACPI_TABLE_VERSION_1_0B) != 0) {
+		CurrentRsdtEntry  = (UINT32 *) ((UINT8 *) AcpiTableInstance->Rsdt1 + sizeof (EFI_ACPI_DESCRIPTION_HEADER));
+		*CurrentRsdtEntry = (UINT32) (UINTN) AcpiTableInstance->Fadt1;
+	}
+	if ((Version & EFI_ACPI_TABLE_VERSION_2_0) != 0 ||
+		(Version & EFI_ACPI_TABLE_VERSION_3_0) != 0) {
+		CurrentRsdtEntry  = (UINT32 *) ((UINT8 *) AcpiTableInstance->Rsdt3 + sizeof (EFI_ACPI_DESCRIPTION_HEADER));
+		*CurrentRsdtEntry = (UINT32) (UINTN) AcpiTableInstance->Fadt3;
+		CurrentXsdtEntry  = (VOID *) ((UINT8 *) AcpiTableInstance->Xsdt + sizeof (EFI_ACPI_DESCRIPTION_HEADER));
+		//
+		// Add entry to XSDT, XSDT expects 64 bit pointers, but
+		// the table pointers in XSDT are not aligned on 8 byte boundary.
+		//
+		Buffer64 = (UINT64) (UINTN) AcpiTableInstance->Fadt3;
+		CopyMem (
+				 CurrentXsdtEntry,
+				 &Buffer64,
+				 sizeof (UINT64)
+				 );
+	}
+	
+	//
+	// Do checksum again because Dsdt/Xsdt is updated.
+	//
+	ChecksumCommonTables (AcpiTableInstance);
+	
+	//
+	// Add the RSD_PTR to the system table and store that we have installed the
+	// tables.
+	//
+	if (((Version & EFI_ACPI_TABLE_VERSION_1_0B) != 0) &&
+		!AcpiTableInstance->TablesInstalled1) {
+		Status = gBS->InstallConfigurationTable (&gEfiAcpi10TableGuid, AcpiTableInstance->Rsdp1);
+		if (EFI_ERROR (Status)) {
+			return EFI_ABORTED;
+		}
+		
+		AcpiTableInstance->TablesInstalled1 = TRUE;
+	}
+	
+	if (((Version & EFI_ACPI_TABLE_VERSION_2_0) != 0 ||
+		 (Version & EFI_ACPI_TABLE_VERSION_3_0) != 0) &&
+		!AcpiTableInstance->TablesInstalled3) {
+		Status = gBS->InstallConfigurationTable (&gEfiAcpiTableGuid, AcpiTableInstance->Rsdp3);
+		if (EFI_ERROR (Status)) {
+			return EFI_ABORTED;
+		}
+		
+		AcpiTableInstance->TablesInstalled3= TRUE;
+	}
+	
+	return EFI_SUCCESS;
 }
 
 
@@ -1721,27 +1724,32 @@ AcpiTableAcpiTableConstructor (
   EFI_ACPI_TABLE_INSTANCE                   *AcpiTableInstance
   )
 {
-  EFI_STATUS            Status;
-  UINT64                CurrentData;
-  UINTN                 TotalSize;
-  UINT8                 *Pointer;
-  EFI_PHYSICAL_ADDRESS  PageAddress;
 
-  //
-  // Check for invalid input parameters
-  //
-  ASSERT (AcpiTableInstance);
-
-  InitializeListHead (&AcpiTableInstance->TableList);
-  AcpiTableInstance->CurrentHandle              = 1;
-
-  AcpiTableInstance->AcpiTableProtocol.InstallAcpiTable   = InstallAcpiTable;
-  AcpiTableInstance->AcpiTableProtocol.UninstallAcpiTable = UninstallAcpiTable;
-
-/*  if (FeaturePcdGet (PcdInstallAcpiSdtProtocol)) {
-    SdtAcpiTableAcpiSdtConstructor (AcpiTableInstance);
-  }
-*/
+	UINT8					*Pointer;
+#if NEWTABLES
+	EFI_STATUS				Status;
+	UINT64					CurrentData;
+	UINTN					TotalSize;
+	EFI_PHYSICAL_ADDRESS	PageAddress;
+#else
+	EFI_PEI_HOB_POINTERS    GuidHob;
+#endif	
+	//
+	// Check for invalid input parameters
+	//
+	ASSERT (AcpiTableInstance);
+	
+	InitializeListHead (&AcpiTableInstance->TableList);
+	AcpiTableInstance->CurrentHandle              = 1;
+	
+	AcpiTableInstance->AcpiTableProtocol.InstallAcpiTable   = InstallAcpiTable;
+	AcpiTableInstance->AcpiTableProtocol.UninstallAcpiTable = UninstallAcpiTable;
+	
+	/*  if (FeaturePcdGet (PcdInstallAcpiSdtProtocol)) {
+	 SdtAcpiTableAcpiSdtConstructor (AcpiTableInstance);
+	 }
+	 */
+#if NEWTABLES
   //
   // Create RSDP, RSDT, XSDT structures
   // Allocate all buffers
@@ -1865,6 +1873,40 @@ AcpiTableAcpiTableConstructor (
   // We always reserve first one for FADT
   //
   AcpiTableInstance->Xsdt->Length           = AcpiTableInstance->Xsdt->Length + sizeof(UINT64);
+#else //use legacy tables know to HOB
+	AcpiTableInstance->Rsdp1 = 0;
+	GuidHob.Raw = GetFirstGuidHob (&gEfiAcpi10TableGuid);
+	if (GuidHob.Raw) {
+		Pointer = (UINT8 *)GET_GUID_HOB_DATA (GuidHob.Guid);
+		Print(L"Pointer to ACPI1: %x\n", Pointer);
+		if (Pointer) {
+			Print(L" Point to RSDP: %x\n", *Pointer);
+			AcpiTableInstance->Rsdp1 = (EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER *) (UINTN)*Pointer;
+			if (AcpiTableInstance->Rsdp1) {
+				AcpiTableInstance->Rsdt1 = (EFI_ACPI_DESCRIPTION_HEADER *)(AcpiTableInstance->Rsdp1->RsdtAddress);
+				Print(L" Point to RSDT: %x\n", AcpiTableInstance->Rsdt1);
+			}
+//			AcpiTableInstance->Xsdt = (EFI_ACPI_DESCRIPTION_HEADER *)(AcpiTableInstance->Rsdp1->XsdtAddress);
+		}
+	}
+	AcpiTableInstance->Rsdp3 = 0;
+	GuidHob.Raw = GetFirstGuidHob (&gEfiAcpiTableGuid);
+	if (GuidHob.Raw) {
+		Pointer = (UINT8 *)GET_GUID_HOB_DATA (GuidHob.Guid);
+		if (Pointer) {
+			Print(L"Pointer to ACPI2: %x\n", Pointer);
+			AcpiTableInstance->Rsdp3 = (EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER *) (UINTN)*Pointer;
+			Print(L" Point to RSDP: %x\n", *Pointer);
+			AcpiTableInstance->Rsdt3 = (EFI_ACPI_DESCRIPTION_HEADER *)(AcpiTableInstance->Rsdp3->RsdtAddress);
+//		CopyMem(&AcpiTableInstance->Xsdt, AcpiTableInstance->Rsdp3->XsdtAddress, sizeof (UINT64));
+			Print(L" Point to RSDT: %x\n", AcpiTableInstance->Rsdt3);
+			AcpiTableInstance->Xsdt = (EFI_ACPI_DESCRIPTION_HEADER *)(UINTN)(AcpiTableInstance->Rsdp3->XsdtAddress);
+			Print(L" Point to XSDT: %x\n", AcpiTableInstance->Xsdt);
+		} //else
+		//Slice: TODO if we found only Acpi1.0 we need to convert it to Acpi2.0
+		// like I did in Chameleon		
+	}
+#endif 
 
   ChecksumCommonTables (AcpiTableInstance);
 

@@ -52,10 +52,12 @@
 #  DebugLib
   BaseLib
   PcdLib
+#  HobLib
 
 [Guids]
   gEfiAcpi10TableGuid                           # ALWAYS_CONSUMED
   gEfiAcpiTableGuid
+  gEfiAcpi20TableGuid
 
 [FeaturePcd]
 #  gEfiMdeModulePkgTokenSpaceGuid.PcdInstallAcpiSdtProtocol

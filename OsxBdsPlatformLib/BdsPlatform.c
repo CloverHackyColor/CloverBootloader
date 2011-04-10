@@ -23,6 +23,7 @@ Abstract:
 #include <Protocol/DevicePath.h>
 
 #include "BdsPlatform.h"
+#include "AcpiTable.h"
 
 #define IS_PCI_ISA_PDECODE(_p)        IS_CLASS3 (_p, PCI_CLASS_BRIDGE, PCI_CLASS_BRIDGE_ISA_PDECODE, 0)
 
@@ -30,7 +31,7 @@ extern BOOLEAN  gConnectAllHappened;
 extern USB_CLASS_FORMAT_DEVICE_PATH gUsbClassKeyboardDevicePath;
 
 EFI_GUID                    *gTableGuidArray[] = {
-    &gEfiAcpi20TableGuid, &gEfiAcpiTableGuid, &gEfiSmbiosTableGuid, &gEfiMpsTableGuid
+    &gEfiAcpi10TableGuid, &gEfiAcpiTableGuid, &gEfiSmbiosTableGuid, &gEfiMpsTableGuid
   };
 
 //
@@ -1497,33 +1498,49 @@ Returns:
 
 --*/
 {
-  VOID                  *AcpiTableOri;
-  VOID                  *AcpiTableNew;
-  EFI_STATUS            Status;
-  EFI_PHYSICAL_ADDRESS  BufferPtr;
-
-  
-  AcpiTableOri    =  (VOID *)(UINTN)(*(UINT64*)(*Table));
-  if (((UINTN)AcpiTableOri < 0x100000) && ((UINTN)AcpiTableOri > 0xE0000)) {
-    BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
-    Status = gBS->AllocatePages (
-                    AllocateMaxAddress,
-                    EfiACPIMemoryNVS,
-                    EFI_SIZE_TO_PAGES(TableLen),
-                    &BufferPtr
-                    );
-    ASSERT_EFI_ERROR (Status);
-    AcpiTableNew = (VOID *)(UINTN)BufferPtr;
-    CopyMem (AcpiTableNew, AcpiTableOri, TableLen);
-  } else {
-    AcpiTableNew = AcpiTableOri;
-  }
-  //
-  // Change configuration table Pointer
-  //
-  *Table = AcpiTableNew;
-  
-  return EFI_SUCCESS;
+	VOID                  *AcpiTableOri;
+	VOID                  *AcpiTableNew;
+	EFI_STATUS            Status;
+//	EFI_PHYSICAL_ADDRESS  BufferPtr;
+//	UINT32					RsdtAddr;
+	EFI_ACPI_TABLE_PROTOCOL         *AcpiTable;
+	EFI_ACPI_TABLE_INSTANCE			*AcpiInstance;
+	
+	
+	AcpiTableOri    =  (VOID *)(UINTN)(*(UINT64*)(*Table));
+	if (((UINTN)AcpiTableOri < 0x100000) && ((UINTN)AcpiTableOri > 0xE0000)) {
+/*		BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
+		Status = gBS->AllocatePages (
+									 AllocateMaxAddress,
+									 EfiACPIMemoryNVS,
+									 EFI_SIZE_TO_PAGES(TableLen),
+									 &BufferPtr
+									 );
+		ASSERT_EFI_ERROR (Status);
+		AcpiTableNew = (VOID *)(UINTN)BufferPtr;
+//		RsdtAddr = ((EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)AcpiTableOri)->RsdtAddress;
+*/
+		Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid, NULL, (VOID**)&AcpiTable);
+		if (EFI_ERROR (Status)) {
+			return EFI_ABORTED;
+		}
+ 
+		AcpiInstance = EFI_ACPI_TABLE_INSTANCE_FROM_THIS(AcpiTable);
+		AcpiTableNew = (VOID *)(UINTN)AcpiInstance->Rsdp3;
+/*		
+		RsdtAddr = AcpiInstance->Rsdt3;		
+		CopyMem (AcpiTableNew, AcpiTableOri, TableLen);
+		((EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)AcpiTableNew)->RsdtAddress = RsdtAddr;
+ */
+	} else {
+		AcpiTableNew = AcpiTableOri;
+	}
+	//
+	// Change configuration table Pointer
+	//
+	*Table = AcpiTableNew;
+	
+	return EFI_SUCCESS;
 }
 
 EFI_STATUS

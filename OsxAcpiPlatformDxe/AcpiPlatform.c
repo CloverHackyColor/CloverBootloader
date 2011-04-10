@@ -62,12 +62,12 @@ typedef union {
 
 #pragma pack()
 EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE   *Fadt;
-extern EFI_ACPI_TABLE_INSTANCE   *mPrivateData;
+//extern EFI_ACPI_TABLE_INSTANCE   *mPrivateData;
 
 VOID
 InstallLegacyTables (
 	EFI_ACPI_TABLE_PROTOCOL         *AcpiTable,
-	EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER *Rsdp
+	EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER *Rsdp   //legacy table
 					 )
 {
 	EFI_STATUS                      Status;
@@ -85,12 +85,12 @@ InstallLegacyTables (
 	UINTN							BasePtr;
 	//	UINT32                       Signature;
 	SIGNAT							Signature;
-	
+	EFI_ACPI_TABLE_INSTANCE			*AcpiInstance;
 //	BOOLEAN							Found = FALSE;
 	
 	TableHandle = 0;
-	
-	Rsdt = (RSDT_TABLE *)Rsdp->RsdtAddress; //(UINTN)
+	AcpiInstance = EFI_ACPI_TABLE_INSTANCE_FROM_THIS(AcpiTable);
+	Rsdt = (RSDT_TABLE *)(Rsdp->RsdtAddress); //(UINTN)
 	Xsdt = NULL;
 	if ((Rsdp->Revision >= 2) && (Rsdp->XsdtAddress < (UINT64)(UINTN)-1)) {
 		Xsdt = (XSDT_TABLE *)(UINTN)Rsdp->XsdtAddress;
@@ -99,11 +99,14 @@ InstallLegacyTables (
 	//Install Xsdt if any	
 	if (Xsdt) {
 		TableSize = Xsdt->Header.Length;
-/*		Signature.Sign = Xsdt->Header.Signature;
+		//Now copy legacy table into new protocol
+		CopyMem(AcpiInstance->Xsdt, Xsdt, TableSize);
+		
+		Signature.Sign = Xsdt->Header.Signature;
 		Print(L"Install table: %c%c%c%c\n",
 			  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
 		
-		Status = AcpiTable->InstallAcpiTable (
+/*		Status = AcpiTable->InstallAcpiTable (
 											  AcpiTable,
 											  Xsdt,
 											  TableSize,
@@ -124,6 +127,9 @@ InstallLegacyTables (
 			if (Index == 0) {
 				Fadt = (EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE*)Table;
 			}
+			Signature.Sign = Table->Signature;
+			Print(L"Install table from %x: %c%c%c%c\n", (UINTN)Table,
+				  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
 			Status = AcpiTable->InstallAcpiTable (
 												  AcpiTable,
 												  Table,
@@ -168,11 +174,14 @@ InstallLegacyTables (
 	if (!Xsdt && Rsdt) {
 		//Install Rsdt
 		Print(L"Xsdt not found, patch Rsdt\n");
-/*		TableSize = Rsdt->Header.Length;
+		
+		TableSize = Rsdt->Header.Length;
 		Signature.Sign = Rsdt->Header.Signature;
 		Print(L"Install table: %c%c%c%c\n",
 			  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
-		Status = AcpiTable->InstallAcpiTable (
+		CopyMem(AcpiInstance->Rsdt1, Rsdt, TableSize);
+		CopyMem(AcpiInstance->Rsdt3, Rsdt, TableSize);
+/*		Status = AcpiTable->InstallAcpiTable (
 											  AcpiTable,
 											  Rsdt,
 											  TableSize,
@@ -183,7 +192,7 @@ InstallLegacyTables (
 		}
 */ 
 		//First scan for RSDT
-		EntryCount = (Rsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT32);
+		EntryCount = (TableSize - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT32);
 		Print(L"RSDT table length %d\n", EntryCount);
 		EntryPtr = &Rsdt->Entry;
 		Fadt = (EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE*)((UINTN)(*EntryPtr));
@@ -194,7 +203,7 @@ InstallLegacyTables (
 			Signature.Sign = Table->Signature;
 			Print(L"Install table: %c%c%c%c\n", 
 				  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
-/*			Status = AcpiTable->InstallAcpiTable (
+			Status = AcpiTable->InstallAcpiTable (
 												  AcpiTable,
 												  Table,
 												  TableSize,
@@ -203,7 +212,7 @@ InstallLegacyTables (
 			if (EFI_ERROR(Status)) {
 				continue;
 			}
- */
+ 
 		}
 		//Now find Fadt and install dsdt and facs
 		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Fadt->FirmwareCtrl));
@@ -211,13 +220,13 @@ InstallLegacyTables (
 		Signature.Sign = Table->Signature;
 		Print(L"Install table: %c%c%c%c\n", 
 		Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
-/*		Status = AcpiTable->InstallAcpiTable (
+		Status = AcpiTable->InstallAcpiTable (
 											  AcpiTable,
 											  Table,
 											  TableSize,
 											  &TableHandle
 											  );
- */
+ 
 // do not install legacy dsdt until we test a file DSDT.aml 
 /*		
 		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Fadt->Dsdt));
@@ -333,7 +342,7 @@ AcpiPlatformEntryPoint (
 	EFI_PHYSICAL_ADDRESS			*Acpi20;
 	EFI_PEI_HOB_POINTERS        GuidHob;
 	EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER *Rsdp;
-	EFI_ACPI_DESCRIPTION_HEADER *Rsdt, *Xsdt;
+//	EFI_ACPI_DESCRIPTION_HEADER *Rsdt, *Xsdt;
 //	EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt;
 	EFI_ACPI_DESCRIPTION_HEADER		*Table;
 	SIGNAT							Signature;
@@ -346,12 +355,13 @@ AcpiPlatformEntryPoint (
 	if (EFI_ERROR (Status)) {
 		return EFI_ABORTED;
 	}
+
 	AcpiInstance = EFI_ACPI_TABLE_INSTANCE_FROM_THIS(AcpiTable);
 	Print(L"Rsdp1 %x\n", AcpiInstance->Rsdp1);
 	Print(L"Rsdp3 %x\n", AcpiInstance->Rsdp3);
 	Print(L"Rsdt1 %x\n", AcpiInstance->Rsdt1);
 	Print(L"Rsdt3 %x\n", AcpiInstance->Rsdt3);
-	Print(L"Xsdt %x\n", AcpiInstance->Xsdt);
+	Print(L"Xsdt  %x\n", AcpiInstance->Xsdt);
 	Print(L"Fadt1 %x\n", AcpiInstance->Fadt1);
 	Print(L"Fadt3 %x\n", AcpiInstance->Fadt3);
 	
@@ -359,9 +369,9 @@ AcpiPlatformEntryPoint (
 	CurrentTable = NULL;
 	TableHandle  = 0;
 	
-	GuidHob.Raw = GetFirstGuidHob (&gEfiAcpi20TableGuid);
+	GuidHob.Raw = GetFirstGuidHob (&gEfiAcpiTableGuid);
 	if (GuidHob.Raw == NULL) {
-		GuidHob.Raw = GetFirstGuidHob (&gEfiAcpiTableGuid);
+		GuidHob.Raw = GetFirstGuidHob (&gEfiAcpi10TableGuid);
 		if (GuidHob.Raw == NULL) {
 			return EFI_ABORTED;
 		}
@@ -377,20 +387,16 @@ AcpiPlatformEntryPoint (
 		return EFI_ABORTED;
 	}	*/
 	Rsdp = (EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER *)(UINTN)*Acpi20;	
-	Rsdt = (EFI_ACPI_DESCRIPTION_HEADER *)Rsdp->RsdtAddress; //(UINTN)
-	Xsdt = NULL;
-	if ((Rsdp->Revision >= 2) && (Rsdp->XsdtAddress < (UINT64)(UINTN)-1)) {
-		Xsdt = (EFI_ACPI_DESCRIPTION_HEADER *)(UINTN)Rsdp->XsdtAddress;
-	}
-	
 	Print(L"Rsdp @ %x\n", (UINTN)Rsdp);
-	Print(L"Rsdt @ %x\n", (UINTN)Rsdt);
-	Print(L"Xsdt @ %x\n", (UINTN)Xsdt);
+	Print(L"Rsdt @ %x\n", (UINTN)(Rsdp->RsdtAddress));
+	Print(L"Xsdt @ %x\n", (UINTN)(Rsdp->XsdtAddress));
 //Now we patch empty acpiProtocol with legacy tables
-	AcpiInstance->Rsdp3 = Rsdp;
-	AcpiInstance->Rsdt1 = Rsdt;
-	AcpiInstance->Rsdt3 = Rsdt;
-	AcpiInstance->Xsdt = Xsdt;
+//do not copy pointers, copy body!	
+//	AcpiInstance->Rsdp1 = (EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER *)Rsdp;
+//	AcpiInstance->Rsdp3 = Rsdp;
+//	AcpiInstance->Rsdt1 = (EFI_ACPI_DESCRIPTION_HEADER*)(Rsdp->RsdtAddress);
+//	AcpiInstance->Rsdt3 = (EFI_ACPI_DESCRIPTION_HEADER*)(Rsdp->RsdtAddress);
+//	AcpiInstance->Xsdt = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)(Rsdp->XsdtAddress);
 	
 	InstallLegacyTables(AcpiTable, Rsdp);
 //	Print(L"LegacyTables installed\n");
@@ -479,7 +485,7 @@ AcpiPlatformEntryPoint (
 									Info
 									);
 		FileSize = Info->FileSize;
-				Print(L"FileSize = %d!\n", FileSize);
+//				Print(L"FileSize = %d!\n", FileSize);
 		gBS->FreePool (Info);
 		
 		FileBuffer = AllocatePool(FileSize);
@@ -494,7 +500,7 @@ AcpiPlatformEntryPoint (
  */
 		
 		Status = ThisFile->Read (ThisFile, &FileSize, FileBuffer); //(VOID**)&
-		Print(L"FileRead status=%x\n", 	Status);	
+//		Print(L"FileRead status=%x\n", 	Status);	
 		if (!EFI_ERROR(Status)) {
 			//
 			// Add the table
@@ -504,8 +510,8 @@ AcpiPlatformEntryPoint (
 				ThisFile->Close (ThisFile); //close file before use buffer?! Flush?!
 			}
 			
-			Print(L"FileRead success: %c%c%c%c\n",
-				  ((CHAR8*)FileBuffer)[0], ((CHAR8*)FileBuffer)[1], ((CHAR8*)FileBuffer)[2], ((CHAR8*)FileBuffer)[3]);
+//			Print(L"FileRead success: %c%c%c%c\n",
+//				  ((CHAR8*)FileBuffer)[0], ((CHAR8*)FileBuffer)[1], ((CHAR8*)FileBuffer)[2], ((CHAR8*)FileBuffer)[3]);
 			TableSize = ((EFI_ACPI_DESCRIPTION_HEADER *) FileBuffer)->Length;
 			//ASSERT (BufferSize >= TableSize);
 			Print(L"Table size=%d\n", TableSize);
@@ -525,14 +531,14 @@ AcpiPlatformEntryPoint (
 					CopyMem(oldDSDT, FileBuffer, TableSize);
 					Print(L"New DSDT copied to old place\n");
 				}
-				Fadt->Dsdt = 0;  //exclude old one - looks like a final trick
-				Fadt->XDsdt = 0;
+//				Fadt->Dsdt = 0;  //exclude old one - looks like a final trick
+//				Fadt->XDsdt = 0;
 			}		
 			//
 			// Install ACPI table
 			//
 			TmpHandler = &FileBuffer;
-			if (Index) {
+			if (1 /* Index*/) {
 				Status = AcpiTable->InstallAcpiTable (
 													  AcpiTable,
 													  *TmpHandler,
@@ -561,7 +567,7 @@ AcpiPlatformEntryPoint (
 			Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Fadt->Dsdt));
 			TableSize = Table->Length;
 			Signature.Sign = Table->Signature;
-			Print(L"Install table: %c%c%c%c\n", 
+			Print(L"Install legacy table: %c%c%c%c\n", 
 				  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
 			
 			Status = AcpiTable->InstallAcpiTable (
@@ -575,7 +581,6 @@ AcpiPlatformEntryPoint (
 	if (Root != NULL) {
 		Root->Close (Root);
 	}
-	
 	return EFI_SUCCESS;
 }
 

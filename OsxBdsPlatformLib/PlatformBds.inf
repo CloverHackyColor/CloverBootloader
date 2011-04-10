@@ -53,10 +53,15 @@
 [Guids]
   gEfiGlobalVariableGuid
   gEfiPciExpressBaseAddressGuid
+  gEfiAcpi10TableGuid
   gEfiAcpi20TableGuid
   gEfiMpsTableGuid
   gEfiSmbiosTableGuid
   gEfiAcpiTableGuid
+  
+[Protocols]
+  gEfiAcpiTableProtocolGuid      
+  
   
 [Pcd]
   gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdPlatformBootTimeOut  

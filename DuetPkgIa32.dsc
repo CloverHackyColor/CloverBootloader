@@ -272,8 +272,8 @@
   #MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
   DuetPkg/cloverefiboot/OsxAcpiTableDxe/AcpiTableDxe.inf
   #MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
-  #DuetPkg/cloverefiboot/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
-   DuetPkg/cloverefiboot/OsxLegacyAcpi/AcpiPlatformDxe.inf
+  DuetPkg/cloverefiboot/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
+  # DuetPkg/cloverefiboot/OsxLegacyAcpi/AcpiPlatformDxe.inf
 
   MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
   MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
@@ -287,7 +287,7 @@
   # Sample Application
   #
   #MdeModulePkg/Application/HelloWorld/HelloWorld.inf
-  MdeModulePkg/Application/VariableInfo/VariableInfo.inf
+  # MdeModulePkg/Application/VariableInfo/VariableInfo.inf
 
 ###################################################################################################
 #
