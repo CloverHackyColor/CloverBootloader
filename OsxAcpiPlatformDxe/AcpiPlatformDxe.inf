@@ -63,5 +63,5 @@
 #  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiTableStorageFile
 
 [Depex]
-  gEfiAcpiTableProtocolGuid
+  gEfiAcpiTableProtocolGuid AND gEfiSimpleFileSystemProtocolGuid AND gEfiLoadedImageProtocolGuid
 
