@@ -356,7 +356,25 @@ InstallFirmwareVolumeSmbios		(//128
 	SmbiosTable = GetSmbiosTableFromType ((SMBIOS_TABLE_ENTRY_POINT *)Smbios, 128, 0);
 	if (SmbiosTable.Raw == NULL) {
 		//    DEBUG ((EFI_D_ERROR, "SmbiosTable: Type 128 (FirmwareVolume) not found!\n"));
-		return ;
+
+		SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE128*)AllocateZeroPool(sizeof(SMBIOS_TABLE_TYPE128));
+		SmbiosTable.Type128->Hdr.Type = 128;
+		SmbiosTable.Type128->Hdr.Length = sizeof(SMBIOS_STRUCTURE)+2; 
+		SmbiosTable.Type128->FirmwareFeatures = 0x80000015;
+		SmbiosTable.Type128->FirmwareFeaturesMask = 0x800003ff;
+		/*
+		 FW_REGION_RESERVED   = 0,
+		 FW_REGION_RECOVERY   = 1,
+		 FW_REGION_MAIN       = 2,
+		 FW_REGION_NVRAM      = 3,
+		 FW_REGION_CONFIG     = 4,
+		 FW_REGION_DIAGVAULT  = 5,		 
+		 */
+		SmbiosTable.Type128->RegionCount = 0; //TODO until fill with real values
+		SmbiosTable.Type128->RegionType[0] = FW_REGION_RESERVED; //For example
+		SmbiosTable.Type128->FlashMap[0].StartAddress = 0x0;
+		SmbiosTable.Type128->FlashMap[0].EndAddress = 0x1000;
+//		return ;
 	}	
 	//
 	// Log Smbios Record Type128
@@ -446,6 +464,19 @@ InstallMemorySmbios (
 	//
 	// Generate Memory Array Mapped Address info (TYPE 19)
 	//
+	/*
+	 /// This structure provides the address mapping for a Physical Memory Array.  
+	 /// One structure is present for each contiguous address range described.
+	 ///
+	 typedef struct {
+	 SMBIOS_STRUCTURE      Hdr;
+	 UINT32                StartingAddress;
+	 UINT32                EndingAddress;
+	 UINT16                MemoryArrayHandle;
+	 UINT8                 PartitionWidth;
+	 } SMBIOS_TABLE_TYPE19;
+	 
+	 */
 	for (i=0; i<16; i++) {
 		SmbiosTable = GetSmbiosTableFromType ((SMBIOS_TABLE_ENTRY_POINT *)Smbios, 19, i);
 		if (SmbiosTable.Raw == NULL) {			
@@ -686,7 +717,7 @@ SmbiosGenEntrypoint (
 				break;
 		}
 	} else {
-		switch (cpuid_cpu_info.cpuid_extmodel) {
+		switch (cpuid_info()->cpuid_model) {
 			case CPU_MODEL_MEROM: //or Conroe!
 			case CPU_MODEL_PENRYN:	
 				gMacType = iMac112;

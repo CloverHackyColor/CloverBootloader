@@ -215,9 +215,10 @@ SetProperVariables(IN EFI_HANDLE ImageHandle, EFI_RUNTIME_SERVICES * rs)
 {
      EFI_STATUS          rc;
      UINT32              vBackgroundClear = 0x00000000;
+/*	
      UINT32              vFwFeatures      = 0x80000015;
      UINT32              vFwFeaturesMask  = 0x800003ff;
-
+*/
      // -legacy acpi=0xffffffff acpi_debug=0xfffffff panic_io_port=0xef11 io=0xfffffffe trace=4096  io=0xffffffef -v serial=2 serialbaud=9600
      // 0x10 makes kdb default, thus 0x15e for kdb, 0x14e for gdb
 
@@ -239,7 +240,7 @@ SetProperVariables(IN EFI_HANDLE ImageHandle, EFI_RUNTIME_SERVICES * rs)
                           &gEfiAppleNvramGuid,
                           /* EFI_VARIABLE_NON_VOLATILE | */ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                           sizeof(vBackgroundClear), &vBackgroundClear);
-
+/*
      rc = rs->SetVariable(L"FirmwareFeatures",
                           &gEfiAppleNvramGuid,
                           EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
@@ -249,7 +250,7 @@ SetProperVariables(IN EFI_HANDLE ImageHandle, EFI_RUNTIME_SERVICES * rs)
                           &gEfiAppleNvramGuid,
                           EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                           sizeof(vFwFeaturesMask), &vFwFeaturesMask);
-
+*/
      rc = rs->SetVariable(L"boot-args",
                           &gEfiAppleBootGuid,
                           EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
@@ -274,13 +275,18 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
     UINT64              TSCFrequency;
     UINT64              CPUFrequency;
 	//Slice 
-	BOOLEAN                           Find = FALSE;
+	BOOLEAN                           Find4 = FALSE;
+	BOOLEAN                           Find128 = FALSE;
+
 	EFI_SMBIOS_HANDLE                 SmbiosHandle;
 	EFI_SMBIOS_PROTOCOL               *Smbios;
 	EFI_SMBIOS_TABLE_HEADER           *Record;
 	//SMBIOS_TABLE_TYPE0                *Type0Record;
-	//SMBIOS_TABLE_TYPE1                *Type1Record;
+	SMBIOS_TABLE_TYPE128              *Type128Record;
 	SMBIOS_TABLE_TYPE4                *Type4Record;
+	UINT32              vFwFeatures      = 0x80000015;
+	UINT32              vFwFeaturesMask  = 0x800003ff;
+
 	//
 	
     rc = SetProperVariables(ImageHandle, SystemTable->RuntimeServices);
@@ -298,11 +304,7 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 	TSCFrequency = 2400000000ull;
 	CPUFrequency = 2400000000ull;
 //Slice - take values from DMI
-	rc = gBS->LocateProtocol (
-								  &gEfiSmbiosProtocolGuid,
-								  NULL,
-								  (VOID **) &Smbios
-								  );
+	rc = gBS->LocateProtocol (&gEfiSmbiosProtocolGuid, NULL, (VOID **) &Smbios);
 	ASSERT_EFI_ERROR (rc);
 	
 	SmbiosHandle = 0;
@@ -319,9 +321,26 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 			Type4Record->MaxSpeed = CPUFrequency;
 			CPUFrequency = TSCFrequency;
 			FSBFrequency = Type4Record->ExternalClock * 1000000ull;
-			Find = TRUE;
+			Find4 = TRUE;
 		}
-	} while (!Find);
+		if (Record->Type == 128) {
+			Type128Record = (SMBIOS_TABLE_TYPE128 *) Record;
+			vFwFeatures = Type128Record->FirmwareFeatures;
+			vFwFeaturesMask = Type128Record->FirmwareFeaturesMask;
+			Find128  = TRUE;
+		}
+	} while (!Find4 || !Find128);
+	
+	rc = rs->SetVariable(L"FirmwareFeatures",
+						 &gEfiAppleNvramGuid,
+						 EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+						 sizeof(vFwFeatures), &vFwFeatures);
+	
+	rc = rs->SetVariable(L"FirmwareFeaturesMask",
+						 &gEfiAppleNvramGuid,
+						 EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+						 sizeof(vFwFeaturesMask), &vFwFeaturesMask);
+	
 //	
 	rc = CpuUpdateDataHub(gBS, FSBFrequency, TSCFrequency, CPUFrequency);
     ASSERT_EFI_ERROR (rc);
