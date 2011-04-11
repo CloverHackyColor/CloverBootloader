@@ -29,7 +29,8 @@
 
 #include <IndustryStandard/Acpi10.h>
 #include <IndustryStandard/Acpi20.h>
-#include <IndustryStandard/SmBios.h>
+//#include <IndustryStandard/SmBios.h>
+#include "SmBios.h"
 
 #include <Guid/SmBios.h>
 #include <Guid/Acpi.h>
@@ -141,15 +142,16 @@ GetDeviceProps(IN     APPLE_GETVAR_PROTOCOL   *This,
                IN     CHAR8                   *Buffer,
                IN OUT UINT32                  *BufferSize)
 {
-    UINT32 BufLen = *BufferSize, DataLen;
+    UINT32 BufLen = *BufferSize;
+	UINT32 DataLen;
 
     //DataLen = GetVmVariable(EFI_INFO_INDEX_DEVICE_PROPS, Buffer, BufLen);
-	DataLen = 0; //sizeof(UINT64);
+	DataLen = 1; //sizeof(UINT64);
     *BufferSize = DataLen;
 Print(L"GetDeviceProps called with bufferlen=%d\n", BufLen);
     if (DataLen > BufLen)
         return EFI_BUFFER_TOO_SMALL;
-
+	Buffer[0] = 0;
     return EFI_SUCCESS;
 }
 
@@ -286,10 +288,11 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 	SMBIOS_TABLE_TYPE4                *Type4Record;
 	UINT32              vFwFeatures      = 0x80000015;
 	UINT32              vFwFeaturesMask  = 0x800003ff;
+	EFI_RUNTIME_SERVICES * rs = SystemTable->RuntimeServices;
 
 	//
 	
-    rc = SetProperVariables(ImageHandle, SystemTable->RuntimeServices);
+    rc = SetProperVariables(ImageHandle, rs);
     ASSERT_EFI_ERROR (rc);
 
     rc = SetPrivateVarProto(ImageHandle, gBS);
