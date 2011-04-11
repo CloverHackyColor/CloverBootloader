@@ -19,6 +19,7 @@
 #ifndef DEBUG_ACPI
 #define DEBUG_ACPI 0
 #endif
+#define LIP 0
 
 #if DEBUG_ACPI==1
 #define DBG(x...)  Print(x)
@@ -32,15 +33,17 @@
 #include <Protocol/AcpiTable.h>
 //#include <Protocol/FirmwareVolume2.h>
 #include <Protocol/DevicePath.h>
-#include <Protocol/LoadedImage.h>
+//#include <Protocol/LoadedImage.h>
 #include <Protocol/SimpleFileSystem.h>
 
 #include <Guid/HobList.h>
 #include <Guid/FileInfo.h>
+#include <Guid/FileSystemInfo.h>
 #include <Guid/Acpi.h>
 
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
+//#include <Library/DevicePathLib.h>
 #include <Library/UefiLib.h>
 #include <Library/UefiDriverEntryPoint.h>
 #include <Library/UefiBootServicesTableLib.h>
@@ -340,7 +343,9 @@ AcpiPlatformEntryPoint (
 //	UINTN                           Size;
 	UINTN							Index;
 	CHAR16*							FileName;
+#if LIP	
 	EFI_LOADED_IMAGE_PROTOCOL		*LoadedImage;
+#endif	
 	VOID							*FileBuffer;
 	VOID**							TmpHandler;
 	UINTN							FileSize;
@@ -351,7 +356,7 @@ AcpiPlatformEntryPoint (
 	EFI_FILE_HANDLE                 Root = NULL;
 	EFI_FILE_HANDLE                 ThisFile = NULL;
 	EFI_PHYSICAL_ADDRESS			*Acpi20;
-	EFI_PEI_HOB_POINTERS        GuidHob;
+	EFI_PEI_HOB_POINTERS			GuidHob;
 	EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER *Rsdp;
 //	EFI_ACPI_DESCRIPTION_HEADER *Rsdt, *Xsdt;
 //	EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt;
@@ -414,6 +419,7 @@ AcpiPlatformEntryPoint (
 	oldDSDT = (EFI_ACPI_COMMON_HEADER*)(UINTN)Fadt->Dsdt;
 	DBG(L"Fadt @ %x\n", (UINTN)Fadt);
 	DBG(L"oldDSDT @ %x\n", (UINTN)oldDSDT);
+#if LIP	
 //  Looking for a volume from what we boot
 	
 /*	TODO - look for a volume we want to boot System
@@ -451,16 +457,48 @@ AcpiPlatformEntryPoint (
 	if (EFI_ERROR (Status)) {
 		return EFI_ABORTED;
 	}
-//		DBG(L"Volume found\n");
+
+	//		DBG(L"Volume found\n");
 	//
 	// Open the root directory of the volume
 	//
 	if (!EFI_ERROR (Status)) {
-		Status = Volume->OpenVolume (
-									 Volume,
-									 &Root
-									 );
+		Status = Volume->OpenVolume (Volume, &Root);
 	}
+#else //Multiple FS protocols
+	EFI_HANDLE            *mFs = NULL;
+	UINTN                 mFsCount = 0;
+	// mFsInfo[] array entries must match mFs[] handles
+	EFI_FILE_SYSTEM_INFO  **mFsInfo = NULL;
+	
+	gBS->LocateHandleBuffer (ByProtocol, &gEfiSimpleFileSystemProtocolGuid, NULL, &mFsCount, &mFs);
+	mFsInfo = AllocateZeroPool (mFsCount * sizeof (EFI_FILE_SYSTEM_INFO *));
+	if (mFsInfo == NULL) {
+		// If we can't do this then we can't support file system entries
+		mFsCount = 0;
+	} else {
+		// Loop through all the file system structures and cache the file system info data
+		for (Index =0; Index < mFsCount; Index++) {
+			Status = gBS->HandleProtocol (mFs[Index], &gEfiSimpleFileSystemProtocolGuid, (VOID **)&Volume);
+			if (!EFI_ERROR (Status)) {
+				Status = Volume->OpenVolume (Volume, &Root);
+				if (!EFI_ERROR (Status)) {
+					// Get information about the volume
+/*					Size = 0;
+					Status = Root->GetInfo (Root, &gEfiFileSystemInfoGuid, &Size, mFsInfo[Index]);
+					if (Status == EFI_BUFFER_TOO_SMALL) {
+						mFsInfo[Index] = AllocatePool (Size);
+						Status = Root->GetInfo (Root, &gEfiFileSystemInfoGuid, &Size, mFsInfo[Index]);
+					}
+*/					
+//					Root->Close (Root);
+					break; //I will stop at first volume
+					//TODO try to find DSDT in all volumes
+				}
+			}
+		}
+  }
+#endif	
 	FileName = AllocateZeroPool(32); //Should be enough
 	//
 	// Read tables from the storage file.

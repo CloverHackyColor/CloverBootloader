@@ -56,12 +56,13 @@
 
 [Protocols]
   gEfiAcpiTableProtocolGuid                     # PROTOCOL ALWAYS_CONSUMED
-  gEfiLoadedImageProtocolGuid
+#  gEfiLoadedImageProtocolGuid
   gEfiSimpleFileSystemProtocolGuid
 
 [Pcd]
 #  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiTableStorageFile
 
 [Depex]
-  gEfiAcpiTableProtocolGuid AND gEfiSimpleFileSystemProtocolGuid AND gEfiLoadedImageProtocolGuid
+  gEfiAcpiTableProtocolGuid AND gEfiSimpleFileSystemProtocolGuid
+  #AND gEfiLoadedImageProtocolGuid
 
