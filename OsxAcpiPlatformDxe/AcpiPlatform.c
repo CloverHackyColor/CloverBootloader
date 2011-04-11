@@ -15,6 +15,17 @@
  Slice 2011 - corrections for MacOS
  Load and install patched DSDT.aml, SSDT-N.aml
  */
+
+#ifndef DEBUG_ACPI
+#define DEBUG_ACPI 0
+#endif
+
+#if DEBUG_ACPI==1
+#define DBG(x...)  Print(x)
+#else
+#define DBG(x...)
+#endif
+
 #include <Uefi.h>
 #include <PiDxe.h>
 
@@ -103,7 +114,7 @@ InstallLegacyTables (
 		CopyMem(AcpiInstance->Xsdt, Xsdt, TableSize);
 		
 		Signature.Sign = Xsdt->Header.Signature;
-		Print(L"Install table: %c%c%c%c\n",
+		DBG(L"Install table: %c%c%c%c\n",
 			  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
 		
 /*		Status = AcpiTable->InstallAcpiTable (
@@ -128,7 +139,7 @@ InstallLegacyTables (
 				Fadt = (EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE*)Table;
 			}
 			Signature.Sign = Table->Signature;
-			Print(L"Install table from %x: %c%c%c%c\n", (UINTN)Table,
+			DBG(L"Install table from %x: %c%c%c%c\n", (UINTN)Table,
 				  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
 			Status = AcpiTable->InstallAcpiTable (
 												  AcpiTable,
@@ -144,7 +155,7 @@ InstallLegacyTables (
 		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Fadt->FirmwareCtrl));
 		TableSize = Table->Length;
 		Signature.Sign = Table->Signature;
-		Print(L"Install table: %c%c%c%c\n", 
+		DBG(L"Install table: %c%c%c%c\n", 
 			  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
 		Status = AcpiTable->InstallAcpiTable (
 											  AcpiTable,
@@ -157,7 +168,7 @@ InstallLegacyTables (
 /*		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Fadt->Dsdt));
 		TableSize = Table->Length;
 		Signature.Sign = Table->Signature;
-		Print(L"Install table: %c%c%c%c\n", 
+		DBG(L"Install table: %c%c%c%c\n", 
 			  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
 		
 		Status = AcpiTable->InstallAcpiTable (
@@ -173,11 +184,11 @@ InstallLegacyTables (
 	}
 	if (!Xsdt && Rsdt) {
 		//Install Rsdt
-		Print(L"Xsdt not found, patch Rsdt\n");
+		DBG(L"Xsdt not found, patch Rsdt\n");
 		
 		TableSize = Rsdt->Header.Length;
 		Signature.Sign = Rsdt->Header.Signature;
-		Print(L"Install table: %c%c%c%c\n",
+		DBG(L"Install table: %c%c%c%c\n",
 			  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
 		CopyMem(AcpiInstance->Rsdt1, Rsdt, TableSize);
 		CopyMem(AcpiInstance->Rsdt3, Rsdt, TableSize);
@@ -193,15 +204,15 @@ InstallLegacyTables (
 */ 
 		//First scan for RSDT
 		EntryCount = (TableSize - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT32);
-		Print(L"RSDT table length %d\n", EntryCount);
+		DBG(L"RSDT table length %d\n", EntryCount);
 		EntryPtr = &Rsdt->Entry;
 		Fadt = (EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE*)((UINTN)(*EntryPtr));
-		Print(L"Fadt from Rsdt @ %x\n", (UINTN)Fadt);
+		DBG(L"Fadt from Rsdt @ %x\n", (UINTN)Fadt);
 		for (Index = 0; Index < EntryCount; Index ++, EntryPtr ++) {
 			Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
 			TableSize = Table->Length;
 			Signature.Sign = Table->Signature;
-			Print(L"Install table: %c%c%c%c\n", 
+			DBG(L"Install table: %c%c%c%c\n", 
 				  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
 			Status = AcpiTable->InstallAcpiTable (
 												  AcpiTable,
@@ -218,7 +229,7 @@ InstallLegacyTables (
 		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Fadt->FirmwareCtrl));
 		TableSize = Table->Length;
 		Signature.Sign = Table->Signature;
-		Print(L"Install table: %c%c%c%c\n", 
+		DBG(L"Install table: %c%c%c%c\n", 
 		Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
 		Status = AcpiTable->InstallAcpiTable (
 											  AcpiTable,
@@ -232,7 +243,7 @@ InstallLegacyTables (
 		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Fadt->Dsdt));
 		TableSize = Table->Length;
 		Signature.Sign = Table->Signature;
-		Print(L"Install table: %c%c%c%c\n", 
+		DBG(L"Install table: %c%c%c%c\n", 
 			  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
 		
 		Status = AcpiTable->InstallAcpiTable (
@@ -357,13 +368,13 @@ AcpiPlatformEntryPoint (
 	}
 
 	AcpiInstance = EFI_ACPI_TABLE_INSTANCE_FROM_THIS(AcpiTable);
-	Print(L"Rsdp1 %x\n", AcpiInstance->Rsdp1);
-	Print(L"Rsdp3 %x\n", AcpiInstance->Rsdp3);
-	Print(L"Rsdt1 %x\n", AcpiInstance->Rsdt1);
-	Print(L"Rsdt3 %x\n", AcpiInstance->Rsdt3);
-	Print(L"Xsdt  %x\n", AcpiInstance->Xsdt);
-	Print(L"Fadt1 %x\n", AcpiInstance->Fadt1);
-	Print(L"Fadt3 %x\n", AcpiInstance->Fadt3);
+	DBG(L"Rsdp1 %x\n", AcpiInstance->Rsdp1);
+	DBG(L"Rsdp3 %x\n", AcpiInstance->Rsdp3);
+	DBG(L"Rsdt1 %x\n", AcpiInstance->Rsdt1);
+	DBG(L"Rsdt3 %x\n", AcpiInstance->Rsdt3);
+	DBG(L"Xsdt  %x\n", AcpiInstance->Xsdt);
+	DBG(L"Fadt1 %x\n", AcpiInstance->Fadt1);
+	DBG(L"Fadt3 %x\n", AcpiInstance->Fadt3);
 	
 	Instance     = 0;
 	CurrentTable = NULL;
@@ -387,9 +398,9 @@ AcpiPlatformEntryPoint (
 		return EFI_ABORTED;
 	}	*/
 	Rsdp = (EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER *)(UINTN)*Acpi20;	
-	Print(L"Rsdp @ %x\n", (UINTN)Rsdp);
-	Print(L"Rsdt @ %x\n", (UINTN)(Rsdp->RsdtAddress));
-	Print(L"Xsdt @ %x\n", (UINTN)(Rsdp->XsdtAddress));
+	DBG(L"Rsdp @ %x\n", (UINTN)Rsdp);
+	DBG(L"Rsdt @ %x\n", (UINTN)(Rsdp->RsdtAddress));
+	DBG(L"Xsdt @ %x\n", (UINTN)(Rsdp->XsdtAddress));
 //Now we patch empty acpiProtocol with legacy tables
 //do not copy pointers, copy body!	
 //	AcpiInstance->Rsdp1 = (EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER *)Rsdp;
@@ -399,10 +410,10 @@ AcpiPlatformEntryPoint (
 //	AcpiInstance->Xsdt = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)(Rsdp->XsdtAddress);
 	
 	InstallLegacyTables(AcpiTable, Rsdp);
-//	Print(L"LegacyTables installed\n");
+//	DBG(L"LegacyTables installed\n");
 	oldDSDT = (EFI_ACPI_COMMON_HEADER*)(UINTN)Fadt->Dsdt;
-	Print(L"Fadt @ %x\n", (UINTN)Fadt);
-	Print(L"oldDSDT @ %x\n", (UINTN)oldDSDT);
+	DBG(L"Fadt @ %x\n", (UINTN)Fadt);
+	DBG(L"oldDSDT @ %x\n", (UINTN)oldDSDT);
 //  Looking for a volume from what we boot
 	
 /*	TODO - look for a volume we want to boot System
@@ -440,7 +451,7 @@ AcpiPlatformEntryPoint (
 	if (EFI_ERROR (Status)) {
 		return EFI_ABORTED;
 	}
-//		Print(L"Volume found\n");
+//		DBG(L"Volume found\n");
 	//
 	// Open the root directory of the volume
 	//
@@ -456,7 +467,7 @@ AcpiPlatformEntryPoint (
 	//
 	for (Index=0; Index<NUM_TABLES; Index++) {
 		StrCpy(FileName, ACPInames[Index]);
-//		Print(L"File probe %s\n", FileName);
+//		DBG(L"File probe %s\n", FileName);
 		Status = Root->Open (Root, &ThisFile, FileName, EFI_FILE_MODE_READ, 0);
 		if (EFI_ERROR (Status)) {
 			continue;
@@ -471,11 +482,11 @@ AcpiPlatformEntryPoint (
 		if (EFI_ERROR(Status) && Status != EFI_BUFFER_TOO_SMALL) {
 			continue;
 		}
-		Print(L"Buffer size %d\n", BufferSize);
-		//		Print(L"GetInfo success!\n");
+		DBG(L"Buffer size %d\n", BufferSize);
+		//		DBG(L"GetInfo success!\n");
 		Status = gBS->AllocatePool (EfiBootServicesData, BufferSize, (VOID **) &Info);
 		if (EFI_ERROR (Status)) {
-			//			Print(L"No pool!\n");
+			//			DBG(L"No pool!\n");
 			continue;
 		}
 		Status = ThisFile->GetInfo (
@@ -485,11 +496,11 @@ AcpiPlatformEntryPoint (
 									Info
 									);
 		FileSize = Info->FileSize;
-//				Print(L"FileSize = %d!\n", FileSize);
+//				DBG(L"FileSize = %d!\n", FileSize);
 		gBS->FreePool (Info);
 		
 		FileBuffer = AllocatePool(FileSize);
-		Print(L"FileBuffer @ %x\n", (UINTN)FileBuffer);
+		DBG(L"FileBuffer @ %x\n", (UINTN)FileBuffer);
 		//Slice - may be this is more correct memory for ACPI tables?
 /*		Status = gBS->AllocatePages (
 									 AllocateMaxAddress,
@@ -500,7 +511,7 @@ AcpiPlatformEntryPoint (
  */
 		
 		Status = ThisFile->Read (ThisFile, &FileSize, FileBuffer); //(VOID**)&
-//		Print(L"FileRead status=%x\n", 	Status);	
+//		DBG(L"FileRead status=%x\n", 	Status);	
 		if (!EFI_ERROR(Status)) {
 			//
 			// Add the table
@@ -510,16 +521,16 @@ AcpiPlatformEntryPoint (
 				ThisFile->Close (ThisFile); //close file before use buffer?! Flush?!
 			}
 			
-//			Print(L"FileRead success: %c%c%c%c\n",
+//			DBG(L"FileRead success: %c%c%c%c\n",
 //				  ((CHAR8*)FileBuffer)[0], ((CHAR8*)FileBuffer)[1], ((CHAR8*)FileBuffer)[2], ((CHAR8*)FileBuffer)[3]);
 			TableSize = ((EFI_ACPI_DESCRIPTION_HEADER *) FileBuffer)->Length;
 			//ASSERT (BufferSize >= TableSize);
-			Print(L"Table size=%d\n", TableSize);
+			DBG(L"Table size=%d\n", TableSize);
 			if (FileSize < TableSize) {
 				//Data incorrect. What TODO? Quick fix
 //				((EFI_ACPI_DESCRIPTION_HEADER *) FileBuffer)->Length = FileSize;
 //				TableSize = FileSize;
-				Print(L"Table size > file size :(\n");
+				DBG(L"Table size > file size :(\n");
 				continue; //do nothing with broken table
 			}			
 			//
@@ -529,7 +540,7 @@ AcpiPlatformEntryPoint (
 			if ((Index==0) && oldDSDT) {  //DSDT always at index 0
 				if (((EFI_ACPI_DESCRIPTION_HEADER *) oldDSDT)->Length > TableSize) {
 					CopyMem(oldDSDT, FileBuffer, TableSize);
-					Print(L"New DSDT copied to old place\n");
+					DBG(L"New DSDT copied to old place\n");
 				}
 //				Fadt->Dsdt = 0;  //exclude old one - looks like a final trick
 //				Fadt->XDsdt = 0;
@@ -538,25 +549,18 @@ AcpiPlatformEntryPoint (
 			// Install ACPI table
 			//
 			TmpHandler = &FileBuffer;
-			if (1 /* Index*/) {
 				Status = AcpiTable->InstallAcpiTable (
 													  AcpiTable,
 													  *TmpHandler,
 													  TableSize,
 													  &TableHandle
 													  );
-			} else {
-				//DSDT - nuegonah acpiprotocol
-				Fadt->Dsdt = (UINT32)FileBuffer;
-				Fadt->XDsdt = (UINT64)(UINTN)FileBuffer;
-				Status = EFI_SUCCESS;
-			}
 
-			Print(L"Table install status=%x\n", 	Status);
+			DBG(L"Table install status=%x\n", 	Status);
 			if (EFI_ERROR(Status)) {
 				continue;
 			}
-//			Print(L"Table installed #%d\n", Index);
+//			DBG(L"Table installed #%d\n", Index);
 			//
 			// Increment the instance
 			//
@@ -567,7 +571,7 @@ AcpiPlatformEntryPoint (
 			Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Fadt->Dsdt));
 			TableSize = Table->Length;
 			Signature.Sign = Table->Signature;
-			Print(L"Install legacy table: %c%c%c%c\n", 
+			DBG(L"Install legacy table: %c%c%c%c\n", 
 				  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
 			
 			Status = AcpiTable->InstallAcpiTable (
