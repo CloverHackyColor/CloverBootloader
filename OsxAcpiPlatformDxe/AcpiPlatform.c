@@ -398,21 +398,10 @@ AcpiPlatformEntryPoint (
 	if (Acpi20 == NULL) {
 		return EFI_ABORTED;
 	}
-/*	Status = gBS->HandleProtocol (ImageHandle, &gEfiAcpiTableProtocolGuid, (VOID*)&AcpiTable);
-	if (EFI_ERROR (Status)) {
-		return EFI_ABORTED;
-	}	*/
 	Rsdp = (EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER *)(UINTN)*Acpi20;	
 	DBG(L"Rsdp @ %x\n", (UINTN)Rsdp);
 	DBG(L"Rsdt @ %x\n", (UINTN)(Rsdp->RsdtAddress));
 	DBG(L"Xsdt @ %x\n", (UINTN)(Rsdp->XsdtAddress));
-//Now we patch empty acpiProtocol with legacy tables
-//do not copy pointers, copy body!	
-//	AcpiInstance->Rsdp1 = (EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER *)Rsdp;
-//	AcpiInstance->Rsdp3 = Rsdp;
-//	AcpiInstance->Rsdt1 = (EFI_ACPI_DESCRIPTION_HEADER*)(Rsdp->RsdtAddress);
-//	AcpiInstance->Rsdt3 = (EFI_ACPI_DESCRIPTION_HEADER*)(Rsdp->RsdtAddress);
-//	AcpiInstance->Xsdt = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)(Rsdp->XsdtAddress);
 	
 	InstallLegacyTables(AcpiTable, Rsdp);
 //	DBG(L"LegacyTables installed\n");
@@ -501,7 +490,7 @@ AcpiPlatformEntryPoint (
 #endif	
 	FileName = AllocateZeroPool(32); //Should be enough
 	//
-	// Read tables from the storage file.
+	// Read tables from the first volume.
 	//
 	for (Index=0; Index<NUM_TABLES; Index++) {
 		StrCpy(FileName, ACPInames[Index]);
@@ -539,14 +528,6 @@ AcpiPlatformEntryPoint (
 		
 		FileBuffer = AllocatePool(FileSize);
 		DBG(L"FileBuffer @ %x\n", (UINTN)FileBuffer);
-		//Slice - may be this is more correct memory for ACPI tables?
-/*		Status = gBS->AllocatePages (
-									 AllocateMaxAddress,
-									 EfiACPIMemoryNVS,
-									 EFI_SIZE_TO_PAGES(FileSize),
-									 &FileBuffer
-									 );
- */
 		
 		Status = ThisFile->Read (ThisFile, &FileSize, FileBuffer); //(VOID**)&
 //		DBG(L"FileRead status=%x\n", 	Status);	
@@ -580,8 +561,6 @@ AcpiPlatformEntryPoint (
 					CopyMem(oldDSDT, FileBuffer, TableSize);
 					DBG(L"New DSDT copied to old place\n");
 				}
-//				Fadt->Dsdt = 0;  //exclude old one - looks like a final trick
-//				Fadt->XDsdt = 0;
 			}		
 			//
 			// Install ACPI table

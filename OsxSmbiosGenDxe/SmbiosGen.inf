@@ -31,7 +31,7 @@
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
-	DuetPkg/DuetPkg.dec
+  DuetPkg/DuetPkg.dec
 
 [LibraryClasses]
   UefiLib

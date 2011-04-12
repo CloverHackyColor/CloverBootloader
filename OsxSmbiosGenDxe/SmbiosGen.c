@@ -13,7 +13,7 @@ Module Name:
 
   SmbiosGen.c
 
-Abstract:
+Abstract: 
 2011 Slice - patch for MacOSX
 **/
 
@@ -23,6 +23,10 @@ EFI_HII_DATABASE_PROTOCOL   *gHiiDatabase;
 extern UINT8                SmbiosGenDxeStrings[];
 EFI_SMBIOS_PROTOCOL         *gSmbios;
 EFI_HII_HANDLE              gStringHandle;
+UINT32			mTotalSystemMemory;
+UINT16			mHandle16;
+UINT16			mHandle17[8];
+UINT16			mMemCount;
 
 UINT8			gMacType;
 BOOLEAN			gMobile;
@@ -287,7 +291,7 @@ InstallSystemSlotSmbios			(//9
 			return ;
 		}	
 		//
-		// Log Smbios Record Type6
+		// Log Smbios Record Type9
 		//
 		LogSmbiosData(gSmbios,(UINT8*)SmbiosTable.Type9);
 		
@@ -302,6 +306,8 @@ InstallPhysicalMemoryArraySmbios(//16
   )
 {
 	SMBIOS_STRUCTURE_POINTER          SmbiosTable;
+	mTotalSystemMemory = 0;
+	mMemCount = 0;
 	//
 	// PhysicalMemoryArray (TYPE 16)
 	// 
@@ -313,7 +319,8 @@ InstallPhysicalMemoryArraySmbios(//16
 	//
 	// Log Smbios Record Type16
 	//
-	LogSmbiosData(gSmbios,(UINT8*)SmbiosTable.Type16);
+	mMemCount = SmbiosTable.Type16->NumberOfMemoryDevices;
+	mHandle16 = LogSmbiosData(gSmbios,(UINT8*)SmbiosTable.Type16);
 	
 	return ;
 }
@@ -324,21 +331,28 @@ InstallMemoryDeviceSmbios		(//17
   )
 {
 	SMBIOS_STRUCTURE_POINTER          SmbiosTable;
+	SMBIOS_STRUCTURE_POINTER          newSmbiosTable;
 	UINTN	i;
   //
   // MemoryDevice (TYPE 17)
   // 
-	for (i=0; i<8; i++) {
+	if (!mMemCount) {
+		mMemCount = 8;
+	}
+	for (i=0; i<mMemCount; i++) {
 		SmbiosTable = GetSmbiosTableFromType ((SMBIOS_TABLE_ENTRY_POINT *)Smbios, 17, i);
 		if (SmbiosTable.Raw == NULL) {
 			//    DEBUG ((EFI_D_ERROR, "SmbiosTable: Type 17 (MemoryDevice) not found!\n"));
-			return ;
+			continue;
 		}
-		
+		newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE17*)AllocateZeroPool(sizeof(SMBIOS_TABLE_TYPE17));
+		CopyMem((VOID*)newSmbiosTable.Type17, (VOID*)SmbiosTable.Type17, sizeof(SMBIOS_TABLE_TYPE17));
+		newSmbiosTable.Type17->MemoryArrayHandle = mHandle16;
+		mTotalSystemMemory += SmbiosTable.Type17->Size;
 		//
 		// Log Smbios Record Type17
 		//
-		LogSmbiosData(gSmbios,(UINT8*)SmbiosTable.Type17);
+		mHandle17[i] = LogSmbiosData(gSmbios,(UINT8*)newSmbiosTable.Type17);
 	}
 	return ;
 }
@@ -359,21 +373,24 @@ InstallFirmwareVolumeSmbios		(//128
 
 		SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE128*)AllocateZeroPool(sizeof(SMBIOS_TABLE_TYPE128));
 		SmbiosTable.Type128->Hdr.Type = 128;
-		SmbiosTable.Type128->Hdr.Length = sizeof(SMBIOS_STRUCTURE)+2; 
+		SmbiosTable.Type128->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE128)+2; 
 		SmbiosTable.Type128->FirmwareFeatures = 0x80000015;
 		SmbiosTable.Type128->FirmwareFeaturesMask = 0x800003ff;
 		/*
 		 FW_REGION_RESERVED   = 0,
 		 FW_REGION_RECOVERY   = 1,
-		 FW_REGION_MAIN       = 2,
+		 FW_REGION_MAIN       = 2, gHob->MemoryAbove1MB.PhysicalStart + ResourceLength
+		    or fix as 0x200000 - 0x600000
 		 FW_REGION_NVRAM      = 3,
 		 FW_REGION_CONFIG     = 4,
 		 FW_REGION_DIAGVAULT  = 5,		 
 		 */
-		SmbiosTable.Type128->RegionCount = 0; //TODO until fill with real values
-		SmbiosTable.Type128->RegionType[0] = FW_REGION_RESERVED; //For example
-		SmbiosTable.Type128->FlashMap[0].StartAddress = 0x0;
-		SmbiosTable.Type128->FlashMap[0].EndAddress = 0x1000;
+		SmbiosTable.Type128->RegionCount = 1; 
+		SmbiosTable.Type128->RegionType[0] = FW_REGION_MAIN; //the only needed
+		SmbiosTable.Type128->FlashMap[0].StartAddress = 0x200000;
+//			gHob->MemoryAbove1MB.PhysicalStart;
+		SmbiosTable.Type128->FlashMap[0].EndAddress = 0x5fffff;
+//			gHob->MemoryAbove1MB.PhysicalStart + gHob->MemoryAbove1MB.ResourceLength - 1;
 //		return ;
 	}	
 	//
@@ -460,6 +477,7 @@ InstallMemorySmbios (
   )
 {
 	SMBIOS_STRUCTURE_POINTER          SmbiosTable;
+	SMBIOS_STRUCTURE_POINTER          newSmbiosTable;
 	UINTN	i;
 	//
 	// Generate Memory Array Mapped Address info (TYPE 19)
@@ -469,23 +487,29 @@ InstallMemorySmbios (
 	 /// One structure is present for each contiguous address range described.
 	 ///
 	 typedef struct {
-	 SMBIOS_STRUCTURE      Hdr;
-	 UINT32                StartingAddress;
-	 UINT32                EndingAddress;
-	 UINT16                MemoryArrayHandle;
-	 UINT8                 PartitionWidth;
+		SMBIOS_STRUCTURE      Hdr;
+		UINT32                StartingAddress;
+		UINT32                EndingAddress;
+		UINT16                MemoryArrayHandle;
+		UINT8                 PartitionWidth;
 	 } SMBIOS_TABLE_TYPE19;
 	 
 	 */
-	for (i=0; i<16; i++) {
+	for (i=0; i<mMemCount+1; i++) {
 		SmbiosTable = GetSmbiosTableFromType ((SMBIOS_TABLE_ENTRY_POINT *)Smbios, 19, i);
 		if (SmbiosTable.Raw == NULL) {			
 			return ;
-		}		
+		}	
+		newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE19*)AllocateZeroPool(sizeof(SMBIOS_TABLE_TYPE19));
+		CopyMem((VOID*)newSmbiosTable.Type19, (VOID*)SmbiosTable.Type19, sizeof(SMBIOS_TABLE_TYPE19));
+
+		newSmbiosTable.Type19->MemoryArrayHandle = mHandle16;
+		if (!SmbiosTable.Type19->EndingAddress)
+			newSmbiosTable.Type19->EndingAddress = mTotalSystemMemory << 10; // Mb -> kb
 		//
 		// Record Smbios Type 19
 		//
-		LogSmbiosData(gSmbios, (UINT8*)SmbiosTable.Type19);		
+		LogSmbiosData(gSmbios, (UINT8*)newSmbiosTable.Type19);		
 	}
 	return ;
 }
@@ -499,7 +523,7 @@ InstallMemoryMapSmbios (
 	UINTN	i;
 	//
 	// Generate Memory Array Mapped Address info (TYPE 20)
-	//
+	// not needed neither for Apple nor for EFI
 	for (i=0; i<16; i++) {
 		SmbiosTable = GetSmbiosTableFromType ((SMBIOS_TABLE_ENTRY_POINT *)Smbios, 20, i);
 		if (SmbiosTable.Raw == NULL) {			
@@ -746,8 +770,6 @@ SmbiosGenEntrypoint (
 	
 	InstallProcessorSmbios (Smbios); //kSMBTypeProcessorInformation=4
 	InstallCacheSmbios     (Smbios); //kSMBTypeCacheInformation=7 
-	InstallMemorySmbios    (Smbios); //Memory Array Mapped Address info (TYPE 19) unknown to Apple
-	InstallMemoryMapSmbios    (Smbios); //Memory Device Mapped info (TYPE 20) unknown to Apple
 	InstallMiscSmbios      (Smbios); //kSMBTypeSystemInformation=1 kSMBTypeBIOSInformation=0
 	InstallBaseBoardSmbios			(Smbios); //2
 
@@ -755,6 +777,8 @@ SmbiosGenEntrypoint (
 	InstallSystemSlotSmbios			(Smbios); //9
 	InstallPhysicalMemoryArraySmbios(Smbios); //16
 	InstallMemoryDeviceSmbios		(Smbios); //17
+	InstallMemorySmbios    (Smbios); //Memory Array Mapped Address info (TYPE 19) unknown to Apple
+	InstallMemoryMapSmbios    (Smbios); //Memory Device Mapped info (TYPE 20) unknown to Apple
 // Apple Specific Structures
 	InstallFirmwareVolumeSmbios		(Smbios); //128
 	InstallMemorySPDSmbios			(Smbios); //130
