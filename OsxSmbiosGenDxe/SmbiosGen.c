@@ -19,12 +19,21 @@ Abstract:
 
 #include "SmbiosGen.h"
 #include "cpuid.h"
+/*
+ kSMBType32BitMemoryErrorInfo        = 18,
+ kSMBType64BitMemoryErrorInfo        = 33,
+
+ */
+
 EFI_HII_DATABASE_PROTOCOL   *gHiiDatabase;
 extern UINT8                SmbiosGenDxeStrings[];
 EFI_SMBIOS_PROTOCOL         *gSmbios;
 EFI_HII_HANDLE              gStringHandle;
 UINT32			mTotalSystemMemory;
 UINT16			mHandle16;
+UINT16			mHandleL1;
+UINT16			mHandleL2;
+UINT16			mHandleL3;
 UINT16			mHandle17[8];
 UINT16			mMemCount;
 
@@ -114,51 +123,102 @@ GetSmbiosTablesFromHob (
 
 
 VOID
-InstallProcessorSmbios (
+InstallProcessorSmbios (  //4
   IN VOID                  *Smbios
   )
 {
-  SMBIOS_STRUCTURE_POINTER          SmbiosTable;
-  CHAR8                             *AString;
-  CHAR16                            *UString;
-  STRING_REF                        Token;
-
-  //
-  // Processor info (TYPE 4)
-  // 
-  SmbiosTable = GetSmbiosTableFromType ((SMBIOS_TABLE_ENTRY_POINT *)Smbios, 4, 0);
-  if (SmbiosTable.Raw == NULL) {
-//    DEBUG ((EFI_D_ERROR, "SmbiosTable: Type 4 (Processor Info) not found!\n"));
-    return ;
-  }
-	gBusSpeed = SmbiosTable.Type4->ExternalClock;
-	if (SmbiosTable.Type4->CoreCount > 20) {  // :)
-		SmbiosTable.Type4->CoreCount = cpuid_info()->core_count;
-		SmbiosTable.Type4->ThreadCount = cpuid_info()->thread_count;
+	SMBIOS_STRUCTURE_POINTER        SmbiosTable;
+	SMBIOS_STRUCTURE_POINTER        newSmbiosTable;
+	CHAR8                           *AString;
+	CHAR16                          *UString;
+	STRING_REF                      Token;
+	UINTN							Size, BigSize;
+	CHAR8							*Socket, *Manuf, *Ver, *SN, *Asset, *Part;
+	UINTN							StringNumber = 0;
+	EFI_SMBIOS_HANDLE				Handle;
+	CHAR8							*StrStart;
+	//
+	// Processor info (TYPE 4)
+	// 
+	SmbiosTable = GetSmbiosTableFromType ((SMBIOS_TABLE_ENTRY_POINT *)Smbios, 4, 0);
+	if (SmbiosTable.Raw == NULL) {
+		//    DEBUG ((EFI_D_ERROR, "SmbiosTable: Type 4 (Processor Info) not found!\n"));
+		return ;
 	}
-	if (SmbiosTable.Type4->CoreCount < SmbiosTable.Type4->EnabledCoreCount) {
-		SmbiosTable.Type4->EnabledCoreCount = cpuid_info()->core_count;
+	Size = SmbiosTable.Type4->Hdr.Length;
+	StrStart = (CHAR8*)SmbiosTable.Type4+Size;
+	for (BigSize = Size; !(*StrStart == 0 && *(StrStart + 1) == 0); BigSize++) {
+		StrStart++;
+	}	
+	BigSize++;
+	Socket = GetSmbiosString (SmbiosTable, SmbiosTable.Type4->Socket);
+	Manuf  = GetSmbiosString (SmbiosTable, SmbiosTable.Type4->ProcessorManufacture);
+	Ver    = GetSmbiosString (SmbiosTable, SmbiosTable.Type4->ProcessorVersion);
+	SN = NULL;
+	Asset = NULL;
+	Part = NULL;
+	if (Size > 0x20) {
+		SN    = GetSmbiosString (SmbiosTable, SmbiosTable.Type4->SerialNumber);
+		Asset = GetSmbiosString (SmbiosTable, SmbiosTable.Type4->AssetTag);
+		Part  = GetSmbiosString (SmbiosTable, SmbiosTable.Type4->PartNumber);
 	}
-  //
-  // Log Smbios Record Type4
-  //
-  LogSmbiosData(gSmbios,(UINT8*)SmbiosTable.Type4);
-
-  //
-  // Set ProcessorVersion string
-  //
-  AString = GetSmbiosString (SmbiosTable, SmbiosTable.Type4->ProcessorVersion);
-  UString = AllocateZeroPool ((AsciiStrLen(AString) + 1) * sizeof(CHAR16));
-  ASSERT (UString != NULL);
-  AsciiStrToUnicodeStr (AString, UString);
-
-  Token = HiiSetString (gStringHandle, 0, UString, NULL);
-  if (Token == 0) {
-    gBS->FreePool (UString);
-    return ;
-  }
-  gBS->FreePool (UString);
-  return ;
+//	if (Size > 0x28) {Size = 0x28;}
+	newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE4*)AllocateZeroPool(BigSize + 0x28 - Size);
+	CopyMem((VOID*)newSmbiosTable.Type4, (VOID*)SmbiosTable.Type4, Size); //copy old data
+	CopyMem((CHAR8*)newSmbiosTable.Type4+0x28, (CHAR8*)SmbiosTable.Type4+Size, BigSize - Size);
+	// we make SMBios v2.6 while Apple needs 2.5
+	newSmbiosTable.Type4->Hdr.Length = 0x28;
+	gBusSpeed = newSmbiosTable.Type4->ExternalClock;
+	if (Size <= 0x23) {  //Smbios <=2.3
+		newSmbiosTable.Type4->CoreCount = cpuid_info()->core_count;
+		newSmbiosTable.Type4->ThreadCount = cpuid_info()->thread_count;
+	}
+	if (newSmbiosTable.Type4->CoreCount < newSmbiosTable.Type4->EnabledCoreCount) {
+		newSmbiosTable.Type4->EnabledCoreCount = cpuid_info()->core_count;
+	}
+	newSmbiosTable.Type4->L1CacheHandle = mHandleL1;
+	newSmbiosTable.Type4->L2CacheHandle = mHandleL2;
+	newSmbiosTable.Type4->L3CacheHandle = mHandleL3;
+	/*
+	 ProcessorCharacteristics ???
+	 bit2 = cpuid_info()->cpuid_extfeatures & CPUID_EXTFEATURE_EM64T
+	 bit3 = core_count > 1
+	 bit4 = thread_count > 1 or CPUID_FEATURE_HTT
+	 bit5 = CPUID_EXTFEATURE_XD 
+	 bit6 = CPUID_FEATURE_VMX
+	 bit7 = CPUID_FEATURE_EST
+	 */
+	//
+	// Log Smbios Record Type4
+	//
+	Handle = LogSmbiosData(gSmbios,(UINT8*)newSmbiosTable.Type4);
+	StringNumber = newSmbiosTable.Type4->Socket;
+	gSmbios->UpdateString(gSmbios, &Handle, &StringNumber, Socket); 
+	StringNumber = newSmbiosTable.Type4->ProcessorManufacture;
+	gSmbios->UpdateString(gSmbios, &Handle, &StringNumber, Manuf); 
+	StringNumber = newSmbiosTable.Type4->ProcessorVersion;
+	gSmbios->UpdateString(gSmbios, &Handle, &StringNumber, Ver); 
+		StringNumber = newSmbiosTable.Type4->SerialNumber;
+		gSmbios->UpdateString(gSmbios, &Handle, &StringNumber, SN); 
+		StringNumber = newSmbiosTable.Type4->AssetTag;
+		gSmbios->UpdateString(gSmbios, &Handle, &StringNumber, Asset); 
+		StringNumber = newSmbiosTable.Type4->PartNumber;
+		gSmbios->UpdateString(gSmbios, &Handle, &StringNumber, Part); 	
+	//
+	// Set ProcessorVersion string
+	//
+	AString = Ver; //GetSmbiosString (SmbiosTable, SmbiosTable.Type4->ProcessorVersion);
+	UString = AllocateZeroPool ((AsciiStrLen(AString) + 1) * sizeof(CHAR16));
+	ASSERT (UString != NULL);
+	AsciiStrToUnicodeStr (AString, UString);
+	
+	Token = HiiSetString (gStringHandle, 0, UString, NULL);
+	if (Token == 0) {
+		gBS->FreePool (UString);
+		return ;
+	}
+	gBS->FreePool (UString);
+	return ;
 }
 
 VOID
@@ -168,18 +228,37 @@ InstallCacheSmbios ( //7
 {
 	SMBIOS_STRUCTURE_POINTER          SmbiosTable;
 	UINTN i;
+	EFI_SMBIOS_HANDLE				Handle;
+	UINT16							Level = 0;
 	//
 	// Cache info (TYPE 7)
 	// 
+	mHandleL1 = 0xFFFE;
+	mHandleL2 = 0xFFFE;
+	mHandleL3 = 0xFFFE;
 	//Slice - How many caches do we have ?
-	for (i=0; i<8; i++) {
+	for (i=0; i<4; i++) {
 		SmbiosTable = GetSmbiosTableFromType ((SMBIOS_TABLE_ENTRY_POINT *)Smbios, 7, i);
 		if (SmbiosTable.Raw == NULL) {
 			return ;
-		}		
+		}	
+		Level = SmbiosTable.Type7->CacheConfiguration & 3;
 		// Log Smbios Record Type7
 		//
-		LogSmbiosData(gSmbios,(UINT8*)SmbiosTable.Type7);		
+		Handle = LogSmbiosData(gSmbios,(UINT8*)SmbiosTable.Type7);	
+		switch (Level) {
+			case 0:
+				mHandleL1 = Handle;
+				break;
+			case 1:
+				mHandleL2 = Handle;
+				break;
+			case 2:
+				mHandleL3 = Handle;
+				break;
+			default:
+				break;
+		}
 	}
 	return ;
 }
@@ -387,7 +466,7 @@ InstallFirmwareVolumeSmbios		(//128
 		 */
 		SmbiosTable.Type128->RegionCount = 1; 
 		SmbiosTable.Type128->RegionType[0] = FW_REGION_MAIN; //the only needed
-		SmbiosTable.Type128->FlashMap[0].StartAddress = 0x200000;
+		SmbiosTable.Type128->FlashMap[0].StartAddress = 0x100000;
 //			gHob->MemoryAbove1MB.PhysicalStart;
 		SmbiosTable.Type128->FlashMap[0].EndAddress = 0x5fffff;
 //			gHob->MemoryAbove1MB.PhysicalStart + gHob->MemoryAbove1MB.ResourceLength - 1;
@@ -472,7 +551,7 @@ InstallOemProcessorBusSpeed		(//132
 										
 
 VOID
-InstallMemorySmbios (
+InstallMemorySmbios (  //19
   IN VOID                  *Smbios
   )
 {
@@ -515,7 +594,7 @@ InstallMemorySmbios (
 }
 
 VOID
-InstallMemoryMapSmbios (
+InstallMemoryMapSmbios (  //20
 					 IN VOID          *Smbios
 					 )
 {
@@ -767,9 +846,9 @@ SmbiosGenEntrypoint (
 		gCpuType = (cpuid_cpu_info.core_count >= 4)?0x701:0x601;
 	}
 
-	
+	InstallCacheSmbios     (Smbios); //kSMBTypeCacheInformation=7 	
 	InstallProcessorSmbios (Smbios); //kSMBTypeProcessorInformation=4
-	InstallCacheSmbios     (Smbios); //kSMBTypeCacheInformation=7 
+
 	InstallMiscSmbios      (Smbios); //kSMBTypeSystemInformation=1 kSMBTypeBIOSInformation=0
 	InstallBaseBoardSmbios			(Smbios); //2
 
@@ -869,6 +948,7 @@ GetSmbiosString (
 
   @param  Smbios   Pointer to SMBIOS protocol instance.
   @param  Buffer   Pointer to the data buffer.
+  @return Handle to new table
 
 **/
 EFI_SMBIOS_HANDLE
