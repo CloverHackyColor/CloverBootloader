@@ -65,7 +65,7 @@ CHAR8* SMbiosversion[8] = {  //t0 BiosVersion
 };
 
 CHAR8* SMboardproduct[8] = { //t2 ProductName
-	"Mac-F4208CA9",
+	"Mac-F4208DA9",
 	"Mac-F4208CA9",
 	"Mac-F42D89C8",
 	"Mac-F22587C8",
@@ -412,7 +412,7 @@ InstallMemoryDeviceSmbios		(//17
 	SMBIOS_STRUCTURE_POINTER          SmbiosTable;
 	SMBIOS_STRUCTURE_POINTER          newSmbiosTable;
 	UINTN	i, Size, BigSize;
-	CHAR8	StrStart;
+	CHAR8	*StrStart;
   //
   // MemoryDevice (TYPE 17)
   // 
@@ -451,6 +451,7 @@ InstallFirmwareVolumeSmbios		(//128
   )
 {
 	SMBIOS_STRUCTURE_POINTER          SmbiosTable;
+	UINT32						UpAddress;
 	//
 	// FirmwareVolume (TYPE 128)
 	// 
@@ -474,9 +475,10 @@ InstallFirmwareVolumeSmbios		(//128
 		 */
 		SmbiosTable.Type128->RegionCount = 1; 
 		SmbiosTable.Type128->RegionType[0] = FW_REGION_MAIN; //the only needed
-		SmbiosTable.Type128->FlashMap[0].StartAddress = 0x100000;
+		UpAddress = mTotalSystemMemory << 20; //Mb -> b
+		SmbiosTable.Type128->FlashMap[0].StartAddress = UpAddress - 0x2000000; //0x100000;
 //			gHob->MemoryAbove1MB.PhysicalStart;
-		SmbiosTable.Type128->FlashMap[0].EndAddress = 0x5fffff;
+		SmbiosTable.Type128->FlashMap[0].EndAddress = UpAddress - 1;
 //			gHob->MemoryAbove1MB.PhysicalStart + gHob->MemoryAbove1MB.ResourceLength - 1;
 //		return ;
 	}	
