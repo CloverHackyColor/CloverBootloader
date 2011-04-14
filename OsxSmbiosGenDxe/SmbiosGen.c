@@ -411,7 +411,8 @@ InstallMemoryDeviceSmbios		(//17
 {
 	SMBIOS_STRUCTURE_POINTER          SmbiosTable;
 	SMBIOS_STRUCTURE_POINTER          newSmbiosTable;
-	UINTN	i;
+	UINTN	i, Size, BigSize;
+	CHAR8	StrStart;
   //
   // MemoryDevice (TYPE 17)
   // 
@@ -424,8 +425,15 @@ InstallMemoryDeviceSmbios		(//17
 			//    DEBUG ((EFI_D_ERROR, "SmbiosTable: Type 17 (MemoryDevice) not found!\n"));
 			continue;
 		}
-		newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE17*)AllocateZeroPool(sizeof(SMBIOS_TABLE_TYPE17));
-		CopyMem((VOID*)newSmbiosTable.Type17, (VOID*)SmbiosTable.Type17, sizeof(SMBIOS_TABLE_TYPE17));
+		Size = SmbiosTable.Type17->Hdr.Length;
+		StrStart = (CHAR8*)SmbiosTable.Type17+Size;
+		for (BigSize = Size; !(*StrStart == 0 && *(StrStart + 1) == 0); BigSize++) {
+			StrStart++;
+		}	
+		BigSize++;
+		
+		newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE17*)AllocateZeroPool(BigSize);
+		CopyMem((VOID*)newSmbiosTable.Type17, (VOID*)SmbiosTable.Type17, BigSize);
 		newSmbiosTable.Type17->MemoryArrayHandle = mHandle16;
 		mTotalSystemMemory += SmbiosTable.Type17->Size;
 		//
