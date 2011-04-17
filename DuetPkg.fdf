@@ -95,11 +95,11 @@ INF  IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
 INF  IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
 
   # IDE/AHCI Support
-INF  DuetPkg/cloverefiboot/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
-INF  DuetPkg/cloverefiboot/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
-#INF  DuetPkg/SataControllerDxe/SataControllerDxe.inf
-#INF  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
-#INF  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
+#INF  DuetPkg/cloverefiboot/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
+#INF  DuetPkg/cloverefiboot/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
+INF  DuetPkg/SataControllerDxe/SataControllerDxe.inf
+INF  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
+INF  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
 #INF  MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
 #INF  MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
 

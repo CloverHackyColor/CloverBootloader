@@ -476,9 +476,9 @@ InstallFirmwareVolumeSmbios		(//128
 		SmbiosTable.Type128->RegionCount = 1; 
 		SmbiosTable.Type128->RegionType[0] = FW_REGION_MAIN; //the only needed
 		UpAddress = mTotalSystemMemory << 20; //Mb -> b
-		SmbiosTable.Type128->FlashMap[0].StartAddress = UpAddress - 0x2000000; //0x100000;
+		SmbiosTable.Type128->FlashMap[0].StartAddress = 0xF0000;
 //			gHob->MemoryAbove1MB.PhysicalStart;
-		SmbiosTable.Type128->FlashMap[0].EndAddress = UpAddress - 1;
+		SmbiosTable.Type128->FlashMap[0].EndAddress = 0x17FFFF;
 //			gHob->MemoryAbove1MB.PhysicalStart + gHob->MemoryAbove1MB.ResourceLength - 1;
 //		return ;
 	}	
