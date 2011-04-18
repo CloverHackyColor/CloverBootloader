@@ -71,7 +71,7 @@ CHAR8* SMboardproduct[8] = { //t2 ProductName
 	"Mac-F22587C8",
 	"Mac-F42C8CC8",
 	"Mac-F4208EAA",
-	"Mac-F2268DAE",
+	"Mac-F2238AC8",
 	"Mac-F4208DC8"
 };
 
@@ -137,6 +137,7 @@ InstallProcessorSmbios (  //4
 	UINTN							StringNumber = 0;
 	EFI_SMBIOS_HANDLE				Handle;
 	CHAR8							*StrStart;
+	UINTN							AddBrand = 0;
 	//
 	// Processor info (TYPE 4)
 	// 
@@ -162,8 +163,11 @@ InstallProcessorSmbios (  //4
 		Asset = GetSmbiosString (SmbiosTable, SmbiosTable.Type4->AssetTag);
 		Part  = GetSmbiosString (SmbiosTable, SmbiosTable.Type4->PartNumber);
 	}
+	if (Ver == NULL) {
+		AddBrand = 48;
+	}
 //	if (Size > 0x28) {Size = 0x28;}
-	newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE4*)AllocateZeroPool(BigSize + 0x28 - Size);
+	newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE4*)AllocateZeroPool(BigSize + 0x28 - Size + AddBrand);
 	CopyMem((VOID*)newSmbiosTable.Type4, (VOID*)SmbiosTable.Type4, Size); //copy old data
 	CopyMem((CHAR8*)newSmbiosTable.Type4+0x28, (CHAR8*)SmbiosTable.Type4+Size, BigSize - Size);
 	// we make SMBios v2.6 while Apple needs 2.5
@@ -179,6 +183,9 @@ InstallProcessorSmbios (  //4
 	newSmbiosTable.Type4->L1CacheHandle = mHandleL1;
 	newSmbiosTable.Type4->L2CacheHandle = mHandleL2;
 	newSmbiosTable.Type4->L3CacheHandle = mHandleL3;
+	if (AddBrand) {
+		newSmbiosTable.Type4->ProcessorVersion = 3;
+	}
 	/*
 	 ProcessorCharacteristics ???
 	 bit2 = cpuid_info()->cpuid_extfeatures & CPUID_EXTFEATURE_EM64T
@@ -196,8 +203,13 @@ InstallProcessorSmbios (  //4
 	gSmbios->UpdateString(gSmbios, &Handle, &StringNumber, Socket); 
 	StringNumber = newSmbiosTable.Type4->ProcessorManufacture;
 	gSmbios->UpdateString(gSmbios, &Handle, &StringNumber, Manuf); 
-	StringNumber = newSmbiosTable.Type4->ProcessorVersion;
-	gSmbios->UpdateString(gSmbios, &Handle, &StringNumber, Ver); 
+	StringNumber = newSmbiosTable.Type4->ProcessorVersion;	
+	if(!AddBrand){
+		gSmbios->UpdateString(gSmbios, &Handle, &StringNumber, Ver); 
+	} else {
+		gSmbios->UpdateString(gSmbios, &Handle, &StringNumber, cpuid_info()->cpuid_brand_string);
+	}
+
 		StringNumber = newSmbiosTable.Type4->SerialNumber;
 		gSmbios->UpdateString(gSmbios, &Handle, &StringNumber, SN); 
 		StringNumber = newSmbiosTable.Type4->AssetTag;

@@ -62,6 +62,6 @@
 
 [BuildOptions.common]
 
-  GCC:*_*_*_CC_FLAGS = 
-  INTEL:*_*_*_CC_FLAGS =
+#  GCC:*_*_*_CC_FLAGS = 
+#  INTEL:*_*_*_CC_FLAGS =
   MSFT:*_*_*_CC_FLAGS =

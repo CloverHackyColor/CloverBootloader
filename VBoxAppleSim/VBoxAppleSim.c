@@ -153,7 +153,7 @@ GetDeviceProps(IN     APPLE_GETVAR_PROTOCOL   *This,
 //Print(L"GetDeviceProps called with bufferlen=%d\n", BufLen);
     if (DataLen > BufLen)
         return EFI_BUFFER_TOO_SMALL;
-	Buffer[0] = 0;
+	Buffer[0] = 0x35;
     return EFI_SUCCESS;
 }
 
@@ -171,7 +171,7 @@ GetDeviceProps2(IN     APPLE_GETVAR_PROTOCOL   *This,
 	//Print(L"GetDeviceProps called with bufferlen=%d\n", BufLen);
     if (DataLen > BufLen)
         return EFI_BUFFER_TOO_SMALL;
-	Buffer[0] = 1;
+	Buffer[0] = 0x36;
     return EFI_SUCCESS;
 }
 
@@ -189,7 +189,7 @@ APPLE_GETVAR_PROTOCOL gPrivateVarHandler =
 EFI_STATUS EFIAPI
 UnknownHandlerImpl()
 {
-    Print(L"Unknown called\n");
+//    Print(L"Unknown called\n");
     return EFI_SUCCESS;
 }
 
@@ -341,7 +341,7 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 			Type4Record = (SMBIOS_TABLE_TYPE4 *) Record;
 			CPUFrequency = Type4Record->CurrentSpeed;
 			TSCFrequency = CPUFrequency * 1000000ull;
-			Type4Record->MaxSpeed = CPUFrequency;
+			Type4Record->MaxSpeed = CPUFrequency; //no effect here
 			CPUFrequency = TSCFrequency;
 			FSBFrequency = Type4Record->ExternalClock * 1000000ull;
 			Find4 = TRUE;
