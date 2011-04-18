@@ -138,6 +138,8 @@ InstallProcessorSmbios (  //4
 	EFI_SMBIOS_HANDLE				Handle;
 	CHAR8							*StrStart;
 	UINTN							AddBrand = 0;
+	CHAR8							BrandStr[48];
+	CopyMem(BrandStr, cpuid_info()->cpuid_brand_string, 48);
 	//
 	// Processor info (TYPE 4)
 	// 
@@ -163,7 +165,7 @@ InstallProcessorSmbios (  //4
 		Asset = GetSmbiosString (SmbiosTable, SmbiosTable.Type4->AssetTag);
 		Part  = GetSmbiosString (SmbiosTable, SmbiosTable.Type4->PartNumber);
 	}
-	if (Ver == NULL) {
+	if (SmbiosTable.Type4->ProcessorVersion == 0) {
 		AddBrand = 48;
 	}
 //	if (Size > 0x28) {Size = 0x28;}
@@ -204,11 +206,11 @@ InstallProcessorSmbios (  //4
 	StringNumber = newSmbiosTable.Type4->ProcessorManufacture;
 	gSmbios->UpdateString(gSmbios, &Handle, &StringNumber, Manuf); 
 	StringNumber = newSmbiosTable.Type4->ProcessorVersion;	
-	if(!AddBrand){
-		gSmbios->UpdateString(gSmbios, &Handle, &StringNumber, Ver); 
-	} else {
-		gSmbios->UpdateString(gSmbios, &Handle, &StringNumber, cpuid_info()->cpuid_brand_string);
-	}
+//	if(!AddBrand){
+//		gSmbios->UpdateString(gSmbios, &Handle, &StringNumber, Ver); 
+//	} else {
+		gSmbios->UpdateString(gSmbios, &Handle, &StringNumber, BrandStr);
+//	}
 
 		StringNumber = newSmbiosTable.Type4->SerialNumber;
 		gSmbios->UpdateString(gSmbios, &Handle, &StringNumber, SN); 
@@ -596,7 +598,9 @@ InstallMemorySmbios (  //19
 	 } SMBIOS_TABLE_TYPE19;
 	 
 	 */
-	for (i=0; i<mMemCount+1; i++) {
+	//Slice. Now I want to change the logic
+	// combine all tables and log only one of them
+/*	for (i=0; i<mMemCount+1; i++) {
 		SmbiosTable = GetSmbiosTableFromType ((SMBIOS_TABLE_ENTRY_POINT *)Smbios, 19, i);
 		if (SmbiosTable.Raw == NULL) {			
 			return ;
@@ -606,12 +610,36 @@ InstallMemorySmbios (  //19
 
 		newSmbiosTable.Type19->MemoryArrayHandle = mHandle16;
 		if (!SmbiosTable.Type19->EndingAddress)
-			newSmbiosTable.Type19->EndingAddress = mTotalSystemMemory << 10; // Mb -> kb
+			newSmbiosTable.Type19->EndingAddress = (mTotalSystemMemory << 10) - 1; // Mb -> kb
 		//
 		// Record Smbios Type 19
 		//
 		LogSmbiosData(gSmbios, (UINT8*)newSmbiosTable.Type19);		
 	}
+ */
+	UINT32	TotalEnd = 0; 
+	UINT8	PartWidth = 1;
+	for (i=0; i<mMemCount+1; i++) {
+		SmbiosTable = GetSmbiosTableFromType ((SMBIOS_TABLE_ENTRY_POINT *)Smbios, 19, i);
+		if (SmbiosTable.Raw == NULL) {			
+			break;
+		}
+		if (SmbiosTable.Type19->EndingAddress > TotalEnd) {
+			TotalEnd = SmbiosTable.Type19->EndingAddress;
+		}
+		PartWidth = SmbiosTable.Type19->PartitionWidth;
+	}
+	if (TotalEnd == 0) {
+		TotalEnd = (mTotalSystemMemory << 10) - 1;
+	}
+	newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE19*)AllocateZeroPool(sizeof(SMBIOS_TABLE_TYPE19));
+	newSmbiosTable.Type19->Hdr.Type = 19;
+	newSmbiosTable.Type19->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE19); 
+	newSmbiosTable.Type19->MemoryArrayHandle = mHandle16;
+	newSmbiosTable.Type19->StartingAddress = 0;
+	newSmbiosTable.Type19->EndingAddress = TotalEnd;
+	newSmbiosTable.Type19->PartitionWidth = PartWidth;
+	LogSmbiosData(gSmbios, (UINT8*)newSmbiosTable.Type19);
 	return ;
 }
 
@@ -625,6 +653,7 @@ InstallMemoryMapSmbios (  //20
 	//
 	// Generate Memory Array Mapped Address info (TYPE 20)
 	// not needed neither for Apple nor for EFI
+	// so why I didn't correct wrong handles
 	for (i=0; i<16; i++) {
 		SmbiosTable = GetSmbiosTableFromType ((SMBIOS_TABLE_ENTRY_POINT *)Smbios, 20, i);
 		if (SmbiosTable.Raw == NULL) {			

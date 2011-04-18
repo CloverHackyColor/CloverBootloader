@@ -110,6 +110,7 @@ EFI_STATUS
     IN     CHAR8                   *Buffer,
     IN OUT UINT32                  *BufferSize);
 
+static UINT32 mCount = 0;
 
 struct _APPLE_GETVAR_PROTOCOL {
     EFI_STATUS(EFIAPI *Unknown0)(IN VOID *);
@@ -148,12 +149,13 @@ GetDeviceProps(IN     APPLE_GETVAR_PROTOCOL   *This,
 	UINT32 DataLen;
 
     //DataLen = GetVmVariable(EFI_INFO_INDEX_DEVICE_PROPS, Buffer, BufLen);
-	DataLen = 1; //sizeof(UINT64);
+	DataLen = 2; //sizeof(UINT64);
     *BufferSize = DataLen;
 //Print(L"GetDeviceProps called with bufferlen=%d\n", BufLen);
     if (DataLen > BufLen)
         return EFI_BUFFER_TOO_SMALL;
 	Buffer[0] = 0x35;
+	Buffer[1] = (CHAR8)(mCount & 0xFF);
     return EFI_SUCCESS;
 }
 
@@ -166,12 +168,13 @@ GetDeviceProps2(IN     APPLE_GETVAR_PROTOCOL   *This,
 	UINT32 DataLen;
 	
     //DataLen = GetVmVariable(EFI_INFO_INDEX_DEVICE_PROPS, Buffer, BufLen);
-	DataLen = 1; //sizeof(UINT64);
+	DataLen = 2; //sizeof(UINT64);
     *BufferSize = DataLen;
 	//Print(L"GetDeviceProps called with bufferlen=%d\n", BufLen);
     if (DataLen > BufLen)
         return EFI_BUFFER_TOO_SMALL;
 	Buffer[0] = 0x36;
+	Buffer[1] = (CHAR8)(mCount & 0xFF);
     return EFI_SUCCESS;
 }
 
@@ -190,6 +193,7 @@ EFI_STATUS EFIAPI
 UnknownHandlerImpl()
 {
 //    Print(L"Unknown called\n");
+	mCount++;
     return EFI_SUCCESS;
 }
 
