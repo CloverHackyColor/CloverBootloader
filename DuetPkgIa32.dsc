@@ -290,6 +290,7 @@
   #
   #MdeModulePkg/Application/HelloWorld/HelloWorld.inf
   # MdeModulePkg/Application/VariableInfo/VariableInfo.inf
+  iboot-cl/iboot.inf
 
 ###################################################################################################
 #
