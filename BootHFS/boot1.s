@@ -1433,7 +1433,6 @@ error_str			db		'error', NULL
 searchCatalogKey	dd		kHFSRootFolderID
 					dw		searchCatKeyNameLen
 searchCatKeyName	dw		'c', 'l', 'o', 'v', 'e', 'r'			; must be lower case
-#searchCatKeyName	dw		'b', 'o', 'o', 't'			; must be lower case
 searchCatKeyNameLen	EQU		($ - searchCatKeyName) / 2
 
 ;--------------------------------------------------------------------------
