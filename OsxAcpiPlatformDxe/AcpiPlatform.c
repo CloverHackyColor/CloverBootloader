@@ -57,6 +57,8 @@
 //#include "HobGeneration.h"
 #include "AcpiTable.h"
 
+#define RoundPage(x)  ((((unsigned)(x)) + EFI_PAGE_SIZE - 1) & ~(EFI_PAGE_SIZE - 1))
+
 #pragma pack(1)
 
 typedef struct {
@@ -529,7 +531,7 @@ AcpiPlatformEntryPoint (
 //		FileBuffer = AllocatePool(FileSize);
 //should use ACPI memory
 		Status=gBS->AllocatePages(AllocateMaxAddress,
-					EfiACPIReclaimMemory,RoundPage(FileSize)/EFI_PAGE_SIZE,&FileBuffer);
+					EfiACPIReclaimMemory,RoundPage(FileSize)/EFI_PAGE_SIZE, FileBuffer);
 		DBG(L"FileBuffer @ %x\n", (UINTN)FileBuffer);
 		
 		Status = ThisFile->Read (ThisFile, &FileSize, FileBuffer); //(VOID**)&

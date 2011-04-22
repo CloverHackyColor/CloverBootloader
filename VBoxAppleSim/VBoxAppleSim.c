@@ -39,7 +39,7 @@
 #include <Guid/SmBios.h>
 #include <Guid/Acpi.h>
 #include <Guid/Mps.h>
-#include <Guid/DataHubRecords.h>
+//#include <Guid/DataHubRecords.h>
 
 
 EFI_SYSTEM_TABLE *gSystemTable;
@@ -275,10 +275,20 @@ EFI_STATUS (EFIAPI *gUnknownProtoHandler[])() =
 };
 #endif
 //This part of codes origin from iBoot
-EFI_INTERFACE_SCREEN_INFO mScreenInfo=
-{
-	GetScreenInfo
-};
+// screen
+typedef	EFI_STATUS (EFIAPI *EFI_SCREEN_INFO_FUNCTION)(
+													  VOID* This, 
+													  UINT64* baseAddress,
+													  UINT64* frameBufferSize,
+													  UINT32* byterPerRow,
+													  UINT32* Width,
+													  UINT32* Height,
+													  UINT32* colorDepth
+													  );
+
+typedef struct {	
+	EFI_SCREEN_INFO_FUNCTION GetScreenInfo;	
+} EFI_INTERFACE_SCREEN_INFO;
 
 EFI_STATUS GetScreenInfo(VOID* This, UINT64* baseAddress, UINT64* frameBufferSize, UINT32* bpr, UINT32* w, UINT32* h, UINT32* colorDepth)
 {
@@ -299,6 +309,13 @@ EFI_STATUS GetScreenInfo(VOID* This, UINT64* baseAddress, UINT64* frameBufferSiz
 	
 	return EFI_SUCCESS;
 }
+
+
+EFI_INTERFACE_SCREEN_INFO mScreenInfo=
+{
+	GetScreenInfo
+};
+
 //
 
 EFI_STATUS EFIAPI

@@ -30,7 +30,7 @@
 #include <Library/HiiLib.h>
 #include <Library/BaseLib.h>
 
-#include <Guid/DataHubRecords.h>
+#include "DataHubRecords.h"
 
 #include <Protocol/Cpu.h>
 #include <Protocol/DataHub.h>
@@ -68,7 +68,7 @@ typedef struct {
 UINT32
 CopyRecord(PLATFORM_DATA* Rec, const CHAR16* Name, VOID* Val, UINT32 ValLen)
 {
-	CopyMem(Rec->Hdr, mCpuDataRecordHeader, sizeof(EFI_SUBCLASS_TYPE1_HEADER));
+	CopyMem(&Rec->Hdr, &mCpuDataRecordHeader, sizeof(EFI_SUBCLASS_TYPE1_HEADER));
     Rec->NameLen = StrLen(Name) * sizeof(CHAR16);
     Rec->ValLen = ValLen;
     CopyMem(Rec->Data, Name, Rec->NameLen);
@@ -86,7 +86,7 @@ LogData(EFI_DATA_HUB_PROTOCOL       *DataHub,
 {
     UINT32                      RecordSize;
     EFI_STATUS                  Status;
-	PLATFORM_DATA               *PlatformData,
+	PLATFORM_DATA               *PlatformData;
 	
     PlatformData = (PLATFORM_DATA*)AllocatePool (0x200);
     if (PlatformData == NULL) {
