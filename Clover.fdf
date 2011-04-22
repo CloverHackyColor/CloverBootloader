@@ -78,6 +78,7 @@ INF  DuetPkg/cloverefiboot/CpuDxe/Cpu.inf
 	#VBox additions
 INF  DuetPkg/cloverefiboot/VBoxAppleSim/VBoxAppleSim.inf
 INF IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
+INF IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
 	# foreign file system support
 #INF  DuetPkg/cloverefiboot/VBoxFsDxe/VBoxHfs.inf
 #INF  DuetPkg/cloverefiboot/VBoxFsDxe/VBoxFsDxe.inf

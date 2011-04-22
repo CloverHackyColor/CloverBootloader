@@ -347,7 +347,7 @@ AcpiPlatformEntryPoint (
 	EFI_LOADED_IMAGE_PROTOCOL		*LoadedImage;
 #endif	
 	VOID							*FileBuffer;
-	VOID**							TmpHandler;
+//	VOID**							TmpHandler;
 	UINTN							FileSize;
 	UINTN							BufferSize;
 //	UINTN							Key;
@@ -525,8 +525,11 @@ AcpiPlatformEntryPoint (
 		FileSize = Info->FileSize;
 //				DBG(L"FileSize = %d!\n", FileSize);
 		gBS->FreePool (Info);
-		
-		FileBuffer = AllocatePool(FileSize);
+//Slice - this is the problem. 		
+//		FileBuffer = AllocatePool(FileSize);
+//should use ACPI memory
+		Status=gBS->AllocatePages(AllocateMaxAddress,
+					EfiACPIReclaimMemory,RoundPage(FileSize)/EFI_PAGE_SIZE,&FileBuffer);
 		DBG(L"FileBuffer @ %x\n", (UINTN)FileBuffer);
 		
 		Status = ThisFile->Read (ThisFile, &FileSize, FileBuffer); //(VOID**)&
@@ -565,10 +568,10 @@ AcpiPlatformEntryPoint (
 			//
 			// Install ACPI table
 			//
-			TmpHandler = &FileBuffer;
+			//TmpHandler = &FileBuffer;
 				Status = AcpiTable->InstallAcpiTable (
 													  AcpiTable,
-													  *TmpHandler,
+													  FileBuffer,
 													  TableSize,
 													  &TableHandle
 													  );

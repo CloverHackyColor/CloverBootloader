@@ -58,78 +58,68 @@ EFI_GUID gDataHubPlatformGuid = {
 
 #pragma pack(1)
 typedef struct {
-    UINT8          Pad0[0x10];      /* 0x48 */
-    UINT32         NameLen;         /* 0x58 , in bytes */
-    UINT32         ValLen;          /* 0x5c */
-    UINT8          Data[1];         /* 0x60 Name Value */
-} MAGIC_HUB_DATA;
+    EFI_SUBCLASS_TYPE1_HEADER   Hdr;			/* 0x48 */
+    UINT32						NameLen;         /* 0x58 , in bytes */
+    UINT32						ValLen;          /* 0x5c */
+    UINT8						Data[1];         /* 0x60 Name Value */
+} PLATFORM_DATA;
 #pragma pack()
 
 UINT32
-CopyRecord(MAGIC_HUB_DATA* Rec, const CHAR16* Name, VOID* Val, UINT32 ValLen)
+CopyRecord(PLATFORM_DATA* Rec, const CHAR16* Name, VOID* Val, UINT32 ValLen)
 {
+	CopyMem(Rec->Hdr, mCpuDataRecordHeader, sizeof(EFI_SUBCLASS_TYPE1_HEADER));
     Rec->NameLen = StrLen(Name) * sizeof(CHAR16);
     Rec->ValLen = ValLen;
     CopyMem(Rec->Data, Name, Rec->NameLen);
     CopyMem(Rec->Data + Rec->NameLen, Val, ValLen);
 
-    return 0x10 + 4 + 4 + Rec->NameLen + Rec->ValLen;
+    return (sizeof(EFI_SUBCLASS_TYPE1_HEADER) + 4 + 4 + Rec->NameLen + Rec->ValLen);
 }
 
 EFI_STATUS EFIAPI
 LogData(EFI_DATA_HUB_PROTOCOL       *DataHub,
-        MAGIC_HUB_DATA              *MagicData,
+		EFI_GUID					*Guid,
         CHAR16                      *Name,
         VOID                        *Data,
         UINT32                       DataSize)
 {
     UINT32                      RecordSize;
     EFI_STATUS                  Status;
+	PLATFORM_DATA               *PlatformData,
+	
+    PlatformData = (PLATFORM_DATA*)AllocatePool (0x200);
+    if (PlatformData == NULL) {
+        return EFI_OUT_OF_RESOURCES;
+    }
 
-    RecordSize = CopyRecord(MagicData, Name, Data, DataSize);
+    RecordSize = CopyRecord(PlatformData, Name, Data, DataSize);
     Status = DataHub->LogData (
-        DataHub,
-        &gEfiProcessorSubClassGuid, /* DataRecordGuid */
-        &gDataHubPlatformGuid,     /* ProducerName */
-        EFI_DATA_RECORD_CLASS_DATA,
-        MagicData,
-        RecordSize
+							   DataHub,
+							   Guid,					/* DataRecordGuid */
+							   &gDataHubPlatformGuid,     /* ProducerName */
+							   EFI_DATA_RECORD_CLASS_DATA,
+							   PlatformData,
+							   RecordSize
                                );
     ASSERT_EFI_ERROR (Status);
-
+	
+    FreePool (PlatformData);
     return Status;
 }
 
 EFI_STATUS EFIAPI
-CpuUpdateDataHub(EFI_BOOT_SERVICES * bs,
+CpuUpdateDataHub(EFI_DATA_HUB_PROTOCOL       *DataHub,
                  UINT64              FSBFrequency,
                  UINT64              TSCFrequency,
                  UINT64              CPUFrequency)
 {
-    EFI_STATUS                  Status;
-    EFI_DATA_HUB_PROTOCOL       *DataHub;
-    MAGIC_HUB_DATA              *MagicData;
-    //
-    // Locate DataHub protocol.
-    //
-    Status = bs->LocateProtocol (&gEfiDataHubProtocolGuid, NULL, (VOID**)&DataHub);
-    if (EFI_ERROR (Status)) {
-        return Status;
-    }
-
-    MagicData = (MAGIC_HUB_DATA*)AllocatePool (0x200);
-    if (MagicData == NULL) {
-        return EFI_OUT_OF_RESOURCES;
-    }
-
     // Log data in format some OSes like
-    LogData(DataHub, MagicData, L"FSBFrequency", &FSBFrequency, sizeof(FSBFrequency));
+    LogData(DataHub, &gEfiProcessorSubClassGuid, L"FSBFrequency", &FSBFrequency, sizeof(FSBFrequency));
     // do that twice, as last variable read not really accounted for
-    LogData(DataHub, MagicData, L"FSBFrequency", &FSBFrequency, sizeof(FSBFrequency));
-    LogData(DataHub, MagicData, L"TSCFrequency", &TSCFrequency, sizeof(TSCFrequency));
-    LogData(DataHub, MagicData, L"CPUFrequency", &CPUFrequency, sizeof(CPUFrequency));
-
-    FreePool (MagicData);
+    LogData(DataHub, &gEfiProcessorSubClassGuid, L"FSBFrequency", &FSBFrequency, sizeof(FSBFrequency));
+    LogData(DataHub, &gEfiProcessorSubClassGuid, L"TSCFrequency", &TSCFrequency, sizeof(TSCFrequency));
+    LogData(DataHub, &gEfiProcessorSubClassGuid, L"CPUFrequency", &CPUFrequency, sizeof(CPUFrequency));
 
     return EFI_SUCCESS;
 }

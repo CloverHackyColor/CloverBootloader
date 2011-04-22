@@ -14,7 +14,9 @@
  * VirtualBox OSE distribution. VirtualBox OSE is distributed in the
  * hope that it will be useful, but WITHOUT ANY WARRANTY of any kind.
  */
-
+/*
+ 
+ */
 
 /*******************************************************************************
 *   Header Files                                                               *
@@ -26,6 +28,7 @@
 
 #include <Protocol/DevicePathToText.h>
 #include <Protocol/Smbios.h>
+#include <Protocol/DataHub.h>
 
 #include <IndustryStandard/Acpi10.h>
 #include <IndustryStandard/Acpi20.h>
@@ -35,21 +38,26 @@
 #include <Guid/SmBios.h>
 #include <Guid/Acpi.h>
 #include <Guid/Mps.h>
+#include <Guid/DataHubRecords.h>
 
 
-//#include "VBoxPkg.h"
-//#include "DevEFI.h"
-//#include "iprt/asm.h"
-
-
+EFI_SYSTEM_TABLE *gSystemTable;
 /*
  * External functions
  */
 EFI_STATUS EFIAPI
-CpuUpdateDataHub(EFI_BOOT_SERVICES * bs,
-                 UINT64              FSBFrequency,
-                 UINT64              TSCFrequency,
-                 UINT64              CPUFrequency);
+CpuUpdateDataHub(EFI_DATA_HUB_PROTOCOL       *DataHub,
+                 UINT64						FSBFrequency,
+                 UINT64						TSCFrequency,
+                 UINT64						CPUFrequency);
+
+EFI_STATUS EFIAPI
+LogData(EFI_DATA_HUB_PROTOCOL       *DataHub,
+		EFI_GUID					*Guid, ///* DataRecordGuid */
+        CHAR16                      *Name,
+        VOID                        *Data,
+        UINT32                       DataSize);
+
 
 EFI_STATUS EFIAPI
 InitializeConsoleSim (IN EFI_HANDLE           ImageHandle,
@@ -77,49 +85,17 @@ InitializeConsoleSim (IN EFI_HANDLE           ImageHandle,
  EFI_GUID gEfiAppleNvramGuid				= {0x4D1EDE05, 0x38C7, 0x4A6A, {0x9C, 0xC6, 0x4B, 0xCC, 0xA8, 0xB3, 0x8C, 0x14}};
  EFI_GUID FsbFrequencyPropertyGuid			= {0xD1A04D55, 0x75B9, 0x41A3, {0x90, 0x36, 0x8F, 0x4A, 0x26, 0x1C, 0xBB, 0xA2}};
  EFI_GUID DevicePathsSupportedGuid			= {0x5BB91CF7, 0xD816, 0x404B, {0x86, 0x72, 0x68, 0xF2, 0x7F, 0x78, 0x31, 0xDC}};
-
-EFI_STATUS SetEfiPlatformProperty(EFI_STRING Name, EFI_GUID EfiPropertyGuid, VOID *Data, UINT32 DataSize)
-{
-	EFI_STATUS Status;
-	UINT32 DataNameSize;
-	EFI_PROPERTY_SUBCLASS_DATA *DataRecord;
-	
-	DataNameSize = (UINT32)EfiStrSize(Name);
-	
-	DataRecord = EfiLibAllocateZeroPool(sizeof(EFI_PROPERTY_SUBCLASS_DATA) + DataNameSize + DataSize);
-	ASSERT (DataRecord != NULL);
-	
-	DataRecord->Header.Version = EFI_DATA_RECORD_HEADER_VERSION;
-	DataRecord->Header.HeaderSize = sizeof(EFI_SUBCLASS_TYPE1_HEADER);
-	DataRecord->Header.Instance = 0xFFFF;
-	DataRecord->Header.SubInstance = 0xFFFF;
-	DataRecord->Header.RecordType = 0xFFFFFFFF;
-	DataRecord->Record.DataNameSize = DataNameSize;
-	DataRecord->Record.DataSize = DataSize;
-	
-	
-	EfiCopyMem((UINT8 *)DataRecord + sizeof(EFI_PROPERTY_SUBCLASS_DATA), Name, DataNameSize);
-	EfiCopyMem((UINT8 *)DataRecord + sizeof(EFI_PROPERTY_SUBCLASS_DATA) + DataNameSize, Data, DataSize);
-	
-	Status = gDataHub->LogData(gDataHub, &EfiPropertyGuid, &SpecialGuid, 
-							   EFI_DATA_RECORD_CLASS_DATA,
-							   DataRecord,
-							   sizeof(EFI_PROPERTY_SUBCLASS_DATA) + DataNameSize + DataSize);
-	
-	if (DataRecord)
-		gBS->FreePool(DataRecord);
-	
-	return Status;
-}
-
+ EFI_GUID gNotifyExitBootServices			= {0xd2b2b828, 0x0826, 0x48a7, {0xb3, 0xdf, 0x98, 0x3c, 0x00, 0x60, 0x24, 0xf0}};
  
+
+//example by Kabyl 
  VOID SetupPlatformInfo(VOID)
 {
 	UINT64 FsbFrequency = 200000000;
 	UINT32 DevicePathsSupported = 1;
 	
-	SetEfiPlatformProperty(L"FSBFrequency", FsbFrequencyPropertyGuid, &FsbFrequency, sizeof(UINT64));
-	SetEfiPlatformProperty(L"DevicePathsSupported", DevicePathsSupportedGuid, &DevicePathsSupported, sizeof(UINT32));
+	LogData(DataHub, FsbFrequencyPropertyGuid, L"FSBFrequency", &FsbFrequency, sizeof(UINT64));
+	LogData(DataHub, DevicePathsSupportedGuid, L"DevicePathsSupported", &DevicePathsSupported, sizeof(UINT32));
 }
  */
 /*
@@ -159,6 +135,12 @@ EFI_GUID gEfiAppleBootGuid = {
 EFI_GUID gDevicePropertiesGuid = {
     0x91BD12FE, 0xF6C3, 0x44FB, {0xA5, 0xB7, 0x51, 0x22, 0xAB, 0x30, 0x3A, 0xE0}
 };
+
+EFI_GUID gAppleScreenInfoGuid = {
+	0xe316e100, 0x0751, 0x4c49, {0x90, 0x56, 0x48, 0x6c, 0x7e, 0x47, 0x29, 0x03}
+};
+
+
 #if NOTCLOVER
 EFI_GUID gEfiUnknown1ProtocolGuid = {
     0xDD8E06AC, 0x00E2, 0x49A9, {0x88, 0x8F, 0xFA, 0x46, 0xDE, 0xD4, 0x0A, 0x52}
@@ -192,7 +174,7 @@ struct _APPLE_GETVAR_PROTOCOL {
     EFI_STATUS EFIAPI                                           \
     iface##Unknown##num(IN  VOID   *This)                       \
     {                                                           \
-		mCount = (num) + 1;											\
+		mCount = (num) + 1;										\
         return EFI_SUCCESS;                                     \
     }
 
@@ -286,6 +268,33 @@ EFI_STATUS (EFIAPI *gUnknownProtoHandler[])() =
     UnknownHandlerImpl
 };
 #endif
+//This part of codes origin from iBoot
+EFI_INTERFACE_SCREEN_INFO mScreenInfo=
+{
+	GetScreenInfo
+};
+
+EFI_STATUS GetScreenInfo(VOID* This, UINT64* baseAddress, UINT64* frameBufferSize, UINT32* bpr, UINT32* w, UINT32* h, UINT32* colorDepth)
+{
+	EFI_GRAPHICS_OUTPUT_PROTOCOL	*GraphicsOutput=NULL;
+	EFI_STATUS						Status;
+	
+	
+	Status=gBS->HandleProtocol (gSystemTable->ConsoleOutHandle, &gEfiGraphicsOutputProtocolGuid, (VOID **) &GraphicsOutput);
+	if(EFI_ERROR(Status))
+		return EFI_UNSUPPORTED;
+	
+	*frameBufferSize=(UINT64)GraphicsOutput->Mode->FrameBufferSize;
+	*baseAddress=(UINT64)GraphicsOutput->Mode->FrameBufferBase;
+	*w=(UINT32)GraphicsOutput->Mode->Info->HorizontalResolution;
+	*h=(UINT32)GraphicsOutput->Mode->Info->VerticalResolution;
+	*colorDepth=32;
+	*bpr=(UINT32)(GraphicsOutput->Mode->Info->PixelsPerScanLine*32)/8;
+	
+	return EFI_SUCCESS;
+}
+//
+
 EFI_STATUS EFIAPI
 SetPrivateVarProto(IN EFI_HANDLE ImageHandle, EFI_BOOT_SERVICES * bs)
 {
@@ -298,15 +307,23 @@ SetPrivateVarProto(IN EFI_HANDLE ImageHandle, EFI_BOOT_SERVICES * bs)
 												 NULL
                                                  );
     ASSERT_EFI_ERROR (rc);
+	rc=gBS->InstallProtocolInterface(
+									 &gImageHandle,
+									 &gAppleScreenInfoGuid,
+									 EFI_NATIVE_INTERFACE,
+									 &mScreenInfo
+									 );
+	ASSERT_EFI_ERROR (rc);
 	
     return EFI_SUCCESS;
 }
 
 EFI_STATUS EFIAPI
-SetProperVariables(IN EFI_HANDLE ImageHandle, EFI_RUNTIME_SERVICES * rs)
+SetProperVariables(IN EFI_HANDLE ImageHandle,  IN EFI_SYSTEM_TABLE *SystemTable)
 {
      EFI_STATUS          rc;
      UINT32              vBackgroundClear = 0x00000000;
+	EFI_RUNTIME_SERVICES * rs = SystemTable->RuntimeServices;
 /*	
      UINT32              vFwFeatures      = 0x80000015;
      UINT32              vFwFeaturesMask  = 0x800003ff;
@@ -379,19 +396,22 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 	UINT32              vFwFeatures      = 0x80000015;
 	UINT32              vFwFeaturesMask  = 0x800003ff;
 	EFI_RUNTIME_SERVICES * rs = SystemTable->RuntimeServices;
-
+	gSystemTable = SystemTable;
+	EFI_DATA_HUB_PROTOCOL       *DataHub;
+//    PLATFORM_DATA              *PlatformData;
+    //
+    // Locate DataHub protocol.
+    //
+    rc = gBS->LocateProtocol (&gEfiDataHubProtocolGuid, NULL, (VOID**)&DataHub);
+    ASSERT_EFI_ERROR (rc);
 	//
 	
-    rc = SetProperVariables(ImageHandle, rs);
+    rc = SetProperVariables(ImageHandle, SystemTable);
     ASSERT_EFI_ERROR (rc);
 
     rc = SetPrivateVarProto(ImageHandle, gBS);
     ASSERT_EFI_ERROR (rc);
-/*
-    GetVmVariable(EFI_INFO_INDEX_FSB_FREQUENCY, (CHAR8*)&FSBFrequency, sizeof FSBFrequency);
-    GetVmVariable(EFI_INFO_INDEX_TSC_FREQUENCY, (CHAR8*)&TSCFrequency, sizeof TSCFrequency);
-    GetVmVariable(EFI_INFO_INDEX_CPU_FREQUENCY, (CHAR8*)&CPUFrequency, sizeof CPUFrequency);
-*/
+
 	//initial values
 	FSBFrequency =  200000000ull;
 	TSCFrequency = 2400000000ull;
@@ -435,7 +455,7 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 						 sizeof(vFwFeaturesMask), &vFwFeaturesMask);
 	
 //	
-	rc = CpuUpdateDataHub(gBS, FSBFrequency, TSCFrequency, CPUFrequency);
+	rc = CpuUpdateDataHub(DataHub, FSBFrequency, TSCFrequency, CPUFrequency);
     ASSERT_EFI_ERROR (rc);
 
     rc = InitializeConsoleSim(ImageHandle, SystemTable);

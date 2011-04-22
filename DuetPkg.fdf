@@ -78,6 +78,7 @@ INF  DuetPkg/cloverefiboot/CpuDxe/Cpu.inf
 	#VBox additions
 INF  DuetPkg/cloverefiboot/VBoxAppleSim/VBoxAppleSim.inf
 INF IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
+INF IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
 	# foreign file system support
 #INF  DuetPkg/cloverefiboot/VBoxFsDxe/VBoxHfs.inf
 #INF  DuetPkg/cloverefiboot/VBoxFsDxe/VBoxFsDxe.inf
@@ -109,6 +110,7 @@ INF  MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
 INF  MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
 INF  MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
 INF  MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
+INF  MdeModulePkg/Bus/Usb/UsbMouseDxe/UsbMouseDxe.inf
 
   # ISA Support
 INF  PcAtChipsetPkg/IsaAcpiDxe/IsaAcpi.inf
@@ -127,13 +129,11 @@ INF  DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
 #INF  MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
 INF  DuetPkg/cloverefiboot/OsxAcpiTableDxe/AcpiTableDxe.inf
 INF  DuetPkg/cloverefiboot/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
-#INF  DuetPkg/cloverefiboot/OsxLegacyAcpi/AcpiPlatformDxe.inf
 
   # Binary INF file to support toggle among different CPU architectures.
 INF  RuleOverride=BINARY FatBinPkg/EnhancedFatDxe/Fat.inf
 
 FILE FREEFORM = PCD(gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdLogoFile) {
-#    SECTION RAW = MdeModulePkg/Logo/Logo.bmp
 	SECTION RAW = DuetPkg/cloverefiboot/Logo/Logo.bmp
   }
 

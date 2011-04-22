@@ -237,6 +237,7 @@
   	#Vbox additions
 	DuetPkg/cloverefiboot/VBoxAppleSim/VBoxAppleSim.inf
 	IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
+	IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
   
   	# foreign file system support
 	#DuetPkg/cloverefiboot/VBoxFsDxe/VBoxHfs.inf
@@ -291,7 +292,7 @@
   #
   #MdeModulePkg/Application/HelloWorld/HelloWorld.inf
   # MdeModulePkg/Application/VariableInfo/VariableInfo.inf
-  iboot-cl/iboot.inf
+  iboot-cl/Slice/iboot.inf
   #rEFIt_UEFI/refit.inf
 
 ###################################################################################################
