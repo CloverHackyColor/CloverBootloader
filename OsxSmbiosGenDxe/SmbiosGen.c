@@ -221,7 +221,7 @@ InstallProcessorSmbios (  //4
 	//
 	// Set ProcessorVersion string
 	//
-	AString = Ver; //GetSmbiosString (SmbiosTable, SmbiosTable.Type4->ProcessorVersion);
+	AString = GetSmbiosString (newSmbiosTable, SmbiosTable.Type4->ProcessorVersion);
 	UString = AllocateZeroPool ((AsciiStrLen(AString) + 1) * sizeof(CHAR16));
 	ASSERT (UString != NULL);
 	AsciiStrToUnicodeStr (AString, UString);
@@ -401,6 +401,7 @@ InstallPhysicalMemoryArraySmbios(//16
 	SMBIOS_STRUCTURE_POINTER          SmbiosTable;
 	mTotalSystemMemory = 0;
 	mMemCount = 0;
+	mHandle16 = 0xFFFE;
 	//
 	// PhysicalMemoryArray (TYPE 16)
 	// 
@@ -512,7 +513,8 @@ InstallMemorySPDSmbios			(//130
 	SMBIOS_STRUCTURE_POINTER          SmbiosTable;
 	//
 	// MemorySPD (TYPE 130)
-	// 
+	// TODO: LocateProtocol(Smbus) and read SPD. Addresses are known from Chameleon sources. 
+	//
 	SmbiosTable = GetSmbiosTableFromType ((SMBIOS_TABLE_ENTRY_POINT *)Smbios, 130, 0);
 	if (SmbiosTable.Raw == NULL) {
 		return ;
@@ -598,9 +600,11 @@ InstallMemorySmbios (  //19
 	 } SMBIOS_TABLE_TYPE19;
 	 
 	 */
-	//Slice. Now I want to change the logic
-	// combine all tables and log only one of them
-/*	for (i=0; i<mMemCount+1; i++) {
+	if (!mMemCount) {
+		mMemCount = 8;
+	}
+/*	
+	for (i=0; i<mMemCount+1; i++) {
 		SmbiosTable = GetSmbiosTableFromType ((SMBIOS_TABLE_ENTRY_POINT *)Smbios, 19, i);
 		if (SmbiosTable.Raw == NULL) {			
 			return ;
@@ -847,9 +851,12 @@ SmbiosGenEntrypoint (
 	if (gMobile) {
 		switch (cpuid_info()->cpuid_model) {
 			case CPU_MODEL_PENTIUM_M: 	
-			case CPU_MODEL_YONAH: 
 				gMacType = MacBook11;
 				gCpuType = 0x101;
+				break;				
+			case CPU_MODEL_YONAH: 
+				gMacType = MacBook11;
+				gCpuType = 0x201;
 				break;
 			case CPU_MODEL_MEROM: 
 				gMacType = MacBook21;

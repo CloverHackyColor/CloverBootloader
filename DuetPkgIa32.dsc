@@ -292,7 +292,7 @@
   #MdeModulePkg/Application/HelloWorld/HelloWorld.inf
   # MdeModulePkg/Application/VariableInfo/VariableInfo.inf
   iboot-cl/iboot.inf
-  rEFIt_UEFI/refit.inf
+  #rEFIt_UEFI/refit.inf
 
 ###################################################################################################
 #

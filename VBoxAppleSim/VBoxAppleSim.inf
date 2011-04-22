@@ -54,11 +54,13 @@
 [Guids]
    gEfiProcessorSubClassGuid
    gEfiSmbiosTableGuid
+   gDataHubPlatformGuid
    
 [Protocols]
    gEfiDevicePathToTextProtocolGuid
    gEfiDataHubProtocolGuid
    gEfiSmbiosProtocolGuid
+   
 
 [BuildOptions.common]
 

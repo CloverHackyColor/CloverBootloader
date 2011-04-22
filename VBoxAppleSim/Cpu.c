@@ -52,7 +52,7 @@ EFI_SUBCLASS_TYPE1_HEADER mCpuDataRecordHeader = {
     0                                     // RecordType, Initialize later
 };
 
-EFI_GUID gEfiAppleMagicHubGuid = {
+EFI_GUID gDataHubPlatformGuid = {
     0x64517cc8, 0x6561, 0x4051, {0xb0, 0x3c, 0x59, 0x64, 0xb6, 0x0f, 0x4c, 0x7a }
 };
 
@@ -90,7 +90,7 @@ LogData(EFI_DATA_HUB_PROTOCOL       *DataHub,
     Status = DataHub->LogData (
         DataHub,
         &gEfiProcessorSubClassGuid, /* DataRecordGuid */
-        &gEfiAppleMagicHubGuid,     /* ProducerName */
+        &gDataHubPlatformGuid,     /* ProducerName */
         EFI_DATA_RECORD_CLASS_DATA,
         MagicData,
         RecordSize
