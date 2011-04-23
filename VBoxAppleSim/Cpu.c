@@ -30,7 +30,8 @@
 #include <Library/HiiLib.h>
 #include <Library/BaseLib.h>
 
-#include "DataHubRecords.h"
+//#include "DataHubRecords.h"
+#include <Guid/DataHubRecords.h>
 
 #include <Protocol/Cpu.h>
 #include <Protocol/DataHub.h>

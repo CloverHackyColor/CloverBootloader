@@ -185,7 +185,7 @@ InstallLegacyTables (
 */ 
 	}
 	if (Xsdt && Rsdt) {
-		Rsdt->Entry = (UINTN)Fadt; //Copy Fadt from XSDT
+		Rsdt->Entry = (UINT32)Fadt; //Copy Fadt from XSDT
 	}
 	if (!Xsdt && Rsdt) {
 		//Install Rsdt
@@ -529,9 +529,15 @@ AcpiPlatformEntryPoint (
 		gBS->FreePool (Info);
 //Slice - this is the problem. 		
 //		FileBuffer = AllocatePool(FileSize);
+		Status = gBS->AllocatePool (EfiBootServicesData, FileSize, (VOID **) &FileBuffer);
+		if (EFI_ERROR (Status)) {
+			//			DBG(L"No pool for FileBuffer size %d!\n", FileSize);
+			continue;
+		}
+		
 //should use ACPI memory
-		Status=gBS->AllocatePages(AllocateMaxAddress,
-					EfiACPIReclaimMemory,RoundPage(FileSize)/EFI_PAGE_SIZE, FileBuffer);
+//		Status=gBS->AllocatePages(AllocateMaxAddress,
+//					EfiACPIReclaimMemory,RoundPage(FileSize)/EFI_PAGE_SIZE, FileBuffer);
 		DBG(L"FileBuffer @ %x\n", (UINTN)FileBuffer);
 		
 		Status = ThisFile->Read (ThisFile, &FileSize, FileBuffer); //(VOID**)&
