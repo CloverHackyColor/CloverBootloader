@@ -75,10 +75,11 @@ INF  UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
 #INF  UefiCpuPkg/CpuDxe/CpuDxe.inf
 INF  DuetPkg/cloverefiboot/CpuDxe/Cpu.inf
 
-	#VBox additions
+	#DataHub
 #INF  DuetPkg/cloverefiboot/VBoxAppleSim/VBoxAppleSim.inf
 INF IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 INF IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
+INF EdkCompatibilityPkg/Compatibility/PiSmbiosRecordOnDataHubSmbiosRecordThunk/PiSmbiosRecordOnDataHubSmbiosRecordThunk.inf
 	# foreign file system support
 #INF  DuetPkg/cloverefiboot/VBoxFsDxe/VBoxHfs.inf
 #INF  DuetPkg/cloverefiboot/VBoxFsDxe/VBoxFsDxe.inf

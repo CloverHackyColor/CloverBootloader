@@ -121,6 +121,23 @@ GetSmbiosTablesFromHob (
   return NULL;
 }
 
+UINTN
+SmbiosTableLength (
+				   IN SMBIOS_STRUCTURE_POINTER SmbiosTable
+				   )
+{
+	CHAR8  *AChar;
+	UINTN  Length;
+	
+	AChar = (CHAR8 *)(SmbiosTable.Raw + SmbiosTable.Hdr->Length);
+	while ((*AChar != 0) || (*(AChar + 1) != 0)) {
+		AChar ++;
+	}
+	Length = ((UINTN)AChar - (UINTN)SmbiosTable.Raw + 2);
+	
+	return Length;
+}
+
 
 VOID
 InstallProcessorSmbios (  //4
@@ -136,7 +153,7 @@ InstallProcessorSmbios (  //4
 	CHAR8							*Socket, *Manuf, *Ver, *SN, *Asset, *Part;
 	UINTN							StringNumber = 0;
 	EFI_SMBIOS_HANDLE				Handle;
-	CHAR8							*StrStart;
+//	CHAR8							*StrStart;
 	UINTN							AddBrand = 0;
 	CHAR8							BrandStr[48];
 	CopyMem(BrandStr, cpuid_info()->cpuid_brand_string, 48);
@@ -149,11 +166,12 @@ InstallProcessorSmbios (  //4
 		return ;
 	}
 	Size = SmbiosTable.Type4->Hdr.Length;
-	StrStart = (CHAR8*)SmbiosTable.Type4+Size;
+/*	StrStart = (CHAR8*)SmbiosTable.Type4+Size;
 	for (BigSize = Size; !(*StrStart == 0 && *(StrStart + 1) == 0); BigSize++) {
 		StrStart++;
 	}	
-	BigSize++;
+	BigSize++;*/
+	BigSize = SmbiosTableLength(SmbiosTable);
 	Socket = GetSmbiosString (SmbiosTable, SmbiosTable.Type4->Socket);
 	Manuf  = GetSmbiosString (SmbiosTable, SmbiosTable.Type4->ProcessorManufacture);
 	Ver    = GetSmbiosString (SmbiosTable, SmbiosTable.Type4->ProcessorVersion);
@@ -427,7 +445,7 @@ InstallMemoryDeviceSmbios		(//17
 	SMBIOS_STRUCTURE_POINTER          SmbiosTable;
 	SMBIOS_STRUCTURE_POINTER          newSmbiosTable;
 	UINTN	i, Size, BigSize;
-	CHAR8	*StrStart;
+//	CHAR8	*StrStart;
   //
   // MemoryDevice (TYPE 17)
   // 
@@ -441,12 +459,12 @@ InstallMemoryDeviceSmbios		(//17
 			continue;
 		}
 		Size = SmbiosTable.Type17->Hdr.Length;
-		StrStart = (CHAR8*)SmbiosTable.Type17+Size;
+/*		StrStart = (CHAR8*)SmbiosTable.Type17+Size;
 		for (BigSize = Size; !(*StrStart == 0 && *(StrStart + 1) == 0); BigSize++) {
 			StrStart++;
 		}	
-		BigSize++;
-		
+		BigSize++;*/
+		BigSize = SmbiosTableLength(SmbiosTable);
 		newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE17*)AllocateZeroPool(BigSize);
 		CopyMem((VOID*)newSmbiosTable.Type17, (VOID*)SmbiosTable.Type17, BigSize);
 		newSmbiosTable.Type17->MemoryArrayHandle = mHandle16;
@@ -915,7 +933,7 @@ SmbiosGenEntrypoint (
 	InstallPhysicalMemoryArraySmbios(Smbios); //16
 	InstallMemoryDeviceSmbios		(Smbios); //17
 	InstallMemorySmbios    (Smbios); //Memory Array Mapped Address info (TYPE 19) unknown to Apple
-	InstallMemoryMapSmbios    (Smbios); //Memory Device Mapped info (TYPE 20) unknown to Apple
+	InstallMemoryMapSmbios (Smbios); //Memory Device Mapped info (TYPE 20) unknown to Apple
 // Apple Specific Structures
 	InstallFirmwareVolumeSmbios		(Smbios); //128
 	InstallMemorySPDSmbios			(Smbios); //130
@@ -928,23 +946,6 @@ SmbiosGenEntrypoint (
 //
 // Internal function
 //
-
-UINTN
-SmbiosTableLength (
-  IN SMBIOS_STRUCTURE_POINTER SmbiosTable
-  )
-{
-	CHAR8  *AChar;
-	UINTN  Length;
-	
-	AChar = (CHAR8 *)(SmbiosTable.Raw + SmbiosTable.Hdr->Length);
-	while ((*AChar != 0) || (*(AChar + 1) != 0)) {
-		AChar ++;
-	}
-	Length = ((UINTN)AChar - (UINTN)SmbiosTable.Raw + 2);
-	
-	return Length;
-}
 
 SMBIOS_STRUCTURE_POINTER
 GetSmbiosTableFromType (
