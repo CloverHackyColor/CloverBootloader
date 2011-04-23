@@ -93,7 +93,7 @@ PeCoffLoaderGetPeHeader (
   EFI_IMAGE_DOS_HEADER  DosHdr;
   EFI_FAT_IMAGE_HEADER  Fat;
   UINTN                 Size;
-  UINTN                 Offset = 0;
+  UINT32                Offset = 0;
   UINT16                Magic;
   EFI_FAT_IMAGE_HEADER_NLIST nlist[5];
   Size = sizeof (EFI_FAT_IMAGE_HEADER);
