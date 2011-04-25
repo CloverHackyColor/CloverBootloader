@@ -149,7 +149,7 @@ InstallProcessorSmbios (  //4
 	CHAR8                           *AString;
 	CHAR16                          *UString;
 	STRING_REF                      Token;
-	UINTN							Size, BigSize;
+	UINTN							Size, BigSize, newSize;
 	CHAR8							*Socket, *Manuf, *Ver, *SN, *Asset, *Part;
 	UINTN							StringNumber = 0;
 	EFI_SMBIOS_HANDLE				Handle;
@@ -187,18 +187,28 @@ InstallProcessorSmbios (  //4
 		AddBrand = 48;
 	}
 //	if (Size > 0x28) {Size = 0x28;}
-	newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE4*)AllocateZeroPool(BigSize + 0x28 - Size + AddBrand);
+	//Smbios 2.6 has size = 0x2a
+	newSize = sizeof(SMBIOS_TABLE_TYPE4);
+	newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE4*)AllocateZeroPool(BigSize + newSize - Size + AddBrand);
 	CopyMem((VOID*)newSmbiosTable.Type4, (VOID*)SmbiosTable.Type4, Size); //copy old data
-	CopyMem((CHAR8*)newSmbiosTable.Type4+0x28, (CHAR8*)SmbiosTable.Type4+Size, BigSize - Size);
+	CopyMem((CHAR8*)newSmbiosTable.Type4+newSize, (CHAR8*)SmbiosTable.Type4+Size, BigSize - Size);
 	// we make SMBios v2.6 while Apple needs 2.5
-	newSmbiosTable.Type4->Hdr.Length = 0x28;
+	newSmbiosTable.Type4->Hdr.Length = newSize;
 	gBusSpeed = newSmbiosTable.Type4->ExternalClock;
+	//this hack is related to different using of these fields by PC BIOS and Apple
+	newSmbiosTable.Type4->MaxSpeed = newSmbiosTable.Type4->CurrentSpeed;
+	
 	if (Size <= 0x23) {  //Smbios <=2.3
 		newSmbiosTable.Type4->CoreCount = cpuid_info()->core_count;
 		newSmbiosTable.Type4->ThreadCount = cpuid_info()->thread_count;
-	}
+	} //else we propose DMI data is better then cpuid().
 	if (newSmbiosTable.Type4->CoreCount < newSmbiosTable.Type4->EnabledCoreCount) {
 		newSmbiosTable.Type4->EnabledCoreCount = cpuid_info()->core_count;
+	}
+	UINT8 model = cpuid_info()->cpuid_extmodel;
+	if (model == CPU_MODEL_YONAH) {
+		//this is change in Smbios v2.6 vs v2.3
+		newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCoreSolo;
 	}
 	newSmbiosTable.Type4->L1CacheHandle = mHandleL1;
 	newSmbiosTable.Type4->L2CacheHandle = mHandleL2;
@@ -219,16 +229,17 @@ InstallProcessorSmbios (  //4
 	// Log Smbios Record Type4
 	//
 	Handle = LogSmbiosData(gSmbios,(UINT8*)newSmbiosTable.Type4);
+	//then change strings
 	StringNumber = newSmbiosTable.Type4->Socket;
 	gSmbios->UpdateString(gSmbios, &Handle, &StringNumber, Socket); 
 	StringNumber = newSmbiosTable.Type4->ProcessorManufacture;
 	gSmbios->UpdateString(gSmbios, &Handle, &StringNumber, Manuf); 
 	StringNumber = newSmbiosTable.Type4->ProcessorVersion;	
-//	if(!AddBrand){
+	if(BrandStr[0]){
 //		gSmbios->UpdateString(gSmbios, &Handle, &StringNumber, Ver); 
 //	} else {
 		gSmbios->UpdateString(gSmbios, &Handle, &StringNumber, BrandStr);
-//	}
+	}
 
 		StringNumber = newSmbiosTable.Type4->SerialNumber;
 		gSmbios->UpdateString(gSmbios, &Handle, &StringNumber, SN); 
@@ -291,11 +302,24 @@ InstallCacheSmbios ( //7
 			default:
 				break;
 		}
+		//Here it will be good to correct socket designation
+		CHAR8* SSocketD = "L1-Cache";
+		UINTN StringNumber = 1;
+		 if(SmbiosTable.Type7->SocketDesignation == 0) {
+			 
+			 SmbiosTable.Type7->SocketDesignation = 1;
+			 SSocketD[1] += Level;
+			 gSmbios->UpdateString(gSmbios,
+								   &Handle,
+								   &StringNumber,
+								   SSocketD); 
+			 
+		 }
+		 
 	}
 	return ;
 }
 
-//Slice
 VOID
 InstallBaseBoardSmbios			( //2
 IN VOID                  *Smbios
@@ -312,6 +336,7 @@ IN VOID                  *Smbios
 		return ;
 	}
 	Handle = LogSmbiosData(gSmbios,(UINT8*)SmbiosTable.Type2);
+	
 	StringNumber = SmbiosTable.Type2->Manufacturer;
 	gSmbios->UpdateString(gSmbios,
 						  &Handle,

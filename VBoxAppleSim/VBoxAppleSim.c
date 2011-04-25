@@ -274,8 +274,9 @@ EFI_STATUS (EFIAPI *gUnknownProtoHandler[])() =
     UnknownHandlerImpl
 };
 #endif
-//This part of codes origin from iBoot
+//This part of codes origin from iBoot, placed here to test purpose
 // screen
+#if TEST
 typedef	EFI_STATUS (EFIAPI *EFI_SCREEN_INFO_FUNCTION)(
 													  VOID* This, 
 													  UINT64* baseAddress,
@@ -315,7 +316,7 @@ EFI_INTERFACE_SCREEN_INFO mScreenInfo=
 {
 	GetScreenInfo
 };
-
+#endif
 //
 
 EFI_STATUS EFIAPI
@@ -330,6 +331,7 @@ SetPrivateVarProto(IN EFI_HANDLE ImageHandle, EFI_BOOT_SERVICES * bs)
 												 NULL
                                                  );
     ASSERT_EFI_ERROR (Status);
+#if TEST	
 	Status=gBS->InstallProtocolInterface(
 									 &gImageHandle,
 									 &gAppleScreenInfoGuid,
@@ -337,7 +339,7 @@ SetPrivateVarProto(IN EFI_HANDLE ImageHandle, EFI_BOOT_SERVICES * bs)
 									 &mScreenInfo
 									 );
 	ASSERT_EFI_ERROR (Status);
-	
+#endif	
     return EFI_SUCCESS;
 }
 
