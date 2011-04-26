@@ -254,23 +254,34 @@ EFI_STATUS EFIAPI
 UnknownHandlerImpl()
 {
 //    Print(L"Unknown called\n");
-	mCount++;
+	mCount |=0x80;
     return EFI_SUCCESS;
 }
+
+IMPL_STUB(Proto, 0)
+IMPL_STUB(Proto, 1)
+IMPL_STUB(Proto, 2)
+IMPL_STUB(Proto, 3)
+IMPL_STUB(Proto, 4)
+IMPL_STUB(Proto, 5)
+IMPL_STUB(Proto, 6)
+IMPL_STUB(Proto, 7)
+IMPL_STUB(Proto, 8)
+IMPL_STUB(Proto, 9)
 
 /* array of pointers to function */  // 18 procs
 EFI_STATUS (EFIAPI *gUnknownProtoHandler[])() =
 {
-    UnknownHandlerImpl,
-    UnknownHandlerImpl,
-    UnknownHandlerImpl,
-    UnknownHandlerImpl,
-    UnknownHandlerImpl,
-    UnknownHandlerImpl,
-    UnknownHandlerImpl,
-    UnknownHandlerImpl,
-    UnknownHandlerImpl,
-    UnknownHandlerImpl,
+    ProtoUnknown0,
+    ProtoUnknown1,
+    ProtoUnknown2,
+    ProtoUnknown3,
+    ProtoUnknown4,
+    ProtoUnknown5,
+    ProtoUnknown6,
+    ProtoUnknown7,
+    ProtoUnknown8,
+    ProtoUnknown9,
     UnknownHandlerImpl,
     UnknownHandlerImpl,
     UnknownHandlerImpl,
