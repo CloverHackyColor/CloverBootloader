@@ -154,7 +154,7 @@ typedef struct {
 } MISC_BIOS_CHARACTERISTICS_EXTENSION;
 
 ///
-/// BIOS Information (Type 0).
+/// BIOS Information (Type 0). EFI_SMBIOS_TYPE_BIOS_INFORMATION
 ///
 typedef struct {
   SMBIOS_STRUCTURE          Hdr;
@@ -187,7 +187,7 @@ typedef enum {
 } MISC_SYSTEM_WAKEUP_TYPE;
 
 ///
-/// System Information (Type 1).
+/// System Information (Type 1). EFI_SMBIOS_TYPE_SYSTEM_INFORMATION
 /// 
 /// The information in this structure defines attributes of the overall system and is 
 /// intended to be associated with the Component ID group of the system's MIF.
@@ -238,7 +238,7 @@ typedef enum {
 } BASE_BOARD_TYPE;
 
 ///
-/// Base Board (or Module) Information (Type 2).
+/// Base Board (or Module) Information (Type 2). EFI_SMBIOS_TYPE_BASEBOARD_INFORMATION
 ///
 /// The information in this structure defines attributes of a system baseboard - 
 /// for example a motherboard, planar, or server blade or other standard system module.
@@ -327,7 +327,7 @@ typedef struct {
 
 
 ///
-/// System Enclosure or Chassis (Type 3).
+/// System Enclosure or Chassis (Type 3). EFI_SMBIOS_TYPE_SYSTEM_ENCLOSURE
 ///
 /// The information in this structure defines attributes of the system's mechanical enclosure(s).  
 /// For example, if a system included a separate enclosure for its peripheral devices, 

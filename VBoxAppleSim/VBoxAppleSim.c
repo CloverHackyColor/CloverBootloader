@@ -39,7 +39,7 @@
 #include <Guid/SmBios.h>
 #include <Guid/Acpi.h>
 #include <Guid/Mps.h>
-//#include <Guid/DataHubRecords.h>
+#include "DataHubRecords.h"
 
 
 EFI_SYSTEM_TABLE *gSystemTable;
@@ -64,9 +64,14 @@ EFI_STATUS EFIAPI
 InitializeConsoleSim (IN EFI_HANDLE           ImageHandle,
                       IN EFI_SYSTEM_TABLE     *SystemTable);
 
+EFI_GUID gDataHubPlatformGuid = {0x64517cc8, 0x6561, 0x4051, {0xb0, 0x3c, 0x59, 0x64, 0xb6, 0x0f, 0x4c, 0x7a}};
+EFI_GUID gDataHubOptionsGuid  = {0x0021001C, 0x3CE3, 0x41F8, {0x99, 0xc6, 0xec, 0xf5, 0xda, 0x75, 0x47, 0x31}};
+
+#define TEST 1
+
 // Example
 /*
- //GUIDs from Ninja
+ //GUIDs from Ninja and more
  EFI_GUID gEfiLegacyBiosThunkProtocolGuid	= {0x4c51a7ba, 0x7195, 0x442d, {0x87, 0x92, 0xbe, 0xea, 0x6e, 0x2f, 0xf6, 0xec}};
  EFI_GUID gEfiLegacyBiosProtocolGuid		= {0xdb9a1e3d, 0x45cb, 0x4abb, {0x85, 0x3b, 0xe5, 0x38, 0x7f, 0xdb, 0x2e, 0x2d}};
  EFI_GUID gEfiLegacy8259ProtocolGuid		= {0x38321dba, 0x4fe0, 0x4e17, {0x8a, 0xec, 0x41, 0x30, 0x55, 0xea, 0xed, 0xc1}};
@@ -127,6 +132,7 @@ GetVmVariable(UINT32 Variable, CHAR8* Buffer, UINT32 Size )
     return VarLen;
 }
 #endif
+
 /*
  * GUIDs
  */
@@ -147,9 +153,10 @@ EFI_GUID gAppleScreenInfoGuid = {
 };
 
 
-#if NOTCLOVER
+#if TEST
 EFI_GUID gEfiUnknown1ProtocolGuid = {
-    0xDD8E06AC, 0x00E2, 0x49A9, {0x88, 0x8F, 0xFA, 0x46, 0xDE, 0xD4, 0x0A, 0x52}
+	0x78EE99FB, 0x6A5E, 0x4186, {0x97, 0xDE, 0xCD, 0x0A, 0xBA, 0x34, 0x5A, 0x74}
+//    0xDD8E06AC, 0x00E2, 0x49A9, {0x88, 0x8F, 0xFA, 0x46, 0xDE, 0xD4, 0x0A, 0x52}
 };
 #endif
 /*
@@ -212,7 +219,7 @@ GetDeviceProps(IN     APPLE_GETVAR_PROTOCOL   *This,
 	Buffer[1] = 0x35;  
 	return EFI_SUCCESS;
 }
-#if TEST
+#if TEST2
 EFI_STATUS EFIAPI
 GetDeviceProps2(IN     APPLE_GETVAR_PROTOCOL   *This,
                IN     CHAR8                   *Buffer,
@@ -242,7 +249,7 @@ APPLE_GETVAR_PROTOCOL gPrivateVarHandler =
     GetDeviceProps,
 	GetDeviceProps
 };
-#if NOTCLOVER
+#if TEST
 EFI_STATUS EFIAPI
 UnknownHandlerImpl()
 {
@@ -343,6 +350,28 @@ SetPrivateVarProto(IN EFI_HANDLE ImageHandle, EFI_BOOT_SERVICES * bs)
     return EFI_SUCCESS;
 }
 
+CHAR8 *GetSmbiosString (SMBIOS_STRUCTURE_POINTER SmbiosTable,SMBIOS_TABLE_STRING String)
+{
+	CHAR8      *AString;
+	UINT8      Index;
+	
+	Index = 1;
+	AString = (CHAR8 *)(SmbiosTable.Raw + SmbiosTable.Hdr->Length);
+	while (Index != String) {
+		while (*AString != 0) {
+			AString ++;
+		}
+		AString ++;
+		if (*AString == 0) {
+			return AString;
+		}
+		Index ++;
+	}
+	
+	return AString;
+}
+
+
 EFI_STATUS EFIAPI
 SetProperVariables(IN EFI_HANDLE ImageHandle,  IN EFI_SYSTEM_TABLE *SystemTable)
 {
@@ -409,17 +438,16 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
     UINT64              TSCFrequency;
     UINT64              CPUFrequency;
 	//Slice 
-	BOOLEAN                           Find4 = FALSE;
-	BOOLEAN                           Find128 = FALSE;
+	UINT8								Find = 0;
+	EFI_SMBIOS_HANDLE					SmbiosHandle;
+	EFI_SMBIOS_PROTOCOL					*Smbios;
+	EFI_SMBIOS_TABLE_HEADER				*Record;
+	SMBIOS_STRUCTURE_POINTER			SmbiosTable;
 
-	EFI_SMBIOS_HANDLE                 SmbiosHandle;
-	EFI_SMBIOS_PROTOCOL               *Smbios;
-	EFI_SMBIOS_TABLE_HEADER           *Record;
-	//SMBIOS_TABLE_TYPE0                *Type0Record;
-	SMBIOS_TABLE_TYPE128              *Type128Record;
-	SMBIOS_TABLE_TYPE4                *Type4Record;
 	UINT32              vFwFeatures      = 0x80000015;
 	UINT32              vFwFeaturesMask  = 0x800003ff;
+	UINT32				devPathSupportedVal = 1;
+	
 	EFI_RUNTIME_SERVICES * rs = SystemTable->RuntimeServices;
 	gSystemTable = SystemTable;
 	EFI_DATA_HUB_PROTOCOL       *DataHub;
@@ -429,7 +457,6 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
     //
     Status = gBS->LocateProtocol (&gEfiDataHubProtocolGuid, NULL, (VOID**)&DataHub);
     ASSERT_EFI_ERROR (Status);
-	//
 	
     Status = SetProperVariables(ImageHandle, SystemTable);
     ASSERT_EFI_ERROR (Status);
@@ -447,26 +474,49 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 //TODO -add "SystemSerialNumber", "DevicePathsSupported", "system-id"
 // "bootOrder"? "board-id", "system-type"
 	SmbiosHandle = 0;
+	CHAR8 *TmpString;
+	EFI_GUID SystemID;
+	UINT8 SystemType;
 	do {
 		Status = Smbios->GetNext (Smbios, &SmbiosHandle, NULL, &Record, NULL);
 		if (EFI_ERROR(Status)) {
 			break;
 		}
-		
+		if (Record->Type == EFI_SMBIOS_TYPE_SYSTEM_INFORMATION) {
+			SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE1*)Record;
+			TmpString = GetSmbiosString (SmbiosTable, SmbiosTable.Type1->SerialNumber);
+			LogData(DataHub, &gEfiMiscSubClassGuid, L"SystemSerialNumber", &TmpString, AsciiStrLen(TmpString));
+			CopyMem(&SystemID, &SmbiosTable.Type1->Uuid, 16);
+			LogData(DataHub, &gDataHubPlatformGuid, L"system-id", &SystemID, 16);
+			Find |= 1;
+		}
+		if (Record->Type == EFI_SMBIOS_TYPE_BASEBOARD_INFORMATION) {
+			SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE2 *)Record;
+			TmpString = GetSmbiosString (SmbiosTable, SmbiosTable.Type2->ProductName);
+			LogData(DataHub, &gEfiMiscSubClassGuid, L"board-id", &TmpString, AsciiStrLen(TmpString));
+			Find |= 2;
+		}
+		if (Record->Type == EFI_SMBIOS_TYPE_SYSTEM_ENCLOSURE) {
+			SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE3 *)Record;
+			SystemType = (SmbiosTable.Type3->Type >= 8)?2:1;
+			LogData(DataHub, &gDataHubPlatformGuid, L"system-type", &SystemType, 1);
+			Find |= 4;
+		}
+				
 		if (Record->Type == EFI_SMBIOS_TYPE_PROCESSOR_INFORMATION) {
-			Type4Record = (SMBIOS_TABLE_TYPE4 *) Record;
-			CPUFrequency = Type4Record->CurrentSpeed * 1000000ull;
-			TSCFrequency = Type4Record->MaxSpeed * 1000000ull;
-			FSBFrequency = Type4Record->ExternalClock * 1000000ull;
-			Find4 = TRUE;
+			SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE4 *)Record;
+			CPUFrequency = SmbiosTable.Type4->CurrentSpeed * 1000000ull;
+			TSCFrequency = SmbiosTable.Type4->MaxSpeed * 1000000ull;
+			FSBFrequency = SmbiosTable.Type4->ExternalClock * 1000000ull;
+			Find |= 8;
 		}
 		if (Record->Type == 128) {
-			Type128Record = (SMBIOS_TABLE_TYPE128 *) Record;
-			vFwFeatures = Type128Record->FirmwareFeatures;
-			vFwFeaturesMask = Type128Record->FirmwareFeaturesMask;
-			Find128  = TRUE;
+			SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE128 *)Record;
+			vFwFeatures = SmbiosTable.Type128->FirmwareFeatures;
+			vFwFeaturesMask = SmbiosTable.Type128->FirmwareFeaturesMask;
+			Find |= 0x10;
 		}
-	} while (!Find4 || !Find128);
+	} while (Find != 0x1F);
 	
 	Status = rs->SetVariable(L"FirmwareFeatures",
 						 &gEfiAppleNvramGuid,
@@ -477,14 +527,17 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 						 &gEfiAppleNvramGuid,
 						 EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
 						 sizeof(vFwFeaturesMask), &vFwFeaturesMask);
-	
+// Here I want to double this variable to datahub test values
+	LogData(DataHub, &gDataHubOptionsGuid, L"FirmwareFeatures", &vFwFeatures, sizeof(vFwFeatures));
+	LogData(DataHub, &gDataHubPlatformGuid, L"FirmwareFeaturesMask", &vFwFeaturesMask, sizeof(vFwFeaturesMask));	
+	LogData(DataHub, &gDataHubPlatformGuid, L"DevicePathsSupported", &devPathSupportedVal, sizeof(devPathSupportedVal));
 //	
 	Status = CpuUpdateDataHub(DataHub, FSBFrequency, TSCFrequency, CPUFrequency);
     ASSERT_EFI_ERROR (Status);
 
     Status = InitializeConsoleSim(ImageHandle, SystemTable);
     ASSERT_EFI_ERROR (Status);
-/*
+
     Status = gBS->InstallMultipleProtocolInterfaces (
                                                  &ImageHandle,
                                                  &gEfiUnknown1ProtocolGuid,
@@ -492,7 +545,7 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
                                                  NULL
                                                  );
     ASSERT_EFI_ERROR (Status);
-*/
+
     return EFI_SUCCESS;
 }
 

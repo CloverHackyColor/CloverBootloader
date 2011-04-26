@@ -30,6 +30,7 @@ extern UINT8                SmbiosGenDxeStrings[];
 EFI_SMBIOS_PROTOCOL         *gSmbios;
 EFI_HII_HANDLE              gStringHandle;
 UINT32			mTotalSystemMemory;
+UINT16			mHandle3;
 UINT16			mHandle16;
 UINT16			mHandleL1;
 UINT16			mHandleL2;
@@ -185,6 +186,7 @@ InstallProcessorSmbios (  //4
 	}
 	if (SmbiosTable.Type4->ProcessorVersion == 0) {
 		AddBrand = 48;
+		BigSize+=2; //one byte new string and add zero
 	}
 //	if (Size > 0x28) {Size = 0x28;}
 	//Smbios 2.6 has size = 0x2a
@@ -214,7 +216,11 @@ InstallProcessorSmbios (  //4
 	newSmbiosTable.Type4->L2CacheHandle = mHandleL2;
 	newSmbiosTable.Type4->L3CacheHandle = mHandleL3;
 	if (AddBrand) {
-		newSmbiosTable.Type4->ProcessorVersion = 3;
+		newSmbiosTable.Type4->ProcessorVersion = 3; //ugly
+		UINT8 *p = ((UINT8*)newSmbiosTable.Type4);
+		p[BigSize - 3] = 0x43;
+		p[BigSize - 2] = 0;
+		p[BigSize - 1] = 0;
 	}
 	/*
 	 ProcessorCharacteristics ???
@@ -326,6 +332,8 @@ IN VOID                  *Smbios
 								 )
 {
 	SMBIOS_STRUCTURE_POINTER          SmbiosTable;
+	SMBIOS_STRUCTURE_POINTER          newSmbiosTable;
+	UINTN							BigSize;
 	EFI_SMBIOS_HANDLE				Handle;
 	UINTN StringNumber = 0;
 	//
@@ -335,26 +343,30 @@ IN VOID                  *Smbios
 	if (SmbiosTable.Raw == NULL) {
 		return ;
 	}
-	Handle = LogSmbiosData(gSmbios,(UINT8*)SmbiosTable.Type2);
+	BigSize = SmbiosTableLength(SmbiosTable);
+	newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE4*)AllocateZeroPool(BigSize);
+	CopyMem((VOID*)newSmbiosTable.Type2, (VOID*)SmbiosTable.Type2, BigSize);
+	newSmbiosTable.Type2->ChassisHandle = mHandle3;
+	Handle = LogSmbiosData(gSmbios,(UINT8*)newSmbiosTable.Type2);
 	
-	StringNumber = SmbiosTable.Type2->Manufacturer;
+	StringNumber = newSmbiosTable.Type2->Manufacturer;
 	gSmbios->UpdateString(gSmbios,
 						  &Handle,
 						  &StringNumber,
 						  SMboardmanufacter); 
 	//CHAR8* SMboardproduct[8] = { //t2 ProductName
-	StringNumber = SmbiosTable.Type2->ProductName;
+	StringNumber = newSmbiosTable.Type2->ProductName;
 	gSmbios->UpdateString(gSmbios,
 						  &Handle,
 						  &StringNumber,
 						  SMboardproduct[gMacType]); 
 	//SMserial = "W87234JHYA4";  //t1,t2 SerialNumber,
-	StringNumber = SmbiosTable.Type2->SerialNumber;
+	StringNumber = newSmbiosTable.Type2->SerialNumber;
 	gSmbios->UpdateString(gSmbios,
 						  &Handle,
 						  &StringNumber,
 						  SMserial); 
-	StringNumber = SmbiosTable.Type1->Version;
+	StringNumber = newSmbiosTable.Type2->Version;
 	gSmbios->UpdateString(gSmbios,
 						  &Handle,
 						  &StringNumber,
@@ -382,7 +394,7 @@ InstallSystemEnclosureSmbios    (//3
 	//
 	// Log Smbios Record Type3
 	//
-	LogSmbiosData(gSmbios,(UINT8*)SmbiosTable.Type3);
+	mHandle3 = LogSmbiosData(gSmbios,(UINT8*)SmbiosTable.Type3);
 	return ;
 }
 

@@ -54,7 +54,8 @@
 [Guids]
    gEfiProcessorSubClassGuid
    gEfiSmbiosTableGuid
-   
+	gEfiMiscSubClassGuid
+
 [Protocols]
    gEfiDevicePathToTextProtocolGuid
    gEfiDataHubProtocolGuid

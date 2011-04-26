@@ -76,10 +76,10 @@ INF  UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
 INF  DuetPkg/cloverefiboot/CpuDxe/Cpu.inf
 
 	#DataHub
-#INF  DuetPkg/cloverefiboot/VBoxAppleSim/VBoxAppleSim.inf
+INF  DuetPkg/cloverefiboot/VBoxAppleSim/VBoxAppleSim.inf
 INF IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
-INF IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
-INF EdkCompatibilityPkg/Compatibility/PiSmbiosRecordOnDataHubSmbiosRecordThunk/PiSmbiosRecordOnDataHubSmbiosRecordThunk.inf
+#INF IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
+#INF EdkCompatibilityPkg/Compatibility/PiSmbiosRecordOnDataHubSmbiosRecordThunk/PiSmbiosRecordOnDataHubSmbiosRecordThunk.inf
 	# foreign file system support
 #INF  DuetPkg/cloverefiboot/VBoxFsDxe/VBoxHfs.inf
 #INF  DuetPkg/cloverefiboot/VBoxFsDxe/VBoxFsDxe.inf
@@ -93,7 +93,7 @@ INF  PcAtChipsetPkg/8254TimerDxe/8254Timer.inf
 INF  PcAtChipsetPkg/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
 INF  DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
 INF  DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
-INF  IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
+#INF  IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
 INF  IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
 INF  DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
 

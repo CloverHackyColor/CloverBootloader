@@ -52,11 +52,12 @@ EFI_SUBCLASS_TYPE1_HEADER mCpuDataRecordHeader = {
     EFI_SUBCLASS_INSTANCE_NON_APPLICABLE, // SubInstance
     0                                     // RecordType, Initialize later
 };
-
+/*
 EFI_GUID gDataHubPlatformGuid = {
     0x64517cc8, 0x6561, 0x4051, {0xb0, 0x3c, 0x59, 0x64, 0xb6, 0x0f, 0x4c, 0x7a }
 };
-
+*/
+extern EFI_GUID gDataHubPlatformGuid;
 #pragma pack(1)
 typedef struct {
     EFI_SUBCLASS_TYPE1_HEADER   Hdr;			/* 0x48 */

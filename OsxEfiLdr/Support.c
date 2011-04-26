@@ -166,19 +166,19 @@ GenMemoryMap (
   for (Index = 0; Index < BiosMemoryMap->MemoryMapSize / sizeof(BIOS_MEMORY_MAP_ENTRY); Index++) {
 
     switch (BiosMemoryMap->MemoryMapEntry[Index].Type) { 
-    case (INT15_E820_AddressRangeMemory):
+    case (INT15_E820_AddressRangeMemory):  //1 kMemoryRangeUsable
       Type = EfiConventionalMemory;
       Attr = EFI_MEMORY_WB;
       break;
-    case (INT15_E820_AddressRangeReserved):
+    case (INT15_E820_AddressRangeReserved): //2 (Do not use)
       Type = EfiReservedMemoryType;
       Attr = EFI_MEMORY_UC;
       break;
-    case (INT15_E820_AddressRangeACPI):
+    case (INT15_E820_AddressRangeACPI):  //3
       Type = EfiACPIReclaimMemory;
       Attr = EFI_MEMORY_WB;
       break;
-    case (INT15_E820_AddressRangeNVS):
+    case (INT15_E820_AddressRangeNVS):  //4 (Do not use)
       Type = EfiACPIMemoryNVS;
       Attr = EFI_MEMORY_UC;
       break;
@@ -186,7 +186,7 @@ GenMemoryMap (
       // We should not get here, according to ACPI 2.0 Spec.
       // BIOS behaviour of the Int15h, E820h
       Type = EfiReservedMemoryType;
-      Attr = EFI_MEMORY_UC;
+      Attr = EFI_MEMORY_UC;  //(Do not use)
       break;
     }
     if (Type == EfiConventionalMemory) {
