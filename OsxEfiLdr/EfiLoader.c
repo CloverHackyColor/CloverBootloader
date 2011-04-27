@@ -53,15 +53,15 @@ EfiLoader (
   EFILDRHANDOFF         Handoff;
 
   ClearScreen();
- /* 
+ 
   PrintHeader ('A');
   
-  AsciiSPrint (PrintBuffer, 256, "Enter DUET Loader...\n");
-  PrintString (PrintBuffer);
+//  AsciiSPrint (PrintBuffer, 256, "Enter DUET Loader...\n");
+//  PrintString (PrintBuffer);
 
-  AsciiSPrint (PrintBuffer, 256, "BiosMemoryMapBaseAddress = 0x%x\n", BiosMemoryMapBaseAddress);
-  PrintString (PrintBuffer);
-*/
+//  AsciiSPrint (PrintBuffer, 256, "BiosMemoryMapBaseAddress = 0x%x\n", BiosMemoryMapBaseAddress);
+//  PrintString (PrintBuffer);
+
   //
   // Add all EfiConventionalMemory descriptors to the table.  If there are partial pages, then
   // round the start address up to the next page, and round the length down to a page boundry.
@@ -190,6 +190,7 @@ EfiLoader (
   if (EFI_ERROR (Status)) {
 //    AsciiSPrint (PrintBuffer, 256, "Fail to load and relocate DxeIpl PE image!\n");
 //    PrintString (PrintBuffer);
+	  PrintHeader ('X');
     SystemHang();
   }
 //  AsciiSPrint (PrintBuffer, 256, "DxeIpl PE image is successed loaded at 0x%x, entry=0x%x\n",
@@ -259,9 +260,9 @@ PrintHeader ('E');
   //
   // Display the table of memory descriptors.
   //
-
-//  PrintString("\nEFI Memory Descriptors\n");   
 /*
+  PrintString("\nEFI Memory Descriptors\n");   
+
   {
   UINTN Index;
   for (Index = 0; Index < NumberOfMemoryMapEntries; Index++) {

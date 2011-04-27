@@ -81,7 +81,8 @@ CopyRecord(PLATFORM_DATA* Rec, const CHAR16* Name, VOID* Val, UINT32 ValLen)
 
 EFI_STATUS EFIAPI
 LogData(EFI_DATA_HUB_PROTOCOL       *DataHub,
-		EFI_GUID					*Guid,
+		EFI_GUID					*Guid1,
+		EFI_GUID					*Guid2,
         CHAR16                      *Name,
         VOID                        *Data,
         UINT32                       DataSize)
@@ -98,8 +99,9 @@ LogData(EFI_DATA_HUB_PROTOCOL       *DataHub,
     RecordSize = CopyRecord(PlatformData, Name, Data, DataSize);
     Status = DataHub->LogData (
 							   DataHub,
-							   Guid,					/* DataRecordGuid */
-							   &gDataHubPlatformGuid,     /* ProducerName */
+							   Guid1,					/* DataRecordGuid */
+							   Guid2,					/* ProducerName */
+							   //&gDataHubPlatformGuid,     							   
 							   EFI_DATA_RECORD_CLASS_DATA,
 							   PlatformData,
 							   RecordSize
@@ -117,11 +119,15 @@ CpuUpdateDataHub(EFI_DATA_HUB_PROTOCOL       *DataHub,
                  UINT64              CPUFrequency)
 {
     // Log data in format some OSes like
-    LogData(DataHub, &gEfiProcessorSubClassGuid, L"FSBFrequency", &FSBFrequency, sizeof(FSBFrequency));
+    LogData(DataHub, &gEfiProcessorSubClassGuid, &gDataHubPlatformGuid,
+			L"FSBFrequency", &FSBFrequency, sizeof(FSBFrequency));
     // do that twice, as last variable read not really accounted for
-    LogData(DataHub, &gEfiProcessorSubClassGuid, L"FSBFrequency", &FSBFrequency, sizeof(FSBFrequency));
-    LogData(DataHub, &gEfiProcessorSubClassGuid, L"TSCFrequency", &TSCFrequency, sizeof(TSCFrequency));
-    LogData(DataHub, &gEfiProcessorSubClassGuid, L"CPUFrequency", &CPUFrequency, sizeof(CPUFrequency));
+    LogData(DataHub, &gEfiProcessorSubClassGuid, &gDataHubPlatformGuid,
+			L"FSBFrequency", &FSBFrequency, sizeof(FSBFrequency));
+    LogData(DataHub, &gEfiProcessorSubClassGuid, &gDataHubPlatformGuid,
+			L"TSCFrequency", &TSCFrequency, sizeof(TSCFrequency));
+    LogData(DataHub, &gEfiProcessorSubClassGuid, &gDataHubPlatformGuid,
+			L"CPUFrequency", &CPUFrequency, sizeof(CPUFrequency));
 
     return EFI_SUCCESS;
 }

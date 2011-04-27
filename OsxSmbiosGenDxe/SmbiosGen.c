@@ -344,7 +344,7 @@ IN VOID                  *Smbios
 		return ;
 	}
 	BigSize = SmbiosTableLength(SmbiosTable);
-	newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE4*)AllocateZeroPool(BigSize);
+	newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE2*)AllocateZeroPool(BigSize);
 	CopyMem((VOID*)newSmbiosTable.Type2, (VOID*)SmbiosTable.Type2, BigSize);
 	newSmbiosTable.Type2->ChassisHandle = mHandle3;
 	Handle = LogSmbiosData(gSmbios,(UINT8*)newSmbiosTable.Type2);
@@ -381,6 +381,10 @@ InstallSystemEnclosureSmbios    (//3
   )
 {
 	SMBIOS_STRUCTURE_POINTER          SmbiosTable;
+	SMBIOS_STRUCTURE_POINTER          newSmbiosTable;
+	UINTN							BigSize;
+//	EFI_SMBIOS_HANDLE				Handle;
+	UINTN							StringNumber = 0;
 	gMobile = FALSE;
 	//
 	// SystemEnclosure (TYPE 3)
@@ -390,11 +394,32 @@ InstallSystemEnclosureSmbios    (//3
 		//    DEBUG ((EFI_D_ERROR, "SmbiosTable: Type 3 (SystemEnclosure) not found!\n"));
 		return ;
 	}
-	gMobile = ((SmbiosTable.Type3->Type) >= 8);
+	BigSize = SmbiosTableLength(SmbiosTable);
+	newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE3*)AllocateZeroPool(BigSize);
+	CopyMem((VOID*)newSmbiosTable.Type3, (VOID*)SmbiosTable.Type3, BigSize);
+	
+	
+	gMobile = ((newSmbiosTable.Type3->Type) >= 8);
 	//
 	// Log Smbios Record Type3
 	//
 	mHandle3 = LogSmbiosData(gSmbios,(UINT8*)SmbiosTable.Type3);
+	StringNumber = newSmbiosTable.Type3->Manufacturer;
+	gSmbios->UpdateString(gSmbios,
+						  &mHandle3,
+						  &StringNumber,
+						  SMboardmanufacter); 
+	StringNumber = newSmbiosTable.Type3->Version;
+	gSmbios->UpdateString(gSmbios,
+						  &mHandle3,
+						  &StringNumber,
+						  SMboardproduct[4]); 
+	StringNumber = newSmbiosTable.Type3->SerialNumber;
+	gSmbios->UpdateString(gSmbios,
+						  &mHandle3,
+						  &StringNumber,
+						  SMserial); 
+	
 	return ;
 }
 

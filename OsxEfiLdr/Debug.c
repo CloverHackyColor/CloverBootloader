@@ -19,7 +19,7 @@ Revision History:
 --*/
 #include "EfiLdr.h"
 #include "Debug.h"
-#include <Library/SerialPortLib.h>
+//#include <Library/SerialPortLib.h>
 
 UINT8 *mCursor;
 UINT8 mHeaderIndex = 10;
