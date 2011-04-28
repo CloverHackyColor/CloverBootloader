@@ -66,7 +66,7 @@ InitializeConsoleSim (IN EFI_HANDLE           ImageHandle,
                       IN EFI_SYSTEM_TABLE     *SystemTable);
 
 EFI_GUID gDataHubPlatformGuid = {0x64517cc8, 0x6561, 0x4051, {0xb0, 0x3c, 0x59, 0x64, 0xb6, 0x0f, 0x4c, 0x7a}};
-EFI_GUID gDataHubOptionsGuid  = {0x0021001C, 0x3CE3, 0x41F8, {0x99, 0xc6, 0xec, 0xf5, 0xda, 0x75, 0x47, 0x31}};
+//EFI_GUID gDataHubOptionsGuid  = {0x0021001C, 0x3CE3, 0x41F8, {0x99, 0xc6, 0xec, 0xf5, 0xda, 0x75, 0x47, 0x31}};
 
 #define TEST 1
 
@@ -99,40 +99,7 @@ EFI_GUID gDataHubOptionsGuid  = {0x0021001C, 0x3CE3, 0x41F8, {0x99, 0xc6, 0xec, 
  8ECE08D8-A6D4-430B-A7B0-2DF318E7884A  //gfx-saved-config-restore-status
  78EE99FB-6A5E-4186-97DE-CD0ABA345A74  //before device-properties
 
-
-//example by Kabyl 
- VOID SetupPlatformInfo(VOID)
-{
-	UINT64 FsbFrequency = 200000000;
-	UINT32 DevicePathsSupported = 1;
-	
-	LogData(DataHub, FsbFrequencyPropertyGuid, L"FSBFrequency", &FsbFrequency, sizeof(UINT64));
-	LogData(DataHub, DevicePathsSupportedGuid, L"DevicePathsSupported", &DevicePathsSupported, sizeof(UINT32));
-}
  */
-/*
- *   Internal Functions                                                        *
- */
-#if NOTCLOVER
-static UINT32
-GetVmVariable(UINT32 Variable, CHAR8* Buffer, UINT32 Size )
-{
-    UINT32 VarLen = 0;
-
-/*
- int i;
-    ASMOutU32(EFI_INFO_PORT, Variable);
-    VarLen = ASMInU32(EFI_INFO_PORT);
-
-    for (i=0; i < VarLen && i < Size; i++)
-    {
-        Buffer[i] = ASMInU8(EFI_INFO_PORT);
-    }
-*/
-//#warning  function GetVmVariable should be implemented through DeviceTree	
-    return VarLen;
-}
-#endif
 
 /*
  * GUIDs
@@ -219,11 +186,11 @@ GetDeviceProps(IN     APPLE_GETVAR_PROTOCOL   *This,
         return EFI_BUFFER_TOO_SMALL;
 
 	Buffer[0] = (CHAR8)(mCount & 0xFF);
-	Buffer[1] = 0x35;  
+//	Buffer[1] = 0x35;  
 	CopyMem(&Buffer[1], &mAddr,  sizeof(UINTN));
 	return EFI_SUCCESS;
 }
-#if TEST2
+#if TEST
 EFI_STATUS EFIAPI
 GetDeviceProps2(IN     APPLE_GETVAR_PROTOCOL   *This,
                IN     CHAR8                   *Buffer,
@@ -276,7 +243,7 @@ IMPL_STUB(Proto, 9)
 /* array of pointers to function */  // 18 procs
 EFI_STATUS (EFIAPI *gUnknownProtoHandler[])() =
 {
-    ProtoUnknown0,
+    GetDeviceProps2,
     ProtoUnknown1,
     ProtoUnknown2,
     ProtoUnknown3,
@@ -402,21 +369,16 @@ SetProperVariables(IN EFI_HANDLE ImageHandle,  IN EFI_SYSTEM_TABLE *SystemTable)
 */
      // -legacy acpi=0xffffffff acpi_debug=0xfffffff panic_io_port=0xef11 io=0xfffffffe trace=4096  io=0xffffffef -v serial=2 serialbaud=9600
      // 0x10 makes kdb default, thus 0x15e for kdb, 0x14e for gdb
-
-     //static const CHAR8  vBootArgs[]      = "debug=0x15e keepsyms=1 acpi=0xffffffff acpi_debug=0xff acpi_level=7 -v -x32 -s"; // or just "debug=0x8 -legacy"
-     // 0x14e for serial output
-     //static const CHAR8  vDefBootArgs[]      = "debug=0x146 keepsyms=1 -v -serial=0x1";
+     //static const CHAR8  vBootArgs[]      = "debug=0x15e keepsyms=1 acpi=0xffffffff acpi_debug=0xff acpi_level=7 -v -x32 -s";
+	// or just "debug=0x8 -legacy",  0x14e for serial output
+     
      static const CHAR8  vDefBootArgs[]      = "-v arch=i386 kernel=mach_kernel";
      CHAR8  vBootArgs[256];
      UINT32 BootArgsLen;
 
-	BootArgsLen = 0; 
-	//GetVmVariable(EFI_INFO_INDEX_BOOT_ARGS, vBootArgs, sizeof vBootArgs);
-     if (BootArgsLen <= 1)
-     {
-         BootArgsLen = sizeof vDefBootArgs;
-         CopyMem(vBootArgs, vDefBootArgs, BootArgsLen);
-     }
+	BootArgsLen = sizeof vDefBootArgs;
+    CopyMem(vBootArgs, vDefBootArgs, BootArgsLen);
+
      Status = rs->SetVariable(L"BackgroundClear",
                           &gEfiAppleNvramGuid,
                           /* EFI_VARIABLE_NON_VOLATILE | */ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
@@ -469,7 +431,6 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 	EFI_RUNTIME_SERVICES * rs = SystemTable->RuntimeServices;
 	gSystemTable = SystemTable;
 	EFI_DATA_HUB_PROTOCOL       *DataHub;
-//    PLATFORM_DATA              *PlatformData;
     //
     // Locate DataHub protocol.
     //
@@ -506,8 +467,8 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 			LogData(DataHub, &gEfiMiscSubClassGuid, &gDataHubPlatformGuid,
 					L"SystemSerialNumber", &TmpString, AsciiStrLen(TmpString));
 			CopyMem(&SystemID, &SmbiosTable.Type1->Uuid, 16);
-//			LogData(DataHub, &gEfiMiscSubClassGuid, &gDataHubPlatformGuid,
-//					L"system-id", &SystemID, 16);
+			LogData(DataHub, &gEfiMiscSubClassGuid, &gDataHubPlatformGuid,
+					L"system-id", &SystemID, 16);
 			Status = rs->SetVariable(L"system-id",
 									 &gEfiAppleBootGuid,
 									 EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
@@ -519,8 +480,8 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 		if (Record->Type == EFI_SMBIOS_TYPE_BASEBOARD_INFORMATION) {
 			SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE2 *)Record;
 			TmpString = GetSmbiosString (SmbiosTable, SmbiosTable.Type2->ProductName);
-//			LogData(DataHub, &gEfiAppleBootGuid, &gDataHubPlatformGuid,
-//					L"board-id", &TmpString, AsciiStrLen(TmpString));
+			LogData(DataHub, &gEfiAppleBootGuid, &gDataHubPlatformGuid,
+					L"board-id", &TmpString, AsciiStrLen(TmpString));
 			Status = rs->SetVariable(L"board-id",
 									 &gEfiAppleBootGuid,
 									 EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,

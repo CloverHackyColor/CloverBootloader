@@ -218,9 +218,10 @@ InstallProcessorSmbios (  //4
 	if (AddBrand) {
 		newSmbiosTable.Type4->ProcessorVersion = 3; //ugly
 		UINT8 *p = ((UINT8*)newSmbiosTable.Type4);
-		p[BigSize - 3] = 0x43;
-		p[BigSize - 2] = 0;
-		p[BigSize - 1] = 0;
+		while ((*p++!=0) && (*p!=0)) {}
+		*p++ = 0x58;
+		*p++ = 0;
+		*p   = 0;
 	}
 	/*
 	 ProcessorCharacteristics ???
@@ -935,7 +936,7 @@ SmbiosGenEntrypoint (
 				gCpuType = 0x101;
 				break;				
 			case CPU_MODEL_YONAH: 
-				gMacType = MacBook11;
+				gMacType = MacBookPro51; //MacBook11; //Probe to install Lion
 				gCpuType = 0x201;
 				break;
 			case CPU_MODEL_MEROM: 
