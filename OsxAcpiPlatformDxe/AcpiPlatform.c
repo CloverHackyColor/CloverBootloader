@@ -106,7 +106,7 @@ InstallLegacyTables (
 	
 	TableHandle = 0;
 	AcpiInstance = EFI_ACPI_TABLE_INSTANCE_FROM_THIS(AcpiTable);
-	Rsdt = (RSDT_TABLE *)(Rsdp->RsdtAddress); //(UINTN)
+	Rsdt = (RSDT_TABLE *)(UINTN)(Rsdp->RsdtAddress); //(UINTN)
 	Xsdt = NULL;
 	if ((Rsdp->Revision >= 2) && (Rsdp->XsdtAddress < (UINT64)(UINTN)-1)) {
 		Xsdt = (XSDT_TABLE *)(UINTN)Rsdp->XsdtAddress;
@@ -185,7 +185,7 @@ InstallLegacyTables (
 */ 
 	}
 	if (Xsdt && Rsdt) {
-		Rsdt->Entry = (UINT32)Fadt; //Copy Fadt from XSDT
+		Rsdt->Entry = (UINT32)(UINTN)Fadt; //Copy Fadt from XSDT
 	}
 	if (!Xsdt && Rsdt) {
 		//Install Rsdt

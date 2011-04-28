@@ -231,7 +231,7 @@ fsw_status_t fsw_block_get(struct VOLSTRUCTNAME *vol, fsw_u32 phys_bno, fsw_u32 
         for (i = vol->bcache_size; i < new_bcache_size; i++) {
             new_bcache[i].refcount = 0;
             new_bcache[i].cache_level = 0;
-            (unsigned long)new_bcache[i].phys_bno = FSW_INVALID_BNO;
+            new_bcache[i].phys_bno = (fsw_u32)FSW_INVALID_BNO;
             new_bcache[i].data = NULL;
         }
         i = vol->bcache_size;
@@ -242,7 +242,7 @@ fsw_status_t fsw_block_get(struct VOLSTRUCTNAME *vol, fsw_u32 phys_bno, fsw_u32 
         vol->bcache = new_bcache;
         vol->bcache_size = new_bcache_size;
     }
-    (unsigned long)vol->bcache[i].phys_bno = FSW_INVALID_BNO;
+    vol->bcache[i].phys_bno = (fsw_u32)FSW_INVALID_BNO;
 
     // read the data
     if (vol->bcache[i].data == NULL) {

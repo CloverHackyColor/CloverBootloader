@@ -222,7 +222,7 @@
   #MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
   UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
   #UefiCpuPkg/CpuDxe/CpuDxe.inf
-  DuetPkg/cloverefiboot/CpuDxe/Cpu.inf
+  #DuetPkg/cloverefiboot/CpuDxe/Cpu.inf
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
   DuetPkg/AcpiResetDxe/Reset.inf
   DuetPkg/LegacyMetronome/Metronome.inf
@@ -239,9 +239,9 @@
   
   	# foreign file system support
 	#DuetPkg/cloverefiboot/VBoxFsDxe/VBoxHfs.inf
-	DuetPkg/cloverefiboot/VBoxFsDxe/VBoxIso9660.inf
+	#DuetPkg/cloverefiboot/VBoxFsDxe/VBoxIso9660.inf
 	#DuetPkg/cloverefiboot/VBoxFsDxe/VBoxFsDxe.inf
-	DuetPkg/cloverefiboot/VBoxFsDxe/VBoxExt2.inf
+	#DuetPkg/cloverefiboot/VBoxFsDxe/VBoxExt2.inf
 
   IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
   IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
@@ -283,14 +283,14 @@
   DuetPkg/cloverefiboot/OsxPartitionDxe/PartitionDxe.inf
 
   # Bios Thunk
-  DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
+  #DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
 
   #
   # Sample Application
   #
   #MdeModulePkg/Application/HelloWorld/HelloWorld.inf
   # MdeModulePkg/Application/VariableInfo/VariableInfo.inf
-  iboot-cl/Slice/iboot.inf
+  #iboot-cl/Slice/iboot.inf
   #rEFIt_UEFI/refit.inf
 
 ###################################################################################################

@@ -74,7 +74,7 @@ INF  MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
 INF  UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
 #INF  UefiCpuPkg/CpuDxe/CpuDxe.inf
 INF  DuetPkg/cloverefiboot/CpuDxe/Cpu.inf
-INF EdkCompatibilityPkg/Compatibility/MpServicesOnFrameworkMpServicesThunk/MpServicesOnFrameworkMpServicesThunk.inf
+#INF EdkCompatibilityPkg/Compatibility/MpServicesOnFrameworkMpServicesThunk/MpServicesOnFrameworkMpServicesThunk.inf
 
 	#DataHub
 INF  DuetPkg/cloverefiboot/VBoxAppleSim/VBoxAppleSim.inf
@@ -100,7 +100,7 @@ INF  DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
   # IDE/AHCI Support
 #INF  DuetPkg/cloverefiboot/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
 #INF  DuetPkg/cloverefiboot/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
-#INF  DuetPkg/SataControllerDxe/SataControllerDxe.inf
+INF  DuetPkg/SataControllerDxe/SataControllerDxe.inf
 INF  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
 INF  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
 #INF  MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
