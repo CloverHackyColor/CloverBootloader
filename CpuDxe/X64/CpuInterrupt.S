@@ -31,15 +31,15 @@ ASM_PFX(mExceptionCodeSize): .long  9
   ASM_GLOBAL ASM_PFX(InitDescriptor)
 
 ASM_PFX(InitDescriptor):
-        movq    $GDT_BASE,%rax              # EAX=PHYSICAL address of gdt
-        movq    %rax, gdtr + 2              # Put address of gdt into the gdtr
-        lgdt    gdtr
+        movq    GDT_BASE(%rip),%rax              # EAX=PHYSICAL address of gdt
+        movq    %rax, (gdtr + 2)(%rip)              # Put address of gdt into the gdtr
+        lgdt    gdtr(%rip)
         movq    $0x18, %rax
-        movq    %rax, %gs
-        movq    %rax, %fs
-        movq    $IDT_BASE,%rax              # EAX=PHYSICAL address of idt
-        movq    %rax, idtr + 2              # Put address of idt into the idtr
-        lidt    idtr
+        movl    %eax, %gs
+        movl    %eax, %fs
+        movq    IDT_BASE(%rip),%rax              # EAX=PHYSICAL address of idt
+        movq    %rax, (idtr + 2)(%rip)              # Put address of idt into the idtr
+        lidt    idtr(%rip)
         ret
 
 # VOID
@@ -207,75 +207,75 @@ INTUnknown:
   # macro .rept isn't used here because Apple GAS compiler doesn't support it.
   # No. 1
     push     $0x0      # push error code place holder on the stack
-#    push    xxh     # push vector number
-    .byte    0x6a
-    .byte    ( . - INTUnknown - 3 ) / 9 + 20 # vector number
+    push    $20     # push vector number
+#    .byte    0x6a
+#    .byte    ( . - INTUnknown(%rip) - 3 ) / 9 + 20 # vector number
     JmpCommonIdtEntry
   # No. 2
     push     $0x0      # push error code place holder on the stack
-#    push    xxh     # push vector number
-    .byte    0x6a
-    .byte    ( . - INTUnknown - 3 ) / 9 + 20 # vector number
+    push    $21     # push vector number
+#    .byte    0x6a
+#    .byte    ( . - INTUnknown(%rip) - 3 ) / 9 + 20 # vector number
     JmpCommonIdtEntry
   # No. 3
     push     $0x0      # push error code place holder on the stack
-#    push    xxh     # push vector number
-    .byte    0x6a
-    .byte    ( . - INTUnknown - 3 ) / 9 + 20 # vector number
+    push    $22     # push vector number
+#    .byte    0x6a
+#    .byte    ( . - INTUnknown - 3 ) / 9 + 20 # vector number
     JmpCommonIdtEntry
   # No. 4
     push     $0x0      # push error code place holder on the stack
-#    push    xxh     # push vector number
-    .byte    0x6a
-    .byte    ( . - INTUnknown - 3 ) / 9 + 20 # vector number
+    push    $23     # push vector number
+#    .byte    0x6a
+#    .byte    ( . - INTUnknown - 3 ) / 9 + 20 # vector number
     JmpCommonIdtEntry
   # No. 5
     push     $0x0      # push error code place holder on the stack
-#    push    xxh     # push vector number
-    .byte    0x6a
-    .byte    ( . - INTUnknown - 3 ) / 9 + 20 # vector number
+    push    $24     # push vector number
+#    .byte    0x6a
+#    .byte    ( . - INTUnknown - 3 ) / 9 + 20 # vector number
     JmpCommonIdtEntry
   # No. 6
     push     $0x0      # push error code place holder on the stack
-#    push    xxh     # push vector number
-    .byte    0x6a
-    .byte    ( . - INTUnknown - 3 ) / 9 + 20 # vector number
+    push    $25     # push vector number
+#    .byte    0x6a
+#    .byte    ( . - INTUnknown - 3 ) / 9 + 20 # vector number
     JmpCommonIdtEntry
   # No. 7
     push     $0x0      # push error code place holder on the stack
-#    push    xxh     # push vector number
-    .byte    0x6a
-    .byte    ( . - INTUnknown - 3 ) / 9 + 20 # vector number
+    push    $26     # push vector number
+#    .byte    0x6a
+#    .byte    ( . - INTUnknown - 3 ) / 9 + 20 # vector number
     JmpCommonIdtEntry
   # No. 8
     push     $0x0      # push error code place holder on the stack
-#    push    xxh     # push vector number
-    .byte    0x6a
-    .byte    ( . - INTUnknown - 3 ) / 9 + 20 # vector number
+    push    $27     # push vector number
+#    .byte    0x6a
+#    .byte    ( . - INTUnknown - 3 ) / 9 + 20 # vector number
     JmpCommonIdtEntry
   # No. 9
     push     $0x0      # push error code place holder on the stack
-#    push    xxh     # push vector number
-    .byte    0x6a
-    .byte    ( . - INTUnknown - 3 ) / 9 + 20 # vector number
+    push    $28     # push vector number
+#    .byte    0x6a
+#    .byte    ( . - INTUnknown - 3 ) / 9 + 20 # vector number
     JmpCommonIdtEntry
   # No. 10
     push     $0x0      # push error code place holder on the stack
-#    push    xxh     # push vector number
-    .byte    0x6a
-    .byte    ( . - INTUnknown - 3 ) / 9 + 20 # vector number
+    push    $29     # push vector number
+#    .byte    0x6a
+#    .byte    ( . - INTUnknown - 3 ) / 9 + 20 # vector number
     JmpCommonIdtEntry
   # No. 11
     push     $0x0      # push error code place holder on the stack
-#    push    xxh     # push vector number
-    .byte    0x6a
-    .byte    ( . - INTUnknown - 3 ) / 9 + 20 # vector number
+    push    $30     # push vector number
+#    .byte    0x6a
+#    .byte    ( . - INTUnknown - 3 ) / 9 + 20 # vector number
     JmpCommonIdtEntry
   # No. 12
     push     $0x0      # push error code place holder on the stack
-#    push    xxh     # push vector number
-    .byte    0x6a
-    .byte    ( . - INTUnknown - 3 ) / 9 + 20 # vector number
+    push    $31     # push vector number
+#    .byte    0x6a
+#    .byte    ( . - INTUnknown - 3 ) / 9 + 20 # vector number
     JmpCommonIdtEntry
 
 
@@ -334,13 +334,13 @@ commonIdtEntry:
   push    %rax                      # for ss
   movzx   4*8(%rbp), %rax
   push    %rax                      # for cs
-  movq    %ds, %rax
+  movl    %ds, %eax
   push    %rax
-  movq    %es, %rax
+  movl    %es, %eax
   push    %rax
-  movq    %fs, %rax
+  movl    %fs, %eax
   push    %rax
-  movq    %gs, %rax
+  movl    %gs, %eax
   push    %rax
 
 ## UINT64  Rip#
@@ -484,9 +484,9 @@ ExceptionDone:
   # mov     fs, rax # not for fs
   # (X64 will not use fs and gs, so we do not restore it)
   pop     %rax
-  movq    %rax, %es
+  movl    %eax, %es    #movq    %rax, %es  #Slice
   pop     %rax
-  movq    %rax, %ds
+  movl    %eax, %ds
   pop     4*8(%rbp)       # for cs
   pop     7*8(%rbp)       # for ss
 

@@ -204,7 +204,7 @@ fsw_status_t fsw_block_get(struct VOLSTRUCTNAME *vol, fsw_u32 phys_bno, fsw_u32 
 
     // find a free entry in the cache table
     for (i = 0; i < vol->bcache_size; i++) {
-        if (vol->bcache[i].phys_bno == FSW_INVALID_BNO)
+        if ((unsigned long)vol->bcache[i].phys_bno == FSW_INVALID_BNO)
             break;
     }
     if (i >= vol->bcache_size) {
@@ -231,7 +231,7 @@ fsw_status_t fsw_block_get(struct VOLSTRUCTNAME *vol, fsw_u32 phys_bno, fsw_u32 
         for (i = vol->bcache_size; i < new_bcache_size; i++) {
             new_bcache[i].refcount = 0;
             new_bcache[i].cache_level = 0;
-            new_bcache[i].phys_bno = FSW_INVALID_BNO;
+            (unsigned long)new_bcache[i].phys_bno = FSW_INVALID_BNO;
             new_bcache[i].data = NULL;
         }
         i = vol->bcache_size;
@@ -242,7 +242,7 @@ fsw_status_t fsw_block_get(struct VOLSTRUCTNAME *vol, fsw_u32 phys_bno, fsw_u32 
         vol->bcache = new_bcache;
         vol->bcache_size = new_bcache_size;
     }
-    vol->bcache[i].phys_bno = FSW_INVALID_BNO;
+    (unsigned long)vol->bcache[i].phys_bno = FSW_INVALID_BNO;
 
     // read the data
     if (vol->bcache[i].data == NULL) {

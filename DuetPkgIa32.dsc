@@ -219,7 +219,6 @@
   }
   #  DuetPkg/cloverefiboot/OsxBdsDxe/BdsDxe.inf {
   IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf {
-
     <LibraryClasses>
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
   }
