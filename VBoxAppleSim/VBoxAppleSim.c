@@ -84,6 +84,7 @@ EFI_GUID gDataHubPlatformGuid = {0x64517cc8, 0x6561, 0x4051, {0xb0, 0x3c, 0x59, 
  EFI_GUID gEfiMemorySubClassGuid			= {0x4E8F4EBB, 0x64B9, 0x4e05, {0x9B, 0x18, 0x4C, 0xFE, 0x49, 0x23, 0x50, 0x97}}; -
  EFI_GUID gNotifyMouseActivity				= {0xF913C2C2, 0x5351, 0x4fdb, {0x93, 0x44, 0x70, 0xFF, 0xED, 0xB8, 0x42, 0x25}}; -
  EFI_GUID gConsoleControlGuid				= {0xf42f7782, 0x012e, 0x4c12, {0x99, 0x56, 0x49, 0xf9, 0x43, 0x04, 0xf7, 0x21}}; +
+  -> gEfiConsoleControlProtocolGuid
  EFI_GUID gDevicePropertiesGuid				= {0x91BD12FE, 0xF6C3, 0x44FB, {0xA5, 0xB7, 0x51, 0x22, 0xAB, 0x30, 0x3A, 0xE0}}; + 
  EFI_GUID gEfiAppleBootGuid					= {0x7C436110, 0xAB2A, 0x4BBB, {0xA8, 0x80, 0xFE, 0x41, 0x99, 0x5C, 0x9F, 0x82}}; +//gEfiAppleVarGuid -> gAppleEFINVRAMGuid
  EFI_GUID gAppleScreenInfoGuid				= {0xe316e100, 0x0751, 0x4c49, {0x90, 0x56, 0x48, 0x6c, 0x7e, 0x47, 0x29, 0x03}}; +
@@ -93,12 +94,16 @@ EFI_GUID gDataHubPlatformGuid = {0x64517cc8, 0x6561, 0x4051, {0xb0, 0x3c, 0x59, 
  EFI_GUID FsbFrequencyPropertyGuid			= {0xD1A04D55, 0x75B9, 0x41A3, {0x90, 0x36, 0x8F, 0x4A, 0x26, 0x1C, 0xBB, 0xA2}}; //not found in boot.efi
  EFI_GUID DevicePathsSupportedGuid			= {0x5BB91CF7, 0xD816, 0x404B, {0x86, 0x72, 0x68, 0xF2, 0x7F, 0x78, 0x31, 0xDC}}; //not found
  EFI_GUID gNotifyExitBootServices			= {0xd2b2b828, 0x0826, 0x48a7, {0xb3, 0xdf, 0x98, 0x3c, 0x00, 0x60, 0x24, 0xf0}};
+ // -> gEfiStatusCodeRuntimeProtocolGuid
   //Unknown protocols from Kabyl
  5B213447-6E73-4901-A4F1-B864F3B7A172  //efiboot loaded from device
  8FFEEB3A-4C98-4630-803F-740F9567091D  //recovery-boot, boot-args, efi-boot-kernelcache-data, efi-boot-file-data  /options?
  8ECE08D8-A6D4-430B-A7B0-2DF318E7884A  //gfx-saved-config-restore-status
  78EE99FB-6A5E-4186-97DE-CD0ABA345A74  //before device-properties
-
+ //
+ E3E9FD4F-1C1D-48AC-A86406E06547ADEE - unk_214E0 sub_15370+7E gAppleUn5Guid
+ 9BB9FD8E-5AAA-4ECD-AA5B5AC1B6136070 - unk_21510 sub_15500+E gAppleMkextProtocolGuid
+ 
  */
 
 /*
@@ -115,7 +120,7 @@ EFI_GUID gEfiAppleBootGuid = {
 EFI_GUID gDevicePropertiesGuid = {
     0x91BD12FE, 0xF6C3, 0x44FB, {0xA5, 0xB7, 0x51, 0x22, 0xAB, 0x30, 0x3A, 0xE0}
 };
-
+// used for boot.efi GUI but we can't use it
 EFI_GUID gAppleScreenInfoGuid = {
 	0xe316e100, 0x0751, 0x4c49, {0x90, 0x56, 0x48, 0x6c, 0x7e, 0x47, 0x29, 0x03}
 };
@@ -414,23 +419,23 @@ EFI_STATUS EFIAPI
 VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 {
     EFI_STATUS          Status;
-    UINT64              FSBFrequency;
-    UINT64              TSCFrequency;
-    UINT64              CPUFrequency;
+    UINT64              FSBFrequency =  200000000ull;
+    UINT64              TSCFrequency = 2400000000ull;
+    UINT64              CPUFrequency = 2400000000ull;
 	//Slice 
 	UINT8								Find = 0;
 	EFI_SMBIOS_HANDLE					SmbiosHandle;
 	EFI_SMBIOS_PROTOCOL					*Smbios;
 	EFI_SMBIOS_TABLE_HEADER				*Record;
 	SMBIOS_STRUCTURE_POINTER			SmbiosTable;
-
+	EFI_DATA_HUB_PROTOCOL				*DataHub;
 	UINT32              vFwFeatures      = 0x80000015;
 	UINT32              vFwFeaturesMask  = 0x800003ff;
 	UINT32				devPathSupportedVal = 1;
 	
 	EFI_RUNTIME_SERVICES * rs = SystemTable->RuntimeServices;
 	gSystemTable = SystemTable;
-	EFI_DATA_HUB_PROTOCOL       *DataHub;
+
     //
     // Locate DataHub protocol.
     //
@@ -443,10 +448,6 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
     Status = SetPrivateVarProto(ImageHandle, gBS);
     ASSERT_EFI_ERROR (Status);
 
-	//initial values
-	FSBFrequency =  200000000ull;
-	TSCFrequency = 2400000000ull;
-	CPUFrequency = 2400000000ull;
 //Slice - take values from DMI
 	Status = gBS->LocateProtocol (&gEfiSmbiosProtocolGuid, NULL, (VOID **) &Smbios);
 	ASSERT_EFI_ERROR (Status);
@@ -469,11 +470,14 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 			CopyMem(&SystemID, &SmbiosTable.Type1->Uuid, 16);
 			LogData(DataHub, &gEfiMiscSubClassGuid, &gDataHubPlatformGuid,
 					L"system-id", &SystemID, 16);
-			Status = rs->SetVariable(L"system-id",
+/*			Status = rs->SetVariable(L"system-id",
 									 &gEfiAppleBootGuid,
 									 EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
 									 16, &SystemID);
-			
+*/			
+			TmpString = GetSmbiosString (SmbiosTable, SmbiosTable.Type1->ProductName);
+			LogData(DataHub, &gEfiMiscSubClassGuid, &gDataHubPlatformGuid,
+					L"Model", &TmpString, AsciiStrLen(TmpString));
 			
 			Find |= 1;
 		}
@@ -482,10 +486,11 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 			TmpString = GetSmbiosString (SmbiosTable, SmbiosTable.Type2->ProductName);
 			LogData(DataHub, &gEfiAppleBootGuid, &gDataHubPlatformGuid,
 					L"board-id", &TmpString, AsciiStrLen(TmpString));
-			Status = rs->SetVariable(L"board-id",
+/*			Status = rs->SetVariable(L"board-id",
 									 &gEfiAppleBootGuid,
 									 EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
 									 AsciiStrLen(TmpString), &TmpString);
+ */
 			Find |= 2;
 		}
 		if (Record->Type == EFI_SMBIOS_TYPE_SYSTEM_ENCLOSURE) {

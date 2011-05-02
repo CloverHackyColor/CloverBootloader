@@ -88,7 +88,8 @@ INF IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 INF  DuetPkg/cloverefiboot/HFSPlus/HFSPlus.inf
 
 INF  PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
-INF  DuetPkg/AcpiResetDxe/Reset.inf
+#INF  DuetPkg/AcpiResetDxe/Reset.inf
+INF  PcAtChipsetPkg/KbcResetDxe/Reset.inf
 INF  DuetPkg/LegacyMetronome/Metronome.inf
 INF  PcAtChipsetPkg/8254TimerDxe/8254Timer.inf
 INF  PcAtChipsetPkg/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
@@ -97,6 +98,7 @@ INF  DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
 #INF  IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
 INF  IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
 INF  DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
+#INF  DuetPkg/cloverefiboot/IntelGmaDxe/Gop.inf
 
   # IDE/AHCI Support
 INF  DuetPkg/cloverefiboot/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
@@ -114,7 +116,7 @@ INF  MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
 INF  MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
 INF  MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
 INF  MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
-INF  MdeModulePkg/Bus/Usb/UsbMouseDxe/UsbMouseDxe.inf
+#INF  MdeModulePkg/Bus/Usb/UsbMouseDxe/UsbMouseDxe.inf
 
   # ISA Support
 INF  PcAtChipsetPkg/IsaAcpiDxe/IsaAcpi.inf

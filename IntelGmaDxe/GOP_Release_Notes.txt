@@ -1,0 +1,123 @@
+================================================================================
+UEFI Graphic Output Protocol (GOP) Sample Driver  11/2/2010
+=============================================================================
+DISCLAIMER
+=============================================================================
+LICENSE   BDS license http://opensource.org/licenses/bsd-license.php
+================================================================================                     
+Copyright (c) 2010, Intel Coporation
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are 
+permitted provided that the following conditions are met:
+
+Redistributions of source code must retain the above copyright notice, this list of 
+conditions and the following disclaimer.
+
+Redistributions in binary form must reproduce the above copyright notice, this list 
+of conditions and the following disclaimer in the documentation and/or other materials 
+provided with the distribution.
+
+Neither the name of the Intel Corporation nor the names of its contributors may be used to 
+endorse or promote products derived from this software without specific prior written 
+permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, 
+OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+OF SUCH DAMAGE.
+
+Intel Corporation assumes no responsibility or liability for any errors or 
+inaccuracies that may appear in this document or any software that may be 
+provided in association with this document.
+
+================================================================================
+                              ADDITIONAL DISCLAIMER
+================================================================================
+This code is based upon the EDK code base as found on the UEFI Open Source 
+Community Website (URL:www.tianocore.org).
+                       
+=============================================================================
+Contents
+=============================================================================
+      1.  Features
+      2.  Build Guide
+      3.  Notes and Known Issues
+      4.  Files in the release package
+=============================================================================
+1. Features
+=============================================================================
+   Main Features
+
+    1) Implement UEFI GOP protocol.
+  
+    2) Support Intel® Atom™ Platform. 
+       - Support Intel® Atom™ platform VGA Port.
+       - Support Intel® Atom™ platform LVDS Port.
+
+    3) Resolution Support.
+       - 640x480, 32bit, 60Hz.
+       - 800x600, 32bit, 60Hz.
+       - 1024x768, 32bit, 60Hz.
+
+=============================================================================
+2. Build Guide
+=============================================================================
+3.1. Setup Build Environment
+   1) Install Visual Studio 2005 or Visual Studio .NET 2003 in your build machine.
+ 
+3.2. Extract the Files 
+
+   1)  Building this driver is same with build other UEFI driver.
+       - Download the extract EDK 1.06 package to a folder, for example C:\Framework
+	Link for EDK 1.06 package:
+            http://sourceforge.net/projects/efidevkit/files/Releases/Official%20Releases/Edk%201.06.zip/download
+   2)  Extract the GOP driver to a package folder, for example C:\Framework\Edk\Sample\Universal\GOP.
+   3)  Update the build descript file "platfrom.dsc" (e.g. C:\Framewrok\Edk\Sample\Platform\Nt32\Build\nt32.dsc) , 
+            add the GOP build item. for example "Sample\Universal\Gop\Dxe\GOP.inf" in the components section
+            of the nt32.dsc file.
+
+       
+3.3. Build Steps 
+   1) Open Visual Studio 2005 Command Prompt, Change the work directory to build directory.
+      For example, "cd C:\Framework\Edk\Sample\Platform\Nt32\" 
+      and "set EDK_SOURCE=C:\Framework\Edk".
+   2) Check <EFI_SOURCE>\Edk\Sample\Platform\Nt32\Build\Config.env: 
+      - Set "USE_VC8 = YES" for Visual Studio 2005 build.
+      - Set "USE_VC8 = NO" for Visual Studio .NET 2003 build.
+   3) Type "Build" at the command prompt
+      
+
+   Note: To build this driver, please refer to the "EDK Getting Started Guide.pdf" found on the following link:
+       http://sourceforge.net/projects/efidevkit/files/Edk%20Getting%20Started%20Guide%5B1%5D.0.41.pdf/download
+  
+============================================================================
+4. Notes and Known Issues
+============================================================================
+ 
+    1) Video card is platform related. Each video card has its own config method. This sample 
+       driver is developed for the Intel® Atom™ Platform. It may not work 
+       on other platforms. Developer may need make necessory update for other platforms.
+    
+    2) This GOP Driver is support 3 resolutions. If the display device is not support these 
+       resolutions. The display devices maybe not work correctly when switch to unsupported resolution.
+      
+    3) The GOP driver is a UEFI driver, so it should be built in UEFI environment. If building in EFI environment, it will be failed.
+       
+============================================================================
+5. Files in the release package
+============================================================================
+
+		1) GOP Release_Notes.txt
+		     This file.
+		     
+		2) GOP.zip
+		     GOP sample driver source code.
+		     
+		

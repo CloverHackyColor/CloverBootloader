@@ -47,6 +47,7 @@ enum MachineTypes {
 	MacBook11 = 0,
 	MacBook21,
 	MacBook41,
+	MacBook51,
 	MacBookPro51,
 	MacBookAir11,
 	MacMini21,
@@ -54,10 +55,11 @@ enum MachineTypes {
 	MacPro31
 };
 
-CHAR8* SMbiosversion[8] = {  //t0 BiosVersion
+CHAR8* SMbiosversion[9] = {  //t0 BiosVersion
 	"MB11.0061.B03.0809221748",
 	"MB21.88Z.00A5.B07.0706270922",
 	"MB41.88Z.0073.B00.0809221748",
+	"MB51.88Z.008E.02B.0809221748",
 	"MBP51.88Z.00AC.B03.0906151647",
 	"MBA11.88Z.00BB.B00.0712201139",
 	"MM21.88Z.009A.B00.0706281359",
@@ -65,10 +67,11 @@ CHAR8* SMbiosversion[8] = {  //t0 BiosVersion
 	"MP31.88Z.006C.B05.0802291410"
 };
 
-CHAR8* SMboardproduct[8] = { //t2 ProductName
+CHAR8* SMboardproduct[9] = { //t2 ProductName
 	"Mac-F4208DA9",
 	"Mac-F4208CA9",
 	"Mac-F42D89C8",
+	"Mac-F227BEC8", //"Mac-F22788C8",
 	"Mac-F22587C8",
 	"Mac-F42C8CC8",
 	"Mac-F4208EAA",
@@ -76,14 +79,16 @@ CHAR8* SMboardproduct[8] = { //t2 ProductName
 	"Mac-F4208DC8"
 };
 
-CHAR8* SMserial = "W87234JHYA4";  //t1,t2 SerialNumber, 
+CHAR8* SMserial  = "W87234JHYA4";  //t1,t2 SerialNumber, "W874725NZ66"
+CHAR8* SMserial2 = "W874725NZ66";
 CHAR8* SMbiosvendor = "Apple Inc.";  //t0 Vendor
 CHAR8* SMboardmanufacter = "Apple Computer, Inc."; //t1, t2 Manufacturer
 
-CHAR8* SMproductname[8] = { //t1 ProductName
+CHAR8* SMproductname[9] = { //t1 ProductName
 	"MacBook1,1",
 	"MacBook2,1",
 	"MacBook4,1",
+	"MacBook5,1",
 	"MacBookPro5,1",
 	"MacBookAir1,1",
 	"MacMini2,1",
@@ -91,7 +96,8 @@ CHAR8* SMproductname[8] = { //t1 ProductName
 	"MacPro3,1"
 };
 
-CHAR8* Family[8] = {  //t1 Family
+CHAR8* Family[9] = {  //t1 Family
+	"MacBook",
 	"MacBook",
 	"MacBook",
 	"MacBook",
@@ -124,8 +130,8 @@ GetSmbiosTablesFromHob (
 
 UINTN
 SmbiosTableLength (
-				   IN SMBIOS_STRUCTURE_POINTER SmbiosTable
-				   )
+		IN SMBIOS_STRUCTURE_POINTER SmbiosTable
+		)
 {
 	CHAR8  *AChar;
 	UINTN  Length;
@@ -167,12 +173,11 @@ InstallProcessorSmbios (  //4
 		return ;
 	}
 	Size = SmbiosTable.Type4->Hdr.Length;
-/*	StrStart = (CHAR8*)SmbiosTable.Type4+Size;
-	for (BigSize = Size; !(*StrStart == 0 && *(StrStart + 1) == 0); BigSize++) {
-		StrStart++;
-	}	
-	BigSize++;*/
 	BigSize = SmbiosTableLength(SmbiosTable);
+	if (SmbiosTable.Type4->ProcessorVersion == 0) {
+		AddBrand = 48;
+	}
+	
 	Socket = GetSmbiosString (SmbiosTable, SmbiosTable.Type4->Socket);
 	Manuf  = GetSmbiosString (SmbiosTable, SmbiosTable.Type4->ProcessorManufacture);
 	Ver    = GetSmbiosString (SmbiosTable, SmbiosTable.Type4->ProcessorVersion);
@@ -184,16 +189,13 @@ InstallProcessorSmbios (  //4
 		Asset = GetSmbiosString (SmbiosTable, SmbiosTable.Type4->AssetTag);
 		Part  = GetSmbiosString (SmbiosTable, SmbiosTable.Type4->PartNumber);
 	}
-	if (SmbiosTable.Type4->ProcessorVersion == 0) {
-		AddBrand = 48;
-		BigSize+=2; //one byte new string and add zero
-	}
 //	if (Size > 0x28) {Size = 0x28;}
 	//Smbios 2.6 has size = 0x2a
 	newSize = sizeof(SMBIOS_TABLE_TYPE4);
 	newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE4*)AllocateZeroPool(BigSize + newSize - Size + AddBrand);
 	CopyMem((VOID*)newSmbiosTable.Type4, (VOID*)SmbiosTable.Type4, Size); //copy old data
 	CopyMem((CHAR8*)newSmbiosTable.Type4+newSize, (CHAR8*)SmbiosTable.Type4+Size, BigSize - Size);
+	
 	// we make SMBios v2.6 while Apple needs 2.5
 	newSmbiosTable.Type4->Hdr.Length = newSize;
 	gBusSpeed = newSmbiosTable.Type4->ExternalClock;
@@ -217,11 +219,15 @@ InstallProcessorSmbios (  //4
 	newSmbiosTable.Type4->L3CacheHandle = mHandleL3;
 	if (AddBrand) {
 		newSmbiosTable.Type4->ProcessorVersion = 3; //ugly
-		UINT8 *p = ((UINT8*)newSmbiosTable.Type4);
-		while ((*p++!=0) && (*p!=0)) {}
-		*p++ = 0x58;
-		*p++ = 0;
-		*p   = 0;
+		//UpdateString is not working, do this manually
+		UINT8* p = (UINT8*)newSmbiosTable.Type4 + newSize;
+		while ((*p++ != 0) || (*p != 0)) {}
+		for (Size = 48; Size>0; Size--) {
+			if ((BrandStr[Size] !=0) && (BrandStr[Size] != 32)) {
+				break;
+			}
+		}
+		CopyMem(p, BrandStr, Size);
 	}
 	/*
 	 ProcessorCharacteristics ???
@@ -257,7 +263,7 @@ InstallProcessorSmbios (  //4
 	//
 	// Set ProcessorVersion string
 	//
-	AString = GetSmbiosString (newSmbiosTable, SmbiosTable.Type4->ProcessorVersion);
+	AString = GetSmbiosString (newSmbiosTable, newSmbiosTable.Type4->ProcessorVersion);
 	UString = AllocateZeroPool ((AsciiStrLen(AString) + 1) * sizeof(CHAR16));
 	ASSERT (UString != NULL);
 	AsciiStrToUnicodeStr (AString, UString);
@@ -936,8 +942,8 @@ SmbiosGenEntrypoint (
 				gCpuType = 0x101;
 				break;				
 			case CPU_MODEL_YONAH: 
-				gMacType = MacBookPro51; //MacBook11; //Probe to install Lion
-				gCpuType = 0x201;
+				gMacType = MacBook51; //MacBook11; //Probe to install Lion
+				gCpuType = 0x201;  // or 0x101???
 				break;
 			case CPU_MODEL_MEROM: 
 				gMacType = MacBook21;
