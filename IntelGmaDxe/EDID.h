@@ -28,9 +28,36 @@ Revision History
 #ifndef _EDID_H_
 #define _EDID_H_
 
-#include "Tiano.h"
+//#include "Tiano.h"
+#include <Uefi.h>
 
-#define EDID_HEADER_SIGNATURE   0x00FFFFFFFFFFFF00
+//
+// Driver Consumed Protocol Prototypes
+//
+#include <Protocol/DevicePath.h>
+#include <Protocol/PciIo.h>
+#include <Protocol/DriverBinding.h>
+#include <Protocol/ComponentName.h>
+#include <Protocol/ComponentName2.h>
+#include <Protocol/GraphicsOutput.h>
+#include <Protocol/UgaDraw.h>
+//#include <Protocol/VgaMiniPort.h>
+//#include <Protocol/Legacy8259.h>
+#include <Protocol/EdidActive.h>
+#include <Protocol/EdidDiscovered.h>
+#include <Protocol/DevicePath.h>
+
+#include <Library/UefiLib.h>
+#include <Library/DebugLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/BaseMemoryLib.h>
+#include <Library/DevicePathLib.h>
+#include <Library/MemoryAllocationLib.h>
+
+#include <IndustryStandard/Pci.h>
+
+
+#define EDID_HEADER_SIGNATURE   0x00FFFFFFFFFFFF00ull
 #define SUPPORTED_EDID_VERSION  1
 #define SUPPORTED_EDID_REVISION 3
 

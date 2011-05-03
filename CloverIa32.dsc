@@ -65,7 +65,7 @@
   PeCoffLib|DuetPkg/cloverefiboot/VBoxPeCoffLib/VBoxPeCoffLib.inf
   PeCoffExtraActionLib|MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
   PeCoffGetEntryPointLib|MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
-  ResetSystemLib|PcAtChipsetPkg/Library/ResetSystemLib/ResetSystemLib.inf
+  #ResetSystemLib|PcAtChipsetPkg/Library/ResetSystemLib/ResetSystemLib.inf
   #
   # UEFI & PI
   #
@@ -233,7 +233,7 @@
   #UefiCpuPkg/CpuDxe/CpuDxe.inf
   DuetPkg/cloverefiboot/CpuDxe/Cpu.inf
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
-  #DuetPkg/AcpiResetDxe/Reset.inf
+  DuetPkg/AcpiResetDxe/Reset.inf
   DuetPkg/LegacyMetronome/Metronome.inf
  #EdkCompatibilityPkg/Compatibility/MpServicesOnFrameworkMpServicesThunk/MpServicesOnFrameworkMpServicesThunk.inf
 
@@ -257,7 +257,7 @@
 
   IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
   IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
-  #DuetPkg/cloverefiboot/IntelGmaDxe/Gop.inf
+  DuetPkg/cloverefiboot/IntelGmaDxe/Gop.inf
 
   # IDE/AHCI Support
   DuetPkg/cloverefiboot/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
@@ -278,7 +278,7 @@
 
   # ISA Support
   PcAtChipsetPkg/IsaAcpiDxe/IsaAcpi.inf
-  PcAtChipsetPkg/KbcResetDxe/Reset.inf
+  #PcAtChipsetPkg/KbcResetDxe/Reset.inf
   IntelFrameworkModulePkg/Bus/Isa/IsaBusDxe/IsaBusDxe.inf
   #IntelFrameworkModulePkg/Bus/Isa/IsaSerialDxe/IsaSerialDxe.inf
   IntelFrameworkModulePkg/Bus/Isa/Ps2KeyboardDxe/Ps2keyboardDxe.inf
@@ -305,7 +305,7 @@
   #
   #MdeModulePkg/Application/HelloWorld/HelloWorld.inf
   # MdeModulePkg/Application/VariableInfo/VariableInfo.inf
-  iboot-cl/Slice/iboot.inf
+  iboot-efi/branches/Slice/iboot.inf
   #rEFIt_UEFI/refit.inf
 
 ###################################################################################################

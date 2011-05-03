@@ -301,7 +301,7 @@ ReadEDID (
     //
     // Make a copy of the 256 byte EDID data to ensure integrity of at least one EDID block
     //
-    EfiCommonLibCopyMem (&EdidData[256], &EdidData[0], 256);
+    CopyMem (&EdidData[256], &EdidData[0], 256);
 
     //
     // Search for the EDID signature
@@ -309,7 +309,7 @@ ReadEDID (
     ValidEdid = &EdidData[0];
     Signature = EDID_HEADER_SIGNATURE;
     for (Index = 0; Index < 256; Index++, ValidEdid++) {
-      if (EfiCompareMem (ValidEdid, &Signature, 8) == 0) {
+      if (CompareMem (ValidEdid, &Signature, 8) == 0) {
         break;
       }
     }
@@ -320,7 +320,7 @@ ReadEDID (
       return EFI_UNSUPPORTED;
     }
 
-    *EDIDBlock = EfiLibAllocateCopyPool (
+    *EDIDBlock = AllocateCopyPool (
                   sizeof (EDID_BLOCK),
                   ValidEdid
                   );
@@ -460,7 +460,7 @@ ParseEDIDTable (
   }
 
   ValidNumber = 0;
-  EfiZeroMem (ValidEdidTiming, sizeof (VALID_EDID_TIMING));
+  ZeroMem (ValidEdidTiming, sizeof (VALID_EDID_TIMING));
 
   if ((EDIDTable->ET1 != 0) || (EDIDTable->ET2 != 0) || (EDIDTable->ET3 != 0)) {
     //

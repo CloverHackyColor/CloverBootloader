@@ -21,9 +21,14 @@
 #--*/
 
 [defines]
-BASE_NAME            = Gop
+INF_VERSION                    = 0x00010005
+BASE_NAME            = IntelGop
 FILE_GUID            = 048B4BA8-3666-4fa7-A7ED-D75D9BA6358D
-COMPONENT_TYPE       = BS_DRIVER
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = GraphicsOutputDriverEntryPoint
+#COMPONENT_TYPE       = BS_DRIVER
+
 
 [Packages]
   DuetPkg/DuetPkg.dec
@@ -31,25 +36,42 @@ COMPONENT_TYPE       = BS_DRIVER
   IntelFrameworkPkg/IntelFrameworkPkg.dec
 
 
-[sources.common]
+[Sources]
   Gop.c
-  Gop.h
+#  Gop.h
   GraphicsOutput.c
   VideoModes.c
   EDID.c
-  EDID.h
+#  EDID.h
   ComponentName.c
-  CpuSupport.h
+#  CpuSupport.h
 
-[sources.ia32,sources.x64]
+[Sources.IA32]
   Ia32/CpuSupport.c
 
-[libraries.common]
-  EfiProtocolLib
-  EfiDriverLib
+[LibraryClasses]
+  UefiBootServicesTableLib
+  MemoryAllocationLib
+  BaseMemoryLib
+  UefiLib
+  UefiDriverEntryPoint
 
-[libraries.ia32,libraries.x64]
-  CPUIa32Lib
+[Protocols]
+  gEfiPciIoProtocolGuid
+#  gEfiVgaMiniPortProtocolGuid
+  gEfiEdidDiscoveredProtocolGuid
+  gEfiEdidActiveProtocolGuid
+
+[Depex]
+  TRUE
+
+
+#[libraries.common]
+#  EfiProtocolLib
+#  EfiDriverLib
+
+#[libraries.ia32,libraries.x64]
+#  CPUIa32Lib
 
 #[includes.common]
 # $(EDK_SOURCE)\Foundation\Efi
@@ -61,10 +83,10 @@ COMPONENT_TYPE       = BS_DRIVER
 #  $(EDK_SOURCE)\Foundation\Framework\Include
 #  $(EDK_SOURCE)\Foundation\Cpu\Pentium\Include
 #  $(EDK_SOURCE)\Foundation\Include\IndustryStandard
-  $(EDK_SOURCE)\Foundation\Core\Dxe
-  $(EDK_SOURCE)\Foundation\Library\Dxe\Include
+#  $(EDK_SOURCE)\Foundation\Core\Dxe
+#  $(EDK_SOURCE)\Foundation\Library\Dxe\Include
   
 
-[nmake.common]
-  IMAGE_ENTRY_POINT=GraphicsOutputDriverEntryPoint
+#[nmake.common]
+#  IMAGE_ENTRY_POINT=GraphicsOutputDriverEntryPoint
 

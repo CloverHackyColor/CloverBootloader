@@ -25,7 +25,7 @@ Revision History:
 #ifndef _EFI_CPU_SUPPORT_H_
 #define _EFI_CPU_SUPPORT_H_
 
-#include "Tiano.h"
+#include <Uefi.h>
 
 VOID
 FlushDataCache (

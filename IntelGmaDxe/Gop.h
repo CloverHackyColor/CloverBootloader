@@ -28,15 +28,45 @@ Revision History
 #ifndef _EFI_GOP_H_
 #define _EFI_GOP_H_
 
-#include "Tiano.h"
-#include "Pci22.h"
-#include "EfiDriverLib.h"
+//#include "Tiano.h"
+//#include "Pci22.h"
+//#include "EfiDriverLib.h"
+#include <Uefi.h>
+
+//
+// Driver Consumed Protocol Prototypes
+//
+#include <Protocol/DevicePath.h>
+#include <Protocol/PciIo.h>
+#include <Protocol/DriverBinding.h>
+#include <Protocol/ComponentName.h>
+#include <Protocol/ComponentName2.h>
+#include <Protocol/GraphicsOutput.h>
+#include <Protocol/UgaDraw.h>
+//#include <Protocol/VgaMiniPort.h>
+//#include <Protocol/Legacy8259.h>
+#include <Protocol/EdidActive.h>
+#include <Protocol/EdidDiscovered.h>
+#include <Protocol/DevicePath.h>
+
+#include <Library/UefiLib.h>
+#include <Library/DebugLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/BaseMemoryLib.h>
+#include <Library/DevicePathLib.h>
+#include <Library/MemoryAllocationLib.h>
+
+#include <IndustryStandard/Pci.h>
+
+# define EFI_SIGNATURE_32(a, b, c, d) SIGNATURE_32(a, b, c, d)
+/*
 #include EFI_PROTOCOL_DEFINITION (DriverBinding)
 #include EFI_PROTOCOL_DEFINITION (DevicePath)
 #include EFI_PROTOCOL_DEFINITION (PciIo)
 #include EFI_PROTOCOL_DEFINITION (GraphicsOutput)
 #include EFI_PROTOCOL_DEFINITION (EdidDiscovered)
 #include EFI_PROTOCOL_DEFINITION (EdidActive)
+ */
 
 //
 // Helper Macros
@@ -58,11 +88,11 @@ Revision History
 // Global Variables
 //
 extern EFI_DRIVER_BINDING_PROTOCOL gDriverBinding;
-#if (EFI_SPECIFICATION_VERSION >= 0x00020000)
-extern EFI_COMPONENT_NAME2_PROTOCOL gComponentName;
-#else
+//#if (EFI_SPECIFICATION_VERSION >= 0x00020000)
+extern EFI_COMPONENT_NAME2_PROTOCOL gComponentName2;
+//#else
 extern EFI_COMPONENT_NAME_PROTOCOL  gComponentName;
-#endif
+//#endif
 
 //
 // Intel Graphical Mode Data

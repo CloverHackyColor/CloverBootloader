@@ -113,7 +113,7 @@ MODE_FORMAT DS_0_0_0_0[] = {
 //
 // Make sure there are NUM_DS_ENTRIES in the structure
 //
-C_ASSERT(sizeof (DS_0_0_0_0) == NUM_DS_ENTRIES * sizeof (MODE_FORMAT));
+//C_ASSERT(sizeof (DS_0_0_0_0) == NUM_DS_ENTRIES * sizeof (MODE_FORMAT));
 
 //
 // 640x480 Modes 60Hz
@@ -201,7 +201,7 @@ MODE_FORMAT DS_640_480_32_60[] = {
     FALSE
   },
 };
-C_ASSERT(sizeof (DS_640_480_32_60) == NUM_DS_ENTRIES * sizeof (MODE_FORMAT));
+//C_ASSERT(sizeof (DS_640_480_32_60) == NUM_DS_ENTRIES * sizeof (MODE_FORMAT));
 
 //
 // 800x600 Modes 60Hz
@@ -289,7 +289,7 @@ MODE_FORMAT DS_800_600_32_60[] = {
     FALSE
   },
 };
-C_ASSERT(sizeof (DS_800_600_32_60) == NUM_DS_ENTRIES * sizeof (MODE_FORMAT));
+//C_ASSERT(sizeof (DS_800_600_32_60) == NUM_DS_ENTRIES * sizeof (MODE_FORMAT));
 
 //
 // 1024x768 Modes 60Hz
@@ -377,7 +377,7 @@ MODE_FORMAT DS_1024_768_32_60[] = {
     FALSE
   },
 };
-C_ASSERT(sizeof (DS_1024_768_32_60) == NUM_DS_ENTRIES * sizeof (MODE_FORMAT));
+//C_ASSERT(sizeof (DS_1024_768_32_60) == NUM_DS_ENTRIES * sizeof (MODE_FORMAT));
 
 //
 // Generic shutdown controller;  this is used to turn off the controller

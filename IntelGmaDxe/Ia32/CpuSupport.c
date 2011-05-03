@@ -22,8 +22,10 @@ Revision History:
 
 --*/
 
-#include "Tiano.h"
-#include "CpuIA32.h"
+//#include "Tiano.h"
+//#include "CpuIA32.h"
+#include <Library/BaseLib.h>
+
 
 VOID
 FlushDataCache (
@@ -31,5 +33,6 @@ FlushDataCache (
   IN UINT64                        Length
   )
 {
-  EfiWbinvd ();
+	AsmWbinvd ();
+ // EfiWbinvd ();
 }

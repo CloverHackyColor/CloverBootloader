@@ -15,10 +15,12 @@ Module Name:
   ComponentName.c
 
 Abstract:
-
+//Slice 2011 - adaptation for UEFI2
 --*/
 
 #include "Gop.h"
+
+
 
 //
 // EFI Component Name Functions
@@ -26,7 +28,7 @@ Abstract:
 EFI_STATUS
 EFIAPI
 ComponentNameGetDriverName (
-  IN  EFI_COMPONENT_NAME2_PROTOCOL *This,
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
   IN  CHAR8                        *Language,
   OUT CHAR16                       **DriverName
   );
@@ -34,7 +36,7 @@ ComponentNameGetDriverName (
 EFI_STATUS
 EFIAPI
 ComponentNameGetControllerName (
-  IN  EFI_COMPONENT_NAME2_PROTOCOL                                       *This,
+  IN  EFI_COMPONENT_NAME_PROTOCOL                                       *This,
   IN  EFI_HANDLE                                                         ControllerHandle,
   IN  EFI_HANDLE                                                         ChildHandle        OPTIONAL,
   IN  CHAR8                                                              *Language,
@@ -44,16 +46,22 @@ ComponentNameGetControllerName (
 //
 // EFI Component Name Protocol
 //
-EFI_COMPONENT_NAME2_PROTOCOL    gComponentName = {
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL    gComponentName = {
   ComponentNameGetDriverName,
   ComponentNameGetControllerName,
-  LANGUAGE_CODE_ENGLISH
+  "eng"
+};
+
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL    gComponentName2 = {
+	(EFI_COMPONENT_NAME2_GET_DRIVER_NAME) ComponentNameGetDriverName,
+	(EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) ComponentNameGetControllerName,
+	"en"
 };
 
 STATIC EFI_UNICODE_STRING_TABLE mDriverNameTable[] = {
   {
-    LANGUAGE_CODE_ENGLISH,
-    L"Intel(R) GOP Driver"
+    "eng;en",
+    (CHAR16 *)L"Intel(R) GOP Driver"
   },
   {
     NULL,
@@ -63,8 +71,8 @@ STATIC EFI_UNICODE_STRING_TABLE mDriverNameTable[] = {
 
 STATIC EFI_UNICODE_STRING_TABLE mControllerNameTable[] = {
   {
-    LANGUAGE_CODE_ENGLISH,
-    L"Intel(R) Embedded Graphics Controller"
+    "eng;en",
+    (CHAR16 *)L"Intel(R) Embedded Graphics Controller"
   },
   {
     NULL,
@@ -74,8 +82,8 @@ STATIC EFI_UNICODE_STRING_TABLE mControllerNameTable[] = {
 
 STATIC EFI_UNICODE_STRING_TABLE mChildNameTable[] = {
   {
-    LANGUAGE_CODE_ENGLISH,
-    L"Intel(R) Embedded Graphics Controller Display Device #0"
+    "eng;en",
+    (CHAR16 *)L"Intel(R) Embedded Graphics Controller Display Device #0"
   },
   {
     NULL,
@@ -86,7 +94,7 @@ STATIC EFI_UNICODE_STRING_TABLE mChildNameTable[] = {
 EFI_STATUS
 EFIAPI
 ComponentNameGetDriverName (
-  IN  EFI_COMPONENT_NAME2_PROTOCOL *This,
+  IN  EFI_COMPONENT_NAME_PROTOCOL *This,
   IN  CHAR8                        *Language,
   OUT CHAR16                       **DriverName
   )
@@ -117,18 +125,19 @@ ComponentNameGetDriverName (
 
 --*/
 {
-  return EfiLibLookupUnicodeString (
-          Language,
-          gComponentName.SupportedLanguages,
-          mDriverNameTable,
-          DriverName
-          );
+	return LookupUnicodeString2 (
+								 Language,
+								 This->SupportedLanguages,
+								 mDriverNameTable,
+								 DriverName,
+								 (BOOLEAN)(This == &gComponentName)
+								 );
 }
 
 EFI_STATUS
 EFIAPI
 ComponentNameGetControllerName (
-  IN  EFI_COMPONENT_NAME2_PROTOCOL                                       *This,
+  IN  EFI_COMPONENT_NAME_PROTOCOL                                       *This,
   IN  EFI_HANDLE                                                         ControllerHandle,
   IN  EFI_HANDLE                                                         ChildHandle        OPTIONAL,
   IN  CHAR8                                                              *Language,
@@ -187,7 +196,7 @@ ComponentNameGetControllerName (
   //
   // Make sure this driver is currently managing ControllHandle
   //
-  Status = EfiLibTestManagedDevice (
+  Status = EfiTestManagedDevice (
              ControllerHandle,
              gDriverBinding.DriverBindingHandle,
              &gEfiPciIoProtocolGuid
@@ -197,15 +206,17 @@ ComponentNameGetControllerName (
   }
 
   if (ChildHandle == NULL) {
-    return EfiLibLookupUnicodeString (
-             Language,
-             gComponentName.SupportedLanguages,
-             mControllerNameTable,
-             ControllerName
-             );
+	  return LookupUnicodeString2 (
+								   Language,
+								   This->SupportedLanguages,
+								   mControllerNameTable,
+								   ControllerName,
+								   (BOOLEAN)(This == &gComponentName)
+								   );
+	  
   }
 
-  Status = EfiLibTestChildHandle (
+  Status = EfiTestChildHandle (
              ControllerHandle,
              ChildHandle,
              &gEfiPciIoProtocolGuid
@@ -213,11 +224,12 @@ ComponentNameGetControllerName (
   if (EFI_ERROR (Status)) {
     return Status;
   }
-
-  return EfiLibLookupUnicodeString (
-           Language,
-           gComponentName.SupportedLanguages,
-           mChildNameTable,
-           ControllerName
-           );
+	return LookupUnicodeString2 (
+								 Language,
+								 This->SupportedLanguages,
+								 mChildNameTable,
+								 ControllerName,
+								 (BOOLEAN)(This == &gComponentName)
+								 );
+	
 }

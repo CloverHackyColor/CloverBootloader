@@ -114,7 +114,7 @@ Routine Description:
   Status = gBS->AllocatePool (
                   EfiBootServicesData,
                   sizeof (EFI_GRAPHICS_OUTPUT_MODE_INFORMATION),
-                  Info
+                  (VOID**)&Info
                   );
   if (EFI_ERROR (Status)) {
     return Status;
@@ -333,7 +333,7 @@ Returns:
   // We would not want a timer based event (Cursor, ...) to come in while we are
   // doing this operation.
   //
-  OriginalTPL = gBS->RaiseTPL (EFI_TPL_NOTIFY);
+  OriginalTPL = gBS->RaiseTPL (TPL_NOTIFY);
 
   switch (BltOperation) {
   case EfiBltVideoToBltBuffer:
@@ -361,7 +361,7 @@ Returns:
     //
     // use the 2D BLT engine to copy data within the IGD Gfx frame buffer
     //
-    TmpBuf = EfiLibAllocatePool(Width * sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+    TmpBuf = AllocatePool(Width * sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
 	for (Index = 0; Index < Width; Index ++) {
 
 		TmpBuf[Index] = *BltBuffer;
@@ -386,7 +386,7 @@ Returns:
 					(VOID *) TmpBuf
 					);
     }
-	EfiLibSafeFreePool(TmpBuf);
+	FreePool(TmpBuf);
     break;
 
   case EfiBltVideoFill:
@@ -395,7 +395,7 @@ Returns:
     // pixel in the bltbit buffer
     // Assuming the bltbuffer is the same width as the screen
     //
-    TmpBuf = EfiLibAllocatePool(Width * sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+    TmpBuf = AllocatePool(Width * sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
 	for (Index = 0; Index < Width; Index ++) {
 
 		TmpBuf[Index] = *BltBuffer;
@@ -411,7 +411,7 @@ Returns:
 					(VOID *) TmpBuf
 					);
     }
-	EfiLibSafeFreePool(TmpBuf);
+	FreePool(TmpBuf);
 
     break;
 
@@ -490,7 +490,7 @@ Returns:
 
   PciIo = Private->PciIo;
   
-  EfiZeroMem (&ValidEdidTiming, sizeof (VALID_EDID_TIMING));
+  ZeroMem (&ValidEdidTiming, sizeof (VALID_EDID_TIMING));
 
   //
   // Enable the PCI Device
@@ -575,13 +575,13 @@ Returns:
   Private->EdidActive.Edid = NULL;
   Private->EdidActive.SizeOfEdid = 0;
 
-  Status = ReadEDID (PciIo, &Private->EdidDiscovered.Edid, &EdidSize);
+  Status = ReadEDID (PciIo, (VOID**)&Private->EdidDiscovered.Edid, &EdidSize);
   if (!EFI_ERROR (Status)) {
     Status = ParseEDIDTable ((EDID_BLOCK *) Private->EdidDiscovered.Edid, EdidSize, &ValidEdidTiming);
     if (!EFI_ERROR (Status)) {
       Private->EdidDiscovered.SizeOfEdid = EdidSize;
       Private->EdidActive.SizeOfEdid = EdidSize;
-      Private->EdidActive.Edid = EfiLibAllocateCopyPool (EdidSize, Private->EdidDiscovered.Edid);
+      Private->EdidActive.Edid = AllocateCopyPool (EdidSize, Private->EdidDiscovered.Edid);
       if (Private->EdidActive.Edid == NULL) {
         return EFI_OUT_OF_RESOURCES;
       }

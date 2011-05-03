@@ -85,7 +85,7 @@ GetUmaBase (
 //
 // GOP Driver Entry point
 //
-EFI_DRIVER_ENTRY_POINT (GraphicsOutputDriverEntryPoint)
+//EFI_DRIVER_ENTRY_POINT (GraphicsOutputDriverEntryPoint)
 
 EFI_STATUS
 EFIAPI
@@ -110,7 +110,21 @@ Returns:
 
 --*/
 {
-  return EfiLibInstallAllDriverProtocols2 (
+	EFI_STATUS              Status;
+	
+	Status = EfiLibInstallDriverBindingComponentName2 (
+													   ImageHandle,
+													   SystemTable,
+													   &gDriverBinding,
+													   ImageHandle,
+													   &gComponentName,
+													   &gComponentName2
+													   );
+	ASSERT_EFI_ERROR (Status);
+	
+	return Status;	
+	
+/*  return EfiLibInstallAllDriverProtocols2 (
            ImageHandle,
            SystemTable,
            &gDriverBinding,
@@ -119,6 +133,7 @@ Returns:
            NULL,
            NULL
            );
+ */
 }
 
 EFI_STATUS
@@ -176,8 +191,8 @@ Returns:
   //
   // See if this is a graphics controller
   //
-  if (Pci.Hdr.VendorId == INTEL_VENDOR_ID && Pci.Hdr.DeviceId == INTEL_GMA_DEVICE_ID) {
-	  //INTEL_GOP_DEVICE_ID) { //Slice
+  if (Pci.Hdr.VendorId == INTEL_VENDOR_ID && ((Pci.Hdr.DeviceId == INTEL_GMA_DEVICE_ID) ||
+			(Pci.Hdr.DeviceId == INTEL_GOP_DEVICE_ID)	)) { //Slice
     Status = EFI_SUCCESS;
   }
 
@@ -259,7 +274,7 @@ Returns:
   //
   // Allocate Private context data for Graphics Output inteface.
   //
-  Private = EfiLibAllocateCopyPool (
+  Private = AllocateCopyPool (
               sizeof (INTEL_PRIVATE_DATA),
               &mGopPrivateDataTemplate
               );
@@ -293,7 +308,7 @@ Returns:
     }
     Private->AllocatedMemory.BaseAddress = (UINTN)AllocateMemoryBase;
 
-    EfiZeroMem ((VOID *) Private->AllocatedMemory.BaseAddress, MEM_ALLOC_SIZE);
+    ZeroMem ((VOID *) Private->AllocatedMemory.BaseAddress, MEM_ALLOC_SIZE);
 
     FlushDataCache (Private->AllocatedMemory.BaseAddress, MEM_ALLOC_SIZE);
     //
@@ -311,7 +326,7 @@ Returns:
     }
     Private->GTTBaseAddress.BaseAddress = (UINTN)AllocateMemoryBase;
 
-    EfiZeroMem ((VOID *) Private->GTTBaseAddress.BaseAddress, GTT_ALLOC_SIZE);
+    ZeroMem ((VOID *) Private->GTTBaseAddress.BaseAddress, GTT_ALLOC_SIZE);
 
     FlushDataCache (Private->GTTBaseAddress.BaseAddress, GTT_ALLOC_SIZE);
 
@@ -319,8 +334,8 @@ Returns:
     // Create ExitBootServiceEvent to clear Gfx Controller
     //
     Status = gBS->CreateEvent (
-                      EFI_EVENT_SIGNAL_EXIT_BOOT_SERVICES,
-                      EFI_TPL_CALLBACK,
+                      EVT_SIGNAL_EXIT_BOOT_SERVICES,
+					  TPL_CALLBACK,
                       ClearGfxController,
                       Private,
                       &Private->ExitBootServiceEvent
@@ -338,7 +353,7 @@ Returns:
     //
     Private->AllocatedMemory.BaseAddress = PreAllocatedMemory;
     Private->GTTBaseAddress.BaseAddress  = PreAllocatedMemory + MEM_ALLOC_SIZE;
-    EfiZeroMem ((VOID *) PreAllocatedMemory, PREALLOCATED_SIZE);
+    ZeroMem ((VOID *) PreAllocatedMemory, PREALLOCATED_SIZE);
     FlushDataCache (PreAllocatedMemory, PREALLOCATED_SIZE);
 
   }
@@ -356,15 +371,15 @@ Returns:
     //
     // If ACPI_ADR is not specified, use default
     //
-    EfiZeroMem (&AcpiDevicePath, sizeof (ACPI_ADR_DEVICE_PATH));
+    ZeroMem (&AcpiDevicePath, sizeof (ACPI_ADR_DEVICE_PATH));
     AcpiDevicePath.Header.Type = ACPI_DEVICE_PATH;
     AcpiDevicePath.Header.SubType = ACPI_ADR_DP;
     AcpiDevicePath.ADR = ACPI_DISPLAY_ADR (1, 0, 0, 1, 0, ACPI_ADR_DISPLAY_TYPE_VGA, 0, 0);
     SetDevicePathNodeLength (&AcpiDevicePath.Header, sizeof (ACPI_ADR_DEVICE_PATH));
 
-    Private->DevicePath = EfiAppendDevicePathNode (ParentDevicePath, (EFI_DEVICE_PATH_PROTOCOL *) &AcpiDevicePath);
+    Private->DevicePath = AppendDevicePathNode (ParentDevicePath, (EFI_DEVICE_PATH_PROTOCOL *) &AcpiDevicePath);
   } else {
-    Private->DevicePath = EfiAppendDevicePathNode (ParentDevicePath, RemainingDevicePath);
+    Private->DevicePath = AppendDevicePathNode (ParentDevicePath, RemainingDevicePath);
   }
 
   //
