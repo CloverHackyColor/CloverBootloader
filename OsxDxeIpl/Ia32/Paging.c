@@ -21,7 +21,7 @@ Revision History:
 #include "DxeIpl.h"
 #include "HobGeneration.h"
 #include "VirtualMemory.h"
-#include "Debug.h"
+//#include "Debug.h"
 
 #define EFI_PAGE_SIZE_4K      0x1000
 #define EFI_PAGE_SIZE_4M      0x400000

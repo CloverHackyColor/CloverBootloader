@@ -20,7 +20,7 @@ Revision History:
 
 #include "PpisNeededByDxeCore.h"
 #include "HobGeneration.h"
-#include "SerialStatusCode.h"
+//#include "SerialStatusCode.h"
 
 EFI_STATUS
 EFIAPI
@@ -51,7 +51,7 @@ Returns:
   //EFI_PEI_PE_COFF_LOADER_PROTOCOL           *PeCoffLoader;
   //EFI_DECOMPRESS_PROTOCOL                   *EfiDecompress;
   //EFI_TIANO_DECOMPRESS_PROTOCOL             *TianoDecompress;
-  EFI_REPORT_STATUS_CODE                    ReportStatusCode;
+  //EFI_REPORT_STATUS_CODE                    ReportStatusCode;
 
   //InstallEfiPeiFlushInstructionCache (&FlushInstructionCache);
   //Hob->FlushInstructionCache.Interface = FlushInstructionCache;
@@ -69,8 +69,8 @@ Returns:
   //InstallTianoDecompress (&TianoDecompress);
   //Hob->TianoDecompress.Interface = TianoDecompress;
 
-  InstallSerialStatusCode (&ReportStatusCode);
-  Hob->SerialStatusCode.Interface = (EFI_PHYSICAL_ADDRESS) (UINTN) ReportStatusCode;
+  //InstallSerialStatusCode (&ReportStatusCode);
+  //Hob->SerialStatusCode.Interface = (EFI_PHYSICAL_ADDRESS) (UINTN) ReportStatusCode;
 
   return EFI_SUCCESS;
 }

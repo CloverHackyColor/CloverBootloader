@@ -21,7 +21,7 @@ Revision History:
 #include "HobGeneration.h"
 #include "PpisNeededByDxeCore.h"
 #include "FlashLayout.h"
-#include "Debug.h"
+//#include "Debug.h"
 
 #define EFI_DXE_FILE_GUID \
   { 0xb1644c1a, 0xc16a, 0x4c5b, {0x88, 0xde, 0xea, 0xfb, 0xa9, 0x7e, 0x74, 0xd8 }}
@@ -839,7 +839,7 @@ PrepareHobNvStorage (
   //   0 - File exist with correct size
   //
   if (*(UINT8 *) (UINTN) (NV_STORAGE_STATE + 4) == 2) {
-    ClearScreen ();
+//    ClearScreen ();
 //    PrintString ("Error: Size of Efivar.bin should be 16k!\n");
     CpuDeadLoop();
   }

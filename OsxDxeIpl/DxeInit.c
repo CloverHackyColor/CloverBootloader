@@ -22,8 +22,8 @@ Revision History:
 
 #include "LegacyTable.h"
 #include "HobGeneration.h"
-#include "PpisNeededByDxeCore.h"
-#include "Debug.h"
+//#include "PpisNeededByDxeCore.h"
+//#include "Debug.h"
 
 /*
 --------------------------------------------------------
@@ -143,7 +143,7 @@ Returns:
   CopyMem ((VOID*) &HandoffCopy, (VOID*) Handoff, sizeof (EFILDRHANDOFF));
   Handoff = &HandoffCopy;
 
-  ClearScreen();
+//  ClearScreen();
 //  PrintString("Enter DxeIpl ...\n");
   
 /*
@@ -223,7 +223,7 @@ Returns:
 
   PrepareHobLegacyTable (gHob);
   
-  PreparePpisNeededByDxeCore (gHob);
+//  PreparePpisNeededByDxeCore (gHob);
 
   CompleteHobGeneration ();
 /*
@@ -340,13 +340,13 @@ Returns:
   EFI_DEADLOOP();
 */
 
-  ClearScreen();
-  PrintString("\n\n\n\n\n\n\n\n\n\n");
-  PrintString("                         WELCOME TO EFI WORLD!\n");
+//  ClearScreen();
+//PrintString("\n\n\n\n\n\n\n\n\n\n");
+//  PrintString("                         WELCOME TO EFI WORLD!\n");
   
   EnterDxeMain (StackTop, Handoff->DxeCoreEntryPoint, gHob, PageTableBase);
  
-  PrintString("Fail to enter DXE main!\n");
+//  PrintString("Fail to enter DXE main!\n");
   //
   // Should never get here
   //

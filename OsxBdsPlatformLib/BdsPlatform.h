@@ -63,9 +63,9 @@ extern EFI_DEVICE_PATH_PROTOCOL   *gPlatformConnectSequence[];
 extern EFI_DEVICE_PATH_PROTOCOL   *gPlatformDriverOption[];
 extern EFI_DEVICE_PATH_PROTOCOL   *gPlatformRootBridges[];
 extern ACPI_HID_DEVICE_PATH       gPnpPs2KeyboardDeviceNode;
-extern ACPI_HID_DEVICE_PATH       gPnp16550ComPortDeviceNode;
-extern UART_DEVICE_PATH           gUartDeviceNode;
-extern VENDOR_DEVICE_PATH         gTerminalTypeDeviceNode;
+//extern ACPI_HID_DEVICE_PATH       gPnp16550ComPortDeviceNode;
+//extern UART_DEVICE_PATH           gUartDeviceNode;
+//extern VENDOR_DEVICE_PATH         gTerminalTypeDeviceNode;
 //
 //
 //

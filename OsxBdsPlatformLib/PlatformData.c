@@ -28,9 +28,9 @@ Abstract:
 UINT16   gPlatformBootTimeOutDefault = 3;
 
 ACPI_HID_DEVICE_PATH       gPnpPs2KeyboardDeviceNode  = gPnpPs2Keyboard;
-ACPI_HID_DEVICE_PATH       gPnp16550ComPortDeviceNode = gPnp16550ComPort;
-UART_DEVICE_PATH           gUartDeviceNode            = gUart;
-VENDOR_DEVICE_PATH         gTerminalTypeDeviceNode    = gPcAnsiTerminal;
+//ACPI_HID_DEVICE_PATH       gPnp16550ComPortDeviceNode = gPnp16550ComPort;
+//UART_DEVICE_PATH           gUartDeviceNode            = gUart;
+//VENDOR_DEVICE_PATH         gTerminalTypeDeviceNode    = gPcAnsiTerminal;
 
 //
 // Predefined platform root bridge
@@ -72,7 +72,7 @@ USB_CLASS_FORMAT_DEVICE_PATH gUsbClassKeyboardDevicePath = {
   }
 };
 
-/*
+
 //
 // Platform specific Dummy ISA keyboard device path
 //
@@ -82,7 +82,7 @@ PLATFORM_DUMMY_ISA_KEYBOARD_DEVICE_PATH     gDummyIsaKeyboardDevicePath = {
   gPnpPs2Keyboard,
   gEndEntire
 };
-
+/*
 //
 // Platform specific Dummy ISA serial device path
 //
@@ -94,7 +94,7 @@ PLATFORM_DUMMY_ISA_SERIAL_DEVICE_PATH   gDummyIsaSerialDevicePath = {
   gPcAnsiTerminal,
   gEndEntire
 };
-
+*/
 //
 // Platform specific Dummy PCI VGA device path
 //
@@ -103,7 +103,7 @@ PLATFORM_DUMMY_PCI_VGA_DEVICE_PATH gDummyPciVgaDevicePath = {
   PCI_DEVICE_PATH_NODE(0, 0x2),
   gEndEntire
 };
-
+/*
 //
 // Platform specific Dummy PCI serial device path
 //
@@ -127,14 +127,14 @@ BDS_CONSOLE_CONNECT_ENTRY         gPlatformConsole[] = {
 //    (EFI_DEVICE_PATH_PROTOCOL *) &gDummyIsaSerialDevicePath,
 //    (CONSOLE_OUT | CONSOLE_IN | STD_ERROR)
 //  },
-//  {
-//    (EFI_DEVICE_PATH_PROTOCOL *) &gDummyIsaKeyboardDevicePath,
-//    (CONSOLE_IN | STD_ERROR)
-//  },
-//  {
-//    (EFI_DEVICE_PATH_PROTOCOL *) &gDummyPciVgaDevicePath,
-//    CONSOLE_OUT
-//  },
+  {
+    (EFI_DEVICE_PATH_PROTOCOL *) &gDummyIsaKeyboardDevicePath,
+    (CONSOLE_IN | STD_ERROR)
+  },
+  {
+    (EFI_DEVICE_PATH_PROTOCOL *) &gDummyPciVgaDevicePath,
+    CONSOLE_OUT
+  },
 //  {
 //    (EFI_DEVICE_PATH_PROTOCOL *) &gDummyPciSerialDevicePath,
 //    (CONSOLE_OUT | CONSOLE_IN | STD_ERROR)

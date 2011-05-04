@@ -161,12 +161,12 @@ UpdateMemoryMap (
   
   GuidHob.Raw = GetFirstGuidHob (&gEfiLdrMemoryDescriptorGuid);
   if (GuidHob.Raw == NULL) {
-    DEBUG ((EFI_D_ERROR, "Fail to get gEfiLdrMemoryDescriptorGuid from GUID HOB LIST!\n"));
+//    DEBUG ((EFI_D_ERROR, "Fail to get gEfiLdrMemoryDescriptorGuid from GUID HOB LIST!\n"));
     return;
   }
   Table = GET_GUID_HOB_DATA (GuidHob.Guid);
   if (Table == NULL) {
-    DEBUG ((EFI_D_ERROR, "Fail to get gEfiLdrMemoryDescriptorGuid from GUID HOB LIST!\n"));
+//    DEBUG ((EFI_D_ERROR, "Fail to get gEfiLdrMemoryDescriptorGuid from GUID HOB LIST!\n"));
     return;
   }
   MemoryDescHob.MemDescCount = *(UINTN *)Table;
@@ -237,7 +237,7 @@ UpdateMemoryMap (
         }
 
         //
-        // PassThrough, let below code add and alloate.
+        // PassThrough, let below code add and allocate.
         //
       }
       //
@@ -250,14 +250,14 @@ UpdateMemoryMap (
                       MemoryDescHob.MemDesc[Index].Attribute
                       );
       if (EFI_ERROR (Status)) {
-        DEBUG ((EFI_D_ERROR, "AddMemorySpace fail - %r!\n", Status));
+//        DEBUG ((EFI_D_ERROR, "AddMemorySpace fail - %r!\n", Status));
         if ((MemoryDescHob.MemDesc[Index].Type == EfiACPIReclaimMemory) ||
             (MemoryDescHob.MemDesc[Index].Type == EfiACPIMemoryNVS)) {
           //
           // For EfiACPIReclaimMemory and EfiACPIMemoryNVS, it must success.
           // For EfiReservedMemoryType, there maybe overlap. So skip check here.
           //
-//          ASSERT_EFI_ERROR (Status);
+          ASSERT_EFI_ERROR (Status);
         }
         continue;
       }
@@ -905,7 +905,7 @@ Returns:
       //
       // Add them to ConOut.
       //
-      DEBUG ((EFI_D_INFO, "Find the VGA device\n"));
+//      DEBUG ((EFI_D_INFO, "Find the VGA device\n"));
       PreparePciVgaDevicePath (HandleBuffer[Index]);
       continue;
     }
@@ -1023,7 +1023,7 @@ PlatformBdsConnectSequence (
 
 Routine Description:
 
-  Connect with predeined platform connect sequence, 
+  Connect with predefined platform connect sequence, 
   the OEM/IBV can customize with their own connect sequence.
   
 Arguments:
@@ -1233,7 +1233,7 @@ Returns:
   //
   // Memory test and Logo show
   //
-  PlatformBdsDiagnostics (IGNORE, TRUE, BaseMemoryTest);
+//  PlatformBdsDiagnostics (IGNORE, TRUE, BaseMemoryTest);
 
   //
   // Perform some platform specific connect sequence
@@ -1627,6 +1627,7 @@ Returns:
     SmbiosTableOri->TableLength
     );
   SmbiosTableNew->TableAddress = (UINT32)BufferPtr;
+	SmbiosTableNew->SmbiosBcdRevision = 0x26; //Slice - as DHP suggested
   SmbiosTableNew->IntermediateChecksum = 0;
   SmbiosTableNew->IntermediateChecksum = 
           CalculateCheckSum8 ((UINT8*)SmbiosTableNew + 0x10, SmbiosEntryLen -0x10);

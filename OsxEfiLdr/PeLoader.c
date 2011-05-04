@@ -18,7 +18,7 @@ Revision History:
 
 --*/
 #include "EfiLdr.h"
-#include "Debug.h"
+//#include "Debug.h"
 #include "Support.h"
 
 EFI_STATUS
@@ -148,7 +148,7 @@ EfiLdrPeCoffLoadPeImage (
   if (DosHdr.e_magic != EFI_IMAGE_DOS_SIGNATURE) {
 //    AsciiSPrint (PrintBuffer, 256, "PeCoffLoadPeImage: Dos header signature not found\n");
  //   PrintString (PrintBuffer);
-    PrintHeader ('F');
+//    PrintHeader ('F');
     return EFI_UNSUPPORTED;
   }
 
@@ -157,7 +157,7 @@ EfiLdrPeCoffLoadPeImage (
   if (PeHdr.Pe32.Signature != EFI_IMAGE_NT_SIGNATURE) {
 //    AsciiSPrint (PrintBuffer, 256, "PeCoffLoadPeImage: PE image header signature not found\n");
 //    PrintString (PrintBuffer);
-    PrintHeader ('G');
+//    PrintHeader ('G');
     return EFI_UNSUPPORTED;
   }
     
@@ -169,7 +169,7 @@ EfiLdrPeCoffLoadPeImage (
   if (EFI_ERROR(Status)) {
 //    AsciiSPrint (PrintBuffer, 256, "PeCoffLoadPeImage: Subsystem type not known\n");
 //    PrintString (PrintBuffer);
-    PrintHeader ('H');
+//    PrintHeader ('H');
     return Status;
   }
 
@@ -181,7 +181,7 @@ EfiLdrPeCoffLoadPeImage (
   if (EFI_ERROR(Status)) {
 //    AsciiSPrint (PrintBuffer, 256, "PeCoffLoadPeImage: Incorrect machine type\n");
 //    PrintString (PrintBuffer);
-    PrintHeader ('I');
+//    PrintHeader ('I');
     return Status;
   }
 
@@ -234,7 +234,7 @@ EfiLdrPeCoffLoadPeImage (
   }
 
   if (EFI_ERROR(Status)) {
-    PrintHeader ('J');
+//    PrintHeader ('J');
     return Status;
   }
 
@@ -257,7 +257,7 @@ EfiLdrPeCoffLoadPeImage (
              );
 
   if (EFI_ERROR(Status)) {
-    PrintHeader ('K');
+//    PrintHeader ('K');
     return Status;
   }
 
@@ -322,7 +322,7 @@ EfiLdrPeCoffLoadPeImage (
         
     if (EFI_ERROR(Status) || !Base || !End) {
 //      DEBUG((D_LOAD|D_ERROR, "LoadPe: Section %d was not loaded\n", Index));
-    PrintHeader ('L');
+//    PrintHeader ('L');
       return EFI_LOAD_ERROR;
     }
 
@@ -335,7 +335,7 @@ EfiLdrPeCoffLoadPeImage (
     if (Section->SizeOfRawData) {
       Status = EfiLdrPeCoffImageRead (FHand, Section->PointerToRawData, Section->SizeOfRawData, Base);
       if (EFI_ERROR(Status)) {
-		  PrintHeader ('M');
+//		  PrintHeader ('M');
         return Status;
       }
     }
@@ -384,7 +384,7 @@ EfiLdrPeCoffLoadPeImage (
                );
 
     if (EFI_ERROR(Status)) {
-      PrintHeader ('N');
+//      PrintHeader ('N');
       return Status;
     }
   }
@@ -429,7 +429,7 @@ EfiLdrPeCoffLoadPeRelocate (
   RelocBase = EfiLdrPeCoffImageAddress (Image, RelocDir->VirtualAddress);
   RelocBaseEnd = EfiLdrPeCoffImageAddress (Image, RelocDir->VirtualAddress + RelocDir->Size);
   if (!RelocBase || !RelocBaseEnd) {
-	  PrintHeader ('O');
+//	  PrintHeader ('O');
     return EFI_LOAD_ERROR;
   }
 
@@ -450,7 +450,7 @@ EfiLdrPeCoffLoadPeRelocate (
     RelocEnd = (UINT16 *) ((UINT8 *) RelocBase + RelocBase->SizeOfBlock);
     FixupBase = EfiLdrPeCoffImageAddress (Image, RelocBase->VirtualAddress);
     if ((UINT8 *) RelocEnd < Image->ImageBase || (UINT8 *) RelocEnd > Image->ImageEof) {
-		PrintHeader ('P');
+//		PrintHeader ('P');
       return EFI_LOAD_ERROR;
     }
 
@@ -510,7 +510,7 @@ EfiLdrPeCoffLoadPeRelocate (
 
       default:
 //        DEBUG((D_LOAD|D_ERROR, "PeRelocate: unknown fixed type\n"));
-			  PrintHeader ('Q');
+//			  PrintHeader ('Q');
         CpuDeadLoop();
         return EFI_LOAD_ERROR;
       }
@@ -618,11 +618,11 @@ EfiLdrPeCoffCheckImageMachineType (
 
   Status = EFI_UNSUPPORTED;
 
-#ifdef MDE_CPU_IA32
-  if (MachineType == EFI_IMAGE_MACHINE_IA32) {
+//#ifdef MDE_CPU_IA32
+  if ((MachineType == EFI_IMAGE_MACHINE_IA32) || (MachineType == EFI_IMAGE_MACHINE_X64)) {
     Status = EFI_SUCCESS;
   }
-#endif
+//#endif
 
 #ifdef MDE_CPU_X64
   if (MachineType == EFI_IMAGE_MACHINE_X64) {

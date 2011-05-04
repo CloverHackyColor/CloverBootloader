@@ -20,7 +20,7 @@ Revision History:
 
 #include "DxeIpl.h"
 #include "HobGeneration.h"
-#include "Debug.h"
+//#include "Debug.h"
 
 #define MPS_PTR           SIGNATURE_32('_','M','P','_')
 #define SMBIOS_PTR        SIGNATURE_32('_','S','M','_')

@@ -24,5 +24,5 @@ Revision History:
 #include "EfiLoader.c"
 #include "PeLoader.c"
 #include "Support.c"
-#include "Debug.c"
+//#include "Debug.c"
 

@@ -40,28 +40,28 @@
   gEfiVariableGuid
 
 [Sources]
-  DxeIpl.h
+#  DxeIpl.h
   DxeInit.c
   LegacyTable.c
-  LegacyTable.h
-  PpisNeededByDxeCore.c
-  PpisNeededByDxeCore.h
+#  LegacyTable.h
+#  PpisNeededByDxeCore.c
+#  PpisNeededByDxeCore.h
   HobGeneration.c
-  HobGeneration.h
-  SerialStatusCode.c
-  SerialStatusCode.h
-  Debug.c
-  Debug.h
+#  HobGeneration.h
+#  SerialStatusCode.c
+#  SerialStatusCode.h
+#  Debug.c
+#  Debug.h
   
 [Sources.x64]
   X64/EnterDxeCore.c
   X64/Paging.c
-  X64/VirtualMemory.h
+#  X64/VirtualMemory.h
 
 [Sources.Ia32]
   Ia32/EnterDxeCore.c
   Ia32/Paging.c
-  Ia32/VirtualMemory.h
+#  Ia32/VirtualMemory.h
 
 #[BuildOptions]
   #MSFT:*_*_IA32_DLINK_FLAGS = /out:"$(BIN_DIR)\SecMain.exe" /base:0x10000000 /pdb:"$(BIN_DIR)\SecMain.pdb" /LIBPATH:"$(VCINSTALLDIR)\Lib" /LIBPATH:"$(VCINSTALLDIR)\PlatformSdk\Lib" /NOLOGO /SUBSYSTEM:CONSOLE /NODEFAULTLIB /IGNORE:4086 /MAP /OPT:REF /DEBUG /MACHINE:I386 /LTCG Kernel32.lib MSVCRTD.lib Gdi32.lib User32.lib Winmm.lib

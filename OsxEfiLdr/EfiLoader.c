@@ -20,7 +20,7 @@ Revision History:
 
 #include "EfiLdr.h"
 #include "Support.h"
-#include "Debug.h"
+//#include "Debug.h"
 #include "PeLoader.h"
 #include "LzmaDecompress.h"
 
@@ -29,8 +29,8 @@ SystemHang(
   VOID
   )
 {
-  CHAR8 PrintBuffer[256];
-  AsciiSPrint (PrintBuffer, 256, "## FATEL ERROR ##: Fail to load DUET images! System hang!\n");
+//  CHAR8 PrintBuffer[256];
+//  AsciiSPrint (PrintBuffer, 256, "## FATEL ERROR ##: Fail to load DUET images! System hang!\n");
   CpuDeadLoop();
 }
 
@@ -52,9 +52,9 @@ EfiLoader (
 //  CHAR8                 PrintBuffer[256];
   EFILDRHANDOFF         Handoff;
 
-  ClearScreen();
+//  ClearScreen();
  
-  PrintHeader ('A');
+//  PrintHeader ('A');
   
 //  AsciiSPrint (PrintBuffer, 256, "Enter DUET Loader...\n");
 //  PrintString (PrintBuffer);
@@ -135,7 +135,7 @@ EfiLoader (
   ZeroMem ((VOID *)(UINTN)BfvBase, BfvPageNumber * EFI_PAGE_SIZE);
   CopyMem ((VOID *)(UINTN)BfvBase, (VOID *)(UINTN)EFI_DECOMPRESSED_BUFFER_ADDRESS, DestinationSize);
 
-  PrintHeader ('B');
+//  PrintHeader ('B');
 
   //
   // Point to the 2nd image (DxeIpl)
@@ -190,7 +190,7 @@ EfiLoader (
   if (EFI_ERROR (Status)) {
 //    AsciiSPrint (PrintBuffer, 256, "Fail to load and relocate DxeIpl PE image!\n");
 //    PrintString (PrintBuffer);
-	  PrintHeader ('X');
+//	  PrintHeader ('X');
     SystemHang();
   }
 //  AsciiSPrint (PrintBuffer, 256, "DxeIpl PE image is successed loaded at 0x%x, entry=0x%x\n",
@@ -201,7 +201,7 @@ EfiLoader (
 //  PrintValue(Image.NoPages);
 //  PrintString("\n");
 
-PrintHeader ('C');
+//PrintHeader ('C');
 
   //
   // Point to the 3rd image (DxeMain)
@@ -255,7 +255,7 @@ PrintHeader ('C');
                (UINTN)DxeCoreImage.ImageBasePage, (UINTN)DxeCoreImage.EntryPoint);
   PrintString (PrintBuffer);  
 */
-PrintHeader ('E');
+//PrintHeader ('E');
 
   //
   // Display the table of memory descriptors.
@@ -300,7 +300,7 @@ PrintHeader ('E');
     EfiMainEntrypoint (&Handoff);
   }
 
-PrintHeader ('F');
+//PrintHeader ('F');
 
   //
   // There was a problem loading the image, so HALT the system.
