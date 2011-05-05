@@ -96,8 +96,8 @@ INF  DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
 INF  DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
 #INF  IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
 #INF  IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
-#INF  DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
-INF  DuetPkg/cloverefiboot/IntelGmaDxe/Gop.inf
+INF  DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
+#INF  DuetPkg/cloverefiboot/IntelGmaDxe/Gop.inf
 
   # IDE/AHCI Support
 #INF  DuetPkg/cloverefiboot/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
