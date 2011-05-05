@@ -316,6 +316,7 @@ InstallCacheSmbios ( //7
 				break;
 		}
 		//Here it will be good to correct socket designation
+		//but it doesn't work because of quirky protocol
 		CHAR8* SSocketD = "L1-Cache";
 		UINTN StringNumber = 1;
 		 if(SmbiosTable.Type7->SocketDesignation == 0) {

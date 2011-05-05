@@ -191,8 +191,11 @@ Returns:
   //
   // See if this is a graphics controller
   //
-  if (Pci.Hdr.VendorId == INTEL_VENDOR_ID && ((Pci.Hdr.DeviceId == INTEL_GMA_DEVICE_ID) ||
-			(Pci.Hdr.DeviceId == INTEL_GOP_DEVICE_ID)	)) { //Slice
+  if (Pci.Hdr.VendorId == INTEL_VENDOR_ID && (
+			(Pci.Hdr.DeviceId == INTEL_GMA_DEVICE_ID) ||
+			(Pci.Hdr.DeviceId == INTEL_GOP_DEVICE_ID) ||
+			(Pci.Hdr.DeviceId == INTEL_X3100_DEVICE_ID)	
+			)) { //Slice
     Status = EFI_SUCCESS;
   }
 
@@ -349,7 +352,7 @@ Returns:
     PreAllocatedMemory = (UINTN)GetUmaBase (PciIo);
 
     //
-    // Use pre-allcoated memory
+    // Use pre-allocated memory
     //
     Private->AllocatedMemory.BaseAddress = PreAllocatedMemory;
     Private->GTTBaseAddress.BaseAddress  = PreAllocatedMemory + MEM_ALLOC_SIZE;
@@ -360,7 +363,7 @@ Returns:
 
   //
   // Start the Graphics Output software stack.
-  // The Graphics Output constuctor requires that the MMIO BAR be enabled.
+  // The Graphics Output constructor requires that the MMIO BAR be enabled.
   //
   Status = GraphicsOutputConstructor (Private);
   if (EFI_ERROR (Status)) {

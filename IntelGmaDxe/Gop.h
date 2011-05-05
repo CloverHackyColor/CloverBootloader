@@ -112,9 +112,10 @@ extern EFI_COMPONENT_NAME_PROTOCOL  gComponentName;
 //
 // Intel PCI Configuration Header values
 //
-#define INTEL_VENDOR_ID     0x8086
-#define INTEL_GOP_DEVICE_ID 0xA011
-#define INTEL_GMA_DEVICE_ID 0x27A2
+#define INTEL_VENDOR_ID			0x8086
+#define INTEL_GOP_DEVICE_ID		0xA011
+#define INTEL_GMA_DEVICE_ID		0x27A2
+#define INTEL_X3100_DEVICE_ID	0x2A02
 
 //
 // PCI Cfg Registers
