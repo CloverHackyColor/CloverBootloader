@@ -212,6 +212,7 @@ GetDeviceProps2(IN     APPLE_GETVAR_PROTOCOL   *This,
         return EFI_BUFFER_TOO_SMALL;
 	Buffer[0] = 0x36;
 	Buffer[1] = (CHAR8)(mCount & 0xFF);
+	mAddr = (UINT32)Buffer;
     return EFI_SUCCESS;
 }
 #endif
@@ -466,7 +467,7 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 			SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE1*)Record;
 			TmpString = GetSmbiosString (SmbiosTable, SmbiosTable.Type1->SerialNumber);
 			LogData(DataHub, &gEfiMiscSubClassGuid, &gDataHubPlatformGuid,
-					L"SystemSerialNumber", &TmpString, AsciiStrLen(TmpString));
+					L"SystemSerialNumber", (VOID*)TmpString, AsciiStrLen(TmpString));
 			CopyMem(&SystemID, &SmbiosTable.Type1->Uuid, 16);
 			LogData(DataHub, &gEfiMiscSubClassGuid, &gDataHubPlatformGuid,
 					L"system-id", &SystemID, 16);
@@ -477,7 +478,7 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 */			
 			TmpString = GetSmbiosString (SmbiosTable, SmbiosTable.Type1->ProductName);
 			LogData(DataHub, &gEfiMiscSubClassGuid, &gDataHubPlatformGuid,
-					L"Model", &TmpString, AsciiStrLen(TmpString));
+					L"Model", (VOID*)TmpString, AsciiStrLen(TmpString));
 			
 			Find |= 1;
 		}
@@ -485,7 +486,7 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 			SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE2 *)Record;
 			TmpString = GetSmbiosString (SmbiosTable, SmbiosTable.Type2->ProductName);
 			LogData(DataHub, &gEfiAppleBootGuid, &gDataHubPlatformGuid,
-					L"board-id", &TmpString, AsciiStrLen(TmpString));
+					L"board-id", (VOID*)TmpString, AsciiStrLen(TmpString));
 /*			Status = rs->SetVariable(L"board-id",
 									 &gEfiAppleBootGuid,
 									 EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
