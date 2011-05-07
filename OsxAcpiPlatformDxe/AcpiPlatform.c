@@ -529,12 +529,12 @@ AcpiPlatformEntryPoint (
 		gBS->FreePool (Info);
 //Slice - this is the problem. 		
 //		FileBuffer = AllocatePool(FileSize);
-/*		Status = gBS->AllocatePool (EfiBootServicesData, FileSize, (VOID **) &FileBuffer);
+		Status = gBS->AllocatePool (EfiBootServicesData, FileSize, (VOID **) &FileBuffer);
 		if (EFI_ERROR (Status)) {
 			//			DBG(L"No pool for FileBuffer size %d!\n", FileSize);
 			continue;
-		}*/
-		Status = gBS->AllocatePages (
+		}
+/*		Status = gBS->AllocatePages (
 									 AllocateMaxAddress,
 									 EfiACPIMemoryNVS,
 									 EFI_SIZE_TO_PAGES(FileSize),
@@ -544,7 +544,7 @@ AcpiPlatformEntryPoint (
 			//			DBG(L"No pool for FileBuffer size %d!\n", FileSize);
 			continue;
 		}
-		
+*/		
 		
 //should use ACPI memory
 //		Status=gBS->AllocatePages(AllocateMaxAddress,

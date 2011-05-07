@@ -22,7 +22,9 @@
 /*******************************************************************************
 *   Header Files                                                               *
 *******************************************************************************/
+#include <Framework/FrameworkInternalFormRepresentation.h>
 #include <Library/BaseMemoryLib.h>
+#include <Library/MemoryAllocationLib.h>
 #include <Library/DebugLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiLib.h>
@@ -39,8 +41,8 @@
 #include <Guid/SmBios.h>
 #include <Guid/Acpi.h>
 #include <Guid/Mps.h>
-#include "DataHubRecords.h"
-
+//#include "DataHubRecords.h"
+#include <Guid/DataHubRecords.h>
 
 EFI_SYSTEM_TABLE *gSystemTable;
 /*
@@ -433,6 +435,11 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 	UINT32              vFwFeatures      = 0x80000015;
 	UINT32              vFwFeaturesMask  = 0x800003ff;
 	UINT32				devPathSupportedVal = 1;
+	CHAR8		*TmpString;
+	EFI_GUID	SystemID;
+	UINT8		SystemType;
+	CHAR16      *UString;
+	UINTN		UStrSize;
 	
 	EFI_RUNTIME_SERVICES * rs = SystemTable->RuntimeServices;
 	gSystemTable = SystemTable;
@@ -455,9 +462,6 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 //TODO -add "SystemSerialNumber", "DevicePathsSupported", "system-id"
 // "bootOrder"? "board-id", "system-type"
 	SmbiosHandle = 0;
-	CHAR8 *TmpString;
-	EFI_GUID SystemID;
-	UINT8 SystemType;
 	do {
 		Status = Smbios->GetNext (Smbios, &SmbiosHandle, NULL, &Record, NULL);
 		if (EFI_ERROR(Status)) {
@@ -466,8 +470,12 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 		if (Record->Type == EFI_SMBIOS_TYPE_SYSTEM_INFORMATION) {
 			SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE1*)Record;
 			TmpString = GetSmbiosString (SmbiosTable, SmbiosTable.Type1->SerialNumber);
+			UStrSize = (AsciiStrLen(TmpString) + 1) * sizeof(CHAR16);
+			UString = AllocateZeroPool (UStrSize);
+			ASSERT (UString != NULL);
+			AsciiStrToUnicodeStr (TmpString, UString);			
 			LogData(DataHub, &gEfiMiscSubClassGuid, &gDataHubPlatformGuid,
-					L"SystemSerialNumber", (VOID*)TmpString, AsciiStrLen(TmpString));
+					L"SystemSerialNumber", (VOID*)UString, UStrSize);
 			CopyMem(&SystemID, &SmbiosTable.Type1->Uuid, 16);
 			LogData(DataHub, &gEfiMiscSubClassGuid, &gDataHubPlatformGuid,
 					L"system-id", &SystemID, 16);
@@ -477,16 +485,24 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 									 16, &SystemID);
 */			
 			TmpString = GetSmbiosString (SmbiosTable, SmbiosTable.Type1->ProductName);
+			UStrSize = (AsciiStrLen(TmpString) + 1) * sizeof(CHAR16);
+			UString = AllocateZeroPool (UStrSize);
+			ASSERT (UString != NULL);
+			AsciiStrToUnicodeStr (TmpString, UString);			
 			LogData(DataHub, &gEfiMiscSubClassGuid, &gDataHubPlatformGuid,
-					L"Model", (VOID*)TmpString, AsciiStrLen(TmpString));
+					L"Model", (VOID*)UString, UStrSize);
 			
 			Find |= 1;
 		}
 		if (Record->Type == EFI_SMBIOS_TYPE_BASEBOARD_INFORMATION) {
 			SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE2 *)Record;
 			TmpString = GetSmbiosString (SmbiosTable, SmbiosTable.Type2->ProductName);
+			UStrSize = (AsciiStrLen(TmpString) + 1) * sizeof(CHAR16);
+			UString = AllocateZeroPool (UStrSize);
+			ASSERT (UString != NULL);
+			AsciiStrToUnicodeStr (TmpString, UString);			
 			LogData(DataHub, &gEfiAppleBootGuid, &gDataHubPlatformGuid,
-					L"board-id", (VOID*)TmpString, AsciiStrLen(TmpString));
+					L"board-id", (VOID*)UString, UStrSize);
 /*			Status = rs->SetVariable(L"board-id",
 									 &gEfiAppleBootGuid,
 									 EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,

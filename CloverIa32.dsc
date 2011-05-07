@@ -80,7 +80,6 @@
   DxeServicesLib|MdePkg/Library/DxeServicesLib/DxeServicesLib.inf
   DxeServicesTableLib|MdePkg/Library/DxeServicesTableLib/DxeServicesTableLib.inf
 
-  
   #
   # Generic Modules
   #
@@ -207,15 +206,12 @@
   }
   MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
   MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
-
   MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
   MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
   MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
   MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
-
-
-  #DuetPkg/SmbiosGenDxe/SmbiosGen.inf
   DuetPkg/cloverefiboot/OsxSmbiosGenDxe/SmbiosGen.inf
+
   #DuetPkg/FvbRuntimeService/DUETFwh.inf
   #DuetPkg/EfiLdr/EfiLdr.inf {
   DuetPkg/cloverefiboot/OsxEfiLdr/EfiLdr.inf {
@@ -262,9 +258,9 @@
   # IDE/AHCI Support
   DuetPkg/cloverefiboot/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
   DuetPkg/cloverefiboot/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
-  DuetPkg/SataControllerDxe/SataControllerDxe.inf
-  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
-  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
+  #DuetPkg/SataControllerDxe/SataControllerDxe.inf
+  #MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
+  #MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
 

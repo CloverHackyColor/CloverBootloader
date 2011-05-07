@@ -16,6 +16,10 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include "Partition.h"
 
+#ifdef DEBUG
+#undef DEBUG
+#endif
+#define DEBUG(x...)
 
 /**
   Install child handles if the Handle supports GPT partition structure.

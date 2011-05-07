@@ -173,7 +173,7 @@ typedef union _EFI_MISC_PORT_DEVICE_PATH {
 #define EFI_STRING_TOKEN          UINT16
 
 #ifndef STRING_REF
-typedef UINT16  STRING_REF;  //absent definition :(
+//typedef UINT16  STRING_REF;  //absent definition :(
 #endif
 ///
 /// Each data record that is a member of some subclass starts with a standard 

@@ -60,7 +60,6 @@
   #PciExpressLib|MdePkg/Library/BasePciExpressLib/BasePciExpressLib.inf
   PciLib|MdePkg/Library/BasePciLibPciExpress/BasePciLibPciExpress.inf
   PciExpressLib|MdePkg/Library/DxeRuntimePciExpressLib/DxeRuntimePciExpressLib.inf
-  
   CacheMaintenanceLib|MdePkg/Library/BaseCacheMaintenanceLib/BaseCacheMaintenanceLib.inf
   #PeCoffLib|MdePkg/Library/BasePeCoffLib/BasePeCoffLib.inf
   PeCoffLib|DuetPkg/cloverefiboot/VBoxPeCoffLib/VBoxPeCoffLib.inf
@@ -85,12 +84,13 @@
   # Generic Modules
   #
   UefiUsbLib|MdePkg/Library/UefiUsbLib/UefiUsbLib.inf
-  UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
+  #UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
   OemHookStatusCodeLib|MdeModulePkg/Library/OemHookStatusCodeLibNull/OemHookStatusCodeLibNull.inf
   #GenericBdsLib|IntelFrameworkModulePkg/Library/GenericBdsLib/GenericBdsLib.inf
   GenericBdsLib|DuetPkg/cloverefiboot/OsxBdsLib/GenericBdsLib.inf
   SecurityManagementLib|MdeModulePkg/Library/DxeSecurityManagementLib/DxeSecurityManagementLib.inf
   CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibNull/DxeCapsuleLibNull.inf
+  PeCoffExtraActionLib|MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
   #
   # Platform
   #
@@ -229,6 +229,7 @@
   #UefiCpuPkg/CpuDxe/CpuDxe.inf
   DuetPkg/cloverefiboot/CpuDxe/Cpu.inf
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
+  DuetPkg/AcpiResetDxe/Reset.inf
   DuetPkg/LegacyMetronome/Metronome.inf
  #EdkCompatibilityPkg/Compatibility/MpServicesOnFrameworkMpServicesThunk/MpServicesOnFrameworkMpServicesThunk.inf
 
@@ -247,7 +248,7 @@
   	# foreign file system support
 	#DuetPkg/cloverefiboot/VBoxFsDxe/VBoxHfs.inf
 	DuetPkg/cloverefiboot/VBoxFsDxe/VBoxIso9660.inf
-	DuetPkg/cloverefiboot/VBoxFsDxe/VBoxFsDxe.inf
+	#DuetPkg/cloverefiboot/VBoxFsDxe/VBoxFsDxe.inf
 	DuetPkg/cloverefiboot/VBoxFsDxe/VBoxExt2.inf
 
   IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
@@ -282,7 +283,6 @@
   IntelFrameworkModulePkg/Bus/Isa/Ps2MouseDxe/Ps2MouseDxe.inf
  
   # ACPI Support
-  DuetPkg/AcpiResetDxe/Reset.inf
   #MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
    DuetPkg/cloverefiboot/OsxAcpiTableDxe/AcpiTableDxe.inf
   #MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
@@ -290,8 +290,8 @@
 
   MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
   MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
-  MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
-  #DuetPkg/cloverefiboot/OsxPartitionDxe/PartitionDxe.inf
+  #MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
+  DuetPkg/cloverefiboot/OsxPartitionDxe/PartitionDxe.inf
 
   # Bios Thunk
   DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
