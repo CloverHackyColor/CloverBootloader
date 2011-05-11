@@ -70,7 +70,7 @@ InitializeConsoleSim (IN EFI_HANDLE           ImageHandle,
 EFI_GUID gDataHubPlatformGuid = {0x64517cc8, 0x6561, 0x4051, {0xb0, 0x3c, 0x59, 0x64, 0xb6, 0x0f, 0x4c, 0x7a}};
 //EFI_GUID gDataHubOptionsGuid  = {0x0021001C, 0x3CE3, 0x41F8, {0x99, 0xc6, 0xec, 0xf5, 0xda, 0x75, 0x47, 0x31}};
 
-#define TEST 1
+#define TEST 0
 
 // Example
 /*
@@ -559,7 +559,7 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 
     Status = InitializeConsoleSim(ImageHandle, SystemTable);
     ASSERT_EFI_ERROR (Status);
-
+#if TEST
     Status = gBS->InstallMultipleProtocolInterfaces (
                                                  &ImageHandle,
                                                  &gEfiUnknown1ProtocolGuid,
@@ -567,7 +567,7 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
                                                  NULL
                                                  );
     ASSERT_EFI_ERROR (Status);
-
+#endif
     return EFI_SUCCESS;
 }
 

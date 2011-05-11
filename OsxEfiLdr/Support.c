@@ -204,10 +204,10 @@ GenMemoryMap (
         Length = LShiftU64 (RShiftU64 (Length, EFI_PAGE_SHIFT) + 1, EFI_PAGE_SHIFT);
       }
 		//ugly hack for GMA950 shared memory
-		if ((Length > 0x57F000) && (Length < 0xF7F000)){
+/*		if ((Length > 0x57F000) && (Length < 0xF7F000)){
 			Length += 0x40<<20; //64Mb
 			BaseAddress -= 0x40<<20;
-		}
+		}*/
       //
       // Update Memory Ceiling
       //
