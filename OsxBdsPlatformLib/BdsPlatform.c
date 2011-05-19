@@ -1233,7 +1233,7 @@ Returns:
   //
   // Memory test and Logo show
   //
-//  PlatformBdsDiagnostics (IGNORE, TRUE, BaseMemoryTest);
+  PlatformBdsDiagnostics (IGNORE, TRUE, BaseMemoryTest);
 
   //
   // Perform some platform specific connect sequence
