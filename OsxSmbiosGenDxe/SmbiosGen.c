@@ -77,17 +77,28 @@ CHAR8* SMbiosversion[9] = {  //t0 BiosVersion
  */
 
 CHAR8* SMboardproduct[9] = { //t2 ProductName
-	"Mac-F4208DA9",
+	"Mac-F4208CC8",
 	"Mac-F4208CA9",
-	"Mac-F42D89C8",
+	"Mac-F22788A9", //F42D89C8",
 	"Mac-F227BEC8", //"Mac-F22788C8",
-	"Mac-F22587C8",
+	"Mac-F42D86C8", //F22587C8",
 	"Mac-F42C8CC8",
 	"Mac-F4208EAA",
 	"Mac-F2238AC8",
 	"Mac-F4208DC8"
 };
 
+CHAR8* SMserials[9] = {
+	"4H629LYAU9C",
+	"4H7044LUWGP",
+	"RM83064H0P1",
+	"W874725NZ66",
+	"W88439FE1G0",
+	"W8811456Y51",
+	"YM8054BYYL2",
+	"W8034342DB7",
+	"CK80728AXYL"	
+};
 CHAR8* SMserial  = "W87234JHYA4";  //t1,t2 SerialNumber, "W874725NZ66"
 CHAR8* SMserial2 = "W874725NZ66";
 CHAR8* SMbiosvendor = "Apple Inc.";  //t0 Vendor
@@ -100,7 +111,7 @@ CHAR8* SMproductname[9] = { //t1 ProductName
 	"MacBook5,1",
 	"MacBookPro5,1",
 	"MacBookAir1,1",
-	"MacMini2,1",
+	"Macmini2,1",
 	"iMac11,2",
 	"MacPro3,1"
 };
@@ -112,7 +123,7 @@ CHAR8* Family[9] = {  //t1 Family
 	"MacBook",
 	"MacBookPro",
 	"MacBookAir",
-	"MacMini",
+	"Macmini",
 	"iMac"
 	"MacPro"
 };
@@ -382,7 +393,7 @@ IN VOID                  *Smbios
 	gSmbios->UpdateString(gSmbios,
 						  &Handle,
 						  &StringNumber,
-						  SMserial); 
+						  SMserials[gMacType]); 
 	StringNumber = newSmbiosTable.Type2->Version;
 	gSmbios->UpdateString(gSmbios,
 						  &Handle,
