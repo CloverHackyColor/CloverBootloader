@@ -47,7 +47,7 @@ enum MachineTypes {
 	MacBook11 = 0,
 	MacBook21,
 	MacBook41,
-	MacBook51,
+	MacBook52,
 	MacBookPro51,
 	MacBookAir11,
 	MacMini21,
@@ -59,7 +59,7 @@ CHAR8* SMbiosversion[9] = {  //t0 BiosVersion
 	"MB11.0061.B03.0809221748",  //SMC 1.4f12
 	"MB21.88Z.00A5.B07.0706270922",
 	"MB41.88Z.0073.B00.0809221748",  //SMC 1.31f1
-	"MB51.88Z.007D.003.0809221748",  //SMC 1.32f8
+	"MB52.88Z.007D.003.0809221748",  //SMC 1.32f8
 	"MBP51.88Z.007E.B05.0906151647",  //SMC 1.33f8
 	"MBA11.88Z.00BB.B03.0712201139",
 	"MM21.88Z.009A.B00.0706281359",
@@ -80,7 +80,7 @@ CHAR8* SMboardproduct[9] = { //t2 ProductName
 	"Mac-F4208CC8",
 	"Mac-F4208CA9",
 	"Mac-F22788A9", //F42D89C8",
-	"Mac-F227BEC8", //"Mac-F22788C8",
+	"Mac-F22788AA", //F227BEC8", //"Mac-F22788C8",
 	"Mac-F42D86C8", //F22587C8",
 	"Mac-F42C8CC8",
 	"Mac-F4208EAA",
@@ -89,17 +89,17 @@ CHAR8* SMboardproduct[9] = { //t2 ProductName
 };
 
 CHAR8* SMserials[9] = {
-	"4H629LYAU9C",
-	"4H7044LUWGP",
-	"RM83064H0P1",
-	"W874725NZ66",
-	"W88439FE1G0",
-	"W8811456Y51",
-	"YM8054BYYL2",
-	"W8034342DB7",
-	"CK80728AXYL"	
+	"4H629LYAU9C",  //+
+	"4H7044LUWGP",  //+  
+	"RM83064H0P1",  //+
+	"W88AAAAA9GU", //"W874725NZ66", //MacBook3,1 
+	"W88439FE1G0",  //+
+	"W8811456Y51",  //+  
+	"YM8054BYYL2",  //+
+	"W8034342DB7",  //+
+	"CK80728AXYL"	//+
 };
-CHAR8* SMserial  = "W87234JHYA4";  //t1,t2 SerialNumber, "W874725NZ66"
+CHAR8* SMserial  = "W87234JHYA4";//MB21  //t1,t2 SerialNumber, "W874725NZ66" //MB31
 CHAR8* SMserial2 = "W874725NZ66";
 CHAR8* SMbiosvendor = "Apple Inc.";  //t0 Vendor
 CHAR8* SMboardmanufacter = "Apple Computer, Inc."; //t1, t2 Manufacturer
@@ -108,7 +108,7 @@ CHAR8* SMproductname[9] = { //t1 ProductName
 	"MacBook1,1",
 	"MacBook2,1",
 	"MacBook4,1",
-	"MacBook5,1",
+	"MacBook5,2",
 	"MacBookPro5,1",
 	"MacBookAir1,1",
 	"Macmini2,1",
@@ -963,7 +963,7 @@ SmbiosGenEntrypoint (
 				gCpuType = 0x101;
 				break;				
 			case CPU_MODEL_YONAH: 
-				gMacType = MacBook51; //MacBook11; //Probe to install Lion
+				gMacType = MacBook11; //MacBook11; //Probe to install Lion
 				gCpuType = 0x201;  // or 0x101???
 				break;
 			case CPU_MODEL_MEROM: 

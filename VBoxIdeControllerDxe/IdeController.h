@@ -184,23 +184,17 @@ IdeInitNotifyPhase (
   )
 /*++
 
-Routine Description:
+/**
+  This function is called by IdeBus driver to submit EFI_IDENTIFY_DATA data structure
+  obtained from IDE deivce. This structure is used to set IDE timing
 
-  TODO: Add function description
+  @param This           The EFI_IDE_CONTROLLER_INIT_PROTOCOL instance.
+  @param Channel        IDE channel number (0 based, either 0 or 1)
+  @param Device         IDE device number
+  @param IdentifyData   A pointer to EFI_IDENTIFY_DATA data structure
 
-Arguments:
-
-  This    - TODO: add argument description
-  Phase   - TODO: add argument description
-  Channel - TODO: add argument description
-
-Returns:
-
-  TODO: add return values
-
---*/
-;
-
+  @return EFI_SUCCESS   Success operation.
+**/
 EFI_STATUS
 EFIAPI
 IdeInitSubmitData (
@@ -209,24 +203,17 @@ IdeInitSubmitData (
   IN  UINT8                             Device,
   IN  EFI_IDENTIFY_DATA                 *IdentifyData
   )
-/*++
+/**
+  This function is called by IdeBus driver to disqualify unsupported operation
+  mode on specfic IDE device
 
-Routine Description:
+  @param This       the EFI_IDE_CONTROLLER_INIT_PROTOCOL instance.
+  @param Channel    IDE channel number (0 based, either 0 or 1)
+  @param Device     IDE device number
+  @param BadModes   Operation mode indicator
 
-  TODO: Add function description
-
-Arguments:
-
-  This          - TODO: add argument description
-  Channel       - TODO: add argument description
-  Device        - TODO: add argument description
-  IdentifyData  - TODO: add argument description
-
-Returns:
-
-  TODO: add return values
-
---*/
+  @return EFI_SUCCESS Success operation.
+**/
 ;
 
 EFI_STATUS
@@ -262,26 +249,19 @@ IdeInitDisqualifyMode (
   IN  UINT8                             Channel,
   IN  UINT8                             Device,
   IN  EFI_ATA_COLLECTIVE_MODE           *BadModes
-  )
-/*++
+  );
+/**
+  This function is called by IdeBus driver to calculate the best operation mode
+  supported by specific IDE device
 
-Routine Description:
+  @param This               the EFI_IDE_CONTROLLER_INIT_PROTOCOL instance.
+  @param Channel            IDE channel number (0 based, either 0 or 1)
+  @param Device             IDE device number
+  @param SupportedModes     Modes collection supported by IDE device
 
-  TODO: Add function description
-
-Arguments:
-
-  This      - TODO: add argument description
-  Channel   - TODO: add argument description
-  Device    - TODO: add argument description
-  BadModes  - TODO: add argument description
-
-Returns:
-
-  TODO: add return values
-
---*/
-;
+  @retval EFI_OUT_OF_RESOURCES  Fail to allocate pool.
+  @retval EFI_INVALID_PARAMETER Invalid channel id and device id.
+**/
 
 EFI_STATUS
 EFIAPI
@@ -291,24 +271,17 @@ IdeInitCalculateMode (
   IN  UINT8                             Device,
   IN  EFI_ATA_COLLECTIVE_MODE           **SupportedModes
   )
-/*++
+/**
+  This function is called by IdeBus driver to set appropriate timing on IDE
+  controller according supported operation mode.
 
-Routine Description:
+  @param This       the EFI_IDE_CONTROLLER_INIT_PROTOCOL instance.
+  @param Channel    IDE channel number (0 based, either 0 or 1)
+  @param Device     IDE device number
+  @param Modes      IDE device modes
 
-  TODO: Add function description
-
-Arguments:
-
-  This            - TODO: add argument description
-  Channel         - TODO: add argument description
-  Device          - TODO: add argument description
-  SupportedModes  - TODO: add argument description
-
-Returns:
-
-  TODO: add return values
-
---*/
+  @retval EFI_SUCCESS Sucess operation.
+**/
 ;
 
 EFI_STATUS
