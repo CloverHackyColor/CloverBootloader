@@ -82,7 +82,7 @@ EFI_ATA_COLLECTIVE_MODE  gEfiAtaCollectiveModeTemplate = {
 };
 
 static BOOLEAN gfIdeAhciEmulation = FALSE;
-
+/**
   @param ImageHandle    While the driver image loaded be the ImageLoader(),
                         an image handle is assigned to this driver binary,
                         all activities of the driver is tied to this ImageHandle

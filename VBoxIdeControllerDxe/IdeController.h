@@ -182,8 +182,6 @@ IdeInitNotifyPhase (
   IN  EFI_IDE_CONTROLLER_ENUM_PHASE     Phase,
   OUT UINT8                             Channel
   )
-/*++
-
 /**
   This function is called by IdeBus driver to submit EFI_IDENTIFY_DATA data structure
   obtained from IDE deivce. This structure is used to set IDE timing
@@ -195,6 +193,8 @@ IdeInitNotifyPhase (
 
   @return EFI_SUCCESS   Success operation.
 **/
+;
+
 EFI_STATUS
 EFIAPI
 IdeInitSubmitData (
