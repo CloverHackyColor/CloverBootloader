@@ -54,6 +54,7 @@
   #BaseMemoryLib|MdePkg/Library/BaseMemoryLibSse2/BaseMemoryLibSse2.inf
   PrintLib|MdePkg/Library/BasePrintLib/BasePrintLib.inf
   CpuLib|MdePkg/Library/BaseCpuLib/BaseCpuLib.inf
+  CpuIA32Lib|EdkCompatibilityPkg/Foundation/Cpu/Pentium/CpuIA32Lib/CpuIA32Lib_Edk2.inf
   IoLib|MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsic.inf
   #PciLib|MdePkg/Library/BasePciLibCf8/BasePciLibCf8.inf
   #PciCf8Lib|MdePkg/Library/BasePciCf8Lib/BasePciCf8Lib.inf
@@ -79,6 +80,7 @@
   UefiDecompressLib|MdePkg/Library/BaseUefiDecompressLib/BaseUefiDecompressLib.inf
   DxeServicesLib|MdePkg/Library/DxeServicesLib/DxeServicesLib.inf
   DxeServicesTableLib|MdePkg/Library/DxeServicesTableLib/DxeServicesTableLib.inf
+  EfiFileLib|EmbeddedPkg/Library/EfiFileLib/EfiFileLib.inf
   
   #
   # Generic Modules
@@ -237,7 +239,8 @@
   PcAtChipsetPkg/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
   PcAtChipsetPkg/8254TimerDxe/8254Timer.inf
   DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
-  DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
+  #DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
+  DuetPkg/cloverefiboot/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
   
   	#DataHub
 	DuetPkg/cloverefiboot/VBoxAppleSim/VBoxAppleSim.inf
@@ -290,8 +293,8 @@
 
   MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
   MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
-  MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
-  #DuetPkg/cloverefiboot/OsxPartitionDxe/PartitionDxe.inf
+  #MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
+  DuetPkg/cloverefiboot/OsxPartitionDxe/PartitionDxe.inf
 
   # Bios Thunk
   DuetPkg/BiosVideoThunkDxe/BiosVideo.inf

@@ -1,6 +1,6 @@
 /*++
 
-Copyright (c) 2006 - 2010, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2006 - 2011, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials                          
 are licensed and made available under the terms and conditions of the BSD License         
 which accompanies this distribution.  The full text of the license may be found at        
@@ -19,10 +19,10 @@ Revision History:
 --*/
 #include "EfiLdr.h"
 #include "Debug.h"
-//#include <Library/SerialPortLib.h>
 
 UINT8 *mCursor;
 UINT8 mHeaderIndex = 10;
+
 
 VOID
 PrintHeader (
@@ -47,7 +47,6 @@ ClearScreen (
   }
   mCursor = (UINT8 *)(UINTN)(0x000b8000 + 160);
 }
-
 
 VOID 
 PrintU32Base10 (
@@ -114,16 +113,17 @@ PrintValue64 (
 
 VOID
 PrintString (
-  CHAR8 *String
+  IN CONST CHAR8  *FormatString,
+  ...
   )
 {
   UINT32 Index;
 
-  for (Index = 0; String[Index] != 0; Index++) {
-    if (String[Index] == '\n') {
-      mCursor = (UINT8 *)(UINTN)(0xb8000 + (((((UINTN)mCursor - 0xb8000) + 160) / 160) * 160));
+  for (Index = 0; PrintBuffer[Index] != 0; Index++) {
+    if (PrintBuffer[Index] == '\n') {
+      mCursor = (UINT8 *) (UINTN) (0xb8000 + (((((UINTN)mCursor - 0xb8000) + 160) / 160) * 160));
     } else {
-      *mCursor = String[Index];
+      *mCursor = (UINT8) PrintBuffer[Index];
       mCursor += 2;
     }
   }
@@ -131,6 +131,6 @@ PrintString (
   //
   // All information also output to serial port.
   //
-//SerialPortWrite ((UINT8*) String, Index);
+ // SerialPortWrite ((UINT8 *) PrintBuffer, Index);
 }
 

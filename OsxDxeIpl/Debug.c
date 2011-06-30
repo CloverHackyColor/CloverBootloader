@@ -1,6 +1,6 @@
 /** @file
 
-Copyright (c) 2006, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2006 - 2011, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials                          
 are licensed and made available under the terms and conditions of the BSD License         
 which accompanies this distribution.  The full text of the license may be found at        
@@ -85,16 +85,23 @@ PrintValue64 (
 
 VOID
 PrintString (
-  CHAR8 *String
+  IN CONST CHAR8  *FormatString,
+  ...
   )
 {
-  UINT32 Index;
+  UINTN           Index;
+  CHAR8           PrintBuffer[1000];
+  VA_LIST         Marker;
 
-  for (Index = 0; String[Index] != 0; Index++) {
-    if (String[Index] == '\n') {
-      mCursor = (UINT8 *)(UINTN)(0xb8000 + (((((UINTN)mCursor - 0xb8000) + 160) / 160) * 160));
+  VA_START (Marker, FormatString);
+  AsciiVSPrint (PrintBuffer, sizeof (PrintBuffer), FormatString, Marker);
+  VA_END (Marker);
+
+  for (Index = 0; PrintBuffer[Index] != 0; Index++) {
+    if (PrintBuffer[Index] == '\n') {
+      mCursor = (UINT8 *) (UINTN) (0xb8000 + (((((UINTN)mCursor - 0xb8000) + 160) / 160) * 160));
     } else {
-      *mCursor = String[Index];
+      *mCursor = (UINT8) PrintBuffer[Index];
       mCursor += 2;
     }
   }
@@ -102,6 +109,6 @@ PrintString (
   //
   // All information also output to serial port.
   //
-  //DebugSerialPrint ((CHAR8*)String);
+  //SerialPortWrite ((UINT8 *) PrintBuffer, Index);
 }
 

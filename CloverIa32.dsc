@@ -239,7 +239,8 @@
   PcAtChipsetPkg/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
   PcAtChipsetPkg/8254TimerDxe/8254Timer.inf
   DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
-  DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
+  #DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
+  DuetPkg/cloverefiboot/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
   
   	#DataHub
 	DuetPkg/cloverefiboot/VBoxAppleSim/VBoxAppleSim.inf

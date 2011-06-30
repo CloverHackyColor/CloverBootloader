@@ -94,7 +94,8 @@ INF  DuetPkg/LegacyMetronome/Metronome.inf
 INF  PcAtChipsetPkg/8254TimerDxe/8254Timer.inf
 INF  PcAtChipsetPkg/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
 INF  DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
-INF  DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
+#INF  DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
+INF  DuetPkg/cloverefiboot/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
 INF  IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
 INF  IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
 INF  DuetPkg/BiosVideoThunkDxe/BiosVideo.inf

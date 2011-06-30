@@ -1,6 +1,6 @@
 /*++
 
-Copyright (c) 2006, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2005 - 2006, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials                          
 are licensed and made available under the terms and conditions of the BSD License         
 which accompanies this distribution.  The full text of the license may be found at        
@@ -10,41 +10,38 @@ THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
 WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.             
 
 Module Name:
-  Debug.h
 
+  PciEnumerator.h
+  
 Abstract:
 
-Revision History:
+  PCI Bus Driver
+
+Revision History
 
 --*/
 
-#ifndef _EFILDR_DEBUG_H_
-#define _EFILDR_DEBUG_H_
+#ifndef _EFI_PCI_ENUMERATOR_H
+#define _EFI_PCI_ENUMERATOR_H
 
-VOID
-PrintHeader (
-  CHAR8 Char
-  );
+EFI_STATUS
+PciEnumerator (
+  IN EFI_HANDLE                    Controller
+  )
+/*++
 
-VOID 
-PrintValue (
-  UINT32 Value
-  );
+Routine Description:
 
-VOID
-PrintValue64 (
-  UINT64 Value
-  );
+  TODO: Add function description
 
-VOID 
-PrintString (
-  IN CONST CHAR8  *FormatString,
-  ...
-  );
+Arguments:
 
-VOID 
-ClearScreen (
-  VOID
-  );
+  Controller  - TODO: add argument description
 
+Returns:
+
+  TODO: add return values
+
+--*/
+;
 #endif
