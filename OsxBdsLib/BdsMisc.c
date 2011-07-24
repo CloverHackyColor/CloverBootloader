@@ -1,7 +1,7 @@
 /** @file
   Misc BDS library function
 
-Copyright (c) 2004 - 2010, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2004 - 2011, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -950,7 +950,7 @@ SetupResetReminder (
       //
       // If the user hits the YES Response key, reset
       //
-      if ((Key.UnicodeChar == CHAR_CARRIAGE_RETURN)) {
+      if (Key.UnicodeChar == CHAR_CARRIAGE_RETURN) {
         gRT->ResetSystem (EfiResetCold, EFI_SUCCESS, 0, NULL);
       }
       gST->ConOut->ClearScreen (gST->ConOut);
@@ -1279,17 +1279,25 @@ BdsSetMemoryTypeInformationVariable (
       continue;
     }
 
+    //
+    // Previous is the number of pages pre-allocated
+    // Current is the number of pages actually needed
+    //
     Previous = PreviousMemoryTypeInformation[Index].NumberOfPages;
+    Current  = CurrentMemoryTypeInformation[Index1].NumberOfPages;
+    Next     = Previous;
 
     //
     // Write next varible to 125% * current and Inconsistent Memory Reserved across bootings may lead to S4 fail
     //
-    if (!MemoryTypeInformationVariableExists && Current < Previous) {
+    if (Current < Previous) {
+      if (BootMode == BOOT_WITH_DEFAULT_SETTINGS) {
       Next = Current + (Current >> 2);
+      } else if (!MemoryTypeInformationVariableExists) {
+        Next = MAX (Current + (Current >> 2), Previous);
+      }
     } else if (Current > Previous) {
       Next = Current + (Current >> 2);
-    } else {
-      Next = Previous;
     }
     if (Next > 0 && Next < 4) {
       Next = 4;

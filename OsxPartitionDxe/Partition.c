@@ -47,9 +47,9 @@ PARTITION_DETECT_ROUTINE mPartitionDetectRoutineTable[] = {
   Test to see if this driver supports ControllerHandle. Any ControllerHandle
   than contains a BlockIo and DiskIo protocol can be supported.
 
-  @param  This                Protocol instance pointer.
-  @param  ControllerHandle    Handle of device to test
-  @param  RemainingDevicePath Optional parameter use to pick a specific child
+  @param[in]  This                Protocol instance pointer.
+  @param[in]  ControllerHandle    Handle of device to test.
+  @param[in]  RemainingDevicePath Optional parameter use to pick a specific child
                               device to start.
 
   @retval EFI_SUCCESS         This driver supports this device
@@ -160,19 +160,38 @@ PartitionDriverBindingSupported (
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_TEST_PROTOCOL
                   );
-
+ if (EFI_ERROR (Status)) {
   return Status;
 }
 
+ Status = gBS->OpenProtocol (
+                 ControllerHandle,
+                 &gEfiBlockIo2ProtocolGuid,
+                 NULL,
+                 This->DriverBindingHandle,
+                 ControllerHandle,
+                 EFI_OPEN_PROTOCOL_TEST_PROTOCOL
+                 );
+  if (EFI_ERROR (Status)) {
+    //
+    // According to UEFI Spec 2.3.1, if a driver is written for a disk device, 
+    // then the EFI_BLOCK_IO_PROTOCOL and EFI_BLOCK_IO2_PROTOCOAL must be implemented.
+    // Currently, SCSI disk driver only produce the EFI_BLOCK_IO_PROTOCOL, it will
+    // not be updated until the non blocking SCSI Pass Thru Protocol is provided.
+    // If there is no EFI_BLOCK_IO2_PROTOCOL, skip here.
+    //    
+  } 
+  return EFI_SUCCESS;  
+}
 
 /**
-  Start this driver on ControllerHandle by opening a Block IO and Disk IO
-  protocol, reading Device Path, and creating a child handle with a
-  Disk IO and device path protocol.
+  Start this driver on ControllerHandle by opening a Block IO or a Block IO2
+  or both, and Disk IO protocol, reading Device Path, and creating a child
+  handle with a Disk IO and device path protocol.
 
-  @param  This                 Protocol instance pointer.
-  @param  ControllerHandle     Handle of device to bind driver to
-  @param  RemainingDevicePath  Optional parameter use to pick a specific child
+  @param[in]  This                 Protocol instance pointer.
+  @param[in]  ControllerHandle     Handle of device to bind driver to
+  @param[in]  RemainingDevicePath  Optional parameter use to pick a specific child
                                device to start.
 
   @retval EFI_SUCCESS          This driver is added to ControllerHandle
@@ -191,6 +210,7 @@ PartitionDriverBindingStart (
   EFI_STATUS                Status;
   EFI_STATUS                OpenStatus;
   EFI_BLOCK_IO_PROTOCOL     *BlockIo;
+  EFI_BLOCK_IO2_PROTOCOL    *BlockIo2;
   EFI_DISK_IO_PROTOCOL      *DiskIo;
   EFI_DEVICE_PATH_PROTOCOL  *ParentDevicePath;
   PARTITION_DETECT_ROUTINE  *Routine;
@@ -212,6 +232,10 @@ PartitionDriverBindingStart (
     }
   }
 
+  //
+  // Try to open BlockIO and BlockIO2. If BlockIO would be opened, continue,
+  // otherwise, return error.
+  //
   Status = gBS->OpenProtocol (
                   ControllerHandle,
                   &gEfiBlockIoProtocolGuid,
@@ -223,8 +247,27 @@ PartitionDriverBindingStart (
   if (EFI_ERROR (Status)) {
     goto Exit;
   }
+
+  Status = gBS->OpenProtocol (
+                  ControllerHandle,
+                  &gEfiBlockIo2ProtocolGuid,
+                  (VOID **) &BlockIo2,
+                  This->DriverBindingHandle,
+                  ControllerHandle,
+                  EFI_OPEN_PROTOCOL_BY_DRIVER
+                  );
+  if (EFI_ERROR (Status)) {
   //
-  // Get the Device Path Protocol on ControllerHandle's handle
+    // According to UEFI Spec 2.3.1, if a driver is written for a disk device, 
+    // then the EFI_BLOCK_IO_PROTOCOL and EFI_BLOCK_IO2_PROTOCOAL must be implemented.
+    // Currently, SCSI disk driver only produce the EFI_BLOCK_IO_PROTOCOL, it will
+    // not be updated until the non blocking SCSI Pass Thru Protocol is provided.
+    // If there is no EFI_BLOCK_IO2_PROTOCOL, skip here.
+    //
+  }
+
+  //
+  // Get the Device Path Protocol on ControllerHandle's handle.
   //
   Status = gBS->OpenProtocol (
                   ControllerHandle,
@@ -277,6 +320,7 @@ PartitionDriverBindingStart (
                    ControllerHandle,
                    DiskIo,
                    BlockIo,
+                   BlockIo2,
                    ParentDevicePath
                    );
       if (!EFI_ERROR (Status) || Status == EFI_MEDIA_CHANGED || Status == EFI_NO_MEDIA) {
@@ -307,6 +351,16 @@ PartitionDriverBindingStart (
           This->DriverBindingHandle,
           ControllerHandle
           );
+    //
+    // Close Parent BlockIO2 if has.
+    //    
+        gBS->CloseProtocol (
+           ControllerHandle,
+           &gEfiBlockIo2ProtocolGuid,
+           This->DriverBindingHandle,
+           ControllerHandle
+           );
+
 
     gBS->CloseProtocol (
           ControllerHandle,
@@ -356,9 +410,14 @@ PartitionDriverBindingStop (
   EFI_STATUS              Status;
   UINTN                   Index;
   EFI_BLOCK_IO_PROTOCOL   *BlockIo;
+  EFI_BLOCK_IO2_PROTOCOL  *BlockIo2;
   BOOLEAN                 AllChildrenStopped;
   PARTITION_PRIVATE_DATA  *Private;
   EFI_DISK_IO_PROTOCOL    *DiskIo;
+
+  BlockIo  = NULL;
+  BlockIo2 = NULL;
+  Private = NULL;
 
   if (NumberOfChildren == 0) {
     //
@@ -370,6 +429,15 @@ PartitionDriverBindingStop (
           This->DriverBindingHandle,
           ControllerHandle
           );
+    //
+    // Close Parent BlockIO2 if has.
+    //    
+    gBS->CloseProtocol (
+           ControllerHandle,
+           &gEfiBlockIo2ProtocolGuid,
+           This->DriverBindingHandle,
+           ControllerHandle
+           );
 
     gBS->CloseProtocol (
           ControllerHandle,
@@ -377,13 +445,12 @@ PartitionDriverBindingStop (
           This->DriverBindingHandle,
           ControllerHandle
           );
-
     return EFI_SUCCESS;
   }
 
   AllChildrenStopped = TRUE;
   for (Index = 0; Index < NumberOfChildren; Index++) {
-    Status = gBS->OpenProtocol (
+    gBS->OpenProtocol (
                     ChildHandleBuffer[Index],
                     &gEfiBlockIoProtocolGuid,
                     (VOID **) &BlockIo,
@@ -391,14 +458,20 @@ PartitionDriverBindingStop (
                     ControllerHandle,
                     EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
-    if (!EFI_ERROR (Status)) {
+    //
+    // Try to locate BlockIo2.
+    //
+    gBS->OpenProtocol (
+           ChildHandleBuffer[Index],
+           &gEfiBlockIo2ProtocolGuid,
+           (VOID **) &BlockIo2,
+           This->DriverBindingHandle,
+           ControllerHandle,
+           EFI_OPEN_PROTOCOL_GET_PROTOCOL
+           ); 
+
 
       Private = PARTITION_DEVICE_FROM_BLOCK_IO_THIS (BlockIo);
-
-      //
-      // All Software protocols have be freed from the handle so remove it.
-      //
-      BlockIo->FlushBlocks (BlockIo);
 
       Status = gBS->CloseProtocol (
                       ControllerHandle,
@@ -406,7 +479,28 @@ PartitionDriverBindingStop (
                       This->DriverBindingHandle,
                       ChildHandleBuffer[Index]
                       );
-
+    //
+    // All Software protocols have be freed from the handle so remove it.
+    // Remove the BlockIo Protocol if has.
+    // Remove the BlockIo2 Protocol if has.
+    //
+    if (BlockIo2 != NULL) {
+      BlockIo->FlushBlocks (BlockIo);
+      BlockIo2->FlushBlocksEx (BlockIo2, NULL);
+      Status = gBS->UninstallMultipleProtocolInterfaces (
+                       ChildHandleBuffer[Index],
+                       &gEfiDevicePathProtocolGuid,
+                       Private->DevicePath,
+                       &gEfiBlockIoProtocolGuid,
+                       &Private->BlockIo,
+                       &gEfiBlockIo2ProtocolGuid,
+                       &Private->BlockIo2,
+                       Private->EspGuid,
+                       NULL,
+                       NULL
+                       );
+    } else {
+      BlockIo->FlushBlocks (BlockIo);
       Status = gBS->UninstallMultipleProtocolInterfaces (
                       ChildHandleBuffer[Index],
                       &gEfiDevicePathProtocolGuid,
@@ -417,6 +511,8 @@ PartitionDriverBindingStop (
                       NULL,
                       NULL
                       );
+    }
+
       if (EFI_ERROR (Status)) {
         gBS->OpenProtocol (
               ControllerHandle,
@@ -430,8 +526,6 @@ PartitionDriverBindingStop (
         FreePool (Private->DevicePath);
         FreePool (Private);
       }
-
-    }
 
     if (EFI_ERROR (Status)) {
       AllChildrenStopped = FALSE;
@@ -560,11 +654,11 @@ PartitionReadBlocks (
   Write by using the Disk IO protocol on the parent device. Lba addresses
   must be converted to byte offsets.
 
-  @param  This       Protocol instance pointer.
-  @param  MediaId    Id of the media, changes every time the media is replaced.
-  @param  Lba        The starting Logical Block Address to read from
-  @param  BufferSize Size of Buffer, must be a multiple of device block size.
-  @param  Buffer     Buffer containing read data
+  @param[in]  This       Protocol instance pointer.
+  @param[in]  MediaId    Id of the media, changes every time the media is replaced.
+  @param[in]  Lba        The starting Logical Block Address to read from
+  @param[in]  BufferSize Size of Buffer, must be a multiple of device block size.
+  @param[in]  Buffer     Buffer containing data to be written to device.
 
   @retval EFI_SUCCESS           The data was written correctly to the device.
   @retval EFI_WRITE_PROTECTED   The device can not be written to.
@@ -583,7 +677,7 @@ PartitionWriteBlocks (
   IN UINT32                 MediaId,
   IN EFI_LBA                Lba,
   IN UINTN                  BufferSize,
-  OUT VOID                  *Buffer
+  IN VOID                  *Buffer
   )
 {
   PARTITION_PRIVATE_DATA  *Private;
@@ -631,25 +725,261 @@ PartitionFlushBlocks (
   return Private->ParentBlockIo->FlushBlocks (Private->ParentBlockIo);
 }
 
+/**
+  Reset the Block Device throught Block I/O2 protocol.
+
+  @param  This                 Protocol instance pointer.
+  @param  ExtendedVerification Driver may perform diagnostics on reset.
+
+  @retval EFI_SUCCESS          The device was reset.
+  @retval EFI_DEVICE_ERROR     The device is not functioning properly and could
+                               not be reset.
+
+**/
+EFI_STATUS
+EFIAPI
+PartitionResetEx (
+  IN EFI_BLOCK_IO2_PROTOCOL *This,
+  IN BOOLEAN                ExtendedVerification
+  )
+{
+  PARTITION_PRIVATE_DATA  *Private;
+
+  Private = PARTITION_DEVICE_FROM_BLOCK_IO2_THIS (This);
+
+  return Private->ParentBlockIo2->Reset (
+                                    Private->ParentBlockIo2,
+                                    ExtendedVerification
+                                    );
+}
+
+/**
+  Read BufferSize bytes from Lba into Buffer.
+  
+  This function reads the requested number of blocks from the device. All the
+  blocks are read, or an error is returned.
+  If EFI_DEVICE_ERROR, EFI_NO_MEDIA,_or EFI_MEDIA_CHANGED is returned and
+  non-blocking I/O is being used, the Event associated with this request will
+  not be signaled.
+
+  @param[in]       This       Indicates a pointer to the calling context.
+  @param[in]       MediaId    Id of the media, changes every time the media is 
+                              replaced.
+  @param[in]       Lba        The starting Logical Block Address to read from.
+  @param[in, out]  Token	    A pointer to the token associated with the transaction.
+  @param[in]       BufferSize Size of Buffer, must be a multiple of device block size.  
+  @param[out]      Buffer     A pointer to the destination buffer for the data. The 
+                              caller is responsible for either having implicit or 
+                              explicit ownership of the buffer.
+
+  @retval EFI_SUCCESS           The read request was queued if Token->Event is
+                                not NULL.The data was read correctly from the
+                                device if the Token->Event is NULL.
+  @retval EFI_DEVICE_ERROR      The device reported an error while performing
+                                the read.
+  @retval EFI_NO_MEDIA          There is no media in the device.
+  @retval EFI_MEDIA_CHANGED     The MediaId is not for the current media.
+  @retval EFI_BAD_BUFFER_SIZE   The BufferSize parameter is not a multiple of the
+                                intrinsic block size of the device.
+  @retval EFI_INVALID_PARAMETER The read request contains LBAs that are not valid, 
+                                or the buffer is not on proper alignment.
+  @retval EFI_OUT_OF_RESOURCES  The request could not be completed due to a lack
+                                of resources.
+**/
+EFI_STATUS
+EFIAPI
+PartitionReadBlocksEx (
+  IN     EFI_BLOCK_IO2_PROTOCOL *This,
+  IN     UINT32                 MediaId,
+  IN     EFI_LBA                Lba,
+  IN OUT EFI_BLOCK_IO2_TOKEN    *Token,
+  IN     UINTN                  BufferSize,
+  OUT    VOID                   *Buffer
+  )
+{
+  PARTITION_PRIVATE_DATA  *Private;
+  UINT64                  Offset;
+  UINT32                  UnderRun;
+
+  if (Token == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  Private = PARTITION_DEVICE_FROM_BLOCK_IO2_THIS (This);
+  if (BufferSize % Private->BlockSize != 0) {
+    return EFI_BAD_BUFFER_SIZE;
+  }
+
+  Offset = MultU64x32 (Lba, Private->BlockSize) + Private->Start;
+  if (Offset + BufferSize > Private->End) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  //
+  // Since the BlockIO2 call Parent BlockIO2 directly, so here the offset must
+  // be multiple of BlockSize. If the Spec will be updated the DiskIO to support
+  // BlockIO2, this limitation will be removed and call DiskIO here.
+  //
+  Lba = DivU64x32Remainder (Offset, Private->BlockSize, &UnderRun);
+  if (UnderRun != 0) {
+    return EFI_UNSUPPORTED;
+  }
+
+  //
+  // Because some partitions have different block size from their parent
+  // device, in that case the Block I/O2 couldn't be called.
+  //
+  if (Private->BlockSize != Private->ParentBlockIo->Media->BlockSize) {
+    return EFI_UNSUPPORTED;
+  }
+
+  return Private->ParentBlockIo2->ReadBlocksEx (Private->ParentBlockIo2, MediaId, Lba, Token, BufferSize, Buffer);
+}
+
+/**
+  Write BufferSize bytes from Lba into Buffer.
+
+  This function writes the requested number of blocks to the device. All blocks
+  are written, or an error is returned.If EFI_DEVICE_ERROR, EFI_NO_MEDIA,
+  EFI_WRITE_PROTECTED or EFI_MEDIA_CHANGED is returned and non-blocking I/O is
+  being used, the Event associated with this request will not be signaled.
+
+  @param[in]       This       Indicates a pointer to the calling context.
+  @param[in]       MediaId    The media ID that the write request is for.
+  @param[in]       Lba        The starting logical block address to be written. The
+                              caller is responsible for writing to only legitimate
+                              locations.
+  @param[in, out]  Token      A pointer to the token associated with the transaction.
+  @param[in]       BufferSize Size of Buffer, must be a multiple of device block size.
+  @param[in]       Buffer     A pointer to the source buffer for the data.
+
+  @retval EFI_SUCCESS           The write request was queued if Event is not NULL.
+                                The data was written correctly to the device if
+                                the Event is NULL.
+  @retval EFI_WRITE_PROTECTED   The device can not be written to.
+  @retval EFI_NO_MEDIA          There is no media in the device.
+  @retval EFI_MEDIA_CHNAGED     The MediaId does not matched the current device.
+  @retval EFI_DEVICE_ERROR      The device reported an error while performing the write.
+  @retval EFI_BAD_BUFFER_SIZE   The Buffer was not a multiple of the block size of the device.
+  @retval EFI_INVALID_PARAMETER The write request contains LBAs that are not valid, 
+                                or the buffer is not on proper alignment.
+  @retval EFI_OUT_OF_RESOURCES  The request could not be completed due to a lack
+                                of resources.
+
+**/
+EFI_STATUS
+EFIAPI
+PartitionWriteBlocksEx (
+  IN     EFI_BLOCK_IO2_PROTOCOL *This,
+  IN     UINT32                 MediaId,
+  IN     EFI_LBA                Lba,
+  IN OUT EFI_BLOCK_IO2_TOKEN    *Token,
+  IN     UINTN                  BufferSize,
+  IN     VOID                   *Buffer
+  )
+{
+  PARTITION_PRIVATE_DATA  *Private;
+  UINT64                  Offset;
+  UINT32                  UnderRun;
+
+  if (Token == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  Private = PARTITION_DEVICE_FROM_BLOCK_IO2_THIS (This);
+  if (BufferSize % Private->BlockSize != 0) {
+    return EFI_BAD_BUFFER_SIZE;
+  }
+
+  Offset = MultU64x32 (Lba, Private->BlockSize) + Private->Start;
+  if (Offset + BufferSize > Private->End) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  //
+  // Since the BlockIO2 call Parent BlockIO2 directly, so here the offset must
+  // be multiple of BlockSize. If the Spec will be updated the DiskIO to support
+  // BlockIO2, this limitation will be removed and call DiskIO here.
+  //
+  Lba = DivU64x32Remainder (Offset, Private->BlockSize, &UnderRun);
+  if (UnderRun != 0) {
+    return EFI_UNSUPPORTED;
+  }
+
+  //
+  // Because some kinds of partition have different block size from their parent,
+  // in that case it couldn't call parent Block I/O2. 
+  //
+  if (Private->BlockSize != Private->ParentBlockIo->Media->BlockSize) {
+    return EFI_UNSUPPORTED;
+  }
+
+  return Private->ParentBlockIo2->WriteBlocksEx (Private->ParentBlockIo2, MediaId, Lba, Token, BufferSize, Buffer);
+}
+
+/**
+  Flush the Block Device.
+ 
+  If EFI_DEVICE_ERROR, EFI_NO_MEDIA,_EFI_WRITE_PROTECTED or EFI_MEDIA_CHANGED
+  is returned and non-blocking I/O is being used, the Event associated with
+  this request will not be signaled.  
+
+  @param[in]      This     Indicates a pointer to the calling context.
+  @param[in, out] Token    A pointer to the token associated with the transaction
+
+  @retval EFI_SUCCESS          The flush request was queued if Event is not NULL.
+                               All outstanding data was written correctly to the
+                               device if the Event is NULL.
+  @retval EFI_DEVICE_ERROR     The device reported an error while writting back
+                               the data.
+  @retval EFI_WRITE_PROTECTED  The device cannot be written to.
+  @retval EFI_NO_MEDIA         There is no media in the device.
+  @retval EFI_MEDIA_CHANGED    The MediaId is not for the current media.
+  @retval EFI_OUT_OF_RESOURCES The request could not be completed due to a lack
+                               of resources.
+
+**/
+EFI_STATUS
+EFIAPI
+PartitionFlushBlocksEx (
+  IN     EFI_BLOCK_IO2_PROTOCOL *This,
+  IN OUT EFI_BLOCK_IO2_TOKEN    *Token
+  )
+{
+  PARTITION_PRIVATE_DATA  *Private;
+
+  Private = PARTITION_DEVICE_FROM_BLOCK_IO2_THIS (This);
+
+  //
+  // Because some kinds of partition have different block size from their parent,
+  // in that case it couldn't call parent Block I/O2. 
+  //
+  if (Private->BlockSize != Private->ParentBlockIo->Media->BlockSize) {
+    return EFI_UNSUPPORTED;
+  }
+
+  return Private->ParentBlockIo2->FlushBlocksEx (Private->ParentBlockIo2, Token);
+}
 
 
 /**
   Create a child handle for a logical block device that represents the
   bytes Start to End of the Parent Block IO device.
 
-  @param[in]  This              Protocol instance pointer
-  @param[in]  ParentHandle      Parent Handle for new child
-  @param[in]  ParentDiskIo      Parent DiskIo interface
-  @param[in]  ParentBlockIo     Parent BlockIo interface
-  @param[in]  ParentDevicePath  Parent Device Path
-  @param[in]  DevicePathNode    Child Device Path node
-  @param[in]  Start             Start Block
-  @param[in]  End               End Block
-  @param[in]  BlockSize         Child block size
-  @param[in]  InstallEspGuid    Flag to install EFI System Partition GUID on handle
+  @param[in]  This              Protocol instance pointer.
+  @param[in]  ParentHandle      Parent Handle for new child.
+  @param[in]  ParentDiskIo      Parent DiskIo interface.
+  @param[in]  ParentBlockIo     Parent BlockIo interface.
+  @param[in]  ParentBlockIo2    Parent BlockIo2 interface.
+  @param[in]  ParentDevicePath  Parent Device Path.
+  @param[in]  DevicePathNode    Child Device Path node.
+  @param[in]  Start             Start Block.
+  @param[in]  End               End Block.
+  @param[in]  BlockSize         Child block size.
+  @param[in]  InstallEspGuid    Flag to install EFI System Partition GUID on handle.
 
-  @retval EFI_SUCCESS       A child handle was added
-  @retval other             A child handle was not added
+  @retval EFI_SUCCESS       A child handle was added.
+  @retval other             A child handle was not added.
 
 **/
 EFI_STATUS
@@ -658,6 +988,7 @@ PartitionInstallChildHandle (
   IN  EFI_HANDLE                   ParentHandle,
   IN  EFI_DISK_IO_PROTOCOL         *ParentDiskIo,
   IN  EFI_BLOCK_IO_PROTOCOL        *ParentBlockIo,
+  IN  EFI_BLOCK_IO2_PROTOCOL       *ParentBlockIo2,
   IN  EFI_DEVICE_PATH_PROTOCOL     *ParentDevicePath,
   IN  EFI_DEVICE_PATH_PROTOCOL     *DevicePathNode,
   IN  EFI_LBA                      Start,
@@ -669,6 +1000,7 @@ PartitionInstallChildHandle (
   EFI_STATUS              Status;
   PARTITION_PRIVATE_DATA  *Private;
 
+  Status  = EFI_SUCCESS;
   Private = AllocateZeroPool (sizeof (PARTITION_PRIVATE_DATA));
   if (Private == NULL) {
     return EFI_OUT_OF_RESOURCES;
@@ -681,18 +1013,37 @@ PartitionInstallChildHandle (
 
   Private->BlockSize        = BlockSize;
   Private->ParentBlockIo    = ParentBlockIo;
+  Private->ParentBlockIo2   = ParentBlockIo2;
   Private->DiskIo           = ParentDiskIo;
 
+  //
+  // Set the BlockIO into Private Data.
+  //
   Private->BlockIo.Revision = ParentBlockIo->Revision;
 
   Private->BlockIo.Media    = &Private->Media;
   CopyMem (Private->BlockIo.Media, ParentBlockIo->Media, sizeof (EFI_BLOCK_IO_MEDIA));
-  Private->Media.LogicalPartition = TRUE;
+
+  Private->BlockIo.Reset        = PartitionReset;
+  Private->BlockIo.ReadBlocks   = PartitionReadBlocks;
+  Private->BlockIo.WriteBlocks  = PartitionWriteBlocks;
+  Private->BlockIo.FlushBlocks  = PartitionFlushBlocks;
 
   //
-  // Logical BlockIo instance doesn't have IoAlign restriction because it implements block io operation based on DiskIo
+  // Set the BlockIO2 into Private Data.
   //
+  if (Private->ParentBlockIo2 != NULL) {
+    Private->BlockIo2.Media    = &Private->Media2;
+    CopyMem (Private->BlockIo2.Media, ParentBlockIo2->Media, sizeof (EFI_BLOCK_IO_MEDIA));
+
+    Private->BlockIo2.Reset          = PartitionResetEx;
+    Private->BlockIo2.ReadBlocksEx   = PartitionReadBlocksEx;
+    Private->BlockIo2.WriteBlocksEx  = PartitionWriteBlocksEx;
+    Private->BlockIo2.FlushBlocksEx  = PartitionFlushBlocksEx; 
+  }
+
   Private->Media.IoAlign   = 0;
+  Private->Media.LogicalPartition = TRUE;
   Private->Media.LastBlock = DivU64x32 (
                                MultU64x32 (
                                  End - Start + 1,
@@ -704,18 +1055,26 @@ PartitionInstallChildHandle (
   Private->Media.BlockSize      = (UINT32) BlockSize;
 
   //
-  // Per UEFI Spec, LowestAlignedLba and LogicalBlocksPerPhysicalBlock must be 0
+  // For BlockIO2, it should keep the same alignment with the parent BlockIO2's.
+  //
+  Private->Media2.LogicalPartition = TRUE;
+  Private->Media2.LastBlock = Private->Media.LastBlock;
+  Private->Media2.BlockSize = (UINT32) BlockSize;
+
+  //
+  // Per UEFI Spec, LowestAlignedLba, LogicalBlocksPerPhysicalBlock and OptimalTransferLengthGranularity must be 0
   //  for logical partitions.
   //
   if (Private->BlockIo.Revision >= EFI_BLOCK_IO_PROTOCOL_REVISION2) {
-    Private->BlockIo.Media->LowestAlignedLba              = 0;
-    Private->BlockIo.Media->LogicalBlocksPerPhysicalBlock = 0;
+    Private->Media.LowestAlignedLba               = 0;
+    Private->Media.LogicalBlocksPerPhysicalBlock  = 0;
+    Private->Media2.LowestAlignedLba              = 0;
+    Private->Media2.LogicalBlocksPerPhysicalBlock = 0;
+    if (Private->BlockIo.Revision >= EFI_BLOCK_IO_PROTOCOL_REVISION3) {
+      Private->Media.OptimalTransferLengthGranularity  = 0;
+      Private->Media2.OptimalTransferLengthGranularity = 0;
+    }
   }
-
-  Private->BlockIo.Reset        = PartitionReset;
-  Private->BlockIo.ReadBlocks   = PartitionReadBlocks;
-  Private->BlockIo.WriteBlocks  = PartitionWriteBlocks;
-  Private->BlockIo.FlushBlocks  = PartitionFlushBlocks;
 
   Private->DevicePath           = AppendDevicePathNode (ParentDevicePath, DevicePathNode);
 
@@ -732,20 +1091,44 @@ PartitionInstallChildHandle (
     //
     Private->EspGuid = NULL;
   }
+
   //
-  // Create the new handle
+  // Create the new handle. 
+  // BlockIO2 will be installed on the condition that the blocksize of parent BlockIO 
+  // is same with the child BlockIO's. Instead of calling the DiskIO, the child BlockIO2 
+  // directly call the parent BlockIO and doesn't handle the different block size issue.
+  // If SPEC will update the DiskIO to support the Non-Blocking model, the BlockIO2 will call
+  // DiskIO to handle the blocksize unequal issue and the limitation will be remove from
+  // here.
   //
   Private->Handle = NULL;
+  if ((Private->ParentBlockIo2 != NULL) &&
+      (Private->ParentBlockIo2->Media->BlockSize == BlockSize)
+     ) {
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &Private->Handle,
                   &gEfiDevicePathProtocolGuid,
                   Private->DevicePath,
                   &gEfiBlockIoProtocolGuid,
                   &Private->BlockIo,
+                    &gEfiBlockIo2ProtocolGuid,
+                    &Private->BlockIo2,
                   Private->EspGuid,
                   NULL,
                   NULL
                   );
+  } else {    
+    Status = gBS->InstallMultipleProtocolInterfaces (
+                    &Private->Handle,
+                    &gEfiDevicePathProtocolGuid,
+                    Private->DevicePath,
+                    &gEfiBlockIoProtocolGuid,
+                    &Private->BlockIo,
+                    Private->EspGuid,
+                    NULL,
+                    NULL
+                    );
+  }
 
   if (!EFI_ERROR (Status)) {
     //

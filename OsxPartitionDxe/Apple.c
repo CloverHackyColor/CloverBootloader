@@ -67,6 +67,7 @@ PartitionInstallAppleChildHandles (
   IN  EFI_HANDLE                   Handle,
   IN  EFI_DISK_IO_PROTOCOL         *DiskIo,
   IN  EFI_BLOCK_IO_PROTOCOL        *BlockIo,
+  IN  EFI_BLOCK_IO2_PROTOCOL       *BlockIo2,
   IN  EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
@@ -84,9 +85,16 @@ PartitionInstallAppleChildHandles (
   UINT32                    VolSpaceSize;
   UINT32                    SubBlockSize;
   UINT32                    BlkPerSec;
-
+  UINT32                      MediaId;
+	UINT32                      BlockSize;
+	EFI_LBA                     LastBlock;
+	
+	
   Found         = EFI_NOT_FOUND;
   Media         = BlockIo->Media;
+    BlockSize     = BlockIo->Media->BlockSize;
+  LastBlock     = BlockIo->Media->LastBlock;
+  MediaId       = BlockIo->Media->MediaId;
   VolSpaceSize  = 0;
 
   Block = AllocatePool ((UINTN) Media->BlockSize);
@@ -103,9 +111,9 @@ PartitionInstallAppleChildHandles (
 
       Status = DiskIo->ReadDisk (
                        DiskIo,
-                       Media->MediaId,
-                       MultU64x32 (Lba, Media->BlockSize),
-                       Media->BlockSize,
+                       MediaId,
+                       MultU64x32 (Lba, BlockSize),
+                       BlockSize,
                        Block
                        );
       if (EFI_ERROR (Status))
@@ -120,10 +128,10 @@ PartitionInstallAppleChildHandles (
           break;
       }
       SubBlockSize = be16_to_cpu(Header->sbBlkSize);
-      BlkPerSec    = Media->BlockSize / SubBlockSize;
+      BlkPerSec    = BlockSize / SubBlockSize;
 
       /* Fail if media block size isn't an exact multiple */
-      if (Media->BlockSize != SubBlockSize * BlkPerSec)
+      if (BlockSize != SubBlockSize * BlkPerSec)
       {
           break;
       }
@@ -138,7 +146,7 @@ PartitionInstallAppleChildHandles (
 
           Status = DiskIo->ReadDisk (
                        DiskIo,
-                       Media->MediaId,
+                       MediaId,
                        MultU64x32 (Partition, SubBlockSize),
                        SubBlockSize,
                        Block
@@ -186,13 +194,14 @@ PartitionInstallAppleChildHandles (
               Handle,
               DiskIo,
               BlockIo,
+               BlockIo2,
               DevicePath,
               (EFI_DEVICE_PATH_PROTOCOL *) &CdDev,
               CdDev.PartitionStart,
               CdDev.PartitionStart + CdDev.PartitionSize - 1,
               SubBlockSize,
               FALSE
-                                                );
+               );
 
           if (!EFI_ERROR (Status)) {
               Found = EFI_SUCCESS;
