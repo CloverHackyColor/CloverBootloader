@@ -204,7 +204,7 @@ fsw_status_t fsw_block_get(struct VOLSTRUCTNAME *vol, fsw_u32 phys_bno, fsw_u32 
 
     // find a free entry in the cache table
     for (i = 0; i < vol->bcache_size; i++) {
-        if ((unsigned long)vol->bcache[i].phys_bno == FSW_INVALID_BNO)
+        if ((unsigned long)(vol->bcache[i].phys_bno) == FSW_INVALID_BNO)
             break;
     }
     if (i >= vol->bcache_size) {
