@@ -34,7 +34,7 @@
   SectionExtraction/CoreSectionExtraction.c
   Image/Image.c
   Image/Image.h
-#  Misc/DebugImageInfo.c
+  Misc/DebugImageInfo.c
   Misc/Stall.c
   Misc/SetWatchdogTimer.c
   Misc/InstallConfigurationTable.c
@@ -50,7 +50,7 @@
   Mem/Page.c
   Mem/MemData.c
   Mem/Imem.h
-#  FwVolBlock/FwVolBlock.c
+  FwVolBlock/FwVolBlock.c
 #  FwVolBlock/FwVolBlock.h
 #  FwVol/FwVolWrite.c
 #  FwVol/FwVolRead.c
@@ -101,7 +101,7 @@
   gEfiFileInfoGuid                              ## CONSUMES ## File
   gEfiFirmwareFileSystem2Guid                   ## CONSUMES ## GUID
   gAprioriGuid                                  ## CONSUMES ## GUID
-#  gEfiDebugImageInfoTableGuid                   ## CONSUMES ## GUID
+  gEfiDebugImageInfoTableGuid                   ## CONSUMES ## GUID
   gEfiHobListGuid                               ## CONSUMES ## GUID
   gEfiDxeServicesTableGuid                      ## CONSUMES ## GUID
   gEfiMemoryTypeInformationGuid                 ## CONSUMES ## GUID

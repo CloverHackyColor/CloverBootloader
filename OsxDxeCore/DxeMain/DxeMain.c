@@ -121,7 +121,7 @@ EFI_DXE_SERVICES mDxeServices = {
   (EFI_DISPATCH)                     CoreDispatcher,                      // Dispatch
   (EFI_SCHEDULE)                     CoreSchedule,                        // Schedule
   (EFI_TRUST)                        CoreTrust,                           // Trust
-  (EFI_PROCESS_FIRMWARE_VOLUME)      CoreProcessFirmwareVolume,           // ProcessFirmwareVolume
+//  (EFI_PROCESS_FIRMWARE_VOLUME)      CoreProcessFirmwareVolume,           // ProcessFirmwareVolume
 };
 
 EFI_SYSTEM_TABLE mEfiSystemTableTemplate = {
@@ -245,7 +245,7 @@ DxeMain (
   //
   // Initialize Debug Agent to support source level debug in DXE phase
   //
-  InitializeDebugAgent (DEBUG_AGENT_INIT_DXE_CORE, HobStart, NULL);
+ // InitializeDebugAgent (DEBUG_AGENT_INIT_DXE_CORE, HobStart, NULL);
 
   //
   // Initialize Memory Services
@@ -330,7 +330,7 @@ DxeMain (
   // debuggers to locate the system table...  Also, install debug image info
   // configuration table.
   //
-  CoreInitializeDebugImageInfoTable ();
+/*  CoreInitializeDebugImageInfoTable ();
   CoreNewDebugImageInfoEntry (
     EFI_DEBUG_IMAGE_INFO_TYPE_NORMAL,
     gDxeCoreLoadedImage,
@@ -358,7 +358,7 @@ DxeMain (
       }
     }
   DEBUG_CODE_END ();
-
+*/
   //
   // Initialize the Event Services
   //
@@ -398,11 +398,11 @@ DxeMain (
   //
   // Produce Firmware Volume Protocols, one for each FV in the HOB list.
   //
-  Status = FwVolBlockDriverInit (gDxeCoreImageHandle, gDxeCoreST);
-  ASSERT_EFI_ERROR (Status);
+//  Status = FwVolBlockDriverInit (gDxeCoreImageHandle, gDxeCoreST);
+//  ASSERT_EFI_ERROR (Status);
 
-  Status = FwVolDriverInit (gDxeCoreImageHandle, gDxeCoreST);
-  ASSERT_EFI_ERROR (Status);
+//  Status = FwVolDriverInit (gDxeCoreImageHandle, gDxeCoreST);
+//  ASSERT_EFI_ERROR (Status);
 
   //
   // Produce the Section Extraction Protocol
@@ -427,17 +427,17 @@ DxeMain (
   //
   // Display Architectural protocols that were not loaded if this is DEBUG build
   //
-  DEBUG_CODE_BEGIN ();
-    CoreDisplayMissingArchProtocols ();
-  DEBUG_CODE_END ();
+//  DEBUG_CODE_BEGIN ();
+//    CoreDisplayMissingArchProtocols ();
+//  DEBUG_CODE_END ();
 
   //
   // Display any drivers that were not dispatched because dependency expression
   // evaluated to false if this is a debug build
   //
-  DEBUG_CODE_BEGIN ();
-    CoreDisplayDiscoveredNotDispatched ();
-  DEBUG_CODE_END ();
+//  DEBUG_CODE_BEGIN ();
+//    CoreDisplayDiscoveredNotDispatched ();
+//  DEBUG_CODE_END ();
 
   //
   // Assert if the Architectural Protocols are not present.

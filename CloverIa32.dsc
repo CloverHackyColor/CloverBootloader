@@ -222,7 +222,7 @@
       DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
       NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
   }
-  IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf {
+  #IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf {
   DuetPkg/cloverefiboot/OsxBdsDxe/BdsDxe.inf {
     <LibraryClasses>
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
