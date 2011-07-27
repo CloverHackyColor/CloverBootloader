@@ -106,7 +106,7 @@ BdsLibDoLegacyBoot (
     WriteBootToOsPerformanceData ();
   );
 
-  DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Legacy Boot: %S\n", Option->Description));
+//  DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Legacy Boot: %S\n", Option->Description));
   return LegacyBios->LegacyBoot (
                       LegacyBios,
                       (BBS_BBS_DEVICE_PATH *) Option->DevicePath,

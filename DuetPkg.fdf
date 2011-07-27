@@ -24,6 +24,7 @@
 ################################################################################
 [FV.DuetEfiMainFv]
 BlockSize          = 0x10000
+NumBlocks          = 0x2a
 FvAlignment        = 16         #FV alignment and FV attributes setting.
 ERASE_POLARITY     = 1
 MEMORY_MAPPED      = TRUE
@@ -71,8 +72,8 @@ INF  IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf
 #INF  MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
 INF  MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
 INF  UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
-#INF  UefiCpuPkg/CpuDxe/CpuDxe.inf
-INF  DuetPkg/cloverefiboot/CpuDxe/Cpu.inf
+INF  UefiCpuPkg/CpuDxe/CpuDxe.inf
+#INF  DuetPkg/cloverefiboot/CpuDxe/Cpu.inf
 #INF EdkCompatibilityPkg/Compatibility/MpServicesOnFrameworkMpServicesThunk/MpServicesOnFrameworkMpServicesThunk.inf
 
 	#DataHub

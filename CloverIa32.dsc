@@ -171,7 +171,8 @@
       ReportStatusCodeLib|MdeModulePkg/Library/DxeReportStatusCodeLib/DxeReportStatusCodeLib.inf
   }
 
-  MdeModulePkg/Core/Dxe/DxeMain.inf {
+ # MdeModulePkg/Core/Dxe/DxeMain.inf {
+  DuetPkg/cloverefiboot/OsxDxeCore/DxeMain.inf {
     #
     # Enable debug output for DxeCore module, this is a sample for how to enable debug output
     # for a module. If need turn on debug output for other module, please copy following overriden
@@ -221,8 +222,8 @@
       DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
       NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
   }
-  #  DuetPkg/cloverefiboot/OsxBdsDxe/BdsDxe.inf {
   IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf {
+  DuetPkg/cloverefiboot/OsxBdsDxe/BdsDxe.inf {
     <LibraryClasses>
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
   }

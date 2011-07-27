@@ -879,7 +879,7 @@ Returns:
         // Add IsaKeyboard to ConIn,
         // add IsaSerial to ConOut, ConIn, ErrOut
         //
-        DEBUG ((EFI_D_INFO, "Find the LPC Bridge device\n"));
+ //       DEBUG ((EFI_D_INFO, "Find the LPC Bridge device\n"));
         PrepareLpcBridgeDevicePath (HandleBuffer[Index]);
         continue;
       }
@@ -891,7 +891,7 @@ Returns:
         //
         // Add them to ConOut, ConIn, ErrOut.
         //
-        DEBUG ((EFI_D_INFO, "Find the 16550 SERIAL device\n"));
+//        DEBUG ((EFI_D_INFO, "Find the 16550 SERIAL device\n"));
         PreparePciSerialDevicePath (HandleBuffer[Index]);
         continue;
       }
@@ -1005,7 +1005,7 @@ Returns:
   Status = DisableUsbLegacySupport();
   
   //
-  // Connect the all the default console with current cosole variable
+  // Connect the all the default console with current console variable
   //
   Status = BdsLibConnectAllDefaultConsoles ();
   if (EFI_ERROR (Status)) {
@@ -1138,11 +1138,11 @@ Returns:
     //
     // Perform system diagnostic
     //
-    Status = BaseMemoryTest (MemoryTestLevel);
+/*    Status = BaseMemoryTest (MemoryTestLevel);
     if (EFI_ERROR (Status)) {
       DisableQuietBoot ();
     }
-
+*/
     return ;
   }
   //
