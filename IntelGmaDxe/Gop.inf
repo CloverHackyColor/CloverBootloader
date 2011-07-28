@@ -45,9 +45,10 @@ FILE_GUID            = 048B4BA8-3666-4fa7-A7ED-D75D9BA6358D
 #  EDID.h
   ComponentName.c
 #  CpuSupport.h
+  Ia32/CpuSupport.c
 
 [Sources.IA32]
-  Ia32/CpuSupport.c
+#  Ia32/CpuSupport.c
 
 [LibraryClasses]
   UefiBootServicesTableLib

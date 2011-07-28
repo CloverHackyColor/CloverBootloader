@@ -30,7 +30,7 @@
   SUPPORTED_ARCHITECTURES        = X64
   BUILD_TARGETS                  = DEBUG
   SKUID_IDENTIFIER               = DEFAULT
-  FLASH_DEFINITION               = DuetPkg/cloverefiboot/DuetPkg.fdf
+  FLASH_DEFINITION               = DuetPkg/cloverefiboot/DuetPkg64.fdf
 
 ################################################################################
 #
@@ -251,8 +251,9 @@
 	#DuetPkg/cloverefiboot/VBoxFsDxe/VBoxFsDxe.inf
 	#DuetPkg/cloverefiboot/VBoxFsDxe/VBoxExt2.inf
 
-  IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
+  #IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
   IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
+  DuetPkg/cloverefiboot/IntelGmaDxe/Gop.inf
 
   # IDE/AHCI Support
   DuetPkg/cloverefiboot/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
@@ -293,14 +294,14 @@
   DuetPkg/cloverefiboot/OsxPartitionDxe/PartitionDxe.inf
 
   # Bios Thunk
-  DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
+  #DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
 
   #
   # Sample Application
   #
   #MdeModulePkg/Application/HelloWorld/HelloWorld.inf
   # MdeModulePkg/Application/VariableInfo/VariableInfo.inf
-  iboot-efi/branches/Slice/iboot.inf
+  #iboot-efi/branches/Slice/iboot.inf
   #rEFIt_UEFI/refit.inf
 
 ###################################################################################################
