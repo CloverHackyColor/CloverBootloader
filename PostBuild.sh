@@ -24,7 +24,7 @@ else
 export BASETOOLS_DIR=$EDK_TOOLS_PATH/Source/C/bin
 fi
 
-export BOOTSECTOR_BIN_DIR=$WORKSPACE/DuetPkg/BootSector/bin
+export BOOTSECTOR_BIN_DIR=$WORKSPACE/Clover/BootSector/bin
 export PROCESSOR=""
 if [ \
      -z "$1" -o \
@@ -62,7 +62,7 @@ case "$2" in
 	echo Welcome to XCode!
 esac
 
-export BUILD_DIR=$WORKSPACE/Build/Clover$PROCESSOR/DEBUG_XCODE32
+export BUILD_DIR=$WORKSPACE/Build/Clover$PROCESSOR/RELEASE_XCODE32
 
 
 #
@@ -91,8 +91,8 @@ then
 	#bcat -o $BUILD_DIR/FV/Efildr.bcat $BOOTSECTOR_BIN_DIR/start.com $BOOTSECTOR_BIN_DIR/efi32.com2 $BUILD_DIR/FV/Efildr32
 #	cat $BOOTSECTOR_BIN_DIR/Start16.com $BOOTSECTOR_BIN_DIR/efi32.com2 $BUILD_DIR/FV/Efildr32 > $BUILD_DIR/FV/Efildr16
 	#bcat -o $BUILD_DIR/FV/Efildr16.bcat $BOOTSECTOR_BIN_DIR/start16.com $BOOTSECTOR_BIN_DIR/efi32.com2 $BUILD_DIR/FV/Efildr32
-	cat $BOOTSECTOR_BIN_DIR/Start32.com $BOOTSECTOR_BIN_DIR/efi32.com3 $BUILD_DIR/FV/Efildr32 > $BUILD_DIR/FV/Efildr20	
-	cat $BUILD_DIR/FV/StartHFS.com $BOOTSECTOR_BIN_DIR/efi32.com3 $BUILD_DIR/FV/Efildr32 > $BUILD_DIR/FV/boot
+	cat $BOOTSECTOR_BIN_DIR/Start32.com $BOOTSECTOR_BIN_DIR/efi32.com2 $BUILD_DIR/FV/Efildr32 > $BUILD_DIR/FV/Efildr20	
+	cat $BOOTSECTOR_BIN_DIR/StartHFS.com $BOOTSECTOR_BIN_DIR/efi32.com3 $BUILD_DIR/FV/Efildr32 > $BUILD_DIR/FV/boot
 	#bcat -o $BUILD_DIR/FV/Efildr20.bcat $BOOTSECTOR_BIN_DIR/start32.com $BOOTSECTOR_BIN_DIR/efi32.com2 $BUILD_DIR/FV/Efildr32
 	echo Done!
 fi
