@@ -277,7 +277,7 @@ BdsLibUpdateConsoleVariable (
         ConVarName,
         &gEfiGlobalVariableGuid,
         Attributes,
-                  DevicePathSize,
+        GetDevicePathSize (NewDevicePath),
         NewDevicePath
         );
   ASSERT_EFI_ERROR (Status);
@@ -372,7 +372,15 @@ BdsLibConnectConsoleVariable (
        ((DevicePathSubType (Instance) == MSG_USB_CLASS_DP)
        || (DevicePathSubType (Instance) == MSG_USB_WWID_DP)
        )) {
-      Status = BdsLibConnectUsbDevByShortFormDP (0xFF, Instance);
+      //
+      // Check the Usb console in Usb2.0 bus firstly, then Usb1.1 bus
+      //
+      Status = BdsLibConnectUsbDevByShortFormDP (PCI_IF_EHCI, Instance);
+      if (!EFI_ERROR (Status)) {
+        DeviceExist = TRUE;
+      }
+
+      Status = BdsLibConnectUsbDevByShortFormDP (PCI_IF_UHCI, Instance);
       if (!EFI_ERROR (Status)) {
         DeviceExist = TRUE;
       }
@@ -801,8 +809,8 @@ EnableQuietBoot (
 
   //
   // Erase Cursor from screen
-  //Slice - no cursor
-//  gST->ConOut->EnableCursor (gST->ConOut, FALSE);
+  //
+  gST->ConOut->EnableCursor (gST->ConOut, FALSE);
 
   Badging = NULL;
   Status  = gBS->LocateProtocol (&gEfiOEMBadgingProtocolGuid, NULL, (VOID **) &Badging);
@@ -1002,8 +1010,8 @@ DisableQuietBoot (
 
   //
   // Enable Cursor on Screen
-  //Slice
- // gST->ConOut->EnableCursor (gST->ConOut, TRUE);
+  //
+  gST->ConOut->EnableCursor (gST->ConOut, TRUE);
   return EFI_SUCCESS;
 }
 

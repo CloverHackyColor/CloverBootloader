@@ -1025,8 +1025,8 @@ SmbiosGenEntrypoint (
 	InstallMemorySmbios    (Smbios); //Memory Array Mapped Address info (TYPE 19) unknown to Apple
 	InstallMemoryMapSmbios (Smbios); //Memory Device Mapped info (TYPE 20) unknown to Apple
 // Apple Specific Structures
-	InstallFirmwareVolumeSmbios		(Smbios); //128
-	InstallMemorySPDSmbios			(Smbios); //130
+//	InstallFirmwareVolumeSmbios		(Smbios); //128
+//	InstallMemorySPDSmbios			(Smbios); //130
 	InstallOemProcessorTypeSmbios	(Smbios); //131
 	InstallOemProcessorBusSpeed		(Smbios); //132
 

@@ -1138,11 +1138,11 @@ Returns:
     //
     // Perform system diagnostic
     //
-/*    Status = BaseMemoryTest (MemoryTestLevel);
+    Status = BaseMemoryTest (MemoryTestLevel);
     if (EFI_ERROR (Status)) {
       DisableQuietBoot ();
     }
-*/
+
     return ;
   }
   //

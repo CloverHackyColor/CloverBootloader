@@ -383,14 +383,7 @@ BdsFindUsbDevice (
   UINTN                     Index;
   UINTN                     ParentSize;
   UINTN                     Size;
-  EFI_HANDLE                ImageHandle;
-  EFI_HANDLE                Handle;
-  EFI_DEVICE_PATH_PROTOCOL  *FullDevicePath;
-  EFI_DEVICE_PATH_PROTOCOL  *NextDevicePath;
-	CHAR16				*NewFileName;
-
-  FullDevicePath = NULL;
-  ImageHandle    = NULL;
+  EFI_HANDLE                ReturnHandle;
 
   //
   // Get all UsbIo Handles.
@@ -408,6 +401,7 @@ BdsFindUsbDevice (
     return NULL;
   }
 
+  ReturnHandle = NULL;
   ParentSize = (ParentDevicePath == NULL) ? 0 : GetDevicePathSize (ParentDevicePath);
   for (Index = 0; Index < UsbIoHandleCount; Index++) {
     //
@@ -422,15 +416,13 @@ BdsFindUsbDevice (
       continue;
     }
 
-    UsbIoDevicePath = DevicePathFromHandle (UsbIoHandleBuffer[Index]);
-    if (UsbIoDevicePath == NULL) {
-      continue;
-    }
-
     if (ParentDevicePath != NULL) {
       //
       // Compare starting part of UsbIoHandle's device path with ParentDevicePath.
       //
+      UsbIoDevicePath = DevicePathFromHandle (UsbIoHandleBuffer[Index]);
+      ASSERT (UsbIoDevicePath != NULL);
+
       Size = GetDevicePathSize (UsbIoDevicePath);
       if ((Size < ParentSize) ||
           (CompareMem (UsbIoDevicePath, ParentDevicePath, ParentSize - END_DEVICE_PATH_LENGTH) != 0)) {
@@ -440,75 +432,13 @@ BdsFindUsbDevice (
 
     if (BdsMatchUsbClass (UsbIo, (USB_CLASS_DEVICE_PATH *) ShortFormDevicePath) ||
         BdsMatchUsbWwid (UsbIo, (USB_WWID_DEVICE_PATH *) ShortFormDevicePath)) {
-      //
-      // Try to find if there is the boot file in this DevicePath
-      //
-      NextDevicePath = NextDevicePathNode (ShortFormDevicePath);
-      if (!IsDevicePathEnd (NextDevicePath)) {
-        FullDevicePath = AppendDevicePath (UsbIoDevicePath, NextDevicePath);
-        //
-        // Connect the full device path, so that Simple File System protocol
-        // could be installed for this USB device.
-        //
-        BdsLibConnectDevicePath (FullDevicePath);
-        Status = gBS->LoadImage (
-                       TRUE,
-                       gImageHandle,
-                       FullDevicePath,
-                       NULL,
-                       0,
-                       &ImageHandle
-                       );
-        FreePool (FullDevicePath);
-      } else {
-        FullDevicePath = UsbIoDevicePath;
-        Status = EFI_NOT_FOUND;
-      }
-
-      //
-      // If we didn't find an image directly, we need to try as if it is a removable device boot option
-      // and load the image according to the default boot behavior for removable device.
-      //
-      if (EFI_ERROR (Status)) {
-        //
-        // check if there is a bootable removable media could be found in this device path ,
-        // and get the bootable media handle
-        //
-        Handle = BdsLibGetBootableHandle(UsbIoDevicePath, &NewFileName);
-        if (Handle == NULL) {
-          continue;
-        }
-        //
-        // Load the default boot file \EFI\BOOT\boot{machinename}.EFI from removable Media
-        //  machinename is ia32, ia64, x64, ...
-        //
-        FullDevicePath = FileDevicePath (Handle, EFI_REMOVABLE_MEDIA_FILE_NAME);
-        if (FullDevicePath != NULL) {
-          Status = gBS->LoadImage (
-                          TRUE,
-                          gImageHandle,
-                          FullDevicePath,
-                          NULL,
-                          0,
-                          &ImageHandle
-                          );
-          if (EFI_ERROR (Status)) {
-            //
-            // The DevicePath failed, and it's not a valid
-            // removable media device.
-            //
-            continue;
-          }
-        } else {
-          continue;
-        }
-      }
+      ReturnHandle = UsbIoHandleBuffer[Index];
       break;
     }
   }
 
   FreePool (UsbIoHandleBuffer);
-  return ImageHandle;
+  return ReturnHandle;
 }
 
 /**
@@ -535,20 +465,22 @@ BdsFindUsbDevice (
            the specified USB Class or USB WWID device path.
 
 **/
-EFI_HANDLE *
+EFI_DEVICE_PATH_PROTOCOL *
 BdsExpandUsbShortFormDevicePath (
   IN EFI_DEVICE_PATH_PROTOCOL       *DevicePath
   )
 {
-  EFI_HANDLE                *ImageHandle;
+  EFI_DEVICE_PATH_PROTOCOL  *FullDevicePath;
+  EFI_HANDLE                *UsbIoHandle;
+  EFI_DEVICE_PATH_PROTOCOL  *UsbIoDevicePath;
   EFI_DEVICE_PATH_PROTOCOL  *TempDevicePath;
+  EFI_DEVICE_PATH_PROTOCOL  *NextDevicePath;
   EFI_DEVICE_PATH_PROTOCOL  *ShortFormDevicePath;
 
   //
   // Search for USB Class or USB WWID device path node.
   //
   ShortFormDevicePath = NULL;
-  ImageHandle         = NULL;
   TempDevicePath = DevicePath;
   while (!IsDevicePathEnd (TempDevicePath)) {
     if ((DevicePathType (TempDevicePath) == MESSAGING_DEVICE_PATH) &&
@@ -571,14 +503,14 @@ BdsExpandUsbShortFormDevicePath (
     //
     // Boot Option device path starts with USB Class or USB WWID device path.
     //
-    ImageHandle = BdsFindUsbDevice (NULL, ShortFormDevicePath);
-    if (ImageHandle == NULL) {
+    UsbIoHandle = BdsFindUsbDevice (NULL, ShortFormDevicePath);
+    if (UsbIoHandle == NULL) {
       //
       // Failed to find a match in existing devices, connect the short form USB
       // device path and try again.
       //
       BdsLibConnectUsbDevByShortFormDP (0xff, ShortFormDevicePath);
-      ImageHandle = BdsFindUsbDevice (NULL, ShortFormDevicePath);
+      UsbIoHandle = BdsFindUsbDevice (NULL, ShortFormDevicePath);
     }
   } else {
     //
@@ -598,11 +530,48 @@ BdsExpandUsbShortFormDevicePath (
     // Class or USB WWID device path, so just search in existing USB devices and
     // doesn't perform ConnectController here.
     //
-    ImageHandle = BdsFindUsbDevice (TempDevicePath, ShortFormDevicePath);
+    UsbIoHandle = BdsFindUsbDevice (TempDevicePath, ShortFormDevicePath);
     FreePool (TempDevicePath);
   }
 
-  return ImageHandle;
+  if (UsbIoHandle == NULL) {
+    //
+    // Failed to expand USB Class or USB WWID device path.
+    //
+    return NULL;
+  }
+
+  //
+  // Get device path of the matched USB device.
+  //
+  UsbIoDevicePath = DevicePathFromHandle (UsbIoHandle);
+  ASSERT (UsbIoDevicePath != NULL);
+
+  FullDevicePath = NULL;
+  //
+  // Advance to next device path node to skip the USB Class or USB WWID device path.
+  //
+  NextDevicePath = NextDevicePathNode (ShortFormDevicePath);
+  if (!IsDevicePathEnd (NextDevicePath)) {
+    //
+    // There is remaining device path after USB Class or USB WWID device path
+    // node, append it to the USB device path.
+    //
+    FullDevicePath = AppendDevicePath (UsbIoDevicePath, NextDevicePath);
+
+    //
+    // Connect the full device path, so that Simple File System protocol
+    // could be installed for this USB device.
+    //
+    BdsLibConnectDevicePath (FullDevicePath);
+  } else {
+    //
+    // USB Class or WWID device path is in the end.
+    //
+    FullDevicePath = UsbIoDevicePath;
+  }
+
+  return FullDevicePath;
 }
 
 /**
@@ -637,6 +606,7 @@ BdsLibBootViaBootOption (
   EFI_DEVICE_PATH_PROTOCOL  *WorkingDevicePath;
   EFI_ACPI_S3_SAVE_PROTOCOL *AcpiS3Save;
   LIST_ENTRY                TempBootLists;
+  EFI_SECURITY_ARCH_PROTOCOL *SecurityProtocol;
   CHAR16                    *NewFileName;
   //
   // Record the performance data for End of BDS
@@ -673,7 +643,10 @@ BdsLibBootViaBootOption (
   //
   // Expand USB Class or USB WWID drive path node to full device path.
   //
-  ImageHandle = BdsExpandUsbShortFormDevicePath (DevicePath);
+  WorkingDevicePath = BdsExpandUsbShortFormDevicePath (DevicePath);
+  if (WorkingDevicePath != NULL) {
+    DevicePath = WorkingDevicePath;
+  }
 
   //
   // Signal the EVT_SIGNAL_READY_TO_BOOT event
@@ -705,11 +678,6 @@ BdsLibBootViaBootOption (
           );
   }
 
-  //
-  // By expanding the USB Class or WWID device path, the ImageHandle has returnned.
-  // Here get the ImageHandle for the non USB class or WWID device path.
-  //
-  if (ImageHandle == NULL) {
   ASSERT (Option->DevicePath != NULL);
   if ((DevicePathType (Option->DevicePath) == BBS_DEVICE_PATH) &&
       (DevicePathSubType (Option->DevicePath) == BBS_BBS_DP)
@@ -742,6 +710,18 @@ BdsLibBootViaBootOption (
     //
     FreePool (DevicePath);
     DevicePath = Option->DevicePath;
+  }
+
+  //
+  // Measure GPT Table by SAP protocol.
+  //
+  Status = gBS->LocateProtocol (
+                  &gEfiSecurityArchProtocolGuid,
+                  NULL,
+                  (VOID**) &SecurityProtocol
+                  );
+  if (!EFI_ERROR (Status)) {
+    Status = SecurityProtocol->FileAuthenticationState (SecurityProtocol, 0, DevicePath);
   }
 
   DEBUG_CODE_BEGIN();
@@ -780,7 +760,8 @@ BdsLibBootViaBootOption (
     // Load the default boot file \EFI\BOOT\boot{machinename}.EFI from removable Media
     //  machinename is ia32, ia64, x64, ...
     //
-      FilePath = FileDevicePath (Handle, EFI_REMOVABLE_MEDIA_FILE_NAME);
+//FilePath = FileDevicePath (Handle, EFI_REMOVABLE_MEDIA_FILE_NAME);
+	FilePath = FileDevicePath (Handle, NewFileName);
     if (FilePath != NULL) {
       Status = gBS->LoadImage (
                       TRUE,
@@ -806,13 +787,9 @@ BdsLibBootViaBootOption (
     //
     goto Done;
   }
-  }
   //
   // Provide the image with it's load options
   //
-  if (ImageHandle == NULL) {
-    goto Done;
-  }
   Status = gBS->HandleProtocol (ImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &ImageInfo);
   ASSERT_EFI_ERROR (Status);
 
@@ -1441,7 +1418,6 @@ BdsLibEnumerateAllBootOption (
 {
 	EFI_STATUS                    Status;
 	UINT16                        FloppyNumber;
-  UINT16                        HarddriveNumber;
 	UINT16                        CdromNumber;
 	UINT16                        UsbNumber;
 	UINT16                        MiscNumber;
@@ -1450,8 +1426,6 @@ BdsLibEnumerateAllBootOption (
 	UINTN                         NumberBlockIoHandles;
 	EFI_HANDLE                    *BlockIoHandles;
 	EFI_BLOCK_IO_PROTOCOL         *BlkIo;
-  BOOLEAN                       Removable[2];
-  UINTN                         RemovableIndex;
 	UINTN                         Index;
 	UINTN                         NumOfLoadFileHandles;
 	EFI_HANDLE                    *LoadFileHandles;
@@ -1476,7 +1450,6 @@ BdsLibEnumerateAllBootOption (
 	EFI_IMAGE_OPTIONAL_HEADER_PTR_UNION   Hdr;
 	
 	FloppyNumber  = 0;
-  HarddriveNumber = 0;
 	CdromNumber   = 0;
 	UsbNumber     = 0;
 	MiscNumber    = 0;
@@ -1528,13 +1501,8 @@ BdsLibEnumerateAllBootOption (
 	BdsDeleteAllInvalidEfiBootOption ();
 	
 	//
-  // Parse removable media followed by fixed media.
-  // The Removable[] array is used by the for-loop below to create removable media boot options 
-  // at first, and then to create fixed media boot options.
+	// Parse removable media
 	//
-  Removable[0]  = FALSE;
-  Removable[1]  = TRUE;
-
 	gBS->LocateHandleBuffer (
 							 ByProtocol,
 							 &gEfiBlockIoProtocolGuid,
@@ -1543,19 +1511,25 @@ BdsLibEnumerateAllBootOption (
 							 &BlockIoHandles
 							 );
 	
-  for (RemovableIndex = 0; RemovableIndex < 2; RemovableIndex++) {
 	for (Index = 0; Index < NumberBlockIoHandles; Index++) {
 		Status = gBS->HandleProtocol (
 									  BlockIoHandles[Index],
 									  &gEfiBlockIoProtocolGuid,
 									  (VOID **) &BlkIo
 									  );
+		if (!EFI_ERROR (Status)) {
+			/* VBOX: For some guests we need to add non-movable devices as boot
+			 *  options automatically.
+			 */
+#if 0 //ndef VBOX
+			if (!BlkIo->Media->RemovableMedia) {
 				//
       // skip the fixed block io then the removable block io
 				//
-      if (EFI_ERROR (Status) || (BlkIo->Media->RemovableMedia == Removable[RemovableIndex])) {
 				continue;
 			}
+#endif
+		}
 		DevicePath  = DevicePathFromHandle (BlockIoHandles[Index]);
 		DevicePathType = BdsGetBootTypeFromDevicePath (DevicePath);
 		
@@ -1575,23 +1549,14 @@ BdsLibEnumerateAllBootOption (
 				//
 			case BDS_EFI_MESSAGE_ATAPI_BOOT:
 			case BDS_EFI_MESSAGE_SATA_BOOT:
-        if (BlkIo->Media->RemovableMedia) {
 				if (CdromNumber != 0) {
 					UnicodeSPrint (Buffer, sizeof (Buffer), L"%s %d", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_CD_DVD)), CdromNumber);
 				} else {
 					UnicodeSPrint (Buffer, sizeof (Buffer), L"%s", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_CD_DVD)));
 				}
-          CdromNumber++;
-        } else {
-          if (HarddriveNumber != 0) {
-            UnicodeSPrint (Buffer, sizeof (Buffer), L"%s %d", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_HARDDRIVE)), HarddriveNumber);
-          } else {
-            UnicodeSPrint (Buffer, sizeof (Buffer), L"%s", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_HARDDRIVE)));
-          }
-          HarddriveNumber++;
-        }
 				DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Buffer: %S\n", Buffer));
 				BdsLibBuildOptionFromHandle (BlockIoHandles[Index], BdsBootOptionList, Buffer);
+				CdromNumber++;
 				break;
 				
 			case BDS_EFI_MESSAGE_USB_DEVICE_BOOT:
@@ -1614,6 +1579,7 @@ BdsLibEnumerateAllBootOption (
 				ScsiNumber++;
 				break;
 				
+			case BDS_EFI_MEDIA_HD_BOOT:
 			case BDS_EFI_MESSAGE_MISC_BOOT:
 				if (MiscNumber != 0) {
 					UnicodeSPrint (Buffer, sizeof (Buffer), L"%s %d", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_MISC)), MiscNumber);
@@ -1628,7 +1594,6 @@ BdsLibEnumerateAllBootOption (
 				break;
 		}
 	}
-  }
 	
 	if (NumberBlockIoHandles != 0) {
 		FreePool (BlockIoHandles);

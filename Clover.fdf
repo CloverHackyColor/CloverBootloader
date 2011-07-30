@@ -97,7 +97,7 @@ INF  DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
 #INF  DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
 INF  Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
 INF  IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
-INF  IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
+#INF  IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
 INF  DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
 #INF  Clover/IntelGmaDxe/Gop.inf
 

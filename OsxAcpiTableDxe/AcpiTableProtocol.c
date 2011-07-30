@@ -355,13 +355,15 @@ InstallAcpiTable (
              AcpiTableInstance,
              AcpiTableBufferConst,
              FALSE,
-             EFI_ACPI_TABLE_VERSION_1_0B | EFI_ACPI_TABLE_VERSION_2_0 | EFI_ACPI_TABLE_VERSION_3_0,
+            // EFI_ACPI_TABLE_VERSION_1_0B |
+						 EFI_ACPI_TABLE_VERSION_2_0 | EFI_ACPI_TABLE_VERSION_3_0,
              TableKey
              );
   if (!EFI_ERROR (Status)) {
     Status = PublishTables (
                AcpiTableInstance,
-               EFI_ACPI_TABLE_VERSION_1_0B | EFI_ACPI_TABLE_VERSION_2_0 | EFI_ACPI_TABLE_VERSION_3_0
+           //    EFI_ACPI_TABLE_VERSION_1_0B |
+							EFI_ACPI_TABLE_VERSION_2_0 | EFI_ACPI_TABLE_VERSION_3_0
                );
   }
   FreePool (AcpiTableBufferConst);
@@ -416,13 +418,15 @@ UninstallAcpiTable (
              AcpiTableInstance,
              NULL,
              FALSE,
-             EFI_ACPI_TABLE_VERSION_1_0B | EFI_ACPI_TABLE_VERSION_2_0 | EFI_ACPI_TABLE_VERSION_3_0,
+           //  EFI_ACPI_TABLE_VERSION_1_0B |
+						 EFI_ACPI_TABLE_VERSION_2_0 | EFI_ACPI_TABLE_VERSION_3_0,
              &TableKey
              );
   if (!EFI_ERROR (Status)) {
     Status = PublishTables (
                AcpiTableInstance,
-               EFI_ACPI_TABLE_VERSION_1_0B | EFI_ACPI_TABLE_VERSION_2_0 | EFI_ACPI_TABLE_VERSION_3_0
+              // EFI_ACPI_TABLE_VERSION_1_0B |
+							EFI_ACPI_TABLE_VERSION_2_0 | EFI_ACPI_TABLE_VERSION_3_0
                );
   }
 
@@ -1868,7 +1872,7 @@ AcpiTableAcpiTableConstructor (
   // We always reserve first one for FADT
   //
   AcpiTableInstance->Xsdt->Length           = AcpiTableInstance->Xsdt->Length + sizeof(UINT64);
-#else //use legacy tables knowт to HOB
+#else //use legacy tables known to HOB
 	AcpiTableInstance->Rsdp1 = 0;
 	GuidHob.Raw = GetFirstGuidHob (&gEfiAcpi10TableGuid);
 	if (GuidHob.Raw) {
