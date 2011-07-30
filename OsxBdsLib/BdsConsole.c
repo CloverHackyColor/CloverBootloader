@@ -280,7 +280,7 @@ BdsLibUpdateConsoleVariable (
         GetDevicePathSize (NewDevicePath),
         NewDevicePath
         );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
 
   if (VarConsole == NewDevicePath) {
     if (VarConsole != NULL) {
@@ -295,7 +295,7 @@ BdsLibUpdateConsoleVariable (
     }
   }
 
-  return Status;
+  return EFI_SUCCESS;
 
 }
 

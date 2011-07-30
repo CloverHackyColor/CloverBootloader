@@ -28,7 +28,7 @@
   DSC_SPECIFICATION              = 0x00010005
   OUTPUT_DIRECTORY               = Build/CloverIA32
   SUPPORTED_ARCHITECTURES        = IA32
-  BUILD_TARGETS                  = RELEASE
+  BUILD_TARGETS                  = RELEASE|DEBUG
   SKUID_IDENTIFIER               = DEFAULT
   FLASH_DEFINITION               = DuetPkg/cloverefiboot/DuetPkg.fdf
 
