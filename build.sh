@@ -39,6 +39,7 @@ fi
 
 PROCESSOR=IA32
 Processor=Ia32
+VTARGET=RELEASE
 
 #
 # Pick a default tool type for a given OS
@@ -62,7 +63,7 @@ case `uname` in
 
 esac
 
-BUILD_ROOT_ARCH=$WORKSPACE/Build/Clover$PROCESSOR/RELEASE_"$TARGET_TOOLS"/$PROCESSOR
+BUILD_ROOT_ARCH=$WORKSPACE/Build/Clover$PROCESSOR/$VTARGET_"$TARGET_TOOLS"/$PROCESSOR
 FLOPPY_IMAGE=$WORKSPACE/Build/Clover$PROCESSOR/floppy.img
 
 if  [[ ! -f `which build` || ! -f `which GenFv` ]];
@@ -107,6 +108,6 @@ done
 echo Running edk2 build for Clover$Processor
 build -p $WORKSPACE/Clover/Clover$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 $*
 echo Running Clover/PostBuild.sh
-$WORKSPACE/Clover/PostBuild.sh $PROCESSOR $TARGET_TOOLS
+$WORKSPACE/Clover/PostBuild.sh $PROCESSOR $TARGET_TOOLS $VTARGET
 exit $?
 
