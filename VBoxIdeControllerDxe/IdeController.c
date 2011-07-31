@@ -20,8 +20,8 @@
   IDE Bus driver to support platform dependent timing information. This driver
   is responsible for early initialization of IDE controller.
 
-  Copyright (c) 2008 - 2009 Intel Corporation. <BR>
-  All rights reserved. This program and the accompanying materials                          
+  Copyright (c) 2008 - 2010, Intel Corporation. All rights reserved.<BR>
+  This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License         
   which accompanies this distribution.  The full text of the license may be found at        
   http://opensource.org/licenses/bsd-license.php                                            
@@ -83,6 +83,9 @@ EFI_ATA_COLLECTIVE_MODE  gEfiAtaCollectiveModeTemplate = {
 
 static BOOLEAN gfIdeAhciEmulation = FALSE;
 /**
+  Chipset Ide Driver EntryPoint function. It follows the standard EFI driver model.
+  It's called by StartImage() of DXE Core.
+
   @param ImageHandle    While the driver image loaded be the ImageLoader(),
                         an image handle is assigned to this driver binary,
                         all activities of the driver is tied to this ImageHandle

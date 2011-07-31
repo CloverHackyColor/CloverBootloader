@@ -223,7 +223,7 @@
       DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
       NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
   }
-  #IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf {
+ #IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf {
   Clover/OsxBdsDxe/BdsDxe.inf {
     <LibraryClasses>
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
@@ -299,7 +299,8 @@
   Clover/OsxPartitionDxe/PartitionDxe.inf
 
   # Bios Thunk
-  DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
+  #DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
+  Clover/BiosVideo/BiosVideo.inf
 
   #
   # Sample Application

@@ -75,7 +75,7 @@ INF  MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
 INF  UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
 #INF  UefiCpuPkg/CpuDxe/CpuDxe.inf
 INF  Clover/CpuDxe/Cpu.inf
-#INF EdkCompatibilityPkg/Compatibility/MpServicesOnFrameworkMpServicesThunk/MpServicesOnFrameworkMpServicesThunk.inf
+INF EdkCompatibilityPkg/Compatibility/MpServicesOnFrameworkMpServicesThunk/MpServicesOnFrameworkMpServicesThunk.inf
 
 	#DataHub
 INF  Clover/VBoxAppleSim/VBoxAppleSim.inf
@@ -98,8 +98,9 @@ INF  DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
 #INF  DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
 INF  Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
 INF  IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
-INF  IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
-INF  DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
+#INF  IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
+#INF  DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
+INF   Clover/BiosVideo/BiosVideo.inf
 #INF  Clover/IntelGmaDxe/Gop.inf
 
   # IDE/AHCI Support

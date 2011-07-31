@@ -18,8 +18,8 @@
 /** @file
   Header file for IDE controller driver.
 
-  Copyright (c) 2008 Intel Corporation. <BR>
-  All rights reserved. This program and the accompanying materials                          
+  Copyright (c) 2008 - 2011, Intel Corporation. All rights reserved.<BR>
+  This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License         
   which accompanies this distribution.  The full text of the license may be found at        
   http://opensource.org/licenses/bsd-license.php                                            
@@ -159,20 +159,12 @@ IdeInitGetChannelInfo (
 
 Routine Description:
 
-  TODO: Add function description
+  @param This       the EFI_IDE_CONTROLLER_INIT_PROTOCOL instance.
+  @param Phase      phase indicator defined by IDE_CONTROLLER_INIT protocol
+  @param Channel    Channel number (0 based, either 0 or 1)
 
-Arguments:
-
-  This        - TODO: add argument description
-  Channel     - TODO: add argument description
-  Enabled     - TODO: add argument description
-  MaxDevices  - TODO: add argument description
-
-Returns:
-
-  TODO: add return values
-
---*/
+  @return EFI_SUCCESS Success operation.
+**/
 ;
 
 EFI_STATUS
