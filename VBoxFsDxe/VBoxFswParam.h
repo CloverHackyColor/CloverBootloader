@@ -20,6 +20,7 @@
 /*
  * Here is common declarations for EDK<->EDK2 compatibility
  */
+# include <Base.h>
 # include <Uefi.h>
 # include <Library/DebugLib.h>
 # include <Library/BaseLib.h>

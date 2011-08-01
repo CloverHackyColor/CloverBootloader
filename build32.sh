@@ -24,7 +24,7 @@ then
   echo Initializing workspace
   if [ ! -e `pwd`/edksetup.sh ]
   then
-    cd ../..
+    cd ..
   fi
 # This version is for the tools in the BaseTools project.
 # this assumes svn pulls have the same root dir

@@ -24,7 +24,7 @@ then
   echo Initializing workspace
   if [ ! -e `pwd`/edksetup.sh ]
   then
-    cd ../..
+    cd ..
   fi
 # This version is for the tools in the BaseTools project.
 # this assumes svn pulls have the same root dir
@@ -50,7 +50,7 @@ case `uname` in
       Major=$(uname -r | cut -f 1 -d '.')
       if [[ $Major == 9 ]]
       then
-        echo DuetPkg requires Snow Leopard or later OS
+        echo Clover requires Snow Leopard or later OS
         exit 1
       else
         TARGET_TOOLS=XCODE32
@@ -90,26 +90,24 @@ do
 
   if [[ $arg == cleanall ]]; then
     make -C $WORKSPACE/BaseTools clean
-    build -p $WORKSPACE/DuetPkg/cloverefiboot/Clover$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 clean
+    build -p $WORKSPACE/clover/Clover$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 clean
     exit $?
   fi
 
   if [[ $arg == clean ]]; then
-    build -p $WORKSPACE/DuetPkg/cloverefiboot/Clover$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 clean
+    build -p $WORKSPACE/clover/Clover$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 clean
     exit $?
   fi
 done
 
 
 #
-# Build the edk2 DuetPkg
+# Build the edk2 clover
 #
 echo Running edk2 build for Clover$Processor
-build -p $WORKSPACE/DuetPkg/cloverefiboot/Clover$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 $*
-echo Running DuetPkg/cloverefiboot/PostBuild.sh
-$WORKSPACE/DuetPkg/cloverefiboot/PostBuild.sh $PROCESSOR $TARGET_TOOLS
-#echo Running DuetPkg/CreateBootDisk.sh
+build -p $WORKSPACE/clover/Clover$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 $*
+echo Running clover/PostBuild.sh
+$WORKSPACE/clover/PostBuild.sh $PROCESSOR $TARGET_TOOLS
 
-#$WORKSPACE/DuetPkg/CreateBootDisk.sh file $FLOPPY_IMAGE /dev/null FAT12 $PROCESSOR $TARGET_TOOLS
 exit $?
 

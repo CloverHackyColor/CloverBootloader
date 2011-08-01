@@ -28,7 +28,7 @@
   DSC_SPECIFICATION              = 0x00010005
   OUTPUT_DIRECTORY               = Build/CloverIA32
   SUPPORTED_ARCHITECTURES        = IA32
-  BUILD_TARGETS                  = RELEASE|DEBUG
+  BUILD_TARGETS                  = RELEASE
   SKUID_IDENTIFIER               = DEFAULT
   FLASH_DEFINITION               = Clover/Clover.fdf
 
@@ -92,7 +92,6 @@
   GenericBdsLib|Clover/OsxBdsLib/GenericBdsLib.inf
   SecurityManagementLib|MdeModulePkg/Library/DxeSecurityManagementLib/DxeSecurityManagementLib.inf
   CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibNull/DxeCapsuleLibNull.inf
-  PeCoffExtraActionLib|MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
   #
   # Platform
   #
@@ -108,6 +107,8 @@
   MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
   HobLib|MdePkg/Library/DxeHobLib/DxeHobLib.inf
   ExtractGuidedSectionLib|MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
+    PlatformHookLib|MdeModulePkg/Library/BasePlatformHookLibNull/BasePlatformHookLibNull.inf
+
   #SerialPortLib|PcAtChipsetPkg/Library/SerialIoLib/SerialIoLib.inf
   SerialPortLib|MdePkg/Library/BaseSerialPortLibNull/BaseSerialPortLibNull.inf
   MtrrLib|UefiCpuPkg/Library/MtrrLib/MtrrLib.inf
@@ -207,8 +208,8 @@
     <LibraryClasses>
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
   }
- # MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
-  Clover/HiiDatabaseDxe/HiiDatabaseDxe.inf
+  MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
+  #Clover/HiiDatabaseDxe/HiiDatabaseDxe.inf
   MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
   MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
   #MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
@@ -221,17 +222,18 @@
   Clover/OsxEfiLdr/EfiLdr.inf {
     <LibraryClasses>
       DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
-      NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
+      #NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
+      NULL|IntelFrameworkModulePkg/Library/BaseUefiTianoCustomDecompressLib/BaseUefiTianoCustomDecompressLib.inf
   }
- #IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf {
-  Clover/OsxBdsDxe/BdsDxe.inf {
+  #  Clover/OsxBdsDxe/BdsDxe.inf {
+  IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf {
     <LibraryClasses>
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
   }
   #MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
   UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
-  #UefiCpuPkg/CpuDxe/CpuDxe.inf
-  Clover/CpuDxe/Cpu.inf
+  UefiCpuPkg/CpuDxe/CpuDxe.inf
+  #Clover/CpuDxe/Cpu.inf
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
   DuetPkg/AcpiResetDxe/Reset.inf
   DuetPkg/LegacyMetronome/Metronome.inf
@@ -252,20 +254,20 @@
   
   	# foreign file system support
 	#Clover/VBoxFsDxe/VBoxHfs.inf
-	Clover/VBoxFsDxe/VBoxIso9660.inf
+	#Clover/VBoxFsDxe/VBoxIso9660.inf
 	#Clover/VBoxFsDxe/VBoxFsDxe.inf
-	Clover/VBoxFsDxe/VBoxExt2.inf
+	#Clover/VBoxFsDxe/VBoxExt2.inf
 
   IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
-  IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
-  Clover/IntelGmaDxe/Gop.inf
+  #IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
+  #Clover/IntelGmaDxe/Gop.inf
 
   # IDE/AHCI Support
   Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
   Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
-  DuetPkg/SataControllerDxe/SataControllerDxe.inf
-  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
-  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
+  #DuetPkg/SataControllerDxe/SataControllerDxe.inf
+  #MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
+  #MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
 
@@ -300,13 +302,14 @@
 
   # Bios Thunk
   #DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
-  Clover/BiosVideo/BiosVideo.inf
+  #Clover/BiosVideo/BiosVideo.inf
+  IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf
 
   #
   # Sample Application
   #
   #MdeModulePkg/Application/HelloWorld/HelloWorld.inf
-  # MdeModulePkg/Application/VariableInfo/VariableInfo.inf
+  MdeModulePkg/Application/VariableInfo/VariableInfo.inf
   iBootEFI/iboot.inf
   #rEFIt_UEFI/refit.inf
 

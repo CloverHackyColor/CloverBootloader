@@ -26,11 +26,11 @@
   PLATFORM_GUID                  = 199E24E0-0989-42aa-87F2-611A8C397E72
   PLATFORM_VERSION               = 0.3
   DSC_SPECIFICATION              = 0x00010005
-  OUTPUT_DIRECTORY               = Build/CloverIA32
+  OUTPUT_DIRECTORY               = Build/DuetPkgIA32
   SUPPORTED_ARCHITECTURES        = IA32
-  BUILD_TARGETS                  = RELEASE|DEBUG
+  BUILD_TARGETS                  = RELEASE
   SKUID_IDENTIFIER               = DEFAULT
-  FLASH_DEFINITION               = DuetPkg/cloverefiboot/DuetPkg.fdf
+  FLASH_DEFINITION               = clover/DuetPkg.fdf
 
 ################################################################################
 #
@@ -63,7 +63,7 @@
   PciExpressLib|MdePkg/Library/DxeRuntimePciExpressLib/DxeRuntimePciExpressLib.inf
   CacheMaintenanceLib|MdePkg/Library/BaseCacheMaintenanceLib/BaseCacheMaintenanceLib.inf
   #PeCoffLib|MdePkg/Library/BasePeCoffLib/BasePeCoffLib.inf
-  PeCoffLib|DuetPkg/cloverefiboot/VBoxPeCoffLib/VBoxPeCoffLib.inf
+  PeCoffLib|clover/VBoxPeCoffLib/VBoxPeCoffLib.inf
   PeCoffExtraActionLib|MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
   PeCoffGetEntryPointLib|MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
   #ResetSystemLib|PcAtChipsetPkg/Library/ResetSystemLib/ResetSystemLib.inf
@@ -89,15 +89,14 @@
   #UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
   OemHookStatusCodeLib|MdeModulePkg/Library/OemHookStatusCodeLibNull/OemHookStatusCodeLibNull.inf
   #GenericBdsLib|IntelFrameworkModulePkg/Library/GenericBdsLib/GenericBdsLib.inf
-  GenericBdsLib|DuetPkg/cloverefiboot/OsxBdsLib/GenericBdsLib.inf
+  GenericBdsLib|clover/OsxBdsLib/GenericBdsLib.inf
   SecurityManagementLib|MdeModulePkg/Library/DxeSecurityManagementLib/DxeSecurityManagementLib.inf
   CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibNull/DxeCapsuleLibNull.inf
-  PeCoffExtraActionLib|MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
   #
   # Platform
   #
   #PlatformBdsLib|DuetPkg/Library/DuetBdsLib/PlatformBds.inf
-  PlatformBdsLib|DuetPkg/cloverefiboot/OsxBdsPlatformLib/PlatformBds.inf
+  PlatformBdsLib|clover/OsxBdsPlatformLib/PlatformBds.inf
   TimerLib|DuetPkg/Library/DuetTimerLib/DuetTimerLib.inf
   #
   # Misc
@@ -163,7 +162,7 @@
 	#DuetPkg/BootSector/BootSector.inf
 
   #DuetPkg/DxeIpl/DxeIpl.inf {
-  DuetPkg/cloverefiboot/OsxDxeIpl/DxeIpl.inf {
+  clover/OsxDxeIpl/DxeIpl.inf {
     <LibraryClasses>
       #
       # If no following overriden for ReportStatusCodeLib library class,
@@ -214,24 +213,24 @@
   MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
   MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
   MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
-  DuetPkg/cloverefiboot/OsxSmbiosGenDxe/SmbiosGen.inf
+  clover/OsxSmbiosGenDxe/SmbiosGen.inf
 
   #DuetPkg/FvbRuntimeService/DUETFwh.inf
   #DuetPkg/EfiLdr/EfiLdr.inf {
-  DuetPkg/cloverefiboot/OsxEfiLdr/EfiLdr.inf {
+  clover/OsxEfiLdr/EfiLdr.inf {
     <LibraryClasses>
       DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
       NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
   }
-#  IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf {
-  DuetPkg/cloverefiboot/OsxBdsDxe/BdsDxe.inf {
+  #  clover/OsxBdsDxe/BdsDxe.inf {
+  IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf {
     <LibraryClasses>
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
   }
   #MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
   UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
   UefiCpuPkg/CpuDxe/CpuDxe.inf
-  #DuetPkg/cloverefiboot/CpuDxe/Cpu.inf
+  #clover/CpuDxe/Cpu.inf
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
   DuetPkg/AcpiResetDxe/Reset.inf
   DuetPkg/LegacyMetronome/Metronome.inf
@@ -242,27 +241,27 @@
   PcAtChipsetPkg/8254TimerDxe/8254Timer.inf
   DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
   #DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
-  DuetPkg/cloverefiboot/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
+  clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
   
   	#DataHub
-	DuetPkg/cloverefiboot/VBoxAppleSim/VBoxAppleSim.inf
+	clover/VBoxAppleSim/VBoxAppleSim.inf
 	IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 	#IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
 	#EdkCompatibilityPkg/Compatibility/PiSmbiosRecordOnDataHubSmbiosRecordThunk/PiSmbiosRecordOnDataHubSmbiosRecordThunk.inf
   
   	# foreign file system support
-	#DuetPkg/cloverefiboot/VBoxFsDxe/VBoxHfs.inf
-	DuetPkg/cloverefiboot/VBoxFsDxe/VBoxIso9660.inf
-	#DuetPkg/cloverefiboot/VBoxFsDxe/VBoxFsDxe.inf
-	DuetPkg/cloverefiboot/VBoxFsDxe/VBoxExt2.inf
+	#clover/VBoxFsDxe/VBoxHfs.inf
+	clover/VBoxFsDxe/VBoxIso9660.inf
+	#clover/VBoxFsDxe/VBoxFsDxe.inf
+	clover/VBoxFsDxe/VBoxExt2.inf
 
   IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
   IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
-  DuetPkg/cloverefiboot/IntelGmaDxe/Gop.inf
+  clover/IntelGmaDxe/Gop.inf
 
   # IDE/AHCI Support
-  DuetPkg/cloverefiboot/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
-  DuetPkg/cloverefiboot/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
+  clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
+  clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
   DuetPkg/SataControllerDxe/SataControllerDxe.inf
   MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
   MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
@@ -289,14 +288,14 @@
  
   # ACPI Support
   #MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
-   DuetPkg/cloverefiboot/OsxAcpiTableDxe/AcpiTableDxe.inf
+   clover/OsxAcpiTableDxe/AcpiTableDxe.inf
   #MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
-  DuetPkg/cloverefiboot/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
+  clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
 
   MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
   MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
   #MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
-  DuetPkg/cloverefiboot/OsxPartitionDxe/PartitionDxe.inf
+  clover/OsxPartitionDxe/PartitionDxe.inf
 
   # Bios Thunk
   DuetPkg/BiosVideoThunkDxe/BiosVideo.inf

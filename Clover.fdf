@@ -59,23 +59,24 @@ INF  MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
 INF  MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
 INF  MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
 INF  MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
-#INF  MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
-INF  Clover/HiiDatabaseDxe/HiiDatabaseDxe.inf
+INF  MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
+#INF  Clover/HiiDatabaseDxe/HiiDatabaseDxe.inf
 INF  MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
 
 INF  MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
 #INF  MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
 INF  MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
+#INF  DuetPkg/SmbiosGenDxe/SmbiosGen.inf
 INF  Clover/OsxSmbiosGenDxe/SmbiosGen.inf
 #INF  DuetPkg/FvbRuntimeService/DUETFwh.inf
-#INF  IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf
-INF  Clover/OsxBdsDxe/BdsDxe.inf
+INF  IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf
+#INF  Clover/OsxBdsDxe/BdsDxe.inf
 #INF  MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
 INF  MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
 INF  UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
-#INF  UefiCpuPkg/CpuDxe/CpuDxe.inf
-INF  Clover/CpuDxe/Cpu.inf
-INF EdkCompatibilityPkg/Compatibility/MpServicesOnFrameworkMpServicesThunk/MpServicesOnFrameworkMpServicesThunk.inf
+INF  UefiCpuPkg/CpuDxe/CpuDxe.inf
+#INF  Clover/CpuDxe/Cpu.inf
+#INF EdkCompatibilityPkg/Compatibility/MpServicesOnFrameworkMpServicesThunk/MpServicesOnFrameworkMpServicesThunk.inf
 
 	#DataHub
 INF  Clover/VBoxAppleSim/VBoxAppleSim.inf
@@ -100,7 +101,7 @@ INF  Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
 INF  IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
 #INF  IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
 #INF  DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
-INF   Clover/BiosVideo/BiosVideo.inf
+INF IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf
 #INF  Clover/IntelGmaDxe/Gop.inf
 
   # IDE/AHCI Support

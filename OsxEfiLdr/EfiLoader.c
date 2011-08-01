@@ -22,7 +22,8 @@ Revision History:
 #include "Support.h"
 //#include "Debug.h"
 #include "PeLoader.h"
-#include "LzmaDecompress.h"
+//#include "LzmaDecompress.h"
+#include "TianoDecompress.h"
 
 VOID
 SystemHang (
@@ -94,8 +95,9 @@ EfiLoader (
     (UINTN) EFILDRImage->Offset
     );
     */
-  Status = LzmaUefiDecompressGetInfo (
-             (VOID *)(UINTN)(EFILDR_HEADER_ADDRESS + EFILDRImage->Offset),
+//  Status = LzmaUefiDecompressGetInfo (
+  Status = UefiDecompressGetInfo (
+			(VOID *)(UINTN)(EFILDR_HEADER_ADDRESS + EFILDRImage->Offset),
              EFILDRImage->Length,
              &DestinationSize, 
              &ScratchSize
@@ -106,9 +108,10 @@ EfiLoader (
   }
   
 //  PrintString ("BFV decompress: DestinationSize = %x, ScratchSize = %x\n", (UINTN) DestinationSize, (UINTN) ScratchSize);
-  Status =  LzmaUefiDecompress (
+//  Status =  LzmaUefiDecompress (
+  Status =  UefiDecompress (
     (VOID *)(UINTN)(EFILDR_HEADER_ADDRESS + EFILDRImage->Offset),
-    EFILDRImage->Length,
+//    EFILDRImage->Length,
     (VOID *)(UINTN)EFI_DECOMPRESSED_BUFFER_ADDRESS, 
     (VOID *)(UINTN)((EFI_DECOMPRESSED_BUFFER_ADDRESS + DestinationSize + 0x1000) & 0xfffff000)
     );
@@ -143,7 +146,8 @@ EfiLoader (
     (UINTN) EFILDRImage->Offset
     );
 */
-  Status = LzmaUefiDecompressGetInfo (
+//  Status = LzmaUefiDecompressGetInfo (
+	  Status = UefiDecompressGetInfo (
              (VOID *)(UINTN)(EFILDR_HEADER_ADDRESS + EFILDRImage->Offset),
              EFILDRImage->Length,
              &DestinationSize, 
@@ -153,9 +157,10 @@ EfiLoader (
     SystemHang ("Failed to get decompress information for DxeIpl!\n");
   }
 
-  Status = LzmaUefiDecompress (
+//  Status = LzmaUefiDecompress (
+	Status = UefiDecompress (
              (VOID *)(UINTN)(EFILDR_HEADER_ADDRESS + EFILDRImage->Offset),
-             EFILDRImage->Length,
+//             EFILDRImage->Length,
              (VOID *)(UINTN)EFI_DECOMPRESSED_BUFFER_ADDRESS,
              (VOID *)(UINTN)((EFI_DECOMPRESSED_BUFFER_ADDRESS + DestinationSize + 0x1000) & 0xfffff000)
              );
@@ -199,7 +204,8 @@ EfiLoader (
     (UINTN) EFILDRImage->Offset
     );
 */
-  Status = LzmaUefiDecompressGetInfo (
+//  Status = LzmaUefiDecompressGetInfo (
+	Status = UefiDecompressGetInfo (
              (VOID *)(UINTN)(EFILDR_HEADER_ADDRESS + EFILDRImage->Offset),
              EFILDRImage->Length,
              &DestinationSize, 
@@ -209,9 +215,10 @@ EfiLoader (
     SystemHang ("Failed to get decompress information for DxeMain FV image!\n");
   }
 
-  Status = LzmaUefiDecompress (
+//  Status = LzmaUefiDecompress (
+	Status = UefiDecompress (
              (VOID *)(UINTN)(EFILDR_HEADER_ADDRESS + EFILDRImage->Offset),
-              EFILDRImage->Length,
+//              EFILDRImage->Length,
              (VOID *)(UINTN)EFI_DECOMPRESSED_BUFFER_ADDRESS,
              (VOID *)(UINTN)((EFI_DECOMPRESSED_BUFFER_ADDRESS + DestinationSize + 0x1000) & 0xfffff000)
              );
