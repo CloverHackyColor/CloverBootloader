@@ -28,7 +28,7 @@
   DSC_SPECIFICATION              = 0x00010005
   OUTPUT_DIRECTORY               = Build/CloverIA32
   SUPPORTED_ARCHITECTURES        = IA32
-  BUILD_TARGETS                  = RELEASE
+  BUILD_TARGETS                  = RELEASE|DEBUG
   SKUID_IDENTIFIER               = DEFAULT
   FLASH_DEFINITION               = Clover/Clover.fdf
 
@@ -208,8 +208,8 @@
     <LibraryClasses>
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
   }
-  MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
-  #Clover/HiiDatabaseDxe/HiiDatabaseDxe.inf
+  #MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
+  Clover/HiiDatabaseDxe/HiiDatabaseDxe.inf
   MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
   MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
   #MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
@@ -222,8 +222,8 @@
   Clover/OsxEfiLdr/EfiLdr.inf {
     <LibraryClasses>
       DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
-      #NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
-      NULL|IntelFrameworkModulePkg/Library/BaseUefiTianoCustomDecompressLib/BaseUefiTianoCustomDecompressLib.inf
+      NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
+      #NULL|IntelFrameworkModulePkg/Library/BaseUefiTianoCustomDecompressLib/BaseUefiTianoCustomDecompressLib.inf
   }
   #  Clover/OsxBdsDxe/BdsDxe.inf {
   IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf {
@@ -232,8 +232,8 @@
   }
   #MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
   UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
-  UefiCpuPkg/CpuDxe/CpuDxe.inf
-  #Clover/CpuDxe/Cpu.inf
+  #UefiCpuPkg/CpuDxe/CpuDxe.inf
+  Clover/CpuDxe/Cpu.inf
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
   DuetPkg/AcpiResetDxe/Reset.inf
   DuetPkg/LegacyMetronome/Metronome.inf
@@ -259,7 +259,7 @@
 	#Clover/VBoxFsDxe/VBoxExt2.inf
 
   IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
-  #IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
+  IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
   #Clover/IntelGmaDxe/Gop.inf
 
   # IDE/AHCI Support
@@ -302,8 +302,8 @@
 
   # Bios Thunk
   #DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
-  #Clover/BiosVideo/BiosVideo.inf
-  IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf
+  Clover/BiosVideo/BiosVideo.inf
+  #IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf
 
   #
   # Sample Application
