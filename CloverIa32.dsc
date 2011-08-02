@@ -221,7 +221,8 @@
   Clover/OsxEfiLdr/EfiLdr.inf {
     <LibraryClasses>
       DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
-      NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
+      #NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
+      NULL|Clover/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
   }
   #  Clover/OsxBdsDxe/BdsDxe.inf {
   IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf {
@@ -257,7 +258,8 @@
 	#Clover/VBoxFsDxe/VBoxExt2.inf
 
   IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
-  IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
+  #IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
+  Clover/VgaClassDxe/VgaClassDxe.inf
   #Clover/IntelGmaDxe/Gop.inf
 
   # IDE/AHCI Support
