@@ -1,0 +1,83 @@
+## @file
+# The DXE driver produces HII protocols defined in UEFI HII 2.1 specificatin.
+#
+# Copyright (c) 2007 - 2011, Intel Corporation. All rights reserved.<BR>
+#
+#  This program and the accompanying materials       
+#  are licensed and made available under the terms and conditions of the BSD License   
+#  which accompanies this distribution. The full text of the license may be found at  
+#  http://opensource.org/licenses/bsd-license.php           
+#  
+#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,      
+#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = HiiDatabase
+  FILE_GUID                      = 348C4D62-BFBD-4882-9ECE-C80BB1C4783B
+  MODULE_TYPE                    = DXE_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = InitializeHiiDatabase
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC
+#
+
+[Sources]
+  HiiDatabaseEntry.c
+  Image.c
+  HiiDatabase.h
+  ConfigRouting.c
+  String.c
+  Database.c
+  Font.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+
+
+[LibraryClasses]
+  MemoryAllocationLib
+  DevicePathLib
+  BaseLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
+  BaseMemoryLib
+  DebugLib
+  UefiLib
+  PcdLib
+  UefiRuntimeServicesTableLib
+  PrintLib
+
+[Protocols]
+  gEfiDevicePathProtocolGuid                                            ## SOMETIMES_CONSUMES
+  gEfiHiiStringProtocolGuid                                             ## PRODUCES
+  gEfiHiiImageProtocolGuid |gEfiMdeModulePkgTokenSpaceGuid.PcdSupportHiiImageProtocol                  ## PRODUCES
+  gEfiHiiConfigRoutingProtocolGuid                                      ## PRODUCES
+  gEfiHiiDatabaseProtocolGuid                                           ## PRODUCES
+  gEfiHiiFontProtocolGuid                                               ## PRODUCES
+  gEfiHiiConfigAccessProtocolGuid                                       ## CONSUMES
+
+[FeaturePcd]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSupportHiiImageProtocol
+
+[Pcd]
+  gEfiMdePkgTokenSpaceGuid.PcdUefiVariableDefaultPlatformLang
+
+[Guids]  
+  gEfiGlobalVariableGuid  ## SOMETIMES_CONSUMES ## Variable:"PlatformLang"
+  ##
+  # Event registered to EFI_HII_SET_KEYBOARD_LAYOUT_EVENT_GUID group,
+  # which will be triggered by EFI_HII_DATABASE_PROTOCOL.SetKeyboardLayout().
+  ##
+  gEfiHiiKeyBoardLayoutGuid  ## SOMETIME_CONSUMES  ## Event
+
+[Depex]
+  TRUE
+
