@@ -443,6 +443,7 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 	UINT8		SystemType;
 	CHAR16      *UString;
 	UINTN		UStrSize;
+	UINT16		Counter = 0;
 	
 	EFI_RUNTIME_SERVICES * rs = SystemTable->RuntimeServices;
 	gSystemTable = SystemTable;
@@ -538,7 +539,8 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 			vFwFeaturesMask = SmbiosTable.Type128->FirmwareFeaturesMask;
 			Find |= 0x10;
 		}
-	} while (Find != 0x1F);
+		Counter++;
+	} while ((Find != 0x1F) && (Counter < 300)); //restrict 300 attempts
 	
 	Status = rs->SetVariable(L"FirmwareFeatures",
 						 &gEfiAppleNvramGuid,

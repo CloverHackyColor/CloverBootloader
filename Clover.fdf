@@ -68,8 +68,8 @@ INF  MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
 #INF  DuetPkg/SmbiosGenDxe/SmbiosGen.inf
 INF  Clover/OsxSmbiosGenDxe/SmbiosGen.inf
 #INF  DuetPkg/FvbRuntimeService/DUETFwh.inf
-INF  IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf
-#INF  Clover/OsxBdsDxe/BdsDxe.inf
+#INF  IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf
+INF  Clover/OsxBdsDxe/BdsDxe.inf
 #INF  MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
 INF  MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
 INF  UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf

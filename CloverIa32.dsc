@@ -224,8 +224,8 @@
       #NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
       NULL|Clover/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
   }
-  #  Clover/OsxBdsDxe/BdsDxe.inf {
-  IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf {
+  #IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf {
+  Clover/OsxBdsDxe/BdsDxe.inf {
     <LibraryClasses>
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
   }
