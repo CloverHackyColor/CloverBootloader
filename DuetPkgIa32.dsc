@@ -28,9 +28,9 @@
   DSC_SPECIFICATION              = 0x00010005
   OUTPUT_DIRECTORY               = Build/DuetPkgIA32
   SUPPORTED_ARCHITECTURES        = IA32
-  BUILD_TARGETS                  = RELEASE
+  BUILD_TARGETS                  = RELEASE|DEBUG
   SKUID_IDENTIFIER               = DEFAULT
-  FLASH_DEFINITION               = clover/DuetPkg.fdf
+  FLASH_DEFINITION               = Clover/DuetPkg.fdf
 
 ################################################################################
 #
@@ -63,7 +63,7 @@
   PciExpressLib|MdePkg/Library/DxeRuntimePciExpressLib/DxeRuntimePciExpressLib.inf
   CacheMaintenanceLib|MdePkg/Library/BaseCacheMaintenanceLib/BaseCacheMaintenanceLib.inf
   #PeCoffLib|MdePkg/Library/BasePeCoffLib/BasePeCoffLib.inf
-  PeCoffLib|clover/VBoxPeCoffLib/VBoxPeCoffLib.inf
+  PeCoffLib|Clover/VBoxPeCoffLib/VBoxPeCoffLib.inf
   PeCoffExtraActionLib|MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
   PeCoffGetEntryPointLib|MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
   #ResetSystemLib|PcAtChipsetPkg/Library/ResetSystemLib/ResetSystemLib.inf
@@ -89,14 +89,14 @@
   #UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
   OemHookStatusCodeLib|MdeModulePkg/Library/OemHookStatusCodeLibNull/OemHookStatusCodeLibNull.inf
   #GenericBdsLib|IntelFrameworkModulePkg/Library/GenericBdsLib/GenericBdsLib.inf
-  GenericBdsLib|clover/OsxBdsLib/GenericBdsLib.inf
+  GenericBdsLib|Clover/OsxBdsLib/GenericBdsLib.inf
   SecurityManagementLib|MdeModulePkg/Library/DxeSecurityManagementLib/DxeSecurityManagementLib.inf
   CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibNull/DxeCapsuleLibNull.inf
   #
   # Platform
   #
   #PlatformBdsLib|DuetPkg/Library/DuetBdsLib/PlatformBds.inf
-  PlatformBdsLib|clover/OsxBdsPlatformLib/PlatformBds.inf
+  PlatformBdsLib|Clover/OsxBdsPlatformLib/PlatformBds.inf
   TimerLib|DuetPkg/Library/DuetTimerLib/DuetTimerLib.inf
   #
   # Misc
@@ -107,7 +107,7 @@
   MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
   HobLib|MdePkg/Library/DxeHobLib/DxeHobLib.inf
   ExtractGuidedSectionLib|MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
-  #PlatformHookLib|MdeModulePkg/Library/BasePlatformHookLibNull/BasePlatformHookLibNull.inf
+    PlatformHookLib|MdeModulePkg/Library/BasePlatformHookLibNull/BasePlatformHookLibNull.inf
 
   #SerialPortLib|PcAtChipsetPkg/Library/SerialIoLib/SerialIoLib.inf
   SerialPortLib|MdePkg/Library/BaseSerialPortLibNull/BaseSerialPortLibNull.inf
@@ -162,16 +162,17 @@
 	#DuetPkg/BootSector/BootSector.inf
 
   #DuetPkg/DxeIpl/DxeIpl.inf {
-  clover/OsxDxeIpl/DxeIpl.inf {
+  Clover/OsxDxeIpl/DxeIpl.inf {
     <LibraryClasses>
       #
       # If no following overriden for ReportStatusCodeLib library class,
       # All other module can *not* output debug information even they are use not NULL library
       # instance for DebugLib and ReportStatusCodeLib
       #
-      ReportStatusCodeLib|MdeModulePkg/Library/DxeReportStatusCodeLib/DxeReportStatusCodeLib.inf
+      #ReportStatusCodeLib|MdeModulePkg/Library/DxeReportStatusCodeLib/DxeReportStatusCodeLib.inf
+      ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
   }
-
+#  Clover/OsxDxeCore/DxeMain.inf {
   MdeModulePkg/Core/Dxe/DxeMain.inf {
     #
     # Enable debug output for DxeCore module, this is a sample for how to enable debug output
@@ -210,58 +211,60 @@
   MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
   MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
   MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
-  MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
+  #MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
   MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
-  MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
-  clover/OsxSmbiosGenDxe/SmbiosGen.inf
+  #MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
+  Clover/OsxSmbiosDxe/SmbiosDxe.inf
+  Clover/OsxSmbiosGenDxe/SmbiosGen.inf
 
   #DuetPkg/FvbRuntimeService/DUETFwh.inf
   #DuetPkg/EfiLdr/EfiLdr.inf {
-  clover/OsxEfiLdr/EfiLdr.inf {
+  Clover/OsxEfiLdr/EfiLdr.inf {
     <LibraryClasses>
       DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
       NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
   }
-  #  clover/OsxBdsDxe/BdsDxe.inf {
-  IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf {
+  #IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf {
+  Clover/OsxBdsDxe/BdsDxe.inf {
     <LibraryClasses>
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
   }
   #MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
   UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
-  UefiCpuPkg/CpuDxe/CpuDxe.inf
-  #clover/CpuDxe/Cpu.inf
+  #UefiCpuPkg/CpuDxe/CpuDxe.inf
+  Clover/CpuDxe/Cpu.inf
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
   DuetPkg/AcpiResetDxe/Reset.inf
   DuetPkg/LegacyMetronome/Metronome.inf
- #EdkCompatibilityPkg/Compatibility/MpServicesOnFrameworkMpServicesThunk/MpServicesOnFrameworkMpServicesThunk.inf
+ EdkCompatibilityPkg/Compatibility/MpServicesOnFrameworkMpServicesThunk/MpServicesOnFrameworkMpServicesThunk.inf
 
 #Chipset
   PcAtChipsetPkg/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
   PcAtChipsetPkg/8254TimerDxe/8254Timer.inf
   DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
   #DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
-  clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
+  Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
   
   	#DataHub
-	clover/VBoxAppleSim/VBoxAppleSim.inf
+	Clover/VBoxAppleSim/VBoxAppleSim.inf
 	IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 	#IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
 	#EdkCompatibilityPkg/Compatibility/PiSmbiosRecordOnDataHubSmbiosRecordThunk/PiSmbiosRecordOnDataHubSmbiosRecordThunk.inf
   
   	# foreign file system support
-	#clover/VBoxFsDxe/VBoxHfs.inf
-	clover/VBoxFsDxe/VBoxIso9660.inf
-	#clover/VBoxFsDxe/VBoxFsDxe.inf
-	clover/VBoxFsDxe/VBoxExt2.inf
+	#Clover/VBoxFsDxe/VBoxHfs.inf
+	Clover/VBoxFsDxe/VBoxIso9660.inf
+	#Clover/VBoxFsDxe/VBoxFsDxe.inf
+	Clover/VBoxFsDxe/VBoxExt2.inf
 
   IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
-  IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
-  clover/IntelGmaDxe/Gop.inf
+  #IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
+  Clover/VgaClassDxe/VgaClassDxe.inf
+  #Clover/IntelGmaDxe/Gop.inf
 
   # IDE/AHCI Support
-  clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
-  clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
+  Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
+  Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
   DuetPkg/SataControllerDxe/SataControllerDxe.inf
   MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
   MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
@@ -288,24 +291,26 @@
  
   # ACPI Support
   #MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
-   clover/OsxAcpiTableDxe/AcpiTableDxe.inf
+  Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
   #MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
-  clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
+  Clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
 
   MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
   MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
   #MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
-  clover/OsxPartitionDxe/PartitionDxe.inf
+  Clover/OsxPartitionDxe/PartitionDxe.inf
 
   # Bios Thunk
-  DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
+  #DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
+  Clover/BiosVideo/BiosVideo.inf
+  #IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf
 
   #
   # Sample Application
   #
   #MdeModulePkg/Application/HelloWorld/HelloWorld.inf
-  # MdeModulePkg/Application/VariableInfo/VariableInfo.inf
-  iboot-efi/branches/Slice/iboot.inf
+  MdeModulePkg/Application/VariableInfo/VariableInfo.inf
+  iBootEFI/iboot.inf
   #rEFIt_UEFI/refit.inf
 
 ###################################################################################################

@@ -39,6 +39,7 @@ fi
 
 PROCESSOR=IA32
 Processor=Ia32
+VTARGET=$TARGET
 
 #
 # Pick a default tool type for a given OS
@@ -62,7 +63,7 @@ case `uname` in
 
 esac
 
-BUILD_ROOT_ARCH=$WORKSPACE/Build/Clover$PROCESSOR/DEBUG_"$TARGET_TOOLS"/$PROCESSOR
+BUILD_ROOT_ARCH=$WORKSPACE/Build/DuetPkg$PROCESSOR/$VTARGET_"$TARGET_TOOLS"/$PROCESSOR
 FLOPPY_IMAGE=$WORKSPACE/Build/DuetPkg$PROCESSOR/floppy.img
 
 if  [[ ! -f `which build` || ! -f `which GenFv` ]];
@@ -90,12 +91,12 @@ do
 
   if [[ $arg == cleanall ]]; then
     make -C $WORKSPACE/BaseTools clean
-    build -p $WORKSPACE/DuetPkg/cloverefiboot/DuetPkg$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 clean
+    build -p $WORKSPACE/Clover/DuetPkg$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 clean
     exit $?
   fi
 
   if [[ $arg == clean ]]; then
-    build -p $WORKSPACE/DuetPkg/cloverefiboot/DuetPkg$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 clean
+    build -p $WORKSPACE/Clover/DuetPkg$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 clean
     exit $?
   fi
 done
@@ -105,11 +106,10 @@ done
 # Build the edk2 DuetPkg
 #
 echo Running edk2 build for DuetPkg$Processor
-build -p $WORKSPACE/DuetPkg/cloverefiboot/DuetPkg$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 $*
-echo Running DuetPkg/cloverefiboot/PostBuild.sh
-$WORKSPACE/DuetPkg/cloverefiboot/PostBuild.sh $PROCESSOR $TARGET_TOOLS
+build -p $WORKSPACE/Clover/DuetPkg$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 $*
+echo Running Clover/PostBuildDuet.sh
+$WORKSPACE/Clover/PostBuildDuet.sh $PROCESSOR $TARGET_TOOLS  $VTARGET
 #echo Running DuetPkg/CreateBootDisk.sh
 
-#$WORKSPACE/DuetPkg/CreateBootDisk.sh file $FLOPPY_IMAGE /dev/null FAT12 $PROCESSOR $TARGET_TOOLS
 exit $?
 

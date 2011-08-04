@@ -213,7 +213,8 @@
   MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
   #MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
   MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
-  MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
+  #MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
+  Clover/OsxSmbiosDxe/SmbiosDxe.inf
   Clover/OsxSmbiosGenDxe/SmbiosGen.inf
 
   #DuetPkg/FvbRuntimeService/DUETFwh.inf
@@ -303,7 +304,6 @@
   # Bios Thunk
   #DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
   Clover/BiosVideo/BiosVideo.inf
-  #IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf
 
   #
   # Sample Application

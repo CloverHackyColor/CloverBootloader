@@ -39,7 +39,7 @@ fi
 
 PROCESSOR=IA32
 Processor=Ia32
-VTARGET=RELEASE
+VTARGET=$TARGET
 
 #
 # Pick a default tool type for a given OS
