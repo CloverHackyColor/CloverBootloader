@@ -213,11 +213,12 @@ IdeControllerSupported (
   //
   // Examine Ide PCI Configuration table fields
   //
-  if ((PciClass != PCI_CLASS_MASS_STORAGE) || ((PciSubClass != PCI_CLASS_MASS_STORAGE_IDE) && (PciSubClass != 0x06 /*SATA*/))) {
+  if ((PciClass != PCI_CLASS_MASS_STORAGE) || ((PciSubClass != PCI_CLASS_MASS_STORAGE_IDE))) {
+											   //&& (PciSubClass != 0x06 /*SATA*/))) {
     Status = EFI_UNSUPPORTED;
   }
-  if (PciSubClass == 0x6)
-    gfIdeAhciEmulation = TRUE;
+//  if (PciSubClass == 0x6)
+//    gfIdeAhciEmulation = TRUE;
 
 Done:
   gBS->CloseProtocol (

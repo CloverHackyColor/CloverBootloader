@@ -102,19 +102,18 @@ INF  IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
 #INF  IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
 INF  Clover/VgaClassDxe/VgaClassDxe.inf
 #INF  DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
-#INF IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf
 INF  Clover/BiosVideo/BiosVideo.inf
 #INF  Clover/IntelGmaDxe/Gop.inf
 
   # IDE/AHCI Support
 INF  Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
-INF  Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
-INF  DuetPkg/SataControllerDxe/SataControllerDxe.inf
+#INF  Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
+INF  Clover/SataControllerDxe/SataControllerDxe.inf
 INF  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
 INF  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
 #INF  MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
 #INF  MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
-#INF  IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
+INF  IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
 
   # Usb Support
 INF  MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf

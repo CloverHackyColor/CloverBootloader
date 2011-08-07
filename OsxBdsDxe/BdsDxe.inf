@@ -182,3 +182,7 @@
 #   HOB                     ## SOMETIMES_CONSUMES  ## GUID EXTENSION Capsule Data Hob
 #
 # 
+
+[BuildOptions]
+  XCODE:*_*_*_CC_FLAGS = -Os
+  GCC:*_*_*_CC_FLAGS = -Os

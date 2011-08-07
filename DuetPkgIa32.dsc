@@ -222,7 +222,8 @@
   Clover/OsxEfiLdr/EfiLdr.inf {
     <LibraryClasses>
       DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
-      NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
+      #NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
+      NULL|Clover/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
   }
   #IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf {
   Clover/OsxBdsDxe/BdsDxe.inf {
@@ -264,12 +265,13 @@
 
   # IDE/AHCI Support
   Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
-  Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
-  DuetPkg/SataControllerDxe/SataControllerDxe.inf
+  #Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
+  Clover/SataControllerDxe/SataControllerDxe.inf
   MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
   MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
+  IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
 
   # Usb Support
   MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
@@ -310,7 +312,7 @@
   #
   #MdeModulePkg/Application/HelloWorld/HelloWorld.inf
   MdeModulePkg/Application/VariableInfo/VariableInfo.inf
-  iBootEFI/iboot.inf
+  #iBootEFI/iboot.inf
   #rEFIt_UEFI/refit.inf
 
 ###################################################################################################

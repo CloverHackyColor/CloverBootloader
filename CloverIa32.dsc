@@ -254,9 +254,9 @@
   
   	# foreign file system support
 	#Clover/VBoxFsDxe/VBoxHfs.inf
-	#Clover/VBoxFsDxe/VBoxIso9660.inf
+	Clover/VBoxFsDxe/VBoxIso9660.inf
 	#Clover/VBoxFsDxe/VBoxFsDxe.inf
-	#Clover/VBoxFsDxe/VBoxExt2.inf
+	Clover/VBoxFsDxe/VBoxExt2.inf
 
   IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
   #IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
@@ -266,9 +266,9 @@
   # IDE/AHCI Support
   Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
   Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
-  #DuetPkg/SataControllerDxe/SataControllerDxe.inf
-  #MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
-  #MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
+  DuetPkg/SataControllerDxe/SataControllerDxe.inf
+  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
+  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
 
