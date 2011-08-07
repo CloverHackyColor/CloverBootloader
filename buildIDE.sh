@@ -39,6 +39,7 @@ fi
 
 PROCESSOR=IA32
 Processor=Ia32
+VTARGET=$TARGET
 
 #
 # Pick a default tool type for a given OS
@@ -50,7 +51,7 @@ case `uname` in
       Major=$(uname -r | cut -f 1 -d '.')
       if [[ $Major == 9 ]]
       then
-        echo Clover requires Snow Leopard or later OS
+        echo DuetPkg requires Snow Leopard or later OS
         exit 1
       else
         TARGET_TOOLS=XCODE32
@@ -62,7 +63,7 @@ case `uname` in
 
 esac
 
-BUILD_ROOT_ARCH=$WORKSPACE/Build/Clover$PROCESSOR/DEBUG_"$TARGET_TOOLS"/$PROCESSOR
+BUILD_ROOT_ARCH=$WORKSPACE/Build/Clover$PROCESSOR/$VTARGET_"$TARGET_TOOLS"/$PROCESSOR
 FLOPPY_IMAGE=$WORKSPACE/Build/Clover$PROCESSOR/floppy.img
 
 if  [[ ! -f `which build` || ! -f `which GenFv` ]];
@@ -90,24 +91,23 @@ do
 
   if [[ $arg == cleanall ]]; then
     make -C $WORKSPACE/BaseTools clean
-    build -p $WORKSPACE/clover/Clover$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 clean
+    build -p $WORKSPACE/Clover/Clover$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 clean
     exit $?
   fi
 
   if [[ $arg == clean ]]; then
-    build -p $WORKSPACE/clover/Clover$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 clean
+    build -p $WORKSPACE/Clover/Clover$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 clean
     exit $?
   fi
 done
 
 
 #
-# Build the edk2 clover
+# Build the edk2 Clover
 #
 echo Running edk2 build for Clover$Processor
-build -p $WORKSPACE/clover/Clover$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 $*
-echo Running clover/PostBuild.sh
-$WORKSPACE/clover/PostBuild.sh $PROCESSOR $TARGET_TOOLS
-
+build -p $WORKSPACE/Clover/Clover$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 $*
+echo Running Clover/PostBuild.sh
+$WORKSPACE/Clover/PostBuild.sh $PROCESSOR $TARGET_TOOLS $VTARGET
 exit $?
 

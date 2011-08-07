@@ -310,7 +310,7 @@
   #
   #MdeModulePkg/Application/HelloWorld/HelloWorld.inf
   MdeModulePkg/Application/VariableInfo/VariableInfo.inf
-  iBootEFI/iboot.inf
+  #iBootEFI/iboot.inf
   #rEFIt_UEFI/refit.inf
 
 ###################################################################################################
