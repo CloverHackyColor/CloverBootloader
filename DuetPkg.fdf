@@ -49,7 +49,8 @@ APRIORI DXE {
 
 INF  MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
 INF  MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
-INF  MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
+#INF  MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
+INF  Clover/OsxRuntimeDxe/RuntimeDxe.inf
 INF  MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDxe.inf
 
 #INF  DuetPkg/FSVariable/FSVariable.inf
@@ -106,9 +107,9 @@ INF  Clover/BiosVideo/BiosVideo.inf
 #INF  Clover/IntelGmaDxe/Gop.inf
 
   # IDE/AHCI Support
-INF  Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
+#INF  Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
 #INF  Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
-INF  Clover/SataControllerDxe/SataControllerDxe.inf
+INF  DuetPkg/SataControllerDxe/SataControllerDxe.inf
 INF  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
 INF  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
 #INF  MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf

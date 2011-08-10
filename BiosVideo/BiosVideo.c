@@ -506,7 +506,7 @@ BiosVideoChildHandleInstall (
       //
       // INT services are available, so on the 80x25 and 80x50 text mode are supported
       //
-      BiosVideoPrivate->VgaMiniPort.MaxMode = 2;
+      BiosVideoPrivate->VgaMiniPort.MaxMode = 3;
     }
   }
 
@@ -1550,6 +1550,9 @@ BiosVideoCheckForVga (
   ModeBuffer->VerticalResolution    = 480;
   ModeBuffer->BitsPerPixel          = 8;  
   ModeBuffer->PixelFormat           = PixelBltOnly;
+	ModeBuffer->ColorDepth            = 32;
+	ModeBuffer->RefreshRate           = 60;
+	
 
   BiosVideoPrivate->ModeData = ModeBuffer;
 

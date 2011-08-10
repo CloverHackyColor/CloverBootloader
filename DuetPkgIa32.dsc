@@ -195,7 +195,8 @@
 
   MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
   MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
-  MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
+  #MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
+  Clover/OsxRuntimeDxe/RuntimeDxe.inf
   MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDxe.inf
 
   #DuetPkg/FSVariable/FSVariable.inf
@@ -225,7 +226,7 @@
       #NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
       NULL|Clover/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
   }
-  #IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf {
+#  IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf {
   Clover/OsxBdsDxe/BdsDxe.inf {
     <LibraryClasses>
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
@@ -245,6 +246,9 @@
   DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
   #DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
   Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
+  #MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
+  #MdeModulePkg/Bus/Pci/IncompatiblePciDeviceSupportDxe/IncompatiblePciDeviceSupportDxe.inf
+
   
   	#DataHub
 	Clover/VBoxAppleSim/VBoxAppleSim.inf
@@ -253,9 +257,9 @@
 	#EdkCompatibilityPkg/Compatibility/PiSmbiosRecordOnDataHubSmbiosRecordThunk/PiSmbiosRecordOnDataHubSmbiosRecordThunk.inf
   
   	# foreign file system support
-	#Clover/VBoxFsDxe/VBoxHfs.inf
+	Clover/VBoxFsDxe/VBoxHfs.inf
 	Clover/VBoxFsDxe/VBoxIso9660.inf
-	#Clover/VBoxFsDxe/VBoxFsDxe.inf
+	Clover/VBoxFsDxe/VBoxFsDxe.inf
 	Clover/VBoxFsDxe/VBoxExt2.inf
 
   IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf

@@ -79,7 +79,7 @@
   HobLib
   BaseLib
   UefiLib
-#  DebugLib
+  DebugLib
   DxeCoreEntryPoint
   PeCoffLib
   PeCoffGetEntryPointLib

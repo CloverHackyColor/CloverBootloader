@@ -98,10 +98,10 @@ EFI_GUID gDataHubPlatformGuid = {0x64517cc8, 0x6561, 0x4051, {0xb0, 0x3c, 0x59, 
  EFI_GUID gNotifyExitBootServices			= {0xd2b2b828, 0x0826, 0x48a7, {0xb3, 0xdf, 0x98, 0x3c, 0x00, 0x60, 0x24, 0xf0}};
  // -> gEfiStatusCodeRuntimeProtocolGuid
   //Unknown protocols from Kabyl
- 5B213447-6E73-4901-A4F1-B864F3B7A172  //efiboot loaded from device
- 8FFEEB3A-4C98-4630-803F-740F9567091D  //recovery-boot, boot-args, efi-boot-kernelcache-data, efi-boot-file-data  /options?
+ 5B213447-6E73-4901-A4F1-B864F3B7A172  //GUID_001 efiboot loaded from device
+ 8FFEEB3A-4C98-4630-803F-740F9567091D  //GUID_003 recovery-boot, boot-args, efi-boot-kernelcache-data, efi-boot-file-data  /options?
  8ECE08D8-A6D4-430B-A7B0-2DF318E7884A  //gfx-saved-config-restore-status
- 78EE99FB-6A5E-4186-97DE-CD0ABA345A74  //before device-properties
+ 78EE99FB-6A5E-4186-97DE-CD0ABA345A74  //GUID_002 before device-properties
  //
  E3E9FD4F-1C1D-48AC-A86406E06547ADEE - unk_214E0 sub_15370+7E gAppleUn5Guid
  9BB9FD8E-5AAA-4ECD-AA5B5AC1B6136070 - unk_21510 sub_15500+E gAppleMkextProtocolGuid
