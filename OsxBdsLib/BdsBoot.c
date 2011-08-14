@@ -604,8 +604,8 @@ BdsLibBootViaBootOption (
   EFI_DEVICE_PATH_PROTOCOL  *FilePath;
   EFI_LOADED_IMAGE_PROTOCOL *ImageInfo;
   EFI_DEVICE_PATH_PROTOCOL  *WorkingDevicePath;
-  EFI_ACPI_S3_SAVE_PROTOCOL *AcpiS3Save;
-  LIST_ENTRY                TempBootLists;
+//  EFI_ACPI_S3_SAVE_PROTOCOL *AcpiS3Save;
+//  LIST_ENTRY                TempBootLists;
   EFI_SECURITY_ARCH_PROTOCOL *SecurityProtocol;
   CHAR16                    *NewFileName;
   //
@@ -621,10 +621,11 @@ BdsLibBootViaBootOption (
   // hook on the event EVT_SIGNAL_READY_TO_BOOT or
   // EVT_SIGNAL_LEGACY_BOOT
   //
+/*	
   Status = gBS->LocateProtocol (&gEfiAcpiS3SaveProtocolGuid, NULL, (VOID **) &AcpiS3Save);
   if (!EFI_ERROR (Status)) {
     AcpiS3Save->S3Save (AcpiS3Save, NULL);
-  }
+  } */
   //
   // If it's Device Path that starts with a hard drive path, append it with the front part to compose a
   // full device path
@@ -691,7 +692,7 @@ BdsLibBootViaBootOption (
   //
   // If the boot option point to Internal FV shell, make sure it is valid
   //
-  Status = BdsLibUpdateFvFileDevicePath (&DevicePath, PcdGetPtr(PcdShellFile));
+/*  Status = BdsLibUpdateFvFileDevicePath (&DevicePath, PcdGetPtr(PcdShellFile));
   if (!EFI_ERROR(Status)) {
     if (Option->DevicePath != NULL) {
       FreePool(Option->DevicePath);
@@ -710,7 +711,7 @@ BdsLibBootViaBootOption (
     //
     FreePool (DevicePath);
     DevicePath = Option->DevicePath;
-  }
+  }*/
 
   //
   // Measure GPT Table by SAP protocol.
@@ -723,7 +724,7 @@ BdsLibBootViaBootOption (
   if (!EFI_ERROR (Status)) {
     Status = SecurityProtocol->FileAuthenticationState (SecurityProtocol, 0, DevicePath);
   }
-
+/*
   DEBUG_CODE_BEGIN();
 
     if (Option->Description == NULL) {
@@ -733,7 +734,7 @@ BdsLibBootViaBootOption (
     }
         
   DEBUG_CODE_END();
-  
+*/  
   Status = gBS->LoadImage (
                   TRUE,
                   gImageHandle, // mBdsImageHandle,
@@ -801,25 +802,25 @@ BdsLibBootViaBootOption (
   // Before calling the image, enable the Watchdog Timer for
   // the 5 Minute period
   //
-#if 0 //ndef VBOX
+#if 1 //ndef VBOX
   /* Some special guests don't return here */
-  gBS->SetWatchdogTimer (5 * 60, 0x0000, 0x00, NULL);
+  gBS->SetWatchdogTimer (1 * 60, 0x0000, 0x00, NULL);
 #endif
 
   //
   // Write boot to OS performance data for UEFI boot
   //
-  PERF_CODE (
+/*  PERF_CODE (
     WriteBootToOsPerformanceData ();
   );
-
+*/
   Status = gBS->StartImage (ImageHandle, ExitDataSize, ExitData);
-  DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Image Return Status = %r\n", Status));
+//  DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Image Return Status = %r\n", Status));
 
   //
   // Clear the Watchdog Timer after the image returns
   //
-#if 0 //ndef VBOX
+#if 1 //ndef VBOX
   gBS->SetWatchdogTimer (0x0000, 0x0000, 0x0000, NULL);
 #endif
 
@@ -1429,13 +1430,13 @@ BdsLibEnumerateAllBootOption (
 	UINTN                         Index;
 	UINTN                         NumOfLoadFileHandles;
 	EFI_HANDLE                    *LoadFileHandles;
-	UINTN                         FvHandleCount;
-	EFI_HANDLE                    *FvHandleBuffer;
-	EFI_FV_FILETYPE               Type;
-	UINTN                         Size;
-	EFI_FV_FILE_ATTRIBUTES        Attributes;
-	UINT32                        AuthenticationStatus;
-	EFI_FIRMWARE_VOLUME2_PROTOCOL *Fv;
+//	UINTN                         FvHandleCount;
+//	EFI_HANDLE                    *FvHandleBuffer;
+//	EFI_FV_FILETYPE               Type;
+//	UINTN                         Size;
+//	EFI_FV_FILE_ATTRIBUTES        Attributes;
+//	UINT32                        AuthenticationStatus;
+//	EFI_FIRMWARE_VOLUME2_PROTOCOL *Fv;
 	EFI_DEVICE_PATH_PROTOCOL      *DevicePath;
 	UINTN                         DevicePathType;
 	CHAR16                        Buffer[40];
@@ -1554,7 +1555,7 @@ BdsLibEnumerateAllBootOption (
 				} else {
 					UnicodeSPrint (Buffer, sizeof (Buffer), L"%s", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_CD_DVD)));
 				}
-				DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Buffer: %S\n", Buffer));
+			//	DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Buffer: %S\n", Buffer));
 				BdsLibBuildOptionFromHandle (BlockIoHandles[Index], BdsBootOptionList, Buffer);
 				CdromNumber++;
 				break;
@@ -1707,7 +1708,7 @@ BdsLibEnumerateAllBootOption (
 	//
 	// Check if we have on flash shell
 	//
-	gBS->LocateHandleBuffer (
+/*	gBS->LocateHandleBuffer (
 							 ByProtocol,
 							 &gEfiFirmwareVolume2ProtocolGuid,
 							 NULL,
@@ -1745,6 +1746,7 @@ BdsLibEnumerateAllBootOption (
 	if (FvHandleCount != 0) {
 		FreePool (FvHandleBuffer);
 	}
+ */
 	//
 	// Make sure every boot only have one time
 	// boot device enumerate
@@ -1801,16 +1803,16 @@ BdsLibBuildOptionFromShell (
   )
 {
   EFI_DEVICE_PATH_PROTOCOL          *DevicePath;
-  MEDIA_FW_VOL_FILEPATH_DEVICE_PATH ShellNode;
+//  MEDIA_FW_VOL_FILEPATH_DEVICE_PATH ShellNode;
 
   DevicePath = DevicePathFromHandle (Handle);
 
   //
   // Build the shell device path
   //
-  EfiInitializeFwVolDevicepathNode (&ShellNode, PcdGetPtr(PcdShellFile));
+//  EfiInitializeFwVolDevicepathNode (&ShellNode, PcdGetPtr(PcdShellFile));
 
-  DevicePath = AppendDevicePathNode (DevicePath, (EFI_DEVICE_PATH_PROTOCOL *) &ShellNode);
+//  DevicePath = AppendDevicePathNode (DevicePath, (EFI_DEVICE_PATH_PROTOCOL *) &ShellNode);
 
   //
   // Create and register the shell boot option
@@ -2391,7 +2393,7 @@ BdsLibIsValidEFIBootOptDevicePathExt (
     return TRUE;
   }
 
-  //
+/*  //
   // Check if it's a valid boot option for internal FV application
   //
   if (EfiGetNameGuidFromFwVolDevicePathNode ((MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *) LastDeviceNode) != NULL) {
@@ -2399,10 +2401,10 @@ BdsLibIsValidEFIBootOptDevicePathExt (
     // If the boot option point to internal FV application, make sure it is valid
     // VBox - Internal FV shell
     TempDevicePath = DevPath;
-/*    Status = BdsLibUpdateFvFileDevicePath (
+    Status = BdsLibUpdateFvFileDevicePath (
                &TempDevicePath,
                EfiGetNameGuidFromFwVolDevicePathNode ((MEDIA_FW_VOL_FILEPATH_DEVICE_PATH *) LastDeviceNode)
-               );*/
+               );
       Status = BdsLibUpdateFvFileDevicePath (&TempDevicePath, PcdGetPtr(PcdShellFile));
     if (Status == EFI_ALREADY_STARTED) {
       return TRUE;
@@ -2412,7 +2414,7 @@ BdsLibIsValidEFIBootOptDevicePathExt (
       }
       return FALSE;
     }
-  }
+  } */
 
   //
   // If the boot option point to a blockIO device:
@@ -2492,6 +2494,7 @@ BdsLibIsValidEFIBootOptDevicePathExt (
                                  and return the updated device path in DevicePath
 
 **/
+/*
 EFI_STATUS
 EFIAPI
 BdsLibUpdateFvFileDevicePath (
@@ -2673,3 +2676,4 @@ BdsLibUpdateFvFileDevicePath (
   }
   return EFI_NOT_FOUND;
 }
+*/

@@ -164,7 +164,7 @@ struct fsw_host_table   fsw_efi_host_table = {
 
 extern struct fsw_fstype_table   FSW_FSTYPE_TABLE_NAME(FSTYPE);
 
-
+#include "OverrideFunctions-kabyl.edk2.c.include"
 
 /**
  * Image entry point. Installs the Driver Binding and Component Name protocols
@@ -200,6 +200,8 @@ EFI_STATUS EFIAPI fsw_efi_main(IN EFI_HANDLE         ImageHandle,
     if (EFI_ERROR (Status)) {
         return Status;
     }
+
+	OverrideFunctions();
 
     return EFI_SUCCESS;
 }
@@ -744,7 +746,7 @@ EFI_STATUS fsw_efi_file_read(IN FSW_FILE_DATA *File,
     Print(L"fsw_efi_file_read %d bytes\n", *BufferSize);
 #endif
 
-    buffer_size = *BufferSize;
+    buffer_size = (fsw_u32)*BufferSize;
     Status = fsw_efi_map_status(fsw_shandle_read(&File->shand, &buffer_size, Buffer),
                                 (FSW_VOLUME_DATA *)File->shand.dnode->vol->host_data);
     *BufferSize = buffer_size;
@@ -806,7 +808,7 @@ EFI_STATUS fsw_efi_dir_open(IN FSW_FILE_DATA *File,
         return EFI_WRITE_PROTECTED;
 
     lookup_path.type = FSW_STRING_TYPE_UTF16;
-    lookup_path.len  = StrLen(FileName);
+    lookup_path.len  = (int)StrLen(FileName);
     lookup_path.size = lookup_path.len * sizeof(fsw_u16);
     lookup_path.data = FileName;
 

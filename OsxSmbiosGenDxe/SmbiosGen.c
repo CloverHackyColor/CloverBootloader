@@ -52,10 +52,11 @@ enum MachineTypes {
 	MacBookAir11,
 	MacMini21,
 	iMac112,
-	MacPro31
+	MacPro31,
+	iMac122
 };
 
-CHAR8* SMbiosversion[9] = {  //t0 BiosVersion
+CHAR8* SMbiosversion[10] = {  //t0 BiosVersion
 	"MB11.0061.B03.0809221748",  //SMC 1.4f12
 	"MB21.88Z.00A5.B07.0706270922",
 	"MB41.88Z.0073.B00.0809221748",  //SMC 1.31f1
@@ -64,7 +65,8 @@ CHAR8* SMbiosversion[9] = {  //t0 BiosVersion
 	"MBA11.88Z.00BB.B03.0712201139",
 	"MM21.88Z.009A.B00.0706281359",
 	"IM112.0034.B00.0802091538",
-	"MP31.88Z.006C.B05.0802291410"
+	"MP31.88Z.006C.B05.0802291410",
+	"IM121.88Z.0047.B0A.1104221555"
 };
 /*
  MB71.0039.B0B (EFI2.0)
@@ -76,7 +78,7 @@ CHAR8* SMbiosversion[9] = {  //t0 BiosVersion
  IM111.0034.B02 (EFI1.0)? SMC 1.54f36
  */
 
-CHAR8* SMboardproduct[9] = { //t2 ProductName
+CHAR8* SMboardproduct[10] = { //t2 ProductName
 	"Mac-F4208CC8",
 	"Mac-F4208CA9",
 	"Mac-F22788A9", //F42D89C8",
@@ -85,10 +87,11 @@ CHAR8* SMboardproduct[9] = { //t2 ProductName
 	"Mac-F42C8CC8",
 	"Mac-F4208EAA",
 	"Mac-F2238AC8",
-	"Mac-F4208DC8"
+	"Mac-F4208DC8",
+	"Mac-942B59F58194171B"
 };
 
-CHAR8* SMserials[9] = {
+CHAR8* SMserials[10] = {
 	"4H629LYAU9C",  //+
 	"4H7044LUWGP",  //+  
 	"RM83064H0P1",  //+
@@ -97,6 +100,7 @@ CHAR8* SMserials[9] = {
 	"W8811456Y51",  //+  
 	"YM8054BYYL2",  //+
 	"W8034342DB7",  //+
+	"CK80728AXYL",	//+
 	"CK80728AXYL"	//+
 };
 CHAR8* SMserial  = "W87234JHYA4";//MB21  //t1,t2 SerialNumber, "W874725NZ66" //MB31
@@ -104,7 +108,7 @@ CHAR8* SMserial2 = "W874725NZ66";
 CHAR8* SMbiosvendor = "Apple Inc.";  //t0 Vendor
 CHAR8* SMboardmanufacter = "Apple Computer, Inc."; //t1, t2 Manufacturer
 
-CHAR8* SMproductname[9] = { //t1 ProductName
+CHAR8* SMproductname[10] = { //t1 ProductName
 	"MacBook1,1",
 	"MacBook2,1",
 	"MacBook4,1",
@@ -113,10 +117,11 @@ CHAR8* SMproductname[9] = { //t1 ProductName
 	"MacBookAir1,1",
 	"Macmini2,1",
 	"iMac11,2",
-	"MacPro3,1"
+	"MacPro3,1",
+	"iMac12,2"
 };
 
-CHAR8* Family[9] = {  //t1 Family
+CHAR8* Family[10] = {  //t1 Family
 	"MacBook",
 	"MacBook",
 	"MacBook",
@@ -124,10 +129,66 @@ CHAR8* Family[9] = {  //t1 Family
 	"MacBookPro",
 	"MacBookAir",
 	"Macmini",
+	"iMac",
+	"MacPro",
 	"iMac"
-	"MacPro"
 };
 
+
+EFI_STATUS
+GetSystemConfigurationTable (
+  IN EFI_GUID *TableGuid,
+  OUT VOID **Table
+  )
+/*++
+
+Routine Description:
+
+  Get table from configuration table by name
+
+Arguments:
+
+  TableGuid       - Table name to search
+  
+  Table           - Pointer to the table caller wants
+
+Returns: 
+
+  EFI_NOT_FOUND   - Not found the table
+  
+  EFI_SUCCESS     - Found the table
+
+--*/
+{
+  UINTN Index;
+
+  *Table = NULL;
+  for (Index = 0; Index < gST->NumberOfTableEntries; Index++) {
+    if (CompareGuid (TableGuid, &(gST->ConfigurationTable[Index].VendorGuid))) {
+      *Table = gST->ConfigurationTable[Index].VendorTable;
+      return EFI_SUCCESS;
+    }
+  }
+
+  return EFI_NOT_FOUND;
+}
+
+VOID *
+GetSmbiosTablesFromConfigTables (
+  VOID
+  )
+{
+  EFI_STATUS              Status;
+  EFI_PHYSICAL_ADDRESS       *Table;
+  
+  Status = GetSystemConfigurationTable (&gEfiSmbiosTableGuid, (VOID **)  &Table);
+  if (EFI_ERROR (Status) || Table == NULL) {
+	Table = NULL;
+	Print(L"GetSmbiosTablesFromConfigTables: not found\n");
+  }
+
+  return Table;
+}
 
 VOID *
 GetSmbiosTablesFromHob (
@@ -183,6 +244,9 @@ InstallProcessorSmbios (  //4
 //	CHAR8							*StrStart;
 	UINTN							AddBrand = 0;
 	CHAR8							BrandStr[48];
+	UINT8 model = 0;
+	UINT8* p = NULL;
+
 	CopyMem(BrandStr, cpuid_info()->cpuid_brand_string, 48);
 	//
 	// Processor info (TYPE 4)
@@ -212,24 +276,25 @@ InstallProcessorSmbios (  //4
 //	if (Size > 0x28) {Size = 0x28;}
 	//Smbios 2.6 has size = 0x2a
 	newSize = sizeof(SMBIOS_TABLE_TYPE4);
-	newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE4*)AllocateZeroPool(BigSize + newSize - Size + AddBrand);
+	//newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE4*)AllocateZeroPool(BigSize + newSize - Size + AddBrand);
+	newSmbiosTable.Type4 = (SMBIOS_TABLE_TYPE4*)AllocateZeroPool(BigSize + newSize - Size + AddBrand);
 	CopyMem((VOID*)newSmbiosTable.Type4, (VOID*)SmbiosTable.Type4, Size); //copy old data
 	CopyMem((CHAR8*)newSmbiosTable.Type4+newSize, (CHAR8*)SmbiosTable.Type4+Size, BigSize - Size);
 	
 	// we make SMBios v2.6 while Apple needs 2.5
-	newSmbiosTable.Type4->Hdr.Length = newSize;
+	newSmbiosTable.Type4->Hdr.Length = (UINT8)newSize;
 	gBusSpeed = newSmbiosTable.Type4->ExternalClock;
 	//this hack is related to different using of these fields by PC BIOS and Apple
 	newSmbiosTable.Type4->MaxSpeed = newSmbiosTable.Type4->CurrentSpeed;
 	
 	if (Size <= 0x23) {  //Smbios <=2.3
-		newSmbiosTable.Type4->CoreCount = cpuid_info()->core_count;
-		newSmbiosTable.Type4->ThreadCount = cpuid_info()->thread_count;
+		newSmbiosTable.Type4->CoreCount = (UINT8)cpuid_info()->core_count;
+		newSmbiosTable.Type4->ThreadCount = (UINT8)cpuid_info()->thread_count;
 	} //else we propose DMI data is better then cpuid().
 	if (newSmbiosTable.Type4->CoreCount < newSmbiosTable.Type4->EnabledCoreCount) {
-		newSmbiosTable.Type4->EnabledCoreCount = cpuid_info()->core_count;
+		newSmbiosTable.Type4->EnabledCoreCount = (UINT8)cpuid_info()->core_count;
 	}
-	UINT8 model = cpuid_info()->cpuid_extmodel;
+	model = cpuid_info()->cpuid_extmodel;
 	if (model == CPU_MODEL_YONAH) {
 		//this is change in Smbios v2.6 vs v2.3
 		newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCoreSolo;
@@ -240,7 +305,7 @@ InstallProcessorSmbios (  //4
 	if (AddBrand) {
 		newSmbiosTable.Type4->ProcessorVersion = 3; //ugly
 		//UpdateString is not working, do this manually
-		UINT8* p = (UINT8*)newSmbiosTable.Type4 + newSize;
+		p = (UINT8*)newSmbiosTable.Type4 + newSize;
 		while ((*p++ != 0) || (*p != 0)) {}
 		for (Size = 48; Size>0; Size--) {
 			if ((BrandStr[Size] !=0) && (BrandStr[Size] != 32)) {
@@ -306,6 +371,8 @@ InstallCacheSmbios ( //7
 	UINTN i;
 	EFI_SMBIOS_HANDLE				Handle;
 	UINT16							Level = 0;
+	CHAR8* SSocketD;
+	UINTN StringNumber;
 	//
 	// Cache info (TYPE 7)
 	// 
@@ -337,12 +404,12 @@ InstallCacheSmbios ( //7
 		}
 		//Here it will be good to correct socket designation
 		//but it doesn't work because of quirky protocol
-		CHAR8* SSocketD = "L1-Cache";
-		UINTN StringNumber = 1;
+		SSocketD = "L1-Cache";
+		StringNumber = 1;
 		 if(SmbiosTable.Type7->SocketDesignation == 0) {
 			 
 			 SmbiosTable.Type7->SocketDesignation = 1;
-			 SSocketD[1] += Level;
+			 SSocketD[1] += (CHAR8)Level;
 			 gSmbios->UpdateString(gSmbios,
 								   &Handle,
 								   &StringNumber,
@@ -372,7 +439,8 @@ IN VOID                  *Smbios
 		return ;
 	}
 	BigSize = SmbiosTableLength(SmbiosTable);
-	newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE2*)AllocateZeroPool(BigSize);
+	//newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE2*)AllocateZeroPool(BigSize);
+	newSmbiosTable.Type2 = (SMBIOS_TABLE_TYPE2*)AllocateZeroPool(BigSize);
 	CopyMem((VOID*)newSmbiosTable.Type2, (VOID*)SmbiosTable.Type2, BigSize);
 	newSmbiosTable.Type2->ChassisHandle = mHandle3;
 	Handle = LogSmbiosData(gSmbios,(UINT8*)newSmbiosTable.Type2);
@@ -423,7 +491,8 @@ InstallSystemEnclosureSmbios    (//3
 		return ;
 	}
 	BigSize = SmbiosTableLength(SmbiosTable);
-	newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE3*)AllocateZeroPool(BigSize);
+	//newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE3*)AllocateZeroPool(BigSize);
+	newSmbiosTable.Type3 = (SMBIOS_TABLE_TYPE3*)AllocateZeroPool(BigSize);
 	CopyMem((VOID*)newSmbiosTable.Type3, (VOID*)SmbiosTable.Type3, BigSize);
 	
 	
@@ -555,7 +624,8 @@ InstallMemoryDeviceSmbios		(//17
 		}	
 		BigSize++;*/
 		BigSize = SmbiosTableLength(SmbiosTable);
-		newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE17*)AllocateZeroPool(BigSize);
+		//newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE17*)AllocateZeroPool(BigSize);
+		newSmbiosTable.Type17 = (SMBIOS_TABLE_TYPE17*)AllocateZeroPool(BigSize);
 		CopyMem((VOID*)newSmbiosTable.Type17, (VOID*)SmbiosTable.Type17, BigSize);
 		newSmbiosTable.Type17->MemoryArrayHandle = mHandle16;
 		mTotalSystemMemory += SmbiosTable.Type17->Size;
@@ -582,7 +652,8 @@ InstallFirmwareVolumeSmbios		(//128
 	if (SmbiosTable.Raw == NULL) {
 		//    DEBUG ((EFI_D_ERROR, "SmbiosTable: Type 128 (FirmwareVolume) not found!\n"));
 
-		SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE128*)AllocateZeroPool(sizeof(SMBIOS_TABLE_TYPE128));
+		//SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE128*)AllocateZeroPool(sizeof(SMBIOS_TABLE_TYPE128));
+		SmbiosTable.Type128 = (SMBIOS_TABLE_TYPE128*)AllocateZeroPool(sizeof(SMBIOS_TABLE_TYPE128));
 		SmbiosTable.Type128->Hdr.Type = 128;
 		SmbiosTable.Type128->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE128)+2; 
 		SmbiosTable.Type128->FirmwareFeatures = 0x80000015;
@@ -645,7 +716,8 @@ InstallOemProcessorTypeSmbios	(//131
 	// 
 	SmbiosTable = GetSmbiosTableFromType ((SMBIOS_TABLE_ENTRY_POINT *)Smbios, 131, 0);
 	if (SmbiosTable.Raw == NULL) {
-		SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE131*)AllocateZeroPool(sizeof(SMBIOS_TABLE_TYPE131));
+		//SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE131*)AllocateZeroPool(sizeof(SMBIOS_TABLE_TYPE131));
+		SmbiosTable.Type131 = (SMBIOS_TABLE_TYPE131*)AllocateZeroPool(sizeof(SMBIOS_TABLE_TYPE131));
 		SmbiosTable.Type131->Hdr.Type = 131;
 		SmbiosTable.Type131->Hdr.Length = sizeof(SMBIOS_STRUCTURE)+2; 
 		SmbiosTable.Type131->ProcessorType = gCpuType;
@@ -664,17 +736,19 @@ InstallOemProcessorBusSpeed		(//132
   )
 {
 	SMBIOS_STRUCTURE_POINTER          SmbiosTable;
+	UINT16 res;
 	//
 	// OemProcessorBus (TYPE 132)
 	// 
 	SmbiosTable = GetSmbiosTableFromType ((SMBIOS_TABLE_ENTRY_POINT *)Smbios, 132, 0);
 	if (SmbiosTable.Raw == NULL) {
-		SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE132*)AllocateZeroPool(sizeof(SMBIOS_TABLE_TYPE132));
+		//SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE132*)AllocateZeroPool(sizeof(SMBIOS_TABLE_TYPE132));
+		SmbiosTable.Type132 = (SMBIOS_TABLE_TYPE132*)AllocateZeroPool(sizeof(SMBIOS_TABLE_TYPE132));
 		SmbiosTable.Type132->Hdr.Type = 132;
 		SmbiosTable.Type132->Hdr.Length = sizeof(SMBIOS_STRUCTURE)+2; 
 		//    return ;
 	}
-	UINT16 res = (gBusSpeed % 10) / 3;
+	res = (gBusSpeed % 10) / 3;
 	SmbiosTable.Type132->ProcessorBusSpeed = (gBusSpeed << 2) + res;
 	//
 	// Log Smbios Record Type132
@@ -691,7 +765,9 @@ InstallMemorySmbios (  //19
 {
 	SMBIOS_STRUCTURE_POINTER          SmbiosTable;
 	SMBIOS_STRUCTURE_POINTER          newSmbiosTable;
-	UINTN	i;
+	UINT16	i;
+	UINT32	TotalEnd; 
+	UINT8	PartWidth;
 	//
 	// Generate Memory Array Mapped Address info (TYPE 19)
 	//
@@ -729,8 +805,8 @@ InstallMemorySmbios (  //19
 		LogSmbiosData(gSmbios, (UINT8*)newSmbiosTable.Type19);		
 	}
  */
-	UINT32	TotalEnd = 0; 
-	UINT8	PartWidth = 1;
+	TotalEnd = 0; 
+	PartWidth = 1;
 	for (i=0; i<mMemCount+1; i++) {
 		SmbiosTable = GetSmbiosTableFromType ((SMBIOS_TABLE_ENTRY_POINT *)Smbios, 19, i);
 		if (SmbiosTable.Raw == NULL) {			
@@ -744,7 +820,8 @@ InstallMemorySmbios (  //19
 	if (TotalEnd == 0) {
 		TotalEnd = (mTotalSystemMemory << 10) - 1;
 	}
-	newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE19*)AllocateZeroPool(sizeof(SMBIOS_TABLE_TYPE19));
+	//newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE19*)AllocateZeroPool(sizeof(SMBIOS_TABLE_TYPE19));
+	newSmbiosTable.Type19 = (SMBIOS_TABLE_TYPE19*)AllocateZeroPool(sizeof(SMBIOS_TABLE_TYPE19));
 	newSmbiosTable.Type19->Hdr.Type = 19;
 	newSmbiosTable.Type19->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE19); 
 	newSmbiosTable.Type19->MemoryArrayHandle = mHandle16;
@@ -891,7 +968,13 @@ SmbiosGenEntrypoint (
 
   Smbios = GetSmbiosTablesFromHob ();
   if (Smbios == NULL) {
+    // Print(L"SmbiosGenEntrypoint: GetSmbiosTablesFromHob not found\n");
+    
+    Smbios = GetSmbiosTablesFromConfigTables();
+      if (Smbios == NULL) {
+        // Print(L"SmbiosGenEntrypoint: GetSmbiosTablesFromConfigTables not found\n");
     return EFI_NOT_FOUND;
+  }
   }
 
   Status = gBS->LocateProtocol (
@@ -1001,6 +1084,9 @@ SmbiosGenEntrypoint (
 			case CPU_MODEL_DALES: 
 				gMacType = iMac112;
 				gCpuType = 0x701;
+				break;
+			case CPU_MODEL_SANDY_BRIDGE: 
+				gMacType = iMac122;
 				break;
 			default:
 				gMacType = MacPro31;

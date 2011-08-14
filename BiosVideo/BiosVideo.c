@@ -1550,7 +1550,7 @@ BiosVideoCheckForVga (
   ModeBuffer->VerticalResolution    = 480;
   ModeBuffer->BitsPerPixel          = 8;  
   ModeBuffer->PixelFormat           = PixelBltOnly;
-	ModeBuffer->ColorDepth            = 32;
+//	ModeBuffer->ColorDepth            = 32;
 	ModeBuffer->RefreshRate           = 60;
 	
 

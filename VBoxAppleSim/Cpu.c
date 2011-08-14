@@ -71,7 +71,7 @@ UINT32
 CopyRecord(PLATFORM_DATA* Rec, const CHAR16* Name, VOID* Val, UINT32 ValLen)
 {
 	CopyMem(&Rec->Hdr, &mCpuDataRecordHeader, sizeof(EFI_SUBCLASS_TYPE1_HEADER));
-    Rec->NameLen = StrLen(Name) * sizeof(CHAR16);
+    Rec->NameLen = (UINT32)StrLen(Name) * sizeof(CHAR16);
     Rec->ValLen = ValLen;
     CopyMem(Rec->Data, Name, Rec->NameLen);
     CopyMem(Rec->Data + Rec->NameLen, Val, ValLen);

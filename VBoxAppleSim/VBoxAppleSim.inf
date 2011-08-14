@@ -30,6 +30,8 @@
         VBoxAppleSim.c
         Cpu.c
         Console.c
+[Sources.IA32]
+        llmul.c | MSFT
  
 [Packages]
         MdePkg/MdePkg.dec
@@ -67,3 +69,4 @@
 #  GCC:*_*_*_CC_FLAGS = 
 #  INTEL:*_*_*_CC_FLAGS =
   MSFT:*_*_*_CC_FLAGS =
+  MSFT:*_*_IA32_CC_FLAGS = /GL-

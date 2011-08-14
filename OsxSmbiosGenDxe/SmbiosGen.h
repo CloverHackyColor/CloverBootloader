@@ -44,7 +44,7 @@ Abstract:
 #define   PRODUCT_NAME                  L"Clover"
 #define   PRODUCT_VERSION               L"1.0.5"
 
-#define   FIRMWARE_PRODUCT_NAME         (PRODUCT_NAME L":DUET ")
+#define   FIRMWARE_PRODUCT_NAME         (PRODUCT_NAME L":CLOVER")
 #ifdef EFI32
 #define   FIRMWARE_BIOS_VERSIONE        (PRODUCT_NAME L"(IA32.UEFI)" PRODUCT_VERSION L": ")
 #else  // EFIX64

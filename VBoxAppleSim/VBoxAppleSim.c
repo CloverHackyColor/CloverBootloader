@@ -452,7 +452,11 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
     // Locate DataHub protocol.
     //
     Status = gBS->LocateProtocol (&gEfiDataHubProtocolGuid, NULL, (VOID**)&DataHub);
-    ASSERT_EFI_ERROR (Status);
+	if (EFI_ERROR(Status)) {
+		Print(L"gEfiDataHubProtocolGuid ERROR ...\n");
+		return Status;
+	}
+//    ASSERT_EFI_ERROR (Status);
 	
     Status = SetProperVariables(ImageHandle, SystemTable);
     ASSERT_EFI_ERROR (Status);
@@ -472,14 +476,15 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 			break;
 		}
 		if (Record->Type == EFI_SMBIOS_TYPE_SYSTEM_INFORMATION) {
-			SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE1*)Record;
+			//SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE1*)Record;
+			SmbiosTable.Type1 = (SMBIOS_TABLE_TYPE1*)Record;
 			TmpString = GetSmbiosString (SmbiosTable, SmbiosTable.Type1->SerialNumber);
 			UStrSize = (AsciiStrLen(TmpString) + 1) * sizeof(CHAR16);
 			UString = AllocateZeroPool (UStrSize);
 			ASSERT (UString != NULL);
 			AsciiStrToUnicodeStr (TmpString, UString);			
 			LogData(DataHub, &gEfiMiscSubClassGuid, &gDataHubPlatformGuid,
-					L"SystemSerialNumber", (VOID*)UString, UStrSize);
+					L"SystemSerialNumber", (VOID*)UString, (UINT32)UStrSize);
 			CopyMem(&SystemID, &SmbiosTable.Type1->Uuid, 16);
 			LogData(DataHub, &gEfiMiscSubClassGuid, &gDataHubPlatformGuid,
 					L"system-id", &SystemID, 16);
@@ -494,19 +499,20 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 			ASSERT (UString != NULL);
 			AsciiStrToUnicodeStr (TmpString, UString);			
 			LogData(DataHub, &gEfiMiscSubClassGuid, &gDataHubPlatformGuid,
-					L"Model", (VOID*)UString, UStrSize);
+					L"Model", (VOID*)UString, (UINT32)UStrSize);
 			
 			Find |= 1;
 		}
 		if (Record->Type == EFI_SMBIOS_TYPE_BASEBOARD_INFORMATION) {
-			SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE2 *)Record;
+			//SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE2 *)Record;
+			SmbiosTable.Type2 = (SMBIOS_TABLE_TYPE2 *)Record;
 			TmpString = GetSmbiosString (SmbiosTable, SmbiosTable.Type2->ProductName);
 			UStrSize = (AsciiStrLen(TmpString) + 1) * sizeof(CHAR16);
 			UString = AllocateZeroPool (UStrSize);
 			ASSERT (UString != NULL);
 			AsciiStrToUnicodeStr (TmpString, UString);			
 			LogData(DataHub, &gEfiAppleBootGuid, &gDataHubPlatformGuid,
-					L"board-id", (VOID*)UString, UStrSize);
+					L"board-id", (VOID*)UString, (UINT32)UStrSize);
 /*			Status = rs->SetVariable(L"board-id",
 									 &gEfiAppleBootGuid,
 									 EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
@@ -515,7 +521,8 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 			Find |= 2;
 		}
 		if (Record->Type == EFI_SMBIOS_TYPE_SYSTEM_ENCLOSURE) {
-			SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE3 *)Record;
+			//SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE3 *)Record;
+			SmbiosTable.Type3 = (SMBIOS_TABLE_TYPE3 *)Record;
 			SystemType = (SmbiosTable.Type3->Type >= 8)?2:1;
 //			LogData(DataHub, &gEfiAppleBootGuid, &gDataHubOptionsGuid, 
 //					L"system-type", &SystemType, 1);
@@ -527,14 +534,16 @@ VBoxInitAppleSim(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 		}
 				
 		if (Record->Type == EFI_SMBIOS_TYPE_PROCESSOR_INFORMATION) {
-			SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE4 *)Record;
+			//SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE4 *)Record;
+			SmbiosTable.Type4 = (SMBIOS_TABLE_TYPE4 *)Record;
 			CPUFrequency = SmbiosTable.Type4->CurrentSpeed * 1000000ull;
 			TSCFrequency = SmbiosTable.Type4->MaxSpeed * 1000000ull;
 			FSBFrequency = SmbiosTable.Type4->ExternalClock * 1000000ull;
 			Find |= 8;
 		}
 		if (Record->Type == 128) {
-			SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE128 *)Record;
+			//SmbiosTable = (SMBIOS_STRUCTURE_POINTER)(SMBIOS_TABLE_TYPE128 *)Record;
+			SmbiosTable.Type128 = (SMBIOS_TABLE_TYPE128 *)Record;
 			vFwFeatures = SmbiosTable.Type128->FirmwareFeatures;
 			vFwFeaturesMask = SmbiosTable.Type128->FirmwareFeaturesMask;
 			Find |= 0x10;

@@ -2124,7 +2124,7 @@ typedef struct { //kSMBTypeMemorySPD - as read 128 bytes from SMBus to memInfoDa
 	UINT16           Type17Handle;
 	UINT16           Offset;
 	UINT16           Size;
-	UINT16           Data[];
+	UINT16           Data[1];
 } SMBIOS_TABLE_TYPE130;
 
 typedef struct { //kSMBTypeOemProcessorType
