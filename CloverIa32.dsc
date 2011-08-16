@@ -244,12 +244,13 @@
   PcAtChipsetPkg/8254TimerDxe/8254Timer.inf
   DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
   #DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
-  Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
+  #Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
+  MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
   
   	#DataHub
 	Clover/VBoxAppleSim/VBoxAppleSim.inf
 	IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
-	#IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
+	IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
 	#EdkCompatibilityPkg/Compatibility/PiSmbiosRecordOnDataHubSmbiosRecordThunk/PiSmbiosRecordOnDataHubSmbiosRecordThunk.inf
   
   	# foreign file system support

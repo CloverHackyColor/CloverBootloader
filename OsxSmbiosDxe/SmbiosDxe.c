@@ -47,11 +47,11 @@ SMBIOS_TABLE_ENTRY_POINT EntryPointStructureData = {
   //
   // MajorVersion
   //
-  (UINT8) (FixedPcdGet16 (PcdSmbiosVersion) >> 8),
+  2, //(UINT8) (FixedPcdGet16 (PcdSmbiosVersion) >> 8),
   //
   // MinorVersion
   //
-  (UINT8) (FixedPcdGet16 (PcdSmbiosVersion) & 0x00ff),
+  6, //(UINT8) (FixedPcdGet16 (PcdSmbiosVersion) & 0x00ff),
   //
   // MaxStructureSize, TO BE FILLED
   //
@@ -99,7 +99,7 @@ SMBIOS_TABLE_ENTRY_POINT EntryPointStructureData = {
   //
   // SmbiosBcdRevision
   //
-  0  
+  0x26  
 };
 
 
@@ -1003,8 +1003,8 @@ SmbiosDriverEntryPoint (
   mPrivateData.Smbios.UpdateString      = SmbiosUpdateString;
   mPrivateData.Smbios.Remove            = SmbiosRemove;
   mPrivateData.Smbios.GetNext           = SmbiosGetNext;
-  mPrivateData.Smbios.MajorVersion      = (UINT8) (FixedPcdGet16 (PcdSmbiosVersion) >> 8);
-  mPrivateData.Smbios.MinorVersion      = (UINT8) (FixedPcdGet16 (PcdSmbiosVersion) & 0x00ff);
+	mPrivateData.Smbios.MajorVersion      = 2; //(UINT8) (FixedPcdGet16 (PcdSmbiosVersion) >> 8);
+	mPrivateData.Smbios.MinorVersion      = 6; //(UINT8) (FixedPcdGet16 (PcdSmbiosVersion) & 0x00ff);
 
   InitializeListHead (&mPrivateData.DataListHead);
   InitializeListHead (&mPrivateData.AllocatedHandleListHead);
