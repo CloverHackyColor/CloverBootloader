@@ -196,6 +196,7 @@
   MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
   MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
   MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
+  #Clover/OsxRuntimeDxe/RuntimeDxe.inf
   MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDxe.inf
 
   #DuetPkg/FSVariable/FSVariable.inf
@@ -215,7 +216,8 @@
   MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
   #MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
   Clover/OsxSmbiosDxe/SmbiosDxe.inf
-  Clover/OsxSmbiosGenDxe/SmbiosGen.inf
+  #Clover/OsxSmbiosGenDxe/SmbiosGen.inf
+  DuetPkg/SmbiosGenDxe/SmbiosGen.inf
 
   #DuetPkg/FvbRuntimeService/DUETFwh.inf
   #DuetPkg/EfiLdr/EfiLdr.inf {
@@ -244,8 +246,9 @@
   PcAtChipsetPkg/8254TimerDxe/8254Timer.inf
   DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
   #DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
-  #Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
-  MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
+  Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
+  #MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
+  #Clover/OsxPciBusDxe/PciBusDxe.inf
   
   	#DataHub
 	Clover/VBoxAppleSim/VBoxAppleSim.inf
@@ -292,10 +295,10 @@
   IntelFrameworkModulePkg/Bus/Isa/Ps2MouseDxe/Ps2MouseDxe.inf
  
   # ACPI Support
-  #MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
-  Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
-  #MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
-  Clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
+  MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
+  #Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
+  MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
+  #Clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
 
   MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
   MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf

@@ -59,7 +59,7 @@ SMBIOS_TABLE_ENTRY_POINT EntryPointStructureData = {
   //
   // EntryPointRevision
   //
-  0,
+  0x26,
   //
   // FormattedArea
   //
