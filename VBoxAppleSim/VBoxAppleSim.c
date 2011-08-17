@@ -96,10 +96,14 @@ EFI_GUID gDataHubPlatformGuid = {0x64517cc8, 0x6561, 0x4051, {0xb0, 0x3c, 0x59, 
  EFI_GUID FsbFrequencyPropertyGuid			= {0xD1A04D55, 0x75B9, 0x41A3, {0x90, 0x36, 0x8F, 0x4A, 0x26, 0x1C, 0xBB, 0xA2}}; //not found in boot.efi
  EFI_GUID DevicePathsSupportedGuid			= {0x5BB91CF7, 0xD816, 0x404B, {0x86, 0x72, 0x68, 0xF2, 0x7F, 0x78, 0x31, 0xDC}}; //not found
  EFI_GUID gNotifyExitBootServices			= {0xd2b2b828, 0x0826, 0x48a7, {0xb3, 0xdf, 0x98, 0x3c, 0x00, 0x60, 0x24, 0xf0}};
+ EFI_GUID gEfiGlobalVarGuid					= {0x8BE4DF61, 0x93CA, 0x11d2, {0xAA, 0x0D, 0x00, 0xE0, 0x98, 0x03, 0x2B, 0x8C}};
+ EFI_GUID gEfiAppleVendorGuid				= {0xAC39C713, 0x7E50, 0x423D, {0x88, 0x9D, 0x27, 0x8F, 0xCC, 0x34, 0x22, 0xB6}};
+ EFI_GUID gEfiAppleFirmwarePasswordProtocolGuid 8FFEEB3A-4C98-4630-803F-740F9567091D
+ 
  // -> gEfiStatusCodeRuntimeProtocolGuid
   //Unknown protocols from Kabyl
  5B213447-6E73-4901-A4F1-B864F3B7A172  //GUID_001 efiboot loaded from device
- 8FFEEB3A-4C98-4630-803F-740F9567091D  //GUID_003 recovery-boot, boot-args, efi-boot-kernelcache-data, efi-boot-file-data  /options?
+// 8FFEEB3A-4C98-4630-803F-740F9567091D  //GUID_003 recovery-boot, boot-args, efi-boot-kernelcache-data, efi-boot-file-data  /options?
  8ECE08D8-A6D4-430B-A7B0-2DF318E7884A  //gfx-saved-config-restore-status
  78EE99FB-6A5E-4186-97DE-CD0ABA345A74  //GUID_002 before device-properties
  //
