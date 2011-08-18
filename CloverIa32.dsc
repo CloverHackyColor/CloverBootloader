@@ -261,6 +261,8 @@
 	Clover/VBoxFsDxe/VBoxIso9660.inf
 	Clover/VBoxFsDxe/VBoxFsDxe.inf
 	Clover/VBoxFsDxe/VBoxExt2.inf
+	#EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
+	Clover/OsxMmcDxe/MmcDxe.inf
 
   IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
   #IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
@@ -295,10 +297,10 @@
   IntelFrameworkModulePkg/Bus/Isa/Ps2MouseDxe/Ps2MouseDxe.inf
  
   # ACPI Support
-  MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
-  #Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
-  MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
-  #Clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
+  #MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
+  Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
+  #MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
+  Clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
 
   MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
   MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf

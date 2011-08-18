@@ -286,7 +286,7 @@
 
   ## If TRUE, then the Device Path From Text Protocol should be produced by the platform.
   #  It can be disabled to save size.
-  gEfiMdeModulePkgTokenSpaceGuid.PcdDevicePathSupportDevicePathFromText|FALSE|BOOLEAN|0x00010038
+  gEfiMdeModulePkgTokenSpaceGuid.PcdDevicePathSupportDevicePathFromText|TRUE|BOOLEAN|0x00010038
 
   ## If TRUE, enable the statistic functionality about variable usage. Such information is
   #  stored as a vendor configuration table into the EFI system table.
@@ -307,7 +307,7 @@
 
   ## If TRUE, UGA Draw Protocol will be installed on virtual handle created by ConsplitterDxe.
   #  It could be set FALSE to save size.
-  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutUgaSupport|FALSE|BOOLEAN|0x00010043
+  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutUgaSupport|TRUE|BOOLEAN|0x00010043
 
   ## If TRUE, when PeiCore dispatches a PEI module, PeiCore will first search TE section from this PEIM to load the image.
   #  If TE section is not found, then PeiCore will search PE section.
@@ -319,7 +319,7 @@
   ## If TRUE, force to switch off the support of legacy usb. So legacy usb device driver can not make use of SMI
   #  interrupt to access usb device in the case of absence of usb stack. 
   #  DUET platform requires the token to be TRUE.
-  gEfiMdeModulePkgTokenSpaceGuid.PcdTurnOffUsbLegacySupport|FALSE|BOOLEAN|0x00010047
+  gEfiMdeModulePkgTokenSpaceGuid.PcdTurnOffUsbLegacySupport|TRUE|BOOLEAN|0x00010047
   
   ## If TRUE, HiiImageProtocol will be installed.
   #  FALSE is for size reduction.
@@ -380,7 +380,7 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdRecoveryOnIdeDisk|TRUE|BOOLEAN|0x00010060
 
   ## If TRUE, recovery from FAT floppy disk will be supported.
-  gEfiMdeModulePkgTokenSpaceGuid.PcdRecoveryOnFatFloppyDisk|TRUE|BOOLEAN|0x00010061
+  gEfiMdeModulePkgTokenSpaceGuid.PcdRecoveryOnFatFloppyDisk|FALSE|BOOLEAN|0x00010061
 
   ## If TRUE, recovery from data CD will be supported.
   gEfiMdeModulePkgTokenSpaceGuid.PcdRecoveryOnDataCD|TRUE|BOOLEAN|0x00010062
@@ -475,7 +475,7 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdLoadModuleAtFixAddressEnable|0|UINT64|0x30001015
   
   ## Smbios version
-  gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0207|UINT16|0x00010055
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0206|UINT16|0x00010055
 
   ## TFTP BlockSize. Initial value 0 means using default block size which is (MTU-IP_HEADER-UDP_HEADER-TFTP_HEADER)
   #  to handle all link layers. If the value is non zero, the PCD value will be used as block size.
