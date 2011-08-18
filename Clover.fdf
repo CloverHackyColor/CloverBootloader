@@ -67,8 +67,8 @@ INF  MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
 #INF  MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
 #INF  MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
 INF  Clover/OsxSmbiosDxe/SmbiosDxe.inf
-INF  DuetPkg/SmbiosGenDxe/SmbiosGen.inf
-#INF  Clover/OsxSmbiosGenDxe/SmbiosGen.inf
+#INF  DuetPkg/SmbiosGenDxe/SmbiosGen.inf
+INF  Clover/OsxSmbiosGenDxe/SmbiosGen.inf
 #INF  DuetPkg/FvbRuntimeService/DUETFwh.inf
 #INF  IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf
 INF  Clover/OsxBdsDxe/BdsDxe.inf
@@ -80,7 +80,7 @@ INF  Clover/CpuDxe/Cpu.inf
 INF EdkCompatibilityPkg/Compatibility/MpServicesOnFrameworkMpServicesThunk/MpServicesOnFrameworkMpServicesThunk.inf
 
 	#DataHub
-#INF  Clover/VBoxAppleSim/VBoxAppleSim.inf
+INF  Clover/VBoxAppleSim/VBoxAppleSim.inf
 INF IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 INF IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
 #INF EdkCompatibilityPkg/Compatibility/PiSmbiosRecordOnDataHubSmbiosRecordThunk/PiSmbiosRecordOnDataHubSmbiosRecordThunk.inf

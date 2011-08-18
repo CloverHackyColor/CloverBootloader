@@ -86,6 +86,10 @@
   #
   PlatformHookLib|Include/Library/PlatformHookLib.h
   
+  ##  @libraryclass  Provide platform specific hooks for SMM core.
+  #
+  SmmCorePlatformHookLib|Include/Library/SmmCorePlatformHookLib.h
+  
 [Guids]
   ## MdeModule package token space guid
   # Include/Guid/MdeModulePkgTokenSpace.h
