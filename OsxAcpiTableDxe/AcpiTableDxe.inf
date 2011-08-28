@@ -52,7 +52,7 @@
 #  DebugLib
   BaseLib
   PcdLib
-#  HobLib
+  HobLib
 
 [Guids]
   gEfiAcpi10TableGuid                           # ALWAYS_CONSUMED

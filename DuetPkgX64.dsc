@@ -30,7 +30,7 @@
   SUPPORTED_ARCHITECTURES        = X64
   BUILD_TARGETS                  = DEBUG
   SKUID_IDENTIFIER               = DEFAULT
-  FLASH_DEFINITION               = DuetPkg/cloverefiboot/DuetPkg64.fdf
+  FLASH_DEFINITION               = Clover/DuetPkg64.fdf
 
 ################################################################################
 #
@@ -61,7 +61,7 @@
   PciExpressLib|MdePkg/Library/DxeRuntimePciExpressLib/DxeRuntimePciExpressLib.inf
   CacheMaintenanceLib|MdePkg/Library/BaseCacheMaintenanceLib/BaseCacheMaintenanceLib.inf
   #PeCoffLib|MdePkg/Library/BasePeCoffLib/BasePeCoffLib.inf
-  PeCoffLib|DuetPkg/cloverefiboot/VBoxPeCoffLib/VBoxPeCoffLib.inf
+  PeCoffLib|Clover/VBoxPeCoffLib/VBoxPeCoffLib.inf
   PeCoffExtraActionLib|MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
   PeCoffGetEntryPointLib|MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
   #
@@ -86,7 +86,7 @@
   #UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
   OemHookStatusCodeLib|MdeModulePkg/Library/OemHookStatusCodeLibNull/OemHookStatusCodeLibNull.inf
   #GenericBdsLib|IntelFrameworkModulePkg/Library/GenericBdsLib/GenericBdsLib.inf
-  GenericBdsLib|DuetPkg/cloverefiboot/OsxBdsLib/GenericBdsLib.inf
+  GenericBdsLib|Clover/OsxBdsLib/GenericBdsLib.inf
   SecurityManagementLib|MdeModulePkg/Library/DxeSecurityManagementLib/DxeSecurityManagementLib.inf
   CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibNull/DxeCapsuleLibNull.inf
   PeCoffExtraActionLib|MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
@@ -94,7 +94,7 @@
   # Platform
   #
   #PlatformBdsLib|DuetPkg/Library/DuetBdsLib/PlatformBds.inf
-  PlatformBdsLib|DuetPkg/cloverefiboot/OsxBdsPlatformLib/PlatformBds.inf
+  PlatformBdsLib|Clover/OsxBdsPlatformLib/PlatformBds.inf
   TimerLib|DuetPkg/Library/DuetTimerLib/DuetTimerLib.inf
   #
   # Misc
@@ -136,7 +136,7 @@
 
 [PcdsFeatureFlag]
   gEfiMdeModulePkgTokenSpaceGuid.PcdTurnOffUsbLegacySupport|TRUE
-  gEfiMdeModulePkgTokenSpaceGuid.PcdResetOnMemoryTypeInformationChange|FALSE
+  #gEfiMdeModulePkgTokenSpaceGuid.PcdResetOnMemoryTypeInformationChange|FALSE
 
 ###################################################################################################
 #
@@ -160,7 +160,7 @@
 	#DuetPkg/BootSector/BootSector.inf
 
   #DuetPkg/DxeIpl/DxeIpl.inf {
-  DuetPkg/cloverefiboot/OsxDxeIpl/DxeIpl.inf {
+  Clover/OsxDxeIpl/DxeIpl.inf {
     <LibraryClasses>
       #
       # If no following overriden for ReportStatusCodeLib library class,
@@ -210,24 +210,24 @@
   MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
   MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
   MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
-  DuetPkg/cloverefiboot/OsxSmbiosGenDxe/SmbiosGen.inf
+  Clover/OsxSmbiosGenDxe/SmbiosGen.inf
 
   #DuetPkg/FvbRuntimeService/DUETFwh.inf
   #DuetPkg/EfiLdr/EfiLdr.inf {
-  DuetPkg/cloverefiboot/OsxEfiLdr/EfiLdr.inf {
+  Clover/OsxEfiLdr/EfiLdr.inf {
     <LibraryClasses>
       DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
       NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
   }
 #  IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf {
-  DuetPkg/cloverefiboot/OsxBdsDxe/BdsDxe.inf {
+  Clover/OsxBdsDxe/BdsDxe.inf {
     <LibraryClasses>
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
   }
   #MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
   UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
   UefiCpuPkg/CpuDxe/CpuDxe.inf
-  #DuetPkg/cloverefiboot/CpuDxe/Cpu.inf
+  #Clover/CpuDxe/Cpu.inf
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
   DuetPkg/AcpiResetDxe/Reset.inf
   DuetPkg/LegacyMetronome/Metronome.inf
@@ -238,26 +238,26 @@
   PcAtChipsetPkg/8254TimerDxe/8254Timer.inf
   DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
   #DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
-  DuetPkg/cloverefiboot/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
+  Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
   
   	#DataHub
-	DuetPkg/cloverefiboot/VBoxAppleSim/VBoxAppleSim.inf
+	Clover/VBoxAppleSim/VBoxAppleSim.inf
 	IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 	#IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
   
   	# foreign file system support
-	#DuetPkg/cloverefiboot/VBoxFsDxe/VBoxHfs.inf
-	#DuetPkg/cloverefiboot/VBoxFsDxe/VBoxIso9660.inf
-	#DuetPkg/cloverefiboot/VBoxFsDxe/VBoxFsDxe.inf
-	#DuetPkg/cloverefiboot/VBoxFsDxe/VBoxExt2.inf
+	#Clover/VBoxFsDxe/VBoxHfs.inf
+	#Clover/VBoxFsDxe/VBoxIso9660.inf
+	#Clover/VBoxFsDxe/VBoxFsDxe.inf
+	#Clover/VBoxFsDxe/VBoxExt2.inf
 
   #IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
   IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
-  DuetPkg/cloverefiboot/IntelGmaDxe/Gop.inf
+  Clover/IntelGmaDxe/Gop.inf
 
   # IDE/AHCI Support
-  DuetPkg/cloverefiboot/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
-  DuetPkg/cloverefiboot/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
+  Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
+  Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
   DuetPkg/SataControllerDxe/SataControllerDxe.inf
   MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
   MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
@@ -283,15 +283,15 @@
  
   # ACPI Support
   #MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
-   DuetPkg/cloverefiboot/OsxAcpiTableDxe/AcpiTableDxe.inf
+   Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
   #MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
-  DuetPkg/cloverefiboot/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
-  # DuetPkg/cloverefiboot/OsxLegacyAcpi/AcpiPlatformDxe.inf
+  Clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
+  # Clover/OsxLegacyAcpi/AcpiPlatformDxe.inf
 
   MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
   MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
   #MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
-  DuetPkg/cloverefiboot/OsxPartitionDxe/PartitionDxe.inf
+  Clover/OsxPartitionDxe/PartitionDxe.inf
 
   # Bios Thunk
   #DuetPkg/BiosVideoThunkDxe/BiosVideo.inf

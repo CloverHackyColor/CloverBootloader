@@ -468,7 +468,7 @@ SmbiosUpdateString (
     return EFI_ABORTED;
   }
 
-  if (*StringNumber == 0) {
+  if (*StringNumber == 0) { //Slice - there should be a way to add a string if not exists
     return EFI_NOT_FOUND;
   }
 

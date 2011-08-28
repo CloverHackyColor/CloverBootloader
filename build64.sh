@@ -89,12 +89,12 @@ do
 
   if [[ $arg == cleanall ]]; then
     make -C $WORKSPACE/BaseTools clean
-    build -p $WORKSPACE/clover/DuetPkg$PROCESSOR.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 clean
+    build -p $WORKSPACE/Clover/DuetPkg$PROCESSOR.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 clean
     exit $?
   fi
 
   if [[ $arg == clean ]]; then
-    build -p $WORKSPACE/clover/DuetPkg$PROCESSOR.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 clean
+    build -p $WORKSPACE/Clover/DuetPkg$PROCESSOR.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 clean
     exit $?
   fi
 done
@@ -104,9 +104,9 @@ done
 # Build the edk2 DuetPkg
 #
 echo Running edk2 build for DuetPkg$PROCESSOR
-build -p $WORKSPACE/clover/DuetPkg$PROCESSOR.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 $*
-echo Running clover/PostBuild.sh
-$WORKSPACE/clover/PostBuild.sh $PROCESSOR $TARGET_TOOLS
+build -p $WORKSPACE/Clover/DuetPkg$PROCESSOR.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 $*
+echo Running Clover/PostBuild.sh
+$WORKSPACE/Clover/PostBuild.sh $PROCESSOR $TARGET_TOOLS
 echo Running CreateBootDisk.sh
 
 #$WORKSPACE/DuetPkg/CreateBootDisk.sh file $FLOPPY_IMAGE /dev/null FAT12 $PROCESSOR $TARGET_TOOLS
