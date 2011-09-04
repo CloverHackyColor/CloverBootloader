@@ -135,10 +135,11 @@
   gEfiMdePkgTokenSpaceGuid.PcdReportStatusCodePropertyMask|0x0
   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x0
   gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x0
+  gEfiMdeModulePkgTokenSpaceGuid.PcdResetOnMemoryTypeInformationChange|FALSE
+
 
 [PcdsFeatureFlag]
   gEfiMdeModulePkgTokenSpaceGuid.PcdTurnOffUsbLegacySupport|TRUE
-  #gEfiMdeModulePkgTokenSpaceGuid.PcdResetOnMemoryTypeInformationChange|FALSE
 
 ###################################################################################################
 #
@@ -235,7 +236,7 @@
   #MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
   UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
   #UefiCpuPkg/CpuDxe/CpuDxe.inf
-  IntelFrameworkModulePkg/Universal/CpuIoDxe/CpuIoDxe.inf
+  #IntelFrameworkModulePkg/Universal/CpuIoDxe/CpuIoDxe.inf
   Clover/CpuDxe/Cpu.inf
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
   DuetPkg/AcpiResetDxe/Reset.inf
@@ -249,7 +250,7 @@
   #DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
   Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
   #MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
-  Clover/OsxPciBusDxe/PciBusDxe.inf
+  #Clover/OsxPciBusDxe/PciBusDxe.inf
   
   	#DataHub
 	Clover/VBoxAppleSim/VBoxAppleSim.inf
@@ -263,7 +264,7 @@
 	Clover/VBoxFsDxe/VBoxFsDxe.inf
 	Clover/VBoxFsDxe/VBoxExt2.inf
 	#EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
-	Clover/OsxMmcDxe/MmcDxe.inf
+	#Clover/OsxMmcDxe/MmcDxe.inf
 
   IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
   #IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
@@ -278,6 +279,7 @@
   MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
+  #IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
 
   # Usb Support
   MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf

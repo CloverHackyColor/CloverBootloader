@@ -135,10 +135,10 @@
   gEfiMdePkgTokenSpaceGuid.PcdReportStatusCodePropertyMask|0x0
   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x0
   gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x0
+  gEfiMdeModulePkgTokenSpaceGuid.PcdResetOnMemoryTypeInformationChange|FALSE
 
 [PcdsFeatureFlag]
   gEfiMdeModulePkgTokenSpaceGuid.PcdTurnOffUsbLegacySupport|TRUE
-  gEfiMdeModulePkgTokenSpaceGuid.PcdResetOnMemoryTypeInformationChange|FALSE
 
 ###################################################################################################
 #
@@ -195,8 +195,8 @@
 
   MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
   MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
-  #MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
-  Clover/OsxRuntimeDxe/RuntimeDxe.inf
+  MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
+  #Clover/OsxRuntimeDxe/RuntimeDxe.inf
   MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDxe.inf
 
   #DuetPkg/FSVariable/FSVariable.inf
@@ -261,7 +261,8 @@
 	Clover/VBoxFsDxe/VBoxIso9660.inf
 	Clover/VBoxFsDxe/VBoxFsDxe.inf
 	Clover/VBoxFsDxe/VBoxExt2.inf
-
+	#EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
+	
   IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
   #IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
   Clover/VgaClassDxe/VgaClassDxe.inf
@@ -280,6 +281,7 @@
   # Usb Support
   MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
   MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
+  MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
   MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
   MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
   MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
@@ -310,12 +312,16 @@
   #DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
   Clover/BiosVideo/BiosVideo.inf
   #IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf
+  IntelFrameworkModulePkg/Csm/LegacyBiosDxe/LegacyBiosDxe.inf
+  IntelFrameworkModulePkg/Csm/BiosThunk/BlockIoDxe/BlockIoDxe.inf
+  IntelFrameworkModulePkg/Csm/BiosThunk/KeyboardDxe/KeyboardDxe.inf
+  IntelFrameworkModulePkg/Universal/LegacyRegionDxe/LegacyRegionDxe.inf
 
   #
   # Sample Application
   #
   #MdeModulePkg/Application/HelloWorld/HelloWorld.inf
-  MdeModulePkg/Application/VariableInfo/VariableInfo.inf
+  #MdeModulePkg/Application/VariableInfo/VariableInfo.inf
   #iBootEFI/iboot.inf
   #rEFIt_UEFI/refit.inf
 

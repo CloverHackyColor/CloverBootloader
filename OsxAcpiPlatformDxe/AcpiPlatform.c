@@ -432,6 +432,7 @@ AcpiPlatformEntryPoint (
  and extract DevicePath from BootNext - first available :(
  In Gui.efi we can repeat this patch with DSDT.aml loaded from another place
  */
+	
 	Status = gBS->HandleProtocol (
 								  ImageHandle,
 								  &gEfiLoadedImageProtocolGuid,

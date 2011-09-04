@@ -49,8 +49,8 @@ APRIORI DXE {
 
 INF  MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
 INF  MdeModulePkg/Universal/WatchdogTimerDxe/WatchdogTimer.inf
-#INF  MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
-INF  Clover/OsxRuntimeDxe/RuntimeDxe.inf
+INF  MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
+#INF  Clover/OsxRuntimeDxe/RuntimeDxe.inf
 INF  MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDxe.inf
 
 #INF  DuetPkg/FSVariable/FSVariable.inf
@@ -76,6 +76,7 @@ INF  Clover/OsxBdsDxe/BdsDxe.inf
 INF  MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
 INF  UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
 #INF  UefiCpuPkg/CpuDxe/CpuDxe.inf
+#INF  IntelFrameworkModulePkg/Universal/CpuIoDxe/CpuIoDxe.inf
 INF  Clover/CpuDxe/Cpu.inf
 INF EdkCompatibilityPkg/Compatibility/MpServicesOnFrameworkMpServicesThunk/MpServicesOnFrameworkMpServicesThunk.inf
 
@@ -106,19 +107,27 @@ INF  Clover/VgaClassDxe/VgaClassDxe.inf
 INF  Clover/BiosVideo/BiosVideo.inf
 #INF  Clover/IntelGmaDxe/Gop.inf
 
+# BIOS CSM
+INF  IntelFrameworkModulePkg/Csm/LegacyBiosDxe/LegacyBiosDxe.inf
+#INF  IntelFrameworkModulePkg/Csm/BiosThunk/BlockIoDxe/BlockIoDxe.inf
+#INF  IntelFrameworkModulePkg/Csm/BiosThunk/KeyboardDxe/KeyboardDxe.inf
+#INF  IntelFrameworkModulePkg/Universal/LegacyRegionDxe/LegacyRegionDxe.inf
+
+
   # IDE/AHCI Support
 #INF  Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
 #INF  Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
-INF  DuetPkg/SataControllerDxe/SataControllerDxe.inf
+INF  Clover/SataControllerDxe/SataControllerDxe.inf
 INF  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
 INF  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
 #INF  MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
 #INF  MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
-INF  IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
+#INF  IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
 
   # Usb Support
 INF  MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
 INF  MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
+#INF  MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
 INF  MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
 #INF  MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
 INF  MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
