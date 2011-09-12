@@ -226,7 +226,7 @@
       #NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
       NULL|Clover/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
   }
-#  IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf {
+  #IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf {
   Clover/OsxBdsDxe/BdsDxe.inf {
     <LibraryClasses>
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
@@ -247,8 +247,7 @@
   #DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
   Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
   #MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
-  #MdeModulePkg/Bus/Pci/IncompatiblePciDeviceSupportDxe/IncompatiblePciDeviceSupportDxe.inf
-
+  #Clover/OsxPciBusDxe/PciBusDxe.inf
   
   	#DataHub
 	Clover/VBoxAppleSim/VBoxAppleSim.inf
@@ -262,6 +261,7 @@
 	Clover/VBoxFsDxe/VBoxFsDxe.inf
 	Clover/VBoxFsDxe/VBoxExt2.inf
 	#EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
+	#Clover/OsxMmcDxe/MmcDxe.inf
 	
   IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
   #IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
@@ -270,13 +270,13 @@
 
   # IDE/AHCI Support
   Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
-  #Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
+  Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
   Clover/SataControllerDxe/SataControllerDxe.inf
   MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
   MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
-  IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
+  #IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
 
   # Usb Support
   MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
@@ -307,6 +307,7 @@
   MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
   #MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
   Clover/OsxPartitionDxe/PartitionDxe.inf
+  IntelFrameworkModulePkg/Universal/Acpi/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
 
   # Bios Thunk
   #DuetPkg/BiosVideoThunkDxe/BiosVideo.inf

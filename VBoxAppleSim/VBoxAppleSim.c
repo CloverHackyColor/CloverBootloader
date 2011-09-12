@@ -99,13 +99,19 @@ EFI_GUID gDataHubPlatformGuid = {0x64517cc8, 0x6561, 0x4051, {0xb0, 0x3c, 0x59, 
  EFI_GUID gEfiGlobalVarGuid					= {0x8BE4DF61, 0x93CA, 0x11d2, {0xAA, 0x0D, 0x00, 0xE0, 0x98, 0x03, 0x2B, 0x8C}};
  EFI_GUID gEfiAppleVendorGuid				= {0xAC39C713, 0x7E50, 0x423D, {0x88, 0x9D, 0x27, 0x8F, 0xCC, 0x34, 0x22, 0xB6}};
  EFI_GUID gEfiAppleFirmwarePasswordProtocolGuid 8FFEEB3A-4C98-4630-803F-740F9567091D
+ EFI_GUID AppleAcpiVariableGuid				= {0xaf9ffd67, 0xec10, 0x488a, {0x9d, 0xfc, 0x6c, 0xbf, 0x5e, 0xe2, 0x2c, 0x2e}};
+ EFI_GUID AppleBootKeyPressProtocolGuid		= {0x5b213447, 0x6e73, 0x4901, {0xa4, 0xf1, 0xb8, 0x64, 0xf3, 0xb7, 0xa1, 0x72}};
+ EFI_GUID AppleNetBootProtocolGuid			= {0x78ee99fb, 0x6a5e, 0x4186, {0x97, 0xde, 0xcd, 0x0a, 0xba, 0x34, 0x5a, 0x74}};
+ EFI_GUID AppleImageCodecProtocolGuid		= {0x0dfce9f6, 0xc4e3, 0x45ee, {0xa0, 0x6a, 0xa8, 0x61, 0x3b, 0x98, 0xa5, 0x07}};
+ 
+ 
  
  // -> gEfiStatusCodeRuntimeProtocolGuid
   //Unknown protocols from Kabyl
- 5B213447-6E73-4901-A4F1-B864F3B7A172  //GUID_001 efiboot loaded from device
+// 5B213447-6E73-4901-A4F1-B864F3B7A172  //GUID_001 efiboot loaded from device
 // 8FFEEB3A-4C98-4630-803F-740F9567091D  //GUID_003 recovery-boot, boot-args, efi-boot-kernelcache-data, efi-boot-file-data  /options?
  8ECE08D8-A6D4-430B-A7B0-2DF318E7884A  //gfx-saved-config-restore-status
- 78EE99FB-6A5E-4186-97DE-CD0ABA345A74  //GUID_002 before device-properties
+// 78EE99FB-6A5E-4186-97DE-CD0ABA345A74  //GUID_002 before device-properties
  //
  E3E9FD4F-1C1D-48AC-A86406E06547ADEE - unk_214E0 sub_15370+7E gAppleUn5Guid
  9BB9FD8E-5AAA-4ECD-AA5B5AC1B6136070 - unk_21510 sub_15500+E gAppleMkextProtocolGuid
@@ -133,8 +139,8 @@ EFI_GUID gAppleScreenInfoGuid = {
 
 
 #if TEST
-EFI_GUID gEfiUnknown1ProtocolGuid = {
-	0x78EE99FB, 0x6A5E, 0x4186, {0x97, 0xDE, 0xCD, 0x0A, 0xBA, 0x34, 0x5A, 0x74}
+EFI_GUID gEfiUnknown1ProtocolGuid = {  
+	0x78EE99FB, 0x6A5E, 0x4186, {0x97, 0xDE, 0xCD, 0x0A, 0xBA, 0x34, 0x5A, 0x74} //AppleNetBootProtocolGuid
 //    0xDD8E06AC, 0x00E2, 0x49A9, {0x88, 0x8F, 0xFA, 0x46, 0xDE, 0xD4, 0x0A, 0x52}
 };
 #endif

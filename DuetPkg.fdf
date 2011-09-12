@@ -100,6 +100,8 @@ INF  PcAtChipsetPkg/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
 INF  DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
 #INF  DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
 INF  Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
+#INF  MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
+#INF  Clover/OsxPciBusDxe/PciBusDxe.inf
 INF  IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
 #INF  IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
 INF  Clover/VgaClassDxe/VgaClassDxe.inf
@@ -109,9 +111,9 @@ INF  Clover/BiosVideo/BiosVideo.inf
 
 # BIOS CSM
 INF  IntelFrameworkModulePkg/Csm/LegacyBiosDxe/LegacyBiosDxe.inf
-#INF  IntelFrameworkModulePkg/Csm/BiosThunk/BlockIoDxe/BlockIoDxe.inf
+INF  IntelFrameworkModulePkg/Csm/BiosThunk/BlockIoDxe/BlockIoDxe.inf
 #INF  IntelFrameworkModulePkg/Csm/BiosThunk/KeyboardDxe/KeyboardDxe.inf
-#INF  IntelFrameworkModulePkg/Universal/LegacyRegionDxe/LegacyRegionDxe.inf
+INF  IntelFrameworkModulePkg/Universal/LegacyRegionDxe/LegacyRegionDxe.inf
 
 
   # IDE/AHCI Support
@@ -149,6 +151,7 @@ INF  Clover/OsxPartitionDxe/PartitionDxe.inf
 #INF  MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
 INF  Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
 INF  Clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
+INF  IntelFrameworkModulePkg/Universal/Acpi/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
 
   # Binary INF file to support toggle among different CPU architectures.
 INF  RuleOverride=BINARY FatBinPkg/EnhancedFatDxe/Fat.inf

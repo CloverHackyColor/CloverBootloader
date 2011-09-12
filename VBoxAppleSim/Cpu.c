@@ -76,7 +76,7 @@ CopyRecord(PLATFORM_DATA* Rec, const CHAR16* Name, VOID* Val, UINT32 ValLen)
     CopyMem(Rec->Data, Name, Rec->NameLen);
     CopyMem(Rec->Data + Rec->NameLen, Val, ValLen);
 
-    return (sizeof(EFI_SUBCLASS_TYPE1_HEADER) + 4 + 4 + Rec->NameLen + Rec->ValLen);
+    return (sizeof(EFI_SUBCLASS_TYPE1_HEADER) + 8 + Rec->NameLen + Rec->ValLen);
 }
 
 EFI_STATUS EFIAPI
