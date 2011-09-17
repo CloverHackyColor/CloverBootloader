@@ -398,10 +398,10 @@ Var_UpdateConsoleOption (
   EFI_DEVICE_PATH_PROTOCOL  *ConDevicePath;
   BM_MENU_ENTRY             *NewMenuEntry;
   BM_CONSOLE_CONTEXT        *NewConsoleContext;
-  BM_TERMINAL_CONTEXT       *NewTerminalContext;
+//  BM_TERMINAL_CONTEXT       *NewTerminalContext;
   EFI_STATUS                Status;
-  VENDOR_DEVICE_PATH        Vendor;
-  EFI_DEVICE_PATH_PROTOCOL  *TerminalDevicePath;
+//  VENDOR_DEVICE_PATH        Vendor;
+//  EFI_DEVICE_PATH_PROTOCOL  *TerminalDevicePath;
   UINTN                     Index;
 
   ConDevicePath = EfiLibGetVariable (ConsoleName, &gEfiGlobalVariableGuid);
@@ -425,7 +425,7 @@ Var_UpdateConsoleOption (
                         );
     }
   }
-
+/*
   for (Index = 0; Index < TerminalMenu.MenuNumber; Index++) {
     NewMenuEntry = BOpt_GetMenuEntry (&TerminalMenu, Index);
 
@@ -454,9 +454,10 @@ Var_UpdateConsoleOption (
                         ConDevicePath,
                         TerminalDevicePath
                         );
+ 
     }
   }
-
+*/
   if (ConDevicePath != NULL) {
     Status = gRT->SetVariable (
                     ConsoleName,

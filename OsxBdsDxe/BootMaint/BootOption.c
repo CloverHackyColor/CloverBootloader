@@ -47,7 +47,7 @@ BOpt_CreateMenuEntry (
   case BM_FILE_CONTEXT_SELECT:
     ContextSize = sizeof (BM_FILE_CONTEXT);
     break;
-
+/*
   case BM_CONSOLE_CONTEXT_SELECT:
     ContextSize = sizeof (BM_CONSOLE_CONTEXT);
     break;
@@ -55,7 +55,7 @@ BOpt_CreateMenuEntry (
   case BM_TERMINAL_CONTEXT_SELECT:
     ContextSize = sizeof (BM_TERMINAL_CONTEXT);
     break;
-
+*/
   case BM_HANDLE_CONTEXT_SELECT:
     ContextSize = sizeof (BM_HANDLE_CONTEXT);
     break;
@@ -105,8 +105,8 @@ BOpt_DestroyMenuEntry (
 {
   BM_LOAD_CONTEXT           *LoadContext;
   BM_FILE_CONTEXT           *FileContext;
-  BM_CONSOLE_CONTEXT        *ConsoleContext;
-  BM_TERMINAL_CONTEXT       *TerminalContext;
+//  BM_CONSOLE_CONTEXT        *ConsoleContext;
+//  BM_TERMINAL_CONTEXT       *TerminalContext;
   BM_HANDLE_CONTEXT         *HandleContext;
   BM_LEGACY_DEVICE_CONTEXT  *LegacyDevContext;
 
@@ -143,7 +143,7 @@ BOpt_DestroyMenuEntry (
     }
     FreePool (FileContext);
     break;
-
+/*
   case BM_CONSOLE_CONTEXT_SELECT:
     ConsoleContext = (BM_CONSOLE_CONTEXT *) MenuEntry->VariableContext;
     FreePool (ConsoleContext->DevicePath);
@@ -155,7 +155,7 @@ BOpt_DestroyMenuEntry (
     FreePool (TerminalContext->DevicePath);
     FreePool (TerminalContext);
     break;
-
+*/
   case BM_HANDLE_CONTEXT_SELECT:
     HandleContext = (BM_HANDLE_CONTEXT *) MenuEntry->VariableContext;
     FreePool (HandleContext);

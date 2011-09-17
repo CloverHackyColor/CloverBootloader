@@ -20,13 +20,13 @@ EFI_IFR_GUID_LABEL  *mStartLabel = NULL;
 EFI_IFR_GUID_LABEL  *mEndLabel = NULL;
 
 STRING_DEPOSITORY   *FileOptionStrDepository;
-STRING_DEPOSITORY   *ConsoleOptionStrDepository;
+//STRING_DEPOSITORY   *ConsoleOptionStrDepository;
 STRING_DEPOSITORY   *BootOptionStrDepository;
 STRING_DEPOSITORY   *BootOptionHelpStrDepository;
 STRING_DEPOSITORY   *DriverOptionStrDepository;
 STRING_DEPOSITORY   *DriverOptionHelpStrDepository;
-STRING_DEPOSITORY   *TerminalStrDepository;
-
+//STRING_DEPOSITORY   *TerminalStrDepository;
+/*
 ///
 /// Terminal type string token storage
 ///
@@ -49,7 +49,7 @@ UINT32              mFlowControlValue[2] = {
   0,
   UART_FLOW_CONTROL_HARDWARE
 };
-
+*/
 ///
 /// File system selection menu
 ///
@@ -58,7 +58,7 @@ BM_MENU_OPTION      FsOptionMenu = {
   {NULL},
   0
 };
-
+/*
 ///
 /// Console Input Device Selection Menu
 ///
@@ -85,7 +85,7 @@ BM_MENU_OPTION      ConsoleErrMenu = {
   {NULL},
   0
 };
-
+*/
 ///
 /// Boot Option from variable Menu
 ///
@@ -166,7 +166,7 @@ BM_MENU_OPTION      DriverMenu = {
   {NULL},
   0
 };
-
+/*
 BM_MENU_OPTION      TerminalMenu = {
   BM_MENU_OPTION_SIGNATURE,
   {NULL},
@@ -330,3 +330,4 @@ EFI_GUID            TerminalTypeGuid[4] = {
   DEVICE_PATH_MESSAGING_VT_100_PLUS,
   DEVICE_PATH_MESSAGING_VT_UTF8
 };
+*/

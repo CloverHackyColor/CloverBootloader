@@ -689,11 +689,12 @@ BOpt_GetMenuEntry (
   @retval EFI_UNSUPPORTED No serial ports present.
 
 **/
+/*
 EFI_STATUS
 LocateSerialIo (
   VOID
   );
-
+*/
 //
 // Initializing Console menu
 //
@@ -703,11 +704,12 @@ LocateSerialIo (
   @retval EFI_SUCCESS    The function always complete successfully.
 
 **/
+/*
 EFI_STATUS
 GetAllConsoles(
   VOID
   );
-
+*/
 //
 // Get current mode information
 //
@@ -716,11 +718,12 @@ GetAllConsoles(
 
   @param CallbackData    The BMM context data.
 **/
+/*
 VOID
 GetConsoleOutMode (
   IN  BMM_CALLBACK_DATA    *CallbackData
   );
-
+*/
 //
 // Cleaning up console menu
 //
@@ -729,11 +732,12 @@ GetConsoleOutMode (
 
   @retval EFI_SUCCESS    The function always complete successfully.
 **/
+/*
 EFI_STATUS
 FreeAllConsoles (
   VOID
   );
-
+*/
 /**
   Update the device path that describing a terminal device
   based on the new BaudRate, Data Bits, parity and Stop Bits
@@ -759,12 +763,13 @@ ChangeVariableDevicePath (
   @return EFI_SUCCESS    The function completes successfully.
 
 **/
+/*
 EFI_STATUS
 ChangeTerminalDevicePath (
   IN OUT EFI_DEVICE_PATH_PROTOCOL  **DevicePath,
   IN BOOLEAN                   ChangeTerminal
   );
-
+*/
 //
 // Variable operation by menu selection
 //

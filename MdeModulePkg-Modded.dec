@@ -550,10 +550,10 @@
   
 [PcdsPatchableInModule, PcdsDynamic, PcdsDynamicEx]
   ## This PCD defines the Console output column and the default value is 25 according to UEFI spec
-  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow|25|UINT32|0x40000006
+  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow|31|UINT32|0x40000006
 
   ## This PCD defines the Console output row and the default value is 80 according to UEFI spec
-  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn|80|UINT32|0x40000007
+  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn|100|UINT32|0x40000007
 
 [PcdsFixedAtBuild, PcdsDynamic, PcdsDynamicEx]
   ## Base address of the NV variable range in flash device

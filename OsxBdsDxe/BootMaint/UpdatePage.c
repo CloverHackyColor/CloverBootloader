@@ -204,6 +204,7 @@ BootThisFile (
 
   @param CallbackData    The BMM context data.
 **/
+/*
 VOID
 UpdateConCOMPage (
   IN BMM_CALLBACK_DATA                *CallbackData
@@ -232,7 +233,7 @@ UpdateConCOMPage (
 
   UpdatePageEnd (CallbackData);
 }
-
+*/
 /**
   Create a lit of boot option from global BootOptionMenu. It
   allow user to delete the boot option.
@@ -813,7 +814,7 @@ UpdateConModePage (
   //
   // Determin which mode should be the first entry in menu
   //
-  GetConsoleOutMode (CallbackData);
+//  GetConsoleOutMode (CallbackData);
 
   //
   // Build text mode options
@@ -881,6 +882,7 @@ UpdateConModePage (
   @param CallbackData    The BMM context data.
 
 **/
+/*
 VOID
 UpdateTerminalPage (
   IN BMM_CALLBACK_DATA                *CallbackData
@@ -889,7 +891,7 @@ UpdateTerminalPage (
   UINT8               Index;
   UINT8               CheckFlags;
   BM_MENU_ENTRY       *NewMenuEntry;
-  BM_TERMINAL_CONTEXT *NewTerminalContext;
+//  BM_TERMINAL_CONTEXT *NewTerminalContext;
   VOID                *OptionsOpCodeHandle;
 
   CallbackData->BmmAskSaveOrNot = TRUE;
@@ -1108,7 +1110,7 @@ UpdateTerminalPage (
 
   UpdatePageEnd (CallbackData);
 }
-
+*/
 /**
   Dispatch the correct update page function to call based on
   the UpdatePageId.
@@ -1125,6 +1127,7 @@ UpdatePageBody (
 {
   CleanUpPage (UpdatePageId, CallbackData);
   switch (UpdatePageId) {
+/*
   case FORM_CON_IN_ID:
     UpdateConsolePage (UpdatePageId, &ConsoleInpMenu, CallbackData);
     break;
@@ -1136,7 +1139,7 @@ UpdatePageBody (
   case FORM_CON_ERR_ID:
     UpdateConsolePage (UpdatePageId, &ConsoleErrMenu, CallbackData);
     break;
-
+*/
   case FORM_BOOT_CHG_ID:
     UpdateOrderPage (UpdatePageId, &BootOptionMenu, CallbackData);
     break;

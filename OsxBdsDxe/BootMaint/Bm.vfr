@@ -47,13 +47,13 @@ formset
 
     subtitle text = STRING_TOKEN(STR_NULL_STRING);
 
-    goto FORM_CON_MAIN_ID,
-         prompt = STRING_TOKEN(STR_FORM_CON_MAIN_TITLE),
-         help = STRING_TOKEN(STR_FORM_CON_MAIN_HELP),
-         flags = INTERACTIVE,
-         key = FORM_CON_MAIN_ID;
+//    goto FORM_CON_MAIN_ID,
+//         prompt = STRING_TOKEN(STR_FORM_CON_MAIN_TITLE),
+//         help = STRING_TOKEN(STR_FORM_CON_MAIN_HELP),
+//         flags = INTERACTIVE,
+//         key = FORM_CON_MAIN_ID;
 
-    subtitle text = STRING_TOKEN(STR_NULL_STRING);
+//    subtitle text = STRING_TOKEN(STR_NULL_STRING);
 
     goto FORM_CON_MAIN_ID,
          prompt = STRING_TOKEN(STR_BOOT_FROM_FILE),

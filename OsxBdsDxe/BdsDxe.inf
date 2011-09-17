@@ -68,7 +68,7 @@
   BootMaint/UpdatePage.c
   BootMaint/Variable.c
   BootMaint/Data.c
-  BootMaint/ConsoleOption.c
+#  BootMaint/ConsoleOption.c
   BootMaint/BootOption.c
   BootMaint/BmLib.c
   BootMaint/Bm.vfr
@@ -148,7 +148,7 @@
   gEfiSimpleTextInputExProtocolGuid             ## PROTOCOL CONSUMES
   gEfiHiiConfigAccessProtocolGuid               ## PROTOCOL CONSUMES
   gEfiFormBrowser2ProtocolGuid                  ## PROTOCOL CONSUMES
-  gEfiSerialIoProtocolGuid                      ## PROTOCOL CONSUMES
+#  gEfiSerialIoProtocolGuid                      ## PROTOCOL CONSUMES
   gEfiDevicePathProtocolGuid                    ## PROTOCOL CONSUMES
   gEfiDriverHealthProtocolGuid                  ## PROTOCOL SOMETIMES_CONSUMES
   gEfiPciIoProtocolGuid                         ## PROTOCOL CONSUMES

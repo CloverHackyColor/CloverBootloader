@@ -186,7 +186,7 @@ DevPathVendor (
   CHAR16              *Type;
   UINTN               DataLength;
   UINTN               Index;
-  UINT32              FlowControlMap;
+//  UINT32              FlowControlMap;
 
   UINT16              Info;
 
@@ -199,6 +199,7 @@ DevPathVendor (
 
   case MESSAGING_DEVICE_PATH:
     Type = L"Msg";
+/*		  
     if (CompareGuid (&Vendor->Guid, &gEfiPcAnsiGuid)) {
       CatPrint (Str, L"VenPcAnsi()");
       return ;
@@ -232,7 +233,9 @@ DevPathVendor (
 
       return ;
 
-    } else if (CompareGuid (&Vendor->Guid, &gEfiSasDevicePathGuid)) {
+    } else
+ */
+    if (CompareGuid (&Vendor->Guid, &gEfiSasDevicePathGuid)) {
       CatPrint (
         Str,
         L"SAS(%lx,%lx,%x,",

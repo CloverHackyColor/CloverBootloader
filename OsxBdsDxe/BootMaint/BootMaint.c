@@ -556,7 +556,7 @@ BootMaintCallback (
         case FORM_RESET:
           gRT->ResetSystem (EfiResetCold, EFI_SUCCESS, 0, NULL);
           return EFI_UNSUPPORTED;
-
+/*
         case FORM_CON_IN_ID:
         case FORM_CON_OUT_ID:
         case FORM_CON_ERR_ID:
@@ -572,7 +572,7 @@ BootMaintCallback (
           CleanUpPage (FORM_CON_COM_ID, Private);
           UpdateConCOMPage (Private);
           break;
-
+*/
         case FORM_SET_FD_ORDER_ID:
         case FORM_SET_HD_ORDER_ID:
         case FORM_SET_CD_ORDER_ID:
@@ -598,7 +598,7 @@ BootMaintCallback (
           // Tell browser not to ask for confirmation of changes,
           // since we have already applied or discarded.
           //
-          *ActionRequest = EFI_BROWSER_ACTION_REQUEST_SUBMIT;
+          *ActionRequest = EFI_BROWSER_ACTION_REQUEST_FORM_APPLY;
           break;
 
         default:
@@ -609,7 +609,7 @@ BootMaintCallback (
         Private->CurrentTerminal  = Index2;
 
         CleanUpPage (FORM_CON_COM_SETUP_ID, Private);
-        UpdateTerminalPage (Private);
+ //       UpdateTerminalPage (Private);
 
       } else if (QuestionId >= HANDLE_OPTION_OFFSET) {
         Index2                  = (UINT16) (QuestionId - HANDLE_OPTION_OFFSET);
@@ -658,8 +658,8 @@ ApplyChangeHandler (
   IN  EFI_FORM_ID                     FormId
   )
 {
-  BM_CONSOLE_CONTEXT  *NewConsoleContext;
-  BM_TERMINAL_CONTEXT *NewTerminalContext;
+//  BM_CONSOLE_CONTEXT  *NewConsoleContext;
+//  BM_TERMINAL_CONTEXT *NewTerminalContext;
   BM_LOAD_CONTEXT     *NewLoadContext;
   BM_MENU_ENTRY       *NewMenuEntry;
   EFI_STATUS          Status;
@@ -721,7 +721,7 @@ ApplyChangeHandler (
   case FORM_CON_MODE_ID:
     Status = Var_UpdateConMode (Private);
     break;
-
+/*
   case FORM_CON_COM_SETUP_ID:
     NewMenuEntry                      = BOpt_GetMenuEntry (&TerminalMenu, Private->CurrentTerminal);
 
@@ -807,7 +807,7 @@ ApplyChangeHandler (
 
     Var_UpdateErrorOutOption ();
     break;
-
+*/
   case FORM_DRV_ADD_HANDLE_DESC_ID:
     Status = Var_UpdateDriverOption (
                Private,
@@ -1037,22 +1037,22 @@ InitializeBM (
 
   InitAllMenu (BmmCallbackInfo);
 
-  CreateMenuStringToken (BmmCallbackInfo, BmmCallbackInfo->BmmHiiHandle, &ConsoleInpMenu);
-  CreateMenuStringToken (BmmCallbackInfo, BmmCallbackInfo->BmmHiiHandle, &ConsoleOutMenu);
-  CreateMenuStringToken (BmmCallbackInfo, BmmCallbackInfo->BmmHiiHandle, &ConsoleErrMenu);
+ // CreateMenuStringToken (BmmCallbackInfo, BmmCallbackInfo->BmmHiiHandle, &ConsoleInpMenu);
+ // CreateMenuStringToken (BmmCallbackInfo, BmmCallbackInfo->BmmHiiHandle, &ConsoleOutMenu);
+ // CreateMenuStringToken (BmmCallbackInfo, BmmCallbackInfo->BmmHiiHandle, &ConsoleErrMenu);
   CreateMenuStringToken (BmmCallbackInfo, BmmCallbackInfo->BmmHiiHandle, &BootOptionMenu);
   CreateMenuStringToken (BmmCallbackInfo, BmmCallbackInfo->BmmHiiHandle, &DriverOptionMenu);
-  CreateMenuStringToken (BmmCallbackInfo, BmmCallbackInfo->BmmHiiHandle, &TerminalMenu);
+//  CreateMenuStringToken (BmmCallbackInfo, BmmCallbackInfo->BmmHiiHandle, &TerminalMenu);
   CreateMenuStringToken (BmmCallbackInfo, BmmCallbackInfo->BmmHiiHandle, &DriverMenu);
 
   UpdateBootDelPage (BmmCallbackInfo);
   UpdateDrvDelPage (BmmCallbackInfo);
-
+/*
   if (TerminalMenu.MenuNumber > 0) {
     BmmCallbackInfo->CurrentTerminal = 0;
     UpdateTerminalPage (BmmCallbackInfo);
   }
-
+*/
   Status = EfiLibLocateProtocol (&gEfiLegacyBiosProtocolGuid, (VOID **) &LegacyBios);
   if (!EFI_ERROR (Status)) {
     RefreshUpdateData ();
@@ -1187,12 +1187,12 @@ InitAllMenu (
   InitializeListHead (&FsOptionMenu.Head);
   BOpt_FindDrivers ();
   InitializeListHead (&DirectoryMenu.Head);
-  InitializeListHead (&ConsoleInpMenu.Head);
-  InitializeListHead (&ConsoleOutMenu.Head);
-  InitializeListHead (&ConsoleErrMenu.Head);
-  InitializeListHead (&TerminalMenu.Head);
-  LocateSerialIo ();
-  GetAllConsoles ();
+//  InitializeListHead (&ConsoleInpMenu.Head);
+//  InitializeListHead (&ConsoleOutMenu.Head);
+//  InitializeListHead (&ConsoleErrMenu.Head);
+//  InitializeListHead (&TerminalMenu.Head);
+//  LocateSerialIo ();
+//  GetAllConsoles ();
 }
 
 /**
@@ -1210,7 +1210,7 @@ FreeAllMenu (
   BOpt_FreeMenu (&DriverOptionMenu);
   BOpt_FreeMenu (&DriverMenu);
   BOpt_FreeLegacyOptions ();
-  FreeAllConsoles ();
+//  FreeAllConsoles ();
 }
 
 /**
@@ -1225,12 +1225,12 @@ InitializeStringDepository (
   STRING_DEPOSITORY *StringDepository;
   StringDepository              = AllocateZeroPool (sizeof (STRING_DEPOSITORY) * STRING_DEPOSITORY_NUMBER);
   FileOptionStrDepository       = StringDepository++;
-  ConsoleOptionStrDepository    = StringDepository++;
+//  ConsoleOptionStrDepository    = StringDepository++;
   BootOptionStrDepository       = StringDepository++;
   BootOptionHelpStrDepository   = StringDepository++;
   DriverOptionStrDepository     = StringDepository++;
-  DriverOptionHelpStrDepository = StringDepository++;
-  TerminalStrDepository         = StringDepository;
+  DriverOptionHelpStrDepository = StringDepository;
+//  TerminalStrDepository         = StringDepository;
 }
 
 /**
