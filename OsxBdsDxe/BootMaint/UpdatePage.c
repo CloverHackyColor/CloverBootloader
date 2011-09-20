@@ -891,7 +891,7 @@ UpdateTerminalPage (
   UINT8               Index;
   UINT8               CheckFlags;
   BM_MENU_ENTRY       *NewMenuEntry;
-//  BM_TERMINAL_CONTEXT *NewTerminalContext;
+  BM_TERMINAL_CONTEXT *NewTerminalContext;
   VOID                *OptionsOpCodeHandle;
 
   CallbackData->BmmAskSaveOrNot = TRUE;

@@ -110,7 +110,7 @@ INF  Clover/BiosVideo/BiosVideo.inf
 #INF  Clover/IntelGmaDxe/Gop.inf
 
 # BIOS CSM
-#INF  IntelFrameworkModulePkg/Csm/LegacyBiosDxe/LegacyBiosDxe.inf
+INF  IntelFrameworkModulePkg/Csm/LegacyBiosDxe/LegacyBiosDxe.inf
 #INF  IntelFrameworkModulePkg/Csm/BiosThunk/BlockIoDxe/BlockIoDxe.inf
 #INF  IntelFrameworkModulePkg/Csm/BiosThunk/KeyboardDxe/KeyboardDxe.inf
 #INF  IntelFrameworkModulePkg/Universal/LegacyRegionDxe/LegacyRegionDxe.inf

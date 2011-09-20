@@ -31,8 +31,10 @@ Revision History:
 #define NV_STORAGE_START               0x15000
 #define NV_STORAGE_STATE               0x19000
 
-//#define EFI_LDR_MEMORY_DESCRIPTOR_GUID \
-//  { 0x7701d7e5, 0x7d1d, 0x4432, {0xa4, 0x68, 0x67, 0x3d, 0xab, 0x8a, 0xde, 0x60}}
+/*
+ #define EFI_LDR_MEMORY_DESCRIPTOR_GUID \
+  { 0x7701d7e5, 0x7d1d, 0x4432, {0xa4, 0x68, 0x67, 0x3d, 0xab, 0x8a, 0xde, 0x60}}
+ */
 
 #pragma pack(1)
 
@@ -50,13 +52,13 @@ typedef struct {
   EFI_HOB_GUID_TYPE             Hob;
   EFI_PHYSICAL_ADDRESS          Interface;
 } PROTOCOL_HOB;
-
+/*
 typedef struct {
   EFI_HOB_GUID_TYPE             Hob;
   UINTN                         MemDescCount;
   EFI_MEMORY_DESCRIPTOR         *MemDesc;
 } MEMORY_DESC_HOB;
-
+*/
 typedef struct {
   EFI_HOB_GUID_TYPE                         Hob;
   // Note: we get only one PCI Segment now.

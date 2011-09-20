@@ -971,7 +971,7 @@ PlatformBdsEnterFrontPage (
   if (ConnectAllHappened) {
     gConnectAllHappened = TRUE;
   }
-//goto Exit; //Slice
+
   HotkeyBoot ();
   if (TimeoutDefault != 0xffff) {
     Status = ShowProgress (TimeoutDefault);

@@ -75,9 +75,9 @@ INF  Clover/OsxBdsDxe/BdsDxe.inf
 #INF  MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
 INF  MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
 INF  UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
-#INF  UefiCpuPkg/CpuDxe/CpuDxe.inf
+INF  Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
 #INF  IntelFrameworkModulePkg/Universal/CpuIoDxe/CpuIoDxe.inf
-INF  Clover/CpuDxe/Cpu.inf
+#INF  Clover/CpuDxe/Cpu.inf
 #INF EdkCompatibilityPkg/Compatibility/MpServicesOnFrameworkMpServicesThunk/MpServicesOnFrameworkMpServicesThunk.inf
 
 	#DataHub
@@ -119,7 +119,7 @@ INF  IntelFrameworkModulePkg/Csm/LegacyBiosDxe/LegacyBiosDxe.inf
   # IDE/AHCI Support
 INF  Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
 INF  Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
-#INF  DuetPkg/SataControllerDxe/SataControllerDxe.inf
+#INF  Clover/SataControllerDxe/SataControllerDxe.inf
 #INF  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
 #INF  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
 #INF  MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf

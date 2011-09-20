@@ -362,7 +362,7 @@ SataControllerSupported (
     return EFI_UNSUPPORTED;
   }
 
-  if (/*IS_PCI_IDE (&PciData) ||*/ IS_PCI_SATADPA (&PciData)) {
+  if (IS_PCI_IDE (&PciData) || IS_PCI_SATADPA (&PciData)) {
     return EFI_SUCCESS;
   }
 
@@ -449,11 +449,10 @@ SataControllerStart (
                         );
   ASSERT_EFI_ERROR (Status);
 
- /* if (IS_PCI_IDE (&PciData)) {
+  if (IS_PCI_IDE (&PciData)) {
     SataPrivateData->IdeInit.ChannelCount = IDE_MAX_CHANNEL;
     SataPrivateData->DeviceCount = IDE_MAX_DEVICES;
-  } else */
-	  if (IS_PCI_SATADPA (&PciData)) {
+  } else if (IS_PCI_SATADPA (&PciData)) {
     //
     // Read Host Capability Register(CAP) to get Number of Ports(NPS) and Supports Port Multiplier(SPM)
     //   NPS is 0's based value indicating the maximum number of ports supported by the HBA silicon.

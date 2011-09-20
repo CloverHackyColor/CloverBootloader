@@ -116,7 +116,7 @@ MMC_HOST_INSTANCE* CreateMmcHostInstance (
   MmcHostInstance->MmcHost = MmcHost;
 
   // Create DevicePath for the new MMC Host
-  Status = MmcHost->BuildDevicePath(&NewDevicePathNode);
+  Status = MmcHost->BuildDevicePath (MmcHost, &NewDevicePathNode);
   if (EFI_ERROR (Status)) {
     goto FREE_MEDIA;
   }
@@ -299,6 +299,9 @@ MmcDriverBindingStart (
     InsertMmcHost (MmcHostInstance);
 
     MmcHostInstance->Initialized = FALSE;
+
+    // Detect card presence now
+    CheckCardsCallback (NULL, NULL);
   }
 
   return EFI_SUCCESS;
@@ -361,10 +364,14 @@ CheckCardsCallback (
     MmcHostInstance = MMC_HOST_INSTANCE_FROM_LINK(CurrentLink);
     ASSERT(MmcHostInstance != NULL);
 
-    if (MmcHostInstance->MmcHost->IsCardPresent() == !MmcHostInstance->Initialized) {
+    if (MmcHostInstance->MmcHost->IsCardPresent (MmcHostInstance->MmcHost) == !MmcHostInstance->Initialized) {
       MmcHostInstance->State = MmcHwInitializationState;
       MmcHostInstance->BlockIo.Media->MediaPresent = !MmcHostInstance->Initialized;
       MmcHostInstance->Initialized = !MmcHostInstance->Initialized;
+
+      if (MmcHostInstance->BlockIo.Media->MediaPresent) {
+        InitializeMmcDevice (MmcHostInstance);
+      }
 
       Status = gBS->ReinstallProtocolInterface (
                     (MmcHostInstance->MmcHandle),
@@ -381,6 +388,7 @@ CheckCardsCallback (
     CurrentLink = CurrentLink->ForwardLink;
   }
 }
+
 
 EFI_DRIVER_BINDING_PROTOCOL gMmcDriverBinding = {
   MmcDriverBindingSupported,

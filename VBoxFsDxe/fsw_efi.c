@@ -164,7 +164,7 @@ struct fsw_host_table   fsw_efi_host_table = {
 
 extern struct fsw_fstype_table   FSW_FSTYPE_TABLE_NAME(FSTYPE);
 
-#include "OverrideFunctions-kabyl.edk2.c.include"
+//#include "OverrideFunctions-kabyl.edk2.c.include"
 
 /**
  * Image entry point. Installs the Driver Binding and Component Name protocols
@@ -201,7 +201,7 @@ EFI_STATUS EFIAPI fsw_efi_main(IN EFI_HANDLE         ImageHandle,
         return Status;
     }
 
-	OverrideFunctions();
+//	OverrideFunctions();
 
     return EFI_SUCCESS;
 }

@@ -58,6 +58,8 @@
   gEfiMpsTableGuid
   gEfiSmbiosTableGuid
   gEfiAcpiTableGuid
+  gLdrMemoryDescriptorGuid
+
   
 [Protocols]
   gEfiAcpiTableProtocolGuid      
