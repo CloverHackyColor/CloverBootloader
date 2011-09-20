@@ -55,8 +55,7 @@ Abstract:
 #include <Guid/HobList.h>
 #include <Guid/PciExpressBaseAddress.h>
 #include <Guid/GlobalVariable.h>
-//#include <Guid/DataHubRecords.h>
-
+#include <Guid/LdrMemoryDescriptor.h>
 
 extern BDS_CONSOLE_CONNECT_ENTRY  gPlatformConsole[];
 extern EFI_DEVICE_PATH_PROTOCOL   *gPlatformConnectSequence[];

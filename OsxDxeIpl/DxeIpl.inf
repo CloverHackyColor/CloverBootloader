@@ -38,6 +38,8 @@
 
 [Guids]
   gEfiVariableGuid
+  gDxeCoreFileNameGuid
+  gLdrMemoryDescriptorGuid
 
 [Sources]
 #  DxeIpl.h
@@ -56,7 +58,7 @@
 [Sources.x64]
   X64/EnterDxeCore.c
   X64/Paging.c
-#  X64/VirtualMemory.h
+  X64/VirtualMemory.h
 
 [Sources.Ia32]
   Ia32/EnterDxeCore.c

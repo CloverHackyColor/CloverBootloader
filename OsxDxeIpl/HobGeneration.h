@@ -1,6 +1,6 @@
 /** @file
 
-Copyright (c) 2006 - 2010, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2006 - 2011, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials                          
 are licensed and made available under the terms and conditions of the BSD License         
 which accompanies this distribution.  The full text of the license may be found at        
@@ -31,8 +31,8 @@ Revision History:
 #define NV_STORAGE_START               0x15000
 #define NV_STORAGE_STATE               0x19000
 
-#define EFI_LDR_MEMORY_DESCRIPTOR_GUID \
-  { 0x7701d7e5, 0x7d1d, 0x4432, {0xa4, 0x68, 0x67, 0x3d, 0xab, 0x8a, 0xde, 0x60}}
+//#define EFI_LDR_MEMORY_DESCRIPTOR_GUID \
+//  { 0x7701d7e5, 0x7d1d, 0x4432, {0xa4, 0x68, 0x67, 0x3d, 0xab, 0x8a, 0xde, 0x60}}
 
 #pragma pack(1)
 

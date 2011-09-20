@@ -159,7 +159,7 @@ UpdateMemoryMap (
   EFI_PHYSICAL_ADDRESS            Memory;
   EFI_GCD_MEMORY_SPACE_DESCRIPTOR Descriptor;
   
-  GuidHob.Raw = GetFirstGuidHob (&gEfiLdrMemoryDescriptorGuid);
+  GuidHob.Raw = GetFirstGuidHob (&gLdrMemoryDescriptorGuid);
   if (GuidHob.Raw == NULL) {
 //    DEBUG ((EFI_D_ERROR, "Fail to get gEfiLdrMemoryDescriptorGuid from GUID HOB LIST!\n"));
     return;
@@ -257,7 +257,7 @@ UpdateMemoryMap (
           // For EfiACPIReclaimMemory and EfiACPIMemoryNVS, it must success.
           // For EfiReservedMemoryType, there maybe overlap. So skip check here.
           //
-          ASSERT_EFI_ERROR (Status);
+//          ASSERT_EFI_ERROR (Status);
         }
         continue;
       }
@@ -1611,12 +1611,6 @@ Returns:
     SmbiosTableOri,
     SmbiosEntryLen
     );
-	//Slice - TODO. Here should be SMBIOS patch as follow
-/*
- PatchTableLen = readXML("smbios.plist", PatchTable);
- ApplySMBIOSPatch(SmbiosTableNew, PatchTable);
- 
- */
   // 
   // Get Smbios Structure table address, and make sure the start address is 32-bit align
   //
