@@ -724,7 +724,7 @@ BdsLibBootViaBootOption (
   }
 
   //
-  // If the boot option point to Internal FV shell, make sure it is valid
+  // If the boot option points to Internal FV shell, make sure it is valid
   //
 /*  Status = BdsLibUpdateFvFileDevicePath (&DevicePath, PcdGetPtr(PcdShellFile));
   if (!EFI_ERROR(Status)) {
@@ -760,14 +760,74 @@ BdsLibBootViaBootOption (
   }
 
   DEBUG_CODE_BEGIN();
+    UINTN                     DevicePathTypeValue;
+    CHAR16                    *HiiString;
+    CHAR16                    *BootStringNumber;
+    UINTN                     BufferSize;
 
-    if (Option->Description == NULL) {
-      DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Booting from unknown device path\n"));
-    } else {
+    DevicePathTypeValue = BdsGetBootTypeFromDevicePath (Option->DevicePath);
+
+    //
+    // store number string of boot option temporary.
+    //
+    HiiString = NULL;
+    switch (DevicePathTypeValue) {
+    case BDS_EFI_ACPI_FLOPPY_BOOT:
+      HiiString = L"EFI Floppy";
+      break;
+    case BDS_EFI_MEDIA_CDROM_BOOT:
+    case BDS_EFI_MESSAGE_SATA_BOOT:
+    case BDS_EFI_MESSAGE_ATAPI_BOOT:
+      HiiString = L"EFI DVD/CDROM";
+      break;
+    case BDS_EFI_MESSAGE_USB_DEVICE_BOOT:
+      HiiString = L"EFI USB Device";
+      break;
+    case BDS_EFI_MESSAGE_SCSI_BOOT:
+      HiiString = L"EFI SCSI Device";
+      break;
+    case BDS_EFI_MESSAGE_MISC_BOOT:
+      HiiString = L"EFI Misc Device";
+      break;
+    case BDS_EFI_MESSAGE_MAC_BOOT:
+      HiiString = L"EFI Network";
+      break;
+    case BBS_DEVICE_PATH:
+      //
+      // Do nothing for legacy boot option.
+      //
+      break;
+    default:
+      DEBUG((EFI_D_INFO, "Can not find HiiString for given device path type 0x%x\n", DevicePathTypeValue));
+    }
+
+    //
+    // If found Hii description string then cat Hii string with original description.
+    //
+    if (HiiString != NULL) {
+      BootStringNumber = Option->Description;
+      BufferSize = StrSize(BootStringNumber);
+      BufferSize += StrSize(HiiString);
+      Option->Description = AllocateZeroPool(BufferSize);
+      StrCpy (Option->Description, HiiString);
+      if (StrnCmp (BootStringNumber, L"0", 1) != 0) {
+        StrCat (Option->Description, L" ");
+        StrCat (Option->Description, BootStringNumber);
+      }
+
+      FreePool (BootStringNumber);
+    }
+
       DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Booting %S\n", Option->Description));
+
+  DEBUG_CODE_END();
+  if (DevPathToTxt == NULL)
+  {
+    Status = gBS->LocateProtocol(&gEfiDevicePathToTextProtocolGuid, NULL, (VOID **)&DevPathToTxt);
+    ASSERT((!EFI_ERROR(Status)));
     }
         
-  DEBUG_CODE_END();
+
 */  
   Status = gBS->LoadImage (
                   TRUE,
@@ -889,7 +949,7 @@ Done:
 
   @param  HardDriveDevicePath    EFI Device Path to boot, if it starts with a hard
                                  drive media device path.
-  @return A Pointer to the full device path or NULL if a valid Hard Drive devic path
+  @return A Pointer to the full device path or NULL if a valid Hard Drive device path
           cannot be found.
 
 **/
@@ -1405,6 +1465,33 @@ BdsDeleteAllInvalidEfiBootOption (
   return Status;
 }
 
+static BOOLEAN bdsCheckFileName(EFI_IMAGE_OPTIONAL_HEADER_UNION *pHdrData, EFI_HANDLE FileSystemHandle, CHAR16 *pu16FileName, CHAR16 **ppNewFileName)
+{
+    EFI_IMAGE_OPTIONAL_HEADER_PTR_UNION   Hdr;
+    BOOLEAN fNeedDelete = TRUE;
+    CHAR16 *NewFileName;
+    EFI_STATUS Status;
+    Hdr.Union = pHdrData;
+    EFI_IMAGE_DOS_HEADER          DosHeader;
+    Status     = BdsLibGetImageHeader (
+                   FileSystemHandle,
+                   pu16FileName,
+                   &DosHeader,
+                   Hdr,
+                   &NewFileName
+                   );
+    if (!EFI_ERROR (Status)
+#ifndef VBOX
+        && EFI_IMAGE_MACHINE_TYPE_SUPPORTED (Hdr.Pe32->FileHeader.Machine) &&
+        Hdr.Pe32->OptionalHeader.Subsystem == EFI_IMAGE_SUBSYSTEM_EFI_APPLICATION
+#endif
+        ) {
+      fNeedDelete = FALSE;
+    }
+    if (ppNewFileName)
+        *ppNewFileName = NewFileName;
+    return fNeedDelete;
+}
 
 /**
   For EFI boot option, BDS separate them as six types:
@@ -1572,7 +1659,7 @@ BdsLibEnumerateAllBootOption (
 #if 0 //ndef VBOX
 			if (BlkIo->Media->RemovableMedia == Removable[RemovableIndex]) {
 				//
-      // skip the fixed block io then the removable block io
+        // skip the non-removable block devices
 				//
 				continue;
 			}
@@ -1583,11 +1670,7 @@ BdsLibEnumerateAllBootOption (
 		
 		switch (DevicePathType) {
 			case BDS_EFI_ACPI_FLOPPY_BOOT:
-				if (FloppyNumber != 0) {
-					UnicodeSPrint (Buffer, sizeof (Buffer), L"%s %d", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_FLOPPY)), FloppyNumber);
-				} else {
-					UnicodeSPrint (Buffer, sizeof (Buffer), L"%s", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_FLOPPY)));
-				}
+		        UnicodeSPrint (Buffer, sizeof (Buffer), L"%d", FloppyNumber);
 				BdsLibBuildOptionFromHandle (BlockIoHandles[Index], BdsBootOptionList, Buffer);
 				FloppyNumber++;
 				break;
@@ -1627,21 +1710,14 @@ BdsLibEnumerateAllBootOption (
 				break;
 				
 			case BDS_EFI_MESSAGE_SCSI_BOOT:
-				if (ScsiNumber != 0) {
-					UnicodeSPrint (Buffer, sizeof (Buffer), L"%s %d", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_SCSI)), ScsiNumber);
-				} else {
-					UnicodeSPrint (Buffer, sizeof (Buffer), L"%s", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_SCSI)));
-				}
+  			    UnicodeSPrint (Buffer, sizeof (Buffer), L"%d", ScsiNumber);
 				BdsLibBuildOptionFromHandle (BlockIoHandles[Index], BdsBootOptionList, Buffer);
 				ScsiNumber++;
 				break;
 				
+ 		    case BDS_EFI_MEDIA_HD_BOOT:
 			case BDS_EFI_MESSAGE_MISC_BOOT:
-				if (MiscNumber != 0) {
-					UnicodeSPrint (Buffer, sizeof (Buffer), L"%s %d", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_MISC)), MiscNumber);
-				} else {
-					UnicodeSPrint (Buffer, sizeof (Buffer), L"%s", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_MISC)));
-				}
+ 			    UnicodeSPrint (Buffer, sizeof (Buffer), L"%d", MiscNumber);
 				BdsLibBuildOptionFromHandle (BlockIoHandles[Index], BdsBootOptionList, Buffer);
 				MiscNumber++;
 				break;
@@ -1686,44 +1762,18 @@ BdsLibEnumerateAllBootOption (
 		//
 		Hdr.Union = &HdrData;
 		NeedDelete = TRUE;
-		Status     = BdsLibGetImageHeader (
-										   FileSystemHandles[Index],
-										   EFI_REMOVABLE_MEDIA_FILE_NAME,
-										   &DosHeader,
-										   Hdr,
-										   &NewFileName
-										   );
-		if (!EFI_ERROR (Status)
-#if 0 //ndef VBOX
-			&& EFI_IMAGE_MACHINE_TYPE_SUPPORTED (Hdr.Pe32->FileHeader.Machine) &&
-			Hdr.Pe32->OptionalHeader.Subsystem == EFI_IMAGE_SUBSYSTEM_EFI_APPLICATION
-#endif
-			) {
-			NeedDelete = FALSE;
-		}
-		Status = BdsLibGetImageHeader (
-									   FileSystemHandles[Index],
-									   L"\\System\\Library\\CoreServices\\boot.efi",
-									   &DosHeader,
-									   Hdr,
-									   &NewFileName
-									   );
-		/* Here should be Mac Specific checks */
-		if (!EFI_ERROR (Status)) {
-			NeedDelete = FALSE;
-		}
-		
+    NeedDelete = bdsCheckFileName(&HdrData, FileSystemHandles[Index], EFI_REMOVABLE_MEDIA_FILE_NAME, NULL);
+    if (NeedDelete)
+        NeedDelete = bdsCheckFileName(&HdrData, FileSystemHandles[Index], L"\\Mac OS X Install Data\\boot.efi", NULL);
+    if (NeedDelete)
+        NeedDelete = bdsCheckFileName(&HdrData, FileSystemHandles[Index], L"\\System\\Library\\CoreServices\\boot.efi", NULL);
 		if (NeedDelete) {
 			//
 			// No such file or the file is not a EFI application, delete this boot option
 			//
 			BdsLibDeleteOptionFromHandle (FileSystemHandles[Index]);
 		} else {
-			if (NonBlockNumber != 0) {
-				UnicodeSPrint (Buffer, sizeof (Buffer), L"%s %d", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_NON_BLOCK)), NonBlockNumber);
-			} else {
-				UnicodeSPrint (Buffer, sizeof (Buffer), L"%s", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_NON_BLOCK)));
-			}
+	      UnicodeSPrint (Buffer, sizeof (Buffer), L"EFI Non-Block Boot Device %d", NonBlockNumber);
 			BdsLibBuildOptionFromHandle (FileSystemHandles[Index], BdsBootOptionList, Buffer);
 			NonBlockNumber++;
 		}
@@ -1749,11 +1799,7 @@ BdsLibEnumerateAllBootOption (
 							 );
 	
 	for (Index = 0; Index < NumOfLoadFileHandles; Index++) {
-		if (Index != 0) {
-			UnicodeSPrint (Buffer, sizeof (Buffer), L"%s %d", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_NETWORK)), Index);
-		} else {
-			UnicodeSPrint (Buffer, sizeof (Buffer), L"%s", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_NETWORK)));
-		}
+		UnicodeSPrint (Buffer, sizeof (Buffer), L"%s %d", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_NETWORK)), Index);
 		BdsLibBuildOptionFromHandle (LoadFileHandles[Index], BdsBootOptionList, Buffer);
 	}
 	
@@ -1982,7 +2028,7 @@ BdsLibGetBootableHandle (
   Status = gBS->LocateDevicePath (&gEfiBlockIoProtocolGuid, &UpdatedDevicePath, &Handle);
   if (EFI_ERROR (Status)) {
     //
-    // Skip the case that the boot option point to a simple file protocol which does not consume block Io protocol,
+    // Skip the case that the boot option points to a simple file protocol which does not consume block Io protocol,
     //
     Status = gBS->LocateDevicePath (&gEfiSimpleFileSystemProtocolGuid, &UpdatedDevicePath, &Handle);
     if (EFI_ERROR (Status)) {
@@ -2079,38 +2125,13 @@ BdsLibGetBootableHandle (
       // Load the default boot file \EFI\BOOT\boot{machinename}.EFI from removable Media
       //  machinename is ia32, ia64, x64, ...
       //
-      Hdr.Union = &HdrData;
-      Status = BdsLibGetImageHeader (
-                 SimpleFileSystemHandles[Index],
-                 EFI_REMOVABLE_MEDIA_FILE_NAME,
-                 &DosHeader,
-                 Hdr,
-                 NewFileName
-                 );
-      if (!EFI_ERROR (Status)
-#if 0 //VBOX      
-      && EFI_IMAGE_MACHINE_TYPE_SUPPORTED (Hdr.Pe32->FileHeader.Machine) &&
-        Hdr.Pe32->OptionalHeader.Subsystem == EFI_IMAGE_SUBSYSTEM_EFI_APPLICATION
-#endif        
-        ) {
-        ReturnHandle = SimpleFileSystemHandles[Index];
-        break;
-      }
-      Status = BdsLibGetImageHeader (
-                 SimpleFileSystemHandles[Index],
-                 L"\\System\\Library\\CoreServices\\boot.efi",
-                 &DosHeader,
-                 Hdr,
-                 NewFileName
-                 );
-      /* Here should be Mac Specific checks */
-      if (!EFI_ERROR (Status)
-#if 0 //ndef VBOX
-        && EFI_IMAGE_MACHINE_TYPE_SUPPORTED (Hdr.Pe32->FileHeader.Machine) &&
-        Hdr.Pe32->OptionalHeader.Subsystem == EFI_IMAGE_SUBSYSTEM_EFI_APPLICATION
-#endif
-        ) {
-//        DEBUG((DEBUG_INFO, "%a:%d clear the timer \n", __FILE__, __LINE__));
+      BOOLEAN fNotFound = bdsCheckFileName(&HdrData, SimpleFileSystemHandles[Index], EFI_REMOVABLE_MEDIA_FILE_NAME, NewFileName);
+      if (fNotFound)
+          fNotFound = bdsCheckFileName(&HdrData, SimpleFileSystemHandles[Index], L"\\Mac OS X Install Data\\boot.efi", NewFileName);
+      if (fNotFound)
+          fNotFound = bdsCheckFileName(&HdrData, SimpleFileSystemHandles[Index], L"\\System\\Library\\CoreServices\\boot.efi", NewFileName);
+      if (!fNotFound)
+      {
         ReturnHandle = SimpleFileSystemHandles[Index];
         break;
       }
@@ -2340,7 +2361,7 @@ BdsGetBootTypeFromDevicePath (
 }
 
 /**
-  Check whether the Device path in a boot option point to a valid bootable device,
+  Check whether the Device path in a boot option points to a valid bootable device,
   And if CheckMedia is true, check the device is ready to boot now.
 
   @param  DevPath     the Device path in a boot option
@@ -2361,7 +2382,7 @@ BdsLibIsValidEFIBootOptDevicePath (
 }
 
 /**
-  Check whether the Device path in a boot option point to a valid bootable device,
+  Check whether the Device path in a boot option points to a valid bootable device,
   And if CheckMedia is true, check the device is ready to boot now.
   If Description is not NULL and the device path point to a fixed BlockIo
   device, check the description whether conflict with other auto-created
@@ -2437,7 +2458,7 @@ BdsLibIsValidEFIBootOptDevicePathExt (
   }
 
   //
-  // If the boot option point to a file, it is a valid EFI boot option,
+  // If the boot option points to a file, it is a valid EFI boot option,
   // and assume it is ready to boot now
   //
   while (!IsDevicePathEnd (TempDevicePath)) {
@@ -2484,7 +2505,7 @@ BdsLibIsValidEFIBootOptDevicePathExt (
   } */
 
   //
-  // If the boot option point to a blockIO device:
+  // If the boot option points to a blockIO device:
   //    if it is a removable blockIo device, it is valid.
   //    if it is a fixed blockIo device, check its description confliction.
   //
@@ -2520,7 +2541,7 @@ BdsLibIsValidEFIBootOptDevicePathExt (
     }
   } else {
     //
-    // if the boot option point to a simple file protocol which does not consume block Io protocol, it is also a valid EFI boot option,
+    // if the boot option points to a simple file protocol which does not consume block Io protocol, it is also a valid EFI boot option,
     //
     Status = gBS->LocateDevicePath (&gEfiSimpleFileSystemProtocolGuid, &TempDevicePath, &Handle);
     if (!EFI_ERROR (Status)) {

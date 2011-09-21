@@ -14,7 +14,6 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include "InternalBdsLib.h"
 
-
 /**
   This function will connect all the system driver to controller
   first, and then special connect the default console, this make
@@ -82,6 +81,7 @@ BdsLibGenericConnectAll (
                                 node failed
 
 **/
+
 EFI_STATUS
 EFIAPI
 BdsLibConnectDevicePath (
@@ -285,7 +285,7 @@ BdsLibDisconnectAllEfi (
 /**
   Connects all drivers to all controllers.
   This function make sure all the current system driver will manage
-  the correspoinding controllers if have. And at the same time, make
+  the corresponding controllers if have. And at the same time, make
   sure all the system controllers have driver to manage it if have.
 
 **/

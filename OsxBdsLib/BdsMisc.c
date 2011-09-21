@@ -134,7 +134,7 @@ BdsLibLoadDrivers (
 
 /**
   Get the Option Number that does not used.
-  Try to locate the specific option variable one by one utile find a free number.
+  Try to locate the specific option variable one by one until find a free number.
 
   @param  VariableName          Indicate if the boot#### or driver#### option
 
@@ -1178,18 +1178,28 @@ BdsLibGetImageHeader (
 }
 
 /**
-  This routine adjust the memory information for different memory type and 
-  save them into the variables for next boot.
+
+  This routine is a notification function for legacy boot or exit boot
+  service event. It will adjust the memory information for different
+  memory type and save them into the variables for next boot.
+
+
+  @param Event           The event that triggered this notification function.
+  @param Context         Pointer to the notification functions context.
+
 **/
 VOID
+EFIAPI
 BdsSetMemoryTypeInformationVariable (
-  VOID
+  EFI_EVENT  Event,
+  VOID       *Context
   )
 {
   EFI_STATUS                   Status;
   EFI_MEMORY_TYPE_INFORMATION  *PreviousMemoryTypeInformation;
   EFI_MEMORY_TYPE_INFORMATION  *CurrentMemoryTypeInformation;
   UINTN                        VariableSize;
+  BOOLEAN                      UpdateRequired;
   UINTN                        Index;
   UINTN                        Index1;
   UINT32                       Previous;
@@ -1203,7 +1213,7 @@ BdsSetMemoryTypeInformationVariable (
   MemoryTypeInformationModified       = FALSE;
   MemoryTypeInformationVariableExists = FALSE;
 
-
+#if NOTVBOX
   BootMode = GetBootModeHob ();
   //
   // In BOOT_IN_RECOVERY_MODE, Variable region is not reliable.
@@ -1230,6 +1240,9 @@ BdsSetMemoryTypeInformationVariable (
       MemoryTypeInformationVariableExists = TRUE;
     }
   }
+#endif
+
+  UpdateRequired = FALSE;
 
   //
   // Retrieve the current memory usage statistics.  If they are not found, then
@@ -1261,9 +1274,9 @@ BdsSetMemoryTypeInformationVariable (
   //
   // Use a heuristic to adjust the Memory Type Information for the next boot
   //
-  DEBUG ((EFI_D_INFO, "Memory  Previous  Current    Next   \n"));
-  DEBUG ((EFI_D_INFO, " Type    Pages     Pages     Pages  \n"));
-  DEBUG ((EFI_D_INFO, "======  ========  ========  ========\n"));
+//  DEBUG ((EFI_D_INFO, "Memory  Previous  Current    Next   \n"));
+//  DEBUG ((EFI_D_INFO, " Type    Pages     Pages     Pages  \n"));
+//  DEBUG ((EFI_D_INFO, "======  ========  ========  ========\n"));
 
   for (Index = 0; PreviousMemoryTypeInformation[Index].Type != EfiMaxMemoryType; Index++) {
 
@@ -1286,11 +1299,14 @@ BdsSetMemoryTypeInformationVariable (
     Previous = PreviousMemoryTypeInformation[Index].NumberOfPages;
 
     //
-    // Write next varible to 125% * current and Inconsistent Memory Reserved across bootings may lead to S4 fail
+    // Write next variable to 125% * current and Inconsistent Memory Reserved across bootings may lead to S4 fail
     //
+#if NOTVBOX    
     if (!MemoryTypeInformationVariableExists && Current < Previous) {
       Next = Current + (Current >> 2);
-    } else if (Current > Previous) {
+    } else 
+#endif    
+    if (Current > Previous) {
       Next = Current + (Current >> 2);
     } else {
       Next = Previous;
@@ -1302,13 +1318,15 @@ BdsSetMemoryTypeInformationVariable (
     if (Next != Previous) {
       PreviousMemoryTypeInformation[Index].NumberOfPages = Next;
       MemoryTypeInformationModified = TRUE;
+            UpdateRequired = TRUE;
     }
 
-    DEBUG ((EFI_D_INFO, "  %02x    %08x  %08x  %08x\n", PreviousMemoryTypeInformation[Index].Type, Previous, Current, Next));
+//    DEBUG ((EFI_D_INFO, "  %02x    %08x  %08x  %08x\n", PreviousMemoryTypeInformation[Index].Type, Previous, Current, Next));
   }
 
   //
   // If any changes were made to the Memory Type Information settings, then set the new variable value;
+#if NOTVBOX  
   // Or create the variable in first boot.
   //
   if (MemoryTypeInformationModified || !MemoryTypeInformationVariableExists) {
@@ -1330,10 +1348,27 @@ BdsSetMemoryTypeInformationVariable (
       gRT->ResetSystem (EfiResetWarm, EFI_SUCCESS, 0, NULL);
     }
   }
+#elif
+  if (UpdateRequired) {
+    Status = gRT->SetVariable (
+          EFI_MEMORY_TYPE_INFORMATION_VARIABLE_NAME,
+          &gEfiMemoryTypeInformationGuid,
+          EFI_VARIABLE_NON_VOLATILE  | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+          VariableSize,
+          PreviousMemoryTypeInformation
+          );
+  }
+
+  return;
+
+#endif    
+
 }
 
 /**
-  This routine is kept for backward compatibility.
+  This routine register a function to adjust the different type memory page number
+  just before booting and save the updated info into the variable for next boot to use.
+
 **/
 VOID
 EFIAPI
@@ -1341,6 +1376,18 @@ BdsLibSaveMemoryTypeInformation (
   VOID
   )
 {
+  EFI_STATUS                   Status;
+  EFI_EVENT                    ReadyToBootEvent;
+
+  Status = EfiCreateEventReadyToBootEx (
+           TPL_CALLBACK,
+           BdsSetMemoryTypeInformationVariable,
+           NULL,
+           &ReadyToBootEvent
+           );
+  if (EFI_ERROR (Status)) {
+   // DEBUG ((DEBUG_ERROR,"Bds Set Memory Type Information Variable Fails\n"));
+  }
 }
 
 

@@ -21,7 +21,7 @@ PERF_DATA                 mPerfData;
 EFI_PHYSICAL_ADDRESS      mAcpiLowMemoryBase = 0x0FFFFFFFFULL;
 
 /**
-  Get the short verion of PDB file name to be
+  Get the short version of PDB file name to be
   used in performance data logging.
 
   @param PdbFileName     The long PDB file name.
