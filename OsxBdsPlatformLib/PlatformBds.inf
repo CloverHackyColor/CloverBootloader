@@ -31,11 +31,13 @@
   BdsPlatform.c
   PlatformData.c
   BdsPlatform.h
+#  Cpu.c
 
 [Packages]
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   DuetPkg/DuetPkg.dec
+  IntelFrameworkPkg/IntelFrameworkPkg.dec
   IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
   
 [LibraryClasses]
@@ -43,7 +45,7 @@
   MemoryAllocationLib
   UefiBootServicesTableLib
   BaseMemoryLib
-  DebugLib
+#  DebugLib
   PcdLib
   GenericBdsLib
   HobLib
@@ -59,13 +61,21 @@
   gEfiSmbiosTableGuid
   gEfiAcpiTableGuid
   gLdrMemoryDescriptorGuid
-
   
 [Protocols]
-  gEfiAcpiTableProtocolGuid      
+  gEfiAcpiTableProtocolGuid    
+  gEfiLegacy8259ProtocolGuid
+  gEfiCpuArchProtocolGuid
+
+[Depex]
+  gEfiLegacy8259ProtocolGuid
   
   
 [Pcd]
   gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdPlatformBootTimeOut  
   gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdLogoFile  
   
+
+[BuildOptions]
+  XCODE:*_*_*_CC_FLAGS = -Os
+  GCC:*_*_*_CC_FLAGS = -Os

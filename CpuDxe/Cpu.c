@@ -18,6 +18,7 @@ Abstract:
 
 #include "CpuDxe.h"
 
+extern VOID BiosPutC(CHAR8 ch);
 //
 // Global Variables
 //
@@ -1222,4 +1223,18 @@ LegacyBiosInt86 (
   Ret = (BOOLEAN) (Regs->E.EFlags.CF == 1);
 
   return Ret;
+}
+
+
+VOID BiosPutC(CHAR8 ch)
+{
+	EFI_IA32_REGISTER_SET           Regs;
+	
+	gBS->SetMem (&Regs, sizeof (Regs), 0);
+    Regs.H.AH = 0x0e;
+    Regs.H.AL = ch;
+    Regs.H.BL = 0x0F;	/* foreground white */
+	Regs.H.BH = 0x00;  /* background black */
+	LegacyBiosInt86 (0x10, &Regs);
+	
 }

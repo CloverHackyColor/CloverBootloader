@@ -810,7 +810,7 @@ EnableQuietBoot (
   //
   // Erase Cursor from screen
   //
-  gST->ConOut->EnableCursor (gST->ConOut, FALSE);
+  //gST->ConOut->EnableCursor (gST->ConOut, FALSE);
 
   Badging = NULL;
   Status  = gBS->LocateProtocol (&gEfiOEMBadgingProtocolGuid, NULL, (VOID **) &Badging);
@@ -1011,7 +1011,7 @@ DisableQuietBoot (
   //
   // Enable Cursor on Screen
   //
-  gST->ConOut->EnableCursor (gST->ConOut, TRUE);
+ // gST->ConOut->EnableCursor (gST->ConOut, TRUE);
   return EFI_SUCCESS;
 }
 

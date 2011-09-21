@@ -1313,7 +1313,19 @@ BiosVideoCheckForVbe (
     // Select a reasonable mode to be set for current display mode
     //
     ModeFound = FALSE;
-
+	  if (BiosVideoPrivate->VbeModeInformationBlock->XResolution == 1440 &&
+		  BiosVideoPrivate->VbeModeInformationBlock->YResolution == 900
+		  ) {
+		  ModeFound = TRUE;
+		  PreferMode = ModeNumber; //Slice - I prefer this mode
+	  }
+	  if (BiosVideoPrivate->VbeModeInformationBlock->XResolution == 1280 &&
+		  BiosVideoPrivate->VbeModeInformationBlock->YResolution == 800
+		  ) {
+		  ModeFound = TRUE;
+		  PreferMode = ModeNumber; //Slice - I prefer this mode
+	  }
+	  
     if (BiosVideoPrivate->VbeModeInformationBlock->XResolution == 1024 &&
         BiosVideoPrivate->VbeModeInformationBlock->YResolution == 768
         ) {

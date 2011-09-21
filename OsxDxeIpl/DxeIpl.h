@@ -32,8 +32,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Guid/SystemNvDataGuid.h>
 #include <Guid/VariableFormat.h>
 #include <Guid/StatusCodeDataTypeDebug.h>
-#include <Guid/DxeCoreFileName.h>
 #include <Guid/LdrMemoryDescriptor.h>
+#include <Guid/DxeCoreFileName.h>
 
 #include <Protocol/Decompress.h>
 #include <Protocol/StatusCode.h>

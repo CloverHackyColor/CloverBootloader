@@ -34,6 +34,12 @@ EFI_GUID                    *gTableGuidArray[] = {
     &gEfiAcpi10TableGuid, &gEfiAcpiTableGuid, &gEfiSmbiosTableGuid, &gEfiMpsTableGuid
   };
 
+
+VOID BiosPutC(CHAR8 ch)
+{
+	//
+}
+
 //
 // BDS Platform Functions
 //
@@ -87,7 +93,22 @@ Returns:
 
   return ;
 }
+/*
+#define EFI_LDR_MEMORY_DESCRIPTOR_GUID \
+  { 0x7701d7e5, 0x7d1d, 0x4432, {0xa4, 0x68, 0x67, 0x3d, 0xab, 0x8a, 0xde, 0x60 }}
 
+EFI_GUID gEfiLdrMemoryDescriptorGuid = EFI_LDR_MEMORY_DESCRIPTOR_GUID;
+
+#pragma pack(1)
+
+typedef struct {
+  EFI_HOB_GUID_TYPE             Hob;
+  UINTN                         MemDescCount;
+  EFI_MEMORY_DESCRIPTOR         *MemDesc;
+} MEMORY_DESC_HOB;
+
+#pragma pack()
+*/
 #if 0
 VOID
 PrintMemoryMap (
@@ -1176,18 +1197,18 @@ Returns:
   // Init the time out value
   //
   Timeout = PcdGet16 (PcdPlatformBootTimeOut);
-
+	BiosPutC('1');
   //
   // Load the driver option as the driver option list
   //
   PlatformBdsGetDriverOption (DriverOptionList);
-
+	BiosPutC('2');
   //
   // Get current Boot Mode
   //
   Status = BdsLibGetBootMode (&BootMode);
 //  DEBUG ((EFI_D_ERROR, "Boot Mode:%x\n", BootMode));
-
+	BiosPutC('3');
   //
   // Go the different platform policy with different boot mode
   // Notes: this part code can be change with the table policy
@@ -1197,10 +1218,12 @@ Returns:
   // Connect platform console
   //
   Status = PlatformBdsConnectConsole (gPlatformConsole);
+	BiosPutC('4');
   if (EFI_ERROR (Status)) {
     //
     // Here OEM/IBV can customize with defined action
     //
+	  BiosPutC('5');
     PlatformBdsNoConsoleAction ();
   }
   //
@@ -1219,13 +1242,14 @@ Returns:
   //
   // Memory test and Logo show
   //
+	BiosPutC('6');
   PlatformBdsDiagnostics (IGNORE, TRUE, BaseMemoryTest);
-
+	BiosPutC('7');
   //
   // Perform some platform specific connect sequence
   //
   PlatformBdsConnectSequence ();
-
+	BiosPutC('8');
   //
   // Give one chance to enter the setup if we
   // have the time out
@@ -1235,10 +1259,11 @@ Returns:
   if (Timeout != 0) {
     PlatformBdsEnterFrontPage (Timeout, FALSE);
   }
-
+	BiosPutC('9');
   //
   BdsLibConnectAll ();
   BdsLibEnumerateAllBootOption (BootOptionList);  
+	BiosPutC('a');
   
   //
   // Please uncomment above ConnectAll and EnumerateAll code and remove following first boot
@@ -1273,6 +1298,7 @@ Returns:
     //
     // Enter Setup if user input 
     //
+	  BiosPutC('b');
     Timeout = 0xffff;
     PlatformBdsEnterFrontPage (Timeout, FALSE);
   }

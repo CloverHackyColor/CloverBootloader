@@ -75,6 +75,7 @@
   BootMaint/Bmstring.uni
   Hotkey.c
   MemoryTest.c
+#  Cpu2.c
   Capsules.c
   Strings.uni
   String.c
@@ -152,6 +153,8 @@
   gEfiDevicePathProtocolGuid                    ## PROTOCOL CONSUMES
   gEfiDriverHealthProtocolGuid                  ## PROTOCOL SOMETIMES_CONSUMES
   gEfiPciIoProtocolGuid                         ## PROTOCOL CONSUMES
+  gEfiLegacy8259ProtocolGuid
+  gEfiCpuArchProtocolGuid
 
 [FeaturePcd]
   gEfiMdePkgTokenSpaceGuid.PcdUefiVariableDefaultLangDeprecate

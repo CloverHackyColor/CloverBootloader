@@ -61,6 +61,14 @@ HII_VENDOR_DEVICE_PATH  mFrontPageHiiVendorDevicePath = {
   }
 };
 
+BOOLEAN
+EFIAPI
+LegacyBiosInt86 (
+				 IN  UINT8                           BiosInt,
+				 IN  EFI_IA32_REGISTER_SET           *Regs
+				 );
+
+
 /**
   This function allows a caller to extract the current configuration for one
   or more named elements from the target driver.
@@ -879,7 +887,7 @@ ShowProgress (
     return EFI_TIMEOUT;
   }
 
-  DEBUG ((EFI_D_INFO, "\n\nStart showing progress bar... Press any key to stop it! ...Zzz....\n"));
+//  DEBUG ((EFI_D_INFO, "\n\nStart showing progress bar... Press any key to stop it! ...Zzz....\n"));
 
   SetMem (&Foreground, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL), 0xff);
   SetMem (&Background, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL), 0x0);
@@ -895,7 +903,7 @@ ShowProgress (
 
   TimeoutRemain = TimeoutDefault;
   while (TimeoutRemain != 0) {
-    DEBUG ((EFI_D_INFO, "Showing progress bar...Remaining %d second!\n", TimeoutRemain));
+//    DEBUG ((EFI_D_INFO, "Showing progress bar...Remaining %d second!\n", TimeoutRemain));
 
     Status = WaitForSingleEvent (gST->ConIn->WaitForKey, ONE_SECOND);
     if (Status != EFI_TIMEOUT) {
@@ -906,7 +914,7 @@ ShowProgress (
     //
     // Show progress
     //
-    if (TmpStr != NULL) {
+/*    if (TmpStr != NULL) {
       PlatformBdsShowProgress (
         Foreground,
         Background,
@@ -915,7 +923,7 @@ ShowProgress (
         ((TimeoutDefault - TimeoutRemain) * 100 / TimeoutDefault),
         0
         );
-    }
+    } */
   }
   gBS->FreePool (TmpStr);
 
@@ -963,8 +971,8 @@ PlatformBdsEnterFrontPage (
   )
 {
   EFI_STATUS                    Status;
-
-  PERF_START (NULL, "BdsTimeOut", "BDS", 0);
+	BiosPutC('A');
+//  PERF_START (NULL, "BdsTimeOut", "BDS", 0);
   //
   // Indicate if we need connect all in the platform setup
   //
@@ -974,14 +982,17 @@ PlatformBdsEnterFrontPage (
 
   HotkeyBoot ();
   if (TimeoutDefault != 0xffff) {
+	  BiosPutC('B');
     Status = ShowProgress (TimeoutDefault);
+	  BiosPutC('C');
     HotkeyBoot ();
+	  BiosPutC('D');
 
     //
     // Ensure screen is clear when switch Console from Graphics mode to Text mode
     //
-    gST->ConOut->EnableCursor (gST->ConOut, TRUE);
-    gST->ConOut->ClearScreen (gST->ConOut);
+//    gST->ConOut->EnableCursor (gST->ConOut, TRUE);
+//    gST->ConOut->ClearScreen (gST->ConOut);
 
     if (EFI_ERROR (Status)) {
       //
@@ -994,11 +1005,13 @@ PlatformBdsEnterFrontPage (
   do {
 
     InitializeFrontPage (FALSE);
+	  BiosPutC('E');
 
     //
     // Update Front Page strings
     //
     UpdateFrontPageStrings ();
+	  BiosPutC('F');
 
     gCallbackKey = 0;
     Status = CallFrontPage ();
@@ -1072,10 +1085,11 @@ PlatformBdsEnterFrontPage (
   SetupResetReminder ();
 
 Exit:
+	return;
   //
   // Automatically load current entry
   // Note: The following lines of code only execute when Auto boot
   // takes affect
   //
-  PERF_END (NULL, "BdsTimeOut", "BDS", 0);
+//  PERF_END (NULL, "BdsTimeOut", "BDS", 0);
 }

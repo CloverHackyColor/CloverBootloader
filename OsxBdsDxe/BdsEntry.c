@@ -21,6 +21,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include "FrontPage.h"
 #include "Hotkey.h"
 #include "HwErrRecSupport.h"
+#include "CpuDxe.h"
 
 ///
 /// BDS arch protocol instance initial value.
@@ -58,7 +59,9 @@ BdsInitialize (
   )
 {
   EFI_STATUS  Status;
-
+//	Status = InitializeCpu (ImageHandle, SystemTable);
+	
+	
   //
   // Install protocol interface
   //
@@ -290,8 +293,8 @@ BdsEntry (
   //
   // Insert the performance probe
   //
-  PERF_END (NULL, "DXE", NULL, 0);
-  PERF_START (NULL, "BDS", NULL, 0);
+ // PERF_END (NULL, "DXE", NULL, 0);
+ // PERF_START (NULL, "BDS", NULL, 0);
 
   //
   // Initialize the global system boot option and driver option
@@ -320,7 +323,7 @@ BdsEntry (
   //
   // Do the platform init, can be customized by OEM/IBV
   //
-  PERF_START (NULL, "PlatformBds", "BDS", 0);
+ // PERF_START (NULL, "PlatformBds", "BDS", 0);
   PlatformBdsInit ();
 
   InitializeHwErrRecSupport();
@@ -355,7 +358,7 @@ BdsEntry (
   // Setup some platform policy here
   //
   PlatformBdsPolicyBehavior (&DriverOptionList, &BootOptionList, BdsProcessCapsules, BdsMemoryTest);
-  PERF_END (NULL, "PlatformBds", "BDS", 0);
+ // PERF_END (NULL, "PlatformBds", "BDS", 0);
 
   //
   // BDS select the boot device to load OS

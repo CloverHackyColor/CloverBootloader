@@ -110,7 +110,7 @@ typedef struct {
 // ACPI table information used to initialize tables.
 //
 #define EFI_ACPI_OEM_ID           "INTEL "
-#define EFI_ACPI_OEM_TABLE_ID     SIGNATURE_64('E', 'D', 'K', '2', ' ', ' ', ' ', ' ')
+#define EFI_ACPI_OEM_TABLE_ID     SIGNATURE_64('E', 'D', 'K', '2', '3', ' ', ' ', ' ')
 #define EFI_ACPI_OEM_REVISION     0x00000002
 #define EFI_ACPI_CREATOR_ID       0x20202020
 #define EFI_ACPI_CREATOR_REVISION 0x01000013

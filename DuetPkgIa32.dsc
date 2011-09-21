@@ -235,8 +235,8 @@
   }
   #MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
   UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
-  #UefiCpuPkg/CpuDxe/CpuDxe.inf
-  Clover/CpuDxe/Cpu.inf
+  UefiCpuPkg/CpuDxe/CpuDxe.inf
+  #Clover/CpuDxe/Cpu.inf
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
   DuetPkg/AcpiResetDxe/Reset.inf
   DuetPkg/LegacyMetronome/Metronome.inf
