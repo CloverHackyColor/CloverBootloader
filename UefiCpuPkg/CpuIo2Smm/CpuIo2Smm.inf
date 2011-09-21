@@ -1,0 +1,48 @@
+## @file
+#  Module that produces the SMM CPU I/O 2 Protocol using the services of the I/O Library
+#
+#  Copyright (c) 2009 - 2010, Intel Corporation. All rights reserved.<BR>
+#  This program and the accompanying materials
+#  are licensed and made available under the terms and conditions of the BSD License
+#  which accompanies this distribution. The full text of the license may be found at
+#  http://opensource.org/licenses/bsd-license.php
+#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = CpuIo2Smm
+  FILE_GUID                      = A47EE2D8-F60E-42fd-8E58-7BD65EE4C29B
+  MODULE_TYPE                    = DXE_SMM_DRIVER
+  VERSION_STRING                 = 1.0
+  PI_SPECIFICATION_VERSION       = 0x0001000A
+  ENTRY_POINT                    = SmmCpuIo2Initialize
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 
+#
+
+[Sources]
+  CpuIo2Smm.c
+  CpuIo2Smm.h
+  
+[Packages]
+  MdePkg/MdePkg.dec
+
+[LibraryClasses]
+  UefiDriverEntryPoint
+  BaseLib
+  DebugLib
+  IoLib
+  SmmServicesTableLib
+  BaseMemoryLib
+  
+[Protocols]
+  gEfiSmmCpuIo2ProtocolGuid                   # PROTOCOL ALWAYS_CONSUMED
+
+[Depex]
+  TRUE
