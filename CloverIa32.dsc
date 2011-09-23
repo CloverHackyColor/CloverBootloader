@@ -265,7 +265,8 @@
 	#EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
 	#Clover/OsxMmcDxe/MmcDxe.inf
 
-  IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
+  #IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
+  Clover/VBoxVgaMiniPort/VgaMiniPortDxe.inf
   #IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
   Clover/VgaClassDxe/VgaClassDxe.inf
   #Clover/IntelGmaDxe/Gop.inf

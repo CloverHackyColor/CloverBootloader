@@ -687,7 +687,7 @@ BdsLibBootViaBootOption (
   // Adjust the different type memory page number just before booting
   // and save the updated info into the variable for next boot to use
   //
-  BdsSetMemoryTypeInformationVariable ();
+//  BdsSetMemoryTypeInformationVariable ();
 
 
   //
@@ -1569,11 +1569,11 @@ BdsLibEnumerateAllBootOption (
 	EFI_DEVICE_PATH_PROTOCOL      *DevicePath;
 	UINTN                         DevicePathType;
 	CHAR16                        Buffer[40];
-	CHAR16						*NewFileName;
+//	CHAR16						*NewFileName;
 	EFI_HANDLE                    *FileSystemHandles;
 	UINTN                         NumberFileSystemHandles;
 	BOOLEAN                       NeedDelete;
-	EFI_IMAGE_DOS_HEADER          DosHeader;
+//	EFI_IMAGE_DOS_HEADER          DosHeader;
 	CHAR8                         *PlatLang;
 	CHAR8                         *LastLang;
 	EFI_IMAGE_OPTIONAL_HEADER_UNION       HdrData;
@@ -2010,9 +2010,9 @@ BdsLibGetBootableHandle (
 
   UINTN                           NumberSimpleFileSystemHandles;
   UINTN                           Index;
-  EFI_IMAGE_DOS_HEADER            DosHeader;
+//  EFI_IMAGE_DOS_HEADER            DosHeader;
   EFI_IMAGE_OPTIONAL_HEADER_UNION       HdrData;
-  EFI_IMAGE_OPTIONAL_HEADER_PTR_UNION   Hdr;
+//  EFI_IMAGE_OPTIONAL_HEADER_PTR_UNION   Hdr;
 
   UpdatedDevicePath = DevicePath;
 

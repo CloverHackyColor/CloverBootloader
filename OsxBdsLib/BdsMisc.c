@@ -111,7 +111,7 @@ BdsLibLoadDrivers (
 #endif
 
       Status = gBS->StartImage (ImageHandle, &ExitDataSize, &ExitData);
-      DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Driver Return Status = %r\n", Status));
+//      DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Driver Return Status = %r\n", Status));
 
       //
       // Clear the Watchdog Timer after the image returns
@@ -1048,7 +1048,7 @@ BdsLibGetImageHeader (
                          Info
                          );
     if (!EFI_ERROR (Status)) {
-      DEBUG((DEBUG_INFO, "%a:%d Open FileName:%s from Info %r \n", __FILE__, __LINE__, Info->FileName, Status));
+//      DEBUG((DEBUG_INFO, "%a:%d Open FileName:%s from Info %r \n", __FILE__, __LINE__, Info->FileName, Status));
       Status = gBS->AllocatePool (EfiBootServicesData, StrLen(Info->FileName), (VOID **) &FileName0);
       StrCpy(FileName0, Info->FileName);
       if (EFI_ERROR (Status)) {
@@ -1128,7 +1128,7 @@ BdsLibGetImageHeader (
         {
             *p = L'\0';
             Status0 = Root->Open (Root, &ThisFile, dup, EFI_FILE_MODE_READ, 1);
-            DEBUG((DEBUG_INFO, "%a:%d Open FileName:%s - %r \n", __FILE__, __LINE__, dup, Status));
+//            DEBUG((DEBUG_INFO, "%a:%d Open FileName:%s - %r \n", __FILE__, __LINE__, dup, Status));
             if (EFI_ERROR (Status)) {
               goto Done;
             }
@@ -1141,7 +1141,7 @@ BdsLibGetImageHeader (
                                  );
             if (EFI_ERROR(Status) && Status != EFI_BUFFER_TOO_SMALL)
             {
-                DEBUG((DEBUG_INFO, "%a:%d GetInfo(1) FileName:%s %r \n", __FILE__, __LINE__, FileName, Status));
+ //               DEBUG((DEBUG_INFO, "%a:%d GetInfo(1) FileName:%s %r \n", __FILE__, __LINE__, FileName, Status));
                 goto Done;
             }
             Status0 = gBS->AllocatePool (EfiBootServicesData, BufferSize, (VOID **) &Info);
@@ -1155,7 +1155,7 @@ BdsLibGetImageHeader (
                                  Info
                                  );
             if (!EFI_ERROR (Status0)) {
-              DEBUG((DEBUG_INFO, "%a:%d Open FileName:%s from Info %r \n", __FILE__, __LINE__, Info->FileName, Status));
+ //             DEBUG((DEBUG_INFO, "%a:%d Open FileName:%s from Info %r \n", __FILE__, __LINE__, Info->FileName, Status));
               StrCpy(pp + 1, Info->FileName);
             }
             * p = L'\\';
@@ -1164,10 +1164,10 @@ BdsLibGetImageHeader (
         p++;
     }
     StrCpy(pp + 1, FileName0);
-    DEBUG((DEBUG_INFO, "%a:%d NewFileName:'%s'\n", __FILE__, __LINE__, dup));
+//    DEBUG((DEBUG_INFO, "%a:%d NewFileName:'%s'\n", __FILE__, __LINE__, dup));
     *NewFileName = dup;
   }
-  DEBUG((DEBUG_INFO, "%a:%d %s - %r\n", __FILE__, __LINE__, FileName, Status));
+//  DEBUG((DEBUG_INFO, "%a:%d %s - %r\n", __FILE__, __LINE__, FileName, Status));
   if (ThisFile != NULL) {
     ThisFile->Close (ThisFile);
   }
@@ -1208,7 +1208,7 @@ BdsSetMemoryTypeInformationVariable (
   EFI_HOB_GUID_TYPE            *GuidHob;
   BOOLEAN                      MemoryTypeInformationModified;
   BOOLEAN                      MemoryTypeInformationVariableExists;
-  EFI_BOOT_MODE                BootMode;
+//  EFI_BOOT_MODE                BootMode;
 
   MemoryTypeInformationModified       = FALSE;
   MemoryTypeInformationVariableExists = FALSE;
@@ -1344,11 +1344,11 @@ BdsSetMemoryTypeInformationVariable (
     // entry/resume cycle will not fail.
     //
     if (MemoryTypeInformationModified && PcdGetBool (PcdResetOnMemoryTypeInformationChange)) {
-      DEBUG ((EFI_D_INFO, "Memory Type Information settings change. Warm Reset!!!\n"));
+//      DEBUG ((EFI_D_INFO, "Memory Type Information settings change. Warm Reset!!!\n"));
       gRT->ResetSystem (EfiResetWarm, EFI_SUCCESS, 0, NULL);
     }
   }
-#elif
+#else
   if (UpdateRequired) {
     Status = gRT->SetVariable (
           EFI_MEMORY_TYPE_INFORMATION_VARIABLE_NAME,

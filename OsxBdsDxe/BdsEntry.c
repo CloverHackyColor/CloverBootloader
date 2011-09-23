@@ -21,7 +21,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include "FrontPage.h"
 #include "Hotkey.h"
 #include "HwErrRecSupport.h"
-#include "CpuDxe.h"
+//#include "CpuDxe.h"
 
 ///
 /// BDS arch protocol instance initial value.

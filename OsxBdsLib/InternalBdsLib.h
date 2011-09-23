@@ -120,8 +120,10 @@ BdsLibGetImageHeader (
   save them into the variables for next boot.
 **/
 VOID
+EFIAPI
 BdsSetMemoryTypeInformationVariable (
-  VOID
-  );
+	EFI_EVENT  Event,
+	VOID       *Context
+	);
 
 #endif // _BDS_LIB_H_
