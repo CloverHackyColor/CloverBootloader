@@ -25,13 +25,21 @@
 CHAR16* mLogBuffer = NULL;
 UINTN   mLogRemainChar = 0;
 
-CHAR16* DiagnosticInitLog(UINTN MaxBufferChar) {
+CHAR16*
+DiagnosticInitLog (
+  UINTN MaxBufferChar
+  )
+{
     mLogRemainChar = MaxBufferChar;
     mLogBuffer = AllocatePool ((UINTN)MaxBufferChar * sizeof(CHAR16));
     return mLogBuffer;
 }
 
-UINTN DiagnosticLog(CONST CHAR16* Str) {
+UINTN
+DiagnosticLog (
+  CONST CHAR16* Str
+  )
+{
     UINTN len = StrLen (Str);
     if (len <= mLogRemainChar) {
         mLogRemainChar -= len;
@@ -43,7 +51,12 @@ UINTN DiagnosticLog(CONST CHAR16* Str) {
     }
 }
 
-VOID GenerateRandomBuffer(VOID* Buffer, UINTN BufferSize) {
+VOID
+GenerateRandomBuffer (
+  VOID* Buffer,
+  UINTN BufferSize
+  )
+{
     UINT64 i;
     UINT64* Buffer64 = (UINT64*)Buffer;
 
@@ -53,7 +66,13 @@ VOID GenerateRandomBuffer(VOID* Buffer, UINTN BufferSize) {
     }
 }
 
-BOOLEAN CompareBuffer(VOID *BufferA, VOID *BufferB, UINTN BufferSize) {
+BOOLEAN
+CompareBuffer (
+  VOID  *BufferA,
+  VOID  *BufferB,
+  UINTN BufferSize
+  )
+{
     UINTN i;
     UINT64* BufferA64 = (UINT64*)BufferA;
     UINT64* BufferB64 = (UINT64*)BufferB;
@@ -70,7 +89,13 @@ BOOLEAN CompareBuffer(VOID *BufferA, VOID *BufferB, UINTN BufferSize) {
     return TRUE;
 }
 
-EFI_STATUS MmcReadWriteDataTest(MMC_HOST_INSTANCE *MmcHostInstance, EFI_LBA Lba, UINTN BufferSize) {
+EFI_STATUS
+MmcReadWriteDataTest (
+  MMC_HOST_INSTANCE *MmcHostInstance,
+  EFI_LBA           Lba,
+  UINTN             BufferSize
+  )
+{
     VOID                        *BackBuffer;
     VOID                        *WriteBuffer;
     VOID                        *ReadBuffer;

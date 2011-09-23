@@ -19,7 +19,7 @@ BOOLEAN mEnumBootDevice = FALSE;
 EFI_HII_HANDLE gBdsLibStringPackHandle = NULL;
 
 ///
-/// This GUID is used for an EFI Variable that stores the front device pathes
+/// This GUID is used for an EFI Variable that stores the front device paths
 /// for a partial device path that starts with the HD node.
 ///
 EFI_GUID  mHdBootVariablePrivateGuid = { 0xfab7e9e1, 0x39dd, 0x4f2b, { 0x84, 0x8, 0xe2, 0xe, 0x90, 0x6c, 0xb6, 0xde } };
@@ -483,7 +483,7 @@ BdsFindUsbDevice (
 				// Load the default boot file \EFI\BOOT\boot{machinename}.EFI from removable Media
 				//  machinename is ia32, ia64, x64, ...
 				//
-				FullDevicePath = FileDevicePath (Handle, EFI_REMOVABLE_MEDIA_FILE_NAME);
+				FullDevicePath = FileDevicePath (Handle, NewFileName); //EFI_REMOVABLE_MEDIA_FILE_NAME);
 				if (FullDevicePath != NULL) {
 					//          REPORT_STATUS_CODE (EFI_PROGRESS_CODE, PcdGet32 (PcdProgressCodeOsLoaderLoad));
 					Status = gBS->LoadImage (
@@ -637,14 +637,16 @@ BdsLibBootViaBootOption (
   EFI_DEVICE_PATH_PROTOCOL  *FilePath;
   EFI_LOADED_IMAGE_PROTOCOL *ImageInfo;
   EFI_DEVICE_PATH_PROTOCOL  *WorkingDevicePath;
-  EFI_ACPI_S3_SAVE_PROTOCOL *AcpiS3Save;
+//  EFI_ACPI_S3_SAVE_PROTOCOL *AcpiS3Save;
 //  LIST_ENTRY                TempBootLists;
-//  EFI_SECURITY_ARCH_PROTOCOL *SecurityProtocol;
+  EFI_SECURITY_ARCH_PROTOCOL *SecurityProtocol;
   CHAR16                    *NewFileName;
+//EFI_DEVICE_PATH_TO_TEXT_PROTOCOL *DevPathToTxt;
+
   //
   // Record the performance data for End of BDS
   //
-  PERF_END(NULL, "BDS", NULL, 0);
+//  PERF_END(NULL, "BDS", NULL, 0);
 
   *ExitDataSize = 0;
   *ExitData     = NULL;
@@ -654,10 +656,12 @@ BdsLibBootViaBootOption (
   // hook on the event EVT_SIGNAL_READY_TO_BOOT or
   // EVT_SIGNAL_LEGACY_BOOT
   //
+	/*
   Status = gBS->LocateProtocol (&gEfiAcpiS3SaveProtocolGuid, NULL, (VOID **) &AcpiS3Save);
   if (!EFI_ERROR (Status)) {
     AcpiS3Save->S3Save (AcpiS3Save, NULL);
   } 
+	 */
   //
   // If it's Device Path that starts with a hard drive path, append it with the front part to compose a
   // full device path
@@ -712,17 +716,17 @@ BdsLibBootViaBootOption (
   // By expanding the USB Class or WWID device path, the ImageHandle has returnned.
   // Here get the ImageHandle for the non USB class or WWID device path.
   //
-  if (ImageHandle == NULL) {
-  ASSERT (Option->DevicePath != NULL);
-  if ((DevicePathType (Option->DevicePath) == BBS_DEVICE_PATH) &&
-      (DevicePathSubType (Option->DevicePath) == BBS_BBS_DP)
-    ) {
-    //
-    // Check to see if we should legacy BOOT. If yes then do the legacy boot
-    //
-    return BdsLibDoLegacyBoot (Option);
-  }
-
+	if (ImageHandle == NULL) {
+		ASSERT (Option->DevicePath != NULL);
+		if ((DevicePathType (Option->DevicePath) == BBS_DEVICE_PATH) &&
+			(DevicePathSubType (Option->DevicePath) == BBS_BBS_DP)
+			) {
+			//
+			// Check to see if we should legacy BOOT. If yes then do the legacy boot
+			//
+			return BdsLibDoLegacyBoot (Option);
+		}
+		
   //
   // If the boot option points to Internal FV shell, make sure it is valid
   //
@@ -750,7 +754,7 @@ BdsLibBootViaBootOption (
   //
   // Measure GPT Table by SAP protocol.
   //
-/*  Status = gBS->LocateProtocol (
+  Status = gBS->LocateProtocol (
                   &gEfiSecurityArchProtocolGuid,
                   NULL,
                   (VOID**) &SecurityProtocol
@@ -821,14 +825,12 @@ BdsLibBootViaBootOption (
       DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Booting %S\n", Option->Description));
 
   DEBUG_CODE_END();
-  if (DevPathToTxt == NULL)
+/*  if (DevPathToTxt == NULL)
   {
     Status = gBS->LocateProtocol(&gEfiDevicePathToTextProtocolGuid, NULL, (VOID **)&DevPathToTxt);
     ASSERT((!EFI_ERROR(Status)));
     }
-        
-
-*/  
+ */       
   Status = gBS->LoadImage (
                   TRUE,
                   gImageHandle, // mBdsImageHandle,
@@ -1578,6 +1580,7 @@ BdsLibEnumerateAllBootOption (
 	CHAR8                         *LastLang;
 	EFI_IMAGE_OPTIONAL_HEADER_UNION       HdrData;
 	EFI_IMAGE_OPTIONAL_HEADER_PTR_UNION   Hdr;
+	CHAR16 *NewFileName;
 	
 	FloppyNumber  = 0;
   HarddriveNumber = 0;
@@ -1670,7 +1673,7 @@ BdsLibEnumerateAllBootOption (
 		
 		switch (DevicePathType) {
 			case BDS_EFI_ACPI_FLOPPY_BOOT:
-		        UnicodeSPrint (Buffer, sizeof (Buffer), L"%d", FloppyNumber);
+		        UnicodeSPrint (Buffer, sizeof (Buffer), L"FDD %d", FloppyNumber);
 				BdsLibBuildOptionFromHandle (BlockIoHandles[Index], BdsBootOptionList, Buffer);
 				FloppyNumber++;
 				break;
@@ -1681,18 +1684,10 @@ BdsLibEnumerateAllBootOption (
 			case BDS_EFI_MESSAGE_ATAPI_BOOT:
 			case BDS_EFI_MESSAGE_SATA_BOOT:
         if (BlkIo->Media->RemovableMedia) {
-				if (CdromNumber != 0) {
-					UnicodeSPrint (Buffer, sizeof (Buffer), L"%s %d", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_CD_DVD)), CdromNumber);
-				} else {
-					UnicodeSPrint (Buffer, sizeof (Buffer), L"%s", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_CD_DVD)));
-				}
+					UnicodeSPrint (Buffer, sizeof (Buffer), L"DVD %d", CdromNumber);
           CdromNumber++;
         } else {
-          if (HarddriveNumber != 0) {
-            UnicodeSPrint (Buffer, sizeof (Buffer), L"%s %d", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_HARDDRIVE)), HarddriveNumber);
-          } else {
-            UnicodeSPrint (Buffer, sizeof (Buffer), L"%s", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_HARDDRIVE)));
-          }
+					UnicodeSPrint (Buffer, sizeof (Buffer), L"HDD %d", HarddriveNumber);
           HarddriveNumber++;
         }
 //        DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Buffer: %S\n", Buffer));
@@ -1700,24 +1695,20 @@ BdsLibEnumerateAllBootOption (
 				break;
 				
 			case BDS_EFI_MESSAGE_USB_DEVICE_BOOT:
-				if (UsbNumber != 0) {
-					UnicodeSPrint (Buffer, sizeof (Buffer), L"%s %d", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_USB)), UsbNumber);
-				} else {
-					UnicodeSPrint (Buffer, sizeof (Buffer), L"%s", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_USB)));
-				}
+		        UnicodeSPrint (Buffer, sizeof (Buffer), L"USB %d", UsbNumber);
 				BdsLibBuildOptionFromHandle (BlockIoHandles[Index], BdsBootOptionList, Buffer);
 				UsbNumber++;
 				break;
 				
 			case BDS_EFI_MESSAGE_SCSI_BOOT:
-  			    UnicodeSPrint (Buffer, sizeof (Buffer), L"%d", ScsiNumber);
+  			    UnicodeSPrint (Buffer, sizeof (Buffer), L"MSG %d", ScsiNumber);
 				BdsLibBuildOptionFromHandle (BlockIoHandles[Index], BdsBootOptionList, Buffer);
 				ScsiNumber++;
 				break;
 				
  		    case BDS_EFI_MEDIA_HD_BOOT:
 			case BDS_EFI_MESSAGE_MISC_BOOT:
- 			    UnicodeSPrint (Buffer, sizeof (Buffer), L"%d", MiscNumber);
+ 			    UnicodeSPrint (Buffer, sizeof (Buffer), L"MISC %d", MiscNumber);
 				BdsLibBuildOptionFromHandle (BlockIoHandles[Index], BdsBootOptionList, Buffer);
 				MiscNumber++;
 				break;
@@ -1761,8 +1752,7 @@ BdsLibEnumerateAllBootOption (
 		//  machinename is ia32, ia64, x64, ...
 		//
 		Hdr.Union = &HdrData;
-		NeedDelete = TRUE;
-    NeedDelete = bdsCheckFileName(&HdrData, FileSystemHandles[Index], EFI_REMOVABLE_MEDIA_FILE_NAME, NULL);
+    NeedDelete = bdsCheckFileName(&HdrData, FileSystemHandles[Index],  NewFileName, NULL); //EFI_REMOVABLE_MEDIA_FILE_NAME, NULL);
     if (NeedDelete)
         NeedDelete = bdsCheckFileName(&HdrData, FileSystemHandles[Index], L"\\Mac OS X Install Data\\boot.efi", NULL);
     if (NeedDelete)
@@ -1799,7 +1789,7 @@ BdsLibEnumerateAllBootOption (
 							 );
 	
 	for (Index = 0; Index < NumOfLoadFileHandles; Index++) {
-		UnicodeSPrint (Buffer, sizeof (Buffer), L"%s %d", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_NETWORK)), Index);
+		UnicodeSPrint (Buffer, sizeof (Buffer), L"PXE %d", Index);
 		BdsLibBuildOptionFromHandle (LoadFileHandles[Index], BdsBootOptionList, Buffer);
 	}
 	

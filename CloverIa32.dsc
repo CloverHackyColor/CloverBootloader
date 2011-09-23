@@ -81,6 +81,7 @@
   DxeServicesLib|MdePkg/Library/DxeServicesLib/DxeServicesLib.inf
   DxeServicesTableLib|MdePkg/Library/DxeServicesTableLib/DxeServicesTableLib.inf
   EfiFileLib|EmbeddedPkg/Library/EfiFileLib/EfiFileLib.inf
+  #FileHandleLib|ShellPkg/Library/BaseFileHandleLib/BaseFileHandleLib.inf
 
   #
   # Generic Modules
@@ -88,8 +89,8 @@
   UefiUsbLib|MdePkg/Library/UefiUsbLib/UefiUsbLib.inf
   #UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
   OemHookStatusCodeLib|MdeModulePkg/Library/OemHookStatusCodeLibNull/OemHookStatusCodeLibNull.inf
-  #GenericBdsLib|IntelFrameworkModulePkg/Library/GenericBdsLib/GenericBdsLib.inf
-  GenericBdsLib|Clover/OsxBdsLib/GenericBdsLib.inf
+  GenericBdsLib|IntelFrameworkModulePkg/Library/GenericBdsLib/GenericBdsLib.inf
+  #GenericBdsLib|Clover/OsxBdsLib/GenericBdsLib.inf
   SecurityManagementLib|MdeModulePkg/Library/DxeSecurityManagementLib/DxeSecurityManagementLib.inf
   CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibNull/DxeCapsuleLibNull.inf
   #
@@ -97,6 +98,7 @@
   #
   #PlatformBdsLib|DuetPkg/Library/DuetBdsLib/PlatformBds.inf
   PlatformBdsLib|Clover/OsxBdsPlatformLib/PlatformBds.inf
+  #TimerLib|OvmfPkg/Library/AcpiTimerLib/AcpiTimerLib.inf
   TimerLib|DuetPkg/Library/DuetTimerLib/DuetTimerLib.inf
   #
   # Misc
