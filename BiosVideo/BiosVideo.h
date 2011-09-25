@@ -60,6 +60,7 @@ typedef struct {
   UINTN                       FrameBufferSize;
   UINT32                      HorizontalResolution;
   UINT32                      VerticalResolution;
+  UINT32                      ColorDepth;
   UINT32                      RefreshRate;
   UINT32                      BitsPerPixel;
   BIOS_VIDEO_COLOR_PLACEMENT  Red;
@@ -104,6 +105,8 @@ typedef struct {
   // Graphics Output Protocol related fields
   //
   BOOLEAN                                     HardwareNeedsStarting;
+  UINTN                                       CurrentMode;
+  UINTN                                       MaxMode;
   BIOS_VIDEO_MODE_DATA                        *ModeData;
   UINT8                                       *LineBuffer;
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL               *VbeFrameBuffer;
@@ -236,9 +239,11 @@ BiosVideoCheckForVbe (
 EFI_STATUS
 EFIAPI
 BiosVideoCheckForVga (
-  BIOS_VIDEO_DEV  *BiosVideoPrivate
-  )
-;
+  IN OUT BIOS_VIDEO_DEV  *BiosVideoPrivate
+  );
+
+
+
 
 /**
   Collect the resource from destroyed bios video device.
@@ -257,18 +262,19 @@ BiosVideoDeviceReleaseResource (
 //
 /**
 
-  Graphics Output protocol interface to get video mode
+  @param  This                   Protocol instance pointer.
+  @param  ModeNumber             The mode number to return information on.
+  @param  SizeOfInfo             A pointer to the size, in bytes, of the Info
+                                 buffer.
+  @param  Info                   Caller allocated buffer that returns information
+                                 about ModeNumber.
 
-
-  @param This            - Protocol instance pointer.
-  @param ModeNumber      - The mode number to return information on.
-  @param SizeOfInfo      - A pointer to the size, in bytes, of the Info buffer.
-  @param Info            - Caller allocated buffer that returns information about ModeNumber.
-
-  @return EFI_SUCCESS           - Mode information returned.
-          EFI_DEVICE_ERROR      - A hardware error occurred trying to retrieve the video mode.
-          EFI_NOT_STARTED       - Video display is not initialized. Call SetMode ()
-          EFI_INVALID_PARAMETER - One of the input args was NULL.
+  @retval EFI_SUCCESS            Mode information returned.
+  @retval EFI_BUFFER_TOO_SMALL   The Info buffer was too small.
+  @retval EFI_DEVICE_ERROR       A hardware error occurred trying to retrieve the
+                                 video mode.
+  @retval EFI_NOT_STARTED        Video display is not initialized. Call SetMode ()
+  @retval EFI_INVALID_PARAMETER  One of the input args was NULL.
 
 **/
 EFI_STATUS

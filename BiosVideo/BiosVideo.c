@@ -890,23 +890,23 @@ ParseEdidData (
         //
         // A valid Standard Timing
         //
-        HorizontalResolution = (UINT8) (BufferIndex[0] * 8 + 248);
+        HorizontalResolution = (UINT16) (BufferIndex[0] * 8 + 248);
         AspectRatio = (UINT8) (BufferIndex[1] >> 6);
         switch (AspectRatio) {
           case 0:
-            VerticalResolution = (UINT8) (HorizontalResolution / 16 * 10);
+            VerticalResolution = (UINT16) (HorizontalResolution / 16 * 10);
             break;
           case 1:
-            VerticalResolution = (UINT8) (HorizontalResolution / 4 * 3);
+            VerticalResolution = (UINT16) (HorizontalResolution / 4 * 3);
             break;
           case 2:
-            VerticalResolution = (UINT8) (HorizontalResolution / 5 * 4);
+            VerticalResolution = (UINT16) (HorizontalResolution / 5 * 4);
             break;
           case 3:
-            VerticalResolution = (UINT8) (HorizontalResolution / 16 * 9);
+            VerticalResolution = (UINT16) (HorizontalResolution / 16 * 9);
             break;
           default:
-            VerticalResolution = (UINT8) (HorizontalResolution / 4 * 3);
+            VerticalResolution = (UINT16) (HorizontalResolution / 4 * 3);
             break;
         }
         RefreshRate = (UINT8) ((BufferIndex[1] & 0x1f) + 60);
@@ -1562,7 +1562,7 @@ BiosVideoCheckForVga (
   ModeBuffer->VerticalResolution    = 480;
   ModeBuffer->BitsPerPixel          = 8;  
   ModeBuffer->PixelFormat           = PixelBltOnly;
-//	ModeBuffer->ColorDepth            = 32;
+	ModeBuffer->ColorDepth            = 32;
 	ModeBuffer->RefreshRate           = 60;
 	
 
@@ -1649,7 +1649,7 @@ BiosVideoGraphicsOutputQueryMode (
   (*Info)->HorizontalResolution = ModeData->HorizontalResolution;
   (*Info)->VerticalResolution   = ModeData->VerticalResolution;
   (*Info)->PixelFormat = ModeData->PixelFormat;
-  (*Info)->PixelInformation = ModeData->PixelBitMask;
+  CopyMem (&((*Info)->PixelInformation), &(ModeData->PixelBitMask), sizeof(ModeData->PixelBitMask));
 
   (*Info)->PixelsPerScanLine =  (ModeData->BytesPerScanLine * 8) / ModeData->BitsPerPixel;
 
@@ -1789,7 +1789,7 @@ BiosVideoGraphicsOutputSetMode (
   This->Mode->Info->HorizontalResolution = ModeData->HorizontalResolution;
   This->Mode->Info->VerticalResolution = ModeData->VerticalResolution;
   This->Mode->Info->PixelFormat = ModeData->PixelFormat;
-  This->Mode->Info->PixelInformation = ModeData->PixelBitMask;
+  CopyMem (&(This->Mode->Info->PixelInformation), &(ModeData->PixelBitMask), sizeof (ModeData->PixelBitMask));
   This->Mode->Info->PixelsPerScanLine =  (ModeData->BytesPerScanLine * 8) / ModeData->BitsPerPixel;
   This->Mode->SizeOfInfo = sizeof(EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
 
@@ -2042,7 +2042,7 @@ BiosVideoGraphicsOutputVbeBlt (
       //
       VbeBuffer = ((UINT8 *) VbeFrameBuffer + (SrcY * BytesPerScanLine + SourceX * VbePixelWidth));
       for (DstX = DestinationX; DstX < (Width + DestinationX); DstX++) {
-        Pixel         = *(UINT32 *) (VbeBuffer);
+        Pixel         = VbeBuffer[0] | VbeBuffer[1] << 8 | VbeBuffer[2] << 16 | VbeBuffer[3] << 24;
         Blt->Red      = (UINT8) ((Pixel >> Mode->Red.Position) & Mode->Red.Mask);
         Blt->Blue     = (UINT8) ((Pixel >> Mode->Blue.Position) & Mode->Blue.Mask);
         Blt->Green    = (UINT8) ((Pixel >> Mode->Green.Position) & Mode->Green.Mask);
@@ -2605,7 +2605,7 @@ BiosVideoGraphicsOutputVgaBlt (
                     PciIo,
                     EfiPciIoWidthUint8,
                     EFI_PCI_IO_PASS_THROUGH_BAR,
-                    (UINT64) Address,
+                    (UINT64) (UINTN) Address,
                     1,
                     &Data
                     );
@@ -2616,7 +2616,7 @@ BiosVideoGraphicsOutputVgaBlt (
                     PciIo,
                     EfiPciIoWidthUint8,
                     EFI_PCI_IO_PASS_THROUGH_BAR,
-                    (UINT64) Address,
+                    (UINT64) (UINTN) Address,
                     1,
                     &PixelColor
                     );
@@ -2638,7 +2638,7 @@ BiosVideoGraphicsOutputVgaBlt (
                     PciIo,
                     EfiPciIoWidthFillUint8,
                     EFI_PCI_IO_PASS_THROUGH_BAR,
-                    (UINT64) Address,
+                    (UINT64) (UINTN) Address,
                     Bytes - 1,
                     &PixelColor
                     );
@@ -2663,7 +2663,7 @@ BiosVideoGraphicsOutputVgaBlt (
                     PciIo,
                     EfiPciIoWidthUint8,
                     EFI_PCI_IO_PASS_THROUGH_BAR,
-                    (UINT64) Address,
+                    (UINT64) (UINTN) Address,
                     1,
                     &Data
                     );
@@ -2674,7 +2674,7 @@ BiosVideoGraphicsOutputVgaBlt (
                     PciIo,
                     EfiPciIoWidthUint8,
                     EFI_PCI_IO_PASS_THROUGH_BAR,
-                    (UINT64) Address,
+                    (UINT64) (UINTN) Address,
                     1,
                     &PixelColor
                     );
@@ -2728,7 +2728,7 @@ BiosVideoGraphicsOutputVgaBlt (
                       PciIo,
                       EfiPciIoWidthUint8,
                       EFI_PCI_IO_PASS_THROUGH_BAR,
-                      (UINT64)(UINTN) Address1,
+                      (UINT64) (UINTN) Address1,
                       1,
                       &Data
                       );
