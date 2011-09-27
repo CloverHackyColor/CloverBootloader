@@ -298,7 +298,7 @@ MemMapDone:
 #        loopl   Delay25uS
 #Timeout8042: 
 #New algo from WIKI
-		cli
+/*		cli
 		call    a20wait
 		movb	$0xAD, %al
 		outb    %al, $KBD_STATUS_PORT
@@ -325,12 +325,12 @@ MemMapDone:
 		outb    %al, $KBD_STATUS_PORT
 		
 		call    a20wait
-
+*/
 		
 #WIKI -fast A20gate
-#		inb     $0x92, %al
-#		orb		$2, %al
-#		outb    %al, $0x92
+		inb     $0x92, %al
+		orb		$2, %al
+		outb    %al, $0x92
 
 A20GateEnabled: 
 #//Slice - switch to graphics mode (1), or 80x25 mono text mode (2)
@@ -341,7 +341,7 @@ A20GateEnabled:
 # DISABLE INTERRUPTS - Entering Protected Mode
 #
 
-#        cli
+        cli
 
 #        mov ax,0b800h
 #        mov es,ax

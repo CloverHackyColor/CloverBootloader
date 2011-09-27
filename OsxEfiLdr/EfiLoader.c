@@ -62,7 +62,7 @@ EfiLoader (
 //  PrintHeader ('A');
   
 
-//  PrintString ("Enter DUET Loader...\n");
+//  PrintString ("Enter Clover Loader...\n");
 //  PrintString ("BiosMemoryMapBaseAddress = %x\n", (UINTN) BiosMemoryMapBaseAddress);
 
   //
@@ -147,7 +147,6 @@ EfiLoader (
     );
 */
   Status = LzmaUefiDecompressGetInfo (
-//	  Status = UefiDecompressGetInfo (
              (VOID *)(UINTN)(EFILDR_HEADER_ADDRESS + EFILDRImage->Offset),
              EFILDRImage->Length,
              &DestinationSize, 
@@ -158,7 +157,6 @@ EfiLoader (
   }
 
   Status = LzmaUefiDecompress (
-//	Status = UefiDecompress (
              (VOID *)(UINTN)(EFILDR_HEADER_ADDRESS + EFILDRImage->Offset),
              EFILDRImage->Length,
              (VOID *)(UINTN)EFI_DECOMPRESSED_BUFFER_ADDRESS,
@@ -205,7 +203,7 @@ EfiLoader (
     );
 */
   Status = LzmaUefiDecompressGetInfo (
-//	Status = UefiDecompressGetInfo (
+
              (VOID *)(UINTN)(EFILDR_HEADER_ADDRESS + EFILDRImage->Offset),
              EFILDRImage->Length,
              &DestinationSize, 
@@ -216,7 +214,6 @@ EfiLoader (
   }
 
   Status = LzmaUefiDecompress (
-//	Status = UefiDecompress (
              (VOID *)(UINTN)(EFILDR_HEADER_ADDRESS + EFILDRImage->Offset),
               EFILDRImage->Length,
              (VOID *)(UINTN)EFI_DECOMPRESSED_BUFFER_ADDRESS,
