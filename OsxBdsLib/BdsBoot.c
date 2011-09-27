@@ -637,7 +637,7 @@ BdsLibBootViaBootOption (
   EFI_DEVICE_PATH_PROTOCOL  *FilePath;
   EFI_LOADED_IMAGE_PROTOCOL *ImageInfo;
   EFI_DEVICE_PATH_PROTOCOL  *WorkingDevicePath;
-//  EFI_ACPI_S3_SAVE_PROTOCOL *AcpiS3Save;
+  EFI_ACPI_S3_SAVE_PROTOCOL *AcpiS3Save;
 //  LIST_ENTRY                TempBootLists;
   EFI_SECURITY_ARCH_PROTOCOL *SecurityProtocol;
   CHAR16                    *NewFileName;
@@ -656,12 +656,10 @@ BdsLibBootViaBootOption (
   // hook on the event EVT_SIGNAL_READY_TO_BOOT or
   // EVT_SIGNAL_LEGACY_BOOT
   //
-	/*
   Status = gBS->LocateProtocol (&gEfiAcpiS3SaveProtocolGuid, NULL, (VOID **) &AcpiS3Save);
   if (!EFI_ERROR (Status)) {
     AcpiS3Save->S3Save (AcpiS3Save, NULL);
   } 
-	 */
   //
   // If it's Device Path that starts with a hard drive path, append it with the front part to compose a
   // full device path
@@ -691,7 +689,7 @@ BdsLibBootViaBootOption (
   // Adjust the different type memory page number just before booting
   // and save the updated info into the variable for next boot to use
   //
-//  BdsSetMemoryTypeInformationVariable ();
+  BdsSetMemoryTypeInformationVariable ();
 
 
   //
@@ -802,7 +800,8 @@ BdsLibBootViaBootOption (
       //
       break;
     default:
-      DEBUG((EFI_D_INFO, "Can not find HiiString for given device path type 0x%x\n", DevicePathTypeValue));
+//      DEBUG((EFI_D_INFO, "Can not find HiiString for given device path type 0x%x\n", DevicePathTypeValue));
+		break;
     }
 
     //
@@ -822,7 +821,7 @@ BdsLibBootViaBootOption (
       FreePool (BootStringNumber);
     }
 
-      DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Booting %S\n", Option->Description));
+//      DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Booting %S\n", Option->Description));
 
   DEBUG_CODE_END();
 /*  if (DevPathToTxt == NULL)
@@ -982,7 +981,7 @@ BdsExpandPartitionPartialDevicePathToFull (
   // Check if there is prestore 'HDDP' variable.
   // If exist, search the front path which point to partition node in the variable instants.
   // If fail to find or 'HDDP' not exist, reconnect all and search in all system
-  //
+  // HD_BOOT_DEVICE_PATH_VARIABLE_NAME == L"HDDP" ?
   CachedDevicePath = BdsLibGetVariableAndSize (
                       L"HDDP",
                       &mHdBootVariablePrivateGuid,
@@ -1635,7 +1634,9 @@ BdsLibEnumerateAllBootOption (
 	BdsDeleteAllInvalidEfiBootOption ();
 	
 	//
-	// Parse removable media
+  // Parse removable media followed by fixed media.
+  // The Removable[] array is used by the for-loop below to create removable media boot options 
+  // at first, and then to create fixed media boot options.
 	//
   Removable[0]  = FALSE;
   Removable[1]  = TRUE;
@@ -1909,7 +1910,7 @@ BdsLibBuildOptionFromShell (
   //
   // Create and register the shell boot option
   //
-  BdsLibRegisterNewOption (BdsBootOptionList, DevicePath, L"EFI Internal Shell", L"BootOrder");
+//  BdsLibRegisterNewOption (BdsBootOptionList, DevicePath, L"EFI Internal Shell", L"BootOrder");
 
 }
 

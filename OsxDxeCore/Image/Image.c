@@ -77,6 +77,46 @@ LOADED_IMAGE_PRIVATE_DATA mCorePrivateImage  = {
 //
 GLOBAL_REMOVE_IF_UNREFERENCED    UINT64                *mDxeCodeMemoryRangeUsageBitMap=NULL;
 
+typedef struct {
+  UINT16  MachineType;
+  CHAR16  *MachineTypeName;
+} MACHINE_TYPE_INFO;
+
+//
+// EBC machine is not listed in this table, because EBC is in the default supported scopes of other machine type.
+//
+GLOBAL_REMOVE_IF_UNREFERENCED MACHINE_TYPE_INFO  mMachineTypeInfo[] = {
+  {EFI_IMAGE_MACHINE_IA32,           L"IA32"},
+  {EFI_IMAGE_MACHINE_IA64,           L"IA64"},
+  {EFI_IMAGE_MACHINE_X64,            L"X64"},
+  {EFI_IMAGE_MACHINE_ARMTHUMB_MIXED, L"ARM"}
+};
+
+UINT16 mDxeCoreImageMachineType = 0;
+
+/**
+ Return machine type name.
+
+ @param MachineType The machine type
+
+ @return machine type name
+**/
+CHAR16 *
+GetMachineTypeName (
+  UINT16 MachineType
+  )
+{
+  UINTN  Index;
+  
+  for (Index = 0; Index < sizeof(mMachineTypeInfo)/sizeof(mMachineTypeInfo[0]); Index++) {
+    if (mMachineTypeInfo[Index].MachineType == MachineType) {
+      return mMachineTypeInfo[Index].MachineTypeName;
+    }
+  }
+
+  return L"<Unknown>";
+}
+
 /**
   Add the Image Services to EFI Boot Services Table and install the protocol
   interfaces for this image.
@@ -147,6 +187,7 @@ CoreInitializeImageServices (
   //
   // Fill in DXE globals
   //
+  mDxeCoreImageMachineType = PeCoffLoaderGetMachineType (Image->Info.ImageBase);
   gDxeCoreImageHandle = Image->Handle;
   gDxeCoreLoadedImage = &Image->Info;
 
@@ -369,7 +410,7 @@ GetPeCoffImageFixLoadingAssignedAddress(
      }
      SectionHeaderOffset += sizeof (EFI_IMAGE_SECTION_HEADER);
    }
-   DEBUG ((EFI_D_INFO|EFI_D_LOAD, "LOADING MODULE FIXED INFO: Loading module at fixed address 0x%11p. Status = %r \n", (VOID *)(UINTN)(ImageContext->ImageAddress), Status));
+//   DEBUG ((EFI_D_INFO|EFI_D_LOAD, "LOADING MODULE FIXED INFO: Loading module at fixed address 0x%11p. Status = %r \n", (VOID *)(UINTN)(ImageContext->ImageAddress), Status));
    return Status;
 }
 /**
@@ -426,6 +467,8 @@ CoreLoadPeImage (
       // The PE/COFF loader can support loading image types that can be executed.
       // If we loaded an image type that we can not execute return EFI_UNSUPORTED.
       //
+//      DEBUG ((EFI_D_ERROR, "Image type %s can't be loaded ", GetMachineTypeName(Image->ImageContext.Machine)));
+//      DEBUG ((EFI_D_ERROR, "on %s UEFI system.\n", GetMachineTypeName(mDxeCoreImageMachineType)));
       return EFI_UNSUPPORTED;
     }
   }
@@ -488,7 +531,7 @@ CoreLoadPeImage (
           //
       	  // If the code memory is not ready, invoke CoreAllocatePage with AllocateAnyPages to load the driver.
       	  //
-          DEBUG ((EFI_D_INFO|EFI_D_LOAD, "LOADING MODULE FIXED ERROR: Loading module at fixed address failed since specified memory is not available.\n"));
+//          DEBUG ((EFI_D_INFO|EFI_D_LOAD, "LOADING MODULE FIXED ERROR: Loading module at fixed address failed since specified memory is not available.\n"));
         
           Status = CoreAllocatePages (
                      AllocateAnyPages,
@@ -606,7 +649,7 @@ CoreLoadPeImage (
     //
     Status = CoreLocateProtocol (&gEfiEbcProtocolGuid, NULL, (VOID **)&Image->Ebc);
     if (EFI_ERROR(Status) || Image->Ebc == NULL) {
-      DEBUG ((DEBUG_LOAD | DEBUG_ERROR, "CoreLoadPeImage: There is no EBC interpreter for an EBC image.\n"));
+//      DEBUG ((DEBUG_LOAD | DEBUG_ERROR, "CoreLoadPeImage: There is no EBC interpreter for an EBC image.\n"));
       goto Done;
     }
 
@@ -670,17 +713,17 @@ CoreLoadPeImage (
   // Print the load address and the PDB file name if it is available
   //
 
-  DEBUG_CODE_BEGIN ();
+//  DEBUG_CODE_BEGIN ();
 
     UINTN Index;
     UINTN StartIndex;
     CHAR8 EfiFileName[256];
 
 
-    DEBUG ((DEBUG_INFO | DEBUG_LOAD,
-           "Loading driver at 0x%11p EntryPoint=0x%11p ",
-           (VOID *)(UINTN) Image->ImageContext.ImageAddress,
-           FUNCTION_ENTRY_POINT (Image->ImageContext.EntryPoint)));
+//    DEBUG ((DEBUG_INFO | DEBUG_LOAD,
+//           "Loading driver at 0x%11p EntryPoint=0x%11p ",
+//           (VOID *)(UINTN) Image->ImageContext.ImageAddress,
+//           FUNCTION_ENTRY_POINT (Image->ImageContext.EntryPoint)));
 
 
     //
@@ -716,11 +759,11 @@ CoreLoadPeImage (
       if (Index == sizeof (EfiFileName) - 4) {
         EfiFileName[Index] = 0;
       }
-      DEBUG ((DEBUG_INFO | DEBUG_LOAD, "%a", EfiFileName)); // &Image->ImageContext.PdbPointer[StartIndex]));
+//      DEBUG ((DEBUG_INFO | DEBUG_LOAD, "%a", EfiFileName)); // &Image->ImageContext.PdbPointer[StartIndex]));
     }
-    DEBUG ((DEBUG_INFO | DEBUG_LOAD, "\n"));
+//    DEBUG ((DEBUG_INFO | DEBUG_LOAD, "\n"));
 
-  DEBUG_CODE_END ();
+//  DEBUG_CODE_END ();
 
   return EFI_SUCCESS;
 
@@ -768,7 +811,7 @@ CoreLoadedImageInfo (
   if (!EFI_ERROR (Status)) {
     Image = LOADED_IMAGE_PRIVATE_DATA_FROM_THIS (LoadedImage);
   } else {
-    DEBUG ((DEBUG_LOAD, "CoreLoadedImageInfo: Not an ImageHandle %p\n", ImageHandle));
+//    DEBUG ((DEBUG_LOAD, "CoreLoadedImageInfo: Not an ImageHandle %p\n", ImageHandle));
     Image = NULL;
   }
 
@@ -1321,8 +1364,8 @@ CoreLoadImage (
              EFI_LOAD_PE_IMAGE_ATTRIBUTE_RUNTIME_REGISTRATION | EFI_LOAD_PE_IMAGE_ATTRIBUTE_DEBUG_IMAGE_INFO_TABLE_REGISTRATION
              );
 
-  PERF_START (*ImageHandle, "LoadImage:", NULL, Tick);
-  PERF_END (*ImageHandle, "LoadImage:", NULL, 0);
+//  PERF_START (*ImageHandle, "LoadImage:", NULL, Tick);
+//  PERF_END (*ImageHandle, "LoadImage:", NULL, 0);
 
   return Status;
 }
@@ -1436,15 +1479,20 @@ CoreStartImage (
   //
   // The image to be started must have the machine type supported by DxeCore.
   //
-  ASSERT (EFI_IMAGE_MACHINE_TYPE_SUPPORTED (Image->Machine));
   if (!EFI_IMAGE_MACHINE_TYPE_SUPPORTED (Image->Machine)) {
+    //
+    // Do not ASSERT here, because image might be loaded via EFI_IMAGE_MACHINE_CROSS_TYPE_SUPPORTED
+    // But it can not be started.
+    //
+//    DEBUG ((EFI_D_ERROR, "Image type %s can't be started ", GetMachineTypeName(Image->Machine)));
+//    DEBUG ((EFI_D_ERROR, "on %s UEFI system.\n", GetMachineTypeName(mDxeCoreImageMachineType)));
     return EFI_UNSUPPORTED;
   }
 
   //
   // Don't profile Objects or invalid start requests
   //
-  PERF_START (ImageHandle, "StartImage:", NULL, 0);
+//  PERF_START (ImageHandle, "StartImage:", NULL, 0);
 
 
   //
@@ -1464,7 +1512,7 @@ CoreStartImage (
   //
   Image->JumpBuffer = AllocatePool (sizeof (BASE_LIBRARY_JUMP_BUFFER) + BASE_LIBRARY_JUMP_BUFFER_ALIGNMENT);
   if (Image->JumpBuffer == NULL) {
-    PERF_END (ImageHandle, "StartImage:", NULL, 0);
+//    PERF_END (ImageHandle, "StartImage:", NULL, 0);
     return EFI_OUT_OF_RESOURCES;
   }
   Image->JumpContext = ALIGN_POINTER (Image->JumpBuffer, BASE_LIBRARY_JUMP_BUFFER_ALIGNMENT);
@@ -1486,12 +1534,13 @@ CoreStartImage (
     // This make the user aware and check if the driver image have already released
     // all the resource in this situation.
     //
+ /*   
     DEBUG_CODE_BEGIN ();
       if (EFI_ERROR (Image->Status)) {
         DEBUG ((DEBUG_ERROR, "Error: Image at %11p start failed: %r\n", Image->Info.ImageBase, Image->Status));
       }
     DEBUG_CODE_END ();
-
+*/
     //
     // If the image returns, exit it through Exit()
     //
@@ -1519,6 +1568,7 @@ CoreStartImage (
   //
   // Handle the image's returned ExitData
   //
+  /*
   DEBUG_CODE_BEGIN ();
     if (Image->ExitDataSize != 0 || Image->ExitData != NULL) {
 
@@ -1529,7 +1579,7 @@ CoreStartImage (
       DEBUG ((DEBUG_LOAD, "\n"));
     }
   DEBUG_CODE_END ();
-
+*/
   //
   //  Return the exit data to the caller
   //

@@ -950,7 +950,7 @@ SetupResetReminder (
       //
       // If the user hits the YES Response key, reset
       //
-      if ((Key.UnicodeChar == CHAR_CARRIAGE_RETURN)) {
+      if (Key.UnicodeChar == CHAR_CARRIAGE_RETURN) {
         gRT->ResetSystem (EfiResetCold, EFI_SUCCESS, 0, NULL);
       }
       gST->ConOut->ClearScreen (gST->ConOut);
@@ -1189,17 +1189,14 @@ BdsLibGetImageHeader (
 
 **/
 VOID
-EFIAPI
 BdsSetMemoryTypeInformationVariable (
-  EFI_EVENT  Event,
-  VOID       *Context
+  VOID
   )
 {
   EFI_STATUS                   Status;
   EFI_MEMORY_TYPE_INFORMATION  *PreviousMemoryTypeInformation;
   EFI_MEMORY_TYPE_INFORMATION  *CurrentMemoryTypeInformation;
   UINTN                        VariableSize;
-  BOOLEAN                      UpdateRequired;
   UINTN                        Index;
   UINTN                        Index1;
   UINT32                       Previous;
@@ -1208,12 +1205,12 @@ BdsSetMemoryTypeInformationVariable (
   EFI_HOB_GUID_TYPE            *GuidHob;
   BOOLEAN                      MemoryTypeInformationModified;
   BOOLEAN                      MemoryTypeInformationVariableExists;
-//  EFI_BOOT_MODE                BootMode;
+  EFI_BOOT_MODE                BootMode;
 
   MemoryTypeInformationModified       = FALSE;
   MemoryTypeInformationVariableExists = FALSE;
 
-#if NOTVBOX
+#if 1 //NOTVBOX
   BootMode = GetBootModeHob ();
   //
   // In BOOT_IN_RECOVERY_MODE, Variable region is not reliable.
@@ -1242,7 +1239,7 @@ BdsSetMemoryTypeInformationVariable (
   }
 #endif
 
-  UpdateRequired = FALSE;
+//  UpdateRequired = FALSE;
 
   //
   // Retrieve the current memory usage statistics.  If they are not found, then
@@ -1297,19 +1294,20 @@ BdsSetMemoryTypeInformationVariable (
     // Current is the number of pages actually needed
     //
     Previous = PreviousMemoryTypeInformation[Index].NumberOfPages;
+    Current  = CurrentMemoryTypeInformation[Index1].NumberOfPages;
+    Next     = Previous;
 
     //
     // Write next variable to 125% * current and Inconsistent Memory Reserved across bootings may lead to S4 fail
     //
-#if NOTVBOX    
-    if (!MemoryTypeInformationVariableExists && Current < Previous) {
+    if (Current < Previous) {
+      if (BootMode == BOOT_WITH_DEFAULT_SETTINGS) {
       Next = Current + (Current >> 2);
-    } else 
-#endif    
-    if (Current > Previous) {
+      } else if (!MemoryTypeInformationVariableExists) {
+        Next = MAX (Current + (Current >> 2), Previous);
+      }
+    } else if (Current > Previous) {
       Next = Current + (Current >> 2);
-    } else {
-      Next = Previous;
     }
     if (Next > 0 && Next < 4) {
       Next = 4;
@@ -1318,7 +1316,6 @@ BdsSetMemoryTypeInformationVariable (
     if (Next != Previous) {
       PreviousMemoryTypeInformation[Index].NumberOfPages = Next;
       MemoryTypeInformationModified = TRUE;
-            UpdateRequired = TRUE;
     }
 
 //    DEBUG ((EFI_D_INFO, "  %02x    %08x  %08x  %08x\n", PreviousMemoryTypeInformation[Index].Type, Previous, Current, Next));
@@ -1326,7 +1323,6 @@ BdsSetMemoryTypeInformationVariable (
 
   //
   // If any changes were made to the Memory Type Information settings, then set the new variable value;
-#if NOTVBOX  
   // Or create the variable in first boot.
   //
   if (MemoryTypeInformationModified || !MemoryTypeInformationVariableExists) {
@@ -1348,21 +1344,6 @@ BdsSetMemoryTypeInformationVariable (
       gRT->ResetSystem (EfiResetWarm, EFI_SUCCESS, 0, NULL);
     }
   }
-#else
-  if (UpdateRequired) {
-    Status = gRT->SetVariable (
-          EFI_MEMORY_TYPE_INFORMATION_VARIABLE_NAME,
-          &gEfiMemoryTypeInformationGuid,
-          EFI_VARIABLE_NON_VOLATILE  | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-          VariableSize,
-          PreviousMemoryTypeInformation
-          );
-  }
-
-  return;
-
-#endif    
-
 }
 
 /**
@@ -1376,6 +1357,7 @@ BdsLibSaveMemoryTypeInformation (
   VOID
   )
 {
+	/*
   EFI_STATUS                   Status;
   EFI_EVENT                    ReadyToBootEvent;
 
@@ -1388,6 +1370,7 @@ BdsLibSaveMemoryTypeInformation (
   if (EFI_ERROR (Status)) {
    // DEBUG ((DEBUG_ERROR,"Bds Set Memory Type Information Variable Fails\n"));
   }
+	 */
 }
 
 

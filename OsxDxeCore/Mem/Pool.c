@@ -62,8 +62,8 @@ typedef struct {
 
 #define POOL_SIGNATURE  SIGNATURE_32('p','l','s','t')
 typedef struct {
-    INTN             Signature;
-    UINTN            Used;
+    INT32             Signature;
+    UINT32            Used;
     EFI_MEMORY_TYPE  MemoryType;
     LIST_ENTRY       FreeList[MAX_POOL_LIST];
     LIST_ENTRY       Link;
@@ -334,7 +334,7 @@ Done:
     Tail->Size      = (UINT32) Size;
     Buffer          = Head->Data;
     DEBUG_CLEAR_MEMORY (Buffer, Size - POOL_OVERHEAD);
-
+/*
     DEBUG ((
       DEBUG_POOL,
       "AllocatePoolI: Type %x, Addr %p (len %lx) %,ld\n", PoolType,
@@ -342,15 +342,15 @@ Done:
       (UINT64)(Size - POOL_OVERHEAD),
       (UINT64) Pool->Used
       ));
-
+*/
     //
     // Account the allocation
     //
     Pool->Used += Size;
 
-  } else {
+  } /*else {
     DEBUG ((DEBUG_ERROR | DEBUG_POOL, "AllocatePool: failed to allocate %ld bytes\n", (UINT64) Size));
-  }
+  }*/
 
   return Buffer;
 }
@@ -451,7 +451,7 @@ CoreFreePoolI (
     return EFI_INVALID_PARAMETER;
   }
   Pool->Used -= Size;
-  DEBUG ((DEBUG_POOL, "FreePool: %p (len %lx) %,ld\n", Head->Data, (UINT64)(Head->Size - POOL_OVERHEAD), (UINT64) Pool->Used));
+//  DEBUG ((DEBUG_POOL, "FreePool: %p (len %lx) %,ld\n", Head->Data, (UINT64)(Head->Size - POOL_OVERHEAD), (UINT64) Pool->Used));
 
   //
   // Determine the pool list

@@ -273,14 +273,18 @@ BdsLibUpdateConsoleVariable (
   //
   // Finally, Update the variable of the default console by NewDevicePath
   //
+  DevicePathSize = GetDevicePathSize (NewDevicePath);
   Status = gRT->SetVariable (
         ConVarName,
         &gEfiGlobalVariableGuid,
         Attributes,
-        GetDevicePathSize (NewDevicePath),
+                  DevicePathSize,
         NewDevicePath
         );
-//  ASSERT_EFI_ERROR (Status);
+  if ((DevicePathSize == 0) && (Status == EFI_NOT_FOUND)) {
+    Status = EFI_SUCCESS;
+  }
+  ASSERT_EFI_ERROR (Status);
 
   if (VarConsole == NewDevicePath) {
     if (VarConsole != NULL) {
@@ -295,7 +299,7 @@ BdsLibUpdateConsoleVariable (
     }
   }
 
-  return EFI_SUCCESS;
+  return Status;
 
 }
 
@@ -372,15 +376,7 @@ BdsLibConnectConsoleVariable (
        ((DevicePathSubType (Instance) == MSG_USB_CLASS_DP)
        || (DevicePathSubType (Instance) == MSG_USB_WWID_DP)
        )) {
-      //
-      // Check the Usb console in Usb2.0 bus firstly, then Usb1.1 bus
-      //
-      Status = BdsLibConnectUsbDevByShortFormDP (PCI_IF_EHCI, Instance);
-      if (!EFI_ERROR (Status)) {
-        DeviceExist = TRUE;
-      }
-
-      Status = BdsLibConnectUsbDevByShortFormDP (PCI_IF_UHCI, Instance);
+      Status = BdsLibConnectUsbDevByShortFormDP (0xFF, Instance);
       if (!EFI_ERROR (Status)) {
         DeviceExist = TRUE;
       }

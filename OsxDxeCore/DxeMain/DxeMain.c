@@ -274,8 +274,8 @@ DxeMain (
   // Call constructor for all libraries
   //
   ProcessLibraryConstructorList (gDxeCoreImageHandle, gDxeCoreST);
-  PERF_END   (NULL,"PEI", NULL, 0) ;
-  PERF_START (NULL,"DXE", NULL, 0) ;
+//  PERF_END   (NULL,"PEI", NULL, 0) ;
+//  PERF_START (NULL,"DXE", NULL, 0) ;
 
   //
   // Report DXE Core image information to the PE/COFF Extra Action Library
@@ -320,11 +320,11 @@ DxeMain (
   //
   // Report Status Code here for DXE_ENTRY_POINT once it is available
   //
-  REPORT_STATUS_CODE (
+/*  REPORT_STATUS_CODE (
     EFI_PROGRESS_CODE,
     (EFI_SOFTWARE_DXE_CORE | EFI_SW_DXE_CORE_PC_ENTRY_POINT)
     );
-
+*/
   //
   // Create the aligned system table pointer structure that is used by external
   // debuggers to locate the system table...  Also, install debug image info
@@ -336,7 +336,7 @@ DxeMain (
     gDxeCoreLoadedImage,
     gDxeCoreImageHandle
     );
-
+/*
   DEBUG ((DEBUG_INFO | DEBUG_LOAD, "HOBLIST address in DXE = 0x%p\n", HobStart));
 
   DEBUG_CODE_BEGIN ();
@@ -358,7 +358,7 @@ DxeMain (
       }
     }
   DEBUG_CODE_END ();
-
+*/
   //
   // Initialize the Event Services
   //
@@ -413,31 +413,31 @@ DxeMain (
   //
   // Initialize the DXE Dispatcher
   //
-  PERF_START (NULL,"CoreInitializeDispatcher", "DxeMain", 0) ;
+//  PERF_START (NULL,"CoreInitializeDispatcher", "DxeMain", 0) ;
   CoreInitializeDispatcher ();
-  PERF_END (NULL,"CoreInitializeDispatcher", "DxeMain", 0) ;
+//  PERF_END (NULL,"CoreInitializeDispatcher", "DxeMain", 0) ;
 
   //
   // Invoke the DXE Dispatcher
   //
-  PERF_START (NULL, "CoreDispatcher", "DxeMain", 0);
+//  PERF_START (NULL, "CoreDispatcher", "DxeMain", 0);
   CoreDispatcher ();
-  PERF_END (NULL, "CoreDispatcher", "DxeMain", 0);
+//  PERF_END (NULL, "CoreDispatcher", "DxeMain", 0);
 
   //
   // Display Architectural protocols that were not loaded if this is DEBUG build
   //
-  DEBUG_CODE_BEGIN ();
+//  DEBUG_CODE_BEGIN ();
     CoreDisplayMissingArchProtocols ();
-  DEBUG_CODE_END ();
+//  DEBUG_CODE_END ();
 
   //
   // Display any drivers that were not dispatched because dependency expression
   // evaluated to false if this is a debug build
   //
-  DEBUG_CODE_BEGIN ();
+//  DEBUG_CODE_BEGIN ();
     CoreDisplayDiscoveredNotDispatched ();
-  DEBUG_CODE_END ();
+//  DEBUG_CODE_END ();
 
   //
   // Assert if the Architectural Protocols are not present.
@@ -447,11 +447,11 @@ DxeMain (
   //
   // Report Status code before transfer control to BDS
   //
-  REPORT_STATUS_CODE (
+/*  REPORT_STATUS_CODE (
     EFI_PROGRESS_CODE,
     (EFI_SOFTWARE_DXE_CORE | EFI_SW_DXE_CORE_PC_HANDOFF_TO_NEXT)
     );
-
+*/
   //
   // Transfer control to the BDS Architectural Protocol
   //
@@ -706,11 +706,11 @@ CoreExitBootServices (
   //
   // Report that ExitBootServices() has been called
   //
-  REPORT_STATUS_CODE (
+/*  REPORT_STATUS_CODE (
     EFI_PROGRESS_CODE,
     (EFI_SOFTWARE_EFI_BOOT_SERVICE | EFI_SW_BS_PC_EXIT_BOOT_SERVICES)
     );
-
+*/
   //
   // Clear the non-runtime values of the EFI System Table
   //

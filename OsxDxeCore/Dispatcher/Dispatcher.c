@@ -333,13 +333,13 @@ CoreSchedule (
       DriverEntry->Dependent    = TRUE;
       CoreReleaseDispatcherLock ();
 
-      DEBUG ((DEBUG_DISPATCH, "Schedule FFS(%g) - EFI_SUCCESS\n", DriverName));
+//      DEBUG ((DEBUG_DISPATCH, "Schedule FFS(%g) - EFI_SUCCESS\n", DriverName));
       
       return EFI_SUCCESS;
     }
   }
   
-  DEBUG ((DEBUG_DISPATCH, "Schedule FFS(%g) - EFI_NOT_FOUND\n", DriverName));
+//  DEBUG ((DEBUG_DISPATCH, "Schedule FFS(%g) - EFI_NOT_FOUND\n", DriverName));
   
   return EFI_NOT_FOUND;
 }
@@ -478,7 +478,7 @@ CoreDispatcher (
       // skip the LoadImage
       //
       if (DriverEntry->ImageHandle == NULL) {
-        DEBUG ((DEBUG_INFO, "Loading driver %g\n", &DriverEntry->FileName));
+//        DEBUG ((DEBUG_INFO, "Loading driver %g\n", &DriverEntry->FileName));
         Status = CoreLoadImage (
                         FALSE,
                         gDxeCoreImageHandle,
@@ -577,13 +577,13 @@ CoreDispatcher (
           CoreInsertOnScheduledQueueWhileProcessingBeforeAndAfter (DriverEntry);
           ReadyToRun = TRUE;
         }
-      } else {
+      }/* else {
         if (DriverEntry->Unrequested) {
           DEBUG ((DEBUG_DISPATCH, "Evaluate DXE DEPEX for FFS(%g)\n", &DriverEntry->FileName));
           DEBUG ((DEBUG_DISPATCH, "  SOR                                             = Not Requested\n"));
           DEBUG ((DEBUG_DISPATCH, "  RESULT = FALSE\n"));
         }
-      }
+      }*/
     }
   } while (ReadyToRun);
 
@@ -623,17 +623,17 @@ CoreInsertOnScheduledQueueWhileProcessingBeforeAndAfter (
   for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link = Link->ForwardLink) {
     DriverEntry = CR(Link, EFI_CORE_DRIVER_ENTRY, Link, EFI_CORE_DRIVER_ENTRY_SIGNATURE);
     if (DriverEntry->Before && DriverEntry->Dependent && DriverEntry != InsertedDriverEntry) {
-      DEBUG ((DEBUG_DISPATCH, "Evaluate DXE DEPEX for FFS(%g)\n", &DriverEntry->FileName));
-      DEBUG ((DEBUG_DISPATCH, "  BEFORE FFS(%g) = ", &DriverEntry->BeforeAfterGuid));
+ //     DEBUG ((DEBUG_DISPATCH, "Evaluate DXE DEPEX for FFS(%g)\n", &DriverEntry->FileName));
+ //     DEBUG ((DEBUG_DISPATCH, "  BEFORE FFS(%g) = ", &DriverEntry->BeforeAfterGuid));
       if (CompareGuid (&InsertedDriverEntry->FileName, &DriverEntry->BeforeAfterGuid)) {
         //
         // Recursively process BEFORE
         //
-        DEBUG ((DEBUG_DISPATCH, "TRUE\n  END\n  RESULT = TRUE\n"));
+ //       DEBUG ((DEBUG_DISPATCH, "TRUE\n  END\n  RESULT = TRUE\n"));
         CoreInsertOnScheduledQueueWhileProcessingBeforeAndAfter (DriverEntry);
-      } else {
+      }/* else {
         DEBUG ((DEBUG_DISPATCH, "FALSE\n  END\n  RESULT = FALSE\n"));
-      }
+      }*/
     }
   }
 
@@ -654,17 +654,17 @@ CoreInsertOnScheduledQueueWhileProcessingBeforeAndAfter (
   for (Link = mDiscoveredList.ForwardLink; Link != &mDiscoveredList; Link = Link->ForwardLink) {
     DriverEntry = CR(Link, EFI_CORE_DRIVER_ENTRY, Link, EFI_CORE_DRIVER_ENTRY_SIGNATURE);
     if (DriverEntry->After && DriverEntry->Dependent && DriverEntry != InsertedDriverEntry) {
-      DEBUG ((DEBUG_DISPATCH, "Evaluate DXE DEPEX for FFS(%g)\n", &DriverEntry->FileName));
-      DEBUG ((DEBUG_DISPATCH, "  AFTER FFS(%g) = ", &DriverEntry->BeforeAfterGuid));
+//      DEBUG ((DEBUG_DISPATCH, "Evaluate DXE DEPEX for FFS(%g)\n", &DriverEntry->FileName));
+//      DEBUG ((DEBUG_DISPATCH, "  AFTER FFS(%g) = ", &DriverEntry->BeforeAfterGuid));
       if (CompareGuid (&InsertedDriverEntry->FileName, &DriverEntry->BeforeAfterGuid)) {
         //
         // Recursively process AFTER
         //
-        DEBUG ((DEBUG_DISPATCH, "TRUE\n  END\n  RESULT = TRUE\n"));
+//        DEBUG ((DEBUG_DISPATCH, "TRUE\n  END\n  RESULT = TRUE\n"));
         CoreInsertOnScheduledQueueWhileProcessingBeforeAndAfter (DriverEntry);
-      } else {
+      }/* else {
         DEBUG ((DEBUG_DISPATCH, "FALSE\n  END\n  RESULT = FALSE\n"));
-      }
+      }*/
     }
   }
 }
@@ -1171,8 +1171,8 @@ CoreFwVolEventProtocolNotify (
           DriverEntry->Scheduled = TRUE;
           InsertTailList (&mScheduledQueue, &DriverEntry->ScheduledLink);
           CoreReleaseDispatcherLock ();
-          DEBUG ((DEBUG_DISPATCH, "Evaluate DXE DEPEX for FFS(%g)\n", &DriverEntry->FileName));
-          DEBUG ((DEBUG_DISPATCH, "  RESULT = TRUE (Apriori)\n"));
+//          DEBUG ((DEBUG_DISPATCH, "Evaluate DXE DEPEX for FFS(%g)\n", &DriverEntry->FileName));
+//          DEBUG ((DEBUG_DISPATCH, "  RESULT = TRUE (Apriori)\n"));
           break;
         }
       }
@@ -1225,8 +1225,8 @@ CoreDisplayDiscoveredNotDispatched (
 
   for (Link = mDiscoveredList.ForwardLink;Link !=&mDiscoveredList; Link = Link->ForwardLink) {
     DriverEntry = CR(Link, EFI_CORE_DRIVER_ENTRY, Link, EFI_CORE_DRIVER_ENTRY_SIGNATURE);
-    if (DriverEntry->Dependent) {
+/*    if (DriverEntry->Dependent) {
       DEBUG ((DEBUG_LOAD, "Driver %g was discovered but not loaded!!\n", &DriverEntry->FileName));
-    }
+    }*/
   }
 }

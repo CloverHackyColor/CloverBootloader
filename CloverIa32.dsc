@@ -89,8 +89,8 @@
   UefiUsbLib|MdePkg/Library/UefiUsbLib/UefiUsbLib.inf
   #UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
   OemHookStatusCodeLib|MdeModulePkg/Library/OemHookStatusCodeLibNull/OemHookStatusCodeLibNull.inf
-  GenericBdsLib|IntelFrameworkModulePkg/Library/GenericBdsLib/GenericBdsLib.inf
-  #GenericBdsLib|Clover/OsxBdsLib/GenericBdsLib.inf
+  #GenericBdsLib|IntelFrameworkModulePkg/Library/GenericBdsLib/GenericBdsLib.inf
+  GenericBdsLib|Clover/OsxBdsLib/GenericBdsLib.inf
   SecurityManagementLib|MdeModulePkg/Library/DxeSecurityManagementLib/DxeSecurityManagementLib.inf
   CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibNull/DxeCapsuleLibNull.inf
   #
@@ -197,8 +197,8 @@
       #ReportStatusCodeLib|MdeModulePkg/Library/DxeReportStatusCodeLib/DxeReportStatusCodeLib.inf
       ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
   }
-#  Clover/OsxDxeCore/DxeMain.inf {
- MdeModulePkg/Core/Dxe/DxeMain.inf {
+  Clover/OsxDxeCore/DxeMain.inf {
+# MdeModulePkg/Core/Dxe/DxeMain.inf {
     #
     # Enable debug output for DxeCore module, this is a sample for how to enable debug output
     # for a module. If need turn on debug output for other module, please copy following overriden
@@ -206,9 +206,9 @@
     #
     <PcdsFixedAtBuild>
       gEfiMdePkgTokenSpaceGuid.PcdReportStatusCodePropertyMask|0x0
-      gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x82
+      gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x0
       #0x82
-      gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000042
+      gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x0
       #0x80000042
     <LibraryClasses>
      # DebugLib|IntelFrameworkModulePkg/Library/PeiDxeDebugLibReportStatusCode/PeiDxeDebugLibReportStatusCode.inf

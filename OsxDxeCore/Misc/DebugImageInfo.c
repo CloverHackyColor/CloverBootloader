@@ -71,10 +71,10 @@ CoreInitializeDebugImageInfoTable (
              &Memory
              );
   if (EFI_ERROR (Status)) {
-    if (PcdGet64 (PcdMaxEfiSystemTablePointerAddress) != 0) {
+/*    if (PcdGet64 (PcdMaxEfiSystemTablePointerAddress) != 0) {
       DEBUG ((EFI_D_INFO, "Allocate memory for EFI_SYSTEM_TABLE_POINTER below PcdMaxEfiSystemTablePointerAddress failed. \
                           Retry to allocate memroy as close to the top of memory as feasible.\n"));
-    }
+    }*/
     //
     // If the initial memory allocation fails, then reattempt allocation
     // as close to the top of memory as feasible.

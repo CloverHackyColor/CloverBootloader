@@ -273,7 +273,7 @@ CoreDisplayMissingArchProtocols (
     if (!Entry->Present) {
       for (MissingEntry = mMissingProtocols; MissingEntry->ProtocolGuid != NULL; MissingEntry++) {
         if (CompareGuid (Entry->ProtocolGuid, MissingEntry->ProtocolGuid)) {
-          DEBUG ((DEBUG_ERROR, "\n%a Arch Protocol not present!!\n", MissingEntry->GuidString));
+ //         DEBUG ((DEBUG_ERROR, "\n%a Arch Protocol not present!!\n", MissingEntry->GuidString));
           break;
         }
       }
