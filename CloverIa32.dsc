@@ -89,8 +89,8 @@
   UefiUsbLib|MdePkg/Library/UefiUsbLib/UefiUsbLib.inf
   #UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
   OemHookStatusCodeLib|MdeModulePkg/Library/OemHookStatusCodeLibNull/OemHookStatusCodeLibNull.inf
-  #GenericBdsLib|IntelFrameworkModulePkg/Library/GenericBdsLib/GenericBdsLib.inf
-  GenericBdsLib|Clover/OsxBdsLib/GenericBdsLib.inf
+  GenericBdsLib|IntelFrameworkModulePkg/Library/GenericBdsLib/GenericBdsLib.inf
+  #GenericBdsLib|Clover/OsxBdsLib/GenericBdsLib.inf
   SecurityManagementLib|MdeModulePkg/Library/DxeSecurityManagementLib/DxeSecurityManagementLib.inf
   CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibNull/DxeCapsuleLibNull.inf
   #
@@ -206,9 +206,9 @@
     #
     <PcdsFixedAtBuild>
       gEfiMdePkgTokenSpaceGuid.PcdReportStatusCodePropertyMask|0x0
-      gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x0
+      gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x82
       #0x82
-      gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x0
+      gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000042
       #0x80000042
     <LibraryClasses>
      # DebugLib|IntelFrameworkModulePkg/Library/PeiDxeDebugLibReportStatusCode/PeiDxeDebugLibReportStatusCode.inf

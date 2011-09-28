@@ -51,13 +51,13 @@
   Mem/MemData.c
   Mem/Imem.h
   FwVolBlock/FwVolBlock.c
-#  FwVolBlock/FwVolBlock.h
-#  FwVol/FwVolWrite.c
-#  FwVol/FwVolRead.c
-#  FwVol/FwVolAttrib.c
-#  FwVol/Ffs.c
-#  FwVol/FwVol.c
-#  FwVol/FwVolDriver.h
+  FwVolBlock/FwVolBlock.h
+  FwVol/FwVolWrite.c
+  FwVol/FwVolRead.c
+  FwVol/FwVolAttrib.c
+  FwVol/Ffs.c
+  FwVol/FwVol.c
+  FwVol/FwVolDriver.h
   Event/Tpl.c
   Event/Timer.c
   Event/Event.c
@@ -152,6 +152,6 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdMaxEfiSystemTablePointerAddress         ## CONSUMES
 
 [BuildOptions]
-  XCODE:*_*_*_CC_FLAGS = -Os
-  GCC:*_*_*_CC_FLAGS = -Os
+#  XCODE:*_*_*_CC_FLAGS = -Os
+#  GCC:*_*_*_CC_FLAGS = -Os
   

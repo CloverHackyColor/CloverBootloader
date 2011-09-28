@@ -429,10 +429,6 @@ ProduceFVBProtocolOnBuffer (
   OUT EFI_HANDLE            *FvProtocol  OPTIONAL
   )
 {
-	    return EFI_VOLUME_CORRUPTED;
-}
-/*
-{
   EFI_STATUS                    Status;
   EFI_FW_VOL_BLOCK_DEVICE       *FvbDev;
   EFI_FIRMWARE_VOLUME_HEADER    *FwVolHeader;
@@ -561,7 +557,7 @@ ProduceFVBProtocolOnBuffer (
 
   return Status;
 }
-*/
+
 
 
 /**

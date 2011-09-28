@@ -713,7 +713,7 @@ CoreLoadPeImage (
   // Print the load address and the PDB file name if it is available
   //
 
-//  DEBUG_CODE_BEGIN ();
+  DEBUG_CODE_BEGIN ();
 
     UINTN Index;
     UINTN StartIndex;
@@ -763,7 +763,7 @@ CoreLoadPeImage (
     }
 //    DEBUG ((DEBUG_INFO | DEBUG_LOAD, "\n"));
 
-//  DEBUG_CODE_END ();
+  DEBUG_CODE_END ();
 
   return EFI_SUCCESS;
 
@@ -1364,8 +1364,8 @@ CoreLoadImage (
              EFI_LOAD_PE_IMAGE_ATTRIBUTE_RUNTIME_REGISTRATION | EFI_LOAD_PE_IMAGE_ATTRIBUTE_DEBUG_IMAGE_INFO_TABLE_REGISTRATION
              );
 
-//  PERF_START (*ImageHandle, "LoadImage:", NULL, Tick);
-//  PERF_END (*ImageHandle, "LoadImage:", NULL, 0);
+  PERF_START (*ImageHandle, "LoadImage:", NULL, Tick);
+  PERF_END (*ImageHandle, "LoadImage:", NULL, 0);
 
   return Status;
 }
@@ -1492,7 +1492,7 @@ CoreStartImage (
   //
   // Don't profile Objects or invalid start requests
   //
-//  PERF_START (ImageHandle, "StartImage:", NULL, 0);
+  PERF_START (ImageHandle, "StartImage:", NULL, 0);
 
 
   //
@@ -1512,7 +1512,7 @@ CoreStartImage (
   //
   Image->JumpBuffer = AllocatePool (sizeof (BASE_LIBRARY_JUMP_BUFFER) + BASE_LIBRARY_JUMP_BUFFER_ALIGNMENT);
   if (Image->JumpBuffer == NULL) {
-//    PERF_END (ImageHandle, "StartImage:", NULL, 0);
+    PERF_END (ImageHandle, "StartImage:", NULL, 0);
     return EFI_OUT_OF_RESOURCES;
   }
   Image->JumpContext = ALIGN_POINTER (Image->JumpBuffer, BASE_LIBRARY_JUMP_BUFFER_ALIGNMENT);

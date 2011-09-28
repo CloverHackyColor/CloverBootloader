@@ -2217,7 +2217,7 @@ CoreInitializeGcdServices (
   EFI_GCD_IO_TYPE                    GcdIoType;
   EFI_GCD_MEMORY_SPACE_DESCRIPTOR    Descriptor;
   EFI_HOB_MEMORY_ALLOCATION          *MemoryHob;
-//  EFI_HOB_FIRMWARE_VOLUME            *FirmwareVolumeHob;
+  EFI_HOB_FIRMWARE_VOLUME            *FirmwareVolumeHob;
   UINTN                              NumberOfDescriptors;
   EFI_GCD_MEMORY_SPACE_DESCRIPTOR    *MemorySpaceMap;
   UINTN                              Index;
@@ -2375,7 +2375,7 @@ CoreInitializeGcdServices (
         }
       }
     }
-/*
+
     if (GET_HOB_TYPE (Hob) == EFI_HOB_TYPE_FV) {
       FirmwareVolumeHob = Hob.FirmwareVolume;
       BaseAddress = FirmwareVolumeHob->BaseAddress;
@@ -2388,7 +2388,7 @@ CoreInitializeGcdServices (
                  gDxeCoreImageHandle,
                  NULL
                  );
-    }*/
+    }
   }
 
   //
