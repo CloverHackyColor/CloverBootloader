@@ -17,8 +17,6 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include "Language.h"
 #include "Hotkey.h"
 
-EFI_GUID  mFrontPageGuid      = FRONT_PAGE_FORMSET_GUID;
-
 BOOLEAN   gConnectAllHappened = FALSE;
 UINTN     gCallbackKey;
 
@@ -46,10 +44,7 @@ HII_VENDOR_DEVICE_PATH  mFrontPageHiiVendorDevicePath = {
         (UINT8) ((sizeof (VENDOR_DEVICE_PATH)) >> 8)
       }
     },
-    //
-    // {8E6D99EE-7531-48f8-8745-7F6144468FF2}
-    //
-    { 0x8e6d99ee, 0x7531, 0x48f8, { 0x87, 0x45, 0x7f, 0x61, 0x44, 0x46, 0x8f, 0xf2 } }
+    FRONT_PAGE_FORMSET_GUID
   },
   {
     END_DEVICE_PATH_TYPE,
@@ -60,14 +55,6 @@ HII_VENDOR_DEVICE_PATH  mFrontPageHiiVendorDevicePath = {
     }
   }
 };
-
-BOOLEAN
-EFIAPI
-LegacyBiosInt86 (
-				 IN  UINT8                           BiosInt,
-				 IN  EFI_IA32_REGISTER_SET           *Regs
-				 );
-
 
 /**
   This function allows a caller to extract the current configuration for one
@@ -136,8 +123,8 @@ FakeRouteConfig (
   }
 
   *Progress = Configuration;
-  if (!HiiIsConfigHdrMatch (Configuration, &mBootMaintGuid, mBootMaintStorageName)
-      && !HiiIsConfigHdrMatch (Configuration, &mFileExplorerGuid, mFileExplorerStorageName)) {
+  if (!HiiIsConfigHdrMatch (Configuration, &gBootMaintFormSetGuid, mBootMaintStorageName)
+      && !HiiIsConfigHdrMatch (Configuration, &gFileExploreFormSetGuid, mFileExplorerStorageName)) {
     return EFI_NOT_FOUND;
   }
 
@@ -365,7 +352,7 @@ InitializeFrontPage (
     // Publish our HII data
     //
     gFrontPagePrivate.HiiHandle = HiiAddPackages (
-                                    &mFrontPageGuid,
+                                    &gFrontPageFormSetGuid,
                                     gFrontPagePrivate.DriverHandle,
                                     FrontPageVfrBin,
                                     BdsDxeStrings,
@@ -504,7 +491,7 @@ InitializeFrontPage (
 
   Status = HiiUpdateForm (
              HiiHandle,
-             &mFrontPageGuid,
+             &gFrontPageFormSetGuid,
              FRONT_PAGE_FORM_ID,
              StartOpCodeHandle, // LABEL_SELECT_LANGUAGE
              EndOpCodeHandle    // LABEL_END
@@ -544,7 +531,7 @@ CallFrontPage (
                             gFormBrowser2,
                             &gFrontPagePrivate.HiiHandle,
                             1,
-                            &mFrontPageGuid,
+                            &gFrontPageFormSetGuid,
                             0,
                             NULL,
                             &ActionRequest
@@ -914,7 +901,7 @@ ShowProgress (
     //
     // Show progress
     //
-/*    if (TmpStr != NULL) {
+    if (TmpStr != NULL) {
       PlatformBdsShowProgress (
         Foreground,
         Background,
@@ -923,7 +910,7 @@ ShowProgress (
         ((TimeoutDefault - TimeoutRemain) * 100 / TimeoutDefault),
         0
         );
-    } */
+    }
   }
   gBS->FreePool (TmpStr);
 
@@ -971,8 +958,8 @@ PlatformBdsEnterFrontPage (
   )
 {
   EFI_STATUS                    Status;
-	BiosPutC('A');
-//  PERF_START (NULL, "BdsTimeOut", "BDS", 0);
+
+  PERF_START (NULL, "BdsTimeOut", "BDS", 0);
   //
   // Indicate if we need connect all in the platform setup
   //
@@ -982,17 +969,14 @@ PlatformBdsEnterFrontPage (
 
   HotkeyBoot ();
   if (TimeoutDefault != 0xffff) {
-	  BiosPutC('B');
     Status = ShowProgress (TimeoutDefault);
-	  BiosPutC('C');
     HotkeyBoot ();
-	  BiosPutC('D');
 
     //
     // Ensure screen is clear when switch Console from Graphics mode to Text mode
     //
-//    gST->ConOut->EnableCursor (gST->ConOut, TRUE);
-//    gST->ConOut->ClearScreen (gST->ConOut);
+    gST->ConOut->EnableCursor (gST->ConOut, TRUE);
+    gST->ConOut->ClearScreen (gST->ConOut);
 
     if (EFI_ERROR (Status)) {
       //
@@ -1005,13 +989,11 @@ PlatformBdsEnterFrontPage (
   do {
 
     InitializeFrontPage (FALSE);
-	  BiosPutC('E');
 
     //
     // Update Front Page strings
     //
     UpdateFrontPageStrings ();
-	  BiosPutC('F');
 
     gCallbackKey = 0;
     Status = CallFrontPage ();
@@ -1085,11 +1067,10 @@ PlatformBdsEnterFrontPage (
   SetupResetReminder ();
 
 Exit:
-	return;
   //
   // Automatically load current entry
   // Note: The following lines of code only execute when Auto boot
   // takes affect
   //
-//  PERF_END (NULL, "BdsTimeOut", "BDS", 0);
+  PERF_END (NULL, "BdsTimeOut", "BDS", 0);
 }
