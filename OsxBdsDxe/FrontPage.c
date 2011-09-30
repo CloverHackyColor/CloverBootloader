@@ -521,7 +521,7 @@ CallFrontPage (
   //
   // Begin waiting for USER INPUT
   //
-  REPORT_STATUS_CODE (
+  Status = REPORT_STATUS_CODE (
     EFI_PROGRESS_CODE,
     (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_PC_INPUT_WAIT)
     );
@@ -1007,7 +1007,7 @@ PlatformBdsEnterFrontPage (
     // 5 = boot maintenance manager
     //
     if (gCallbackKey != 0) {
-      REPORT_STATUS_CODE (
+      Status = REPORT_STATUS_CODE (
         EFI_PROGRESS_CODE,
         (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_PC_USER_SETUP)
         );

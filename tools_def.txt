@@ -3327,6 +3327,7 @@ RELEASE_XCODE32_*_MTOC_FLAGS = -align 0x20
 *_XCODE32_IA32_ASLDLINK_PATH  = ld
 
 DEBUG_XCODE32_IA32_DLINK_FLAGS      = -arch i386 -S -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -all_load -dead_strip -seg1addr 0x240 -read_only_relocs suppress -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map 
+
 # DEBUG_XCODE32_IA32_DLINK_FLAGS      = -arch i386 -S -x -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -pie -all_load -dead_strip -seg1addr 0x240 -read_only_relocs suppress -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
 RELEASE_XCODE32_IA32_DLINK_FLAGS      = -arch i386 -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -all_load -dead_strip -seg1addr 0x220 -read_only_relocs suppress -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
 *_XCODE32_IA32_SLINK_FLAGS      = -arch_only i386 -static -o

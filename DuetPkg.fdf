@@ -68,7 +68,7 @@ INF  MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
 #INF  MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
 INF  Clover/OsxSmbiosDxe/SmbiosDxe.inf
 #INF  DuetPkg/SmbiosGenDxe/SmbiosGen.inf
-#INF  Clover/OsxSmbiosGenDxe/SmbiosGen.inf
+INF  Clover/OsxSmbiosGenDxe/SmbiosGen.inf
 #INF  DuetPkg/FvbRuntimeService/DUETFwh.inf
 #INF  IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf
 INF  Clover/OsxBdsDxe/BdsDxe.inf
@@ -97,17 +97,20 @@ INF  DuetPkg/AcpiResetDxe/Reset.inf
 INF  DuetPkg/LegacyMetronome/Metronome.inf
 INF  PcAtChipsetPkg/8254TimerDxe/8254Timer.inf
 INF  PcAtChipsetPkg/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
+#INF  PcAtChipsetPkg/PciHostBridgeDxe/PciHostBridgeDxe.inf
 INF  DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
 #INF  DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
 INF  Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
 #INF  MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
 #INF  Clover/OsxPciBusDxe/PciBusDxe.inf
+
+#Video
 #INF  IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
 INF  Clover/VBoxVgaMiniPort/VgaMiniPortDxe.inf
 #INF  IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
-#INF  Clover/VgaClassDxe/VgaClassDxe.inf
+INF  Clover/VgaClassDxe/VgaClassDxe.inf
 #INF  DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
-#INF  Clover/BiosVideo/BiosVideo.inf
+INF  Clover/BiosVideo/BiosVideo.inf
 #INF  Clover/IntelGmaDxe/Gop.inf
 
 # BIOS CSM
@@ -115,6 +118,7 @@ INF  Clover/VBoxVgaMiniPort/VgaMiniPortDxe.inf
 #INF  IntelFrameworkModulePkg/Csm/BiosThunk/BlockIoDxe/BlockIoDxe.inf
 #INF  IntelFrameworkModulePkg/Csm/BiosThunk/KeyboardDxe/KeyboardDxe.inf
 #INF  IntelFrameworkModulePkg/Universal/LegacyRegionDxe/LegacyRegionDxe.inf
+#INF  IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf
 
 
   # IDE/AHCI Support

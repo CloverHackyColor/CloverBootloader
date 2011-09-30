@@ -274,9 +274,9 @@ MemMapDone:
 #
 # Enable A20 Gate 
 #
-#        movw $0x2401, %ax                   # Enable A20 Gate
-#        int $0x15
-#        jnc A20GateEnabled                  # Jump if it suceeded
+        movw $0x2401, %ax                   # Enable A20 Gate
+        int $0x15
+        jnc A20GateEnabled                  # Jump if it suceeded
 		
 #
 # If INT 15 Function 2401 is not supported, then attempt to Enable A20 manually.

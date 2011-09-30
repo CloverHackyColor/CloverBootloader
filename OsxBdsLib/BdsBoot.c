@@ -451,7 +451,7 @@ BdsFindUsbDevice (
 				// could be installed for this USB device.
 				//
 				BdsLibConnectDevicePath (FullDevicePath);
-				//       REPORT_STATUS_CODE (EFI_PROGRESS_CODE, PcdGet32 (PcdProgressCodeOsLoaderLoad));
+				Status = REPORT_STATUS_CODE (EFI_PROGRESS_CODE, PcdGet32 (PcdProgressCodeOsLoaderLoad));
 				Status = gBS->LoadImage (
 										 TRUE,
 										 gImageHandle,
@@ -485,7 +485,7 @@ BdsFindUsbDevice (
 				//
 				FullDevicePath = FileDevicePath (Handle, NewFileName); //EFI_REMOVABLE_MEDIA_FILE_NAME);
 				if (FullDevicePath != NULL) {
-					//          REPORT_STATUS_CODE (EFI_PROGRESS_CODE, PcdGet32 (PcdProgressCodeOsLoaderLoad));
+					Status = REPORT_STATUS_CODE (EFI_PROGRESS_CODE, PcdGet32 (PcdProgressCodeOsLoaderLoad));
 					Status = gBS->LoadImage (
 											 TRUE,
 											 gImageHandle,

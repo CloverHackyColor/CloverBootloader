@@ -696,7 +696,7 @@ typedef struct {
 ///
 typedef struct {
   UINT16  Length;
-  CHAR16  String[1];
+  CHAR16  String[3];
 } EFI_IMAGE_RESOURCE_DIRECTORY_STRING;
 
 ///
