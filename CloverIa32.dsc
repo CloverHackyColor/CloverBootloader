@@ -89,8 +89,8 @@
   UefiUsbLib|MdePkg/Library/UefiUsbLib/UefiUsbLib.inf
   #UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
   OemHookStatusCodeLib|MdeModulePkg/Library/OemHookStatusCodeLibNull/OemHookStatusCodeLibNull.inf
-  GenericBdsLib|IntelFrameworkModulePkg/Library/GenericBdsLib/GenericBdsLib.inf
-  #GenericBdsLib|Clover/OsxBdsLib/GenericBdsLib.inf
+  #GenericBdsLib|IntelFrameworkModulePkg/Library/GenericBdsLib/GenericBdsLib.inf
+  GenericBdsLib|Clover/OsxBdsLib/GenericBdsLib.inf
   SecurityManagementLib|MdeModulePkg/Library/DxeSecurityManagementLib/DxeSecurityManagementLib.inf
   CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibNull/DxeCapsuleLibNull.inf
   #
@@ -276,7 +276,7 @@
   	#DataHub
 	Clover/VBoxAppleSim/VBoxAppleSim.inf
 	IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
-	#IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
+	IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
 	#EdkCompatibilityPkg/Compatibility/PiSmbiosRecordOnDataHubSmbiosRecordThunk/PiSmbiosRecordOnDataHubSmbiosRecordThunk.inf
   
   	# foreign file system support
@@ -285,13 +285,16 @@
 	Clover/VBoxFsDxe/VBoxFsDxe.inf
 	Clover/VBoxFsDxe/VBoxExt2.inf
 	#EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
-	#Clover/OsxMmcDxe/MmcDxe.inf
-
+	Clover/OsxMmcDxe/MmcDxe.inf
+#Video
   #IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
   Clover/VBoxVgaMiniPort/VgaMiniPortDxe.inf
   #IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
   Clover/VgaClassDxe/VgaClassDxe.inf
   #Clover/IntelGmaDxe/Gop.inf
+  #DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
+  Clover/BiosVideo/BiosVideo.inf
+
 
   # IDE/AHCI Support
   Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
@@ -342,8 +345,6 @@
 
 
   # Bios Thunk
-  #DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
-  Clover/BiosVideo/BiosVideo.inf
   IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf
   IntelFrameworkModulePkg/Csm/LegacyBiosDxe/LegacyBiosDxe.inf
   IntelFrameworkModulePkg/Csm/BiosThunk/BlockIoDxe/BlockIoDxe.inf
