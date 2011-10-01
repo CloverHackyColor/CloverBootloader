@@ -103,11 +103,11 @@ PeCoffLoaderGetPeHeader (
                            &Size,
                            &Fat
                            );
-  DEBUG((DEBUG_LOAD, "%a:%d - %r\n", __FILE__, __LINE__, Status));
+//  DEBUG((DEBUG_LOAD, "%a:%d - %r\n", __FILE__, __LINE__, Status));
   if (!RETURN_ERROR(Status) && Fat.Signature == EFI_FAT_IMAGE_HEADER_SIGNATURE)
   {
     UINT32 i;
-    DEBUG((DEBUG_LOAD, "%a:%d - %x narches:%d\n", __FILE__, __LINE__, Fat.Signature, Fat.NFatArch));
+//    DEBUG((DEBUG_LOAD, "%a:%d - %x narches:%d\n", __FILE__, __LINE__, Fat.Signature, Fat.NFatArch));
     /* Can't find the way to allocate here because library used in all phases */
     ASSERT((Fat.NFatArch < 5));
     Size = sizeof(EFI_FAT_IMAGE_HEADER_NLIST) * Fat.NFatArch;
@@ -140,7 +140,7 @@ PeCoffLoaderGetPeHeader (
                            &Size,
                            &DosHdr
                            );
-    DEBUG((DEBUG_LOAD, "%a:%d - %r\n", __FILE__, __LINE__, Status));
+//    DEBUG((DEBUG_LOAD, "%a:%d - %r\n", __FILE__, __LINE__, Status));
   if (RETURN_ERROR (Status)) {
     ImageContext->ImageError = IMAGE_ERROR_IMAGE_READ;
     return Status;
@@ -168,7 +168,7 @@ PeCoffLoaderGetPeHeader (
                            &Size,
                            Hdr.Pe32
                            );
-    DEBUG((DEBUG_LOAD, "%a:%d - %r\n", __FILE__, __LINE__, Status));
+//    DEBUG((DEBUG_LOAD, "%a:%d - %r\n", __FILE__, __LINE__, Status));
   if (RETURN_ERROR (Status)) {
     ImageContext->ImageError = IMAGE_ERROR_IMAGE_READ;
     return Status;
@@ -194,7 +194,7 @@ PeCoffLoaderGetPeHeader (
     ImageContext->Machine = Hdr.Pe32->FileHeader.Machine;
 
     Magic = PeCoffLoaderGetPeHeaderMagicValue (Hdr);
-    DEBUG((DEBUG_LOAD, "%a:%d - %x\n", __FILE__, __LINE__, Magic));
+//    DEBUG((DEBUG_LOAD, "%a:%d - %x\n", __FILE__, __LINE__, Magic));
 
     if (Magic == EFI_IMAGE_NT_OPTIONAL_HDR32_MAGIC) {
       //
@@ -215,7 +215,7 @@ PeCoffLoaderGetPeHeader (
       ImageContext->SizeOfHeaders     = Hdr.Pe32Plus->OptionalHeader.SizeOfHeaders;
     } else {
       ImageContext->ImageError = IMAGE_ERROR_INVALID_MACHINE_TYPE;
-    DEBUG((DEBUG_LOAD, "%a:%d - %r\n", __FILE__, __LINE__, RETURN_UNSUPPORTED));
+//    DEBUG((DEBUG_LOAD, "%a:%d - %r\n", __FILE__, __LINE__, RETURN_UNSUPPORTED));
       return RETURN_UNSUPPORTED;
     }
   } else {
@@ -230,7 +230,7 @@ PeCoffLoaderGetPeHeader (
     // this does not mean the user of this library can call the entry
     // point of the image.
     //
-    DEBUG((DEBUG_LOAD, "%a:%d - %r\n", __FILE__, __LINE__, RETURN_UNSUPPORTED));
+//    DEBUG((DEBUG_LOAD, "%a:%d - %r\n", __FILE__, __LINE__, RETURN_UNSUPPORTED));
     return RETURN_UNSUPPORTED;
   }
 
@@ -400,7 +400,7 @@ PeCoffLoaderGetImageInfo (
                                  );
         if (RETURN_ERROR (Status)) {
           ImageContext->ImageError = IMAGE_ERROR_IMAGE_READ;
-    DEBUG((DEBUG_LOAD, "%a:%d - %r\n", __FILE__, __LINE__, Status));
+//    DEBUG((DEBUG_LOAD, "%a:%d - %r\n", __FILE__, __LINE__, Status));
           return Status;
         }
 
@@ -426,7 +426,7 @@ PeCoffLoaderGetImageInfo (
                                    &Size,
                                    &DebugEntry
                                    );
-    DEBUG((DEBUG_LOAD, "%a:%d - %r\n", __FILE__, __LINE__, Status));
+//    DEBUG((DEBUG_LOAD, "%a:%d - %r\n", __FILE__, __LINE__, Status));
           if (RETURN_ERROR (Status)) {
             ImageContext->ImageError = IMAGE_ERROR_IMAGE_READ;
             return Status;
@@ -461,7 +461,7 @@ PeCoffLoaderGetImageInfo (
                                &Size,
                                &SectionHeader
                                );
-    DEBUG((DEBUG_LOAD, "%a:%d - %r\n", __FILE__, __LINE__, Status));
+//    DEBUG((DEBUG_LOAD, "%a:%d - %r\n", __FILE__, __LINE__, Status));
       if (RETURN_ERROR (Status)) {
         ImageContext->ImageError = IMAGE_ERROR_IMAGE_READ;
         return Status;
@@ -515,7 +515,7 @@ PeCoffLoaderGetImageInfo (
                                  &Size,
                                  &DebugEntry
                                  );
-    DEBUG((DEBUG_LOAD, "%a:%d - %r\n", __FILE__, __LINE__, Status));
+//    DEBUG((DEBUG_LOAD, "%a:%d - %r\n", __FILE__, __LINE__, Status));
         if (RETURN_ERROR (Status)) {
           ImageContext->ImageError = IMAGE_ERROR_IMAGE_READ;
           return Status;
@@ -823,7 +823,7 @@ PeCoffLoaderRelocateImage (
   if (ImageContext->DestinationAddress != 0) {
      ImageContext->EntryPoint -= (UINT64) ImageContext->ImageAddress;
      ImageContext->EntryPoint += (UINT64) ImageContext->DestinationAddress;
-     DEBUG((DEBUG_INFO, "%a:%d entry point %x\n", __FILE__, __LINE__, ImageContext->EntryPoint));
+ //    DEBUG((DEBUG_INFO, "%a:%d entry point %x\n", __FILE__, __LINE__, ImageContext->EntryPoint));
   }
 
   // Applies additional environment specific actions to relocate fixups
@@ -1098,7 +1098,7 @@ PeCoffLoaderLoadImage (
                                                             ImageContext,
                                                             (UINTN)Hdr.Pe32->OptionalHeader.AddressOfEntryPoint
                                                             );
-      DEBUG((DEBUG_INFO, "%a:%d entry point %x\n", __FILE__, __LINE__, ImageContext->EntryPoint));
+//      DEBUG((DEBUG_INFO, "%a:%d entry point %x\n", __FILE__, __LINE__, ImageContext->EntryPoint));
     } else {
       //
       // Use PE32+ offset
@@ -1107,7 +1107,7 @@ PeCoffLoaderLoadImage (
                                                             ImageContext,
                                                             (UINTN)Hdr.Pe32Plus->OptionalHeader.AddressOfEntryPoint
                                                             );
-      DEBUG((DEBUG_INFO, "%a:%d entry point %x\n", __FILE__, __LINE__, ImageContext->EntryPoint));
+//      DEBUG((DEBUG_INFO, "%a:%d entry point %x\n", __FILE__, __LINE__, ImageContext->EntryPoint));
     }
   } else {
     ImageContext->EntryPoint =  (PHYSICAL_ADDRESS) (
@@ -1116,7 +1116,7 @@ PeCoffLoaderLoadImage (
                                 (UINTN)sizeof(EFI_TE_IMAGE_HEADER) -
                                 (UINTN)Hdr.Te->StrippedSize
                                 );
-      DEBUG((DEBUG_INFO, "%a:%d entry point %x\n", __FILE__, __LINE__, ImageContext->EntryPoint));
+//      DEBUG((DEBUG_INFO, "%a:%d entry point %x\n", __FILE__, __LINE__, ImageContext->EntryPoint));
   }
 
   //

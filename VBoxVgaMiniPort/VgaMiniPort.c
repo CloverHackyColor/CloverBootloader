@@ -238,8 +238,8 @@ VBoxVgaMiniPortDB_Supported(IN EFI_DRIVER_BINDING_PROTOCOL *This, IN EFI_HANDLE 
 
         gBS->CloseProtocol(ControllerHandle, &gEfiPciIoProtocolGuid, This->DriverBindingHandle, ControllerHandle);
     }
-    else
-        DEBUG((DEBUG_INFO, "%a: PciIoProtocol -> %r\n", __FUNCTION__, rc));
+//    else
+//        DEBUG((DEBUG_INFO, "%a: PciIoProtocol -> %r\n", __FUNCTION__, rc));
     return rcRet;
 }
 #else

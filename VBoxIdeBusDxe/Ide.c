@@ -389,7 +389,7 @@ GetIdeRegistersBaseAddr (
   }
   IdeRegsBaseAddr[IdeSecondary].BusMasterBaseAddr     =
   (UINT16) ((PciData.Device.Bar[fIDEAhciEmulation ? 5 : 4] & 0x0000fff0));
-
+/*
   DEBUG((DEBUG_INFO, "%a:%d CommandBlockBaseAddr:%x, "
 		     "ControlBlockBaseAddr:%x, "
 		     "BusMasterBaseAddr:%x\n", __FILE__, __LINE__,
@@ -402,6 +402,7 @@ GetIdeRegistersBaseAddr (
 		     IdeRegsBaseAddr[IdeSecondary].CommandBlockBaseAddr,
 		     IdeRegsBaseAddr[IdeSecondary].ControlBlockBaseAddr,
 		     IdeRegsBaseAddr[IdeSecondary].BusMasterBaseAddr));
+ */
   return EFI_SUCCESS;
 }
 

@@ -159,7 +159,7 @@ static fsw_status_t rr_find_nm(struct fsw_iso9660_volume *vol, struct iso9660_di
             if (fCe == 0)
                 fsw_alloc_zero(ISO9660_BLOCKSIZE, (void *)&begin);
             fCe = 1;
-            DEBUG((DEBUG_WARN, "%a:%d we found CE before NM or its continuation\n", __FILE__, __LINE__));
+        //    DEBUG((DEBUG_WARN, "%a:%d we found CE before NM or its continuation\n", __FILE__, __LINE__));
             ce = (union fsw_rock_ridge_susp_ce *)r;
             limit = ISOINT(ce->X.len);
             ce_off = ISOINT(ce->X.offset);
@@ -593,7 +593,7 @@ static fsw_status_t fsw_iso9660_read_dirrec(struct fsw_iso9660_volume *vol, stru
     status = fsw_shandle_read(shand, &buffer_size, dirrec);
     if (status)
     {
-        DEBUG((DEBUG_INFO, "%a:%d \n", __FILE__, __LINE__));
+    //    DEBUG((DEBUG_INFO, "%a:%d \n", __FILE__, __LINE__));
         return status;
     }
 
@@ -601,7 +601,7 @@ static fsw_status_t fsw_iso9660_read_dirrec(struct fsw_iso9660_volume *vol, stru
         // end of directory reached
         fsw_u8 *r;
         r = (fsw_u8 *)dirrec;
-        DEBUG((DEBUG_INFO, "%a:%d bs:%d dl:%d\n", __FILE__, __LINE__, buffer_size, dirrec->dirrec_length));
+ //       DEBUG((DEBUG_INFO, "%a:%d bs:%d dl:%d\n", __FILE__, __LINE__, buffer_size, dirrec->dirrec_length));
         for(i = 0; i < buffer_size; ++i)
         {
             DEBUG((DEBUG_INFO, "r[%d]:%c", i, r[i]));
@@ -613,7 +613,7 @@ static fsw_status_t fsw_iso9660_read_dirrec(struct fsw_iso9660_volume *vol, stru
         dirrec->dirrec_length < 33 + dirrec->file_identifier_length)
         return FSW_VOLUME_CORRUPTED;
 
-    DEBUG((DEBUG_INFO, "%a:%d, dirrec_length: %d\n", __FILE__, __LINE__, dirrec->dirrec_length));
+//    DEBUG((DEBUG_INFO, "%a:%d, dirrec_length: %d\n", __FILE__, __LINE__, dirrec->dirrec_length));
 
     // read variable size part of directory record
     buffer_size = remaining_size = dirrec->dirrec_length - 33;
@@ -651,7 +651,7 @@ static fsw_status_t fsw_iso9660_read_dirrec(struct fsw_iso9660_volume *vol, stru
     dirrec_buffer->name.type = FSW_STRING_TYPE_ISO88591;
     dirrec_buffer->name.len = dirrec_buffer->name.size = name_len;
     dirrec_buffer->name.data = dirrec->file_identifier;
-    DEBUG((DEBUG_INFO, "%a:%d: dirrec_buffer->name.data:%a\n", __FILE__, __LINE__, dirrec_buffer->name.data));
+//    DEBUG((DEBUG_INFO, "%a:%d: dirrec_buffer->name.data:%a\n", __FILE__, __LINE__, dirrec_buffer->name.data));
     return FSW_SUCCESS;
 }
 
