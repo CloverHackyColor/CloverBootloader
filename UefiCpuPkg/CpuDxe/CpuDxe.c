@@ -1129,9 +1129,7 @@ InitInterruptDescriptorTable (
 		// preserve it.
 		//
 		if (Index < OldIdtSize) {
-			IntHandler = 
-			(VOID*) (
-					 OldIdt[Index].Bits.OffsetLow +
+			IntHandler = (VOID*) (OldIdt[Index].Bits.OffsetLow +
 					 (OldIdt[Index].Bits.OffsetHigh << 16)
 #if defined (MDE_CPU_X64)
 					 + (((UINTN) OldIdt[Index].Bits.OffsetUpper) << 32)
@@ -1281,7 +1279,7 @@ InitializeCpu (
       AllocateMaxAddress,
       EfiReservedMemoryType,
       1,
-      &HandyCpuPage                               );
+      &HandyCpuPage);
   ASSERT_EFI_ERROR (Status);
   ASSERT (HandyCpuPage != 0xffffffff);
 

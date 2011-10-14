@@ -208,8 +208,8 @@ PartitionInstallGptChildHandles (
   LastBlock     = BlockIo->Media->LastBlock;
   MediaId       = BlockIo->Media->MediaId;
 
-  DEBUG ((EFI_D_INFO, " BlockSize : %d \n", BlockSize));
-  DEBUG ((EFI_D_INFO, " LastBlock : %lx \n", LastBlock));
+//  DEBUG ((EFI_D_INFO, " BlockSize : %d \n", BlockSize));
+//  DEBUG ((EFI_D_INFO, " LastBlock : %lx \n", LastBlock));
 
   GptValidStatus = EFI_NOT_FOUND;
 
@@ -268,43 +268,43 @@ PartitionInstallGptChildHandles (
   // Check primary and backup partition tables
   //
   if (!PartitionValidGptTable (BlockIo, DiskIo, PRIMARY_PART_HEADER_LBA, PrimaryHeader)) {
-    DEBUG ((EFI_D_INFO, " Not Valid primary partition table\n"));
+ //   DEBUG ((EFI_D_INFO, " Not Valid primary partition table\n"));
 
     if (!PartitionValidGptTable (BlockIo, DiskIo, LastBlock, BackupHeader)) {
-      DEBUG ((EFI_D_INFO, " Not Valid backup partition table\n"));
+//      DEBUG ((EFI_D_INFO, " Not Valid backup partition table\n"));
       goto Done;
     } else {
-      DEBUG ((EFI_D_INFO, " Valid backup partition table\n"));
-      DEBUG ((EFI_D_INFO, " Restore primary partition table by the backup\n"));
+//      DEBUG ((EFI_D_INFO, " Valid backup partition table\n"));
+//      DEBUG ((EFI_D_INFO, " Restore primary partition table by the backup\n"));
       if (!PartitionRestoreGptTable (BlockIo, DiskIo, BackupHeader)) {
-        DEBUG ((EFI_D_INFO, " Restore primary partition table error\n"));
+ //       DEBUG ((EFI_D_INFO, " Restore primary partition table error\n"));
       }
 
       if (PartitionValidGptTable (BlockIo, DiskIo, BackupHeader->AlternateLBA, PrimaryHeader)) {
-        DEBUG ((EFI_D_INFO, " Restore backup partition table success\n"));
+//        DEBUG ((EFI_D_INFO, " Restore backup partition table success\n"));
       }
     }
   } else if (!PartitionValidGptTable (BlockIo, DiskIo, PrimaryHeader->AlternateLBA, BackupHeader)) {
-    DEBUG ((EFI_D_INFO, " Valid primary and !Valid backup partition table\n"));
-    DEBUG ((EFI_D_INFO, " Restore backup partition table by the primary\n"));
+//    DEBUG ((EFI_D_INFO, " Valid primary and !Valid backup partition table\n"));
+//    DEBUG ((EFI_D_INFO, " Restore backup partition table by the primary\n"));
     if (!PartitionRestoreGptTable (BlockIo, DiskIo, PrimaryHeader)) {
-      DEBUG ((EFI_D_INFO, " Restore  backup partition table error\n"));
+//      DEBUG ((EFI_D_INFO, " Restore  backup partition table error\n"));
     }
 
     if (PartitionValidGptTable (BlockIo, DiskIo, PrimaryHeader->AlternateLBA, BackupHeader)) {
-      DEBUG ((EFI_D_INFO, " Restore backup partition table success\n"));
+ //     DEBUG ((EFI_D_INFO, " Restore backup partition table success\n"));
     }
 
   }
 
-  DEBUG ((EFI_D_INFO, " Valid primary and Valid backup partition table\n"));
+//  DEBUG ((EFI_D_INFO, " Valid primary and Valid backup partition table\n"));
 
   //
   // Read the EFI Partition Entries
   //
   PartEntry = AllocatePool (PrimaryHeader->NumberOfPartitionEntries * sizeof (EFI_PARTITION_ENTRY));
   if (PartEntry == NULL) {
-    DEBUG ((EFI_D_ERROR, "Allocate pool error\n"));
+//    DEBUG ((EFI_D_ERROR, "Allocate pool error\n"));
     goto Done;
   }
 
@@ -317,17 +317,17 @@ PartitionInstallGptChildHandles (
                      );
   if (EFI_ERROR (Status)) {
     GptValidStatus = Status;
-    DEBUG ((EFI_D_ERROR, " Partition Entry ReadDisk error\n"));
+ //   DEBUG ((EFI_D_ERROR, " Partition Entry ReadDisk error\n"));
     goto Done;
   }
 
-  DEBUG ((EFI_D_INFO, " Partition entries read block success\n"));
+//  DEBUG ((EFI_D_INFO, " Partition entries read block success\n"));
 
-  DEBUG ((EFI_D_INFO, " Number of partition entries: %d\n", PrimaryHeader->NumberOfPartitionEntries));
+//  DEBUG ((EFI_D_INFO, " Number of partition entries: %d\n", PrimaryHeader->NumberOfPartitionEntries));
 
   PEntryStatus = AllocateZeroPool (PrimaryHeader->NumberOfPartitionEntries * sizeof (EFI_PARTITION_ENTRY_STATUS));
   if (PEntryStatus == NULL) {
-    DEBUG ((EFI_D_ERROR, "Allocate pool error\n"));
+//    DEBUG ((EFI_D_ERROR, "Allocate pool error\n"));
     goto Done;
   }
 
@@ -368,14 +368,14 @@ PartitionInstallGptChildHandles (
     HdDev.PartitionStart  = PartEntry[Index].StartingLBA;
     HdDev.PartitionSize   = PartEntry[Index].EndingLBA - PartEntry[Index].StartingLBA + 1;
     CopyMem (HdDev.Signature, &PartEntry[Index].UniquePartitionGUID, sizeof (EFI_GUID));
-
+/*
     DEBUG ((EFI_D_INFO, " Index : %d\n", (UINT32) Index));
     DEBUG ((EFI_D_INFO, " Start LBA : %lx\n", (UINT64) HdDev.PartitionStart));
     DEBUG ((EFI_D_INFO, " End LBA : %lx\n", (UINT64) PartEntry[Index].EndingLBA));
     DEBUG ((EFI_D_INFO, " Partition size: %lx\n", (UINT64) HdDev.PartitionSize));
     DEBUG ((EFI_D_INFO, " Start : %lx", MultU64x32 (PartEntry[Index].StartingLBA, BlockSize)));
     DEBUG ((EFI_D_INFO, " End : %lx\n", MultU64x32 (PartEntry[Index].EndingLBA, BlockSize)));
-
+*/
     Status = PartitionInstallChildHandle (
               This,
               Handle,
@@ -391,7 +391,7 @@ PartitionInstallGptChildHandles (
               );
   }
 
-  DEBUG ((EFI_D_INFO, "Prepare to Free Pool\n"));
+//  DEBUG ((EFI_D_INFO, "Prepare to Free Pool\n"));
 
 Done:
   if (ProtectiveMbr != NULL) {
@@ -443,7 +443,7 @@ PartitionValidGptTable (
   PartHdr   = AllocateZeroPool (BlockSize);
 
   if (PartHdr == NULL) {
-    DEBUG ((EFI_D_ERROR, "Allocate pool error\n"));
+ //   DEBUG ((EFI_D_ERROR, "Allocate pool error\n"));
     return FALSE;
   }
   //
@@ -465,7 +465,7 @@ PartitionValidGptTable (
       !PartitionCheckCrc (BlockSize, &PartHdr->Header) ||
       PartHdr->MyLBA != Lba
       ) {
-    DEBUG ((EFI_D_INFO, "Invalid efi partition table header\n"));
+//    DEBUG ((EFI_D_INFO, "Invalid efi partition table header\n"));
     FreePool (PartHdr);
     return FALSE;
   }
@@ -476,7 +476,7 @@ PartitionValidGptTable (
     return FALSE;
   }
 
-  DEBUG ((EFI_D_INFO, " Valid efi partition table header\n"));
+//  DEBUG ((EFI_D_INFO, " Valid efi partition table header\n"));
   FreePool (PartHdr);
   return TRUE;
 }
@@ -510,7 +510,7 @@ PartitionCheckGptEntryArrayCRC (
   //
   Ptr = AllocatePool (PartHeader->NumberOfPartitionEntries * PartHeader->SizeOfPartitionEntry);
   if (Ptr == NULL) {
-    DEBUG ((EFI_D_ERROR, " Allocate pool error\n"));
+ //   DEBUG ((EFI_D_ERROR, " Allocate pool error\n"));
     return FALSE;
   }
 
@@ -530,7 +530,7 @@ PartitionCheckGptEntryArrayCRC (
 
   Status  = gBS->CalculateCrc32 (Ptr, Size, &Crc);
   if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_ERROR, "CheckPEntryArrayCRC: Crc calculation failed\n"));
+//    DEBUG ((EFI_D_ERROR, "CheckPEntryArrayCRC: Crc calculation failed\n"));
     FreePool (Ptr);
     return FALSE;
   }
@@ -576,7 +576,7 @@ PartitionRestoreGptTable (
   PartHdr   = AllocateZeroPool (BlockSize);
 
   if (PartHdr == NULL) {
-    DEBUG ((EFI_D_ERROR, "Allocate pool error\n"));
+ //   DEBUG ((EFI_D_ERROR, "Allocate pool error\n"));
     return FALSE;
   }
 
@@ -604,7 +604,7 @@ PartitionRestoreGptTable (
 
   Ptr = AllocatePool (PartHeader->NumberOfPartitionEntries * PartHeader->SizeOfPartitionEntry);
   if (Ptr == NULL) {
-    DEBUG ((EFI_D_ERROR, " Allocate pool error\n"));
+//    DEBUG ((EFI_D_ERROR, " Allocate pool error\n"));
     Status = EFI_OUT_OF_RESOURCES;
     goto Done;
   }
@@ -666,7 +666,7 @@ PartitionCheckGptEntry (
   UINTN   Index2;
   UINT64  Attributes;
 
-  DEBUG ((EFI_D_INFO, " start check partition entries\n"));
+//  DEBUG ((EFI_D_INFO, " start check partition entries\n"));
   for (Index1 = 0; Index1 < PartHeader->NumberOfPartitionEntries; Index1++) {
     if (CompareGuid (&PartEntry[Index1].PartitionTypeGUID, &gEfiPartTypeUnusedGuid)) {
       continue;
@@ -710,7 +710,7 @@ PartitionCheckGptEntry (
     }
   }
 
-  DEBUG ((EFI_D_INFO, " End check partition entries\n"));
+//  DEBUG ((EFI_D_INFO, " End check partition entries\n"));
 }
 
 
@@ -802,7 +802,7 @@ PartitionCheckCrcAltSize (
   }
 
   if ((MaxSize != 0) && (Size > MaxSize)) {
-    DEBUG ((EFI_D_ERROR, "CheckCrc32: Size > MaxSize\n"));
+ //   DEBUG ((EFI_D_ERROR, "CheckCrc32: Size > MaxSize\n"));
     return FALSE;
   }
   //
@@ -813,7 +813,7 @@ PartitionCheckCrcAltSize (
 
   Status      = gBS->CalculateCrc32 ((UINT8 *) Hdr, Size, &Crc);
   if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_ERROR, "CheckCrc32: Crc calculation failed\n"));
+ //   DEBUG ((EFI_D_ERROR, "CheckCrc32: Crc calculation failed\n"));
     return FALSE;
   }
   //
@@ -824,11 +824,12 @@ PartitionCheckCrcAltSize (
   //
   // return status
   //
+	/*
   DEBUG_CODE_BEGIN ();
     if (OrgCrc != Crc) {
       DEBUG ((EFI_D_ERROR, "CheckCrc32: Crc check failed\n"));
     }
   DEBUG_CODE_END ();
-
+*/
   return (BOOLEAN) (OrgCrc == Crc);
 }

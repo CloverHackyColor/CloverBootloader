@@ -449,17 +449,17 @@ UpdateConsolePage (
   IN BMM_CALLBACK_DATA                *CallbackData
   )
 {
-  BM_MENU_ENTRY       *NewMenuEntry;
-  BM_CONSOLE_CONTEXT  *NewConsoleContext;
-  BM_TERMINAL_CONTEXT *NewTerminalContext;
-  UINT16              Index;
-  UINT16              Index2;
-  UINT8               CheckFlags;
+//  BM_MENU_ENTRY       *NewMenuEntry;
+//  BM_CONSOLE_CONTEXT  *NewConsoleContext;
+//  BM_TERMINAL_CONTEXT *NewTerminalContext;
+//  UINT16              Index;
+//  UINT16              Index2;
+//  UINT8               CheckFlags;
  
   CallbackData->BmmAskSaveOrNot = TRUE;
 
   UpdatePageStart (CallbackData);
-
+/*
   for (Index = 0; ((Index < ConsoleMenu->MenuNumber) && \
        (Index < (sizeof (CallbackData->BmmFakeNvData.ConsoleCheck) / sizeof (UINT8)))) ; Index++) {
     NewMenuEntry      = BOpt_GetMenuEntry (ConsoleMenu, Index);
@@ -516,7 +516,7 @@ UpdateConsolePage (
 
     Index++;
   }
-
+*/
   UpdatePageEnd (CallbackData);
 }
 
@@ -1346,7 +1346,7 @@ UpdateSetLegacyDeviceOrderPage (
     break;
 
   default:
-    DEBUG ((EFI_D_ERROR, "Invalid command ID for updating page!\n"));
+//    DEBUG ((EFI_D_ERROR, "Invalid command ID for updating page!\n"));
     return;
   }
 

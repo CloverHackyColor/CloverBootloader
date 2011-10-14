@@ -314,7 +314,7 @@ Returns:
              );
   if (!EFI_ERROR (Status)) {
     PciIoDevice->IsPciExp = TRUE;
-    DEBUG ((EFI_D_ERROR, "PciExp - %x (B-%x, D-%x, F-%x)\n", PciIoDevice->IsPciExp, PciIoDevice->BusNumber, PciIoDevice->DeviceNumber, PciIoDevice->FunctionNumber));
+//    DEBUG ((EFI_D_ERROR, "PciExp - %x (B-%x, D-%x, F-%x)\n", PciIoDevice->IsPciExp, PciIoDevice->BusNumber, PciIoDevice->DeviceNumber, PciIoDevice->FunctionNumber));
   }
   
   //

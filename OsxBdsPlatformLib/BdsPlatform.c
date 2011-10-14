@@ -139,12 +139,12 @@ PrintMemoryMap (
 
   for (Index = 0; Index < MemMapSize / DescriptorSize; Index ++) {
     Bytes = LShiftU64 (MemMap->NumberOfPages, 12);
-    DEBUG ((EFI_D_ERROR, "%lX-%lX  %lX %lX %X\n",
+ /*   DEBUG ((EFI_D_ERROR, "%lX-%lX  %lX %lX %X\n",
           MemMap->PhysicalStart, 
           MemMap->PhysicalStart + Bytes - 1,
           MemMap->NumberOfPages, 
           MemMap->Attribute,
-          (UINTN)MemMap->Type));
+          (UINTN)MemMap->Type));*/
     MemMap = (EFI_MEMORY_DESCRIPTOR *)((UINTN)MemMap + DescriptorSize);
   }
 

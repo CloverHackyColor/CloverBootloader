@@ -316,6 +316,7 @@ Var_ChangeDriverOrder (
   set.
 
 **/
+/*
 VOID
 Var_UpdateAllConsoleOption (
   VOID
@@ -365,7 +366,7 @@ Var_UpdateAllConsoleOption (
     ASSERT (!EFI_ERROR (Status));
   }
 }
-
+*/
 /**
   This function delete and build multi-instance device path for
   specified type of console device.
@@ -481,6 +482,7 @@ Var_UpdateConsoleOption (
   @retval EFI_SUCCESS    The function complete successfully.
   @return The EFI variable can not be saved. See gRT->SetVariable for detail return information.
 **/
+/*
 EFI_STATUS
 Var_UpdateConsoleInpOption (
   VOID
@@ -488,7 +490,7 @@ Var_UpdateConsoleInpOption (
 {
   return Var_UpdateConsoleOption (L"ConIn", &ConsoleInpMenu, FORM_CON_IN_ID);
 }
-
+*/
 /**
   This function delete and build multi-instance device path ConOut
   console device.
@@ -496,6 +498,7 @@ Var_UpdateConsoleInpOption (
   @retval EFI_SUCCESS    The function complete successfully.
   @return The EFI variable can not be saved. See gRT->SetVariable for detail return information.
 **/
+/*
 EFI_STATUS
 Var_UpdateConsoleOutOption (
   VOID
@@ -503,7 +506,7 @@ Var_UpdateConsoleOutOption (
 {
   return Var_UpdateConsoleOption (L"ConOut", &ConsoleOutMenu, FORM_CON_OUT_ID);
 }
-
+*/
 /**
   This function delete and build multi-instance device path ErrOut
   console device.
@@ -511,6 +514,7 @@ Var_UpdateConsoleOutOption (
   @retval EFI_SUCCESS    The function complete successfully.
   @return The EFI variable can not be saved. See gRT->SetVariable for detail return information.  
 **/
+/*
 EFI_STATUS
 Var_UpdateErrorOutOption (
   VOID
@@ -518,7 +522,7 @@ Var_UpdateErrorOutOption (
 {
   return Var_UpdateConsoleOption (L"ErrOut", &ConsoleErrMenu, FORM_CON_ERR_ID);
 }
-
+*/
 /**
   This function create a currently loaded Drive Option from 
   the BMM. It then appends this Driver Option to the end of 

@@ -119,8 +119,8 @@ Returns:
     return EFI_NOT_FOUND;
   }
   
-  DEBUG ((EFI_D_ERROR, "PCIBUS: GetOpRomInfo: OPROM detected!\n"));
-  DEBUG ((EFI_D_ERROR, "PCIBUS: GetOpRomInfo: B-%x, D-%x, F-%x\n", (UINTN)Bus, (UINTN)Device, (UINTN)Function));
+//  DEBUG ((EFI_D_ERROR, "PCIBUS: GetOpRomInfo: OPROM detected!\n"));
+//  DEBUG ((EFI_D_ERROR, "PCIBUS: GetOpRomInfo: B-%x, D-%x, F-%x\n", (UINTN)Bus, (UINTN)Device, (UINTN)Function));
 
   PciIoDevice->RomSize = (UINT64) ((~AllOnes) + 1);
   return EFI_SUCCESS;

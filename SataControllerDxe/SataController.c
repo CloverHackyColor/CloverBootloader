@@ -127,7 +127,7 @@ CalculateBestPioMode (
   if ((IdentifyData->AtaData.field_validity & 0x02) == 0x02) {
 
     AdvancedPioMode = IdentifyData->AtaData.advanced_pio_modes;
-    DEBUG ((EFI_D_INFO, "CalculateBestPioMode: AdvancedPioMode = %x\n", AdvancedPioMode));
+ //   DEBUG ((EFI_D_INFO, "CalculateBestPioMode: AdvancedPioMode = %x\n", AdvancedPioMode));
 
     for (Index = 0; Index < 8; Index++) {
       if ((AdvancedPioMode & 0x01) != 0) {

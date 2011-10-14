@@ -951,7 +951,7 @@ Return
     Regs.X.BX = NewVideoMode;
     LegacyBiosInt86 (0x10, &Regs);
     if (Regs.X.AX != 0x004F) {
-      DEBUG ((EFI_D_ERROR, "SORRY: Cannot set to video mode: 0x%04X!\n", NewVideoMode));
+//      DEBUG ((EFI_D_ERROR, "SORRY: Cannot set to video mode: 0x%04X!\n", NewVideoMode));
       return (UINT16) -1;
     }
   }
@@ -980,7 +980,7 @@ ExceptionHandler (
   //
   VideoMode = SwitchVideoMode (0x83);
   if (VideoMode == (UINT16) -1) {
-    DEBUG ((EFI_D_ERROR, "Video Mode Unknown!\n"));
+//    DEBUG ((EFI_D_ERROR, "Video Mode Unknown!\n"));
   }
 #endif
 

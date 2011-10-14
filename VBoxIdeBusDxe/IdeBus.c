@@ -341,7 +341,7 @@ IDEBusDriverBindingStart (
   SavedStatus = Status;
 
   if ((EFI_ERROR (Status)) && (Status != EFI_ALREADY_STARTED)) {
-    DEBUG ((EFI_D_ERROR, "Open Init, Status=%x", Status));
+//    DEBUG ((EFI_D_ERROR, "Open Init, Status=%x", Status));
     //
     // open protocol is not SUCCESS or not ALREADY_STARTED, error exit
     //
@@ -366,7 +366,7 @@ IDEBusDriverBindingStart (
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_ERROR, "Open PciIo, Status=%x", Status));
+ //   DEBUG ((EFI_D_ERROR, "Open PciIo, Status=%x", Status));
     goto ErrorExit;
   }
 
@@ -516,7 +516,7 @@ IDEBusDriverBindingStart (
                         &MaxDevices
                         );
     if (EFI_ERROR (Status)) {
-      DEBUG ((EFI_D_ERROR, "[GetChannel, Status=%x]", Status));
+  //    DEBUG ((EFI_D_ERROR, "[GetChannel, Status=%x]", Status));
       continue;
     }
 
@@ -714,7 +714,7 @@ IDEBusDriverBindingStart (
                           &SupportedModes
                           );
       if (EFI_ERROR (Status)) {
-        DEBUG ((EFI_D_ERROR, "[bStStp20S=%x]", Status));
+  //      DEBUG ((EFI_D_ERROR, "[bStStp20S=%x]", Status));
         continue;
       }
 

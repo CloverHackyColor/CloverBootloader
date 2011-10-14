@@ -1117,7 +1117,7 @@ BiosVideoCheckForVbe (
   //
   // See if the VESA call succeeded
   //
-  if (Regs.X.AX != VESA_BIOS_EXTENSIONS_STATUS_SUCCESS) {
+  if (Regs.X.AX != VESA_BIOS_EXTENSIONS_STATUS_SUCCESS) { //0x004f
     return Status;
   }
   //
@@ -1220,7 +1220,7 @@ BiosVideoCheckForVbe (
   PreferMode = 0;
   ModeNumber = 0;
 
-  for (; *ModeNumberPtr != VESA_BIOS_EXTENSIONS_END_OF_MODE_LIST; ModeNumberPtr++) {
+  for (; *ModeNumberPtr != VESA_BIOS_EXTENSIONS_END_OF_MODE_LIST; ModeNumberPtr++) {//0xffff
     //
     // Make sure this is a mode number defined by the VESA VBE specification.  If it isn'tm then skip this mode number.
     //
