@@ -72,6 +72,7 @@ typedef struct {
   UINT64       BaseAddress;
   UINT64       Length;
   UINT32       Type;
+	UINT32		ExtendedAttribute;
 } BIOS_MEMORY_MAP_ENTRY;
 #pragma pack()
 

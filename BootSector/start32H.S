@@ -67,7 +67,7 @@ PhysicalDrive:       .byte  0              # Physical Drive Number           - 1
 Reserved1:           .byte  0              # Reserved Field                  - 1 byte
 Signature:           .byte  0              # Extended Boot Signature         - 1 byte
 VolId:               .ascii  "    "        # Volume Serial Number            - 4 bytes
-FatLabel:            .ascii  "           " # Volume Label                    - 11 bytes
+FatLabel:            .ascii  "Clover     " # Volume Label                    - 11 bytes
 FileSystemType:      .ascii  "HFSPlus "    # File System Type                - 8 bytes
 
 BootSectorEntryPoint: 
@@ -206,8 +206,8 @@ LBAOffsetForBootSector:
 
  .org     0x200  # Will cause build break
         jmp start
-Em64String: 
-        .byte 'E', 0x0c, 'm', 0x0c, '6', 0x0c, '4', 0x0c, 'T', 0x0c, ' ', 0x0c, 'U', 0x0c, 'n', 0x0c, 's', 0x0c, 'u', 0x0c, 'p', 0x0c, 'p', 0x0c, 'o', 0x0c, 'r', 0x0c, 't', 0x0c, 'e', 0x0c, 'd', 0x0c, '!', 0x0c
+#Em64String: 
+#        .byte 'E', 0x0c, 'm', 0x0c, '6', 0x0c, '4', 0x0c, 'T', 0x0c, ' ', 0x0c, 'U', 0x0c, 'n', 0x0c, 's', 0x0c, 'u', 0x0c, 'p', 0x0c, 'p', 0x0c, 'o', 0x0c, 'r', 0x0c, 't', 0x0c, 'e', 0x0c, 'd', 0x0c, '!', 0x0c
 
 start:  
         movw %cs, %ax
@@ -226,17 +226,68 @@ start:
 #		movw $0x61, byte ptr %es:[160]
 #		movw %cs, %ax
 #		movw %ax, %es
+//advanced algo
+/*
+; use the INT 0x15, eax= 0xE820 BIOS function to get a memory map
+; inputs: es:di -> destination buffer for 24 byte entries
+; outputs: bp = entry count, trashes all registers except esi
+do_e820:
+	xor ebx, ebx		; ebx must be 0 to start
+	xor bp, bp		; keep an entry count in bp
+	mov edx, 0x0534D4150	; Place "SMAP" into edx
+	mov eax, 0xe820
+	mov [es:di + 20], dword 1	; force a valid ACPI 3.X entry
+	mov ecx, 24		; ask for 24 bytes
+	int 0x15
+	jc short .failed	; carry set on first call means "unsupported function"
+	mov edx, 0x0534D4150	; Some BIOSes apparently trash this register?
+	cmp eax, edx		; on success, eax must have been reset to "SMAP"
+	jne short .failed
+	test ebx, ebx		; ebx = 0 implies list is only 1 entry long (worthless)
+	je short .failed
+	jmp short .jmpin
+.e820lp:
+	mov eax, 0xe820		; eax, ecx get trashed on every int 0x15 call
+	mov [es:di + 20], dword 1	; force a valid ACPI 3.X entry
+	mov ecx, 24		; ask for 24 bytes again
+	int 0x15
+	jc short .e820f		; carry set means "end of list already reached"
+	mov edx, 0x0534D4150	; repair potentially trashed register
+.jmpin:
+	jcxz .skipent		; skip any 0 length entries
+	cmp cl, 20		; got a 24 byte ACPI 3.X response?
+	jbe short .notext
+	test byte [es:di + 20], 1	; if so: is the "ignore this data" bit clear?
+	je short .skipent
+.notext:
+	mov ecx, [es:di + 8]	; get lower dword of memory region length
+	or ecx, [es:di + 12]	; "or" it with upper dword to test for zero
+	jz .skipent		; if length qword is 0, skip entry
+	inc bp			; got a good entry: ++count, move to next storage spot
+	add di, 24
+.skipent:
+	test ebx, ebx		; if ebx resets to 0, list is complete
+	jne short .e820lp
+.e820f:
+	mov [mmap_ent], bp	; store the entry count
+	clc			; there is "jc" on end of list to this point, so the carry must be cleared
+	ret
+.failed:
+	stc			; "function unsupported" error exit
+	ret
+*/	
+
 
 
         movl $0, %ebx
         leal MemoryMap, %edi
 MemMapLoop: 
         movl $0xe820, %eax
-        movl $20, %ecx
+        movl $24, %ecx			#WIKI said $24
         movl $0x534d4150, %edx  # 0x534d4150 = 'SMAP' 
         int  $0x15
         jc  MemMapDone
-        addl $20, %edi
+        addl $24, %edi
         cmpl $0, %ebx
         je  MemMapDone
         jmp MemMapLoop
@@ -334,8 +385,8 @@ MemMapDone:
 
 A20GateEnabled: 
 #//Slice - switch to graphics mode (1), or 80x25 mono text mode (2)
-#		movl	$0x0002, %eax 
-#		int		$0x10
+		movl	$0x0002, %eax 
+		int		$0x10
 
 #
 # DISABLE INTERRUPTS - Entering Protected Mode

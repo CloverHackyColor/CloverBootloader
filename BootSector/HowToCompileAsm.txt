@@ -1,4 +1,4 @@
-./gnu-gcc -c -o efi32.o efi32.S -Os -arch=ia32 -save-temps -g -combine -mms-bitfields  -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-missing-braces  -c -fno-stack-protector
+./gnu-gcc -c -o efi32.o efi32.S -Os -arch=ia32 -save-temps -g -combine -mms-bitfields -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-missing-braces -c -fno-stack-protector
 ./gnu-ld --oformat binary -o efi32.com efi32.o -Ttext 0 -Map efi32.map
 dd if=efi32.com of=efi32.com3 bs=512 skip=264
 
