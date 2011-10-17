@@ -196,8 +196,8 @@
       #ReportStatusCodeLib|MdeModulePkg/Library/DxeReportStatusCodeLib/DxeReportStatusCodeLib.inf
       ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
   }
-#  Clover/OsxDxeCore/DxeMain.inf {
- MdeModulePkg/Core/Dxe/DxeMain.inf {
+ Clover/OsxDxeCore/DxeMain.inf {
+# MdeModulePkg/Core/Dxe/DxeMain.inf {
     #
     # Enable debug output for DxeCore module, this is a sample for how to enable debug output
     # for a module. If need turn on debug output for other module, please copy following overriden

@@ -482,7 +482,17 @@ BiosVideoChildHandleInstall (
   // When check for VBE, PCI I/O protocol is needed, so use parent's protocol interface temporally
   //
   BiosVideoPrivate->PciIo = ParentPciIo;
-
+//Slice
+	IA32_REGISTER_SET        Regs;
+	gBS->SetMem (&Regs, sizeof (Regs), 0);
+	Regs.H.AH = 0x0E;
+	Regs.H.AL = 0x36;
+	Regs.H.BL = 0xF;
+	LegacyBiosInt86 (BiosVideoPrivate, 0x10, &Regs);
+//	while (TRUE) {
+		
+//	}
+	
   //
   // Check for VESA BIOS Extensions for modes that are compatible with Graphics Output
   //

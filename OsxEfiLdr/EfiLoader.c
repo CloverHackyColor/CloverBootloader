@@ -20,7 +20,7 @@ Revision History:
 
 #include "EfiLdr.h"
 #include "Support.h"
-//#include "Debug.h"
+#include "Debug.h"
 #include "PeLoader.h"
 #include "LzmaDecompress.h"
 //#include "TianoDecompress.h"

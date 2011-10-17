@@ -108,9 +108,9 @@ INF  Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
 #INF  IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
 INF  Clover/VBoxVgaMiniPort/VgaMiniPortDxe.inf
 #INF  IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
-INF  Clover/VgaClassDxe/VgaClassDxe.inf
+#INF  Clover/VgaClassDxe/VgaClassDxe.inf
 #INF  DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
-INF  Clover/BiosVideo/BiosVideo.inf
+#INF  Clover/BiosVideo/BiosVideo.inf
 #INF  Clover/IntelGmaDxe/Gop.inf
 
 # BIOS CSM

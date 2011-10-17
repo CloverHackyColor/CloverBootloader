@@ -115,7 +115,7 @@ LoadVarStore:
 SaveVolumeId: 
         popw    %es
         movw    VolId(%bp), %ax
-        movw    %ax, %es:0                       # Save Volume Id to 0:19000. we will find the correct volume according to this VolumeId
+        movw    %ax, %es:0        # Save Volume Id to 0:19000. we will find the correct volume according to this VolumeId
         movw    VolId+2(%bp), %ax
         movw    %ax, %es:2
 
@@ -174,7 +174,7 @@ ReadFile:
 
 ReadBlocks: 
 		ret
-
+/*
 PrintStringAndHalt: 
         movw $0xb800, %ax
         movw %ax, %es
@@ -187,6 +187,7 @@ Halt:
 ErrorString: 
         .byte 'S', 0x0c, 'E', 0x0c, 'r', 0x0c, 'r', 0x0c, 'o', 0x0c, 'r', 0x0c, '!', 0x0c
 
+ */
          .org     0x01fa  # Will cause build break
 LBAOffsetForBootSector: 
         .long   0x0
@@ -276,8 +277,47 @@ do_e820:
 	stc			; "function unsupported" error exit
 	ret
 */	
-
-
+/*	xorl %ebx, %ebx
+	xorl %ebp, %ebp
+	movl $0x534d4150, %edx  # 0x534d4150 = 'SMAP'
+	movl $0xe820, %eax
+	leal MemoryMap, %edi
+	movl $1, %es:20(%di)
+	movl $24, %ecx
+	int  $0x15
+	jc  MemMapDone
+	movl $0x534d4150, %edx
+	cmpl %edx, %eax
+	jne MemMapDone
+	testl %ebx, %ebx
+	je  MemMapDone
+	jmp JumpIn
+MemMapLoop:
+	movl $0xe820, %eax	
+	movl $1, %es:20(%di)
+	int  $0x15	
+	jc  MemMapDone
+	movl $0x534d4150, %edx
+JumpIn:
+	jcxz SkipEntry
+	cmpb $20, %cl
+	jbe NoText
+#	movl 20(%edi), %eax
+	testb $1, 20(%edi)
+	je SkipEntry
+NoText:
+	movl %es:8(%di), %ecx
+	orl %es:12(%di), %ecx
+	jz  SkipEntry
+	incl %ebp
+	addl $24, %edi
+SkipEntry:
+	test %ebx, %ebx
+	jne  MemMapLoop
+MemMapDone:
+	movl %ebp, MemoryMapSize
+	clc		
+	*/
 
         movl $0, %ebx
         leal MemoryMap, %edi
@@ -325,29 +365,14 @@ MemMapDone:
 #
 # Enable A20 Gate 
 #
+		
         movw $0x2401, %ax                   # Enable A20 Gate
         int $0x15
-        jnc A20GateEnabled                  # Jump if it suceeded
-		
+        jnc A20GateEnabled                  # Jump if it succeeded
+
 #
 # If INT 15 Function 2401 is not supported, then attempt to Enable A20 manually.
 #
-#Old DUET algo
-#        call    Empty8042InputBuffer        # Empty the Input Buffer on the 8042 controller
-#        jnz     Timeout8042                 # Jump if the 8042 timed out
-#        outw    %ax, $DELAY_PORT            # Delay 1 uS
-#        movb    $WRITE_DATA_PORT_CMD, %al   # 8042 cmd to write output port
-#        outb    %al, $KBD_STATUS_PORT       # Send command to the 8042
-#        call    Empty8042InputBuffer        # Empty the Input Buffer on the 8042 controller
-#        jnz     Timeout8042                 # Jump if the 8042 timed out
-#        movb    $ENABLE_A20_CMD, %al        # gate address bit 20 on
-#        outb    %al, $KBD_CONTROL_PORT      # Send command to thre 8042
-#        call    Empty8042InputBuffer        # Empty the Input Buffer on the 8042 controller
-#        movw    $25, %cx                    # Delay 25 uS for the command to complete on the 8042
-#Delay25uS: 
-#        outw    %ax, $DELAY_PORT            # Delay 1 uS
-#        loopl   Delay25uS
-#Timeout8042: 
 #New algo from WIKI
 /*		cli
 		call    a20wait
@@ -377,17 +402,38 @@ MemMapDone:
 		
 		call    a20wait
 */
+#UEFI/DUET
+        call    Empty8042InputBuffer        # Empty the Input Buffer on the 8042 controller
+        jnz     Timeout8042                 # Jump if the 8042 timed out
+        outw    %ax, $DELAY_PORT            # Delay 1 uS
+        movb    $WRITE_DATA_PORT_CMD, %al   # 8042 cmd to write output port
+        outb    %al, $KBD_STATUS_PORT       # Send command to the 8042
+        call    Empty8042InputBuffer        # Empty the Input Buffer on the 8042 controller
+        jnz     Timeout8042                 # Jump if the 8042 timed out
+        movb    $ENABLE_A20_CMD, %al        # gate address bit 20 on
+        outb    %al, $KBD_CONTROL_PORT      # Send command to thre 8042
+        call    Empty8042InputBuffer        # Empty the Input Buffer on the 8042 controller
+        movw    $25, %cx                    # Delay 25 uS for the command to complete on the 8042
+Delay25uS: 
+        outw    %ax, $DELAY_PORT            # Delay 1 uS
+        loopl   Delay25uS
+Timeout8042: 
 		
 #WIKI -fast A20gate
-		inb     $0x92, %al
-		orb		$2, %al
-		outb    %al, $0x92
+#		inb     $0x92, %al
+#		orb		$2, %al
+#		outb    %al, $0x92
 
 A20GateEnabled: 
 #//Slice - switch to graphics mode (1), or 80x25 mono text mode (2)
 		movl	$0x0002, %eax 
 		int		$0x10
-
+		#put char
+		movl	$0x000F, %ebx
+		movl	$0x0E35, %eax
+		movl	$0x0010, %ecx
+		int		$0x10
+#		jmp  PrintStringAndHalt
 #
 # DISABLE INTERRUPTS - Entering Protected Mode
 #
@@ -428,7 +474,7 @@ Empty8042Loop:
         andb    $0x2, %al                   # Check the Input Buffer Full Flag
         loopnz  Empty8042Loop               # Loop until the input buffer is empty or a timout of 65536 uS
         ret
-		
+/*		
 a20wait:
         inb     $KBD_STATUS_PORT, %al
         testb    $2, %al
@@ -441,6 +487,22 @@ a20wait2:
         testb   $1, %al
         jz      a20wait2
         ret
+*/
+
+PrintStringAndHalt: 
+        leaw ErrorString, %si
+        movw $7, %cx
+
+        movw $0xb800, %ax
+        movw %ax, %es
+        movw $160, %di
+        rep
+        movsw
+Halt: 
+        jmp   Halt
+
+ErrorString: 
+        .byte 'S', 0x0c, 'E', 0x0c, 'r', 0x0c, 'r', 0x0c, 'o', 0x0c, 'r', 0x0c, '!', 0x0c
 		
 
 ##############################################################################
