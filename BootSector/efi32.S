@@ -20,7 +20,7 @@
 ##############################################################################
 
         .org 0x21000
-
+.code32
 .global _start
 _start:
 
@@ -36,13 +36,20 @@ _start:
     .long      commonIdtEntry - . - 4   # offset to jump to     
 .endm
 
-Start:  
+Start: 
+#PAUSE4:		
+#		jmp PAUSE4
+	movw	$0x08, %ax                   # Flat data descriptor
+	
     movw    %ax, %ds
     movw    %ax, %es
     movw    %ax, %fs
     movw    %ax, %gs
     movw    %ax, %ss
+#	.byte   0x66
+#	movl	$0x00400000, %ebp
     movl    $0x001ffff0, %esp
+#	movl	$0x00070000, %ebx
 #Slice
 #    call    ClearScreen
 #	movl    $0xb8000, %edi
@@ -97,7 +104,7 @@ LOOP_1:                                         # loop through all IDT entries e
 
 ##    
 ## just for fun, let's do a software interrupt to see if we correctly land in the exception handler...
-    movl     $0x011111111, %eax
+#    movl     $0x011111111, %eax
 #    mov     ebx, 022222222h
 #    mov     ecx, 033333333h
 #    mov     edx, 044444444h

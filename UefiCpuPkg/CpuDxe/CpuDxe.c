@@ -1328,7 +1328,7 @@ InitializeCpu (
 
 
   // Register virtual address change notifier
-#if 0
+#if 1
   gBS->CreateEventEx (
       EVT_NOTIFY_SIGNAL,
       TPL_NOTIFY,

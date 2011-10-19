@@ -15,6 +15,10 @@
 #*
 #------------------------------------------------------------------------------
 
+#define data32  .byte 0x66
+#define addr32  .byte 0x67
+
+
         #.MODEL small
         .stack: 
         .486p: 
@@ -79,56 +83,6 @@ BootSectorEntryPoint:
 
 # Re use the BPB data stored in Boot Sector
         movw    $0x7c00, %bp
-
-
-        pushw   %cx
-# Read Efivar.bin
-#       1000:dx    = DirectoryEntry of Efivar.bin -> BS.com has filled already
-        movw    $0x1900, %ax
-        movw    %ax, %es
-        testw   %dx, %dx
- #       jnz     CheckVarStoreSize
-
-        movb    $1, %al
-NoVarStore: 
-        pushw   %es
-# Set the 5th byte start @ 0:19000 to non-zero indicating we should init var store header in DxeIpl
-        movb    %al, %es:4
-        jmp     SaveVolumeId
-
-CheckVarStoreSize: 
-        movw    %dx, %di
-        cmpl    $0x4000, %ds:2(%di)
-        movb    $2, %al
-        jne     NoVarStore
-
-LoadVarStore: 
-        movb    $0, %al
-        movb    %al, %es:4
-        movw    (%di), %cx
-#       ES:DI = 1500:0
-        xorw    %di, %di
-        pushw   %es
-        movw    $0x1500, %ax
-        movw    %ax, %es
-#        call    ReadFile
-SaveVolumeId: 
-        popw    %es
-        movw    VolId(%bp), %ax
-        movw    %ax, %es:0        # Save Volume Id to 0:19000. we will find the correct volume according to this VolumeId
-        movw    VolId+2(%bp), %ax
-        movw    %ax, %es:2
-
-# Read Efildr
-        popw    %cx
-#       cx    = Start Cluster of Efildr -> BS.com has filled already
-#       ES:DI = 2000:0, first cluster will be read again
-        xorw    %di, %di                            # di = 0
-        movw    $0x2000, %ax
-        movw    %ax, %es
-        call    ReadFile
-        movw    %cs, %ax
-        movw    %ax, %cs:JumpSegment
 JumpFarInstruction: 
         .byte   0xea
 JumpOffset: 
@@ -136,44 +90,6 @@ JumpOffset:
 JumpSegment: 
         .word   0x2000
 
-
-
-
-# ****************************************************************************
-# ReadFile
-#
-# Arguments:
-#   CX    = Start Cluster of File
-#   ES:DI = Buffer to store file content read from disk
-#
-# Return:
-#   (ES << 4 + DI) = end of file content Buffer
-#
-# ****************************************************************************
-ReadFile: 
-# si      = NumberOfClusters
-# cx      = ClusterNumber
-# dx      = CachedFatSectorNumber
-# ds:0000 = CacheFatSectorBuffer
-# es:di   = Buffer to load file
-# bx      = NextClusterNumber
-	ret
-
-
-# ****************************************************************************
-# ReadBlocks - Reads a set of blocks from a block device
-#
-# AX    = Start LBA
-# BX    = Number of Blocks to Read
-# ES:DI = Buffer to store sectors read from disk
-# ****************************************************************************
-
-# cx = Blocks
-# bx = NumberOfBlocks
-# si = StartLBA
-
-ReadBlocks: 
-		ret
 /*
 PrintStringAndHalt: 
         movw $0xb800, %ax
@@ -206,10 +122,11 @@ LBAOffsetForBootSector:
 .equ                 ENABLE_A20_CMD, 0x0df       # 8042 command to enable A20
 
  .org     0x200  # Will cause build break
+ .code16
         jmp start
 #Em64String: 
 #        .byte 'E', 0x0c, 'm', 0x0c, '6', 0x0c, '4', 0x0c, 'T', 0x0c, ' ', 0x0c, 'U', 0x0c, 'n', 0x0c, 's', 0x0c, 'u', 0x0c, 'p', 0x0c, 'p', 0x0c, 'o', 0x0c, 'r', 0x0c, 't', 0x0c, 'e', 0x0c, 'd', 0x0c, '!', 0x0c
-
+Label:            .ascii  "Clover      " # Bootloader Label  
 start:  
         movw %cs, %ax
         movw %ax, %ds
@@ -323,11 +240,11 @@ MemMapDone:
         leal MemoryMap, %edi
 MemMapLoop: 
         movl $0xe820, %eax
-        movl $24, %ecx			#WIKI said $24
+        movl $20, %ecx			#WIKI said $24
         movl $0x534d4150, %edx  # 0x534d4150 = 'SMAP' 
         int  $0x15
         jc  MemMapDone
-        addl $24, %edi
+        addl $20, %edi
         cmpl $0, %ebx
         je  MemMapDone
         jmp MemMapLoop
@@ -346,7 +263,7 @@ MemMapDone:
         leal    MemoryMapSize(%ebx), %edx   # Physical base address of the memory map
 
         addl $0x1000, %ebx                  # Source of EFI32
-        movl %ebx, JUMP+2
+#        movl %ebx, JUMP+2
         addl $0x1000, %ebx
         movl %ebx, %esi                     # Source of EFILDR32
 
@@ -428,42 +345,55 @@ A20GateEnabled:
 #//Slice - switch to graphics mode (1), or 80x25 mono text mode (2)
 		movl	$0x0002, %eax 
 		int		$0x10
-		#put char
+		#put char 5
 		movl	$0x000F, %ebx
 		movl	$0x0E35, %eax
 		movl	$0x0010, %ecx
 		int		$0x10
-#		jmp  PrintStringAndHalt
+#PAUSE1:		
+#		jmp PAUSE1
+
 #
 # DISABLE INTERRUPTS - Entering Protected Mode
 #
 
         cli
-
-#        mov ax,0b800h
-#        mov es,ax
-#        mov byte ptr es:[164],'c'
-#        mov ax,cs
-#        mov es,ax
-
-        .byte   0x66
+#		addr32
+        data32
         lgdt    gdtr
-        .byte   0x66
+#PAUSE2:		
+#		jmp PAUSE2
+#		addr32
+        data32
         lidt    idtr
+#PAUSE3:		
+#		jmp PAUSE3
 
         movl    %cr0, %eax
         orb     $1, %al
+#		data32
+#		or      $1, %eax
         movl    %eax, %cr0
+#PAUSE4:		
+#		jmp PAUSE4
+#		data32
+#		ljmp xprot
+#xprot:		
 
-        movl $0x008, %eax                   # Flat data descriptor
-        movl $0x00400000, %ebp              # Destination of EFILDR32
-        movl $0x00070000, %ebx              # Length of copy
+#		.byte 0x66
+#        movl $0x008, %eax                   # Flat data descriptor
+#		.byte 0x90
+#        movl $0x00400000, %ebp              # Destination of EFILDR32
+#		.byte 0x90
+#        movl $0x00070000, %ebx              # Length of copy
+#PAUSE5:		
+#		jmp PAUSE5
 
 JUMP: 
 # jmp far 0010:00020000
         .byte 0x66
         .byte 0xea
-        .long 0x00020000
+        .long 0x00021000
         .word 0x0010
 
 Empty8042InputBuffer: 
@@ -488,7 +418,7 @@ a20wait2:
         jz      a20wait2
         ret
 */
-
+/*
 PrintStringAndHalt: 
         leaw ErrorString, %si
         movw $7, %cx
@@ -503,7 +433,7 @@ Halt:
 
 ErrorString: 
         .byte 'S', 0x0c, 'E', 0x0c, 'r', 0x0c, 'r', 0x0c, 'o', 0x0c, 'r', 0x0c, '!', 0x0c
-		
+*/		
 
 ##############################################################################
 # data

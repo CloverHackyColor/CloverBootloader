@@ -257,6 +257,9 @@ EfiLoader (
   //
   // Jump to EFI Firmware
   //
+//	while (TRUE) {
+		
+//	}
 
   if (DxeIplImage.EntryPoint != NULL) {
 
