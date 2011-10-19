@@ -11,3 +11,14 @@ cat start32H.com2 efi32.com3 Efildr32 >boot
 ./gnu-ld --oformat binary -o start32.com start32.o -Ttext 0 -Map start.map
 
 cat start32.com efi32.com3 Efildr32 >Efildr20
+
+next step
+
+./gnu-gcc -c -o efi32.o efi32.S -Os -arch=ia32 -save-temps -g -combine -mms-bitfields -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-missing-braces -c -fno-stack-protector
+./gnu-ld --oformat binary -o efi32.com efi32.o -Ttext 0 -Map efi32.map
+dd if=efi32.com of=efi32.com4 bs=512 skip=264
+
+./gnu-gcc -c -o start32H.o start32H.S -Os -arch=ia32 -save-temps -g -fno-strict-aliasing -Wall -Werror -fno-stack-protector
+./gnu-ld --oformat binary -o start32H.com start32H.o -Ttext 0 -Map start.map
+dd if=start32H.com of=start32H.com4 bs=512 skip=1
+cat start32H.com4 efi32.com4 Efildr32 >boot

@@ -263,7 +263,7 @@ MemMapDone:
         leal    MemoryMapSize(%ebx), %edx   # Physical base address of the memory map
 
         addl $0x1000, %ebx                  # Source of EFI32
-#        movl %ebx, JUMP+2
+        movl %ebx, JUMP+2
         addl $0x1000, %ebx
         movl %ebx, %esi                     # Source of EFILDR32
 
@@ -358,12 +358,12 @@ A20GateEnabled:
 #
 
         cli
-#		addr32
+		addr32
         data32
         lgdt    gdtr
 #PAUSE2:		
 #		jmp PAUSE2
-#		addr32
+		addr32
         data32
         lidt    idtr
 #PAUSE3:		
@@ -393,7 +393,7 @@ JUMP:
 # jmp far 0010:00020000
         .byte 0x66
         .byte 0xea
-        .long 0x00021000
+        .long 0x00020000
         .word 0x0010
 
 Empty8042InputBuffer: 
