@@ -124,6 +124,7 @@ LBAOffsetForBootSector:
  .org     0x200  # Will cause build break
  .code16
         jmp start
+Label:            .ascii  "Clover     " 		
 #Em64String: 
 #        .byte 'E', 0x0c, 'm', 0x0c, '6', 0x0c, '4', 0x0c, 'T', 0x0c, ' ', 0x0c, 'U', 0x0c, 'n', 0x0c, 's', 0x0c, 'u', 0x0c, 'p', 0x0c, 'p', 0x0c, 'o', 0x0c, 'r', 0x0c, 't', 0x0c, 'e', 0x0c, 'd', 0x0c, '!', 0x0c
 Label:            .ascii  "Clover      " # Bootloader Label  
@@ -262,10 +263,10 @@ MemMapDone:
         movl    %eax, idtr + 2            # Put address of idt into the idtr
         leal    MemoryMapSize(%ebx), %edx   # Physical base address of the memory map
 
-        addl $0x1000, %ebx                  # Source of EFI32
+        addl $0x1000, %ebx                  # Source of EFI32 = $0x21000
         movl %ebx, JUMP+2
         addl $0x1000, %ebx
-        movl %ebx, %esi                     # Source of EFILDR32
+        movl %ebx, %esi                     # Source of EFILDR32 = $0x22000
 
 #        mov ax,0b800h
 #        mov es,ax
@@ -343,12 +344,12 @@ Timeout8042:
 
 A20GateEnabled: 
 #//Slice - switch to graphics mode (1), or 80x25 mono text mode (2)
-		movl	$0x0002, %eax 
+		movw	$0x0002, %ax 
 		int		$0x10
-		#put char 5
-		movl	$0x000F, %ebx
-		movl	$0x0E35, %eax
-		movl	$0x0010, %ecx
+		#put char '5'
+		movw	$0x000F, %bx
+		movw	$0x0E35, %ax
+		movw	$0x0010, %cx
 		int		$0x10
 #PAUSE1:		
 #		jmp PAUSE1
@@ -358,8 +359,8 @@ A20GateEnabled:
 #
 
         cli
-		addr32
-        data32
+
+        .byte   0x66
         lgdt    gdtr
 #PAUSE2:		
 #		jmp PAUSE2
@@ -374,20 +375,19 @@ A20GateEnabled:
 #		data32
 #		or      $1, %eax
         movl    %eax, %cr0
-#PAUSE4:		
-#		jmp PAUSE4
-#		data32
-#		ljmp xprot
-#xprot:		
+		
+		jmp  NEAR
+		nop
+		nop
+		nop
 
-#		.byte 0x66
-#        movl $0x008, %eax                   # Flat data descriptor
-#		.byte 0x90
-#        movl $0x00400000, %ebp              # Destination of EFILDR32
-#		.byte 0x90
-#        movl $0x00070000, %ebx              # Length of copy
-#PAUSE5:		
-#		jmp PAUSE5
+NEAR:  
+		.byte   0x66
+		movl $0x008, %eax                   # Flat data descriptor
+		.byte   0x66
+        movl $0x00400000, %ebp              # Destination of EFILDR32
+		.byte   0x66
+        movl $0x00070000, %ebx              # Length of copy
 
 JUMP: 
 # jmp far 0010:00020000

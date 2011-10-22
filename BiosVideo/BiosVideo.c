@@ -483,12 +483,12 @@ BiosVideoChildHandleInstall (
   //
   BiosVideoPrivate->PciIo = ParentPciIo;
 //Slice
-	IA32_REGISTER_SET        Regs;
+/*	IA32_REGISTER_SET        Regs;
 	gBS->SetMem (&Regs, sizeof (Regs), 0);
 	Regs.H.AH = 0x0E;
 	Regs.H.AL = 0x36;
 	Regs.H.BL = 0xF;
-	LegacyBiosInt86 (BiosVideoPrivate, 0x10, &Regs);
+	LegacyBiosInt86 (BiosVideoPrivate, 0x10, &Regs); */
 //	while (TRUE) {
 		
 //	}
