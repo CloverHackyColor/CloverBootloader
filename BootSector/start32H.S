@@ -123,8 +123,7 @@ LBAOffsetForBootSector:
 
  .org     0x200  # Will cause build break
  .code16
-        jmp start
-Label:            .ascii  "Clover     " 		
+        jmp start		
 #Em64String: 
 #        .byte 'E', 0x0c, 'm', 0x0c, '6', 0x0c, '4', 0x0c, 'T', 0x0c, ' ', 0x0c, 'U', 0x0c, 'n', 0x0c, 's', 0x0c, 'u', 0x0c, 'p', 0x0c, 'p', 0x0c, 'o', 0x0c, 'r', 0x0c, 't', 0x0c, 'e', 0x0c, 'd', 0x0c, '!', 0x0c
 Label:            .ascii  "Clover      " # Bootloader Label  
@@ -346,10 +345,10 @@ A20GateEnabled:
 #//Slice - switch to graphics mode (1), or 80x25 mono text mode (2)
 		movw	$0x0002, %ax 
 		int		$0x10
-		#put char '5'
-		movw	$0x000F, %bx
-		movw	$0x0E35, %ax
-		movw	$0x0010, %cx
+		#put char 6
+		movl	$0x000F, %ebx
+		movl	$0x0E36, %eax
+		movl	$0x0010, %ecx
 		int		$0x10
 #PAUSE1:		
 #		jmp PAUSE1
@@ -364,34 +363,32 @@ A20GateEnabled:
         lgdt    gdtr
 #PAUSE2:		
 #		jmp PAUSE2
-		addr32
+#		addr32
         data32
         lidt    idtr
 #PAUSE3:		
 #		jmp PAUSE3
 
         movl    %cr0, %eax
-        orb     $1, %al
-#		data32
-#		or      $1, %eax
+#        orb     $1, %al
+		data32
+		or      $1, %eax
         movl    %eax, %cr0
 		
-		jmp  NEAR
-		nop
-		nop
-		nop
-
-NEAR:  
-		.byte   0x66
-		movl $0x008, %eax                   # Flat data descriptor
-		.byte   0x66
-        movl $0x00400000, %ebp              # Destination of EFILDR32
-		.byte   0x66
-        movl $0x00070000, %ebx              # Length of copy
-
+#		ljmp  NEAR
+#NEAR: 
+# now 32-bit protected mode 
+#.code32
+		
+#		movl $0x008, %eax                   # Flat data descriptor
+ #       movl $0x00400000, %ebp              # Destination of EFILDR32
+ #       movl $0x00070000, %ebx              # Length of copy
+		
+#		jmp BlockSignature+2
+		
 JUMP: 
 # jmp far 0010:00020000
-        .byte 0x66
+        data32
         .byte 0xea
         .long 0x00020000
         .word 0x0010
