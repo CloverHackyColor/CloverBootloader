@@ -338,7 +338,7 @@ DxeMain (
     );
 
 //  DEBUG ((DEBUG_INFO | DEBUG_LOAD, "HOBLIST address in DXE = 0x%p\n", HobStart));
-
+/*
   DEBUG_CODE_BEGIN ();
     EFI_PEI_HOB_POINTERS               Hob;
 
@@ -358,7 +358,7 @@ DxeMain (
       }
     }
   DEBUG_CODE_END ();
-
+*/
   //
   // Initialize the Event Services
   //
