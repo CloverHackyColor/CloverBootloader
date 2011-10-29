@@ -33,6 +33,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include <Library/UefiLib.h>
 #include <Library/DebugLib.h>
+#include <Library/PrintLib.h>
+#include <Library/BaseLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DevicePathLib.h>
@@ -127,6 +129,7 @@ typedef struct {
   // Status code
   //
   EFI_DEVICE_PATH_PROTOCOL                    *DevicePath;
+	EFI_EVENT                                   ExitBootServicesEvent;
 } BIOS_VIDEO_DEV;
 
 #define BIOS_VIDEO_DEV_FROM_PCI_IO_THIS(a)      CR (a, BIOS_VIDEO_DEV, PciIo, BIOS_VIDEO_DEV_SIGNATURE)

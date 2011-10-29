@@ -1178,8 +1178,10 @@ BdsLibGetImageHeader (
 }
 
 /**
-  This routine adjust the memory information for different memory type and 
-  save them into the variables for next boot.
+  This routine adjusts the memory information for different memory type and 
+  saves them into the variables for next boot. It conditionally resets the
+  system when the memory information changes. Platform can reserve memory 
+  large enough (125% of actual requirement) to avoid the reset in the first boot.
 **/
 VOID
 BdsSetMemoryTypeInformationVariable (
@@ -1213,7 +1215,7 @@ BdsSetMemoryTypeInformationVariable (
   }
 
   //
-  // Only get the the Memory Type Information variable in the boot mode 
+  // Only check the the Memory Type Information variable in the boot mode 
   // other than BOOT_WITH_DEFAULT_SETTINGS because the Memory Type
   // Information is not valid in this boot mode.
   //

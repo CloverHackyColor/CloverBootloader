@@ -54,7 +54,8 @@ INF  MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
 INF  MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDxe.inf
 
 #INF  DuetPkg/FSVariable/FSVariable.inf
-INF  MdeModulePkg/Universal/Variable/EmuRuntimeDxe/EmuVariableRuntimeDxe.inf
+#INF  MdeModulePkg/Universal/Variable/EmuRuntimeDxe/EmuVariableRuntimeDxe.inf
+INF  Clover/EmuVariableDxe/EmuVariableRuntimeDxe.inf
 INF  MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
 #INF  MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
 INF  MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
@@ -74,7 +75,7 @@ INF  Clover/OsxSmbiosGenDxe/SmbiosGen.inf
 INF  Clover/OsxBdsDxe/BdsDxe.inf
 #INF  MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
 INF  MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
-INF  UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
+INF  Clover/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
 INF  Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
 #INF  IntelFrameworkModulePkg/Universal/CpuIoDxe/CpuIoDxe.inf
 #INF  Clover/CpuDxe/Cpu.inf
@@ -92,7 +93,8 @@ INF IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 INF  Clover/HFSPlus/HFSPlus.inf
 
 INF  PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
-INF  DuetPkg/AcpiResetDxe/Reset.inf
+#INF  DuetPkg/AcpiResetDxe/Reset.inf
+INF  Clover/AcpiReset/Reset.inf
 #INF  PcAtChipsetPkg/KbcResetDxe/Reset.inf
 INF  DuetPkg/LegacyMetronome/Metronome.inf
 INF  PcAtChipsetPkg/8254TimerDxe/8254Timer.inf
@@ -159,6 +161,13 @@ INF  Clover/OsxPartitionDxe/PartitionDxe.inf
 INF  Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
 INF  Clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
 #INF  IntelFrameworkModulePkg/Universal/Acpi/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
+
+  #FD
+INF  MdeModulePkg/Universal/Acpi/S3SaveStateDxe/S3SaveStateDxe.inf
+#INF  MdeModulePkg/Universal/Acpi/SmmS3SaveState/SmmS3SaveState.inf
+INF  MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
+#INF  UefiCpuPkg/Universal/Acpi/S3Resume2Pei/S3Resume2Pei.inf
+
 
   # Binary INF file to support toggle among different CPU architectures.
 INF  RuleOverride=BINARY FatBinPkg/EnhancedFatDxe/Fat.inf

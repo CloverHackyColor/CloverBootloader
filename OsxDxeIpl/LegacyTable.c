@@ -293,7 +293,7 @@ PrepareFadtTable (
   //
   AcpiDescription->PM_TMR_LEN = Fadt->PmTmrLen;
   AcpiDescription->TMR_VAL_EXT = (UINT8)((Fadt->Flags & 0x100) != 0);
- 
+	AcpiDescription->Flags = Fadt->Flags;
   //
   // For fields not included in ACPI 1.0 spec, we get the value based on table length
   //
@@ -311,8 +311,61 @@ PrepareFadtTable (
       sizeof(EFI_ACPI_3_0_GENERIC_ADDRESS_STRUCTURE)
       );
     AcpiDescription->RESET_VALUE = Fadt->ResetValue;
+  } else {
+	  AcpiDescription->RESET_REG.Address = 0x64;
+	  AcpiDescription->RESET_REG.AddressSpaceId = EFI_ACPI_3_0_SYSTEM_IO;
+	  AcpiDescription->RESET_REG.RegisterBitWidth = 8;
+	  AcpiDescription->RESET_REG.RegisterBitOffset = 0;
+	  AcpiDescription->RESET_REG.AccessSize = 1;
+	  AcpiDescription->RESET_VALUE = 0xFE;
   }
 
+	if (Fadt->Header.Length >= OFFSET_OF (EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE, XPm1aEvtBlk) + sizeof (Fadt->XPm1aEvtBlk)) {
+		CopyMem (
+				 &AcpiDescription->PM1a_EVT_BLK,
+				 &Fadt->XPm1aEvtBlk,
+				 sizeof(EFI_ACPI_3_0_GENERIC_ADDRESS_STRUCTURE)
+				 );
+	} else {
+		AcpiDescription->PM1a_EVT_BLK.Address = (UINT64)Fadt->Pm1aEvtBlk;
+		AcpiDescription->PM1a_EVT_BLK.AddressSpaceId = EFI_ACPI_3_0_SYSTEM_IO;
+		AcpiDescription->PM1a_EVT_BLK.RegisterBitWidth = 20;
+		AcpiDescription->PM1a_EVT_BLK.RegisterBitOffset = 0;
+		AcpiDescription->PM1a_EVT_BLK.AccessSize = 3;
+	}
+	AcpiDescription->PM1_EVT_LEN = Fadt->Pm1EvtLen;
+	
+	if (Fadt->Header.Length >= OFFSET_OF (EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE, XPm1aCntBlk) + sizeof (Fadt->XPm1aCntBlk)) {
+		CopyMem (
+				 &AcpiDescription->PM1a_CNT_BLK,
+				 &Fadt->XPm1aCntBlk,
+				 sizeof(EFI_ACPI_3_0_GENERIC_ADDRESS_STRUCTURE)
+				 );
+	} else {
+		AcpiDescription->PM1a_CNT_BLK.Address = (UINT64)Fadt->Pm1aCntBlk;
+		AcpiDescription->PM1a_CNT_BLK.AddressSpaceId = EFI_ACPI_3_0_SYSTEM_IO;
+		AcpiDescription->PM1a_CNT_BLK.RegisterBitWidth = 10;
+		AcpiDescription->PM1a_CNT_BLK.RegisterBitOffset = 0;
+		AcpiDescription->PM1a_CNT_BLK.AccessSize = 2;
+	}
+	AcpiDescription->PM1_CNT_LEN = Fadt->Pm1CntLen;
+
+	if (Fadt->Header.Length >= OFFSET_OF (EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE, XPm2CntBlk) + sizeof (Fadt->XPm2CntBlk)) {
+		CopyMem (
+				 &AcpiDescription->PM2_CNT_BLK,
+				 &Fadt->XPm2CntBlk,
+				 sizeof(EFI_ACPI_3_0_GENERIC_ADDRESS_STRUCTURE)
+				 );
+	} else {
+		AcpiDescription->PM2_CNT_BLK.Address = (UINT64)Fadt->Pm2CntBlk;
+		AcpiDescription->PM2_CNT_BLK.AddressSpaceId = EFI_ACPI_3_0_SYSTEM_IO;
+		AcpiDescription->PM2_CNT_BLK.RegisterBitWidth = 8;
+		AcpiDescription->PM2_CNT_BLK.RegisterBitOffset = 0;
+		AcpiDescription->PM2_CNT_BLK.AccessSize = 1;
+	}
+	AcpiDescription->PM2_CNT_LEN = Fadt->Pm2CntLen;
+	
+	
   if (AcpiDescription->PM_TMR_BLK.Address == 0) {
     AcpiDescription->PM_TMR_BLK.Address          = Fadt->PmTmrBlk;
     AcpiDescription->PM_TMR_BLK.AddressSpaceId   = EFI_ACPI_3_0_SYSTEM_IO;
@@ -325,7 +378,11 @@ PrepareFadtTable (
   //  A one indicates TMR_VAL is implemented as a 32-bit value
   //
   AcpiDescription->PM_TMR_BLK.RegisterBitWidth = (UINT8) ((AcpiDescription->TMR_VAL_EXT == 0) ? 24 : 32);
-  
+	//
+	//Slice - fill these fields by known values; 1 and 2 never used
+	AcpiDescription->SLP_TYPa = 7;
+	AcpiDescription->SLP3_TYPa = 5;
+	AcpiDescription->SLP4_TYPa = 7;
 
   return ;
 }

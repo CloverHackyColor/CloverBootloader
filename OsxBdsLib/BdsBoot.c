@@ -1,7 +1,7 @@
 /** @file
   BDS Lib functions which relate with create or process the boot option.
 
-Copyright (c) 2004 - 2010, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2004 - 2011, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -356,15 +356,17 @@ BdsMatchUsbWwid (
 }
 
 /**
-  Find a USB device which match the specified short-form device path start with 
-  USB Class or USB WWID device path. If ParentDevicePath is NULL, this function
-  will search in all USB devices of the platform. If ParentDevicePath is not NULL,
-  this function will only search in its child devices.
+  Find a USB device path which match the specified short-form device path start
+  with USB Class or USB WWID device path and load the boot file then return the 
+  image handle. If ParentDevicePath is NULL, this function will search in all USB
+  devices of the platform. If ParentDevicePath is not NULL,this function will only
+  search in its child devices.
 
   @param ParentDevicePath      The device path of the parent.
   @param ShortFormDevicePath   The USB Class or USB WWID device path to match.
 
-  @return  The handle of matched USB device, or NULL if not found.
+  @return  The image Handle if find load file from specified short-form device path
+           or NULL if not found.
 
 **/
 EFI_HANDLE *
@@ -441,7 +443,8 @@ BdsFindUsbDevice (
 
 /**
   Expand USB Class or USB WWID device path node to be full device path of a USB
-  device in platform.
+  device in platform then load the boot file on this full device path and return the 
+  image handle.
 
   This function support following 4 cases:
   1) Boot Option device path starts with a USB Class or USB WWID device path,
@@ -524,7 +527,7 @@ BdsExpandUsbShortFormDevicePath (
     SetDevicePathEndNode (((UINT8 *) TempDevicePath) + ((UINTN) ShortFormDevicePath - (UINTN) DevicePath));
 
     //
-    // The USB Host Controller device path is in already in Boot Option device path
+    // The USB Host Controller device path is already in Boot Option device path
     // and USB Bus driver already support RemainingDevicePath starts with USB
     // Class or USB WWID device path, so just search in existing USB devices and
     // doesn't perform ConnectController here.
@@ -820,7 +823,7 @@ BdsLibBootViaBootOption (
   );
 
   Status = gBS->StartImage (ImageHandle, ExitDataSize, ExitData);
-  DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Image Return Status = %r\n", Status));
+//  DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Image Return Status = %r\n", Status));
 
   //
   // Clear the Watchdog Timer after the image returns
