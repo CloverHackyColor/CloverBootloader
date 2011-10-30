@@ -210,29 +210,33 @@ typedef struct {
 } SIMPLE_QUEUE;
 
 typedef struct {
-  UINTN                                       Signature;
-  EFI_HANDLE                                  Handle;
-  EFI_LEGACY_8259_PROTOCOL                    *Legacy8259;
-  THUNK_CONTEXT                               *ThunkContext;
-  EFI_ISA_IO_PROTOCOL                         *IsaIo;
-  EFI_SIMPLE_TEXT_INPUT_PROTOCOL              SimpleTextIn;
-  EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL           SimpleTextInputEx;
-  UINT16                                      DataRegisterAddress;
-  UINT16                                      StatusRegisterAddress;
-  UINT16                                      CommandRegisterAddress;
-  BOOLEAN                                     ExtendedKeyboard;
-  
-  //
-  // Buffer storing EFI_KEY_DATA
-  //
-  SIMPLE_QUEUE                                Queue;
-
-  //
-  // Notification Function List
-  //
-  LIST_ENTRY                                  NotifyList;
-  EFI_EVENT                                   TimerEvent;
-  
+	UINTN                                       Signature;
+	EFI_HANDLE                                  Handle;
+	EFI_LEGACY_8259_PROTOCOL                    *Legacy8259;
+	THUNK_CONTEXT                               *ThunkContext;
+	EFI_ISA_IO_PROTOCOL                         *IsaIo;
+	EFI_SIMPLE_TEXT_INPUT_PROTOCOL              SimpleTextIn;
+	EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL           SimpleTextInputEx;
+	UINT16                                      DataRegisterAddress;
+	UINT16                                      StatusRegisterAddress;
+	UINT16                                      CommandRegisterAddress;
+	BOOLEAN                                     ExtendedKeyboard;
+	
+	//
+	// Buffer storing EFI_KEY_DATA
+	//
+	SIMPLE_QUEUE                                Queue;
+	
+	EFI_UNICODE_STRING_TABLE					*ControllerNameTable;
+	
+	EFI_DEVICE_PATH_PROTOCOL					*DevicePath;
+	
+	//
+	// Notification Function List
+	//
+	LIST_ENTRY                                  NotifyList;
+	EFI_EVENT                                   TimerEvent;
+	
 } BIOS_KEYBOARD_DEV;
 
 #define BIOS_KEYBOARD_DEV_FROM_THIS(a)  CR (a, BIOS_KEYBOARD_DEV, SimpleTextIn, BIOS_KEYBOARD_DEV_SIGNATURE)

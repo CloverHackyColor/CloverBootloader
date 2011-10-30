@@ -25,7 +25,7 @@ Abstract:
 //
 // Predefined platform default time out value
 //
-UINT16   gPlatformBootTimeOutDefault = 3;
+UINT16   gPlatformBootTimeOutDefault = 2;
 
 ACPI_HID_DEVICE_PATH       gPnpPs2KeyboardDeviceNode  = gPnpPs2Keyboard;
 //ACPI_HID_DEVICE_PATH       gPnp16550ComPortDeviceNode = gPnp16550ComPort;

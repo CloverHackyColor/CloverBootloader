@@ -179,5 +179,65 @@ BiosKeyboardComponentNameGetControllerName (
   OUT CHAR16                                          **ControllerName
   )
 {
-  return EFI_UNSUPPORTED;
+	EFI_STATUS                                  Status;
+	EFI_SIMPLE_TEXT_INPUT_PROTOCOL              *ConIn;
+	BIOS_KEYBOARD_DEV							*ConsoleIn;
+	EFI_ISA_IO_PROTOCOL                         *IsaIoProtocol;
+	
+	//
+	// This is a device driver, so ChildHandle must be NULL.
+	//
+	if (ChildHandle != NULL) {
+		return EFI_UNSUPPORTED;
+	}
+	//
+	// Check Controller's handle
+	//
+	Status = gBS->OpenProtocol (
+								ControllerHandle,
+								&gEfiIsaIoProtocolGuid,
+								(VOID **) &IsaIoProtocol,
+								gBiosKeyboardDriverBinding.DriverBindingHandle,
+								ControllerHandle,
+								EFI_OPEN_PROTOCOL_BY_DRIVER
+								);
+	
+	if (!EFI_ERROR (Status)) {
+		gBS->CloseProtocol (
+							ControllerHandle,
+							&gEfiIsaIoProtocolGuid,
+							gBiosKeyboardDriverBinding.DriverBindingHandle,
+							ControllerHandle
+							);
+		
+		return EFI_UNSUPPORTED;
+	}
+	
+	if (Status != EFI_ALREADY_STARTED) {
+		return EFI_UNSUPPORTED;
+	}
+	//
+	// Get the device context
+	//
+	Status = gBS->OpenProtocol (
+								ControllerHandle,
+								&gEfiSimpleTextInProtocolGuid,
+								(VOID **) &ConIn,
+								gBiosKeyboardDriverBinding.DriverBindingHandle,
+								ControllerHandle,
+								EFI_OPEN_PROTOCOL_GET_PROTOCOL
+								);
+	if (EFI_ERROR (Status)) {
+		return Status;
+	}
+	
+	ConsoleIn = BIOS_KEYBOARD_DEV_FROM_THIS (ConIn);
+	
+	return LookupUnicodeString2 (
+								 Language,
+								 This->SupportedLanguages,
+								 ConsoleIn->ControllerNameTable,
+								 ControllerName,
+								 (BOOLEAN)(This == &gBiosKeyboardComponentName)
+								 );
 }

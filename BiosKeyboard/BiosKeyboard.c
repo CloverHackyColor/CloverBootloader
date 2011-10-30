@@ -215,6 +215,8 @@ BiosKeyboardDriverBindingStart (
   EFI_PS2_POLICY_PROTOCOL                   *Ps2Policy;
   UINT8                                     Command;
   EFI_STATUS_CODE_VALUE                     StatusCode;
+	EFI_DEVICE_PATH_PROTOCOL                  *ParentDevicePath;
+
 
   BiosKeyboardPrivate = NULL;
   IsaIo = NULL;
@@ -254,6 +256,17 @@ BiosKeyboardDriverBindingStart (
 		InitializeInterruptRedirection(mLegacy8259);
 	}
 	
+	Status = gBS->OpenProtocol (
+								Controller,
+								&gEfiDevicePathProtocolGuid,
+								(VOID **) &ParentDevicePath,
+								This->DriverBindingHandle,
+								Controller,
+								EFI_OPEN_PROTOCOL_BY_DRIVER
+								);
+	if (EFI_ERROR (Status)) {
+		return Status;
+	}
 	
   //
   // Open the IO Abstraction(s) needed
@@ -267,6 +280,12 @@ BiosKeyboardDriverBindingStart (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
   if (EFI_ERROR (Status)) {
+	  gBS->CloseProtocol (
+						  Controller,
+						  &gEfiDevicePathProtocolGuid,
+						  This->DriverBindingHandle,
+						  Controller
+						  );	  
     return Status;
   }
 
@@ -292,6 +311,7 @@ BiosKeyboardDriverBindingStart (
 	BiosKeyboardPrivate->ThunkContext = &mThunkContext;
 	
   BiosKeyboardPrivate->IsaIo                      = IsaIo;
+	BiosKeyboardPrivate->DevicePath             = ParentDevicePath;
 
   BiosKeyboardPrivate->SimpleTextIn.Reset         = BiosKeyboardReset;
   BiosKeyboardPrivate->SimpleTextIn.ReadKeyStroke = BiosKeyboardReadKeyStroke;
@@ -464,7 +484,23 @@ BiosKeyboardDriverBindingStart (
     }
   }
 //  DEBUG ((EFI_D_INFO, "[KBD]Extended keystrokes supported by CSM16 - %02x\n", (UINTN)BiosKeyboardPrivate->ExtendedKeyboard));
-  //
+	BiosKeyboardPrivate->ControllerNameTable = NULL;
+	AddUnicodeString2 (
+					   "eng",
+					   gBiosKeyboardComponentName.SupportedLanguages,
+					   &BiosKeyboardPrivate->ControllerNameTable,
+					   L"BIOS[INT16] Keyboard Device",
+					   TRUE
+					   );
+	AddUnicodeString2 (
+					   "en",
+					   gBiosKeyboardComponentName2.SupportedLanguages,
+					   &BiosKeyboardPrivate->ControllerNameTable,
+					   L"BIOS[INT16] Keyboard Device",
+					   FALSE
+					   );
+	
+	//
   // Install protocol interfaces for the keyboard device.
   //
   Status = gBS->InstallMultipleProtocolInterfaces (
@@ -505,7 +541,13 @@ Done:
 
       FreePool (BiosKeyboardPrivate);
     }
-
+	  gBS->CloseProtocol (
+						  Controller,
+						  &gEfiDevicePathProtocolGuid,
+						  This->DriverBindingHandle,
+						  Controller
+						  );
+	  
     if (IsaIo != NULL) {
       gBS->CloseProtocol (
              Controller,
@@ -588,6 +630,14 @@ BiosKeyboardDriverBindingStop (
   //
   // Release the IsaIo protocol on the controller handle
   //
+	gBS->CloseProtocol (
+						Controller,
+						&gEfiDevicePathProtocolGuid,
+						This->DriverBindingHandle,
+						Controller
+						);
+	
+	
   gBS->CloseProtocol (
          Controller,
          &gEfiIsaIoProtocolGuid,
