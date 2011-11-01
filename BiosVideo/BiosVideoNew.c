@@ -1483,7 +1483,6 @@ BiosVideoCheckForVbe (
 		  ModeFound = TRUE;
 		  PreferMode = ModeNumber;
 	  }
-
     }
 
     //
@@ -2901,7 +2900,7 @@ BiosVideoGraphicsOutputVgaBlt (
                       PciIo,
                       EfiPciIoWidthUint8,
                       EFI_PCI_IO_PASS_THROUGH_BAR,
-                      (UINT64) (UINTN) Address1,
+                      (UINT64)(UINTN) Address1,
                       1,
                       &Data
                       );

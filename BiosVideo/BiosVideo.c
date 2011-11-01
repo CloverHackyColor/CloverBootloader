@@ -791,6 +791,61 @@ BiosVideoDeviceReleaseResource (
   return ;
 }
 
+//Subroutines from Joblo's project RadeonFB
+//----------------------------------------------------------------------------------
+
+BOOLEAN edid_checksum(UINT8 *edid)
+{
+	INTN i;
+	UINT8 csum = 0, all_null = 0;
+	
+	for (i = 0; i < VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE; i++) {
+		csum += edid[i];
+		all_null |= edid[i];
+	}
+	
+	if (csum == 0x00 && all_null) {
+		/* checksum passed, everything's good */
+		return TRUE;
+	}
+	
+	return FALSE;
+}
+
+//----------------------------------------------------------------------------------
+const UINT8 edid_v1_header[] = { 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00	};
+
+BOOLEAN edid_check_header(UINT8 *edid)
+{
+	INTN i; 
+	
+	for (i = 0; i < 8; i++) {
+		if (edid[i] != edid_v1_header[i])
+			return FALSE;
+	}
+	
+	return TRUE;
+}
+//------------------------------------------------------------------------
+BOOLEAN verifyEDID(UINT8 *edid)
+{
+	if (edid == NULL || !edid_checksum(edid) ||	!edid_check_header(edid)) 
+	{
+		return FALSE;
+	}
+	return TRUE;
+}
+//------------------------------------------------------------------------
+BOOLEAN edid_is_timing_block(UINT8 *block)
+{
+	if ((block[0] != 0x00) || (block[1] != 0x00) ||
+		(block[2] != 0x00) || (block[4] != 0x00))
+		return TRUE;
+	else
+		return FALSE;
+}
+//----------------------------------------------------------------------------------
+
 /**
 
   Generate a search key for a specified timing data.
@@ -890,23 +945,23 @@ ParseEdidData (
         //
         // A valid Standard Timing
         //
-        HorizontalResolution = (UINT8) (BufferIndex[0] * 8 + 248);
+        HorizontalResolution = (UINT16) (BufferIndex[0] * 8 + 248);
         AspectRatio = (UINT8) (BufferIndex[1] >> 6);
         switch (AspectRatio) {
           case 0:
-            VerticalResolution = (UINT8) (HorizontalResolution / 16 * 10);
+            VerticalResolution = (UINT16) (HorizontalResolution / 16 * 10);
             break;
           case 1:
-            VerticalResolution = (UINT8) (HorizontalResolution / 4 * 3);
+            VerticalResolution = (UINT16) (HorizontalResolution / 4 * 3);
             break;
           case 2:
-            VerticalResolution = (UINT8) (HorizontalResolution / 5 * 4);
+            VerticalResolution = (UINT16) (HorizontalResolution / 5 * 4);
             break;
           case 3:
-            VerticalResolution = (UINT8) (HorizontalResolution / 16 * 9);
+            VerticalResolution = (UINT16) (HorizontalResolution / 16 * 9);
             break;
           default:
-            VerticalResolution = (UINT8) (HorizontalResolution / 4 * 3);
+            VerticalResolution = (UINT16) (HorizontalResolution / 4 * 3);
             break;
         }
         RefreshRate = (UINT8) ((BufferIndex[1] & 0x1f) + 60);
@@ -919,6 +974,17 @@ ParseEdidData (
       BufferIndex += 2;
     }
   }
+//Slice - where is DetailedTiming??? Here
+	BufferIndex = &EdidDataBlock->DetailedTimingDescriptions[0];
+	for (Index = 0; Index < 4; Index ++, BufferIndex += DETAILED_TIMING_DESCRIPTION_SIZE) {
+		if (edid_is_timing_block(BufferIndex)) {
+			TempTiming.HorizontalResolution = ((UINT16)(BufferIndex[4] & 0xF0) << 4) | (BufferIndex[2]);
+			TempTiming.VerticalResolution = ((UINT16)(BufferIndex[7] & 0xF0) << 4) | (BufferIndex[5]);
+			TempTiming.RefreshRate = 60; //doesn't matter, it's temporary
+			ValidEdidTiming->Key[ValidNumber] = CalculateEdidKey (&TempTiming);
+			ValidNumber ++;			
+		}
+	}
 
   ValidEdidTiming->ValidNumber = ValidNumber;
   return TRUE;
@@ -1053,7 +1119,7 @@ BiosVideoCheckForVbe (
                                               sizeof (VESA_BIOS_EXTENSIONS_CRTC_INFORMATION_BLOCK)
                                               );
 
-  BiosVideoPrivate->PagesBelow1MB = 0x00100000 - 1;
+  BiosVideoPrivate->PagesBelow1MB = 0x000A0000 - 1;
 
   Status = gBS->AllocatePages (
                   AllocateMaxAddress,
@@ -1305,7 +1371,10 @@ BiosVideoCheckForVbe (
       Timing.HorizontalResolution = BiosVideoPrivate->VbeModeInformationBlock->XResolution;
       Timing.VerticalResolution = BiosVideoPrivate->VbeModeInformationBlock->YResolution;
       if (SearchEdidTiming (&ValidEdidTiming, &Timing) == FALSE) {
-        continue;
+		  ModeFound = FALSE;
+      } else {
+		  ModeFound = TRUE;
+		  PreferMode = ModeNumber;
       }
     }
 
@@ -2027,7 +2096,7 @@ BiosVideoGraphicsOutputVbeBlt (
       //
       VbeBuffer = ((UINT8 *) VbeFrameBuffer + (SrcY * BytesPerScanLine + SourceX * VbePixelWidth));
       for (DstX = DestinationX; DstX < (Width + DestinationX); DstX++) {
-        Pixel         = *(UINT32 *) (VbeBuffer);
+        Pixel         = VbeBuffer[0] | VbeBuffer[1] << 8 | VbeBuffer[2] << 16 | VbeBuffer[3] << 24;
         Blt->Red      = (UINT8) ((Pixel >> Mode->Red.Position) & Mode->Red.Mask);
         Blt->Blue     = (UINT8) ((Pixel >> Mode->Blue.Position) & Mode->Blue.Mask);
         Blt->Green    = (UINT8) ((Pixel >> Mode->Green.Position) & Mode->Green.Mask);
@@ -2590,7 +2659,7 @@ BiosVideoGraphicsOutputVgaBlt (
                     PciIo,
                     EfiPciIoWidthUint8,
                     EFI_PCI_IO_PASS_THROUGH_BAR,
-                    (UINT64) Address,
+                    (UINT64) (UINTN) Address,
                     1,
                     &Data
                     );
@@ -2601,7 +2670,7 @@ BiosVideoGraphicsOutputVgaBlt (
                     PciIo,
                     EfiPciIoWidthUint8,
                     EFI_PCI_IO_PASS_THROUGH_BAR,
-                    (UINT64) Address,
+                    (UINT64) (UINTN) Address,
                     1,
                     &PixelColor
                     );
@@ -2623,7 +2692,7 @@ BiosVideoGraphicsOutputVgaBlt (
                     PciIo,
                     EfiPciIoWidthFillUint8,
                     EFI_PCI_IO_PASS_THROUGH_BAR,
-                    (UINT64) Address,
+                    (UINT64) (UINTN) Address,
                     Bytes - 1,
                     &PixelColor
                     );
@@ -2648,7 +2717,7 @@ BiosVideoGraphicsOutputVgaBlt (
                     PciIo,
                     EfiPciIoWidthUint8,
                     EFI_PCI_IO_PASS_THROUGH_BAR,
-                    (UINT64) Address,
+                    (UINT64) (UINTN) Address,
                     1,
                     &Data
                     );
@@ -2659,7 +2728,7 @@ BiosVideoGraphicsOutputVgaBlt (
                     PciIo,
                     EfiPciIoWidthUint8,
                     EFI_PCI_IO_PASS_THROUGH_BAR,
-                    (UINT64) Address,
+                    (UINT64) (UINTN) Address,
                     1,
                     &PixelColor
                     );

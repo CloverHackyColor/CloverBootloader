@@ -31,7 +31,7 @@ extern BOOLEAN  gConnectAllHappened;
 extern USB_CLASS_FORMAT_DEVICE_PATH gUsbClassKeyboardDevicePath;
 
 EFI_GUID                    *gTableGuidArray[] = {
-    &gEfiAcpi10TableGuid, &gEfiAcpiTableGuid, &gEfiSmbiosTableGuid, &gEfiMpsTableGuid
+    &gEfiAcpi10TableGuid, &gEfiAcpiTableGuid, &gEfiSmbiosTableGuid //, &gEfiMpsTableGuid
   };
 
 
@@ -1197,18 +1197,18 @@ Returns:
   // Init the time out value
   //
   Timeout = PcdGet16 (PcdPlatformBootTimeOut);
-	BiosPutC('1');
+//	BiosPutC('1');
   //
   // Load the driver option as the driver option list
   //
   PlatformBdsGetDriverOption (DriverOptionList);
-	BiosPutC('2');
+//	BiosPutC('2');
   //
   // Get current Boot Mode
   //
   Status = BdsLibGetBootMode (&BootMode);
 //  DEBUG ((EFI_D_ERROR, "Boot Mode:%x\n", BootMode));
-	BiosPutC('3');
+//	BiosPutC('3');
   //
   // Go the different platform policy with different boot mode
   // Notes: this part code can be change with the table policy
@@ -1218,12 +1218,12 @@ Returns:
   // Connect platform console
   //
   Status = PlatformBdsConnectConsole (gPlatformConsole);
-	BiosPutC('4');
+//	BiosPutC('4');
   if (EFI_ERROR (Status)) {
     //
     // Here OEM/IBV can customize with defined action
     //
-	  BiosPutC('5');
+//	  BiosPutC('5');
     PlatformBdsNoConsoleAction ();
   }
   //
@@ -1242,28 +1242,28 @@ Returns:
   //
   // Memory test and Logo show
   //
-	BiosPutC('6');
+//	BiosPutC('6');
   PlatformBdsDiagnostics (IGNORE, TRUE, BaseMemoryTest);
-	BiosPutC('7');
+//	BiosPutC('7');
   //
   // Perform some platform specific connect sequence
   //
   PlatformBdsConnectSequence ();
-	BiosPutC('8');
+//	BiosPutC('8');
   //
   // Give one chance to enter the setup if we
   // have the time out
   //
   // BUGBUG: hard code timeout to 5 second to show logo in graphic mode.
-  Timeout = 5;  
+  Timeout = 3;  
   if (Timeout != 0) {
     PlatformBdsEnterFrontPage (Timeout, FALSE);
   }
-	BiosPutC('9');
+//	BiosPutC('9');
   //
   BdsLibConnectAll ();
   BdsLibEnumerateAllBootOption (BootOptionList);  
-	BiosPutC('a');
+//	BiosPutC('a');
   
   //
   // Please uncomment above ConnectAll and EnumerateAll code and remove following first boot
@@ -1298,7 +1298,7 @@ Returns:
     //
     // Enter Setup if user input 
     //
-	  BiosPutC('b');
+//	  BiosPutC('b');
     Timeout = 0xffff;
     PlatformBdsEnterFrontPage (Timeout, FALSE);
   }
@@ -1633,7 +1633,7 @@ Returns:
     SmbiosTableOri->TableLength
     );
   SmbiosTableNew->TableAddress = (UINT32)BufferPtr;
-	SmbiosTableNew->SmbiosBcdRevision = 0x26; //Slice - as DHP suggested
+	SmbiosTableNew->SmbiosBcdRevision = 0x26; 
   SmbiosTableNew->IntermediateChecksum = 0;
   SmbiosTableNew->IntermediateChecksum = 
           CalculateCheckSum8 ((UINT8*)SmbiosTableNew + 0x10, SmbiosEntryLen -0x10);
