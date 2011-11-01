@@ -339,7 +339,7 @@
   Clover/OsxPartitionDxe/PartitionDxe.inf
   
   #FD
-  #IntelFrameworkModulePkg/Universal/Acpi/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
+  IntelFrameworkModulePkg/Universal/Acpi/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
   MdeModulePkg/Universal/Acpi/S3SaveStateDxe/S3SaveStateDxe.inf
   #MdeModulePkg/Universal/Acpi/SmmS3SaveState/SmmS3SaveState.inf
   MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
@@ -352,7 +352,7 @@
   #IntelFrameworkModulePkg/Csm/BiosThunk/BlockIoDxe/BlockIoDxe.inf
   #IntelFrameworkModulePkg/Csm/BiosThunk/KeyboardDxe/KeyboardDxe.inf
   Clover/BiosKeyboard/KeyboardDxe.inf
-  #IntelFrameworkModulePkg/Universal/LegacyRegionDxe/LegacyRegionDxe.inf
+  IntelFrameworkModulePkg/Universal/LegacyRegionDxe/LegacyRegionDxe.inf
   MdeModulePkg/Universal/LegacyRegion2Dxe/LegacyRegion2Dxe.inf
 
   #

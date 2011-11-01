@@ -110,6 +110,9 @@ extern ACPI_HID_DEVICE_PATH       gPnpPs2KeyboardDeviceNode;
 #define gP2PBridge \
   PCI_DEVICE_PATH_NODE(0, 0x1e)
 
+#define gRootPortBridge \
+  PCI_DEVICE_PATH_NODE(0, 0x1)
+
 #define gPnpPs2Keyboard \
   PNPID_DEVICE_PATH_NODE(0x0303)
 
@@ -192,6 +195,13 @@ typedef struct {
   PCI_DEVICE_PATH           VgaDevice;
   EFI_DEVICE_PATH_PROTOCOL  End;
 } PLATFORM_DUMMY_PCI_VGA_DEVICE_PATH;
+
+typedef struct {
+	ACPI_HID_DEVICE_PATH      PciRootBridge;
+	PCI_DEVICE_PATH			PortBridge;
+	PCI_DEVICE_PATH           VgaDevice;
+	EFI_DEVICE_PATH_PROTOCOL  End;
+} PLATFORM_DUMMY_PCIE_VGA_DEVICE_PATH;
 
 typedef struct {
   ACPI_HID_DEVICE_PATH      PciRootBridge;

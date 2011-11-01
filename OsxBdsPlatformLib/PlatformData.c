@@ -103,6 +103,14 @@ PLATFORM_DUMMY_PCI_VGA_DEVICE_PATH gDummyPciVgaDevicePath = {
   PCI_DEVICE_PATH_NODE(0, 0x2),
   gEndEntire
 };
+
+PLATFORM_DUMMY_PCIE_VGA_DEVICE_PATH gDummyPcieVgaDevicePath = {
+	gPciRootBridge,
+	gRootPortBridge,
+	PCI_DEVICE_PATH_NODE(0, 0),
+	gEndEntire
+};
+
 /*
 //
 // Platform specific Dummy PCI serial device path
@@ -131,10 +139,15 @@ BDS_CONSOLE_CONNECT_ENTRY         gPlatformConsole[] = {
     (EFI_DEVICE_PATH_PROTOCOL *) &gDummyIsaKeyboardDevicePath,
     (CONSOLE_IN | STD_ERROR)
   },
+	{
+		(EFI_DEVICE_PATH_PROTOCOL *) &gDummyPcieVgaDevicePath,
+		CONSOLE_OUT
+	},
   {
     (EFI_DEVICE_PATH_PROTOCOL *) &gDummyPciVgaDevicePath,
     CONSOLE_OUT
   },
+	
 //  {
 //    (EFI_DEVICE_PATH_PROTOCOL *) &gDummyPciSerialDevicePath,
 //    (CONSOLE_OUT | CONSOLE_IN | STD_ERROR)
