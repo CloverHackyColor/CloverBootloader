@@ -147,7 +147,6 @@ BDS_CONSOLE_CONNECT_ENTRY         gPlatformConsole[] = {
     (EFI_DEVICE_PATH_PROTOCOL *) &gDummyPciVgaDevicePath,
     CONSOLE_OUT
   },
-	
 //  {
 //    (EFI_DEVICE_PATH_PROTOCOL *) &gDummyPciSerialDevicePath,
 //    (CONSOLE_OUT | CONSOLE_IN | STD_ERROR)

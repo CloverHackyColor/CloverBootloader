@@ -38,7 +38,7 @@
   
 [Sources]
   BiosVideo.h
-  BiosVideo.c
+  BiosVideoNew.c
   ComponentName.c
   VesaBiosExtensions.h
   LegacyBiosThunk.c

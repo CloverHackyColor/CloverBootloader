@@ -26,7 +26,7 @@ EFI_CPU_INTERRUPT_HANDLER ExternalVectorTable[0x100];
 BOOLEAN                   InterruptState = FALSE;
 EFI_HANDLE                mCpuHandle = NULL;
 BOOLEAN                   mIsFlushingGCD;
-UINT8                     mDefaultMemoryType    = MTRR_CACHE_WRITE_BACK;
+MTRR_MEMORY_CACHE_TYPE    mDefaultMemoryType    = MTRR_CACHE_WRITE_BACK;
 UINT64                    mValidMtrrAddressMask = MTRR_LIB_CACHE_VALID_ADDRESS;
 UINT64                    mValidMtrrBitsMask    = MTRR_LIB_MSR_VALID_MASK;
 
@@ -718,7 +718,7 @@ InitializeMtrrMask (
 **/
 UINT64
 GetMemorySpaceAttributeFromMtrrType (
-  IN UINT8                MtrrAttributes
+  IN MTRR_MEMORY_CACHE_TYPE  MtrrAttributes
   )
 {
   switch (MtrrAttributes) {
@@ -883,7 +883,7 @@ RefreshGcdMemoryAttributes (
   UINT64                              Length;
   UINT64                              Attributes;
   UINT64                              CurrentAttributes;
-  UINT8                               MtrrType;
+  MTRR_MEMORY_CACHE_TYPE              MtrrType;
   UINTN                               NumberOfDescriptors;
   EFI_GCD_MEMORY_SPACE_DESCRIPTOR     *MemorySpaceMap;
   UINT64                              DefaultAttributes;
@@ -925,6 +925,7 @@ RefreshGcdMemoryAttributes (
                   );
   ASSERT_EFI_ERROR (Status);
 
+  mDefaultMemoryType = MtrrGetDefaultMemoryType ();
   DefaultAttributes = GetMemorySpaceAttributeFromMtrrType (mDefaultMemoryType);
 
   //
@@ -957,19 +958,37 @@ RefreshGcdMemoryAttributes (
         );
     }
   }
+
   //
-  // Go for variable MTRRs with Non-WB attribute
+  // Go for variable MTRRs with the attribute except for WB and UC attributes
   //
   for (Index = 0; Index < FirmwareVariableMtrrCount; Index++) {
     if (VariableMtrr[Index].Valid &&
-        VariableMtrr[Index].Type != MTRR_CACHE_WRITE_BACK) {
-      Attributes = GetMemorySpaceAttributeFromMtrrType ((UINT8) VariableMtrr[Index].Type);
+        VariableMtrr[Index].Type != MTRR_CACHE_WRITE_BACK &&
+        VariableMtrr[Index].Type != MTRR_CACHE_UNCACHEABLE) {
+      Attributes = GetMemorySpaceAttributeFromMtrrType ((MTRR_MEMORY_CACHE_TYPE) VariableMtrr[Index].Type);
       SetGcdMemorySpaceAttributes (
         MemorySpaceMap,
         NumberOfDescriptors,
         VariableMtrr[Index].BaseAddress,
         VariableMtrr[Index].Length,
         Attributes
+        );
+    }
+  }
+
+  //
+  // Go for variable MTRRs with UC attribute
+  //
+  for (Index = 0; Index < FirmwareVariableMtrrCount; Index++) {
+    if (VariableMtrr[Index].Valid &&
+        VariableMtrr[Index].Type == MTRR_CACHE_UNCACHEABLE) {
+      SetGcdMemorySpaceAttributes (
+        MemorySpaceMap,
+        NumberOfDescriptors,
+        VariableMtrr[Index].BaseAddress,
+        VariableMtrr[Index].Length,
+        EFI_MEMORY_UC
         );
     }
   }
@@ -987,7 +1006,7 @@ RefreshGcdMemoryAttributes (
     // Check for continuous fixed MTRR sections
     //
     for (SubIndex = 0; SubIndex < 8; SubIndex++) {
-      MtrrType = (UINT8) RShiftU64 (RegValue, SubIndex * 8);
+      MtrrType = (MTRR_MEMORY_CACHE_TYPE) RShiftU64 (RegValue, SubIndex * 8);
       CurrentAttributes = GetMemorySpaceAttributeFromMtrrType (MtrrType);
       if (Length == 0) {
         //
@@ -1098,7 +1117,7 @@ InitInterruptDescriptorTable (
   UINTN                     Index;
   UINT16                    CurrentCs;
   VOID                      *IntHandler;
-	UINTN					CurrentHandler;
+	UINT64					CurrentHandler;
 
   SetMem (ExternalVectorTable, sizeof(ExternalVectorTable), 0);
 
@@ -1118,7 +1137,7 @@ InitInterruptDescriptorTable (
   //
   // Intialize IDT
   //
-	CurrentHandler = (UINTN)AsmIdtVector00;
+	CurrentHandler = (UINT64)(UINTN)AsmIdtVector00;
   CurrentCs = AsmReadCs();
 	 // Allocate Runtime Data for the IDT
 	IdtSize = INTERRUPT_VECTOR_NUMBER*sizeof(IA32_IDT_GATE_DESCRIPTOR);

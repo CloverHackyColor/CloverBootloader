@@ -704,7 +704,7 @@ GetGopDevicePath (
         // In current implementation, we only enable one of the child handles
         // as console device, i.e. sotre one of the child handle's device
         // path to variable "ConOut"
-        // In futhure, we could select all child handles to be console device
+        // In future, we could select all child handles to be console device
         //       
 
         *GopDevicePath = TempDevicePath;

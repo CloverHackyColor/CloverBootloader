@@ -1283,7 +1283,7 @@ BiosVideoCheckForVbe (
   Regs.X.AX = VESA_BIOS_EXTENSIONS_EDID;
   Regs.X.BX = 1;
   Regs.X.CX = 0;
-  Regs.X.DX = 0; //block 0
+  Regs.X.DX = 1; //block 0
   Regs.E.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
   Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
 
@@ -1305,7 +1305,7 @@ BiosVideoCheckForVbe (
 	Regs.X.AX = VESA_BIOS_EXTENSIONS_EDID;
 	Regs.X.BX = 1;
 	Regs.X.CX = 0;
-	Regs.X.DX = 1; //block 1
+	Regs.X.DX = 0; //block 1
 	Regs.E.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
 	Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
 	
@@ -1371,12 +1371,14 @@ BiosVideoCheckForVbe (
   //
   // Walk through the mode list to see if there is at least one mode the is compatible with the EDID mode
   //
-  ModeNumberPtr = (UINT16 *)
+	UINT8* VMP = (UINT8 *)&BiosVideoPrivate->VbeInformationBlock->VideoModePtr; 
+	ModeNumberPtr = (UINT16 *)((VMP[0] | (VMP[1]<<8)) + ((VMP[2]<<4) | (VMP[3]<<12)));
+/*  ModeNumberPtr = (UINT16 *)
     (
       (((UINTN) BiosVideoPrivate->VbeInformationBlock->VideoModePtr & 0xffff0000) >> 12) |
         ((UINTN) BiosVideoPrivate->VbeInformationBlock->VideoModePtr & 0x0000ffff)
     );
-
+*/
   PreferMode = -1;
   ModeNumber = 0;
 	 MsgLog("VbeModes:\n");
@@ -1429,14 +1431,14 @@ BiosVideoCheckForVbe (
     // See if the mode supports graphics.  If it doesn't then try the next mode.
     //
     if ((BiosVideoPrivate->VbeModeInformationBlock->ModeAttributes & VESA_BIOS_EXTENSIONS_MODE_ATTRIBUTE_GRAPHICS) == 0) {
-//		MsgLog("not graphics \n");
+		MsgLog("not graphics \n");
 		continue;
     }
     //
     // See if the mode supports a linear frame buffer.  If it doesn't then try the next mode.
     //
     if ((BiosVideoPrivate->VbeModeInformationBlock->ModeAttributes & VESA_BIOS_EXTENSIONS_MODE_ATTRIBUTE_LINEAR_FRAME_BUFFER) == 0) {
-//		MsgLog("not linear ");
+		MsgLog("not linear ");
 		continue;
     }
     //

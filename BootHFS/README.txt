@@ -14,7 +14,7 @@
   		sudo dd if=boot1h of=/dev/rdisk0s2
   
    - Install clover to the partition's root directory:
-  		sudo cp clover /
+  		sudo cp clover /boot
   
   
   EFI Partition Install (HFS) :
@@ -34,7 +34,7 @@
   		sudo dd if=boot1h of=/dev/rdisk0s1
   
    - Install clover to the EFI partition's root directory:
-  		sudo cp clover /Volumes/EFI
+  		sudo cp clover /Volumes/EFI/boot
 
 
  EFI Partition Install (FAT32) :
