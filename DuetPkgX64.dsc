@@ -156,10 +156,10 @@
   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x0
   gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x0
   gEfiMdeModulePkgTokenSpaceGuid.PcdResetOnMemoryTypeInformationChange|FALSE
-  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress|0xF0000000
+  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress|0xF8000000
 
 [PcdsFeatureFlag]
-  gEfiMdeModulePkgTokenSpaceGuid.PcdTurnOffUsbLegacySupport|TRUE
+  gEfiMdeModulePkgTokenSpaceGuid.PcdTurnOffUsbLegacySupport|FALSE
 
 ###################################################################################################
 #
@@ -220,7 +220,8 @@
   MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDxe.inf
 
   #DuetPkg/FSVariable/FSVariable.inf
-  MdeModulePkg/Universal/Variable/EmuRuntimeDxe/EmuVariableRuntimeDxe.inf
+  #MdeModulePkg/Universal/Variable/EmuRuntimeDxe/EmuVariableRuntimeDxe.inf
+  Clover/EmuVariableDxe/EmuVariableRuntimeDxe.inf
   MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
   MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
   MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
@@ -252,11 +253,12 @@
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
   }
   #MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
-  UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
+  Clover/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
   Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
   #Clover/CpuDxe/Cpu.inf
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
-  DuetPkg/AcpiResetDxe/Reset.inf
+  #DuetPkg/AcpiResetDxe/Reset.inf
+  Clover/AcpiReset/Reset.inf
   DuetPkg/LegacyMetronome/Metronome.inf
 # EdkCompatibilityPkg/Compatibility/MpServicesOnFrameworkMpServicesThunk/MpServicesOnFrameworkMpServicesThunk.inf
 
@@ -279,17 +281,16 @@
 	#Clover/VBoxFsDxe/VBoxExt2.inf
 
   #IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
-  Clover/VBoxVgaMiniPort/VgaMiniPortDxe.inf
+  #Clover/VBoxVgaMiniPort/VgaMiniPortDxe.inf
   #IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
-  Clover/VgaClassDxe/VgaClassDxe.inf
+  #Clover/VgaClassDxe/VgaClassDxe.inf
   #Clover/IntelGmaDxe/Gop.inf
   #DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
   Clover/BiosVideo/BiosVideo.inf
 
-
   # IDE/AHCI Support
-  Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
-  Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
+  #Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
+  #Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
   Clover/SataControllerDxe/SataControllerDxe.inf
   MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
   MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
@@ -325,8 +326,22 @@
   #MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
   Clover/OsxPartitionDxe/PartitionDxe.inf
 
+  #FD
+  #IntelFrameworkModulePkg/Universal/Acpi/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
+  #MdeModulePkg/Universal/Acpi/S3SaveStateDxe/S3SaveStateDxe.inf
+  #MdeModulePkg/Universal/Acpi/SmmS3SaveState/SmmS3SaveState.inf
+  #MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
+  #UefiCpuPkg/Universal/Acpi/S3Resume2Pei/S3Resume2Pei.inf
+
+
   # Bios Thunk
-  #DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
+  #IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf
+  #IntelFrameworkModulePkg/Csm/LegacyBiosDxe/LegacyBiosDxe.inf
+  #IntelFrameworkModulePkg/Csm/BiosThunk/BlockIoDxe/BlockIoDxe.inf
+  #IntelFrameworkModulePkg/Csm/BiosThunk/KeyboardDxe/KeyboardDxe.inf
+  #Clover/BiosKeyboard/KeyboardDxe.inf
+  #IntelFrameworkModulePkg/Universal/LegacyRegionDxe/LegacyRegionDxe.inf
+  #MdeModulePkg/Universal/LegacyRegion2Dxe/LegacyRegion2Dxe.inf
 
   #
   # Sample Application

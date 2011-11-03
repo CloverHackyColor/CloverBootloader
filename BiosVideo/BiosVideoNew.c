@@ -26,8 +26,8 @@ EFI_DRIVER_BINDING_PROTOCOL gBiosVideoDriverBinding = {
   NULL,
   NULL
 };
-
-CHAR8 *msgbuf = NULL;
+//Cancel msglog but not erase from the sources as example how to do.
+/*CHAR8 *msgbuf = NULL;
 CHAR8 *msgCursor = NULL;
 #define BOOTER_LOG_SIZE	(4 * 1024)
 
@@ -49,13 +49,13 @@ VOID InitBooterLog(VOID)
 	msgCursor = msgbuf;
 }
 
-/*VOID MsgLog(const CHAR8* S)
+VOID MsgLog(const CHAR8* S)
 {
 	while (*S) {		
 		*msgCursor++ = *S++;
 	}
 }*/
-#define MsgLog(x...) if(msgCursor){AsciiSPrint(msgCursor, BOOTER_LOG_SIZE, x); while(*msgCursor){msgCursor++;}}
+//#define MsgLog(x...) if(msgCursor){AsciiSPrint(msgCursor, BOOTER_LOG_SIZE, x); while(*msgCursor){msgCursor++;}}
 //
 // Global lookup tables for VGA graphics modes
 //
@@ -295,7 +295,7 @@ BiosVideoDriverBindingStart (
   //
   // Prepare for status code
   //
-	InitBooterLog();
+//	InitBooterLog();
   Status = gBS->HandleProtocol (
                   Controller,
                   &gEfiDevicePathProtocolGuid,
@@ -462,7 +462,7 @@ BiosVideoChildHandleInstall (
     goto Done;
   }
 
-  ZeroMem (BiosVideoPrivate, sizeof (BIOS_VIDEO_DEV));
+  gBS->SetMem(BiosVideoPrivate, sizeof (BIOS_VIDEO_DEV), 0);
 
   if (!BiosVideoIsVga (ParentPciIo)) {
     Status = EFI_UNSUPPORTED;
@@ -513,12 +513,12 @@ BiosVideoChildHandleInstall (
   //
   BiosVideoPrivate->PciIo = ParentPciIo;
 //Slice
-/*	IA32_REGISTER_SET        Regs;
-	gBS->SetMem (&Regs, sizeof (Regs), 0);
-	Regs.H.AH = 0x0E;
-	Regs.H.AL = 0x36;
-	Regs.H.BL = 0xF;
-	LegacyBiosInt86 (BiosVideoPrivate, 0x10, &Regs); */
+//	IA32_REGISTER_SET        Regs;
+//	gBS->SetMem (&Regs, sizeof (Regs), 0);
+//	Regs.H.AH = 0x00;
+//	Regs.H.AL = 0x01;
+//	Regs.H.BL = 0xF;
+//	LegacyBiosInt86 (BiosVideoPrivate, 0x10, &Regs); 
 //	while (TRUE) {
 		
 //	}
@@ -552,7 +552,7 @@ BiosVideoChildHandleInstall (
 
 	if (BiosVideoPrivate->ProduceGraphicsOutput) {
 		if (RemainingDevicePath == NULL) {
-			ZeroMem (&AcpiDeviceNode, sizeof (ACPI_ADR_DEVICE_PATH));
+			gBS->SetMem(&AcpiDeviceNode, sizeof (ACPI_ADR_DEVICE_PATH), 0);
 			AcpiDeviceNode.Header.Type    = ACPI_DEVICE_PATH;
 			AcpiDeviceNode.Header.SubType = ACPI_ADR_DP;
 			AcpiDeviceNode.ADR            = ACPI_DISPLAY_ADR (1, 0, 0, 1, 0, ACPI_ADR_DISPLAY_TYPE_VGA, 0, 0);
@@ -567,7 +567,7 @@ BiosVideoChildHandleInstall (
 		}
 		
 		//Store msglog into EdidActive ;)
-		if (BiosVideoPrivate->EdidActive.Edid != NULL) {
+/*		if (BiosVideoPrivate->EdidActive.Edid != NULL) {
 			gBS->FreePool (BiosVideoPrivate->EdidActive.Edid);
 		}
 		UINTN			LogSize = msgCursor - msgbuf;
@@ -580,6 +580,7 @@ BiosVideoChildHandleInstall (
 		if (!EFI_ERROR (Status)){
 			gBS->CopyMem(BiosVideoPrivate->EdidActive.Edid, msgbuf, LogSize);
 		}
+ */
 		//
 		// Creat child handle and install Graphics Output Protocol,EDID Discovered/Active Protocol
 		//
@@ -889,15 +890,6 @@ BOOLEAN verifyEDID(UINT8 *edid)
 	}
 	return TRUE;
 }
-//------------------------------------------------------------------------
-BOOLEAN edid_is_timing_block(UINT8 *block)
-{
-	if ((block[0] != 0x00) || (block[1] != 0x00) ||
-		(block[2] != 0x00) || (block[4] != 0x00))
-		return TRUE;
-	else
-		return FALSE;
-}
 //----------------------------------------------------------------------------------
 
 /**
@@ -1034,10 +1026,11 @@ ParseEdidData (
       BufferIndex += 2;
     }
   }
-//Slice - where is DetailedTiming??? Here
+//Slice - DetailedTiming here
 	BufferIndex = &EdidDataBlock->DetailedTimingDescriptions[0];
 	for (Index = 0; Index < 4; Index ++, BufferIndex += DETAILED_TIMING_DESCRIPTION_SIZE) {
-		if (edid_is_timing_block(BufferIndex)) {
+		if ((BufferIndex[0] != 0x00) || (BufferIndex[1] != 0x00) ||
+			(BufferIndex[2] != 0x00) || (BufferIndex[4] != 0x00)) {
 			TempTiming.HorizontalResolution = ((UINT16)(BufferIndex[4] & 0xF0) << 4) | (BufferIndex[2]);
 			TempTiming.VerticalResolution = ((UINT16)(BufferIndex[7] & 0xF0) << 4) | (BufferIndex[5]);
 			TempTiming.RefreshRate = 60; //doesn't matter, it's temporary
@@ -1191,7 +1184,7 @@ BiosVideoCheckForVbe (
     return Status;
   }
 
-  ZeroMem (&ValidEdidTiming, sizeof (VESA_BIOS_EXTENSIONS_VALID_EDID_TIMING));
+  gBS->SetMem(&ValidEdidTiming, sizeof (VESA_BIOS_EXTENSIONS_VALID_EDID_TIMING), 0);
 
   //
   // Fill in the Graphics Output Protocol
@@ -1283,7 +1276,7 @@ BiosVideoCheckForVbe (
   Regs.X.AX = VESA_BIOS_EXTENSIONS_EDID;
   Regs.X.BX = 1;
   Regs.X.CX = 0;
-  Regs.X.DX = 1; //block 0
+  Regs.X.DX = 0; //block 0
   Regs.E.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
   Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
 
@@ -1296,7 +1289,7 @@ BiosVideoCheckForVbe (
   if (Regs.X.AX == VESA_BIOS_EXTENSIONS_STATUS_SUCCESS)
   {
 	  EdidFound = TRUE;
-	  MsgLog(" Edid0+");
+//	  MsgLog(" Edid0+");
 	  ParseEdidData ((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock, &ValidEdidTiming);
   }
 	  
@@ -1305,7 +1298,7 @@ BiosVideoCheckForVbe (
 	Regs.X.AX = VESA_BIOS_EXTENSIONS_EDID;
 	Regs.X.BX = 1;
 	Regs.X.CX = 0;
-	Regs.X.DX = 0; //block 1
+	Regs.X.DX = 1; //block 1
 	Regs.E.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
 	Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
 	
@@ -1315,7 +1308,7 @@ BiosVideoCheckForVbe (
 	
 	
 	if (!verifyEDID((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock)) {
-		MsgLog(" Edid broken\n");
+//		MsgLog(" Edid broken\n");
 	}
     //
     // Parse EDID data structure to retrieve modes supported by monitor
@@ -1323,7 +1316,7 @@ BiosVideoCheckForVbe (
 	if (Regs.X.AX == VESA_BIOS_EXTENSIONS_STATUS_SUCCESS)
 	{
 		EdidFound = TRUE;
-		MsgLog(" Edid1+");
+//		MsgLog(" Edid1+");
 		ParseEdidData ((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock, &ValidEdidTiming);
 	}
 	
@@ -1372,7 +1365,7 @@ BiosVideoCheckForVbe (
   // Walk through the mode list to see if there is at least one mode the is compatible with the EDID mode
   //
 	UINT8* VMP = (UINT8 *)&BiosVideoPrivate->VbeInformationBlock->VideoModePtr; 
-	ModeNumberPtr = (UINT16 *)((VMP[0] | (VMP[1]<<8)) + ((VMP[2]<<4) | (VMP[3]<<12)));
+	ModeNumberPtr = (UINT16 *)(UINTN)((VMP[0] | (VMP[1]<<8)) + ((VMP[2]<<4) | (VMP[3]<<12)));
 /*  ModeNumberPtr = (UINT16 *)
     (
       (((UINTN) BiosVideoPrivate->VbeInformationBlock->VideoModePtr & 0xffff0000) >> 12) |
@@ -1381,14 +1374,14 @@ BiosVideoCheckForVbe (
 */
   PreferMode = -1;
   ModeNumber = 0;
-	 MsgLog("VbeModes:\n");
+//	 MsgLog("VbeModes:\n");
   for (; *ModeNumberPtr != VESA_BIOS_EXTENSIONS_END_OF_MODE_LIST; ModeNumberPtr++) {//0xffff
     //
     // Make sure this is a mode number defined by the VESA VBE specification.  If it isn'tm then skip this mode number.
     //
     if ((*ModeNumberPtr & VESA_BIOS_EXTENSIONS_MODE_NUMBER_VESA) == 0) {  //0x0100
-		MsgLog("non-VESA ");
-//      continue;
+//		MsgLog("non-VESA ");
+      continue;
     }
     //
     // Get the information about the mode
@@ -1431,14 +1424,14 @@ BiosVideoCheckForVbe (
     // See if the mode supports graphics.  If it doesn't then try the next mode.
     //
     if ((BiosVideoPrivate->VbeModeInformationBlock->ModeAttributes & VESA_BIOS_EXTENSIONS_MODE_ATTRIBUTE_GRAPHICS) == 0) {
-		MsgLog("not graphics \n");
+//		MsgLog("not graphics \n");
 		continue;
     }
     //
     // See if the mode supports a linear frame buffer.  If it doesn't then try the next mode.
     //
     if ((BiosVideoPrivate->VbeModeInformationBlock->ModeAttributes & VESA_BIOS_EXTENSIONS_MODE_ATTRIBUTE_LINEAR_FRAME_BUFFER) == 0) {
-		MsgLog("not linear ");
+//		MsgLog("not linear ");
 		continue;
     }
     //
@@ -1466,10 +1459,10 @@ BiosVideoCheckForVbe (
     if (BiosVideoPrivate->VbeModeInformationBlock->PhysBasePtr == 0) {
       continue;
     }
-	  MsgLog("0x%x: %dx%dx%d\n",*ModeNumberPtr, BiosVideoPrivate->VbeModeInformationBlock->XResolution,
+/*	  MsgLog("0x%x: %dx%dx%d\n",*ModeNumberPtr, BiosVideoPrivate->VbeModeInformationBlock->XResolution,
 			 BiosVideoPrivate->VbeModeInformationBlock->YResolution,
 			 BiosVideoPrivate->VbeModeInformationBlock->BitsPerPixel);
-	  
+*/	  
     ModeFound = FALSE;
     if (EdidFound && (ValidEdidTiming.ValidNumber > 0)) {
       //
@@ -1478,10 +1471,10 @@ BiosVideoCheckForVbe (
       Timing.HorizontalResolution = BiosVideoPrivate->VbeModeInformationBlock->XResolution;
       Timing.VerticalResolution = BiosVideoPrivate->VbeModeInformationBlock->YResolution;
       if (SearchEdidTiming (&ValidEdidTiming, &Timing) == FALSE) {
-		  MsgLog("Timing-\n");
+//		  MsgLog("Timing-\n");
 		  ModeFound = FALSE;
       } else {
-		  MsgLog("Timing+\n");
+//		  MsgLog("Timing+\n");
 		  ModeFound = TRUE;
 		  PreferMode = ModeNumber;
 	  }
@@ -1489,15 +1482,6 @@ BiosVideoCheckForVbe (
 
     //
     // Select a reasonable mode to be set for current display mode
-    // ugly
-	  if (BiosVideoPrivate->VbeModeInformationBlock->XResolution == 1280 &&
-		  BiosVideoPrivate->VbeModeInformationBlock->YResolution == 800
-		  ) {
-		  ModeFound = TRUE;
-		  if (PreferMode == -1) {
-			  PreferMode = ModeNumber; //Slice - I prefer this mode
-		  }		
-	  }
 	  
     if (BiosVideoPrivate->VbeModeInformationBlock->XResolution == 1024 &&
         BiosVideoPrivate->VbeModeInformationBlock->YResolution == 768
@@ -1823,7 +1807,7 @@ BiosVideoGraphicsOutputQueryMode (
   (*Info)->HorizontalResolution = ModeData->HorizontalResolution;
   (*Info)->VerticalResolution   = ModeData->VerticalResolution;
   (*Info)->PixelFormat = ModeData->PixelFormat;
-  CopyMem (&((*Info)->PixelInformation), &(ModeData->PixelBitMask), sizeof(ModeData->PixelBitMask));
+  gBS->CopyMem (&((*Info)->PixelInformation), &(ModeData->PixelBitMask), sizeof(ModeData->PixelBitMask));
 
   (*Info)->PixelsPerScanLine =  (ModeData->BytesPerScanLine * 8) / ModeData->BitsPerPixel;
 
@@ -1963,7 +1947,7 @@ BiosVideoGraphicsOutputSetMode (
   This->Mode->Info->HorizontalResolution = ModeData->HorizontalResolution;
   This->Mode->Info->VerticalResolution = ModeData->VerticalResolution;
   This->Mode->Info->PixelFormat = ModeData->PixelFormat;
-  CopyMem (&(This->Mode->Info->PixelInformation), &(ModeData->PixelBitMask), sizeof (ModeData->PixelBitMask));
+  gBS->CopyMem (&(This->Mode->Info->PixelInformation), &(ModeData->PixelBitMask), sizeof (ModeData->PixelBitMask));
   This->Mode->Info->PixelsPerScanLine =  (ModeData->BytesPerScanLine * 8) / ModeData->BitsPerPixel;
   This->Mode->SizeOfInfo = sizeof(EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
 
