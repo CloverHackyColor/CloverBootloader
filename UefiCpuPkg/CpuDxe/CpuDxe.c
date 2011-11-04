@@ -925,7 +925,7 @@ RefreshGcdMemoryAttributes (
                   );
   ASSERT_EFI_ERROR (Status);
 
-  mDefaultMemoryType = MtrrGetDefaultMemoryType ();
+//  mDefaultMemoryType = MtrrGetDefaultMemoryType ();
   DefaultAttributes = GetMemorySpaceAttributeFromMtrrType (mDefaultMemoryType);
 
   //
@@ -958,14 +958,13 @@ RefreshGcdMemoryAttributes (
         );
     }
   }
-
   //
-  // Go for variable MTRRs with the attribute except for WB and UC attributes
+  // Go for variable MTRRs with the attribute except for WB and /*UC*/ attributes
   //
   for (Index = 0; Index < FirmwareVariableMtrrCount; Index++) {
     if (VariableMtrr[Index].Valid &&
-        VariableMtrr[Index].Type != MTRR_CACHE_WRITE_BACK &&
-        VariableMtrr[Index].Type != MTRR_CACHE_UNCACHEABLE) {
+        VariableMtrr[Index].Type != MTRR_CACHE_WRITE_BACK /*&&
+        VariableMtrr[Index].Type != MTRR_CACHE_UNCACHEABLE*/) {
       Attributes = GetMemorySpaceAttributeFromMtrrType ((MTRR_MEMORY_CACHE_TYPE) VariableMtrr[Index].Type);
       SetGcdMemorySpaceAttributes (
         MemorySpaceMap,
@@ -980,7 +979,7 @@ RefreshGcdMemoryAttributes (
   //
   // Go for variable MTRRs with UC attribute
   //
-  for (Index = 0; Index < FirmwareVariableMtrrCount; Index++) {
+/*  for (Index = 0; Index < FirmwareVariableMtrrCount; Index++) {
     if (VariableMtrr[Index].Valid &&
         VariableMtrr[Index].Type == MTRR_CACHE_UNCACHEABLE) {
       SetGcdMemorySpaceAttributes (
@@ -991,7 +990,7 @@ RefreshGcdMemoryAttributes (
         EFI_MEMORY_UC
         );
     }
-  }
+  }*/
 
   //
   // Go for fixed MTRRs

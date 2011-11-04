@@ -462,7 +462,7 @@ BiosVideoChildHandleInstall (
     goto Done;
   }
 
-  gBS->SetMem(BiosVideoPrivate, sizeof (BIOS_VIDEO_DEV), 0);
+  ZeroMem(BiosVideoPrivate, sizeof (BIOS_VIDEO_DEV));
 
   if (!BiosVideoIsVga (ParentPciIo)) {
     Status = EFI_UNSUPPORTED;
@@ -513,12 +513,12 @@ BiosVideoChildHandleInstall (
   //
   BiosVideoPrivate->PciIo = ParentPciIo;
 //Slice
-//	IA32_REGISTER_SET        Regs;
-//	gBS->SetMem (&Regs, sizeof (Regs), 0);
-//	Regs.H.AH = 0x00;
-//	Regs.H.AL = 0x01;
+/*	IA32_REGISTER_SET        Regs;
+	gBS->SetMem (&Regs, sizeof (Regs), 0);
+	Regs.H.AH = 0x00;
+	Regs.H.AL = 0x02;
 //	Regs.H.BL = 0xF;
-//	LegacyBiosInt86 (BiosVideoPrivate, 0x10, &Regs); 
+	LegacyBiosInt86 (BiosVideoPrivate, 0x10, &Regs); */
 //	while (TRUE) {
 		
 //	}
@@ -546,13 +546,13 @@ BiosVideoChildHandleInstall (
       //
       // INT services are available, so on the 80x25 and 80x50 text mode are supported
       //
-      BiosVideoPrivate->VgaMiniPort.MaxMode = 2;
+      BiosVideoPrivate->VgaMiniPort.MaxMode = 3;
     }
   }
 
 	if (BiosVideoPrivate->ProduceGraphicsOutput) {
 		if (RemainingDevicePath == NULL) {
-			gBS->SetMem(&AcpiDeviceNode, sizeof (ACPI_ADR_DEVICE_PATH), 0);
+			ZeroMem(&AcpiDeviceNode, sizeof (ACPI_ADR_DEVICE_PATH));
 			AcpiDeviceNode.Header.Type    = ACPI_DEVICE_PATH;
 			AcpiDeviceNode.Header.SubType = ACPI_ADR_DP;
 			AcpiDeviceNode.ADR            = ACPI_DISPLAY_ADR (1, 0, 0, 1, 0, ACPI_ADR_DISPLAY_TYPE_VGA, 0, 0);
@@ -578,7 +578,7 @@ BiosVideoChildHandleInstall (
 									(VOID**)&BiosVideoPrivate->EdidActive.Edid
 									);
 		if (!EFI_ERROR (Status)){
-			gBS->CopyMem(BiosVideoPrivate->EdidActive.Edid, msgbuf, LogSize);
+			CopyMem(BiosVideoPrivate->EdidActive.Edid, msgbuf, LogSize);
 		}
  */
 		//
@@ -736,7 +736,7 @@ BiosVideoChildHandleUninstall (
     return Status;
   }
 
-  gBS->SetMem (&Regs, sizeof (Regs), 0);
+  ZeroMem (&Regs, sizeof (Regs));
 
   //
   // Set the 80x25 Text VGA Mode
@@ -1172,7 +1172,7 @@ BiosVideoCheckForVbe (
                                               sizeof (VESA_BIOS_EXTENSIONS_CRTC_INFORMATION_BLOCK)
                                               );
 
-  BiosVideoPrivate->PagesBelow1MB = 0x000A0000 - 1;
+  BiosVideoPrivate->PagesBelow1MB = 0x000C0000 - 1;
 
   Status = gBS->AllocatePages (
                   AllocateMaxAddress,
@@ -1184,7 +1184,7 @@ BiosVideoCheckForVbe (
     return Status;
   }
 
-  gBS->SetMem(&ValidEdidTiming, sizeof (VESA_BIOS_EXTENSIONS_VALID_EDID_TIMING), 0);
+  ZeroMem(&ValidEdidTiming, sizeof (VESA_BIOS_EXTENSIONS_VALID_EDID_TIMING));
 
   //
   // Fill in the Graphics Output Protocol
@@ -1222,9 +1222,9 @@ BiosVideoCheckForVbe (
   // Desc:  determine whether VESA BIOS extensions are present and the capabilities
   //    supported by the display adapter
   //
-  gBS->SetMem (&Regs, sizeof (Regs), 0);
+  ZeroMem (&Regs, sizeof (Regs));
   Regs.X.AX = VESA_BIOS_EXTENSIONS_RETURN_CONTROLLER_INFORMATION;
-  gBS->SetMem (BiosVideoPrivate->VbeInformationBlock, sizeof (VESA_BIOS_EXTENSIONS_INFORMATION_BLOCK), 0);
+  ZeroMem (BiosVideoPrivate->VbeInformationBlock, sizeof (VESA_BIOS_EXTENSIONS_INFORMATION_BLOCK));
   BiosVideoPrivate->VbeInformationBlock->VESASignature  = VESA_BIOS_EXTENSIONS_VBE2_SIGNATURE;
   Regs.E.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeInformationBlock);
   Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeInformationBlock);
@@ -1251,7 +1251,7 @@ BiosVideoCheckForVbe (
 //  if (BiosVideoPrivate->VbeInformationBlock->VESAVersion < VESA_BIOS_EXTENSIONS_VERSION_2_0) {
 //    return Status;
 // }
-	gBS->SetMem (&ValidEdidTiming, sizeof (VESA_BIOS_EXTENSIONS_VALID_EDID_TIMING), 0);
+	ZeroMem (&ValidEdidTiming, sizeof (VESA_BIOS_EXTENSIONS_VALID_EDID_TIMING));
   //
   // Read EDID information
   //
@@ -1272,7 +1272,7 @@ BiosVideoCheckForVbe (
 	 block 0 - VESA Structure
 	 block 1 - CEA Ext Structure
 	 */
-  gBS->SetMem (&Regs, sizeof (Regs), 0);
+  ZeroMem (&Regs, sizeof (Regs));
   Regs.X.AX = VESA_BIOS_EXTENSIONS_EDID;
   Regs.X.BX = 1;
   Regs.X.CX = 0;
@@ -1289,12 +1289,12 @@ BiosVideoCheckForVbe (
   if (Regs.X.AX == VESA_BIOS_EXTENSIONS_STATUS_SUCCESS)
   {
 	  EdidFound = TRUE;
-//	  MsgLog(" Edid0+");
+//	  MsgLog(" Edid1+");
 	  ParseEdidData ((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock, &ValidEdidTiming);
   }
 	  
 	//Slice - attempt Nr2
-	gBS->SetMem (&Regs, sizeof (Regs), 0);
+	ZeroMem (&Regs, sizeof (Regs));
 	Regs.X.AX = VESA_BIOS_EXTENSIONS_EDID;
 	Regs.X.BX = 1;
 	Regs.X.CX = 0;
@@ -1316,7 +1316,7 @@ BiosVideoCheckForVbe (
 	if (Regs.X.AX == VESA_BIOS_EXTENSIONS_STATUS_SUCCESS)
 	{
 		EdidFound = TRUE;
-//		MsgLog(" Edid1+");
+//		MsgLog(" Edid0+");
 		ParseEdidData ((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock, &ValidEdidTiming);
 	}
 	
@@ -1331,7 +1331,7 @@ BiosVideoCheckForVbe (
       if (EFI_ERROR (Status)) {
         goto Done;
       }
-      gBS->CopyMem (
+      CopyMem (
              BiosVideoPrivate->EdidDiscovered.Edid,
              BiosVideoPrivate->VbeEdidDataBlock,
              VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE
@@ -1346,7 +1346,7 @@ BiosVideoCheckForVbe (
       if (EFI_ERROR (Status)) {
         goto Done;
       }
-      gBS->CopyMem (
+      CopyMem (
              BiosVideoPrivate->EdidActive.Edid,
              BiosVideoPrivate->VbeEdidDataBlock,
              VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE
@@ -1381,7 +1381,7 @@ BiosVideoCheckForVbe (
     //
     if ((*ModeNumberPtr & VESA_BIOS_EXTENSIONS_MODE_NUMBER_VESA) == 0) {  //0x0100
 //		MsgLog("non-VESA ");
-      continue;
+		continue;
     }
     //
     // Get the information about the mode
@@ -1398,10 +1398,10 @@ BiosVideoCheckForVbe (
     //      01h failed
     // Desc:  determine the attributes of the specified video mode
     //
-    gBS->SetMem (&Regs, sizeof (Regs), 0);
+    ZeroMem (&Regs, sizeof (Regs));
     Regs.X.AX = VESA_BIOS_EXTENSIONS_RETURN_MODE_INFORMATION;
     Regs.X.CX = *ModeNumberPtr;
-    gBS->SetMem (BiosVideoPrivate->VbeModeInformationBlock, sizeof (VESA_BIOS_EXTENSIONS_MODE_INFORMATION_BLOCK), 0);
+    ZeroMem (BiosVideoPrivate->VbeModeInformationBlock, sizeof (VESA_BIOS_EXTENSIONS_MODE_INFORMATION_BLOCK));
     Regs.E.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeModeInformationBlock);
     Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeModeInformationBlock);
 
@@ -1522,7 +1522,7 @@ BiosVideoCheckForVbe (
     }
 
     if (ModeNumber > 1) {
-      gBS->CopyMem (
+      CopyMem (
             ModeBuffer,
             BiosVideoPrivate->ModeData,
             (ModeNumber - 1) * sizeof (BIOS_VIDEO_MODE_DATA)
@@ -1807,7 +1807,7 @@ BiosVideoGraphicsOutputQueryMode (
   (*Info)->HorizontalResolution = ModeData->HorizontalResolution;
   (*Info)->VerticalResolution   = ModeData->VerticalResolution;
   (*Info)->PixelFormat = ModeData->PixelFormat;
-  gBS->CopyMem (&((*Info)->PixelInformation), &(ModeData->PixelBitMask), sizeof(ModeData->PixelBitMask));
+  CopyMem (&((*Info)->PixelInformation), &(ModeData->PixelBitMask), sizeof(ModeData->PixelBitMask));
 
   (*Info)->PixelsPerScanLine =  (ModeData->BytesPerScanLine * 8) / ModeData->BitsPerPixel;
 
@@ -1875,7 +1875,7 @@ BiosVideoGraphicsOutputSetMode (
   //
   // Clear all registers
   //
-  gBS->SetMem (&Regs, sizeof (Regs), 0);
+  ZeroMem (&Regs, sizeof (Regs));
 
   if (ModeData->VbeModeNumber < 0x100) {
     //
@@ -1914,7 +1914,7 @@ BiosVideoGraphicsOutputSetMode (
     //
     Regs.X.AX = VESA_BIOS_EXTENSIONS_SET_MODE;
 	  Regs.X.BX = (UINT16) (ModeData->VbeModeNumber | VESA_BIOS_EXTENSIONS_MODE_NUMBER_LINEAR_FRAME_BUFFER);
-    gBS->SetMem (BiosVideoPrivate->VbeCrtcInformationBlock, sizeof (VESA_BIOS_EXTENSIONS_CRTC_INFORMATION_BLOCK), 0);
+    ZeroMem (BiosVideoPrivate->VbeCrtcInformationBlock, sizeof (VESA_BIOS_EXTENSIONS_CRTC_INFORMATION_BLOCK));
     Regs.E.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeCrtcInformationBlock);
     Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeCrtcInformationBlock);
     
@@ -1947,7 +1947,7 @@ BiosVideoGraphicsOutputSetMode (
   This->Mode->Info->HorizontalResolution = ModeData->HorizontalResolution;
   This->Mode->Info->VerticalResolution = ModeData->VerticalResolution;
   This->Mode->Info->PixelFormat = ModeData->PixelFormat;
-  gBS->CopyMem (&(This->Mode->Info->PixelInformation), &(ModeData->PixelBitMask), sizeof (ModeData->PixelBitMask));
+  CopyMem (&(This->Mode->Info->PixelInformation), &(ModeData->PixelBitMask), sizeof (ModeData->PixelBitMask));
   This->Mode->Info->PixelsPerScanLine =  (ModeData->BytesPerScanLine * 8) / ModeData->BitsPerPixel;
   This->Mode->SizeOfInfo = sizeof(EFI_GRAPHICS_OUTPUT_MODE_INFORMATION);
 
@@ -2225,7 +2225,7 @@ BiosVideoGraphicsOutputVbeBlt (
       VbeBuffer   = ((UINT8 *) VbeFrameBuffer + DstY * BytesPerScanLine + DestinationX * VbePixelWidth);
       VbeBuffer1  = ((UINT8 *) VbeFrameBuffer + SrcY * BytesPerScanLine + SourceX * VbePixelWidth);
 
-      gBS->CopyMem (
+      CopyMem (
             VbeBuffer,
             VbeBuffer1,
             TotalBytes
@@ -2261,7 +2261,7 @@ BiosVideoGraphicsOutputVbeBlt (
           ((Blt->Blue & Mode->Blue.Mask) << Mode->Blue.Position);
 
     for (Index = 0; Index < Width; Index++) {
-      gBS->CopyMem (
+      CopyMem (
             VbeBuffer,
             &Pixel,
             VbePixelWidth
@@ -2271,7 +2271,7 @@ BiosVideoGraphicsOutputVbeBlt (
 
     VbeBuffer = (UINT8 *) ((UINTN) VbeFrameBuffer + (DestinationY * BytesPerScanLine) + DestinationX * VbePixelWidth);
     for (DstY = DestinationY + 1; DstY < (Height + DestinationY); DstY++) {
-      gBS->CopyMem (
+      CopyMem (
             (VOID *) ((UINTN) VbeFrameBuffer + (DstY * BytesPerScanLine) + DestinationX * VbePixelWidth),
             VbeBuffer,
             TotalBytes
@@ -2305,7 +2305,7 @@ BiosVideoGraphicsOutputVbeBlt (
         Pixel = ((Blt->Red & Mode->Red.Mask) << Mode->Red.Position) |
           ((Blt->Green & Mode->Green.Mask) << Mode->Green.Position) |
             ((Blt->Blue & Mode->Blue.Mask) << Mode->Blue.Position);
-        gBS->CopyMem (
+        CopyMem (
               VbeBuffer,
               &Pixel,
               VbePixelWidth
@@ -2956,7 +2956,7 @@ BiosVideoVgaMiniPortSetMode (
   //
   BiosVideoPrivate = BIOS_VIDEO_DEV_FROM_VGA_MINI_PORT_THIS (This);
   
-  gBS->SetMem (&Regs, sizeof (Regs), 0);
+  ZeroMem (&Regs, sizeof (Regs));
 
   switch (ModeNumber) {
   case 0:

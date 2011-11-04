@@ -302,8 +302,8 @@
   #Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
   #Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
   Clover/SataControllerDxe/SataControllerDxe.inf
-  #MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
-  Clover/AtaAtapi/AtaAtapiPassThru.inf
+  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
+  #Clover/AtaAtapi/AtaAtapiPassThru.inf
   MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf

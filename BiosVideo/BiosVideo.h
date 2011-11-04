@@ -102,13 +102,14 @@ typedef struct {
   //
   BOOLEAN                                     VgaCompatible;
   BOOLEAN                                     ProduceGraphicsOutput;
+  EFI_EVENT                                   ExitBootServicesEvent;
 
   //
   // Graphics Output Protocol related fields
   //
   BOOLEAN                                     HardwareNeedsStarting;
-  UINTN                                       CurrentMode;
-  UINTN                                       MaxMode;
+//  UINTN                                       CurrentMode;
+//  UINTN                                       MaxMode;
   BIOS_VIDEO_MODE_DATA                        *ModeData;
   UINT8                                       *LineBuffer;
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL               *VbeFrameBuffer;
@@ -129,7 +130,7 @@ typedef struct {
   // Status code
   //
   EFI_DEVICE_PATH_PROTOCOL                    *DevicePath;
-	EFI_EVENT                                   ExitBootServicesEvent;
+//	EFI_EVENT                                   ExitBootServicesEvent;
 } BIOS_VIDEO_DEV;
 
 #define BIOS_VIDEO_DEV_FROM_PCI_IO_THIS(a)      CR (a, BIOS_VIDEO_DEV, PciIo, BIOS_VIDEO_DEV_SIGNATURE)
@@ -416,12 +417,12 @@ BiosVideoVgaMiniPortSetMode (
   @retval TRUE  Is vga device
   @retval FALSE Is no vga device
 **/
+
 BOOLEAN
 BiosVideoIsVga (
   IN  EFI_PCI_IO_PROTOCOL       *PciIo
   )
 ;
-
 
 //
 // Standard VGA Definitions
