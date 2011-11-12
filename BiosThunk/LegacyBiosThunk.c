@@ -188,7 +188,7 @@ InitializeInterruptRedirection (
 --*/
 {
   EFI_STATUS            Status;
-  UINTN                 LegacyRegionBase;
+  EFI_PHYSICAL_ADDRESS  LegacyRegionBase;
   UINTN                 LegacyRegionLength;
   UINT32                *IdtArray;
   UINTN                 Index;
@@ -214,7 +214,7 @@ InitializeInterruptRedirection (
   //
   // Copy code to legacy region
   //
-  EfiCommonLibCopyMem ((VOID *)LegacyRegionBase, InterruptRedirectionCode, sizeof (InterruptRedirectionCode));
+  CopyMem ((VOID *)(UINTN)LegacyRegionBase, InterruptRedirectionCode, sizeof (InterruptRedirectionCode));
 
   //
   // Get VectorBase, it should be 0x68
@@ -264,6 +264,7 @@ LegacyBiosInt86 (
   UINT32                Eflags;
   IA32_REGISTER_SET     ThunkRegSet;
   BOOLEAN               Ret;
+  UINT16                *Stack16;
  
   Regs->X.Flags.Reserved1 = 1;
   Regs->X.Flags.Reserved2 = 0;
@@ -275,7 +276,7 @@ LegacyBiosInt86 (
   Regs->X.Flags.TF        = 0;
   Regs->X.Flags.CF        = 0;
 
-  EfiCommonLibZeroMem (&ThunkRegSet, sizeof (ThunkRegSet));
+  ZeroMem (&ThunkRegSet, sizeof (ThunkRegSet));
   ThunkRegSet.E.EDI  = Regs->E.EDI;
   ThunkRegSet.E.ESI  = Regs->E.ESI;
   ThunkRegSet.E.EBP  = Regs->E.EBP;
@@ -286,14 +287,14 @@ LegacyBiosInt86 (
   ThunkRegSet.E.DS   = Regs->E.DS;
   ThunkRegSet.E.ES   = Regs->E.ES;
 
-  EfiCommonLibCopyMem (&(ThunkRegSet.E.EFLAGS), &(Regs->E.EFlags), sizeof (UINT32));
+  CopyMem (&(ThunkRegSet.E.EFLAGS), &(Regs->E.EFlags), sizeof (UINT32));
  
   //
   // The call to Legacy16 is a critical section to EFI
   //
-  Eflags = EfiGetEflags ();
+  Eflags = AsmReadEflags ();
   if ((Eflags | EFI_CPU_EFLAGS_IF) != 0) {
-    EfiDisableInterrupts ();
+    DisableInterrupts ();
   }
 
   //
@@ -302,7 +303,17 @@ LegacyBiosInt86 (
   Status = gLegacy8259->SetMode (gLegacy8259, Efi8259LegacyMode, NULL, NULL);
   ASSERT_EFI_ERROR (Status);
   
-  AsmThunk16Int86 (&mThunkContext, BiosInt, &ThunkRegSet, 0);
+//  AsmThunk16Int86 (&mThunkContext, BiosInt, &ThunkRegSet, 0);
+  Stack16 = (UINT16 *)((UINT8 *) mThunkContext->RealModeBuffer + mThunkContext->RealModeBufferSize - sizeof (UINT16));
+
+  ThunkRegSet.E.SS   = (UINT16) (((UINTN) Stack16 >> 16) << 12);
+  ThunkRegSet.E.ESP  = (UINT16) (UINTN) Stack16;
+
+  ThunkRegSet.E.Eip  = (UINT16)((UINT32 *)NULL)[BiosInt];
+  ThunkRegSet.E.CS   = (UINT16)(((UINT32 *)NULL)[BiosInt] >> 16);
+  mThunkContext->RealModeState = &ThunkRegSet;
+  AsmThunk16 (mThunkContext);
+
 
   //
   // Restore protected mode interrupt state
@@ -314,7 +325,7 @@ LegacyBiosInt86 (
   // End critical section
   //
   if ((Eflags | EFI_CPU_EFLAGS_IF) != 0) {
-    EfiEnableInterrupts ();
+    EnableInterrupts ();
   }
 
   Regs->E.EDI      = ThunkRegSet.E.EDI;      
@@ -329,7 +340,7 @@ LegacyBiosInt86 (
   Regs->E.DS       = ThunkRegSet.E.DS;  
   Regs->E.ES       = ThunkRegSet.E.ES;
 
-  EfiCommonLibCopyMem (&(Regs->E.EFlags), &(ThunkRegSet.E.EFLAGS), sizeof (UINT32));
+  CopyMem (&(Regs->E.EFlags), &(ThunkRegSet.E.EFLAGS), sizeof (UINT32));
 
   Ret = (BOOLEAN) (Regs->E.EFlags.CF == 1);
 
