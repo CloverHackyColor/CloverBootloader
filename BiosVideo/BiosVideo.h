@@ -1,6 +1,7 @@
 /** @file
 
-Copyright (c) 2006 - 2009, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2006 - 2010, Intel Corporation. All rights reserved.<BR>
+
 This program and the accompanying materials                          
 are licensed and made available under the terms and conditions of the BSD License         
 which accompanies this distribution.  The full text of the license may be found at        
@@ -37,6 +38,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Library/BaseLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/BaseMemoryLib.h>
+#include <Library/MemoryAllocationLib.h>
 #include <Library/DevicePathLib.h>
 
 #include <IndustryStandard/Pci.h>
@@ -102,14 +104,13 @@ typedef struct {
   //
   BOOLEAN                                     VgaCompatible;
   BOOLEAN                                     ProduceGraphicsOutput;
-  EFI_EVENT                                   ExitBootServicesEvent;
 
   //
   // Graphics Output Protocol related fields
   //
   BOOLEAN                                     HardwareNeedsStarting;
-//  UINTN                                       CurrentMode;
-//  UINTN                                       MaxMode;
+  UINTN                                       CurrentMode;
+  UINTN                                       MaxMode;
   BIOS_VIDEO_MODE_DATA                        *ModeData;
   UINT8                                       *LineBuffer;
   EFI_GRAPHICS_OUTPUT_BLT_PIXEL               *VbeFrameBuffer;
@@ -130,7 +131,7 @@ typedef struct {
   // Status code
   //
   EFI_DEVICE_PATH_PROTOCOL                    *DevicePath;
-//	EFI_EVENT                                   ExitBootServicesEvent;
+  EFI_EVENT                                   ExitBootServicesEvent;
 } BIOS_VIDEO_DEV;
 
 #define BIOS_VIDEO_DEV_FROM_PCI_IO_THIS(a)      CR (a, BIOS_VIDEO_DEV, PciIo, BIOS_VIDEO_DEV_SIGNATURE)
@@ -169,8 +170,8 @@ BiosVideoDriverBindingSupported (
   IN EFI_DRIVER_BINDING_PROTOCOL  *This,
   IN EFI_HANDLE                   Controller,
   IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath
-  )
-;
+  );
+
 
 /**
   Install Graphics Output Protocol onto VGA device handles
@@ -188,8 +189,8 @@ BiosVideoDriverBindingStart (
   IN EFI_DRIVER_BINDING_PROTOCOL  *This,
   IN EFI_HANDLE                   Controller,
   IN EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath
-  )
-;
+  );
+
 
 /**
   Stop this driver on Controller 
@@ -211,14 +212,13 @@ BiosVideoDriverBindingStop (
   IN  EFI_HANDLE                   Controller,
   IN  UINTN                        NumberOfChildren,
   IN  EFI_HANDLE                   *ChildHandleBuffer
-  )
-;
+  );
 
 //
 // Private worker functions
 //
 /**
-  Check for VBE device
+  Check for VBE device.
 
   @param BiosVideoPrivate - Pointer to BIOS_VIDEO_DEV structure
 
@@ -229,11 +229,11 @@ EFI_STATUS
 EFIAPI
 BiosVideoCheckForVbe (
   IN OUT BIOS_VIDEO_DEV  *BiosVideoPrivate
-  )
-;
+  );
+
 
 /**
-  Check for VGA device
+  Check for VGA device.
 
   @param BiosVideoPrivate - Pointer to BIOS_VIDEO_DEV structure
 
@@ -288,8 +288,8 @@ BiosVideoGraphicsOutputQueryMode (
   IN  UINT32                                ModeNumber,
   OUT UINTN                                 *SizeOfInfo,
   OUT EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  **Info
-  )
-;
+  );
+
 
 /**
 
@@ -309,8 +309,8 @@ EFIAPI
 BiosVideoGraphicsOutputSetMode (
   IN  EFI_GRAPHICS_OUTPUT_PROTOCOL * This,
   IN  UINT32                       ModeNumber
-  )
-;
+  );
+
 
 /**
 
@@ -348,8 +348,8 @@ BiosVideoGraphicsOutputVbeBlt (
   IN  UINTN                              Width,
   IN  UINTN                              Height,
   IN  UINTN                              Delta
-  )
-;
+  );
+
 
 /**
   Grahpics Output protocol instance to block transfer for VGA device
@@ -385,14 +385,13 @@ BiosVideoGraphicsOutputVgaBlt (
   IN  UINTN                              Width,
   IN  UINTN                              Height,
   IN  UINTN                              Delta
-  )
-;
+  );
 
 //
 // BIOS VGA Mini Port Protocol functions
 //
 /**
-  VgaMiniPort protocol interface to set mode
+  VgaMiniPort protocol interface to set mode.
 
   @param This             Pointer to VgaMiniPort protocol instance
   @param ModeNumber       The index of the mode
@@ -406,8 +405,7 @@ EFIAPI
 BiosVideoVgaMiniPortSetMode (
   IN  EFI_VGA_MINI_PORT_PROTOCOL  *This,
   IN  UINTN                       ModeNumber
-  )
-;
+  );
 
 /**
   Judge whether this device is VGA device.

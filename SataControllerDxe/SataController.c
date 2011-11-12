@@ -14,6 +14,14 @@
 
 #include "SataController.h"
 
+#define DEBUG_SATA 0
+
+#if DEBUG_SATA==1
+#define DBG(x...)  Print(x)
+#else
+#define DBG(x...)
+#endif
+
 ///
 /// EFI_DRIVER_BINDING_PROTOCOL instance
 ///
@@ -110,7 +118,7 @@ CalculateBestPioMode (
 {
 	*SelectedMode = 3;
 	
-#if 0	
+#if 1	
   UINT16    PioMode;
   UINT16    AdvancedPioMode;
   UINT16    Temp;
@@ -128,7 +136,7 @@ CalculateBestPioMode (
 
     AdvancedPioMode = IdentifyData->AtaData.advanced_pio_modes;
  //   DEBUG ((EFI_D_INFO, "CalculateBestPioMode: AdvancedPioMode = %x\n", AdvancedPioMode));
-
+	  DBG(L"CalculateBestPioMode: AdvancedPioMode = %x\n", AdvancedPioMode);
     for (Index = 0; Index < 8; Index++) {
       if ((AdvancedPioMode & 0x01) != 0) {
         Temp = Index;
@@ -399,7 +407,7 @@ SataControllerStart (
   UINTN                             ChannelDeviceCount;
 
 //  DEBUG ((EFI_D_INFO, "SataControllerStart START\n"));
-
+	DBG(L"SataControllerStart START\n");
   SataPrivateData = NULL;
 
   //
@@ -519,7 +527,7 @@ Done:
   }
 
 //  DEBUG ((EFI_D_INFO, "SataControllerStart END status = %r\n", Status));
-
+	DBG(L"SataControllerStart END status = %r\n", Status);
   return Status;
 }
 
@@ -640,6 +648,7 @@ IdeInitGetChannelInfo (
   if (Channel < This->ChannelCount) {
     *Enabled = TRUE;
     *MaxDevices = SataPrivateData->DeviceCount;
+	  DBG(L"Channel %d enabled  Count=%d\n", (INTN)Channel, *MaxDevices);
     return EFI_SUCCESS;
   }
 
@@ -824,7 +833,7 @@ IdeInitCalculateMode (
     (*SupportedModes)->PioMode.Valid = FALSE;
   }
 //  DEBUG ((EFI_D_INFO, "IdeInitCalculateMode: PioMode = %x\n", (*SupportedModes)->PioMode.Mode));
-
+	DBG(L"IdeInitCalculateMode: PioMode = %x\n", (*SupportedModes)->PioMode.Mode);
   Status = CalculateBestUdmaMode (
             IdentifyData,
             (DisqulifiedModes->UdmaMode.Valid ? ((UINT16 *) &(DisqulifiedModes->UdmaMode.Mode)) : NULL),
@@ -839,7 +848,7 @@ IdeInitCalculateMode (
     (*SupportedModes)->UdmaMode.Valid = FALSE;
   }
 //  DEBUG ((EFI_D_INFO, "IdeInitCalculateMode: UdmaMode = %x\n", (*SupportedModes)->UdmaMode.Mode));
-
+	DBG(L"IdeInitCalculateMode: UdmaMode = %x\n", (*SupportedModes)->UdmaMode.Mode);
   //
   // The modes other than PIO and UDMA are not supported
   //

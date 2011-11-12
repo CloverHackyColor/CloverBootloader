@@ -28,6 +28,7 @@
 #include <Library/MemoryAllocationLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <IndustryStandard/Pci.h>
+#include <Library/PrintLib.h>
 
 //
 // Global Variables definitions

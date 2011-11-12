@@ -26,6 +26,7 @@
 #include <Protocol/ScsiPassThruExt.h>
 
 #include <Library/DebugLib.h>
+#include <Library/PrintLib.h>
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/UefiDriverEntryPoint.h>
@@ -1078,7 +1079,7 @@ AhciModeInitialization (
   @param[in]       AtapiCommandLength  The length of the atapi command.
   @param[in]       AtaCommandBlock     The EFI_ATA_COMMAND_BLOCK data.
   @param[in, out]  AtaStatusBlock      The EFI_ATA_STATUS_BLOCK data.
-  @param[in]       Timeout             The timeout value of non data transfer.
+  @param[in]       Timeout             The timeout value of non data transfer, uses 100ns as a unit.
   @param[in]       Task                Optional. Pointer to the ATA_NONBLOCK_TASK
                                        used by non-blocking mode.
 
@@ -1118,7 +1119,7 @@ AhciNonDataTransfer (
   @param[in, out]  AtaStatusBlock      The EFI_ATA_STATUS_BLOCK data.
   @param[in, out]  MemoryAddr          The pointer to the data buffer.
   @param[in]       DataCount           The data count to be transferred.
-  @param[in]       Timeout             The timeout value of non data transfer.
+  @param[in]       Timeout             The timeout value of non data transfer, uses 100ns as a unit.
   @param[in]       Task                Optional. Pointer to the ATA_NONBLOCK_TASK
                                        used by non-blocking mode.
 
@@ -1141,7 +1142,7 @@ AhciDmaTransfer (
   IN     EFI_ATA_COMMAND_BLOCK        *AtaCommandBlock,
   IN OUT EFI_ATA_STATUS_BLOCK         *AtaStatusBlock,
   IN OUT VOID                         *MemoryAddr,
-  IN     UINTN                        DataCount,
+  IN     UINT32                       DataCount,
   IN     UINT64                       Timeout, 
   IN     ATA_NONBLOCK_TASK            *Task
   );
@@ -1161,7 +1162,7 @@ AhciDmaTransfer (
   @param[in, out]  AtaStatusBlock      The EFI_ATA_STATUS_BLOCK data.
   @param[in, out]  MemoryAddr          The pointer to the data buffer.
   @param[in]       DataCount           The data count to be transferred.
-  @param[in]       Timeout             The timeout value of non data transfer.
+  @param[in]       Timeout             The timeout value of non data transfer, uses 100ns as a unit.
   @param[in]       Task                Optional. Pointer to the ATA_NONBLOCK_TASK
                                        used by non-blocking mode.
 
@@ -1198,7 +1199,7 @@ AhciPioTransfer (
   @param[in]      AtaCommandBlock  A pointer to EFI_ATA_COMMAND_BLOCK data
                                    structure.
   @param[in, out] AtaStatusBlock   A pointer to EFI_ATA_STATUS_BLOCK data structure.
-  @param[in]      Timeout          The time to complete the command.
+  @param[in]      Timeout          The time to complete the command, uses 100ns as a unit.
   @param[in]      Task             Optional. Pointer to the ATA_NONBLOCK_TASK
                                    used by non-blocking mode.
 
@@ -1232,7 +1233,7 @@ AtaNonDataCommandIn (
   @param[in]      DataLength       The length of  the data.
   @param[in]      AtaCommandBlock  A pointer to EFI_ATA_COMMAND_BLOCK data structure.
   @param[in, out] AtaStatusBlock   A pointer to EFI_ATA_STATUS_BLOCK data structure.
-  @param[in]      Timeout          The time to complete the command.
+  @param[in]      Timeout          The time to complete the command, uses 100ns as a unit.
   @param[in]      Task             Optional. Pointer to the ATA_NONBLOCK_TASK
                                    used by non-blocking mode.
 
@@ -1270,7 +1271,7 @@ AtaUdmaInOut (
                                    from host to device.
   @param[in]      AtaCommandBlock  A pointer to EFI_ATA_COMMAND_BLOCK data structure.
   @param[in, out] AtaStatusBlock   A pointer to EFI_ATA_STATUS_BLOCK data structure.
-  @param[in]      Timeout          The time to complete the command.
+  @param[in]      Timeout          The time to complete the command, uses 100ns as a unit.
   @param[in]      Task             Optional. Pointer to the ATA_NONBLOCK_TASK
                                    used by non-blocking mode.
   

@@ -38,6 +38,7 @@
 [LibraryClasses]
   UefiDriverEntryPoint
   DebugLib
+  PrintLib
   UefiLib
   BaseLib
   BaseMemoryLib

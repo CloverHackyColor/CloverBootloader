@@ -36,7 +36,7 @@ InitializeBiosIntCaller (
   //
   AsmGetThunk16Properties (&RealModeBufferSize, &ExtraStackSize);
   LegacyRegionSize = (((RealModeBufferSize + ExtraStackSize) / EFI_PAGE_SIZE) + 1) * EFI_PAGE_SIZE;
-  LegacyRegionBase = 0x100000;
+  LegacyRegionBase = 0x0C0000;
   Status = gBS->AllocatePages (
                   AllocateMaxAddress,
                   EfiACPIMemoryNVS,
@@ -87,7 +87,7 @@ InitializeInterruptRedirection (
   // Get LegacyRegion
   //
   LegacyRegionLength = sizeof(InterruptRedirectionCode);
-  LegacyRegionBase = 0x100000;
+  LegacyRegionBase = 0x0C0000;
   Status = gBS->AllocatePages (
                   AllocateMaxAddress,
                   EfiACPIMemoryNVS,

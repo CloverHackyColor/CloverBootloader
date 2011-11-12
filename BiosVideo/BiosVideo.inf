@@ -25,7 +25,7 @@
   MdePkg/MdePkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
   IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
-  DuetPkg/DuetPkg.dec
+#  DuetPkg/DuetPkg.dec
 
 [LibraryClasses]
   UefiLib
@@ -33,6 +33,7 @@
   PrintLib
   UefiBootServicesTableLib
   BaseMemoryLib
+  MemoryAllocationLib
   UefiDriverEntryPoint
   DevicePathLib
   

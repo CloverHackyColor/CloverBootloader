@@ -224,8 +224,8 @@
   MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDxe.inf
 
   #DuetPkg/FSVariable/FSVariable.inf
-  #MdeModulePkg/Universal/Variable/EmuRuntimeDxe/EmuVariableRuntimeDxe.inf
-  Clover/EmuVariableDxe/EmuVariableRuntimeDxe.inf
+  MdeModulePkg/Universal/Variable/EmuRuntimeDxe/EmuVariableRuntimeDxe.inf
+  #Clover/EmuVariableDxe/EmuVariableRuntimeDxe.inf
   MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
   MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
   MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
@@ -302,8 +302,14 @@
   #Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
   #Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
   Clover/SataControllerDxe/SataControllerDxe.inf
-  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
-  #Clover/AtaAtapi/AtaAtapiPassThru.inf
+  #MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
+  Clover/AtaAtapi/AtaAtapiPassThru.inf {
+    <PcdsFixedAtBuild>
+	  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000042
+      gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x02
+  	<LibraryClasses>
+#  	DebugLib|MdePkg/Library/UefiDebugLibStdErr/UefiDebugLibStdErr.inf
+  }
   MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf

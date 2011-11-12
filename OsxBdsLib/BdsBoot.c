@@ -1323,12 +1323,13 @@ BdsDeleteAllInvalidEfiBootOption (
     //
     // Skip legacy boot option (BBS boot device)
     //
-    if ((DevicePathType (OptionDevicePath) == BBS_DEVICE_PATH) &&
+	  //Slice - why? I want legacy boot
+ /*   if ((DevicePathType (OptionDevicePath) == BBS_DEVICE_PATH) &&
         (DevicePathSubType (OptionDevicePath) == BBS_BBS_DP)) {
       FreePool (BootOptionVar);
       Index++;
       continue;
-    }
+    }*/
 
     if (!BdsLibIsValidEFIBootOptDevicePathExt (OptionDevicePath, FALSE, Description)) {
       //
