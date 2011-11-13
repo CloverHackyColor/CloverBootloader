@@ -34,7 +34,7 @@
   		sudo dd if=boot1h of=/dev/rdisk0s1
   
    - Install clover to the EFI partition's root directory:
-  		sudo cp clover /Volumes/EFI/boot
+  		sudo cp boot /Volumes/EFI/boot
 
 
  EFI Partition Install (FAT32) :
@@ -47,7 +47,7 @@
 		sudo mount_msdos /dev/disk0s1 /Volumes/EFI/
 
    - Install clover to the EFI partition's root directory:
-		cp clover /Volumes/EFI/
+		cp boot /Volumes/EFI/
 		sudo umount -f  /Volumes/EFI/
 		
    - Install boot0 to the MBR:

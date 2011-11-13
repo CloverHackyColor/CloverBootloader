@@ -446,7 +446,7 @@ SataControllerStart (
   SataPrivateData->IdeInit.DisqualifyMode = IdeInitDisqualifyMode;
   SataPrivateData->IdeInit.CalculateMode = IdeInitCalculateMode;
   SataPrivateData->IdeInit.SetTiming = IdeInitSetTiming;
-  SataPrivateData->IdeInit.EnumAll = SATA_ENUMER_ALL;
+  SataPrivateData->IdeInit.EnumAll = SATA_ENUMER_ALL;  ////FALSE
 
   Status = PciIo->Pci.Read (
                         PciIo,
@@ -827,7 +827,7 @@ IdeInitCalculateMode (
             );
   if (!EFI_ERROR (Status)) {
     (*SupportedModes)->PioMode.Valid = TRUE;
-    (*SupportedModes)->PioMode.Mode = SelectedMode;
+	  (*SupportedModes)->PioMode.Mode = 3; //SelectedMode; //Slice
 
   } else {
     (*SupportedModes)->PioMode.Valid = FALSE;
@@ -839,14 +839,17 @@ IdeInitCalculateMode (
             (DisqulifiedModes->UdmaMode.Valid ? ((UINT16 *) &(DisqulifiedModes->UdmaMode.Mode)) : NULL),
             &SelectedMode
             );
-
-  if (!EFI_ERROR (Status)) {
+//Slice
+/*  if (!EFI_ERROR (Status)) {
     (*SupportedModes)->UdmaMode.Valid = TRUE;
     (*SupportedModes)->UdmaMode.Mode  = SelectedMode;
 
   } else {
     (*SupportedModes)->UdmaMode.Valid = FALSE;
-  }
+  }*/
+	(*SupportedModes)->UdmaMode.Valid = FALSE;
+	(*SupportedModes)->MultiWordDmaMode.Valid = FALSE;
+	
 //  DEBUG ((EFI_D_INFO, "IdeInitCalculateMode: UdmaMode = %x\n", (*SupportedModes)->UdmaMode.Mode));
 	DBG(L"IdeInitCalculateMode: UdmaMode = %x\n", (*SupportedModes)->UdmaMode.Mode);
   //

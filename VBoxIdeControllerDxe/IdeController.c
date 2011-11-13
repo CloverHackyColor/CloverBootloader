@@ -55,8 +55,8 @@ EFI_IDE_CONTROLLER_INIT_PROTOCOL  gEfiIdeControllerInit = {
   IdeInitDisqualifyMode,
   IdeInitCalculateMode,
   IdeInitSetTiming,
-  ICH_IDE_ENUMER_ALL,
-  ICH_IDE_MAX_CHANNEL
+  ICH_IDE_ENUMER_ALL,  //FALSE
+  ICH_IDE_MAX_CHANNEL  //=2
 };
 
 //
@@ -285,7 +285,8 @@ IdeControllerStart (
   //
   return gBS->InstallMultipleProtocolInterfaces (
                 &Controller,
-                &gEfiIdeControllerInitProtocolGuid, &gEfiIdeControllerInit,
+                &gEfiIdeControllerInitProtocolGuid,
+				&gEfiIdeControllerInit,
                 NULL
                 );
 }

@@ -214,7 +214,9 @@ PartitionInstallMbrChildHandles (
         //  this BlockIo would corrupt the GPT structures and require a recovery that would corrupt the format
         //  that corrupted the GPT partition. 
         //
-        continue;
+        //continue;
+		  //Slice
+		  break;
       }
 
       HdDev.PartitionNumber = PartitionNumber ++;
