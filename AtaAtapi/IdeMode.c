@@ -14,6 +14,13 @@
 
 #include "AtaAtapiPassThru.h"
 
+
+BOOLEAN ChannelDeviceDetected = FALSE;
+BOOLEAN SlaveDeviceExist      = FALSE;
+UINT8   SlaveDeviceType       = INVALID_DEVICE_TYPE;
+BOOLEAN MasterDeviceExist     = FALSE;
+UINT8   MasterDeviceType      = INVALID_DEVICE_TYPE;
+
 /**
   read a one-byte data from a IDE port.
 
@@ -158,8 +165,30 @@ IdeWritePortWMultiple (
   IN  VOID                  *Buffer
   )
 {
-  ASSERT (PciIo  != NULL);
-  ASSERT (Buffer != NULL);
+  UINT16  *AlignedBuffer;
+  UINT32  *WorkingBuffer;
+  UINTN   Size;
+
+  //
+  // Prepare an 16-bit aligned working buffer. CpuIo will return failure and
+  // not perform actual I/O operations if buffer pointer passed in is not at
+  // natural boundary. The "Buffer" argument is passed in by user and may not
+  // at 16-bit natural boundary.
+  //
+  Size = sizeof (UINT16) * Count;
+
+  gBS->AllocatePool (
+        EfiBootServicesData,
+        Size + 1,
+        (VOID **) &WorkingBuffer
+        );
+
+  AlignedBuffer = (UINT16 *) ((UINTN)(((UINTN) WorkingBuffer + 0x1) & (~0x1)));
+
+  //
+  // Copy data from user buffer to working buffer
+  //
+  CopyMem ((UINT16 *) AlignedBuffer, Buffer, Size);
 
   //
   // perform UINT16 data write to the FIFO
@@ -170,9 +199,10 @@ IdeWritePortWMultiple (
               EFI_PCI_IO_PASS_THROUGH_BAR,
               (UINT64) Port,
               Count,
-              (UINT16 *) Buffer
+              (UINT16 *) AlignedBuffer
               );
 
+  gBS->FreePool (WorkingBuffer);
 }
 
 /**
@@ -195,8 +225,25 @@ IdeReadPortWMultiple (
   IN  VOID                  *Buffer
   )
 {
-  ASSERT (PciIo  != NULL);
-  ASSERT (Buffer != NULL);
+  UINT16  *AlignedBuffer;
+  UINT16  *WorkingBuffer;
+  UINTN   Size;
+
+  //
+  // Prepare an 16-bit aligned working buffer. CpuIo will return failure and
+  // not perform actual I/O operations if buffer pointer passed in is not at
+  // natural boundary. The "Buffer" argument is passed in by user and may not
+  // at 16-bit natural boundary.
+  //
+  Size = sizeof (UINT16) * Count;
+
+  gBS->AllocatePool (
+        EfiBootServicesData,
+        Size + 1,
+        (VOID**)&WorkingBuffer
+        );
+
+  AlignedBuffer = (UINT16 *) ((UINTN)(((UINTN) WorkingBuffer + 0x1) & (~0x1)));
 
   //
   // Perform UINT16 data read from FIFO
@@ -207,9 +254,14 @@ IdeReadPortWMultiple (
               EFI_PCI_IO_PASS_THROUGH_BAR,
               (UINT64) Port,
               Count,
-              (UINT16 *) Buffer
+              (UINT16*)AlignedBuffer
               );
 
+  //
+  // Copy data to user buffer
+  //
+  CopyMem (Buffer, (UINT16*)AlignedBuffer, Size);
+  gBS->FreePool (WorkingBuffer);
 }
 
 /**
@@ -2591,9 +2643,15 @@ DetectAndConfigIdeDevice (
   UINT8                             LBAMidReg;
   UINT8                             LBAHighReg;
   EFI_ATA_DEVICE_TYPE               DeviceType;
+	EFI_ATA_DEVICE_TYPE               MasterDeviceType = EfiIdeHarddisk;
+	EFI_ATA_DEVICE_TYPE               SlaveDeviceType = EfiIdeCdrom;
+	
   UINT8                             IdeDevice;
   EFI_IDE_REGISTERS                 *IdeRegisters;
   EFI_IDENTIFY_DATA                 Buffer;
+	UINT8       InitStatusReg;
+	UINT8       StatusReg;
+
 
   EFI_IDE_CONTROLLER_INIT_PROTOCOL  *IdeInit;
   EFI_PCI_IO_PROTOCOL               *PciIo;
@@ -2605,7 +2663,22 @@ DetectAndConfigIdeDevice (
   IdeRegisters = &Instance->IdeRegisters[IdeChannel];
   IdeInit      = Instance->IdeControllerInit;
   PciIo        = Instance->PciIo;
-
+//Slice - workaround by Oracle's VBox
+	//
+	// Select slave device
+	//
+    IdeWritePortB (PciIo, IdeRegisters->Head, (UINT8)((1 << 4) | 0xe0));
+	gBS->Stall (100);
+	//
+	// Save the init slave status register
+	//
+	InitStatusReg = IdeReadPortB (IdeDev->PciIo, IdeRegisters->CmdOrStatus);
+	//
+	// Select Master back
+	//
+	IdeWritePortB (PciIo, IdeRegisters->Head, (UINT8)((0 << 4) | 0xe0));
+	gBS->Stall (100);
+	
   for (IdeDevice = 0; IdeDevice < EfiIdeMaxDevice; IdeDevice++) {
     //
     // Send ATA Device Execut Diagnostic command.
@@ -2633,17 +2706,54 @@ DetectAndConfigIdeDevice (
     LBALowReg      = IdeReadPortB (PciIo, IdeRegisters->SectorNumber);
     LBAMidReg      = IdeReadPortB (PciIo, IdeRegisters->CylinderLsb);
     LBAHighReg     = IdeReadPortB (PciIo, IdeRegisters->CylinderMsb);
+	  if (IdeDevice == 1)
+		  StatusReg  =  IdeReadPortB (PciIo, IdeRegisters->CmdOrStatus);
 
     //
     // Refer to ATA/ATAPI 4 Spec, section 9.1
     //
     if ((SectorCountReg == 0x1) && (LBALowReg == 0x1) && (LBAMidReg == 0x0) && (LBAHighReg == 0x0)) {
-      DeviceType = EfiIdeHarddisk;
+		if (IdeDevice == 0) {
+			MasterDeviceExist = TRUE;
+			MasterDeviceType = EfiIdeHarddisk;
+		}
+		else {
+			SlaveDeviceExist = TRUE;
+			SlaveDeviceType = EfiIdeHarddisk;
+		}
+		DeviceType = EfiIdeHarddisk; //ATA_DEVICE_TYPE
     } else if ((LBAMidReg == 0x14) && (LBAHighReg == 0xeb)) {
-      DeviceType = EfiIdeCdrom;
+		if (IdeDevice == 0) {
+			MasterDeviceExist = TRUE;
+			MasterDeviceType = EfiIdeCdrom;
+		}
+		else {
+			SlaveDeviceExist = TRUE;
+			SlaveDeviceType = EfiIdeCdrom;
+		}
+		DeviceType = EfiIdeCdrom; //ATAPI_DEVICE_TYPE
     } else {
-      continue;
+		continue;
     }
+	  if (!MasterDeviceExist) {
+		  gBS->Stall (20000);
+	  }
+	  //
+	  // When single master is plugged, slave device
+	  // will be wrongly detected. Here's the workaround
+	  // for ATA devices by detecting DRY bit in status
+	  // register.
+	  // NOTE: This workaround doesn't apply to ATAPI.
+	  //
+	  if (MasterDeviceExist && SlaveDeviceExist &&
+		  (StatusReg & ATA_STSREG_DRDY) == 0               &&
+		  (InitStatusReg & ATA_STSREG_DRDY) == 0           &&
+		  MasterDeviceType == SlaveDeviceType   &&
+		  SlaveDeviceType != ATAPI_DEVICE_TYPE) {
+		  SlaveDeviceExist = FALSE;
+  }
+	  
+
 //    DEBUG ((EFI_D_ERROR, "start identifing device for channel [%d] device [%d]\n", IdeChannel, IdeDevice));
 
     //
@@ -2655,7 +2765,7 @@ DetectAndConfigIdeDevice (
       // if identifying ata device is failure, then try to send identify packet cmd.
       //
       if (EFI_ERROR (Status)) {
-        REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_PERIPHERAL_FIXED_MEDIA | EFI_P_EC_NOT_DETECTED));
+//        REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_PERIPHERAL_FIXED_MEDIA | EFI_P_EC_NOT_DETECTED));
 
         DeviceType = EfiIdeCdrom;
         Status     = AtaIdentifyPacket (Instance, IdeChannel, IdeDevice, &Buffer, NULL);
@@ -2795,10 +2905,10 @@ DetectAndConfigIdeDevice (
     if (EFI_ERROR (Status)) {
       continue;
     }
-
+/*
     if (DeviceType == EfiIdeHarddisk) {
       REPORT_STATUS_CODE (EFI_PROGRESS_CODE, (EFI_PERIPHERAL_FIXED_MEDIA | EFI_P_PC_ENABLE));
-    }
+    }*/
   }
   return EFI_SUCCESS;
 }

@@ -349,8 +349,8 @@ GetIdeRegistersBaseAddr (
 	ASSERT_EFI_ERROR((EFI_UNSUPPORTED)); 
 	return EFI_UNSUPPORTED;
   }
-  DEBUG((DEBUG_INFO, "class primary code: %x\n", PciData.Hdr.ClassCode[0] & IDE_PRIMARY_OPERATING_MODE));
-  DEBUG((DEBUG_INFO, "class secondary code: %x\n", PciData.Hdr.ClassCode[0] & IDE_SECONDARY_OPERATING_MODE));
+//  DEBUG((DEBUG_INFO, "class primary code: %x\n", PciData.Hdr.ClassCode[0] & IDE_PRIMARY_OPERATING_MODE));
+//  DEBUG((DEBUG_INFO, "class secondary code: %x\n", PciData.Hdr.ClassCode[0] & IDE_SECONDARY_OPERATING_MODE));
   if ((PciData.Hdr.ClassCode[0] & IDE_PRIMARY_OPERATING_MODE) == 0) {
      IdeRegsBaseAddr[IdePrimary].CommandBlockBaseAddr  = fIDEAhciEmulation ? 0x1e8 : 0x1f0;
      IdeRegsBaseAddr[IdePrimary].ControlBlockBaseAddr  = fIDEAhciEmulation ? 0x3e6 :0x3f6;
@@ -513,7 +513,7 @@ DetectIDEController (
   //
   // Save the init slave status register
   //
-  InitStatusReg = IDEReadPortB (IdeDev->PciIo, IdeDev->IoPort->Reg.Status);
+  InitStatusReg = IDEReadPortB (IdeDev->PciIo, IdeDev->IoPort->Reg.Status); //CmdOrStatus
 
   //
   // Select Master back
@@ -533,7 +533,7 @@ DetectIDEController (
 
   Status    = WaitForBSYClear (IdeDev, 3500);
   if (EFI_ERROR (Status)) {
-    DEBUG((EFI_D_ERROR, "New detecting method: Send Execute Diagnostic Command: WaitForBSYClear: Status: %d\n", Status));
+  //  DEBUG((EFI_D_ERROR, "New detecting method: Send Execute Diagnostic Command: WaitForBSYClear: Status: %d\n", Status));
     return Status;
   }
   //
@@ -1191,7 +1191,7 @@ DRDYReady2 (
 
   Delay = (UINT32) (((DelayInMilliSeconds * STALL_1_MILLI_SECOND) / 30) + 1);
   do {
-    AltRegister = IDEReadPortB (IdeDev->PciIo, IdeDev->IoPort->Alt.AltStatus);
+    AltRegister = IDEReadPortB (IdeDev->PciIo, IdeDev->IoPort->Alt.AltStatus); //AltOrDev
     //
     //  BSY == 0 , DRDY == 1
     //

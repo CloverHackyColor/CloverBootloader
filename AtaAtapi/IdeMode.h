@@ -107,7 +107,10 @@ typedef struct {
   UINT16                          Head;
   UINT16                          CmdOrStatus;
   UINT16                          AltOrDev;
-
+//Slice - add here as VBox
+	UINT16                          DriveAddress;	
+	UINT16                          MasterSlave;
+//	
   UINT16                          BusMasterBaseAddr;
 } EFI_IDE_REGISTERS;
 
