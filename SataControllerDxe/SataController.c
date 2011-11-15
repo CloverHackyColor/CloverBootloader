@@ -14,7 +14,7 @@
 
 #include "SataController.h"
 
-#define DEBUG_SATA 0
+#define DEBUG_SATA 1
 
 #if DEBUG_SATA==1
 #define DBG(x...)  Print(x)
@@ -249,7 +249,7 @@ CalculateBestUdmaMode (
   }
 
   DeviceUDmaMode = IdentifyData->AtaData.ultra_dma_mode;
- // DEBUG ((EFI_D_INFO, "CalculateBestUdmaMode: DeviceUDmaMode = %x\n", DeviceUDmaMode));
+ DBG(L"CalculateBestUdmaMode: DeviceUDmaMode = %x\n", DeviceUDmaMode);
   DeviceUDmaMode &= 0x3f;
   TempMode = 0;                 // initialize it to UDMA-0
 
@@ -422,7 +422,7 @@ SataControllerStart (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
   if (EFI_ERROR (Status)) {
- //   DEBUG ((EFI_D_ERROR, "SataControllerStart error return status = %r\n", Status));
+    DBG(L"SataControllerStart error return status = %r\n", Status);
     return Status;
   }
 
@@ -460,6 +460,7 @@ SataControllerStart (
   if (IS_PCI_IDE (&PciData)) {
     SataPrivateData->IdeInit.ChannelCount = IDE_MAX_CHANNEL;
     SataPrivateData->DeviceCount = IDE_MAX_DEVICES;
+	  DBG(L"IDE controller found\n");
   } else if (IS_PCI_SATADPA (&PciData)) {
     //
     // Read Host Capability Register(CAP) to get Number of Ports(NPS) and Supports Port Multiplier(SPM)

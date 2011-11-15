@@ -113,6 +113,23 @@ typedef struct {
 //	
   UINT16                          BusMasterBaseAddr;
 } EFI_IDE_REGISTERS;
+//same for compare
+/*typedef struct {
+	UINT16                          Data;
+	IDE_ERROR_OR_FEATURE            Reg1;
+	UINT16                          SectorCount;
+	UINT16                          SectorNumber;
+	UINT16                          CylinderLsb;
+	UINT16                          CylinderMsb;
+	UINT16                          Head;
+	IDE_CMD_OR_STATUS               Reg;
+	
+	IDE_ALTSTATUS_OR_DEVICECONTROL  Alt;
+	UINT16                          DriveAddress;
+	
+	UINT16                          MasterSlave;
+	UINT16                          BusMasterBaseAddr;
+} IDE_BASE_REGISTERS;*/
 
 //
 // Bit definitions in Programming Interface byte of the Class Code field

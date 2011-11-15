@@ -787,7 +787,7 @@ CheckErrorStatus (
   UINT8 ErrorRegister;
 
   StatusRegister = IDEReadPortB (IdeDev->PciIo, IdeDev->IoPort->Reg.Status);
-
+/*
   DEBUG_CODE_BEGIN ();
 
   if ((StatusRegister & ATA_STSREG_DWF) != 0) {
@@ -859,7 +859,7 @@ CheckErrorStatus (
     }
 
   DEBUG_CODE_END ();
-
+*/
   if ((StatusRegister & (ATA_STSREG_ERR | ATA_STSREG_DWF | ATA_STSREG_CORR)) == 0) {
     return EFI_SUCCESS;
   }
@@ -1108,7 +1108,7 @@ AtaSoftReset (
   //
   // disable Interrupt
   //
-  DeviceControl |= BIT1;
+  DeviceControl |= ATA_CTLREG_IEN_L;
 
   IDEWritePortB (IdeDev->PciIo, IdeDev->IoPort->Alt.DeviceControl, DeviceControl);
 

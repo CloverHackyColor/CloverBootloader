@@ -89,7 +89,7 @@ INF IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 	# foreign file system support
 #INF  Clover/VBoxFsDxe/VBoxHfs.inf
 #INF  Clover/VBoxFsDxe/VBoxFsDxe.inf
-#INF  Clover/VBoxFsDxe/VBoxIso9660.inf
+INF  Clover/VBoxFsDxe/VBoxIso9660.inf
 INF  Clover/HFSPlus/HFSPlus.inf
 
 INF  PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
@@ -128,12 +128,14 @@ INF  MdeModulePkg/Universal/LegacyRegion2Dxe/LegacyRegion2Dxe.inf
   # IDE/AHCI Support
 #INF  Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
 #INF  Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
-INF  Clover/SataControllerDxe/SataControllerDxe.inf
+#INF  Clover/SataControllerDxe/SataControllerDxe.inf
 #INF  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
-INF  Clover/AtaAtapi/AtaAtapiPassThru.inf
+#INF  Clover/AtaAtapi/AtaAtapiPassThru.inf
 INF  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
 #INF  MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
+INF  Clover/DVDBus/ScsiBusDxe.inf
 #INF  MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
+INF  Clover/DVDDisk/ScsiDiskDxe.inf
 #INF  IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
 
   # Usb Support

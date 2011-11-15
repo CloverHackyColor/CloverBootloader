@@ -15,6 +15,14 @@
 
 #include "AtaAtapiPassThru.h"
 
+#define DEBUG_ATAATAPI 1
+
+#if DEBUG_ATAATAPI==1
+#define DBG(x...)  Print(x)
+#else
+#define DBG(x...)
+#endif
+
 //
 //  EFI_DRIVER_BINDING_PROTOCOL instance
 //
@@ -665,7 +673,7 @@ AtaAtapiPassThruStart (
   Instance              = NULL;
   OriginalPciAttributes = 0;
 
-  DEBUG ((EFI_D_INFO, "==AtaAtapiPassThru Start== Controller = %x\n", Controller));
+  DBG (L"==AtaAtapiPassThru Start== Controller = %x\n", Controller);
 
   Status  = gBS->OpenProtocol (
                    Controller,
@@ -677,7 +685,7 @@ AtaAtapiPassThruStart (
                    );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_ERROR, "Open Ide_Controller_Init Error, Status=%r", Status));
+    DBG (L"Open Ide_Controller_Init Error, Status=%r", Status);
     goto ErrorExit;
   }
 
@@ -690,7 +698,7 @@ AtaAtapiPassThruStart (
                   EFI_OPEN_PROTOCOL_GET_PROTOCOL
                   );
   if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_ERROR, "Get Pci_Io Protocol Error, Status=%r", Status));
+//    DEBUG ((EFI_D_ERROR, "Get Pci_Io Protocol Error, Status=%r", Status));
     goto ErrorExit;
   }
 
@@ -702,6 +710,7 @@ AtaAtapiPassThruStart (
                     );
 
   if (EFI_ERROR (Status)) {
+	  DBG(L"OriginalPciAttributes status=%r\n", Status);
     goto ErrorExit;
   }
 
@@ -778,7 +787,7 @@ AtaAtapiPassThruStart (
                   NULL
                   );
   ASSERT_EFI_ERROR (Status);
-
+	DBG(L"AtaPassThru success\n");
   return Status;
 
 ErrorExit:
@@ -848,7 +857,7 @@ AtaAtapiPassThruStop (
   EFI_AHCI_REGISTERS                *AhciRegisters;
   UINT64                            Supports;
 
-  DEBUG ((EFI_D_INFO, "==AtaAtapiPassThru Stop== Controller = %x\n", Controller));
+  DBG (L"==AtaAtapiPassThru Stop== Controller = %x\n", Controller);
 
   Status = gBS->OpenProtocol (
                   Controller,
@@ -1158,18 +1167,20 @@ EnumerateAttachedDevice (
 
   switch (ClassCode) {
     case PCI_CLASS_MASS_STORAGE_IDE :
-      //
-      // The ATA controller is working at IDE mode
-      //
-      Instance->Mode = EfiAtaIdeMode;
-
-      Status = IdeModeInitialization (Instance);
-      if (EFI_ERROR (Status)) {
-        Status = EFI_DEVICE_ERROR;
-        goto Done;
-      }
-      break;
-    case PCI_CLASS_MASS_STORAGE_SATADPA :
+		  //
+		  // The ATA controller is working at IDE mode
+		  //
+		  Instance->Mode = EfiAtaIdeMode;
+		  
+		  Status = IdeModeInitialization (Instance);
+		  DBG(L"IdeModeInitialization Status=%r\n", Status);
+		  if (EFI_ERROR (Status)) {
+			  
+			  Status = EFI_DEVICE_ERROR;
+			  goto Done;
+		  }
+		  break;
+	  case PCI_CLASS_MASS_STORAGE_SATADPA :
       //
       // The ATA controller is working at AHCI mode
       //

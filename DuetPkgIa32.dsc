@@ -87,7 +87,7 @@
   # Generic Modules
   #
   UefiUsbLib|MdePkg/Library/UefiUsbLib/UefiUsbLib.inf
-  #UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
+  UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
   OemHookStatusCodeLib|MdeModulePkg/Library/OemHookStatusCodeLibNull/OemHookStatusCodeLibNull.inf
   GenericBdsLib|IntelFrameworkModulePkg/Library/GenericBdsLib/GenericBdsLib.inf
   #GenericBdsLib|Clover/OsxBdsLib/GenericBdsLib.inf
@@ -282,11 +282,11 @@
 	#IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
 	#EdkCompatibilityPkg/Compatibility/PiSmbiosRecordOnDataHubSmbiosRecordThunk/PiSmbiosRecordOnDataHubSmbiosRecordThunk.inf
   
-  	# foreign file system support
+  # foreign file system support
 	#Clover/VBoxFsDxe/VBoxHfs.inf
-	#Clover/VBoxFsDxe/VBoxIso9660.inf
+	Clover/VBoxFsDxe/VBoxIso9660.inf
 	#Clover/VBoxFsDxe/VBoxFsDxe.inf
-	#Clover/VBoxFsDxe/VBoxExt2.inf
+	Clover/VBoxFsDxe/VBoxExt2.inf
 	#EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
 	#Clover/OsxMmcDxe/MmcDxe.inf
 #Video
@@ -312,7 +312,9 @@
   }
   MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
+  Clover/DVDBus/ScsiBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
+  Clover/DVDDisk/ScsiDiskDxe.inf
   #IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
 
   # Usb Support

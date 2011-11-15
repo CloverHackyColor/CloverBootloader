@@ -282,7 +282,7 @@ EFI_STATUS EFIAPI fsw_efi_DriverBinding_Start(IN EFI_DRIVER_BINDING_PROTOCOL  *T
                               ControllerHandle,
                               EFI_OPEN_PROTOCOL_GET_PROTOCOL);   // NOTE: we only want to look at the MediaId
     if (EFI_ERROR(Status)) {
-        Print(L"Fsw ERROR: OpenProtocol(BlockIo) returned %x\n", Status);
+//        Print(L"Fsw ERROR: OpenProtocol(BlockIo) returned %x\n", Status);
         return Status;
     }
 
@@ -293,7 +293,7 @@ EFI_STATUS EFIAPI fsw_efi_DriverBinding_Start(IN EFI_DRIVER_BINDING_PROTOCOL  *T
                               ControllerHandle,
                               EFI_OPEN_PROTOCOL_BY_DRIVER);
     if (EFI_ERROR(Status)) {
-        Print(L"Fsw ERROR: OpenProtocol(DiskIo) returned %x\n", Status);
+//        Print(L"Fsw ERROR: OpenProtocol(DiskIo) returned %x\n", Status);
         return Status;
     }
 
@@ -317,8 +317,9 @@ EFI_STATUS EFIAPI fsw_efi_DriverBinding_Start(IN EFI_DRIVER_BINDING_PROTOCOL  *T
         Status = BS->InstallMultipleProtocolInterfaces(&ControllerHandle,
                                                        &PROTO_NAME(SimpleFileSystemProtocol), &Volume->FileSystem,
                                                        NULL);
-        if (EFI_ERROR(Status))
-            Print(L"Fsw ERROR: InstallMultipleProtocolInterfaces returned %x\n", Status);
+        if (EFI_ERROR(Status)) {
+//            Print(L"Fsw ERROR: InstallMultipleProtocolInterfaces returned %x\n", Status);
+		}
     }
 
     // on errors, close the opened protocols
@@ -377,7 +378,7 @@ EFI_STATUS EFIAPI fsw_efi_DriverBinding_Stop(IN  EFI_DRIVER_BINDING_PROTOCOL  *T
                                                      &PROTO_NAME(SimpleFileSystemProtocol), &Volume->FileSystem,
                                                      NULL);
     if (EFI_ERROR(Status)) {
-        Print(L"Fsw ERROR: UninstallMultipleProtocolInterfaces returned %x\n", Status);
+ //       Print(L"Fsw ERROR: UninstallMultipleProtocolInterfaces returned %x\n", Status);
         return Status;
     }
 #if DEBUG_LEVEL
@@ -456,7 +457,7 @@ fsw_status_t fsw_efi_read_block(struct fsw_volume *vol, fsw_u32 phys_bno, void *
     EFI_STATUS          Status;
     FSW_VOLUME_DATA     *Volume = (FSW_VOLUME_DATA *)vol->host_data;
 
-    FSW_MSG_DEBUGV((FSW_MSGSTR("fsw_efi_read_block: %d  (%d)\n"), phys_bno, vol->phys_blocksize));
+//    FSW_MSG_DEBUGV((FSW_MSGSTR("fsw_efi_read_block: %d  (%d)\n"), phys_bno, vol->phys_blocksize));
 
     // read from disk
     Status = Volume->DiskIo->ReadDisk(Volume->DiskIo, Volume->MediaId,

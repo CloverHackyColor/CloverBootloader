@@ -14,12 +14,20 @@
 
 #include "AtaAtapiPassThru.h"
 
+#define DEBUG_ATA 1
+
+#if DEBUG_ATA==1
+#define DBG(x...)  Print(x)
+#else
+#define DBG(x...)
+#endif
+
 
 BOOLEAN ChannelDeviceDetected = FALSE;
 BOOLEAN SlaveDeviceExist      = FALSE;
-UINT8   SlaveDeviceType       = INVALID_DEVICE_TYPE;
+UINT8   SlaveDeviceType       = EfiIdeUnknown;
 BOOLEAN MasterDeviceExist     = FALSE;
-UINT8   MasterDeviceType      = INVALID_DEVICE_TYPE;
+UINT8   MasterDeviceType      = EfiIdeUnknown;
 
 /**
   read a one-byte data from a IDE port.
@@ -311,43 +319,43 @@ DumpAllIdeRegisters (
 //  DEBUG_CODE_BEGIN ();
   if ((StatusBlock.AtaStatus & ATA_STSREG_DWF) != 0) {
 //    DEBUG ((EFI_D_ERROR, "CheckRegisterStatus()-- %02x : Error : Write Fault\n", StatusBlock.AtaStatus));
-//	  Print(L"CheckRegisterStatus()-- %02x : Error : Write Fault\n", StatusBlock.AtaStatus);
+	  DBG(L"CheckRegisterStatus()-- %02x : Error : Write Fault\n", StatusBlock.AtaStatus);
   }
 
   if ((StatusBlock.AtaStatus & ATA_STSREG_CORR) != 0) {
 //    DEBUG ((EFI_D_ERROR, "CheckRegisterStatus()-- %02x : Error : Corrected Data\n", StatusBlock.AtaStatus));
-//			Print(L"CheckRegisterStatus()-- %02x : Error : Corrected Data\n", StatusBlock.AtaStatus);
+			DBG(L"CheckRegisterStatus()-- %02x : Error : Corrected Data\n", StatusBlock.AtaStatus);
   }
 
   if ((StatusBlock.AtaStatus & ATA_STSREG_ERR) != 0) {
     if ((StatusBlock.AtaError & ATA_ERRREG_BBK) != 0) {
  //     DEBUG ((EFI_D_ERROR, "CheckRegisterStatus()-- %02x : Error : Bad Block Detected\n", StatusBlock.AtaError));
-//		Print(L"CheckRegisterStatus()-- %02x : Error : Bad Block Detected\n", StatusBlock.AtaError);
+//		DBG(L"CheckRegisterStatus()-- %02x : Error : Bad Block Detected\n", StatusBlock.AtaError);
     }
 
     if ((StatusBlock.AtaError & ATA_ERRREG_UNC) != 0) {
  //     DEBUG ((EFI_D_ERROR, "CheckRegisterStatus()-- %02x : Error : Uncorrectable Data\n", StatusBlock.AtaError));
-//			  Print(L"CheckRegisterStatus()-- %02x : Error : Uncorrectable Data\n", StatusBlock.AtaError);
+//			  DBG(L"CheckRegisterStatus()-- %02x : Error : Uncorrectable Data\n", StatusBlock.AtaError);
     }
 
     if ((StatusBlock.AtaError & ATA_ERRREG_MC) != 0) {
 //      DEBUG ((EFI_D_ERROR, "CheckRegisterStatus()-- %02x : Error : Media Change\n", StatusBlock.AtaError));
-//		Print(L"CheckRegisterStatus()-- %02x : Error : Media Change\n", StatusBlock.AtaError);
+//		DBG(L"CheckRegisterStatus()-- %02x : Error : Media Change\n", StatusBlock.AtaError);
     }
 
     if ((StatusBlock.AtaError & ATA_ERRREG_ABRT) != 0) {
 //      DEBUG ((EFI_D_ERROR, "CheckRegisterStatus()-- %02x : Error : Abort\n", StatusBlock.AtaError));
-//			  Print(L"CheckRegisterStatus()-- %02x : Error : Abort\n", StatusBlock.AtaError);
+//			  DBG(L"CheckRegisterStatus()-- %02x : Error : Abort\n", StatusBlock.AtaError);
     }
 
     if ((StatusBlock.AtaError & ATA_ERRREG_TK0NF) != 0) {
 //      DEBUG ((EFI_D_ERROR, "CheckRegisterStatus()-- %02x : Error : Track 0 Not Found\n", StatusBlock.AtaError));
-//		Print(L"CheckRegisterStatus()-- %02x : Error : Track 0 Not Found\n", StatusBlock.AtaError);
+		DBG(L"CheckRegisterStatus()-- %02x : Error : Track 0 Not Found\n", StatusBlock.AtaError);
     }
 
     if ((StatusBlock.AtaError & ATA_ERRREG_AMNF) != 0) {
 //      DEBUG ((EFI_D_ERROR, "CheckRegisterStatus()-- %02x : Error : Address Mark Not Found\n", StatusBlock.AtaError));
-//			  Print(L"CheckRegisterStatus()-- %02x : Error : Address Mark Not Found\n", StatusBlock.AtaError);
+			  DBG(L"CheckRegisterStatus()-- %02x : Error : Address Mark Not Found\n", StatusBlock.AtaError);
     }
   }
 //  DEBUG_CODE_END ();
@@ -415,6 +423,7 @@ DRQClear (
 {
   UINT32  Delay;
   UINT8   StatusRegister;
+	UINT8   ErrorRegister;
 
   ASSERT (PciIo != NULL);
   ASSERT (IdeRegisters != NULL);
@@ -426,13 +435,28 @@ DRQClear (
     //
     // Wait for BSY == 0, then judge if DRQ is clear
     //
-    if ((StatusRegister & ATA_STSREG_BSY) == 0) {
+/*    if ((StatusRegister & ATA_STSREG_BSY) == 0) {
       if ((StatusRegister & ATA_STSREG_DRQ) == ATA_STSREG_DRQ) {
         return EFI_DEVICE_ERROR;
       } else {
         return EFI_SUCCESS;
       }
+    }*/
+	  //
+	  // wait for BSY == 0 and DRQ == 0
+	  //
+	  if ((StatusRegister & (ATA_STSREG_DRQ | ATA_STSREG_BSY)) == 0) {
+		  break;
+	  }
+	  
+	  if ((StatusRegister & (ATA_STSREG_BSY | ATA_STSREG_ERR)) == ATA_STSREG_ERR) {
+		  
+		  ErrorRegister = IdeReadPortB (PciIo, IdeRegisters->ErrOrFeature);
+		  if ((ErrorRegister & ATA_ERRREG_ABRT) == ATA_ERRREG_ABRT) {
+			  return EFI_ABORTED;
+		  }
     }
+	  
 
     //
     // Stall for 100 microseconds.
@@ -443,7 +467,11 @@ DRQClear (
 
   } while (Delay > 0);
 
-  return EFI_TIMEOUT;
+	if (Delay == 0) {
+		return EFI_TIMEOUT;
+	}
+	
+	return EFI_SUCCESS;
 }
 /**
   This function is used to poll for the DRQ bit clear in the Alternate
@@ -471,6 +499,7 @@ DRQClear2 (
 {
   UINT32  Delay;
   UINT8   AltRegister;
+	UINT8   ErrorRegister;
 
   ASSERT (PciIo != NULL);
   ASSERT (IdeRegisters != NULL);
@@ -482,13 +511,25 @@ DRQClear2 (
     //
     // Wait for BSY == 0, then judge if DRQ is clear
     //
-    if ((AltRegister & ATA_STSREG_BSY) == 0) {
+/*    if ((AltRegister & ATA_STSREG_BSY) == 0) {
       if ((AltRegister & ATA_STSREG_DRQ) == ATA_STSREG_DRQ) {
         return EFI_DEVICE_ERROR;
       } else {
         return EFI_SUCCESS;
       }
+    }*/
+	  if ((AltRegister & (ATA_STSREG_DRQ | ATA_STSREG_BSY)) == 0) {
+		  break;
+	  }
+	  
+	  if ((AltRegister & (ATA_STSREG_BSY | ATA_STSREG_ERR)) == ATA_STSREG_ERR) {
+		  
+		  ErrorRegister = IdeReadPortB (PciIo, IdeRegisters->ErrOrFeature);
+		  if ((ErrorRegister & ATA_ERRREG_ABRT) == ATA_ERRREG_ABRT) {
+			  return EFI_ABORTED;
+		  }
     }
+	  
 
     //
     // Stall for 100 microseconds.
@@ -499,7 +540,11 @@ DRQClear2 (
 
   } while (Delay > 0);
 
-  return EFI_TIMEOUT;
+	if (Delay == 0) {
+		return EFI_TIMEOUT;
+	}
+	
+	return EFI_SUCCESS;
 }
 
 /**
@@ -1402,7 +1447,7 @@ AtaUdmStatusWait (
     RegisterValue = IdeReadPortB (PciIo, IoPortForBmis);
     if (((RegisterValue & BMIS_ERROR) != 0) || (Timeout == 0)) {
  //     DEBUG ((EFI_D_ERROR, "ATA UDMA operation fails\n"));
-//		Print(L"ATA UDMA operation fails\n");
+		DBG(L"ATA UDMA operation fails\n");
       Status = EFI_DEVICE_ERROR;
       break;
     }
@@ -1458,7 +1503,7 @@ AtaUdmStatusCheck (
 
   if ((RegisterValue & BMIS_ERROR) != 0) {
  //   DEBUG ((EFI_D_ERROR, "ATA UDMA operation fails\n"));
-//			  Print(L"ATA UDMA operation fails\n");
+			  DBG(L"ATA UDMA operation fails\n");
     return EFI_DEVICE_ERROR;
   }
 
@@ -2368,14 +2413,14 @@ IdeAtaSmartReturnStatusCheck (
     // The threshold exceeded condition is not detected by the device
     //
 //    DEBUG ((EFI_D_INFO, "The S.M.A.R.T threshold exceeded condition is not detected\n"));
-//	  Print(L"The S.M.A.R.T threshold exceeded condition is not detected\n");
+//	  DBG(L"The S.M.A.R.T threshold exceeded condition is not detected\n");
 
   } else if ((LBAMid == 0xf4) && (LBAHigh == 0x2c)) {
     //
     // The threshold exceeded condition is detected by the device
     //
 //    DEBUG ((EFI_D_INFO, "The S.M.A.R.T threshold exceeded condition is detected\n"));
-//			Print(L"The S.M.A.R.T threshold exceeded condition is detected\n");
+//			DBG(L"The S.M.A.R.T threshold exceeded condition is detected\n");
   }
 
   return EFI_SUCCESS;
@@ -2413,7 +2458,7 @@ IdeAtaSmartSupport (
     //
 //    DEBUG ((EFI_D_INFO, "S.M.A.R.T feature is not supported at [%a] channel [%a] device!\n", 
 //            (Channel == 1) ? "secondary" : "primary", (Device == 1) ? "slave" : "master"));
-//	  Print(L"S.M.A.R.T feature is not supported at [%a] channel [%a] device!\n", 
+//	  DBG(L"S.M.A.R.T feature is not supported at [%a] channel [%a] device!\n", 
 //            (Channel == 1) ? "secondary" : "primary", (Device == 1) ? "slave" : "master");
   } else {
     //
@@ -2475,7 +2520,7 @@ IdeAtaSmartSupport (
 
 //    DEBUG ((EFI_D_INFO, "Enabled S.M.A.R.T feature at [%a] channel [%a] device!\n", 
 //           (Channel == 1) ? "secondary" : "primary", (Device == 1) ? "slave" : "master"));
-//	  Print(L"Enabled S.M.A.R.T feature at [%a] channel [%a] device!\n", 
+//	  DBG(L"Enabled S.M.A.R.T feature at [%a] channel [%a] device!\n", 
 //			(Channel == 1) ? "secondary" : "primary", (Device == 1) ? "slave" : "master");
 
   }
@@ -2672,7 +2717,7 @@ DetectAndConfigIdeDevice (
 	//
 	// Save the init slave status register
 	//
-	InitStatusReg = IdeReadPortB (IdeDev->PciIo, IdeRegisters->CmdOrStatus);
+	InitStatusReg = IdeReadPortB (PciIo, IdeRegisters->CmdOrStatus);
 	//
 	// Select Master back
 	//
@@ -2689,7 +2734,7 @@ DetectAndConfigIdeDevice (
     Status = WaitForBSYClear (PciIo, IdeRegisters, 350000);
     if (EFI_ERROR (Status)) {
 //        DEBUG((EFI_D_ERROR, "New detecting method: Send Execute Diagnostic Command: WaitForBSYClear: Status: %d\n", Status));
-//		Print(L"New detecting method: Send Execute Diagnostic Command: WaitForBSYClear: Status: %d\n", Status);
+		DBG(L"New detecting method: Send Execute Diagnostic Command: WaitForBSYClear: Status: %r\n", Status);
       continue;
     }
  //   DEBUG ((EFI_D_ERROR, "WaitForBSYClear for channel [%d] device [%d] end\n", IdeChannel, IdeDevice));
@@ -2735,6 +2780,7 @@ DetectAndConfigIdeDevice (
     } else {
 		continue;
     }
+	  DBG(L"IdeDevice=%d LBAMidReg=%x LBAHighReg=%x\n", IdeDevice, LBAMidReg, LBAHighReg);
 	  if (!MasterDeviceExist) {
 		  gBS->Stall (20000);
 	  }
@@ -2749,12 +2795,12 @@ DetectAndConfigIdeDevice (
 		  (StatusReg & ATA_STSREG_DRDY) == 0               &&
 		  (InitStatusReg & ATA_STSREG_DRDY) == 0           &&
 		  MasterDeviceType == SlaveDeviceType   &&
-		  SlaveDeviceType != ATAPI_DEVICE_TYPE) {
+		  SlaveDeviceType != EfiIdeCdrom) {
 		  SlaveDeviceExist = FALSE;
   }
 	  
 
-//    DEBUG ((EFI_D_ERROR, "start identifing device for channel [%d] device [%d]\n", IdeChannel, IdeDevice));
+    DBG (L"start identifing device for channel [%d] device [%d]\n", IdeChannel, IdeDevice);
 
     //
     // Send IDENTIFY cmd to the device to test if it is really attached.
@@ -2770,7 +2816,7 @@ DetectAndConfigIdeDevice (
         DeviceType = EfiIdeCdrom;
         Status     = AtaIdentifyPacket (Instance, IdeChannel, IdeDevice, &Buffer, NULL);
       }
-    } else {
+    } else { //EfiIdeCdrom
       Status = AtaIdentifyPacket (Instance, IdeChannel, IdeDevice, &Buffer, NULL);
       //
       // if identifying atapi device is failure, then try to send identify cmd.
@@ -2785,15 +2831,16 @@ DetectAndConfigIdeDevice (
       //
       // No device is found at this port
       //
+		DBG(L"No device found IdeDevice=%d\n", IdeDevice);
       continue;
     }
 
 //    DEBUG ((EFI_D_INFO, "[%a] channel [%a] [%a] device\n", 
 //            (IdeChannel == 1) ? "secondary" : "primary  ", (IdeDevice == 1) ? "slave " : "master",
 //            DeviceType == EfiIdeCdrom ? "cdrom   " : "harddisk"));
-//	  Print(L"[%a] channel [%a] [%a] device\n", 
-//            (IdeChannel == 1) ? "secondary" : "primary  ", (IdeDevice == 1) ? "slave " : "master",
-//            DeviceType == EfiIdeCdrom ? "cdrom   " : "harddisk");
+	  DBG(L"[%a] channel [%a] [%a] device\n", 
+            (IdeChannel == 1) ? "secondary" : "primary  ", (IdeDevice == 1) ? "slave " : "master",
+            DeviceType == EfiIdeCdrom ? "cdrom   " : "harddisk");
     //
     // If the device is a hard disk, then try to enable S.M.A.R.T feature
     //
@@ -2811,7 +2858,7 @@ DetectAndConfigIdeDevice (
     // Submit identify data to IDE controller init driver
     //
     IdeInit->SubmitData (IdeInit, IdeChannel, IdeDevice, &Buffer);
- //   DEBUG ((EFI_D_ERROR, "CalculateMode for device for channel [%d] device [%d]\n", IdeChannel, IdeDevice));
+    DBG (L"CalculateMode for device for channel [%d] device [%d]\n", IdeChannel, IdeDevice);
     //
     // Now start to config ide device parameter and transfer mode.
     //
@@ -2823,7 +2870,7 @@ DetectAndConfigIdeDevice (
                         );
     if (EFI_ERROR (Status)) {
  //     DEBUG ((EFI_D_ERROR, "Calculate Mode Fail, Status = %r\n", Status));
-//		Print(L"Calculate Mode Fail, Status = %r\n", Status);
+		DBG(L"Calculate Mode Fail, Status = %r\n", Status);
       continue;
     }
 
@@ -2837,13 +2884,13 @@ DetectAndConfigIdeDevice (
     }
 
     TransferMode.ModeNumber = (UINT8) (SupportedModes->PioMode.Mode);
-//    DEBUG ((EFI_D_ERROR, "Set transfer Mode for channel [%d] device [%d] start\n", IdeChannel, IdeDevice));
+    DBG (L"Set transfer Mode for channel [%d] device [%d] start\n", IdeChannel, IdeDevice);
     if (SupportedModes->ExtModeCount == 0){
       Status = SetDeviceTransferMode (Instance, IdeChannel, IdeDevice, &TransferMode, NULL);
 
       if (EFI_ERROR (Status)) {
 //        DEBUG ((EFI_D_ERROR, "Set transfer Mode Fail, Status = %r\n", Status));
-//			  Print(L"Set transfer Mode Fail, Status = %r\n", Status);
+			  DBG(L"Set transfer Mode Fail, Status = %r\n", Status);
         continue;
       }
     }
@@ -2861,7 +2908,7 @@ DetectAndConfigIdeDevice (
 
       if (EFI_ERROR (Status)) {
 //        DEBUG ((EFI_D_ERROR, "Set transfer Mode Fail, Status = %r\n", Status));
-//		  Print(L"Set transfer Mode Fail, Status = %r\n", Status);
+		  DBG(L"Set transfer Mode Fail, Status = %r\n", Status);
         continue;
       }
     } else if (SupportedModes->MultiWordDmaMode.Valid) {
@@ -2871,7 +2918,7 @@ DetectAndConfigIdeDevice (
 
       if (EFI_ERROR (Status)) {
  //       DEBUG ((EFI_D_ERROR, "Set transfer Mode Fail, Status = %r\n", Status));
-//				Print(L"Set transfer Mode Fail, Status = %r\n", Status);
+				DBG(L"Set transfer Mode Fail, Status = %r\n", Status);
         continue;
       }
     }
@@ -2891,7 +2938,7 @@ DetectAndConfigIdeDevice (
 
       Status = SetDriveParameters (Instance, IdeChannel, IdeDevice, &DriveParameters, NULL);
     }
- //   DEBUG ((EFI_D_ERROR, "Set Parameters for channel [%d] device [%d] end\n", IdeChannel, IdeDevice));
+   DBG (L"Set Parameters for channel [%d] device [%d] end\n", IdeChannel, IdeDevice);
     //
     // Set IDE controller Timing Blocks in the PCI Configuration Space
     //
@@ -2903,6 +2950,7 @@ DetectAndConfigIdeDevice (
     //
     Status = CreateNewDeviceInfo (Instance, IdeChannel, IdeDevice, DeviceType, &Buffer);
     if (EFI_ERROR (Status)) {
+		DBG(L"CreateNewDeviceInfo fails Status=%r\n", Status);
       continue;
     }
 /*
@@ -2945,6 +2993,7 @@ IdeModeInitialization (
   //
   Status = GetIdeRegisterIoAddr (PciIo, Instance->IdeRegisters);
   if (EFI_ERROR (Status)) {
+	  DBG(L"GetIdeRegisterIoAddr fails Status=%r\n", Status);
     goto ErrorExit;
   }
 
@@ -2962,7 +3011,7 @@ IdeModeInitialization (
                         );
     if (EFI_ERROR (Status)) {
  //     DEBUG ((EFI_D_ERROR, "[GetChannel, Status=%x]", Status));
-//		Print(L"[GetChannel, Status=%r]", Status);
+		DBG(L"[GetChannel, Status=%r]", Status);
       continue;
     }
 

@@ -87,7 +87,7 @@ static fsw_status_t fsw_iso9660_readlink(struct fsw_iso9660_volume *vol, struct 
 static fsw_status_t rr_find_sp(struct iso9660_dirrec *dirrec, struct fsw_rock_ridge_susp_sp **psp);
 static fsw_status_t rr_find_nm(struct fsw_iso9660_volume *vol, struct iso9660_dirrec *dirrec, int off, struct fsw_string *str);
 static fsw_status_t rr_read_ce(struct fsw_iso9660_volume *vol, union fsw_rock_ridge_susp_ce *ce, fsw_u8 *begin);
-static void dump_dirrec(struct iso9660_dirrec *dirrec);
+//static void dump_dirrec(struct iso9660_dirrec *dirrec);
 //
 // Dispatch Table
 //
@@ -199,7 +199,7 @@ static fsw_status_t rr_find_nm(struct fsw_iso9660_volume *vol, struct iso9660_di
                     fsw_memcpy(tmp, str->data, str->len);
                     fsw_free(str->data);
                 }
-                DEBUG((DEBUG_INFO, "dst:%p src:%p len:%d\n", tmp + str->len, &nm->name[0], len));
+           //     DEBUG((DEBUG_INFO, "dst:%p src:%p len:%d\n", tmp + str->len, &nm->name[0], len));
                 fsw_memcpy(tmp + str->len, &nm->name[0], len);
                 str->data = tmp;
                 str->len += len;
@@ -231,12 +231,13 @@ static fsw_status_t rr_read_ce(struct fsw_iso9660_volume *vol, union fsw_rock_ri
     rc = vol->g.host_table->read_block(&vol->g, ISOINT(ce->X.block_loc), begin);
     if (rc != FSW_SUCCESS)
         return rc;
-    for (i = 0; i < len; ++i)
+/*    for (i = 0; i < len; ++i)
     {
         DEBUG((DEBUG_INFO, "%d: (%d:%x)%c ", i, r[i], r[i], r[i]));
-    }
+    }*/
     return FSW_SUCCESS;
 }
+/*
 static void dump_dirrec(struct iso9660_dirrec *dirrec)
 {
     int i;
@@ -246,7 +247,7 @@ static void dump_dirrec(struct iso9660_dirrec *dirrec)
     {
         DEBUG((DEBUG_INFO, "%d: (%d:%x)%c ", i, r[i], r[i], r[i]));
     }
-}
+}*/
 /**
  * Mount an ISO9660 volume. Reads the superblock and constructs the
  * root directory dnode.
@@ -330,7 +331,7 @@ static fsw_status_t fsw_iso9660_volume_mount(struct fsw_iso9660_volume *vol)
             || pvoldesc->escape[2] == 0x43
             || pvoldesc->escape[2] == 0x45))
     {
-        FSW_MSG_DEBUG((FSW_MSGSTR("fsw_iso9660_volume_mount: success (joliet!!!)\n")));
+ //       FSW_MSG_DEBUG((FSW_MSGSTR("fsw_iso9660_volume_mount: success (joliet!!!)\n")));
         vol->fJoliet = 1;
     }
 
@@ -363,7 +364,7 @@ static fsw_status_t fsw_iso9660_volume_mount(struct fsw_iso9660_volume *vol)
     vol->primary_voldesc = NULL;
 
 
-    FSW_MSG_DEBUG((FSW_MSGSTR("fsw_iso9660_volume_mount: success\n")));
+//    FSW_MSG_DEBUG((FSW_MSGSTR("fsw_iso9660_volume_mount: success\n")));
 
     return FSW_SUCCESS;
 }
@@ -623,7 +624,7 @@ static fsw_status_t fsw_iso9660_read_dirrec(struct fsw_iso9660_volume *vol, stru
     if (buffer_size < remaining_size)
         return FSW_VOLUME_CORRUPTED;
 
-     dump_dirrec(dirrec);
+//     dump_dirrec(dirrec);
      if (vol->fRockRidge)
      {
          sp_off = sizeof(*dirrec) + dirrec->file_identifier_length;

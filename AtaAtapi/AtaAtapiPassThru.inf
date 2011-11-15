@@ -58,7 +58,7 @@
 #  DebugLib
   TimerLib
   ReportStatusCodeLib
-#  PrintLib
+  PrintLib
 
 [Protocols]
   gEfiIdeControllerInitProtocolGuid             # BY_START
