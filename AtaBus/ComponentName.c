@@ -1,42 +1,52 @@
 /** @file
-  UEFI Component Name(2) protocol implementation for SCSI disk driver.
+  UEFI Component Name(2) protocol implementation for ConPlatform driver.
+  
+  Copyright (c) 2009 - 2011, Intel Corporation. All rights reserved.<BR>
+  This program and the accompanying materials                          
+  are licensed and made available under the terms and conditions of the BSD License         
+  which accompanies this distribution.  The full text of the license may be found at        
+  http://opensource.org/licenses/bsd-license.php                                            
 
-Copyright (c) 2004 - 2011, Intel Corporation. All rights reserved.<BR>
-This program and the accompanying materials
-are licensed and made available under the terms and conditions of the BSD License
-which accompanies this distribution.  The full text of the license may be found at
-http://opensource.org/licenses/bsd-license.php
-
-THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
-WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,                     
+  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.             
 
 **/
 
+#include "AtaBus.h"
 
-#include "ScsiDisk.h"
+//
+// Driver name table 
+//
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mAtaBusDriverNameTable[] = {
+  { "eng;en", L"ATA Bus Driver" },
+  { NULL , NULL }
+};
+
+//
+// Controller name table
+//
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mAtaBusControllerNameTable[] = {
+  { "eng;en", L"ATA Controller" },
+  { NULL , NULL }
+};
+
 
 //
 // EFI Component Name Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gScsiDiskComponentName = {
-  ScsiDiskComponentNameGetDriverName,
-  ScsiDiskComponentNameGetControllerName,
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME_PROTOCOL  gAtaBusComponentName = {
+  AtaBusComponentNameGetDriverName,
+  AtaBusComponentNameGetControllerName,
   "eng"
 };
 
 //
 // EFI Component Name 2 Protocol
 //
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gScsiDiskComponentName2 = {
-  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) ScsiDiskComponentNameGetDriverName,
-  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) ScsiDiskComponentNameGetControllerName,
+GLOBAL_REMOVE_IF_UNREFERENCED EFI_COMPONENT_NAME2_PROTOCOL gAtaBusComponentName2 = {
+  (EFI_COMPONENT_NAME2_GET_DRIVER_NAME) AtaBusComponentNameGetDriverName,
+  (EFI_COMPONENT_NAME2_GET_CONTROLLER_NAME) AtaBusComponentNameGetControllerName,
   "en"
-};
-
-
-GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mScsiDiskDriverNameTable[] = {
-  { "eng;en", (CHAR16 *) L"IDE DVD Disk Driver" },
-  { NULL , NULL }
 };
 
 /**
@@ -49,10 +59,10 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mScsiDiskDriverNameTable[
   by This does not support the language specified by Language,
   then EFI_UNSUPPORTED is returned.
 
-  @param  This                  A pointer to the EFI_COMPONENT_NAME2_PROTOCOL or
+  @param  This[in]              A pointer to the EFI_COMPONENT_NAME2_PROTOCOL or
                                 EFI_COMPONENT_NAME_PROTOCOL instance.
 
-  @param  Language              A pointer to a Null-terminated ASCII string
+  @param  Language[in]          A pointer to a Null-terminated ASCII string
                                 array indicating the language. This is the
                                 language of the driver name that the caller is
                                 requesting, and it must match one of the
@@ -61,7 +71,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mScsiDiskDriverNameTable[
                                 to the driver writer. Language is specified
                                 in RFC 4646 or ISO 639-2 language code format.
 
-  @param  DriverName            A pointer to the Unicode string to return.
+  @param  DriverName[out]       A pointer to the Unicode string to return.
                                 This Unicode string is the name of the
                                 driver specified by This in the language
                                 specified by Language.
@@ -80,7 +90,7 @@ GLOBAL_REMOVE_IF_UNREFERENCED EFI_UNICODE_STRING_TABLE mScsiDiskDriverNameTable[
 **/
 EFI_STATUS
 EFIAPI
-ScsiDiskComponentNameGetDriverName (
+AtaBusComponentNameGetDriverName (
   IN  EFI_COMPONENT_NAME_PROTOCOL  *This,
   IN  CHAR8                        *Language,
   OUT CHAR16                       **DriverName
@@ -89,11 +99,12 @@ ScsiDiskComponentNameGetDriverName (
   return LookupUnicodeString2 (
            Language,
            This->SupportedLanguages,
-           mScsiDiskDriverNameTable,
+           mAtaBusDriverNameTable,
            DriverName,
-           (BOOLEAN)(This == &gScsiDiskComponentName)
+           (BOOLEAN)(This == &gAtaBusComponentName)
            );
 }
+
 
 /**
   Retrieves a Unicode string that is the user readable name of the controller
@@ -108,15 +119,15 @@ ScsiDiskComponentNameGetDriverName (
   then EFI_UNSUPPORTED is returned.  If the driver specified by This does not
   support the language specified by Language, then EFI_UNSUPPORTED is returned.
 
-  @param  This                  A pointer to the EFI_COMPONENT_NAME2_PROTOCOL or
+  @param  This[in]              A pointer to the EFI_COMPONENT_NAME2_PROTOCOL or
                                 EFI_COMPONENT_NAME_PROTOCOL instance.
 
-  @param  ControllerHandle      The handle of a controller that the driver
+  @param  ControllerHandle[in]  The handle of a controller that the driver
                                 specified by This is managing.  This handle
                                 specifies the controller whose name is to be
                                 returned.
 
-  @param  ChildHandle           The handle of the child controller to retrieve
+  @param  ChildHandle[in]       The handle of the child controller to retrieve
                                 the name of.  This is an optional parameter that
                                 may be NULL.  It will be NULL for device
                                 drivers.  It will also be NULL for a bus drivers
@@ -125,7 +136,7 @@ ScsiDiskComponentNameGetDriverName (
                                 driver that wishes to retrieve the name of a
                                 child controller.
 
-  @param  Language              A pointer to a Null-terminated ASCII string
+  @param  Language[in]          A pointer to a Null-terminated ASCII string
                                 array indicating the language.  This is the
                                 language of the driver name that the caller is
                                 requesting, and it must match one of the
@@ -134,7 +145,7 @@ ScsiDiskComponentNameGetDriverName (
                                 to the driver writer. Language is specified in
                                 RFC 4646 or ISO 639-2 language code format.
 
-  @param  ControllerName        A pointer to the Unicode string to return.
+  @param  ControllerName[out]   A pointer to the Unicode string to return.
                                 This Unicode string is the name of the
                                 controller specified by ControllerHandle and
                                 ChildHandle in the language specified by
@@ -165,7 +176,7 @@ ScsiDiskComponentNameGetDriverName (
 **/
 EFI_STATUS
 EFIAPI
-ScsiDiskComponentNameGetControllerName (
+AtaBusComponentNameGetControllerName (
   IN  EFI_COMPONENT_NAME_PROTOCOL                     *This,
   IN  EFI_HANDLE                                      ControllerHandle,
   IN  EFI_HANDLE                                      ChildHandle        OPTIONAL,
@@ -173,52 +184,55 @@ ScsiDiskComponentNameGetControllerName (
   OUT CHAR16                                          **ControllerName
   )
 {
-  EFI_STATUS            Status;
-  SCSI_DISK_DEV         *ScsiDiskDevice;
-  EFI_BLOCK_IO_PROTOCOL *BlockIo;
+  EFI_STATUS                Status;
+  EFI_BLOCK_IO_PROTOCOL     *BlockIo;
+  ATA_DEVICE                *AtaDevice;
+  EFI_UNICODE_STRING_TABLE  *ControllerNameTable;
 
   //
-  // This is a device driver, so ChildHandle must be NULL.
-  //
-  if (ChildHandle != NULL) {
-    return EFI_UNSUPPORTED;
-  }
-  
-  //
-  // Make sure this driver is currently managing ControllerHandle
+  // Make sure this driver is currently managing ControllHandle
   //
   Status = EfiTestManagedDevice (
              ControllerHandle,
-             gScsiDiskDriverBinding.DriverBindingHandle,
-             &gEfiScsiIoProtocolGuid    //gEfiIdeControllerInitProtocolGuid
+             gAtaBusDriverBinding.DriverBindingHandle,
+             &gEfiAtaPassThruProtocolGuid
              );
   if (EFI_ERROR (Status)) {
     return Status;
   }
-  //
-  // Get the device context
-  //
-  Status = gBS->OpenProtocol (
-                  ControllerHandle,
-                  &gEfiBlockIoProtocolGuid,
-                  (VOID **) &BlockIo,
-                  gScsiDiskDriverBinding.DriverBindingHandle,
-                  ControllerHandle,
-                  EFI_OPEN_PROTOCOL_GET_PROTOCOL
-                  );
 
-  if (EFI_ERROR (Status)) {
-    return Status;
+  ControllerNameTable = mAtaBusControllerNameTable;
+  if (ChildHandle != NULL) {
+    Status = EfiTestChildHandle (
+               ControllerHandle,
+               ChildHandle,
+               &gEfiAtaPassThruProtocolGuid
+               );
+    if (EFI_ERROR (Status)) {
+      return Status;
+    }
+    //
+    // Get the child context
+    //
+    Status = gBS->OpenProtocol (
+                    ChildHandle,
+                    &gEfiBlockIoProtocolGuid,
+                    (VOID **) &BlockIo,
+                    gAtaBusDriverBinding.DriverBindingHandle,
+                    ChildHandle,
+                    EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                    );
+    if (EFI_ERROR (Status)) {
+      return EFI_UNSUPPORTED;
+    }
+    AtaDevice = ATA_DEVICE_FROM_BLOCK_IO (BlockIo);
+    ControllerNameTable =AtaDevice->ControllerNameTable;
   }
-
-  ScsiDiskDevice = SCSI_DISK_DEV_FROM_THIS (BlockIo);
-
   return LookupUnicodeString2 (
            Language,
            This->SupportedLanguages,
-           ScsiDiskDevice->ControllerNameTable,
+           ControllerNameTable,
            ControllerName,
-           (BOOLEAN)(This == &gScsiDiskComponentName)
+           (BOOLEAN)(This == &gAtaBusComponentName)
            );
-
 }

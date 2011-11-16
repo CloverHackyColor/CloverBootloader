@@ -130,8 +130,9 @@ INF  MdeModulePkg/Universal/LegacyRegion2Dxe/LegacyRegion2Dxe.inf
 #INF  Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
 #INF  Clover/SataControllerDxe/SataControllerDxe.inf
 #INF  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
-#INF  Clover/AtaAtapi/AtaAtapiPassThru.inf
-INF  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
+INF  Clover/AtaAtapi/AtaAtapiPassThru.inf
+#INF  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
+INF  Clover/AtaBus/AtaBusDxe.inf
 #INF  MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
 INF  Clover/DVDBus/ScsiBusDxe.inf
 #INF  MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf

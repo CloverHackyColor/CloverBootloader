@@ -310,7 +310,8 @@
   	<LibraryClasses>
 #  	DebugLib|MdePkg/Library/UefiDebugLibStdErr/UefiDebugLibStdErr.inf
   }
-  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
+  #MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
+  Clover/AtaBus/AtaBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
   Clover/DVDBus/ScsiBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf

@@ -2695,7 +2695,7 @@ DetectAndConfigIdeDevice (
   EFI_IDE_REGISTERS                 *IdeRegisters;
   EFI_IDENTIFY_DATA                 Buffer;
 	UINT8       InitStatusReg;
-	UINT8       StatusReg;
+	UINT8       StatusReg = 0;
 
 
   EFI_IDE_CONTROLLER_INIT_PROTOCOL  *IdeInit;

@@ -16,6 +16,14 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include "ScsiBus.h"
 
+#define DEBUG_SCSIBUS 1
+
+#if DEBUG_SCSIBUS==1
+#define DBG(x...)  Print(x)
+#else
+#define DBG(x...)
+#endif
+
 
 EFI_DRIVER_BINDING_PROTOCOL gSCSIBusDriverBinding = {
   SCSIBusDriverBindingSupported,
@@ -315,6 +323,7 @@ SCSIBusDriverBindingStart (
   // Fail to open UEFI ExtendPassThru Protocol, then try to open EFI PassThru Protocol instead.
   //
   if (EFI_ERROR(Status) && (Status != EFI_ALREADY_STARTED)) {
+	  DBG(L"ExtScsiInterface status=%r\n", Status);
     Status = gBS->OpenProtocol (
                     Controller,
                     &gEfiScsiPassThruProtocolGuid,
@@ -343,6 +352,7 @@ SCSIBusDriverBindingStart (
     // with BY_DRIVER if it is also present on the handle. The intent is to prevent 
     // another SCSI Bus Driver to work on the same host handle.
     //
+	  DBG(L"old scsi interface\n");
     ExtScsiSupport = TRUE;
     PassThruStatus = gBS->OpenProtocol (
                             Controller,
@@ -369,6 +379,7 @@ SCSIBusDriverBindingStart (
     ScsiBusDev->ExtScsiSupport   = ExtScsiSupport;
     ScsiBusDev->DevicePath       = ParentDevicePath;
     if (ScsiBusDev->ExtScsiSupport) {
+		DBG(L"ScsiBusDev->ExtScsiSupport installed\n");
       ScsiBusDev->ExtScsiInterface = ExtScsiInterface;
     } else {
       ScsiBusDev->ScsiInterface    = ScsiInterface;    
@@ -414,6 +425,7 @@ SCSIBusDriverBindingStart (
     // If RemainingDevicePath is NULL, 
     // must enumerate all SCSI devices anyway
     //
+	  DBG(L"must enumerate all SCSI devices\n");
     FromFirstTarget = TRUE;
   } else if (!IsDevicePathEnd (RemainingDevicePath)) {
     //
@@ -425,7 +437,7 @@ SCSIBusDriverBindingStart (
     } else {
       Status = ScsiBusDev->ScsiInterface->GetTargetLun (ScsiBusDev->ScsiInterface, RemainingDevicePath, &ScsiTargetId.ScsiId.Scsi, &Lun);
     }
-
+	  		DBG(L"GetTargetLun=%d status=%r\n", Status);
     if (EFI_ERROR (Status)) {
       return Status;
     }
@@ -434,6 +446,7 @@ SCSIBusDriverBindingStart (
     // If RemainingDevicePath is the End of Device Path Node,
     // skip enumerate any device and return EFI_SUCESSS
     // 
+	  DBG(L"skip enumerate any device\n");
     ScanOtherPuns = FALSE;
   }
 
@@ -448,6 +461,7 @@ SCSIBusDriverBindingStart (
       } else {
         Status = ScsiBusDev->ScsiInterface->GetNextDevice (ScsiBusDev->ScsiInterface, &ScsiTargetId.ScsiId.Scsi, &Lun);
       }
+		DBG(L"GetNextDevice=%d status=%r\n", Lun, Status);
       if (EFI_ERROR (Status)) {
         //
         // no legal Pun and Lun found any more
@@ -462,6 +476,7 @@ SCSIBusDriverBindingStart (
     //
     if (ScsiBusDev->ExtScsiSupport) {
       if ((ScsiTargetId.ScsiId.Scsi) == ScsiBusDev->ExtScsiInterface->Mode->AdapterId) {
+		  DBG(L"this is adapter!\n");
         continue;
       }
     } else {
@@ -474,6 +489,7 @@ SCSIBusDriverBindingStart (
     // then create handle and install scsi i/o protocol.
     //
     Status = ScsiScanCreateDevice (This, Controller, &ScsiTargetId, Lun, ScsiBusDev);
+	  DBG(L"ScsiScanCreateDevice Status=%r\n", Status);
   }
   return EFI_SUCCESS;
 

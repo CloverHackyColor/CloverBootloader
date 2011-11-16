@@ -225,9 +225,9 @@ done:
 static fsw_status_t rr_read_ce(struct fsw_iso9660_volume *vol, union fsw_rock_ridge_susp_ce *ce, fsw_u8 *begin)
 {
     int rc;
-    int i;
-    fsw_u8 *r = begin + ISOINT(ce->X.offset);
-    int len = ISOINT(ce->X.len);
+//    int i;
+//    fsw_u8 *r = begin + ISOINT(ce->X.offset);
+//    int len = ISOINT(ce->X.len);
     rc = vol->g.host_table->read_block(&vol->g, ISOINT(ce->X.block_loc), begin);
     if (rc != FSW_SUCCESS)
         return rc;
