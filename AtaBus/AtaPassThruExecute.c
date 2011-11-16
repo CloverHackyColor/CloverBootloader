@@ -24,6 +24,14 @@
 
 #include "AtaBus.h"
 
+#define DEBUG_EXEC 0
+#if DEBUG_EXEC==1
+#define DBG(x...)  Print(x)
+#else
+#define DBG(x...)
+#endif
+
+
 #define ATA_CMD_TRUST_NON_DATA    0x5B
 #define ATA_CMD_TRUST_RECEIVE     0x5C
 #define ATA_CMD_TRUST_RECEIVE_DMA 0x5D
@@ -150,6 +158,7 @@ AtaDevicePassThru (
                           Packet,
                           Event
                           );
+//	DBG(L"AtaPassThru->PassThru Status=%r\n", Status);
   //
   // Ensure ATA pass through caller and callee have the same
   // interpretation of ATA pass through protocol. 

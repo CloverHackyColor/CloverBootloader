@@ -15,7 +15,8 @@
 
 #include "AtaAtapiPassThru.h"
 
-#define DEBUG_ATAATAPI 1
+
+#define DEBUG_ATAATAPI 0
 
 #if DEBUG_ATAATAPI==1
 #define DBG(x...)  Print(x)
@@ -203,11 +204,11 @@ AtaPassThruPassThruExecute (
       // Reassign IDE mode io port registers' base addresses
       //
       Status = GetIdeRegisterIoAddr (Instance->PciIo, Instance->IdeRegisters);
-      
+		  DBG(L"GetIdeRegisterIoAddr Status=%r\n", Status);
       if (EFI_ERROR (Status)) {
         return Status;
       }
-      
+		  DBG(L"Protocol = %x\n", Protocol);
       switch (Protocol) {
         case EFI_ATA_PASS_THRU_PROTOCOL_ATA_NON_DATA:
           Status = AtaNonDataCommandIn (
@@ -1052,8 +1053,9 @@ CreateNewDeviceInfo (
   DeviceInfo->Port           = Port;
   DeviceInfo->PortMultiplier = PortMultiplier;
   DeviceInfo->Type           = DeviceType;
-
+	DBG(L"Creating DeviceInfo for Chan=%d dev=%d type=%a\n", Port, PortMultiplier, DeviceType == EfiIdeCdrom ? "cdrom   " : "harddisk");
   if (IdentifyData != NULL) {
+	  DBG(L" IdentifyData copied\n");
     DeviceInfo->IdentifyData = AllocateCopyPool (sizeof (EFI_IDENTIFY_DATA), IdentifyData);
     if (DeviceInfo->IdentifyData == NULL) {
       FreePool (DeviceInfo);
@@ -1251,7 +1253,7 @@ AtaPassThruPassThru (
   EFI_TPL                         OldTpl;
 
   Instance = ATA_PASS_THRU_PRIVATE_DATA_FROM_THIS (This);
-
+//	DBG(L"This->Mode->IoAlign=%d Packet=%x Packet->InDataBuffer=%x\n", This->Mode->IoAlign, (UINTN)Packet, (UINTN)Packet->InDataBuffer); 
   if ((This->Mode->IoAlign > 1) && !IS_ALIGNED(Packet->InDataBuffer, This->Mode->IoAlign)) {
     return EFI_INVALID_PARAMETER;
   }
@@ -1867,6 +1869,7 @@ ExtScsiPassThruPassThru (
   Instance = EXT_SCSI_PASS_THRU_PRIVATE_DATA_FROM_THIS (This);
 
   if ((Packet == NULL) || (Packet->Cdb == NULL)) {
+	  DBG(L"(Packet == NULL) || (Packet->Cdb == NULL)\n");
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1875,18 +1878,22 @@ ExtScsiPassThruPassThru (
   //
   if ((Packet->CdbLength != 6) && (Packet->CdbLength != 10) &&
       (Packet->CdbLength != 12) && (Packet->CdbLength != 16)) {
+	  DBG(L"Packet->CdbLength = %d\n", Packet->CdbLength);
     return EFI_INVALID_PARAMETER;
   }
   
   if ((This->Mode->IoAlign > 1) && !IS_ALIGNED(Packet->InDataBuffer, This->Mode->IoAlign)) {
+	  DBG(L"IN not aligned\n");
     return EFI_INVALID_PARAMETER;
   }
 
   if ((This->Mode->IoAlign > 1) && !IS_ALIGNED(Packet->OutDataBuffer, This->Mode->IoAlign)) {
+	  DBG(L"OUT not aligned\n");
     return EFI_INVALID_PARAMETER;
   }
 
   if ((This->Mode->IoAlign > 1) && !IS_ALIGNED(Packet->SenseData, This->Mode->IoAlign)) {
+	  DBG(L"SenseData not aligned\n");
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1894,6 +1901,7 @@ ExtScsiPassThruPassThru (
   // For ATAPI device, doesn't support multiple LUN device.
   //
   if (Lun != 0) {
+	  DBG(L"Lun=%d\n", Lun);
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1913,6 +1921,7 @@ ExtScsiPassThruPassThru (
 
   Node = SearchDeviceInfoList(Instance, Port, PortMultiplier, EfiIdeCdrom);
   if (Node == NULL) {
+	  DBG(L"not EfiIdeCdrom \n");
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1935,12 +1944,14 @@ ExtScsiPassThruPassThru (
       // Reassign IDE mode io port registers' base addresses
       //
       Status = GetIdeRegisterIoAddr (Instance->PciIo, Instance->IdeRegisters);
-
+		 
       if (EFI_ERROR (Status)) {
+		   DBG(L"GetIdeRegisterIoAddr Status=%r\n", Status);
         return Status;
       }
 
       Status = AtaPacketCommandExecute (Instance->PciIo, &Instance->IdeRegisters[Port], Port, PortMultiplier, Packet);
+		   DBG(L"AtaPacketCommandExecute Status=%r\n", Status);
       break;
     case EfiAtaAhciMode:
       Status = AhciPacketCommandExecute (Instance->PciIo, &Instance->AhciRegisters, Port, PortMultiplier, Packet);

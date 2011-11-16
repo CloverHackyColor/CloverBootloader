@@ -95,13 +95,13 @@ DEFINE ICC11_BIN64x86     = C:\Program Files (x86)\Intel\Compiler\DEF(ICC11_VERS
 DEFINE EBC_BIN          = C:\Program Files\Intel\EBC\Bin
 DEFINE EBC_BINx86       = C:\Program Files (x86)\Intel\EBC\Bin
 
-DEFINE ELFGCC_BIN       = /usr/bin
+DEFINE ELFGCC_BIN       = /usr/local/bin
 
 #
 # Option 1: Hard coded full path to compiler suite
-DEFINE UNIXGCC_IA32_PETOOLS_PREFIX = /opt/tiano/i386-tiano-pe/i386-tiano-pe/bin/
-DEFINE UNIXGCC_X64_PETOOLS_PREFIX  = /opt/tiano/x86_64-pc-mingw64/x86_64-pc-mingw64/bin/
-DEFINE UNIXGCC_IPF_PETOOLS_PREFIX  = /opt/tiano/ia64-pc-elf/ia64-pc-elf/bin/
+#DEFINE UNIXGCC_IA32_PETOOLS_PREFIX = /opt/tiano/i386-tiano-pe/i386-tiano-pe/bin/
+#DEFINE UNIXGCC_X64_PETOOLS_PREFIX  = /opt/tiano/x86_64-pc-mingw64/x86_64-pc-mingw64/bin/
+#DEFINE UNIXGCC_IPF_PETOOLS_PREFIX  = /opt/tiano/ia64-pc-elf/ia64-pc-elf/bin/
 #
 # Option 2: Use an environment variable
 #DEFINE UNIXGCC_IA32_PETOOLS_PREFIX = ENV(IA32_PETOOLS_PREFIX)
@@ -117,8 +117,9 @@ DEFINE UNIXGCC_IPF_PETOOLS_PREFIX  = /opt/tiano/ia64-pc-elf/ia64-pc-elf/bin/
 #DEFINE UNIXGCC_X64_PETOOLS_PREFIX  = ENV(WORKSPACE)/BaseTools/Bin/gcc/X64/
 #
 # Option 5: Install programs under user's home directory
-#DEFINE UNIXGCC_IA32_PETOOLS_PREFIX = ENV(HOME)/programs/gcc/ia32/bin/i686-pc-mingw32-
-#DEFINE UNIXGCC_X64_PETOOLS_PREFIX  = ENV(HOME)/programs/gcc/x64/bin/x86_64-pc-mingw32-
+DEFINE UNIXGCC_IA32_PETOOLS_PREFIX = ENV(HOME)/programs/gcc/ia32/bin/i686-pc-mingw32-
+DEFINE UNIXGCC_X64_PETOOLS_PREFIX  = ENV(HOME)/programs/gcc/x64/bin/x86_64-pc-mingw32-
+DEFINE UNIXGCC_IPF_PETOOLS_PREFIX  = /usr/local/arm-elf/bin/
 #
 
 DEFINE CYGWIN_BIN              = c:/cygwin/bin
@@ -154,11 +155,11 @@ DEFINE DEFAULT_WIN_ASL_OUTFLAGS = DEF(IASL_OUTFLAGS)
 
 DEFINE MSFT_ASLPP_FLAGS        = /nologo /E /C /FIAutoGen.h
 DEFINE MSFT_ASLCC_FLAGS        = /nologo /c /FIAutoGen.h /TC /Dmain=ReferenceAcpiTable
-DEFINE MSFT_ASLDLINK_FLAGS     = /NODEFAULTLIB /ENTRY:ReferenceAcpiTable /SUBSYSTEM:CONSOLE
+DEFINE MSFT_ASLDLINK_FLAGS     = /NODEFAULTLIB /ENTRY:ReferenceAcpiTable /SUBSYSTEM:EFI_BOOT_SERVICE_DRIVER
 
 DEFINE ICC_WIN_ASLPP_FLAGS     = /nologo /E /C /FIAutoGen.h
 DEFINE ICC_WIN_ASLCC_FLAGS     = /nologo /c /FIAutoGen.h /TC /Dmain=ReferenceAcpiTable
-DEFINE ICC_WIN_ASLDLINK_FLAGS  = /NODEFAULTLIB /ENTRY:ReferenceAcpiTable /SUBSYSTEM:CONSOLE /NODEFAULTLIB:libmmt /NODEFAULTLIB:libirc
+DEFINE ICC_WIN_ASLDLINK_FLAGS  = /NODEFAULTLIB /ENTRY:ReferenceAcpiTable /SUBSYSTEM:EFI_BOOT_SERVICE_DRIVER /NODEFAULTLIB:libmmt /NODEFAULTLIB:libirc
 
 DEFINE IPHONE_TOOLS            = /Developer/Platforms/iPhoneOS.platform/Developer
 DEFINE RVCT31_TOOLS_PATH       = c:/Program Files/ARM/RVCT/Programs/3.1/569/win_32-pentium
@@ -170,7 +171,7 @@ DEFINE SOURCERY_CYGWIN_TOOLS = /cygdrive/c/Program Files/CodeSourcery/Sourcery G
 #
 # Change to the location clang was built
 #
-DEFINE CLANG_BIN = /usr/bin/
+DEFINE CLANG_BIN = /usr/local/bin/
 
 ####################################################################################
 #
@@ -3305,30 +3306,33 @@ RELEASE_MYTOOLS_IPF_DLINK_FLAGS          = /NOLOGO /NODEFAULTLIB /LTCG /DLL /OPT
 
 *_XCODE32_*_DSYMUTIL_PATH    = /usr/bin/dsymutil
 
-# This tool needs to be installed seperatly from Xcode 3.2
-*_XCODE32_*_MTOC_PATH        = /usr/local/bin/mtoc.NEW
+# This tool needs to be installed separatly from Xcode 3.2
+*_XCODE32_*_MTOC_PATH        = /usr/local/bin/mtoc
 
-  DEBUG_XCODE32_*_MTOC_FLAGS = -align 0x20 
-#-d $(DEBUG_DIR)/$(MODULE_NAME).dll
+#  DEBUG_XCODE32_*_MTOC_FLAGS = -align 0x20 -d $(DEBUG_DIR)/$(MODULE_NAME).dll
 RELEASE_XCODE32_*_MTOC_FLAGS = -align 0x20
+
+DEBUG_XCODE32_*_MTOC_FLAGS = -align 0x20
 
 ##################
 # IA32 definitions
 ##################
 *_XCODE32_IA32_CC_PATH      = gcc
 *_XCODE32_IA32_SLINK_PATH   = libtool.NEW
-*_XCODE32_IA32_DLINK_PATH   = ld.NEW
-*_XCODE32_IA32_ASM_PATH     = as.NEW
+*_XCODE32_IA32_DLINK_PATH   = ld64
+*_XCODE32_IA32_ASM_PATH     = as386
 *_XCODE32_IA32_PP_PATH      = gcc
 *_XCODE32_IA32_VFRPP_PATH   = gcc
 *_XCODE32_IA32_ASL_PATH     = iasl
 *_XCODE32_IA32_ASLCC_PATH   = gcc
 *_XCODE32_IA32_ASLPP_PATH   = gcc
-*_XCODE32_IA32_ASLDLINK_PATH  = ld
+*_XCODE32_IA32_ASLDLINK_PATH  = ld64
 
-DEBUG_XCODE32_IA32_DLINK_FLAGS      = -arch i386 -S -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -all_load -dead_strip -seg1addr 0x240 -read_only_relocs suppress -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map 
-
-# DEBUG_XCODE32_IA32_DLINK_FLAGS      = -arch i386 -S -x -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -pie -all_load -dead_strip -seg1addr 0x240 -read_only_relocs suppress -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
+  DEBUG_XCODE32_IA32_DLINK_FLAGS      = -arch i386 -S -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20 -pie -all_load -dead_strip -seg1addr 0x240 -read_only_relocs suppress  -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
+ 
+# -pagezero_size 0x0
+ 
+# -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
 RELEASE_XCODE32_IA32_DLINK_FLAGS      = -arch i386 -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -all_load -dead_strip -seg1addr 0x220 -read_only_relocs suppress -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
 *_XCODE32_IA32_SLINK_FLAGS      = -arch_only i386 -static -o
   DEBUG_XCODE32_IA32_ASM_FLAGS  = -arch i386 
@@ -3336,40 +3340,47 @@ RELEASE_XCODE32_IA32_DLINK_FLAGS      = -arch i386 -u _$(IMAGE_ENTRY_POINT) -e _
 RELEASE_XCODE32_IA32_ASM_FLAGS  = -arch i386
 *_XCODE32_IA32_PP_FLAGS         = -arch i386 -E -x assembler-with-cpp -include $(DEST_DIR_DEBUG)/AutoGen.h
 *_XCODE32_IA32_VFRPP_FLAGS      = -arch i386 -x c -E -P -DVFRCOMPILE --include $(DEST_DIR_DEBUG)/$(MODULE_NAME)StrDefs.h
-  DEBUG_XCODE32_IA32_CC_FLAGS   = -arch i386 -save-temps -g -O0 -combine -msse2 -mms-bitfields  -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-missing-braces  -c -include AutoGen.h -mdynamic-no-pic -fno-stack-protector
+#  DEBUG_XCODE32_IA32_CC_FLAGS   = -arch i386 -save-temps -g -O0 -combine -mms-bitfields  -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-missing-braces  -c -include AutoGen.h -mdynamic-no-pic -fno-stack-protector
+#Slice - rename release to debug
+DEBUG_XCODE32_IA32_CC_FLAGS   = -arch i386 -O0 -combine -mms-bitfields -msse2 -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-empty-body -Wno-pointer-sign -Wno-unused-function -Wno-unused-value -Wno-missing-braces -Wreturn-type -Wno-unused-variable -c -s -include AutoGen.h -mdynamic-no-pic -fno-stack-protector
+#-Wno-tautological-compare
 RELEASE_XCODE32_IA32_CC_FLAGS   = -arch i386 -Os -combine -mms-bitfields -msse2 -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-missing-braces -fomit-frame-pointer -c -include AutoGen.h -mdynamic-no-pic -fno-stack-protector
 
 *_XCODE32_IA32_ASLCC_FLAGS      = -arch i386 -x c -save-temps -g -O0 -mms-bitfields -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-missing-braces -c -include AutoGen.h -mdynamic-no-pic
 *_XCODE32_IA32_ASLDLINK_FLAGS   = -arch i386 -e _main -preload -segalign 0x20  -pie -seg1addr 0x220 -read_only_relocs suppress -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
 *_XCODE32_IA32_ASLPP_FLAGS      = -arch i386 -x c -E
-*_XCODE32_IA32_ASL_FLAGS        =
+*_XCODE32_IA32_ASL_FLAGS        = -ta
 
 ##################
 # X64 definitions - still a work in progress. This tool chain does not produce
 # the correct ABI, it is just used to compile the code....
 ##################
 *_XCODE32_X64_CC_PATH       = gcc-4.2
-*_XCODE32_X64_SLINK_PATH    = libtool
-*_XCODE32_X64_DLINK_PATH    = ld
+*_XCODE32_X64_SLINK_PATH    = libtool.NEW
+*_XCODE32_X64_DLINK_PATH    = ld64
 *_XCODE32_X64_ASM_PATH      = as
 *_XCODE32_X64_PP_PATH       = gcc-4.2
 *_XCODE32_X64_VFRPP_PATH    = gcc-4.2
 *_XCODE32_X64_ASL_PATH     = iasl
 *_XCODE32_X64_ASLCC_PATH   = gcc
 *_XCODE32_X64_ASLPP_PATH   = gcc
-*_XCODE32_X64_ASLDLINK_PATH  = ld
+*_XCODE32_X64_ASLDLINK_PATH  = ld64
 
-*_XCODE32_X64_DLINK_FLAGS      = -arch x86_64 -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -seg1addr 0x240 -read_only_relocs suppress -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
-*_XCODE32_X64_SLINK_FLAGS      = -static -o
+*_XCODE32_X64_DLINK_FLAGS      = -arch x86_64 -S -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -all_load -dead_strip -seg1addr 0x240 -read_only_relocs suppress -pagezero_size 0x0 -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
 
-  DEBUG_XCODE32_X64_ASM_FLAGS  = -arch x86_64 -g
+#*_XCODE32_X64_DLINK_FLAGS      = -arch x86_64 -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -seg1addr 0x240 -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
+*_XCODE32_X64_SLINK_FLAGS      = -arch_only x86_64 -static -o
+
+#DEBUG_XCODE32_X64_ASM_FLAGS  = -arch x86_64 -g
+DEBUG_XCODE32_X64_ASM_FLAGS  = -arch x86_64
 RELEASE_XCODE32_X64_ASM_FLAGS  = -arch x86_64
 *_XCODE32_X64_PP_FLAGS         = -arch x86_64 -E -x assembler-with-cpp -include $(DEST_DIR_DEBUG)/AutoGen.h
 *_XCODE32_X64_VFRPP_FLAGS      = -arch x86_64 -x c -E -P -DVFRCOMPILE --include $(DEST_DIR_DEBUG)/$(MODULE_NAME)StrDefs.h
 
-  DEBUG_XCODE32_X64_CC_FLAGS   = -arch x86_64 -save-temps -g -O0 -combine -mms-bitfields -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-missing-braces -Wno-address  -fomit-frame-pointer -static  -c -include AutoGen.h -fno-stack-protector
+#  DEBUG_XCODE32_X64_CC_FLAGS   = -arch x86_64 -save-temps -g -O0 -combine -mms-bitfields -msse2 -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-missing-braces -Wno-address  -fomit-frame-pointer -static  -c -include AutoGen.h -fno-stack-protector
 RELEASE_XCODE32_X64_CC_FLAGS   = -arch x86_64 -Oz -combine -mms-bitfields -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-missing-braces -Wno-address  -fomit-frame-pointer -static  -c -include AutoGen.h -fno-stack-protector
-
+DEBUG_XCODE32_X64_CC_FLAGS   = -arch x86_64 -Oz -combine -mms-bitfields -msse2 -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-missing-braces -Wno-address -static -s -c -include AutoGen.h -mdynamic-no-pic -fno-stack-protector
+#  -fomit-frame-pointer
 ##################
 # ARM definitions - (Assumes iPhone SDK installed on Snow Leopard)
 ##################
@@ -3420,16 +3431,16 @@ RELEASE_XCODE32_ARM_CC_FLAGS   = $(ARCHCC_FLAGS) $(PLATFORM_FLAGS) -mthumb-inter
 RELEASE_XCLANG_*_MTOC_FLAGS = -align 0x20
 
 
-*_XCLANG_*_CC_PATH      = DEF(CLANG_BIN)clang
-*_XCLANG_*_SLINK_PATH   = libtool
-*_XCLANG_*_DLINK_PATH   = ld
-*_XCLANG_*_ASM_PATH     = as
-*_XCLANG_*_PP_PATH      = DEF(CLANG_BIN)clang
-*_XCLANG_*_VFRPP_PATH   = DEF(CLANG_BIN)clang
+*_XCLANG_*_CC_PATH      = DEF(CLANG_BIN)clang.NEW
+*_XCLANG_*_SLINK_PATH   = libtool.NEW
+*_XCLANG_*_DLINK_PATH   = ld64
+*_XCLANG_*_ASM_PATH     = as386
+*_XCLANG_*_PP_PATH      = DEF(CLANG_BIN)clang.NEW
+*_XCLANG_*_VFRPP_PATH   = DEF(CLANG_BIN)clang.NEW
 *_XCLANG_*_ASL_PATH     = iasl
-*_XCLANG_*_ASLCC_PATH   = DEF(CLANG_BIN)clang
-*_XCLANG_*_ASLPP_PATH   = DEF(CLANG_BIN)clang
-*_XCLANG_*_ASLDLINK_PATH  = ld
+*_XCLANG_*_ASLCC_PATH   = DEF(CLANG_BIN)clang.NEW
+*_XCLANG_*_ASLPP_PATH   = DEF(CLANG_BIN)clang.NEW
+*_XCLANG_*_ASLDLINK_PATH  = ld64
 
 ####################
 # IA-32 definitions
@@ -3607,7 +3618,11 @@ RELEASE_ARMGCC_ARM_ASM_FLAGS   = $(ARCHASM_FLAGS) -mlittle-endian
 *_ARMGCC_ARM_VFRPP_FLAGS = $(ARCHCC_FLAGS) $(PLATFORM_FLAGS)  -x c -E -P -DVFRCOMPILE --include $(DEST_DIR_DEBUG)/$(MODULE_NAME)StrDefs.h
 
 *_ARMGCC_ARM_SLINK_FLAGS =  -rc
-*_ARMGCC_ARM_DLINK_FLAGS =  $(ARCHDLINK_FLAGS)  --oformat=elf32-littlearm --emit-relocs -nostdlib -u $(IMAGE_ENTRY_POINT) -e $(IMAGE_ENTRY_POINT) -Map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
+*_ARMGCC_ARM_DLINK_FLAGS =  $(ARCHDLINK_FLAGS)  --oformat=elf32-littlearm -nostdlib -u $(IMAGE_ENTRY_POINT) -e $(IMAGE_ENTRY_POINT) -Map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
+#
+# Had to remove --emit-relocs to get compile working. Images don't work correctly (linked at 0, no relocations)
+# --emit-relocs
+#
 
   DEBUG_ARMGCC_ARM_CC_FLAGS = $(ARCHCC_FLAGS) $(PLATFORM_FLAGS) -mlittle-endian -g -O0 -mabi=aapcs -mapcs -fno-short-enums -save-temps -combine -fsigned-char -fshort-wchar -fno-strict-aliasing -ffunction-sections -fdata-sections -Wall -Werror -Wno-missing-braces -fomit-frame-pointer -c -include AutoGen.h
 RELEASE_ARMGCC_ARM_CC_FLAGS = $(ARCHCC_FLAGS) $(PLATFORM_FLAGS) -mlittle-endian    -Os -mabi=aapcs -mapcs -fno-short-enums -save-temps -combine -fsigned-char -fshort-wchar -fno-strict-aliasing -ffunction-sections -fdata-sections -Wall -Werror -Wno-missing-braces -fomit-frame-pointer -c -include AutoGen.h
@@ -3640,7 +3655,7 @@ RELEASE_ARMGCC_ARM_CC_FLAGS = $(ARCHCC_FLAGS) $(PLATFORM_FLAGS) -mlittle-endian 
 # Asl Compiler definitions
 ##################
 *_*_*_ASLCC_FLAGS                  = /nologo /c /FIAutoGen.h /TC /Dmain=ReferenceAcpiTable
-*_*_*_ASLDLINK_FLAGS               = /NODEFAULTLIB /ENTRY:ReferenceAcpiTable /SUBSYSTEM:CONSOLE
+*_*_*_ASLDLINK_FLAGS               = /NODEFAULTLIB /ENTRY:ReferenceAcpiTable /SUBSYSTEM:EFI_BOOT_SERVICE_DRIVER
 *_*_*_ASLPP_FLAGS                  = /nologo /EP /C
 *_*_*_ASL_FLAGS                    =
 

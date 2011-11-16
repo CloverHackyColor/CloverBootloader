@@ -18,7 +18,7 @@
 
 #include "AtaBus.h"
 
-#define DEBUG_ATABUS 1
+#define DEBUG_ATABUS 0
 
 #if DEBUG_ATABUS==1
 #define DBG(x...)  Print(x)

@@ -14,7 +14,7 @@
 
 #include "SataController.h"
 
-#define DEBUG_SATA 1
+#define DEBUG_SATA 0
 
 #if DEBUG_SATA==1
 #define DBG(x...)  Print(x)

@@ -16,7 +16,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include "ScsiBus.h"
 
-#define DEBUG_SCSIBUS 1
+#define DEBUG_SCSIBUS 0
 
 #if DEBUG_SCSIBUS==1
 #define DBG(x...)  Print(x)
@@ -322,8 +322,9 @@ SCSIBusDriverBindingStart (
   //
   // Fail to open UEFI ExtendPassThru Protocol, then try to open EFI PassThru Protocol instead.
   //
+	DBG(L"ExtScsiInterface status=%r\n", Status);
   if (EFI_ERROR(Status) && (Status != EFI_ALREADY_STARTED)) {
-	  DBG(L"ExtScsiInterface status=%r\n", Status);
+	  
     Status = gBS->OpenProtocol (
                     Controller,
                     &gEfiScsiPassThruProtocolGuid,
@@ -352,7 +353,7 @@ SCSIBusDriverBindingStart (
     // with BY_DRIVER if it is also present on the handle. The intent is to prevent 
     // another SCSI Bus Driver to work on the same host handle.
     //
-	  DBG(L"old scsi interface\n");
+	  DBG(L"ext scsi interface\n");
     ExtScsiSupport = TRUE;
     PassThruStatus = gBS->OpenProtocol (
                             Controller,
@@ -714,6 +715,29 @@ SCSIBusDriverBindingStop (
 
 
 /**
+ Allocates an aligned buffer for Scsi device.
+ 
+ This function allocates an aligned buffer for the Scsi device to perform
+ ATA pass through operations. The alignment requirement is from ATA pass
+ through interface.
+ 
+ @param  ScsiIoDevice         The Scsi child device involved for the operation.
+ @param  BufferSize        The request buffer size.
+ 
+ @return A pointer to the aligned buffer or NULL if the allocation fails.
+ 
+ **/
+VOID *
+AllocateAlignedBuffer (
+					   IN SCSI_IO_DEV               *ScsiIoDevice,
+					   IN UINTN                    BufferSize
+					   )
+{
+	return AllocateAlignedPages (EFI_SIZE_TO_PAGES (BufferSize), ScsiIoDevice->ExtScsiPassThru->Mode->IoAlign);
+}
+
+
+/**
   Retrieves the device type information of the SCSI Controller.
 
   @param  This          Protocol instance pointer.
@@ -914,33 +938,39 @@ ScsiExecuteSCSICommand (
   PacketEvent = NULL;
   
   if (Packet == NULL) {
+	  DBG(L"Packet == NULL\n");
     return EFI_INVALID_PARAMETER;
   }
 
   ScsiIoDevice  = SCSI_IO_DEV_FROM_THIS (This);
-  CopyMem (Target,&ScsiIoDevice->Pun, TARGET_MAX_BYTES);
+  CopyMem (Target, &ScsiIoDevice->Pun, TARGET_MAX_BYTES);
+	
+	mWorkingBuffer = AllocateAlignedBuffer(ScsiIoDevice, sizeof(EFI_EXT_SCSI_PASS_THRU_SCSI_REQUEST_PACKET));
+    if (mWorkingBuffer == NULL) {
+      return EFI_DEVICE_ERROR;
+    }
 
   if (ScsiIoDevice->ExtScsiSupport) {
-    ExtRequestPacket = (EFI_EXT_SCSI_PASS_THRU_SCSI_REQUEST_PACKET *) Packet;
+ //   ExtRequestPacket = (EFI_EXT_SCSI_PASS_THRU_SCSI_REQUEST_PACKET *) Packet;
+	  CopyMem(mWorkingBuffer, (VOID*)Packet, sizeof(EFI_EXT_SCSI_PASS_THRU_SCSI_REQUEST_PACKET));
+	  
     Status = ScsiIoDevice->ExtScsiPassThru->PassThru (
                                           ScsiIoDevice->ExtScsiPassThru,
                                           Target,
                                           ScsiIoDevice->Lun,
-                                          ExtRequestPacket,
+                                          mWorkingBuffer,
                                           Event
                                           );
+	  DBG(L"ExtScsiPassThru->PassThru Status=%r\n", Status);
+//	  CopyMem((VOID*)ExtRequestPacket, mWorkingBuffer, sizeof(EFI_EXT_SCSI_PASS_THRU_SCSI_REQUEST_PACKET));
+	  ExtRequestPacket = (EFI_EXT_SCSI_PASS_THRU_SCSI_REQUEST_PACKET *)mWorkingBuffer;
   } else {
-
-    mWorkingBuffer = AllocatePool (sizeof(EFI_SCSI_PASS_THRU_SCSI_REQUEST_PACKET));
-
-    if (mWorkingBuffer == NULL) {
-      return EFI_DEVICE_ERROR;
-    }
 
     //
     // Convert package into EFI1.0, EFI_SCSI_PASS_THRU_SCSI_REQUEST_PACKET.
     //
     Status = ScsiioToPassThruPacket(Packet, (EFI_SCSI_PASS_THRU_SCSI_REQUEST_PACKET*)mWorkingBuffer);
+	  DBG(L"ScsiioToPassThruPacket Status=%r\n", Status);
     if (EFI_ERROR(Status)) {
       FreePool(mWorkingBuffer);
       return Status;
@@ -960,6 +990,7 @@ ScsiExecuteSCSICommand (
                        &PacketEvent
                        );
       if (EFI_ERROR(Status)) {
+		  DBG(L"CreateEvent Status=%r\n", Status);
         FreePool(mWorkingBuffer);
         return Status;
       }
@@ -973,6 +1004,7 @@ ScsiExecuteSCSICommand (
                                           );
 
       if (EFI_ERROR(Status)) {
+		  DBG(L"PassThru PacketEvent Status=%r\n", Status);
         FreePool(mWorkingBuffer);
         gBS->CloseEvent(PacketEvent);
         return Status;
@@ -991,6 +1023,7 @@ ScsiExecuteSCSICommand (
                                           Event
                                           );
       if (EFI_ERROR(Status)) {
+		  DBG(L"PassThru Event Status=%r\n", Status);
         FreePool(mWorkingBuffer);
         return Status;
       }
@@ -1063,6 +1096,7 @@ ScsiScanCreateDevice (
   }
 
   if (EFI_ERROR(Status)) {
+	  DBG(L"BuildDevicePath Status=%r\n", Status);
     return Status;
   }
 
@@ -1072,6 +1106,7 @@ ScsiScanCreateDevice (
                  );
 
   if (DevicePath == NULL) {
+	  DBG(L"AppendDevicePathNode Status=%r\n", Status);
     Status = EFI_OUT_OF_RESOURCES;
     goto ErrorExit;
   }
@@ -1089,6 +1124,7 @@ ScsiScanCreateDevice (
 
   ScsiIoDevice = AllocateZeroPool (sizeof (SCSI_IO_DEV));
   if (ScsiIoDevice == NULL) {
+	  DBG(L"AllocateZeroPool Status=%r\n", Status);
     Status = EFI_OUT_OF_RESOURCES;
     goto ErrorExit;
   }
@@ -1115,6 +1151,7 @@ ScsiScanCreateDevice (
   ScsiIoDevice->ScsiIo.ExecuteScsiCommand = ScsiExecuteSCSICommand;
 
   if (!DiscoverScsiDevice (ScsiIoDevice)) {
+	  DBG(L"DiscoverScsiDevice Status=%r\n", Status);
     Status = EFI_OUT_OF_RESOURCES;
     goto ErrorExit;
   }
@@ -1194,8 +1231,8 @@ DiscoverScsiDevice (
   UINT8                 SenseDataLength;
   UINT8                 HostAdapterStatus;
   UINT8                 TargetStatus;
-  EFI_SCSI_SENSE_DATA   SenseData;
-  EFI_SCSI_INQUIRY_DATA InquiryData;
+  EFI_SCSI_SENSE_DATA*   SenseData;
+  EFI_SCSI_INQUIRY_DATA* InquiryData;
   UINT8                 MaxRetry;
   UINT8                 Index;
 
@@ -1206,67 +1243,78 @@ DiscoverScsiDevice (
   //
   InquiryDataLength = sizeof (EFI_SCSI_INQUIRY_DATA);
   SenseDataLength   = (UINT8) sizeof (EFI_SCSI_SENSE_DATA);
-  ZeroMem (&InquiryData, InquiryDataLength);
+	InquiryData = (EFI_SCSI_INQUIRY_DATA*)AllocateAlignedBuffer(ScsiIoDevice, InquiryDataLength);
+	SenseData = (EFI_SCSI_SENSE_DATA*)AllocateAlignedBuffer(ScsiIoDevice, SenseDataLength);
+//  ZeroMem (&InquiryData, InquiryDataLength);
 
   MaxRetry = 2;
   for (Index = 0; Index < MaxRetry; Index++) {
     Status = ScsiInquiryCommand (
               &ScsiIoDevice->ScsiIo,
               EFI_TIMER_PERIOD_SECONDS (1),
-              (VOID *) &SenseData,
+              (VOID *)SenseData,
               &SenseDataLength,
               &HostAdapterStatus,
               &TargetStatus,
-              (VOID *) &InquiryData,
+              (VOID *)InquiryData,
               &InquiryDataLength,
               FALSE
               );
+	  DBG(L"ScsiInquiryCommand Status=%r\n", Status);
     if (!EFI_ERROR (Status)) {
       break;
     } else if ((Status == EFI_BAD_BUFFER_SIZE) || 
                (Status == EFI_INVALID_PARAMETER) ||
                (Status == EFI_UNSUPPORTED)) {
-      return FALSE;
+		goto Exit;
     }
   }
 
   if (Index == MaxRetry) {
-    return FALSE;
+	  DBG(L"Index == MaxRetry\n");
+	  goto Exit;
   }
   
   //
   // Retrieved inquiry data successfully
   //
-  if ((InquiryData.Peripheral_Qualifier != 0) &&
-      (InquiryData.Peripheral_Qualifier != 3)) {
-    return FALSE;
+	DBG(L"InquiryData->Peripheral_Qualifier=%d\n", InquiryData->Peripheral_Qualifier);
+  if ((InquiryData->Peripheral_Qualifier != 0) &&
+      (InquiryData->Peripheral_Qualifier != 3)) {
+	  goto Exit;
   }
-
-  if (InquiryData.Peripheral_Qualifier == 3) {
-    if (InquiryData.Peripheral_Type != 0x1f) {
-      return FALSE;
+	DBG(L"InquiryData->Peripheral_Type=%d\n", InquiryData->Peripheral_Type);
+  if (InquiryData->Peripheral_Qualifier == 3) {
+    if (InquiryData->Peripheral_Type != 0x1f) {
+		goto Exit;
     }
   }
 
-  if (0x1e >= InquiryData.Peripheral_Type && InquiryData.Peripheral_Type >= 0xa) {
-    return FALSE;
+  if (0x1e >= InquiryData->Peripheral_Type && InquiryData->Peripheral_Type >= 0xa) {
+	  goto Exit;
   }
 
   //
   // valid device type and peripheral qualifier combination.
   //
-  ScsiIoDevice->ScsiDeviceType  = InquiryData.Peripheral_Type;
-  ScsiIoDevice->RemovableDevice = InquiryData.Rmb;
-  if (InquiryData.Version == 0) {
+  ScsiIoDevice->ScsiDeviceType  = InquiryData->Peripheral_Type;
+  ScsiIoDevice->RemovableDevice = InquiryData->Rmb;
+  if (InquiryData->Version == 0) {
     ScsiIoDevice->ScsiVersion = 0;
   } else {
     //
     // ANSI-approved version
     //
-    ScsiIoDevice->ScsiVersion = (UINT8) (InquiryData.Version & 0x07);
+    ScsiIoDevice->ScsiVersion = (UINT8) (InquiryData->Version & 0x07);
   }
-
+	DBG(L"ScsiIoDevice->ScsiVersion=%d\n", ScsiIoDevice->ScsiVersion);
+	FreePool(InquiryData);
+	FreePool(SenseData);
   return TRUE;
+Exit:
+	FreePool(InquiryData);
+	FreePool(SenseData);
+	return FALSE;
 }
 
 

@@ -14,7 +14,7 @@
 
 #include "AtaAtapiPassThru.h"
 
-#define DEBUG_ATA 1
+#define DEBUG_ATA 0
 
 #if DEBUG_ATA==1
 #define DBG(x...)  Print(x)
@@ -2725,6 +2725,7 @@ DetectAndConfigIdeDevice (
 	gBS->Stall (100);
 	
   for (IdeDevice = 0; IdeDevice < EfiIdeMaxDevice; IdeDevice++) {
+	  SetMem (&Buffer, sizeof(EFI_IDENTIFY_DATA), 0x00);
     //
     // Send ATA Device Execut Diagnostic command.
     // This command should work no matter DRDY is ready or not
@@ -2801,8 +2802,8 @@ DetectAndConfigIdeDevice (
 	  
 
     DBG (L"start identifing device for channel [%d] device [%d]\n", IdeChannel, IdeDevice);
-
-    //
+	  
+	//
     // Send IDENTIFY cmd to the device to test if it is really attached.
     //
     if (DeviceType == EfiIdeHarddisk) {
