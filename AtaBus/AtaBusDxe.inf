@@ -59,6 +59,7 @@
 [Guids]
   gEfiDiskInfoIdeInterfaceGuid                  # CONSUMES  ## GUID
   gEfiDiskInfoAhciInterfaceGuid                 # CONSUMES  ## GUID
+  gEfiEventExitBootServicesGuid
 
 [Protocols]
   gEfiDiskInfoProtocolGuid                      # BY_START

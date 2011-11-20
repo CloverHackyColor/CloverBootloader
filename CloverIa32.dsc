@@ -87,7 +87,7 @@
   # Generic Modules
   #
   UefiUsbLib|MdePkg/Library/UefiUsbLib/UefiUsbLib.inf
-  #UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
+  UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
   OemHookStatusCodeLib|MdeModulePkg/Library/OemHookStatusCodeLibNull/OemHookStatusCodeLibNull.inf
   GenericBdsLib|IntelFrameworkModulePkg/Library/GenericBdsLib/GenericBdsLib.inf
   #GenericBdsLib|Clover/OsxBdsLib/GenericBdsLib.inf
@@ -224,8 +224,8 @@
   MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDxe.inf
 
   #DuetPkg/FSVariable/FSVariable.inf
-  #MdeModulePkg/Universal/Variable/EmuRuntimeDxe/EmuVariableRuntimeDxe.inf
-  Clover/EmuVariableDxe/EmuVariableRuntimeDxe.inf
+  MdeModulePkg/Universal/Variable/EmuRuntimeDxe/EmuVariableRuntimeDxe.inf
+  #Clover/EmuVariableDxe/EmuVariableRuntimeDxe.inf
   MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
   MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
   MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
@@ -264,7 +264,7 @@
   #DuetPkg/AcpiResetDxe/Reset.inf
   Clover/AcpiReset/Reset.inf
   DuetPkg/LegacyMetronome/Metronome.inf
- EdkCompatibilityPkg/Compatibility/MpServicesOnFrameworkMpServicesThunk/MpServicesOnFrameworkMpServicesThunk.inf
+# EdkCompatibilityPkg/Compatibility/MpServicesOnFrameworkMpServicesThunk/MpServicesOnFrameworkMpServicesThunk.inf
 
 #Chipset
   PcAtChipsetPkg/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
@@ -277,7 +277,7 @@
   #Clover/OsxPciBusDxe/PciBusDxe.inf
   
   	#DataHub
-	Clover/VBoxAppleSim/VBoxAppleSim.inf
+	#Clover/VBoxAppleSim/VBoxAppleSim.inf
 	IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 	#IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
 	#EdkCompatibilityPkg/Compatibility/PiSmbiosRecordOnDataHubSmbiosRecordThunk/PiSmbiosRecordOnDataHubSmbiosRecordThunk.inf
@@ -304,8 +304,11 @@
   #Clover/SataControllerDxe/SataControllerDxe.inf
   #MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
   #MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
+  #Clover/AtaBus/AtaBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
+  #Clover/DVDBus/ScsiBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
+  #Clover/DVDDisk/ScsiDiskDxe.inf
   #IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
 
   # Usb Support
@@ -343,7 +346,7 @@
   MdeModulePkg/Universal/Acpi/S3SaveStateDxe/S3SaveStateDxe.inf
   #MdeModulePkg/Universal/Acpi/SmmS3SaveState/SmmS3SaveState.inf
   MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
-  #UefiCpuPkg/Universal/Acpi/S3Resume2Pei/S3Resume2Pei.inf
+  UefiCpuPkg/Universal/Acpi/S3Resume2Pei/S3Resume2Pei.inf
 
 
   # Bios Thunk
@@ -374,4 +377,5 @@
 ###################################################################################################
 [BuildOptions]
   MSFT:*_*_*_CC_FLAGS = /FAsc /FR$(@R).SBR
+  XCODE:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
 

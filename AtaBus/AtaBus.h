@@ -36,6 +36,8 @@
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/DevicePathLib.h>
 
+#include <Guid/EventGroup.h>
+
 #include <IndustryStandard/Atapi.h>
 
 //
@@ -139,7 +141,7 @@ typedef struct {
 	//
 	// ExitBootService Event, it is used to clear pending IDE interrupt
 	//
-//	EFI_EVENT                   ExitBootServiceEvent;
+	EFI_EVENT                   ExitBootServiceEvent;
 	
 
   EFI_UNICODE_STRING_TABLE              *ControllerNameTable;

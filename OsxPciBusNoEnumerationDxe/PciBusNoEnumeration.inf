@@ -70,3 +70,6 @@
   
 [Guids]
   gEfiPciOptionRomTableGuid
+
+[BuildOptions]
+  XCODE:*_*_*_CC_FLAGS = -Os

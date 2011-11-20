@@ -16,7 +16,7 @@
 
 EFI_EVENT                 mEfiVirtualNotifyEvent;
 EFI_PHYSICAL_ADDRESS      HandyCpuPage;
-IA32_IDT_GATE_DESCRIPTOR* Idt;
+IA32_IDT_GATE_DESCRIPTOR* gIdtTable;
 UINT32                    IdtSize;
 
 //
@@ -29,6 +29,8 @@ BOOLEAN                   mIsFlushingGCD;
 MTRR_MEMORY_CACHE_TYPE    mDefaultMemoryType    = MTRR_CACHE_WRITE_BACK;
 UINT64                    mValidMtrrAddressMask = MTRR_LIB_CACHE_VALID_ADDRESS;
 UINT64                    mValidMtrrBitsMask    = MTRR_LIB_MSR_VALID_MASK;
+IA32_IDT_GATE_DESCRIPTOR  *mOrigIdtEntry        = NULL;
+UINT16                    mOrigIdtEntryCount    = 0;
 
 FIXED_MTRR    mFixedMtrrTable[] = {
   {
@@ -524,7 +526,15 @@ CpuRegisterInterruptHandler (
     return EFI_ALREADY_STARTED;
   }
 
+  if (InterruptHandler != NULL) {
   SetInterruptDescriptorTableHandlerAddress ((UINTN)InterruptType, NULL);
+  } else {
+    //
+    // Restore the original IDT handler address if InterruptHandler is NULL.
+    //
+    RestoreInterruptDescriptorTableHandlerAddress ((UINTN)InterruptType);
+  }
+
   ExternalVectorTable[InterruptType] = InterruptHandler;
   return EFI_SUCCESS;
 }
@@ -1083,19 +1093,40 @@ SetInterruptDescriptorTableHandlerAddress (
   gIdtTable[Index].Bits.Reserved_1  = 0;
 #endif
 #else
-	Idt[Index].Bits.OffsetLow   = (UINT16)UintnHandler;
-//	Idt[Index].Bits.Selector    = AsmReadCs();
-	Idt[Index].Bits.Reserved_0  = 0;
-	Idt[Index].Bits.GateType    = IA32_IDT_GATE_TYPE_INTERRUPT_32;
-	Idt[Index].Bits.OffsetHigh  = (UINT16)(UintnHandler >> 16);
+	gIdtTable[Index].Bits.OffsetLow   = (UINT16)UintnHandler;
+//	gIdtTable[Index].Bits.Selector    = AsmReadCs();
+	gIdtTable[Index].Bits.Reserved_0  = 0;
+	gIdtTable[Index].Bits.GateType    = IA32_IDT_GATE_TYPE_INTERRUPT_32;
+	gIdtTable[Index].Bits.OffsetHigh  = (UINT16)(UintnHandler >> 16);
 #if defined (MDE_CPU_X64)
-	Idt[Index].Bits.OffsetUpper = (UINT32)(UintnHandler >> 32);
-	Idt[Index].Bits.Reserved_1  = 0;
+	gIdtTable[Index].Bits.OffsetUpper = (UINT32)(UintnHandler >> 32);
+	gIdtTable[Index].Bits.Reserved_1  = 0;
 	
 #endif
 	
 #endif
 }
+
+/**
+  Restore original Interrupt Descriptor Table Handler Address.
+
+  @param Index        The Index of the interrupt descriptor table handle.
+
+**/
+VOID
+RestoreInterruptDescriptorTableHandlerAddress (
+  IN UINTN       Index
+  )
+{
+  if (Index < mOrigIdtEntryCount) {
+    gIdtTable[Index].Bits.OffsetLow   = mOrigIdtEntry[Index].Bits.OffsetLow;
+    gIdtTable[Index].Bits.OffsetHigh  = mOrigIdtEntry[Index].Bits.OffsetHigh;
+#if defined (MDE_CPU_X64)
+    gIdtTable[Index].Bits.OffsetUpper = mOrigIdtEntry[Index].Bits.OffsetUpper;
+#endif
+  }
+}
+
 
 
 /**
@@ -1128,6 +1159,12 @@ InitInterruptDescriptorTable (
   if ((OldIdtPtr.Base != 0) && ((OldIdtPtr.Limit & 7) == 7)) {
     OldIdt = (IA32_IDT_GATE_DESCRIPTOR*) OldIdtPtr.Base;
     OldIdtSize = (OldIdtPtr.Limit + 1) / sizeof (IA32_IDT_GATE_DESCRIPTOR);
+    //
+    // Save original IDT entry and IDT entry count.
+    //
+    mOrigIdtEntry = AllocateCopyPool (OldIdtPtr.Limit + 1, (VOID *) OldIdtPtr.Base);
+    ASSERT (mOrigIdtEntry != NULL);
+    mOrigIdtEntryCount = (UINT16) OldIdtSize;
   } else {
     OldIdt = NULL;
     OldIdtSize = 0;
@@ -1140,7 +1177,7 @@ InitInterruptDescriptorTable (
   CurrentCs = AsmReadCs();
 	 // Allocate Runtime Data for the IDT
 	IdtSize = INTERRUPT_VECTOR_NUMBER*sizeof(IA32_IDT_GATE_DESCRIPTOR);
-	Idt = (VOID*)(UINTN)HandyCpuPage + 0x500;
+	gIdtTable = (VOID*)(UINTN)HandyCpuPage + 0x500;
 	for (Index = 0; Index < INTERRUPT_VECTOR_NUMBER; Index ++, CurrentHandler += 0x08) {
 		//
 		// If the old IDT had a handler for this interrupt, then
@@ -1162,14 +1199,14 @@ InitInterruptDescriptorTable (
 		gIdtTable[Index].Bits.Reserved_0  = 0;
 		gIdtTable[Index].Bits.GateType    = IA32_IDT_GATE_TYPE_INTERRUPT_32;
 #else
-		 Idt[Index].Bits.OffsetLow   = (UINT16)CurrentHandler;
-		Idt[Index].Bits.Selector    = CurrentCs; //AsmReadCs();
-		 Idt[Index].Bits.Reserved_0  = 0;
-		 Idt[Index].Bits.GateType    = IA32_IDT_GATE_TYPE_INTERRUPT_32;
-		 Idt[Index].Bits.OffsetHigh  = (UINT16)(CurrentHandler >> 16);
+		gIdtTable[Index].Bits.OffsetLow   = (UINT16)CurrentHandler;
+		gIdtTable[Index].Bits.Selector    = CurrentCs; //AsmReadCs();
+		gIdtTable[Index].Bits.Reserved_0  = 0;
+		gIdtTable[Index].Bits.GateType    = IA32_IDT_GATE_TYPE_INTERRUPT_32;
+		gIdtTable[Index].Bits.OffsetHigh  = (UINT16)(CurrentHandler >> 16);
 #if defined (MDE_CPU_X64)
-		 Idt[Index].Bits.OffsetUpper = (UINT32)(CurrentHandler >> 32);
-		 Idt[Index].Bits.Reserved_1  = 0;
+		gIdtTable[Index].Bits.OffsetUpper = (UINT32)(CurrentHandler >> 32);
+		gIdtTable[Index].Bits.Reserved_1  = 0;
 
 #endif
 
@@ -1189,7 +1226,7 @@ InitInterruptDescriptorTable (
 
   FreePool (IdtPtrAlignmentBuffer);
 #else
-	 LoadIdt(Idt, IdtSize);
+	 LoadIdt(gIdtTable, IdtSize);
 #endif
   //
   // Initialize Exception Handlers
@@ -1256,11 +1293,11 @@ CpuLibVirtualNotifyEvent (
     EFI_RUNTIME_SERVICES * rs = (EFI_RUNTIME_SERVICES *)Context;
 
     rs->ConvertPointer (0, (VOID **) &Gdt);
-    rs->ConvertPointer (0, (VOID **) &Idt);
+    rs->ConvertPointer (0, (VOID **) &gIdtTable);
 
     DisableInterrupts();
 
-    LoadIdt(Idt, IdtSize);
+    LoadIdt(gIdtTable, IdtSize);
     LoadGdt(Gdt, GdtSize);
 
     //IoWrite32(0xef11, 1);

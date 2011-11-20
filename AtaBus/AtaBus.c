@@ -93,6 +93,7 @@ ATA_DEVICE gAtaDeviceTemplate = {
   FALSE,                       // UdmaValid
   FALSE,                       // Lba48Bit
   NULL,                        // IdentifyData
+	NULL,					// ExitBootServiceEvent
   NULL,                        // ControllerNameTable
   {L'\0', },                   // ModelName
   {NULL, NULL}                 // AtaTaskList
@@ -182,10 +183,118 @@ ReleaseAtaResources (
       FreeAtaSubTask (Task);
     }
   }
+	if (AtaDevice->ExitBootServiceEvent != NULL) {
+		gBS->CloseEvent (AtaDevice->ExitBootServiceEvent);
+		AtaDevice->ExitBootServiceEvent = NULL;
+	}
+
+
   gBS->RestoreTPL (OldTpl);
   FreePool (AtaDevice);
 }
 
+/**
+ The is an event(generally the event is exitBootService event) call back function.
+ Clear pending IDE interrupt before OS loader/kernel take control of the IDE device.
+ 
+ @param  Event   Pointer to this event
+ @param  Context Event handler private data
+ 
+ **/
+VOID
+EFIAPI
+ClearInterrupt (
+				IN EFI_EVENT  Event,
+				IN VOID       *Context
+				)
+{
+	EFI_STATUS      Status;
+//	UINT64          IoPortForBmis;
+//	UINT8           RegisterValue;
+	ATA_DEVICE		*AtaDev;
+//	ATA_BUS_DRIVER_DATA         *AtaBusDriverData;
+//	EFI_ATA_PASS_THRU_PROTOCOL  *AtaPassThru;
+	
+	//
+	// Get our context
+	//
+	AtaDev = (ATA_DEVICE *) Context;
+//	AtaBusDriverData = AtaDev->AtaBusDriverData;
+//	AtaPassThru = AtaBusDriverData->AtaPassThru;
+	//
+	// Obtain IDE IO port registers' base addresses in case switch native<->legacy
+	//
+/*	Status = ReassignIdeResources (IdeDev);
+	if (EFI_ERROR (Status)) {
+		return;
+	}*/
+	
+	//
+	// Check whether interrupt is pending
+	//
+	
+	//
+	// Reset IDE device to force it de-assert interrupt pin
+	// Note: this will reset all devices on this IDE channel
+	//
+//	AtaSoftReset (PciIo, IdeRegisters, Timeout);
+//	Status = AtaDev->BlockIo.Reset(AtaDev->BlockIo, FALSE);	
+//	Status = AtaPassThru->ResetPort(AtaPassThru->ResetPort, 0);
+	Status = ResetAtaDevice(AtaDev);
+	if (EFI_ERROR (Status)) {
+		return;
+	}
+/*	
+	//
+	// Get base address of IDE Bus Master Status Register
+	//
+	if (IdePrimary == IdeDev->Channel) {
+		IoPortForBmis = IdeDev->IoPort->BusMasterBaseAddr + BMISP_OFFSET;
+	} else {
+		if (IdeSecondary == IdeDev->Channel) {
+			IoPortForBmis = IdeDev->IoPort->BusMasterBaseAddr + BMISS_OFFSET;
+		} else {
+			return;
+		}
+	}
+	//
+	// Read BMIS register and clear ERROR and INTR bit
+	//
+	IdeDev->PciIo->Io.Read (
+							IdeDev->PciIo,
+							EfiPciIoWidthUint8,
+							EFI_PCI_IO_PASS_THROUGH_BAR,
+							IoPortForBmis,
+							1,
+							&RegisterValue
+							);
+	
+	RegisterValue |= (BMIS_INTERRUPT | BMIS_ERROR);
+	
+	IdeDev->PciIo->Io.Write (
+							 IdeDev->PciIo,
+							 EfiPciIoWidthUint8,
+							 EFI_PCI_IO_PASS_THROUGH_BAR,
+							 IoPortForBmis,
+							 1,
+							 &RegisterValue
+							 );
+	
+	//
+	// Select the other device on this channel to ensure this device to release the interrupt pin
+	//
+	if (IdeDev->Device == 0) {
+		RegisterValue = (1 << 4) | 0xe0;
+	} else {
+		RegisterValue = (0 << 4) | 0xe0;
+	}
+	IdeWritePortB (
+				   IdeDev->PciIo,
+				   IdeDev->IoPort->Head,
+				   RegisterValue
+				   );
+*/
+}
 
 /**
   Registers an ATA device.
@@ -369,7 +478,7 @@ RegisterAtaDevice (
 	//
 	// Create event to clear pending IDE interrupt
 	//
-/*	Status = gBS->CreateEventEx (
+	Status = gBS->CreateEventEx (
 								 EVT_NOTIFY_SIGNAL,
 								 TPL_NOTIFY,
 								 ClearInterrupt,
@@ -378,15 +487,14 @@ RegisterAtaDevice (
 								 &AtaDevice->ExitBootServiceEvent
 								 );
 
-*/
 
 Done:
   if (NewDevicePathNode != NULL) {
-    FreePool (NewDevicePathNode);
+	  FreePool (NewDevicePathNode);
   }
 
   if (EFI_ERROR (Status) && (AtaDevice != NULL)) {
-    ReleaseAtaResources (AtaDevice);  
+	  ReleaseAtaResources (AtaDevice);  
 //    DEBUG ((EFI_D_ERROR | EFI_D_INIT, "Failed to initialize Port %x PortMultiplierPort %x, status = %r\n", Port, PortMultiplierPort, Status));
 	  DBG(L"Failed to initialize Port %x PortMultiplierPort %x, status = %r\n", Port, PortMultiplierPort, Status);
   }

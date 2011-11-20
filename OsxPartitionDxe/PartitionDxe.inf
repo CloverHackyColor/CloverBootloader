@@ -74,3 +74,6 @@
   gEfiBlockIo2ProtocolGuid                      ## TO_START
   gEfiDevicePathProtocolGuid                    ## TO_START
   gEfiDiskIoProtocolGuid                        ## TO_START
+
+[BuildOptions]
+  XCODE:*_*_*_CC_FLAGS = -Os

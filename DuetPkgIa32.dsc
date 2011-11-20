@@ -353,7 +353,7 @@
   MdeModulePkg/Universal/Acpi/S3SaveStateDxe/S3SaveStateDxe.inf
   #MdeModulePkg/Universal/Acpi/SmmS3SaveState/SmmS3SaveState.inf
   MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
-  #UefiCpuPkg/Universal/Acpi/S3Resume2Pei/S3Resume2Pei.inf
+  UefiCpuPkg/Universal/Acpi/S3Resume2Pei/S3Resume2Pei.inf
 
 
   # Bios Thunk

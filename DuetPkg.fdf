@@ -89,7 +89,7 @@ INF IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 	# foreign file system support
 #INF  Clover/VBoxFsDxe/VBoxHfs.inf
 #INF  Clover/VBoxFsDxe/VBoxFsDxe.inf
-INF  Clover/VBoxFsDxe/VBoxIso9660.inf
+#INF  Clover/VBoxFsDxe/VBoxIso9660.inf
 INF  Clover/HFSPlus/HFSPlus.inf
 
 INF  PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
@@ -164,12 +164,12 @@ INF  Clover/OsxPartitionDxe/PartitionDxe.inf
 #INF  MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
 INF  Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
 INF  Clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
-#INF  IntelFrameworkModulePkg/Universal/Acpi/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
 
   #FD
+#INF  IntelFrameworkModulePkg/Universal/Acpi/AcpiS3SaveDxe/AcpiS3SaveDxe.inf 
 #INF  MdeModulePkg/Universal/Acpi/S3SaveStateDxe/S3SaveStateDxe.inf
 #INF  MdeModulePkg/Universal/Acpi/SmmS3SaveState/SmmS3SaveState.inf
-#NF  MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
+#INF  MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
 #INF  UefiCpuPkg/Universal/Acpi/S3Resume2Pei/S3Resume2Pei.inf
 
 

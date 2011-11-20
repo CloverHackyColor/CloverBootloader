@@ -275,6 +275,16 @@ SetDataSelectors (
   UINT16 Selector
   );
 
+/**
+  Restore original Interrupt Descriptor Table Handler Address.
+
+  @param Index        The Index of the interrupt descriptor table handle.
+
+**/
+VOID
+RestoreInterruptDescriptorTableHandlerAddress (
+  IN UINTN       Index
+  );
 
 VOID EFIAPI
 LoadGdt(VOID* Gdt, UINT32 GdtSize);

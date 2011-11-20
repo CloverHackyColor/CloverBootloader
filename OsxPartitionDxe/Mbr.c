@@ -215,7 +215,7 @@ PartitionInstallMbrChildHandles (
         //  that corrupted the GPT partition. 
         //
         //continue;
-		  //Slice
+		  //Slice - if EE entry found no need to continue. That's all.
 		  break;
       }
 
@@ -286,18 +286,18 @@ PartitionInstallMbrChildHandles (
       *((UINT32 *) &HdDev.Signature[0]) = 0;
 
       Status = PartitionInstallChildHandle (
-                This,
-                Handle,
-                DiskIo,
-                BlockIo,
+                 This,
+                 Handle,
+                 DiskIo,
+                 BlockIo,
                  BlockIo2,
-                DevicePath,
-                (EFI_DEVICE_PATH_PROTOCOL *) &HdDev,
-                HdDev.PartitionStart - ParentHdDev.PartitionStart,
-                HdDev.PartitionStart - ParentHdDev.PartitionStart + HdDev.PartitionSize - 1,
-                MBR_SIZE,
-                (BOOLEAN) (Mbr->Partition[0].OSIndicator == EFI_PARTITION)
-                );
+                 DevicePath,
+                 (EFI_DEVICE_PATH_PROTOCOL *) &HdDev,
+                 HdDev.PartitionStart - ParentHdDev.PartitionStart,
+                 HdDev.PartitionStart - ParentHdDev.PartitionStart + HdDev.PartitionSize - 1,
+                 MBR_SIZE,
+                 (BOOLEAN) (Mbr->Partition[0].OSIndicator == EFI_PARTITION)
+                 );
       if (!EFI_ERROR (Status)) {
         Found = EFI_SUCCESS;
       }

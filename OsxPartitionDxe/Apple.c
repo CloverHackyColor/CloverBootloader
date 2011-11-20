@@ -53,6 +53,7 @@ be32_to_cpu(UINT32 x)
   @param[in]  Handle      Parent Handle
   @param[in]  DiskIo      Parent DiskIo interface
   @param[in]  BlockIo     Parent BlockIo interface
+  @param[in]  BlockIo2    Parent BlockIo2 interface.
   @param[in]  DevicePath  Parent Device Path
 
 
@@ -97,7 +98,7 @@ PartitionInstallAppleChildHandles (
   MediaId       = BlockIo->Media->MediaId;
   VolSpaceSize  = 0;
 
-  Block = AllocatePool ((UINTN) Media->BlockSize);
+  Block = AllocatePool ((UINTN)BlockSize);
 
   if (Block == NULL) {
     return EFI_NOT_FOUND;
@@ -178,6 +179,9 @@ PartitionInstallAppleChildHandles (
               Print(L"HFS partition (%d of %d) at LBA 0x%x size=%dM\n",
                     Partition, PartitionEntries, StartLba,
                     (UINT32)(MultU64x32(SizeLbs, SubBlockSize) / (1024 * 1024)));
+      //
+      // Create child device handle
+      //
 
           ZeroMem (&CdDev, sizeof (CdDev));
           CdDev.Header.Type     = MEDIA_DEVICE_PATH;

@@ -54,8 +54,8 @@ INF  MdeModulePkg/Core/RuntimeDxe/RuntimeDxe.inf
 INF  MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDxe.inf
 
 #INF  DuetPkg/FSVariable/FSVariable.inf
-#INF  MdeModulePkg/Universal/Variable/EmuRuntimeDxe/EmuVariableRuntimeDxe.inf
-INF  Clover/EmuVariableDxe/EmuVariableRuntimeDxe.inf
+INF  MdeModulePkg/Universal/Variable/EmuRuntimeDxe/EmuVariableRuntimeDxe.inf
+#INF  Clover/EmuVariableDxe/EmuVariableRuntimeDxe.inf
 INF  MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
 #INF  MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
 INF  MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
@@ -160,9 +160,9 @@ INF  Clover/OsxPartitionDxe/PartitionDxe.inf
 #INF  MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
 INF  Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
 INF  Clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
-#INF  IntelFrameworkModulePkg/Universal/Acpi/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
 
   #FD
+#INF  IntelFrameworkModulePkg/Universal/Acpi/AcpiS3SaveDxe/AcpiS3SaveDxe.inf 
 #INF  MdeModulePkg/Universal/Acpi/S3SaveStateDxe/S3SaveStateDxe.inf
 #INF  MdeModulePkg/Universal/Acpi/SmmS3SaveState/SmmS3SaveState.inf
 #INF  MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
