@@ -54,6 +54,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Protocol/SmmBase2.h>
 #include <Guid/MemoryTypeInformation.h>
 #include <Guid/FirmwareFileSystem2.h>
+#include <Guid/FirmwareFileSystem3.h>
 #include <Guid/HobList.h>
 #include <Guid/DebugImageInfoTable.h>
 #include <Guid/FileInfo.h>
@@ -163,6 +164,7 @@ typedef struct {
   BOOLEAN                         DepexProtocolError;
 
   EFI_HANDLE                      ImageHandle;
+  BOOLEAN                         IsFvImage;
 
 } EFI_CORE_DRIVER_ENTRY;
 
@@ -1252,7 +1254,7 @@ EFI_STATUS
 EFIAPI
 CoreAllocatePool (
   IN EFI_MEMORY_TYPE  PoolType,
-  IN UINTN            Size,
+  IN UINT64            Size,
   OUT VOID            **Buffer
   );
 
@@ -1681,8 +1683,18 @@ CoreGetMemorySpaceDescriptor (
   @param  Length                 Specified length
   @param  Attributes             Specified attributes
 
-  @retval EFI_SUCCESS            Successfully set attribute of a segment of
-                                 memory space.
+  @retval EFI_SUCCESS           The attributes were set for the memory region.
+  @retval EFI_INVALID_PARAMETER Length is zero. 
+  @retval EFI_UNSUPPORTED       The processor does not support one or more bytes of the memory
+                                resource range specified by BaseAddress and Length.
+  @retval EFI_UNSUPPORTED       The bit mask of attributes is not support for the memory resource
+                                range specified by BaseAddress and Length.
+  @retval EFI_ACCESS_DEFINED    The attributes for the memory resource range specified by
+                                BaseAddress and Length cannot be modified.
+  @retval EFI_OUT_OF_RESOURCES  There are not enough system resources to modify the attributes of
+                                the memory resource range.
+  @retval EFI_NOT_AVAILABLE_YET The attributes cannot be set because CPU architectural protocol is
+                                not available yet.
 
 **/
 EFI_STATUS
@@ -2255,6 +2267,7 @@ OpenSectionStream (
                                 function returns anything other than
                                 EFI_SUCCESS, the value of *AuthenticationStatus
                                 is undefined.
+  @param  IsFfs3Fv              Indicates the FV format.
 
   @retval EFI_SUCCESS           Section was retrieved successfully
   @retval EFI_PROTOCOL_ERROR    A GUID defined section was encountered in the
@@ -2285,7 +2298,8 @@ GetSection (
   IN UINTN                                              SectionInstance,
   IN VOID                                               **Buffer,
   IN OUT UINTN                                          *BufferSize,
-  OUT UINT32                                            *AuthenticationStatus
+  OUT UINT32                                            *AuthenticationStatus,
+  IN BOOLEAN                                            IsFfs3Fv
   );
 
 

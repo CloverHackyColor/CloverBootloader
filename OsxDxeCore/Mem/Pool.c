@@ -62,8 +62,8 @@ typedef struct {
 
 #define POOL_SIGNATURE  SIGNATURE_32('p','l','s','t')
 typedef struct {
-    INT32             Signature;
-    UINT32            Used;
+    INT64             Signature;
+    UINT64            Used;
     EFI_MEMORY_TYPE  MemoryType;
     LIST_ENTRY       FreeList[MAX_POOL_LIST];
     LIST_ENTRY       Link;
@@ -176,7 +176,7 @@ EFI_STATUS
 EFIAPI
 CoreAllocatePool (
   IN EFI_MEMORY_TYPE  PoolType,
-  IN UINTN            Size,
+  IN UINT64            Size,
   OUT VOID            **Buffer
   )
 {
