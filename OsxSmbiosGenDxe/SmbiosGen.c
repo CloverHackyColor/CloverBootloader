@@ -634,6 +634,8 @@ InstallMemoryDeviceSmbios		(//17
 		//
 		mHandle17[i] = LogSmbiosData(gSmbios,(UINT8*)newSmbiosTable.Type17);
 	}
+	//now we know Total system Memory in Mb
+	
 	return ;
 }
 
@@ -766,7 +768,7 @@ InstallMemorySmbios (  //19
 	SMBIOS_STRUCTURE_POINTER          SmbiosTable;
 	SMBIOS_STRUCTURE_POINTER          newSmbiosTable;
 	UINT16	i;
-	UINT32	TotalEnd; 
+	UINT64	TotalEnd; 
 	UINT8	PartWidth;
 	//
 	// Generate Memory Array Mapped Address info (TYPE 19)

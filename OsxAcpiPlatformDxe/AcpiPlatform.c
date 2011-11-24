@@ -350,7 +350,7 @@ AcpiPlatformEntryPoint (
 #endif	
 	VOID							*FileBuffer;
 //	VOID**							TmpHandler;
-	UINTN							FileSize;
+	UINT64							FileSize;
 	UINTN							BufferSize;
 //	UINTN							Key;
 	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *Volume;
@@ -410,6 +410,8 @@ AcpiPlatformEntryPoint (
 	oldDSDT = (EFI_ACPI_COMMON_HEADER*)(UINTN)Fadt->Dsdt;
 	DBG(L"Fadt @ %x\n", (UINTN)Fadt);
 	DBG(L"oldDSDT @ %x\n", (UINTN)oldDSDT);
+	
+#if READTABLES
 #if LIP	
 //  Looking for a volume from what we boot
 	
@@ -606,6 +608,7 @@ AcpiPlatformEntryPoint (
 			//
 			Instance++;   //for a what?
 			FileBuffer = NULL;
+			
 		} else if (oldDSDT && (Index==0)) {
 			//if new DSDT not found then install legacy one
 			Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Fadt->Dsdt));
@@ -625,6 +628,25 @@ AcpiPlatformEntryPoint (
 	if (Root != NULL) {
 		Root->Close (Root);
 	}
+#else
+//just install legacy tables
+	if (oldDSDT) {
+		//if new DSDT not found then install legacy one
+		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Fadt->Dsdt));
+		TableSize = Table->Length;
+		Signature.Sign = Table->Signature;
+		DBG(L"Install legacy table: %c%c%c%c\n", 
+			Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
+		
+		Status = AcpiTable->InstallAcpiTable (
+											  AcpiTable,
+											  Table,
+											  TableSize,
+											  &TableHandle
+											  );
+	}	
+	
+#endif	
 	return EFI_SUCCESS;
 }
 

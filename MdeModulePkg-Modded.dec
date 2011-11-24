@@ -85,10 +85,14 @@
   ##  @libraryclass  Provide platform specific hooks.
   #
   PlatformHookLib|Include/Library/PlatformHookLib.h
-  
+
   ##  @libraryclass  Provide platform specific hooks for SMM core.
   #
   SmmCorePlatformHookLib|Include/Library/SmmCorePlatformHookLib.h
+
+  ##  @libraryclass  Provide capability to maintain the data integrity cross S3 phase.
+  #
+  LockBoxLib|Include/Library/LockBoxLib.h
   
 [Guids]
   ## MdeModule package token space guid
@@ -198,6 +202,41 @@
   ## Include/Guid/AcpiS3Context.h
   gEfiAcpiS3ContextGuid              = { 0xef98d3a, 0x3e33, 0x497a, { 0xa4, 0x1, 0x77, 0xbe, 0x3e, 0xb7, 0x4f, 0x38 }}
 
+  ## Include/Guid/BootScriptExecutorVariable.h
+  gEfiBootScriptExecutorVariableGuid = { 0x3079818c, 0x46d4, 0x4a73, { 0xae, 0xf3, 0xe3, 0xe4, 0x6c, 0xf1, 0xee, 0xdb }}
+  gEfiBootScriptExecutorContextGuid  = { 0x79cb58c4, 0xac51, 0x442f, { 0xaf, 0xd7, 0x98, 0xe4, 0x7d, 0x2e, 0x99, 0x8 }}
+
+  ## Include/Guid/UsbKeyBoardLayout.h
+  gUsbKeyboardLayoutPackageGuid      = { 0xc0f3b43, 0x44de, 0x4907, { 0xb4, 0x78, 0x22, 0x5f, 0x6f, 0x62, 0x89, 0xdc }}
+  gUsbKeyboardLayoutKeyGuid          = { 0x3a4d7a7c, 0x18a, 0x4b42, { 0x81, 0xb3, 0xdc, 0x10, 0xe3, 0xb5, 0x91, 0xbd }}
+  
+  ## Include/Guid/HiiResourceSampleHii.h
+  gHiiResourceSamleFormSetGuid       = { 0x4f4ef7f0, 0xaa29, 0x4ce9, { 0xba, 0x41, 0x64, 0x3e, 0x1, 0x23, 0xa9, 0x9f }}
+
+  ## Include/Guid/DriverSampleHii.h
+  gDriverSampleFormSetGuid           = { 0xA04A27f4, 0xDF00, 0x4D42, { 0xB5, 0x52, 0x39, 0x51, 0x13, 0x02, 0x11, 0x3D }}
+  gDriverSampleInventoryGuid         = { 0xb3f56470, 0x6141, 0x4621, { 0x8f, 0x19, 0x70, 0x4e, 0x57, 0x7a, 0xa9, 0xe8 }}
+  gEfiIfrRefreshIdOpGuid             = { 0xF5E655D9, 0x02A6, 0x46f2, { 0x9E, 0x76, 0xB8, 0xBE, 0x8E, 0x60, 0xAB, 0x22 }}
+
+  ## Include/Guid/PlatDriOverrideHii.h
+  gPlatformOverridesManagerGuid      = { 0x8614567d, 0x35be, 0x4415, { 0x8d, 0x88, 0xbd, 0x7d, 0xc, 0x9c, 0x70, 0xc0 }}
+
+  ## Include/Guid/Ip4ConfigHii.h
+  gNicIp4ConfigNvDataGuid            = { 0x9d5b53f, 0xf4b0, 0x4f59, { 0xa0, 0xb1, 0x7b, 0x57, 0xd3, 0x5c, 0xe, 0x5 }}
+
+  ## Include/Guid/VlanConfigHii.h
+  gVlanConfigFormSetGuid             = { 0xd79df6b0, 0xef44, 0x43bd, { 0x97, 0x97, 0x43, 0xe9, 0x3b, 0xcf, 0x5f, 0xa8 }}
+
+  ## Include/Guid/Ip4IScsiConfigHii.h
+  gIp4IScsiConfigGuid                = { 0x6456ed61, 0x3579, 0x41c9, { 0x8a, 0x26, 0x0a, 0x0b, 0xd6, 0x2b, 0x78, 0xfc }}
+  gIScsiCHAPAuthInfoGuid             = { 0x786ec0ac, 0x65ae, 0x4d1b, { 0xb1, 0x37, 0xd, 0x11, 0xa, 0x48, 0x37, 0x97 }}
+
+  ## Include/Guid/ZeroGuid.h
+  gZeroGuid                          = { 0x0, 0x0, 0x0, {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}}
+  
+  ## Include/Guid/MtcVendor.h
+  gMtcVendorGuid                     = { 0xeb704011, 0x1402, 0x11d3, { 0x8e, 0x77, 0x0, 0xa0, 0xc9, 0x69, 0x72, 0x3b }}
+
 [Ppis]
   ## Include/Ppi/AtaController.h
   gPeiAtaControllerPpiGuid       = { 0xa45e60d1, 0xc719, 0x44aa, { 0xb0, 0x7a, 0xaa, 0x77, 0x7f, 0x85, 0x90, 0x6d }}
@@ -228,6 +267,9 @@
 
   ## Include/Ppi/SmmControl.h
   gPeiSmmControlPpiGuid         =  { 0x61c68702, 0x4d7e, 0x4f43, { 0x8d, 0xef, 0xa7, 0x43, 0x5, 0xce, 0x74, 0xc5 }}
+
+  ## Include/Ppi/PostBootScriptTable.h
+  gPeiPostScriptTablePpiGuid    =  { 0x88c9d306, 0x900, 0x4eb5, { 0x82, 0x60, 0x3e, 0x2d, 0xbe, 0xda, 0x1f, 0x89}}
 
 [Protocols]
   ## Load File protocol provides capability to load and unload EFI image into memory and execute it.
@@ -277,6 +319,18 @@
 
   ## Include/Protocol/LockBox.h
   gEfiLockBoxProtocolGuid        = { 0xbd445d79, 0xb7ad, 0x4f04, { 0x9a, 0xd8, 0x29, 0xbd, 0x20, 0x40, 0xeb, 0x3c }}
+  
+  ## Include/Protocol/FormBrowserEx.h
+  gEfiFormBrowserExProtocolGuid = { 0x1f73b18d, 0x4630, 0x43c1, { 0xa1, 0xde, 0x6f, 0x80, 0x85, 0x5d, 0x7d, 0xa4 } }
+
+  ## Include/Protocol/EbcVmTest.h
+  gEfiEbcVmTestProtocolGuid = { 0xAAEACCFD, 0xF27B, 0x4C17, { 0xB6, 0x10, 0x75, 0xCA, 0x1F, 0x2D, 0xFB, 0x52 } }
+
+  ## Include/Protocol/EbcSimpleDebugger.h
+  gEfiEbcSimpleDebuggerProtocolGuid = { 0x2a72d11e, 0x7376, 0x40f6, { 0x9c, 0x68, 0x23, 0xfa, 0x2f, 0xe3, 0x63, 0xf1 } }
+
+  ## Include/Protocol/BootLogo.h
+  gEfiBootLogoProtocolGuid = { 0xcdea2bd3, 0xfc25, 0x4c1c, { 0xb9, 0x7c, 0xb3, 0x11, 0x86, 0x6, 0x49, 0x90 } }
 
 [PcdsFeatureFlag]
   ## Indicate whether platform can support update capsule across a system reset
@@ -469,6 +523,9 @@
   ## FFS filename to find the ACPI tables
   gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiTableStorageFile|{ 0x25, 0x4e, 0x37, 0x7e, 0x01, 0x8e, 0xee, 0x4f, 0x87, 0xf2, 0x39, 0xc, 0x23, 0xc6, 0x6, 0xcd }|VOID*|0x30000016
 
+  ## FFS filename to find the capsule coalesce image.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdCapsuleCoalesceFile|{ 0xA6, 0xE4, 0xFD, 0xF7, 0x4C, 0x29, 0x3c, 0x49, 0xB5, 0x0F, 0x97, 0x34, 0x55, 0x3B, 0xB7, 0x57 }|VOID*|0x30000017
+
   ## Single root I/O virtualization virtual function memory BAR alignment
   #  BITN set indicates 2 of n+12 power
   #  BIT0 set indicates 4KB alignment
@@ -488,6 +545,22 @@
   #  to handle all link layers. If the value is non zero, the PCD value will be used as block size.
   #
   gEfiMdeModulePkgTokenSpaceGuid.PcdTftpBlockSize|0x0|UINT64|0x30001026
+
+  ## Progress Code for OS Loader LoadImage start.
+  #  PROGRESS_CODE_OS_LOADER_LOAD   = (EFI_SOFTWARE_DXE_BS_DRIVER | (EFI_OEM_SPECIFIC | 0x00000000)) = 0x03058000
+  gEfiMdeModulePkgTokenSpaceGuid.PcdProgressCodeOsLoaderLoad|0x03058000|UINT32|0x30001030
+
+  ## Progress Code for OS Loader StartImage start.
+  #  PROGRESS_CODE_OS_LOADER_START  = (EFI_SOFTWARE_DXE_BS_DRIVER | (EFI_OEM_SPECIFIC | 0x00000001)) = 0x03058001
+  gEfiMdeModulePkgTokenSpaceGuid.PcdProgressCodeOsLoaderStart|0x03058001|UINT32|0x30001031
+
+  ## Progress Code for S3 Suspend start.
+  #  PROGRESS_CODE_S3_SUSPEND_START = (EFI_SOFTWARE_SMM_DRIVER | (EFI_OEM_SPECIFIC | 0x00000000))    = 0x03078000
+  gEfiMdeModulePkgTokenSpaceGuid.PcdProgressCodeS3SuspendStart|0x03078000|UINT32|0x30001032
+
+  ## Progress Code for S3 Suspend end.
+  #  PROGRESS_CODE_S3_SUSPEND_END   = (EFI_SOFTWARE_SMM_DRIVER | (EFI_OEM_SPECIFIC | 0x00000001))    = 0x03078001
+  gEfiMdeModulePkgTokenSpaceGuid.PcdProgressCodeS3SuspendEnd|0x03078001|UINT32|0x30001033
 
 [PcdsFixedAtBuild,PcdsPatchableInModule]
   ## Maximun number of performance log entries during PEI phase.
@@ -549,11 +622,21 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdMaxEfiSystemTablePointerAddress|0x0|UINT64|0x30001027
   
 [PcdsPatchableInModule, PcdsDynamic, PcdsDynamicEx]
-  ## This PCD defines the Console output column and the default value is 25 according to UEFI spec
-  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow|31|UINT32|0x40000006
+  ## This PCD defines the Console output column and the default value is 25 according to UEFI spec.
+  #  This PCD could be set to 0 then console output could be at max column and max row.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow|0|UINT32|0x40000006
 
-  ## This PCD defines the Console output row and the default value is 80 according to UEFI spec
-  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn|100|UINT32|0x40000007
+  ## This PCD defines the Console output row and the default value is 80 according to UEFI spec.
+  #  This PCD could be set to 0 then console output could be at max column and max row.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn|0|UINT32|0x40000007
+
+  ## This PCD defines the video horizontal resolution.
+  #  This PCD could be set to 0 then video resolution could be at highest resolution.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution|0|UINT32|0x40000009
+
+  ## This PCD defines the video vertical resolution.
+  #  This PCD could be set to 0 then video resolution could be at highest resolution.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution|0|UINT32|0x4000000a
 
 [PcdsFixedAtBuild, PcdsDynamic, PcdsDynamicEx]
   ## Base address of the NV variable range in flash device
@@ -643,7 +726,7 @@
   #  0x0D (EFI_LIGHTMAGENTA)
   #  0x0E (EFI_YELLOW)
   #  0x0F (EFI_WHITE)
-  gEfiMdeModulePkgTokenSpaceGuid.PcdBrowserSubtitleTextColor|0x01|UINT8|0x00010057
+  gEfiMdeModulePkgTokenSpaceGuid.PcdBrowserSubtitleTextColor|0x02|UINT8|0x00010057
   
   ## Specify the foreground color for prompt and Question value text in HII Form Browser. The default value is EFI_BLACK.
   #  Only following values defined in UEFI specification are valid:
@@ -700,6 +783,20 @@
   ## Time in second to delay for SATA devices to spin-up for recovery.
   gEfiMdeModulePkgTokenSpaceGuid.PcdSataSpinUpDelayInSecForRecoveryPath|15|UINT16|0x0001005B
 
+  ## The PCD is used to specify memory size with page number for a pre-allocated ACPI NVS memory to hold
+  #  runtime created S3 boot script entries. The default page number is 2. When changing the value of this
+  #  PCD, the platform developer should make sure the memory size is large enough to hold the S3 boot
+  #  script node created in runtime phase.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdS3BootScriptRuntimeTableReservePageNumber|0x2|UINT16|0x0001005C
+
+  ## The PCD is used to specify the stack size when capsule IA32 PEI transfers to long mode in PEI phase.
+  #  The default size 32K. When changing the value of this PCD, the platform developer should
+  #  make sure the memory size is large enough to meet capsule PEI requiremnt in capsule update path.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdCapsulePeiLongModeStackSize|0x8000|UINT32|0x0001005D
+
+  ## This PCD specifies whether 1G page table is enabled.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdUse1GPageTable|FALSE|BOOLEAN|0x0001005E
+
 [PcdsPatchableInModule]
   ## Specify  memory size with page number for PEI code when 
   #  the feature of Loading Module at Fixed Address is enabled
@@ -716,4 +813,12 @@
   ## Specify  memory size with page number for SMM code when 
   #  the feature of Loading Module at Fixed Address is enabled
   gEfiMdeModulePkgTokenSpaceGuid.PcdLoadFixAddressSmmCodePageNumber|0|UINT32|0x0000002c
+
+[PcdsDynamic]
+#, PcdsDynamicEx]
+  ## This dynamic PCD hold an address to point to private data structure used in DxeS3BootScriptLib library
+  #  instance which records the S3 boot script table start address, length, etc. To introduce this PCD is
+  #  only for DxeS3BootScriptLib instance implementation purpose. The platform developer should make sure the
+  #  default value is set to Zero. And the PCD is assumed ONLY to be accessed in DxeS3BootScriptLib Library.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdS3BootScriptTablePrivateDataPtr|0x0|UINT64|0x00030000
 

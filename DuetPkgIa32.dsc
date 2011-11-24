@@ -196,8 +196,8 @@
       #ReportStatusCodeLib|MdeModulePkg/Library/DxeReportStatusCodeLib/DxeReportStatusCodeLib.inf
       ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
   }
- Clover/OsxDxeCore/DxeMain.inf {
-# MdeModulePkg/Core/Dxe/DxeMain.inf {
+# Clover/OsxDxeCore/DxeMain.inf {
+ MdeModulePkg/Core/Dxe/DxeMain.inf {
     #
     # Enable debug output for DxeCore module, this is a sample for how to enable debug output
     # for a module. If need turn on debug output for other module, please copy following overriden
@@ -303,13 +303,7 @@
   #Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
   Clover/SataControllerDxe/SataControllerDxe.inf
   #MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
-  Clover/AtaAtapi/AtaAtapiPassThru.inf {
-    <PcdsFixedAtBuild>
-	  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000042
-      gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x02
-  	<LibraryClasses>
-#  	DebugLib|MdePkg/Library/UefiDebugLibStdErr/UefiDebugLibStdErr.inf
-  }
+  Clover/AtaAtapi/AtaAtapiPassThru.inf
   #MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
   Clover/AtaBus/AtaBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf

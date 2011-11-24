@@ -34,12 +34,6 @@ EFI_GUID                    *gTableGuidArray[] = {
     &gEfiAcpi10TableGuid, &gEfiAcpiTableGuid, &gEfiSmbiosTableGuid //, &gEfiMpsTableGuid
   };
 
-
-VOID BiosPutC(CHAR8 ch)
-{
-	//
-}
-
 //
 // BDS Platform Functions
 //
@@ -73,7 +67,6 @@ Returns:
   //
   // Iteratively add ACPI Table, SMBIOS Table, MPS Table to EFI System Table
   //
-// do it only for MP?	
   for (Index = 0; Index < sizeof (gTableGuidArray) / sizeof (*gTableGuidArray); ++Index) {
 //	Index = 3;
     GuidHob.Raw = GetNextGuidHob (gTableGuidArray[Index], HobStart.Raw);
@@ -139,12 +132,12 @@ PrintMemoryMap (
 
   for (Index = 0; Index < MemMapSize / DescriptorSize; Index ++) {
     Bytes = LShiftU64 (MemMap->NumberOfPages, 12);
- /*   DEBUG ((EFI_D_ERROR, "%lX-%lX  %lX %lX %X\n",
+    DEBUG ((EFI_D_ERROR, "%lX-%lX  %lX %lX %X\n",
           MemMap->PhysicalStart, 
           MemMap->PhysicalStart + Bytes - 1,
           MemMap->NumberOfPages, 
           MemMap->Attribute,
-          (UINTN)MemMap->Type));*/
+          (UINTN)MemMap->Type));
     MemMap = (EFI_MEMORY_DESCRIPTOR *)((UINTN)MemMap + DescriptorSize);
   }
 
@@ -1197,18 +1190,18 @@ Returns:
   // Init the time out value
   //
   Timeout = PcdGet16 (PcdPlatformBootTimeOut);
-//	BiosPutC('1');
+
   //
   // Load the driver option as the driver option list
   //
   PlatformBdsGetDriverOption (DriverOptionList);
-//	BiosPutC('2');
+
   //
   // Get current Boot Mode
   //
   Status = BdsLibGetBootMode (&BootMode);
-//  DEBUG ((EFI_D_ERROR, "Boot Mode:%x\n", BootMode));
-//	BiosPutC('3');
+  DEBUG ((EFI_D_ERROR, "Boot Mode:%x\n", BootMode));
+
   //
   // Go the different platform policy with different boot mode
   // Notes: this part code can be change with the table policy
@@ -1218,12 +1211,10 @@ Returns:
   // Connect platform console
   //
   Status = PlatformBdsConnectConsole (gPlatformConsole);
-//	BiosPutC('4');
   if (EFI_ERROR (Status)) {
     //
     // Here OEM/IBV can customize with defined action
     //
-//	  BiosPutC('5');
     PlatformBdsNoConsoleAction ();
   }
   //
@@ -1242,14 +1233,13 @@ Returns:
   //
   // Memory test and Logo show
   //
-//	BiosPutC('6');
   PlatformBdsDiagnostics (IGNORE, TRUE, BaseMemoryTest);
-//	BiosPutC('7');
+
   //
   // Perform some platform specific connect sequence
   //
   PlatformBdsConnectSequence ();
-//	BiosPutC('8');
+
   //
   // Give one chance to enter the setup if we
   // have the time out
@@ -1259,7 +1249,7 @@ Returns:
   if (Timeout != 0) {
     PlatformBdsEnterFrontPage (Timeout, FALSE);
   }
-//	BiosPutC('9');
+
   //
   BdsLibConnectAll ();
   BdsLibEnumerateAllBootOption (BootOptionList);  
@@ -1298,7 +1288,6 @@ Returns:
     //
     // Enter Setup if user input 
     //
-//	  BiosPutC('b');
     Timeout = 0xffff;
     PlatformBdsEnterFrontPage (Timeout, FALSE);
   }
