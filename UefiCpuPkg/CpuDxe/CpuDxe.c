@@ -1083,16 +1083,7 @@ SetInterruptDescriptorTableHandlerAddress (
   } else {
     UintnHandler = ((UINTN) AsmIdtVector00) + (8 * Index);
   }
-#if notvbox
-  gIdtTable[Index].Bits.OffsetLow   = (UINT16)UintnHandler;
-  gIdtTable[Index].Bits.Reserved_0  = 0;
-  gIdtTable[Index].Bits.GateType    = IA32_IDT_GATE_TYPE_INTERRUPT_32;
-  gIdtTable[Index].Bits.OffsetHigh  = (UINT16)(UintnHandler >> 16);
-#if defined (MDE_CPU_X64)
-  gIdtTable[Index].Bits.OffsetUpper = (UINT32)(UintnHandler >> 32);
-  gIdtTable[Index].Bits.Reserved_1  = 0;
-#endif
-#else
+  
 	gIdtTable[Index].Bits.OffsetLow   = (UINT16)UintnHandler;
 //	gIdtTable[Index].Bits.Selector    = AsmReadCs();
 	gIdtTable[Index].Bits.Reserved_0  = 0;
@@ -1100,10 +1091,7 @@ SetInterruptDescriptorTableHandlerAddress (
 	gIdtTable[Index].Bits.OffsetHigh  = (UINT16)(UintnHandler >> 16);
 #if defined (MDE_CPU_X64)
 	gIdtTable[Index].Bits.OffsetUpper = (UINT32)(UintnHandler >> 32);
-	gIdtTable[Index].Bits.Reserved_1  = 0;
-	
-#endif
-	
+	gIdtTable[Index].Bits.Reserved_1  = 0;	
 #endif
 }
 
@@ -1126,8 +1114,6 @@ RestoreInterruptDescriptorTableHandlerAddress (
 #endif
   }
 }
-
-
 
 /**
   Initialize Interrupt Descriptor Table for interrupt handling.

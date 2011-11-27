@@ -295,7 +295,7 @@ LoadIdt(VOID* Idt, UINT32 IdtSize);
 extern EFI_PHYSICAL_ADDRESS      HandyCpuPage;
 extern VOID*                     Gdt;
 extern UINT32                    GdtSize;
-extern IA32_IDT_GATE_DESCRIPTOR* Idt;
+extern IA32_IDT_GATE_DESCRIPTOR* gIdtTable;
 extern UINT32                    IdtSize;
 
 #endif

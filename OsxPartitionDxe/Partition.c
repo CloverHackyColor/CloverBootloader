@@ -1139,7 +1139,7 @@ PartitionInstallChildHandle (
   // here.
   //
   Private->Handle = NULL;
-  if ((Private->ParentBlockIo2 != NULL) &&
+  if ( 0 && (Private->ParentBlockIo2 != NULL) &&
       (Private->ParentBlockIo2->Media->BlockSize == BlockSize)
      ) {
     Status = gBS->InstallMultipleProtocolInterfaces (

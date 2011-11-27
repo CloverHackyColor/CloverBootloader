@@ -20,6 +20,7 @@
 #define DEBUG_ACPI 0
 #endif
 #define LIP 0
+#define READTABLES 0
 
 #if DEBUG_ACPI==1
 #define DBG(x...)  Print(x)
@@ -343,6 +344,7 @@ AcpiPlatformEntryPoint (
 	UINTN                           TableHandle;
 	UINTN                           TableSize;
 //	UINTN                           Size;
+#if READTABLES	
 	UINTN							Index;
 	CHAR16*							FileName;
 #if LIP	
@@ -357,6 +359,7 @@ AcpiPlatformEntryPoint (
 	EFI_FILE_INFO                   *Info;
 	EFI_FILE_HANDLE                 Root = NULL;
 	EFI_FILE_HANDLE                 ThisFile = NULL;
+#endif	
 	EFI_PHYSICAL_ADDRESS			*Acpi20;
 	EFI_PEI_HOB_POINTERS			GuidHob;
 	EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER *Rsdp;

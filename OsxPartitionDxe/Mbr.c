@@ -216,6 +216,7 @@ PartitionInstallMbrChildHandles (
         //
         //continue;
 		  //Slice - if EE entry found no need to continue. That's all.
+		  Found           = EFI_NOT_FOUND;
 		  break;
       }
 

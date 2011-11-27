@@ -2,7 +2,7 @@
   SCSI Bus driver that layers on every SCSI Pass Thru and
   Extended SCSI Pass Thru protocol in the system.
 
-Copyright (c) 2006 - 2010, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2006 - 2011, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -78,6 +78,49 @@ NotifyFunction (
   IN  EFI_EVENT  Event,
   IN  VOID       *Context
   );
+
+/**
+  Allocates an aligned buffer for SCSI device.
+
+  This function allocates an aligned buffer for the SCSI device to perform
+  SCSI pass through operations. The alignment requirement is from SCSI pass
+  through interface.
+
+  @param  ScsiIoDevice      The SCSI child device involved for the operation.
+  @param  BufferSize        The request buffer size.
+
+  @return A pointer to the aligned buffer or NULL if the allocation fails.
+
+**/
+VOID *
+AllocateAlignedBuffer (
+  IN SCSI_IO_DEV              *ScsiIoDevice,
+  IN UINTN                    BufferSize
+  )
+{
+  return AllocateAlignedPages (EFI_SIZE_TO_PAGES (BufferSize), ScsiIoDevice->ScsiIo.IoAlign);
+}
+
+/**
+  Frees an aligned buffer for SCSI device.
+
+  This function frees an aligned buffer for the SCSI device to perform
+  SCSI pass through operations.
+
+  @param  Buffer            The aligned buffer to be freed.
+  @param  BufferSize        The request buffer size.
+
+**/
+VOID
+FreeAlignedBuffer (
+  IN VOID                     *Buffer,
+  IN UINTN                    BufferSize
+  )
+{
+  if (Buffer != NULL) {
+    FreeAlignedPages (Buffer, EFI_SIZE_TO_PAGES (BufferSize));
+  }
+}
 
 /**
   The user Entry Point for module ScsiBus. The user code starts with this function.
@@ -715,29 +758,6 @@ SCSIBusDriverBindingStop (
 
 
 /**
- Allocates an aligned buffer for Scsi device.
- 
- This function allocates an aligned buffer for the Scsi device to perform
- ATA pass through operations. The alignment requirement is from ATA pass
- through interface.
- 
- @param  ScsiIoDevice         The Scsi child device involved for the operation.
- @param  BufferSize        The request buffer size.
- 
- @return A pointer to the aligned buffer or NULL if the allocation fails.
- 
- **/
-VOID *
-AllocateAlignedBuffer (
-					   IN SCSI_IO_DEV               *ScsiIoDevice,
-					   IN UINTN                    BufferSize
-					   )
-{
-	return AllocateAlignedPages (EFI_SIZE_TO_PAGES (BufferSize), ScsiIoDevice->ExtScsiPassThru->Mode->IoAlign);
-}
-
-
-/**
   Retrieves the device type information of the SCSI Controller.
 
   @param  This          Protocol instance pointer.
@@ -1231,10 +1251,11 @@ DiscoverScsiDevice (
   UINT8                 SenseDataLength;
   UINT8                 HostAdapterStatus;
   UINT8                 TargetStatus;
-  EFI_SCSI_SENSE_DATA*   SenseData;
+  EFI_SCSI_SENSE_DATA*   SenseData = NULL;
   EFI_SCSI_INQUIRY_DATA* InquiryData;
   UINT8                 MaxRetry;
   UINT8                 Index;
+  BOOLEAN               ScsiDeviceFound;
 
   HostAdapterStatus = 0;
   TargetStatus      = 0;
@@ -1244,6 +1265,11 @@ DiscoverScsiDevice (
   InquiryDataLength = sizeof (EFI_SCSI_INQUIRY_DATA);
   SenseDataLength   = (UINT8) sizeof (EFI_SCSI_SENSE_DATA);
 	InquiryData = (EFI_SCSI_INQUIRY_DATA*)AllocateAlignedBuffer(ScsiIoDevice, InquiryDataLength);
+ if (InquiryData == NULL) {
+    ScsiDeviceFound = FALSE;
+    goto Done;
+  }
+
 	SenseData = (EFI_SCSI_SENSE_DATA*)AllocateAlignedBuffer(ScsiIoDevice, SenseDataLength);
 //  ZeroMem (&InquiryData, InquiryDataLength);
 
@@ -1266,13 +1292,14 @@ DiscoverScsiDevice (
     } else if ((Status == EFI_BAD_BUFFER_SIZE) || 
                (Status == EFI_INVALID_PARAMETER) ||
                (Status == EFI_UNSUPPORTED)) {
-		goto Exit;
+      ScsiDeviceFound = FALSE;
+      goto Done;
     }
   }
 
   if (Index == MaxRetry) {
-	  DBG(L"Index == MaxRetry\n");
-	  goto Exit;
+    ScsiDeviceFound = FALSE;
+    goto Done;
   }
   
   //
@@ -1281,17 +1308,20 @@ DiscoverScsiDevice (
 	DBG(L"InquiryData->Peripheral_Qualifier=%d\n", InquiryData->Peripheral_Qualifier);
   if ((InquiryData->Peripheral_Qualifier != 0) &&
       (InquiryData->Peripheral_Qualifier != 3)) {
-	  goto Exit;
+    ScsiDeviceFound = FALSE;
+    goto Done;
   }
 	DBG(L"InquiryData->Peripheral_Type=%d\n", InquiryData->Peripheral_Type);
   if (InquiryData->Peripheral_Qualifier == 3) {
     if (InquiryData->Peripheral_Type != 0x1f) {
-		goto Exit;
+      ScsiDeviceFound = FALSE;
+      goto Done;
     }
   }
 
   if (0x1e >= InquiryData->Peripheral_Type && InquiryData->Peripheral_Type >= 0xa) {
-	  goto Exit;
+    ScsiDeviceFound = FALSE;
+    goto Done;
   }
 
   //
@@ -1308,13 +1338,21 @@ DiscoverScsiDevice (
     ScsiIoDevice->ScsiVersion = (UINT8) (InquiryData->Version & 0x07);
   }
 	DBG(L"ScsiIoDevice->ScsiVersion=%d\n", ScsiIoDevice->ScsiVersion);
+
+  ScsiDeviceFound = TRUE;
+
+Done:
+	FreeAlignedBuffer (InquiryData, sizeof (EFI_SCSI_INQUIRY_DATA));
+	FreeAlignedBuffer (SenseData, sizeof (EFI_SCSI_SENSE_DATA));
+  return ScsiDeviceFound;
+/*	
 	FreePool(InquiryData);
 	FreePool(SenseData);
   return TRUE;
 Exit:
 	FreePool(InquiryData);
 	FreePool(SenseData);
-	return FALSE;
+	return FALSE;*/
 }
 
 

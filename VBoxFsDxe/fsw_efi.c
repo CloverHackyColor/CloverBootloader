@@ -314,9 +314,11 @@ EFI_STATUS EFIAPI fsw_efi_DriverBinding_Start(IN EFI_DRIVER_BINDING_PROTOCOL  *T
         // register the SimpleFileSystem protocol
         Volume->FileSystem.Revision     = EFI_FILE_IO_INTERFACE_REVISION;
         Volume->FileSystem.OpenVolume   = fsw_efi_FileSystem_OpenVolume;
-        Status = BS->InstallMultipleProtocolInterfaces(&ControllerHandle,
-                                                       &PROTO_NAME(SimpleFileSystemProtocol), &Volume->FileSystem,
-                                                       NULL);
+        Status = BS->InstallMultipleProtocolInterfaces(
+											&ControllerHandle,
+											&PROTO_NAME(SimpleFileSystemProtocol), 
+											&Volume->FileSystem,
+                                            NULL);
         if (EFI_ERROR(Status)) {
 //            Print(L"Fsw ERROR: InstallMultipleProtocolInterfaces returned %x\n", Status);
 		}

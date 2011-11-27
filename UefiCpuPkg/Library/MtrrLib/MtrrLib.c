@@ -144,17 +144,21 @@ GetFirmwareVariableMtrrCount (
 /**
   Returns the default MTRR cache type for the system.
 
-  @return  MTRR default type
+  @return  The default MTRR cache type.
 
 **/
-UINT64
-GetMtrrDefaultMemoryType (
+MTRR_MEMORY_CACHE_TYPE
+EFIAPI
+MtrrGetDefaultMemoryType (
   VOID
 )
 {
-  return (AsmReadMsr64 (MTRR_LIB_IA32_MTRR_DEF_TYPE) & 0xff);
+  if (!IsMtrrSupported ()) {
+    return CacheUncacheable;
 }
 
+  return (MTRR_MEMORY_CACHE_TYPE) (AsmReadMsr64 (MTRR_LIB_IA32_MTRR_DEF_TYPE) & 0x7);
+}
 
 /**
   Preparation before programming MTRR.
@@ -1023,20 +1027,10 @@ MtrrSetMemoryAttribute (
   }
 
   //
-  // Program Variable MTRRs
-  //
-  // Avoid hardcode here and read data dynamically
-  //
-  if (UsedMtrr >= FirmwareVariableMtrrCount) {
-    Status = RETURN_OUT_OF_RESOURCES;
-    goto Done;
-  }
-
-  //
   // The memory type is the same with the type specified by
   // MTRR_LIB_IA32_MTRR_DEF_TYPE.
   //
-  if ((!OverwriteExistingMtrr) && (Attribute == GetMtrrDefaultMemoryType ())) {
+  if ((!OverwriteExistingMtrr) && (Attribute == MtrrGetDefaultMemoryType ())) {
     //
     // Invalidate the now-unused MTRRs
     //

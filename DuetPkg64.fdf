@@ -56,7 +56,7 @@ INF  MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDx
 #INF  MdeModulePkg/Universal/Variable/EmuRuntimeDxe/EmuVariableRuntimeDxe.inf
 INF  Clover/EmuVariableDxe/EmuVariableRuntimeDxe.inf
 INF  MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
-#INF  MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
+INF  MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
 INF  MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
 INF  MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
 INF  MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
@@ -82,7 +82,7 @@ INF  Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
 
 	#DataHub
 #INF  Clover/VBoxAppleSim/VBoxAppleSim.inf
-#INF IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
+INF IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 #INF IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
 #INF EdkCompatibilityPkg/Compatibility/PiSmbiosRecordOnDataHubSmbiosRecordThunk/PiSmbiosRecordOnDataHubSmbiosRecordThunk.inf
 	# foreign file system support
@@ -159,7 +159,7 @@ INF  Clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
   #FD
 #INF  MdeModulePkg/Universal/Acpi/S3SaveStateDxe/S3SaveStateDxe.inf
 #INF  MdeModulePkg/Universal/Acpi/SmmS3SaveState/SmmS3SaveState.inf
-#NF  MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
+#INF  MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
 #INF  UefiCpuPkg/Universal/Acpi/S3Resume2Pei/S3Resume2Pei.inf
 
 
