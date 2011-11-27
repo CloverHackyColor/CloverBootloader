@@ -163,6 +163,9 @@
 
 [PcdsFeatureFlag]
   gEfiMdeModulePkgTokenSpaceGuid.PcdTurnOffUsbLegacySupport|TRUE
+  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdPlatformCsmSupport|FALSE
+  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdPs2MouseExtendedVerification|FALSE
+  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdInstallAcpiSupportProtocol|FALSE
 
 ###################################################################################################
 #
@@ -362,7 +365,7 @@
   #
   # Sample Application
   #
-  #MdeModulePkg/Application/HelloWorld/HelloWorld.inf
+  MdeModulePkg/Application/HelloWorld/HelloWorld.inf
   #MdeModulePkg/Application/VariableInfo/VariableInfo.inf
   #iBootEFI/iboot.inf
   #rEFIt_UEFI/refit.inf
