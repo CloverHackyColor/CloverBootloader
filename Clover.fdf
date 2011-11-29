@@ -42,6 +42,12 @@ READ_STATUS        = TRUE
 READ_LOCK_CAP      = TRUE
 READ_LOCK_STATUS   = TRUE
 
+APRIORI PEI {
+  INF  MdeModulePkg/Universal/ReportStatusCodeRouter/Pei/ReportStatusCodeRouterPei.inf
+  INF  MdeModulePkg/Universal/StatusCodeHandler/Pei/StatusCodeHandlerPei.inf
+  INF  MdeModulePkg/Universal/PCD/Pei/Pcd.inf
+  }
+
 APRIORI DXE {
   INF  MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
   INF  PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
@@ -57,7 +63,7 @@ INF  MdeModulePkg/Universal/MonotonicCounterRuntimeDxe/MonotonicCounterRuntimeDx
 INF  MdeModulePkg/Universal/Variable/EmuRuntimeDxe/EmuVariableRuntimeDxe.inf
 #INF  Clover/EmuVariableDxe/EmuVariableRuntimeDxe.inf
 INF  MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
-#INF  MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
+INF  MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
 INF  MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
 INF  MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
 INF  MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf
@@ -90,6 +96,7 @@ INF IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 #INF  Clover/VBoxFsDxe/VBoxHfs.inf
 #INF  Clover/VBoxFsDxe/VBoxFsDxe.inf
 #INF  Clover/VBoxFsDxe/VBoxIso9660.inf
+#INF  Clover/VBoxFsDxe/VBoxExt2.inf
 INF  Clover/HFSPlus/HFSPlus.inf
 
 INF  PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
@@ -163,6 +170,7 @@ INF  Clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
 
   #FD
 #INF  IntelFrameworkModulePkg/Universal/Acpi/AcpiS3SaveDxe/AcpiS3SaveDxe.inf 
+INF  Clover/SaveResume/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
 #INF  MdeModulePkg/Universal/Acpi/S3SaveStateDxe/S3SaveStateDxe.inf
 #INF  MdeModulePkg/Universal/Acpi/SmmS3SaveState/SmmS3SaveState.inf
 #INF  MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
@@ -175,6 +183,30 @@ INF  RuleOverride=BINARY FatBinPkg/EnhancedFatDxe/Fat.inf
 FILE FREEFORM = PCD(gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdLogoFile) {
 	SECTION RAW = Clover/Logo/Logo.bmp
   }
+
+[Rule.Common.SEC]
+  FILE SEC = $(NAMED_GUID)  {
+    PE32     PE32    Align=32       $(INF_OUTPUT)/$(MODULE_NAME).efi
+    UI       STRING ="$(MODULE_NAME)" Optional
+    VERSION  STRING ="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+  }
+
+
+[Rule.Common.PEI_CORE]
+  FILE PEI_CORE = $(NAMED_GUID) {
+    PE32     PE32    Align=32       $(INF_OUTPUT)/$(MODULE_NAME).efi
+    UI       STRING ="$(MODULE_NAME)" Optional
+    VERSION  STRING ="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+  }
+
+[Rule.Common.PEIM]
+  FILE PEIM = $(NAMED_GUID) {
+     PEI_DEPEX PEI_DEPEX Optional        $(INF_OUTPUT)/$(MODULE_NAME).depex
+     PE32      PE32   Align=32       $(INF_OUTPUT)/$(MODULE_NAME).efi
+     UI       STRING="$(MODULE_NAME)" Optional
+     VERSION  STRING="$(INF_VERSION)" Optional BUILD_NUM=$(BUILD_NUMBER)
+  }
+
 
 [Rule.Common.DXE_CORE]
   FILE DXE_CORE = $(NAMED_GUID) {

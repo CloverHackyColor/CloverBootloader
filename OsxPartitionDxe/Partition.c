@@ -18,6 +18,13 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include "Partition.h"
 
+#define DEBUG_PAR 1
+#if DEBUG_PAR==1
+#define DBG(x...)  Print(x)
+#else
+#define DBG(x...)
+#endif
+
 //
 // Partition Driver Global Variables.
 //
@@ -270,6 +277,7 @@ PartitionDriverBindingStart (
     // not be updated until the non blocking SCSI Pass Thru Protocol is provided.
     // If there is no EFI_BLOCK_IO2_PROTOCOL, skip here.
     //
+	  DBG(L"no BlockIo2 protocol! husym\n");
   }
 
   //
@@ -295,7 +303,9 @@ PartitionDriverBindingStart (
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
+	DBG(L"open DiskIo status=%r\n", Status);
   if (EFI_ERROR (Status) && Status != EFI_ALREADY_STARTED) {
+	  
     gBS->CloseProtocol (
           ControllerHandle,
           &gEfiDevicePathProtocolGuid,
@@ -329,6 +339,7 @@ PartitionDriverBindingStart (
                    BlockIo2,
                    ParentDevicePath
                    );
+		DBG(L"Handle %x check partition Status=%r\n", ControllerHandle, Status);
       if (!EFI_ERROR (Status) || Status == EFI_MEDIA_CHANGED || Status == EFI_NO_MEDIA) {
         break;
       }
@@ -591,6 +602,7 @@ ProbeMediaStatus (
   //
   Status = DiskIo->ReadDisk (DiskIo, MediaId, 0, 1, NULL);
   if ((Status == EFI_NO_MEDIA) || (Status == EFI_MEDIA_CHANGED)) {
+	  DBG(L"ProbeMediaStatus=%r\n", Status);
     return Status;
   }
   return DefaultStatus;
@@ -631,11 +643,13 @@ PartitionReadBlocks (
   Private = PARTITION_DEVICE_FROM_BLOCK_IO_THIS (This);
 
   if (BufferSize % Private->BlockSize != 0) {
+	  DBG(L"PartitionReadBlocks non-even BufferSize=%x\n", BufferSize);
     return ProbeMediaStatus (Private->DiskIo, MediaId, EFI_BAD_BUFFER_SIZE);
   }
 
   Offset = MultU64x32 (Lba, Private->BlockSize) + Private->Start;
   if (Offset + BufferSize > Private->End) {
+	  DBG(L"out of part %x %x %x\n", Offset, BufferSize, Private->End); 
     return ProbeMediaStatus (Private->DiskIo, MediaId, EFI_INVALID_PARAMETER);
   }
   //
@@ -682,12 +696,13 @@ PartitionWriteBlocks (
   Private = PARTITION_DEVICE_FROM_BLOCK_IO_THIS (This);
 
   if (BufferSize % Private->BlockSize != 0) {
+	  DBG(L"PartitionWriteBlocks non-even BufferSize=%x\n", BufferSize);
     return ProbeMediaStatus (Private->DiskIo, MediaId, EFI_BAD_BUFFER_SIZE);
   }
 
   Offset = MultU64x32 (Lba, Private->BlockSize) + Private->Start;
   if (Offset + BufferSize > Private->End) {
-    return ProbeMediaStatus (Private->DiskIo, MediaId, EFI_INVALID_PARAMETER);
+   return ProbeMediaStatus (Private->DiskIo, MediaId, EFI_INVALID_PARAMETER);
   }
   //
   // Because some kinds of partition have different block size from their parent

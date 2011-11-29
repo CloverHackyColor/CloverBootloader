@@ -286,7 +286,7 @@
 	#EdkCompatibilityPkg/Compatibility/PiSmbiosRecordOnDataHubSmbiosRecordThunk/PiSmbiosRecordOnDataHubSmbiosRecordThunk.inf
   
   # foreign file system support
-	#Clover/VBoxFsDxe/VBoxHfs.inf
+	Clover/VBoxFsDxe/VBoxHfs.inf
 	Clover/VBoxFsDxe/VBoxIso9660.inf
 	#Clover/VBoxFsDxe/VBoxFsDxe.inf
 	Clover/VBoxFsDxe/VBoxExt2.inf
@@ -343,10 +343,12 @@
   MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
   MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
   #MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
-  Clover/OsxPartitionDxe/PartitionDxe.inf
+  #Clover/OsxPartitionDxe/PartitionDxe.inf
+  Clover/PartitionDxe/PartitionDxe.inf
   
   #FD
-  IntelFrameworkModulePkg/Universal/Acpi/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
+  #IntelFrameworkModulePkg/Universal/Acpi/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
+  Clover/SaveResume/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
   MdeModulePkg/Universal/Acpi/S3SaveStateDxe/S3SaveStateDxe.inf
   #MdeModulePkg/Universal/Acpi/SmmS3SaveState/SmmS3SaveState.inf
   MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
