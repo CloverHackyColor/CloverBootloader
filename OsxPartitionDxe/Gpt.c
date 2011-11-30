@@ -16,6 +16,14 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include "Partition.h"
 
+#define DEBUG_GPT 1
+
+#if DEBUG_GPT==1
+#define DBG(x...)  Print(x)
+#else
+#define DBG(x...)
+#endif
+
 /**
   Install child handles if the Handle supports GPT partition structure.
 
@@ -370,6 +378,12 @@ PartitionInstallGptChildHandles (
     DEBUG ((EFI_D_INFO, " Partition size: %lx\n", (UINT64) HdDev.PartitionSize));
     DEBUG ((EFI_D_INFO, " Start : %lx", MultU64x32 (PartEntry[Index].StartingLBA, BlockSize)));
     DEBUG ((EFI_D_INFO, " End : %lx\n", MultU64x32 (PartEntry[Index].EndingLBA, BlockSize)));
+	  DBG(L" Index : %d\n", (UINT32) Index );
+	  DBG(L" Start LBA : %lx\n", (UINT64) HdDev.PartitionStart );
+	  DBG(L" End LBA : %lx\n", (UINT64) PartEntry[Index].EndingLBA );
+	  DBG(L" Partition size: %lx\n", (UINT64) HdDev.PartitionSize );
+	  DBG(L" Start : %lx", MultU64x32 (PartEntry[Index].StartingLBA, BlockSize) );
+	  DBG(L" End : %lx\n", MultU64x32 (PartEntry[Index].EndingLBA, BlockSize) );
 
     Status = PartitionInstallChildHandle (
                This,

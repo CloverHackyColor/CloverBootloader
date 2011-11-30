@@ -51,7 +51,7 @@ EFI_DRIVER_BINDING_PROTOCOL gPartitionDriverBinding = {
 PARTITION_DETECT_ROUTINE mPartitionDetectRoutineTable[] = {
   PartitionInstallGptChildHandles,
   PartitionInstallAppleChildHandles,
-  PartitionInstallElToritoChildHandles,
+//  PartitionInstallElToritoChildHandles,
   PartitionInstallMbrChildHandles,
   NULL
 };
@@ -208,9 +208,9 @@ PartitionDriverBindingStart (
   EFI_DEVICE_PATH_PROTOCOL  *ParentDevicePath;
   PARTITION_DETECT_ROUTINE  *Routine;
   BOOLEAN                   MediaPresent;
-  EFI_TPL                   OldTpl;
+//  EFI_TPL                   OldTpl;
 
-  OldTpl = gBS->RaiseTPL (TPL_CALLBACK); 
+//  OldTpl = gBS->RaiseTPL (TPL_CALLBACK); 
   //
   // Check RemainingDevicePath validation
   //
@@ -333,15 +333,15 @@ PartitionDriverBindingStart (
 //Slice - VBox patch	  
 	goto Exit;
   }
-  gBS->CloseProtocol (
+/*  gBS->CloseProtocol (
        ControllerHandle,
        &gEfiDiskIoProtocolGuid,
        This->DriverBindingHandle,
        ControllerHandle
        );
-
+*/
 Exit:
-  gBS->RestoreTPL (OldTpl);
+//  gBS->RestoreTPL (OldTpl);
   return Status;
 }
 

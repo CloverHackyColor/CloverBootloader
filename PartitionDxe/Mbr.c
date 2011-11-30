@@ -131,33 +131,26 @@ PartitionInstallMbrChildHandles (
   UINT32                    PartitionNumber;
   EFI_DEVICE_PATH_PROTOCOL  *DevicePathNode;
   EFI_DEVICE_PATH_PROTOCOL  *LastDevicePathNode;
-  UINT32                    BlockSize;
-  UINT32                    MediaId;
-  EFI_LBA                   LastBlock;
 
   Found           = EFI_NOT_FOUND;
 
-  BlockSize = BlockIo->Media->BlockSize;
-  MediaId   = BlockIo->Media->MediaId;
-  LastBlock = BlockIo->Media->LastBlock;
-
-  Mbr = AllocatePool (BlockSize);
+  Mbr             = AllocatePool (BlockIo->Media->BlockSize);
   if (Mbr == NULL) {
     return Found;
   }
 
   Status = DiskIo->ReadDisk (
                      DiskIo,
-                     MediaId,
+                     BlockIo->Media->MediaId,
                      0,
-                     BlockSize,
+                     BlockIo->Media->BlockSize,
                      Mbr
                      );
   if (EFI_ERROR (Status)) {
     Found = Status;
     goto Done;
   }
-  if (!PartitionValidMbr (Mbr, LastBlock)) {
+  if (!PartitionValidMbr (Mbr, BlockIo->Media->LastBlock)) {
     goto Done;
   }
   //
@@ -251,9 +244,9 @@ PartitionInstallMbrChildHandles (
 
       Status = DiskIo->ReadDisk (
                          DiskIo,
-                         MediaId,
-                         MultU64x32 (ExtMbrStartingLba, BlockSize),
-                         BlockSize,
+                         BlockIo->Media->MediaId,
+                         MultU64x32 (ExtMbrStartingLba, BlockIo->Media->BlockSize),
+                         BlockIo->Media->BlockSize,
                          Mbr
                          );
       if (EFI_ERROR (Status)) {

@@ -23,7 +23,8 @@ Revision History:
 
 #include "DxeIpl.h"
 
-#define EFI_MEMORY_BELOW_1MB_START     0x86000
+//#define EFI_MEMORY_BELOW_1MB_START     0x86000
+#define EFI_MEMORY_BELOW_1MB_START     0x0
 #define EFI_MEMORY_BELOW_1MB_END       0x9F800
 #define EFI_MEMORY_STACK_PAGE_NUM      0x20
 #define CONSUMED_MEMORY                0x100000 * 80

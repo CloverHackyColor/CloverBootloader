@@ -189,7 +189,6 @@ PartitionInstallGptChildHandles (
   UINTN                       Index;
   EFI_STATUS                  GptValidStatus;
   HARDDRIVE_DEVICE_PATH       HdDev;
-  UINT32                      MediaId;
 
   ProtectiveMbr = NULL;
   PrimaryHeader = NULL;
@@ -199,7 +198,6 @@ PartitionInstallGptChildHandles (
 
   BlockSize     = BlockIo->Media->BlockSize;
   LastBlock     = BlockIo->Media->LastBlock;
-  MediaId       = BlockIo->Media->MediaId;
 
   DEBUG ((EFI_D_INFO, " BlockSize : %d \n", BlockSize));
   DEBUG ((EFI_D_INFO, " LastBlock : %lx \n", LastBlock));
@@ -219,9 +217,9 @@ PartitionInstallGptChildHandles (
   //
   Status = DiskIo->ReadDisk (
                      DiskIo,
-                     MediaId,
+                     BlockIo->Media->MediaId,
                      0,
-                     BlockSize,
+                     BlockIo->Media->BlockSize,
                      ProtectiveMbr
                      );
   if (EFI_ERROR (Status)) {
@@ -303,7 +301,7 @@ PartitionInstallGptChildHandles (
 
   Status = DiskIo->ReadDisk (
                      DiskIo,
-                     MediaId,
+                     BlockIo->Media->MediaId,
                      MultU64x32(PrimaryHeader->PartitionEntryLBA, BlockSize),
                      PrimaryHeader->NumberOfPartitionEntries * (PrimaryHeader->SizeOfPartitionEntry),
                      PartEntry
@@ -428,10 +426,9 @@ PartitionValidGptTable (
   EFI_STATUS                  Status;
   UINT32                      BlockSize;
   EFI_PARTITION_TABLE_HEADER  *PartHdr;
-  UINT32                      MediaId;
 
   BlockSize = BlockIo->Media->BlockSize;
-  MediaId   = BlockIo->Media->MediaId;
+
   PartHdr   = AllocateZeroPool (BlockSize);
 
   if (PartHdr == NULL) {
@@ -443,7 +440,7 @@ PartitionValidGptTable (
   //
   Status = DiskIo->ReadDisk (
                      DiskIo,
-                     MediaId,
+                     BlockIo->Media->MediaId,
                      MultU64x32 (Lba, BlockSize),
                      BlockSize,
                      PartHdr
@@ -557,13 +554,11 @@ PartitionRestoreGptTable (
   EFI_PARTITION_TABLE_HEADER  *PartHdr;
   EFI_LBA                     PEntryLBA;
   UINT8                       *Ptr;
-  UINT32                      MediaId;
 
   PartHdr   = NULL;
   Ptr       = NULL;
 
   BlockSize = BlockIo->Media->BlockSize;
-  MediaId   = BlockIo->Media->MediaId;
 
   PartHdr   = AllocateZeroPool (BlockSize);
 
@@ -585,8 +580,8 @@ PartitionRestoreGptTable (
 
   Status = DiskIo->WriteDisk (
                      DiskIo,
-                     MediaId,
-                     MultU64x32 (PartHdr->MyLBA, (UINT32) BlockSize),
+                     BlockIo->Media->MediaId,
+                     MultU64x32 (PartHdr->MyLBA, BlockIo->Media->BlockSize),
                      BlockSize,
                      PartHdr
                      );
@@ -603,8 +598,8 @@ PartitionRestoreGptTable (
 
   Status = DiskIo->ReadDisk (
                     DiskIo,
-                    MediaId,
-                    MultU64x32(PartHeader->PartitionEntryLBA, (UINT32) BlockSize),
+                    BlockIo->Media->MediaId,
+                    MultU64x32(PartHeader->PartitionEntryLBA, BlockIo->Media->BlockSize),
                     PartHeader->NumberOfPartitionEntries * PartHeader->SizeOfPartitionEntry,
                     Ptr
                     );
@@ -614,8 +609,8 @@ PartitionRestoreGptTable (
 
   Status = DiskIo->WriteDisk (
                     DiskIo,
-                    MediaId,
-                    MultU64x32(PEntryLBA, (UINT32) BlockSize),
+                    BlockIo->Media->MediaId,
+                    MultU64x32(PEntryLBA, BlockIo->Media->BlockSize),
                     PartHeader->NumberOfPartitionEntries * PartHeader->SizeOfPartitionEntry,
                     Ptr
                     );
