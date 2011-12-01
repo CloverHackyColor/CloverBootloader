@@ -159,7 +159,8 @@
   gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress|0xF8000000
 
 [PcdsFeatureFlag]
-  gEfiMdeModulePkgTokenSpaceGuid.PcdTurnOffUsbLegacySupport|FALSE
+  gEfiMdeModulePkgTokenSpaceGuid.PcdTurnOffUsbLegacySupport|TRUE
+  gEfiMdeModulePkgTokenSpaceGuid.PcdDxeIplSwitchToLongMode|TRUE
 
 ###################################################################################################
 #

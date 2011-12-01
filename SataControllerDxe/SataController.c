@@ -827,8 +827,8 @@ IdeInitCalculateMode (
             &SelectedMode
             );
   if (!EFI_ERROR (Status)) {
-    (*SupportedModes)->PioMode.Valid = TRUE;
-	  (*SupportedModes)->PioMode.Mode = 3; //SelectedMode; //Slice
+      (*SupportedModes)->PioMode.Valid = TRUE;
+	  (*SupportedModes)->PioMode.Mode = SelectedMode; //Slice -> 3
 
   } else {
     (*SupportedModes)->PioMode.Valid = FALSE;
@@ -840,15 +840,15 @@ IdeInitCalculateMode (
             (DisqulifiedModes->UdmaMode.Valid ? ((UINT16 *) &(DisqulifiedModes->UdmaMode.Mode)) : NULL),
             &SelectedMode
             );
-//Slice
-/*  if (!EFI_ERROR (Status)) {
+//Slice - exclude UDMA
+  if (!EFI_ERROR (Status)) {
     (*SupportedModes)->UdmaMode.Valid = TRUE;
     (*SupportedModes)->UdmaMode.Mode  = SelectedMode;
 
   } else {
     (*SupportedModes)->UdmaMode.Valid = FALSE;
-  }*/
-	(*SupportedModes)->UdmaMode.Valid = FALSE;
+  }
+//	(*SupportedModes)->UdmaMode.Valid = FALSE;
 	(*SupportedModes)->MultiWordDmaMode.Valid = FALSE;
 	
 //  DEBUG ((EFI_D_INFO, "IdeInitCalculateMode: UdmaMode = %x\n", (*SupportedModes)->UdmaMode.Mode));

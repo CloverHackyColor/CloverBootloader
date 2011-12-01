@@ -18,7 +18,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include "Partition.h"
 
-#define DEBUG_PAR 1
+#define DEBUG_PAR 0
 #if DEBUG_PAR==1
 #define DBG(x...)  Print(x)
 #else

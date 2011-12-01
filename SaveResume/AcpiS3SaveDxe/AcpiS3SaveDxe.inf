@@ -80,5 +80,6 @@
   # Note: the extra dependency of gEfiMpServiceProtocolGuid is to ensure that ACPI variable is set by MpDxe driver before
   # AcpiS3SaveDxe module is executed. 
   #
-  gEfiVariableArchProtocolGuid AND gEfiVariableWriteArchProtocolGuid AND gEfiMpServiceProtocolGuid
+  gEfiVariableArchProtocolGuid AND gEfiVariableWriteArchProtocolGuid
+  # AND gEfiMpServiceProtocolGuid
   

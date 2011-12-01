@@ -83,7 +83,7 @@ S3ReadyThunkPlatform (
   //
   AcpiMemoryBase = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocateAcpiNvsMemoryBelow4G (PcdGet32 (PcdS3AcpiReservedMemorySize));
   ASSERT (AcpiMemoryBase != 0);
-  AcpiMemorySize = PcdGet32 (PcdS3AcpiReservedMemorySize);
+  AcpiMemorySize = PcdGet32 (PcdS3AcpiReservedMemorySize); //0x8000
 
   //
   // Calculate the system memory length by memory hobs

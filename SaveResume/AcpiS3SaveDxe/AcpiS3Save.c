@@ -479,7 +479,7 @@ S3Ready (
   Status = SetLockBoxAttributes (&gEfiAcpiS3ContextGuid, LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE);
   ASSERT_EFI_ERROR (Status);
 
-  if (FeaturePcdGet(PcdFrameworkCompatibilitySupport)) {
+  if (FeaturePcdGet(PcdFrameworkCompatibilitySupport)) { //FALSE
     S3ReadyThunkPlatform (AcpiS3Context);
   }
 
@@ -508,7 +508,7 @@ InstallAcpiS3Save (
 {
   EFI_STATUS        Status;
 
-  if (!FeaturePcdGet(PcdPlatformCsmSupport)) {
+  if (!FeaturePcdGet(PcdPlatformCsmSupport)) { //!FALSE
     //
     // More memory for no CSM tip, because GDT need relocation
     //
@@ -517,7 +517,7 @@ InstallAcpiS3Save (
     mLegacyRegionSize = 0x100;
   }
 
-  if (FeaturePcdGet(PcdFrameworkCompatibilitySupport)) {
+  if (FeaturePcdGet(PcdFrameworkCompatibilitySupport)) {  //FALSE
     InstallAcpiS3SaveThunk ();
   }
 
