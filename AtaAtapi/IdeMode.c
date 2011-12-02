@@ -1462,7 +1462,11 @@ AtaUdmStatusWait (
     MicroSecondDelay (1000);
     Timeout--;
   }
-
+	
+	if (Timeout == 0) {
+		Status = EFI_TIMEOUT;
+	}
+		
   return Status;
 }
 
@@ -1978,9 +1982,14 @@ AtaPacketReadWrite (
     //
     Status = DRQReady2 (PciIo, IdeRegisters, Timeout);
     if (EFI_ERROR (Status)) {
-      return CheckStatusRegister (PciIo, IdeRegisters);
+		return EFI_DEVICE_ERROR;
     }
 
+      Status =  CheckStatusRegister (PciIo, IdeRegisters);
+	  if (EFI_ERROR (Status)) {
+		  return EFI_DEVICE_ERROR;
+	  }
+	  
     //
     // get current data transfer size from Cylinder Registers.
     //
