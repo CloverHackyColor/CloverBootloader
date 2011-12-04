@@ -784,7 +784,7 @@ CheckErrorStatus (
   )
 {
   UINT8 StatusRegister;
-  UINT8 ErrorRegister;
+//  UINT8 ErrorRegister;
 
   StatusRegister = IDEReadPortB (IdeDev->PciIo, IdeDev->IoPort->Reg.Status);
 /*

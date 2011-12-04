@@ -76,11 +76,12 @@ USB_CLASS_FORMAT_DEVICE_PATH gUsbClassKeyboardDevicePath = {
 //
 // Platform specific Dummy ISA keyboard device path
 //
+
 PLATFORM_DUMMY_ISA_KEYBOARD_DEVICE_PATH     gDummyIsaKeyboardDevicePath = {
-  gPciRootBridge,
-  gPciIsaBridge,
-  gPnpPs2Keyboard,
-  gEndEntire
+	gPciRootBridge,
+	gPciIsaBridge,
+	gPnpPs2Keyboard,
+	gEndEntire
 };
 /*
 //
@@ -98,11 +99,13 @@ PLATFORM_DUMMY_ISA_SERIAL_DEVICE_PATH   gDummyIsaSerialDevicePath = {
 //
 // Platform specific Dummy PCI VGA device path
 //
+
 PLATFORM_DUMMY_PCI_VGA_DEVICE_PATH gDummyPciVgaDevicePath = {
-  gPciRootBridge,
-  PCI_DEVICE_PATH_NODE(0, 0x2),
-  gEndEntire
+	gPciRootBridge,
+	PCI_DEVICE_PATH_NODE(0, 0x2),
+	gEndEntire
 };
+ 
 /*
 PLATFORM_DUMMY_PCIE_VGA_DEVICE_PATH gDummyPcieVgaDevicePath = {
 	gPciRootBridge,
@@ -143,10 +146,10 @@ BDS_CONSOLE_CONNECT_ENTRY         gPlatformConsole[] = {
 //		(EFI_DEVICE_PATH_PROTOCOL *) &gDummyPcieVgaDevicePath,
 //		CONSOLE_OUT
 //	},
-  {
-    (EFI_DEVICE_PATH_PROTOCOL *) &gDummyPciVgaDevicePath,
-    CONSOLE_OUT
-  },
+//  {
+//    (EFI_DEVICE_PATH_PROTOCOL *) &gDummyPciVgaDevicePath,
+//    CONSOLE_OUT
+//  },
 //  {
 //    (EFI_DEVICE_PATH_PROTOCOL *) &gDummyPciSerialDevicePath,
 //    (CONSOLE_OUT | CONSOLE_IN | STD_ERROR)

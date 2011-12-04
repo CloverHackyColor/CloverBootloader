@@ -68,7 +68,6 @@ Returns:
   // Iteratively add ACPI Table, SMBIOS Table, MPS Table to EFI System Table
   //
   for (Index = 0; Index < sizeof (gTableGuidArray) / sizeof (*gTableGuidArray); ++Index) {
-//	Index = 3;
     GuidHob.Raw = GetNextGuidHob (gTableGuidArray[Index], HobStart.Raw);
     if (GuidHob.Raw != NULL) {
       Table = GET_GUID_HOB_DATA (GuidHob.Guid);
@@ -380,7 +379,6 @@ Returns:
                   break;
                 }
               }
-				
             }
           } 
         }
