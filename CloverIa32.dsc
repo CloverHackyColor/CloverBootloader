@@ -288,9 +288,9 @@
   
   	# foreign file system support
 	#Clover/VBoxFsDxe/VBoxHfs.inf
-	#Clover/VBoxFsDxe/VBoxIso9660.inf
+	Clover/VBoxFsDxe/VBoxIso9660.inf
 	#Clover/VBoxFsDxe/VBoxFsDxe.inf
-	#Clover/VBoxFsDxe/VBoxExt2.inf
+	Clover/VBoxFsDxe/VBoxExt2.inf
 	#EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
 	#Clover/OsxMmcDxe/MmcDxe.inf
 #Video
@@ -305,14 +305,15 @@
   # IDE/AHCI Support
   Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
   Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
-  #Clover/SataControllerDxe/SataControllerDxe.inf
+  Clover/SataControllerDxe/SataControllerDxe.inf
   #MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
+  Clover/AtaAtapi/AtaAtapiPassThru.inf
   #MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
-  #Clover/AtaBus/AtaBusDxe.inf
+  Clover/AtaBus/AtaBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
-  #Clover/DVDBus/ScsiBusDxe.inf
+  Clover/DVDBus/ScsiBusDxe.inf
   #MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
-  #Clover/DVDDisk/ScsiDiskDxe.inf
+  Clover/DVDDisk/ScsiDiskDxe.inf
   #IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
 
   # Usb Support
@@ -343,14 +344,16 @@
   MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
   MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
   #MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
-  Clover/OsxPartitionDxe/PartitionDxe.inf
+  #Clover/OsxPartitionDxe/PartitionDxe.inf
+  Clover/PartitionDxe/PartitionDxe.inf
   
   #FD
   #IntelFrameworkModulePkg/Universal/Acpi/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
   Clover/SaveResume/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
   MdeModulePkg/Universal/Acpi/S3SaveStateDxe/S3SaveStateDxe.inf
   #MdeModulePkg/Universal/Acpi/SmmS3SaveState/SmmS3SaveState.inf
-  MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
+  #MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
+  Clover/SaveResume/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
   UefiCpuPkg/Universal/Acpi/S3Resume2Pei/S3Resume2Pei.inf
 
 
@@ -366,7 +369,7 @@
   #
   # Sample Application
   #
-  #MdeModulePkg/Application/HelloWorld/HelloWorld.inf
+  MdeModulePkg/Application/HelloWorld/HelloWorld.inf
   #MdeModulePkg/Application/VariableInfo/VariableInfo.inf
   #iBootEFI/iboot.inf
   #rEFIt_UEFI/refit.inf

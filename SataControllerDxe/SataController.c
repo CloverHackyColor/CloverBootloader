@@ -14,7 +14,7 @@
 
 #include "SataController.h"
 
-#define DEBUG_SATA 0
+#define DEBUG_SATA 1
 
 #if DEBUG_SATA==1
 #define DBG(x...)  Print(x)
@@ -215,6 +215,7 @@ CalculateBestPioMode (
 
   }
 #endif
+	DBG(L"selected PIO mode = %d\n", *SelectedMode);
   return EFI_SUCCESS;
 }
 
@@ -263,6 +264,7 @@ CalculateBestUdmaMode (
   if (DisUDmaMode != NULL) {
     if (*DisUDmaMode == 0) {
       *SelectedMode = 0;
+		DBG(L"DMA mode is none\n");
       return EFI_UNSUPPORTED;   // no mode below ATA_UDMA_MODE_0
     }
 
@@ -275,7 +277,7 @@ CalculateBestUdmaMode (
   // Possible returned mode is between ATA_UDMA_MODE_0 and ATA_UDMA_MODE_5
   //
   *SelectedMode = TempMode;
-
+DBG(L"selected DMA mode = %d\n", *SelectedMode);
   return EFI_SUCCESS;
 }
 
@@ -528,7 +530,7 @@ Done:
   }
 
 //  DEBUG ((EFI_D_INFO, "SataControllerStart END status = %r\n", Status));
-	DBG(L"SataControllerStart END status = %r\n", Status);
+//	DBG(L"SataControllerStart END status = %r\n", Status);
   return Status;
 }
 
@@ -649,7 +651,7 @@ IdeInitGetChannelInfo (
   if (Channel < This->ChannelCount) {
     *Enabled = TRUE;
     *MaxDevices = SataPrivateData->DeviceCount;
-	  DBG(L"Channel %d enabled  Count=%d\n", (INTN)Channel, *MaxDevices);
+//	  DBG(L"Channel %d enabled  Count=%d\n", (INTN)Channel, *MaxDevices);
     return EFI_SUCCESS;
   }
 

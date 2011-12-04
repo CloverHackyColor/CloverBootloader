@@ -799,7 +799,7 @@ DRQClear (
   UINT8   StatusRegister;
   UINT8   ErrorRegister;
 
-  Delay = (UINT32) (((TimeoutInMilliSeconds * STALL_1_MILLI_SECOND) / 30) + 1);
+  Delay = (UINT32) (((TimeoutInMilliSeconds * STALL_1_MILLI_SECOND) / 30) + 1); //1000 -> 33ms
   do {
 
     StatusRegister = IDEReadPortB (IdeDev->PciIo, IdeDev->IoPort->Reg.Status);

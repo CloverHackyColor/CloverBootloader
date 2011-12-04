@@ -159,7 +159,7 @@
   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x0
   gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x0
   gEfiMdeModulePkgTokenSpaceGuid.PcdResetOnMemoryTypeInformationChange|FALSE
-  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress|0xF8000000
+  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress|0xF0000000
 
 [PcdsFeatureFlag]
   gEfiMdeModulePkgTokenSpaceGuid.PcdTurnOffUsbLegacySupport|TRUE
@@ -303,8 +303,8 @@
   Clover/BiosVideo/BiosVideo.inf
 
   # IDE/AHCI Support
-  #Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
-  #Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
+  Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
+  Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
   Clover/SataControllerDxe/SataControllerDxe.inf
   #MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
   Clover/AtaAtapi/AtaAtapiPassThru.inf

@@ -33,6 +33,16 @@
 
 #include "IdeController.h"
 
+#define DEBUG_IDE 0
+
+#if DEBUG_IDE==1
+#define DBG(x...)  Print(x)
+#else
+#define DBG(x...)
+#endif
+
+
+
 //
 //  EFI_DRIVER_BINDING_PROTOCOL instance
 //
@@ -535,7 +545,7 @@ Returns:
      pSupportedModes->UdmaMode.Valid = FALSE;
      pSupportedModes->MultiWordDmaMode.Valid = FALSE;
   }
-
+	DBG(L"supported mode=%d\n", pSupportedModes->PioMode.Mode);
   return EFI_SUCCESS;
 }
 
