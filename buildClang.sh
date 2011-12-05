@@ -63,8 +63,8 @@ case `uname` in
 
 esac
 
-BUILD_ROOT_ARCH=$WORKSPACE/Build/DuetPkg$PROCESSOR/$VTARGET_"$TARGET_TOOLS"/$PROCESSOR
-FLOPPY_IMAGE=$WORKSPACE/Build/DuetPkg$PROCESSOR/floppy.img
+BUILD_ROOT_ARCH=$WORKSPACE/Build/Clang$PROCESSOR/$VTARGET_"$TARGET_TOOLS"/$PROCESSOR
+FLOPPY_IMAGE=$WORKSPACE/Build/Clang$PROCESSOR/floppy.img
 
 if  [[ ! -f `which build` || ! -f `which GenFv` ]];
 then
