@@ -5,7 +5,7 @@
 #  2) BDS boot device connect interface;
 #  3) BDS Misc interfaces for mainting boot variable, ouput string, etc.
 #  
-#  Copyright (c) 2007 - 2010, Intel Corporation. All rights reserved.<BR>
+#  Copyright (c) 2007 - 2011, Intel Corporation. All rights reserved.<BR>
 #  This program and the accompanying materials
 #  are licensed and made available under the terms and conditions of the BSD License
 #  which accompanies this distribution.  The full text of the license may be found at
@@ -39,7 +39,6 @@
   BdsConsole.c
   BdsBoot.c
   InternalBdsLib.h
-  Bmp.h
   String.h
   String.c
   GenericBdsStrings.uni
@@ -68,14 +67,14 @@
   TimerLib
   DxeServicesLib
   HiiLib
+  ReportStatusCodeLib
 
 [Guids]
   gEfiVT100PlusGuid                             ## CONSUMES ## GUID (The type of terminal)
   gEfiVT100Guid                                 ## CONSUMES ## GUID (The type of terminal)
-  gEfiMemoryTypeInformationGuid                 ## CONSUMES ## GUID (The identifier of memory type information type in system table)
                                                 ## CONSUMES ## GUID HOB (The hob holding memory type information)
+  gEfiMemoryTypeInformationGuid                 ## CONSUMES ## GUID (The identifier of memory type information type in system table)
   gEfiVTUTF8Guid                                ## CONSUMES ## GUID (The type of terminal)
-  gEfiGlobalVariableGuid                        ## SOMETIMES_PRODUCES ## Variable:L"BootCurrent" (The boot option of current boot)
                                                 ## SOMETIMES_CONSUMES ## Variable:L"BootXX" (Boot option variable)
                                                 ## CONSUMES           ## Variable:L"Timeout" (The time out value in second of showing progress bar)
                                                 ## SOMETIMES_CONSUMES ## Variable:L"BootOrder" (The boot option array)
@@ -83,11 +82,15 @@
                                                 ## SOMETIMES_CONSUMES ## Variable:L"ConIn" (The device path of console in device)
                                                 ## SOMETIMES_CONSUMES ## Variable:L"ConOut" (The device path of console out device)
                                                 ## SOMETIMES_CONSUMES ## Variable:L"ErrOut" (The device path of error out device)
+  gEfiGlobalVariableGuid                        ## SOMETIMES_PRODUCES ## Variable:L"BootCurrent" (The boot option of current boot)
   gEfiFileInfoGuid                              ## CONSUMES ## GUID
   gEfiPcAnsiGuid                                ## CONSUMES ## GUID (The type of terminal)
   gPerformanceProtocolGuid                      ## SOMETIMES_PRODUCES ## Variable:L"PerfDataMemAddr" (The ACPI address of performance data)
   gEfiUartDevicePathGuid                        ## CONSUMES ## GUID (Identify the device path for UARD device)
   gEfiSasDevicePathGuid                         ## CONSUMES ## GUID (Identify the device path for SAS device)
+  gLastEnumLangGuid                             ## SOMETIMES_PRODUCES ## Variable:L"LastEnumLang" (Platform language at last time enumeration.)
+  gHdBootDevicePathVariablGuid                  ## SOMETIMES_PRODUCES ## Variable:L"HDDP" (The device path of Boot file on Hard device.)
+  gBdsLibStringPackageGuid                      ## PRODUCES ## GUID (HII String PackageList Guid)
 
 [Protocols]
   gEfiSimpleFileSystemProtocolGuid              # PROTOCOL CONSUMES
@@ -111,11 +114,13 @@
   gEfiHiiFontProtocolGuid                       # PROTOCOL CONSUMES
   gEfiUserManagerProtocolGuid                   # PROTOCOL CONSUMES
   gEfiUsbIoProtocolGuid                         # PROTOCOL SOMETIMES_CONSUMES
-  gEfiSecurityArchProtocolGuid                  # PROTOCOL CONSUMES
+  gEfiBootLogoProtocolGuid                      # PROTOCOL SOMETIMES_CONSUMES
 
 [FeaturePcd]
   gEfiMdePkgTokenSpaceGuid.PcdUgaConsumeSupport
 
 [Pcd]
   gEfiMdeModulePkgTokenSpaceGuid.PcdResetOnMemoryTypeInformationChange
+  gEfiMdeModulePkgTokenSpaceGuid.PcdProgressCodeOsLoaderLoad
+  gEfiMdeModulePkgTokenSpaceGuid.PcdProgressCodeOsLoaderStart
   gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdShellFile

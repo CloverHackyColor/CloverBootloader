@@ -79,7 +79,7 @@ BdsLibLoadDrivers (
     //
     Status = gBS->LoadImage (
                     FALSE,
-                    gImageHandle, //mBdsImageHandle
+                    gImageHandle,
                     Option->DevicePath,
                     NULL,
                     0,
@@ -106,9 +106,7 @@ BdsLibLoadDrivers (
       // Before calling the image, enable the Watchdog Timer for
       // the 5 Minute period
       //
-#if 0 //ndef VBOX
       gBS->SetWatchdogTimer (5 * 60, 0x0000, 0x00, NULL);
-#endif
 
       Status = gBS->StartImage (ImageHandle, &ExitDataSize, &ExitData);
       DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Driver Return Status = %r\n", Status));
@@ -116,9 +114,7 @@ BdsLibLoadDrivers (
       //
       // Clear the Watchdog Timer after the image returns
       //
-#if 0 //ndef VBOX
       gBS->SetWatchdogTimer (0x0000, 0x0000, 0x0000, NULL);
-#endif
     }
   }
   
@@ -950,7 +946,7 @@ SetupResetReminder (
       //
       // If the user hits the YES Response key, reset
       //
-      if ((Key.UnicodeChar == CHAR_CARRIAGE_RETURN)) {
+      if (Key.UnicodeChar == CHAR_CARRIAGE_RETURN) {
         gRT->ResetSystem (EfiResetCold, EFI_SUCCESS, 0, NULL);
       }
       gST->ConOut->ClearScreen (gST->ConOut);
@@ -977,8 +973,7 @@ BdsLibGetImageHeader (
   IN  EFI_HANDLE                  Device,
   IN  CHAR16                      *FileName,
   OUT EFI_IMAGE_DOS_HEADER        *DosHeader,
-  OUT EFI_IMAGE_OPTIONAL_HEADER_PTR_UNION   Hdr,
-  IN OUT  CHAR16                      **NewFileName
+  OUT EFI_IMAGE_OPTIONAL_HEADER_PTR_UNION   Hdr
   )
 {
   EFI_STATUS                       Status;
@@ -988,7 +983,6 @@ BdsLibGetImageHeader (
   UINTN                            BufferSize;
   UINT64                           FileSize;
   EFI_FILE_INFO                    *Info;
-  CHAR16                           *FileName0 = NULL; /*application's file*/
 
   Root     = NULL;
   ThisFile = NULL;
@@ -1022,21 +1016,9 @@ BdsLibGetImageHeader (
   //
   // Get file size
   //
-//  BufferSize  = SIZE_OF_EFI_FILE_INFO + 200;
+  BufferSize  = SIZE_OF_EFI_FILE_INFO + 200;
   do {
-    BufferSize  = 0;
     Info   = NULL;
-    /* Get right size we need to allocate */
-    Status = ThisFile->GetInfo (
-                         ThisFile,
-                         &gEfiFileInfoGuid,
-                         &BufferSize,
-                         Info
-                         );
-    if (EFI_ERROR(Status) && Status != EFI_BUFFER_TOO_SMALL)
-    {
-        goto Done;
-    }
     Status = gBS->AllocatePool (EfiBootServicesData, BufferSize, (VOID **) &Info);
     if (EFI_ERROR (Status)) {
       goto Done;
@@ -1048,12 +1030,6 @@ BdsLibGetImageHeader (
                          Info
                          );
     if (!EFI_ERROR (Status)) {
-//      DEBUG((DEBUG_INFO, "%a:%d Open FileName:%s from Info %r \n", __FILE__, __LINE__, Info->FileName, Status));
-      Status = gBS->AllocatePool (EfiBootServicesData, StrLen(Info->FileName), (VOID **) &FileName0);
-      StrCpy(FileName0, Info->FileName);
-      if (EFI_ERROR (Status)) {
-        goto Done;
-      }
       break;
     }
     if (Status != EFI_BUFFER_TOO_SMALL) {
@@ -1069,7 +1045,6 @@ BdsLibGetImageHeader (
   //
   // Read dos header
   //
-#if 0 //ndef VBOX
   BufferSize = sizeof (EFI_IMAGE_DOS_HEADER);
   Status = ThisFile->Read (ThisFile, &BufferSize, DosHeader);
   if (EFI_ERROR (Status) ||
@@ -1109,65 +1084,8 @@ BdsLibGetImageHeader (
     Status = EFI_LOAD_ERROR;
     goto Done;
   }
-#endif
+
  Done:
-  if (!EFI_ERROR(Status))
-  {
-    EFI_STATUS Status0;
-    /* We need prepare the correct file path for case sensitive loaders ... Sigh.*/
-    CHAR16 *dup;
-    CHAR16 *p, *pp;
-    dup = AllocateZeroPool(StrSize(FileName));
-    StrCpy(dup, FileName);
-    pp = p = dup;
-    while (*p != L'\0')
-    {
-        BufferSize  = 0;
-        Info   = NULL;
-        if (*p == L'\\' && p != dup)
-        {
-            *p = L'\0';
-            Status0 = Root->Open (Root, &ThisFile, dup, EFI_FILE_MODE_READ, 1);
-     //       DEBUG((DEBUG_INFO, "%a:%d Open FileName:%s - %r \n", __FILE__, __LINE__, dup, Status));
-            if (EFI_ERROR (Status)) {
-              goto Done;
-            }
-            /* Get right size we need to allocate */
-            Status0 = ThisFile->GetInfo (
-                                 ThisFile,
-                                 &gEfiFileInfoGuid,
-                                 &BufferSize,
-                                 Info
-                                 );
-            if (EFI_ERROR(Status) && Status != EFI_BUFFER_TOO_SMALL)
-            {
-   //             DEBUG((DEBUG_INFO, "%a:%d GetInfo(1) FileName:%s %r \n", __FILE__, __LINE__, FileName, Status));
-                goto Done;
-            }
-            Status0 = gBS->AllocatePool (EfiBootServicesData, BufferSize, (VOID **) &Info);
-            if (EFI_ERROR (Status)) {
-              goto Done;
-            }
-            Status0 = ThisFile->GetInfo (
-                                 ThisFile,
-                                 &gEfiFileInfoGuid,
-                                 &BufferSize,
-                                 Info
-                                 );
-            if (!EFI_ERROR (Status0)) {
-    //          DEBUG((DEBUG_INFO, "%a:%d Open FileName:%s from Info %r \n", __FILE__, __LINE__, Info->FileName, Status));
-              StrCpy(pp + 1, Info->FileName);
-            }
-            * p = L'\\';
-            pp = p;
-        }
-        p++;
-    }
-    StrCpy(pp + 1, FileName0);
-//    DEBUG((DEBUG_INFO, "%a:%d NewFileName:'%s'\n", __FILE__, __LINE__, dup));
-    *NewFileName = dup;
-  }
-//  DEBUG((DEBUG_INFO, "%a:%d %s - %r\n", __FILE__, __LINE__, FileName, Status));
   if (ThisFile != NULL) {
     ThisFile->Close (ThisFile);
   }
@@ -1269,29 +1187,34 @@ BdsSetMemoryTypeInformationVariable (
 
   for (Index = 0; PreviousMemoryTypeInformation[Index].Type != EfiMaxMemoryType; Index++) {
 
-    Current = 0;
     for (Index1 = 0; CurrentMemoryTypeInformation[Index1].Type != EfiMaxMemoryType; Index1++) {
       if (PreviousMemoryTypeInformation[Index].Type == CurrentMemoryTypeInformation[Index1].Type) {
-        Current = CurrentMemoryTypeInformation[Index1].NumberOfPages;
         break;
       }
     }
-
     if (CurrentMemoryTypeInformation[Index1].Type == EfiMaxMemoryType) {
       continue;
     }
 
+    //
+    // Previous is the number of pages pre-allocated
+    // Current is the number of pages actually needed
+    //
     Previous = PreviousMemoryTypeInformation[Index].NumberOfPages;
+    Current  = CurrentMemoryTypeInformation[Index1].NumberOfPages;
+    Next     = Previous;
 
     //
     // Write next varible to 125% * current and Inconsistent Memory Reserved across bootings may lead to S4 fail
     //
-    if (!MemoryTypeInformationVariableExists && Current < Previous) {
-      Next = Current + (Current >> 2);
+    if (Current < Previous) {
+      if (BootMode == BOOT_WITH_DEFAULT_SETTINGS) {
+        Next = Current + (Current >> 2);
+      } else if (!MemoryTypeInformationVariableExists) {
+        Next = MAX (Current + (Current >> 2), Previous);
+      }
     } else if (Current > Previous) {
       Next = Current + (Current >> 2);
-    } else {
-      Next = Previous;
     }
     if (Next > 0 && Next < 4) {
       Next = 4;
@@ -1302,7 +1225,7 @@ BdsSetMemoryTypeInformationVariable (
       MemoryTypeInformationModified = TRUE;
     }
 
-//    DEBUG ((EFI_D_INFO, "  %02x    %08x  %08x  %08x\n", PreviousMemoryTypeInformation[Index].Type, Previous, Current, Next));
+ //   DEBUG ((EFI_D_INFO, "  %02x    %08x  %08x  %08x\n", PreviousMemoryTypeInformation[Index].Type, Previous, Current, Next));
   }
 
   //
@@ -1324,7 +1247,7 @@ BdsSetMemoryTypeInformationVariable (
     // entry/resume cycle will not fail.
     //
     if (MemoryTypeInformationModified && PcdGetBool (PcdResetOnMemoryTypeInformationChange)) {
-//      DEBUG ((EFI_D_INFO, "Memory Type Information settings change. Warm Reset!!!\n"));
+ //     DEBUG ((EFI_D_INFO, "Memory Type Information settings change. Warm Reset!!!\n"));
       gRT->ResetSystem (EfiResetWarm, EFI_SUCCESS, 0, NULL);
     }
   }

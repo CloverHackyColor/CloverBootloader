@@ -1,7 +1,7 @@
 /** @file
   BDS library definition, include the file and data structure
 
-Copyright (c) 2004 - 2010, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2004 - 2011, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -41,13 +41,15 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Protocol/HiiFont.h>
 #include <Protocol/HiiImage.h>
 #include <Protocol/UsbIo.h>
-#include <Protocol/Security.h>
 
 #include <Guid/MemoryTypeInformation.h>
 #include <Guid/FileInfo.h>
 #include <Guid/GlobalVariable.h>
 #include <Guid/PcAnsi.h>
 #include <Guid/Performance.h>
+#include <Guid/BdsLibHii.h>
+#include <Guid/HdBootVariable.h>
+#include <Guid/LastEnumLang.h>
 
 #include <Library/PrintLib.h>
 #include <Library/DebugLib.h>
@@ -63,11 +65,11 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Library/PerformanceLib.h>
 #include <Library/PcdLib.h>
 #include <Library/PeCoffGetEntryPointLib.h>
-//#include <Library/GenericBdsLib.h>
-#include "GenericBdsLib.h"
+#include <Library/GenericBdsLib.h>
 #include <Library/TimerLib.h>
 #include <Library/PcdLib.h>
 #include <Library/DxeServicesLib.h>
+#include <Library/ReportStatusCodeLib.h>
 
 #if !defined (EFI_REMOVABLE_MEDIA_FILE_NAME)
     #if defined (MDE_CPU_EBC)
@@ -111,8 +113,7 @@ BdsLibGetImageHeader (
   IN  EFI_HANDLE                  Device,
   IN  CHAR16                      *FileName,
   OUT EFI_IMAGE_DOS_HEADER        *DosHeader,
-  OUT EFI_IMAGE_OPTIONAL_HEADER_PTR_UNION   Hdr,
-  IN OUT  CHAR16                      **NewFileName
+  OUT EFI_IMAGE_OPTIONAL_HEADER_PTR_UNION   Hdr
   );
 
 /**
