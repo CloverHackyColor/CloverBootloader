@@ -32,7 +32,7 @@
 [Sources]
   AcpiS3Save.h
   AcpiS3Save.c
-  AcpiVariableThunkPlatform.c
+#  AcpiVariableThunkPlatform.c
 
 [Packages]
   MdePkg/MdePkg.dec

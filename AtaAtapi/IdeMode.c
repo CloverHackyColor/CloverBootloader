@@ -14,7 +14,7 @@
 
 #include "AtaAtapiPassThru.h"
 
-#define DEBUG_ATA 1
+#define DEBUG_ATA 0
 
 #if DEBUG_ATA==1
 #define DBG(x...)  Print(x)

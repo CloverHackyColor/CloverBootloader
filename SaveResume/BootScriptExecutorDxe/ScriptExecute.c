@@ -175,28 +175,6 @@ S3BootScriptExecutorEntryFunction (
   // We need turn back to S3Resume - install boot script done ppi and report status code on S3resume.
   //
   if (PeiS3ResumeState != 0) {
-    if (FeaturePcdGet (PcdDxeIplSwitchToLongMode)) {
-      //
-      // X64 S3 Resume
-      //
-      DEBUG ((EFI_D_ERROR, "Call AsmDisablePaging64() to return to S3 Resume in PEI Phase\n"));
-      PeiS3ResumeState->AsmTransferControl = (EFI_PHYSICAL_ADDRESS)(UINTN)AsmTransferControl32;
-
-      //
-      // more step needed - because relative address is handled differently between X64 and IA32.
-      //
-      AsmTransferControl16Address = (UINTN)AsmTransferControl16;
-      AsmFixAddress16 = (UINT32)AsmTransferControl16Address;
-      AsmJmpAddr32 = (UINT32)((Facs->FirmwareWakingVector & 0xF) | ((Facs->FirmwareWakingVector & 0xFFFF0) << 12));
-
-      AsmDisablePaging64 (
-        PeiS3ResumeState->ReturnCs,
-        (UINT32)PeiS3ResumeState->ReturnEntryPoint,
-        (UINT32)(UINTN)AcpiS3Context,
-        (UINT32)(UINTN)PeiS3ResumeState,
-        (UINT32)PeiS3ResumeState->ReturnStackPointer
-        );
-    } else {
       //
       // IA32 S3 Resume
       //
@@ -209,7 +187,6 @@ S3BootScriptExecutorEntryFunction (
         (VOID *)(UINTN)PeiS3ResumeState,
         (VOID *)(UINTN)PeiS3ResumeState->ReturnStackPointer
         );
-    }
 
     //
     // Never run to here
@@ -222,60 +199,11 @@ S3BootScriptExecutorEntryFunction (
     WriteToOsS3PerformanceData ();
     );
 
-  if (Facs->XFirmwareWakingVector != 0) {
-    //
-    // Switch to native waking vector
-    //
-    TempStackTop = (UINTN)&TempStack + sizeof(TempStack);
-    if ((Facs->Version == EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_VERSION) &&
-        ((Facs->Flags & EFI_ACPI_4_0_64BIT_WAKE_SUPPORTED_F) != 0) &&
-        ((Facs->Flags & EFI_ACPI_4_0_OSPM_64BIT_WAKE__F) != 0)) {
-      //
-      // X64 long mode waking vector
-      //
-      DEBUG (( EFI_D_ERROR, "Transfer to 64bit OS waking vector - %x\r\n", (UINTN)Facs->XFirmwareWakingVector));
-      if (FeaturePcdGet (PcdDxeIplSwitchToLongMode)) {
-        SwitchStack (
-          (SWITCH_STACK_ENTRY_POINT)(UINTN)Facs->XFirmwareWakingVector,
-          NULL,
-          NULL,
-          (VOID *)(UINTN)TempStackTop
-          );
-      } else {
-        // Unsupported for 32bit DXE, 64bit OS vector
-        DEBUG (( EFI_D_ERROR, "Unsupported for 32bit DXE transfer to 64bit OS waking vector!\r\n"));
-        ASSERT (FALSE);
-      }
-    } else {
-      //
-      // IA32 protected mode waking vector (Page disabled)
-      //
-      DEBUG (( EFI_D_ERROR, "Transfer to 32bit OS waking vector - %x\r\n", (UINTN)Facs->XFirmwareWakingVector));
-      if (FeaturePcdGet (PcdDxeIplSwitchToLongMode)) {
-        AsmDisablePaging64 (
-          0x10,
-          (UINT32)Facs->XFirmwareWakingVector,
-          0,
-          0,
-          (UINT32)TempStackTop
-          );
-      } else {
-        SwitchStack (
-          (SWITCH_STACK_ENTRY_POINT)(UINTN)Facs->XFirmwareWakingVector,
-          NULL,
-          NULL,
-          (VOID *)(UINTN)TempStackTop
-          );
-      }
-    }
-  } else {
     //
     // 16bit Realmode waking vector
     //
-    DEBUG (( EFI_D_ERROR, "Transfer to 16bit OS waking vector - %x\r\n", (UINTN)Facs->FirmwareWakingVector));
+//    DEBUG (( EFI_D_ERROR, "Transfer to 16bit OS waking vector - %x\r\n", (UINTN)Facs->FirmwareWakingVector));
     AsmTransferControl (Facs->FirmwareWakingVector, 0x0);
-  }
-
   //
   // Never run to here
   //

@@ -31,30 +31,20 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <IndustryStandard/Acpi.h>
 
 #include "AcpiS3Save.h"
-
-/**
-  Hook point for AcpiVariableThunkPlatform for InstallAcpiS3Save.
-**/
-VOID
-InstallAcpiS3SaveThunk (
-  VOID
-  );
-
-/**
-  Hook point for AcpiVariableThunkPlatform for S3Ready.
-
-  @param AcpiS3Context   ACPI s3 context
-**/
-VOID
-S3ReadyThunkPlatform (
-  IN ACPI_S3_CONTEXT      *AcpiS3Context
-  );
+// protocol
+///
+/// Gets the size of legacy memory below 1 MB that is required for S3 resume.
+///EFI_ACPI_GET_LEGACY_MEMORY_SIZE   GetLegacyMemorySize;
+///
+/// Prepare all information for an S3 resume.
+//EFI_ACPI_S3_SAVE                  S3Save;
+///
 
 UINTN     mLegacyRegionSize;
 
 EFI_ACPI_S3_SAVE_PROTOCOL mS3Save = {
-  LegacyGetS3MemorySize,
-  S3Ready,
+  LegacyGetS3MemorySize,  //GetLegacyMemorySize
+  S3Ready,                //S3Save
 };
 
 EFI_GUID              mAcpiS3IdtrProfileGuid = {
@@ -141,7 +131,10 @@ FindAcpiFacsTableByAcpiGuid (
 
   Rsdt = (EFI_ACPI_DESCRIPTION_HEADER *)(UINTN) Rsdp->RsdtAddress;
   if (Rsdt == NULL || Rsdt->Signature != EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
-    return NULL;
+    Rsdt = (EFI_ACPI_DESCRIPTION_HEADER *)(UINTN) Rsdp->XsdtAddress;
+    if (Rsdt == NULL || Rsdt->Signature != EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
+      return NULL;
+    }
   }
 
   for (Index = sizeof (EFI_ACPI_DESCRIPTION_HEADER); Index < Rsdt->Length; Index = Index + sizeof (UINT32)) {
@@ -200,153 +193,10 @@ S3CreateIdentityMappingPageTables (
   VOID
   )
 {  
-  if (FeaturePcdGet (PcdDxeIplSwitchToLongMode)) {
-    UINT32                                        RegEax;
-    UINT32                                        RegEdx;
-    UINT8                                         PhysicalAddressBits;
-    EFI_PHYSICAL_ADDRESS                          PageAddress;
-    UINTN                                         IndexOfPml4Entries;
-    UINTN                                         IndexOfPdpEntries;
-    UINTN                                         IndexOfPageDirectoryEntries;
-    UINT32                                        NumberOfPml4EntriesNeeded;
-    UINT32                                        NumberOfPdpEntriesNeeded;
-    PAGE_MAP_AND_DIRECTORY_POINTER                *PageMapLevel4Entry;
-    PAGE_MAP_AND_DIRECTORY_POINTER                *PageMap;
-    PAGE_MAP_AND_DIRECTORY_POINTER                *PageDirectoryPointerEntry;
-    PAGE_TABLE_ENTRY                              *PageDirectoryEntry;
-    EFI_PHYSICAL_ADDRESS                          S3NvsPageTableAddress;
-    UINTN                                         TotalPageTableSize;
-    VOID                                          *Hob;
-    BOOLEAN                                       Page1GSupport;
-    PAGE_TABLE_1G_ENTRY                           *PageDirectory1GEntry;
-
-    Page1GSupport = FALSE;
-    if (PcdGetBool(PcdUse1GPageTable)) {
-      AsmCpuid (0x80000000, &RegEax, NULL, NULL, NULL);
-      if (RegEax >= 0x80000001) {
-        AsmCpuid (0x80000001, NULL, NULL, NULL, &RegEdx);
-        if ((RegEdx & BIT26) != 0) {
-          Page1GSupport = TRUE;
-        }
-      }
-    }
-
-    //
-    // Get physical address bits supported.
-    //
-    Hob = GetFirstHob (EFI_HOB_TYPE_CPU);
-    if (Hob != NULL) {
-      PhysicalAddressBits = ((EFI_HOB_CPU *) Hob)->SizeOfMemorySpace;
-    } else {
-      AsmCpuid (0x80000000, &RegEax, NULL, NULL, NULL);
-      if (RegEax >= 0x80000008) {
-        AsmCpuid (0x80000008, &RegEax, NULL, NULL, NULL);
-        PhysicalAddressBits = (UINT8) RegEax;
-      } else {
-        PhysicalAddressBits = 36;
-      }
-    }
-    
-    //
-    // IA-32e paging translates 48-bit linear addresses to 52-bit physical addresses.
-    //
-    ASSERT (PhysicalAddressBits <= 52);
-    if (PhysicalAddressBits > 48) {
-      PhysicalAddressBits = 48;
-    }
-
-    //
-    // Calculate the table entries needed.
-    //
-    if (PhysicalAddressBits <= 39 ) {
-      NumberOfPml4EntriesNeeded = 1;
-      NumberOfPdpEntriesNeeded = (UINT32)LShiftU64 (1, (PhysicalAddressBits - 30));
-    } else {
-      NumberOfPml4EntriesNeeded = (UINT32)LShiftU64 (1, (PhysicalAddressBits - 39));
-      NumberOfPdpEntriesNeeded = 512;
-    }
-
-    //
-    // We need calculate whole page size then allocate once, because S3 restore page table does not know each page in Nvs.
-    //
-    if (!Page1GSupport) {
-      TotalPageTableSize = (UINTN)(1 + NumberOfPml4EntriesNeeded + NumberOfPml4EntriesNeeded * NumberOfPdpEntriesNeeded);
-    } else {
-      TotalPageTableSize = (UINTN)(1 + NumberOfPml4EntriesNeeded);
-    }
-    DEBUG ((EFI_D_ERROR, "TotalPageTableSize - %x pages\n", TotalPageTableSize));
-
-    //
-    // By architecture only one PageMapLevel4 exists - so lets allocate storgage for it.
-    //
-    S3NvsPageTableAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocateAcpiNvsMemoryBelow4G (EFI_PAGES_TO_SIZE(TotalPageTableSize));
-    ASSERT (S3NvsPageTableAddress != 0);
-    PageMap = (PAGE_MAP_AND_DIRECTORY_POINTER *)(UINTN)S3NvsPageTableAddress;
-    S3NvsPageTableAddress += SIZE_4KB;
-
-    PageMapLevel4Entry = PageMap;
-    PageAddress        = 0;
-    for (IndexOfPml4Entries = 0; IndexOfPml4Entries < NumberOfPml4EntriesNeeded; IndexOfPml4Entries++, PageMapLevel4Entry++) {
-      //
-      // Each PML4 entry points to a page of Page Directory Pointer entires.
-      // So lets allocate space for them and fill them in in the IndexOfPdpEntries loop.
-      //
-      PageDirectoryPointerEntry = (PAGE_MAP_AND_DIRECTORY_POINTER *)(UINTN)S3NvsPageTableAddress;
-      S3NvsPageTableAddress += SIZE_4KB;
-      //
-      // Make a PML4 Entry
-      //
-      PageMapLevel4Entry->Uint64 = (UINT64)(UINTN)PageDirectoryPointerEntry;
-      PageMapLevel4Entry->Bits.ReadWrite = 1;
-      PageMapLevel4Entry->Bits.Present = 1;
-    
-      if (Page1GSupport) {
-        PageDirectory1GEntry = (PAGE_TABLE_1G_ENTRY *)(UINTN)PageDirectoryPointerEntry;
-    
-        for (IndexOfPageDirectoryEntries = 0; IndexOfPageDirectoryEntries < 512; IndexOfPageDirectoryEntries++, PageDirectory1GEntry++, PageAddress += SIZE_1GB) {
-          //
-          // Fill in the Page Directory entries
-          //
-          PageDirectory1GEntry->Uint64 = (UINT64)PageAddress;
-          PageDirectory1GEntry->Bits.ReadWrite = 1;
-          PageDirectory1GEntry->Bits.Present = 1;
-          PageDirectory1GEntry->Bits.MustBe1 = 1;
-        }
-      } else {
-        for (IndexOfPdpEntries = 0; IndexOfPdpEntries < NumberOfPdpEntriesNeeded; IndexOfPdpEntries++, PageDirectoryPointerEntry++) {
-          //
-          // Each Directory Pointer entries points to a page of Page Directory entires.
-          // So allocate space for them and fill them in in the IndexOfPageDirectoryEntries loop.
-          //       
-          PageDirectoryEntry = (PAGE_TABLE_ENTRY *)(UINTN)S3NvsPageTableAddress;
-          S3NvsPageTableAddress += SIZE_4KB;
-      
-          //
-          // Fill in a Page Directory Pointer Entries
-          //
-          PageDirectoryPointerEntry->Uint64 = (UINT64)(UINTN)PageDirectoryEntry;
-          PageDirectoryPointerEntry->Bits.ReadWrite = 1;
-          PageDirectoryPointerEntry->Bits.Present = 1;
-      
-          for (IndexOfPageDirectoryEntries = 0; IndexOfPageDirectoryEntries < 512; IndexOfPageDirectoryEntries++, PageDirectoryEntry++, PageAddress += SIZE_2MB) {
-            //
-            // Fill in the Page Directory entries
-            //
-            PageDirectoryEntry->Uint64 = (UINT64)PageAddress;
-            PageDirectoryEntry->Bits.ReadWrite = 1;
-            PageDirectoryEntry->Bits.Present = 1;
-            PageDirectoryEntry->Bits.MustBe1 = 1;
-          }
-        }
-      }
-    }
-    return (EFI_PHYSICAL_ADDRESS) (UINTN) PageMap;
-  } else {
     //
     // If DXE is running 32-bit mode, no need to establish page table.
     //
     return  (EFI_PHYSICAL_ADDRESS) 0;  
-  }
 }
 
 /**
@@ -403,10 +253,11 @@ S3Ready (
   IA32_DESCRIPTOR                               *Idtr;
   IA32_IDT_GATE_DESCRIPTOR                      *IdtGate;
 
-  DEBUG ((EFI_D_INFO, "S3Ready!\n"));
+//  DEBUG ((EFI_D_INFO, "S3Ready!\n"));
 
   //
-  // Platform may invoke AcpiS3Save->S3Save() before ExitPmAuth, because we need save S3 information there, while BDS ReadyToBoot may invoke it again.
+  // Platform may invoke AcpiS3Save->S3Save() before ExitPmAuth,
+  //	because we need save S3 information there, while BDS ReadyToBoot may invoke it again.
   // So if 2nd S3Save() is triggered later, we need ignore it.
   //
   if (AlreadyEntered) {
@@ -457,10 +308,10 @@ S3Ready (
   //
   AcpiS3Context->S3DebugBufferAddress = (EFI_PHYSICAL_ADDRESS)(UINTN)AllocateAcpiNvsMemoryBelow4G (EFI_PAGE_SIZE);
 
-  DEBUG((EFI_D_INFO, "AcpiS3Context: AcpiFacsTable is 0x%8x\n", AcpiS3Context->AcpiFacsTable));
-  DEBUG((EFI_D_INFO, "AcpiS3Context: IdtrProfile is 0x%8x\n", AcpiS3Context->IdtrProfile));
-  DEBUG((EFI_D_INFO, "AcpiS3Context: S3NvsPageTableAddress is 0x%8x\n", AcpiS3Context->S3NvsPageTableAddress));
-  DEBUG((EFI_D_INFO, "AcpiS3Context: S3DebugBufferAddress is 0x%8x\n", AcpiS3Context->S3DebugBufferAddress));
+//  DEBUG((EFI_D_INFO, "AcpiS3Context: AcpiFacsTable is 0x%8x\n", AcpiS3Context->AcpiFacsTable));
+//  DEBUG((EFI_D_INFO, "AcpiS3Context: IdtrProfile is 0x%8x\n", AcpiS3Context->IdtrProfile));
+//  DEBUG((EFI_D_INFO, "AcpiS3Context: S3NvsPageTableAddress is 0x%8x\n", AcpiS3Context->S3NvsPageTableAddress));
+//  DEBUG((EFI_D_INFO, "AcpiS3Context: S3DebugBufferAddress is 0x%8x\n", AcpiS3Context->S3DebugBufferAddress));
 
   Status = SaveLockBox (
              &gEfiAcpiVariableGuid,
@@ -478,10 +329,6 @@ S3Ready (
 
   Status = SetLockBoxAttributes (&gEfiAcpiS3ContextGuid, LOCK_BOX_ATTRIBUTE_RESTORE_IN_PLACE);
   ASSERT_EFI_ERROR (Status);
-
-  if (FeaturePcdGet(PcdFrameworkCompatibilitySupport)) { //FALSE
-    S3ReadyThunkPlatform (AcpiS3Context);
-  }
 
   return EFI_SUCCESS;
 }
@@ -508,18 +355,10 @@ InstallAcpiS3Save (
 {
   EFI_STATUS        Status;
 
-  if (!FeaturePcdGet(PcdPlatformCsmSupport)) { //!FALSE
     //
     // More memory for no CSM tip, because GDT need relocation
     //
-    mLegacyRegionSize = 0x250;
-  } else {
-    mLegacyRegionSize = 0x100;
-  }
-
-  if (FeaturePcdGet(PcdFrameworkCompatibilitySupport)) {  //FALSE
-    InstallAcpiS3SaveThunk ();
-  }
+  mLegacyRegionSize = 0x250;
 
   Status = gBS->InstallProtocolInterface (
                   &ImageHandle,
