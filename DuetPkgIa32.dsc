@@ -359,7 +359,7 @@
   #IntelFrameworkModulePkg/Csm/LegacyBiosDxe/LegacyBiosDxe.inf
   #IntelFrameworkModulePkg/Csm/BiosThunk/BlockIoDxe/BlockIoDxe.inf
   #IntelFrameworkModulePkg/Csm/BiosThunk/KeyboardDxe/KeyboardDxe.inf
-  #Clover/BiosKeyboard/KeyboardDxe.inf
+  Clover/BiosKeyboard/KeyboardDxe.inf
   IntelFrameworkModulePkg/Universal/LegacyRegionDxe/LegacyRegionDxe.inf
   MdeModulePkg/Universal/LegacyRegion2Dxe/LegacyRegion2Dxe.inf
 

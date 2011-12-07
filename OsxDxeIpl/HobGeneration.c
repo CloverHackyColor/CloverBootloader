@@ -306,37 +306,47 @@ HOB_TEMPLATE  gHobTemplate = {
   },
   /**
   { // Pointer to FlushInstructionCache
+   {
     EFI_HOB_TYPE_GUID_EXTENSION,       // Hob type
     sizeof (PROTOCOL_HOB),             // Hob size
     0,                                 // reserved
+   }
     EFI_PEI_FLUSH_INSTRUCTION_CACHE_GUID,
     NULL
   },
   { // Pointer to TransferControl
+   {
     EFI_HOB_TYPE_GUID_EXTENSION,       // Hob type
     sizeof (PROTOCOL_HOB),             // Hob size
     0,                                 // reserved
+   }
     EFI_PEI_TRANSFER_CONTROL_GUID,
     NULL
   },
   { // Pointer to PeCoffLoader
+   {
     EFI_HOB_TYPE_GUID_EXTENSION,       // Hob type
     sizeof (PROTOCOL_HOB),             // Hob size
     0,                                 // reserved
+   }
     EFI_PEI_PE_COFF_LOADER_GUID,
     NULL
   },
   { // Pointer to EfiDecompress
+   {
     EFI_HOB_TYPE_GUID_EXTENSION,       // Hob type
     sizeof (PROTOCOL_HOB),             // Hob size
     0,                                 // reserved
+   }
     EFI_DECOMPRESS_PROTOCOL_GUID,
     NULL
   },
   { // Pointer to TianoDecompress
+   {
     EFI_HOB_TYPE_GUID_EXTENSION,       // Hob type
     sizeof (PROTOCOL_HOB),             // Hob size
     0,                                 // reserved
+   }
     EFI_TIANO_DECOMPRESS_PROTOCOL_GUID,
     NULL
   },

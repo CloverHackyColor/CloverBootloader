@@ -221,7 +221,25 @@ GenMemoryMap (
       Attr
       );
   }
-
+  
+  //Slice - Add two more descriptors?
+  EfiAddMemoryDescriptor (
+                          NumberOfMemoryMapEntries,
+                          EfiMemoryDescriptor,
+                          EfiReservedMemoryType,
+                          (EFI_PHYSICAL_ADDRESS)0x9F000,
+                          1,
+                          EFI_MEMORY_UC
+                          );
+  
+  EfiAddMemoryDescriptor (
+                          NumberOfMemoryMapEntries,
+                          EfiMemoryDescriptor,
+                          EfiReservedMemoryType,
+                          (EFI_PHYSICAL_ADDRESS)0xE0000,
+                          0x20,
+                          EFI_MEMORY_UC
+                          );
   //
   // Update MemoryMap according to Ceiling
   //

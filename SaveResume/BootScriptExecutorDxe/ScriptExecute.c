@@ -119,9 +119,9 @@ S3BootScriptExecutorEntryFunction (
 {
   EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE  *Facs;
   EFI_STATUS                                    Status;
-  UINTN                                         TempStackTop;
-  UINTN                                         TempStack[0x10];
-  UINTN                                         AsmTransferControl16Address;
+ // UINTN                                         TempStackTop;
+ // UINTN                                         TempStack[0x10];
+ // UINTN                                         AsmTransferControl16Address;
 
   PERF_CODE (
     mS3BootScriptEntryTick = GetPerformanceCounter ();
