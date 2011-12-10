@@ -828,7 +828,7 @@ InstallMemorySmbios (  //19
 	newSmbiosTable.Type19->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE19); 
 	newSmbiosTable.Type19->MemoryArrayHandle = mHandle16;
 	newSmbiosTable.Type19->StartingAddress = 0;
-	newSmbiosTable.Type19->EndingAddress = TotalEnd;
+	newSmbiosTable.Type19->EndingAddress = (UINT32)(TotalEnd & 0xFFFFFFFF);
 	newSmbiosTable.Type19->PartitionWidth = PartWidth;
 	LogSmbiosData(gSmbios, (UINT8*)newSmbiosTable.Type19);
 	return ;

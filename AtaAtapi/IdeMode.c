@@ -386,14 +386,14 @@ CheckStatusRegister (
 
   StatusRegister = IdeReadPortB (PciIo, IdeRegisters->CmdOrStatus);
 
-  if ((StatusRegister & ATA_STSREG_BSY) == 0) {
+//  if ((StatusRegister & ATA_STSREG_BSY) == 0) {
     if ((StatusRegister & (ATA_STSREG_ERR | ATA_STSREG_DWF | ATA_STSREG_CORR)) == 0) {
       return EFI_SUCCESS;
     } else {
       return EFI_DEVICE_ERROR;
     }
-  }
-  return EFI_NOT_READY; //EFI_SUCCESS;
+//  }
+//  return EFI_NOT_READY; //EFI_SUCCESS;
 }
 
 /**
@@ -423,19 +423,19 @@ DRQClear (
 {
   UINT32  Delay;
   UINT8   StatusRegister;
-//	UINT8   ErrorRegister;
+	UINT8   ErrorRegister;
 
   ASSERT (PciIo != NULL);
   ASSERT (IdeRegisters != NULL);
 
-  Delay = (UINT32) (DivU64x32(Timeout, 1000) + 1); //30001
+  Delay = (UINT32) (DivU64x32(Timeout, 300) + 1); //30001
   do {
     StatusRegister = IdeReadPortB (PciIo, IdeRegisters->CmdOrStatus);
 
     //
     // Wait for BSY == 0, then judge if DRQ is clear
     //
-#if 1	  
+#if 0	  
     if ((StatusRegister & ATA_STSREG_BSY) == 0) {
       if ((StatusRegister & ATA_STSREG_DRQ) == ATA_STSREG_DRQ) {
         return EFI_NOT_READY;
@@ -461,9 +461,9 @@ DRQClear (
 #endif	  
 
     //
-    // Stall for 100 microseconds.
+    // Stall for 100 microseconds. -> 30
     //
-    MicroSecondDelay (100);
+    MicroSecondDelay (30);
 
     Delay--;
 
@@ -501,15 +501,15 @@ DRQClear2 (
 {
   UINT32  Delay;
   UINT8   AltRegister;
-//	UINT8   ErrorRegister;
+	UINT8   ErrorRegister;
 
   ASSERT (PciIo != NULL);
   ASSERT (IdeRegisters != NULL);
 
-  Delay = (UINT32) (DivU64x32(Timeout, 1000) + 1);
+  Delay = (UINT32) (DivU64x32(Timeout, 300) + 1);
   do {
     AltRegister = IdeReadPortB (PciIo, IdeRegisters->AltOrDev);
-#if 1
+#if 0
     //
     // Wait for BSY == 0, then judge if DRQ is clear
     //
@@ -535,9 +535,9 @@ DRQClear2 (
 #endif	  
 
     //
-    // Stall for 100 microseconds.
+    // Stall for 100 microseconds. -> 30
     //
-    MicroSecondDelay (100);
+    MicroSecondDelay (30);
 
     Delay--;
 
@@ -583,7 +583,7 @@ DRQReady (
   ASSERT (PciIo != NULL);
   ASSERT (IdeRegisters != NULL);
 
-  Delay = (UINT32) (DivU64x32(Timeout, 1000) + 1);
+  Delay = (UINT32) (DivU64x32(Timeout, 300) + 1);
   do {
     //
     // Read Status Register will clear interrupt
@@ -611,9 +611,9 @@ DRQReady (
     }
 
     //
-    // Stall for 100 microseconds.
+    // Stall for 100 microseconds. -> 30
     //
-    MicroSecondDelay (100);
+    MicroSecondDelay (30);
 
     Delay--;
   } while (Delay > 0);
@@ -650,7 +650,7 @@ DRQReady2 (
   ASSERT (PciIo != NULL);
   ASSERT (IdeRegisters != NULL);
 
-  Delay = (UINT32) (DivU64x32(Timeout, 1000) + 1);
+  Delay = (UINT32) (DivU64x32(Timeout, 300) + 1);
 
   do {
     //
@@ -680,7 +680,7 @@ DRQReady2 (
     //
     // Stall for 100 microseconds.
     //
-    MicroSecondDelay (100);
+    MicroSecondDelay (30);
 
     Delay--;
   } while (Delay > 0);
@@ -717,7 +717,7 @@ DRDYReady (
   ASSERT (PciIo != NULL);
   ASSERT (IdeRegisters != NULL);
 
-  Delay = (UINT32) (DivU64x32(Timeout, 1000) + 1);
+  Delay = (UINT32) (DivU64x32(Timeout, 300) + 1);
   do {
     StatusRegister = IdeReadPortB (PciIo, IdeRegisters->CmdOrStatus);
     //
@@ -741,9 +741,9 @@ DRDYReady (
     }
 
     //
-    // Stall for 100 microseconds.
+    // Stall for 100 microseconds. ->30
     //
-    MicroSecondDelay (100);
+    MicroSecondDelay (30);
 
     Delay--;
   } while (Delay > 0);
@@ -781,7 +781,7 @@ DRDYReady2 (
   ASSERT (PciIo != NULL);
   ASSERT (IdeRegisters != NULL);
 
-  Delay = (UINT32) (DivU64x32(Timeout, 1000) + 1);
+  Delay = (UINT32) (DivU64x32(Timeout, 300) + 1);
   do {
     AltRegister = IdeReadPortB (PciIo, IdeRegisters->AltOrDev);
     //
@@ -807,7 +807,7 @@ DRDYReady2 (
     //
     // Stall for 100 microseconds.
     //
-    MicroSecondDelay (100);
+    MicroSecondDelay (30);
 
     Delay--;
   } while (Delay > 0);
@@ -842,7 +842,7 @@ WaitForBSYClear (
   ASSERT (PciIo != NULL);
   ASSERT (IdeRegisters != NULL);
 
-  Delay = (UINT32) (DivU64x32(Timeout, 1000) + 1);
+  Delay = (UINT32) (DivU64x32(Timeout, 300) + 1);
   do {
     StatusRegister = IdeReadPortB (PciIo, IdeRegisters->CmdOrStatus);
 
@@ -853,7 +853,7 @@ WaitForBSYClear (
     //
     // Stall for 100 microseconds.
     //
-    MicroSecondDelay (100);
+    MicroSecondDelay (30);
 
     Delay--;
 
@@ -889,7 +889,7 @@ WaitForBSYClear2 (
   ASSERT (PciIo != NULL);
   ASSERT (IdeRegisters != NULL);
 
-  Delay = (UINT32) (DivU64x32(Timeout, 1000) + 1);
+  Delay = (UINT32) (DivU64x32(Timeout, 300) + 1);
   do {
     AltStatusRegister = IdeReadPortB (PciIo, IdeRegisters->AltOrDev);
 
@@ -900,7 +900,7 @@ WaitForBSYClear2 (
     //
     // Stall for 100 microseconds.
     //
-    MicroSecondDelay (100);
+    MicroSecondDelay (30);
 
     Delay--;
 
@@ -1158,6 +1158,17 @@ AtaIssueCommand (
   // Select device (bit4), set LBA mode(bit6) (use 0xe0 for compatibility)
   //
   IdeWritePortB (PciIo, IdeRegisters->Head, (UINT8) (0xe0 | DeviceHead));
+  //
+  // All ATAPI device's ATA commands can be issued regardless of the
+  // state of the DRDY
+  //Slice - this is from IdeBus
+/*  if (IdeDev->Type == IdeHardDisk) {
+    
+    Status = DRDYReady (IdeDev, ATATIMEOUT);
+    if (EFI_ERROR (Status)) {
+      return EFI_DEVICE_ERROR;
+    }
+  } */
 
   //
   // set all the command parameters
@@ -1295,6 +1306,12 @@ AtaPioDataInOut (
       goto Exit;
     }
 
+    Status = CheckStatusRegister (PciIo, IdeRegisters);
+    if (EFI_ERROR (Status)) {
+      Status = EFI_DEVICE_ERROR;
+      goto Exit;
+    }
+
     //
     // Get the byte count for one series of read
     //
@@ -1316,12 +1333,6 @@ AtaPioDataInOut (
         Increment,
         Buffer16
         );
-    }
-
-    Status = CheckStatusRegister (PciIo, IdeRegisters);
-    if (EFI_ERROR (Status)) {
-      Status = EFI_DEVICE_ERROR;
-      goto Exit;
     }
 
     WordCount += Increment;
