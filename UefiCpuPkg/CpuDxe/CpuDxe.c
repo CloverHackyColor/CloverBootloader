@@ -1163,7 +1163,7 @@ InitInterruptDescriptorTable (
   CurrentCs = AsmReadCs();
 	 // Allocate Runtime Data for the IDT
 	IdtSize = INTERRUPT_VECTOR_NUMBER*sizeof(IA32_IDT_GATE_DESCRIPTOR);
-	gIdtTable = (VOID*)(UINTN)HandyCpuPage + 0x500;
+	gIdtTable = (VOID*)((UINTN)HandyCpuPage + 0x500);
 	for (Index = 0; Index < INTERRUPT_VECTOR_NUMBER; Index ++, CurrentHandler += 0x08) {
 		//
 		// If the old IDT had a handler for this interrupt, then
@@ -1258,7 +1258,7 @@ LoadIdt(VOID* Idt, UINT32 IdtSize)
     AsmWriteIdtr (&IdtPtr);
 }
 
-UINT32
+/*UINT32
 EFIAPI
 IoWrite32 (
   IN      UINTN                     Port,
@@ -1267,7 +1267,7 @@ IoWrite32 (
 {
   __asm__ __volatile__ ("outl %0,%w1" : : "a" (Value), "d" ((UINT16)Port));
   return Value;
-}
+}*/
 
 VOID
 EFIAPI

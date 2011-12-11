@@ -158,7 +158,7 @@ AtaDevicePassThru (
                           Packet,
                           Event
                           );
-//	DBG(L"AtaPassThru->PassThru Status=%r\n", Status);
+	DBG(L"AtaPassThru->PassThru DeviceHead=%x Status=%r\n", Packet->Acb->AtaDeviceHead, Status);
   //
   // Ensure ATA pass through caller and callee have the same
   // interpretation of ATA pass through protocol. 
@@ -484,6 +484,8 @@ TransferAtaDevice (
   ASSERT ((UINTN) AtaDevice->UdmaValid < 2);
   ASSERT ((UINTN) AtaDevice->Lba48Bit < 2);
   ASSERT ((UINTN) IsWrite < 2);
+  DBG(L"Udma=%d Lba48bit=%d IsWrite=%d\n", (INTN) AtaDevice->UdmaValid,
+      (INTN) AtaDevice->Lba48Bit, (INTN) IsWrite);
   //
   // Prepare for ATA command block.
   //
@@ -502,7 +504,7 @@ TransferAtaDevice (
   } else {
     Acb->AtaDeviceHead = (UINT8) (Acb->AtaDeviceHead | RShiftU64 (StartLba, 24));
   }
-
+  DBG(L"Transfer StartLba=%x AtaDeviceHead=%x\n", StartLba, Acb->AtaDeviceHead);
   //
   // Prepare for ATA pass through packet.
   //

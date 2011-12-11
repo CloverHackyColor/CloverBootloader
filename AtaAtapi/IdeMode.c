@@ -1,5 +1,5 @@
 /** @file
-  Header file for AHCI mode of ATA host controller.
+  Header file for IDE mode of ATA host controller.
   
   Copyright (c) 2010 - 2011, Intel Corporation. All rights reserved.<BR>
   This program and the accompanying materials                          
@@ -589,7 +589,7 @@ DRQReady (
     // Read Status Register will clear interrupt
     //
     StatusRegister = IdeReadPortB (PciIo, IdeRegisters->CmdOrStatus);
-
+#if 0
     //
     // Wait for BSY == 0, then judge if DRQ is clear or ERR is set
     //
@@ -609,7 +609,23 @@ DRQReady (
         return EFI_NOT_READY;
       } 
     }
+#else
+    //
+    //  BSY==0,DRQ==1
+    //
+    if ((StatusRegister & (ATA_STSREG_BSY | ATA_STSREG_DRQ)) == ATA_STSREG_DRQ) {
+      break;
+    }
+    
+    if ((StatusRegister & (ATA_STSREG_BSY | ATA_STSREG_ERR)) == ATA_STSREG_ERR) {
+      
+      ErrorRegister = IdeReadPortB (PciIo, IdeRegisters->ErrOrFeature);
+      if ((ErrorRegister & ATA_ERRREG_ABRT) == ATA_ERRREG_ABRT) {
+        return EFI_ABORTED;
+      }
+    }
 
+#endif
     //
     // Stall for 100 microseconds. -> 30
     //
@@ -618,7 +634,11 @@ DRQReady (
     Delay--;
   } while (Delay > 0);
 
-  return EFI_TIMEOUT;
+  if (Delay == 0) {
+    return EFI_TIMEOUT;
+  }
+  
+  return EFI_SUCCESS;
 }
 /**
   This function is used to poll for the DRQ bit set in the Alternate Status Register.
@@ -657,6 +677,7 @@ DRQReady2 (
     // Read Alternate Status Register will not clear interrupt status
     //
     AltRegister = IdeReadPortB (PciIo, IdeRegisters->AltOrDev);
+#if 0  
     //
     // Wait for BSY == 0, then judge if DRQ is clear or ERR is set
     //
@@ -676,7 +697,22 @@ DRQReady2 (
         return EFI_NOT_READY;
       } 
     }
-
+#else
+    //
+    // BSY == 0 , DRQ == 1
+    //
+    if ((AltRegister & (ATA_STSREG_BSY | ATA_STSREG_DRQ)) == ATA_STSREG_DRQ) {
+      break;
+    }
+    
+    if ((AltRegister & (ATA_STSREG_BSY | ATA_STSREG_ERR)) == ATA_STSREG_ERR) {
+      
+      ErrorRegister = IdeReadPortB (PciIo, IdeRegisters->ErrOrFeature);
+      if ((ErrorRegister & ATA_ERRREG_ABRT) == ATA_ERRREG_ABRT) {
+        return EFI_ABORTED;
+      }
+    }
+#endif
     //
     // Stall for 100 microseconds.
     //
@@ -685,7 +721,11 @@ DRQReady2 (
     Delay--;
   } while (Delay > 0);
 
-  return EFI_TIMEOUT;
+  if (Delay == 0) {
+    return EFI_TIMEOUT;
+  }
+  
+  return EFI_SUCCESS;
 }
 
 /**
@@ -720,6 +760,7 @@ DRDYReady (
   Delay = (UINT32) (DivU64x32(Timeout, 300) + 1);
   do {
     StatusRegister = IdeReadPortB (PciIo, IdeRegisters->CmdOrStatus);
+#if 0    
     //
     // Wait for BSY == 0, then judge if DRDY is set or ERR is set
     //
@@ -739,7 +780,22 @@ DRDYReady (
         return EFI_NOT_READY;
       }
     }
-
+#else
+    //
+    //  BSY == 0 , DRDY == 1
+    //
+    if ((StatusRegister & (ATA_STSREG_DRDY | ATA_STSREG_BSY)) == ATA_STSREG_DRDY) {
+      break;
+    }
+    
+    if ((StatusRegister & (ATA_STSREG_BSY | ATA_STSREG_ERR)) == ATA_STSREG_ERR) {
+      
+      ErrorRegister = IdeReadPortB (PciIo, IdeRegisters->ErrOrFeature);
+      if ((ErrorRegister & ATA_ERRREG_ABRT) == ATA_ERRREG_ABRT) {
+        return EFI_ABORTED;
+      }
+    }
+#endif
     //
     // Stall for 100 microseconds. ->30
     //
@@ -748,7 +804,11 @@ DRDYReady (
     Delay--;
   } while (Delay > 0);
 
-  return EFI_TIMEOUT;
+  if (Delay == 0) {
+    return EFI_TIMEOUT;
+  }
+  
+  return EFI_SUCCESS;
 }
 
 /**
@@ -784,6 +844,7 @@ DRDYReady2 (
   Delay = (UINT32) (DivU64x32(Timeout, 300) + 1);
   do {
     AltRegister = IdeReadPortB (PciIo, IdeRegisters->AltOrDev);
+#if 0
     //
     // Wait for BSY == 0, then judge if DRDY is set or ERR is set
     //
@@ -803,6 +864,22 @@ DRDYReady2 (
         return EFI_NOT_READY;
       }
     }
+#else
+    //
+    //  BSY == 0 , DRDY == 1
+    //
+    if ((AltRegister & (ATA_STSREG_DRDY | ATA_STSREG_BSY)) == ATA_STSREG_DRDY) {
+      break;
+    }
+    
+    if ((AltRegister & (ATA_STSREG_BSY | ATA_STSREG_ERR)) == ATA_STSREG_ERR) {
+      
+      ErrorRegister = IdeReadPortB (PciIo, IdeRegisters->ErrOrFeature);
+      if ((ErrorRegister & ATA_ERRREG_ABRT) == ATA_ERRREG_ABRT) {
+        return EFI_ABORTED;
+      }
+    }
+#endif
 
     //
     // Stall for 100 microseconds.
@@ -812,7 +889,11 @@ DRDYReady2 (
     Delay--;
   } while (Delay > 0);
 
-  return EFI_TIMEOUT;
+  if (Delay == 0) {
+    return EFI_TIMEOUT;
+  }
+  
+  return EFI_SUCCESS;
 }
 
 /**
@@ -851,7 +932,7 @@ WaitForBSYClear (
     }
 
     //
-    // Stall for 100 microseconds.
+    // Stall for 100 microseconds. -> 30us
     //
     MicroSecondDelay (30);
 
@@ -1093,7 +1174,7 @@ AtaSoftReset (
   // SRST should assert for at least 5 us, we use 10 us for
   // better compatibility
   //
-  MicroSecondDelay (10);
+  MicroSecondDelay (30); //Slice - minimum
 
   //
   // Enable interrupt to support UDMA, and clear SRST bit
@@ -1141,6 +1222,7 @@ AtaIssueCommand (
   EFI_STATUS  Status;
   UINT8       DeviceHead;
   UINT8       AtaCommand;
+  UINT8       LBAMidReg;
 
   ASSERT (PciIo != NULL);
   ASSERT (IdeRegisters != NULL);
@@ -1154,6 +1236,7 @@ AtaIssueCommand (
     return EFI_DEVICE_ERROR;
   }
 
+  LBAMidReg = IdeReadPortB (PciIo, IdeRegisters->CylinderLsb);
   //
   // Select device (bit4), set LBA mode(bit6) (use 0xe0 for compatibility)
   //
@@ -1162,13 +1245,17 @@ AtaIssueCommand (
   // All ATAPI device's ATA commands can be issued regardless of the
   // state of the DRDY
   //Slice - this is from IdeBus
-/*  if (IdeDev->Type == IdeHardDisk) {
+  /* How to differ HD from CD?
+   LBAMidReg      = IdeReadPortB (PciIo, IdeRegisters->CylinderLsb);
+   if (LBAMidReg == 0x14) type = EfiIdeCdrom;
+   */
+  if (LBAMidReg == 0) {
     
-    Status = DRDYReady (IdeDev, ATATIMEOUT);
+    Status = DRDYReady (PciIo, IdeRegisters, Timeout);
     if (EFI_ERROR (Status)) {
       return EFI_DEVICE_ERROR;
     }
-  } */
+  } 
 
   //
   // set all the command parameters
@@ -2368,7 +2455,7 @@ SetDriveParameters (
              ATA_ATAPI_TIMEOUT, 
              NULL
              );
-
+  DBG(L"Send Init DeviceHead=%x Status=%r\n", AtaCommandBlock.AtaDeviceHead, Status);
   //
   // Send Set Multiple parameters
   //
@@ -2384,7 +2471,7 @@ SetDriveParameters (
              ATA_ATAPI_TIMEOUT, 
              NULL
              );
-
+  DBG(L"Set Multiple DeviceHead=%x Status=%r\n", AtaCommandBlock.AtaDeviceHead, Status);
   return Status;
 }
 
@@ -2433,7 +2520,7 @@ IdeAtaSmartReturnStatusCheck (
              ATA_ATAPI_TIMEOUT,
              NULL
              );
-
+  DBG(L"Send S.M.A.R.T DeviceHead=%x Status=%r\n", AtaCommandBlock.AtaDeviceHead, Status);
   if (EFI_ERROR (Status)) {
     return EFI_DEVICE_ERROR;
   }
@@ -2518,7 +2605,7 @@ IdeAtaSmartSupport (
                  ATA_ATAPI_TIMEOUT,
                  NULL
                  );
-
+      DBG(L"Send S.M.A.R.T enable DeviceHead=%x Status=%r\n", AtaCommandBlock.AtaDeviceHead, Status);
       if (!EFI_ERROR (Status)) {
         //
         // Send S.M.A.R.T AutoSave command to device
@@ -2540,6 +2627,7 @@ IdeAtaSmartSupport (
                    ATA_ATAPI_TIMEOUT,
                    NULL
                    );
+        DBG(L"Send S.M.A.R.T autosave DeviceHead=%x Status=%r\n", AtaCommandBlock.AtaDeviceHead, Status);
         if (!EFI_ERROR (Status)) {
           Status = IdeAtaSmartReturnStatusCheck (
                      Instance,
@@ -2613,7 +2701,7 @@ AtaIdentify (
              ATA_ATAPI_TIMEOUT,
              NULL
              );
-
+  DBG(L"ATA identify DeviceHead=%x Status=%r\n", AtaCommandBlock.AtaDeviceHead, Status);
   return Status;
 }
 
@@ -2681,7 +2769,7 @@ AtaIdentifyPacket (
              ATA_ATAPI_TIMEOUT,
              NULL
              );
-
+  DBG(L"Atapi identify DeviceHead=%x Status=%r\n", AtaCommandBlock.AtaDeviceHead, Status);
   return Status;
 }
 
@@ -2792,29 +2880,29 @@ DetectAndConfigIdeDevice (
     // Refer to ATA/ATAPI 4 Spec, section 9.1
     //
     if ((SectorCountReg == 0x1) && (LBALowReg == 0x1) && (LBAMidReg == 0x0) && (LBAHighReg == 0x0)) {
-		if (IdeDevice == 0) {
-			MasterDeviceExist = TRUE;
-			MasterDeviceType = EfiIdeHarddisk;
-		}
-		else {
-			SlaveDeviceExist = TRUE;
-			SlaveDeviceType = EfiIdeHarddisk;
-		}
-		DeviceType = EfiIdeHarddisk; //ATA_DEVICE_TYPE
+      if (IdeDevice == 0) {
+        MasterDeviceExist = TRUE;
+        MasterDeviceType = EfiIdeHarddisk;
+      }
+      else {
+        SlaveDeviceExist = TRUE;
+        SlaveDeviceType = EfiIdeHarddisk;
+      }
+      DeviceType = EfiIdeHarddisk; //ATA_DEVICE_TYPE
     } else if ((LBAMidReg == 0x14) && (LBAHighReg == 0xeb)) {
-		if (IdeDevice == 0) {
-			MasterDeviceExist = TRUE;
-			MasterDeviceType = EfiIdeCdrom;
-		}
-		else {
-			SlaveDeviceExist = TRUE;
-			SlaveDeviceType = EfiIdeCdrom;
-		}
-		DeviceType = EfiIdeCdrom; //ATAPI_DEVICE_TYPE
+      if (IdeDevice == 0) {
+        MasterDeviceExist = TRUE;
+        MasterDeviceType = EfiIdeCdrom;
+      }
+      else {
+        SlaveDeviceExist = TRUE;
+        SlaveDeviceType = EfiIdeCdrom;
+      }
+      DeviceType = EfiIdeCdrom; //ATAPI_DEVICE_TYPE
     } else {
-		continue;
+      continue;
     }
-//	  DBG(L"IdeDevice=%d LBAMidReg=%x LBAHighReg=%x\n", IdeDevice, LBAMidReg, LBAHighReg);
+    //	  DBG(L"IdeDevice=%d LBAMidReg=%x LBAHighReg=%x\n", IdeDevice, LBAMidReg, LBAHighReg);
 	  if (!MasterDeviceExist) {
 		  gBS->Stall (20000);
 	  }
@@ -2892,7 +2980,7 @@ DetectAndConfigIdeDevice (
     // Submit identify data to IDE controller init driver
     //
     IdeInit->SubmitData (IdeInit, IdeChannel, IdeDevice, &Buffer);
-    DBG (L"CalculateMode for device for channel [%d] device [%d]\n", IdeChannel, IdeDevice);
+ //   DBG (L"CalculateMode for device for channel [%d] device [%d]\n", IdeChannel, IdeDevice);
     //
     // Now start to config ide device parameter and transfer mode.
     //
@@ -2972,7 +3060,7 @@ DetectAndConfigIdeDevice (
 
       Status = SetDriveParameters (Instance, IdeChannel, IdeDevice, &DriveParameters, NULL);
     }
-   DBG (L"Set Parameters for channel [%d] device [%d] end\n", IdeChannel, IdeDevice);
+//   DBG (L"Set Parameters for channel [%d] device [%d] end\n", IdeChannel, IdeDevice);
     //
     // Set IDE controller Timing Blocks in the PCI Configuration Space
     //
@@ -3027,7 +3115,7 @@ IdeModeInitialization (
   //
   Status = GetIdeRegisterIoAddr (PciIo, Instance->IdeRegisters);
   if (EFI_ERROR (Status)) {
-	  DBG(L"GetIdeRegisterIoAddr fails Status=%r\n", Status);
+//	  DBG(L"GetIdeRegisterIoAddr fails Status=%r\n", Status);
     goto ErrorExit;
   }
 

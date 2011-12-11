@@ -485,7 +485,7 @@ RestoreS3PageTables (
   IN UINTN                                         S3NvsPageTableAddress
   )
 {
-  if (FeaturePcdGet (PcdDxeIplSwitchToLongMode)) {
+/*  if (FeaturePcdGet (PcdDxeIplSwitchToLongMode)) {
     UINT32                                        RegEax;
     UINT32                                        RegEdx;
     UINT8                                         PhysicalAddressBits;
@@ -624,7 +624,8 @@ RestoreS3PageTables (
   	// If DXE is running 32-bit mode, no need to establish page table.
   	//
     return ;
-  }
+  } */
+  return;
 }
 
 /**

@@ -26,7 +26,7 @@ EFI_DRIVER_BINDING_PROTOCOL gBiosVideoDriverBinding = {
   NULL,
   NULL
 };
-
+/*
 CHAR8 *msgbuf = NULL;
 CHAR8 *msgCursor = NULL;
 #define BOOTER_LOG_SIZE	(4 * 1024)
@@ -48,14 +48,14 @@ VOID InitBooterLog(VOID)
 	
 	msgCursor = msgbuf;
 }
-
+*/
 /*VOID MsgLog(const CHAR8* S)
 {
 	while (*S) {		
 		*msgCursor++ = *S++;
 	}
 }*/
-#define MsgLog(x...) if(msgCursor){AsciiSPrint(msgCursor, BOOTER_LOG_SIZE, x); while(*msgCursor){msgCursor++;}}
+//#define MsgLog(x...) if(msgCursor){AsciiSPrint(msgCursor, BOOTER_LOG_SIZE, x); while(*msgCursor){msgCursor++;}}
 //
 // Global lookup tables for VGA graphics modes
 //
@@ -295,7 +295,7 @@ BiosVideoDriverBindingStart (
   //
   // Prepare for status code
   //
-	InitBooterLog();
+//	InitBooterLog();
   Status = gBS->HandleProtocol (
                   Controller,
                   &gEfiDevicePathProtocolGuid,
@@ -449,6 +449,7 @@ BiosVideoChildHandleInstall (
   EFI_STATUS               Status;
   BIOS_VIDEO_DEV           *BiosVideoPrivate;
   ACPI_ADR_DEVICE_PATH     AcpiDeviceNode;
+  IA32_REGISTER_SET        Regs;
 
   //
   // Allocate the private device structure for video device
@@ -513,7 +514,7 @@ BiosVideoChildHandleInstall (
   //
   BiosVideoPrivate->PciIo = ParentPciIo;
 //Slice
-	IA32_REGISTER_SET        Regs;
+//	IA32_REGISTER_SET        Regs;
 	gBS->SetMem (&Regs, sizeof (Regs), 0);
 	Regs.H.AH = 0x00;
 	Regs.H.AL = 0x94; //0x83; bit 7      HiColor DAC
@@ -532,7 +533,7 @@ BiosVideoChildHandleInstall (
 	//	Regs.H.BL = 0xF;
 	LegacyBiosInt86 (BiosVideoPrivate, 0x10, &Regs); 
 */	
-	MsgLog("Current mode: %x\n", Regs.X.BX);
+//	MsgLog("Current mode: %x\n", Regs.X.BX);
 	
   //
   // Check for VESA BIOS Extensions for modes that are compatible with Graphics Output
@@ -578,7 +579,7 @@ BiosVideoChildHandleInstall (
 		}
 		
 		//Store msglog into EdidActive ;)
-		if (BiosVideoPrivate->EdidActive.Edid != NULL) {
+/*		if (BiosVideoPrivate->EdidActive.Edid != NULL) {
 			gBS->FreePool (BiosVideoPrivate->EdidActive.Edid);
 		}
 		UINTN			LogSize = msgCursor - msgbuf;
@@ -591,7 +592,8 @@ BiosVideoChildHandleInstall (
 		if (!EFI_ERROR (Status)){
 			CopyMem(BiosVideoPrivate->EdidActive.Edid, msgbuf, LogSize);
 		}
-		//
+*/
+    //
 		// Creat child handle and install Graphics Output Protocol,EDID Discovered/Active Protocol
 		//
 		Status = gBS->InstallMultipleProtocolInterfaces (
@@ -1139,7 +1141,7 @@ ParseEdidData (
 				}				
 			}
 		} else if (BufferIndex[3] == 0xFE) { //Ascii string
-			MsgLog("timing string:%a\n", &BufferIndex[5]);
+//			MsgLog("timing string:%a\n", &BufferIndex[5]);
 		}
 	}
 	
@@ -1236,7 +1238,8 @@ BiosVideoCheckForVbe (
 	UINT16									HighestHorizontalResolution = 0; 
 	UINT16									HighestVerticalResolution = 0; 
 	UINT16									HighestResolutionMode = 0; 
-	INTN	i;
+//	INTN	i;
+  UINT16* VMP16;
 	
 	
 	//	MsgLog("Check for Vbe\n");
@@ -1367,7 +1370,7 @@ BiosVideoCheckForVbe (
 	if (Regs.X.AX == VESA_BIOS_EXTENSIONS_STATUS_SUCCESS)
 	{
 		EdidFound = TRUE;
-		MsgLog(" Edid1+ ");
+//		MsgLog(" Edid1+ ");
 		ParseEdidData ((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock, &ValidEdidTiming);
 	}
 	
@@ -1386,7 +1389,7 @@ BiosVideoCheckForVbe (
 	
 	
 	if (!verifyEDID((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock)) {
-		MsgLog(" Edid broken\n");
+//		MsgLog(" Edid broken\n");
 	}
     //
     // Parse EDID data structure to retrieve modes supported by monitor
@@ -1394,17 +1397,17 @@ BiosVideoCheckForVbe (
 	if (Regs.X.AX == VESA_BIOS_EXTENSIONS_STATUS_SUCCESS)
 	{
 		EdidFound = TRUE;
-		MsgLog(" Edid0+ ");
+//		MsgLog(" Edid0+ ");
 		ParseEdidData ((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock, &ValidEdidTiming);
 	}
 	
     if (EdidFound ) {
 		//		MsgLog(" Edid good\n");
-		MsgLog("Timings: ");
+/*		MsgLog("Timings: ");
 		for (i=0; i<ValidEdidTiming.ValidNumber; i++) {
 			MsgLog("%d ", ValidEdidTiming.Key[i]);
 		}
-		MsgLog("\n");
+		MsgLog("\n"); */
 		BiosVideoPrivate->EdidDiscovered.SizeOfEdid = VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE;
 		Status = gBS->AllocatePool (
 									EfiBootServicesData,
@@ -1449,7 +1452,7 @@ BiosVideoCheckForVbe (
 	//
 	//	UINT8* VMP = (UINT8 *)&BiosVideoPrivate->VbeInformationBlock->VideoModePtr; 
 	//	ModeNumberPtr = (UINT16 *)(UINTN)((VMP[0] | (VMP[1]<<8)) + ((VMP[2]<<4) | (VMP[3]<<12)));
-	UINT16* VMP16 = (UINT16 *)&BiosVideoPrivate->VbeInformationBlock->VideoModePtr;
+	VMP16 = (UINT16 *)&BiosVideoPrivate->VbeInformationBlock->VideoModePtr;
 	ModeNumberPtr = (UINT16 *)(UINTN)(VMP16[0] | ((UINTN)VMP16[1] << 4));
 	/*  ModeNumberPtr = (UINT16 *)
 	 (
@@ -1459,7 +1462,7 @@ BiosVideoCheckForVbe (
 	 */
 	PreferMode = -1;
 	ModeNumber = 0;
-	MsgLog("VbeModes: @%x\n", (UINTN)ModeNumberPtr);
+//	MsgLog("VbeModes: @%x\n", (UINTN)ModeNumberPtr);
 	for (; *ModeNumberPtr != VESA_BIOS_EXTENSIONS_END_OF_MODE_LIST; ModeNumberPtr++) {//0xffff
 		//
 		// Make sure this is a mode number defined by the VESA VBE specification.  If it isn'tm then skip this mode number.
@@ -1544,10 +1547,10 @@ BiosVideoCheckForVbe (
 		if (BiosVideoPrivate->VbeModeInformationBlock->PhysBasePtr == 0) {
 			continue;
 		}
-		MsgLog("0x%x: %dx%d attr=%d\n",*ModeNumberPtr, BiosVideoPrivate->VbeModeInformationBlock->XResolution,
+	/*	MsgLog("0x%x: %dx%d attr=%d\n",*ModeNumberPtr, BiosVideoPrivate->VbeModeInformationBlock->XResolution,
 			   BiosVideoPrivate->VbeModeInformationBlock->YResolution,
 			   BiosVideoPrivate->VbeModeInformationBlock->ModeAttributes);
-		
+	*/	
 		ModeFound = FALSE;
 		if (EdidFound && (ValidEdidTiming.ValidNumber > 0)) {
 			//
@@ -1602,7 +1605,7 @@ BiosVideoCheckForVbe (
 			HighestHorizontalResolution = BiosVideoPrivate->VbeModeInformationBlock->XResolution;
 			HighestVerticalResolution = BiosVideoPrivate->VbeModeInformationBlock->YResolution;
 			HighestResolutionMode = ModeNumber;
-			MsgLog("best mode: %d\n", ModeNumber);
+//			MsgLog("best mode: %d\n", ModeNumber);
 		}
 		// later -
 		PreferMode = HighestResolutionMode;
@@ -1717,16 +1720,16 @@ BiosVideoCheckForVbe (
 	// Find the best mode to initialize
 	//
 	Status = BiosVideoGraphicsOutputSetMode (&BiosVideoPrivate->GraphicsOutput, (UINT32) PreferMode);
-	MsgLog("setPreferMode %d status=%r\n", PreferMode, Status);
+//	MsgLog("setPreferMode %d status=%r\n", PreferMode, Status);
 	if (EFI_ERROR (Status)) {
 		for (PreferMode = 0; PreferMode < ModeNumber; PreferMode ++) {
-			MsgLog("try to set %d...", PreferMode);
+//			MsgLog("try to set %d...", PreferMode);
 			Status = BiosVideoGraphicsOutputSetMode (
 													 &BiosVideoPrivate->GraphicsOutput,
 													 (UINT32) PreferMode
 													 );
 			if (!EFI_ERROR (Status)) {
-				MsgLog("success\n");
+//				MsgLog("success\n");
 				break;
 			}
 		}
