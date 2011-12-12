@@ -21,7 +21,7 @@
 #if DEBUG_ATAATAPI==1
 #define DBG(x...)  Print(x)
 #else
-#define DBG(x...)
+#define DBG(x,...)
 #endif
 
 //
@@ -208,11 +208,11 @@ AtaPassThruPassThruExecute (
       // Reassign IDE mode io port registers' base addresses
       //
       Status = GetIdeRegisterIoAddr (Instance->PciIo, Instance->IdeRegisters);
-		  DBG(L"GetIdeRegisterIoAddr Status=%r\n", Status);
+//		  DBG(L"GetIdeRegisterIoAddr Status=%r\n", Status);
       if (EFI_ERROR (Status)) {
         return Status;
       }
-		  DBG(L"Protocol = %x\n", Protocol);
+//		  DBG(L"Protocol = %x\n", Protocol);
       switch (Protocol) {
         case EFI_ATA_PASS_THRU_PROTOCOL_ATA_NON_DATA:
           Status = AtaNonDataCommandIn (
@@ -236,6 +236,7 @@ AtaPassThruPassThruExecute (
                      Packet->Timeout,
                      Task
                      );
+          DBG(L"AtaPioDataInOut PIO Status=%r\n", Status);
           break;
         case EFI_ATA_PASS_THRU_PROTOCOL_PIO_DATA_OUT:
           Status = AtaPioDataInOut (
@@ -262,6 +263,7 @@ AtaPassThruPassThruExecute (
                      Packet->Timeout,
                      Task
                      );
+          DBG(L"AtaPioDataInOut UDMA Status=%r\n", Status);
           break;
         case EFI_ATA_PASS_THRU_PROTOCOL_UDMA_DATA_OUT:
           Status = AtaUdmaInOut (
@@ -678,7 +680,7 @@ AtaAtapiPassThruStart (
   Instance              = NULL;
   OriginalPciAttributes = 0;
 
-  DBG (L"==AtaAtapiPassThru Start== Controller = %x\n", Controller);
+//  DBG (L"==AtaAtapiPassThru Start== Controller = %x\n", Controller);
 
   Status  = gBS->OpenProtocol (
                    Controller,
@@ -690,7 +692,7 @@ AtaAtapiPassThruStart (
                    );
 
   if (EFI_ERROR (Status)) {
-    DBG (L"Open Ide_Controller_Init Error, Status=%r", Status);
+//    DBG (L"Open Ide_Controller_Init Error, Status=%r", Status);
     goto ErrorExit;
   }
 
@@ -715,7 +717,7 @@ AtaAtapiPassThruStart (
                     );
 
   if (EFI_ERROR (Status)) {
-	  DBG(L"OriginalPciAttributes status=%r\n", Status);
+//	  DBG(L"OriginalPciAttributes status=%r\n", Status);
     goto ErrorExit;
   }
 
@@ -792,7 +794,7 @@ AtaAtapiPassThruStart (
                   NULL
                   );
   ASSERT_EFI_ERROR (Status);
-	DBG(L"AtaPassThru success\n");
+//	DBG(L"AtaPassThru success\n");
   return Status;
 
 ErrorExit:
@@ -862,7 +864,7 @@ AtaAtapiPassThruStop (
   EFI_AHCI_REGISTERS                *AhciRegisters;
   UINT64                            Supports;
 
-  DBG (L"==AtaAtapiPassThru Stop== Controller = %x\n", Controller);
+//  DBG (L"==AtaAtapiPassThru Stop== Controller = %x\n", Controller);
 
   Status = gBS->OpenProtocol (
                   Controller,
@@ -1059,7 +1061,7 @@ CreateNewDeviceInfo (
   DeviceInfo->Type           = DeviceType;
 	DBG(L"Creating DeviceInfo for Chan=%d dev=%d type=%a\n", Port, PortMultiplier, DeviceType == EfiIdeCdrom ? "cdrom   " : "harddisk");
   if (IdentifyData != NULL) {
-	  DBG(L" IdentifyData copied\n");
+//	  DBG(L" IdentifyData copied\n");
     DeviceInfo->IdentifyData = AllocateCopyPool (sizeof (EFI_IDENTIFY_DATA), IdentifyData);
     if (DeviceInfo->IdentifyData == NULL) {
       FreePool (DeviceInfo);
@@ -1179,7 +1181,7 @@ EnumerateAttachedDevice (
 		  Instance->Mode = EfiAtaIdeMode;
 		  
 		  Status = IdeModeInitialization (Instance);
-		  DBG(L"IdeModeInitialization Status=%r\n", Status);
+//		  DBG(L"IdeModeInitialization Status=%r\n", Status);
 		  if (EFI_ERROR (Status)) {
 			  
 			  Status = EFI_DEVICE_ERROR;
@@ -1950,12 +1952,12 @@ ExtScsiPassThruPassThru (
       Status = GetIdeRegisterIoAddr (Instance->PciIo, Instance->IdeRegisters);
 		 
       if (EFI_ERROR (Status)) {
-		   DBG(L"GetIdeRegisterIoAddr Status=%r\n", Status);
+	//	   DBG(L"GetIdeRegisterIoAddr Status=%r\n", Status);
         return Status;
       }
 
       Status = AtaPacketCommandExecute (Instance->PciIo, &Instance->IdeRegisters[Port], Port, PortMultiplier, Packet);
-		   DBG(L"AtaPacketCommandExecute Status=%r\n", Status);
+ 	   DBG(L"AtaPacketCommandExecute Multiplier=%d Status=%r\n", PortMultiplier, Status);
       break;
     case EfiAtaAhciMode:
       Status = AhciPacketCommandExecute (Instance->PciIo, &Instance->AhciRegisters, Port, PortMultiplier, Packet);

@@ -19,7 +19,7 @@
 #if DEBUG_SATA==1
 #define DBG(x...)  Print(x)
 #else
-#define DBG(x...)
+#define DBG(x, ...)
 #endif
 
 ///
@@ -118,7 +118,7 @@ CalculateBestPioMode (
 {
 	*SelectedMode = 3;
 	
-#if 1	
+#if 0	
   UINT16    PioMode;
   UINT16    AdvancedPioMode;
   UINT16    Temp;
@@ -843,13 +843,14 @@ IdeInitCalculateMode (
             &SelectedMode
             );
 //Slice - exclude UDMA
-  if (!EFI_ERROR (Status)) {
+/*  if (!EFI_ERROR (Status)) {
     (*SupportedModes)->UdmaMode.Valid = TRUE;
     (*SupportedModes)->UdmaMode.Mode  = SelectedMode;
 
-  } else {
+  } else {*/
     (*SupportedModes)->UdmaMode.Valid = FALSE;
-  }
+  (*SupportedModes)->UdmaMode.Mode  = SelectedMode;
+//  }
 //	(*SupportedModes)->UdmaMode.Valid = FALSE;
 	(*SupportedModes)->MultiWordDmaMode.Valid = FALSE;
 	

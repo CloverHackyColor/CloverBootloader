@@ -68,6 +68,6 @@
   gEfiPciIoProtocolGuid                         # TO_START
   
  [BuildOptions]
-  XCODE:*_*_*_CC_FLAGS = -Os
-  GCC:*_*_*_CC_FLAGS = -Os
+  XCODE:*_*_*_CC_FLAGS = -O3
+  GCC:*_*_*_CC_FLAGS = -O3
  

@@ -3072,7 +3072,7 @@ DetectAndConfigIdeDevice (
     //
     Status = CreateNewDeviceInfo (Instance, IdeChannel, IdeDevice, DeviceType, &Buffer);
     if (EFI_ERROR (Status)) {
-		DBG(L"CreateNewDeviceInfo fails Status=%r\n", Status);
+	//	DBG(L"CreateNewDeviceInfo fails Status=%r\n", Status);
       continue;
     }
 

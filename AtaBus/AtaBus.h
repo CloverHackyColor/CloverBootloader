@@ -43,7 +43,7 @@
 //
 // Time out value for ATA pass through protocol
 //
-#define ATA_TIMEOUT                       EFI_TIMER_PERIOD_SECONDS (3)
+#define ATA_TIMEOUT                       EFI_TIMER_PERIOD_SECONDS (4)
 
 //
 // Maximum number of times to retry ATA command
