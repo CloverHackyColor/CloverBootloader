@@ -17,7 +17,7 @@ Abstract:
 --*/
 
 #include "LegacyBiosThunk.h"
-#include "CpuIa32.h"
+//#include "CpuIa32.h"
 
 #define EFI_CPU_EFLAGS_IF 0x200
 
