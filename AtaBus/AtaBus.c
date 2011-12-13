@@ -638,7 +638,7 @@ UnregisterAtaDevice (
   }
 
   ReleaseAtaResources (AtaDevice);
-  return Status;
+  return EFI_SUCCESS;
 }
 
 

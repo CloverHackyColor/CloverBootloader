@@ -102,16 +102,17 @@ INF  Clover/HFSPlus/HFSPlus.inf
 INF  PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
 #INF  DuetPkg/AcpiResetDxe/Reset.inf
 INF  Clover/AcpiReset/Reset.inf
-#INF  PcAtChipsetPkg/KbcResetDxe/Reset.inf
-INF  DuetPkg/LegacyMetronome/Metronome.inf
+#INF  DuetPkg/LegacyMetronome/Metronome.inf
+INF  MdeModulePkg/Universal/Metronome/Metronome.inf
 INF  PcAtChipsetPkg/8254TimerDxe/8254Timer.inf
+#INF  PcAtChipsetPkg/HpetTimerDxe/HpetTimerDxe.inf
 INF  PcAtChipsetPkg/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
 #INF  PcAtChipsetPkg/PciHostBridgeDxe/PciHostBridgeDxe.inf
 INF  DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
 #INF  DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
 INF  Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
 #INF  MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
-#INF  Clover/OsxPciBusDxe/PciBusDxe.inf
+#INF  Clover/PciBusDxe/PciBusDxe.inf
 
 #Video
 #INF  IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
@@ -138,10 +139,8 @@ INF  MdeModulePkg/Universal/LegacyRegion2Dxe/LegacyRegion2Dxe.inf
 INF  Clover/SataControllerDxe/SataControllerDxe.inf
 #INF  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
 INF  Clover/AtaAtapi/AtaAtapiPassThru.inf
-#INF  Clover/Ata2/AtaAtapiPassThru/AtaAtapiPassThru.inf
 #INF  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
 INF  Clover/AtaBus/AtaBusDxe.inf
-#INF  Clover/Ata2/AtaBusDxe/AtaBusDxe.inf
 #INF  MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
 INF  Clover/DVDBus/ScsiBusDxe.inf
 #INF  MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf

@@ -116,9 +116,9 @@ CalculateBestPioMode (
   OUT UINT16            *SelectedMode
   )
 {
-	*SelectedMode = 3;
+//	*SelectedMode = 3;
 	
-#if 0	
+#if 1
   UINT16    PioMode;
   UINT16    AdvancedPioMode;
   UINT16    Temp;
