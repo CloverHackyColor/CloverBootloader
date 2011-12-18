@@ -86,9 +86,9 @@ AllocateLegacyMemory (
 
   @param  This                       Protocol instance pointer.
   @param  LegacyMemorySize           Size of required region
-  @param  Region                     Region to use. 00 = Either 0xE0000 or 0xF0000
-                                     block Bit0 = 1 0xF0000 block Bit1 = 1 0xE0000
-                                     block
+  @param  Region                     Region to use. 00 = Either 0xE0000 or 0xF0000 block
+                                     Bit0 = 1 0xF0000 block
+                                     Bit1 = 1 0xE0000 block
   @param  Alignment                  Address alignment. Bit mapped. First non-zero
                                      bit from right is alignment.
   @param  LegacyMemoryAddress        Region Assigned
@@ -109,38 +109,21 @@ LegacyBiosGetLegacyRegion (
   )
 {
 
-  LEGACY_BIOS_INSTANCE  *Private;
-  EFI_IA32_REGISTER_SET Regs;
+//  LEGACY_BIOS_INSTANCE  *Private;
   EFI_STATUS            Status;
-  UINT32                Granularity;
+  UINTN                 PagesBelow1MB;
 
-  Private = LEGACY_BIOS_INSTANCE_FROM_THIS (This);
-  Private->LegacyRegion->UnLock (Private->LegacyRegion, 0xE0000, 0x20000, &Granularity);
+//  Private = LEGACY_BIOS_INSTANCE_FROM_THIS (This);
+  PagesBelow1MB = 0x000A0000 - 1;
+  Status = gBS->AllocatePages (
+                               AllocateMaxAddress,
+                               EfiBootServicesData,
+                               LegacyMemorySize,
+                               &PagesBelow1MB
+                               );
 
-  ZeroMem (&Regs, sizeof (EFI_IA32_REGISTER_SET));
-  Regs.X.AX = Legacy16GetTableAddress;
-  Regs.X.BX = (UINT16) Region;
-  Regs.X.CX = (UINT16) LegacyMemorySize;
-  Regs.X.DX = (UINT16) Alignment;
-  Private->LegacyBios.FarCall86 (
-     &Private->LegacyBios,
-     Private->Legacy16CallSegment,
-     Private->Legacy16CallOffset,
-     &Regs,
-     NULL,
-     0
-     );
-
-  if (Regs.X.AX == 0) {
-    *LegacyMemoryAddress  = (VOID *) (UINTN) ((Regs.X.DS << 4) + Regs.X.BX);
-    Status = EFI_SUCCESS;
-  } else {
-    Status = EFI_OUT_OF_RESOURCES;
-  }
-
-  Private->Cpu->FlushDataCache (Private->Cpu, 0xE0000, 0x20000, EfiCpuFlushTypeWriteBackInvalidate);
-  Private->LegacyRegion->Lock (Private->LegacyRegion, 0xE0000, 0x20000, &Granularity);
-
+  *LegacyMemoryAddress = (VOID*)PagesBelow1MB;
+  
   return Status;
 }
 
@@ -169,26 +152,7 @@ LegacyBiosCopyLegacyRegion (
   )
 {
 
-  LEGACY_BIOS_INSTANCE  *Private;
-  UINT32                Granularity;
-
-  if ((LegacyMemoryAddress < (VOID *)(UINTN)0xE0000 ) ||
-      ((UINTN) LegacyMemoryAddress + LegacyMemorySize > (UINTN) 0x100000)
-        ) {
-    return EFI_ACCESS_DENIED;
-  }
-  //
-  // There is no protection from writes over lapping if this function is
-  // called multiple times.
-  //
-  Private = LEGACY_BIOS_INSTANCE_FROM_THIS (This);
-  Private->LegacyRegion->UnLock (Private->LegacyRegion, 0xE0000, 0x20000, &Granularity);
-  CopyMem (LegacyMemoryAddress, LegacyMemorySourceAddress, LegacyMemorySize);
-
-  Private->Cpu->FlushDataCache (Private->Cpu, 0xE0000, 0x20000, EfiCpuFlushTypeWriteBackInvalidate);
-  Private->LegacyRegion->Lock (Private->LegacyRegion, 0xE0000, 0x20000, &Granularity);
-
-  return EFI_SUCCESS;
+  return EFI_ACCESS_DENIED;
 }
 
 
@@ -275,112 +239,43 @@ ShadowAndStartLegacy16 (
   // end testtest
   //
   EfiToLegacy16BootTable = &Private->IntThunk->EfiToLegacy16BootTable;
-  Status = Private->LegacyBiosPlatform->GetPlatformInfo (
-                                          Private->LegacyBiosPlatform,
-                                          EfiGetPlatformBinarySystemRom,
-                                          &LegacyBiosImage,
-                                          &LegacyBiosImageSize,
-                                          &Location,
-                                          &Alignment,
-                                          0,
-                                          0
-                                          );
-  if (EFI_ERROR (Status)) {
-    return Status;
-  }
-
+  LegacyBiosImageSize = 0x20000;
+  
   Private->BiosStart            = (UINT32) (0x100000 - LegacyBiosImageSize);
   Private->OptionRom            = 0xc0000;
   Private->LegacyBiosImageSize  = (UINT32) LegacyBiosImageSize;
-
-  //
-  // Can only shadow into memory allocated for legacy useage.
-  //
-  ASSERT (Private->BiosStart > Private->OptionRom);
-
-  //
-  // Shadow Legacy BIOS. Turn on memory and copy image
-  //
-  Private->LegacyRegion->UnLock (Private->LegacyRegion, 0xc0000, 0x40000, &Granularity);
-
-  ClearPtr = (VOID *) ((UINTN) 0xc0000);
-
-  //
-  // Initialize region from 0xc0000 to start of BIOS to all ffs. This allows unused
-  // regions to be used by EMM386 etc.
-  //
-  SetMem ((VOID *) ClearPtr, (UINTN) (0x40000 - LegacyBiosImageSize), 0xff);
-
-  TempData = Private->BiosStart;
-
-  CopyMem (
-    (VOID *) TempData,
-    LegacyBiosImage,
-    (UINTN) LegacyBiosImageSize
-    );
-
-  Private->Cpu->FlushDataCache (Private->Cpu, 0xc0000, 0x40000, EfiCpuFlushTypeWriteBackInvalidate);
 
   //
   // Search for Legacy16 table in Shadowed ROM
   //
   Done  = FALSE;
   Table = NULL;
-  for (Ptr = (UINT8 *) TempData; Ptr < (UINT8 *) ((UINTN) 0x100000) && !Done; Ptr += 0x10) {
-    if (*(UINT32 *) Ptr == SIGNATURE_32 ('I', 'F', 'E', '$')) {
-      Table   = (EFI_COMPATIBILITY16_TABLE *) Ptr;
-      PtrEnd  = Ptr + Table->TableLength;
-      for (CheckSum = 0; Ptr < PtrEnd; Ptr++) {
-        CheckSum = (UINT8) (CheckSum +*Ptr);
-      }
-
-      Done = TRUE;
-    }
-  }
-
-  if (Table == NULL) {
-    DEBUG ((EFI_D_ERROR, "No Legacy16 table found\n"));
-    return EFI_NOT_FOUND;
-  }
-
-  if (!Done) {
-    //
-    // Legacy16 table header checksum error.
-    //
-    DEBUG ((EFI_D_ERROR, "Legacy16 table found with bad talbe header checksum\n"));
-  }
-
   //
   // Remember location of the Legacy16 table
   //
   Private->Legacy16Table            = Table;
-  Private->Legacy16CallSegment      = Table->Compatibility16CallSegment;
-  Private->Legacy16CallOffset       = Table->Compatibility16CallOffset;
-  EfiToLegacy16InitTable            = &Private->IntThunk->EfiToLegacy16InitTable;
-  Private->Legacy16InitPtr          = EfiToLegacy16InitTable;
-  Private->Legacy16BootPtr          = &Private->IntThunk->EfiToLegacy16BootTable;
+  Private->Legacy16CallSegment      = 0;
+  Private->Legacy16CallOffset       = 0;
+  EfiToLegacy16InitTable            = NULL;
+  Private->Legacy16InitPtr          = NULL;
+  Private->Legacy16BootPtr          = NULL;
   Private->InternalIrqRoutingTable  = NULL;
   Private->NumberIrqRoutingEntries  = 0;
   Private->BbsTablePtr              = NULL;
   Private->LegacyEfiHddTable        = NULL;
   Private->DiskEnd                  = 0;
   Private->Disk4075                 = 0;
-  Private->HddTablePtr              = &Private->IntThunk->EfiToLegacy16BootTable.HddInfo;
+  Private->HddTablePtr              = NULL;
   Private->NumberHddControllers     = MAX_IDE_CONTROLLER;
   Private->Dump[0]                  = 'D';
   Private->Dump[1]                  = 'U';
   Private->Dump[2]                  = 'M';
   Private->Dump[3]                  = 'P';
 
-  ZeroMem (
-    Private->Legacy16BootPtr,
-    sizeof (EFI_TO_COMPATIBILITY16_BOOT_TABLE)
-    );
-
   //
   // Store away a copy of the EFI System Table
   //
-  Table->EfiSystemTable = (UINT32) (UINTN) gST;
+//  Table->EfiSystemTable = (UINT32) (UINTN) gST;
 
   //
   // IPF CSM integration -Bug
@@ -392,83 +287,16 @@ ShadowAndStartLegacy16 (
   //
   // Initialize BDA and EBDA standard values needed to load Legacy16 code
   //
-  LegacyBiosInitBda (Private);
-  LegacyBiosInitCmos (Private);
+//  LegacyBiosInitBda (Private);
+//  LegacyBiosInitCmos (Private);
 
   //
   // All legacy interrupt should be masked when do initialization work from legacy 16 code.
   //
   Private->Legacy8259->GetMask(Private->Legacy8259, &OldMask, NULL, NULL, NULL);
-  NewMask = 0xFFFF;
-  Private->Legacy8259->SetMask(Private->Legacy8259, &NewMask, NULL, NULL, NULL);
+//  NewMask = 0xFFFF;
+//  Private->Legacy8259->SetMask(Private->Legacy8259, &NewMask, NULL, NULL, NULL);
   
-  //
-  // Call into Legacy16 code to do an INIT
-  //
-  ZeroMem (&Regs, sizeof (EFI_IA32_REGISTER_SET));
-  Regs.X.AX = Legacy16InitializeYourself;
-  Regs.X.ES = EFI_SEGMENT (*((UINT32 *) &EfiToLegacy16InitTable));
-  Regs.X.BX = EFI_OFFSET (*((UINT32 *) &EfiToLegacy16InitTable));
-
-  Private->LegacyBios.FarCall86 (
-    &Private->LegacyBios,
-    Table->Compatibility16CallSegment,
-    Table->Compatibility16CallOffset,
-    &Regs,
-    NULL,
-    0
-    );
-
-  //
-  // Restore original legacy interrupt mask value
-  //
-  Private->Legacy8259->SetMask(Private->Legacy8259, &OldMask, NULL, NULL, NULL);
-  
-  if (Regs.X.AX != 0) {
-    return EFI_DEVICE_ERROR;
-  }
-
-  //
-  // start testtest
-  //  GetTimerValue (&Ticker);
-  //
-  //  gRT->SetVariable (L"BackFromInitYourself",
-  //                    &gEfiGlobalVariableGuid,
-  //                    EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-  //                    sizeof (UINT64),
-  //                    (VOID *)&Ticker
-  //                    );
-  // end testtest
-  //
-  // Copy E820 table after InitializeYourself is completed
-  //
-  ZeroMem (&Regs, sizeof (EFI_IA32_REGISTER_SET));
-  Regs.X.AX = Legacy16GetTableAddress;
-  Regs.X.CX = (UINT16) E820Size;
-  Regs.X.DX = 1;
-  Private->LegacyBios.FarCall86 (
-    &Private->LegacyBios,
-    Table->Compatibility16CallSegment,
-    Table->Compatibility16CallOffset,
-    &Regs,
-    NULL,
-    0
-    );
-
-  Table->E820Pointer  = (UINT32) (Regs.X.DS * 16 + Regs.X.BX);
-  Table->E820Length   = (UINT32) E820Size;
-  if (Regs.X.AX != 0) {
-    DEBUG ((EFI_D_ERROR, "Legacy16 E820 length insufficient\n"));
-  } else {
-    TempData = Table->E820Pointer;
-    CopyMem ((VOID *) TempData, Private->E820Table, E820Size);
-  }
-  //
-  // Get PnPInstallationCheck Info.
-  //
-  Private->PnPInstallationCheckSegment  = Table->PnPInstallationCheckSegment;
-  Private->PnPInstallationCheckOffset   = Table->PnPInstallationCheckOffset;
-
   //
   // Check if PCI Express is supported. If yes, Save base address.
   //
@@ -502,29 +330,8 @@ ShadowAndStartLegacy16 (
                                           0
                                           );
   if (!EFI_ERROR (Status)) {
-
-    ZeroMem (&Regs, sizeof (EFI_IA32_REGISTER_SET));
-    Regs.X.AX = Legacy16GetTableAddress;
-    Regs.X.CX = (UINT16) TpmBinaryImageSize;
-    Regs.X.DX = 1;
-    Private->LegacyBios.FarCall86 (
-      &Private->LegacyBios,
-      Table->Compatibility16CallSegment,
-      Table->Compatibility16CallOffset,
-      &Regs,
-      NULL,
-      0
-      );
-
-    TpmPointer = (UINT32) (Regs.X.DS * 16 + Regs.X.BX);
-    if (Regs.X.AX != 0) {
-      DEBUG ((EFI_D_ERROR, "TPM cannot be loaded\n"));
-    } else {
-      CopyMem ((VOID *) (UINTN)TpmPointer, TpmBinaryImage, TpmBinaryImageSize);
-      Table->TpmSegment = Regs.X.DS;
-      Table->TpmOffset  = Regs.X.BX;
-
-    }
+//    Table->TpmSegment = (UINT16)(Location >> 4) & 0xFFFF;
+//    Table->TpmOffset  = (UINT16)(Location & 0xFFFF);
   }
   //
   // Lock the Legacy BIOS region
@@ -532,43 +339,6 @@ ShadowAndStartLegacy16 (
   Private->Cpu->FlushDataCache (Private->Cpu, Private->BiosStart, (UINT32) LegacyBiosImageSize, EfiCpuFlushTypeWriteBackInvalidate);
   Private->LegacyRegion->Lock (Private->LegacyRegion, Private->BiosStart, (UINT32) LegacyBiosImageSize, &Granularity);
 
-  //
-  // Get the BbsTable from LOW_MEMORY_THUNK
-  //
-  BbsTable = (BBS_TABLE *)(UINTN)Private->IntThunk->BbsTable;
-  ZeroMem ((VOID *)BbsTable, sizeof (Private->IntThunk->BbsTable));
-
-  EfiToLegacy16BootTable->BbsTable  = (UINT32)(UINTN)BbsTable;
-  Private->BbsTablePtr              = (VOID *) BbsTable;
-  //
-  // Skip Floppy and possible onboard IDE drives
-  //
-  EfiToLegacy16BootTable->NumberBbsEntries = 1 + 2 * MAX_IDE_CONTROLLER;
-
-  for (Index = 0; Index < (sizeof (Private->IntThunk->BbsTable) / sizeof (BBS_TABLE)); Index++) {
-    BbsTable[Index].BootPriority = BBS_IGNORE_ENTRY;
-  }
-  //
-  // Allocate space for Legacy HDD table
-  //
-  LegacyEfiHddTable = (LEGACY_EFI_HDD_TABLE *) AllocateZeroPool ((UINTN) MAX_HDD_ENTRIES * sizeof (LEGACY_EFI_HDD_TABLE));
-  ASSERT (LegacyEfiHddTable);
-
-  Private->LegacyEfiHddTable      = LegacyEfiHddTable;
-  Private->LegacyEfiHddTableIndex = 0x00;
-
-  //
-  // start testtest
-  //  GetTimerValue (&Ticker);
-  //
-  //  gRT->SetVariable (L"EndOfLoadFv",
-  //                    &gEfiGlobalVariableGuid,
-  //                    EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-  //                    sizeof (UINT64),
-  //                    (VOID *)&Ticker
-  //                    );
-  // end testtest
-  //
   return EFI_SUCCESS;
 }
 
@@ -589,13 +359,13 @@ LegacyBiosShadowAllLegacyOproms (
   IN EFI_LEGACY_BIOS_PROTOCOL *This
   )
 {
-  LEGACY_BIOS_INSTANCE  *Private;
+//  LEGACY_BIOS_INSTANCE  *Private;
 
   //
   //  EFI_LEGACY_BIOS_PLATFORM_PROTOCOL    *LegacyBiosPlatform;
   //  EFI_LEGACY16_TABLE                   *Legacy16Table;
   //
-  Private = LEGACY_BIOS_INSTANCE_FROM_THIS (This);
+//  Private = LEGACY_BIOS_INSTANCE_FROM_THIS (This);
 
   //
   //  LegacyBiosPlatform       = Private->LegacyBiosPlatform;
@@ -606,9 +376,9 @@ LegacyBiosShadowAllLegacyOproms (
   //
   //  WARNING: PciIo is gone after this call.
   //
-  PciProgramAllInterruptLineRegisters (Private);
+//  PciProgramAllInterruptLineRegisters (Private);
 
-  PciShadowRoms (Private);
+//  PciShadowRoms (Private);
 
   //
   // Shadow PXE base code, BIS etc.
@@ -816,7 +586,7 @@ LegacyBiosInstall (
     gDS->SetMemorySpaceAttributes (
            0xc0000,
            0x40000,
-           EFI_MEMORY_WB
+           EFI_MEMORY_UC  //EFI_MEMORY_WB
            );
   }
 
@@ -837,65 +607,14 @@ LegacyBiosInstall (
     );
   ASSERT (MemoryAddress == 0x000000000);
 
-  ClearPtr = (VOID *) ((UINTN) 0x0000);
+//  ClearPtr = (VOID *) ((UINTN) 0x0000);
 
   //
   // Initialize region from 0x0000 to 4k. This initializes interrupt vector
   // range.
   //
-  gBS->SetMem ((VOID *) ClearPtr, 0x400, INITIAL_VALUE_BELOW_1K);
-  ZeroMem ((VOID *) ((UINTN)ClearPtr + 0x400), 0xC00);
-
-  //
-  // Allocate pages for OPROM usage
-  //
-  MemorySize = PcdGet32 (PcdEbdaReservedMemorySize);
-  ASSERT ((MemorySize & 0xFFF) == 0);
-
-  Status = AllocateLegacyMemory (
-             AllocateAddress,
-             CONVENTIONAL_MEMORY_TOP - MemorySize,
-             EFI_SIZE_TO_PAGES (MemorySize),
-             &MemoryAddress
-             );
-  ASSERT_EFI_ERROR (Status);
-
-  ZeroMem ((VOID *) ((UINTN) MemoryAddress), MemorySize);
-
-  //
-  // Allocate all 32k chunks from 0x60000 ~ 0x88000 for Legacy OPROMs that
-  // don't use PMM but look for zeroed memory. Note that various non-BBS
-  // SCSIs expect different areas to be free
-  //
-  for (MemStart = 0x60000; MemStart < 0x88000; MemStart += 0x1000) {
-    Status = AllocateLegacyMemory (
-               AllocateAddress,
-               MemStart,
-               1,
-               &MemoryAddress
-               );
-    if (!EFI_ERROR (Status)) {
-      MemoryPtr = (VOID *) ((UINTN) MemoryAddress);
-      ZeroMem (MemoryPtr, 0x1000);
-    } else {
-      DEBUG ((EFI_D_ERROR, "WARNING: Allocate legacy memory fail for SCSI card - %x\n", MemStart));
-    }
-  }
-
-  //
-  // Allocate low PMM memory and zero it out
-  //
-  MemorySize = PcdGet32 (PcdLowPmmMemorySize);
-  ASSERT ((MemorySize & 0xFFF) == 0);  
-  Status = AllocateLegacyMemory (
-             AllocateMaxAddress,
-             CONVENTIONAL_MEMORY_TOP,
-             EFI_SIZE_TO_PAGES (MemorySize),
-             &MemoryAddressUnder1MB
-             );
-  ASSERT_EFI_ERROR (Status);
-
-  ZeroMem ((VOID *) ((UINTN) MemoryAddressUnder1MB), MemorySize);
+//  gBS->SetMem ((VOID *) ClearPtr, 0x400, INITIAL_VALUE_BELOW_1K);
+//  ZeroMem ((VOID *) ((UINTN)ClearPtr + 0x400), 0xC00);
 
   //
   // Allocate space for thunker and Init Thunker
@@ -941,12 +660,6 @@ LegacyBiosInstall (
   //
   //  ShutdownAPs();
   //
-  // Start the Legacy BIOS;
-  //
-  Status = ShadowAndStartLegacy16 (Private);
-  if (EFI_ERROR (Status)) {
-    return Status;
-  }
   //
   // Initialize interrupt redirection code and entries;
   // IDT Vectors 0x68-0x6f must be redirected to IDT Vectors 0x08-0x0f.
@@ -983,10 +696,6 @@ LegacyBiosInstall (
                   );
   Private->Csm16PciInterfaceVersion = GetPciInterfaceVersion (Private);
   
-  DEBUG ((EFI_D_INFO, "CSM16 PCI BIOS Interface Version: %02x.%02x\n", 
-          (UINT8) (Private->Csm16PciInterfaceVersion >> 8), 
-          (UINT8) Private->Csm16PciInterfaceVersion
-        ));
   ASSERT (Private->Csm16PciInterfaceVersion != 0);
   return Status;
 }
