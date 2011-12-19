@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------------
 #*
-#*   Copyright (c) 2006 - 2007, Intel Corporation. All rights reserved.<BR>
+#*   Copyright (c) 2006 - 2011, Intel Corporation. All rights reserved.<BR>
 #*   This program and the accompanying materials                          
 #*   are licensed and made available under the terms and conditions of the BSD License         
 #*   which accompanies this distribution.  The full text of the license may be found at        
@@ -18,7 +18,7 @@
         #.MODEL small
         .stack: 
         .486p: 
-        .code: 
+        .code16
 
 .equ                        FAT_DIRECTORY_ENTRY_SIZE, 0x020
 .equ                        FAT_DIRECTORY_ENTRY_SHIFT, 5
@@ -111,7 +111,7 @@ LoadVarStore:
         pushw   %es
         movw    $0x1500, %ax
         movw    %ax, %es
-#        call    ReadFile
+        call    ReadFile
 SaveVolumeId: 
         popw    %es
         movw    VolId(%bp), %ax
@@ -432,9 +432,9 @@ MemMapDone:
 # Enable A20 Gate 
 #
 
-#        movw $0x2401, %ax                   # Enable A20 Gate
-#        int $0x15
-#        jnc A20GateEnabled                  # Jump if it suceeded
+        movw $0x2401, %ax                   # Enable A20 Gate
+        int $0x15
+        jnc A20GateEnabled                  # Jump if it suceeded
 
 #WIKI -fast A20gate
 #in al, 0x92
@@ -462,9 +462,7 @@ Timeout8042:
 
 
 A20GateEnabled: 
-//Slice - switch to graphics mode
-//		movw	$0x0001
-//		int		$0x10
+        movw    $0x0008, %bx                # Flat data descriptor
 #
 # DISABLE INTERRUPTS - Entering Protected Mode
 #
@@ -485,11 +483,6 @@ A20GateEnabled:
         movl    %cr0, %eax
         orb     $1, %al
         movl    %eax, %cr0
-
-        movl $0x008, %eax                   # Flat data descriptor
-        movl $0x00400000, %ebp              # Destination of EFILDR32
-        movl $0x00070000, %ebx              # Length of copy
-
 JUMP: 
 # jmp far 0010:00020000
         .byte 0x66

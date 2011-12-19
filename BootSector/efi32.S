@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------------
 #*
-#*   Copyright (c) 2006, Intel Corporation. All rights reserved.<BR>
+#*   Copyright (c) 2006 - 2011, Intel Corporation. All rights reserved.<BR>
 #*   This program and the accompanying materials                          
 #*   are licensed and made available under the terms and conditions of the BSD License         
 #*   which accompanies this distribution.  The full text of the license may be found at        
@@ -37,10 +37,7 @@ _start:
 .endm
 
 Start: 
-#PAUSE4:		
-#		jmp PAUSE4
-	movw	$0x08, %ax                   # Flat data descriptor
-	
+    movw    %bx, %ax
     movw    %ax, %ds
     movw    %ax, %es
     movw    %ax, %fs
@@ -103,7 +100,7 @@ LOOP_1:                                         # loop through all IDT entries e
 #    jmp     OuterLoop
 
 ##    
-## just for fun, let's do a software interrupt to see if we correctly land in the exception handler...
+## just for fun, let's 'do a software interrupt to see if we correctly land in the exception handler...
 #    movl     $0x011111111, %eax
 #    mov     ebx, 022222222h
 #    mov     ecx, 033333333h

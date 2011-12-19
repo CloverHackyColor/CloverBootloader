@@ -22,7 +22,7 @@
         #.MODEL small
         .stack: 
         .486p: 
-        .code16 
+        .code: 
 
 .equ                        FAT_DIRECTORY_ENTRY_SIZE, 0x020
 .equ                        FAT_DIRECTORY_ENTRY_SHIFT, 5
@@ -121,7 +121,7 @@ LBAOffsetForBootSector:
 .equ                 WRITE_DATA_PORT_CMD, 0x0d1  # 8042 command to write the data port
 .equ                 ENABLE_A20_CMD, 0x0df       # 8042 command to enable A20
 
- .org     0x200  # Will cause build break
+ .org     0x200  # Will cause build break? lol
  .code16
         jmp start		
 #Em64String: 
@@ -342,22 +342,22 @@ Timeout8042:
 #		outb    %al, $0x92
 
 A20GateEnabled: 
+
 #//Slice - switch to graphics mode (1), or 80x25 mono text mode (2)
-		movw	$0x0002, %ax 
-		int		$0x10
-		#put char 6
+#		movw	$0x0002, %ax 
+#		int		$0x10
+		#put char 7
 		movl	$0x000F, %ebx
-		movl	$0x0E36, %eax
+		movl	$0x0E37, %eax
 		movl	$0x0010, %ecx
 		int		$0x10
-           movw    $0x0008, %bx                # Flat data descriptor
 #PAUSE1:		
 #		jmp PAUSE1
 
 #
 # DISABLE INTERRUPTS - Entering Protected Mode
 #
-
+        movw    $0x0008, %bx                # Flat data descriptor
         cli
 
         .byte   0x66
@@ -375,7 +375,13 @@ A20GateEnabled:
 #		data32
 #		or      $1, %eax
         movl    %eax, %cr0
-				
+# now 32-bit protected mode 
+#.code32
+		
+#		movl $0x008, %eax                   # Flat data descriptor
+ #       movl $0x00400000, %ebp              # Destination of EFILDR32
+ #       movl $0x00070000, %ebx              # Length of copy
+		
 JUMP: 
 # jmp far 0010:00020000
         data32
