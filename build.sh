@@ -63,8 +63,8 @@ case `uname` in
 
 esac
 
-BUILD_ROOT_ARCH=$WORKSPACE/Build/DuetPkg$PROCESSOR/$VTARGET_"$TARGET_TOOLS"/$PROCESSOR
-FLOPPY_IMAGE=$WORKSPACE/Build/DuetPkg$PROCESSOR/floppy.img
+BUILD_ROOT_ARCH=$WORKSPACE/Build/Clover$PROCESSOR/$VTARGET_"$TARGET_TOOLS"/$PROCESSOR
+FLOPPY_IMAGE=$WORKSPACE/Build/Clover$PROCESSOR/floppy.img
 
 if  [[ ! -f `which build` || ! -f `which GenFv` ]];
 then
@@ -107,8 +107,8 @@ done
 #
 echo Running edk2 build for DuetPkg$Processor
 build -p $WORKSPACE/Clover/DuetPkg$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 $*
-echo Running Clover/PostBuildDuet.sh
-$WORKSPACE/Clover/PostBuildDuet.sh $PROCESSOR $TARGET_TOOLS  $VTARGET
+echo Running Clover/PostBuild.sh
+$WORKSPACE/Clover/PostBuild.sh $PROCESSOR $TARGET_TOOLS  $VTARGET
 #echo Running DuetPkg/CreateBootDisk.sh
 
 exit $?

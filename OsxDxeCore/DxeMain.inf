@@ -1,0 +1,154 @@
+## @file
+#  This is core module in DXE phase. It provides an implementation of DXE Core that is
+#  compliant with DXE CIS.  
+#  
+#  Copyright (c) 2006 - 2011, Intel Corporation. All rights reserved.<BR>
+#  This program and the accompanying materials
+#  are licensed and made available under the terms and conditions of the BSD License
+#  which accompanies this distribution.  The full text of the license may be found at
+#  http://opensource.org/licenses/bsd-license.php
+#  
+#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#  
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = DxeCore
+  FILE_GUID                      = D6A2CB7F-6A18-4e2f-B43B-9920A733700A
+  MODULE_TYPE                    = DXE_CORE
+  VERSION_STRING                 = 1.0
+
+
+  ENTRY_POINT                    = DxeMain
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC (EBC is for build only)
+#
+
+[Sources]
+  DxeMain.h
+  SectionExtraction/CoreSectionExtraction.c
+  Image/Image.c
+  Image/Image.h
+  Misc/DebugImageInfo.c
+  Misc/Stall.c
+  Misc/SetWatchdogTimer.c
+  Misc/InstallConfigurationTable.c
+  Library/Library.c
+  Hand/DriverSupport.c
+  Hand/Notify.c
+  Hand/Locate.c
+  Hand/Handle.c
+  Hand/Handle.h
+  Gcd/Gcd.c
+  Gcd/Gcd.h
+  Mem/Pool.c
+  Mem/Page.c
+  Mem/MemData.c
+  Mem/Imem.h
+  FwVolBlock/FwVolBlock.c
+  FwVolBlock/FwVolBlock.h
+  FwVol/FwVolWrite.c
+  FwVol/FwVolRead.c
+  FwVol/FwVolAttrib.c
+  FwVol/Ffs.c
+  FwVol/FwVol.c
+  FwVol/FwVolDriver.h
+  Event/Tpl.c
+  Event/Timer.c
+  Event/Event.c
+  Event/Event.h
+  Dispatcher/Dependency.c
+  Dispatcher/Dispatcher.c
+  DxeMain/DxeProtocolNotify.c
+  DxeMain/DxeMain.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+
+[LibraryClasses]
+  BaseMemoryLib
+  CacheMaintenanceLib
+  UefiDecompressLib
+  PerformanceLib
+  HobLib
+  BaseLib
+  UefiLib
+  DebugLib
+  DxeCoreEntryPoint
+  PeCoffLib
+  PeCoffGetEntryPointLib
+  PeCoffExtraActionLib
+  ExtractGuidedSectionLib
+  MemoryAllocationLib
+  UefiBootServicesTableLib
+  DevicePathLib
+  ReportStatusCodeLib
+  TimerLib
+  DxeServicesLib
+  DebugAgentLib
+
+[Guids]
+  gEfiEventMemoryMapChangeGuid                  ## CONSUMES ## Event
+  gEfiEventVirtualAddressChangeGuid             ## SOMETIMES_CONSUMES ## Event
+  gEfiEventExitBootServicesGuid                 ## SOMETIMES_CONSUMES ## Event
+  gEfiHobMemoryAllocModuleGuid                  ## CONSUMES ## Hob
+  gEfiFileInfoGuid                              ## CONSUMES ## File
+  gEfiFirmwareFileSystem2Guid                   ## CONSUMES ## GUID
+  gEfiFirmwareFileSystem3Guid                   ## CONSUMES ## GUID
+  gAprioriGuid                                  ## CONSUMES ## GUID
+  gEfiDebugImageInfoTableGuid                   ## CONSUMES ## GUID
+  gEfiHobListGuid                               ## CONSUMES ## GUID
+  gEfiDxeServicesTableGuid                      ## CONSUMES ## GUID
+  gEfiMemoryTypeInformationGuid                 ## CONSUMES ## GUID
+  gEfiEventDxeDispatchGuid                      ## CONSUMES ## GUID
+  gLoadFixedAddressConfigurationTableGuid       ## SOMETIMES_CONSUMES
+  gIdleLoopEventGuid                            ## CONSUMES ## GUID
+
+[Protocols]
+  gEfiStatusCodeRuntimeProtocolGuid             ## SOMETIMES_CONSUMES
+  gEfiCapsuleArchProtocolGuid                   ## CONSUMES
+  gEfiDecompressProtocolGuid                    ## CONSUMES
+  gEfiLoadPeImageProtocolGuid                   ## SOMETIMES_PRODUCES (Produces when PcdFrameworkCompatibilitySupport is set)
+  gEfiSimpleFileSystemProtocolGuid              ## CONSUMES
+  gEfiLoadFileProtocolGuid                      ## CONSUMES
+  gEfiLoadFile2ProtocolGuid                     ## CONSUMES
+  gEfiResetArchProtocolGuid                     ## CONSUMES
+  gEfiRealTimeClockArchProtocolGuid             ## CONSUMES
+  gEfiRuntimeArchProtocolGuid                   ## CONSUMES
+  gEfiWatchdogTimerArchProtocolGuid             ## CONSUMES
+  gEfiSecurityArchProtocolGuid                  ## CONSUMES
+  gEfiVariableArchProtocolGuid                  ## CONSUMES
+  gEfiBdsArchProtocolGuid                       ## CONSUMES
+  gEfiVariableWriteArchProtocolGuid             ## CONSUMES
+  gEfiMonotonicCounterArchProtocolGuid          ## CONSUMES
+  gEfiMetronomeArchProtocolGuid                 ## CONSUMES
+  gEfiTimerArchProtocolGuid                     ## CONSUMES
+  gEfiBusSpecificDriverOverrideProtocolGuid     ## CONSUMES
+  gEfiDriverFamilyOverrideProtocolGuid          ## CONSUMES
+  gEfiPlatformDriverOverrideProtocolGuid        ## CONSUMES
+  gEfiDriverBindingProtocolGuid                 ## SOMETIMES_CONSUMES
+  gEfiFirmwareVolumeBlockProtocolGuid           ## PRODUCES
+  gEfiFirmwareVolume2ProtocolGuid               ## PRODUCES
+  gEfiCpuArchProtocolGuid                       ## CONSUMES
+  gEfiDevicePathProtocolGuid                    ## CONSUMES
+  gEfiLoadedImageProtocolGuid                   ## PRODUCES
+  gEfiHiiPackageListProtocolGuid                ## SOMETIMES_PRODUCES
+  gEfiEbcProtocolGuid                           ## SOMETIMES_CONSUMES
+  gEfiLoadedImageDevicePathProtocolGuid         ## PRODUCES
+  gEfiSmmBase2ProtocolGuid                      ## SOMETIMES_CONSUMES
+
+[FeaturePcd]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFrameworkCompatibilitySupport	   ## CONSUMES
+
+[Pcd]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdLoadFixAddressBootTimeCodePageNumber    ## SOMETIMES_CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdLoadFixAddressRuntimeCodePageNumber     ## SOMETIMES_CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdLoadModuleAtFixAddressEnable            ## CONSUMES
+  gEfiMdeModulePkgTokenSpaceGuid.PcdMaxEfiSystemTablePointerAddress         ## CONSUMES
+  

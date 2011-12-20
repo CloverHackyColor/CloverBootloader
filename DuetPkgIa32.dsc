@@ -22,11 +22,11 @@
 #
 ################################################################################
 [Defines]
-  PLATFORM_NAME                  = DuetPkg
+  PLATFORM_NAME                  = Clover
   PLATFORM_GUID                  = 199E24E0-0989-42aa-87F2-611A8C397E72
-  PLATFORM_VERSION               = 0.4
+  PLATFORM_VERSION               = 0.92
   DSC_SPECIFICATION              = 0x00010005
-  OUTPUT_DIRECTORY               = Build/DuetPkgIA32
+  OUTPUT_DIRECTORY               = Build/CloverIA32
   SUPPORTED_ARCHITECTURES        = IA32
   BUILD_TARGETS                  = RELEASE|DEBUG
   SKUID_IDENTIFIER               = DEFAULT
@@ -210,7 +210,8 @@
       #ReportStatusCodeLib|MdeModulePkg/Library/DxeReportStatusCodeLib/DxeReportStatusCodeLib.inf
       ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
   }
- MdeModulePkg/Core/Dxe/DxeMain.inf {
+ #MdeModulePkg/Core/Dxe/DxeMain.inf {
+ Clover/OsxDxeCore/DxeMain.inf {
     #
     # Enable debug output for DxeCore module, this is a sample for how to enable debug output
     # for a module. If need turn on debug output for other module, please copy following overriden
