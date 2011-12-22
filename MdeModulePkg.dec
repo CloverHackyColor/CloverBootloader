@@ -20,7 +20,7 @@
   DEC_SPECIFICATION              = 0x00010005
   PACKAGE_NAME                   = MdeModulePkg
   PACKAGE_GUID                   = BA0D78D6-2CAF-414b-BD4D-B6762A894288
-  PACKAGE_VERSION                = 0.91
+  PACKAGE_VERSION                = 0.92
 
 [Includes]
   Include
@@ -237,6 +237,10 @@
   ## Include/Guid/MtcVendor.h
   gMtcVendorGuid                     = { 0xeb704011, 0x1402, 0x11d3, { 0x8e, 0x77, 0x0, 0xa0, 0xc9, 0x69, 0x72, 0x3b }}
 
+  ## Guid for Firmware Performance Data Table (FPDT) implementation.
+  #  Include/Guid/FirmwarePerformance.h
+  gEfiFirmwarePerformanceGuid = { 0xc095791a, 0x3001, 0x47b2, { 0x80, 0xc9, 0xea, 0xc7, 0x31, 0x9f, 0x2f, 0xa4 }}
+
 [Ppis]
   ## Include/Ppi/AtaController.h
   gPeiAtaControllerPpiGuid       = { 0xa45e60d1, 0xc719, 0x44aa, { 0xb0, 0x7a, 0xaa, 0x77, 0x7f, 0x85, 0x90, 0x6d }}
@@ -448,6 +452,9 @@
 
   ## If TRUE, recovery from FAT USB disk will be supported.
   gEfiMdeModulePkgTokenSpaceGuid.PcdRecoveryOnFatUsbDisk|TRUE|BOOLEAN|0x00010063
+
+  ## If TRUE, S3 performance data will be supported in ACPI FPDT table.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwarePerformanceDataTableS3Support|FALSE|BOOLEAN|0x00010064
 
 [PcdsFeatureFlag.IA32, PcdsFeatureFlag.X64]
   ##
@@ -691,7 +698,7 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor|L"CLOVER"|VOID*|0x00010050
 
   ## Firmware revision that is default value filled into the EFI System Table
-  gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareRevision|0x00010001|UINT32|0x00010051
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareRevision|0x00010010|UINT32|0x00010051
 
   ## Null-terminated Unicode string that described the firmware version
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVersionString|L""|VOID*|0x00010052
@@ -814,8 +821,7 @@
   #  the feature of Loading Module at Fixed Address is enabled
   gEfiMdeModulePkgTokenSpaceGuid.PcdLoadFixAddressSmmCodePageNumber|0|UINT32|0x0000002c
 
-[PcdsDynamic]
-#, PcdsDynamicEx]
+[PcdsDynamic, PcdsDynamicEx]
   ## This dynamic PCD hold an address to point to private data structure used in DxeS3BootScriptLib library
   #  instance which records the S3 boot script table start address, length, etc. To introduce this PCD is
   #  only for DxeS3BootScriptLib instance implementation purpose. The platform developer should make sure the
