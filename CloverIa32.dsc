@@ -24,7 +24,7 @@
 [Defines]
   PLATFORM_NAME                  = Clover
   PLATFORM_GUID                  = 199E24E0-0989-42aa-87F2-611A8C397E72
-  PLATFORM_VERSION               = 0.3
+  PLATFORM_VERSION               = 0.92
   DSC_SPECIFICATION              = 0x00010005
   OUTPUT_DIRECTORY               = Build/CloverIA32
   SUPPORTED_ARCHITECTURES        = IA32
@@ -117,6 +117,7 @@
   #SerialPortLib|PcAtChipsetPkg/Library/SerialIoLib/SerialIoLib.inf
   SerialPortLib|MdePkg/Library/BaseSerialPortLibNull/BaseSerialPortLibNull.inf
   MtrrLib|UefiCpuPkg/Library/MtrrLib/MtrrLib.inf
+  IoApicLib|PcAtChipsetPkg/Library/BaseIoApicLib/BaseIoApicLib.inf
   LocalApicLib|UefiCpuPkg/Library/BaseXApicLib/BaseXApicLib.inf
   #LocalApicLib|UefiCpuPkg/Library/BaseXApicX2ApicLib/BaseXApicX2ApicLib.inf
   
@@ -159,11 +160,15 @@
   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x0
   gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x0
   gEfiMdeModulePkgTokenSpaceGuid.PcdResetOnMemoryTypeInformationChange|FALSE
-  gPcAtChipsetPkgTokenSpaceGuid.Pcd8259LegacyModeMask|0xEFFC
+  gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiFloppyAEnable|FALSE
+  gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiFloppyBEnable|FALSE
+  gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiCom1Enable|FALSE
+  gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiCom2Enable|FALSE
+  
   
 [PcdsDynamicDefault.common]
-  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress|0xF8000000
-  
+  gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress|0xF0000000
+  gPcAtChipsetPkgTokenSpaceGuid.Pcd8259LegacyModeMask|0xFFFC
 
 [PcdsFeatureFlag]
   gEfiMdeModulePkgTokenSpaceGuid.PcdTurnOffUsbLegacySupport|TRUE
@@ -171,6 +176,7 @@
   gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdPs2MouseExtendedVerification|FALSE
   gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdInstallAcpiSupportProtocol|FALSE
   gEfiMdeModulePkgTokenSpaceGuid.PcdDxeIplSwitchToLongMode|FALSE
+  gPcAtChipsetPkgTokenSpaceGuid.PcdHpetMsiEnable|FALSE
 
 ###################################################################################################
 #
@@ -204,7 +210,8 @@
       #ReportStatusCodeLib|MdeModulePkg/Library/DxeReportStatusCodeLib/DxeReportStatusCodeLib.inf
       ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
   }
- MdeModulePkg/Core/Dxe/DxeMain.inf {
+ #MdeModulePkg/Core/Dxe/DxeMain.inf {
+ Clover/OsxDxeCore/DxeMain.inf {
     #
     # Enable debug output for DxeCore module, this is a sample for how to enable debug output
     # for a module. If need turn on debug output for other module, please copy following overriden
@@ -231,6 +238,7 @@
 
   #DuetPkg/FSVariable/FSVariable.inf
   MdeModulePkg/Universal/Variable/EmuRuntimeDxe/EmuVariableRuntimeDxe.inf
+  #Clover/EmuVariableDxe/EmuVariableRuntimeDxe.inf
   MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
   MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
   MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
@@ -268,17 +276,20 @@
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
   #DuetPkg/AcpiResetDxe/Reset.inf
   Clover/AcpiReset/Reset.inf
-  DuetPkg/LegacyMetronome/Metronome.inf
+  #DuetPkg/LegacyMetronome/Metronome.inf
+  MdeModulePkg/Universal/Metronome/Metronome.inf
 # EdkCompatibilityPkg/Compatibility/MpServicesOnFrameworkMpServicesThunk/MpServicesOnFrameworkMpServicesThunk.inf
 
 #Chipset
   PcAtChipsetPkg/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
   PcAtChipsetPkg/8254TimerDxe/8254Timer.inf
+  PcAtChipsetPkg/HpetTimerDxe/HpetTimerDxe.inf
   #PcAtChipsetPkg/PciHostBridgeDxe/PciHostBridgeDxe.inf
   DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
   #DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
   Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
   #MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
+  Clover/PciBusDxe/PciBusDxe.inf
   
   	#DataHub
 	#Clover/VBoxAppleSim/VBoxAppleSim.inf
@@ -385,4 +396,5 @@
 [BuildOptions]
   MSFT:*_*_*_CC_FLAGS = /FAsc /FR$(@R).SBR
   XCODE:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
+  GCC:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
 
