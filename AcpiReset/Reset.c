@@ -90,7 +90,7 @@ EfiAcpiResetSystem (
     //
     // If Shutdown fails, then let fall through to reset 
     //
-		  //Slice - no!
+		  //Slice - no! Stop here.
 		  CpuDeadLoop ();
   case EfiResetWarm:
   case EfiResetCold:

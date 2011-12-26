@@ -197,11 +197,11 @@
         $(DEBUG_DIR)(+)${s_dir}(+)${s_base}.c
 
     <Command>
-        -$(MD) $(OUTPUT_DIR)(+)${s_dir} > NUL 2>&1
-        "$(VFRPP)" $(VFRPP_FLAGS) $(INC) ${src} > $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.i
-        -$(MD) ${d_path} > NUL 2>&1
-        "$(VFR)" $(VFR_FLAGS) --string-db $(OUTPUT_DIR)(+)$(MODULE_NAME)StrDefs.hpk --output-directory ${d_path} $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.i
-
+        @-$(MD) $(OUTPUT_DIR)(+)${s_dir} > NUL 2>&1
+        @"$(VFRPP)" $(VFRPP_FLAGS) $(INC) ${src} > $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.i
+        @-$(MD) ${d_path} > NUL 2>&1
+        @"$(VFR)" $(VFR_FLAGS) --string-db $(OUTPUT_DIR)(+)$(MODULE_NAME)StrDefs.hpk --output-directory ${d_path} $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.i
+	@"echo" [VFR] $(MODULE_NAME)
 [Object-File]
     <InputFile>
         *.obj
@@ -308,13 +308,14 @@
         #
         #The below 2 lines are only needed for UNIXGCC tool chain, which genereates PE image directly
         #
-        -$(OBJCOPY) $(OBJCOPY_ADDDEBUGFLAG) ${src}
+        @-$(OBJCOPY) $(OBJCOPY_ADDDEBUGFLAG) ${src}
         #-$(CP) $(DEBUG_DIR)(+)$(MODULE_NAME).debug $(BIN_DIR)
 
-        "$(GENFW)" -e $(MODULE_TYPE) -o ${dst} ${src} $(GENFW_FLAGS)
+        @"$(GENFW)" -e $(MODULE_TYPE) -o ${dst} ${src} $(GENFW_FLAGS)
         @$(CP) ${dst} $(OUTPUT_DIR)
-        $(CP) ${dst} $(BIN_DIR)
-        -$(CP) $(DEBUG_DIR)(+)*.map $(OUTPUT_DIR)
+        @$(CP) ${dst} $(BIN_DIR)
+        @-$(CP) $(DEBUG_DIR)(+)*.map $(OUTPUT_DIR)
+	@"echo" [GENFW] $(MODULE_NAME)
         
     <Command.XCODE>
         # tool to convert Mach-O to PE/COFF
