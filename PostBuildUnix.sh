@@ -71,12 +71,12 @@ case "$3" in
      export VTAG=RELEASE
      ;;
    *)
-     echo Invalid Target, assume RELEASE
-     export VTAG=RELEASE
+     echo Invalid Target, assume "$TARGET" or "$VTAG"
+     export VTAG=DEBUG
 esac
 
 
-export BUILD_DIR=$WORKSPACE/Build/Clover$PROCESSOR/RELEASE_$TOOLTAG
+export BUILD_DIR=$WORKSPACE/Build/Clover$PROCESSOR/"$VTAG"_"$TOOLTAG"
 
 
 #

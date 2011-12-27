@@ -38,7 +38,7 @@ else
 fi
 
 Processor=IA32
-VTARGET=$TARGET
+VTARGET=TARGET
 
 #
 # Pick a default tool type for a given OS
@@ -69,7 +69,7 @@ case `uname` in
 
 esac
 
-BUILD_ROOT_ARCH=$WORKSPACE/Build/Clover$Processor/$VTARGET_"$TARGET_TOOLS"/$Processor
+BUILD_ROOT_ARCH=$WORKSPACE/Build/Clover$Processor/"$VTARGET"_"$TARGET_TOOLS"/$Processor
 FLOPPY_IMAGE=$WORKSPACE/Build/Clover$Processor/floppy.img
 
 if  [[ ! -f `which build` || ! -f `which GenFv` ]];
