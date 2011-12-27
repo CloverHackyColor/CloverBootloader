@@ -37,7 +37,7 @@ else
   echo Building from: $WORKSPACE
 fi
 
-Processor=IA32
+Processor=X64
 VTARGET=TARGET
 
 #

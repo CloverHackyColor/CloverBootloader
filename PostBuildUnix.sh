@@ -71,7 +71,7 @@ case "$3" in
      export VTAG=RELEASE
      ;;
    *)
-     echo Invalid Target, assume "$TARGET" or "$VTAG"
+     echo Invalid Target, assume "$TARGET" or "$VTAG" or "$VTARGET"
      export VTAG=DEBUG
 esac
 
