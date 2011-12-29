@@ -107,7 +107,8 @@ INF  PcAtChipsetPkg/8254TimerDxe/8254Timer.inf
 #INF  PcAtChipsetPkg/HpetTimerDxe/HpetTimerDxe.inf
 INF  PcAtChipsetPkg/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
 #INF  PcAtChipsetPkg/PciHostBridgeDxe/PciHostBridgeDxe.inf
-INF  DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
+#INF  DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
+INF  Clover/PciRootBridgeDxe/PciRootBridge.inf
 #INF  DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
 INF  Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
 #INF  MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf

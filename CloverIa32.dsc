@@ -58,7 +58,7 @@
   IoLib|MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsic.inf
   PciLib|MdePkg/Library/BasePciLibCf8/BasePciLibCf8.inf
   PciCf8Lib|MdePkg/Library/BasePciCf8Lib/BasePciCf8Lib.inf
-  PciExpressLib|MdePkg/Library/BasePciExpressLib/BasePciExpressLib.inf
+  #PciExpressLib|MdePkg/Library/BasePciExpressLib/BasePciExpressLib.inf
   #PciLib|MdePkg/Library/BasePciLibPciExpress/BasePciLibPciExpress.inf
   #PciExpressLib|MdePkg/Library/DxeRuntimePciExpressLib/DxeRuntimePciExpressLib.inf
   CacheMaintenanceLib|MdePkg/Library/BaseCacheMaintenanceLib/BaseCacheMaintenanceLib.inf
@@ -285,7 +285,8 @@
   PcAtChipsetPkg/8254TimerDxe/8254Timer.inf
   PcAtChipsetPkg/HpetTimerDxe/HpetTimerDxe.inf
   #PcAtChipsetPkg/PciHostBridgeDxe/PciHostBridgeDxe.inf
-  DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
+  #DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
+  Clover/PciRootBridgeDxe/PciRootBridge.inf
   #DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
   Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
   #MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf

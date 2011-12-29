@@ -38,7 +38,7 @@ else
 fi
 
 Processor=IA32
-VTARGET=TARGET
+VTARGET="$TARGET"
 
 #
 # Pick a default tool type for a given OS
