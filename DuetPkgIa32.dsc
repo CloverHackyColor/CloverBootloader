@@ -285,7 +285,8 @@
   PcAtChipsetPkg/8254TimerDxe/8254Timer.inf
   PcAtChipsetPkg/HpetTimerDxe/HpetTimerDxe.inf
   #PcAtChipsetPkg/PciHostBridgeDxe/PciHostBridgeDxe.inf
-  DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
+  #DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
+  Clover/PciRootBridgeDxe/PciRootBridge.inf
   #DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
   Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
   #MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
@@ -396,4 +397,5 @@
 [BuildOptions]
   MSFT:*_*_*_CC_FLAGS = /FAsc /FR$(@R).SBR
   XCODE:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
+  GCC:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
 

@@ -107,7 +107,8 @@ INF  PcAtChipsetPkg/8254TimerDxe/8254Timer.inf
 #INF  PcAtChipsetPkg/HpetTimerDxe/HpetTimerDxe.inf
 INF  PcAtChipsetPkg/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
 #INF  PcAtChipsetPkg/PciHostBridgeDxe/PciHostBridgeDxe.inf
-INF  DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
+#INF  DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
+INF  Clover/PciRootBridgeDxe/PciRootBridge.inf
 #INF  DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
 INF  Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
 #INF  MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
@@ -175,11 +176,11 @@ INF  Clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
 
   #FD
 #INF  IntelFrameworkModulePkg/Universal/Acpi/AcpiS3SaveDxe/AcpiS3SaveDxe.inf 
-INF  Clover/SaveResume/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
+#INF  Clover/SaveResume/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
 #INF  MdeModulePkg/Universal/Acpi/S3SaveStateDxe/S3SaveStateDxe.inf
 #INF  MdeModulePkg/Universal/Acpi/SmmS3SaveState/SmmS3SaveState.inf
 #INF  MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
-INF  Clover/SaveResume/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
+#INF  Clover/SaveResume/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
 #INF  UefiCpuPkg/Universal/Acpi/S3Resume2Pei/S3Resume2Pei.inf
 
 
