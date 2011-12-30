@@ -134,10 +134,10 @@ Returns:
     // Get PCI Express Base Address
     //
     PrivateData->PciExpressBaseAddress = GetPciExpressBaseAddressForRootBridge (PciSegmentIndex, PciRootBridgeIndex);
-    if (PrivateData->PciExpressBaseAddress != 0) {
+ /*   if (PrivateData->PciExpressBaseAddress != 0) {
       DEBUG ((EFI_D_ERROR, "PCIE Base - 0x%lx\n", PrivateData->PciExpressBaseAddress));
     }
-
+*/
     //
     // Create a lock for performing PCI Configuration cycles
     //
