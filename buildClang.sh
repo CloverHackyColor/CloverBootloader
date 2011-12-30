@@ -63,7 +63,7 @@ case `uname` in
 
 esac
 
-BUILD_ROOT_ARCH=$WORKSPACE/Build/Clang$PROCESSOR/$VTARGET_"$TARGET_TOOLS"/$PROCESSOR
+BUILD_ROOT_ARCH=$WORKSPACE/Build/Clang$PROCESSOR/"$VTARGET"_"$TARGET_TOOLS"/$PROCESSOR
 FLOPPY_IMAGE=$WORKSPACE/Build/Clang$PROCESSOR/floppy.img
 
 if  [[ ! -f `which build` || ! -f `which GenFv` ]];
@@ -91,12 +91,12 @@ do
 
   if [[ $arg == cleanall ]]; then
     make -C $WORKSPACE/BaseTools clean
-    build -p $WORKSPACE/Clover/DuetPkg$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 clean
+    build -p $WORKSPACE/Clover/CloverClang$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 clean
     exit $?
   fi
 
   if [[ $arg == clean ]]; then
-    build -p $WORKSPACE/Clover/DuetPkg$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 clean
+    build -p $WORKSPACE/Clover/CloverClang$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 clean
     exit $?
   fi
 done
@@ -105,8 +105,8 @@ done
 #
 # Build the edk2 DuetPkg
 #
-echo Running edk2 build for DuetPkg$Processor
-build -p $WORKSPACE/Clover/DuetPkg$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 $*
+echo Running edk2 build for CloverClang$Processor
+build -p $WORKSPACE/Clover/CloverClang$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 $*
 echo Running Clover/PostBuildDuet.sh
 $WORKSPACE/Clover/PostBuildDuet.sh $PROCESSOR $TARGET_TOOLS  $VTARGET
 #echo Running DuetPkg/CreateBootDisk.sh

@@ -102,6 +102,7 @@ DEFINE ELFGCC_BIN       = /usr/local/bin
 #DEFINE UNIXGCC_IA32_PETOOLS_PREFIX = /opt/tiano/i386-tiano-pe/i386-tiano-pe/bin/
 #DEFINE UNIXGCC_X64_PETOOLS_PREFIX  = /opt/tiano/x86_64-pc-mingw64/x86_64-pc-mingw64/bin/
 #DEFINE UNIXGCC_IPF_PETOOLS_PREFIX  = /opt/tiano/ia64-pc-elf/ia64-pc-elf/bin/
+
 #
 # Option 2: Use an environment variable
 #DEFINE UNIXGCC_IA32_PETOOLS_PREFIX = ENV(IA32_PETOOLS_PREFIX)
@@ -114,14 +115,14 @@ DEFINE ELFGCC_BIN       = /usr/local/bin
 # Option 4: Create links under the BaseTools/Bin/gcc/ARCH directory
 # Links needed: gcc, ar & ld
 #DEFINE UNIXGCC_IA32_PETOOLS_PREFIX = ENV(WORKSPACE)/BaseTools/Bin/gcc/Ia32/
-#DEFINE UNIXGCC_X64_PETOOLS_PREFIX  = ENV(WORKSPACE)/BaseTools/Bin/gcc/X64/
+DEFINE UNIXGCC_X64_PETOOLS_PREFIX  = ENV(WORKSPACE)/BaseTools/gcc/symlinks/X64/
 #
 # Option 5: Install programs under user's home directory
 DEFINE UNIXGCC_IA32_PETOOLS_PREFIX = ENV(HOME)/programs/gcc/ia32/bin/i686-pc-mingw32-
 #DEFINE UNIXGCC_X64_PETOOLS_PREFIX  = ENV(HOME)/programs/gcc/x64/bin/x86_64-pc-mingw32-
 
 #DEFINE UNIXGCC_IA32_PETOOLS_PREFIX = ENV(HOME)/gcc-461/bin/x86_64-apple-darwin10.8.0-
-DEFINE UNIXGCC_X64_PETOOLS_PREFIX  = ENV(HOME)/gcc-461/bin/x86_64-apple-darwin10.8.0-
+#DEFINE UNIXGCC_X64_PETOOLS_PREFIX  = ENV(HOME)/gcc-461/bin/x86_64-apple-darwin10.8.0-
 
 DEFINE UNIXGCC_IPF_PETOOLS_PREFIX  = /usr/local/arm-elf/bin/
 #
@@ -1605,7 +1606,7 @@ DEFINE GCC_IA32_RC_FLAGS           = -I binary -O elf32-i386        -B i386 --re
 DEFINE GCC_X64_RC_FLAGS            = -I binary -O elf64-x86-64      -B i386 --rename-section .data=.hii
 DEFINE GCC_IPF_RC_FLAGS            = -I binary -O elf64-ia64-little -B ia64 --rename-section .data=.hii
 
-DEFINE GCC44_ALL_CC_FLAGS            = -g -Os -fshort-wchar -fno-stack-protector -fno-strict-aliasing -Wall -Werror -Wno-missing-braces -Wno-array-bounds -ffunction-sections -fdata-sections -c -include AutoGen.h -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings
+DEFINE GCC44_ALL_CC_FLAGS            = -g -O0 -fshort-wchar -fno-stack-protector -fno-strict-aliasing -Wall -Werror -Wno-missing-braces -Wno-array-bounds -ffunction-sections -fdata-sections -c -include AutoGen.h -DSTRING_ARRAY_NAME=$(BASE_NAME)Strings
 DEFINE GCC44_IA32_CC_FLAGS           = DEF(GCC44_ALL_CC_FLAGS) -m32 -malign-double -D EFI32
 DEFINE GCC44_X64_CC_FLAGS            = DEF(GCC44_ALL_CC_FLAGS) -m64 "-DEFIAPI=__attribute__((ms_abi))" -DNO_BUILTIN_VA_FUNCS -mno-red-zone -Wno-address -mcmodel=large
 DEFINE GCC44_IA32_X64_DLINK_COMMON   = -nostdlib -n -q --gc-sections --script=$(EDK_TOOLS_PATH)/Scripts/gcc4.4-ld-script
@@ -1689,7 +1690,7 @@ DEFINE GCC46_ASM_FLAGS               = DEF(GCC45_ASM_FLAGS)
 *_UNIXGCC_X64_RC_PATH               = DEF(UNIXGCC_X64_PETOOLS_PREFIX)objcopy
 *_UNIXGCC_X64_OBJCOPY_PATH          = DEF(UNIXGCC_X64_PETOOLS_PREFIX)objcopy
 
-*_UNIXGCC_X64_CC_FLAGS              = DEF(GCC46_X64_CC_FLAGS)
+*_UNIXGCC_X64_CC_FLAGS              = DEF(GCC44_X64_CC_FLAGS)
 *_UNIXGCC_X64_RC_FLAGS              = DEF(GCC_X64_RC_FLAGS)
 *_UNIXGCC_X64_OBJCOPY_FLAGS         =
 
@@ -3447,7 +3448,7 @@ RELEASE_XCLANG_*_MTOC_FLAGS = -align 0x20
 *_XCLANG_*_CC_PATH      = DEF(CLANG_BIN)clang
 *_XCLANG_*_SLINK_PATH   = libtool.NEW
 *_XCLANG_*_DLINK_PATH   = ld64
-*_XCLANG_*_ASM_PATH     = as64
+*_XCLANG_*_ASM_PATH     = as
 *_XCLANG_*_PP_PATH      = DEF(CLANG_BIN)clang
 *_XCLANG_*_VFRPP_PATH   = DEF(CLANG_BIN)clang
 *_XCLANG_*_ASL_PATH     = iasl

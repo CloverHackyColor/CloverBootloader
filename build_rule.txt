@@ -126,7 +126,7 @@
 
     <Command.GCC, Command.RVCT>
         # For RVCTCYGWIN CC_FLAGS must be first to work around pathing issues
-        @"$(CC)" $(CC_FLAGS) -o ${dst} $(INC) ${src}
+        "$(CC)" $(CC_FLAGS) -o ${dst} $(INC) ${src}
         @"echo" [CC] ${s_base}
         #@"$(SYMRENAME)" $(SYMRENAME_FLAGS) ${dst}
 
@@ -162,10 +162,10 @@
         "$(ASM)" /Fo${dst} $(ASM_FLAGS) /I${s_path} $(INC) ${d_path}(+)${s_base}.iii
 
     <Command.GCC, Command.RVCT>
-        @"$(PP)" $(PP_FLAGS) $(INC) ${src} > ${d_path}(+)${s_base}.i
+        "$(PP)" $(PP_FLAGS) $(INC) ${src} > ${d_path}(+)${s_base}.i
         @Trim --source-code -o ${d_path}(+)${s_base}.iii ${d_path}(+)${s_base}.i
         # For RVCTCYGWIN ASM_FLAGS must be first to work around pathing issues
-        @"$(ASM)" $(ASM_FLAGS) -o ${dst} $(INC) ${d_path}(+)${s_base}.iii
+        "$(ASM)" $(ASM_FLAGS) -o ${dst} $(INC) ${d_path}(+)${s_base}.iii
 	@"echo" [ASM] ${s_base}
 
 [Assembly-Code-File.COMMON.IPF]
@@ -215,6 +215,8 @@
 
     <Command.GCC>
         @"$(SLINK)" -cr ${dst} $(SLINK_FLAGS) @$(OBJECT_FILES_LIST)
+	@"echo" [SLINK] $(MODULE_NAME)
+	#@"$(SLINK)" -c ${dst} $(SLINK_FLAGS) @$(OBJECT_FILES_LIST)
     
     <Command.RVCT>
         "$(SLINK)" $(SLINK_FLAGS) ${dst} --via $(OBJECT_FILES_LIST)
@@ -254,7 +256,7 @@
         "$(DLINK)" $(DLINK_FLAGS) -o ${dst} $(DLINK_SPATH) $(STATIC_LIBRARY_FILES) $(DLINK2_FLAGS)
 
     <Command.XCODE>
-        "$(DLINK)" $(DLINK_FLAGS) -o ${dst} $(DLINK_SPATH) -filelist $(STATIC_LIBRARY_FILES_LIST)  $(DLINK2_FLAGS)
+        @"$(DLINK)" $(DLINK_FLAGS) -o ${dst} $(DLINK_SPATH) -filelist $(STATIC_LIBRARY_FILES_LIST)  $(DLINK2_FLAGS)
     
     
 [Static-Library-File.USER_DEFINED]
@@ -284,7 +286,7 @@
         "$(DLINK)" $(DLINK_FLAGS) -o ${dst} $(DLINK_SPATH) $(STATIC_LIBRARY_FILES) $(DLINK2_FLAGS)
 
     <Command.XCODE>
-        "$(DLINK)" -o ${dst} $(DLINK_FLAGS)  $(DLINK_SPATH) -filelist $(STATIC_LIBRARY_FILES_LIST)  $(DLINK2_FLAGS)
+        @"$(DLINK)" -o ${dst} $(DLINK_FLAGS)  $(DLINK_SPATH) -filelist $(STATIC_LIBRARY_FILES_LIST)  $(DLINK2_FLAGS)
       
       
 [Dynamic-Library-File]
@@ -319,13 +321,15 @@
         
     <Command.XCODE>
         # tool to convert Mach-O to PE/COFF
-        "$(MTOC)" -subsystem $(MODULE_TYPE)  $(MTOC_FLAGS)  ${src}  $(DEBUG_DIR)(+)$(MODULE_NAME).pecoff
+        @"$(MTOC)" -subsystem $(MODULE_TYPE)  $(MTOC_FLAGS)  ${src}  $(DEBUG_DIR)(+)$(MODULE_NAME).pecoff
+	@"echo" [MTOC] $(MODULE_NAME)
         # create symbol file for GDB debug
-        -$(DSYMUTIL) ${src}
-        "$(GENFW)" -e $(MODULE_TYPE) -o ${dst} $(DEBUG_DIR)(+)$(MODULE_NAME).pecoff $(GENFW_FLAGS)
-        $(CP) ${dst} $(OUTPUT_DIR)
-        $(CP) ${dst} $(BIN_DIR)
-        -$(CP) $(DEBUG_DIR)(+)*.map $(OUTPUT_DIR)
+        #-$(DSYMUTIL) ${src}
+        @"$(GENFW)" -e $(MODULE_TYPE) -o ${dst} $(DEBUG_DIR)(+)$(MODULE_NAME).pecoff $(GENFW_FLAGS)
+        @$(CP) ${dst} $(OUTPUT_DIR)
+        @$(CP) ${dst} $(BIN_DIR)
+        @-$(CP) $(DEBUG_DIR)(+)*.map $(OUTPUT_DIR)
+	@"echo" [GENFW] $(MODULE_NAME)
 
 [Dependency-Expression-File]
     <InputFile>
@@ -404,10 +408,10 @@
         "$(GENFW)" -o ${dst} -c $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.dll $(GENFW_FLAGS)
         
     <Command.XCODE>        
-        "$(ASLCC)" -o $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj  $(ASLCC_FLAGS) $(INC) ${src}
-        "$(ASLDLINK)" -o $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.dll $(ASLDLINK_FLAGS) $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj
-        "$(MTOC)" -subsystem $(MODULE_TYPE)  $(MTOC_FLAGS) $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.dll $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.efi
-        "$(GENFW)" -o ${dst} -c $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.efi $(GENFW_FLAGS)
+        @"$(ASLCC)" -o $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj  $(ASLCC_FLAGS) $(INC) ${src}
+        @"$(ASLDLINK)" -o $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.dll $(ASLDLINK_FLAGS) $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj
+        @"$(MTOC)" -subsystem $(MODULE_TYPE)  $(MTOC_FLAGS) $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.dll $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.efi
+        @"$(GENFW)" -o ${dst} -c $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.efi $(GENFW_FLAGS)
       
       
 [Masm16-Code-File]
@@ -434,11 +438,11 @@
       "$(DLINK)" -o ${dst} $(DLINK_FLAGS) -\( $(DLINK_SPATH) $(LIBS) $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj -\)
      
     <Command.XCODE>
-      "$(PP)" $(PP_FLAGS) $(INC) ${src} > ${d_path}(+)${s_base}.i
-      Trim --source-code -o ${d_path}(+)${s_base}.iii ${d_path}(+)${s_base}.i
-      "$(ASM)" -o $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj $(ASM_FLAGS) $(INC) ${d_path}(+)${s_base}.iii
-      "$(SLINK)" $(SLINK_FLAGS) $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.slib $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj
-      otool -t $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.slib | hex2bin.py ${dst}
+      @"$(PP)" $(PP_FLAGS) $(INC) ${src} > ${d_path}(+)${s_base}.i
+      @Trim --source-code -o ${d_path}(+)${s_base}.iii ${d_path}(+)${s_base}.i
+      @"$(ASM)" -o $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj $(ASM_FLAGS) $(INC) ${d_path}(+)${s_base}.iii
+      @"$(SLINK)" $(SLINK_FLAGS) $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.slib $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.obj
+      @otool -t $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.slib | hex2bin.py ${dst}
       
 
 [Microcode-File.USER_DEFINED, Microcode-File.Microcode]
