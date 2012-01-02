@@ -64,7 +64,7 @@ case "$2" in
 #     echo Invalid tool tag, should be only UNIXGCC or GCC44
 #     return 1
 	echo Welcome to XCode!
-	export TOOLTAG=XCODE
+	export TOOLTAG=XCODE32
 esac
 
 case "$3" in
@@ -77,7 +77,7 @@ case "$3" in
    *)
      echo Invalid Target "$3", assume "$TARGET" or "$VTAG" or "$VTARGET"
      echo ToolTag "$TOOLTAG"
-     export VTAG=DEBUG
+     export VTAG=RELEASE
 esac
 
 export BUILD_DIR=$WORKSPACE/Build/Clover$PROCESSOR/"$VTAG"_"$TOOLTAG"

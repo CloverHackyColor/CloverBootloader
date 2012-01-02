@@ -23,6 +23,16 @@ Abstract:
 
 EFI_CPU_IO2_PROTOCOL *gCpuIo;
 
+
+typedef struct {
+  PCI_DEVICE_INDEPENDENT_REGION Hdr;
+  union {
+    PCI_CARDBUS_CONTROL_REGISTER   CardBridge;
+    PCI_BRIDGE_CONTROL_REGISTER   P2PBridge;
+  } Bridge;
+  
+} PCI_TYPE02;
+
 EFI_STATUS
 EFIAPI
 InitializePcatPciRootBridge (
@@ -53,7 +63,7 @@ Returns:
   UINTN                          Device;
   UINTN                          Function;
   UINT16                         VendorId;
-  PCI_TYPE01                     PciConfigurationHeader;
+  PCI_TYPE02                     PciConfigurationHeader;
   UINT64                         Address;
   UINT64                         Value;
   UINT64                         Base;
@@ -237,23 +247,23 @@ Returns:
           //
           // Get the Bus range that the PPB is decoding
           //
-          if (PciConfigurationHeader.Bridge.SubordinateBus > PrivateData->SubordinateBus) {
+          if (PciConfigurationHeader.Bridge.P2PBridge.SubordinateBus > PrivateData->SubordinateBus) {
             //
             // If the suborinate bus number of the PCI-PCI bridge is greater than the PCI root bridge's
             // current subordinate bus number, then update the PCI root bridge's subordinate bus number 
             //
-            PrivateData->SubordinateBus = PciConfigurationHeader.Bridge.SubordinateBus;
+            PrivateData->SubordinateBus = PciConfigurationHeader.Bridge.P2PBridge.SubordinateBus;
           }
 
           //
           // Get the I/O range that the PPB is decoding
           //
-          Value = PciConfigurationHeader.Bridge.IoBase & 0x0f;
-          Base  = ((UINT32)PciConfigurationHeader.Bridge.IoBase & 0xf0) << 8;
-          Limit = (((UINT32)PciConfigurationHeader.Bridge.IoLimit & 0xf0) << 8) | 0x0fff;
+          Value = PciConfigurationHeader.Bridge.P2PBridge.IoBase & 0x0f;
+          Base  = ((UINT32)PciConfigurationHeader.Bridge.P2PBridge.IoBase & 0xf0) << 8;
+          Limit = (((UINT32)PciConfigurationHeader.Bridge.P2PBridge.IoLimit & 0xf0) << 8) | 0x0fff;
           if (Value == 0x01) {
-            Base  |= ((UINT32)PciConfigurationHeader.Bridge.IoBaseUpper16 << 16);
-            Limit |= ((UINT32)PciConfigurationHeader.Bridge.IoLimitUpper16 << 16);
+            Base  |= ((UINT32)PciConfigurationHeader.Bridge.P2PBridge.IoBaseUpper16 << 16);
+            Limit |= ((UINT32)PciConfigurationHeader.Bridge.P2PBridge.IoLimitUpper16 << 16);
           }
           if (Base < Limit) {
             if (PrivateData->IoBase > Base) {
@@ -267,8 +277,8 @@ Returns:
           //
           // Get the Memory range that the PPB is decoding
           //
-          Base  = ((UINT32)PciConfigurationHeader.Bridge.MemoryBase & 0xfff0) << 16;
-          Limit = (((UINT32)PciConfigurationHeader.Bridge.MemoryLimit & 0xfff0) << 16) | 0xfffff;
+          Base  = ((UINT32)PciConfigurationHeader.Bridge.P2PBridge.MemoryBase & 0xfff0) << 16;
+          Limit = (((UINT32)PciConfigurationHeader.Bridge.P2PBridge.MemoryLimit & 0xfff0) << 16) | 0xfffff;
           if (Base < Limit) {
             if (PrivateData->MemBase > Base) {
               PrivateData->MemBase = Base;
@@ -287,12 +297,12 @@ Returns:
           //
           // Get the Prefetchable Memory range that the PPB is decoding
           //
-          Value = PciConfigurationHeader.Bridge.PrefetchableMemoryBase & 0x0f;
-          Base  = ((UINT32)PciConfigurationHeader.Bridge.PrefetchableMemoryBase & 0xfff0) << 16;
-          Limit = (((UINT32)PciConfigurationHeader.Bridge.PrefetchableMemoryLimit & 0xfff0) << 16) | 0xffffff;
+          Value = PciConfigurationHeader.Bridge.P2PBridge.PrefetchableMemoryBase & 0x0f;
+          Base  = ((UINT32)PciConfigurationHeader.Bridge.P2PBridge.PrefetchableMemoryBase & 0xfff0) << 16;
+          Limit = (((UINT32)PciConfigurationHeader.Bridge.P2PBridge.PrefetchableMemoryLimit & 0xfff0) << 16) | 0xffffff;
           if (Value == 0x01) {
-            Base  |= LShiftU64((UINT64)PciConfigurationHeader.Bridge.PrefetchableBaseUpper32,32);
-            Limit |= LShiftU64((UINT64)PciConfigurationHeader.Bridge.PrefetchableLimitUpper32,32);
+            Base  |= LShiftU64((UINT64)PciConfigurationHeader.Bridge.P2PBridge.PrefetchableBaseUpper32,32);
+            Limit |= LShiftU64((UINT64)PciConfigurationHeader.Bridge.P2PBridge.PrefetchableLimitUpper32,32);
           }
           if (Base < Limit) {
             if (PrivateData->MemBase > Base) {
@@ -322,17 +332,64 @@ Returns:
           //
           // Look at the PPB Configuration for legacy decoding attributes
           //
-          if (PciConfigurationHeader.Bridge.BridgeControl & 0x04) {
+          if (PciConfigurationHeader.Bridge.P2PBridge.BridgeControl & 0x04) {
             PrivateData->Attributes |= EFI_PCI_ATTRIBUTE_ISA_IO;
             PrivateData->Attributes |= EFI_PCI_ATTRIBUTE_ISA_MOTHERBOARD_IO;
           }
-          if (PciConfigurationHeader.Bridge.BridgeControl & 0x08) {
+          if (PciConfigurationHeader.Bridge.P2PBridge.BridgeControl & 0x08) {
             PrivateData->Attributes |= EFI_PCI_ATTRIBUTE_VGA_PALETTE_IO;
             PrivateData->Attributes |= EFI_PCI_ATTRIBUTE_VGA_MEMORY;
             PrivateData->Attributes |= EFI_PCI_ATTRIBUTE_VGA_IO;
           }
 
-        } else {
+        } else if (IS_CARDBUS_BRIDGE(&PciConfigurationHeader)) {
+          //
+          // Get the Bus range that the PPB is decoding
+          //
+          if (PciConfigurationHeader.Bridge.CardBridge.SubordinateBusNumber > PrivateData->SubordinateBus) {
+            //
+            // If the suborinate bus number of the PCI-PCI bridge is greater than the PCI root bridge's
+            // current subordinate bus number, then update the PCI root bridge's subordinate bus number 
+            //
+            PrivateData->SubordinateBus = PciConfigurationHeader.Bridge.CardBridge.SubordinateBusNumber;
+          }
+          
+          //
+          // Get the I/O range that the PPB is decoding
+          //
+          Base  = PciConfigurationHeader.Bridge.CardBridge.IoBase0;
+          Limit = PciConfigurationHeader.Bridge.CardBridge.IoLimit0;
+          if (Base < Limit) {
+            if (PrivateData->IoBase > Base) {
+              PrivateData->IoBase = Base;
+            }
+            if (PrivateData->IoLimit < Limit) {
+              PrivateData->IoLimit = Limit;
+            }
+          }
+          
+          //
+          // Get the Memory range that the PPB is decoding
+          //
+          Base  = PciConfigurationHeader.Bridge.CardBridge.MemoryBase0;
+          Limit = PciConfigurationHeader.Bridge.CardBridge.MemoryLimit0;
+          if (Base < Limit) {
+            if (PrivateData->MemBase > Base) {
+              PrivateData->MemBase = Base;
+            }
+            if (PrivateData->MemLimit < Limit) {
+              PrivateData->MemLimit = Limit;
+            }
+            if (PrivateData->Mem32Base > Base) {
+              PrivateData->Mem32Base = Base;
+            }
+            if (PrivateData->Mem32Limit < Limit) {
+              PrivateData->Mem32Limit = Limit;
+            }
+          }
+          
+        } else 
+          {
           //
           // Parse the BARs of the PCI device to determine what I/O Ranges,
           // Memory Ranges, and Prefetchable Memory Ranges the device is decoding

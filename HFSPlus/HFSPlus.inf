@@ -16,8 +16,8 @@
 #
 
 [Binaries.Ia32]
-  PE32|HFSPlus.efi|*
+  PE32|Ia32/HFSPlus.efi|*
 
 [Binaries.X64]
-  PE32|HFSPlusMP21.efi|*
+  PE32|X64/HFSPlus.efi|*
 

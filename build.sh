@@ -39,7 +39,21 @@ fi
 
 PROCESSOR=IA32
 Processor=Ia32
-VTARGET=$TARGET
+case $TARGET in
+	DEBUG*)
+		echo Config DEBUG 
+		VTARGET=DEBUG
+		;;
+	RELEASE*)
+		echo Config RELEASE
+		VTARGET=RELASE
+		;;
+	*)
+	  echo Config= $TARGET ?
+	  VTARGET="$TARGET"
+esac		
+
+
 
 #
 # Pick a default tool type for a given OS
@@ -63,7 +77,7 @@ case `uname` in
 
 esac
 
-BUILD_ROOT_ARCH=$WORKSPACE/Build/Clover$PROCESSOR/$VTARGET_"$TARGET_TOOLS"/$PROCESSOR
+BUILD_ROOT_ARCH=$WORKSPACE/Build/Clover$PROCESSOR/"$VTARGET"_"$TARGET_TOOLS"/$PROCESSOR
 FLOPPY_IMAGE=$WORKSPACE/Build/Clover$PROCESSOR/floppy.img
 
 if  [[ ! -f `which build` || ! -f `which GenFv` ]];
@@ -108,7 +122,7 @@ done
 echo Running edk2 build for DuetPkg$Processor
 build -p $WORKSPACE/Clover/DuetPkg$Processor.dsc -a $PROCESSOR -t $TARGET_TOOLS -n 3 $*
 echo Running Clover/PostBuild.sh
-$WORKSPACE/Clover/PostBuild.sh $PROCESSOR $TARGET_TOOLS  $VTARGET
+$WORKSPACE/Clover/PostBuild.sh $PROCESSOR $TARGET_TOOLS $VTARGET
 #echo Running DuetPkg/CreateBootDisk.sh
 
 exit $?
