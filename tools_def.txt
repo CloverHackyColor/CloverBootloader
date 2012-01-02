@@ -3969,9 +3969,9 @@ RELEASE_XCODE32_ARM_CC_FLAGS   = $(ARCHCC_FLAGS) $(PLATFORM_FLAGS) -mthumb-inter
 
       *_*_*_MTOC_PATH  = /usr/local/bin/mtoc
 
-  DEBUG_XCLANG_*_MTOC_FLAGS = -align 0x20 -d $(DEBUG_DIR)/$(MODULE_NAME).dll
+#  DEBUG_XCLANG_*_MTOC_FLAGS = -align 0x20 -d $(DEBUG_DIR)/$(MODULE_NAME).dll
 RELEASE_XCLANG_*_MTOC_FLAGS = -align 0x20
-
+DEBUG_XCLANG_*_MTOC_FLAGS = -align 0x20
 
 *_XCLANG_*_CC_PATH      = DEF(CLANG_BIN)clang
 *_XCLANG_*_SLINK_PATH   = libtool.NEW
@@ -3987,14 +3987,16 @@ RELEASE_XCLANG_*_MTOC_FLAGS = -align 0x20
 ####################
 # IA-32 definitions
 ####################
-  DEBUG_XCLANG_IA32_DLINK_FLAGS      = -arch i386 -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -all_load -dead_strip -seg1addr 0x240 -read_only_relocs suppress -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
+  DEBUG_XCLANG_IA32_DLINK_FLAGS      = -arch i386 -S -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -all_load -dead_strip -seg1addr 0x240 -read_only_relocs suppress -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
 RELEASE_XCLANG_IA32_DLINK_FLAGS      = -arch i386 -u _$(IMAGE_ENTRY_POINT) -e _$(IMAGE_ENTRY_POINT) -preload -segalign 0x20  -pie -all_load -dead_strip -seg1addr 0x220 -read_only_relocs suppress -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
 *_XCLANG_IA32_SLINK_FLAGS      = -static -o
-  DEBUG_XCLANG_IA32_ASM_FLAGS  = -arch i386 -g
+  DEBUG_XCLANG_IA32_ASM_FLAGS  = -arch i386
+# -g
 RELEASE_XCLANG_IA32_ASM_FLAGS  = -arch i386 
 
 
-  DEBUG_XCLANG_IA32_CC_FLAGS   = -arch i386 -c -g -O0  -Wall -Werror -include AutoGen.h -fno-stack-protector -fno-builtin -fshort-wchar -mdynamic-no-pic -mno-sse -mno-mmx -Wno-empty-body -Wno-pointer-sign -Wno-unused-function -Wno-unused-value -Wno-missing-braces -Wno-tautological-compare -Wreturn-type -Wno-unused-variable 
+  DEBUG_XCLANG_IA32_CC_FLAGS   = -arch i386 -c -O0  -Wall -Werror -include AutoGen.h -fno-stack-protector -fno-builtin -fshort-wchar -mdynamic-no-pic -Wno-empty-body -Wno-pointer-sign -Wno-unused-function -Wno-unused-value -Wno-missing-braces -Wno-tautological-compare -Wreturn-type -Wno-unused-variable 
+# -g -mno-sse -mno-mmx 
 RELEASE_XCLANG_IA32_CC_FLAGS   = -arch i386 -c    -Os  -Wall -Werror -include AutoGen.h -fno-stack-protector -fno-builtin -fshort-wchar -mdynamic-no-pic -mno-sse -mno-mmx -Wno-empty-body -Wno-pointer-sign -Wno-unused-function -Wno-unused-value -Wno-missing-braces -Wno-tautological-compare -Wreturn-type -Wno-unused-variable 
 
 

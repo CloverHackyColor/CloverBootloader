@@ -56,6 +56,10 @@ case "$2" in
    GCC44)
      export TOOLTAG=GCC44
      ;;
+   XCLANG)
+   	 echo Welcome to XClang!
+     export TOOLTAG=XCLANG
+     ;;
    *)
 #     echo Invalid tool tag, should be only UNIXGCC or GCC44
 #     return 1
@@ -63,7 +67,20 @@ case "$2" in
 	export TOOLTAG=XCODE
 esac
 
-export BUILD_DIR=$WORKSPACE/Build/Clover$PROCESSOR/DEBUG_XCODE32
+case "$3" in
+   DEBUG)
+     export VTAG=DEBUG
+     ;;
+   RELEASE)
+     export VTAG=RELEASE
+     ;;
+   *)
+     echo Invalid Target "$3", assume "$TARGET" or "$VTAG" or "$VTARGET"
+     echo ToolTag "$TOOLTAG"
+     export VTAG=DEBUG
+esac
+
+export BUILD_DIR=$WORKSPACE/Build/Clover$PROCESSOR/"$VTAG"_"$TOOLTAG"
 
 
 #
