@@ -380,7 +380,7 @@ PrepareFadtTable (
   AcpiDescription->PM_TMR_BLK.RegisterBitWidth = (UINT8) ((AcpiDescription->TMR_VAL_EXT == 0) ? 24 : 32);
 	//
 	//Slice - fill these fields by known values; 1 and 2 never used
-	AcpiDescription->SLP_TYPa = 7;
+	AcpiDescription->SLP_TYPa = 5;
 	AcpiDescription->SLP3_TYPa = 5;
 	AcpiDescription->SLP4_TYPa = 7;
 

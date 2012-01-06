@@ -337,7 +337,7 @@ Returns:
             PrivateData->Attributes |= EFI_PCI_ATTRIBUTE_ISA_MOTHERBOARD_IO;
           }
           if (PciConfigurationHeader.Bridge.P2PBridge.BridgeControl & 0x08) {
-            PrivateData->Attributes |= EFI_PCI_ATTRIBUTE_VGA_PALETTE_IO;
+           // PrivateData->Attributes |= EFI_PCI_ATTRIBUTE_VGA_PALETTE_IO;
             PrivateData->Attributes |= EFI_PCI_ATTRIBUTE_VGA_MEMORY;
             PrivateData->Attributes |= EFI_PCI_ATTRIBUTE_VGA_IO;
           }
@@ -436,7 +436,7 @@ Returns:
           //
           if (PciConfigurationHeader.Hdr.ClassCode[2] == 0x03 &&
               PciConfigurationHeader.Hdr.ClassCode[1] == 0x00    ) {
-            PrivateData->Attributes |= EFI_PCI_ATTRIBUTE_VGA_PALETTE_IO;
+          //  PrivateData->Attributes |= EFI_PCI_ATTRIBUTE_VGA_PALETTE_IO;
             PrivateData->Attributes |= EFI_PCI_ATTRIBUTE_VGA_MEMORY;
             PrivateData->Attributes |= EFI_PCI_ATTRIBUTE_VGA_IO;
           }

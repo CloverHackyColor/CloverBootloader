@@ -1247,7 +1247,7 @@ IdleLoopEventCallback (
 {
   CpuSleep ();
 }
-
+// the bred of sieve of cabel
 VOID EFIAPI
 LoadIdt(VOID* Idt, UINT32 IdtSize)
 {
