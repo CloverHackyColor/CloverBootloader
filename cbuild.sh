@@ -1,6 +1,8 @@
 #!/bin/sh
 
-#  build.sh
+#  cbuild.sh
+#  Script for building CloverEFI source under OS X
+#  Supported chainloads(compilers) are XCODE32, UNIXGCC and CLANG
 #  
 #
 #  Created by Jadran Puharic on 1/6/12.
@@ -49,7 +51,7 @@ export Processor=X64
 }
 
 fnDebug ()
-# Function: Xcode function
+# Function: Debug version of compiled source
 {
 echo "Debug TARGET"
 export TARGET=DEBUG
@@ -57,7 +59,7 @@ export VTARGET=DEBUG
 }
 
 fnRelease ()
-# Function: Xcode function
+# Function: Release version of compiled source
 {
 echo "Release TARGET"
 export TARGET=RELEASE
@@ -87,10 +89,11 @@ echo
 }
 
 fnHelpArgument ()
-# Function: HelpArgument2
+# Function: Help with arguments
 {
 echo "ERROR!"
 echo "Example: ./cbuild.sh -xcode -ia32 -release"
+echo "Example: ./cbuild.sh -unixgcc -x64 -release"
 }
 
 ## MAIN ARGUMENT PART##
@@ -154,7 +157,7 @@ echo "Example: ./cbuild.sh -xcode -ia32 -release"
         ;;
 
         '-cleanall')
-        export arg=cleanall
+        export ARG=cleanall
         ;;
     esac
 
@@ -205,7 +208,7 @@ else
 echo using prebuilt tools
 fi
 
-# Cleaning part of the script if we have $4 argument
+# Cleaning part of the script if we have $4 argument: clean/cleanall
 if [[ $ARG == cleanall ]]; then
 make -C $WORKSPACE/BaseTools clean
 build -p $WORKSPACE/Clover/DuetPkg$Processor.dsc -a $PROCESSOR -b $VTARGET -t $TARGET_TOOLS -n 3 clean
@@ -237,7 +240,7 @@ fi
 export BOOTSECTOR_BIN_DIR=$WORKSPACE/Clover/BootSector/bin
 export BUILD_DIR=$WORKSPACE/Build/Clover$PROCESSOR/"$VTARGET"_"$TARGET_TOOLS"
 
-[ ! $BUILD_DIR/FV/DUETEFIMAINFV.z ] && \
+[ ! -f $BUILD_DIR/FV/DUETEFIMAINFV.z ] && \
 echo "ERROR: Build not finished exiting PostBuild Part..." && exit
 
 #
