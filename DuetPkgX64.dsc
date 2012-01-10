@@ -282,7 +282,8 @@
   PcAtChipsetPkg/8254TimerDxe/8254Timer.inf
   PcAtChipsetPkg/HpetTimerDxe/HpetTimerDxe.inf
   #PcAtChipsetPkg/PciHostBridgeDxe/PciHostBridgeDxe.inf
-  DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
+  #DuetPkg/PciRootBridgeNoEnumerationDxe/PciRootBridgeNoEnumeration.inf
+  Clover/PciRootBridgeDxe/PciRootBridge.inf
   #DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
   Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
   #MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
@@ -334,7 +335,7 @@
   PcAtChipsetPkg/IsaAcpiDxe/IsaAcpi.inf
   IntelFrameworkModulePkg/Bus/Isa/IsaBusDxe/IsaBusDxe.inf
   #IntelFrameworkModulePkg/Bus/Isa/IsaSerialDxe/IsaSerialDxe.inf
-  IntelFrameworkModulePkg/Bus/Isa/Ps2KeyboardDxe/Ps2keyboardDxe.inf
+  #IntelFrameworkModulePkg/Bus/Isa/Ps2KeyboardDxe/Ps2keyboardDxe.inf
   #IntelFrameworkModulePkg/Bus/Isa/IsaFloppyDxe/IsaFloppyDxe.inf
   IntelFrameworkModulePkg/Bus/Isa/Ps2MouseAbsolutePointerDxe/Ps2MouseAbsolutePointerDxe.inf
   IntelFrameworkModulePkg/Bus/Isa/Ps2MouseDxe/Ps2MouseDxe.inf
@@ -353,9 +354,11 @@
 
   #FD
   #IntelFrameworkModulePkg/Universal/Acpi/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
+  #Clover/SaveResume/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
   #MdeModulePkg/Universal/Acpi/S3SaveStateDxe/S3SaveStateDxe.inf
   #MdeModulePkg/Universal/Acpi/SmmS3SaveState/SmmS3SaveState.inf
   #MdeModulePkg/Universal/Acpi/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
+  #Clover/SaveResume/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
   #UefiCpuPkg/Universal/Acpi/S3Resume2Pei/S3Resume2Pei.inf
 
 
@@ -365,13 +368,13 @@
   #IntelFrameworkModulePkg/Csm/BiosThunk/BlockIoDxe/BlockIoDxe.inf
   #IntelFrameworkModulePkg/Csm/BiosThunk/KeyboardDxe/KeyboardDxe.inf
   Clover/BiosKeyboard/KeyboardDxe.inf
-  IntelFrameworkModulePkg/Universal/LegacyRegionDxe/LegacyRegionDxe.inf
+  #IntelFrameworkModulePkg/Universal/LegacyRegionDxe/LegacyRegionDxe.inf
   MdeModulePkg/Universal/LegacyRegion2Dxe/LegacyRegion2Dxe.inf
 
   #
   # Sample Application
   #
-  #MdeModulePkg/Application/HelloWorld/HelloWorld.inf
+  MdeModulePkg/Application/HelloWorld/HelloWorld.inf
   #MdeModulePkg/Application/VariableInfo/VariableInfo.inf
   #iBootEFI/iboot.inf
   #rEFIt_UEFI/refit.inf

@@ -1,6 +1,6 @@
 #------------------------------------------------------------------------------
 #*
-#*   Copyright (c) 2006 - 2007, Intel Corporation. All rights reserved.<BR>
+#*   Copyright (c) 2006 - 2012, Intel Corporation. All rights reserved.<BR>
 #*   This program and the accompanying materials                          
 #*   are licensed and made available under the terms and conditions of the BSD License         
 #*   which accompanies this distribution.  The full text of the license may be found at        
@@ -142,9 +142,9 @@ CheckEm64T:
         movw $18,%cx
         jmp  PrintStringAndHalt
 CheckEm64TPass: 
-jumpFarInstruction: 
+JumpFarInstruction: 
         .byte 0xea
-jumpOffset: 
+JumpOffset: 
         .word 0x200
 JumpSegment: 
         .word 0x2000
@@ -421,13 +421,13 @@ Timeout8042:
 
 A20GateEnabled: 
 //Slice
-		movw	$0x0002, %ax 
-		int		$0x10
+#		movw	$0x0002, %ax 
+#		int		$0x10
 		#put char 6
-		movl	$0x000F, %ebx
-		movl	$0x0E36, %eax
-		movl	$0x0010, %ecx
-		int		$0x10
+#		movl	$0x000F, %ebx
+#		movl	$0x0E36, %eax
+#		movl	$0x0010, %ecx
+#		int		$0x10
 
 #
 # DISABLE INTERRUPTS - Entering Protected Mode
@@ -1126,9 +1126,8 @@ MemoryMap:  .long 0,0,0,0,0,0,0,0
         .long 0,0,0,0,0,0,0,0
 
         .long 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-        .long 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
-        #.org 0x0fe0  #Just for pass build
+        .org 0x0fe0
 MyStack:    
         # below is the pieces of the IVT that is used to redirect INT 68h - 6fh
         #    back to INT 08h - 0fh  when in real mode...  It is 'org'ed to a
@@ -1160,7 +1159,7 @@ MyStack:
         iret
 
 
-        #.org 0x0ffe #Just for pass build
+        .org 0x0ffe
 BlockSignature: 
         .word 0xaa55
 

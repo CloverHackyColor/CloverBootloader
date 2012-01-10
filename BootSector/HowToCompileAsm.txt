@@ -36,3 +36,7 @@ cat start32H2.com4 efi32.com5 Efildr32 >boot
 ./gnu-gcc -c -o st32_64.o st32_64.S -Os -arch=ia32 -save-temps -g -fno-strict-aliasing -Wall -Werror -fno-stack-protector
 ./gnu-ld --oformat binary -o start64H.com st32_64.o -Ttext 0 -Map start.map
 dd if=start64H.com of=start64H.com2 bs=512 skip=1
+
+./gnu-gcc -c -o efi64.o efi64.S -Os -arch=x64 -save-temps -combine -mms-bitfields -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-missing-braces -c -fno-stack-protector
+./gnu-ld --oformat binary -o efi64.com efi64.o -Ttext 0 -Map efi64.map
+dd if=efi64.com of=efi64.com3 bs=512 skip=264

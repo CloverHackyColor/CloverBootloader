@@ -211,18 +211,18 @@ fi
 # Cleaning part of the script if we have $4 argument: clean/cleanall
 if [[ $ARG == cleanall ]]; then
 make -C $WORKSPACE/BaseTools clean
-build -p $WORKSPACE/Clover/DuetPkg$Processor.dsc -a $PROCESSOR -b $VTARGET -t $TARGET_TOOLS -n 3 clean
+build -p $WORKSPACE/Clover/Clover$Processor.dsc -a $PROCESSOR -b $VTARGET -t $TARGET_TOOLS -n 3 clean
 exit $?
 fi
 
 if [[ $ARG == clean ]]; then
-build -p $WORKSPACE/Clover/DuetPkg$Processor.dsc -a $PROCESSOR -b $VTARGET -t $TARGET_TOOLS -n 3 clean
+build -p $WORKSPACE/Clover/Clover$Processor.dsc -a $PROCESSOR -b $VTARGET -t $TARGET_TOOLS -n 3 clean
 exit $?
 fi
 
 # Build the edk2 DuetPkg
-echo Running edk2 build for DuetPkg$Processor
-build -p $WORKSPACE/Clover/DuetPkg$Processor.dsc -a $PROCESSOR -b $VTARGET -t $TARGET_TOOLS -n 3 $*
+echo Running edk2 build for Clover$Processor
+build -p $WORKSPACE/Clover/Clover$Processor.dsc -a $PROCESSOR -b $VTARGET -t $TARGET_TOOLS -n 3 $*
 
 }
 
@@ -240,11 +240,11 @@ fi
 export BOOTSECTOR_BIN_DIR=$WORKSPACE/Clover/BootSector/bin
 export BUILD_DIR=$WORKSPACE/Build/Clover$PROCESSOR/"$VTARGET"_"$TARGET_TOOLS"
 
-[ ! -f $BUILD_DIR/FV/DUETEFIMAINFV.z ] && \
-echo "ERROR: Build not finished exiting PostBuild Part..." && exit
+#[ ! -f $BUILD_DIR/FV/DUETEFIMAINFV.z ] && \
+#echo "ERROR: Build not finished exiting PostBuild Part..." && exit
 
 #
-# Boot sector module could only be built under IA32 tool chain
+# Boot sector module could only be built under IA32 tool chain - sure?
 #
 
 echo Compressing DUETEFIMainFv.FV ...
@@ -276,9 +276,9 @@ cat $BOOTSECTOR_BIN_DIR/Start64.com $BOOTSECTOR_BIN_DIR/efi64.com2 $BUILD_DIR/FV
 $BASETOOLS_DIR/GenPage $BUILD_DIR/FV/EfildrPure -o $BUILD_DIR/FV/Efildr
 cat $BOOTSECTOR_BIN_DIR/St16_64.com $BOOTSECTOR_BIN_DIR/efi64.com2 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/Efildr16Pure
 $BASETOOLS_DIR/GenPage $BUILD_DIR/FV/Efildr16Pure -o $BUILD_DIR/FV/Efildr16
-cat $BOOTSECTOR_BIN_DIR/St32_64.com $BOOTSECTOR_BIN_DIR/efi64.com2 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/Efildr20Pure
+cat $BOOTSECTOR_BIN_DIR/start64H.com $BOOTSECTOR_BIN_DIR/efi64.com3 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/Efildr20Pure
 $BASETOOLS_DIR/GenPage $BUILD_DIR/FV/Efildr20Pure -o $BUILD_DIR/FV/Efildr20
-cat $BOOTSECTOR_BIN_DIR/start64H.com2 $BOOTSECTOR_BIN_DIR/efi64.com2 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/bootPure
+cat $BOOTSECTOR_BIN_DIR/start64H.com2 $BOOTSECTOR_BIN_DIR/efi64.com3 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/bootPure
 $BASETOOLS_DIR/GenPage $BUILD_DIR/FV/bootPure -o $BUILD_DIR/FV/boot
 
 echo Done!
