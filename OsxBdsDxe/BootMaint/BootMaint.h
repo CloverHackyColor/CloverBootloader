@@ -26,7 +26,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #define VAR_CON_OUT_MODE L"ConOutMode"
 
 //
-// String Contant
+// String Constant
 //
 #define STR_FLOPPY       L"Floppy Drive #%02x"
 #define STR_HARDDISK     L"HardDisk Drive #%02x"

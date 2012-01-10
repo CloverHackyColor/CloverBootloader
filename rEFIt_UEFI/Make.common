@@ -1,0 +1,77 @@
+#
+# Make.common
+# Common make rules for building with gnu-efi
+#
+
+EFIINC          = /usr/local/include/efi
+GNUEFILIB       = /usr/local/lib
+EFILIB          = /usr/local/lib
+EFICRT0         = /usr/local/lib
+
+#ARCH            = $(shell uname -m | sed s,i[3456789]86,ia32,)
+ARCH			= ia32
+CPPFLAGS        = -I$(EFIINC) -I$(EFIINC)/$(ARCH) -I$(EFIINC)/protocol -DCONFIG_$(ARCH)
+
+OPTIMFLAGS      = -O2 -fno-strict-aliasing
+DEBUGFLAGS      = -Wall
+CFLAGS          = $(OPTIMFLAGS) -mtune=pentium3 -march=pentium3 -fpic -fshort-wchar $(DEBUGFLAGS)
+LDFLAGS         = -nostdlib -znocombreloc
+
+#prefix          = /usr/bin/
+prefix			= i686-osxbook-linux-gnu-
+CC              = $(prefix)gcc
+AS              = $(prefix)as
+LD              = $(prefix)ld
+AR              = $(prefix)ar
+RANLIB          = $(prefix)ranlib
+OBJCOPY         = $(prefix)objcopy
+
+ifeq ($(ARCH),ia64)
+  # EFI specs allows only lower floating point partition to be used
+  CFLAGS       += -frename-registers -mfixed-range=f32-f127
+endif
+
+
+CRTOBJS         = $(EFICRT0)/crt0-efi-$(ARCH).o
+LDSCRIPT        = $(EFICRT0)/elf_$(ARCH)_efi.lds
+
+LDFLAGS        += -T $(LDSCRIPT) -shared -Bsymbolic -L$(EFILIB) -L$(GNUEFILIB) $(CRTOBJS)
+LIBS            = -lefi -lgnuefi $(shell $(CC) -print-libgcc-file-name)
+FORMAT          = efi-app-$(ARCH)
+
+
+# general rules
+
+%.o: %.c 
+	$(CC) $(LOCAL_CPPFLAGS) $(CPPFLAGS) $(LOCAL_CFLAGS) $(CFLAGS) -c $< -o $@
+
+# rules for EFI applications
+
+ifneq (,$(filter %.efi,$(TARGET)))
+
+SHLIB_TARGET = $(subst .efi,.so,$(TARGET))
+
+$(SHLIB_TARGET): $(OBJS)
+	$(LD) $(LOCAL_LDFLAGS) $(LDFLAGS) $(OBJS) -o $@ $(LOCAL_LIBS) $(LIBS)
+
+$(TARGET): $(SHLIB_TARGET)
+	$(OBJCOPY) -j .text -j .sdata -j .data -j .dynamic -j .dynsym -j .rel \
+		   -j .rela -j .reloc --target=$(FORMAT) $< $@
+
+endif
+
+# rules for libraries
+
+ifneq (,$(filter %.a,$(TARGET)))
+
+$(TARGET): $(OBJS)
+	$(AR) cq $@ $(OBJS)
+
+endif
+
+# utility rules
+
+clean:
+	rm -f $(TARGET) *~ *.so $(OBJS)
+
+# EOF

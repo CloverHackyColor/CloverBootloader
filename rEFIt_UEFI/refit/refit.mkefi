@@ -1,0 +1,15 @@
+#
+# mkefi control file for refit
+#
+
+name refit
+type app
+entrypoint RefitMain
+
+includedir . ../include ../libeg
+libdir ../libeg
+lib eg
+
+source main.c config.c menu.c screen.c icns.c lib.c
+
+# EOF

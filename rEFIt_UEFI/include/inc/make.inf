@@ -1,0 +1,29 @@
+#
+#
+#
+
+[sources]
+    efi.h
+    efiapi.h
+    eficon.h
+    efidebug.h
+    efidef.h
+    efidevp.h
+    efierr.h
+    efifs.h
+    efilib.h
+    efipart.h
+    efiprot.h
+    efipxebc.h
+    efistdarg.h
+    efinet.h
+
+[ia32sources]
+    efibind.h
+    pe.h
+    efilibplat.h
+
+[ia64sources]
+    efibind.h
+    pe.h
+    efilibplat.h

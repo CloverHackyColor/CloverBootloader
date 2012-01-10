@@ -28,6 +28,8 @@ Resolved. Explanation here\
 Looks like the EFI EDK2 has wrong MemoryMap.\
 WIKI said that it might be 24bytes while start32 uses only 20bytes. \
 Resolved by patching OS kernel.\
+Fully resolved by correcting memory map.\
 \
 3. I can go to S3 state (sleep) but never return back to system. The module S3Resume supposes to return to Pei. NO, NO, NO!!! I want to return to system!\
+Resolved! S3Save and S3Resume assume UEFI method and I just set BIOS method for resume. S3Save and S3Resume more more used.\
 }

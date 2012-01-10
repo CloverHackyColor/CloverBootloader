@@ -1,0 +1,12 @@
+#
+# mkefi control file for libeg
+#
+
+name libeg
+type lib
+
+includedir .
+
+source screen.c image.c text.c load_bmp.c load_icns.c
+
+# EOF

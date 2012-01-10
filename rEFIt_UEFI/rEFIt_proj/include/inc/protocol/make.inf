@@ -1,0 +1,13 @@
+#
+#
+#
+
+[sources]
+    efivar.h
+	legacyboot.h
+	VgaClass.h
+    intload.h
+
+[ia32sources]
+
+[ia64sources]

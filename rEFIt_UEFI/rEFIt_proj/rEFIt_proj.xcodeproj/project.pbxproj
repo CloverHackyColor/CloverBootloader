@@ -1,0 +1,401 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXFileReference section */
+		12021208142663F0004B7B93 /* rEFIt.dsc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = rEFIt.dsc; path = ../rEFIt.dsc; sourceTree = SOURCE_ROOT; };
+		1202122E142667C4004B7B93 /* BmLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BmLib.c; sourceTree = "<group>"; };
+		122336B213377E050033F008 /* efiConsoleControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efiConsoleControl.h; sourceTree = "<group>"; };
+		122336B313377E050033F008 /* efiGraphicsOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efiGraphicsOutput.h; sourceTree = "<group>"; };
+		122336B413377E050033F008 /* efiUgaDraw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efiUgaDraw.h; sourceTree = "<group>"; };
+		122336B513377E050033F008 /* egemb_font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = egemb_font.h; sourceTree = "<group>"; };
+		122336B613377E050033F008 /* image.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = image.c; sourceTree = "<group>"; };
+		122336B713377E050033F008 /* libeg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libeg.h; sourceTree = "<group>"; };
+		122336B813377E050033F008 /* libeg.mak */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = libeg.mak; sourceTree = "<group>"; };
+		122336B913377E050033F008 /* libeg.mkefi */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = libeg.mkefi; sourceTree = "<group>"; };
+		122336BA13377E050033F008 /* libegint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libegint.h; sourceTree = "<group>"; };
+		122336BB13377E050033F008 /* load_bmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = load_bmp.c; sourceTree = "<group>"; };
+		122336BC13377E050033F008 /* load_icns.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = load_icns.c; sourceTree = "<group>"; };
+		122336BD13377E050033F008 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		122336BE13377E050033F008 /* mkegemb.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = mkegemb.py; sourceTree = "<group>"; };
+		122336BF13377E050033F008 /* libscreen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libscreen.c; sourceTree = "<group>"; };
+		122336C013377E050033F008 /* text.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = text.c; sourceTree = "<group>"; };
+		122336C213377E150033F008 /* config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = config.c; sourceTree = "<group>"; };
+		122336C313377E150033F008 /* Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Handle.h; sourceTree = "<group>"; };
+		122336C413377E150033F008 /* icns.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = icns.c; sourceTree = "<group>"; };
+		122336C513377E150033F008 /* lib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lib.c; sourceTree = "<group>"; };
+		122336C613377E150033F008 /* lib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lib.h; sourceTree = "<group>"; };
+		122336C713377E150033F008 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		122336C813377E150033F008 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		122336C913377E150033F008 /* menu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = menu.c; sourceTree = "<group>"; };
+		122336CB13377E150033F008 /* refit.mkefi */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = refit.mkefi; sourceTree = "<group>"; };
+		122336CC13377E150033F008 /* screen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = screen.c; sourceTree = "<group>"; };
+		122336CD13377E260033F008 /* refit.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = refit.inf; path = ../refit.inf; sourceTree = SOURCE_ROOT; };
+		12CB8F581427390E009EDAF2 /* DevicePath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DevicePath.c; sourceTree = "<group>"; };
+		12CB8F6014273A38009EDAF2 /* GenericBdsLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericBdsLib.h; sourceTree = "<group>"; };
+		12CB8FAB14274AE1009EDAF2 /* efiConsoleControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efiConsoleControl.h; sourceTree = "<group>"; };
+		12CB8FAC14274AE1009EDAF2 /* egemb_back_selected_small.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = egemb_back_selected_small.h; sourceTree = "<group>"; };
+		12CB8FAD14274AE1009EDAF2 /* egemb_refit_banner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = egemb_refit_banner.h; sourceTree = "<group>"; };
+		12CB8FAE14274AE1009EDAF2 /* Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Handle.h; sourceTree = "<group>"; };
+		12CB8FB014274AE1009EDAF2 /* efi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efi.h; sourceTree = "<group>"; };
+		12CB8FB114274AE1009EDAF2 /* efi_nii.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efi_nii.h; sourceTree = "<group>"; };
+		12CB8FB214274AE1009EDAF2 /* efi_pxe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efi_pxe.h; sourceTree = "<group>"; };
+		12CB8FB314274AE1009EDAF2 /* efiapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efiapi.h; sourceTree = "<group>"; };
+		12CB8FB414274AE1009EDAF2 /* eficon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = eficon.h; sourceTree = "<group>"; };
+		12CB8FB514274AE1009EDAF2 /* efidebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efidebug.h; sourceTree = "<group>"; };
+		12CB8FB614274AE1009EDAF2 /* efidef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efidef.h; sourceTree = "<group>"; };
+		12CB8FB714274AE1009EDAF2 /* efidevp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efidevp.h; sourceTree = "<group>"; };
+		12CB8FB814274AE1009EDAF2 /* efierr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efierr.h; sourceTree = "<group>"; };
+		12CB8FB914274AE1009EDAF2 /* efifs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efifs.h; sourceTree = "<group>"; };
+		12CB8FBA14274AE1009EDAF2 /* efigpt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efigpt.h; sourceTree = "<group>"; };
+		12CB8FBB14274AE1009EDAF2 /* efilib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efilib.h; sourceTree = "<group>"; };
+		12CB8FBC14274AE1009EDAF2 /* efilink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efilink.h; sourceTree = "<group>"; };
+		12CB8FBD14274AE1009EDAF2 /* efinet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efinet.h; sourceTree = "<group>"; };
+		12CB8FBE14274AE1009EDAF2 /* efipart.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efipart.h; sourceTree = "<group>"; };
+		12CB8FBF14274AE1009EDAF2 /* efiprot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efiprot.h; sourceTree = "<group>"; };
+		12CB8FC014274AE1009EDAF2 /* efipxebc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efipxebc.h; sourceTree = "<group>"; };
+		12CB8FC114274AE1009EDAF2 /* efirtlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efirtlib.h; sourceTree = "<group>"; };
+		12CB8FC214274AE1009EDAF2 /* efiser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efiser.h; sourceTree = "<group>"; };
+		12CB8FC314274AE1009EDAF2 /* efistdarg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efistdarg.h; sourceTree = "<group>"; };
+		12CB8FC414274AE1009EDAF2 /* efiui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efiui.h; sourceTree = "<group>"; };
+		12CB8FC614274AE1009EDAF2 /* efibind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efibind.h; sourceTree = "<group>"; };
+		12CB8FC714274AE1009EDAF2 /* efilibplat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efilibplat.h; sourceTree = "<group>"; };
+		12CB8FC814274AE1009EDAF2 /* pe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pe.h; sourceTree = "<group>"; };
+		12CB8FCA14274AE1009EDAF2 /* efibind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efibind.h; sourceTree = "<group>"; };
+		12CB8FCB14274AE1009EDAF2 /* efilibplat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efilibplat.h; sourceTree = "<group>"; };
+		12CB8FCC14274AE1009EDAF2 /* pe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pe.h; sourceTree = "<group>"; };
+		12CB8FCD14274AE1009EDAF2 /* salproc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = salproc.h; sourceTree = "<group>"; };
+		12CB8FCE14274AE1009EDAF2 /* inc.mak */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = inc.mak; sourceTree = "<group>"; };
+		12CB8FCF14274AE1009EDAF2 /* libsmbios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libsmbios.h; sourceTree = "<group>"; };
+		12CB8FD014274AE1009EDAF2 /* make.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = make.inf; sourceTree = "<group>"; };
+		12CB8FD114274AE1009EDAF2 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		12CB8FD214274AE1009EDAF2 /* makefile.hdr */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = makefile.hdr; sourceTree = "<group>"; };
+		12CB8FD314274AE1009EDAF2 /* pci22.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pci22.h; sourceTree = "<group>"; };
+		12CB8FD514274AE1009EDAF2 /* adapterdebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = adapterdebug.h; sourceTree = "<group>"; };
+		12CB8FD614274AE1009EDAF2 /* eficonsplit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = eficonsplit.h; sourceTree = "<group>"; };
+		12CB8FD714274AE1009EDAF2 /* efidbg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efidbg.h; sourceTree = "<group>"; };
+		12CB8FD814274AE1009EDAF2 /* efivar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efivar.h; sourceTree = "<group>"; };
+		12CB8FDA14274AE1009EDAF2 /* eficontext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = eficontext.h; sourceTree = "<group>"; };
+		12CB8FDB14274AE1009EDAF2 /* intload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = intload.h; sourceTree = "<group>"; };
+		12CB8FDC14274AE1009EDAF2 /* legacyboot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = legacyboot.h; sourceTree = "<group>"; };
+		12CB8FDD14274AE1009EDAF2 /* make.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = make.inf; sourceTree = "<group>"; };
+		12CB8FDE14274AE1009EDAF2 /* makefile.hdr */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = makefile.hdr; sourceTree = "<group>"; };
+		12CB8FDF14274AE1009EDAF2 /* piflash64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = piflash64.h; sourceTree = "<group>"; };
+		12CB8FE014274AE1009EDAF2 /* readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = readme.txt; sourceTree = "<group>"; };
+		12CB8FE114274AE1009EDAF2 /* vgaclass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vgaclass.h; sourceTree = "<group>"; };
+		12CB8FE214274AE1009EDAF2 /* romload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = romload.h; sourceTree = "<group>"; };
+		12CB8FE414274AE1009EDAF2 /* EfiApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EfiApi.h; sourceTree = "<group>"; };
+		12CB8FE514274AE1009EDAF2 /* EfiDevicePath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EfiDevicePath.h; sourceTree = "<group>"; };
+		12CB8FE614274AE1009EDAF2 /* EfiError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EfiError.h; sourceTree = "<group>"; };
+		12CB8FE714274AE1009EDAF2 /* EfiHii.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EfiHii.h; sourceTree = "<group>"; };
+		12CB8FE814274AE1009EDAF2 /* EfiImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EfiImage.h; sourceTree = "<group>"; };
+		12CB8FE914274AE1009EDAF2 /* EfiTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EfiTypes.h; sourceTree = "<group>"; };
+		12CB8FEA14274AE1009EDAF2 /* Pxe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pxe.h; sourceTree = "<group>"; };
+		12CB917114276985009EDAF2 /* IO.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IO.c; sourceTree = "<group>"; };
+		12CB91AB14276D8E009EDAF2 /* IO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IO.h; sourceTree = "<group>"; };
+		12CB922014277F71009EDAF2 /* BdsConnect.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BdsConnect.c; sourceTree = "<group>"; };
+		12CB922114277F7D009EDAF2 /* PiBootMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PiBootMode.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		08FB7794FE84155DC02AAC07 /* rEFIt_proj */ = {
+			isa = PBXGroup;
+			children = (
+				12021208142663F0004B7B93 /* rEFIt.dsc */,
+				122336CD13377E260033F008 /* refit.inf */,
+				1202122D142667C4004B7B93 /* EfiLib */,
+				12CB8FAA14274AE1009EDAF2 /* include */,
+				122336C113377E150033F008 /* refit */,
+				122336B113377E050033F008 /* libeg */,
+			);
+			name = rEFIt_proj;
+			sourceTree = "<group>";
+		};
+		1202122D142667C4004B7B93 /* EfiLib */ = {
+			isa = PBXGroup;
+			children = (
+				12CB922014277F71009EDAF2 /* BdsConnect.c */,
+				1202122E142667C4004B7B93 /* BmLib.c */,
+				12CB8F6014273A38009EDAF2 /* GenericBdsLib.h */,
+				12CB8F581427390E009EDAF2 /* DevicePath.c */,
+				12CB922114277F7D009EDAF2 /* PiBootMode.h */,
+			);
+			name = EfiLib;
+			path = ../EfiLib;
+			sourceTree = SOURCE_ROOT;
+		};
+		122336B113377E050033F008 /* libeg */ = {
+			isa = PBXGroup;
+			children = (
+				122336B213377E050033F008 /* efiConsoleControl.h */,
+				122336B313377E050033F008 /* efiGraphicsOutput.h */,
+				122336B413377E050033F008 /* efiUgaDraw.h */,
+				122336B513377E050033F008 /* egemb_font.h */,
+				122336B613377E050033F008 /* image.c */,
+				122336B713377E050033F008 /* libeg.h */,
+				122336B813377E050033F008 /* libeg.mak */,
+				122336B913377E050033F008 /* libeg.mkefi */,
+				122336BA13377E050033F008 /* libegint.h */,
+				122336BB13377E050033F008 /* load_bmp.c */,
+				122336BC13377E050033F008 /* load_icns.c */,
+				122336BD13377E050033F008 /* Makefile */,
+				122336BE13377E050033F008 /* mkegemb.py */,
+				122336BF13377E050033F008 /* libscreen.c */,
+				122336C013377E050033F008 /* text.c */,
+			);
+			name = libeg;
+			path = ../libeg;
+			sourceTree = SOURCE_ROOT;
+		};
+		122336C113377E150033F008 /* refit */ = {
+			isa = PBXGroup;
+			children = (
+				122336C213377E150033F008 /* config.c */,
+				122336C313377E150033F008 /* Handle.h */,
+				122336C413377E150033F008 /* icns.c */,
+				12CB91AB14276D8E009EDAF2 /* IO.h */,
+				12CB917114276985009EDAF2 /* IO.c */,
+				122336C513377E150033F008 /* lib.c */,
+				122336C613377E150033F008 /* lib.h */,
+				122336C713377E150033F008 /* main.c */,
+				122336C813377E150033F008 /* Makefile */,
+				122336C913377E150033F008 /* menu.c */,
+				122336CB13377E150033F008 /* refit.mkefi */,
+				122336CC13377E150033F008 /* screen.c */,
+			);
+			name = refit;
+			path = ../refit;
+			sourceTree = SOURCE_ROOT;
+		};
+		12CB8FAA14274AE1009EDAF2 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				12CB8FAB14274AE1009EDAF2 /* efiConsoleControl.h */,
+				12CB8FAC14274AE1009EDAF2 /* egemb_back_selected_small.h */,
+				12CB8FAD14274AE1009EDAF2 /* egemb_refit_banner.h */,
+				12CB8FAE14274AE1009EDAF2 /* Handle.h */,
+				12CB8FAF14274AE1009EDAF2 /* inc */,
+				12CB8FE314274AE1009EDAF2 /* UEFI */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		12CB8FAF14274AE1009EDAF2 /* inc */ = {
+			isa = PBXGroup;
+			children = (
+				12CB8FB014274AE1009EDAF2 /* efi.h */,
+				12CB8FB114274AE1009EDAF2 /* efi_nii.h */,
+				12CB8FB214274AE1009EDAF2 /* efi_pxe.h */,
+				12CB8FB314274AE1009EDAF2 /* efiapi.h */,
+				12CB8FB414274AE1009EDAF2 /* eficon.h */,
+				12CB8FB514274AE1009EDAF2 /* efidebug.h */,
+				12CB8FB614274AE1009EDAF2 /* efidef.h */,
+				12CB8FB714274AE1009EDAF2 /* efidevp.h */,
+				12CB8FB814274AE1009EDAF2 /* efierr.h */,
+				12CB8FB914274AE1009EDAF2 /* efifs.h */,
+				12CB8FBA14274AE1009EDAF2 /* efigpt.h */,
+				12CB8FBB14274AE1009EDAF2 /* efilib.h */,
+				12CB8FBC14274AE1009EDAF2 /* efilink.h */,
+				12CB8FBD14274AE1009EDAF2 /* efinet.h */,
+				12CB8FBE14274AE1009EDAF2 /* efipart.h */,
+				12CB8FBF14274AE1009EDAF2 /* efiprot.h */,
+				12CB8FC014274AE1009EDAF2 /* efipxebc.h */,
+				12CB8FC114274AE1009EDAF2 /* efirtlib.h */,
+				12CB8FC214274AE1009EDAF2 /* efiser.h */,
+				12CB8FC314274AE1009EDAF2 /* efistdarg.h */,
+				12CB8FC414274AE1009EDAF2 /* efiui.h */,
+				12CB8FC514274AE1009EDAF2 /* ia32 */,
+				12CB8FC914274AE1009EDAF2 /* ia64 */,
+				12CB8FCE14274AE1009EDAF2 /* inc.mak */,
+				12CB8FCF14274AE1009EDAF2 /* libsmbios.h */,
+				12CB8FD014274AE1009EDAF2 /* make.inf */,
+				12CB8FD114274AE1009EDAF2 /* Makefile */,
+				12CB8FD214274AE1009EDAF2 /* makefile.hdr */,
+				12CB8FD314274AE1009EDAF2 /* pci22.h */,
+				12CB8FD414274AE1009EDAF2 /* protocol */,
+				12CB8FE214274AE1009EDAF2 /* romload.h */,
+			);
+			path = inc;
+			sourceTree = "<group>";
+		};
+		12CB8FC514274AE1009EDAF2 /* ia32 */ = {
+			isa = PBXGroup;
+			children = (
+				12CB8FC614274AE1009EDAF2 /* efibind.h */,
+				12CB8FC714274AE1009EDAF2 /* efilibplat.h */,
+				12CB8FC814274AE1009EDAF2 /* pe.h */,
+			);
+			path = ia32;
+			sourceTree = "<group>";
+		};
+		12CB8FC914274AE1009EDAF2 /* ia64 */ = {
+			isa = PBXGroup;
+			children = (
+				12CB8FCA14274AE1009EDAF2 /* efibind.h */,
+				12CB8FCB14274AE1009EDAF2 /* efilibplat.h */,
+				12CB8FCC14274AE1009EDAF2 /* pe.h */,
+				12CB8FCD14274AE1009EDAF2 /* salproc.h */,
+			);
+			path = ia64;
+			sourceTree = "<group>";
+		};
+		12CB8FD414274AE1009EDAF2 /* protocol */ = {
+			isa = PBXGroup;
+			children = (
+				12CB8FD514274AE1009EDAF2 /* adapterdebug.h */,
+				12CB8FD614274AE1009EDAF2 /* eficonsplit.h */,
+				12CB8FD714274AE1009EDAF2 /* efidbg.h */,
+				12CB8FD814274AE1009EDAF2 /* efivar.h */,
+				12CB8FD914274AE1009EDAF2 /* ia64 */,
+				12CB8FDB14274AE1009EDAF2 /* intload.h */,
+				12CB8FDC14274AE1009EDAF2 /* legacyboot.h */,
+				12CB8FDD14274AE1009EDAF2 /* make.inf */,
+				12CB8FDE14274AE1009EDAF2 /* makefile.hdr */,
+				12CB8FDF14274AE1009EDAF2 /* piflash64.h */,
+				12CB8FE014274AE1009EDAF2 /* readme.txt */,
+				12CB8FE114274AE1009EDAF2 /* vgaclass.h */,
+			);
+			path = protocol;
+			sourceTree = "<group>";
+		};
+		12CB8FD914274AE1009EDAF2 /* ia64 */ = {
+			isa = PBXGroup;
+			children = (
+				12CB8FDA14274AE1009EDAF2 /* eficontext.h */,
+			);
+			path = ia64;
+			sourceTree = "<group>";
+		};
+		12CB8FE314274AE1009EDAF2 /* UEFI */ = {
+			isa = PBXGroup;
+			children = (
+				12CB8FE414274AE1009EDAF2 /* EfiApi.h */,
+				12CB8FE514274AE1009EDAF2 /* EfiDevicePath.h */,
+				12CB8FE614274AE1009EDAF2 /* EfiError.h */,
+				12CB8FE714274AE1009EDAF2 /* EfiHii.h */,
+				12CB8FE814274AE1009EDAF2 /* EfiImage.h */,
+				12CB8FE914274AE1009EDAF2 /* EfiTypes.h */,
+				12CB8FEA14274AE1009EDAF2 /* Pxe.h */,
+			);
+			path = UEFI;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXLegacyTarget section */
+		D28A88AD04BDD90700651E21 /* rEFIt_proj */ = {
+			isa = PBXLegacyTarget;
+			buildArgumentsString = "$(ACTION)";
+			buildConfigurationList = 1DEB918F08733D9F0010E9CD /* Build configuration list for PBXLegacyTarget "rEFIt_proj" */;
+			buildPhases = (
+			);
+			buildToolPath = /usr/bin/make;
+			dependencies = (
+			);
+			name = rEFIt_proj;
+			passBuildSettingsInEnvironment = 1;
+			productName = rEFIt_proj;
+		};
+/* End PBXLegacyTarget section */
+
+/* Begin PBXProject section */
+		08FB7793FE84155DC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB919308733D9F0010E9CD /* Build configuration list for PBXProject "rEFIt_proj" */;
+			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
+			mainGroup = 08FB7794FE84155DC02AAC07 /* rEFIt_proj */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D28A88AD04BDD90700651E21 /* rEFIt_proj */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB919008733D9F0010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				DEBUGGING_SYMBOLS = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = rEFIt_proj;
+			};
+			name = Debug;
+		};
+		1DEB919108733D9F0010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = rEFIt_proj;
+			};
+			name = Release;
+		};
+		1DEB919408733D9F0010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.6;
+			};
+			name = Debug;
+		};
+		1DEB919508733D9F0010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.6;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB918F08733D9F0010E9CD /* Build configuration list for PBXLegacyTarget "rEFIt_proj" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB919008733D9F0010E9CD /* Debug */,
+				1DEB919108733D9F0010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB919308733D9F0010E9CD /* Build configuration list for PBXProject "rEFIt_proj" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB919408733D9F0010E9CD /* Debug */,
+				1DEB919508733D9F0010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+}
