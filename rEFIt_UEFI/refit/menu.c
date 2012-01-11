@@ -38,8 +38,6 @@
 
 #include "egemb_back_selected_small.h"
 
-#define ST gST;
-
 // scrolling definitions
 
 typedef struct {

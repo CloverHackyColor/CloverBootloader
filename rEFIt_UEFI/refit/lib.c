@@ -50,7 +50,7 @@ UINTN            VolumesCount = 0;
 //
 // Unicode collation protocol interface
 //
-EFI_UNICODE_COLLATION_PROTOCOL *mUnicodeCollation = NULL;
+//EFI_UNICODE_COLLATION_PROTOCOL *mUnicodeCollation = NULL;
 
 // functions
 
@@ -59,10 +59,10 @@ static EFI_STATUS FinishInitRefitLib(VOID);
 static VOID UninitVolumes(VOID);
 static VOID ReinitVolumes(VOID);
 
-BOOLEAN MetaiMatch (
+/*BOOLEAN MetaiMatch (
 			IN CHAR16   *String,
 			IN CHAR16   *Pattern
-			);
+			);*/
 //
 // self recognition stuff
 //
@@ -1099,7 +1099,7 @@ EFI_STATUS DirIterClose(IN OUT REFIT_DIR_ITER *DirIter)
         DirIter->DirHandle->Close(DirIter->DirHandle);
     return DirIter->LastStatus;
 }
-
+/*
 //
 // file name manipulation
 //
@@ -1139,7 +1139,7 @@ InitializeUnicodeCollationProtocol (
 								  );
 	return Status;
 }
-
+*/
 
 
 CHAR16 * Basename(IN CHAR16 *Path)

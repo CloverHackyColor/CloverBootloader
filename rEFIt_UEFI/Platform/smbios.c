@@ -3,18 +3,19 @@
  implementation for smbios table patching
   Slice 2011. 
  
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ 
+ Copyright (c) 2009 - 2010, Intel Corporation. All rights reserved.<BR>
+ This program and the accompanying materials                          
+ are licensed and made available under the terms and conditions of the BSD License         
+ which accompanies this distribution.  The full text of the license may be found at        
+ http://opensource.org/licenses/bsd-license.php                                            
+ 
+ THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,                     
+ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.             
+ 
+ Module Name:
+ 
+ SmbiosGen.c
  **/
 
 

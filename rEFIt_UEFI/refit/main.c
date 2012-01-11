@@ -972,10 +972,10 @@ static VOID ScanTool(VOID)
     }
     
     // look for the GPT/MBR sync tool
-    StrCpy(FileName, L"\\efi\\tools\\gptsync.efi");
+/*    StrCpy(FileName, L"\\efi\\tools\\gptsync.efi");
     if (FileExists(SelfRootDir, FileName)) {
         Entry = AddToolEntry(FileName, L"Partitioning Tool", BuiltinIcon(BUILTIN_ICON_TOOL_PART), 'P', FALSE);
-    }
+    }*/
 /*    
     // look for rescue Linux
     StrCpy(FileName, L"\\efi\\rescue\\elilo.efi");
@@ -1089,16 +1089,16 @@ Done:
 */
 static VOID LoadDrivers(VOID)
 {
-    CHAR16                  DirName[256];
+//    CHAR16                  DirName[256];
     
     Print(L"Scanning for drivers...\n");
     
     // load drivers from /efi/refit/drivers
-    SPrint(DirName, 255, L"%s\\drivers", SelfDirPath);
-    ScanDriverDir(DirName);
-    Print(L"Scanning for drivers in /efi/refit/drivers complete\n");
-    // load drivers from /efi/tools/drivers
-    ScanDriverDir(L"\\efi\\tools\\drivers");
+//    SPrint(DirName, 255, L"%s\\drivers", SelfDirPath);
+//    ScanDriverDir(DirName);
+//    Print(L"Scanning for drivers in /efi/refit/drivers complete\n");
+    // load drivers from /efi/drivers
+    ScanDriverDir(L"\\efi\\drivers");
     Print(L"Scanning for drivers in /efi/tools/drivers complete\n");
     // connect all devices
     BdsLibConnectAllDriversToAllControllers();
