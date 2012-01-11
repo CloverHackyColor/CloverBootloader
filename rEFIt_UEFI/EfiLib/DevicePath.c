@@ -50,16 +50,16 @@ CatPrint (
   UnicodeVSPrint (AppendStr, 0x1000, Fmt, Args);
   VA_END (Args);
   if (NULL == Str->Str) {
-    StringSize   = StrSize (AppendStr);
+    StringSize   = StrLen (AppendStr);
     Str->Str  = AllocateZeroPool (StringSize);
     ASSERT (Str->Str != NULL);
   } else {
-    StringSize = StrSize (AppendStr);
-    StringSize += (StrSize (Str->Str) - sizeof (UINT16));
+    StringSize = StrLen (AppendStr);
+    StringSize += (StrLen (Str->Str) - sizeof (UINT16));
 
     Str->Str = EfiReallocatePool (
 					Str->Str,		   
-					StrSize (Str->Str),
+					StrLen (Str->Str),
 					StringSize                
                 );
     ASSERT (Str->Str != NULL);

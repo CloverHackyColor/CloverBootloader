@@ -289,6 +289,8 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
     UINTN                   i;
     MBR_PARTITION_INFO      *MbrTable;
     BOOLEAN                 MbrTableFound;
+  UINTN       BlockSize = 0;  
+  CHAR16      volumeName[255];
     
     Volume->HasBootCode = FALSE;
     Volume->OSIconName = NULL;
@@ -297,17 +299,55 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
     
     if (Volume->BlockIO == NULL)
         return;
-    if (Volume->BlockIO->Media->BlockSize > 2048)
+  BlockSize = Volume->BlockIO->Media->BlockSize;
+    if (BlockSize > 2048)
         return;   // our buffer is too small...
     
     // look at the boot sector (this is used for both hard disks and El Torito images!)
     Status = Volume->BlockIO->ReadBlocks(Volume->BlockIO, Volume->BlockIO->Media->MediaId,
-                                         Volume->BlockIOOffset, 2048, SectorBuffer);
+                                         Volume->BlockIOOffset /*start lba*/,
+                                         2048, SectorBuffer);
     if (!EFI_ERROR(Status)) {
+      if (Volume->DiskKind == DISK_KIND_OPTICAL) { //CDROM
+        CHAR8* p = (CHAR8*)&SectorBuffer[8];
+				while (*p == 0x20) {
+					p++;
+				}
+				if (*p != 0) {
+					AsciiStrToUnicodeStr(p, volumeName);
+				}
+				for (i=8; i<2000; i++) { //vendor search
+					if (SectorBuffer[i] == 'A') {
+						if (AsciiStrStr((CHAR8*)&SectorBuffer[i], "APPLE")) {
+							StrCpy(Volume->VolumeName, volumeName);
+							Volume->OSType = OSTYPE_OSX;
+							Volume->BootType = BOOTING_BY_CD;
+							break;
+						}
+					} else if (SectorBuffer[i] == 'M') {
+						if (AsciiStrStr((CHAR8*)&SectorBuffer[i], "MICROSOFT")) {
+							StrCpy(Volume->VolumeName, volumeName);
+							Volume->OSType = OSTYPE_WIN;
+							Volume->BootType = BOOTING_BY_CD;
+							break;
+						}
+						
+					} else if (SectorBuffer[i] == 'L') {
+						if (AsciiStrStr((CHAR8*)&SectorBuffer[i], "LINUX")) {
+							Volume->DevicePath = DuplicateDevicePath(DevicePath);
+              
+							StrCpy(Volume->VolumeName, volumeName);
+							Volume->OSType = OSTYPE_LIN;
+							Volume->BootType = BOOTING_BY_CD;
+							break;
+						}						
+					}
+				}				
         
+      } else { //HDD
         if (*((UINT16 *)(SectorBuffer + 510)) == 0xaa55 && SectorBuffer[0] != 0) {
-            *Bootable = TRUE;
-            Volume->HasBootCode = TRUE;
+          *Bootable = TRUE;
+          Volume->HasBootCode = TRUE;
         }
         
         // detect specific boot codes
@@ -315,81 +355,111 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
             CompareMem(SectorBuffer + 6, "LILO", 4) == 0 ||
             CompareMem(SectorBuffer + 3, "SYSLINUX", 8) == 0 ||
             FindMem(SectorBuffer, 2048, "ISOLINUX", 8) >= 0) {
-            Volume->HasBootCode = TRUE;
-            Volume->OSIconName = L"linux";
-            Volume->OSName = L"Linux";
-            
+          Volume->HasBootCode = TRUE;
+          Volume->OSIconName = L"linux";
+          Volume->OSName = L"Linux";
+          Volume->OSType = OSTYPE_LIN;
+          Volume->BootType = BOOTING_BY_EFI;
+
+          
         } else if (FindMem(SectorBuffer, 512, "Geom\0Hard Disk\0Read\0 Error", 26) >= 0) {   // GRUB
-            Volume->HasBootCode = TRUE;
-            Volume->OSIconName = L"grub,linux";
-            Volume->OSName = L"Linux";
-			
-		} else if ((*((UINT32 *)(SectorBuffer)) == 0x8ec031fa &&
+          Volume->HasBootCode = TRUE;
+          Volume->OSIconName = L"grub,linux";
+          Volume->OSName = L"Linux";
+          
+        } else if ((*((UINT32 *)(SectorBuffer)) == 0x8ec031fa &&
                     *((UINT16 *)(SectorBuffer + 510)) == 0xaa55) ||
                    FindMem(SectorBuffer, 2048, L"boot", 10) >= 0) {
-            Volume->HasBootCode = TRUE;
-            Volume->OSIconName = L"mac";
-            Volume->OSName = L"MacOSX";
-            
+          Volume->HasBootCode = TRUE;
+          Volume->OSIconName = L"mac";
+          Volume->OSName = L"MacOSX";
+          Volume->OSType = OSTYPE_OSX;
+          Volume->BootType = BOOTING_BY_EFI;
+
+          
         } else if ((*((UINT32 *)(SectorBuffer + 502)) == 0 &&
                     *((UINT32 *)(SectorBuffer + 506)) == 50000 &&
                     *((UINT16 *)(SectorBuffer + 510)) == 0xaa55) ||
                    FindMem(SectorBuffer, 2048, "Starting the BTX loader", 23) >= 0) {
-            Volume->HasBootCode = TRUE;
-            Volume->OSIconName = L"freebsd";
-            Volume->OSName = L"FreeBSD";
-            
+          Volume->HasBootCode = TRUE;
+          Volume->OSIconName = L"freebsd";
+          Volume->OSName = L"FreeBSD";
+          Volume->OSType = OSTYPE_VAR;
+          Volume->BootType = BOOTING_BY_PBR;
+
+          
         } else if (FindMem(SectorBuffer, 512, "!Loading", 8) >= 0 ||
                    FindMem(SectorBuffer, 2048, "/cdboot\0/CDBOOT\0", 16) >= 0) {
-            Volume->HasBootCode = TRUE;
-            Volume->OSIconName = L"openbsd";
-            Volume->OSName = L"OpenBSD";
-            
+          Volume->HasBootCode = TRUE;
+          Volume->OSIconName = L"openbsd";
+          Volume->OSName = L"OpenBSD";
+          Volume->OSType = OSTYPE_VAR;
+          Volume->BootType = BOOTING_BY_PBR;
+          
         } else if (FindMem(SectorBuffer, 512, "Not a bootxx image", 18) >= 0 ||
                    *((UINT32 *)(SectorBuffer + 1028)) == 0x7886b6d1) {
-            Volume->HasBootCode = TRUE;
-            Volume->OSIconName = L"netbsd";
-            Volume->OSName = L"NetBSD";
-            
+          Volume->HasBootCode = TRUE;
+          Volume->OSIconName = L"netbsd";
+          Volume->OSName = L"NetBSD";
+          Volume->OSType = OSTYPE_VAR;
+          Volume->BootType = BOOTING_BY_PBR;
+          
         } else if (FindMem(SectorBuffer, 2048, "NTLDR", 5) >= 0) {
-            Volume->HasBootCode = TRUE;
-            Volume->OSIconName = L"win";
-            Volume->OSName = L"Windows";
-            
+          Volume->HasBootCode = TRUE;
+          Volume->OSIconName = L"win";
+          Volume->OSName = L"Windows";
+          Volume->OSType = OSTYPE_WIN;
+          Volume->BootType = BOOTING_BY_PBR;
+
+          
         } else if (FindMem(SectorBuffer, 2048, "BOOTMGR", 7) >= 0) {
-            Volume->HasBootCode = TRUE;
-            Volume->OSIconName = L"winvista,win";
-            Volume->OSName = L"Windows";
-            
+          Volume->HasBootCode = TRUE;
+          Volume->OSIconName = L"winvista,win";
+          Volume->OSName = L"Windows";
+          Volume->OSType = OSTYPE_WIN;
+          Volume->BootType = BOOTING_BY_EFI;
+          
         } else if (FindMem(SectorBuffer, 512, "CPUBOOT SYS", 11) >= 0 ||
                    FindMem(SectorBuffer, 512, "KERNEL  SYS", 11) >= 0) {
-            Volume->HasBootCode = TRUE;
-            Volume->OSIconName = L"freedos";
-            Volume->OSName = L"FreeDOS";
-            
+          Volume->HasBootCode = TRUE;
+          Volume->OSIconName = L"freedos";
+          Volume->OSName = L"FreeDOS";
+          Volume->OSType = OSTYPE_VAR;
+          Volume->BootType = BOOTING_BY_PBR;
+          
         } else if (FindMem(SectorBuffer, 512, "OS2LDR", 6) >= 0 ||
                    FindMem(SectorBuffer, 512, "OS2BOOT", 7) >= 0) {
-            Volume->HasBootCode = TRUE;
-            Volume->OSIconName = L"ecomstation";
-            Volume->OSName = L"eComStation";
-            
+          Volume->HasBootCode = TRUE;
+          Volume->OSIconName = L"ecomstation";
+          Volume->OSName = L"eComStation";
+          Volume->OSType = OSTYPE_VAR;
+          Volume->BootType = BOOTING_BY_PBR;
+          
         } else if (FindMem(SectorBuffer, 512, "Be Boot Loader", 14) >= 0) {
-            Volume->HasBootCode = TRUE;
-            Volume->OSIconName = L"beos";
-            Volume->OSName = L"BeOS";
-            
+          Volume->HasBootCode = TRUE;
+          Volume->OSIconName = L"beos";
+          Volume->OSName = L"BeOS";
+          Volume->OSType = OSTYPE_VAR;
+          Volume->BootType = BOOTING_BY_PBR;
+          
         } else if (FindMem(SectorBuffer, 512, "yT Boot Loader", 14) >= 0) {
-            Volume->HasBootCode = TRUE;
-            Volume->OSIconName = L"zeta,beos";
-            Volume->OSName = L"ZETA";
-            
+          Volume->HasBootCode = TRUE;
+          Volume->OSIconName = L"zeta,beos";
+          Volume->OSName = L"ZETA";
+          Volume->OSType = OSTYPE_VAR;
+          Volume->BootType = BOOTING_BY_PBR;
+          
         } else if (FindMem(SectorBuffer, 512, "\x04" "beos\x06" "system\x05" "zbeos", 18) >= 0 ||
                    FindMem(SectorBuffer, 512, "\x06" "system\x0c" "haiku_loader", 20) >= 0) {
-            Volume->HasBootCode = TRUE;
-            Volume->OSIconName = L"haiku,beos";
-            Volume->OSName = L"Haiku";
-            
-        }
+          Volume->HasBootCode = TRUE;
+          Volume->OSIconName = L"haiku,beos";
+          Volume->OSName = L"Haiku";
+          Volume->OSType = OSTYPE_VAR;
+          Volume->BootType = BOOTING_BY_PBR;
+          
+        }        
+      }
+
         
         // NOTE: If you add an operating system with a name that starts with 'W' or 'L', you
         //  need to fix AddLegacyEntry in main.c.
@@ -444,12 +514,8 @@ LibFileSystemInfo (
 {
 	EFI_STATUS              Status = EFI_NOT_FOUND;
 	EFI_FILE_SYSTEM_INFO*			FileSystemInfo=NULL;
-//	UINT32							BufferSize;
 	UINT32							BufferSizeVolume;
-	
-//	BufferSize  = SIZE_OF_EFI_FILE_INFO + 255;
-//	Info=AllocateZeroPool(BufferSize);
-	
+		
 	BufferSizeVolume =	SIZE_OF_EFI_FILE_SYSTEM_INFO + 255;
 	FileSystemInfo = AllocateZeroPool(BufferSizeVolume);
 	
@@ -458,7 +524,9 @@ LibFileSystemInfo (
 	//
 	if(FileSystemInfo!=NULL)
 	{
-		Status = Root->GetInfo(Root, &gEfiFileSystemInfoGuid, (UINTN*)&BufferSizeVolume, FileSystemInfo);
+    while (EfiGrowBuffer (&Status, (VOID **) &FileSystemInfo, BufferSizeVolume)) {
+      Status = Root->GetInfo(Root, &gEfiFileSystemInfoGuid, (UINTN*)&BufferSizeVolume, FileSystemInfo);
+    }
 		
 	}
 	return EFI_ERROR(Status)?NULL:FileSystemInfo;
@@ -493,8 +561,13 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
         Volume->BlockIO = NULL;
         Print(L"Warning: Can't get BlockIO protocol.\n");
     } else {
-        if (Volume->BlockIO->Media->BlockSize == 2048)
-            Volume->DiskKind = DISK_KIND_OPTICAL;
+      if (Volume->BlockIO->Media->BlockSize == 2048){
+        Volume->DiskKind = DISK_KIND_OPTICAL;
+        Volume->BlockIOOffset = 0x10;
+      } else {
+        Volume->BlockIOOffset = 0;
+      }
+
     }
     
     // scan for bootcode and MBR table
@@ -506,23 +579,49 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
     while (DevicePath != NULL && !IsDevicePathEndType(DevicePath)) {
         NextDevicePath = NextDevicePathNode(DevicePath);
         
-        if (DevicePathType(DevicePath) == MESSAGING_DEVICE_PATH &&
-            (DevicePathSubType(DevicePath) == MSG_USB_DP ||
-             DevicePathSubType(DevicePath) == MSG_USB_CLASS_DP ||
-             DevicePathSubType(DevicePath) == MSG_1394_DP ||
-             DevicePathSubType(DevicePath) == MSG_FIBRECHANNEL_DP))
-            Volume->DiskKind = DISK_KIND_EXTERNAL;    // USB/FireWire/FC device -> external
-        if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH &&
-            DevicePathSubType(DevicePath) == MEDIA_CDROM_DP) {
-            Volume->DiskKind = DISK_KIND_OPTICAL;     // El Torito entry -> optical disk
-            Bootable = TRUE;
-        }
-        
-        if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH &&
+      if (DevicePathType(DevicePath) == MESSAGING_DEVICE_PATH && 
+          (DevicePathSubType(DevicePath) == MSG_USB_DP || DevicePathSubType(DevicePath) == MSG_USB_CLASS_DP))
+      {
+        DiskKind = DISK_KIND_EXTERNAL; 
+      }
+      // FIREWIRE Devices
+      if (DevicePathType(DevicePath) == MESSAGING_DEVICE_PATH && 
+          (DevicePathSubType(DevicePath) == MSG_1394_DP || DevicePathSubType(DevicePath) == MSG_FIBRECHANNEL_DP))
+      {
+        DiskKind = DISK_KIND_FIREWIRE; 
+      }
+      // CD-ROM Devices
+      if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH && 
+          DevicePathSubType(DevicePath) == MEDIA_CDROM_DP) 
+      {
+        DiskKind = DISK_KIND_OPTICAL;     
+      }
+      // VENDOR Specific Path
+      if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH && 
+          DevicePathSubType(DevicePath) == MEDIA_VENDOR_DP) 
+      {
+        DiskKind = DISK_KIND_NODISK;
+      }
+      // LEGACY CD-ROM
+      if (DevicePathType(DevicePath) == BBS_DEVICE_PATH && 
+          (DevicePathSubType(DevicePath) == BBS_BBS_DP || DevicePathSubType(DevicePath) == BBS_TYPE_CDROM)) 
+      {
+        DiskKind = DISK_KIND_OPTICAL;
+      }
+      // LEGACY HARDDISK
+      if (DevicePathType(DevicePath) == BBS_DEVICE_PATH && 
+          (DevicePathSubType(DevicePath) == BBS_BBS_DP || DevicePathSubType(DevicePath) == BBS_TYPE_HARDDRIVE)) 
+      {
+        DiskKind = DISK_KIND_INTERNAL;
+      }
+      Bootable = TRUE;
+      
+      if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH &&
             DevicePathSubType(DevicePath) == MEDIA_VENDOR_DP) {
             Volume->IsAppleLegacy = TRUE;             // legacy BIOS device entry
             // TODO: also check for Boot Camp GUID
             Bootable = FALSE;   // this handle's BlockIO is just an alias for the whole device
+          Print(L"AppleLegacy device\n");
         }
         
         if (DevicePathType(DevicePath) == MESSAGING_DEVICE_PATH) {
@@ -581,9 +680,12 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
     // open the root directory of the volume
     Volume->RootDir = EfiLibOpenRoot(Volume->DeviceHandle);
     if (Volume->RootDir == NULL) {
-        Print(L"Error: Can't open volume.\n");
+        //Print(L"Error: Can't open volume.\n");
         // TODO: signal that we had an error
-        return;
+      //Slice - there is LegacyBoot volume
+      Print(L"LegacyBoot volume\n");
+      Volume->VolName =  L"Legacy OS";
+      return;
     }
     
     // get volume name
@@ -591,7 +693,29 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
     if (FileSystemInfoPtr != NULL) {
         Print(L"  Volume %s\n", FileSystemInfoPtr->VolumeLabel);
         Volume->VolName = EfiStrDuplicate(FileSystemInfoPtr->VolumeLabel);
-        FreePool(FileSystemInfoPtr);
+      /*
+      sysVersion = FindVersionPlist(Volume->DevicePath);
+      switch (sysVersion) {
+        case 0x104:
+          volume->OSType=OSTYPE_TIGER;
+          break;
+        case 0x105:
+          volume->OSType=OSTYPE_LEO;
+          break;
+        case 0x106:
+          volume->OSType=OSTYPE_SNOW;
+          break;
+        case 0x107:
+          volume->OSType=OSTYPE_LION;
+          break;
+        default:
+          volume->OSType=OSTYPE_OSX;
+          break;
+      }
+   */   
+      
+      
+      FreePool(FileSystemInfoPtr);
     } else {
         Print(L"Warning: Can't get volume info.\n");
         // NOTE: this is normal for Apple's VenMedia device paths
@@ -686,8 +810,9 @@ VOID ScanVolumes(VOID)
     Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiBlockIoProtocolGuid, NULL, &HandleCount, &Handles);
     // was: &FileSystemProtocol
     if (Status == EFI_NOT_FOUND)
-        return;  // no filesystems. strange, but true...
-    if (CheckError(Status, L"while listing all file systems"))
+        return;  
+    if (CheckError(Status, L"while listing all BlockIo"))
+      //Slice - what is the case for that?
         return;
     
     // first pass: collect information about all handles
@@ -706,7 +831,7 @@ VOID ScanVolumes(VOID)
     FreePool(Handles);
     
     if (SelfVolume == NULL)
-        Print(L"WARNING: SelfVolume not found");
+        Print(L"WARNING: SelfVolume not found"); //Slice - and what?
     
     // second pass: relate partitions and whole disk devices
     for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {

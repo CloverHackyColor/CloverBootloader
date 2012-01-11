@@ -118,14 +118,14 @@ CatPrint (
 	UnicodeVSPrint (AppendStr, 0x1000, Fmt, Args);
 	VA_END (Args);
 	if (NULL == Str->Str) {
-		Size   = StrSize (AppendStr);
+		Size   = StrLen (AppendStr);
 		Str->Str  = AllocateZeroPool (Size);
 		ASSERT (Str->Str != NULL);
 	} else {
-		Size = StrSize (AppendStr) - sizeof (UINT16);
-		Size = Size + StrSize (Str->Str);
+		Size = StrLen (AppendStr) - sizeof (UINT16);
+		Size = Size + StrLen (Str->Str);
 		Str->Str =  EfiReallocatePool(
-								   StrSize (Str->Str),
+								   StrLen (Str->Str),
 								   Size,
 								   Str->Str
 								   );
@@ -1109,9 +1109,9 @@ static VOID LoadDrivers(VOID)
 // main entry point
 //
 
-#ifdef __GNUC__
-#define RefitMain efi_main
-#endif
+//#ifdef __GNUC__
+//#define RefitMain efi_main
+//#endif
 
 EFI_STATUS
 EFIAPI

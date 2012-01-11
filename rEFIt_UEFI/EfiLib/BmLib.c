@@ -69,7 +69,7 @@ EfiLibOpenRoot (
   Status = gBS->HandleProtocol (
                   DeviceHandle,
                   &gEfiSimpleFileSystemProtocolGuid,
-                  (VOID *) &Volume
+                  (VOID **) &Volume
                   );
 
   //
@@ -268,7 +268,7 @@ EfiStrDuplicate (
   CHAR16  *Dest;
   UINTN   Size;
 
-  Size  = StrSize (Src);
+  Size  = StrSize (Src); //at least 2bytes
   Dest  = AllocateZeroPool (Size);
   ASSERT (Dest != NULL);
   if (Dest != NULL) {
@@ -277,7 +277,7 @@ EfiStrDuplicate (
 
   return Dest;
 }
-
+//Compare strings case insensitive
 INTN
 EFIAPI
 StriCmp (

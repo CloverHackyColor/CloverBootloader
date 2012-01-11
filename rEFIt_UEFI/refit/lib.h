@@ -81,6 +81,24 @@ typedef struct {
 #define DISK_KIND_FIREWIRE	(3)
 #define DISK_KIND_NODISK 		(4)
 
+#define BOOTING_BY_BOOTLOADER	(1)
+#define BOOTING_BY_EFI        (2)
+#define BOOTING_BY_BOOTEFI		(3)
+#define BOOTING_BY_MBR        (4)
+#define BOOTING_BY_PBR        (5)
+#define BOOTING_BY_CD         (6)
+
+#define OSTYPE_OSX				(1)
+#define OSTYPE_WIN				(2)
+#define OSTYPE_VAR				(3)
+#define OSTYPE_LIN				(4)
+#define OSTYPE_EFI        (5)
+#define OSTYPE_TIGER			(14)
+#define OSTYPE_LEO				(15)
+#define OSTYPE_SNOW				(16)
+#define OSTYPE_LION				(17)
+
+
 
 #define IS_EXTENDED_PART_TYPE(type) ((type) == 0x05 || (type) == 0x0f || (type) == 0x85)
 
@@ -90,7 +108,9 @@ typedef struct {
     EFI_FILE            *RootDir;
     CHAR16              *VolName;
     EG_IMAGE            *VolBadgeImage;
-    UINTN               DiskKind;
+    UINT8               DiskKind;
+  UINT8               OSType;
+  UINT8               BootType;
     BOOLEAN             IsAppleLegacy;
     BOOLEAN             HasBootCode;
     CHAR16              *OSIconName;

@@ -22,7 +22,7 @@
   EDK_RELEASE_VERSION			= 0x00020000
   EFI_SPECIFICATION_VERSION		= 0x00020000
   VERSION_STRING                = 1.0
-  ENTRY_POINT                   = efi_main
+  ENTRY_POINT                   = RefitMain
 
 #
 # The following information is for reference only and not required by the build tools.
@@ -90,42 +90,42 @@
 [Ppis]
 
 [Protocols]
-  gEfiSimpleFileSystemProtocolGuid                        # ALWAYS_CONSUMED
-  gEfiSimpleTextInputExProtocolGuid                       # ALWAYS_CONSUMED
-  gEfiSimpleTextInProtocolGuid                            # ALWAYS_CONSUMED
-  gEfiSimpleTextOutProtocolGuid                           # ALWAYS_CONSUMED
   gEfiComponentName2ProtocolGuid                          # ALWAYS_CONSUMED
-  gEfiUnicodeCollation2ProtocolGuid                       # ALWAYS_CONSUMED
   gEfiDevicePathToTextProtocolGuid                        # ALWAYS_CONSUMED
-  gEfiPciIoProtocolGuid                         # PROTOCOL CONSUMES
-  gEfiLoadedImageProtocolGuid                   # PROTOCOL CONSUMES
-  gEfiSimpleNetworkProtocolGuid                 # PROTOCOL CONSUMES
-  gEfiDebugPortProtocolGuid                     # PROTOCOL CONSUMES
-  gEfiBlockIoProtocolGuid                       # PROTOCOL CONSUMES
-  gEfiDiskIoProtocolGuid                        # PROTOCOL CONSUMES
-  gEfiFirmwareVolume2ProtocolGuid               # PROTOCOL CONSUMES
-  gEfiCpuArchProtocolGuid                       # PROTOCOL CONSUMES
-  gEfiDevicePathProtocolGuid                    # PROTOCOL CONSUMES
+  gEfiSimpleFileSystemProtocolGuid                        # ALWAYS_CONSUMED
+  gEfiSimpleTextInProtocolGuid                            # ALWAYS_CONSUMED
+  gEfiSimpleTextInputExProtocolGuid                       # ALWAYS_CONSUMED
+  gEfiSimpleTextOutProtocolGuid                           # ALWAYS_CONSUMED
+  gEfiUnicodeCollation2ProtocolGuid                       # ALWAYS_CONSUMED  
+  
   gEfiAcpiS3SaveProtocolGuid                    # PROTOCOL CONSUMES
+  gEfiBlockIoProtocolGuid                       # PROTOCOL CONSUMES
+  gEfiCpuArchProtocolGuid                       # PROTOCOL CONSUMES
+  gEfiDebugPortProtocolGuid                     # PROTOCOL CONSUMES
+  gEfiDevicePathProtocolGuid                    # PROTOCOL CONSUMES
+  gEfiDiskIoProtocolGuid                        # PROTOCOL CONSUMES
+  gEfiExtScsiPassThruProtocolGuid               ## PROTOCOL SOMETIMES_CONSUMES
+  gEfiFirmwareVolume2ProtocolGuid               # PROTOCOL CONSUMES
   gEfiGraphicsOutputProtocolGuid                # PROTOCOL SOMETIMES_CONSUMES
-  gEfiUgaDrawProtocolGuid |PcdUgaConsumeSupport # PROTOCOL SOMETIMES_CONSUMES
-  gEfiOEMBadgingProtocolGuid                    # PROTOCOL CONSUMES
   gEfiHiiFontProtocolGuid                       # PROTOCOL CONSUMES
-  gEfiSecurityArchProtocolGuid
-  gEfiAcpiTableProtocolGuid
-  gEfiAbsolutePointerProtocolGuid		
-  gEfiHiiImageProtocolGuid
-  gEfiSimplePointerProtocolGuid			
-  gEfiSmbiosProtocolGuid
-  gEfiHiiDatabaseProtocolGuid
-  gEfiHiiProtocolGuid
-
-  gEfiEdidDiscoveredProtocolGuid
-  gEfiEdidActiveProtocolGuid
+  gEfiLoadedImageProtocolGuid                   # PROTOCOL CONSUMES
+  gEfiOEMBadgingProtocolGuid                    # PROTOCOL CONSUMES
+  gEfiPciIoProtocolGuid                         # PROTOCOL CONSUMES 
   gEfiScsiIoProtocolGuid                        ## PROTOCOL SOMETIMES_CONSUMES
   gEfiScsiPassThruProtocolGuid                  ## PROTOCOL SOMETIMES_CONSUMES
-  gEfiExtScsiPassThruProtocolGuid               ## PROTOCOL SOMETIMES_CONSUMES
+  gEfiSimpleNetworkProtocolGuid                 # PROTOCOL CONSUMES
+  gEfiUgaDrawProtocolGuid |PcdUgaConsumeSupport # PROTOCOL SOMETIMES_CONSUMES
   
+  gEfiAbsolutePointerProtocolGuid
+  gEfiAcpiTableProtocolGuid
+  gEfiEdidActiveProtocolGuid
+  gEfiEdidDiscoveredProtocolGuid
+  gEfiHiiDatabaseProtocolGuid
+  gEfiHiiImageProtocolGuid
+  gEfiHiiProtocolGuid
+  gEfiSimplePointerProtocolGuid
+  gEfiSmbiosProtocolGuid
+  gEfiSecurityArchProtocolGuid  
 
 
 [FeaturePcd]
