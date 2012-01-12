@@ -36,8 +36,22 @@
 #define HPET_OEM_TABLE_ID  { 'A', 'p', 'p', 'l', 'e', '0', '0' }
 #define HPET_CREATOR_ID    { 'i', 'B', 'O', 'O', 'T' }
 
+#define NUM_TABLES 12
+CHAR16* ACPInames[NUM_TABLES] = {
+	L"DSDT.aml",
+	L"SSDT.aml",
+	L"SSDT-1.aml",
+	L"SSDT-2.aml",
+	L"SSDT-3.aml",
+	L"SSDT-4.aml",
+	L"SSDT-5.aml",
+	L"SSDT-6.aml",
+	L"SSDT-7.aml",
+	L"APIC.aml",
+	L"HPET.aml",
+	L"MCFG.aml"
+};
 
-extern GUI_MENU_DATA		gSettingsFromMenu;
 extern BOOLEAN				gMobile;
 extern CHAR8*				AppleBiosVendor;
 EFI_PHYSICAL_ADDRESS        *Table;
@@ -277,6 +291,9 @@ EFI_STATUS PatchDsdt(EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 	CHAR16*						path = NULL;
 	UINT32* rf = NULL;
 	UINT64* xf = NULL;
+  UINT64 XDsdt; //save values if present
+  UINT64 XFirmwareCtrl;
+
 	
 	fadtFound = FALSE;
 	//Slice - I want to begin from BIOS ACPI tables like with SMBIOS
@@ -345,20 +362,20 @@ EFI_STATUS PatchDsdt(EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 	if (!RsdPointer) {
 		return EFI_UNSUPPORTED;
 	}
-	Rsdt = TO_POINTER(RSDT_TABLE, RsdPointer->RsdtAddress);
+	Rsdt = (RSDT_TABLE*)(UINTN)RsdPointer->RsdtAddress;
 	DBG("RSDT 0x%p\n", Rsdt);
 	rf = ScanRSDT(Rsdt, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE);
 	if(rf)
-		FadtPointer = TO_POINTER(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE, (*rf));
+		FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(*rf);
 	
 	Xsdt = NULL;			
 	if (RsdPointer->Revision >=2 && (RsdPointer->XsdtAddress < (UINT64)(UINTN)-1))
 	{
-		Xsdt = TO_POINTER(XSDT_TABLE,(UINTN)RsdPointer->XsdtAddress);
+		Xsdt = (XSDT_TABLE*)(UINTN)RsdPointer->XsdtAddress;
 		DBG("XSDT 0x%p\n", Xsdt);
 		xf = ScanXSDT(Xsdt, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE);
 		if(xf!=NULL)
-			FadtPointer = TO_POINTER(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE, (*xf));
+			FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(*xf));
 	}
 	
 	if(!xf){
@@ -375,18 +392,16 @@ EFI_STATUS PatchDsdt(EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 		Status=gBootServices->AllocatePages(AllocateMaxAddress,EfiACPIReclaimMemory, 1, &BufferPtr);		
 		if(!EFI_ERROR(Status))
 		{
-			newFadt = TO_POINTER(EFI_ACPI_4_0_FIXED_ACPI_DESCRIPTION_TABLE, BufferPtr);
+			newFadt = (EFI_ACPI_4_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)BufferPtr;
 			UINT32 oldLength = ((EFI_ACPI_DESCRIPTION_HEADER*)FadtPointer)->Length;
-			MsgLog("old FADT length=%x\n", oldLength);
-			UINT64 XDsdt; //save values if present
-			UINT64 XFirmwareCtrl;
+	//		MsgLog("old FADT length=%x\n", oldLength);
 			CopyMem((UINT8*)newFadt, (UINT8*)FadtPointer, oldLength); //old data
 			newFadt->Header.Length = 0xF4; 				
 			CopyMem((UINT8*)newFadt->Header.OemId, (UINT8*)AppleBiosVendor, 6);
 			newFadt->Header.Revision = EFI_ACPI_4_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION;
 			newFadt->Reserved0 = 0; //ACPIspec said it should be 0, while 1 is possible, but no more
 			
-			if (gSettingsFromMenu.smartUPS==TRUE) {
+			if (gSettings.smartUPS==TRUE) {
 				newFadt->PreferredPmProfile = 3;
 			} else {
 				newFadt->PreferredPmProfile = gMobile?2:1; //as calculated before
@@ -447,7 +462,7 @@ EFI_STATUS PatchDsdt(EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 		xf = ScanXSDT(Xsdt, HPET_SIGN);
 		if(xf==NULL) { //we want to make the new table if OEM is not found
 			
-			Hpet = TO_POINTER(EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER, BufferPtr);
+			Hpet = (EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER*)(UINTN)BufferPtr;
 			Hpet->Header.Signature = EFI_ACPI_3_0_HIGH_PRECISION_EVENT_TIMER_TABLE_SIGNATURE;
 			Hpet->Header.Length = sizeof(EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER);
 			Hpet->Header.Revision = EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_REVISION;
@@ -490,7 +505,7 @@ EFI_STATUS PatchDsdt(EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 		if(DevicePath==NULL)
 			return EFI_UNSUPPORTED; //is it safe to just return here?
 		
-    if (gSettingsFromMenu.UseDSDTmini==TRUE) {
+    if (gSettings.UseDSDTmini==TRUE) {
         PathToUSB = GetRootDevicePath();
 		path = DsdtMini;
     } else {
@@ -508,7 +523,6 @@ EFI_STATUS PatchDsdt(EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 		DBG("path to DSDT = %a\n", path);
 		if(PathToUSB && FileExists(PathToUSB, path)) 
 		{
-			DBG("try to get DSDT from USB\n");
 			Status = GetHandleForDevicePath(PathToUSB, &FileSystemHandle);
 			if(!EFI_ERROR(Status))
 			{		//return Status; //no we should try another path
@@ -518,8 +532,6 @@ EFI_STATUS PatchDsdt(EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 				{
 					// load dsdt binary
 					Status=LoadFile(PathToUSB, path, (CHAR8**)&buffer, &bufferLen, FALSE);
-					//cannot show without desktop
-					//SHOW_ON_ERROR(Status, "Incompatible DSDT!", L"Плохой DSDT файл!", STOP_ICON);
 					
 					if(!EFI_ERROR(Status))
 					{
@@ -527,7 +539,7 @@ EFI_STATUS PatchDsdt(EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 						//if success insert dsdt pointer into ACPI tables
 						if(!EFI_ERROR(Status) && (FadtPointer!=NULL && buffer!=NULL))
 						{
-							CopyMem(TO_POINTER(VOID,(UINTN)dsdt),buffer,bufferLen);
+							CopyMem((VOID*)(UINTN)dsdt,buffer,bufferLen);
 							
 							if(FadtPointer!=NULL)
 							{
@@ -578,7 +590,7 @@ EFI_STATUS PatchDsdt(EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 				
 				if(!EFI_ERROR(Status) && (FadtPointer!=NULL && buffer!=NULL))
 				{
-					CopyMem(TO_POINTER(VOID,(UINTN)dsdt), buffer, bufferLen);
+					CopyMem((VOID*)(UINTN)dsdt, buffer, bufferLen);
 					
 					if(FadtPointer!=NULL)
 					{

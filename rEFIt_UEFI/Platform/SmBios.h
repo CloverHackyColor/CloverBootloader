@@ -11,6 +11,8 @@ THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
 WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.             
 
 **/
+//Slice - why it separated from EDK? Because there is 2.7 while I want to have 2.6
+//also Apple's definitions included
 
 #ifndef __SMBIOS_STANDARD_H__
 #define __SMBIOS_STANDARD_H__

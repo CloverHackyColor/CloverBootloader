@@ -34,7 +34,6 @@
  */
 
 
-#include "iBoot.h"
 
 #define DEBUG_CPU 1
 #define DEBUG_PCI 1
@@ -48,15 +47,13 @@
 #endif
 
 
-extern EFI_BOOT_SERVICES*		gBootServices;
-extern GUI_MENU_DATA			gSettingsFromMenu;
+extern EFI_BOOT_SERVICES*		gBS;
 extern SMBIOS_STRUCTURE_POINTER	SmbiosTable;
 extern GFX_MANUFACTERER			gGraphicsCard;
 extern CHAR8*					cpuFrequencyMHz;
 extern BOOLEAN					gMobile;
 extern UINT16					gCpuSpeed;
 
-CPU_STRUCTURE					gCPUStructure;
 INTN							temp, tjmax=0;
 UINT8							gDefaultType; 
 

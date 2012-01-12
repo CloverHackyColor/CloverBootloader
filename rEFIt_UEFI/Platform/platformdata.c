@@ -31,7 +31,7 @@ CHAR8* AppleFirmwareVersion[14] =
 	"MP51.88Z.007F.B00.1008031144"
 };
 
-CHAR8* AppleBoardID[14] = 
+CHAR8* AppleBoardID[14] = //Lion DR1 compatible
 {
 	"Mac-F4208CC8",
 	"Mac-F4208CA9",
@@ -58,7 +58,7 @@ CHAR8* AppleReleaseDate[14] =
 	"10/14/08",
 	"03/08/08",
 	"08/07/07",
-	"08/07/09",
+	"08/01/09",
 	"09/03/09",
 	"10/20/09",
 	"10/20/09",
@@ -76,7 +76,7 @@ CHAR8* AppleProductName[14] =
 	"MacBookPro5,1",
 	"MacBookAir1,1",
 	"Macmini2,1",
-	"iMac8,1",
+	"iMac7,1",
 	"iMac10,1",
 	"iMac11,2",
 	"iMac12,1",
@@ -122,22 +122,22 @@ CHAR8* AppleSystemVersion[14] =
 	"1.2"
 };
 
-CHAR8* AppleSerialNumber[14] = 
+CHAR8* AppleSerialNumber[14] = //random generated
 {
-	"4H629LYAU9C",
-	"4H7044LUWGP",  
-	"RM83064H0P1",
-	"W88AAAAA9GU", 
-	"W88439FE1G0",
-	"W8811456Y51",  
-	"YM8054BYYL2",
-	"YM318NLJ945",
-	"YM950KTA1Q6",
-	"W8034342DB7",
-	"W8403D24BG6",
-	"CK80728AXYL",
-	"CT93051DK9Y",
-	"CG154TB9WU3"
+	"W80A041AU9B", //MB11
+	"W88A041AWGP", //MB21 - merom 05/07
+	"W88A041A0P0", //MB41
+	"W88AAAAA9GU", //MB52
+	"W88439FE1G0", //MBP51
+	"W8811456Y51", //MBA11
+	"W88A56BYYL2", //MM21 - merom GMA950 07/07
+	"W89A00AAX88", //IM71 - merom 01/09
+	"W80AA98A5PE", //IM101 - conroe? E7600 01/09
+	"W8034342DB7", //IM112
+	"W8403D24BG6", //IM121
+	"W88A77AA5J4", //MP31 - xeon quad 02/09
+	"CT93051DK9Y", //MP41
+	"CG154TB9WU3"  //MP51
 };
 //no! ChassisVersion == BoardID
 CHAR8* AppleChassisAsset[14] = 

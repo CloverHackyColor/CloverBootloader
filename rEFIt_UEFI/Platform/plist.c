@@ -33,7 +33,7 @@
 SymbolPtr	gSymbolsHead;
 TagPtr		gTagsFree;
 CHAR8* buffer_start = NULL;
-/* - move to types.h
+
 enum {
   kTagTypeNone = 0,
   kTagTypeDict,
@@ -46,7 +46,7 @@ enum {
   kTagTypeTrue,
   kTagTypeArray
 };
-*/
+
 /* Function for basic XML character entities parsing */
 
 CHAR8*
