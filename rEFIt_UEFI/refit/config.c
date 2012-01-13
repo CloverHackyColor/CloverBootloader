@@ -314,7 +314,7 @@ VOID ReadConfig(VOID)
     if (!FileExists(SelfDir, CONFIG_FILE_NAME))
         return;
     
-    Print(L"Reading configuration file...\n");
+    DBG("Reading configuration file...\n");
     Status = ReadFile(SelfDir, CONFIG_FILE_NAME, &File);
     if (EFI_ERROR(Status))
         return;

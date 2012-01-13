@@ -50,7 +50,7 @@ UINTN            VolumesCount = 0;
 //
 // Unicode collation protocol interface
 //
-//EFI_UNICODE_COLLATION_PROTOCOL *mUnicodeCollation = NULL;
+EFI_UNICODE_COLLATION_PROTOCOL *mUnicodeCollation = NULL;
 
 // functions
 
@@ -59,10 +59,10 @@ static EFI_STATUS FinishInitRefitLib(VOID);
 static VOID UninitVolumes(VOID);
 static VOID ReinitVolumes(VOID);
 
-/*BOOLEAN MetaiMatch (
+BOOLEAN MetaiMatch (
 			IN CHAR16   *String,
 			IN CHAR16   *Pattern
-			);*/
+			);
 //
 // self recognition stuff
 //
@@ -289,8 +289,8 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
     UINTN                   i;
     MBR_PARTITION_INFO      *MbrTable;
     BOOLEAN                 MbrTableFound;
-  UINTN       BlockSize = 0;  
-  CHAR16      volumeName[255];
+    UINTN       BlockSize = 0;  
+    CHAR16      volumeName[255];
     
     Volume->HasBootCode = FALSE;
     Volume->OSIconName = NULL;
@@ -319,14 +319,14 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
 				for (i=8; i<2000; i++) { //vendor search
 					if (SectorBuffer[i] == 'A') {
 						if (AsciiStrStr((CHAR8*)&SectorBuffer[i], "APPLE")) {
-							StrCpy(Volume->VolumeName, volumeName);
+							StrCpy(Volume->VolName, volumeName);
 							Volume->OSType = OSTYPE_OSX;
 							Volume->BootType = BOOTING_BY_CD;
 							break;
 						}
 					} else if (SectorBuffer[i] == 'M') {
 						if (AsciiStrStr((CHAR8*)&SectorBuffer[i], "MICROSOFT")) {
-							StrCpy(Volume->VolumeName, volumeName);
+							StrCpy(Volume->VolName, volumeName);
 							Volume->OSType = OSTYPE_WIN;
 							Volume->BootType = BOOTING_BY_CD;
 							break;
@@ -334,9 +334,9 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
 						
 					} else if (SectorBuffer[i] == 'L') {
 						if (AsciiStrStr((CHAR8*)&SectorBuffer[i], "LINUX")) {
-							Volume->DevicePath = DuplicateDevicePath(DevicePath);
+					//		Volume->DevicePath = DuplicateDevicePath(DevicePath);
               
-							StrCpy(Volume->VolumeName, volumeName);
+							StrCpy(Volume->VolName, volumeName);
 							Volume->OSType = OSTYPE_LIN;
 							Volume->BootType = BOOTING_BY_CD;
 							break;
@@ -582,37 +582,37 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
       if (DevicePathType(DevicePath) == MESSAGING_DEVICE_PATH && 
           (DevicePathSubType(DevicePath) == MSG_USB_DP || DevicePathSubType(DevicePath) == MSG_USB_CLASS_DP))
       {
-        DiskKind = DISK_KIND_EXTERNAL; 
+        Volume->DiskKind = DISK_KIND_EXTERNAL; 
       }
       // FIREWIRE Devices
       if (DevicePathType(DevicePath) == MESSAGING_DEVICE_PATH && 
           (DevicePathSubType(DevicePath) == MSG_1394_DP || DevicePathSubType(DevicePath) == MSG_FIBRECHANNEL_DP))
       {
-        DiskKind = DISK_KIND_FIREWIRE; 
+        Volume->DiskKind = DISK_KIND_FIREWIRE; 
       }
       // CD-ROM Devices
       if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH && 
           DevicePathSubType(DevicePath) == MEDIA_CDROM_DP) 
       {
-        DiskKind = DISK_KIND_OPTICAL;     
+        Volume->DiskKind = DISK_KIND_OPTICAL;     
       }
       // VENDOR Specific Path
       if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH && 
           DevicePathSubType(DevicePath) == MEDIA_VENDOR_DP) 
       {
-        DiskKind = DISK_KIND_NODISK;
+        Volume->DiskKind = DISK_KIND_NODISK;
       }
       // LEGACY CD-ROM
       if (DevicePathType(DevicePath) == BBS_DEVICE_PATH && 
           (DevicePathSubType(DevicePath) == BBS_BBS_DP || DevicePathSubType(DevicePath) == BBS_TYPE_CDROM)) 
       {
-        DiskKind = DISK_KIND_OPTICAL;
+        Volume->DiskKind = DISK_KIND_OPTICAL;
       }
       // LEGACY HARDDISK
       if (DevicePathType(DevicePath) == BBS_DEVICE_PATH && 
           (DevicePathSubType(DevicePath) == BBS_BBS_DP || DevicePathSubType(DevicePath) == BBS_TYPE_HARDDRIVE)) 
       {
-        DiskKind = DISK_KIND_INTERNAL;
+        Volume->DiskKind = DISK_KIND_INTERNAL;
       }
       Bootable = TRUE;
       
@@ -1099,7 +1099,7 @@ EFI_STATUS DirIterClose(IN OUT REFIT_DIR_ITER *DirIter)
         DirIter->DirHandle->Close(DirIter->DirHandle);
     return DirIter->LastStatus;
 }
-/*
+
 //
 // file name manipulation
 //
@@ -1139,7 +1139,7 @@ InitializeUnicodeCollationProtocol (
 								  );
 	return Status;
 }
-*/
+
 
 
 CHAR16 * Basename(IN CHAR16 *Path)
