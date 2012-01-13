@@ -28,7 +28,7 @@
  *  code split out from drivers.c by Soren Spies, 2005
  */
 //Slice - rewrite for UEFI with more functions like Copyright (c) 2003 Apple Computer 
-
+#include "Platform.h"
 
 SymbolPtr	gSymbolsHead;
 TagPtr		gTagsFree;

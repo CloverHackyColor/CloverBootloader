@@ -15,6 +15,7 @@
  */
 
 //
+#include "Platform.h"
 #include "spd.h"
 #include "memvendors.h"
 

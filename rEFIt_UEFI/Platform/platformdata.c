@@ -2,16 +2,17 @@
  platformdata.c
  **/
 
+#include "Platform.h"
 
 /* Machine Default Data */
 
 CHAR8*	DefaultMemEntry = "N/A";
 
-CHAR8*	DefaultSerial = "CT288GT9VT6";
+CHAR8*	DefaultSerial = "W88A77AA5J4"; //hackintosh
 
 CHAR8* AppleBiosVendor = "Apple Inc.";
 
-CHAR8* AppleManufacturer = "Apple Computer, Inc.";
+CHAR8* AppleManufacturer = "Apple Computer, Inc."; //Old name, before 2007
 
 CHAR8* AppleFirmwareVersion[14] = 
 {
@@ -22,7 +23,7 @@ CHAR8* AppleFirmwareVersion[14] =
 	"MBP51.88Z.007E.B05.0906151647",
 	"MBA11.88Z.00BB.B03.0712201139",
 	"MM21.88Z.009A.B00.0706281359",
-	"IM81.88Z.00C1.B00.0803051705",
+	"IM71.88Z.00C1.B00.0803051705",
 	"IM101.88Z.00CC.B00.0909031926",
 	"IM112.88Z.0034.B00.0802091538",
 	"IM121.88Z.0047.B00.1102091756",

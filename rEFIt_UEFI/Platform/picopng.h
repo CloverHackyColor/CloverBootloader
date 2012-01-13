@@ -28,7 +28,7 @@
 
 #ifndef _PICOPNG_H
 #define _PICOPNG_H
-
+#include "Platform.h"
 
 typedef struct {
 

@@ -10,7 +10,7 @@ LegacyBoot.c - support for boot legacy OS such as WindowsXP and Linux
 Portion from XOM project
 Copyright (c) 2006 JLA 
 */
-
+#include "Platform.h"
 #include "LegacyBiosThunk.h"
 
 #define DEBUG_LBOOT 0
@@ -71,7 +71,7 @@ typedef struct Address_t {
 #define ADDRT_REAL   0   // Segment:Offset (16:16)
 #define ADDRT_FLAT   1   // Segment is 0, Offset is 32 bit flat address
 
-extern EFI_LEGACY_8259_PROTOCOL   *gLegacy8259;
+EFI_LEGACY_8259_PROTOCOL   *gLegacy8259;
 THUNK_CONTEXT              *mThunkContext;
 
 UINT8* floppyImage;
@@ -140,7 +140,7 @@ static UINTN   addrGTE(Address a1, Address a2) { return addrToOffset(a1) >= addr
 
 Address krnMemoryTop;
 
-EFI_STATUS bootElTorito(BOOTVOLUME_DATA*	volume)
+EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 {
 	EFI_BLOCK_IO* pBlockIO = volume->BlockIo;
 	Address      bootAddress = addrRealFromSegOfs(0x0000, 0x7C00);
@@ -166,7 +166,7 @@ EFI_STATUS bootElTorito(BOOTVOLUME_DATA*	volume)
 	Status = pBlockIO->ReadBlocks(pBlockIO, pBlockIO->Media->MediaId, 0x11, 2048, &sectorBuffer);
 	if (EFI_ERROR(Status)) {
 		// Retry in case the CD was swapped out
-		Status = gBootServices->HandleProtocol(volume->DeviceHandle, &gEfiBlockIoProtocolGuid, (VOID **) &pBlockIO);
+		Status = gBS->HandleProtocol(volume->DeviceHandle, &gEfiBlockIoProtocolGuid, (VOID **) &pBlockIO);
 		if (!EFI_ERROR(Status)) {
 			//      pCDROMBlockIO = pBlockIO;
 			Status = pBlockIO->ReadBlocks(pBlockIO, pBlockIO->Media->MediaId, 0x11, 2048, &sectorBuffer);
@@ -240,12 +240,12 @@ EFI_STATUS bootElTorito(BOOTVOLUME_DATA*	volume)
 	
 	// Boot it
 	//  dbgStart(bootLoadAddress, enableDebugger);
-  Status = gBootServices->LocateProtocol(&gEfiLegacy8259ProtocolGuid, NULL, (VOID**)&gLegacy8259);
+  Status = gBS->LocateProtocol(&gEfiLegacy8259ProtocolGuid, NULL, (VOID**)&gLegacy8259);
 	if (EFI_ERROR(Status)) {
 		return Status;
 	}
 	
-	Status = gBootServices->AllocatePool (EfiBootServicesData,sizeof(THUNK_CONTEXT),(VOID **)&mThunkContext);
+	Status = gBS->AllocatePool (EfiBootServicesData,sizeof(THUNK_CONTEXT),(VOID **)&mThunkContext);
 	if (EFI_ERROR (Status)) {
 		return Status;
 	}
@@ -266,7 +266,7 @@ EFI_STATUS bootElTorito(BOOTVOLUME_DATA*	volume)
 	return Status;
 }
 
-EFI_STATUS bootMBR(BOOTVOLUME_DATA* volume) 
+EFI_STATUS bootMBR(REFIT_VOLUME* volume) 
 {
 	EFI_STATUS			Status			= EFI_NOT_FOUND;
 	EFI_BLOCK_IO*		pDisk			= volume->BlockIo;
@@ -275,15 +275,15 @@ EFI_STATUS bootMBR(BOOTVOLUME_DATA* volume)
 	MBR_ENTRY*			activePartition = NULL;
 	UINTN				partitionIndex;
 	IA32_REGISTER_SET           Regs;
-	gBootServices->SetMem (&Regs, sizeof (Regs), 0);
+	gBS->SetMem (&Regs, sizeof (Regs), 0);
 	addrEnablePaging(0);
 	
-	Status = gBootServices->LocateProtocol(&gEfiLegacy8259ProtocolGuid, NULL, (VOID**)&gLegacy8259);
+	Status = gBS->LocateProtocol(&gEfiLegacy8259ProtocolGuid, NULL, (VOID**)&gLegacy8259);
 	if (EFI_ERROR(Status)) {
 		return Status;
 	}
 	
-	Status = gBootServices->AllocatePool (EfiBootServicesData,sizeof(THUNK_CONTEXT),(VOID **)&mThunkContext);
+	Status = gBS->AllocatePool (EfiBootServicesData,sizeof(THUNK_CONTEXT),(VOID **)&mThunkContext);
 	if (EFI_ERROR (Status)) {
 		return Status;
 	}
@@ -362,7 +362,7 @@ EFI_STATUS bootMBR(BOOTVOLUME_DATA* volume)
 	return EFI_SUCCESS;	
 }
 
-EFI_STATUS bootPBR(BOOTVOLUME_DATA* volume) 
+EFI_STATUS bootPBR(REFIT_VOLUME* volume) 
 {
 	EFI_STATUS					Status		= EFI_NOT_FOUND;
 	EFI_BLOCK_IO*				pDisk     = volume->BlockIo;
@@ -370,22 +370,21 @@ EFI_STATUS bootPBR(BOOTVOLUME_DATA* volume)
 	MBR_ENTRY*					pMBR      = (MBR_ENTRY*)0x7BE;
 	UINT32              LbaOffset	= 0;
 	UINT32              LbaSize		= 0;
-	HARDDRIVE_DEVICE_PATH     *HdPath     = NULL;
-	EFI_DEVICE_PATH_PROTOCOL	*DevicePath = volume->DevicePath;
+	HARDDRIVE_DEVICE_PATH    *HdPath     = NULL; 
+	EFI_DEVICE_PATH_PROTOCOL    *DevicePath = volume->DevicePath;
   UINT16                            OldMask;
   UINT16                            NewMask;
   
 	
 	IA32_REGISTER_SET   Regs;
-	gBootServices->SetMem (&Regs, sizeof (Regs), 0);
+	gBS->SetMem (&Regs, sizeof (Regs), 0);
 	addrEnablePaging(0);
 	//
 	// find the partition device path node
 	//
 	while (!IsDevicePathEnd (DevicePath)) {
 		if ((DevicePathType (DevicePath) == MEDIA_DEVICE_PATH) &&
-			(DevicePathSubType (DevicePath) == MEDIA_HARDDRIVE_DP)
-			) {
+        (DevicePathSubType (DevicePath) == MEDIA_HARDDRIVE_DP)) {
 			HdPath = (HARDDRIVE_DEVICE_PATH *)DevicePath;
 			break;
 		}		
@@ -399,14 +398,14 @@ EFI_STATUS bootPBR(BOOTVOLUME_DATA* volume)
 		return Status;
 	}
 	
-	Status = gBootServices->LocateProtocol(&gEfiLegacy8259ProtocolGuid, NULL, (VOID**)&gLegacy8259);
+	Status = gBS->LocateProtocol(&gEfiLegacy8259ProtocolGuid, NULL, (VOID**)&gLegacy8259);
 	if (EFI_ERROR(Status)) {
 		return Status;
 	}
   
   Status = gLegacy8259->GetMask(gLegacy8259, &OldMask, NULL, NULL, NULL);
 	
-	Status = gBootServices->AllocatePool (EfiBootServicesData,sizeof(THUNK_CONTEXT),(VOID **)&mThunkContext);
+	Status = gBS->AllocatePool (EfiBootServicesData,sizeof(THUNK_CONTEXT),(VOID **)&mThunkContext);
 	if (EFI_ERROR (Status)) {
 		return Status;
 	}

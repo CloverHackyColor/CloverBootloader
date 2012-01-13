@@ -14,11 +14,8 @@
  * VirtualBox OSE distribution. VirtualBox OSE is distributed in the
  * hope that it will be useful, but WITHOUT ANY WARRANTY of any kind.
  */
-#include <Uefi.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/DebugLib.h>
 
-#include "efiConsoleControl.h"
+#include "Platform.h"
 
 EFI_STATUS EFIAPI
 GetModeImpl(

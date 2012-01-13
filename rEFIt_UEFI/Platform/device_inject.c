@@ -7,7 +7,8 @@
 
 
 #include "device_inject.h"
-#include "iBoot.h"
+#include "Platform.h"
+
 #ifndef DEBUG_INJECT
 #define DEBUG_INJECT 0
 #endif

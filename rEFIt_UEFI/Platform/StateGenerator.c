@@ -3,7 +3,7 @@
  * 2010 mojodojo, slice
  */
 
-#include "acpi_patcher.h"
+#include "Platform.h"
 
 #ifndef DEBUG_ACPI
 #define DEBUG_ACPI 0
@@ -18,11 +18,12 @@
 #else
 #define DBG(x...)
 #endif
-extern CPU_STRUCTURE					gCPUStructure;
+
 
 #define INTEL_VENDOR 0x756E6547
 
 // TODO Migrate
+#pragma pack(1)
 struct acpi_2_ssdt {
 	CHAR8           Signature[4];
 	UINT32          Length;
@@ -34,7 +35,7 @@ struct acpi_2_ssdt {
 	UINT32        CreatorId;
 	UINT32        CreatorRevision;
 } __attribute__((packed));
-
+#pragma pack()
 
 UINT8	acpi_cpu_count = 0;
 CHAR8** acpi_cpu_name = {"CPU0", "CPU1", "CPU2", "CPU3", "CPU4", "CPU5", "CPU6", "CPU7", "CPU8", "CPU9"};
@@ -42,7 +43,7 @@ UINT32 acpi_cpu_p_blk = 0;
 
 struct acpi_2_ssdt *generate_pss_ssdt()
 {	
-	CHAR8 ssdt_header[] =
+	UINT8 ssdt_header[] =
 	{
 		0x53, 0x53, 0x44, 0x54, 0x7E, 0x00, 0x00, 0x00, /* SSDT.... */
 		0x01, 0x6A, 0x50, 0x6D, 0x52, 0x65, 0x66, 0x00, /* ..PmRef. */

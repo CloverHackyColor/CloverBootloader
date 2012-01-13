@@ -19,24 +19,11 @@
 /*******************************************************************************
  *   Header Files                                                               *
  *******************************************************************************/
-#include <Framework/FrameworkInternalFormRepresentation.h>
-
-#include <Library/BaseMemoryLib.h>
-#include <Library/DebugLib.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/MemoryAllocationLib.h>
-#include <Library/UefiLib.h>
-#include <Library/HiiLib.h>
-#include <Library/BaseLib.h>
+//#include <Framework/FrameworkInternalFormRepresentation.h>
+#include "Platform.h"
 
 #include "DataHubRecords.h"
 //#include <Guid/DataHubRecords.h>
-
-#include <Protocol/Cpu.h>
-#include <Protocol/DataHub.h>
-#include <Protocol/FrameworkHii.h>
-#include <Protocol/CpuIo.h>
 
 #define EFI_CPU_DATA_MAXIMUM_LENGTH 0x100
 
@@ -66,6 +53,9 @@ typedef struct {
     UINT8						Data[1];         /* 0x60 Name Value */
 } PLATFORM_DATA;
 #pragma pack()
+
+EFI_DATA_HUB_PROTOCOL					*gDataHub;
+
 
 UINT32
 CopyRecord(PLATFORM_DATA* Rec, const CHAR16* Name, VOID* Val, UINT32 ValLen)
@@ -119,58 +109,59 @@ EFI_STATUS SetVariablesForOSX()
 	UINT32      BackgroundClear = 0x00000000;
 	UINT32      FwFeatures      = 0x80000015; //Slice - get it from SMBIOS
 	UINT32      FwFeaturesMask  = 0x800003ff;
-	UINTN		bootArgsLen = 120; 
-	CHAR8*		None	= "none";
-	CHAR8*		BA = &gSettings.KernelFlags[119];
+	UINTN       bootArgsLen = 120; 
+	CHAR8*      None	= "none";
+	CHAR8*      BA = &gSettings.KernelFlags[119];
+  
 	while ((*BA == ' ') || (*BA == 0)) {
 		BA--; bootArgsLen--;
 	}
 	
-	Status = gRuntimeServices->SetVariable(L"BootNext",  &gEfiAppleNvramGuid, //&gEfiGlobalVarGuid,
+	Status = gRS->SetVariable(L"BootNext",  &gEfiAppleNvramGuid, //&gEfiGlobalVarGuid,
                                          /*	EFI_VARIABLE_NON_VOLATILE | */EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          sizeof(BootNext) ,&BootNext);
-	Status = gRuntimeServices->SetVariable(L"BackgroundClear", &gEfiAppleNvramGuid,
+	Status = gRS->SetVariable(L"BackgroundClear", &gEfiAppleNvramGuid,
                                          /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          sizeof(BackgroundClear), &BackgroundClear);
-	Status = gRuntimeServices->SetVariable(L"FirmwareFeatures", &gEfiAppleNvramGuid,
+	Status = gRS->SetVariable(L"FirmwareFeatures", &gEfiAppleNvramGuid,
                                          EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          sizeof(FwFeatures),&FwFeatures);
-	Status = gRuntimeServices->SetVariable(L"FirmwareFeaturesMask", &gEfiAppleNvramGuid,
+	Status = gRS->SetVariable(L"FirmwareFeaturesMask", &gEfiAppleNvramGuid,
                                          EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          sizeof(FwFeaturesMask), &FwFeaturesMask);
   
-	Status = gRuntimeServices->SetVariable(L"boot-args", &gEfiAppleBootGuid, 
+	Status = gRS->SetVariable(L"boot-args", &gEfiAppleBootGuid, 
                                          /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                                         bootArgsLen ,&gSettingsFromMenu.KernelFlags);
-	Status = gRuntimeServices->SetVariable(L"security-mode", &gEfiAppleBootGuid, 
+                                         bootArgsLen ,&gSettings.KernelFlags);
+	Status = gRS->SetVariable(L"security-mode", &gEfiAppleBootGuid, 
                                          /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          5 , (VOID*)None);
-	Status = gRuntimeServices->SetVariable(L"platform-uuid", &gEfiAppleBootGuid, 
+	Status = gRS->SetVariable(L"platform-uuid", &gEfiAppleBootGuid, 
                                          /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                                         AsciiStrLen(gSettingsFromMenu.CustomUuid) ,&gSettingsFromMenu.CustomUuid);
+                                         AsciiStrLen(gSettings.CustomUuid) ,&gSettings.CustomUuid);
   return Status;
 }
 
 VOID SetupDataForOSX()
 {
 	EFI_STATUS			Status;	
-	CHAR16*				iBootVersion=L"2.2S";
+	CHAR16*				CloverVersion=L"2.0";
   
-	UINT32				KextListSize;
+//	UINT32				KextListSize;
 	UINT32				devPathSupportedVal = 1;
 	UINT64				FrontSideBus		= gCPUStructure.FSBFrequency;
 	UINT64				CpuSpeed        = gCPUStructure.CPUFrequency;
 	UINT64				TSCFrequency		= gCPUStructure.TSCFrequency;
-	CHAR16*				productName			= AllocateZeroPool(32);
-	CHAR16*				serialNumber		= AllocateZeroPool(32);
+	CHAR16*				productName			= AllocateZeroPool(64);
+	CHAR16*				serialNumber		= AllocateZeroPool(64);
 	
 	// Locate DataHub Protocol
-	Status = gBootServices->LocateProtocol(&gEfiDataHubProtocolGuid, NULL, (VOID**)&gDataHub);
+	Status = gBS->LocateProtocol(&gEfiDataHubProtocolGuid, NULL, (VOID**)&gDataHub);
 	if (!EFI_ERROR (Status)) 
 	{
-		KextListSize = GetKextListSize();
-		AsciiStrToUnicodeStr(gSettingsFromMenu.ProductName, productName);
-		AsciiStrToUnicodeStr(gSettingsFromMenu.SerialNr, serialNumber);
+//		KextListSize = GetKextListSize();
+		AsciiStrToUnicodeStr(gSettings.ProductName, productName);
+		AsciiStrToUnicodeStr(gSettings.SerialNr, serialNumber);
 		
 		Status =  LogDataHub(&gEfiProcessorSubClassGuid, L"FSBFrequency", &FrontSideBus, sizeof(UINT64));
 		Status =  LogDataHub(&gEfiProcessorSubClassGuid, L"TSCFrequency", &TSCFrequency, sizeof(UINT64));
@@ -180,7 +171,7 @@ VOID SetupDataForOSX()
 		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"Model", productName, StrSize(productName));
 		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"SystemSerialNumber", serialNumber, StrSize(serialNumber));
     Status =  LogDataHub(&gEfiMiscSubClassGuid, L"system-id", &gUuid, sizeof(EFI_GUID));		
-		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"kext", &gKextList, KextListSize);    
-		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"iboot", iBootVersion, StrSize(iBootVersion));
+//		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"kext", &gKextList, KextListSize);    
+		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"Clover", CloverVersion, StrSize(CloverVersion));
 	}
 }

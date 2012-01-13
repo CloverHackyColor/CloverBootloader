@@ -16,7 +16,7 @@
 [Defines]
   PLATFORM_NAME                  = rEFIt
   PLATFORM_GUID                  = 8F7D7B1F-0E1C-4c98-B12E-4EC99C4081AC
-  PLATFORM_VERSION               = 0.50
+  PLATFORM_VERSION               = 0.92
   DSC_SPECIFICATION              = 0x00010006
   OUTPUT_DIRECTORY               = Build/rEFIt
   SUPPORTED_ARCHITECTURES        = IA32|X64
@@ -27,6 +27,7 @@
   UefiLib|MdePkg/Library/UefiLib/UefiLib.inf
   BaseLib|MdePkg/Library/BaseLib/BaseLib.inf
   BaseMemoryLib|MdePkg/Library/BaseMemoryLib/BaseMemoryLib.inf
+  IoLib|MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsic.inf
   MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
   PrintLib|MdePkg/Library/BasePrintLib/BasePrintLib.inf
   UefiApplicationEntryPoint|MdePkg/Library/UefiApplicationEntryPoint/UefiApplicationEntryPoint.inf
@@ -52,7 +53,12 @@
   HiiLib|MdeModulePkg/Library/UefiHiiLib/UefiHiiLib.inf
   NetLib|MdeModulePkg/Library/DxeNetLib/DxeNetLib.inf
   
+   PeCoffLib|Clover/VBoxPeCoffLib/VBoxPeCoffLib.inf
  PeCoffGetEntryPointLib|MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
+ GenericBdsLib|Clover/GenericBdsLib/GenericBdsLib.inf
+  UefiUsbLib|MdePkg/Library/UefiUsbLib/UefiUsbLib.inf
+  UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
+
 
 [Components]
 	Clover/rEFIt_UEFI/refit.inf

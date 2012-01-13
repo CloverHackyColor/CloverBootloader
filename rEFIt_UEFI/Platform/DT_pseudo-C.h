@@ -2,8 +2,8 @@
 #define kDTMaxPropertyNameLength 31
 
 typedef struct DeviceTreeNodeProperty {
-    CHAR8	name[kDTMaxPropertyNameLength];	// NUL terminated property name max [kPropNameLength]
-    .zero
+  CHAR8	name[kDTMaxPropertyNameLength];	// NUL terminated property name max [kPropNameLength]
+  .zero
 	UINT32		length;		// Length (bytes) of following prop value
 	UINT8		value[length];	// Variable length value of property
 	.align 8				// Padded to a multiple of a longword?
@@ -12,8 +12,8 @@ typedef struct DeviceTreeNodeProperty {
 struct DeviceTreeNode;
 
 typedef struct OpaqueDTEntry {
-    UINT32		nProperties;	// Number of props[] elements (0 => end)
-    UINT32		nChildren;	// Number of children[] elements
+  UINT32		nProperties;	// Number of props[] elements (0 => end)
+  UINT32		nChildren;	// Number of children[] elements
 	DeviceTreeNodeProperty	props[nProperties];// array size == nProperties
 	DeviceTreeNode			children[nChildren];	// array size == nChildren
 } DeviceTreeNode;

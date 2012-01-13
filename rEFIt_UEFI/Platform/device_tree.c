@@ -34,13 +34,13 @@
 
 /* Entry*/
 
-static int DTInitialized;
-static RealDTEntry DTRootNode;
+INTN DTInitialized;
+RealDTEntry DTRootNode;
 
 /*
  * Support Routines
  */
-static RealDTEntry
+RealDTEntry
 skipProperties(RealDTEntry entry)
 {
 	DeviceTreeNodeProperty *prop;
@@ -57,7 +57,7 @@ skipProperties(RealDTEntry entry)
 	return ((RealDTEntry) prop);
 }
 
-static RealDTEntry
+RealDTEntry
 skipTree(RealDTEntry root)
 {
 	RealDTEntry entry;
@@ -73,20 +73,20 @@ skipTree(RealDTEntry root)
 	return entry;
 }
 
-static RealDTEntry
+RealDTEntry
 GetFirstChild(RealDTEntry parent)
 {
 	return skipProperties(parent);
 }
 
-static RealDTEntry
+RealDTEntry
 GetNextChild(RealDTEntry sibling)
 {
-	return skipTree(sibling);
+	skipTree(sibling);
 }
 
-static const char *
-GetNextComponent(const char *cp, char *bp)
+CONST CHAR8*
+GetNextComponent(CONST CHAR8 *cp, CHAR8 *bp)
 {
 	while (*cp != 0) {
 		if (*cp == kDTPathNameSeparator) {
@@ -99,13 +99,13 @@ GetNextComponent(const char *cp, char *bp)
 	return cp;
 }
 
-static RealDTEntry
-FindChild(RealDTEntry cur, char *buf)
+RealDTEntry
+FindChild(RealDTEntry cur, CHAR8 *buf)
 {
 	RealDTEntry	child;
-	unsigned long	index;
-	char *			str;
-	unsigned int	dummy;
+	UINT32      index;
+	CHAR8*			str;
+	UINT32      dummy;
 
 	if (cur->nChildren == 0) {
 		return NULL;
@@ -113,7 +113,7 @@ FindChild(RealDTEntry cur, char *buf)
 	index = 1;
 	child = GetFirstChild(cur);
 	while (1) {
-		if (DTGetProperty(child, "name", (void **)&str, &dummy) != kSuccess) {
+		if (DTGetProperty(child, "name", (VOID **)&str, &dummy) != kSuccess) {
 			break;
 		}
 		if (AsciiStrCmp((CHAR8*)str, (CHAR8*)buf) == 0) {
@@ -132,44 +132,44 @@ FindChild(RealDTEntry cur, char *buf)
 /*
  * External Routines
  */
-void
-DTInit(void *base)
+VOID
+DTInit(VOID *base)
 {
 	DTRootNode = (RealDTEntry) base;
 	DTInitialized = (DTRootNode != 0);
 }
 
 int
-DTEntryIsEqual(const DTEntry ref1, const DTEntry ref2)
+DTEntryIsEqual(CONST DTEntry ref1, CONST DTEntry ref2)
 {
 	/* equality of pointers */
 	return (ref1 == ref2);
 }
 
-static char *startingP;		// needed for find_entry
-int find_entry(const char *propName, const char *propValue, DTEntry *entryH);
+CHAR8 *startingP;		// needed for find_entry
+INTN find_entry(CONST CHAR8 *propName, CONST CHAR8 *propValue, DTEntry *entryH);
 
-int DTFindEntry(const char *propName, const char *propValue, DTEntry *entryH)
+INTN DTFindEntry(CONST CHAR8 *propName, CONST CHAR8 *propValue, DTEntry *entryH)
 {
 	if (!DTInitialized) {
 		return kError;
 	}
 
-	startingP = (char *)DTRootNode;
+	startingP = (CHAR8 *)DTRootNode;
 	return(find_entry(propName, propValue, entryH));
 }
 
-int find_entry(const char *propName, const char *propValue, DTEntry *entryH)
+INTN find_entry(CONST CHAR8 *propName, CONST CHAR8 *propValue, DTEntry *entryH)
 {
-	DeviceTreeNode *nodeP = (DeviceTreeNode *) (void *) startingP;
-	unsigned int k;
+	DeviceTreeNode *nodeP = (DeviceTreeNode *) (VOID *) startingP;
+	UNITN k;
 
 	if (nodeP->nProperties == 0) return(kError);	// End of the list of nodes
-	startingP = (char *) (nodeP + 1);
+	startingP = (CHAR8 *) (nodeP + 1);
 
 	// Search current entry
 	for (k = 0; k < nodeP->nProperties; ++k) {
-		DeviceTreeNodeProperty *propP = (DeviceTreeNodeProperty *) (void *) startingP;
+		DeviceTreeNodeProperty *propP = (DeviceTreeNodeProperty *) (VOID *) startingP;
 
 		startingP += sizeof (*propP) + ((propP->length + 3) & -4);
 
@@ -191,12 +191,12 @@ int find_entry(const char *propName, const char *propValue, DTEntry *entryH)
 	return(kError);
 }
 //if(DTLookupEntry(NULL,"/",&efiPlatform)==kSuccess)
-int
-DTLookupEntry(const DTEntry searchPoint, const char *pathName, DTEntry *foundEntry)
+INTN
+DTLookupEntry(CONST DTEntry searchPoint, CONST char *pathName, DTEntry *foundEntry)
 {
 	DTEntryNameBuf	buf;
 	RealDTEntry	cur;
-	const char *	cp;
+	CONST CHAR8*	cp;
 
 	if (!DTInitialized) {
 		return kError;
@@ -236,8 +236,8 @@ DTLookupEntry(const DTEntry searchPoint, const char *pathName, DTEntry *foundEnt
 	return kError;
 }
 
-int
-DTCreateEntryIterator(const DTEntry startEntry, DTEntryIterator *iterator)
+INTN
+DTCreateEntryIterator(CONST DTEntry startEntry, DTEntryIterator *iterator)
 {
 	RealDTEntryIterator iter;
 
@@ -261,7 +261,7 @@ DTCreateEntryIterator(const DTEntry startEntry, DTEntryIterator *iterator)
 	return kSuccess;
 }
 
-int
+INTN
 DTDisposeEntryIterator(DTEntryIterator iterator)
 {
 	RealDTEntryIterator iter = iterator;
@@ -275,7 +275,7 @@ DTDisposeEntryIterator(DTEntryIterator iterator)
 	return kSuccess;
 }
 
-int
+INTN
 DTEnterEntry(DTEntryIterator iterator, DTEntry childEntry)
 {
 	RealDTEntryIterator iter = iterator;
@@ -298,7 +298,7 @@ DTEnterEntry(DTEntryIterator iterator, DTEntry childEntry)
 	return kSuccess;
 }
 
-int
+INTN
 DTExitEntry(DTEntryIterator iterator, DTEntry *currentPosition)
 {
 	RealDTEntryIterator iter = iterator;
@@ -319,7 +319,7 @@ DTExitEntry(DTEntryIterator iterator, DTEntry *currentPosition)
 	return kSuccess;
 }
 
-int
+INTN
 DTIterateEntries(DTEntryIterator iterator, DTEntry *nextEntry)
 {
 	RealDTEntryIterator iter = iterator;
@@ -339,7 +339,7 @@ DTIterateEntries(DTEntryIterator iterator, DTEntry *nextEntry)
 	}
 }
 
-int
+INTN
 DTRestartEntryIteration(DTEntryIterator iterator)
 {
 	RealDTEntryIterator iter = iterator;
@@ -362,11 +362,11 @@ DTRestartEntryIteration(DTEntryIterator iterator)
 	return kSuccess;
 }
 
-int
-DTGetProperty(const DTEntry entry, const char *propertyName, void **propertyValue, unsigned int *propertySize)
+INTN
+DTGetProperty(CONST DTEntry entry, CONST char *propertyName, VOID **propertyValue, unsigned int *propertySize)
 {
 	DeviceTreeNodeProperty *prop;
-	unsigned int k;
+	UINTN k;
 
 	if (entry == NULL || entry->nProperties == 0) {
 		return kError;
@@ -374,7 +374,7 @@ DTGetProperty(const DTEntry entry, const char *propertyName, void **propertyValu
 		prop = (DeviceTreeNodeProperty *) (entry + 1);
 		for (k = 0; k < entry->nProperties; k++) {
 			if (AsciiStrCmp((CHAR8*)prop->name, (CHAR8*)propertyName) == 0) {
-				*propertyValue = (void *) (((UINT8*)prop)
+				*propertyValue = (VOID *) (((UINT8*)prop)
 						+ sizeof(DeviceTreeNodeProperty));
 				*propertySize = prop->length;
 				return kSuccess;
@@ -385,8 +385,8 @@ DTGetProperty(const DTEntry entry, const char *propertyName, void **propertyValu
 	return kError;
 }
 
-int
-DTCreatePropertyIterator(const DTEntry entry, DTPropertyIterator *iterator)
+INTN
+DTCreatePropertyIterator(CONST DTEntry entry, DTPropertyIterator *iterator)
 {
 	RealDTPropertyIterator iter;
 
@@ -399,15 +399,15 @@ DTCreatePropertyIterator(const DTEntry entry, DTPropertyIterator *iterator)
 	return kSuccess;
 }
 
-int
+INTN
 DTDisposePropertyIterator(DTPropertyIterator iterator)
 {
 	FreePool(iterator);
 	return kSuccess;
 }
 
-int
-DTIterateProperties(DTPropertyIterator iterator, char **foundProperty)
+INTN
+DTIterateProperties(DTPropertyIterator iterator, CHAR8 **foundProperty)
 {
 	RealDTPropertyIterator iter = iterator;
 
@@ -426,7 +426,7 @@ DTIterateProperties(DTPropertyIterator iterator, char **foundProperty)
 	}
 }
 
-int
+INTN
 DTRestartPropertyIteration(DTPropertyIterator iterator)
 {
 	RealDTPropertyIterator iter = iterator;

@@ -1,8 +1,7 @@
 /**
- dsdt_patcher.c
- implementation for DSDT patching
-
- FADT Patch, ScanRSDT/XSDT Re-Work by Slice 2011.
+initial concept of DSDT patching by mackerintel
+ 
+Re-Work by Slice 2011.
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -17,6 +16,8 @@
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
+
+#include "Platform.h"
 
 #define DEBUG_ACPI 1
 
@@ -52,8 +53,6 @@ CHAR16* ACPInames[NUM_TABLES] = {
 	L"MCFG.aml"
 };
 
-extern BOOLEAN				gMobile;
-extern CHAR8*				AppleBiosVendor;
 EFI_PHYSICAL_ADDRESS        *Table;
 
 UINT8 pmBlock[] = {
@@ -153,63 +152,7 @@ EFI_STATUS ConvertAcpiTable (IN UINTN TableLen,IN OUT VOID **Table)
   
 	return EFI_SUCCESS;
 }
-#if 0
-/*#############################################################################
-Copyright (c) 2004 - 2006, Intel Corporation                                                         
-All rights reserved. This program and the accompanying materials                          
-are licensed and made available under the terms and conditions of the BSD License         
-which accompanies this distribution.  The full text of the license may be found at        
-http://opensource.org/licenses/bsd-license.php                                            
 
-THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,                     
-WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
-
-Routine Description:
-  Convert ACPI Table if its location is lower than Address:0x100000
-  Assumption here:
-   As in legacy Bios, ACPI table is required to place in E/F Seg, 
-   So here we just check if the range is E/F seg, 
-   and if Not, assume the Memory type is EfiACPIReclaimMemory/EfiACPIMemoryNVS
-
-Arguments:
-  TableGuid - Guid of the table
-  Table     - pointer to the table  
-
-Returns:
-  EFI_SUCEESS - Convert Table successfully
-  Other       - Failed
-
-###############################################################################*/
-EFI_STATUS ConvertAcpiSystemTable (IN EFI_GUID *TableGuid,IN OUT VOID **Table)
-{
-	EFI_STATUS      Status;
-	VOID            *AcpiHeader;
-	UINTN           AcpiTableLen;
-  
-	// If match acpi guid (1.0, 2.0, or later), Convert ACPI table according to version. 
-	AcpiHeader = (VOID*)(UINTN)(*(UINT64 *)(*Table));
-  
-	if (CompareGuid(TableGuid, &gEfiAcpi10TableGuid) || CompareGuid(TableGuid, &gEfiAcpi20TableGuid)){
-		if (((EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER *)AcpiHeader)->Reserved == 0x00){
-
-		// If Acpi 1.0 Table, then RSDP structure doesn't contain Length field, use structure size
-		AcpiTableLen = sizeof (EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER);
-		} else if (((EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER *)AcpiHeader)->Reserved >= 0x02){
-
-		// If Acpi 2.0 or later, use RSDP Length field.
-		AcpiTableLen = ((EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER *)AcpiHeader)->Length;
-		} else {
-
-		// Invalid Acpi Version, return
-		return EFI_UNSUPPORTED;
-		}
-		Status = ConvertAcpiTable (AcpiTableLen, Table);
-		return Status; 
-	}
-  
-	return EFI_UNSUPPORTED;
-}
-#endif
 UINT8 Checksum8(VOID * startPtr, UINT32 len)
 {
 	UINT8	Value = 0;
@@ -221,7 +164,7 @@ UINT8 Checksum8(VOID * startPtr, UINT32 len)
 	return Value;
 }
 
-UINT32* ScanRSDT (RSDT_TABLE *Rsdt, UINT32 Signature) //,EFI_ACPI_DESCRIPTION_HEADER **FoundTable)
+UINT32* ScanRSDT (RSDT_TABLE *Rsdt, UINT32 Signature) 
 {
 	EFI_ACPI_DESCRIPTION_HEADER     *Table;
 	UINTN							Index;
@@ -256,18 +199,16 @@ UINT64* ScanXSDT (XSDT_TABLE *Xsdt, UINT32 Signature)
 		Table = (EFI_ACPI_DESCRIPTION_HEADER *)((UINTN)(Entry64));
 		if (Table->Signature==Signature) 
 		{
-			return BasePtr; //pointer to the table entry, but not a value from the entry
+			return BasePtr; //pointer to the table entry
 		}
 	}
 	return NULL;
 }
 
-EFI_STATUS PatchDsdt(EFI_DEVICE_PATH_PROTOCOL *DevicePath)
+EFI_STATUS PatchACPI(VOID)
 {
 	EFI_STATUS										Status = EFI_SUCCESS;
-	UINTN											Index;
-//	UINTN											AcpiTableLen;
-	BOOLEAN											fadtFound;
+	UINTN                         Index;
 	RSDT_TABLE										*Rsdt = NULL;
 	XSDT_TABLE										*Xsdt = NULL;	
 	EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER	*RsdPointer;
@@ -278,16 +219,16 @@ EFI_STATUS PatchDsdt(EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 //	EFI_GUID										*gTableGuidArray[] = {&gEfiAcpi20TableGuid, &gEfiAcpi10TableGuid};
 //	EFI_PEI_HOB_POINTERS							GuidHob;
 //	EFI_PEI_HOB_POINTERS							HobStart;
-	EFI_DEVICE_PATH_PROTOCOL*	PathToUSB = NULL;
+	EFI_DEVICE_PATH_PROTOCOL*	PathBooter = NULL;
 	EFI_DEVICE_PATH_PROTOCOL*	FilePath;
 	EFI_HANDLE					FileSystemHandle;
 	EFI_PHYSICAL_ADDRESS		dsdt = 0xFE000000;
 	EFI_PHYSICAL_ADDRESS		BufferPtr;
 	UINT8*						buffer = NULL;
 	UINT32						bufferLen = 0;
-	CHAR16*						DsdtFromUSB = L"\\efi\\acpi\\patched\\DSDT.aml";
-	CHAR16*						DsdtFromHDD = L"\\DSDT.aml";
-  CHAR16*						DsdtMini    = L"\\efi\\acpi\\mini\\DSDT.aml";
+	CHAR16*						PathPatched = L"\\EFI\\acpi\\patched\\DSDT.aml";
+	CHAR16*						PathDSDT = L"\\DSDT.aml";
+  CHAR16*						DsdtMini    = L"\\EFI\\acpi\\mini\\DSDT.aml";
 	CHAR16*						path = NULL;
 	UINT32* rf = NULL;
 	UINT64* xf = NULL;
@@ -295,10 +236,10 @@ EFI_STATUS PatchDsdt(EFI_DEVICE_PATH_PROTOCOL *DevicePath)
   UINT64 XFirmwareCtrl;
 
 	
-	fadtFound = FALSE;
 	//Slice - I want to begin from BIOS ACPI tables like with SMBIOS
 	RsdPointer = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)FindAcpiRsdPtr();
 	DBG("Found RsdPtr in BIOS: %p\n", RsdPointer);
+  
 //Slice - some tricks to do with Bios Acpi Tables
   Rsdt = (RSDT_TABLE*)(UINTN)(RsdPointer->RsdtAddress);
   if (Rsdt == NULL || Rsdt->Header.Signature != EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
@@ -312,9 +253,8 @@ EFI_STATUS PatchDsdt(EFI_DEVICE_PATH_PROTOCOL *DevicePath)
   DBG("Found FADT in BIOS: %p\n", FadtPointer);
   Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)(FadtPointer->FirmwareCtrl);
   DBG("Found FACS in BIOS: %p\n", Facs);
-//  Facs->FirmwareWakingVector = 0x2000;
-//  DBG("HW sign in FACS: %x\n", Facs->HardwareSignature);
-#if 0	
+
+#if 0	  //Slice - this codes reserved for a future
 	if (0) { //RsdPointer) {
 		if (((EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER *)RsdPointer)->Reserved == 0x00){
 			
@@ -331,10 +271,10 @@ EFI_STATUS PatchDsdt(EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 		}
 		Status = ConvertAcpiTable (AcpiTableLen, (VOID**)&RsdPointer);
 		//Now install the new table
-		gBootServices->InstallConfigurationTable (&gEfiAcpiTableGuid, (VOID*)RsdPointer);
+		gBS->InstallConfigurationTable (&gEfiAcpiTableGuid, (VOID*)RsdPointer);
 		DBG("Converted RsdPtr 0x%p\n", RsdPointer);
 		gSystemTable->Hdr.CRC32 = 0;
-		gBootServices->CalculateCrc32 ((UINT8 *) &gSystemTable->Hdr, 
+		gBS->CalculateCrc32 ((UINT8 *) &gSystemTable->Hdr, 
 									   gSystemTable->Hdr.HeaderSize, &gSystemTable->Hdr.CRC32);	
 		DBG("AcpiTableLen %x\n", AcpiTableLen);
 	} else
@@ -382,14 +322,13 @@ EFI_STATUS PatchDsdt(EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 	 	AsciiPrint("Error! Xsdt is not found!!!\n");
 	 	//We should make here ACPI20 RSDP with all needed subtables based on ACPI10
 	}
-	fadtFound = (FadtPointer!=NULL);
+
 	DBG("FADT pointer = %x\n", (UINTN)FadtPointer);
-	if(fadtFound)
+	if(FadtPointer)
 	{
 		//Slice - then we do FADT patch no matter if we don't have DSDT.aml
-		//gBootServices->AllocatePool (EfiBootServicesData, 0x100, (VOID **) &newFadt);
 		BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
-		Status=gBootServices->AllocatePages(AllocateMaxAddress,EfiACPIReclaimMemory, 1, &BufferPtr);		
+		Status=gBS->AllocatePages(AllocateMaxAddress,EfiACPIReclaimMemory, 1, &BufferPtr);		
 		if(!EFI_ERROR(Status))
 		{
 			newFadt = (EFI_ACPI_4_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)BufferPtr;
@@ -397,7 +336,7 @@ EFI_STATUS PatchDsdt(EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 	//		MsgLog("old FADT length=%x\n", oldLength);
 			CopyMem((UINT8*)newFadt, (UINT8*)FadtPointer, oldLength); //old data
 			newFadt->Header.Length = 0xF4; 				
-			CopyMem((UINT8*)newFadt->Header.OemId, (UINT8*)AppleBiosVendor, 6);
+			CopyMem((UINT8*)newFadt->Header.OemId, (UINT8*)BiosVendor, 6);
 			newFadt->Header.Revision = EFI_ACPI_4_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION;
 			newFadt->Reserved0 = 0; //ACPIspec said it should be 0, while 1 is possible, but no more
 			
@@ -453,14 +392,14 @@ EFI_STATUS PatchDsdt(EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 		}
 		
 	BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
-	Status=gBootServices->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);
+	Status=gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);
 	if(!EFI_ERROR(Status))
 	{
-		UINT8	oemID[6]     = HPET_OEM_ID;
-		UINT64	oemTableID[] = HPET_OEM_TABLE_ID;
-		UINT32	creatorID[]  = HPET_CREATOR_ID;
+		UINT8	oemID[6]        = HPET_OEM_ID;
+		UINT64	oemTableID[]  = HPET_OEM_TABLE_ID;
+		UINT32	creatorID[]   = HPET_CREATOR_ID;
 		xf = ScanXSDT(Xsdt, HPET_SIGN);
-		if(xf==NULL) { //we want to make the new table if OEM is not found
+		if(!xf) { //we want to make the new table if OEM is not found
 			
 			Hpet = (EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER*)(UINTN)BufferPtr;
 			Hpet->Header.Signature = EFI_ACPI_3_0_HIGH_PRECISION_EVENT_TIMER_TABLE_SIGNATURE;
@@ -470,13 +409,13 @@ EFI_STATUS PatchDsdt(EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 			CopyMem(&Hpet->Header.OemTableId, oemTableID, sizeof(oemTableID));
 			Hpet->Header.OemRevision = 0x00000001;
 			CopyMem(&Hpet->Header.CreatorId, creatorID, sizeof(creatorID));
-			Hpet->EventTimerBlockId = 0x8086A201; //I think we should have option to set this in plist?? // we should remember LPC VendorID to place here
+			Hpet->EventTimerBlockId = 0x8086A201; // we should remember LPC VendorID to place here
 			Hpet->BaseAddressLower32Bit.AddressSpaceId = EFI_ACPI_2_0_SYSTEM_IO;
 			Hpet->BaseAddressLower32Bit.RegisterBitWidth = 0x40; //64bit
-			Hpet->BaseAddressLower32Bit.RegisterBitOffset = 0x00; //is this correct??
+			Hpet->BaseAddressLower32Bit.RegisterBitOffset = 0x00; 
 			Hpet->BaseAddressLower32Bit.Address = 0xFED00000; //Physical Addr.
 			Hpet->HpetNumber = 0;
-			Hpet->MainCounterMinimumClockTickInPeriodicMode = 0x0080; //This may need to be calculated..
+			Hpet->MainCounterMinimumClockTickInPeriodicMode = 0x0080; 
 			Hpet->PageProtectionAndOemAttribute = EFI_ACPI_64KB_PAGE_PROTECTION; //Flags |= EFI_ACPI_4KB_PAGE_PROTECTION , EFI_ACPI_64KB_PAGE_PROTECTION
 			// verify checksum
 			Hpet->Header.Checksum = 0;
@@ -506,24 +445,24 @@ EFI_STATUS PatchDsdt(EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 			return EFI_UNSUPPORTED; //is it safe to just return here?
 		
     if (gSettings.UseDSDTmini==TRUE) {
-        PathToUSB = GetRootDevicePath();
+        PathBooter = GetRootDevicePath();
 		path = DsdtMini;
     } else {
-      if(FileExists(DevicePath, DsdtFromHDD)){
-        path = DsdtFromHDD;
+      if(FileExists(DevicePath, PathDSDT)){
+        path = PathDSDT;
       }else{
         // get Root from DevicePath  
-        PathToUSB = GetRootDevicePath();
-        path = DsdtFromUSB;
+        PathBooter = GetRootDevicePath();
+        path = PathPatched;
       }      
     }
 
 		
 		Status = EFI_NOT_FOUND;
 		DBG("path to DSDT = %a\n", path);
-		if(PathToUSB && FileExists(PathToUSB, path)) 
+		if(PathBooter && FileExists(PathBooter, path)) 
 		{
-			Status = GetHandleForDevicePath(PathToUSB, &FileSystemHandle);
+			Status = GetHandleForDevicePath(PathBooter, &FileSystemHandle);
 			if(!EFI_ERROR(Status))
 			{		//return Status; //no we should try another path
 				Status = EFI_NOT_FOUND; //needed for next check
@@ -531,11 +470,11 @@ EFI_STATUS PatchDsdt(EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 				if (FilePath != NULL) 
 				{
 					// load dsdt binary
-					Status=LoadFile(PathToUSB, path, (CHAR8**)&buffer, &bufferLen, FALSE);
+					Status=LoadFile(PathBooter, path, (CHAR8**)&buffer, &bufferLen, FALSE);
 					
 					if(!EFI_ERROR(Status))
 					{
-						Status=gBootServices->AllocatePages(AllocateMaxAddress,EfiACPIReclaimMemory,RoundPage(bufferLen)/EFI_PAGE_SIZE, &dsdt);
+						Status=gBS->AllocatePages(AllocateMaxAddress,EfiACPIReclaimMemory,RoundPage(bufferLen)/EFI_PAGE_SIZE, &dsdt);
 						//if success insert dsdt pointer into ACPI tables
 						if(!EFI_ERROR(Status) && (FadtPointer!=NULL && buffer!=NULL))
 						{
@@ -569,13 +508,13 @@ EFI_STATUS PatchDsdt(EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 			}
 		}
 		//if any previous operation fails we go to HDD 
-		if(EFI_ERROR(Status) && FileExists(DevicePath, DsdtFromHDD)==TRUE)
+		if(EFI_ERROR(Status) && FileExists(DevicePath, PathDSDT)==TRUE)
 		{
 			DBG("try to get DSDT from HDD\n");
 			Status=GetHandleForDevicePath(DevicePath, &FileSystemHandle);
 			if(EFI_ERROR(Status))
 				return Status; //no DSDT found on both pathes
-			path = DsdtFromHDD;
+			path = PathDSDT;
 			FilePath = FileDevicePath (FileSystemHandle, path);
 			if (FilePath != NULL) 
 			{				
@@ -586,7 +525,7 @@ EFI_STATUS PatchDsdt(EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 					SHOW_ON_ERROR(Status,"Incompatible DSDT!", L"Плохой DSDT файл!", STOP_ICON);
 					return Status; //no DSDT found on both pathes
 				}
-				Status = gBootServices->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, RoundPage(bufferLen) / EFI_PAGE_SIZE, &dsdt);
+				Status = gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, RoundPage(bufferLen) / EFI_PAGE_SIZE, &dsdt);
 				
 				if(!EFI_ERROR(Status) && (FadtPointer!=NULL && buffer!=NULL))
 				{

@@ -6,18 +6,12 @@
 
  *  Initial concept from Kabyl
  */
-/* Kabyl: BooterLog */
-//#define BOOTER_LOG_SIZE	(64 * 1024)
-#define SAFE_LOG_SIZE	80
 
-#define BOOTER_LOG_SIZE	(64 * 1024)
-#define MsgLog(x...) {AsciiSPrint(msgCursor, BOOTER_LOG_SIZE, x); while(*msgCursor){msgCursor++;}}
 
+#include "Platform.h"
 
 CHAR8 *msgbuf = 0;
 CHAR8 *msgCursor = 0;
-
-
 
 
 VOID InitBooterLog(VOID)

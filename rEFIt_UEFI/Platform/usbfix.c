@@ -6,6 +6,7 @@
  *  based on works by mackerintel 2008, orByte 2006, Signal64, THeKiNG
  */
 
+#include "Platform.h"
 
 #define DEBUG_USB 0
 

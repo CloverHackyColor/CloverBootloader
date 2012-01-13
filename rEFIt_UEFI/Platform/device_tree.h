@@ -78,6 +78,9 @@ enum {
 Structures for a Flattened Device Tree
  */
 
+//These definitions show the primitivity of C-language where there is no possibility to
+//explain the structure of DT
+
 #define kPropNameLength	32
 
 typedef struct DeviceTreeNodeProperty {

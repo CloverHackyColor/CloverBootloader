@@ -17,27 +17,7 @@
 /*******************************************************************************
  *   Header Files                                                               *
  *******************************************************************************/
-#include <Framework/FrameworkInternalFormRepresentation.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/MemoryAllocationLib.h>
-#include <Library/DebugLib.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/UefiLib.h>
-
-#include <Protocol/DevicePathToText.h>
-#include <Protocol/Smbios.h>
-#include <Protocol/DataHub.h>
-
-#include <IndustryStandard/Acpi10.h>
-#include <IndustryStandard/Acpi20.h>
-//#include <IndustryStandard/SmBios.h>
-#include "SmBios.h"
-
-#include <Guid/SmBios.h>
-#include <Guid/Acpi.h>
-#include <Guid/Mps.h>
-#include "DataHubRecords.h"
-
+#include "Platform.h"
 
 EFI_GUID gDevicePropertiesGuid = {
   0x91BD12FE, 0xF6C3, 0x44FB, {0xA5, 0xB7, 0x51, 0x22, 0xAB, 0x30, 0x3A, 0xE0}
@@ -47,8 +27,8 @@ EFI_GUID gAppleScreenInfoGuid = {
 	0xe316e100, 0x0751, 0x4c49, {0x90, 0x56, 0x48, 0x6c, 0x7e, 0x47, 0x29, 0x03}
 };
 
-UINT32 mCount = 0;
-UINT8* mAddr = NULL;
+UINT32 mPropSize = 0;
+UINT8* mProperties = NULL;
 
 typedef
 EFI_STATUS
@@ -74,7 +54,7 @@ APPLE_GETVAR_PROTOCOL mDeviceProperties=
 	NULL,
 	NULL,
 	NULL,
-	GetDeviceProperties,   
+	GetDeviceProps,   
 };
 
 
@@ -112,7 +92,7 @@ EFI_STATUS GetScreenInfo(VOID* This, UINT64* baseAddress, UINT64* frameBufferSiz
 	EFI_STATUS						Status;
 	
 	Status=gBS->HandleProtocol (
-                              gSystemTable->ConsoleOutHandle,
+                              gST->ConsoleOutHandle,
                               &gEfiGraphicsOutputProtocolGuid,
                               (VOID **) &GraphicsOutput);
 	if(EFI_ERROR(Status))

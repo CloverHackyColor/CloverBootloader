@@ -4,15 +4,17 @@
 
 #include "Platform.h"
 
-#define DEBUG_BOOT 0
+#define DEBUG_SET 0
 
-#if DEBUG_BOOT == 2
+#if DEBUG_SET == 2
 #define DBG(x...) AsciiPrint(x)
-#elif DEBUG_BOOT == 1
+#elif DEBUG_SET == 1
 #define DBG(x...) MsgLog(x)
 #else
 #define DBG(x...)
 #endif
+
+CHAR8							gSelectedUUID[40];
 
 EFI_STATUS GetNVRAMSettings(EFI_DEVICE_PATH_PROTOCOL* DevicePath, CHAR16* NVRAMPlistPath)
 {
@@ -42,7 +44,7 @@ EFI_STATUS GetNVRAMSettings(EFI_DEVICE_PATH_PROTOCOL* DevicePath, CHAR16* NVRAMP
 /*		prop=GetProperty(dict, "boot-args");
 		if(prop)
 		{
-			AsciiStrCpy(gSettingsFromMenu.KernelFlags, prop->string);
+			AsciiStrCpy(gSettings.KernelFlags, prop->string);
 		}
  */
 		prop = GetProperty(dict, "efi-boot-device");
@@ -128,34 +130,34 @@ EFI_STATUS GetUserSettings(EFI_HANDLE DeviceHandle, CHAR16* ConfigPlistPath)
 		prop=GetProperty(dict,"Language");
 		if(prop!=NULL)
 		{
-			AsciiStrCpy(gSettingsFromMenu.Language, prop->string);
+			AsciiStrCpy(gSettings.Language, prop->string);
 		} else {
 			prop=GetProperty(dict,"prev-lang:kbd");
 			if(prop!=NULL)
 			{
-				AsciiStrCpy(gSettingsFromMenu.Language, prop->string);
+				AsciiStrCpy(gSettings.Language, prop->string);
 			}
 		}
 		prop=GetProperty(dict,"boot-args");
 		if(prop!=NULL)
 		{
-			AsciiStrCpy(gSettingsFromMenu.KernelFlags, prop->string);
+			AsciiStrCpy(gSettings.KernelFlags, prop->string);
 		} else {
 			prop=GetProperty(dict,"KernelFlags");
 			if(prop!=NULL)
 			{
-				AsciiStrCpy(gSettingsFromMenu.KernelFlags, prop->string);
+				AsciiStrCpy(gSettings.KernelFlags, prop->string);
 			}
 		}
-		//gSettingsFromMenu.TimeOut
+		//gSettings.TimeOut
 		prop=GetProperty(dict,"TimeOut");
 		if(prop!=NULL)
 		{
-			AsciiStrCpy(gSettingsFromMenu.TimeOut, prop->string);
-			gTimeoutSec = (UINT16)AsciiStrDecimalToUintn(gSettingsFromMenu.TimeOut);	
+			AsciiStrCpy(gSettings.TimeOut, prop->string);
+			gTimeoutSec = (UINT16)AsciiStrDecimalToUintn(gSettings.TimeOut);	
 		} else {
 			gTimeoutSec = 5;
-			AsciiStrCpy(gSettingsFromMenu.TimeOut, "5");
+			AsciiStrCpy(gSettings.TimeOut, "5");
 		}
 		
 
@@ -163,20 +165,20 @@ EFI_STATUS GetUserSettings(EFI_HANDLE DeviceHandle, CHAR16* ConfigPlistPath)
 		prop=GetProperty(dict,"ResetAddress");
 		if(prop!=NULL)
 		{
-			AsciiStrCpy(gSettingsFromMenu.ResetAddr, prop->string);
-			gResetAddress  = (UINT16)AsciiStrHexToUintn(gSettingsFromMenu.ResetAddr); 
+			AsciiStrCpy(gSettings.ResetAddr, prop->string);
+			gResetAddress  = (UINT16)AsciiStrHexToUintn(gSettings.ResetAddr); 
 		}  else {
 			gResetAddress  = 0x64; //I wish it will be default
-			AsciiStrCpy(gSettingsFromMenu.ResetAddr,"0x64");
+			AsciiStrCpy(gSettings.ResetAddr,"0x64");
 		}
 		prop=GetProperty(dict,"ResetValue");
 		if(prop!=NULL)
 		{
-			AsciiStrCpy(gSettingsFromMenu.ResetVal, prop->string);
-			gResetValue = (UINT16)AsciiStrHexToUintn(gSettingsFromMenu.ResetVal);	
+			AsciiStrCpy(gSettings.ResetVal, prop->string);
+			gResetValue = (UINT16)AsciiStrHexToUintn(gSettings.ResetVal);	
 		} else {
 			gResetValue = 0xFE;
-			AsciiStrCpy(gSettingsFromMenu.ResetVal, "0xFE");
+			AsciiStrCpy(gSettings.ResetVal, "0xFE");
 		}
 		//other known pair is 0x02F9/0x06
 		
@@ -184,128 +186,128 @@ EFI_STATUS GetUserSettings(EFI_HANDLE DeviceHandle, CHAR16* ConfigPlistPath)
 		prop=GetProperty(dict,"BiosVendor");
 		if(prop!=NULL)
 		{
-			AsciiStrCpy(gSettingsFromMenu.VendorName, prop->string);
+			AsciiStrCpy(gSettings.VendorName, prop->string);
 		}
 		prop=GetProperty(dict,"BiosVersion");
 		if(prop!=NULL)
 		{
-			AsciiStrCpy(gSettingsFromMenu.RomVersion, prop->string);
+			AsciiStrCpy(gSettings.RomVersion, prop->string);
 		}
 		prop=GetProperty(dict,"BiosReleaseDate");
 		if(prop!=NULL)
 		{
-			AsciiStrCpy(gSettingsFromMenu.ReleaseDate, prop->string);
+			AsciiStrCpy(gSettings.ReleaseDate, prop->string);
 		}
 		prop=GetProperty(dict,"Manufacturer");
 		if(prop!=NULL)
 		{
-			AsciiStrCpy(gSettingsFromMenu.ManufactureName, prop->string);
+			AsciiStrCpy(gSettings.ManufactureName, prop->string);
 		}
 		prop=GetProperty(dict,"ProductName");
 		if(prop!=NULL)
 		{
-			AsciiStrCpy(gSettingsFromMenu.ProductName, prop->string);
+			AsciiStrCpy(gSettings.ProductName, prop->string);
 		}
 		prop=GetProperty(dict,"Version");
 		if(prop!=NULL)
 		{
-			AsciiStrCpy(gSettingsFromMenu.VersionNr, prop->string);
+			AsciiStrCpy(gSettings.VersionNr, prop->string);
 		}
 		prop=GetProperty(dict,"Family");
 		if(prop!=NULL)
 		{
-			AsciiStrCpy(gSettingsFromMenu.FamilyName, prop->string);
+			AsciiStrCpy(gSettings.FamilyName, prop->string);
 		}
 		prop=GetProperty(dict,"SerialNumber");
 		if(prop!=NULL)
 		{
-			AsciiStrCpy(gSettingsFromMenu.SerialNr, prop->string);
+			AsciiStrCpy(gSettings.SerialNr, prop->string);
 		}
 		prop=GetProperty(dict,"CustomUUID");
 		if(prop!=NULL)
 		{
-			AsciiStrCpy(gSettingsFromMenu.CustomUuid, prop->string);
+			AsciiStrCpy(gSettings.CustomUuid, prop->string);
 		}
 		prop=GetProperty(dict,"BoardManufacturer");
 		if(prop!=NULL)
 		{
-			AsciiStrCpy(gSettingsFromMenu.BoardManufactureName, prop->string);
+			AsciiStrCpy(gSettings.BoardManufactureName, prop->string);
 		}
 		prop=GetProperty(dict,"BoardSerialNumber");
 		if(prop!=NULL)
 		{
-			AsciiStrCpy(gSettingsFromMenu.BoardSerialNumber, prop->string);
+			AsciiStrCpy(gSettings.BoardSerialNumber, prop->string);
 		}
 		prop=GetProperty(dict,"Board-ID");
 		if(prop!=NULL)
 		{
-			AsciiStrCpy(gSettingsFromMenu.BoardNumber, prop->string);
+			AsciiStrCpy(gSettings.BoardNumber, prop->string);
 		}
 		prop=GetProperty(dict,"LocationInChassis");
 		if(prop!=NULL)
 		{
-			AsciiStrCpy(gSettingsFromMenu.LocationInChassis, prop->string);
+			AsciiStrCpy(gSettings.LocationInChassis, prop->string);
 		}
 		
 		prop=GetProperty(dict,"ChassisManufacturer");
 		if(prop!=NULL)
 		{
-			AsciiStrCpy(gSettingsFromMenu.ChassisManufacturer, prop->string);
+			AsciiStrCpy(gSettings.ChassisManufacturer, prop->string);
 		}
 		prop=GetProperty(dict,"ChassisAssetTag");
 		if(prop!=NULL)
 		{
-			AsciiStrCpy(gSettingsFromMenu.ChassisAssetTag, prop->string);
+			AsciiStrCpy(gSettings.ChassisAssetTag, prop->string);
 		}
 		prop=GetProperty(dict,"smartUPS");
 		if(prop!=NULL)
 		{
 			if (AsciiStriCmp(prop->string,"y")==0 || AsciiStriCmp(prop->string,"Y")==0)
-				gSettingsFromMenu.smartUPS=TRUE;
+				gSettings.smartUPS=TRUE;
 			else
-				gSettingsFromMenu.smartUPS=FALSE;
+				gSettings.smartUPS=FALSE;
 		}
 		prop=GetProperty(dict,"ShowLegacyBoot");
 		if(prop!=NULL)
 		{
 			if (AsciiStriCmp(prop->string,"y")==0 || AsciiStriCmp(prop->string,"Y")==0)
-				gSettingsFromMenu.ShowLegacyBoot=TRUE;
+				gSettings.ShowLegacyBoot=TRUE;
 			else
-				gSettingsFromMenu.ShowLegacyBoot=FALSE;
+				gSettings.ShowLegacyBoot=FALSE;
 		}
     
 /*		
 		prop=GetProperty(dict,"MemorySerialNumber");
 		if(prop!=NULL)
 		{
-			AsciiStrCpy(gSettingsFromMenu.MemorySerialNumber, prop->string);
+			AsciiStrCpy(gSettings.MemorySerialNumber, prop->string);
 		}
 		prop=GetProperty(dict,"MemoryPartNumber");
 		if(prop!=NULL)
 		{
-			AsciiStrCpy(gSettingsFromMenu.MemoryPartNumber, prop->string);
+			AsciiStrCpy(gSettings.MemoryPartNumber, prop->string);
 		}
  */
 		prop=GetProperty(dict,"CpuFrequencyMHz");
 		if(prop!=NULL)
 		{
-			AsciiStrCpy(gSettingsFromMenu.CpuFreqMHz, prop->string);
-			gCpuSpeed = (UINT16)AsciiStrDecimalToUintn(gSettingsFromMenu.CpuFreqMHz);
+			AsciiStrCpy(gSettings.CpuFreqMHz, prop->string);
+			gCpuSpeed = (UINT16)AsciiStrDecimalToUintn(gSettings.CpuFreqMHz);
 		}
 		prop=GetProperty(dict,"ProcessorType");
 		if(prop!=NULL)
 		{
-			AsciiStrCpy(gSettingsFromMenu.CpuType, prop->string);
-			gCPUtype = (UINT16)AsciiStrHexToUintn(gSettingsFromMenu.CpuType);
+			AsciiStrCpy(gSettings.CpuType, prop->string);
+			gCPUtype = (UINT16)AsciiStrHexToUintn(gSettings.CpuType);
 		} else {
 			gCPUtype = GetAdvancedCpuType();
 		}
 
-		prop=GetProperty(dict,"ProcessorBusSpeed");
+		prop=GetProperty(dict,"BusSpeed");
 		if(prop!=NULL)
 		{
-			AsciiStrCpy(gSettingsFromMenu.BusSpeed, prop->string);
-			gBusSpeed = (UINT16)AsciiStrDecimalToUintn(gSettingsFromMenu.BusSpeed);
+			AsciiStrCpy(gSettings.BusSpeed, prop->string);
+			gBusSpeed = (UINT16)AsciiStrDecimalToUintn(gSettings.BusSpeed);
 		}
 		SaveSettings();
 	}	

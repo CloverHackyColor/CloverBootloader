@@ -33,6 +33,7 @@
  * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
  */
 
+#include "Platform.h"
 
 
 #define DEBUG_CPU 1
@@ -46,13 +47,6 @@
 #define DBG(x...)
 #endif
 
-
-extern EFI_BOOT_SERVICES*		gBS;
-extern SMBIOS_STRUCTURE_POINTER	SmbiosTable;
-extern GFX_MANUFACTERER			gGraphicsCard;
-extern CHAR8*					cpuFrequencyMHz;
-extern BOOLEAN					gMobile;
-extern UINT16					gCpuSpeed;
 
 INTN							temp, tjmax=0;
 UINT8							gDefaultType; 
@@ -185,7 +179,7 @@ DoCpuid(UINT32 selector, UINT32 *data)
 	AsmCpuid(selector, data, data+1, data+2, data+3);
 }
 
-UINT64 GetCPUProperties ()
+UINT64 GetCPUProperties (VOID)
 {
 	INT32		i = 0;
 	UINT32		reg[4];
@@ -809,7 +803,7 @@ VOID ShowCPU()
 	buf = AllocateZeroPool(64);
 	AsciiSPrint(msg[0], 64, "CPU:	BrandString - %a", gCPUStructure.BrandString);
 	AsciiSPrint(msgru[0], 64, "%a - %a", RusToAscii(buf, L"Название ЦПУ"), gCPUStructure.BrandString);
-	PrintMessage(4, msgru[0], MENU_ICON);
+//	PrintMessage(4, msgru[0], MENU_ICON);
 	AsciiSPrint(msg[1], 64, "Vendor/Model/ExtModel: 0x%x/0x%x/0x%x",
 				gCPUStructure.Vendor,  gCPUStructure.Model, gCPUStructure.Extmodel);
 	AsciiSPrint(msgru[1], 64, "%a: 0x%x/0x%x/0x%x", RusToAscii(buf, L"Фирма/Модель/Ревизия"),
