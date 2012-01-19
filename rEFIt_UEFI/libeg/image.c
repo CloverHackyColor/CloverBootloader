@@ -158,7 +158,7 @@ static EFI_STATUS egFindESP(OUT EFI_FILE_HANDLE *RootDir)
     }
     return Status;
 }
-
+//if (NULL, ...) then save to EFI partition
 EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName,
                       IN UINT8 *FileData, IN UINTN FileDataLength)
 {

@@ -82,6 +82,8 @@
 
 // Guid Includes
 #include <Guid/Acpi.h>
+#include <Guid/ConsoleInDevice.h>
+#include <Guid/ConsoleOutDevice.h>
 #include <Guid/DataHubRecords.h>
 #include <Guid/DxeServices.h>
 #include <Guid/EventGroup.h>
@@ -93,6 +95,7 @@
 #include <Guid/MemoryTypeInformation.h>
 #include <Guid/MemoryAllocationHob.h>
 #include <Guid/SmBios.h>
+#include <Guid/StandardErrorDevice.h>
 
 // Library Includes
 #include <Library/BaseLib.h>

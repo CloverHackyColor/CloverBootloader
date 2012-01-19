@@ -222,13 +222,13 @@ EFI_STATUS PatchACPI(VOID)
 	EFI_DEVICE_PATH_PROTOCOL*	PathBooter = NULL;
 	EFI_DEVICE_PATH_PROTOCOL*	FilePath;
 	EFI_HANDLE					FileSystemHandle;
-	EFI_PHYSICAL_ADDRESS		dsdt = 0xFE000000;
+	EFI_PHYSICAL_ADDRESS		dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
 	EFI_PHYSICAL_ADDRESS		BufferPtr;
 	UINT8*						buffer = NULL;
 	UINT32						bufferLen = 0;
 	CHAR16*						PathPatched = L"\\EFI\\acpi\\patched\\DSDT.aml";
-	CHAR16*						PathDSDT = L"\\DSDT.aml";
-  CHAR16*						DsdtMini    = L"\\EFI\\acpi\\mini\\DSDT.aml";
+	CHAR16*						PathDsdt = L"\\DSDT.aml";
+  CHAR16*						PathDsdtMini    = L"\\EFI\\acpi\\mini\\DSDT.aml";
 	CHAR16*						path = NULL;
 	UINT32* rf = NULL;
 	UINT64* xf = NULL;
@@ -323,9 +323,11 @@ EFI_STATUS PatchACPI(VOID)
 	 	//We should make here ACPI20 RSDP with all needed subtables based on ACPI10
 	}
 
-	DBG("FADT pointer = %x\n", (UINTN)FadtPointer);
-	if(FadtPointer)
+//	DBG("FADT pointer = %x\n", (UINTN)FadtPointer);
+	if(!FadtPointer)
 	{
+    return EFI_NOT_FOUND;
+  }
 		//Slice - then we do FADT patch no matter if we don't have DSDT.aml
 		BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
 		Status=gBS->AllocatePages(AllocateMaxAddress,EfiACPIReclaimMemory, 1, &BufferPtr);		
@@ -390,187 +392,98 @@ EFI_STATUS PatchACPI(VOID)
 			}
 
 		}
-		
-	BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
-	Status=gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);
-	if(!EFI_ERROR(Status))
-	{
-		UINT8	oemID[6]        = HPET_OEM_ID;
-		UINT64	oemTableID[]  = HPET_OEM_TABLE_ID;
-		UINT32	creatorID[]   = HPET_CREATOR_ID;
-		xf = ScanXSDT(Xsdt, HPET_SIGN);
-		if(!xf) { //we want to make the new table if OEM is not found
-			
-			Hpet = (EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER*)(UINTN)BufferPtr;
-			Hpet->Header.Signature = EFI_ACPI_3_0_HIGH_PRECISION_EVENT_TIMER_TABLE_SIGNATURE;
-			Hpet->Header.Length = sizeof(EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER);
-			Hpet->Header.Revision = EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_REVISION;
-			CopyMem(&Hpet->Header.OemId, oemID, 6);
-			CopyMem(&Hpet->Header.OemTableId, oemTableID, sizeof(oemTableID));
-			Hpet->Header.OemRevision = 0x00000001;
-			CopyMem(&Hpet->Header.CreatorId, creatorID, sizeof(creatorID));
-			Hpet->EventTimerBlockId = 0x8086A201; // we should remember LPC VendorID to place here
-			Hpet->BaseAddressLower32Bit.AddressSpaceId = EFI_ACPI_2_0_SYSTEM_IO;
-			Hpet->BaseAddressLower32Bit.RegisterBitWidth = 0x40; //64bit
-			Hpet->BaseAddressLower32Bit.RegisterBitOffset = 0x00; 
-			Hpet->BaseAddressLower32Bit.Address = 0xFED00000; //Physical Addr.
-			Hpet->HpetNumber = 0;
-			Hpet->MainCounterMinimumClockTickInPeriodicMode = 0x0080; 
-			Hpet->PageProtectionAndOemAttribute = EFI_ACPI_64KB_PAGE_PROTECTION; //Flags |= EFI_ACPI_4KB_PAGE_PROTECTION , EFI_ACPI_64KB_PAGE_PROTECTION
-			// verify checksum
-			Hpet->Header.Checksum = 0;
-			Hpet->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Hpet,Hpet->Header.Length));
-			
-			//then we have to install new table into Xsdt
-			if (Xsdt!=NULL) {
-				//we have no such table. Add a new entry into Xsdt
-				UINT64	EntryCount;
-				
-				EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
-				xf = (UINT64*)(&(Xsdt->Entry)) + EntryCount;
-				Xsdt->Header.Length += sizeof(UINT64);				
-				*xf = (UINT64)(UINTN)Hpet;
-				DBG("HPET placed into XSDT: %lx\n", *xf);
-				Xsdt->Header.Checksum = 0;
-				Xsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Xsdt, Xsdt->Header.Length));
-			}
-		}
-	}
-
-		
-		if(DevicePath==NULL) {
-			DevicePath = GetRootDevicePath();
-		}
-		if(DevicePath==NULL)
-			return EFI_UNSUPPORTED; //is it safe to just return here?
-		
-    if (gSettings.UseDSDTmini==TRUE) {
-        PathBooter = GetRootDevicePath();
-		path = DsdtMini;
-    } else {
-      if(FileExists(DevicePath, PathDSDT)){
-        path = PathDSDT;
-      }else{
-        // get Root from DevicePath  
-        PathBooter = GetRootDevicePath();
-        path = PathPatched;
-      }      
+    
+      //HPET creation
+    BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
+    Status=gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);
+    if(!EFI_ERROR(Status))
+    {
+      UINT8	oemID[6]        = HPET_OEM_ID;
+      UINT64	oemTableID[]  = HPET_OEM_TABLE_ID;
+      UINT32	creatorID[]   = HPET_CREATOR_ID;
+      xf = ScanXSDT(Xsdt, HPET_SIGN);
+      if(!xf) { //we want to make the new table if OEM is not found
+        
+        Hpet = (EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER*)(UINTN)BufferPtr;
+        Hpet->Header.Signature = EFI_ACPI_3_0_HIGH_PRECISION_EVENT_TIMER_TABLE_SIGNATURE;
+        Hpet->Header.Length = sizeof(EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER);
+        Hpet->Header.Revision = EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_REVISION;
+        CopyMem(&Hpet->Header.OemId, oemID, 6);
+        CopyMem(&Hpet->Header.OemTableId, oemTableID, sizeof(oemTableID));
+        Hpet->Header.OemRevision = 0x00000001;
+        CopyMem(&Hpet->Header.CreatorId, creatorID, sizeof(creatorID));
+        Hpet->EventTimerBlockId = 0x8086A201; // we should remember LPC VendorID to place here
+        Hpet->BaseAddressLower32Bit.AddressSpaceId = EFI_ACPI_2_0_SYSTEM_IO;
+        Hpet->BaseAddressLower32Bit.RegisterBitWidth = 0x40; //64bit
+        Hpet->BaseAddressLower32Bit.RegisterBitOffset = 0x00; 
+        Hpet->BaseAddressLower32Bit.Address = 0xFED00000; //Physical Addr.
+        Hpet->HpetNumber = 0;
+        Hpet->MainCounterMinimumClockTickInPeriodicMode = 0x0080; 
+        Hpet->PageProtectionAndOemAttribute = EFI_ACPI_64KB_PAGE_PROTECTION; //Flags |= EFI_ACPI_4KB_PAGE_PROTECTION , EFI_ACPI_64KB_PAGE_PROTECTION
+        // verify checksum
+        Hpet->Header.Checksum = 0;
+        Hpet->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Hpet,Hpet->Header.Length));
+        
+        //then we have to install new table into Xsdt
+        if (Xsdt!=NULL) {
+          //we have no such table. Add a new entry into Xsdt
+          UINT64	EntryCount;
+          
+          EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
+          xf = (UINT64*)(&(Xsdt->Entry)) + EntryCount;
+          Xsdt->Header.Length += sizeof(UINT64);				
+          *xf = (UINT64)(UINTN)Hpet;
+          DBG("HPET placed into XSDT: %lx\n", *xf);
+          Xsdt->Header.Checksum = 0;
+          Xsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Xsdt, Xsdt->Header.Length));
+        }
+      }
     }
-
-		
-		Status = EFI_NOT_FOUND;
-		DBG("path to DSDT = %a\n", path);
-		if(PathBooter && FileExists(PathBooter, path)) 
-		{
-			Status = GetHandleForDevicePath(PathBooter, &FileSystemHandle);
-			if(!EFI_ERROR(Status))
-			{		//return Status; //no we should try another path
-				Status = EFI_NOT_FOUND; //needed for next check
-				FilePath = FileDevicePath (FileSystemHandle, path);
-				if (FilePath != NULL) 
-				{
-					// load dsdt binary
-					Status=LoadFile(PathBooter, path, (CHAR8**)&buffer, &bufferLen, FALSE);
-					
-					if(!EFI_ERROR(Status))
-					{
-						Status=gBS->AllocatePages(AllocateMaxAddress,EfiACPIReclaimMemory,RoundPage(bufferLen)/EFI_PAGE_SIZE, &dsdt);
-						//if success insert dsdt pointer into ACPI tables
-						if(!EFI_ERROR(Status) && (FadtPointer!=NULL && buffer!=NULL))
-						{
-							CopyMem((VOID*)(UINTN)dsdt,buffer,bufferLen);
-							
-							if(FadtPointer!=NULL)
-							{
-								EFI_ACPI_DESCRIPTION_HEADER* facpHeader=(EFI_ACPI_DESCRIPTION_HEADER*) FadtPointer;
-								
-								FadtPointer->Dsdt=(UINT32)dsdt;
-								
-								if(facpHeader->Length>0x8C)
-								{
-									FadtPointer->XDsdt=dsdt;
-								}
-								// verify checksum
-								facpHeader->Checksum = 0;
-								facpHeader->Checksum = (UINT8)(256-Checksum8((CHAR8*)FadtPointer,facpHeader->Length));
-							}
-							if (Rsdt) {
-								Rsdt->Header.Checksum = 0;
-								Rsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Rsdt, Rsdt->Header.Length));
-							}
-							if (Xsdt) {
-								Xsdt->Header.Checksum = 0;
-								Xsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Xsdt, Xsdt->Header.Length));
-							}
-						}
-					} 
-				}
-			}
-		}
-		//if any previous operation fails we go to HDD 
-		if(EFI_ERROR(Status) && FileExists(DevicePath, PathDSDT)==TRUE)
-		{
-			DBG("try to get DSDT from HDD\n");
-			Status=GetHandleForDevicePath(DevicePath, &FileSystemHandle);
-			if(EFI_ERROR(Status))
-				return Status; //no DSDT found on both pathes
-			path = PathDSDT;
-			FilePath = FileDevicePath (FileSystemHandle, path);
-			if (FilePath != NULL) 
-			{				
-				// load dsdt binary
-				Status=LoadFile(DevicePath,path,(CHAR8**)&buffer,&bufferLen,FALSE);
-				if(EFI_ERROR(Status)){
-					CreateDesktop(TRUE);
-					SHOW_ON_ERROR(Status,"Incompatible DSDT!", L"Плохой DSDT файл!", STOP_ICON);
-					return Status; //no DSDT found on both pathes
-				}
-				Status = gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, RoundPage(bufferLen) / EFI_PAGE_SIZE, &dsdt);
-				
-				if(!EFI_ERROR(Status) && (FadtPointer!=NULL && buffer!=NULL))
-				{
-					CopyMem((VOID*)(UINTN)dsdt, buffer, bufferLen);
-					
-					if(FadtPointer!=NULL)
-					{
-						EFI_ACPI_DESCRIPTION_HEADER* facpHeader=(EFI_ACPI_DESCRIPTION_HEADER*) FadtPointer;
-						
-						FadtPointer->Dsdt=(UINT32)dsdt;
-						
-						if(facpHeader->Length>0x8C) //yes we make 0xF4
-						{
-							FadtPointer->XDsdt=dsdt;
-						}
-						// verify checksum
-						facpHeader->Checksum = 0;
-						facpHeader->Checksum = (UINT8)(256-Checksum8((CHAR8*)FadtPointer,facpHeader->Length));
-						DBG("DSDT applied\n");
-					}
-					//Now we can finish with RSDT checksum
-					if (Rsdt) {
-						Rsdt->Header.Checksum = 0;
-						Rsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Rsdt, Rsdt->Header.Length));
-					}
-					if (Xsdt) {
-						Xsdt->Header.Checksum = 0;
-						Xsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Xsdt, Xsdt->Header.Length));
-					}
-				}
-			}
-			else if(!FileExists(DevicePath,path)) 
-			{
-				DBG(" DSDT not found\n");
-				return EFI_SUCCESS;
-			}
-			//				goto AddTable;
-#if DEBUG_ACPI == 2		
-			WaitForKeyPress("look to DSDT patch!");
-#endif			
-			
-			return EFI_SUCCESS;
-		}
+  
+      //DSDT finding
+    Status = EFI_NOT_FOUND;
+    if (gSettings.UseDSDTmini==TRUE) {
+      if (FileExists(SelfRootDir, PathDsdtMini)) {
+        Status = egLoadFile(SelfRootDir, PathDsdtMini, &buffer, &bufferLen);
+      }
+    }
+    if (EFI_ERROR(Status) && FileExists(Volume->RootDir, PathDsdt)) {
+      Status = egLoadFile(Volume->RootDir, PathDSDT, &buffer, &bufferLen);
+    }
+    if (EFI_ERROR(Status) && FileExists(SelfRootDir, PathPatched)) {
+      Status = egLoadFile(SelfRootDir, PathPatched, &buffer, &bufferLen);
+    }
+		  //apply DSDT
+    if (!EFI_ERROR(Status)) {
+      Status = gBS->AllocatePages (
+                                   AllocateMaxAddress,
+                                   EfiACPIReclaimMemory,
+                                   EFI_SIZE_TO_PAGES(bufferLen),
+                                   &dsdt
+                                   );
+      
+      //if success insert dsdt pointer into ACPI tables
+      if(!EFI_ERROR(Status))
+      {
+        CopyMem((VOID*)(UINTN)dsdt, buffer, bufferLen);
+          
+        FadtPointer->Dsdt=(UINT32)dsdt;
+        FadtPointer->XDsdt=dsdt;
+          // verify checksum
+        FadtPointer->Header.Checksum = 0;
+        FadtPointer->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)FadtPointer,FadtPointer->Header.Length));
+        if (Rsdt) {
+          Rsdt->Header.Checksum = 0;
+          Rsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Rsdt, Rsdt->Header.Length));
+        }
+        if (Xsdt) {
+          Xsdt->Header.Checksum = 0;
+          Xsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Xsdt, Xsdt->Header.Length));
+        }
+      }
+    } 
+    
+      //find other ACPI tables
+ 
 		return Status;
 	}
-
-	return EFI_UNSUPPORTED;
-}

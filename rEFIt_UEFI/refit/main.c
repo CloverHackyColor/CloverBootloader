@@ -1149,7 +1149,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     SetupScreen();
     LoadDrivers();
     ScanVolumes();
-    DebugPause();
+ //   DebugPause();
     
     // scan for loaders and tools, add them to the menu
     if (GlobalConfig.LegacyFirst)
@@ -1158,7 +1158,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     if (!GlobalConfig.LegacyFirst)
         ScanLegacy();
     ScanTool();
-    DebugPause();
+//    DebugPause();
     
     // fixed other menu entries
     if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
