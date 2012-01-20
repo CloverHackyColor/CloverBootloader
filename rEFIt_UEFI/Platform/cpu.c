@@ -771,20 +771,20 @@ typedef struct {
  VOID DumpCPU()
  {
  //	if(AsciiStrStr(gSettingsFromMenu.Debug,"y") || AsciiStrStr(gSettingsFromMenu.Debug,"Y")) {
-	AsciiPrint("CPU:	BrandString - %a\n", gCPUStructure.BrandString);
-	AsciiPrint("Vendor/Model/ExtModel: 0x%x/0x%x/0x%x\n", gCPUStructure.Vendor,  gCPUStructure.Model, gCPUStructure.Extmodel);
-	AsciiPrint("Family/ExtFamily:      0x%x/0x%x\n", gCPUStructure.Family,  gCPUStructure.Extfamily);
-	AsciiPrint("MaxCoef/CurrCoef:      0x%x/0x%x\n", gCPUStructure.MaxCoef,  gCPUStructure.CurrCoef);
-	AsciiPrint("MaxDiv/CurrDiv:        0x%x/0x%x\n", gCPUStructure.MaxDiv,  gCPUStructure.CurrDiv);
-	AsciiPrint("Features: 0x%08x\n",gCPUStructure.Features);
-	AsciiPrint("Threads: %d\n",gCPUStructure.Threads);
-	AsciiPrint("Cores: %d\n",gCPUStructure.Cores);
-	AsciiPrint("FSB: %d MHz\n",gCPUStructure.ExternalClock);
-	AsciiPrint("CPU: %d MHz\n",gCPUStructure.MaxSpeed);
-	AsciiPrint("TSC: %d MHz\n",gCPUStructure.CurrentSpeed);	
-	AsciiPrint("TjMax: %d C\n", tjmax);	
+	Print(L"CPU:	BrandString - %a\n", gCPUStructure.BrandString);
+	Print(L"Vendor/Model/ExtModel: 0x%x/0x%x/0x%x\n", gCPUStructure.Vendor,  gCPUStructure.Model, gCPUStructure.Extmodel);
+	Print(L"Family/ExtFamily:      0x%x/0x%x\n", gCPUStructure.Family,  gCPUStructure.Extfamily);
+	Print(L"MaxCoef/CurrCoef:      0x%x/0x%x\n", gCPUStructure.MaxCoef,  gCPUStructure.CurrCoef);
+	Print(L"MaxDiv/CurrDiv:        0x%x/0x%x\n", gCPUStructure.MaxDiv,  gCPUStructure.CurrDiv);
+	Print(L"Features: 0x%08x\n",gCPUStructure.Features);
+	Print(L"Threads: %d\n",gCPUStructure.Threads);
+	Print(L"Cores: %d\n",gCPUStructure.Cores);
+	Print(L"FSB: %d MHz\n",gCPUStructure.ExternalClock);
+	Print(L"CPU: %d MHz\n",gCPUStructure.MaxSpeed);
+	Print(L"TSC: %d MHz\n",gCPUStructure.CurrentSpeed);	
+	Print(L"TjMax: %d C\n", tjmax);	
 	
-		//		AsciiPrint("press key to continue...\n");
+		//		Print(L"press key to continue...\n");
 	WaitForKeyPress("waiting for key press...\n");
 //	}	
 }

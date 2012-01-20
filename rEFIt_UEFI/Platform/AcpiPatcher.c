@@ -319,7 +319,7 @@ EFI_STATUS PatchACPI(VOID)
 	}
 	
 	if(!xf){
-	 	AsciiPrint("Error! Xsdt is not found!!!\n");
+	 	Print(L"Error! Xsdt is not found!!!\n");
 	 	//We should make here ACPI20 RSDP with all needed subtables based on ACPI10
 	}
 

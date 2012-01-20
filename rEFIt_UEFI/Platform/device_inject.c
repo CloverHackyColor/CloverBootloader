@@ -119,7 +119,7 @@ struct DevPropDevice *devprop_add_device(struct DevPropString *string, CHAR8 *pa
 	device = AllocatePool(sizeof(struct DevPropDevice));
 
 	if (AsciiStrnCmp(path, pciroot_string, AsciiStrLen(pciroot_string))) {
-		AsciiPrint("ERROR parsing device path\n");
+		Print(L"ERROR parsing device path\n");
 		return NULL;
 	}
 
@@ -141,7 +141,7 @@ struct DevPropDevice *devprop_add_device(struct DevPropString *string, CHAR8 *pa
 				AsciiSPrint(buff, 3, "%c", path[curr]);
 			else 
 			{
-				AsciiPrint("ERROR parsing device path\n");
+				Print(L"ERROR parsing device path\n");
 				numpaths = 0;
 				break;
 			}
@@ -156,7 +156,7 @@ struct DevPropDevice *devprop_add_device(struct DevPropString *string, CHAR8 *pa
 				AsciiSPrint(buff, 3, "%c", path[curr]);
 			else
 			{
-				AsciiPrint("ERROR parsing device path\n");
+				Print(L"ERROR parsing device path\n");
 				numpaths = 0;
 				break;
 			}

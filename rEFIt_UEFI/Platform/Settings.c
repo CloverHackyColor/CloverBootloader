@@ -116,14 +116,14 @@ EFI_STATUS GetUserSettings(EFI_HANDLE DeviceHandle, CHAR16* ConfigPlistPath)
 	Status=LoadFileFromDevice(DeviceHandle, ConfigPlistPath, (CHAR8**)&gConfigPtr, &size, FALSE);
 	if(EFI_ERROR(Status))
 	{
-		AsciiPrint("Error loading config.plist!\n");
+		Print(L"Error loading config.plist!\n");
 		return Status;
 	}
 	if(gConfigPtr!=NULL)
 	{		
 		if(ParseXML((const CHAR8*)gConfigPtr, &dict) != EFI_SUCCESS)
 		{
-			AsciiPrint("config error\n");
+			Print(L"config error\n");
 			return EFI_UNSUPPORTED;
 		}
 		//*** SYSTEM ***//

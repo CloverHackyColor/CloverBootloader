@@ -968,17 +968,17 @@ static UINT32 read32(UINT8 *ptr, UINT16 offset)
 static INT32 patch_nvidia_rom(UINT8 *rom)
 {
 	if (!rom || (rom[0] != 0x55 && rom[1] != 0xaa)) {
-		AsciiPrint("FALSE ROM signature: 0x%02x%02x\n", rom[0], rom[1]);
+		Print(L"FALSE ROM signature: 0x%02x%02x\n", rom[0], rom[1]);
 		return PATCH_ROM_FAILED;
 	}
 	
 	UINT16 dcbptr = swap16(read16(rom, 0x36));
 	if(!dcbptr) {
-		AsciiPrint("no dcb table found\n");
+		Print(L"no dcb table found\n");
 		return PATCH_ROM_FAILED;
 	}
 //	else
-//		AsciiPrint("dcb table at offset 0x%04x\n", dcbptr);
+//		Print(L"dcb table at offset 0x%04x\n", dcbptr);
 	 
 	UINT8 *dcbtable		 = &rom[dcbptr];
 	UINT8 dcbtable_version = dcbtable[0];
@@ -1006,7 +1006,7 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 		
 		if (sig != 0x4edcbdcb)
 		{
-			AsciiPrint("Bad display config block signature (0x%8x)\n", sig); //Azi: issue #48
+			Print(L"Bad display config block signature (0x%8x)\n", sig); //Azi: issue #48
 			return PATCH_ROM_FAILED;
 		}
 	}
@@ -1019,13 +1019,13 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 		
 		if (AsciiStrCmp(sig, "DEV_REC"))
 		{
-			AsciiPrint("Bad Display Configuration Block signature (%s)\n", sig);
+			Print(L"Bad Display Configuration Block signature (%s)\n", sig);
 			return PATCH_ROM_FAILED;
 		}
 	}
 	else
 	{
-		AsciiPrint("ERROR: dcbtable_version is 0x%X\n", dcbtable_version);
+		Print(L"ERROR: dcbtable_version is 0x%X\n", dcbtable_version);
 		return PATCH_ROM_FAILED;
 	}
 	
@@ -1067,7 +1067,7 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 		if (entries[i].type == 3)
 		{
 			has_lvds =TRUE;
-			//AsciiPrint("found LVDS\n");
+			//Print(L"found LVDS\n");
 			channel1 |= ( 0x1 << entries[i].index);
 			entries[i].type = TYPE_GROUPED;
 		}
@@ -1103,7 +1103,7 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 					switch (x)
 					{
 						case 0:
-							//AsciiPrint("group channel 1\n");
+							//Print(L"group channel 1\n");
 							channel1 |= ( 0x1 << entries[i].index);
 							entries[i].type = TYPE_GROUPED;
 							
@@ -1115,14 +1115,14 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 							// group TV as well if there is one
 							if ( ((i+1) < num_outputs) && (entries[i+1].type == 0x1) )
 							{
-								//	AsciiPrint("group tv1\n");
+								//	Print(L"group tv1\n");
 								channel1 |= ( 0x1 << entries[i+1].index);
 								entries[i+1].type = TYPE_GROUPED;
 							}
 							break;
 						
 						case 1:
-							//AsciiPrint("group channel 2 : %d\n", i);
+							//Print(L"group channel 2 : %d\n", i);
 							channel2 |= ( 0x1 << entries[i].index);
 							entries[i].type = TYPE_GROUPED;
 							
@@ -1134,7 +1134,7 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 							// group TV as well if there is one
 							if ( ((i+1) < num_outputs) && (entries[i+1].type == 0x1) )
 							{
-								//	AsciiPrint("group tv2\n");
+								//	Print(L"group tv2\n");
 								channel2 |= ( 0x1 << entries[i+1].index);
 								entries[i+1].type = TYPE_GROUPED;
 							}
@@ -1154,7 +1154,7 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 	{
 		if (entries[i].type != TYPE_GROUPED)
 		{
-			//AsciiPrint("%d not grouped\n", i);
+			//Print(L"%d not grouped\n", i);
 			if (togroup)
 			{
 				*togroup |= ( 0x1 << entries[i].index);
@@ -1216,7 +1216,7 @@ static UINT32 load_nvidia_bios_file(const CHAR8 *filename, UINT8 *buf, INT32 buf
 	
 	if (size > bufsize)
 	{
-		AsciiPrint("Filesize of %s is bigger than expected! Truncating to 0x%x Bytes!\n",
+		Print(L"Filesize of %s is bigger than expected! Truncating to 0x%x Bytes!\n",
 				filename, bufsize);
 		size = bufsize;
 	}
@@ -1285,7 +1285,7 @@ INT32 hex2bin(const CHAR8 *hex, UINT8 *bin, INT32 len)
 	CHAR8	buf[3];
 	
 	if (hex == NULL || bin == NULL || len <= 0 || AsciiStrLen(hex) != len * 2) {
-		AsciiPrint("[ERROR] bin2hex input error\n");
+		Print(L"[ERROR] bin2hex input error\n");
 		return -1;
 	}
 	
@@ -1295,7 +1295,7 @@ INT32 hex2bin(const CHAR8 *hex, UINT8 *bin, INT32 len)
 	for (i = 0; i < len; i++)
 	{
 		if (!IsHexDigit(p[0]) || !IsHexDigit(p[1])) {
-			AsciiPrint("[ERROR] bin2hex '%s' syntax error\n", hex);
+			Print(L"[ERROR] bin2hex '%s' syntax error\n", hex);
 			return -2;
 		}
 		buf[0] = *p++;
@@ -1373,7 +1373,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	videoRam = mem_detect(regs, nvCardType, nvda_dev);
 	model = get_nvidia_model((nvda_dev->vendor_id << 16) | nvda_dev->device_id);
 	
-	AsciiPrint("nVidia %s %dMB NV%02x [%04x:%04x] :: %s\n",
+	Print(L"nVidia %s %dMB NV%02x [%04x:%04x] :: %s\n",
 			model, (UINT32)(videoRam / 1024 / 1024),
 			(REG32(0) >> 20) & 0x1ff, nvda_dev->vendor_id, nvda_dev->device_id,
 			devicepath);
@@ -1411,7 +1411,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 				// Valid Signature ?
 				if (rom[0] != 0x55 && rom[1] != 0xaa)
 				{
-					AsciiPrint("ERROR: Unable to locate nVidia Video BIOS\n");
+					Print(L"ERROR: Unable to locate nVidia Video BIOS\n");
 					return FALSE;
 				}
 				else
@@ -1431,7 +1431,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	
 	
 	if ((nvPatch = patch_nvidia_rom(rom)) == PATCH_ROM_FAILED) {
-		AsciiPrint("ERROR: nVidia ROM Patching Failed!\n");
+		Print(L"ERROR: nVidia ROM Patching Failed!\n");
 		//return FALSE;
 	}
 	
@@ -1447,7 +1447,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 		}
 		else
 		{
-			AsciiPrint("nVidia incorrect PCI ROM signature: 0x%x\n", rom_pci_header->signature);
+			Print(L"nVidia incorrect PCI ROM signature: 0x%x\n", rom_pci_header->signature);
 		}
 	}
 	
@@ -1512,7 +1512,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	
 	
 #if DEBUG_NVCAP
-	AsciiPrint("NVCAP: %02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x\n",
+	Print(L"NVCAP: %02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x\n",
 	default_NVCAP[0], default_NVCAP[1], default_NVCAP[2], default_NVCAP[3],
 	default_NVCAP[4], default_NVCAP[5], default_NVCAP[6], default_NVCAP[7],
 	default_NVCAP[8], default_NVCAP[9], default_NVCAP[10], default_NVCAP[11],

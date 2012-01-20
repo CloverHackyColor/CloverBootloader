@@ -69,7 +69,7 @@ VOID CorrectMemoryMap(IN UINT32 memMap,
 		memDescriptor = (EfiMemoryRange *)(UINTN)memMap;
 		for (Index = 0; Index < *memMapSize / memDescriptorSize; Index ++) {
 			Bytes = LShiftU64 (memDescriptor->NumberOfPages, 12);
-			AsciiPrint("%lX-%lX  %lX %lX %X\n",
+			Print(L"%lX-%lX  %lX %lX %X\n",
                  memDescriptor->PhysicalStart, 
                  memDescriptor->PhysicalStart + Bytes - 1,
                  memDescriptor->NumberOfPages, 

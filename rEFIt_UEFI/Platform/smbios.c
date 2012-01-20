@@ -320,7 +320,7 @@ VOID PatchTableType0()
 	// Get Table Type0
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_BIOS_INFORMATION, 0);
 	if (SmbiosTable.Raw == NULL) {
-//		AsciiPrint("SmbiosTable: Type 0 (Bios Information) not found!\n");
+//		Print(L"SmbiosTable: Type 0 (Bios Information) not found!\n");
 		
 		return;
 	}
@@ -351,7 +351,7 @@ VOID GetTableType1()
 {
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_SYSTEM_INFORMATION, 0);
 	if (SmbiosTable.Raw == NULL) {
-		AsciiPrint("SmbiosTable: Type 1 (System Information) not found!\n");
+		Print(L"SmbiosTable: Type 1 (System Information) not found!\n");
 		return;
 	}
 		
@@ -421,7 +421,7 @@ VOID PatchTableType2()
 	// Get Table Type2
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_BASEBOARD_INFORMATION, 0);
 	if (SmbiosTable.Raw == NULL) {
-//		AsciiPrint("SmbiosTable: Type 2 (BaseBoard Information) not found!\n");
+//		Print(L"SmbiosTable: Type 2 (BaseBoard Information) not found!\n");
 		return;
 	}
 	Size = SmbiosTable.Type2->Hdr.Length; //old size
@@ -477,7 +477,7 @@ VOID GetTableType3()
 {
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_SYSTEM_ENCLOSURE, 0);
 	if (SmbiosTable.Raw == NULL) {
-		AsciiPrint("SmbiosTable: Type 3 (System Chassis Information) not found!\n");
+		Print(L"SmbiosTable: Type 3 (System Chassis Information) not found!\n");
 		gMobile = FALSE; //default value
 		return;
 	}
@@ -492,7 +492,7 @@ VOID PatchTableType3()
 	// Get Table Type3
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_SYSTEM_ENCLOSURE, 0);
 	if (SmbiosTable.Raw == NULL) {
-//		AsciiPrint("SmbiosTable: Type 3 (System Chassis Information) not found!\n");
+//		Print(L"SmbiosTable: Type 3 (System Chassis Information) not found!\n");
 		return;
 	}
 	Size = SmbiosTable.Type3->Hdr.Length; //old size
@@ -539,7 +539,7 @@ VOID GetTableType4()
 {
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_PROCESSOR_INFORMATION, 0);
 	if (SmbiosTable.Raw == NULL) {
-		AsciiPrint("SmbiosTable: Type 4 (Processor Information) not found!\n");
+		Print(L"SmbiosTable: Type 4 (Processor Information) not found!\n");
 		return;
 	}
 	gCPUStructure.ExternalClock = SmbiosTable.Type4->ExternalClock;
@@ -853,7 +853,7 @@ VOID GetTableType16()
 	// Get Table Type16 and set Device Count
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_PHYSICAL_MEMORY_ARRAY, 0);
 	if (SmbiosTable.Raw == NULL) {
-		AsciiPrint("SmbiosTable: Type 16 (Physical Memory Array) not found!\n");
+		Print(L"SmbiosTable: Type 16 (Physical Memory Array) not found!\n");
 		return;
 	}
 	TotalCount = newSmbiosTable.Type16->NumberOfMemoryDevices;
@@ -874,7 +874,7 @@ VOID PatchTableType16()
 	// Get Table Type16 and set Device Count
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_PHYSICAL_MEMORY_ARRAY, 0);
 	if (SmbiosTable.Raw == NULL) {
-		AsciiPrint("SmbiosTable: Type 16 (Physical Memory Array) not found!\n");
+		Print(L"SmbiosTable: Type 16 (Physical Memory Array) not found!\n");
 		return;
 	}
 	TableSize = SmbiosTableLength(SmbiosTable);
@@ -900,7 +900,7 @@ VOID GetTableType17()
 	for (Index = 0; Index < TotalCount; Index++) {
 		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, Index);
 		if (SmbiosTable.Raw == NULL) {
-//			AsciiPrint("SmbiosTable: Type 17 (Memory Device number %d) not found!\n", Index);
+//			Print(L"SmbiosTable: Type 17 (Memory Device number %d) not found!\n", Index);
 			continue;
 		}
 		gDMI->CntMemorySlots++;
@@ -920,7 +920,7 @@ VOID PatchTableType17()
 	for (Index = 0; Index < TotalCount; Index++) {
 		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, Index);
 		if (SmbiosTable.Raw == NULL) {
-//			AsciiPrint("SmbiosTable: Type 17 (Memory Device number %d) not found!\n", Index);
+//			Print(L"SmbiosTable: Type 17 (Memory Device number %d) not found!\n", Index);
 			continue;
 		}
 		TableSize = SmbiosTableLength(SmbiosTable);
@@ -1220,10 +1220,10 @@ EFI_STATUS PrepatchSmbios()
 	DBG("OEM Tables = %x\n", ((SMBIOS_TABLE_ENTRY_POINT*)Smbios)->TableAddress);
 	if (!Smbios) {
 		Status = EFI_NOT_FOUND;
-		AsciiPrint("Original SMBIOS System Table not found! Getting from Hob...\n");
+		Print(L"Original SMBIOS System Table not found! Getting from Hob...\n");
 		Smbios = GetSmbiosTablesFromHob ();
 		if (!Smbios) {
-			AsciiPrint("And here SMBIOS System Table not found! Exiting...\n");
+			Print(L"And here SMBIOS System Table not found! Exiting...\n");
 			return EFI_NOT_FOUND;
 		}		
 	}
@@ -1237,11 +1237,11 @@ EFI_STATUS PrepatchSmbios()
 	Status = gBS->AllocatePages (AllocateMaxAddress, EfiACPIMemoryNVS, /*EfiACPIReclaimMemory, 	*/
 	EFI_SIZE_TO_PAGES(BufferLen), &BufferPtr);
 	if (EFI_ERROR (Status)) {
-		AsciiPrint("There is error allocating pages in EfiACPIMemoryNVS!\n");
+		Print(L"There is error allocating pages in EfiACPIMemoryNVS!\n");
 		Status = gBS->AllocatePages (AllocateMaxAddress,  /*EfiACPIMemoryNVS, */EfiACPIReclaimMemory,
 											   RoundPage(BufferLen)/EFI_PAGE_SIZE, &BufferPtr);
 		if (EFI_ERROR (Status)) {
-			AsciiPrint("There is error allocating pages in EfiACPIReclaimMemory!\n");
+			Print(L"There is error allocating pages in EfiACPIReclaimMemory!\n");
 		}
 	}
 //	DBG("Buffer @ %p\n", BufferPtr);
