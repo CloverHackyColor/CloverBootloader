@@ -35,6 +35,51 @@
 		122336CB13377E150033F008 /* refit.mkefi */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = refit.mkefi; sourceTree = "<group>"; };
 		122336CC13377E150033F008 /* screen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = screen.c; sourceTree = "<group>"; };
 		122336CD13377E260033F008 /* refit.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = refit.inf; path = ../refit.inf; sourceTree = SOURCE_ROOT; };
+		12BE9A5514C0658A00996F8D /* AcpiPatcher.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AcpiPatcher.c; sourceTree = "<group>"; };
+		12BE9A5614C0658A00996F8D /* AppleEfi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppleEfi.h; sourceTree = "<group>"; };
+		12BE9A5714C0658A00996F8D /* BiosVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BiosVideo.h; sourceTree = "<group>"; };
+		12BE9A5814C0658A00996F8D /* Bmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bmp.h; sourceTree = "<group>"; };
+		12BE9A5914C0658A00996F8D /* boot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boot.h; sourceTree = "<group>"; };
+		12BE9A5A14C0658A00996F8D /* BootLog.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BootLog.c; sourceTree = "<group>"; };
+		12BE9A5B14C0658A00996F8D /* Console.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Console.c; sourceTree = "<group>"; };
+		12BE9A5C14C0658A00996F8D /* cpu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cpu.c; sourceTree = "<group>"; };
+		12BE9A5D14C0658A00996F8D /* DataHubCpu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DataHubCpu.c; sourceTree = "<group>"; };
+		12BE9A5E14C0658A00996F8D /* DataHubRecords.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataHubRecords.h; sourceTree = "<group>"; };
+		12BE9A5F14C0658A00996F8D /* device_inject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = device_inject.c; sourceTree = "<group>"; };
+		12BE9A6014C0658A00996F8D /* device_inject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = device_inject.h; sourceTree = "<group>"; };
+		12BE9A6114C0658A00996F8D /* device_tree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = device_tree.c; sourceTree = "<group>"; };
+		12BE9A6214C0658A00996F8D /* device_tree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = device_tree.h; sourceTree = "<group>"; };
+		12BE9A6314C0658A00996F8D /* DT_Add.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DT_Add.c; sourceTree = "<group>"; };
+		12BE9A6414C0658A00996F8D /* DT_Add.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DT_Add.h; sourceTree = "<group>"; };
+		12BE9A6514C0658A00996F8D /* DT_pseudo-C.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DT_pseudo-C.h"; sourceTree = "<group>"; };
+		12BE9A6614C0658A00996F8D /* Events.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Events.c; sourceTree = "<group>"; };
+		12BE9A6714C0658A00996F8D /* Injectors.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Injectors.c; sourceTree = "<group>"; };
+		12BE9A6814C0658A00996F8D /* LegacyBiosThunk.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = LegacyBiosThunk.c; sourceTree = "<group>"; };
+		12BE9A6914C0658A00996F8D /* LegacyBiosThunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyBiosThunk.h; sourceTree = "<group>"; };
+		12BE9A6A14C0658A00996F8D /* LegacyBoot.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = LegacyBoot.c; sourceTree = "<group>"; };
+		12BE9A6B14C0658A00996F8D /* memvendors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memvendors.h; sourceTree = "<group>"; };
+		12BE9A6C14C0658A00996F8D /* mkext.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mkext.c; sourceTree = "<group>"; };
+		12BE9A6D14C0658A00996F8D /* mkext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mkext.h; sourceTree = "<group>"; };
+		12BE9A6E14C0658A00996F8D /* nvidia.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nvidia.c; sourceTree = "<group>"; };
+		12BE9A6F14C0658A00996F8D /* nvidia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nvidia.h; sourceTree = "<group>"; };
+		12BE9A7014C0658A00996F8D /* pci.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pci.c; sourceTree = "<group>"; };
+		12BE9A7114C0658A00996F8D /* picopng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = picopng.c; sourceTree = "<group>"; };
+		12BE9A7214C0658A00996F8D /* picopng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = picopng.h; sourceTree = "<group>"; };
+		12BE9A7314C0658A00996F8D /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
+		12BE9A7414C0658A00996F8D /* platformdata.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = platformdata.c; sourceTree = "<group>"; };
+		12BE9A7514C0658A00996F8D /* plist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = plist.c; sourceTree = "<group>"; };
+		12BE9A7614C0658A00996F8D /* Settings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Settings.c; sourceTree = "<group>"; };
+		12BE9A7714C0658A00996F8D /* smbios.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = smbios.c; sourceTree = "<group>"; };
+		12BE9A7814C0658A00996F8D /* SmBios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmBios.h; sourceTree = "<group>"; };
+		12BE9A7914C0658A00996F8D /* spd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = spd.c; sourceTree = "<group>"; };
+		12BE9A7A14C0658A00996F8D /* spd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spd.h; sourceTree = "<group>"; };
+		12BE9A7B14C0658A00996F8D /* StateGenerator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = StateGenerator.c; sourceTree = "<group>"; };
+		12BE9A7C14C0658A00996F8D /* StateGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StateGenerator.h; sourceTree = "<group>"; };
+		12BE9A7D14C0658A00996F8D /* usbfix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = usbfix.c; sourceTree = "<group>"; };
+		12BE9A7E14C0658A00996F8D /* UsbMass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbMass.h; sourceTree = "<group>"; };
+		12BE9A7F14C0658A00996F8D /* UsbMassBoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbMassBoot.h; sourceTree = "<group>"; };
+		12BE9A8014C0658A00996F8D /* UsbMassImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbMassImpl.h; sourceTree = "<group>"; };
+		12BE9A8114C0658A00996F8D /* VesaBiosExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VesaBiosExtensions.h; sourceTree = "<group>"; };
 		12CB8F581427390E009EDAF2 /* DevicePath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DevicePath.c; sourceTree = "<group>"; };
 		12CB8F6014273A38009EDAF2 /* GenericBdsLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericBdsLib.h; sourceTree = "<group>"; };
 		12CB8FAB14274AE1009EDAF2 /* efiConsoleControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efiConsoleControl.h; sourceTree = "<group>"; };
@@ -97,6 +142,7 @@
 			children = (
 				12021208142663F0004B7B93 /* rEFIt.dsc */,
 				122336CD13377E260033F008 /* refit.inf */,
+				12BE9A5414C0658A00996F8D /* Platform */,
 				1202122D142667C4004B7B93 /* EfiLib */,
 				12CB8FAA14274AE1009EDAF2 /* include */,
 				12F0E43B14C0CBF4009BB0C3 /* Platform */,
@@ -160,6 +206,59 @@
 			);
 			name = refit;
 			path = ../refit;
+			sourceTree = SOURCE_ROOT;
+		};
+		12BE9A5414C0658A00996F8D /* Platform */ = {
+			isa = PBXGroup;
+			children = (
+				12BE9A5514C0658A00996F8D /* AcpiPatcher.c */,
+				12BE9A5614C0658A00996F8D /* AppleEfi.h */,
+				12BE9A5714C0658A00996F8D /* BiosVideo.h */,
+				12BE9A5814C0658A00996F8D /* Bmp.h */,
+				12BE9A5914C0658A00996F8D /* boot.h */,
+				12BE9A5A14C0658A00996F8D /* BootLog.c */,
+				12BE9A5B14C0658A00996F8D /* Console.c */,
+				12BE9A5C14C0658A00996F8D /* cpu.c */,
+				12BE9A5D14C0658A00996F8D /* DataHubCpu.c */,
+				12BE9A5E14C0658A00996F8D /* DataHubRecords.h */,
+				12BE9A5F14C0658A00996F8D /* device_inject.c */,
+				12BE9A6014C0658A00996F8D /* device_inject.h */,
+				12BE9A6114C0658A00996F8D /* device_tree.c */,
+				12BE9A6214C0658A00996F8D /* device_tree.h */,
+				12BE9A6314C0658A00996F8D /* DT_Add.c */,
+				12BE9A6414C0658A00996F8D /* DT_Add.h */,
+				12BE9A6514C0658A00996F8D /* DT_pseudo-C.h */,
+				12BE9A6614C0658A00996F8D /* Events.c */,
+				12BE9A6714C0658A00996F8D /* Injectors.c */,
+				12BE9A6814C0658A00996F8D /* LegacyBiosThunk.c */,
+				12BE9A6914C0658A00996F8D /* LegacyBiosThunk.h */,
+				12BE9A6A14C0658A00996F8D /* LegacyBoot.c */,
+				12BE9A6B14C0658A00996F8D /* memvendors.h */,
+				12BE9A6C14C0658A00996F8D /* mkext.c */,
+				12BE9A6D14C0658A00996F8D /* mkext.h */,
+				12BE9A6E14C0658A00996F8D /* nvidia.c */,
+				12BE9A6F14C0658A00996F8D /* nvidia.h */,
+				12BE9A7014C0658A00996F8D /* pci.c */,
+				12BE9A7114C0658A00996F8D /* picopng.c */,
+				12BE9A7214C0658A00996F8D /* picopng.h */,
+				12BE9A7314C0658A00996F8D /* Platform.h */,
+				12BE9A7414C0658A00996F8D /* platformdata.c */,
+				12BE9A7514C0658A00996F8D /* plist.c */,
+				12BE9A7614C0658A00996F8D /* Settings.c */,
+				12BE9A7714C0658A00996F8D /* smbios.c */,
+				12BE9A7814C0658A00996F8D /* SmBios.h */,
+				12BE9A7914C0658A00996F8D /* spd.c */,
+				12BE9A7A14C0658A00996F8D /* spd.h */,
+				12BE9A7B14C0658A00996F8D /* StateGenerator.c */,
+				12BE9A7C14C0658A00996F8D /* StateGenerator.h */,
+				12BE9A7D14C0658A00996F8D /* usbfix.c */,
+				12BE9A7E14C0658A00996F8D /* UsbMass.h */,
+				12BE9A7F14C0658A00996F8D /* UsbMassBoot.h */,
+				12BE9A8014C0658A00996F8D /* UsbMassImpl.h */,
+				12BE9A8114C0658A00996F8D /* VesaBiosExtensions.h */,
+			);
+			name = Platform;
+			path = ../Platform;
 			sourceTree = SOURCE_ROOT;
 		};
 		12CB8FAA14274AE1009EDAF2 /* include */ = {
