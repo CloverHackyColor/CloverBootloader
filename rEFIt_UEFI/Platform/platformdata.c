@@ -8,7 +8,7 @@
 
 CHAR8*	DefaultMemEntry = "N/A";
 
-CHAR8*	DefaultSerial = "W88A77AA5J4"; //hackintosh
+CHAR8*	DefaultSerial = "CT288GT9VT6";
 
 CHAR8* AppleBiosVendor = "Apple Inc.";
 
@@ -21,9 +21,9 @@ CHAR8* AppleFirmwareVersion[14] =
 	"MB41.88Z.0073.B00.0809221748",
 	"MB52.88Z.007D.003.0809221748",
 	"MBP51.88Z.007E.B05.0906151647",
-	"MBA11.88Z.00BB.B03.0712201139",
+	"MBA31.88Z.0061.B01.0712201139",
 	"MM21.88Z.009A.B00.0706281359",
-	"IM71.88Z.00C1.B00.0803051705",
+	"IM81.88Z.00C1.B00.0803051705",
 	"IM101.88Z.00CC.B00.0909031926",
 	"IM112.88Z.0034.B00.0802091538",
 	"IM121.88Z.0047.B00.1102091756",
@@ -39,7 +39,7 @@ CHAR8* AppleBoardID[14] = //Lion DR1 compatible
 	"Mac-F22788A9",
 	"Mac-F22788AA",
 	"Mac-F42D86C8",
-	"Mac-F42C8CC8",
+	"Mac-942452F5819B1C1B",
 	"Mac-F4208EAA",
 	"Mac-F227BEC8",
 	"Mac-F2268CC8",
@@ -57,9 +57,9 @@ CHAR8* AppleReleaseDate[14] =
 	"02/26/08",
 	"01/21/09",
 	"10/14/08",
-	"03/08/08",
+	"12/08/10",
 	"08/07/07",
-	"08/01/09",
+	"08/07/09",
 	"09/03/09",
 	"10/20/09",
 	"10/20/09",
@@ -75,9 +75,9 @@ CHAR8* AppleProductName[14] =
 	"MacBook4,1",
 	"MacBook5,2",
 	"MacBookPro5,1",
-	"MacBookAir1,1",
+	"MacBookAir3,1",
 	"Macmini2,1",
-	"iMac7,1",
+	"iMac8,1",
 	"iMac10,1",
 	"iMac11,2",
 	"iMac12,1",
@@ -130,7 +130,7 @@ CHAR8* AppleSerialNumber[14] = //random generated
 	"W88A041A0P0", //MB41
 	"W88AAAAA9GU", //MB52
 	"W88439FE1G0", //MBP51
-	"W8811456Y51", //MBA11
+	"W8649476DQX", //MBA31
 	"W88A56BYYL2", //MM21 - merom GMA950 07/07
 	"W89A00AAX88", //IM71 - merom 01/09
 	"W80AA98A5PE", //IM101 - conroe? E7600 01/09

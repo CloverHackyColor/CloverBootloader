@@ -266,7 +266,7 @@ UINT64 GetCPUProperties (VOID)
 	}
 	switch (gCPUStructure.Model)
 	{
-		case CPU_MODEL_ATOM: 
+		case CPU_MODEL_ATOM: //N570 has 2 cores, 4 threads
 		{
 			gCPUStructure.Cores   = 1; 
 			gCPUStructure.Threads = 2; 
@@ -407,7 +407,7 @@ UINT64 GetCPUProperties (VOID)
 					else 
 						gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
 					break;
-				case CPU_MODEL_ATOM:// Core i7 & Atom
+				case CPU_MODEL_ATOM:// Core i7 | Atom
 					switch (gCPUStructure.Stepping)
 					{
 						case 0xa:
@@ -914,7 +914,7 @@ UINT16 GetDefaultModel()
 		switch (gCPUStructure.Model)
 		{
 			case CPU_MODEL_ATOM:
-				gDefaultType = MacBookAir11;
+				gDefaultType = MacBookAir31; //MacBookAir1,1 doesn't support _PSS for speedstep!
 				break;
 			case CPU_MODEL_DOTHAN:	
 				gDefaultType = MacBook11;
@@ -956,7 +956,7 @@ UINT16 GetDefaultModel()
 				gDefaultType = iMac81;
 				break;
 			case CPU_MODEL_PENRYN:	
-				gDefaultType = iMac101;
+				gDefaultType = MacPro31;//speedstep without patching; Hapertown is also a Penryn, according to Wikipedia
 				break;
 			case CPU_MODEL_NEHALEM:
 				gDefaultType = MacPro41;

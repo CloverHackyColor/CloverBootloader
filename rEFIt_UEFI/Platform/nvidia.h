@@ -51,43 +51,7 @@
 #define __LIBSAIO_NVIDIA_H
 
 #include "iBoot.h"
-
-typedef struct {
-	UINT32		:2;
-	UINT32	reg :6;
-	UINT32	func:3;
-	UINT32	dev :5;
-	UINT32	bus :8;
-	UINT32		:7;
-	UINT32	eb	:1;
-} pci_addr_t;
-
-typedef union {
-	pci_addr_t	bits;
-	UINT32	addr;
-} pci_dev_t;
-
-typedef struct pci_dt_t {
-	pci_dev_t				dev;
-	
-	UINT16				vendor_id;
-	UINT16				device_id;
-	
-	union {
-		struct {
-			UINT16	vendor_id;
-			UINT16	device_id;
-		} subsys;
-		UINT32	subsys_id;
-	}subsys_id;
-	UINT8		revision;
-	UINT8		subclass;
-	UINT16				class_id;	
-	
-	struct pci_dt_t			*parent;
-	struct pci_dt_t			*children;
-	struct pci_dt_t			*next;
-} pci_dt_t;
+#include "device_inject.h"
 
 
 BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev);
@@ -121,9 +85,6 @@ struct bios {
 #define NV_PBUS_PCI_NV_20_ROM_SHADOW_DISABLED	(0 << 0)
 #define NV_PBUS_PCI_NV_20_ROM_SHADOW_ENABLED	(1 << 0)
 
-#define REG8(reg)  ((volatile UINT8 *)regs)[(reg)]
-#define REG16(reg)  ((volatile UINT16 *)regs)[(reg) >> 1]
-#define REG32(reg)  ((volatile UINT32 *)regs)[(reg) >> 2]
 
 #define NV_ARCH_03  0x03
 #define NV_ARCH_04  0x04
