@@ -46,6 +46,60 @@
   libeg/load_icns.c
   libeg/libscreen.c
   libeg/text.c
+  Platform/
+  	AcpiPatcher.c
+#	Platform/AppleEfi.h
+#	Platform/ati_reg.h
+	Platform/ati.c
+#	Platform/BiosVideo.h
+#	Platform/Bmp.h
+#	Platform/boot.h
+	Platform/BootLog.c
+	Platform/Console.c
+	Platform/cpu.c
+	Platform/DataHubCpu.c
+#	Platform/DataHubRecords.h
+	Platform/device_inject.c
+#	Platform/device_inject.h
+	Platform/device_tree.c
+#	Platform/device_tree.h
+#	Platform/DriverVar.txt
+#	Platform/DT_Add.c
+#	Platform/DT_Add.h
+#	Platform/DT_pseudo-C.h
+	Platform/Events.c
+	Platform/gma.c
+#	Platform/gma.h
+	Platform/guid.c
+	Platform/Injectors.c
+	Platform/LegacyBiosThunk.c
+#	Platform/LegacyBiosThunk.h
+	Platform/LegacyBoot.c
+#	Platform/memvendors.h
+	Platform/mkext.c
+#	Platform/mkext.h
+	Platform/nvidia.c
+#	Platform/nvidia.h
+	Platform/pci.c
+	Platform/picopng.c
+#	Platform/picopng.h
+	Platform/Platform.h
+	Platform/platformdata.c
+	Platform/plist.c
+	Settings.c
+	Platform/smbios.c
+#	Platform/SmBios.h
+	Platform/spd.c
+#	Platform/spd.h
+#	Platform/StateGenerator.c
+#	Platform/StateGenerator.h
+#	Platform/stringTable.c
+	Platform/usbfix.c
+#	Platform/UsbMass.h
+#	Platform/UsbMassBoot.h
+#	Platform/UsbMassImpl.h
+#	Platform/VesaBiosExtensions.h
+
 
 [Packages]
 #	DuetPkg/DuetPkg.dec

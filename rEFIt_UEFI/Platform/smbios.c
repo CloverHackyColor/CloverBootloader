@@ -973,7 +973,7 @@ VOID PatchTableType17()
 			UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gSettings.MemoryPartNumber);		
 		}
 /*		if(iStrLen(gSettings.MemorySpeed)>0){
-			newSmbiosTable.Type17->Speed = (UINT16)AsciiStrDecimalToUintn(gSettings.MemorySpeed);			
+			newSmbiosTable.Type17->Speed = (UINT16)StrDecimalToUintn(gSettings.MemorySpeed);			
 		}
 */
 #else
@@ -1170,7 +1170,7 @@ VOID PatchTableType131()
 		newSmbiosTable.Type131->Hdr.Handle = 0x8300; //common rule
 		// Patch ProcessorType
 		if(iStrLen(gSettings.CpuType, 10)>0){
-			newSmbiosTable.Type131->ProcessorType = (UINT16)AsciiStrHexToUintn(gSettings.CpuType);
+			newSmbiosTable.Type131->ProcessorType = (UINT16)StrHexToUint64(gSettings.CpuType);
 		} else {
 			newSmbiosTable.Type131->ProcessorType = gCPUtype;
 		}	

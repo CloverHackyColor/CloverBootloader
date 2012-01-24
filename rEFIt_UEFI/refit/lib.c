@@ -507,14 +507,11 @@ static VOID ScanVolumeDefaultIcon(IN OUT REFIT_VOLUME *Volume)
         Volume->VolBadgeImage = BuiltinIcon(BUILTIN_ICON_VOL_OPTICAL);
 }
 
-EFI_FILE_SYSTEM_INFO *
-LibFileSystemInfo (
-				   IN EFI_FILE_HANDLE   Root
-				   )
+EFI_FILE_SYSTEM_INFO * LibFileSystemInfo (IN EFI_FILE_HANDLE   Root)
 {
-	EFI_STATUS              Status = EFI_NOT_FOUND;
-	EFI_FILE_SYSTEM_INFO*			FileSystemInfo=NULL;
-	UINT32							BufferSizeVolume;
+	EFI_STATUS                Status = EFI_NOT_FOUND;
+	EFI_FILE_SYSTEM_INFO*			FileSystemInfo = NULL;
+	UINT32                    BufferSizeVolume;
 		
 	BufferSizeVolume =	SIZE_OF_EFI_FILE_SYSTEM_INFO + 255;
 	FileSystemInfo = AllocateZeroPool(BufferSizeVolume);
@@ -522,7 +519,7 @@ LibFileSystemInfo (
 	//
 	// check file system info
 	//
-	if(FileSystemInfo!=NULL)
+	if(FileSystemInfo)
 	{
     while (EfiGrowBuffer (&Status, (VOID **) &FileSystemInfo, BufferSizeVolume)) {
       Status = Root->GetInfo(Root, &gEfiFileSystemInfoGuid, (UINTN*)&BufferSizeVolume, FileSystemInfo);
@@ -559,7 +556,7 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
     Status = gBS->HandleProtocol(Volume->DeviceHandle, &gEfiBlockIoProtocolGuid, (VOID **) &(Volume->BlockIO));
     if (EFI_ERROR(Status)) {
         Volume->BlockIO = NULL;
-        Print(L"Warning: Can't get BlockIO protocol.\n");
+        DBG("Warning: Can't get BlockIO protocol.\n");
     } else {
       if (Volume->BlockIO->Media->BlockSize == 2048){
         Volume->DiskKind = DISK_KIND_OPTICAL;
@@ -691,29 +688,13 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
     // get volume name
     FileSystemInfoPtr = LibFileSystemInfo(Volume->RootDir);
     if (FileSystemInfoPtr != NULL) {
-        Print(L"  Volume %s\n", FileSystemInfoPtr->VolumeLabel);
-        Volume->VolName = EfiStrDuplicate(FileSystemInfoPtr->VolumeLabel);
-      /*
-      sysVersion = FindVersionPlist(Volume->DevicePath);
-      switch (sysVersion) {
-        case 0x104:
-          volume->OSType=OSTYPE_TIGER;
-          break;
-        case 0x105:
-          volume->OSType=OSTYPE_LEO;
-          break;
-        case 0x106:
-          volume->OSType=OSTYPE_SNOW;
-          break;
-        case 0x107:
-          volume->OSType=OSTYPE_LION;
-          break;
-        default:
-          volume->OSType=OSTYPE_OSX;
-          break;
+      Print(L"  Volume %s\n", FileSystemInfoPtr->VolumeLabel);
+      Volume->VolName = EfiStrDuplicate(FileSystemInfoPtr->VolumeLabel);
+      Status = FindVersionPlist(Volume);
+      if (EFI_ERROR(Status) {
+       // Volume->OSType = 0; //TODO - other criteria?
+       // Other EFI systems?
       }
-   */   
-      
       
       FreePool(FileSystemInfoPtr);
     } else {

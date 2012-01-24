@@ -145,23 +145,23 @@ EFI_STATUS SetVariablesForOSX()
 VOID SetupDataForOSX()
 {
 	EFI_STATUS			Status;	
-	CHAR16*				CloverVersion=L"2.0";
+	CHAR16*				CloverVersion = L"2.0";
   
 //	UINT32				KextListSize;
 	UINT32				devPathSupportedVal = 1;
 	UINT64				FrontSideBus		= gCPUStructure.FSBFrequency;
 	UINT64				CpuSpeed        = gCPUStructure.CPUFrequency;
 	UINT64				TSCFrequency		= gCPUStructure.TSCFrequency;
-	CHAR16*				productName			= AllocateZeroPool(64);
-	CHAR16*				serialNumber		= AllocateZeroPool(64);
+	CHAR16*				productName; //			= AllocateZeroPool(64);
+	CHAR16*				serialNumber; //		= AllocateZeroPool(64);
 	
 	// Locate DataHub Protocol
 	Status = gBS->LocateProtocol(&gEfiDataHubProtocolGuid, NULL, (VOID**)&gDataHub);
 	if (!EFI_ERROR (Status)) 
 	{
 //		KextListSize = GetKextListSize();
-		AsciiStrToUnicodeStr(gSettings.ProductName, productName);
-		AsciiStrToUnicodeStr(gSettings.SerialNr, serialNumber);
+		productName = EfiStrDuplicate(gSettings.ProductName);
+		serialNumber = EfiStrDuplicate(gSettings.SerialNr);
 		
 		Status =  LogDataHub(&gEfiProcessorSubClassGuid, L"FSBFrequency", &FrontSideBus, sizeof(UINT64));
 		Status =  LogDataHub(&gEfiProcessorSubClassGuid, L"TSCFrequency", &TSCFrequency, sizeof(UINT64));

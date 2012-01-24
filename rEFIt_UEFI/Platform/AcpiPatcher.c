@@ -205,7 +205,7 @@ UINT64* ScanXSDT (XSDT_TABLE *Xsdt, UINT32 Signature)
 	return NULL;
 }
 
-EFI_STATUS PatchACPI(VOID)
+EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 {
 	EFI_STATUS										Status = EFI_SUCCESS;
 	UINTN                         Index;
@@ -216,9 +216,9 @@ EFI_STATUS PatchACPI(VOID)
 	EFI_ACPI_4_0_FIXED_ACPI_DESCRIPTION_TABLE		*newFadt	 = NULL;
 	EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER	*Hpet    = NULL;
 	EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE	*Facs = NULL;
-//	EFI_GUID										*gTableGuidArray[] = {&gEfiAcpi20TableGuid, &gEfiAcpi10TableGuid};
-//	EFI_PEI_HOB_POINTERS							GuidHob;
-//	EFI_PEI_HOB_POINTERS							HobStart;
+  //	EFI_GUID										*gTableGuidArray[] = {&gEfiAcpi20TableGuid, &gEfiAcpi10TableGuid};
+  //	EFI_PEI_HOB_POINTERS							GuidHob;
+  //	EFI_PEI_HOB_POINTERS							HobStart;
 	EFI_DEVICE_PATH_PROTOCOL*	PathBooter = NULL;
 	EFI_DEVICE_PATH_PROTOCOL*	FilePath;
 	EFI_HANDLE					FileSystemHandle;
@@ -234,13 +234,13 @@ EFI_STATUS PatchACPI(VOID)
 	UINT64* xf = NULL;
   UINT64 XDsdt; //save values if present
   UINT64 XFirmwareCtrl;
-
+  
 	
 	//Slice - I want to begin from BIOS ACPI tables like with SMBIOS
 	RsdPointer = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)FindAcpiRsdPtr();
 	DBG("Found RsdPtr in BIOS: %p\n", RsdPointer);
   
-//Slice - some tricks to do with Bios Acpi Tables
+  //Slice - some tricks to do with Bios Acpi Tables
   Rsdt = (RSDT_TABLE*)(UINTN)(RsdPointer->RsdtAddress);
   if (Rsdt == NULL || Rsdt->Header.Signature != EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
     Xsdt = (XSDT_TABLE *)(UINTN)(RsdPointer->XsdtAddress);
@@ -253,7 +253,7 @@ EFI_STATUS PatchACPI(VOID)
   DBG("Found FADT in BIOS: %p\n", FadtPointer);
   Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)(FadtPointer->FirmwareCtrl);
   DBG("Found FACS in BIOS: %p\n", Facs);
-
+  
 #if 0	  //Slice - this codes reserved for a future
 	if (0) { //RsdPointer) {
 		if (((EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER *)RsdPointer)->Reserved == 0x00){
@@ -275,7 +275,7 @@ EFI_STATUS PatchACPI(VOID)
 		DBG("Converted RsdPtr 0x%p\n", RsdPointer);
 		gSystemTable->Hdr.CRC32 = 0;
 		gBS->CalculateCrc32 ((UINT8 *) &gSystemTable->Hdr, 
-									   gSystemTable->Hdr.HeaderSize, &gSystemTable->Hdr.CRC32);	
+                         gSystemTable->Hdr.HeaderSize, &gSystemTable->Hdr.CRC32);	
 		DBG("AcpiTableLen %x\n", AcpiTableLen);
 	} else
 #else	
@@ -298,7 +298,7 @@ EFI_STATUS PatchACPI(VOID)
 		}
 	}
 #endif	
-
+  
 	if (!RsdPointer) {
 		return EFI_UNSUPPORTED;
 	}
@@ -307,183 +307,183 @@ EFI_STATUS PatchACPI(VOID)
 	rf = ScanRSDT(Rsdt, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE);
 	if(rf)
 		FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(*rf);
-	
-	Xsdt = NULL;			
-	if (RsdPointer->Revision >=2 && (RsdPointer->XsdtAddress < (UINT64)(UINTN)-1))
-	{
-		Xsdt = (XSDT_TABLE*)(UINTN)RsdPointer->XsdtAddress;
-		DBG("XSDT 0x%p\n", Xsdt);
-		xf = ScanXSDT(Xsdt, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE);
-		if(xf!=NULL)
-			FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(*xf));
-	}
+    
+    Xsdt = NULL;			
+    if (RsdPointer->Revision >=2 && (RsdPointer->XsdtAddress < (UINT64)(UINTN)-1))
+    {
+      Xsdt = (XSDT_TABLE*)(UINTN)RsdPointer->XsdtAddress;
+      DBG("XSDT 0x%p\n", Xsdt);
+      xf = ScanXSDT(Xsdt, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE);
+      if(xf!=NULL)
+        FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(*xf));
+    }
 	
 	if(!xf){
 	 	Print(L"Error! Xsdt is not found!!!\n");
 	 	//We should make here ACPI20 RSDP with all needed subtables based on ACPI10
 	}
-
-//	DBG("FADT pointer = %x\n", (UINTN)FadtPointer);
+  
+  //	DBG("FADT pointer = %x\n", (UINTN)FadtPointer);
 	if(!FadtPointer)
 	{
     return EFI_NOT_FOUND;
   }
-		//Slice - then we do FADT patch no matter if we don't have DSDT.aml
-		BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
-		Status=gBS->AllocatePages(AllocateMaxAddress,EfiACPIReclaimMemory, 1, &BufferPtr);		
-		if(!EFI_ERROR(Status))
-		{
-			newFadt = (EFI_ACPI_4_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)BufferPtr;
-			UINT32 oldLength = ((EFI_ACPI_DESCRIPTION_HEADER*)FadtPointer)->Length;
-	//		MsgLog("old FADT length=%x\n", oldLength);
-			CopyMem((UINT8*)newFadt, (UINT8*)FadtPointer, oldLength); //old data
-			newFadt->Header.Length = 0xF4; 				
-			CopyMem((UINT8*)newFadt->Header.OemId, (UINT8*)BiosVendor, 6);
-			newFadt->Header.Revision = EFI_ACPI_4_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION;
-			newFadt->Reserved0 = 0; //ACPIspec said it should be 0, while 1 is possible, but no more
-			
-			if (gSettings.smartUPS==TRUE) {
-				newFadt->PreferredPmProfile = 3;
-			} else {
-				newFadt->PreferredPmProfile = gMobile?2:1; //as calculated before
-			}
-			newFadt->Flags |= 0x400; //Reset Register Supported
-			XDsdt = newFadt->XDsdt; //save values if present
-			XFirmwareCtrl = newFadt->XFirmwareCtrl;
-			CopyMem((UINT8*)&newFadt->ResetReg, pmBlock, 0x80);
-			//but these common values are not specific, so adjust
-			//ACPIspec said that if Xdsdt !=0 then Dsdt must be =0. But real Mac no! Both values present
-			if (newFadt->Dsdt) {
-				newFadt->XDsdt = U32_TO_U64(newFadt->Dsdt);
-			} else if (XDsdt) {
-				newFadt->Dsdt = (UINT32)XDsdt;
-			}
-			if (Facs) newFadt->FirmwareCtrl = (UINT32)(UINTN)Facs;
-			else MsgLog("No FACS table ?!\n");
-			if (newFadt->FirmwareCtrl) {
-				newFadt->XFirmwareCtrl = U32_TO_U64(newFadt->FirmwareCtrl);
-			} else if (newFadt->XFirmwareCtrl) {
-				newFadt->FirmwareCtrl = (UINT32)XFirmwareCtrl;
-			}
-			//patch for FACS included here
-			Facs->Version = EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_VERSION;
-			//
-			newFadt->ResetReg.Address    = U32_TO_U64(gResetAddress); //UINT16->UINT64
-			newFadt->ResetValue			 = gResetValue; //UINT8
-			newFadt->XPm1aEvtBlk.Address = U32_TO_U64(newFadt->Pm1aEvtBlk);
-			newFadt->XPm1bEvtBlk.Address = U32_TO_U64(newFadt->Pm1bEvtBlk);
-			newFadt->XPm1aCntBlk.Address = U32_TO_U64(newFadt->Pm1aCntBlk);
-			newFadt->XPm1bCntBlk.Address = U32_TO_U64(newFadt->Pm1bCntBlk);
-			newFadt->XPm2CntBlk.Address  = U32_TO_U64(newFadt->Pm2CntBlk);
-			newFadt->XPmTmrBlk.Address   = U32_TO_U64(newFadt->PmTmrBlk);
-			newFadt->XGpe0Blk.Address    = U32_TO_U64(newFadt->Gpe0Blk);
-			newFadt->XGpe1Blk.Address    = U32_TO_U64(newFadt->Gpe1Blk);
-			FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)newFadt;
-			//We are sure that Fadt is the first entry in RSDT/XSDT table
-			if (Rsdt!=NULL) {
-				Rsdt->Entry = (UINT32)(UINTN)newFadt;
-				Rsdt->Header.Checksum = 0;
-				Rsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Rsdt, Rsdt->Header.Length));
-			}
-			if (Xsdt!=NULL) {
-				Xsdt->Entry = U32_TO_U64((UINT32)(UINTN)newFadt);
-				Xsdt->Header.Checksum = 0;
-				Xsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Xsdt, Xsdt->Header.Length));
-			}
-
-		}
+  //Slice - then we do FADT patch no matter if we don't have DSDT.aml
+  BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
+  Status=gBS->AllocatePages(AllocateMaxAddress,EfiACPIReclaimMemory, 1, &BufferPtr);		
+  if(!EFI_ERROR(Status))
+  {
+    newFadt = (EFI_ACPI_4_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)BufferPtr;
+    UINT32 oldLength = ((EFI_ACPI_DESCRIPTION_HEADER*)FadtPointer)->Length;
+    //		MsgLog("old FADT length=%x\n", oldLength);
+    CopyMem((UINT8*)newFadt, (UINT8*)FadtPointer, oldLength); //old data
+    newFadt->Header.Length = 0xF4; 				
+    CopyMem((UINT8*)newFadt->Header.OemId, (UINT8*)BiosVendor, 6);
+    newFadt->Header.Revision = EFI_ACPI_4_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION;
+    newFadt->Reserved0 = 0; //ACPIspec said it should be 0, while 1 is possible, but no more
     
-      //HPET creation
-    BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
-    Status=gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);
+    if (gSettings.smartUPS==TRUE) {
+      newFadt->PreferredPmProfile = 3;
+    } else {
+      newFadt->PreferredPmProfile = gMobile?2:1; //as calculated before
+    }
+    newFadt->Flags |= 0x400; //Reset Register Supported
+    XDsdt = newFadt->XDsdt; //save values if present
+    XFirmwareCtrl = newFadt->XFirmwareCtrl;
+    CopyMem((UINT8*)&newFadt->ResetReg, pmBlock, 0x80);
+    //but these common values are not specific, so adjust
+    //ACPIspec said that if Xdsdt !=0 then Dsdt must be =0. But real Mac no! Both values present
+    if (newFadt->Dsdt) {
+      newFadt->XDsdt = U32_TO_U64(newFadt->Dsdt);
+    } else if (XDsdt) {
+      newFadt->Dsdt = (UINT32)XDsdt;
+    }
+    if (Facs) newFadt->FirmwareCtrl = (UINT32)(UINTN)Facs;
+    else MsgLog("No FACS table ?!\n");
+    if (newFadt->FirmwareCtrl) {
+      newFadt->XFirmwareCtrl = U32_TO_U64(newFadt->FirmwareCtrl);
+    } else if (newFadt->XFirmwareCtrl) {
+      newFadt->FirmwareCtrl = (UINT32)XFirmwareCtrl;
+    }
+    //patch for FACS included here
+    Facs->Version = EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_VERSION;
+    //
+    newFadt->ResetReg.Address    = U32_TO_U64(gResetAddress); //UINT16->UINT64
+    newFadt->ResetValue			 = gResetValue; //UINT8
+    newFadt->XPm1aEvtBlk.Address = U32_TO_U64(newFadt->Pm1aEvtBlk);
+    newFadt->XPm1bEvtBlk.Address = U32_TO_U64(newFadt->Pm1bEvtBlk);
+    newFadt->XPm1aCntBlk.Address = U32_TO_U64(newFadt->Pm1aCntBlk);
+    newFadt->XPm1bCntBlk.Address = U32_TO_U64(newFadt->Pm1bCntBlk);
+    newFadt->XPm2CntBlk.Address  = U32_TO_U64(newFadt->Pm2CntBlk);
+    newFadt->XPmTmrBlk.Address   = U32_TO_U64(newFadt->PmTmrBlk);
+    newFadt->XGpe0Blk.Address    = U32_TO_U64(newFadt->Gpe0Blk);
+    newFadt->XGpe1Blk.Address    = U32_TO_U64(newFadt->Gpe1Blk);
+    FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)newFadt;
+    //We are sure that Fadt is the first entry in RSDT/XSDT table
+    if (Rsdt!=NULL) {
+      Rsdt->Entry = (UINT32)(UINTN)newFadt;
+      Rsdt->Header.Checksum = 0;
+      Rsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Rsdt, Rsdt->Header.Length));
+    }
+    if (Xsdt!=NULL) {
+      Xsdt->Entry = U32_TO_U64((UINT32)(UINTN)newFadt);
+      Xsdt->Header.Checksum = 0;
+      Xsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Xsdt, Xsdt->Header.Length));
+    }
+    
+  }
+  
+  //HPET creation
+  BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
+  Status=gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);
+  if(!EFI_ERROR(Status))
+  {
+    UINT8	oemID[6]        = HPET_OEM_ID;
+    UINT64	oemTableID[]  = HPET_OEM_TABLE_ID;
+    UINT32	creatorID[]   = HPET_CREATOR_ID;
+    xf = ScanXSDT(Xsdt, HPET_SIGN);
+    if(!xf) { //we want to make the new table if OEM is not found
+      
+      Hpet = (EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER*)(UINTN)BufferPtr;
+      Hpet->Header.Signature = EFI_ACPI_3_0_HIGH_PRECISION_EVENT_TIMER_TABLE_SIGNATURE;
+      Hpet->Header.Length = sizeof(EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER);
+      Hpet->Header.Revision = EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_REVISION;
+      CopyMem(&Hpet->Header.OemId, oemID, 6);
+      CopyMem(&Hpet->Header.OemTableId, oemTableID, sizeof(oemTableID));
+      Hpet->Header.OemRevision = 0x00000001;
+      CopyMem(&Hpet->Header.CreatorId, creatorID, sizeof(creatorID));
+      Hpet->EventTimerBlockId = 0x8086A201; // we should remember LPC VendorID to place here
+      Hpet->BaseAddressLower32Bit.AddressSpaceId = EFI_ACPI_2_0_SYSTEM_IO;
+      Hpet->BaseAddressLower32Bit.RegisterBitWidth = 0x40; //64bit
+      Hpet->BaseAddressLower32Bit.RegisterBitOffset = 0x00; 
+      Hpet->BaseAddressLower32Bit.Address = 0xFED00000; //Physical Addr.
+      Hpet->HpetNumber = 0;
+      Hpet->MainCounterMinimumClockTickInPeriodicMode = 0x0080; 
+      Hpet->PageProtectionAndOemAttribute = EFI_ACPI_64KB_PAGE_PROTECTION; //Flags |= EFI_ACPI_4KB_PAGE_PROTECTION , EFI_ACPI_64KB_PAGE_PROTECTION
+      // verify checksum
+      Hpet->Header.Checksum = 0;
+      Hpet->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Hpet,Hpet->Header.Length));
+      
+      //then we have to install new table into Xsdt
+      if (Xsdt!=NULL) {
+        //we have no such table. Add a new entry into Xsdt
+        UINT64	EntryCount;
+        
+        EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
+        xf = (UINT64*)(&(Xsdt->Entry)) + EntryCount;
+        Xsdt->Header.Length += sizeof(UINT64);				
+        *xf = (UINT64)(UINTN)Hpet;
+        DBG("HPET placed into XSDT: %lx\n", *xf);
+        Xsdt->Header.Checksum = 0;
+        Xsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Xsdt, Xsdt->Header.Length));
+      }
+    }
+  }
+  
+  //DSDT finding
+  Status = EFI_NOT_FOUND;
+  if (gSettings.UseDSDTmini==TRUE) {
+    if (FileExists(SelfRootDir, PathDsdtMini)) {
+      Status = egLoadFile(SelfRootDir, PathDsdtMini, &buffer, &bufferLen);
+    }
+  }
+  if (EFI_ERROR(Status) && FileExists(Volume->RootDir, PathDsdt)) {
+    Status = egLoadFile(Volume->RootDir, PathDSDT, &buffer, &bufferLen);
+  }
+  if (EFI_ERROR(Status) && FileExists(SelfRootDir, PathPatched)) {
+    Status = egLoadFile(SelfRootDir, PathPatched, &buffer, &bufferLen);
+  }
+  //apply DSDT
+  if (!EFI_ERROR(Status)) {
+    Status = gBS->AllocatePages (
+                                 AllocateMaxAddress,
+                                 EfiACPIReclaimMemory,
+                                 EFI_SIZE_TO_PAGES(bufferLen),
+                                 &dsdt
+                                 );
+    
+    //if success insert dsdt pointer into ACPI tables
     if(!EFI_ERROR(Status))
     {
-      UINT8	oemID[6]        = HPET_OEM_ID;
-      UINT64	oemTableID[]  = HPET_OEM_TABLE_ID;
-      UINT32	creatorID[]   = HPET_CREATOR_ID;
-      xf = ScanXSDT(Xsdt, HPET_SIGN);
-      if(!xf) { //we want to make the new table if OEM is not found
-        
-        Hpet = (EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER*)(UINTN)BufferPtr;
-        Hpet->Header.Signature = EFI_ACPI_3_0_HIGH_PRECISION_EVENT_TIMER_TABLE_SIGNATURE;
-        Hpet->Header.Length = sizeof(EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER);
-        Hpet->Header.Revision = EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_REVISION;
-        CopyMem(&Hpet->Header.OemId, oemID, 6);
-        CopyMem(&Hpet->Header.OemTableId, oemTableID, sizeof(oemTableID));
-        Hpet->Header.OemRevision = 0x00000001;
-        CopyMem(&Hpet->Header.CreatorId, creatorID, sizeof(creatorID));
-        Hpet->EventTimerBlockId = 0x8086A201; // we should remember LPC VendorID to place here
-        Hpet->BaseAddressLower32Bit.AddressSpaceId = EFI_ACPI_2_0_SYSTEM_IO;
-        Hpet->BaseAddressLower32Bit.RegisterBitWidth = 0x40; //64bit
-        Hpet->BaseAddressLower32Bit.RegisterBitOffset = 0x00; 
-        Hpet->BaseAddressLower32Bit.Address = 0xFED00000; //Physical Addr.
-        Hpet->HpetNumber = 0;
-        Hpet->MainCounterMinimumClockTickInPeriodicMode = 0x0080; 
-        Hpet->PageProtectionAndOemAttribute = EFI_ACPI_64KB_PAGE_PROTECTION; //Flags |= EFI_ACPI_4KB_PAGE_PROTECTION , EFI_ACPI_64KB_PAGE_PROTECTION
-        // verify checksum
-        Hpet->Header.Checksum = 0;
-        Hpet->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Hpet,Hpet->Header.Length));
-        
-        //then we have to install new table into Xsdt
-        if (Xsdt!=NULL) {
-          //we have no such table. Add a new entry into Xsdt
-          UINT64	EntryCount;
-          
-          EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
-          xf = (UINT64*)(&(Xsdt->Entry)) + EntryCount;
-          Xsdt->Header.Length += sizeof(UINT64);				
-          *xf = (UINT64)(UINTN)Hpet;
-          DBG("HPET placed into XSDT: %lx\n", *xf);
-          Xsdt->Header.Checksum = 0;
-          Xsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Xsdt, Xsdt->Header.Length));
-        }
-      }
-    }
-  
-      //DSDT finding
-    Status = EFI_NOT_FOUND;
-    if (gSettings.UseDSDTmini==TRUE) {
-      if (FileExists(SelfRootDir, PathDsdtMini)) {
-        Status = egLoadFile(SelfRootDir, PathDsdtMini, &buffer, &bufferLen);
-      }
-    }
-    if (EFI_ERROR(Status) && FileExists(Volume->RootDir, PathDsdt)) {
-      Status = egLoadFile(Volume->RootDir, PathDSDT, &buffer, &bufferLen);
-    }
-    if (EFI_ERROR(Status) && FileExists(SelfRootDir, PathPatched)) {
-      Status = egLoadFile(SelfRootDir, PathPatched, &buffer, &bufferLen);
-    }
-		  //apply DSDT
-    if (!EFI_ERROR(Status)) {
-      Status = gBS->AllocatePages (
-                                   AllocateMaxAddress,
-                                   EfiACPIReclaimMemory,
-                                   EFI_SIZE_TO_PAGES(bufferLen),
-                                   &dsdt
-                                   );
+      CopyMem((VOID*)(UINTN)dsdt, buffer, bufferLen);
       
-      //if success insert dsdt pointer into ACPI tables
-      if(!EFI_ERROR(Status))
-      {
-        CopyMem((VOID*)(UINTN)dsdt, buffer, bufferLen);
-          
-        FadtPointer->Dsdt=(UINT32)dsdt;
-        FadtPointer->XDsdt=dsdt;
-          // verify checksum
-        FadtPointer->Header.Checksum = 0;
-        FadtPointer->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)FadtPointer,FadtPointer->Header.Length));
-        if (Rsdt) {
-          Rsdt->Header.Checksum = 0;
-          Rsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Rsdt, Rsdt->Header.Length));
-        }
-        if (Xsdt) {
-          Xsdt->Header.Checksum = 0;
-          Xsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Xsdt, Xsdt->Header.Length));
-        }
+      FadtPointer->Dsdt=(UINT32)dsdt;
+      FadtPointer->XDsdt=dsdt;
+      // verify checksum
+      FadtPointer->Header.Checksum = 0;
+      FadtPointer->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)FadtPointer,FadtPointer->Header.Length));
+      if (Rsdt) {
+        Rsdt->Header.Checksum = 0;
+        Rsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Rsdt, Rsdt->Header.Length));
       }
-    } 
-    
-      //find other ACPI tables
- 
-		return Status;
-	}
+      if (Xsdt) {
+        Xsdt->Header.Checksum = 0;
+        Xsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Xsdt, Xsdt->Header.Length));
+      }
+    }
+  } 
+  
+  //find other ACPI tables
+  
+  return Status;
+}
