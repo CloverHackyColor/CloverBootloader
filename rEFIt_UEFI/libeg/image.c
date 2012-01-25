@@ -204,23 +204,27 @@ static CHAR16 * egFindExtension(IN CHAR16 *FileName)
 static EG_IMAGE * egDecodeAny(IN UINT8 *FileData, IN UINTN FileDataLength,
                               IN CHAR16 *Format, IN UINTN IconSize, IN BOOLEAN WantAlpha)
 {
-    EG_DECODE_FUNC  DecodeFunc;
-    EG_IMAGE        *NewImage;
-    
-    // dispatch by extension
-    DecodeFunc = NULL;
-    if (StriCmp(Format, L"BMP") == 0)
-        DecodeFunc = egDecodeBMP;
-    else if (StriCmp(Format, L"ICNS") == 0)
-        DecodeFunc = egDecodeICNS;
-    
-    if (DecodeFunc == NULL)
-        return NULL;
-    
-    // decode it
-    NewImage = DecodeFunc(FileData, FileDataLength, IconSize, WantAlpha);
-    
-    return NewImage;
+  EG_DECODE_FUNC  DecodeFunc;
+  EG_IMAGE        *NewImage;
+  
+  // dispatch by extension
+  DecodeFunc = NULL;
+  if (StriCmp(Format, L"BMP") == 0)
+    DecodeFunc = egDecodeBMP;
+  else if (StriCmp(Format, L"ICNS") == 0)
+    DecodeFunc = egDecodeICNS;
+  else if (StriCmp(Format, L"PNG") == 0)
+    DecodeFunc = egDecodePNG;
+  else if (StriCmp(Format, L"TGA") == 0)
+    DecodeFunc = egDecodeTGA;
+  
+  if (DecodeFunc == NULL)
+    return NULL;
+  
+  // decode it
+  NewImage = DecodeFunc(FileData, FileDataLength, IconSize, WantAlpha);
+  
+  return NewImage;
 }
 
 EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN BOOLEAN WantAlpha)

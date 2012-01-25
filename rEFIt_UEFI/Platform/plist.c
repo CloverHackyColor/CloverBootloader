@@ -261,12 +261,12 @@ EFI_STATUS XMLParseNextTag(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr)
 	{
 		Status = ParseTagDate(buffer + pos, tag, &length);
 	}
-	/***** false ****/
+	/***** FALSE ****/
 	else if (!AsciiStrCmp(tagName, kXMLTagFalse))
 	{
 		Status = ParseTagBoolean(buffer + pos, tag, kTagTypeFalse, &length);
 	}
-	/***** true ****/	
+	/***** TRUE ****/	
 	else if (!AsciiStrCmp(tagName, kXMLTagTrue))
 	{
 		Status = ParseTagBoolean(buffer + pos, tag, kTagTypeTrue, &length);

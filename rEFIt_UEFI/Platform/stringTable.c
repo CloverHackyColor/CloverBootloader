@@ -26,16 +26,16 @@
  * All rights reserved.
  */
 
-#import "libsaio.h"
-#import "bootstruct.h"
-#import <driverkit/configTablePrivate.h>
+//#import "libsaio.h"
+//#import "bootstruct.h"
+//#import <driverkit/configTablePrivate.h>
 
 extern char *Language;
 extern char *LoadableFamilies;
 
 static void eatThru(char val, char **table_p);
 
-static inline int isspace(char c)
+static inline INTN isspace(char c)
 {
     return (c == ' ' || c == '\t');
 }
@@ -44,9 +44,9 @@ static inline int isspace(char c)
  * Compare a string to a key with quoted characters
  */
 static inline int
-keyncmp(char *str, char *key, int n)
+keyncmp(char *str, char *key, INTN n)
 {
-    int c;
+   INTN c;
     while (n--) {
 	c = *key++;
 	if (c == '\\') {
@@ -94,12 +94,12 @@ static void eatThru(char val, char **table_p)
 char *
 newStringFromList(
     char **list,
-    int *size
+   INTN* size
 )
 {
     char *begin = *list, *end;
     char *newstr;
-    int newsize = *size;
+   INTN newsize = *size;
     
     while (*begin && newsize && isspace(*begin)) {
 	begin++;
@@ -122,7 +122,7 @@ newStringFromList(
 /* 
  * compress == compress escaped characters to one character
  */
-int stringLength(char *table, int compress)
+int stringLength(char *table, INTN compress)
 {
 	int ret = 0;
 
@@ -146,9 +146,9 @@ int stringLength(char *table, int compress)
 
 // looks in table for strings of format << "key" = "value"; >>
 // or << "key"; >>
-BOOL getValueForStringTableKey(char *table, char *key, char **val, int *size)
+BOOL getValueForStringTableKey(char *table, char *key, char **val, INTN *size)
 {
-	int keyLength;
+	INTN keyLength;
 	char *tableKey;
 
 	do
@@ -160,7 +160,7 @@ BOOL getValueForStringTableKey(char *table, char *key, char **val, int *size)
 		    (stringLength(table,1) == keyLength) &&
 		    (keyncmp(key, table, keyLength) == 0))
 		{
-			int c;
+			INTN c;
 			
 			/* found the key; now look for either
 			 * '=' or ';'
@@ -203,7 +203,7 @@ char *newStringForStringTableKey(
 )
 {
     char *val, *newstr, *p;
-    int size;
+   INTN size;
     
     if (getValueForStringTableKey(table, key, &val, &size)) {
 	newstr = malloc(size+1);
@@ -237,7 +237,7 @@ char *
 newStringForKey(char *key)
 {
     char *val, *newstr;
-    int size;
+   INTN size;
     
     if (getValueForKey(key, &val, &size) && size) {
 	newstr = malloc(size + 1);
@@ -254,7 +254,7 @@ newStringForKey(char *key)
  * non-whitespace characters, or enclosed in quotes.
  */
 
-static char *getToken(char *line, char **begin, int *len)
+static char *getToken(char *line, char **begin, INTN *len)
 {
     if (*line == '\"') {
 	*begin = ++line;
@@ -270,10 +270,10 @@ static char *getToken(char *line, char **begin, int *len)
     return line;
 }
 
-BOOL getValueForBootKey(char *line, char *match, char **matchval, int *len)
+BOOL getValueForBootKey(char *line, char *match, char **matchval, INTN *len)
 {
     char *key, *value;
-    int key_len, value_len;
+   INTN key_len, value_len;
     
     while (*line) {
 	/* look for keyword or argument */
@@ -300,7 +300,7 @@ BOOL getBoolForKey(
 )
 {
     char *val;
-    int size;
+   INTN, size;
     
     if (getValueForKey(key, &val, &size) && (size >= 1) &&
 	val[0] == 'Y' || val[0] == 'y')
@@ -311,7 +311,7 @@ BOOL getBoolForKey(
 BOOL getValueForKey(
     char *key,
     char **val,
-    int *size
+   INTN *size
 )
 {
     if (getValueForBootKey(bootArgs->bootString, key, val, size))
@@ -331,7 +331,7 @@ loadLocalizableStrings(
 )
 {
     char buf[256], *config;
-    register int count, fd;
+    register INTN count, fd;
     
     sprintf(buf, LOCALIZABLE, name, Language);
     if ((fd = open(buf,0)) < 0) {
@@ -356,7 +356,7 @@ bundleLongName(
 )
 {
     char *table, *name, *val;
-    int size;
+   INTN, size;
     
     if ((table = loadLocalizableStrings(bundleName)) != 0 &&
 	 getValueForStringTableKey(table,"Long Name", &val, &size) == YES) {
@@ -379,10 +379,10 @@ int sysConfigValid;
  * Returns pointer to table in memory in *table.
  */
 int
-loadConfigFile( char *configFile, char **table, int allocTable)
+loadConfigFile( char *configFile, char **table, INTN allocTable)
 {
     char *configPtr = bootArgs->configEnd;
-    int fd, count;
+   INTN fd, count;
     
     /* Read config file into memory */
     if ((fd = open(configFile, 0)) >= 0)
@@ -422,13 +422,13 @@ loadConfigFile( char *configFile, char **table, int allocTable)
 int
 loadConfigDir(
     char *bundleName,	// bundle directory name (e.g. "System.config")
-    int useDefault,	// use Default.table instead of instance tables
+   INTN useDefault,	// use Default.table instead of instance tables
     char **table,	// returns pointer to config table
-    int allocTable	// malloc the table and return in *table
+   INTN allocTable	// malloc the table and return in *table
 )
 {
     char *buf;
-    int i, ret;
+   INTN i, ret;
     
     buf = malloc(256);
     ret = 0;
@@ -474,11 +474,11 @@ loadConfigDir(
 int
 loadSystemConfig(
     char *which,
-    int size
+   INTN size
 )
 {
     char *buf, *bp, *cp;
-    int ret, len, doDefault=0;
+   INTN ret, len, doDefault=0;
 
     buf = bp = malloc(256);
     if (which && size)
@@ -520,13 +520,13 @@ loadSystemConfig(
 
 int
 loadOtherConfigs(
-    int useDefault
+   INTN useDefault
 )
 {
     char *val, *table;
-    int count;
+   INTN count;
     char *string;
-    int fd, ret;
+   INTN fd, ret;
 
     if (getValueForKey( "Boot Drivers", &val, &count))
     {

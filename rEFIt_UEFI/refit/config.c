@@ -293,7 +293,7 @@ static VOID HandleEnum(IN CHAR16 **TokenList, IN UINTN TokenCount, IN CHAR16 **E
             *Value = i;
             return;
         }
-    // try to handle an int instead
+    // try to handle anINTNinstead
     *Value = StrDecimalToUintn(TokenList[1]);
 }
 

@@ -882,7 +882,7 @@ BdsLibGetBootableHandle (
   is ready to boot now.
 
   @param  DevPath     The Device path in a boot option.
-  @param  CheckMedia  If true, check whether the device is ready to boot now.
+  @param  CheckMedia  If TRUE, check whether the device is ready to boot now.
 
   @retval TRUE        The Device path is valid.
   @retval FALSE       The Device path is invalid.
@@ -903,7 +903,7 @@ BdsLibIsValidEFIBootOptDevicePath (
   boot options.
 
   @param  DevPath     The Device path in a boot option.
-  @param  CheckMedia  If true, checks if the device is ready to boot now.
+  @param  CheckMedia  If TRUE, checks if the device is ready to boot now.
   @param  Description The description of a boot option.
 
   @retval TRUE        The Device path is valid.

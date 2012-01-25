@@ -44,7 +44,7 @@ RealDTEntry
 skipProperties(RealDTEntry entry)
 {
 	DeviceTreeNodeProperty *prop;
-	unsigned int k;
+	unsignedINTNk;
 
 	if (entry == NULL || entry->nProperties == 0) {
 		return NULL;
@@ -61,7 +61,7 @@ RealDTEntry
 skipTree(RealDTEntry root)
 {
 	RealDTEntry entry;
-	unsigned int k;
+	unsignedINTNk;
 
 	entry = skipProperties(root);
 	if (entry == NULL) {
@@ -345,7 +345,7 @@ DTRestartEntryIteration(DTEntryIterator iterator)
 	RealDTEntryIterator iter = iterator;
 #if 0
 	// This commented out code allows a second argument (outer)
-	// which (if true) causes restarting at the outer scope
+	// which (if TRUE) causes restarting at the outer scope
 	// rather than the current scope.
 	DTSavedScopePtr scope;
 
@@ -363,7 +363,7 @@ DTRestartEntryIteration(DTEntryIterator iterator)
 }
 
 INTN
-DTGetProperty(CONST DTEntry entry, CONST char *propertyName, VOID **propertyValue, unsigned int *propertySize)
+DTGetProperty(CONST DTEntry entry, CONST char *propertyName, VOID **propertyValue, unsignedINTN*propertySize)
 {
 	DeviceTreeNodeProperty *prop;
 	UINTN k;

@@ -64,6 +64,7 @@
 #define DBG(x...)
 #endif
 
+
 #define NVIDIA_ROM_SIZE				0x10000
 #define PATCH_ROM_SUCCESS			1
 #define PATCH_ROM_SUCCESS_HAS_LVDS	2
@@ -918,14 +919,14 @@ EFI_STATUS read_nVidia_ROM(VOID* rom)
 	/*nvRom = (UINT8*)&regs[NV_PRAMIN_OFFSET]; //так нельзя делать
 	 CopyMem((VOID*)nvRom, (VOID*)rom, NVIDIA_ROM_SIZE);*/
 	
-	Status = gBootServices->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
+	Status = gBS->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
 	if (EFI_ERROR(Status)) return 0;
 	for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
-		Status = gBootServices->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
+		Status = gBS->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
 		if (EFI_ERROR(Status)) continue;
 		for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
 			if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex])) {
-				Status = gBootServices->OpenProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+				Status = gBS->OpenProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
 				if (EFI_ERROR(Status)) continue;
 				Status = PciIo->Pci.Read(PciIo,EfiPciIoWidthUint32, 0, sizeof(Pci) / sizeof(UINT32), &Pci);
 				if (EFI_ERROR(Status)) continue;
@@ -1365,7 +1366,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	DBG("BAR: 0x%x\n", bar[0]);
 	regs = (UINT8 *) (bar[0] & ~0x0f);
 	
-	gBootServices->Stall(50);
+	gBS->Stall(50);
 		
 	// get card type
 	nvCardType = (REG32(0) >> 20) & 0x1ff;
@@ -1420,7 +1421,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 				if (rom[0] != 0x55 && rom[1] != 0xaa)
 				{
 					DBG("ERROR: Unable to locate nVidia Video BIOS\n");
-					//gBootServices->Stall(5000000);
+					//gBS->Stall(5000000);
 					//return FALSE;
 				}
 				else
@@ -1544,12 +1545,12 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 //	devprop_add_value(device, "@1,connector-type",connector_type_1, 4);
 	//end Nvidia HDMI Audio
 	
-	extern CHAR8*						gDeviceProperties;
+	
 	gDeviceProperties = AllocatePool(string->length * 2);
 	CopyMem(gDeviceProperties, (VOID*)devprop_generate_string(string), string->length * 2);
 	DBG(gDeviceProperties);
 #if DEBUG_NVIDIA == 2  
-	gBootServices->Stall(5000000);
+	gBS->Stall(5000000);
 #endif  
 	//stringlength = string->length;
 	if (FALSE)

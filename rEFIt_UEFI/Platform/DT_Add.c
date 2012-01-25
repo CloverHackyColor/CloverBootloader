@@ -33,7 +33,7 @@ DT__AddProperty(Node *node, const char *name, UINT32 length, void *value)
     DPRINTF("DT__AddProperty([Node '%a'], '%a', %d, 0x%x)\n", DT__GetName(node), name, length, value);
     if (freeProperties == NULL) {
         void *buf = AllocateZeroPool(kAllocSize);
-        int i;
+       INTN i;
         
         DPRINTF("Allocating more free properties\n");
         if (buf == 0) return 0;
@@ -82,7 +82,7 @@ DT__AddChild(Node *parent, const char *name)
 
     if (freeNodes == NULL) {
         void *buf = AllocateZeroPool(kAllocSize);
-        int i;
+       INTN i;
         
         DPRINTF("Allocating more free nodes\n");
         if (buf == 0) return 0;
@@ -186,7 +186,7 @@ FlattenNodes(Node *node, void *buffer)
     Property *prop;
     DeviceTreeNode *flatNode;
     DeviceTreeNodeProperty *flatProp;
-    int count;
+   INTN count;
 
     if (node == 0) return buffer;
 
@@ -277,7 +277,7 @@ DT__FindNode(const char *path, BOOLEAN createIfMissing)
     Node *node, *child;
     DTPropertyNameBuf nameBuf;
     char *bp;
-    int i;
+   INTN i;
 
     DPRINTF("DT__FindNode('%s', %d)\n", path, createIfMissing);
     
@@ -320,7 +320,7 @@ DT__FindNode(const char *path, BOOLEAN createIfMissing)
 #if DEBUG
 
 void
-DT__PrintNode(Node *node, int level)
+DT__PrintNode(Node *node, INTN level)
 {
     char spaces[10], *cp = spaces;
     Property *prop;
@@ -346,7 +346,7 @@ DT__PrintNode(Node *node, int level)
 }
 
 static void
-_PrintTree(Node *node, int level)
+_PrintTree(Node *node, INTN level)
 {
     DT__PrintNode(node, level);
     level++;
@@ -362,13 +362,13 @@ DT__PrintTree(Node *node)
 }
 
 void
-DT__PrintFlattenedNode(DTEntry entry, int level)
+DT__PrintFlattenedNode(DTEntry entry, INTN level)
 {
     char spaces[10], *cp = spaces;
     DTPropertyIterator	                propIter;
     char *name;
     void *prop;
-    int propSize;
+   INTN propSize;
 
     if (level > 9) level = 9;
     while (level--) *cp++ = ' ';
@@ -390,7 +390,7 @@ DT__PrintFlattenedNode(DTEntry entry, int level)
 }
 
 static void
-_PrintFlattenedTree(DTEntry entry, int level)
+_PrintFlattenedTree(DTEntry entry, INTN level)
 {
     DTEntryIterator entryIter;
 

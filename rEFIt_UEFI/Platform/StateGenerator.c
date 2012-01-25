@@ -81,7 +81,7 @@ struct acpi_2_ssdt *generate_pss_ssdt()
 					case CPU_MODEL_PENRYN:	// Intel Core 2 Solo, Duo, Quad, Extreme, Xeon X54xx, Xeon X33xx
 					case CPU_MODEL_ATOM:	// Intel Atom (45nm)
 					{
-						BOOLEAN cpu_dynamic_fsb = false;
+						BOOLEAN cpu_dynamic_fsb = FALSE;
 						
 						if (AsmReadMsr64(MSR_IA32_EXT_CONFIG) & (1 << 27)) 
 						{

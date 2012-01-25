@@ -680,8 +680,9 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
         //Print(L"Error: Can't open volume.\n");
         // TODO: signal that we had an error
       //Slice - there is LegacyBoot volume
-      Print(L"LegacyBoot volume\n");
-      Volume->VolName =  L"Legacy OS";
+      //properties are set before
+      //    Print(L"LegacyBoot volume\n");
+  //    Volume->VolName =  L"Legacy OS";
       return;
     }
     
@@ -690,7 +691,7 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
     if (FileSystemInfoPtr != NULL) {
       Print(L"  Volume %s\n", FileSystemInfoPtr->VolumeLabel);
       Volume->VolName = EfiStrDuplicate(FileSystemInfoPtr->VolumeLabel);
-      Status = FindVersionPlist(Volume);
+      Status = GetOSVersion(Volume); //here we set tiger,leo,snow,lion
       if (EFI_ERROR(Status) {
        // Volume->OSType = 0; //TODO - other criteria?
        // Other EFI systems?

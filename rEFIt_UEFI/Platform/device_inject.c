@@ -45,12 +45,12 @@ static UINT32 dp_swap32(UINT32 toswap)
 struct DevPropString *devprop_create_string(VOID)
 {
 	DBG("devprop_create_string\n");
-	string = (struct DevPropString*)AllocatePool(sizeof(struct DevPropString));
+	string = (struct DevPropString*)AllocateZeroPool(sizeof(struct DevPropString));
 	
 	if(string == NULL)
 		return NULL;
 	
-	ZeroMem((VOID*)string, sizeof(struct DevPropString));
+//	ZeroMem((VOID*)string, sizeof(struct DevPropString));
 	string->length = 12;
 	string->WHAT2 = 0x01000000;
 	return string;
@@ -100,14 +100,14 @@ CHAR8 *get_pci_dev_path(pci_dt_t *pci_dt)
 	EFI_GUID				**ProtocolGuidArray;
 	
 	
-	Status = gBootServices->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
+	Status = gBS->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
 	if (EFI_ERROR(Status)) return 0;
 	for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
-		Status = gBootServices->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
+		Status = gBS->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
 		if (EFI_ERROR(Status)) continue;
 		for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
 			if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex])) {
-				Status = gBootServices->OpenProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+				Status = gBS->OpenProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
 				if (EFI_ERROR(Status)) continue;
 				Status = PciIo->Pci.Read(PciIo,EfiPciIoWidthUint32, 0, sizeof(Pci) / sizeof(UINT32), &Pci);
 				if (EFI_ERROR(Status)) continue;
@@ -140,14 +140,14 @@ UINT32 pci_config_read32(UINT32 pci_addr, UINT8 reg)
 	UINT32					res;
 	
 	
-	Status = gBootServices->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
+	Status = gBS->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
 	if (EFI_ERROR(Status)) return 0;
 	for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
-		Status = gBootServices->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
+		Status = gBS->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
 		if (EFI_ERROR(Status)) continue;
 		for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
 			if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex])) {
-				Status = gBootServices->OpenProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+				Status = gBS->OpenProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
 				if (EFI_ERROR(Status)) continue;
 				Status = PciIo->Pci.Read(PciIo,EfiPciIoWidthUint32, 0, sizeof(Pci) / sizeof(UINT32), &Pci);
 				if (EFI_ERROR(Status)) continue;
@@ -190,7 +190,7 @@ struct DevPropDevice *devprop_add_device(struct DevPropString *string, CHAR8 *pa
 	if (string == NULL || path == NULL) {
 		return NULL;
 	}
-	device = AllocatePool(sizeof(struct DevPropDevice));
+	device = AllocateZeroPool(sizeof(struct DevPropDevice));
 
 	if (AsciiStrnCmp(path, pciroot_string, AsciiStrLen(pciroot_string)) &&
 		AsciiStrnCmp(path, pcieroot_string, AsciiStrLen(pcieroot_string))) {

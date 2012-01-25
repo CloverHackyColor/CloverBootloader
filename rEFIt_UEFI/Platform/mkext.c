@@ -81,7 +81,7 @@ struct encode_state {
     /*
      * left & right children & parent. These constitute binary search trees.
      */
-    int lchild[N + 1], rchild[N + 257], parent[N + 1];
+   INTNlchild[N + 1], rchild[N + 257], parent[N + 1];
 
     /* ring buffer of size N, with extra F-1 bytes to aid string comparison */
     u_int8_t text_buf[N + F - 1];
@@ -90,7 +90,7 @@ struct encode_state {
      * match_length of longest match.
      * These are set by the insert_node() procedure.
      */
-    int match_position, match_length;
+   INTNmatch_position, match_length;
 };
 
 
@@ -101,8 +101,8 @@ decompress_lzss(u_int8_t *dst, u_int8_t *src, u_int32_t srclen)
     u_int8_t text_buf[N + F - 1];
     u_int8_t *dststart = dst;
     u_int8_t *srcend = src + srclen;
-    int  i, j, k, r, c;
-    unsigned int flags;
+   INTN i, j, k, r, c;
+    unsignedINTNflags;
     
     dst = dststart;
     srcend = src + srclen;
@@ -150,7 +150,7 @@ decompress_lzss(u_int8_t *dst, u_int8_t *src, u_int32_t srclen)
  * Note there are 256 trees. */
 static void init_state(struct encode_state *sp)
 {
-    int  i;
+   INTN i;
 
     bzero(sp, sizeof(*sp));
 
@@ -170,10 +170,10 @@ static void init_state(struct encode_state *sp)
  * because the old one will be deleted sooner. Note r plays double role,
  * as tree node and position in buffer.
  */
-static void insert_node(struct encode_state *sp, int r)
+static void insert_node(struct encode_state *sp, INTN r)
 {
-    int  i, p, cmp;
-    u_int8_t  *key;
+    INTN i, p, cmp;
+    UINT8  *key;
 
     cmp = 1;
     key = &sp->text_buf[r];
@@ -221,9 +221,9 @@ static void insert_node(struct encode_state *sp, int r)
 }
 
 /* deletes node p from tree */
-static void delete_node(struct encode_state *sp, int p)
+static void delete_node(struct encode_state *sp INTN p)
 {
-    int  q;
+   INTN q;
     
     if (sp->parent[p] == NIL)
         return;  /* not in tree */
@@ -259,7 +259,7 @@ compress_lzss(u_int8_t *dst, u_int32_t dstlen, u_int8_t *src, u_int32_t srcLen)
     /* Encoding state, mostly tree but some current match stuff */
     struct encode_state *sp;
 
-    int  i, c, len, r, s, last_match_length, code_buf_ptr;
+   INTN i, c, len, r, s, last_match_length, code_buf_ptr;
     u_int8_t code_buf[17], mask;
     u_int8_t *srcend = src + srcLen;
     u_int8_t *dstend = dst + dstlen;

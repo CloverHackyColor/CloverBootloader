@@ -649,7 +649,7 @@ void Inflator_inflate(VECTOR_8 *out, const VECTOR_8 *in, UINT32 inpos)
 			Inflator_inflateHuffmanBlock(out, &in->data[inpos], &bp, &pos, in->size, BTYPE);
 	}
 	if (!Inflator_error)
-		vector8_resize(out, pos); // Only now we know the true size of out, resize it to that
+		vector8_resize(out, pos); // Only now we know the TRUE size of out, resize it to that
 }
 
 /*************************************************************************************************/
@@ -787,7 +787,7 @@ void PNG_readPngHeader(PNG_INFO *info, const UINT8 *in, UINT32 inlength)
 	PNG_error = PNG_checkColorValidity(info->colorType, info->bitDepth);
 }
 
-int PNG_paethPredictor(int a, int b, int c) // Paeth predicter, used by PNG filter type 4
+INTN PNG_paethPredictor(INTN a, INTN b, INTN c) // Paeth predicter, used by PNG filter type 4
 {
 	int p, pa, pb, pc;
 	p = a + b - c;
@@ -1210,79 +1210,43 @@ PNG_INFO *PNG_decode(const UINT8 *in, UINT32 size)
 	return info;
 }
 
-/*************************************************************************************************/
+/**********************************************************************************************/
 
-#if TEST
-
-#include <stdio.h>
-#include <sys/stat.h>
-
-int main(int argc, char **argv)
+EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha)
 {
-	char *fname = (argc > 1) ? argv[1] : "test.png";
-	PNG_INFO *info;
-	struct stat statbuf;
-	UINT32 insize, outsize;
-	FILE *infp, *outfp;
-	UINT8 *inbuf;
-	UINT32 n;
+  EG_IMAGE            *NewImage;
+  PNG_INFO            *info;
+  UINT8               AlphaValue;
+  EG_PIXEL            *Pixel;
+  INTN                x, y;
+  
+  // read and check header
+  if (FileDataLength < sizeof(BMP_IMAGE_HEADER) || FileData == NULL)
+    return NULL;
 
-	if (stat(fname, &statbuf) != 0) {
-		perror("stat");
-		return 1;
-	} else if (!statbuf.st_size) {
-		printf("file empty\n");
-		return 1;
+  PNG_error = -1;
+	info = PNG_decode(NewImage, (UINT32)FileDataLength);
+	if(!PNG_error)
+	{
+		NewImage = egCreateImage(info->width, info->height, WantAlpha);
+    if (NewImage == NULL)
+      return NULL;
+    AlphaValue = WantAlpha ? 255 : 0;
+
+		CopyMem(NewImage->PixelData, info->image->data, info->image->size);
+		png_alloc_free_all();
+    Pixel = (EG_PIXEL*)NewImage->PixelData;
+		for (y = 0; y < NewImage->Height; y++) {
+      for (x = 0; x < < NewImage->Width; x++) {
+        UINT8	Temp;
+        Temp = Pixel->Blue;
+        Pixel->Blue = Pixel->Red;
+        Pixel->Red=Temp;
+        Pixel++;        
+      }
+    }
+		return NewImage;
 	}
-	insize = (UINT32) statbuf.st_size;
-	inbuf = AllocateZeroPool(insize);
-	infp = fopen(fname, "rb");
-	if (!infp) {
-		perror("fopen");
-		return 1;
-	} else if (fread(inbuf, 1, insize, infp) != insize) {
-		perror("fread");
-		return 1;
-	}
-	fclose(infp);
-
-	printf("input file: %s (size: %d)\n", fname, insize);
-
-	info = PNG_decode(inbuf, insize);
-	FreePool(inbuf);
-	printf("PNG_error: %d\n", PNG_error);
-	if (PNG_error != 0)
-		return 1;
-
-	printf("width: %d, height: %d\nfirst 16 bytes: ", info->width, info->height);
-	for (n = 0; n < 16; n++)
-		printf("%02x ", info->image->data[n]);
-	printf("\n");
-
-	outsize = info->width * info->height * 4;
-	printf("image size: %d\n", outsize);
-	if (outsize != info->image->size) {
-		printf("error: image size doesn't match dimensions\n");
-		return 1;
-	}
-	outfp = fopen("out.bin", "wb");
-	if (!outfp) {
-		perror("fopen");
-		return 1;
-	} else if (fwrite(info->image->data, 1, outsize, outfp) != outsize) {
-		perror("fwrite");
-		return 1;
-	}
-	fclose(outfp);
-
-#ifdef ALLOC_DEBUG
-	png_alloc_node_t *node;
-	for (node = png_alloc_head, n = 1; node; node = node->next, n++)
-		printf("node %d (%p) addr = %p, size = %ld\n", n, node, node->addr, node->size);
-#endif
-	png_alloc_free_all(); // also frees info and image data from PNG_decode
-
-	return 0;
+  
+	return NULL;  
 }
-
-#endif

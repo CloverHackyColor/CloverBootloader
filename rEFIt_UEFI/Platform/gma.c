@@ -25,6 +25,7 @@
 #define DBG(x...)
 #endif
 
+extern CHAR8*						gDeviceProperties;
 
 //Slice - correct all values, still not sure
 UINT8 GMAX3100_vals[23][4] = {
@@ -62,18 +63,18 @@ static struct gma_gpu_t KnownGPUS[] = {
 	{ 0x808627AE, "GMA 950"	},
 //	{ 0x808627A6, "Mobile GMA950"	}, //not a GPU
 	{ 0x8086A011, "Mobile GMA3150"	},
-	{ 0x8086A012, "Mobile GMA3150"	},
+//	{ 0x8086A012, "Mobile GMA3150"	},
 	{ 0x80862772, "Desktop GMA950"	},
 //	{ 0x80862776, "Desktop GMA950"	}, //not a GPU
 //	{ 0x8086A001, "Desktop GMA3150" },
 	{ 0x8086A001, "Mobile GMA3150"	},
-	{ 0x8086A002, "Desktop GMA3150" },
+//	{ 0x8086A002, "Desktop GMA3150" },
 	{ 0x80862A02, "GMAX3100"		},
-	{ 0x80862A03, "GMAX3100"		},
+//	{ 0x80862A03, "GMAX3100"		},//not a GPU
 	{ 0x80862A12, "GMAX3100"		},
-	{ 0x80862A13, "GMAX3100"		},
+//	{ 0x80862A13, "GMAX3100"		},
 	{ 0x80862A42, "GMAX3100"		},
-	{ 0x80862A43, "GMAX3100"		},
+//	{ 0x80862A43, "GMAX3100"		},
 };
 
 CHAR8 *get_gma_model(UINT32 id) {
@@ -90,11 +91,12 @@ CHAR8 *get_gma_model(UINT32 id) {
 BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 {
 	CHAR8					*devicepath;
+  struct DevPropDevice *device;
 	UINT8         *regs;
 	UINT32				bar[7];
 	CHAR8					*model;
 	UINT8 BuiltIn =		0x00;
-	UINT8 ClassFix[4] =	{ 0x00, 0x00, 0x03, 0x00 };
+//	UINT8 ClassFix[4] =	{ 0x00, 0x00, 0x03, 0x00 };
 	
 	devicepath = get_pci_dev_path(gma_dev);
 	
@@ -110,8 +112,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 	if (!string)
 		string = devprop_create_string();
 	
-	struct DevPropDevice *device = AllocatePool(sizeof(struct DevPropDevice));
-	device = devprop_add_device(string, devicepath);
+	device = devprop_add_device(string, devicepath); //AllocatePool inside
 	
 	if (!device)
 	{
@@ -128,42 +129,42 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 	{
 		devprop_add_value(device, "AAPL,HasPanel", reg_TRUE, 4);
 		devprop_add_value(device, "built-in", &BuiltIn, 1);
-		devprop_add_value(device, "class-code", ClassFix, 4);
+//		devprop_add_value(device, "class-code", ClassFix, 4);
 	}
 	else if ((model == (CHAR8 *)"Desktop GMA950")
 			|| (model == (CHAR8 *)"Desktop GMA3150"))
 	{
 		BuiltIn = 0x01;
 		devprop_add_value(device, "built-in", &BuiltIn, 1);
-		devprop_add_value(device, "class-code", ClassFix, 4);
+//		devprop_add_value(device, "class-code", ClassFix, 4);
 	}
 	else if (model == (CHAR8 *)"GMAX3100")
 	{
 		//BuiltIn = gDualLink;
-		devprop_add_value(device, "AAPL,HasPanel",GMAX3100_vals[0], 4);
-		devprop_add_value(device, "AAPL,SelfRefreshSupported",GMAX3100_vals[1], 4);
-		devprop_add_value(device, "AAPL,aux-power-connected",GMAX3100_vals[2], 4);
-		devprop_add_value(device, "AAPL,backlight-control",GMAX3100_vals[3], 4);
-		devprop_add_value(device, "AAPL00,blackscreen-preferences",GMAX3100_vals[4], 4);
-		devprop_add_value(device, "AAPL01,BacklightIntensity",GMAX3100_vals[5], 4);
-		devprop_add_value(device, "AAPL01,blackscreen-preferences",GMAX3100_vals[6], 4);
-		devprop_add_value(device, "AAPL01,DataJustify",GMAX3100_vals[7], 4);
-		devprop_add_value(device, "AAPL01,Depth",GMAX3100_vals[8], 4);
-		devprop_add_value(device, "AAPL01,Dither",GMAX3100_vals[9], 4);
+		devprop_add_value(device, "AAPL,HasPanel", GMAX3100_vals[0], 4);
+		devprop_add_value(device, "AAPL,SelfRefreshSupported", GMAX3100_vals[1], 4);
+		devprop_add_value(device, "AAPL,aux-power-connected", GMAX3100_vals[2], 4);
+		devprop_add_value(device, "AAPL,backlight-control", GMAX3100_vals[3], 4);
+		devprop_add_value(device, "AAPL00,blackscreen-preferences", GMAX3100_vals[4], 4);
+		devprop_add_value(device, "AAPL01,BacklightIntensity", GMAX3100_vals[5], 4);
+		devprop_add_value(device, "AAPL01,blackscreen-preferences", GMAX3100_vals[6], 4);
+		devprop_add_value(device, "AAPL01,DataJustify", GMAX3100_vals[7], 4);
+		devprop_add_value(device, "AAPL01,Depth", GMAX3100_vals[8], 4);
+		devprop_add_value(device, "AAPL01,Dither", GMAX3100_vals[9], 4);
 		devprop_add_value(device, "AAPL01,DualLink", &BuiltIn, 1);		//GMAX3100_vals[10]
-		devprop_add_value(device, "AAPL01,Height",GMAX3100_vals[10], 4);
-		devprop_add_value(device, "AAPL01,Interlace",GMAX3100_vals[11], 4);
-		devprop_add_value(device, "AAPL01,Inverter",GMAX3100_vals[12], 4);
-		devprop_add_value(device, "AAPL01,InverterCurrent",GMAX3100_vals[13], 4);
-//		devprop_add_value(device, "AAPL01,InverterCurrency",GMAX3100_vals[15], 4);
-		devprop_add_value(device, "AAPL01,LinkFormat",GMAX3100_vals[14], 4);
-		devprop_add_value(device, "AAPL01,LinkType",GMAX3100_vals[15], 4);
-		devprop_add_value(device, "AAPL01,Pipe",GMAX3100_vals[16], 4);
-		devprop_add_value(device, "AAPL01,PixelFormat",GMAX3100_vals[17], 4);
-		devprop_add_value(device, "AAPL01,Refresh",GMAX3100_vals[18], 4);
-		devprop_add_value(device, "AAPL01,Stretch",GMAX3100_vals[19], 4);
-		devprop_add_value(device, "AAPL01,InverterFrequency",GMAX3100_vals[20], 4);
-		devprop_add_value(device, "class-code",						ClassFix, 4);
+		devprop_add_value(device, "AAPL01,Height", GMAX3100_vals[10], 4);
+		devprop_add_value(device, "AAPL01,Interlace", GMAX3100_vals[11], 4);
+		devprop_add_value(device, "AAPL01,Inverter", GMAX3100_vals[12], 4);
+		devprop_add_value(device, "AAPL01,InverterCurrent", GMAX3100_vals[13], 4);
+//		devprop_add_value(device, "AAPL01,InverterCurrency", GMAX3100_vals[15], 4);
+		devprop_add_value(device, "AAPL01,LinkFormat", GMAX3100_vals[14], 4);
+		devprop_add_value(device, "AAPL01,LinkType", GMAX3100_vals[15], 4);
+		devprop_add_value(device, "AAPL01,Pipe", GMAX3100_vals[16], 4);
+		devprop_add_value(device, "AAPL01,PixelFormat", GMAX3100_vals[17], 4);
+		devprop_add_value(device, "AAPL01,Refresh", GMAX3100_vals[18], 4);
+		devprop_add_value(device, "AAPL01,Stretch", GMAX3100_vals[19], 4);
+		devprop_add_value(device, "AAPL01,InverterFrequency", GMAX3100_vals[20], 4);
+//		devprop_add_value(device, "class-code",						ClassFix, 4);
 		devprop_add_value(device, "subsystem-vendor-id", GMAX3100_vals[21], 4);
 		devprop_add_value(device, "subsystem-id", GMAX3100_vals[22], 4);
 	}
@@ -180,12 +181,11 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 		return FALSE;
 	}*/
 	
-	extern CHAR8*						gDeviceProperties;
 	gDeviceProperties = AllocatePool(string->length * 2);
 	CopyMem(gDeviceProperties, (VOID*)devprop_generate_string(string), string->length * 2);
 	DBG(gDeviceProperties);
 #if DEBUG_GMA == 2  
-	gBootServices->Stall(5000000);
+	gBS->Stall(5000000);
 #endif  
 
 	

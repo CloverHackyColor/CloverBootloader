@@ -210,7 +210,6 @@ extern CHAR8                    *msgbuf;
 extern CHAR8                    *msgCursor;
 extern SMBIOS_STRUCTURE_POINTER	SmbiosTable;
 extern GFX_MANUFACTERER         gGraphicsCard;
-extern CHAR8*                   cpuFrequencyMHz;
 extern BOOLEAN                  gMobile;
 extern UINT32                   gCpuSpeed;  //kHz
 extern UINT32                   gBusSpeed;  //kHz
@@ -219,6 +218,18 @@ extern UINT32                   mPropSize;
 extern UINT8*                   mProperties;
 extern CHAR8                    gSelectedUUID[];
 extern CHAR8*                   AppleSystemVersion[];
+extern CHAR8*                   AppleBiosVendor;
+extern CHAR8*	                  AppleFirmwareVersion[];
+extern CHAR8*	                  AppleReleaseDate[];
+extern CHAR8*	                  AppleManufacturer;
+extern CHAR8*	                  AppleProductName[];
+extern CHAR8*	                  AppleSystemVersion[];
+extern CHAR8*	                  AppleSerialNumber[];
+extern CHAR8*	                  AppleFamilies[];
+extern CHAR8*	                  AppleBoardID[];
+extern CHAR8*	                  AppleChassisAsset[];
+extern CHAR8*	                  AppleBoardSN;
+extern CHAR8*	                  AppleBoardLocation;
 extern UINT8                    gDefaultType;
 extern EFI_SYSTEM_TABLE*        gST;
 extern EFI_BOOT_SERVICES*       gBS; 
@@ -227,9 +238,10 @@ extern CPU_STRUCTURE            gCPUStructure;
 extern EFI_GUID                 gUuid;
 extern CHAR8                    gOEMProduct[];  //original name from SMBIOS
 extern EFI_EDID_DISCOVERED_PROTOCOL*            EdidDiscovered;
+extern CHAR8*                   gDeviceProperties;
 
 
-VOID InitBooterLog(VOID);
+VOID       InitBooterLog(VOID);
 EFI_STATUS SetupBooterLog(VOID);
 
 EFI_STATUS
@@ -239,7 +251,11 @@ InitializeConsoleSim (
                       IN EFI_SYSTEM_TABLE     *SystemTable
                       );
 
-UINT64 GetCPUProperties (VOID);
+UINT64     GetCPUProperties (VOID);
+EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume);
+EFI_STATUS GetUserSettings(IN REFIT_VOLUME *Volume, CHAR16* ConfigPlistPath);
+EFI_STATUS GetNVRAMSettings(IN REFIT_VOLUME *Volume, CHAR16* NVRAMPlistPath);
+EFI_STATUS GetTheme (CHAR16* ThemePlistPath);
 
 EFI_STATUS EFIAPI
 LogDataHub(

@@ -134,17 +134,17 @@ typedef struct mkext_basic_header {
 * whose keys are the bundle IDs to load, and whose values are
 * dictionaries of flags:
 *
-* - "Load Kext" - boolean, whether to load the kext or not (default true).
+* - "Load Kext" - boolean, whether to load the kext or not (default TRUE).
 *   May be used to send just personalities for already-loaded kexts,
 *   but we do have a mechanism to do that from userland already.
 * - "Start Kext" - boolean, whether to start the kext or not
-*   (used when debugging). Defaults to true.
+*   (used when debugging). Defaults to TRUE.
 * - "Add Personalities" - boolean, whether to send personalities to
-*   the IOCatalogue (used when debugging). Defaults to true.
+*   the IOCatalogue (used when debugging). Defaults to TRUE.
 * - "Disable Autounload" - boolean, whether to prevent the reaper
 *   thread from unloading the kext, so the dev. has time to set up
 *   the debug session. (Predefined window, or maybe this will be a
-*   number of seconds to wait.) Defaults to false.
+*   number of seconds to wait.) Defaults to FALSE.
 *********************************************************************/
 #define kMKEXTInfoDictionariesKey             "_MKEXTInfoDictionaries"
 

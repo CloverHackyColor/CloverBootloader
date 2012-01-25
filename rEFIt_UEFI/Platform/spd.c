@@ -236,7 +236,7 @@ CHAR8* getDDRSerial(UINT8* spd)
 }
 
 /** Get DDR3 or DDR2 Part Number, always return a valid ptr */
-CHAR8* getDDRPartNum(UINT8* spd, UINT32 base, int slot)
+CHAR8* getDDRPartNum(UINT8* spd, UINT32 base, INTN slot)
 {
 	CHAR8* asciiPartNo; //[32];
 	asciiPartNo = AllocatePool(32);
@@ -453,19 +453,19 @@ VOID ScanSPD()
 	UINTN				ProtocolIndex;
 
 	/* Scan PCI BUS For SmBus controller */
-	Status = gBootServices->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
+	Status = gBS->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
 	if (!EFI_ERROR(Status))
 	{	
 		for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++)
 		{
-			Status = gBootServices->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
+			Status = gBS->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
 			if (!EFI_ERROR(Status))
 			{			
 				for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++)
 				{
 					if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex]))
 					{
-						Status = gBootServices->OpenProtocol(HandleBuffer[HandleIndex],&gEfiPciIoProtocolGuid,(VOID **)&PciIo,gImageHandle,NULL,EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+						Status = gBS->OpenProtocol(HandleBuffer[HandleIndex],&gEfiPciIoProtocolGuid,(VOID **)&PciIo,gImageHandle,NULL,EFI_OPEN_PROTOCOL_GET_PROTOCOL);
 						if (!EFI_ERROR(Status))
 						{
 							/* Read PCI BUS */

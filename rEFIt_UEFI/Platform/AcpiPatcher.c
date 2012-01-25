@@ -273,26 +273,26 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 		//Now install the new table
 		gBS->InstallConfigurationTable (&gEfiAcpiTableGuid, (VOID*)RsdPointer);
 		DBG("Converted RsdPtr 0x%p\n", RsdPointer);
-		gSystemTable->Hdr.CRC32 = 0;
-		gBS->CalculateCrc32 ((UINT8 *) &gSystemTable->Hdr, 
-                         gSystemTable->Hdr.HeaderSize, &gSystemTable->Hdr.CRC32);	
+		gST->Hdr.CRC32 = 0;
+		gBS->CalculateCrc32 ((UINT8 *) &gST->Hdr, 
+                         gST->Hdr.HeaderSize, &gST->Hdr.CRC32);	
 		DBG("AcpiTableLen %x\n", AcpiTableLen);
 	} else
 #else	
 	{
 		//try to find in SystemTable
-		for(Index = 0; Index < gSystemTable->NumberOfTableEntries; Index++)
+		for(Index = 0; Index < gST->NumberOfTableEntries; Index++)
 		{
-			if(CompareGuid (&gSystemTable->ConfigurationTable[Index].VendorGuid, &gEfiAcpi20TableGuid))
+			if(CompareGuid (&gST->ConfigurationTable[Index].VendorGuid, &gEfiAcpi20TableGuid))
 			{
 				// Acpi 2.0
-				RsdPointer = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)gSystemTable->ConfigurationTable[Index].VendorTable;
+				RsdPointer = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)gST->ConfigurationTable[Index].VendorTable;
 				break;
 			}
-			else if(CompareGuid (&gSystemTable->ConfigurationTable[Index].VendorGuid, &gEfiAcpi10TableGuid))
+			else if(CompareGuid (&gST->ConfigurationTable[Index].VendorGuid, &gEfiAcpi10TableGuid))
 			{
 				// Acpi 1.0 - RSDT only
-				RsdPointer = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)gSystemTable->ConfigurationTable[Index].VendorTable;
+				RsdPointer = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)gST->ConfigurationTable[Index].VendorTable;
 				continue;
 			}
 		}

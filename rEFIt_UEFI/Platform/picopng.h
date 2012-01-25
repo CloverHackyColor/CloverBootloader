@@ -58,9 +58,6 @@ typedef struct {
 
 } PNG_INFO;
 
-PNG_INFO *PNG_decode(const UINT8 *in, UINT32 size);
-void png_alloc_free_all();
-
-extern int PNG_error;
+EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha)
 
 #endif

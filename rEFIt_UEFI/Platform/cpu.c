@@ -589,19 +589,19 @@ UINT64 GetCPUProperties (VOID)
 		// thanks to dgobe for i3/i5/i7 bus speed detection
 		qpimult = 2; //init
 		/* Scan PCI BUS For QPI Frequency */
-		Status = gBootServices->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
+		Status = gBS->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
 		if (!EFI_ERROR(Status))
 		{	
 			for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++)
 			{
-				Status = gBootServices->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
+				Status = gBS->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
 				if (!EFI_ERROR(Status))
 				{			
 					for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++)
 					{
 						if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex]))
 						{
-							Status = gBootServices->OpenProtocol(HandleBuffer[HandleIndex],&gEfiPciIoProtocolGuid,(VOID **)&PciIo,gImageHandle,NULL,EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+							Status = gBS->OpenProtocol(HandleBuffer[HandleIndex],&gEfiPciIoProtocolGuid,(VOID **)&PciIo,gImageHandle,NULL,EFI_OPEN_PROTOCOL_GET_PROTOCOL);
 							if (!EFI_ERROR(Status))
 							{
 								/* Read PCI BUS */
@@ -682,19 +682,19 @@ UINT64 GetCPUProperties (VOID)
 #if DEBUG_PCI
 	
 	/* Scan PCI BUS */
-	Status = gBootServices->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
+	Status = gBS->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
 	if (!EFI_ERROR(Status))
 	{	
 		for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++)
 		{
-			Status = gBootServices->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
+			Status = gBS->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
 			if (!EFI_ERROR(Status))
 			{			
 				for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++)
 				{
 					if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex]))
 					{
-						Status = gBootServices->OpenProtocol(HandleBuffer[HandleIndex],&gEfiPciIoProtocolGuid,(VOID **)&PciIo,gImageHandle,NULL,EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+						Status = gBS->OpenProtocol(HandleBuffer[HandleIndex],&gEfiPciIoProtocolGuid,(VOID **)&PciIo,gImageHandle,NULL,EFI_OPEN_PROTOCOL_GET_PROTOCOL);
 						if (!EFI_ERROR(Status))
 						{
 							/* Read PCI BUS */

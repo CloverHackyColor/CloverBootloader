@@ -129,7 +129,7 @@ for filename in sys.argv[1:]:
         pixelformat = pixelformat + "_GRAY"
     
     elif len(planes[0]) > 0:
-        print " encoding as true color"
+        print " encoding as TRUE color"
         imagedata.extend(encode_plane(planes[0], planenames[0]))
         imagedata.extend(encode_plane(planes[1], planenames[1]))
         imagedata.extend(encode_plane(planes[2], planenames[2]))

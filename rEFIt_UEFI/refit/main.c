@@ -300,8 +300,11 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     // locate a custom icon for the loader
     StrCpy(IconFileName, LoaderPath);
     ReplaceExtension(IconFileName, L".icns");
-    if (FileExists(Volume->RootDir, IconFileName))
+  if (FileExists(Volume->RootDir, IconFileName)){
         Entry->me.Image = LoadIcns(Volume->RootDir, IconFileName, 128);
+  } else if (FileExists(SelfRootDir, IconFileName)) {
+    Entry->me.Image = LoadIcns(SelfRootDir, IconFileName, 128);
+  }
     
     // detect specific loaders
     OSIconName = NULL;

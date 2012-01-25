@@ -19,6 +19,38 @@ SETTINGS_DATA     gSettings;
 GFX_MANUFACTERER  gGraphicsCard;
 EFI_EDID_DISCOVERED_PROTOCOL*            EdidDiscovered;
 
+EFI_STATUS GetTheme (CHAR16* ThemePlistPath)
+{
+  EFI_STATUS	Status = EFI_NOT_FOUND;
+	UINT32		size;
+	CHAR8*		gThemePtr;
+	TagPtr		dict;
+	TagPtr		prop;
+
+  if (FileExists(SelfRootDir, ThemePlistPath)) {
+    Status = egLoadFile(SelfRootDir, ThemePlistPath, (CHAR8**)&gThemePtr, &size);
+  } 
+  if (EFI_ERROR(Status)) {
+    Print(L"No theme found!\n");
+    gBS->Stall(3000000);
+    return Status;
+  }
+
+  if(gThemePtr)
+	{		
+		if(ParseXML((const CHAR8*)gThemePtr, &dict) != EFI_SUCCESS)
+		{
+			Print(L"Theme.plist parsing error!\n");
+      gBS->Stall(3000000);
+			return EFI_UNSUPPORTED;
+		}
+    
+    
+    
+  }
+  return Status;
+}
+
 EFI_STATUS GetNVRAMSettings(IN REFIT_VOLUME *Volume, CHAR16* NVRAMPlistPath)
 {
 	EFI_STATUS	Status;
@@ -326,7 +358,7 @@ EFI_STATUS GetUserSettings(IN REFIT_VOLUME *Volume, CHAR16* ConfigPlistPath)
 	return Status;
 }	
 
-EFI_STATUS FindVersionPlist(IN REFIT_VOLUME *Volume)
+EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 {
 	EFI_STATUS				Status = EFI_NOT_FOUND;
 	CHAR8*						plistBuffer = 0;
@@ -361,26 +393,30 @@ EFI_STATUS FindVersionPlist(IN REFIT_VOLUME *Volume)
 			// Tiger
 			if(AsciiStrStr(prop->string, "10.4") != 0){
         Volume->OSType = OSTYPE_TIGER;
+        Volume->OSIconName = L"tiger";
         Status = EFI_SUCCESS;
       } else
 			// Leopard
       if(AsciiStrStr(prop->string, "10.5") != 0){
 				Volume->OSType = OSTYPE_LEO;
+        Volume->OSIconName = L"leo";
         Status = EFI_SUCCESS;
       } else
 			// Snow Leopard
 			if(AsciiStrStr(prop->string, "10.6") != 0){
 				Volume->OSType = OSTYPE_SNOW;
+        Volume->OSIconName = L"snow";
         Status = EFI_SUCCESS;
       } else
 			// Lion
 			if(AsciiStrStr(prop->string, "10.7") != 0){
 				Volume->OSType = OSTYPE_LION;
+        Volume->OSIconName = L"lion";
         Status = EFI_SUCCESS;
       }
     } 
 	}
-//	MsgLog("Booting OS %x\n", sysVersion);
+//	MsgLog("Booting %a\n", sysVersion[Volume->OSType]);
 	return Status;
 }
 
@@ -390,7 +426,7 @@ VOID GetEdid(VOID)
 	EFI_EDID_ACTIVE_PROTOCOL*                EdidActive;
 	EFI_STATUS						Status;
   //	EFI_GRAPHICS_OUTPUT_PROTOCOL	*GraphicsOutput=NULL;
-	Status = gBootServices->LocateProtocol (&gEfiEdidActiveProtocolGuid, NULL, (VOID **)&EdidActive);
+	Status = gBS->LocateProtocol (&gEfiEdidActiveProtocolGuid, NULL, (VOID **)&EdidActive);
 	
 	if (!EFI_ERROR (Status)) 
 	{
@@ -399,7 +435,7 @@ VOID GetEdid(VOID)
 		MsgLog("%a\n", (CHAR8*)EdidActive->Edid);
 	}
   
-	Status = gBootServices->LocateProtocol (&gEfiEdidDiscoveredProtocolGuid, NULL, (VOID **)&EdidDiscovered);
+	Status = gBS->LocateProtocol (&gEfiEdidDiscoveredProtocolGuid, NULL, (VOID **)&EdidDiscovered);
 	
 	if (!EFI_ERROR (Status)) 
 	{
@@ -436,14 +472,14 @@ VOID SetGraphics(VOID)
   
   GetEdid();
   /* Read Pci Bus for GFX */
-	Status = gBootServices->LocateHandleBuffer (AllHandles, NULL, NULL, &HandleCount, &HandleBuffer);
+	Status = gBS->LocateHandleBuffer (AllHandles, NULL, NULL, &HandleCount, &HandleBuffer);
 	if (!EFI_ERROR(Status)) {
 		for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
-			Status = gBootServices->ProtocolsPerHandle (HandleBuffer[HandleIndex], &ProtocolGuidArray, &ArrayCount);
+			Status = gBS->ProtocolsPerHandle (HandleBuffer[HandleIndex], &ProtocolGuidArray, &ArrayCount);
 			if (!EFI_ERROR(Status)) {
 				for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
 					if (CompareGuid( &gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex])) {
-						Status = gBootServices->OpenProtocol (HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID **)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+						Status = gBS->OpenProtocol (HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID **)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
 						if (!EFI_ERROR(Status)) {
 							Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, 0, sizeof (Pci) / sizeof (UINT32), &Pci);
 							if (EFI_ERROR (Status)) {
