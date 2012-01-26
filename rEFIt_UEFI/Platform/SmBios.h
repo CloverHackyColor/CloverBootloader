@@ -640,31 +640,31 @@ typedef struct {
   UINT32  ProcessorDe        :1;
   UINT32  ProcessorPse       :1;
   UINT32  ProcessorTsc       :1;
-  UINT32  ProcessorMsr       :1;
+  UINT32  ProcessorMsr       :1; //5
   UINT32  ProcessorPae       :1;
   UINT32  ProcessorMce       :1;
   UINT32  ProcessorCx8       :1;
   UINT32  ProcessorApic      :1;
-  UINT32  ProcessorReserved1 :1;
+  UINT32  ProcessorReserved1 :1; //10
   UINT32  ProcessorSep       :1;
   UINT32  ProcessorMtrr      :1;
   UINT32  ProcessorPge       :1;
   UINT32  ProcessorMca       :1;
-  UINT32  ProcessorCmov      :1;
+  UINT32  ProcessorCmov      :1; //15
   UINT32  ProcessorPat       :1;
   UINT32  ProcessorPse36     :1;
   UINT32  ProcessorPsn       :1;
   UINT32  ProcessorClfsh     :1;
-  UINT32  ProcessorReserved2 :1;
+  UINT32  ProcessorReserved2 :1; //20
   UINT32  ProcessorDs        :1;
   UINT32  ProcessorAcpi      :1;
   UINT32  ProcessorMmx       :1;
   UINT32  ProcessorFxsr      :1;
-  UINT32  ProcessorSse       :1;
+  UINT32  ProcessorSse       :1; //25
   UINT32  ProcessorSse2      :1;
   UINT32  ProcessorSs        :1;
   UINT32  ProcessorReserved3 :1;
-  UINT32  ProcessorTm        :1;
+  UINT32  ProcessorTm        :1; //29
   UINT32  ProcessorReserved4 :2;
 } PROCESSOR_FEATURE_FLAGS;
 

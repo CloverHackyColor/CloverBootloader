@@ -43,6 +43,25 @@ Headers collection for procedures
 #define BOOTER_LOG_SIZE	(64 * 1024)
 #define MsgLog(x...) {AsciiSPrint(msgCursor, BOOTER_LOG_SIZE, x); while(*msgCursor){msgCursor++;}}
 
+#define CPU_MODEL_DOTHAN        0x0D
+#define CPU_MODEL_YONAH         0x0E
+#define CPU_MODEL_MEROM         0x0F  /* same as CONROE but mobile */
+#define CPU_MODEL_CELERON       0x16  /* ever see? */
+#define CPU_MODEL_PENRYN        0x17  
+#define CPU_MODEL_NEHALEM       0x1A
+#define CPU_MODEL_ATOM          0x1C
+#define CPU_MODEL_XEON_MP       0x1D  /* ever see? */
+#define CPU_MODEL_FIELDS        0x1E
+#define CPU_MODEL_DALES         0x1F
+#define CPU_MODEL_CLARKDALE     0x25
+#define CPU_MODEL_LINCROFT      0x27
+#define CPU_MODEL_SANDY_BRIDGE	0x2A
+#define CPU_MODEL_WESTMERE      0x2C
+#define CPU_MODEL_JAKETOWN      0x2D  /* ever see? */
+#define CPU_MODEL_NEHALEM_EX    0x2E
+#define CPU_MODEL_WESTMERE_EX   0x2F
+
+#define CPU_VENDOR_INTEL  0x756E6547
 
 typedef struct {
   
@@ -57,40 +76,42 @@ typedef struct {
 typedef struct {
   
 	// SMBIOS TYPE0
-	CHAR16	VendorName[64];
-	CHAR16	RomVersion[64];
-	CHAR16	ReleaseDate[64];
+	CHAR8	VendorName[64];
+	CHAR8	RomVersion[64];
+	CHAR8	ReleaseDate[64];
 	// SMBIOS TYPE1
-	CHAR16	ManufactureName[64];
-	CHAR16	ProductName[64];
-	CHAR16	VersionNr[64];
-	CHAR16	SerialNr[64];
-	CHAR16	Uuid[64];
-	CHAR16	SKUNumber[64];
-	CHAR16	FamilyName[64];
+	CHAR8	ManufactureName[64];
+	CHAR8	ProductName[64];
+	CHAR8	VersionNr[64];
+	CHAR8	SerialNr[64];
+//	CHAR8	Uuid[64];
+//	CHAR8	SKUNumber[64];
+	CHAR8	FamilyName[64];
+  CHAR16 OEMProduct[64];
 	// SMBIOS TYPE2
-	CHAR16	BoardManufactureName[64];
-	CHAR16	BoardSerialNumber[64];
-	CHAR16	BoardNumber[64]; //Board-ID
-	CHAR16	LocationInChassis[64];
+	CHAR8	BoardManufactureName[64];
+	CHAR8	BoardSerialNumber[64];
+	CHAR8	BoardNumber[64]; //Board-ID
+	CHAR8	LocationInChassis[64];
 	// SMBIOS TYPE3
-	CHAR16	ChassisManufacturer[64];
-	CHAR16	ChassisAssetTag[64]; 
+	CHAR8	ChassisManufacturer[64];
+	CHAR8	ChassisAssetTag[64]; 
 	// SMBIOS TYPE4
-	CHAR16	ProcessorTray[64];
+	CHAR8	ProcessorTray[64];
 	CHAR16	CpuFreqMHz[5];
-	CHAR16	CPUSerial[10];  //microcode?
-                          // SMBIOS TYPE16
-	CHAR16	NumberOfMemorySlots[3];
-	// SMBIOS TYPE17
-	CHAR16	MemoryManufacturer[64];
-	CHAR16	MemorySerialNumber[64];
-	CHAR16	MemoryPartNumber[64];
-	CHAR16	MemorySpeed[64];
-	// SMBIOS TYPE131
-	CHAR16	CpuType[10];
-	// SMBIOS TYPE132
 	CHAR16	BusSpeed[10];
+	CHAR8	CPUSerial[10];  //microcode?
+                          // SMBIOS TYPE16
+	CHAR8	NumberOfMemorySlots[3];
+	// SMBIOS TYPE17
+	CHAR8	MemoryManufacturer[64];
+	CHAR8	MemorySerialNumber[64];
+	CHAR8	MemoryPartNumber[64];
+	CHAR8	MemorySpeed[64];
+	// SMBIOS TYPE131
+	CHAR8	CpuType[10];
+	// SMBIOS TYPE132
+  
 	// OS X Args
 	CHAR16	Language[10];
 	CHAR16	KernelFlags[120];
@@ -112,52 +133,47 @@ typedef struct {
 } SETTINGS_DATA;
 
 typedef struct {
-  
-	CHAR8	BrandString[48];
-	UINT8	Cores;
-	UINT8	Threads;
-	UINT8	Mobile;
-	UINT8	MaxCoef;
-	UINT8	MaxDiv;
-	UINT8	CurrCoef;
-	UINT8	CurrDiv;
-	UINT8	FlexRatio;
-	UINT8	BusRatioMax;
-	UINT8	BusRatioMin;
-	UINT16	ExternalClock;
-	UINT16	MaxSpeed;
-	UINT16	CurrentSpeed;
+ //values from CPUID 
+	UINT32	CPUID[CPUID_MAX][4];
 	UINT32  Vendor;
+	UINT32	Signature;
 	UINT32	Family;
 	UINT32	Model;
 	UINT32	Stepping;
 	UINT32	Type;
 	UINT32	Extmodel;
 	UINT32	Extfamily;
-	UINT32	Signature;
 	UINT64  Features;
 	UINT64  ExtFeatures;
+	UINT32	CoresPerPackage;
+	UINT32  LogicalPerPackage;  
+	CHAR8   BrandString[48];
+  
+  //values from BIOS
+	UINT32	ExternalClock; //keep this values as kHz
+	UINT32	MaxSpeed;       //MHz
+	UINT32	CurrentSpeed;   //MHz
+  
+  //calculated from MSR
+  UINT64  MicroCode;
+  UINT64  ProcessorFlag;
 	UINT32	MaxRatio;
 	UINT32	MinRatio;
-	UINT32	TMS;
-	UINT32	IDA;
-  //	UINT64	FrontSideBus;
 	UINT64  ProcessorInterconnectSpeed;
-	UINT64  UserSetting;
-	UINT64	FSBFrequency;
+	UINT64	FSBFrequency; //Hz
 	UINT64	CPUFrequency;
 	UINT64	TSCFrequency;
-	UINT32	CoresPerPackage;
-	UINT32  LogicalPerPackage;
+	UINT8   Cores;
+  UINT8   EnabledCores;
+	UINT8   Threads;
+	UINT8   Mobile;
   
 	/* Core i7,5,3 */
-	UINT8	Turbo1; //1 Core
-	UINT8	Turbo2; //2 Core
-	UINT8	Turbo3; //3 Core
-	UINT8	Turbo4; //4 Core
-  
-	UINT32	CPUID[CPUID_MAX][4];
-  
+	UINT8   Turbo1; //1 Core
+	UINT8   Turbo2; //2 Core
+	UINT8   Turbo3; //3 Core
+	UINT8   Turbo4; //4 Core
+    
 } CPU_STRUCTURE;
 
 typedef struct {

@@ -39,37 +39,32 @@
 #define CPUID_FEATURE_VMX			_HBit(5)
 #define CPUID_FEATURE_EST			_HBit(7)		
 
-
-CHAR8							gOEMProduct[40];
-
 EFI_GUID						gUuid;
-
 EFI_GUID						*gTableGuidArray[] = {&gEfiSmbiosTableGuid};
 
 //EFI_PHYSICAL_ADDRESS			*smbiosTable;
-VOID							*Smbios;  //pointer to SMBIOS data
+VOID                        *Smbios;  //pointer to SMBIOS data
 SMBIOS_TABLE_ENTRY_POINT		*EntryPoint; //SmbiosEps original
 SMBIOS_TABLE_ENTRY_POINT		*SmbiosEpsNew; //new SmbiosEps
 //for patching
 SMBIOS_STRUCTURE_POINTER		SmbiosTable;
 SMBIOS_STRUCTURE_POINTER		newSmbiosTable;
-UINT16							NumberOfRecords;
-UINT16							MaxStructureSize;
-UINT8*							Current; //pointer to the current end of tables
+UINT16                      NumberOfRecords;
+UINT16                      MaxStructureSize;
+UINT8*                      Current; //pointer to the current end of tables
 EFI_SMBIOS_TABLE_HEADER			*Record;
-EFI_SMBIOS_HANDLE				Handle;
-EFI_SMBIOS_TYPE					Type;
-//EFI_HANDLE						ProducerHandle;
-UINTN							stringNumber;
-UINTN							TableSize;
-UINTN							Index, Size, NewSize, MaxSize;
-//UINT16							CpuBus;
-UINT16							CoreCache = 0;
-UINT16							TotalCount = 0;
-UINT16							L1, L2, L3;
-UINT32							MaxMemory = 0;
+EFI_SMBIOS_HANDLE           Handle;
+EFI_SMBIOS_TYPE             Type;
+
+UINTN				stringNumber;
+UINTN				TableSize;
+UINTN				Index, Size, NewSize, MaxSize;
+UINT16			CoreCache = 0;
+UINT16			TotalCount = 0;
+UINT16			L1, L2, L3;
+UINT32			MaxMemory = 0;
 UINT32			mTotalSystemMemory;
-UINT64						gTotalMemory;
+UINT64      gTotalMemory;
 UINT16			mHandle3;
 UINT16			mHandle16 = 0xFFFE;;
 UINT16			mHandle17[MAX_SLOT_COUNT];
@@ -78,16 +73,16 @@ UINT16			mMemory17[MAX_SLOT_COUNT];
 UINT64			mInstalled[MAX_SLOT_COUNT];
 UINT64			mEnabled[MAX_SLOT_COUNT];
 BOOLEAN			gMobile;
-UINT8			gBootStatus;
+UINT8       gBootStatus;
 BOOLEAN			Once;
 
-MEM_STRUCTURE*					gRAM;
+MEM_STRUCTURE*		gRAM;
 DMI*							gDMI;
 
 
-#define MAX_HANDLE	0xFEFF
+#define MAX_HANDLE        0xFEFF
 #define SMBIOS_PTR        SIGNATURE_32('_','S','M','_')
-#define MAX_TABLE_SIZE 512
+#define MAX_TABLE_SIZE    512
 
 
 /* Functions */
@@ -292,7 +287,7 @@ CHAR8* GetSmbiosString (
 		while (*AString != 0) {
 			AString ++;
 		}
-		AString ++;
+		AString ++; //skip zero ending
 		if (*AString == 0) {
 			return AString; //this is end of the table
 		}
@@ -317,7 +312,8 @@ VOID AddSmbiosEndOfTable()
 /* Patching Functions */
 VOID PatchTableType0()
 {
-	// Get Table Type0
+  // BIOS information
+	// 
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_BIOS_INFORMATION, 0);
 	if (SmbiosTable.Raw == NULL) {
 //		Print(L"SmbiosTable: Type 0 (Bios Information) not found!\n");
@@ -349,6 +345,8 @@ VOID PatchTableType0()
 
 VOID GetTableType1()
 {
+  // System Information
+  //
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_SYSTEM_INFORMATION, 0);
 	if (SmbiosTable.Raw == NULL) {
 		Print(L"SmbiosTable: Type 1 (System Information) not found!\n");
@@ -356,9 +354,9 @@ VOID GetTableType1()
 	}
 		
 	CopyMem(&gUuid, (VOID*)&SmbiosTable.Type1->Uuid, 16);
-//	AsciiStrCpy(gOEMProduct, GetSmbiosString(SmbiosTable, SmbiosTable.Type1->ProductName));
+	AsciiStrToUnicodeStr(GetSmbiosString(SmbiosTable, SmbiosTable.Type1->ProductName), gSettings.OEMProduct);
 	//Check the validity
-	if (((gUuid.Data3 & 0xF000) == 0) || (AsciiStrStr(gSettings.Uuid_Fix,"y") || AsciiStrStr(gSettings.Uuid_Fix,"Y"))) {
+	if ((gUuid.Data3 & 0xF000) == 0) {
 		CopyMem(&gUuid, (VOID*)&gEfiSmbiosTableGuid, 16); //gPlatformUuid
 		gUuid.Data1 ^= 0x1234; //random 
 		gUuid.Data2 ^= 0x2341;
@@ -370,8 +368,8 @@ VOID GetTableType1()
 
 VOID PatchTableType1()
 {
-//	CHAR8* AString;
-	// Get Table Type1
+  // System Information
+  // 
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_SYSTEM_INFORMATION, 0);
 	if (SmbiosTable.Raw == NULL) {
 		return;
@@ -418,7 +416,8 @@ VOID PatchTableType1()
 
 VOID PatchTableType2()
 {
-	// Get Table Type2
+  // BaseBoard Information
+	// 
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_BASEBOARD_INFORMATION, 0);
 	if (SmbiosTable.Raw == NULL) {
 //		Print(L"SmbiosTable: Type 2 (BaseBoard Information) not found!\n");
@@ -475,6 +474,8 @@ VOID PatchTableType2()
 
 VOID GetTableType3()
 {
+  // System Chassis Information
+  //
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_SYSTEM_ENCLOSURE, 0);
 	if (SmbiosTable.Raw == NULL) {
 		Print(L"SmbiosTable: Type 3 (System Chassis Information) not found!\n");
@@ -489,7 +490,8 @@ VOID GetTableType3()
 
 VOID PatchTableType3()
 {
-	// Get Table Type3
+  // System Chassis Information
+  //
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_SYSTEM_ENCLOSURE, 0);
 	if (SmbiosTable.Raw == NULL) {
 //		Print(L"SmbiosTable: Type 3 (System Chassis Information) not found!\n");
@@ -537,23 +539,37 @@ VOID PatchTableType3()
 
 VOID GetTableType4()
 {
+  // Processor Information
+  //
+  INTN res = 0;
+  
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_PROCESSOR_INFORMATION, 0);
 	if (SmbiosTable.Raw == NULL) {
 		Print(L"SmbiosTable: Type 4 (Processor Information) not found!\n");
 		return;
 	}
-	gCPUStructure.ExternalClock = SmbiosTable.Type4->ExternalClock;
-	AsciiSPrint(gSettings.BusSpeed, 10, "%d", gCPUStructure.ExternalClock);
+  res = (SmbiosTable.Type4->ExternalClock * 3 + 2) % 100;
+  if (res > 2) {
+    res = 0;
+  } else {
+    res = SmbiosTable.Type4->ExternalClock % 10;
+  }
+
+	gCPUStructure.ExternalClock = SmbiosTable.Type4->ExternalClock * 1000 + res * 110;//MHz->kHz  
+	SPrint(gSettings.BusSpeed, 10, L"%d", gCPUStructure.ExternalClock);
+  
 	gCPUStructure.CurrentSpeed = SmbiosTable.Type4->CurrentSpeed;
-	AsciiSPrint(gSettings.CpuFreqMHz, 10, "%d", gCPUStructure.CurrentSpeed);
+	SPrint(gSettings.CpuFreqMHz, 10, L"%d", gCPUStructure.CurrentSpeed);
 	
 	return;
 }
 
 VOID PatchTableType4()
 {
-	UINTN							AddBrand = 0;
-	CHAR8							BrandStr[48];
+  // Processor Information
+  //
+	UINTN               AddBrand = 0;
+	CHAR8               BrandStr[48];
 	UINT16							ProcChar = 0;
 
 	//Note. iMac11,2 has four tables for CPU i3
@@ -602,33 +618,25 @@ VOID PatchTableType4()
 		if (gCPUStructure.Model == CPU_MODEL_ATOM) {
 			newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelAtom;
 		}
-		if (gCPUStructure.Model == CPU_MODEL_DOTHAN) {
-			if (gCPUStructure.Mobile==TRUE)
+		if ((gCPUStructure.Model == CPU_MODEL_DOTHAN) ||
+        (gCPUStructure.Model == CPU_MODEL_YONAH)) {
+			if (gCPUStructure.Mobile)
 			{
 				newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCoreSoloMobile;
-				if (gCPUStructure.Cores==2)
+				if (gCPUStructure.Cores == 2)
 				{
 					newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCoreDuoMobile;
 				}
 			} else {
 				newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCoreSolo;
-				if (gCPUStructure.Cores==2)
+				if (gCPUStructure.Cores == 2)
 				{
 					newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCoreDuo;
 				}
 			}
 		}
-		if (gCPUStructure.Model == CPU_MODEL_YONAH) {
-			//this is change in Smbios v2.6 vs v2.3
-			if (gCPUStructure.Mobile==TRUE)
-			{
-				newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCoreSoloMobile;
-			} else {
-				newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCoreSolo;
-			}
-		}
 		if (gCPUStructure.Model == CPU_MODEL_MEROM) { //and Conroe
-			if (gCPUStructure.Mobile==TRUE)
+			if (gCPUStructure.Mobile)
 			{
 				if (gCPUStructure.Cores==2)
 				{
@@ -650,7 +658,7 @@ VOID PatchTableType4()
 			}
 		}
 		if (gCPUStructure.Model == CPU_MODEL_PENRYN) {
-			if (gCPUStructure.Mobile==TRUE)
+			if (gCPUStructure.Mobile)
 			{
 				if (gCPUStructure.Cores>2)
 				{
@@ -692,8 +700,7 @@ VOID PatchTableType4()
 		newSmbiosTable.Type4->ProcessorId.Signature.ProcessorType		= gCPUStructure.Type;
 		newSmbiosTable.Type4->ProcessorId.Signature.ProcessorXModel		= gCPUStructure.Extmodel;
 		newSmbiosTable.Type4->ProcessorId.Signature.ProcessorXFamily	= gCPUStructure.Extfamily;
-		//should check before uncomment
-//		newSmbiosTable.Type4->ProcessorId.Signature.FeatureFlags = gCPUStructure.Features;
+		newSmbiosTable.Type4->ProcessorId.Signature.FeatureFlags = gCPUStructure.Features;
 		if (Size <= 0x26) {
 			newSmbiosTable.Type4->ProcessorFamily2 = newSmbiosTable.Type4->ProcessorFamily;
 			ProcChar |= (gCPUStructure.ExtFeatures & CPUID_EXTFEATURE_EM64T)?0x04:0;
