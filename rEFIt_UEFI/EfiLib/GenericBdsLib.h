@@ -872,8 +872,7 @@ BdsExpandPartitionPartialDevicePathToFull (
 EFI_HANDLE
 EFIAPI
 BdsLibGetBootableHandle (
-	IN  EFI_DEVICE_PATH_PROTOCOL      *DevicePath,
-	IN OUT CHAR16 **NewFileName
+  IN  EFI_DEVICE_PATH_PROTOCOL      *DevicePath
   );
   
 
