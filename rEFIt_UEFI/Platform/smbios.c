@@ -717,7 +717,7 @@ VOID PatchTableType4()
 		}
 
 		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type4->AssetTag, BrandStr); //like mac
-		
+		// looks to be MicroCode revision
 		if(iStrLen(gSettings.CPUSerial, 10)>0){
 			UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type4->SerialNumber, gSettings.CPUSerial);
 		}
@@ -753,6 +753,13 @@ VOID PatchTableType6()
 
 VOID PatchTableType7()
 {
+  // Cache Information 
+  //
+    //TODO - should be separate table for each CPU core
+    //new handle for each core and attach Type4 tables for individual Type7
+    // Handle = 0x0700 + CoreN<<2 + CacheN (4-level cache is supported
+    // L1[CoreN] = Handle
+  
 	CHAR8* SSocketD;
 	BOOLEAN correctSD = FALSE;
 	
@@ -772,7 +779,7 @@ VOID PatchTableType7()
 		ZeroMem((VOID*)newSmbiosTable.Type7, MAX_TABLE_SIZE);
 		CopyMem((VOID*)newSmbiosTable.Type7, (VOID*)SmbiosTable.Type7, TableSize);
 		correctSD = (newSmbiosTable.Type7->SocketDesignation == 0);
-		CoreCache = newSmbiosTable.Type7->CacheConfiguration & CPU_CACHE_LEVEL; //0x3 means a two bit mask, so CPU_CACHE_LEVEL is always 3
+		CoreCache = newSmbiosTable.Type7->CacheConfiguration & 3; 
 		Once = TRUE;
 
 		SSocketD = "L1-Cache";
@@ -855,6 +862,8 @@ VOID PatchTableTypeSome()
 
 VOID GetTableType16()
 {
+  // Physical Memory Array
+  //
 	mTotalSystemMemory = 0; //later we will add to the value, here initialize it
 	TotalCount = 0;
 	// Get Table Type16 and set Device Count
@@ -874,6 +883,9 @@ VOID GetTableType16()
 
 VOID PatchTableType16()
 {
+  // Physical Memory Array
+  //
+
 //	mTotalSystemMemory = 0; //later we will add to the value, here initialize it
 //	TotalCount = 0;
 	mHandle16 = 0xFFFE;
@@ -901,6 +913,8 @@ VOID PatchTableType16()
 
 VOID GetTableType17()
 {
+  // Memory Device
+  //
 	// Get Table Type17 and count Size
 	gDMI->CntMemorySlots = 0;
 	gDMI->MemoryModules = 0;
@@ -923,7 +937,8 @@ VOID GetTableType17()
 
 VOID PatchTableType17()
 {
-	// Get Table Type17 and count Size
+  // Memory Device
+  //
 	for (Index = 0; Index < TotalCount; Index++) {
 		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, Index);
 		if (SmbiosTable.Raw == NULL) {
@@ -1151,7 +1166,7 @@ VOID PatchTableType130()
 {
 	//
 	// MemorySPD (TYPE 130)
-	// TODO: LocateProtocol(Smbus) and read SPD. Addresses are known from Chameleon sources. 
+	// TODO:  read SPD and place here. But for a what? 
 	//
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, 130, 0);
 	if (SmbiosTable.Raw == NULL) {
@@ -1202,8 +1217,7 @@ VOID PatchTableType132()
 		if(gCPUStructure.ProcessorInterconnectSpeed){
 			newSmbiosTable.Type132->ProcessorBusSpeed = gCPUStructure.ProcessorInterconnectSpeed;
 		} else {
-			UINT16 res = (gBusSpeed % 10) / 3;
-			newSmbiosTable.Type132->ProcessorBusSpeed = (gBusSpeed << 2) + res;
+			newSmbiosTable.Type132->ProcessorBusSpeed = (gBusSpeed << 2);
 		}
 		Handle = LogSmbiosTable(newSmbiosTable);
 		return;
@@ -1285,6 +1299,7 @@ EFI_STATUS PrepatchSmbios()
 	GetTableType17();
 	GetTableType32(); //get BootStatus here to decide what to do
 	MsgLog("Boot status=%x\n", gBootStatus);
+  //for example the bootloader may go to Recovery is BootStatus is Fail
 	return 	Status;
 } 
 
@@ -1313,8 +1328,9 @@ VOID PatchSmbios(VOID) //continue
 	PatchTableType132();
 	AddSmbiosEndOfTable();
 	if(MaxStructureSize > MAX_TABLE_SIZE){
-	   SHOW_ON_ERROR(Status, "Found too large SMBIOS table! Correct settings and try again.",
-					 L"Длинновата у вас таблица! Укоротите в меню что-нибудь...", STOP_ICON);
+//	   SHOW_ON_ERROR(Status, "Found too large SMBIOS table! Correct settings and try again.",
+//					 L"Длинновата у вас таблица! Укоротите в меню что-нибудь...", STOP_ICON);
+    Print(L"Too long SMBIOS!\n");
 	}
 	FreePool((VOID*)newSmbiosTable.Raw);	
 	
@@ -1350,8 +1366,7 @@ VOID FinalizeSmbios() //continue
 				SmbiosEpsNew->EntryPointStructureChecksum = (UINT8)(256 - Checksum8((UINT8*)SmbiosEpsNew, SmbiosEpsNew->EntryPointLength));
 				DBG("SmbiosEpsNew->EntryPointLength = %d\n", SmbiosEpsNew->EntryPointLength);
 				DBG("DMI checksum = %d\n", Checksum8((UINT8*)SmbiosEpsNew, SmbiosEpsNew->EntryPointLength));
-				//*Table = (UINT32)(UINTN)SmbiosEpsNew;
-				gBS->InstallConfigurationTable (&gEfiSmbiosTableGuid, (VOID*)SmbiosEpsNew);
+					gBS->InstallConfigurationTable (&gEfiSmbiosTableGuid, (VOID*)SmbiosEpsNew);
 				*Table = (UINT32)(UINTN)SmbiosEpsNew;
 				gST->Hdr.CRC32 = 0;
 				gBS->CalculateCrc32 ((UINT8 *) &gST->Hdr, 

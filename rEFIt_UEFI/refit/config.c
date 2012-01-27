@@ -38,7 +38,7 @@
 
 // constants
 
-#define CONFIG_FILE_NAME    L"refit.conf"
+#define CONFIG_FILE_NAME    L"interface.cfg"
 #define MAXCONFIGFILESIZE   (64*1024)
 
 #define ENCODING_ISO8859_1  (0)
@@ -63,7 +63,7 @@ static EFI_STATUS ReadFile(IN EFI_FILE_HANDLE BaseDir, CHAR16 *FileName, REFIT_F
     File->Buffer = NULL;
     File->BufferSize = 0;
     
-    // read the file, allocating a buffer on the woy
+    // read the file, allocating a buffer on the fly
     Status = BaseDir->Open(BaseDir, &FileHandle, FileName, EFI_FILE_MODE_READ, 0);
     if (CheckError(Status, L"while loading the configuration file"))
         return Status;
@@ -293,7 +293,7 @@ static VOID HandleEnum(IN CHAR16 **TokenList, IN UINTN TokenCount, IN CHAR16 **E
             *Value = i;
             return;
         }
-    // try to handle anINTNinstead
+    // try to handle an INTN instead
     *Value = StrDecimalToUintn(TokenList[1]);
 }
 

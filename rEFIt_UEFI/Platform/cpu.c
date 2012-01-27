@@ -164,6 +164,12 @@ CPU_STRUCTURE			gCPUStructure;
 #define MSR_THERMAL_TARGET          0x01A2	 /* limited use - not for Penryn or older			*/
 #define MSR_TURBO_RATIO_LIMIT       0x01AD	 /* limited use - not for Penryn or older			*/
 
+//AMD
+#define K8_FIDVID_STATUS        0xC0010042
+#define K10_COFVID_STATUS       0xC0010071
+#define DEFAULT_FSB             100000          /* for now, hardcoding 100MHz for old CPUs */
+
+
 VOID
 DoCpuid(UINT32 selector, UINT32 *data)
 {
@@ -196,121 +202,120 @@ UINT64 GetCPUProperties (VOID)
 	UINTN         Function;
   CHAR8         str[128], *s;
 	
+  //initial values 
 	gCPUStructure.MaxRatio = 1;
 	gCPUStructure.MinRatio = 1;
+  gCPUStructure.SubDivider = 0;
 	gCPUStructure.MaxSpeed = 0;
-	gCpuSpeed = gCPUStructure.CurrentSpeed;
-	gCPUStructure.FSBFrequency = gCPUStructure.ExternalClock  * 1000ull; //kHz -> Hz
+	gSettings.CpuFreqMHz = gCPUStructure.CurrentSpeed;
+	gCPUStructure.FSBFrequency = gCPUStructure.ExternalClock  * kilo; //kHz -> Hz
 	gCPUStructure.CPUFrequency = 0;
-	gCPUStructure.TSCFrequency = gCPUStructure.CurrentSpeed * 1000000ull; //MHz -> Hz
+	gCPUStructure.TSCFrequency = gCPUStructure.CurrentSpeed * Mega; //MHz -> Hz
 	gCPUStructure.ProcessorInterconnectSpeed = 0;
 	gCPUStructure.Mobile = FALSE; //not same as gMobile
 
 	/* get CPUID Values */
-  DoCpuid(0, gCPUStructure.CPUID[0]);
+  DoCpuid(0, gCPUStructure.CPUID[CPUID_0]);
   /*
 	 * Get processor signature and decode
 	 * and bracket this with the approved procedure for reading the
 	 * the microcode version number a.k.a. signature a.k.a. BIOS ID
 	 */  
   AsmWriteMsr64(MSR_IA32_BIOS_SIGN_ID, 0);
-  DoCpuid(1, gCPUStructure.CPUID[1]);
+  DoCpuid(1, gCPUStructure.CPUID[CPUID_1]);
   msr = AsmReadMsr64(MSR_IA32_BIOS_SIGN_ID);
   gCPUStructure.MicroCode = msr >> 32;
+  AsciiSPrint(gSettings.CPUSerial, 10, "%x", gCPUStructure.MicroCode);
   /* Get "processor flag"; necessary for microcode update matching */
   gCPUStructure.ProcessorFlag = (AsmReadMsr64(MSR_IA32_PLATFORM_ID) >> 50) & 3;
-  DoCpuid(2, gCPUStructure.CPUID[2]);
-  DoCpuid(3, gCPUStructure.CPUID[3]);
+  
+//  DoCpuid(2, gCPUStructure.CPUID[2]);
 
 	DoCpuid(0x80000000, gCPUStructure.CPUID[CPUID_80]);
-	if((gCPUStructure.CPUID[CPUID_80][0] & 0x0000000f) >= 1){
+	if((gCPUStructure.CPUID[CPUID_80][EAX] & 0x0000000f) >= 1){
 		DoCpuid(0x80000001, gCPUStructure.CPUID[CPUID_81]); 
 	}
 	
-	gCPUStructure.Vendor	= gCPUStructure.CPUID[CPUID_0][1];
-	gCPUStructure.Signature = gCPUStructure.CPUID[CPUID_1][0];
-	gCPUStructure.Stepping	= (UINT8) bitfield(gCPUStructure.CPUID[CPUID_1][0], 3, 0);
-	gCPUStructure.Model		= (UINT8) bitfield(gCPUStructure.CPUID[CPUID_1][0], 7, 4);
-	gCPUStructure.Family	= (UINT8) bitfield(gCPUStructure.CPUID[CPUID_1][0], 11, 8);
-	gCPUStructure.Type		= (UINT8) bitfield(gCPUStructure.CPUID[CPUID_1][0], 13, 12);
-	gCPUStructure.Extmodel	= (UINT8) bitfield(gCPUStructure.CPUID[CPUID_1][0], 19, 16);
-	gCPUStructure.Extfamily = (UINT8) bitfield(gCPUStructure.CPUID[CPUID_1][0], 27, 20);
-	gCPUStructure.Features  = quad(gCPUStructure.CPUID[CPUID_1][2], gCPUStructure.CPUID[CPUID_1][3]);
-	gCPUStructure.ExtFeatures  = quad(gCPUStructure.CPUID[CPUID_81][2], gCPUStructure.CPUID[CPUID_81][3]);
-	/* Pack CPU Family */
+	gCPUStructure.Vendor	= gCPUStructure.CPUID[CPUID_0][EBX];
+	gCPUStructure.Signature = gCPUStructure.CPUID[CPUID_1][EAX];
+	gCPUStructure.Stepping	= (UINT8) bitfield(gCPUStructure.CPUID[CPUID_1][EAX], 3, 0);
+	gCPUStructure.Model		= (UINT8) bitfield(gCPUStructure.CPUID[CPUID_1][EAX], 7, 4);
+	gCPUStructure.Family	= (UINT8) bitfield(gCPUStructure.CPUID[CPUID_1][EAX], 11, 8);
+	gCPUStructure.Type		= (UINT8) bitfield(gCPUStructure.CPUID[CPUID_1][EAX], 13, 12);
+	gCPUStructure.Extmodel	= (UINT8) bitfield(gCPUStructure.CPUID[CPUID_1][EAX], 19, 16);
+	gCPUStructure.Extfamily = (UINT8) bitfield(gCPUStructure.CPUID[CPUID_1][EAX], 27, 20);
+	gCPUStructure.Features  = quad(gCPUStructure.CPUID[CPUID_1][ECX], gCPUStructure.CPUID[CPUID_1][EDX]);
+	gCPUStructure.ExtFeatures  = quad(gCPUStructure.CPUID[CPUID_81][ECX], gCPUStructure.CPUID[CPUID_81][EDX]);
+	/* Pack CPU Family and Model */
 	if (gCPUStructure.Family == 0x0f) {
 		gCPUStructure.Family += gCPUStructure.Extfamily;
 	}
+	gCPUStructure.Model += (gCPUStructure.Extmodel << 4);  
   
   //Calculate Nr or Cores
-	gCPUStructure.Model += (gCPUStructure.Extmodel << 4);
 	if (gCPUStructure.Features & CPUID_FEATURE_HTT) {
-		gCPUStructure.LogicalPerPackage	= bitfield(gCPUStructure.CPUID[CPUID_1][1], 23, 16);
+		gCPUStructure.LogicalPerPackage	= bitfield(gCPUStructure.CPUID[CPUID_1][EBX], 23, 16); //Atom330 = 4
 	} else {
 		gCPUStructure.LogicalPerPackage	= 1;
 	}
-
-	gCPUStructure.CoresPerPackage =  bitfield(gCPUStructure.CPUID[CPUID_4][0], 31, 26) + 1;
+  DoCpuid(4, gCPUStructure.CPUID[CPUID_4]);
+	gCPUStructure.CoresPerPackage =  bitfield(gCPUStructure.CPUID[CPUID_4][EAX], 31, 26) + 1; //Atom330 = 2
 	if (gCPUStructure.CoresPerPackage == 0) {
 		gCPUStructure.CoresPerPackage = 1;
 	}
-	switch (gCPUStructure.Model)
-	{
-		case CPU_MODEL_ATOM: //N570 has 2 cores, 4 threads
-		{
-      switch (gCPUStructure.Stepping) {
-        case 0x2:
-        case 0xA:  
-          gCPUStructure.Cores   = 2; 
-          gCPUStructure.Threads = 4; 
-          break;
-        default:
-          gCPUStructure.Cores   = 1; 
-          gCPUStructure.Threads = 2; 
-          break;
-      }
-		}
-			break;
-		case CPU_MODEL_NEHALEM: // Intel Core i7 LGA1366 (45nm)
-		case CPU_MODEL_FIELDS: // Intel Core i5, i7 LGA1156 (45nm)
-		case CPU_MODEL_DALES:
-		case CPU_MODEL_NEHALEM_EX:	
-		case CPU_MODEL_JAKETOWN:
-		case CPU_MODEL_SANDY_BRIDGE:
-					
-		{
-			msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);
-			gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 31, 16);
-			gCPUStructure.Threads = (UINT8)bitfield((UINT32)msr, 15,  0);
-		} break;
-		case CPU_MODEL_CLARKDALE: // Intel Core i3, i5, i7 LGA1156 (32nm)
-		case CPU_MODEL_WESTMERE: // Intel Core i7 LGA1366 (32nm) 6 Core
-		case CPU_MODEL_WESTMERE_EX:
-
-		{
-			msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);
-			gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 19, 16);
-			gCPUStructure.Threads = (UINT8)bitfield((UINT32)msr, 15,  0);
-			break;
-		}
-			
-		default:		
-			gCPUStructure.Cores   = (UINT8)(gCPUStructure.CoresPerPackage & 0xff);
-			gCPUStructure.Threads = (UINT8)(gCPUStructure.LogicalPerPackage & 0xff);
-			break;
+  
+  /* Fold in the Invariant TSC feature bit, if present */
+	if((gCPUStructure.CPUID[CPUID_80][EAX] & 0x0000000f) >= 7){
+		DoCpuid(0x80000007, gCPUStructure.CPUID[CPUID_87]); 
+  gCPUStructure.ExtFeatures |=
+    gCPUStructure.CPUID[CPUID_87][EDX] & (UINT32)CPUID_EXTFEATURE_TSCI;
 	}
+  
+  
+  
+  if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
+    switch (gCPUStructure.Model)
+    {
+      case CPU_MODEL_NEHALEM: // Intel Core i7 LGA1366 (45nm)
+      case CPU_MODEL_FIELDS: // Intel Core i5, i7 LGA1156 (45nm)
+      case CPU_MODEL_DALES:
+      case CPU_MODEL_NEHALEM_EX:	
+      case CPU_MODEL_JAKETOWN:
+      case CPU_MODEL_SANDY_BRIDGE:					
+      {
+        msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);
+        gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 31, 16);
+        gCPUStructure.Threads = (UINT8)bitfield((UINT32)msr, 15,  0);
+      } break;
+      case CPU_MODEL_CLARKDALE: // Intel Core i3, i5, i7 LGA1156 (32nm)
+      case CPU_MODEL_WESTMERE: // Intel Core i7 LGA1366 (32nm) 6 Core
+      case CPU_MODEL_WESTMERE_EX:
+        
+      {
+        msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);
+        gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 19, 16);
+        gCPUStructure.Threads = (UINT8)bitfield((UINT32)msr, 15,  0);
+        break;
+      }
+        
+      default:		
+        gCPUStructure.Cores   = (UINT8)(gCPUStructure.CoresPerPackage & 0xff);
+        gCPUStructure.Threads = (UINT8)(gCPUStructure.LogicalPerPackage & 0xff);
+        break;
+    }    
+  }
 	if (gCPUStructure.Cores == 0) {
-		gCPUStructure.Cores   = (UINT8)(gCPUStructure.CoresPerPackage & 0xff);
-		gCPUStructure.Threads = (UINT8)(gCPUStructure.LogicalPerPackage & 0xff);
+      gCPUStructure.Cores   = (UINT8)(gCPUStructure.CoresPerPackage & 0xff);
+      gCPUStructure.Threads = (UINT8)(gCPUStructure.LogicalPerPackage & 0xff);
 	}
   //still zero? Correct!
 	if (gCPUStructure.Cores == 0) {
-		gCPUStructure.Cores = 1;
-		gCPUStructure.Threads = 1;
+      gCPUStructure.Cores = 1;
+      gCPUStructure.Threads = 1;
 	}
 		
 	/* get BrandString (if supported) */
-	if(gCPUStructure.CPUID[CPUID_80][0] >= 0x80000004){
+	if(gCPUStructure.CPUID[CPUID_80][EAX] >= 0x80000004){
  
 		ZeroMem(str, 128);
 		/* 
@@ -351,8 +356,7 @@ UINT64 GetCPUProperties (VOID)
 				fsbad	= FALSE;
 
 				switch (gCPUStructure.Model)
-				{
-            
+				{            
           case CPU_MODEL_SANDY_BRIDGE:// Sandy Bridge, 32nm
           case CPU_MODEL_NEHALEM:// Core i7 LGA1366, Xeon 5500, "Bloomfield", "Gainstown", 45nm
           case CPU_MODEL_FIELDS:// Core i7, i5 LGA1156, "Clarksfield", "Lynnfield", "Jasper", 45nm
@@ -397,9 +401,11 @@ UINT64 GetCPUProperties (VOID)
               gCPUStructure.Mobile = TRUE;
             }
             msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);
-            gCPUStructure.MaxRatio = (UINT8)(msr >> 8) & 0xff;
+            gCPUStructure.MaxRatio = (UINT32)(msr >> 8) & 0xff;
+            gCPUStructure.SubDivider = (UINT32)(msr >> 46) & 0x1;
             gCPUStructure.MinRatio = 6;
-            gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.TSCFrequency, gCPUStructure.MaxRatio);
+            gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.TSCFrequency * 2,
+                                                   gCPUStructure.MaxRatio * 2 + gCPUStructure.SubDivider);
             gCPUStructure.Turbo4 = gCPUStructure.MaxRatio + 1;
             if (gSettings.Turbo){
               gCPUStructure.CPUFrequency = gCPUStructure.Turbo4 * gCPUStructure.FSBFrequency;
@@ -414,7 +420,7 @@ UINT64 GetCPUProperties (VOID)
             break;
 				}
 			}
-			else //Family !=6 i.e. Pentium 4 or AMD or VIA
+			else //Family !=6 i.e. Pentium 4 
 			{
         msr = AsmReadMsr64(MSR_IA32_PLATFORM_ID);
         if (((msr >> 31) & 0x01) != 0) {
@@ -426,13 +432,51 @@ UINT64 GetCPUProperties (VOID)
         gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
 			}
 	}
-
-  BusSpeed = (UINT32)DivU64x32(gCPUStructure.FSBFrequency, 1000UL); //Hz -> kHz
+#if 1 //NOTNOW
+  else if(gCPUStructure.Vendor == CPU_VENDOR_AMD /* AMD */) 
+	{
+		if(gCPUStructure.Extfamily == 0x00 /* K8 */)
+		{
+			msr = AsmReadMsr64(K8_FIDVID_STATUS);
+			gCPUStructure.MaxRatio = (msr & 0x3f) / 2 + 4;
+			gCPUStructure.SubDivider = (msr & 0x01) * 2;
+		}
+		else if(gCPUStructure.Extfamily >= 0x01 /* K10+ */)
+		{
+			msr = AsmReadMsr64(K10_COFVID_STATUS);
+			if(gCPUStructure.Extfamily == 0x01 /* K10 */)
+				gCPUStructure.MaxRatio = (msr & 0x3f) + 0x10;
+			else /* K11+ */
+				gCPUStructure.MaxRatio = (msr & 0x3f) + 0x08;
+			gCPUStructure.SubDivider = (2 << ((msr >> 6) & 0x07));
+		}
+    
+		if (gCPUStructure.MaxRatio)
+		{
+			if (gCPUStructure.SubDivider)
+			{
+				gCPUStructure.FSBFrequency = DivU64x32(
+                                               MulU64x32(gCPUStructure.TSCFrequency,
+                                                         gCPUStructure.SubDivider),
+                                               gCPUStructure.MaxRatio);
+		//		DBG("%d.%d\n", currcoef / currdiv, ((currcoef % currdiv) * 100) / currdiv);
+			}
+			else
+			{
+				gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.TSCFrequency, gCPUStructure.MaxRatio);
+			}
+      DBG("AMD divider: %d\n", gCPUStructure.MaxRatio);
+			gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
+		}
+	}
+  
+#endif
+  BusSpeed = (UINT32)DivU64x32(gCPUStructure.FSBFrequency, kilo); //Hz -> kHz
      //now check if SMBIOS has ExternalClock = 4xBusSpeed
   if (gCPUStructure.ExternalClock > BusSpeed * 3) {
     gCPUStructure.ExternalClock = BusSpeed;
   } else {
-    gCPUStructure.FSBFrequency = MulU64x32(gCPUStructure.ExternalClock, 1000UL); //kHz -> Hz
+    gCPUStructure.FSBFrequency = MulU64x32(gCPUStructure.ExternalClock, kilo); //kHz -> Hz
   }
 	
 	if (gCPUStructure.Model >= CPU_MODEL_NEHALEM) {
@@ -506,13 +550,11 @@ UINT64 GetCPUProperties (VOID)
 
 		DBG("qpimult %d\n", qpimult);
 		qpibusspeed = qpimult * 2 * gCPUStructure.ExternalClock;
-		// Rek: rounding decimals to match original mac profile info
-		if (qpibusspeed%100 != 0)qpibusspeed = ((qpibusspeed+50)/100)*100;
 		DBG("qpibusspeed %d\n", qpibusspeed);
-		gCPUStructure.ProcessorInterconnectSpeed = (UINT16)DivU64x32(qpibusspeed, 1000UL);
+		gCPUStructure.ProcessorInterconnectSpeed = (UINT16)DivU64x32(qpibusspeed, kilo);
 
 	} else {
-		gCPUStructure.ProcessorInterconnectSpeed = (UINT16)DivU64x32(gCPUStructure.ExternalClock << 2, 1000UL);
+		gCPUStructure.ProcessorInterconnectSpeed = (UINT16)DivU64x32(gCPUStructure.ExternalClock << 2, kilo);
 	}
 	
 	DBG("Vendor/Model/Stepping: 0x%x/0x%x/0x%x\n", gCPUStructure.Vendor, gCPUStructure.Model, gCPUStructure.Stepping);

@@ -17,6 +17,8 @@
 
 #include "Platform.h"
 
+static EFI_CONSOLE_CONTROL_SCREEN_MODE CurrentMode = EfiConsoleControlScreenText;
+
 EFI_STATUS EFIAPI
 GetModeImpl(
   IN  EFI_CONSOLE_CONTROL_PROTOCOL      *This,
@@ -25,7 +27,9 @@ GetModeImpl(
   OUT BOOLEAN                           *StdInLocked    OPTIONAL
   )
 {
-    *Mode =  EfiConsoleControlScreenText; // EfiConsoleControlScreenGraphics;
+  *Mode = CurrentMode; 
+  // EfiConsoleControlScreenText;
+  // EfiConsoleControlScreenGraphics;
 
     if (GopUgaExists)
         *GopUgaExists = TRUE;
@@ -40,6 +44,7 @@ SetModeImpl(
   IN  EFI_CONSOLE_CONTROL_SCREEN_MODE   Mode
   )
 {
+  CurrentMode = Mode;
     return EFI_SUCCESS;
 }
 

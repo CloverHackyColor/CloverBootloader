@@ -111,7 +111,7 @@ EFI_STATUS SetVariablesForOSX()
 	UINT32      FwFeaturesMask  = 0x800003ff;
 	UINTN       bootArgsLen = 120; 
 	CHAR8*      None	= "none";
-	CHAR8*      BA = &gSettings.KernelFlags[119];
+	CHAR8*      BA = &gSettings.BootArgs[119];
   
 	while ((*BA == ' ') || (*BA == 0)) {
 		BA--; bootArgsLen--;
@@ -132,7 +132,7 @@ EFI_STATUS SetVariablesForOSX()
   
 	Status = gRS->SetVariable(L"boot-args", &gEfiAppleBootGuid, 
                                          /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                                         bootArgsLen ,&gSettings.KernelFlags);
+                                         bootArgsLen ,&gSettings.BootArgs);
 	Status = gRS->SetVariable(L"security-mode", &gEfiAppleBootGuid, 
                                          /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          5 , (VOID*)None);

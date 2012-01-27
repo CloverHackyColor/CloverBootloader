@@ -38,6 +38,13 @@ Headers collection for procedures
 #include "Bmp.h"
 #include "efiConsoleControl.h"
 
+/* Decimal powers: */
+#define kilo (1000ULL)
+#define Mega (kilo * kilo)
+#define Giga (kilo * Mega)
+#define Tera (kilo * Giga)
+#define Peta (kilo * Tera)
+
 #define SAFE_LOG_SIZE	80
 
 #define BOOTER_LOG_SIZE	(64 * 1024)
@@ -62,6 +69,28 @@ Headers collection for procedures
 #define CPU_MODEL_WESTMERE_EX   0x2F
 
 #define CPU_VENDOR_INTEL  0x756E6547
+#define CPU_VENDOR_AMD    0x68747541
+
+/* CPUID Index */ 
+#define CPUID_0		0 
+#define CPUID_1		1 
+#define CPUID_2		2 
+#define CPUID_3		3 
+#define CPUID_4		4 
+#define CPUID_80	5 
+#define CPUID_81	6
+#define CPUID_87  7
+#define CPUID_MAX	8
+
+#define EAX 0
+#define EBX 1
+#define ECX 2
+#define EDX 3
+
+/* CPU Cache */
+#define MAX_CACHE_COUNT  4
+#define CPU_CACHE_LEVEL  3
+
 
 typedef struct {
   
@@ -97,39 +126,38 @@ typedef struct {
 	CHAR8	ChassisManufacturer[64];
 	CHAR8	ChassisAssetTag[64]; 
 	// SMBIOS TYPE4
-	CHAR8	ProcessorTray[64];
-	CHAR16	CpuFreqMHz[5];
-	CHAR16	BusSpeed[10];
-	CHAR8	CPUSerial[10];  //microcode?
-                          // SMBIOS TYPE16
-	CHAR8	NumberOfMemorySlots[3];
+	UINT16	CpuFreqMHz;
+	UINT16	BusSpeed;                    
 	// SMBIOS TYPE17
 	CHAR8	MemoryManufacturer[64];
 	CHAR8	MemorySerialNumber[64];
 	CHAR8	MemoryPartNumber[64];
 	CHAR8	MemorySpeed[64];
 	// SMBIOS TYPE131
-	CHAR8	CpuType[10];
-	// SMBIOS TYPE132
+	UINT16	CpuType;
   
-	// OS X Args
+	// OS parameters
 	CHAR16	Language[10];
-	CHAR16	KernelFlags[120];
-	CHAR16	DsdtName[60];
+	CHAR16	BootArgs[120];
+	CHAR16	CustomUuid[40];
 	
-	// System parameters
+	// GUI parameters
 	BOOLEAN	Debug;
+  
+	//ACPI
+	UINT16	ResetAddr;
+	UINT16	ResetVal;
+	BOOLEAN	UseDSDTmini;  
 	BOOLEAN	DropSSDT;
 	BOOLEAN	smartUPS;
-	BOOLEAN	ShowLegacyBoot;
-	BOOLEAN	UseDSDTmini;
-	// User TimeOut
-	CHAR16	TimeOut[3];
+	CHAR16	DsdtName[60];
+    
+  //Graphics
+  BOOLEAN GraphicInjector;
+  BOOLEAN LoadVBios;
+  CHAR16  FBName[16];
+  UINT16  VideoPorts;
   
-	CHAR16	CustomUuid[40];
-	//FADT
-	CHAR16	ResetAddr[7];
-	CHAR16	ResetVal[5];
 } SETTINGS_DATA;
 
 typedef struct {
@@ -158,6 +186,7 @@ typedef struct {
   UINT64  MicroCode;
   UINT64  ProcessorFlag;
 	UINT32	MaxRatio;
+  UINT32  SubDivider;
 	UINT32	MinRatio;
 	UINT64  ProcessorInterconnectSpeed;
 	UINT64	FSBFrequency; //Hz
@@ -166,7 +195,7 @@ typedef struct {
 	UINT8   Cores;
   UINT8   EnabledCores;
 	UINT8   Threads;
-	UINT8   Mobile;
+	UINT8   Mobile;  //not for i3-i7
   
 	/* Core i7,5,3 */
 	UINT8   Turbo1; //1 Core
@@ -266,12 +295,14 @@ InitializeConsoleSim (
                       IN EFI_HANDLE           ImageHandle,
                       IN EFI_SYSTEM_TABLE     *SystemTable
                       );
-
+//Settings.c
 UINT64     GetCPUProperties (VOID);
 EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume);
 EFI_STATUS GetUserSettings(IN REFIT_VOLUME *Volume, CHAR16* ConfigPlistPath);
 EFI_STATUS GetNVRAMSettings(IN REFIT_VOLUME *Volume, CHAR16* NVRAMPlistPath);
-EFI_STATUS GetTheme (CHAR16* ThemePlistPath);
+//EFI_STATUS GetTheme (CHAR16* ThemePlistPath);
+EFI_STATUS GetGraphicsOutput(VOID);
+EFI_STATUS GetEdid(VOID)
 
 EFI_STATUS EFIAPI
 LogDataHub(

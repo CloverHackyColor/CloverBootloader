@@ -1160,7 +1160,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     ScanLoader();
     if (!GlobalConfig.LegacyFirst)
         ScanLegacy();
+  if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
     ScanTool();
+  }
+    
 //    DebugPause();
     
     // fixed other menu entries

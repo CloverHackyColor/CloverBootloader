@@ -17,8 +17,10 @@
 CHAR8             gSelectedUUID[40];
 SETTINGS_DATA     gSettings;
 GFX_MANUFACTERER  gGraphicsCard;
-EFI_EDID_DISCOVERED_PROTOCOL*            EdidDiscovered;
+EFI_EDID_DISCOVERED_PROTOCOL    *EdidDiscovered;
+EFI_GRAPHICS_OUTPUT_PROTOCOL    *GraphicsOutput;
 
+//should be excluded. Now interface.cfg
 EFI_STATUS GetTheme (CHAR16* ThemePlistPath)
 {
   EFI_STATUS	Status = EFI_NOT_FOUND;
@@ -44,9 +46,6 @@ EFI_STATUS GetTheme (CHAR16* ThemePlistPath)
       gBS->Stall(3000000);
 			return EFI_UNSUPPORTED;
 		}
-    
-    
-    
   }
   return Status;
 }
@@ -79,7 +78,7 @@ EFI_STATUS GetNVRAMSettings(IN REFIT_VOLUME *Volume, CHAR16* NVRAMPlistPath)
 /*		prop = GetProperty(dict, "boot-args");
 		if(prop)
 		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.KernelFlags);
+			AsciiStrToUnicodeStr(prop->string, gSettings.BootArgs);
 		}
  */
 		prop = GetProperty(dict, "efi-boot-device");
@@ -144,6 +143,7 @@ EFI_STATUS GetUserSettings(IN REFIT_VOLUME *Volume, CHAR16* ConfigPlistPath)
 	CHAR8*		gConfigPtr;
 	TagPtr		dict;
 	TagPtr		prop;
+  CHAR16    UStr[64];
 //	TagPtr		dictPointer;
 	
 	
@@ -167,30 +167,20 @@ EFI_STATUS GetUserSettings(IN REFIT_VOLUME *Volume, CHAR16* ConfigPlistPath)
 			return EFI_UNSUPPORTED;
 		}
 		//*** SYSTEM ***//
-		prop = GetProperty(dict,"Language");
-		if(prop)
-		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.Language);
-		} else {
-			prop = GetProperty(dict,"prev-lang:kbd");
-			if(prop)
-			{
-				AsciiStrToUnicodeStr(prop->string, gSettings.Language);
-			}
-		}
+    prop = GetProperty(dict,"prev-lang:kbd");
+    if(prop)
+    {
+      AsciiStrToUnicodeStr(prop->string, gSettings.Language);
+    }
+    
 		prop = GetProperty(dict,"boot-args");
 		if(prop)
 		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.KernelFlags);
-		} else {
-			prop = GetProperty(dict,"KernelFlags");
-			if(prop)
-			{
-				AsciiStrToUnicodeStr(prop->string, gSettings.KernelFlags);
-			}
-		}
-		//gSettings.TimeOut
-		prop = GetProperty(dict,"TimeOut");
+			AsciiStrToUnicodeStr(prop->string, gSettings.BootArgs);
+		} 
+    
+		//gSettings.TimeOut - will be in interface.txt
+/*		prop = GetProperty(dict,"TimeOut");
 		if(prop)
 		{
 			AsciiStrToUnicodeStr(prop->string, gSettings.TimeOut);
@@ -199,26 +189,24 @@ EFI_STATUS GetUserSettings(IN REFIT_VOLUME *Volume, CHAR16* ConfigPlistPath)
 			gTimeoutSec = 5;
 			StrCpy(gSettings.TimeOut, L"5");
 		}
-		
+*/		
 
 		//*** ACPI ***//
 		prop = GetProperty(dict,"ResetAddress");
 		if(prop)
 		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.ResetAddr);
-			gResetAddress  = (UINT16)StrHexToUint64(gSettings.ResetAddr); 
+			AsciiStrToUnicodeStr(prop->string, &UStr);
+			gResetAddress  = (UINT16)StrHexToUint64(UStr); 
 		}  else {
 			gResetAddress  = 0x64; //I wish it will be default
-			StrCpy(gSettings.ResetAddr, L"0x64");
 		}
 		prop = GetProperty(dict,"ResetValue");
 		if(prop)
 		{
 			AsciiStrToUnicodeStr(prop->string, gSettings.ResetVal);
-			gResetValue = (UINT16)StrHexToUint64(gSettings.ResetVal);	
+			gSettings.ResetVal = (UINT16)StrHexToUint64(gSettings.ResetVal);	
 		} else {
-			gResetValue = 0xFE;
-			StrCpy(gSettings.ResetVal, L"0xFE");
+			gSettings.ResetVal = 0xFE;
 		}
 		//other known pair is 0x02F9/0x06
 		
@@ -420,7 +408,32 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 	return Status;
 }
 
-VOID GetEdid(VOID)
+//GOP interface
+EFI_STATUS GetGraphicsOutput(VOID)
+{
+  EFI_STATUS						Status;
+  Status = gBS->HandleProtocol (gST->ConsoleOutHandle,
+                                &gEfiGraphicsOutputProtocolGuid,
+                                (VOID **)&GraphicsOutput);
+  return Status;
+}
+
+VOID GetResolution(UINT32* Width, UINT32* Height)
+{
+	EFI_STATUS						Status;
+  
+	if(GraphicsOutput)
+	{
+		*Width  = GraphicsOutput->Mode->Info->HorizontalResolution;
+		*Height = GraphicsOutput->Mode->Info->VerticalResolution;
+	} else {
+    *Width = 800;
+    *Height = 600;
+  }  
+}
+
+
+EFI_STATUS GetEdid(VOID)
 {
 	UINTN i, j, N;
 	EFI_EDID_ACTIVE_PROTOCOL*                EdidActive;
@@ -452,6 +465,7 @@ VOID GetEdid(VOID)
 			MsgLog("\n");		   
 		}
 	}
+  return Status;
 }
 
 
