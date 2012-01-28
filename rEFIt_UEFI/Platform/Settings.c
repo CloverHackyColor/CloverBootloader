@@ -14,9 +14,9 @@
 #define DBG(x...)
 #endif
 
-CHAR8             gSelectedUUID[40];
-SETTINGS_DATA     gSettings;
-GFX_MANUFACTERER  gGraphicsCard;
+CHAR8                           gSelectedUUID[40];
+SETTINGS_DATA                   gSettings;
+GFX_PROPERTIES                  gGraphics;
 EFI_EDID_DISCOVERED_PROTOCOL    *EdidDiscovered;
 EFI_GRAPHICS_OUTPUT_PROTOCOL    *GraphicsOutput;
 
@@ -408,30 +408,6 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 	return Status;
 }
 
-//GOP interface
-EFI_STATUS GetGraphicsOutput(VOID)
-{
-  EFI_STATUS						Status;
-  Status = gBS->HandleProtocol (gST->ConsoleOutHandle,
-                                &gEfiGraphicsOutputProtocolGuid,
-                                (VOID **)&GraphicsOutput);
-  return Status;
-}
-
-VOID GetResolution(UINT32* Width, UINT32* Height)
-{
-	EFI_STATUS						Status;
-  
-	if(GraphicsOutput)
-	{
-		*Width  = GraphicsOutput->Mode->Info->HorizontalResolution;
-		*Height = GraphicsOutput->Mode->Info->VerticalResolution;
-	} else {
-    *Width = 800;
-    *Height = 600;
-  }  
-}
-
 
 EFI_STATUS GetEdid(VOID)
 {
@@ -471,9 +447,7 @@ EFI_STATUS GetEdid(VOID)
 
 VOID SetGraphics(VOID)
 {
-  UINTN MaxMode;
-	UINTN modeNumber, currentRes, currentMode;
-	EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  *modeInfo;
+//	EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  *modeInfo;
   EFI_PCI_IO_PROTOCOL		*PciIo;
 	PCI_TYPE00            Pci;
 	UINTN                 HandleCount;
@@ -483,6 +457,9 @@ VOID SetGraphics(VOID)
 	EFI_HANDLE            *HandleBuffer;
 	EFI_GUID              **ProtocolGuidArray;
   pci_dt_t*             GFXdevice;
+  
+  gGraphics.Width  = UGAWidth;
+  gGraphics.Height = UGAHeight;
   
   GetEdid();
   /* Read Pci Bus for GFX */
@@ -507,6 +484,7 @@ VOID SetGraphics(VOID)
 									GFXdevice = AllocatePool(sizeof(pci_dt_t));
 									GFXdevice->vendor_id = Pci.Hdr.VendorId;
 									GFXdevice->device_id = Pci.Hdr.DeviceId;
+                  gGraphics.DeviceId = Pci.Hdr.DeviceId;
 									//GFXdevice->subsys_id = (UINT16)(0x10de0000 | Pci.Hdr.DeviceId);
 									GFXdevice->revision = Pci.Hdr.RevisionID;
 									GFXdevice->subclass = Pci.Hdr.ClassCode[0];
@@ -523,6 +501,7 @@ VOID SetGraphics(VOID)
 									GFXdevice = AllocatePool(sizeof(pci_dt_t));
 									GFXdevice->vendor_id = Pci.Hdr.VendorId;
 									GFXdevice->device_id = Pci.Hdr.DeviceId;
+                  gGraphics.DeviceId = Pci.Hdr.DeviceId;
 									//GFXdevice->subsys_id = (UINT16)(0x10de0000 | Pci.Hdr.DeviceId);
 									GFXdevice->revision = Pci.Hdr.RevisionID;
 									GFXdevice->subclass = Pci.Hdr.ClassCode[0];
@@ -539,6 +518,7 @@ VOID SetGraphics(VOID)
 									GFXdevice = AllocatePool(sizeof(pci_dt_t));
 									GFXdevice->vendor_id = Pci.Hdr.VendorId;
 									GFXdevice->device_id = Pci.Hdr.DeviceId;
+                  gGraphics.DeviceId = Pci.Hdr.DeviceId;
 									//GFXdevice->subsys_id = (UINT16)(0x10de0000 | Pci.Hdr.DeviceId);
 									GFXdevice->revision = Pci.Hdr.RevisionID;
 									GFXdevice->subclass = Pci.Hdr.ClassCode[0];
@@ -554,21 +534,5 @@ VOID SetGraphics(VOID)
 		}
 	}
   
-	MaxMode = GetMaxMode();
-	currentRes = 0;
-  currentMode = GetMode();
-	
-	MsgLog("CurrentMode=%d MaxMode=%d\n", currentMode, MaxMode);
-	for (modeNumber = 0; modeNumber < MaxMode; modeNumber++) {
-		GetModeInfo(modeNumber, &modeInfo);
-		MsgLog("mode %d: %dx%d pixels %d\n", modeNumber, modeInfo->HorizontalResolution, modeInfo->VerticalResolution,
-           modeInfo->PixelsPerScanLine); 
-		if (currentRes < modeInfo->PixelsPerScanLine) {
-			currentRes = modeInfo->PixelsPerScanLine;
-			gMaxResMode = modeNumber;
-		}
-	}
-	MsgLog("ChosenMode=%d\n", gMaxResMode);
-	SetResolution(gMaxResMode);
-  
+	MsgLog("CurrentMode: Width=%d Height=%d\n", gGraphics.Width, gGraphics.Height);  
 }

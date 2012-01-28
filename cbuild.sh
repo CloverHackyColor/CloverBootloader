@@ -16,28 +16,46 @@ fnXcode ()
 {
 [ ! -f /usr/bin/xcodebuild ] && \
 echo "ERROR: Install Xcode Tools from Apple before using this script." && exit
-echo "Xcode chainload"
+echo "CHAINLOAD: XCODE"
 export TARGET_TOOLS=XCODE32
+}
+
+fnXcode4 ()
+# Function: Xcode chainload
+{
+[ ! -f /usr/bin/xcodebuild ] && \
+echo "ERROR: Install Xcode Tools from Apple before using this script." && exit
+echo "CHAINLOAD: XCODE"
+export TARGET_TOOLS=XCODE41
+}
+
+fnGCC46 ()
+# Function: Xcode chainload
+{
+[ ! -f /usr/bin/xcodebuild ] && \
+echo "ERROR: Install Xcode Tools from Apple before using this script." && exit
+echo "CHAINLOAD: GCC46"
+export TARGET_TOOLS=GCC46
 }
 
 fnClang ()
 # Function: Clang chainload
 {
-echo "Clang chainload"
+echo "CHAINLOAD: CLANG"
 export TARGET_TOOLS=XCLANG
 }
 
 fnUnixgcc ()
 # Function: Unixgcc chainload
 {
-echo "Unixgcc chainload"
+echo "CHAINLOAD: UNIXGCC"
 export TARGET_TOOLS=UNIXGCC
 }
 
 fnArchIA32 ()
 # Function: IA32 Arch function
 {
-echo "IA32 arch"
+echo "ARCH: IA32"
 export PROCESSOR=IA32
 export Processor=Ia32
 }
@@ -45,7 +63,7 @@ export Processor=Ia32
 fnArchX64 ()
 # Function: X64 Arch function
 {
-echo "X64 arch"
+echo "ARCH: X64"
 export PROCESSOR=X64
 export Processor=X64
 }
@@ -53,7 +71,7 @@ export Processor=X64
 fnDebug ()
 # Function: Debug version of compiled source
 {
-echo "Debug TARGET"
+echo "TARGET: DEBUG"
 export TARGET=DEBUG
 export VTARGET=DEBUG
 }
@@ -61,7 +79,7 @@ export VTARGET=DEBUG
 fnRelease ()
 # Function: Release version of compiled source
 {
-echo "Release TARGET"
+echo "TARGET: RELEASE"
 export TARGET=RELEASE
 export VTARGET=RELEASE
 }
@@ -100,7 +118,6 @@ echo "Example: ./cbuild.sh -unixgcc -x64 -release"
 
 # 1. Argument Case
     case "$1" in
-
         '')
          fnHelp && exit
         ;;
@@ -110,20 +127,26 @@ echo "Example: ./cbuild.sh -unixgcc -x64 -release"
         '-xcode')
          fnXcode
         ;;
-
+        '-xcode4')
+         fnXcode4
+        ;;
         '-clang')
          fnClang
         ;;
-
         '-unixgcc')
          fnUnixgcc
         ;;
-
+        '-gcc46')
+         fnGCC46
+        ;;
+        *)
+         echo $"ERROR!"
+         echo $"COMPILER: {-xcode|-xcode4|-clang|-unixgcc|-gcc46}"
+        exit 1
     esac
 
 # 2. Argument Case
     case "$2" in
-
         '')
         fnHelpArgument && exit
         ;;
@@ -133,8 +156,12 @@ echo "Example: ./cbuild.sh -unixgcc -x64 -release"
         '-x64')
          fnArchX64
         ;;
-
+        *)
+         echo $"ERROR!"
+         echo $"ARCH: {-ia32|-x64}"
+        exit 1
     esac
+
 # 3. Argument Case
     case "$3" in
         '')
@@ -147,7 +174,10 @@ echo "Example: ./cbuild.sh -unixgcc -x64 -release"
         '-release')
          fnRelease
         ;;
-
+        *)
+         echo $"ERROR!"
+         echo $"TYPE: {-debug|-release}"
+        exit 1
     esac
 
 # 4. Argument Case
@@ -272,13 +302,13 @@ if [ $PROCESSOR = X64 ]
 then
 $BASETOOLS_DIR/GenFw --rebase 0x10000 -o $BUILD_DIR/$PROCESSOR/EfiLoader.efi $BUILD_DIR/$PROCESSOR/EfiLoader.efi
 $BASETOOLS_DIR/EfiLdrImage -o $BUILD_DIR/FV/Efildr64 $BUILD_DIR/$PROCESSOR/EfiLoader.efi $BUILD_DIR/FV/DxeIpl.z $BUILD_DIR/FV/DxeMain.z $BUILD_DIR/FV/DUETEFIMAINFV.z
-cat $BOOTSECTOR_BIN_DIR/Start64.com $BOOTSECTOR_BIN_DIR/efi64.com2 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/EfildrPure
-$BASETOOLS_DIR/GenPage $BUILD_DIR/FV/EfildrPure -o $BUILD_DIR/FV/Efildr
-cat $BOOTSECTOR_BIN_DIR/St16_64.com $BOOTSECTOR_BIN_DIR/efi64.com2 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/Efildr16Pure
-$BASETOOLS_DIR/GenPage $BUILD_DIR/FV/Efildr16Pure -o $BUILD_DIR/FV/Efildr16
-cat $BOOTSECTOR_BIN_DIR/start64H.com $BOOTSECTOR_BIN_DIR/efi64.com3 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/Efildr20Pure
+#cat $BOOTSECTOR_BIN_DIR/Start64.com $BOOTSECTOR_BIN_DIR/efi64.com2 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/EfildrPure
+#$BASETOOLS_DIR/GenPage $BUILD_DIR/FV/EfildrPure -o $BUILD_DIR/FV/Efildr
+#cat $BOOTSECTOR_BIN_DIR/St16_64.com $BOOTSECTOR_BIN_DIR/efi64.com2 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/Efildr16Pure
+#$BASETOOLS_DIR/GenPage $BUILD_DIR/FV/Efildr16Pure -o $BUILD_DIR/FV/Efildr16
+cat $BOOTSECTOR_BIN_DIR/Start64.com $BOOTSECTOR_BIN_DIR/efi64.com2 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/Efildr20Pure
 $BASETOOLS_DIR/GenPage $BUILD_DIR/FV/Efildr20Pure -o $BUILD_DIR/FV/Efildr20
-cat $BOOTSECTOR_BIN_DIR/start64H.com2 $BOOTSECTOR_BIN_DIR/efi64.com3 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/bootPure
+cat $BOOTSECTOR_BIN_DIR/Start64.com2 $BOOTSECTOR_BIN_DIR/efi64.com2 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/bootPure
 $BASETOOLS_DIR/GenPage $BUILD_DIR/FV/bootPure -o $BUILD_DIR/FV/boot
 
 echo Done!

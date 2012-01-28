@@ -51,8 +51,8 @@ static VOID PauseForKey(VOID);
 
 // UGA defines and variables
 
-UINTN UGAWidth;
-UINTN UGAHeight;
+UINTN   UGAWidth;
+UINTN   UGAHeight;
 BOOLEAN AllowGraphicsMode;
 
 EG_PIXEL StdBackgroundPixel  = { 0xbf, 0xbf, 0xbf, 0 };

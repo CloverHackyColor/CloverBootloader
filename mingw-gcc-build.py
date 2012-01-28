@@ -127,7 +127,7 @@ class Config:
                 )
         self.target_arch = {'ia32': 'i686', 'x64': 'x86_64', 'ipf': 'ia64'}[self.arch]
         self.target_sys = {'ia32': 'pc', 'x64': 'pc', 'ipf': 'pc'}[self.arch]
-        self.target_bin = {'ia32': 'elf', 'x64': 'elf', 'ipf': 'elf'}[self.arch]
+        self.target_bin = {'ia32': 'mingw32', 'x64': 'mingw32', 'ipf': 'elf'}[self.arch]
         self.target_combo = '-'.join((self.target_arch, self.target_sys, self.target_bin))
 
         return (Opt, Args)
@@ -204,7 +204,7 @@ class SourceFiles:
 
         if config.options.skip_gcc:
             del self.source_files['gcc']
-#            del self.source_files['mingw_hdr']
+            del self.source_files['mingw_hdr']
 
     source_files_common = {
         'binutils': {
@@ -299,7 +299,7 @@ class SourceFiles:
                         else:
                             print '[md5 mismatch]',
                         sys.stdout.flush()
-                        completed = True
+                        completed = md5_pass
 
                     if not completed:
                         urllib.urlretrieve(url, local_file, progress)
@@ -519,7 +519,7 @@ class Builder:
         if not os.path.exists(links_dir):
             os.makedirs(links_dir)
         startPrinted = False
-        for link in ('ar', 'ld', 'gcc'):
+        for link in ('ar', 'ld', 'gcc', 'objcopy'):
             src = os.path.join(
                 self.config.prefix, 'bin', self.config.target_combo + '-' + link
                 )

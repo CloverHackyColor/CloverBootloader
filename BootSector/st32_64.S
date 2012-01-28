@@ -30,7 +30,7 @@
 
 .global _start
 _start:
-              
+
 Ia32Jump: 
   jmp   BootSectorEntryPoint  # JMP inst    - 3 bytes
   nop
@@ -420,14 +420,6 @@ Timeout8042:
 
 
 A20GateEnabled: 
-//Slice
-#		movw	$0x0002, %ax 
-#		int		$0x10
-		#put char 6
-#		movl	$0x000F, %ebx
-#		movl	$0x0E36, %eax
-#		movl	$0x0010, %ecx
-#		int		$0x10
 
 #
 # DISABLE INTERRUPTS - Entering Protected Mode
@@ -609,7 +601,7 @@ Empty8042Loop:
 
         .p2align 1
 
-        gdtr:    .long  GDT_END - GDT_BASE - 1  # GDT limit 
+        gdtr:    .word  GDT_END - GDT_BASE - 1  # GDT limit 
         .long 0                     # (GDT base gets set above)
 ##############################################################################
 #   global descriptor table (GDT)

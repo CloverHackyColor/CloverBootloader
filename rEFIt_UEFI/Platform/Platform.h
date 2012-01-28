@@ -243,13 +243,20 @@ typedef struct {
 	UINT32		DIMM[MAX_RAM_SLOTS];	// Information and SPD mapping for each slot
 } DMI;
 
-typedef struct {
-  
-	BOOLEAN	Ati;
-	BOOLEAN	Intel;
-	BOOLEAN	Nvidia;
+typedef enum {
+  GfxUnknown,
+	GfxAti,
+	GfxIntel,
+	GfxNvidia
   
 } GFX_MANUFACTERER;
+
+typedef struct {
+  GFX_MANUFACTERER  Vendor;
+  UINT16            Width;
+  UINT16            Height;
+  UINT16            DeviceID;
+} GFX_PROPERTIES;
 
 extern CHAR8                    *msgbuf;
 extern CHAR8                    *msgCursor;
@@ -284,6 +291,7 @@ extern EFI_GUID                 gUuid;
 extern CHAR8                    gOEMProduct[];  //original name from SMBIOS
 extern EFI_EDID_DISCOVERED_PROTOCOL*            EdidDiscovered;
 extern CHAR8*                   gDeviceProperties;
+extern GFX_PROPERTIES           gGraphics;
 
 
 VOID       InitBooterLog(VOID);

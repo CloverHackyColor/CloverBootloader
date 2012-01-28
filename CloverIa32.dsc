@@ -296,7 +296,6 @@
 	#Clover/VBoxAppleSim/VBoxAppleSim.inf
 	IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 	#IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
-	#EdkCompatibilityPkg/Compatibility/PiSmbiosRecordOnDataHubSmbiosRecordThunk/PiSmbiosRecordOnDataHubSmbiosRecordThunk.inf
   
   	# foreign file system support
 	#Clover/VBoxFsDxe/VBoxHfs.inf
@@ -338,7 +337,6 @@
 
   # ISA Support
   PcAtChipsetPkg/IsaAcpiDxe/IsaAcpi.inf
-  #PcAtChipsetPkg/KbcResetDxe/Reset.inf
   IntelFrameworkModulePkg/Bus/Isa/IsaBusDxe/IsaBusDxe.inf
   #IntelFrameworkModulePkg/Bus/Isa/IsaSerialDxe/IsaSerialDxe.inf
   #IntelFrameworkModulePkg/Bus/Isa/Ps2KeyboardDxe/Ps2keyboardDxe.inf
