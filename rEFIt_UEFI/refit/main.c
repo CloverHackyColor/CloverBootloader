@@ -1121,114 +1121,142 @@ EFIAPI
 RefitMain (IN EFI_HANDLE           ImageHandle,
            IN EFI_SYSTEM_TABLE     *SystemTable)
 {
-    EFI_STATUS Status;
-    BOOLEAN MainLoopRunning = TRUE;
-    REFIT_MENU_ENTRY *ChosenEntry;
-    UINTN MenuExit;
-    UINTN i;
-    
-    // bootstrap
-//    InitializeLib(ImageHandle, SystemTable);
+  EFI_STATUS Status;
+  BOOLEAN           MainLoopRunning = TRUE;
+  REFIT_MENU_ENTRY  *ChosenEntry;
+  UINTN             MenuExit;
+  UINTN i;
+  UINT8             *Buffer = NULL;
+  
+  // bootstrap
+  //    InitializeLib(ImageHandle, SystemTable);
 	gST				= SystemTable;
 	gImageHandle	= ImageHandle;
 	gBS				= SystemTable->BootServices;
 	gRT				= SystemTable->RuntimeServices;
 	Status = EfiGetSystemConfigurationTable (&gEfiDxeServicesTableGuid, (VOID **) &gDS);
 	
-	
-    InitScreen();
-    Status = InitRefitLib(ImageHandle);
-    if (EFI_ERROR(Status))
-        return Status;
-    
-    // read configuration
-    ReadConfig();
-    MainMenu.TimeoutSeconds = GlobalConfig.Timeout;
-    
-    // disable EFI watchdog timer
-    gBS->SetWatchdogTimer(0x0000, 0x0000, 0x0000, NULL);
-    
-    // further bootstrap (now with config available)
-    SetupScreen();
-    LoadDrivers();
-    ScanVolumes();
- //   DebugPause();
-    
-    // scan for loaders and tools, add them to the menu
-    if (GlobalConfig.LegacyFirst)
-        ScanLegacy();
+	InitBooterLog();
+  InitScreen();
+  Status = InitRefitLib(ImageHandle);
+  if (EFI_ERROR(Status))
+    return Status;
+  
+  // read GUI configuration
+  ReadConfig();
+  MainMenu.TimeoutSeconds = GlobalConfig.Timeout;
+  
+  // disable EFI watchdog timer
+  gBS->SetWatchdogTimer(0x0000, 0x0000, 0x0000, NULL);
+  
+  // further bootstrap (now with config available)
+  SetupScreen();
+  LoadDrivers();
+  ScanVolumes();
+  //   DebugPause();
+  
+  //setup properties
+  SetGraphics();
+  PrepatchSmbios();
+  GetCPUProperties();
+  ScanSPD();
+  GetDefaultSettings();
+  Status = gRS->GetVariable(L"boot-args",
+                            &gEfiAppleBootGuid,  NULL,
+                            &Size, 										   
+                            Buffer);
+	if (Status == EFI_BUFFER_TOO_SMALL) {
+		Buffer = (UINT8 *) AllocatePool (Size);		
+		if (!Buffer){
+			Print(L"Errors allocating kernel flags!\n");
+ 		} else {
+			Status = gRS->GetVariable (L"boot-args",
+                                 &gEfiAppleBootGuid, NULL,
+                                 &Size, 
+                                 Buffer);
+		}		
+	}
+	if (Status == EFI_SUCCESS)
+		CopyMem(gSettingsFromMenu.BootArgs, Buffer, Size);			
+
+  //Second step. Load config.plist into gSettings	
+	GetUserSettings(SelfVolume, L"EFI\\config.plist");
+  
+  // scan for loaders and tools, add them to the menu
+  if (GlobalConfig.LegacyFirst)
+    ScanLegacy();
     ScanLoader();
     if (!GlobalConfig.LegacyFirst)
-        ScanLegacy();
-  if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
-    ScanTool();
+      ScanLegacy();
+      if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
+        ScanTool();
+      }
+  
+  //    DebugPause();
+  
+  // fixed other menu entries
+  if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
+    MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
+    AddMenuEntry(&MainMenu, &MenuEntryAbout);
   }
-    
-//    DebugPause();
-    
-    // fixed other menu entries
-    if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
-        MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
-        AddMenuEntry(&MainMenu, &MenuEntryAbout);
-    }
-    if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.EntryCount == 0) {
-         MenuEntryShutdown.Image = BuiltinIcon(BUILTIN_ICON_FUNC_SHUTDOWN);
-        AddMenuEntry(&MainMenu, &MenuEntryShutdown);
-        MenuEntryReset.Image = BuiltinIcon(BUILTIN_ICON_FUNC_RESET);
-        AddMenuEntry(&MainMenu, &MenuEntryReset);
-    }
-    
-    // assign shortcut keys
-    for (i = 0; i < MainMenu.EntryCount && MainMenu.Entries[i]->Row == 0 && i < 9; i++)
-        MainMenu.Entries[i]->ShortcutDigit = (CHAR16)('1' + i);
+  if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.EntryCount == 0) {
+    MenuEntryShutdown.Image = BuiltinIcon(BUILTIN_ICON_FUNC_SHUTDOWN);
+    AddMenuEntry(&MainMenu, &MenuEntryShutdown);
+    MenuEntryReset.Image = BuiltinIcon(BUILTIN_ICON_FUNC_RESET);
+    AddMenuEntry(&MainMenu, &MenuEntryReset);
+  }
+  
+  // assign shortcut keys
+  for (i = 0; i < MainMenu.EntryCount && MainMenu.Entries[i]->Row == 0 && i < 9; i++)
+    MainMenu.Entries[i]->ShortcutDigit = (CHAR16)('1' + i);
     
     // wait for user ACK when there were errors
     FinishTextScreen(FALSE);
     
     while (MainLoopRunning) {
-        MenuExit = RunMainMenu(&MainMenu, GlobalConfig.DefaultSelection, &ChosenEntry);
-        
-        // We don't allow exiting the main menu with the Escape key.
-        if (MenuExit == MENU_EXIT_ESCAPE)
-            continue;
-        
-        switch (ChosenEntry->Tag) {
-            
-            case TAG_RESET:    // Restart
-                TerminateScreen();
-                gRT->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
-                MainLoopRunning = FALSE;   // just in case we get this far
-                break;
-                
-            case TAG_SHUTDOWN: // Shut Down
-                TerminateScreen();
-                gRT->ResetSystem(EfiResetShutdown, EFI_SUCCESS, 0, NULL);
-                MainLoopRunning = FALSE;   // just in case we get this far
-                break;
-                
-            case TAG_ABOUT:    // About rEFIt
-                AboutRefit();
-                break;
-                
-            case TAG_LOADER:   // Boot OS via .EFI loader
-                StartLoader((LOADER_ENTRY *)ChosenEntry);
-                break;
-                
-            case TAG_LEGACY:   // Boot legacy OS
-                StartLegacy((LEGACY_ENTRY *)ChosenEntry);
-                break;
-                
-            case TAG_TOOL:     // Start a EFI tool
-                StartTool((LOADER_ENTRY *)ChosenEntry);
-                break;
-                
-        }
+      MenuExit = RunMainMenu(&MainMenu, GlobalConfig.DefaultSelection, &ChosenEntry);
+      
+      // We don't allow exiting the main menu with the Escape key.
+      if (MenuExit == MENU_EXIT_ESCAPE)
+        continue;
+      
+      switch (ChosenEntry->Tag) {
+          
+        case TAG_RESET:    // Restart
+          TerminateScreen();
+          gRT->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
+          MainLoopRunning = FALSE;   // just in case we get this far
+          break;
+          
+        case TAG_SHUTDOWN: // Shut Down
+          TerminateScreen();
+          gRT->ResetSystem(EfiResetShutdown, EFI_SUCCESS, 0, NULL);
+          MainLoopRunning = FALSE;   // just in case we get this far
+          break;
+          
+        case TAG_ABOUT:    // About rEFIt
+          AboutRefit();
+          break;
+          
+        case TAG_LOADER:   // Boot OS via .EFI loader
+          StartLoader((LOADER_ENTRY *)ChosenEntry);
+          break;
+          
+        case TAG_LEGACY:   // Boot legacy OS
+          StartLegacy((LEGACY_ENTRY *)ChosenEntry);
+          break;
+          
+        case TAG_TOOL:     // Start a EFI tool
+          StartTool((LOADER_ENTRY *)ChosenEntry);
+          break;
+          
+      }
     }
-    
-    // If we end up here, things have gone wrong. Try to reboot, and if that
-    // fails, go into an endless loop.
-    gRT->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
-    EndlessIdleLoop();
-    
-    return EFI_SUCCESS;
+  
+  // If we end up here, things have gone wrong. Try to reboot, and if that
+  // fails, go into an endless loop.
+  gRT->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
+  EndlessIdleLoop();
+  
+  return EFI_SUCCESS;
 }

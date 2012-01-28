@@ -161,3 +161,29 @@ CHAR8* AppleChassisAsset[14] =
 
 CHAR8* AppleBoardSN = "C02032101R5DC771H";
 CHAR8* AppleBoardLocation = "Part Component";
+
+VOID GetDefaultSettings(VOID)
+{
+  MACHINE_TYPES   Model;
+  
+  Model             = GetDefaultModel();
+  gSettings.CpuType	= GetAdvancedCpuType();
+  gSettings.BusSpeed = DivU64x32(gCPUStructure.FSBFrequency, kilo);
+  gSettings.CpuFreqMHz = DivU64x32(gCPUStructure.CPUFrequency, Mega);
+  
+	AsciiStrCpy(gSettings.VendorName,             AppleBiosVendor);
+  AsciiStrCpy(gSettings.RomVersion,             AppleFirmwareVersion[Model]);
+	AsciiStrCpy(gSettings.ReleaseDate,            AppleReleaseDate[Model]);
+	AsciiStrCpy(gSettings.ManufactureName,        AppleBiosVendor);
+	AsciiStrCpy(gSettings.ProductName,            AppleProductName[Model]);
+	AsciiStrCpy(gSettings.VersionNr,              AppleSystemVersion[Model]);
+	AsciiStrCpy(gSettings.SerialNr,               AppleSerialNumber[Model]);
+	AsciiStrCpy(gSettings.FamilyName,             AppleFamilies[Model]);	
+	AsciiStrCpy(gSettings.BoardManufactureName,   AppleBiosVendor);
+  AsciiStrCpy(gSettings.BoardSerialNumber,      AppleBoardSN);
+	AsciiStrCpy(gSettings.BoardNumber,            AppleBoardID[Model]);
+	AsciiStrCpy(gSettings.LocationInChassis,      AppleBoardLocation);
+	AsciiStrCpy(gSettings.ChassisManufacturer,    AppleBiosVendor);
+	AsciiStrCpy(gSettings.ChassisAssetTag,        AppleChassisAsset[Model]);
+  
+}

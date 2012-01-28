@@ -91,7 +91,6 @@ Headers collection for procedures
 #define MAX_CACHE_COUNT  4
 #define CPU_CACHE_LEVEL  3
 
-
 typedef struct {
   
   UINT32		type;
@@ -205,17 +204,36 @@ typedef struct {
     
 } CPU_STRUCTURE;
 
+typedef enum {
+  
+	MacBook11,
+	MacBook21,
+	MacBook41,
+	MacBook52,
+	MacBookPro51,
+	MacBookAir31,
+	MacMini21,
+	iMac81,
+	iMac101,
+	iMac112,
+	iMac121,
+	MacPro31,
+	MacPro41,
+	MacPro51
+  
+} MACHINE_TYPES;
+
 typedef struct {
-	UINT8			Type;
-	UINT8			BankConnections;
-	UINT8			BankConnectionCount;
-	UINT32			ModuleSize;
-	UINT32			Frequency;
-	CHAR8*			Vendor;
-	CHAR8*			PartNo;
-	CHAR8*			SerialNo;
-	UINT8			*spd;
-	BOOLEAN			InUse;
+	UINT8   Type;
+	UINT8   BankConnections;
+	UINT8   BankConnectionCount;
+	UINT32	ModuleSize;
+	UINT32	Frequency;
+	CHAR8*	Vendor;
+	CHAR8*	PartNo;
+	CHAR8*	SerialNo;
+	UINT8   *spd;
+	BOOLEAN	InUse;
 } RAM_SLOT_INFO; 
 
 #define MAX_SLOT_COUNT	8
@@ -223,8 +241,8 @@ typedef struct {
 
 typedef struct {
   
-	UINT64			Frequency;
-	UINT32			Divider;
+	UINT64		Frequency;
+	UINT32		Divider;
 	UINT8			TRC;
 	UINT8			TRP;
 	UINT8			RAS;
@@ -244,18 +262,18 @@ typedef struct {
 } DMI;
 
 typedef enum {
-  GfxUnknown,
-	GfxAti,
-	GfxIntel,
-	GfxNvidia
+  Unknown,
+	Ati,
+	Intel,
+	Nvidia
   
 } GFX_MANUFACTERER;
 
 typedef struct {
   GFX_MANUFACTERER  Vendor;
+  UINT16            DeviceID;
   UINT16            Width;
   UINT16            Height;
-  UINT16            DeviceID;
 } GFX_PROPERTIES;
 
 extern CHAR8                    *msgbuf;
@@ -265,6 +283,7 @@ extern GFX_MANUFACTERER         gGraphicsCard;
 extern BOOLEAN                  gMobile;
 extern UINT32                   gCpuSpeed;  //kHz
 extern UINT32                   gBusSpeed;  //kHz
+extern UINT16                   gCPUtype;
 extern CHAR8*                   BiosVendor;
 extern UINT32                   mPropSize;
 extern UINT8*                   mProperties;
@@ -282,7 +301,6 @@ extern CHAR8*	                  AppleBoardID[];
 extern CHAR8*	                  AppleChassisAsset[];
 extern CHAR8*	                  AppleBoardSN;
 extern CHAR8*	                  AppleBoardLocation;
-extern UINT8                    gDefaultType;
 extern EFI_SYSTEM_TABLE*        gST;
 extern EFI_BOOT_SERVICES*       gBS; 
 extern SETTINGS_DATA            gSettings;
@@ -294,30 +312,28 @@ extern CHAR8*                   gDeviceProperties;
 extern GFX_PROPERTIES           gGraphics;
 
 
-VOID       InitBooterLog(VOID);
-EFI_STATUS SetupBooterLog(VOID);
+VOID        InitBooterLog(VOID);
+EFI_STATUS  SetupBooterLog(VOID);
+VOID        GetDefaultSettings(VOID);
 
 EFI_STATUS
-EFIAPI
 InitializeConsoleSim (
                       IN EFI_HANDLE           ImageHandle,
                       IN EFI_SYSTEM_TABLE     *SystemTable
                       );
 //Settings.c
-UINT64     GetCPUProperties (VOID);
+VOID       GetCPUProperties (VOID);
 EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume);
 EFI_STATUS GetUserSettings(IN REFIT_VOLUME *Volume, CHAR16* ConfigPlistPath);
 EFI_STATUS GetNVRAMSettings(IN REFIT_VOLUME *Volume, CHAR16* NVRAMPlistPath);
-//EFI_STATUS GetTheme (CHAR16* ThemePlistPath);
-EFI_STATUS GetGraphicsOutput(VOID);
 EFI_STATUS GetEdid(VOID)
 
-EFI_STATUS EFIAPI
+EFI_STATUS
 LogDataHub(
            EFI_GUID					*TypeGuid,
-           CHAR16                      *Name,
-           VOID                        *Data,
-           UINT32                       DataSize);
+           CHAR16           *Name,
+           VOID             *Data,
+           UINT32           DataSize);
 
 EFI_STATUS SetVariablesForOSX();
 VOID       SetupDataForOSX();
@@ -326,8 +342,8 @@ EFI_STATUS SetPrivateVarProto(VOID);
 EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume);
 
 EFI_STATUS EventsInitialize (
-                  IN EFI_HANDLE                             ImageHandle,
-                  IN EFI_SYSTEM_TABLE                       *SystemTable
+                  IN EFI_HANDLE           ImageHandle,
+                  IN EFI_SYSTEM_TABLE     *SystemTable
                   );
 
 EFI_STATUS  bootElTorito(REFIT_VOLUME*	volume);

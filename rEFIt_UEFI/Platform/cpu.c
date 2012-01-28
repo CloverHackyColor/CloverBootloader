@@ -169,14 +169,12 @@ CPU_STRUCTURE			gCPUStructure;
 #define K10_COFVID_STATUS       0xC0010071
 #define DEFAULT_FSB             100000          /* for now, hardcoding 100MHz for old CPUs */
 
-
-VOID
-DoCpuid(UINT32 selector, UINT32 *data)
+VOID DoCpuid(UINT32 selector, UINT32 *data)
 {
 	AsmCpuid(selector, data, data+1, data+2, data+3);
 }
 
-UINT64 GetCPUProperties (VOID)
+VOID GetCPUProperties (VOID)
 {
 	INT32		i = 0;
 	UINT32		reg[4];
@@ -481,6 +479,7 @@ UINT64 GetCPUProperties (VOID)
 	
 	if (gCPUStructure.Model >= CPU_MODEL_NEHALEM) {
 		//Slice - for Nehalem we can do more calculation as in Cham
+    // but this algo almost always wrong
 		// thanks to dgobe for i3/i5/i7 bus speed detection
 		qpimult = 2; //init
 		/* Scan PCI BUS For QPI Frequency */
@@ -610,7 +609,7 @@ UINT64 GetCPUProperties (VOID)
 //	WaitForKeyPress("waiting for key press...\n");
 #endif	
 
-	return gCPUStructure.FSBFrequency;
+	return;
 }
 //PCI info
 /*
@@ -793,35 +792,35 @@ UINT16 GetAdvancedCpuType ()
 	return GetStandardCpuType();
 }
 
-UINT16 GetDefaultModel()
+MACHINE_TYPES GetDefaultModel()
 {
-	//Slice - move this after PrepatchSMBIOS
+  MACHINE_TYPES DefaultType = MacPro31;
 	// TODO: Add more CPU models and configure the correct machines per CPU/GFX model
 	if(gMobile)
 	{
 		switch (gCPUStructure.Model)
 		{
 			case CPU_MODEL_ATOM:
-				gDefaultType = MacBookAir31; //MacBookAir1,1 doesn't support _PSS for speedstep!
+				DefaultType = MacBookAir31; //MacBookAir1,1 doesn't support _PSS for speedstep!
 				break;
 			case CPU_MODEL_DOTHAN:	
-				gDefaultType = MacBook11;
+				DefaultType = MacBook11;
 				break;
 			case CPU_MODEL_YONAH: 
-				gDefaultType = MacBook11;
+				DefaultType = MacBook11;
 				break;
 			case CPU_MODEL_MEROM: 
-				gDefaultType = MacBook21;
+				DefaultType = MacBook21;
 				break;
 			case CPU_MODEL_PENRYN:
 				if (gGraphicsCard.Nvidia)
 				{
-					gDefaultType = MacBookPro51;
+					DefaultType = MacBookPro51;
 				} else
-					gDefaultType = MacBook41;
+					DefaultType = MacBook41;
 				break;
 			default:
-				gDefaultType = MacBook52;
+				DefaultType = MacBook52;
 				break;
 		}
 	}
@@ -831,62 +830,62 @@ UINT16 GetDefaultModel()
 		{
 			case CPU_MODEL_CELERON:
 
-				gDefaultType = MacMini21;
+				DefaultType = MacMini21;
 				break;
 	
 			case CPU_MODEL_LINCROFT:
-				gDefaultType = MacMini21;
+				DefaultType = MacMini21;
 				break;
 			case CPU_MODEL_ATOM:
-				gDefaultType = MacMini21;
+				DefaultType = MacMini21;
 				break;
 			case CPU_MODEL_MEROM:
-				gDefaultType = iMac81;
+				DefaultType = iMac81;
 				break;
 			case CPU_MODEL_PENRYN:	
-				gDefaultType = MacPro31;//speedstep without patching; Hapertown is also a Penryn, according to Wikipedia
+				DefaultType = MacPro31;//speedstep without patching; Hapertown is also a Penryn, according to Wikipedia
 				break;
 			case CPU_MODEL_NEHALEM:
-				gDefaultType = MacPro41;
+				DefaultType = MacPro41;
 				break;
 			case CPU_MODEL_NEHALEM_EX:
-				gDefaultType = MacPro41;
+				DefaultType = MacPro41;
 				break;
 			case CPU_MODEL_FIELDS:
-				gDefaultType = iMac112;
+				DefaultType = iMac112;
 				break;
 			case CPU_MODEL_DALES: 
-				gDefaultType = iMac112;
+				DefaultType = iMac112;
 				break;
 			case CPU_MODEL_CLARKDALE:
-				gDefaultType = iMac112;
+				DefaultType = iMac112;
 				break;
 			case CPU_MODEL_WESTMERE:
-				gDefaultType = MacPro51;
+				DefaultType = MacPro51;
 				break;
 			case CPU_MODEL_WESTMERE_EX:
-				gDefaultType = MacPro51;
+				DefaultType = MacPro51;
 				break;
 			case CPU_MODEL_SANDY_BRIDGE:
 				if((AsciiStrStr(gCPUStructure.BrandString, "i3")) || 
 				   (AsciiStrStr(gCPUStructure.BrandString, "i5-2390T")) || 
 				   (AsciiStrStr(gCPUStructure.BrandString, "i5-2100S")))
 				{
-					gDefaultType = iMac112;
+					DefaultType = iMac112;
 					break;
 				}
 				if(AsciiStrStr(gCPUStructure.BrandString, "i7"))
 				{
-					gDefaultType = iMac121;
+					DefaultType = iMac121;
 					break;
 				}
 			case CPU_MODEL_JAKETOWN:
-				gDefaultType = MacPro41;
+				DefaultType = MacPro41;
 				break;
 			default:
-				gDefaultType = MacPro31;
+				DefaultType = MacPro31;
 				break;
 		}
 	}	
-	return gDefaultType;
+	return DefaultType;
 }
