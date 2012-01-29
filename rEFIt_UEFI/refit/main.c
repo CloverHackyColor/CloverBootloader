@@ -228,8 +228,20 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
     
     // turn control over to the image
     // TODO: (optionally) re-enable the EFI watchdog timer!
+  //Slice - do this!
+  //
+  // Before calling the image, enable the Watchdog Timer for
+  // the 5 Minute period - Slice - NO! 30seconds is enough
+  //  
+  gBS->SetWatchdogTimer (30, 0x0000, 0x00, NULL);
+  
     ReturnStatus = Status = gBS->StartImage(ChildImageHandle, NULL, NULL);
-    // control returns here when the child image calls Exit()
+  //
+  // Clear the Watchdog Timer after the image returns
+  //
+  gBS->SetWatchdogTimer (0x0000, 0x0000, 0x0000, NULL);
+  
+  // control returns here when the child image calls Exit()
     SPrint(ErrorInfo, 255, L"returned from %s", ImageTitle);
     if (CheckError(Status, ErrorInfo)) {
         if (ErrorInStep != NULL)
@@ -237,8 +249,15 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
     }
     
     // re-open file handles
-    ReinitRefitLib();
-    
+    Status = ReinitRefitLib();  
+  //Slice
+  if (EFI_ERROR(Status)) {
+    goto bailout_unload;
+  }
+  if (!EFI_ERROR(ReturnStatus)) { //why unload driver?!
+    goto bailout;
+  }
+   
 bailout_unload:
     // unload the image, we don't care if it works or not...
     Status = gBS->UnloadImage(ChildImageHandle);
@@ -999,7 +1018,7 @@ static VOID ScanTool(VOID)
 // pre-boot driver functions
 //
 
-static VOID ScanDriverDir(IN CHAR16 *Path)
+static VOID ScanDriverDir(IN CHAR16 *Path) //path to folder 
 {
     EFI_STATUS              Status;
     REFIT_DIR_ITER          DirIter;
@@ -1022,6 +1041,7 @@ static VOID ScanDriverDir(IN CHAR16 *Path)
         CheckError(Status, FileName);
     }
 }
+      //Slice - I am proposed to use UEFI2.3.1 BdsLib
 /*
 static EFI_STATUS ConnectAllDriversToAllControllers(VOID)
 {
@@ -1093,6 +1113,7 @@ Done:
 static VOID LoadDrivers(VOID)
 {
 //    CHAR16                  DirName[256];
+  BOOLEAN ReconnectAll = TRUE; //TODO - find a reason to not reconnect
     
     Print(L"Scanning for drivers...\n");
     
@@ -1101,10 +1122,18 @@ static VOID LoadDrivers(VOID)
 //    ScanDriverDir(DirName);
 //    Print(L"Scanning for drivers in /efi/refit/drivers complete\n");
     // load drivers from /efi/drivers
-    ScanDriverDir(L"\\efi\\drivers");
-    Print(L"Scanning for drivers in /efi/tools/drivers complete\n");
+    ScanDriverDir(L"\\EFI\\drivers");
+    Print(L"Scanning for drivers in /EFI/drivers complete\n");
     // connect all devices
-    BdsLibConnectAllDriversToAllControllers();
+    //    BdsLibConnectAllDriversToAllControllers();
+    //
+    // Process the LOAD_OPTION_FORCE_RECONNECT driver option
+    //
+  if (ReconnectAll) {
+    BdsLibDisconnectAllEfi ();
+    BdsLibConnectAll ();
+  }
+  
 	Print(L"Drivers connected\n");
 }
 
@@ -1177,7 +1206,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 		}		
 	}
 	if (Status == EFI_SUCCESS)
-		CopyMem(gSettingsFromMenu.BootArgs, Buffer, Size);			
+		CopyMem(gSettings.BootArgs, Buffer, Size);			
 
   //Second step. Load config.plist into gSettings	
 	GetUserSettings(SelfVolume, L"EFI\\config.plist");
@@ -1185,12 +1214,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   // scan for loaders and tools, add them to the menu
   if (GlobalConfig.LegacyFirst)
     ScanLegacy();
-    ScanLoader();
-    if (!GlobalConfig.LegacyFirst)
-      ScanLegacy();
-      if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
-        ScanTool();
-      }
+  ScanLoader();
+  if (!GlobalConfig.LegacyFirst)
+    ScanLegacy();
+  if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
+    ScanTool();
+  }
   
   //    DebugPause();
   

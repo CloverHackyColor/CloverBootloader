@@ -38,7 +38,7 @@
 
 // constants
 
-#define CONFIG_FILE_NAME    L"interface.cfg"
+#define CONFIG_FILE_NAME    L"refit.conf"
 #define MAXCONFIGFILESIZE   (64*1024)
 
 #define ENCODING_ISO8859_1  (0)

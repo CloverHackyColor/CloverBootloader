@@ -657,7 +657,7 @@ typedef struct {
 /*
  VOID DumpCPU()
  {
- //	if(AsciiStrStr(gSettingsFromMenu.Debug,"y") || AsciiStrStr(gSettingsFromMenu.Debug,"Y")) {
+ //	if(AsciiStrStr(gSettings.Debug,"y") || AsciiStrStr(gSettings.Debug,"Y")) {
 	Print(L"CPU:	BrandString - %a\n", gCPUStructure.BrandString);
 	Print(L"Vendor/Model/ExtModel: 0x%x/0x%x/0x%x\n", gCPUStructure.Vendor,  gCPUStructure.Model, gCPUStructure.Extmodel);
 	Print(L"Family/ExtFamily:      0x%x/0x%x\n", gCPUStructure.Family,  gCPUStructure.Extfamily);

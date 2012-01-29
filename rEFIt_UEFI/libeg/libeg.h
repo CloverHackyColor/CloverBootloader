@@ -123,9 +123,9 @@
 #include <IndustryStandard/Pci.h>
 #include <IndustryStandard/SmBus.h>
 #include <IndustryStandard/Acpi.h>
-#include <IndustryStandard/Acpi20.h>
-#include <IndustryStandard/Acpi30.h>
-#include <IndustryStandard/Acpi40.h>
+//#include <IndustryStandard/Acpi20.h>
+//#include <IndustryStandard/Acpi30.h>
+//#include <IndustryStandard/Acpi40.h>
 #include <IndustryStandard/HighPrecisionEventTimerTable.h>
 #include <IndustryStandard/Scsi.h>
 

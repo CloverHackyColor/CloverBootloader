@@ -39,9 +39,6 @@
   DxeServicesLib|MdePkg/Library/DxeServicesLib/DxeServicesLib.inf
   DxeServicesTableLib|MdePkg/Library/DxeServicesTableLib/DxeServicesTableLib.inf
   HobLib|MdePkg/Library/DxeHobLib/DxeHobLib.inf
-  EfiFileLib|EmbeddedPkg/Library/EfiFileLib/EfiFileLib.inf
-  EblCmdLib|EmbeddedPkg/Library/EblCmdLibNull/EblCmdLibNull.inf  
-  EblNetworkLib|EmbeddedPkg/Library/EblNetworkLib/EblNetworkLib.inf
   CpuLib|MdePkg/Library/BaseCpuLib/BaseCpuLib.inf
   IoLib|MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsic.inf
   PciLib|MdePkg/Library/BasePciLibCf8/BasePciLibCf8.inf
@@ -53,11 +50,14 @@
   HiiLib|MdeModulePkg/Library/UefiHiiLib/UefiHiiLib.inf
   NetLib|MdeModulePkg/Library/DxeNetLib/DxeNetLib.inf
   
-   PeCoffLib|Clover/VBoxPeCoffLib/VBoxPeCoffLib.inf
- PeCoffGetEntryPointLib|MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
- GenericBdsLib|Clover/GenericBdsLib/GenericBdsLib.inf
+  PeCoffLib|Clover/VBoxPeCoffLib/VBoxPeCoffLib.inf
+  PeCoffGetEntryPointLib|MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
+  GenericBdsLib|Clover/GenericBdsLib/GenericBdsLib.inf
   UefiUsbLib|MdePkg/Library/UefiUsbLib/UefiUsbLib.inf
   UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
+  EfiFileLib|EmbeddedPkg/Library/EfiFileLib/EfiFileLib.inf
+  EblCmdLib|EmbeddedPkg/Library/EblCmdLibNull/EblCmdLibNull.inf  
+  EblNetworkLib|EmbeddedPkg/Library/EblNetworkLib/EblNetworkLib.inf
 
 
 [Components]

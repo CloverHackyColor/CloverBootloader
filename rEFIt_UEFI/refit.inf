@@ -33,7 +33,7 @@
 [Sources]
   EfiLib/BmLib.c
   EfiLib/DevicePath.c
-  EfiLib/BdsConnect.c
+ # EfiLib/BdsConnect.c #included into GenericBdsLib
   refit/main.c
   refit/config.c
   refit/icns.c
@@ -46,8 +46,7 @@
   libeg/load_icns.c
   libeg/libscreen.c
   libeg/text.c
-  Platform/
-  	AcpiPatcher.c
+  Platform/AcpiPatcher.c
 #	Platform/AppleEfi.h
 #	Platform/ati_reg.h
 	Platform/ati.c

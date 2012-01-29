@@ -70,7 +70,7 @@ THUNK_CONTEXT              mThunkContext;
 
 EFI_GRAPHICS_OUTPUT_BLT_PIXEL  mVgaColorToGraphicsOutputColor[] = {
   //
-  // {B, G, R, reserved}
+  // {B, G, R, Alpha}
   //  
   {0x00, 0x00, 0x00, 0x00}, // BLACK
   {0x98, 0x00, 0x00, 0x00}, // LIGHTBLUE

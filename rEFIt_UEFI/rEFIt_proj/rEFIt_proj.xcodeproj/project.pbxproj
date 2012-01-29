@@ -38,8 +38,6 @@
 		12CB8F581427390E009EDAF2 /* DevicePath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DevicePath.c; sourceTree = "<group>"; };
 		12CB8F6014273A38009EDAF2 /* GenericBdsLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericBdsLib.h; sourceTree = "<group>"; };
 		12CB8FAB14274AE1009EDAF2 /* efiConsoleControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efiConsoleControl.h; sourceTree = "<group>"; };
-		12CB8FAC14274AE1009EDAF2 /* egemb_back_selected_small.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = egemb_back_selected_small.h; sourceTree = "<group>"; };
-		12CB8FAD14274AE1009EDAF2 /* egemb_refit_banner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = egemb_refit_banner.h; sourceTree = "<group>"; };
 		12CB8FAE14274AE1009EDAF2 /* Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Handle.h; sourceTree = "<group>"; };
 		12CB917114276985009EDAF2 /* IO.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IO.c; sourceTree = "<group>"; };
 		12CB91AB14276D8E009EDAF2 /* IO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IO.h; sourceTree = "<group>"; };
@@ -174,8 +172,6 @@
 			isa = PBXGroup;
 			children = (
 				12CB8FAB14274AE1009EDAF2 /* efiConsoleControl.h */,
-				12CB8FAC14274AE1009EDAF2 /* egemb_back_selected_small.h */,
-				12CB8FAD14274AE1009EDAF2 /* egemb_refit_banner.h */,
 				12CB8FAE14274AE1009EDAF2 /* Handle.h */,
 			);
 			name = include;

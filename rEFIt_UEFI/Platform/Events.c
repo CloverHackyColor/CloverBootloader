@@ -63,7 +63,7 @@ VOID CorrectMemoryMap(IN UINT32 memMap,
     }
   }  
   
-	if(gSettingsFromMenu.Debug==TRUE) {
+	if(gSettings.Debug==TRUE) {
 		
 		WaitForKeyPress("press any key to dump MemoryMap");
 		memDescriptor = (EfiMemoryRange *)(UINTN)memMap;
