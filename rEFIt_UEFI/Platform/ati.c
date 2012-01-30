@@ -26,6 +26,33 @@
 #define RegRead32(reg)			(Reg32(reg))
 #define RegWrite32(reg, value)	(Reg32(reg) = value)
 
+/* Option ROM header */
+typedef struct {
+	UINT16		signature;		// 0xAA55
+	UINT8			rom_size;
+	UINT32		entry_point;
+	UINT8			reserved[15];
+	UINT16		pci_header_offset;
+	UINT16		expansion_header_offset;
+} option_rom_header_t;
+
+/* Option ROM PCI Data Structure */
+typedef struct {
+	UINT32		signature;		// ati - 0x52494350, nvidia - 0x50434952, 'PCIR'
+	UINT16		vendor_id;
+	UINT16		device_id;
+	UINT16		vital_product_data_offset;
+	UINT16		structure_length;
+	UINT8			structure_revision;
+	UINT8			class_code[3];
+	UINT16		image_length;
+	UINT16		image_revision;
+	UINT8			code_type;
+	UINT8			indicator;
+	UINT16		reserved;
+} option_rom_pci_header_t;
+
+
 typedef enum {
 	kNul,
 	kStr,
@@ -888,7 +915,7 @@ BOOLEAN get_conntype_val(value_t *val)
 
 BOOLEAN get_vrammemsize_val(value_t *val)
 {
-	staticINTNidx = -1;
+	static INTN idx = -1;
 	static UINT64 memsize;
 	
 	idx++;
@@ -930,7 +957,7 @@ BOOLEAN get_romrevision_val(value_t *val)
 	if (!val->data)
 		return FALSE;
 	
-	memcpy(val->data, rev, val->size);
+	CopyMem(val->data, rev, val->size);
 	
 	return TRUE;
 }
@@ -988,7 +1015,7 @@ void free_val(value_t *val)
 	if (val->type == kPtr)
 		FreePool(val->data);
 	
-	bzero(val, sizeof(value_t));
+	ZeroMem(val, sizeof(value_t));
 }
 
 void devprop_add_list(dev_prop_t devprop_list[])
@@ -1073,17 +1100,18 @@ BOOLEAN load_vbios_file(const CHAR8 *key, UINT16 vendor_id, UINT16 device_id, UI
 {
 	UINTN bufferLen;
 	CHAR16 FileName[24];
-	BOOLEAN do_load = FALSE;
+//	BOOLEAN do_load = FALSE;
   UINT8*  buffer;
 	
 //	getBoolForKey(key, &do_load, &bootInfo->chameleonConfig);
-	if (!gSettings.loadVBios)
+	if (!gSettings.LoadVBios)
 		return FALSE;
 	
 	SPrint(FileName, 24, L"/EFI/device/%04x_%04x_%08x.rom", vendor_id, device_id, subsys_id);
 	if (!FileExists(SelfRootDir, FileName))
 		return FALSE;
-	Status = egLoadFile(SelfRootDir, FileName, &buffer, &bufferLen);
+//	Status = 
+  egLoadFile(SelfRootDir, FileName, &buffer, &bufferLen);
   
 	card->rom_size = bufferLen;
 	card->rom = AllocateZeroPool(bufferLen);
@@ -1137,7 +1165,7 @@ BOOLEAN read_vbios(BOOLEAN from_pci)
 	
 	if (from_pci)
 	{
-		rom_addr = (option_rom_header_t *)(pci_config_read32(card->pci_dev->dev.addr, PCI_ROM_ADDRESS) & ~0x7ff);
+		rom_addr = (option_rom_header_t *)(pci_config_read32(card->pci_dev->dev.addr, PCI_EXPANSION_ROM_BASE) & ~0x7ff);
 		DBG(" @0x%x", rom_addr);
 	}
 	else
@@ -1317,11 +1345,11 @@ BOOLEAN devprop_add_pci_config_space(void)
 
 static BOOLEAN init_card(pci_dt_t *pci_dev)
 {
-	BOOLEAN	add_vbios = TRUE;
+//	BOOLEAN	add_vbios = TRUE;
 	CHAR8	name[24];
 	CHAR8	name_parent[24];
 	int		i;
-	int		n_ports = 0;
+//	int		n_ports = 0;
 	
 	card = AllocateZeroPool(sizeof(card_t));
 	if (!card)
@@ -1353,7 +1381,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 	card->io		= (UINT8 *)(pci_config_read32(pci_dev->dev.addr, PCI_BASE_ADDRESS_4) & ~0x03);
 	
 	DBG("Framebuffer @0x%08X  MMIO @0x%08X	I/O Port @0x%08X ROM Addr @0x%08X\n",
-		card->fb, card->mmio, card->io, pci_config_read32(pci_dev->dev.addr, PCI_ROM_ADDRESS));
+		card->fb, card->mmio, card->io, pci_config_read32(pci_dev->dev.addr, PCI_EXPANSION_ROM_BASE));
 	
 	card->posted = radeon_card_posted();
 	DBG("ATI card %s, ", card->posted ? "POSTed" : "non-POSTed");
@@ -1361,7 +1389,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 	get_vram_size();
 	
 //	getBoolForKey(kATYbinimage, &add_vbios, &bootInfo->chameleonConfig);
-	
+/*	
 	if (gSettings.LoadVBios)
 	{
 		if (!load_vbios_file(kUseAtiROM, pci_dev->vendor_id, pci_dev->device_id, pci_dev->subsys_id.subsys_id))
@@ -1374,6 +1402,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 			DBG("\n");
 		}
 	}
+ */
 	
 //	card->ports = 2; // default - Azi: default is card_configs
 	
@@ -1382,12 +1411,15 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 		card->flags |= EVERGREEN;
 //		card->ports = 3; //Azi: use the AtiPorts key if needed
 	}
+	if (gSettings.VideoPorts) {
+    card->ports = gSettings.VideoPorts;
+  }
 	
 //	atN = 0;
 	
 	// Check AtiConfig key for a framebuffer name,
   //	card->cfg_name = getStringForKey(kAtiConfig, &bootInfo->chameleonConfig);
-  UnicodeStrToAsciiStr(gSettings.FBName, card->cfg_name);
+  UnicodeStrToAsciiStr((CHAR16*)&gSettings.FBName[0],(CHAR8*)&card->cfg_name[0]);
 	// if none,
 	if (AsciiStrLen(card->cfg_name) == 0)
 	{

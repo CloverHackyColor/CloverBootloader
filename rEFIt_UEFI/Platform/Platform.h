@@ -20,6 +20,8 @@ Headers collection for procedures
 #include <Library/UefiLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
 
+#include <Framework/FrameworkInternalFormRepresentation.h>
+
 #include <IndustryStandard/Acpi10.h>
 #include <IndustryStandard/Acpi20.h>
 
@@ -32,11 +34,12 @@ Headers collection for procedures
 #include <Protocol/VariableWrite.h>
 #include <Protocol/Variable.h>
 
-
+#include "lib.h"
 #include "boot.h"
 #include "BiosVideo.h"
 #include "Bmp.h"
 #include "efiConsoleControl.h"
+#include "SmBios.h"
 
 /* Decimal powers: */
 #define kilo (1000ULL)
@@ -44,6 +47,10 @@ Headers collection for procedures
 #define Giga (kilo * Mega)
 #define Tera (kilo * Giga)
 #define Peta (kilo * Tera)
+
+#define EBDA_BASE_ADDRESS 0x40E
+#define EFI_SYSTEM_TABLE_MAX_ADDRESS 0xFFFFFFFF
+
 
 #define SAFE_LOG_SIZE	80
 
@@ -91,6 +98,16 @@ Headers collection for procedures
 #define MAX_CACHE_COUNT  4
 #define CPU_CACHE_LEVEL  3
 
+/* PCI */
+#define PCI_BASE_ADDRESS_0					0x10		/* 32 bits */
+#define PCI_BASE_ADDRESS_1					0x14		/* 32 bits [htype 0,1 only] */
+#define PCI_BASE_ADDRESS_2					0x18		/* 32 bits [htype 0 only] */
+#define PCI_BASE_ADDRESS_3					0x1c		/* 32 bits */
+#define PCI_BASE_ADDRESS_4					0x20		/* 32 bits */
+#define PCI_BASE_ADDRESS_5					0x24		/* 32 bits */
+
+
+#pragma pack(1)
 typedef struct {
   
   UINT32		type;
@@ -100,6 +117,21 @@ typedef struct {
   VOID      *tagNext;
   
 }Tag, *TagPtr;
+
+typedef struct {
+  
+  EFI_ACPI_DESCRIPTION_HEADER   Header;
+  UINT32						Entry;
+  
+} RSDT_TABLE;
+
+typedef struct {
+  
+  EFI_ACPI_DESCRIPTION_HEADER   Header;
+  UINT64						Entry;
+  
+} XSDT_TABLE;
+
 
 typedef struct {
   
@@ -126,7 +158,9 @@ typedef struct {
 	CHAR8	ChassisAssetTag[64]; 
 	// SMBIOS TYPE4
 	UINT16	CpuFreqMHz;
-	UINT16	BusSpeed;                    
+	UINT16	BusSpeed;
+  BOOLEAN Turbo;
+  
 	// SMBIOS TYPE17
 	CHAR8	MemoryManufacturer[64];
 	CHAR8	MemorySerialNumber[64];
@@ -137,7 +171,7 @@ typedef struct {
   
 	// OS parameters
 	CHAR16	Language[10];
-	CHAR16	BootArgs[120];
+	CHAR8   BootArgs[120];
 	CHAR16	CustomUuid[40];
 	
 	// GUI parameters
@@ -275,11 +309,11 @@ typedef struct {
   UINT16            Width;
   UINT16            Height;
 } GFX_PROPERTIES;
-
+#pragma pack(0)
 extern CHAR8                    *msgbuf;
 extern CHAR8                    *msgCursor;
 extern SMBIOS_STRUCTURE_POINTER	SmbiosTable;
-extern GFX_MANUFACTERER         gGraphicsCard;
+extern GFX_PROPERTIES           gGraphics;
 extern BOOLEAN                  gMobile;
 extern UINT32                   gCpuSpeed;  //kHz
 extern UINT32                   gBusSpeed;  //kHz
@@ -309,7 +343,15 @@ extern EFI_GUID                 gUuid;
 extern CHAR8                    gOEMProduct[];  //original name from SMBIOS
 extern EFI_EDID_DISCOVERED_PROTOCOL*            EdidDiscovered;
 extern CHAR8*                   gDeviceProperties;
-extern GFX_PROPERTIES           gGraphics;
+extern UINT16                   gResetAddress;
+extern UINT16                   gResetValue;
+
+extern EFI_GUID	gEfiAppleBootGuid;
+extern EFI_GUID	gEfiAppleNvramGuid;
+extern EFI_GUID AppleSystemInfoProducerName;
+extern EFI_GUID AppleDevicePropertyProtocolGuid;
+extern EFI_GUID gEfiAppleScreenInfoGuid;
+extern EFI_GUID gEfiAppleVendorGuid;
 
 
 VOID        InitBooterLog(VOID);
@@ -326,7 +368,7 @@ VOID       GetCPUProperties (VOID);
 EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume);
 EFI_STATUS GetUserSettings(IN REFIT_VOLUME *Volume, CHAR16* ConfigPlistPath);
 EFI_STATUS GetNVRAMSettings(IN REFIT_VOLUME *Volume, CHAR16* NVRAMPlistPath);
-EFI_STATUS GetEdid(VOID)
+EFI_STATUS GetEdid(VOID);
 
 EFI_STATUS
 LogDataHub(
@@ -338,6 +380,10 @@ LogDataHub(
 EFI_STATUS SetVariablesForOSX();
 VOID       SetupDataForOSX();
 EFI_STATUS SetPrivateVarProto(VOID);
+VOID       SetGraphics(VOID);
+VOID       ScanSPD();
+
+EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha);
 
 EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume);
 

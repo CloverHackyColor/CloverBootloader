@@ -80,7 +80,7 @@ LogDataHub(
   EFI_STATUS                  Status;
 	PLATFORM_DATA               *PlatformData;
 	
-  PlatformData = (PLATFORM_DATA*)AllocatePool (sizeof(PLATFORM_DATA) + DataSize + MAX_NAME_LENGTH);
+  PlatformData = (PLATFORM_DATA*)AllocatePool (sizeof(PLATFORM_DATA) + DataSize + EFI_CPU_DATA_MAXIMUM_LENGTH);
   if (PlatformData == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
@@ -89,7 +89,7 @@ LogDataHub(
   Status = gDataHub->LogData (
                               gDataHub,
                               TypeGuid,				/* DataRecordGuid */				
-                              &AppleSystemInfoProducerName,   /* ProducerName */  //always						   
+                              &gDataHubPlatformGuid,   /* ProducerName */  //always						   
                               EFI_DATA_RECORD_CLASS_DATA,
                               PlatformData,
                               RecordSize
@@ -136,9 +136,10 @@ EFI_STATUS SetVariablesForOSX()
 	Status = gRS->SetVariable(L"security-mode", &gEfiAppleBootGuid, 
                                          /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          5 , (VOID*)None);
-	Status = gRS->SetVariable(L"platform-uuid", &gEfiAppleBootGuid, 
-                                         /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                                         AsciiStrLen(gSettings.CustomUuid) ,&gSettings.CustomUuid);
+  //TODO we should have to UUID: platform and system
+//	Status = gRS->SetVariable(L"platform-uuid", &gEfiAppleBootGuid, 
+//                                         /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+//                                         StrLen(gSettings.CustomUuid) ,&gSettings.CustomUuid);
   return Status;
 }
 
@@ -160,8 +161,11 @@ VOID SetupDataForOSX()
 	if (!EFI_ERROR (Status)) 
 	{
 //		KextListSize = GetKextListSize();
-		productName = EfiStrDuplicate(gSettings.ProductName);
-		serialNumber = EfiStrDuplicate(gSettings.SerialNr);
+//		productName = EfiStrDuplicate(gSettings.ProductName);
+//		serialNumber = EfiStrDuplicate(gSettings.SerialNr);
+    AsciiStrToUnicodeStr(gSettings.ProductName, productName);
+		AsciiStrToUnicodeStr(gSettings.SerialNr, serialNumber);
+    
 		
 		Status =  LogDataHub(&gEfiProcessorSubClassGuid, L"FSBFrequency", &FrontSideBus, sizeof(UINT64));
 		Status =  LogDataHub(&gEfiProcessorSubClassGuid, L"TSCFrequency", &TSCFrequency, sizeof(UINT64));

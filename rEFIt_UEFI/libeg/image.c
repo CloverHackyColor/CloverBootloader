@@ -35,6 +35,7 @@
  */
 
 #include "libegint.h"
+#include "Platform.h"
 
 #define MAX_FILE_SIZE (1024*1024*1024)
 
@@ -215,8 +216,8 @@ static EG_IMAGE * egDecodeAny(IN UINT8 *FileData, IN UINTN FileDataLength,
     DecodeFunc = egDecodeICNS;
   else if (StriCmp(Format, L"PNG") == 0)
     DecodeFunc = egDecodePNG;
-  else if (StriCmp(Format, L"TGA") == 0)
-    DecodeFunc = egDecodeTGA;
+//  else if (StriCmp(Format, L"TGA") == 0)
+//    DecodeFunc = egDecodeTGA;
   
   if (DecodeFunc == NULL)
     return NULL;

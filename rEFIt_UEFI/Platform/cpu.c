@@ -176,7 +176,6 @@ VOID DoCpuid(UINT32 selector, UINT32 *data)
 
 VOID GetCPUProperties (VOID)
 {
-	INT32		i = 0;
 	UINT32		reg[4];
 	UINT64		msr = 0;
 	BOOLEAN		fix_fsb, core_i, turbo, isatom, fsbad;
@@ -192,6 +191,7 @@ VOID GetCPUProperties (VOID)
 	UINTN         ProtocolIndex;
 	UINT16				qpibusspeed; //units=MHz
 	UINT16				qpimult = 2;
+  UINT32        BusSpeed = 0; //units kHz
 
 	UINT16				did, vid;
 	UINTN         Segment;
@@ -223,7 +223,6 @@ VOID GetCPUProperties (VOID)
   DoCpuid(1, gCPUStructure.CPUID[CPUID_1]);
   msr = AsmReadMsr64(MSR_IA32_BIOS_SIGN_ID);
   gCPUStructure.MicroCode = msr >> 32;
-  AsciiSPrint(gSettings.CPUSerial, 10, "%x", gCPUStructure.MicroCode);
   /* Get "processor flag"; necessary for microcode update matching */
   gCPUStructure.ProcessorFlag = (AsmReadMsr64(MSR_IA32_PLATFORM_ID) >> 50) & 3;
   
@@ -454,7 +453,7 @@ VOID GetCPUProperties (VOID)
 			if (gCPUStructure.SubDivider)
 			{
 				gCPUStructure.FSBFrequency = DivU64x32(
-                                               MulU64x32(gCPUStructure.TSCFrequency,
+                                               MultU64x32(gCPUStructure.TSCFrequency,
                                                          gCPUStructure.SubDivider),
                                                gCPUStructure.MaxRatio);
 		//		DBG("%d.%d\n", currcoef / currdiv, ((currcoef % currdiv) * 100) / currdiv);
@@ -474,7 +473,7 @@ VOID GetCPUProperties (VOID)
   if (gCPUStructure.ExternalClock > BusSpeed * 3) {
     gCPUStructure.ExternalClock = BusSpeed;
   } else {
-    gCPUStructure.FSBFrequency = MulU64x32(gCPUStructure.ExternalClock, kilo); //kHz -> Hz
+    gCPUStructure.FSBFrequency = MultU64x32(gCPUStructure.ExternalClock, kilo); //kHz -> Hz
   }
 	
 	if (gCPUStructure.Model >= CPU_MODEL_NEHALEM) {
@@ -676,6 +675,7 @@ typedef struct {
 //	}	
 }
 */
+/*
 VOID ShowCPU()
 {
 	int i;
@@ -723,7 +723,7 @@ VOID ShowCPU()
 	}
 	FreePool(buf);
 }
-
+*/
 UINT16 GetStandardCpuType()
 {
 	if (gCPUStructure.Threads >= 4) 
@@ -813,7 +813,7 @@ MACHINE_TYPES GetDefaultModel()
 				DefaultType = MacBook21;
 				break;
 			case CPU_MODEL_PENRYN:
-				if (gGraphicsCard.Nvidia)
+				if (gGraphics.Vendor == Nvidia)
 				{
 					DefaultType = MacBookPro51;
 				} else

@@ -85,7 +85,7 @@
 	Platform/Platform.h
 	Platform/platformdata.c
 	Platform/plist.c
-	Settings.c
+	Platform/Settings.c
 	Platform/smbios.c
 #	Platform/SmBios.h
 	Platform/spd.c

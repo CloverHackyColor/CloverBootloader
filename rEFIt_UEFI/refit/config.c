@@ -36,6 +36,17 @@
 
 #include "lib.h"
 
+#define DEBUG_CFG 2
+
+#if DEBUG_CFG == 2
+#define DBG(x...) AsciiPrint(x)
+#elif DEBUG_CFG == 1
+#define DBG(x...) MsgLog(x)
+#else
+#define DBG(x...)
+#endif
+
+
 // constants
 
 #define CONFIG_FILE_NAME    L"refit.conf"

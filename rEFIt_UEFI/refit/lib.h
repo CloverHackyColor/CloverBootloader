@@ -37,6 +37,8 @@
 //#include "efi.h"
 //#include "efilib.h"
 //#include "EfiApi.h"
+#ifndef __REFITLIB_STANDARD_H__
+#define __REFITLIB_STANDARD_H__
 
 
 #include "libeg.h"
@@ -48,7 +50,7 @@
 extern EFI_HANDLE					gImageHandle;
 extern EFI_SYSTEM_TABLE*			gST;
 extern EFI_BOOT_SERVICES*			gBS; 
-extern EFI_RUNTIME_SERVICES*		gRT;
+extern EFI_RUNTIME_SERVICES*		gRS;
 
 
 //
@@ -318,6 +320,24 @@ typedef struct {
     CHAR16      *DefaultSelection;
 } REFIT_CONFIG;
 
+// types
+
+typedef struct {
+  REFIT_MENU_ENTRY me;
+  CHAR16           *LoaderPath;
+  CHAR16           *VolName;
+  EFI_DEVICE_PATH  *DevicePath;
+  BOOLEAN          UseGraphicsMode;
+  CHAR16           *LoadOptions;
+} LOADER_ENTRY;
+
+typedef struct {
+  REFIT_MENU_ENTRY me;
+  REFIT_VOLUME     *Volume;
+  CHAR16           *LoadOptions;
+} LEGACY_ENTRY;
+
+
 extern REFIT_CONFIG GlobalConfig;
 
 VOID ReadConfig(VOID);
@@ -387,5 +407,5 @@ Atoi (
 	  );
 
 
-
+#endif
 /* EOF */

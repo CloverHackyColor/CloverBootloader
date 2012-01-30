@@ -219,9 +219,9 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   //	EFI_GUID										*gTableGuidArray[] = {&gEfiAcpi20TableGuid, &gEfiAcpi10TableGuid};
   //	EFI_PEI_HOB_POINTERS							GuidHob;
   //	EFI_PEI_HOB_POINTERS							HobStart;
-	EFI_DEVICE_PATH_PROTOCOL*	PathBooter = NULL;
-	EFI_DEVICE_PATH_PROTOCOL*	FilePath;
-	EFI_HANDLE					FileSystemHandle;
+//	EFI_DEVICE_PATH_PROTOCOL*	PathBooter = NULL;
+//	EFI_DEVICE_PATH_PROTOCOL*	FilePath;
+//	EFI_HANDLE					FileSystemHandle;
 	EFI_PHYSICAL_ADDRESS		dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
 	EFI_PHYSICAL_ADDRESS		BufferPtr;
 	UINT8*						buffer = NULL;
@@ -229,7 +229,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 	CHAR16*						PathPatched = L"\\EFI\\acpi\\patched\\DSDT.aml";
 	CHAR16*						PathDsdt = L"\\DSDT.aml";
   CHAR16*						PathDsdtMini    = L"\\EFI\\acpi\\mini\\DSDT.aml";
-	CHAR16*						path = NULL;
+//	CHAR16*						path = NULL;
 	UINT32* rf = NULL;
 	UINT64* xf = NULL;
   UINT64 XDsdt; //save values if present
@@ -314,8 +314,8 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       Xsdt = (XSDT_TABLE*)(UINTN)RsdPointer->XsdtAddress;
       DBG("XSDT 0x%p\n", Xsdt);
       xf = ScanXSDT(Xsdt, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE);
-      if(xf!=NULL)
-        FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(*xf));
+      if(xf)
+        FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(*xf);
     }
 	
 	if(!xf){
@@ -354,30 +354,30 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     //but these common values are not specific, so adjust
     //ACPIspec said that if Xdsdt !=0 then Dsdt must be =0. But real Mac no! Both values present
     if (newFadt->Dsdt) {
-      newFadt->XDsdt = U32_TO_U64(newFadt->Dsdt);
+      newFadt->XDsdt = (UINT64)(newFadt->Dsdt);
     } else if (XDsdt) {
       newFadt->Dsdt = (UINT32)XDsdt;
     }
     if (Facs) newFadt->FirmwareCtrl = (UINT32)(UINTN)Facs;
     else MsgLog("No FACS table ?!\n");
     if (newFadt->FirmwareCtrl) {
-      newFadt->XFirmwareCtrl = U32_TO_U64(newFadt->FirmwareCtrl);
+      newFadt->XFirmwareCtrl = (UINT64)(newFadt->FirmwareCtrl);
     } else if (newFadt->XFirmwareCtrl) {
       newFadt->FirmwareCtrl = (UINT32)XFirmwareCtrl;
     }
     //patch for FACS included here
     Facs->Version = EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_VERSION;
     //
-    newFadt->ResetReg.Address    = U32_TO_U64(gResetAddress); //UINT16->UINT64
+    newFadt->ResetReg.Address    = (UINT64)(gResetAddress); //UINT16->UINT64
     newFadt->ResetValue			 = gResetValue; //UINT8
-    newFadt->XPm1aEvtBlk.Address = U32_TO_U64(newFadt->Pm1aEvtBlk);
-    newFadt->XPm1bEvtBlk.Address = U32_TO_U64(newFadt->Pm1bEvtBlk);
-    newFadt->XPm1aCntBlk.Address = U32_TO_U64(newFadt->Pm1aCntBlk);
-    newFadt->XPm1bCntBlk.Address = U32_TO_U64(newFadt->Pm1bCntBlk);
-    newFadt->XPm2CntBlk.Address  = U32_TO_U64(newFadt->Pm2CntBlk);
-    newFadt->XPmTmrBlk.Address   = U32_TO_U64(newFadt->PmTmrBlk);
-    newFadt->XGpe0Blk.Address    = U32_TO_U64(newFadt->Gpe0Blk);
-    newFadt->XGpe1Blk.Address    = U32_TO_U64(newFadt->Gpe1Blk);
+    newFadt->XPm1aEvtBlk.Address = (UINT64)(newFadt->Pm1aEvtBlk);
+    newFadt->XPm1bEvtBlk.Address = (UINT64)(newFadt->Pm1bEvtBlk);
+    newFadt->XPm1aCntBlk.Address = (UINT64)(newFadt->Pm1aCntBlk);
+    newFadt->XPm1bCntBlk.Address = (UINT64)(newFadt->Pm1bCntBlk);
+    newFadt->XPm2CntBlk.Address  = (UINT64)(newFadt->Pm2CntBlk);
+    newFadt->XPmTmrBlk.Address   = (UINT64)(newFadt->PmTmrBlk);
+    newFadt->XGpe0Blk.Address    = (UINT64)(newFadt->Gpe0Blk);
+    newFadt->XGpe1Blk.Address    = (UINT64)(newFadt->Gpe1Blk);
     FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)newFadt;
     //We are sure that Fadt is the first entry in RSDT/XSDT table
     if (Rsdt!=NULL) {
@@ -386,7 +386,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       Rsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Rsdt, Rsdt->Header.Length));
     }
     if (Xsdt!=NULL) {
-      Xsdt->Entry = U32_TO_U64((UINT32)(UINTN)newFadt);
+      Xsdt->Entry = (UINT64)((UINT32)(UINTN)newFadt);
       Xsdt->Header.Checksum = 0;
       Xsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Xsdt, Xsdt->Header.Length));
     }
@@ -448,7 +448,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     }
   }
   if (EFI_ERROR(Status) && FileExists(Volume->RootDir, PathDsdt)) {
-    Status = egLoadFile(Volume->RootDir, PathDSDT, &buffer, &bufferLen);
+    Status = egLoadFile(Volume->RootDir, PathDsdt, &buffer, &bufferLen);
   }
   if (EFI_ERROR(Status) && FileExists(SelfRootDir, PathPatched)) {
     Status = egLoadFile(SelfRootDir, PathPatched, &buffer, &bufferLen);

@@ -38,23 +38,7 @@
 #include "Handle.h"
 
 #include "syslinux_mbr.h"
-
-// types
-
-typedef struct {
-    REFIT_MENU_ENTRY me;
-    CHAR16           *LoaderPath;
-    CHAR16           *VolName;
-    EFI_DEVICE_PATH  *DevicePath;
-    BOOLEAN          UseGraphicsMode;
-    CHAR16           *LoadOptions;
-} LOADER_ENTRY;
-
-typedef struct {
-    REFIT_MENU_ENTRY me;
-    REFIT_VOLUME     *Volume;
-    CHAR16           *LoadOptions;
-} LEGACY_ENTRY;
+#include "Platform.h"
 
 // variables
 
@@ -70,7 +54,7 @@ typedef struct {
 EFI_HANDLE					gImageHandle;
 EFI_SYSTEM_TABLE*			gST;
 EFI_BOOT_SERVICES*			gBS; 
-EFI_RUNTIME_SERVICES*		gRT;
+EFI_RUNTIME_SERVICES*		gRS;
 EFI_DXE_SERVICES*			gDS;
 
 
@@ -1154,7 +1138,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   BOOLEAN           MainLoopRunning = TRUE;
   REFIT_MENU_ENTRY  *ChosenEntry;
   UINTN             MenuExit;
-  UINTN i;
+  UINTN             Size, i;
   UINT8             *Buffer = NULL;
   
   // bootstrap
@@ -1162,7 +1146,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	gST				= SystemTable;
 	gImageHandle	= ImageHandle;
 	gBS				= SystemTable->BootServices;
-	gRT				= SystemTable->RuntimeServices;
+	gRS				= SystemTable->RuntimeServices;
 	Status = EfiGetSystemConfigurationTable (&gEfiDxeServicesTableGuid, (VOID **) &gDS);
 	
 	InitBooterLog();
@@ -1253,13 +1237,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
           
         case TAG_RESET:    // Restart
           TerminateScreen();
-          gRT->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
+          gRS->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
           MainLoopRunning = FALSE;   // just in case we get this far
           break;
           
         case TAG_SHUTDOWN: // Shut Down
           TerminateScreen();
-          gRT->ResetSystem(EfiResetShutdown, EFI_SUCCESS, 0, NULL);
+          gRS->ResetSystem(EfiResetShutdown, EFI_SUCCESS, 0, NULL);
           MainLoopRunning = FALSE;   // just in case we get this far
           break;
           
@@ -1284,7 +1268,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   // If we end up here, things have gone wrong. Try to reboot, and if that
   // fails, go into an endless loop.
-  gRT->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
+  gRS->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
   EndlessIdleLoop();
   
   return EFI_SUCCESS;

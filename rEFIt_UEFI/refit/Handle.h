@@ -31,7 +31,7 @@ Revision History
 
 # define BS gBS
 #define ST gST
-#define RT gRT
+#define RT gRS
 # define PROTO_NAME(x) gEfi ## x ## Guid
 # define GUID_NAME(x) gEfi ## x ## Guid
 

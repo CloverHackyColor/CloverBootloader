@@ -202,7 +202,7 @@ EfiLibDeleteVariable (
     //
     // Delete variable from Storage
     //
-    Status = gRT->SetVariable (VarName, VarGuid, VAR_FLAG, 0, NULL);
+    Status = gRS->SetVariable (VarName, VarGuid, VAR_FLAG, 0, NULL);
     ASSERT (!EFI_ERROR (Status));
     FreePool (VarBuf);
   }

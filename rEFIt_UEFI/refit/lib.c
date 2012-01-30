@@ -35,6 +35,17 @@
  */
 
 #include "lib.h"
+#include "Platform.h"
+
+#define DEBUG_LIB 2
+
+#if DEBUG_LIB == 2
+#define DBG(x...) AsciiPrint(x)
+#elif DEBUG_LIB == 1
+#define DBG(x...) MsgLog(x)
+#else
+#define DBG(x...)
+#endif
 
 // variables
 
@@ -692,7 +703,7 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
       Print(L"  Volume %s\n", FileSystemInfoPtr->VolumeLabel);
       Volume->VolName = EfiStrDuplicate(FileSystemInfoPtr->VolumeLabel);
       Status = GetOSVersion(Volume); //here we set tiger,leo,snow,lion
-      if (EFI_ERROR(Status) {
+      if (EFI_ERROR(Status)) {
        // Volume->OSType = 0; //TODO - other criteria?
        // Other EFI systems?
       }

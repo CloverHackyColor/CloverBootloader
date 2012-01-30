@@ -20,6 +20,8 @@ GFX_PROPERTIES                  gGraphics;
 EFI_EDID_DISCOVERED_PROTOCOL    *EdidDiscovered;
 //EFI_GRAPHICS_OUTPUT_PROTOCOL    *GraphicsOutput;
 UINT16                          gCPUtype;
+UINT16                          gResetAddress;
+UINT16                          gResetValue;
 
 //should be excluded. Now interface.cfg
 EFI_STATUS GetTheme (CHAR16* ThemePlistPath)
@@ -480,7 +482,7 @@ VOID SetGraphics(VOID)
 							// Ati GFX
 							if (Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) {
 								if (Pci.Hdr.VendorId == 0x1002) {
-									gGraphicsCard.Vendor = Ati;
+									gGraphics.Vendor = Ati;
                   MsgLog("ATI GFX found\n");
 									GFXdevice = AllocatePool(sizeof(pci_dt_t));
 									GFXdevice->vendor_id = Pci.Hdr.VendorId;
@@ -497,7 +499,7 @@ VOID SetGraphics(VOID)
 							// Intel GFX
 							if (Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) {
 								if (Pci.Hdr.VendorId == 0x8086) {
-									gGraphicsCard.Vendor = Intel;
+									gGraphics.Vendor = Intel;
                   MsgLog("Intel GFX found\n");
 									GFXdevice = AllocatePool(sizeof(pci_dt_t));
 									GFXdevice->vendor_id = Pci.Hdr.VendorId;
@@ -514,7 +516,7 @@ VOID SetGraphics(VOID)
 							// Nvidia GFX
 							if (Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) {
 								if (Pci.Hdr.VendorId == 0x10de) {
-									gGraphicsCard.Vendor = Nvidia;
+									gGraphics.Vendor = Nvidia;
                    MsgLog("nVidia GFX found\n");
 									GFXdevice = AllocatePool(sizeof(pci_dt_t));
 									GFXdevice->vendor_id = Pci.Hdr.VendorId;
