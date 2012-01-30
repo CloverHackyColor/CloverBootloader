@@ -126,8 +126,8 @@ class Config:
                     ', '.join(allowedArchs)
                 )
         self.target_arch = {'ia32': 'i686', 'x64': 'x86_64', 'ipf': 'ia64'}[self.arch]
-        self.target_sys = {'ia32': 'pc', 'x64': 'pc', 'ipf': 'pc'}[self.arch]
-        self.target_bin = {'ia32': 'mingw32', 'x64': 'mingw32', 'ipf': 'elf'}[self.arch]
+        self.target_sys = {'ia32': 'pc', 'x64': 'linux', 'ipf': 'pc'}[self.arch]
+        self.target_bin = {'ia32': 'mingw32', 'gnu': 'mingw32', 'ipf': 'elf'}[self.arch]
         self.target_combo = '-'.join((self.target_arch, self.target_sys, self.target_bin))
 
         return (Opt, Args)
@@ -219,8 +219,8 @@ class SourceFiles:
         'gcc': {
             'url': 'http://ftpmirror.gnu.org/gcc/' + \
                    'gcc-$version/gcc-$version.tar.bz2',
-            'version': '4.4.6',
-            'md5': 'ab525d429ee4425050a554bc9247d6c4',
+            'version': '4.6.2',
+            'md5': '028115c4fbfb6cfd75d6369f4a90d87e',
             },
         }
 
@@ -468,7 +468,7 @@ class Builder:
 
         cmd = ('make',)
         if module == 'gcc':
-            cmd += ('all-gcc',)
+            cmd += ('-j 2 all-gcc',)
         self.RunCommand(cmd, module, 'build')
 
         cmd = ('make',)

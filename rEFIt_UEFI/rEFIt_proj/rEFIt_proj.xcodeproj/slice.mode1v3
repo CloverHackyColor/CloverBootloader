@@ -231,8 +231,6 @@
 			<key>Layout</key>
 			<array>
 				<dict>
-					<key>BecomeActive</key>
-					<true/>
 					<key>ContentConfiguration</key>
 					<dict>
 						<key>PBXBottomSmartGroupGIDs</key>
@@ -271,6 +269,7 @@
 								<string>1202122D142667C4004B7B93</string>
 								<string>12CB8FAA14274AE1009EDAF2</string>
 								<string>12D6305B14CEA05E00E5898F</string>
+								<string>122336C113377E150033F008</string>
 								<string>122336B113377E050033F008</string>
 								<string>1C37FBAC04509CD000000102</string>
 								<string>1C37FABC05509CD000000102</string>
@@ -278,13 +277,13 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>70</integer>
-									<integer>66</integer>
+									<integer>89</integer>
+									<integer>78</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 878}, {186, 609}}</string>
+							<string>{{0, 971}, {186, 609}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -303,7 +302,7 @@
 							<real>186</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>226 110 1050 668 0 0 1280 778 </string>
+						<string>84 110 1050 668 0 0 1280 778 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -314,12 +313,14 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>egemb_font.h</string>
+								<string>lib.c</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -327,11 +328,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>egemb_font.h</string>
+										<string>lib.c</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>1213AA6814D5B794005D4A83</string>
+										<string>1277965614D5E22700B8F090</string>
 										<key>history</key>
 										<array>
 											<string>1202124114266E13004B7B93</string>
@@ -350,7 +351,6 @@
 											<string>12BE9A8514C0658D00996F8D</string>
 											<string>12D630DA14CEC55500E5898F</string>
 											<string>12D630DC14CEC55500E5898F</string>
-											<string>12D630DD14CEC55500E5898F</string>
 											<string>12D6311014CEE71D00E5898F</string>
 											<string>12D6318F14D03F0200E5898F</string>
 											<string>12D6319014D03F0200E5898F</string>
@@ -373,7 +373,9 @@
 											<string>1213AA6414D5B794005D4A83</string>
 											<string>1213AA6514D5B794005D4A83</string>
 											<string>1213AA6614D5B794005D4A83</string>
-											<string>1213AA6714D5B794005D4A83</string>
+											<string>1277965314D5E22700B8F090</string>
+											<string>1277965414D5E22700B8F090</string>
+											<string>1277965514D5E22700B8F090</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -385,14 +387,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {842, 467}}</string>
+								<string>{{0, 0}, {842, 462}}</string>
 								<key>RubberWindowFrame</key>
-								<string>226 110 1050 668 0 0 1280 778 </string>
+								<string>84 110 1050 668 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>467pt</string>
+							<string>462pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -405,14 +407,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 472}, {842, 155}}</string>
+								<string>{{0, 467}, {842, 160}}</string>
 								<key>RubberWindowFrame</key>
-								<string>226 110 1050 668 0 0 1280 778 </string>
+								<string>84 110 1050 668 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>155pt</string>
+							<string>160pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -431,9 +433,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>1213AA6914D5B794005D4A83</string>
+				<string>1277965714D5E22700B8F090</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>1213AA6A14D5B794005D4A83</string>
+				<string>1277965814D5E22700B8F090</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -576,7 +578,7 @@
 		<string>/Users/slice/src/edk2/Clover/rEFIt_UEFI/rEFIt_proj/rEFIt_proj.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>226 110 1050 668 0 0 1280 778 </string>
+	<string>84 110 1050 668 0 0 1280 778 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>
@@ -653,7 +655,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>122336AD13377DFD0033F008</string>
-				<string>1213AA1A14D53845005D4A83</string>
+				<string>1277964F14D5E0BD00B8F090</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -786,14 +788,12 @@
 							<key>Dock</key>
 							<array>
 								<dict>
-									<key>BecomeActive</key>
-									<true/>
 									<key>ContentConfiguration</key>
 									<dict>
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>libeg.h</string>
+										<string></string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -814,6 +814,8 @@
 							<string>406pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -849,8 +851,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>1213AA1E14D53845005D4A83</string>
-				<string>1213AA1F14D53845005D4A83</string>
+				<string>1277965114D5E0BD00B8F090</string>
+				<string>1277965214D5E0BD00B8F090</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>
