@@ -97,8 +97,10 @@ echo "[COMPILER]   [ARCH]     [TYPE]"
 echo "-xcode       -ia32      -debug"
 echo "-clang       -x64       -release"
 echo "-unixgcc"
+echo "-gcc46"
 echo
 echo "Example: ./cbuild.sh -xcode -ia32 -release"
+echo "Example: ./cbuild.sh -gcc46 -x64 -release"
 echo
 echo "If you want to clean a build:"
 echo "Example: ./cbuild.sh -xcode -ia32 -release -clean"
@@ -111,7 +113,7 @@ fnHelpArgument ()
 {
 echo "ERROR!"
 echo "Example: ./cbuild.sh -xcode -ia32 -release"
-echo "Example: ./cbuild.sh -unixgcc -x64 -release"
+echo "Example: ./cbuild.sh -gcc46 -x64 -release"
 }
 
 ## MAIN ARGUMENT PART##

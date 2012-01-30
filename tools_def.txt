@@ -135,7 +135,9 @@ DEFINE GCC45_IA32_PREFIX       = /usr/bin/
 DEFINE GCC45_X64_PREFIX        = /usr/bin/
 
 DEFINE GCC46_IA32_PREFIX       = /opt/local/ia32/
-DEFINE GCC46_X64_PREFIX        = /opt/local/x64/
+#DEFINE GCC46_X64_PREFIX        = /opt/local/x64/
+#DEFINE GCC46_IA32_PREFIX = ENV(WORKSPACE)/BaseTools/gcc/symlinks/Ia32/
+DEFINE GCC46_X64_PREFIX  = ENV(WORKSPACE)/BaseTools/gcc/symlinks/X64/
 
 DEFINE UNIX_IASL_BIN           = /usr/local/bin/iasl
 #DEFINE UNIX_IASL_BIN           = $(HOME)/programs/iasl

@@ -1,17 +1,24 @@
 #!/bin/sh
 
 # Script for GCC chainload in OS X made for EDKII
+# 
+# Primary use is for creating better crosscompile support than 
+# mingw-gcc-build.py that is found in BaseTools/gcc/
+# 
+# With this we can use Native GCC chainload for EDKII  
+# development
 #
 # Xcode Tools are required
 # Script tested on "Xcode 3.2" - Snow Leopard  
 #                  "Xcode 4.1" - Lion
 #
-#  Created by Jadran Puharic on 1/25/12.
-#
-
+#  
+# Created by Jadran Puharic on 1/25/12.
+# 
+# 
 
 # GCC chainload source version 
-# 
+# here we can change source versions of tools
 #
 export BINUTILS_VERSION=binutils-2.22
 export GCC_VERSION=4.6.2
@@ -25,8 +32,8 @@ export MPC_VERSION=mpc-0.9
 export PREFIX=/opt/local
 
 # Change target mode of crosscompiler for
-# IA32 and X64
-#
+# IA32 and X64 - (we know that this one works best)
+# 
 export TARGET_IA32="i686-linux-gnu"
 export TARGET_X64="x86_64-linux-gnu"
 

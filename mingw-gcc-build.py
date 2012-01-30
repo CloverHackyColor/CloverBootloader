@@ -126,8 +126,8 @@ class Config:
                     ', '.join(allowedArchs)
                 )
         self.target_arch = {'ia32': 'i686', 'x64': 'x86_64', 'ipf': 'ia64'}[self.arch]
-        self.target_sys = {'ia32': 'pc', 'x64': 'linux', 'ipf': 'pc'}[self.arch]
-        self.target_bin = {'ia32': 'mingw32', 'gnu': 'mingw32', 'ipf': 'elf'}[self.arch]
+        self.target_sys = {'ia32': 'linux', 'x64': 'linux', 'ipf': 'pc'}[self.arch]
+        self.target_bin = {'ia32': 'gnu', 'x64': 'gnu', 'ipf': 'elf'}[self.arch]
         self.target_combo = '-'.join((self.target_arch, self.target_sys, self.target_bin))
 
         return (Opt, Args)
@@ -468,7 +468,7 @@ class Builder:
 
         cmd = ('make',)
         if module == 'gcc':
-            cmd += ('-j 2 all-gcc',)
+            cmd += ('all-gcc',)
         self.RunCommand(cmd, module, 'build')
 
         cmd = ('make',)
