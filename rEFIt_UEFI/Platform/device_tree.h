@@ -112,14 +112,14 @@ typedef struct OpaqueDTEntryIterator {
 	RealDTEntry currentScope;
 	RealDTEntry currentEntry;
 	DTSavedScopePtr savedScope;
-	unsigned long currentIndex;		
+	UINT32 currentIndex;		
 } *RealDTEntryIterator;
 
 /* Property Iterator*/
 typedef struct OpaqueDTPropertyIterator {
 	RealDTEntry entry;
 	DeviceTreeNodeProperty *currentProperty;
-	unsigned long currentIndex;
+	UINT32 currentIndex;
 } *RealDTPropertyIterator;
 
 /*
@@ -130,7 +130,7 @@ typedef struct OpaqueDTPropertyIterator {
 
 /* Used to initalize the device tree functions. */
 /* base is the base address of the flatened device tree */
-void DTInit(void *base);
+VOID DTInit(VOID *base);
 
 /*
 -------------------------------------------------------------------------------
@@ -138,7 +138,7 @@ void DTInit(void *base);
 -------------------------------------------------------------------------------
 */
 /* Compare two Entry's for equality. */
-extern INTN DTEntryIsEqual(const DTEntry ref1, const DTEntry ref2);
+extern INTN DTEntryIsEqual(CONST DTEntry ref1, CONST DTEntry ref2);
 
 /*
 -------------------------------------------------------------------------------
@@ -153,7 +153,7 @@ extern INTN DTEntryIsEqual(const DTEntry ref1, const DTEntry ref2);
  Returns:    kSuccess = entry was found.  Entry is in entryH.
              kError   = entry was not found
 */
-extern INTN DTFindEntry(const char *propName, const char *propValue, DTEntry *entryH);
+extern INTN DTFindEntry(const CHAR8 *propName, const CHAR8 *propValue, DTEntry *entryH);
 
 /*
  Lookup Entry
@@ -161,7 +161,7 @@ extern INTN DTFindEntry(const char *propName, const char *propValue, DTEntry *en
  searchPoint pointer is NULL, the path name is assumed to be an absolute path
  name rooted to the root of the device tree.
 */
-extern INTN DTLookupEntry(const DTEntry searchPoint, const char *pathName, DTEntry *foundEntry);
+extern INTN DTLookupEntry(const DTEntry searchPoint, const CHAR8 *pathName, DTEntry *foundEntry);
 
 /*
 -------------------------------------------------------------------------------
@@ -233,7 +233,7 @@ extern INTN DTRestartEntryIteration(DTEntryIterator iterator);
 
  Get Property
 */
-extern INTN DTGetProperty(const DTEntry entry, const char *propertyName, void **propertyValue, UINTN *propertySize);
+extern INTN DTGetProperty(const DTEntry entry, const CHAR8 *propertyName, void **propertyValue, UINTN *propertySize);
 
 /*
 -------------------------------------------------------------------------------
@@ -258,7 +258,7 @@ extern INTN DTDisposePropertyIterator(DTPropertyIterator iterator);
 */
 
 extern INTN DTIterateProperties(DTPropertyIterator iterator,
-						char **foundProperty);
+						CHAR8 **foundProperty);
 
 /*
  Restart Property Iteration

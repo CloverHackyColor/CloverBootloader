@@ -105,7 +105,7 @@ FindChild(RealDTEntry cur, CHAR8 *buf)
 	RealDTEntry	child;
 	UINT32      index;
 	CHAR8*			str;
-	UINT32      dummy;
+	UINTN      dummy;
 
 	if (cur->nChildren == 0) {
 		return NULL;
@@ -139,7 +139,7 @@ DTInit(VOID *base)
 	DTInitialized = (DTRootNode != 0);
 }
 
-int
+INTN
 DTEntryIsEqual(CONST DTEntry ref1, CONST DTEntry ref2)
 {
 	/* equality of pointers */

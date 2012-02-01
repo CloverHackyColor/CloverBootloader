@@ -97,7 +97,7 @@ OnExitBootServices (
   BootArgs1*				bootArgs1;
 	BootArgs2*				bootArgs2;
 	UINT8*						ptr=(UINT8*)(UINTN)0x100000;
-	DTEntry						efiPlatform;
+//	DTEntry						efiPlatform;
 	CHAR8*						dtRoot;
 	UINTN						archMode = sizeof(UINTN) * 8;
 	UINTN						Version = 0;
@@ -111,7 +111,7 @@ OnExitBootServices (
 		if(((bootArgs2->Revision == 0) || (bootArgs2->Revision == 0)) && bootArgs2->Version==2)
 		{
 			if (((UINTN)bootArgs2->efiMode == 32) || ((UINTN)bootArgs2->efiMode == 64)){
-				dtRoot = (CHAR8*)bootArgs2->deviceTreeP;
+				dtRoot = (CHAR8*)(UINTN)bootArgs2->deviceTreeP;
 				bootArgs2->efiMode = archMode; //correct to EFI arch
 				Version = 2;
 				break;
@@ -125,7 +125,7 @@ OnExitBootServices (
       
 			if (((UINTN)bootArgs1->efiMode == 32) ||
           ((UINTN)bootArgs1->efiMode == 64)){
-				dtRoot = (CHAR8*)bootArgs1->deviceTreeP;
+				dtRoot = (CHAR8*)(UINTN)bootArgs1->deviceTreeP;
 				bootArgs1->efiMode = archMode;
 				Version = 1;
 				break;
@@ -133,7 +133,7 @@ OnExitBootServices (
 		}
     
 		ptr+=0x1000;
-		if((UINT32)ptr > 0x3000000)
+		if((UINT32)(UINTN)ptr > 0x3000000)
 		{
 			Print(L"bootArgs not found!\n");
 			gBS->Stall(5000000);

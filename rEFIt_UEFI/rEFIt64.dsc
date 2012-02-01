@@ -57,7 +57,7 @@
   UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
   EfiFileLib|EmbeddedPkg/Library/EfiFileLib/EfiFileLib.inf
   EblNetworkLib|EmbeddedPkg/Library/EblNetworkLib/EblNetworkLib.inf
-
+  
   #NULL libraries
   #
   EblCmdLib|EmbeddedPkg/Library/EblCmdLibNull/EblCmdLibNull.inf  
@@ -68,7 +68,7 @@
 
 
 [Components]
-	Clover/rEFIt_UEFI/refit.inf
+	Clover/rEFIt_UEFI/refit64.inf
 
 [BuildOptions]
   XCODE:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG

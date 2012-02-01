@@ -10,7 +10,7 @@
 //#include "platform.h"
 #include "device_inject.h"
 #include "gma.h"
-#include "iBoot.h"
+#include "Platform.h"
 //#include "graphics.h"
 
 #ifndef DEBUG_GMA
@@ -101,7 +101,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 	devicepath = get_pci_dev_path(gma_dev);
 	
 	bar[0] = pci_config_read32(gma_dev->dev.addr, 0x10);
-	regs = (UINT8 *) (bar[0] & ~0x0f);
+	regs = (UINT8 *) (UINTN)(bar[0] & ~0x0f);
 	
 	model = get_gma_model((gma_dev->vendor_id << 16) | gma_dev->device_id);
 	DBG(model);

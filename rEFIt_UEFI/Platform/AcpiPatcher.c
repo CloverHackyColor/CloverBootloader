@@ -225,7 +225,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 	EFI_PHYSICAL_ADDRESS		dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
 	EFI_PHYSICAL_ADDRESS		BufferPtr;
 	UINT8*						buffer = NULL;
-	UINT32						bufferLen = 0;
+	UINTN             bufferLen = 0;
 	CHAR16*						PathPatched = L"\\EFI\\acpi\\patched\\DSDT.aml";
 	CHAR16*						PathDsdt = L"\\DSDT.aml";
   CHAR16*						PathDsdtMini    = L"\\EFI\\acpi\\mini\\DSDT.aml";

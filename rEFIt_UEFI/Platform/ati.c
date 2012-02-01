@@ -1165,7 +1165,7 @@ BOOLEAN read_vbios(BOOLEAN from_pci)
 	
 	if (from_pci)
 	{
-		rom_addr = (option_rom_header_t *)(pci_config_read32(card->pci_dev->dev.addr, PCI_EXPANSION_ROM_BASE) & ~0x7ff);
+		rom_addr = (option_rom_header_t *)(UINTN)(pci_config_read32(card->pci_dev->dev.addr, PCI_EXPANSION_ROM_BASE) & ~0x7ff);
 		DBG(" @0x%x", rom_addr);
 	}
 	else
@@ -1376,9 +1376,9 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 		return FALSE;
 	}
 	
-	card->fb		= (UINT8 *)(pci_config_read32(pci_dev->dev.addr, PCI_BASE_ADDRESS_0) & ~0x0f);
-	card->mmio		= (UINT8 *)(pci_config_read32(pci_dev->dev.addr, PCI_BASE_ADDRESS_2) & ~0x0f);
-	card->io		= (UINT8 *)(pci_config_read32(pci_dev->dev.addr, PCI_BASE_ADDRESS_4) & ~0x03);
+	card->fb		= (UINT8 *)(UINTN)(pci_config_read32(pci_dev->dev.addr, PCI_BASE_ADDRESS_0) & ~0x0f);
+	card->mmio		= (UINT8 *)(UINTN)(pci_config_read32(pci_dev->dev.addr, PCI_BASE_ADDRESS_2) & ~0x0f);
+	card->io		= (UINT8 *)(UINTN)(pci_config_read32(pci_dev->dev.addr, PCI_BASE_ADDRESS_4) & ~0x03);
 	
 	DBG("Framebuffer @0x%08X  MMIO @0x%08X	I/O Port @0x%08X ROM Addr @0x%08X\n",
 		card->fb, card->mmio, card->io, pci_config_read32(pci_dev->dev.addr, PCI_EXPANSION_ROM_BASE));

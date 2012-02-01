@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 **/
 
-#include "Lib.h"
+#include "Platform.h"
 
 /**
   Concatenates a formatted unicode string to allocated pool.

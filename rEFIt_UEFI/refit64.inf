@@ -1,0 +1,193 @@
+## @file
+#  Sample UEFI Application Reference EDKII Module
+#
+#
+#  Copyright (c) 2009 - 2010, Intel Corporation. All rights reserved.<BR>
+#
+#  This program and the accompanying materials
+#  are licensed and made available under the terms and conditions of the BSD License
+#  which accompanies this distribution. The full text of the license may be found at
+#  http://opensource.org/licenses/bsd-license.php
+#  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
+#
+#
+##
+
+[Defines]
+  INF_VERSION                   = 0x00010005
+  BASE_NAME                     = BOOTX64
+  FILE_GUID                     = 8F7D7B1E-0E1C-4c98-B12E-4EC99C4081AC
+  MODULE_TYPE                   = UEFI_APPLICATION
+  EDK_RELEASE_VERSION			= 0x00020000
+  EFI_SPECIFICATION_VERSION		= 0x00020000
+  VERSION_STRING                = 1.0
+  ENTRY_POINT                   = RefitMain
+
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = IA32 X64 IPF EBC
+#
+
+[Sources]
+  EfiLib/BmLib.c
+  EfiLib/DevicePath.c
+ # EfiLib/BdsConnect.c #included into GenericBdsLib
+  refit/main.c
+  refit/config.c
+  refit/icns.c
+  refit/lib.c
+  refit/menu.c
+  refit/screen.c
+  refit/IO.c
+  libeg/image.c
+  libeg/load_bmp.c
+  libeg/load_icns.c
+  libeg/libscreen.c
+  libeg/text.c
+  Platform/AcpiPatcher.c
+#	Platform/AppleEfi.h
+#	Platform/ati_reg.h
+	Platform/ati.c
+#	Platform/BiosVideo.h
+#	Platform/Bmp.h
+#	Platform/boot.h
+	Platform/BootLog.c
+	Platform/Console.c
+	Platform/cpu.c
+	Platform/DataHubCpu.c
+#	Platform/DataHubRecords.h
+	Platform/device_inject.c
+#	Platform/device_inject.h
+	Platform/device_tree.c
+#	Platform/device_tree.h
+#	Platform/DriverVar.txt
+#	Platform/DT_Add.c
+#	Platform/DT_Add.h
+#	Platform/DT_pseudo-C.h
+	Platform/Events.c
+	Platform/gma.c
+#	Platform/gma.h
+	Platform/guid.c
+	Platform/Injectors.c
+	Platform/LegacyBiosThunk.c
+#	Platform/LegacyBiosThunk.h
+	Platform/LegacyBoot.c
+#	Platform/memvendors.h
+	Platform/mkext.c
+#	Platform/mkext.h
+	Platform/nvidia.c
+#	Platform/nvidia.h
+	Platform/pci.c
+	Platform/picopng.c
+#	Platform/picopng.h
+	Platform/Platform.h
+	Platform/platformdata.c
+	Platform/plist.c
+	Platform/Settings.c
+	Platform/smbios.c
+#	Platform/SmBios.h
+	Platform/spd.c
+#	Platform/spd.h
+#	Platform/StateGenerator.c
+#	Platform/StateGenerator.h
+#	Platform/stringTable.c
+	Platform/usbfix.c
+#	Platform/UsbMass.h
+#	Platform/UsbMassBoot.h
+#	Platform/UsbMassImpl.h
+#	Platform/VesaBiosExtensions.h
+
+
+[Packages]
+#	DuetPkg/DuetPkg.dec
+    MdePkg/MdePkg.dec
+    MdeModulePkg/MdeModulePkg.dec
+#    ShellPkg/ShellPkg.dec
+  IntelFrameworkPkg/IntelFrameworkPkg.dec
+  IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
+
+[LibraryClasses]
+  UefiApplicationEntryPoint
+  UefiBootServicesTableLib
+  UefiLib
+   MemoryAllocationLib
+   BaseMemoryLib
+   BaseLib
+  DevicePathLib
+  DebugLib
+  DxeServicesLib
+  DxeServicesTableLib
+  HobLib
+  MemoryAllocationLib
+  IoLib
+  HiiLib
+  EfiFileLib
+  PeCoffLib
+  GenericBdsLib
+
+[Guids]
+  gEfiAcpiTableGuid
+  gEfiAcpi20TableGuid
+  gEfiFileInfoGuid                              ## CONSUMES ## GUID
+  gEfiFileSystemInfoGuid                        ## CONSUMES ## GUID
+  gEfiGlobalVariableGuid
+  gEfiAcpiTableGuid
+  gEfiSmbiosTableGuid
+  gEfiEventReadyToBootGuid
+  gEfiSasDevicePathGuid
+  gEfiDxeServicesTableGuid
+  gEfiEventVirtualAddressChangeGuid
+
+	
+
+[Ppis]
+
+[Protocols]
+  gEfiComponentName2ProtocolGuid                          # ALWAYS_CONSUMED
+  gEfiDevicePathToTextProtocolGuid                        # ALWAYS_CONSUMED
+  gEfiSimpleFileSystemProtocolGuid                        # ALWAYS_CONSUMED
+  gEfiSimpleTextInProtocolGuid                            # ALWAYS_CONSUMED
+  gEfiSimpleTextInputExProtocolGuid                       # ALWAYS_CONSUMED
+  gEfiSimpleTextOutProtocolGuid                           # ALWAYS_CONSUMED
+  gEfiUnicodeCollation2ProtocolGuid                       # ALWAYS_CONSUMED  
+  
+  gEfiAcpiS3SaveProtocolGuid                    # PROTOCOL CONSUMES
+  gEfiBlockIoProtocolGuid                       # PROTOCOL CONSUMES
+  gEfiCpuArchProtocolGuid                       # PROTOCOL CONSUMES
+  gEfiDebugPortProtocolGuid                     # PROTOCOL CONSUMES
+  gEfiDevicePathProtocolGuid                    # PROTOCOL CONSUMES
+  gEfiDiskIoProtocolGuid                        # PROTOCOL CONSUMES
+  gEfiExtScsiPassThruProtocolGuid               ## PROTOCOL SOMETIMES_CONSUMES
+  gEfiFirmwareVolume2ProtocolGuid               # PROTOCOL CONSUMES
+  gEfiGraphicsOutputProtocolGuid                # PROTOCOL SOMETIMES_CONSUMES
+  gEfiHiiFontProtocolGuid                       # PROTOCOL CONSUMES
+  gEfiLoadedImageProtocolGuid                   # PROTOCOL CONSUMES
+  gEfiOEMBadgingProtocolGuid                    # PROTOCOL CONSUMES
+  gEfiPciIoProtocolGuid                         # PROTOCOL CONSUMES 
+  gEfiScsiIoProtocolGuid                        ## PROTOCOL SOMETIMES_CONSUMES
+  gEfiScsiPassThruProtocolGuid                  ## PROTOCOL SOMETIMES_CONSUMES
+  gEfiSimpleNetworkProtocolGuid                 # PROTOCOL CONSUMES
+  gEfiUgaDrawProtocolGuid |PcdUgaConsumeSupport # PROTOCOL SOMETIMES_CONSUMES
+  
+  gEfiAbsolutePointerProtocolGuid
+  gEfiAcpiTableProtocolGuid
+  gEfiEdidActiveProtocolGuid
+  gEfiEdidDiscoveredProtocolGuid
+  gEfiHiiDatabaseProtocolGuid
+  gEfiHiiImageProtocolGuid
+  gEfiHiiProtocolGuid
+  gEfiSimplePointerProtocolGuid
+  gEfiSmbiosProtocolGuid
+  gEfiSecurityArchProtocolGuid  
+
+
+[FeaturePcd]
+  gEfiMdePkgTokenSpaceGuid.PcdUgaConsumeSupport
+
+[Pcd]
+
+[BuildOptions]
+  XCODE:*_*_*_CC_FLAGS = -Os 
+  GCC:*_*_*_CC_FLAGS = -Os
