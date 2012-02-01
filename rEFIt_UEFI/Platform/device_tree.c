@@ -26,7 +26,7 @@
  * @APPLE_OSREFERENCE_LICENSE_HEADER_END@
  */
 
-#include <Uefi.h>
+#include "Platform.h"
 #include "device_tree.h"
 
 #define round_long(x)	(((x) + 3UL) & ~(3UL))
@@ -44,7 +44,7 @@ RealDTEntry
 skipProperties(RealDTEntry entry)
 {
 	DeviceTreeNodeProperty *prop;
-	unsignedINTNk;
+	UINTN k;
 
 	if (entry == NULL || entry->nProperties == 0) {
 		return NULL;
@@ -61,7 +61,7 @@ RealDTEntry
 skipTree(RealDTEntry root)
 {
 	RealDTEntry entry;
-	unsignedINTNk;
+	UINTN k;
 
 	entry = skipProperties(root);
 	if (entry == NULL) {
@@ -82,7 +82,7 @@ GetFirstChild(RealDTEntry parent)
 RealDTEntry
 GetNextChild(RealDTEntry sibling)
 {
-	skipTree(sibling);
+	return skipTree(sibling);
 }
 
 CONST CHAR8*
@@ -162,7 +162,7 @@ INTN DTFindEntry(CONST CHAR8 *propName, CONST CHAR8 *propValue, DTEntry *entryH)
 INTN find_entry(CONST CHAR8 *propName, CONST CHAR8 *propValue, DTEntry *entryH)
 {
 	DeviceTreeNode *nodeP = (DeviceTreeNode *) (VOID *) startingP;
-	UNITN k;
+	UINTN k;
 
 	if (nodeP->nProperties == 0) return(kError);	// End of the list of nodes
 	startingP = (CHAR8 *) (nodeP + 1);
@@ -363,7 +363,7 @@ DTRestartEntryIteration(DTEntryIterator iterator)
 }
 
 INTN
-DTGetProperty(CONST DTEntry entry, CONST char *propertyName, VOID **propertyValue, unsignedINTN*propertySize)
+DTGetProperty(CONST DTEntry entry, CONST char *propertyName, VOID **propertyValue, UINTN *propertySize)
 {
 	DeviceTreeNodeProperty *prop;
 	UINTN k;

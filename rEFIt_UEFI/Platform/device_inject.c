@@ -4,10 +4,12 @@
 /*
  *	Cleaned and merged by iNDi
  */
+// UEFI adaptation by usr-sse2
 
 
 #include "device_inject.h"
-#include "iBoot.h"
+#include "Platform.h"
+
 #ifndef DEBUG_INJECT
 #define DEBUG_INJECT 1
 #endif

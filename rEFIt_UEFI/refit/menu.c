@@ -34,7 +34,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "lib.h"
+#include "Platform.h"
 
 #include "egemb_back_selected_small.h"
 

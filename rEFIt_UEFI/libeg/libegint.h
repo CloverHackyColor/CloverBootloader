@@ -41,7 +41,7 @@
 //#include <efi.h>
 //#include <efilib.h>
 
-#include "lib.h"
+#include "Platform.h"
 
 /* types */
 

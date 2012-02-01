@@ -22,7 +22,7 @@ Revision History
 --*/
 
 //#include "EfiShellLib.h"
-#include "lib.h"
+#include "Platform.h"
 
 #define PRINT_STRING_LEN        1024
 #define PRINT_ITEM_BUFFER_LEN   100

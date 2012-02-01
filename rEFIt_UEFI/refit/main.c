@@ -34,11 +34,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "lib.h"
+#include "Platform.h"
 #include "Handle.h"
 
 #include "syslinux_mbr.h"
-#include "Platform.h"
+
 
 // variables
 

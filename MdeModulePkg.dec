@@ -464,7 +464,7 @@
   # It is assumed that 64-bit DxeCore is built in firmware if it is true; otherwise 32-bit DxeCore
   # is built in firmware.
   #
-  gEfiMdeModulePkgTokenSpaceGuid.PcdDxeIplSwitchToLongMode|FALSE|BOOLEAN|0x0001003b
+  gEfiMdeModulePkgTokenSpaceGuid.PcdDxeIplSwitchToLongMode|TRUE|BOOLEAN|0x0001003b
 
   ##
   # This feature flag specifies whether DxeIpl should rebuild page tables. This flag only
@@ -733,7 +733,7 @@
   #  0x0D (EFI_LIGHTMAGENTA)
   #  0x0E (EFI_YELLOW)
   #  0x0F (EFI_WHITE)
-  gEfiMdeModulePkgTokenSpaceGuid.PcdBrowserSubtitleTextColor|0x02|UINT8|0x00010057
+  gEfiMdeModulePkgTokenSpaceGuid.PcdBrowserSubtitleTextColor|0x01|UINT8|0x00010057
   
   ## Specify the foreground color for prompt and Question value text in HII Form Browser. The default value is EFI_BLACK.
   #  Only following values defined in UEFI specification are valid:

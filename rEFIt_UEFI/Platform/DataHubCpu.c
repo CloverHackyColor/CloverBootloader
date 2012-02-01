@@ -153,8 +153,8 @@ VOID SetupDataForOSX()
 	UINT64				FrontSideBus		= gCPUStructure.FSBFrequency;
 	UINT64				CpuSpeed        = gCPUStructure.CPUFrequency;
 	UINT64				TSCFrequency		= gCPUStructure.TSCFrequency;
-	CHAR16*				productName; //			= AllocateZeroPool(64);
-	CHAR16*				serialNumber; //		= AllocateZeroPool(64);
+	CHAR16*				productName			= AllocateZeroPool(64);
+	CHAR16*				serialNumber		= AllocateZeroPool(64);
 	
 	// Locate DataHub Protocol
 	Status = gBS->LocateProtocol(&gEfiDataHubProtocolGuid, NULL, (VOID**)&gDataHub);

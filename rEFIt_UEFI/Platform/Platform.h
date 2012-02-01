@@ -2,6 +2,10 @@
 Headers collection for procedures
 */
 
+#ifndef __REFIT_PLATFORM_H__
+#define __REFIT_PLATFORM_H__
+
+
 #include <Uefi.h>
 
 #include <Guid/Acpi.h>
@@ -15,10 +19,14 @@ Headers collection for procedures
 #include <Library/HiiLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PcdLib.h>
+#include <Library/PerformanceLib.h>
+#include <Library/PeCoffGetEntryPointLib.h>
+#include <Library/TimerLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiDriverEntryPoint.h>
 #include <Library/UefiLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
+#include <Library/UefiRuntimeLib.h>
 
 #include <Framework/FrameworkInternalFormRepresentation.h>
 
@@ -40,6 +48,7 @@ Headers collection for procedures
 #include "Bmp.h"
 #include "efiConsoleControl.h"
 #include "SmBios.h"
+//#include "GenericBdsLib.h"
 
 /* Decimal powers: */
 #define kilo (1000ULL)
@@ -409,3 +418,5 @@ VOID        PatchSmbios(VOID);
 VOID        FinalizeSmbios(VOID);
 
 EFI_STATUS  DisableUsbLegacySupport(VOID);
+
+#endif

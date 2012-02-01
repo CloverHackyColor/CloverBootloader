@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 **/
 
-#include "lib.h"
+#include "Platform.h"
 /**
 
   Find the first instance of this Protocol

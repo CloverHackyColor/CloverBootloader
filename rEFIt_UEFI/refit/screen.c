@@ -34,7 +34,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "lib.h"
+#include "Platform.h"
 
 #include "egemb_refit_banner.h"
 

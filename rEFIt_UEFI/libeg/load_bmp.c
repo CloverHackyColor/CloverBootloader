@@ -37,7 +37,7 @@
 #include "libegint.h"
 
 // BMP structures
-
+/*
 #pragma pack(1)
 
 typedef struct {
@@ -67,7 +67,7 @@ typedef struct {
 } BMP_IMAGE_HEADER;
 
 #pragma pack()
-
+*/
 //
 // Load BMP image
 //

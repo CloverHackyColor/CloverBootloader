@@ -138,7 +138,7 @@ void DTInit(void *base);
 -------------------------------------------------------------------------------
 */
 /* Compare two Entry's for equality. */
-externINTNDTEntryIsEqual(const DTEntry ref1, const DTEntry ref2);
+extern INTN DTEntryIsEqual(const DTEntry ref1, const DTEntry ref2);
 
 /*
 -------------------------------------------------------------------------------
@@ -153,7 +153,7 @@ externINTNDTEntryIsEqual(const DTEntry ref1, const DTEntry ref2);
  Returns:    kSuccess = entry was found.  Entry is in entryH.
              kError   = entry was not found
 */
-externINTNDTFindEntry(const char *propName, const char *propValue, DTEntry *entryH);
+extern INTN DTFindEntry(const char *propName, const char *propValue, DTEntry *entryH);
 
 /*
  Lookup Entry
@@ -161,7 +161,7 @@ externINTNDTFindEntry(const char *propName, const char *propValue, DTEntry *entr
  searchPoint pointer is NULL, the path name is assumed to be an absolute path
  name rooted to the root of the device tree.
 */
-externINTNDTLookupEntry(const DTEntry searchPoint, const char *pathName, DTEntry *foundEntry);
+extern INTN DTLookupEntry(const DTEntry searchPoint, const char *pathName, DTEntry *foundEntry);
 
 /*
 -------------------------------------------------------------------------------
@@ -182,10 +182,10 @@ externINTNDTLookupEntry(const DTEntry searchPoint, const char *pathName, DTEntry
  currentScope are set to the root entry.  The currentPosition for the iterator is
  set to "nil".
 */
-externINTNDTCreateEntryIterator(const DTEntry startEntry, DTEntryIterator *iterator);
+extern INTN DTCreateEntryIterator(const DTEntry startEntry, DTEntryIterator *iterator);
 
 /* Dispose Entry Iterator*/
-externINTNDTDisposeEntryIterator(DTEntryIterator iterator);
+extern INTN DTDisposeEntryIterator(DTEntryIterator iterator);
 
 /*
  Enter Child Entry
@@ -194,7 +194,7 @@ externINTNDTDisposeEntryIterator(DTEntryIterator iterator);
  "childEntry" is nil, the currentScope is set to the entry specified by the
  currentPosition of the iterator.
 */
-externINTNDTEnterEntry(DTEntryIterator iterator, DTEntry childEntry);
+extern INTN DTEnterEntry(DTEntryIterator iterator, DTEntry childEntry);
 
 /*
  Exit to Parent Entry
@@ -203,7 +203,7 @@ externINTNDTEnterEntry(DTEntryIterator iterator, DTEntry childEntry);
  previous currentScope), so the next iteration call will continue where it left off.
  This position is returned in parameter "currentPosition".
 */
-externINTNDTExitEntry(DTEntryIterator iterator, DTEntry *currentPosition);
+extern INTN DTExitEntry(DTEntryIterator iterator, DTEntry *currentPosition);
 
 /*
  Iterate Entries 
@@ -212,7 +212,7 @@ externINTNDTExitEntry(DTEntryIterator iterator, DTEntry *currentPosition);
 INTN== kIterationDone, all entries have been exhausted, and the
  value of nextEntry will be Nil. 
 */
-externINTNDTIterateEntries(DTEntryIterator iterator, DTEntry *nextEntry);
+extern INTN DTIterateEntries(DTEntryIterator iterator, DTEntry *nextEntry);
 
 /*
  Restart Entry Iteration
@@ -221,7 +221,7 @@ externINTNDTIterateEntries(DTEntryIterator iterator, DTEntry *nextEntry);
  outermostScope and currentScope of the iterator are unchanged. The currentPosition
  for the iterator is set to "nil".
 */
-externINTNDTRestartEntryIteration(DTEntryIterator iterator);
+extern INTN DTRestartEntryIteration(DTEntryIterator iterator);
 
 /*
 -------------------------------------------------------------------------------
@@ -233,7 +233,7 @@ externINTNDTRestartEntryIteration(DTEntryIterator iterator);
 
  Get Property
 */
-externINTNDTGetProperty(const DTEntry entry, const char *propertyName, void **propertyValue, unsignedINTN*propertySize);
+extern INTN DTGetProperty(const DTEntry entry, const char *propertyName, void **propertyValue, UINTN *propertySize);
 
 /*
 -------------------------------------------------------------------------------
@@ -245,11 +245,11 @@ externINTNDTGetProperty(const DTEntry entry, const char *propertyName, void **pr
  Create the property iterator structure. The target entry is defined by entry.
 */
 
-externINTNDTCreatePropertyIterator(const DTEntry entry,
+extern INTN DTCreatePropertyIterator(const DTEntry entry,
 					DTPropertyIterator *iterator);
 
 /* Dispose Property Iterator*/
-externINTNDTDisposePropertyIterator(DTPropertyIterator iterator);
+extern INTN DTDisposePropertyIterator(DTPropertyIterator iterator);
 
 /*
  Iterate Properites
@@ -257,7 +257,7 @@ externINTNDTDisposePropertyIterator(DTPropertyIterator iterator);
  WhenINTN== kIterationDone, all properties have been exhausted.
 */
 
-externINTNDTIterateProperties(DTPropertyIterator iterator,
+extern INTN DTIterateProperties(DTPropertyIterator iterator,
 						char **foundProperty);
 
 /*
@@ -266,7 +266,7 @@ externINTNDTIterateProperties(DTPropertyIterator iterator,
  reset to the beginning of the list of properties for an entry.
 */
 
-externINTNDTRestartPropertyIteration(DTPropertyIterator iterator);
+extern INTN DTRestartPropertyIteration(DTPropertyIterator iterator);
 
 
 

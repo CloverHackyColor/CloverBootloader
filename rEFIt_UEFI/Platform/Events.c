@@ -11,7 +11,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 */
 
 #include "Platform.h"
-#include <PiDxe.h>
+#include "device_tree.h"
 
 
 EFI_EVENT                        mVirtualAddressChangeEvent = NULL;
@@ -65,7 +65,7 @@ VOID CorrectMemoryMap(IN UINT32 memMap,
   
 	if(gSettings.Debug==TRUE) {
 		
-		WaitForKeyPress("press any key to dump MemoryMap");
+//		WaitForKeyPress("press any key to dump MemoryMap");
 		memDescriptor = (EfiMemoryRange *)(UINTN)memMap;
 		for (Index = 0; Index < *memMapSize / memDescriptorSize; Index ++) {
 			Bytes = LShiftU64 (memDescriptor->NumberOfPages, 12);
@@ -76,9 +76,9 @@ VOID CorrectMemoryMap(IN UINT32 memMap,
                  memDescriptor->Attribute,
                  (UINTN)memDescriptor->Type);
 			memDescriptor = (EfiMemoryRange *)((UINTN)memDescriptor + memDescriptorSize);
-			if (Index % 20 == 19) {
-				WaitForKeyPress("press any key to next");
-			}
+//			if (Index % 20 == 19) {
+	//			WaitForKeyPress("press any key to next");
+  //			}
 		}
 	}
 	
@@ -104,25 +104,28 @@ OnExitBootServices (
   
   while(TRUE)
 	{
-		bootArgsNew=(BootArgsNew*)ptr;
-		bootArgs=(BootArgs*)ptr;
+		bootArgs2 = (BootArgs2*)ptr;
+		bootArgs1 = (BootArgs1*)ptr;
     
 		/* search bootargs for 10.7 */
 		if(((bootArgs2->Revision == 0) || (bootArgs2->Revision == 0)) && bootArgs2->Version==2)
 		{
 			if (((UINTN)bootArgs2->efiMode == 32) || ((UINTN)bootArgs2->efiMode == 64)){
-				dtRoot = (CHAR8*)bootArgsNew->deviceTreeP;
+				dtRoot = (CHAR8*)bootArgs2->deviceTreeP;
 				bootArgs2->efiMode = archMode; //correct to EFI arch
 				Version = 2;
 				break;
 			} 
       
       /* search bootargs for 10.4 - 10.6.x */
-		} else if((bootArgs->Revision==6 || bootArgs->Revision==5 || bootArgs->Revision==4) 
-              && bootArgs->Version==1){
+		} else if(((bootArgs1->Revision==6) ||
+               (bootArgs1->Revision==5) || 
+               (bootArgs1->Revision==4)) &&
+               (bootArgs1->Version ==1)){
       
-			if (((UINTN)bootArgs1->efiMode == 32) || ((UINTN)bootArgs1->efiMode == 64)){
-				dtRoot = (CHAR8,bootArgs1->deviceTreeP);
+			if (((UINTN)bootArgs1->efiMode == 32) ||
+          ((UINTN)bootArgs1->efiMode == 64)){
+				dtRoot = (CHAR8*)bootArgs1->deviceTreeP;
 				bootArgs1->efiMode = archMode;
 				Version = 1;
 				break;
@@ -142,13 +145,13 @@ OnExitBootServices (
 		CorrectMemoryMap(bootArgs2->MemoryMap,
                      bootArgs2->MemoryMapDescriptorSize,
                      &bootArgs2->MemoryMapSize);
-		bootArgsNew->efiSystemTable = (UINT32)(UINTN)gST;
+		bootArgs2->efiSystemTable = (UINT32)(UINTN)gST;
 		
 	}else if(Version==1) {
 		CorrectMemoryMap(bootArgs1->MemoryMap,
                      bootArgs1->MemoryMapDescriptorSize,
                      &bootArgs1->MemoryMapSize);
-		bootArgs->efiSystemTable = (UINT32)(UINTN)gST;
+		bootArgs1->efiSystemTable = (UINT32)(UINTN)gST;
 	}
   
   DisableUsbLegacySupport();
@@ -172,7 +175,7 @@ VirtualAddressChangeEvent (
                            IN VOID       *Context
                            )
 {
-  EfiConvertPointer (0x0, (VOID **) &mProperty);
+//  EfiConvertPointer (0x0, (VOID **) &mProperty);
 //  EfiConvertPointer (0x0, (VOID **) &mSmmCommunication);
 }
 
@@ -183,7 +186,7 @@ EventsInitialize (
   IN EFI_SYSTEM_TABLE                       *SystemTable
   )
 {
-  EFI_EVENT   OnReadyToBootEvent = NULL;
+//  EFI_EVENT   OnReadyToBootEvent = NULL;
   EFI_EVENT   ExitBootServiceEvent = NULL;
   EFI_EVENT   mVirtualAddressChangeEvent = NULL;
 
