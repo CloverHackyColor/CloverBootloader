@@ -34,8 +34,11 @@
 #include "picopng.h"
 
 //const UINT32 passstart[7] = { 0, 0, 0, 0, 0, 0, 0 };
-const UINT32 pattern[28] = { 0, 4, 0, 2, 0, 1, 0, 0, 0, 4, 0, 2, 0, 1, 8, 8, 4, 4, 2, 2, 1, 8, 8,
-	8, 4, 4, 2, 2 }; // values for the adam7 passes
+CONST 
+UINT32 pattern[28] = {0, 4, 0, 2, 0, 1, 0,
+                      0, 0, 4, 0, 2, 0, 1,
+                      8, 8, 4, 4, 2, 2, 1,
+                      8, 8,	8, 4, 4, 2, 2 }; // values for the adam7 passes
 
 
 /*************************************************************************************************/
@@ -991,7 +994,7 @@ PNG_INFO *PNG_info_new()
 	return info;
 }
 
-PNG_INFO *PNG_decode(const UINT8 *in, UINT32 size)
+PNG_INFO *PNG_decode(/* const*/ UINT8 *in, UINT32 size)
 {
 	UINT32 pos ;
 	VECTOR_8 *idat;
@@ -1225,7 +1228,7 @@ EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ico
     return NULL;
 
   PNG_error = -1;
-	info = PNG_decode(NewImage, (UINT32)FileDataLength);
+	info = PNG_decode(FileData, (UINT32)FileDataLength);
 	if(!PNG_error)
 	{
 		NewImage = egCreateImage(info->width, info->height, WantAlpha);
@@ -1237,11 +1240,11 @@ EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ico
 		png_alloc_free_all();
     Pixel = (EG_PIXEL*)NewImage->PixelData;
 		for (y = 0; y < NewImage->Height; y++) {
-      for (x = 0; x < < NewImage->Width; x++) {
+      for (x = 0; x < NewImage->Width; x++) {
         UINT8	Temp;
-        Temp = Pixel->Blue;
-        Pixel->Blue = Pixel->Red;
-        Pixel->Red=Temp;
+        Temp = Pixel->b;
+        Pixel->b = Pixel->r;
+        Pixel->r = Temp;
         Pixel++;        
       }
     }

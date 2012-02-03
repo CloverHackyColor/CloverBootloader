@@ -201,7 +201,7 @@ struct DevPropDevice *devprop_add_device(struct DevPropString *string, CHAR8 *pa
 	}
 
 	ZeroMem((VOID*)device, sizeof(struct DevPropDevice));
-	device->acpi_dev_path._UID = /*getPciRootUID();*/1; //FIXME: what if 0?
+	device->acpi_dev_path._UID = /*getPciRootUID();*/0; //FIXME: what if 0?
 
 	INT32 numpaths = 0;
 	INT32		x, curr = 0;

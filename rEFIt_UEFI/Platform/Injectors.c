@@ -27,8 +27,10 @@ EFI_GUID gAppleScreenInfoGuid = {
 	0xe316e100, 0x0751, 0x4c49, {0x90, 0x56, 0x48, 0x6c, 0x7e, 0x47, 0x29, 0x03}
 };
 
-UINT32 mPropSize = 0;
-UINT8* mProperties = NULL;
+//UINT32 mPropSize = 0;
+//UINT8* mProperties = NULL;
+
+typedef struct _APPLE_GETVAR_PROTOCOL APPLE_GETVAR_PROTOCOL;
 
 typedef
 EFI_STATUS
@@ -37,16 +39,59 @@ EFI_STATUS
                                                   IN     CHAR8                   *Buffer,
                                                   IN OUT UINT32                  *BufferSize);
 
-
-typedef struct {
+struct _APPLE_GETVAR_PROTOCOL {
   UINT64    Sign;
   EFI_STATUS(EFIAPI *Unknown1)(IN VOID *);
   EFI_STATUS(EFIAPI *Unknown2)(IN VOID *);
   EFI_STATUS(EFIAPI *Unknown3)(IN VOID *);
   APPLE_GETVAR_PROTOCOL_GET_DEVICE_PROPS  GetDevProps;
-} APPLE_GETVAR_PROTOCOL;
+};
+
 
 #define DEVICE_PROPERTIES_SIGNATURE SIGNATURE_64('A','P','P','L','E','D','E','V')
+
+EFI_STATUS EFIAPI
+GetDeviceProps(IN     APPLE_GETVAR_PROTOCOL   *This,
+               IN     CHAR8                   *Buffer,
+               IN OUT UINT32                  *BufferSize)
+{ 
+//  if (mPropSize > *BufferSize)
+//    return EFI_BUFFER_TOO_SMALL;
+  UINT32		cnt=0;
+	UINT8     *binStr = NULL;
+  CHAR8   CHigh, CLow;
+  CHAR8*  Ptr; 
+  UINT8   byte;
+//TODO if gSetting.GraphicsEnabler=FALSE then egLoadFile(strings.dat, gDeviceProperties)  
+  if(gDeviceProperties!=NULL && AsciiStrLen(gDeviceProperties)>3)
+	{
+    cnt=(UINT32)AsciiStrLen(gDeviceProperties) / 2;
+		binStr = AllocateZeroPool(cnt);
+    Ptr = gDeviceProperties;
+    while (*Ptr) {
+      CHigh = *Ptr++ | 0x20;
+      if (IS_DIGIT(CHigh)) {
+        byte = (CHigh - 0x30) << 4;
+      } else if (IS_HEX(CHigh)) {
+        byte = ((CHigh) - 0x57) << 4;
+      } else {
+        byte = 0;
+      }
+      CLow = *Ptr++ | 0x20;
+      if (IS_DIGIT(CLow)) {
+        byte += (CHigh - 0x30);
+      } else if (IS_HEX(CLow)) {
+        byte += ((CLow) - 0x57);
+      }
+      *binStr++ = byte;
+    }
+    
+    
+  }   
+  *BufferSize = cnt;    
+	CopyMem(Buffer, binStr,  cnt);
+	return EFI_SUCCESS;
+}
 
 APPLE_GETVAR_PROTOCOL mDeviceProperties=
 {
@@ -56,20 +101,6 @@ APPLE_GETVAR_PROTOCOL mDeviceProperties=
 	NULL,
 	GetDeviceProps,   
 };
-
-
-EFI_STATUS EFIAPI
-GetDeviceProps(IN     APPLE_GETVAR_PROTOCOL   *This,
-               IN     CHAR8                   *Buffer,
-               IN OUT UINT32                  *BufferSize)
-{ 
-  if (mPropSize > *BufferSize)
-    return EFI_BUFFER_TOO_SMALL;
-    
-	CopyMem(&Buffer[1], mProperties,  mPropSize);
-	return EFI_SUCCESS;
-}
-
 
 typedef	EFI_STATUS (EFIAPI *EFI_SCREEN_INFO_FUNCTION)(
                                                       VOID* This, 

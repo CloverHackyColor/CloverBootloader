@@ -14,6 +14,9 @@
 #define DBG(x...)
 #endif
 
+#define kXMLTagArray   		"array"
+
+EFI_GUID gRandomUUID = { 0x0A0B0C0D, 0x0000, 0x1010, {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 }};
 CHAR8                           gSelectedUUID[40];
 SETTINGS_DATA                   gSettings;
 GFX_PROPERTIES                  gGraphics;
@@ -23,8 +26,8 @@ UINT16                          gCPUtype;
 UINT16                          gResetAddress;
 UINT16                          gResetValue;
 
-//should be excluded. Now interface.cfg
-EFI_STATUS GetTheme (CHAR16* ThemePlistPath)
+//should be excluded. Now refit.conf
+/*EFI_STATUS GetTheme (CHAR16* ThemePlistPath)
 {
   EFI_STATUS	Status = EFI_NOT_FOUND;
 	UINT32		size;
@@ -33,7 +36,7 @@ EFI_STATUS GetTheme (CHAR16* ThemePlistPath)
 	TagPtr		prop;
 
   if (FileExists(SelfRootDir, ThemePlistPath)) {
-    Status = egLoadFile(SelfRootDir, ThemePlistPath, (CHAR8**)&gThemePtr, &size);
+    Status = egLoadFile(SelfRootDir, ThemePlistPath, (UINT8**)&gThemePtr, &size);
   } 
   if (EFI_ERROR(Status)) {
     Print(L"No theme found!\n");
@@ -51,12 +54,12 @@ EFI_STATUS GetTheme (CHAR16* ThemePlistPath)
 		}
   }
   return Status;
-}
+}*/
 
 EFI_STATUS GetNVRAMSettings(IN REFIT_VOLUME *Volume, CHAR16* NVRAMPlistPath)
 {
 	EFI_STATUS	Status;
-	UINT32		size;
+	UINTN     size;
 	CHAR8*		gNvramPtr;
 	CHAR8*		efiBootDevice;
 	TagPtr		dict;
@@ -64,7 +67,7 @@ EFI_STATUS GetNVRAMSettings(IN REFIT_VOLUME *Volume, CHAR16* NVRAMPlistPath)
 	TagPtr		dictPointer;
 	UINT32		pos = 0;
 	
-	Status = egLoadFile(Volume->RootDir, NVRAMPlistPath, (CHAR8**)&gNvramPtr, &size);
+	Status = egLoadFile(Volume->RootDir, NVRAMPlistPath, (UINT8**)&gNvramPtr, &size);
 	if(EFI_ERROR(Status))
 	{
 		DBG("Error loading nvram.plist!\n");
@@ -93,7 +96,7 @@ EFI_STATUS GetNVRAMSettings(IN REFIT_VOLUME *Volume, CHAR16* NVRAMPlistPath)
 	//		Status = XMLParseNextTag(efiBootDevice, &dictPointer, &size);
 			while (TRUE)
 			{
-				Status = XMLParseNextTag(efiBootDevice + pos, &dict, &size);
+				Status = XMLParseNextTag(efiBootDevice + pos, &dict, (UINT32 *)&size);
 				if (EFI_ERROR(Status))
 					break;
 				
@@ -128,7 +131,8 @@ EFI_STATUS GetNVRAMSettings(IN REFIT_VOLUME *Volume, CHAR16* NVRAMPlistPath)
 						if(prop)
 						{
 							MsgLog("UUID property type=%d string=%a\n", prop->type, prop->string);
-							AsciiStrToUnicodeStr(prop->string, gSelectedUUID);
+						//	AsciiStrToUnicodeStr(prop->string, gSelectedUUID);
+              AsciiStrCpy(gSelectedUUID, prop->string);
 						}									
 					}
 				}				
@@ -142,7 +146,7 @@ EFI_STATUS GetNVRAMSettings(IN REFIT_VOLUME *Volume, CHAR16* NVRAMPlistPath)
 EFI_STATUS GetUserSettings(IN REFIT_VOLUME *Volume, CHAR16* ConfigPlistPath)
 {
 	EFI_STATUS	Status = EFI_NOT_FOUND;
-	UINT32		size;
+	UINTN		size;
 	CHAR8*		gConfigPtr;
 	TagPtr		dict;
 	TagPtr		prop;
@@ -152,10 +156,10 @@ EFI_STATUS GetUserSettings(IN REFIT_VOLUME *Volume, CHAR16* ConfigPlistPath)
 	
 	// load config
   if (FileExists(Volume->RootDir, ConfigPlistPath)) {
-    Status = egLoadFile(Volume->RootDir, ConfigPlistPath, (CHAR8**)&gConfigPtr, &size);
+    Status = egLoadFile(Volume->RootDir, ConfigPlistPath, (UINT8**)&gConfigPtr, &size);
   } 
   if (EFI_ERROR(Status)) {
-    Status = egLoadFile(SelfRootDir, ConfigPlistPath, (CHAR8**)&gConfigPtr, &size);
+    Status = egLoadFile(SelfRootDir, ConfigPlistPath, (UINT8**)&gConfigPtr, &size);
   }
     
 	if(EFI_ERROR(Status)) {
@@ -179,7 +183,7 @@ EFI_STATUS GetUserSettings(IN REFIT_VOLUME *Volume, CHAR16* ConfigPlistPath)
 		prop = GetProperty(dict,"boot-args");
 		if(prop)
 		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.BootArgs);
+			AsciiStrCpy(gSettings.BootArgs, prop->string);
 		} 
     
 		//gSettings.TimeOut - will be in interface.txt
@@ -198,7 +202,7 @@ EFI_STATUS GetUserSettings(IN REFIT_VOLUME *Volume, CHAR16* ConfigPlistPath)
 		prop = GetProperty(dict,"ResetAddress");
 		if(prop)
 		{
-			AsciiStrToUnicodeStr(prop->string, &UStr);
+			AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
 			gResetAddress  = (UINT16)StrHexToUint64(UStr); 
 		}  else {
 			gResetAddress  = 0x64; //I wish it will be default
@@ -206,8 +210,8 @@ EFI_STATUS GetUserSettings(IN REFIT_VOLUME *Volume, CHAR16* ConfigPlistPath)
 		prop = GetProperty(dict,"ResetValue");
 		if(prop)
 		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.ResetVal);
-			gSettings.ResetVal = (UINT16)StrHexToUint64(gSettings.ResetVal);	
+			AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+			gSettings.ResetVal = (UINT16)StrHexToUint64((CHAR16*)&UStr[0]);	
 		} else {
 			gSettings.ResetVal = 0xFE;
 		}
@@ -217,92 +221,92 @@ EFI_STATUS GetUserSettings(IN REFIT_VOLUME *Volume, CHAR16* ConfigPlistPath)
 		prop = GetProperty(dict,"BiosVendor");
 		if(prop)
 		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.VendorName);
+			AsciiStrCpy(gSettings.VendorName, prop->string);
 		}
 		prop = GetProperty(dict,"BiosVersion");
 		if(prop)
 		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.RomVersion);
+			AsciiStrCpy(gSettings.RomVersion, prop->string);
 		}
 		prop = GetProperty(dict,"BiosReleaseDate");
 		if(prop)
 		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.ReleaseDate);
+			AsciiStrCpy(gSettings.ReleaseDate, prop->string);
 		}
 		prop = GetProperty(dict,"Manufacturer");
 		if(prop)
 		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.ManufactureName);
+			AsciiStrCpy(gSettings.ManufactureName, prop->string);
 		}
 		prop = GetProperty(dict,"ProductName");
 		if(prop)
 		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.ProductName);
+			AsciiStrCpy(gSettings.ProductName, prop->string);
 		}
 		prop = GetProperty(dict,"Version");
 		if(prop)
 		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.VersionNr);
+			AsciiStrCpy(gSettings.VersionNr, prop->string);
 		}
 		prop = GetProperty(dict,"Family");
 		if(prop)
 		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.FamilyName);
+			AsciiStrCpy(gSettings.FamilyName, prop->string);
 		}
 		prop = GetProperty(dict,"SerialNumber");
 		if(prop)
 		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.SerialNr);
+			AsciiStrCpy(gSettings.SerialNr, prop->string);
 		}
 		prop = GetProperty(dict,"CustomUUID");
 		if(prop)
 		{
 			AsciiStrToUnicodeStr(prop->string, gSettings.CustomUuid);
-      Status = StrToGuid(gSettings.CustomUuid, gUuid);
+      Status = StrToGuid(gSettings.CustomUuid, (struct EFI_GUID *)&gUuid);
       if (EFI_ERROR(Status)) {
-        CopyMem(gUuid, gRandomUUID, 16);
+        CopyMem((VOID*)&gUuid, (VOID*)&gRandomUUID, 16);
       }
 		}
 		prop = GetProperty(dict,"BoardManufacturer");
 		if(prop)
 		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.BoardManufactureName);
+			AsciiStrCpy(gSettings.BoardManufactureName, prop->string);
 		}
 		prop = GetProperty(dict,"BoardSerialNumber");
 		if(prop)
 		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.BoardSerialNumber);
+			AsciiStrCpy(gSettings.BoardSerialNumber, prop->string);
 		}
 		prop = GetProperty(dict,"Board-ID");
 		if(prop)
 		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.BoardNumber);
+			AsciiStrCpy(gSettings.BoardNumber, prop->string);
 		}
 		prop = GetProperty(dict,"LocationInChassis");
 		if(prop)
 		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.LocationInChassis);
+			AsciiStrCpy(gSettings.LocationInChassis, prop->string);
 		}
 		
 		prop = GetProperty(dict,"ChassisManufacturer");
 		if(prop)
 		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.ChassisManufacturer);
+			AsciiStrCpy(gSettings.ChassisManufacturer, prop->string);
 		}
 		prop = GetProperty(dict,"ChassisAssetTag");
 		if(prop)
 		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.ChassisAssetTag);
+			AsciiStrCpy(gSettings.ChassisAssetTag, prop->string);
 		}
 		prop = GetProperty(dict,"smartUPS");
 		if(prop)
 		{
-			if (prop->string[0] == "y") || (prop->string[0] == "Y")
+			if (prop->string[0] == 'y') || (prop->string[0] == 'Y')
 				gSettings.smartUPS=TRUE;
 			else
 				gSettings.smartUPS=FALSE;
 		}
-		prop = GetProperty(dict,"ShowLegacyBoot");
+/*		prop = GetProperty(dict,"ShowLegacyBoot");
 		if(prop)
 		{
 			if (prop->string[0] == "y") || (prop->string[0] == "Y")
@@ -311,38 +315,38 @@ EFI_STATUS GetUserSettings(IN REFIT_VOLUME *Volume, CHAR16* ConfigPlistPath)
 				gSettings.ShowLegacyBoot=FALSE;
 		}
     
-/*		
+		
 		prop = GetProperty(dict,"MemorySerialNumber");
 		if(prop)
 		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.MemorySerialNumber);
+			AsciiStrCpy(gSettings.MemorySerialNumber);
 		}
 		prop = GetProperty(dict,"MemoryPartNumber");
 		if(prop)
 		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.MemoryPartNumber);
+			AsciiStrCpy(gSettings.MemoryPartNumber);
 		}
  */
 		prop = GetProperty(dict,"CpuFrequencyMHz");
 		if(prop)
 		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.CpuFreqMHz);
-			gCpuSpeed = (UINT16)StrDecimalToUintn(gSettings.CpuFreqMHz);
+			AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+			gSettings.CpuFreqMHz = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
 		}
 		prop = GetProperty(dict,"ProcessorType");
 		if(prop)
 		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.CpuType);
-			gCPUtype = (UINT16)StrHexToUint64(gSettings.CpuType);
+			AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+			gSettings.CpuType = (UINT16)StrHexToUint64((CHAR16*)&UStr[0]);
 		} else {
-			gCPUtype = GetAdvancedCpuType();
+			gSettings.CpuType = GetAdvancedCpuType();
 		}
 
 		prop = GetProperty(dict,"BusSpeedkHz");
 		if(prop)
 		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.BusSpeed);
-			gBusSpeed = (UINT16)StrDecimalToUintn(gSettings.BusSpeed);
+			AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+			gSettings.BusSpeed = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
 		}
 		SaveSettings();
 	}	

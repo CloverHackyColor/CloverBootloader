@@ -533,7 +533,7 @@ static VOID ScanLoaderDir(IN REFIT_VOLUME *Volume, IN CHAR16 *Path)
     
     // look through contents of the directory
     DirIterOpen(Volume->RootDir, Path, &DirIter);
-    while (DirIterNext(&DirIter, 2, L"*.EFI", &DirEntry)) {
+    while (DirIterNext(&DirIter, 2, L"*.efi", &DirEntry)) {
         if (DirEntry->FileName[0] == '.' ||
             StriCmp(DirEntry->FileName, L"TextMode.efi") == 0 ||
             StriCmp(DirEntry->FileName, L"ebounce.efi") == 0 ||
@@ -1173,6 +1173,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   PrepatchSmbios();
   GetCPUProperties();
   ScanSPD();
+  SetPrivateVarProto();
   GetDefaultSettings();
   Status = gRS->GetVariable(L"boot-args",
                             &gEfiAppleBootGuid,  NULL,

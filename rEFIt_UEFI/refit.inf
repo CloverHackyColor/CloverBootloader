@@ -75,11 +75,11 @@
 #	Platform/LegacyBiosThunk.h
 	Platform/LegacyBoot.c
 #	Platform/memvendors.h
-	Platform/mkext.c
+#	Platform/mkext.c
 #	Platform/mkext.h
 	Platform/nvidia.c
 #	Platform/nvidia.h
-	Platform/pci.c
+#	Platform/pci.c
 	Platform/picopng.c
 #	Platform/picopng.h
 	Platform/Platform.h

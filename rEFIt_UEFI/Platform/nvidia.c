@@ -48,8 +48,8 @@
  * SOFTWARE.
  */
 
-#include "nvidia.h"
 #include "Platform.h"
+#include "nvidia.h"
 #include "device_inject.h"
 
 #ifndef DEBUG_NVIDIA
@@ -1364,7 +1364,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	devicepath = get_pci_dev_path(nvda_dev);
 	bar[0] = pci_config_read32(nvda_dev->dev.addr, 0x10 );
 	DBG("BAR: 0x%x\n", bar[0]);
-	regs = (UINT8 *) (bar[0] & ~0x0f);
+	regs = (UINT8 *)(UINTN)(bar[0] & ~0x0f);
 	
 	gBS->Stall(50);
 		

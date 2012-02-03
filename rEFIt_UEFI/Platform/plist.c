@@ -30,10 +30,25 @@
 //Slice - rewrite for UEFI with more functions like Copyright (c) 2003 Apple Computer 
 #include "Platform.h"
 
+#define kXMLTagPList  		"plist"
+#define kXMLTagDict    		"dict"
+#define kXMLTagKey     		"key"
+#define kXMLTagString  		"string"
+#define kXMLTagInteger 		"integer"
+#define kXMLTagData    		"data"
+#define kXMLTagDate    		"date"
+#define kXMLTagFalse   		"false/"
+#define kXMLTagTrue    		"true/"
+#define kXMLTagArray   		"array"
+#define kXMLTagReference 	"reference"
+#define kXMLTagID      		"ID="
+#define kXMLTagIDREF   		"IDREF="
+
+
 SymbolPtr	gSymbolsHead;
 TagPtr		gTagsFree;
 CHAR8* buffer_start = NULL;
-
+/*
 enum {
   kTagTypeNone = 0,
   kTagTypeDict,
@@ -45,7 +60,21 @@ enum {
   kTagTypeFalse,
   kTagTypeTrue,
   kTagTypeArray
-};
+};*/
+
+// Forward declarations
+EFI_STATUS ParseTagList( CHAR8* buffer, TagPtr * tag, UINT32 type, UINT32 empty, UINT32* lenPtr);
+EFI_STATUS ParseTagKey( char * buffer, TagPtr * tag,UINT32* lenPtr);
+EFI_STATUS ParseTagString(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr);
+EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr);
+EFI_STATUS ParseTagData(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr);
+EFI_STATUS ParseTagDate(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr);
+EFI_STATUS ParseTagBoolean(CHAR8* buffer, TagPtr * tag, UINT32 type,UINT32* lenPtr);
+TagPtr     NewTag( void );
+EFI_STATUS FixDataMatchingTag( CHAR8* buffer, CHAR8* tag,UINT32* lenPtr);
+CHAR8*      NewSymbol(CHAR8* string);
+VOID        FreeSymbol(CHAR8* string);
+SymbolPtr   FindSymbol( char * string, SymbolPtr * prevSymbol );
 
 /* Function for basic XML character entities parsing */
 
@@ -527,7 +556,7 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 
 	
 	tmpTag->type = kTagTypeInteger;
-	tmpTag->string = TO_POINTER(CHAR8,integer);
+	tmpTag->string = (CHAR8*)(UINTN)integer;
 	tmpTag->tag = NULL;
 	tmpTag->offset = buffer_start ? buffer - buffer_start: 0;
 	tmpTag->tagNext = NULL;

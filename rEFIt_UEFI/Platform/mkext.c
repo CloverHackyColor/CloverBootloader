@@ -22,7 +22,7 @@
  * 
  * @APPLE_LICENSE_HEADER_END@
  */
-#include <string.h>
+/*#include <string.h>
 #if KERNEL
 #include <libsa/mkext.h>
 #include <libsa/stdlib.h>
@@ -30,13 +30,15 @@
 #include <Kernel/libsa/mkext.h>
 #include <stdlib.h>
 #endif /* KERNEL */
+*/
+#include "Platform.h"
+#include "mkext.h"
 
-
-__private_extern__ u_int32_t
-adler32(u_int8_t *buffer, int32_t length)
+__private_extern__  UINT32
+adler32( INT8 *buffer, INT32 length)
 {
-    int32_t cnt;
-    u_int32_t  result, lowHalf, highHalf;
+    INT32 cnt;
+     UINT32  result, lowHalf, highHalf;
     
     lowHalf = 1;
     highHalf = 0;
@@ -81,28 +83,28 @@ struct encode_state {
     /*
      * left & right children & parent. These constitute binary search trees.
      */
-   INTNlchild[N + 1], rchild[N + 257], parent[N + 1];
+    INTN lchild[N + 1], rchild[N + 257], parent[N + 1];
 
     /* ring buffer of size N, with extra F-1 bytes to aid string comparison */
-    u_int8_t text_buf[N + F - 1];
+     INT8 text_buf[N + F - 1];
 
     /*
      * match_length of longest match.
      * These are set by the insert_node() procedure.
      */
-   INTNmatch_position, match_length;
+    INTN match_position, match_length;
 };
 
 
 __private_extern__ int
-decompress_lzss(u_int8_t *dst, u_int8_t *src, u_int32_t srclen)
+decompress_lzss( INT8 *dst,  INT8 *src,  UINT32 srclen)
 {
     /* ring buffer of size N, with extra F-1 bytes to aid string comparison */
-    u_int8_t text_buf[N + F - 1];
-    u_int8_t *dststart = dst;
-    u_int8_t *srcend = src + srclen;
-   INTN i, j, k, r, c;
-    unsignedINTNflags;
+     INT8 text_buf[N + F - 1];
+     INT8 *dststart = dst;
+     INT8 *srcend = src + srclen;
+    INTN  i, j, k, r, c;
+    unsigned INTN flags;
     
     dst = dststart;
     srcend = src + srclen;
@@ -150,7 +152,7 @@ decompress_lzss(u_int8_t *dst, u_int8_t *src, u_int32_t srclen)
  * Note there are 256 trees. */
 static void init_state(struct encode_state *sp)
 {
-   INTN i;
+    INTN  i;
 
     bzero(sp, sizeof(*sp));
 
@@ -170,9 +172,9 @@ static void init_state(struct encode_state *sp)
  * because the old one will be deleted sooner. Note r plays double role,
  * as tree node and position in buffer.
  */
-static void insert_node(struct encode_state *sp, INTN r)
+static void insert_node(struct encode_state *sp,  INTN  r)
 {
-    INTN i, p, cmp;
+     INTN  i, p, cmp;
     UINT8  *key;
 
     cmp = 1;
@@ -221,9 +223,9 @@ static void insert_node(struct encode_state *sp, INTN r)
 }
 
 /* deletes node p from tree */
-static void delete_node(struct encode_state *sp INTN p)
+static void delete_node(struct encode_state *sp  INTN  p)
 {
-   INTN q;
+    INTN  q;
     
     if (sp->parent[p] == NIL)
         return;  /* not in tree */
@@ -253,16 +255,16 @@ static void delete_node(struct encode_state *sp INTN p)
     sp->parent[p] = NIL;
 }
 
-__private_extern__ u_int8_t *
-compress_lzss(u_int8_t *dst, u_int32_t dstlen, u_int8_t *src, u_int32_t srcLen)
+__private_extern__  INT8 *
+compress_lzss( INT8 *dst,  UINT32 dstlen,  INT8 *src,  UINT32 srcLen)
 {
     /* Encoding state, mostly tree but some current match stuff */
     struct encode_state *sp;
 
-   INTN i, c, len, r, s, last_match_length, code_buf_ptr;
-    u_int8_t code_buf[17], mask;
-    u_int8_t *srcend = src + srcLen;
-    u_int8_t *dstend = dst + dstlen;
+    INTN  i, c, len, r, s, last_match_length, code_buf_ptr;
+     INT8 code_buf[17], mask;
+     INT8 *srcend = src + srcLen;
+     INT8 *dstend = dst + dstlen;
 
     /* initialize trees */
     sp = (struct encode_state *) malloc(sizeof(*sp));
@@ -309,8 +311,8 @@ compress_lzss(u_int8_t *dst, u_int32_t dstlen, u_int8_t *src, u_int32_t srcLen)
             code_buf[code_buf_ptr++] = sp->text_buf[r];  /* Send uncoded. */
         } else {
             /* Send position and length pair. Note match_length > THRESHOLD. */
-            code_buf[code_buf_ptr++] = (u_int8_t) sp->match_position;
-            code_buf[code_buf_ptr++] = (u_int8_t)
+            code_buf[code_buf_ptr++] = ( INT8) sp->match_position;
+            code_buf[code_buf_ptr++] = ( INT8)
                 ( ((sp->match_position >> 4) & 0xF0)
                 |  (sp->match_length - (THRESHOLD + 1)) );
         }

@@ -66,13 +66,9 @@ typedef struct {
 
 typedef struct {
     UINT8 Flags;
-    UINT8 StartCHS1;
-    UINT8 StartCHS2;
-    UINT8 StartCHS3;
+    UINT8 StartCHS[3];
     UINT8 Type;
-    UINT8 EndCHS1;
-    UINT8 EndCHS2;
-    UINT8 EndCHS3;
+    UINT8 EndCHS[3];
     UINT32 StartLBA;
     UINT32 Size;
 } MBR_PARTITION_INFO;

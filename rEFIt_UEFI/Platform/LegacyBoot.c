@@ -25,11 +25,12 @@ Copyright (c) 2006 JLA
 
 #pragma pack(1)
 
-static CHS chsValue = { 0xFE, 0xFF, 0xFF };
+//template
+CONST MBR_PARTITION_INFO tMBR = {0x80, 0xFE, 0xFF, 0xFF, 0x06, 0xFE, 0xFF, 0xFF, 0, 0};
 
 typedef struct {
   UINT8 loader[0x1BE];
-  MBR_ENTRY p[4];
+  MBR_PARTITION_INFO p[4];
   UINT16 signature;
 } MBR;
 
@@ -71,6 +72,7 @@ typedef struct Address_t {
 #define ADDRT_REAL   0   // Segment:Offset (16:16)
 #define ADDRT_FLAT   1   // Segment is 0, Offset is 32 bit flat address
 
+EFI_CPU_ARCH_PROTOCOL      *mCpu;
 EFI_LEGACY_8259_PROTOCOL   *gLegacy8259;
 THUNK_CONTEXT              *mThunkContext;
 
@@ -142,7 +144,7 @@ Address krnMemoryTop;
 
 EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 {
-	EFI_BLOCK_IO* pBlockIO = volume->BlockIo;
+	EFI_BLOCK_IO* pBlockIO = volume->BlockIO;
 	Address      bootAddress = addrRealFromSegOfs(0x0000, 0x7C00);
 	UINT8        sectorBuffer[2048];
 	EFI_STATUS   Status = EFI_NOT_FOUND;
@@ -244,6 +246,12 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 	if (EFI_ERROR(Status)) {
 		return Status;
 	}
+  mCpu = NULL;
+  Status = gBS->LocateProtocol (&gEfiCpuArchProtocolGuid, NULL, (VOID **) &mCpu);
+	if (EFI_ERROR(Status)) {
+		return Status;
+	}
+
 	
 	Status = gBS->AllocatePool (EfiBootServicesData,sizeof(THUNK_CONTEXT),(VOID **)&mThunkContext);
 	if (EFI_ERROR (Status)) {
@@ -251,6 +259,7 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 	}
 	InitializeBiosIntCaller(); //mThunkContext);
 	InitializeInterruptRedirection(); //gLegacy8259);
+  Status = mCpu->EnableInterrupt(mCpu);  
   
 	Regs.X.DX = 0x82;
 	//	Regs.X.SI = (UINT16)activePartition;
@@ -269,16 +278,21 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 EFI_STATUS bootMBR(REFIT_VOLUME* volume) 
 {
 	EFI_STATUS			Status			= EFI_NOT_FOUND;
-	EFI_BLOCK_IO*		pDisk			= volume->BlockIo;
+	EFI_BLOCK_IO*		pDisk			= volume->BlockIO;
 	UINT8*				pMBR			= (void*)0x600;
 	UINT8*				pBootSector		= (void*)0x7C00;
-	MBR_ENTRY*			activePartition = NULL;
+	MBR_PARTITION_INFO*			activePartition = NULL;
 	UINTN				partitionIndex;
 	IA32_REGISTER_SET           Regs;
 	gBS->SetMem (&Regs, sizeof (Regs), 0);
 	addrEnablePaging(0);
 	
 	Status = gBS->LocateProtocol(&gEfiLegacy8259ProtocolGuid, NULL, (VOID**)&gLegacy8259);
+	if (EFI_ERROR(Status)) {
+		return Status;
+	}
+  mCpu = NULL;
+  Status = gBS->LocateProtocol (&gEfiCpuArchProtocolGuid, NULL, (VOID **) &mCpu);
 	if (EFI_ERROR(Status)) {
 		return Status;
 	}
@@ -289,6 +303,7 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
 	}
 	InitializeBiosIntCaller(); //mThunkContext);
 	InitializeInterruptRedirection(); //gLegacy8259);
+  Status = mCpu->EnableInterrupt(mCpu);
 	
 	// Read the MBR
 	Status = pDisk->ReadBlocks(pDisk, pDisk->Media->MediaId, 0, 512, pMBR);
@@ -306,15 +321,15 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
 	
 	// Traverse partitions
 	for (partitionIndex = 0; partitionIndex < 4; ++partitionIndex) {
-		MBR_ENTRY* partition = (MBR_ENTRY*)(pMBR + 0x1BE + sizeof(MBR_ENTRY) * partitionIndex);
+		MBR_PARTITION_INFO* partition = (MBR_PARTITION_INFO*)(pMBR + 0x1BE + sizeof(MBR_PARTITION_INFO) * partitionIndex);
 		
 		// Not the active partition?
-		if (partition->Drive != 0x80)
+		if (partition->Flags != 0x80)
 			continue;
 		
 		// Is the partition valid?
-		if (partition->Start == 0 || partition->Size == 0) {
-			Print(L"HDBoot: Invalid active partition %d: (%08X L %08X)\n", partition->Start, partition->Size);
+		if (partition->StartLBA == 0 || partition->Size == 0) {
+			Print(L"HDBoot: Invalid active partition %d: (%08X L %08X)\n", partition->StartLBA, partition->Size);
 			return Status;
 		}
 		
@@ -332,7 +347,7 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
 	DBG(L"HDBoot: Found active partition #%d.\n", partitionIndex);
 	
 	// Read the boot sector
-	Status = pDisk->ReadBlocks(pDisk, pDisk->Media->MediaId, activePartition->Start, 512, pBootSector);
+	Status = pDisk->ReadBlocks(pDisk, pDisk->Media->MediaId, activePartition->StartLBA, 512, pBootSector);
 	if (EFI_ERROR(Status)) {
 		Print(L"HDBoot: Unable to read partition %d's boot sector: %r\n", partitionIndex, Status);
 		Status = EFI_NOT_FOUND;
@@ -365,9 +380,9 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
 EFI_STATUS bootPBR(REFIT_VOLUME* volume) 
 {
 	EFI_STATUS					Status		= EFI_NOT_FOUND;
-	EFI_BLOCK_IO*				pDisk     = volume->BlockIo;
+	EFI_BLOCK_IO*				pDisk     = volume->BlockIO;
 	UINT8*              pBootSector	= (UINT8*)0x7C00;
-	MBR_ENTRY*					pMBR      = (MBR_ENTRY*)0x7BE;
+	MBR_PARTITION_INFO*					pMBR      = (MBR_PARTITION_INFO*)0x7BE;
 	UINT32              LbaOffset	= 0;
 	UINT32              LbaSize		= 0;
 	HARDDRIVE_DEVICE_PATH    *HdPath     = NULL; 
@@ -402,6 +417,12 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
 	if (EFI_ERROR(Status)) {
 		return Status;
 	}
+  mCpu = NULL;
+  Status = gBS->LocateProtocol (&gEfiCpuArchProtocolGuid, NULL, (VOID **) &mCpu);
+	if (EFI_ERROR(Status)) {
+		return Status;
+	}
+  Status = mCpu->EnableInterrupt(mCpu);
   
   Status = gLegacy8259->GetMask(gLegacy8259, &OldMask, NULL, NULL, NULL);
 	
@@ -414,13 +435,10 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
 	Status = pDisk->ReadBlocks(pDisk, pDisk->Media->MediaId, 0, 512, pBootSector);
   NewMask = 0x0;
   Status = gLegacy8259->SetMask(gLegacy8259, &NewMask, NULL, NULL, NULL);
-		
-	pMBR->Drive = 0x80;
-	pMBR->Type = 0x07;  //like NTFS
-	pMBR->Start = LbaOffset;
+	Status = mCpu->EnableInterrupt(mCpu);
+	CopyMem(pMBR, &tMBR, 16);
+	pMBR->StartLBA = LbaOffset;
 	pMBR->Size = LbaSize;
-	pMBR->chsStart = chsValue;
-	pMBR->chsEnd = chsValue;
 		
 	Regs.X.DX = 0x80;
 	Regs.X.SI = 0x7BE;

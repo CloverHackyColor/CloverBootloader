@@ -57,6 +57,17 @@ Headers collection for procedures
 #define Tera (kilo * Giga)
 #define Peta (kilo * Tera)
 
+#define IS_COMMA(a)                ((a) == L',')
+#define IS_HYPHEN(a)               ((a) == L'-')
+#define IS_DOT(a)                  ((a) == L'.')
+#define IS_LEFT_PARENTH(a)         ((a) == L'(')
+#define IS_RIGHT_PARENTH(a)        ((a) == L')')
+#define IS_SLASH(a)                ((a) == L'/')
+#define IS_NULL(a)                 ((a) == L'\0')
+#define IS_DIGIT(a)            (((a) >= '0') && ((a) <= '9'))
+#define IS_HEX(a)            (((a) >= 'a') && ((a) <= 'f'))
+
+
 #define EBDA_BASE_ADDRESS 0x40E
 #define EFI_SYSTEM_TABLE_MAX_ADDRESS 0xFFFFFFFF
 
@@ -115,8 +126,29 @@ Headers collection for procedures
 #define PCI_BASE_ADDRESS_4					0x20		/* 32 bits */
 #define PCI_BASE_ADDRESS_5					0x24		/* 32 bits */
 
+enum {
+	kTagTypeNone = 0,
+	kTagTypeDict,
+	kTagTypeKey,
+	kTagTypeString,
+	kTagTypeInteger,
+	kTagTypeData,
+	kTagTypeDate,
+	kTagTypeFalse,
+	kTagTypeTrue,
+	kTagTypeArray
+};
 
 #pragma pack(1)
+
+struct Symbol {
+	UINT32        refCount;
+	struct Symbol *next;
+	CHAR8         string[1];
+};
+
+typedef struct Symbol Symbol, *SymbolPtr;
+
 typedef struct {
   
   UINT32		type;
@@ -367,17 +399,21 @@ VOID        InitBooterLog(VOID);
 EFI_STATUS  SetupBooterLog(VOID);
 VOID        GetDefaultSettings(VOID);
 
+EFI_STATUS StrToGuid (IN  CHAR16   *Str, OUT EFI_GUID *Guid);
+
 EFI_STATUS
 InitializeConsoleSim (
                       IN EFI_HANDLE           ImageHandle,
                       IN EFI_SYSTEM_TABLE     *SystemTable
                       );
 //Settings.c
-VOID       GetCPUProperties (VOID);
-EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume);
-EFI_STATUS GetUserSettings(IN REFIT_VOLUME *Volume, CHAR16* ConfigPlistPath);
-EFI_STATUS GetNVRAMSettings(IN REFIT_VOLUME *Volume, CHAR16* NVRAMPlistPath);
-EFI_STATUS GetEdid(VOID);
+VOID            GetCPUProperties (VOID);
+MACHINE_TYPES   GetDefaultModel(VOID);
+UINT16          GetAdvancedCpuType(VOID);
+EFI_STATUS      GetOSVersion(IN REFIT_VOLUME *Volume);
+EFI_STATUS      GetUserSettings(IN REFIT_VOLUME *Volume, CHAR16* ConfigPlistPath);
+EFI_STATUS      GetNVRAMSettings(IN REFIT_VOLUME *Volume, CHAR16* NVRAMPlistPath);
+EFI_STATUS      GetEdid(VOID);
 
 EFI_STATUS
 LogDataHub(
@@ -409,6 +445,8 @@ CHAR8*      XMLDecode(const CHAR8* src);
 EFI_STATUS  ParseXML(const CHAR8* buffer, TagPtr * dict);
 TagPtr      GetProperty( TagPtr dict, const CHAR8* key );
 EFI_STATUS  XMLParseNextTag(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr);
+VOID        FreeTag( TagPtr tag );
+EFI_STATUS  GetNextTag( UINT8* buffer, CHAR8** tag, UINT32* start,UINT32* length);
 
 VOID        SaveSettings(VOID);
 
