@@ -358,6 +358,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
         if (*((UINT16 *)(SectorBuffer + 510)) == 0xaa55 && SectorBuffer[0] != 0) {
           *Bootable = TRUE;
           Volume->HasBootCode = TRUE;
+          DBG("The volume has bootcode\n");
         }
         
         // detect specific boot codes
@@ -385,6 +386,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
           Volume->OSName = L"MacOSX";
           Volume->OSType = OSTYPE_OSX;
           Volume->BootType = BOOTING_BY_EFI;
+          DBG("Detected MacOSX bootcode\n");
 
           
         } else if ((*((UINT32 *)(SectorBuffer + 502)) == 0 &&
@@ -467,7 +469,15 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
           Volume->OSType = OSTYPE_VAR;
           Volume->BootType = BOOTING_BY_PBR;
           
-        }        
+        } else {
+          DBG("unknown bootcode %x\n", *(UINT32*)&SectorBuffer[0]);
+          Volume->HasBootCode = TRUE;
+          Volume->OSIconName = L"mac";
+          Volume->OSName = L"MacOSX";
+          Volume->OSType = OSTYPE_OSX;
+          Volume->BootType = BOOTING_BY_EFI;          
+        }
+      
       }
 
         
@@ -580,7 +590,7 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
     // scan for bootcode and MBR table
     Bootable = FALSE;
     ScanVolumeBootcode(Volume, &Bootable);
-    
+  DBG("ScanVolumeBootcode success\n");
     // detect device type
     DevicePath = Volume->DevicePath;
     while (DevicePath != NULL && !IsDevicePathEndType(DevicePath)) {
@@ -589,6 +599,7 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
       if (DevicePathType(DevicePath) == MESSAGING_DEVICE_PATH && 
           (DevicePathSubType(DevicePath) == MSG_USB_DP || DevicePathSubType(DevicePath) == MSG_USB_CLASS_DP))
       {
+        DBG("USB volume\n");
         Volume->DiskKind = DISK_KIND_EXTERNAL; 
       }
       // FIREWIRE Devices
@@ -619,6 +630,7 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
       if (DevicePathType(DevicePath) == BBS_DEVICE_PATH && 
           (DevicePathSubType(DevicePath) == BBS_BBS_DP || DevicePathSubType(DevicePath) == BBS_TYPE_HARDDRIVE)) 
       {
+        DBG("LEGACY HARDDISK\n");
         Volume->DiskKind = DISK_KIND_INTERNAL;
       }
       Bootable = TRUE;
@@ -664,12 +676,13 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
                     
                 } else {
                     Volume->WholeDiskBlockIO = NULL;
+                  DBG("no WholeDiskBlockIO\n");
                     //CheckError(Status, L"from HandleProtocol");
                 }
             } //else
               //  CheckError(Status, L"from LocateDevicePath");
         }
-        
+      DBG("NextDevicePath\n");
         DevicePath = NextDevicePath;
     }
     
@@ -680,10 +693,10 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
 #endif
         Volume->HasBootCode = FALSE;
     }
-    
+  DBG("search volume icon\n");
     // default volume icon based on disk kind
     ScanVolumeDefaultIcon(Volume);
-    
+    DBG("search volume icon finished\n");
     // open the root directory of the volume
     Volume->RootDir = EfiLibOpenRoot(Volume->DeviceHandle);
     if (Volume->RootDir == NULL) {
@@ -691,11 +704,11 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
         // TODO: signal that we had an error
       //Slice - there is LegacyBoot volume
       //properties are set before
-      //    Print(L"LegacyBoot volume\n");
+        DBG("LegacyBoot volume\n");
   //    Volume->VolName =  L"Legacy OS";
       return;
     }
-    
+    DBG("RootDir found\n");
     // get volume name
     FileSystemInfoPtr = LibFileSystemInfo(Volume->RootDir);
     if (FileSystemInfoPtr != NULL) {
@@ -712,15 +725,18 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
         Print(L"Warning: Can't get volume info.\n");
         // NOTE: this is normal for Apple's VenMedia device paths
     }
-    
+    DBG("VolName found\n");
     // TODO: if no official volume name is found or it is empty, use something else, e.g.:
     //   - name from bytes 3 to 10 of the boot sector
     //   - partition number
     //   - name derived from file system type or partition type
     
     // get custom volume icon if present
-    if (FileExists(Volume->RootDir, L".VolumeIcon.icns"))
+  if (FileExists(Volume->RootDir, L".VolumeIcon.icns")){
         Volume->VolBadgeImage = LoadIcns(Volume->RootDir, L".VolumeIcon.icns", 32);
+    DBG("VolBadgeImage found\n");
+  }
+  DBG("ScanVolume finished\n");
 }
 
 static VOID ScanExtendedPartition(REFIT_VOLUME *WholeDiskVolume, MBR_PARTITION_INFO *MbrEntry)
