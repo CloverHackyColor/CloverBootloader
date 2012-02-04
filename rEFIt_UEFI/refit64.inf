@@ -129,6 +129,7 @@
 
 [Guids]
   gEfiAcpiTableGuid
+  gEfiAcpi10TableGuid
   gEfiAcpi20TableGuid
   gEfiFileInfoGuid                              ## CONSUMES ## GUID
   gEfiFileSystemInfoGuid                        ## CONSUMES ## GUID

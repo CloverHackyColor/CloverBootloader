@@ -49,6 +49,7 @@ Headers collection for procedures
 #include "efiConsoleControl.h"
 #include "SmBios.h"
 //#include "GenericBdsLib.h"
+#include "device_inject.h"
 
 /* Decimal powers: */
 #define kilo (1000ULL)
@@ -66,10 +67,15 @@ Headers collection for procedures
 #define IS_NULL(a)                 ((a) == L'\0')
 #define IS_DIGIT(a)            (((a) >= '0') && ((a) <= '9'))
 #define IS_HEX(a)            (((a) >= 'a') && ((a) <= 'f'))
+#define IS_ALFA(x) (((x >= 'a') && (x <='z')) || ((x >= 'A') && (x <='Z')))
+#define IS_ASCII(x) ((x>=0x20) && (x<=0x7F))
+#define IS_PUNCT(x) ((x == '.') || (x == '-'))
+
 
 
 #define EBDA_BASE_ADDRESS 0x40E
 #define EFI_SYSTEM_TABLE_MAX_ADDRESS 0xFFFFFFFF
+#define ROUND_PAGE(x)  ((((unsigned)(x)) + EFI_PAGE_SIZE - 1) & ~(EFI_PAGE_SIZE - 1))
 
 
 #define SAFE_LOG_SIZE	80
@@ -199,7 +205,7 @@ typedef struct {
 	CHAR8	ChassisAssetTag[64]; 
 	// SMBIOS TYPE4
 	UINT16	CpuFreqMHz;
-	UINT16	BusSpeed;
+	UINT32	BusSpeed; //in kHz
   BOOLEAN Turbo;
   
 	// SMBIOS TYPE17
@@ -364,7 +370,6 @@ extern UINT32                   mPropSize;
 extern UINT8*                   mProperties;
 extern CHAR8                    gSelectedUUID[];
 extern CHAR8*                   AppleSystemVersion[];
-extern CHAR8*                   AppleBiosVendor;
 extern CHAR8*	                  AppleFirmwareVersion[];
 extern CHAR8*	                  AppleReleaseDate[];
 extern CHAR8*	                  AppleManufacturer;
@@ -427,10 +432,15 @@ VOID       SetupDataForOSX();
 EFI_STATUS SetPrivateVarProto(VOID);
 VOID       SetGraphics(VOID);
 VOID       ScanSPD();
+BOOLEAN setup_ati_devprop(pci_dt_t *ati_dev);
+BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev);
+BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev);
+
 
 EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha);
 
-EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume);
+EFI_STATUS  PatchACPI(IN REFIT_VOLUME *Volume);
+UINT8       Checksum8(VOID * startPtr, UINT32 len);
 
 EFI_STATUS EventsInitialize (
                   IN EFI_HANDLE           ImageHandle,
@@ -448,7 +458,7 @@ EFI_STATUS  XMLParseNextTag(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr);
 VOID        FreeTag( TagPtr tag );
 EFI_STATUS  GetNextTag( UINT8* buffer, CHAR8** tag, UINT32* start,UINT32* length);
 
-VOID        SaveSettings(VOID);
+EFI_STATUS  SaveSettings(VOID);
 
 UINTN       iStrLen(CHAR8* String, UINTN MaxLen);
 EFI_STATUS  PrepatchSmbios(VOID);

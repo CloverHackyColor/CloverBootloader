@@ -10,7 +10,7 @@ CHAR8*	DefaultMemEntry = "N/A";
 
 CHAR8*	DefaultSerial = "CT288GT9VT6";
 
-CHAR8* AppleBiosVendor = "Apple Inc.";
+CHAR8* BiosVendor = "Apple Inc.";
 
 CHAR8* AppleManufacturer = "Apple Computer, Inc."; //Old name, before 2007
 
@@ -171,19 +171,19 @@ VOID GetDefaultSettings(VOID)
   gSettings.BusSpeed = DivU64x32(gCPUStructure.FSBFrequency, kilo);
   gSettings.CpuFreqMHz = DivU64x32(gCPUStructure.CPUFrequency, Mega);
   
-	AsciiStrCpy(gSettings.VendorName,             AppleBiosVendor);
+	AsciiStrCpy(gSettings.VendorName,             BiosVendor);
   AsciiStrCpy(gSettings.RomVersion,             AppleFirmwareVersion[Model]);
 	AsciiStrCpy(gSettings.ReleaseDate,            AppleReleaseDate[Model]);
-	AsciiStrCpy(gSettings.ManufactureName,        AppleBiosVendor);
+	AsciiStrCpy(gSettings.ManufactureName,        BiosVendor);
 	AsciiStrCpy(gSettings.ProductName,            AppleProductName[Model]);
 	AsciiStrCpy(gSettings.VersionNr,              AppleSystemVersion[Model]);
 	AsciiStrCpy(gSettings.SerialNr,               AppleSerialNumber[Model]);
 	AsciiStrCpy(gSettings.FamilyName,             AppleFamilies[Model]);	
-	AsciiStrCpy(gSettings.BoardManufactureName,   AppleBiosVendor);
+	AsciiStrCpy(gSettings.BoardManufactureName,   BiosVendor);
   AsciiStrCpy(gSettings.BoardSerialNumber,      AppleBoardSN);
 	AsciiStrCpy(gSettings.BoardNumber,            AppleBoardID[Model]);
 	AsciiStrCpy(gSettings.LocationInChassis,      AppleBoardLocation);
-	AsciiStrCpy(gSettings.ChassisManufacturer,    AppleBiosVendor);
+	AsciiStrCpy(gSettings.ChassisManufacturer,    BiosVendor);
 	AsciiStrCpy(gSettings.ChassisAssetTag,        AppleChassisAsset[Model]);
   
 }

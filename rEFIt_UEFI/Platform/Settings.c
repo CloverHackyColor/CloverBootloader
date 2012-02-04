@@ -2,6 +2,7 @@
  Slice 2012
 */
 
+#include "device_inject.h"
 #include "Platform.h"
 
 #define DEBUG_SET 0
@@ -262,7 +263,7 @@ EFI_STATUS GetUserSettings(IN REFIT_VOLUME *Volume, CHAR16* ConfigPlistPath)
 		if(prop)
 		{
 			AsciiStrToUnicodeStr(prop->string, gSettings.CustomUuid);
-      Status = StrToGuid(gSettings.CustomUuid, (struct EFI_GUID *)&gUuid);
+      Status = StrToGuid(gSettings.CustomUuid, &gUuid);
       if (EFI_ERROR(Status)) {
         CopyMem((VOID*)&gUuid, (VOID*)&gRandomUUID, 16);
       }
@@ -301,7 +302,7 @@ EFI_STATUS GetUserSettings(IN REFIT_VOLUME *Volume, CHAR16* ConfigPlistPath)
 		prop = GetProperty(dict,"smartUPS");
 		if(prop)
 		{
-			if (prop->string[0] == 'y') || (prop->string[0] == 'Y')
+			if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
 				gSettings.smartUPS=TRUE;
 			else
 				gSettings.smartUPS=FALSE;
@@ -309,7 +310,7 @@ EFI_STATUS GetUserSettings(IN REFIT_VOLUME *Volume, CHAR16* ConfigPlistPath)
 /*		prop = GetProperty(dict,"ShowLegacyBoot");
 		if(prop)
 		{
-			if (prop->string[0] == "y") || (prop->string[0] == "Y")
+			if ((prop->string[0] == "y") || (prop->string[0] == "Y"))
 				gSettings.ShowLegacyBoot=TRUE;
 			else
 				gSettings.ShowLegacyBoot=FALSE;
@@ -357,21 +358,21 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 {
 	EFI_STATUS				Status = EFI_NOT_FOUND;
 	CHAR8*						plistBuffer = 0;
-	UINT32						plistLen;
+	UINTN             plistLen;
 	TagPtr						dict=NULL;
 	TagPtr						prop = NULL;
-  CONST CHAR16*     SystemPlist = L"System\\Library\\CoreServices\\SystemVersion.plist";
-  CONST CHAR16*     ServerPlist = L"System\\Library\\CoreServices\\ServerVersion.plist";
+  CHAR16*     SystemPlist = L"System\\Library\\CoreServices\\SystemVersion.plist";
+  CHAR16*     ServerPlist = L"System\\Library\\CoreServices\\ServerVersion.plist";
   
 	/* Mac OS X */ 
 	if(FileExists(Volume->RootDir, SystemPlist)) 
 	{
-		Status = egLoadFile(Volume->RootDir, SystemPlist, &plistBuffer, &plistLen);
+		Status = egLoadFile(Volume->RootDir, SystemPlist, (UINT8 **)&plistBuffer, &plistLen);
 	}
 	/* Mac OS X Server */
 	else if(FileExists(Volume->RootDir, ServerPlist))
 	{
-		Status = egLoadFile(Volume->RootDir, ServerPlist, &plistBuffer, &plistLen);
+		Status = egLoadFile(Volume->RootDir, ServerPlist, (UINT8 **)&plistBuffer, &plistLen);
 	}
 	if(!EFI_ERROR(Status))
 	{
@@ -418,9 +419,10 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 
 EFI_STATUS GetEdid(VOID)
 {
+	EFI_STATUS						Status;
 	UINTN i, j, N;
 	EFI_EDID_ACTIVE_PROTOCOL*                EdidActive;
-	EFI_STATUS						Status;
+
   //	EFI_GRAPHICS_OUTPUT_PROTOCOL	*GraphicsOutput=NULL;
 	Status = gBS->LocateProtocol (&gEfiEdidActiveProtocolGuid, NULL, (VOID **)&EdidActive);
 	
@@ -438,7 +440,7 @@ EFI_STATUS GetEdid(VOID)
 		N = EdidDiscovered->SizeOfEdid;
 		if (N == 0) {
 			MsgLog("EdidDiscovered size=0\n");
-			return;
+			return EFI_NOT_FOUND;
 		}
 		for (i=0; i<N; i+=16) {
 			MsgLog("%02x: ", i);
@@ -455,6 +457,7 @@ EFI_STATUS GetEdid(VOID)
 VOID SetGraphics(VOID)
 {
 //	EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  *modeInfo;
+  EFI_STATUS						Status;
   EFI_PCI_IO_PROTOCOL		*PciIo;
 	PCI_TYPE00            Pci;
 	UINTN                 HandleCount;
@@ -491,7 +494,7 @@ VOID SetGraphics(VOID)
 									GFXdevice = AllocatePool(sizeof(pci_dt_t));
 									GFXdevice->vendor_id = Pci.Hdr.VendorId;
 									GFXdevice->device_id = Pci.Hdr.DeviceId;
-                  gGraphics.DeviceId = Pci.Hdr.DeviceId;
+                  gGraphics.DeviceID = Pci.Hdr.DeviceId;
 									//GFXdevice->subsys_id = (UINT16)(0x10de0000 | Pci.Hdr.DeviceId);
 									GFXdevice->revision = Pci.Hdr.RevisionID;
 									GFXdevice->subclass = Pci.Hdr.ClassCode[0];
@@ -508,7 +511,7 @@ VOID SetGraphics(VOID)
 									GFXdevice = AllocatePool(sizeof(pci_dt_t));
 									GFXdevice->vendor_id = Pci.Hdr.VendorId;
 									GFXdevice->device_id = Pci.Hdr.DeviceId;
-                  gGraphics.DeviceId = Pci.Hdr.DeviceId;
+                  gGraphics.DeviceID = Pci.Hdr.DeviceId;
 									//GFXdevice->subsys_id = (UINT16)(0x10de0000 | Pci.Hdr.DeviceId);
 									GFXdevice->revision = Pci.Hdr.RevisionID;
 									GFXdevice->subclass = Pci.Hdr.ClassCode[0];
@@ -525,7 +528,7 @@ VOID SetGraphics(VOID)
 									GFXdevice = AllocatePool(sizeof(pci_dt_t));
 									GFXdevice->vendor_id = Pci.Hdr.VendorId;
 									GFXdevice->device_id = Pci.Hdr.DeviceId;
-                  gGraphics.DeviceId = Pci.Hdr.DeviceId;
+                  gGraphics.DeviceID = Pci.Hdr.DeviceId;
 									//GFXdevice->subsys_id = (UINT16)(0x10de0000 | Pci.Hdr.DeviceId);
 									GFXdevice->revision = Pci.Hdr.RevisionID;
 									GFXdevice->subclass = Pci.Hdr.ClassCode[0];
@@ -542,4 +545,10 @@ VOID SetGraphics(VOID)
 	}
   
 	MsgLog("CurrentMode: Width=%d Height=%d\n", gGraphics.Width, gGraphics.Height);  
+}
+
+EFI_STATUS SaveSettings()
+{
+  //TODO - SetVariable()..
+  return EFI_SUCCESS;
 }

@@ -157,6 +157,7 @@ VOID ReplaceExtension(IN OUT CHAR16 *Path, IN CHAR16 *Extension);
 
 INTN FindMem(IN VOID *Buffer, IN UINTN BufferLength, IN VOID *SearchString, IN UINTN SearchStringLength);
 
+EFI_STATUS InitializeUnicodeCollationProtocol (VOID);
 //
 // screen module
 //
@@ -320,6 +321,7 @@ typedef struct {
 
 typedef struct {
   REFIT_MENU_ENTRY me;
+  REFIT_VOLUME     *Volume;
   CHAR16           *LoaderPath;
   CHAR16           *VolName;
   EFI_DEVICE_PATH  *DevicePath;

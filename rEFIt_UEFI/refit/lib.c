@@ -796,7 +796,7 @@ VOID ScanVolumes(VOID)
     UINT8                   *SectorBuffer1, *SectorBuffer2;
     UINTN                   SectorSum, i;
     
-    Print(L"Scanning volumes...\n");
+    DBG("Scanning volumes...\n");
     
     // get all filesystem handles
     Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiBlockIoProtocolGuid, NULL, &HandleCount, &Handles);
@@ -813,7 +813,7 @@ VOID ScanVolumes(VOID)
         Volume = AllocateZeroPool(sizeof(REFIT_VOLUME));
         Volume->DeviceHandle = Handles[HandleIndex];
         ScanVolume(Volume);
-        
+      DBG("Found Volume at index=%x\n", HandleIndex);
         AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
         
         if (Volume->DeviceHandle == SelfLoadedImage->DeviceHandle)
@@ -821,7 +821,7 @@ VOID ScanVolumes(VOID)
         
     }
     FreePool(Handles);
-    
+  DBG("Fount %d volumes\n", VolumesCount);
     if (SelfVolume == NULL)
         Print(L"WARNING: SelfVolume not found"); //Slice - and what?
     
@@ -833,6 +833,7 @@ VOID ScanVolumes(VOID)
         if (Volume->BlockIO != NULL && Volume->WholeDiskBlockIO != NULL &&
             Volume->BlockIO == Volume->WholeDiskBlockIO && Volume->BlockIOOffset == 0 &&
             Volume->MbrPartitionTable != NULL) {
+          DBG("Volume %d has MBR\n", VolumeIndex);
             MbrTable = Volume->MbrPartitionTable;
             for (PartitionIndex = 0; PartitionIndex < 4; PartitionIndex++) {
                 if (IS_EXTENDED_PART_TYPE(MbrTable[PartitionIndex].Type)) {
@@ -1109,9 +1110,7 @@ MetaiMatch (
 
 
 EFI_STATUS
-InitializeUnicodeCollationProtocol (
-									VOID
-									)
+InitializeUnicodeCollationProtocol (VOID)
 {
 	EFI_STATUS  Status;
 	

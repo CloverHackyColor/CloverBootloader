@@ -39,6 +39,15 @@
 
 #include "syslinux_mbr.h"
 
+#define DEBUG_MAIN 2
+
+#if DEBUG_MAIN == 2
+#define DBG(x...) AsciiPrint(x)
+#elif DEBUG_MAIN == 1
+#define DBG(x...) MsgLog(x)
+#else
+#define DBG(x...)
+#endif
 
 // variables
 
@@ -50,12 +59,13 @@
 #define TAG_TOOL     (4)
 #define TAG_LOADER   (5)
 #define TAG_LEGACY   (6)
+#define TAG_INFO     (7)
 
-EFI_HANDLE					gImageHandle;
-EFI_SYSTEM_TABLE*			gST;
+EFI_HANDLE              gImageHandle;
+EFI_SYSTEM_TABLE*       gST;
 EFI_BOOT_SERVICES*			gBS; 
 EFI_RUNTIME_SERVICES*		gRS;
-EFI_DXE_SERVICES*			gDS;
+EFI_DXE_SERVICES*       gDS;
 
 
 static REFIT_MENU_ENTRY MenuEntryAbout    = { L"About rEFIt", TAG_ABOUT, 1, 0, 'A', NULL, NULL, NULL };
@@ -256,11 +266,11 @@ static EFI_STATUS StartEFIImage(IN EFI_DEVICE_PATH *DevicePath,
                                 IN CHAR16 *ImageTitle,
                                 OUT UINTN *ErrorInStep)
 {
-    EFI_DEVICE_PATH *DevicePaths[2];
-    
-    DevicePaths[0] = DevicePath;
-    DevicePaths[1] = NULL;
-    return StartEFIImageList(DevicePaths, LoadOptions, LoadOptionsPrefix, ImageTitle, ErrorInStep);
+  EFI_DEVICE_PATH *DevicePaths[2];
+  
+  DevicePaths[0] = DevicePath;
+  DevicePaths[1] = NULL;
+  return StartEFIImageList(DevicePaths, LoadOptions, LoadOptionsPrefix, ImageTitle, ErrorInStep);
 }
 
 //
@@ -269,291 +279,299 @@ static EFI_STATUS StartEFIImage(IN EFI_DEVICE_PATH *DevicePath,
 
 static VOID StartLoader(IN LOADER_ENTRY *Entry)
 {
-    BeginExternalScreen(Entry->UseGraphicsMode, L"Booting OS");
-    StartEFIImage(Entry->DevicePath, Entry->LoadOptions,
-                  Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL);
-    FinishExternalScreen();
+  BeginExternalScreen(Entry->UseGraphicsMode, L"Booting OS");
+  SetPrivateVarProto();
+  PatchSmbios();
+  PatchACPI(Entry->Volume);
+  SetVariablesForOSX();
+  FinalizeSmbios();
+  SetupBooterLog();
+  SetupDataForOSX();
+  StartEFIImage(Entry->DevicePath, Entry->LoadOptions,
+                Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL);
+  FinishExternalScreen();
 }
 
 static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume)
 {
-    CHAR16          *FileName, *OSIconName;
-    CHAR16          IconFileName[256];
-    CHAR16          DiagsFileName[256];
-    CHAR16          ShortcutLetter;
-    UINTN           LoaderKind;
-    LOADER_ENTRY    *Entry, *SubEntry;
-    REFIT_MENU_SCREEN *SubScreen;
-    
-    FileName = Basename(LoaderPath);
-    
-    // prepare the menu entry
-    Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-    Entry->me.Title        = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : LoaderPath + 1, Volume->VolName);
-    Entry->me.Tag          = TAG_LOADER;
-    Entry->me.Row          = 0;
-    if (GlobalConfig.HideBadges == 0 ||
-        (GlobalConfig.HideBadges == 1 && Volume->DiskKind != DISK_KIND_INTERNAL))
-        Entry->me.BadgeImage   = Volume->VolBadgeImage;
-    Entry->LoaderPath      = EfiStrDuplicate(LoaderPath);
-    Entry->VolName         = Volume->VolName;
-    Entry->DevicePath      = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
-    Entry->UseGraphicsMode = FALSE;
-    
-    // locate a custom icon for the loader
-    StrCpy(IconFileName, LoaderPath);
-    ReplaceExtension(IconFileName, L".icns");
+  CHAR16          *FileName, *OSIconName;
+  CHAR16          IconFileName[256];
+  CHAR16          DiagsFileName[256];
+  CHAR16          ShortcutLetter;
+  UINTN           LoaderKind;
+  LOADER_ENTRY    *Entry, *SubEntry;
+  REFIT_MENU_SCREEN *SubScreen;
+  
+  FileName = Basename(LoaderPath);
+  
+  // prepare the menu entry
+  Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+  Entry->me.Title        = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : LoaderPath + 1, Volume->VolName);
+  Entry->me.Tag          = TAG_LOADER;
+  Entry->me.Row          = 0;
+  Entry->Volume = Volume;
+  if (GlobalConfig.HideBadges == 0 ||
+      (GlobalConfig.HideBadges == 1 && Volume->DiskKind != DISK_KIND_INTERNAL))
+    Entry->me.BadgeImage   = Volume->VolBadgeImage;
+  Entry->LoaderPath      = EfiStrDuplicate(LoaderPath);
+  Entry->VolName         = Volume->VolName;
+  Entry->DevicePath      = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
+  Entry->UseGraphicsMode = FALSE;
+  
+  // locate a custom icon for the loader
+  StrCpy(IconFileName, LoaderPath);
+  ReplaceExtension(IconFileName, L".icns");
   if (FileExists(Volume->RootDir, IconFileName)){
-        Entry->me.Image = LoadIcns(Volume->RootDir, IconFileName, 128);
+    Entry->me.Image = LoadIcns(Volume->RootDir, IconFileName, 128);
   } else if (FileExists(SelfRootDir, IconFileName)) {
     Entry->me.Image = LoadIcns(SelfRootDir, IconFileName, 128);
   }
-    
-    // detect specific loaders
-    OSIconName = NULL;
-    LoaderKind = 0;
-    ShortcutLetter = 0;
-    if (StriCmp(LoaderPath, MACOSX_LOADER_PATH) == 0) {
-        OSIconName = L"mac";
-        Entry->UseGraphicsMode = TRUE;
-        LoaderKind = 1;
-        ShortcutLetter = 'M';
-    } else if (StriCmp(FileName, L"diags.efi") == 0) {
-        OSIconName = L"hwtest";
-    } else if (StriCmp(FileName, L"e.efi") == 0 ||
-               StriCmp(FileName, L"elilo.efi") == 0) {
-        OSIconName = L"elilo,linux";
-        LoaderKind = 2;
-        ShortcutLetter = 'L';
-    } else if (StriCmp(FileName, L"cdboot.efi") == 0 ||
-               StriCmp(FileName, L"bootmgr.efi") == 0 ||
-               StriCmp(FileName, L"Bootmgfw.efi") == 0) {
-        OSIconName = L"win";
-        ShortcutLetter = 'W';
-    } else if (StriCmp(FileName, L"xom.efi") == 0) {
-        OSIconName = L"xom,win";
-        Entry->UseGraphicsMode = TRUE;
-        LoaderKind = 3;
-        ShortcutLetter = 'W';
-    }
-    Entry->me.ShortcutLetter = ShortcutLetter;
-    if (Entry->me.Image == NULL)
-        Entry->me.Image = LoadOSIcon(OSIconName, L"unknown", FALSE);
-    
-    // create the submenu
-    SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
-    SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (LoaderTitle != NULL) ? LoaderTitle : FileName, Volume->VolName);
-    SubScreen->TitleImage = Entry->me.Image;
-    
-    // default entry
+  
+  // detect specific loaders
+  OSIconName = NULL;
+  LoaderKind = 0;
+  ShortcutLetter = 0;
+  if (StriCmp(LoaderPath, MACOSX_LOADER_PATH) == 0) {
+    OSIconName = L"mac";
+    Entry->UseGraphicsMode = TRUE;
+    LoaderKind = 1;
+    ShortcutLetter = 'M';
+  } else if (StriCmp(FileName, L"diags.efi") == 0) {
+    OSIconName = L"hwtest";
+  } else if (StriCmp(FileName, L"e.efi") == 0 ||
+             StriCmp(FileName, L"elilo.efi") == 0) {
+    OSIconName = L"elilo,linux";
+    LoaderKind = 2;
+    ShortcutLetter = 'L';
+  } else if (StriCmp(FileName, L"cdboot.efi") == 0 ||
+             StriCmp(FileName, L"bootmgr.efi") == 0 ||
+             StriCmp(FileName, L"Bootmgfw.efi") == 0) {
+    OSIconName = L"win";
+    ShortcutLetter = 'W';
+  } else if (StriCmp(FileName, L"xom.efi") == 0) {
+    OSIconName = L"xom,win";
+    Entry->UseGraphicsMode = TRUE;
+    LoaderKind = 3;
+    ShortcutLetter = 'W';
+  }
+  Entry->me.ShortcutLetter = ShortcutLetter;
+  if (Entry->me.Image == NULL)
+    Entry->me.Image = LoadOSIcon(OSIconName, L"unknown", FALSE);
+  
+  // create the submenu
+  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+  SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (LoaderTitle != NULL) ? LoaderTitle : FileName, Volume->VolName);
+  SubScreen->TitleImage = Entry->me.Image;
+  
+  // default entry
+  SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+  SubEntry->me.Title        = (LoaderKind == 1) ? L"Boot Mac OS X" : PoolPrint(L"Run %s", FileName);
+  SubEntry->me.Tag          = TAG_LOADER;
+  SubEntry->LoaderPath      = Entry->LoaderPath;
+  SubEntry->VolName         = Entry->VolName;
+  SubEntry->DevicePath      = Entry->DevicePath;
+  SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+  
+  // loader-specific submenu entries
+  if (LoaderKind == 1) {          // entries for Mac OS X
+#if defined(EFIX64)
     SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-    SubEntry->me.Title        = (LoaderKind == 1) ? L"Boot Mac OS X" : PoolPrint(L"Run %s", FileName);
+    SubEntry->me.Title        = L"Boot Mac OS X with a 64-bit kernel";
     SubEntry->me.Tag          = TAG_LOADER;
     SubEntry->LoaderPath      = Entry->LoaderPath;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
+    SubEntry->LoadOptions     = L"arch=x86_64";
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     
-    // loader-specific submenu entries
-    if (LoaderKind == 1) {          // entries for Mac OS X
-#if defined(EFIX64)
-        SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-        SubEntry->me.Title        = L"Boot Mac OS X with a 64-bit kernel";
-        SubEntry->me.Tag          = TAG_LOADER;
-        SubEntry->LoaderPath      = Entry->LoaderPath;
-        SubEntry->VolName         = Entry->VolName;
-        SubEntry->DevicePath      = Entry->DevicePath;
-        SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
-        SubEntry->LoadOptions     = L"arch=x86_64";
-        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-
-        SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-        SubEntry->me.Title        = L"Boot Mac OS X with a 32-bit kernel";
-        SubEntry->me.Tag          = TAG_LOADER;
-        SubEntry->LoaderPath      = Entry->LoaderPath;
-        SubEntry->VolName         = Entry->VolName;
-        SubEntry->DevicePath      = Entry->DevicePath;
-        SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
-        SubEntry->LoadOptions     = L"arch=i386";
-        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+    SubEntry->me.Title        = L"Boot Mac OS X with a 32-bit kernel";
+    SubEntry->me.Tag          = TAG_LOADER;
+    SubEntry->LoaderPath      = Entry->LoaderPath;
+    SubEntry->VolName         = Entry->VolName;
+    SubEntry->DevicePath      = Entry->DevicePath;
+    SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
+    SubEntry->LoadOptions     = L"arch=i386";
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
 #endif
-        
-        if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_SINGLEUSER)) {
-            SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-            SubEntry->me.Title        = L"Boot Mac OS X in verbose mode";
-            SubEntry->me.Tag          = TAG_LOADER;
-            SubEntry->LoaderPath      = Entry->LoaderPath;
-            SubEntry->VolName         = Entry->VolName;
-            SubEntry->DevicePath      = Entry->DevicePath;
-            SubEntry->UseGraphicsMode = FALSE;
-            SubEntry->LoadOptions     = L"-v";
-            AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-            
+    
+    if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_SINGLEUSER)) {
+      SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+      SubEntry->me.Title        = L"Boot Mac OS X in verbose mode";
+      SubEntry->me.Tag          = TAG_LOADER;
+      SubEntry->LoaderPath      = Entry->LoaderPath;
+      SubEntry->VolName         = Entry->VolName;
+      SubEntry->DevicePath      = Entry->DevicePath;
+      SubEntry->UseGraphicsMode = FALSE;
+      SubEntry->LoadOptions     = L"-v";
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      
 #if defined(EFIX64)
-            SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-            SubEntry->me.Title        = L"Boot Mac OS X in verbose mode (64-bit)";
-            SubEntry->me.Tag          = TAG_LOADER;
-            SubEntry->LoaderPath      = Entry->LoaderPath;
-            SubEntry->VolName         = Entry->VolName;
-            SubEntry->DevicePath      = Entry->DevicePath;
-            SubEntry->UseGraphicsMode = FALSE;
-            SubEntry->LoadOptions     = L"-v arch=x86_64";
-            AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-            
-            SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-            SubEntry->me.Title        = L"Boot Mac OS X in verbose mode (32-bit)";
-            SubEntry->me.Tag          = TAG_LOADER;
-            SubEntry->LoaderPath      = Entry->LoaderPath;
-            SubEntry->VolName         = Entry->VolName;
-            SubEntry->DevicePath      = Entry->DevicePath;
-            SubEntry->UseGraphicsMode = FALSE;
-            SubEntry->LoadOptions     = L"-v arch=i386";
-            AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+      SubEntry->me.Title        = L"Boot Mac OS X in verbose mode (64-bit)";
+      SubEntry->me.Tag          = TAG_LOADER;
+      SubEntry->LoaderPath      = Entry->LoaderPath;
+      SubEntry->VolName         = Entry->VolName;
+      SubEntry->DevicePath      = Entry->DevicePath;
+      SubEntry->UseGraphicsMode = FALSE;
+      SubEntry->LoadOptions     = L"-v arch=x86_64";
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      
+      SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+      SubEntry->me.Title        = L"Boot Mac OS X in verbose mode (32-bit)";
+      SubEntry->me.Tag          = TAG_LOADER;
+      SubEntry->LoaderPath      = Entry->LoaderPath;
+      SubEntry->VolName         = Entry->VolName;
+      SubEntry->DevicePath      = Entry->DevicePath;
+      SubEntry->UseGraphicsMode = FALSE;
+      SubEntry->LoadOptions     = L"-v arch=i386";
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
 #endif
-            
-            SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-            SubEntry->me.Title        = L"Boot Mac OS X in single user mode";
-            SubEntry->me.Tag          = TAG_LOADER;
-            SubEntry->LoaderPath      = Entry->LoaderPath;
-            SubEntry->VolName         = Entry->VolName;
-            SubEntry->DevicePath      = Entry->DevicePath;
-            SubEntry->UseGraphicsMode = FALSE;
-            SubEntry->LoadOptions     = L"-v -s";
-            AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-        }
-        
-        // check for Apple hardware diagnostics
-        StrCpy(DiagsFileName, L"\\System\\Library\\CoreServices\\.diagnostics\\diags.efi");
-        if (FileExists(Volume->RootDir, DiagsFileName) && !(GlobalConfig.DisableFlags & DISABLE_FLAG_HWTEST)) {
-            Print(L"  - Apple Hardware Test found\n");
-            
-            SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-            SubEntry->me.Title        = L"Run Apple Hardware Test";
-            SubEntry->me.Tag          = TAG_LOADER;
-            SubEntry->LoaderPath      = EfiStrDuplicate(DiagsFileName);
-            SubEntry->VolName         = Entry->VolName;
-            SubEntry->DevicePath      = FileDevicePath(Volume->DeviceHandle, SubEntry->LoaderPath);
-            SubEntry->UseGraphicsMode = TRUE;
-            AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-        }
-        
-    } else if (LoaderKind == 2) {   // entries for elilo
-        SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-        SubEntry->me.Title        = PoolPrint(L"Run %s in interactive mode", FileName);
-        SubEntry->me.Tag          = TAG_LOADER;
-        SubEntry->LoaderPath      = Entry->LoaderPath;
-        SubEntry->VolName         = Entry->VolName;
-        SubEntry->DevicePath      = Entry->DevicePath;
-        SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
-        SubEntry->LoadOptions     = L"-p";
-        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-        
-        SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-        SubEntry->me.Title        = L"Boot Linux for a 17\" iMac or a 15\" MacBook Pro (*)";
-        SubEntry->me.Tag          = TAG_LOADER;
-        SubEntry->LoaderPath      = Entry->LoaderPath;
-        SubEntry->VolName         = Entry->VolName;
-        SubEntry->DevicePath      = Entry->DevicePath;
-        SubEntry->UseGraphicsMode = TRUE;
-        SubEntry->LoadOptions     = L"-d 0 i17";
-        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-        
-        SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-        SubEntry->me.Title        = L"Boot Linux for a 20\" iMac (*)";
-        SubEntry->me.Tag          = TAG_LOADER;
-        SubEntry->LoaderPath      = Entry->LoaderPath;
-        SubEntry->VolName         = Entry->VolName;
-        SubEntry->DevicePath      = Entry->DevicePath;
-        SubEntry->UseGraphicsMode = TRUE;
-        SubEntry->LoadOptions     = L"-d 0 i20";
-        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-        
-        SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-        SubEntry->me.Title        = L"Boot Linux for a Mac Mini (*)";
-        SubEntry->me.Tag          = TAG_LOADER;
-        SubEntry->LoaderPath      = Entry->LoaderPath;
-        SubEntry->VolName         = Entry->VolName;
-        SubEntry->DevicePath      = Entry->DevicePath;
-        SubEntry->UseGraphicsMode = TRUE;
-        SubEntry->LoadOptions     = L"-d 0 mini";
-        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-        
-        AddMenuInfoLine(SubScreen, L"NOTE: This is an example. Entries");
-        AddMenuInfoLine(SubScreen, L"marked with (*) may not work.");
-        
-    } else if (LoaderKind == 3) {   // entries for xom.efi
-        // by default, skip the built-in selection and boot from hard disk only
-        Entry->LoadOptions = L"-s -h";
-        
-        SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-        SubEntry->me.Title        = L"Boot Windows from Hard Disk";
-        SubEntry->me.Tag          = TAG_LOADER;
-        SubEntry->LoaderPath      = Entry->LoaderPath;
-        SubEntry->VolName         = Entry->VolName;
-        SubEntry->DevicePath      = Entry->DevicePath;
-        SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
-        SubEntry->LoadOptions     = L"-s -h";
-        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-        
-        SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-        SubEntry->me.Title        = L"Boot Windows from CD-ROM";
-        SubEntry->me.Tag          = TAG_LOADER;
-        SubEntry->LoaderPath      = Entry->LoaderPath;
-        SubEntry->VolName         = Entry->VolName;
-        SubEntry->DevicePath      = Entry->DevicePath;
-        SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
-        SubEntry->LoadOptions     = L"-s -c";
-        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-        
-        SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-        SubEntry->me.Title        = PoolPrint(L"Run %s in text mode", FileName);
-        SubEntry->me.Tag          = TAG_LOADER;
-        SubEntry->LoaderPath      = Entry->LoaderPath;
-        SubEntry->VolName         = Entry->VolName;
-        SubEntry->DevicePath      = Entry->DevicePath;
-        SubEntry->UseGraphicsMode = FALSE;
-        SubEntry->LoadOptions     = L"-v";
-        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-        
+      
+      SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+      SubEntry->me.Title        = L"Boot Mac OS X in single user mode";
+      SubEntry->me.Tag          = TAG_LOADER;
+      SubEntry->LoaderPath      = Entry->LoaderPath;
+      SubEntry->VolName         = Entry->VolName;
+      SubEntry->DevicePath      = Entry->DevicePath;
+      SubEntry->UseGraphicsMode = FALSE;
+      SubEntry->LoadOptions     = L"-v -s";
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
     
-    AddMenuEntry(SubScreen, &MenuEntryReturn);
-    Entry->me.SubScreen = SubScreen;
-    AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
-    return Entry;
+    // check for Apple hardware diagnostics
+    StrCpy(DiagsFileName, L"\\System\\Library\\CoreServices\\.diagnostics\\diags.efi");
+    if (FileExists(Volume->RootDir, DiagsFileName) && !(GlobalConfig.DisableFlags & DISABLE_FLAG_HWTEST)) {
+      Print(L"  - Apple Hardware Test found\n");
+      
+      SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+      SubEntry->me.Title        = L"Run Apple Hardware Test";
+      SubEntry->me.Tag          = TAG_LOADER;
+      SubEntry->LoaderPath      = EfiStrDuplicate(DiagsFileName);
+      SubEntry->VolName         = Entry->VolName;
+      SubEntry->DevicePath      = FileDevicePath(Volume->DeviceHandle, SubEntry->LoaderPath);
+      SubEntry->UseGraphicsMode = TRUE;
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    }
+    
+  } else if (LoaderKind == 2) {   // entries for elilo
+    SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+    SubEntry->me.Title        = PoolPrint(L"Run %s in interactive mode", FileName);
+    SubEntry->me.Tag          = TAG_LOADER;
+    SubEntry->LoaderPath      = Entry->LoaderPath;
+    SubEntry->VolName         = Entry->VolName;
+    SubEntry->DevicePath      = Entry->DevicePath;
+    SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
+    SubEntry->LoadOptions     = L"-p";
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    
+    SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+    SubEntry->me.Title        = L"Boot Linux for a 17\" iMac or a 15\" MacBook Pro (*)";
+    SubEntry->me.Tag          = TAG_LOADER;
+    SubEntry->LoaderPath      = Entry->LoaderPath;
+    SubEntry->VolName         = Entry->VolName;
+    SubEntry->DevicePath      = Entry->DevicePath;
+    SubEntry->UseGraphicsMode = TRUE;
+    SubEntry->LoadOptions     = L"-d 0 i17";
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    
+    SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+    SubEntry->me.Title        = L"Boot Linux for a 20\" iMac (*)";
+    SubEntry->me.Tag          = TAG_LOADER;
+    SubEntry->LoaderPath      = Entry->LoaderPath;
+    SubEntry->VolName         = Entry->VolName;
+    SubEntry->DevicePath      = Entry->DevicePath;
+    SubEntry->UseGraphicsMode = TRUE;
+    SubEntry->LoadOptions     = L"-d 0 i20";
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    
+    SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+    SubEntry->me.Title        = L"Boot Linux for a Mac Mini (*)";
+    SubEntry->me.Tag          = TAG_LOADER;
+    SubEntry->LoaderPath      = Entry->LoaderPath;
+    SubEntry->VolName         = Entry->VolName;
+    SubEntry->DevicePath      = Entry->DevicePath;
+    SubEntry->UseGraphicsMode = TRUE;
+    SubEntry->LoadOptions     = L"-d 0 mini";
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    
+    AddMenuInfoLine(SubScreen, L"NOTE: This is an example. Entries");
+    AddMenuInfoLine(SubScreen, L"marked with (*) may not work.");
+    
+  } else if (LoaderKind == 3) {   // entries for xom.efi
+                                  // by default, skip the built-in selection and boot from hard disk only
+    Entry->LoadOptions = L"-s -h";
+    
+    SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+    SubEntry->me.Title        = L"Boot Windows from Hard Disk";
+    SubEntry->me.Tag          = TAG_LOADER;
+    SubEntry->LoaderPath      = Entry->LoaderPath;
+    SubEntry->VolName         = Entry->VolName;
+    SubEntry->DevicePath      = Entry->DevicePath;
+    SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
+    SubEntry->LoadOptions     = L"-s -h";
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    
+    SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+    SubEntry->me.Title        = L"Boot Windows from CD-ROM";
+    SubEntry->me.Tag          = TAG_LOADER;
+    SubEntry->LoaderPath      = Entry->LoaderPath;
+    SubEntry->VolName         = Entry->VolName;
+    SubEntry->DevicePath      = Entry->DevicePath;
+    SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
+    SubEntry->LoadOptions     = L"-s -c";
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    
+    SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+    SubEntry->me.Title        = PoolPrint(L"Run %s in text mode", FileName);
+    SubEntry->me.Tag          = TAG_LOADER;
+    SubEntry->LoaderPath      = Entry->LoaderPath;
+    SubEntry->VolName         = Entry->VolName;
+    SubEntry->DevicePath      = Entry->DevicePath;
+    SubEntry->UseGraphicsMode = FALSE;
+    SubEntry->LoadOptions     = L"-v";
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    
+  }
+  
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  Entry->me.SubScreen = SubScreen;
+  AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
+  return Entry;
 }
 
 static VOID ScanLoaderDir(IN REFIT_VOLUME *Volume, IN CHAR16 *Path)
 {
-    EFI_STATUS              Status;
-    REFIT_DIR_ITER          DirIter;
-    EFI_FILE_INFO           *DirEntry;
-    CHAR16                  FileName[256];
+  EFI_STATUS              Status;
+  REFIT_DIR_ITER          DirIter;
+  EFI_FILE_INFO           *DirEntry;
+  CHAR16                  FileName[256];
+  
+  // look through contents of the directory
+  DirIterOpen(Volume->RootDir, Path, &DirIter);
+  while (DirIterNext(&DirIter, 2, L"*.efi", &DirEntry)) {
+    if (DirEntry->FileName[0] == '.' ||
+        StriCmp(DirEntry->FileName, L"TextMode.efi") == 0 ||
+        StriCmp(DirEntry->FileName, L"ebounce.efi") == 0 ||
+        StriCmp(DirEntry->FileName, L"GraphicsConsole.efi") == 0)
+      continue;   // skip this
     
-    // look through contents of the directory
-    DirIterOpen(Volume->RootDir, Path, &DirIter);
-    while (DirIterNext(&DirIter, 2, L"*.efi", &DirEntry)) {
-        if (DirEntry->FileName[0] == '.' ||
-            StriCmp(DirEntry->FileName, L"TextMode.efi") == 0 ||
-            StriCmp(DirEntry->FileName, L"ebounce.efi") == 0 ||
-            StriCmp(DirEntry->FileName, L"GraphicsConsole.efi") == 0)
-            continue;   // skip this
-        
-        if (Path)
-            SPrint(FileName, 255, L"\\%s\\%s", Path, DirEntry->FileName);
-        else
-            SPrint(FileName, 255, L"\\%s", DirEntry->FileName);
-        AddLoaderEntry(FileName, NULL, Volume);
-    }
-    Status = DirIterClose(&DirIter);
-    if (Status != EFI_NOT_FOUND) {
-        if (Path)
-            SPrint(FileName, 255, L"while scanning the %s directory", Path);
-        else
-            StrCpy(FileName, L"while scanning the root directory");
-        CheckError(Status, FileName);
-    }
+    if (Path)
+      SPrint(FileName, 255, L"\\%s\\%s", Path, DirEntry->FileName);
+    else
+      SPrint(FileName, 255, L"\\%s", DirEntry->FileName);
+    AddLoaderEntry(FileName, NULL, Volume);
+  }
+  Status = DirIterClose(&DirIter);
+  if (Status != EFI_NOT_FOUND) {
+    if (Path)
+      SPrint(FileName, 255, L"while scanning the %s directory", Path);
+    else
+      StrCpy(FileName, L"while scanning the root directory");
+    CheckError(Status, FileName);
+  }
 }
 
 static VOID ScanLoader(VOID)
@@ -970,7 +988,7 @@ static VOID ScanTool(VOID)
         if (FileExists(SelfRootDir, FileName)) {
             Entry = AddToolEntry(FileName, L"EFI Shell", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
         } else {
-            StrCpy(FileName, L"\\efi\\tools\\Shell.efi");
+            StrCpy(FileName, L"\\EFI\\tools\\Shell.efi");
             if (FileExists(SelfRootDir, FileName)) {
                 Entry = AddToolEntry(FileName, L"EFI Shell", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
             }
@@ -1151,12 +1169,20 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	
 	InitBooterLog();
   InitScreen();
+  DBG("InitScreen ok\n");
+  
   Status = InitRefitLib(ImageHandle);
   if (EFI_ERROR(Status))
     return Status;
+  DBG("InitRefitLib ok\n");
+  
+  InitializeUnicodeCollationProtocol();
+  DBG("InitializeUnicodeCollationProtocol ok\n");
   
   // read GUI configuration
   ReadConfig();
+  DBG("ReadConfig ok\n");
+  
   MainMenu.TimeoutSeconds = GlobalConfig.Timeout;
   
   // disable EFI watchdog timer
@@ -1164,17 +1190,34 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   // further bootstrap (now with config available)
   SetupScreen();
+  DBG("SetupScreen ok\n");
+  
   LoadDrivers();
+  DBG("LoadDrivers ok\n");
+  
   ScanVolumes();
+  DBG("ScanVolumes ok\n");
   //   DebugPause();
   
   //setup properties
   SetGraphics();
+  DBG("SetGraphics ok\n");
+  
   PrepatchSmbios();
+  DBG("PrepatchSmbios ok\n");
+  
   GetCPUProperties();
+  DBG("GetCPUProperties ok\n");
+  
   ScanSPD();
+  DBG("ScanSPD ok\n");
+  
   SetPrivateVarProto();
+  DBG("SetPrivateVarProto ok\n");
+  
   GetDefaultSettings();
+  DBG("GetDefaultSettings ok\n");
+  
   Status = gRS->GetVariable(L"boot-args",
                             &gEfiAppleBootGuid,  NULL,
                             &Size, 										   

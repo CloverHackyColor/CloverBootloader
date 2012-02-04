@@ -7,7 +7,7 @@
 // UEFI adaptation by usr-sse2
 
 
-#include "device_inject.h"
+
 #include "Platform.h"
 
 #ifndef DEBUG_INJECT

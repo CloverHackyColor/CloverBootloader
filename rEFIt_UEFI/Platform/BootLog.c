@@ -9,6 +9,7 @@
 
 
 #include "Platform.h"
+extern  EFI_GUID  gEfiMiscSubClassGuid;
 
 CHAR8 *msgbuf = 0;
 CHAR8 *msgCursor = 0;

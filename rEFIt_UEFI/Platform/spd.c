@@ -255,7 +255,7 @@ CHAR8* getDDRPartNum(UINT8* spd, UINT32 base, INTN slot)
 	for (i=start; i < start + 32; i++) {
 		READ_SPD(spd, base, slot, i); // only read once the corresponding model part (ddr3 or ddr2)
 		c = spd[i];
-		if (isalpha(c) || isdigit(c) || ispunct(c)) // It seems that System Profiler likes only letters and digits...
+		if (IS_ALFA(c) || IS_DIGIT(c) || IS_PUNCT(c)) // It seems that System Profiler likes only letters and digits...
 			asciiPartNo[index++] = c;
 		else if (c < 0x20)
 			break;

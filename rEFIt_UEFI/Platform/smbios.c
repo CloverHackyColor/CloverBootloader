@@ -556,11 +556,11 @@ VOID GetTableType4()
   }
 
 	gCPUStructure.ExternalClock = SmbiosTable.Type4->ExternalClock * 1000 + res * 110;//MHz->kHz  
-	SPrint(gSettings.BusSpeed, 10, L"%d", gCPUStructure.ExternalClock);
-  
+//	SPrint(gSettings.BusSpeed, 10, L"%d", gCPUStructure.ExternalClock);
+  gSettings.BusSpeed = gCPUStructure.ExternalClock; //why duplicate??
 	gCPUStructure.CurrentSpeed = SmbiosTable.Type4->CurrentSpeed;
-	SPrint(gSettings.CpuFreqMHz, 10, L"%d", gCPUStructure.CurrentSpeed);
-	
+//	SPrint(gSettings.CpuFreqMHz, 10, L"%d", gCPUStructure.CurrentSpeed);
+	gSettings.CpuFreqMHz = gCPUStructure.CurrentSpeed; 
 	return;
 }
 
@@ -613,6 +613,12 @@ VOID PatchTableType4()
 		if (newSmbiosTable.Type4->CoreCount < newSmbiosTable.Type4->EnabledCoreCount) {
 			newSmbiosTable.Type4->EnabledCoreCount = gCPUStructure.Cores;
 		}
+    //some verifications
+    if ((newSmbiosTable.Type4->ThreadCount < newSmbiosTable.Type4->CoreCount) ||
+        newSmbiosTable.Type4->ThreadCount > newSmbiosTable.Type4->CoreCount * 2) {
+      newSmbiosTable.Type4->ThreadCount = gCPUStructure.Threads;
+    }
+    
 		// TODO: Set SmbiosTable.Type4->ProcessorFamily for all implemented CPU models
 		Once = TRUE;
 		if (gCPUStructure.Model == CPU_MODEL_ATOM) {
@@ -647,7 +653,11 @@ VOID PatchTableType4()
 					newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2SoloMobile;
 				}
 			} else {
-				if (gCPUStructure.Cores==2)
+				if (gCPUStructure.Cores>2)
+				{
+					newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2Quad;
+				} else
+          if (gCPUStructure.Cores==2)
 				{
 					newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2Extreme;
 				}
@@ -700,7 +710,8 @@ VOID PatchTableType4()
 		newSmbiosTable.Type4->ProcessorId.Signature.ProcessorType		= gCPUStructure.Type;
 		newSmbiosTable.Type4->ProcessorId.Signature.ProcessorXModel		= gCPUStructure.Extmodel;
 		newSmbiosTable.Type4->ProcessorId.Signature.ProcessorXFamily	= gCPUStructure.Extfamily;
-		newSmbiosTable.Type4->ProcessorId.Signature.FeatureFlags = gCPUStructure.Features;
+    CopyMem((VOID*)&newSmbiosTable.Type4->ProcessorId.FeatureFlags, (VOID*)&gCPUStructure.Features, 4);
+//		newSmbiosTable.Type4->ProcessorId.FeatureFlags = (PROCESSOR_FEATURE_FLAGS)(UINT32)gCPUStructure.Features;
 		if (Size <= 0x26) {
 			newSmbiosTable.Type4->ProcessorFamily2 = newSmbiosTable.Type4->ProcessorFamily;
 			ProcChar |= (gCPUStructure.ExtFeatures & CPUID_EXTFEATURE_EM64T)?0x04:0;
@@ -718,8 +729,9 @@ VOID PatchTableType4()
 
 		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type4->AssetTag, BrandStr); //like mac
 		// looks to be MicroCode revision
-		if(iStrLen(gSettings.CPUSerial, 10)>0){
-			UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type4->SerialNumber, gSettings.CPUSerial);
+		if(gCPUStructure.MicroCode > 0){
+      AsciiSPrint(BrandStr, 20, "%X", gCPUStructure.MicroCode);
+			UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type4->SerialNumber, BrandStr);
 		}
 		
 		Handle = LogSmbiosTable(newSmbiosTable);
@@ -1191,11 +1203,7 @@ VOID PatchTableType131()
 		newSmbiosTable.Type131->Hdr.Length = sizeof(SMBIOS_STRUCTURE)+2; 
 		newSmbiosTable.Type131->Hdr.Handle = 0x8300; //common rule
 		// Patch ProcessorType
-		if(iStrLen(gSettings.CpuType, 10)>0){
-			newSmbiosTable.Type131->ProcessorType = (UINT16)StrHexToUint64(gSettings.CpuType);
-		} else {
-			newSmbiosTable.Type131->ProcessorType = gCPUtype;
-		}	
+			newSmbiosTable.Type131->ProcessorType = gSettings.CpuType;
 		Handle = LogSmbiosTable(newSmbiosTable);
 		return;
 	}	
@@ -1217,7 +1225,7 @@ VOID PatchTableType132()
 		if(gCPUStructure.ProcessorInterconnectSpeed){
 			newSmbiosTable.Type132->ProcessorBusSpeed = gCPUStructure.ProcessorInterconnectSpeed;
 		} else {
-			newSmbiosTable.Type132->ProcessorBusSpeed = (gBusSpeed << 2);
+			newSmbiosTable.Type132->ProcessorBusSpeed = DivU64x32(gSettings.BusSpeed, kilo)  << 2;
 		}
 		Handle = LogSmbiosTable(newSmbiosTable);
 		return;
@@ -1252,7 +1260,7 @@ EFI_STATUS PrepatchSmbios()
 	EntryPoint = (SMBIOS_TABLE_ENTRY_POINT*)Smbios; //yes, it is old SmbiosEPS
 //	Smbios = (VOID*)(UINT32)EntryPoint->TableAddress; // here is flat Smbios database. Work with it
 	//how many we need to add for tables 128, 130, 131, 132 and for strings?
-	BufferLen = 0x1F + SYS_TABLE_PAD(0x1F) + EntryPoint->TableLength + 64 * 10; 
+	BufferLen = 0x20 + EntryPoint->TableLength + 64 * 10; 
 	//new place for EPS and tables. Allocated once for both
 	BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
 	Status = gBS->AllocatePages (AllocateMaxAddress, EfiACPIMemoryNVS, /*EfiACPIReclaimMemory, 	*/
@@ -1260,7 +1268,7 @@ EFI_STATUS PrepatchSmbios()
 	if (EFI_ERROR (Status)) {
 		Print(L"There is error allocating pages in EfiACPIMemoryNVS!\n");
 		Status = gBS->AllocatePages (AllocateMaxAddress,  /*EfiACPIMemoryNVS, */EfiACPIReclaimMemory,
-											   RoundPage(BufferLen)/EFI_PAGE_SIZE, &BufferPtr);
+											   ROUND_PAGE(BufferLen)/EFI_PAGE_SIZE, &BufferPtr);
 		if (EFI_ERROR (Status)) {
 			Print(L"There is error allocating pages in EfiACPIReclaimMemory!\n");
 		}
@@ -1305,7 +1313,7 @@ EFI_STATUS PrepatchSmbios()
 
 VOID PatchSmbios(VOID) //continue
 {
-	EFI_STATUS Status = EFI_UNSUPPORTED;
+//	EFI_STATUS Status = EFI_UNSUPPORTED;
 //	newSmbiosTable = (SMBIOS_STRUCTURE_POINTER)(UINT8*)AllocateZeroPool(MAX_TABLE_SIZE);
   newSmbiosTable.Raw = (UINT8*)AllocateZeroPool(MAX_TABLE_SIZE);
 	//Slice - order of patching is significant

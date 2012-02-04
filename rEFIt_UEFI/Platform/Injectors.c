@@ -29,6 +29,7 @@ EFI_GUID gAppleScreenInfoGuid = {
 
 //UINT32 mPropSize = 0;
 //UINT8* mProperties = NULL;
+CHAR8* gDeviceProperties = NULL;
 
 typedef struct _APPLE_GETVAR_PROTOCOL APPLE_GETVAR_PROTOCOL;
 
@@ -65,7 +66,7 @@ GetDeviceProps(IN     APPLE_GETVAR_PROTOCOL   *This,
 //TODO if gSetting.GraphicsEnabler=FALSE then egLoadFile(strings.dat, gDeviceProperties)  
   if(gDeviceProperties!=NULL && AsciiStrLen(gDeviceProperties)>3)
 	{
-    cnt=(UINT32)AsciiStrLen(gDeviceProperties) / 2;
+    cnt = (UINT32)AsciiStrLen(gDeviceProperties) / 2;
 		binStr = AllocateZeroPool(cnt);
     Ptr = gDeviceProperties;
     while (*Ptr) {
