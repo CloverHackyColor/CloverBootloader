@@ -555,7 +555,7 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
     EFI_DEVICE_PATH         *DevicePath, *NextDevicePath;
     EFI_DEVICE_PATH         *DiskDevicePath, *RemainingDevicePath;
     EFI_HANDLE              WholeDiskHandle;
-    UINTN                   PartialLength;
+    UINTN                   PartialLength = 0;
     EFI_FILE_SYSTEM_INFO    *FileSystemInfoPtr;
     BOOLEAN                 Bootable;
     
@@ -601,30 +601,35 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
       {
         DBG("USB volume\n");
         Volume->DiskKind = DISK_KIND_EXTERNAL; 
+        break;
       }
       // FIREWIRE Devices
       if (DevicePathType(DevicePath) == MESSAGING_DEVICE_PATH && 
           (DevicePathSubType(DevicePath) == MSG_1394_DP || DevicePathSubType(DevicePath) == MSG_FIBRECHANNEL_DP))
       {
         Volume->DiskKind = DISK_KIND_FIREWIRE; 
+        break;
       }
       // CD-ROM Devices
       if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH && 
           DevicePathSubType(DevicePath) == MEDIA_CDROM_DP) 
       {
         Volume->DiskKind = DISK_KIND_OPTICAL;     
+        break;
       }
       // VENDOR Specific Path
       if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH && 
           DevicePathSubType(DevicePath) == MEDIA_VENDOR_DP) 
       {
         Volume->DiskKind = DISK_KIND_NODISK;
+        break;
       }
       // LEGACY CD-ROM
       if (DevicePathType(DevicePath) == BBS_DEVICE_PATH && 
           (DevicePathSubType(DevicePath) == BBS_BBS_DP || DevicePathSubType(DevicePath) == BBS_TYPE_CDROM)) 
       {
         Volume->DiskKind = DISK_KIND_OPTICAL;
+        break;
       }
       // LEGACY HARDDISK
       if (DevicePathType(DevicePath) == BBS_DEVICE_PATH && 
@@ -632,44 +637,69 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
       {
         DBG("LEGACY HARDDISK\n");
         Volume->DiskKind = DISK_KIND_INTERNAL;
+        break;
       }
-      Bootable = TRUE;
+      DBG("NextDevicePath\n");
+      DevicePath = NextDevicePath;
+    }
+/*  what is the bread?
+     // Bootable = TRUE;
       
       if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH &&
             DevicePathSubType(DevicePath) == MEDIA_VENDOR_DP) {
             Volume->IsAppleLegacy = TRUE;             // legacy BIOS device entry
             // TODO: also check for Boot Camp GUID
+        //gEfiPartTypeSystemPartGuid
             Bootable = FALSE;   // this handle's BlockIO is just an alias for the whole device
           Print(L"AppleLegacy device\n");
         }
-        
+ */   
+  //search for WholeDisk
+  DevicePath = Volume->DevicePath;
+  while (!IsDevicePathEnd (DevicePath)) {
+    NextDevicePath = NextDevicePathNode(DevicePath);
+    if (IsDevicePathEndType(NextDevicePath)) {
+      break;
+    }
+    DevicePath = NextDevicePath;
+  }
+  
+     //TODO - look for MatchPartitionDevicePathNode   
         if (DevicePathType(DevicePath) == MESSAGING_DEVICE_PATH) {
-            // make a device path for the whole device
-            PartialLength = (UINT8 *)NextDevicePath - (UINT8 *)(Volume->DevicePath);
-            DiskDevicePath = (EFI_DEVICE_PATH *)AllocatePool(PartialLength + sizeof(EFI_DEVICE_PATH));
-            CopyMem(DiskDevicePath, Volume->DevicePath, PartialLength);
-            CopyMem((UINT8 *)DiskDevicePath + PartialLength, NextDevicePath, sizeof(EFI_DEVICE_PATH)); //EndDevicePath
+            // 
+          DBG("make a device path for the whole device\n");
+          PartialLength = (UINT8 *)DevicePath - (UINT8 *)(Volume->DevicePath);
+          DBG("PartialLength=%d\n", PartialLength);
+          DiskDevicePath = (EFI_DEVICE_PATH *)AllocatePool(PartialLength + sizeof(EFI_DEVICE_PATH));
+          CopyMem(DiskDevicePath, Volume->DevicePath, PartialLength);
+          CopyMem((UINT8 *)DiskDevicePath + PartialLength, NextDevicePath, sizeof(EFI_DEVICE_PATH)); //EndDevicePath
+     //  DiskDevicePath = AppendDevicePathNode(Volume->DevicePath, NextDevicePath);
             
             // get the handle for that path
             RemainingDevicePath = DiskDevicePath;
-            //Print(L"  * looking at %s\n", DevicePathToStr(RemainingDevicePath));
-            Status = gBS->LocateDevicePath(&gEfiBlockIoProtocolGuid, &RemainingDevicePath, &WholeDiskHandle);
-            //Print(L"  * remaining: %s\n", DevicePathToStr(RemainingDevicePath));
+            Print(L"  * looking at %s\n", DevicePathToStr(RemainingDevicePath));
+//            Status = gBS->LocateDevicePath(&gEfiBlockIoProtocolGuid, &RemainingDevicePath, &WholeDiskHandle);
+          
+          Status = gBS->LocateDevicePath(&gEfiDevicePathProtocolGuid, &RemainingDevicePath, &WholeDiskHandle);
+            Print(L"  * remaining: %s\n", DevicePathToStr(RemainingDevicePath));
             FreePool(DiskDevicePath);
             
             if (!EFI_ERROR(Status)) {
-                //Print(L"  - original handle: %08x - disk handle: %08x\n", (UINT32)DeviceHandle, (UINT32)WholeDiskHandle);
+                Print(L"  - original handle: %x - whole disk handle: %x\n", (UINTN)Volume->DeviceHandle, (UINTN)WholeDiskHandle);
                 
                 // get the device path for later
                 Status = gBS->HandleProtocol(WholeDiskHandle, &gEfiDevicePathProtocolGuid, (VOID **) &DiskDevicePath);
                 if (!EFI_ERROR(Status)) {
+                  DBG("WholeDiskDevicePath OK\n");
                     Volume->WholeDiskDevicePath = DuplicateDevicePath(DiskDevicePath);
+                  Print(L"  * whole: %s\n", DevicePathToStr(Volume->WholeDiskDevicePath));
+                
                 }
                 
                 // look at the BlockIO protocol
                 Status = gBS->HandleProtocol(WholeDiskHandle, &gEfiBlockIoProtocolGuid, (VOID **) &Volume->WholeDiskBlockIO);
                 if (!EFI_ERROR(Status)) {
-                    
+                  DBG("WholeDiskBlockIO BlockSize=%d\n", Volume->WholeDiskBlockIO->Media->BlockSize);
                     // check the media block size
                     if (Volume->WholeDiskBlockIO->Media->BlockSize == 2048)
                         Volume->DiskKind = DISK_KIND_OPTICAL;
@@ -682,9 +712,6 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
             } //else
               //  CheckError(Status, L"from LocateDevicePath");
         }
-      DBG("NextDevicePath\n");
-        DevicePath = NextDevicePath;
-    }
     
     if (!Bootable) {
 #if REFIT_DEBUG > 0

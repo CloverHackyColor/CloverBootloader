@@ -274,7 +274,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>20</integer>
+									<integer>19</integer>
 									<integer>13</integer>
 									<integer>0</integer>
 								</array>
@@ -299,7 +299,7 @@
 							<real>186</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>330 170 875 608 0 0 1280 778 </string>
+						<string>288 170 875 608 0 0 1280 778 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -329,7 +329,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>12E07D9114DDA8BD0090CD94</string>
+										<string>12C6420414DF15CB0045803C</string>
 										<key>history</key>
 										<array>
 											<string>1202124114266E13004B7B93</string>
@@ -381,9 +381,9 @@
 											<string>1219114414DD852B000BFF78</string>
 											<string>121C09E814DD984A005CF5DA</string>
 											<string>121C09E914DD984A005CF5DA</string>
-											<string>121C09FC14DD98BA005CF5DA</string>
-											<string>1200A9CD14DDA09D0087965F</string>
-											<string>12E07D8D14DDA8B90090CD94</string>
+											<string>12D5B37014DE686C00A5D127</string>
+											<string>12A0907714DE91B000803A23</string>
+											<string>12C6420314DF15CB0045803C</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -395,14 +395,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {667, 399}}</string>
+								<string>{{0, 0}, {667, 373}}</string>
 								<key>RubberWindowFrame</key>
-								<string>330 170 875 608 0 0 1280 778 </string>
+								<string>288 170 875 608 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>399pt</string>
+							<string>373pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -415,14 +415,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 404}, {667, 163}}</string>
+								<string>{{0, 378}, {667, 189}}</string>
 								<key>RubberWindowFrame</key>
-								<string>330 170 875 608 0 0 1280 778 </string>
+								<string>288 170 875 608 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>163pt</string>
+							<string>189pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -441,9 +441,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>12E07D9214DDA8BD0090CD94</string>
+				<string>12C6420514DF15CB0045803C</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>12E07D9314DDA8BD0090CD94</string>
+				<string>12C6420614DF15CB0045803C</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -581,12 +581,11 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>122336AD13377DFD0033F008</string>
 		<string>/Users/slice/src/edk23/Clover/rEFIt_UEFI/rEFIt_proj/rEFIt_proj.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>330 170 875 608 0 0 1280 778 </string>
+	<string>288 170 875 608 0 0 1280 778 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>
@@ -663,7 +662,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>122336AD13377DFD0033F008</string>
-				<string>12E07D8B14DDA8B90090CD94</string>
+				<string>12C6420714DF15CB0045803C</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -803,7 +802,7 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>lib.c</string>
+										<string>screen.c</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -859,8 +858,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>12E07D8F14DDA8B90090CD94</string>
-				<string>12E07D9014DDA8B90090CD94</string>
+				<string>12D5B36D14DE686800A5D127</string>
+				<string>12D5B36E14DE686800A5D127</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>

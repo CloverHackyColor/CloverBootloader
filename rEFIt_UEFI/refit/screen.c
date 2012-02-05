@@ -115,7 +115,7 @@ VOID SetupScreen(VOID)
         // clear screen and show banner
         // (now we know we'll stay in graphics mode)
         SwitchToGraphics();
-        BltClearScreen(TRUE);
+//        BltClearScreen(TRUE);
     }
 }
 
@@ -164,7 +164,7 @@ VOID BeginExternalScreen(IN BOOLEAN UseGraphicsMode, IN CHAR16 *Title)
     
     if (UseGraphicsMode) {
         SwitchToGraphics();
-        BltClearScreen(FALSE);
+//        BltClearScreen(FALSE);
     }
     
     // show the header
@@ -207,7 +207,7 @@ static VOID DrawScreenHeader(IN CHAR16 *Title)
     
     // clear to black background
     gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
-    gST->ConOut->ClearScreen (gST->ConOut);
+//    gST->ConOut->ClearScreen (gST->ConOut);
     
     // paint header background
     gST->ConOut->SetAttribute (gST->ConOut, ATTR_BANNER);
@@ -289,6 +289,7 @@ VOID EndlessIdleLoop(VOID)
 //
 // Error handling
 //
+/*
 VOID
 StatusToString (
 				OUT CHAR16      *Buffer,
@@ -296,19 +297,19 @@ StatusToString (
 				)
 {
 	SPrint(Buffer, 64, L"EFI Error %r", Status);
-}
+}*/
 
 
 BOOLEAN CheckFatalError(IN EFI_STATUS Status, IN CHAR16 *where)
 {
-    CHAR16 ErrorName[64];
+//    CHAR16 ErrorName[64];
     
     if (!EFI_ERROR(Status))
         return FALSE;
     
-    StatusToString(ErrorName, Status);
+//    StatusToString(ErrorName, Status);
     gST->ConOut->SetAttribute (gST->ConOut, ATTR_ERROR);
-    Print(L"Fatal Error: %s %s\n", ErrorName, where);
+    Print(L"Fatal Error: %r %s\n", Status, where);
     gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
     haveError = TRUE;
     
@@ -319,14 +320,14 @@ BOOLEAN CheckFatalError(IN EFI_STATUS Status, IN CHAR16 *where)
 
 BOOLEAN CheckError(IN EFI_STATUS Status, IN CHAR16 *where)
 {
-    CHAR16 ErrorName[64];
+//    CHAR16 ErrorName[64];
     
     if (!EFI_ERROR(Status))
         return FALSE;
     
-    StatusToString(ErrorName, Status);
+//    StatusToString(ErrorName, Status);
     gST->ConOut->SetAttribute (gST->ConOut, ATTR_ERROR);
-    Print(L"Error: %s %s\n", ErrorName, where);
+    Print(L"Error: %r %s\n", Status, where);
     gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
     haveError = TRUE;
     
