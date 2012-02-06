@@ -499,7 +499,7 @@ VOID SetGraphics(VOID)
 									GFXdevice->revision = Pci.Hdr.RevisionID;
 									GFXdevice->subclass = Pci.Hdr.ClassCode[0];
 									GFXdevice->class_id = *((UINT16*)(Pci.Hdr.ClassCode+1));
-									setup_ati_devprop(GFXdevice);
+									//setup_ati_devprop(GFXdevice);
 									FreePool(GFXdevice);
 								}
 							}
@@ -516,7 +516,7 @@ VOID SetGraphics(VOID)
 									GFXdevice->revision = Pci.Hdr.RevisionID;
 									GFXdevice->subclass = Pci.Hdr.ClassCode[0];
 									GFXdevice->class_id = *((UINT16*)(Pci.Hdr.ClassCode+1));
-									setup_gma_devprop(GFXdevice);
+									//setup_gma_devprop(GFXdevice);
 									FreePool(GFXdevice);
 								}
 							}
@@ -533,7 +533,7 @@ VOID SetGraphics(VOID)
 									GFXdevice->revision = Pci.Hdr.RevisionID;
 									GFXdevice->subclass = Pci.Hdr.ClassCode[0];
 									GFXdevice->class_id = *((UINT16*)(Pci.Hdr.ClassCode+1));
-									setup_nvidia_devprop(GFXdevice);
+									//setup_nvidia_devprop(GFXdevice);
 									FreePool(GFXdevice);
 								}
 							}
@@ -544,7 +544,7 @@ VOID SetGraphics(VOID)
 		}
 	}
   
-	MsgLog("CurrentMode: Width=%d Height=%d\n", gGraphics.Width, gGraphics.Height);  
+	DBG("CurrentMode: Width=%d Height=%d\n", gGraphics.Width, gGraphics.Height);  
 }
 
 EFI_STATUS SaveSettings()

@@ -228,8 +228,8 @@ Returns:
   //
   // Is the string is over the max truncate it
   //
-  if (spc->Len + len > spc->MaxLen) {
-    len = spc->MaxLen - spc->Len;
+  if (spc->Len + len > spc->Maxlen) {
+    len = spc->Maxlen - spc->Len;
   }
   //
   // Append the new text
@@ -240,10 +240,10 @@ Returns:
   //
   // Null terminate it
   //
-  if (spc->Len < spc->MaxLen) {
+  if (spc->Len < spc->Maxlen) {
     spc->Str[spc->Len] = 0;
-  } else if (spc->MaxLen) {
-    spc->Str[spc->MaxLen] = 0;
+  } else if (spc->Maxlen) {
+    spc->Str[spc->Maxlen] = 0;
   }
 
   return 0;
@@ -287,14 +287,14 @@ Returns:
   ps.args     = args;
   _PPrint (&ps);
 }
-
+/*
 UINTN
 SPrint (
   OUT CHAR16    *Str,
   IN UINTN      StrSize,
   IN CHAR16     *fmt,
   ...
-  )
+  )*/
 /*++
 
 Routine Description:
@@ -314,20 +314,20 @@ Returns:
 
   String length returned in buffer
 
---*/
+-- /
 {
   POOL_PRINT  spc;
   VA_LIST     args;
 
   VA_START (args, fmt);
   spc.Str     = Str;
-  spc.MaxLen  = StrSize / sizeof (CHAR16) - 1;
+  spc.Maxlen  = StrSize / sizeof (CHAR16) - 1;
   spc.Len     = 0;
 
   _PoolCatPrint (fmt, args, &spc, _SPrint);
   return spc.Len;
-}
-
+}*/
+/*
 UINTN
 VSPrint (
   OUT CHAR16  *Str,
@@ -335,7 +335,7 @@ VSPrint (
   IN CHAR16   *fmt,
   IN VA_LIST  vargs
   )
-/*++
+/ ++
 
 Routine Description:
 
@@ -352,17 +352,17 @@ Returns:
 
     String length returned in buffer
 
---*/
+-- /
 {
   POOL_PRINT  spc;
 
   spc.Str     = Str;
-  spc.MaxLen  = StrSize / sizeof (CHAR16) - 1;
+  spc.Maxlen  = StrSize / sizeof (CHAR16) - 1;
   spc.Len     = 0;
 
   _PoolCatPrint (fmt, vargs, &spc, _SPrint);
   return spc.Len;
-}
+} */
 /*
 UINTN
 Print (
@@ -549,14 +549,14 @@ Returns:
   VA_START (args, fmt);
   return _IPrint (Column, Row, gST->ConOut, fmt, NULL, args);
 }
-
+/*
 CHAR16 *
 CatPrint (
   IN OUT POOL_PRINT     *Str,
   IN CHAR16             *fmt,
   ...
   )
-/*++
+/ ++
 
 Routine Description:
 
@@ -576,7 +576,7 @@ Returns:
   The caller must free the allocated buffer.   The buffer
   allocation is not packed.
 
---*/
+--/
 {
   VA_LIST args;
 
@@ -584,7 +584,7 @@ Returns:
   _PoolCatPrint (fmt, args, Str, _PoolPrint);
   return Str->Str;
 }
-
+*/
 UINTN
 _IPrint (
   IN UINTN                            Column,
@@ -748,13 +748,13 @@ PFLUSH (
     );
   ps->Pos = ps->Buffer;
 }
-
+/*
 UINTN
 APrint (
   IN CHAR8      *fmt,
   ...
   )
-/*++
+/ ++
 
 Routine Description:
 
@@ -769,14 +769,14 @@ Returns:
 
     Length of string printed to the console
 
---*/
+-- /
 {
   VA_LIST args;
 
   VA_START (args, fmt);
   return _IPrint ((UINTN) -1, (UINTN) -1, gST->ConOut, NULL, fmt, args);
 }
-
+*/
 void
 PSETATTR (
   IN OUT PRINT_STATE    *ps,
@@ -1109,7 +1109,7 @@ Returns:
         Item.Item.u.pw = Item.Scratch;
 			  //SPrint(Buffer, 64, L"EFI Error №%r", (UINTN)Status);
      //   ValueToHex (
-		SPrint(	  
+		UnicodeSPrint(	  
           Item.Item.u.pw, 64, L"%x",
           Item.Long ? VA_ARG (ps->args, UINT64) : VA_ARG (ps->args, UINTN)
           );
@@ -1127,7 +1127,7 @@ Returns:
       case 'd':
         Item.Item.u.pw = Item.Scratch;
       //  ValueToString (
-		SPrint(	  
+		UnicodeSPrint(	  
           Item.Item.u.pw, 64, L"%d",
        //   Item.Comma,
           Item.Long ? VA_ARG (ps->args, UINT64) : VA_ARG (ps->args, INTN)
@@ -1142,7 +1142,7 @@ Returns:
       case 'r':
         Item.Item.u.pw = Item.Scratch;
    //     StatusToString 
-		SPrint(Item.Item.u.pw, 64, L"%r", VA_ARG (ps->args, EFI_STATUS));
+		UnicodeSPrint(Item.Item.u.pw, 64, L"%r", VA_ARG (ps->args, EFI_STATUS));
         break;
 
       case 'n':
@@ -1454,21 +1454,21 @@ Returns:
   //
   // Is the string is over the max, grow the buffer
   //
-  if (newlen > spc->MaxLen) {
+  if (newlen > spc->Maxlen) {
     //
     // Grow the pool buffer
     //
     newlen += PRINT_STRING_LEN;
-    spc->MaxLen = newlen;
+    spc->Maxlen = newlen;
     spc->Str = EfiReallocatePool (
                 spc->Str,
                 spc->Len * sizeof (CHAR16),
-                spc->MaxLen * sizeof (CHAR16)
+                spc->Maxlen * sizeof (CHAR16)
                 );
 
     if (!spc->Str) {
       spc->Len    = 0;
-      spc->MaxLen = 0;
+      spc->Maxlen = 0;
     }
   }
   //

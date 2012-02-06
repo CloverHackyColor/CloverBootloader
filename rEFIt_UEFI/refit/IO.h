@@ -30,13 +30,13 @@ Revision History
 #define EFI_TPL_NOTIFY      16
 #define EFI_TPL_HIGH_LEVEL  31
 
-
+/*
 typedef struct {
   CHAR16  *Str;
   UINTN   Len;
   UINTN   MaxLen;
 } POOL_PRINT;
-
+*/
 VOID
 Input (
   IN CHAR16   *Prompt OPTIONAL,
@@ -62,7 +62,7 @@ PrintAt (
   IN CHAR16     *fmt,
   ...
   );
-
+/*
 UINTN
 SPrint (
   OUT CHAR16    *Str,
@@ -70,7 +70,7 @@ SPrint (
   IN CHAR16     *fmt,
   ...
   );
-/*
+
 UINTN
 PrintToken (
   IN UINT16             Token,
@@ -84,7 +84,7 @@ IPrint (
   IN CHAR16                           *fmt,
   ...
   );
-*/
+
 UINTN
 VSPrint (
   OUT CHAR16                        *Str,
@@ -92,20 +92,20 @@ VSPrint (
   IN CHAR16                         *fmt,
   IN VA_LIST                        vargs
   );
-
+*/
 CHAR16                                *
 PoolPrint (
   IN CHAR16                           *fmt,
   ...
   );
-
+/*
 CHAR16                                *
 CatPrint (
   IN OUT POOL_PRINT     *Str,
   IN CHAR16             *fmt,
   ...
   );
-/*
+
 INTN
 DbgPrint (
   IN INTN       mask,
@@ -145,13 +145,13 @@ IPrintAt (
   IN CHAR16                           *fmt,
   ...
   );
-
+/*
 UINTN
 APrint (
   IN CHAR8                            *fmt,
   ...
   );
-
+*/
 VOID
 LibEnablePageBreak (
   IN INT32      StartRow,

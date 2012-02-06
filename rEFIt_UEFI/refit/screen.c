@@ -296,7 +296,7 @@ StatusToString (
 				EFI_STATUS      Status
 				)
 {
-	SPrint(Buffer, 64, L"EFI Error %r", Status);
+	UnicodeSPrint(Buffer, 64, L"EFI Error %r", Status);
 }*/
 
 

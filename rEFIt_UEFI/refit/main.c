@@ -189,7 +189,7 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
         if (ReturnStatus != EFI_NOT_FOUND)
             break;
     }
-    SPrint(ErrorInfo, 255, L"while loading %s", ImageTitle);
+    UnicodeSPrint(ErrorInfo, 255, L"while loading %s", ImageTitle);
     if (CheckError(Status, ErrorInfo)) {
         if (ErrorInStep != NULL)
             *ErrorInStep = 1;
@@ -236,7 +236,7 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   gBS->SetWatchdogTimer (0x0000, 0x0000, 0x0000, NULL);
   
   // control returns here when the child image calls Exit()
-    SPrint(ErrorInfo, 255, L"returned from %s", ImageTitle);
+    UnicodeSPrint(ErrorInfo, 255, L"returned from %s", ImageTitle);
     if (CheckError(Status, ErrorInfo)) {
         if (ErrorInStep != NULL)
             *ErrorInStep = 3;
@@ -559,15 +559,15 @@ static VOID ScanLoaderDir(IN REFIT_VOLUME *Volume, IN CHAR16 *Path)
       continue;   // skip this
     
     if (Path)
-      SPrint(FileName, 255, L"\\%s\\%s", Path, DirEntry->FileName);
+      UnicodeSPrint(FileName, 255, L"\\%s\\%s", Path, DirEntry->FileName);
     else
-      SPrint(FileName, 255, L"\\%s", DirEntry->FileName);
+      UnicodeSPrint(FileName, 255, L"\\%s", DirEntry->FileName);
     AddLoaderEntry(FileName, NULL, Volume);
   }
   Status = DirIterClose(&DirIter);
   if (Status != EFI_NOT_FOUND) {
     if (Path)
-      SPrint(FileName, 255, L"while scanning the %s directory", Path);
+      UnicodeSPrint(FileName, 255, L"while scanning the %s directory", Path);
     else
       StrCpy(FileName, L"while scanning the root directory");
     CheckError(Status, FileName);
@@ -636,7 +636,7 @@ static VOID ScanLoader(VOID)
                 continue;   // skip ourselves
             Print(L"  - Directory EFI\\%s found\n", EfiDirEntry->FileName);
             
-            SPrint(FileName, 255, L"EFI\\%s", EfiDirEntry->FileName);
+            UnicodeSPrint(FileName, 255, L"EFI\\%s", EfiDirEntry->FileName);
             ScanLoaderDir(Volume, FileName);
         }
         Status = DirIterClose(&EfiDirIter);
@@ -984,7 +984,7 @@ static VOID ScanTool(VOID)
     
     // look for the EFI shell
     if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_SHELL)) {
-        SPrint(FileName, 255, L"%s\\apps\\shell.efi", SelfDirPath);
+        UnicodeSPrint(FileName, 255, L"%s\\apps\\shell.efi", SelfDirPath);
         if (FileExists(SelfRootDir, FileName)) {
             Entry = AddToolEntry(FileName, L"EFI Shell", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
         } else {
@@ -1033,13 +1033,13 @@ static VOID ScanDriverDir(IN CHAR16 *Path) //path to folder
         if (DirEntry->FileName[0] == '.')
             continue;   // skip this
         
-        SPrint(FileName, 255, L"%s\\%s", Path, DirEntry->FileName);
+        UnicodeSPrint(FileName, 255, L"%s\\%s", Path, DirEntry->FileName);
         Status = StartEFIImage(FileDevicePath(SelfLoadedImage->DeviceHandle, FileName),
                                L"", DirEntry->FileName, DirEntry->FileName, NULL);
     }
     Status = DirIterClose(&DirIter);
     if (Status != EFI_NOT_FOUND) {
-        SPrint(FileName, 255, L"while scanning the %s directory", Path);
+        UnicodeSPrint(FileName, 255, L"while scanning the %s directory", Path);
         CheckError(Status, FileName);
     }
 }
@@ -1120,7 +1120,7 @@ static VOID LoadDrivers(VOID)
     Print(L"Scanning for drivers...\n");
     
     // load drivers from /efi/refit/drivers
-//    SPrint(DirName, 255, L"%s\\drivers", SelfDirPath);
+//    UnicodeSPrint(DirName, 255, L"%s\\drivers", SelfDirPath);
 //    ScanDriverDir(DirName);
 //    Print(L"Scanning for drivers in /efi/refit/drivers complete\n");
     // load drivers from /efi/drivers
@@ -1192,22 +1192,30 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   // further bootstrap (now with config available)
   SetupScreen();
   DBG("SetupScreen ok\n");
+  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
   
   LoadDrivers();
   DBG("LoadDrivers ok\n");
+  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
   
   ScanVolumes();
   DBG("ScanVolumes ok\n");
   //   DebugPause();
+  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
   
   //setup properties
-  //  SetGraphics();
-  //DBG("SetGraphics ok\n");
-  //WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-  //gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
+  SetGraphics();
+  DBG("SetGraphics ok\n");
+  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
   
   PrepatchSmbios();
   DBG("PrepatchSmbios ok\n");
+  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
   
   GetCPUProperties();
   DBG("GetCPUProperties ok\n");

@@ -28,7 +28,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
           The buffer allocation is not packed.
 
 **/
-/*
+
 CHAR16 *
 EFIAPI
 CatPrint (
@@ -65,8 +65,8 @@ CatPrint (
     ASSERT (Str->Str != NULL);
   }
 
-  Str->MaxLen = MAX_CHAR * sizeof (UINT16);
-  if (StringSize < Str->MaxLen) {
+  Str->Maxlen = MAX_CHAR * sizeof (UINT16);
+  if (StringSize < Str->Maxlen) {
     StrCat (Str->Str, AppendStr);
     Str->Len = StringSize - sizeof (UINT16);
   }
@@ -74,7 +74,7 @@ CatPrint (
   FreePool (AppendStr);
   return Str->Str;
 }
-*/
+
 /**
   Convert Device Path to a Unicode string for printing.
 

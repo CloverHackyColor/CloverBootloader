@@ -1107,7 +1107,7 @@ BOOLEAN load_vbios_file(const CHAR8 *key, UINT16 vendor_id, UINT16 device_id, UI
 	if (!gSettings.LoadVBios)
 		return FALSE;
 	
-	SPrint(FileName, 24, L"/EFI/device/%04x_%04x_%08x.rom", vendor_id, device_id, subsys_id);
+	UnicodeSPrint(FileName, 24, L"/EFI/device/%04x_%04x_%08x.rom", vendor_id, device_id, subsys_id);
 	if (!FileExists(SelfRootDir, FileName))
 		return FALSE;
 //	Status = 

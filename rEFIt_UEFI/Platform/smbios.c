@@ -556,10 +556,10 @@ VOID GetTableType4()
   }
 
 	gCPUStructure.ExternalClock = SmbiosTable.Type4->ExternalClock * 1000 + res * 110;//MHz->kHz  
-//	SPrint(gSettings.BusSpeed, 10, L"%d", gCPUStructure.ExternalClock);
+//	UnicodeSPrint(gSettings.BusSpeed, 10, L"%d", gCPUStructure.ExternalClock);
   gSettings.BusSpeed = gCPUStructure.ExternalClock; //why duplicate??
 	gCPUStructure.CurrentSpeed = SmbiosTable.Type4->CurrentSpeed;
-//	SPrint(gSettings.CpuFreqMHz, 10, L"%d", gCPUStructure.CurrentSpeed);
+//	UnicodeSPrint(gSettings.CpuFreqMHz, 10, L"%d", gCPUStructure.CurrentSpeed);
 	gSettings.CpuFreqMHz = gCPUStructure.CurrentSpeed; 
 	return;
 }

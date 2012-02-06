@@ -573,14 +573,12 @@ DevicePathToStr (
 //
 // Internal definitions
 //
-/*#ifndef POOL_PRINT
 typedef struct {
   CHAR16  *Str;
   UINTN   Len;
   UINTN   Maxlen;
 } POOL_PRINT;
-#endif
- */
+
 typedef
 VOID
 (*DEV_PATH_FUNCTION) (
@@ -1054,7 +1052,7 @@ DevPathVendor (
           The buffer allocation is not packed.
 
 **/
-/*
+
 CHAR16 *
 EFIAPI
 CatPrint (
@@ -1062,7 +1060,7 @@ CatPrint (
   IN CHAR16           *Fmt,
   ...
   );
-*/
+
 /**
   Use SystemTable ConOut to stop video based Simple Text Out consoles from going
   to the video device. Put up LogoFile on every video device that is a console.
