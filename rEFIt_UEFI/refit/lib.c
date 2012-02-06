@@ -36,7 +36,7 @@
 
 #include "Platform.h"
 
-#define DEBUG_LIB 2
+#define DEBUG_LIB 1
 
 #if DEBUG_LIB == 2
 #define DBG(x...) AsciiPrint(x)
@@ -553,11 +553,13 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
 {
     EFI_STATUS              Status;
     EFI_DEVICE_PATH         *DevicePath, *NextDevicePath;
-    EFI_DEVICE_PATH         *DiskDevicePath, *RemainingDevicePath;
+    EFI_DEVICE_PATH         *DiskDevicePath, *RemainingDevicePath = NULL;
+  HARDDRIVE_DEVICE_PATH    *HdPath     = NULL; 
     EFI_HANDLE              WholeDiskHandle;
     UINTN                   PartialLength = 0;
     EFI_FILE_SYSTEM_INFO    *FileSystemInfoPtr;
     BOOLEAN                 Bootable;
+//  EFI_INPUT_KEY Key;
     
     // get device path
     Volume->DevicePath = DuplicateDevicePath(DevicePathFromHandle(Volume->DeviceHandle));
@@ -639,8 +641,10 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
         Volume->DiskKind = DISK_KIND_INTERNAL;
         break;
       }
-      DBG("NextDevicePath\n");
+//      DBG("NextDevicePath\n");
       DevicePath = NextDevicePath;
+//      WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+//      gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
     }
 /*  what is the bread?
      // Bootable = TRUE;
@@ -655,20 +659,62 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
         }
  */   
   //search for WholeDisk
+  //  DBG("search for partition\n");
   DevicePath = Volume->DevicePath;
-  while (!IsDevicePathEnd (DevicePath)) {
-    NextDevicePath = NextDevicePathNode(DevicePath);
-    if (IsDevicePathEndType(NextDevicePath)) {
-      break;
+	//
+	// find the partition device path node
+	//
+	while (!IsDevicePathEnd (DevicePath)) {
+		if ((DevicePathType (DevicePath) == MEDIA_DEVICE_PATH) &&
+        (DevicePathSubType (DevicePath) == MEDIA_HARDDRIVE_DP)) {
+			HdPath = (HARDDRIVE_DEVICE_PATH *)DevicePath;
+//			break;
+		}		
+		DevicePath = NextDevicePathNode (DevicePath);
+	}
+    if (HdPath) {
+ //     Print(L"Partition found %s\n", DevicePathToStr((EFI_DEVICE_PATH *)HdPath));
+      PartialLength = (UINTN)((UINT8 *)HdPath - (UINT8 *)(Volume->DevicePath));
+//      DBG("PartialLength=%d\n", PartialLength);
+      DiskDevicePath = (EFI_DEVICE_PATH *)AllocatePool(PartialLength + sizeof(EFI_DEVICE_PATH));
+      CopyMem(DiskDevicePath, Volume->DevicePath, PartialLength);
+      CopyMem((UINT8 *)DiskDevicePath + PartialLength, DevicePath, sizeof(EFI_DEVICE_PATH)); //EndDevicePath
+ //     Print(L"WholeDevicePath  %s\n", DevicePathToStr(DiskDevicePath));
+      RemainingDevicePath = DiskDevicePath;
+      Status = gBS->LocateDevicePath(&gEfiDevicePathProtocolGuid, &RemainingDevicePath, &WholeDiskHandle);
+      if (EFI_ERROR(Status)) {
+//        Print(L"Can't find WholeDevicePath: %r\n", Status);
+//        WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+//        gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
+      } else {
+//        Print(L"  - original handle: %x - whole disk handle: %x\n", (UINTN)Volume->DeviceHandle, (UINTN)WholeDiskHandle);
+        Volume->WholeDiskDevicePath = DuplicateDevicePath(DiskDevicePath);
+        // look at the BlockIO protocol
+        Status = gBS->HandleProtocol(WholeDiskHandle, &gEfiBlockIoProtocolGuid, (VOID **) &Volume->WholeDiskBlockIO);
+        if (!EFI_ERROR(Status)) {
+          DBG("WholeDiskBlockIO BlockSize=%d\n", Volume->WholeDiskBlockIO->Media->BlockSize);
+          // check the media block size
+          if (Volume->WholeDiskBlockIO->Media->BlockSize == 2048)
+            Volume->DiskKind = DISK_KIND_OPTICAL;
+          
+        } else {
+          Volume->WholeDiskBlockIO = NULL;
+          DBG("no WholeDiskBlockIO: %r\n", Status);
+          
+          //CheckError(Status, L"from HandleProtocol");
+        }
+      }
+      FreePool(DiskDevicePath);
+//      WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+//      gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
     }
-    DevicePath = NextDevicePath;
-  }
+  
   
      //TODO - look for MatchPartitionDevicePathNode   
-        if (DevicePathType(DevicePath) == MESSAGING_DEVICE_PATH) {
+/*        if (DevicePathType(DevicePath) == MESSAGING_DEVICE_PATH) {
             // 
           DBG("make a device path for the whole device\n");
-          PartialLength = (UINT8 *)DevicePath - (UINT8 *)(Volume->DevicePath);
+          PartialLength = (UINTN)((UINT8 *)DevicePath - (UINT8 *)(Volume->DevicePath));
           DBG("PartialLength=%d\n", PartialLength);
           DiskDevicePath = (EFI_DEVICE_PATH *)AllocatePool(PartialLength + sizeof(EFI_DEVICE_PATH));
           CopyMem(DiskDevicePath, Volume->DevicePath, PartialLength);
@@ -712,18 +758,21 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
             } //else
               //  CheckError(Status, L"from LocateDevicePath");
         }
-    
+*/    
     if (!Bootable) {
 #if REFIT_DEBUG > 0
-        if (Volume->HasBootCode)
-            Print(L"  Volume considered non-bootable, but boot code is present\n");
+      if (Volume->HasBootCode){
+        DBG("  Volume considered non-bootable, but boot code is present\n");
+ //       WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+ //       gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
+      }
 #endif
         Volume->HasBootCode = FALSE;
     }
-  DBG("search volume icon\n");
+//  DBG("search volume icon\n");
     // default volume icon based on disk kind
     ScanVolumeDefaultIcon(Volume);
-    DBG("search volume icon finished\n");
+//    DBG("search volume icon finished\n");
     // open the root directory of the volume
     Volume->RootDir = EfiLibOpenRoot(Volume->DeviceHandle);
     if (Volume->RootDir == NULL) {
@@ -735,11 +784,13 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
   //    Volume->VolName =  L"Legacy OS";
       return;
     }
-    DBG("RootDir found\n");
+//    DBG("RootDir found\n");
     // get volume name
     FileSystemInfoPtr = LibFileSystemInfo(Volume->RootDir);
     if (FileSystemInfoPtr != NULL) {
-      Print(L"  Volume %s\n", FileSystemInfoPtr->VolumeLabel);
+//      Print(L"  Volume %s\n", FileSystemInfoPtr->VolumeLabel);
+//      WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+//      gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
       Volume->VolName = EfiStrDuplicate(FileSystemInfoPtr->VolumeLabel);
       Status = GetOSVersion(Volume); //here we set tiger,leo,snow,lion
       if (EFI_ERROR(Status)) {
@@ -749,10 +800,12 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
       
       FreePool(FileSystemInfoPtr);
     } else {
-        Print(L"Warning: Can't get volume info.\n");
+//        Print(L"Warning: Can't get volume info.\n");
+//      WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+//      gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
         // NOTE: this is normal for Apple's VenMedia device paths
     }
-    DBG("VolName found\n");
+//    DBG("VolName found\n");
     // TODO: if no official volume name is found or it is empty, use something else, e.g.:
     //   - name from bytes 3 to 10 of the boot sector
     //   - partition number
@@ -763,7 +816,9 @@ static VOID ScanVolume(IN OUT REFIT_VOLUME *Volume)
         Volume->VolBadgeImage = LoadIcns(Volume->RootDir, L".VolumeIcon.icns", 32);
     DBG("VolBadgeImage found\n");
   }
-  DBG("ScanVolume finished\n");
+//  DBG("ScanVolume finished\n");
+//  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+//  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
 }
 
 static VOID ScanExtendedPartition(REFIT_VOLUME *WholeDiskVolume, MBR_PARTITION_INFO *MbrEntry)

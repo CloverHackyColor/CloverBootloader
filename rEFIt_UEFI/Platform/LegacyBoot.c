@@ -422,7 +422,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
 	if (EFI_ERROR(Status)) {
 		return Status;
 	}
-  Status = mCpu->EnableInterrupt(mCpu);
+//  Status = mCpu->EnableInterrupt(mCpu);
   
   Status = gLegacy8259->GetMask(gLegacy8259, &OldMask, NULL, NULL, NULL);
 	
