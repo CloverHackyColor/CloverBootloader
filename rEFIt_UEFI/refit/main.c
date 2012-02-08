@@ -1117,7 +1117,7 @@ static VOID LoadDrivers(VOID)
 //    CHAR16                  DirName[256];
   BOOLEAN ReconnectAll = TRUE; //TODO - find a reason to not reconnect
     
-    Print(L"Scanning for drivers...\n");
+//    Print(L"Scanning for drivers...\n");
     
     // load drivers from /efi/refit/drivers
 //    UnicodeSPrint(DirName, 255, L"%s\\drivers", SelfDirPath);
@@ -1125,7 +1125,7 @@ static VOID LoadDrivers(VOID)
 //    Print(L"Scanning for drivers in /efi/refit/drivers complete\n");
     // load drivers from /efi/drivers
     ScanDriverDir(L"\\EFI\\drivers");
-    Print(L"Scanning for drivers in /EFI/drivers complete\n");
+//    Print(L"Scanning for drivers in /EFI/drivers complete\n");
     // connect all devices
     //    BdsLibConnectAllDriversToAllControllers();
     //
@@ -1170,19 +1170,19 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	
 	InitBooterLog();
   InitScreen();
-  DBG("InitScreen ok\n");
+//  DBG("InitScreen ok\n");
   
   Status = InitRefitLib(ImageHandle);
   if (EFI_ERROR(Status))
     return Status;
-  DBG("InitRefitLib ok\n");
+//  DBG("InitRefitLib ok\n");
   
   InitializeUnicodeCollationProtocol();
-  DBG("InitializeUnicodeCollationProtocol ok\n");
+//  DBG("InitializeUnicodeCollationProtocol ok\n");
   
   // read GUI configuration
   ReadConfig();
-  DBG("ReadConfig ok\n");
+//  DBG("ReadConfig ok\n");
   
   MainMenu.TimeoutSeconds = GlobalConfig.Timeout;
   
@@ -1191,52 +1191,52 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   // further bootstrap (now with config available)
   SetupScreen();
-  DBG("SetupScreen ok\n");
-  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
+//  DBG("SetupScreen ok\n");
+//  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+//  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
   
   LoadDrivers();
-  DBG("LoadDrivers ok\n");
-  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
+//  DBG("LoadDrivers ok\n");
+//  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+//  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
   
   ScanVolumes();
   DBG("ScanVolumes ok\n");
   //   DebugPause();
-  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
+  //  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+  //  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
   
   //setup properties
   SetGraphics();
-  DBG("SetGraphics ok\n");
-  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
+//  DBG("SetGraphics ok\n");
+//  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+//  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
   
   PrepatchSmbios();
-  DBG("PrepatchSmbios ok\n");
-  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
+//  DBG("PrepatchSmbios ok\n");
+//  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+//  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
   
   GetCPUProperties();
-  DBG("GetCPUProperties ok\n");
-  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
+//  DBG("GetCPUProperties ok\n");
+//  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+//  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
   
   ScanSPD();
-  DBG("ScanSPD ok\n");
-  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
+//  DBG("ScanSPD ok\n");
+//  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+//  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
   
   SetPrivateVarProto();
-  DBG("SetPrivateVarProto ok\n");
-  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
+//  DBG("SetPrivateVarProto ok\n");
+//  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+//  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
   
   GetDefaultSettings();
   DBG("GetDefaultSettings ok\n");
   WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
   gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
-  
+  Size = 0;
   Status = gRS->GetVariable(L"boot-args",
                             &gEfiAppleBootGuid,  NULL,
                             &Size, 										   
@@ -1252,6 +1252,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
                                  Buffer);
 		}		
 	}
+  DBG("BootArgs Size=%d\n", Size);
+  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
+  
 	if (Status == EFI_SUCCESS)
 		CopyMem(gSettings.BootArgs, Buffer, Size);			
 

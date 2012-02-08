@@ -83,6 +83,7 @@ EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
     CHAR16      *DevicePathAsString;
     CHAR16      BaseDirectory[256];
     UINTN       i;
+  EFI_INPUT_KEY Key;
     
     SelfImageHandle = ImageHandle;
     Status = gBS->HandleProtocol(SelfImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &SelfLoadedImage);
@@ -112,7 +113,10 @@ EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
     } else
         BaseDirectory[0] = 0;
     SelfDirPath = EfiStrDuplicate(BaseDirectory);
-    
+  Print(L"SelfDirPath = %s\n", SelfDirPath);
+  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
+  
     return FinishInitRefitLib();
 }
 
@@ -884,7 +888,7 @@ VOID ScanVolumes(VOID)
     EFI_STATUS              Status;
     UINTN                   HandleCount = 0;
     UINTN                   HandleIndex;
-    EFI_HANDLE              *Handles;
+    EFI_HANDLE              *Handles = NULL;
     REFIT_VOLUME            *Volume, *WholeDiskVolume;
     UINTN                   VolumeIndex, VolumeIndex2;
     MBR_PARTITION_INFO      *MbrTable;
