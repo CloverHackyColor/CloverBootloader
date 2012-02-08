@@ -53,6 +53,7 @@ EFI_LOADED_IMAGE *SelfLoadedImage;
 EFI_FILE         *SelfRootDir;
 EFI_FILE         *SelfDir;
 CHAR16           *SelfDirPath;
+EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *SelfFS;
 
 REFIT_VOLUME     *SelfVolume = NULL;
 REFIT_VOLUME     **Volumes = NULL;
@@ -102,8 +103,20 @@ EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
         CheckError(EFI_LOAD_ERROR, L"FOR DEBUGGING");
     }
     */
-    
-    // find the current directory
+  
+  Status = gBS->HandleProtocol (
+                                SelfLoadedImage->DeviceHandle,
+                                &gEfiSimpleFileSystemProtocolGuid,
+                                (VOID *) &SelfFS
+                                );
+	if (CheckFatalError (Status, L"while getting SelfVolume")) {
+		return EFI_LOAD_ERROR;
+	}
+  
+	//		DBG(L"Volume found\n");
+  
+  
+  // find the current directory
     DevicePathAsString = DevicePathToStr(SelfLoadedImage->FilePath);
     if (DevicePathAsString != NULL) {
         StrCpy(BaseDirectory, DevicePathAsString);
@@ -151,7 +164,8 @@ EFI_STATUS ReinitRefitLib(VOID)
     return FinishInitRefitLib();
 }
 
-static EFI_STATUS FinishInitRefitLib(VOID)
+//static
+EFI_STATUS FinishInitRefitLib(VOID)
 {    
     EFI_STATUS  Status;
     
@@ -929,7 +943,7 @@ VOID ScanVolumes(VOID)
       }
     }
     FreePool(Handles);
-  DBG("Fount %d volumes\n", VolumesCount);
+  DBG("Found %d volumes\n", VolumesCount);
     if (SelfVolume == NULL)
         Print(L"WARNING: SelfVolume not found"); //Slice - and what?
     
