@@ -156,7 +156,7 @@ EFI_STATUS GetUserSettings(IN REFIT_VOLUME *Volume, CHAR16* ConfigPlistPath)
 	
 	
 	// load config
-  if (FileExists(Volume->RootDir, ConfigPlistPath)) {
+  if ((Volume != NULL) && FileExists(Volume->RootDir, ConfigPlistPath)) {
     Status = egLoadFile(Volume->RootDir, ConfigPlistPath, (UINT8**)&gConfigPtr, &size);
   } 
   if (EFI_ERROR(Status)) {
@@ -363,6 +363,10 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 	TagPtr						prop = NULL;
   CHAR16*     SystemPlist = L"System\\Library\\CoreServices\\SystemVersion.plist";
   CHAR16*     ServerPlist = L"System\\Library\\CoreServices\\ServerVersion.plist";
+  
+  if (!Volume) {
+    return EFI_NOT_FOUND;
+  }
   
 	/* Mac OS X */ 
 	if(FileExists(Volume->RootDir, SystemPlist)) 

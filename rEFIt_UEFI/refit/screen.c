@@ -47,7 +47,7 @@ CHAR16 *BlankLine;
 static VOID SwitchToText(IN BOOLEAN CursorEnabled);
 static VOID SwitchToGraphics(VOID);
 static VOID DrawScreenHeader(IN CHAR16 *Title);
-static VOID PauseForKey(VOID);
+
 
 // UGA defines and variables
 
@@ -150,7 +150,7 @@ VOID FinishTextScreen(IN BOOLEAN WaitAlways)
 {
     if (haveError || WaitAlways) {
         SwitchToText(FALSE);
-        PauseForKey();
+        PauseForKey(L"");
     }
     
     // reset error flag
@@ -184,7 +184,7 @@ VOID FinishExternalScreen(VOID)
     
     if (haveError) {
         SwitchToText(FALSE);
-        PauseForKey();
+        PauseForKey(L"");
     }
     
     // reset error flag
@@ -247,10 +247,12 @@ static BOOLEAN ReadAllKeyStrokes(VOID)
     return GotKeyStrokes;
 }
 
-static VOID PauseForKey(VOID)
+VOID PauseForKey(CHAR16* msg)
 {
     UINTN index;
-    
+    if (msg) {
+      Print(L"\n %s", msg);
+    }
     Print(L"\n* Hit any key to continue *");
     
     if (ReadAllKeyStrokes()) {  // remove buffered key strokes
@@ -269,7 +271,7 @@ VOID DebugPause(VOID)
 {
     // show console and wait for key
     SwitchToText(FALSE);
-    PauseForKey();
+    PauseForKey(L"");
     
     // reset error flag
     haveError = FALSE;

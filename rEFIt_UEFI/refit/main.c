@@ -1158,7 +1158,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   UINTN             MenuExit;
   UINTN             Size, i;
   UINT8             *Buffer = NULL;
-  EFI_INPUT_KEY Key;
+//  EFI_INPUT_KEY Key;
   
   // bootstrap
   //    InitializeLib(ImageHandle, SystemTable);
@@ -1190,52 +1190,40 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   gBS->SetWatchdogTimer(0x0000, 0x0000, 0x0000, NULL);
   
   // further bootstrap (now with config available)
-  SetupScreen();
-//  DBG("SetupScreen ok\n");
-//  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-//  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
-  
+  //  SetupScreen();
+//  PauseForKey(L"SetupScreen ok");
+
   LoadDrivers();
-//  DBG("LoadDrivers ok\n");
-//  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-//  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
+  PauseForKey(L"LoadDrivers ok");
+
+  //Now we have to reinit handles
+ /* UninitRefitLib();
+  Status = InitRefitLib(ImageHandle);
+  if (EFI_ERROR(Status)){
+    DBG("Error reinit refit %r\n", Status);
+    WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+    gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
+    return Status;
+  }
+  */
   
   ScanVolumes();
-  DBG("ScanVolumes ok\n");
-  //   DebugPause();
-  //  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-  //  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
+  PauseForKey(L"ScanVolumes ok");
   
   //setup properties
   SetGraphics();
-//  DBG("SetGraphics ok\n");
-//  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-//  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
   
   PrepatchSmbios();
-//  DBG("PrepatchSmbios ok\n");
-//  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-//  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
   
   GetCPUProperties();
-//  DBG("GetCPUProperties ok\n");
-//  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-//  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
   
   ScanSPD();
-//  DBG("ScanSPD ok\n");
-//  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-//  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
   
   SetPrivateVarProto();
-//  DBG("SetPrivateVarProto ok\n");
-//  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-//  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
   
   GetDefaultSettings();
-  DBG("GetDefaultSettings ok\n");
-  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
+  PauseForKey(L"GetDefaultSettings ok");
+
   Size = 0;
   Status = gRS->GetVariable(L"boot-args",
                             &gEfiAppleBootGuid,  NULL,
@@ -1252,20 +1240,18 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
                                  Buffer);
 		}		
 	}
-  DBG("BootArgs Size=%d\n", Size);
-  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
   
-	if (Status == EFI_SUCCESS)
+  DBG("BootArgs Size=%d\n", Size);
+  PauseForKey(L"BootArgs ok");
+  
+	if ((Status == EFI_SUCCESS) && (Size != 0))
 		CopyMem(gSettings.BootArgs, Buffer, Size);			
 
   //Second step. Load config.plist into gSettings	
 	GetUserSettings(SelfVolume, L"EFI\\config.plist");
-  DBG("config.plist read ok\n");
-  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
+  PauseForKey(L"config.plist read ok");
   
-  // scan for loaders and tools, add them to the menu
+  // scan for loaders and tools, add then to the menu
   if (GlobalConfig.LegacyFirst)
     ScanLegacy();
   ScanLoader();
@@ -1275,25 +1261,21 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     ScanTool();
   }
   
-  DebugPause();
+  PauseForKey(L"scan for loaders and tools ok");
   
   // fixed other menu entries
   if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
     MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
     AddMenuEntry(&MainMenu, &MenuEntryAbout);
-    DBG("menu About added\n");
-    WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-    gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
+    PauseForKey(L"menu About added ok");
   }
+  
   if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.EntryCount == 0) {
     MenuEntryShutdown.Image = BuiltinIcon(BUILTIN_ICON_FUNC_SHUTDOWN);
     AddMenuEntry(&MainMenu, &MenuEntryShutdown);
     MenuEntryReset.Image = BuiltinIcon(BUILTIN_ICON_FUNC_RESET);
     AddMenuEntry(&MainMenu, &MenuEntryReset);
-    DBG("menu Reset/Shutdown added\n");
-    WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-    gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
-    
+    PauseForKey(L"menu Reset/Shutdown added ok");
   }
   
   // assign shortcut keys
@@ -1302,10 +1284,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     
     // wait for user ACK when there were errors
     FinishTextScreen(FALSE);
-  DBG("Enter main menu\n");
-  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
-
+//  PauseForKey(L"Enter main menu ok");  //--no more text
     
     while (MainLoopRunning) {
       MenuExit = RunMainMenu(&MainMenu, GlobalConfig.DefaultSelection, &ChosenEntry);

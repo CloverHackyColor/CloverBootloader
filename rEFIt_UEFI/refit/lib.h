@@ -127,6 +127,8 @@ extern EFI_LOADED_IMAGE *SelfLoadedImage;
 extern EFI_FILE         *SelfRootDir;
 extern EFI_FILE         *SelfDir;
 extern CHAR16           *SelfDirPath;
+extern EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *SelfFS;
+extern EFI_DEVICE_PATH * SelfDevicePath;
 
 extern REFIT_VOLUME     *SelfVolume;
 extern REFIT_VOLUME     **Volumes;
@@ -135,6 +137,7 @@ extern UINTN            VolumesCount;
 EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle);
 VOID UninitRefitLib(VOID);
 EFI_STATUS ReinitRefitLib(VOID);
+VOID PauseForKey(IN CHAR16 *Msg);
 
 VOID CreateList(OUT VOID ***ListPtr, OUT UINTN *ElementCount, IN UINTN InitialElementCount);
 VOID AddListElement(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount, IN VOID *NewElement);
