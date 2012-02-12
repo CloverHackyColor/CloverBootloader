@@ -16,7 +16,7 @@
 
 [Defines]
   INF_VERSION                   = 0x00010005
-  BASE_NAME                     = rEFIt_UEFI
+  BASE_NAME                     = BOOTIA32
   FILE_GUID                     = 8F7D7B1E-0E1C-4c98-B12E-4EC99C4081AC
   MODULE_TYPE                   = UEFI_APPLICATION
   EDK_RELEASE_VERSION			= 0x00020000
@@ -32,7 +32,7 @@
 
 [Sources]
   EfiLib/BmLib.c
-  EfiLib/DevicePath.c
+#  EfiLib/DevicePath.c #included into GenericBdsLib
  # EfiLib/BdsConnect.c #included into GenericBdsLib
   refit/main.c
   refit/config.c
@@ -124,6 +124,8 @@
   IoLib
   HiiLib
   EfiFileLib
+  PeCoffLib
+  GenericBdsLib
 
 [Guids]
   gEfiAcpiTableGuid

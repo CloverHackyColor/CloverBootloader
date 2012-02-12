@@ -44,13 +44,13 @@
 #include "libeg.h"
 //#include <Library/EfiShellLib.h>
 //#include "IO.h"
-#define REFIT_DEBUG (1)
+#define REFIT_DEBUG (2)
 #include "GenericBdsLib.h"
 
-extern EFI_HANDLE					gImageHandle;
+extern EFI_HANDLE             gImageHandle;
 extern EFI_SYSTEM_TABLE*			gST;
 extern EFI_BOOT_SERVICES*			gBS; 
-extern EFI_RUNTIME_SERVICES*		gRS;
+extern EFI_RUNTIME_SERVICES*	gRS;
 
 
 //
@@ -78,6 +78,7 @@ typedef struct {
 #define DISK_KIND_OPTICAL   (2)
 #define DISK_KIND_FIREWIRE	(3)
 #define DISK_KIND_NODISK 		(4)
+#define DISK_KIND_BOOTER 		(5)
 
 #define BOOTING_BY_BOOTLOADER	(1)
 #define BOOTING_BY_EFI        (2)
@@ -135,9 +136,10 @@ extern REFIT_VOLUME     **Volumes;
 extern UINTN            VolumesCount;
 
 EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle);
-VOID UninitRefitLib(VOID);
+VOID       UninitRefitLib(VOID);
 EFI_STATUS ReinitRefitLib(VOID);
-VOID PauseForKey(IN CHAR16 *Msg);
+EFI_STATUS FinishInitRefitLib(VOID);
+VOID       PauseForKey(IN CHAR16 *Msg);
 
 VOID CreateList(OUT VOID ***ListPtr, OUT UINTN *ElementCount, IN UINTN InitialElementCount);
 VOID AddListElement(IN OUT VOID ***ListPtr, IN OUT UINTN *ElementCount, IN VOID *NewElement);
@@ -151,12 +153,12 @@ BOOLEAN FileExists(IN EFI_FILE *BaseDir, IN CHAR16 *RelativePath);
 
 EFI_STATUS DirNextEntry(IN EFI_FILE *Directory, IN OUT EFI_FILE_INFO **DirEntry, IN UINTN FilterMode);
 
-VOID DirIterOpen(IN EFI_FILE *BaseDir, IN CHAR16 *RelativePath OPTIONAL, OUT REFIT_DIR_ITER *DirIter);
+VOID    DirIterOpen(IN EFI_FILE *BaseDir, IN CHAR16 *RelativePath OPTIONAL, OUT REFIT_DIR_ITER *DirIter);
 BOOLEAN DirIterNext(IN OUT REFIT_DIR_ITER *DirIter, IN UINTN FilterMode, IN CHAR16 *FilePattern OPTIONAL, OUT EFI_FILE_INFO **DirEntry);
 EFI_STATUS DirIterClose(IN OUT REFIT_DIR_ITER *DirIter);
 
 CHAR16 * Basename(IN CHAR16 *Path);
-VOID ReplaceExtension(IN OUT CHAR16 *Path, IN CHAR16 *Extension);
+VOID   ReplaceExtension(IN OUT CHAR16 *Path, IN CHAR16 *Extension);
 
 INTN FindMem(IN VOID *Buffer, IN UINTN BufferLength, IN VOID *SearchString, IN UINTN SearchStringLength);
 

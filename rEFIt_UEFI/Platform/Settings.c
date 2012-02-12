@@ -57,7 +57,7 @@ UINT16                          gResetValue;
   return Status;
 }*/
 
-EFI_STATUS GetNVRAMSettings(IN REFIT_VOLUME *Volume, CHAR16* NVRAMPlistPath)
+EFI_STATUS GetNVRAMSettings(IN EFI_FILE *RootDir, CHAR16* NVRAMPlistPath)
 {
 	EFI_STATUS	Status;
 	UINTN     size;
@@ -68,7 +68,7 @@ EFI_STATUS GetNVRAMSettings(IN REFIT_VOLUME *Volume, CHAR16* NVRAMPlistPath)
 	TagPtr		dictPointer;
 	UINT32		pos = 0;
 	
-	Status = egLoadFile(Volume->RootDir, NVRAMPlistPath, (UINT8**)&gNvramPtr, &size);
+	Status = egLoadFile(RootDir, NVRAMPlistPath, (UINT8**)&gNvramPtr, &size);
 	if(EFI_ERROR(Status))
 	{
 		DBG("Error loading nvram.plist!\n");
@@ -144,7 +144,7 @@ EFI_STATUS GetNVRAMSettings(IN REFIT_VOLUME *Volume, CHAR16* NVRAMPlistPath)
 	return Status;
 }	
 
-EFI_STATUS GetUserSettings(IN REFIT_VOLUME *Volume, CHAR16* ConfigPlistPath)
+EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, CHAR16* ConfigPlistPath)
 {
 	EFI_STATUS	Status = EFI_NOT_FOUND;
 	UINTN		size;
@@ -156,8 +156,8 @@ EFI_STATUS GetUserSettings(IN REFIT_VOLUME *Volume, CHAR16* ConfigPlistPath)
 	
 	
 	// load config
-  if ((Volume != NULL) && FileExists(Volume->RootDir, ConfigPlistPath)) {
-    Status = egLoadFile(Volume->RootDir, ConfigPlistPath, (UINT8**)&gConfigPtr, &size);
+  if ((RootDir != NULL) && FileExists(RootDir, ConfigPlistPath)) {
+    Status = egLoadFile(RootDir, ConfigPlistPath, (UINT8**)&gConfigPtr, &size);
   } 
   if (EFI_ERROR(Status)) {
     Status = egLoadFile(SelfRootDir, ConfigPlistPath, (UINT8**)&gConfigPtr, &size);

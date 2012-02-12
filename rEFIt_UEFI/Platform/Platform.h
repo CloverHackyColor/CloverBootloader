@@ -416,8 +416,8 @@ VOID            GetCPUProperties (VOID);
 MACHINE_TYPES   GetDefaultModel(VOID);
 UINT16          GetAdvancedCpuType(VOID);
 EFI_STATUS      GetOSVersion(IN REFIT_VOLUME *Volume);
-EFI_STATUS      GetUserSettings(IN REFIT_VOLUME *Volume, CHAR16* ConfigPlistPath);
-EFI_STATUS      GetNVRAMSettings(IN REFIT_VOLUME *Volume, CHAR16* NVRAMPlistPath);
+EFI_STATUS      GetUserSettings(IN EFI_FILE *RootDir, CHAR16* ConfigPlistPath);
+EFI_STATUS      GetNVRAMSettings(IN EFI_FILE *RootDir, CHAR16* NVRAMPlistPath);
 EFI_STATUS      GetEdid(VOID);
 
 EFI_STATUS
@@ -439,7 +439,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev);
 
 EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha);
 
-EFI_STATUS  PatchACPI(IN REFIT_VOLUME *Volume);
+EFI_STATUS  PatchACPI(IN EFI_FILE *RootDir);
 UINT8       Checksum8(VOID * startPtr, UINT32 len);
 
 EFI_STATUS EventsInitialize (

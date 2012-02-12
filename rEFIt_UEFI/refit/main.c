@@ -282,7 +282,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   BeginExternalScreen(Entry->UseGraphicsMode, L"Booting OS");
   SetPrivateVarProto();
   PatchSmbios();
-  PatchACPI(Entry->Volume);
+  PatchACPI(Entry->Volume->RootDir);
   SetVariablesForOSX();
   FinalizeSmbios();
   SetupBooterLog();
@@ -1044,74 +1044,7 @@ static VOID ScanDriverDir(IN CHAR16 *Path) //path to folder
     }
 }
       //Slice - I am proposed to use UEFI2.3.1 BdsLib
-/*
-static EFI_STATUS ConnectAllDriversToAllControllers(VOID)
-{
-    EFI_STATUS  Status;
-    UINTN       AllHandleCount;
-    EFI_HANDLE  *AllHandleBuffer;
-    UINTN       Index;
-    UINTN       HandleCount;
-    EFI_HANDLE  *HandleBuffer;
-    UINT32      *HandleType;
-    UINTN       HandleIndex;
-    BOOLEAN     Parent;
-    BOOLEAN     Device;
-    
-    Status = gBS->LocateHandleBuffer(AllHandles,
-                             NULL,
-                             NULL,
-                             &AllHandleCount,
-                             &AllHandleBuffer);
-    if (EFI_ERROR(Status))
-        return Status;
-    
-    for (Index = 0; Index < AllHandleCount; Index++) {
-        //
-        // Scan the handle database
-        //
-        Status = LibScanHandleDatabase(NULL,
-                                       NULL,
-                                       AllHandleBuffer[Index],
-                                       NULL,
-                                       &HandleCount,
-                                       &HandleBuffer,
-                                       &HandleType);
-        if (EFI_ERROR (Status))
-            goto Done;
-        
-        Device = TRUE;
-        if (HandleType[Index] & EFI_HANDLE_TYPE_DRIVER_BINDING_HANDLE)
-            Device = FALSE;
-        if (HandleType[Index] & EFI_HANDLE_TYPE_IMAGE_HANDLE)
-            Device = FALSE;
-        
-        if (Device) {
-            Parent = FALSE;
-            for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
-                if (HandleType[HandleIndex] & EFI_HANDLE_TYPE_PARENT_HANDLE)
-                    Parent = TRUE;
-            }
-            
-            if (!Parent) {
-                if (HandleType[Index] & EFI_HANDLE_TYPE_DEVICE_HANDLE) {
-                    Status = gBS->ConnectController(AllHandleBuffer[Index],
-                                                   NULL,
-                                                   NULL,
-                                                   TRUE);
-                }
-            }
-        }
-        
-        FreePool (HandleBuffer);
-        FreePool (HandleType);
-    }
-    
-Done:
-    FreePool (AllHandleBuffer);
-    return Status;
-}
-*/
+
 static VOID LoadDrivers(VOID)
 {
 //    CHAR16                  DirName[256];
@@ -1136,7 +1069,7 @@ static VOID LoadDrivers(VOID)
     BdsLibConnectAll ();
   }
   
-	Print(L"Drivers connected\n");
+	DBG("Drivers connected\n");
 }
 
 //
@@ -1197,16 +1130,16 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   PauseForKey(L"LoadDrivers ok");
 
   //Now we have to reinit handles
- /* UninitRefitLib();
-  Status = InitRefitLib(ImageHandle);
+/*  UninitRefitLib();
+  Status = FinishInitRefitLib();
   if (EFI_ERROR(Status)){
-    DBG("Error reinit refit %r\n", Status);
-    WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-    gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
+    DBG(" %r", Status);
+    PauseForKey(L"Error reinit refit\n");
     return Status;
+  } else {
+    PauseForKey(L"Reinit refitLib OK\n");
   }
-  */
-  
+*/  
   ScanVolumes();
   PauseForKey(L"ScanVolumes ok");
   
@@ -1242,13 +1175,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	}
   
   DBG("BootArgs Size=%d\n", Size);
-  PauseForKey(L"BootArgs ok");
+//  PauseForKey(L"BootArgs ok");
   
 	if ((Status == EFI_SUCCESS) && (Size != 0))
 		CopyMem(gSettings.BootArgs, Buffer, Size);			
 
   //Second step. Load config.plist into gSettings	
-	GetUserSettings(SelfVolume, L"EFI\\config.plist");
+	GetUserSettings(SelfRootDir, L"EFI\\config.plist");
   PauseForKey(L"config.plist read ok");
   
   // scan for loaders and tools, add then to the menu
@@ -1261,13 +1194,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     ScanTool();
   }
   
-  PauseForKey(L"scan for loaders and tools ok");
+//  PauseForKey(L"scan for loaders and tools ok");
   
   // fixed other menu entries
   if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
     MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
     AddMenuEntry(&MainMenu, &MenuEntryAbout);
-    PauseForKey(L"menu About added ok");
+//    PauseForKey(L"menu About added ok");
   }
   
   if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.EntryCount == 0) {
@@ -1275,7 +1208,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     AddMenuEntry(&MainMenu, &MenuEntryShutdown);
     MenuEntryReset.Image = BuiltinIcon(BUILTIN_ICON_FUNC_RESET);
     AddMenuEntry(&MainMenu, &MenuEntryReset);
-    PauseForKey(L"menu Reset/Shutdown added ok");
+//    PauseForKey(L"menu Reset/Shutdown added ok");
   }
   
   // assign shortcut keys

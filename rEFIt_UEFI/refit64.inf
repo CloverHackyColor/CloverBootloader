@@ -32,7 +32,7 @@
 
 [Sources]
   EfiLib/BmLib.c
-  EfiLib/DevicePath.c
+ # EfiLib/DevicePath.c
  # EfiLib/BdsConnect.c #included into GenericBdsLib
   refit/main.c
   refit/config.c

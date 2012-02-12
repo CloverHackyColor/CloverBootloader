@@ -205,7 +205,7 @@ UINT64* ScanXSDT (XSDT_TABLE *Xsdt, UINT32 Signature)
 	return NULL;
 }
 
-EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
+EFI_STATUS PatchACPI(IN EFI_FILE *RootDir)
 {
 	EFI_STATUS										Status = EFI_SUCCESS;
 	UINTN                         Index;
@@ -447,8 +447,8 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       Status = egLoadFile(SelfRootDir, PathDsdtMini, &buffer, &bufferLen);
     }
   }
-  if (EFI_ERROR(Status) && FileExists(Volume->RootDir, PathDsdt)) {
-    Status = egLoadFile(Volume->RootDir, PathDsdt, &buffer, &bufferLen);
+  if (EFI_ERROR(Status) && FileExists(RootDir, PathDsdt)) {
+    Status = egLoadFile(RootDir, PathDsdt, &buffer, &bufferLen);
   }
   if (EFI_ERROR(Status) && FileExists(SelfRootDir, PathPatched)) {
     Status = egLoadFile(SelfRootDir, PathPatched, &buffer, &bufferLen);
