@@ -25,7 +25,6 @@
 		122336BF13377E050033F008 /* libscreen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libscreen.c; sourceTree = "<group>"; };
 		122336C013377E050033F008 /* text.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = text.c; sourceTree = "<group>"; };
 		122336C213377E150033F008 /* config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = config.c; sourceTree = "<group>"; };
-		122336C313377E150033F008 /* Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Handle.h; sourceTree = "<group>"; };
 		122336C413377E150033F008 /* icns.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = icns.c; sourceTree = "<group>"; };
 		122336C513377E150033F008 /* lib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lib.c; sourceTree = "<group>"; };
 		122336C613377E150033F008 /* lib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lib.h; sourceTree = "<group>"; };
@@ -156,7 +155,6 @@
 			isa = PBXGroup;
 			children = (
 				122336C213377E150033F008 /* config.c */,
-				122336C313377E150033F008 /* Handle.h */,
 				122336C413377E150033F008 /* icns.c */,
 				12CB91AB14276D8E009EDAF2 /* IO.h */,
 				12CB917114276985009EDAF2 /* IO.c */,

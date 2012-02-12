@@ -39,11 +39,11 @@ Revision History
 #define EFI_HANDLE_TYPE_CHILD_HANDLE                0x400
 
 EFI_FILE_SYSTEM_INFO              *
-LibFileSystemInfo (
+EfiLibFileSystemInfo (
   IN EFI_FILE_HANDLE                FHand
   );
 
-EFI_FILE_SYSTEM_VOLUME_LABEL_INFO *
+/*EFI_FILE_SYSTEM_VOLUME_LABEL_INFO *
 LibFileSystemVolumeLabelInfo (
   IN EFI_FILE_HANDLE                FHand
   );
@@ -72,7 +72,7 @@ LibGetParentControllerHandles (
   UINTN       *ParentControllerHandleCount,
   EFI_HANDLE  **ParentControllerHandleBuffer
   );
-
+*/
 EFI_STATUS
 LibGetManagedChildControllerHandles (
   EFI_HANDLE  DriverBindingHandle,

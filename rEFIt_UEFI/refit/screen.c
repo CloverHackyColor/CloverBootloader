@@ -249,6 +249,7 @@ static BOOLEAN ReadAllKeyStrokes(VOID)
 
 VOID PauseForKey(CHAR16* msg)
 {
+#if REFIT_DEBUG > 0  
     UINTN index;
     if (msg) {
       Print(L"\n %s", msg);
@@ -264,6 +265,7 @@ VOID PauseForKey(CHAR16* msg)
     ReadAllKeyStrokes();        // empty the buffer to protect the menu
     
     Print(L"\n");
+#endif
 }
 
 #if REFIT_DEBUG > 0

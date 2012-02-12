@@ -210,6 +210,7 @@ EFI_STATUS FinishInitRefitLib(VOID)
   if (CheckFatalError(Status, L"while opening our installation directory"))
     return EFI_LOAD_ERROR;
   DBG("SelfDirPath found\n");
+  
   return EFI_SUCCESS;
 }
 
@@ -584,11 +585,11 @@ static VOID ScanVolumeDefaultIcon(IN OUT REFIT_VOLUME *Volume)
         Volume->VolBadgeImage = BuiltinIcon(BUILTIN_ICON_VOL_OPTICAL);
 }
 
-EFI_FILE_SYSTEM_INFO * LibFileSystemInfo (IN EFI_FILE_HANDLE   Root)
+EFI_FILE_SYSTEM_INFO * EfiLibFileSystemInfo (IN EFI_FILE_HANDLE   Root)
 {
 	EFI_STATUS                Status = EFI_NOT_FOUND;
 	EFI_FILE_SYSTEM_INFO*			FileSystemInfo = NULL;
-	UINT32                    BufferSizeVolume;
+	UINTN                     BufferSizeVolume;
 		
 	BufferSizeVolume =	SIZE_OF_EFI_FILE_SYSTEM_INFO + 255;
 	FileSystemInfo = AllocateZeroPool(BufferSizeVolume);
@@ -615,6 +616,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   HARDDRIVE_DEVICE_PATH   *HdPath     = NULL; 
   EFI_HANDLE              WholeDiskHandle;
   UINTN                   PartialLength = 0;
+  UINTN                   BufferSize = 255;
   EFI_FILE_SYSTEM_INFO    *FileSystemInfoPtr;
   EFI_FILE_INFO           *RootInfo = NULL;
   BOOLEAN                 Bootable;
@@ -814,7 +816,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
 //    DBG("RootDir found\n");
   
     // get volume name
-    FileSystemInfoPtr = LibFileSystemInfo(Volume->RootDir);
+    FileSystemInfoPtr = EfiLibFileSystemInfo(Volume->RootDir);
     if (FileSystemInfoPtr != NULL) {
       Print(L"  Volume %s\n", FileSystemInfoPtr->VolumeLabel);
       Volume->VolName = EfiStrDuplicate(FileSystemInfoPtr->VolumeLabel);
@@ -823,7 +825,18 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
         Print(L"Warning: Can't get FileSystemInfo.\n");
       //next attempt is to get Root Name !
       if (Volume->RootDir) {
-        RootInfo = EfiLibFileInfo (Volume->RootDir);
+  //      RootInfo = EfiLibFileInfo (Volume->RootDir);
+        BufferSize  = SIZE_OF_EFI_FILE_INFO + 255;
+        RootInfo = AllocateZeroPool(BufferSize);
+        Status = Volume->RootDir->GetInfo (Volume->RootDir,
+                                           &gEfiFileInfoGuid,
+                                           (UINTN*)&BufferSize,
+                                           RootInfo);
+        if(EFI_ERROR(Status))
+        {
+          DBG("Can't get RootInfo\n");
+          FreePool(RootInfo);
+        }
       }
       
       
@@ -833,15 +846,20 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
           //        WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
           //        gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
           
-          tmpName = (CHAR16*)AllocateZeroPool(60);
+          tmpName = (CHAR16*)AllocateZeroPool(128);
           UnicodeSPrint(tmpName, 60, L"Unknown HD%d", HdPath->PartitionNumber);
           Volume->VolName = EfiStrDuplicate(tmpName);
           FreePool(tmpName);
           // NOTE: this is normal for Apple's VenMedia device paths
         } 
       } else {
-        Volume->VolName = (CHAR16*)AllocateZeroPool(60);
-        StrnCpy(Volume->VolName, RootInfo->FileName, 60);
+        BufferSize = StrLen(RootInfo->FileName);
+        Print(L"RootInfo has name %s len=%d\n", RootInfo->FileName, BufferSize);
+        if (BufferSize > 60) {
+          BufferSize = 60;
+        }
+        Volume->VolName = (CHAR16*)AllocateZeroPool(128);
+        StrnCpy(Volume->VolName, RootInfo->FileName, BufferSize);
         Print(L"  Volume name from Root: %s\n", Volume->VolName);
       }        
     }
@@ -993,7 +1011,7 @@ VOID ScanVolumes(VOID)
     SelfVolume->OSType = OSTYPE_EFI;
     SelfVolume->HasBootCode = TRUE;
     SelfVolume->BootType = BOOTING_BY_PBR;
-    AddListElement((VOID ***) &Volumes, &VolumesCount, SelfVolume);
+ //   AddListElement((VOID ***) &Volumes, &VolumesCount, SelfVolume);
     
     DBG("SelfVolume Nr %d\n", VolumesCount);
     

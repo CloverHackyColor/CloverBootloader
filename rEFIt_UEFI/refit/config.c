@@ -329,7 +329,7 @@ VOID ReadConfig(VOID)
     Status = ReadFile(SelfDir, CONFIG_FILE_NAME, &File);
     if (EFI_ERROR(Status))
         return;
-    
+    DBG("Reading configuration file OK!\n");
     for (;;) {
         ReadTokenLine(&File, &TokenList, &TokenCount);
         if (TokenCount == 0)

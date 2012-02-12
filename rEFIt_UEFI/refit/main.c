@@ -35,7 +35,7 @@
  */
 
 #include "Platform.h"
-#include "Handle.h"
+//#include "../include/Handle.h"
 
 #include "syslinux_mbr.h"
 
@@ -280,16 +280,26 @@ static EFI_STATUS StartEFIImage(IN EFI_DEVICE_PATH *DevicePath,
 static VOID StartLoader(IN LOADER_ENTRY *Entry)
 {
   BeginExternalScreen(Entry->UseGraphicsMode, L"Booting OS");
+  PauseForKey(L"SetPrivateVarProto");
   SetPrivateVarProto();
+  PauseForKey(L"PatchSmbios");
   PatchSmbios();
+  PauseForKey(L"PatchACPI");
   PatchACPI(Entry->Volume->RootDir);
+  PauseForKey(L"SetVariablesForOSX");
   SetVariablesForOSX();
+  PauseForKey(L"FinalizeSmbios");
   FinalizeSmbios();
+  PauseForKey(L"SetupBooterLog");
   SetupBooterLog();
+  PauseForKey(L"SetupDataForOSX");
   SetupDataForOSX();
+  PauseForKey(L"StartEFIImage");
   StartEFIImage(Entry->DevicePath, Entry->LoadOptions,
                 Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL);
+  PauseForKey(L"FinishExternalScreen");
   FinishExternalScreen();
+  PauseForKey(L"System started?!");
 }
 
 static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume)
@@ -1124,7 +1134,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   // further bootstrap (now with config available)
   //  SetupScreen();
-//  PauseForKey(L"SetupScreen ok");
+  PauseForKey(L"SetupScreen ok");
 
   LoadDrivers();
   PauseForKey(L"LoadDrivers ok");
@@ -1141,7 +1151,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
 */  
   ScanVolumes();
-  PauseForKey(L"ScanVolumes ok");
+//  PauseForKey(L"ScanVolumes ok");
   
   //setup properties
   SetGraphics();
@@ -1155,7 +1165,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   SetPrivateVarProto();
   
   GetDefaultSettings();
-  PauseForKey(L"GetDefaultSettings ok");
+//  PauseForKey(L"GetDefaultSettings ok");
 
   Size = 0;
   Status = gRS->GetVariable(L"boot-args",
@@ -1174,15 +1184,15 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 		}		
 	}
   
-  DBG("BootArgs Size=%d\n", Size);
+//  DBG("BootArgs Size=%d\n", Size);
 //  PauseForKey(L"BootArgs ok");
   
 	if ((Status == EFI_SUCCESS) && (Size != 0))
 		CopyMem(gSettings.BootArgs, Buffer, Size);			
 
   //Second step. Load config.plist into gSettings	
-	GetUserSettings(SelfRootDir, L"EFI\\config.plist");
-  PauseForKey(L"config.plist read ok");
+	GetUserSettings(SelfRootDir, L"\\EFI\\config.plist");
+//  PauseForKey(L"config.plist read ok");
   
   // scan for loaders and tools, add then to the menu
   if (GlobalConfig.LegacyFirst)
