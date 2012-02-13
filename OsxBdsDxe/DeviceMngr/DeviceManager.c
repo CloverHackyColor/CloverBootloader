@@ -133,8 +133,14 @@ DeviceManagerCallback (
 {
   UINTN CurIndex;
 
-  if (Action == EFI_BROWSER_ACTION_CHANGING) {
-    if ((Value == NULL) || (ActionRequest == NULL)) {
+  if (Action != EFI_BROWSER_ACTION_CHANGING) {
+    //
+    // All other action return unsupported.
+    //
+    return EFI_UNSUPPORTED;
+  }
+
+  if (Value == NULL) {
       return EFI_INVALID_PARAMETER;
     }
 
@@ -150,19 +156,8 @@ DeviceManagerCallback (
       }
     }
   
-    //
-    // Request to exit SendForm(), so as to switch to selected form
-    //
-    *ActionRequest = EFI_BROWSER_ACTION_REQUEST_EXIT;
-
     return EFI_SUCCESS;
   }
-
-  //
-  // All other action return unsupported.
-  //
-  return EFI_UNSUPPORTED;
-}
 
 /**
 
@@ -579,7 +574,7 @@ IsNeedAddNetworkMenu (
   EFI_STATUS     Status;
   UINTN          EntryCount;
   UINTN          Index;  
-  EFI_HII_HANDLE HiiDeviceManagerHandle;
+//  EFI_HII_HANDLE HiiDeviceManagerHandle;
   EFI_HANDLE     DriverHandle;
   EFI_HANDLE     ControllerHandle;
   EFI_DEVICE_PATH_PROTOCOL   *DevicePath;
@@ -588,7 +583,6 @@ IsNeedAddNetworkMenu (
   EFI_OPEN_PROTOCOL_INFORMATION_ENTRY   *OpenInfoBuffer;
   BOOLEAN        IsNeedAdd;
 
-  HiiDeviceManagerHandle = gDeviceManagerPrivate.HiiHandle;
   IsNeedAdd  = FALSE;
   OpenInfoBuffer = NULL;
   if ((Handle == NULL) || (ItemCount == NULL)) {
@@ -624,7 +618,7 @@ IsNeedAddNetworkMenu (
 
   //
   // Search whether this path is the controller path, not he child handle path.
-  // And the child handle has the network devcie connected.
+  // And the child handle has the network device connected.
   //
   TmpDevicePath = DevicePath;
   Status = gBS->LocateDevicePath(&gEfiDevicePathProtocolGuid, &TmpDevicePath, &ControllerHandle);
@@ -875,7 +869,7 @@ CallDeviceManager (
           AddNetworkMenu = TRUE;
           HiiCreateGotoOpCode (
             StartOpCodeHandle,
-            DEVICE_MANAGER_FORM_ID,
+            INVALID_FORM_ID,
             STRING_TOKEN (STR_FORM_NETWORK_DEVICE_LIST_TITLE),
             STRING_TOKEN (STR_FORM_NETWORK_DEVICE_LIST_HELP),
             EFI_IFR_FLAG_CALLBACK,
@@ -889,7 +883,7 @@ CallDeviceManager (
         while (AddItemCount > 0) {
             HiiCreateGotoOpCode (
               StartOpCodeHandle,
-              NETWORK_DEVICE_LIST_FORM_ID,
+              INVALID_FORM_ID,
               mMacDeviceList.NodeList[mMacDeviceList.CurListLen - AddItemCount].PromptId,
               STRING_TOKEN (STR_NETWORK_DEVICE_HELP),
               EFI_IFR_FLAG_CALLBACK,
@@ -903,7 +897,7 @@ CallDeviceManager (
         //
         HiiCreateGotoOpCode (
           StartOpCodeHandle,
-          NETWORK_DEVICE_FORM_ID,
+          INVALID_FORM_ID,
           Token,
           TokenHelp,
           EFI_IFR_FLAG_CALLBACK,
@@ -918,7 +912,7 @@ CallDeviceManager (
       if (mNextShowFormId == DEVICE_MANAGER_FORM_ID) {
         HiiCreateGotoOpCode (
           StartOpCodeHandle,
-          DEVICE_MANAGER_FORM_ID,
+          INVALID_FORM_ID,
           Token,
           TokenHelp,
           EFI_IFR_FLAG_CALLBACK,
@@ -1099,7 +1093,7 @@ DriverHealthCallback (
   OUT EFI_BROWSER_ACTION_REQUEST             *ActionRequest
   )
 {
-  if (Action == EFI_BROWSER_ACTION_CHANGING) {
+  if (Action == EFI_BROWSER_ACTION_CHANGED) {
     if ((Value == NULL) || (ActionRequest == NULL)) {
       return EFI_INVALID_PARAMETER;
     }
@@ -1157,11 +1151,9 @@ CallDriverHealth (
   DRIVER_HEALTH_INFO          *DriverHealthInfo;
   LIST_ENTRY                  *Link;
   EFI_DEVICE_PATH_PROTOCOL    *DriverDevicePath;
-  UINTN                       Length;
   BOOLEAN                     RebootRequired;
 
   Index               = 0;
-  Length              = 0;
   DriverHealthInfo    = NULL;  
   DriverDevicePath    = NULL;
   InitializeListHead (&DriverHealthList);

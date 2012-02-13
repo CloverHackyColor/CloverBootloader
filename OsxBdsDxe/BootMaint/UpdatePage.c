@@ -99,26 +99,26 @@ UpdatePageEnd (
       0
       );
 
-    HiiCreateGotoOpCode (
+    HiiCreateActionOpCode (
       mStartOpCodeHandle,
-      FORM_MAIN_ID,
+      KEY_VALUE_SAVE_AND_EXIT,
       STRING_TOKEN (STR_SAVE_AND_EXIT),
       STRING_TOKEN (STR_NULL_STRING),
       EFI_IFR_FLAG_CALLBACK,
-      KEY_VALUE_SAVE_AND_EXIT
+      0
       );
   }
 
   //
   // Ensure user can return to the main page.
   //
-  HiiCreateGotoOpCode (
+  HiiCreateActionOpCode (
     mStartOpCodeHandle,
-    FORM_MAIN_ID,
+    KEY_VALUE_NO_SAVE_AND_EXIT,
     STRING_TOKEN (STR_NO_SAVE_AND_EXIT),
     STRING_TOKEN (STR_NULL_STRING),
     EFI_IFR_FLAG_CALLBACK,
-    KEY_VALUE_NO_SAVE_AND_EXIT
+    0
     );
 
   HiiUpdateForm (
@@ -204,7 +204,6 @@ BootThisFile (
 
   @param CallbackData    The BMM context data.
 **/
-/*
 VOID
 UpdateConCOMPage (
   IN BMM_CALLBACK_DATA                *CallbackData
@@ -233,7 +232,7 @@ UpdateConCOMPage (
 
   UpdatePageEnd (CallbackData);
 }
-*/
+
 /**
   Create a lit of boot option from global BootOptionMenu. It
   allow user to delete the boot option.
@@ -449,12 +448,12 @@ UpdateConsolePage (
   IN BMM_CALLBACK_DATA                *CallbackData
   )
 {
-//  BM_MENU_ENTRY       *NewMenuEntry;
-//  BM_CONSOLE_CONTEXT  *NewConsoleContext;
-//  BM_TERMINAL_CONTEXT *NewTerminalContext;
-//  UINT16              Index;
-//  UINT16              Index2;
-//  UINT8               CheckFlags;
+/*  BM_MENU_ENTRY       *NewMenuEntry;
+  BM_CONSOLE_CONTEXT  *NewConsoleContext;
+  BM_TERMINAL_CONTEXT *NewTerminalContext;
+  UINT16              Index;
+  UINT16              Index2;
+  UINT8               CheckFlags;*/
  
   CallbackData->BmmAskSaveOrNot = TRUE;
 

@@ -55,7 +55,7 @@ formset
 
 //    subtitle text = STRING_TOKEN(STR_NULL_STRING);
 
-    goto FORM_CON_MAIN_ID,
+    goto FORM_BOOT_FROM_FILE_ID,
          prompt = STRING_TOKEN(STR_BOOT_FROM_FILE),
          help   = STRING_TOKEN(STR_BOOT_FROM_FILE_HELP),
          flags = INTERACTIVE,

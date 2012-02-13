@@ -14,7 +14,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include "BootMaint.h"
 
-UART_FLOW_CONTROL_DEVICE_PATH mFlowControlDevicePath =
+UART_FLOW_CONTROL_DEVICE_PATH mFlowControlDevicePath =
+
 { 
   MESSAGING_DEVICE_PATH,
   MSG_VENDOR_DP,
@@ -1033,8 +1034,8 @@ GetConsoleOutMode (
   ConOut   = gST->ConOut;
   MaxMode  = (UINTN) (ConOut->Mode->MaxMode);
 
-  CurrentCol = PcdGet32 (PcdConOutColumn);
-  CurrentRow = PcdGet32 (PcdConOutRow);
+  CurrentCol = PcdGet32 (PcdSetupConOutColumn);
+  CurrentRow = PcdGet32 (PcdSetupConOutRow);
   for (Mode = 0; Mode < MaxMode; Mode++) {
     Status = ConOut->QueryMode (ConOut, Mode, &Col, &Row);
     if (!EFI_ERROR(Status)) {

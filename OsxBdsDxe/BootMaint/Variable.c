@@ -677,14 +677,13 @@ Var_UpdateDriverOption (
                       &gEfiGlobalVariableGuid,
                       &DriverOrderListSize
                       );
-  ASSERT (DriverOrderList != NULL);
   NewDriverOrderList = AllocateZeroPool (DriverOrderListSize + sizeof (UINT16));
   ASSERT (NewDriverOrderList != NULL);
-  CopyMem (NewDriverOrderList, DriverOrderList, DriverOrderListSize);
-  NewDriverOrderList[DriverOrderListSize / sizeof (UINT16)] = Index;
   if (DriverOrderList != NULL) {
+  CopyMem (NewDriverOrderList, DriverOrderList, DriverOrderListSize);
     EfiLibDeleteVariable (L"DriverOrder", &gEfiGlobalVariableGuid);
   }
+  NewDriverOrderList[DriverOrderListSize / sizeof (UINT16)] = Index;
 
   Status = gRT->SetVariable (
                   L"DriverOrder",
@@ -1349,8 +1348,8 @@ Var_UpdateConMode (
 
   Status = gST->ConOut->QueryMode (gST->ConOut, Mode, &(ModeInfo.Column), &(ModeInfo.Row));
   if (!EFI_ERROR(Status)) {
-    PcdSet32 (PcdConOutColumn, (UINT32) ModeInfo.Column);
-    PcdSet32 (PcdConOutRow, (UINT32) ModeInfo.Row);
+    PcdSet32 (PcdSetupConOutColumn, (UINT32) ModeInfo.Column);
+    PcdSet32 (PcdSetupConOutRow, (UINT32) ModeInfo.Row);
   }
 
   return EFI_SUCCESS;

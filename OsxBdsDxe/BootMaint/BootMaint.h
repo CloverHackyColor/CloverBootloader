@@ -249,7 +249,7 @@ typedef struct {
   UINT16    BbsIndex;
   UINT16    BbsType;
 } BOOT_OPTION_BBS_MAPPING;
-
+/*
 typedef struct {
   BBS_TYPE  BbsType;
   ///
@@ -258,6 +258,7 @@ typedef struct {
   UINT16    Length;
   UINT16    Data[1];
 } BM_LEGACY_DEV_ORDER_CONTEXT;
+*/
 #pragma pack()
 
 typedef struct {

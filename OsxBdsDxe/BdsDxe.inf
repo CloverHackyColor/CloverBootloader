@@ -160,8 +160,10 @@
   gEfiDevicePathProtocolGuid                    ## PROTOCOL CONSUMES
   gEfiDriverHealthProtocolGuid                  ## PROTOCOL SOMETIMES_CONSUMES
   gEfiPciIoProtocolGuid                         ## PROTOCOL CONSUMES
+  gEfiBootLogoProtocolGuid                      ## PROTOCOL SOMETIMES_CONSUMES
   gEfiLegacy8259ProtocolGuid
   gEfiCpuArchProtocolGuid
+  
 
 [FeaturePcd]
   gEfiMdePkgTokenSpaceGuid.PcdUefiVariableDefaultLangDeprecate
@@ -179,6 +181,13 @@
   gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdBootState
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareRevision
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution
+  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdSetupConOutColumn
+  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdSetupConOutRow
+  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdSetupVideoHorizontalResolution
+  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdSetupVideoVerticalResolution
+  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdShellFile
 
 [Depex]
   TRUE

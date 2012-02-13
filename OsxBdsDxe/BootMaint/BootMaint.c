@@ -280,17 +280,20 @@ BootMaintCallback (
   UINTN             Pos;
   UINTN             Bit;
   UINT16            NewValuePos;
+  UINT16            Index3;  
   UINT16            Index2;
   UINT16            Index;
   UINT8             *OldLegacyDev;
   UINT8             *NewLegacyDev;
   UINT8             *DisMap;
-  EFI_FORM_ID       FormId;
+//  EFI_FORM_ID       FormId;
   Status = EFI_SUCCESS;
 
-  if (Action == EFI_BROWSER_ACTION_CHANGING) {
-    if ((Value == NULL) || (ActionRequest == NULL)) {
-      return EFI_INVALID_PARAMETER;
+  if (Action != EFI_BROWSER_ACTION_CHANGING && Action != EFI_BROWSER_ACTION_CHANGED) {    
+    //
+    // All other action return unsupported.
+    //
+    return EFI_UNSUPPORTED;
     }
 
     OldValue       = 0;
@@ -310,62 +313,42 @@ BootMaintCallback (
     //
     CurrentFakeNVMap = &Private->BmmFakeNvData;
     HiiGetBrowserData (&gBootMaintFormSetGuid, mBootMaintStorageName, sizeof (BMM_FAKE_NV_DATA), (UINT8 *) CurrentFakeNVMap);
+  if (Action == EFI_BROWSER_ACTION_CHANGING) {
+    if (Value == NULL) {
+      return EFI_INVALID_PARAMETER;
+    }
+    
+    UpdatePageId (Private, QuestionId);
 
     //
     // need to be subtituded.
     //
     // Update Select FD/HD/CD/NET/BEV Order Form
     //
-    if (FORM_SET_FD_ORDER_ID == Private->BmmPreviousPageId ||
-        FORM_SET_HD_ORDER_ID == Private->BmmPreviousPageId ||
-        FORM_SET_CD_ORDER_ID == Private->BmmPreviousPageId ||
-        FORM_SET_NET_ORDER_ID == Private->BmmPreviousPageId ||
-        FORM_SET_BEV_ORDER_ID == Private->BmmPreviousPageId ||
-        ((FORM_BOOT_SETUP_ID == Private->BmmPreviousPageId) &&
-        (QuestionId >= LEGACY_FD_QUESTION_ID) &&
-         (QuestionId < (LEGACY_BEV_QUESTION_ID + 100)) )
-        ) {
+    if ((QuestionId >= LEGACY_FD_QUESTION_ID) && (QuestionId < LEGACY_BEV_QUESTION_ID + MAX_MENU_NUMBER)) {
 
       DisMap  = Private->BmmOldFakeNVData.DisableMap;
 
-      FormId  = Private->BmmPreviousPageId;
-      if (FormId == FORM_BOOT_SETUP_ID) {
-        FormId = Private->BmmCurrentPageId;
-      }
-
-      switch (FormId) {
-      case FORM_SET_FD_ORDER_ID:
+      if (QuestionId >= LEGACY_FD_QUESTION_ID && QuestionId < LEGACY_FD_QUESTION_ID + MAX_MENU_NUMBER) {
         Number        = (UINT16) LegacyFDMenu.MenuNumber;
         OldLegacyDev  = Private->BmmOldFakeNVData.LegacyFD;
         NewLegacyDev  = CurrentFakeNVMap->LegacyFD;
-        break;
-
-      case FORM_SET_HD_ORDER_ID:
+      } else if (QuestionId >= LEGACY_HD_QUESTION_ID && QuestionId < LEGACY_HD_QUESTION_ID + MAX_MENU_NUMBER) {
         Number        = (UINT16) LegacyHDMenu.MenuNumber;
         OldLegacyDev  = Private->BmmOldFakeNVData.LegacyHD;
         NewLegacyDev  = CurrentFakeNVMap->LegacyHD;
-        break;
-
-      case FORM_SET_CD_ORDER_ID:
+      } else if (QuestionId >= LEGACY_CD_QUESTION_ID && QuestionId < LEGACY_CD_QUESTION_ID + MAX_MENU_NUMBER) {
         Number        = (UINT16) LegacyCDMenu.MenuNumber;
         OldLegacyDev  = Private->BmmOldFakeNVData.LegacyCD;
         NewLegacyDev  = CurrentFakeNVMap->LegacyCD;
-        break;
-
-      case FORM_SET_NET_ORDER_ID:
+      } else if (QuestionId >= LEGACY_NET_QUESTION_ID && QuestionId < LEGACY_NET_QUESTION_ID + MAX_MENU_NUMBER) {
         Number        = (UINT16) LegacyNETMenu.MenuNumber;
         OldLegacyDev  = Private->BmmOldFakeNVData.LegacyNET;
         NewLegacyDev  = CurrentFakeNVMap->LegacyNET;
-        break;
-
-      case FORM_SET_BEV_ORDER_ID:
+      } else if (QuestionId >= LEGACY_BEV_QUESTION_ID && QuestionId < LEGACY_BEV_QUESTION_ID + MAX_MENU_NUMBER) {
         Number        = (UINT16) LegacyBEVMenu.MenuNumber;
         OldLegacyDev  = Private->BmmOldFakeNVData.LegacyBEV;
         NewLegacyDev  = CurrentFakeNVMap->LegacyBEV;
-        break;
-
-      default:
-        break;
       }
       //
       //  First, find the different position
@@ -450,6 +433,7 @@ BootMaintCallback (
         // To prevent DISABLE appears in the middle of the list
         // we should perform a re-ordering
         //
+        Index3 = Index;
         Index = 0;
         while (Index < Number) {
           if (0xFF != NewLegacyDev[Index]) {
@@ -480,6 +464,11 @@ BootMaintCallback (
           NewLegacyDev,
           Number
           );
+
+        //
+        //  Return correct question value.
+        //
+        Value->u8 = NewLegacyDev[Index3];
       }
     }
 
@@ -488,29 +477,14 @@ BootMaintCallback (
         switch (QuestionId) {
         case KEY_VALUE_BOOT_FROM_FILE:
           Private->FeCurrentState = FileExplorerStateBootFromFile;
-
-          //
-          // Exit Bmm main formset to send File Explorer formset.
-          //
-          *ActionRequest = EFI_BROWSER_ACTION_REQUEST_EXIT;
           break;
 
         case FORM_BOOT_ADD_ID:
           Private->FeCurrentState = FileExplorerStateAddBootOption;
-
-          //
-          // Exit Bmm main formset to send File Explorer formset.
-          //
-          *ActionRequest = EFI_BROWSER_ACTION_REQUEST_EXIT;
           break;
 
         case FORM_DRV_ADD_FILE_ID:
           Private->FeCurrentState = FileExplorerStateAddDriverOptionState;
-
-          //
-          // Exit Bmm main formset to send File Explorer formset.
-          //
-          *ActionRequest = EFI_BROWSER_ACTION_REQUEST_EXIT;
           break;
 
         case FORM_DRV_ADD_HANDLE_ID:
@@ -542,10 +516,6 @@ BootMaintCallback (
           CleanUpPage (FORM_TIME_OUT_ID, Private);
           UpdateTimeOutPage (Private);
           break;
-
-        case FORM_RESET:
-          gRT->ResetSystem (EfiResetCold, EFI_SUCCESS, 0, NULL);
-          return EFI_UNSUPPORTED;
 /*
         case FORM_CON_IN_ID:
         case FORM_CON_OUT_ID:
@@ -570,25 +540,6 @@ BootMaintCallback (
         case FORM_SET_BEV_ORDER_ID:
           CleanUpPage (QuestionId, Private);
           UpdateSetLegacyDeviceOrderPage (QuestionId, Private);
-          break;
-
-        case KEY_VALUE_SAVE_AND_EXIT:
-        case KEY_VALUE_NO_SAVE_AND_EXIT:
-
-          if (QuestionId == KEY_VALUE_SAVE_AND_EXIT) {
-            Status = ApplyChangeHandler (Private, CurrentFakeNVMap, Private->BmmPreviousPageId);
-            if (EFI_ERROR (Status)) {
-              return Status;
-            }
-          } else if (QuestionId == KEY_VALUE_NO_SAVE_AND_EXIT) {
-            DiscardChangeHandler (Private, CurrentFakeNVMap);
-          }
-
-          //
-          // Tell browser not to ask for confirmation of changes,
-          // since we have already applied or discarded.
-          //
-          *ActionRequest = EFI_BROWSER_ACTION_REQUEST_FORM_APPLY;
           break;
 
         default:
@@ -616,18 +567,44 @@ BootMaintCallback (
         UpdateDriverAddHandleDescPage (Private);
       }
     }
+  } else if (Action == EFI_BROWSER_ACTION_CHANGED) {
+    if ((Value == NULL) || (ActionRequest == NULL)) {
+      return EFI_INVALID_PARAMETER;
+    }
+    
+    switch (QuestionId) {
+    case KEY_VALUE_SAVE_AND_EXIT:
+    case KEY_VALUE_NO_SAVE_AND_EXIT:
+      if (QuestionId == KEY_VALUE_SAVE_AND_EXIT) {
+        Status = ApplyChangeHandler (Private, CurrentFakeNVMap, Private->BmmPreviousPageId);
+        if (EFI_ERROR (Status)) {
+          return Status;
+        }
+      } else if (QuestionId == KEY_VALUE_NO_SAVE_AND_EXIT) {
+        DiscardChangeHandler (Private, CurrentFakeNVMap);
+      }
 
     //
-    // Pass changed uncommitted data back to Form Browser
+      // Tell browser not to ask for confirmation of changes,
+      // since we have already applied or discarded.
     //
-    Status = HiiSetBrowserData (&gBootMaintFormSetGuid, mBootMaintStorageName, sizeof (BMM_FAKE_NV_DATA), (UINT8 *) CurrentFakeNVMap, NULL);
-    return Status;
+      *ActionRequest = EFI_BROWSER_ACTION_REQUEST_FORM_SUBMIT_EXIT;
+      break;  
+
+    case FORM_RESET:
+      gRT->ResetSystem (EfiResetCold, EFI_SUCCESS, 0, NULL);
+      return EFI_UNSUPPORTED;
+
+    default:
+      break;
+    }
   }
 
   //
-  // All other action return unsupported.
+  // Pass changed uncommitted data back to Form Browser
   //
-  return EFI_UNSUPPORTED;
+  HiiSetBrowserData (&gBootMaintFormSetGuid, mBootMaintStorageName, sizeof (BMM_FAKE_NV_DATA), (UINT8 *) CurrentFakeNVMap, NULL);
+  return EFI_SUCCESS;
 }
 
 /**
