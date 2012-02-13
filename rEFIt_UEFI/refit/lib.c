@@ -584,7 +584,7 @@ static VOID ScanVolumeDefaultIcon(IN OUT REFIT_VOLUME *Volume)
     else if (Volume->DiskKind == DISK_KIND_OPTICAL)
         Volume->VolBadgeImage = BuiltinIcon(BUILTIN_ICON_VOL_OPTICAL);
 }
-
+/*
 EFI_FILE_SYSTEM_INFO * EfiLibFileSystemInfo (IN EFI_FILE_HANDLE   Root)
 {
 	EFI_STATUS                Status = EFI_NOT_FOUND;
@@ -606,7 +606,7 @@ EFI_FILE_SYSTEM_INFO * EfiLibFileSystemInfo (IN EFI_FILE_HANDLE   Root)
 	}
 	return EFI_ERROR(Status)?NULL:FileSystemInfo;
 }
-
+*/
 //at start we have only Volume->DeviceHandle
 static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
 {
@@ -616,7 +616,8 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   HARDDRIVE_DEVICE_PATH   *HdPath     = NULL; 
   EFI_HANDLE              WholeDiskHandle;
   UINTN                   PartialLength = 0;
-  UINTN                   BufferSize = 255;
+//  UINTN                   BufferSize = 255;
+  EFI_FILE_SYSTEM_VOLUME_LABEL *VolumeInfo;
   EFI_FILE_SYSTEM_INFO    *FileSystemInfoPtr;
   EFI_FILE_INFO           *RootInfo = NULL;
   BOOLEAN                 Bootable;
@@ -816,53 +817,48 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
 //    DBG("RootDir found\n");
   
     // get volume name
+  Volume->VolName = NULL;
+  if (Volume->RootDir) {
     FileSystemInfoPtr = EfiLibFileSystemInfo(Volume->RootDir);
-    if (FileSystemInfoPtr != NULL) {
-      Print(L"  Volume %s\n", FileSystemInfoPtr->VolumeLabel);
+    if (FileSystemInfoPtr) {
+      Print(L"  Volume name from FileSystem: %s\n", FileSystemInfoPtr->VolumeLabel);
       Volume->VolName = EfiStrDuplicate(FileSystemInfoPtr->VolumeLabel);
       FreePool(FileSystemInfoPtr);
-    } else {
-        Print(L"Warning: Can't get FileSystemInfo.\n");
-      //next attempt is to get Root Name !
-      if (Volume->RootDir) {
-  //      RootInfo = EfiLibFileInfo (Volume->RootDir);
-        BufferSize  = SIZE_OF_EFI_FILE_INFO + 255;
-        RootInfo = AllocateZeroPool(BufferSize);
-        Status = Volume->RootDir->GetInfo (Volume->RootDir,
-                                           &gEfiFileInfoGuid,
-                                           (UINTN*)&BufferSize,
-                                           RootInfo);
-        if(EFI_ERROR(Status))
-        {
-          DBG("Can't get RootInfo\n");
-          FreePool(RootInfo);
-        }
-      }
-      
-      
-      if (!RootInfo) {
-        if (HdPath) {
-          DBG("Create unknown name\n");
-          //        WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-          //        gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
-          
-          tmpName = (CHAR16*)AllocateZeroPool(128);
-          UnicodeSPrint(tmpName, 60, L"Unknown HD%d", HdPath->PartitionNumber);
-          Volume->VolName = EfiStrDuplicate(tmpName);
-          FreePool(tmpName);
-          // NOTE: this is normal for Apple's VenMedia device paths
-        } 
-      } else {
-        BufferSize = StrLen(RootInfo->FileName);
-        Print(L"RootInfo has name %s len=%d\n", RootInfo->FileName, BufferSize);
-        if (BufferSize > 60) {
-          BufferSize = 60;
-        }
-        Volume->VolName = (CHAR16*)AllocateZeroPool(128);
-        StrnCpy(Volume->VolName, RootInfo->FileName, BufferSize);
-        Print(L"  Volume name from Root: %s\n", Volume->VolName);
-      }        
     }
+    if (!Volume->VolName) {
+      RootInfo = EfiLibFileInfo (Volume->RootDir);
+      if (RootInfo) {
+        Print(L"  Volume name from RootFile: %s\n", RootInfo->FileName);
+        Volume->VolName = EfiStrDuplicate(RootInfo->FileName);
+        FreePool(RootInfo);
+      }
+    }
+    if (!Volume->VolName) {
+      VolumeInfo = EfiLibFileSystemVolumeLabelInfo(Volume->RootDir);
+      if (VolumeInfo) {
+        Print(L"  Volume name from VolumeLabel: %s\n", VolumeInfo->VolumeLabel);
+        Volume->VolName = EfiStrDuplicate(VolumeInfo->VolumeLabel);
+        FreePool(VolumeInfo); 
+      }  
+    }
+  }
+  if (!Volume->VolName) {
+    DBG("Create unknown name\n");
+    //        WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+    //        gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
+
+    if (HdPath) {      
+      
+      tmpName = (CHAR16*)AllocateZeroPool(128);
+      UnicodeSPrint(tmpName, 60, L"Unknown HD%d", HdPath->PartitionNumber);
+      Volume->VolName = EfiStrDuplicate(tmpName);
+      FreePool(tmpName);
+      // NOTE: this is normal for Apple's VenMedia device paths
+    } else {
+      Volume->VolName = L"Unknown HD";
+    }
+  }
+
   DBG("GetOSVersion\n");
   Status = GetOSVersion(Volume); //here we set tiger,leo,snow,lion
   if (EFI_ERROR(Status)) {

@@ -133,6 +133,7 @@
   gEfiAcpi20TableGuid
   gEfiFileInfoGuid                              ## CONSUMES ## GUID
   gEfiFileSystemInfoGuid                        ## CONSUMES ## GUID
+  gEfiFileSystemVolumeLabelInfoIdGuid
   gEfiGlobalVariableGuid
   gEfiAcpiTableGuid
   gEfiSmbiosTableGuid

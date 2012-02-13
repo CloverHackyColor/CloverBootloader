@@ -219,7 +219,7 @@ EfiLibDeleteVariable (
   @param FHand           The file handle.
 
   @return                A pointer to a buffer with file information.
-  @retval                NULL is returned if failed to get Vaolume Label Info.
+  @retval                NULL is returned if failed to get Volume Label Info.
 
 **/
 EFI_FILE_SYSTEM_VOLUME_LABEL *
@@ -227,6 +227,7 @@ EfiLibFileSystemVolumeLabelInfo (
   IN EFI_FILE_HANDLE      FHand
   )
 {
+#if 0
   EFI_STATUS                        Status  = EFI_SUCCESS;
   EFI_FILE_SYSTEM_VOLUME_LABEL      *Buffer;
   UINTN                             BufferSize;
@@ -249,6 +250,21 @@ EfiLibFileSystemVolumeLabelInfo (
   }
 
   return Buffer;
+#else
+  EFI_STATUS    Status;
+  EFI_FILE_SYSTEM_VOLUME_LABEL *VolumeInfo = NULL;
+  UINTN         Size = 0;
+  
+  Status = FHand->GetInfo (FHand, &gEfiFileSystemVolumeLabelInfoIdGuid, &Size, VolumeInfo);
+  if (Status == EFI_BUFFER_TOO_SMALL) {
+    VolumeInfo = AllocateZeroPool (Size);
+    Status = FHand->GetInfo (FHand, &gEfiFileSystemVolumeLabelInfoIdGuid, &Size, VolumeInfo);
+  }
+  
+  return EFI_ERROR(Status)?NULL:VolumeInfo;
+  
+#endif  
+  
 }
 
 /**
@@ -270,7 +286,7 @@ EfiStrDuplicate (
 
   Size  = StrSize (Src); //at least 2bytes
   Dest  = AllocateZeroPool (Size);
-  ASSERT (Dest != NULL);
+//  ASSERT (Dest != NULL);
   if (Dest != NULL) {
     CopyMem (Dest, Src, Size);
   }
@@ -309,9 +325,10 @@ EfiLibFileInfo (
   IN EFI_FILE_HANDLE      FHand
   )
 {
+#if 0  
   EFI_STATUS    Status = EFI_SUCCESS;
-  EFI_FILE_INFO *Buffer;
-  UINTN         BufferSize;
+  EFI_FILE_INFO *Buffer = NULL;
+  UINTN         BufferSize = 0;
 
   //
   // Initialize for GrowBuffer loop
@@ -330,8 +347,41 @@ EfiLibFileInfo (
                       Buffer
                       );
   }
+    return Buffer;
+#else
+  EFI_STATUS    Status;
+  EFI_FILE_INFO *FileInfo = NULL;
+  UINTN         Size = 0;
+  
+  Status = FHand->GetInfo (FHand, &gEfiFileInfoGuid, &Size, FileInfo);
+  if (Status == EFI_BUFFER_TOO_SMALL) {
+    FileInfo = AllocateZeroPool (Size);
+    Status = FHand->GetInfo (FHand, &gEfiFileInfoGuid, &Size, FileInfo);
+  }
+  
+  return EFI_ERROR(Status)?NULL:FileInfo;
+  
+#endif  
 
-  return Buffer;
+
+}
+
+EFI_FILE_SYSTEM_INFO *
+EfiLibFileSystemInfo (
+                IN EFI_FILE_HANDLE      FHand
+                )
+{
+  EFI_STATUS    Status;
+  EFI_FILE_SYSTEM_INFO *FileSystemInfo = NULL;
+  UINTN         Size = 0;
+  
+  Status = FHand->GetInfo (FHand, &gEfiFileSystemInfoGuid, &Size, FileSystemInfo);
+  if (Status == EFI_BUFFER_TOO_SMALL) {
+    FileSystemInfo = AllocateZeroPool (Size);
+    Status = FHand->GetInfo (FHand, &gEfiFileSystemInfoGuid, &Size, FileSystemInfo);
+  }
+  
+  return EFI_ERROR(Status)?NULL:FileSystemInfo;
 }
 
 /**

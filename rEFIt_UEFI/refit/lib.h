@@ -380,11 +380,8 @@ extern INTN StriCmp (
 		 IN      CONST CHAR16              *SecondString
 		 );
 
-extern EFI_FILE_INFO *
-EfiLibFileInfo (
-				IN EFI_FILE_HANDLE      FHand
-				);
-
+extern EFI_FILE_INFO * EfiLibFileInfo (IN EFI_FILE_HANDLE      FHand);
+extern EFI_FILE_SYSTEM_INFO * EfiLibFileSystemInfo (IN EFI_FILE_HANDLE   Root);
 
 extern UINTN
 EfiDevicePathInstanceCount (
