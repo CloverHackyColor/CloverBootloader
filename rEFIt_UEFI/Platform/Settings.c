@@ -351,6 +351,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, CHAR16* ConfigPlistPath)
 		}
 		SaveSettings();
 	}	
+  Print(L"config.plist read and return %r\n", Status);
 	return Status;
 }	
 

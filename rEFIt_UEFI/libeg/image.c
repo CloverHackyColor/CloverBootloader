@@ -124,7 +124,7 @@ EFI_STATUS egLoadFile(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName,
     FreePool(FileInfo);
     
     BufferSize = (UINTN)ReadSize;   // was limited to 1 GB above, so this is safe
-    Buffer = (UINT8 *) AllocatePool(BufferSize);
+    Buffer = (UINT8 *) AllocateAlignedPages (EFI_SIZE_TO_PAGES(BufferSize), 16);
     if (Buffer == NULL) {
         FileHandle->Close(FileHandle);
         return EFI_OUT_OF_RESOURCES;

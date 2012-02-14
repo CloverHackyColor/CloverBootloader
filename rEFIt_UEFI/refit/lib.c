@@ -183,7 +183,7 @@ EFI_STATUS FinishInitRefitLib(VOID)
   NewSelfHandle = NULL;
 	Status = gBS->LocateDevicePath (&gEfiSimpleFileSystemProtocolGuid,
                                   &TmpDevicePath,
-                                  NewSelfHandle);
+                                  &NewSelfHandle);
   CheckError(EFI_LOAD_ERROR, L"while (re)opening our self handle");
   DBG("new SelfHandle=%x\n", NewSelfHandle);
   if (SelfRootDir == NULL) {
@@ -209,7 +209,7 @@ EFI_STATUS FinishInitRefitLib(VOID)
   Status = SelfRootDir->Open(SelfRootDir, &SelfDir, SelfDirPath, EFI_FILE_MODE_READ, 0);
   if (CheckFatalError(Status, L"while opening our installation directory"))
     return EFI_LOAD_ERROR;
-  DBG("SelfDirPath found\n");
+  Print(L"SelfDirPath found: %s\n", SelfDirPath);
   
   return EFI_SUCCESS;
 }
@@ -343,7 +343,8 @@ VOID ExtractLegacyLoaderPaths(EFI_DEVICE_PATH **PathList, UINTN MaxPaths, EFI_DE
 static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootable)
 {
     EFI_STATUS              Status;
-    UINT8                   SectorBuffer[2048];
+//    UINT8                   SectorBuffer[2048];
+  UINT8                   *SectorBuffer;
     UINTN                   i;
     MBR_PARTITION_INFO      *MbrTable;
     BOOLEAN                 MbrTableFound;
@@ -360,7 +361,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
   BlockSize = Volume->BlockIO->Media->BlockSize;
     if (BlockSize > 2048)
         return;   // our buffer is too small...
-    
+  SectorBuffer = AllocateAlignedPages(EFI_SIZE_TO_PAGES (2048), 16); //align to 16 byte?!
     // look at the boot sector (this is used for both hard disks and El Torito images!)
     Status = Volume->BlockIO->ReadBlocks(Volume->BlockIO, Volume->BlockIO->Media->MediaId,
                                          Volume->BlockIOOffset /*start lba*/,
@@ -584,29 +585,7 @@ static VOID ScanVolumeDefaultIcon(IN OUT REFIT_VOLUME *Volume)
     else if (Volume->DiskKind == DISK_KIND_OPTICAL)
         Volume->VolBadgeImage = BuiltinIcon(BUILTIN_ICON_VOL_OPTICAL);
 }
-/*
-EFI_FILE_SYSTEM_INFO * EfiLibFileSystemInfo (IN EFI_FILE_HANDLE   Root)
-{
-	EFI_STATUS                Status = EFI_NOT_FOUND;
-	EFI_FILE_SYSTEM_INFO*			FileSystemInfo = NULL;
-	UINTN                     BufferSizeVolume;
-		
-	BufferSizeVolume =	SIZE_OF_EFI_FILE_SYSTEM_INFO + 255;
-	FileSystemInfo = AllocateZeroPool(BufferSizeVolume);
-	
-	//
-	// check file system info
-	//
-	if(FileSystemInfo)
-	{
-    while (EfiGrowBuffer (&Status, (VOID **) &FileSystemInfo, BufferSizeVolume)) {
-      Status = Root->GetInfo(Root, &gEfiFileSystemInfoGuid, (UINTN*)&BufferSizeVolume, FileSystemInfo);
-    }
-		
-	}
-	return EFI_ERROR(Status)?NULL:FileSystemInfo;
-}
-*/
+
 //at start we have only Volume->DeviceHandle
 static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
 {
@@ -892,12 +871,13 @@ static VOID ScanExtendedPartition(REFIT_VOLUME *WholeDiskVolume, MBR_PARTITION_I
     UINT32                  ExtBase, ExtCurrent, NextExtCurrent;
     UINTN                   i;
     UINTN                   LogicalPartitionIndex = 4;
-    UINT8                   SectorBuffer[512];
+ //   UINT8                   SectorBuffer[512];
+  UINT8                   *SectorBuffer;
     BOOLEAN                 Bootable;
     MBR_PARTITION_INFO      *EMbrTable;
     
     ExtBase = MbrEntry->StartLBA;
-    
+  SectorBuffer = AllocateAlignedPages (EFI_SIZE_TO_PAGES (512), 16);
     for (ExtCurrent = ExtBase; ExtCurrent; ExtCurrent = NextExtCurrent) {
         // read current EMBR
         Status = WholeDiskVolume->BlockIO->ReadBlocks(WholeDiskVolume->BlockIO,
@@ -1043,8 +1023,8 @@ VOID ScanVolumes(VOID)
         if (WholeDiskVolume != NULL && WholeDiskVolume->MbrPartitionTable != NULL) {
             // check if this volume is one of the partitions in the table
             MbrTable = WholeDiskVolume->MbrPartitionTable;
-            SectorBuffer1 = AllocatePool(512);
-            SectorBuffer2 = AllocatePool(512);
+            SectorBuffer1 = AllocateAlignedPages (EFI_SIZE_TO_PAGES (512), 16);
+            SectorBuffer2 = AllocateAlignedPages (EFI_SIZE_TO_PAGES (512), 16);
             
             for (PartitionIndex = 0; PartitionIndex < 4; PartitionIndex++) {
                 // check size
@@ -1182,7 +1162,7 @@ EFI_STATUS DirNextEntry(IN EFI_FILE *Directory, IN OUT EFI_FILE_INFO **DirEntry,
         
         // read next directory entry
         LastBufferSize = BufferSize = 256;
-        Buffer = AllocatePool(BufferSize);
+        Buffer = AllocateAlignedPages (EFI_SIZE_TO_PAGES (BufferSize), 16);
         for (IterCount = 0; ; IterCount++) {
             Status = Directory->Read(Directory, &BufferSize, Buffer);
             if (Status != EFI_BUFFER_TOO_SMALL || IterCount >= 4)

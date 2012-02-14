@@ -610,12 +610,13 @@ static VOID ScanLoader(VOID)
         // check for Mac OS X boot loader
         StrCpy(FileName, MACOSX_LOADER_PATH);
         if (FileExists(Volume->RootDir, FileName)) {
-            Print(L"  - Mac OS X boot file found\n");
+       //     Print(L"  - Mac OS X boot file found\n");
             Entry = AddLoaderEntry(FileName, L"Mac OS X", Volume);
         }
         
         // check for XOM
-        StrCpy(FileName, L"\\System\\Library\\CoreServices\\xom.efi");
+    //    StrCpy(FileName, L"\\System\\Library\\CoreServices\\xom.efi");
+      StrCpy(FileName, L"\\EFI\\tools\\xom.efi");
         if (FileExists(Volume->RootDir, FileName)) {
             AddLoaderEntry(FileName, L"Windows XP (XoM)", Volume);
         }
@@ -623,16 +624,16 @@ static VOID ScanLoader(VOID)
         // check for Microsoft boot loader/menu
         StrCpy(FileName, L"\\EFI\\Microsoft\\Boot\\Bootmgfw.efi");
         if (FileExists(Volume->RootDir, FileName)) {
-            Print(L"  - Microsoft boot menu found\n");
+       //     Print(L"  - Microsoft boot menu found\n");
             AddLoaderEntry(FileName, L"Microsoft boot menu", Volume);
         }
         
         // scan the root directory for EFI executables
-        ScanLoaderDir(Volume, NULL);
+   //     ScanLoaderDir(Volume, NULL);
         // scan the elilo directory (as used on gimli's first Live CD)
-        ScanLoaderDir(Volume, L"elilo");
+  //      ScanLoaderDir(Volume, L"elilo");
         // scan the boot directory
-        ScanLoaderDir(Volume, L"boot");
+  //      ScanLoaderDir(Volume, L"boot");
         
         // scan subdirectories of the EFI directory (as per the standard)
         DirIterOpen(Volume->RootDir, L"EFI", &EfiDirIter);
@@ -644,7 +645,7 @@ static VOID ScanLoader(VOID)
                 StriCmp(EfiDirEntry->FileName, L"REFITL") == 0 ||
                 StriCmp(EfiDirEntry->FileName, L"RESCUE") == 0)
                 continue;   // skip ourselves
-            Print(L"  - Directory EFI\\%s found\n", EfiDirEntry->FileName);
+      //      Print(L"  - Directory EFI\\%s found\n", EfiDirEntry->FileName);
             
             UnicodeSPrint(FileName, 255, L"EFI\\%s", EfiDirEntry->FileName);
             ScanLoaderDir(Volume, FileName);
@@ -662,13 +663,13 @@ static VOID ScanLoader(VOID)
 static EFI_STATUS ActivateMbrPartition(IN EFI_BLOCK_IO *BlockIO, IN UINTN PartitionIndex)
 {
     EFI_STATUS          Status;
-    UINT8               SectorBuffer[512];
+    UINT8               *SectorBuffer;
     MBR_PARTITION_INFO  *MbrTable, *EMbrTable;
     UINT32              ExtBase, ExtCurrent, NextExtCurrent;
     UINTN               LogicalPartitionIndex = 4;
     UINTN               i;
     BOOLEAN             HaveBootCode;
-    
+  SectorBuffer = AllocateAlignedPages (EFI_SIZE_TO_PAGES(512), 16);
     // read MBR
     Status = BlockIO->ReadBlocks(BlockIO, BlockIO->Media->MediaId, 0, 512, SectorBuffer);
     if (EFI_ERROR(Status))
@@ -1101,6 +1102,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   UINTN             MenuExit;
   UINTN             Size, i;
   UINT8             *Buffer = NULL;
+  CHAR16            *InputBuffer;
 //  EFI_INPUT_KEY Key;
   
   // bootstrap
@@ -1188,11 +1190,21 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //  PauseForKey(L"BootArgs ok");
   
 	if ((Status == EFI_SUCCESS) && (Size != 0))
-		CopyMem(gSettings.BootArgs, Buffer, Size);			
+		CopyMem(gSettings.BootArgs, Buffer, Size);	
+  else {
+//    InputBuffer = (CHAR16*)AllocateZeroPool(254);
+    InputBuffer = L"-v arch=i386";
+    Input(L"Kernel flags:", InputBuffer, 100);
+    if (StrLen(InputBuffer) > 0) {
+      UnicodeStrToAsciiStr( InputBuffer, gSettings.BootArgs);
+    }
+  }
+
+  
 
   //Second step. Load config.plist into gSettings	
 	GetUserSettings(SelfRootDir, L"\\EFI\\config.plist");
-//  PauseForKey(L"config.plist read ok");
+  PauseForKey(L"config.plist read ok");
   
   // scan for loaders and tools, add then to the menu
   if (GlobalConfig.LegacyFirst)
