@@ -680,7 +680,7 @@ Var_UpdateDriverOption (
   NewDriverOrderList = AllocateZeroPool (DriverOrderListSize + sizeof (UINT16));
   ASSERT (NewDriverOrderList != NULL);
   if (DriverOrderList != NULL) {
-  CopyMem (NewDriverOrderList, DriverOrderList, DriverOrderListSize);
+    CopyMem (NewDriverOrderList, DriverOrderList, DriverOrderListSize);
     EfiLibDeleteVariable (L"DriverOrder", &gEfiGlobalVariableGuid);
   }
   NewDriverOrderList[DriverOrderListSize / sizeof (UINT16)] = Index;

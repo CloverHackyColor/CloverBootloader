@@ -248,6 +248,8 @@ BOpt_FindFileSystem (
   BBS_BBS_DEVICE_PATH       BbsDevicePathNode;
   EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
   BOOLEAN                   RemovableMedia;
+  EFI_FILE_SYSTEM_INFO      *FileSystemInfo;
+  EFI_FILE_INFO             *FileInfo;
 
 
   NoSimpleFsHandles = 0;
@@ -368,7 +370,18 @@ BOpt_FindFileSystem (
       // Get current file system's Volume Label
       //
       if (FileContext->Info == NULL) {
-        VolumeLabel = L"NO FILE SYSTEM INFO";
+        //Slice
+        FileSystemInfo = EfiLibFileSystemInfo (FileContext->FHandle);
+        if (FileSystemInfo) {
+          VolumeLabel = EfiStrDuplicate(FileSystemInfo->VolumeLabel);                                         
+        } else {
+          FileInfo = EfiLibFileInfo (FileContext->FHandle);
+          if (FileInfo) {
+            VolumeLabel = EfiStrDuplicate(FileInfo->FileName);
+          } else {
+            VolumeLabel = L"NO FILE SYSTEM INFO";
+          }
+        }
       } else {
         if (FileContext->Info->VolumeLabel == NULL) {
           VolumeLabel = L"NULL VOLUME LABEL";

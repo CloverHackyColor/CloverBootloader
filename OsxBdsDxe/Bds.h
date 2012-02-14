@@ -24,6 +24,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <IndustryStandard/SmBios.h>
 #include <Protocol/LoadFile.h>
 #include <Guid/FileInfo.h>
+#include <Guid/FileSystemInfo.h>
 #include <Protocol/HiiConfigRouting.h>
 #include <Protocol/Bds.h>
 #include <Protocol/Smbios.h>

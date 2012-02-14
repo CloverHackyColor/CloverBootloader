@@ -1175,7 +1175,21 @@ EFI_FILE_INFO *
 EfiLibFileInfo (
   IN EFI_FILE_HANDLE      FHand
   );
+/**
+ 
+ Function gets the file system information from an open file descriptor, and stores it
+ in a buffer allocated from pool.
+ 
+ @param FHand           File Handle.
+ 
+ @return                A pointer to a buffer with file information or NULL is returned
+ 
+ **/
 
+EFI_FILE_SYSTEM_INFO *
+EfiLibFileSystemInfo (
+   IN EFI_FILE_HANDLE      FHand
+   );
 /**
   Find the first instance of this Protocol in the system and return it's interface.
 
