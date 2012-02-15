@@ -358,14 +358,14 @@ extern EFI_FILE_HANDLE
 EfiLibOpenRoot (
 				IN EFI_HANDLE                   DeviceHandle
 				);
-
+/*
 extern BOOLEAN
 EfiGrowBuffer (
 			   IN OUT EFI_STATUS   *Status,
 			   IN OUT VOID         **Buffer,
 			   IN UINTN            BufferSize
 			   );
-
+*/
 extern EFI_FILE_SYSTEM_VOLUME_LABEL *
 EfiLibFileSystemVolumeLabelInfo (
 								 IN EFI_FILE_HANDLE      FHand

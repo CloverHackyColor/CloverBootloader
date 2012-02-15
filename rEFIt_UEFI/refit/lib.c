@@ -51,11 +51,12 @@
 EFI_HANDLE       SelfImageHandle;
 EFI_HANDLE       SelfDeviceHandle;
 EFI_LOADED_IMAGE *SelfLoadedImage;
+EFI_FILE         *SelfRoot;
 EFI_FILE         *SelfRootDir;
 EFI_FILE         *SelfDir;
 CHAR16           *SelfDirPath;
 EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *SelfFS  = NULL;
-EFI_DEVICE_PATH * SelfDevicePath = NULL;
+EFI_DEVICE_PATH  *SelfDevicePath = NULL;
 
 
 REFIT_VOLUME     *SelfVolume = NULL;
@@ -97,7 +98,7 @@ EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
     SelfDeviceHandle = SelfLoadedImage->DeviceHandle;
     SelfDevicePath = DevicePathFromHandle (SelfDeviceHandle);
 #if DEBUG_LIB > 1 
-  Print(L"SelfDevicePath=%s @%x\n", DevicePathToStr(SelfDevicePath), SelfDeviceHandle);
+//  Print(L"SelfDevicePath=%s @%x\n", DevicePathToStr(SelfDevicePath), SelfDeviceHandle);
 #endif 
     /*
     if (SelfLoadedImage->LoadOptionsSize > 0) {
@@ -134,7 +135,7 @@ EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
     } else
         BaseDirectory[0] = 0;
     SelfDirPath = EfiStrDuplicate(BaseDirectory);
-//  Print(L"SelfDirPath = %s\n", SelfDirPath);
+//  Print(L"SelfDirPath = %s\n", SelfDirPath);  //result=\EFI\BOOT
   
     return FinishInitRefitLib();
 }
@@ -173,8 +174,8 @@ EFI_STATUS ReinitRefitLib(VOID)
 //static
 EFI_STATUS FinishInitRefitLib(VOID)
 { 
-	EFI_STATUS   Status;
-  EFI_HANDLE       NewSelfHandle;
+	EFI_STATUS                Status;
+  EFI_HANDLE                NewSelfHandle;
 	EFI_DEVICE_PATH_PROTOCOL* TmpDevicePath = DuplicateDevicePath(SelfDevicePath);
   
 	if(TmpDevicePath == NULL)
@@ -184,7 +185,7 @@ EFI_STATUS FinishInitRefitLib(VOID)
 	Status = gBS->LocateDevicePath (&gEfiSimpleFileSystemProtocolGuid,
                                   &TmpDevicePath,
                                   &NewSelfHandle);
-  CheckError(EFI_LOAD_ERROR, L"while (re)opening our self handle");
+  CheckError(Status, L"while (re)opening our self handle");
   DBG("new SelfHandle=%x\n", NewSelfHandle);
   if (SelfRootDir == NULL) {
     if (!EFI_ERROR(Status)) {
@@ -201,7 +202,7 @@ EFI_STATUS FinishInitRefitLib(VOID)
         SelfDeviceHandle = SelfLoadedImage->DeviceHandle;
       }      
     } else {
-      SelfLoadedImage->DeviceHandle = NewSelfHandle;
+  //    SelfLoadedImage->DeviceHandle = NewSelfHandle;
       SelfDeviceHandle = NewSelfHandle;
     }
   }
@@ -769,13 +770,13 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
 #endif
         Volume->HasBootCode = FALSE;
     }
-  DBG("default volume icon based on disk kind\n");
+//  DBG("default volume icon based on disk kind\n");
     // default volume icon based on disk kind
     ScanVolumeDefaultIcon(Volume);
-  DBG("default volume icon OK\n");
+//  DBG("default volume icon OK\n");
     // open the root directory of the volume
     Volume->RootDir = EfiLibOpenRoot(Volume->DeviceHandle);
-  DBG("Volume->RootDir OK\n");
+//  DBG("Volume->RootDir OK\n");
     if (Volume->RootDir == NULL) {
         //Print(L"Error: Can't open volume.\n");
         // TODO: signal that we had an error

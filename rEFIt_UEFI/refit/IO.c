@@ -1684,7 +1684,10 @@ Returns:
     return ;
   }
 
-  SetMem (InStr, StrLength * sizeof (CHAR16), 0);
+ // SetMem (InStr, StrLength * sizeof (CHAR16), 0);
+  //prepare default string
+  StrPos = StrLen(InStr);
+  Print(L"%s", InStr);
   Done = FALSE;
   do {
     //

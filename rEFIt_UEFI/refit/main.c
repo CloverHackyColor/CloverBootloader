@@ -1197,6 +1197,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     Input(L"Kernel flags:", InputBuffer, 100);
     if (StrLen(InputBuffer) > 0) {
       UnicodeStrToAsciiStr( InputBuffer, gSettings.BootArgs);
+      DBG("inputted boot-args: %a\n", gSettings.BootArgs);
     }
   }
 

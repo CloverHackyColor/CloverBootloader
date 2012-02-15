@@ -103,6 +103,7 @@ EfiLibOpenRoot (
   @retval  FALSE The caller should not call this function again.
 
 **/
+/*
 BOOLEAN
 EfiGrowBuffer (
   IN OUT EFI_STATUS   *Status,
@@ -146,7 +147,7 @@ EfiGrowBuffer (
 
   return TryAgain;
 }
-
+*/
 /**
   Function returns the value of the specified variable.
 
@@ -257,7 +258,7 @@ EfiLibFileSystemVolumeLabelInfo (
   
   Status = FHand->GetInfo (FHand, &gEfiFileSystemVolumeLabelInfoIdGuid, &Size, VolumeInfo);
   if (Status == EFI_BUFFER_TOO_SMALL) {
-    VolumeInfo = AllocateZeroPool (Size);
+    VolumeInfo = AllocateAlignedPages (EFI_SIZE_TO_PAGES (Size), 16);
     Status = FHand->GetInfo (FHand, &gEfiFileSystemVolumeLabelInfoIdGuid, &Size, VolumeInfo);
   }
   
@@ -355,7 +356,7 @@ EfiLibFileInfo (
   
   Status = FHand->GetInfo (FHand, &gEfiFileInfoGuid, &Size, FileInfo);
   if (Status == EFI_BUFFER_TOO_SMALL) {
-    FileInfo = AllocateZeroPool (Size);
+    FileInfo = AllocateAlignedPages (EFI_SIZE_TO_PAGES (Size), 16);
     Status = FHand->GetInfo (FHand, &gEfiFileInfoGuid, &Size, FileInfo);
   }
   
@@ -377,7 +378,7 @@ EfiLibFileSystemInfo (
   
   Status = FHand->GetInfo (FHand, &gEfiFileSystemInfoGuid, &Size, FileSystemInfo);
   if (Status == EFI_BUFFER_TOO_SMALL) {
-    FileSystemInfo = AllocateZeroPool (Size);
+    FileSystemInfo = AllocateAlignedPages (EFI_SIZE_TO_PAGES (Size), 16);
     Status = FHand->GetInfo (FHand, &gEfiFileSystemInfoGuid, &Size, FileSystemInfo);
   }
   
