@@ -192,7 +192,7 @@ INTN find_entry(CONST CHAR8 *propName, CONST CHAR8 *propValue, DTEntry *entryH)
 }
 //if(DTLookupEntry(NULL,"/",&efiPlatform)==kSuccess)
 INTN
-DTLookupEntry(CONST DTEntry searchPoint, CONST char *pathName, DTEntry *foundEntry)
+DTLookupEntry(CONST DTEntry searchPoint, CONST CHAR8 *pathName, DTEntry *foundEntry)
 {
 	DTEntryNameBuf	buf;
 	RealDTEntry	cur;

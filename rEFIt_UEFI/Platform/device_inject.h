@@ -14,7 +14,9 @@
 
 #define REG8(reg)  ((volatile UINT8 *)regs)[(reg)]
 #define REG16(reg)  ((volatile UINT16 *)regs)[(reg) >> 1]
-#define REG32(reg)  ((volatile UINT32 *)regs)[(reg) >> 2]
+//#define REG32(reg)  ((volatile UINT32 *)regs)[(reg) >> 2]
+UINT32 REG32(UINT32 reg);
+VOID WRITEREG32 (UINT32 reg, UINT32 value);
 
 
 extern struct DevPropString *string;
@@ -57,9 +59,37 @@ typedef struct pci_dt_t {
 	struct pci_dt_t			*children;
 	struct pci_dt_t			*next;
 } pci_dt_t;
+/* Option ROM header */
+typedef struct {
+	UINT16		signature;		// 0xAA55
+	UINT8			rom_size;
+	UINT32		entry_point;
+	UINT8			reserved[15];
+	UINT16		pci_header_offset;
+	UINT16		expansion_header_offset;
+} option_rom_header_t;
+
+/* Option ROM PCI Data Structure */
+typedef struct {
+	UINT32		signature;		// ati - 0x52494350, nvidia - 0x50434952, 'PCIR'
+	UINT16		vendor_id;
+	UINT16		device_id;
+	UINT16		vital_product_data_offset;
+	UINT16		structure_length;
+	UINT8			structure_revision;
+	UINT8			class_code[3];
+	UINT16		image_length;
+	UINT16		image_revision;
+	UINT8			code_type;
+	UINT8			indicator;
+	UINT16		reserved;
+} option_rom_pci_header_t;
+
+
 CHAR8 *get_pci_dev_path(pci_dt_t *pci_dt);
 UINT32 pci_config_read32(UINT32 pci_addr, UINT8 reg);
 extern pci_dt_t* nvdevice;
+VOID* PCIReadRom(pci_dt_t* device);
 
 #if 0 //never do this
 extern VOID setupDeviceProperties(Node *node);

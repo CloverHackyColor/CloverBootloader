@@ -72,31 +72,6 @@
 #define MAX_NUM_DCB_ENTRIES			16
 #define TYPE_GROUPED				0xff
 
-/* Option ROM header */
-typedef struct {
-	UINT16		signature;		// 0xAA55
-	UINT8			rom_size;
-	UINT32		entry_point;
-	UINT8			reserved[15];
-	UINT16		pci_header_offset;
-	UINT16		expansion_header_offset;
-} option_rom_header_t;
-
-/* Option ROM PCI Data Structure */
-typedef struct {
-	UINT32		signature;		// ati - 0x52494350, nvidia - 0x50434952, 'PCIR'
-	UINT16		vendor_id;
-	UINT16		device_id;
-	UINT16		vital_product_data_offset;
-	UINT16		structure_length;
-	UINT8			structure_revision;
-	UINT8			class_code[3];
-	UINT16		image_length;
-	UINT16		image_revision;
-	UINT8			code_type;
-	UINT8			indicator;
-	UINT16		reserved;
-} option_rom_pci_header_t;
 
 
 
@@ -112,8 +87,8 @@ const CHAR8 *nvidia_name_1[]			=	{ "@1,name",		"NVDA,Display-B" };
 const CHAR8 *nvidia_slot_name[]		=	{ "AAPL,slot-name", "Slot-1"		 };
 
 static UINT8 default_NVCAP[]= {
-	0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0x00,
-	0x09, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0a,
+	0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0d, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0a,
 	0x00, 0x00, 0x00, 0x00
 };
 
@@ -902,7 +877,7 @@ static UINT32 read32(UINT8 *ptr, UINT16 offset)
 }
 #endif
 
-EFI_STATUS read_nVidia_ROM(VOID* rom)
+EFI_STATUS read_nVidia_PRAMIN(VOID* rom, UINT8 arch)
 {
 	DBG("read_nVidia_ROM\n");
 	EFI_STATUS Status;
@@ -916,8 +891,6 @@ EFI_STATUS read_nVidia_ROM(VOID* rom)
 	EFI_GUID				**ProtocolGuidArray;
 	//UINT32					res;
 	// PRAMIN first
-	/*nvRom = (UINT8*)&regs[NV_PRAMIN_OFFSET]; //так нельзя делать
-	 CopyMem((VOID*)nvRom, (VOID*)rom, NVIDIA_ROM_SIZE);*/
 	
 	Status = gBS->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
 	if (EFI_ERROR(Status)) return 0;
@@ -932,14 +905,139 @@ EFI_STATUS read_nVidia_ROM(VOID* rom)
 				if (EFI_ERROR(Status)) continue;
 				if ((Pci.Hdr.VendorId != nvdevice->vendor_id) || (Pci.Hdr.DeviceId != nvdevice->device_id)) continue;
 				//return ((UINT32*)&Pci)[reg];	
+				
+				UINT32 vbios_vram = 0;
+				UINT32 old_bar0_pramin = 0;
+				
+				if (arch>=0x50) {
+					AsciiPrint("Using PRAMIN fixups\n");
+					Status = PciIo->Mem.Read(
+											 PciIo,
+											 EfiPciIoWidthUint32,
+											 0,
+											 NV_PDISPLAY_OFFSET + 0x9f04,///4,
+											 1,
+											 &vbios_vram
+											 );
+					vbios_vram = (vbios_vram & ~0xff) << 8;
+					
 				Status = PciIo->Mem.Read(
 										 PciIo,
 										 EfiPciIoWidthUint32,
+										 0,
+											 NV_PMC_OFFSET + 0x1700,///4,
+											 1,
+											 &old_bar0_pramin
+											 );
+					
+					if (vbios_vram == 0) 					
+						vbios_vram = (old_bar0_pramin << 16) + 0xf0000;
+					
+					vbios_vram >>= 16;
+					
+					Status = PciIo->Mem.Write(
+											  PciIo,
+											  EfiPciIoWidthUint32,
+											  0,
+											  NV_PMC_OFFSET + 0x1700,///4,
+											  1,
+											  &vbios_vram
+											  );
+				}
+				
+				Status = PciIo->Mem.Read(
+										 PciIo,
+										 EfiPciIoWidthUint8,
 										 0,
 										 NV_PRAMIN_OFFSET,
 										 NVIDIA_ROM_SIZE,
 										 rom
 										 );
+				
+				if (arch>=0x50) {
+					Status = PciIo->Mem.Write(
+											  PciIo,
+											  EfiPciIoWidthUint32,
+											  0,
+											  NV_PMC_OFFSET + 0x1700,///4,
+											  1,
+											  &old_bar0_pramin
+											  );
+				}
+				
+				if (EFI_ERROR(Status)) {
+					AsciiPrint("read_nVidia_ROM failed\n");
+					return Status;
+				}
+				return EFI_SUCCESS;										 
+			}
+		}
+	}
+	return EFI_NOT_FOUND;
+}
+
+
+EFI_STATUS read_nVidia_PROM(VOID* rom)
+{
+	AsciiPrint("PROM\n");
+	EFI_STATUS Status;
+	EFI_PCI_IO_PROTOCOL		*PciIo;
+	PCI_TYPE00				Pci;
+	UINTN					HandleCount;
+	UINTN					ArrayCount;
+	UINTN					HandleIndex;
+	UINTN					ProtocolIndex;
+	EFI_HANDLE				*HandleBuffer;
+	EFI_GUID				**ProtocolGuidArray;
+	//UINT32					res;
+	// PRAMIN first
+	
+	Status = gBootServices->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
+	if (EFI_ERROR(Status)) return 0;
+	for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
+		Status = gBootServices->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
+		if (EFI_ERROR(Status)) continue;
+		for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
+			if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex])) {
+				Status = gBootServices->OpenProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+				if (EFI_ERROR(Status)) continue;
+				Status = PciIo->Pci.Read(PciIo,EfiPciIoWidthUint32, 0, sizeof(Pci) / sizeof(UINT32), &Pci);
+				if (EFI_ERROR(Status)) continue;
+				if ((Pci.Hdr.VendorId != nvdevice->vendor_id) || (Pci.Hdr.DeviceId != nvdevice->device_id)) continue;
+				//return ((UINT32*)&Pci)[reg];	
+				
+								
+				UINT32 value = NV_PBUS_PCI_NV_20_ROM_SHADOW_DISABLED;
+				
+				Status = PciIo->Mem.Write(
+										  PciIo,
+										  EfiPciIoWidthUint32,
+										  0,
+										  NV_PBUS_PCI_NV_20*4,
+										  1,
+										  &value
+										  );							 
+				
+				Status = PciIo->Mem.Read(
+										 PciIo,
+										 EfiPciIoWidthUint8,
+										 0,
+										 NV_PROM_OFFSET,
+										 NVIDIA_ROM_SIZE,
+										 rom
+										 );
+				
+				value = NV_PBUS_PCI_NV_20_ROM_SHADOW_ENABLED;
+				
+				Status = PciIo->Mem.Write(
+										  PciIo,
+										  EfiPciIoWidthUint32,
+										  0,
+										  NV_PBUS_PCI_NV_20*4,
+										  1,
+										  &value
+										  );					
+				
 				if (EFI_ERROR(Status)) {
 					DBG("read_nVidia_ROM failed\n");
 					return Status;
@@ -1302,7 +1400,7 @@ INT32 hex2bin(const CHAR8 *hex, UINT8 *bin, INT32 len)
 	return 0;
 }
 
-UINT64 mem_detect(volatile UINT8 *regs, UINT8 nvCardType, pci_dt_t *nvda_dev)
+UINT32 mem_detect(UINT8 nvCardType, pci_dt_t *nvda_dev)
 {
 	DBG("mem_detect\n");
 	UINT64 vram_size = 0;
@@ -1338,148 +1436,80 @@ UINT64 mem_detect(volatile UINT8 *regs, UINT8 nvCardType, pci_dt_t *nvda_dev)
 
 BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 {
-	//DBG("setup_nvidia_devprop\n");
-	struct DevPropDevice	*device;
-	CHAR8					*devicepath;
-	//option_rom_pci_header_t *rom_pci_header;
-	volatile UINT8		*regs;
-	UINT8					*rom;
-	UINT8					*nvRom;
-	UINT8					nvCardType;
-	UINT16		videoRam;
-	UINT32				nvBiosOveride;
-	UINT32				bar[7];
-	UINT32				boot_display;
-	//INT32						nvPatch;
-	//INT32						len;
-	CHAR8					biosVersion[32];
-	//CHAR8					nvFilename[32];
-	//CHAR8					kNVCAP[12];
-	CHAR8					*model;
-	//const CHAR8				*value;
-	//BOOLEAN	doit;
-	nvdevice = nvda_dev;
+	//AsciiPrint("setup_nvidia_devprop\n");
+	struct DevPropDevice	*device = NULL;
+	CHAR8					*devicepath = NULL;
 	
+	//UINT8					*rom = NULL;
+	UINT8					nvCardType = 0;
+	UINT32					videoRam = 0;
+	UINT32					bar[7];
+	UINT32					boot_display = 0;
+	INT32					nvPatch = 0;
+	CHAR8					*model = NULL;
+	nvdevice = nvda_dev;
+		
 	DBG("%x:%x\n",nvda_dev->vendor_id, nvda_dev->device_id);
 	devicepath = get_pci_dev_path(nvda_dev);
 	bar[0] = pci_config_read32(nvda_dev->dev.addr, 0x10 );
 	DBG("BAR: 0x%x\n", bar[0]);
-	regs = (UINT8 *)(UINTN)(bar[0] & ~0x0f);
+//	regs = (UINT8 *)(UINTN)(bar[0] & ~0x0f);
 	
-	gBS->Stall(50);
+//	gBS->Stall(50);
 		
 	// get card type
 	nvCardType = (REG32(0) >> 20) & 0x1ff;
 	
 	// Amount of VRAM in kilobytes
-	videoRam = mem_detect(regs, nvCardType, nvda_dev);
-	//model = "Unknown"; //нельзя так писать
+	videoRam = mem_detect(nvCardType, nvda_dev);
 	model = get_nvidia_model((nvda_dev->vendor_id << 16) | nvda_dev->device_id);
-	//DBG("got here\n");
 	
-	DBG("nVidia ");
-	DBG(model);
-	DBG(" ");
+	DBG("nVidia %a\n", model);
 	//DBG(" %dMB NV%02x [%04x:%04x] :: ", (UINT32)(videoRam / 1024 / 1024),
 			   //nvCardType, nvda_dev->vendor_id, nvda_dev->device_id);
-	DBG(devicepath);
-	DBG("\n");
-	rom = AllocatePool(NVIDIA_ROM_SIZE+1);
-	//DBG("got here\n");
-			// Otherwise read bios from card
-		nvBiosOveride = 0;
 		
-		// TODO: we should really check for the signature before copying the rom, i think.
+
+	const INT32 MAX_BIOS_VERSION_LENGTH = 32;
+	CHAR8* version_str = (CHAR8*)AllocatePool(MAX_BIOS_VERSION_LENGTH);
 		
+	UINT8* rom = AllocatePool(NVIDIA_ROM_SIZE+1);
 		// PRAMIN first
-		nvRom = (UINT8*)&regs[NV_PRAMIN_OFFSET]; //так нельзя делать
-		CopyMem((VOID*)nvRom, (VOID*)rom, NVIDIA_ROM_SIZE);
-	//read_nVidia_ROM(rom);
+	read_nVidia_PRAMIN(rom, nvCardType);
 			 
 	//DBG("got here\n");
 		
-		// Valid Signature ?
-		if (rom[0] != 0x55 && rom[1] != 0xaa)
-		{
-			// PROM next
-			// Enable PROM access
-			(REG32(NV_PBUS_PCI_NV_20)) = NV_PBUS_PCI_NV_20_ROM_SHADOW_DISABLED;
+	AsciiPrint("%x%x\n", rom[0], rom[1]);
+	option_rom_pci_header_t *rom_pci_header = NULL;
 			
-			nvRom = (UINT8*)&regs[NV_PROM_OFFSET];
-			CopyMem((VOID *)nvRom, (VOID*)rom, NVIDIA_ROM_SIZE);
-			
-			// disable PROM access
-			(REG32(NV_PBUS_PCI_NV_20)) = NV_PBUS_PCI_NV_20_ROM_SHADOW_ENABLED;
-			
-			// Valid Signature ?
-			if (rom[0] != 0x55 && rom[1] != 0xaa)
-			{
-				// 0xC0000 last
-				CopyMem((VOID *)0xc0000, (VOID*)rom, NVIDIA_ROM_SIZE);
-				
-				// Valid Signature ?
-				if (rom[0] != 0x55 && rom[1] != 0xaa)
-				{
-					DBG("ERROR: Unable to locate nVidia Video BIOS\n");
-					//gBS->Stall(5000000);
-					//return FALSE;
-				}
-				else
-				{
-					DBG("ROM Address 0x%x Signature 0x%02x%02x\n", nvRom, rom[0], rom[1]);
-				}
+	if (rom[0] != 0x55 || rom[1] != 0xaa) {
+		read_nVidia_PROM(rom);
+		if (rom[0] != 0x55 || rom[1] != 0xaa)
+			DBG("ERROR: Unable to locate nVidia Video BIOS\n");
 			}
-			else
-			{
-				DBG("PROM Address 0x%x Signature 0x%02x%02x\n", nvRom, rom[0], rom[1]);
-			}
-		}
-		else
-		{
-			DBG("PRAM Address 0x%x Signature 0x%02x%02x\n", nvRom, rom[0], rom[1]);
-		}
 	
-	
-	/*if ((nvPatch = patch_nvidia_rom(rom)) == PATCH_ROM_FAILED) {
-		AsciiPrint("ERROR: nVidia ROM Patching Failed!\n");
-		//return FALSE;
+	if (rom[0] == 0x55 && rom[1] == 0xaa) {	
+		if ((nvPatch = patch_nvidia_rom(rom)) == PATCH_ROM_FAILED) {
+		DBG("ERROR: nVidia ROM Patching Failed!\n");
 	}
 	
 	rom_pci_header = (option_rom_pci_header_t*)(rom + *(UINT16 *)&rom[24]);
 	
 	// check for 'PCIR' sig
-	if (rom_pci_header->signature == 0x50434952)
-	{
-		if (rom_pci_header->device_id != nvda_dev->device_id)
-		{
+		if (rom_pci_header->signature == 0x52494350/*50434952*/) { //for some reason, the reverse byte order
+			if (rom_pci_header->device_id != nvda_dev->device_id) {
 			// Get Model from the OpROM
 			model = get_nvidia_model((rom_pci_header->vendor_id << 16) | rom_pci_header->device_id);
+				AsciiPrint(model);
+			}
 		}
 		else
 		{
 			AsciiPrint("nVidia incorrect PCI ROM signature: 0x%x\n", rom_pci_header->signature);
 		}
-	}*/
-	
-	if (!string) {
-		string = devprop_create_string();
-	}
-	device = devprop_add_device(string, devicepath);
-	
-	/* FIXME: for primary graphics card only */
-	boot_display = 1;
-	devprop_add_value(device, "@0,AAPL,boot-display", (UINT8*)&boot_display, 4);
-	
-	/*if (nvPatch == PATCH_ROM_SUCCESS_HAS_LVDS) {
-		UINT8 built_in = 0x01;
-		devprop_add_value(device, "@0,built-in", &built_in, 1);
-	}
 	
 	// get bios version
-	const INT32 MAX_BIOS_VERSION_LENGTH = 32;
-	CHAR8* version_str = (CHAR8*)AllocatePool(MAX_BIOS_VERSION_LENGTH);
 	
-	ZeroMem((VOID*)version_str, MAX_BIOS_VERSION_LENGTH);
+		//ZeroMem((VOID*)version_str, MAX_BIOS_VERSION_LENGTH);
 	
 	INT32 i, version_start;
 	INT32 crlf_count = 0;
@@ -1509,6 +1539,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 						}
 						
 						AsciiStrnCpy(version_str, (const CHAR8*)rom+version_start, i-version_start);
+							AsciiPrint(version_str);
 						break;
 					}
 				}
@@ -1516,12 +1547,34 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 			}
 		}
 	}
+	}
+//#endif
 	
-	AsciiSPrint(biosVersion, 32, "%s", (nvBiosOveride > 0) ? nvFilename : version_str);
-	AsciiSPrint(kNVCAP, 12, "NVCAP_%04x", nvda_dev->device_id);
-	*/
+	AsciiPrint(devicepath);
+	AsciiPrint("\n");
 	
-#if DEBUG_NVCAP
+	if (!string) {
+		string = devprop_create_string();
+	}
+	device = devprop_add_device(string, devicepath);
+	devprop_add_nvidia_template(device);
+
+	
+	/* FIXME: for primary graphics card only */
+	boot_display = 1;
+	devprop_add_value(device, "@0,AAPL,boot-display", (UINT8*)&boot_display, 4);
+	
+	if (nvPatch == PATCH_ROM_SUCCESS_HAS_LVDS) {
+		UINT8 built_in = 0x01;
+		devprop_add_value(device, "@0,built-in", &built_in, 1);
+	}
+
+	
+	//AsciiSPrint(biosVersion, 32, "%s", version_str);
+	//AsciiSPrint(kNVCAP, 12, "NVCAP_%04x", nvda_dev->device_id);
+	
+	
+#ifdef DEBUG_NVCAP
 	AsciiPrint("NVCAP: %02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x\n",
 	default_NVCAP[0], default_NVCAP[1], default_NVCAP[2], default_NVCAP[3],
 	default_NVCAP[4], default_NVCAP[5], default_NVCAP[6], default_NVCAP[7],
@@ -1530,12 +1583,11 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	default_NVCAP[16], default_NVCAP[17], default_NVCAP[18], default_NVCAP[19]);
 #endif
 	
-	devprop_add_nvidia_template(device);
 	devprop_add_value(device, "NVCAP", default_NVCAP, NVCAP_LEN);
 	devprop_add_value(device, "NVPM", default_NVPM, NVPM_LEN);
 	devprop_add_value(device, "VRAM,totalsize", (UINT8*)&videoRam, 4);
 	devprop_add_value(device, "model", (UINT8*)model, AsciiStrLen(model) + 1);
-	devprop_add_value(device, "rom-revision", (UINT8*)biosVersion, AsciiStrLen(biosVersion) + 1);
+	devprop_add_value(device, "rom-revision", (UINT8*)version_str, AsciiStrLen(version_str) + 1);
 	devprop_add_value(device, "@0,display-cfg", default_dcfg_0, DCFG0_LEN);
 	devprop_add_value(device, "@1,display-cfg", default_dcfg_1, DCFG1_LEN);
 	
@@ -1545,16 +1597,9 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 //	devprop_add_value(device, "@1,connector-type",connector_type_1, 4);
 	//end Nvidia HDMI Audio
 	
-	
-	gDeviceProperties = AllocatePool(string->length * 2);
-	CopyMem(gDeviceProperties, (VOID*)devprop_generate_string(string), string->length * 2);
-	DBG(gDeviceProperties);
-#if DEBUG_NVIDIA == 2  
-	gBS->Stall(5000000);
-#endif  
-	//stringlength = string->length;
-	if (FALSE)
-		patch_nvidia_rom(NULL);
-	
+
+	gDeviceProperties = (VOID*)devprop_generate_string(string);
+	//AsciiPrint(gDeviceProperties);
+	gBootServices->Stall(2000000);
 	return TRUE;
 }

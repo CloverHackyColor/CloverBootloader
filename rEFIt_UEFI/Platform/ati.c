@@ -1010,7 +1010,7 @@ BOOLEAN get_vramtotalsize_val(value_t *val)
 	return TRUE;
 }
 
-void free_val(value_t *val)
+VOID free_val(value_t *val)
 {
 	if (val->type == kPtr)
 		FreePool(val->data);
@@ -1018,7 +1018,7 @@ void free_val(value_t *val)
 	ZeroMem(val, sizeof(value_t));
 }
 
-void devprop_add_list(dev_prop_t devprop_list[])
+VOID devprop_add_list(dev_prop_t devprop_list[])
 {
 	value_t *val = AllocateZeroPool(sizeof(value_t));
 	int i, pnum;
@@ -1190,7 +1190,7 @@ BOOLEAN read_vbios(BOOLEAN from_pci)
 	return TRUE;
 }
 
-BOOLEAN read_disabled_vbios(void)
+BOOLEAN read_disabled_vbios(VOID)
 {
 	BOOLEAN ret = FALSE;
 	chip_family_t chip_family = card->info->chip_family;
@@ -1307,7 +1307,7 @@ BOOLEAN read_disabled_vbios(void)
 	return ret;
 }
 
-BOOLEAN radeon_card_posted(void)
+BOOLEAN radeon_card_posted(VOID)
 {
 	UINT32 reg;
 	
@@ -1325,7 +1325,7 @@ BOOLEAN radeon_card_posted(void)
 }
 
 #if 0
-BOOLEAN devprop_add_pci_config_space(void)
+BOOLEAN devprop_add_pci_config_space(VOID)
 {
 	int offset;
 	

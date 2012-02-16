@@ -85,7 +85,7 @@ UINT8 ascii_hex_to_int (CHAR8* buf)
 
 CHAR8 *get_pci_dev_path(pci_dt_t *pci_dt)
 {
-	DBG("get_pci_dev_path");
+//	DBG("get_pci_dev_path");
 	CHAR8*		tmp;
 	CHAR16*		devpathstr;
 	EFI_DEVICE_PATH_PROTOCOL*	DevicePath;
@@ -129,7 +129,7 @@ CHAR8 *get_pci_dev_path(pci_dt_t *pci_dt)
 
 UINT32 pci_config_read32(UINT32 pci_addr, UINT8 reg)
 {
-	DBG("pci_config_read32\n");
+//	DBG("pci_config_read32\n");
 	EFI_STATUS Status;
 	EFI_PCI_IO_PROTOCOL		*PciIo;
 	PCI_TYPE00				Pci;
@@ -172,6 +172,138 @@ UINT32 pci_config_read32(UINT32 pci_addr, UINT8 reg)
 	}
 	return 0;
 }
+
+/*VOID WRITETEG32 (UINT32 reg, UINT32 value) {
+	AsciiPrint("WRITEREG32\n");
+	EFI_STATUS Status;
+	EFI_PCI_IO_PROTOCOL		*PciIo;
+	PCI_TYPE00				Pci;
+	UINTN					HandleCount;
+	UINTN					ArrayCount;
+	UINTN					HandleIndex;
+	UINTN					ProtocolIndex;
+	EFI_HANDLE				*HandleBuffer;
+	EFI_GUID				**ProtocolGuidArray;	
+	
+	Status = gBootServices->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
+	if (EFI_ERROR(Status)) return 0;
+	for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
+		Status = gBootServices->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
+		if (EFI_ERROR(Status)) continue;
+		for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
+			if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex])) {
+				Status = gBootServices->OpenProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+				if (EFI_ERROR(Status)) continue;
+				Status = PciIo->Pci.Read(PciIo,EfiPciIoWidthUint32, 0, sizeof(Pci) / sizeof(UINT32), &Pci);
+				if (EFI_ERROR(Status)) continue;
+				if ((Pci.Hdr.VendorId != nvdevice->vendor_id) || (Pci.Hdr.DeviceId != nvdevice->device_id)) continue;
+				//return ((UINT32*)&Pci)[reg];	
+				Status = PciIo->Mem.Write(
+										 PciIo,
+										 EfiPciIoWidthUint32,
+										 0, //BAR 0
+										 reg,
+										 1,
+										 &value
+										 );
+				if (EFI_ERROR(Status))
+					AsciiPrint("WRITEREG32 failed\n");
+				return;										 
+			}
+		}
+	}
+}*/
+
+UINT32 REG32(UINT32 reg)
+{
+	//AsciiPrint("REG32\n");
+	EFI_STATUS Status;
+	EFI_PCI_IO_PROTOCOL		*PciIo;
+	PCI_TYPE00				Pci;
+	UINTN					HandleCount;
+	UINTN					ArrayCount;
+	UINTN					HandleIndex;
+	UINTN					ProtocolIndex;
+	EFI_HANDLE				*HandleBuffer;
+	EFI_GUID				**ProtocolGuidArray;
+	UINT32					res;
+	
+	
+	Status = gBootServices->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
+	if (EFI_ERROR(Status)) return 0;
+	for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
+		Status = gBootServices->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
+		if (EFI_ERROR(Status)) continue;
+		for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
+			if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex])) {
+				Status = gBootServices->OpenProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+				if (EFI_ERROR(Status)) continue;
+				Status = PciIo->Pci.Read(PciIo,EfiPciIoWidthUint32, 0, sizeof(Pci) / sizeof(UINT32), &Pci);
+				if (EFI_ERROR(Status)) continue;
+				if ((Pci.Hdr.VendorId != nvdevice->vendor_id) || (Pci.Hdr.DeviceId != nvdevice->device_id)) continue;
+				//return ((UINT32*)&Pci)[reg];	
+				Status = PciIo->Mem.Read(
+										 PciIo,
+										 EfiPciIoWidthUint32,
+										 0, //BAR 0
+										 reg,
+										 1,
+										 &res
+										 );
+				if (EFI_ERROR(Status)) {
+					AsciiPrint("REG32 failed\n");
+					return 0;
+				}
+				return (UINT32)res;										 
+			}
+		}
+	}
+	return 0;
+}
+
+
+/* This is only for EFI ROMs, not BIOS.
+VOID* PCIReadRom(pci_dt_t* device)
+{
+	AsciiPrint("PCIReadRom\n");
+	EFI_STATUS Status;
+	EFI_PCI_IO_PROTOCOL		*PciIo;
+	PCI_TYPE00				Pci;
+	UINTN					HandleCount;
+	UINTN					ArrayCount;
+	UINTN					HandleIndex;
+	UINTN					ProtocolIndex;
+	EFI_HANDLE				*HandleBuffer;
+	EFI_GUID				**ProtocolGuidArray;
+	UINT64 ii;
+	//VOID* rom;
+	
+	
+	Status = gBootServices->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
+	if (EFI_ERROR(Status)) return 0;
+	for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
+		Status = gBootServices->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
+		if (EFI_ERROR(Status)) continue;
+		for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
+			if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex])) {
+				Status = gBootServices->OpenProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+				if (EFI_ERROR(Status)) continue;
+				Status = PciIo->Pci.Read(PciIo,EfiPciIoWidthUint32, 0, sizeof(Pci) / sizeof(UINT32), &Pci);
+				if (EFI_ERROR(Status)) continue;
+				if ((Pci.Hdr.VendorId != device->vendor_id) || (Pci.Hdr.DeviceId != device->device_id)) continue;
+				//return ((UINT32*)&Pci)[reg];	
+				AsciiPrint("%d\n",PciIo->RomSize);
+				for (ii=0; ii<PciIo->RomSize; ii++) {
+					AsciiPrint("%0x ", ((UINT8*)(PciIo->RomImage))[ii]); 
+				}
+				return PciIo->RomImage;								 
+			}
+		}
+	}
+	return 0;
+}*/
+
+
 
 /*UINT32 pci_config_read32(UINT32 pci_addr, UINT8 reg)
 {
@@ -399,7 +531,7 @@ CHAR8 *devprop_generate_string(struct DevPropString *string)
 
 VOID devprop_free_string(struct DevPropString *string)
 {
-	DBG("devprop_free_string\n");
+	//DBG("devprop_free_string\n");
 	if(!string)
 		return;
 	

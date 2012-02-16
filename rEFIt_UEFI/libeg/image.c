@@ -141,8 +141,8 @@ EFI_STATUS egLoadFile(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName,
     *FileDataLength = BufferSize;
     return EFI_SUCCESS;
 }
-
-static EFI_GUID ESPGuid = { 0xc12a7328, 0xf81f, 0x11d2, { 0xba, 0x4b, 0x00, 0xa0, 0xc9, 0x3e, 0xc9, 0x3b } };
+//Slice - this is gEfiPartTypeSystemPartGuid
+//static EFI_GUID ESPGuid = { 0xc12a7328, 0xf81f, 0x11d2, { 0xba, 0x4b, 0x00, 0xa0, 0xc9, 0x3e, 0xc9, 0x3b } };
 
 static EFI_STATUS egFindESP(OUT EFI_FILE_HANDLE *RootDir)
 {
@@ -150,7 +150,7 @@ static EFI_STATUS egFindESP(OUT EFI_FILE_HANDLE *RootDir)
     UINTN               HandleCount = 0;
     EFI_HANDLE          *Handles;
     
-    Status = gBS->LocateHandleBuffer(ByProtocol, &ESPGuid, NULL, &HandleCount, &Handles);
+    Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiPartTypeSystemPartGuid, NULL, &HandleCount, &Handles);
     if (!EFI_ERROR(Status) && HandleCount > 0) {
         *RootDir = EfiLibOpenRoot(Handles[0]);
         if (*RootDir == NULL)

@@ -131,16 +131,18 @@
   gEfiAcpiTableGuid
   gEfiAcpi10TableGuid
   gEfiAcpi20TableGuid
+  gEfiDxeServicesTableGuid
+  gEfiEventReadyToBootGuid
+  gEfiEventVirtualAddressChangeGuid
   gEfiFileInfoGuid                              ## CONSUMES ## GUID
   gEfiFileSystemInfoGuid                        ## CONSUMES ## GUID
   gEfiFileSystemVolumeLabelInfoIdGuid
   gEfiGlobalVariableGuid
-  gEfiAcpiTableGuid
+  gEfiPartTypeLegacyMbrGuid
+  gEfiPartTypeSystemPartGuid
   gEfiSmbiosTableGuid
-  gEfiEventReadyToBootGuid
   gEfiSasDevicePathGuid
-  gEfiDxeServicesTableGuid
-  gEfiEventVirtualAddressChangeGuid
+  
 
 	
 
