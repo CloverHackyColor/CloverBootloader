@@ -992,14 +992,14 @@ EFI_STATUS read_nVidia_PROM(VOID* rom)
 	//UINT32					res;
 	// PRAMIN first
 	
-	Status = gBootServices->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
+	Status = gBS->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
 	if (EFI_ERROR(Status)) return 0;
 	for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
-		Status = gBootServices->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
+		Status = gBS->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
 		if (EFI_ERROR(Status)) continue;
 		for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
 			if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex])) {
-				Status = gBootServices->OpenProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+				Status = gBS->OpenProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
 				if (EFI_ERROR(Status)) continue;
 				Status = PciIo->Pci.Read(PciIo,EfiPciIoWidthUint32, 0, sizeof(Pci) / sizeof(UINT32), &Pci);
 				if (EFI_ERROR(Status)) continue;
@@ -1600,6 +1600,6 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 
 	gDeviceProperties = (VOID*)devprop_generate_string(string);
 	//AsciiPrint(gDeviceProperties);
-	gBootServices->Stall(2000000);
+	gBS->Stall(2000000);
 	return TRUE;
 }

@@ -185,14 +185,14 @@ UINT32 pci_config_read32(UINT32 pci_addr, UINT8 reg)
 	EFI_HANDLE				*HandleBuffer;
 	EFI_GUID				**ProtocolGuidArray;	
 	
-	Status = gBootServices->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
+	Status = gBS->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
 	if (EFI_ERROR(Status)) return 0;
 	for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
-		Status = gBootServices->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
+		Status = gBS->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
 		if (EFI_ERROR(Status)) continue;
 		for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
 			if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex])) {
-				Status = gBootServices->OpenProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+				Status = gBS->OpenProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
 				if (EFI_ERROR(Status)) continue;
 				Status = PciIo->Pci.Read(PciIo,EfiPciIoWidthUint32, 0, sizeof(Pci) / sizeof(UINT32), &Pci);
 				if (EFI_ERROR(Status)) continue;
@@ -229,14 +229,14 @@ UINT32 REG32(UINT32 reg)
 	UINT32					res;
 	
 	
-	Status = gBootServices->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
+	Status = gBS->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
 	if (EFI_ERROR(Status)) return 0;
 	for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
-		Status = gBootServices->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
+		Status = gBS->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
 		if (EFI_ERROR(Status)) continue;
 		for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
 			if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex])) {
-				Status = gBootServices->OpenProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+				Status = gBS->OpenProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
 				if (EFI_ERROR(Status)) continue;
 				Status = PciIo->Pci.Read(PciIo,EfiPciIoWidthUint32, 0, sizeof(Pci) / sizeof(UINT32), &Pci);
 				if (EFI_ERROR(Status)) continue;
@@ -279,14 +279,14 @@ VOID* PCIReadRom(pci_dt_t* device)
 	//VOID* rom;
 	
 	
-	Status = gBootServices->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
+	Status = gBS->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
 	if (EFI_ERROR(Status)) return 0;
 	for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
-		Status = gBootServices->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
+		Status = gBS->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
 		if (EFI_ERROR(Status)) continue;
 		for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
 			if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex])) {
-				Status = gBootServices->OpenProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+				Status = gBS->OpenProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
 				if (EFI_ERROR(Status)) continue;
 				Status = PciIo->Pci.Read(PciIo,EfiPciIoWidthUint32, 0, sizeof(Pci) / sizeof(UINT32), &Pci);
 				if (EFI_ERROR(Status)) continue;

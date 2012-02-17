@@ -26,7 +26,7 @@ EFI_GUID gEfiMemorySubClassGuid                 = {0x4E8F4EBB, 0x64B9, 0x4e05, {
              
 //all these codes are still under the question
 // turbo - or an EFI System Partition - C12A7328-F81F-11D2-BA4B-00A0C93EC93B
-//EFI_GUID GPT_EFI_SYSTEM_PARTITION = \
+//EFI_GUID GPT_EFI_SYSTEM_PARTITION = 
 //{ 0xC12A7328, 0xF81F, 0x11D2, {0xBA, 0x4B, 0x00, 0xA0, 0xC9, 0x3E, 0xC9, 0x3B }};
 // zef - Basic Data Partition - EBD0A0A2-B9E5-4433-87C0-68B6B72699C7 for foreign OS support
 EFI_GUID GPT_MSDOS_PARTITION = \
