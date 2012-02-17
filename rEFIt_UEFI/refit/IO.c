@@ -1660,8 +1660,8 @@ Returns:
   //
   // Read a line from the console
   //
-  Len           = 0;
-  StrPos        = 0;
+//  Len           = 0;
+//  StrPos        = 0;
   OutputLength  = 0;
   Update        = 0;
   Delete        = 0;
@@ -1687,6 +1687,8 @@ Returns:
  // SetMem (InStr, StrLength * sizeof (CHAR16), 0);
   //prepare default string
   StrPos = StrLen(InStr);
+  Len = StrPos;
+  OutputLength = Len;
   Print(L"%s", InStr);
   Done = FALSE;
   do {
@@ -1729,7 +1731,7 @@ Returns:
         //
         // If we are at the buffer's end, drop the key
         //
-        if (Len == StrLength - 1 && (InsertMode || StrPos == Len)) {
+        if ((Len == StrLength - 1) && (InsertMode || StrPos == Len)) {
           break;
         }
         //

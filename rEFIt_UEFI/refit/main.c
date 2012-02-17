@@ -1102,7 +1102,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   UINTN             MenuExit;
   UINTN             Size, i;
   UINT8             *Buffer = NULL;
-  CHAR16            *InputBuffer;
+  CHAR16            *InputBuffer, *Y;
 //  EFI_INPUT_KEY Key;
   
   // bootstrap
@@ -1202,8 +1202,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
 
   //Second step. Load config.plist into gSettings	
-	GetUserSettings(SelfRootDir);
-  PauseForKey(L"config.plist read ok");
+	Status = GetUserSettings(SelfRoot);
+  Print(L"config.plist read status=%r\n", Status);
+  Y = L"";
+  Input(L"is it ok?", Y, 4);
+  
   
   // scan for loaders and tools, add then to the menu
   if (GlobalConfig.LegacyFirst)

@@ -418,12 +418,16 @@ static UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC Sty
         switch (key.UnicodeChar) {
             case CHAR_LINEFEED:
             case CHAR_CARRIAGE_RETURN:
-            case ' ':
+        //    case ' ':
                 MenuExit = MENU_EXIT_ENTER;
                 break;
             case '+':
                 MenuExit = MENU_EXIT_DETAILS;
                 break;
+            case ' ':
+              MenuExit = MENU_EXIT_DETAILS;
+              break;
+
             default:
                 ShortcutEntry = FindMenuShortcutEntry(Screen, key.UnicodeChar);
                 if (ShortcutEntry >= 0) {

@@ -153,7 +153,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 	TagPtr		prop;
   CHAR16    UStr[64];
 //	TagPtr		dictPointer;
-  CHAR16* ConfigPlistPath = L"\\EFI\\config.plist";
+  CHAR16* ConfigPlistPath = L"EFI\\config.plist";
 	
 	
 	// load config

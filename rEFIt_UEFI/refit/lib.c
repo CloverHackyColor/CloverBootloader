@@ -112,7 +112,7 @@ EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
         CheckError(EFI_LOAD_ERROR, L"FOR DEBUGGING");
     }
     */
-  
+/*  
   Status = gBS->HandleProtocol (
                                 SelfDeviceHandle,
                                 &gEfiSimpleFileSystemProtocolGuid,
@@ -121,6 +121,7 @@ EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
 	if (CheckFatalError (Status, L"while getting SelfVolume")) {
 		return Status;
 	}
+ */
   
 	//		DBG(L"Volume found\n");
  //   Print(L"SelfDevicePath = %s\n", DevicePathToStr(SelfDevicePath));
@@ -155,6 +156,11 @@ VOID UninitRefitLib(VOID)
         SelfRootDir->Close(SelfRootDir);
         SelfRootDir = NULL;
     }
+
+  if (SelfRoot != NULL) {
+    SelfRoot->Close(SelfRoot);
+    SelfRoot = NULL;
+  }
 }
 
 EFI_STATUS ReinitRefitLib(VOID)
@@ -180,13 +186,13 @@ EFI_STATUS FinishInitRefitLib(VOID)
   
 	if(TmpDevicePath == NULL)
 		return EFI_UNSUPPORTED;
-  DBG("old SelfHandle=%x\n", SelfDeviceHandle);
+//  DBG("old SelfHandle=%x\n", SelfDeviceHandle);
   NewSelfHandle = NULL;
 	Status = gBS->LocateDevicePath (&gEfiSimpleFileSystemProtocolGuid,
                                   &TmpDevicePath,
                                   &NewSelfHandle);
   CheckError(Status, L"while (re)opening our self handle");
-  DBG("new SelfHandle=%x\n", NewSelfHandle);
+//  DBG("new SelfHandle=%x\n", NewSelfHandle);
   if (SelfRootDir == NULL) {
     if (!EFI_ERROR(Status)) {
       SelfRootDir = EfiLibOpenRoot(NewSelfHandle);
@@ -210,7 +216,9 @@ EFI_STATUS FinishInitRefitLib(VOID)
   Status = SelfRootDir->Open(SelfRootDir, &SelfDir, SelfDirPath, EFI_FILE_MODE_READ, 0);
   if (CheckFatalError(Status, L"while opening our installation directory"))
     return EFI_LOAD_ERROR;
-  Print(L"SelfDirPath found: %s\n", SelfDirPath);
+//  Print(L"SelfDirPath found: %s\n", SelfDirPath);
+  
+  Status = SelfRootDir->Open(SelfRootDir, &SelfRoot, L"\\", EFI_FILE_MODE_READ, 0);
   
   return EFI_SUCCESS;
 }
@@ -544,7 +552,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
         // NOTE: If you add an operating system with a name that starts with 'W' or 'L', you
         //  need to fix AddLegacyEntry in main.c.
         
-#if REFIT_DEBUG > 0
+#if 0 // REFIT_DEBUG > 0
         Print(L"  Result of bootcode detection: %s %s (%s)\n",
               Volume->HasBootCode ? L"bootable" : L"non-bootable",
               Volume->OSName, Volume->OSIconName);
@@ -601,12 +609,12 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   EFI_FILE_SYSTEM_INFO    *FileSystemInfoPtr;
   EFI_FILE_INFO           *RootInfo = NULL;
   BOOLEAN                 Bootable;
-  EFI_INPUT_KEY           Key;
+//  EFI_INPUT_KEY           Key;
   CHAR16                  *tmpName;
   
     // get device path
     Volume->DevicePath = DuplicateDevicePath(DevicePathFromHandle(Volume->DeviceHandle));
-#if REFIT_DEBUG > 0
+#if 0 //REFIT_DEBUG > 0
     if (Volume->DevicePath != NULL) {
         Print(L"* %s\n", DevicePathToStr(Volume->DevicePath));
 #if REFIT_DEBUG >= 2
@@ -622,8 +630,8 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     if (EFI_ERROR(Status)) {
       Volume->BlockIO = NULL;
       DBG("Warning: Can't get BlockIO protocol.\n");
-      WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-      gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
+ //     WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+ //     gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
 
       return Status;
     } else {
@@ -646,48 +654,48 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
       
       if ((DevicePathType (DevicePath) == MESSAGING_DEVICE_PATH) &&
           (DevicePathSubType (DevicePath) == MSG_SATA_DP)) {
-        DBG("HDD volume\n");
+//        DBG("HDD volume\n");
         Volume->DiskKind = DISK_KIND_INTERNAL; 
         break;
       }
       if (DevicePathType(DevicePath) == MESSAGING_DEVICE_PATH && 
           (DevicePathSubType(DevicePath) == MSG_USB_DP || DevicePathSubType(DevicePath) == MSG_USB_CLASS_DP)) {
-        DBG("USB volume\n");
+//        DBG("USB volume\n");
         Volume->DiskKind = DISK_KIND_EXTERNAL; 
         break;
       }
       // FIREWIRE Devices
       if (DevicePathType(DevicePath) == MESSAGING_DEVICE_PATH && 
           (DevicePathSubType(DevicePath) == MSG_1394_DP || DevicePathSubType(DevicePath) == MSG_FIBRECHANNEL_DP)) {
-        DBG("FireWire volume\n");
+//        DBG("FireWire volume\n");
         Volume->DiskKind = DISK_KIND_FIREWIRE; 
         break;
       }
       // CD-ROM Devices
       if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH && 
           DevicePathSubType(DevicePath) == MEDIA_CDROM_DP) {
-        DBG("CD-ROM volume\n");
+//        DBG("CD-ROM volume\n");
         Volume->DiskKind = DISK_KIND_OPTICAL;     
         break;
       }
       // VENDOR Specific Path
       if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH && 
           DevicePathSubType(DevicePath) == MEDIA_VENDOR_DP) {
-        DBG("Vendor volume\n");
+//        DBG("Vendor volume\n");
         Volume->DiskKind = DISK_KIND_NODISK;
         break;
       }
       // LEGACY CD-ROM
       if (DevicePathType(DevicePath) == BBS_DEVICE_PATH && 
           (DevicePathSubType(DevicePath) == BBS_BBS_DP || DevicePathSubType(DevicePath) == BBS_TYPE_CDROM)) {
-        DBG("Legacy CD-ROM volume\n");
+//        DBG("Legacy CD-ROM volume\n");
         Volume->DiskKind = DISK_KIND_OPTICAL;
         break;
       }
       // LEGACY HARDDISK
       if (DevicePathType(DevicePath) == BBS_DEVICE_PATH && 
           (DevicePathSubType(DevicePath) == BBS_BBS_DP || DevicePathSubType(DevicePath) == BBS_TYPE_HARDDRIVE)) {
-        DBG("Legacy HDD volume\n");
+//        DBG("Legacy HDD volume\n");
         Volume->DiskKind = DISK_KIND_INTERNAL;
         break;
       }
@@ -720,9 +728,9 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
 		}		
 		DevicePath = NextDevicePathNode (DevicePath);
 	}
-  DBG("DevicePath scanned\n");
+//  DBG("DevicePath scanned\n");
     if (HdPath) {
-      Print(L"Partition found %s\n", DevicePathToStr((EFI_DEVICE_PATH *)HdPath));
+//      Print(L"Partition found %s\n", DevicePathToStr((EFI_DEVICE_PATH *)HdPath));
       
       PartialLength = (UINTN)((UINT8 *)HdPath - (UINT8 *)(RemainingDevicePath));
       if (PartialLength > 0x1000) {        
@@ -732,7 +740,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
       DiskDevicePath = (EFI_DEVICE_PATH *)AllocatePool(PartialLength + sizeof(EFI_DEVICE_PATH));
       CopyMem(DiskDevicePath, Volume->DevicePath, PartialLength);
       CopyMem((UINT8 *)DiskDevicePath + PartialLength, DevicePath, sizeof(EFI_DEVICE_PATH)); //EndDevicePath
-      Print(L"WholeDevicePath  %s\n", DevicePathToStr(DiskDevicePath));
+//      Print(L"WholeDevicePath  %s\n", DevicePathToStr(DiskDevicePath));
       RemainingDevicePath = DiskDevicePath;
       Status = gBS->LocateDevicePath(&gEfiDevicePathProtocolGuid, &RemainingDevicePath, &WholeDiskHandle);
       if (EFI_ERROR(Status)) {
@@ -742,7 +750,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
         // look at the BlockIO protocol
         Status = gBS->HandleProtocol(WholeDiskHandle, &gEfiBlockIoProtocolGuid, (VOID **) &Volume->WholeDiskBlockIO);
         if (!EFI_ERROR(Status)) {
-          DBG("WholeDiskBlockIO BlockSize=%d\n", Volume->WholeDiskBlockIO->Media->BlockSize);
+//          DBG("WholeDiskBlockIO BlockSize=%d\n", Volume->WholeDiskBlockIO->Media->BlockSize);
           // check the media block size
           if (Volume->WholeDiskBlockIO->Media->BlockSize == 2048)
             Volume->DiskKind = DISK_KIND_OPTICAL;
@@ -764,8 +772,8 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
 #if REFIT_DEBUG > 0
       if (Volume->HasBootCode){
         DBG("  Volume considered non-bootable, but boot code is present\n");
-        WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-        gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
+//        WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+//        gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
       }
 #endif
         Volume->HasBootCode = FALSE;
@@ -782,11 +790,11 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
         // TODO: signal that we had an error
       //Slice - there is LegacyBoot volume
       //properties are set before
-        DBG("LegacyBoot volume\n");
+//        DBG("LegacyBoot volume\n");
 
       if (HdPath) {
         tmpName = (CHAR16*)AllocateZeroPool(60);
-        DBG("Create legacyName\n");
+//        DBG("Create legacyName\n");
         UnicodeSPrint(tmpName, 60, L"Legacy HD%d", HdPath->PartitionNumber);
         Volume->VolName = EfiStrDuplicate(tmpName);
         FreePool(tmpName);
@@ -801,14 +809,14 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   if (Volume->RootDir) {
     FileSystemInfoPtr = EfiLibFileSystemInfo(Volume->RootDir);
     if (FileSystemInfoPtr) {
-      Print(L"  Volume name from FileSystem: %s\n", FileSystemInfoPtr->VolumeLabel);
+//      Print(L"  Volume name from FileSystem: %s\n", FileSystemInfoPtr->VolumeLabel);
       Volume->VolName = EfiStrDuplicate(FileSystemInfoPtr->VolumeLabel);
       FreePool(FileSystemInfoPtr);
     }
     if (!Volume->VolName) {
       RootInfo = EfiLibFileInfo (Volume->RootDir);
       if (RootInfo) {
-        Print(L"  Volume name from RootFile: %s\n", RootInfo->FileName);
+ //       Print(L"  Volume name from RootFile: %s\n", RootInfo->FileName);
         Volume->VolName = EfiStrDuplicate(RootInfo->FileName);
         FreePool(RootInfo);
       }
@@ -816,7 +824,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     if (!Volume->VolName) {
       VolumeInfo = EfiLibFileSystemVolumeLabelInfo(Volume->RootDir);
       if (VolumeInfo) {
-        Print(L"  Volume name from VolumeLabel: %s\n", VolumeInfo->VolumeLabel);
+ //       Print(L"  Volume name from VolumeLabel: %s\n", VolumeInfo->VolumeLabel);
         Volume->VolName = EfiStrDuplicate(VolumeInfo->VolumeLabel);
         FreePool(VolumeInfo); 
       }  
@@ -839,7 +847,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     }
   }
 
-  DBG("GetOSVersion\n");
+//  DBG("GetOSVersion\n");
   Status = GetOSVersion(Volume); //here we set tiger,leo,snow,lion
   if (EFI_ERROR(Status)) {
     // Volume->OSType = 0; //TODO - other criteria?
@@ -848,7 +856,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   }
   
   
-    DBG("VolName found OSType=%d\n", Volume->OSType);
+//    DBG("VolName found OSType=%d\n", Volume->OSType);
     // TODO: if no official volume name is found or it is empty, use something else, e.g.:
     //   - name from bytes 3 to 10 of the boot sector
     //   - partition number -- Slice: done
@@ -857,7 +865,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     // get custom volume icon if present
   if (FileExists(Volume->RootDir, L".VolumeIcon.icns")){
         Volume->VolBadgeImage = LoadIcns(Volume->RootDir, L".VolumeIcon.icns", 32);
-    DBG("VolBadgeImage found\n");
+ //   DBG("VolBadgeImage found\n");
   }
 //  DBG("ScanVolume finished\n");
 //  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);

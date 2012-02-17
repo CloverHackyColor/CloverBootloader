@@ -127,6 +127,7 @@ typedef struct {
 extern EFI_HANDLE       SelfImageHandle;
 extern EFI_LOADED_IMAGE *SelfLoadedImage;
 extern EFI_FILE         *SelfRootDir;
+extern EFI_FILE         *SelfRoot;
 extern EFI_FILE         *SelfDir;
 extern CHAR16           *SelfDirPath;
 extern EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *SelfFS;
