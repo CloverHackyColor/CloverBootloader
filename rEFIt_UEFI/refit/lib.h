@@ -96,6 +96,7 @@ typedef struct {
 #define OSTYPE_LEO				(15)
 #define OSTYPE_SNOW				(16)
 #define OSTYPE_LION				(17)
+#define OSTYPE_COUG   		(18)
 
 
 

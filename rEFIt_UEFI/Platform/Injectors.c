@@ -123,19 +123,19 @@ EFI_STATUS GetScreenInfo(VOID* This, UINT64* baseAddress, UINT64* frameBufferSiz
 	EFI_GRAPHICS_OUTPUT_PROTOCOL	*GraphicsOutput=NULL;
 	EFI_STATUS						Status;
 	
-	Status=gBS->HandleProtocol (
+	Status = gBS->HandleProtocol (
                               gST->ConsoleOutHandle,
                               &gEfiGraphicsOutputProtocolGuid,
                               (VOID **) &GraphicsOutput);
 	if(EFI_ERROR(Status))
 		return EFI_UNSUPPORTED;
 	
-	*frameBufferSize=(UINT64)GraphicsOutput->Mode->FrameBufferSize;
-	*baseAddress=(UINT64)GraphicsOutput->Mode->FrameBufferBase;
-	*w=(UINT32)GraphicsOutput->Mode->Info->HorizontalResolution;
-	*h=(UINT32)GraphicsOutput->Mode->Info->VerticalResolution;
-	*colorDepth=32;
-	*bpr=(UINT32)(GraphicsOutput->Mode->Info->PixelsPerScanLine*32)/8;
+	*frameBufferSize = (UINT64)GraphicsOutput->Mode->FrameBufferSize;
+	*baseAddress = (UINT64)GraphicsOutput->Mode->FrameBufferBase;
+	*w = (UINT32)GraphicsOutput->Mode->Info->HorizontalResolution;
+	*h = (UINT32)GraphicsOutput->Mode->Info->VerticalResolution;
+	*colorDepth = 32;
+	*bpr = (UINT32)(GraphicsOutput->Mode->Info->PixelsPerScanLine*32)/8;
 	
 	return EFI_SUCCESS;
 }

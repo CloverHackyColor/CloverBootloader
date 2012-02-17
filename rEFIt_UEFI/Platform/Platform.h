@@ -416,7 +416,7 @@ VOID            GetCPUProperties (VOID);
 MACHINE_TYPES   GetDefaultModel(VOID);
 UINT16          GetAdvancedCpuType(VOID);
 EFI_STATUS      GetOSVersion(IN REFIT_VOLUME *Volume);
-EFI_STATUS      GetUserSettings(IN EFI_FILE *RootDir, CHAR16* ConfigPlistPath);
+EFI_STATUS      GetUserSettings(IN EFI_FILE *RootDir);
 EFI_STATUS      GetNVRAMSettings(IN EFI_FILE *RootDir, CHAR16* NVRAMPlistPath);
 EFI_STATUS      GetEdid(VOID);
 

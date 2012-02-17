@@ -144,7 +144,7 @@ EFI_STATUS GetNVRAMSettings(IN EFI_FILE *RootDir, CHAR16* NVRAMPlistPath)
 	return Status;
 }	
 
-EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, CHAR16* ConfigPlistPath)
+EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 {
 	EFI_STATUS	Status = EFI_NOT_FOUND;
 	UINTN		size;
@@ -153,6 +153,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir, CHAR16* ConfigPlistPath)
 	TagPtr		prop;
   CHAR16    UStr[64];
 //	TagPtr		dictPointer;
+  CHAR16* ConfigPlistPath = L"\\EFI\\config.plist";
 	
 	
 	// load config
@@ -415,6 +416,13 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
         Volume->OSIconName = L"lion";
         Status = EFI_SUCCESS;
       }
+      // Mountain Lion
+      if(AsciiStrStr(prop->string, "10.8") != 0){
+				Volume->OSType = OSTYPE_COUG;
+        Volume->OSIconName = L"couguar";
+        Status = EFI_SUCCESS;
+      }
+      
     } 
 	}
 //	MsgLog("Booting %a\n", sysVersion[Volume->OSType]);

@@ -226,9 +226,9 @@ EFI_STATUS PatchACPI(IN EFI_FILE *RootDir)
 	EFI_PHYSICAL_ADDRESS		BufferPtr;
 	UINT8*						buffer = NULL;
 	UINTN             bufferLen = 0;
-	CHAR16*						PathPatched = L"\\EFI\\acpi\\patched\\DSDT.aml";
-	CHAR16*						PathDsdt = L"\\DSDT.aml";
-  CHAR16*						PathDsdtMini    = L"\\EFI\\acpi\\mini\\DSDT.aml";
+	CHAR16*						PathPatched   = L"\\EFI\\acpi\\patched\\DSDT.aml";
+	CHAR16*						PathDsdt      = L"\\DSDT.aml";
+  CHAR16*						PathDsdtMini  = L"\\EFI\\acpi\\mini\\DSDT.aml";
 //	CHAR16*						path = NULL;
 	UINT32* rf = NULL;
 	UINT64* xf = NULL;
@@ -467,8 +467,8 @@ EFI_STATUS PatchACPI(IN EFI_FILE *RootDir)
     {
       CopyMem((VOID*)(UINTN)dsdt, buffer, bufferLen);
       
-      FadtPointer->Dsdt=(UINT32)dsdt;
-      FadtPointer->XDsdt=dsdt;
+      FadtPointer->Dsdt  = (UINT32)dsdt;
+      FadtPointer->XDsdt = dsdt;
       // verify checksum
       FadtPointer->Header.Checksum = 0;
       FadtPointer->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)FadtPointer,FadtPointer->Header.Length));

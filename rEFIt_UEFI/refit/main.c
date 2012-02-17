@@ -1201,10 +1201,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
   }
 
-  
-
   //Second step. Load config.plist into gSettings	
-	GetUserSettings(SelfRootDir, L"\\EFI\\config.plist");
+	GetUserSettings(SelfRootDir);
   PauseForKey(L"config.plist read ok");
   
   // scan for loaders and tools, add then to the menu
