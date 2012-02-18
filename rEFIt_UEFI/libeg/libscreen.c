@@ -229,27 +229,29 @@ VOID egDrawImageArea(IN EG_IMAGE *Image,
 // Make a screenshot
 //
 
-VOID egScreenShot(VOID)
+EFI_STATUS egScreenShot(VOID)
 {
     EFI_STATUS      Status;
     EG_IMAGE        *Image;
     UINT8           *FileData;
     UINTN           FileDataLength;
     UINTN           Index;
-    
+    CHAR16					ScreenshotName[128];
+      
     if (!egHasGraphics)
-        return;
+        return EFI_NOT_READY;
     
     // allocate a buffer for the whole screen
     Image = egCreateImage(egScreenWidth, egScreenHeight, FALSE);
     if (Image == NULL) {
         Print(L"Error egCreateImage returned NULL\n");
-        goto bailout_wait;
+        return EFI_NO_MEDIA;
     }
     
     // get full screen image
     if (GraphicsOutput != NULL) {
-        GraphicsOutput->Blt(GraphicsOutput, (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)Image->PixelData, EfiBltVideoToBltBuffer,
+        GraphicsOutput->Blt(GraphicsOutput, (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)Image->PixelData,
+                            EfiBltVideoToBltBuffer,
                             0, 0, 0, 0, Image->Width, Image->Height, 0);
     } else if (UgaDraw != NULL) {
         UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)Image->PixelData, EfiUgaVideoToBltBuffer,
@@ -261,23 +263,26 @@ VOID egScreenShot(VOID)
     egFreeImage(Image);
     if (FileData == NULL) {
         Print(L"Error egEncodeBMP returned NULL\n");
-        goto bailout_wait;
+        return EFI_NO_MEDIA;
     }
     
     // save to file on the ESP
     Status = egSaveFile(NULL, L"screenshot.bmp", FileData, FileDataLength);
-    FreePool(FileData);
     if (EFI_ERROR(Status)) {
-        Print(L"Error egSaveFile: %x\n", Status);
-        goto bailout_wait;
+      for (Index=0; Index < 20; Index++) {
+        UnicodeSPrint(ScreenshotName, 128, L"EFI\\misc\\screenshot%d.bmp", Index);
+        if(!FileExists(SelfRootDir, ScreenshotName)){
+          Status = egSaveFile(SelfRootDir, ScreenshotName, FileData, FileDataLength);
+          if (!EFI_ERROR(Status)) {
+            break;
+          }				
+        }
+      }
+      
+      CheckError(Status, L"Error egSaveFile\n");
     }
-    
-    return;
-    
-    // DEBUG: switch to text mode
-bailout_wait:
-    egSetGraphicsModeEnabled(FALSE);
-    gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &Index);
+    FreePool(FileData);    
+    return Status;
 }
 
 /* EOF */

@@ -51,12 +51,10 @@
 EFI_HANDLE       SelfImageHandle;
 EFI_HANDLE       SelfDeviceHandle;
 EFI_LOADED_IMAGE *SelfLoadedImage;
-EFI_FILE         *SelfRoot;
 EFI_FILE         *SelfRootDir;
 EFI_FILE         *SelfDir;
 CHAR16           *SelfDirPath;
-EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *SelfFS  = NULL;
-EFI_DEVICE_PATH  *SelfDevicePath = NULL;
+EFI_DEVICE_PATH  *SelfDevicePath;
 
 
 REFIT_VOLUME     *SelfVolume = NULL;
@@ -69,10 +67,10 @@ EFI_UNICODE_COLLATION_PROTOCOL *mUnicodeCollation = NULL;
 
 // functions
 
-EFI_STATUS FinishInitRefitLib(VOID);
+static EFI_STATUS FinishInitRefitLib(VOID);
 
-VOID UninitVolumes(VOID);
-VOID ReinitVolumes(VOID);
+static VOID UninitVolumes(VOID);
+static VOID ReinitVolumes(VOID);
 
 BOOLEAN MetaiMatch (
 			IN CHAR16   *String,
@@ -88,43 +86,23 @@ EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
     CHAR16      *FilePathAsString;
     CHAR16      BaseDirectory[256];
     UINTN       i;
-//  EFI_INPUT_KEY Key;
+    UINTN                     DevicePathSize;
+    EFI_DEVICE_PATH_PROTOCOL* TmpDevicePath;
     
     SelfImageHandle = ImageHandle;
     Status = gBS->HandleProtocol(SelfImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &SelfLoadedImage);
     if (CheckFatalError(Status, L"while getting a LoadedImageProtocol handle"))
-        return EFI_LOAD_ERROR;
+        return Status;
     
     SelfDeviceHandle = SelfLoadedImage->DeviceHandle;
-    SelfDevicePath = DevicePathFromHandle (SelfDeviceHandle);
-#if DEBUG_LIB > 1 
-//  Print(L"SelfDevicePath=%s @%x\n", DevicePathToStr(SelfDevicePath), SelfDeviceHandle);
-#endif 
-    /*
-    if (SelfLoadedImage->LoadOptionsSize > 0) {
-        CHAR16 Buffer[1024];
-        UINTN Length = SelfLoadedImage->LoadOptionsSize / 2;
-        if (Length > 1023)
-            Length = 1023;
-        CopyMem(Buffer, SelfLoadedImage->LoadOptions, SelfLoadedImage->LoadOptionsSize);
-        Buffer[Length] = 0;
-        Print(L"Load options: '%s'\n", Buffer);
-        CheckError(EFI_LOAD_ERROR, L"FOR DEBUGGING");
-    }
-    */
-/*  
-  Status = gBS->HandleProtocol (
-                                SelfDeviceHandle,
-                                &gEfiSimpleFileSystemProtocolGuid,
-                                (VOID **) &SelfFS
-                                );
-	if (CheckFatalError (Status, L"while getting SelfVolume")) {
-		return Status;
-	}
- */
+    TmpDevicePath = DevicePathFromHandle (SelfDeviceHandle);
+    DevicePathSize = GetDevicePathSize (TmpDevicePath);
+    SelfDevicePath = AllocateAlignedPages(EFI_SIZE_TO_PAGES(DevicePathSize), 64);
+    CopyMem(SelfDevicePath, TmpDevicePath, DevicePathSize);
   
-	//		DBG(L"Volume found\n");
- //   Print(L"SelfDevicePath = %s\n", DevicePathToStr(SelfDevicePath));
+#if DEBUG_LIB > 1 
+//    Print(L"SelfDevicePath=%s @%x\n", DevicePathToStr(SelfDevicePath), SelfDeviceHandle);
+#endif 
   
   // find the current directory
     FilePathAsString = DevicePathToStr(SelfLoadedImage->FilePath);
@@ -136,7 +114,7 @@ EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
     } else
         BaseDirectory[0] = 0;
     SelfDirPath = EfiStrDuplicate(BaseDirectory);
-//  Print(L"SelfDirPath = %s\n", SelfDirPath);  //result=\EFI\BOOT
+ //   Print(L"SelfDirPath = %s\n", SelfDirPath);  //result=\EFI\BOOT
   
     return FinishInitRefitLib();
 }
@@ -156,19 +134,12 @@ VOID UninitRefitLib(VOID)
         SelfRootDir->Close(SelfRootDir);
         SelfRootDir = NULL;
     }
-
-  if (SelfRoot != NULL) {
-    SelfRoot->Close(SelfRoot);
-    SelfRoot = NULL;
-  }
 }
 
 EFI_STATUS ReinitRefitLib(VOID)
 {
     // called after running external programs to re-open file handles
-    
-    //EFI_STATUS  Status;
-    
+    //
     ReinitVolumes();
     
     if (SelfVolume != NULL && SelfVolume->RootDir != NULL)
@@ -177,50 +148,58 @@ EFI_STATUS ReinitRefitLib(VOID)
     return FinishInitRefitLib();
 }
 
-//static
-EFI_STATUS FinishInitRefitLib(VOID)
-{ 
-	EFI_STATUS                Status;
-  EFI_HANDLE                NewSelfHandle;
-	EFI_DEVICE_PATH_PROTOCOL* TmpDevicePath = DuplicateDevicePath(SelfDevicePath);
+EFI_STATUS ReinitSelfLib(VOID)
+{
+  // called after reconnect drivers to re-open file handles
   
-	if(TmpDevicePath == NULL)
-		return EFI_UNSUPPORTED;
-//  DBG("old SelfHandle=%x\n", SelfDeviceHandle);
+  EFI_STATUS  Status;
+  EFI_HANDLE                NewSelfHandle;
+	EFI_DEVICE_PATH_PROTOCOL* TmpDevicePath;
+  if (!SelfDevicePath) {
+    return EFI_NOT_FOUND;
+  }
+
+  TmpDevicePath = DuplicateDevicePath(SelfDevicePath);
+
+  if(TmpDevicePath == NULL)
+		return EFI_NOT_FOUND;
+
   NewSelfHandle = NULL;
 	Status = gBS->LocateDevicePath (&gEfiSimpleFileSystemProtocolGuid,
                                   &TmpDevicePath,
                                   &NewSelfHandle);
-  CheckError(Status, L"while (re)opening our self handle");
+  CheckError(Status, L"while reopening our self handle");
 //  DBG("new SelfHandle=%x\n", NewSelfHandle);
+
+  SelfRootDir = EfiLibOpenRoot(NewSelfHandle);  
   if (SelfRootDir == NULL) {
-    if (!EFI_ERROR(Status)) {
-      SelfRootDir = EfiLibOpenRoot(NewSelfHandle);
-    }
-    
-    if (SelfRootDir == NULL) {
-      DBG("NewSelfHandle is wrong. go to SelfImage\n");
+    DBG("SelfRootDir can't be reopened\n");
+    return EFI_NOT_FOUND;
+  }
+  SelfDeviceHandle = NewSelfHandle;
+  Status = SelfRootDir->Open(SelfRootDir, &SelfDir, SelfDirPath, EFI_FILE_MODE_READ, 0);
+  CheckFatalError(Status, L"while reopening our installation directory");
+  return Status;
+}
+
+
+static
+EFI_STATUS FinishInitRefitLib(VOID)
+{ 
+	EFI_STATUS                Status;
+
+  if (SelfRootDir == NULL) {
       SelfRootDir = EfiLibOpenRoot(SelfLoadedImage->DeviceHandle);
-      if (SelfRootDir == NULL) {
-        CheckError(EFI_LOAD_ERROR, L"while (re)opening our installation volume");
-        return EFI_LOAD_ERROR;
-      } else {
-        SelfDeviceHandle = SelfLoadedImage->DeviceHandle;
-      }      
-    } else {
-  //    SelfLoadedImage->DeviceHandle = NewSelfHandle;
-      SelfDeviceHandle = NewSelfHandle;
-    }
+     if (SelfRootDir != NULL) {
+       SelfDeviceHandle = SelfLoadedImage->DeviceHandle;
+     } else {
+       return EFI_LOAD_ERROR;
+     }
   }
   
   Status = SelfRootDir->Open(SelfRootDir, &SelfDir, SelfDirPath, EFI_FILE_MODE_READ, 0);
-  if (CheckFatalError(Status, L"while opening our installation directory"))
-    return EFI_LOAD_ERROR;
-//  Print(L"SelfDirPath found: %s\n", SelfDirPath);
-  
-  Status = SelfRootDir->Open(SelfRootDir, &SelfRoot, L"\\", EFI_FILE_MODE_READ, 0);
-  
-  return EFI_SUCCESS;
+  CheckFatalError(Status, L"while opening our installation directory");
+  return Status;
 }
 
 //
@@ -604,6 +583,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   HARDDRIVE_DEVICE_PATH   *HdPath     = NULL; 
   EFI_HANDLE              WholeDiskHandle;
   UINTN                   PartialLength = 0;
+  UINTN                   DevicePathSize;
 //  UINTN                   BufferSize = 255;
   EFI_FILE_SYSTEM_VOLUME_LABEL *VolumeInfo;
   EFI_FILE_SYSTEM_INFO    *FileSystemInfoPtr;
@@ -613,7 +593,12 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   CHAR16                  *tmpName;
   
     // get device path
-    Volume->DevicePath = DuplicateDevicePath(DevicePathFromHandle(Volume->DeviceHandle));
+  DiskDevicePath = DevicePathFromHandle(Volume->DeviceHandle);
+  DevicePathSize = GetDevicePathSize (DiskDevicePath);
+  Volume->DevicePath = AllocateAlignedPages(EFI_SIZE_TO_PAGES(DevicePathSize), 64);
+  CopyMem(Volume->DevicePath, DiskDevicePath, DevicePathSize);
+  
+//    Volume->DevicePath = DuplicateDevicePath(DevicePathFromHandle(Volume->DeviceHandle));
 #if 0 //REFIT_DEBUG > 0
     if (Volume->DevicePath != NULL) {
         Print(L"* %s\n", DevicePathToStr(Volume->DevicePath));
@@ -809,14 +794,14 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   if (Volume->RootDir) {
     FileSystemInfoPtr = EfiLibFileSystemInfo(Volume->RootDir);
     if (FileSystemInfoPtr) {
-//      Print(L"  Volume name from FileSystem: %s\n", FileSystemInfoPtr->VolumeLabel);
+      DBG("  Volume name from FileSystem\n");
       Volume->VolName = EfiStrDuplicate(FileSystemInfoPtr->VolumeLabel);
       FreePool(FileSystemInfoPtr);
     }
     if (!Volume->VolName) {
       RootInfo = EfiLibFileInfo (Volume->RootDir);
       if (RootInfo) {
- //       Print(L"  Volume name from RootFile: %s\n", RootInfo->FileName);
+        DBG("  Volume name from RootFile\n");
         Volume->VolName = EfiStrDuplicate(RootInfo->FileName);
         FreePool(RootInfo);
       }
@@ -824,7 +809,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     if (!Volume->VolName) {
       VolumeInfo = EfiLibFileSystemVolumeLabelInfo(Volume->RootDir);
       if (VolumeInfo) {
- //       Print(L"  Volume name from VolumeLabel: %s\n", VolumeInfo->VolumeLabel);
+        DBG("  Volume name from VolumeLabel\n");
         Volume->VolName = EfiStrDuplicate(VolumeInfo->VolumeLabel);
         FreePool(VolumeInfo); 
       }  
@@ -848,7 +833,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   }
 
 //  DBG("GetOSVersion\n");
-  Status = GetOSVersion(Volume); //here we set tiger,leo,snow,lion
+  Status = GetOSVersion(Volume); //here we set tiger,leo,snow,lion and cougar
   if (EFI_ERROR(Status)) {
     // Volume->OSType = 0; //TODO - other criteria?
     // Other EFI systems?
@@ -865,11 +850,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     // get custom volume icon if present
   if (FileExists(Volume->RootDir, L".VolumeIcon.icns")){
         Volume->VolBadgeImage = LoadIcns(Volume->RootDir, L".VolumeIcon.icns", 32);
- //   DBG("VolBadgeImage found\n");
   }
-//  DBG("ScanVolume finished\n");
-//  WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-//  gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
   return EFI_SUCCESS;
 }
 
@@ -880,13 +861,13 @@ static VOID ScanExtendedPartition(REFIT_VOLUME *WholeDiskVolume, MBR_PARTITION_I
     UINT32                  ExtBase, ExtCurrent, NextExtCurrent;
     UINTN                   i;
     UINTN                   LogicalPartitionIndex = 4;
- //   UINT8                   SectorBuffer[512];
-  UINT8                   *SectorBuffer;
+    UINT8                   *SectorBuffer;
     BOOLEAN                 Bootable;
     MBR_PARTITION_INFO      *EMbrTable;
     
     ExtBase = MbrEntry->StartLBA;
-  SectorBuffer = AllocateAlignedPages (EFI_SIZE_TO_PAGES (512), 16);
+    SectorBuffer = AllocateAlignedPages (EFI_SIZE_TO_PAGES (512), WholeDiskVolume->BlockIO->Media->IoAlign);
+  
     for (ExtCurrent = ExtBase; ExtCurrent; ExtCurrent = NextExtCurrent) {
         // read current EMBR
         Status = WholeDiskVolume->BlockIO->ReadBlocks(WholeDiskVolume->BlockIO,
@@ -927,8 +908,7 @@ static VOID ScanExtendedPartition(REFIT_VOLUME *WholeDiskVolume, MBR_PARTITION_I
                 
                 ScanVolumeDefaultIcon(Volume);
                 
-                AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
-                
+                AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);                
             }
         }
     }
@@ -946,47 +926,39 @@ VOID ScanVolumes(VOID)
     UINTN                   PartitionIndex;
     UINT8                   *SectorBuffer1, *SectorBuffer2;
     UINTN                   SectorSum, i;
-  EFI_INPUT_KEY Key;
+//  EFI_INPUT_KEY Key;
     
-    DBG("Scanning volumes...\n");
+//    DBG("Scanning volumes...\n");
     
     // get all BlockIo handles
     Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiBlockIoProtocolGuid, NULL, &HandleCount, &Handles);
-    // was: &FileSystemProtocol
     if (Status == EFI_NOT_FOUND)
         return;  
- //   if (CheckError(Status, L"while listing all BlockIo"))
-      //Slice - what is the case for that?
- //       return;
     
     // first pass: collect information about all handles
     for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
         
       Volume = AllocateZeroPool(sizeof(REFIT_VOLUME));
       Volume->DeviceHandle = Handles[HandleIndex];
-      DBG("Volume Nr %d\n", HandleIndex);
-      DBG("Handles: Volume=%x Self=%x\n", Volume->DeviceHandle, SelfLoadedImage->DeviceHandle);
-      WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
-      gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
-      if (Volume->DeviceHandle == SelfLoadedImage->DeviceHandle){
-        DBG("this is SelfVolume\n");
+      if (Volume->DeviceHandle == SelfDeviceHandle){
+        DBG("this is SelfVolume at index %d\n", HandleIndex);
         SelfVolume = Volume;  
       }
       
       Status = ScanVolume(Volume);
       if (!EFI_ERROR(Status)) {
-        DBG("Found Volume at index=%x\n", HandleIndex);
+//        DBG("Found Volume at index=%x\n", HandleIndex);
         AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
         
       } else {
-        DBG("wrong volume?!\n");
+        DBG("wrong volume Nr%d?!\n", HandleIndex);
         FreePool(Volume);
       }
     }
     FreePool(Handles);
   DBG("Found %d volumes\n", VolumesCount);
   if (SelfVolume == NULL){
-    Print(L"WARNING: SelfVolume not found"); //Slice - and what?
+    DBG("WARNING: SelfVolume not found"); //Slice - and what?
     SelfVolume = AllocateZeroPool(sizeof(REFIT_VOLUME));
     SelfVolume->DeviceHandle = SelfDeviceHandle;
     SelfVolume->DevicePath = SelfDevicePath;
@@ -998,7 +970,7 @@ VOID ScanVolumes(VOID)
     SelfVolume->BootType = BOOTING_BY_PBR;
  //   AddListElement((VOID ***) &Volumes, &VolumesCount, SelfVolume);
     
-    DBG("SelfVolume Nr %d\n", VolumesCount);
+    DBG("SelfVolume Nr %d created\n", VolumesCount);
     
   }
     
@@ -1074,7 +1046,7 @@ VOID ScanVolumes(VOID)
     }
 }
 
-VOID UninitVolumes(VOID)
+static VOID UninitVolumes(VOID)
 {
     REFIT_VOLUME            *Volume;
     UINTN                   VolumeIndex;
@@ -1093,7 +1065,7 @@ VOID UninitVolumes(VOID)
     }
 }
 
-VOID ReinitVolumes(VOID)
+static VOID ReinitVolumes(VOID)
 {
     EFI_STATUS              Status;
     REFIT_VOLUME            *Volume;

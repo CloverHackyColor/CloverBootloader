@@ -89,130 +89,6 @@ EfiLibOpenRoot (
 
 /**
 
-  Helper function called as part of the code needed
-  to allocate the proper sized buffer for various
-  EFI interfaces.
-
-
-  @param Status          Current status
-  @param Buffer          Current allocated buffer, or NULL
-  @param BufferSize      Current buffer size needed
-
-  @retval  TRUE  if the buffer was reallocated and the caller
-                 should try the API again.
-  @retval  FALSE The caller should not call this function again.
-
-**/
-/*
-BOOLEAN
-EfiGrowBuffer (
-  IN OUT EFI_STATUS   *Status,
-  IN OUT VOID         **Buffer,
-  IN UINTN            BufferSize
-  )
-{
-  BOOLEAN TryAgain;
-
-  //
-  // If this is an initial request, buffer will be null with a new buffer size
-  //
-  if ((*Buffer == NULL) && (BufferSize != 0)) {
-    *Status = EFI_BUFFER_TOO_SMALL;
-  }
-  //
-  // If the status code is "buffer too small", resize the buffer
-  //
-  TryAgain = FALSE;
-  if (*Status == EFI_BUFFER_TOO_SMALL) {
-
-    if (*Buffer != NULL) {
-      FreePool (*Buffer);
-    }
-
-    *Buffer = AllocateZeroPool (BufferSize);
-
-    if (*Buffer != NULL) {
-      TryAgain = TRUE;
-    } else {
-      *Status = EFI_OUT_OF_RESOURCES;
-    }
-  }
-  //
-  // If there's an error, free the buffer
-  //
-  if (!TryAgain && EFI_ERROR (*Status) && (*Buffer != NULL)) {
-    FreePool (*Buffer);
-    *Buffer = NULL;
-  }
-
-  return TryAgain;
-}
-*/
-/**
-  Function returns the value of the specified variable.
-
-
-  @param Name            A Null-terminated Unicode string that is
-                         the name of the vendor's variable.
-  @param VendorGuid      A unique identifier for the vendor.
-
-  @return               The payload of the variable.
-  @retval NULL          If the variable can't be read.
-
-**/
-/*
-VOID *
-EfiLibGetVariable (
-  IN CHAR16               *Name,
-  IN EFI_GUID             *VendorGuid
-  )
-{
-  UINTN VarSize;
-
-  return BdsLibGetVariableAndSize (Name, VendorGuid, &VarSize);
-}
-*/
-/**
-  Function deletes the variable specified by VarName and VarGuid.
-
-  @param VarName           A Null-terminated Unicode string that is
-                           the name of the vendor's variable.
-                         
-  @param VarGuid           A unique identifier for the vendor.
-
-  @retval  EFI_SUCCESS           The variable was found and removed
-  @retval  EFI_UNSUPPORTED       The variable store was inaccessible
-  @retval  EFI_OUT_OF_RESOURCES  The temporary buffer was not available
-  @retval  EFI_NOT_FOUND         The variable was not found
-
-**/
-/*
-EFI_STATUS
-EfiLibDeleteVariable (
-  IN CHAR16   *VarName,
-  IN EFI_GUID *VarGuid
-  )
-{
-  VOID        *VarBuf;
-  EFI_STATUS  Status;
-
-  VarBuf  = EfiLibGetVariable (VarName, VarGuid);
-  Status  = EFI_NOT_FOUND;
-
-  if (VarBuf != NULL) {
-    //
-    // Delete variable from Storage
-    //
-    Status = gRS->SetVariable (VarName, VarGuid, VAR_FLAG, 0, NULL);
-    ASSERT (!EFI_ERROR (Status));
-    FreePool (VarBuf);
-  }
-
-  return Status;
-}
-*/
-/**
-
   Function gets the file system information from an open file descriptor,
   and stores it in a buffer allocated from pool.
 
@@ -228,30 +104,6 @@ EfiLibFileSystemVolumeLabelInfo (
   IN EFI_FILE_HANDLE      FHand
   )
 {
-#if 0
-  EFI_STATUS                        Status  = EFI_SUCCESS;
-  EFI_FILE_SYSTEM_VOLUME_LABEL      *Buffer;
-  UINTN                             BufferSize;
-  //
-  // Initialize for GrowBuffer loop
-  //
-  Buffer      = NULL;
-  BufferSize  = SIZE_OF_EFI_FILE_SYSTEM_VOLUME_LABEL + 200;
-
-  //
-  // Call the real function
-  //
-  while (EfiGrowBuffer (&Status, (VOID **) &Buffer, BufferSize)) {
-    Status = FHand->GetInfo (
-                      FHand,
-                      &gEfiFileSystemVolumeLabelInfoIdGuid,
-                      &BufferSize,
-                      Buffer
-                      );
-  }
-
-  return Buffer;
-#else
   EFI_STATUS    Status;
   EFI_FILE_SYSTEM_VOLUME_LABEL *VolumeInfo = NULL;
   UINTN         Size = 0;
@@ -262,10 +114,7 @@ EfiLibFileSystemVolumeLabelInfo (
     Status = FHand->GetInfo (FHand, &gEfiFileSystemVolumeLabelInfoIdGuid, &Size, VolumeInfo);
   }
   
-  return EFI_ERROR(Status)?NULL:VolumeInfo;
-  
-#endif  
-  
+  return EFI_ERROR(Status)?NULL:VolumeInfo;  
 }
 
 /**
@@ -326,30 +175,6 @@ EfiLibFileInfo (
   IN EFI_FILE_HANDLE      FHand
   )
 {
-#if 0  
-  EFI_STATUS    Status = EFI_SUCCESS;
-  EFI_FILE_INFO *Buffer = NULL;
-  UINTN         BufferSize = 0;
-
-  //
-  // Initialize for GrowBuffer loop
-  //
-  Buffer      = NULL;
-  BufferSize  = SIZE_OF_EFI_FILE_INFO + 200;
-
-  //
-  // Call the real function
-  //
-  while (EfiGrowBuffer (&Status, (VOID **) &Buffer, BufferSize)) {
-    Status = FHand->GetInfo (
-                      FHand,
-                      &gEfiFileInfoGuid,
-                      &BufferSize,
-                      Buffer
-                      );
-  }
-    return Buffer;
-#else
   EFI_STATUS    Status;
   EFI_FILE_INFO *FileInfo = NULL;
   UINTN         Size = 0;
@@ -361,10 +186,6 @@ EfiLibFileInfo (
   }
   
   return EFI_ERROR(Status)?NULL:FileInfo;
-  
-#endif  
-
-
 }
 
 EFI_FILE_SYSTEM_INFO *

@@ -101,7 +101,7 @@ VOID InitScreen(VOID)
     BlankLine[i] = 0;
     
     // show the banner (even when in graphics mode)
-    DrawScreenHeader(L"Initializing...");
+//    DrawScreenHeader(L"Initializing...");
 }
 
 VOID SetupScreen(VOID)

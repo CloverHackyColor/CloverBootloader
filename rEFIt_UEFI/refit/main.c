@@ -594,7 +594,7 @@ static VOID ScanLoader(VOID)
     CHAR16                  FileName[256];
     LOADER_ENTRY            *Entry;
     
-    Print(L"Scanning for boot loaders...\n");
+//    Print(L"Scanning for boot loaders...\n");
     
     for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
         Volume = Volumes[VolumeIndex];
@@ -905,11 +905,11 @@ static VOID ScanLegacy(VOID)
     BOOLEAN                 ShowVolume, HideIfOthersFound;
     REFIT_VOLUME            *Volume;
     
-    Print(L"Scanning for legacy boot volumes...\n");
+ //   Print(L"Scanning for legacy boot volumes...\n");
     
     for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
         Volume = Volumes[VolumeIndex];
-#if REFIT_DEBUG > 0
+#if 0 // REFIT_DEBUG > 0
         Print(L" %d %s\n  %d %d %s %d %s\n",
               VolumeIndex, DevicePathToStr(Volume->DevicePath),
               Volume->DiskKind, Volume->MbrPartitionIndex,
@@ -991,7 +991,7 @@ static VOID ScanTool(VOID)
     if (GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)
         return;
     
-    Print(L"Scanning for tools...\n");
+//    Print(L"Scanning for tools...\n");
     
     // look for the EFI shell
     if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_SHELL)) {
@@ -1058,22 +1058,12 @@ static VOID ScanDriverDir(IN CHAR16 *Path) //path to folder
 
 static VOID LoadDrivers(VOID)
 {
-//    CHAR16                  DirName[256];
   BOOLEAN ReconnectAll = TRUE; //TODO - find a reason to not reconnect
     
-//    Print(L"Scanning for drivers...\n");
-    
-    // load drivers from /efi/refit/drivers
-//    UnicodeSPrint(DirName, 255, L"%s\\drivers", SelfDirPath);
-//    ScanDriverDir(DirName);
-//    Print(L"Scanning for drivers in /efi/refit/drivers complete\n");
     // load drivers from /efi/drivers
     ScanDriverDir(L"\\EFI\\drivers");
-//    Print(L"Scanning for drivers in /EFI/drivers complete\n");
-    // connect all devices
-    //    BdsLibConnectAllDriversToAllControllers();
-    //
-    // Process the LOAD_OPTION_FORCE_RECONNECT driver option
+
+  // connect all devices
     //
   if (ReconnectAll) {
     BdsLibDisconnectAllEfi ();
@@ -1087,10 +1077,6 @@ static VOID LoadDrivers(VOID)
 // main entry point
 //
 
-//#ifdef __GNUC__
-//#define RefitMain efi_main
-//#endif
-
 EFI_STATUS
 EFIAPI
 RefitMain (IN EFI_HANDLE           ImageHandle,
@@ -1102,7 +1088,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   UINTN             MenuExit;
   UINTN             Size, i;
   UINT8             *Buffer = NULL;
-  CHAR16            *InputBuffer, *Y;
+  CHAR16            *InputBuffer; //, *Y;
 //  EFI_INPUT_KEY Key;
   
   // bootstrap
@@ -1115,19 +1101,15 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	
 	InitBooterLog();
   InitScreen();
-//  DBG("InitScreen ok\n");
   
   Status = InitRefitLib(ImageHandle);
   if (EFI_ERROR(Status))
     return Status;
-//  DBG("InitRefitLib ok\n");
   
   InitializeUnicodeCollationProtocol();
-//  DBG("InitializeUnicodeCollationProtocol ok\n");
   
   // read GUI configuration
   ReadConfig();
-//  DBG("ReadConfig ok\n");
   
   MainMenu.TimeoutSeconds = GlobalConfig.Timeout;
   
@@ -1136,22 +1118,21 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   // further bootstrap (now with config available)
   //  SetupScreen();
-  PauseForKey(L"SetupScreen ok");
+//  PauseForKey(L"SetupScreen ok");
 
   LoadDrivers();
-  PauseForKey(L"LoadDrivers ok");
+//  PauseForKey(L"LoadDrivers ok");
 
   //Now we have to reinit handles
-/*  UninitRefitLib();
-  Status = FinishInitRefitLib();
+  Status = ReinitSelfLib();
   if (EFI_ERROR(Status)){
     DBG(" %r", Status);
     PauseForKey(L"Error reinit refit\n");
     return Status;
-  } else {
+  }/* else {
     PauseForKey(L"Reinit refitLib OK\n");
-  }
-*/  
+  }*/
+  
   ScanVolumes();
 //  PauseForKey(L"ScanVolumes ok");
   
@@ -1175,7 +1156,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
                             &Size, 										   
                             Buffer);
 	if (Status == EFI_BUFFER_TOO_SMALL) {
-		Buffer = (UINT8 *) AllocatePool (Size);		
+		Buffer = (UINT8 *) AllocateAlignedPages (EFI_SIZE_TO_PAGES(Size), 16);		
 		if (!Buffer){
 			Print(L"Errors allocating kernel flags!\n");
  		} else {
@@ -1202,11 +1183,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
 
   //Second step. Load config.plist into gSettings	
-	Status = GetUserSettings(SelfRoot);
-  Print(L"config.plist read status=%r\n", Status);
-  Y = L"";
-  Input(L"is it ok?", Y, 4);
-  
+	Status = GetUserSettings(SelfRootDir);  
   
   // scan for loaders and tools, add then to the menu
   if (GlobalConfig.LegacyFirst)
@@ -1217,9 +1194,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
     ScanTool();
   }
-  
-//  PauseForKey(L"scan for loaders and tools ok");
-  
+    
   // fixed other menu entries
   if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
     MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);

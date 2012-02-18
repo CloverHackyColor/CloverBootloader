@@ -19,7 +19,7 @@ Re-Work by Slice 2011.
 
 #include "Platform.h"
 
-#define DEBUG_ACPI 1
+#define DEBUG_ACPI 2
 
 #if DEBUG_ACPI == 2
 #define DBG(x...) AsciiPrint(x)

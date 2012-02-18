@@ -1686,11 +1686,12 @@ Returns:
 
  // SetMem (InStr, StrLength * sizeof (CHAR16), 0);
   //prepare default string
-  StrPos = StrLen(InStr);
-  Len = StrPos;
+  Len = StrLen(InStr);
+  StrPos = 0; 
   OutputLength = Len;
   Print(L"%s", InStr);
   Done = FALSE;
+  SetCursorPosition (ConOut, Column, Row, LineLength, TotalRow, InStr, StrPos, Len);
   do {
     //
     // Read a key
@@ -1740,7 +1741,7 @@ Returns:
         // the character.
         //
         if (InsertMode) {
-          for (Index = Len; Index > StrPos; Index -= 1) {
+          for (Index = Len; Index > StrPos; Index--) {
             InStr[Index] = InStr[Index - 1];
           }
         }
@@ -1748,8 +1749,8 @@ Returns:
         InStr[StrPos] = Key.UnicodeChar;
         Update        = StrPos;
 
-        StrPos += 1;
-        OutputLength = 1;
+        StrPos++;
+        OutputLength++;
       }
       break;
 

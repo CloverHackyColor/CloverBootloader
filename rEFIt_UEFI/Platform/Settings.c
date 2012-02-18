@@ -418,8 +418,8 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
       }
       // Mountain Lion
       if(AsciiStrStr(prop->string, "10.8") != 0){
-				Volume->OSType = OSTYPE_COUG;
-        Volume->OSIconName = L"couguar";
+				Volume->OSType = OSTYPE_COUGAR;
+        Volume->OSIconName = L"cougar";
         Status = EFI_SUCCESS;
       }
       
@@ -434,10 +434,10 @@ EFI_STATUS GetEdid(VOID)
 {
 	EFI_STATUS						Status;
 	UINTN i, j, N;
-	EFI_EDID_ACTIVE_PROTOCOL*                EdidActive;
+/*	EFI_EDID_ACTIVE_PROTOCOL*                EdidActive;
 
   //	EFI_GRAPHICS_OUTPUT_PROTOCOL	*GraphicsOutput=NULL;
-	Status = gBS->LocateProtocol (&gEfiEdidActiveProtocolGuid, NULL, (VOID **)&EdidActive);
+	Status = gBS->LocateProtocol (&gMsgLogProtocolGuid, NULL, (VOID **)&EdidActive);
 	
 	if (!EFI_ERROR (Status)) 
 	{
@@ -445,7 +445,7 @@ EFI_STATUS GetEdid(VOID)
 		MsgLog("Log from Clover:\n");
 		MsgLog("%a\n", (CHAR8*)EdidActive->Edid);
 	}
-  
+*/  
 	Status = gBS->LocateProtocol (&gEfiEdidDiscoveredProtocolGuid, NULL, (VOID **)&EdidDiscovered);
 	
 	if (!EFI_ERROR (Status)) 

@@ -216,7 +216,7 @@ VOID egDrawImageArea(IN EG_IMAGE *Image,
                      IN UINTN AreaWidth, IN UINTN AreaHeight,
                      IN UINTN ScreenPosX, IN UINTN ScreenPosY);
 
-VOID egScreenShot(VOID);
+EFI_STATUS egScreenShot(VOID);
 
 
 #endif /* __LIBEG_LIBEG_H__ */

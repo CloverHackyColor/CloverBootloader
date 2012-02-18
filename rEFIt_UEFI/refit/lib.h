@@ -96,7 +96,7 @@ typedef struct {
 #define OSTYPE_LEO				(15)
 #define OSTYPE_SNOW				(16)
 #define OSTYPE_LION				(17)
-#define OSTYPE_COUG   		(18)
+#define OSTYPE_COUGAR  		(18)
 
 
 
@@ -127,10 +127,8 @@ typedef struct {
 extern EFI_HANDLE       SelfImageHandle;
 extern EFI_LOADED_IMAGE *SelfLoadedImage;
 extern EFI_FILE         *SelfRootDir;
-extern EFI_FILE         *SelfRoot;
 extern EFI_FILE         *SelfDir;
 extern CHAR16           *SelfDirPath;
-extern EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *SelfFS;
 extern EFI_DEVICE_PATH * SelfDevicePath;
 
 extern REFIT_VOLUME     *SelfVolume;
@@ -140,7 +138,8 @@ extern UINTN            VolumesCount;
 EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle);
 VOID       UninitRefitLib(VOID);
 EFI_STATUS ReinitRefitLib(VOID);
-EFI_STATUS FinishInitRefitLib(VOID);
+EFI_STATUS ReinitSelfLib(VOID);
+//extern EFI_STATUS FinishInitRefitLib(VOID);
 VOID       PauseForKey(IN CHAR16 *Msg);
 
 VOID CreateList(OUT VOID ***ListPtr, OUT UINTN *ElementCount, IN UINTN InitialElementCount);
