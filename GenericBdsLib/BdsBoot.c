@@ -15,6 +15,28 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include "InternalBdsLib.h"
 #include "String.h"
 
+//
+// Clover File location to boot from on removable media devices
+//
+#define CLOVER_MEDIA_FILE_NAME_IA32    L"\\EFI\\BOOT\\CLOVERIA32.EFI"
+#define CLOVER_MEDIA_FILE_NAME_IA64    L"\\EFI\\BOOT\\CLOVERIA64.EFI"
+#define CLOVER_MEDIA_FILE_NAME_X64     L"\\EFI\\BOOT\\CLOVERX64.EFI"
+#define CLOVER_MEDIA_FILE_NAME_ARM     L"\\EFI\\BOOT\\CLOVERARM.EFI"
+
+#if   defined (MDE_CPU_IA32)
+#define CLOVER_MEDIA_FILE_NAME   CLOVER_MEDIA_FILE_NAME_IA32
+#elif defined (MDE_CPU_IPF)
+#define CLOVER_MEDIA_FILE_NAME   CLOVER_MEDIA_FILE_NAME_IA64
+#elif defined (MDE_CPU_X64)
+#define CLOVER_MEDIA_FILE_NAME   CLOVER_MEDIA_FILE_NAME_X64
+#elif defined (MDE_CPU_EBC)
+#elif defined (MDE_CPU_ARM)
+#define CLOVER_MEDIA_FILE_NAME   CLOVER_MEDIA_FILE_NAME_ARM
+#else
+#error Unknown Processor Type
+#endif
+
+
 BOOLEAN mEnumBootDevice = FALSE;
 EFI_HII_HANDLE gBdsLibStringPackHandle = NULL;
 
@@ -465,7 +487,7 @@ BdsFindUsbDevice (
         // Load the default boot file \EFI\BOOT\boot{machinename}.EFI from removable Media
         //  machinename is ia32, ia64, x64, ...
         //
-        FullDevicePath = FileDevicePath (Handle, EFI_REMOVABLE_MEDIA_FILE_NAME);
+        FullDevicePath = FileDevicePath (Handle, CLOVER_MEDIA_FILE_NAME);
         if (FullDevicePath != NULL) {
           REPORT_STATUS_CODE (EFI_PROGRESS_CODE, PcdGet32 (PcdProgressCodeOsLoaderLoad));
           Status = gBS->LoadImage (
@@ -769,7 +791,7 @@ BdsLibBootViaBootOption (
       // Load the default boot file \EFI\BOOT\boot{machinename}.EFI from removable Media
       //  machinename is ia32, ia64, x64, ...
       //
-      FilePath = FileDevicePath (Handle, EFI_REMOVABLE_MEDIA_FILE_NAME);
+      FilePath = FileDevicePath (Handle, CLOVER_MEDIA_FILE_NAME);
       if (FilePath != NULL) {
         REPORT_STATUS_CODE (EFI_PROGRESS_CODE, PcdGet32 (PcdProgressCodeOsLoaderLoad));
         Status = gBS->LoadImage (
@@ -1660,7 +1682,7 @@ BdsLibEnumerateAllBootOption (
     NeedDelete = TRUE;
     Status     = BdsLibGetImageHeader (
                    FileSystemHandles[Index],
-                   EFI_REMOVABLE_MEDIA_FILE_NAME,
+                   CLOVER_MEDIA_FILE_NAME,
                    &DosHeader,
                    Hdr
                    );
@@ -2041,7 +2063,7 @@ BdsLibGetBootableHandle (
       Hdr.Union = &HdrData;
       Status = BdsLibGetImageHeader (
                  SimpleFileSystemHandles[Index],
-                 EFI_REMOVABLE_MEDIA_FILE_NAME,
+                 CLOVER_MEDIA_FILE_NAME,
                  &DosHeader,
                  Hdr
                  );
