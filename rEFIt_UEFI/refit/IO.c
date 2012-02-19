@@ -1691,7 +1691,7 @@ Returns:
   OutputLength = Len;
   Print(L"%s", InStr);
   Done = FALSE;
-  SetCursorPosition (ConOut, Column, Row, LineLength, TotalRow, InStr, StrPos, Len);
+  ConOut->SetCursorPosition (ConOut, Column, Row);
   do {
     //
     // Read a key

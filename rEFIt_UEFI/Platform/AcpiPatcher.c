@@ -205,7 +205,7 @@ UINT64* ScanXSDT (XSDT_TABLE *Xsdt, UINT32 Signature)
 	return NULL;
 }
 
-EFI_STATUS PatchACPI(IN EFI_FILE *RootDir)
+EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 {
 	EFI_STATUS										Status = EFI_SUCCESS;
 	UINTN                         Index;
@@ -234,6 +234,8 @@ EFI_STATUS PatchACPI(IN EFI_FILE *RootDir)
 	UINT64* xf = NULL;
   UINT64 XDsdt; //save values if present
   UINT64 XFirmwareCtrl;
+  EFI_FILE *RootDir;
+  
   
 	
 	//Slice - I want to begin from BIOS ACPI tables like with SMBIOS
@@ -323,19 +325,19 @@ EFI_STATUS PatchACPI(IN EFI_FILE *RootDir)
 	 	//We should make here ACPI20 RSDP with all needed subtables based on ACPI10
 	}
   
-  //	DBG("FADT pointer = %x\n", (UINTN)FadtPointer);
+  DBG("FADT pointer = %x\n", (UINTN)FadtPointer);
 	if(!FadtPointer)
 	{
     return EFI_NOT_FOUND;
   }
   //Slice - then we do FADT patch no matter if we don't have DSDT.aml
   BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
-  Status=gBS->AllocatePages(AllocateMaxAddress,EfiACPIReclaimMemory, 1, &BufferPtr);		
+  Status = gBS->AllocatePages(AllocateMaxAddress,EfiACPIReclaimMemory, 1, &BufferPtr);		
   if(!EFI_ERROR(Status))
   {
     newFadt = (EFI_ACPI_4_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)BufferPtr;
     UINT32 oldLength = ((EFI_ACPI_DESCRIPTION_HEADER*)FadtPointer)->Length;
-    //		MsgLog("old FADT length=%x\n", oldLength);
+    DBG("old FADT length=%x\n", oldLength);
     CopyMem((UINT8*)newFadt, (UINT8*)FadtPointer, oldLength); //old data
     newFadt->Header.Length = 0xF4; 				
     CopyMem((UINT8*)newFadt->Header.OemId, (UINT8*)BiosVendor, 6);
@@ -359,7 +361,7 @@ EFI_STATUS PatchACPI(IN EFI_FILE *RootDir)
       newFadt->Dsdt = (UINT32)XDsdt;
     }
     if (Facs) newFadt->FirmwareCtrl = (UINT32)(UINTN)Facs;
-    else MsgLog("No FACS table ?!\n");
+    else DBG("No FACS table ?!\n");
     if (newFadt->FirmwareCtrl) {
       newFadt->XFirmwareCtrl = (UINT64)(newFadt->FirmwareCtrl);
     } else if (newFadt->XFirmwareCtrl) {
@@ -393,7 +395,7 @@ EFI_STATUS PatchACPI(IN EFI_FILE *RootDir)
     
   }
   
-  //HPET creation
+  DBG("HPET creation\n");
   BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
   Status=gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);
   if(!EFI_ERROR(Status))
@@ -440,17 +442,35 @@ EFI_STATUS PatchACPI(IN EFI_FILE *RootDir)
     }
   }
   
-  //DSDT finding
+  DBG("DSDT finding\n");
+  if (!Volume) {
+    DBG("Volume not found!\n");
+  }
+  if (!Volume->DevicePath) {
+    DBG("Volume DevicePath not found!\n"); 
+  } else {
+    Print(L"Volume DevicePath=%s\n", DevicePathToStr(Volume->DevicePath)); 
+  }
+
+  Status = GetRootFromPath(Volume->DevicePath, &RootDir);
+  CheckError(Status, L"while getting volume rootdir");
+  
   Status = EFI_NOT_FOUND;
-  if (gSettings.UseDSDTmini==TRUE) {
+  if (gSettings.UseDSDTmini) {
+    DBG("search DSDTmini\n"); 
     if (FileExists(SelfRootDir, PathDsdtMini)) {
+      DBG(" DSDTmini found\n");
       Status = egLoadFile(SelfRootDir, PathDsdtMini, &buffer, &bufferLen);
     }
   }
+  DBG("search at booted volume\n"); 
   if (EFI_ERROR(Status) && FileExists(RootDir, PathDsdt)) {
+    DBG("found in booted volume\n");
     Status = egLoadFile(RootDir, PathDsdt, &buffer, &bufferLen);
   }
+  DBG("search at clover volume\n"); 
   if (EFI_ERROR(Status) && FileExists(SelfRootDir, PathPatched)) {
+    DBG("found in clover volume\n");
     Status = egLoadFile(SelfRootDir, PathPatched, &buffer, &bufferLen);
   }
   //apply DSDT
@@ -465,6 +485,7 @@ EFI_STATUS PatchACPI(IN EFI_FILE *RootDir)
     //if success insert dsdt pointer into ACPI tables
     if(!EFI_ERROR(Status))
     {
+      DBG("page is allocated, write DSDT into\n");
       CopyMem((VOID*)(UINTN)dsdt, buffer, bufferLen);
       
       FadtPointer->Dsdt  = (UINT32)dsdt;

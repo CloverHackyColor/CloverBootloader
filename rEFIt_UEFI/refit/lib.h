@@ -136,6 +136,7 @@ extern REFIT_VOLUME     **Volumes;
 extern UINTN            VolumesCount;
 
 EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle);
+EFI_STATUS GetRootFromPath(IN EFI_DEVICE_PATH_PROTOCOL* DevicePath, OUT EFI_FILE **Root);
 VOID       UninitRefitLib(VOID);
 EFI_STATUS ReinitRefitLib(VOID);
 EFI_STATUS ReinitSelfLib(VOID);

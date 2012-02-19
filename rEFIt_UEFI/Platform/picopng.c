@@ -33,7 +33,6 @@
 #define TEST 0
 #include "picopng.h"
 
-//const UINT32 passstart[7] = { 0, 0, 0, 0, 0, 0, 0 };
 CONST 
 UINT32 pattern[28] = {0, 4, 0, 2, 0, 1, 0,
                       0, 0, 4, 0, 2, 0, 1,

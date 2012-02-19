@@ -76,6 +76,34 @@ BOOLEAN MetaiMatch (
 			IN CHAR16   *String,
 			IN CHAR16   *Pattern
 			);
+
+EFI_STATUS GetRootFromPath(IN EFI_DEVICE_PATH_PROTOCOL* DevicePath, OUT EFI_FILE **Root)
+{
+  EFI_STATUS  Status;
+  EFI_HANDLE                NewHandle;
+  EFI_DEVICE_PATH_PROTOCOL* TmpDevicePath;
+  DBG("Try to duplicate DevicePath\n");
+  TmpDevicePath = DuplicateDevicePath(DevicePath);
+  DBG("TmpDevicePath found\n");
+  NewHandle = NULL;
+	Status = gBS->LocateDevicePath (&gEfiSimpleFileSystemProtocolGuid,
+                                  &TmpDevicePath,
+                                  &NewHandle);
+   DBG("volume handle found =%x\n", NewHandle);
+  CheckError(Status, L"while reopening volume handle");
+  *Root = EfiLibOpenRoot(NewHandle);  
+  if (*Root == NULL) {
+    DBG("volume Root Dir can't be reopened\n");
+    return EFI_NOT_FOUND;
+  }
+  if (FileExists(*Root, L"mach_kernel")) {
+    PauseForKey(L"mach_kernel exists\n");
+  } else {
+    PauseForKey(L"mach_kernel not exists\n");
+  }
+
+  return Status;
+}
 //
 // self recognition stuff
 //

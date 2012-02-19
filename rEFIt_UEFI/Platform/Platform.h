@@ -441,7 +441,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev);
 
 EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha);
 
-EFI_STATUS  PatchACPI(IN EFI_FILE *RootDir);
+EFI_STATUS  PatchACPI(IN REFIT_VOLUME *Volume);
 UINT8       Checksum8(VOID * startPtr, UINT32 len);
 
 EFI_STATUS EventsInitialize (
@@ -449,9 +449,9 @@ EFI_STATUS EventsInitialize (
                   IN EFI_SYSTEM_TABLE     *SystemTable
                   );
 
-EFI_STATUS  bootElTorito(REFIT_VOLUME*	volume);
-EFI_STATUS  bootMBR(REFIT_VOLUME* volume);
-EFI_STATUS  bootPBR(REFIT_VOLUME* volume);
+EFI_STATUS  bootElTorito(IN REFIT_VOLUME*	volume);
+EFI_STATUS  bootMBR(IN REFIT_VOLUME* volume);
+EFI_STATUS  bootPBR(IN REFIT_VOLUME* volume);
 
 CHAR8*      XMLDecode(const CHAR8* src);
 EFI_STATUS  ParseXML(const CHAR8* buffer, TagPtr * dict);

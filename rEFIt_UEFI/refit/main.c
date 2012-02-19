@@ -142,7 +142,7 @@ static VOID AboutRefit(VOID)
 {
     if (AboutMenu.EntryCount == 0) {
         AboutMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
-        AddMenuInfoLine(&AboutMenu, L"rEFIt Version 0.16 UEFI");
+        AddMenuInfoLine(&AboutMenu, L"rEFIt Version 0.16 UEFI by Slice");
         AddMenuInfoLine(&AboutMenu, L"");
         AddMenuInfoLine(&AboutMenu, L"Copyright (c) 2006-2010 Christoph Pfisterer");
         AddMenuInfoLine(&AboutMenu, L"Portions Copyright (c) Intel Corporation and others");
@@ -150,9 +150,9 @@ static VOID AboutRefit(VOID)
         AddMenuInfoLine(&AboutMenu, L"Running on:");
         AddMenuInfoLine(&AboutMenu, PoolPrint(L" EFI Revision %d.%02d",
             gST->Hdr.Revision >> 16, gST->Hdr.Revision & ((1 << 16) - 1)));
-#if defined(EFI32)
+#if defined(MDE_CPU_IA32)
         AddMenuInfoLine(&AboutMenu, L" Platform: i386 (32 bit)");
-#elif defined(EFIX64)
+#elif defined(MDE_CPU_X64)
         AddMenuInfoLine(&AboutMenu, L" Platform: x86_64 (64 bit)");
 #else
         AddMenuInfoLine(&AboutMenu, L" Platform: unknown");
@@ -285,7 +285,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   PauseForKey(L"PatchSmbios");
   PatchSmbios();
   PauseForKey(L"PatchACPI");
-  PatchACPI(Entry->Volume->RootDir);
+  PatchACPI(Entry->Volume);
   PauseForKey(L"SetVariablesForOSX");
   SetVariablesForOSX();
   PauseForKey(L"FinalizeSmbios");
@@ -317,7 +317,12 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   // prepare the menu entry
   Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
   Entry->me.Title        = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : LoaderPath + 1, Volume->VolName);
-  Entry->me.Tag          = TAG_LOADER;
+  if (Volume->BootType == BOOTING_BY_EFI) {
+    Entry->me.Tag          = TAG_LOADER;
+  } else {
+    Entry->me.Tag          = TAG_LEGACY;
+  }
+
   Entry->me.Row          = 0;
   Entry->Volume = Volume;
   if (GlobalConfig.HideBadges == 0 ||
@@ -342,7 +347,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   LoaderKind = 0;
   ShortcutLetter = 0;
   if (StriCmp(LoaderPath, MACOSX_LOADER_PATH) == 0) {
-    OSIconName = L"mac";
+    OSIconName = Volume->OSIconName;
     Entry->UseGraphicsMode = TRUE;
     LoaderKind = 1;
     ShortcutLetter = 'M';
@@ -385,7 +390,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   
   // loader-specific submenu entries
   if (LoaderKind == 1) {          // entries for Mac OS X
-#if defined(EFIX64)
+#if defined(MDE_CPU_X64)
     SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
     SubEntry->me.Title        = L"Boot Mac OS X with a 64-bit kernel";
     SubEntry->me.Tag          = TAG_LOADER;
@@ -418,7 +423,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->LoadOptions     = L"-v";
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
       
-#if defined(EFIX64)
+#if defined(MDE_CPU_X64)
       SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
       SubEntry->me.Title        = L"Boot Mac OS X in verbose mode (64-bit)";
       SubEntry->me.Tag          = TAG_LOADER;
@@ -572,7 +577,7 @@ static VOID ScanLoaderDir(IN REFIT_VOLUME *Volume, IN CHAR16 *Path)
       UnicodeSPrint(FileName, 255, L"\\%s\\%s", Path, DirEntry->FileName);
     else
       UnicodeSPrint(FileName, 255, L"\\%s", DirEntry->FileName);
-    AddLoaderEntry(FileName, NULL, Volume);
+//    AddLoaderEntry(FileName, NULL, Volume);
   }
   Status = DirIterClose(&DirIter);
   if (Status != EFI_NOT_FOUND) {
@@ -586,11 +591,11 @@ static VOID ScanLoaderDir(IN REFIT_VOLUME *Volume, IN CHAR16 *Path)
 
 static VOID ScanLoader(VOID)
 {
-    EFI_STATUS              Status;
+ //   EFI_STATUS              Status;
     UINTN                   VolumeIndex;
     REFIT_VOLUME            *Volume;
-    REFIT_DIR_ITER          EfiDirIter;
-    EFI_FILE_INFO           *EfiDirEntry;
+ //   REFIT_DIR_ITER          EfiDirIter;
+ //   EFI_FILE_INFO           *EfiDirEntry;
     CHAR16                  FileName[256];
     LOADER_ENTRY            *Entry;
     
@@ -611,32 +616,35 @@ static VOID ScanLoader(VOID)
         StrCpy(FileName, MACOSX_LOADER_PATH);
         if (FileExists(Volume->RootDir, FileName)) {
        //     Print(L"  - Mac OS X boot file found\n");
+            Volume->BootType = BOOTING_BY_EFI;
             Entry = AddLoaderEntry(FileName, L"Mac OS X", Volume);
         }
         
-        // check for XOM
+        // check for XOM - and what?
     //    StrCpy(FileName, L"\\System\\Library\\CoreServices\\xom.efi");
-      StrCpy(FileName, L"\\EFI\\tools\\xom.efi");
+        StrCpy(FileName, L"\\EFI\\tools\\xom.efi");
         if (FileExists(Volume->RootDir, FileName)) {
-            AddLoaderEntry(FileName, L"Windows XP (XoM)", Volume);
+            Volume->BootType = BOOTING_BY_EFI;
+            AddLoaderEntry(L"Xom.efi", L"Windows XP ", Volume);
         }
         
         // check for Microsoft boot loader/menu
         StrCpy(FileName, L"\\EFI\\Microsoft\\Boot\\Bootmgfw.efi");
         if (FileExists(Volume->RootDir, FileName)) {
        //     Print(L"  - Microsoft boot menu found\n");
-            AddLoaderEntry(FileName, L"Microsoft boot menu", Volume);
+            Volume->BootType = BOOTING_BY_EFI;
+            AddLoaderEntry(L" ", L"Microsoft boot menu", Volume);
         }
         
         // scan the root directory for EFI executables
    //     ScanLoaderDir(Volume, NULL);
         // scan the elilo directory (as used on gimli's first Live CD)
-  //      ScanLoaderDir(Volume, L"elilo");
+        ScanLoaderDir(Volume, L"elilo");
         // scan the boot directory
   //      ScanLoaderDir(Volume, L"boot");
         
         // scan subdirectories of the EFI directory (as per the standard)
-        DirIterOpen(Volume->RootDir, L"EFI", &EfiDirIter);
+/*        DirIterOpen(Volume->RootDir, L"EFI", &EfiDirIter);
         while (DirIterNext(&EfiDirIter, 1, NULL, &EfiDirEntry)) {
             if (StriCmp(EfiDirEntry->FileName, L"TOOLS") == 0 ||
                 EfiDirEntry->FileName[0] == '.')
@@ -653,6 +661,7 @@ static VOID ScanLoader(VOID)
         Status = DirIterClose(&EfiDirIter);
         if (Status != EFI_NOT_FOUND)
             CheckError(Status, L"while scanning the EFI directory");
+ */
     }
 }
 
@@ -923,6 +932,10 @@ static VOID ScanLegacy(VOID)
             (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_INTERNAL)))
             continue;
         
+        if (Volume->OSType > 10) {
+          continue; //this is not legacy!!!
+        }
+      
         ShowVolume = FALSE;
         HideIfOthersFound = FALSE;
         if (Volume->IsAppleLegacy) {
@@ -945,8 +958,10 @@ static VOID ScanLegacy(VOID)
             }
         }
         
-        if (ShowVolume)
+        if (ShowVolume){
             AddLegacyEntry(NULL, Volume);
+            DBG("added legacy entry %d\n", VolumeIndex);
+        }
     }
 }
 
@@ -1186,11 +1201,15 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	Status = GetUserSettings(SelfRootDir);  
   
   // scan for loaders and tools, add then to the menu
-  if (GlobalConfig.LegacyFirst)
-    ScanLegacy();
+  if (GlobalConfig.LegacyFirst){
+    DBG("scan legacy first\n");
+//    ScanLegacy();
+  }
   ScanLoader();
-  if (!GlobalConfig.LegacyFirst)
+  if (!GlobalConfig.LegacyFirst){
+    DBG("scan legacy second\n");
     ScanLegacy();
+  }
   if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
     ScanTool();
   }
