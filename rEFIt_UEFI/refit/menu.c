@@ -332,8 +332,9 @@ static UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC Sty
     UINTN TimeoutCountdown = 0;
     CHAR16 *TimeoutMessage;
     UINTN MenuExit;
-    
-    if (Screen->TimeoutSeconds > 0) {
+  
+    //no default - no timeout!
+    if ((*DefaultEntryIndex != -1) && (Screen->TimeoutSeconds > 0)) {
         HaveTimeout = TRUE;
         TimeoutCountdown = Screen->TimeoutSeconds * 10;
     }

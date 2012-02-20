@@ -164,6 +164,37 @@ CPU_STRUCTURE			gCPUStructure;
 #define MSR_THERMAL_TARGET          0x01A2	 /* limited use - not for Penryn or older			*/
 #define MSR_TURBO_RATIO_LIMIT       0x01AD	 /* limited use - not for Penryn or older			*/
 
+//Copied from revogirl
+#define IA32_ENERGY_PERF_BIAS		0x01B0
+#define IA32_PLATFORM_DCA_CAP		0x01F8
+
+
+// Sandy Bridge & JakeTown specific 'Running Average Power Limit' MSR's.
+#define MSR_RAPL_POWER_UNIT			0x606
+
+#define MSR_PKG_RAPL_POWER_LIMIT	0x610
+#define MSR_PKG_ENERGY_STATUS		0x611
+#define MSR_PKG_PERF_STATUS			0x613
+#define MSR_PKG_POWER_INFO			0x614
+
+// Sandy Bridge IA (Core) domain MSR's.
+#define MSR_PP0_POWER_LIMIT			0x638
+#define MSR_PP0_ENERGY_STATUS		0x639
+#define MSR_PP0_POLICY          0x63A
+#define MSR_PP0_PERF_STATUS			0x63B
+
+// Sandy Bridge Uncore (IGPU) domain MSR's (Not on JakeTown).
+#define MSR_PP1_POWER_LIMIT			0x640
+#define MSR_PP1_ENERGY_STATUS		0x641
+#define MSR_PP1_POLICY          0x642
+
+// JakeTown only Memory MSR's.
+#define MSR_DRAM_POWER_LIMIT		0x618
+#define MSR_DRAM_ENERGY_STATUS	0x619
+#define MSR_DRAM_PERF_STATUS		0x61B
+#define MSR_DRAM_POWER_INFO			0x61C
+
+
 //AMD
 #define K8_FIDVID_STATUS        0xC0010042
 #define K10_COFVID_STATUS       0xC0010071

@@ -144,6 +144,7 @@ EFI_STATUS GetNVRAMSettings(IN EFI_FILE *RootDir, CHAR16* NVRAMPlistPath)
 	return Status;
 }	
 
+
 EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 {
 	EFI_STATUS	Status = EFI_NOT_FOUND;

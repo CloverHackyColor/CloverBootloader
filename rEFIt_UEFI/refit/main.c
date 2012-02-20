@@ -977,7 +977,8 @@ static VOID StartTool(IN LOADER_ENTRY *Entry)
     FinishExternalScreen();
 }
 
-static LOADER_ENTRY * AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN EG_IMAGE *Image,
+static LOADER_ENTRY * AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle,
+                                   IN EG_IMAGE *Image,
                                    IN CHAR16 ShortcutLetter, IN BOOLEAN UseGraphicsMode)
 {
     LOADER_ENTRY *Entry;
@@ -1088,6 +1089,18 @@ static VOID LoadDrivers(VOID)
 	DBG("Drivers connected\n");
 }
 
+REFIT_MENU_ENTRY  * FindDefaultEntry(VOID)
+{
+  /*
+   search volume with name in gSettings.DefaultBoot
+   search nvram.plist on the volume
+   GetNVRAMSettings
+   search volume with gSelectedUUID
+   search mainmenu.entry with Entry->VolName == Volume->VolName
+   */
+  return NULL;
+}
+
 //
 // main entry point
 //
@@ -1100,6 +1113,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   EFI_STATUS Status;
   BOOLEAN           MainLoopRunning = TRUE;
   REFIT_MENU_ENTRY  *ChosenEntry;
+  REFIT_MENU_ENTRY  *DefaultEntry;
   UINTN             MenuExit;
   UINTN             Size, i;
   UINT8             *Buffer = NULL;
@@ -1236,9 +1250,14 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     // wait for user ACK when there were errors
     FinishTextScreen(FALSE);
 //  PauseForKey(L"Enter main menu ok");  //--no more text
-    
+    DefaultEntry = FindDefaultEntry();  
+  
     while (MainLoopRunning) {
       MenuExit = RunMainMenu(&MainMenu, GlobalConfig.DefaultSelection, &ChosenEntry);
+      
+      if ((DefaultEntry != NULL) && (MenuExit == MENU_EXIT_TIMEOUT)) {
+        StartLoader((LOADER_ENTRY *)DefaultEntry);
+      }
       
       // We don't allow exiting the main menu with the Escape key.
       if (MenuExit == MENU_EXIT_ESCAPE)
