@@ -409,6 +409,9 @@ static UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC Sty
                 MenuExit = MENU_EXIT_ESCAPE;
                 break;
             case SCAN_INSERT:
+              MenuExit = MENU_EXIT_OPTIONS;
+              break;
+
             case SCAN_F2:
                 MenuExit = MENU_EXIT_DETAILS;
                 break;
@@ -428,7 +431,6 @@ static UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC Sty
             case ' ':
               MenuExit = MENU_EXIT_DETAILS;
               break;
-
             default:
                 ShortcutEntry = FindMenuShortcutEntry(Screen, key.UnicodeChar);
                 if (ShortcutEntry >= 0) {

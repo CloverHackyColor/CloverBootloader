@@ -445,7 +445,9 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   DBG("DSDT finding\n");
   if (!Volume) {
     DBG("Volume not found!\n");
+    return EFI_NOT_FOUND;
   }
+  /*
   if (!Volume->DevicePath) {
     DBG("Volume DevicePath not found!\n"); 
   } else {
@@ -454,7 +456,8 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 
   Status = GetRootFromPath(Volume->DevicePath, &RootDir);
   CheckError(Status, L"while getting volume rootdir");
-  
+  */
+  RootDir = Volume->RootDir;
   Status = EFI_NOT_FOUND;
   if (gSettings.UseDSDTmini) {
     DBG("search DSDTmini\n"); 
@@ -468,9 +471,9 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     DBG("found in booted volume\n");
     Status = egLoadFile(RootDir, PathDsdt, &buffer, &bufferLen);
   }
-  DBG("search at clover volume\n"); 
+  DBG("search at Clover volume\n"); 
   if (EFI_ERROR(Status) && FileExists(SelfRootDir, PathPatched)) {
-    DBG("found in clover volume\n");
+    DBG("found in Clover volume\n");
     Status = egLoadFile(SelfRootDir, PathPatched, &buffer, &bufferLen);
   }
   //apply DSDT

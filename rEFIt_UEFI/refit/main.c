@@ -60,6 +60,7 @@
 #define TAG_LOADER   (5)
 #define TAG_LEGACY   (6)
 #define TAG_INFO     (7)
+#define TAG_OPTIONS  (8)
 
 EFI_HANDLE              gImageHandle;
 EFI_SYSTEM_TABLE*       gST;
@@ -67,7 +68,7 @@ EFI_BOOT_SERVICES*			gBS;
 EFI_RUNTIME_SERVICES*		gRS;
 EFI_DXE_SERVICES*       gDS;
 
-
+static REFIT_MENU_ENTRY MenuEntryOptions    = { L"Options", TAG_ABOUT, 1, 0, 'O', NULL, NULL, NULL };
 static REFIT_MENU_ENTRY MenuEntryAbout    = { L"About rEFIt", TAG_ABOUT, 1, 0, 'A', NULL, NULL, NULL };
 static REFIT_MENU_ENTRY MenuEntryReset    = { L"Restart Computer", TAG_RESET, 1, 0, 'R', NULL, NULL, NULL };
 static REFIT_MENU_ENTRY MenuEntryShutdown = { L"Shut Down Computer", TAG_SHUTDOWN, 1, 0, 'U', NULL, NULL, NULL };
@@ -75,6 +76,8 @@ static REFIT_MENU_ENTRY MenuEntryReturn   = { L"Return to Main Menu", TAG_RETURN
 
 static REFIT_MENU_SCREEN MainMenu       = { L"Main Menu", NULL, 0, NULL, 0, NULL, 0, L"Automatic boot" };
 static REFIT_MENU_SCREEN AboutMenu      = { L"About", NULL, 0, NULL, 0, NULL, 0, NULL };
+
+static REFIT_MENU_SCREEN OptionMenu      = { L"Options", NULL, 0, NULL, 0, NULL, 0, NULL };
 
 /**
  Concatenates a formatted unicode string to allocated pool. The caller must
@@ -136,13 +139,20 @@ CatPrint (
 	return Str->Str;
 }
 */
-
+static VOID  OptionsMenu(VOID)
+{
+  if (OptionMenu.EntryCount == 0) {
+    AddMenuInfoLine(&OptionMenu, L"");
+    AddMenuEntry(&OptionMenu, &MenuEntryReturn);
+  }
+  RunMenu(&OptionMenu, NULL);
+}
 
 static VOID AboutRefit(VOID)
 {
     if (AboutMenu.EntryCount == 0) {
         AboutMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
-        AddMenuInfoLine(&AboutMenu, L"rEFIt Version 0.16 UEFI by Slice");
+        AddMenuInfoLine(&AboutMenu, L"rEFIt Version 1.00 UEFI by Slice");
         AddMenuInfoLine(&AboutMenu, L"");
         AddMenuInfoLine(&AboutMenu, L"Copyright (c) 2006-2010 Christoph Pfisterer");
         AddMenuInfoLine(&AboutMenu, L"Portions Copyright (c) Intel Corporation and others");
@@ -225,9 +235,9 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   //Slice - do this!
   //
   // Before calling the image, enable the Watchdog Timer for
-  // the 5 Minute period - Slice - NO! 30seconds is enough
+  // the 5 Minute period - Slice - NO! 60seconds is enough
   //  
-  gBS->SetWatchdogTimer (30, 0x0000, 0x00, NULL);
+  gBS->SetWatchdogTimer (60, 0x0000, 0x00, NULL);
   
     ReturnStatus = Status = gBS->StartImage(ChildImageHandle, NULL, NULL);
   //
@@ -280,19 +290,19 @@ static EFI_STATUS StartEFIImage(IN EFI_DEVICE_PATH *DevicePath,
 static VOID StartLoader(IN LOADER_ENTRY *Entry)
 {
   BeginExternalScreen(Entry->UseGraphicsMode, L"Booting OS");
-  PauseForKey(L"SetPrivateVarProto");
+//  PauseForKey(L"SetPrivateVarProto");
   SetPrivateVarProto();
-  PauseForKey(L"PatchSmbios");
+//  PauseForKey(L"PatchSmbios");
   PatchSmbios();
-  PauseForKey(L"PatchACPI");
+//  PauseForKey(L"PatchACPI");
   PatchACPI(Entry->Volume);
   PauseForKey(L"SetVariablesForOSX");
   SetVariablesForOSX();
-  PauseForKey(L"FinalizeSmbios");
+//  PauseForKey(L"FinalizeSmbios");
   FinalizeSmbios();
-  PauseForKey(L"SetupBooterLog");
+//  PauseForKey(L"SetupBooterLog");
   SetupBooterLog();
-  PauseForKey(L"SetupDataForOSX");
+//  PauseForKey(L"SetupDataForOSX");
   SetupDataForOSX();
   PauseForKey(L"StartEFIImage");
   StartEFIImage(Entry->DevicePath, Entry->LoadOptions,
@@ -383,6 +393,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   SubEntry->me.Title        = (LoaderKind == 1) ? L"Boot Mac OS X" : PoolPrint(L"Run %s", FileName);
   SubEntry->me.Tag          = TAG_LOADER;
   SubEntry->LoaderPath      = Entry->LoaderPath;
+  SubEntry->Volume          = Entry->Volume;
   SubEntry->VolName         = Entry->VolName;
   SubEntry->DevicePath      = Entry->DevicePath;
   SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
@@ -395,6 +406,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->me.Title        = L"Boot Mac OS X with a 64-bit kernel";
     SubEntry->me.Tag          = TAG_LOADER;
     SubEntry->LoaderPath      = Entry->LoaderPath;
+    SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
@@ -405,6 +417,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->me.Title        = L"Boot Mac OS X with a 32-bit kernel";
     SubEntry->me.Tag          = TAG_LOADER;
     SubEntry->LoaderPath      = Entry->LoaderPath;
+    SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
@@ -417,6 +430,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->me.Title        = L"Boot Mac OS X in verbose mode";
       SubEntry->me.Tag          = TAG_LOADER;
       SubEntry->LoaderPath      = Entry->LoaderPath;
+      SubEntry->Volume          = Entry->Volume;
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->UseGraphicsMode = FALSE;
@@ -428,6 +442,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->me.Title        = L"Boot Mac OS X in verbose mode (64-bit)";
       SubEntry->me.Tag          = TAG_LOADER;
       SubEntry->LoaderPath      = Entry->LoaderPath;
+      SubEntry->Volume          = Entry->Volume;
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->UseGraphicsMode = FALSE;
@@ -438,6 +453,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->me.Title        = L"Boot Mac OS X in verbose mode (32-bit)";
       SubEntry->me.Tag          = TAG_LOADER;
       SubEntry->LoaderPath      = Entry->LoaderPath;
+      SubEntry->Volume          = Entry->Volume;
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->UseGraphicsMode = FALSE;
@@ -449,6 +465,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->me.Title        = L"Boot Mac OS X in single user mode";
       SubEntry->me.Tag          = TAG_LOADER;
       SubEntry->LoaderPath      = Entry->LoaderPath;
+      SubEntry->Volume          = Entry->Volume;
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->UseGraphicsMode = FALSE;
@@ -465,6 +482,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->me.Title        = L"Run Apple Hardware Test";
       SubEntry->me.Tag          = TAG_LOADER;
       SubEntry->LoaderPath      = EfiStrDuplicate(DiagsFileName);
+      SubEntry->Volume          = Entry->Volume;
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = FileDevicePath(Volume->DeviceHandle, SubEntry->LoaderPath);
       SubEntry->UseGraphicsMode = TRUE;
@@ -476,6 +494,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->me.Title        = PoolPrint(L"Run %s in interactive mode", FileName);
     SubEntry->me.Tag          = TAG_LOADER;
     SubEntry->LoaderPath      = Entry->LoaderPath;
+    SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
@@ -486,6 +505,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->me.Title        = L"Boot Linux for a 17\" iMac or a 15\" MacBook Pro (*)";
     SubEntry->me.Tag          = TAG_LOADER;
     SubEntry->LoaderPath      = Entry->LoaderPath;
+    SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = TRUE;
@@ -496,6 +516,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->me.Title        = L"Boot Linux for a 20\" iMac (*)";
     SubEntry->me.Tag          = TAG_LOADER;
     SubEntry->LoaderPath      = Entry->LoaderPath;
+    SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = TRUE;
@@ -506,6 +527,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->me.Title        = L"Boot Linux for a Mac Mini (*)";
     SubEntry->me.Tag          = TAG_LOADER;
     SubEntry->LoaderPath      = Entry->LoaderPath;
+    SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = TRUE;
@@ -523,6 +545,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->me.Title        = L"Boot Windows from Hard Disk";
     SubEntry->me.Tag          = TAG_LOADER;
     SubEntry->LoaderPath      = Entry->LoaderPath;
+    SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
@@ -533,6 +556,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->me.Title        = L"Boot Windows from CD-ROM";
     SubEntry->me.Tag          = TAG_LOADER;
     SubEntry->LoaderPath      = Entry->LoaderPath;
+    SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
@@ -543,6 +567,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->me.Title        = PoolPrint(L"Run %s in text mode", FileName);
     SubEntry->me.Tag          = TAG_LOADER;
     SubEntry->LoaderPath      = Entry->LoaderPath;
+    SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = FALSE;
@@ -616,8 +641,9 @@ static VOID ScanLoader(VOID)
         StrCpy(FileName, MACOSX_LOADER_PATH);
         if (FileExists(Volume->RootDir, FileName)) {
        //     Print(L"  - Mac OS X boot file found\n");
-            Volume->BootType = BOOTING_BY_EFI;
-            Entry = AddLoaderEntry(FileName, L"Mac OS X", Volume);
+          Volume->BootType = BOOTING_BY_EFI;
+          Entry = AddLoaderEntry(FileName, L"Mac OS X", Volume);
+          break; //boot MacOSX only
         }
         
         // check for XOM - and what?
@@ -678,7 +704,7 @@ static EFI_STATUS ActivateMbrPartition(IN EFI_BLOCK_IO *BlockIO, IN UINTN Partit
     UINTN               LogicalPartitionIndex = 4;
     UINTN               i;
     BOOLEAN             HaveBootCode;
-  SectorBuffer = AllocateAlignedPages (EFI_SIZE_TO_PAGES(512), 16);
+  SectorBuffer = AllocateAlignedPages (EFI_SIZE_TO_PAGES(512), BlockIO->Media->IoAlign);
     // read MBR
     Status = BlockIO->ReadBlocks(BlockIO, BlockIO->Media->MediaId, 0, 512, SectorBuffer);
     if (EFI_ERROR(Status))
@@ -1118,7 +1144,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   UINTN             Size, i;
   UINT8             *Buffer = NULL;
   CHAR16            *InputBuffer; //, *Y;
-//  EFI_INPUT_KEY Key;
+                                  //  EFI_INPUT_KEY Key;
   
   // bootstrap
   //    InitializeLib(ImageHandle, SystemTable);
@@ -1147,11 +1173,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   // further bootstrap (now with config available)
   //  SetupScreen();
-//  PauseForKey(L"SetupScreen ok");
-
+  //  PauseForKey(L"SetupScreen ok");
+  
   LoadDrivers();
-//  PauseForKey(L"LoadDrivers ok");
-
+  //  PauseForKey(L"LoadDrivers ok");
+  
   //Now we have to reinit handles
   Status = ReinitSelfLib();
   if (EFI_ERROR(Status)){
@@ -1160,10 +1186,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     return Status;
   }/* else {
     PauseForKey(L"Reinit refitLib OK\n");
-  }*/
+    }*/
   
   ScanVolumes();
-//  PauseForKey(L"ScanVolumes ok");
+  //  PauseForKey(L"ScanVolumes ok");
   
   //setup properties
   SetGraphics();
@@ -1177,8 +1203,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   SetPrivateVarProto();
   
   GetDefaultSettings();
-//  PauseForKey(L"GetDefaultSettings ok");
-
+  //  PauseForKey(L"GetDefaultSettings ok");
+  
   Size = 0;
   Status = gRS->GetVariable(L"boot-args",
                             &gEfiAppleBootGuid,  NULL,
@@ -1196,28 +1222,28 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 		}		
 	}
   
-//  DBG("BootArgs Size=%d\n", Size);
-//  PauseForKey(L"BootArgs ok");
+  //  DBG("BootArgs Size=%d\n", Size);
+  //  PauseForKey(L"BootArgs ok");
   
 	if ((Status == EFI_SUCCESS) && (Size != 0))
 		CopyMem(gSettings.BootArgs, Buffer, Size);	
-  else {
-//    InputBuffer = (CHAR16*)AllocateZeroPool(254);
-    InputBuffer = L"-v arch=i386";
-    Input(L"Kernel flags:", InputBuffer, 100);
-    if (StrLen(InputBuffer) > 0) {
-      UnicodeStrToAsciiStr( InputBuffer, gSettings.BootArgs);
-      DBG("inputted boot-args: %a\n", gSettings.BootArgs);
+    else {
+      //    InputBuffer = (CHAR16*)AllocateZeroPool(254);
+      InputBuffer = L"-v arch=i386";
+      Input(L"Kernel flags:", InputBuffer, 100);
+      if (StrLen(InputBuffer) > 0) {
+        UnicodeStrToAsciiStr( InputBuffer, gSettings.BootArgs);
+        DBG("inputted boot-args: %a\n", gSettings.BootArgs);
+      }
     }
-  }
-
+  
   //Second step. Load config.plist into gSettings	
 	Status = GetUserSettings(SelfRootDir);  
   
   // scan for loaders and tools, add then to the menu
   if (GlobalConfig.LegacyFirst){
     DBG("scan legacy first\n");
-//    ScanLegacy();
+    //    ScanLegacy();
   }
   ScanLoader();
   if (!GlobalConfig.LegacyFirst){
@@ -1227,12 +1253,21 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
     ScanTool();
   }
-    
+
+  
+  MenuEntryOptions
+  
   // fixed other menu entries
+  if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
+    MenuEntryOptions.Image = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
+    AddMenuEntry(&MainMenu, &MenuEntryOptions);
+    //    PauseForKey(L"menu Options added ok");
+  }  
+  
   if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
     MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
     AddMenuEntry(&MainMenu, &MenuEntryAbout);
-//    PauseForKey(L"menu About added ok");
+    //    PauseForKey(L"menu About added ok");
   }
   
   if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.EntryCount == 0) {
@@ -1240,7 +1275,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     AddMenuEntry(&MainMenu, &MenuEntryShutdown);
     MenuEntryReset.Image = BuiltinIcon(BUILTIN_ICON_FUNC_RESET);
     AddMenuEntry(&MainMenu, &MenuEntryReset);
-//    PauseForKey(L"menu Reset/Shutdown added ok");
+    //    PauseForKey(L"menu Reset/Shutdown added ok");
   }
   
   // assign shortcut keys
@@ -1248,53 +1283,64 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     MainMenu.Entries[i]->ShortcutDigit = (CHAR16)('1' + i);
     
     // wait for user ACK when there were errors
-    FinishTextScreen(FALSE);
-//  PauseForKey(L"Enter main menu ok");  //--no more text
-    DefaultEntry = FindDefaultEntry();  
-  
-    while (MainLoopRunning) {
-      MenuExit = RunMainMenu(&MainMenu, GlobalConfig.DefaultSelection, &ChosenEntry);
-      
-      if ((DefaultEntry != NULL) && (MenuExit == MENU_EXIT_TIMEOUT)) {
-        StartLoader((LOADER_ENTRY *)DefaultEntry);
-      }
-      
-      // We don't allow exiting the main menu with the Escape key.
-      if (MenuExit == MENU_EXIT_ESCAPE)
-        continue;
-      
-      switch (ChosenEntry->Tag) {
-          
-        case TAG_RESET:    // Restart
-          TerminateScreen();
-          gRS->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
-          MainLoopRunning = FALSE;   // just in case we get this far
-          break;
-          
-        case TAG_SHUTDOWN: // Shut Down
-          TerminateScreen();
-          gRS->ResetSystem(EfiResetShutdown, EFI_SUCCESS, 0, NULL);
-          MainLoopRunning = FALSE;   // just in case we get this far
-          break;
-          
-        case TAG_ABOUT:    // About rEFIt
-          AboutRefit();
-          break;
-          
-        case TAG_LOADER:   // Boot OS via .EFI loader
-          StartLoader((LOADER_ENTRY *)ChosenEntry);
-          break;
-          
-        case TAG_LEGACY:   // Boot legacy OS
-          StartLegacy((LEGACY_ENTRY *)ChosenEntry);
-          break;
-          
-        case TAG_TOOL:     // Start a EFI tool
-          StartTool((LOADER_ENTRY *)ChosenEntry);
-          break;
-          
-      }
+  FinishTextScreen(FALSE);
+    //  PauseForKey(L"Enter main menu ok");  //--no more text
+  DefaultEntry = FindDefaultEntry();  
+    
+  while (MainLoopRunning) {
+    MenuExit = RunMainMenu(&MainMenu, GlobalConfig.DefaultSelection, &ChosenEntry);
+    
+    if ((DefaultEntry != NULL) && (MenuExit == MENU_EXIT_TIMEOUT)) {
+      StartLoader((LOADER_ENTRY *)DefaultEntry);
     }
+    
+    if (MenuExit == MENU_EXIT_OPTIONS){
+      OptionsMenu();
+      continue;
+    }
+    
+    
+    // We don't allow exiting the main menu with the Escape key.
+    if (MenuExit == MENU_EXIT_ESCAPE)
+      continue;
+    
+    switch (ChosenEntry->Tag) {
+        
+      case TAG_RESET:    // Restart
+        TerminateScreen();
+        gRS->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
+        MainLoopRunning = FALSE;   // just in case we get this far
+        break;
+        
+      case TAG_SHUTDOWN: // Shut Down
+        TerminateScreen();
+        gRS->ResetSystem(EfiResetShutdown, EFI_SUCCESS, 0, NULL);
+        MainLoopRunning = FALSE;   // just in case we get this far
+        break;
+        
+      case TAG_OPTIONS:    // About rEFIt
+        OptionsMenu();
+        break;
+        
+        
+      case TAG_ABOUT:    // About rEFIt
+        AboutRefit();
+        break;
+        
+      case TAG_LOADER:   // Boot OS via .EFI loader
+        StartLoader((LOADER_ENTRY *)ChosenEntry);
+        break;
+        
+      case TAG_LEGACY:   // Boot legacy OS
+        StartLegacy((LEGACY_ENTRY *)ChosenEntry);
+        break;
+        
+      case TAG_TOOL:     // Start a EFI tool
+        StartTool((LOADER_ENTRY *)ChosenEntry);
+        break;
+        
+    }
+  }
   
   // If we end up here, things have gone wrong. Try to reboot, and if that
   // fails, go into an endless loop.

@@ -232,15 +232,17 @@ EG_IMAGE * DummyImage(IN UINTN PixelSize);
 EG_IMAGE * BuiltinIcon(IN UINTN Id);
 
 #define BUILTIN_ICON_FUNC_ABOUT     (0)
-#define BUILTIN_ICON_FUNC_RESET     (1)
-#define BUILTIN_ICON_FUNC_SHUTDOWN  (2)
-#define BUILTIN_ICON_TOOL_SHELL     (3)
-#define BUILTIN_ICON_TOOL_PART      (4)
-#define BUILTIN_ICON_TOOL_RESCUE    (5)
-#define BUILTIN_ICON_VOL_INTERNAL   (6)
-#define BUILTIN_ICON_VOL_EXTERNAL   (7)
-#define BUILTIN_ICON_VOL_OPTICAL    (8)
-#define BUILTIN_ICON_COUNT          (9)
+#define BUILTIN_ICON_FUNC_OPTIONS   (1)
+#define BUILTIN_ICON_FUNC_RESET     (2)
+#define BUILTIN_ICON_FUNC_SHUTDOWN  (3)
+#define BUILTIN_ICON_TOOL_SHELL     (4)
+#define BUILTIN_ICON_TOOL_PART      (5)
+#define BUILTIN_ICON_TOOL_RESCUE    (6)
+#define BUILTIN_ICON_VOL_INTERNAL   (7)
+#define BUILTIN_ICON_VOL_EXTERNAL   (8)
+#define BUILTIN_ICON_VOL_OPTICAL    (9)
+#define BUILTIN_ICON_COUNT          (10)
+
 
 //
 // menu module
@@ -250,6 +252,7 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id);
 #define MENU_EXIT_ESCAPE  (2)
 #define MENU_EXIT_DETAILS (3)
 #define MENU_EXIT_TIMEOUT (4)
+#define MENU_EXIT_OPTIONS (5)
 
 #define TAG_RETURN       (99)
 

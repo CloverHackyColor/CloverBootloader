@@ -189,7 +189,37 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 			AsciiStrCpy(gSettings.BootArgs, prop->string);
 		} 
     
-		//gSettings.TimeOut - will be in interface.txt
+ 		prop = GetProperty(dict,"DefaultBootVolume");
+		if(prop)
+		{
+			AsciiStrCpy(gSettings.DefaultBoot, prop->string);
+		}
+//Graphics
+ 		prop = GetProperty(dict,"LoadVBios");
+		if(prop)
+		{
+//			AsciiStrCpy(gSettings.LoadVBios, prop->string);
+      if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+				gSettings.smartUPS=TRUE;
+			else
+				gSettings.smartUPS=FALSE;
+      
+		}
+ 		prop = GetProperty(dict,"VideoPorts");
+		if(prop)
+		{
+      AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+			gSettings.VideoPorts = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
+
+		}
+ 		prop = GetProperty(dict,"FBName");
+		if(prop)
+		{
+      AsciiStrToUnicodeStr(prop->string, gSettings.FBName);
+		}
+    
+    
+		//gSettings.TimeOut - will be in refit.config
 /*		prop = GetProperty(dict,"TimeOut");
 		if(prop)
 		{
