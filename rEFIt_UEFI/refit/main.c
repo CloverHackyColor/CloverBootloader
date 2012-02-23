@@ -39,7 +39,7 @@
 
 #include "syslinux_mbr.h"
 
-#define DEBUG_MAIN 2
+#define DEBUG_MAIN 1
 
 #if DEBUG_MAIN == 2
 #define DBG(x...) AsciiPrint(x)
@@ -61,6 +61,7 @@
 #define TAG_LEGACY   (6)
 #define TAG_INFO     (7)
 #define TAG_OPTIONS  (8)
+#define TAG_INPUT    (9)
 
 EFI_HANDLE              gImageHandle;
 EFI_SYSTEM_TABLE*       gST;
@@ -68,7 +69,7 @@ EFI_BOOT_SERVICES*			gBS;
 EFI_RUNTIME_SERVICES*		gRS;
 EFI_DXE_SERVICES*       gDS;
 
-static REFIT_MENU_ENTRY MenuEntryOptions    = { L"Options", TAG_ABOUT, 1, 0, 'O', NULL, NULL, NULL };
+static REFIT_MENU_ENTRY MenuEntryOptions    = { L"Options", TAG_OPTIONS, 1, 0, 'O', NULL, NULL, NULL };
 static REFIT_MENU_ENTRY MenuEntryAbout    = { L"About rEFIt", TAG_ABOUT, 1, 0, 'A', NULL, NULL, NULL };
 static REFIT_MENU_ENTRY MenuEntryReset    = { L"Restart Computer", TAG_RESET, 1, 0, 'R', NULL, NULL, NULL };
 static REFIT_MENU_ENTRY MenuEntryShutdown = { L"Shut Down Computer", TAG_SHUTDOWN, 1, 0, 'U', NULL, NULL, NULL };
@@ -141,8 +142,22 @@ CatPrint (
 */
 static VOID  OptionsMenu(VOID)
 {
+  CHAR16* Flags = AllocateZeroPool(255);
+  REFIT_MENU_ENTRY* InputBootArgs = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
+  UnicodeSPrint(Flags, 255, L"Boot Args:%a", gSettings.BootArgs);
+  InputBootArgs->Title = Flags;
+  InputBootArgs->Tag = TAG_INPUT;
+  InputBootArgs->Row = 0;
+  InputBootArgs->ShortcutDigit = 0;
+  InputBootArgs->ShortcutLetter = ' ';
+  InputBootArgs->Image = NULL; 
+  InputBootArgs->BadgeImage = NULL;
+  InputBootArgs->SubScreen = NULL;
+
+  
   if (OptionMenu.EntryCount == 0) {
-    AddMenuInfoLine(&OptionMenu, L"");
+//    AddMenuInfoLine(&OptionMenu, Flags);
+    AddMenuEntry(&OptionMenu, InputBootArgs);
     AddMenuEntry(&OptionMenu, &MenuEntryReturn);
   }
   RunMenu(&OptionMenu, NULL);
@@ -344,8 +359,9 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   Entry->UseGraphicsMode = FALSE;
   
   // locate a custom icon for the loader
-  StrCpy(IconFileName, LoaderPath);
-  ReplaceExtension(IconFileName, L".icns");
+//  StrCpy(IconFileName, LoaderPath);
+  StrCpy(IconFileName, Volume->OSIconName);
+//  ReplaceExtension(IconFileName, L".icns");
   if (FileExists(Volume->RootDir, IconFileName)){
     Entry->me.Image = LoadIcns(Volume->RootDir, IconFileName, 128);
   } else if (FileExists(SelfRootDir, IconFileName)) {
@@ -643,7 +659,7 @@ static VOID ScanLoader(VOID)
        //     Print(L"  - Mac OS X boot file found\n");
           Volume->BootType = BOOTING_BY_EFI;
           Entry = AddLoaderEntry(FileName, L"Mac OS X", Volume);
-          break; //boot MacOSX only
+          continue; //boot MacOSX only
         }
         
         // check for XOM - and what?
@@ -1037,13 +1053,15 @@ static VOID ScanTool(VOID)
     
     // look for the EFI shell
     if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_SHELL)) {
-        UnicodeSPrint(FileName, 255, L"%s\\apps\\shell.efi", SelfDirPath);
-        if (FileExists(SelfRootDir, FileName)) {
+        UnicodeSPrint(FileName, 255, L"apps\\shell.efi");
+        if (FileExists(SelfDir, FileName)) {
             Entry = AddToolEntry(FileName, L"EFI Shell", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
+          DBG("found apps\\shell.efi\n");
         } else {
             StrCpy(FileName, L"\\EFI\\tools\\Shell.efi");
             if (FileExists(SelfRootDir, FileName)) {
                 Entry = AddToolEntry(FileName, L"EFI Shell", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
+              DBG("found tools\\shell.efi\n");
             }
         }
     }
@@ -1230,11 +1248,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     else {
       //    InputBuffer = (CHAR16*)AllocateZeroPool(254);
       InputBuffer = L"-v arch=i386";
-      Input(L"Kernel flags:", InputBuffer, 100);
+ /*     Input(L"Kernel flags:", InputBuffer, 100);
       if (StrLen(InputBuffer) > 0) {
         UnicodeStrToAsciiStr( InputBuffer, gSettings.BootArgs);
         DBG("inputted boot-args: %a\n", gSettings.BootArgs);
       }
+  */
     }
   
   //Second step. Load config.plist into gSettings	
@@ -1243,7 +1262,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   // scan for loaders and tools, add then to the menu
   if (GlobalConfig.LegacyFirst){
     DBG("scan legacy first\n");
-    //    ScanLegacy();
+    ScanLegacy();
   }
   ScanLoader();
   if (!GlobalConfig.LegacyFirst){
@@ -1254,21 +1273,19 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     ScanTool();
   }
 
-  
-  MenuEntryOptions
-  
   // fixed other menu entries
-  if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
-    MenuEntryOptions.Image = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
-    AddMenuEntry(&MainMenu, &MenuEntryOptions);
-    //    PauseForKey(L"menu Options added ok");
-  }  
-  
+    
   if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
     MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
     AddMenuEntry(&MainMenu, &MenuEntryAbout);
     //    PauseForKey(L"menu About added ok");
   }
+  
+  if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
+    MenuEntryOptions.Image = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
+    AddMenuEntry(&MainMenu, &MenuEntryOptions);
+    //    PauseForKey(L"menu Options added ok");
+  }  
   
   if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.EntryCount == 0) {
     MenuEntryShutdown.Image = BuiltinIcon(BUILTIN_ICON_FUNC_SHUTDOWN);

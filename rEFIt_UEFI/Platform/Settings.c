@@ -192,7 +192,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
  		prop = GetProperty(dict,"DefaultBootVolume");
 		if(prop)
 		{
-			AsciiStrCpy(gSettings.DefaultBoot, prop->string);
+      AsciiStrToUnicodeStr(prop->string, gSettings.DefaultBoot);
 		}
 //Graphics
  		prop = GetProperty(dict,"LoadVBios");
@@ -427,30 +427,35 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 			if(AsciiStrStr(prop->string, "10.4") != 0){
         Volume->OSType = OSTYPE_TIGER;
         Volume->OSIconName = L"tiger";
+        Volume->BootType = BOOTING_BY_EFI;
         Status = EFI_SUCCESS;
       } else
 			// Leopard
       if(AsciiStrStr(prop->string, "10.5") != 0){
 				Volume->OSType = OSTYPE_LEO;
         Volume->OSIconName = L"leo";
+        Volume->BootType = BOOTING_BY_EFI;
         Status = EFI_SUCCESS;
       } else
 			// Snow Leopard
 			if(AsciiStrStr(prop->string, "10.6") != 0){
 				Volume->OSType = OSTYPE_SNOW;
         Volume->OSIconName = L"snow";
+        Volume->BootType = BOOTING_BY_EFI;
         Status = EFI_SUCCESS;
       } else
 			// Lion
 			if(AsciiStrStr(prop->string, "10.7") != 0){
 				Volume->OSType = OSTYPE_LION;
         Volume->OSIconName = L"lion";
+        Volume->BootType = BOOTING_BY_EFI;
         Status = EFI_SUCCESS;
-      }
+      } else
       // Mountain Lion
       if(AsciiStrStr(prop->string, "10.8") != 0){
 				Volume->OSType = OSTYPE_COUGAR;
         Volume->OSIconName = L"cougar";
+        Volume->BootType = BOOTING_BY_EFI;
         Status = EFI_SUCCESS;
       }
       

@@ -704,8 +704,19 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
 
 static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, UINTN XPos, UINTN YPos)
 {
+  LOADER_ENTRY* LEntry = (LOADER_ENTRY*)Entry;
+  EG_IMAGE* MainImage;
+  if (LEntry->Volume) {
+    MainImage = LEntry->Volume->DriveImage;
+  } else {
+    MainImage = Entry->Image;
+  }
+  if (!MainImage) {
+    MainImage = LoadIcns(SelfDir, L"icons\\osx.icns", 128);
+  }
+  
     BltImageCompositeBadge(SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
-                           Entry->Image, Entry->BadgeImage, XPos, YPos);
+                           MainImage, Entry->BadgeImage, XPos, YPos);
 }
 
 static VOID DrawMainMenuText(IN CHAR16 *Text, IN UINTN XPos, IN UINTN YPos)

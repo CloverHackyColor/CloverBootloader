@@ -47,16 +47,18 @@ typedef struct {
 } BUILTIN_ICON;
 
 BUILTIN_ICON BuiltinIconTable[BUILTIN_ICON_COUNT] = {
-    { NULL, L"icons\\func_about.icns", 48 },
-    { NULL, L"icons\\func_options.icns", 32 },
-    { NULL, L"icons\\func_reset.icns", 32 },
-    { NULL, L"icons\\func_shutdown.icns", 32 },
+    { NULL, L"icons\\func_about.png", 48 },
+    { NULL, L"icons\\func_options.png", 48 },
+    { NULL, L"icons\\func_reset.png", 48 },
+    { NULL, L"icons\\func_shutdown.png", 48 },
     { NULL, L"icons\\tool_shell.icns", 48 },
     { NULL, L"icons\\tool_part.icns", 48 },
     { NULL, L"icons\\tool_rescue.icns", 48 },
-    { NULL, L"icons\\vol_internal.icns", 32 },
-    { NULL, L"icons\\vol_external.icns", 32 },
-    { NULL, L"icons\\vol_optical.icns", 32 },
+    { NULL, L"icons\\vol_internal.icns", 128 },
+    { NULL, L"icons\\vol_external.icns", 128 },
+    { NULL, L"icons\\vol_optical.icns", 128 },
+    { NULL, L"icons\\vol_firewire.icns", 128 },
+    { NULL, L"icons\\vol_clover.icns", 128 },
 };
 
 EG_IMAGE * BuiltinIcon(IN UINTN Id)
@@ -107,7 +109,7 @@ EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconNam
                BootLogo ? L"boot" : L"os", CutoutName);
         
         // try to load it
-        Image = egLoadIcon(SelfDir, FileName, 128);
+        Image = egLoadIcon(SelfDir, FileName, 32);
         if (Image != NULL)
             return Image;
     }
@@ -115,7 +117,7 @@ EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconNam
     // try the fallback name
     UnicodeSPrint(FileName, 255, L"icons\\%s_%s.icns",
            BootLogo ? L"boot" : L"os", FallbackIconName);
-    Image = egLoadIcon(SelfDir, FileName, 128);
+    Image = egLoadIcon(SelfDir, FileName, 32);
     if (Image != NULL)
         return Image;
     

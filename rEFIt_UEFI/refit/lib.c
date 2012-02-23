@@ -36,7 +36,7 @@
 
 #include "Platform.h"
 
-#define DEBUG_LIB 2
+#define DEBUG_LIB 1
 
 #if DEBUG_LIB == 2
 #define DBG(x...) AsciiPrint(x)
@@ -547,12 +547,16 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
         } else {
           DBG("unknown bootcode %x\n", *(UINT32*)&SectorBuffer[0]);
           Volume->HasBootCode = FALSE;
-          Volume->OSIconName = L"Clover";
+          Volume->OSIconName = L"clover";
           Volume->OSName = L"Unknown";
           Volume->OSType = OSTYPE_VAR;
           Volume->BootType = BOOTING_BY_PBR;          
         }
       
+      }
+      
+      if (Volume->OSIconName) {
+        Volume->VolBadgeImage = LoadOSIcon(Volume->OSIconName, L"mac", FALSE);
       }
 
         
@@ -592,14 +596,28 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
 }
 
 static VOID ScanVolumeDefaultIcon(IN OUT REFIT_VOLUME *Volume)
-{
+{  
     // default volume icon based on disk kind
-    if (Volume->DiskKind == DISK_KIND_INTERNAL)
-        Volume->VolBadgeImage = BuiltinIcon(BUILTIN_ICON_VOL_INTERNAL);
-    else if (Volume->DiskKind == DISK_KIND_EXTERNAL)
-        Volume->VolBadgeImage = BuiltinIcon(BUILTIN_ICON_VOL_EXTERNAL);
-    else if (Volume->DiskKind == DISK_KIND_OPTICAL)
-        Volume->VolBadgeImage = BuiltinIcon(BUILTIN_ICON_VOL_OPTICAL);
+  switch (Volume->DiskKind) {
+    case DISK_KIND_INTERNAL:
+      Volume->DriveImage = BuiltinIcon(BUILTIN_ICON_VOL_INTERNAL);
+      break;
+    case DISK_KIND_EXTERNAL:
+      Volume->DriveImage = BuiltinIcon(BUILTIN_ICON_VOL_EXTERNAL);
+      break;
+    case DISK_KIND_OPTICAL:
+      Volume->DriveImage = BuiltinIcon(BUILTIN_ICON_VOL_OPTICAL);
+      break;
+    case DISK_KIND_FIREWIRE:
+      Volume->DriveImage = BuiltinIcon(BUILTIN_ICON_VOL_FIREWIRE);
+      break;
+    case DISK_KIND_BOOTER:
+      Volume->DriveImage = BuiltinIcon(BUILTIN_ICON_VOL_BOOTER);
+      break;
+    default:
+      Volume->DriveImage = NULL;
+      break;
+  }
 }
 
 //at start we have only Volume->DeviceHandle
@@ -862,19 +880,13 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
 
 //  DBG("GetOSVersion\n");
   Status = GetOSVersion(Volume); //here we set tiger,leo,snow,lion and cougar
-  if (EFI_ERROR(Status)) {
+  if (!EFI_ERROR(Status)) {
+    Volume->VolBadgeImage = LoadOSIcon(Volume->OSIconName, L"mac", FALSE);
+  }
     // Volume->OSType = 0; //TODO - other criteria?
     // Other EFI systems?
     // for now do not change default values
-  }
   
-  
-//    DBG("VolName found OSType=%d\n", Volume->OSType);
-    // TODO: if no official volume name is found or it is empty, use something else, e.g.:
-    //   - name from bytes 3 to 10 of the boot sector
-    //   - partition number -- Slice: done
-    //   - name derived from file system type or partition type
-    
     // get custom volume icon if present
   if (FileExists(Volume->RootDir, L".VolumeIcon.icns")){
         Volume->VolBadgeImage = LoadIcns(Volume->RootDir, L".VolumeIcon.icns", 32);
@@ -984,7 +996,7 @@ VOID ScanVolumes(VOID)
       }
     }
     FreePool(Handles);
-  DBG("Found %d volumes\n", VolumesCount);
+//  DBG("Found %d volumes\n", VolumesCount);
   if (SelfVolume == NULL){
     DBG("WARNING: SelfVolume not found"); //Slice - and what?
     SelfVolume = AllocateZeroPool(sizeof(REFIT_VOLUME));
@@ -998,7 +1010,7 @@ VOID ScanVolumes(VOID)
     SelfVolume->BootType = BOOTING_BY_PBR;
  //   AddListElement((VOID ***) &Volumes, &VolumesCount, SelfVolume);
     
-    DBG("SelfVolume Nr %d created\n", VolumesCount);
+//    DBG("SelfVolume Nr %d created\n", VolumesCount);
     
   }
     
@@ -1010,7 +1022,7 @@ VOID ScanVolumes(VOID)
         if (Volume->BlockIO != NULL && Volume->WholeDiskBlockIO != NULL &&
             Volume->BlockIO == Volume->WholeDiskBlockIO && Volume->BlockIOOffset == 0 &&
             Volume->MbrPartitionTable != NULL) {
-          DBG("Volume %d has MBR\n", VolumeIndex);
+//          DBG("Volume %d has MBR\n", VolumeIndex);
             MbrTable = Volume->MbrPartitionTable;
             for (PartitionIndex = 0; PartitionIndex < 4; PartitionIndex++) {
                 if (IS_EXTENDED_PART_TYPE(MbrTable[PartitionIndex].Type)) {
@@ -1177,11 +1189,11 @@ EFI_STATUS DirNextEntry(IN EFI_FILE *Directory, IN OUT EFI_FILE_INFO **DirEntry,
             if (Status != EFI_BUFFER_TOO_SMALL || IterCount >= 4)
                 break;
             if (BufferSize <= LastBufferSize) {
-                Print(L"FS Driver requests bad buffer size %d (was %d), using %d instead\n", BufferSize, LastBufferSize, LastBufferSize * 2);
+                DBG("FS Driver requests bad buffer size %d (was %d), using %d instead\n", BufferSize, LastBufferSize, LastBufferSize * 2);
                 BufferSize = LastBufferSize * 2;
 #if REFIT_DEBUG > 0
             } else {
-                Print(L"Reallocating buffer from %d to %d\n", LastBufferSize, BufferSize);
+                DBG("Reallocating buffer from %d to %d\n", LastBufferSize, BufferSize);
 #endif
             }
             Buffer = EfiReallocatePool(Buffer, LastBufferSize, BufferSize);
