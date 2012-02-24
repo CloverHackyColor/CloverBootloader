@@ -410,11 +410,8 @@ VOID        GetDefaultSettings(VOID);
 
 EFI_STATUS StrToGuid (IN  CHAR16   *Str, OUT EFI_GUID *Guid);
 
-EFI_STATUS
-InitializeConsoleSim (
-                      IN EFI_HANDLE           ImageHandle,
-                      IN EFI_SYSTEM_TABLE     *SystemTable
-                      );
+EFI_STATUS InitializeConsoleSim (VOID);
+
 //Settings.c
 VOID            GetCPUProperties (VOID);
 MACHINE_TYPES   GetDefaultModel(VOID);
@@ -446,10 +443,7 @@ EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ico
 EFI_STATUS  PatchACPI(IN REFIT_VOLUME *Volume);
 UINT8       Checksum8(VOID * startPtr, UINT32 len);
 
-EFI_STATUS EventsInitialize (
-                  IN EFI_HANDLE           ImageHandle,
-                  IN EFI_SYSTEM_TABLE     *SystemTable
-                  );
+EFI_STATUS EventsInitialize (VOID);
 
 EFI_STATUS  bootElTorito(IN REFIT_VOLUME*	volume);
 EFI_STATUS  bootMBR(IN REFIT_VOLUME* volume);

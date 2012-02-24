@@ -69,10 +69,7 @@ EFI_GUID gEfiConsoleControlProtocolGuid = EFI_CONSOLE_CONTROL_PROTOCOL_GUID;
 
 EFI_STATUS
 EFIAPI
-InitializeConsoleSim (
-  IN EFI_HANDLE           ImageHandle,
-  IN EFI_SYSTEM_TABLE     *SystemTable
-  )
+InitializeConsoleSim ()
 {
   EFI_STATUS              Status;
   EG_PIXEL		BackgroundClear = {0, 0, 0, 0};
@@ -81,7 +78,7 @@ InitializeConsoleSim (
   
   
   Status = gBS->InstallMultipleProtocolInterfaces (
-      &ImageHandle,
+      &gImageHandle,
       &gEfiConsoleControlProtocolGuid,
       &gConsoleController,
       NULL

@@ -321,7 +321,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   
   BeginExternalScreen(Entry->UseGraphicsMode, L"Booting OS");
 //  PauseForKey(L"SetPrivateVarProto");
-  SetPrivateVarProto();
+//  SetPrivateVarProto();
 //  PauseForKey(L"PatchSmbios");
   PatchSmbios();
 //  PauseForKey(L"PatchACPI");
@@ -330,12 +330,13 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   SetVariablesForOSX();
 //  PauseForKey(L"FinalizeSmbios");
   FinalizeSmbios();
-  PauseForKey(L"SetupDataForOSX");
+//  PauseForKey(L"SetupDataForOSX");
   SetupDataForOSX();
-  PauseForKey(L"SetupBooterLog");
+//  PauseForKey(L"SetupBooterLog");
   Status = SetupBooterLog();
   CheckError(Status, L"while SetupBooterLog");
-  PauseForKey(L"StartEFIImage");
+//  PauseForKey(L"StartEFIImage");
+  EventsInitialize ();
   StartEFIImage(Entry->DevicePath, Entry->LoadOptions,
                 Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL);
   PauseForKey(L"FinishExternalScreen");
@@ -1207,6 +1208,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	gRS				= SystemTable->RuntimeServices;
 	Status = EfiGetSystemConfigurationTable (&gEfiDxeServicesTableGuid, (VOID **) &gDS);
 	
+  InitializeConsoleSim();
 	InitBooterLog();
   InitScreen();
   

@@ -136,8 +136,9 @@ OnExitBootServices (
 		if((UINT32)(UINTN)ptr > 0x3000000)
 		{
 			Print(L"bootArgs not found!\n");
-			gBS->Stall(5000000);
-			return;
+//			gBS->Stall(5000000);
+//			return;
+      break;
 		}
 	}
   
@@ -181,10 +182,7 @@ VirtualAddressChangeEvent (
 
 EFI_STATUS
 EFIAPI
-EventsInitialize (
-  IN EFI_HANDLE                             ImageHandle,
-  IN EFI_SYSTEM_TABLE                       *SystemTable
-  )
+EventsInitialize ()
 {
 //  EFI_EVENT   OnReadyToBootEvent = NULL;
   EFI_EVENT   ExitBootServiceEvent = NULL;

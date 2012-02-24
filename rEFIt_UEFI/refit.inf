@@ -134,6 +134,7 @@
   gEfiDxeServicesTableGuid
   gEfiEventReadyToBootGuid
   gEfiEventVirtualAddressChangeGuid
+  gEfiEventExitBootServicesGuid
   gEfiFileInfoGuid                              ## CONSUMES ## GUID
   gEfiFileSystemInfoGuid                        ## CONSUMES ## GUID
   gEfiFileSystemVolumeLabelInfoIdGuid

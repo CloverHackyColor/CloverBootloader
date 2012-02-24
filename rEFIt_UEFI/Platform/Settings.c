@@ -566,6 +566,9 @@ VOID SetGraphics(VOID)
 									GFXdevice->subclass = Pci.Hdr.ClassCode[0];
 									GFXdevice->class_id = *((UINT16*)(Pci.Hdr.ClassCode+1));
 									//setup_gma_devprop(GFXdevice);
+                  MsgLog("Intel GFX device_id =0x%x\n", GFXdevice->device_id);
+                  MsgLog("Intel GFX revision  =0x%x\n", GFXdevice->revision);
+                 // MsgLog("Intel GFX found\n");
 									FreePool(GFXdevice);
 								}
 							}
