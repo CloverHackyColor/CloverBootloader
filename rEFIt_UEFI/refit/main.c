@@ -38,6 +38,7 @@
 //#include "../include/Handle.h"
 
 #include "syslinux_mbr.h"
+#include "Version.h"
 
 #define DEBUG_MAIN 1
 
@@ -168,10 +169,16 @@ static VOID  OptionsMenu(VOID)
 
 static VOID AboutRefit(VOID)
 {
+//  CHAR8* Revision = NULL;
     if (AboutMenu.EntryCount == 0) {
         AboutMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
         AddMenuInfoLine(&AboutMenu, L"rEFIt Version 1.01 UEFI by Slice");
-        AddMenuInfoLine(&AboutMenu, L"");
+#ifdef FIRMWARE_BUILDDATE
+      AddMenuInfoLine(&AboutMenu, PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
+#else
+      AddMenuInfoLine(&AboutMenu, L" Build: unknown");
+#endif
+      AddMenuInfoLine(&AboutMenu, L"");
         AddMenuInfoLine(&AboutMenu, L"Copyright (c) 2006-2010 Christoph Pfisterer");
         AddMenuInfoLine(&AboutMenu, L"Portions Copyright (c) Intel Corporation and others");
         AddMenuInfoLine(&AboutMenu, L"");
@@ -185,7 +192,11 @@ static VOID AboutRefit(VOID)
 #else
         AddMenuInfoLine(&AboutMenu, L" Platform: unknown");
 #endif
-        AddMenuInfoLine(&AboutMenu, PoolPrint(L" Firmware: %s rev %d", gST->FirmwareVendor, gST->FirmwareRevision));
+#ifdef FIRMWARE_REVISION
+      AddMenuInfoLine(&AboutMenu, PoolPrint(L" Firmware: %s rev %a", gST->FirmwareVendor, FIRMWARE_REVISION));
+#else
+      AddMenuInfoLine(&AboutMenu, PoolPrint(L" Firmware: %s rev %d", gST->FirmwareVendor, gST->FirmwareRevision));
+#endif
         AddMenuInfoLine(&AboutMenu, PoolPrint(L" Screen Output: %s", egScreenDescription()));
         AddMenuEntry(&AboutMenu, &MenuEntryReturn);
     }
@@ -319,11 +330,11 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   SetVariablesForOSX();
 //  PauseForKey(L"FinalizeSmbios");
   FinalizeSmbios();
+  PauseForKey(L"SetupDataForOSX");
+  SetupDataForOSX();
   PauseForKey(L"SetupBooterLog");
   Status = SetupBooterLog();
   CheckError(Status, L"while SetupBooterLog");
-  PauseForKey(L"SetupDataForOSX");
-  SetupDataForOSX();
   PauseForKey(L"StartEFIImage");
   StartEFIImage(Entry->DevicePath, Entry->LoadOptions,
                 Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL);

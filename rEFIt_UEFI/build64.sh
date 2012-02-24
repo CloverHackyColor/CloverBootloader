@@ -15,7 +15,7 @@
 set -e
 shopt -s nocasematch
 
-
+svnversion -n | tr -d [:alpha:] >vers.txt
 #
 # Setup workspace if it is not set
 #
@@ -61,6 +61,12 @@ esac
 
 BUILD_ROOT_ARCH=$WORKSPACE/Build/rEFIt/RELEASE_"$TARGET_TOOLS"/X64
 
+rm -f $WORKSPACE/Clover/rEFIt_UEFI/Version.h
+echo "#define FIRMWARE_VERSION \"2.31\"" > $WORKSPACE/Clover/rEFIt_UEFI/Version.h
+echo "#define FIRMWARE_BUILDDATE \"`date \"+%Y-%m-%d %H:%M:%S\"`\"" >> $WORKSPACE/Clover/rEFIt_UEFI/Version.h
+#echo "#define FIRMWARE_REVISION \"`svnversion -n | tr -d [:alpha:]`\"" >> $WORKSPACE/Clover/rEFIt_UEFI/Version.h
+echo "#define FIRMWARE_REVISION \"`cat Clover/rEFIt_UEFI/vers.txt`\"" >> $WORKSPACE/Clover/rEFIt_UEFI/Version.h
+#rm -f $WORKSPACE/Clover/rEFIt_UEFI/vers.txt
 
 #
 # Build the edk2 
