@@ -157,17 +157,20 @@ static VOID  OptionsMenu(VOID)
   
   if (OptionMenu.EntryCount == 0) {
 //    AddMenuInfoLine(&OptionMenu, Flags);
+    OptionMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
     AddMenuEntry(&OptionMenu, InputBootArgs);
     AddMenuEntry(&OptionMenu, &MenuEntryReturn);
   }
   RunMenu(&OptionMenu, NULL);
+  FreePool(Flags);
+  FreePool(InputBootArgs);
 }
 
 static VOID AboutRefit(VOID)
 {
     if (AboutMenu.EntryCount == 0) {
         AboutMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
-        AddMenuInfoLine(&AboutMenu, L"rEFIt Version 1.00 UEFI by Slice");
+        AddMenuInfoLine(&AboutMenu, L"rEFIt Version 1.01 UEFI by Slice");
         AddMenuInfoLine(&AboutMenu, L"");
         AddMenuInfoLine(&AboutMenu, L"Copyright (c) 2006-2010 Christoph Pfisterer");
         AddMenuInfoLine(&AboutMenu, L"Portions Copyright (c) Intel Corporation and others");
@@ -182,8 +185,7 @@ static VOID AboutRefit(VOID)
 #else
         AddMenuInfoLine(&AboutMenu, L" Platform: unknown");
 #endif
-        AddMenuInfoLine(&AboutMenu, PoolPrint(L" Firmware: %s %d.%02d",
-            gST->FirmwareVendor, gST->FirmwareRevision >> 16, gST->FirmwareRevision & ((1 << 16) - 1)));
+        AddMenuInfoLine(&AboutMenu, PoolPrint(L" Firmware: %s rev %d", gST->FirmwareVendor, gST->FirmwareRevision));
         AddMenuInfoLine(&AboutMenu, PoolPrint(L" Screen Output: %s", egScreenDescription()));
         AddMenuEntry(&AboutMenu, &MenuEntryReturn);
     }
@@ -304,6 +306,8 @@ static EFI_STATUS StartEFIImage(IN EFI_DEVICE_PATH *DevicePath,
 
 static VOID StartLoader(IN LOADER_ENTRY *Entry)
 {
+  EFI_STATUS              Status;
+  
   BeginExternalScreen(Entry->UseGraphicsMode, L"Booting OS");
 //  PauseForKey(L"SetPrivateVarProto");
   SetPrivateVarProto();
@@ -311,13 +315,14 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   PatchSmbios();
 //  PauseForKey(L"PatchACPI");
   PatchACPI(Entry->Volume);
-  PauseForKey(L"SetVariablesForOSX");
+//  PauseForKey(L"SetVariablesForOSX");
   SetVariablesForOSX();
 //  PauseForKey(L"FinalizeSmbios");
   FinalizeSmbios();
-//  PauseForKey(L"SetupBooterLog");
-  SetupBooterLog();
-//  PauseForKey(L"SetupDataForOSX");
+  PauseForKey(L"SetupBooterLog");
+  Status = SetupBooterLog();
+  CheckError(Status, L"while SetupBooterLog");
+  PauseForKey(L"SetupDataForOSX");
   SetupDataForOSX();
   PauseForKey(L"StartEFIImage");
   StartEFIImage(Entry->DevicePath, Entry->LoadOptions,
@@ -357,6 +362,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   Entry->VolName         = Volume->VolName;
   Entry->DevicePath      = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
   Entry->UseGraphicsMode = FALSE;
+  Entry->LoadOptions     = PoolPrint(L"%a", gSettings.BootArgs);
   
   // locate a custom icon for the loader
 //  StrCpy(IconFileName, LoaderPath);
@@ -413,6 +419,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   SubEntry->VolName         = Entry->VolName;
   SubEntry->DevicePath      = Entry->DevicePath;
   SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
+  SubEntry->LoadOptions     = PoolPrint(L"%a", gSettings.BootArgs);
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
   
   // loader-specific submenu entries
@@ -880,19 +887,35 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
                       (UGAWidth  - BootLogoImage->Width ) >> 1,
                       (UGAHeight - BootLogoImage->Height) >> 1,
                       &StdBackgroundPixel);
-    
-    if (Entry->Volume->IsMbrPartition)
-        ActivateMbrPartition(Entry->Volume->WholeDiskBlockIO, Entry->Volume->MbrPartitionIndex);
-    
+        
     ExtractLegacyLoaderPaths(DiscoveredPathList, MAX_DISCOVERED_PATHS, LegacyLoaderList);
     
     Status = StartEFIImageList(DiscoveredPathList, Entry->LoadOptions, NULL, L"legacy loader", &ErrorInStep);
     if (Status == EFI_NOT_FOUND) {
-        if (ErrorInStep == 1)
+      //try my LegacyBoot
+      switch (Entry->Volume->BootType) {
+        case BOOTING_BY_CD:
+          Status = bootElTorito(Entry->Volume);
+          break;
+        case BOOTING_BY_MBR:
+          Status = bootMBR(Entry->Volume);
+          break;
+        case BOOTING_BY_PBR:
+          Status = bootPBR(Entry->Volume);
+          break;
+        default:
+          break;
+      }
+      CheckError(Status, L"while LegacyBoot");
+      if (0 && Entry->Volume->IsMbrPartition && !Entry->Volume->HasBootCode)
+         ActivateMbrPartition(Entry->Volume->WholeDiskBlockIO, Entry->Volume->MbrPartitionIndex);
+
+/*        if (ErrorInStep == 1)
             Print(L"\nPlease make sure that you have the latest firmware update installed.\n");
         else if (ErrorInStep == 3)
             Print(L"\nThe firmware refused to boot from the selected volume. Note that external\n"
                   L"hard drives are not well-supported by Apple's firmware for legacy OS booting.\n");
+ */
     }
     FinishExternalScreen();
 }
@@ -974,7 +997,8 @@ static VOID ScanLegacy(VOID)
             (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_INTERNAL)))
             continue;
         
-        if (Volume->OSType > 10) {
+        if ((Volume->BootType == BOOTING_BY_EFI) ||
+            (Volume->BootType == BOOTING_BY_BOOTEFI)) {
           continue; //this is not legacy!!!
         }
       
@@ -1239,6 +1263,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
                                  Buffer);
 		}		
 	}
+  //Second step. Load config.plist into gSettings	
+	Status = GetUserSettings(SelfRootDir);  
   
   //  DBG("BootArgs Size=%d\n", Size);
   //  PauseForKey(L"BootArgs ok");
@@ -1256,8 +1282,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   */
     }
   
-  //Second step. Load config.plist into gSettings	
-	Status = GetUserSettings(SelfRootDir);  
   
   // scan for loaders and tools, add then to the menu
   if (GlobalConfig.LegacyFirst){

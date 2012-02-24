@@ -24,10 +24,10 @@ VOID InitBooterLog(VOID)
 EFI_STATUS SetupBooterLog(VOID)
 {
 	EFI_STATUS		Status	= EFI_SUCCESS;
-	UINTN			LogSize = msgCursor - msgbuf;
+	UINTN			LogSize;
 	if (!msgbuf)
 		return EFI_NOT_FOUND;
-		
+	LogSize  = msgCursor - msgbuf;
 	Status =  LogDataHub(&gEfiMiscSubClassGuid, L"boot-log", msgbuf, LogSize);
 	return Status;
 }

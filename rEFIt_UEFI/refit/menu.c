@@ -779,8 +779,9 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
             }
             
             // initial painting
-            InitSelection();
+            //InitSelection(); //Slice - I changed order because of background pixel
             SwitchToGraphicsAndClear();
+            InitSelection();
             break;
             
         case MENU_FUNCTION_CLEANUP:

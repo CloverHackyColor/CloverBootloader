@@ -109,7 +109,7 @@ EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconNam
                BootLogo ? L"boot" : L"os", CutoutName);
         
         // try to load it
-        Image = egLoadIcon(SelfDir, FileName, 32);
+        Image = egLoadIcon(SelfDir, FileName, 128);
         if (Image != NULL)
             return Image;
     }
@@ -117,7 +117,7 @@ EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconNam
     // try the fallback name
     UnicodeSPrint(FileName, 255, L"icons\\%s_%s.icns",
            BootLogo ? L"boot" : L"os", FallbackIconName);
-    Image = egLoadIcon(SelfDir, FileName, 32);
+    Image = egLoadIcon(SelfDir, FileName, 128);
     if (Image != NULL)
         return Image;
     

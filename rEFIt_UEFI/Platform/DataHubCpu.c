@@ -15,6 +15,16 @@
  * hope that it will be useful, but WITHOUT ANY WARRANTY of any kind.
  */
 
+#define DEBUG_DH 2
+
+#if DEBUG_DH == 2
+#define DBG(x...) AsciiPrint(x)
+#elif DEBUG_DH == 1
+#define DBG(x...) MsgLog(x)
+#else
+#define DBG(x...)
+#endif
+
 
 /*******************************************************************************
  *   Header Files                                                               *

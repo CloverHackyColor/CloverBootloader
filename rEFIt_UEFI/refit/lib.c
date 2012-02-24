@@ -556,7 +556,10 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
       }
       
       if (Volume->OSIconName) {
-        Volume->VolBadgeImage = LoadOSIcon(Volume->OSIconName, L"mac", FALSE);
+        CHAR16          FileName[256];
+        UnicodeSPrint(FileName, 255, L"icons\\os_%s.icns", Volume->OSIconName);
+        Volume->VolBadgeImage = egLoadIcon(SelfDir, FileName, 32);
+        //LoadOSIcon(Volume->OSIconName, L"mac", FALSE);
       }
 
         
@@ -881,7 +884,10 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
 //  DBG("GetOSVersion\n");
   Status = GetOSVersion(Volume); //here we set tiger,leo,snow,lion and cougar
   if (!EFI_ERROR(Status)) {
-    Volume->VolBadgeImage = LoadOSIcon(Volume->OSIconName, L"mac", FALSE);
+    CHAR16          FileName[256];
+    UnicodeSPrint(FileName, 255, L"icons\\os_%s.icns", Volume->OSIconName);
+    Volume->VolBadgeImage = egLoadIcon(SelfDir, FileName, 32);
+//    Volume->VolBadgeImage = LoadOSIcon(Volume->OSIconName, L"mac", FALSE);
   }
     // Volume->OSType = 0; //TODO - other criteria?
     // Other EFI systems?

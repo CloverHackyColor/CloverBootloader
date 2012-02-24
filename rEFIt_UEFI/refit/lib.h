@@ -125,6 +125,87 @@ typedef struct {
     MBR_PARTITION_INFO  *MbrPartitionTable;
 } REFIT_VOLUME;
 
+struct _refit_menu_screen;
+
+typedef struct _refit_menu_entry {
+  CHAR16      *Title;
+  UINTN       Tag;
+  UINTN       Row;
+  CHAR16      ShortcutDigit;
+  CHAR16      ShortcutLetter;
+  EG_IMAGE    *Image;
+  EG_IMAGE    *BadgeImage;
+  struct _refit_menu_screen *SubScreen;
+} REFIT_MENU_ENTRY;
+
+typedef struct _refit_menu_screen {
+  CHAR16      *Title;
+  EG_IMAGE    *TitleImage;
+  UINTN       InfoLineCount;
+  CHAR16      **InfoLines;
+  UINTN       EntryCount;
+  REFIT_MENU_ENTRY **Entries;
+  UINTN       TimeoutSeconds;
+  CHAR16      *TimeoutText;
+} REFIT_MENU_SCREEN;
+
+//this structure is used for refit.config
+typedef struct {
+  UINT8   *Buffer;
+  UINTN   BufferSize;
+  UINTN   Encoding;
+  CHAR8   *Current8Ptr;
+  CHAR8   *End8Ptr;
+  CHAR16  *Current16Ptr;
+  CHAR16  *End16Ptr;
+} REFIT_FILE;
+
+#define DISABLE_FLAG_SHELL      (0x0001)
+#define DISABLE_FLAG_TOOLS      (0x0002)
+#define DISABLE_FLAG_OPTICAL    (0x0004)
+#define DISABLE_FLAG_EXTERNAL   (0x0008)
+#define DISABLE_FLAG_INTERNAL   (0x0010)
+#define DISABLE_FLAG_SINGLEUSER (0x0020)
+#define DISABLE_FLAG_HWTEST     (0x0040)
+#define DISABLE_ALL             ((0xffff) & (~DISABLE_FLAG_INTERNAL))
+
+#define HIDEUI_FLAG_BANNER      (0x0001)
+#define HIDEUI_FLAG_FUNCS       (0x0002)
+#define HIDEUI_FLAG_LABEL       (0x0004)
+#define HIDEUI_ALL              (0xffff)
+
+typedef struct {
+  BOOLEAN     TextOnly;
+  UINTN       Timeout;
+  UINTN       DisableFlags;
+  UINTN       HideBadges;
+  UINTN       HideUIFlags;
+  BOOLEAN     LegacyFirst;
+  CHAR16      *BannerFileName;
+  CHAR16      *SelectionSmallFileName;
+  CHAR16      *SelectionBigFileName;
+  CHAR16      *DefaultSelection;
+} REFIT_CONFIG;
+
+// types
+
+typedef struct {
+  REFIT_MENU_ENTRY me;
+  REFIT_VOLUME     *Volume;
+  CHAR16           *LoadOptions; //moved here for compatibility with legacy
+  CHAR16           *LoaderPath;
+  CHAR16           *VolName;
+  EFI_DEVICE_PATH  *DevicePath;
+  BOOLEAN          UseGraphicsMode;
+} LOADER_ENTRY;
+
+typedef struct {
+  REFIT_MENU_ENTRY me;
+  REFIT_VOLUME     *Volume;
+  CHAR16           *LoadOptions;
+} LEGACY_ENTRY;
+
+
 extern EFI_HANDLE       SelfImageHandle;
 extern EFI_LOADED_IMAGE *SelfLoadedImage;
 extern EFI_FILE         *SelfRootDir;
@@ -259,30 +340,6 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id);
 
 #define TAG_RETURN       (99)
 
-struct _refit_menu_screen;
-
-typedef struct _refit_menu_entry {
-    CHAR16      *Title;
-    UINTN       Tag;
-    UINTN       Row;
-    CHAR16      ShortcutDigit;
-    CHAR16      ShortcutLetter;
-    EG_IMAGE    *Image;
-    EG_IMAGE    *BadgeImage;
-    struct _refit_menu_screen *SubScreen;
-} REFIT_MENU_ENTRY;
-
-typedef struct _refit_menu_screen {
-    CHAR16      *Title;
-    EG_IMAGE    *TitleImage;
-    UINTN       InfoLineCount;
-    CHAR16      **InfoLines;
-    UINTN       EntryCount;
-    REFIT_MENU_ENTRY **Entries;
-    UINTN       TimeoutSeconds;
-    CHAR16      *TimeoutText;
-} REFIT_MENU_SCREEN;
-
 VOID AddMenuInfoLine(IN REFIT_MENU_SCREEN *Screen, IN CHAR16 *InfoLine);
 VOID AddMenuEntry(IN REFIT_MENU_SCREEN *Screen, IN REFIT_MENU_ENTRY *Entry);
 VOID FreeMenu(IN REFIT_MENU_SCREEN *Screen);
@@ -292,61 +349,6 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN CHAR16* DefaultSelection, OUT
 //
 // config module
 //
-
-typedef struct {
-    UINT8   *Buffer;
-    UINTN   BufferSize;
-    UINTN   Encoding;
-    CHAR8   *Current8Ptr;
-    CHAR8   *End8Ptr;
-    CHAR16  *Current16Ptr;
-    CHAR16  *End16Ptr;
-} REFIT_FILE;
-
-#define DISABLE_FLAG_SHELL      (0x0001)
-#define DISABLE_FLAG_TOOLS      (0x0002)
-#define DISABLE_FLAG_OPTICAL    (0x0004)
-#define DISABLE_FLAG_EXTERNAL   (0x0008)
-#define DISABLE_FLAG_INTERNAL   (0x0010)
-#define DISABLE_FLAG_SINGLEUSER (0x0020)
-#define DISABLE_FLAG_HWTEST     (0x0040)
-#define DISABLE_ALL             ((0xffff) & (~DISABLE_FLAG_INTERNAL))
-
-#define HIDEUI_FLAG_BANNER      (0x0001)
-#define HIDEUI_FLAG_FUNCS       (0x0002)
-#define HIDEUI_FLAG_LABEL       (0x0004)
-#define HIDEUI_ALL              (0xffff)
-
-typedef struct {
-    BOOLEAN     TextOnly;
-    UINTN       Timeout;
-    UINTN       DisableFlags;
-    UINTN       HideBadges;
-    UINTN       HideUIFlags;
-    BOOLEAN     LegacyFirst;
-    CHAR16      *BannerFileName;
-    CHAR16      *SelectionSmallFileName;
-    CHAR16      *SelectionBigFileName;
-    CHAR16      *DefaultSelection;
-} REFIT_CONFIG;
-
-// types
-
-typedef struct {
-  REFIT_MENU_ENTRY me;
-  REFIT_VOLUME     *Volume;
-  CHAR16           *LoaderPath;
-  CHAR16           *VolName;
-  EFI_DEVICE_PATH  *DevicePath;
-  BOOLEAN          UseGraphicsMode;
-  CHAR16           *LoadOptions;
-} LOADER_ENTRY;
-
-typedef struct {
-  REFIT_MENU_ENTRY me;
-  REFIT_VOLUME     *Volume;
-  CHAR16           *LoadOptions;
-} LEGACY_ENTRY;
 
 
 extern REFIT_CONFIG GlobalConfig;
@@ -366,14 +368,7 @@ extern EFI_FILE_HANDLE
 EfiLibOpenRoot (
 				IN EFI_HANDLE                   DeviceHandle
 				);
-/*
-extern BOOLEAN
-EfiGrowBuffer (
-			   IN OUT EFI_STATUS   *Status,
-			   IN OUT VOID         **Buffer,
-			   IN UINTN            BufferSize
-			   );
-*/
+
 extern EFI_FILE_SYSTEM_VOLUME_LABEL *
 EfiLibFileSystemVolumeLabelInfo (
 								 IN EFI_FILE_HANDLE      FHand
@@ -408,12 +403,12 @@ TimeCompare (
 			 IN EFI_TIME               *FirstTime,
 			 IN EFI_TIME               *SecondTime
 			 );
-
+/*
 extern UINTN
 Atoi (
 	  CHAR16  *str
 	  );
-
+*/
 
 #endif
 /* EOF */

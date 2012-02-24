@@ -401,6 +401,7 @@ extern EFI_GUID gEfiAppleScreenInfoGuid;
 extern EFI_GUID gEfiAppleVendorGuid;
 extern EFI_GUID gEfiPartTypeSystemPartGuid;
 extern EFI_GUID gMsgLogProtocolGuid;
+extern EFI_GUID gEfiLegacy8259ProtocolGuid;
 
 
 VOID        InitBooterLog(VOID);

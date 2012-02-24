@@ -4,7 +4,7 @@
  implementation for cpu
 
  Remade by Slice 2011 based on Apple's XNU sources
- Portion copyright from Chameleon project
+ Portion copyright from Chameleon project. Thanks to all who involved to it.
  */
 /*
  * Copyright (c) 2000-2006 Apple Computer, Inc. All rights reserved.

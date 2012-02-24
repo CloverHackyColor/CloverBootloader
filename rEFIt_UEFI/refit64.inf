@@ -138,6 +138,7 @@
   gEfiFileSystemInfoGuid                        ## CONSUMES ## GUID
   gEfiFileSystemVolumeLabelInfoIdGuid
   gEfiGlobalVariableGuid
+#  gEfiLegacy8259ProtocolGuid
   gEfiPartTypeLegacyMbrGuid
   gEfiPartTypeSystemPartGuid
   gEfiSmbiosTableGuid
