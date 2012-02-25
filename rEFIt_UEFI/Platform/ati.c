@@ -79,7 +79,7 @@ BOOLEAN get_model_val(value_t *val)
 		return FALSE;
 	
 	val->type = kStr;
-	val->size = AsciiStrLen(card->info->model_name) + 1;
+	val->size = AsciiStrLen(card->info->model_name);
 	val->data = (UINT8 *)card->info->model_name;
 	
 	return TRUE;
@@ -650,12 +650,12 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 	
 	AsciiSPrint(name, 24, "ATY,%s", card->cfg_name);
 	aty_name.type = kStr;
-	aty_name.size = AsciiStrLen(name) + 1;
+	aty_name.size = AsciiStrLen(name);
 	aty_name.data = (UINT8 *)name;
 	
 	AsciiSPrint(name_parent, 24, "ATY,%sParent", card->cfg_name);
 	aty_nameparent.type = kStr;
-	aty_nameparent.size = AsciiStrLen(name_parent) + 1;
+	aty_nameparent.size = AsciiStrLen(name_parent);
 	aty_nameparent.data = (UINT8 *)name_parent;
 	
 	return TRUE;

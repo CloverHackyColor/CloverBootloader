@@ -1242,7 +1242,7 @@ static CHAR8 *get_nvidia_model(UINT32 id)
 	for (i = 1; i < (sizeof(NVKnownChipsets) / sizeof(NVKnownChipsets[0])); i++) {
 		if (NVKnownChipsets[i].device == id)
 		{
-			UINTN size = AsciiStrLen(NVKnownChipsets[i].name)+1;
+			UINTN size = AsciiStrLen(NVKnownChipsets[i].name);
 			name = AllocatePool(size);
 			AsciiStrnCpy(name, NVKnownChipsets[i].name, size);
 			return name;
@@ -1314,24 +1314,24 @@ static INT32 devprop_add_nvidia_template(DevPropDevice *device)
 
 UINT8 hexstrtouint8 (CHAR8* buf) {
 	INT8 i;
-	if (buf[0]>='0' && buf[0]<='9')
+	if (IS_DIGIT(buf[0]))
 		i = buf[0]-'0';
 	else
-		i = buf[0]-'A'; //no error checking
-	i *= 16;
-	if (buf[1]>='0' && buf[1]<='9')
+		i = buf[0]-'A' + 10; //no error checking
+	i <<= 4;
+	if (IS_DIGIT(buf[1]))
 		i += buf[1]-'0';
 	else
-		i += buf[1]-'A'; //no error checking
+		i += buf[1]-'A'+ 10; //no error checking
 	return i;
 }
 
 BOOLEAN IsHexDigit (CHAR8 c) {
-	return ((c>='0'&&c<='9')||(c>='A'&&c<='F'))?TRUE:FALSE;
+	return (IS_DIGIT(c) || (c>='A'&&c<='F'))?TRUE:FALSE;
 }
 
 
-INT32 hex2bin(const CHAR8 *hex, UINT8 *bin, INT32 len)
+BOOLEAN hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, INT32 len)
 {
 	CHAR8	*p;
 	INT32	i;
@@ -1339,7 +1339,7 @@ INT32 hex2bin(const CHAR8 *hex, UINT8 *bin, INT32 len)
 	
 	if (hex == NULL || bin == NULL || len <= 0 || AsciiStrLen(hex) != len * 2) {
 		DBG("[ERROR] bin2hex input error\n");
-		return -1;
+		return FALSE;
 	}
 	
 	buf[2] = '\0';
@@ -1355,7 +1355,7 @@ INT32 hex2bin(const CHAR8 *hex, UINT8 *bin, INT32 len)
 		buf[1] = *p++;
 		bin[i] = hexstrtouint8(buf);
 	}
-	return 0;
+	return TRUE;
 }
 
 UINT32 mem_detect(UINT8 nvCardType, pci_dt_t *nvda_dev)

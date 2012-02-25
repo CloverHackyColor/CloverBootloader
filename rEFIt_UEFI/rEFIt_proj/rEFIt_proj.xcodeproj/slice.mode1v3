@@ -266,18 +266,20 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateExpansionKey</key>
 							<array>
 								<string>08FB7794FE84155DC02AAC07</string>
+								<string>12D6305B14CEA05E00E5898F</string>
 								<string>1C37FBAC04509CD000000102</string>
 								<string>1C37FABC05509CD000000102</string>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
+									<integer>33</integer>
 									<integer>7</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 0}, {186, 599}}</string>
+							<string>{{0, 199}, {186, 599}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -296,7 +298,7 @@
 							<real>186</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>180 120 927 658 0 0 1280 778 </string>
+						<string>279 120 927 658 0 0 1280 778 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
@@ -307,12 +309,14 @@
 					<key>Dock</key>
 					<array>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>ati.c</string>
+								<string>nvidia.c</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -320,11 +324,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>ati.c</string>
+										<string>nvidia.c</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>12EC735514F951FE00E1D5DF</string>
+										<string>122A7A3B14F9673700E12326</string>
 										<key>history</key>
 										<array>
 											<string>1202124114266E13004B7B93</string>
@@ -355,12 +359,10 @@
 											<string>12263ABF14ED368D00DD21CB</string>
 											<string>12263AC014ED368D00DD21CB</string>
 											<string>12263AC114ED368D00DD21CB</string>
-											<string>122C9FEB14EF738300BBEB68</string>
 											<string>1224901914EFF7F9002613FC</string>
 											<string>12D5B1C314F0F3550043569D</string>
 											<string>12D5B1CE14F0F67F0043569D</string>
 											<string>12D5B22314F0FEF10043569D</string>
-											<string>12D5B25114F157260043569D</string>
 											<string>12C92A2214F1603200414D40</string>
 											<string>12C92A2314F1603200414D40</string>
 											<string>12D3D36414F16B1A008BFF78</string>
@@ -378,13 +380,16 @@
 											<string>12213F1414F8EC050005E10E</string>
 											<string>12213F1614F8EC050005E10E</string>
 											<string>12213F3F14F8F0E70005E10E</string>
-											<string>12213F5414F8F6970005E10E</string>
 											<string>12213F6D14F9024D0005E10E</string>
 											<string>12CAD96714F9347600A36E1D</string>
-											<string>12EC734E14F951F500E1D5DF</string>
 											<string>12EC734F14F951F500E1D5DF</string>
 											<string>12EC735014F951F500E1D5DF</string>
-											<string>12EC735114F951F500E1D5DF</string>
+											<string>12BBA56714F95D010006D5A2</string>
+											<string>12BBA56814F95D010006D5A2</string>
+											<string>12BBA56914F95D010006D5A2</string>
+											<string>12BBA56A14F95D010006D5A2</string>
+											<string>122A7A3914F9673700E12326</string>
+											<string>122A7A3A14F9673700E12326</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -396,18 +401,16 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {719, 385}}</string>
+								<string>{{0, 0}, {719, 361}}</string>
 								<key>RubberWindowFrame</key>
-								<string>180 120 927 658 0 0 1280 778 </string>
+								<string>279 120 927 658 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>385pt</string>
+							<string>361pt</string>
 						</dict>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -418,14 +421,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 390}, {719, 227}}</string>
+								<string>{{0, 366}, {719, 251}}</string>
 								<key>RubberWindowFrame</key>
-								<string>180 120 927 658 0 0 1280 778 </string>
+								<string>279 120 927 658 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>227pt</string>
+							<string>251pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -444,9 +447,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>12EC735314F951F500E1D5DF</string>
+				<string>122A7A3C14F9673700E12326</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>12EC735414F951F500E1D5DF</string>
+				<string>122A7A3D14F9673700E12326</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -589,7 +592,7 @@
 		<string>/Users/slice/src/edk23/Clover/rEFIt_UEFI/rEFIt_proj/rEFIt_proj.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>180 120 927 658 0 0 1280 778 </string>
+	<string>279 120 927 658 0 0 1280 778 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>
@@ -666,7 +669,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>122336AD13377DFD0033F008</string>
-				<string>12EC732814F9454200E1D5DF</string>
+				<string>122A7A3214F9673200E12326</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -806,7 +809,7 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>ati.h</string>
+										<string>nvidia.c</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -815,7 +818,7 @@
 										<key>Frame</key>
 										<string>{{0, 0}, {884, 424}}</string>
 										<key>RubberWindowFrame</key>
-										<string>342 89 884 670 0 0 1280 778 </string>
+										<string>4 81 884 670 0 0 1280 778 </string>
 									</dict>
 									<key>Module</key>
 									<string>PBXNavigatorGroup</string>
@@ -839,7 +842,7 @@
 								<key>Frame</key>
 								<string>{{0, 429}, {884, 200}}</string>
 								<key>RubberWindowFrame</key>
-								<string>342 89 884 670 0 0 1280 778 </string>
+								<string>4 81 884 670 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXProjectFindModule</string>
@@ -862,13 +865,13 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>12EC732F14F9454200E1D5DF</string>
-				<string>12EC733014F9454200E1D5DF</string>
+				<string>122A7A3714F9673200E12326</string>
+				<string>122A7A3814F9673200E12326</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>
 			<key>WindowString</key>
-			<string>342 89 884 670 0 0 1280 778 </string>
+			<string>4 81 884 670 0 0 1280 778 </string>
 			<key>WindowToolGUID</key>
 			<string>1C530D57069F1CE1000CFCEE</string>
 			<key>WindowToolIsVisible</key>

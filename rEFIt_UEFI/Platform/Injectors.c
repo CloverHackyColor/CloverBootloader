@@ -60,15 +60,15 @@ GetDeviceProps(IN     APPLE_GETVAR_PROTOCOL   *This,
 //    return EFI_BUFFER_TOO_SMALL;
   UINT32		cnt=0;
 	UINT8     *binStr = NULL;
-  CHAR8   CHigh, CLow;
-  CHAR8*  Ptr; 
-  UINT8   byte;
+//  CHAR8   CHigh, CLow;
+//  CHAR8*  Ptr; 
+//  UINT8   byte;
 //TODO if gSetting.GraphicsEnabler=FALSE then egLoadFile(strings.dat, gDeviceProperties)  
   if(gDeviceProperties!=NULL && AsciiStrLen(gDeviceProperties)>3)
 	{
     cnt = (UINT32)AsciiStrLen(gDeviceProperties) / 2;
 		binStr = AllocateZeroPool(cnt);
-    Ptr = gDeviceProperties;
+/*    Ptr = gDeviceProperties;
     while (*Ptr) {
       CHigh = *Ptr++ | 0x20;
       if (IS_DIGIT(CHigh)) {
@@ -86,11 +86,14 @@ GetDeviceProps(IN     APPLE_GETVAR_PROTOCOL   *This,
       }
       *binStr++ = byte;
     }
-    
-    
+*/    
+    if(hex2bin(gDeviceProperties, binStr, cnt)){
+      *BufferSize = cnt;    
+      CopyMem(Buffer, binStr,  cnt);
+      return EFI_SUCCESS;      
+    }
   }   
-  *BufferSize = 0; //cnt;    
-//	CopyMem(Buffer, binStr,  cnt);
+  *BufferSize = 0;    
 	return EFI_SUCCESS;
 }
 

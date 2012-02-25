@@ -12,7 +12,7 @@
 
 #define OFFSET_TO_GET_ATOMBIOS_STRINGS_START 0x6e
 #define DATVAL(x)			{kPtr, sizeof(x), (UINT8 *)x}
-#define STRVAL(x)			{kStr, sizeof(x), (UINT8 *)x}
+#define STRVAL(x)			{kStr, sizeof(x)-1, (UINT8 *)x}
 #define BYTVAL(x)			{kCst, 1, (UINT8 *)x}
 #define WRDVAL(x)			{kCst, 2, (UINT8 *)x}
 #define DWRVAL(x)			{kCst, 4, (UINT8 *)x}
