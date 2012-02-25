@@ -516,6 +516,11 @@ VOID SetGraphics(VOID)
 	EFI_HANDLE            *HandleBuffer;
 	EFI_GUID              **ProtocolGuidArray;
   pci_dt_t*             GFXdevice;
+  UINTN         Segment;
+	UINTN         Bus;
+	UINTN         Device;
+	UINTN         Function;
+  
   
   gGraphics.Width  = UGAWidth;
   gGraphics.Height = UGAHeight;
@@ -535,59 +540,44 @@ VOID SetGraphics(VOID)
 							if (EFI_ERROR (Status)) {
 								continue;
 							}
-							// Ati GFX
-							if (Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) {
-								if (Pci.Hdr.VendorId == 0x1002) {
-									gGraphics.Vendor = Ati;
-                  MsgLog("ATI GFX found\n");
-									GFXdevice = AllocatePool(sizeof(pci_dt_t));
-									GFXdevice->vendor_id = Pci.Hdr.VendorId;
-									GFXdevice->device_id = Pci.Hdr.DeviceId;
-                  gGraphics.DeviceID = Pci.Hdr.DeviceId;
-									//GFXdevice->subsys_id = (UINT16)(0x10de0000 | Pci.Hdr.DeviceId);
-									GFXdevice->revision = Pci.Hdr.RevisionID;
-									GFXdevice->subclass = Pci.Hdr.ClassCode[0];
-									GFXdevice->class_id = *((UINT16*)(Pci.Hdr.ClassCode+1));
-									//setup_ati_devprop(GFXdevice);
-									FreePool(GFXdevice);
-								}
-							}
-							// Intel GFX
-							if (Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) {
-								if (Pci.Hdr.VendorId == 0x8086) {
-									gGraphics.Vendor = Intel;
-                  MsgLog("Intel GFX found\n");
-									GFXdevice = AllocatePool(sizeof(pci_dt_t));
-									GFXdevice->vendor_id = Pci.Hdr.VendorId;
-									GFXdevice->device_id = Pci.Hdr.DeviceId;
-                  gGraphics.DeviceID = Pci.Hdr.DeviceId;
-									//GFXdevice->subsys_id = (UINT16)(0x10de0000 | Pci.Hdr.DeviceId);
-									GFXdevice->revision = Pci.Hdr.RevisionID;
-									GFXdevice->subclass = Pci.Hdr.ClassCode[0];
-									GFXdevice->class_id = *((UINT16*)(Pci.Hdr.ClassCode+1));
-									//setup_gma_devprop(GFXdevice);
-                  MsgLog("Intel GFX device_id =0x%x\n", GFXdevice->device_id);
-                  MsgLog("Intel GFX revision  =0x%x\n", GFXdevice->revision);
-                 // MsgLog("Intel GFX found\n");
-									FreePool(GFXdevice);
-								}
-							}
-							// Nvidia GFX
-							if (Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) {
-								if (Pci.Hdr.VendorId == 0x10de) {
-									gGraphics.Vendor = Nvidia;
-                   MsgLog("nVidia GFX found\n");
-									GFXdevice = AllocatePool(sizeof(pci_dt_t));
-									GFXdevice->vendor_id = Pci.Hdr.VendorId;
-									GFXdevice->device_id = Pci.Hdr.DeviceId;
-                  gGraphics.DeviceID = Pci.Hdr.DeviceId;
-									//GFXdevice->subsys_id = (UINT16)(0x10de0000 | Pci.Hdr.DeviceId);
-									GFXdevice->revision = Pci.Hdr.RevisionID;
-									GFXdevice->subclass = Pci.Hdr.ClassCode[0];
-									GFXdevice->class_id = *((UINT16*)(Pci.Hdr.ClassCode+1));
-									//setup_nvidia_devprop(GFXdevice);
-									FreePool(GFXdevice);
-								}
+              Status = PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
+							// GFX
+							if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
+                  (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA)) {
+                GFXdevice = AllocateZeroPool(sizeof(pci_dt_t));
+                GFXdevice->DeviceHandle = HandleBuffer[HandleIndex];
+                GFXdevice->dev.addr = PCIADDR(Bus, Device, Function);
+                GFXdevice->vendor_id = Pci.Hdr.VendorId;
+                GFXdevice->device_id = Pci.Hdr.DeviceId;
+                gGraphics.DeviceID = Pci.Hdr.DeviceId;
+                GFXdevice->revision = Pci.Hdr.RevisionID;
+                GFXdevice->subclass = Pci.Hdr.ClassCode[0];
+                GFXdevice->class_id = *((UINT16*)(Pci.Hdr.ClassCode+1));
+                switch (Pci.Hdr.VendorId) {
+                  case 0x1002:
+                    gGraphics.Vendor = Ati;
+                    MsgLog("ATI GFX found\n");
+                    GFXdevice->subsys_id.subsys_id = (UINT16)(0x10020000 | Pci.Hdr.DeviceId);
+                    setup_ati_devprop(GFXdevice);
+                    FreePool(GFXdevice);                    
+                    break;
+                  case 0x8086:
+                    MsgLog("Intel GFX found\n");
+                    GFXdevice->subsys_id.subsys_id = (UINT16)(0x80860000 | Pci.Hdr.DeviceId);
+                    setup_gma_devprop(GFXdevice);
+                    MsgLog("Intel GFX device_id =0x%x\n", GFXdevice->device_id);
+                    MsgLog("Intel GFX revision  =0x%x\n", GFXdevice->revision);
+                    break;
+                  case 0x10de:
+                    gGraphics.Vendor = Nvidia;
+                    MsgLog("nVidia GFX found\n");
+                    GFXdevice->subsys_id.subsys_id = (UINT16)(0x10de0000 | Pci.Hdr.DeviceId);
+                    setup_nvidia_devprop(GFXdevice);
+                    break;
+                  default:
+                    break;
+                }
+                FreePool(GFXdevice);                    
 							}
 						}
 					}

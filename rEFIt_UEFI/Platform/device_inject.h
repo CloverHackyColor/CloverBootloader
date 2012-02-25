@@ -12,11 +12,11 @@
 #define DP_ADD_TEMP_VAL_DATA(dev, val) devprop_add_value(dev, (CHAR8*)val.name, (UINT8*)val.data, val.size)
 #define MAX_PCI_DEV_PATHS 4
 
-#define REG8(reg)  ((volatile UINT8 *)regs)[(reg)]
-#define REG16(reg)  ((volatile UINT16 *)regs)[(reg) >> 1]
+//#define REG8(reg)  ((volatile UINT8 *)regs)[(reg)]
+//#define REG16(reg)  ((volatile UINT16 *)regs)[(reg) >> 1]
 //#define REG32(reg)  ((volatile UINT32 *)regs)[(reg) >> 2]
-UINT32 REG32(UINT32 reg);
-VOID WRITEREG32 (UINT32 reg, UINT32 value);
+//UINT32 REG32(UINT32 reg);
+//VOID WRITEREG32 (UINT32 reg, UINT32 value);
 
 
 extern struct DevPropString *string;
@@ -39,7 +39,11 @@ typedef union {
 } pci_dev_t;
 
 typedef struct pci_dt_t {
-	pci_dev_t				dev;
+//  EFI_PCI_IO_PROTOCOL		*PciIo;
+//  PCI_TYPE00            Pci;
+  EFI_HANDLE    DeviceHandle;
+  UINT8*        regs;
+	pci_dev_t			dev;
 	
 	UINT16				vendor_id;
 	UINT16				device_id;
@@ -86,8 +90,8 @@ typedef struct {
 } option_rom_pci_header_t;
 
 
-CHAR8 *get_pci_dev_path(pci_dt_t *pci_dt);
-UINT32 pci_config_read32(UINT32 pci_addr, UINT8 reg);
+CHAR8  *get_pci_dev_path(pci_dt_t *pci_dt);
+UINT32 pci_config_read32(pci_dt_t *pci_dt, UINT8 reg);
 extern pci_dt_t* nvdevice;
 VOID* PCIReadRom(pci_dt_t* device);
 
@@ -132,17 +136,19 @@ struct DevPropDevice {
 	// ------------------------	
 };
 
+typedef struct DevPropDevice DevPropDevice;
+
 struct DevPropString {
 	UINT32 length;
 	UINT32 WHAT2;			// 0x01000000 ?
 	UINT16 numentries;
 	UINT16 WHAT3;			// 0x0000     ?
-	struct DevPropDevice **entries;
+	DevPropDevice **entries;
 };
 
 struct DevPropString	*devprop_create_string(void);
-struct DevPropDevice	*devprop_add_device(struct DevPropString *string, char *path);
-INT32			devprop_add_value(struct DevPropDevice *device, char *nm, UINT8 *vl, UINT32 len);
+DevPropDevice	*devprop_add_device(struct DevPropString *string, char *path);
+BOOLEAN		devprop_add_value(DevPropDevice *device, char *nm, UINT8 *vl, UINT32 len);
 CHAR8			*devprop_generate_string(struct DevPropString *string);
 VOID			devprop_free_string(struct DevPropString *string);
 

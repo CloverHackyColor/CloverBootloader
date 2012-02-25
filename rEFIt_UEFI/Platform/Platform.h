@@ -132,6 +132,12 @@ Headers collection for procedures
 #define PCI_BASE_ADDRESS_4					0x20		/* 32 bits */
 #define PCI_BASE_ADDRESS_5					0x24		/* 32 bits */
 
+#define PCIADDR(bus, dev, func) ((1 << 31) | (bus << 16) | (dev << 11) | (func << 8))
+#define REG8(base, reg)  ((volatile UINT8 *)(UINTN)base)[(reg)]
+#define REG16(base, reg)  ((volatile UINT16 *)(UINTN)base)[(reg) >> 1]
+#define REG32(base, reg)  ((volatile UINT32 *)(UINTN)base)[(reg) >> 2]
+#define WRITEREG32(base, reg, value) REG32(base, reg) = value
+
 enum {
 	kTagTypeNone = 0,
 	kTagTypeDict,
@@ -443,7 +449,7 @@ EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ico
 EFI_STATUS  PatchACPI(IN REFIT_VOLUME *Volume);
 UINT8       Checksum8(VOID * startPtr, UINT32 len);
 
-EFI_STATUS EventsInitialize (VOID);
+EFI_STATUS  EventsInitialize(VOID);
 
 EFI_STATUS  bootElTorito(IN REFIT_VOLUME*	volume);
 EFI_STATUS  bootMBR(IN REFIT_VOLUME* volume);

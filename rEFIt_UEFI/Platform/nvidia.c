@@ -877,176 +877,134 @@ static UINT32 read32(UINT8 *ptr, UINT16 offset)
 }
 #endif
 
-EFI_STATUS read_nVidia_PRAMIN(VOID* rom, UINT8 arch)
+EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, VOID* rom, UINT8 arch)
 {
 	DBG("read_nVidia_ROM\n");
 	EFI_STATUS Status;
 	EFI_PCI_IO_PROTOCOL		*PciIo;
 	PCI_TYPE00				Pci;
-	UINTN					HandleCount;
-	UINTN					ArrayCount;
-	UINTN					HandleIndex;
-	UINTN					ProtocolIndex;
-	EFI_HANDLE				*HandleBuffer;
-	EFI_GUID				**ProtocolGuidArray;
-	//UINT32					res;
-	// PRAMIN first
-	
-	Status = gBS->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
-	if (EFI_ERROR(Status)) return 0;
-	for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
-		Status = gBS->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
-		if (EFI_ERROR(Status)) continue;
-		for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
-			if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex])) {
-				Status = gBS->OpenProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
-				if (EFI_ERROR(Status)) continue;
-				Status = PciIo->Pci.Read(PciIo,EfiPciIoWidthUint32, 0, sizeof(Pci) / sizeof(UINT32), &Pci);
-				if (EFI_ERROR(Status)) continue;
-				if ((Pci.Hdr.VendorId != nvdevice->vendor_id) || (Pci.Hdr.DeviceId != nvdevice->device_id)) continue;
-				//return ((UINT32*)&Pci)[reg];	
-				
-				UINT32 vbios_vram = 0;
-				UINT32 old_bar0_pramin = 0;
-				
-				if (arch>=0x50) {
-					AsciiPrint("Using PRAMIN fixups\n");
-					Status = PciIo->Mem.Read(
-											 PciIo,
-											 EfiPciIoWidthUint32,
-											 0,
-											 NV_PDISPLAY_OFFSET + 0x9f04,///4,
-											 1,
-											 &vbios_vram
-											 );
-					vbios_vram = (vbios_vram & ~0xff) << 8;
-					
-				Status = PciIo->Mem.Read(
-										 PciIo,
-										 EfiPciIoWidthUint32,
-										 0,
-											 NV_PMC_OFFSET + 0x1700,///4,
-											 1,
-											 &old_bar0_pramin
-											 );
-					
-					if (vbios_vram == 0) 					
-						vbios_vram = (old_bar0_pramin << 16) + 0xf0000;
-					
-					vbios_vram >>= 16;
-					
-					Status = PciIo->Mem.Write(
-											  PciIo,
-											  EfiPciIoWidthUint32,
-											  0,
-											  NV_PMC_OFFSET + 0x1700,///4,
-											  1,
-											  &vbios_vram
-											  );
-				}
-				
-				Status = PciIo->Mem.Read(
-										 PciIo,
-										 EfiPciIoWidthUint8,
-										 0,
-										 NV_PRAMIN_OFFSET,
-										 NVIDIA_ROM_SIZE,
-										 rom
-										 );
-				
-				if (arch>=0x50) {
-					Status = PciIo->Mem.Write(
-											  PciIo,
-											  EfiPciIoWidthUint32,
-											  0,
-											  NV_PMC_OFFSET + 0x1700,///4,
-											  1,
-											  &old_bar0_pramin
-											  );
-				}
-				
-				if (EFI_ERROR(Status)) {
-					AsciiPrint("read_nVidia_ROM failed\n");
-					return Status;
-				}
-				return EFI_SUCCESS;										 
-			}
-		}
-	}
-	return EFI_NOT_FOUND;
+  
+  UINT32 vbios_vram = 0;
+  UINT32 old_bar0_pramin = 0;
+  
+  Status = gBS->OpenProtocol(nvda_dev->DeviceHandle, &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+  if (EFI_ERROR(Status)) return EFI_NOT_FOUND;
+  Status = PciIo->Pci.Read(PciIo,EfiPciIoWidthUint32, 0, sizeof(Pci) / sizeof(UINT32), &Pci);
+  if (EFI_ERROR(Status)) return EFI_NOT_FOUND;
+  
+  if (arch>=0x50) {
+    DBG("Using PRAMIN fixups\n");
+    Status = PciIo->Mem.Read(
+                             PciIo,
+                             EfiPciIoWidthUint32,
+                             0,
+                             NV_PDISPLAY_OFFSET + 0x9f04,///4,
+                             1,
+                             &vbios_vram
+                             );
+    vbios_vram = (vbios_vram & ~0xff) << 8;
+    
+    Status = PciIo->Mem.Read(
+                             PciIo,
+                             EfiPciIoWidthUint32,
+                             0,
+                             NV_PMC_OFFSET + 0x1700,///4,
+                             1,
+                             &old_bar0_pramin
+                             );
+    
+    if (vbios_vram == 0) 					
+      vbios_vram = (old_bar0_pramin << 16) + 0xf0000;
+    
+    vbios_vram >>= 16;
+    
+    Status = PciIo->Mem.Write(
+                              PciIo,
+                              EfiPciIoWidthUint32,
+                              0,
+                              NV_PMC_OFFSET + 0x1700,///4,
+                              1,
+                              &vbios_vram
+                              );
+  }
+  
+  Status = PciIo->Mem.Read(
+                           PciIo,
+                           EfiPciIoWidthUint8,
+                           0,
+                           NV_PRAMIN_OFFSET,
+                           NVIDIA_ROM_SIZE,
+                           rom
+                           );
+  
+  if (arch>=0x50) {
+    Status = PciIo->Mem.Write(
+                              PciIo,
+                              EfiPciIoWidthUint32,
+                              0,
+                              NV_PMC_OFFSET + 0x1700,///4,
+                              1,
+                              &old_bar0_pramin
+                              );
+  }
+  
+  if (EFI_ERROR(Status)) {
+    DBG("read_nVidia_ROM failed\n");
+    return Status;
+  }
+  return EFI_SUCCESS;										 
 }
 
 
-EFI_STATUS read_nVidia_PROM(VOID* rom)
+EFI_STATUS read_nVidia_PROM(pci_dt_t *nvda_dev, VOID* rom)
 {
-	AsciiPrint("PROM\n");
+	DBG("PROM\n");
 	EFI_STATUS Status;
 	EFI_PCI_IO_PROTOCOL		*PciIo;
 	PCI_TYPE00				Pci;
-	UINTN					HandleCount;
-	UINTN					ArrayCount;
-	UINTN					HandleIndex;
-	UINTN					ProtocolIndex;
-	EFI_HANDLE				*HandleBuffer;
-	EFI_GUID				**ProtocolGuidArray;
-	//UINT32					res;
-	// PRAMIN first
-	
-	Status = gBS->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
-	if (EFI_ERROR(Status)) return 0;
-	for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
-		Status = gBS->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
-		if (EFI_ERROR(Status)) continue;
-		for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
-			if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex])) {
-				Status = gBS->OpenProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
-				if (EFI_ERROR(Status)) continue;
-				Status = PciIo->Pci.Read(PciIo,EfiPciIoWidthUint32, 0, sizeof(Pci) / sizeof(UINT32), &Pci);
-				if (EFI_ERROR(Status)) continue;
-				if ((Pci.Hdr.VendorId != nvdevice->vendor_id) || (Pci.Hdr.DeviceId != nvdevice->device_id)) continue;
-				//return ((UINT32*)&Pci)[reg];	
-				
-								
-				UINT32 value = NV_PBUS_PCI_NV_20_ROM_SHADOW_DISABLED;
-				
-				Status = PciIo->Mem.Write(
-										  PciIo,
-										  EfiPciIoWidthUint32,
-										  0,
-										  NV_PBUS_PCI_NV_20*4,
-										  1,
-										  &value
-										  );							 
-				
-				Status = PciIo->Mem.Read(
-										 PciIo,
-										 EfiPciIoWidthUint8,
-										 0,
-										 NV_PROM_OFFSET,
-										 NVIDIA_ROM_SIZE,
-										 rom
-										 );
-				
-				value = NV_PBUS_PCI_NV_20_ROM_SHADOW_ENABLED;
-				
-				Status = PciIo->Mem.Write(
-										  PciIo,
-										  EfiPciIoWidthUint32,
-										  0,
-										  NV_PBUS_PCI_NV_20*4,
-										  1,
-										  &value
-										  );					
-				
-				if (EFI_ERROR(Status)) {
-					DBG("read_nVidia_ROM failed\n");
-					return Status;
-				}
-				return EFI_SUCCESS;										 
-			}
-		}
-	}
-	return EFI_NOT_FOUND;
+  UINT32 value;
+  
+  Status = gBS->OpenProtocol(nvda_dev->DeviceHandle, &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+  if (EFI_ERROR(Status)) return EFI_NOT_FOUND;
+  Status = PciIo->Pci.Read(PciIo,EfiPciIoWidthUint32, 0, sizeof(Pci) / sizeof(UINT32), &Pci);
+  if (EFI_ERROR(Status)) return EFI_NOT_FOUND;
+  
+  value = NV_PBUS_PCI_NV_20_ROM_SHADOW_DISABLED;
+  
+  Status = PciIo->Mem.Write(
+                            PciIo,
+                            EfiPciIoWidthUint32,
+                            0,
+                            NV_PBUS_PCI_NV_20*4,
+                            1,
+                            &value
+                            );							 
+  
+  Status = PciIo->Mem.Read(
+                           PciIo,
+                           EfiPciIoWidthUint8,
+                           0,
+                           NV_PROM_OFFSET,
+                           NVIDIA_ROM_SIZE,
+                           rom
+                           );
+  
+  value = NV_PBUS_PCI_NV_20_ROM_SHADOW_ENABLED;
+  
+  Status = PciIo->Mem.Write(
+                            PciIo,
+                            EfiPciIoWidthUint32,
+                            0,
+                            NV_PBUS_PCI_NV_20*4,
+                            1,
+                            &value
+                            );					
+  
+  if (EFI_ERROR(Status)) {
+    DBG("read_nVidia_ROM failed\n");
+    return Status;
+  }
+  return EFI_SUCCESS;										 
 }
 
 
@@ -1321,7 +1279,7 @@ static UINT32 load_nvidia_bios_file(const CHAR8 *filename, UINT8 *buf, INT32 buf
 }
 #endif
 
-static INT32 devprop_add_nvidia_template(struct DevPropDevice *device)
+static INT32 devprop_add_nvidia_template(DevPropDevice *device)
 {
 	DBG("devprop_add_nvidia_template\n");
 	CHAR8 tmp[16];
@@ -1407,19 +1365,19 @@ UINT32 mem_detect(UINT8 nvCardType, pci_dt_t *nvda_dev)
 	
 	if (nvCardType < NV_ARCH_50)
 	{
-		vram_size  = REG32(NV04_PFB_FIFO_DATA);
+		vram_size  = REG32(nvda_dev->regs, NV04_PFB_FIFO_DATA);
 		vram_size &= NV10_PFB_FIFO_DATA_RAM_AMOUNT_MB_MASK;
 	}
 	else if (nvCardType < NV_ARCH_C0)
 	{
-		vram_size = REG32(NV04_PFB_FIFO_DATA);
+		vram_size = REG32(nvda_dev->regs, NV04_PFB_FIFO_DATA);
 		vram_size |= (vram_size & 0xff) << 32;
 		vram_size &= 0xffffffff00ll;
 	}
 	else // >= NV_ARCH_C0
 	{
-		vram_size = REG32(NVC0_MEM_CTRLR_RAM_AMOUNT) << 20;
-		vram_size *= REG32(NVC0_MEM_CTRLR_COUNT);
+		vram_size = REG32(nvda_dev->regs, NVC0_MEM_CTRLR_RAM_AMOUNT) << 20;
+		vram_size *= REG32(nvda_dev->regs, NVC0_MEM_CTRLR_COUNT);
 	}
 	
 	// Workaround for GT 420/430 & 9600M GT
@@ -1436,8 +1394,8 @@ UINT32 mem_detect(UINT8 nvCardType, pci_dt_t *nvda_dev)
 
 BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 {
-	//AsciiPrint("setup_nvidia_devprop\n");
-	struct DevPropDevice	*device = NULL;
+	//DBG("setup_nvidia_devprop\n");
+	DevPropDevice	*device = NULL;
 	CHAR8					*devicepath = NULL;
 	
 	//UINT8					*rom = NULL;
@@ -1447,18 +1405,18 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	UINT32					boot_display = 0;
 	INT32					nvPatch = 0;
 	CHAR8					*model = NULL;
-	nvdevice = nvda_dev;
 		
 	DBG("%x:%x\n",nvda_dev->vendor_id, nvda_dev->device_id);
 	devicepath = get_pci_dev_path(nvda_dev);
-	bar[0] = pci_config_read32(nvda_dev->dev.addr, 0x10 );
-	DBG("BAR: 0x%x\n", bar[0]);
+	bar[0] = pci_config_read32(nvda_dev, PCI_BASE_ADDRESS_0);
+  nvda_dev->regs = (UINT8 *)(UINTN)(bar[0] & ~0x0f);
+	DBG("BAR: 0x%x\n", nvda_dev->regs);
 //	regs = (UINT8 *)(UINTN)(bar[0] & ~0x0f);
 	
 //	gBS->Stall(50);
 		
 	// get card type
-	nvCardType = (REG32(0) >> 20) & 0x1ff;
+	nvCardType = (REG32(nvda_dev->regs, 0) >> 20) & 0x1ff;
 	
 	// Amount of VRAM in kilobytes
 	videoRam = mem_detect(nvCardType, nvda_dev);
@@ -1474,15 +1432,15 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 		
 	UINT8* rom = AllocatePool(NVIDIA_ROM_SIZE+1);
 		// PRAMIN first
-	read_nVidia_PRAMIN(rom, nvCardType);
+	read_nVidia_PRAMIN(nvda_dev, rom, nvCardType);
 			 
 	//DBG("got here\n");
 		
-	AsciiPrint("%x%x\n", rom[0], rom[1]);
+	DBG("%x%x\n", rom[0], rom[1]);
 	option_rom_pci_header_t *rom_pci_header = NULL;
 			
 	if (rom[0] != 0x55 || rom[1] != 0xaa) {
-		read_nVidia_PROM(rom);
+		read_nVidia_PROM(nvda_dev, rom);
 		if (rom[0] != 0x55 || rom[1] != 0xaa)
 			DBG("ERROR: Unable to locate nVidia Video BIOS\n");
 			}
@@ -1499,12 +1457,12 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 			if (rom_pci_header->device_id != nvda_dev->device_id) {
 			// Get Model from the OpROM
 			model = get_nvidia_model((rom_pci_header->vendor_id << 16) | rom_pci_header->device_id);
-				AsciiPrint(model);
+				DBG(model);
 			}
 		}
 		else
 		{
-			AsciiPrint("nVidia incorrect PCI ROM signature: 0x%x\n", rom_pci_header->signature);
+			DBG("nVidia incorrect PCI ROM signature: 0x%x\n", rom_pci_header->signature);
 		}
 	
 	// get bios version
@@ -1539,7 +1497,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 						}
 						
 						AsciiStrnCpy(version_str, (const CHAR8*)rom+version_start, i-version_start);
-							AsciiPrint(version_str);
+							DBG(version_str);
 						break;
 					}
 				}
@@ -1550,8 +1508,8 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	}
 //#endif
 	
-	AsciiPrint(devicepath);
-	AsciiPrint("\n");
+	DBG(devicepath);
+	DBG("\n");
 	
 	if (!string) {
 		string = devprop_create_string();
@@ -1575,7 +1533,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	
 	
 #ifdef DEBUG_NVCAP
-	AsciiPrint("NVCAP: %02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x\n",
+	DBG("NVCAP: %02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x\n",
 	default_NVCAP[0], default_NVCAP[1], default_NVCAP[2], default_NVCAP[3],
 	default_NVCAP[4], default_NVCAP[5], default_NVCAP[6], default_NVCAP[7],
 	default_NVCAP[8], default_NVCAP[9], default_NVCAP[10], default_NVCAP[11],
@@ -1599,7 +1557,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	
 
 	gDeviceProperties = (VOID*)devprop_generate_string(string);
-	//AsciiPrint(gDeviceProperties);
+	//DBG(gDeviceProperties);
 	gBS->Stall(2000000);
 	return TRUE;
 }

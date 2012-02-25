@@ -59,6 +59,8 @@ UINT8 reg_FALSE[] = { 0x00, 0x00, 0x00, 0x00 };
 
 static struct gma_gpu_t KnownGPUS[] = {
 	{ 0x00000000, "Unknown"			},
+	{ 0x80862582, "GMA 915"	},
+	{ 0x80862592, "GMA 915"	},
 	{ 0x808627A2, "GMA 950"	},
 	{ 0x808627AE, "GMA 950"	},
 //	{ 0x808627A6, "Mobile GMA950"	}, //not a GPU
@@ -91,8 +93,9 @@ CHAR8 *get_gma_model(UINT32 id) {
 BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 {
 	CHAR8					*devicepath;
-  struct DevPropDevice *device;
-	UINT8         *regs;
+  DevPropDevice *device;
+//	UINT8         *regs;
+  UINT32        DualLink;
 	UINT32				bar[7];
 	CHAR8					*model;
 	UINT8 BuiltIn =		0x00;
@@ -100,14 +103,14 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 	
 	devicepath = get_pci_dev_path(gma_dev);
 	
-	bar[0] = pci_config_read32(gma_dev->dev.addr, 0x10);
-	regs = (UINT8 *) (UINTN)(bar[0] & ~0x0f);
+	bar[0] = pci_config_read32(gma_dev, PCI_BASE_ADDRESS_0);
+	gma_dev->regs = (UINT8 *) (UINTN)(bar[0] & ~0x0f);
 	
 	model = get_gma_model((gma_dev->vendor_id << 16) | gma_dev->device_id);
-	DBG(model);
+//	DBG(model);
 	
-	//DBG("Intel %s [%04x:%04x] :: %s\n",
-			//model, gma_dev->vendor_id, gma_dev->device_id, devicepath);
+	DBG("Intel %a [%04x:%04x] :: %a\n",
+			model, gma_dev->vendor_id, gma_dev->device_id, devicepath);
 	
 	if (!string)
 		string = devprop_create_string();
@@ -120,68 +123,58 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 		//pause();
 		return FALSE;
 	}
+
+  DualLink = ((gGraphics.Width * gGraphics.Height) > (1<<20))?1:0;
 	
-	devprop_add_value(device, "model", (UINT8*)model, (AsciiStrLen(model) + 1));
+  devprop_add_value(device, "model", (UINT8*)model, (AsciiStrLen(model) + 1));
 	devprop_add_value(device, "device_type", (UINT8*)"display", 8);	
-	
-	if ((model == (CHAR8 *)"GMA 950")
-		|| (model == (CHAR8 *)"Mobile GMA3150"))
-	{
-		devprop_add_value(device, "AAPL,HasPanel", reg_TRUE, 4);
-		devprop_add_value(device, "built-in", &BuiltIn, 1);
-//		devprop_add_value(device, "class-code", ClassFix, 4);
-	}
-	else if ((model == (CHAR8 *)"Desktop GMA950")
-			|| (model == (CHAR8 *)"Desktop GMA3150"))
-	{
-		BuiltIn = 0x01;
-		devprop_add_value(device, "built-in", &BuiltIn, 1);
-//		devprop_add_value(device, "class-code", ClassFix, 4);
-	}
-	else if (model == (CHAR8 *)"GMAX3100")
-	{
-		//BuiltIn = gDualLink;
-		devprop_add_value(device, "AAPL,HasPanel", GMAX3100_vals[0], 4);
-		devprop_add_value(device, "AAPL,SelfRefreshSupported", GMAX3100_vals[1], 4);
-		devprop_add_value(device, "AAPL,aux-power-connected", GMAX3100_vals[2], 4);
-		devprop_add_value(device, "AAPL,backlight-control", GMAX3100_vals[3], 4);
-		devprop_add_value(device, "AAPL00,blackscreen-preferences", GMAX3100_vals[4], 4);
-		devprop_add_value(device, "AAPL01,BacklightIntensity", GMAX3100_vals[5], 4);
-		devprop_add_value(device, "AAPL01,blackscreen-preferences", GMAX3100_vals[6], 4);
-		devprop_add_value(device, "AAPL01,DataJustify", GMAX3100_vals[7], 4);
-		devprop_add_value(device, "AAPL01,Depth", GMAX3100_vals[8], 4);
-		devprop_add_value(device, "AAPL01,Dither", GMAX3100_vals[9], 4);
-		devprop_add_value(device, "AAPL01,DualLink", &BuiltIn, 1);		//GMAX3100_vals[10]
-		devprop_add_value(device, "AAPL01,Height", GMAX3100_vals[10], 4);
-		devprop_add_value(device, "AAPL01,Interlace", GMAX3100_vals[11], 4);
-		devprop_add_value(device, "AAPL01,Inverter", GMAX3100_vals[12], 4);
-		devprop_add_value(device, "AAPL01,InverterCurrent", GMAX3100_vals[13], 4);
-//		devprop_add_value(device, "AAPL01,InverterCurrency", GMAX3100_vals[15], 4);
-		devprop_add_value(device, "AAPL01,LinkFormat", GMAX3100_vals[14], 4);
-		devprop_add_value(device, "AAPL01,LinkType", GMAX3100_vals[15], 4);
-		devprop_add_value(device, "AAPL01,Pipe", GMAX3100_vals[16], 4);
-		devprop_add_value(device, "AAPL01,PixelFormat", GMAX3100_vals[17], 4);
-		devprop_add_value(device, "AAPL01,Refresh", GMAX3100_vals[18], 4);
-		devprop_add_value(device, "AAPL01,Stretch", GMAX3100_vals[19], 4);
-		devprop_add_value(device, "AAPL01,InverterFrequency", GMAX3100_vals[20], 4);
-//		devprop_add_value(device, "class-code",						ClassFix, 4);
-		devprop_add_value(device, "subsystem-vendor-id", GMAX3100_vals[21], 4);
-		devprop_add_value(device, "subsystem-id", GMAX3100_vals[22], 4);
-	}
-	else if (model == (CHAR8*)"Unknown")
-	{
-		return FALSE;
-	}
-	
-	/*stringdata = AllocatePool(sizeof(UINT8) * string->length);
-	if (!stringdata)
-	{
-		DBG("No stringdata.\n");
-		//pause();
-		return FALSE;
-	}*/
-	
-	gDeviceProperties = AllocatePool(string->length * 2);
+  switch (gma_dev->device_id) {
+    case 0x2582:
+    case 0x2592:
+    case 0x27A2:
+    case 0x27AE:
+      devprop_add_value(device, "AAPL,HasPanel", reg_TRUE, 4);
+      devprop_add_value(device, "built-in", &BuiltIn, 1);
+      break;
+    case 0x2772:
+    case 0xA002:  
+      devprop_add_value(device, "built-in", &BuiltIn, 1);
+      break;
+    case 0x2A02:
+      devprop_add_value(device, "AAPL,HasPanel", GMAX3100_vals[0], 4);
+      devprop_add_value(device, "AAPL,SelfRefreshSupported", GMAX3100_vals[1], 4);
+      devprop_add_value(device, "AAPL,aux-power-connected", GMAX3100_vals[2], 4);
+      devprop_add_value(device, "AAPL,backlight-control", GMAX3100_vals[3], 4);
+      devprop_add_value(device, "AAPL00,blackscreen-preferences", GMAX3100_vals[4], 4);
+      devprop_add_value(device, "AAPL01,BacklightIntensity", GMAX3100_vals[5], 4);
+      devprop_add_value(device, "AAPL01,blackscreen-preferences", GMAX3100_vals[6], 4);
+      devprop_add_value(device, "AAPL01,DataJustify", GMAX3100_vals[7], 4);
+     // devprop_add_value(device, "AAPL01,Depth", GMAX3100_vals[8], 4);
+      devprop_add_value(device, "AAPL01,Dither", GMAX3100_vals[9], 4);
+      devprop_add_value(device, "AAPL01,DualLink", (UINT8 *)&DualLink, 1);
+     // devprop_add_value(device, "AAPL01,Height", GMAX3100_vals[10], 4);
+      devprop_add_value(device, "AAPL01,Interlace", GMAX3100_vals[11], 4);
+      devprop_add_value(device, "AAPL01,Inverter", GMAX3100_vals[12], 4);
+      devprop_add_value(device, "AAPL01,InverterCurrent", GMAX3100_vals[13], 4);
+      //		devprop_add_value(device, "AAPL01,InverterCurrency", GMAX3100_vals[15], 4);
+      devprop_add_value(device, "AAPL01,LinkFormat", GMAX3100_vals[14], 4);
+      devprop_add_value(device, "AAPL01,LinkType", GMAX3100_vals[15], 4);
+      devprop_add_value(device, "AAPL01,Pipe", GMAX3100_vals[16], 4);
+     // devprop_add_value(device, "AAPL01,PixelFormat", GMAX3100_vals[17], 4);
+      devprop_add_value(device, "AAPL01,Refresh", GMAX3100_vals[18], 4);
+      devprop_add_value(device, "AAPL01,Stretch", GMAX3100_vals[19], 4);
+      devprop_add_value(device, "AAPL01,InverterFrequency", GMAX3100_vals[20], 4);
+      //		devprop_add_value(device, "class-code",						ClassFix, 4);
+      devprop_add_value(device, "subsystem-vendor-id", GMAX3100_vals[21], 4);
+      devprop_add_value(device, "subsystem-id", GMAX3100_vals[22], 4);
+      devprop_add_value(device, "built-in", &BuiltIn, 1);
+      break;
+    default:
+      DBG("Intel card id=%x unsupported, please report to projectosx\n", gma_dev->device_id);
+      return FALSE;
+  }
+		
+	gDeviceProperties = AllocateAlignedPages(EFI_SIZE_TO_PAGES(string->length * 2 + 1), 64);
 	CopyMem(gDeviceProperties, (VOID*)devprop_generate_string(string), string->length * 2);
 	DBG(gDeviceProperties);
 #if DEBUG_GMA == 2  

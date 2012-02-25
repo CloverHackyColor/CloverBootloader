@@ -329,17 +329,17 @@ void get_vram_size(void)
 	if (chip_family >= CHIP_FAMILY_CEDAR)
 		// size in MB on evergreen
 		// XXX watch for overflow!!!
-		card->vram_size = REG32(R600_CONFIG_MEMSIZE) * 1024 * 1024;
+		card->vram_size = REG32(card->mmio, R600_CONFIG_MEMSIZE) * 1024 * 1024;
 	else
 		if (chip_family >= CHIP_FAMILY_R600)
-			card->vram_size = REG32(R600_CONFIG_MEMSIZE);
+			card->vram_size = REG32(card->mmio, R600_CONFIG_MEMSIZE);
   else {
-    card->vram_size = REG32(RADEON_CONFIG_MEMSIZE);
+    card->vram_size = REG32(card->mmio, RADEON_CONFIG_MEMSIZE);
     if (card->vram_size == 0) {
-      card->vram_size = REG32(RADEON_CONFIG_APER_SIZE);
+      card->vram_size = REG32(card->mmio, RADEON_CONFIG_APER_SIZE);
       //Slice - previously I successfully made Radeon9000 working
       //by writing this register
-      WRITEREG32(RADEON_CONFIG_MEMSIZE, 0x30000);
+      WRITEREG32(card->mmio, RADEON_CONFIG_MEMSIZE, 0x30000);
     }
   }
 }
@@ -350,7 +350,7 @@ BOOLEAN read_vbios(BOOLEAN from_pci)
 	
 	if (from_pci)
 	{
-		rom_addr = (option_rom_header_t *)(UINTN)(pci_config_read32(card->pci_dev->dev.addr, PCI_EXPANSION_ROM_BASE) & ~0x7ff);
+		rom_addr = (option_rom_header_t *)(UINTN)(pci_config_read32(card->pci_dev, PCI_EXPANSION_ROM_BASE) & ~0x7ff);
 		DBG(" @0x%x", rom_addr);
 	}
 	else
@@ -382,111 +382,111 @@ BOOLEAN read_disabled_vbios(VOID)
 	
 	if (chip_family >= CHIP_FAMILY_RV770)
 	{
-		UINT32 viph_control		= REG32(RADEON_VIPH_CONTROL);
-		UINT32 bus_cntl			= REG32(RADEON_BUS_CNTL);
-		UINT32 d1vga_control		= REG32(AVIVO_D1VGA_CONTROL);
-		UINT32 d2vga_control		= REG32(AVIVO_D2VGA_CONTROL);
-		UINT32 vga_render_control = REG32(AVIVO_VGA_RENDER_CONTROL);
-		UINT32 rom_cntl			= REG32(R600_ROM_CNTL);
+		UINT32 viph_control		= REG32(card->mmio, RADEON_VIPH_CONTROL);
+		UINT32 bus_cntl			= REG32(card->mmio, RADEON_BUS_CNTL);
+		UINT32 d1vga_control		= REG32(card->mmio, AVIVO_D1VGA_CONTROL);
+		UINT32 d2vga_control		= REG32(card->mmio, AVIVO_D2VGA_CONTROL);
+		UINT32 vga_render_control = REG32(card->mmio, AVIVO_VGA_RENDER_CONTROL);
+		UINT32 rom_cntl			= REG32(card->mmio, R600_ROM_CNTL);
 		UINT32 cg_spll_func_cntl	= 0;
 		UINT32 cg_spll_status;
 		
 		// disable VIP
-		WRITEREG32(RADEON_VIPH_CONTROL, (viph_control & ~RADEON_VIPH_EN));
+		WRITEREG32(card->mmio, RADEON_VIPH_CONTROL, (viph_control & ~RADEON_VIPH_EN));
 		
 		// enable the rom
-		WRITEREG32(RADEON_BUS_CNTL, (bus_cntl & ~RADEON_BUS_BIOS_DIS_ROM));
+		WRITEREG32(card->mmio, RADEON_BUS_CNTL, (bus_cntl & ~RADEON_BUS_BIOS_DIS_ROM));
 		
 		// Disable VGA mode
-		WRITEREG32(AVIVO_D1VGA_CONTROL, (d1vga_control & ~(AVIVO_DVGA_CONTROL_MODE_ENABLE | AVIVO_DVGA_CONTROL_TIMING_SELECT)));
-		WRITEREG32(AVIVO_D2VGA_CONTROL, (d2vga_control & ~(AVIVO_DVGA_CONTROL_MODE_ENABLE | AVIVO_DVGA_CONTROL_TIMING_SELECT)));
-		WRITEREG32(AVIVO_VGA_RENDER_CONTROL, (vga_render_control & ~AVIVO_VGA_VSTATUS_CNTL_MASK));
+		WRITEREG32(card->mmio, AVIVO_D1VGA_CONTROL, (d1vga_control & ~(AVIVO_DVGA_CONTROL_MODE_ENABLE | AVIVO_DVGA_CONTROL_TIMING_SELECT)));
+		WRITEREG32(card->mmio, AVIVO_D2VGA_CONTROL, (d2vga_control & ~(AVIVO_DVGA_CONTROL_MODE_ENABLE | AVIVO_DVGA_CONTROL_TIMING_SELECT)));
+		WRITEREG32(card->mmio, AVIVO_VGA_RENDER_CONTROL, (vga_render_control & ~AVIVO_VGA_VSTATUS_CNTL_MASK));
 		
 		if (chip_family == CHIP_FAMILY_RV730)
 		{
-			cg_spll_func_cntl = REG32(R600_CG_SPLL_FUNC_CNTL);
+			cg_spll_func_cntl = REG32(card->mmio, R600_CG_SPLL_FUNC_CNTL);
 			
 			// enable bypass mode
-			WRITEREG32(R600_CG_SPLL_FUNC_CNTL, (cg_spll_func_cntl | R600_SPLL_BYPASS_EN));
+			WRITEREG32(card->mmio, R600_CG_SPLL_FUNC_CNTL, (cg_spll_func_cntl | R600_SPLL_BYPASS_EN));
 			
 			// wait for SPLL_CHG_STATUS to change to 1
 			cg_spll_status = 0;
 			while (!(cg_spll_status & R600_SPLL_CHG_STATUS))
-				cg_spll_status = REG32(R600_CG_SPLL_STATUS);
+				cg_spll_status = REG32(card->mmio, R600_CG_SPLL_STATUS);
 			
-			WRITEREG32(R600_ROM_CNTL, (rom_cntl & ~R600_SCK_OVERWRITE));
+			WRITEREG32(card->mmio, R600_ROM_CNTL, (rom_cntl & ~R600_SCK_OVERWRITE));
 		}
 		else
-			WRITEREG32(R600_ROM_CNTL, (rom_cntl | R600_SCK_OVERWRITE));
+			WRITEREG32(card->mmio, R600_ROM_CNTL, (rom_cntl | R600_SCK_OVERWRITE));
 		
 		ret = read_vbios(TRUE);
 		
 		// restore regs
 		if (chip_family == CHIP_FAMILY_RV730)
 		{
-			WRITEREG32(R600_CG_SPLL_FUNC_CNTL, cg_spll_func_cntl);
+			WRITEREG32(card->mmio, R600_CG_SPLL_FUNC_CNTL, cg_spll_func_cntl);
 			
 			// wait for SPLL_CHG_STATUS to change to 1
 			cg_spll_status = 0;
 			while (!(cg_spll_status & R600_SPLL_CHG_STATUS))
-			cg_spll_status = REG32(R600_CG_SPLL_STATUS);
+			cg_spll_status = REG32(card->mmio, R600_CG_SPLL_STATUS);
 		}
-		WRITEREG32(RADEON_VIPH_CONTROL, viph_control);
-		WRITEREG32(RADEON_BUS_CNTL, bus_cntl);
-		WRITEREG32(AVIVO_D1VGA_CONTROL, d1vga_control);
-		WRITEREG32(AVIVO_D2VGA_CONTROL, d2vga_control);
-		WRITEREG32(AVIVO_VGA_RENDER_CONTROL, vga_render_control);
-		WRITEREG32(R600_ROM_CNTL, rom_cntl);
+		WRITEREG32(card->mmio, RADEON_VIPH_CONTROL, viph_control);
+		WRITEREG32(card->mmio, RADEON_BUS_CNTL, bus_cntl);
+		WRITEREG32(card->mmio, AVIVO_D1VGA_CONTROL, d1vga_control);
+		WRITEREG32(card->mmio, AVIVO_D2VGA_CONTROL, d2vga_control);
+		WRITEREG32(card->mmio, AVIVO_VGA_RENDER_CONTROL, vga_render_control);
+		WRITEREG32(card->mmio, R600_ROM_CNTL, rom_cntl);
 	}
 	else
 		if (chip_family >= CHIP_FAMILY_R600)
 		{
-			UINT32 viph_control				= REG32(RADEON_VIPH_CONTROL);
-			UINT32 bus_cntl					= REG32(RADEON_BUS_CNTL);
-			UINT32 d1vga_control				= REG32(AVIVO_D1VGA_CONTROL);
-			UINT32 d2vga_control				= REG32(AVIVO_D2VGA_CONTROL);
-			UINT32 vga_render_control			= REG32(AVIVO_VGA_RENDER_CONTROL);
-			UINT32 rom_cntl					= REG32(R600_ROM_CNTL);
-			UINT32 general_pwrmgt				= REG32(R600_GENERAL_PWRMGT);
-			UINT32 low_vid_lower_gpio_cntl	= REG32(R600_LOW_VID_LOWER_GPIO_CNTL);
-			UINT32 medium_vid_lower_gpio_cntl = REG32(R600_MEDIUM_VID_LOWER_GPIO_CNTL);
-			UINT32 high_vid_lower_gpio_cntl	= REG32(R600_HIGH_VID_LOWER_GPIO_CNTL);
-			UINT32 ctxsw_vid_lower_gpio_cntl	= REG32(R600_CTXSW_VID_LOWER_GPIO_CNTL);
-			UINT32 lower_gpio_enable			= REG32(R600_LOWER_GPIO_ENABLE);
+			UINT32 viph_control				= REG32(card->mmio, RADEON_VIPH_CONTROL);
+			UINT32 bus_cntl					= REG32(card->mmio, RADEON_BUS_CNTL);
+			UINT32 d1vga_control				= REG32(card->mmio, AVIVO_D1VGA_CONTROL);
+			UINT32 d2vga_control				= REG32(card->mmio, AVIVO_D2VGA_CONTROL);
+			UINT32 vga_render_control			= REG32(card->mmio, AVIVO_VGA_RENDER_CONTROL);
+			UINT32 rom_cntl					= REG32(card->mmio, R600_ROM_CNTL);
+			UINT32 general_pwrmgt				= REG32(card->mmio, R600_GENERAL_PWRMGT);
+			UINT32 low_vid_lower_gpio_cntl	= REG32(card->mmio, R600_LOW_VID_LOWER_GPIO_CNTL);
+			UINT32 medium_vid_lower_gpio_cntl = REG32(card->mmio, R600_MEDIUM_VID_LOWER_GPIO_CNTL);
+			UINT32 high_vid_lower_gpio_cntl	= REG32(card->mmio, R600_HIGH_VID_LOWER_GPIO_CNTL);
+			UINT32 ctxsw_vid_lower_gpio_cntl	= REG32(card->mmio, R600_CTXSW_VID_LOWER_GPIO_CNTL);
+			UINT32 lower_gpio_enable			= REG32(card->mmio, R600_LOWER_GPIO_ENABLE);
 			
 			// disable VIP
-			WRITEREG32(RADEON_VIPH_CONTROL, (viph_control & ~RADEON_VIPH_EN));
+			WRITEREG32(card->mmio, RADEON_VIPH_CONTROL, (viph_control & ~RADEON_VIPH_EN));
 			
 			// enable the rom
-			WRITEREG32(RADEON_BUS_CNTL, (bus_cntl & ~RADEON_BUS_BIOS_DIS_ROM));
+			WRITEREG32(card->mmio, RADEON_BUS_CNTL, (bus_cntl & ~RADEON_BUS_BIOS_DIS_ROM));
 			
 			// Disable VGA mode
-			WRITEREG32(AVIVO_D1VGA_CONTROL, (d1vga_control & ~(AVIVO_DVGA_CONTROL_MODE_ENABLE | AVIVO_DVGA_CONTROL_TIMING_SELECT)));
-			WRITEREG32(AVIVO_D2VGA_CONTROL, (d2vga_control & ~(AVIVO_DVGA_CONTROL_MODE_ENABLE | AVIVO_DVGA_CONTROL_TIMING_SELECT)));
-			WRITEREG32(AVIVO_VGA_RENDER_CONTROL, (vga_render_control & ~AVIVO_VGA_VSTATUS_CNTL_MASK));
-			WRITEREG32(R600_ROM_CNTL, ((rom_cntl & ~R600_SCK_PRESCALE_CRYSTAL_CLK_MASK) | (1 << R600_SCK_PRESCALE_CRYSTAL_CLK_SHIFT) | R600_SCK_OVERWRITE));
-			WRITEREG32(R600_GENERAL_PWRMGT, (general_pwrmgt & ~R600_OPEN_DRAIN_PADS));
-			WRITEREG32(R600_LOW_VID_LOWER_GPIO_CNTL, (low_vid_lower_gpio_cntl & ~0x400));
-			WRITEREG32(R600_MEDIUM_VID_LOWER_GPIO_CNTL, (medium_vid_lower_gpio_cntl & ~0x400));
-			WRITEREG32(R600_HIGH_VID_LOWER_GPIO_CNTL, (high_vid_lower_gpio_cntl & ~0x400));
-			WRITEREG32(R600_CTXSW_VID_LOWER_GPIO_CNTL, (ctxsw_vid_lower_gpio_cntl & ~0x400));
-			WRITEREG32(R600_LOWER_GPIO_ENABLE, (lower_gpio_enable | 0x400));
+			WRITEREG32(card->mmio, AVIVO_D1VGA_CONTROL, (d1vga_control & ~(AVIVO_DVGA_CONTROL_MODE_ENABLE | AVIVO_DVGA_CONTROL_TIMING_SELECT)));
+			WRITEREG32(card->mmio, AVIVO_D2VGA_CONTROL, (d2vga_control & ~(AVIVO_DVGA_CONTROL_MODE_ENABLE | AVIVO_DVGA_CONTROL_TIMING_SELECT)));
+			WRITEREG32(card->mmio, AVIVO_VGA_RENDER_CONTROL, (vga_render_control & ~AVIVO_VGA_VSTATUS_CNTL_MASK));
+			WRITEREG32(card->mmio, R600_ROM_CNTL, ((rom_cntl & ~R600_SCK_PRESCALE_CRYSTAL_CLK_MASK) | (1 << R600_SCK_PRESCALE_CRYSTAL_CLK_SHIFT) | R600_SCK_OVERWRITE));
+			WRITEREG32(card->mmio, R600_GENERAL_PWRMGT, (general_pwrmgt & ~R600_OPEN_DRAIN_PADS));
+			WRITEREG32(card->mmio, R600_LOW_VID_LOWER_GPIO_CNTL, (low_vid_lower_gpio_cntl & ~0x400));
+			WRITEREG32(card->mmio, R600_MEDIUM_VID_LOWER_GPIO_CNTL, (medium_vid_lower_gpio_cntl & ~0x400));
+			WRITEREG32(card->mmio, R600_HIGH_VID_LOWER_GPIO_CNTL, (high_vid_lower_gpio_cntl & ~0x400));
+			WRITEREG32(card->mmio, R600_CTXSW_VID_LOWER_GPIO_CNTL, (ctxsw_vid_lower_gpio_cntl & ~0x400));
+			WRITEREG32(card->mmio, R600_LOWER_GPIO_ENABLE, (lower_gpio_enable | 0x400));
 			
 			ret = read_vbios(TRUE);
 			
 			// restore regs
-			WRITEREG32(RADEON_VIPH_CONTROL, viph_control);
-			WRITEREG32(RADEON_BUS_CNTL, bus_cntl);
-			WRITEREG32(AVIVO_D1VGA_CONTROL, d1vga_control);
-			WRITEREG32(AVIVO_D2VGA_CONTROL, d2vga_control);
-			WRITEREG32(AVIVO_VGA_RENDER_CONTROL, vga_render_control);
-			WRITEREG32(R600_ROM_CNTL, rom_cntl);
-			WRITEREG32(R600_GENERAL_PWRMGT, general_pwrmgt);
-			WRITEREG32(R600_LOW_VID_LOWER_GPIO_CNTL, low_vid_lower_gpio_cntl);
-			WRITEREG32(R600_MEDIUM_VID_LOWER_GPIO_CNTL, medium_vid_lower_gpio_cntl);
-			WRITEREG32(R600_HIGH_VID_LOWER_GPIO_CNTL, high_vid_lower_gpio_cntl);
-			WRITEREG32(R600_CTXSW_VID_LOWER_GPIO_CNTL, ctxsw_vid_lower_gpio_cntl);
-			WRITEREG32(R600_LOWER_GPIO_ENABLE, lower_gpio_enable);
+			WRITEREG32(card->mmio, RADEON_VIPH_CONTROL, viph_control);
+			WRITEREG32(card->mmio, RADEON_BUS_CNTL, bus_cntl);
+			WRITEREG32(card->mmio, AVIVO_D1VGA_CONTROL, d1vga_control);
+			WRITEREG32(card->mmio, AVIVO_D2VGA_CONTROL, d2vga_control);
+			WRITEREG32(card->mmio, AVIVO_VGA_RENDER_CONTROL, vga_render_control);
+			WRITEREG32(card->mmio, R600_ROM_CNTL, rom_cntl);
+			WRITEREG32(card->mmio, R600_GENERAL_PWRMGT, general_pwrmgt);
+			WRITEREG32(card->mmio, R600_LOW_VID_LOWER_GPIO_CNTL, low_vid_lower_gpio_cntl);
+			WRITEREG32(card->mmio, R600_MEDIUM_VID_LOWER_GPIO_CNTL, medium_vid_lower_gpio_cntl);
+			WRITEREG32(card->mmio, R600_HIGH_VID_LOWER_GPIO_CNTL, high_vid_lower_gpio_cntl);
+			WRITEREG32(card->mmio, R600_CTXSW_VID_LOWER_GPIO_CNTL, ctxsw_vid_lower_gpio_cntl);
+			WRITEREG32(card->mmio, R600_LOWER_GPIO_ENABLE, lower_gpio_enable);
 		}
 
 	return ret;
@@ -497,12 +497,12 @@ BOOLEAN radeon_card_posted(VOID)
 	UINT32 reg;
 	
 	// first check CRTCs
-	reg = REG32(RADEON_CRTC_GEN_CNTL) | REG32(RADEON_CRTC2_GEN_CNTL);
+	reg = REG32(card->mmio, RADEON_CRTC_GEN_CNTL) | REG32(card->mmio, RADEON_CRTC2_GEN_CNTL);
 	if (reg & RADEON_CRTC_EN)
 		return TRUE;
 	
 	// then check MEM_SIZE, in case something turned the crtcs off
-	reg = REG32(R600_CONFIG_MEMSIZE);
+	reg = REG32(card->mmio, R600_CONFIG_MEMSIZE);
 	if (reg)
 		return TRUE;
 	
@@ -519,7 +519,7 @@ BOOLEAN devprop_add_pci_config_space(VOID)
 		return FALSE;
 	
 	for (offset = 0; offset < 0x100; offset += 4)
-		config_space[offset / 4] = pci_config_read32(card->pci_dev->dev.addr, offset);
+		config_space[offset / 4] = pci_config_read32(card->pci_dev, offset);
 	
 	devprop_add_value(card->device, "ATY,PCIConfigSpace", config_space, 0x100);
 	FreePool(config_space);
@@ -561,12 +561,13 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 		return FALSE;
 	}
 	
-	card->fb		= (UINT8 *)(UINTN)(pci_config_read32(pci_dev->dev.addr, PCI_BASE_ADDRESS_0) & ~0x0f);
-	card->mmio		= (UINT8 *)(UINTN)(pci_config_read32(pci_dev->dev.addr, PCI_BASE_ADDRESS_2) & ~0x0f);
-	card->io		= (UINT8 *)(UINTN)(pci_config_read32(pci_dev->dev.addr, PCI_BASE_ADDRESS_4) & ~0x03);
+	card->fb		= (UINT8 *)(UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_0) & ~0x0f);
+	card->mmio		= (UINT8 *)(UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_2) & ~0x0f);
+	card->io		= (UINT8 *)(UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_4) & ~0x03);
+  pci_dev->regs = card->mmio;
 	
 	DBG("Framebuffer @0x%08X  MMIO @0x%08X	I/O Port @0x%08X ROM Addr @0x%08X\n",
-		card->fb, card->mmio, card->io, pci_config_read32(pci_dev->dev.addr, PCI_EXPANSION_ROM_BASE));
+		card->fb, card->mmio, card->io, pci_config_read32(pci_dev, PCI_EXPANSION_ROM_BASE));
 	
 	card->posted = radeon_card_posted();
 	DBG("ATI card %s, ", card->posted ? "POSTed" : "non-POSTed");

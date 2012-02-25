@@ -28,7 +28,7 @@ struct DevPropString *string = 0;
 UINT8 *stringdata = 0;
 UINT32 stringlength = 0;
 
-pci_dt_t* nvdevice;
+//pci_dt_t* nvdevice;
 
 static UINT16 dp_swap16(UINT16 toswap)
 {
@@ -83,97 +83,57 @@ UINT8 ascii_hex_to_int (CHAR8* buf)
 	return i;
 }
 
-CHAR8 *get_pci_dev_path(pci_dt_t *pci_dt)
+CHAR8 *get_pci_dev_path(pci_dt_t *PciDt)
 {
 //	DBG("get_pci_dev_path");
 	CHAR8*		tmp;
-	CHAR16*		devpathstr;
-	EFI_DEVICE_PATH_PROTOCOL*	DevicePath;
+	CHAR16*		devpathstr = NULL;
+	EFI_DEVICE_PATH_PROTOCOL*	DevicePath = NULL;
 	
+  DevicePath = DevicePathFromHandle (PciDt->DeviceHandle);
+  if (!DevicePath)
+    return NULL;
+  devpathstr = DevicePathToStr(DevicePath);
+  tmp = AllocateZeroPool((StrLen(devpathstr)+1)*sizeof(CHAR8));
+  UnicodeStrToAsciiStr(devpathstr, tmp);		
+  return tmp;
 	
-	EFI_STATUS Status;
-	EFI_PCI_IO_PROTOCOL		*PciIo;
-	PCI_TYPE00				Pci;
-	UINTN					HandleCount;
-	UINTN					ArrayCount;
-	UINTN					HandleIndex;
-	UINTN					ProtocolIndex;
-	EFI_HANDLE				*HandleBuffer;
-	EFI_GUID				**ProtocolGuidArray;
-	
-	
-	Status = gBS->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
-	if (EFI_ERROR(Status)) return 0;
-	for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
-		Status = gBS->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
-		if (EFI_ERROR(Status)) continue;
-		for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
-			if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex])) {
-				Status = gBS->OpenProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
-				if (EFI_ERROR(Status)) continue;
-				Status = PciIo->Pci.Read(PciIo,EfiPciIoWidthUint32, 0, sizeof(Pci) / sizeof(UINT32), &Pci);
-				if (EFI_ERROR(Status)) continue;
-				if ((Pci.Hdr.VendorId == pci_dt->vendor_id) && (Pci.Hdr.DeviceId == pci_dt->device_id)) {
-					DevicePath = DevicePathFromHandle (HandleBuffer[HandleIndex]);
-					if (!DevicePath) continue;
-					devpathstr = DevicePathToStr(DevicePath);
-					tmp = AllocatePool((StrLen(devpathstr)+1)*sizeof(CHAR8));
-					UnicodeStrToAsciiStr(devpathstr, tmp);		
-					return tmp;
-				}
-			}
-		}
-	}
-	return NULL;
 }
 
-UINT32 pci_config_read32(UINT32 pci_addr, UINT8 reg)
+UINT32 pci_config_read32(pci_dt_t *PciDt, UINT8 reg)
 {
 //	DBG("pci_config_read32\n");
 	EFI_STATUS Status;
 	EFI_PCI_IO_PROTOCOL		*PciIo;
 	PCI_TYPE00				Pci;
-	UINTN					HandleCount;
-	UINTN					ArrayCount;
-	UINTN					HandleIndex;
-	UINTN					ProtocolIndex;
-	EFI_HANDLE				*HandleBuffer;
-	EFI_GUID				**ProtocolGuidArray;
 	UINT32					res;
 	
-	
-	Status = gBS->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
-	if (EFI_ERROR(Status)) return 0;
-	for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
-		Status = gBS->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
-		if (EFI_ERROR(Status)) continue;
-		for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
-			if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex])) {
-				Status = gBS->OpenProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
-				if (EFI_ERROR(Status)) continue;
-				Status = PciIo->Pci.Read(PciIo,EfiPciIoWidthUint32, 0, sizeof(Pci) / sizeof(UINT32), &Pci);
-				if (EFI_ERROR(Status)) continue;
-				if ((Pci.Hdr.VendorId != nvdevice->vendor_id) || (Pci.Hdr.DeviceId != nvdevice->device_id)) continue;
-				//return ((UINT32*)&Pci)[reg];	
-				Status = PciIo->Pci.Read(
-										 PciIo,
-										 EfiPciIoWidthUint32,
-										 reg & ~3,
-										 1,
-										 &res
-										 );
-				if (EFI_ERROR(Status)) {
-					DBG("pci_config_read32 failed\n");
-					return 0;
-				}
-				return res;										 
-			}
-		}
-	}
-	return 0;
+  Status = gBS->OpenProtocol(PciDt->DeviceHandle, &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+  if (EFI_ERROR(Status)){
+    DBG("pci_config_read cant open protocol\n");
+    return 0;
+  }
+	Status = PciIo->Pci.Read(PciIo,EfiPciIoWidthUint32, 0, sizeof(Pci) / sizeof(UINT32), &Pci);
+  if (EFI_ERROR(Status)) {
+    DBG("pci_config_read cant read pci\n");
+    return 0;
+  }
+  Status = PciIo->Mem.Read (
+                            PciIo,
+                            EfiPciIoWidthUint32,
+                            EFI_PCI_IO_PASS_THROUGH_BAR,           
+                            reg & ~3,
+                            1,
+                            &res
+                            );
+  if (EFI_ERROR(Status)) {
+    DBG("pci_config_read32 failed\n");
+    return 0;
+  }
+  return res;										 
 }
 
-/*VOID WRITETEG32 (UINT32 reg, UINT32 value) {
+/*VOID WRITEREG32 (UINT32 reg, UINT32 value) {
 	AsciiPrint("WRITEREG32\n");
 	EFI_STATUS Status;
 	EFI_PCI_IO_PROTOCOL		*PciIo;
@@ -213,7 +173,7 @@ UINT32 pci_config_read32(UINT32 pci_addr, UINT8 reg)
 		}
 	}
 }*/
-
+/*
 UINT32 REG32(UINT32 reg)
 {
 	//AsciiPrint("REG32\n");
@@ -260,7 +220,7 @@ UINT32 REG32(UINT32 reg)
 	}
 	return 0;
 }
-
+*/
 
 /* This is only for EFI ROMs, not BIOS.
 VOID* PCIReadRom(pci_dt_t* device)
@@ -313,10 +273,10 @@ VOID* PCIReadRom(pci_dt_t* device)
 }*/
 
  
-struct DevPropDevice *devprop_add_device(struct DevPropString *string, CHAR8 *path)
+DevPropDevice *devprop_add_device(struct DevPropString *string, CHAR8 *path)
 {
 	//DBG("devprop_add_device\n");
-	struct DevPropDevice	*device;
+	DevPropDevice	*device;
 	const CHAR8		pciroot_string[] = "PciRoot(0x";
 	const CHAR8		pcieroot_string[] = "PcieRoot(0x";
 	const CHAR8		pci_device_string[] = "Pci(0x";
@@ -324,7 +284,7 @@ struct DevPropDevice *devprop_add_device(struct DevPropString *string, CHAR8 *pa
 	if (string == NULL || path == NULL) {
 		return NULL;
 	}
-	device = AllocateZeroPool(sizeof(struct DevPropDevice));
+	device = AllocateZeroPool(sizeof(DevPropDevice));
 
 	if (AsciiStrnCmp(path, pciroot_string, AsciiStrLen(pciroot_string)) &&
 		AsciiStrnCmp(path, pcieroot_string, AsciiStrLen(pcieroot_string))) {
@@ -332,7 +292,7 @@ struct DevPropDevice *devprop_add_device(struct DevPropString *string, CHAR8 *pa
 		return NULL;
 	}
 
-	ZeroMem((VOID*)device, sizeof(struct DevPropDevice));
+	ZeroMem((VOID*)device, sizeof(DevPropDevice));
 	device->acpi_dev_path._UID = /*getPciRootUID();*/0; //FIXME: what if 0?
 
 	INT32 numpaths = 0;
@@ -406,106 +366,108 @@ struct DevPropDevice *devprop_add_device(struct DevPropString *string, CHAR8 *pa
 	string->length += device->length;
 	
 	if(!string->entries)
-		if((string->entries = (struct DevPropDevice**)AllocatePool(sizeof(device)))== NULL)
+		if((string->entries = (DevPropDevice**)AllocatePool(sizeof(device)))== NULL)
 			return 0;
 	
-	string->entries[string->numentries++] = (struct DevPropDevice*)AllocatePool(sizeof(device));
+	string->entries[string->numentries++] = (DevPropDevice*)AllocatePool(sizeof(device));
 	string->entries[string->numentries-1] = device;
 	
 	return device;
 }
 
-INT32 devprop_add_value(struct DevPropDevice *device, CHAR8 *nm, UINT8 *vl, UINT32 len)
+BOOLEAN devprop_add_value(DevPropDevice *device, CHAR8 *nm, UINT8 *vl, UINT32 len)
 {
+  UINT32 offset;
+  UINT32 off;
+  UINT32 length;
+  UINT8 *data;
+  UINTN i, l;
+  UINT32 *datalength;
+  UINT8 *newdata;
+  
+	if(!device || !nm || !vl || !len)
+		return FALSE;
 	DBG("devprop_add_value\n");
-	if(!nm || !vl || !len)
-		return 0;
+	l = AsciiStrLen(nm);
+	length = ((l * 2) + len + (2 * sizeof(UINT32)) + 2);
+	data = (UINT8*)AllocateZeroPool(length);
+  if(!data)
+    return FALSE;
+  
+  off= 0;
+  
+  data[off+1] = ((l * 2) + 6) >> 8;
+  data[off] =   ((l * 2) + 6) & 0x00FF;
+  
+  off += 4;
+  
+  for(i = 0 ; i < l ; i++, off += 2)
+  {
+    data[off] = *nm++;
+  }
+  
+  off += 2;
+  l = len;
+  datalength = (UINT32*)&data[off];
+  *datalength = l + 4;
+  off += 4;
+  for(i = 0 ; i < l ; i++, off++)
+  {
+    data[off] = *vl++;
+  }
 	
-	UINT32 length = ((AsciiStrLen(nm) * 2) + len + (2 * sizeof(UINT32)) + 2);
-	UINT8 *data = (UINT8*)AllocatePool(length);
-	{
-		if(!data)
-			return 0;
-		
-		ZeroMem((VOID*)data, length);
-		UINT32 off= 0;
-		data[off+1] = ((AsciiStrLen(nm) * 2) + 6) >> 8;
-		data[off] =   ((AsciiStrLen(nm) * 2) + 6) & 0x00FF;
-		
-		off += 4;
-		UINT32 i=0, l = AsciiStrLen(nm);
-		for(i = 0 ; i < l ; i++, off += 2)
-		{
-			data[off] = *nm++;
-		}
-		
-		off += 2;
-		l = len;
-		UINT32 *datalength = (UINT32*)&data[off];
-		*datalength = l + 4;
-		off += 4;
-		for(i = 0 ; i < l ; i++, off++)
-		{
-			data[off] = *vl++;
-		}
-	}	
+	offset = device->length - (24 + (6 * device->num_pci_devpaths));
 	
-	UINT32 offset = device->length - (24 + (6 * device->num_pci_devpaths));
-	
-	UINT8 *newdata = (UINT8*)AllocatePool((length + offset));
+	newdata = (UINT8*)AllocateZeroPool((length + offset));
 	if(!newdata)
 		return 0;
-	if(device->data)
-		if(offset > 1)
+	if((device->data) && (offset > 1)){
 			CopyMem((VOID*)newdata, (VOID*)device->data, offset);
+  }
 
 	CopyMem((VOID*)(newdata + offset), (VOID*)data, length);
 	
 	device->length += length;
 	device->string->length += length;
-	device->numentries++;
-	
-	if(!device->data)
-		device->data = (UINT8*)AllocatePool(sizeof(UINT8));
-	else
-		FreePool(device->data);
-	
-	FreePool(data);
+	device->numentries++;		
 	device->data = newdata;
-	
-	return 1;
+  
+	FreePool(data);	
+	return TRUE;
 }
 
 CHAR8 *devprop_generate_string(struct DevPropString *string)
 {
+  UINTN len = string->length * 2;
+	INT32 i = 0, x = 0;
+  
 	DBG("devprop_generate_string\n");
-	CHAR8 *buffer = (CHAR8*)AllocatePool(string->length * 2);
+	CHAR8 *buffer = (CHAR8*)AllocatePool(len + 1);
 	CHAR8 *ptr = buffer;
 	
 	if(!buffer)
 		return NULL;
 
-	AsciiSPrint(buffer, string->length * 2, "%08x%08x%04x%04x", dp_swap32(string->length), string->WHAT2,
+	AsciiSPrint(buffer, len, "%08x%08x%04x%04x", dp_swap32(string->length), string->WHAT2,
 			dp_swap16(string->numentries), string->WHAT3);
 	buffer += 24;
-	INT32 i = 0, x = 0;
 	
 	while(i < string->numentries)
 	{
-		AsciiSPrint(buffer, string->length * 2, "%08x%04x%04x", dp_swap32(string->entries[i]->length),
+		AsciiSPrint(buffer, len, "%08x%04x%04x", dp_swap32(string->entries[i]->length),
 				dp_swap16(string->entries[i]->numentries), string->entries[i]->WHAT2); //FIXME: wrong buffer sizes!
 		
 		buffer += 16;
-		AsciiSPrint(buffer, string->length * 2, "%02x%02x%04x%08x%08x", string->entries[i]->acpi_dev_path.type,
+		AsciiSPrint(buffer, len, "%02x%02x%04x%08x%08x", string->entries[i]->acpi_dev_path.type,
 				string->entries[i]->acpi_dev_path.subtype,
 				dp_swap16(string->entries[i]->acpi_dev_path.length),
 				string->entries[i]->acpi_dev_path._HID,
 				dp_swap32(string->entries[i]->acpi_dev_path._UID));
 
 		buffer += 24;
-		for(x=0;x < string->entries[i]->num_pci_devpaths; x++)
+		for(x = 0; x < string->entries[i]->num_pci_devpaths; x++)
 		{
-			AsciiSPrint(buffer, string->length * 2, "%02x%02x%04x%02x%02x", string->entries[i]->pci_dev_path[x].type,
+			AsciiSPrint(buffer, len, "%02x%02x%04x%02x%02x", string->entries[i]->pci_dev_path[x].type,
 					string->entries[i]->pci_dev_path[x].subtype,
 					dp_swap16(string->entries[i]->pci_dev_path[x].length),
 					string->entries[i]->pci_dev_path[x].function,
@@ -513,15 +475,15 @@ CHAR8 *devprop_generate_string(struct DevPropString *string)
 			buffer += 12;
 		}
 		
-		AsciiSPrint(buffer, string->length * 2, "%02x%02x%04x", string->entries[i]->path_end.type,
+		AsciiSPrint(buffer, len, "%02x%02x%04x", string->entries[i]->path_end.type,
 				string->entries[i]->path_end.subtype,
 				dp_swap16(string->entries[i]->path_end.length));
 		
 		buffer += 8;
 		UINT8 *dataptr = string->entries[i]->data;
-		for(x = 0; x < (string->entries[i]->length) - (24 + (6 * string->entries[i]->num_pci_devpaths)) ; x++)
+		for(x = 0; x < (string->entries[i]->length) - (24 + (6 * string->entries[i]->num_pci_devpaths)); x++)
 		{
-			AsciiSPrint(buffer, string->length * 2, "%02x", *dataptr++);
+			AsciiSPrint(buffer, len, "%02x", *dataptr++);
 			buffer += 2;
 		}
 		i++;

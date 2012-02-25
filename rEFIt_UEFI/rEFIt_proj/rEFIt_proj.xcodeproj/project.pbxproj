@@ -20,7 +20,6 @@
 		122336BA13377E050033F008 /* libegint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libegint.h; sourceTree = "<group>"; };
 		122336BB13377E050033F008 /* load_bmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = load_bmp.c; sourceTree = "<group>"; };
 		122336BC13377E050033F008 /* load_icns.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = load_icns.c; sourceTree = "<group>"; };
-		122336BD13377E050033F008 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		122336BE13377E050033F008 /* mkegemb.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = mkegemb.py; sourceTree = "<group>"; };
 		122336BF13377E050033F008 /* libscreen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libscreen.c; sourceTree = "<group>"; };
 		122336C013377E050033F008 /* text.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = text.c; sourceTree = "<group>"; };
@@ -29,7 +28,6 @@
 		122336C513377E150033F008 /* lib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lib.c; sourceTree = "<group>"; };
 		122336C613377E150033F008 /* lib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lib.h; sourceTree = "<group>"; };
 		122336C713377E150033F008 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
-		122336C813377E150033F008 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		122336C913377E150033F008 /* menu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = menu.c; sourceTree = "<group>"; };
 		122336CB13377E150033F008 /* refit.mkefi */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = refit.mkefi; sourceTree = "<group>"; };
 		122336CC13377E150033F008 /* screen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = screen.c; sourceTree = "<group>"; };
@@ -143,7 +141,6 @@
 				122336BA13377E050033F008 /* libegint.h */,
 				122336BB13377E050033F008 /* load_bmp.c */,
 				122336BC13377E050033F008 /* load_icns.c */,
-				122336BD13377E050033F008 /* Makefile */,
 				122336BE13377E050033F008 /* mkegemb.py */,
 				122336BF13377E050033F008 /* libscreen.c */,
 				122336C013377E050033F008 /* text.c */,
@@ -162,7 +159,6 @@
 				122336C513377E150033F008 /* lib.c */,
 				122336C613377E150033F008 /* lib.h */,
 				122336C713377E150033F008 /* main.c */,
-				122336C813377E150033F008 /* Makefile */,
 				122336C913377E150033F008 /* menu.c */,
 				122336CB13377E150033F008 /* refit.mkefi */,
 				122336CC13377E150033F008 /* screen.c */,

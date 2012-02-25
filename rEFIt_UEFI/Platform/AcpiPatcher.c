@@ -19,7 +19,7 @@ Re-Work by Slice 2011.
 
 #include "Platform.h"
 
-#define DEBUG_ACPI 2
+#define DEBUG_ACPI 1
 
 #if DEBUG_ACPI == 2
 #define DBG(x...) AsciiPrint(x)
@@ -442,7 +442,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     }
   }
   
-  DBG("DSDT finding\n");
+//  DBG("DSDT finding\n");
   if (!Volume) {
     DBG("Volume not found!\n");
     return EFI_NOT_FOUND;
@@ -466,14 +466,14 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       Status = egLoadFile(SelfRootDir, PathDsdtMini, &buffer, &bufferLen);
     }
   }
-  DBG("search at booted volume\n"); 
+//  DBG("search at booted volume\n"); 
   if (EFI_ERROR(Status) && FileExists(RootDir, PathDsdt)) {
-    DBG("found in booted volume\n");
+    DBG("DSDT found in booted volume\n");
     Status = egLoadFile(RootDir, PathDsdt, &buffer, &bufferLen);
   }
-  DBG("search at Clover volume\n"); 
+//  DBG("search at Clover volume\n"); 
   if (EFI_ERROR(Status) && FileExists(SelfRootDir, PathPatched)) {
-    DBG("found in Clover volume\n");
+    DBG("DSDT found in Clover volume\n");
     Status = egLoadFile(SelfRootDir, PathPatched, &buffer, &bufferLen);
   }
   //apply DSDT
@@ -488,7 +488,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     //if success insert dsdt pointer into ACPI tables
     if(!EFI_ERROR(Status))
     {
-      DBG("page is allocated, write DSDT into\n");
+//      DBG("page is allocated, write DSDT into\n");
       CopyMem((VOID*)(UINTN)dsdt, buffer, bufferLen);
       
       FadtPointer->Dsdt  = (UINT32)dsdt;

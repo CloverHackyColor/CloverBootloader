@@ -334,14 +334,14 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   SetupDataForOSX();
 //  PauseForKey(L"SetupBooterLog");
   Status = SetupBooterLog();
-  CheckError(Status, L"while SetupBooterLog");
+//  CheckError(Status, L"while SetupBooterLog");
 //  PauseForKey(L"StartEFIImage");
   EventsInitialize ();
   StartEFIImage(Entry->DevicePath, Entry->LoadOptions,
                 Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL);
-  PauseForKey(L"FinishExternalScreen");
+//  PauseForKey(L"FinishExternalScreen");
   FinishExternalScreen();
-  PauseForKey(L"System started?!");
+//  PauseForKey(L"System started?!");
 }
 
 static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume)

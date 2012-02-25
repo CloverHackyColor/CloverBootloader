@@ -875,7 +875,7 @@ static radeon_card_info_t radeon_cards[] = {
 };
 
 typedef struct {
-	struct DevPropDevice	*device;
+	DevPropDevice	*device;
 	radeon_card_info_t		*info;
 	pci_dt_t              *pci_dev;
 	UINT8                 *fb;
