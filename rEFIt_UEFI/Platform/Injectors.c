@@ -89,8 +89,8 @@ GetDeviceProps(IN     APPLE_GETVAR_PROTOCOL   *This,
     
     
   }   
-  *BufferSize = cnt;    
-	CopyMem(Buffer, binStr,  cnt);
+  *BufferSize = 0; //cnt;    
+//	CopyMem(Buffer, binStr,  cnt);
 	return EFI_SUCCESS;
 }
 

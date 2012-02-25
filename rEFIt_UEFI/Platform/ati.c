@@ -360,8 +360,8 @@ BOOLEAN read_vbios(BOOLEAN from_pci)
 		rom_addr = (option_rom_header_t *)0xc0000;
 	
 	if (!validate_rom(rom_addr, card->pci_dev)){
-    Print(L"There is no ROM @C0000\n");
-    gBS->Stall(3000000);
+    DBG("There is no ROM @C0000\n");
+ //   gBS->Stall(3000000);
 		return FALSE;
   }
 	
@@ -693,10 +693,14 @@ BOOLEAN setup_ati_devprop(pci_dt_t *ati_dev)
 	// -------------------------------------------------
 	// Find a better way to do this (in device_inject.c)
 	//Azi: XXX tried to fix a malloc error in vain; this is related to XCode 4 compilation!
-	stringdata = AllocateZeroPool(sizeof(UINT8) * string->length);
-	CopyMem(stringdata, (UINT8*)devprop_generate_string(string), string->length);
-	stringlength = string->length;
+//	stringdata = AllocateZeroPool(sizeof(UINT8) * string->length);
+//	CopyMem(stringdata, (UINT8*)devprop_generate_string(string), string->length);
+	stringlength = string->length * 2;
 	// -------------------------------------------------
+  gDeviceProperties = AllocateAlignedPages(EFI_SIZE_TO_PAGES(stringlength + 1), 64);
+	CopyMem(gDeviceProperties, (VOID*)devprop_generate_string(string), stringlength);
+	DBG(gDeviceProperties);
+  DBG("\n");
 	
 	DBG("ATI %s %s %dMB (%s) [%04x:%04x] (subsys [%04x:%04x]):: %s\n",
 			chip_family_name[card->info->chip_family], card->info->model_name,

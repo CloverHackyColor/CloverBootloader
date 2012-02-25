@@ -383,7 +383,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 		}
 		SaveSettings();
 	}	
-  Print(L"config.plist read and return %r\n", Status);
+  DBG("config.plist read and return %r\n", Status);
 	return Status;
 }	
 

@@ -387,7 +387,7 @@ BOOLEAN devprop_add_value(DevPropDevice *device, CHAR8 *nm, UINT8 *vl, UINT32 le
   
 	if(!device || !nm || !vl || !len)
 		return FALSE;
-	DBG("devprop_add_value\n");
+	DBG("devprop_add_value %a len=%d\n", nm, len);
 	l = AsciiStrLen(nm);
 	length = ((l * 2) + len + (2 * sizeof(UINT32)) + 2);
 	data = (UINT8*)AllocateZeroPool(length);

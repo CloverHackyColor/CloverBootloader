@@ -126,8 +126,8 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 
   DualLink = ((gGraphics.Width * gGraphics.Height) > (1<<20))?1:0;
 	
-  devprop_add_value(device, "model", (UINT8*)model, (AsciiStrLen(model) + 1));
-	devprop_add_value(device, "device_type", (UINT8*)"display", 8);	
+  devprop_add_value(device, "model", (UINT8*)model, AsciiStrLen(model));
+	devprop_add_value(device, "device_type", (UINT8*)"display", 7);	
   switch (gma_dev->device_id) {
     case 0x2582:
     case 0x2592:
@@ -177,6 +177,8 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 	gDeviceProperties = AllocateAlignedPages(EFI_SIZE_TO_PAGES(string->length * 2 + 1), 64);
 	CopyMem(gDeviceProperties, (VOID*)devprop_generate_string(string), string->length * 2);
 	DBG(gDeviceProperties);
+  DBG("\n");
+  DBG("model len=%d\n", sizeof("model"));
 #if DEBUG_GMA == 2  
 	gBS->Stall(5000000);
 #endif  

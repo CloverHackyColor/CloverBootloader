@@ -4,6 +4,7 @@
  *  Created by Slice on 19.02.12.
  *  
  *  the code ported from Chameleon project as well as from RadeonFB by Joblo and RadeonHD by dong
+ *  bis thank to Islam M. Ahmed Zaid for the updating the collection
  */
 
 #include "Platform.h"  //this include needed for Uefi types
@@ -875,7 +876,7 @@ static radeon_card_info_t radeon_cards[] = {
 };
 
 typedef struct {
-	DevPropDevice	*device;
+	DevPropDevice         *device;
 	radeon_card_info_t		*info;
 	pci_dt_t              *pci_dev;
 	UINT8                 *fb;
@@ -933,33 +934,33 @@ AtiDevProp ati_devprop_list[] = {
 	{FLAGTRUE,	FALSE,	"@0,AAPL,boot-display",		get_bootdisplay_val,	NULVAL							},
   //	{FLAGTRUE,	FALSE,	"@0,ATY,EFIDisplay",		NULL,					STRVAL("TMDSA")					},
 	
-  //	{FLAGTRUE,	TRUE,	"@0,AAPL,vram-memory",		get_vrammemory_val,		NULVAL							},
-  //	{FLAGTRUE,	TRUE,	"@0,compatible",			get_name_val,			NULVAL							},
+  //{FLAGTRUE,	TRUE,	"@0,AAPL,vram-memory",		get_vrammemory_val,		NULVAL							},
+  {FLAGTRUE,	TRUE,	"@0,compatible",		get_name_val,			NULVAL							},
   //	{FLAGTRUE,	TRUE,	"@0,connector-type",		get_conntype_val,		NULVAL							},
-  //	{FLAGTRUE,	TRUE,	"@0,device_type",			NULL,					STRVAL("display")				},
+  {FLAGTRUE,	TRUE,	"@0,device_type",			NULL,					STRVAL("display")				},
   //	{FLAGTRUE,	FALSE,	"@0,display-connect-flags", NULL,					DWRVAL((UINT32)0)				},
-  //	{FLAGTRUE,	TRUE,	"@0,display-type",			NULL,					STRVAL("NONE")					},
+  {FLAGTRUE,	TRUE,	"@0,display-type",			NULL,					STRVAL("LCD")					},
 	{FLAGTRUE,	TRUE,	"@0,name",					get_name_val,			NULVAL							},
-  //	{FLAGTRUE,	TRUE,	"@0,VRAM,memsize",			get_vrammemsize_val,	NULVAL							},
+  {FLAGTRUE,	TRUE,	"@0,VRAM,memsize",			get_vrammemsize_val,	NULVAL							},
 	
-  //	{FLAGTRUE,	FALSE,	"AAPL,aux-power-connected", NULL,					DWRVAL((UINT32)1)				},
-  //	{FLAGTRUE,	FALSE,	"AAPL,backlight-control",	NULL,					DWRVAL((UINT32)0)				},
-	{FLAGTRUE,	FALSE,	"ATY,bin_image",			get_binimage_val,		NULVAL							},
-	{FLAGTRUE,	FALSE,	"ATY,Copyright",			NULL,	STRVAL("Copyright AMD Inc. All Rights Reserved. 2005-2010") },
-	{FLAGTRUE,	FALSE,	"ATY,Card#",				get_romrevision_val,	NULVAL							},
-	{FLAGTRUE,	FALSE,	"ATY,VendorID",				NULL,					WRDVAL((UINT16)0x1002)		},
-	{FLAGTRUE,	FALSE,	"ATY,DeviceID",				get_deviceid_val,		NULVAL							},
+  {FLAGTRUE,	FALSE,	"AAPL,aux-power-connected", NULL,					DWRVAL((UINT32)1)				},
+  {FLAGTRUE,	FALSE,	"AAPL,backlight-control",	NULL,					DWRVAL((UINT32)0)				},
+	{FLAGTRUE,	FALSE,	"ATY,bin_image",	get_binimage_val,		NULVAL							},
+	{FLAGTRUE,	FALSE,	"ATY,Copyright",	NULL,	STRVAL("Copyright AMD Inc. All Rights Reserved. 2005-2010") },
+	{FLAGTRUE,	FALSE,	"ATY,Card#",			get_romrevision_val,	NULVAL							},
+	{FLAGTRUE,	FALSE,	"ATY,VendorID",		NULL,					WRDVAL((UINT16)0x1002)		},
+	{FLAGTRUE,	FALSE,	"ATY,DeviceID",		get_deviceid_val,		NULVAL							},
 	
   //	{FLAGTRUE,	FALSE,	"ATY,MCLK",					get_mclk_val,			NULVAL							},
   //	{FLAGTRUE,	FALSE,	"ATY,SCLK",					get_sclk_val,			NULVAL							},
   //	{FLAGTRUE,	FALSE,	"ATY,RefCLK",				get_refclk_val,			DWRVAL((UINT32)0x0a8c)		},
 	
-  //	{FLAGTRUE,	FALSE,	"ATY,PlatformInfo",			get_platforminfo_val,	NULVAL							},
+  {FLAGTRUE,	FALSE,	"ATY,PlatformInfo",			get_platforminfo_val,	NULVAL							},
 	
 	{FLAGTRUE,	FALSE,	"name",						get_nameparent_val,		NULVAL							},
-	{FLAGTRUE,	FALSE,	"device_type",				get_nameparent_val,		NULVAL							},
+	{FLAGTRUE,	FALSE,	"device_type",		get_nameparent_val,		NULVAL							},
 	{FLAGTRUE,	FALSE,	"model",					get_model_val,			STRVAL("ATI Radeon")			},
-  //	{FLAGTRUE,	FALSE,	"VRAM,totalsize",			get_vramtotalsize_val,	NULVAL							},
+  {FLAGTRUE,	FALSE,	"VRAM,totalsize",			get_vramtotalsize_val,	NULVAL							},
 	
 	{FLAGTRUE,	FALSE,	NULL,						NULL,					NULVAL							}
 };

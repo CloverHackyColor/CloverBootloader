@@ -8,7 +8,7 @@
 #ifndef __LIBSAIO_DEVICE_INJECT_H
 #define __LIBSAIO_DEVICE_INJECT_H
 
-#define DP_ADD_TEMP_VAL(dev, val) devprop_add_value(dev, (CHAR8*)val[0], (UINT8*)val[1], AsciiStrLen(val[1]) + 1)
+#define DP_ADD_TEMP_VAL(dev, val) devprop_add_value(dev, (CHAR8*)val[0], (UINT8*)val[1], AsciiStrLen(val[1]))
 #define DP_ADD_TEMP_VAL_DATA(dev, val) devprop_add_value(dev, (CHAR8*)val.name, (UINT8*)val.data, val.size)
 #define MAX_PCI_DEV_PATHS 4
 

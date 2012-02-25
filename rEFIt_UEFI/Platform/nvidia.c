@@ -1532,20 +1532,20 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	//AsciiSPrint(kNVCAP, 12, "NVCAP_%04x", nvda_dev->device_id);
 	
 	
-#ifdef DEBUG_NVCAP
+//#ifdef DEBUG_NVCAP
 	DBG("NVCAP: %02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x\n",
 	default_NVCAP[0], default_NVCAP[1], default_NVCAP[2], default_NVCAP[3],
 	default_NVCAP[4], default_NVCAP[5], default_NVCAP[6], default_NVCAP[7],
 	default_NVCAP[8], default_NVCAP[9], default_NVCAP[10], default_NVCAP[11],
 	default_NVCAP[12], default_NVCAP[13], default_NVCAP[14], default_NVCAP[15],
 	default_NVCAP[16], default_NVCAP[17], default_NVCAP[18], default_NVCAP[19]);
-#endif
+//#endif
 	
 	devprop_add_value(device, "NVCAP", default_NVCAP, NVCAP_LEN);
 	devprop_add_value(device, "NVPM", default_NVPM, NVPM_LEN);
 	devprop_add_value(device, "VRAM,totalsize", (UINT8*)&videoRam, 4);
-	devprop_add_value(device, "model", (UINT8*)model, AsciiStrLen(model) + 1);
-	devprop_add_value(device, "rom-revision", (UINT8*)version_str, AsciiStrLen(version_str) + 1);
+	devprop_add_value(device, "model", (UINT8*)model, AsciiStrLen(model));
+	devprop_add_value(device, "rom-revision", (UINT8*)version_str, AsciiStrLen(version_str));
 	devprop_add_value(device, "@0,display-cfg", default_dcfg_0, DCFG0_LEN);
 	devprop_add_value(device, "@1,display-cfg", default_dcfg_1, DCFG1_LEN);
 	
@@ -1556,8 +1556,11 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	//end Nvidia HDMI Audio
 	
 
-	gDeviceProperties = (VOID*)devprop_generate_string(string);
-	//DBG(gDeviceProperties);
-	gBS->Stall(2000000);
+//	gDeviceProperties = (VOID*)devprop_generate_string(string);
+  gDeviceProperties = AllocateAlignedPages(EFI_SIZE_TO_PAGES(string->length * 2 + 1), 64);
+	CopyMem(gDeviceProperties, (VOID*)devprop_generate_string(string), string->length * 2);
+	DBG(gDeviceProperties);
+  DBG("\n");
+//	gBS->Stall(2000000);
 	return TRUE;
 }
