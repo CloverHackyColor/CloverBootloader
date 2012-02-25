@@ -232,8 +232,8 @@ typedef struct {
 	BOOLEAN	Debug;
   
 	//ACPI
-	UINT16	ResetAddr;
-	UINT16	ResetVal;
+	UINT64	ResetAddr;
+	UINT8 	ResetVal;
 	BOOLEAN	UseDSDTmini;  
 	BOOLEAN	DropSSDT;
 	BOOLEAN	smartUPS;
@@ -396,8 +396,8 @@ extern EFI_GUID                 gUuid;
 extern CHAR8                    gOEMProduct[];  //original name from SMBIOS
 extern EFI_EDID_DISCOVERED_PROTOCOL*            EdidDiscovered;
 extern CHAR8*                   gDeviceProperties;
-extern UINT16                   gResetAddress;
-extern UINT16                   gResetValue;
+//extern UINT16                   gResetAddress;
+//extern UINT16                   gResetValue;
 
 extern EFI_GUID	gEfiAppleBootGuid;
 extern EFI_GUID	gEfiAppleNvramGuid;

@@ -24,8 +24,8 @@ GFX_PROPERTIES                  gGraphics;
 EFI_EDID_DISCOVERED_PROTOCOL    *EdidDiscovered;
 //EFI_GRAPHICS_OUTPUT_PROTOCOL    *GraphicsOutput;
 UINT16                          gCPUtype;
-UINT16                          gResetAddress;
-UINT16                          gResetValue;
+//UINT16                          gResetAddress;
+//UINT16                          gResetValue;
 
 //should be excluded. Now refit.conf
 /*EFI_STATUS GetTheme (CHAR16* ThemePlistPath)
@@ -236,15 +236,15 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 		if(prop)
 		{
 			AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-			gResetAddress  = (UINT16)StrHexToUint64(UStr); 
+			gSettings.ResetAddr  = StrHexToUint64(UStr); 
 		}  else {
-			gResetAddress  = 0x64; //I wish it will be default
+			gSettings.ResetAddr  = 0x64; //I wish it will be default
 		}
 		prop = GetProperty(dict,"ResetValue");
 		if(prop)
 		{
 			AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-			gSettings.ResetVal = (UINT16)StrHexToUint64((CHAR16*)&UStr[0]);	
+			gSettings.ResetVal = (UINT8)StrHexToUint64((CHAR16*)&UStr[0]);	
 		} else {
 			gSettings.ResetVal = 0xFE;
 		}
