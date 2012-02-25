@@ -278,7 +278,7 @@ BOOLEAN validate_rom(option_rom_header_t *rom_header, pci_dt_t *pci_dev)
 	return TRUE;
 }
 
-BOOLEAN load_vbios_file(const CHAR8 *key, UINT16 vendor_id, UINT16 device_id, UINT32 subsys_id)
+BOOLEAN load_vbios_file(UINT16 vendor_id, UINT16 device_id, UINT32 subsys_id)
 {
   	EFI_STATUS            Status;
 	UINTN bufferLen;
@@ -291,8 +291,10 @@ BOOLEAN load_vbios_file(const CHAR8 *key, UINT16 vendor_id, UINT16 device_id, UI
 		return FALSE;
 	
 	UnicodeSPrint(FileName, 24, L"\\EFI\\device\\%04x_%04x_%08x.rom", vendor_id, device_id, subsys_id);
-	if (!FileExists(SelfRootDir, FileName))
+	if (!FileExists(SelfRootDir, FileName)){
+    DBG("ATI ROM not found \n");
 		return FALSE;
+  }
 	Status = egLoadFile(SelfRootDir, FileName, &buffer, &bufferLen);
   if (EFI_ERROR(Status)) {
     return FALSE;
@@ -307,6 +309,7 @@ BOOLEAN load_vbios_file(const CHAR8 *key, UINT16 vendor_id, UINT16 device_id, UI
 	
 	if (!validate_rom((option_rom_header_t *)card->rom, card->pci_dev))
 	{
+    DBG("validate_rom fails\n");
 		card->rom_size = 0;
 		card->rom = 0;
 		return FALSE;
@@ -575,10 +578,10 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 	get_vram_size();
 	
 //	getBoolForKey(kATYbinimage, &add_vbios, &bootInfo->chameleonConfig);
-/*	
+
 	if (gSettings.LoadVBios)
 	{
-		if (!load_vbios_file(kUseAtiROM, pci_dev->vendor_id, pci_dev->device_id, pci_dev->subsys_id.subsys_id))
+		if (!load_vbios_file(pci_dev->vendor_id, pci_dev->device_id, pci_dev->subsys_id.subsys_id))
 		{
 			DBG("reading VBIOS from %s", card->posted ? "legacy space" : "PCI ROM");
 			if (card->posted)
@@ -588,7 +591,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 			DBG("\n");
 		}
 	}
- */
+
 	
 //	card->ports = 2; // default - Azi: default is card_configs
 	

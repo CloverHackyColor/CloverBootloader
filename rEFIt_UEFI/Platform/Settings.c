@@ -200,9 +200,9 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 		{
 //			AsciiStrCpy(gSettings.LoadVBios, prop->string);
       if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
-				gSettings.smartUPS=TRUE;
+				gSettings.LoadVBios=TRUE;
 			else
-				gSettings.smartUPS=FALSE;
+				gSettings.LoadVBios=FALSE;
       
 		}
  		prop = GetProperty(dict,"VideoPorts");
