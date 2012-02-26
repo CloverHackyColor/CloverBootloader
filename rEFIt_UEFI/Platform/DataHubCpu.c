@@ -166,6 +166,12 @@ VOID SetupDataForOSX()
 	CHAR16*				productName			= AllocateZeroPool(64);
 	CHAR16*				serialNumber		= AllocateZeroPool(64);
 	
+  //fool proof
+  if ((FrontSideBus < (50 * Mega)) ||  (FrontSideBus > (450 * Mega))){
+    DBG("FrontSideBus=%d\n", FrontSideBus);
+    FrontSideBus = 100 * Mega;
+  }
+  
 	// Locate DataHub Protocol
 	Status = gBS->LocateProtocol(&gEfiDataHubProtocolGuid, NULL, (VOID**)&gDataHub);
 	if (!EFI_ERROR (Status)) 
