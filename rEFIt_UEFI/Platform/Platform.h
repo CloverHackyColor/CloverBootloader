@@ -240,10 +240,13 @@ typedef struct {
 	CHAR16	DsdtName[60];
     
   //Graphics
-  BOOLEAN GraphicInjector;
+  BOOLEAN GraphicsInjector;
   BOOLEAN LoadVBios;
   CHAR16  FBName[16];
   UINT16  VideoPorts;
+  UINT64  VRAM;
+  UINT8   Dcfg[8];
+  UINT8   NVCAP[20];
   
 } SETTINGS_DATA;
 
@@ -395,8 +398,7 @@ extern CPU_STRUCTURE            gCPUStructure;
 extern EFI_GUID                 gUuid;
 extern EFI_EDID_DISCOVERED_PROTOCOL*            EdidDiscovered;
 extern CHAR8*                   gDeviceProperties;
-//extern UINT16                   gResetAddress;
-//extern UINT16                   gResetValue;
+extern CHAR8*                   cDeviceProperties;
 
 extern EFI_GUID	gEfiAppleBootGuid;
 extern EFI_GUID	gEfiAppleNvramGuid;

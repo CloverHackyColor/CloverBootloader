@@ -184,6 +184,7 @@ VOID SetupDataForOSX()
 		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"DevicePathsSupported", &devPathSupportedVal, sizeof(UINT32));
 		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"Model", productName, StrSize(productName));
 		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"SystemSerialNumber", serialNumber, StrSize(serialNumber));
+    DBG("Custom UUID=%g\n", gUuid);
     Status =  LogDataHub(&gEfiMiscSubClassGuid, L"system-id", &gUuid, sizeof(EFI_GUID));		
 //		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"kext", &gKextList, KextListSize);    
 		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"Clover", CloverVersion, StrSize(CloverVersion));

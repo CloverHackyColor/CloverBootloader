@@ -185,6 +185,7 @@ BOOLEAN get_platforminfo_val(value_t *val)
 
 BOOLEAN get_vramtotalsize_val(value_t *val)
 {
+  
 	val->type = kCst;
 	val->size = 4;
 	val->data = (UINT8 *)&card->vram_size;
@@ -327,24 +328,26 @@ void get_vram_size(void)
 {
 	chip_family_t chip_family = card->info->chip_family;
 	
-	card->vram_size = 0;
-	
-	if (chip_family >= CHIP_FAMILY_CEDAR)
-		// size in MB on evergreen
-		// XXX watch for overflow!!!
-		card->vram_size = REG32(card->mmio, R600_CONFIG_MEMSIZE) * 1024 * 1024;
-	else
-		if (chip_family >= CHIP_FAMILY_R600)
+	card->vram_size = 128 << 20; //default 128Mb, this is minimum for OS
+  if (gSettings.VRAM != 0) {
+    card->vram_size = gSettings.VRAM;
+  } else {
+    if (chip_family >= CHIP_FAMILY_CEDAR) {
+      // size in MB on evergreen
+      // XXX watch for overflow!!!
+      card->vram_size = REG32(card->mmio, R600_CONFIG_MEMSIZE) << 20;
+    } else if (chip_family >= CHIP_FAMILY_R600) {
 			card->vram_size = REG32(card->mmio, R600_CONFIG_MEMSIZE);
-  else {
-    card->vram_size = REG32(card->mmio, RADEON_CONFIG_MEMSIZE);
-    if (card->vram_size == 0) {
-      card->vram_size = REG32(card->mmio, RADEON_CONFIG_APER_SIZE);
-      //Slice - previously I successfully made Radeon9000 working
-      //by writing this register
-      WRITEREG32(card->mmio, RADEON_CONFIG_MEMSIZE, 0x30000);
+    } else {
+      card->vram_size = REG32(card->mmio, RADEON_CONFIG_MEMSIZE);
+      if (card->vram_size == 0) {
+        card->vram_size = REG32(card->mmio, RADEON_CONFIG_APER_SIZE);
+        //Slice - previously I successfully made Radeon9000 working
+        //by writing this register
+        WRITEREG32(card->mmio, RADEON_CONFIG_MEMSIZE, 0x30000);
+      }
     }
-  }
+  }	
 }
 
 BOOLEAN read_vbios(BOOLEAN from_pci)

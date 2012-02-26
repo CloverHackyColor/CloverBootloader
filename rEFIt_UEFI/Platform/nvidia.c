@@ -1423,8 +1423,8 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	model = get_nvidia_model((nvda_dev->vendor_id << 16) | nvda_dev->device_id);
 	
 	DBG("nVidia %a\n", model);
-	//DBG(" %dMB NV%02x [%04x:%04x] :: ", (UINT32)(videoRam / 1024 / 1024),
-			   //nvCardType, nvda_dev->vendor_id, nvda_dev->device_id);
+	DBG(" %dMB NV%02x [%04x:%04x] :: ", (UINT32)(videoRam / 1024 / 1024),
+			   nvCardType, nvda_dev->vendor_id, nvda_dev->device_id);
 		
 
 	const INT32 MAX_BIOS_VERSION_LENGTH = 32;
@@ -1540,14 +1540,26 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	default_NVCAP[12], default_NVCAP[13], default_NVCAP[14], default_NVCAP[15],
 	default_NVCAP[16], default_NVCAP[17], default_NVCAP[18], default_NVCAP[19]);
 //#endif
-	
-	devprop_add_value(device, "NVCAP", default_NVCAP, NVCAP_LEN);
+	if ((gSettings.NVCAP[0] != 0)) {
+    devprop_add_value(device, "NVCAP", &gSettings.NVCAP[0], NVCAP_LEN);
+  } else {
+    devprop_add_value(device, "NVCAP", default_NVCAP, NVCAP_LEN);
+  }	
 	devprop_add_value(device, "NVPM", default_NVPM, NVPM_LEN);
-	devprop_add_value(device, "VRAM,totalsize", (UINT8*)&videoRam, 4);
+  if ((gSettings.VRAM != 0)) {
+    devprop_add_value(device, "VRAM,totalsize", (UINT8*)&gSettings.VRAM, 4);
+  } else {
+    devprop_add_value(device, "VRAM,totalsize", (UINT8*)&videoRam, 4);
+  }	
 	devprop_add_value(device, "model", (UINT8*)model, AsciiStrLen(model));
 	devprop_add_value(device, "rom-revision", (UINT8*)version_str, AsciiStrLen(version_str));
-	devprop_add_value(device, "@0,display-cfg", default_dcfg_0, DCFG0_LEN);
-	devprop_add_value(device, "@1,display-cfg", default_dcfg_1, DCFG1_LEN);
+  if ((gSettings.Dcfg[0] != 0) && (gSettings.Dcfg[1] != 0)) {
+    devprop_add_value(device, "@0,display-cfg", &gSettings.Dcfg[0], DCFG0_LEN);
+    devprop_add_value(device, "@1,display-cfg", &gSettings.Dcfg[4], DCFG1_LEN);
+  } else {
+    devprop_add_value(device, "@0,display-cfg", default_dcfg_0, DCFG0_LEN);
+    devprop_add_value(device, "@1,display-cfg", default_dcfg_1, DCFG1_LEN);
+  }
 	
 	//add HDMI Audio back to nvidia
 	//http://forge.voodooprojects.org/p/chameleon/issues/67/

@@ -30,6 +30,7 @@ EFI_GUID gAppleScreenInfoGuid = {
 //UINT32 mPropSize = 0;
 //UINT8* mProperties = NULL;
 CHAR8* gDeviceProperties = NULL;
+CHAR8* cDeviceProperties = NULL;
 
 typedef struct _APPLE_GETVAR_PROTOCOL APPLE_GETVAR_PROTOCOL;
 
@@ -56,43 +57,27 @@ GetDeviceProps(IN     APPLE_GETVAR_PROTOCOL   *This,
                IN     CHAR8                   *Buffer,
                IN OUT UINT32                  *BufferSize)
 { 
-//  if (mPropSize > *BufferSize)
-//    return EFI_BUFFER_TOO_SMALL;
-  UINT32		cnt=0;
+  UINT32		cnt = 0;
 	UINT8     *binStr = NULL;
-//  CHAR8   CHigh, CLow;
-//  CHAR8*  Ptr; 
-//  UINT8   byte;
-//TODO if gSetting.GraphicsEnabler=FALSE then egLoadFile(strings.dat, gDeviceProperties)  
-  if(gDeviceProperties!=NULL && AsciiStrLen(gDeviceProperties)>3)
+
+  if(gSettings.GraphicsInjector && (gDeviceProperties!=NULL) && AsciiStrLen(gDeviceProperties)>3)
 	{
     cnt = (UINT32)AsciiStrLen(gDeviceProperties) / 2;
 		binStr = AllocateZeroPool(cnt);
-/*    Ptr = gDeviceProperties;
-    while (*Ptr) {
-      CHigh = *Ptr++ | 0x20;
-      if (IS_DIGIT(CHigh)) {
-        byte = (CHigh - 0x30) << 4;
-      } else if (IS_HEX(CHigh)) {
-        byte = ((CHigh) - 0x57) << 4;
-      } else {
-        byte = 0;
-      }
-      CLow = *Ptr++ | 0x20;
-      if (IS_DIGIT(CLow)) {
-        byte += (CHigh - 0x30);
-      } else if (IS_HEX(CLow)) {
-        byte += ((CLow) - 0x57);
-      }
-      *binStr++ = byte;
-    }
-*/    
     if(hex2bin(gDeviceProperties, binStr, cnt)){
       *BufferSize = cnt;    
       CopyMem(Buffer, binStr,  cnt);
       return EFI_SUCCESS;      
     }
-  }   
+  } else if ((cDeviceProperties!=NULL) && AsciiStrLen(cDeviceProperties)>3) {
+    cnt = (UINT32)AsciiStrLen(cDeviceProperties) / 2;
+		binStr = AllocateZeroPool(cnt);
+    if(hex2bin(cDeviceProperties, binStr, cnt)){
+      *BufferSize = cnt;    
+      CopyMem(Buffer, binStr,  cnt);
+      return EFI_SUCCESS;      
+    } 
+  }
   *BufferSize = 0;    
 	return EFI_SUCCESS;
 }

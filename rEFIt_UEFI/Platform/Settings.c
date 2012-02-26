@@ -169,6 +169,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 	TagPtr		dict;
 	TagPtr		prop;
   CHAR16    UStr[64];
+//  CHAR8     AStr[64];
 //	TagPtr		dictPointer;
   CHAR16* ConfigPlistPath = L"EFI\\config.plist";
 	
@@ -211,16 +212,39 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       AsciiStrToUnicodeStr(prop->string, gSettings.DefaultBoot);
 		}
 //Graphics
+    prop = GetProperty(dict,"GraphicsInjector");
+    gSettings.GraphicsInjector = TRUE; //default
+		if(prop)
+		{
+      //			AsciiStrCpy(gSettings.LoadVBios, prop->string);
+      if ((prop->string[0] == 'n') || (prop->string[0] == 'N'))
+				gSettings.GraphicsInjector=FALSE;
+			else
+				gSettings.GraphicsInjector=TRUE;      
+		}
+    
+ 		prop = GetProperty(dict,"DeviceProperties");
+		if(prop)
+		{
+      cDeviceProperties = AllocateZeroPool(AsciiStrLen(prop->string)+1);
+      AsciiStrCpy(cDeviceProperties, prop->string);
+		}
+		prop = GetProperty(dict,"VRAM");
+		if(prop)
+		{
+			AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+			gSettings.VRAM = (UINT64)StrDecimalToUintn((CHAR16*)&UStr[0]) << 20;  //bytes
+		}
+    
  		prop = GetProperty(dict,"LoadVBios");
 		if(prop)
 		{
-//			AsciiStrCpy(gSettings.LoadVBios, prop->string);
       if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
-				gSettings.LoadVBios=TRUE;
-			else
-				gSettings.LoadVBios=FALSE;
+				gSettings.LoadVBios = TRUE;
+		}	else
+				gSettings.LoadVBios = FALSE;
       
-		}
+
  		prop = GetProperty(dict,"VideoPorts");
 		if(prop)
 		{
@@ -234,19 +258,18 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       AsciiStrToUnicodeStr(prop->string, gSettings.FBName);
 		}
     
-    
-		//gSettings.TimeOut - will be in refit.config
-/*		prop = GetProperty(dict,"TimeOut");
+		prop = GetProperty(dict,"NVCAP");
 		if(prop)
-		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.TimeOut);
-			gTimeoutSec = (UINT16)StrDecimalToUintn(gSettings.TimeOut);	
-		} else {
-			gTimeoutSec = 5;
-			StrCpy(gSettings.TimeOut, L"5");
-		}
-*/		
-
+		{      
+      hex2bin(prop->string, (UINT8*)&gSettings.NVCAP[0], 20);
+		} 
+		prop = GetProperty(dict,"display-cfg");
+		if(prop)
+		{      
+      hex2bin(prop->string, (UINT8*)&gSettings.Dcfg[0], 8);
+		} 
+    
+    
 		//*** ACPI ***//
 		prop = GetProperty(dict,"ResetAddress");
 		if(prop)
@@ -312,10 +335,9 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 		{
 			AsciiStrToUnicodeStr(prop->string, gSettings.CustomUuid);
       Status = StrToGuid(gSettings.CustomUuid, &gUuid);
-      if (EFI_ERROR(Status)) {
-        CopyMem((VOID*)&gUuid, (VOID*)&gRandomUUID, 16);
-      }
-		}
+      //else value from SMBIOS
+    }
+
 		prop = GetProperty(dict,"BoardManufacturer");
 		if(prop)
 		{
@@ -355,27 +377,6 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 			else
 				gSettings.smartUPS=FALSE;
 		}
-/*		prop = GetProperty(dict,"ShowLegacyBoot");
-		if(prop)
-		{
-			if ((prop->string[0] == "y") || (prop->string[0] == "Y"))
-				gSettings.ShowLegacyBoot=TRUE;
-			else
-				gSettings.ShowLegacyBoot=FALSE;
-		}
-    
-		
-		prop = GetProperty(dict,"MemorySerialNumber");
-		if(prop)
-		{
-			AsciiStrCpy(gSettings.MemorySerialNumber);
-		}
-		prop = GetProperty(dict,"MemoryPartNumber");
-		if(prop)
-		{
-			AsciiStrCpy(gSettings.MemoryPartNumber);
-		}
- */
 		prop = GetProperty(dict,"CpuFrequencyMHz");
 		if(prop)
 		{

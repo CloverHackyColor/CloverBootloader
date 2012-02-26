@@ -884,7 +884,7 @@ typedef struct {
 	UINT8                 *io;
 	UINT8                 *rom;
 	UINT32                rom_size;
-	UINT32                vram_size;
+	UINT64                vram_size;
 	const CHAR8           *cfg_name;
 	UINT8                 ports;
 	UINT32                flags;
