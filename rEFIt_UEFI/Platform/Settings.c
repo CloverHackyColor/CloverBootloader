@@ -148,8 +148,8 @@ EFI_STATUS GetNVRAMSettings(IN EFI_FILE *RootDir, CHAR16* NVRAMPlistPath)
 						if(prop)
 						{
 							MsgLog("UUID property type=%d string=%a\n", prop->type, prop->string);
-              AsciiStrToUnicodeStr(prop->string, gSelectedUUID);
-              //AsciiStrCpy(gSelectedUUID, prop->string);
+              //AsciiStrToUnicodeStr(prop->string, gSelectedUUID);
+              AsciiStrCpy(gSelectedUUID, prop->string);
 						}									
 					}
 				}				

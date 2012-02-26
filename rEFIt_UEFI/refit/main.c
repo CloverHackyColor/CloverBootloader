@@ -1212,7 +1212,7 @@ REFIT_MENU_ENTRY* FindDefaultEntry(VOID)
         if (!VolumeUUID) {
           continue;
         }
-        if (StrStr(VolumeUUID, gSelectedUUID))
+        if (StrStr(VolumeUUID, PoolPrint(L"%a", gSelectedUUID)))
         {
           return EntryFromVolume(Volume2);
         }        
