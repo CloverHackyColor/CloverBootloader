@@ -591,11 +591,11 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
             }
         }
         
-    } else {
+    } /*else {
 #if REFIT_DEBUG > 0
         CheckError(Status, L"while reading boot sector");
 #endif
-    }
+    } */
 }
 
 static VOID ScanVolumeDefaultIcon(IN OUT REFIT_VOLUME *Volume)

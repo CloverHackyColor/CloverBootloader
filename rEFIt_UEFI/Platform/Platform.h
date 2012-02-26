@@ -200,7 +200,7 @@ typedef struct {
 //	CHAR8	Uuid[64];
 //	CHAR8	SKUNumber[64];
 	CHAR8	FamilyName[64];
-  CHAR16 OEMProduct[64];
+  CHAR8 OEMProduct[64];
 	// SMBIOS TYPE2
 	CHAR8	BoardManufactureName[64];
 	CHAR8	BoardSerialNumber[64];
@@ -393,7 +393,6 @@ extern EFI_BOOT_SERVICES*       gBS;
 extern SETTINGS_DATA            gSettings;
 extern CPU_STRUCTURE            gCPUStructure;
 extern EFI_GUID                 gUuid;
-extern CHAR8                    gOEMProduct[];  //original name from SMBIOS
 extern EFI_EDID_DISCOVERED_PROTOCOL*            EdidDiscovered;
 extern CHAR8*                   gDeviceProperties;
 //extern UINT16                   gResetAddress;

@@ -345,6 +345,7 @@ VOID PatchTableType0()
 
 VOID GetTableType1()
 {
+  CHAR8* s;
   // System Information
   //
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_SYSTEM_INFORMATION, 0);
@@ -354,7 +355,9 @@ VOID GetTableType1()
 	}
 		
 	CopyMem(&gUuid, (VOID*)&SmbiosTable.Type1->Uuid, 16);
-	AsciiStrToUnicodeStr(GetSmbiosString(SmbiosTable, SmbiosTable.Type1->ProductName), gSettings.OEMProduct);
+	//AsciiStrToUnicodeStr(GetSmbiosString(SmbiosTable, SmbiosTable.Type1->ProductName), gSettings.OEMProduct);
+  s = GetSmbiosString(SmbiosTable, SmbiosTable.Type1->ProductName);
+  CopyMem(gSettings.OEMProduct, s, iStrLen(s, 64));
 	//Check the validity
 	if ((gUuid.Data3 & 0xF000) == 0) {
 		CopyMem(&gUuid, (VOID*)&gEfiSmbiosTableGuid, 16); //gPlatformUuid

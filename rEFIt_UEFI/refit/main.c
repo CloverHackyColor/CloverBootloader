@@ -314,12 +314,14 @@ static EFI_STATUS StartEFIImage(IN EFI_DEVICE_PATH *DevicePath,
 //
 // EFI OS loader functions
 //
+EG_PIXEL DarkBackgroundPixel  = { 0x0, 0x0, 0x0, 0 };
 
 static VOID StartLoader(IN LOADER_ENTRY *Entry)
 {
   EFI_STATUS              Status;
-  
+  egClearScreen(&DarkBackgroundPixel);
   BeginExternalScreen(Entry->UseGraphicsMode, L"Booting OS");
+  
 //  PauseForKey(L"SetPrivateVarProto");
 //  SetPrivateVarProto();
 //  PauseForKey(L"PatchSmbios");
@@ -1169,15 +1171,57 @@ static VOID LoadDrivers(VOID)
 	DBG("Drivers connected\n");
 }
 
-REFIT_MENU_ENTRY  * FindDefaultEntry(VOID)
+REFIT_MENU_ENTRY* EntryFromVolume(REFIT_VOLUME    *Volume)
 {
-  /*
-   search volume with name in gSettings.DefaultBoot
-   search nvram.plist on the volume
-   GetNVRAMSettings
-   search volume with gSelectedUUID
-   search mainmenu.entry with Entry->VolName == Volume->VolName
-   */
+  LOADER_ENTRY    *Entry;
+  UINTN         i;
+  for (i = 0; i < MainMenu.EntryCount && MainMenu.Entries[i]->Row == 0; i++){
+    Entry = (LOADER_ENTRY*)MainMenu.Entries[i];
+    if (!Entry->Volume) {
+      continue;
+    }
+    if (Entry->Volume->DeviceHandle == Volume->DeviceHandle) {
+      return (REFIT_MENU_ENTRY*)Entry;
+    }
+  }
+  return NULL;
+}
+
+REFIT_MENU_ENTRY* FindDefaultEntry(VOID)
+{
+  EFI_STATUS      Status;
+  UINTN           VolumeIndex, Index2;
+  REFIT_VOLUME    *Volume, *Volume2;
+  CHAR16*          VolumeUUID;
+  CHAR16*          buf;
+//   search volume with name in gSettings.DefaultBoot
+  for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
+    Volume = Volumes[VolumeIndex];
+    if (StriCmp(Volume->VolName, gSettings.DefaultBoot)) {
+      continue;
+    }
+//   search nvram.plist on the volume    
+    Status = GetNVRAMSettings(Volume->RootDir, L"nvram.plist");
+    if (!EFI_ERROR(Status)) {
+//   search volume with gSelectedUUID
+      for (Index2 = 0; Index2 < VolumesCount; Index2++) {
+        Volume2 = Volumes[Index2];
+      //  UnicodeStrToAsciiStr(DevicePathToStr(Volume2->DevicePath), buf);
+        buf = DevicePathToStr(Volume2->DevicePath);
+        VolumeUUID = StrStr(buf, L"GPT");
+        if (!VolumeUUID) {
+          continue;
+        }
+        if (StrStr(VolumeUUID, gSelectedUUID))
+        {
+          return EntryFromVolume(Volume2);
+        }        
+      }
+    }
+    //nvram is not found or it points to wrong volume but DefaultBoot found
+    return EntryFromVolume(Volume);
+//   search mainmenu.entry with Entry->VolName == Volume->VolName
+  }
   return NULL;
 }
 
@@ -1210,6 +1254,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	
   InitializeConsoleSim();
 	InitBooterLog();
+  DBG("Starting rEFIt...\n");
   InitScreen();
   
   Status = InitRefitLib(ImageHandle);
@@ -1228,10 +1273,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   // further bootstrap (now with config available)
   //  SetupScreen();
-  //  PauseForKey(L"SetupScreen ok");
   
   LoadDrivers();
-  //  PauseForKey(L"LoadDrivers ok");
   
   //Now we have to reinit handles
   Status = ReinitSelfLib();
@@ -1239,17 +1282,15 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     DBG(" %r", Status);
     PauseForKey(L"Error reinit refit\n");
     return Status;
-  }/* else {
-    PauseForKey(L"Reinit refitLib OK\n");
-    }*/
+  }
   
   ScanVolumes();
-  //  PauseForKey(L"ScanVolumes ok");
   
   //setup properties
   SetGraphics();
   
   PrepatchSmbios();
+  DBG("running on %a\n", gSettings.OEMProduct);
   
   GetCPUProperties();
   
@@ -1258,7 +1299,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   SetPrivateVarProto();
   
   GetDefaultSettings();
-  //  PauseForKey(L"GetDefaultSettings ok");
   
   Size = 0;
   Status = gRS->GetVariable(L"boot-args",
@@ -1268,7 +1308,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	if (Status == EFI_BUFFER_TOO_SMALL) {
 		Buffer = (UINT8 *) AllocateAlignedPages (EFI_SIZE_TO_PAGES(Size), 16);		
 		if (!Buffer){
-			Print(L"Errors allocating kernel flags!\n");
+			DBG("Errors allocating kernel flags!\n");
  		} else {
 			Status = gRS->GetVariable (L"boot-args",
                                  &gEfiAppleBootGuid, NULL,
@@ -1294,8 +1334,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
   */
     }
-  
-  
+    
   // scan for loaders and tools, add then to the menu
   if (GlobalConfig.LegacyFirst){
     DBG("scan legacy first\n");
@@ -1307,6 +1346,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     ScanLegacy();
   }
   if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
+    DBG("scan tools\n");
     ScanTool();
   }
 
@@ -1315,13 +1355,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
     MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
     AddMenuEntry(&MainMenu, &MenuEntryAbout);
-    //    PauseForKey(L"menu About added ok");
   }
   
   if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
     MenuEntryOptions.Image = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
     AddMenuEntry(&MainMenu, &MenuEntryOptions);
-    //    PauseForKey(L"menu Options added ok");
   }  
   
   if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.EntryCount == 0) {
@@ -1329,7 +1367,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     AddMenuEntry(&MainMenu, &MenuEntryShutdown);
     MenuEntryReset.Image = BuiltinIcon(BUILTIN_ICON_FUNC_RESET);
     AddMenuEntry(&MainMenu, &MenuEntryReset);
-    //    PauseForKey(L"menu Reset/Shutdown added ok");
   }
   
   // assign shortcut keys
@@ -1338,7 +1375,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     
     // wait for user ACK when there were errors
   FinishTextScreen(FALSE);
-    //  PauseForKey(L"Enter main menu ok");  //--no more text
   DefaultEntry = FindDefaultEntry();  
     
   while (MainLoopRunning) {
@@ -1352,7 +1388,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       OptionsMenu();
       continue;
     }
-    
     
     // We don't allow exiting the main menu with the Escape key.
     if (MenuExit == MENU_EXIT_ESCAPE)
@@ -1372,10 +1407,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         MainLoopRunning = FALSE;   // just in case we get this far
         break;
         
-      case TAG_OPTIONS:    // About rEFIt
+      case TAG_OPTIONS:    // Options like KernelFlags, DSDTname etc.
         OptionsMenu();
         break;
-        
         
       case TAG_ABOUT:    // About rEFIt
         AboutRefit();

@@ -74,6 +74,22 @@ EFI_STATUS GetNVRAMSettings(IN EFI_FILE *RootDir, CHAR16* NVRAMPlistPath)
 		DBG("Error loading nvram.plist!\n");
 		return Status;
 	}
+  /* check again:
+	 fileInfo->EFI_TIME  ModificationTime;
+	 /// EFI Time Abstraction:
+	 ///  Year:       1900 - 9999
+	 ///  Month:      1 - 12
+	 ///  Day:        1 - 31
+	 ///  Hour:       0 - 23
+	 ///  Minute:     0 - 59
+	 ///  Second:     0 - 59
+	 ///  Nanosecond: 0 - 999,999,999
+	 ///  TimeZone:   -1440 to 1440 or 2047
+	 If we found nvram.plist at startVolume then we compare ModificationTimes, and use it if
+	 the file is more recent then loaded.
+   */	 
+  
+  
 	if(gNvramPtr)
 	{		
 		if(ParseXML((const CHAR8*)gNvramPtr, &dict) != EFI_SUCCESS)
@@ -132,8 +148,8 @@ EFI_STATUS GetNVRAMSettings(IN EFI_FILE *RootDir, CHAR16* NVRAMPlistPath)
 						if(prop)
 						{
 							MsgLog("UUID property type=%d string=%a\n", prop->type, prop->string);
-						//	AsciiStrToUnicodeStr(prop->string, gSelectedUUID);
-              AsciiStrCpy(gSelectedUUID, prop->string);
+              AsciiStrToUnicodeStr(prop->string, gSelectedUUID);
+              //AsciiStrCpy(gSelectedUUID, prop->string);
 						}									
 					}
 				}				
