@@ -576,7 +576,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 		card->fb, card->mmio, card->io, pci_config_read32(pci_dev, PCI_EXPANSION_ROM_BASE));
 	
 	card->posted = radeon_card_posted();
-	DBG("ATI card %s, ", card->posted ? "POSTed" : "non-POSTed");
+	DBG("ATI card %a, ", card->posted ? "POSTed" : "non-POSTed");
 	
 	get_vram_size();
 	
@@ -586,7 +586,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 	{
 		if (!load_vbios_file(pci_dev->vendor_id, pci_dev->device_id, pci_dev->subsys_id.subsys_id))
 		{
-			DBG("reading VBIOS from %s", card->posted ? "legacy space" : "PCI ROM");
+			DBG("reading VBIOS from %a", card->posted ? "legacy space" : "PCI ROM");
 			if (card->posted)
 				read_vbios(FALSE);
 			else
@@ -621,12 +621,12 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 //		card->ports = card_configs[card->info->cfg_name].ports;
 		
 		// which means one of the fb's or kNull
-		DBG("Framebuffer set to device's default: %s\n", card->cfg_name);
+		DBG("Framebuffer set to device's default: %a\n", card->cfg_name);
 	}
 	else
 	{
 		// else, use the fb name returned by AtiConfig.
-		DBG("(AtiConfig) Framebuffer set to: %s\n", card->cfg_name);
+		DBG("(AtiConfig) Framebuffer set to: %a\n", card->cfg_name);
 	}
 	
 	// Check AtiPorts key for nr of ports,
@@ -651,12 +651,12 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 //		card->ports = 2/1 ?; // set a min if 0 ports ?
 //		DBG("Nr of ports set to min: %d\n", card->ports);
 	
-	AsciiSPrint(name, 24, "ATY,%s", card->cfg_name);
+	AsciiSPrint(name, 24, "ATY,%a", card->cfg_name);
 	aty_name.type = kStr;
 	aty_name.size = AsciiStrLen(name);
 	aty_name.data = (UINT8 *)name;
 	
-	AsciiSPrint(name_parent, 24, "ATY,%sParent", card->cfg_name);
+	AsciiSPrint(name_parent, 24, "ATY,%aParent", card->cfg_name);
 	aty_nameparent.type = kStr;
 	aty_nameparent.size = AsciiStrLen(name_parent);
 	aty_nameparent.data = (UINT8 *)name_parent;
@@ -705,7 +705,7 @@ BOOLEAN setup_ati_devprop(pci_dt_t *ati_dev)
 	DBG(gDeviceProperties);
   DBG("\n");
 	
-	DBG("ATI %s %s %dMB (%s) [%04x:%04x] (subsys [%04x:%04x]):: %s\n",
+	DBG("ATI %a %a %dMB (%a) [%04x:%04x] (subsys [%04x:%04x]):: %a\n",
 			chip_family_name[card->info->chip_family], card->info->model_name,
 			(UINT32)(card->vram_size / (1024 * 1024)), card->cfg_name,
 			ati_dev->vendor_id, ati_dev->device_id,

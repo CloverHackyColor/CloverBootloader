@@ -100,7 +100,7 @@ DT__AddChild(Node *parent, const char *name)
             node++;
         }
     }
-    DPRINTF("DT__AddChild(0x%x, '%s')\n", parent, name);
+    DPRINTF("DT__AddChild(0x%x, '%a')\n", parent, name);
     node = freeNodes;
     freeNodes = node->next;
     DPRINTF("Got free node 0x%x\n", node);
@@ -262,7 +262,7 @@ DT__GetName(Node *node)
     DPRINTF("DT__GetName(0x%x)\n", node);
     DPRINTF("Node properties = 0x%x\n", node->properties);
     for (prop = node->properties; prop; prop = prop->next) {
-        DPRINTF("Prop '%s'\n", prop->name);
+        DPRINTF("Prop '%a'\n", prop->name);
         if (AsciiStrCmp(prop->name, "name") == 0) {
             return prop->value;
         }
@@ -279,7 +279,7 @@ DT__FindNode(const char *path, BOOLEAN createIfMissing)
     char *bp;
    INTN i;
 
-    DPRINTF("DT__FindNode('%s', %d)\n", path, createIfMissing);
+    DPRINTF("DT__FindNode('%a', %d)\n", path, createIfMissing);
     
     // Start at root
     node = rootNode;
@@ -296,7 +296,7 @@ DT__FindNode(const char *path, BOOLEAN createIfMissing)
             // last path entry
             break;
         }
-        DPRINTF("Node '%s'\n", nameBuf);
+        DPRINTF("Node '%a'\n", nameBuf);
 
         for (child = node->children; child != 0; child = child->next) {
             DPRINTF("Child 0x%x\n", child);
@@ -329,7 +329,7 @@ DT__PrintNode(Node *node, INTN level)
     while (level--) *cp++ = ' ';
     *cp = '\0';
 
-    verbose("%s===Node===\n", spaces);
+    verbose("%a===Node===\n", spaces);
     for (prop = node->properties; prop; prop = prop->next) {
         char c = *((char *)prop->value);
         if (prop->length < 64 && (
@@ -337,12 +337,12 @@ DT__PrintNode(Node *node, INTN level)
             (c >= '0' && c <= '9') ||
             (c >= 'a' && c <= 'z') ||
             (c >= 'A' && c <= 'Z') || c == '_')) {
-            verbose("%s Property '%s' [%d] = '%s'\n", spaces, prop->name, prop->length, prop->value);
+            verbose("%a Property '%a' [%d] = '%a'\n", spaces, prop->name, prop->length, prop->value);
         } else {
-            verbose("%s Property '%s' [%d] = (data)\n", spaces, prop->name, prop->length);
+            verbose("%a Property '%a' [%d] = (data)\n", spaces, prop->name, prop->length);
         }
     }
-    verbose("%s==========\n", spaces);
+    verbose("%a==========\n", spaces);
 }
 
 static void
@@ -374,7 +374,7 @@ DT__PrintFlattenedNode(DTEntry entry, INTN level)
     while (level--) *cp++ = ' ';
     *cp = '\0';
 
-    verbose("%s===Entry %p===\n", spaces, entry);
+    verbose("%a===Entry %p===\n", spaces, entry);
     if (kSuccess != DTCreatePropertyIterator(entry, &propIter)) {
         verbose("Couldn't create property iterator\n");
         return;
@@ -382,11 +382,11 @@ DT__PrintFlattenedNode(DTEntry entry, INTN level)
     while( kSuccess == DTIterateProperties( propIter, &name)) {
         if(  kSuccess != DTGetProperty( entry, name, &prop, &propSize ))
             continue;
-        verbose("%s Property %s = %s\n", spaces, name, prop);
+        verbose("%a Property %a = %a\n", spaces, name, prop);
     }
     DTDisposePropertyIterator(propIter);
 
-    verbose("%s==========\n", spaces);
+    verbose("%a==========\n", spaces);
 }
 
 static void
@@ -470,7 +470,7 @@ main(int argc, char **argv)
         while( kSuccess == DTIterateProperties( propIter, &name)) {
             if(  kSuccess != DTGetProperty( dtEntry, name, &prop, &propSize ))
                 continue;
-            printf(" Property %s = %s\n", name, prop);
+            printf(" Property %a = %a\n", name, prop);
         }
         DTDisposePropertyIterator(propIter);
         printf("========\n");
@@ -489,7 +489,7 @@ main(int argc, char **argv)
         while( kSuccess == DTIterateProperties( propIter, &name)) {
             if(  kSuccess != DTGetProperty( dtEntry, name, &prop, &propSize ))
                 continue;
-            printf(" Property %s = %s\n", name, prop);
+            printf(" Property %a = %a\n", name, prop);
         }
         DTDisposePropertyIterator(propIter);
         printf("========\n");

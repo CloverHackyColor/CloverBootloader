@@ -1063,7 +1063,7 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 		
 		if (AsciiStrCmp(sig, "DEV_REC"))
 		{
-			DBG("Bad Display Configuration Block signature (%s)\n", sig);
+			DBG("Bad Display Configuration Block signature (%a)\n", sig);
 			return PATCH_ROM_FAILED;
 		}
 	}
@@ -1348,7 +1348,7 @@ BOOLEAN hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, INT32 len)
 	for (i = 0; i < len; i++)
 	{
 		if (!IsHexDigit(p[0]) || !IsHexDigit(p[1])) {
-			DBG("[ERROR] bin2hex '%s' syntax error\n", hex);
+			DBG("[ERROR] bin2hex '%a' syntax error\n", hex);
 			return -2;
 		}
 		buf[0] = *p++;
@@ -1528,7 +1528,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	}
 
 	
-	//AsciiSPrint(biosVersion, 32, "%s", version_str);
+	//AsciiSPrint(biosVersion, 32, "%a", version_str);
 	//AsciiSPrint(kNVCAP, 12, "NVCAP_%04x", nvda_dev->device_id);
 	
 	
