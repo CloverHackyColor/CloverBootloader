@@ -22,6 +22,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include "Hotkey.h"
 #include "HwErrRecSupport.h"
 //#include "CpuDxe.h"
+#include "Version.h"
 
 ///
 /// BDS arch protocol instance initial value.
@@ -313,8 +314,12 @@ BdsEntry (
   FirmwareVendor = (CHAR16 *)PcdGetPtr (PcdFirmwareVendor);
   gST->FirmwareVendor = AllocateRuntimeCopyPool (StrSize (FirmwareVendor), FirmwareVendor);
   ASSERT (gST->FirmwareVendor != NULL);
+#ifdef FIRMWARE_REVISION
+  gST->FirmwareRevision = FIRMWARE_REVISION;
+#else  
   gST->FirmwareRevision = PcdGet32 (PcdFirmwareRevision);
-
+#endif
+  
   //
   // Fixup Tasble CRC after we updated Firmware Vendor and Revision
   //

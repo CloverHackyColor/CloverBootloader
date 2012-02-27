@@ -562,6 +562,7 @@ VOID GetTableType4()
 //	UnicodeSPrint(gSettings.BusSpeed, 10, L"%d", gCPUStructure.ExternalClock);
   gSettings.BusSpeed = gCPUStructure.ExternalClock; //why duplicate??
 	gCPUStructure.CurrentSpeed = SmbiosTable.Type4->CurrentSpeed;
+  gCPUStructure.MaxSpeed = SmbiosTable.Type4->MaxSpeed;
 //	UnicodeSPrint(gSettings.CpuFreqMHz, 10, L"%d", gCPUStructure.CurrentSpeed);
 	gSettings.CpuFreqMHz = gCPUStructure.CurrentSpeed; 
 	return;

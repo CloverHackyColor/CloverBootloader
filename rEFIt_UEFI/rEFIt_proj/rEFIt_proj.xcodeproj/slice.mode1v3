@@ -216,10 +216,10 @@
 						<key>_historyCapacity</key>
 						<integer>0</integer>
 						<key>bookmark</key>
-						<string>12AD9D3F14FA84AE00E76BC9</string>
+						<string>12AD9D5614FB2BC500E76BC9</string>
 						<key>history</key>
 						<array>
-							<string>12AD9D2314FA5F5600E76BC9</string>
+							<string>12AD9D3F14FA84AE00E76BC9</string>
 						</array>
 					</dict>
 					<key>SplitCount</key>
@@ -348,14 +348,12 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>DataHubCpu.c</string>
+								<string>SmBios.h</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -363,11 +361,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>DataHubCpu.c</string>
+										<string>SmBios.h</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>12AD9D3E14FA84AE00E76BC9</string>
+										<string>12AD9D5314FB2BC500E76BC9</string>
 										<key>history</key>
 										<array>
 											<string>1202124114266E13004B7B93</string>
@@ -379,7 +377,6 @@
 											<string>12BE9A8514C0658D00996F8D</string>
 											<string>12D6319014D03F0200E5898F</string>
 											<string>12D6324D14D2DF8F00E5898F</string>
-											<string>12AF710814D40A1700502DC7</string>
 											<string>1277965314D5E22700B8F090</string>
 											<string>1277965414D5E22700B8F090</string>
 											<string>123D85FC14D94F01000AF00B</string>
@@ -406,7 +403,6 @@
 											<string>12D37B5514F6B39D0091D8FC</string>
 											<string>125F2B1D14F79B7A009F94A9</string>
 											<string>125F2B1E14F79B7A009F94A9</string>
-											<string>125F2B1F14F79B7A009F94A9</string>
 											<string>127C222C14F7F5DA00CFA796</string>
 											<string>12D2CE3414F8072000004FFD</string>
 											<string>12213F1314F8EC050005E10E</string>
@@ -428,7 +424,9 @@
 											<string>12AD9D2014FA5F5600E76BC9</string>
 											<string>12AD9D2A14FA6E6300E76BC9</string>
 											<string>12AD9D3C14FA84AE00E76BC9</string>
-											<string>12AD9D3D14FA84AE00E76BC9</string>
+											<string>12AD9D5014FB2BC500E76BC9</string>
+											<string>12AD9D5114FB2BC500E76BC9</string>
+											<string>12AD9D5214FB2BC500E76BC9</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -440,16 +438,18 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {719, 380}}</string>
+								<string>{{0, 0}, {719, 372}}</string>
 								<key>RubberWindowFrame</key>
 								<string>251 120 927 658 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>380pt</string>
+							<string>372pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -460,14 +460,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 385}, {719, 232}}</string>
+								<string>{{0, 377}, {719, 240}}</string>
 								<key>RubberWindowFrame</key>
 								<string>251 120 927 658 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>232pt</string>
+							<string>240pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -486,9 +486,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>12AD9D2D14FA6E6300E76BC9</string>
+				<string>12AD9D5414FB2BC500E76BC9</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>12AD9D2E14FA6E6300E76BC9</string>
+				<string>12AD9D5514FB2BC500E76BC9</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -709,7 +709,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>122336AD13377DFD0033F008</string>
-				<string>12AD9D3014FA6E6300E76BC9</string>
+				<string>12AD9D4714FB283900E76BC9</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -849,7 +849,7 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>DataHubCpu.c</string>
+										<string>smbios.c</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -858,7 +858,7 @@
 										<key>Frame</key>
 										<string>{{0, 0}, {884, 424}}</string>
 										<key>RubberWindowFrame</key>
-										<string>396 108 884 670 0 0 1280 778 </string>
+										<string>395 108 884 670 0 0 1280 778 </string>
 									</dict>
 									<key>Module</key>
 									<string>PBXNavigatorGroup</string>
@@ -882,7 +882,7 @@
 								<key>Frame</key>
 								<string>{{0, 429}, {884, 200}}</string>
 								<key>RubberWindowFrame</key>
-								<string>396 108 884 670 0 0 1280 778 </string>
+								<string>395 108 884 670 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXProjectFindModule</string>
@@ -905,13 +905,13 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>12AD9D3114FA6E6300E76BC9</string>
-				<string>12AD9D3214FA6E6300E76BC9</string>
+				<string>12AD9D4B14FB283900E76BC9</string>
+				<string>12AD9D4C14FB283900E76BC9</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>
 			<key>WindowString</key>
-			<string>396 108 884 670 0 0 1280 778 </string>
+			<string>395 108 884 670 0 0 1280 778 </string>
 			<key>WindowToolGUID</key>
 			<string>1C530D57069F1CE1000CFCEE</string>
 			<key>WindowToolIsVisible</key>

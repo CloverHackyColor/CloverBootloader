@@ -501,7 +501,7 @@ VOID GetCPUProperties (VOID)
 #endif
   BusSpeed = (UINT32)DivU64x32(gCPUStructure.FSBFrequency, kilo); //Hz -> kHz
      //now check if SMBIOS has ExternalClock = 4xBusSpeed
-  if (gCPUStructure.ExternalClock > BusSpeed * 3) {
+  if ((BusSpeed > 50*Mega) && (gCPUStructure.ExternalClock > BusSpeed * 3)) {
     gCPUStructure.ExternalClock = BusSpeed;
   } else {
     gCPUStructure.FSBFrequency = MultU64x32(gCPUStructure.ExternalClock, kilo); //kHz -> Hz
@@ -578,21 +578,22 @@ VOID GetCPUProperties (VOID)
 		}
 
 		DBG("qpimult %d\n", qpimult);
-		qpibusspeed = qpimult * 2 * gCPUStructure.ExternalClock;
-		DBG("qpibusspeed %d\n", qpibusspeed);
-		gCPUStructure.ProcessorInterconnectSpeed = (UINT16)DivU64x32(qpibusspeed, kilo);
+		qpibusspeed = qpimult * 2 * gCPUStructure.ExternalClock; //kHz
+		DBG("qpibusspeed %dkHz\n", qpibusspeed);
+		gCPUStructure.ProcessorInterconnectSpeed = DivU64x32(qpibusspeed, kilo); //kHz->MHz
 
 	} else {
-		gCPUStructure.ProcessorInterconnectSpeed = (UINT16)DivU64x32(gCPUStructure.ExternalClock << 2, kilo);
+		gCPUStructure.ProcessorInterconnectSpeed = DivU64x32(gCPUStructure.ExternalClock << 2, kilo); //kHz->MHz
 	}
 	
 	DBG("Vendor/Model/Stepping: 0x%x/0x%x/0x%x\n", gCPUStructure.Vendor, gCPUStructure.Model, gCPUStructure.Stepping);
 	DBG("Family/ExtFamily: 0x%x/0x%x\n", gCPUStructure.Family, gCPUStructure.Extfamily);
 	DBG("MaxDiv/MinDiv: 0x%x/0x%x\n", gCPUStructure.MaxRatio, gCPUStructure.MinRatio);
+  DBG("Turbo1: %d, Turbo4: %d\n", gCPUStructure.Turbo1, gCPUStructure.Turbo4);
 	DBG("Features: 0x%08x\n",gCPUStructure.Features);
 	DBG("Threads: %d\n",gCPUStructure.Threads);
 	DBG("Cores: %d\n",gCPUStructure.Cores);
-	DBG("FSB: %d MHz\n",gCPUStructure.ExternalClock);
+	DBG("FSB: %d MHz\n",gCPUStructure.ExternalClock * kilo);
 	DBG("CPU: %d MHz\n",gCPUStructure.MaxSpeed);
 	DBG("TSC: %d MHz\n",gCPUStructure.CurrentSpeed);
 	DBG("PIS: %d MHz\n",gCPUStructure.ProcessorInterconnectSpeed);
