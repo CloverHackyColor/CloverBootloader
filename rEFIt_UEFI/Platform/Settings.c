@@ -353,6 +353,18 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 		{
 			AsciiStrCpy(gSettings.BoardNumber, prop->string);
 		}
+    
+    prop = GetProperty(dict,"Mobile");
+		if(prop)
+		{
+      //			AsciiStrCpy(gSettings.LoadVBios, prop->string);
+      if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+				gSettings.Mobile = TRUE;
+    }
+			else
+				gSettings.Mobile = gMobile;  //default    
+		
+    
 		prop = GetProperty(dict,"LocationInChassis");
 		if(prop)
 		{

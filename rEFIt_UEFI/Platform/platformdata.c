@@ -168,8 +168,8 @@ VOID GetDefaultSettings(VOID)
   
   Model             = GetDefaultModel();
   gSettings.CpuType	= GetAdvancedCpuType();
-  gSettings.BusSpeed = DivU64x32(gCPUStructure.FSBFrequency, kilo);
-  gSettings.CpuFreqMHz = DivU64x32(gCPUStructure.CPUFrequency, Mega);
+  gSettings.BusSpeed = DivU64x32(gCPUStructure.FSBFrequency, kilo); //Hz -> kHz
+  gSettings.CpuFreqMHz = DivU64x32(gCPUStructure.CPUFrequency, Mega); //Hz ->MHz
   
 	AsciiStrCpy(gSettings.VendorName,             BiosVendor);
   AsciiStrCpy(gSettings.RomVersion,             AppleFirmwareVersion[Model]);

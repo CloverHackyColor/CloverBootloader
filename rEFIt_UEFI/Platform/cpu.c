@@ -306,7 +306,7 @@ VOID GetCPUProperties (VOID)
     {
       case CPU_MODEL_NEHALEM: // Intel Core i7 LGA1366 (45nm)
       case CPU_MODEL_FIELDS: // Intel Core i5, i7 LGA1156 (45nm)
-      case CPU_MODEL_DALES:
+      case CPU_MODEL_CLARKDALE: // Intel Core i3, i5, i7 LGA1156 (32nm) 
       case CPU_MODEL_NEHALEM_EX:	
       case CPU_MODEL_JAKETOWN:
       case CPU_MODEL_SANDY_BRIDGE:					
@@ -315,7 +315,8 @@ VOID GetCPUProperties (VOID)
         gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 31, 16);
         gCPUStructure.Threads = (UINT8)bitfield((UINT32)msr, 15,  0);
       } break;
-      case CPU_MODEL_CLARKDALE: // Intel Core i3, i5, i7 LGA1156 (32nm)
+        
+      case CPU_MODEL_DALES:
       case CPU_MODEL_WESTMERE: // Intel Core i7 LGA1366 (32nm) 6 Core
       case CPU_MODEL_WESTMERE_EX:
         
@@ -327,7 +328,7 @@ VOID GetCPUProperties (VOID)
       }
         
       default:		
-        gCPUStructure.Cores   = (UINT8)(gCPUStructure.CoresPerPackage & 0xff);
+        gCPUStructure.Cores   = (UINT8)(bitfield(gCPUStructure.CPUID[CPUID_1][EBX], 23, 16));
         gCPUStructure.Threads = (UINT8)(gCPUStructure.LogicalPerPackage & 0xff);
         break;
     }    
@@ -335,11 +336,6 @@ VOID GetCPUProperties (VOID)
 	if (gCPUStructure.Cores == 0) {
       gCPUStructure.Cores   = (UINT8)(gCPUStructure.CoresPerPackage & 0xff);
       gCPUStructure.Threads = (UINT8)(gCPUStructure.LogicalPerPackage & 0xff);
-	}
-  //still zero? Correct!
-	if (gCPUStructure.Cores == 0) {
-      gCPUStructure.Cores = 1;
-      gCPUStructure.Threads = 1;
 	}
 		
 	/* get BrandString (if supported) */
@@ -593,8 +589,8 @@ VOID GetCPUProperties (VOID)
 	DBG("Features: 0x%08x\n",gCPUStructure.Features);
 	DBG("Threads: %d\n",gCPUStructure.Threads);
 	DBG("Cores: %d\n",gCPUStructure.Cores);
-	DBG("FSB: %d MHz\n",gCPUStructure.ExternalClock * kilo);
-	DBG("CPU: %d MHz\n",gCPUStructure.MaxSpeed);
+	DBG("FSB: %d MHz\n",gCPUStructure.ExternalClock / kilo);
+	DBG("CPU: %d MHz\n",gCPUStructure.CPUFrequency / Mega);
 	DBG("TSC: %d MHz\n",gCPUStructure.CurrentSpeed);
 	DBG("PIS: %d MHz\n",gCPUStructure.ProcessorInterconnectSpeed);
 #if DEBUG_PCI

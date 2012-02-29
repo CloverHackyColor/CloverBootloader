@@ -77,6 +77,9 @@ static struct gma_gpu_t KnownGPUS[] = {
 //	{ 0x80862A13, "GMAX3100"		},
 	{ 0x80862A42, "GMAX3100"		},
 //	{ 0x80862A43, "GMAX3100"		},
+  { 0x80860044, "HD2000"  },
+  { 0x80860046, "HD2000"  },
+  { 0x80860126, "HD3000"  },
 };
 
 CHAR8 *get_gma_model(UINT32 id) {
@@ -133,14 +136,19 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x2592:
     case 0x27A2:
     case 0x27AE:
+    case 0x0126:  
       devprop_add_value(device, "AAPL,HasPanel", reg_TRUE, 4);
       devprop_add_value(device, "built-in", &BuiltIn, 1);
       break;
     case 0x2772:
+    case 0x0044:  
+    case 0x0046:  
     case 0xA002:  
       devprop_add_value(device, "built-in", &BuiltIn, 1);
       break;
     case 0x2A02:
+    case 0x2A12:
+    case 0x2A42:
       devprop_add_value(device, "AAPL,HasPanel", GMAX3100_vals[0], 4);
       devprop_add_value(device, "AAPL,SelfRefreshSupported", GMAX3100_vals[1], 4);
       devprop_add_value(device, "AAPL,aux-power-connected", GMAX3100_vals[2], 4);
@@ -178,7 +186,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 	CopyMem(gDeviceProperties, (VOID*)devprop_generate_string(string), string->length * 2);
 	DBG(gDeviceProperties);
   DBG("\n");
-  DBG("model len=%d\n", sizeof("model"));
+//  DBG("model len=%d\n", sizeof("model"));
 #if DEBUG_GMA == 2  
 	gBS->Stall(5000000);
 #endif  

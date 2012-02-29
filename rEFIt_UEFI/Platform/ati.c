@@ -291,7 +291,7 @@ BOOLEAN load_vbios_file(UINT16 vendor_id, UINT16 device_id, UINT32 subsys_id)
 	if (!gSettings.LoadVBios)
 		return FALSE;
 	
-	UnicodeSPrint(FileName, 24, L"\\EFI\\device\\%04x_%04x_%08x.rom", vendor_id, device_id, subsys_id);
+	UnicodeSPrint(FileName, 24, L"\\EFI\\device\\%04x_%04x.rom", vendor_id, device_id, subsys_id);
 	if (!FileExists(SelfRootDir, FileName)){
     DBG("ATI ROM not found \n");
 		return FALSE;
