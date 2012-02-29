@@ -22,7 +22,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include "Hotkey.h"
 #include "HwErrRecSupport.h"
 //#include "CpuDxe.h"
-#include "Version.h"
+#include "../Version.h"
 
 ///
 /// BDS arch protocol instance initial value.
@@ -315,7 +315,7 @@ BdsEntry (
   gST->FirmwareVendor = AllocateRuntimeCopyPool (StrSize (FirmwareVendor), FirmwareVendor);
   ASSERT (gST->FirmwareVendor != NULL);
 #ifdef FIRMWARE_REVISION
-  gST->FirmwareRevision = FIRMWARE_REVISION;
+  gST->FirmwareRevision = StrDecimalToUintn(FIRMWARE_REVISION);
 #else  
   gST->FirmwareRevision = PcdGet32 (PcdFirmwareRevision);
 #endif

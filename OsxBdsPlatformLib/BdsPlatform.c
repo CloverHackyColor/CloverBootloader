@@ -26,6 +26,7 @@ Abstract:
 #include "AcpiTable.h"
 
 #define IS_PCI_ISA_PDECODE(_p)        IS_CLASS3 (_p, PCI_CLASS_BRIDGE, PCI_CLASS_BRIDGE_ISA_PDECODE, 0)
+#define PCI_IF_XHCI 0x30
 
 extern BOOLEAN  gConnectAllHappened;
 extern USB_CLASS_FORMAT_DEVICE_PATH gUsbClassKeyboardDevicePath;
@@ -341,7 +342,8 @@ Returns:
               //
               Command = 0;
               Status = PciIo->Pci.Write (PciIo, EfiPciIoWidthUint16, 0xC0, 1, &Command);
-            } else if (PCI_IF_EHCI == Class[0]) {
+            } else if ((PCI_IF_EHCI == Class[0]) ||
+                       (PCI_IF_XHCI == Class[0])) {
               //
               // Found the EHCI, then disable the legacy support
               //
