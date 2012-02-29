@@ -182,7 +182,7 @@ INF  Clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
 INF  RuleOverride=BINARY FatBinPkg/EnhancedFatDxe/Fat.inf
 
 FILE FREEFORM = PCD(gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdLogoFile) {
-	SECTION RAW = Clover/Logo/Logo_CloverEFI.bmp
+	SECTION RAW = Clover/Logo/Logo.bmp
   }
 
 [Rule.Common.SEC]
