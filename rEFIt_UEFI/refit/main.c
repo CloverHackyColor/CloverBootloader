@@ -696,7 +696,7 @@ static VOID ScanLoader(VOID)
         if (FileExists(Volume->RootDir, FileName)) {
        //     Print(L"  - Microsoft boot menu found\n");
             Volume->BootType = BOOTING_BY_EFI;
-            AddLoaderEntry(L" ", L"Microsoft boot menu", Volume);
+            AddLoaderEntry(FileName, L"Microsoft EFI boot menu", Volume);
         }
         
         // scan the root directory for EFI executables
@@ -1071,7 +1071,7 @@ static LOADER_ENTRY * AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle
     Entry->me.ShortcutLetter = ShortcutLetter;
     Entry->me.Image = Image;
     Entry->LoaderPath = EfiStrDuplicate(LoaderPath);
-    Entry->DevicePath = FileDevicePath(SelfLoadedImage->DeviceHandle, Entry->LoaderPath);
+    Entry->DevicePath = FileDevicePath(SelfDeviceHandle, Entry->LoaderPath);
     Entry->UseGraphicsMode = UseGraphicsMode;
     
     AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
@@ -1091,8 +1091,8 @@ static VOID ScanTool(VOID)
     
     // look for the EFI shell
     if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_SHELL)) {
-        UnicodeSPrint(FileName, 255, L"apps\\shell.efi");
-        if (FileExists(SelfDir, FileName)) {
+        UnicodeSPrint(FileName, 255, L"\\EFI\\BOOT\\apps\\shell.efi");
+        if (FileExists(SelfRootDir, FileName)) {
             Entry = AddToolEntry(FileName, L"EFI Shell", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
           DBG("found apps\\shell.efi\n");
         } else {

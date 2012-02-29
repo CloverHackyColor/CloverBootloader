@@ -20,6 +20,7 @@
 
 
 #define PCI_IF_OHCI			0x10
+#define PCI_IF_XHCI     0x30
 #define OHCI_CTRL_MASK	(1 << 9)
 #define OHCI_CONTROL		0x04
 #define OHCI_INTRDISABLE	0x14
