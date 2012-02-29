@@ -892,7 +892,7 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
     EG_IMAGE            *BootLogoImage;
     UINTN               ErrorInStep = 0;
     EFI_DEVICE_PATH     *DiscoveredPathList[MAX_DISCOVERED_PATHS];
-    
+    egClearScreen(&DarkBackgroundPixel);
     BeginExternalScreen(TRUE, L"Booting Legacy OS");
     
     BootLogoImage = LoadOSIcon(Entry->Volume->OSIconName, L"legacy", TRUE);
@@ -1051,10 +1051,12 @@ static VOID ScanLegacy(VOID)
 
 static VOID StartTool(IN LOADER_ENTRY *Entry)
 {
+  egClearScreen(&DarkBackgroundPixel);
     BeginExternalScreen(Entry->UseGraphicsMode, Entry->me.Title + 6);  // assumes "Start <title>" as assigned below
     StartEFIImage(Entry->DevicePath, Entry->LoadOptions, Basename(Entry->LoaderPath),
                   Basename(Entry->LoaderPath), NULL);
     FinishExternalScreen();
+  ReinitSelfLib();
 }
 
 static LOADER_ENTRY * AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle,
@@ -1091,17 +1093,25 @@ static VOID ScanTool(VOID)
     
     // look for the EFI shell
     if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_SHELL)) {
-        UnicodeSPrint(FileName, 255, L"\\EFI\\BOOT\\apps\\shell.efi");
-        if (FileExists(SelfRootDir, FileName)) {
-            Entry = AddToolEntry(FileName, L"EFI Shell", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
-          DBG("found apps\\shell.efi\n");
-        } else {
-            StrCpy(FileName, L"\\EFI\\tools\\Shell.efi");
-            if (FileExists(SelfRootDir, FileName)) {
-                Entry = AddToolEntry(FileName, L"EFI Shell", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
-              DBG("found tools\\shell.efi\n");
-            }
-        }
+#if defined(MDE_CPU_IA32)
+      StrCpy(FileName, L"\\EFI\\tools\\Shell32.efi");
+      if (FileExists(SelfRootDir, FileName)) {
+        Entry = AddToolEntry(FileName, L"EFI Shell 32", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
+        DBG("found tools\\Shell32.efi\n");
+      }
+#elif defined(MDE_CPU_X64)
+      StrCpy(FileName, L"\\EFI\\tools\\Shell64.efi");
+      if (FileExists(SelfRootDir, FileName)) {
+        Entry = AddToolEntry(FileName, L"EFI Shell 64", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
+        DBG("found tools\\Shell64.efi\n");
+      }
+#else
+      UnicodeSPrint(FileName, 255, L"\\EFI\\BOOT\\apps\\shell.efi");
+      if (FileExists(SelfRootDir, FileName)) {
+        Entry = AddToolEntry(FileName, L"EFI Shell", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
+        DBG("found apps\\shell.efi\n");
+      }
+#endif
     }
     
     // look for the GPT/MBR sync tool
