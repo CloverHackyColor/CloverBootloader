@@ -589,8 +589,8 @@ VOID GetCPUProperties (VOID)
 	DBG("Features: 0x%08x\n",gCPUStructure.Features);
 	DBG("Threads: %d\n",gCPUStructure.Threads);
 	DBG("Cores: %d\n",gCPUStructure.Cores);
-	DBG("FSB: %d MHz\n",gCPUStructure.ExternalClock / kilo);
-	DBG("CPU: %d MHz\n",gCPUStructure.CPUFrequency / Mega);
+	DBG("FSB: %d MHz\n",DivU64x32(gCPUStructure.ExternalClock, kilo));
+	DBG("CPU: %d MHz\n", DivU64x32(gCPUStructure.CPUFrequency, Mega));
 	DBG("TSC: %d MHz\n",gCPUStructure.CurrentSpeed);
 	DBG("PIS: %d MHz\n",gCPUStructure.ProcessorInterconnectSpeed);
 #if DEBUG_PCI
