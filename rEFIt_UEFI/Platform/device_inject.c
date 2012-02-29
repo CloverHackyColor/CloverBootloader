@@ -118,16 +118,15 @@ UINT32 pci_config_read32(pci_dt_t *PciDt, UINT8 reg)
     DBG("pci_config_read cant read pci\n");
     return 0;
   }
-  Status = PciIo->Mem.Read (
+  Status = PciIo->Pci.Read (
                             PciIo,
                             EfiPciIoWidthUint32,
-                            EFI_PCI_IO_PASS_THROUGH_BAR,           
-                            reg & ~3,
+                            (UINT64)(reg & ~3),
                             1,
                             &res
                             );
   if (EFI_ERROR(Status)) {
-    DBG("pci_config_read32 failed\n");
+    DBG("pci_config_read32 failed %r\n", Status);
     return 0;
   }
   return res;										 

@@ -1193,6 +1193,7 @@ REFIT_MENU_ENTRY* EntryFromVolume(REFIT_VOLUME    *Volume)
     if (Entry->Volume->DeviceHandle == Volume->DeviceHandle) {
       return (REFIT_MENU_ENTRY*)Entry;
     }
+    DBG("EntryHandle=%s VolumeHandle=%x\n", Entry->Volume->DeviceHandle, Volume->DeviceHandle);
   }
   return NULL;
 }
@@ -1208,12 +1209,14 @@ REFIT_MENU_ENTRY* FindDefaultEntry(VOID)
   for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
     Volume = Volumes[VolumeIndex];
     if (StriCmp(Volume->VolName, gSettings.DefaultBoot)) {
+      DBG("Volume index %d not default\n", VolumeIndex);
       continue;
     }
 //   search nvram.plist on the volume    
     Status = GetNVRAMSettings(Volume->RootDir, L"nvram.plist");
     if (!EFI_ERROR(Status)) {
 //   search volume with gSelectedUUID
+      DBG("nvram.plist found\n");
       for (Index2 = 0; Index2 < VolumesCount; Index2++) {
         Volume2 = Volumes[Index2];
       //  UnicodeStrToAsciiStr(DevicePathToStr(Volume2->DevicePath), buf);
@@ -1225,7 +1228,10 @@ REFIT_MENU_ENTRY* FindDefaultEntry(VOID)
         if (StrStr(VolumeUUID, PoolPrint(L"%a", gSelectedUUID)))
         {
           return EntryFromVolume(Volume2);
-        }        
+        }  else {
+          DBG("Selected UUID not at Volume %d\n", Index2);
+        }
+      
       }
     }
     //nvram is not found or it points to wrong volume but DefaultBoot found

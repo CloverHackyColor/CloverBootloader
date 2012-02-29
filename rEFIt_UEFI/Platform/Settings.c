@@ -213,15 +213,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 		}
 //Graphics
     prop = GetProperty(dict,"GraphicsInjector");
-    gSettings.GraphicsInjector = TRUE; //default
+    gSettings.GraphicsInjector=TRUE;
 		if(prop)
 		{
       //			AsciiStrCpy(gSettings.LoadVBios, prop->string);
       if ((prop->string[0] == 'n') || (prop->string[0] == 'N'))
 				gSettings.GraphicsInjector=FALSE;
-			else
-				gSettings.GraphicsInjector=TRUE;      
-		}
+    }
     
  		prop = GetProperty(dict,"DeviceProperties");
 		if(prop)
@@ -237,14 +235,12 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 		}
     
  		prop = GetProperty(dict,"LoadVBios");
+    gSettings.LoadVBios = FALSE;
 		if(prop)
 		{
       if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
 				gSettings.LoadVBios = TRUE;
-		}	else
-				gSettings.LoadVBios = FALSE;
-      
-
+		}
  		prop = GetProperty(dict,"VideoPorts");
 		if(prop)
 		{
@@ -268,24 +264,21 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 		{      
       hex2bin(prop->string, (UINT8*)&gSettings.Dcfg[0], 8);
 		} 
-    
-    
+        
 		//*** ACPI ***//
 		prop = GetProperty(dict,"ResetAddress");
+    gSettings.ResetAddr  = 0x64; //I wish it will be default
 		if(prop)
 		{
 			AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
 			gSettings.ResetAddr  = StrHexToUint64(UStr); 
-		}  else {
-			gSettings.ResetAddr  = 0x64; //I wish it will be default
 		}
 		prop = GetProperty(dict,"ResetValue");
+    gSettings.ResetVal = 0xFE;
 		if(prop)
 		{
 			AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
 			gSettings.ResetVal = (UINT8)StrHexToUint64((CHAR16*)&UStr[0]);	
-		} else {
-			gSettings.ResetVal = 0xFE;
 		}
 		//other known pair is 0x02F9/0x06
 		
@@ -355,15 +348,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 		}
     
     prop = GetProperty(dict,"Mobile");
+    gSettings.Mobile = gMobile;  //default
 		if(prop)
 		{
       //			AsciiStrCpy(gSettings.LoadVBios, prop->string);
       if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
 				gSettings.Mobile = TRUE;
     }
-			else
-				gSettings.Mobile = gMobile;  //default    
-		
     
 		prop = GetProperty(dict,"LocationInChassis");
 		if(prop)
@@ -382,12 +373,11 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 			AsciiStrCpy(gSettings.ChassisAssetTag, prop->string);
 		}
 		prop = GetProperty(dict,"smartUPS");
+    gSettings.smartUPS=FALSE;
 		if(prop)
 		{
 			if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
 				gSettings.smartUPS=TRUE;
-			else
-				gSettings.smartUPS=FALSE;
 		}
 		prop = GetProperty(dict,"CpuFrequencyMHz");
 		if(prop)
@@ -396,12 +386,11 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 			gSettings.CpuFreqMHz = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
 		}
 		prop = GetProperty(dict,"ProcessorType");
+    gSettings.CpuType = GetAdvancedCpuType();
 		if(prop)
 		{
 			AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
 			gSettings.CpuType = (UINT16)StrHexToUint64((CHAR16*)&UStr[0]);
-		} else {
-			gSettings.CpuType = GetAdvancedCpuType();
 		}
 
 		prop = GetProperty(dict,"BusSpeedkHz");
