@@ -612,6 +612,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 	// Check AtiConfig key for a framebuffer name,
   //	card->cfg_name = getStringForKey(kAtiConfig, &bootInfo->chameleonConfig);
   UnicodeStrToAsciiStr((CHAR16*)&gSettings.FBName[0],(CHAR8*)&card->cfg_name[0]);
+  DBG("Users config name %a\n", card->cfg_name);
 	// if none,
 	if (AsciiStrLen(card->cfg_name) == 0)
 	{

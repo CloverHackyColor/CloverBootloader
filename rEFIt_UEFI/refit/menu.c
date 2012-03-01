@@ -834,20 +834,20 @@ UINTN RunMenu(IN REFIT_MENU_SCREEN *Screen, OUT REFIT_MENU_ENTRY **ChosenEntry)
     return RunGenericMenu(Screen, Style, &index, ChosenEntry);
 }
 
-UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN CHAR16* DefaultSelection, OUT REFIT_MENU_ENTRY **ChosenEntry)
+UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT REFIT_MENU_ENTRY **ChosenEntry)
 {
     MENU_STYLE_FUNC Style = TextMenuStyle;
     MENU_STYLE_FUNC MainStyle = TextMenuStyle;
     REFIT_MENU_ENTRY *TempChosenEntry;
     UINTN MenuExit = 0;
-    INTN DefaultEntryIndex = -1;
+    INTN DefaultEntryIndex = DefaultSelection;
     INTN SubMenuIndex;
 
-    if (DefaultSelection != NULL) {
+/*    if (DefaultSelection != NULL) {
         // Find a menu entry whose shortcut is the first character of DefaultSelection.
         DefaultEntryIndex = FindMenuShortcutEntry(Screen, DefaultSelection[0]);
         // If that didn't work, should we scan more characters?  For now, no.
-    }
+    }*/
     
     if (AllowGraphicsMode) {
         Style = GraphicsMenuStyle;

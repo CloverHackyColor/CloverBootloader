@@ -82,24 +82,24 @@ EFI_STATUS GetRootFromPath(IN EFI_DEVICE_PATH_PROTOCOL* DevicePath, OUT EFI_FILE
   EFI_STATUS  Status;
   EFI_HANDLE                NewHandle;
   EFI_DEVICE_PATH_PROTOCOL* TmpDevicePath;
-  DBG("Try to duplicate DevicePath\n");
+//  DBG("Try to duplicate DevicePath\n");
   TmpDevicePath = DuplicateDevicePath(DevicePath);
-  DBG("TmpDevicePath found\n");
+//  DBG("TmpDevicePath found\n");
   NewHandle = NULL;
 	Status = gBS->LocateDevicePath (&gEfiSimpleFileSystemProtocolGuid,
                                   &TmpDevicePath,
                                   &NewHandle);
-   DBG("volume handle found =%x\n", NewHandle);
+//   DBG("volume handle found =%x\n", NewHandle);
   CheckError(Status, L"while reopening volume handle");
   *Root = EfiLibOpenRoot(NewHandle);  
   if (*Root == NULL) {
-    DBG("volume Root Dir can't be reopened\n");
+//    DBG("volume Root Dir can't be reopened\n");
     return EFI_NOT_FOUND;
   }
   if (FileExists(*Root, L"mach_kernel")) {
-    PauseForKey(L"mach_kernel exists\n");
+    DBG("mach_kernel exists\n");
   } else {
-    PauseForKey(L"mach_kernel not exists\n");
+    DBG("mach_kernel not exists\n");
   }
 
   return Status;
@@ -423,7 +423,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
         if (*((UINT16 *)(SectorBuffer + 510)) == 0xaa55 && SectorBuffer[0] != 0) {
           *Bootable = TRUE;
           Volume->HasBootCode = TRUE;
-          DBG("The volume has bootcode\n");
+      //    DBG("The volume has bootcode\n");
         }
         
         // detect specific boot codes
@@ -451,7 +451,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
           Volume->OSName = L"MacOSX";
           Volume->OSType = OSTYPE_OSX;
           Volume->BootType = BOOTING_BY_EFI;
-          DBG("Detected MacOSX HFS+ bootcode\n");
+   //       DBG("Detected MacOSX HFS+ bootcode\n");
 
         } else if ((*((UINT32 *)(SectorBuffer)) == 0x4d0062e9 &&
                     *((UINT16 *)(SectorBuffer + 510)) == 0xaa55) ||
@@ -461,7 +461,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
           Volume->OSName = L"MacOSX";
           Volume->OSType = OSTYPE_VAR;
           Volume->BootType = BOOTING_BY_PBR;
-          DBG("Detected Clover FAT32 bootcode\n");
+  //        DBG("Detected Clover FAT32 bootcode\n");
           
           
         } else if ((*((UINT32 *)(SectorBuffer + 502)) == 0 &&
@@ -798,9 +798,9 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
       }
       FreePool(DiskDevicePath);
     }
-  else {
+/*  else {
     DBG("HD path is not found\n");
-  }
+  }*/
 
     if (!Bootable) {
 #if REFIT_DEBUG > 0
@@ -836,21 +836,20 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
      //Volume->VolName =  L"Legacy OS";
       return EFI_SUCCESS;
     }
-//    DBG("RootDir found\n");
   
     // get volume name
   Volume->VolName = NULL;
   if (Volume->RootDir) {
     FileSystemInfoPtr = EfiLibFileSystemInfo(Volume->RootDir);
     if (FileSystemInfoPtr) {
-      DBG("  Volume name from FileSystem\n");
+ //     DBG("  Volume name from FileSystem\n");
       Volume->VolName = EfiStrDuplicate(FileSystemInfoPtr->VolumeLabel);
       FreePool(FileSystemInfoPtr);
     }
     if (!Volume->VolName) {
       RootInfo = EfiLibFileInfo (Volume->RootDir);
       if (RootInfo) {
-        DBG("  Volume name from RootFile\n");
+//        DBG("  Volume name from RootFile\n");
         Volume->VolName = EfiStrDuplicate(RootInfo->FileName);
         FreePool(RootInfo);
       }
@@ -858,7 +857,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     if (!Volume->VolName) {
       VolumeInfo = EfiLibFileSystemVolumeLabelInfo(Volume->RootDir);
       if (VolumeInfo) {
-        DBG("  Volume name from VolumeLabel\n");
+//        DBG("  Volume name from VolumeLabel\n");
         Volume->VolName = EfiStrDuplicate(VolumeInfo->VolumeLabel);
         FreePool(VolumeInfo); 
       }  
@@ -993,7 +992,7 @@ VOID ScanVolumes(VOID)
       
       Status = ScanVolume(Volume);
       if (!EFI_ERROR(Status)) {
-//        DBG("Found Volume at index=%x\n", HandleIndex);
+        DBG("Found Volume %s at index=%d\n", Volume->VolName, HandleIndex);
         AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
         
       } else {
@@ -1015,9 +1014,7 @@ VOID ScanVolumes(VOID)
     SelfVolume->HasBootCode = TRUE;
     SelfVolume->BootType = BOOTING_BY_PBR;
  //   AddListElement((VOID ***) &Volumes, &VolumesCount, SelfVolume);
-    
 //    DBG("SelfVolume Nr %d created\n", VolumesCount);
-    
   }
     
     // second pass: relate partitions and whole disk devices

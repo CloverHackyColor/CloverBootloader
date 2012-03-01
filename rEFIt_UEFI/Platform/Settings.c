@@ -154,9 +154,16 @@ EFI_STATUS GetNVRAMSettings(IN EFI_FILE *RootDir, CHAR16* NVRAMPlistPath)
 					}
 				}				
 			}
-		}		
+		}	else {
+      Status = EFI_NOT_FOUND;
+    }
+    
 		SaveSettings();
-	}	
+	}
+  else {
+    return EFI_NOT_FOUND;
+  }
+
 	return Status;
 }	
 

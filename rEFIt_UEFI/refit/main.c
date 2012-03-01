@@ -1199,49 +1199,52 @@ REFIT_MENU_ENTRY* EntryFromVolume(REFIT_VOLUME    *Volume)
   return NULL;
 }
 
-REFIT_MENU_ENTRY* FindDefaultEntry(VOID)
+INTN FindDefaultEntry(VOID)
 {
   EFI_STATUS      Status;
-  UINTN           VolumeIndex, Index2;
-  REFIT_VOLUME    *Volume, *Volume2;
+  UINTN           Index, Index2;
+  REFIT_VOLUME    *Volume;
+  LOADER_ENTRY    *Entry, *Entry2;
   CHAR16*          VolumeUUID;
   CHAR16*          buf;
 //   search volume with name in gSettings.DefaultBoot
-  for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
-    Volume = Volumes[VolumeIndex];
-//    if (StriCmp(Volume->VolName, gSettings.DefaultBoot)) {
-    if (!StrStr(Volume->VolName, gSettings.DefaultBoot)) {
-      DBG("Volume index %d not default\n", VolumeIndex);
+  for (Index = 0; Index < MainMenu.EntryCount && MainMenu.Entries[Index]->Row == 0; Index++){
+    Entry = (LOADER_ENTRY*)MainMenu.Entries[Index];
+    if (!Entry->Volume) {
       continue;
     }
-    DBG("Default volume found at index %d\n", VolumeIndex);
-//   search nvram.plist on the volume    
+    Volume = Entry->Volume;
+    if (!StrStr(Volume->VolName, gSettings.DefaultBoot)) {
+      continue;
+    }
+    DBG("Default volume %s found\n", Volume->VolName);
+    //   search nvram.plist on the volume    
     Status = GetNVRAMSettings(Volume->RootDir, L"nvram.plist");
     if (!EFI_ERROR(Status)) {
-//   search volume with gSelectedUUID
-      DBG("nvram.plist found\n");
-      for (Index2 = 0; Index2 < VolumesCount; Index2++) {
-        Volume2 = Volumes[Index2];
-      //  UnicodeStrToAsciiStr(DevicePathToStr(Volume2->DevicePath), buf);
-        buf = DevicePathToStr(Volume2->DevicePath);
+      //   search volume with gSelectedUUID
+      DBG("nvram.plist found, UUID to boot=%a\n", gSelectedUUID);
+      for (Index2 = 0; Index2 < MainMenu.EntryCount &&
+           MainMenu.Entries[Index2]->Row == 0; Index2++){
+        Entry2 = (LOADER_ENTRY*)MainMenu.Entries[Index2];
+        if (!Entry2->Volume) {
+          continue;
+        }
+        buf = DevicePathToStr(Entry2->Volume->DevicePath);
         VolumeUUID = StrStr(buf, L"GPT");
         if (!VolumeUUID) {
           continue;
         }
         if (StrStr(VolumeUUID, PoolPrint(L"%a", gSelectedUUID)))
         {
-          return EntryFromVolume(Volume2);
-        }  else {
-          DBG("Selected UUID not at Volume %d\n", Index2);
-        }
-      
+          DBG("Default boot redirected to %s\n", Entry2->Volume->VolName);
+          return Index2;
+        }     
       }
     }
     //nvram is not found or it points to wrong volume but DefaultBoot found
-    return EntryFromVolume(Volume);
-//   search mainmenu.entry with Entry->VolName == Volume->VolName
+    return Index;
   }
-  return NULL;
+  return -1;
 }
 
 //
@@ -1257,6 +1260,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   BOOLEAN           MainLoopRunning = TRUE;
   REFIT_MENU_ENTRY  *ChosenEntry;
   REFIT_MENU_ENTRY  *DefaultEntry;
+  INTN              DefaultIndex;
   UINTN             MenuExit;
   UINTN             Size, i;
   UINT8             *Buffer = NULL;
@@ -1340,6 +1344,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
 	if ((Status == EFI_SUCCESS) && (Size != 0))
 		CopyMem(gSettings.BootArgs, Buffer, Size);	
+  if (Buffer) {
+    FreePool(Buffer);
+  }
 
   //Second step. Load config.plist into gSettings	
 	Status = GetUserSettings(SelfRootDir);  
@@ -1359,7 +1366,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     DBG("scan tools\n");
     ScanTool();
   }
-
+/*  CHAR16* TestStr = L"Some Unicode string\n";
+  DBG("First: %s\n", TestStr); //it works!
+  Buffer = AllocatePool(128);
+  UnicodeStrToAsciiStr(TestStr, (CHAR8*)Buffer);
+  DBG("Second: %a\n", (CHAR8*)Buffer); //works too
+  FreePool(Buffer);*/
+  
   // fixed other menu entries
     
   if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
@@ -1385,10 +1398,16 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     
     // wait for user ACK when there were errors
   FinishTextScreen(FALSE);
-  DefaultEntry = FindDefaultEntry();  
-    
+  
+  DefaultIndex = FindDefaultEntry();
+  if (DefaultIndex >= 0) {
+    DefaultEntry = MainMenu.Entries[DefaultIndex];
+  } else {
+    DefaultEntry = NULL;
+  }
+
   while (MainLoopRunning) {
-    MenuExit = RunMainMenu(&MainMenu, GlobalConfig.DefaultSelection, &ChosenEntry);
+    MenuExit = RunMainMenu(&MainMenu, DefaultIndex, &ChosenEntry);
     
     if ((DefaultEntry != NULL) && (MenuExit == MENU_EXIT_TIMEOUT)) {
       StartLoader((LOADER_ENTRY *)DefaultEntry);
