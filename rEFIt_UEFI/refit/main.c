@@ -1191,9 +1191,10 @@ REFIT_MENU_ENTRY* EntryFromVolume(REFIT_VOLUME    *Volume)
       continue;
     }
     if (Entry->Volume->DeviceHandle == Volume->DeviceHandle) {
+      DBG("Found default entry index=%d\n", i);
       return (REFIT_MENU_ENTRY*)Entry;
     }
-    DBG("EntryHandle=%s VolumeHandle=%x\n", Entry->Volume->DeviceHandle, Volume->DeviceHandle);
+    DBG("EntryHandle=%x VolumeHandle=%x\n", Entry->Volume->DeviceHandle, Volume->DeviceHandle);
   }
   return NULL;
 }
@@ -1208,10 +1209,12 @@ REFIT_MENU_ENTRY* FindDefaultEntry(VOID)
 //   search volume with name in gSettings.DefaultBoot
   for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
     Volume = Volumes[VolumeIndex];
-    if (StriCmp(Volume->VolName, gSettings.DefaultBoot)) {
+//    if (StriCmp(Volume->VolName, gSettings.DefaultBoot)) {
+    if (!StrStr(Volume->VolName, gSettings.DefaultBoot)) {
       DBG("Volume index %d not default\n", VolumeIndex);
       continue;
     }
+    DBG("Default volume found at index %d\n", VolumeIndex);
 //   search nvram.plist on the volume    
     Status = GetNVRAMSettings(Volume->RootDir, L"nvram.plist");
     if (!EFI_ERROR(Status)) {
@@ -1257,7 +1260,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   UINTN             MenuExit;
   UINTN             Size, i;
   UINT8             *Buffer = NULL;
-  CHAR16            *InputBuffer; //, *Y;
+ // CHAR16            *InputBuffer; //, *Y;
                                   //  EFI_INPUT_KEY Key;
   
   // bootstrap
@@ -1332,25 +1335,16 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
                                  Buffer);
 		}		
 	}
-  //Second step. Load config.plist into gSettings	
-	Status = GetUserSettings(SelfRootDir);  
-  
   //  DBG("BootArgs Size=%d\n", Size);
   //  PauseForKey(L"BootArgs ok");
   
 	if ((Status == EFI_SUCCESS) && (Size != 0))
 		CopyMem(gSettings.BootArgs, Buffer, Size);	
-    else {
-      //    InputBuffer = (CHAR16*)AllocateZeroPool(254);
-      InputBuffer = L"-v arch=i386";
- /*     Input(L"Kernel flags:", InputBuffer, 100);
-      if (StrLen(InputBuffer) > 0) {
-        UnicodeStrToAsciiStr( InputBuffer, gSettings.BootArgs);
-        DBG("inputted boot-args: %a\n", gSettings.BootArgs);
-      }
-  */
-    }
-    
+
+  //Second step. Load config.plist into gSettings	
+	Status = GetUserSettings(SelfRootDir);  
+  
+   
   // scan for loaders and tools, add then to the menu
   if (GlobalConfig.LegacyFirst){
     DBG("scan legacy first\n");

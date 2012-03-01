@@ -610,5 +610,22 @@ VOID SetGraphics(VOID)
 EFI_STATUS SaveSettings()
 {
   //TODO - SetVariable()..
+  //here we can apply user settings instead of defult one
+  if ((gSettings.BusSpeed != 0) &&
+      (gSettings.BusSpeed > 10 * kilo) &&
+      (gSettings.BusSpeed < 500 * kilo)){
+    gCPUStructure.ExternalClock = gSettings.BusSpeed;
+    gCPUStructure.FSBFrequency = gSettings.BusSpeed * kilo; //kHz -> Hz
+    gCPUStructure.MaxSpeed = gSettings.BusSpeed * gCPUStructure.MaxRatio;
+  }
+
+  if ((gSettings.CpuFreqMHz != 0) &&
+      (gSettings.CpuFreqMHz > 100) &&
+      (gSettings.CpuFreqMHz < 20000)){
+    gCPUStructure.MaxSpeed = gSettings.CpuFreqMHz;
+  }
+  
+  
+  
   return EFI_SUCCESS;
 }
