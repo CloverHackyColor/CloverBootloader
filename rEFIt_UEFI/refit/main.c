@@ -1181,30 +1181,12 @@ static VOID LoadDrivers(VOID)
 	DBG("Drivers connected\n");
 }
 
-REFIT_MENU_ENTRY* EntryFromVolume(REFIT_VOLUME    *Volume)
-{
-  LOADER_ENTRY    *Entry;
-  UINTN         i;
-  for (i = 0; i < MainMenu.EntryCount && MainMenu.Entries[i]->Row == 0; i++){
-    Entry = (LOADER_ENTRY*)MainMenu.Entries[i];
-    if (!Entry->Volume) {
-      continue;
-    }
-    if (Entry->Volume->DeviceHandle == Volume->DeviceHandle) {
-      DBG("Found default entry index=%d\n", i);
-      return (REFIT_MENU_ENTRY*)Entry;
-    }
-    DBG("EntryHandle=%x VolumeHandle=%x\n", Entry->Volume->DeviceHandle, Volume->DeviceHandle);
-  }
-  return NULL;
-}
-
 INTN FindDefaultEntry(VOID)
 {
   EFI_STATUS      Status;
-  UINTN           Index, Index2;
+  UINTN           Index, Index2, Index3;
   REFIT_VOLUME    *Volume;
-  LOADER_ENTRY    *Entry, *Entry2;
+  LOADER_ENTRY    *Entry, *Entry2, *Entry3;
   CHAR16*          VolumeUUID;
   CHAR16*          buf;
 //   search volume with name in gSettings.DefaultBoot
@@ -1236,6 +1218,31 @@ INTN FindDefaultEntry(VOID)
         }
         if (StrStr(VolumeUUID, PoolPrint(L"%a", gSelectedUUID)))
         {
+          //second pass search for user return from those partition
+          Status = GetNVRAMSettings(Entry2->Volume->RootDir, L"nvram.plist");
+          if (!EFI_ERROR(Status)) {
+            //   search volume with gSelectedUUID
+            DBG("nvram.plist found, UUID to boot=%a\n", gSelectedUUID);
+            for (Index3 = 0; Index3 < MainMenu.EntryCount &&
+                 MainMenu.Entries[Index3]->Row == 0; Index3++){
+              Entry3 = (LOADER_ENTRY*)MainMenu.Entries[Index3];
+              if (!Entry3->Volume) {
+                continue;
+              }
+              buf = DevicePathToStr(Entry3->Volume->DevicePath);
+              VolumeUUID = StrStr(buf, L"GPT");
+              if (!VolumeUUID) {
+                continue;
+              }
+              if (StrStr(VolumeUUID, PoolPrint(L"%a", gSelectedUUID)))
+              {
+                //second pass
+                
+                DBG("Default boot redirected to %s\n", Entry3->Volume->VolName);
+                return Index3;
+              }     
+            }
+          }
           DBG("Default boot redirected to %s\n", Entry2->Volume->VolName);
           return Index2;
         }     

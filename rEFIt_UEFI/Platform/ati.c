@@ -545,7 +545,6 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 	card = AllocateZeroPool(sizeof(card_t));
 	if (!card)
 		return FALSE;
-//	bzero(card, sizeof(card_t));
 	
 	card->pci_dev = pci_dev;
 	
@@ -554,9 +553,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 		if (radeon_cards[i].device_id == pci_dev->device_id)
 		{
 			card->info = &radeon_cards[i];
-			if ((radeon_cards[i].subsys_id == 0x00000000) ||
-				(radeon_cards[i].subsys_id == pci_dev->subsys_id.subsys_id))
-				break;
+			break;
 		}
 	}
 	
@@ -564,7 +561,18 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 	{
 		DBG("Unsupported ATI card! Device ID: [%04x:%04x] Subsystem ID: [%08x] \n", 
 				pci_dev->vendor_id, pci_dev->device_id, pci_dev->subsys_id);
-		return FALSE;
+    DBG("search for brothers family\n");
+    for (i = 0; radeon_cards[i].device_id ; i++)
+    {
+      if ((radeon_cards[i].device_id & ~0xf) == (pci_dev->device_id & ~0xf))
+      {
+        card->info = &radeon_cards[i];
+        break;
+      }
+    }
+    if (!card->info->cfg_name) {
+      return FALSE;
+    }
 	}
 	
 	card->fb		= (UINT8 *)(UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_0) & ~0x0f);
@@ -580,8 +588,6 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 	
 	get_vram_size();
 	
-//	getBoolForKey(kATYbinimage, &add_vbios, &bootInfo->chameleonConfig);
-
 	if (gSettings.LoadVBios)
 	{
 		if (!load_vbios_file(pci_dev->vendor_id, pci_dev->device_id, pci_dev->subsys_id.subsys_id))
@@ -596,21 +602,12 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 	}
 
 	
-//	card->ports = 2; // default - Azi: default is card_configs
-	
 	if (card->info->chip_family >= CHIP_FAMILY_CEDAR)
 	{
 		card->flags |= EVERGREEN;
-//		card->ports = 3; //Azi: use the AtiPorts key if needed
 	}
-	if (gSettings.VideoPorts) {
-    card->ports = gSettings.VideoPorts;
-  }
-	
-//	atN = 0;
 	
 	// Check AtiConfig key for a framebuffer name,
-  //	card->cfg_name = getStringForKey(kAtiConfig, &bootInfo->chameleonConfig);
   UnicodeStrToAsciiStr((CHAR16*)&gSettings.FBName[0],(CHAR8*)&card->cfg_name[0]);
   DBG("Users config name %a\n", card->cfg_name);
 	// if none,
@@ -618,8 +615,6 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 	{
 		// use cfg_name on radeon_cards, to retrive the default name from card_configs,
 		card->cfg_name = card_configs[card->info->cfg_name].name;
-		// and leave ports alone!
-//		card->ports = card_configs[card->info->cfg_name].ports;
 		
 		// which means one of the fb's or kNull
 		DBG("Framebuffer set to device's default: %a\n", card->cfg_name);
@@ -630,15 +625,12 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 		DBG("(AtiConfig) Framebuffer set to: %a\n", card->cfg_name);
 	}
 	
-	// Check AtiPorts key for nr of ports,
-  //	card->ports = getIntForKey(kAtiPorts, &n_ports, &bootInfo->chameleonConfig);
-  
-	// if a value bigger than 0 ?? is found, (do we need >= 0 ?? that's null FB on card_configs)
+
 	if (gSettings.VideoPorts > 0)
 	{
 		card->ports = gSettings.VideoPorts; // use it.
 		DBG("(AtiPorts) Nr of ports set to: %d\n", card->ports);
-    }
+  }
 	else// if (card->cfg_name > 0) // do we want 0 ports if fb is kNull or mistyped ?
 	{
 		// else, match cfg_name with card_configs list and retrive default nr of ports.
@@ -648,9 +640,12 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 		
 		DBG("Nr of ports set to framebuffer's default: %d\n", card->ports);
 	}
-//	else
-//		card->ports = 2/1 ?; // set a min if 0 ports ?
-//		DBG("Nr of ports set to min: %d\n", card->ports);
+  
+  if (card->ports == 0) {
+    card->ports = 2; //real minimum
+    DBG("Nr of ports set to min: %d\n", card->ports);
+  }
+//		
 	
 	AsciiSPrint(name, 24, "ATY,%a", card->cfg_name);
 	aty_name.type = kStr;
@@ -694,15 +689,11 @@ BOOLEAN setup_ati_devprop(pci_dt_t *ati_dev)
 	
 	devprop_add_list(ati_devprop_list);
 	
-	// -------------------------------------------------
-	// Find a better way to do this (in device_inject.c)
-	//Azi: XXX tried to fix a malloc error in vain; this is related to XCode 4 compilation!
-//	stringdata = AllocateZeroPool(sizeof(UINT8) * string->length);
-//	CopyMem(stringdata, (UINT8*)devprop_generate_string(string), string->length);
 	stringlength = string->length * 2;
-	// -------------------------------------------------
+
   gDeviceProperties = AllocateAlignedPages(EFI_SIZE_TO_PAGES(stringlength + 1), 64);
 	CopyMem(gDeviceProperties, (VOID*)devprop_generate_string(string), stringlength);
+  gDeviceProperties[stringlength] = 0;
 	DBG(gDeviceProperties);
   DBG("\n");
 	
