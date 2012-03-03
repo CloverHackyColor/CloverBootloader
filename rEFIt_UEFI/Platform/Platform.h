@@ -417,6 +417,7 @@ EFI_STATUS  SetupBooterLog(VOID);
 VOID        GetDefaultSettings(VOID);
 
 EFI_STATUS StrToGuid (IN  CHAR16   *Str, OUT EFI_GUID *Guid);
+EFI_STATUS StrToGuidLE (IN  CHAR16   *Str, OUT EFI_GUID *Guid);
 BOOLEAN hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, INT32 len);
 
 EFI_STATUS InitializeConsoleSim (VOID);

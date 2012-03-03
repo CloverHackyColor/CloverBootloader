@@ -189,6 +189,63 @@ StrToBuf (
  **/
 
 EFI_STATUS
+StrToGuidLE (
+           IN  CHAR16   *Str,
+           OUT EFI_GUID *Guid
+           )
+{
+  UINT8 GuidLE[16];
+  StrToBuf (&GuidLE[0], 4, Str);
+	while (!IS_HYPHEN (*Str) && !IS_NULL (*Str)) {
+		Str ++;
+	}
+	
+	if (IS_HYPHEN (*Str)) {
+		Str++;
+	} else {
+		return EFI_UNSUPPORTED;
+	}
+	
+  StrToBuf (&GuidLE[4], 2, Str);
+	while (!IS_HYPHEN (*Str) && !IS_NULL (*Str)) {
+		Str ++;
+	}
+	
+	if (IS_HYPHEN (*Str)) {
+		Str++;
+	} else {
+		return EFI_UNSUPPORTED;
+	}
+	
+  StrToBuf (&GuidLE[6], 2, Str);
+	while (!IS_HYPHEN (*Str) && !IS_NULL (*Str)) {
+		Str ++;
+	}
+	
+	if (IS_HYPHEN (*Str)) {
+		Str++;
+	} else {
+		return EFI_UNSUPPORTED;
+	}
+
+  StrToBuf (&GuidLE[8], 2, Str);
+	while (!IS_HYPHEN (*Str) && !IS_NULL (*Str)) {
+		Str ++;
+	}
+	
+	if (IS_HYPHEN (*Str)) {
+		Str++;
+	} else {
+		return EFI_UNSUPPORTED;
+	}
+  
+  StrToBuf (&GuidLE[10], 6, Str);
+
+  CopyMem((UINT8*)Guid, &GuidLE[0], 16);
+  return EFI_SUCCESS;
+}
+
+EFI_STATUS
 StrToGuid (
 		   IN  CHAR16   *Str,
 		   OUT EFI_GUID *Guid

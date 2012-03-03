@@ -334,7 +334,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 		if(prop)
 		{
 			AsciiStrToUnicodeStr(prop->string, gSettings.CustomUuid);
-      Status = StrToGuid(gSettings.CustomUuid, &gUuid);
+      Status = StrToGuidLE(gSettings.CustomUuid, &gUuid);
       //else value from SMBIOS
     }
 
