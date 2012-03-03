@@ -1574,6 +1574,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 //	gDeviceProperties = (VOID*)devprop_generate_string(string);
   gDeviceProperties = AllocateAlignedPages(EFI_SIZE_TO_PAGES(string->length * 2 + 1), 64);
 	CopyMem(gDeviceProperties, (VOID*)devprop_generate_string(string), string->length * 2);
+  gDeviceProperties[string->length * 2] = 0;
 	DBG(gDeviceProperties);
   DBG("\n");
 //	gBS->Stall(2000000);

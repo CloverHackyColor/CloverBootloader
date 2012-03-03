@@ -147,9 +147,9 @@ EFI_STATUS SetVariablesForOSX()
                                          /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          5 , (VOID*)None);
   //TODO we should have to UUID: platform and system
-//	Status = gRS->SetVariable(L"platform-uuid", &gEfiAppleBootGuid, 
-//                                         /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-//                                         StrLen(gSettings.CustomUuid) ,&gSettings.CustomUuid);
+	Status = gRS->SetVariable(L"platform-uuid", &gEfiAppleBootGuid, 
+                                         /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                                         16 ,&gUuid);
   return Status;
 }
 
@@ -191,7 +191,7 @@ VOID SetupDataForOSX()
 		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"Model", productName, StrSize(productName));
 		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"SystemSerialNumber", serialNumber, StrSize(serialNumber));
     DBG("Custom UUID=%g\n", gUuid);
-    Status =  LogDataHub(&gEfiMiscSubClassGuid, L"system-id", &gUuid, sizeof(EFI_GUID));		
+//    Status =  LogDataHub(&gEfiMiscSubClassGuid, L"system-id", &gUuid, sizeof(EFI_GUID));		
 //		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"kext", &gKextList, KextListSize);    
 		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"Clover", CloverVersion, StrSize(CloverVersion));
 	}

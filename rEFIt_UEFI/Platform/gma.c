@@ -184,6 +184,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 		
 	gDeviceProperties = AllocateAlignedPages(EFI_SIZE_TO_PAGES(string->length * 2 + 1), 64);
 	CopyMem(gDeviceProperties, (VOID*)devprop_generate_string(string), string->length * 2);
+  gDeviceProperties[string->length * 2] = 0;
 	DBG(gDeviceProperties);
   DBG("\n");
 //  DBG("model len=%d\n", sizeof("model"));
