@@ -623,7 +623,7 @@ EFI_STATUS SaveSettings()
       (gSettings.BusSpeed < 500 * kilo)){
     gCPUStructure.ExternalClock = gSettings.BusSpeed;
     gCPUStructure.FSBFrequency = gSettings.BusSpeed * kilo; //kHz -> Hz
-    gCPUStructure.MaxSpeed = gSettings.BusSpeed * gCPUStructure.MaxRatio;
+    gCPUStructure.MaxSpeed = DivU64x32(gSettings.BusSpeed, 100) * gCPUStructure.MaxRatio; //kHz->MHz
   }
 
   if ((gSettings.CpuFreqMHz != 0) &&
@@ -631,8 +631,6 @@ EFI_STATUS SaveSettings()
       (gSettings.CpuFreqMHz < 20000)){
     gCPUStructure.MaxSpeed = gSettings.CpuFreqMHz;
   }
-  
-  
   
   return EFI_SUCCESS;
 }

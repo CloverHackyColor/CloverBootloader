@@ -167,7 +167,7 @@ VOID SetupDataForOSX()
 	CHAR16*				serialNumber		= AllocateZeroPool(64);
 	
   //fool proof
-  if ((FrontSideBus < (50 * Mega)) ||  (FrontSideBus > (450 * Mega))){
+  if ((FrontSideBus < (50 * Mega)) ||  (FrontSideBus > (500 * Mega))){
     DBG("FrontSideBus=%d\n", FrontSideBus);
     FrontSideBus = 100 * Mega;
   }
