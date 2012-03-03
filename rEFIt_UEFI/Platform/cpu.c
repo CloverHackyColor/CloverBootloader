@@ -220,7 +220,7 @@ VOID GetCPUProperties (VOID)
 	UINTN         ArrayCount;
 	UINTN         HandleIndex;
 	UINTN         ProtocolIndex;
-	UINT16				qpibusspeed; //units=MHz
+	UINT32				qpibusspeed; //units=kHz
 	UINT16				qpimult = 2;
   UINT32        BusSpeed = 0; //units kHz
 
@@ -531,7 +531,7 @@ VOID GetCPUProperties (VOID)
 #endif
   BusSpeed = (UINT32)DivU64x32(gCPUStructure.FSBFrequency, kilo); //Hz -> kHz
      //now check if SMBIOS has ExternalClock = 4xBusSpeed
-  if ((BusSpeed > 50*Mega) && (gCPUStructure.ExternalClock > BusSpeed * 3)) {
+  if ((BusSpeed > 50*kilo) && (gCPUStructure.ExternalClock > BusSpeed * 3)) { //khz
     gCPUStructure.ExternalClock = BusSpeed;
   } else {
     gCPUStructure.FSBFrequency = MultU64x32(gCPUStructure.ExternalClock, kilo); //kHz -> Hz
@@ -595,7 +595,7 @@ VOID GetCPUProperties (VOID)
 															  );
 									DBG("qpi read from PCI %d\n", qpimult);
 									if (EFI_ERROR(Status)) continue;
-									qpimult &= 0x7F;
+									qpimult &= 0xF;
 									break;
 								}
 								//qpimult = (UINT16) MmioRead32(PCIADDR(nhm_bus, 2, 1) + 0x50);
