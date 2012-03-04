@@ -128,8 +128,17 @@ BOOLEAN get_romrevision_val(value_t *val)
 {
   CHAR8* cRev="109-B77101-00";
 	UINT8 *rev;
-	if (!card->rom)
-		return FALSE;
+	if (!card->rom){
+    val->type = kPtr;
+    val->size = 13;
+    val->data = AllocateZeroPool(val->size);
+    if (!val->data)
+      return FALSE;
+    
+    CopyMem(val->data, cRev, val->size);
+    
+		return TRUE;
+  }
 	
 	rev = card->rom + *(UINT8 *)(card->rom + OFFSET_TO_GET_ATOMBIOS_STRINGS_START);
 
@@ -595,7 +604,8 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 	DBG("\n");
 	get_vram_size();
 	
-	if (gSettings.LoadVBios) load_vbios_file(pci_dev->vendor_id, pci_dev->device_id);
+	if (gSettings.LoadVBios){
+    load_vbios_file(pci_dev->vendor_id, pci_dev->device_id);
 		if (!card->rom)
 		{
 			DBG("reading VBIOS from %a", card->posted ? "legacy space" : "PCI ROM");
@@ -605,7 +615,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 				read_disabled_vbios();
 			DBG("\n");
 		}
-
+  }
 
 	
 	if (card->info->chip_family >= CHIP_FAMILY_CEDAR)

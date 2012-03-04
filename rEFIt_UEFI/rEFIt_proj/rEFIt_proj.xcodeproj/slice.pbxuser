@@ -30,8 +30,8 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 352573760;
-			PBXWorkspaceStateSaveDate = 352573760;
+			PBXPerProjectTemplateStateSaveDate = 352578697;
+			PBXWorkspaceStateSaveDate = 352578697;
 		};
 		perUserProjectItems = {
 			1202124214266E13004B7B93 /* PBXTextBookmark */ = 1202124214266E13004B7B93 /* PBXTextBookmark */;
@@ -69,6 +69,10 @@
 			12BBA56A14F95D010006D5A2 /* PBXTextBookmark */ = 12BBA56A14F95D010006D5A2 /* PBXTextBookmark */;
 			12BE99A214BDBDA300996F8D /* PBXTextBookmark */ = 12BE99A214BDBDA300996F8D /* PBXTextBookmark */;
 			12BE9A8514C0658D00996F8D /* PBXTextBookmark */ = 12BE9A8514C0658D00996F8D /* PBXTextBookmark */;
+			12C1113D1503EAC4009D6BEE /* PBXTextBookmark */ = 12C1113D1503EAC4009D6BEE /* PBXTextBookmark */;
+			12C111481503ED49009D6BEE /* PBXTextBookmark */ = 12C111481503ED49009D6BEE /* PBXTextBookmark */;
+			12C111491503ED49009D6BEE /* PBXTextBookmark */ = 12C111491503ED49009D6BEE /* PBXTextBookmark */;
+			12C1114A1503ED49009D6BEE /* PBXTextBookmark */ = 12C1114A1503ED49009D6BEE /* PBXTextBookmark */;
 			12C2C4AE150018C400F47A27 /* PBXTextBookmark */ = 12C2C4AE150018C400F47A27 /* PBXTextBookmark */;
 			12C2C4D7150151D900F47A27 /* PBXTextBookmark */ = 12C2C4D7150151D900F47A27 /* PBXTextBookmark */;
 			12C2C4D8150151D900F47A27 /* PBXTextBookmark */ = 12C2C4D8150151D900F47A27 /* PBXTextBookmark */;
@@ -89,11 +93,7 @@
 			12D6319014D03F0200E5898F /* PBXTextBookmark */ = 12D6319014D03F0200E5898F /* PBXTextBookmark */;
 			12D6324D14D2DF8F00E5898F /* PBXTextBookmark */ = 12D6324D14D2DF8F00E5898F /* PBXTextBookmark */;
 			12E0205B1503D6CA005F67A1 /* PBXTextBookmark */ = 12E0205B1503D6CA005F67A1 /* PBXTextBookmark */;
-			12E0205C1503D6CA005F67A1 /* PBXTextBookmark */ = 12E0205C1503D6CA005F67A1 /* PBXTextBookmark */;
-			12E020671503D85B005F67A1 /* PBXTextBookmark */ = 12E020671503D85B005F67A1 /* PBXTextBookmark */;
-			12E020711503D999005F67A1 /* PBXTextBookmark */ = 12E020711503D999005F67A1 /* PBXTextBookmark */;
 			12E02D1E1501DD84003D631D /* PBXTextBookmark */ = 12E02D1E1501DD84003D631D /* PBXTextBookmark */;
-			12EC735014F951F500E1D5DF /* PBXTextBookmark */ = 12EC735014F951F500E1D5DF /* PBXTextBookmark */;
 		};
 		sourceControlManager = 122336AF13377DFD0033F008 /* Source Control */;
 		userBuildSettings = {
@@ -622,6 +622,46 @@
 		vrLen = 762;
 		vrLoc = 1693;
 	};
+	12C1113D1503EAC4009D6BEE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 12D6308314CEA05E00E5898F /* Settings.c */;
+		name = "Settings.c: 614";
+		rLen = 404;
+		rLoc = 16875;
+		rType = 0;
+		vrLen = 541;
+		vrLoc = 16827;
+	};
+	12C111481503ED49009D6BEE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 12D6305E14CEA05E00E5898F /* ati.c */;
+		name = "ati.c: 367";
+		rLen = 10;
+		rLoc = 7747;
+		rType = 0;
+		vrLen = 626;
+		vrLoc = 7186;
+	};
+	12C111491503ED49009D6BEE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 12D6307C14CEA05E00E5898F /* nvidia.h */;
+		name = "nvidia.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 959;
+		vrLoc = 3644;
+	};
+	12C1114A1503ED49009D6BEE /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 12D6307B14CEA05E00E5898F /* nvidia.c */;
+		name = "nvidia.c: 757";
+		rLen = 0;
+		rLoc = 23085;
+		rType = 0;
+		vrLen = 851;
+		vrLoc = 27383;
+	};
 	12C2C4AE150018C400F47A27 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 122336C613377E150033F008 /* lib.h */;
@@ -825,9 +865,9 @@
 	};
 	12D5B1C914F0F35E0043569D /* ati.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {823, 8450}}";
-			sepNavSelRange = "{27429, 16}";
-			sepNavVisRange = "{26550, 1547}";
+			sepNavIntBoundsRect = "{{0, 0}, {823, 8502}}";
+			sepNavSelRange = "{27603, 19}";
+			sepNavVisRange = "{26628, 1469}";
 			sepNavWindowFrame = "{{29, 107}, {889, 748}}";
 		};
 	};
@@ -860,9 +900,9 @@
 	};
 	12D6305E14CEA05E00E5898F /* ati.c */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {711, 9113}}";
-			sepNavSelRange = "{18334, 17}";
-			sepNavVisRange = "{17972, 627}";
+			sepNavIntBoundsRect = "{{0, 0}, {711, 9230}}";
+			sepNavSelRange = "{7747, 10}";
+			sepNavVisRange = "{7186, 626}";
 		};
 	};
 	12D6305F14CEA05E00E5898F /* ati_reg.h */ = {
@@ -996,16 +1036,16 @@
 	};
 	12D6307B14CEA05E00E5898F /* nvidia.c */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {823, 20098}}";
-			sepNavSelRange = "{38464, 6}";
-			sepNavVisRange = "{40065, 731}";
+			sepNavIntBoundsRect = "{{0, 0}, {711, 20904}}";
+			sepNavSelRange = "{23085, 0}";
+			sepNavVisRange = "{27383, 851}";
 		};
 	};
 	12D6307C14CEA05E00E5898F /* nvidia.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {823, 1846}}";
-			sepNavSelRange = "{2227, 20}";
-			sepNavVisRange = "{1788, 632}";
+			sepNavIntBoundsRect = "{{0, 0}, {711, 1859}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{3644, 959}";
 		};
 	};
 	12D6307D14CEA05E00E5898F /* pci.c */ = {
@@ -1053,9 +1093,9 @@
 	};
 	12D6308314CEA05E00E5898F /* Settings.c */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {711, 7956}}";
+			sepNavIntBoundsRect = "{{0, 0}, {711, 8099}}";
 			sepNavSelRange = "{16875, 404}";
-			sepNavVisRange = "{16827, 542}";
+			sepNavVisRange = "{16827, 541}";
 			sepNavWindowFrame = "{{38, 104}, {889, 748}}";
 		};
 	};
@@ -1133,36 +1173,6 @@
 		vrLen = 380;
 		vrLoc = 49837;
 	};
-	12E0205C1503D6CA005F67A1 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 12D6305E14CEA05E00E5898F /* ati.c */;
-		name = "ati.c: 664";
-		rLen = 17;
-		rLoc = 18334;
-		rType = 0;
-		vrLen = 627;
-		vrLoc = 17972;
-	};
-	12E020671503D85B005F67A1 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 12D6308314CEA05E00E5898F /* Settings.c */;
-		name = "Settings.c: 619";
-		rLen = 0;
-		rLoc = 16848;
-		rType = 0;
-		vrLen = 569;
-		vrLoc = 16827;
-	};
-	12E020711503D999005F67A1 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 12D6308314CEA05E00E5898F /* Settings.c */;
-		name = "Settings.c: 614";
-		rLen = 404;
-		rLoc = 16875;
-		rType = 0;
-		vrLen = 542;
-		vrLoc = 16827;
-	};
 	12E02D1E1501DD84003D631D /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 12D6306614CEA05E00E5898F /* DataHubCpu.c */;
@@ -1172,16 +1182,6 @@
 		rType = 0;
 		vrLen = 1383;
 		vrLoc = 6687;
-	};
-	12EC735014F951F500E1D5DF /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 12D6307C14CEA05E00E5898F /* nvidia.h */;
-		name = "nvidia.h: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 1000;
-		vrLoc = 3;
 	};
 	D28A88AD04BDD90700651E21 /* rEFIt_proj */ = {
 		activeExec = 0;
