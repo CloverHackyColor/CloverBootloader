@@ -528,7 +528,7 @@ EFI_STATUS GetEdid(VOID)
 }
 
 
-VOID SetGraphics(VOID)
+VOID SetDevices(VOID)
 {
 //	EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  *modeInfo;
   EFI_STATUS						Status;
@@ -607,6 +607,14 @@ VOID SetGraphics(VOID)
 						}
 					}
 				}
+        stringlength = string->length * 2;
+        
+        gDeviceProperties = AllocateAlignedPages(EFI_SIZE_TO_PAGES(stringlength + 1), 64);
+        CopyMem(gDeviceProperties, (VOID*)devprop_generate_string(string), stringlength);
+        gDeviceProperties[stringlength] = 0;
+        DBG(gDeviceProperties);
+        DBG("\n");
+        
 			}
 		}
 	}

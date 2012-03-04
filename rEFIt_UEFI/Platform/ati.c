@@ -126,6 +126,7 @@ BOOLEAN get_binimage_val(value_t *val)
 
 BOOLEAN get_romrevision_val(value_t *val)
 {
+  CHAR8* cRev="109-B77101-00";
 	UINT8 *rev;
 	if (!card->rom)
 		return FALSE;
@@ -134,6 +135,10 @@ BOOLEAN get_romrevision_val(value_t *val)
 
 	val->type = kPtr;
 	val->size = AsciiStrLen((CHAR8 *)rev);
+  if ((val->size < 3) || (val->size > 30)) { //fool proof. Real value 13
+    rev = (UINT8 *)cRev;
+    val->size = 13;
+  }
 	val->data = AllocateZeroPool(val->size);
 	
 	if (!val->data)
@@ -279,7 +284,7 @@ BOOLEAN validate_rom(option_rom_header_t *rom_header, pci_dt_t *pci_dev)
 	return TRUE;
 }
 
-BOOLEAN load_vbios_file(UINT16 vendor_id, UINT16 device_id, UINT32 subsys_id)
+BOOLEAN load_vbios_file(UINT16 vendor_id, UINT16 device_id)
 {
   	EFI_STATUS            Status;
 	UINTN bufferLen;
@@ -587,12 +592,11 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 	
 	card->posted = radeon_card_posted();
 	DBG("ATI card %a, ", card->posted ? "POSTed" : "non-POSTed");
-	
+	DBG("\n");
 	get_vram_size();
 	
-	if (gSettings.LoadVBios)
-	{
-		if (!load_vbios_file(pci_dev->vendor_id, pci_dev->device_id, pci_dev->subsys_id.subsys_id))
+	if (gSettings.LoadVBios) load_vbios_file(pci_dev->vendor_id, pci_dev->device_id);
+		if (!card->rom)
 		{
 			DBG("reading VBIOS from %a", card->posted ? "legacy space" : "PCI ROM");
 			if (card->posted)
@@ -601,7 +605,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 				read_disabled_vbios();
 			DBG("\n");
 		}
-	}
+
 
 	
 	if (card->info->chip_family >= CHIP_FAMILY_CEDAR)
@@ -686,13 +690,6 @@ BOOLEAN setup_ati_devprop(pci_dt_t *ati_dev)
 	
 	devprop_add_list(ati_devprop_list);
 	
-	stringlength = string->length * 2;
-
-  gDeviceProperties = AllocateAlignedPages(EFI_SIZE_TO_PAGES(stringlength + 1), 64);
-	CopyMem(gDeviceProperties, (VOID*)devprop_generate_string(string), stringlength);
-  gDeviceProperties[stringlength] = 0;
-	DBG(gDeviceProperties);
-  DBG("\n");
 	
 	DBG("ATI %a %a %dMB (%a) [%04x:%04x] (subsys [%04x:%04x]):: %a\n",
 			chip_family_name[card->info->chip_family], card->info->model_name,

@@ -1284,7 +1284,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	
   InitializeConsoleSim();
 	InitBooterLog();
-  DBG("Starting rEFIt...\n");
+  DBG("\nStarting rEFIt rev %a\n", FIRMWARE_REVISION);
   InitScreen();
   
   Status = InitRefitLib(ImageHandle);
@@ -1317,7 +1317,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   ScanVolumes();
   
   //setup properties
-  SetGraphics();
+  SetDevices();
   
   PrepatchSmbios();
   DBG("running on %a\n", gSettings.OEMProduct);

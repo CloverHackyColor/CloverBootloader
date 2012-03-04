@@ -314,7 +314,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>ati.c</string>
+								<string>main.c</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -322,11 +322,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>ati.c</string>
+										<string>main.c</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>12AE52E115033DC20011A336</string>
+										<string>12AE53401503CCBB0011A336</string>
 										<key>history</key>
 										<array>
 											<string>1202124214266E13004B7B93</string>
@@ -369,7 +369,6 @@
 											<string>12AD9D0A14FA55C600E76BC9</string>
 											<string>12AD9DDC14FDF57D00E76BC9</string>
 											<string>1236D42814FE652D005741D6</string>
-											<string>1286885C14FEBAD900CD9C78</string>
 											<string>12BB241C14FFA3B300A0DDD4</string>
 											<string>12628E6414FFE84300C10119</string>
 											<string>12628E6514FFE84300C10119</string>
@@ -381,13 +380,14 @@
 											<string>12C2C50B1501D11B00F47A27</string>
 											<string>12C2C50C1501D11B00F47A27</string>
 											<string>12E02D1E1501DD84003D631D</string>
-											<string>12AE525A15023C1E0011A336</string>
 											<string>12AE527B15023D800011A336</string>
 											<string>12AE528515024A530011A336</string>
 											<string>12AE52BE1502B56E0011A336</string>
-											<string>12AE52BF1502B56E0011A336</string>
 											<string>12AE52D015033B4E0011A336</string>
-											<string>12AE52DD15033DBE0011A336</string>
+											<string>12AE532A1503C9630011A336</string>
+											<string>12AE532B1503C9630011A336</string>
+											<string>12AE533E1503CCBB0011A336</string>
+											<string>12AE533F1503CCBB0011A336</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -399,14 +399,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {772, 341}}</string>
+								<string>{{0, 0}, {772, 312}}</string>
 								<key>RubberWindowFrame</key>
 								<string>298 119 980 659 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>341pt</string>
+							<string>312pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -419,14 +419,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 346}, {772, 272}}</string>
+								<string>{{0, 317}, {772, 301}}</string>
 								<key>RubberWindowFrame</key>
 								<string>298 119 980 659 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>272pt</string>
+							<string>301pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -445,9 +445,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>12AE52E215033DC20011A336</string>
+				<string>12AE53411503CCBB0011A336</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>12AE52E315033DC20011A336</string>
+				<string>12AE53421503CCBB0011A336</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -667,7 +667,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>122336AD13377DFD0033F008</string>
-				<string>12AE52DB15033DBE0011A336</string>
+				<string>12AE53371503CCB60011A336</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -807,7 +807,7 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>ati.c</string>
+										<string>main.c</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -863,8 +863,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>12AE52DF15033DBE0011A336</string>
-				<string>12AE52E015033DBE0011A336</string>
+				<string>12AE533C1503CCB60011A336</string>
+				<string>12AE533D1503CCB60011A336</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>

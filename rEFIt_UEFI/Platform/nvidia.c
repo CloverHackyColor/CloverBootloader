@@ -1305,8 +1305,6 @@ static INT32 devprop_add_nvidia_template(DevPropDevice *device)
 	if (!DP_ADD_TEMP_VAL(device, nvidia_device_type))
 		return 0;
 	
-	// Rek : Dont use AsciiSPrint return, it does not WORK !! our custom AsciiSPrint() always return 0!
-	// len = AsciiSPrint(tmp, "Slot-%x", devices_number);
 	AsciiSPrint(tmp, 16, "Slot-%x",devices_number);
 	devprop_add_value(device, "AAPL,slot-name", (UINT8 *) tmp, AsciiStrLen(tmp));
 	devices_number++;
@@ -1572,11 +1570,6 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	
 
 //	gDeviceProperties = (VOID*)devprop_generate_string(string);
-  gDeviceProperties = AllocateAlignedPages(EFI_SIZE_TO_PAGES(string->length * 2 + 1), 64);
-	CopyMem(gDeviceProperties, (VOID*)devprop_generate_string(string), string->length * 2);
-  gDeviceProperties[string->length * 2] = 0;
-	DBG(gDeviceProperties);
-  DBG("\n");
 //	gBS->Stall(2000000);
 	return TRUE;
 }

@@ -128,9 +128,7 @@ EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
     SelfDevicePath = AllocateAlignedPages(EFI_SIZE_TO_PAGES(DevicePathSize), 64);
     CopyMem(SelfDevicePath, TmpDevicePath, DevicePathSize);
   
-#if DEBUG_LIB > 1 
-//    Print(L"SelfDevicePath=%s @%x\n", DevicePathToStr(SelfDevicePath), SelfDeviceHandle);
-#endif 
+    DBG("SelfDevicePath=%s @%x\n", DevicePathToStr(SelfDevicePath), SelfDeviceHandle);
   
   // find the current directory
     FilePathAsString = DevicePathToStr(SelfLoadedImage->FilePath);

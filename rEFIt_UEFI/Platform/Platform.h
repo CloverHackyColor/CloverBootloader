@@ -441,7 +441,7 @@ LogDataHub(
 EFI_STATUS SetVariablesForOSX();
 VOID       SetupDataForOSX();
 EFI_STATUS SetPrivateVarProto(VOID);
-VOID       SetGraphics(VOID);
+VOID       SetDevices(VOID);
 VOID       ScanSPD();
 BOOLEAN setup_ati_devprop(pci_dt_t *ati_dev);
 BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev);

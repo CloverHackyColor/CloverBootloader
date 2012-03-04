@@ -274,7 +274,6 @@ VOID* PCIReadRom(pci_dt_t* device)
  
 DevPropDevice *devprop_add_device(struct DevPropString *string, CHAR8 *path)
 {
-	//DBG("devprop_add_device\n");
 	DevPropDevice	*device;
 	const CHAR8		pciroot_string[] = "PciRoot(0x";
 	const CHAR8		pcieroot_string[] = "PcieRoot(0x";
@@ -283,6 +282,8 @@ DevPropDevice *devprop_add_device(struct DevPropString *string, CHAR8 *path)
 	if (string == NULL || path == NULL) {
 		return NULL;
 	}
+ 	DBG("devprop_add_device %a\n", path);
+ 
 	device = AllocateZeroPool(sizeof(DevPropDevice));
 
 	if (AsciiStrnCmp(path, pciroot_string, AsciiStrLen(pciroot_string)) &&
@@ -386,7 +387,11 @@ BOOLEAN devprop_add_value(DevPropDevice *device, CHAR8 *nm, UINT8 *vl, UINT32 le
   
 	if(!device || !nm || !vl || !len)
 		return FALSE;
-	DBG("devprop_add_value %a len=%d\n", nm, len);
+	DBG("devprop_add_value %a=", nm);
+  for (i=0; i<len; i++) {
+    DBG("%02X", vl[i]);
+  }
+  DBG("\n");
 	l = AsciiStrLen(nm);
 	length = ((l * 2) + len + (2 * sizeof(UINT32)) + 2);
 	data = (UINT8*)AllocateZeroPool(length);
