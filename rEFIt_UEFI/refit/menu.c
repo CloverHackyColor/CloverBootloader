@@ -320,6 +320,10 @@ static INTN FindMenuShortcutEntry(IN REFIT_MENU_SCREEN *Screen, IN CHAR16 Shortc
 //
 // generic menu function
 //
+static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, SCROLL_STATE *State, IN MENU_STYLE_FUNC  StyleFunc)
+{
+  return MENU_EXIT_DETAILS;
+}
 
 static UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_MENU_ENTRY **ChosenEntry)
 {
@@ -425,11 +429,11 @@ static UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC Sty
         //    case ' ':
                 MenuExit = MENU_EXIT_ENTER;
                 break;
-            case '+':
+            case 'M':
                 MenuExit = MENU_EXIT_DETAILS;
                 break;
             case ' ':
-              MenuExit = MENU_EXIT_DETAILS;
+              MenuExit = InputDialog(Screen, &State, StyleFunc);
               break;
             default:
                 ShortcutEntry = FindMenuShortcutEntry(Screen, key.UnicodeChar);

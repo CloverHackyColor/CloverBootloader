@@ -291,7 +291,7 @@ BOOLEAN load_vbios_file(UINT16 vendor_id, UINT16 device_id, UINT32 subsys_id)
 	if (!gSettings.LoadVBios)
 		return FALSE;
 	
-	UnicodeSPrint(FileName, 24, L"\\EFI\\device\\%04x_%04x.rom", vendor_id, device_id, subsys_id);
+	UnicodeSPrint(FileName, 24, L"\\EFI\\device\\%04x_%04x.rom", vendor_id, device_id);
 	if (!FileExists(SelfRootDir, FileName)){
     DBG("ATI ROM not found \n");
 		return FALSE;
@@ -537,9 +537,11 @@ BOOLEAN devprop_add_pci_config_space(VOID)
 static BOOLEAN init_card(pci_dt_t *pci_dev)
 {
 //	BOOLEAN	add_vbios = TRUE;
-	CHAR8	name[24];
-	CHAR8	name_parent[24];
-	int		i;
+	CHAR8	*name;
+	CHAR8	*name_parent;
+  CHAR8 *CfgName;
+  INTN NameLen = 0;
+	INTN		i;
 //	int		n_ports = 0;
 	
 	card = AllocateZeroPool(sizeof(card_t));
@@ -606,25 +608,19 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 	{
 		card->flags |= EVERGREEN;
 	}
-	
-	// Check AtiConfig key for a framebuffer name,
-  UnicodeStrToAsciiStr((CHAR16*)&gSettings.FBName[0],(CHAR8*)&card->cfg_name[0]);
-  DBG("Users config name %a\n", card->cfg_name);
-	// if none,
-	if (AsciiStrLen(card->cfg_name) == 0)
-	{
-		// use cfg_name on radeon_cards, to retrive the default name from card_configs,
+	NameLen = StrLen(gSettings.FBName);
+  if (NameLen > 3) {  //fool proof: cfg_name is 4 character or more.
+    CfgName = AllocateZeroPool(NameLen);
+    UnicodeStrToAsciiStr((CHAR16*)&gSettings.FBName[0], CfgName);
+    DBG("Users config name %a\n", CfgName);
+    card->cfg_name = CfgName;
+  } else {
+    // use cfg_name on radeon_cards, to retrive the default name from card_configs,
 		card->cfg_name = card_configs[card->info->cfg_name].name;
 		
 		// which means one of the fb's or kNull
-		DBG("Framebuffer set to device's default: %a\n", card->cfg_name);
-	}
-	else
-	{
-		// else, use the fb name returned by AtiConfig.
-		DBG("(AtiConfig) Framebuffer set to: %a\n", card->cfg_name);
-	}
-	
+		DBG("Framebuffer set to device's default: %a\n", card->cfg_name);    
+  }	
 
 	if (gSettings.VideoPorts > 0)
 	{
@@ -646,17 +642,18 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
     DBG("Nr of ports set to min: %d\n", card->ports);
   }
 //		
-	
+	name = AllocateZeroPool(24);
 	AsciiSPrint(name, 24, "ATY,%a", card->cfg_name);
 	aty_name.type = kStr;
 	aty_name.size = AsciiStrLen(name);
 	aty_name.data = (UINT8 *)name;
 	
+  name_parent = AllocateZeroPool(24);
 	AsciiSPrint(name_parent, 24, "ATY,%aParent", card->cfg_name);
 	aty_nameparent.type = kStr;
 	aty_nameparent.size = AsciiStrLen(name_parent);
 	aty_nameparent.data = (UINT8 *)name_parent;
-	
+//how can we free pool when we leave the procedure? Make all pointers global?	
 	return TRUE;
 }
 
@@ -704,6 +701,7 @@ BOOLEAN setup_ati_devprop(pci_dt_t *ati_dev)
 			ati_dev->subsys_id.subsys.vendor_id, ati_dev->subsys_id.subsys.device_id,
 			devicepath);
 	
+//  FreePool(card->info); //TODO we can't free constant so this info should be copy of constants
 	FreePool(card);
 	
 	return TRUE;
