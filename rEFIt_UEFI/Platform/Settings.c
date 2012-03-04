@@ -545,6 +545,7 @@ VOID SetDevices(VOID)
 	UINTN         Bus;
 	UINTN         Device;
 	UINTN         Function;
+  BOOLEAN       StringDirty = FALSE;
   
   
   gGraphics.Width  = UGAWidth;
@@ -583,13 +584,13 @@ VOID SetDevices(VOID)
                     gGraphics.Vendor = Ati;
                     MsgLog("ATI GFX found\n");
                     GFXdevice->subsys_id.subsys_id = (UINT16)(0x10020000 | Pci.Hdr.DeviceId);
-                    setup_ati_devprop(GFXdevice);
-                    FreePool(GFXdevice);                    
+                    StringDirty = setup_ati_devprop(GFXdevice);
+                    FreePool(GFXdevice);  
                     break;
                   case 0x8086:
                     MsgLog("Intel GFX found\n");
                     GFXdevice->subsys_id.subsys_id = (UINT16)(0x80860000 | Pci.Hdr.DeviceId);
-                    setup_gma_devprop(GFXdevice);
+                    StringDirty = setup_gma_devprop(GFXdevice);
                     MsgLog("Intel GFX device_id =0x%x\n", GFXdevice->device_id);
                     MsgLog("Intel GFX revision  =0x%x\n", GFXdevice->revision);
                     break;
@@ -597,7 +598,7 @@ VOID SetDevices(VOID)
                     gGraphics.Vendor = Nvidia;
                     MsgLog("nVidia GFX found\n");
                     GFXdevice->subsys_id.subsys_id = (UINT16)(0x10de0000 | Pci.Hdr.DeviceId);
-                    setup_nvidia_devprop(GFXdevice);
+                    StringDirty = setup_nvidia_devprop(GFXdevice);
                     break;
                   default:
                     break;
@@ -607,14 +608,15 @@ VOID SetDevices(VOID)
 						}
 					}
 				}
-        stringlength = string->length * 2;
-        
-        gDeviceProperties = AllocateAlignedPages(EFI_SIZE_TO_PAGES(stringlength + 1), 64);
-        CopyMem(gDeviceProperties, (VOID*)devprop_generate_string(string), stringlength);
-        gDeviceProperties[stringlength] = 0;
-        DBG(gDeviceProperties);
-        DBG("\n");
-        
+        if (StringDirty) {
+          stringlength = string->length * 2;
+          
+          gDeviceProperties = AllocateAlignedPages(EFI_SIZE_TO_PAGES(stringlength + 1), 64);
+          CopyMem(gDeviceProperties, (VOID*)devprop_generate_string(string), stringlength);
+          gDeviceProperties[stringlength] = 0;
+          DBG(gDeviceProperties);
+          DBG("\n");          
+        }        
 			}
 		}
 	}
