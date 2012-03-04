@@ -608,6 +608,9 @@ VOID SetDevices(VOID)
 						}
 					}
 				}
+        }        
+			}
+		}
         if (StringDirty) {
           stringlength = string->length * 2;
           
@@ -615,10 +618,9 @@ VOID SetDevices(VOID)
           CopyMem(gDeviceProperties, (VOID*)devprop_generate_string(string), stringlength);
           gDeviceProperties[stringlength] = 0;
           DBG(gDeviceProperties);
-          DBG("\n");          
-        }        
-			}
-		}
+          DBG("\n");   
+          StringDirty = FALSE;
+
 	}
   
 	DBG("CurrentMode: Width=%d Height=%d\n", gGraphics.Width, gGraphics.Height);  
