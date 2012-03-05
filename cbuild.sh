@@ -254,7 +254,7 @@ fi
 
 # Build the edk2 DuetPkg
 echo Running edk2 build for Clover$Processor
-rm $WORKSPACE/Clover/Version.h
+#rm $WORKSPACE/Clover/Version.h
 echo "#define FIRMWARE_VERSION \"2.31\"" > $WORKSPACE/Clover/Version.h
 echo "#define FIRMWARE_BUILDDATE \"`date \"+%Y-%m-%d %H:%M:%S\"`\"" >> $WORKSPACE/Clover/Version.h
 echo "#define FIRMWARE_REVISION L\"`svnversion Clover -n | tr -d [:alpha:]`\"" >> $WORKSPACE/Clover/Version.h

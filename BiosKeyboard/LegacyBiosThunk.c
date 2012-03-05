@@ -170,7 +170,7 @@ LegacyBiosInt86 (
   // The call to Legacy16 is a critical section to EFI
   //
   Eflags = AsmReadEflags ();
-  if ((Eflags | EFI_CPU_EFLAGS_IF) != 0) {
+  if ((Eflags & EFI_CPU_EFLAGS_IF) != 0) {
     DisableInterrupts ();
   }
 
@@ -199,7 +199,7 @@ LegacyBiosInt86 (
   //
   // End critical section
   //
-  if ((Eflags | EFI_CPU_EFLAGS_IF) != 0) {
+  if ((Eflags & EFI_CPU_EFLAGS_IF) != 0) {
     EnableInterrupts ();
   }
 
