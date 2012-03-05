@@ -579,17 +579,17 @@ VOID SetDevices(VOID)
                 GFXdevice->revision = Pci.Hdr.RevisionID;
                 GFXdevice->subclass = Pci.Hdr.ClassCode[0];
                 GFXdevice->class_id = *((UINT16*)(Pci.Hdr.ClassCode+1));
+                GFXdevice->subsys_id.subsys.vendor_id = Pci.Device.SubsystemVendorID;
+                GFXdevice->subsys_id.subsys.device_id = Pci.Device.SubsystemID;
+
                 switch (Pci.Hdr.VendorId) {
                   case 0x1002:
                     gGraphics.Vendor = Ati;
                     MsgLog("ATI GFX found\n");
-                    GFXdevice->subsys_id.subsys_id = (UINT16)(0x10020000 | Pci.Hdr.DeviceId);
                     StringDirty = setup_ati_devprop(GFXdevice);
-                    FreePool(GFXdevice);  
                     break;
                   case 0x8086:
                     MsgLog("Intel GFX found\n");
-                    GFXdevice->subsys_id.subsys_id = (UINT16)(0x80860000 | Pci.Hdr.DeviceId);
                     StringDirty = setup_gma_devprop(GFXdevice);
                     MsgLog("Intel GFX device_id =0x%x\n", GFXdevice->device_id);
                     MsgLog("Intel GFX revision  =0x%x\n", GFXdevice->revision);
@@ -597,7 +597,6 @@ VOID SetDevices(VOID)
                   case 0x10de:
                     gGraphics.Vendor = Nvidia;
                     MsgLog("nVidia GFX found\n");
-                    GFXdevice->subsys_id.subsys_id = (UINT16)(0x10de0000 | Pci.Hdr.DeviceId);
                     StringDirty = setup_nvidia_devprop(GFXdevice);
                     break;
                   default:
@@ -605,6 +604,22 @@ VOID SetDevices(VOID)
                 }
                 FreePool(GFXdevice);                    
 							}
+              
+              //LAN
+              //#define PCI_CLASS_NETWORK             0x02
+              //#define   PCI_CLASS_NETWORK_ETHERNET    0x00  
+              
+              //USB
+              //#define PCI_CLASS_SERIAL              0x0C
+              //#define   PCI_CLASS_SERIAL_USB          0x03
+              //#define     PCI_IF_UHCI                   0x00
+              //#define     PCI_IF_OHCI                   0x10
+              //#define     PCI_IF_EHCI                   0x20
+              //#define     PCI_IF_XHCI                   0x30
+              
+              //HDA
+              //#define PCI_CLASS_MEDIA               0x04
+              //#define   PCI_CLASS_MEDIA_HDA           0x03
 						}
 					}
 				}
