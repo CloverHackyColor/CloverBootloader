@@ -1316,9 +1316,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   ScanVolumes();
   
-  //setup properties
-  SetDevices();
-  
   PrepatchSmbios();
   DBG("running on %a\n", gSettings.OEMProduct);
   
@@ -1358,7 +1355,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   //Second step. Load config.plist into gSettings	
 	Status = GetUserSettings(SelfRootDir);  
   
-   
+  //setup properties
+  SetDevices();
+    
   // scan for loaders and tools, add then to the menu
   if (GlobalConfig.LegacyFirst){
     DBG("scan legacy first\n");

@@ -1429,9 +1429,9 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 		
 
 	const INT32 MAX_BIOS_VERSION_LENGTH = 32;
-	CHAR8* version_str = (CHAR8*)AllocatePool(MAX_BIOS_VERSION_LENGTH);
+	CHAR8* version_str = (CHAR8*)AllocateZeroPool(MAX_BIOS_VERSION_LENGTH);
 		
-	UINT8* rom = AllocatePool(NVIDIA_ROM_SIZE+1);
+	UINT8* rom = AllocateZeroPool(NVIDIA_ROM_SIZE+1);
 		// PRAMIN first
 	read_nVidia_PRAMIN(nvda_dev, rom, nvCardType);
 			 
@@ -1496,9 +1496,14 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 						{
 							version_start += 8;
 						}
-						
-						AsciiStrnCpy(version_str, (const CHAR8*)rom+version_start, i-version_start);
-							DBG(version_str);
+						CHAR8* s = (CHAR8*)(rom + version_start);
+            CHAR8* s1 = version_str;
+            while ((*s > ' ') && (*s < 'z') && ((INTN)(s1 - version_str) < MAX_BIOS_VERSION_LENGTH)) {
+              *s1++ = *s++;
+            }
+            *s1 = 0;
+		//				AsciiStrnCpy(version_str, (const CHAR8*)rom+version_start, i-version_start);
+            DBG(version_str);
 						break;
 					}
 				}
