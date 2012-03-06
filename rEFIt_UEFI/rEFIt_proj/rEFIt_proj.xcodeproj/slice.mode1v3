@@ -348,14 +348,12 @@
 					<key>Dock</key>
 					<array>
 						<dict>
-							<key>BecomeActive</key>
-							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>Settings.c</string>
+								<string>nvidia.c</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -363,11 +361,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>Settings.c</string>
+										<string>nvidia.c</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>12C11188150551DE009D6BEE</string>
+										<string>12226A6715062E8B00C1C129</string>
 										<key>history</key>
 										<array>
 											<string>1202124214266E13004B7B93</string>
@@ -413,11 +411,10 @@
 											<string>12628E6514FFE84300C10119</string>
 											<string>12C2C4AE150018C400F47A27</string>
 											<string>12BB246A1500DEEA00A0DDD4</string>
-											<string>1227A4C21504A31800076FE8</string>
 											<string>123522D01504CB9400103CD7</string>
-											<string>12C11184150551DE009D6BEE</string>
-											<string>12C11185150551DE009D6BEE</string>
-											<string>12C11187150551DE009D6BEE</string>
+											<string>12226A6515062E8B00C1C129</string>
+											<string>12226A6615062E8B00C1C129</string>
+											<string>1227A4C21504A31800076FE8</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -439,6 +436,8 @@
 							<string>375pt</string>
 						</dict>
 						<dict>
+							<key>BecomeActive</key>
+							<true/>
 							<key>ContentConfiguration</key>
 							<dict>
 								<key>PBXProjectModuleGUID</key>
@@ -475,9 +474,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>12C11189150551DE009D6BEE</string>
+				<string>12226A6815062E8B00C1C129</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>12C1118A150551DE009D6BEE</string>
+				<string>12226A6915062E8B00C1C129</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -697,7 +696,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>122336AD13377DFD0033F008</string>
-				<string>12C11191150551DE009D6BEE</string>
+				<string>12226A6A15062E8B00C1C129</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

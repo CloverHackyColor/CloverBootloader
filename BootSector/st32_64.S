@@ -401,7 +401,7 @@ MemMapDone:
 #
 # If INT 15 Function 2401 is not supported, then attempt to Enable A20 manually.
 #
-
+/*
         call    Empty8042InputBuffer        # Empty the Input Buffer on the 8042 controller
         jnz     Timeout8042                 # Jump if the 8042 timed out
         outw    %ax, $DELAY_PORT            # Delay 1 uS
@@ -418,12 +418,22 @@ Delay25uS:
         loop    Delay25uS
 Timeout8042: 
 
+*/
+#WIKI -fast A20gate
+		inb     $0x92, %al
+		orb		$2, %al
+		outb    %al, $0x92
+
 
 A20GateEnabled: 
 
 #
 # DISABLE INTERRUPTS - Entering Protected Mode
-#
+#  253668.pdf page 401
+		movl	$0x000F, %ebx
+		movl	$0x0E37, %eax
+		movl	$0x0010, %ecx
+		int		$0x10
 
         cli
 
@@ -451,7 +461,7 @@ A20GateEnabled:
     # Enable Protect Mode (set CR0.PE=1)
     #
     movl  %cr0, %eax      # Read CR0.
-    orl   $0x1,%eax       # Set PE=1
+    orb   $0x1,%al       # Set PE=1
     movl  %eax, %cr0      # Write CR0.
     .byte 0x66
     .byte 0xea                        # jmp far 16:32
@@ -468,7 +478,17 @@ In32BitProtectedMode:
     movw %ax,%ds
     movw %ax,%es
     movw %ax,%ss
-
+    #
+    # Disable paging before activate long mode (set CR0.PG=0)
+    #
+/*    movl  %cr0, %eax      # Read CR0.
+    .byte 0xf
+    .byte 0xba
+    .byte 0xf8
+    .byte 0x1f
+#    btc   eax, 31         ; Set PG=0.
+    movl  %eax, %cr0      # Write CR0. 
+Cl: jmp Cl */
     #
     # Enable the 64-bit page-translation-table entries by
     # setting CR4.PAE=1 (this is _required_ before activating
@@ -529,8 +549,8 @@ In32BitProtectedMode:
     .byte 0x1f
 #    bts   eax, 31         ; Set PG=1.
     movl  %eax, %cr0      # Write CR0.
-    jmp   GoToLongMode
-GoToLongMode: 
+#    jmp   GoToLongMode
+#GoToLongMode: 
 
     .byte 0x67
     .byte 0xea                  # Far Jump $+9:Selector to reload CS

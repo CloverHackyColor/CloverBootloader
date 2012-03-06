@@ -38,6 +38,7 @@
   DevicePathLib
   
 [Sources]
+  Debug.c
   BiosVideo.h
   BiosVideoNew.c
   ComponentName.c

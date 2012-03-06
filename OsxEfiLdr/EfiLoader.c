@@ -48,7 +48,7 @@ EfiLoader (
   EFI_MEMORY_DESCRIPTOR EfiMemoryDescriptor[EFI_MAX_MEMORY_DESCRIPTORS];
   EFI_STATUS            Status;
   UINTN                 NumberOfMemoryMapEntries;
-  UINT32                DestinationSize;
+  UINT32                DestinationSize = 0;
   UINT32                ScratchSize;
   UINTN                 BfvPageNumber;
   UINTN                 BfvBase;
@@ -60,7 +60,9 @@ EfiLoader (
 //  ClearScreen();
  
 //  PrintHeader ('A');
-  
+// while (TRUE) {
+//   DestinationSize++;
+// } 
 
 //  PrintString ("Enter Clover Loader...\n");
 //  PrintString ("BiosMemoryMapBaseAddress = %x\n", (UINTN) BiosMemoryMapBaseAddress);
@@ -294,6 +296,7 @@ _ModuleEntryPoint (
   UINT32    BiosMemoryMapBaseAddress
   )
 {
+//  while (TRUE) {}
 //  SerialPortInitialize ();
   EfiLoader(BiosMemoryMapBaseAddress);
   return EFI_SUCCESS;

@@ -449,7 +449,7 @@ BiosVideoChildHandleInstall (
   EFI_STATUS               Status;
   BIOS_VIDEO_DEV           *BiosVideoPrivate;
   ACPI_ADR_DEVICE_PATH     AcpiDeviceNode;
-  IA32_REGISTER_SET        Regs;
+//  IA32_REGISTER_SET        Regs;
 
   //
   // Allocate the private device structure for video device
@@ -515,16 +515,16 @@ BiosVideoChildHandleInstall (
   BiosVideoPrivate->PciIo = ParentPciIo;
 //Slice
 //	IA32_REGISTER_SET        Regs;
-	gBS->SetMem (&Regs, sizeof (Regs), 0);
-	Regs.H.AH = 0x00;
-	Regs.H.AL = 0x94; //0x83; bit 7      HiColor DAC
+//	gBS->SetMem (&Regs, sizeof (Regs), 0);
+//	Regs.H.AH = 0x00;
+//	Regs.H.AL = 0x94; //0x83; bit 7      HiColor DAC
 	// 02h = T  80x25  8x8   640x200  16gray    4   B800 CGA,PCjr,Tandy
 	// 03h = T  80x25  8x8   640x200   16       4   B800
 	// 80x50  8x8   640x400   16       4   B800 VGA [17]
 	// 12h = G  80x30  8x16  640x480   16/256K  .   A000 VGA,ATI VIP
 	// 14h = T 132x25  Nx16     .      16       .   B800 XGA, IBM Enhanced VGA [3]
 //	Regs.H.BL = 0xF;
-	LegacyBiosInt86 (BiosVideoPrivate, 0x10, &Regs); 
+//	LegacyBiosInt86 (BiosVideoPrivate, 0x10, &Regs); 
 /*	Regs.H.AH = 0x11;  
  //Int 10/AX=1112h - VIDEO - TEXT-MODE CHARGEN - LOAD ROM 8x8 DBL-DOT PATTERNS (PS,EGA,VGA)
  // 1114 - 8x16

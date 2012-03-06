@@ -21,6 +21,12 @@ Revision History:
 #ifndef _EFILDR_DEBUG_H_
 #define _EFILDR_DEBUG_H_
 
+#include <Library/BaseLib.h>
+#include <Library/BaseMemoryLib.h>
+#include <Library/PrintLib.h>
+//#include <Library/SerialPortLib.h>
+
+
 VOID
 PrintHeader (
   CHAR8 Char

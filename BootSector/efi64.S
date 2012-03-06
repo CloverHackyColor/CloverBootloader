@@ -41,9 +41,8 @@ _start:
 
 
 Start:  
-
+#  btcl  $31,%eax
     movl    $0x001fffe8,%esp # make final stack aligned
-
     # set OSFXSR and OSXMMEXCPT because some code will use XMM register
     .byte 0xf
     .byte 0x20
@@ -56,8 +55,12 @@ Start:
     .byte 0xe0
 #    mov cr4, rax
 
-    call    ClearScreen
-
+#    call    ClearScreen
+#    movl    $0xb8000, %edi
+#    movl    $String1, %esi 
+#    call    PrintString
+#Cyc: jmp Cyc
+#    .byte 0x90, 0x90, 0x90, 0x90, 0x90
     # Populate IDT with meaningful offsets for exception handlers...
     movl    $Idtr, %eax
     sidt    (%eax)                      # get fword address of IDT
@@ -167,6 +170,7 @@ SectionLoop:
     addl    2(%edx), %eax                # add to base of IDT to get location of memory map...
     xorl    %ecx,%ecx
     movl    %eax,%ecx                    # put argument to RCX
+#Cyc: jmp Cyc
 
     .byte 0x48
     .byte 0xc7

@@ -40,18 +40,18 @@ ClearScreen (
 {
   UINT32 Index;
 
-/*  mCursor = (UINT8 *)(UINTN)(0x000b8000 + 160);
+  mCursor = (UINT8 *)(UINTN)(0x000b8000 + 160);
   for (Index = 0; Index < 80 * 49; Index++) {
     *mCursor = ' ';
     mCursor += 2;
   }
   mCursor = (UINT8 *)(UINTN)(0x000b8000 + 160);
- */
+ /*
 	mCursor = (UINT8 *)(UINTN)(0xE0000000);
 	for (Index = 0; Index < 0x1000000; Index++) {
 		*mCursor = Index & 0xFF;
 		mCursor += 2;
-	}
+	}*/
 }
 
 VOID 
