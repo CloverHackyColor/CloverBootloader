@@ -606,16 +606,45 @@ VOID SetDevices(VOID)
 							}
               
               //LAN
-              //#define PCI_CLASS_NETWORK             0x02
-              //#define   PCI_CLASS_NETWORK_ETHERNET    0x00  
+              else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
+                       (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_ETHERNET))
+              {
+                GFXdevice = AllocateZeroPool(sizeof(pci_dt_t));
+                GFXdevice->DeviceHandle = HandleBuffer[HandleIndex];
+                GFXdevice->dev.addr = PCIADDR(Bus, Device, Function);
+                GFXdevice->vendor_id = Pci.Hdr.VendorId;
+                GFXdevice->device_id = Pci.Hdr.DeviceId;
+                gGraphics.DeviceID = Pci.Hdr.DeviceId;
+                GFXdevice->revision = Pci.Hdr.RevisionID;
+                GFXdevice->subclass = Pci.Hdr.ClassCode[0];
+                GFXdevice->class_id = *((UINT16*)(Pci.Hdr.ClassCode+1));
+                GFXdevice->subsys_id.subsys.vendor_id = Pci.Device.SubsystemVendorID;
+                GFXdevice->subsys_id.subsys.device_id = Pci.Device.SubsystemID;
+                MsgLog("Ethernet device found\n");
+                StringDirty = set_eth_builtin(GFXdevice);
+                FreePool(GFXdevice);                    
+              }
               
               //USB
-              //#define PCI_CLASS_SERIAL              0x0C
-              //#define   PCI_CLASS_SERIAL_USB          0x03
-              //#define     PCI_IF_UHCI                   0x00
-              //#define     PCI_IF_OHCI                   0x10
-              //#define     PCI_IF_EHCI                   0x20
-              //#define     PCI_IF_XHCI                   0x30
+              else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
+                       (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_USB))
+              {
+                GFXdevice = AllocateZeroPool(sizeof(pci_dt_t));
+                GFXdevice->DeviceHandle = HandleBuffer[HandleIndex];
+                GFXdevice->dev.addr = PCIADDR(Bus, Device, Function);
+                GFXdevice->vendor_id = Pci.Hdr.VendorId;
+                GFXdevice->device_id = Pci.Hdr.DeviceId;
+                gGraphics.DeviceID = Pci.Hdr.DeviceId;
+                GFXdevice->revision = Pci.Hdr.RevisionID;
+                GFXdevice->subclass = Pci.Hdr.ClassCode[0];
+                GFXdevice->class_id = *((UINT16*)(Pci.Hdr.ClassCode+1));
+                GFXdevice->subsys_id.subsys.vendor_id = Pci.Device.SubsystemVendorID;
+                GFXdevice->subsys_id.subsys.device_id = Pci.Device.SubsystemID;
+                MsgLog("USB device found\n");
+                StringDirty = set_usb_props(GFXdevice);
+                FreePool(GFXdevice);                    
+              }
+              
               
               //HDA
               //#define PCI_CLASS_MEDIA               0x04
@@ -623,19 +652,19 @@ VOID SetDevices(VOID)
 						}
 					}
 				}
-        }        
-			}
-		}
-        if (StringDirty) {
-          stringlength = string->length * 2;
-          
-          gDeviceProperties = AllocateAlignedPages(EFI_SIZE_TO_PAGES(stringlength + 1), 64);
-          CopyMem(gDeviceProperties, (VOID*)devprop_generate_string(string), stringlength);
-          gDeviceProperties[stringlength] = 0;
-          DBG(gDeviceProperties);
-          DBG("\n");   
-          StringDirty = FALSE;
-
+      }        
+    }
+  }
+  if (StringDirty) {
+    stringlength = string->length * 2;
+    
+    gDeviceProperties = AllocateAlignedPages(EFI_SIZE_TO_PAGES(stringlength + 1), 64);
+    CopyMem(gDeviceProperties, (VOID*)devprop_generate_string(string), stringlength);
+    gDeviceProperties[stringlength] = 0;
+    DBG(gDeviceProperties);
+    DBG("\n");   
+    StringDirty = FALSE;
+    
 	}
   
 	DBG("CurrentMode: Width=%d Height=%d\n", gGraphics.Width, gGraphics.Height);  

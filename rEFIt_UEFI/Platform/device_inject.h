@@ -19,10 +19,6 @@
 //VOID WRITEREG32 (UINT32 reg, UINT32 value);
 
 
-extern struct DevPropString *string;
-extern UINT8 *stringdata;
-extern UINT32 stringlength;
-
 typedef struct {
 	UINT32		:2;
 	UINT32	reg :6;
@@ -136,7 +132,7 @@ struct DevPropDevice {
 	// ------------------------	
 };
 
-typedef struct DevPropDevice DevPropDevice;
+typedef struct DevPropDevice  DevPropDevice;
 
 struct DevPropString {
 	UINT32 length;
@@ -146,10 +142,20 @@ struct DevPropString {
 	DevPropDevice **entries;
 };
 
-struct DevPropString	*devprop_create_string(void);
-DevPropDevice	*devprop_add_device(struct DevPropString *string, char *path);
+typedef struct DevPropString  DevPropString;
+
+extern DevPropString *string;
+extern UINT8 *stringdata;
+extern UINT32 stringlength;
+
+
+DevPropString	*devprop_create_string(void);
+DevPropDevice	*devprop_add_device(DevPropString *string, char *path);
 BOOLEAN		devprop_add_value(DevPropDevice *device, char *nm, UINT8 *vl, UINT32 len);
-CHAR8			*devprop_generate_string(struct DevPropString *string);
-VOID			devprop_free_string(struct DevPropString *string);
+CHAR8			*devprop_generate_string(DevPropString *string);
+VOID			devprop_free_string(DevPropString *string);
+
+BOOLEAN set_eth_builtin(pci_dt_t *eth_dev);
+BOOLEAN set_usb_props(pci_dt_t *usb_dev);
 
 #endif /* !__LIBSAIO_DEVICE_INJECT_H */

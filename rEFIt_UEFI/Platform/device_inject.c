@@ -24,7 +24,7 @@
 
 UINT32 devices_number = 1;
 UINT32 builtin_set = 0;
-struct DevPropString *string = 0;
+DevPropString *string = 0;
 UINT8 *stringdata = 0;
 UINT32 stringlength = 0;
 
@@ -44,15 +44,15 @@ static UINT32 dp_swap32(UINT32 toswap)
 }	
 
 
-struct DevPropString *devprop_create_string(VOID)
+DevPropString *devprop_create_string(VOID)
 {
 	DBG("devprop_create_string\n");
-	string = (struct DevPropString*)AllocateZeroPool(sizeof(struct DevPropString));
+	string = (DevPropString*)AllocateZeroPool(sizeof(DevPropString));
 	
 	if(string == NULL)
 		return NULL;
 	
-//	ZeroMem((VOID*)string, sizeof(struct DevPropString));
+//	ZeroMem((VOID*)string, sizeof(DevPropString));
 	string->length = 12;
 	string->WHAT2 = 0x01000000;
 	return string;
@@ -66,18 +66,18 @@ UINT8 ascii_hex_to_int (CHAR8* buf)
 			if (buf[0]>='0' && buf[0]<='9')
 				i = buf[0]-'0';
 			else
-				i = buf[0]-'A'; //no error checking
+				i = buf[0]-'A'+10; //no error checking
 			break;
 		case 2:
 			if (buf[0]>='0' && buf[0]<='9')
 				i = buf[0]-'0';
 			else
-				i = buf[0]-'A'; //no error checking
+				i = buf[0]-'A'+10; //no error checking
 			i *= 16;
 			if (buf[1]>='0' && buf[1]<='9')
 				i += buf[1]-'0';
 			else
-				i += buf[1]-'A'; //no error checking
+				i += buf[1]-'A'+10; //no error checking
 			break;
 	}
 	return i;
@@ -272,7 +272,7 @@ VOID* PCIReadRom(pci_dt_t* device)
 }*/
 
  
-DevPropDevice *devprop_add_device(struct DevPropString *string, CHAR8 *path)
+DevPropDevice *devprop_add_device(DevPropString *string, CHAR8 *path)
 {
 	DevPropDevice	*device;
 	const CHAR8		pciroot_string[] = "PciRoot(0x";
@@ -440,7 +440,7 @@ BOOLEAN devprop_add_value(DevPropDevice *device, CHAR8 *nm, UINT8 *vl, UINT32 le
 	return TRUE;
 }
 
-CHAR8 *devprop_generate_string(struct DevPropString *string)
+CHAR8 *devprop_generate_string(DevPropString *string)
 {
   UINTN len = string->length * 2;
 	INT32 i = 0, x = 0;
@@ -495,7 +495,7 @@ CHAR8 *devprop_generate_string(struct DevPropString *string)
 	return ptr;
 }
 
-VOID devprop_free_string(struct DevPropString *string)
+VOID devprop_free_string(DevPropString *string)
 {
 	//DBG("devprop_free_string\n");
 	if(!string)
@@ -518,4 +518,76 @@ VOID devprop_free_string(struct DevPropString *string)
 	
 	FreePool(string);
 	string = NULL;
+}
+
+// Ethernet built-in device injection
+BOOLEAN set_eth_builtin(pci_dt_t *eth_dev)
+{
+	CHAR8           *devicepath;
+  DevPropDevice   *device;
+  UINT8           builtin = 0x0;
+	
+	if (!string)
+    string = devprop_create_string();
+    
+  devicepath = get_pci_dev_path(eth_dev);
+  device = devprop_add_device(string, devicepath);
+  if (!device)
+    return FALSE;
+	// -------------------------------------------------
+	DBG("LAN Controller [%04x:%04x] :: %a\n", eth_dev->vendor_id, eth_dev->device_id, devicepath);
+	if (eth_dev->vendor_id != 0x168c && builtin_set == 0) 
+  {
+ 		builtin_set = 1;
+ 		builtin = 0x01;
+ 	}
+//  DBG("Setting dev.prop built-in=0x%x\n", builtin);
+  devprop_add_value(device, "device_type", (UINT8*)"ethernet", 8);
+	return devprop_add_value(device, "built-in", (UINT8*)&builtin, 1);
+}
+
+#define PCI_IF_XHCI 0x30
+
+static UINT8 clock_id = 0;
+BOOLEAN set_usb_props(pci_dt_t *usb_dev)
+{
+	CHAR8           *devicepath;
+  DevPropDevice   *device;
+  UINT8           builtin = 0x0;
+  UINT16  current_available = 1200; //mA
+  UINT16  current_extra     = 700;
+  UINT16  current_in_sleep  = 1000;
+	
+	if (!string)
+    string = devprop_create_string();
+  
+  devicepath = get_pci_dev_path(usb_dev);
+  device = devprop_add_device(string, devicepath);
+  if (!device)
+    return FALSE;
+	// -------------------------------------------------
+	DBG("USB Controller [%04x:%04x] :: %a\n", usb_dev->vendor_id, usb_dev->device_id, devicepath);
+  //  DBG("Setting dev.prop built-in=0x%x\n", builtin);
+  devprop_add_value(device, "AAPL,current-available", (UINT8*)&current_available, 2);
+  devprop_add_value(device, "AAPL,current-extra",     (UINT8*)&current_extra, 2);
+  devprop_add_value(device, "AAPL,current-in-sleep",  (UINT8*)&current_in_sleep, 2);
+  switch (usb_dev->subclass) {
+    case PCI_IF_UHCI:
+      devprop_add_value(device, "device_type", (UINT8*)"UHCI", 4);
+      break;
+    case PCI_IF_OHCI:
+      devprop_add_value(device, "device_type", (UINT8*)"OHCI", 4);
+      break;
+    case PCI_IF_EHCI:
+      devprop_add_value(device, "device_type", (UINT8*)"EHCI", 4);
+      break;
+    case PCI_IF_XHCI:
+      devprop_add_value(device, "device_type", (UINT8*)"XHCI", 4);
+      break;
+    default:
+      break;
+  }
+  devprop_add_value(device, "clock-id", (UINT8*)&clock_id, 1);
+  clock_id++;
+	return devprop_add_value(device, "built-in", (UINT8*)&builtin, 1);
 }

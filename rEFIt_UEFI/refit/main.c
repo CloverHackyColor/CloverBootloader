@@ -336,8 +336,6 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   SetupDataForOSX();
 //  PauseForKey(L"SetupBooterLog");
   Status = SetupBooterLog();
-//  CheckError(Status, L"while SetupBooterLog");
-//  PauseForKey(L"StartEFIImage");
   EventsInitialize ();
   StartEFIImage(Entry->DevicePath, Entry->LoadOptions,
                 Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL);
