@@ -25,10 +25,13 @@ EFI_STATUS SetupBooterLog(VOID)
 {
 	EFI_STATUS		Status	= EFI_SUCCESS;
 	UINTN			LogSize;
+  CHAR16*    BootLogName = L"EFI\\misc\\boot.log";
 	if (!msgbuf)
 		return EFI_NOT_FOUND;
 	LogSize  = msgCursor - msgbuf;
 	Status =  LogDataHub(&gEfiMiscSubClassGuid, L"boot-log", msgbuf, LogSize);
+  Status = egSaveFile(SelfRootDir, BootLogName, msgbuf, LogSize);
+   
 	return Status;
 }
 /* Kabyl: !BooterLog */

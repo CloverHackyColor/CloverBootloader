@@ -233,6 +233,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 	UINT32* rf = NULL;
 	UINT64* xf = NULL;
   UINT64 XDsdt; //save values if present
+  UINT64 BiosDsdt;
   UINT64 XFirmwareCtrl;
   EFI_FILE *RootDir;
   
@@ -255,6 +256,13 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   DBG("Found FADT in BIOS: %p\n", FadtPointer);
   Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)(FadtPointer->FirmwareCtrl);
   DBG("Found FACS in BIOS: %p\n", Facs);
+  BiosDsdt = FadtPointer->XDsdt;
+  if (BiosDsdt == 0) {
+    BiosDsdt = FadtPointer->Dsdt;
+    if (BiosDsdt == 0) {
+      DBG("Cannot found DSDT in Bios tables!\n");
+    }
+  }
   
 #if 0	  //Slice - this codes reserved for a future
 	if (0) { //RsdPointer) {
@@ -305,7 +313,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 		return EFI_UNSUPPORTED;
 	}
 	Rsdt = (RSDT_TABLE*)(UINTN)RsdPointer->RsdtAddress;
-	DBG("RSDT 0x%p\n", Rsdt);
+//	DBG("RSDT 0x%p\n", Rsdt);
 	rf = ScanRSDT(Rsdt, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE);
 	if(rf)
 		FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(*rf);
@@ -314,18 +322,18 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     if (RsdPointer->Revision >=2 && (RsdPointer->XsdtAddress < (UINT64)(UINTN)-1))
     {
       Xsdt = (XSDT_TABLE*)(UINTN)RsdPointer->XsdtAddress;
-      DBG("XSDT 0x%p\n", Xsdt);
+//      DBG("XSDT 0x%p\n", Xsdt);
       xf = ScanXSDT(Xsdt, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE);
       if(xf)
         FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(*xf);
     }
 	
 	if(!xf){
-	 	Print(L"Error! Xsdt is not found!!!\n");
+	 	DBG("Error! Xsdt is not found!!!\n");
 	 	//We should make here ACPI20 RSDP with all needed subtables based on ACPI10
 	}
   
-  DBG("FADT pointer = %x\n", (UINTN)FadtPointer);
+//  DBG("FADT pointer = %x\n", (UINTN)FadtPointer);
 	if(!FadtPointer)
 	{
     return EFI_NOT_FOUND;
@@ -355,6 +363,10 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     CopyMem((UINT8*)&newFadt->ResetReg, pmBlock, 0x80);
     //but these common values are not specific, so adjust
     //ACPIspec said that if Xdsdt !=0 then Dsdt must be =0. But real Mac no! Both values present
+    if (BiosDsdt) {
+      newFadt->XDsdt = BiosDsdt;
+      newFadt->Dsdt = BiosDsdt;
+    } else 
     if (newFadt->Dsdt) {
       newFadt->XDsdt = (UINT64)(newFadt->Dsdt);
     } else if (XDsdt) {

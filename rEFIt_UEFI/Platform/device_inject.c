@@ -557,6 +557,7 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
   UINT16  current_available = 1200; //mA
   UINT16  current_extra     = 700;
   UINT16  current_in_sleep  = 1000;
+  UINT32   fake_devid;
 	
 	if (!string)
     string = devprop_create_string();
@@ -571,6 +572,13 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
   devprop_add_value(device, "AAPL,current-available", (UINT8*)&current_available, 2);
   devprop_add_value(device, "AAPL,current-extra",     (UINT8*)&current_extra, 2);
   devprop_add_value(device, "AAPL,current-in-sleep",  (UINT8*)&current_in_sleep, 2);
+  devprop_add_value(device, "AAPL,clock-id", (UINT8*)&clock_id, 1);
+  clock_id++;
+  fake_devid = usb_dev->device_id && 0xFFFF;
+  if ((fake_devid && 0xFF00) == 0x2900) {
+    fake_devid &= 0xFEFF;
+    devprop_add_value(device, "device-id", (UINT8*)&fake_devid, 4);
+  }
   switch (usb_dev->subclass) {
     case PCI_IF_UHCI:
       devprop_add_value(device, "device_type", (UINT8*)"UHCI", 4);
@@ -587,7 +595,5 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
     default:
       break;
   }
-  devprop_add_value(device, "clock-id", (UINT8*)&clock_id, 1);
-  clock_id++;
 	return devprop_add_value(device, "built-in", (UINT8*)&builtin, 1);
 }
