@@ -288,6 +288,15 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 			gSettings.ResetVal = (UINT8)StrHexToUint64((CHAR16*)&UStr[0]);	
 		}
 		//other known pair is 0x02F9/0x06
+    prop = GetProperty(dict,"EnableC6");
+    gSettings.EnableC6 = TRUE;
+		if(prop)
+		{
+      //			AsciiStrCpy(gSettings.LoadVBios, prop->string);
+      if ((prop->string[0] == 'n') || (prop->string[0] == 'N'))
+				gSettings.EnableC6 = FALSE;
+    }
+        
 		
 		//*** SMBIOS ***//
 		prop = GetProperty(dict,"BiosVendor");
@@ -546,6 +555,7 @@ VOID SetDevices(VOID)
 	UINTN         Device;
 	UINTN         Function;
   BOOLEAN       StringDirty = FALSE;
+  UINT16        PmCon;
   
   
   gGraphics.Width  = UGAWidth;
@@ -644,7 +654,43 @@ VOID SetDevices(VOID)
                 StringDirty = set_usb_props(GFXdevice);
                 FreePool(GFXdevice);                    
               }
-              
+              //LPC
+              else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_BRIDGE) &&
+                       (Pci.Hdr.ClassCode[1] == PCI_CLASS_BRIDGE_ISA))
+              {
+                if (gSettings.EnableC6) {
+                  Status = PciIo->Pci.Read (
+                                            PciIo, 
+                                            EfiPciIoWidthUint16, 
+                                            GEN_PMCON_1, 
+                                            1, 
+                                            &PmCon
+                                            );
+                  MsgLog("Initial PmCon value=%x\n", PmCon);                   
+                  PmCon |= 1 << 11;	
+                  Status = PciIo->Pci.Write (
+                                             PciIo, 
+                                             EfiPciIoWidthUint16, 
+                                             GEN_PMCON_1, 
+                                             1, 
+                                             &PmCon
+                                             );
+                  
+                  Status = PciIo->Pci.Read (
+                                            PciIo, 
+                                            EfiPciIoWidthUint16, 
+                                            GEN_PMCON_1, 
+                                            1, 
+                                            &PmCon
+                                            );
+                  MsgLog("Set PmCon value=%x\n", PmCon);                   
+                  
+                } else {
+                  MsgLog("C6 is not enabled\n");
+                }
+
+              }
+                
               
               //HDA
               //#define PCI_CLASS_MEDIA               0x04
@@ -667,7 +713,7 @@ VOID SetDevices(VOID)
     
 	}
   
-	DBG("CurrentMode: Width=%d Height=%d\n", gGraphics.Width, gGraphics.Height);  
+	MsgLog("CurrentMode: Width=%d Height=%d\n", gGraphics.Width, gGraphics.Height);  
 }
 
 EFI_STATUS SaveSettings()
@@ -687,6 +733,6 @@ EFI_STATUS SaveSettings()
       (gSettings.CpuFreqMHz < 20000)){
     gCPUStructure.MaxSpeed = gSettings.CpuFreqMHz;
   }
-  
+  MsgLog("Finally: Bus=%dMHz CPU=%dMHz\n", DivU64x32(gCPUStructure.FSBFrequency, Mega), gCPUStructure.MaxSpeed);
   return EFI_SUCCESS;
 }

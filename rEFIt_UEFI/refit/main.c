@@ -259,8 +259,6 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
     UninitRefitLib();
     
     // turn control over to the image
-    // TODO: (optionally) re-enable the EFI watchdog timer!
-  //Slice - do this!
   //
   // Before calling the image, enable the Watchdog Timer for
   // the 5 Minute period - Slice - NO! 60seconds is enough
@@ -1164,7 +1162,7 @@ static VOID ScanDriverDir(IN CHAR16 *Path) //path to folder
 
 static VOID LoadDrivers(VOID)
 {
-  BOOLEAN ReconnectAll = TRUE; //TODO - find a reason to not reconnect
+  BOOLEAN ReconnectAll = FALSE; //TODO - find a reason to not reconnect
     
     // load drivers from /efi/drivers
     ScanDriverDir(L"\\EFI\\drivers");

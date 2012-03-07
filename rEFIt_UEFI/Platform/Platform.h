@@ -132,6 +132,8 @@ Headers collection for procedures
 #define PCI_BASE_ADDRESS_4					0x20		/* 32 bits */
 #define PCI_BASE_ADDRESS_5					0x24		/* 32 bits */
 
+#define GEN_PMCON_1                 0xA0
+
 #define PCIADDR(bus, dev, func) ((1 << 31) | (bus << 16) | (dev << 11) | (func << 8))
 #define REG8(base, reg)  ((volatile UINT8 *)(UINTN)base)[(reg)]
 #define REG16(base, reg)  ((volatile UINT16 *)(UINTN)base)[(reg) >> 1]
@@ -238,6 +240,7 @@ typedef struct {
 	BOOLEAN	UseDSDTmini;  
 	BOOLEAN	DropSSDT;
 	BOOLEAN	smartUPS;
+  BOOLEAN EnableC6;
 	CHAR16	DsdtName[60];
     
   //Graphics
