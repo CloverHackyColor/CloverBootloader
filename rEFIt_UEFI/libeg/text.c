@@ -54,6 +54,39 @@ VOID egMeasureText(IN CHAR16 *Text, OUT UINTN *Width, OUT UINTN *Height)
         *Height = FONT_CELL_HEIGHT;
 }
 
+EG_IMAGE * egLoadFontImage(IN BOOLEAN WantAlpha)
+{
+  EG_IMAGE            *NewImage;
+  EG_IMAGE            *NewFontImage;
+  UINTN     FontWidth;
+  UINTN     FontHeight;
+  UINTN     ImageWidth, ImageHeight;
+  UINTN     x, y, Ypos, j;
+  EG_PIXEL    *PixelPtr;
+    
+  NewImage = egLoadImage(SelfDir, PoolPrint(L"font\\%s", GlobalConfig.FontFileName), FALSE);
+  ImageWidth = NewImage->Width;
+  ImageHeight = NewImage->Height;
+  FontWidth = ImageWidth >> 4;
+  FontHeight = ImageHeight >> 4;
+  PixelPtr = NewImage->PixelData;
+  
+  NewFontImage = egCreateImage(FontWidth << 8, FontHeight, WantAlpha);
+  if (NewFontImage == NULL)
+    return NULL;
+  for (y=0; y<16; j++) {
+    for (j=0; j<FontHeight; y++) {
+      Ypos = ((j << 4) + y) * ImageWidth;
+      for (x=0; x<ImageWidth; x++) {
+        NewFontImage->PixelData[Ypos + x] = *PixelPtr++;
+      }
+    }    
+  }
+  egFreeImage(NewImage);
+  
+  return NewFontImage;  
+}  
+
 VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage, IN UINTN PosX, IN UINTN PosY)
 {
     EG_PIXEL        *BufferPtr;
@@ -68,8 +101,22 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage, IN UINTN PosX, IN
         TextLength = (CompImage->Width - PosX) / FONT_CELL_WIDTH;
     
     // load the font
-    if (FontImage == NULL)
+  if (FontImage == NULL){
+    switch (GlobalConfig.Font) {
+      case FONT_ALFA:
         FontImage = egPrepareEmbeddedImage(&egemb_font, TRUE);
+        break;
+      case FONT_GRAY:
+        FontImage = egPrepareEmbeddedImage(&egemb_font_gray, TRUE);
+        break;
+      case FONT_LOAD:
+        FontImage = egLoadFontImage(TRUE);
+        break;
+      default:
+        FontImage = egPrepareEmbeddedImage(&egemb_font, TRUE);
+        break;
+    }    
+  }
     
     // render it
     BufferPtr = CompImage->PixelData;

@@ -14,7 +14,11 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include "device_tree.h"
 
 
-EFI_EVENT                        mVirtualAddressChangeEvent = NULL;
+EFI_EVENT   mVirtualAddressChangeEvent = NULL;
+EFI_EVENT   OnReadyToBootEvent = NULL;
+EFI_EVENT   ExitBootServiceEvent = NULL;
+
+
 
 VOID CorrectMemoryMap(IN UINT32 memMap, 
                       IN UINT32 memDescriptorSize,
@@ -184,13 +188,10 @@ EFI_STATUS
 EFIAPI
 EventsInitialize ()
 {
-//  EFI_EVENT   OnReadyToBootEvent = NULL;
-  EFI_EVENT   ExitBootServiceEvent = NULL;
-  EFI_EVENT   mVirtualAddressChangeEvent = NULL;
-
   //
   // Register the event to reclaim variable for OS usage.
   //
+  EfiCreateEventReadyToBoot(&OnReadyToBootEvent);
 /*  EfiCreateEventReadyToBootEx (
     TPL_NOTIFY, 
     OnReadyToBoot, 

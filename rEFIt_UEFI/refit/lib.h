@@ -181,6 +181,9 @@ typedef struct {
   UINTN       HideBadges;
   UINTN       HideUIFlags;
   BOOLEAN     LegacyFirst;
+  FONT_TYPE   Font;
+  CHAR16      *FontFileName;
+  CHAR16      *Theme;
   CHAR16      *BannerFileName;
   CHAR16      *SelectionSmallFileName;
   CHAR16      *SelectionBigFileName;
@@ -212,7 +215,9 @@ extern EFI_LOADED_IMAGE *SelfLoadedImage;
 extern EFI_FILE         *SelfRootDir;
 extern EFI_FILE         *SelfDir;
 extern CHAR16           *SelfDirPath;
-extern EFI_DEVICE_PATH * SelfDevicePath;
+extern EFI_DEVICE_PATH  *SelfDevicePath;
+extern EFI_FILE         *ThemeDir;
+extern CHAR16           *ThemePath;
 
 extern REFIT_VOLUME     *SelfVolume;
 extern REFIT_VOLUME     **Volumes;

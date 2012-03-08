@@ -360,7 +360,7 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
             if (GlobalConfig.BannerFileName == NULL)
                 Banner = egPrepareEmbeddedImage(&egemb_refit_banner, FALSE);
             else
-                Banner = egLoadImage(SelfDir, GlobalConfig.BannerFileName, FALSE);
+                Banner = egLoadImage(ThemeDir, GlobalConfig.BannerFileName, FALSE);
             if (Banner != NULL)
                 MenuBackgroundPixel = Banner->PixelData[0];
         }

@@ -414,6 +414,10 @@ extern EFI_GUID gEfiPartTypeSystemPartGuid;
 extern EFI_GUID gMsgLogProtocolGuid;
 extern EFI_GUID gEfiLegacy8259ProtocolGuid;
 
+extern EFI_EVENT   mVirtualAddressChangeEvent;
+extern EFI_EVENT   OnReadyToBootEvent;
+extern EFI_EVENT   ExitBootServiceEvent;
+
 
 VOID        InitBooterLog(VOID);
 EFI_STATUS  SetupBooterLog(VOID);

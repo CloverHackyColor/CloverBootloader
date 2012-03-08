@@ -97,7 +97,7 @@ static VOID InitSelection(VOID)
     
     // load small selection image
     if (GlobalConfig.SelectionSmallFileName != NULL)
-        SelectionImages[2] = egLoadImage(SelfDir, GlobalConfig.SelectionSmallFileName, FALSE);
+        SelectionImages[2] = egLoadImage(ThemeDir, GlobalConfig.SelectionSmallFileName, FALSE);
     if (SelectionImages[2] == NULL)
         SelectionImages[2] = egPrepareEmbeddedImage(&egemb_back_selected_small, FALSE);
     SelectionImages[2] = egEnsureImageSize(SelectionImages[2],
@@ -107,7 +107,7 @@ static VOID InitSelection(VOID)
     
     // load big selection image
     if (GlobalConfig.SelectionBigFileName != NULL) {
-        SelectionImages[0] = egLoadImage(SelfDir, GlobalConfig.SelectionBigFileName, FALSE);
+        SelectionImages[0] = egLoadImage(ThemeDir, GlobalConfig.SelectionBigFileName, FALSE);
         SelectionImages[0] = egEnsureImageSize(SelectionImages[0],
                                                ROW0_TILESIZE, ROW0_TILESIZE, &MenuBackgroundPixel);
     }
@@ -716,7 +716,7 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, UINTN X
     MainImage = Entry->Image;
   }
   if (!MainImage) {
-    MainImage = LoadIcns(SelfDir, L"icons\\osx.icns", 128);
+    MainImage = LoadIcns(ThemeDir, L"icons\\osx.icns", 128);
   }
   
     BltImageCompositeBadge(SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],

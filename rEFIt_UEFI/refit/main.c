@@ -172,7 +172,7 @@ static VOID AboutRefit(VOID)
 //  CHAR8* Revision = NULL;
     if (AboutMenu.EntryCount == 0) {
         AboutMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
-        AddMenuInfoLine(&AboutMenu, L"rEFIt Version 1.01 UEFI by Slice");
+        AddMenuInfoLine(&AboutMenu, L"rEFIt Version 1.02 UEFI by Slice");
 #ifdef FIRMWARE_BUILDDATE
       AddMenuInfoLine(&AboutMenu, PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
 #else
@@ -327,6 +327,9 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //  PauseForKey(L"PatchACPI");
   PatchACPI(Entry->Volume);
 //  PauseForKey(L"SetVariablesForOSX");
+  gBS->SignalEvent(OnReadyToBootEvent);
+  gBS->SignalEvent(mVirtualAddressChangeEvent);
+  
   SetVariablesForOSX();
 //  PauseForKey(L"FinalizeSmbios");
   FinalizeSmbios();
@@ -1291,7 +1294,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   // read GUI configuration
   ReadConfig();
-  
+  ThemePath = PoolPrint(L"EFI\\BOOT\\themes\\%s", GlobalConfig.Theme);
+  DBG("Theme: %s Path: %s\n", GlobalConfig.Theme, ThemePath);
   MainMenu.TimeoutSeconds = GlobalConfig.Timeout;
   
   // disable EFI watchdog timer

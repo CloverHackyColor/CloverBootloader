@@ -300,3 +300,4 @@ static const UINT8 egemb_font_data[3587] = {
  0x00, 0xff, 0x00, 0xc2, 0x00, 0x84, 0xff, 0xff, 0x00, 0xdb, 0x00,
 };
 static EG_EMBEDDED_IMAGE egemb_font = { 672, 12, EG_EIPIXELMODE_ALPHA, EG_EICOMPMODE_RLE, egemb_font_data, 3587 };
+static EG_EMBEDDED_IMAGE egemb_font_gray = { 672, 12, EG_EIPIXELMODE_GRAY, EG_EICOMPMODE_RLE, egemb_font_data, 3587 };

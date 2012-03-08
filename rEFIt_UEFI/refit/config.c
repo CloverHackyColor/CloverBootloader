@@ -36,7 +36,7 @@
 
 #include "Platform.h"
 
-#define DEBUG_CFG 2
+#define DEBUG_CFG 1
 
 #if DEBUG_CFG == 2
 #define DBG(x...) AsciiPrint(x)
@@ -50,7 +50,7 @@
 // constants
 
 #define CONFIG_FILE_NAME    L"refit.conf"
-#define MAXCONFIGFILESIZE   (64*1024)
+#define MAXCONFIGFILESIZE   (256*1024)
 
 #define ENCODING_ISO8859_1  (0)
 #define ENCODING_UTF8       (1)
@@ -58,7 +58,7 @@
 
 // global configuration with default values
 
-REFIT_CONFIG        GlobalConfig = { FALSE, 20, 0, 0, 0, FALSE, NULL, NULL, NULL, NULL };
+REFIT_CONFIG        GlobalConfig = { FALSE, 20, 0, 0, 0, FALSE, FONT_ALFA, NULL, NULL, NULL, NULL, NULL, NULL };
 
 //
 // read a file into a buffer
@@ -329,7 +329,7 @@ VOID ReadConfig(VOID)
     Status = ReadFile(SelfDir, CONFIG_FILE_NAME, &File);
     if (EFI_ERROR(Status))
         return;
-//    DBG("Reading configuration file OK!\n");
+    DBG("Reading refit.conf file OK!\n");
     for (;;) {
         ReadTokenLine(&File, &TokenList, &TokenCount);
         if (TokenCount == 0)
@@ -358,7 +358,7 @@ VOID ReadConfig(VOID)
                 } else if (StriCmp(FlagName, L"all") == 0) {
                     GlobalConfig.DisableFlags = DISABLE_ALL;
                 } else {
-                    Print(L" unknown disable flag: '%s'\n", FlagName);
+                    DBG(" unknown disable flag: %s\n", FlagName);
                 }
             }
             
@@ -397,10 +397,29 @@ VOID ReadConfig(VOID)
                     if (GlobalConfig.HideBadges < 1)
                         GlobalConfig.HideBadges = 1;
                 } else {
-                    Print(L" unknown hideui flag: '%s'\n", FlagName);
+                    DBG(" unknown hideui flag: %s\n", FlagName);
                 }
             }
+          
+        } else if (StriCmp(TokenList[0], L"theme") == 0) {
+          HandleString(TokenList, TokenCount, &(GlobalConfig.Theme));
+          
+        } else if (StriCmp(TokenList[0], L"font") == 0) {
+          FlagName = TokenList[1];
+          if (StriCmp(FlagName, L"alfa") == 0) {
+            GlobalConfig.Font = FONT_ALFA;
+          } else if (StriCmp(FlagName, L"gray") == 0) {
+            GlobalConfig.Font = FONT_GRAY;
+          } else if (StriCmp(FlagName, L"load") == 0) {
+            GlobalConfig.Font = FONT_LOAD;
+          }  else {
+            DBG(" unknown font type: %s\n", FlagName);
+          }
+          
             
+        } else if (StriCmp(TokenList[0], L"font_file_name") == 0) {
+          HandleString(TokenList, TokenCount, &(GlobalConfig.FontFileName));
+          
         } else if (StriCmp(TokenList[0], L"banner") == 0) {
             HandleString(TokenList, TokenCount, &(GlobalConfig.BannerFileName));
             
@@ -420,7 +439,7 @@ VOID ReadConfig(VOID)
             GlobalConfig.LegacyFirst = TRUE;
             
         } else {
-            Print(L" unknown configuration command: '%s'\n", TokenList[0]);
+            DBG(" unknown configuration command: %s\n", TokenList[0]);
         }
         
         FreeTokenLine(&TokenList, &TokenCount);

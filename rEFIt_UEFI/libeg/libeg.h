@@ -130,12 +130,13 @@
 #include <IndustryStandard/Scsi.h>
 
 
-#ifndef STRING_REF
-//typedef UINT16  STRING_REF;
-#endif
-
-
 /* types */
+
+typedef enum {
+  FONT_ALFA,
+  FONT_GRAY,
+  FONT_LOAD
+} FONT_TYPE;
 
 /* This should be compatible with EFI_UGA_PIXEL */
 typedef struct {

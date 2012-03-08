@@ -55,6 +55,8 @@ EFI_FILE         *SelfRootDir;
 EFI_FILE         *SelfDir;
 CHAR16           *SelfDirPath;
 EFI_DEVICE_PATH  *SelfDevicePath;
+EFI_FILE         *ThemeDir;
+CHAR16           *ThemePath;
 
 
 REFIT_VOLUME     *SelfVolume = NULL;
@@ -140,6 +142,7 @@ EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
     } else
         BaseDirectory[0] = 0;
     SelfDirPath = EfiStrDuplicate(BaseDirectory);
+
  //   Print(L"SelfDirPath = %s\n", SelfDirPath);  //result=\EFI\BOOT
   
     return FinishInitRefitLib();
@@ -160,6 +163,12 @@ VOID UninitRefitLib(VOID)
         SelfRootDir->Close(SelfRootDir);
         SelfRootDir = NULL;
     }
+  
+  if (ThemeDir != NULL) {
+    ThemeDir->Close(ThemeDir);
+    ThemeDir = NULL;
+  }
+  
 }
 
 EFI_STATUS ReinitRefitLib(VOID)
@@ -181,6 +190,7 @@ EFI_STATUS ReinitSelfLib(VOID)
   EFI_STATUS  Status;
   EFI_HANDLE                NewSelfHandle;
 	EFI_DEVICE_PATH_PROTOCOL* TmpDevicePath;
+
   if (!SelfDevicePath) {
     return EFI_NOT_FOUND;
   }
@@ -203,6 +213,7 @@ EFI_STATUS ReinitSelfLib(VOID)
     return EFI_NOT_FOUND;
   }
   SelfDeviceHandle = NewSelfHandle;
+  Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
   Status = SelfRootDir->Open(SelfRootDir, &SelfDir, SelfDirPath, EFI_FILE_MODE_READ, 0);
   CheckFatalError(Status, L"while reopening our installation directory");
   return Status;
@@ -222,7 +233,7 @@ EFI_STATUS FinishInitRefitLib(VOID)
        return EFI_LOAD_ERROR;
      }
   }
-  
+  Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
   Status = SelfRootDir->Open(SelfRootDir, &SelfDir, SelfDirPath, EFI_FILE_MODE_READ, 0);
   CheckFatalError(Status, L"while opening our installation directory");
   return Status;
@@ -556,7 +567,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
       if (Volume->OSIconName) {
         CHAR16          FileName[256];
         UnicodeSPrint(FileName, 255, L"icons\\os_%s.icns", Volume->OSIconName);
-        Volume->VolBadgeImage = egLoadIcon(SelfDir, FileName, 32);
+        Volume->VolBadgeImage = egLoadIcon(ThemeDir, FileName, 32);
         //LoadOSIcon(Volume->OSIconName, L"mac", FALSE);
       }
 
@@ -881,9 +892,9 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
 //  DBG("GetOSVersion\n");
   Status = GetOSVersion(Volume); //here we set tiger,leo,snow,lion and cougar
   if (!EFI_ERROR(Status)) {
-    CHAR16          FileName[256];
-    UnicodeSPrint(FileName, 255, L"icons\\os_%s.icns", Volume->OSIconName);
-    Volume->VolBadgeImage = egLoadIcon(SelfDir, FileName, 32);
+//    CHAR16          FileName[256];
+//    UnicodeSPrint(FileName, 255, L"icons\\os_%s.icns", Volume->OSIconName);
+    Volume->VolBadgeImage = egLoadIcon(ThemeDir, PoolPrint(L"icons\\os_%s.icns", Volume->OSIconName), 32);
 //    Volume->VolBadgeImage = LoadOSIcon(Volume->OSIconName, L"mac", FALSE);
   }
     // Volume->OSType = 0; //TODO - other criteria?

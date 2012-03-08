@@ -289,12 +289,12 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 		}
 		//other known pair is 0x02F9/0x06
     prop = GetProperty(dict,"EnableC6");
-    gSettings.EnableC6 = TRUE;
+    gSettings.EnableC6 = FALSE;
 		if(prop)
 		{
       //			AsciiStrCpy(gSettings.LoadVBios, prop->string);
-      if ((prop->string[0] == 'n') || (prop->string[0] == 'N'))
-				gSettings.EnableC6 = FALSE;
+      if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+				gSettings.EnableC6 = TRUE;
     }
         
 		
