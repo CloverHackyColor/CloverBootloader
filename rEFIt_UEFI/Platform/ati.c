@@ -5,7 +5,7 @@
  *
  */
 
-#include "device_inject.h"
+#include "Platform.h"
 
 #include "ati.h"
 
@@ -18,12 +18,6 @@
 #else
 #define DBG(x...)
 #endif
-
-
-//#define Reg32(reg)				(*(volatile UINT32 *)(card->mmio + reg))
-//#define RegRead32(reg)			(Reg32(reg))
-//#define RegWrite32(reg, value)	(Reg32(reg) = value)
-
 
 
 static value_t aty_name;

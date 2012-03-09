@@ -2,10 +2,9 @@
  Slice 2012
 */
 
-#include "device_inject.h"
 #include "Platform.h"
 
-#define DEBUG_SET 0
+#define DEBUG_SET 1
 
 #if DEBUG_SET == 2
 #define DBG(x...) AsciiPrint(x)
@@ -24,38 +23,6 @@ GFX_PROPERTIES                  gGraphics;
 EFI_EDID_DISCOVERED_PROTOCOL    *EdidDiscovered;
 //EFI_GRAPHICS_OUTPUT_PROTOCOL    *GraphicsOutput;
 UINT16                          gCPUtype;
-//UINT16                          gResetAddress;
-//UINT16                          gResetValue;
-
-//should be excluded. Now refit.conf
-/*EFI_STATUS GetTheme (CHAR16* ThemePlistPath)
-{
-  EFI_STATUS	Status = EFI_NOT_FOUND;
-	UINT32		size;
-	CHAR8*		gThemePtr;
-	TagPtr		dict;
-	TagPtr		prop;
-
-  if (FileExists(SelfRootDir, ThemePlistPath)) {
-    Status = egLoadFile(SelfRootDir, ThemePlistPath, (UINT8**)&gThemePtr, &size);
-  } 
-  if (EFI_ERROR(Status)) {
-    Print(L"No theme found!\n");
-    gBS->Stall(3000000);
-    return Status;
-  }
-
-  if(gThemePtr)
-	{		
-		if(ParseXML((const CHAR8*)gThemePtr, &dict) != EFI_SUCCESS)
-		{
-			Print(L"Theme.plist parsing error!\n");
-      gBS->Stall(3000000);
-			return EFI_UNSUPPORTED;
-		}
-  }
-  return Status;
-}*/
 
 EFI_STATUS GetNVRAMSettings(IN EFI_FILE *RootDir, CHAR16* NVRAMPlistPath)
 {
@@ -288,16 +255,31 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 			gSettings.ResetVal = (UINT8)StrHexToUint64((CHAR16*)&UStr[0]);	
 		}
 		//other known pair is 0x02F9/0x06
+    
     prop = GetProperty(dict,"EnableC6");
     gSettings.EnableC6 = FALSE;
 		if(prop)
 		{
-      //			AsciiStrCpy(gSettings.LoadVBios, prop->string);
       if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
 				gSettings.EnableC6 = TRUE;
     }
         
-		
+    prop = GetProperty(dict,"EnableC4");
+    gSettings.EnableC4 = FALSE;
+		if(prop)
+		{
+      if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+				gSettings.EnableC4 = TRUE;
+    }
+    
+    prop = GetProperty(dict,"EnableISS");
+    gSettings.EnableISS = FALSE;
+		if(prop)
+		{
+      if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+				gSettings.EnableISS = TRUE;
+    }
+    		
 		//*** SMBIOS ***//
 		prop = GetProperty(dict,"BiosVendor");
 		if(prop)
@@ -367,7 +349,6 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
     gSettings.Mobile = gMobile;  //default
 		if(prop)
 		{
-      //			AsciiStrCpy(gSettings.LoadVBios, prop->string);
       if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
 				gSettings.Mobile = TRUE;
     }
@@ -415,6 +396,35 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 			AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
 			gSettings.BusSpeed = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
 		}
+      	
+  	// HDA
+  	gSettings.HDAInjection = TRUE;
+  	gSettings.HDALayoutId = 0;
+  	prop = GetProperty(dict,"HDAInjection");
+  	if(prop)
+    {
+      // enabled by default
+      // syntax:
+      // - HDAInjection=No - disables injection
+      // - HDAInjection=887 - injects layout-id 887 decimal (0x00000377)
+      // - HDAInjection=0x377 - injects layout-id 887 decimal (0x00000377)
+      // - HDAInjection=Detect - reads codec device id (eg. 0x0887)
+      //   converts it to decimal 887 and injects this as layout-id.
+      //   if hex device is cannot be converted to decimal, injects legacy value 12 decimal
+      // - all other values are equal to HDAInjection=Detect
+      if ((prop->string[0] == 'n') || (prop->string[0] == 'N')) {
+        // if starts with n or N, then no HDA injection
+        gSettings.HDAInjection = FALSE;
+      } else if ((prop->string[0] == '0')  && 
+                 (prop->string[1] == 'x' || prop->string[1] == 'X')) {
+        // assume it's a hex layout id
+        gSettings.HDALayoutId = AsciiStrHexToUintn(prop->string);
+      } else {
+				// assume it's a decimal layout id
+				gSettings.HDALayoutId = AsciiStrDecimalToUintn(prop->string);
+			}
+    }
+    
 		SaveSettings();
 	}	
   DBG("config.plist read and return %r\n", Status);
@@ -449,7 +459,6 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 	{
 		if(ParseXML(plistBuffer, &dict) != EFI_SUCCESS)
 		{
-//			Print(L"Error Parsing System Version!\n");
 			FreePool(plistBuffer);
 			return EFI_NOT_FOUND;
 		}
@@ -492,10 +501,10 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
         Volume->BootType = BOOTING_BY_EFI;
         Status = EFI_SUCCESS;
       }
-      
+      MsgLog("Booting OS %a\n", prop->string);
     } 
 	}
-//	MsgLog("Booting %a\n", sysVersion[Volume->OSType]);
+	
 	return Status;
 }
 
@@ -549,12 +558,13 @@ VOID SetDevices(VOID)
 	UINTN                 ProtocolIndex;
 	EFI_HANDLE            *HandleBuffer;
 	EFI_GUID              **ProtocolGuidArray;
-  pci_dt_t*             GFXdevice;
+	pci_dt_t              PCIdevice;
   UINTN         Segment;
 	UINTN         Bus;
 	UINTN         Device;
 	UINTN         Function;
   BOOLEAN       StringDirty = FALSE;
+  BOOLEAN       TmpDirty = FALSE;
   UINT16        PmCon;
   
   
@@ -571,136 +581,140 @@ VOID SetDevices(VOID)
 				for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
 					if (CompareGuid( &gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex])) {
 						Status = gBS->OpenProtocol (HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID **)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
-						if (!EFI_ERROR(Status)) {
-							Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, 0, sizeof (Pci) / sizeof (UINT32), &Pci);
-							if (EFI_ERROR (Status)) {
-								continue;
-							}
-              Status = PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
-							// GFX
-							if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
-                  (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA)) {
-                GFXdevice = AllocateZeroPool(sizeof(pci_dt_t));
-                GFXdevice->DeviceHandle = HandleBuffer[HandleIndex];
-                GFXdevice->dev.addr = PCIADDR(Bus, Device, Function);
-                GFXdevice->vendor_id = Pci.Hdr.VendorId;
-                GFXdevice->device_id = Pci.Hdr.DeviceId;
-                gGraphics.DeviceID = Pci.Hdr.DeviceId;
-                GFXdevice->revision = Pci.Hdr.RevisionID;
-                GFXdevice->subclass = Pci.Hdr.ClassCode[0];
-                GFXdevice->class_id = *((UINT16*)(Pci.Hdr.ClassCode+1));
-                GFXdevice->subsys_id.subsys.vendor_id = Pci.Device.SubsystemVendorID;
-                GFXdevice->subsys_id.subsys.device_id = Pci.Device.SubsystemID;
-
-                switch (Pci.Hdr.VendorId) {
-                  case 0x1002:
-                    gGraphics.Vendor = Ati;
-                    MsgLog("ATI GFX found\n");
-                    StringDirty = setup_ati_devprop(GFXdevice);
-                    break;
-                  case 0x8086:
-                    MsgLog("Intel GFX found\n");
-                    StringDirty = setup_gma_devprop(GFXdevice);
-                    MsgLog("Intel GFX device_id =0x%x\n", GFXdevice->device_id);
-                    MsgLog("Intel GFX revision  =0x%x\n", GFXdevice->revision);
-                    break;
-                  case 0x10de:
-                    gGraphics.Vendor = Nvidia;
-                    MsgLog("nVidia GFX found\n");
-                    StringDirty = setup_nvidia_devprop(GFXdevice);
-                    break;
-                  default:
-                    break;
-                }
-                FreePool(GFXdevice);                    
-							}
-              
-              //LAN
-              else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
-                       (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_ETHERNET))
-              {
-                GFXdevice = AllocateZeroPool(sizeof(pci_dt_t));
-                GFXdevice->DeviceHandle = HandleBuffer[HandleIndex];
-                GFXdevice->dev.addr = PCIADDR(Bus, Device, Function);
-                GFXdevice->vendor_id = Pci.Hdr.VendorId;
-                GFXdevice->device_id = Pci.Hdr.DeviceId;
-                gGraphics.DeviceID = Pci.Hdr.DeviceId;
-                GFXdevice->revision = Pci.Hdr.RevisionID;
-                GFXdevice->subclass = Pci.Hdr.ClassCode[0];
-                GFXdevice->class_id = *((UINT16*)(Pci.Hdr.ClassCode+1));
-                GFXdevice->subsys_id.subsys.vendor_id = Pci.Device.SubsystemVendorID;
-                GFXdevice->subsys_id.subsys.device_id = Pci.Device.SubsystemID;
-                MsgLog("Ethernet device found\n");
-                StringDirty = set_eth_builtin(GFXdevice);
-                FreePool(GFXdevice);                    
-              }
-              
-              //USB
-              else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
-                       (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_USB))
-              {
-                GFXdevice = AllocateZeroPool(sizeof(pci_dt_t));
-                GFXdevice->DeviceHandle = HandleBuffer[HandleIndex];
-                GFXdevice->dev.addr = PCIADDR(Bus, Device, Function);
-                GFXdevice->vendor_id = Pci.Hdr.VendorId;
-                GFXdevice->device_id = Pci.Hdr.DeviceId;
-                gGraphics.DeviceID = Pci.Hdr.DeviceId;
-                GFXdevice->revision = Pci.Hdr.RevisionID;
-                GFXdevice->subclass = Pci.Hdr.ClassCode[0];
-                GFXdevice->class_id = *((UINT16*)(Pci.Hdr.ClassCode+1));
-                GFXdevice->subsys_id.subsys.vendor_id = Pci.Device.SubsystemVendorID;
-                GFXdevice->subsys_id.subsys.device_id = Pci.Device.SubsystemID;
-                MsgLog("USB device found\n");
-                StringDirty = set_usb_props(GFXdevice);
-                FreePool(GFXdevice);                    
-              }
-              //LPC
-              else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_BRIDGE) &&
-                       (Pci.Hdr.ClassCode[1] == PCI_CLASS_BRIDGE_ISA))
-              {
-                if (gSettings.EnableC6) {
-                  Status = PciIo->Pci.Read (
-                                            PciIo, 
-                                            EfiPciIoWidthUint16, 
-                                            GEN_PMCON_1, 
-                                            1, 
-                                            &PmCon
-                                            );
-                  MsgLog("Initial PmCon value=%x\n", PmCon);                   
-                  PmCon |= 1 << 11;	
-                  Status = PciIo->Pci.Write (
-                                             PciIo, 
-                                             EfiPciIoWidthUint16, 
-                                             GEN_PMCON_1, 
-                                             1, 
-                                             &PmCon
-                                             );
-                  
-                  Status = PciIo->Pci.Read (
-                                            PciIo, 
-                                            EfiPciIoWidthUint16, 
-                                            GEN_PMCON_1, 
-                                            1, 
-                                            &PmCon
-                                            );
-                  MsgLog("Set PmCon value=%x\n", PmCon);                   
-                  
-                } else {
-                  MsgLog("C6 is not enabled\n");
-                }
-
-              }
-                
-              
-              //HDA
-              //#define PCI_CLASS_MEDIA               0x04
-              //#define   PCI_CLASS_MEDIA_HDA           0x03
+						if (EFI_ERROR(Status)) {
+							continue;
 						}
+            Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, 0, sizeof (Pci) / sizeof (UINT32), &Pci);
+            if (EFI_ERROR (Status)) {
+              continue;
+            }
+            Status = PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
+						PCIdevice.DeviceHandle = HandleBuffer[HandleIndex];
+						PCIdevice.dev.addr = PCIADDR(Bus, Device, Function);
+						PCIdevice.vendor_id = Pci.Hdr.VendorId;
+						PCIdevice.device_id = Pci.Hdr.DeviceId;
+						PCIdevice.revision = Pci.Hdr.RevisionID;
+						PCIdevice.subclass = Pci.Hdr.ClassCode[0];
+						PCIdevice.class_id = *((UINT16*)(Pci.Hdr.ClassCode+1));
+						PCIdevice.subsys_id.subsys.vendor_id = Pci.Device.SubsystemVendorID;
+						PCIdevice.subsys_id.subsys.device_id = Pci.Device.SubsystemID;
+            // GFX
+            if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
+                (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA)) {
+							
+              gGraphics.DeviceID = Pci.Hdr.DeviceId;
+              
+              switch (Pci.Hdr.VendorId) {
+                case 0x1002:
+                  gGraphics.Vendor = Ati;
+                  MsgLog("ATI GFX found\n");
+                  //can't do in one step because of C-conventions
+                  TmpDirty = setup_ati_devprop(&PCIdevice);
+                  StringDirty |=  TmpDirty;
+									
+                  break;
+                case 0x8086:
+                  
+                  TmpDirty = setup_gma_devprop(&PCIdevice);
+                  StringDirty |=  TmpDirty;
+                  MsgLog("Intel GFX device_id =0x%x\n", PCIdevice.device_id);
+                  MsgLog("Intel GFX revision  =0x%x\n", PCIdevice.revision);
+                  break;
+                case 0x10de:
+                  gGraphics.Vendor = Nvidia;
+                  MsgLog("nVidia GFX found\n");
+                  TmpDirty = setup_nvidia_devprop(&PCIdevice);
+                  StringDirty |=  TmpDirty;
+                  break;
+                default:
+                  break;
+              }
+            }
+            
+            //LAN
+            else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
+                     (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_ETHERNET)) {
+              MsgLog("Ethernet device found\n");
+							TmpDirty = set_eth_props(&PCIdevice);
+							StringDirty |=  TmpDirty;
+            }
+            
+            //USB
+            else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
+                     (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_USB)) {
+              MsgLog("USB device found\n");
+							TmpDirty = set_usb_props(&PCIdevice);
+							StringDirty |=  TmpDirty;
+						}
+						
+						// HDA
+						else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
+                     (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA)) {
+							MsgLog("HDA device found\n");
+							TmpDirty = set_hda_props(PciIo, &PCIdevice);
+							StringDirty |=  TmpDirty;
+            }
+						
+            //LPC
+            else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_BRIDGE) &&
+                     (Pci.Hdr.ClassCode[1] == PCI_CLASS_BRIDGE_ISA))
+            {
+              if (gSettings.Mobile) {
+                Status = PciIo->Pci.Read (
+                                          PciIo, 
+                                          EfiPciIoWidthUint16, 
+                                          GEN_PMCON_1, 
+                                          1, 
+                                          &PmCon
+                                          );
+                MsgLog("Initial PmCon value=%x\n", PmCon);  
+                if (gSettings.EnableC6) {
+                  PmCon |= 1 << 11;	
+                  DBG("C6 enabled\n");
+                } else {
+                  PmCon &= ~(1 << 11);
+                  DBG("C6 disabled\n");
+                }
+                if (gSettings.EnableC4) {
+                  PmCon |= 1 << 7;	
+                  DBG("C4 enabled\n");
+                } else {
+                  PmCon &= ~(1 << 7);
+                  DBG("C4 disabled\n");
+                }
+                if (gSettings.EnableISS) {
+                  PmCon |= 1 << 3;	
+                  DBG("SpeedStep enabled\n");
+                } else {
+                  PmCon &= ~(1 << 3);
+                  DBG("SpeedStep disabled\n");
+                }
+                
+                Status = PciIo->Pci.Write (
+                                           PciIo, 
+                                           EfiPciIoWidthUint16, 
+                                           GEN_PMCON_1, 
+                                           1, 
+                                           &PmCon
+                                           );
+                
+                Status = PciIo->Pci.Read (
+                                          PciIo, 
+                                          EfiPciIoWidthUint16, 
+                                          GEN_PMCON_1, 
+                                          1, 
+                                          &PmCon
+                                          );
+                MsgLog("Set PmCon value=%x\n", PmCon);                   
+                
+              } 
+            }                
 					}
 				}
       }        
     }
   }
+	
   if (StringDirty) {
     stringlength = string->length * 2;
     
@@ -720,6 +734,8 @@ EFI_STATUS SaveSettings()
 {
   //TODO - SetVariable()..
   //here we can apply user settings instead of defult one
+  gMobile = gSettings.Mobile;
+  
   if ((gSettings.BusSpeed != 0) &&
       (gSettings.BusSpeed > 10 * kilo) &&
       (gSettings.BusSpeed < 500 * kilo)){

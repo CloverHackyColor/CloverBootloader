@@ -3,15 +3,8 @@
 	http://forum.voodooprojects.org/index.php/topic,1029.0.html
 */
 
-//#include "libsa.h"
-//#include "saio_internal.h"
-//#include "bootstruct.h"
-//#include "pci.h"
-//#include "platform.h"
-#include "device_inject.h"
-#include "gma.h"
 #include "Platform.h"
-//#include "graphics.h"
+#include "gma.h"
 
 #ifndef DEBUG_GMA
 #define DEBUG_GMA 1
@@ -27,7 +20,7 @@
 
 extern CHAR8*						gDeviceProperties;
 
-//Slice - correct all values, still not sure
+//Slice - corrected all values, still not sure
 UINT8 GMAX3100_vals[23][4] = {
 	{ 0x01,0x00,0x00,0x00 },	//0 "AAPL,HasPanel"
 	{ 0x01,0x00,0x00,0x00 },	//1 "AAPL,SelfRefreshSupported"

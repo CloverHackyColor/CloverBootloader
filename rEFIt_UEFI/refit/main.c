@@ -682,7 +682,15 @@ static VOID ScanLoader(VOID)
           continue; //boot MacOSX only
         }
         
-        // check for XOM - and what?
+      // check for Mac OS X Recovery Boot
+      StrCpy(FileName,  L"\\com.apple.recovery.boot\\boot.efi");
+      if (FileExists(Volume->RootDir, FileName)) {
+        Volume->BootType = BOOTING_BY_EFI;
+        Entry = AddLoaderEntry(FileName, L"Recovery", Volume);
+        continue; //boot MacOSX only
+      }
+      
+      // check for XOM - and what?
     //    StrCpy(FileName, L"\\System\\Library\\CoreServices\\xom.efi");
         StrCpy(FileName, L"\\EFI\\tools\\xom.efi");
         if (FileExists(Volume->RootDir, FileName)) {

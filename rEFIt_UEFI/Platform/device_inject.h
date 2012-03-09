@@ -5,6 +5,8 @@
  *	Cleaned and merged by iNDi
  */
 
+//#include "Platform.h"
+
 #ifndef __LIBSAIO_DEVICE_INJECT_H
 #define __LIBSAIO_DEVICE_INJECT_H
 
@@ -155,7 +157,8 @@ BOOLEAN		devprop_add_value(DevPropDevice *device, char *nm, UINT8 *vl, UINT32 le
 CHAR8			*devprop_generate_string(DevPropString *string);
 VOID			devprop_free_string(DevPropString *string);
 
-BOOLEAN set_eth_builtin(pci_dt_t *eth_dev);
+BOOLEAN set_eth_props(pci_dt_t *eth_dev);
 BOOLEAN set_usb_props(pci_dt_t *usb_dev);
+BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev);
 
 #endif /* !__LIBSAIO_DEVICE_INJECT_H */

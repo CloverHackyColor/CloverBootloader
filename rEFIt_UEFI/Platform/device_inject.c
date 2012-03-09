@@ -387,11 +387,11 @@ BOOLEAN devprop_add_value(DevPropDevice *device, CHAR8 *nm, UINT8 *vl, UINT32 le
   
 	if(!device || !nm || !vl || !len)
 		return FALSE;
-	DBG("devprop_add_value %a=", nm);
+/*	DBG("devprop_add_value %a=", nm);
   for (i=0; i<len; i++) {
     DBG("%02X", vl[i]);
   }
-  DBG("\n");
+  DBG("\n"); */
 	l = AsciiStrLen(nm);
 	length = ((l * 2) + len + (2 * sizeof(UINT32)) + 2);
 	data = (UINT8*)AllocateZeroPool(length);
@@ -424,7 +424,7 @@ BOOLEAN devprop_add_value(DevPropDevice *device, CHAR8 *nm, UINT8 *vl, UINT32 le
 	
 	newdata = (UINT8*)AllocateZeroPool((length + offset));
 	if(!newdata)
-		return 0;
+		return FALSE;
 	if((device->data) && (offset > 1)){
 			CopyMem((VOID*)newdata, (VOID*)device->data, offset);
   }
@@ -521,7 +521,7 @@ VOID devprop_free_string(DevPropString *string)
 }
 
 // Ethernet built-in device injection
-BOOLEAN set_eth_builtin(pci_dt_t *eth_dev)
+BOOLEAN set_eth_props(pci_dt_t *eth_dev)
 {
 	CHAR8           *devicepath;
   DevPropDevice   *device;
@@ -596,4 +596,149 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
       break;
   }
 	return devprop_add_value(device, "built-in", (UINT8*)&builtin, 1);
+}
+
+// HDA layout-id device injection by dmazar
+
+#define HDA_VMIN	0x02 // Minor, Major Version
+#define HDA_GCTL	0x08 // Global Control Register
+#define HDA_ICO		0x60 // Immediate Command Output Interface
+#define HDA_IRI		0x64 // Immediate Response Input Interface
+#define HDA_ICS		0x68 // Immediate Command Status
+
+// executing HDA verb command using Immediate Command Input and Output Registers
+UINT32 HDA_IC_sendVerb(EFI_PCI_IO_PROTOCOL *PciIo, UINT32 codecAdr, UINT32 nodeId, UINT32 verb)
+{
+	EFI_STATUS	Status;
+	UINT16		ics = 0;
+	UINT32		data32 = 0;
+	UINT64		data64 = 0;
+	
+	// poll ICS[0] to become 0
+	Status = PciIo->PollMem(PciIo, EfiPciIoWidthUint16, 0/*bar*/, HDA_ICS/*offset*/, 0x1/*mask*/, 0/*value*/, 10000000/*delay in 100ns*/, &data64);
+	ics = (UINT16)(data64 & 0xFFFF);
+	//DBG("poll ICS[0] == 0: Status=%r, ICS=%x, ICS[0]=%d\n", Status, ics, ics & 0x0001);
+	if (EFI_ERROR(Status)) return 0;
+	// prepare and write verb to ICO
+	data32 = codecAdr << 28 | ((nodeId & 0xFF)<<20) | (verb & 0xFFFFF);
+	Status = PciIo->Mem.Write(PciIo, EfiPciIoWidthUint32, 0, HDA_ICO, 1, &data32);
+	//DBG("ICO write verb Codec=%x, Node=%x, verb=%x, command verb=%x: Status=%r\n", codecAdr, nodeId, verb, data32, Status);
+	if (EFI_ERROR(Status)) return 0;
+	// write 11b to ICS[1:0] to send command
+	ics |= 0x3;
+	Status = PciIo->Mem.Write(PciIo, EfiPciIoWidthUint16, 0, HDA_ICS, 1, &ics);
+	//DBG("ICS[1:0] = 11b: Status=%r\n", Status);
+	if (EFI_ERROR(Status)) return 0;
+	// poll ICS[1:0] to become 10b
+	Status = PciIo->PollMem(PciIo, EfiPciIoWidthUint16, 0/*bar*/, HDA_ICS/*offset*/, 0x3/*mask*/, 0x2/*value*/, 10000000/*delay in 100ns*/, &data64);
+	//DBG("poll ICS[0] == 0: Status=%r\n", Status);
+	if (EFI_ERROR(Status)) return 0;
+	// read IRI for VendorId/DeviceId
+	Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0, HDA_IRI, 1, &data32);
+	if (EFI_ERROR(Status)) return 0;
+	return data32;
+}
+
+UINT32 HDA_getCodecVendorAndDeviceIds(EFI_PCI_IO_PROTOCOL *PciIo) {
+	EFI_STATUS	Status;
+	//UINT8		ver[2];
+	UINT32		data32 = 0;
+	
+	// check HDA version - should be 1.0
+	/*
+   Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint8, 0, HDA_VMIN, 2, &ver[0]);
+   DBG("HDA Version: Status=%r, version=%d.%d\n", Status, ver[1], ver[0]);
+   if (EFI_ERROR(Status)) {
+   return 0;
+   }
+	 */
+	
+	// check if controller is out of reset - GCTL-08h[CRST-bit 0] == 1
+	Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0, HDA_GCTL, 1, &data32);
+	//DBG("check CRST == 1: Status=%r, CRST=%d\n", Status, data32 & 0x1);
+	if (EFI_ERROR(Status)) {
+		return 0;
+	}
+	if ((data32 & 0x1) == 0) {
+		// this controller is not inited yet - we can not read codec ids
+		// if needed, we can init it by:
+		// - set Control reset bit in Global Control reg 08h[0] to 1
+		// - poll it to become 1 again
+		// - wait at least 521 micro sec for codecs to init
+		// - we can check STATESTS reg 0eh where each running codec will set one bit
+		//   codec addr 0 bit 0, codec addr 1 bit 1 ...
+		
+		return 0;
+	}
+  
+	// all ok - read Ids
+	return HDA_IC_sendVerb(PciIo, 0/*codecAdr*/, 0/*nodeId*/, 0xF0000/*verb*/);
+}
+
+UINT32 getLayoutIdFromVendorAndDeviceId(UINT32 vendorDeviceId) {
+	UINT32	layoutId = 0;
+	UINT8	hexDigit = 0;
+	// extract device id - 2 lower bytes,
+	// convert it to decimal like this: 0x0887 => 887 decimal
+	hexDigit = vendorDeviceId & 0xF;
+	if (hexDigit > 9) return 0;
+	layoutId = hexDigit;
+	
+	vendorDeviceId = vendorDeviceId >> 4;
+	hexDigit = vendorDeviceId & 0xF;
+	if (hexDigit > 9) return 0;
+	layoutId += hexDigit * 10;
+	
+	vendorDeviceId = vendorDeviceId >> 4;
+	hexDigit = vendorDeviceId & 0xF;
+	if (hexDigit > 9) return 0;
+	layoutId += hexDigit * 100;
+	
+	vendorDeviceId = vendorDeviceId >> 4;
+	hexDigit = vendorDeviceId & 0xF;
+	if (hexDigit > 9) return 0;
+	layoutId += hexDigit * 1000;
+	
+	return layoutId;
+}
+
+
+
+BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev)
+{
+	CHAR8           *devicepath;
+	DevPropDevice   *device;
+	UINT32           layoutId = 0, codecId = 0;
+	
+	if (!gSettings.HDAInjection) {
+		return FALSE;
+	}
+	
+	if (!string)
+		string = devprop_create_string();
+  
+	devicepath = get_pci_dev_path(hda_dev);
+	device = devprop_add_device(string, devicepath);
+	if (!device)
+		return FALSE;
+  
+	if (gSettings.HDALayoutId > 0) {
+		// layoutId is specified - use it
+		layoutId = (UINT32)gSettings.HDALayoutId;
+		DBG("HDA Controller [%04x:%04x] :: %a => specified layout-id=0x%x=%d\n", hda_dev->vendor_id, hda_dev->device_id, devicepath, layoutId, layoutId);
+	} else {
+		// use detection: layoutId=codec dviceId or use default 12
+		codecId = HDA_getCodecVendorAndDeviceIds(PciIo);
+		layoutId = getLayoutIdFromVendorAndDeviceId(codecId);
+		if (layoutId == 0) {
+			layoutId = 12;
+		}
+		DBG("HDA Controller [%04x:%04x] :: %a, detected codec: %04x:%04x => setting layout-id=0x%x=%d\n",
+        hda_dev->vendor_id, hda_dev->device_id, devicepath, codecId >> 16, codecId & 0xFFFF, layoutId, layoutId);
+	}
+	
+	devprop_add_value(device, "layout-id", (UINT8*)&layoutId, 4);
+	layoutId = 0; // reuse variable
+	devprop_add_value(device, "PinConfigurations", (UINT8*)&layoutId, 1);
+	return TRUE;
 }

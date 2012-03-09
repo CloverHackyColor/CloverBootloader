@@ -68,6 +68,7 @@ struct acpi_2_ssdt *generate_pss_ssdt()
 	{
 		struct p_state initial, maximum, minimum, p_states[32];
 		UINT8 p_states_count = 0;		
+    BOOLEAN cpu_dynamic_fsb = FALSE;
 		
 		// Retrieving P-States, ported from code by superhai (c)
 		switch (gCPUStructure.Family) {
@@ -75,18 +76,17 @@ struct acpi_2_ssdt *generate_pss_ssdt()
 			{
 				switch (gCPUStructure.Model) 
 				{
-					case CPU_MODEL_PENTIUM_M:				// ???
+					case CPU_MODEL_DOTHAN:				// Pentium-M
 					case CPU_MODEL_YONAH:	// Intel Mobile Core Solo, Duo
 					case CPU_MODEL_MEROM:	// Intel Mobile Core 2 Solo, Duo, Xeon 30xx, Xeon 51xx, Xeon X53xx, Xeon E53xx, Xeon X32xx
 					case CPU_MODEL_PENRYN:	// Intel Core 2 Solo, Duo, Quad, Extreme, Xeon X54xx, Xeon X33xx
 					case CPU_MODEL_ATOM:	// Intel Atom (45nm)
 					{
-						BOOLEAN cpu_dynamic_fsb = FALSE;
 						
 						if (AsmReadMsr64(MSR_IA32_EXT_CONFIG) & (1 << 27)) 
 						{
 							AsmWriteMsr64(MSR_IA32_EXT_CONFIG, (AsmReadMsr64(MSR_IA32_EXT_CONFIG) | (1 << 28))); 
-							delay(1);
+							gBS->Stall(10);
 							cpu_dynamic_fsb = AsmReadMsr64(MSR_IA32_EXT_CONFIG) & (1 << 28);
 						}
 						
@@ -109,14 +109,14 @@ struct acpi_2_ssdt *generate_pss_ssdt()
 							{
 								msr = AsmReadMsr64(MSR_IA32_PERF_CONTROL);
 								AsmWriteMsr64(MSR_IA32_PERF_CONTROL, (msr & 0xFFFFFFFFFFFF0000ULL) | (i << 8) | minimum.VID);
-								intel_waitforsts();
+					//			intel_waitforsts();
 								minimum.FID = (AsmReadMsr64(MSR_IA32_PERF_STATUS) >> 8) & 0x1F; 
-								delay(1);
+								gBS->Stall(10);
 							}
 							
 							msr = AsmReadMsr64(MSR_IA32_PERF_CONTROL);
 							AsmWriteMsr64(MSR_IA32_PERF_CONTROL, (msr & 0xFFFFFFFFFFFF0000ULL) | (maximum.FID << 8) | maximum.VID);
-							intel_waitforsts();
+					//		intel_waitforsts();
 						}
 						
 						if (minimum.VID == maximum.VID) 
@@ -128,14 +128,14 @@ struct acpi_2_ssdt *generate_pss_ssdt()
 							{
 								msr = AsmReadMsr64(MSR_IA32_PERF_CONTROL);
 								AsmWriteMsr64(MSR_IA32_PERF_CONTROL, (msr & 0xFFFFFFFFFFFF0000ULL) | (minimum.FID << 8) | i);
-								intel_waitforsts();
+			//					intel_waitforsts();
 								minimum.VID = AsmReadMsr64(MSR_IA32_PERF_STATUS) & 0x3F; 
-								delay(1);
+								gBS->Stall(10);
 							}
 							
 							msr = AsmReadMsr64(MSR_IA32_PERF_CONTROL);
 							AsmWriteMsr64(MSR_IA32_PERF_CONTROL, (msr & 0xFFFFFFFFFFFF0000ULL) | (maximum.FID << 8) | maximum.VID);
-							intel_waitforsts();
+			//				intel_waitforsts();
 						}
 						
 						minimum.CID = ((minimum.FID & 0x1F) << 1) >> cpu_dynamic_fsb;
@@ -199,15 +199,22 @@ struct acpi_2_ssdt *generate_pss_ssdt()
 					} 
 					case CPU_MODEL_FIELDS:		// Intel Core i5, i7, Xeon X34xx LGA1156 (45nm)
 					case CPU_MODEL_DALES:		
-					case CPU_MODEL_DALES_32NM:	// Intel Core i3, i5 LGA1156 (32nm)
+					case CPU_MODEL_CLARKDALE:	// Intel Core i3, i5 LGA1156 (32nm)
 					case CPU_MODEL_NEHALEM:		// Intel Core i7, Xeon W35xx, Xeon X55xx, Xeon E55xx LGA1366 (45nm)
 					case CPU_MODEL_NEHALEM_EX:	// Intel Xeon X75xx, Xeon X65xx, Xeon E75xx, Xeon E65x
 					case CPU_MODEL_WESTMERE:	// Intel Core i7, Xeon X56xx, Xeon E56xx, Xeon W36xx LGA1366 (32nm) 6 Core
 					case CPU_MODEL_WESTMERE_EX:	// Intel Xeon E7
-          case CPU_MODEL_SANDY:		// Intel Core i3, i5, i7 LGA1155 (32nm)
-          case CPU_MODEL_SANDY_XEON:	// Intel Xeon E3
+          case CPU_MODEL_SANDY_BRIDGE:		// Intel Core i3, i5, i7 LGA1155 (32nm)
+          case CPU_MODEL_JAKETOWN:	// Intel Xeon E3
 					{
-						maximum.Control = AsmReadMsr64(MSR_IA32_PERF_STATUS) & 0xff; // Seems it always contains maximum multiplier value (with turbo, that's we need)...
+            if ((gCPUStructure.Model == CPU_MODEL_SANDY_BRIDGE) ||
+                (gCPUStructure.Model == CPU_MODEL_JAKETOWN))
+            {
+              maximum.Control = (AsmReadMsr64(MSR_IA32_PERF_STATUS) >> 8) & 0xff;
+            } else {
+              maximum.Control = AsmReadMsr64(MSR_IA32_PERF_STATUS) & 0xff; // Seems it always contains maximum multiplier value (with turbo, that's we need)...
+            }
+						
 						minimum.Control = (AsmReadMsr64(MSR_PLATFORM_INFO) >> 40) & 0xff;
 						
 						MsgLog("P-States: min 0x%x, max 0x%x\n", minimum.Control, maximum.Control);			

@@ -72,7 +72,6 @@ Headers collection for procedures
 #define IS_PUNCT(x) ((x == '.') || (x == '-'))
 
 
-
 #define EBDA_BASE_ADDRESS 0x40E
 #define EFI_SYSTEM_TABLE_MAX_ADDRESS 0xFFFFFFFF
 #define ROUND_PAGE(x)  ((((unsigned)(x)) + EFI_PAGE_SIZE - 1) & ~(EFI_PAGE_SIZE - 1))
@@ -132,7 +131,10 @@ Headers collection for procedures
 #define PCI_BASE_ADDRESS_4					0x20		/* 32 bits */
 #define PCI_BASE_ADDRESS_5					0x24		/* 32 bits */
 
+#define PCI_CLASS_MEDIA_HDA         0x03
+
 #define GEN_PMCON_1                 0xA0
+
 
 #define PCIADDR(bus, dev, func) ((1 << 31) | (bus << 16) | (dev << 11) | (func << 8))
 #define REG8(base, reg)  ((volatile UINT8 *)(UINTN)base)[(reg)]
@@ -140,8 +142,8 @@ Headers collection for procedures
 #define REG32(base, reg)  ((volatile UINT32 *)(UINTN)base)[(reg) >> 2]
 #define WRITEREG32(base, reg, value) REG32(base, reg) = value
 
-enum {
-	kTagTypeNone = 0,
+typedef enum {
+	kTagTypeNone,
 	kTagTypeDict,
 	kTagTypeKey,
 	kTagTypeString,
@@ -151,7 +153,7 @@ enum {
 	kTagTypeFalse,
 	kTagTypeTrue,
 	kTagTypeArray
-};
+} TAG_TYPE;
 
 #pragma pack(1)
 
@@ -241,6 +243,8 @@ typedef struct {
 	BOOLEAN	DropSSDT;
 	BOOLEAN	smartUPS;
   BOOLEAN EnableC6;
+  BOOLEAN EnableC4;
+  BOOLEAN EnableISS;
 	CHAR16	DsdtName[60];
     
   //Graphics
@@ -251,6 +255,10 @@ typedef struct {
   UINT64  VRAM;
   UINT8   Dcfg[8];
   UINT8   NVCAP[20];
+ 	
+ 	// HDA
+ 	BOOLEAN HDAInjection;
+ 	UINTN   HDALayoutId;
   
 } SETTINGS_DATA;
 
