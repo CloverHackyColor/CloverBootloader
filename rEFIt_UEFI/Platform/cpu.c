@@ -50,6 +50,7 @@
 
 UINT8							gDefaultType; 
 CPU_STRUCTURE			gCPUStructure;
+UINT64            TurboMsr;
 
 /* CPU defines */
 #define bit(n)			(1UL << (n))
@@ -236,10 +237,11 @@ VOID GetCPUProperties (VOID)
 	gCPUStructure.MinRatio = 10; //same
   gCPUStructure.SubDivider = 0;
 	gCPUStructure.MaxSpeed = 0;
-	gSettings.CpuFreqMHz = gCPUStructure.CurrentSpeed;
+	gSettings.CpuFreqMHz = 0;
 	gCPUStructure.FSBFrequency = gCPUStructure.ExternalClock  * kilo; //kHz -> Hz
-	gCPUStructure.CPUFrequency = 0;
+//	gCPUStructure.CPUFrequency = 0;
 	gCPUStructure.TSCFrequency = gCPUStructure.CurrentSpeed * Mega; //MHz -> Hz
+  gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
 	gCPUStructure.ProcessorInterconnectSpeed = 0;
 	gCPUStructure.Mobile = FALSE; //not same as gMobile
 
@@ -393,6 +395,7 @@ VOID GetCPUProperties (VOID)
             gCPUStructure.MinRatio = (UINT8)(msr >> 40) & 0xff;
             msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);
             gCPUStructure.MaxRatio = (UINT8)(msr & 0xff);
+            TurboMsr = msr + 1;
             
             if(gCPUStructure.MaxRatio) {
               gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.TSCFrequency, gCPUStructure.MaxRatio);
@@ -402,7 +405,6 @@ VOID GetCPUProperties (VOID)
                 (gCPUStructure.Model != CPU_MODEL_WESTMERE_EX) &&
                 (gCPUStructure.Model != CPU_MODEL_FIELDS))
             {
-              turbo = TRUE;
               msr = AsmReadMsr64(MSR_TURBO_RATIO_LIMIT);
               
               gCPUStructure.Turbo1 = (UINT8)((msr >> 0) & 0xff) * 10;
@@ -411,10 +413,10 @@ VOID GetCPUProperties (VOID)
               gCPUStructure.Turbo4 = (UINT8)(msr >> 24) & 0xff; //later
             }
             
-            if (turbo && gSettings.Turbo){
-              gCPUStructure.CPUFrequency = gCPUStructure.Turbo4 * gCPUStructure.FSBFrequency;
-            } else 
-              gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
+            if (gCPUStructure.Cores < 4) {
+              gCPUStructure.Turbo4 = gCPUStructure.Turbo1;
+            } 
+
             gCPUStructure.MaxRatio *= 10;
             gCPUStructure.MinRatio *= 10;
             gCPUStructure.Turbo4 *= 10;
@@ -426,13 +428,13 @@ VOID GetCPUProperties (VOID)
             msr = AsmReadMsr64(MSR_PLATFORM_INFO);            
             gCPUStructure.MinRatio = (UINT8)(msr >> 40) & 0xff;
             msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);
+            TurboMsr = msr + (1 << 8);
             gCPUStructure.MaxRatio = (UINT8)(msr >> 8) & 0xff;
             
             if(gCPUStructure.MaxRatio) {
               gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.TSCFrequency, gCPUStructure.MaxRatio);
             }
             
-              turbo = TRUE;
               msr = AsmReadMsr64(MSR_TURBO_RATIO_LIMIT);
               
               gCPUStructure.Turbo1 = (UINT8)((msr >> 0) & 0xff) * 10;
@@ -440,10 +442,11 @@ VOID GetCPUProperties (VOID)
               gCPUStructure.Turbo3 = (UINT8)((msr >> 16) & 0xff) * 10;
               gCPUStructure.Turbo4 = (UINT8)(msr >> 24) & 0xff; //later
             
-            if (gSettings.Turbo){
-              gCPUStructure.CPUFrequency = gCPUStructure.Turbo4 * gCPUStructure.FSBFrequency;
-            } else 
-              gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
+
+              if (gCPUStructure.Cores < 4) {
+                gCPUStructure.Turbo4 = gCPUStructure.Turbo1;
+              } 
+            
             gCPUStructure.MaxRatio *= 10;
             gCPUStructure.MinRatio *= 10;
             gCPUStructure.Turbo4 *= 10;
@@ -457,18 +460,14 @@ VOID GetCPUProperties (VOID)
               gCPUStructure.Mobile = TRUE;
             }
             msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);
-            gCPUStructure.MaxRatio = (UINT32)(msr >> 8) & 0x3f;
+            TurboMsr = msr + (1 << 8);
+            gCPUStructure.MaxRatio = (UINT32)(msr >> 8) & 0x1f;
             gCPUStructure.SubDivider = (UINT32)(msr >> 14) & 0x1;
             gCPUStructure.MinRatio = 60;
             gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.TSCFrequency * 2,
                                                    gCPUStructure.MaxRatio * 2 + gCPUStructure.SubDivider);
             gCPUStructure.MaxRatio = gCPUStructure.MaxRatio * 10 + gCPUStructure.SubDivider * 5; 
-            gCPUStructure.Turbo4 = gCPUStructure.MaxRatio + 10;
-            if (gSettings.Turbo){
-              gCPUStructure.CPUFrequency = gCPUStructure.Turbo4 * gCPUStructure.FSBFrequency;
-            } else 
-              gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
-            
+            gCPUStructure.Turbo4 = gCPUStructure.MaxRatio + 10;            
             break;
           default:	
             gCPUStructure.MinRatio = 60;
@@ -480,6 +479,7 @@ VOID GetCPUProperties (VOID)
 			else //Family !=6 i.e. Pentium 4 
 			{
         msr = AsmReadMsr64(MSR_IA32_PLATFORM_ID);
+        TurboMsr = 0;
         if (((msr >> 31) & 0x01) != 0) {
           gCPUStructure.MaxRatio = (UINT8)((msr >> 8) & 0x1f) * 10;
           gCPUStructure.MinRatio = gCPUStructure.MaxRatio; //no speedstep
@@ -492,6 +492,7 @@ VOID GetCPUProperties (VOID)
 #if 1 //NOTNOW
   else if(gCPUStructure.Vendor == CPU_VENDOR_AMD /* AMD */) 
 	{
+    TurboMsr = 0;
 		if(gCPUStructure.Extfamily == 0x00 /* K8 */)
 		{
 			msr = AsmReadMsr64(K8_FIDVID_STATUS);
@@ -530,11 +531,13 @@ VOID GetCPUProperties (VOID)
   
 #endif
   BusSpeed = (UINT32)DivU64x32(gCPUStructure.FSBFrequency, kilo); //Hz -> kHz
+  DBG("FSBFrequency=%dMHz\n", DivU64x32(gCPUStructure.FSBFrequency, Mega));
      //now check if SMBIOS has ExternalClock = 4xBusSpeed
   if ((BusSpeed > 50*kilo) && (gCPUStructure.ExternalClock > BusSpeed * 3)) { //khz
     gCPUStructure.ExternalClock = BusSpeed;
   } else {
     gCPUStructure.FSBFrequency = MultU64x32(gCPUStructure.ExternalClock, kilo); //kHz -> Hz
+    DBG("Corrected FSBFrequency=%dMHz\n", DivU64x32(gCPUStructure.FSBFrequency, Mega));
   }
 	
 	if (gCPUStructure.Model >= CPU_MODEL_NEHALEM) {

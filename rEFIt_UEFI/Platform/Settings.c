@@ -370,17 +370,31 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 			AsciiStrCpy(gSettings.ChassisAssetTag, prop->string);
 		}
 		prop = GetProperty(dict,"smartUPS");
-    gSettings.smartUPS=FALSE;
+    gSettings.smartUPS = FALSE;
 		if(prop)
 		{
-			if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
-				gSettings.smartUPS=TRUE;
+			if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+				gSettings.smartUPS = TRUE;
+        DBG("Config set smartUPS present\n");
+      }
+		}
+    
+    //CPU
+		prop = GetProperty(dict,"Turbo");
+    gSettings.Turbo = FALSE;
+		if(prop)
+		{
+			if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+				gSettings.Turbo = TRUE;
+        DBG("Config set Turbo\n");
+      }
 		}
 		prop = GetProperty(dict,"CpuFrequencyMHz");
 		if(prop)
 		{
 			AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
 			gSettings.CpuFreqMHz = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
+      DBG("Config set CpuFreq=%dMHz\n", gSettings.CpuFreqMHz);
 		}
 		prop = GetProperty(dict,"ProcessorType");
     gSettings.CpuType = GetAdvancedCpuType();
@@ -388,6 +402,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 		{
 			AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
 			gSettings.CpuType = (UINT16)StrHexToUint64((CHAR16*)&UStr[0]);
+      DBG("Config set CpuType=%x\n", gSettings.CpuType);
 		}
 
 		prop = GetProperty(dict,"BusSpeedkHz");
@@ -395,6 +410,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 		{
 			AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
 			gSettings.BusSpeed = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
+      DBG("Config set BusSpeed=%dMHz\n", gSettings.BusSpeed);
 		}
       	
   	// HDA
@@ -730,8 +746,13 @@ VOID SetDevices(VOID)
 	MsgLog("CurrentMode: Width=%d Height=%d\n", gGraphics.Width, gGraphics.Height);  
 }
 
+
+#define	MSR_IA32_PERF_STATUS        0x0198
+#define MSR_IA32_PERF_CONTROL       0x0199
+
 EFI_STATUS SaveSettings()
 {
+  UINT64  msr;
   //TODO - SetVariable()..
   //here we can apply user settings instead of defult one
   gMobile = gSettings.Mobile;
@@ -749,6 +770,20 @@ EFI_STATUS SaveSettings()
       (gSettings.CpuFreqMHz < 20000)){
     gCPUStructure.MaxSpeed = gSettings.CpuFreqMHz;
   }
-  MsgLog("Finally: Bus=%dMHz CPU=%dMHz\n", DivU64x32(gCPUStructure.FSBFrequency, Mega), gCPUStructure.MaxSpeed);
+  
+  if (gSettings.Turbo){
+    gCPUStructure.CPUFrequency = DivU64x32(gCPUStructure.Turbo4 * gCPUStructure.FSBFrequency, 10);
+    //attempt to make turbo
+    if (TurboMsr != 0) {
+      AsmWriteMsr64(MSR_IA32_PERF_CONTROL, TurboMsr);
+      gBS->Stall(100);
+    }
+    
+    msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);
+    DBG("set turbo state msr=%x CPU=%dMHz\n", msr, DivU64x32(gCPUStructure.CPUFrequency, Mega));
+  } 
+  
+  
+  MsgLog("Finally: Bus=%dMHz CPU=%dMHz\n", DivU64x32(gCPUStructure.FSBFrequency, Mega), gCPUStructure.CPUFrequency);
   return EFI_SUCCESS;
 }

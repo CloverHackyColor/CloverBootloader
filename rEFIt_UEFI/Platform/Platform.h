@@ -387,6 +387,7 @@ extern BOOLEAN                  gMobile;
 extern UINT32                   gCpuSpeed;  //kHz
 extern UINT32                   gBusSpeed;  //kHz
 extern UINT16                   gCPUtype;
+extern UINT64                   TurboMsr;
 extern CHAR8*                   BiosVendor;
 extern UINT32                   mPropSize;
 extern UINT8*                   mProperties;

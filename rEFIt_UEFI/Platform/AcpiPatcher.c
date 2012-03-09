@@ -357,6 +357,9 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     } else {
       newFadt->PreferredPmProfile = gMobile?2:1; //as calculated before
     }
+    if (gSettings.EnableC6 || gSettings.EnableISS) {
+      newFadt->CstCnt = 0x85; //as in Mac
+    }
     newFadt->Flags |= 0x400; //Reset Register Supported
     XDsdt = newFadt->XDsdt; //save values if present
     XFirmwareCtrl = newFadt->XFirmwareCtrl;
