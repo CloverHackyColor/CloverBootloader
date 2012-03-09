@@ -61,6 +61,18 @@ InitializeBiosIntCaller (
    @param Legacy8259  Instance pointer for EFI_LEGACY_8259_PROTOCOL.
    
 **/
+CONST   UINT32   InterruptRedirectionCode[8] = {
+  0x90CF08CD, // INT8; IRET; NOP
+  0x90CF09CD, // INT9; IRET; NOP
+  0x90CF0ACD, // INTA; IRET; NOP
+  0x90CF0BCD, // INTB; IRET; NOP
+  0x90CF0CCD, // INTC; IRET; NOP
+  0x90CF0DCD, // INTD; IRET; NOP
+  0x90CF0ECD, // INTE; IRET; NOP
+  0x90CF0FCD  // INTF; IRET; NOP
+};
+
+
 VOID
 InitializeInterruptRedirection (
   IN  EFI_LEGACY_8259_PROTOCOL  *Legacy8259
@@ -72,16 +84,6 @@ InitializeInterruptRedirection (
   UINT32                *IdtArray;
   UINTN                 Index;
   UINT8                 ProtectedModeBaseVector;
-  UINT32                InterruptRedirectionCode[] = {
-    0x90CF08CD, // INT8; IRET; NOP
-    0x90CF09CD, // INT9; IRET; NOP
-    0x90CF0ACD, // INTA; IRET; NOP
-    0x90CF0BCD, // INTB; IRET; NOP
-    0x90CF0CCD, // INTC; IRET; NOP
-    0x90CF0DCD, // INTD; IRET; NOP
-    0x90CF0ECD, // INTE; IRET; NOP
-    0x90CF0FCD  // INTF; IRET; NOP
-  };
 
   //
   // Get LegacyRegion

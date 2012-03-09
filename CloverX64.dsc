@@ -296,9 +296,9 @@
   
   	# foreign file system support
 	#Clover/VBoxFsDxe/VBoxHfs.inf
-	#Clover/VBoxFsDxe/VBoxIso9660.inf
+	Clover/VBoxFsDxe/VBoxIso9660.inf
 	#Clover/VBoxFsDxe/VBoxFsDxe.inf
-	#Clover/VBoxFsDxe/VBoxExt2.inf
+	Clover/VBoxFsDxe/VBoxExt2.inf
 
   #IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
   #Clover/VBoxVgaMiniPort/VgaMiniPortDxe.inf
