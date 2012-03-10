@@ -29,7 +29,7 @@ export MPC_VERSION=mpc-0.9
 # Change PREFIX if you want gcc and binutils 
 # installed on different place
 #
-export PREFIX=/opt/local
+export PREFIX=~/src/opt/local
 
 # Change target mode of crosscompiler for
 # IA32 and X64 - (we know that this one works best)
@@ -54,7 +54,7 @@ export DIR_GCC=$DIR_MAIN/tools/gcc
 export DIR_DOWNLOADS=$DIR_GCC/download
 export DIR_LOGS=$DIR_GCC/logs
 
-## Paths for GCC (Xcode 4.1 fix) - works with Xcode 3.2
+## Paths for GCC (Xcode 4.1 fix) - works with Xcode 3.2 - Xcode 4.2
 #
 export CC="/usr/bin/gcc-4.2"
 export CXX="/usr/bin/g++-4.2"
@@ -151,8 +151,7 @@ fnCompileLibs ()
     ../download/$GMP_VERSION/configure --prefix=$PREFIX > $DIR_LOGS/gmp.$ARCH.config.log.txt 2> /dev/null
     echo "-  $GMP_VERSION make..."
     make 1> /dev/null 2> $DIR_LOGS/gmp.$ARCH.make.log.txt
-    echo "-  Put Password  -"
-    sudo make install 1> $DIR_LOGS/gmp.$ARCH.install.log.txt 2> /dev/null
+    make install 1> $DIR_LOGS/gmp.$ARCH.install.log.txt 2> /dev/null
     [ ! -f $PREFIX/include/gmp.h ] && echo "Error: $GMP_VERSION not installed, check logs" && exit
     echo "-  $GMP_VERSION installed in $PREFIX  -"
 
@@ -167,8 +166,7 @@ fnCompileLibs ()
     ../download/$MPFR_VERSION/configure --prefix=$PREFIX --with-gmp=$PREFIX > $DIR_LOGS/mpfr.$ARCH.config.log.txt 2> /dev/null
     echo "-  $MPFR_VERSION make..."
     make 1> /dev/null 2> $DIR_LOGS/mpfr.$ARCH.make.log.txt
-    echo "-  Put Password  -"
-    sudo make install 1> $DIR_LOGS/mpfr.$ARCH.install.log.txt 2> /dev/null
+    make install 1> $DIR_LOGS/mpfr.$ARCH.install.log.txt 2> /dev/null
     [ ! -f $PREFIX/include/mpfr.h ] && echo "Error: $MPFR_VERSION not installed, check logs" && exit
     echo "-  $MPFR_VERSION installed in $PREFIX  -"
 
@@ -183,8 +181,7 @@ fnCompileLibs ()
     ../download/$MPC_VERSION/configure --prefix=$PREFIX --with-gmp=$PREFIX --with-mpfr=$PREFIX  > $DIR_LOGS/mpc.$ARCH.config.log.txt 2> /dev/null
     echo "-  $MPC_VERSION make..."
     make 1> /dev/null 2> $DIR_LOGS/mpc.$ARCH.make.log.txt
-    echo "-  Put Password  -"
-    sudo make install 1> $DIR_LOGS/mpc.$ARCH.install.log.txt 2> /dev/null
+    make install 1> $DIR_LOGS/mpc.$ARCH.install.log.txt 2> /dev/null
     [ ! -f $PREFIX/include/mpc.h ] && echo "Error: $MPC_VERSION not installed, check logs" && exit
     echo "-  $MPC_VERSION installed in $PREFIX  -"
 }
@@ -203,8 +200,7 @@ fnCompileBinutils ()
     ../download/$BINUTILS_VERSION/configure --target=$TARGET $BINUTILS_CONFIG 1> $DIR_LOGS/binutils.$ARCH.config.log.txt 2> /dev/null
     echo "-  $BINUTILS_VERSION make..."
     make all 1> /dev/null 2> $DIR_LOGS/binutils.$ARCH.make.log.txt
-    echo "-  Put Password  -"
-    sudo make install 1> $DIR_LOGS/binutils.$ARCH.install.log.txt 2> /dev/null
+    make install 1> $DIR_LOGS/binutils.$ARCH.install.log.txt 2> /dev/null
     [ ! -f $PREFIX/bin/$TARGET-ld ] && echo "Error: $BINUTILS_VERSION not installed, check logs" && exit
     echo "-  $BINUTILS_VERSION installed in $PREFIX  -"
 }
@@ -224,22 +220,21 @@ fnCompileGCC ()
     ../download/gcc-$GCC_VERSION/configure --target=$TARGET $GCC_CONFIG > $DIR_LOGS/gcc.$ARCH.config.log.txt 2> /dev/null
     echo "-  gcc-$GCC_VERSION make..."
     make all-gcc 1> /dev/null 2> $DIR_LOGS/gcc.$ARCH.make.log.txt
-    echo "-  Put Password  -"
-    sudo make install-gcc 1> $DIR_LOGS/gcc.$ARCH.install.log.txt 2> /dev/null
+    make install-gcc 1> $DIR_LOGS/gcc.$ARCH.install.log.txt 2> /dev/null
     [ ! -f $PREFIX/bin/$TARGET-gcc ] && echo "Error: gcc-$GCC_VERSION not installed, check logs" && exit
-    echo "-  gcc-$GCC_VERSION installed in $PREFIX  -"    
-    fnMakeSymLinks
+    echo "-  gcc-$GCC_VERSION installed in $PREFIX  -"  
+    echo
 }
 
 fnMakeSymLinks ()
 # Function: SymLinks in PREFIX location
 {
-    [ ! -d ${PREFIX}/$ARCH ] && sudo mkdir ${PREFIX}/$ARCH
+    [ ! -d ${PREFIX}/$ARCH ] && mkdir ${PREFIX}/$ARCH
     cd $PREFIX/$ARCH
-    sudo ln -s $PREFIX/bin/$TARGET-gcc $PREFIX/$ARCH/gcc 2> /dev/null 
-    sudo ln -s $PREFIX/bin/$TARGET-ld $PREFIX/$ARCH/ld 2> /dev/null 
-    sudo ln -s $PREFIX/bin/$TARGET-objcopy $PREFIX/$ARCH/objcopy 2> /dev/null 
-    sudo ln -s $PREFIX/bin/$TARGET-ar $PREFIX/$ARCH/ar 2> /dev/null 
+    ln -s $PREFIX/bin/$TARGET-gcc $PREFIX/$ARCH/gcc 2> /dev/null 
+    ln -s $PREFIX/bin/$TARGET-ld $PREFIX/$ARCH/ld 2> /dev/null 
+    ln -s $PREFIX/bin/$TARGET-objcopy $PREFIX/$ARCH/objcopy 2> /dev/null 
+    ln -s $PREFIX/bin/$TARGET-ar $PREFIX/$ARCH/ar 2> /dev/null 
     echo "Finished: symlinks are in: "$PREFIX/$ARCH
 }
 
