@@ -255,7 +255,15 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 			gSettings.ResetVal = (UINT8)StrHexToUint64((CHAR16*)&UStr[0]);	
 		}
 		//other known pair is 0x02F9/0x06
-    
+
+    prop = GetProperty(dict,"LpcTune");
+    gSettings.LpcTune = FALSE;
+		if(prop)
+		{
+      if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+				gSettings.LpcTune = TRUE;
+    }
+        
     prop = GetProperty(dict,"EnableC6");
     gSettings.EnableC6 = FALSE;
 		if(prop)
@@ -409,8 +417,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 		if(prop)
 		{
 			AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-			gSettings.BusSpeed = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
-      DBG("Config set BusSpeed=%dMHz\n", gSettings.BusSpeed);
+			gSettings.BusSpeed = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);
+      DBG("Config set BusSpeed=%dkHz\n", gSettings.BusSpeed);
 		}
       	
   	// HDA
@@ -623,7 +631,7 @@ VOID SetDevices(VOID)
               switch (Pci.Hdr.VendorId) {
                 case 0x1002:
                   gGraphics.Vendor = Ati;
-                  MsgLog("ATI GFX found\n");
+    //              MsgLog("ATI GFX found\n");
                   //can't do in one step because of C-conventions
                   TmpDirty = setup_ati_devprop(&PCIdevice);
                   StringDirty |=  TmpDirty;
@@ -633,12 +641,12 @@ VOID SetDevices(VOID)
                   
                   TmpDirty = setup_gma_devprop(&PCIdevice);
                   StringDirty |=  TmpDirty;
-                  MsgLog("Intel GFX device_id =0x%x\n", PCIdevice.device_id);
+    //              MsgLog("Intel GFX device_id =0x%x\n", PCIdevice.device_id);
                   MsgLog("Intel GFX revision  =0x%x\n", PCIdevice.revision);
                   break;
                 case 0x10de:
                   gGraphics.Vendor = Nvidia;
-                  MsgLog("nVidia GFX found\n");
+    //              MsgLog("nVidia GFX found\n");
                   TmpDirty = setup_nvidia_devprop(&PCIdevice);
                   StringDirty |=  TmpDirty;
                   break;
@@ -650,7 +658,7 @@ VOID SetDevices(VOID)
             //LAN
             else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
                      (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_ETHERNET)) {
-              MsgLog("Ethernet device found\n");
+   //           MsgLog("Ethernet device found\n");
 							TmpDirty = set_eth_props(&PCIdevice);
 							StringDirty |=  TmpDirty;
             }
@@ -658,7 +666,7 @@ VOID SetDevices(VOID)
             //USB
             else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
                      (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_USB)) {
-              MsgLog("USB device found\n");
+ //             MsgLog("USB device found\n");
 							TmpDirty = set_usb_props(&PCIdevice);
 							StringDirty |=  TmpDirty;
 						}
@@ -666,7 +674,7 @@ VOID SetDevices(VOID)
 						// HDA
 						else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
                      (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA)) {
-							MsgLog("HDA device found\n");
+//							MsgLog("HDA device found\n");
 							TmpDirty = set_hda_props(PciIo, &PCIdevice);
 							StringDirty |=  TmpDirty;
             }
@@ -675,7 +683,7 @@ VOID SetDevices(VOID)
             else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_BRIDGE) &&
                      (Pci.Hdr.ClassCode[1] == PCI_CLASS_BRIDGE_ISA))
             {
-              if (gSettings.Mobile) {
+              if (gSettings.LpcTune) {
                 Status = PciIo->Pci.Read (
                                           PciIo, 
                                           EfiPciIoWidthUint16, 
@@ -772,7 +780,10 @@ EFI_STATUS SaveSettings()
   }
   
   if (gSettings.Turbo){
-    gCPUStructure.CPUFrequency = DivU64x32(gCPUStructure.Turbo4 * gCPUStructure.FSBFrequency, 10);
+    if (gCPUStructure.Turbo4) {
+      gCPUStructure.CPUFrequency = DivU64x32(gCPUStructure.Turbo4 * gCPUStructure.FSBFrequency, 10);
+    }
+    
     //attempt to make turbo
     if (TurboMsr != 0) {
       AsmWriteMsr64(MSR_IA32_PERF_CONTROL, TurboMsr);

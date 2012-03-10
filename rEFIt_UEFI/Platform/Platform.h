@@ -242,6 +242,7 @@ typedef struct {
 	BOOLEAN	UseDSDTmini;  
 	BOOLEAN	DropSSDT;
 	BOOLEAN	smartUPS;
+  BOOLEAN LpcTune;
   BOOLEAN EnableC6;
   BOOLEAN EnableC4;
   BOOLEAN EnableISS;
@@ -385,7 +386,6 @@ extern SMBIOS_STRUCTURE_POINTER	SmbiosTable;
 extern GFX_PROPERTIES           gGraphics;
 extern BOOLEAN                  gMobile;
 extern UINT32                   gCpuSpeed;  //kHz
-extern UINT32                   gBusSpeed;  //kHz
 extern UINT16                   gCPUtype;
 extern UINT64                   TurboMsr;
 extern CHAR8*                   BiosVendor;

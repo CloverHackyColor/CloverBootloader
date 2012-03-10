@@ -46,7 +46,7 @@ static UINT32 dp_swap32(UINT32 toswap)
 
 DevPropString *devprop_create_string(VOID)
 {
-	DBG("devprop_create_string\n");
+	DBG("Begin creating strings for devices:\n");
 	string = (DevPropString*)AllocateZeroPool(sizeof(DevPropString));
 	
 	if(string == NULL)
@@ -282,7 +282,7 @@ DevPropDevice *devprop_add_device(DevPropString *string, CHAR8 *path)
 	if (string == NULL || path == NULL) {
 		return NULL;
 	}
- 	DBG("devprop_add_device %a\n", path);
+// 	DBG("devprop_add_device %a\n", path);
  
 	device = AllocateZeroPool(sizeof(DevPropDevice));
 
