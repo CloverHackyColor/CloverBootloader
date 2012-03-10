@@ -191,13 +191,12 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       AsciiStrToUnicodeStr(prop->string, gSettings.DefaultBoot);
 		}
 //Graphics
-    prop = GetProperty(dict,"GraphicsInjector");
-    gSettings.GraphicsInjector=TRUE;
+    prop = GetProperty(dict,"PCIRootUID");
+    gSettings.PCIRootUID = 0;
 		if(prop)
 		{
-      //			AsciiStrCpy(gSettings.LoadVBios, prop->string);
-      if ((prop->string[0] == 'n') || (prop->string[0] == 'N'))
-				gSettings.GraphicsInjector=FALSE;
+      AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+			gSettings.PCIRootUID = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
     }
     
  		prop = GetProperty(dict,"DeviceProperties");
@@ -206,6 +205,14 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       cDeviceProperties = AllocateZeroPool(AsciiStrLen(prop->string)+1);
       AsciiStrCpy(cDeviceProperties, prop->string);
 		}
+    prop = GetProperty(dict,"GraphicsInjector");
+    gSettings.GraphicsInjector=TRUE;
+		if(prop)
+		{
+      if ((prop->string[0] == 'n') || (prop->string[0] == 'N'))
+				gSettings.GraphicsInjector=FALSE;
+    }
+    
 		prop = GetProperty(dict,"VRAM");
 		if(prop)
 		{

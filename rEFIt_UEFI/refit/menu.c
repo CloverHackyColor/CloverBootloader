@@ -327,15 +327,16 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, SCROLL_STATE *State, IN M
 
 static UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_MENU_ENTRY **ChosenEntry)
 {
-    SCROLL_STATE State;
-    EFI_STATUS Status;
+    SCROLL_STATE  State;
+    EFI_STATUS    Status;
     EFI_INPUT_KEY key;
-    UINTN index;
-    INTN ShortcutEntry;
-    BOOLEAN HaveTimeout = FALSE;
-    UINTN TimeoutCountdown = 0;
-    CHAR16 *TimeoutMessage;
-    UINTN MenuExit;
+    UINTN         index;
+    INTN          ShortcutEntry;
+    BOOLEAN       HaveTimeout = FALSE;
+    UINTN         TimeoutCountdown = 0;
+    CHAR16        *TimeoutMessage;
+    UINTN         MenuExit;
+    UINTN         LogSize;
   
     //no default - no timeout!
     if ((*DefaultEntryIndex != -1) && (Screen->TimeoutSeconds > 0)) {
@@ -417,8 +418,9 @@ static UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC Sty
               break;
 
             case SCAN_F2:
-                MenuExit = MENU_EXIT_DETAILS;
-                break;
+              LogSize = msgCursor - msgbuf;
+              Status = egSaveFile(SelfRootDir, L"EFI\\misc\\preboot.log", (UINT8*)msgbuf, LogSize);
+              break;
             case SCAN_F10:
                 egScreenShot();
                 break;

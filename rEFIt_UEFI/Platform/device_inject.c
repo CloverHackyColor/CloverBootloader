@@ -293,7 +293,8 @@ DevPropDevice *devprop_add_device(DevPropString *string, CHAR8 *path)
 	}
 
 	ZeroMem((VOID*)device, sizeof(DevPropDevice));
-	device->acpi_dev_path._UID = /*getPciRootUID();*/0; //FIXME: what if 0?
+	device->acpi_dev_path._UID = gSettings.PCIRootUID;
+  // *getPciRootUID();0; //FIXME: what if 0?
 
 	INT32 numpaths = 0;
 	INT32		x, curr = 0;

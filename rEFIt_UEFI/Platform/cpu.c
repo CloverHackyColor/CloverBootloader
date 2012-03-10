@@ -150,17 +150,25 @@ UINT64            TurboMsr;
 
 //Copied from revogirl
 #define IA32_ENERGY_PERF_BIAS		0x01B0
+//MSR 000001B0                                      0000-0000-0000-0005
+//MSR 000001B1                                      0000-0000-8838-0000
 #define IA32_PLATFORM_DCA_CAP		0x01F8
+//MSR 000001FC                                      0000-0000-0004-005F
 
 
 // Sandy Bridge & JakeTown specific 'Running Average Power Limit' MSR's.
 #define MSR_RAPL_POWER_UNIT			0x606
+//MSR 00000606                                      0000-0000-000A-1003
+//MSR 0000060B                                      0000-0000-0000-8854
+//MSR 0000060C                                      0000-0000-0000-8854
 
 #define MSR_PKG_RAPL_POWER_LIMIT	0x610
+//MSR 00000610                                      0000-A580-0000-8960
 #define MSR_PKG_ENERGY_STATUS		0x611
+//MSR 00000611                                      0000-0000-3212-A857
 #define MSR_PKG_PERF_STATUS			0x613
 #define MSR_PKG_POWER_INFO			0x614
-
+//MSR 00000614                                      0000-0000-01E0-02F8
 // Sandy Bridge IA (Core) domain MSR's.
 #define MSR_PP0_POWER_LIMIT			0x638
 #define MSR_PP0_ENERGY_STATUS		0x639
@@ -170,6 +178,7 @@ UINT64            TurboMsr;
 // Sandy Bridge Uncore (IGPU) domain MSR's (Not on JakeTown).
 #define MSR_PP1_POWER_LIMIT			0x640
 #define MSR_PP1_ENERGY_STATUS		0x641
+//MSR 00000641                                      0000-0000-0000-0000
 #define MSR_PP1_POLICY          0x642
 
 // JakeTown only Memory MSR's.
@@ -422,7 +431,7 @@ VOID GetCPUProperties (VOID)
             }
             
               msr = AsmReadMsr64(MSR_TURBO_RATIO_LIMIT);
-              
+              //expected 0000-0000-2223-2425
               gCPUStructure.Turbo1 = (UINT8)((msr >> 0) & 0xff) * 10;
               gCPUStructure.Turbo2 = (UINT8)((msr >> 8) & 0xff) * 10;
               gCPUStructure.Turbo3 = (UINT8)((msr >> 16) & 0xff) * 10;

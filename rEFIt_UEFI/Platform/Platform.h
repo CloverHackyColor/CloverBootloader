@@ -270,6 +270,7 @@ typedef struct {
 	CHAR16	DsdtName[60];
     
   //Graphics
+  UINT16  PCIRootUID;
   BOOLEAN GraphicsInjector;
   BOOLEAN LoadVBios;
   CHAR16  FBName[16];

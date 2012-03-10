@@ -72,6 +72,7 @@ static struct gma_gpu_t KnownGPUS[] = {
 //	{ 0x80862A43, "GMAX3100"		},
 //  { 0x80860044, "HD2000"  }, //host bridge
   { 0x80860046, "HD2000"  },
+  { 0x80860112, "HD3000"  },
   { 0x80860126, "HD3000"  },
 };
 
@@ -135,7 +136,8 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       break;
     case 0x2772:
  //   case 0x0045:  
-    case 0x0046:  
+    case 0x0046: 
+    case 0x0112:  
     case 0xA002:  
       devprop_add_value(device, "built-in", &BuiltIn, 1);
       break;
