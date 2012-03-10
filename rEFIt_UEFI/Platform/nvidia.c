@@ -1313,22 +1313,30 @@ static INT32 devprop_add_nvidia_template(DevPropDevice *device)
 }
 
 
-UINT8 hexstrtouint8 (CHAR8* buf) {
+UINT8 hexstrtouint8 (CHAR8* buf)
+{
 	INT8 i;
 	if (IS_DIGIT(buf[0]))
 		i = buf[0]-'0';
-	else
-		i = buf[0]-'A' + 10; //no error checking
+	else if (IS_HEX(buf[0])) 
+    i = buf[0]-'a' + 10; 
+  else
+		i = buf[0]-'A' + 10;
+  if (AsciiStrLen(buf) == 1) {
+    return i;
+  }
 	i <<= 4;
 	if (IS_DIGIT(buf[1]))
 		i += buf[1]-'0';
+	else if (IS_HEX(buf[1])) 
+    i += buf[1]-'a' + 10; 
 	else
 		i += buf[1]-'A'+ 10; //no error checking
 	return i;
 }
 
 BOOLEAN IsHexDigit (CHAR8 c) {
-	return (IS_DIGIT(c) || (c>='A'&&c<='F'))?TRUE:FALSE;
+	return (IS_DIGIT(c) || (c>='A'&&c<='F') || (c>='a'&&c<='f'))?TRUE:FALSE;
 }
 
 

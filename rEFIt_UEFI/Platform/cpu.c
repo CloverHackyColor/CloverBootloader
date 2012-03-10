@@ -147,23 +147,6 @@ UINT64            TurboMsr;
 /* Unknown CPU */
 #define CPU_STRING_UNKNOWN	"Unknown CPU Type"
 
-/* Known MSR registers */
-#define MSR_IA32_PLATFORM_ID        0x0017	 
-#define MSR_CORE_THREAD_COUNT       0x0035	 /* limited use - not for Penryn or older	*/
-#define MSR_IA32_BIOS_SIGN_ID       0x008B   /* microcode version */
-#define MSR_FSB_FREQ                0x00CD	 /* limited use - not for i7						*/
-#define	MSR_PLATFORM_INFO           0x00CE   /* limited use - MinRatio for i7 but Max for Yonah	*/
-                                             /* turbo for penryn */
-#define MSR_IA32_EXT_CONFIG         0x00EE	 /* limited use - not for i7						*/
-#define MSR_FLEX_RATIO              0x0194	 /* limited use - not for Penryn or older			*/
-          //see no value on most CPUs
-#define	MSR_IA32_PERF_STATUS        0x0198
-#define MSR_IA32_PERF_CONTROL       0x0199
-#define MSR_IA32_CLOCK_MODULATION   0x019A
-#define MSR_THERMAL_STATUS          0x019C
-#define MSR_IA32_MISC_ENABLE        0x01A0
-#define MSR_THERMAL_TARGET          0x01A2	 /* limited use - not for Penryn or older			*/
-#define MSR_TURBO_RATIO_LIMIT       0x01AD	 /* limited use - not for Penryn or older			*/
 
 //Copied from revogirl
 #define IA32_ENERGY_PERF_BIAS		0x01B0
@@ -411,7 +394,10 @@ VOID GetCPUProperties (VOID)
               gCPUStructure.Turbo2 = (UINT8)((msr >> 8) & 0xff) * 10;
               gCPUStructure.Turbo3 = (UINT8)((msr >> 16) & 0xff) * 10;
               gCPUStructure.Turbo4 = (UINT8)(msr >> 24) & 0xff; //later
+            } else {
+              gCPUStructure.Turbo4 = gCPUStructure.MaxRatio + 1;
             }
+
             
             if (gCPUStructure.Cores < 4) {
               gCPUStructure.Turbo4 = gCPUStructure.Turbo1;

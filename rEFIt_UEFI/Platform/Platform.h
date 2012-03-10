@@ -119,6 +119,25 @@ Headers collection for procedures
 #define ECX 2
 #define EDX 3
 
+/* Known MSR registers */
+#define MSR_IA32_PLATFORM_ID        0x0017	 
+#define MSR_CORE_THREAD_COUNT       0x0035	 /* limited use - not for Penryn or older	*/
+#define MSR_IA32_BIOS_SIGN_ID       0x008B   /* microcode version */
+#define MSR_FSB_FREQ                0x00CD	 /* limited use - not for i7						*/
+#define	MSR_PLATFORM_INFO           0x00CE   /* limited use - MinRatio for i7 but Max for Yonah	*/
+/* turbo for penryn */
+#define MSR_IA32_EXT_CONFIG         0x00EE	 /* limited use - not for i7						*/
+#define MSR_FLEX_RATIO              0x0194	 /* limited use - not for Penryn or older			*/
+//see no value on most CPUs
+#define	MSR_IA32_PERF_STATUS        0x0198
+#define MSR_IA32_PERF_CONTROL       0x0199
+#define MSR_IA32_CLOCK_MODULATION   0x019A
+#define MSR_THERMAL_STATUS          0x019C
+#define MSR_IA32_MISC_ENABLE        0x01A0
+#define MSR_THERMAL_TARGET          0x01A2	 /* limited use - not for Penryn or older			*/
+#define MSR_TURBO_RATIO_LIMIT       0x01AD	 /* limited use - not for Penryn or older			*/
+
+
 /* CPU Cache */
 #define MAX_CACHE_COUNT  4
 #define CPU_CACHE_LEVEL  3
@@ -241,6 +260,8 @@ typedef struct {
 	UINT8 	ResetVal;
 	BOOLEAN	UseDSDTmini;  
 	BOOLEAN	DropSSDT;
+	BOOLEAN	GeneratePStates;
+  BOOLEAN	GenerateCStates;
 	BOOLEAN	smartUPS;
   BOOLEAN LpcTune;
   BOOLEAN EnableC6;
@@ -427,16 +448,18 @@ extern EFI_EVENT   mVirtualAddressChangeEvent;
 extern EFI_EVENT   OnReadyToBootEvent;
 extern EFI_EVENT   ExitBootServiceEvent;
 
+VOID        WaitForSts(VOID);
 
 VOID        InitBooterLog(VOID);
 EFI_STATUS  SetupBooterLog(VOID);
 VOID        GetDefaultSettings(VOID);
 
-EFI_STATUS StrToGuid (IN  CHAR16   *Str, OUT EFI_GUID *Guid);
-EFI_STATUS StrToGuidLE (IN  CHAR16   *Str, OUT EFI_GUID *Guid);
-BOOLEAN hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, INT32 len);
+EFI_STATUS  StrToGuid (IN  CHAR16   *Str, OUT EFI_GUID *Guid);
+EFI_STATUS  StrToGuidLE (IN  CHAR16   *Str, OUT EFI_GUID *Guid);
+BOOLEAN     hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, INT32 len);
+UINT8       hexstrtouint8 (CHAR8* buf); //one or two hex letters to one byte
 
-EFI_STATUS InitializeConsoleSim (VOID);
+EFI_STATUS  InitializeConsoleSim (VOID);
 
 //Settings.c
 VOID            GetCPUProperties (VOID);
@@ -468,6 +491,7 @@ EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ico
 
 EFI_STATUS  PatchACPI(IN REFIT_VOLUME *Volume);
 UINT8       Checksum8(VOID * startPtr, UINT32 len);
+BOOLEAN     tableSign(CHAR8 *table, CONST CHAR8 *sgn);
 
 EFI_STATUS  EventsInitialize(VOID);
 

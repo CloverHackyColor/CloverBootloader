@@ -489,7 +489,7 @@ static radeon_card_info_t radeon_cards[] = {
   { 0x68D8,	0x00000000, CHIP_FAMILY_REDWOOD,	"ATI Radeon HD 5670 Series",		kVervet		},
 	{ 0x68D9,	0x00000000, CHIP_FAMILY_REDWOOD,	"ATI Radeon HD 5570 Series",		kVervet		},
 	{ 0x68DA,	0x00000000, CHIP_FAMILY_REDWOOD,	"ATI Radeon HD 5500 Series",		kVervet		},
-	{ 0x68E0,	0x00000000, CHIP_FAMILY_REDWOOD,	"ATI Radeon HD 5500 Series",		kVervet		},	
+	{ 0x68E0,	0x00000000, CHIP_FAMILY_REDWOOD,	"ATI Radeon HD 5470 Series",		kVervet		},	
   
 	{ 0x68F9,	0x00000000, CHIP_FAMILY_CEDAR,		"ATI Radeon HD 5400 Series",		kEulemur	},
 	

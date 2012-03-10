@@ -314,7 +314,7 @@ DevPropDevice *devprop_add_device(DevPropString *string, CHAR8 *path)
 				numpaths = 0;
 				break;
 			}
-			device->pci_dev_path[numpaths].device =	ascii_hex_to_int(buff);
+			device->pci_dev_path[numpaths].device =	hexstrtouint8(buff);
 			
 			x += 3; // 0x
 			curr = x;
@@ -329,7 +329,7 @@ DevPropDevice *devprop_add_device(DevPropString *string, CHAR8 *path)
 				numpaths = 0;
 				break;
 			}
-			device->pci_dev_path[numpaths].function = ascii_hex_to_int(buff); // TODO: find dev from CHAR8 *path
+			device->pci_dev_path[numpaths].function = hexstrtouint8(buff); // TODO: find dev from CHAR8 *path
 			
 			numpaths++;
 		}

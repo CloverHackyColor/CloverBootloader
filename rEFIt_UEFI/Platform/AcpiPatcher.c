@@ -33,11 +33,13 @@ Re-Work by Slice 2011.
 ((UINTN) ( (UINT8 *)&((st *)(0))->m - (UINT8 *)0 ))
 
 #define HPET_SIGN        SIGNATURE_32('H','P','E','T')
-#define HPET_OEM_ID        { 'A', 'P', 'P', 'L', 'E' }
+#define HPET_OEM_ID        { 'A', 'P', 'P', 'L', 'E', ' ' }
 #define HPET_OEM_TABLE_ID  { 'A', 'p', 'p', 'l', 'e', '0', '0' }
-#define HPET_CREATOR_ID    { 'i', 'B', 'O', 'O', 'T' }
+#define HPET_CREATOR_ID    { 'L', 'o', 'k', 'i', ' ' }
+//#define EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('S', 'S', 'D', 'T')
 
-#define NUM_TABLES 12
+
+#define NUM_TABLES 19
 CHAR16* ACPInames[NUM_TABLES] = {
 	L"DSDT.aml",
 	L"SSDT.aml",
@@ -48,9 +50,16 @@ CHAR16* ACPInames[NUM_TABLES] = {
 	L"SSDT-5.aml",
 	L"SSDT-6.aml",
 	L"SSDT-7.aml",
+	L"SSDT-8.aml",
+	L"SSDT-9.aml",
 	L"APIC.aml",
+	L"BOOT.aml",
 	L"HPET.aml",
-	L"MCFG.aml"
+	L"MCFG.aml",
+	L"SLIC.aml",
+	L"SLIT.aml",
+	L"SRAT.aml",
+  L"UEFI.aml"
 };
 
 EFI_PHYSICAL_ADDRESS        *Table;
@@ -68,6 +77,18 @@ UINT8 pmBlock[] = {
 	/*00F0:*/ 0x00, 0x00, 0x00, 0x00                                      
 
 };
+
+// Slice: Signature compare function
+BOOLEAN tableSign(CHAR8 *table, CONST CHAR8 *sgn)
+{
+  INTN i;
+  for (i=0; i<4; i++) {
+    if ((table[i] &~0x20) != (sgn[i] &~0x20)) {
+      return FALSE;
+    }
+  }
+  return TRUE;
+}
 
 VOID *
 FindAcpiRsdPtr (VOID)
@@ -205,6 +226,67 @@ UINT64* ScanXSDT (XSDT_TABLE *Xsdt, UINT32 Signature)
 	return NULL;
 }
 
+VOID DropTableFromRSDT (RSDT_TABLE *Rsdt, UINT32 Signature) 
+{
+	EFI_ACPI_DESCRIPTION_HEADER     *Table;
+	UINTN               Index, Index2;
+	UINT32							EntryCount;
+	UINT32							*EntryPtr, *Ptr, *Ptr2;
+  CHAR8 sign[5];
+  
+	EntryCount = (Rsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT32);
+  DBG("Drop tables from Rsdt, count=%d\n", EntryCount); 
+	EntryPtr = &Rsdt->Entry;
+	for (Index = 0; Index < EntryCount; Index++, EntryPtr++) {
+		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
+    CopyMem((CHAR8*)&sign, (CHAR8*)&Table->Signature, 4);
+    sign[4] = 0;
+    DBG(" Found table: %a\n", sign);
+		if (Table->Signature != Signature) {
+			continue;
+		}
+    DBG(" ... dropped\n");
+    Ptr = EntryPtr;
+    Ptr2 = Ptr + 1;
+    for (Index2 = Index; Index2 < EntryCount; Index2++) {
+      *Ptr++ = *Ptr2++;
+    }
+    Rsdt->Header.Length -= sizeof(UINT32);
+	}	
+}
+
+VOID DropTableFromXSDT (XSDT_TABLE *Xsdt, UINT32 Signature) 
+{
+	EFI_ACPI_DESCRIPTION_HEADER     *Table;
+	UINTN               Index, Index2;
+	UINT32							EntryCount;
+	UINT64							*BasePtr, *Ptr, *Ptr2;
+	UINT64							Entry64;
+  CHAR8 sign[5];
+  
+	EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
+  DBG("Drop tables from Xsdt, count=%d\n", EntryCount); 
+	BasePtr = (UINT64*)(&(Xsdt->Entry));
+	for (Index = 0; Index < EntryCount; Index++, BasePtr++) {
+    CopyMem (&Entry64, (VOID*)BasePtr, sizeof(UINT64)); //value from BasePtr->
+		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Entry64));
+    CopyMem((CHAR8*)&sign, (CHAR8*)&Table->Signature, 4);
+    sign[4] = 0;
+    DBG(" Found table: %a\n", sign);
+		if (Table->Signature != Signature) {
+			continue;
+		}
+    DBG(" ... dropped\n");
+    Ptr = BasePtr;
+    Ptr2 = Ptr + 1;
+    for (Index2 = Index; Index2 < EntryCount; Index2++) {
+      *Ptr++ = *Ptr2++;
+    }
+    Xsdt->Header.Length -= sizeof(UINT64);
+	}	
+}
+
+
 EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 {
 	EFI_STATUS										Status = EFI_SUCCESS;
@@ -224,19 +306,21 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 //	EFI_HANDLE					FileSystemHandle;
 	EFI_PHYSICAL_ADDRESS		dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
 	EFI_PHYSICAL_ADDRESS		BufferPtr;
-	UINT8*						buffer = NULL;
-	UINTN             bufferLen = 0;
-	CHAR16*						PathPatched   = L"\\EFI\\acpi\\patched\\DSDT.aml";
-	CHAR16*						PathDsdt      = L"\\DSDT.aml";
-  CHAR16*						PathDsdtMini  = L"\\EFI\\acpi\\mini\\DSDT.aml";
+	UINT8*				buffer = NULL;
+	UINTN         bufferLen = 0;
+	CHAR16*				PathPatched   = L"\\EFI\\acpi\\patched";
+	CHAR16*				PathDsdt      = L"\\DSDT.aml";
+  CHAR16*				PathDsdtMini  = L"\\EFI\\acpi\\mini\\DSDT.aml";
 //	CHAR16*						path = NULL;
-	UINT32* rf = NULL;
-	UINT64* xf = NULL;
-  UINT64 XDsdt; //save values if present
-  UINT64 BiosDsdt;
-  UINT64 XFirmwareCtrl;
-  EFI_FILE *RootDir;
-  
+	UINT32*       rf = NULL;
+	UINT64*       xf = NULL;
+  UINT64        XDsdt; //save values if present
+  UINT64        BiosDsdt;
+  UINT64        XFirmwareCtrl;
+  EFI_FILE      *RootDir;
+//  CHAR16*        AnyTable;
+  UINT32*       Ptr;
+  UINT64*       XPtr;
   
 	
 	//Slice - I want to begin from BIOS ACPI tables like with SMBIOS
@@ -410,7 +494,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     
   }
   
-  DBG("HPET creation\n");
+
   BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
   Status=gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);
   if(!EFI_ERROR(Status))
@@ -420,7 +504,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     UINT32	creatorID[]   = HPET_CREATOR_ID;
     xf = ScanXSDT(Xsdt, HPET_SIGN);
     if(!xf) { //we want to make the new table if OEM is not found
-      
+        DBG("HPET creation\n");
       Hpet = (EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER*)(UINTN)BufferPtr;
       Hpet->Header.Signature = EFI_ACPI_3_0_HIGH_PRECISION_EVENT_TIMER_TABLE_SIGNATURE;
       Hpet->Header.Length = sizeof(EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER);
@@ -462,16 +546,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     DBG("Volume not found!\n");
     return EFI_NOT_FOUND;
   }
-  /*
-  if (!Volume->DevicePath) {
-    DBG("Volume DevicePath not found!\n"); 
-  } else {
-    Print(L"Volume DevicePath=%s\n", DevicePathToStr(Volume->DevicePath)); 
-  }
 
-  Status = GetRootFromPath(Volume->DevicePath, &RootDir);
-  CheckError(Status, L"while getting volume rootdir");
-  */
   RootDir = Volume->RootDir;
   Status = EFI_NOT_FOUND;
   if (gSettings.UseDSDTmini) {
@@ -481,15 +556,13 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       Status = egLoadFile(SelfRootDir, PathDsdtMini, &buffer, &bufferLen);
     }
   }
-//  DBG("search at booted volume\n"); 
   if (EFI_ERROR(Status) && FileExists(RootDir, PathDsdt)) {
     DBG("DSDT found in booted volume\n");
     Status = egLoadFile(RootDir, PathDsdt, &buffer, &bufferLen);
   }
-//  DBG("search at Clover volume\n"); 
-  if (EFI_ERROR(Status) && FileExists(SelfRootDir, PathPatched)) {
+  if (EFI_ERROR(Status) && FileExists(SelfRootDir, PoolPrint(L"%s%s", PathPatched, PathDsdt))) {
     DBG("DSDT found in Clover volume\n");
-    Status = egLoadFile(SelfRootDir, PathPatched, &buffer, &bufferLen);
+    Status = egLoadFile(SelfRootDir, PoolPrint(L"%s%s", PathPatched, PathDsdt), &buffer, &bufferLen);
   }
   //apply DSDT
   if (!EFI_ERROR(Status)) {
@@ -511,18 +584,44 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       // verify checksum
       FadtPointer->Header.Checksum = 0;
       FadtPointer->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)FadtPointer,FadtPointer->Header.Length));
-      if (Rsdt) {
-        Rsdt->Header.Checksum = 0;
-        Rsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Rsdt, Rsdt->Header.Length));
-      }
-      if (Xsdt) {
-        Xsdt->Header.Checksum = 0;
-        Xsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Xsdt, Xsdt->Header.Length));
-      }
     }
   } 
   
+  if (gSettings.DropSSDT) {
+    DropTableFromRSDT(Rsdt, EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE);
+    DropTableFromXSDT(Xsdt, EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE);
+  }
+  
   //find other ACPI tables
+  for (Index = 0; Index < NUM_TABLES; Index++) {
+    if (FileExists(SelfRootDir, PoolPrint(L"%s%s", PathPatched, ACPInames[Index]))) {
+      
+      Status = egLoadFile(SelfRootDir, PoolPrint(L"%s%s", PathPatched, ACPInames[Index]),
+                          &buffer, &bufferLen);
+      if(!EFI_ERROR(Status))
+      {
+        //insert into RSDT
+        if (Rsdt) {
+          Ptr = (UINT32*)((UINTN)Rsdt + Rsdt->Header.Length);
+          *Ptr = (UINT32)(UINTN)buffer;
+        }
+        //insert into XSDT
+        if (Xsdt) {
+          XPtr = (UINT64*)((UINTN)Rsdt + Rsdt->Header.Length);
+          *XPtr = (UINT64)(UINTN)buffer;
+        }        
+      }      
+    }    
+  }
+  
+  if (Rsdt) {
+    Rsdt->Header.Checksum = 0;
+    Rsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Rsdt, Rsdt->Header.Length));
+  }
+  if (Xsdt) {
+    Xsdt->Header.Checksum = 0;
+    Xsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Xsdt, Xsdt->Header.Length));
+  }
   
   return Status;
 }

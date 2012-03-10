@@ -6,21 +6,16 @@
 #include "Platform.h"
 
 #ifndef DEBUG_ACPI
-#define DEBUG_ACPI 0
+#define DEBUG_ACPI 2
 #endif
 
 #if DEBUG_ACPI==2
-#define DBG(x...)  {printf(x); sleep(1);}
-#elif DEBUG_ACPI==3
-#define DBG(x...)  MsgLog(x)
+#define DBG(x...)  AsciiPrint(x)
 #elif DEBUG_ACPI==1
-#define DBG(x...)  printf(x)
+#define DBG(x...)  MsgLog(x)
 #else
 #define DBG(x...)
 #endif
-
-
-#define INTEL_VENDOR 0x756E6547
 
 // TODO Migrate
 #pragma pack(1)
@@ -37,12 +32,20 @@ struct acpi_2_ssdt {
 } __attribute__((packed));
 #pragma pack()
 
+typedef struct acpi_2_ssdt SSDT_TABLE;
+
 UINT8	acpi_cpu_count = 0;
 CHAR8** acpi_cpu_name = {"CPU0", "CPU1", "CPU2", "CPU3", "CPU4", "CPU5", "CPU6", "CPU7", "CPU8", "CPU9"};
 UINT32 acpi_cpu_p_blk = 0;
 
-struct acpi_2_ssdt *generate_pss_ssdt()
+SSDT_TABLE *generate_pss_ssdt()
 {	
+  CHAR8 name[9];
+  struct p_state initial, maximum, minimum, p_states[32];
+  UINT8 p_states_count = 0;		
+  BOOLEAN cpu_dynamic_fsb = FALSE;
+  
+  
 	UINT8 ssdt_header[] =
 	{
 		0x53, 0x53, 0x44, 0x54, 0x7E, 0x00, 0x00, 0x00, /* SSDT.... */
@@ -52,7 +55,7 @@ struct acpi_2_ssdt *generate_pss_ssdt()
 		0x31, 0x03, 0x10, 0x20,							/* 1.._		*/
 	};
 //	cpuid_update_generic_info();
-	if (gCPUStructure.Vendor != INTEL_VENDOR) {
+	if (gCPUStructure.Vendor != CPU_VENDOR_INTEL) {
 		MsgLog ("Not an Intel platform: P-States will not be generated !!!\n");
 		return NULL;
 	}
@@ -66,10 +69,6 @@ struct acpi_2_ssdt *generate_pss_ssdt()
 		
 	if (acpi_cpu_count > 0) 
 	{
-		struct p_state initial, maximum, minimum, p_states[32];
-		UINT8 p_states_count = 0;		
-    BOOLEAN cpu_dynamic_fsb = FALSE;
-		
 		// Retrieving P-States, ported from code by superhai (c)
 		switch (gCPUStructure.Family) {
 			case 0x06: 
@@ -109,7 +108,7 @@ struct acpi_2_ssdt *generate_pss_ssdt()
 							{
 								msr = AsmReadMsr64(MSR_IA32_PERF_CONTROL);
 								AsmWriteMsr64(MSR_IA32_PERF_CONTROL, (msr & 0xFFFFFFFFFFFF0000ULL) | (i << 8) | minimum.VID);
-					//			intel_waitforsts();
+								WaitForSts();
 								minimum.FID = (AsmReadMsr64(MSR_IA32_PERF_STATUS) >> 8) & 0x1F; 
 								gBS->Stall(10);
 							}
@@ -128,14 +127,14 @@ struct acpi_2_ssdt *generate_pss_ssdt()
 							{
 								msr = AsmReadMsr64(MSR_IA32_PERF_CONTROL);
 								AsmWriteMsr64(MSR_IA32_PERF_CONTROL, (msr & 0xFFFFFFFFFFFF0000ULL) | (minimum.FID << 8) | i);
-			//					intel_waitforsts();
+								WaitForSts();
 								minimum.VID = AsmReadMsr64(MSR_IA32_PERF_STATUS) & 0x3F; 
 								gBS->Stall(10);
 							}
 							
 							msr = AsmReadMsr64(MSR_IA32_PERF_CONTROL);
 							AsmWriteMsr64(MSR_IA32_PERF_CONTROL, (msr & 0xFFFFFFFFFFFF0000ULL) | (maximum.FID << 8) | maximum.VID);
-			//				intel_waitforsts();
+							WaitForSts();
 						}
 						
 						minimum.CID = ((minimum.FID & 0x1F) << 1) >> cpu_dynamic_fsb;
@@ -274,7 +273,7 @@ struct acpi_2_ssdt *generate_pss_ssdt()
 			// Add aliaces
 			for (i = 0; i < acpi_cpu_count; i++) 
 			{
-				CHAR8 name[9];
+
 				AsciiSPrint(name, 8, "_PR_%c%c%c%c", acpi_cpu_name[i][0], acpi_cpu_name[i][1], acpi_cpu_name[i][2], acpi_cpu_name[i][3]);
 				
 				scop = aml_add_scope(root, name);
@@ -283,13 +282,13 @@ struct acpi_2_ssdt *generate_pss_ssdt()
 			
 			aml_calculate_size(root);
 			
-			struct acpi_2_ssdt *ssdt = (struct acpi_2_ssdt *)AllocateKernelMemory(root->Size);
+			SSDT_TABLE *ssdt = (SSDT_TABLE *)AllocateKernelMemory(root->Size);
 			
 			aml_write_node(root, (VOID*)ssdt, 0);
 			
 			ssdt->Length = root->Size;
 			ssdt->Checksum = 0;
-			ssdt->Checksum = 256 - checksum8(ssdt, ssdt->Length);
+			ssdt->Checksum = 256 - Checksum8(ssdt, ssdt->Length);
 			
 			aml_destroy_node(root);
 			

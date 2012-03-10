@@ -24,6 +24,11 @@ EFI_EDID_DISCOVERED_PROTOCOL    *EdidDiscovered;
 //EFI_GRAPHICS_OUTPUT_PROTOCOL    *GraphicsOutput;
 UINT16                          gCPUtype;
 
+VOID WaitForSts(VOID) {
+	UINT32 inline_timeout = 100000;
+	while (AsmReadMsr64(MSR_IA32_PERF_STATUS) & (1 << 21)) { if (!inline_timeout--) break; }
+}
+
 EFI_STATUS GetNVRAMSettings(IN EFI_FILE *RootDir, CHAR16* NVRAMPlistPath)
 {
 	EFI_STATUS	Status;
@@ -240,6 +245,28 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 		} 
         
 		//*** ACPI ***//
+    prop = GetProperty(dict,"DropOemSSDT");
+    gSettings.DropSSDT = FALSE;
+		if(prop)
+		{
+      if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+				gSettings.DropSSDT = TRUE;
+    }
+    prop = GetProperty(dict,"GeneratePStates");
+    gSettings.GeneratePStates = FALSE;
+		if(prop)
+		{
+      if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+				gSettings.GeneratePStates = TRUE;
+    }
+    prop = GetProperty(dict,"GenerateCStates");
+    gSettings.GenerateCStates = FALSE;
+		if(prop)
+		{
+      if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+				gSettings.GenerateCStates = TRUE;
+    }
+    
 		prop = GetProperty(dict,"ResetAddress");
     gSettings.ResetAddr  = 0x64; //I wish it will be default
 		if(prop)
@@ -608,6 +635,7 @@ VOID SetDevices(VOID)
 						if (EFI_ERROR(Status)) {
 							continue;
 						}
+            ZeroMem((UINT8*)&Pci, sizeof(PCI_TYPE00)); //paranoia
             Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, 0, sizeof (Pci) / sizeof (UINT32), &Pci);
             if (EFI_ERROR (Status)) {
               continue;
@@ -623,7 +651,8 @@ VOID SetDevices(VOID)
 						PCIdevice.subsys_id.subsys.vendor_id = Pci.Device.SubsystemVendorID;
 						PCIdevice.subsys_id.subsys.device_id = Pci.Device.SubsystemID;
             // GFX
-            if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
+            if (gSettings.GraphicsInjector &&
+                (Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
                 (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA)) {
 							
               gGraphics.DeviceID = Pci.Hdr.DeviceId;
@@ -672,7 +701,8 @@ VOID SetDevices(VOID)
 						}
 						
 						// HDA
-						else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
+						else if (gSettings.HDAInjection &&
+                     (Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
                      (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA)) {
 //							MsgLog("HDA device found\n");
 							TmpDirty = set_hda_props(PciIo, &PCIdevice);
@@ -788,6 +818,7 @@ EFI_STATUS SaveSettings()
     if (TurboMsr != 0) {
       AsmWriteMsr64(MSR_IA32_PERF_CONTROL, TurboMsr);
       gBS->Stall(100);
+      WaitForSts();
     }
     
     msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);
@@ -795,6 +826,8 @@ EFI_STATUS SaveSettings()
   } 
   
   
-  MsgLog("Finally: Bus=%dMHz CPU=%dMHz\n", DivU64x32(gCPUStructure.FSBFrequency, Mega), gCPUStructure.CPUFrequency);
+  MsgLog("Finally: Bus=%dMHz CPU=%dMHz\n",
+         DivU64x32(gCPUStructure.FSBFrequency, Mega),
+         DivU64x32(gCPUStructure.CPUFrequency, Mega));
   return EFI_SUCCESS;
 }
