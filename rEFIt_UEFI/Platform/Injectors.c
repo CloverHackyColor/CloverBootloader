@@ -61,7 +61,7 @@ GetDeviceProps(IN     APPLE_GETVAR_PROTOCOL   *This,
   UINT32		cnt = 0;
 	UINT8     *binStr = NULL;
 
-  if(gSettings.GraphicsInjector && (gDeviceProperties!=NULL) && AsciiStrLen(gDeviceProperties)>3)
+  if((gDeviceProperties!=NULL) && (AsciiStrLen(gDeviceProperties)>3))
 	{
     cnt = (UINT32)AsciiStrLen(gDeviceProperties) / 2;
 		binStr = AllocateZeroPool(cnt);
