@@ -14,13 +14,15 @@ CHAR8* BiosVendor = "Apple Inc.";
 
 CHAR8* AppleManufacturer = "Apple Computer, Inc."; //Old name, before 2007
 
-CHAR8* AppleFirmwareVersion[14] = 
+CHAR8* AppleFirmwareVersion[16] = 
 {
 	"MB11.88Z.0061.B03.0809221748",
 	"MB21.88Z.00A5.B07.0706270922",
 	"MB41.88Z.0073.B00.0809221748",
 	"MB52.88Z.007D.003.0809221748",
 	"MBP51.88Z.007E.B05.0906151647",
+  "MBP81.88Z.0047.B04.1102071707",
+  "MBP83.88Z.0047.B24.1110261426",
 	"MBA31.88Z.0061.B01.0712201139",
 	"MM21.88Z.009A.B00.0706281359",
 	"IM81.88Z.00C1.B00.0803051705",
@@ -32,13 +34,15 @@ CHAR8* AppleFirmwareVersion[14] =
 	"MP51.88Z.007F.B00.1008031144"
 };
 
-CHAR8* AppleBoardID[14] = //Lion DR1 compatible
+CHAR8* AppleBoardID[16] = //Lion DR1 compatible
 {
 	"Mac-F4208CC8",
 	"Mac-F4208CA9",
 	"Mac-F22788A9",
 	"Mac-F22788AA",
 	"Mac-F42D86C8",
+  "Mac-94245B3640C91C81",
+  "Mac-942459F5819B171B",
 	"Mac-942452F5819B1C1B",
 	"Mac-F4208EAA",
 	"Mac-F227BEC8",
@@ -50,13 +54,15 @@ CHAR8* AppleBoardID[14] = //Lion DR1 compatible
 	"Mac-F22788C8"
 };
 
-CHAR8* AppleReleaseDate[14] = 
+CHAR8* AppleReleaseDate[16] = 
 {
 	"05/16/06",
 	"05/15/07",
 	"02/26/08",
 	"01/21/09",
 	"10/14/08",
+  "10/26/11",
+  "02/07/11",
 	"12/08/10",
 	"08/07/07",
 	"08/07/09",
@@ -68,13 +74,15 @@ CHAR8* AppleReleaseDate[14] =
 	"08/09/10"
 };
 
-CHAR8* AppleProductName[14] = 
+CHAR8* AppleProductName[16] = 
 {
 	"MacBook1,1",
 	"MacBook2,1",
 	"MacBook4,1",
 	"MacBook5,2",
 	"MacBookPro5,1",
+  "MacBookPro8,1",
+  "MacBookPro8,3",
 	"MacBookAir3,1",
 	"Macmini2,1",
 	"iMac8,1",
@@ -86,13 +94,15 @@ CHAR8* AppleProductName[14] =
 	"MacPro5,1"
 };
 
-CHAR8* AppleFamilies[14] = 
+CHAR8* AppleFamilies[16] = 
 {
 	"MacBook",
 	"MacBook",
 	"MacBook",
 	"MacBook",
 	"MacBookPro",
+  "MacBookPro",
+  "MacBookPro",
 	"MacBookAir",
 	"Macmini",
 	"iMac",
@@ -105,7 +115,7 @@ CHAR8* AppleFamilies[14] =
 };
 
 
-CHAR8* AppleSystemVersion[14] = 
+CHAR8* AppleSystemVersion[16] = 
 {
 	"1.1",
 	"1.2",
@@ -113,7 +123,9 @@ CHAR8* AppleSystemVersion[14] =
 	"1.3",
 	"1.0",
 	"1.0",
-	"1.1",
+  "1.0",
+	"1.0",
+  "1.1",
 	"1.3",
 	"1.0",
 	"1.2",
@@ -123,13 +135,15 @@ CHAR8* AppleSystemVersion[14] =
 	"1.2"
 };
 
-CHAR8* AppleSerialNumber[14] = //random generated
+CHAR8* AppleSerialNumber[16] = //random generated
 {
 	"W80A041AU9B", //MB11
 	"W88A041AWGP", //MB21 - merom 05/07
 	"W88A041A0P0", //MB41
 	"W88AAAAA9GU", //MB52
 	"W88439FE1G0", //MBP51
+  "W89F9196DH2G", //MBP81 - i5 SB IntelHD3000
+  "W88F9CDEDF93", //MBP83 -i7 SB  ATI
 	"W8649476DQX", //MBA31
 	"W88A56BYYL2", //MM21 - merom GMA950 07/07
 	"W89A00AAX88", //IM71 - merom 01/09
@@ -141,12 +155,14 @@ CHAR8* AppleSerialNumber[14] = //random generated
 	"CG154TB9WU3"  //MP51
 };
 //no! ChassisVersion == BoardID
-CHAR8* AppleChassisAsset[14] = 
+CHAR8* AppleChassisAsset[16] = 
 {
 	"MacBook-White",
 	"MacBook-White",
 	"MacBook-Black",
 	"MacBook-Black",
+	"MacBook-Aluminum",
+	"MacBook-Aluminum",
 	"MacBook-Aluminum",
 	"Air-Enclosure",
 	"Mini-Aluminum",

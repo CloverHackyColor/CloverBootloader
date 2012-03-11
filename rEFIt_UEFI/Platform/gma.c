@@ -73,6 +73,7 @@ static struct gma_gpu_t KnownGPUS[] = {
 //  { 0x80860044, "HD2000"  }, //host bridge
   { 0x80860046, "HD2000"  },
   { 0x80860112, "HD3000"  },
+  { 0x80860116, "HD3000"  },
   { 0x80860126, "HD3000"  },
 };
 
@@ -93,15 +94,15 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   DevPropDevice *device;
 //	UINT8         *regs;
   UINT32        DualLink;
-	UINT32				bar[7];
+//	UINT32				bar[7];
 	CHAR8					*model;
 	UINT8 BuiltIn =		0x00;
 //	UINT8 ClassFix[4] =	{ 0x00, 0x00, 0x03, 0x00 };
 	
 	devicepath = get_pci_dev_path(gma_dev);
 	
-	bar[0] = pci_config_read32(gma_dev, PCI_BASE_ADDRESS_0);
-	gma_dev->regs = (UINT8 *) (UINTN)(bar[0] & ~0x0f);
+//	bar[0] = pci_config_read32(gma_dev, PCI_BASE_ADDRESS_0);
+//	gma_dev->regs = (UINT8 *) (UINTN)(bar[0] & ~0x0f);
 	
 	model = get_gma_model((gma_dev->vendor_id << 16) | gma_dev->device_id);
 //	DBG(model);
@@ -130,6 +131,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x2592:
     case 0x27A2:
     case 0x27AE:
+    case 0x0116:  
     case 0x0126:  
       devprop_add_value(device, "AAPL,HasPanel", reg_TRUE, 4);
       devprop_add_value(device, "built-in", &BuiltIn, 1);

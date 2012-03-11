@@ -758,9 +758,9 @@ VOID PatchTableType6()
 			continue;
 		}
 		mInstalled[Index]	=  (1ULL << (SmbiosTable.Type6->InstalledSize.InstalledOrEnabledSize & 0x7F)) * (1024 * 1024);
-		MsgLog("MEMORY_MODULE %d Installed %d ", Index, mInstalled[Index]);
+		MsgLog("MEMORY_MODULE %d Installed %x ", Index, mInstalled[Index]);
 		mEnabled[Index]		= (1ULL << ((UINT8)SmbiosTable.Type6->EnabledSize.InstalledOrEnabledSize & 0x7F)) * (1024 * 1024);
-		MsgLog(" Enabled %d \n", mEnabled[Index]);
+		MsgLog(" Enabled %x \n", mEnabled[Index]);
 		LogSmbiosTable(SmbiosTable);		
 	}
 

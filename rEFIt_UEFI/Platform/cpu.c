@@ -883,6 +883,16 @@ MACHINE_TYPES GetDefaultModel()
 				} else
 					DefaultType = MacBook41;
 				break;
+			case CPU_MODEL_JAKETOWN:
+			case CPU_MODEL_SANDY_BRIDGE: 
+				if((AsciiStrStr(gCPUStructure.BrandString, "i3")) || 
+				   (AsciiStrStr(gCPUStructure.BrandString, "i5")))
+				{
+					DefaultType = MacBookPro81;
+					break;
+				}
+        DefaultType = MacBookPro83;
+				break;
 			default:
 				if (gGraphics.Vendor == Nvidia)
 				{
@@ -936,8 +946,7 @@ MACHINE_TYPES GetDefaultModel()
 				break;
 			case CPU_MODEL_SANDY_BRIDGE:
 				if((AsciiStrStr(gCPUStructure.BrandString, "i3")) || 
-				   (AsciiStrStr(gCPUStructure.BrandString, "i5-2390T")) || 
-				   (AsciiStrStr(gCPUStructure.BrandString, "i5-2100S")))
+				   (AsciiStrStr(gCPUStructure.BrandString, "i5")))
 				{
 					DefaultType = iMac112;
 					break;
