@@ -782,8 +782,8 @@ VOID SetDevices(VOID)
     gDeviceProperties = AllocateAlignedPages(EFI_SIZE_TO_PAGES(stringlength + 1), 64);
     CopyMem(gDeviceProperties, (VOID*)devprop_generate_string(string), stringlength);
     gDeviceProperties[stringlength] = 0;
-    DBG(gDeviceProperties);
-    DBG("\n");   
+//    DBG(gDeviceProperties);
+//    DBG("\n");   
     StringDirty = FALSE;
     
 	}

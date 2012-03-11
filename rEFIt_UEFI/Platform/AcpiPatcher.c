@@ -32,6 +32,7 @@ Re-Work by Slice 2011.
 #define offsetof(st, m) \
 ((UINTN) ( (UINT8 *)&((st *)(0))->m - (UINT8 *)0 ))
 
+#define XXXX_SIGN        SIGNATURE_32('X','X','X','X')
 #define HPET_SIGN        SIGNATURE_32('H','P','E','T')
 #define HPET_OEM_ID        { 'A', 'P', 'P', 'L', 'E', ' ' }
 #define HPET_OEM_TABLE_ID  { 'A', 'p', 'p', 'l', 'e', '0', '0' }
@@ -238,6 +239,10 @@ VOID DropTableFromRSDT (RSDT_TABLE *Rsdt, UINT32 Signature)
   DBG("Drop tables from Rsdt, count=%d\n", EntryCount); 
 	EntryPtr = &Rsdt->Entry;
 	for (Index = 0; Index < EntryCount; Index++, EntryPtr++) {
+    if (*EntryPtr == 0) {
+      Rsdt->Header.Length -= sizeof(UINT32);
+      continue;
+    }
 		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
     CopyMem((CHAR8*)&sign, (CHAR8*)&Table->Signature, 4);
     sign[4] = 0;
@@ -268,6 +273,10 @@ VOID DropTableFromXSDT (XSDT_TABLE *Xsdt, UINT32 Signature)
   DBG("Drop tables from Xsdt, count=%d\n", EntryCount); 
 	BasePtr = (UINT64*)(&(Xsdt->Entry));
 	for (Index = 0; Index < EntryCount; Index++, BasePtr++) {
+    if (*BasePtr == 0) {
+      Xsdt->Header.Length -= sizeof(UINT64);
+      continue;
+    }
     CopyMem (&Entry64, (VOID*)BasePtr, sizeof(UINT64)); //value from BasePtr->
 		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Entry64));
     CopyMem((CHAR8*)&sign, (CHAR8*)&Table->Signature, 4);
@@ -325,7 +334,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 	
 	//Slice - I want to begin from BIOS ACPI tables like with SMBIOS
 	RsdPointer = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)FindAcpiRsdPtr();
-	DBG("Found RsdPtr in BIOS: %p\n", RsdPointer);
+//	DBG("Found RsdPtr in BIOS: %p\n", RsdPointer);
   
   //Slice - some tricks to do with Bios Acpi Tables
   Rsdt = (RSDT_TABLE*)(UINTN)(RsdPointer->RsdtAddress);
@@ -337,7 +346,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   } else if (Xsdt) {
     FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Xsdt->Entry);
   }
-  DBG("Found FADT in BIOS: %p\n", FadtPointer);
+//  DBG("Found FADT in BIOS: %p\n", FadtPointer);
   Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)(FadtPointer->FirmwareCtrl);
   DBG("Found FACS in BIOS: %p\n", Facs);
   BiosDsdt = FadtPointer->XDsdt;
@@ -590,29 +599,45 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   if (gSettings.DropSSDT) {
     DropTableFromRSDT(Rsdt, EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE);
     DropTableFromXSDT(Xsdt, EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE);
+  } else {
+    DropTableFromRSDT(Rsdt, XXXX_SIGN);
+    DropTableFromXSDT(Xsdt, XXXX_SIGN);
   }
+
   
   //find other ACPI tables
   for (Index = 0; Index < NUM_TABLES; Index++) {
     if (FileExists(SelfRootDir, PoolPrint(L"%s\\%s", PathPatched, ACPInames[Index]))) {
-      
+      DBG("file %s found\n", ACPInames[Index]);
       Status = egLoadFile(SelfRootDir, PoolPrint(L"%s\\%s", PathPatched, ACPInames[Index]),
                           &buffer, &bufferLen);
       if(!EFI_ERROR(Status))
       {
+ //       DBG("read success\n");
         //insert into RSDT
         if (Rsdt) {
           Ptr = (UINT32*)((UINTN)Rsdt + Rsdt->Header.Length);
           *Ptr = (UINT32)(UINTN)buffer;
+          Rsdt->Header.Length += sizeof(UINT32);
+   //       DBG("Rsdt->Length = %d\n", Rsdt->Header.Length);
         }
         //insert into XSDT
         if (Xsdt) {
-          XPtr = (UINT64*)((UINTN)Rsdt + Rsdt->Header.Length);
+          XPtr = (UINT64*)((UINTN)Xsdt + Xsdt->Header.Length);
           *XPtr = (UINT64)(UINTN)buffer;
+          Xsdt->Header.Length += sizeof(UINT64);
+  //        DBG("Xsdt->Length = %d\n", Xsdt->Header.Length);
         }        
+      } else {
+        DBG("read return status %r\n", Status);
       }      
-    }    
+    } /* else {
+      DBG(" file %s not found\n", PoolPrint(L"%s\\%s", PathPatched, ACPInames[Index]));
+    }*/
   }
+//  DropTableFromRSDT(Rsdt, XXXX_SIGN);
+//  DropTableFromXSDT(Xsdt, XXXX_SIGN);
+ 
   
   if (Rsdt) {
     Rsdt->Header.Checksum = 0;
