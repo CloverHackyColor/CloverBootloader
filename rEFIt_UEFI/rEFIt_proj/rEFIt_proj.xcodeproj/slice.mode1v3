@@ -315,7 +315,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>1CE0B20306471E060097A5F4</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>Injectors.c</string>
+								<string>AcpiPatcher.c</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -323,11 +323,11 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CE0B20406471E060097A5F4</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>Injectors.c</string>
+										<string>AcpiPatcher.c</string>
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>12DFD288150BDB0200E3F784</string>
+										<string>12DFD294150C587E00E3F784</string>
 										<key>history</key>
 										<array>
 											<string>1202124214266E13004B7B93</string>
@@ -376,7 +376,6 @@
 											<string>12DFD211150B9FAD00E3F784</string>
 											<string>12DFD216150B9FAD00E3F784</string>
 											<string>12DFD217150B9FAD00E3F784</string>
-											<string>12DFD235150BA42A00E3F784</string>
 											<string>12DFD259150BBBBA00E3F784</string>
 											<string>12DFD25A150BBBBA00E3F784</string>
 											<string>12DFD260150BC37200E3F784</string>
@@ -385,7 +384,8 @@
 											<string>12DFD26A150BC43300E3F784</string>
 											<string>12DFD27B150BD96D00E3F784</string>
 											<string>12DFD286150BDB0200E3F784</string>
-											<string>12DFD287150BDB0200E3F784</string>
+											<string>12DFD292150C587E00E3F784</string>
+											<string>12DFD293150C587E00E3F784</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -397,14 +397,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {772, 484}}</string>
+								<string>{{0, 0}, {772, 480}}</string>
 								<key>RubberWindowFrame</key>
 								<string>237 119 980 659 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>484pt</string>
+							<string>480pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -417,14 +417,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 489}, {772, 129}}</string>
+								<string>{{0, 485}, {772, 133}}</string>
 								<key>RubberWindowFrame</key>
 								<string>237 119 980 659 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>129pt</string>
+							<string>133pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -443,9 +443,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>12DFD289150BDB0200E3F784</string>
+				<string>12DFD295150C587E00E3F784</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>12DFD28A150BDB0200E3F784</string>
+				<string>12DFD296150C587E00E3F784</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -664,7 +664,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>122336AD13377DFD0033F008</string>
-				<string>12DFD28B150BDB0200E3F784</string>
+				<string>12DFD297150C587E00E3F784</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

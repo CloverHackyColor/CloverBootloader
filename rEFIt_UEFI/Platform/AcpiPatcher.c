@@ -594,9 +594,9 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   
   //find other ACPI tables
   for (Index = 0; Index < NUM_TABLES; Index++) {
-    if (FileExists(SelfRootDir, PoolPrint(L"%s%s", PathPatched, ACPInames[Index]))) {
+    if (FileExists(SelfRootDir, PoolPrint(L"%s\\%s", PathPatched, ACPInames[Index]))) {
       
-      Status = egLoadFile(SelfRootDir, PoolPrint(L"%s%s", PathPatched, ACPInames[Index]),
+      Status = egLoadFile(SelfRootDir, PoolPrint(L"%s\\%s", PathPatched, ACPInames[Index]),
                           &buffer, &bufferLen);
       if(!EFI_ERROR(Status))
       {
