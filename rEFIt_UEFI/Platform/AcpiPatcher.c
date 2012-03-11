@@ -42,8 +42,8 @@ Re-Work by Slice 2011.
 
 #define NUM_TABLES 19
 CHAR16* ACPInames[NUM_TABLES] = {
-	L"DSDT.aml",
 	L"SSDT.aml",
+	L"SSDT-0.aml",
 	L"SSDT-1.aml",
 	L"SSDT-2.aml",
 	L"SSDT-3.aml",

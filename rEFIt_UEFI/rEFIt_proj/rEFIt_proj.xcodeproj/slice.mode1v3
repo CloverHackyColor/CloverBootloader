@@ -326,7 +326,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>12579D46150C9A0C004C89AE</string>
+										<string>12579D50150C9AFC004C89AE</string>
 										<key>history</key>
 										<array>
 											<string>1202124214266E13004B7B93</string>
@@ -384,7 +384,7 @@
 											<string>12DFD292150C587E00E3F784</string>
 											<string>12436555150C856200B0FD23</string>
 											<string>12579D44150C9A0C004C89AE</string>
-											<string>12579D45150C9A0C004C89AE</string>
+											<string>12579D46150C9A0C004C89AE</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -396,14 +396,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {772, 438}}</string>
+								<string>{{0, 0}, {772, 432}}</string>
 								<key>RubberWindowFrame</key>
 								<string>404 219 980 659 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>438pt</string>
+							<string>432pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -416,14 +416,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 443}, {772, 175}}</string>
+								<string>{{0, 437}, {772, 181}}</string>
 								<key>RubberWindowFrame</key>
 								<string>404 219 980 659 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>175pt</string>
+							<string>181pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -442,9 +442,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>12579D47150C9A0C004C89AE</string>
+				<string>12579D51150C9AFC004C89AE</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>12579D48150C9A0C004C89AE</string>
+				<string>12579D52150C9AFC004C89AE</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -663,7 +663,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>122336AD13377DFD0033F008</string>
-				<string>12579D49150C9A0C004C89AE</string>
+				<string>12579D53150C9AFC004C89AE</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
