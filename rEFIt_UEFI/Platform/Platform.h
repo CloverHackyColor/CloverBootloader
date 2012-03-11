@@ -323,10 +323,10 @@ typedef struct {
 	UINT8   Mobile;  //not for i3-i7
   
 	/* Core i7,5,3 */
-	UINT8   Turbo1; //1 Core
-	UINT8   Turbo2; //2 Core
-	UINT8   Turbo3; //3 Core
-	UINT8   Turbo4; //4 Core
+	UINT16  Turbo1; //1 Core
+	UINT16  Turbo2; //2 Core
+	UINT16  Turbo3; //3 Core
+	UINT16  Turbo4; //4 Core
     
 } CPU_STRUCTURE;
 
