@@ -295,7 +295,7 @@
 	#IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
   
   	# foreign file system support
-	#Clover/VBoxFsDxe/VBoxHfs.inf
+	Clover/VBoxFsDxe/VBoxHfs.inf
 	Clover/VBoxFsDxe/VBoxIso9660.inf
 	#Clover/VBoxFsDxe/VBoxFsDxe.inf
 	Clover/VBoxFsDxe/VBoxExt2.inf
@@ -376,7 +376,6 @@
   #
   MdeModulePkg/Application/HelloWorld/HelloWorld.inf
   #MdeModulePkg/Application/VariableInfo/VariableInfo.inf
-  #iBootEFI/iboot.inf
   #rEFIt_UEFI/refit.inf
 
 ###################################################################################################
