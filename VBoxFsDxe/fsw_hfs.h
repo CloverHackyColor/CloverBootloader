@@ -134,7 +134,7 @@ struct fsw_hfs_volume
 static inline fsw_u16
 swab16(fsw_u16 x)
 {
-    return x<<8 | x>>8;
+    return (x<<8 | ((x & 0xff00)>>8));
 }
 
 static inline fsw_u32

@@ -268,7 +268,9 @@ typedef struct {
   BOOLEAN EnableC4;
   BOOLEAN EnableISS;
 	CHAR16	DsdtName[60];
-    
+  
+  //Injections
+  BOOLEAN StringInjector;
   //Graphics
   UINT16  PCIRootUID;
   BOOLEAN GraphicsInjector;

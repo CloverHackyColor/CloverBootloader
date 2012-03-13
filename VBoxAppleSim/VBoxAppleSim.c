@@ -284,17 +284,17 @@ EFI_STATUS (EFIAPI *gUnknownProtoHandler[])() =
     UnknownHandlerImpl
 };
 #endif
-//This part of codes origin from iBoot, placed here to test purpose
-// screen
+
+// screen. Origin from VBoxVga.c
 #if TEST
 typedef	EFI_STATUS (EFIAPI *EFI_SCREEN_INFO_FUNCTION)(
 													  VOID* This, 
-													  UINT64* baseAddress,
-													  UINT64* frameBufferSize,
-													  UINT32* byterPerRow,
-													  UINT32* Width,
-													  UINT32* Height,
-													  UINT32* colorDepth
+													  OUT UINT64* baseAddress,
+													  OUT UINT64* frameBufferSize,
+													  OUT UINT32* byterPerRow,
+													  OUT UINT32* Width,
+													  OUT UINT32* Height,
+													  OUT UINT32* colorDepth
 													  );
 
 typedef struct {	

@@ -93,7 +93,7 @@ PeCoffLoaderGetPeHeader (
   EFI_IMAGE_DOS_HEADER  DosHdr;
   EFI_FAT_IMAGE_HEADER  Fat;
   UINTN                 Size;
-  UINT32                Offset = 0;
+  UINTN                 Offset = 0;
   UINT16                Magic;
   EFI_FAT_IMAGE_HEADER_NLIST nlist[5];
   Size = sizeof (EFI_FAT_IMAGE_HEADER);
@@ -103,7 +103,6 @@ PeCoffLoaderGetPeHeader (
                            &Size,
                            &Fat
                            );
-//  DEBUG((DEBUG_LOAD, "%a:%d - %r\n", __FILE__, __LINE__, Status));
   if (!RETURN_ERROR(Status) && Fat.Signature == EFI_FAT_IMAGE_HEADER_SIGNATURE)
   {
     UINT32 i;
@@ -140,7 +139,6 @@ PeCoffLoaderGetPeHeader (
                            &Size,
                            &DosHdr
                            );
-//    DEBUG((DEBUG_LOAD, "%a:%d - %r\n", __FILE__, __LINE__, Status));
   if (RETURN_ERROR (Status)) {
     ImageContext->ImageError = IMAGE_ERROR_IMAGE_READ;
     return Status;
@@ -168,7 +166,6 @@ PeCoffLoaderGetPeHeader (
                            &Size,
                            Hdr.Pe32
                            );
-//    DEBUG((DEBUG_LOAD, "%a:%d - %r\n", __FILE__, __LINE__, Status));
   if (RETURN_ERROR (Status)) {
     ImageContext->ImageError = IMAGE_ERROR_IMAGE_READ;
     return Status;
@@ -194,7 +191,6 @@ PeCoffLoaderGetPeHeader (
     ImageContext->Machine = Hdr.Pe32->FileHeader.Machine;
 
     Magic = PeCoffLoaderGetPeHeaderMagicValue (Hdr);
-//    DEBUG((DEBUG_LOAD, "%a:%d - %x\n", __FILE__, __LINE__, Magic));
 
     if (Magic == EFI_IMAGE_NT_OPTIONAL_HDR32_MAGIC) {
       //
@@ -461,7 +457,6 @@ PeCoffLoaderGetImageInfo (
                                &Size,
                                &SectionHeader
                                );
-//    DEBUG((DEBUG_LOAD, "%a:%d - %r\n", __FILE__, __LINE__, Status));
       if (RETURN_ERROR (Status)) {
         ImageContext->ImageError = IMAGE_ERROR_IMAGE_READ;
         return Status;
@@ -714,6 +709,10 @@ PeCoffLoaderRelocateImage (
   }
 
   //
+  // If Adjust is not zero, then apply fix ups to the image
+  //
+  if (Adjust != 0) {
+    //
   // Run the relocation information and apply the fixups
   //
   FixupData = ImageContext->FixupData;
@@ -823,7 +822,7 @@ PeCoffLoaderRelocateImage (
   if (ImageContext->DestinationAddress != 0) {
      ImageContext->EntryPoint -= (UINT64) ImageContext->ImageAddress;
      ImageContext->EntryPoint += (UINT64) ImageContext->DestinationAddress;
- //    DEBUG((DEBUG_INFO, "%a:%d entry point %x\n", __FILE__, __LINE__, ImageContext->EntryPoint));
+    }
   }
 
   // Applies additional environment specific actions to relocate fixups
@@ -1098,7 +1097,6 @@ PeCoffLoaderLoadImage (
                                                             ImageContext,
                                                             (UINTN)Hdr.Pe32->OptionalHeader.AddressOfEntryPoint
                                                             );
-//      DEBUG((DEBUG_INFO, "%a:%d entry point %x\n", __FILE__, __LINE__, ImageContext->EntryPoint));
     } else {
       //
       // Use PE32+ offset
@@ -1107,7 +1105,6 @@ PeCoffLoaderLoadImage (
                                                             ImageContext,
                                                             (UINTN)Hdr.Pe32Plus->OptionalHeader.AddressOfEntryPoint
                                                             );
-//      DEBUG((DEBUG_INFO, "%a:%d entry point %x\n", __FILE__, __LINE__, ImageContext->EntryPoint));
     }
   } else {
     ImageContext->EntryPoint =  (PHYSICAL_ADDRESS) (
@@ -1116,7 +1113,6 @@ PeCoffLoaderLoadImage (
                                 (UINTN)sizeof(EFI_TE_IMAGE_HEADER) -
                                 (UINTN)Hdr.Te->StrippedSize
                                 );
-//      DEBUG((DEBUG_INFO, "%a:%d entry point %x\n", __FILE__, __LINE__, ImageContext->EntryPoint));
   }
 
   //

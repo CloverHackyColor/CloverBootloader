@@ -43,7 +43,7 @@ EFI_STATUS GetNVRAMSettings(IN EFI_FILE *RootDir, CHAR16* NVRAMPlistPath)
 	Status = egLoadFile(RootDir, NVRAMPlistPath, (UINT8**)&gNvramPtr, &size);
 	if(EFI_ERROR(Status))
 	{
-		DBG("Error loading nvram.plist!\n");
+		DBG(" nvram.plist not present\n");
 		return Status;
 	}
   /* check again:
@@ -198,6 +198,14 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
 			gSettings.PCIRootUID = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
     }
+    prop = GetProperty(dict,"StringInjector");
+    gSettings.StringInjector = FALSE;
+		if(prop)
+		{
+      if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+				gSettings.StringInjector = TRUE;
+    }
+    
     
  		prop = GetProperty(dict,"DeviceProperties");
 		if(prop)

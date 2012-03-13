@@ -180,6 +180,37 @@ fsw_hfs_compute_shift(fsw_u32 size)
  * Mount an HFS+ volume. Reads the superblock and constructs the
  * root directory dnode.
  */
+//algo from Chameleon
+/*
+void
+HFSGetDescription(CICell ih, char *str, long strMaxLen)
+{
+  
+  UInt16 nodeSize;
+  UInt32 firstLeafNode;
+  long long dirIndex;
+  char *name;
+  long flags, time;
+  
+  if (HFSInitPartition(ih) == -1)  { return; }
+  
+  // Fill some crucial data structures by side effect. 
+  dirIndex = 0;
+  HFSGetDirEntry(ih, "/", &dirIndex, &name, &flags, &time, 0, 0);
+  
+  // Now we can loook up the volume name node. 
+  nodeSize = be16_to_cpu(gBTHeaders[kBTreeCatalog]->nodeSize);
+  firstLeafNode = SWAP_BE32(gBTHeaders[kBTreeCatalog]->firstLeafNode);
+  
+  dirIndex = (long long) firstLeafNode * nodeSize;
+  
+  GetCatalogEntry(&dirIndex, &name, &flags, &time, 0, 0);
+  
+  strncpy(str, name, strMaxLen);
+  str[strMaxLen] = '\0';
+}
+*/
+
 
 static fsw_status_t fsw_hfs_volume_mount(struct fsw_hfs_volume *vol)
 {
@@ -188,6 +219,8 @@ static fsw_status_t fsw_hfs_volume_mount(struct fsw_hfs_volume *vol)
     HFSPlusVolumeHeader   *voldesc;
     fsw_u32                blockno;
     struct fsw_string      s;
+  HFSMasterDirectoryBlock* mdb;
+  UINTN i;
 
     rv = FSW_UNSUPPORTED;
 
@@ -212,20 +245,21 @@ static fsw_status_t fsw_hfs_volume_mount(struct fsw_hfs_volume *vol)
         status = fsw_block_get(vol, blockno, 0, &buffer);
         CHECK(status);
         voldesc = (HFSPlusVolumeHeader *)buffer;
+        mdb = (HFSMasterDirectoryBlock*)buffer;
         signature = be16_to_cpu(voldesc->signature);
 
-        if ((signature == kHFSPlusSigWord) || (signature == kHFSXSigWord))
+        if ((signature == kHFSPlusSigWord) || (signature == kHFSXSigWord)) //H+ or HX
         {
             if (vol->hfs_kind == 0)
             {
-                DPRINT("found HFS+\n");
+    //            DPRINT("found HFS+\n");
                 vol->hfs_kind = FSW_HFS_PLUS;
             }
         }
-        else if (signature == kHFSSigWord)
+        else if (signature == kHFSSigWord) // 'BD'
         {
-            HFSMasterDirectoryBlock* mdb = (HFSMasterDirectoryBlock*)buffer;
-
+//            HFSMasterDirectoryBlock* mdb = (HFSMasterDirectoryBlock*)buffer;
+//VolumeName = mdb->drVN 28bytes
             if (be16_to_cpu(mdb->drEmbedSigWord) == kHFSPlusSigWord)
             {
                 DPRINT("found HFS+ inside HFS, untested\n");
@@ -263,9 +297,15 @@ static fsw_status_t fsw_hfs_volume_mount(struct fsw_hfs_volume *vol)
         fsw_set_blocksize(vol, block_size, block_size);
 
         /* get volume name */
+      for (i = kHFSMaxVolumeNameChars; i > 0; i--)
+        if (mdb->drVN[i-1] != ' ')
+          break;
+      
         s.type = FSW_STRING_TYPE_ISO88591;
-        s.size = s.len = kHFSMaxVolumeNameChars;
-        s.data = "HFS+ volume";
+        s.size = s.len = i;
+      s.data = &mdb->drVN; //"HFS+ volume";
+      
+       //fsw_status_t fsw_strdup_coerce(struct fsw_string *dest, int type, struct fsw_string *src)
         status = fsw_strdup_coerce(&vol->g.label, vol->g.host_string_type, &s);
         CHECK(status);
 

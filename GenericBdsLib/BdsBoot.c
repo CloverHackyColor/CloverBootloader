@@ -728,7 +728,7 @@ BdsLibBootViaBootOption (
     }
 
     //
-    // If the boot option point to Internal FV shell, make sure it is valid
+  // If the boot option points to Internal FV shell, make sure it is valid
     //
     Status = BdsLibUpdateFvFileDevicePath (&DevicePath, PcdGetPtr(PcdShellFile));
     if (!EFI_ERROR(Status)) {
@@ -884,7 +884,7 @@ Done:
 
   @param  HardDriveDevicePath    EFI Device Path to boot, if it starts with a hard
                                  drive media device path.
-  @return A Pointer to the full device path or NULL if a valid Hard Drive devic path
+  @return A Pointer to the full device path or NULL if a valid Hard Drive device path
           cannot be found.
 
 **/

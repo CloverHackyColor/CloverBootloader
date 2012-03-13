@@ -87,7 +87,7 @@ typedef struct {
 
     EFI_FILE                    FileHandle;     //!< Published EFI protocol interface structure
 
-    UINTN                       Type;           //!< File type used for dispatching
+    UINT64                       Type;           //!< File type used for dispatching
     struct fsw_shandle          shand;          //!< FSW handle for this file
 
 } FSW_FILE_DATA;

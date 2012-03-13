@@ -35,9 +35,13 @@ Re-Work by Slice 2011.
 #define XXXX_SIGN        SIGNATURE_32('X','X','X','X')
 #define HPET_SIGN        SIGNATURE_32('H','P','E','T')
 #define HPET_OEM_ID        { 'A', 'P', 'P', 'L', 'E', ' ' }
-#define HPET_OEM_TABLE_ID  { 'A', 'p', 'p', 'l', 'e', '0', '0' }
-#define HPET_CREATOR_ID    { 'L', 'o', 'k', 'i', ' ' }
+#define HPET_OEM_TABLE_ID  { 'A', 'p', 'p', 'l', 'e', '0', '0', ' ' }
+#define HPET_CREATOR_ID    { 'L', 'o', 'k', 'i' }
 //#define EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE  SIGNATURE_32('S', 'S', 'D', 'T')
+
+CONST CHAR8	oemID[6]       = HPET_OEM_ID;
+CONST CHAR8	oemTableID[8]  = HPET_OEM_TABLE_ID;
+CONST CHAR8	creatorID[4]   = HPET_CREATOR_ID;
 
 
 #define NUM_TABLES 19
@@ -234,6 +238,7 @@ VOID DropTableFromRSDT (RSDT_TABLE *Rsdt, UINT32 Signature)
 	UINT32							EntryCount;
 	UINT32							*EntryPtr, *Ptr, *Ptr2;
   CHAR8 sign[5];
+  CHAR8 OTID[9];
   
 	EntryCount = (Rsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT32);
   DBG("Drop tables from Rsdt, count=%d\n", EntryCount); 
@@ -246,7 +251,9 @@ VOID DropTableFromRSDT (RSDT_TABLE *Rsdt, UINT32 Signature)
 		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
     CopyMem((CHAR8*)&sign, (CHAR8*)&Table->Signature, 4);
     sign[4] = 0;
-    DBG(" Found table: %a\n", sign);
+    CopyMem((CHAR8*)&OTID, (CHAR8*)&Table->Header.OemTableId, 8);
+    OTID[8] = 0;
+    DBG(" Found table: %a  %a\n", sign, OTID);
 		if (Table->Signature != Signature) {
 			continue;
 		}
@@ -508,9 +515,6 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   Status=gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);
   if(!EFI_ERROR(Status))
   {
-    UINT8	oemID[6]        = HPET_OEM_ID;
-    UINT64	oemTableID[]  = HPET_OEM_TABLE_ID;
-    UINT32	creatorID[]   = HPET_CREATOR_ID;
     xf = ScanXSDT(Xsdt, HPET_SIGN);
     if(!xf) { //we want to make the new table if OEM is not found
         DBG("HPET creation\n");

@@ -61,7 +61,7 @@ GetDeviceProps(IN     APPLE_GETVAR_PROTOCOL   *This,
   UINT32		cnt = 0;
 	UINT8     *binStr = NULL;
 
-  if((gDeviceProperties!=NULL) && (AsciiStrLen(gDeviceProperties)>3))
+  if(!gSettings.StringInjector && (gDeviceProperties!=NULL) && (AsciiStrLen(gDeviceProperties)>3))
 	{
     cnt = (UINT32)AsciiStrLen(gDeviceProperties) / 2;
 		binStr = AllocateZeroPool(cnt);
@@ -119,14 +119,17 @@ EFI_STATUS GetScreenInfo(VOID* This, UINT64* baseAddress, UINT64* frameBufferSiz
                               (VOID **) &GraphicsOutput);
 	if(EFI_ERROR(Status))
 		return EFI_UNSUPPORTED;
-	
+	Print(L"GetScreenInfo called with args: %lx %lx %lx %lx %lx %lx\n",
+        baseAddress, frameBufferSize, bpr, w, h, colorDepth);
 	*frameBufferSize = (UINT64)GraphicsOutput->Mode->FrameBufferSize;
 	*baseAddress = (UINT64)GraphicsOutput->Mode->FrameBufferBase;
 	*w = (UINT32)GraphicsOutput->Mode->Info->HorizontalResolution;
 	*h = (UINT32)GraphicsOutput->Mode->Info->VerticalResolution;
 	*colorDepth = 32;
-	*bpr = (UINT32)(GraphicsOutput->Mode->Info->PixelsPerScanLine*32)/8;
-	
+	*bpr = (UINT32)(GraphicsOutput->Mode->Info->PixelsPerScanLine*32) >> 3;
+//	Print(L"  Screen info: FBsize=%lx FBaddr=%lx w=%d h=%d\n",
+//      *frameBufferSize, *baseAddress, *w, *h);
+//  PauseForKey(L"--- press any key ---\n");
 	return EFI_SUCCESS;
 }
 

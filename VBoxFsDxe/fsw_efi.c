@@ -321,7 +321,7 @@ EFI_STATUS EFIAPI fsw_efi_DriverBinding_Start(IN EFI_DRIVER_BINDING_PROTOCOL  *T
                                             NULL);
         if (EFI_ERROR(Status)) {
 //            Print(L"Fsw ERROR: InstallMultipleProtocolInterfaces returned %x\n", Status);
-		}
+        }
     }
 
     // on errors, close the opened protocols
