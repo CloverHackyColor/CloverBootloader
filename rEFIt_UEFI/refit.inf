@@ -49,6 +49,7 @@
   Platform/AcpiPatcher.c
 #	Platform/AppleEfi.h
 #	Platform/ati_reg.h
+	Platform/AmlGenerator.c
 	Platform/ati.c
 #	Platform/BiosVideo.h
 #	Platform/Bmp.h
@@ -90,7 +91,7 @@
 #	Platform/SmBios.h
 	Platform/spd.c
 #	Platform/spd.h
-#	Platform/StateGenerator.c
+	Platform/StateGenerator.c
 #	Platform/StateGenerator.h
 #	Platform/stringTable.c
 	Platform/usbfix.c
@@ -147,7 +148,6 @@
   
 
 	
-
 [Ppis]
 
 [Protocols]

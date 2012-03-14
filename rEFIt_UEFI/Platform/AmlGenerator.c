@@ -1,0 +1,498 @@
+/*
+ *  aml_generator.c
+ *  Chameleon
+ *
+ *  Created by Mozodojo on 20/07/10.
+ *  Copyright 2010 mozo. All rights reserved.
+ *
+ */
+
+#include "AmlGenerator.h"
+
+BOOLEAN aml_add_to_parent(AML_CHUNK* parent, AML_CHUNK* node)
+{
+	if (parent && node)
+	{
+		switch (parent->Type) 
+		{
+			case AML_CHUNK_NONE:
+			case AML_CHUNK_BYTE:
+			case AML_CHUNK_WORD:
+			case AML_CHUNK_DWORD:
+			case AML_CHUNK_QWORD:
+			case AML_CHUNK_ALIAS:
+				MsgLog("aml_add_to_parent: node doesn't support child nodes!\n");
+				return FALSE;
+			case AML_CHUNK_NAME:
+				if (parent->First) 
+				{
+					MsgLog("aml_add_to_parent: name node supports only one child node!\n");
+					return FALSE;
+				}
+				break;
+
+			default:
+				break;
+		}
+		
+		if (!parent->First)
+			parent->First = node;
+		
+		if (parent->Last)
+			parent->Last->Next = node;
+		
+		parent->Last = node;
+		
+		return TRUE;
+	}
+	
+	return FALSE;
+}
+
+AML_CHUNK* aml_create_node(AML_CHUNK* parent)
+{
+	AML_CHUNK* node = (AML_CHUNK*)AllocateZeroPool(sizeof(AML_CHUNK));
+	
+	aml_add_to_parent(parent, node);
+	
+	return node;
+}
+
+void aml_destroy_node(AML_CHUNK* node)
+{
+	// Delete child nodes
+	AML_CHUNK* child = node->First;
+	
+	while (child) 
+	{
+		AML_CHUNK* next = child->Next;
+		
+		if (child->Buffer)
+			FreePool(child->Buffer);
+		
+		FreePool(child);
+		
+		child = next;
+	}
+	
+	// Free node
+	if (node->Buffer)
+		FreePool(node->Buffer);
+	
+	FreePool(node);
+}
+
+AML_CHUNK* aml_add_buffer(AML_CHUNK* parent, CONST CHAR8* buffer, UINT32 size)
+{
+	AML_CHUNK* node = aml_create_node(parent);
+	
+	if (node) 
+	{
+		node->Type = AML_CHUNK_NONE;
+		node->Length = size;
+		node->Buffer = AllocateZeroPool (node->Length);
+		CopyMem(node->Buffer, buffer, node->Length);
+	}
+	
+	return node;
+}
+
+AML_CHUNK* aml_add_byte(AML_CHUNK* parent, UINT8 value)
+{
+	AML_CHUNK* node = aml_create_node(parent);
+	
+	if (node) 
+	{
+		node->Type = AML_CHUNK_BYTE;
+		
+		node->Length = 1;
+		node->Buffer = AllocateZeroPool (node->Length);
+		node->Buffer[0] = value;
+	}
+	
+	return node;
+}
+
+AML_CHUNK* aml_add_word(AML_CHUNK* parent, UINT16 value)
+{
+	AML_CHUNK* node = aml_create_node(parent);
+	
+	if (node) 
+	{
+		node->Type = AML_CHUNK_WORD;
+		node->Length = 2;
+		node->Buffer = AllocateZeroPool (node->Length);
+		node->Buffer[0] = value & 0xff;
+		node->Buffer[1] = value >> 8;
+	}
+	
+	return node;
+}
+
+AML_CHUNK* aml_add_dword(AML_CHUNK* parent, UINT32 value)
+{
+	AML_CHUNK* node = aml_create_node(parent);
+	
+	if (node) 
+	{
+		node->Type = AML_CHUNK_DWORD;
+		node->Length = 4;
+		node->Buffer = AllocateZeroPool (node->Length);
+		node->Buffer[0] = value & 0xff;
+		node->Buffer[1] = (value >> 8) & 0xff;
+		node->Buffer[2] = (value >> 16) & 0xff;
+		node->Buffer[3] = (value >> 24) & 0xff;
+	}
+	
+	return node;
+}
+
+AML_CHUNK* aml_add_qword(AML_CHUNK* parent, UINT64 value)
+{
+	AML_CHUNK* node = aml_create_node(parent);
+	
+	if (node) 
+	{
+		node->Type = AML_CHUNK_QWORD;
+		node->Length = 8;
+		node->Buffer = AllocateZeroPool (node->Length);
+		node->Buffer[0] = value & 0xff;
+		node->Buffer[1] = (value >> 8) & 0xff;
+		node->Buffer[2] = (value >> 16) & 0xff;
+		node->Buffer[3] = (value >> 24) & 0xff;
+		node->Buffer[4] = (value >> 32) & 0xff;
+		node->Buffer[5] = (value >> 40) & 0xff;
+		node->Buffer[6] = (value >> 48) & 0xff;
+		node->Buffer[7] = (value >> 56) & 0xff;
+	}
+	
+	return node;
+}
+
+UINT32 aml_fill_simple_name(CHAR8* buffer, CONST CHAR8* name)
+{
+	if (AsciiStrLen(name) < 4) 
+	{
+		MsgLog("aml_fill_simple_name: simple name %a has incorrect lengh! Must be 4.\n", name);
+		return 0;
+	}
+	
+	CopyMem(buffer, name, 4);
+	return 4;
+}
+
+UINT32 aml_fill_name(AML_CHUNK* node, CONST CHAR8* name)
+{
+	if (!node) 
+		return 0;
+	
+	INTN len = AsciiStrLen(name), offset = 0, count = len / 4;
+	
+	if ((len % 4) > 1 || count == 0) 
+	{
+		MsgLog("aml_fill_name: pathname %a has incorrect length! Must be 4, 8, 12, 16, etc...\n", name);
+		return 0;
+	}
+	
+	UINT32 root = 0;
+	
+	if ((len % 4) == 1 && name[0] == '\\')
+		root++;
+			
+	if (count == 1) 
+	{
+		node->Length = 4 + root;
+		node->Buffer = AllocateZeroPool (node->Length);
+		CopyMem(node->Buffer, name, 4 + root);
+		return node->Length;
+	}
+	
+	if (count == 2) 
+	{
+		node->Length = 2 + 8;
+		node->Buffer = AllocateZeroPool (node->Length);
+		node->Buffer[offset++] = 0x5c; // Root Char
+		node->Buffer[offset++] = 0x2e; // Double name
+		CopyMem(node->Buffer+offset, name + root, 8);
+		return node->Length;
+	}
+	
+	node->Length = 3 + count*4;
+	node->Buffer = AllocateZeroPool (node->Length);
+	node->Buffer[offset++] = 0x5c; // Root Char
+	node->Buffer[offset++] = 0x2f; // Multi name
+	node->Buffer[offset++] = count; // Names count
+	CopyMem(node->Buffer+offset, name + root, count*4);
+	
+	return node->Length;
+}
+
+AML_CHUNK* aml_add_scope(AML_CHUNK* parent, CONST CHAR8* name)
+{
+	AML_CHUNK* node = aml_create_node(parent);
+	
+	if (node)
+	{
+		node->Type = AML_CHUNK_SCOPE;
+		
+		aml_fill_name(node, name);
+	}
+	
+	return node;
+}
+
+AML_CHUNK* aml_add_name(AML_CHUNK* parent, CONST CHAR8* name)
+{
+	AML_CHUNK* node = aml_create_node(parent);
+	
+	if (node)
+	{
+		node->Type = AML_CHUNK_NAME;
+		
+		aml_fill_name(node, name);
+	}
+	
+	return node;
+}
+
+AML_CHUNK* aml_add_package(AML_CHUNK* parent)
+{
+	AML_CHUNK* node = aml_create_node(parent);
+	
+	if (node)
+	{
+		node->Type = AML_CHUNK_PACKAGE;
+		
+		node->Length = 1;
+		node->Buffer = AllocateZeroPool (node->Length);
+	}
+	
+	return node;
+}
+
+AML_CHUNK* aml_add_alias(AML_CHUNK* parent, CONST CHAR8* name1, CONST CHAR8* name2)
+{
+	AML_CHUNK* node = aml_create_node(parent);
+	
+	if (node)
+	{
+		node->Type = AML_CHUNK_ALIAS;
+		
+		node->Length = 8;
+		node->Buffer = AllocateZeroPool (node->Length);
+		aml_fill_simple_name(node->Buffer, name1);
+		aml_fill_simple_name(node->Buffer+4, name2);
+	}
+	
+	return node;
+}
+
+UINT8 aml_get_size_length(UINT32 size)
+{
+	if (size + 1 <= 0x3f)
+		return 1;
+	else if (size + 2 <= 0x3fff)
+		return 2;
+	else if (size + 3 <= 0x3fffff)
+		return 3;
+	
+	return 4;
+}
+
+UINT32 aml_calculate_size(AML_CHUNK* node)
+{
+	if (node)
+	{
+		node->Size = 0;
+		
+		// Calculate child nodes size
+		AML_CHUNK* child = node->First;
+		UINT8 child_count = 0;
+		
+		while (child) 
+		{
+			child_count++;
+			
+			node->Size += aml_calculate_size(child);
+			
+			child = child->Next;
+		}
+		
+		switch (node->Type) 
+		{
+			case AML_CHUNK_NONE:
+				node->Size += node->Length;
+				break;
+			case AML_CHUNK_SCOPE:
+				node->Size += 1 + node->Length;
+				node->Size += aml_get_size_length(node->Size);
+				break;
+			case AML_CHUNK_PACKAGE:
+				node->Buffer[0] = child_count;
+				node->Size += 1 + node->Length;
+				node->Size += aml_get_size_length(node->Size);
+				break;
+				
+			case AML_CHUNK_BYTE:
+				if (node->Buffer[0] == 0x0 || node->Buffer[0] == 0x1) 
+				{
+					node->Size += node->Length;
+				}
+				else 
+				{
+					node->Size += 1 + node->Length;
+				}
+				
+				break;
+				
+			case AML_CHUNK_WORD:
+			case AML_CHUNK_DWORD:
+			case AML_CHUNK_QWORD:
+			case AML_CHUNK_ALIAS:
+			case AML_CHUNK_NAME:
+				node->Size += 1 + node->Length;
+				break;
+		}
+		
+		return node->Size;
+	}
+	
+	return 0;
+}
+
+UINT32 aml_write_byte(UINT8 value, CHAR8* buffer, UINT32 offset)
+{
+	buffer[offset++] = value;
+	
+	return offset;
+}
+
+UINT32 aml_write_word(UINT16 value, CHAR8* buffer, UINT32 offset)
+{
+	buffer[offset++] = value & 0xff;
+	buffer[offset++] = value >> 8;
+	
+	return offset;
+}
+
+UINT32 aml_write_dword(UINT32 value, CHAR8* buffer, UINT32 offset)
+{
+	buffer[offset++] = value & 0xff;
+	buffer[offset++] = (value >> 8) & 0xff;
+	buffer[offset++] = (value >> 16) & 0xff;
+	buffer[offset++] = (value >> 24) & 0xff;
+	
+	return offset;
+}
+
+UINT32 aml_write_qword(UINT64 value, CHAR8* buffer, UINT32 offset)
+{
+	buffer[offset++] = value & 0xff;
+	buffer[offset++] = (value >> 8) & 0xff;
+	buffer[offset++] = (value >> 16) & 0xff;
+	buffer[offset++] = (value >> 24) & 0xff;
+	buffer[offset++] = (value >> 32) & 0xff;
+	buffer[offset++] = (value >> 40) & 0xff;
+	buffer[offset++] = (value >> 48) & 0xff;
+	buffer[offset++] = (value >> 56) & 0xff;
+	
+	return offset;
+}
+
+UINT32 aml_write_buffer(CONST CHAR8* value, UINT32 size, CHAR8* buffer, UINT32 offset)
+{
+	if (size > 0)
+	{
+		CopyMem(buffer + offset, value, size);
+	}
+	
+	return offset + size;
+}
+
+UINT32 aml_write_size(UINT32 size, CHAR8* buffer, UINT32 offset)
+{
+	if (size <= 0x3f)
+	{
+		buffer[offset++] = size;
+	}
+	else if (size <= 0x3fff) 
+	{
+		buffer[offset++] = 0x40 | (size & 0xf);
+		buffer[offset++] = (size >> 4) & 0xff;
+	}
+	else if (size <= 0x3fffff) 
+	{
+		buffer[offset++] = 0x80 | (size & 0xf);
+		buffer[offset++] = (size >> 4) & 0xff;
+		buffer[offset++] = (size >> 12) & 0xff;
+	}
+    else 
+	{
+		buffer[offset++] = 0xc0 | (size & 0xf);
+		buffer[offset++] = (size >> 4) & 0xff;
+		buffer[offset++] = (size >> 12) & 0xff;
+		buffer[offset++] = (size >> 20) & 0xff;
+	}
+	
+	return offset;
+}
+
+UINT32 aml_write_node(AML_CHUNK* node, CHAR8* buffer, UINT32 offset)
+{
+	if (node && buffer) 
+	{
+		UINT32 old = offset;
+		
+		switch (node->Type) 
+		{
+			case AML_CHUNK_NONE:
+				offset = aml_write_buffer(node->Buffer, node->Length, buffer, offset);
+				break;
+
+			case AML_CHUNK_SCOPE:
+			case AML_CHUNK_PACKAGE:
+				offset = aml_write_byte(node->Type, buffer, offset);
+				offset = aml_write_size(node->Size-1, buffer, offset);
+				offset = aml_write_buffer(node->Buffer, node->Length, buffer, offset);
+				break;
+				
+			case AML_CHUNK_BYTE:
+				if (node->Buffer[0] == 0x0 || node->Buffer[0] == 0x1) 
+				{
+					offset = aml_write_buffer(node->Buffer, node->Length, buffer, offset);
+				}
+				else 
+				{
+					offset = aml_write_byte(node->Type, buffer, offset);
+					offset = aml_write_buffer(node->Buffer, node->Length, buffer, offset);
+				}
+				break;
+				
+			case AML_CHUNK_WORD:
+			case AML_CHUNK_DWORD:
+			case AML_CHUNK_QWORD:
+			case AML_CHUNK_ALIAS:
+			case AML_CHUNK_NAME:
+				offset = aml_write_byte(node->Type, buffer, offset);
+				offset = aml_write_buffer(node->Buffer, node->Length, buffer, offset);
+				break;
+				
+			default:
+				break;
+		}
+
+		AML_CHUNK* child = node->First;
+		
+		while (child) 
+		{
+			offset = aml_write_node(child, buffer, offset);
+			
+			child = child->Next;
+		}
+		
+		if (offset - old != node->Size) 
+			MsgLog("Node size incorrect: 0x%x\n", node->Type);
+	}
+	
+	return offset;
+}

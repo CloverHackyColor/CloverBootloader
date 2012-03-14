@@ -34,6 +34,8 @@
 		122336CD13377E260033F008 /* refit.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = refit.inf; path = ../refit.inf; sourceTree = SOURCE_ROOT; };
 		123D85D714D94B1F000AF00B /* rEFIt64.dsc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = rEFIt64.dsc; path = ../rEFIt64.dsc; sourceTree = SOURCE_ROOT; };
 		123D85D814D94B29000AF00B /* refit64.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = refit64.inf; path = ../refit64.inf; sourceTree = SOURCE_ROOT; };
+		126C264B1510C3C9005AB30D /* AmlGenerator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AmlGenerator.c; sourceTree = "<group>"; };
+		126C264C1510C3C9005AB30D /* AmlGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AmlGenerator.h; sourceTree = "<group>"; };
 		12CB8F581427390E009EDAF2 /* DevicePath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DevicePath.c; sourceTree = "<group>"; };
 		12CB8F6014273A38009EDAF2 /* GenericBdsLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericBdsLib.h; sourceTree = "<group>"; };
 		12CB8FAB14274AE1009EDAF2 /* efiConsoleControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efiConsoleControl.h; sourceTree = "<group>"; };
@@ -180,6 +182,8 @@
 		12D6305B14CEA05E00E5898F /* Platform */ = {
 			isa = PBXGroup;
 			children = (
+				126C264B1510C3C9005AB30D /* AmlGenerator.c */,
+				126C264C1510C3C9005AB30D /* AmlGenerator.h */,
 				12D6305C14CEA05E00E5898F /* AcpiPatcher.c */,
 				12D6305D14CEA05E00E5898F /* AppleEfi.h */,
 				12D5B1C914F0F35E0043569D /* ati.h */,

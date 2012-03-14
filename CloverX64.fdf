@@ -87,11 +87,11 @@ INF IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 #INF IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
 #INF EdkCompatibilityPkg/Compatibility/PiSmbiosRecordOnDataHubSmbiosRecordThunk/PiSmbiosRecordOnDataHubSmbiosRecordThunk.inf
 	# foreign file system support
-INF  Clover/VBoxFsDxe/VBoxHfs.inf
+#INF  Clover/VBoxFsDxe/VBoxHfs.inf
 #INF  Clover/VBoxFsDxe/VBoxFsDxe.inf
 #INF  Clover/VBoxFsDxe/VBoxIso9660.inf
 #INF  Clover/VBoxFsDxe/VBoxExt2.inf
-#INF  RuleOverride=BINARY Clover/HFSPlus/HFSPlus.inf
+INF  RuleOverride=BINARY Clover/HFSPlus/HFSPlus.inf
 
 INF  PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
 #INF  DuetPkg/AcpiResetDxe/Reset.inf

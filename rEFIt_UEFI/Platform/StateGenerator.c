@@ -3,7 +3,7 @@
  * 2010 mojodojo, slice
  */
 
-#include "Platform.h"
+#include "AmlGenerator.h"
 
 #ifndef DEBUG_ACPI
 #define DEBUG_ACPI 2
@@ -35,8 +35,18 @@ struct acpi_2_ssdt {
 typedef struct acpi_2_ssdt SSDT_TABLE;
 
 UINT8	acpi_cpu_count = 0;
-CHAR8** acpi_cpu_name = {"CPU0", "CPU1", "CPU2", "CPU3", "CPU4", "CPU5", "CPU6", "CPU7", "CPU8", "CPU9"};
+CHAR8* acpi_cpu_name[] = {"CPU0", "CPU1", "CPU2", "CPU3", "CPU4", "CPU5", "CPU6", "CPU7", "CPU8", "CPU9"};
 UINT32 acpi_cpu_p_blk = 0;
+
+CONST UINT8 pss_ssdt_header[] =
+{
+  0x53, 0x53, 0x44, 0x54, 0x7E, 0x00, 0x00, 0x00, /* SSDT.... */
+  0x01, 0x6A, 0x50, 0x6D, 0x52, 0x65, 0x66, 0x00, /* ..PmRef. */
+  0x43, 0x70, 0x75, 0x50, 0x6D, 0x00, 0x00, 0x00, /* CpuPm... */
+  0x00, 0x30, 0x00, 0x00, 0x49, 0x4E, 0x54, 0x4C, /* .0..INTL */
+  0x31, 0x03, 0x10, 0x20,							/* 1.._		*/
+};
+
 
 SSDT_TABLE *generate_pss_ssdt()
 {	
@@ -44,23 +54,15 @@ SSDT_TABLE *generate_pss_ssdt()
   struct p_state initial, maximum, minimum, p_states[32];
   UINT8 p_states_count = 0;		
   BOOLEAN cpu_dynamic_fsb = FALSE;
+//  UINT64 msr;
   
-  
-	UINT8 ssdt_header[] =
-	{
-		0x53, 0x53, 0x44, 0x54, 0x7E, 0x00, 0x00, 0x00, /* SSDT.... */
-		0x01, 0x6A, 0x50, 0x6D, 0x52, 0x65, 0x66, 0x00, /* ..PmRef. */
-		0x43, 0x70, 0x75, 0x50, 0x6D, 0x00, 0x00, 0x00, /* CpuPm... */
-		0x00, 0x30, 0x00, 0x00, 0x49, 0x4E, 0x54, 0x4C, /* .0..INTL */
-		0x31, 0x03, 0x10, 0x20,							/* 1.._		*/
-	};
 //	cpuid_update_generic_info();
 	if (gCPUStructure.Vendor != CPU_VENDOR_INTEL) {
 		MsgLog ("Not an Intel platform: P-States will not be generated !!!\n");
 		return NULL;
 	}
 	
-	if (!(gCPUStructure.Features & CPU_FEATURE_MSR)) {
+	if (!(gCPUStructure.Features & CPUID_FEATURE_MSR)) {
 		MsgLog ("Unsupported CPU: P-States will not be generated !!!\n");
 		return NULL;
 	}
@@ -86,7 +88,7 @@ SSDT_TABLE *generate_pss_ssdt()
 						{
 							AsmWriteMsr64(MSR_IA32_EXT_CONFIG, (AsmReadMsr64(MSR_IA32_EXT_CONFIG) | (1 << 28))); 
 							gBS->Stall(10);
-							cpu_dynamic_fsb = AsmReadMsr64(MSR_IA32_EXT_CONFIG) & (1 << 28);
+							cpu_dynamic_fsb = (AsmReadMsr64(MSR_IA32_EXT_CONFIG) & (1 << 28))?1:0;
 						}
 						
 						BOOLEAN cpu_noninteger_bus_ratio = (AsmReadMsr64(MSR_IA32_PERF_STATUS) & (1ULL << 46));
@@ -101,41 +103,9 @@ SSDT_TABLE *generate_pss_ssdt()
 						
 						if (minimum.FID == 0) 
 						{
-							UINT64 msr;
-							UINT8 i;
-							// Probe for lowest fid
-							for (i = maximum.FID; i >= 0x6; i--) 
-							{
-								msr = AsmReadMsr64(MSR_IA32_PERF_CONTROL);
-								AsmWriteMsr64(MSR_IA32_PERF_CONTROL, (msr & 0xFFFFFFFFFFFF0000ULL) | (i << 8) | minimum.VID);
-								WaitForSts();
-								minimum.FID = (AsmReadMsr64(MSR_IA32_PERF_STATUS) >> 8) & 0x1F; 
-								gBS->Stall(10);
-							}
-							
-							msr = AsmReadMsr64(MSR_IA32_PERF_CONTROL);
-							AsmWriteMsr64(MSR_IA32_PERF_CONTROL, (msr & 0xFFFFFFFFFFFF0000ULL) | (maximum.FID << 8) | maximum.VID);
-					//		intel_waitforsts();
-						}
-						
-						if (minimum.VID == maximum.VID) 
-						{	
-							UINT64 msr;
-							UINT8 i;
-							// Probe for lowest vid
-							for (i = maximum.VID; i > 0xA; i--) 
-							{
-								msr = AsmReadMsr64(MSR_IA32_PERF_CONTROL);
-								AsmWriteMsr64(MSR_IA32_PERF_CONTROL, (msr & 0xFFFFFFFFFFFF0000ULL) | (minimum.FID << 8) | i);
-								WaitForSts();
-								minimum.VID = AsmReadMsr64(MSR_IA32_PERF_STATUS) & 0x3F; 
-								gBS->Stall(10);
-							}
-							
-							msr = AsmReadMsr64(MSR_IA32_PERF_CONTROL);
-							AsmWriteMsr64(MSR_IA32_PERF_CONTROL, (msr & 0xFFFFFFFFFFFF0000ULL) | (maximum.FID << 8) | maximum.VID);
-							WaitForSts();
-						}
+              minimum.FID = 6;
+              minimum.VID = maximum.VID;
+            }						
 						
 						minimum.CID = ((minimum.FID & 0x1F) << 1) >> cpu_dynamic_fsb;
 						
@@ -182,13 +152,13 @@ SSDT_TABLE *generate_pss_ssdt()
 								p_states[i].VID = ((maximum.VID << 2) - (vidstep * u)) >> 2;
 								
 								UINT32 multiplier = p_states[i].FID & 0x1f;		// = 0x08
-								BOOLEAN half = p_states[i].FID & 0x40;					// = 0x01
-								BOOLEAN dfsb = p_states[i].FID & 0x80;					// = 0x00
-								UINT32 fsb = gCPUStructure.FSBFrequency / 1000000; // = 400
-								UINT32 halffsb = (fsb + 1) >> 1;					// = 200
-								UINT32 frequency = (multiplier * fsb);			// = 3200
+								UINT8 half = (p_states[i].FID & 0x40)?1:0;					// = 0x00
+								UINT8 dfsb = (p_states[i].FID & 0x80)?1:0;					// = 0x01
+								UINT32 fsb =  DivU64x32(gCPUStructure.FSBFrequency, Mega); // = 200
+								UINT32 halffsb = (fsb + 1) >> 1;					// = 100
+								UINT32 frequency = (multiplier * fsb);			// = 1600
 								
-								p_states[i].Frequency = (frequency + (half * halffsb)) >> dfsb;	// = 3200 + 200 = 3400
+								p_states[i].Frequency = (frequency + (half * halffsb)) >> dfsb;	// = 1600/2=800
 							}
 							
 							p_states_count -= invalid;
@@ -211,7 +181,7 @@ SSDT_TABLE *generate_pss_ssdt()
             {
               maximum.Control = (AsmReadMsr64(MSR_IA32_PERF_STATUS) >> 8) & 0xff;
             } else {
-              maximum.Control = AsmReadMsr64(MSR_IA32_PERF_STATUS) & 0xff; // Seems it always contains maximum multiplier value (with turbo, that's we need)...
+              maximum.Control = AsmReadMsr64(MSR_IA32_PERF_STATUS) & 0xff; 
             }
 						
 						minimum.Control = (AsmReadMsr64(MSR_PLATFORM_INFO) >> 40) & 0xff;
@@ -233,7 +203,7 @@ SSDT_TABLE *generate_pss_ssdt()
 							{
 								p_states[p_states_count].Control = i;
 								p_states[p_states_count].CID = p_states[p_states_count].Control << 1;
-								p_states[p_states_count].Frequency = (gCPUStructure.FSBFrequency / 1000000) * i;
+								p_states[p_states_count].Frequency = DivU64x32(gCPUStructure.FSBFrequency, Mega) * i;
 								p_states_count++;
 							}
 						}
@@ -250,17 +220,17 @@ SSDT_TABLE *generate_pss_ssdt()
 		// Generating SSDT
 		if (p_states_count > 0) 
 		{	
-			int i;
+			INTN i;
 			
-			struct aml_chunk* root = aml_create_node(NULL);
-				aml_add_buffer(root, ssdt_header, sizeof(ssdt_header)); // SSDT header
-					struct aml_chunk* scop = aml_add_scope(root, "\\_PR_");
-						struct aml_chunk* name = aml_add_name(scop, "PSS_");
-							struct aml_chunk* pack = aml_add_package(name);
+			AML_CHUNK* root = aml_create_node(NULL);
+				aml_add_buffer(root, (CONST CHAR8*)&pss_ssdt_header[0], sizeof(pss_ssdt_header)); // SSDT header
+					AML_CHUNK* scop = aml_add_scope(root, "\\_PR_");
+						AML_CHUNK* method = aml_add_name(scop, "PSS_");
+							AML_CHUNK* pack = aml_add_package(method);
 			
 								for (i = 0; i < p_states_count; i++) 
 								{
-									struct aml_chunk* pstt = aml_add_package(pack);
+									AML_CHUNK* pstt = aml_add_package(pack);
 									
 									aml_add_dword(pstt, p_states[i].Frequency);
 									aml_add_dword(pstt, 0x00000000); // Power
@@ -282,7 +252,7 @@ SSDT_TABLE *generate_pss_ssdt()
 			
 			aml_calculate_size(root);
 			
-			SSDT_TABLE *ssdt = (SSDT_TABLE *)AllocateKernelMemory(root->Size);
+			SSDT_TABLE *ssdt = (SSDT_TABLE *)AllocateZeroPool(root->Size);
 			
 			aml_write_node(root, (VOID*)ssdt, 0);
 			
@@ -307,4 +277,169 @@ SSDT_TABLE *generate_pss_ssdt()
 	return NULL;
 }
 
+CHAR8 cst_ssdt_header[] =
+{
+  0x53, 0x53, 0x44, 0x54, 0xE7, 0x00, 0x00, 0x00, /* SSDT.... */
+  0x01, 0x17, 0x50, 0x6D, 0x52, 0x65, 0x66, 0x41, /* ..PmRefA */
+  0x43, 0x70, 0x75, 0x43, 0x73, 0x74, 0x00, 0x00, /* CpuCst.. */
+  0x00, 0x10, 0x00, 0x00, 0x49, 0x4E, 0x54, 0x4C, /* ....INTL */
+  0x31, 0x03, 0x10, 0x20							/* 1.._		*/
+};
 
+CHAR8 resource_template_register_fixedhw[] =
+{
+  0x11, 0x14, 0x0A, 0x11, 0x82, 0x0C, 0x00, 0x7F,
+  0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x01, 0x79, 0x00
+};
+
+CHAR8 resource_template_register_systemio[] =
+{
+  0x11, 0x14, 0x0A, 0x11, 0x82, 0x0C, 0x00, 0x01,
+  0x08, 0x00, 0x00, 0x15, 0x04, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x79, 0x00,
+};
+
+
+SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
+{
+  BOOLEAN c2_enabled;
+  BOOLEAN c3_enabled;
+  BOOLEAN c4_enabled = gSettings.EnableC4;
+  BOOLEAN cst_using_systemio = gSettings.EnableISS;
+  UINT8   p_blk_lo, p_blk_hi;
+
+  c2_enabled = (fadt->PLvl2Lat < 100);
+  c3_enabled = (fadt->PLvl3Lat < 1000);
+  UINT8 cstates_count = 1 + (c2_enabled ? 1 : 0) + (c3_enabled ? 1 : 0);
+  
+  AML_CHUNK* root = aml_create_node(NULL);
+  aml_add_buffer(root, cst_ssdt_header, sizeof(cst_ssdt_header)); // SSDT header
+  AML_CHUNK* scop = aml_add_scope(root, "\\_PR_");
+  AML_CHUNK* name = aml_add_name(scop, "CST_");
+  AML_CHUNK* pack = aml_add_package(name);
+  aml_add_byte(pack, cstates_count);
+  
+  AML_CHUNK* tmpl = aml_add_package(pack);
+  if (cst_using_systemio)
+  {
+    // C1
+    resource_template_register_fixedhw[8] = 0x00;
+    resource_template_register_fixedhw[9] = 0x00;
+    resource_template_register_fixedhw[18] = 0x00;
+    aml_add_buffer(tmpl, resource_template_register_fixedhw, sizeof(resource_template_register_fixedhw));
+    aml_add_byte(tmpl, 0x01); // C1
+    aml_add_word(tmpl, 0x0001); // Latency
+    aml_add_dword(tmpl, 0x000003e8); // Power
+    
+    if (c2_enabled) // C2
+    {
+      p_blk_lo = acpi_cpu_p_blk + 4;
+      p_blk_hi = (acpi_cpu_p_blk + 4) >> 8;
+      
+      tmpl = aml_add_package(pack);
+      resource_template_register_systemio[11] = p_blk_lo; // C2
+      resource_template_register_systemio[12] = p_blk_hi; // C2
+      aml_add_buffer(tmpl, resource_template_register_systemio, sizeof(resource_template_register_systemio));
+      aml_add_byte(tmpl, 0x02); // C2
+      aml_add_word(tmpl, 0x0040); // Latency
+      aml_add_dword(tmpl, 0x000001f4); // Power
+    }
+    
+    if (c4_enabled) // C4
+    {
+      p_blk_lo = acpi_cpu_p_blk + 5;
+      p_blk_hi = (acpi_cpu_p_blk + 5) >> 8;
+      
+      tmpl = aml_add_package(pack);
+      resource_template_register_systemio[11] = p_blk_lo; // C4
+      resource_template_register_systemio[12] = p_blk_hi; // C4
+      aml_add_buffer(tmpl, resource_template_register_systemio, sizeof(resource_template_register_systemio));
+      aml_add_byte(tmpl, 0x04); // C4
+      aml_add_word(tmpl, 0x0080); // Latency
+      aml_add_dword(tmpl, 0x000000C8); // Power
+    }
+    else if (c3_enabled) // C3
+    {
+      p_blk_lo = acpi_cpu_p_blk + 5;
+      p_blk_hi = (acpi_cpu_p_blk + 5) >> 8;
+      
+      tmpl = aml_add_package(pack);
+      resource_template_register_systemio[11] = p_blk_lo; // C3
+      resource_template_register_systemio[12] = p_blk_hi; // C3
+      aml_add_buffer(tmpl, resource_template_register_systemio, sizeof(resource_template_register_systemio));
+      aml_add_byte(tmpl, 0x03);			// C3
+      aml_add_word(tmpl, 0x0060);			// Latency
+      aml_add_dword(tmpl, 0x0000015e);	// Power
+    }
+  }
+  else
+  {
+    // C1
+    resource_template_register_fixedhw[11] = 0x00; // C1
+    aml_add_buffer(tmpl, resource_template_register_fixedhw, sizeof(resource_template_register_fixedhw));
+    aml_add_byte(tmpl, 0x01);			// C1
+    aml_add_word(tmpl, 0x0001);			// Latency
+    aml_add_dword(tmpl, 0x000003e8);	// Power
+    
+    resource_template_register_fixedhw[18] = 0x03;
+    
+    if (c2_enabled) // C2
+    {
+      tmpl = aml_add_package(pack);
+      resource_template_register_fixedhw[11] = 0x10; // C2
+      aml_add_buffer(tmpl, resource_template_register_fixedhw, sizeof(resource_template_register_fixedhw));
+      aml_add_byte(tmpl, 0x02);			// C2
+      aml_add_word(tmpl, 0x0040);			// Latency
+      aml_add_dword(tmpl, 0x000001f4);	// Power
+    }
+    
+    if (c4_enabled) // C4
+    {
+      tmpl = aml_add_package(pack);
+      resource_template_register_fixedhw[11] = 0x30; // C4
+      aml_add_buffer(tmpl, resource_template_register_fixedhw, sizeof(resource_template_register_fixedhw));
+      aml_add_byte(tmpl, 0x04);			// C4
+      aml_add_word(tmpl, 0x0080);			// Latency
+      aml_add_dword(tmpl, 0x000000C8);	// Power
+    }
+    else if (c3_enabled)
+    {
+      tmpl = aml_add_package(pack);
+      resource_template_register_fixedhw[11] = 0x20; // C3
+      aml_add_buffer(tmpl, resource_template_register_fixedhw, sizeof(resource_template_register_fixedhw));
+      aml_add_byte(tmpl, 0x03);			// C3
+      aml_add_word(tmpl, 0x0060);			// Latency
+      aml_add_dword(tmpl, 0x0000015e);	// Power
+    }
+  }
+  
+  // Aliases
+  INTN i;
+  for (i = 0; i < acpi_cpu_count; i++) 
+  {
+    CHAR8 name[9];
+    AsciiSPrint(name, 8, "_PR_%c%c%c%c", acpi_cpu_name[i][0], acpi_cpu_name[i][1], acpi_cpu_name[i][2], acpi_cpu_name[i][3]);
+    
+    scop = aml_add_scope(root, name);
+    aml_add_alias(scop, "CST_", "_CST");
+  }
+  
+  aml_calculate_size(root);
+  
+  SSDT_TABLE *ssdt = (SSDT_TABLE *)AllocateZeroPool(root->Size);
+  
+  aml_write_node(root, (VOID*)ssdt, 0);
+  
+  ssdt->Length = root->Size;
+  ssdt->Checksum = 0;
+  ssdt->Checksum = 256 - Checksum8((VOID*)ssdt, ssdt->Length);
+  
+  aml_destroy_node(root);
+  
+  //dumpPhysAddr("C-States SSDT content: ", ssdt, ssdt->Length);
+  
+  MsgLog ("SSDT with CPU C-States generated successfully\n");
+  
+  return ssdt;
+}

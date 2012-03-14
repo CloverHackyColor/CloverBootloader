@@ -303,7 +303,7 @@ static fsw_status_t fsw_hfs_volume_mount(struct fsw_hfs_volume *vol)
           break;
       
         s.type = FSW_STRING_TYPE_ISO88591;
-        s.size = s.len = i;
+        s.size = s.len = 0;
       s.data = NULL; //&mdb->drVN; //"HFS+ volume";
       
        //fsw_status_t fsw_strdup_coerce(struct fsw_string *dest, int type, struct fsw_string *src)
@@ -381,6 +381,8 @@ UInt32 firstLeafNode;
 long long dirIndex;
 char *name;
 long flags, time;
+ char              *nodeBuf, *testKey, *entry;
+
 
 if (HFSInitPartition(ih) == -1)  { return; }
 
@@ -393,8 +395,20 @@ nodeSize = SWAP_BE16(gBTHeaders[kBTreeCatalog]->nodeSize);
 firstLeafNode = SWAP_BE32(gBTHeaders[kBTreeCatalog]->firstLeafNode);
 
 dirIndex = (long long) firstLeafNode * nodeSize;
+ index   = (long) (*dirIndex % nodeSize); == 0
+ curNode = (long) (*dirIndex / nodeSize); == firstLeafNode
 
-GetCatalogEntry(&dirIndex, &name, &flags, &time, 0, 0);
+//GetCatalogEntry(&dirIndex, &name, &flags, &time, 0, 0);
+ // Read the BTree node and get the record for index.
+ ReadExtent(extent, extentSize, kHFSCatalogFileID,
+ (long long) curNode * nodeSize, nodeSize, nodeBuf, 1);
+ GetBTreeRecord(index, nodeBuf, nodeSize, &testKey, &entry);
+ 
+ utf_encodestr(((HFSPlusCatalogKey *)testKey)->nodeName.unicode,
+ SWAP_BE16(((HFSPlusCatalogKey *)testKey)->nodeName.length),
+ (u_int8_t *)gTempStr, 256, OSBigEndian);
+ 
+ *name = gTempStr; 
 
 strncpy(str, name, strMaxLen);
 str[strMaxLen] = '\0';
