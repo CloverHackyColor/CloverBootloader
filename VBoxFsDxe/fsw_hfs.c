@@ -111,7 +111,8 @@ fsw_hfs_read_block (struct fsw_hfs_dnode    * dno,
         return status;
 
     phys_bno = extent.phys_start;
-    status = fsw_block_get(dno->g.vol, phys_bno, 0, (void **)&buffer);
+  //Slice - increase cache level from 0 to 3
+    status = fsw_block_get(dno->g.vol, phys_bno, 3, (void **)&buffer);
     if (status)
         return status;
 
@@ -303,7 +304,7 @@ static fsw_status_t fsw_hfs_volume_mount(struct fsw_hfs_volume *vol)
       
         s.type = FSW_STRING_TYPE_ISO88591;
         s.size = s.len = i;
-      s.data = &mdb->drVN; //"HFS+ volume";
+      s.data = NULL; //&mdb->drVN; //"HFS+ volume";
       
        //fsw_status_t fsw_strdup_coerce(struct fsw_string *dest, int type, struct fsw_string *src)
         status = fsw_strdup_coerce(&vol->g.label, vol->g.host_string_type, &s);
@@ -372,6 +373,32 @@ static fsw_status_t fsw_hfs_volume_mount(struct fsw_hfs_volume *vol)
 
     return rv;
 }
+//Here is a method to obtain Volume label from Apple
+//how to implement it?
+/*
+UInt16 nodeSize;
+UInt32 firstLeafNode;
+long long dirIndex;
+char *name;
+long flags, time;
+
+if (HFSInitPartition(ih) == -1)  { return; }
+
+// Fill some crucial data structures by side effect. 
+dirIndex = 0;
+HFSGetDirEntry(ih, "/", &dirIndex, &name, &flags, &time, 0, 0);
+
+// Now we can loook up the volume name node.
+nodeSize = SWAP_BE16(gBTHeaders[kBTreeCatalog]->nodeSize);
+firstLeafNode = SWAP_BE32(gBTHeaders[kBTreeCatalog]->firstLeafNode);
+
+dirIndex = (long long) firstLeafNode * nodeSize;
+
+GetCatalogEntry(&dirIndex, &name, &flags, &time, 0, 0);
+
+strncpy(str, name, strMaxLen);
+str[strMaxLen] = '\0';
+*/
 
 /**
  * Free the volume data structure. Called by the core after an unmount or after

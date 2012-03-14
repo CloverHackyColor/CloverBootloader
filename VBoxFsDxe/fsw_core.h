@@ -290,7 +290,7 @@ enum {
  */
 
 struct fsw_extent {
-    int         type;               //!< Type of extent specification
+    fsw_u32     type;               //!< Type of extent specification
     fsw_u32     log_start;          //!< Starting logical block number
     fsw_u32     log_count;          //!< Logical block count
     fsw_u32     phys_start;         //!< Starting physical block number (for FSW_EXTENT_TYPE_PHYSBLOCK only)

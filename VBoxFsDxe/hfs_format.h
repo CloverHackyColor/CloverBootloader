@@ -606,11 +606,10 @@ enum {
 	kHFSMDBAttributesMask		= 0x8380
 };
 
-
 /* HFS Master Directory Block - 162 bytes */
 /* Stored at sector #2 (3rd sector) and second-to-last sector. */
 struct HFSMasterDirectoryBlock {
-	u_int16_t		drSigWord;	/* == kHFSSigWord */
+	u_int16_t		drSigWord;	/* == kHFSSigWord = 0x4244 = 'BD' or 'H+' or 'HX'*/
 	u_int32_t		drCrDate;	/* date and time of volume creation */
 	u_int32_t		drLsMod;	/* date and time of last modification */
 	u_int16_t		drAtrb;		/* volume attributes */
@@ -650,6 +649,34 @@ typedef struct HFSMasterDirectoryBlock	HFSMasterDirectoryBlock;
 	(((hint) & 0xffffff00) == 0x656e6300 ? (hint) & 0x000000ff : 0xffffffffU)
 #endif /* __APPLE_API_UNSTABLE */
 
+  /*
+   48 2B 00 04 80 00 20 00 48 46 53 4A 00 AD 7E 98  //H+ HFSJ
+   C9 12 D3 9E CB 84 F3 1D 00 00 00 00 C9 26 31 A8
+   00 12 1D 9D 00 03 66 B9 00 00 10 00 01 A1 2C CF
+   00 44 67 DF 01 35 EB A8 00 01 00 00 00 01 00 00
+   10 8B 1C EA 08 E4 9C 1B 00 00 00 00 02 00 00 8B
+   00 00 02 E7 10 3F CB 93 00 00 00 00 00 00 00 00
+   00 00 00 00 00 00 02 E7 6A 45 F3 37 EF 97 E9 A6
+   00 00 00 00 00 34 30 00 00 00 00 00 00 00 03 43
+   00 00 00 01 00 00 03 43 00 00 00 00 00 00 00 00
+   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+   00 00 00 00 00 70 00 00 00 70 00 00 00 00 07 00
+   00 00 13 45 00 00 07 00 00 00 00 00 00 00 00 00
+   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+   00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+   00 00 00 00 2A F8 00 00 01 90 00 00 00 02 AF 80
+   00 01 AA 55 00 01 90 00 00 14 5A C7 00 00 19 00
+   00 3D E4 E3 00 00 19 00 00 95 44 F7 00 00 19 00
+   00 9D 3B 18 00 00 32 00 00 E3 58 1C 00 00 19 00
+   00 48 1C 72 00 00 19 00 00 BB 6A 05 00 00 19 00
+   00 00 00 00 06 40 00 00 01 90 00 00 00 00 64 00
+   00 06 80 00 00 00 19 00 00 38 2A 2F 00 00 19 00
+   00 38 DB 2C 00 00 19 00 00 A6 A2 1F 00 00 19 00
+   */  
+  
 
 /* HFS Plus Volume Header - 512 bytes */
 /* Stored at sector #2 (3rd sector) and second-to-last sector. */
