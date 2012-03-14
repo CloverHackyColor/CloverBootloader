@@ -251,7 +251,7 @@ VOID DropTableFromRSDT (RSDT_TABLE *Rsdt, UINT32 Signature)
 		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
     CopyMem((CHAR8*)&sign, (CHAR8*)&Table->Signature, 4);
     sign[4] = 0;
-    CopyMem((CHAR8*)&OTID, (CHAR8*)&Table->Header.OemTableId, 8);
+    CopyMem((CHAR8*)&OTID, (CHAR8*)&Table->OemTableId, 8);
     OTID[8] = 0;
     DBG(" Found table: %a  %a\n", sign, OTID);
 		if (Table->Signature != Signature) {
@@ -275,6 +275,7 @@ VOID DropTableFromXSDT (XSDT_TABLE *Xsdt, UINT32 Signature)
 	UINT64							*BasePtr, *Ptr, *Ptr2;
 	UINT64							Entry64;
   CHAR8 sign[5];
+  CHAR8 OTID[9];
   
 	EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
   DBG("Drop tables from Xsdt, count=%d\n", EntryCount); 
@@ -288,7 +289,9 @@ VOID DropTableFromXSDT (XSDT_TABLE *Xsdt, UINT32 Signature)
 		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Entry64));
     CopyMem((CHAR8*)&sign, (CHAR8*)&Table->Signature, 4);
     sign[4] = 0;
-    DBG(" Found table: %a\n", sign);
+    CopyMem((CHAR8*)&OTID, (CHAR8*)&Table->OemTableId, 8);
+    OTID[8] = 0;
+    DBG(" Found table: %a  %a\n", sign, OTID);
 		if (Table->Signature != Signature) {
 			continue;
 		}

@@ -24,7 +24,7 @@ typedef struct DTSavedScope {
 	struct DTSavedScope * nextScope;
 	RealDTEntry scope;
 	RealDTEntry entry;
-	unsigned long index;		
+	UINT32 index;		
 } *DTSavedScopePtr;
 
 /* Entry Iterator*/
