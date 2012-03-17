@@ -30,8 +30,8 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 353688971;
-			PBXWorkspaceStateSaveDate = 353688971;
+			PBXPerProjectTemplateStateSaveDate = 353696060;
+			PBXWorkspaceStateSaveDate = 353696060;
 		};
 		perUserProjectItems = {
 			120008A8150FDA930098BBAC /* PBXTextBookmark */ = 120008A8150FDA930098BBAC /* PBXTextBookmark */;
@@ -69,8 +69,6 @@
 			127661B81508A1DB0090B7AD /* PBXTextBookmark */ = 127661B81508A1DB0090B7AD /* PBXTextBookmark */;
 			1277965414D5E22700B8F090 /* PBXTextBookmark */ = 1277965414D5E22700B8F090 /* PBXTextBookmark */;
 			129416BB1514ECBC00C043CE /* PBXTextBookmark */ = 129416BB1514ECBC00C043CE /* PBXTextBookmark */;
-			129416BC1514ECBC00C043CE /* PBXTextBookmark */ = 129416BC1514ECBC00C043CE /* PBXTextBookmark */;
-			129416BD1514ECBC00C043CE /* PBXTextBookmark */ = 129416BD1514ECBC00C043CE /* PBXTextBookmark */;
 			12AD9D0A14FA55C600E76BC9 /* PBXTextBookmark */ = 12AD9D0A14FA55C600E76BC9 /* PBXTextBookmark */;
 			12BBA56A14F95D010006D5A2 /* PBXTextBookmark */ = 12BBA56A14F95D010006D5A2 /* PBXTextBookmark */;
 			12BE99A214BDBDA300996F8D /* PBXTextBookmark */ = 12BE99A214BDBDA300996F8D /* PBXTextBookmark */;
@@ -79,6 +77,7 @@
 			12C564311507EAF60096A9FD /* PBXTextBookmark */ = 12C564311507EAF60096A9FD /* PBXTextBookmark */;
 			12C564331507EAF60096A9FD /* PBXTextBookmark */ = 12C564331507EAF60096A9FD /* PBXTextBookmark */;
 			12C564371507EAF60096A9FD /* PBXTextBookmark */ = 12C564371507EAF60096A9FD /* PBXTextBookmark */;
+			12C6A3E61514FAB7002ACE12 /* PBXTextBookmark */ = 12C6A3E61514FAB7002ACE12 /* PBXTextBookmark */;
 			12CB917914276A7A009EDAF2 /* PBXTextBookmark */ = 12CB917914276A7A009EDAF2 /* PBXTextBookmark */;
 			12CB923A14278158009EDAF2 /* PBXTextBookmark */ = 12CB923A14278158009EDAF2 /* PBXTextBookmark */;
 			12CD5D4814E0617F00B0E501 /* PBXTextBookmark */ = 12CD5D4814E0617F00B0E501 /* PBXTextBookmark */;
@@ -93,6 +92,7 @@
 			12DFD27B150BD96D00E3F784 /* PBXTextBookmark */ = 12DFD27B150BD96D00E3F784 /* PBXTextBookmark */;
 			12E2E64B1508F9E3005CA34C /* PBXTextBookmark */ = 12E2E64B1508F9E3005CA34C /* PBXTextBookmark */;
 			12E2E660150934C1005CA34C /* PBXTextBookmark */ = 12E2E660150934C1005CA34C /* PBXTextBookmark */;
+			12EF0E2E1514F51E006A5A1A /* PBXTextBookmark */ = 12EF0E2E1514F51E006A5A1A /* PBXTextBookmark */;
 		};
 		sourceControlManager = 122336AF13377DFD0033F008 /* Source Control */;
 		userBuildSettings = {
@@ -499,9 +499,9 @@
 	};
 	126C264B1510C3C9005AB30D /* AmlGenerator.c */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {734, 6916}}";
-			sepNavSelRange = "{10758, 20}";
-			sepNavVisRange = "{10039, 849}";
+			sepNavIntBoundsRect = "{{0, 0}, {734, 7085}}";
+			sepNavSelRange = "{4833, 15}";
+			sepNavVisRange = "{4901, 623}";
 			sepNavWindowFrame = "{{84, 77}, {817, 733}}";
 		};
 	};
@@ -643,23 +643,6 @@
 		vrLen = 1054;
 		vrLoc = 0;
 	};
-	129416BC1514ECBC00C043CE /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 126C264B1510C3C9005AB30D /* AmlGenerator.c */;
-		rLen = 20;
-		rLoc = 10758;
-		rType = 0;
-	};
-	129416BD1514ECBC00C043CE /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 126C264B1510C3C9005AB30D /* AmlGenerator.c */;
-		name = "AmlGenerator.c: 536";
-		rLen = 20;
-		rLoc = 10758;
-		rType = 0;
-		vrLen = 849;
-		vrLoc = 10039;
-	};
 	12AD9D0A14FA55C600E76BC9 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 12D6308214CEA05E00E5898F /* plist.c */;
@@ -746,6 +729,16 @@
 		rType = 0;
 		vrLen = 1211;
 		vrLoc = 14437;
+	};
+	12C6A3E61514FAB7002ACE12 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 126C264B1510C3C9005AB30D /* AmlGenerator.c */;
+		name = "AmlGenerator.c: 241";
+		rLen = 15;
+		rLoc = 4833;
+		rType = 0;
+		vrLen = 623;
+		vrLoc = 4901;
 	};
 	12CB8F581427390E009EDAF2 /* DevicePath.c */ = {
 		uiCtxt = {
@@ -1207,6 +1200,16 @@
 		rType = 0;
 		vrLen = 515;
 		vrLoc = 5348;
+	};
+	12EF0E2E1514F51E006A5A1A /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 126C264B1510C3C9005AB30D /* AmlGenerator.c */;
+		name = "AmlGenerator.c: 391";
+		rLen = 0;
+		rLoc = 7514;
+		rType = 0;
+		vrLen = 850;
+		vrLoc = 6768;
 	};
 	D28A88AD04BDD90700651E21 /* rEFIt_proj */ = {
 		activeExec = 0;

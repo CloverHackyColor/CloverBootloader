@@ -329,7 +329,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>129416BD1514ECBC00C043CE</string>
+										<string>12C6A3E61514FAB7002ACE12</string>
 										<key>history</key>
 										<array>
 											<string>1202124214266E13004B7B93</string>
@@ -389,7 +389,7 @@
 											<string>120DBBC31513683D00F0FF16</string>
 											<string>125239A815149FC2007359E6</string>
 											<string>129416BB1514ECBC00C043CE</string>
-											<string>129416BC1514ECBC00C043CE</string>
+											<string>12EF0E2E1514F51E006A5A1A</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -401,14 +401,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {795, 510}}</string>
+								<string>{{0, 0}, {795, 502}}</string>
 								<key>RubberWindowFrame</key>
 								<string>300 119 980 659 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>510pt</string>
+							<string>502pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -421,14 +421,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 515}, {795, 103}}</string>
+								<string>{{0, 507}, {795, 111}}</string>
 								<key>RubberWindowFrame</key>
 								<string>300 119 980 659 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>103pt</string>
+							<string>111pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -447,9 +447,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>129416BE1514ECBC00C043CE</string>
+				<string>12C6A3E71514FAB7002ACE12</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>129416BF1514ECBC00C043CE</string>
+				<string>12C6A3E81514FAB7002ACE12</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -587,7 +587,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>122336AD13377DFD0033F008</string>
 		<string>/Users/slice/src/edk23/Clover/rEFIt_UEFI/rEFIt_proj/rEFIt_proj.xcodeproj</string>
 	</array>
@@ -669,7 +668,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>122336AD13377DFD0033F008</string>
-				<string>129416B21514ECB000C043CE</string>
+				<string>12C6A3E91514FAB7002ACE12</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>

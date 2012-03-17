@@ -360,7 +360,7 @@ UINT32 aml_calculate_size(AML_CHUNK* node)
 		{
 			case AML_CHUNK_NONE:
 				node->Size += node->Length;
-				break;
+				break;  
       case AML_CHUNK_METHOD:  
 			case AML_CHUNK_SCOPE:
 				node->Size += 1 + node->Length;
@@ -490,6 +490,7 @@ UINT32 aml_write_node(AML_CHUNK* node, CHAR8* buffer, UINT32 offset)
 				break;
 
 			case AML_CHUNK_SCOPE:
+      case AML_CHUNK_METHOD:        
 			case AML_CHUNK_PACKAGE:
 				offset = aml_write_byte(node->Type, buffer, offset);
 				offset = aml_write_size(node->Size-1, buffer, offset);
@@ -513,7 +514,6 @@ UINT32 aml_write_node(AML_CHUNK* node, CHAR8* buffer, UINT32 offset)
 			case AML_CHUNK_QWORD:
 			case AML_CHUNK_ALIAS:
 			case AML_CHUNK_NAME:
-      case AML_CHUNK_METHOD:
       case AML_CHUNK_RETURN:
 				offset = aml_write_byte(node->Type, buffer, offset);
 				offset = aml_write_buffer(node->Buffer, node->Length, buffer, offset);
