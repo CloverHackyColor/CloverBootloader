@@ -26,7 +26,7 @@
   PLATFORM_GUID                  = 199E24E0-0989-42aa-87F2-611A8C397E72
   PLATFORM_VERSION               = 0.92
   DSC_SPECIFICATION              = 0x00010005
-  OUTPUT_DIRECTORY               = Build/CloverIA32
+  OUTPUT_DIRECTORY               = Build/Clover
   SUPPORTED_ARCHITECTURES        = IA32
   BUILD_TARGETS                  = RELEASE|DEBUG
   SKUID_IDENTIFIER               = DEFAULT
@@ -109,6 +109,7 @@
   MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
   HobLib|MdePkg/Library/DxeHobLib/DxeHobLib.inf
   LockBoxLib|MdeModulePkg/Library/SmmLockBoxLib/SmmLockBoxDxeLib.inf
+  CpuExceptionHandlerLib|MdeModulePkg/Library/CpuExceptionHandlerLibNull/CpuExceptionHandlerLibNull.inf
   SmbusLib|MdePkg/Library/DxeSmbusLib/DxeSmbusLib.inf
   S3BootScriptLib|MdeModulePkg/Library/PiDxeS3BootScriptLib/DxeS3BootScriptLib.inf
   ExtractGuidedSectionLib|MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
@@ -271,8 +272,9 @@
   }
   #MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
   Clover/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
-  Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
-  #Clover/CpuDxe/Cpu.inf
+  #Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
+  UefiCpuPkg/CpuDxe/CpuDxe.inf
+  Clover/CpuDxe/Cpu.inf
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
   #DuetPkg/AcpiResetDxe/Reset.inf
   Clover/AcpiReset/Reset.inf
@@ -305,7 +307,7 @@
 	#EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
 	#Clover/OsxMmcDxe/MmcDxe.inf
 #Video
-  #IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
+  IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
   #IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
   #Clover/VgaClassDxe/VgaClassDxe.inf
   #Clover/IntelGmaDxe/Gop.inf
@@ -380,7 +382,6 @@
   #
   MdeModulePkg/Application/HelloWorld/HelloWorld.inf
   #MdeModulePkg/Application/VariableInfo/VariableInfo.inf
-  #iBootEFI/iboot.inf
   #rEFIt_UEFI/refit.inf
 
 ###################################################################################################

@@ -26,7 +26,7 @@
   PLATFORM_GUID                  = 199E24E0-0989-42aa-87F2-611A8C397E72
   PLATFORM_VERSION               = 0.92
   DSC_SPECIFICATION              = 0x00010005
-  OUTPUT_DIRECTORY               = Build/CloverX64
+  OUTPUT_DIRECTORY               = Build/Clover
   SUPPORTED_ARCHITECTURES        = X64
   BUILD_TARGETS                  = RELEASE|DEBUG
   SKUID_IDENTIFIER               = DEFAULT
@@ -118,6 +118,7 @@
   MtrrLib|UefiCpuPkg/Library/MtrrLib/MtrrLib.inf
   IoApicLib|PcAtChipsetPkg/Library/BaseIoApicLib/BaseIoApicLib.inf
   LocalApicLib|UefiCpuPkg/Library/BaseXApicLib/BaseXApicLib.inf
+  #LocalApicLib|UefiCpuPkg/Library/BaseXApicX2ApicLib/BaseXApicX2ApicLib.inf
   
   #
   # To save size, use NULL library for DebugLib and ReportStatusCodeLib.
