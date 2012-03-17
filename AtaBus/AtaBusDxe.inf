@@ -54,7 +54,7 @@
   BaseLib
   UefiDriverEntryPoint
   DebugLib
-
+  TimerLib
 
 [Guids]
   gEfiDiskInfoIdeInterfaceGuid                  # CONSUMES  ## GUID

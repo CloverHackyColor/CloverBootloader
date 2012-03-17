@@ -4,7 +4,7 @@
   This file implements protocol interfaces: Driver Binding protocol,
   Block IO protocol and DiskInfo protocol.
     
-  Copyright (c) 2009 - 2011, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2009 - 2012, Intel Corporation. All rights reserved.<BR>
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
   which accompanies this distribution.  The full text of the license may be found at
@@ -96,7 +96,8 @@ ATA_DEVICE gAtaDeviceTemplate = {
 	NULL,					// ExitBootServiceEvent
   NULL,                        // ControllerNameTable
   {L'\0', },                   // ModelName
-  {NULL, NULL}                 // AtaTaskList
+  {NULL, NULL},                // AtaTaskList
+  {NULL, NULL}                 // AtaSubTaskList
 };
 
 /**
@@ -156,7 +157,8 @@ ReleaseAtaResources (
   IN ATA_DEVICE  *AtaDevice
   )
 {
-  ATA_BUS_ASYN_TASK *Task;
+  ATA_BUS_ASYN_SUB_TASK *SubTask;
+  ATA_BUS_ASYN_TASK     *AtaTask;
   LIST_ENTRY        *Entry;
   LIST_ENTRY        *DelEntry;
   EFI_TPL           OldTpl;
@@ -168,6 +170,21 @@ ReleaseAtaResources (
     FreePool (AtaDevice->DevicePath);
   }
   OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
+  if (!IsListEmpty (&AtaDevice->AtaSubTaskList)) {
+    //
+    // Free the Subtask list.
+    //
+    for(Entry = AtaDevice->AtaSubTaskList.ForwardLink;
+        Entry != (&AtaDevice->AtaSubTaskList);
+       ) {
+      DelEntry = Entry;
+      Entry    = Entry->ForwardLink;
+      SubTask  = ATA_AYNS_SUB_TASK_FROM_ENTRY (DelEntry);
+
+      RemoveEntryList (DelEntry);
+      FreeAtaSubTask (SubTask);
+    }
+  }
   if (!IsListEmpty (&AtaDevice->AtaTaskList)) {
     //
     // Free the Subtask list.
@@ -177,10 +194,10 @@ ReleaseAtaResources (
        ) {
       DelEntry = Entry;
       Entry    = Entry->ForwardLink;
-      Task     = ATA_AYNS_TASK_FROM_ENTRY (DelEntry);
+      AtaTask     = ATA_AYNS_TASK_FROM_ENTRY (DelEntry);
       
       RemoveEntryList (DelEntry);
-      FreeAtaSubTask (Task);
+      FreePool (AtaTask);
     }
   }
 	if (AtaDevice->ExitBootServiceEvent != NULL) {
@@ -390,6 +407,7 @@ RegisterAtaDevice (
   // Initial Ata Task List
   //
   InitializeListHead (&AtaDevice->AtaTaskList);
+  InitializeListHead (&AtaDevice->AtaSubTaskList);
 
   //
   // Try to identify the ATA device via the ATA pass through command. 

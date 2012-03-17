@@ -4,7 +4,7 @@
   This file defines common data structures, macro definitions and some module
   internal function header files.
 
-  Copyright (c) 2009 - 2011, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2009 - 2012, Intel Corporation. All rights reserved.<BR>
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
   which accompanies this distribution.  The full text of the license may be found at
@@ -35,7 +35,7 @@
 #include <Library/MemoryAllocationLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/DevicePathLib.h>
-
+#include <Library/TimerLib.h>
 #include <Guid/EventGroup.h>
 
 #include <IndustryStandard/Atapi.h>
@@ -80,20 +80,8 @@
 
 #define ATA_TASK_SIGNATURE                SIGNATURE_32 ('A', 'T', 'S', 'K')
 #define ATA_DEVICE_SIGNATURE              SIGNATURE_32 ('A', 'B', 'I', 'D')
-
+#define ATA_SUB_TASK_SIGNATURE            SIGNATURE_32 ('A', 'S', 'T', 'S')
 #define IS_ALIGNED(addr, size)            (((UINTN) (addr) & (size - 1)) == 0)
-
-//
-// Task for the non blocking I/O
-//
-typedef struct {
-  UINT32                            Signature;
-  EFI_BLOCK_IO2_TOKEN               *Token;
-  UINTN                             *UnsignalledEventCount;
-  EFI_ATA_PASS_THRU_COMMAND_PACKET  Packet;
-  BOOLEAN                           *IsError;// Indicate whether meeting error during source allocation for new task.
-  LIST_ENTRY                        TaskEntry;
-} ATA_BUS_ASYN_TASK;
 
 //
 // ATA bus data structure for ATA controller
@@ -148,12 +136,41 @@ typedef struct {
   CHAR16                                ModelName[MAX_MODEL_NAME_LEN + 1];
 
   LIST_ENTRY                            AtaTaskList;
+  LIST_ENTRY                            AtaSubTaskList;
 } ATA_DEVICE;
+
+//
+// Sub-Task for the non blocking I/O
+//
+typedef struct {
+  UINT32                            Signature;
+  ATA_DEVICE                        *AtaDevice;
+  EFI_BLOCK_IO2_TOKEN               *Token;
+  UINTN                             *UnsignalledEventCount;
+  EFI_ATA_PASS_THRU_COMMAND_PACKET  Packet;
+  BOOLEAN                           *IsError;// Indicate whether meeting error during source allocation for new task.
+  LIST_ENTRY                        TaskEntry;
+} ATA_BUS_ASYN_SUB_TASK;
+
+//
+// Task for the non blocking I/O
+//
+typedef struct {
+  UINT32                            Signature;
+  EFI_BLOCK_IO2_TOKEN               *Token;
+  ATA_DEVICE                        *AtaDevice;
+  UINT8                             *Buffer;
+  EFI_LBA                           StartLba;
+  UINTN                             NumberOfBlocks;
+  BOOLEAN                           IsWrite;
+  LIST_ENTRY                        TaskEntry;
+} ATA_BUS_ASYN_TASK;
 
 #define ATA_DEVICE_FROM_BLOCK_IO(a)         CR (a, ATA_DEVICE, BlockIo, ATA_DEVICE_SIGNATURE)
 #define ATA_DEVICE_FROM_BLOCK_IO2(a)        CR (a, ATA_DEVICE, BlockIo2, ATA_DEVICE_SIGNATURE)
 #define ATA_DEVICE_FROM_DISK_INFO(a)        CR (a, ATA_DEVICE, DiskInfo, ATA_DEVICE_SIGNATURE)
 #define ATA_DEVICE_FROM_STORAGE_SECURITY(a) CR (a, ATA_DEVICE, StorageSecurity, ATA_DEVICE_SIGNATURE)
+#define ATA_AYNS_SUB_TASK_FROM_ENTRY(a)     CR (a, ATA_BUS_ASYN_SUB_TASK, TaskEntry, ATA_SUB_TASK_SIGNATURE)
 #define ATA_AYNS_TASK_FROM_ENTRY(a)         CR (a, ATA_BUS_ASYN_TASK, TaskEntry, ATA_TASK_SIGNATURE)
 
 //
@@ -207,7 +224,7 @@ FreeAlignedBuffer (
 VOID
 EFIAPI 
 FreeAtaSubTask (
-  IN OUT ATA_BUS_ASYN_TASK  *Task
+  IN OUT ATA_BUS_ASYN_SUB_TASK  *Task
   );
 
 /**

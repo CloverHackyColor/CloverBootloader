@@ -849,19 +849,19 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     // get volume name
   Volume->VolName = NULL;
   if (Volume->RootDir) {
+    RootInfo = EfiLibFileInfo (Volume->RootDir);
+    if (RootInfo) {
+      //        DBG("  Volume name from RootFile\n");
+      Volume->VolName = EfiStrDuplicate(RootInfo->FileName);
+      FreePool(RootInfo);
+    }
+  }
+  if (!Volume->VolName) {
     FileSystemInfoPtr = EfiLibFileSystemInfo(Volume->RootDir);
     if (FileSystemInfoPtr) {
  //     DBG("  Volume name from FileSystem\n");
       Volume->VolName = EfiStrDuplicate(FileSystemInfoPtr->VolumeLabel);
       FreePool(FileSystemInfoPtr);
-    }
-    if (!Volume->VolName) {
-      RootInfo = EfiLibFileInfo (Volume->RootDir);
-      if (RootInfo) {
-//        DBG("  Volume name from RootFile\n");
-        Volume->VolName = EfiStrDuplicate(RootInfo->FileName);
-        FreePool(RootInfo);
-      }
     }
     if (!Volume->VolName) {
       VolumeInfo = EfiLibFileSystemVolumeLabelInfo(Volume->RootDir);

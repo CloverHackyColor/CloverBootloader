@@ -2,7 +2,7 @@
   This file implements ATA_PASSTHRU_PROCTOCOL and EXT_SCSI_PASSTHRU_PROTOCOL interfaces
   for managed ATA controllers.
     
-  Copyright (c) 2010 - 2011, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2010 - 2012, Intel Corporation. All rights reserved.<BR>
   This program and the accompanying materials
   are licensed and made available under the terms and conditions of the BSD License
   which accompanies this distribution.  The full text of the license may be found at
@@ -236,7 +236,7 @@ AtaPassThruPassThruExecute (
                      Packet->Timeout,
                      Task
                      );
-          DBG(L"AtaPioDataInOut PIO Status=%r\n", Status);
+//          DBG(L"AtaPioDataInOut PIO Status=%r\n", Status);
           break;
         case EFI_ATA_PASS_THRU_PROTOCOL_PIO_DATA_OUT:
           Status = AtaPioDataInOut (
@@ -423,23 +423,24 @@ AsyncNonBlockingTransferRoutine (
                );
 
     //
-    // If the data transfer meet a error which is not dumped into the status block
-    // set the Status block related bit.
+    // If the data transfer meet a error, remove all tasks in the list since these tasks are
+    // associated with one task from Ata Bus and signal the event with error status.
     //
     if ((Status != EFI_NOT_READY) && (Status != EFI_SUCCESS)) {
-      Task->Packet->Asb->AtaStatus = 0x01;
+      DestroyAsynTaskList (Instance, TRUE);
+      break;
     }
+
     //
     // For Non blocking mode, the Status of EFI_NOT_READY means the operation
-    // is not finished yet. Other Status indicate the operation is either
-    // successful or failed. 
+    // is not finished yet. Otherwise the operation is successful.
     //
-    if (Status != EFI_NOT_READY) {
+    if (Status == EFI_NOT_READY) {
+      break;
+    } else {
       RemoveEntryList (&Task->Link);
       gBS->SignalEvent (Task->Event);
       FreePool (Task);
-    } else {
-      break;
     }
   }
 }
@@ -888,7 +889,7 @@ AtaAtapiPassThruStop (
     gBS->CloseEvent (Instance->TimerEvent);
     Instance->TimerEvent = NULL;
   }
-  DestroyAsynTaskList (Instance);
+  DestroyAsynTaskList (Instance, FALSE);
 
   //
   // Disable this ATA host controller.
@@ -1107,12 +1108,15 @@ DestroyDeviceInfoList (
   Destroy all pending non blocking tasks.
   
   @param[in]  Instance  A pointer to the ATA_ATAPI_PASS_THRU_INSTANCE instance.
+  @param[in]  IsSigEvent  Indicate whether signal the task event when remove the
+                          task.
 
 **/
 VOID
 EFIAPI
 DestroyAsynTaskList (
-  IN ATA_ATAPI_PASS_THRU_INSTANCE *Instance
+  IN ATA_ATAPI_PASS_THRU_INSTANCE *Instance,
+  IN BOOLEAN                       IsSigEvent
   )
 {
   LIST_ENTRY           *Entry;
@@ -1133,6 +1137,10 @@ DestroyAsynTaskList (
       Task     = ATA_NON_BLOCK_TASK_FROM_ENTRY (DelEntry);
 
       RemoveEntryList (DelEntry);
+      if (IsSigEvent) {
+        Task->Packet->Asb->AtaStatus = 0x01;
+        gBS->SignalEvent (Task->Event);
+      }
       FreePool (Task);
     }
   }
@@ -1183,7 +1191,6 @@ EnumerateAttachedDevice (
 		  Status = IdeModeInitialization (Instance);
 //		  DBG(L"IdeModeInitialization Status=%r\n", Status);
 		  if (EFI_ERROR (Status)) {
-			  
 			  Status = EFI_DEVICE_ERROR;
 			  goto Done;
 		  }

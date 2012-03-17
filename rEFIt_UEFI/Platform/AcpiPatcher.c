@@ -17,17 +17,7 @@ Re-Work by Slice 2011.
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  **/
 
-#include "Platform.h"
-
-#define DEBUG_ACPI 1
-
-#if DEBUG_ACPI == 2
-#define DBG(x...) AsciiPrint(x)
-#elif DEBUG_ACPI == 1
-#define DBG(x...) MsgLog(x)
-#else
-#define DBG(x...)
-#endif
+#include "StateGenerator.h"
 
 #define offsetof(st, m) \
 ((UINTN) ( (UINT8 *)&((st *)(0))->m - (UINT8 *)0 ))
@@ -42,6 +32,10 @@ Re-Work by Slice 2011.
 CONST CHAR8	oemID[6]       = HPET_OEM_ID;
 CONST CHAR8	oemTableID[8]  = HPET_OEM_TABLE_ID;
 CONST CHAR8	creatorID[4]   = HPET_CREATOR_ID;
+
+//Global poiters
+RSDT_TABLE										*Rsdt = NULL;
+XSDT_TABLE										*Xsdt = NULL;	
 
 
 #define NUM_TABLES 19
@@ -190,7 +184,7 @@ UINT8 Checksum8(VOID * startPtr, UINT32 len)
 	return Value;
 }
 
-UINT32* ScanRSDT (RSDT_TABLE *Rsdt, UINT32 Signature) 
+UINT32* ScanRSDT (UINT32 Signature) 
 {
 	EFI_ACPI_DESCRIPTION_HEADER     *Table;
 	UINTN							Index;
@@ -209,7 +203,7 @@ UINT32* ScanRSDT (RSDT_TABLE *Rsdt, UINT32 Signature)
 	return NULL;
 }
 
-UINT64* ScanXSDT (XSDT_TABLE *Xsdt, UINT32 Signature)
+UINT64* ScanXSDT (UINT32 Signature)
 {
 	EFI_ACPI_DESCRIPTION_HEADER		*Table;
 	UINTN							Index;
@@ -231,7 +225,7 @@ UINT64* ScanXSDT (XSDT_TABLE *Xsdt, UINT32 Signature)
 	return NULL;
 }
 
-VOID DropTableFromRSDT (RSDT_TABLE *Rsdt, UINT32 Signature) 
+VOID DropTableFromRSDT (UINT32 Signature) 
 {
 	EFI_ACPI_DESCRIPTION_HEADER     *Table;
 	UINTN               Index, Index2;
@@ -267,7 +261,7 @@ VOID DropTableFromRSDT (RSDT_TABLE *Rsdt, UINT32 Signature)
 	}	
 }
 
-VOID DropTableFromXSDT (XSDT_TABLE *Xsdt, UINT32 Signature) 
+VOID DropTableFromXSDT (UINT32 Signature) 
 {
 	EFI_ACPI_DESCRIPTION_HEADER     *Table;
 	UINTN               Index, Index2;
@@ -305,13 +299,53 @@ VOID DropTableFromXSDT (XSDT_TABLE *Xsdt, UINT32 Signature)
 	}	
 }
 
+EFI_STATUS InsertTable(VOID* Table, UINTN Length)
+{
+  EFI_STATUS		Status = EFI_SUCCESS;
+	EFI_PHYSICAL_ADDRESS		BufferPtr  = EFI_SYSTEM_TABLE_MAX_ADDRESS;
+
+  UINT32*       Ptr;
+  UINT64*       XPtr;
+  
+  if (!Table) {
+    return EFI_NOT_FOUND;
+  }
+
+  Status = gBS->AllocatePages (
+                               AllocateMaxAddress,
+                               EfiACPIReclaimMemory,
+                               EFI_SIZE_TO_PAGES(Length),
+                               &BufferPtr
+                               );
+  //if success insert table pointer into ACPI tables
+  if(!EFI_ERROR(Status))
+  {
+    //      DBG("page is allocated, write SSDT into\n");      
+    CopyMem((VOID*)(UINTN)BufferPtr, (VOID*)Table, Length);
+    
+    //insert into RSDT
+    if (Rsdt) {
+      Ptr = (UINT32*)((UINTN)Rsdt + Rsdt->Header.Length);
+      *Ptr = (UINT32)(UINTN)BufferPtr;
+      Rsdt->Header.Length += sizeof(UINT32);
+      //       DBG("Rsdt->Length = %d\n", Rsdt->Header.Length);
+    }
+    //insert into XSDT
+    if (Xsdt) {
+      XPtr = (UINT64*)((UINTN)Xsdt + Xsdt->Header.Length);
+      *XPtr = (UINT64)(UINTN)BufferPtr;
+      Xsdt->Header.Length += sizeof(UINT64);
+      //        DBG("Xsdt->Length = %d\n", Xsdt->Header.Length);
+    }        
+  } 
+  
+  return Status;
+}
 
 EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 {
 	EFI_STATUS										Status = EFI_SUCCESS;
 	UINTN                         Index;
-	RSDT_TABLE										*Rsdt = NULL;
-	XSDT_TABLE										*Xsdt = NULL;	
 	EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER	*RsdPointer;
 	EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE		*FadtPointer = NULL;	
 	EFI_ACPI_4_0_FIXED_ACPI_DESCRIPTION_TABLE		*newFadt	 = NULL;
@@ -325,6 +359,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 //	EFI_HANDLE					FileSystemHandle;
 	EFI_PHYSICAL_ADDRESS		dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
 	EFI_PHYSICAL_ADDRESS		BufferPtr;
+  SSDT_TABLE    *Ssdt = NULL;
 	UINT8*				buffer = NULL;
 	UINTN         bufferLen = 0;
 	CHAR16*				PathPatched   = L"\\EFI\\acpi\\patched";
@@ -337,9 +372,6 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   UINT64        BiosDsdt;
   UINT64        XFirmwareCtrl;
   EFI_FILE      *RootDir;
-//  CHAR16*        AnyTable;
-  UINT32*       Ptr;
-  UINT64*       XPtr;
   
 	
 	//Slice - I want to begin from BIOS ACPI tables like with SMBIOS
@@ -417,7 +449,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 	}
 	Rsdt = (RSDT_TABLE*)(UINTN)RsdPointer->RsdtAddress;
 //	DBG("RSDT 0x%p\n", Rsdt);
-	rf = ScanRSDT(Rsdt, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE);
+	rf = ScanRSDT(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE);
 	if(rf)
 		FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(*rf);
     
@@ -426,7 +458,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     {
       Xsdt = (XSDT_TABLE*)(UINTN)RsdPointer->XsdtAddress;
 //      DBG("XSDT 0x%p\n", Xsdt);
-      xf = ScanXSDT(Xsdt, EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE);
+      xf = ScanXSDT(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE);
       if(xf)
         FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(*xf);
     }
@@ -509,8 +541,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       Xsdt->Entry = (UINT64)((UINT32)(UINTN)newFadt);
       Xsdt->Header.Checksum = 0;
       Xsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Xsdt, Xsdt->Header.Length));
-    }
-    
+    }    
   }
   
 
@@ -518,7 +549,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   Status=gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);
   if(!EFI_ERROR(Status))
   {
-    xf = ScanXSDT(Xsdt, HPET_SIGN);
+    xf = ScanXSDT(HPET_SIGN);
     if(!xf) { //we want to make the new table if OEM is not found
         DBG("HPET creation\n");
       Hpet = (EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER*)(UINTN)BufferPtr;
@@ -604,11 +635,11 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   } 
   
   if (gSettings.DropSSDT) {
-    DropTableFromRSDT(Rsdt, EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE);
-    DropTableFromXSDT(Xsdt, EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE);
+    DropTableFromRSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE);
+    DropTableFromXSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE);
   } else {
-    DropTableFromRSDT(Rsdt, XXXX_SIGN);
-    DropTableFromXSDT(Xsdt, XXXX_SIGN);
+    DropTableFromRSDT(XXXX_SIGN);
+    DropTableFromXSDT(XXXX_SIGN);
   }
 
   
@@ -620,31 +651,36 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
                           &buffer, &bufferLen);
       if(!EFI_ERROR(Status))
       {
- //       DBG("read success\n");
-        //insert into RSDT
-        if (Rsdt) {
-          Ptr = (UINT32*)((UINTN)Rsdt + Rsdt->Header.Length);
-          *Ptr = (UINT32)(UINTN)buffer;
-          Rsdt->Header.Length += sizeof(UINT32);
-   //       DBG("Rsdt->Length = %d\n", Rsdt->Header.Length);
-        }
-        //insert into XSDT
-        if (Xsdt) {
-          XPtr = (UINT64*)((UINTN)Xsdt + Xsdt->Header.Length);
-          *XPtr = (UINT64)(UINTN)buffer;
-          Xsdt->Header.Length += sizeof(UINT64);
-  //        DBG("Xsdt->Length = %d\n", Xsdt->Header.Length);
-        }        
-      } else {
+        //       DBG("read success\n");
+        Status = InsertTable((VOID*)buffer, bufferLen);      
+      }  else {
         DBG("read return status %r\n", Status);
-      }      
-    } /* else {
-      DBG(" file %s not found\n", PoolPrint(L"%s\\%s", PathPatched, ACPInames[Index]));
-    }*/
+      }  
+    } 
   }
-//  DropTableFromRSDT(Rsdt, XXXX_SIGN);
-//  DropTableFromXSDT(Xsdt, XXXX_SIGN);
- 
+  
+  if (gSettings.GeneratePStates) {
+    Status = EFI_NOT_FOUND;
+    Ssdt = generate_pss_ssdt();
+    if (Ssdt) {
+      Status = InsertTable((VOID*)Ssdt, Ssdt->Length);      
+    }
+    if(EFI_ERROR(Status)){
+      DBG("GeneratePStates failed Status=%r\n", Status);
+    }
+  }
+  
+  if (gSettings.GenerateCStates) {
+    Status = EFI_NOT_FOUND;
+    Ssdt = generate_cst_ssdt(FadtPointer);
+    if (Ssdt) {
+      Status = InsertTable((VOID*)Ssdt, Ssdt->Length);      
+    }
+    if(EFI_ERROR(Status)){
+      DBG("GenerateCStates failed Status=%r\n", Status);
+    }
+  }
+  
   
   if (Rsdt) {
     Rsdt->Header.Checksum = 0;
@@ -655,5 +691,5 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     Xsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Xsdt, Xsdt->Header.Length));
   }
   
-  return Status;
+  return EFI_SUCCESS;
 }

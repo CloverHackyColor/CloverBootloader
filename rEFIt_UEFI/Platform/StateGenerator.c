@@ -1,42 +1,12 @@
 /*
  * Copyright 2008 mackerintel
- * 2010 mojodojo, slice
+ * 2010 mojodojo, 2012 slice
  */
 
-#include "AmlGenerator.h"
+#include "StateGenerator.h"
 
-#ifndef DEBUG_ACPI
-#define DEBUG_ACPI 2
-#endif
 
-#if DEBUG_ACPI==2
-#define DBG(x...)  AsciiPrint(x)
-#elif DEBUG_ACPI==1
-#define DBG(x...)  MsgLog(x)
-#else
-#define DBG(x...)
-#endif
-
-// TODO Migrate
-#pragma pack(1)
-struct acpi_2_ssdt {
-	CHAR8           Signature[4];
-	UINT32          Length;
-	UINT8           Revision;
-	UINT8           Checksum;
-	CHAR8            OEMID[6];
-	CHAR8            OEMTableId[8];
-	UINT32        OEMRevision;
-	UINT32        CreatorId;
-	UINT32        CreatorRevision;
-} __attribute__((packed));
-#pragma pack()
-
-typedef struct acpi_2_ssdt SSDT_TABLE;
-
-UINT8	acpi_cpu_count = 0;
-CHAR8* acpi_cpu_name[] = {"CPU0", "CPU1", "CPU2", "CPU3", "CPU4", "CPU5", "CPU6", "CPU7", "CPU8", "CPU9"};
-UINT32 acpi_cpu_p_blk = 0;
+//CHAR8* acpi_cpu_name[] = {"CPU0", "CPU1", "CPU2", "CPU3", "CPU4", "CPU5", "CPU6", "CPU7", "CPU8", "CPU9"};
 
 CONST UINT8 pss_ssdt_header[] =
 {
@@ -44,7 +14,7 @@ CONST UINT8 pss_ssdt_header[] =
   0x01, 0x6A, 0x50, 0x6D, 0x52, 0x65, 0x66, 0x00, /* ..PmRef. */
   0x43, 0x70, 0x75, 0x50, 0x6D, 0x00, 0x00, 0x00, /* CpuPm... */
   0x00, 0x30, 0x00, 0x00, 0x49, 0x4E, 0x54, 0x4C, /* .0..INTL */
-  0x31, 0x03, 0x10, 0x20,							/* 1.._		*/
+  0x23, 0x11, 0x11, 0x20							/* 1.._		*/
 };
 
 
@@ -54,9 +24,8 @@ SSDT_TABLE *generate_pss_ssdt()
   struct p_state initial, maximum, minimum, p_states[32];
   UINT8 p_states_count = 0;		
   BOOLEAN cpu_dynamic_fsb = FALSE;
-//  UINT64 msr;
-  
-//	cpuid_update_generic_info();
+  UINT8	acpi_cpu_count = gCPUStructure.Cores;
+
 	if (gCPUStructure.Vendor != CPU_VENDOR_INTEL) {
 		MsgLog ("Not an Intel platform: P-States will not be generated !!!\n");
 		return NULL;
@@ -66,8 +35,6 @@ SSDT_TABLE *generate_pss_ssdt()
 		MsgLog ("Unsupported CPU: P-States will not be generated !!!\n");
 		return NULL;
 	}
-	
-	acpi_cpu_count = gCPUStructure.Cores;
 		
 	if (acpi_cpu_count > 0) 
 	{
@@ -224,7 +191,7 @@ SSDT_TABLE *generate_pss_ssdt()
 			
 			AML_CHUNK* root = aml_create_node(NULL);
 				aml_add_buffer(root, (CONST CHAR8*)&pss_ssdt_header[0], sizeof(pss_ssdt_header)); // SSDT header
-					AML_CHUNK* scop = aml_add_scope(root, "\\_PR_");
+					AML_CHUNK* scop = aml_add_scope(root, "_PR_CPU0");
 						AML_CHUNK* method = aml_add_name(scop, "PSS_");
 							AML_CHUNK* pack = aml_add_package(method);
 			
@@ -239,15 +206,19 @@ SSDT_TABLE *generate_pss_ssdt()
 									aml_add_dword(pstt, p_states[i].Control);
 									aml_add_dword(pstt, i+1); // Status
 								}
-				
-			// Add aliaces
-			for (i = 0; i < acpi_cpu_count; i++) 
+      AML_CHUNK* met = aml_add_method(scop, "_PSS", 0);
+      AML_CHUNK* ret = aml_add_return_name(met, "PSS_");
+	
+			// Add aliases
+			for (i = 1; i < acpi_cpu_count; i++) 
 			{
 
-				AsciiSPrint(name, 8, "_PR_%c%c%c%c", acpi_cpu_name[i][0], acpi_cpu_name[i][1], acpi_cpu_name[i][2], acpi_cpu_name[i][3]);
+				AsciiSPrint(name, 9, "_PR_CPU%1d",i);
 				
 				scop = aml_add_scope(root, name);
-				aml_add_alias(scop, "PSS_", "_PSS");
+//				aml_add_alias(scop, "PSS_", "_PSS");
+        met = aml_add_method(scop, "_PSS", 0);
+        ret = aml_add_return_name(met, "_PR_CPU0PSS_");
 			}
 			
 			aml_calculate_size(root);
@@ -282,8 +253,8 @@ CHAR8 cst_ssdt_header[] =
   0x53, 0x53, 0x44, 0x54, 0xE7, 0x00, 0x00, 0x00, /* SSDT.... */
   0x01, 0x17, 0x50, 0x6D, 0x52, 0x65, 0x66, 0x41, /* ..PmRefA */
   0x43, 0x70, 0x75, 0x43, 0x73, 0x74, 0x00, 0x00, /* CpuCst.. */
-  0x00, 0x10, 0x00, 0x00, 0x49, 0x4E, 0x54, 0x4C, /* ....INTL */
-  0x31, 0x03, 0x10, 0x20							/* 1.._		*/
+  0x00, 0x30, 0x00, 0x00, 0x49, 0x4E, 0x54, 0x4C, /* ....INTL */
+  0x23, 0x11, 0x11, 0x20                          /* 1.._		*/
 };
 
 CHAR8 resource_template_register_fixedhw[] =
@@ -308,14 +279,22 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
   BOOLEAN c4_enabled = gSettings.EnableC4;
   BOOLEAN cst_using_systemio = gSettings.EnableISS;
   UINT8   p_blk_lo, p_blk_hi;
-
+  UINT8   acpi_cpu_count = gCPUStructure.Cores;
+  UINT8   cstates_count;
+  UINT32  acpi_cpu_p_blk;
+  
+  if (!fadt) {
+    return NULL;
+  }
+  
+  acpi_cpu_p_blk = fadt->Pm1aEvtBlk + 0x10;
   c2_enabled = (fadt->PLvl2Lat < 100);
   c3_enabled = (fadt->PLvl3Lat < 1000);
-  UINT8 cstates_count = 1 + (c2_enabled ? 1 : 0) + (c3_enabled ? 1 : 0);
+  cstates_count = 1 + (c2_enabled ? 1 : 0) + ((c3_enabled || c4_enabled)? 1 : 0);
   
   AML_CHUNK* root = aml_create_node(NULL);
   aml_add_buffer(root, cst_ssdt_header, sizeof(cst_ssdt_header)); // SSDT header
-  AML_CHUNK* scop = aml_add_scope(root, "\\_PR_");
+  AML_CHUNK* scop = aml_add_scope(root, "_PR_CPU0");
   AML_CHUNK* name = aml_add_name(scop, "CST_");
   AML_CHUNK* pack = aml_add_package(name);
   aml_add_byte(pack, cstates_count);
@@ -326,7 +305,7 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
     // C1
     resource_template_register_fixedhw[8] = 0x00;
     resource_template_register_fixedhw[9] = 0x00;
-    resource_template_register_fixedhw[18] = 0x00;
+    resource_template_register_fixedhw[0x12] = 0x00;
     aml_add_buffer(tmpl, resource_template_register_fixedhw, sizeof(resource_template_register_fixedhw));
     aml_add_byte(tmpl, 0x01); // C1
     aml_add_word(tmpl, 0x0001); // Latency
@@ -348,8 +327,8 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
     
     if (c4_enabled) // C4
     {
-      p_blk_lo = acpi_cpu_p_blk + 5;
-      p_blk_hi = (acpi_cpu_p_blk + 5) >> 8;
+      p_blk_lo = (acpi_cpu_p_blk + 6) & 0xff;
+      p_blk_hi = (acpi_cpu_p_blk + 6) >> 8;
       
       tmpl = aml_add_package(pack);
       resource_template_register_systemio[11] = p_blk_lo; // C4
@@ -361,8 +340,8 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
     }
     else if (c3_enabled) // C3
     {
-      p_blk_lo = acpi_cpu_p_blk + 5;
-      p_blk_hi = (acpi_cpu_p_blk + 5) >> 8;
+      p_blk_lo = acpi_cpu_p_blk + 6;
+      p_blk_hi = (acpi_cpu_p_blk + 6) >> 8;
       
       tmpl = aml_add_package(pack);
       resource_template_register_systemio[11] = p_blk_lo; // C3
@@ -377,6 +356,7 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
   {
     // C1
     resource_template_register_fixedhw[11] = 0x00; // C1
+    
     aml_add_buffer(tmpl, resource_template_register_fixedhw, sizeof(resource_template_register_fixedhw));
     aml_add_byte(tmpl, 0x01);			// C1
     aml_add_word(tmpl, 0x0001);			// Latency
@@ -413,16 +393,22 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
       aml_add_dword(tmpl, 0x0000015e);	// Power
     }
   }
-  
+  AML_CHUNK* met = aml_add_method(scop, "_CST", 0);
+  AML_CHUNK* ret = aml_add_return_name(met, "CST_");
+
+//  aml_calculate_size(scop);
   // Aliases
   INTN i;
-  for (i = 0; i < acpi_cpu_count; i++) 
+  for (i = 1; i < acpi_cpu_count; i++) 
   {
     CHAR8 name[9];
-    AsciiSPrint(name, 8, "_PR_%c%c%c%c", acpi_cpu_name[i][0], acpi_cpu_name[i][1], acpi_cpu_name[i][2], acpi_cpu_name[i][3]);
+    AsciiSPrint(name, 9, "_PR_CPU%1d", i);
     
     scop = aml_add_scope(root, name);
-    aml_add_alias(scop, "CST_", "_CST");
+//    aml_add_alias(scop, "CST_", "_CST");
+    met = aml_add_method(scop, "_CST", 0);
+    ret = aml_add_return_name(met, "_PR_CPU0CST_");
+    
   }
   
   aml_calculate_size(root);

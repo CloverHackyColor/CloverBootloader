@@ -1,7 +1,7 @@
 /** @file
   Header file for ATA/ATAPI PASS THRU driver.
   
-  Copyright (c) 2010 - 2011, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2010 - 2012, Intel Corporation. All rights reserved.<BR>
   This program and the accompanying materials                          
   are licensed and made available under the terms and conditions of the BSD License         
   which accompanies this distribution.  The full text of the license may be found at        
@@ -493,12 +493,15 @@ DestroyDeviceInfoList (
   Destroy all pending non blocking tasks.
   
   @param[in]  Instance  A pointer to the ATA_ATAPI_PASS_THRU_INSTANCE instance.
+  @param[in]  IsSigEvent  Indicate whether signal the task event when remove the
+                          task.
 
 **/
 VOID
 EFIAPI
 DestroyAsynTaskList (
-  IN ATA_ATAPI_PASS_THRU_INSTANCE *Instance
+  IN ATA_ATAPI_PASS_THRU_INSTANCE *Instance,
+  IN BOOLEAN                       IsSigEvent
   );
 
 /**

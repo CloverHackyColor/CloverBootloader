@@ -315,6 +315,8 @@ Headers collection for procedures
 #define	AML_CHUNK_QWORD		0x0E
 #define	AML_CHUNK_SCOPE		0x10
 #define	AML_CHUNK_PACKAGE	0x12
+#define	AML_CHUNK_METHOD	0x14
+#define AML_CHUNK_RETURN  0xA4
 
 struct aml_chunk 
 {
