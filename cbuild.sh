@@ -275,7 +275,7 @@ else
 export BASETOOLS_DIR=$EDK_TOOLS_PATH/Source/C/bin
 fi
 export BOOTSECTOR_BIN_DIR=$WORKSPACE/Clover/BootSector/bin
-export BUILD_DIR=$WORKSPACE/Build/Clover$PROCESSOR/"$VTARGET"_"$TARGET_TOOLS"
+export BUILD_DIR=$WORKSPACE/Build/Clover/"$VTARGET"_"$TARGET_TOOLS"
 
 #[ ! -f $BUILD_DIR/FV/DUETEFIMAINFV.z ] && \
 #echo "ERROR: Build not finished exiting PostBuild Part..." && exit
