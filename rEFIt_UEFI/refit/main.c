@@ -1322,7 +1322,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     return Status;
   }
   
-  ZeroMem(gSettings, sizeof(SETTINGS_DATA));
+  ZeroMem((VOID*)&gSettings, sizeof(SETTINGS_DATA));
   ScanVolumes();
   
   PrepatchSmbios();
