@@ -140,6 +140,7 @@ EFI_STATUS GetNVRAMSettings(IN EFI_FILE *RootDir, CHAR16* NVRAMPlistPath)
 }	
 
 
+
 EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 {
 	EFI_STATUS	Status = EFI_NOT_FOUND;
@@ -216,7 +217,6 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
     dictPointer = GetProperty(dict,"Graphics");
     if (dictPointer) {
       prop = GetProperty(dictPointer,"GraphicsInjector");
-      gSettings.GraphicsInjector=TRUE;
       if(prop)
       {
         if ((prop->string[0] == 'n') || (prop->string[0] == 'N'))
@@ -293,8 +293,6 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.LpcTune = TRUE;
       }
       // HDA
-      gSettings.HDAInjection = TRUE;
-      gSettings.HDALayoutId = 0;
       prop = GetProperty(dictPointer,"HDAInjection");
       if(prop)
       {
@@ -322,6 +320,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
     }
         
 		//*** ACPI ***//
+    
     dictPointer = GetProperty(dict,"ACPI");
     if (dictPointer) {
       prop = GetProperty(dictPointer,"DropOemSSDT");
@@ -347,14 +346,12 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       }
       
       prop = GetProperty(dictPointer,"ResetAddress");
-      gSettings.ResetAddr  = 0x64; //I wish it will be default
       if(prop)
       {
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
         gSettings.ResetAddr  = StrHexToUint64(UStr); 
       }
       prop = GetProperty(dictPointer,"ResetValue");
-      gSettings.ResetVal = 0xFE;
       if(prop)
       {
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
@@ -468,7 +465,6 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       }
       
       prop = GetProperty(dictPointer,"Mobile");
-      gSettings.Mobile = gMobile;  //default
       if(prop)
       {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))

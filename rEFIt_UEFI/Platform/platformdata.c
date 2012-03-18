@@ -202,4 +202,11 @@ VOID GetDefaultSettings(VOID)
 	AsciiStrCpy(gSettings.ChassisManufacturer,    BiosVendor);
 	AsciiStrCpy(gSettings.ChassisAssetTag,        AppleChassisAsset[Model]);
   
+  gSettings.ResetAddr  = 0x64; //I wish it will be default
+  gSettings.ResetVal = 0xFE;
+  gSettings.GraphicsInjector = TRUE;
+  gSettings.HDAInjection = TRUE;
+  gSettings.HDALayoutId = 0;
+  gSettings.Mobile = gMobile;  //default
+  
 }
