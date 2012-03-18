@@ -454,8 +454,9 @@ typedef struct {
   BOOLEAN	GenerateCStates;
 	BOOLEAN	smartUPS;
   BOOLEAN LpcTune;
-  BOOLEAN EnableC6;
+  BOOLEAN EnableC2;
   BOOLEAN EnableC4;
+  BOOLEAN EnableC6;
   BOOLEAN EnableISS;
 	CHAR16	DsdtName[60];
   

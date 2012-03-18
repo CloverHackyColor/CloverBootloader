@@ -143,354 +143,393 @@ EFI_STATUS GetNVRAMSettings(IN EFI_FILE *RootDir, CHAR16* NVRAMPlistPath)
 EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 {
 	EFI_STATUS	Status = EFI_NOT_FOUND;
-	UINTN		size;
-	CHAR8*		gConfigPtr;
-	TagPtr		dict;
-	TagPtr		prop;
-  CHAR16    UStr[64];
-//  CHAR8     AStr[64];
-//	TagPtr		dictPointer;
-  CHAR16* ConfigPlistPath = L"EFI\\config.plist";
-	
+	UINTN       size;
+	TagPtr      dict;
+	TagPtr      prop;
+	TagPtr      dictPointer;
+	CHAR8*      gConfigPtr = NULL;
+  
+  CHAR16      UStr[64];  
+  CHAR16*     ConfigPlistPath = L"EFI\\config.plist";
+  CHAR16*     ConfigOemPath = PoolPrint(L"EFI\\OEM\\%a\\config.plist", gSettings.OEMProduct);
 	
 	// load config
-  if ((RootDir != NULL) && FileExists(RootDir, ConfigPlistPath)) {
-    Status = egLoadFile(RootDir, ConfigPlistPath, (UINT8**)&gConfigPtr, &size);
-  } 
-  if (EFI_ERROR(Status)) {
-    Status = egLoadFile(SelfRootDir, ConfigPlistPath, (UINT8**)&gConfigPtr, &size);
+  if (FileExists(SelfRootDir, ConfigOemPath)) {
+    Status = egLoadFile(SelfRootDir, ConfigOemPath, (UINT8**)&gConfigPtr, &size);
+  } else {
+    DBG("Oem config.plist not found at path: %s\n", ConfigOemPath);
   }
-    
+  
+  if (EFI_ERROR(Status)) {
+    if ((RootDir != NULL) && FileExists(RootDir, ConfigPlistPath)) {
+      Status = egLoadFile(RootDir, ConfigPlistPath, (UINT8**)&gConfigPtr, &size);
+    } 
+    if (EFI_ERROR(Status)) {
+      Status = egLoadFile(SelfRootDir, ConfigPlistPath, (UINT8**)&gConfigPtr, &size);
+    }
+  }	else {
+    DBG("Using OEM config.plist at path: %s\n", ConfigOemPath);
+  }
+  
+  
 	if(EFI_ERROR(Status)) {
-		Print(L"Error loading config.plist!\n");
+		DBG("Error loading config.plist! Status=%r\n", Status);
 		return Status;
 	}
 	if(gConfigPtr)
 	{		
 		if(ParseXML((const CHAR8*)gConfigPtr, &dict) != EFI_SUCCESS)
 		{
-			Print(L"config error\n");
+			DBG(" config error\n");
 			return EFI_UNSUPPORTED;
 		}
 		//*** SYSTEM ***//
-    prop = GetProperty(dict,"prev-lang:kbd");
-    if(prop)
-    {
-      AsciiStrToUnicodeStr(prop->string, gSettings.Language);
+    dictPointer = GetProperty(dict,"SystemParameters");
+    if (dictPointer) {
+      prop = GetProperty(dictPointer,"prev-lang:kbd");
+      if(prop)
+      {
+        AsciiStrToUnicodeStr(prop->string, gSettings.Language);
+      }
+      
+      prop = GetProperty(dictPointer,"boot-args");
+      if(prop)
+      {
+        AsciiStrCpy(gSettings.BootArgs, prop->string);
+      } 
+      
+      prop = GetProperty(dictPointer,"DefaultBootVolume");
+      if(prop)
+      {
+        AsciiStrToUnicodeStr(prop->string, gSettings.DefaultBoot);
+      }
+      prop = GetProperty(dictPointer,"CustomUUID");
+      if(prop)
+      {
+        AsciiStrToUnicodeStr(prop->string, gSettings.CustomUuid);
+        Status = StrToGuidLE(gSettings.CustomUuid, &gUuid);
+        //else value from SMBIOS
+      }      
     }
-    
-		prop = GetProperty(dict,"boot-args");
-		if(prop)
-		{
-			AsciiStrCpy(gSettings.BootArgs, prop->string);
-		} 
-    
- 		prop = GetProperty(dict,"DefaultBootVolume");
-		if(prop)
-		{
-      AsciiStrToUnicodeStr(prop->string, gSettings.DefaultBoot);
-		}
 //Graphics
-    prop = GetProperty(dict,"PCIRootUID");
-    gSettings.PCIRootUID = 0;
-		if(prop)
-		{
-      AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-			gSettings.PCIRootUID = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
-    }
-    prop = GetProperty(dict,"StringInjector");
-    gSettings.StringInjector = FALSE;
-		if(prop)
-		{
-      if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
-				gSettings.StringInjector = TRUE;
-    }
     
-    
- 		prop = GetProperty(dict,"DeviceProperties");
-		if(prop)
-		{
-      cDeviceProperties = AllocateZeroPool(AsciiStrLen(prop->string)+1);
-      AsciiStrCpy(cDeviceProperties, prop->string);
-		}
-    prop = GetProperty(dict,"GraphicsInjector");
-    gSettings.GraphicsInjector=TRUE;
-		if(prop)
-		{
-      if ((prop->string[0] == 'n') || (prop->string[0] == 'N'))
-				gSettings.GraphicsInjector=FALSE;
-    }
-    
-		prop = GetProperty(dict,"VRAM");
-		if(prop)
-		{
-			AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-			gSettings.VRAM = (UINT64)StrDecimalToUintn((CHAR16*)&UStr[0]) << 20;  //bytes
-		}
-    
- 		prop = GetProperty(dict,"LoadVBios");
-    gSettings.LoadVBios = FALSE;
-		if(prop)
-		{
-      if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
-				gSettings.LoadVBios = TRUE;
-		}
- 		prop = GetProperty(dict,"VideoPorts");
-		if(prop)
-		{
-      AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-			gSettings.VideoPorts = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
+    dictPointer = GetProperty(dict,"Graphics");
+    if (dictPointer) {
+      prop = GetProperty(dictPointer,"GraphicsInjector");
+      gSettings.GraphicsInjector=TRUE;
+      if(prop)
+      {
+        if ((prop->string[0] == 'n') || (prop->string[0] == 'N'))
+          gSettings.GraphicsInjector=FALSE;
+      }      
+      prop = GetProperty(dictPointer,"VRAM");
+      if(prop)
+      {
+        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+        gSettings.VRAM = (UINT64)StrDecimalToUintn((CHAR16*)&UStr[0]) << 20;  //bytes
+      }
+      
+      prop = GetProperty(dictPointer,"LoadVBios");
+      gSettings.LoadVBios = FALSE;
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+          gSettings.LoadVBios = TRUE;
+      }
+      prop = GetProperty(dictPointer,"VideoPorts");
+      if(prop)
+      {
+        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+        gSettings.VideoPorts = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
+        
+      }
+      prop = GetProperty(dictPointer,"FBName");
+      if(prop)
+      {
+        AsciiStrToUnicodeStr(prop->string, gSettings.FBName);
+      }
+      
+      prop = GetProperty(dictPointer,"NVCAP");
+      if(prop)
+      {      
+        hex2bin(prop->string, (UINT8*)&gSettings.NVCAP[0], 20);
+      } 
+      prop = GetProperty(dictPointer,"display-cfg");
+      if(prop)
+      {      
+        hex2bin(prop->string, (UINT8*)&gSettings.Dcfg[0], 8);
+      } 
+      
+    }    
 
-		}
- 		prop = GetProperty(dict,"FBName");
-		if(prop)
-		{
-      AsciiStrToUnicodeStr(prop->string, gSettings.FBName);
-		}
-    
-		prop = GetProperty(dict,"NVCAP");
-		if(prop)
-		{      
-      hex2bin(prop->string, (UINT8*)&gSettings.NVCAP[0], 20);
-		} 
-		prop = GetProperty(dict,"display-cfg");
-		if(prop)
-		{      
-      hex2bin(prop->string, (UINT8*)&gSettings.Dcfg[0], 8);
-		} 
+    dictPointer = GetProperty(dict,"PCI");
+    if (dictPointer) {
+      
+      prop = GetProperty(dictPointer,"PCIRootUID");
+      gSettings.PCIRootUID = 0;
+      if(prop)
+      {
+        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+        gSettings.PCIRootUID = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
+      }
+      prop = GetProperty(dictPointer,"StringInjector");
+      gSettings.StringInjector = FALSE;
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+          gSettings.StringInjector = TRUE;
+      }
+      prop = GetProperty(dictPointer,"DeviceProperties");
+      if(prop)
+      {
+        cDeviceProperties = AllocateZeroPool(AsciiStrLen(prop->string)+1);
+        AsciiStrCpy(cDeviceProperties, prop->string);
+      }
+      prop = GetProperty(dictPointer,"LpcTune");
+      gSettings.LpcTune = FALSE;
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+          gSettings.LpcTune = TRUE;
+      }
+      // HDA
+      gSettings.HDAInjection = TRUE;
+      gSettings.HDALayoutId = 0;
+      prop = GetProperty(dictPointer,"HDAInjection");
+      if(prop)
+      {
+        // enabled by default
+        // syntax:
+        // - HDAInjection=No - disables injection
+        // - HDAInjection=887 - injects layout-id 887 decimal (0x00000377)
+        // - HDAInjection=0x377 - injects layout-id 887 decimal (0x00000377)
+        // - HDAInjection=Detect - reads codec device id (eg. 0x0887)
+        //   converts it to decimal 887 and injects this as layout-id.
+        //   if hex device is cannot be converted to decimal, injects legacy value 12 decimal
+        // - all other values are equal to HDAInjection=Detect
+        if ((prop->string[0] == 'n') || (prop->string[0] == 'N')) {
+          // if starts with n or N, then no HDA injection
+          gSettings.HDAInjection = FALSE;
+        } else if ((prop->string[0] == '0')  && 
+                   (prop->string[1] == 'x' || prop->string[1] == 'X')) {
+          // assume it's a hex layout id
+          gSettings.HDALayoutId = AsciiStrHexToUintn(prop->string);
+        } else {
+          // assume it's a decimal layout id
+          gSettings.HDALayoutId = AsciiStrDecimalToUintn(prop->string);
+        }
+      }      
+    }
         
 		//*** ACPI ***//
-    prop = GetProperty(dict,"DropOemSSDT");
-    gSettings.DropSSDT = FALSE;
-		if(prop)
-		{
-      if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
-				gSettings.DropSSDT = TRUE;
+    dictPointer = GetProperty(dict,"ACPI");
+    if (dictPointer) {
+      prop = GetProperty(dictPointer,"DropOemSSDT");
+      gSettings.DropSSDT = FALSE;
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+          gSettings.DropSSDT = TRUE;
+      }
+      prop = GetProperty(dictPointer,"GeneratePStates");
+      gSettings.GeneratePStates = FALSE;
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+          gSettings.GeneratePStates = TRUE;
+      }
+      prop = GetProperty(dictPointer,"GenerateCStates");
+      gSettings.GenerateCStates = FALSE;
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+          gSettings.GenerateCStates = TRUE;
+      }
+      
+      prop = GetProperty(dictPointer,"ResetAddress");
+      gSettings.ResetAddr  = 0x64; //I wish it will be default
+      if(prop)
+      {
+        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+        gSettings.ResetAddr  = StrHexToUint64(UStr); 
+      }
+      prop = GetProperty(dictPointer,"ResetValue");
+      gSettings.ResetVal = 0xFE;
+      if(prop)
+      {
+        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+        gSettings.ResetVal = (UINT8)StrHexToUint64((CHAR16*)&UStr[0]);	
+      }
+      //other known pair is 0x02F9/0x06
+      
+      prop = GetProperty(dictPointer,"EnableC6");
+      gSettings.EnableC6 = FALSE;
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+          gSettings.EnableC6 = TRUE;
+      }
+      
+      prop = GetProperty(dictPointer,"EnableC4");
+      gSettings.EnableC4 = FALSE;
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+          gSettings.EnableC4 = TRUE;
+      }
+      
+      prop = GetProperty(dictPointer,"EnableC2");
+      gSettings.EnableC2 = FALSE;
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+          gSettings.EnableC2 = TRUE;
+          DBG(" C2 enabled\n");
+        }
+      }
+      
+      prop = GetProperty(dictPointer,"EnableISS");
+      gSettings.EnableISS = FALSE;
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+          gSettings.EnableISS = TRUE;
+      }      
+      prop = GetProperty(dictPointer,"smartUPS");
+      gSettings.smartUPS = FALSE;
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+          gSettings.smartUPS = TRUE;
+          DBG("Config set smartUPS present\n");
+        }
+      }
     }
-    prop = GetProperty(dict,"GeneratePStates");
-    gSettings.GeneratePStates = FALSE;
-		if(prop)
-		{
-      if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
-				gSettings.GeneratePStates = TRUE;
-    }
-    prop = GetProperty(dict,"GenerateCStates");
-    gSettings.GenerateCStates = FALSE;
-		if(prop)
-		{
-      if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
-				gSettings.GenerateCStates = TRUE;
-    }
-    
-		prop = GetProperty(dict,"ResetAddress");
-    gSettings.ResetAddr  = 0x64; //I wish it will be default
-		if(prop)
-		{
-			AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-			gSettings.ResetAddr  = StrHexToUint64(UStr); 
-		}
-		prop = GetProperty(dict,"ResetValue");
-    gSettings.ResetVal = 0xFE;
-		if(prop)
-		{
-			AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-			gSettings.ResetVal = (UINT8)StrHexToUint64((CHAR16*)&UStr[0]);	
-		}
-		//other known pair is 0x02F9/0x06
 
-    prop = GetProperty(dict,"LpcTune");
-    gSettings.LpcTune = FALSE;
-		if(prop)
-		{
-      if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
-				gSettings.LpcTune = TRUE;
-    }
-        
-    prop = GetProperty(dict,"EnableC6");
-    gSettings.EnableC6 = FALSE;
-		if(prop)
-		{
-      if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
-				gSettings.EnableC6 = TRUE;
-    }
-        
-    prop = GetProperty(dict,"EnableC4");
-    gSettings.EnableC4 = FALSE;
-		if(prop)
-		{
-      if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
-				gSettings.EnableC4 = TRUE;
-    }
-    
-    prop = GetProperty(dict,"EnableISS");
-    gSettings.EnableISS = FALSE;
-		if(prop)
-		{
-      if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
-				gSettings.EnableISS = TRUE;
-    }
     		
 		//*** SMBIOS ***//
-		prop = GetProperty(dict,"BiosVendor");
-		if(prop)
-		{
-			AsciiStrCpy(gSettings.VendorName, prop->string);
-		}
-		prop = GetProperty(dict,"BiosVersion");
-		if(prop)
-		{
-			AsciiStrCpy(gSettings.RomVersion, prop->string);
-		}
-		prop = GetProperty(dict,"BiosReleaseDate");
-		if(prop)
-		{
-			AsciiStrCpy(gSettings.ReleaseDate, prop->string);
-		}
-		prop = GetProperty(dict,"Manufacturer");
-		if(prop)
-		{
-			AsciiStrCpy(gSettings.ManufactureName, prop->string);
-		}
-		prop = GetProperty(dict,"ProductName");
-		if(prop)
-		{
-			AsciiStrCpy(gSettings.ProductName, prop->string);
-		}
-		prop = GetProperty(dict,"Version");
-		if(prop)
-		{
-			AsciiStrCpy(gSettings.VersionNr, prop->string);
-		}
-		prop = GetProperty(dict,"Family");
-		if(prop)
-		{
-			AsciiStrCpy(gSettings.FamilyName, prop->string);
-		}
-		prop = GetProperty(dict,"SerialNumber");
-		if(prop)
-		{
-			AsciiStrCpy(gSettings.SerialNr, prop->string);
-		}
-		prop = GetProperty(dict,"CustomUUID");
-		if(prop)
-		{
-			AsciiStrToUnicodeStr(prop->string, gSettings.CustomUuid);
-      Status = StrToGuidLE(gSettings.CustomUuid, &gUuid);
-      //else value from SMBIOS
+    dictPointer = GetProperty(dict,"SMBIOS");
+    if (dictPointer) {
+      prop = GetProperty(dictPointer,"BiosVendor");
+      if(prop)
+      {
+        AsciiStrCpy(gSettings.VendorName, prop->string);
+      }
+      prop = GetProperty(dictPointer,"BiosVersion");
+      if(prop)
+      {
+        AsciiStrCpy(gSettings.RomVersion, prop->string);
+      }
+      prop = GetProperty(dictPointer,"BiosReleaseDate");
+      if(prop)
+      {
+        AsciiStrCpy(gSettings.ReleaseDate, prop->string);
+      }
+      prop = GetProperty(dictPointer,"Manufacturer");
+      if(prop)
+      {
+        AsciiStrCpy(gSettings.ManufactureName, prop->string);
+      }
+      prop = GetProperty(dictPointer,"ProductName");
+      if(prop)
+      {
+        AsciiStrCpy(gSettings.ProductName, prop->string);
+      }
+      prop = GetProperty(dictPointer,"Version");
+      if(prop)
+      {
+        AsciiStrCpy(gSettings.VersionNr, prop->string);
+      }
+      prop = GetProperty(dictPointer,"Family");
+      if(prop)
+      {
+        AsciiStrCpy(gSettings.FamilyName, prop->string);
+      }
+      prop = GetProperty(dictPointer,"SerialNumber");
+      if(prop)
+      {
+        AsciiStrCpy(gSettings.SerialNr, prop->string);
+      }
+      
+      prop = GetProperty(dictPointer,"BoardManufacturer");
+      if(prop)
+      {
+        AsciiStrCpy(gSettings.BoardManufactureName, prop->string);
+      }
+      prop = GetProperty(dictPointer,"BoardSerialNumber");
+      if(prop)
+      {
+        AsciiStrCpy(gSettings.BoardSerialNumber, prop->string);
+      }
+      prop = GetProperty(dictPointer,"Board-ID");
+      if(prop)
+      {
+        AsciiStrCpy(gSettings.BoardNumber, prop->string);
+      }
+      
+      prop = GetProperty(dictPointer,"Mobile");
+      gSettings.Mobile = gMobile;  //default
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+          gSettings.Mobile = TRUE;
+      }
+      
+      prop = GetProperty(dictPointer,"LocationInChassis");
+      if(prop)
+      {
+        AsciiStrCpy(gSettings.LocationInChassis, prop->string);
+      }
+      
+      prop = GetProperty(dictPointer,"ChassisManufacturer");
+      if(prop)
+      {
+        AsciiStrCpy(gSettings.ChassisManufacturer, prop->string);
+      }
+      prop = GetProperty(dictPointer,"ChassisAssetTag");
+      if(prop)
+      {
+        AsciiStrCpy(gSettings.ChassisAssetTag, prop->string);
+      }
     }
 
-		prop = GetProperty(dict,"BoardManufacturer");
-		if(prop)
-		{
-			AsciiStrCpy(gSettings.BoardManufactureName, prop->string);
-		}
-		prop = GetProperty(dict,"BoardSerialNumber");
-		if(prop)
-		{
-			AsciiStrCpy(gSettings.BoardSerialNumber, prop->string);
-		}
-		prop = GetProperty(dict,"Board-ID");
-		if(prop)
-		{
-			AsciiStrCpy(gSettings.BoardNumber, prop->string);
-		}
-    
-    prop = GetProperty(dict,"Mobile");
-    gSettings.Mobile = gMobile;  //default
-		if(prop)
-		{
-      if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
-				gSettings.Mobile = TRUE;
-    }
-    
-		prop = GetProperty(dict,"LocationInChassis");
-		if(prop)
-		{
-			AsciiStrCpy(gSettings.LocationInChassis, prop->string);
-		}
-		
-		prop = GetProperty(dict,"ChassisManufacturer");
-		if(prop)
-		{
-			AsciiStrCpy(gSettings.ChassisManufacturer, prop->string);
-		}
-		prop = GetProperty(dict,"ChassisAssetTag");
-		if(prop)
-		{
-			AsciiStrCpy(gSettings.ChassisAssetTag, prop->string);
-		}
-		prop = GetProperty(dict,"smartUPS");
-    gSettings.smartUPS = FALSE;
-		if(prop)
-		{
-			if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
-				gSettings.smartUPS = TRUE;
-        DBG("Config set smartUPS present\n");
-      }
-		}
-    
     //CPU
-		prop = GetProperty(dict,"Turbo");
-    gSettings.Turbo = FALSE;
-		if(prop)
-		{
-			if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
-				gSettings.Turbo = TRUE;
-        DBG("Config set Turbo\n");
+    dictPointer = GetProperty(dict,"CPU");
+    if (dictPointer) {
+      prop = GetProperty(dictPointer,"Turbo");
+      gSettings.Turbo = FALSE;
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+          gSettings.Turbo = TRUE;
+          DBG("Config set Turbo\n");
+        }
       }
-		}
-		prop = GetProperty(dict,"CpuFrequencyMHz");
-		if(prop)
-		{
-			AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-			gSettings.CpuFreqMHz = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
-      DBG("Config set CpuFreq=%dMHz\n", gSettings.CpuFreqMHz);
-		}
-		prop = GetProperty(dict,"ProcessorType");
-    gSettings.CpuType = GetAdvancedCpuType();
-		if(prop)
-		{
-			AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-			gSettings.CpuType = (UINT16)StrHexToUint64((CHAR16*)&UStr[0]);
-      DBG("Config set CpuType=%x\n", gSettings.CpuType);
-		}
-
-		prop = GetProperty(dict,"BusSpeedkHz");
-		if(prop)
-		{
-			AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-			gSettings.BusSpeed = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);
-      DBG("Config set BusSpeed=%dkHz\n", gSettings.BusSpeed);
-		}
-      	
-  	// HDA
-  	gSettings.HDAInjection = TRUE;
-  	gSettings.HDALayoutId = 0;
-  	prop = GetProperty(dict,"HDAInjection");
-  	if(prop)
-    {
-      // enabled by default
-      // syntax:
-      // - HDAInjection=No - disables injection
-      // - HDAInjection=887 - injects layout-id 887 decimal (0x00000377)
-      // - HDAInjection=0x377 - injects layout-id 887 decimal (0x00000377)
-      // - HDAInjection=Detect - reads codec device id (eg. 0x0887)
-      //   converts it to decimal 887 and injects this as layout-id.
-      //   if hex device is cannot be converted to decimal, injects legacy value 12 decimal
-      // - all other values are equal to HDAInjection=Detect
-      if ((prop->string[0] == 'n') || (prop->string[0] == 'N')) {
-        // if starts with n or N, then no HDA injection
-        gSettings.HDAInjection = FALSE;
-      } else if ((prop->string[0] == '0')  && 
-                 (prop->string[1] == 'x' || prop->string[1] == 'X')) {
-        // assume it's a hex layout id
-        gSettings.HDALayoutId = AsciiStrHexToUintn(prop->string);
-      } else {
-				// assume it's a decimal layout id
-				gSettings.HDALayoutId = AsciiStrDecimalToUintn(prop->string);
-			}
+      prop = GetProperty(dictPointer,"CpuFrequencyMHz");
+      if(prop)
+      {
+        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+        gSettings.CpuFreqMHz = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
+        DBG("Config set CpuFreq=%dMHz\n", gSettings.CpuFreqMHz);
+      }
+      prop = GetProperty(dictPointer,"ProcessorType");
+      gSettings.CpuType = GetAdvancedCpuType();
+      if(prop)
+      {
+        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+        gSettings.CpuType = (UINT16)StrHexToUint64((CHAR16*)&UStr[0]);
+        DBG("Config set CpuType=%x\n", gSettings.CpuType);
+      }
+      
+      prop = GetProperty(dictPointer,"BusSpeedkHz");
+      if(prop)
+      {
+        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+        gSettings.BusSpeed = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);
+        DBG("Config set BusSpeed=%dkHz\n", gSettings.BusSpeed);
+      }      
     }
-    
+      	    
 		SaveSettings();
 	}	
   DBG("config.plist read and return %r\n", Status);

@@ -362,9 +362,9 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   SSDT_TABLE    *Ssdt = NULL;
 	UINT8*				buffer = NULL;
 	UINTN         bufferLen = 0;
-	CHAR16*				PathPatched   = L"\\EFI\\acpi\\patched";
+	CHAR16*				PathPatched   = L"\\EFI\\ACPI\\patched";
 	CHAR16*				PathDsdt      = L"\\DSDT.aml";
-  CHAR16*				PathDsdtMini  = L"\\EFI\\acpi\\mini\\DSDT.aml";
+  CHAR16*				PathDsdtMini  = L"\\EFI\\ACPI\\mini\\DSDT.aml";
 //	CHAR16*						path = NULL;
 	UINT32*       rf = NULL;
 	UINT64*       xf = NULL;
@@ -373,6 +373,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   UINT64        XFirmwareCtrl;
   EFI_FILE      *RootDir;
   
+  CHAR16*     AcpiOemPath = PoolPrint(L"EFI\\OEM\\%a\\ACPI", gSettings.OEMProduct);
 	
 	//Slice - I want to begin from BIOS ACPI tables like with SMBIOS
 	RsdPointer = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)FindAcpiRsdPtr();
@@ -603,10 +604,17 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       Status = egLoadFile(SelfRootDir, PathDsdtMini, &buffer, &bufferLen);
     }
   }
+  
+  if (EFI_ERROR(Status) && FileExists(SelfRootDir, PoolPrint(L"%s%s", AcpiOemPath, PathDsdt))) {
+    DBG("DSDT found in Clover volume OEM folder\n");
+    Status = egLoadFile(SelfRootDir, PoolPrint(L"%s%s", AcpiOemPath, PathDsdt), &buffer, &bufferLen);
+  }
+    
   if (EFI_ERROR(Status) && FileExists(RootDir, PathDsdt)) {
     DBG("DSDT found in booted volume\n");
     Status = egLoadFile(RootDir, PathDsdt, &buffer, &bufferLen);
   }
+  
   if (EFI_ERROR(Status) && FileExists(SelfRootDir, PoolPrint(L"%s%s", PathPatched, PathDsdt))) {
     DBG("DSDT found in Clover volume\n");
     Status = egLoadFile(SelfRootDir, PoolPrint(L"%s%s", PathPatched, PathDsdt), &buffer, &bufferLen);
@@ -645,16 +653,26 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   
   //find other ACPI tables
   for (Index = 0; Index < NUM_TABLES; Index++) {
-    if (FileExists(SelfRootDir, PoolPrint(L"%s\\%s", PathPatched, ACPInames[Index]))) {
-      DBG("file %s found\n", ACPInames[Index]);
-      Status = egLoadFile(SelfRootDir, PoolPrint(L"%s\\%s", PathPatched, ACPInames[Index]),
-                          &buffer, &bufferLen);
+    Status = EFI_NOT_FOUND;
+    CHAR16* FullName = PoolPrint(L"%s\\%s", AcpiOemPath, ACPInames[Index]);
+    if (FileExists(SelfRootDir, FullName)) {
+      DBG("OEM table %s found\n", ACPInames[Index]);
+      Status = egLoadFile(SelfRootDir, FullName, &buffer, &bufferLen);
+    }
+    
+    if (EFI_ERROR(Status)) {
+      FullName = PoolPrint(L"%s\\%s", PathPatched, ACPInames[Index]);
+      if (FileExists(SelfRootDir, FullName)) {
+        DBG("Common table %s found\n", ACPInames[Index]);
+        Status = egLoadFile(SelfRootDir, FullName, &buffer, &bufferLen);        
+      }
       if(!EFI_ERROR(Status))
       {
         //       DBG("read success\n");
-        Status = InsertTable((VOID*)buffer, bufferLen);      
-      }  else {
-        DBG("read return status %r\n", Status);
+        Status = InsertTable((VOID*)buffer, bufferLen);  
+        if(EFI_ERROR(Status)){
+          DBG("...but read return status %r\n", Status);
+        }
       }  
     } 
   }

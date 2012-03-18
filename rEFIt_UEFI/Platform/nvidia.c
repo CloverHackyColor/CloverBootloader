@@ -1294,8 +1294,9 @@ static CHAR8 *get_nvidia_model(UINT32 id)
 		if (NVKnownChipsets[i].device == id)
 		{
 			UINTN size = AsciiStrLen(NVKnownChipsets[i].name);
-			name = AllocatePool(size);
+			name = AllocateZeroPool(size+1);
 			AsciiStrnCpy(name, NVKnownChipsets[i].name, size);
+      name[size] = 0;
 			return name;
 		}
 	}
@@ -1303,32 +1304,6 @@ static CHAR8 *get_nvidia_model(UINT32 id)
 	AsciiSPrint(name, 80, "Unknown");
 	return name;
 }
-
-#if 0 //loading VBIOS is now unsupported in iBoot
-static UINT32 load_nvidia_bios_file(const CHAR8 *filename, UINT8 *buf, INT32 bufsize)
-{
-	INT32 fd;
-	INT32 size;
-	
-	if ((fd = open_bvdev("bt(0,0)", filename, 0)) < 0)
-	{
-		return 0;
-	}
-	
-	size = file_size(fd);
-	
-	if (size > bufsize)
-	{
-		DBG("Filesize of %s is bigger than expected! Truncating to 0x%x Bytes!\n",
-				filename, bufsize);
-		size = bufsize;
-	}
-	size = read(fd, (CHAR8 *)buf, size);
-	close(fd);
-	
-	return size > 0 ? size : 0;
-}
-#endif
 
 static INT32 devprop_add_nvidia_template(DevPropDevice *device)
 {
@@ -1451,24 +1426,29 @@ UINT32 mem_detect(UINT8 nvCardType, pci_dt_t *nvda_dev)
 
 BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 {
+  EFI_STATUS            Status = EFI_NOT_FOUND;
 	//DBG("setup_nvidia_devprop\n");
 	DevPropDevice	*device = NULL;
 	CHAR8					*devicepath = NULL;
 	
-	//UINT8					*rom = NULL;
+	UINT8					*rom = NULL;
 	UINT8					nvCardType = 0;
-	UINT32					videoRam = 0;
-	UINT32					bar[7];
-	UINT32					boot_display = 0;
+	UINT32				videoRam = 0;
+	UINT32				bar[7];
+	UINT32				boot_display = 0;
 	INT32					nvPatch = 0;
 	CHAR8					*model = NULL;
+	CHAR16        FileName[24];
+  UINT8         *buffer;
+  UINTN         bufferLen;
+  option_rom_pci_header_t *rom_pci_header;
+  
 		
-	DBG("%x:%x\n",nvda_dev->vendor_id, nvda_dev->device_id);
+//	DBG("%x:%x\n",nvda_dev->vendor_id, nvda_dev->device_id);
 	devicepath = get_pci_dev_path(nvda_dev);
 	bar[0] = pci_config_read32(nvda_dev, PCI_BASE_ADDRESS_0);
   nvda_dev->regs = (UINT8 *)(UINTN)(bar[0] & ~0x0f);
-	DBG("BAR: 0x%x\n", nvda_dev->regs);
-//	regs = (UINT8 *)(UINTN)(bar[0] & ~0x0f);
+//	DBG("BAR: 0x%x\n", nvda_dev->regs);
 	
 //	gBS->Stall(50);
 		
@@ -1476,36 +1456,59 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	nvCardType = (REG32(nvda_dev->regs, 0) >> 20) & 0x1ff;
 	
 	// Amount of VRAM in kilobytes
-	videoRam = mem_detect(nvCardType, nvda_dev);
+  if (gSettings.VRAM != 0) {
+    videoRam = gSettings.VRAM << 20;
+  } else {
+    videoRam = mem_detect(nvCardType, nvda_dev);
+  }
+ 
 	model = get_nvidia_model((nvda_dev->vendor_id << 16) | nvda_dev->device_id);
 	
-	DBG("nVidia %a\n", model);
-	DBG(" %dMB NV%02x [%04x:%04x] :: ", (UINT32)(videoRam / 1024 / 1024),
+	DBG("nVidia %a ", model);
+	DBG(" %dMB NV%02x [%04x:%04x] :: ", (UINT32)(videoRam >> 20),
 			   nvCardType, nvda_dev->vendor_id, nvda_dev->device_id);
 		
 
 	const INT32 MAX_BIOS_VERSION_LENGTH = 32;
 	CHAR8* version_str = (CHAR8*)AllocateZeroPool(MAX_BIOS_VERSION_LENGTH);
-		
-	UINT8* rom = AllocateZeroPool(NVIDIA_ROM_SIZE+1);
-		// PRAMIN first
-	read_nVidia_PRAMIN(nvda_dev, rom, nvCardType);
-			 
-	//DBG("got here\n");
-		
-	DBG("%x%x\n", rom[0], rom[1]);
-	option_rom_pci_header_t *rom_pci_header = NULL;
-			
-	if (rom[0] != 0x55 || rom[1] != 0xaa) {
-		read_nVidia_PROM(nvda_dev, rom);
-		if (rom[0] != 0x55 || rom[1] != 0xaa)
-			DBG("ERROR: Unable to locate nVidia Video BIOS\n");
-			}
 	
-	if (rom[0] == 0x55 && rom[1] == 0xaa) {	
-		if ((nvPatch = patch_nvidia_rom(rom)) == PATCH_ROM_FAILED) {
-		DBG("ERROR: nVidia ROM Patching Failed!\n");
-	}
+	if (gSettings.LoadVBios){
+    UnicodeSPrint(FileName, 24, L"EFI\\OEM\\%a\\ROM\\10de_%04x.rom",
+                         gSettings.OEMProduct, nvda_dev->device_id);
+    if (FileExists(SelfRootDir, FileName)){
+      Status = egLoadFile(SelfRootDir, FileName, &buffer, &bufferLen);
+    }
+    if (EFI_ERROR(Status)) {
+      UnicodeSPrint(FileName, 24, L"\\EFI\\ROM\\10de_%04x.rom", nvda_dev->device_id);
+      if (FileExists(SelfRootDir, FileName)){
+        Status = egLoadFile(SelfRootDir, FileName, &buffer, &bufferLen);
+      }
+    }
+  }
+  if (EFI_ERROR(Status)){
+    rom = AllocateZeroPool(NVIDIA_ROM_SIZE+1);
+		// PRAMIN first
+    read_nVidia_PRAMIN(nvda_dev, rom, nvCardType);
+    
+    //DBG("got here\n");
+		
+    //DBG("%x%x\n", rom[0], rom[1]);
+    rom_pci_header = NULL;
+    
+    if (rom[0] != 0x55 || rom[1] != 0xaa) {
+      read_nVidia_PROM(nvda_dev, rom);
+      if (rom[0] != 0x55 || rom[1] != 0xaa)
+        DBG("ERROR: Unable to locate nVidia Video BIOS\n");
+    }
+    
+    if (rom[0] == 0x55 && rom[1] == 0xaa) {	
+      if ((nvPatch = patch_nvidia_rom(rom)) == PATCH_ROM_FAILED) {
+        DBG("ERROR: nVidia ROM Patching Failed!\n");
+      }      
+  } else {
+    DBG("using loaded ROM image\n");
+  }
+
 	
 	rom_pci_header = (option_rom_pci_header_t*)(rom + *(UINT16 *)&rom[24]);
 	

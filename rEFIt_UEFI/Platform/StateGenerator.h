@@ -20,22 +20,7 @@
 #define DBG(x...)
 #endif
 
-/*
 
-#pragma pack(1)
-struct acpi_2_ssdt {
-	CHAR8         Signature[4]; //0
-	UINT32        Length;       //4
-	UINT8         Revision;     //8
-	UINT8         Checksum;     //9
-	CHAR8         OEMID[6];     //0xa
-	CHAR8         OEMTableId[8];  //0x10
-	UINT32        OEMRevision;    //0x14
-	UINT32        CreatorId;      //0x18  
-	UINT32        CreatorRevision; //0x20
-} __attribute__((packed));    //0x24
-#pragma pack()
-*/
 typedef EFI_ACPI_DESCRIPTION_HEADER SSDT_TABLE;
 
 

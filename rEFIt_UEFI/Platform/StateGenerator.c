@@ -274,7 +274,7 @@ CHAR8 resource_template_register_systemio[] =
 
 SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
 {
-  BOOLEAN c2_enabled;
+  BOOLEAN c2_enabled = gSettings.EnableC2;
   BOOLEAN c3_enabled;
   BOOLEAN c4_enabled = gSettings.EnableC4;
   BOOLEAN cst_using_systemio = gSettings.EnableISS;
@@ -288,7 +288,7 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
   }
   
   acpi_cpu_p_blk = fadt->Pm1aEvtBlk + 0x10;
-  c2_enabled = (fadt->PLvl2Lat < 100);
+  c2_enabled = c2_enabled || (fadt->PLvl2Lat < 100);
   c3_enabled = (fadt->PLvl3Lat < 1000);
   cstates_count = 1 + (c2_enabled ? 1 : 0) + ((c3_enabled || c4_enabled)? 1 : 0);
   
