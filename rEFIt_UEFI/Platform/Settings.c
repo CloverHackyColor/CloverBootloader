@@ -779,6 +779,14 @@ VOID SetDevices(VOID)
                   PmCon &= ~(1 << 11);
                   DBG("C6 disabled\n");
                 }
+     /*           if (gSettings.EnableC2) {
+                  PmCon |= 1 << 10;	
+                  DBG("BIOS_PCIE enabled\n");
+                } else {
+                  PmCon &= ~(1 << 10);
+                  DBG("BIOS_PCIE disabled\n");
+                }
+      */
                 if (gSettings.EnableC4) {
                   PmCon |= 1 << 7;	
                   DBG("C4 enabled\n");

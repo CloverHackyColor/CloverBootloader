@@ -21,8 +21,8 @@
 # here we can change source versions of tools
 #
 export BINUTILS_VERSION=binutils-2.22
-export GCC_VERSION=4.6.2
-export GMP_VERSION=gmp-5.0.2
+export GCC_VERSION=4.6.3
+export GMP_VERSION=gmp-5.0.4
 export MPFR_VERSION=mpfr-3.1.0
 export MPC_VERSION=mpc-0.9
 
@@ -152,7 +152,6 @@ fnCompileLibs ()
     echo "-  $GMP_VERSION make..."
     make 1> /dev/null 2> $DIR_LOGS/gmp.$ARCH.make.log.txt
     make install 1> $DIR_LOGS/gmp.$ARCH.install.log.txt 2> /dev/null
-    [ ! -f $PREFIX/include/gmp.h ] && echo "Error: $GMP_VERSION not installed, check logs" && exit
     echo "-  $GMP_VERSION installed in $PREFIX  -"
 
 # Compile MPFR
@@ -167,7 +166,6 @@ fnCompileLibs ()
     echo "-  $MPFR_VERSION make..."
     make 1> /dev/null 2> $DIR_LOGS/mpfr.$ARCH.make.log.txt
     make install 1> $DIR_LOGS/mpfr.$ARCH.install.log.txt 2> /dev/null
-    [ ! -f $PREFIX/include/mpfr.h ] && echo "Error: $MPFR_VERSION not installed, check logs" && exit
     echo "-  $MPFR_VERSION installed in $PREFIX  -"
 
 # Compile MPC
@@ -182,7 +180,6 @@ fnCompileLibs ()
     echo "-  $MPC_VERSION make..."
     make 1> /dev/null 2> $DIR_LOGS/mpc.$ARCH.make.log.txt
     make install 1> $DIR_LOGS/mpc.$ARCH.install.log.txt 2> /dev/null
-    [ ! -f $PREFIX/include/mpc.h ] && echo "Error: $MPC_VERSION not installed, check logs" && exit
     echo "-  $MPC_VERSION installed in $PREFIX  -"
 }
 
@@ -194,6 +191,13 @@ fnCompileBinutils ()
     echo
     [ ! -f $DIR_DOWNLOADS/$BINUTILS_VERSION.tar.bz2.extracted ] && echo "-  $BINUTILS_VERSION extract" && tar -xf $BINUTILS_VERSION.tar.bz2 > $BINUTILS_VERSION.tar.bz2.extracted
     echo "-  $BINUTILS_VERSION extracted"
+    
+    # Check GMP/MPFR/MPC
+    [ ! -f $PREFIX/include/gmp.h ] && echo "Error: $GMP_VERSION not installed, check logs" && exit
+    [ ! -f $PREFIX/include/mpfr.h ] && echo "Error: $MPFR_VERSION not installed, check logs" && exit
+    [ ! -f $PREFIX/include/mpc.h ] && echo "Error: $MPC_VERSION not installed, check logs" && exit
+
+    # Binutils build
     [ ! -d ${DIR_GCC}/$ARCH-binutils ] && mkdir ${DIR_GCC}/$ARCH-binutils 
     [ -d ${DIR_GCC}/$ARCH-binutils ] && cd ${DIR_GCC}/$ARCH-binutils && rm -rf * 
     echo "-  $BINUTILS_VERSION configure..."
