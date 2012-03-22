@@ -42,6 +42,8 @@ Headers collection for procedures
 #include <Protocol/VariableWrite.h>
 #include <Protocol/Variable.h>
 
+#include <Protocol/FSInjectProtocol.h>
+
 #include "lib.h"
 #include "boot.h"
 #include "BiosVideo.h"
@@ -666,6 +668,7 @@ EFI_STATUS      GetOSVersion(IN REFIT_VOLUME *Volume);
 EFI_STATUS      GetUserSettings(IN EFI_FILE *RootDir);
 EFI_STATUS      GetNVRAMSettings(IN EFI_FILE *RootDir, CHAR16* NVRAMPlistPath);
 EFI_STATUS      GetEdid(VOID);
+EFI_STATUS      SetFSInjection(IN LOADER_ENTRY *Entry);
 
 EFI_STATUS
 LogDataHub(

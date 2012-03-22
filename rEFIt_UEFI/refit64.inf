@@ -108,6 +108,7 @@
 #    ShellPkg/ShellPkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
   IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
+  Clover/FSInject/FSInject.dec
 
 [LibraryClasses]
   UefiApplicationEntryPoint
@@ -188,6 +189,8 @@
   gEfiSmbiosProtocolGuid
   gEfiSecurityArchProtocolGuid  
 
+  gFSInjectProtocolGuid
+  
 
 [FeaturePcd]
   gEfiMdePkgTokenSpaceGuid.PcdUgaConsumeSupport

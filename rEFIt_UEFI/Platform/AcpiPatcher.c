@@ -33,7 +33,7 @@ CONST CHAR8	oemID[6]       = HPET_OEM_ID;
 CONST CHAR8	oemTableID[8]  = HPET_OEM_TABLE_ID;
 CONST CHAR8	creatorID[4]   = HPET_CREATOR_ID;
 
-//Global poiters
+//Global pointers
 RSDT_TABLE										*Rsdt = NULL;
 XSDT_TABLE										*Xsdt = NULL;	
 
@@ -354,30 +354,34 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   //	EFI_GUID										*gTableGuidArray[] = {&gEfiAcpi20TableGuid, &gEfiAcpi10TableGuid};
   //	EFI_PEI_HOB_POINTERS							GuidHob;
   //	EFI_PEI_HOB_POINTERS							HobStart;
-//	EFI_DEVICE_PATH_PROTOCOL*	PathBooter = NULL;
-//	EFI_DEVICE_PATH_PROTOCOL*	FilePath;
-//	EFI_HANDLE					FileSystemHandle;
+  //	EFI_DEVICE_PATH_PROTOCOL*	PathBooter = NULL;
+  //	EFI_DEVICE_PATH_PROTOCOL*	FilePath;
+  //	EFI_HANDLE					FileSystemHandle;
 	EFI_PHYSICAL_ADDRESS		dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
 	EFI_PHYSICAL_ADDRESS		BufferPtr;
-  SSDT_TABLE    *Ssdt = NULL;
-	UINT8*				buffer = NULL;
-	UINTN         bufferLen = 0;
-	CHAR16*				PathPatched   = L"\\EFI\\ACPI\\patched";
-	CHAR16*				PathDsdt      = L"\\DSDT.aml";
-  CHAR16*				PathDsdtMini  = L"\\EFI\\ACPI\\mini\\DSDT.aml";
-//	CHAR16*						path = NULL;
-	UINT32*       rf = NULL;
-	UINT64*       xf = NULL;
-  UINT64        XDsdt; //save values if present
-  UINT64        BiosDsdt;
-  UINT64        XFirmwareCtrl;
-  EFI_FILE      *RootDir;
+  SSDT_TABLE    				*Ssdt = NULL;
+	UINT8                       *buffer = NULL;
+	UINTN        				bufferLen = 0;
+	CHAR16*						PathPatched   = L"\\EFI\\ACPI\\patched";
+	CHAR16*						PathDsdt      = L"\\DSDT.aml";
+  CHAR16*						PathDsdtMini  = L"\\EFI\\ACPI\\mini\\DSDT.aml";
+  //	CHAR16*						path = NULL;
+	UINT32*      	 			rf = NULL;
+	UINT64*       				xf = NULL;
+  UINT64        				XDsdt; //save values if present
+ 	UINT64        				BiosDsdt;
+  UINT64        				XFirmwareCtrl;
+  EFI_FILE      				*RootDir;
+  UINT32                                            eCntR; //, eCntX;
+  UINT32                                            *pEntryR;
+  UINT64                                            *pEntryX;
+  
   
   CHAR16*     AcpiOemPath = PoolPrint(L"EFI\\OEM\\%a\\ACPI", gSettings.OEMProduct);
 	
 	//Slice - I want to begin from BIOS ACPI tables like with SMBIOS
 	RsdPointer = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)FindAcpiRsdPtr();
-//	DBG("Found RsdPtr in BIOS: %p\n", RsdPointer);
+  //	DBG("Found RsdPtr in BIOS: %p\n", RsdPointer);
   
   //Slice - some tricks to do with Bios Acpi Tables
   Rsdt = (RSDT_TABLE*)(UINTN)(RsdPointer->RsdtAddress);
@@ -389,7 +393,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   } else if (Xsdt) {
     FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Xsdt->Entry);
   }
-//  DBG("Found FADT in BIOS: %p\n", FadtPointer);
+  //  DBG("Found FADT in BIOS: %p\n", FadtPointer);
   Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)(FadtPointer->FirmwareCtrl);
   DBG("Found FACS in BIOS: %p\n", Facs);
   BiosDsdt = FadtPointer->XDsdt;
@@ -449,7 +453,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 		return EFI_UNSUPPORTED;
 	}
 	Rsdt = (RSDT_TABLE*)(UINTN)RsdPointer->RsdtAddress;
-//	DBG("RSDT 0x%p\n", Rsdt);
+  //	DBG("RSDT 0x%p\n", Rsdt);
 	rf = ScanRSDT(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE);
 	if(rf)
 		FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(*rf);
@@ -458,25 +462,55 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     if (RsdPointer->Revision >=2 && (RsdPointer->XsdtAddress < (UINT64)(UINTN)-1))
     {
       Xsdt = (XSDT_TABLE*)(UINTN)RsdPointer->XsdtAddress;
-//      DBG("XSDT 0x%p\n", Xsdt);
+      //      DBG("XSDT 0x%p\n", Xsdt);
       xf = ScanXSDT(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE);
       if(xf)
         FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(*xf);
     }
 	
-	if(!xf){
-	 	DBG("Error! Xsdt is not found!!!\n");
+	if(!xf && Rsdt){
+	 	DBG("Error! Xsdt is not found!!! Creating new one\n");
 	 	//We should make here ACPI20 RSDP with all needed subtables based on ACPI10
+    BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
+    Status = gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);		
+    if(!EFI_ERROR(Status))
+    {
+      Xsdt = (XSDT_TABLE*)(UINTN)BufferPtr;
+      //      Print(L"XSDT = 0x%x\n\r", Xsdt);
+      Xsdt->Header.Signature = 0x54445358; //EFI_ACPI_2_0_EXTENDED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE
+      eCntR = (Rsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT32);        
+      Xsdt->Header.Length = eCntR * sizeof(UINT64) + sizeof (EFI_ACPI_DESCRIPTION_HEADER);
+      Xsdt->Header.Revision = 1;
+      CopyMem((CHAR8 *)&Xsdt->Header.OemId, (CHAR8 *)&FadtPointer->Header.OemId, 6);
+      Xsdt->Header.OemTableId = Rsdt->Header.OemTableId;
+      Xsdt->Header.OemRevision = Rsdt->Header.OemRevision;
+      Xsdt->Header.CreatorId = Rsdt->Header.CreatorId;
+      Xsdt->Header.CreatorRevision = Rsdt->Header.CreatorRevision;
+      pEntryR = (UINT32*)(&(Rsdt->Entry));
+      pEntryX = (UINT64*)(&(Xsdt->Entry));
+      for (Index = 0; Index < eCntR; Index ++) 
+      {
+        *pEntryX = 0;
+        CopyMem ((VOID*)pEntryX, (VOID*)pEntryR, sizeof(UINT32));
+        pEntryR++;pEntryX++;
+      }
+      RsdPointer->XsdtAddress = (UINT64)Xsdt;
+      //      Print(L"XSDT = 0x%x\n\r", (XSDT_TABLE*)(UINTN)RsdPointer->XsdtAddress);
+      RsdPointer->Checksum = 0;
+      RsdPointer->Checksum = (UINT8)(256-Checksum8((CHAR8*)RsdPointer, 20));
+      RsdPointer->ExtendedChecksum = 0;
+      RsdPointer->ExtendedChecksum = (UINT8)(256-Checksum8((CHAR8*)RsdPointer, RsdPointer->Length));
+    }
 	}
   
-//  DBG("FADT pointer = %x\n", (UINTN)FadtPointer);
+  //  DBG("FADT pointer = %x\n", (UINTN)FadtPointer);
 	if(!FadtPointer)
 	{
     return EFI_NOT_FOUND;
   }
   //Slice - then we do FADT patch no matter if we don't have DSDT.aml
   BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
-  Status = gBS->AllocatePages(AllocateMaxAddress,EfiACPIReclaimMemory, 1, &BufferPtr);		
+  Status = gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);		
   if(!EFI_ERROR(Status))
   {
     newFadt = (EFI_ACPI_4_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)BufferPtr;
@@ -506,11 +540,11 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       newFadt->XDsdt = BiosDsdt;
       newFadt->Dsdt = BiosDsdt;
     } else 
-    if (newFadt->Dsdt) {
-      newFadt->XDsdt = (UINT64)(newFadt->Dsdt);
-    } else if (XDsdt) {
-      newFadt->Dsdt = (UINT32)XDsdt;
-    }
+      if (newFadt->Dsdt) {
+        newFadt->XDsdt = (UINT64)(newFadt->Dsdt);
+      } else if (XDsdt) {
+        newFadt->Dsdt = (UINT32)XDsdt;
+      }
     if (Facs) newFadt->FirmwareCtrl = (UINT32)(UINTN)Facs;
     else DBG("No FACS table ?!\n");
     if (newFadt->FirmwareCtrl) {
@@ -545,14 +579,14 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     }    
   }
   
-
+  
   BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
   Status=gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);
   if(!EFI_ERROR(Status))
   {
     xf = ScanXSDT(HPET_SIGN);
     if(!xf) { //we want to make the new table if OEM is not found
-        DBG("HPET creation\n");
+      DBG("HPET creation\n");
       Hpet = (EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER*)(UINTN)BufferPtr;
       Hpet->Header.Signature = EFI_ACPI_3_0_HIGH_PRECISION_EVENT_TIMER_TABLE_SIGNATURE;
       Hpet->Header.Length = sizeof(EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER);
@@ -589,12 +623,12 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     }
   }
   
-//  DBG("DSDT finding\n");
+  //  DBG("DSDT finding\n");
   if (!Volume) {
     DBG("Volume not found!\n");
     return EFI_NOT_FOUND;
   }
-
+  
   RootDir = Volume->RootDir;
   Status = EFI_NOT_FOUND;
   if (gSettings.UseDSDTmini) {
@@ -609,7 +643,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     DBG("DSDT found in Clover volume OEM folder\n");
     Status = egLoadFile(SelfRootDir, PoolPrint(L"%s%s", AcpiOemPath, PathDsdt), &buffer, &bufferLen);
   }
-    
+  
   if (EFI_ERROR(Status) && FileExists(RootDir, PathDsdt)) {
     DBG("DSDT found in booted volume\n");
     Status = egLoadFile(RootDir, PathDsdt, &buffer, &bufferLen);
@@ -631,7 +665,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     //if success insert dsdt pointer into ACPI tables
     if(!EFI_ERROR(Status))
     {
-//      DBG("page is allocated, write DSDT into\n");
+      //      DBG("page is allocated, write DSDT into\n");
       CopyMem((VOID*)(UINTN)dsdt, buffer, bufferLen);
       
       FadtPointer->Dsdt  = (UINT32)dsdt;
@@ -649,7 +683,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     DropTableFromRSDT(XXXX_SIGN);
     DropTableFromXSDT(XXXX_SIGN);
   }
-
+  
   
   //find other ACPI tables
   for (Index = 0; Index < NUM_TABLES; Index++) {

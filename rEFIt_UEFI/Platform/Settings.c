@@ -889,3 +889,113 @@ EFI_STATUS SaveSettings()
          DivU64x32(gCPUStructure.CPUFrequency, Mega));
   return EFI_SUCCESS;
 }
+
+//dmazar
+EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
+{
+	EFI_STATUS					Status;
+    REFIT_VOLUME                *Volume;
+	FSINJECTION_PROTOCOL		*FSInject;
+    CHAR16                      *OSTypeStr = NULL;
+    CHAR16                      *SrcDir = NULL;
+    
+    MsgLog("FSInjection: ");
+    
+    Volume = Entry->Volume;
+    // some checks?
+    if (Volume->BootType != BOOTING_BY_EFI) {
+        MsgLog("not started - not EFI boot\n");
+        return EFI_UNSUPPORTED;
+    }
+    
+    if (Entry->LoadOptions == NULL || StrStr(Entry->LoadOptions, L"WithKexts") == NULL) {
+        // FS injection not requested
+        MsgLog("not started - booting with cache\n");
+        return EFI_UNSUPPORTED;
+    }
+    
+    // get FSINJECTION_PROTOCOL
+	Status = gBS->LocateProtocol(&gFSInjectProtocolGuid, NULL, (void **)&FSInject);
+	if (EFI_ERROR(Status)) {
+		//Print(L"- No FSINJECTION_PROTOCOL, Status = %r\n", Status);
+        MsgLog("not started - gFSInjectProtocolGuid not found\n");
+		return EFI_NOT_STARTED;
+	}
+    
+    // get os version as string
+    switch (Volume->OSType) {
+        case OSTYPE_TIGER:
+            OSTypeStr = L"10.4";
+            break;
+            
+        case OSTYPE_LEO:
+            OSTypeStr = L"10.5";
+            break;
+            
+        case OSTYPE_SNOW:
+            OSTypeStr = L"10.6";
+            break;
+            
+        case OSTYPE_LION:
+            OSTypeStr = L"10.7";
+            break;
+            
+        case OSTYPE_COUGAR:
+            OSTypeStr = L"10.8";
+            break;
+            
+        default:
+            OSTypeStr = L"Other";
+            break;
+    }
+    MsgLog("OS=%s ", OSTypeStr);
+    
+    // find source injection folder with kexts
+    // note: we are just checking for existance of particular folder, not checking if it is empty or not
+    if (gSettings.OEMProduct != NULL) {
+        // check OEM subfolders: version speciffic or default to Other
+        SrcDir = PoolPrint(L"\\EFI\\OEM\\%a\\kexts\\%s", gSettings.OEMProduct, OSTypeStr);
+        if (!FileExists(SelfVolume->RootDir, SrcDir)) {
+            FreePool(SrcDir);
+            SrcDir = PoolPrint(L"\\EFI\\OEM\\%a\\kexts\\Other", gSettings.OEMProduct);
+            if (!FileExists(SelfVolume->RootDir, SrcDir)) {
+                FreePool(SrcDir);
+                SrcDir = NULL;
+            }
+        }
+    }
+    if (SrcDir == NULL) {
+        // if not found, check EFI\kexts\...
+        SrcDir = PoolPrint(L"\\EFI\\kexts\\%s", OSTypeStr);
+        if (!FileExists(SelfVolume->RootDir, SrcDir)) {
+            FreePool(SrcDir);
+            SrcDir = PoolPrint(L"\\EFI\\kexts\\Other", gSettings.OEMProduct);
+            if (!FileExists(SelfVolume->RootDir, SrcDir)) {
+                FreePool(SrcDir);
+                SrcDir = NULL;
+            }
+        }
+    }
+    
+    if (SrcDir == NULL) {
+        MsgLog("not done - injection kexts folder not found!\n");
+        return EFI_NOT_STARTED;
+    }
+    
+    // we have found it - do the injection
+    MsgLog("Injecting kexts from: '%s' ", SrcDir);
+    //Print(L"FSInjection->Install(%X, %s, %X, %s) ...\n", Volume->DeviceHandle, L"\\system\\library\\extensions", SelfVolume->DeviceHandle, SrcDir);
+    Status = FSInject->Install(Volume->DeviceHandle, L"\\System\\Library\\Extensions", SelfVolume->DeviceHandle, SrcDir, TRUE);
+    FreePool(SrcDir);
+    
+    // reinit Volume->RootDir? it seems it's not needed.
+    
+    if (EFI_ERROR(Status)) {
+        MsgLog("not done - could not install injection!\n");
+        Status = EFI_NOT_STARTED;
+    } else {
+        MsgLog("done!\n");
+    }
+    
+	return Status;
+}

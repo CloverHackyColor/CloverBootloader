@@ -377,6 +377,10 @@
   #IntelFrameworkModulePkg/Universal/LegacyRegionDxe/LegacyRegionDxe.inf
   MdeModulePkg/Universal/LegacyRegion2Dxe/LegacyRegion2Dxe.inf
 
+  #FSInject
+  
+  Clover/FSInject/FSInject.inf
+
   #
   # Sample Application
   #

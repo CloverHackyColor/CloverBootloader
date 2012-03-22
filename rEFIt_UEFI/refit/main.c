@@ -172,7 +172,7 @@ static VOID AboutRefit(VOID)
 //  CHAR8* Revision = NULL;
     if (AboutMenu.EntryCount == 0) {
         AboutMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
-        AddMenuInfoLine(&AboutMenu, L"rEFIt Version 1.02 UEFI by Slice");
+        AddMenuInfoLine(&AboutMenu, L"rEFIt Version 1.03 UEFI by Slice");
 #ifdef FIRMWARE_BUILDDATE
       AddMenuInfoLine(&AboutMenu, PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
 #else
@@ -320,6 +320,9 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   egClearScreen(&DarkBackgroundPixel);
   BeginExternalScreen(Entry->UseGraphicsMode, L"Booting OS");
   
+  SetFSInjection(Entry);
+  //PauseForKey(L"SetFSInjection");
+  
 //  PauseForKey(L"SetPrivateVarProto");
 //  SetPrivateVarProto();
 //  PauseForKey(L"PatchSmbios");
@@ -368,6 +371,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
 
   Entry->me.Row          = 0;
   Entry->Volume = Volume;
+//  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
   if (GlobalConfig.HideBadges == 0 ||
       (GlobalConfig.HideBadges == 1 && Volume->DiskKind != DISK_KIND_INTERNAL))
     Entry->me.BadgeImage   = Volume->VolBadgeImage;
@@ -507,6 +511,17 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->UseGraphicsMode = FALSE;
       SubEntry->LoadOptions     = L"-v -s";
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      
+      SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+      SubEntry->me.Title        = L"Boot Mac OS X with extra kexts (skips cache)";
+      SubEntry->me.Tag          = TAG_LOADER;
+      SubEntry->LoaderPath      = Entry->LoaderPath;
+      SubEntry->Volume          = Entry->Volume;
+      SubEntry->VolName         = Entry->VolName;
+      SubEntry->DevicePath      = Entry->DevicePath;
+      SubEntry->UseGraphicsMode = FALSE;
+      SubEntry->LoadOptions     = L"-v WithKexts";
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
     
     // check for Apple hardware diagnostics
@@ -617,7 +632,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
   return Entry;
 }
-
+/*
 static VOID ScanLoaderDir(IN REFIT_VOLUME *Volume, IN CHAR16 *Path)
 {
   EFI_STATUS              Status;
@@ -649,90 +664,101 @@ static VOID ScanLoaderDir(IN REFIT_VOLUME *Volume, IN CHAR16 *Path)
     CheckError(Status, FileName);
   }
 }
-
+*/
 static VOID ScanLoader(VOID)
 {
- //   EFI_STATUS              Status;
-    UINTN                   VolumeIndex;
-    REFIT_VOLUME            *Volume;
- //   REFIT_DIR_ITER          EfiDirIter;
- //   EFI_FILE_INFO           *EfiDirEntry;
-    CHAR16                  FileName[256];
-    LOADER_ENTRY            *Entry;
+  UINTN                   VolumeIndex;
+  REFIT_VOLUME            *Volume;
+  CHAR16                  FileName[256];
+  LOADER_ENTRY            *Entry;
+  
+  //    Print(L"Scanning for boot loaders...\n");
+  
+  for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
+    Volume = Volumes[VolumeIndex];
+    if (Volume->RootDir == NULL || Volume->VolName == NULL)
+      continue;
     
-//    Print(L"Scanning for boot loaders...\n");
+    // skip volume if its kind is configured as disabled
+    if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_OPTICAL)) ||
+        (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_EXTERNAL)) ||
+        (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_INTERNAL)))
+      continue;
     
-    for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
-        Volume = Volumes[VolumeIndex];
-        if (Volume->RootDir == NULL || Volume->VolName == NULL)
-            continue;
-        
-        // skip volume if its kind is configured as disabled
-        if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_OPTICAL)) ||
-            (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_EXTERNAL)) ||
-            (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_INTERNAL)))
-            continue;
-        
-        // check for Mac OS X boot loader
-        StrCpy(FileName, MACOSX_LOADER_PATH);
-        if (FileExists(Volume->RootDir, FileName)) {
-       //     Print(L"  - Mac OS X boot file found\n");
-          Volume->BootType = BOOTING_BY_EFI;
-          Entry = AddLoaderEntry(FileName, L"Mac OS X", Volume);
-          continue; //boot MacOSX only
-        }
-        
-      // check for Mac OS X Recovery Boot
-      StrCpy(FileName,  L"\\com.apple.recovery.boot\\boot.efi");
-      if (FileExists(Volume->RootDir, FileName)) {
-        Volume->BootType = BOOTING_BY_EFI;
-        Entry = AddLoaderEntry(FileName, L"Recovery", Volume);
-        continue; //boot MacOSX only
-      }
-      
-      // check for XOM - and what?
-    //    StrCpy(FileName, L"\\System\\Library\\CoreServices\\xom.efi");
-        StrCpy(FileName, L"\\EFI\\tools\\xom.efi");
-        if (FileExists(Volume->RootDir, FileName)) {
-            Volume->BootType = BOOTING_BY_EFI;
-            AddLoaderEntry(L"Xom.efi", L"Windows XP ", Volume);
-        }
-        
-        // check for Microsoft boot loader/menu
-        StrCpy(FileName, L"\\EFI\\Microsoft\\Boot\\Bootmgfw.efi");
-        if (FileExists(Volume->RootDir, FileName)) {
-       //     Print(L"  - Microsoft boot menu found\n");
-            Volume->BootType = BOOTING_BY_EFI;
-            AddLoaderEntry(FileName, L"Microsoft EFI boot menu", Volume);
-        }
-        
-        // scan the root directory for EFI executables
-   //     ScanLoaderDir(Volume, NULL);
-        // scan the elilo directory (as used on gimli's first Live CD)
-        ScanLoaderDir(Volume, L"elilo");
-        // scan the boot directory
-  //      ScanLoaderDir(Volume, L"boot");
-        
-        // scan subdirectories of the EFI directory (as per the standard)
-/*        DirIterOpen(Volume->RootDir, L"EFI", &EfiDirIter);
-        while (DirIterNext(&EfiDirIter, 1, NULL, &EfiDirEntry)) {
-            if (StriCmp(EfiDirEntry->FileName, L"TOOLS") == 0 ||
-                EfiDirEntry->FileName[0] == '.')
-                continue;   // skip this, doesn't contain boot loaders
-            if (StriCmp(EfiDirEntry->FileName, L"REFIT") == 0 ||
-                StriCmp(EfiDirEntry->FileName, L"REFITL") == 0 ||
-                StriCmp(EfiDirEntry->FileName, L"RESCUE") == 0)
-                continue;   // skip ourselves
-      //      Print(L"  - Directory EFI\\%s found\n", EfiDirEntry->FileName);
-            
-            UnicodeSPrint(FileName, 255, L"EFI\\%s", EfiDirEntry->FileName);
-            ScanLoaderDir(Volume, FileName);
-        }
-        Status = DirIterClose(&EfiDirIter);
-        if (Status != EFI_NOT_FOUND)
-            CheckError(Status, L"while scanning the EFI directory");
- */
+    // check for Mac OS X boot loader
+    StrCpy(FileName, MACOSX_LOADER_PATH);
+    if (FileExists(Volume->RootDir, FileName)) {
+      //     Print(L"  - Mac OS X boot file found\n");
+      Volume->BootType = BOOTING_BY_EFI;
+      Entry = AddLoaderEntry(FileName, L"Mac OS X", Volume);
+      continue; //boot MacOSX only
     }
+    
+    // check for Mac OS X Recovery Boot
+    StrCpy(FileName,  L"\\com.apple.recovery.boot\\boot.efi");
+    if (FileExists(Volume->RootDir, FileName)) {
+      Volume->BootType = BOOTING_BY_EFI;
+      Entry = AddLoaderEntry(FileName, L"Recovery", Volume);
+      continue; //boot MacOSX only
+    }
+    
+    // check for XOM - and what?
+    //    StrCpy(FileName, L"\\System\\Library\\CoreServices\\xom.efi");
+    /*        StrCpy(FileName, L"\\EFI\\tools\\xom.efi");
+     if (FileExists(Volume->RootDir, FileName)) {
+     Volume->BootType = BOOTING_BY_EFI;
+     AddLoaderEntry(L"Xom.efi", L"Windows XP ", Volume);
+     }*/
+    
+    // check for Microsoft boot loader/menu
+    StrCpy(FileName, L"\\EFI\\Microsoft\\BOOT\\bootmgfw.efi");
+    if (FileExists(Volume->RootDir, FileName)) {
+      //     Print(L"  - Microsoft boot menu found\n");
+      Volume->OSType = OSTYPE_WIN;
+      Volume->BootType = BOOTING_BY_EFI;
+      Entry = AddLoaderEntry(FileName, L"Microsoft EFI boot menu", Volume);
+      continue;
+    }
+    
+    // check for Redhat boot loader/menu
+    StrCpy(FileName, L"\\EFI\\BOOT\\RedHat\\grub.efi");
+    if (FileExists(Volume->RootDir, FileName)) {
+      Volume->OSType = OSTYPE_LIN;
+      Volume->BootType = BOOTING_BY_EFI;
+      Entry = AddLoaderEntry(FileName, L"RedHat EFI boot menu", Volume);
+      continue;
+    }
+    // check for Ubuntu boot loader/menu
+    StrCpy(FileName, L"\\EFI\\BOOT\\Ubuntu\\grub.efi");
+    if (FileExists(Volume->RootDir, FileName)) {
+      Volume->OSType = OSTYPE_LIN;
+      Volume->BootType = BOOTING_BY_EFI;
+      Entry = AddLoaderEntry(FileName, L"Ubuntu EFI boot menu", Volume);
+      continue;
+    }
+    
+    // check for OpenSuse boot loader/menu
+    StrCpy(FileName, L"\\EFI\\BOOT\\OpenSuse\\grub.efi");
+    if (FileExists(Volume->RootDir, FileName)) {
+      Volume->OSType = OSTYPE_LIN;
+      Volume->BootType = BOOTING_BY_EFI;
+      Entry = AddLoaderEntry(FileName, L"OpenSuse EFI boot menu", Volume);
+      continue;
+    }
+    
+    //UEFI bootloader XXX 
+#if defined(MDE_CPU_X64)
+    StrCpy(FileName, L"\\EFI\\BOOT\\BOOTX64.efi");
+#else      
+    StrCpy(FileName, L"\\EFI\\BOOT\\BOOTIA32.efi");
+#endif
+    if (FileExists(Volume->RootDir, FileName)) {
+      Volume->OSType = OSTYPE_VAR;
+      Volume->BootType = BOOTING_BY_EFI;
+      AddLoaderEntry(FileName, L"UEFI boot menu", Volume);
+      continue;
+    }
+  }
 }
 
 //
@@ -909,10 +935,12 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
                       (UGAHeight - BootLogoImage->Height) >> 1,
                       &StdBackgroundPixel);
         
-    ExtractLegacyLoaderPaths(DiscoveredPathList, MAX_DISCOVERED_PATHS, LegacyLoaderList);
-    
-    Status = StartEFIImageList(DiscoveredPathList, Entry->LoadOptions, NULL, L"legacy loader", &ErrorInStep);
-    if (Status == EFI_NOT_FOUND) {
+    Status = ExtractLegacyLoaderPaths(DiscoveredPathList, MAX_DISCOVERED_PATHS, LegacyLoaderList);
+    if (!EFI_ERROR(Status)) {
+      Status = StartEFIImageList(DiscoveredPathList, Entry->LoadOptions, NULL, L"legacy loader", &ErrorInStep);
+
+    }
+    if (EFI_ERROR(Status)) {
       //try my LegacyBoot
       switch (Entry->Volume->BootType) {
         case BOOTING_BY_CD:
@@ -968,9 +996,11 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Vo
     Entry->me.Row          = 0;
     Entry->me.ShortcutLetter = ShortcutLetter;
     Entry->me.Image        = LoadOSIcon(Volume->OSIconName, L"legacy", FALSE);
+  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
+  DBG("Title=%s OSName=%s OSIconName=%s\n", LoaderTitle, Volume->OSName, Volume->OSIconName);
     if (GlobalConfig.HideBadges == 0 ||
         (GlobalConfig.HideBadges == 1 && Volume->DiskKind != DISK_KIND_INTERNAL))
-        Entry->me.BadgeImage   = Volume->VolBadgeImage;
+        Entry->me.BadgeImage   = egLoadIcon(ThemeDir, PoolPrint(L"icons\\os_%s.icns", Volume->OSIconName), 32);
     Entry->Volume          = Volume;
     Entry->LoadOptions     = (Volume->DiskKind == DISK_KIND_OPTICAL) ? L"CD" :
         ((Volume->DiskKind == DISK_KIND_EXTERNAL) ? L"USB" : L"HD");

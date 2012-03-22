@@ -13,7 +13,7 @@ Copyright (c) 2006 JLA
 #include "Platform.h"
 #include "LegacyBiosThunk.h"
 
-#define DEBUG_LBOOT 0
+#define DEBUG_LBOOT 2
 
 #if DEBUG_LBOOT == 2
 #define DBG(x...) AsciiPrint(x)
@@ -339,12 +339,12 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
 	
 	// No active partitions found?
 	if (!activePartition) {
-		Print(L"HDBoot: No active partitions found.\n");
+		DBG("HDBoot: No active partitions found.\n");
 		Status = EFI_NOT_FOUND;
 		return Status;
 	}
 	
-	DBG(L"HDBoot: Found active partition #%d.\n", partitionIndex);
+	DBG("HDBoot: Found active partition #%d.\n", partitionIndex);
 	
 	// Read the boot sector
 	Status = pDisk->ReadBlocks(pDisk, pDisk->Media->MediaId, activePartition->StartLBA, 512, pBootSector);
@@ -387,8 +387,9 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
 	UINT32              LbaSize		= 0;
 	HARDDRIVE_DEVICE_PATH    *HdPath     = NULL; 
 	EFI_DEVICE_PATH_PROTOCOL    *DevicePath = volume->DevicePath;
-  UINT16                            OldMask;
-  UINT16                            NewMask;
+  UINT16              OldMask;
+  UINT16              NewMask;
+  UINTN               i, j;
   
 	
 	IA32_REGISTER_SET   Regs;
@@ -407,8 +408,10 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
 	}
 	
 	if (HdPath != NULL) {
+    DBG("boot from partition %s\n", DevicePathToStr((EFI_DEVICE_PATH *)HdPath));
 		LbaOffset	= HdPath->PartitionStart;
 		LbaSize		= HdPath->PartitionSize;
+    DBG("starting from 0x%x LBA \n", LbaOffset);
 	} else {
 		return Status;
 	}
@@ -417,31 +420,40 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
 	if (EFI_ERROR(Status)) {
 		return Status;
 	}
+  DBG("gEfiLegacy8259ProtocolGuid found\n");
   mCpu = NULL;
   Status = gBS->LocateProtocol (&gEfiCpuArchProtocolGuid, NULL, (VOID **) &mCpu);
 	if (EFI_ERROR(Status)) {
 		return Status;
 	}
 //  Status = mCpu->EnableInterrupt(mCpu);
-  
+  DBG("gEfiCpuArchProtocolGuid found\n");
   Status = gLegacy8259->GetMask(gLegacy8259, &OldMask, NULL, NULL, NULL);
 	
 	Status = gBS->AllocatePool (EfiBootServicesData,sizeof(THUNK_CONTEXT),(VOID **)&mThunkContext);
 	if (EFI_ERROR (Status)) {
 		return Status;
 	}
+  DBG("Thunk allocated\n");
 	InitializeBiosIntCaller(); //mThunkContext);
 	InitializeInterruptRedirection(); //gLegacy8259);
 	Status = pDisk->ReadBlocks(pDisk, pDisk->Media->MediaId, 0, 512, pBootSector);
+  for (i=0; i<16; i++) {
+    DBG("%04x: ", i*16);
+    for (j=0; j<16; j++) {
+      DBG("%02x ", pBootSector[i*16+j]);
+    }
+    DBG("\n");
+  }
   NewMask = 0x0;
   Status = gLegacy8259->SetMask(gLegacy8259, &NewMask, NULL, NULL, NULL);
 	Status = mCpu->EnableInterrupt(mCpu);
 	CopyMem(pMBR, &tMBR, 16);
 	pMBR->StartLBA = LbaOffset;
 	pMBR->Size = LbaSize;
-		
+  DBG("Ready to start\n");
 	Regs.X.DX = 0x80;
-	Regs.X.SI = 0x7BE;
+	Regs.X.SI = 0x07BE;
 	//Regs.X.ES = EFI_SEGMENT((UINT32) pBootSector);
 	//Regs.X.BX = EFI_OFFSET ((UINT32) pBootSector);
 	LegacyBiosFarCall86(

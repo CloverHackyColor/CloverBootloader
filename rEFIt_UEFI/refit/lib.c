@@ -295,7 +295,7 @@ static UINT8 LegacyLoaderMediaPathData[] = {
 };
 static EFI_DEVICE_PATH *LegacyLoaderMediaPath = (EFI_DEVICE_PATH *)LegacyLoaderMediaPathData;
 
-VOID ExtractLegacyLoaderPaths(EFI_DEVICE_PATH **PathList, UINTN MaxPaths, EFI_DEVICE_PATH **HardcodedPathList)
+EFI_STATUS ExtractLegacyLoaderPaths(EFI_DEVICE_PATH **PathList, UINTN MaxPaths, EFI_DEVICE_PATH **HardcodedPathList)
 {
     EFI_STATUS          Status;
     UINTN               HandleCount = 0;
@@ -319,7 +319,7 @@ VOID ExtractLegacyLoaderPaths(EFI_DEVICE_PATH **PathList, UINTN MaxPaths, EFI_DE
                 PathList[PathCount++] = HardcodedPathList[HardcodedIndex];
         }
         PathList[PathCount] = NULL;
-        return;
+        return Status;
     }
     for (HandleIndex = 0; HandleIndex < HandleCount && PathCount < MaxPaths; HandleIndex++) {
         Handle = Handles[HandleIndex];
@@ -359,6 +359,7 @@ VOID ExtractLegacyLoaderPaths(EFI_DEVICE_PATH **PathList, UINTN MaxPaths, EFI_DE
             PathList[PathCount++] = HardcodedPathList[HardcodedIndex];
     }
     PathList[PathCount] = NULL;
+  return (PathCount > 0)?EFI_SUCCESS:EFI_NOT_FOUND;
 }
 
 //
@@ -368,8 +369,7 @@ VOID ExtractLegacyLoaderPaths(EFI_DEVICE_PATH **PathList, UINTN MaxPaths, EFI_DE
 static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootable)
 {
     EFI_STATUS              Status;
-//    UINT8                   SectorBuffer[2048];
-  UINT8                   *SectorBuffer;
+    UINT8                   *SectorBuffer;
     UINTN                   i;
     MBR_PARTITION_INFO      *MbrTable;
     BOOLEAN                 MbrTableFound;
@@ -383,10 +383,10 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
     
     if (Volume->BlockIO == NULL)
         return;
-  BlockSize = Volume->BlockIO->Media->BlockSize;
+    BlockSize = Volume->BlockIO->Media->BlockSize;
     if (BlockSize > 2048)
         return;   // our buffer is too small...
-  SectorBuffer = AllocateAlignedPages(EFI_SIZE_TO_PAGES (2048), 16); //align to 16 byte?!
+    SectorBuffer = AllocateAlignedPages(EFI_SIZE_TO_PAGES (2048), 16); //align to 16 byte?!
     // look at the boot sector (this is used for both hard disks and El Torito images!)
     Status = Volume->BlockIO->ReadBlocks(Volume->BlockIO, Volume->BlockIO->Media->MediaId,
                                          Volume->BlockIOOffset /*start lba*/,
@@ -428,11 +428,16 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
 					}
 				}				
         
-      } else { //HDD
+      }
+      else { //HDD
         if (*((UINT16 *)(SectorBuffer + 510)) == 0xaa55 && SectorBuffer[0] != 0) {
           *Bootable = TRUE;
           Volume->HasBootCode = TRUE;
       //    DBG("The volume has bootcode\n");
+          Volume->OSIconName = L"legacy";
+          Volume->OSName = L"Legacy";
+          Volume->OSType = OSTYPE_VAR;
+          Volume->BootType = BOOTING_BY_PBR;
         }
         
         // detect specific boot codes
@@ -444,7 +449,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
           Volume->OSIconName = L"linux";
           Volume->OSName = L"Linux";
           Volume->OSType = OSTYPE_LIN;
-          Volume->BootType = BOOTING_BY_EFI;
+          Volume->BootType = BOOTING_BY_PBR;
 
           
         } else if (FindMem(SectorBuffer, 512, "Geom\0Hard Disk\0Read\0 Error", 26) >= 0) {   // GRUB
@@ -452,7 +457,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
           Volume->OSIconName = L"grub,linux";
           Volume->OSName = L"Linux";
           
-        } else if ((*((UINT32 *)(SectorBuffer)) == 0x8ec031fa &&
+ /*       } else if ((*((UINT32 *)(SectorBuffer)) == 0x8ec031fa &&
                     *((UINT16 *)(SectorBuffer + 510)) == 0xaa55) ||
                    FindMem(SectorBuffer, 2048, "boot      ", 10) >= 0) {
           Volume->HasBootCode = TRUE;
@@ -460,7 +465,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
           Volume->OSName = L"MacOSX";
           Volume->OSType = OSTYPE_OSX;
           Volume->BootType = BOOTING_BY_EFI;
-   //       DBG("Detected MacOSX HFS+ bootcode\n");
+   //       DBG("Detected MacOSX HFS+ bootcode\n"); */
 
         } else if ((*((UINT32 *)(SectorBuffer)) == 0x4d0062e9 &&
                     *((UINT16 *)(SectorBuffer + 510)) == 0xaa55) ||
@@ -510,10 +515,10 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
           
         } else if (FindMem(SectorBuffer, 2048, "BOOTMGR", 7) >= 0) {
           Volume->HasBootCode = TRUE;
-          Volume->OSIconName = L"winvista,win";
+          Volume->OSIconName = L"vista";
           Volume->OSName = L"Windows";
           Volume->OSType = OSTYPE_WIN;
-          Volume->BootType = BOOTING_BY_EFI;
+          Volume->BootType = BOOTING_BY_PBR;
           
         } else if (FindMem(SectorBuffer, 512, "CPUBOOT SYS", 11) >= 0 ||
                    FindMem(SectorBuffer, 512, "KERNEL  SYS", 11) >= 0) {
@@ -540,7 +545,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
           
         } else if (FindMem(SectorBuffer, 512, "yT Boot Loader", 14) >= 0) {
           Volume->HasBootCode = TRUE;
-          Volume->OSIconName = L"zeta,beos";
+          Volume->OSIconName = L"zeta";
           Volume->OSName = L"ZETA";
           Volume->OSType = OSTYPE_VAR;
           Volume->BootType = BOOTING_BY_PBR;
@@ -548,20 +553,11 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
         } else if (FindMem(SectorBuffer, 512, "\x04" "beos\x06" "system\x05" "zbeos", 18) >= 0 ||
                    FindMem(SectorBuffer, 512, "\x06" "system\x0c" "haiku_loader", 20) >= 0) {
           Volume->HasBootCode = TRUE;
-          Volume->OSIconName = L"haiku,beos";
+          Volume->OSIconName = L"haiku";
           Volume->OSName = L"Haiku";
           Volume->OSType = OSTYPE_VAR;
-          Volume->BootType = BOOTING_BY_PBR;
-          
-        } else {
-          DBG("unknown bootcode %x\n", *(UINT32*)&SectorBuffer[0]);
-          Volume->HasBootCode = FALSE;
-          Volume->OSIconName = L"clover";
-          Volume->OSName = L"Unknown";
-          Volume->OSType = OSTYPE_VAR;
           Volume->BootType = BOOTING_BY_PBR;          
-        }
-      
+      }
       }
       
       if (Volume->OSIconName) {
@@ -597,14 +593,10 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
             if (MbrTableFound) {
                 Volume->MbrPartitionTable = AllocatePool(4 * 16);
                 CopyMem(Volume->MbrPartitionTable, MbrTable, 4 * 16);
+                Volume->BootType = BOOTING_BY_MBR;
             }
         }
-        
-    } /*else {
-#if REFIT_DEBUG > 0
-        CheckError(Status, L"while reading boot sector");
-#endif
-    } */
+    }
 }
 
 static VOID ScanVolumeDefaultIcon(IN OUT REFIT_VOLUME *Volume)
