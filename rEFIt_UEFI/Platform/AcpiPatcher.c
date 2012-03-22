@@ -494,7 +494,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
         CopyMem ((VOID*)pEntryX, (VOID*)pEntryR, sizeof(UINT32));
         pEntryR++;pEntryX++;
       }
-      RsdPointer->XsdtAddress = (UINT64)Xsdt;
+      RsdPointer->XsdtAddress = (UINT64)(UINTN)Xsdt;
       //      Print(L"XSDT = 0x%x\n\r", (XSDT_TABLE*)(UINTN)RsdPointer->XsdtAddress);
       RsdPointer->Checksum = 0;
       RsdPointer->Checksum = (UINT8)(256-Checksum8((CHAR8*)RsdPointer, 20));
