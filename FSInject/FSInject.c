@@ -389,12 +389,14 @@ FSI_FP_Open(
             StriStartsWithBasic(NewFName, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\kernelcache")
             || StriStartsWithBasic(NewFName, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\Extensions.mkext")
             || StriStartsWithBasic(NewFName, L"\\System\\Library\\Extensions.mkext")
+            || StriStartsWithBasic(NewFName, L"\\com.apple.recovery.boot\\kernelcache")
+            || StriStartsWithBasic(NewFName, L"\\com.apple.recovery.boot\\Extensions.mkext")
             ) {
             return EFI_NOT_FOUND;
         }
     }
 	
-	// craete our FP implementation
+	// create our FP implementation
 	FSINew = CreateFSInjectFP();
 	if (FSINew == NULL) {
 		Status = EFI_OUT_OF_RESOURCES;

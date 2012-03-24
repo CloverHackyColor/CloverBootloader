@@ -231,7 +231,7 @@ VOID egDrawImageArea(IN EG_IMAGE *Image,
 
 EFI_STATUS egScreenShot(VOID)
 {
-    EFI_STATUS      Status;
+    EFI_STATUS      Status = EFI_NOT_READY;
     EG_IMAGE        *Image;
     UINT8           *FileData;
     UINTN           FileDataLength;
