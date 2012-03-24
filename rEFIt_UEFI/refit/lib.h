@@ -343,6 +343,7 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id);
 #define MENU_EXIT_DETAILS (3)
 #define MENU_EXIT_TIMEOUT (4)
 #define MENU_EXIT_OPTIONS (5)
+#define MENU_EXIT_EJECT   (6)
 
 #define TAG_RETURN       (99)
 

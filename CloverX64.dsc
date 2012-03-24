@@ -270,8 +270,8 @@
   }
   #MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
   Clover/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
-  #Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
-  UefiCpuPkg/CpuDxe/CpuDxe.inf
+  Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
+  #UefiCpuPkg/CpuDxe/CpuDxe.inf
   Clover/CpuDxe/Cpu.inf
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
   #DuetPkg/AcpiResetDxe/Reset.inf
@@ -315,14 +315,14 @@
   #Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
   #Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
   Clover/SataControllerDxe/SataControllerDxe.inf
-  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
-  #Clover/AtaAtapi/AtaAtapiPassThru.inf
-  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
-  #Clover/AtaBus/AtaBusDxe.inf
-  MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
-  #Clover/DVDBus/ScsiBusDxe.inf
-  MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
-  #Clover/DVDDisk/ScsiDiskDxe.inf
+  #MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
+  Clover/AtaAtapi/AtaAtapiPassThru.inf
+  #MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
+  Clover/AtaBus/AtaBusDxe.inf
+  #MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
+  Clover/DVDBus/ScsiBusDxe.inf
+  #MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
+  Clover/DVDDisk/ScsiDiskDxe.inf
   #IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
 
   # Usb Support

@@ -265,24 +265,31 @@ EFI_STATUS egScreenShot(VOID)
         Print(L"Error egEncodeBMP returned NULL\n");
         return EFI_NO_MEDIA;
     }
-    
-    // save to file on the ESP
-    Status = egSaveFile(NULL, L"screenshot.bmp", FileData, FileDataLength);
-    if (EFI_ERROR(Status)) {
-      for (Index=0; Index < 20; Index++) {
-        UnicodeSPrint(ScreenshotName, 128, L"EFI\\misc\\screenshot%d.bmp", Index);
-        if(!FileExists(SelfRootDir, ScreenshotName)){
-          Status = egSaveFile(SelfRootDir, ScreenshotName, FileData, FileDataLength);
-          if (!EFI_ERROR(Status)) {
-            break;
-          }				
-        }
-      }
-      
-      CheckError(Status, L"Error egSaveFile\n");
+  
+  for (Index=0; Index < 20; Index++) {
+    UnicodeSPrint(ScreenshotName, 128, L"EFI\\misc\\screenshot%d.bmp", Index);
+    if(!FileExists(SelfRootDir, ScreenshotName)){
+      Status = egSaveFile(SelfRootDir, ScreenshotName, FileData, FileDataLength);
+      if (!EFI_ERROR(Status)) {
+        break;
+      }		
     }
-    FreePool(FileData);    
-    return Status;
+  }
+  // else save to file on the ESP
+  if (EFI_ERROR(Status)) {
+    for (Index=0; Index < 20; Index++) {
+      UnicodeSPrint(ScreenshotName, 128, L"EFI\\misc\\screenshot%d.bmp", Index);
+//     if(!FileExists(NULL, ScreenshotName)){
+        Status = egSaveFile(NULL, ScreenshotName, FileData, FileDataLength);
+        if (!EFI_ERROR(Status)) {
+          break;
+        }		
+//      }
+    }
+    CheckError(Status, L"Error egSaveFile\n");
+  }
+  FreePool(FileData);    
+  return Status;
 }
 
 /* EOF */

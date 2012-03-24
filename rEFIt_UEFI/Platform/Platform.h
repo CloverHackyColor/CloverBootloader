@@ -421,6 +421,7 @@ typedef struct {
 	CHAR8	BoardSerialNumber[64];
 	CHAR8	BoardNumber[64]; //Board-ID
 	CHAR8	LocationInChassis[64];
+  CHAR8 BoardVersion[64];
 	// SMBIOS TYPE3
   BOOLEAN Mobile;
 	CHAR8	ChassisManufacturer[64];

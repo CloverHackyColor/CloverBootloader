@@ -198,6 +198,7 @@ VOID GetDefaultSettings(VOID)
 	AsciiStrCpy(gSettings.BoardManufactureName,   BiosVendor);
   AsciiStrCpy(gSettings.BoardSerialNumber,      AppleBoardSN);
 	AsciiStrCpy(gSettings.BoardNumber,            AppleBoardID[Model]);
+  AsciiStrCpy(gSettings.BoardVersion,           AppleSystemVersion[Model]);
 	AsciiStrCpy(gSettings.LocationInChassis,      AppleBoardLocation);
 	AsciiStrCpy(gSettings.ChassisManufacturer,    BiosVendor);
 	AsciiStrCpy(gSettings.ChassisAssetTag,        AppleChassisAsset[Model]);

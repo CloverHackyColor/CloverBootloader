@@ -452,8 +452,8 @@ VOID PatchTableType2()
 	if(iStrLen(gSettings.BoardNumber, 64)>0){
 		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type2->ProductName, gSettings.BoardNumber);
 	}
-	if(iStrLen( gSettings.VersionNr, 64)>0){
-		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type2->Version, gSettings.VersionNr);
+	if(iStrLen( gSettings.BoardVersion, 64)>0){
+		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type2->Version, gSettings.BoardVersion);
 	}	
 	if(iStrLen(gSettings.BoardSerialNumber, 64)>0){
 		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type2->SerialNumber, gSettings.BoardSerialNumber);

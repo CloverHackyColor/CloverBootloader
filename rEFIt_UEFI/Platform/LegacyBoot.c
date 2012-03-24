@@ -379,17 +379,17 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
 
 EFI_STATUS bootPBR(REFIT_VOLUME* volume) 
 {
-	EFI_STATUS					Status		= EFI_NOT_FOUND;
-	EFI_BLOCK_IO*				pDisk     = volume->BlockIO;
-	UINT8*              pBootSector	= (UINT8*)0x7C00;
+	EFI_STATUS                  Status		= EFI_NOT_FOUND;
+	EFI_BLOCK_IO*               pDisk     = volume->BlockIO;
+	UINT8*                      pBootSector	= (UINT8*)0x7C00;
 	MBR_PARTITION_INFO*					pMBR      = (MBR_PARTITION_INFO*)0x7BE;
-	UINT32              LbaOffset	= 0;
-	UINT32              LbaSize		= 0;
-	HARDDRIVE_DEVICE_PATH    *HdPath     = NULL; 
+	UINT32                      LbaOffset	= 0;
+	UINT32                      LbaSize		= 0;
+	HARDDRIVE_DEVICE_PATH       *HdPath     = NULL; 
 	EFI_DEVICE_PATH_PROTOCOL    *DevicePath = volume->DevicePath;
-  UINT16              OldMask;
-  UINT16              NewMask;
-  UINTN               i, j;
+  UINT16                      OldMask;
+  UINT16                      NewMask;
+  UINTN                       i, j;  //for debug dump
   
 	
 	IA32_REGISTER_SET   Regs;
@@ -437,7 +437,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
   DBG("Thunk allocated\n");
 	InitializeBiosIntCaller(); //mThunkContext);
 	InitializeInterruptRedirection(); //gLegacy8259);
-	Status = pDisk->ReadBlocks(pDisk, pDisk->Media->MediaId, 0, 512, pBootSector);
+	Status = pDisk->ReadBlocks(pDisk, pDisk->Media->MediaId, 0, 1024, pBootSector);
   for (i=0; i<16; i++) {
     DBG("%04x: ", i*16);
     for (j=0; j<16; j++) {

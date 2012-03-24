@@ -420,10 +420,17 @@ static UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC Sty
             case SCAN_F2:
               LogSize = msgCursor - msgbuf;
               Status = egSaveFile(SelfRootDir, L"EFI\\misc\\preboot.log", (UINT8*)msgbuf, LogSize);
+              if (EFI_ERROR(Status)) {
+                Status = egSaveFile(NULL, L"EFI\\misc\\preboot.log", (UINT8*)msgbuf, LogSize);
+              }
               break;
             case SCAN_F10:
                 egScreenShot();
                 break;
+            case SCAN_F12:
+              MenuExit = MENU_EXIT_EJECT;
+              break;
+
         }
         switch (key.UnicodeChar) {
             case CHAR_LINEFEED:

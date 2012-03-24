@@ -360,24 +360,24 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 	EFI_PHYSICAL_ADDRESS		dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
 	EFI_PHYSICAL_ADDRESS		BufferPtr;
   SSDT_TABLE    				*Ssdt = NULL;
-	UINT8                       *buffer = NULL;
-	UINTN        				bufferLen = 0;
-	CHAR16*						PathPatched   = L"\\EFI\\ACPI\\patched";
-	CHAR16*						PathDsdt      = L"\\DSDT.aml";
-  CHAR16*						PathDsdtMini  = L"\\EFI\\ACPI\\mini\\DSDT.aml";
+	UINT8                 *buffer = NULL;
+	UINTN        				  bufferLen = 0;
+	CHAR16*               PathPatched   = L"\\EFI\\ACPI\\patched";
+	CHAR16*               PathDsdt      = L"\\DSDT.aml";
+  CHAR16*               PathDsdtMini  = L"\\EFI\\ACPI\\mini\\DSDT.aml";
   //	CHAR16*						path = NULL;
-	UINT32*      	 			rf = NULL;
+	UINT32*      	 			  rf = NULL;
 	UINT64*       				xf = NULL;
   UINT64        				XDsdt; //save values if present
  	UINT64        				BiosDsdt;
   UINT64        				XFirmwareCtrl;
   EFI_FILE      				*RootDir;
-  UINT32                                            eCntR; //, eCntX;
-  UINT32                                            *pEntryR;
-  UINT64                                            *pEntryX;
+  UINT32                eCntR; //, eCntX;
+  UINT32                *pEntryR;
+  UINT64                *pEntryX;
   
   
-  CHAR16*     AcpiOemPath = PoolPrint(L"EFI\\OEM\\%a\\ACPI", gSettings.OEMProduct);
+  CHAR16*     AcpiOemPath = PoolPrint(L"EFI\\OEM\\%a\\ACPI\\patched", gSettings.OEMProduct);
 	
 	//Slice - I want to begin from BIOS ACPI tables like with SMBIOS
 	RsdPointer = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)FindAcpiRsdPtr();

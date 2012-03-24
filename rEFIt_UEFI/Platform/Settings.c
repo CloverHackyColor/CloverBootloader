@@ -463,6 +463,11 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       {
         AsciiStrCpy(gSettings.BoardNumber, prop->string);
       }
+      prop = GetProperty(dictPointer,"BoardVersion");
+      if(prop)
+      {
+        AsciiStrCpy(gSettings.BoardVersion, prop->string);
+      }
       
       prop = GetProperty(dictPointer,"Mobile");
       if(prop)

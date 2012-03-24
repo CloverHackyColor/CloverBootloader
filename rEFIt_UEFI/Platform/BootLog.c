@@ -31,6 +31,9 @@ EFI_STATUS SetupBooterLog(VOID)
 	LogSize  = msgCursor - msgbuf;
 	Status =  LogDataHub(&gEfiMiscSubClassGuid, L"boot-log", msgbuf, LogSize);
   Status = egSaveFile(SelfRootDir, BootLogName, (UINT8*)msgbuf, LogSize);
+  if (EFI_ERROR(Status)) {
+    Status = egSaveFile(NULL, BootLogName, (UINT8*)msgbuf, LogSize);
+  }
    
 	return Status;
 }
