@@ -38,12 +38,26 @@
 
 #include "egemb_back_selected_small.h"
 
+
+#define DEBUG_MENU 0
+
+#if DEBUG_MENU == 2
+#define DBG(x...) AsciiPrint(x)
+#elif DEBUG_MENU == 1
+#define DBG(x...) MsgLog(x)
+#else
+#define DBG(x...)
+#endif
+
 // scrolling definitions
 
+static INTN MaxItemOnScreen = -1;
+
 typedef struct {
-    INTN CurrentSelection, LastSelection, MaxIndex;
-    INTN FirstVisible, LastVisible, MaxVisible, MaxFirstVisible;
-    BOOLEAN IsScrolling, PaintAll, PaintSelection;
+  INTN    CurrentSelection, LastSelection;
+  INTN    MaxScroll, MaxIndex;
+  INTN    FirstVisible, LastVisible, MaxVisible, MaxFirstVisible;
+  BOOLEAN IsScrolling, PaintAll, PaintSelection;
 } SCROLL_STATE;
 
 #define SCROLL_LINE_UP    (0)
@@ -76,10 +90,17 @@ static CHAR16 ArrowDown[2] = { ARROW_DOWN, 0 };
 #define ROW1_TILESIZE (64)
 #define TILE_XSPACING (8)
 #define TILE_YSPACING (16)
+#define ROW0_SCROLLSIZE (100)
 
 static EG_IMAGE *SelectionImages[4] = { NULL, NULL, NULL, NULL };
 static EG_PIXEL SelectionBackgroundPixel = { 0xff, 0xff, 0xff, 0 };
 static EG_IMAGE *TextBuffer = NULL;
+
+static UINTN row0Count, row0PosX, row0PosXRunning;
+static UINTN row1Count, row1PosX, row1PosXRunning;
+static UINTN *itemPosX;
+static UINTN row0PosY, row1PosY, textPosY;
+
 
 //
 // Graphics helper functions
@@ -152,26 +173,32 @@ static VOID InitSelection(VOID)
 //
 // Scrolling functions
 //
+#define CONSTRAIN_MIN(Variable, MinValue) if (Variable < MinValue) Variable = MinValue
+#define CONSTRAIN_MAX(Variable, MaxValue) if (Variable > MaxValue) Variable = MaxValue
 
-static VOID InitScroll(OUT SCROLL_STATE *State, IN UINTN ItemCount, IN UINTN VisibleSpace)
+static VOID InitScroll(OUT SCROLL_STATE *State, IN UINTN ItemCount, IN UINTN MaxCount, IN UINTN VisibleSpace)
 {
-    State->LastSelection = State->CurrentSelection = 0;
-    State->MaxIndex = (INTN)ItemCount - 1;
-    State->FirstVisible = 0;
-    if (VisibleSpace == 0)
-        State->MaxVisible = State->MaxIndex;
-    else
-        State->MaxVisible = (INTN)VisibleSpace - 1;
-    State->MaxFirstVisible = State->MaxIndex - State->MaxVisible;
-    if (State->MaxFirstVisible < 0)
-        State->MaxFirstVisible = 0;   // non-scrolling case
-    State->IsScrolling = (State->MaxFirstVisible > 0) ? TRUE : FALSE;
-    State->PaintAll = TRUE;
-    State->PaintSelection = FALSE;
-    
-    State->LastVisible = State->FirstVisible + State->MaxVisible;
-    
-    // TODO: use more sane values for the non-scrolling case
+  State->LastSelection = State->CurrentSelection = 0;
+  State->MaxIndex = (INTN)MaxCount - 1;
+  State->MaxScroll = (INTN)ItemCount - 1;
+  State->FirstVisible = 0;
+  
+  if (VisibleSpace == 0)
+    State->MaxVisible = State->MaxScroll;
+  else
+    State->MaxVisible = (INTN)VisibleSpace - 1;
+  
+  State->MaxFirstVisible = State->MaxScroll - State->MaxVisible;
+  CONSTRAIN_MIN(State->MaxFirstVisible, 0);
+  
+  State->IsScrolling = (State->MaxFirstVisible > 0);
+  State->PaintAll = TRUE;
+  State->PaintSelection = FALSE;
+  
+  State->LastVisible = State->FirstVisible + State->MaxVisible;
+  DBG("InitScroll: MaxIndex=%d, FirstVisible=%d, MaxVisible=%d, MaxFirstVisible=%d\n",
+      State->MaxIndex, State->FirstVisible, State->MaxVisible, State->MaxFirstVisible);
+  // 14 0 7 2 => MaxScroll = 9 ItemCount=10 MaxCount=15
 }
 
 #define CONSTRAIN_MIN(Variable, MinValue) if (Variable < MinValue) Variable = MinValue
@@ -179,106 +206,134 @@ static VOID InitScroll(OUT SCROLL_STATE *State, IN UINTN ItemCount, IN UINTN Vis
 
 static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
 {
-    State->LastSelection = State->CurrentSelection;
-    
-    switch (Movement) {
-        case SCROLL_LINE_UP:
-            if (State->CurrentSelection > 0) {
-                State->CurrentSelection --;
-                if (State->CurrentSelection < State->FirstVisible) {
-                    State->PaintAll = TRUE;
-                    State->FirstVisible = State->CurrentSelection - (State->MaxVisible >> 1);
-                    CONSTRAIN_MIN(State->FirstVisible, 0);
-                }
-            }
-            break;
-            
-        case SCROLL_LINE_DOWN:
-            if (State->CurrentSelection < State->MaxIndex) {
-                State->CurrentSelection ++;
-                if (State->CurrentSelection > State->LastVisible) {
-                    State->PaintAll = TRUE;
-                    State->FirstVisible = State->CurrentSelection - (State->MaxVisible >> 1);
-                    CONSTRAIN_MAX(State->FirstVisible, State->MaxFirstVisible);
-                }
-            }
-            break;
-            
-        case SCROLL_PAGE_UP:
-            if (State->CurrentSelection > 0) {
-                if (State->CurrentSelection == State->MaxIndex) {   // currently at last entry, special treatment
-                    if (State->IsScrolling)
-                        State->CurrentSelection -= State->MaxVisible - 1;  // move to second line without scrolling
-                    else
-                        State->CurrentSelection = 0;                // move to first entry
-                } else {
-                    if (State->FirstVisible > 0)
-                        State->PaintAll = TRUE;
-                    State->CurrentSelection -= State->MaxVisible;          // move one page and scroll synchronously
-                    State->FirstVisible -= State->MaxVisible;
-                }
-                CONSTRAIN_MIN(State->CurrentSelection, 0);
-                CONSTRAIN_MIN(State->FirstVisible, 0);
-            }
-            break;
-            
-        case SCROLL_PAGE_DOWN:
-            if (State->CurrentSelection < State->MaxIndex) {
-                if (State->CurrentSelection == 0) {   // currently at first entry, special treatment
-                    if (State->IsScrolling)
-                        State->CurrentSelection += State->MaxVisible - 1;  // move to second-to-last line without scrolling
-                    else
-                        State->CurrentSelection = State->MaxIndex;         // move to last entry
-                } else {
-                    if (State->FirstVisible < State->MaxFirstVisible)
-                        State->PaintAll = TRUE;
-                    State->CurrentSelection += State->MaxVisible;          // move one page and scroll synchronously
-                    State->FirstVisible += State->MaxVisible;
-                }
-                CONSTRAIN_MAX(State->CurrentSelection, State->MaxIndex);
-                CONSTRAIN_MAX(State->FirstVisible, State->MaxFirstVisible);
-            }
-            break;
-            
-        case SCROLL_FIRST:
-            if (State->CurrentSelection > 0) {
-                State->CurrentSelection = 0;
-                if (State->FirstVisible > 0) {
-                    State->PaintAll = TRUE;
-                    State->FirstVisible = 0;
-                }
-            }
-            break;
-            
-        case SCROLL_LAST:
-            if (State->CurrentSelection < State->MaxIndex) {
-                State->CurrentSelection = State->MaxIndex;
-                if (State->FirstVisible < State->MaxFirstVisible) {
-                    State->PaintAll = TRUE;
-                    State->FirstVisible = State->MaxFirstVisible;
-                }
-            }
-            break;
-            
-        case SCROLL_NONE:
-            // The caller has already updated CurrentSelection, but we may
-            // have to scroll to make it visible.
-            if (State->CurrentSelection < State->FirstVisible) {
-                State->PaintAll = TRUE;
-                State->FirstVisible = State->CurrentSelection - (State->MaxVisible >> 1);
-                CONSTRAIN_MIN(State->FirstVisible, 0);
-            } else if (State->CurrentSelection > State->LastVisible) {
-                State->PaintAll = TRUE;
-                State->FirstVisible = State->CurrentSelection - (State->MaxVisible >> 1);
-                CONSTRAIN_MAX(State->FirstVisible, State->MaxFirstVisible);
-            }
-            break;
-            
-    }
-    
-    if (!State->PaintAll && State->CurrentSelection != State->LastSelection)
-        State->PaintSelection = TRUE;
-    State->LastVisible = State->FirstVisible + State->MaxVisible;
+  State->LastSelection = State->CurrentSelection;
+  DBG("UpdateScroll on %d\n", Movement);
+  switch (Movement) {
+    case SCROLL_LINE_UP: //of left = decrement
+      if (State->CurrentSelection > 0) {
+        State->CurrentSelection --;
+        if (State->CurrentSelection < State->FirstVisible) {
+          State->PaintAll = TRUE;
+          State->FirstVisible = State->CurrentSelection; // - (State->MaxVisible >> 1);
+          //      CONSTRAIN_MIN(State->FirstVisible, 0);
+        }
+        if (State->CurrentSelection == State->MaxScroll) {
+          State->PaintAll = TRUE;
+        }
+        if ((State->CurrentSelection < State->MaxScroll) && 
+             (State->CurrentSelection > State->LastVisible)) {
+          State->PaintAll = TRUE;
+          State->LastVisible = State->CurrentSelection;
+          State->FirstVisible = State->LastVisible - State->MaxVisible;
+        }
+      }
+      break;
+      
+    case SCROLL_LINE_DOWN: //or right -- increment
+      if (State->CurrentSelection < State->MaxIndex) {
+        State->CurrentSelection++;
+        if ((State->CurrentSelection > State->LastVisible) &&
+            (State->CurrentSelection <= State->MaxScroll)){
+          State->PaintAll = TRUE;
+          State->FirstVisible++;
+          CONSTRAIN_MAX(State->FirstVisible, State->MaxFirstVisible);
+        }
+        if (State->CurrentSelection == State->MaxScroll + 1) {
+          State->PaintAll = TRUE;
+        }        
+      }
+      break;
+      
+    case SCROLL_PAGE_UP:
+      if (State->CurrentSelection > 0) {
+        if (State->CurrentSelection == State->MaxIndex) {   // currently at last entry, special treatment
+          if (State->IsScrolling)
+            State->CurrentSelection -= State->MaxVisible - 1;  // move to second line without scrolling
+          else
+            State->CurrentSelection = 0;                // move to first entry
+        } else {
+          if (State->FirstVisible > 0)
+            State->PaintAll = TRUE;
+          State->CurrentSelection -= State->MaxVisible;          // move one page and scroll synchronously
+          State->FirstVisible -= State->MaxVisible;
+        }
+        CONSTRAIN_MIN(State->CurrentSelection, 0);
+        CONSTRAIN_MIN(State->FirstVisible, 0);
+        if (State->CurrentSelection < State->FirstVisible) {
+          State->PaintAll = TRUE;
+          State->FirstVisible = State->CurrentSelection; 
+        }        
+      }
+      break;
+      
+    case SCROLL_PAGE_DOWN:
+      if (State->CurrentSelection < State->MaxIndex) {
+        if (State->CurrentSelection == 0) {   // currently at first entry, special treatment
+          if (State->IsScrolling)
+            State->CurrentSelection += State->MaxVisible - 1;  // move to second-to-last line without scrolling
+          else
+            State->CurrentSelection = State->MaxIndex;         // move to last entry
+        } else {
+          if (State->FirstVisible < State->MaxFirstVisible)
+            State->PaintAll = TRUE;
+          State->CurrentSelection += State->MaxVisible;          // move one page and scroll synchronously
+          State->FirstVisible += State->MaxVisible;
+        }
+        CONSTRAIN_MAX(State->CurrentSelection, State->MaxIndex);
+        CONSTRAIN_MAX(State->FirstVisible, State->MaxFirstVisible);
+        if ((State->CurrentSelection > State->LastVisible) &&
+            (State->CurrentSelection <= State->MaxScroll)){
+          State->PaintAll = TRUE;
+          State->FirstVisible+= State->MaxVisible;
+          CONSTRAIN_MAX(State->FirstVisible, State->MaxFirstVisible);
+        }
+        
+      }
+      break;
+      
+    case SCROLL_FIRST:
+      if (State->CurrentSelection > 0) {
+        State->CurrentSelection = 0;
+        if (State->FirstVisible > 0) {
+          State->PaintAll = TRUE;
+          State->FirstVisible = 0;
+        }
+      }
+      break;
+      
+    case SCROLL_LAST:
+      if (State->CurrentSelection < State->MaxIndex) {
+        State->CurrentSelection = State->MaxIndex;
+        if (State->FirstVisible < State->MaxFirstVisible) {
+          State->PaintAll = TRUE;
+          State->FirstVisible = State->MaxFirstVisible;
+        }
+      }
+      break;
+      
+    case SCROLL_NONE:
+      // The caller has already updated CurrentSelection, but we may
+      // have to scroll to make it visible.
+      if (State->CurrentSelection < State->FirstVisible) {
+        State->PaintAll = TRUE;
+        State->FirstVisible = State->CurrentSelection; // - (State->MaxVisible >> 1);
+        CONSTRAIN_MIN(State->FirstVisible, 0);
+      } else if ((State->CurrentSelection > State->LastVisible) &&
+                 (State->CurrentSelection <= State->MaxScroll)) {
+        State->PaintAll = TRUE;
+        State->FirstVisible = State->CurrentSelection - State->MaxVisible;
+        CONSTRAIN_MAX(State->FirstVisible, State->MaxFirstVisible);
+      }
+      break;
+      
+  }
+  
+  if (!State->PaintAll && State->CurrentSelection != State->LastSelection)
+    State->PaintSelection = TRUE;
+  State->LastVisible = State->FirstVisible + State->MaxVisible;
+  DBG("Scroll to: CurrentSelection=%d, FirstVisible=%d, LastVisible=%d, LastSelection=%d\n",
+      State->CurrentSelection, State->FirstVisible, State->LastVisible, State->LastSelection);  
+  //result 0 0 4 0
 }
 
 //
@@ -484,7 +539,7 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
             MenuHeight = ConHeight - MenuPosY;
             if (Screen->TimeoutSeconds > 0)
                 MenuHeight -= 2;
-            InitScroll(State, Screen->EntryCount, MenuHeight);
+            InitScroll(State, Screen->EntryCount, Screen->EntryCount, MenuHeight);
             
             // determine width of the menu
             MenuWidth = 20;  // minimum
@@ -608,8 +663,9 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
     switch (Function) {
         
         case MENU_FUNCTION_INIT:
-            InitScroll(State, Screen->EntryCount, 0);    // TODO: calculate available screen space
-            
+        // TODO: calculate available screen space
+        //
+            InitScroll(State, Screen->EntryCount, Screen->EntryCount, 0);              
             // determine width of the menu
             MenuWidth = 20;  // minimum
             for (i = 0; i < (INTN)Screen->InfoLineCount; i++) {
@@ -749,87 +805,115 @@ static VOID DrawMainMenuText(IN CHAR16 *Text, IN UINTN XPos, IN UINTN YPos)
 
 static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
-    INTN i;
-    UINTN row0Count, row0PosX, row0PosXRunning;
-    UINTN row1Count, row1PosX, row1PosXRunning;
-    static UINTN *itemPosX;
-    static UINTN row0PosY, row1PosY, textPosY;
-    
-    switch (Function) {
-        
-        case MENU_FUNCTION_INIT:
-            InitScroll(State, Screen->EntryCount, 0);
-            
-            // layout
-            row0Count = 0;
-            row1Count = 0;
-            for (i = 0; i <= State->MaxIndex; i++) {
-                if (Screen->Entries[i]->Row == 0)
-                    row0Count++;
-                else
-                    row1Count++;
-            }
-            row0PosX = (UGAWidth + TILE_XSPACING - (ROW0_TILESIZE + TILE_XSPACING) * row0Count) >> 1;
-            row0PosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET;
-            row1PosX = (UGAWidth + TILE_XSPACING - (ROW1_TILESIZE + TILE_XSPACING) * row1Count) >> 1;
-            row1PosY = row0PosY + ROW0_TILESIZE + TILE_YSPACING;
-            if (row1Count > 0)
-                textPosY = row1PosY + ROW1_TILESIZE + TILE_YSPACING;
-            else
-                textPosY = row1PosY;
-            
-            itemPosX = AllocatePool(sizeof(UINTN) * Screen->EntryCount);
-            row0PosXRunning = row0PosX;
-            row1PosXRunning = row1PosX;
-            for (i = 0; i <= State->MaxIndex; i++) {
-                if (Screen->Entries[i]->Row == 0) {
-                    itemPosX[i] = row0PosXRunning;
-                    row0PosXRunning += ROW0_TILESIZE + TILE_XSPACING;
-                } else {
-                    itemPosX[i] = row1PosXRunning;
-                    row1PosXRunning += ROW1_TILESIZE + TILE_XSPACING;
-                }
-            }
-            
-            // initial painting
-            //InitSelection(); //Slice - I changed order because of background pixel
-            SwitchToGraphicsAndClear();
-            InitSelection();
-            break;
-            
-        case MENU_FUNCTION_CLEANUP:
-            FreePool(itemPosX);
-            break;
-            
-        case MENU_FUNCTION_PAINT_ALL:
-            for (i = 0; i <= State->MaxIndex; i++) {
-                DrawMainMenuEntry(Screen->Entries[i], (i == State->CurrentSelection) ? TRUE : FALSE,
-                                  itemPosX[i],
-                                  (Screen->Entries[i]->Row == 0) ? row0PosY : row1PosY);
-            }
-            if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL))
-                DrawMainMenuText(Screen->Entries[State->CurrentSelection]->Title,
-                                 (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY);
-            break;
-            
-        case MENU_FUNCTION_PAINT_SELECTION:
-            DrawMainMenuEntry(Screen->Entries[State->LastSelection], FALSE,
-                              itemPosX[State->LastSelection],
-                              (Screen->Entries[State->LastSelection]->Row == 0) ? row0PosY : row1PosY);
-            DrawMainMenuEntry(Screen->Entries[State->CurrentSelection], TRUE,
-                              itemPosX[State->CurrentSelection],
-                              (Screen->Entries[State->CurrentSelection]->Row == 0) ? row0PosY : row1PosY);
-            if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL))
-                DrawMainMenuText(Screen->Entries[State->CurrentSelection]->Title,
-                                 (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY);
-            break;
-            
-        case MENU_FUNCTION_PAINT_TIMEOUT:
-            if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL))
-                DrawMainMenuText(ParamText, (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY + TEXT_LINE_HEIGHT);
-            break;
-            
-    }
+  INTN i; 
+  
+  switch (Function) {
+      
+    case MENU_FUNCTION_INIT:
+      MaxItemOnScreen = (UGAWidth - ROW0_SCROLLSIZE * 2) / (ROW0_TILESIZE + TILE_XSPACING); //8
+      row0PosX = 0;
+      row1PosX = Screen->EntryCount;
+      // layout
+      row0Count = 0; //Nr items in row0
+      row1Count = 0;
+      for (i = 0; i < Screen->EntryCount; i++) {
+        if (Screen->Entries[i]->Row == 0) {
+          row0Count++;
+          CONSTRAIN_MIN(row0PosX, i);
+        } else {
+          row1Count++;
+          CONSTRAIN_MAX(row1PosX, i);
+        }
+      }
+      if (row0PosX > row1PosX) { //9<10
+        MsgLog("BUG! Needed sorting\n");
+      }
+      InitScroll(State, row0Count, Screen->EntryCount, MaxItemOnScreen);
+      row0PosX = (UGAWidth + TILE_XSPACING - 
+                 (ROW0_TILESIZE + TILE_XSPACING) * MaxItemOnScreen) >> 1;
+      row0PosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET;
+      row1PosX = (UGAWidth + TILE_XSPACING - (ROW1_TILESIZE + TILE_XSPACING) * row1Count) >> 1;
+      row1PosY = row0PosY + ROW0_TILESIZE + TILE_YSPACING;
+      if (row1Count > 0)
+        textPosY = row1PosY + ROW1_TILESIZE + TILE_YSPACING;
+      else
+        textPosY = row1PosY;
+      
+      itemPosX = AllocatePool(sizeof(UINTN) * Screen->EntryCount);
+      row0PosXRunning = row0PosX;
+      row1PosXRunning = row1PosX;
+      for (i = 0; i <= Screen->EntryCount; i++) {
+        if (Screen->Entries[i]->Row == 0) {
+          itemPosX[i] = row0PosXRunning;
+          row0PosXRunning += ROW0_TILESIZE + TILE_XSPACING;
+        } else {
+          itemPosX[i] = row1PosXRunning;
+          row1PosXRunning += ROW1_TILESIZE + TILE_XSPACING;
+        }
+      }
+      
+      // initial painting
+      //InitSelection(); //Slice - I changed order because of background pixel
+      SwitchToGraphicsAndClear();
+      InitSelection();
+      break;
+      
+    case MENU_FUNCTION_CLEANUP:
+      FreePool(itemPosX);
+      break;
+      
+    case MENU_FUNCTION_PAINT_ALL:
+      /*  for (i = 0; i <= State->MaxIndex; i++) {
+       DrawMainMenuEntry(Screen->Entries[i], (i == State->CurrentSelection) ? TRUE : FALSE,
+       itemPosX[i],
+       (Screen->Entries[i]->Row == 0) ? row0PosY : row1PosY);
+       }*/
+      for (i = 0; i <= State->MaxIndex; i++) {
+        if (Screen->Entries[i]->Row == 0) {
+          if ((i >= State->FirstVisible) && (i <= State->LastVisible)) {
+            DBG("Draw at x=%d y=%d\n", itemPosX[i - State->FirstVisible], row0PosY);
+            DrawMainMenuEntry(Screen->Entries[i], (i == State->CurrentSelection),
+                              itemPosX[i - State->FirstVisible], row0PosY);
+          }
+        } else {
+          DrawMainMenuEntry(Screen->Entries[i], (i == State->CurrentSelection),
+                            itemPosX[i], row1PosY);
+        }
+      }
+      
+      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL))
+        DrawMainMenuText(Screen->Entries[State->CurrentSelection]->Title,
+                         (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY);
+      break;
+      
+    case MENU_FUNCTION_PAINT_SELECTION:
+      if ((Screen->Entries[State->LastSelection]->Row == 0)) {
+        DrawMainMenuEntry(Screen->Entries[State->LastSelection], FALSE,
+                      itemPosX[State->LastSelection - State->FirstVisible], row0PosY);
+      } else {
+        DrawMainMenuEntry(Screen->Entries[State->LastSelection], FALSE,
+                          itemPosX[State->LastSelection], row1PosY);
+      }
+      
+      if (Screen->Entries[State->CurrentSelection]->Row == 0) {
+        DrawMainMenuEntry(Screen->Entries[State->CurrentSelection], TRUE,
+                      itemPosX[State->CurrentSelection - State->FirstVisible], row0PosY);
+      } else {
+        DrawMainMenuEntry(Screen->Entries[State->CurrentSelection], TRUE,
+                          itemPosX[State->CurrentSelection], row1PosY);
+      }
+
+      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL))
+        DrawMainMenuText(Screen->Entries[State->CurrentSelection]->Title,
+                         (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY);
+      break;
+      
+    case MENU_FUNCTION_PAINT_TIMEOUT:
+      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL))
+        DrawMainMenuText(ParamText, (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY + TEXT_LINE_HEIGHT);
+      break;
+      
+  }
 }
 
 //

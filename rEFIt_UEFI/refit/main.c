@@ -1019,8 +1019,8 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Vo
     Entry->me.Row          = 0;
     Entry->me.ShortcutLetter = ShortcutLetter;
     Entry->me.Image        = LoadOSIcon(Volume->OSIconName, L"legacy", FALSE);
-  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
-  DBG("Title=%s OSName=%s OSIconName=%s\n", LoaderTitle, Volume->OSName, Volume->OSIconName);
+//  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
+//  DBG("Title=%s OSName=%s OSIconName=%s\n", LoaderTitle, Volume->OSName, Volume->OSIconName);
     if (GlobalConfig.HideBadges == 0 ||
         (GlobalConfig.HideBadges == 1 && Volume->DiskKind != DISK_KIND_INTERNAL))
         Entry->me.BadgeImage   = egLoadIcon(ThemeDir, PoolPrint(L"icons\\os_%s.icns", Volume->OSIconName), 32);
@@ -1100,7 +1100,7 @@ static VOID ScanLegacy(VOID)
         
         if (ShowVolume){
             AddLegacyEntry(NULL, Volume);
-            DBG("added legacy entry %d\n", VolumeIndex);
+//            DBG("added legacy entry %d\n", VolumeIndex);
         }
     }
 }
@@ -1238,7 +1238,7 @@ static VOID LoadDrivers(VOID)
     BdsLibConnectAll ();
   }
   
-	DBG("Drivers connected\n");
+//	DBG("Drivers connected\n");
 }
 
 INTN FindDefaultEntry(VOID)
@@ -1332,7 +1332,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   UINTN             Size, i;
   UINT8             *Buffer = NULL;
  // CHAR16            *InputBuffer; //, *Y;
-                                  //  EFI_INPUT_KEY Key;
+//  EFI_INPUT_KEY Key;
   
   // bootstrap
   //    InitializeLib(ImageHandle, SystemTable);
@@ -1344,7 +1344,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	
   InitializeConsoleSim();
 	InitBooterLog();
-  DBG("\nStarting rEFIt rev %a\n", FIRMWARE_REVISION);
+  DBG("\n \nStarting rEFIt rev %a\n", FIRMWARE_REVISION);
   InitScreen();
   
   Status = InitRefitLib(ImageHandle);
@@ -1422,16 +1422,16 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     
   // scan for loaders and tools, add then to the menu
   if (GlobalConfig.LegacyFirst){
-    DBG("scan legacy first\n");
+//    DBG("scan legacy first\n");
     ScanLegacy();
   }
   ScanLoader();
   if (!GlobalConfig.LegacyFirst){
-    DBG("scan legacy second\n");
+//    DBG("scan legacy second\n");
     ScanLegacy();
   }
   if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
-    DBG("scan tools\n");
+//    DBG("scan tools\n");
     ScanTool();
   }
 /*  CHAR16* TestStr = L"Some Unicode string\n";

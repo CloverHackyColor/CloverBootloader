@@ -533,7 +533,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       	    
 		SaveSettings();
 	}	
-  DBG("config.plist read and return %r\n", Status);
+//  DBG("config.plist read and return %r\n", Status);
 	return Status;
 }	
 
@@ -618,7 +618,8 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 EFI_STATUS GetEdid(VOID)
 {
 	EFI_STATUS						Status;
-	UINTN i, j, N;
+//	UINTN i, j;
+  UINTN N;
 /*	EFI_EDID_ACTIVE_PROTOCOL*                EdidActive;
 
   //	EFI_GRAPHICS_OUTPUT_PROTOCOL	*GraphicsOutput=NULL;
@@ -636,17 +637,18 @@ EFI_STATUS GetEdid(VOID)
 	if (!EFI_ERROR (Status)) 
 	{
 		N = EdidDiscovered->SizeOfEdid;
+    MsgLog("EdidDiscovered size=%d\n", N);
 		if (N == 0) {
 			MsgLog("EdidDiscovered size=0\n");
 			return EFI_NOT_FOUND;
 		}
-		for (i=0; i<N; i+=16) {
+/*		for (i=0; i<N; i+=16) {
 			MsgLog("%02x: ", i);
 			for (j=0; j<16; j++) {
 				MsgLog("%02x ", EdidDiscovered->Edid[i+j]);
 			}
 			MsgLog("\n");		   
-		}
+		} */
 	}
   return Status;
 }

@@ -987,13 +987,13 @@ VOID ScanVolumes(VOID)
       Volume = AllocateZeroPool(sizeof(REFIT_VOLUME));
       Volume->DeviceHandle = Handles[HandleIndex];
       if (Volume->DeviceHandle == SelfDeviceHandle){
-        DBG("this is SelfVolume at index %d\n", HandleIndex);
+//        DBG("this is SelfVolume at index %d\n", HandleIndex);
         SelfVolume = Volume;  
       }
       
       Status = ScanVolume(Volume);
       if (!EFI_ERROR(Status)) {
-        DBG("Found Volume %s at index=%d\n", Volume->VolName, HandleIndex);
+//        DBG("Found Volume %s at index=%d\n", Volume->VolName, HandleIndex);
         AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
         
       } else {
