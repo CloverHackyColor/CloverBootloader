@@ -719,17 +719,40 @@ static VOID ScanLoader(VOID)
       Entry = AddLoaderEntry(FileName, L"Microsoft EFI boot menu", Volume);
       continue;
     }
+
+    // check for grub boot loader/menu
+    StrCpy(FileName, L"\\EFI\\grub\\grub.efi");
+    if (FileExists(Volume->RootDir, FileName)) {
+      Volume->OSType = OSTYPE_LIN;
+      Volume->BootType = BOOTING_BY_EFI;
+      Entry = AddLoaderEntry(FileName, L"Grub EFI boot menu", Volume);
+      continue;
+    }
     
     // check for Redhat boot loader/menu
-    StrCpy(FileName, L"\\EFI\\BOOT\\RedHat\\grub.efi");
+    StrCpy(FileName, L"\\EFI\\RedHat\\grub.efi");
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->OSType = OSTYPE_LIN;
       Volume->BootType = BOOTING_BY_EFI;
       Entry = AddLoaderEntry(FileName, L"RedHat EFI boot menu", Volume);
       continue;
     }
+
+    // check for Redhat boot loader/menu
+    StrCpy(FileName, L"\\EFI\\RedHat\\grubx64.efi");
+    if (FileExists(Volume->RootDir, FileName)) {
+      Volume->OSType = OSTYPE_LIN;
+      Volume->BootType = BOOTING_BY_EFI;
+      Entry = AddLoaderEntry(FileName, L"RedHat EFI boot menu", Volume);
+      continue;
+    }
+    
     // check for Ubuntu boot loader/menu
-    StrCpy(FileName, L"\\EFI\\BOOT\\Ubuntu\\grub.efi");
+#if defined(MDE_CPU_X64)    
+    StrCpy(FileName, L"\\EFI\\Ubuntu\\grubx64.efi");
+#else
+    StrCpy(FileName, L"\\EFI\\Ubuntu\\grub.efi");
+#endif
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->OSType = OSTYPE_LIN;
       Volume->BootType = BOOTING_BY_EFI;
@@ -738,7 +761,7 @@ static VOID ScanLoader(VOID)
     }
     
     // check for OpenSuse boot loader/menu
-    StrCpy(FileName, L"\\EFI\\BOOT\\OpenSuse\\grub.efi");
+    StrCpy(FileName, L"\\EFI\\SuSe\\elilo.efi");
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->OSType = OSTYPE_LIN;
       Volume->BootType = BOOTING_BY_EFI;
