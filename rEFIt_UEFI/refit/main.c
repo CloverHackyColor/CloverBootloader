@@ -1413,7 +1413,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   //setup properties
   SetDevices();
-    
+  
+  PrepareFont();
+  //test font
+  
   // scan for loaders and tools, add then to the menu
   if (GlobalConfig.LegacyFirst){
 //    DBG("scan legacy first\n");
@@ -1428,12 +1431,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //    DBG("scan tools\n");
     ScanTool();
   }
-/*  CHAR16* TestStr = L"Some Unicode string\n";
-  DBG("First: %s\n", TestStr); //it works!
-  Buffer = AllocatePool(128);
-  UnicodeStrToAsciiStr(TestStr, (CHAR8*)Buffer);
-  DBG("Second: %a\n", (CHAR8*)Buffer); //works too
-  FreePool(Buffer);*/
   
   // fixed other menu entries
     
@@ -1457,7 +1454,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   // assign shortcut keys
   for (i = 0; i < MainMenu.EntryCount && MainMenu.Entries[i]->Row == 0 && i < 9; i++)
     MainMenu.Entries[i]->ShortcutDigit = (CHAR16)('1' + i);
-    
+  
+//  DrawMenuText(L"Test Русский", 14, 0, UGAHeight-40, 6);
+//  PauseForKey(L"Test fonts");
+  
     // wait for user ACK when there were errors
   FinishTextScreen(FALSE);
   

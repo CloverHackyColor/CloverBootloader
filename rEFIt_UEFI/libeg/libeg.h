@@ -150,6 +150,9 @@ typedef struct {
     EG_PIXEL    *PixelData;
 } EG_IMAGE;
 
+#define TEXT_YMARGIN (2)
+#define TEXT_XMARGIN (8)
+
 #define EG_EIPIXELMODE_GRAY         (0)
 #define EG_EIPIXELMODE_GRAY_ALPHA   (1)
 #define EG_EIPIXELMODE_COLOR        (2)
@@ -172,12 +175,12 @@ typedef struct {
 
 /* functions */
 
-VOID egInitScreen(VOID);
-VOID egGetScreenSize(OUT UINTN *ScreenWidth, OUT UINTN *ScreenHeight);
-CHAR16 * egScreenDescription(VOID);
+VOID    egInitScreen(VOID);
+VOID    egGetScreenSize(OUT UINTN *ScreenWidth, OUT UINTN *ScreenHeight);
+CHAR16* egScreenDescription(VOID);
 BOOLEAN egHasGraphicsMode(VOID);
 BOOLEAN egIsGraphicsModeEnabled(VOID);
-VOID egSetGraphicsModeEnabled(IN BOOLEAN Enable);
+VOID    egSetGraphicsModeEnabled(IN BOOLEAN Enable);
 // NOTE: Even when egHasGraphicsMode() returns FALSE, you should
 //  call egSetGraphicsModeEnabled(FALSE) to ensure the system
 //  is running in text mode. egHasGraphicsMode() only determines
@@ -186,7 +189,7 @@ VOID egSetGraphicsModeEnabled(IN BOOLEAN Enable);
 EG_IMAGE * egCreateImage(IN UINTN Width, IN UINTN Height, IN BOOLEAN HasAlpha);
 EG_IMAGE * egCreateFilledImage(IN UINTN Width, IN UINTN Height, IN BOOLEAN HasAlpha, IN EG_PIXEL *Color);
 EG_IMAGE * egCopyImage(IN EG_IMAGE *Image);
-VOID egFreeImage(IN EG_IMAGE *Image);
+VOID       egFreeImage(IN EG_IMAGE *Image);
 
 EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN BOOLEAN WantAlpha);
 EG_IMAGE * egLoadIcon(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN IconSize);
@@ -206,9 +209,9 @@ VOID egFillImageArea(IN OUT EG_IMAGE *CompImage,
                      IN UINTN AreaWidth, IN UINTN AreaHeight,
                      IN EG_PIXEL *Color);
 VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN UINTN PosX, IN UINTN PosY);
-
+VOID PrepareFont(VOID);
 VOID egMeasureText(IN CHAR16 *Text, OUT UINTN *Width, OUT UINTN *Height);
-VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage, IN UINTN PosX, IN UINTN PosY);
+VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage, IN UINTN PosX, IN UINTN PosY, IN UINTN Cursor);
 
 VOID egClearScreen(IN EG_PIXEL *Color);
 VOID egDrawImage(IN EG_IMAGE *Image, IN UINTN ScreenPosX, IN UINTN ScreenPosY);

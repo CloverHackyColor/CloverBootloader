@@ -198,6 +198,7 @@ typedef struct {
   UINTN       HideUIFlags;
   BOOLEAN     LegacyFirst;
   FONT_TYPE   Font;
+  UINTN       CharWidth;
   CHAR16      *FontFileName;
   CHAR16      *Theme;
   CHAR16      *BannerFileName;
@@ -285,8 +286,13 @@ EFI_STATUS InitializeUnicodeCollationProtocol (VOID);
 #define LAYOUT_BANNER_HEIGHT (32)
 #define LAYOUT_BANNER_YOFFSET (LAYOUT_BANNER_HEIGHT + 32)
 
-#define FONT_CELL_WIDTH (7)
-#define FONT_CELL_HEIGHT (12)
+//#define FONT_CELL_WIDTH (7)
+//#define FONT_CELL_HEIGHT (12)
+
+extern UINTN FontWidth;
+extern UINTN FontHeight;
+extern UINTN TextHeight;
+
 
 extern UINTN ConWidth;
 extern UINTN ConHeight;
@@ -349,7 +355,6 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id);
 #define BUILTIN_ICON_VOL_BOOTER     (11)
 #define BUILTIN_ICON_COUNT          (12)
 
-
 //
 // menu module
 //
@@ -366,6 +371,7 @@ VOID AddMenuEntry(IN REFIT_MENU_SCREEN *Screen, IN REFIT_MENU_ENTRY *Entry);
 VOID FreeMenu(IN REFIT_MENU_SCREEN *Screen);
 UINTN RunMenu(IN REFIT_MENU_SCREEN *Screen, OUT REFIT_MENU_ENTRY **ChosenEntry);
 UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT REFIT_MENU_ENTRY **ChosenEntry);
+VOID DrawMenuText(IN CHAR16 *Text, IN UINTN SelectedWidth, IN UINTN XPos, IN UINTN YPos, IN UINTN Cursor);
 VOID ReinitVolumes(VOID);
 
 //

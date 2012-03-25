@@ -37,10 +37,24 @@
 #include "libegint.h"
 
 #include "egemb_font.h"
-#define FONT_CELL_WIDTH (7)
-#define FONT_CELL_HEIGHT (12)
+//#define FONT_CELL_WIDTH (7)
+//#define FONT_CELL_HEIGHT (12)
+
+#define DEBUG_TEXT 0
+
+#if DEBUG_TEXT == 2
+#define DBG(x...) AsciiPrint(x)
+#elif DEBUG_TEXT == 1
+#define DBG(x...) MsgLog(x)
+#else
+#define DBG(x...)
+#endif
+
 
 static EG_IMAGE *FontImage = NULL;
+UINTN FontWidth = 7;
+UINTN FontHeight = 12;
+UINTN TextHeight;
 
 //
 // Text rendering
@@ -49,35 +63,49 @@ static EG_IMAGE *FontImage = NULL;
 VOID egMeasureText(IN CHAR16 *Text, OUT UINTN *Width, OUT UINTN *Height)
 {
     if (Width != NULL)
-        *Width = StrLen(Text) * FONT_CELL_WIDTH;
+        *Width = StrLen(Text) * FontWidth;
     if (Height != NULL)
-        *Height = FONT_CELL_HEIGHT;
+        *Height = FontHeight;
 }
 
 EG_IMAGE * egLoadFontImage(IN BOOLEAN WantAlpha)
 {
   EG_IMAGE            *NewImage;
   EG_IMAGE            *NewFontImage;
-  UINTN     FontWidth;
-  UINTN     FontHeight;
+//  UINTN     FontWidth;  //using global variables
+//  UINTN     FontHeight;
   UINTN     ImageWidth, ImageHeight;
   UINTN     x, y, Ypos, j;
   EG_PIXEL    *PixelPtr;
+  EG_PIXEL    FirstPixel;
     
-  NewImage = egLoadImage(SelfDir, PoolPrint(L"font\\%s", GlobalConfig.FontFileName), FALSE);
+  NewImage = egLoadImage(SelfDir, PoolPrint(L"font\\%s", GlobalConfig.FontFileName), WantAlpha);
+  if (!NewImage) {
+    DBG("Font %s is not loaded, using default \n", PoolPrint(L"font\\%s", GlobalConfig.FontFileName));
+    return NULL;
+  }
   ImageWidth = NewImage->Width;
   ImageHeight = NewImage->Height;
-  FontWidth = ImageWidth >> 4;
-  FontHeight = ImageHeight >> 4;
   PixelPtr = NewImage->PixelData;
-  
-  NewFontImage = egCreateImage(FontWidth << 8, FontHeight, WantAlpha);
+  DBG("Font loaded: ImageWidth=%d ImageHeight=%d\n", ImageWidth, ImageHeight);
+  NewFontImage = egCreateImage(ImageWidth << 4, ImageHeight >> 4, WantAlpha);
   if (NewFontImage == NULL)
     return NULL;
-  for (y=0; y<16; j++) {
-    for (j=0; j<FontHeight; y++) {
+  
+  FontWidth = ImageWidth >> 4;
+  FontHeight = ImageHeight >> 4;
+  FirstPixel = *PixelPtr;
+  for (y=0; y<16; y++) {
+    for (j=0; j<FontHeight; j++) {
       Ypos = ((j << 4) + y) * ImageWidth;
       for (x=0; x<ImageWidth; x++) {
+       if (WantAlpha && 
+           (PixelPtr->b == FirstPixel.b) &&
+           (PixelPtr->g == FirstPixel.g) &&
+           (PixelPtr->r == FirstPixel.r)
+           ) {
+          PixelPtr->a = 0;
+        }
         NewFontImage->PixelData[Ypos + x] = *PixelPtr++;
       }
     }    
@@ -85,21 +113,11 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN WantAlpha)
   egFreeImage(NewImage);
   
   return NewFontImage;  
-}  
+} 
 
-VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage, IN UINTN PosX, IN UINTN PosY)
+VOID PrepareFont(VOID)
 {
-  EG_PIXEL        *BufferPtr;
-  EG_PIXEL        *FontPixelData;
-  UINTN           BufferLineOffset, FontLineOffset;
-  UINTN           TextLength;
-  UINTN           i, c, c1;
-  
-  // clip the text
-  TextLength = StrLen(Text);
-  if (TextLength * FONT_CELL_WIDTH + PosX > CompImage->Width)
-    TextLength = (CompImage->Width - PosX) / FONT_CELL_WIDTH;
-  
+  BOOLEAN ChangeFont = FALSE;
   // load the font
   if (FontImage == NULL){
     switch (GlobalConfig.Font) {
@@ -111,35 +129,69 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage, IN UINTN PosX, IN
         break;
       case FONT_LOAD:
         FontImage = egLoadFontImage(TRUE);
+        if (!FontImage) {
+          ChangeFont = TRUE;
+          FontImage = egPrepareEmbeddedImage(&egemb_font, TRUE);
+        }
         break;
       default:
         FontImage = egPrepareEmbeddedImage(&egemb_font, TRUE);
         break;
     }    
   }
+  if (ChangeFont) {
+    GlobalConfig.Font = FONT_ALFA;
+  }
+  TextHeight = FontHeight + TEXT_YMARGIN * 2;
+  DBG("Font prepared WxH=%dx%d\n", FontWidth, FontHeight);
+}
+
+VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
+                  IN UINTN PosX, IN UINTN PosY, IN UINTN Cursor)
+{
+  EG_PIXEL        *BufferPtr;
+  EG_PIXEL        *FontPixelData;
+  UINTN           BufferLineOffset, FontLineOffset;
+  UINTN           TextLength;
+  UINTN           i, c, c1;
+  UINTN           Shift = 0;
   
+  // clip the text
+  TextLength = StrLen(Text);
+  if (TextLength * FontWidth + PosX > CompImage->Width)
+    TextLength = (CompImage->Width - PosX) / FontWidth;
+//  DBG("TextLength =%d PosX=%d PosY=%d\n", TextLength, PosX, PosY);
   // render it
   BufferPtr = CompImage->PixelData;
   BufferLineOffset = CompImage->Width;
   BufferPtr += PosX + PosY * BufferLineOffset;
   FontPixelData = FontImage->PixelData;
   FontLineOffset = FontImage->Width;
+  if (GlobalConfig.CharWidth < FontWidth) {
+    Shift = (FontWidth - GlobalConfig.CharWidth) >> 1;
+  }
   for (i = 0; i < TextLength; i++) {
     c = Text[i];
     if (GlobalConfig.Font != FONT_LOAD) {
-      if (c < 32 || c >= 127)
-        c = 95;
+      if (c < 0x20 || c >= 0x7F)
+        c = 0x5F;
       else
-        c -= 32;        
+        c -= 0x20;        
     } else {
       c1 = (((c >=0x410) ? c -= 0x350 : c) & 0xff); //Russian letters
       c = c1;
     }
     
-    egRawCompose(BufferPtr, FontPixelData + c * FONT_CELL_WIDTH,
-                 FONT_CELL_WIDTH, FONT_CELL_HEIGHT,
+    egRawCompose(BufferPtr, FontPixelData + c * FontWidth + Shift,
+                 GlobalConfig.CharWidth, FontHeight,
                  BufferLineOffset, FontLineOffset);
-    BufferPtr += FONT_CELL_WIDTH;
+    if (i == Cursor) {
+      egRawCompose(BufferPtr, FontPixelData + 0x5F * FontWidth,
+                   GlobalConfig.CharWidth, FontHeight,
+                   BufferLineOffset, FontLineOffset);
+      
+    }
+    BufferPtr += GlobalConfig.CharWidth;
   }
 }
 

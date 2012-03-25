@@ -58,7 +58,7 @@
 
 // global configuration with default values
 
-REFIT_CONFIG        GlobalConfig = { FALSE, 20, 0, 0, 0, FALSE, FONT_ALFA, NULL, NULL, NULL, NULL, NULL, NULL };
+REFIT_CONFIG        GlobalConfig = { FALSE, 20, 0, 0, 0, FALSE, FONT_ALFA, 12, NULL, NULL, NULL, NULL, NULL, NULL };
 
 //
 // read a file into a buffer
@@ -337,6 +337,9 @@ VOID ReadConfig(VOID)
         
         if (StriCmp(TokenList[0], L"timeout") == 0) {
             HandleInt(TokenList, TokenCount, &(GlobalConfig.Timeout));
+        
+        } else if (StriCmp(TokenList[0], L"char_width") == 0) {  
+            HandleInt(TokenList, TokenCount, &(GlobalConfig.CharWidth));
             
         } else if (StriCmp(TokenList[0], L"disable") == 0) {
             for (i = 1; i < TokenCount; i++) {
