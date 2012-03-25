@@ -188,6 +188,10 @@
   gEfiSimplePointerProtocolGuid
   gEfiSmbiosProtocolGuid
   gEfiSecurityArchProtocolGuid  
+  gEfiScsiIoProtocolGuid                        ## PROTOCOL SOMETIMES_CONSUMES
+  gEfiScsiPassThruProtocolGuid                  ## PROTOCOL SOMETIMES_CONSUMES
+  gEfiExtScsiPassThruProtocolGuid               ## PROTOCOL SOMETIMES_CONSUMES
+
 
   gFSInjectProtocolGuid
   

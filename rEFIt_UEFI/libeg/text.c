@@ -126,10 +126,15 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage, IN UINTN PosX, IN
     FontLineOffset = FontImage->Width;
     for (i = 0; i < TextLength; i++) {
         c = Text[i];
+      if (GlobalConfig.Font != FONT_LOAD) {
         if (c < 32 || c >= 127)
-            c = 95;
+          c = 95;
         else
-            c -= 32;
+          c -= 32;        
+      } else {
+        c = (CHAR8)(((c >=0x410) ? c -= 0x350 : c) & 0xff)
+      }
+
         egRawCompose(BufferPtr, FontPixelData + c * FONT_CELL_WIDTH,
                      FONT_CELL_WIDTH, FONT_CELL_HEIGHT,
                      BufferLineOffset, FontLineOffset);

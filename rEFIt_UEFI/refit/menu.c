@@ -201,9 +201,6 @@ static VOID InitScroll(OUT SCROLL_STATE *State, IN UINTN ItemCount, IN UINTN Max
   // 14 0 7 2 => MaxScroll = 9 ItemCount=10 MaxCount=15
 }
 
-#define CONSTRAIN_MIN(Variable, MinValue) if (Variable < MinValue) Variable = MinValue
-#define CONSTRAIN_MAX(Variable, MaxValue) if (Variable > MaxValue) Variable = MaxValue
-
 static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
 {
   State->LastSelection = State->CurrentSelection;
@@ -375,9 +372,76 @@ static INTN FindMenuShortcutEntry(IN REFIT_MENU_SCREEN *Screen, IN CHAR16 Shortc
 //
 // generic menu function
 //
-static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, SCROLL_STATE *State, IN MENU_STYLE_FUNC  StyleFunc)
+static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, SCROLL_STATE *State, IN MENU_STYLE_FUNC  StyleFunc, CHAR8* Parameter)
 {
-  return MENU_EXIT_DETAILS;
+	EFI_STATUS    Status;
+	EFI_INPUT_KEY key;
+	UINTN         index = 0;
+	UINTN         i = 0;
+  CHAR8         Backup[256];
+	UINTN         MenuExit = 0;
+	UINTN         LogSize;
+	
+	//InputString = AllocatePool(256*sizeof(CHAR8));
+  AsciiStrCpy(Backup, Parameter);
+	while (!MenuExit) {
+		Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &key);
+		if (Status == EFI_NOT_READY) {
+			gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &index);
+			continue;
+		}
+		switch (key.ScanCode) {
+      /*case SCAN_LEFT:
+        if (index<AsciiStrLen(InputString)) index++;
+        break;
+      case SCAN_RIGHT:
+        if (index>0) index--;
+        break;
+      case SCAN_HOME:
+        index = 0;
+        break;
+      case SCAN_END:
+        index = AsciiStrLen(InputString);
+        break;*/
+      case SCAN_ESC:
+        MenuExit = MENU_EXIT_ESCAPE;
+        continue;
+        break;
+      case SCAN_F2:
+        LogSize = msgCursor - msgbuf;
+        Status = egSaveFile(SelfRootDir, L"EFI\\misc\\preboot.log", (UINT8*)msgbuf, LogSize);
+        break;
+      case SCAN_F10:
+        egScreenShot();
+        break;
+    }
+		
+		switch (key.UnicodeChar) {
+			case CHAR_LINEFEED:
+			case CHAR_CARRIAGE_RETURN:
+				MenuExit = MENU_EXIT_ENTER;
+				break;
+			default:
+				Parameter[i++] = (CHAR8)key.UnicodeChar;
+				Parameter[i] = '\0';
+        StyleFunc(Screen, State, MENU_FUNCTION_PAINT_SELECTION, NULL);
+				//AsciiPrint("%c",(CHAR8)key.UnicodeChar);
+				break;
+		}
+    
+	}
+	switch (MenuExit) {
+		case MENU_EXIT_ENTER:
+      //AsciiStrCpy(Parameter, InputString);
+			//Parameter = InputString; //o_O
+			break;
+		case MENU_EXIT_ESCAPE:
+			AsciiStrCpy(Parameter, Backup);
+			break;
+	}
+  //FreePool(InputString);
+	
+  return 0;
 }
 
 static UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_MENU_ENTRY **ChosenEntry)
@@ -484,21 +548,23 @@ static UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC Sty
                 break;
             case SCAN_F12:
               MenuExit = MENU_EXIT_EJECT;
+              State.PaintAll = TRUE;
               break;
 
         }
         switch (key.UnicodeChar) {
             case CHAR_LINEFEED:
             case CHAR_CARRIAGE_RETURN:
-        //    case ' ':
+        
+        if (Screen->Entries[State.CurrentSelection]->Tag == TAG_INPUT)
+          MenuExit = InputDialog(Screen, &State, StyleFunc, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State.CurrentSelection]))->Value);
+        else 
                 MenuExit = MENU_EXIT_ENTER;
                 break;
-            case 'M':
+      case ' ':
                 MenuExit = MENU_EXIT_DETAILS;
                 break;
-            case ' ':
-              MenuExit = InputDialog(Screen, &State, StyleFunc);
-              break;
+        
             default:
                 ShortcutEntry = FindMenuShortcutEntry(Screen, key.UnicodeChar);
                 if (ShortcutEntry >= 0) {
@@ -713,6 +779,16 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
             
         case MENU_FUNCTION_PAINT_ALL:
             for (i = 0; i <= State->MaxIndex; i++) {
+              if (Screen->Entries[i]->Tag == TAG_INPUT) {
+                CHAR16 ResultString[255];
+                CHAR16 UnicodeParameter[255];
+                AsciiStrToUnicodeStr(((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Value, UnicodeParameter);
+                StrCpy(ResultString, Screen->Entries[i]->Title);
+                StrCat(ResultString, UnicodeParameter);
+                DrawMenuText(ResultString, (i == State->CurrentSelection) ? MenuWidth : 0,
+                             EntriesPosX, EntriesPosY + i * TEXT_LINE_HEIGHT);
+              }
+              else
                 DrawMenuText(Screen->Entries[i]->Title, (i == State->CurrentSelection) ? MenuWidth : 0,
                              EntriesPosX, EntriesPosY + i * TEXT_LINE_HEIGHT);
             }
@@ -745,19 +821,37 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
             
         case MENU_FUNCTION_PAINT_SELECTION:
             // redraw selection cursor
+        //Last selection
+        if (Screen->Entries[State->LastSelection]->Tag == TAG_INPUT) {
+          CHAR16 ResultString[255];
+          CHAR16 UnicodeParameter[255];
+          AsciiStrToUnicodeStr(((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Value, UnicodeParameter);
+          StrCpy(ResultString, Screen->Entries[State->LastSelection]->Title);
+          StrCat(ResultString, UnicodeParameter);
+          DrawMenuText(ResultString, 0,
+                       EntriesPosX, EntriesPosY + State->LastSelection * TEXT_LINE_HEIGHT);
+        }
+        else {
             DrawMenuText(Screen->Entries[State->LastSelection]->Title, 0,
                          EntriesPosX, EntriesPosY + State->LastSelection * TEXT_LINE_HEIGHT);
+        }
+        
+        
+        //Current selection
+        if (Screen->Entries[State->CurrentSelection]->Tag == TAG_INPUT) {
+          CHAR16 ResultString[255];
+          CHAR16 UnicodeParameter[255];
+          AsciiStrToUnicodeStr(((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Value, UnicodeParameter);
+          StrCpy(ResultString, Screen->Entries[State->CurrentSelection]->Title);
+          StrCat(ResultString, UnicodeParameter);
+          DrawMenuText(ResultString, MenuWidth,
+                       EntriesPosX, EntriesPosY + State->CurrentSelection * TEXT_LINE_HEIGHT);
+        }
+        else {
             DrawMenuText(Screen->Entries[State->CurrentSelection]->Title, MenuWidth,
                          EntriesPosX, EntriesPosY + State->CurrentSelection * TEXT_LINE_HEIGHT);
-            // TODO: account for scrolling
-            /*
-            gST->ConOut->SetCursorPosition (gST->ConOut, 2, 4 + (State->LastSelection - State->FirstVisible));
-            gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
-            gST->ConOut->OutputString (gST->ConOut, DisplayStrings[State->LastSelection]);
-            gST->ConOut->SetCursorPosition (gST->ConOut, 2, 4 + (State->CurrentSelection - State->FirstVisible));
-            gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_CURRENT);
-            gST->ConOut->OutputString (gST->ConOut, DisplayStrings[State->CurrentSelection]);
-             */
+        }
+
             break;
             
         case MENU_FUNCTION_PAINT_TIMEOUT:

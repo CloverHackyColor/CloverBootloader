@@ -469,7 +469,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
 
         } else if ((*((UINT32 *)(SectorBuffer)) == 0x4d0062e9 &&
                     *((UINT16 *)(SectorBuffer + 510)) == 0xaa55) ||
-                   FindMem(SectorBuffer, 2048, "BOOT      ", 10) >= 0) {
+                   FindMem(SectorBuffer, 2048, "BOOT      ", 10) >= 0) { //reboot Clover
           Volume->HasBootCode = TRUE;
           Volume->OSIconName = L"clover";
           Volume->OSName = L"MacOSX";
@@ -1111,46 +1111,51 @@ static VOID UninitVolumes(VOID)
 
 static VOID ReinitVolumes(VOID)
 {
-    EFI_STATUS              Status;
-    REFIT_VOLUME            *Volume;
-    UINTN                   VolumeIndex;
-    EFI_DEVICE_PATH         *RemainingDevicePath;
-    EFI_HANDLE              DeviceHandle, WholeDiskHandle;
-    
-    for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
-        Volume = Volumes[VolumeIndex];
-        
-        if (Volume->DevicePath != NULL) {
-            // get the handle for that path
-            RemainingDevicePath = Volume->DevicePath;
-            Status = gBS->LocateDevicePath(&gEfiBlockIoProtocolGuid, &RemainingDevicePath, &DeviceHandle);
-            
-            if (!EFI_ERROR(Status)) {
-                Volume->DeviceHandle = DeviceHandle;
-                
-                // get the root directory
-                Volume->RootDir = EfiLibOpenRoot(Volume->DeviceHandle);
-                
-            } else
-                CheckError(Status, L"from LocateDevicePath");
-        }
-        
-        if (Volume->WholeDiskDevicePath != NULL) {
-            // get the handle for that path
-            RemainingDevicePath = Volume->WholeDiskDevicePath;
-            Status = gBS->LocateDevicePath(&gEfiBlockIoProtocolGuid, &RemainingDevicePath, &WholeDiskHandle);
-            
-            if (!EFI_ERROR(Status)) {
-                // get the BlockIO protocol
-                Status = gBS->HandleProtocol(WholeDiskHandle, &gEfiBlockIoProtocolGuid, (VOID **) &Volume->WholeDiskBlockIO);
-                if (EFI_ERROR(Status)) {
-                    Volume->WholeDiskBlockIO = NULL;
-                    CheckError(Status, L"from HandleProtocol");
-                }
-            } else
-                CheckError(Status, L"from LocateDevicePath");
-        }
+  EFI_STATUS              Status;
+  REFIT_VOLUME            *Volume;
+  UINTN                   VolumeIndex;
+  UINTN           VolumesFound = 0;
+  EFI_DEVICE_PATH         *RemainingDevicePath;
+  EFI_HANDLE              DeviceHandle, WholeDiskHandle;
+  
+  for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
+    Volume = Volumes[VolumeIndex];
+    if (!Volume) {
+      continue;
     }
+    VolumesFound++;
+    if (Volume->DevicePath != NULL) {
+      // get the handle for that path
+      RemainingDevicePath = Volume->DevicePath;
+      Status = gBS->LocateDevicePath(&gEfiBlockIoProtocolGuid, &RemainingDevicePath, &DeviceHandle);
+      
+      if (!EFI_ERROR(Status)) {
+        Volume->DeviceHandle = DeviceHandle;
+        
+        // get the root directory
+        Volume->RootDir = EfiLibOpenRoot(Volume->DeviceHandle);
+        
+      } else
+        CheckError(Status, L"from LocateDevicePath");
+    }
+    
+    if (Volume->WholeDiskDevicePath != NULL) {
+      // get the handle for that path
+      RemainingDevicePath = Volume->WholeDiskDevicePath;
+      Status = gBS->LocateDevicePath(&gEfiBlockIoProtocolGuid, &RemainingDevicePath, &WholeDiskHandle);
+      
+      if (!EFI_ERROR(Status)) {
+        // get the BlockIO protocol
+        Status = gBS->HandleProtocol(WholeDiskHandle, &gEfiBlockIoProtocolGuid, (VOID **) &Volume->WholeDiskBlockIO);
+        if (EFI_ERROR(Status)) {
+          Volume->WholeDiskBlockIO = NULL;
+          CheckError(Status, L"from HandleProtocol");
+        }
+      } else
+        CheckError(Status, L"from LocateDevicePath");
+    }
+  }
+  VolumesCount = VolumesFound;
 }
 
 //

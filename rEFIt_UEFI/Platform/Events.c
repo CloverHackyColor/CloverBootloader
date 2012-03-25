@@ -17,6 +17,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 EFI_EVENT   mVirtualAddressChangeEvent = NULL;
 EFI_EVENT   OnReadyToBootEvent = NULL;
 EFI_EVENT   ExitBootServiceEvent = NULL;
+EFI_EVENT   mSimpleFileSystemChangeEvent = NULL;
 
 
 
@@ -106,7 +107,7 @@ OnExitBootServices (
 	UINTN						archMode = sizeof(UINTN) * 8;
 	UINTN						Version = 0;
   
-  while(TRUE)
+  while(FALSE) //TRUE)
 	{
 		bootArgs2 = (BootArgs2*)ptr;
 		bootArgs1 = (BootArgs1*)ptr;
@@ -145,7 +146,7 @@ OnExitBootServices (
       break;
 		}
 	}
-  
+/*  
   if(Version==2) {
 		CorrectMemoryMap(bootArgs2->MemoryMap,
                      bootArgs2->MemoryMapDescriptorSize,
@@ -158,7 +159,7 @@ OnExitBootServices (
                      &bootArgs1->MemoryMapSize);
 		bootArgs1->efiSystemTable = (UINT32)(UINTN)gST;
 	}
-  
+*/  
   DisableUsbLegacySupport();
   
 }
@@ -183,6 +184,23 @@ VirtualAddressChangeEvent (
 //  EfiConvertPointer (0x0, (VOID **) &mProperty);
 //  EfiConvertPointer (0x0, (VOID **) &mSmmCommunication);
 }
+
+VOID
+EFIAPI
+OnSimpleFileSystem (
+                    IN      EFI_EVENT  Event,
+                    IN      VOID       *Context
+                    )
+{
+  EFI_TPL		OldTpl;
+  
+	OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
+  
+  ReinitVolumes();
+  
+	gBS->RestoreTPL (OldTpl);
+  
+}  
 
 EFI_STATUS
 EFIAPI
@@ -220,6 +238,118 @@ EventsInitialize ()
          &mVirtualAddressChangeEvent
          );
   
+  gBS->CreateEventEx (
+         EVT_NOTIFY_SIGNAL,
+         TPL_NOTIFY,
+         OnSimpleFileSystem,
+         NULL,
+         &gEfiSimpleFileSystemProtocolGuid,
+         &mSimpleFileSystemChangeEvent
+         );
+  
+  
   return EFI_SUCCESS;
 }
 
+EFI_STATUS EjectVolume(IN REFIT_VOLUME *Volume)
+{
+	EFI_SCSI_IO_PROTOCOL            *ScsiIo = NULL;
+	EFI_SCSI_IO_SCSI_REQUEST_PACKET CommandPacket;
+	UINT64                          Lun = 0;
+	UINT8                           *Target;
+	UINT8                           TargetArray[EFI_SCSI_TARGET_MAX_BYTES];
+	EFI_STATUS                      Status = EFI_UNSUPPORTED;
+	UINT8                           Cdb[EFI_SCSI_OP_LENGTH_SIX];
+	USB_MASS_DEVICE                 *UsbMass = NULL;
+	EFI_BLOCK_IO_PROTOCOL           *BlkIo	= NULL;
+	EFI_BLOCK_IO_MEDIA              *Media;
+	UINT32                          Timeout;
+	UINT32                          CmdResult;
+  
+	//
+	// Initialize SCSI REQUEST_PACKET and 6-byte Cdb
+	//
+	ZeroMem (&CommandPacket, sizeof (EFI_SCSI_IO_SCSI_REQUEST_PACKET));
+	ZeroMem (Cdb, sizeof (EFI_SCSI_OP_LENGTH_SIX));
+	
+	Status = gBS->HandleProtocol(Volume->DeviceHandle, &gEfiScsiIoProtocolGuid, (VOID **) &ScsiIo);
+	if (ScsiIo) {
+		Target = &TargetArray[0];
+		ScsiIo->GetDeviceLocation (ScsiIo, &Target, &Lun);
+		
+		
+		Cdb[0]  = EFI_SCSI_OP_START_STOP_UNIT;
+		Cdb[1]  = (UINT8) (LShiftU64 (Lun, 5) & EFI_SCSI_LOGICAL_UNIT_NUMBER_MASK);
+		Cdb[1] |= 0x01;
+		Cdb[4]  = 0x02; //eject command. NO DESCRIPTION IN HEADERS
+		CommandPacket.Timeout = EFI_TIMER_PERIOD_SECONDS (3);
+		CommandPacket.Cdb = Cdb;
+		CommandPacket.CdbLength = (UINT8) sizeof (Cdb);
+    
+		Status = ScsiIo->ExecuteScsiCommand (ScsiIo, &CommandPacket, NULL);
+	} else {
+		Status = gBS->HandleProtocol(Volume->DeviceHandle, &gEfiBlockIoProtocolGuid, (VOID **) &BlkIo);
+		if (BlkIo) {
+			UsbMass = USB_MASS_DEVICE_FROM_BLOCK_IO (BlkIo);
+			if (!UsbMass) {
+				MsgLog("no UsbMass\n");
+				Status = EFI_NOT_FOUND;
+				goto ON_EXIT;
+			}
+			Media   = &UsbMass->BlockIoMedia;
+			if (!Media) {
+				MsgLog("no BlockIoMedia\n");
+				Status = EFI_NO_MEDIA;
+				goto ON_EXIT;
+			}
+			
+			//
+			// If it is a removable media, such as CD-Rom or Usb-Floppy,
+			// need to detect the media before each read/write. While some of
+			// Usb-Flash is marked as removable media.
+			//
+      //TODO - DetectMedia will appear automatically. Do nothing?
+			if (!Media->RemovableMedia) {
+				//Status = UsbBootDetectMedia (UsbMass);
+        //	if (EFI_ERROR (Status)) {
+				Status = EFI_UNSUPPORTED;
+        goto ON_EXIT;
+        //	}
+			} 
+			
+			if (!(Media->MediaPresent)) {
+				Status = EFI_NO_MEDIA;
+				goto ON_EXIT;
+			}
+      //TODO - remember previous state		
+      /*		if (MediaId != Media->MediaId) {
+       Status = EFI_MEDIA_CHANGED;
+       goto ON_EXIT;
+       }*/
+			
+			Timeout = USB_BOOT_GENERAL_CMD_TIMEOUT;
+			Cdb[0]  = EFI_SCSI_OP_START_STOP_UNIT;
+	//		Cdb[1]  = (UINT8) (USB_BOOT_LUN(UsbMass->Lun) & EFI_SCSI_LOGICAL_UNIT_NUMBER_MASK);
+	//		Cdb[1] |= 0x01;
+      Cdb[1] = 0x01;
+			Cdb[4] = 0x02; //eject command. NO DESCRIPTION IN HEADERS
+			Status = EFI_UNSUPPORTED;
+      //TODO - it hangs			
+			Status    = UsbMass->Transport->ExecCommand (
+                                                   UsbMass->Context,
+                                                   &Cdb,
+                                                   sizeof(Cdb),
+                                                   EfiUsbDataOut,
+                                                   NULL, 0,
+                                                   UsbMass->Lun,
+                                                   Timeout,
+                                                   &CmdResult
+                                                   );
+      
+      //ON_EXIT:			
+      //			gBS->RestoreTPL (OldTpl);
+		}
+	}
+ON_EXIT:
+  return Status;
+}

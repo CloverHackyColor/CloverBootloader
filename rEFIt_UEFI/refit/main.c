@@ -54,15 +54,7 @@
 
 #define MACOSX_LOADER_PATH      L"\\System\\Library\\CoreServices\\boot.efi"
 
-#define TAG_ABOUT    (1)
-#define TAG_RESET    (2)
-#define TAG_SHUTDOWN (3)
-#define TAG_TOOL     (4)
-#define TAG_LOADER   (5)
-#define TAG_LEGACY   (6)
-#define TAG_INFO     (7)
-#define TAG_OPTIONS  (8)
-#define TAG_INPUT    (9)
+
 
 EFI_HANDLE              gImageHandle;
 EFI_SYSTEM_TABLE*       gST;
@@ -144,22 +136,24 @@ CatPrint (
 static VOID  OptionsMenu(VOID)
 {
   CHAR16* Flags = AllocateZeroPool(255);
-  REFIT_MENU_ENTRY* InputBootArgs = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
+  REFIT_INPUT_DIALOG* InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   UnicodeSPrint(Flags, 255, L"Boot Args:%a", gSettings.BootArgs);
-  InputBootArgs->Title = Flags;
-  InputBootArgs->Tag = TAG_INPUT;
-  InputBootArgs->Row = 0;
-  InputBootArgs->ShortcutDigit = 0;
-  InputBootArgs->ShortcutLetter = ' ';
-  InputBootArgs->Image = NULL; 
-  InputBootArgs->BadgeImage = NULL;
-  InputBootArgs->SubScreen = NULL;
+  InputBootArgs->Entry.Title = Flags;
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0;
+  InputBootArgs->Entry.ShortcutDigit = 0;
+  InputBootArgs->Entry.ShortcutLetter = ' ';
+  InputBootArgs->Entry.Image = NULL;
+  InputBootArgs->Entry.BadgeImage = NULL;
+  InputBootArgs->Entry.SubScreen = NULL;
+  InputBootArgs->Value = gSettings.BootArgs;
 
   
   if (OptionMenu.EntryCount == 0) {
 //    AddMenuInfoLine(&OptionMenu, Flags);
     OptionMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
-    AddMenuEntry(&OptionMenu, InputBootArgs);
+    //AddMenuInfoLine(&OptionMenu, L"EFIEFI");
+    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     AddMenuEntry(&OptionMenu, &MenuEntryReturn);
   }
   RunMenu(&OptionMenu, NULL);

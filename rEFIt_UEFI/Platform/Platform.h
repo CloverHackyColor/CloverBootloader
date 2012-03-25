@@ -647,6 +647,7 @@ extern EFI_GUID gEfiLegacy8259ProtocolGuid;
 extern EFI_EVENT   mVirtualAddressChangeEvent;
 extern EFI_EVENT   OnReadyToBootEvent;
 extern EFI_EVENT   ExitBootServiceEvent;
+extern EFI_EVENT   mSimpleFileSystemChangeEvent;
 
 VOID        WaitForSts(VOID);
 
@@ -695,6 +696,7 @@ UINT8       Checksum8(VOID * startPtr, UINT32 len);
 BOOLEAN     tableSign(CHAR8 *table, CONST CHAR8 *sgn);
 
 EFI_STATUS  EventsInitialize(VOID);
+EFI_STATUS  EjectVolume(IN REFIT_VOLUME *Volume);
 
 EFI_STATUS  bootElTorito(IN REFIT_VOLUME*	volume);
 EFI_STATUS  bootMBR(IN REFIT_VOLUME* volume);

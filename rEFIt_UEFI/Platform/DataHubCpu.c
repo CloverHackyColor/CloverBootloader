@@ -146,7 +146,8 @@ EFI_STATUS SetVariablesForOSX()
 	Status = gRS->SetVariable(L"security-mode", &gEfiAppleBootGuid, 
                                          /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          5 , (VOID*)None);
-  //TODO we should have to UUID: platform and system
+  // we should have two UUID: platform and system
+  // NO! Only Platform is the best solution
 	Status = gRS->SetVariable(L"platform-uuid", &gEfiAppleBootGuid, 
                                          /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          16 ,&gUuid);

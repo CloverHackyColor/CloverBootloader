@@ -52,6 +52,16 @@ extern EFI_SYSTEM_TABLE*			gST;
 extern EFI_BOOT_SERVICES*			gBS; 
 extern EFI_RUNTIME_SERVICES*	gRS;
 
+#define TAG_ABOUT    (1)
+#define TAG_RESET    (2)
+#define TAG_SHUTDOWN (3)
+#define TAG_TOOL     (4)
+#define TAG_LOADER   (5)
+#define TAG_LEGACY   (6)
+#define TAG_INFO     (7)
+#define TAG_OPTIONS  (8)
+#define TAG_INPUT    (9)
+
 
 //
 // lib module
@@ -137,6 +147,11 @@ typedef struct _refit_menu_entry {
   EG_IMAGE    *BadgeImage;
   struct _refit_menu_screen *SubScreen;
 } REFIT_MENU_ENTRY;
+
+typedef struct _refit_input_dialog {
+  REFIT_MENU_ENTRY  Entry;
+  CHAR8*           Value;
+} REFIT_INPUT_DIALOG;
 
 typedef struct _refit_menu_screen {
   CHAR16      *Title;
