@@ -72,7 +72,7 @@ EFI_UNICODE_COLLATION_PROTOCOL *mUnicodeCollation = NULL;
 static EFI_STATUS FinishInitRefitLib(VOID);
 
 static VOID UninitVolumes(VOID);
-static VOID ReinitVolumes(VOID);
+
 
 BOOLEAN MetaiMatch (
 			IN CHAR16   *String,
@@ -1109,7 +1109,7 @@ static VOID UninitVolumes(VOID)
     }
 }
 
-static VOID ReinitVolumes(VOID)
+VOID ReinitVolumes(VOID)
 {
   EFI_STATUS              Status;
   REFIT_VOLUME            *Volume;

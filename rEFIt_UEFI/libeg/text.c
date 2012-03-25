@@ -89,18 +89,18 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN WantAlpha)
 
 VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage, IN UINTN PosX, IN UINTN PosY)
 {
-    EG_PIXEL        *BufferPtr;
-    EG_PIXEL        *FontPixelData;
-    UINTN           BufferLineOffset, FontLineOffset;
-    UINTN           TextLength;
-    UINTN           i, c;
-    
-    // clip the text
-    TextLength = StrLen(Text);
-    if (TextLength * FONT_CELL_WIDTH + PosX > CompImage->Width)
-        TextLength = (CompImage->Width - PosX) / FONT_CELL_WIDTH;
-    
-    // load the font
+  EG_PIXEL        *BufferPtr;
+  EG_PIXEL        *FontPixelData;
+  UINTN           BufferLineOffset, FontLineOffset;
+  UINTN           TextLength;
+  UINTN           i, c, c1;
+  
+  // clip the text
+  TextLength = StrLen(Text);
+  if (TextLength * FONT_CELL_WIDTH + PosX > CompImage->Width)
+    TextLength = (CompImage->Width - PosX) / FONT_CELL_WIDTH;
+  
+  // load the font
   if (FontImage == NULL){
     switch (GlobalConfig.Font) {
       case FONT_ALFA:
@@ -117,29 +117,30 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage, IN UINTN PosX, IN
         break;
     }    
   }
-    
-    // render it
-    BufferPtr = CompImage->PixelData;
-    BufferLineOffset = CompImage->Width;
-    BufferPtr += PosX + PosY * BufferLineOffset;
-    FontPixelData = FontImage->PixelData;
-    FontLineOffset = FontImage->Width;
-    for (i = 0; i < TextLength; i++) {
-        c = Text[i];
-      if (GlobalConfig.Font != FONT_LOAD) {
-        if (c < 32 || c >= 127)
-          c = 95;
-        else
-          c -= 32;        
-      } else {
-        c = (CHAR8)(((c >=0x410) ? c -= 0x350 : c) & 0xff)
-      }
-
-        egRawCompose(BufferPtr, FontPixelData + c * FONT_CELL_WIDTH,
-                     FONT_CELL_WIDTH, FONT_CELL_HEIGHT,
-                     BufferLineOffset, FontLineOffset);
-        BufferPtr += FONT_CELL_WIDTH;
+  
+  // render it
+  BufferPtr = CompImage->PixelData;
+  BufferLineOffset = CompImage->Width;
+  BufferPtr += PosX + PosY * BufferLineOffset;
+  FontPixelData = FontImage->PixelData;
+  FontLineOffset = FontImage->Width;
+  for (i = 0; i < TextLength; i++) {
+    c = Text[i];
+    if (GlobalConfig.Font != FONT_LOAD) {
+      if (c < 32 || c >= 127)
+        c = 95;
+      else
+        c -= 32;        
+    } else {
+      c1 = (((c >=0x410) ? c -= 0x350 : c) & 0xff); //Russian letters
+      c = c1;
     }
+    
+    egRawCompose(BufferPtr, FontPixelData + c * FONT_CELL_WIDTH,
+                 FONT_CELL_WIDTH, FONT_CELL_HEIGHT,
+                 BufferLineOffset, FontLineOffset);
+    BufferPtr += FONT_CELL_WIDTH;
+  }
 }
 
 /* EOF */

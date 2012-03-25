@@ -52,6 +52,7 @@ Headers collection for procedures
 #include "SmBios.h"
 //#include "GenericBdsLib.h"
 #include "device_inject.h"
+#include "UsbMass.h"
 
 /* Decimal powers: */
 #define kilo (1000ULL)
@@ -79,6 +80,23 @@ Headers collection for procedures
 #define EFI_SYSTEM_TABLE_MAX_ADDRESS 0xFFFFFFFF
 #define ROUND_PAGE(x)  ((((unsigned)(x)) + EFI_PAGE_SIZE - 1) & ~(EFI_PAGE_SIZE - 1))
 
+//
+// Max bytes needed to represent ID of a SCSI device
+//
+#define EFI_SCSI_TARGET_MAX_BYTES (0x10)
+
+//
+// bit5..7 are for Logical unit number
+// 11100000b (0xe0)
+//
+#define EFI_SCSI_LOGICAL_UNIT_NUMBER_MASK 0xe0
+
+//
+// Scsi Command Length
+//
+#define EFI_SCSI_OP_LENGTH_SIX      0x6
+#define EFI_SCSI_OP_LENGTH_TEN      0xa
+#define EFI_SCSI_OP_LENGTH_SIXTEEN  0x10
 
 #define SAFE_LOG_SIZE	80
 
