@@ -700,6 +700,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
         DBG("Common table %s found\n", ACPInames[Index]);
         Status = egLoadFile(SelfRootDir, FullName, &buffer, &bufferLen);        
       }
+    }
       if(!EFI_ERROR(Status))
       {
         //       DBG("read success\n");
@@ -708,7 +709,6 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
           DBG("...but read return status %r\n", Status);
         }
       }  
-    } 
   }
   
   if (gSettings.GeneratePStates) {
