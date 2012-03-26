@@ -143,7 +143,7 @@ static VOID  OptionsMenu(VOID)
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0;
   InputBootArgs->Entry.ShortcutDigit = 0;
-  InputBootArgs->Entry.ShortcutLetter = ' ';
+  InputBootArgs->Entry.ShortcutLetter = 'O';
   InputBootArgs->Entry.Image = NULL;
   InputBootArgs->Entry.BadgeImage = NULL;
   InputBootArgs->Entry.SubScreen = NULL;
@@ -158,8 +158,8 @@ static VOID  OptionsMenu(VOID)
     AddMenuEntry(&OptionMenu, &MenuEntryReturn);
   }
   RunMenu(&OptionMenu, NULL);
-  FreePool(Flags);
-  FreePool(InputBootArgs);
+//  FreePool(Flags);
+//  FreePool(InputBootArgs);
 }
 
 static VOID AboutRefit(VOID)
