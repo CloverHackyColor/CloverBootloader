@@ -273,6 +273,10 @@ VOID DropTableFromXSDT (UINT32 Signature)
   
 	EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
   DBG("Drop tables from Xsdt, count=%d\n", EntryCount); 
+  if (EntryCount > 50) {
+    DBG("BUG! Too many XSDT entries \n");
+    EntryCount = 50;
+  }
 	BasePtr = (UINT64*)(&(Xsdt->Entry));
 	for (Index = 0; Index < EntryCount; Index++, BasePtr++) {
     if (*BasePtr == 0) {
@@ -293,7 +297,8 @@ VOID DropTableFromXSDT (UINT32 Signature)
     Ptr = BasePtr;
     Ptr2 = Ptr + 1;
     for (Index2 = Index; Index2 < EntryCount; Index2++) {
-      *Ptr++ = *Ptr2++;
+      //*Ptr++ = *Ptr2++;
+      CopyMem(Ptr++, Ptr2++, sizeof(UINT64));
     }
     Xsdt->Header.Length -= sizeof(UINT64);
 	}	

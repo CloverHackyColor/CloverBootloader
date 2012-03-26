@@ -30,8 +30,8 @@
 					PBXFileDataSource_Target_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 354463931;
-			PBXWorkspaceStateSaveDate = 354463931;
+			PBXPerProjectTemplateStateSaveDate = 354465110;
+			PBXWorkspaceStateSaveDate = 354465110;
 		};
 		perUserProjectItems = {
 			120008A8150FDA930098BBAC /* PBXTextBookmark */ = 120008A8150FDA930098BBAC /* PBXTextBookmark */;
@@ -47,11 +47,11 @@
 			122E5BEA151F6A47003C7955 /* PBXTextBookmark */ = 122E5BEA151F6A47003C7955 /* PBXTextBookmark */;
 			122E614D151F957100350534 /* PBXTextBookmark */ = 122E614D151F957100350534 /* PBXTextBookmark */;
 			122E614E151F957100350534 /* PBXTextBookmark */ = 122E614E151F957100350534 /* PBXTextBookmark */;
-			123779701520B08100BE5F90 /* PBXTextBookmark */ = 123779701520B08100BE5F90 /* PBXTextBookmark */;
+			123558491520B566000083CB /* PBXTextBookmark */ = 123558491520B566000083CB /* PBXTextBookmark */;
+			1235584A1520B566000083CB /* PBXTextBookmark */ = 1235584A1520B566000083CB /* PBXTextBookmark */;
+			1235584F1520B81B000083CB /* PBXTextBookmark */ = 1235584F1520B81B000083CB /* PBXTextBookmark */;
 			123779711520B08100BE5F90 /* PBXTextBookmark */ = 123779711520B08100BE5F90 /* PBXTextBookmark */;
 			123779811520B10600BE5F90 /* PBXTextBookmark */ = 123779811520B10600BE5F90 /* PBXTextBookmark */;
-			123779821520B10600BE5F90 /* PBXTextBookmark */ = 123779821520B10600BE5F90 /* PBXTextBookmark */;
-			123779831520B10600BE5F90 /* PBXTextBookmark */ = 123779831520B10600BE5F90 /* PBXTextBookmark */;
 			1237A239150A81F100004ED5 /* PBXTextBookmark */ = 1237A239150A81F100004ED5 /* PBXTextBookmark */;
 			123D85FC14D94F01000AF00B /* PBXTextBookmark */ = 123D85FC14D94F01000AF00B /* PBXTextBookmark */;
 			123D85FD14D94F01000AF00B /* PBXTextBookmark */ = 123D85FD14D94F01000AF00B /* PBXTextBookmark */;
@@ -317,9 +317,9 @@
 	};
 	122336C913377E150033F008 /* menu.c */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {757, 13390}}";
+			sepNavIntBoundsRect = "{{0, 0}, {757, 13481}}";
 			sepNavSelRange = "{27255, 0}";
-			sepNavVisRange = "{26274, 1623}";
+			sepNavVisRange = "{26274, 1618}";
 			sepNavWindowFrame = "{{318, 121}, {686, 757}}";
 		};
 	};
@@ -398,7 +398,17 @@
 		vrLen = 755;
 		vrLoc = 4777;
 	};
-	123779701520B08100BE5F90 /* PBXTextBookmark */ = {
+	123558491520B566000083CB /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 122336C913377E150033F008 /* menu.c */;
+		name = "menu.c: 750";
+		rLen = 0;
+		rLoc = 27255;
+		rType = 0;
+		vrLen = 1618;
+		vrLoc = 26274;
+	};
+	1235584A1520B566000083CB /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 12D6305C14CEA05E00E5898F /* AcpiPatcher.c */;
 		name = "AcpiPatcher.c: 151";
@@ -407,6 +417,16 @@
 		rType = 0;
 		vrLen = 1212;
 		vrLoc = 4616;
+	};
+	1235584F1520B81B000083CB /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 12D6305C14CEA05E00E5898F /* AcpiPatcher.c */;
+		name = "AcpiPatcher.c: 299";
+		rLen = 140;
+		rLoc = 9543;
+		rType = 0;
+		vrLen = 1091;
+		vrLoc = 8806;
 	};
 	123779711520B08100BE5F90 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -427,26 +447,6 @@
 		rType = 0;
 		vrLen = 1203;
 		vrLoc = 4198;
-	};
-	123779821520B10600BE5F90 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 122336C913377E150033F008 /* menu.c */;
-		name = "menu.c: 708";
-		rLen = 17;
-		rLoc = 25609;
-		rType = 0;
-		vrLen = 1261;
-		vrLoc = 24978;
-	};
-	123779831520B10600BE5F90 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 122336C913377E150033F008 /* menu.c */;
-		name = "menu.c: 750";
-		rLen = 0;
-		rLoc = 27255;
-		rType = 0;
-		vrLen = 1623;
-		vrLoc = 26274;
 	};
 	1237A239150A81F100004ED5 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
@@ -899,9 +899,9 @@
 	};
 	12D6305C14CEA05E00E5898F /* AcpiPatcher.c */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {757, 9828}}";
-			sepNavSelRange = "{5281, 9}";
-			sepNavVisRange = "{4616, 1212}";
+			sepNavIntBoundsRect = "{{0, 0}, {757, 9997}}";
+			sepNavSelRange = "{9543, 140}";
+			sepNavVisRange = "{8806, 1091}";
 			sepNavWindowFrame = "{{15, 55}, {901, 723}}";
 		};
 	};
