@@ -349,7 +349,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 	EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER	*RsdPointer;
 	EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE		*FadtPointer = NULL;	
 	EFI_ACPI_4_0_FIXED_ACPI_DESCRIPTION_TABLE		*newFadt	 = NULL;
-	EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER	*Hpet    = NULL;
+//	EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER	*Hpet    = NULL;
 	EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE	*Facs = NULL;
   //	EFI_GUID										*gTableGuidArray[] = {&gEfiAcpi20TableGuid, &gEfiAcpi10TableGuid};
   //	EFI_PEI_HOB_POINTERS							GuidHob;
@@ -579,7 +579,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     }    
   }
   
-  
+/*  
   BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
   Status=gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);
   if(!EFI_ERROR(Status))
@@ -622,7 +622,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       }
     }
   }
-  
+*/  
   //  DBG("DSDT finding\n");
   if (!Volume) {
     DBG("Volume not found!\n");
@@ -701,14 +701,15 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
         Status = egLoadFile(SelfRootDir, FullName, &buffer, &bufferLen);        
       }
     }
-      if(!EFI_ERROR(Status))
-      {
-        //       DBG("read success\n");
-        Status = InsertTable((VOID*)buffer, bufferLen);  
-        if(EFI_ERROR(Status)){
-          DBG("...but read return status %r\n", Status);
-        }
-      }  
+    
+    if(!EFI_ERROR(Status))
+    {
+      //       DBG("read success\n");
+      Status = InsertTable((VOID*)buffer, bufferLen);  
+      if(EFI_ERROR(Status)){
+        DBG("...but Insert return status %r\n", Status);
+      }
+    }  
   }
   
   if (gSettings.GeneratePStates) {

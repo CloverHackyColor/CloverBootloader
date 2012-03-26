@@ -40,7 +40,7 @@
 //#define FONT_CELL_WIDTH (7)
 //#define FONT_CELL_HEIGHT (12)
 
-#define DEBUG_TEXT 0
+#define DEBUG_TEXT 1
 
 #if DEBUG_TEXT == 2
 #define DBG(x...) AsciiPrint(x)
@@ -141,6 +141,7 @@ VOID PrepareFont(VOID)
   }
   if (ChangeFont) {
     GlobalConfig.Font = FONT_ALFA;
+    GlobalConfig.CharWidth = 7;
   }
   TextHeight = FontHeight + TEXT_YMARGIN * 2;
   DBG("Font prepared WxH=%dx%d\n", FontWidth, FontHeight);
@@ -186,7 +187,7 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
                  GlobalConfig.CharWidth, FontHeight,
                  BufferLineOffset, FontLineOffset);
     if (i == Cursor) {
-      egRawCompose(BufferPtr, FontPixelData + 0x5F * FontWidth,
+      egRawCompose(BufferPtr, FontPixelData + 0x5F * FontWidth + Shift,
                    GlobalConfig.CharWidth, FontHeight,
                    BufferLineOffset, FontLineOffset);
       

@@ -137,7 +137,8 @@ static VOID  OptionsMenu(VOID)
 {
   CHAR16* Flags = AllocateZeroPool(255);
   REFIT_INPUT_DIALOG* InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  UnicodeSPrint(Flags, 255, L"Boot Args:%a", gSettings.BootArgs);
+//  UnicodeSPrint(Flags, 255, L"Boot Args:%a", gSettings.BootArgs);
+  UnicodeSPrint(Flags, 255, L"Boot Args:");
   InputBootArgs->Entry.Title = Flags;
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0;

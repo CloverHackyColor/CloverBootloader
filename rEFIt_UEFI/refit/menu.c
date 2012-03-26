@@ -719,18 +719,25 @@ VOID DrawMenuText(IN CHAR16 *Text, IN UINTN SelectedWidth, IN UINTN XPos, IN UIN
     BltImage(TextBuffer, XPos, YPos);
 }
 
+static UINTN MenuWidth, EntriesPosX, EntriesPosY, TimeoutPosY;
+
 static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
     INTN i;
     UINTN ItemWidth;
-    static UINTN MenuWidth, EntriesPosX, EntriesPosY, TimeoutPosY;
+
+    UINTN VisibleHeight = 0; //assume vertical layout
     
     switch (Function) {
         
         case MENU_FUNCTION_INIT:
         // TODO: calculate available screen space
         //
-            InitScroll(State, Screen->EntryCount, Screen->EntryCount, 0);              
+       
+            EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET + TextHeight * 2;
+            VisibleHeight = LAYOUT_TOTAL_HEIGHT / TextHeight;
+        
+            InitScroll(State, Screen->EntryCount, Screen->EntryCount, VisibleHeight);              
             // determine width of the menu
             MenuWidth = 20;  // minimum
             for (i = 0; i < (INTN)Screen->InfoLineCount; i++) {
@@ -739,11 +746,12 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
                     MenuWidth = ItemWidth;
             }
             for (i = 0; i <= State->MaxIndex; i++) {
-                ItemWidth = StrLen(Screen->Entries[i]->Title);
+                ItemWidth = StrLen(Screen->Entries[i]->Title) + 
+                            AsciiStrLen(((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Value);
                 if (MenuWidth < ItemWidth)
                     MenuWidth = ItemWidth;
             }
-            MenuWidth = TEXT_XMARGIN * 2 + MenuWidth * FontWidth;
+            MenuWidth = TEXT_XMARGIN * 2 + MenuWidth * GlobalConfig.CharWidth; // FontWidth;
             if (MenuWidth > LAYOUT_TEXT_WIDTH)
                 MenuWidth = LAYOUT_TEXT_WIDTH;
             
@@ -751,7 +759,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
                 EntriesPosX = (UGAWidth + (Screen->TitleImage->Width + TITLEICON_SPACING) - MenuWidth) >> 1;
             else
                 EntriesPosX = (UGAWidth - MenuWidth) >> 1;
-            EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET + TextHeight * 2;
+         //   EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET + TextHeight * 2;
             TimeoutPosY = EntriesPosY + (Screen->EntryCount + 1) * TextHeight;
             
             // initial painting
