@@ -898,36 +898,10 @@ EFI_STATUS SaveSettings()
 }
 
 //dmazar
-EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
+CHAR16* GetExtraKextsDir(REFIT_VOLUME *Volume)
 {
-	EFI_STATUS					Status;
-    REFIT_VOLUME                *Volume;
-	FSINJECTION_PROTOCOL		*FSInject;
     CHAR16                      *OSTypeStr = NULL;
     CHAR16                      *SrcDir = NULL;
-    
-    MsgLog("FSInjection: ");
-    
-    Volume = Entry->Volume;
-    // some checks?
-    if (Volume->BootType != BOOTING_BY_EFI) {
-        MsgLog("not started - not EFI boot\n");
-        return EFI_UNSUPPORTED;
-    }
-    
-    if (Entry->LoadOptions == NULL || StrStr(Entry->LoadOptions, L"WithKexts") == NULL) {
-        // FS injection not requested
-        MsgLog("not started - booting with cache\n");
-        return EFI_UNSUPPORTED;
-    }
-    
-    // get FSINJECTION_PROTOCOL
-	Status = gBS->LocateProtocol(&gFSInjectProtocolGuid, NULL, (void **)&FSInject);
-	if (EFI_ERROR(Status)) {
-		//Print(L"- No FSINJECTION_PROTOCOL, Status = %r\n", Status);
-        MsgLog("not started - gFSInjectProtocolGuid not found\n");
-		return EFI_NOT_STARTED;
-	}
     
     // get os version as string
     switch (Volume->OSType) {
@@ -984,25 +958,87 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
         }
     }
     
-    if (SrcDir == NULL) {
-        MsgLog("not done - injection kexts folder not found!\n");
+    return SrcDir;
+}
+
+EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
+{
+    EFI_STATUS                  Status;
+    REFIT_VOLUME                *Volume;
+    FSINJECTION_PROTOCOL        *FSInject;
+    CHAR16                      *SrcDir = NULL;
+    CHAR16                      *Blacklist[16]; // reserve place for up to 16 file names
+    UINTN                       BlacklistCnt = 0;
+    BOOLEAN                     InjectionNeeded = FALSE;
+    BOOLEAN                     BlockCaches = FALSE;
+    
+    MsgLog("FSInjection: ");
+    
+    Volume = Entry->Volume;
+    
+    // some checks?
+    if (Volume->BootType != BOOTING_BY_EFI) {
+        MsgLog("not started - not an EFI boot\n");
+        return EFI_UNSUPPORTED;
+    }
+    
+    if (Entry->LoadOptions == NULL || StrStr(Entry->LoadOptions, L"WithKexts") == NULL) {
+        // FS injection not requested
+        MsgLog("not requested\n");
         return EFI_NOT_STARTED;
     }
     
-    // we have found it - do the injection
-    MsgLog("Injecting kexts from: '%s' ", SrcDir);
-    //Print(L"FSInjection->Install(%X, %s, %X, %s) ...\n", Volume->DeviceHandle, L"\\system\\library\\extensions", SelfVolume->DeviceHandle, SrcDir);
-    Status = FSInject->Install(Volume->DeviceHandle, L"\\System\\Library\\Extensions", SelfVolume->DeviceHandle, SrcDir, TRUE);
-    FreePool(SrcDir);
+    // get FSINJECTION_PROTOCOL
+    Status = gBS->LocateProtocol(&gFSInjectProtocolGuid, NULL, (void **)&FSInject);
+    if (EFI_ERROR(Status)) {
+        //Print(L"- No FSINJECTION_PROTOCOL, Status = %r\n", Status);
+        MsgLog("not started - gFSInjectProtocolGuid not found\n");
+        return EFI_NOT_STARTED;
+    }
     
-    // reinit Volume->RootDir? it seems it's not needed.
+    if (StrStr(Entry->LoadOptions, L"WithKexts") != NULL) {
+        
+        SrcDir = GetExtraKextsDir(Volume);
+        if (SrcDir != NULL) {
+            // we have found it - injection will be done
+    MsgLog("Injecting kexts from: '%s' ", SrcDir);
+            BlockCaches = TRUE;
+            InjectionNeeded = TRUE;
+            
+        } else {
+            MsgLog("Skipping kext injection (kexts folder not found) ");
+        }
+    }
+    
+    if (!InjectionNeeded) {
+        MsgLog("- not done!\n");
+        return EFI_NOT_STARTED;
+    }
+    
+    if (BlockCaches) {
+        // add caches to blacklist
+        Blacklist[BlacklistCnt++] = L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\kernelcache";
+        Blacklist[BlacklistCnt++] = L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\Extensions.mkext";
+        Blacklist[BlacklistCnt++] = L"\\System\\Library\\Extensions.mkext";
+        Blacklist[BlacklistCnt++] = L"\\com.apple.recovery.boot\\kernelcache";
+        Blacklist[BlacklistCnt++] = L"\\com.apple.recovery.boot\\Extensions.mkext";
+        
+    }
+    
+    //Print(L"FSInject->Install(%X, %s, %X, %s, %d, %p) ...\n", Volume->DeviceHandle, L"\\system\\library\\extensions", SelfVolume->DeviceHandle, SrcDir, BlacklistCnt, Blacklist);
+    Status = FSInject->Install(Volume->DeviceHandle, L"\\System\\Library\\Extensions",
+                               SelfVolume->DeviceHandle, SrcDir,
+                               BlacklistCnt, Blacklist);
+    
+    if (SrcDir != NULL) FreePool(SrcDir);
     
     if (EFI_ERROR(Status)) {
         MsgLog("not done - could not install injection!\n");
-        Status = EFI_NOT_STARTED;
-    } else {
-        MsgLog("done!\n");
+        return EFI_NOT_STARTED;
     }
     
+    // reinit Volume->RootDir? it seems it's not needed.
+    
+    MsgLog("done!\n");
 	return Status;
 }

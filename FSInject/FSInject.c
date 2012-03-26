@@ -42,6 +42,23 @@ Module Name:
 // in package DSC file
 #define SERIAL_OUTPUT 0
 
+#ifdef __GNUC__
+
+#if CONSOLE_OUTPUT && SERIAL_OUTPUT
+	#define PRINT(format, ...) {\
+		DebugPrint(1, format , ## __VA_ARGS__);\
+		Print(L##format , ## __VA_ARGS__);\
+	}
+#elif CONSOLE_OUTPUT
+	#define PRINT(format, ...) Print(L##format , ## __VA_ARGS__);
+#elif SERIAL_OUTPUT
+	#define PRINT(format, ...) DebugPrint(1, format , ## __VA_ARGS__);
+#else
+	#define PRINT(format, ...)
+#endif
+
+#else // __GNUC__
+
 #if CONSOLE_OUTPUT && SERIAL_OUTPUT
 	#define PRINT(format, ...) {\
 		DebugPrint(1, format, __VA_ARGS__);\
@@ -54,6 +71,9 @@ Module Name:
 #else
 	#define PRINT(format, ...)
 #endif
+
+#endif // __GNUC__
+
 
 #define TEST 0
 #if TEST
@@ -377,24 +397,21 @@ FSI_FP_Open(
 	CHAR16					*InjFName = NULL;
 	FSI_FILE_PROTOCOL		*FSIThis;
 	FSI_FILE_PROTOCOL		*FSINew;
+	UINTN					i;
 
 	PRINT("FSI_FP %p.Open('%s', %x, %x) ", This, FileName, OpenMode, Attributes);
 	FSIThis = FSI_FROM_FILE_PROTOCOL(This);
-	
 	NewFName = GetNormalizedFName(FSIThis->FName, FileName);
     
-    if (FSIThis->FSI_FS->SkipCache) {
-        // blocking known caches - please add more if needed
-        if (
-            StriStartsWithBasic(NewFName, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\kernelcache")
-            || StriStartsWithBasic(NewFName, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\Extensions.mkext")
-            || StriStartsWithBasic(NewFName, L"\\System\\Library\\Extensions.mkext")
-            || StriStartsWithBasic(NewFName, L"\\com.apple.recovery.boot\\kernelcache")
-            || StriStartsWithBasic(NewFName, L"\\com.apple.recovery.boot\\Extensions.mkext")
-            ) {
+	if (FSIThis->FSI_FS->BlacklistCnt > 0) {
+		// blocking files in Blacklist
+		for (i=0; i<FSIThis->FSI_FS->BlacklistCnt; i++) {
+			if (StriStartsWithBasic(NewFName, FSIThis->FSI_FS->Blacklist[i])) {
+				PRINT("Blacklisted\n");
             return EFI_NOT_FOUND;
         }
     }
+	}
 	
 	// create our FP implementation
 	FSINew = CreateFSInjectFP();
@@ -424,16 +441,14 @@ FSI_FP_Open(
 	
 	// if write protected - return now
 	if (Status == EFI_WRITE_PROTECTED) {
-		FreePool(FSINew);
-		PRINT("= %r\n", Status);
-		return Status;
+		goto ErrorExit;
 	}
 	
-	// if not found: try injection dir
-	if (EFI_ERROR(Status)) {
+	// handle injection if needed
+	if (EFI_ERROR(Status) && FSIThis->FSI_FS->SrcDir != NULL && FSIThis->FSI_FS->SrcFS != NULL) {
+		// if not found and injection requested: try injection dir
 		InjFName = GetInjectionFName(FSIThis->FSI_FS->TgtDir, FSIThis->FSI_FS->SrcDir, NewFName);
-	}
-	if (InjFName != NULL && FSIThis->FSI_FS->SrcFS != NULL) {
+		if (InjFName != NULL) {
 		// this one exists inside injection dir - should be opened with SrcFP
 		FSINew->FromTgt = FALSE;
 		FSINew->SrcFP = OpenFileProtocol(FSIThis->FSI_FS->SrcFS, InjFName, OpenMode, Attributes);
@@ -446,7 +461,7 @@ FSI_FP_Open(
 		}
 	}
 
-	if (EFI_ERROR(Status)) {
+		if (EFI_ERROR(Status) && FSIThis->TgtFP == NULL) {
 		// this happens when we are called on FP that is opened with SrcFP (we do not have TgtFP)
 		// and then with FName ".." (in shell), and when resulting dir in actually on TgtFP.
 		// need to open it with TgtFP
@@ -460,19 +475,19 @@ FSI_FP_Open(
 			PRINT("TgtFS->OpenVolume Status=%r\n", Status);
 		}
 	}
+	}
+	
 	
 	// if still error - quit
 	if (EFI_ERROR(Status)) {
-		FreePool(FSINew);
-		PRINT("= %r\n", Status);
-		return Status;
+		goto ErrorExit;
 	}
 	
 	// we are here with EFI_SUCCESS
 
 	// check if this is injection point (target dir where we should inject)
-	if (FSINew->TgtFP != NULL && StrCmpiBasic(FSINew->FSI_FS->TgtDir, FSINew->FName) == 0
-		&& FSINew->FSI_FS->SrcFS != NULL && FSINew->FSI_FS->SrcDir != NULL)
+	if (FSINew->TgtFP != NULL && FSINew->FSI_FS->SrcFS != NULL && FSINew->FSI_FS->SrcDir != NULL
+		&& StrCmpiBasic(FSINew->FSI_FS->TgtDir, FSINew->FName) == 0)
 	{
 		// it is - open injection dir also
 		// this FP will have both TgtFP and SrcFP - can be used for test later
@@ -491,6 +506,12 @@ FSI_FP_Open(
 	
 	PRINT("= EFI_SUCCESS, NewHandle=%p, FName='%s'\n", *NewHandle, FSINew->FName);
 	return EFI_SUCCESS;
+	
+ErrorExit:
+	if (FSINew->FName != NULL) FreePool(FSINew->FName);
+	if (FSINew != NULL) FreePool(FSINew);
+	PRINT("= %r\n", Status);
+	return Status;
 }
 
 /** EFI_FILE_PROTOCOL.Close - Closes a specified file handle. */
@@ -871,13 +892,17 @@ FSInjectionInstall (
 	IN CHAR16				*TgtDir,
 	IN EFI_HANDLE			SrcHandle,
 	IN CHAR16				*SrcDir,
-    IN BOOLEAN              SkipCache
+	IN UINTN				BlacklistCnt,
+	CHAR16					*Blacklist[]
 )
 {
 	EFI_STATUS							Status;
 	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL		*TgtFS;
 	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL		*SrcFS;
 	FSI_SIMPLE_FILE_SYSTEM_PROTOCOL		*OurFS;
+	UINTN								Size;
+	UINTN								i;
+	
 	
 	PRINT("FSInjectionInstall ...\n");
 	
@@ -911,15 +936,32 @@ FSInjectionInstall (
 	OurFS->SrcHandle = SrcHandle;
 	OurFS->SrcFS = SrcFS;
 	OurFS->SrcDir = AllocateCopyPool(StrSize(SrcDir), SrcDir);
-    OurFS->SkipCache = SkipCache;
 	
 	if (OurFS->TgtDir == NULL || OurFS->SrcDir == NULL) {
 		Status = EFI_OUT_OF_RESOURCES;
-		if (OurFS->TgtDir != NULL) FreePool(OurFS->TgtDir);
-		if (OurFS->SrcDir != NULL) FreePool(OurFS->SrcDir);
-		FreePool(OurFS);
 		PRINT("- AllocateCopyPool for TgtDir or SrcDir: %r\n", Status);
-		return Status;
+		goto ErrorExit;
+	}
+	
+	if (BlacklistCnt > 0 && Blacklist != NULL) {
+		// size of array of char16 pointers
+		Size = sizeof(CHAR16 *) * BlacklistCnt;
+		OurFS->Blacklist = AllocateZeroPool(Size);
+		if (OurFS->Blacklist == NULL) {
+			Status = EFI_OUT_OF_RESOURCES;
+			PRINT("- AllocateCopyPool for Blacklist: %r\n", Status);
+			goto ErrorExit;
+		}
+		// copy array of file names
+		for(i = 0; i<BlacklistCnt; i++) {
+			OurFS->Blacklist[i] = AllocateCopyPool(StrSize(Blacklist[i]), Blacklist[i]);
+			if (OurFS->Blacklist[i] == NULL) {
+				Status = EFI_OUT_OF_RESOURCES;
+				PRINT("- AllocateCopyPool for Blacklist file: %r\n", Status);
+				goto ErrorExit;
+			}
+		}
+		OurFS->BlacklistCnt = BlacklistCnt;
 	}
 	
 	// replace existing tagret EFI_SIMPLE_FILE_SYSTEM_PROTOCOL with out implementation
@@ -931,6 +973,18 @@ FSInjectionInstall (
 	
 	PRINT("- Our FSI_SIMPLE_FILE_SYSTEM_PROTOCOL installed on handle: %X\n", TgtHandle);
 	return EFI_SUCCESS;
+	
+ErrorExit:
+	if (OurFS->Blacklist != NULL) {
+		for(i = 0; i<BlacklistCnt; i++) {
+			if (OurFS->Blacklist[i] != NULL) FreePool(OurFS->Blacklist[i]);
+		}
+		FreePool(OurFS->Blacklist);
+	}
+	if (OurFS->TgtDir != NULL) FreePool(OurFS->TgtDir);
+	if (OurFS->SrcDir != NULL) FreePool(OurFS->SrcDir);
+	FreePool(OurFS);
+	return Status;
 }
 
 
@@ -978,6 +1032,15 @@ FSInjectEntrypoint (
 	)
 {
 	EFI_STATUS					Status;
+#if TEST
+	CHAR16	*Blacklist[] = {
+		L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\kernelcache",
+		L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\Extensions.mkext",
+		L"\\System\\Library\\Extensions.mkext",
+		L"\\com.apple.recovery.boot\\kernelcache",
+		L"\\com.apple.recovery.boot\\Extensions.mkext"
+	};
+#endif
 	
 	Status = InstallFSInjectionProtocol();
 	if (EFI_ERROR(Status)) {
@@ -985,9 +1048,8 @@ FSInjectEntrypoint (
 	}
 	
 #if TEST
-	//Status = InstallTestFSinjection(L"\\System\\Library\\Extensions", L"\\Users\\dmazar\\Inject");
-	//Status = InstallTestFSinjection(L"\\Users\\dmazar", L"\\efi\\kext\\10_7");
-	Status = InstallTestFSinjection(L"\\Users\\damir", L"\\TstInject");
+	//Status = InstallTestFSinjection(L"\\System\\Library\\Extensions", L"\\Users\\dmazar\\Inject", 2, Blacklist);
+	Status = InstallTestFSinjection(L"\\Users\\dmazar", L"\\efi\\kext\\10_7", 2, Blacklist);
 	if (EFI_ERROR(Status)) {
 		return Status;
 	}

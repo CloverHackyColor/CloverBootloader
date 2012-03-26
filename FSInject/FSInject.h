@@ -28,7 +28,9 @@ typedef struct {
 	EFI_HANDLE							*SrcHandle;		// handle where injection dir is
 	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL		*SrcFS;			// FS with injection dir we are replacing
 	CHAR16								*SrcDir;		// injection dir that contains files that will be injected into TgtDir
-    BOOLEAN                             SkipCache;      // if TRUE then report kernelcache as missing
+	
+	UINTN								BlacklistCnt;	// number of file names in Blacklist
+	CHAR16								**Blacklist;	// pointer to array of pointers - file names to be blocked on target volume
 } FSI_SIMPLE_FILE_SYSTEM_PROTOCOL;
 
 /** Signature for FSI_SIMPLE_FILE_SYSTEM_PROTOCOL */

@@ -18,8 +18,14 @@ Module Name:
 
 /**
  * FSINJECTION_PROTOCOL.Install() type definition
+ * @param TgtHandle     target volume handler
+ * @param TgtDir        dir on target volume where content of SrcDir will be injected
+ * @param SrcHandle     volume where SrcDir exists
+ * @param SrcDir        dir whose content will be injected
+ * @param BlacklistCnt  number of file names listed in Blacklist
+ * @param Blacklist     list of file names that will be blocked on target volume
  */
-typedef EFI_STATUS(EFIAPI * FSINJECTION_INSTALL)(IN EFI_HANDLE TgtHandle, IN CHAR16 *TgtDir, IN EFI_HANDLE InjHandle, IN CHAR16 *InjDir, IN BOOLEAN SkipKernelCache);
+typedef EFI_STATUS(EFIAPI * FSINJECTION_INSTALL)(IN EFI_HANDLE TgtHandle, IN CHAR16 *TgtDir, IN EFI_HANDLE SrcHandle, IN CHAR16 *SrcDir, IN UINTN BlacklistCnt, CHAR16 *Blacklist[]);
 
 /**
  * FSINJECTION_PROTOCOL that can be used to install FSInjection to some existing volume handle

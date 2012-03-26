@@ -77,7 +77,7 @@ GetVolumeHandleWithDir(CHAR16 *SearchDir, OUT EFI_HANDLE *Handle)
 
 EFI_STATUS
 EFIAPI
-InstallTestFSinjection(CHAR16 *TargetDir, CHAR16 *InjectionDir, BOOLEAN SkipCache)
+InstallTestFSinjection(CHAR16 *TargetDir, CHAR16 *InjectionDir, UINTN BlacklistCnt, CHAR16 *Blacklist[])
 {
 	EFI_STATUS					Status;
 	FSINJECTION_PROTOCOL		*FSInjection;
@@ -110,7 +110,7 @@ InstallTestFSinjection(CHAR16 *TargetDir, CHAR16 *InjectionDir, BOOLEAN SkipCach
 	
 	// install FSInjection
 	Print(L"- FSInjection->Install(%X, %s, %X, %s) ...\n", TargetHandle, TargetDir, InjectionHandle, InjectionDir);
-	Status = FSInjection->Install(TargetHandle, TargetDir, InjectionHandle, InjectionDir, SkipCache);
+	Status = FSInjection->Install(TargetHandle, TargetDir, InjectionHandle, InjectionDir, BlacklistCnt, Blacklist);
 	if (EFI_ERROR(Status)) {
 		Print(L"- error FSInjection->Install(), Status = %r\n", Status);
 	}
