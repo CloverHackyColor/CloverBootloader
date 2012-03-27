@@ -418,7 +418,6 @@ typedef struct {
   
 } XSDT_TABLE;
 
-
 typedef struct {
   
 	// SMBIOS TYPE0
@@ -651,6 +650,7 @@ extern EFI_GUID                 gUuid;
 extern EFI_EDID_DISCOVERED_PROTOCOL*            EdidDiscovered;
 extern CHAR8*                   gDeviceProperties;
 extern CHAR8*                   cDeviceProperties;
+extern INPUT_ITEM               *InputItems;
 
 extern EFI_GUID	gEfiAppleBootGuid;
 extern EFI_GUID	gEfiAppleNvramGuid;
@@ -672,6 +672,7 @@ VOID        WaitForSts(VOID);
 VOID        InitBooterLog(VOID);
 EFI_STATUS  SetupBooterLog(VOID);
 VOID        GetDefaultSettings(VOID);
+VOID        FillInputs(VOID);
 
 EFI_STATUS  StrToGuid (IN  CHAR16   *Str, OUT EFI_GUID *Guid);
 EFI_STATUS  StrToGuidLE (IN  CHAR16   *Str, OUT EFI_GUID *Guid);

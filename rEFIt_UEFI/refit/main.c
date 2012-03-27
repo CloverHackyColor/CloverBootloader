@@ -135,31 +135,57 @@ CatPrint (
 */
 static VOID  OptionsMenu(VOID)
 {
-  CHAR16* Flags = AllocateZeroPool(255);
-  REFIT_INPUT_DIALOG* InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-//  UnicodeSPrint(Flags, 255, L"Boot Args:%a", gSettings.BootArgs);
-  UnicodeSPrint(Flags, 255, L"Boot Args:");
-  InputBootArgs->Entry.Title = Flags;
-  InputBootArgs->Entry.Tag = TAG_INPUT;
-  InputBootArgs->Entry.Row = 0;
-  InputBootArgs->Entry.ShortcutDigit = 0;
-  InputBootArgs->Entry.ShortcutLetter = 'O';
-  InputBootArgs->Entry.Image = NULL;
-  InputBootArgs->Entry.BadgeImage = NULL;
-  InputBootArgs->Entry.SubScreen = NULL;
-  InputBootArgs->Value = gSettings.BootArgs;
-
-  
   if (OptionMenu.EntryCount == 0) {
-//    AddMenuInfoLine(&OptionMenu, Flags);
     OptionMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
-    //AddMenuInfoLine(&OptionMenu, L"EFIEFI");
+    
+    CHAR16* Flags = AllocateZeroPool(255);
+    REFIT_INPUT_DIALOG* InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    //  UnicodeSPrint(Flags, 255, L"Boot Args:%a", gSettings.BootArgs);
+    UnicodeSPrint(Flags, 255, L"Boot Args:");
+    InputBootArgs->Entry.Title = Flags;
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = StrLen(InputItems[OptionMenu.EntryCount].SValue);
+    InputBootArgs->Entry.ShortcutDigit = 0;
+    InputBootArgs->Entry.ShortcutLetter = 'O';
+    InputBootArgs->Entry.Image = NULL;
+    InputBootArgs->Entry.BadgeImage = NULL;
+    InputBootArgs->Entry.SubScreen = NULL;
+    InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];    
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+    
+    Flags = AllocateZeroPool(30);
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    UnicodeSPrint(Flags, 30, L"Use DSDT mini:");
+    InputBootArgs->Entry.Title = Flags;
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = 0;
+    InputBootArgs->Entry.ShortcutDigit = 0;
+    InputBootArgs->Entry.ShortcutLetter = 'O';
+    InputBootArgs->Entry.Image = NULL;
+    InputBootArgs->Entry.BadgeImage = NULL;
+    InputBootArgs->Entry.SubScreen = NULL;
+    InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];    
+    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+    
+    Flags = AllocateZeroPool(30);
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    UnicodeSPrint(Flags, 30, L"Audio ID:");
+    InputBootArgs->Entry.Title = Flags;
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = 0;
+    InputBootArgs->Entry.ShortcutDigit = 0;
+    InputBootArgs->Entry.ShortcutLetter = 'O';
+    InputBootArgs->Entry.Image = NULL;
+    InputBootArgs->Entry.BadgeImage = NULL;
+    InputBootArgs->Entry.SubScreen = NULL;
+    InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];    
+    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+        
     AddMenuEntry(&OptionMenu, &MenuEntryReturn);
   }
   RunMenu(&OptionMenu, NULL);
-//  FreePool(Flags);
-//  FreePool(InputBootArgs);
+  //  FreePool(Flags);
+  //  FreePool(InputBootArgs);
 }
 
 static VOID AboutRefit(VOID)
@@ -169,11 +195,11 @@ static VOID AboutRefit(VOID)
         AboutMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
         AddMenuInfoLine(&AboutMenu, L"rEFIt Version 1.03 UEFI by Slice");
 #ifdef FIRMWARE_BUILDDATE
-      AddMenuInfoLine(&AboutMenu, PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
+        AddMenuInfoLine(&AboutMenu, PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
 #else
-      AddMenuInfoLine(&AboutMenu, L" Build: unknown");
+        AddMenuInfoLine(&AboutMenu, L" Build: unknown");
 #endif
-      AddMenuInfoLine(&AboutMenu, L"");
+        AddMenuInfoLine(&AboutMenu, L"");
         AddMenuInfoLine(&AboutMenu, L"Copyright (c) 2006-2010 Christoph Pfisterer");
         AddMenuInfoLine(&AboutMenu, L"Portions Copyright (c) Intel Corporation and others");
         AddMenuInfoLine(&AboutMenu, L"");
@@ -188,7 +214,7 @@ static VOID AboutRefit(VOID)
         AddMenuInfoLine(&AboutMenu, L" Platform: unknown");
 #endif
 #ifdef FIRMWARE_REVISION
-      AddMenuInfoLine(&AboutMenu, PoolPrint(L" Firmware: %s rev %a", gST->FirmwareVendor, FIRMWARE_REVISION));
+        AddMenuInfoLine(&AboutMenu, PoolPrint(L" Firmware: %s rev %a", gST->FirmwareVendor, FIRMWARE_REVISION));
 #else
       AddMenuInfoLine(&AboutMenu, PoolPrint(L" Firmware: %s rev %d", gST->FirmwareVendor, gST->FirmwareRevision));
 #endif
@@ -325,17 +351,19 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //  PauseForKey(L"PatchACPI");
   PatchACPI(Entry->Volume);
 //  PauseForKey(L"SetVariablesForOSX");
+  SetVariablesForOSX();
+//  PauseForKey(L"FinalizeSmbios");
+  EventsInitialize ();
   gBS->SignalEvent(OnReadyToBootEvent);
   gBS->SignalEvent(mVirtualAddressChangeEvent);
   
-  SetVariablesForOSX();
-//  PauseForKey(L"FinalizeSmbios");
   FinalizeSmbios();
 //  PauseForKey(L"SetupDataForOSX");
   SetupDataForOSX();
 //  PauseForKey(L"SetupBooterLog");
   Status = SetupBooterLog();
-  EventsInitialize ();
+  
+  
   StartEFIImage(Entry->DevicePath, Entry->LoadOptions,
                 Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL);
 //  PauseForKey(L"FinishExternalScreen");
@@ -1433,6 +1461,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     ScanTool();
   }
   
+  FillInputs();
   // fixed other menu entries
     
   if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {

@@ -136,6 +136,26 @@ typedef struct {
     MBR_PARTITION_INFO  *MbrPartitionTable;
 } REFIT_VOLUME;
 
+//GUI types
+typedef enum {
+  BoolValue,
+  Numeric,
+  ASString,
+  UNIString,
+  
+} ITEM_TYPE;
+
+typedef struct {
+  ITEM_TYPE ItemType; //string, value, boolean
+  BOOLEAN Valid;
+  BOOLEAN BValue;
+  UINT8   Pad8;
+  UINT32  Pad32;
+  UINT64  UValue;
+  CHAR8*  AValue;
+  CHAR16* SValue;
+} INPUT_ITEM;
+
 struct _refit_menu_screen;
 
 typedef struct _refit_menu_entry {
@@ -151,7 +171,7 @@ typedef struct _refit_menu_entry {
 
 typedef struct _refit_input_dialog {
   REFIT_MENU_ENTRY  Entry;
-  CHAR8*           Value;
+  INPUT_ITEM        *Item;
 } REFIT_INPUT_DIALOG;
 
 typedef struct _refit_menu_screen {
@@ -281,8 +301,8 @@ EFI_STATUS InitializeUnicodeCollationProtocol (VOID);
 #define ATTR_CHOICE_CURRENT (EFI_WHITE | EFI_BACKGROUND_GREEN)
 #define ATTR_SCROLLARROW (EFI_LIGHTGREEN | EFI_BACKGROUND_BLACK)
 
-#define LAYOUT_TEXT_WIDTH (600)
-#define LAYOUT_TOTAL_HEIGHT (368)
+#define LAYOUT_TEXT_WIDTH (780)
+#define LAYOUT_TOTAL_HEIGHT (480)
 #define LAYOUT_BANNER_HEIGHT (32)
 #define LAYOUT_BANNER_YOFFSET (LAYOUT_BANNER_HEIGHT + 32)
 

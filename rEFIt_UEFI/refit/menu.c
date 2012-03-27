@@ -99,7 +99,34 @@ static UINTN row1Count, row1PosX, row1PosXRunning;
 static UINTN *itemPosX;
 static UINTN row0PosY, row1PosY, textPosY;
 
+INPUT_ITEM *InputItems;
+UINTN  InputItemsCount = 0;
 
+
+VOID FillInputs(VOID)
+{
+  InputItemsCount = 20; //XXX
+  InputItems = AllocateZeroPool(InputItemsCount * sizeof(INPUT_ITEM));
+  InputItems[0].ItemType = ASString;
+  //even though Ascii we will keep value as Unicode to convert later
+  InputItems[0].SValue = PoolPrint(L"%a", gSettings.BootArgs);
+  InputItems[1].ItemType = BoolValue;
+  InputItems[1].BValue = gSettings.UseDSDTmini;
+  InputItems[2].ItemType = Numeric;
+  InputItems[2].UValue = gSettings.HDALayoutId;
+  //and so on
+  
+}
+
+VOID FreeItems(VOID)
+{
+  UINTN i;
+  for (i=0; i<InputItemsCount; i++) {
+    FreePool(InputItems[i].AValue);
+    FreePool(InputItems[i].SValue);
+  }
+  FreePool(InputItems);
+}
 
 //
 // Graphics helper functions
@@ -107,66 +134,66 @@ static UINTN row0PosY, row1PosY, textPosY;
 
 static VOID InitSelection(VOID)
 {
-    UINTN       x, y, src_x, src_y;
-    EG_PIXEL    *DestPtr, *SrcPtr;
+  UINTN       x, y, src_x, src_y;
+  EG_PIXEL    *DestPtr, *SrcPtr;
+  
+  if (!AllowGraphicsMode)
+    return;
+  if (SelectionImages[0] != NULL)
+    return;
+  
+  // load small selection image
+  if (GlobalConfig.SelectionSmallFileName != NULL)
+    SelectionImages[2] = egLoadImage(ThemeDir, GlobalConfig.SelectionSmallFileName, FALSE);
+  if (SelectionImages[2] == NULL)
+    SelectionImages[2] = egPrepareEmbeddedImage(&egemb_back_selected_small, FALSE);
+  SelectionImages[2] = egEnsureImageSize(SelectionImages[2],
+                                         ROW1_TILESIZE, ROW1_TILESIZE, &MenuBackgroundPixel);
+  if (SelectionImages[2] == NULL)
+    return;
+  
+  // load big selection image
+  if (GlobalConfig.SelectionBigFileName != NULL) {
+    SelectionImages[0] = egLoadImage(ThemeDir, GlobalConfig.SelectionBigFileName, FALSE);
+    SelectionImages[0] = egEnsureImageSize(SelectionImages[0],
+                                           ROW0_TILESIZE, ROW0_TILESIZE, &MenuBackgroundPixel);
+  }
+  if (SelectionImages[0] == NULL) {
+    // calculate big selection image from small one
     
-    if (!AllowGraphicsMode)
-        return;
-    if (SelectionImages[0] != NULL)
-        return;
-    
-    // load small selection image
-    if (GlobalConfig.SelectionSmallFileName != NULL)
-        SelectionImages[2] = egLoadImage(ThemeDir, GlobalConfig.SelectionSmallFileName, FALSE);
-    if (SelectionImages[2] == NULL)
-        SelectionImages[2] = egPrepareEmbeddedImage(&egemb_back_selected_small, FALSE);
-    SelectionImages[2] = egEnsureImageSize(SelectionImages[2],
-                                           ROW1_TILESIZE, ROW1_TILESIZE, &MenuBackgroundPixel);
-    if (SelectionImages[2] == NULL)
-        return;
-    
-    // load big selection image
-    if (GlobalConfig.SelectionBigFileName != NULL) {
-        SelectionImages[0] = egLoadImage(ThemeDir, GlobalConfig.SelectionBigFileName, FALSE);
-        SelectionImages[0] = egEnsureImageSize(SelectionImages[0],
-                                               ROW0_TILESIZE, ROW0_TILESIZE, &MenuBackgroundPixel);
-    }
+    SelectionImages[0] = egCreateImage(ROW0_TILESIZE, ROW0_TILESIZE, FALSE);
     if (SelectionImages[0] == NULL) {
-        // calculate big selection image from small one
-        
-        SelectionImages[0] = egCreateImage(ROW0_TILESIZE, ROW0_TILESIZE, FALSE);
-        if (SelectionImages[0] == NULL) {
-            egFreeImage(SelectionImages[2]);
-            SelectionImages[2] = NULL;
-            return;
-        }
-        
-        DestPtr = SelectionImages[0]->PixelData;
-        SrcPtr  = SelectionImages[2]->PixelData;
-        for (y = 0; y < ROW0_TILESIZE; y++) {
-            if (y < (ROW1_TILESIZE >> 1))
-                src_y = y;
-            else if (y < (ROW0_TILESIZE - (ROW1_TILESIZE >> 1)))
-                src_y = (ROW1_TILESIZE >> 1);
-            else
-                src_y = y - (ROW0_TILESIZE - ROW1_TILESIZE);
-            
-            for (x = 0; x < ROW0_TILESIZE; x++) {
-                if (x < (ROW1_TILESIZE >> 1))
-                    src_x = x;
-                else if (x < (ROW0_TILESIZE - (ROW1_TILESIZE >> 1)))
-                    src_x = (ROW1_TILESIZE >> 1);
-                else
-                    src_x = x - (ROW0_TILESIZE - ROW1_TILESIZE);
-                
-                *DestPtr++ = SrcPtr[src_y * ROW1_TILESIZE + src_x];
-            }
-        }
+      egFreeImage(SelectionImages[2]);
+      SelectionImages[2] = NULL;
+      return;
     }
     
-    // non-selected background images
-    SelectionImages[1] = egCreateFilledImage(ROW0_TILESIZE, ROW0_TILESIZE, FALSE, &MenuBackgroundPixel);
-    SelectionImages[3] = egCreateFilledImage(ROW1_TILESIZE, ROW1_TILESIZE, FALSE, &MenuBackgroundPixel);
+    DestPtr = SelectionImages[0]->PixelData;
+    SrcPtr  = SelectionImages[2]->PixelData;
+    for (y = 0; y < ROW0_TILESIZE; y++) {
+      if (y < (ROW1_TILESIZE >> 1))
+        src_y = y;
+      else if (y < (ROW0_TILESIZE - (ROW1_TILESIZE >> 1)))
+        src_y = (ROW1_TILESIZE >> 1);
+      else
+        src_y = y - (ROW0_TILESIZE - ROW1_TILESIZE);
+      
+      for (x = 0; x < ROW0_TILESIZE; x++) {
+        if (x < (ROW1_TILESIZE >> 1))
+          src_x = x;
+        else if (x < (ROW0_TILESIZE - (ROW1_TILESIZE >> 1)))
+          src_x = (ROW1_TILESIZE >> 1);
+        else
+          src_x = x - (ROW0_TILESIZE - ROW1_TILESIZE);
+        
+        *DestPtr++ = SrcPtr[src_y * ROW1_TILESIZE + src_x];
+      }
+    }
+  }
+  
+  // non-selected background images
+  SelectionImages[1] = egCreateFilledImage(ROW0_TILESIZE, ROW0_TILESIZE, FALSE, &MenuBackgroundPixel);
+  SelectionImages[3] = egCreateFilledImage(ROW1_TILESIZE, ROW1_TILESIZE, FALSE, &MenuBackgroundPixel);
 }
 
 //
@@ -368,10 +395,13 @@ static INTN FindMenuShortcutEntry(IN REFIT_MENU_SCREEN *Screen, IN CHAR16 Shortc
     return -1;
 }
 
+
+
 //
-// generic menu function
+// generic input menu function
+// usr-sse2
 //
-static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, SCROLL_STATE *State, IN MENU_STYLE_FUNC  StyleFunc, CHAR8* Parameter)
+static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, SCROLL_STATE *State, IN MENU_STYLE_FUNC  StyleFunc, UINTN Selection)
 {
 	EFI_STATUS    Status;
 	EFI_INPUT_KEY key;
@@ -380,6 +410,7 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, SCROLL_STATE *State, IN M
   CHAR8         Backup[256];
 	UINTN         MenuExit = 0;
 	UINTN         LogSize;
+  UINTN         Pos = (Screen->Entries[State->CurrentSelection])->Row;
 	
 	//InputString = AllocatePool(256*sizeof(CHAR8));
   AsciiStrCpy(Backup, Parameter);
@@ -390,18 +421,18 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, SCROLL_STATE *State, IN M
 			continue;
 		}
 		switch (key.ScanCode) {
-      /*case SCAN_LEFT:
-        if (index<AsciiStrLen(InputString)) index++;
+      case SCAN_LEFT:
+        if (Pos<StrLen(Backup)) Pos++;
         break;
       case SCAN_RIGHT:
-        if (index>0) index--;
+        if (Pos>0) Pos--;
         break;
       case SCAN_HOME:
-        index = 0;
+        Pos = 0;
         break;
       case SCAN_END:
-        index = AsciiStrLen(InputString);
-        break;*/
+        Pos = StrLen(Backup);
+        break;
       case SCAN_ESC:
         MenuExit = MENU_EXIT_ESCAPE;
         continue;
@@ -416,6 +447,12 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, SCROLL_STATE *State, IN M
     }
 		
 		switch (key.UnicodeChar) {
+      case CHAR_BACKSPACE:  
+				Parameter[--i] = L" ";
+				Parameter[i+1] = '\0';
+        StyleFunc(Screen, State, MENU_FUNCTION_PAINT_SELECTION, NULL);
+				break;
+        
 			case CHAR_LINEFEED:
 			case CHAR_CARRIAGE_RETURN:
 				MenuExit = MENU_EXIT_ENTER;
@@ -424,7 +461,6 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, SCROLL_STATE *State, IN M
 				Parameter[i++] = (CHAR8)key.UnicodeChar;
 				Parameter[i] = '\0';
         StyleFunc(Screen, State, MENU_FUNCTION_PAINT_SELECTION, NULL);
-				//AsciiPrint("%c",(CHAR8)key.UnicodeChar);
 				break;
 		}
     
@@ -470,116 +506,117 @@ static UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC Sty
         UpdateScroll(&State, SCROLL_NONE);
     }
     
-    while (!MenuExit) {
-        // update the screen
-        if (State.PaintAll) {
-            StyleFunc(Screen, &State, MENU_FUNCTION_PAINT_ALL, NULL);
-            State.PaintAll = FALSE;
-        } else if (State.PaintSelection) {
-            StyleFunc(Screen, &State, MENU_FUNCTION_PAINT_SELECTION, NULL);
-            State.PaintSelection = FALSE;
-        }
-        
-        if (HaveTimeout) {
-            TimeoutMessage = PoolPrint(L"%s in %d seconds", Screen->TimeoutText, (TimeoutCountdown + 5) / 10);
-            StyleFunc(Screen, &State, MENU_FUNCTION_PAINT_TIMEOUT, TimeoutMessage);
-            FreePool(TimeoutMessage);
-        }
-        
-        // read key press (and wait for it if applicable)
-        Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &key);
-        if (Status == EFI_NOT_READY) {
-            if (HaveTimeout && TimeoutCountdown == 0) {
-                // timeout expired
-                MenuExit = MENU_EXIT_TIMEOUT;
-                break;
-            } else if (HaveTimeout) {
-                gBS->Stall(100000);
-                TimeoutCountdown--;
-            } else
-                gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &index);
-            continue;
-        }
-        if (HaveTimeout) {
-            // the user pressed a key, cancel the timeout
-            StyleFunc(Screen, &State, MENU_FUNCTION_PAINT_TIMEOUT, L"");
-            HaveTimeout = FALSE;
-        }
-        
-        // react to key press
-        switch (key.ScanCode) {
-            case SCAN_UP:
-            case SCAN_LEFT:
-                UpdateScroll(&State, SCROLL_LINE_UP);
-                break;
-            case SCAN_DOWN:
-            case SCAN_RIGHT:
-                UpdateScroll(&State, SCROLL_LINE_DOWN);
-                break;
-            case SCAN_HOME:
-                UpdateScroll(&State, SCROLL_FIRST);
-                break;
-            case SCAN_END:
-                UpdateScroll(&State, SCROLL_LAST);
-                break;
-            case SCAN_PAGE_UP:
-                UpdateScroll(&State, SCROLL_PAGE_UP);
-                break;
-            case SCAN_PAGE_DOWN:
-                UpdateScroll(&State, SCROLL_PAGE_DOWN);
-                break;
-            case SCAN_ESC:
-                MenuExit = MENU_EXIT_ESCAPE;
-                break;
-            case SCAN_INSERT:
-              MenuExit = MENU_EXIT_OPTIONS;
-              break;
-
-            case SCAN_F2:
-              LogSize = msgCursor - msgbuf;
-              Status = egSaveFile(SelfRootDir, L"EFI\\misc\\preboot.log", (UINT8*)msgbuf, LogSize);
-              if (EFI_ERROR(Status)) {
-                Status = egSaveFile(NULL, L"EFI\\misc\\preboot.log", (UINT8*)msgbuf, LogSize);
-              }
-              break;
-            case SCAN_F10:
-                egScreenShot();
-                break;
-            case SCAN_F12:
-              MenuExit = MENU_EXIT_EJECT;
-              State.PaintAll = TRUE;
-              break;
-
-        }
-        switch (key.UnicodeChar) {
-            case CHAR_LINEFEED:
-            case CHAR_CARRIAGE_RETURN:
-        
-        if (Screen->Entries[State.CurrentSelection]->Tag == TAG_INPUT)
-          MenuExit = InputDialog(Screen, &State, StyleFunc, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State.CurrentSelection]))->Value);
-        else 
-                MenuExit = MENU_EXIT_ENTER;
-                break;
-      case ' ':
-                MenuExit = MENU_EXIT_DETAILS;
-                break;
-        
-            default:
-                ShortcutEntry = FindMenuShortcutEntry(Screen, key.UnicodeChar);
-                if (ShortcutEntry >= 0) {
-                    State.CurrentSelection = ShortcutEntry;
-                    MenuExit = MENU_EXIT_ENTER;
-                }
-                break;
-        }
+  while (!MenuExit) {
+    // update the screen
+    if (State.PaintAll) {
+      StyleFunc(Screen, &State, MENU_FUNCTION_PAINT_ALL, NULL);
+      State.PaintAll = FALSE;
+    } else if (State.PaintSelection) {
+      StyleFunc(Screen, &State, MENU_FUNCTION_PAINT_SELECTION, NULL);
+      State.PaintSelection = FALSE;
     }
     
-    StyleFunc(Screen, &State, MENU_FUNCTION_CLEANUP, NULL);
+    if (HaveTimeout) {
+      TimeoutMessage = PoolPrint(L"%s in %d seconds", Screen->TimeoutText, (TimeoutCountdown + 5) / 10);
+      StyleFunc(Screen, &State, MENU_FUNCTION_PAINT_TIMEOUT, TimeoutMessage);
+      FreePool(TimeoutMessage);
+    }
     
-    if (ChosenEntry)
-        *ChosenEntry = Screen->Entries[State.CurrentSelection];
-    *DefaultEntryIndex = State.CurrentSelection;
-    return MenuExit;
+    // read key press (and wait for it if applicable)
+    Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &key);
+    if (Status == EFI_NOT_READY) {
+      if (HaveTimeout && TimeoutCountdown == 0) {
+        // timeout expired
+        MenuExit = MENU_EXIT_TIMEOUT;
+        break;
+      } else if (HaveTimeout) {
+        gBS->Stall(100000);
+        TimeoutCountdown--;
+      } else
+        gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &index);
+      continue;
+    }
+    if (HaveTimeout) {
+      // the user pressed a key, cancel the timeout
+      StyleFunc(Screen, &State, MENU_FUNCTION_PAINT_TIMEOUT, L"");
+      HaveTimeout = FALSE;
+    }
+    
+    // react to key press
+    switch (key.ScanCode) {
+      case SCAN_UP:
+      case SCAN_LEFT:
+        UpdateScroll(&State, SCROLL_LINE_UP);
+        break;
+      case SCAN_DOWN:
+      case SCAN_RIGHT:
+        UpdateScroll(&State, SCROLL_LINE_DOWN);
+        break;
+      case SCAN_HOME:
+        UpdateScroll(&State, SCROLL_FIRST);
+        break;
+      case SCAN_END:
+        UpdateScroll(&State, SCROLL_LAST);
+        break;
+      case SCAN_PAGE_UP:
+        UpdateScroll(&State, SCROLL_PAGE_UP);
+        break;
+      case SCAN_PAGE_DOWN:
+        UpdateScroll(&State, SCROLL_PAGE_DOWN);
+        break;
+      case SCAN_ESC:
+        MenuExit = MENU_EXIT_ESCAPE;
+        break;
+      case SCAN_INSERT:
+        MenuExit = MENU_EXIT_OPTIONS;
+        break;
+        
+      case SCAN_F2:
+        LogSize = msgCursor - msgbuf;
+        Status = egSaveFile(SelfRootDir, L"EFI\\misc\\preboot.log", (UINT8*)msgbuf, LogSize);
+        if (EFI_ERROR(Status)) {
+          Status = egSaveFile(NULL, L"EFI\\misc\\preboot.log", (UINT8*)msgbuf, LogSize);
+        }
+        break;
+      case SCAN_F10:
+        egScreenShot();
+        break;
+      case SCAN_F12:
+        MenuExit = MENU_EXIT_EJECT;
+        State.PaintAll = TRUE;
+        break;
+        
+    }
+    switch (key.UnicodeChar) {
+      case CHAR_LINEFEED:
+      case CHAR_CARRIAGE_RETURN:
+        
+        if (Screen->Entries[State.CurrentSelection]->Tag == TAG_INPUT)
+          MenuExit = InputDialog(Screen, &State, StyleFunc);
+                                 //((REFIT_INPUT_DIALOG*)(Screen->Entries[State.CurrentSelection]))->Value);
+        else 
+          MenuExit = MENU_EXIT_ENTER;
+        break;
+      case ' ':
+        MenuExit = MENU_EXIT_DETAILS;
+        break;
+        
+      default:
+        ShortcutEntry = FindMenuShortcutEntry(Screen, key.UnicodeChar);
+        if (ShortcutEntry >= 0) {
+          State.CurrentSelection = ShortcutEntry;
+          MenuExit = MENU_EXIT_ENTER;
+        }
+        break;
+    }
+  }
+  
+  StyleFunc(Screen, &State, MENU_FUNCTION_CLEANUP, NULL);
+    
+  if (ChosenEntry)
+    *ChosenEntry = Screen->Entries[State.CurrentSelection];
+  *DefaultEntryIndex = State.CurrentSelection;
+  return MenuExit;
 }
 
 //
@@ -724,7 +761,7 @@ static UINTN MenuWidth, EntriesPosX, EntriesPosY, TimeoutPosY;
 static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
     INTN i;
-    UINTN ItemWidth;
+    UINTN ItemWidth = 0;
 
     UINTN VisibleHeight = 0; //assume vertical layout
     
@@ -793,8 +830,9 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
                 StrCpy(ResultString, Screen->Entries[i]->Title);
                 StrCat(ResultString, UnicodeParameter);
                 StrCat(ResultString, L" ");
+                //Slice - suppose to use Row as Cursor in text
                 DrawMenuText(ResultString, (i == State->CurrentSelection) ? MenuWidth : 0,
-                             EntriesPosX, EntriesPosY + i * TextHeight, StrLen(ResultString)-1);
+                             EntriesPosX, EntriesPosY + i * TextHeight, Screen->Entries[i]->Row);
               }
               else
                 DrawMenuText(Screen->Entries[i]->Title, (i == State->CurrentSelection) ? MenuWidth : 0,
@@ -813,7 +851,8 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
           StrCat(ResultString, UnicodeParameter);
           StrCat(ResultString, L" ");
           DrawMenuText(ResultString, 0,
-                       EntriesPosX, EntriesPosY + State->LastSelection * TextHeight, StrLen(ResultString)-1);
+                       EntriesPosX, EntriesPosY + State->LastSelection * TextHeight,
+                       Screen->Entries[State->LastSelection]->Row);
         }
         else {
             DrawMenuText(Screen->Entries[State->LastSelection]->Title, 0,
@@ -830,7 +869,8 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
           StrCat(ResultString, UnicodeParameter);
           StrCat(ResultString, L" ");
           DrawMenuText(ResultString, MenuWidth,
-                       EntriesPosX, EntriesPosY + State->CurrentSelection * TextHeight, StrLen(ResultString)-1);
+                       EntriesPosX, EntriesPosY + State->CurrentSelection * TextHeight,
+                       Screen->Entries[State->CurrentSelection]->Row);
         }
         else {
             DrawMenuText(Screen->Entries[State->CurrentSelection]->Title, MenuWidth,
@@ -918,7 +958,10 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       else
         textPosY = row1PosY;
       
-      itemPosX = AllocatePool(sizeof(UINTN) * Screen->EntryCount);
+      if (!itemPosX) {
+        itemPosX = AllocatePool(sizeof(UINTN) * Screen->EntryCount);
+      }
+      
       row0PosXRunning = row0PosX;
       row1PosXRunning = row1PosX;
       for (i = 0; i <= Screen->EntryCount; i++) {
@@ -983,8 +1026,11 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       break;
       
     case MENU_FUNCTION_PAINT_TIMEOUT:
-      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL))
-        DrawMainMenuText(ParamText, (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY + TextHeight);
+      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
+        //screen centering
+        UINTN TextLen = StrLen(ParamText) * GlobalConfig.CharWidth;
+        DrawMainMenuText(ParamText, (UGAWidth - TextLen) >> 1, textPosY + TextHeight);
+      }
       break;
       
   }
