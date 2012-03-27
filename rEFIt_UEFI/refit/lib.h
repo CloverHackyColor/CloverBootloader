@@ -139,7 +139,8 @@ typedef struct {
 //GUI types
 typedef enum {
   BoolValue,
-  Numeric,
+  Decimal,
+  Hex,
   ASString,
   UNIString,
   
@@ -149,10 +150,10 @@ typedef struct {
   ITEM_TYPE ItemType; //string, value, boolean
   BOOLEAN Valid;
   BOOLEAN BValue;
-  UINT8   Pad8;
-  UINT32  Pad32;
-  UINT64  UValue;
-  CHAR8*  AValue;
+//  UINT8   Pad8;
+//  UINT32  Pad32;
+//  UINT64  UValue;
+//  CHAR8*  AValue;
   CHAR16* SValue;
 } INPUT_ITEM;
 

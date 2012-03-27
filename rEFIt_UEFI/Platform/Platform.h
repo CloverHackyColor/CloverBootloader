@@ -673,6 +673,7 @@ VOID        InitBooterLog(VOID);
 EFI_STATUS  SetupBooterLog(VOID);
 VOID        GetDefaultSettings(VOID);
 VOID        FillInputs(VOID);
+VOID        ApplyInputs(VOID);
 
 EFI_STATUS  StrToGuid (IN  CHAR16   *Str, OUT EFI_GUID *Guid);
 EFI_STATUS  StrToGuidLE (IN  CHAR16   *Str, OUT EFI_GUID *Guid);

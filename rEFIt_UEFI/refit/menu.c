@@ -105,26 +105,39 @@ UINTN  InputItemsCount = 0;
 
 VOID FillInputs(VOID)
 {
-  InputItemsCount = 20; //XXX
-  InputItems = AllocateZeroPool(InputItemsCount * sizeof(INPUT_ITEM));
-  InputItems[0].ItemType = ASString;
+  InputItemsCount = 0; 
+  InputItems = AllocateZeroPool(20 * sizeof(INPUT_ITEM)); //XXX
+  InputItems[InputItemsCount].ItemType = ASString;
   //even though Ascii we will keep value as Unicode to convert later
-  InputItems[0].SValue = PoolPrint(L"%a", gSettings.BootArgs);
-  InputItems[1].ItemType = BoolValue;
-  InputItems[1].BValue = gSettings.UseDSDTmini;
-  InputItems[2].ItemType = Numeric;
-  InputItems[2].UValue = gSettings.HDALayoutId;
-  //and so on
-  
+  InputItems[InputItemsCount++].SValue = PoolPrint(L"%a", gSettings.BootArgs);
+  InputItems[InputItemsCount].ItemType = BoolValue;
+  InputItems[InputItemsCount].BValue = gSettings.UseDSDTmini;
+  InputItems[InputItemsCount++].SValue = gSettings.UseDSDTmini?L"[X]":L"[ ]";
+  InputItems[InputItemsCount].ItemType = Decimal;
+  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.HDALayoutId);
+  //and so on  
+}
+
+VOID ApplyInputs(VOID)
+{
+  if (InputItems[0].Valid) {
+    AsciiSPrint(gSettings.BootArgs, 255, "%s", InputItems[0].SValue);
+  }
+  if (InputItems[1].Valid) {
+    gSettings.UseDSDTmini = InputItems[1].BValue;
+  }
+  if (InputItems[2].Valid) {
+    gSettings.HDALayoutId = StrDecimalToUintn((CHAR16*)&(InputItems[0].SValue));
+  }
 }
 
 VOID FreeItems(VOID)
 {
-  UINTN i;
+/*  UINTN i;
   for (i=0; i<InputItemsCount; i++) {
     FreePool(InputItems[i].AValue);
     FreePool(InputItems[i].SValue);
-  }
+  } */
   FreePool(InputItems);
 }
 
@@ -401,80 +414,110 @@ static INTN FindMenuShortcutEntry(IN REFIT_MENU_SCREEN *Screen, IN CHAR16 Shortc
 // generic input menu function
 // usr-sse2
 //
-static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, SCROLL_STATE *State, IN MENU_STYLE_FUNC  StyleFunc, UINTN Selection)
+static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN MENU_STYLE_FUNC  StyleFunc)
 {
 	EFI_STATUS    Status;
 	EFI_INPUT_KEY key;
-	UINTN         index = 0;
+	UINTN         ind = 0;
 	UINTN         i = 0;
-  CHAR8         Backup[256];
 	UINTN         MenuExit = 0;
 	UINTN         LogSize;
   UINTN         Pos = (Screen->Entries[State->CurrentSelection])->Row;
+  INPUT_ITEM    *Item = ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item;
+  CHAR16        *Backup = EfiStrDuplicate(Item->SValue);
+  CHAR16        *Buffer = Item->SValue;
+  CHAR16        *TempString = AllocateZeroPool(255);
+  
 	
-	//InputString = AllocatePool(256*sizeof(CHAR8));
-  AsciiStrCpy(Backup, Parameter);
-	while (!MenuExit) {
-		Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &key);
-		if (Status == EFI_NOT_READY) {
-			gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &index);
-			continue;
-		}
-		switch (key.ScanCode) {
-      case SCAN_LEFT:
-        if (Pos<StrLen(Backup)) Pos++;
-        break;
-      case SCAN_RIGHT:
-        if (Pos>0) Pos--;
-        break;
-      case SCAN_HOME:
-        Pos = 0;
-        break;
-      case SCAN_END:
-        Pos = StrLen(Backup);
-        break;
-      case SCAN_ESC:
-        MenuExit = MENU_EXIT_ESCAPE;
-        continue;
-        break;
-      case SCAN_F2:
-        LogSize = msgCursor - msgbuf;
-        Status = egSaveFile(SelfRootDir, L"EFI\\misc\\preboot.log", (UINT8*)msgbuf, LogSize);
-        break;
-      case SCAN_F10:
-        egScreenShot();
-        break;
-    }
-		
-		switch (key.UnicodeChar) {
-      case CHAR_BACKSPACE:  
-				Parameter[--i] = L" ";
-				Parameter[i+1] = '\0';
-        StyleFunc(Screen, State, MENU_FUNCTION_PAINT_SELECTION, NULL);
-				break;
-        
-			case CHAR_LINEFEED:
-			case CHAR_CARRIAGE_RETURN:
-				MenuExit = MENU_EXIT_ENTER;
-				break;
-			default:
-				Parameter[i++] = (CHAR8)key.UnicodeChar;
-				Parameter[i] = '\0';
-        StyleFunc(Screen, State, MENU_FUNCTION_PAINT_SELECTION, NULL);
-				break;
-		}
+	do {
+    if (Item->ItemType == BoolValue) {
+      Item->BValue = !Item->BValue;
+      Item->SValue = Item->BValue?L"[X]":L"[ ]";
+      MenuExit = MENU_EXIT_ENTER;
+    } else {
     
-	}
+      Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &key);
+      if (Status == EFI_NOT_READY) {
+        gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &ind);
+        continue;
+      }
+      
+      switch (key.ScanCode) {
+        case SCAN_RIGHT:
+          if (Pos < StrLen(Buffer)) Pos++;
+          break;
+        case SCAN_LEFT:
+          if (Pos>0) Pos--;
+          break;
+        case SCAN_HOME:
+          Pos = 0;
+          break;
+        case SCAN_END:
+          Pos = StrLen(Buffer);
+          break;
+        case SCAN_ESC:
+          MenuExit = MENU_EXIT_ESCAPE;
+          continue;
+          break;
+        case SCAN_F2:
+          LogSize = msgCursor - msgbuf;
+          Status = egSaveFile(SelfRootDir, L"EFI\\misc\\preboot.log", (UINT8*)msgbuf, LogSize);
+          break;
+        case SCAN_F10:
+          egScreenShot();
+          break;
+      }
+      
+      switch (key.UnicodeChar) {
+        case CHAR_BACKSPACE:  
+          if (Buffer[0] != CHAR_NULL && Pos != 0) {
+            for (i = 0; i < Pos - 1; i++) {
+              TempString[i] = Buffer[i];
+            }           
+            for (i = Pos - 1; i < StrLen(Buffer); i++) {
+              TempString[i] = Buffer[i+1];
+            }
+            TempString[i] = CHAR_NULL;
+            StrCpy (Buffer, TempString);
+            Pos--;
+          }
+          
+          break;
+          
+        case CHAR_LINEFEED:
+        case CHAR_CARRIAGE_RETURN:
+          MenuExit = MENU_EXIT_ENTER;
+          break;
+        default:
+          if (Pos < 254) {
+            for (i = 0; i < Pos; i++) {
+              TempString[i] = Buffer[i];
+            }           
+            TempString[Pos++] = key.UnicodeChar;
+            for (i = Pos; i < StrLen(Buffer); i++) {
+              TempString[i] = Buffer[i-1];
+            }           
+            StrCpy (Buffer, TempString);
+          }
+          Buffer[Pos++] = key.UnicodeChar;
+          Buffer[i] = '\0';
+          break;
+      }
+    }
+    (Screen->Entries[State->CurrentSelection])->Row = Pos;
+    StyleFunc(Screen, State, MENU_FUNCTION_PAINT_SELECTION, NULL);
+	} while (!MenuExit);
 	switch (MenuExit) {
 		case MENU_EXIT_ENTER:
-      //AsciiStrCpy(Parameter, InputString);
-			//Parameter = InputString; //o_O
+      Item->Valid = TRUE;      
 			break;
 		case MENU_EXIT_ESCAPE:
-			AsciiStrCpy(Parameter, Backup);
+			Item->Valid = FALSE;
+      Item->SValue = EfiStrDuplicate(Backup);
+      StyleFunc(Screen, State, MENU_FUNCTION_PAINT_SELECTION, NULL);
 			break;
 	}
-  //FreePool(InputString);
+  FreePool(TempString);
 	
   return 0;
 }
@@ -593,7 +636,7 @@ static UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC Sty
         
         if (Screen->Entries[State.CurrentSelection]->Tag == TAG_INPUT)
           MenuExit = InputDialog(Screen, &State, StyleFunc);
-                                 //((REFIT_INPUT_DIALOG*)(Screen->Entries[State.CurrentSelection]))->Value);
+                      //((REFIT_INPUT_DIALOG*)(Screen->Entries[State.CurrentSelection]))->Value);
         else 
           MenuExit = MENU_EXIT_ENTER;
         break;
@@ -784,7 +827,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
             }
             for (i = 0; i <= State->MaxIndex; i++) {
                 ItemWidth = StrLen(Screen->Entries[i]->Title) + 
-                            AsciiStrLen(((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Value);
+                    StrLen(((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->SValue);
                 if (MenuWidth < ItemWidth)
                     MenuWidth = ItemWidth;
             }
@@ -825,10 +868,8 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
             for (i = 0; i <= State->MaxIndex; i++) {
               if (Screen->Entries[i]->Tag == TAG_INPUT) {
                 CHAR16 ResultString[255];
-                CHAR16 UnicodeParameter[255];
-                AsciiStrToUnicodeStr(((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Value, UnicodeParameter);
                 StrCpy(ResultString, Screen->Entries[i]->Title);
-                StrCat(ResultString, UnicodeParameter);
+                StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->SValue);
                 StrCat(ResultString, L" ");
                 //Slice - suppose to use Row as Cursor in text
                 DrawMenuText(ResultString, (i == State->CurrentSelection) ? MenuWidth : 0,
@@ -845,10 +886,8 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         //Last selection
         if (Screen->Entries[State->LastSelection]->Tag == TAG_INPUT) {
           CHAR16 ResultString[255];
-          CHAR16 UnicodeParameter[255];
-          AsciiStrToUnicodeStr(((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Value, UnicodeParameter);
           StrCpy(ResultString, Screen->Entries[State->LastSelection]->Title);
-          StrCat(ResultString, UnicodeParameter);
+          StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->SValue);
           StrCat(ResultString, L" ");
           DrawMenuText(ResultString, 0,
                        EntriesPosX, EntriesPosY + State->LastSelection * TextHeight,
@@ -863,10 +902,8 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         //Current selection
         if (Screen->Entries[State->CurrentSelection]->Tag == TAG_INPUT) {
           CHAR16 ResultString[255];
-          CHAR16 UnicodeParameter[255];
-          AsciiStrToUnicodeStr(((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Value, UnicodeParameter);
           StrCpy(ResultString, Screen->Entries[State->CurrentSelection]->Title);
-          StrCat(ResultString, UnicodeParameter);
+          StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->SValue);
           StrCat(ResultString, L" ");
           DrawMenuText(ResultString, MenuWidth,
                        EntriesPosX, EntriesPosY + State->CurrentSelection * TextHeight,

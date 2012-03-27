@@ -62,77 +62,17 @@ EFI_BOOT_SERVICES*			gBS;
 EFI_RUNTIME_SERVICES*		gRS;
 EFI_DXE_SERVICES*       gDS;
 
-static REFIT_MENU_ENTRY MenuEntryOptions    = { L"Options", TAG_OPTIONS, 1, 0, 'O', NULL, NULL, NULL };
+static REFIT_MENU_ENTRY MenuEntryOptions  = { L"Options", TAG_OPTIONS, 1, 0, 'O', NULL, NULL, NULL };
 static REFIT_MENU_ENTRY MenuEntryAbout    = { L"About rEFIt", TAG_ABOUT, 1, 0, 'A', NULL, NULL, NULL };
 static REFIT_MENU_ENTRY MenuEntryReset    = { L"Restart Computer", TAG_RESET, 1, 0, 'R', NULL, NULL, NULL };
 static REFIT_MENU_ENTRY MenuEntryShutdown = { L"Shut Down Computer", TAG_SHUTDOWN, 1, 0, 'U', NULL, NULL, NULL };
 static REFIT_MENU_ENTRY MenuEntryReturn   = { L"Return to Main Menu", TAG_RETURN, 0, 0, 0, NULL, NULL, NULL };
 
-static REFIT_MENU_SCREEN MainMenu       = { L"Main Menu", NULL, 0, NULL, 0, NULL, 0, L"Automatic boot" };
-static REFIT_MENU_SCREEN AboutMenu      = { L"About", NULL, 0, NULL, 0, NULL, 0, NULL };
+static REFIT_MENU_SCREEN MainMenu    = { L"Main Menu", NULL, 0, NULL, 0, NULL, 0, L"Automatic boot" };
+static REFIT_MENU_SCREEN AboutMenu   = { L"About", NULL, 0, NULL, 0, NULL, 0, NULL };
 
-static REFIT_MENU_SCREEN OptionMenu      = { L"Options", NULL, 0, NULL, 0, NULL, 0, NULL };
+static REFIT_MENU_SCREEN OptionMenu  = { L"Options", NULL, 0, NULL, 0, NULL, 0, NULL };
 
-/**
- Concatenates a formatted unicode string to allocated pool. The caller must
- free the resulting buffer.
- 
- @param Str             Tracks the allocated pool, size in use, and
- amount of pool allocated.
- @param Fmt             The format string
- @param ...             Variable arguments based on the format string.
- 
- @return Allocated buffer with the formatted string printed in it.
- The caller must free the allocated buffer. The buffer
- allocation is not packed.
- 
- **/
-/*
-CHAR16 *
-EFIAPI
-CatPrint (
-		  IN OUT POOL_PRINT   *Str,
-		  IN CHAR16           *Fmt,
-		  ...
-		  )
-{
-	UINT16  *AppendStr;
-	VA_LIST Args;
-	UINTN   Size;
-	
-	AppendStr = AllocateZeroPool (0x1000);
-	if (AppendStr == NULL) {
-		return Str->Str;
-	}
-	
-	VA_START (Args, Fmt);
-	UnicodeVSPrint (AppendStr, 0x1000, Fmt, Args);
-	VA_END (Args);
-	if (NULL == Str->Str) {
-		Size   = StrLen (AppendStr);
-		Str->Str  = AllocateZeroPool (Size);
-		ASSERT (Str->Str != NULL);
-	} else {
-		Size = StrLen (AppendStr) - sizeof (UINT16);
-		Size = Size + StrLen (Str->Str);
-		Str->Str =  EfiReallocatePool(
-								   StrLen (Str->Str),
-								   Size,
-								   Str->Str
-								   );
-		ASSERT (Str->Str != NULL);
-	}
-	
-	Str->MaxLen = MAX_CHAR * sizeof (UINT16);
-	if (Size < Str->MaxLen) {
-		StrCat (Str->Str, AppendStr);
-		Str->Len = Size - sizeof (UINT16);
-	}
-	
-	FreePool (AppendStr);
-	return Str->Str;
-}
-*/
 static VOID  OptionsMenu(VOID)
 {
   if (OptionMenu.EntryCount == 0) {
@@ -1507,6 +1447,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     
     if (MenuExit == MENU_EXIT_OPTIONS){
       OptionsMenu();
+      ApplyInputs();
       continue;
     }
     
@@ -1530,6 +1471,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         
       case TAG_OPTIONS:    // Options like KernelFlags, DSDTname etc.
         OptionsMenu();
+        ApplyInputs();
         break;
         
       case TAG_ABOUT:    // About rEFIt
