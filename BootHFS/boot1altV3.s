@@ -407,7 +407,7 @@ startReloc:
     mov     eax, [si + part.lba]
     mov     [gPartLBA], eax					; save the current partition LBA offset
     mov     [gBIOSDriveNumber], dl			; save BIOS drive number
-	mov		WORD [gMallocPtr], mallocStart	; set free space pointer
+    ;mov		WORD [gMallocPtr], mallocStart	; set free space pointer
 
     ;
     ; Loading upper 512 bytes of boot1h and HFS+ Volume Header.
@@ -432,8 +432,51 @@ startReloc:
 	mov		ax, [kHFSPlusBuffer + HFSPlusVolumeHeader.signature]
 	cmp		ax, kHFSPlusCaseSignature
 	je		findRootBoot
-    cmp     ax, kHFSPlusSignature
-    jne     error
+	cmp     ax, kHFSPlusSignature
+	je      setBootFile
+hang:
+	hlt
+	jmp	hang
+
+	; dmazar
+	; Switch between different /boot files.
+	; Wait for a key press for max 5 seconds and if key is pressed
+	; then try to load /boot<pressed key>.
+	; If not found - wait for another key press again.
+	; If timeout - load default /boot file.
+	;
+setBootFile:
+    mov		WORD [gMallocPtr], mallocStart	; set free space pointer
+	mov		cx, 2000						; loop counter = max 5000 miliseconds in total
+.loop
+	mov		ah, 0x01						; int 0x16, Func 0x01 - get keyboard status/preview key
+	int		0x16
+    jz		.wait							; no keypress - wait and loop again
+.readChar
+	xor		ah, ah							; read the char from buffer to spend it
+	int		0x16
+	; have a key - ASCII is in al - put it to file name /boot<pressed key>
+	mov		BYTE [searchCatKeyName + 8], al
+	mov		ah, 0x01						; check buffer for more
+	int		0x16
+	jnz		.readChar						; have more - read it
+    jmp		SHORT .bootFileSet				; try to boot
+
+.wait
+    ; waith for 1 ms: int 0x15, Func 0x86 (wait for cx:dx microseconds)
+	push	cx								; save loop counter
+	xor		cx, cx
+	mov		dx, 1000
+	mov		ah, 0x86						
+	int		0x15
+	pop		cx								; restore loop counter
+
+	loop	.loop
+	; no keypress so far
+	; change filename to /boot by changing size in searchCatalogKey to 4 chars
+	; and try to load
+	mov		WORD [searchCatalogKeyNL], 4
+.bootFileSet:
 
 ;--------------------------------------------------------------------------
 ; Find stage2 boot file in a HFS+ Volume's root folder.
@@ -490,19 +533,21 @@ boot2:
     mov     ah, 0
     int		0x16
 %endif
+	mov     ax, 0x1900
+    mov     es, ax
+	mov     BYTE [es:4], 1
 
     mov     dl, [gBIOSDriveNumber]			; load BIOS drive number
     jmp     kBoot2Segment:kBoot2Address
 
 error:
-
 %if VERBOSE
     LogString(error_str)
 %endif
-	
-hang:
-    hlt
-    jmp     hang
+    ; not found - try again. user will have a chance to press different key
+	; note: if /boot is not present we may have an endless loop in trying
+    jmp		setBootFile
+
 
 ;--------------------------------------------------------------------------
 ; readSectors - Reads more than 127 sectors using LBA addressing.
@@ -1431,8 +1476,8 @@ error_str			db		'error', NULL
 %endif
 
 searchCatalogKey	dd		kHFSRootFolderID
-					dw		searchCatKeyNameLen
-searchCatKeyName	dw		'b', 'o', 'o', 't'			; must be lower case
+searchCatalogKeyNL	dw		searchCatKeyNameLen
+searchCatKeyName	dw		'b', 'o', 'o', 't', 'x'	; must be lower case
 searchCatKeyNameLen	EQU		($ - searchCatKeyName) / 2
 
 ;--------------------------------------------------------------------------

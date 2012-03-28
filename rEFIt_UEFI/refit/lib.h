@@ -394,7 +394,7 @@ UINTN RunMenu(IN REFIT_MENU_SCREEN *Screen, OUT REFIT_MENU_ENTRY **ChosenEntry);
 UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT REFIT_MENU_ENTRY **ChosenEntry);
 VOID DrawMenuText(IN CHAR16 *Text, IN UINTN SelectedWidth, IN UINTN XPos, IN UINTN YPos, IN UINTN Cursor);
 VOID ReinitVolumes(VOID);
-
+BOOLEAN ReadAllKeyStrokes(VOID);
 //
 // config module
 //

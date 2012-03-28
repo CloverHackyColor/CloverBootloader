@@ -190,7 +190,7 @@ gCrap3				times	16	db	0
 
 gBIOSDriveNumber	db	 	0
 gExtInfo			times	25 	db	0
-gFileName			db		"CLOVER     "
+gFileName			db		"BOOT       "
 
 ;--------------------------------------------------------------------------
 ; Boot code is loaded at 0:7C00h.

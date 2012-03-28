@@ -63,7 +63,7 @@ UINTN TextHeight;
 VOID egMeasureText(IN CHAR16 *Text, OUT UINTN *Width, OUT UINTN *Height)
 {
     if (Width != NULL)
-        *Width = StrLen(Text) * FontWidth;
+        *Width = StrLen(Text) * GlobalConfig.CharWidth;
     if (Height != NULL)
         *Height = FontHeight;
 }
@@ -144,7 +144,7 @@ VOID PrepareFont(VOID)
     GlobalConfig.CharWidth = 7;
   }
   TextHeight = FontHeight + TEXT_YMARGIN * 2;
-  DBG("Font prepared WxH=%dx%d\n", FontWidth, FontHeight);
+  DBG("Font prepared WxH=%dx%d CharWidth=%d\n", FontWidth, FontHeight, GlobalConfig.CharWidth);
 }
 
 VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
@@ -159,8 +159,12 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   
   // clip the text
   TextLength = StrLen(Text);
-  if (TextLength * FontWidth + PosX > CompImage->Width)
-    TextLength = (CompImage->Width - PosX) / FontWidth;
+  if (TextLength * GlobalConfig.CharWidth + PosX > CompImage->Width){
+    if (GlobalConfig.CharWidth) {
+      TextLength = (CompImage->Width - PosX) / GlobalConfig.CharWidth;
+    } else
+      TextLength = (CompImage->Width - PosX) / FontWidth;
+  }
 //  DBG("TextLength =%d PosX=%d PosY=%d\n", TextLength, PosX, PosY);
   // render it
   BufferPtr = CompImage->PixelData;

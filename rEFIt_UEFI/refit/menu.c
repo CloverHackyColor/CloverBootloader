@@ -39,7 +39,7 @@
 #include "egemb_back_selected_small.h"
 
 
-#define DEBUG_MENU 0
+#define DEBUG_MENU 1
 
 #if DEBUG_MENU == 2
 #define DBG(x...) AsciiPrint(x)
@@ -243,7 +243,7 @@ static VOID InitScroll(OUT SCROLL_STATE *State, IN UINTN ItemCount, IN UINTN Max
 static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
 {
   State->LastSelection = State->CurrentSelection;
-  DBG("UpdateScroll on %d\n", Movement);
+//  DBG("UpdateScroll on %d\n", Movement);
   switch (Movement) {
     case SCROLL_LINE_UP: //of left = decrement
       if (State->CurrentSelection > 0) {
@@ -367,8 +367,8 @@ static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
   if (!State->PaintAll && State->CurrentSelection != State->LastSelection)
     State->PaintSelection = TRUE;
   State->LastVisible = State->FirstVisible + State->MaxVisible;
-  DBG("Scroll to: CurrentSelection=%d, FirstVisible=%d, LastVisible=%d, LastSelection=%d\n",
-      State->CurrentSelection, State->FirstVisible, State->LastVisible, State->LastSelection);  
+//  DBG("Scroll to: CurrentSelection=%d, FirstVisible=%d, LastVisible=%d, LastSelection=%d\n",
+//      State->CurrentSelection, State->FirstVisible, State->LastVisible, State->LastSelection);  
   //result 0 0 4 0
 }
 
@@ -427,7 +427,9 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, I
   CHAR16        *Backup = EfiStrDuplicate(Item->SValue);
   CHAR16        *Buffer = Item->SValue;
   CHAR16        *TempString = AllocateZeroPool(255);
-  
+  SCROLL_STATE  StateLine;
+//  DBG("Enter Input Dialog\n");
+  InitScroll(&StateLine, 128, 128, StrLen(Item->SValue));
 	
 	do {
     if (Item->ItemType == BoolValue) {
@@ -505,7 +507,7 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, I
       }
     }
     (Screen->Entries[State->CurrentSelection])->Row = Pos;
-    StyleFunc(Screen, State, MENU_FUNCTION_PAINT_SELECTION, NULL);
+    StyleFunc(Screen, &StateLine, MENU_FUNCTION_PAINT_SELECTION, NULL);
 	} while (!MenuExit);
 	switch (MenuExit) {
 		case MENU_EXIT_ENTER:
@@ -514,7 +516,7 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, I
 		case MENU_EXIT_ESCAPE:
 			Item->Valid = FALSE;
       Item->SValue = EfiStrDuplicate(Backup);
-      StyleFunc(Screen, State, MENU_FUNCTION_PAINT_SELECTION, NULL);
+      StyleFunc(Screen, &StateLine, MENU_FUNCTION_PAINT_SELECTION, NULL);
 			break;
 	}
   FreePool(TempString);
@@ -543,12 +545,14 @@ static UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC Sty
     MenuExit = 0;
     
     StyleFunc(Screen, &State, MENU_FUNCTION_INIT, NULL);
+//  DBG("scroll inited\n");
     // override the starting selection with the default index, if any
     if (*DefaultEntryIndex >= 0 && *DefaultEntryIndex <= State.MaxIndex) {
         State.CurrentSelection = *DefaultEntryIndex;
         UpdateScroll(&State, SCROLL_NONE);
     }
-    
+//  DBG("RunGenericMenu CurrentSelection=%d MenuExit=%d\n",
+//      State.CurrentSelection, MenuExit);
   while (!MenuExit) {
     // update the screen
     if (State.PaintAll) {
@@ -634,9 +638,15 @@ static UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC Sty
       case CHAR_LINEFEED:
       case CHAR_CARRIAGE_RETURN:
         
-        if (Screen->Entries[State.CurrentSelection]->Tag == TAG_INPUT)
+        if (Screen->Entries[State.CurrentSelection]->Tag == TAG_INPUT){
           MenuExit = InputDialog(Screen, &State, StyleFunc);
                       //((REFIT_INPUT_DIALOG*)(Screen->Entries[State.CurrentSelection]))->Value);
+          if (ReadAllKeyStrokes()) {  // remove buffered key strokes
+            gBS->Stall(500000);     // 0.5 seconds delay
+            ReadAllKeyStrokes();    // empty the buffer again
+          }
+          
+        }
         else 
           MenuExit = MENU_EXIT_ENTER;
         break;
@@ -653,9 +663,9 @@ static UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC Sty
         break;
     }
   }
-  
+//  DBG("before cleanup\n");
   StyleFunc(Screen, &State, MENU_FUNCTION_CLEANUP, NULL);
-    
+//   DBG("after cleanup\n"); 
   if (ChosenEntry)
     *ChosenEntry = Screen->Entries[State.CurrentSelection];
   *DefaultEntryIndex = State.CurrentSelection;
@@ -803,124 +813,134 @@ static UINTN MenuWidth, EntriesPosX, EntriesPosY, TimeoutPosY;
 
 static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
-    INTN i;
-    UINTN ItemWidth = 0;
-
-    UINTN VisibleHeight = 0; //assume vertical layout
-    
-    switch (Function) {
-        
-        case MENU_FUNCTION_INIT:
-        // TODO: calculate available screen space
-        //
-       
-            EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET + TextHeight * 2;
-            VisibleHeight = LAYOUT_TOTAL_HEIGHT / TextHeight;
-        
-            InitScroll(State, Screen->EntryCount, Screen->EntryCount, VisibleHeight);              
-            // determine width of the menu
-            MenuWidth = 20;  // minimum
-            for (i = 0; i < (INTN)Screen->InfoLineCount; i++) {
-                ItemWidth = StrLen(Screen->InfoLines[i]);
-                if (MenuWidth < ItemWidth)
-                    MenuWidth = ItemWidth;
-            }
-            for (i = 0; i <= State->MaxIndex; i++) {
-                ItemWidth = StrLen(Screen->Entries[i]->Title) + 
-                    StrLen(((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->SValue);
-                if (MenuWidth < ItemWidth)
-                    MenuWidth = ItemWidth;
-            }
-            MenuWidth = TEXT_XMARGIN * 2 + MenuWidth * GlobalConfig.CharWidth; // FontWidth;
-            if (MenuWidth > LAYOUT_TEXT_WIDTH)
-                MenuWidth = LAYOUT_TEXT_WIDTH;
-            
-            if (Screen->TitleImage)
-                EntriesPosX = (UGAWidth + (Screen->TitleImage->Width + TITLEICON_SPACING) - MenuWidth) >> 1;
-            else
-                EntriesPosX = (UGAWidth - MenuWidth) >> 1;
-         //   EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET + TextHeight * 2;
-            TimeoutPosY = EntriesPosY + (Screen->EntryCount + 1) * TextHeight;
-            
-            // initial painting
-            SwitchToGraphicsAndClear();
-            egMeasureText(Screen->Title, &ItemWidth, NULL);
-            DrawMenuText(Screen->Title, 0, ((UGAWidth - ItemWidth) >> 1) - TEXT_XMARGIN, EntriesPosY - TextHeight * 2, 0xFFFF);
-            if (Screen->TitleImage)
-                BltImageAlpha(Screen->TitleImage,
-                              EntriesPosX - (Screen->TitleImage->Width + TITLEICON_SPACING), EntriesPosY,
-                              &MenuBackgroundPixel);
-            if (Screen->InfoLineCount > 0) {
-                for (i = 0; i < (INTN)Screen->InfoLineCount; i++) {
-                    DrawMenuText(Screen->InfoLines[i], 0, EntriesPosX, EntriesPosY, 0xFFFF);
-                    EntriesPosY += TextHeight;
-                }
-                EntriesPosY += TextHeight;  // also add a blank line
-            }
-            
-            break;
-            
-        case MENU_FUNCTION_CLEANUP:
-            // nothing to do
-            break;
-            
-        case MENU_FUNCTION_PAINT_ALL:
-            for (i = 0; i <= State->MaxIndex; i++) {
-              if (Screen->Entries[i]->Tag == TAG_INPUT) {
-                CHAR16 ResultString[255];
-                StrCpy(ResultString, Screen->Entries[i]->Title);
-                StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->SValue);
-                StrCat(ResultString, L" ");
-                //Slice - suppose to use Row as Cursor in text
-                DrawMenuText(ResultString, (i == State->CurrentSelection) ? MenuWidth : 0,
-                             EntriesPosX, EntriesPosY + i * TextHeight, Screen->Entries[i]->Row);
-              }
-              else
-                DrawMenuText(Screen->Entries[i]->Title, (i == State->CurrentSelection) ? MenuWidth : 0,
-                             EntriesPosX, EntriesPosY + i * TextHeight, 0xFFFF);
-            }
-            break;
-            
-        case MENU_FUNCTION_PAINT_SELECTION:
-            // redraw selection cursor
-        //Last selection
-        if (Screen->Entries[State->LastSelection]->Tag == TAG_INPUT) {
+  INTN i;
+  UINTN ItemWidth = 0;
+  UINTN X;  
+  UINTN VisibleHeight = 0; //assume vertical layout
+  
+  switch (Function) {
+      
+    case MENU_FUNCTION_INIT:
+      // TODO: calculate available screen space
+      //
+      //     DBG("MENU_FUNCTION_INIT 1\n");
+      EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET + TextHeight * 2;
+      VisibleHeight = LAYOUT_TOTAL_HEIGHT / TextHeight;
+      
+      InitScroll(State, Screen->EntryCount, Screen->EntryCount, VisibleHeight);              
+      // determine width of the menu
+      MenuWidth = 30;  // minimum
+      /*     for (i = 0; i < (INTN)Screen->InfoLineCount; i++) {
+       ItemWidth = StrLen(Screen->InfoLines[i]);
+       if (MenuWidth < ItemWidth)
+       MenuWidth = ItemWidth;
+       }*/
+      // DBG("MENU_FUNCTION_INIT 2\n");
+      /*     for (i = 0; i <= State->MaxIndex; i++) {
+       ItemWidth = StrLen(Screen->Entries[i]->Title) + 
+       StrLen(((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->SValue);
+       if (MenuWidth < ItemWidth)
+       MenuWidth = ItemWidth;
+       }*/
+      
+//      DBG("MENU_FUNCTION_INIT 3\n");
+      MenuWidth = TEXT_XMARGIN * 2 + MenuWidth * GlobalConfig.CharWidth; // FontWidth;
+      if (MenuWidth > LAYOUT_TEXT_WIDTH)
+        MenuWidth = LAYOUT_TEXT_WIDTH;
+      
+      if (Screen->TitleImage)
+        EntriesPosX = (UGAWidth + (Screen->TitleImage->Width + TITLEICON_SPACING) - MenuWidth) >> 1;
+      else
+        EntriesPosX = (UGAWidth - MenuWidth) >> 1;
+      //   EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET + TextHeight * 2;
+      TimeoutPosY = EntriesPosY + (Screen->EntryCount + 1) * TextHeight;
+//      DBG("MENU_FUNCTION_INIT 4\n");   
+      // initial painting
+      SwitchToGraphicsAndClear();
+      egMeasureText(Screen->Title, &ItemWidth, NULL);
+      DrawMenuText(Screen->Title, 0, ((UGAWidth - ItemWidth) >> 1) - TEXT_XMARGIN, EntriesPosY - TextHeight * 2, 0xFFFF);
+      if (Screen->TitleImage)
+        BltImageAlpha(Screen->TitleImage,
+                      EntriesPosX - (Screen->TitleImage->Width + TITLEICON_SPACING), EntriesPosY,
+                      &MenuBackgroundPixel);
+      if (Screen->InfoLineCount > 0) {
+        for (i = 0; i < (INTN)Screen->InfoLineCount; i++) {
+          DrawMenuText(Screen->InfoLines[i], 0, EntriesPosX, EntriesPosY, 0xFFFF);
+          EntriesPosY += TextHeight;
+        }
+        EntriesPosY += TextHeight;  // also add a blank line
+      }
+//      DBG("MENU_FUNCTION_INIT 5\n");    
+      break;
+      
+    case MENU_FUNCTION_CLEANUP:
+      // nothing to do
+      break;
+      
+    case MENU_FUNCTION_PAINT_ALL:
+      for (i = 0; i <= State->MaxIndex; i++) {
+        if (Screen->Entries[i]->Tag == TAG_INPUT) {
           CHAR16 ResultString[255];
-          StrCpy(ResultString, Screen->Entries[State->LastSelection]->Title);
-          StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->SValue);
+          StrCpy(ResultString, Screen->Entries[i]->Title);
+          StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->SValue);
           StrCat(ResultString, L" ");
-          DrawMenuText(ResultString, 0,
-                       EntriesPosX, EntriesPosY + State->LastSelection * TextHeight,
-                       Screen->Entries[State->LastSelection]->Row);
+          //Slice - suppose to use Row as Cursor in text
+          DrawMenuText(ResultString, (i == State->CurrentSelection) ? MenuWidth : 0,
+                       EntriesPosX, EntriesPosY + i * TextHeight, Screen->Entries[i]->Row);
         }
-        else {
-            DrawMenuText(Screen->Entries[State->LastSelection]->Title, 0,
-                         EntriesPosX, EntriesPosY + State->LastSelection * TextHeight, 0xFFFF);
-        }
-        
-        
-        //Current selection
-        if (Screen->Entries[State->CurrentSelection]->Tag == TAG_INPUT) {
-          CHAR16 ResultString[255];
-          StrCpy(ResultString, Screen->Entries[State->CurrentSelection]->Title);
-          StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->SValue);
-          StrCat(ResultString, L" ");
-          DrawMenuText(ResultString, MenuWidth,
-                       EntriesPosX, EntriesPosY + State->CurrentSelection * TextHeight,
-                       Screen->Entries[State->CurrentSelection]->Row);
-        }
-        else {
-            DrawMenuText(Screen->Entries[State->CurrentSelection]->Title, MenuWidth,
-                         EntriesPosX, EntriesPosY + State->CurrentSelection * TextHeight, 0xFFFF);
-        }
-
-            break;
-            
-        case MENU_FUNCTION_PAINT_TIMEOUT:
-            DrawMenuText(ParamText, 0, EntriesPosX, TimeoutPosY, 0xFFFF);
-            break;
-            
-    }
+        else
+          DrawMenuText(Screen->Entries[i]->Title, (i == State->CurrentSelection) ? MenuWidth : 0,
+                       EntriesPosX, EntriesPosY + i * TextHeight, 0xFFFF);
+      }
+      break;
+      
+    case MENU_FUNCTION_PAINT_SELECTION:
+      // redraw selection cursor
+      //Last selection
+      //      DBG("MENU_FUNCTION_PAINT_SELECTION 1\n");
+      if (Screen->Entries[State->LastSelection]->Tag == TAG_INPUT) {
+        CHAR16 ResultString[255];
+        StrCpy(ResultString, Screen->Entries[State->LastSelection]->Title);
+        StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->SValue);
+        StrCat(ResultString, L" ");
+        DrawMenuText(ResultString, 0,
+                     EntriesPosX, EntriesPosY + State->LastSelection * TextHeight,
+                     Screen->Entries[State->LastSelection]->Row);
+//        DBG("MENU_FUNCTION_PAINT_SELECTION 2\n");
+      }
+      else {
+ //       DBG("MENU_FUNCTION_PAINT_SELECTION 3\n");
+        DrawMenuText(Screen->Entries[State->LastSelection]->Title, 0,
+                     EntriesPosX, EntriesPosY + State->LastSelection * TextHeight, 0xFFFF);
+      }
+      
+//      DBG("MENU_FUNCTION_PAINT_SELECTION 4\n");
+      //Current selection
+      if (Screen->Entries[State->CurrentSelection]->Tag == TAG_INPUT) {
+        CHAR16 ResultString[255];
+        StrCpy(ResultString, Screen->Entries[State->CurrentSelection]->Title);
+        StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->SValue);
+        StrCat(ResultString, L" ");
+ //       DBG("MENU_FUNCTION_PAINT_SELECTION 5\n");
+        DrawMenuText(ResultString, MenuWidth,
+                     EntriesPosX, EntriesPosY + State->CurrentSelection * TextHeight,
+                     Screen->Entries[State->CurrentSelection]->Row);
+      }
+      else {
+ //       DBG("MENU_FUNCTION_PAINT_SELECTION 6\n");
+        DrawMenuText(Screen->Entries[State->CurrentSelection]->Title, MenuWidth,
+                     EntriesPosX, EntriesPosY + State->CurrentSelection * TextHeight, 0xFFFF);
+      }
+      
+      break;
+      
+    case MENU_FUNCTION_PAINT_TIMEOUT:
+      X = (UGAWidth - StrLen(ParamText) * GlobalConfig.CharWidth) >> 1;
+      DrawMenuText(ParamText, 0, X, TimeoutPosY, 0xFFFF);
+      break;
+      
+  }
+//  DBG("scroll out\n");
 }
 
 //
@@ -962,6 +982,8 @@ static VOID DrawMainMenuText(IN CHAR16 *Text, IN UINTN XPos, IN UINTN YPos)
 static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
   INTN i; 
+  CHAR16* p;
+  UINTN X;
   
   switch (Function) {
       
@@ -1025,7 +1047,7 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
        for (i = 0; i <= State->MaxIndex; i++) {
         if (Screen->Entries[i]->Row == 0) {
           if ((i >= State->FirstVisible) && (i <= State->LastVisible)) {
-            DBG("Draw at x=%d y=%d\n", itemPosX[i - State->FirstVisible], row0PosY);
+    //        DBG("Draw at x=%d y=%d\n", itemPosX[i - State->FirstVisible], row0PosY);
             DrawMainMenuEntry(Screen->Entries[i], (i == State->CurrentSelection),
                               itemPosX[i - State->FirstVisible], row0PosY);
           }
@@ -1034,10 +1056,14 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
                             itemPosX[i], row1PosY);
         }
       }
-      
-      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL))
+      p = Screen->Entries[State->CurrentSelection]->Title;
+      X = (UGAWidth - StrLen(p) * GlobalConfig.CharWidth) >> 1;
+      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
+        DrawMainMenuText(p, X, textPosY);
+      }  
+   /*   if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL))
         DrawMainMenuText(Screen->Entries[State->CurrentSelection]->Title,
-                         (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY);
+                         (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY); */
       break;
       
     case MENU_FUNCTION_PAINT_SELECTION:
@@ -1056,17 +1082,20 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
         DrawMainMenuEntry(Screen->Entries[State->CurrentSelection], TRUE,
                           itemPosX[State->CurrentSelection], row1PosY);
       }
-
-      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL))
-        DrawMainMenuText(Screen->Entries[State->CurrentSelection]->Title,
-                         (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY);
+      p = Screen->Entries[State->CurrentSelection]->Title;
+      X = (UGAWidth - StrLen(p) * GlobalConfig.CharWidth) >> 1;
+      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
+        DrawMainMenuText(p, X, textPosY);
+    //    DrawMainMenuText(Screen->Entries[State->CurrentSelection]->Title,
+    //                     (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY);
+      }
       break;
       
     case MENU_FUNCTION_PAINT_TIMEOUT:
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
         //screen centering
-        UINTN TextLen = StrLen(ParamText) * GlobalConfig.CharWidth;
-        DrawMainMenuText(ParamText, (UGAWidth - TextLen) >> 1, textPosY + TextHeight);
+        X = (UGAWidth - StrLen(ParamText) * GlobalConfig.CharWidth) >> 1;
+        DrawMainMenuText(ParamText, X, textPosY + TextHeight);
       }
       break;
       

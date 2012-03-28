@@ -2851,9 +2851,13 @@ DetectAndConfigIdeDevice (
     // Send ATA Device Execut Diagnostic command.
     // This command should work no matter DRDY is ready or not
     //
+    //according to Wiki send command four times to be successful
+    IdeWritePortB (PciIo, IdeRegisters->CmdOrStatus, ATA_CMD_EXEC_DRIVE_DIAG);
+    IdeWritePortB (PciIo, IdeRegisters->CmdOrStatus, ATA_CMD_EXEC_DRIVE_DIAG);
+    IdeWritePortB (PciIo, IdeRegisters->CmdOrStatus, ATA_CMD_EXEC_DRIVE_DIAG);
     IdeWritePortB (PciIo, IdeRegisters->CmdOrStatus, ATA_CMD_EXEC_DRIVE_DIAG);
   
-    Status = WaitForBSYClear (PciIo, IdeRegisters, 350000);
+    Status = WaitForBSYClear (PciIo, IdeRegisters, 35000000); //discussable. The value from Intel/Ide.c
     if (EFI_ERROR (Status)) {
 //        DEBUG((EFI_D_ERROR, "New detecting method: Send Execute Diagnostic Command: WaitForBSYClear: Status: %d\n", Status));
 		DBG(L"New detecting method: Send Execute Diagnostic Command: WaitForBSYClear: Status: %r\n", Status);

@@ -418,6 +418,32 @@ startReloc:
     mov     edx, kBoot1Sector1Addr
     call    readLBA
 
+	;
+	; Switch between /bootalt and /boot
+	; Check for a keypress: if pressed load /bootalt, else load /boot
+	; Do checking in a loop to give user a chance for a press
+	;
+setBootFile:
+	mov		cx, 2000						; loop counter = max 5000 miliseconds in total
+.loop
+	mov		ah, 0x01						; int 0x16, Func 0x01 - get keyboard status/preview key
+	int		0x16
+	jnz		.bootFileSet					; got keypress - load /bootalt as already set up
+
+	; waith for 1 ms: int 0x15, Func 0x86 (wait for cx:dx microseconds)
+	push	cx								; save loop counter
+	xor		cx, cx
+	mov		dx, 1000
+	mov		ah, 0x86						
+	int		0x15
+	pop		cx								; restore loop counter
+
+	loop	.loop
+	; no keypress so far
+	; change /bootalt to /boot by changing size in searchCatalogKey to 4 chars
+	mov		WORD [searchCatalogKeyNL], 4
+.bootFileSet:
+
     ;
     ; Initializing more global variables.
     ;
@@ -432,8 +458,8 @@ startReloc:
 	mov		ax, [kHFSPlusBuffer + HFSPlusVolumeHeader.signature]
 	cmp		ax, kHFSPlusCaseSignature
 	je		findRootBoot
-    cmp     ax, kHFSPlusSignature
-    jne     error
+	cmp     ax, kHFSPlusSignature
+	jne     error
 
 ;--------------------------------------------------------------------------
 ; Find stage2 boot file in a HFS+ Volume's root folder.
@@ -490,6 +516,9 @@ boot2:
     mov     ah, 0
     int		0x16
 %endif
+	mov     ax, 0x1900
+    mov     es, ax
+	mov     BYTE [es:4], 1
 
     mov     dl, [gBIOSDriveNumber]			; load BIOS drive number
     jmp     kBoot2Segment:kBoot2Address
@@ -1431,8 +1460,8 @@ error_str			db		'error', NULL
 %endif
 
 searchCatalogKey	dd		kHFSRootFolderID
-					dw		searchCatKeyNameLen
-searchCatKeyName	dw		'b', 'o', 'o', 't'			; must be lower case
+searchCatalogKeyNL	dw		searchCatKeyNameLen
+searchCatKeyName	dw		'b', 'o', 'o', 't', 'a', 'l', 't'	; must be lower case
 searchCatKeyNameLen	EQU		($ - searchCatKeyName) / 2
 
 ;--------------------------------------------------------------------------

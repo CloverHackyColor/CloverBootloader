@@ -84,13 +84,13 @@ static VOID  OptionsMenu(VOID)
     UnicodeSPrint(Flags, 255, L"Boot Args:");
     InputBootArgs->Entry.Title = Flags;
     InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = StrLen(InputItems[OptionMenu.EntryCount].SValue);
+    InputBootArgs->Entry.Row = StrLen(InputItems[0].SValue);
     InputBootArgs->Entry.ShortcutDigit = 0;
     InputBootArgs->Entry.ShortcutLetter = 'O';
     InputBootArgs->Entry.Image = NULL;
     InputBootArgs->Entry.BadgeImage = NULL;
     InputBootArgs->Entry.SubScreen = NULL;
-    InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];    
+    InputBootArgs->Item = &InputItems[0];    
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     
     Flags = AllocateZeroPool(30);
@@ -104,7 +104,7 @@ static VOID  OptionsMenu(VOID)
     InputBootArgs->Entry.Image = NULL;
     InputBootArgs->Entry.BadgeImage = NULL;
     InputBootArgs->Entry.SubScreen = NULL;
-    InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];    
+    InputBootArgs->Item = &InputItems[1];    
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     
     Flags = AllocateZeroPool(30);
@@ -118,10 +118,11 @@ static VOID  OptionsMenu(VOID)
     InputBootArgs->Entry.Image = NULL;
     InputBootArgs->Entry.BadgeImage = NULL;
     InputBootArgs->Entry.SubScreen = NULL;
-    InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];    
+    InputBootArgs->Item = &InputItems[2];    
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
         
     AddMenuEntry(&OptionMenu, &MenuEntryReturn);
+//    DBG("option menu created entries=%d\n", OptionMenu.EntryCount);
   }
   RunMenu(&OptionMenu, NULL);
   //  FreePool(Flags);
@@ -311,7 +312,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //  PauseForKey(L"System started?!");
 }
 
-static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume)
+static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume, UINT8               OSType)
 {
   CHAR16          *FileName, *OSIconName;
   CHAR16          IconFileName[256];
@@ -358,6 +359,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   OSIconName = NULL;
   LoaderKind = 0;
   ShortcutLetter = 0;
+  /*
   if (StriCmp(LoaderPath, MACOSX_LOADER_PATH) == 0) {
     OSIconName = Volume->OSIconName;
     Entry->UseGraphicsMode = TRUE;
@@ -380,6 +382,38 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     Entry->UseGraphicsMode = TRUE;
     LoaderKind = 3;
     ShortcutLetter = 'W';
+  }
+   */
+  switch (OSType) {
+    case OSTYPE_OSX:
+    case OSTYPE_TIGER:
+    case OSTYPE_LEO:
+    case OSTYPE_SNOW:
+    case OSTYPE_LION:
+    case OSTYPE_COUGAR:
+      OSIconName = Volume->OSIconName;
+      Entry->UseGraphicsMode = TRUE;
+      LoaderKind = 1;
+      ShortcutLetter = 'M';      
+      break;
+    case OSTYPE_WIN:
+      OSIconName = L"win";
+      ShortcutLetter = 'W';
+      LoaderKind = 3;
+      break;
+    case OSTYPE_LIN:
+      OSIconName = L"linux";
+      LoaderKind = 2;
+      ShortcutLetter = 'L';
+      break;
+    case OSTYPE_VAR:
+    case OSTYPE_EFI:
+      OSIconName = L"unknown";
+      LoaderKind = 4;
+      ShortcutLetter = 'U';
+      break;
+    default:
+      break;
   }
   Entry->me.ShortcutLetter = ShortcutLetter;
   if (Entry->me.Image == NULL)
@@ -653,16 +687,16 @@ static VOID ScanLoader(VOID)
     if (FileExists(Volume->RootDir, FileName)) {
       //     Print(L"  - Mac OS X boot file found\n");
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"Mac OS X", Volume);
-      continue; //boot MacOSX only
+      Entry = AddLoaderEntry(FileName, L"Mac OS X", Volume, Volume->OSType);
+ //     continue; //boot MacOSX only
     }
     
     // check for Mac OS X Recovery Boot
     StrCpy(FileName,  L"\\com.apple.recovery.boot\\boot.efi");
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"Recovery", Volume);
-      continue; //boot MacOSX only
+      Entry = AddLoaderEntry(FileName, L"Recovery", Volume, Volume->OSType);
+//      continue; //boot MacOSX only
     }
     
     // check for XOM - and what?
@@ -670,44 +704,44 @@ static VOID ScanLoader(VOID)
     /*        StrCpy(FileName, L"\\EFI\\tools\\xom.efi");
      if (FileExists(Volume->RootDir, FileName)) {
      Volume->BootType = BOOTING_BY_EFI;
-     AddLoaderEntry(L"Xom.efi", L"Windows XP ", Volume);
+     AddLoaderEntry(L"Xom.efi", L"Windows XP ", Volume, OSTYPE_WIN);
      }*/
     
     // check for Microsoft boot loader/menu
     StrCpy(FileName, L"\\EFI\\Microsoft\\BOOT\\bootmgfw.efi");
     if (FileExists(Volume->RootDir, FileName)) {
       //     Print(L"  - Microsoft boot menu found\n");
-      Volume->OSType = OSTYPE_WIN;
+      //    Volume->OSType = OSTYPE_WIN;
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"Microsoft EFI boot menu", Volume);
+      Entry = AddLoaderEntry(FileName, L"Microsoft EFI boot menu", Volume, OSTYPE_WIN);
       continue;
     }
 
     // check for grub boot loader/menu
     StrCpy(FileName, L"\\EFI\\grub\\grub.efi");
     if (FileExists(Volume->RootDir, FileName)) {
-      Volume->OSType = OSTYPE_LIN;
+  //    Volume->OSType = OSTYPE_LIN;
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"Grub EFI boot menu", Volume);
-      continue;
+      Entry = AddLoaderEntry(FileName, L"Grub EFI boot menu", Volume, OSTYPE_LIN);
+ //     continue;
     }
     
     // check for Redhat boot loader/menu
     StrCpy(FileName, L"\\EFI\\RedHat\\grub.efi");
     if (FileExists(Volume->RootDir, FileName)) {
-      Volume->OSType = OSTYPE_LIN;
+ //     Volume->OSType = OSTYPE_LIN;
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"RedHat EFI boot menu", Volume);
-      continue;
+      Entry = AddLoaderEntry(FileName, L"RedHat EFI boot menu", Volume, OSTYPE_LIN);
+//      continue;
     }
 
     // check for Redhat boot loader/menu
     StrCpy(FileName, L"\\EFI\\RedHat\\grubx64.efi");
     if (FileExists(Volume->RootDir, FileName)) {
-      Volume->OSType = OSTYPE_LIN;
+//      Volume->OSType = OSTYPE_LIN;
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"RedHat EFI boot menu", Volume);
-      continue;
+      Entry = AddLoaderEntry(FileName, L"RedHat EFI boot menu", Volume, OSTYPE_LIN);
+ //     continue;
     }
     
     // check for Ubuntu boot loader/menu
@@ -717,19 +751,19 @@ static VOID ScanLoader(VOID)
     StrCpy(FileName, L"\\EFI\\Ubuntu\\grub.efi");
 #endif
     if (FileExists(Volume->RootDir, FileName)) {
-      Volume->OSType = OSTYPE_LIN;
+//      Volume->OSType = OSTYPE_LIN;
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"Ubuntu EFI boot menu", Volume);
-      continue;
+      Entry = AddLoaderEntry(FileName, L"Ubuntu EFI boot menu", Volume, OSTYPE_LIN);
+//      continue;
     }
     
     // check for OpenSuse boot loader/menu
     StrCpy(FileName, L"\\EFI\\SuSe\\elilo.efi");
     if (FileExists(Volume->RootDir, FileName)) {
-      Volume->OSType = OSTYPE_LIN;
+//      Volume->OSType = OSTYPE_LIN;
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"OpenSuse EFI boot menu", Volume);
-      continue;
+      Entry = AddLoaderEntry(FileName, L"OpenSuse EFI boot menu", Volume, OSTYPE_LIN);
+//      continue;
     }
     
     //UEFI bootloader XXX 
@@ -739,10 +773,10 @@ static VOID ScanLoader(VOID)
     StrCpy(FileName, L"\\EFI\\BOOT\\BOOTIA32.efi");
 #endif
     if (FileExists(Volume->RootDir, FileName)) {
-      Volume->OSType = OSTYPE_VAR;
+//      Volume->OSType = OSTYPE_VAR;
       Volume->BootType = BOOTING_BY_EFI;
-      AddLoaderEntry(FileName, L"UEFI boot menu", Volume);
-      continue;
+      AddLoaderEntry(FileName, L"UEFI boot menu", Volume, OSTYPE_VAR);
+//      continue;
     }
   }
 }
@@ -1046,18 +1080,22 @@ static VOID ScanLegacy(VOID)
             HideIfOthersFound = TRUE;
         } else if (Volume->HasBootCode) {
             ShowVolume = TRUE;
+          DBG("Volume %d will be shown\n", VolumeIndex);
             if (Volume->BlockIO == Volume->WholeDiskBlockIO &&
-                Volume->BlockIOOffset == 0 &&
-                Volume->OSName == NULL)
+                Volume->BlockIOOffset == 0 /* &&
+                Volume->OSName == NULL */)
                 // this is a whole disk (MBR) entry; hide if we have entries for partitions
                 HideIfOthersFound = TRUE;
         }
         if (HideIfOthersFound) {
+          DBG("hide volume\n");
             // check for other bootable entries on the same disk
             for (VolumeIndex2 = 0; VolumeIndex2 < VolumesCount; VolumeIndex2++) {
                 if (VolumeIndex2 != VolumeIndex && Volumes[VolumeIndex2]->HasBootCode &&
-                    Volumes[VolumeIndex2]->WholeDiskBlockIO == Volume->WholeDiskBlockIO)
+                    Volumes[VolumeIndex2]->WholeDiskBlockIO == Volume->WholeDiskBlockIO){
                     ShowVolume = FALSE;
+                  DBG("Master volume at index %d\n", VolumeIndex2);
+                }
             }
         }
         
@@ -1307,7 +1345,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	
   InitializeConsoleSim();
 	InitBooterLog();
-  DBG("\n \nStarting rEFIt rev %a\n", FIRMWARE_REVISION);
+  DBG(" \nStarting rEFIt rev %a\n", FIRMWARE_REVISION);
   InitScreen();
   
   Status = InitRefitLib(ImageHandle);

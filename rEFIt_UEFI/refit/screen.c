@@ -230,7 +230,7 @@ static VOID DrawScreenHeader(IN CHAR16 *Title)
 // Keyboard input
 //
 
-static BOOLEAN ReadAllKeyStrokes(VOID)
+BOOLEAN ReadAllKeyStrokes(VOID)
 {
     BOOLEAN       GotKeyStrokes;
     EFI_STATUS    Status;
