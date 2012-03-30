@@ -279,11 +279,14 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
 {
 	EFI_STATUS			Status			= EFI_NOT_FOUND;
 	EFI_BLOCK_IO*		pDisk			= volume->BlockIO;
-	UINT8*				pMBR			= (void*)0x600;
-	UINT8*				pBootSector		= (void*)0x7C00;
+	//UINT8*				pMBR			= (void*)0x600;
+	UINT8*				pMBR			= (void*)0x7C00;
+	//UINT8*				pBootSector		= (void*)0x7C00;
 	MBR_PARTITION_INFO*			activePartition = NULL;
-	UINTN				partitionIndex;
+	//UINTN				partitionIndex;
 	IA32_REGISTER_SET           Regs;
+    UINTN                       i, j;
+    
 	gBS->SetMem (&Regs, sizeof (Regs), 0);
 	addrEnablePaging(0);
 	
@@ -302,8 +305,8 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
 		return Status;
 	}
 	InitializeBiosIntCaller(); //mThunkContext);
-	InitializeInterruptRedirection(); //gLegacy8259);
-  Status = mCpu->EnableInterrupt(mCpu);
+	//InitializeInterruptRedirection(); //gLegacy8259);
+  //Status = mCpu->EnableInterrupt(mCpu);
 	
 	// Read the MBR
 	Status = pDisk->ReadBlocks(pDisk, pDisk->Media->MediaId, 0, 512, pMBR);
@@ -312,12 +315,20 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
 		return Status;
 	}
 	
+    for (i=0; i<16; i++) {
+        DBG("%04x: ", i*16);
+        for (j=0; j<16; j++) {
+            DBG("%02x ", pMBR[i*16+j]);
+        }
+        DBG("\n");
+    }
 	// Check validity of MBR
 	if (pMBR[510] != 0x55 || pMBR[511] != 0xAA) {
 		Print(L"HDBoot: Invalid MBR signature 0x%02X%02X (not 0xAA55)\n", pMBR[511], pMBR[510]);
 		Status = EFI_NOT_FOUND; 
 		return Status;
 	}
+    /*
 	
 	// Traverse partitions
 	for (partitionIndex = 0; partitionIndex < 4; ++partitionIndex) {
@@ -362,16 +373,15 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
 	}
 	
 	DBG("HDBoot: Found valid boot sector on partition #%d. Booting...\n", partitionIndex);
+    */
+	DBG("HDBoot: Booting...\n");
 		
 	Regs.X.DX = 0x80;
 	Regs.X.SI = (UINT16)(UINTN)activePartition;
 	//Regs.X.ES = EFI_SEGMENT((UINT32) pBootSector);
 	//Regs.X.BX = EFI_OFFSET ((UINT32) pBootSector);
-	LegacyBiosFarCall86(
-						EFI_SEGMENT((UINT32)(UINTN) pBootSector),
-						EFI_OFFSET ((UINT32)(UINTN) pBootSector),
-						&Regs
-						);
+    PauseForKey(L"bootMBR");
+	LegacyBiosFarCall86(0, 0x7c00, &Regs);
 		
 	// Success - Should never get here 
 	return EFI_SUCCESS;	
@@ -382,13 +392,13 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
 	EFI_STATUS                  Status		= EFI_NOT_FOUND;
 	EFI_BLOCK_IO*               pDisk     = volume->BlockIO;
 	UINT8*                      pBootSector	= (UINT8*)0x7C00;
-	MBR_PARTITION_INFO*					pMBR      = (MBR_PARTITION_INFO*)0x7BE;
+	//MBR_PARTITION_INFO*					pMBR      = (MBR_PARTITION_INFO*)0x7BE;
 	UINT32                      LbaOffset	= 0;
 	UINT32                      LbaSize		= 0;
 	HARDDRIVE_DEVICE_PATH       *HdPath     = NULL; 
 	EFI_DEVICE_PATH_PROTOCOL    *DevicePath = volume->DevicePath;
   UINT16                      OldMask;
-  UINT16                      NewMask;
+  //UINT16                      NewMask;
   UINTN                       i, j;  //for debug dump
   
 	
@@ -436,7 +446,8 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
 	}
   DBG("Thunk allocated\n");
 	InitializeBiosIntCaller(); //mThunkContext);
-	InitializeInterruptRedirection(); //gLegacy8259);
+	//InitializeInterruptRedirection(); //gLegacy8259);
+    
 	Status = pDisk->ReadBlocks(pDisk, pDisk->Media->MediaId, 0, 1024, pBootSector);
   for (i=0; i<16; i++) {
     DBG("%04x: ", i*16);
@@ -445,22 +456,32 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
     }
     DBG("\n");
   }
-  NewMask = 0x0;
-  Status = gLegacy8259->SetMask(gLegacy8259, &NewMask, NULL, NULL, NULL);
-	Status = mCpu->EnableInterrupt(mCpu);
-	CopyMem(pMBR, &tMBR, 16);
-	pMBR->StartLBA = LbaOffset;
-	pMBR->Size = LbaSize;
+    DBG("Interrupts:\n");
+    for (i=0; i<16; i++) {
+        DBG("%04x: ", i*16);
+        for (j=0; j<16; j++) {
+            DBG("%02x ", *((UINT8*)(UINTN)(i*16+j)));
+        }
+        DBG("\n");
+    }
+  //NewMask = 0x0;
+  //Status = gLegacy8259->SetMask(gLegacy8259, &NewMask, NULL, NULL, NULL);
+	//Status = mCpu->EnableInterrupt(mCpu);
+	//CopyMem(pMBR, &tMBR, 16);
+	//pMBR->StartLBA = LbaOffset;
+	//pMBR->Size = LbaSize;
   DBG("Ready to start\n");
 	Regs.X.DX = 0x80;
-	Regs.X.SI = 0x07BE;
+	//Regs.X.SI = 0x07BE;
 	//Regs.X.ES = EFI_SEGMENT((UINT32) pBootSector);
 	//Regs.X.BX = EFI_OFFSET ((UINT32) pBootSector);
-	LegacyBiosFarCall86(
-						EFI_SEGMENT((UINT32)(UINTN) pBootSector),
-						EFI_OFFSET ((UINT32)(UINTN) pBootSector),
-						&Regs
-						);
+    PauseForKey(L"bootPBR");
+	LegacyBiosFarCall86(0, 0x7c00, &Regs);
+	//LegacyBiosFarCall86(
+	//					EFI_SEGMENT((UINT32)(UINTN) pBootSector),
+	//					EFI_OFFSET ((UINT32)(UINTN) pBootSector),
+//						&Regs
+//						);
 	
 	// Success - Should never get here 
   //else

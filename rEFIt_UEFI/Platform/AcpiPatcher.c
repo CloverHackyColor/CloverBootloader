@@ -239,8 +239,8 @@ VOID DropTableFromRSDT (UINT32 Signature)
 	EntryPtr = &Rsdt->Entry;
 	for (Index = 0; Index < EntryCount; Index++, EntryPtr++) {
     if (*EntryPtr == 0) {
-      Rsdt->Header.Length -= sizeof(UINT32);
-      continue;
+//      Rsdt->Header.Length -= sizeof(UINT32);
+      break;
     }
 		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
     CopyMem((CHAR8*)&sign, (CHAR8*)&Table->Signature, 4);
@@ -257,8 +257,10 @@ VOID DropTableFromRSDT (UINT32 Signature)
     for (Index2 = Index; Index2 < EntryCount; Index2++) {
       *Ptr++ = *Ptr2++;
     }
-    Rsdt->Header.Length -= sizeof(UINT32);
-	}	
+//    Rsdt->Header.Length -= sizeof(UINT32);
+	}
+	Rsdt->Header.Length = sizeof(UINT32) * Index + sizeof(EFI_ACPI_DESCRIPTION_HEADER);
+  DBG("corrected RSDT length=%d\n", Rsdt->Header.Length);
 }
 
 VOID DropTableFromXSDT (UINT32 Signature) 
@@ -280,8 +282,8 @@ VOID DropTableFromXSDT (UINT32 Signature)
 	BasePtr = (UINT64*)(&(Xsdt->Entry));
 	for (Index = 0; Index < EntryCount; Index++, BasePtr++) {
     if (*BasePtr == 0) {
-      Xsdt->Header.Length -= sizeof(UINT64);
-      continue;
+//      Xsdt->Header.Length -= sizeof(UINT64);
+      break;
     }
     CopyMem (&Entry64, (VOID*)BasePtr, sizeof(UINT64)); //value from BasePtr->
 		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Entry64));
@@ -300,8 +302,10 @@ VOID DropTableFromXSDT (UINT32 Signature)
       //*Ptr++ = *Ptr2++;
       CopyMem(Ptr++, Ptr2++, sizeof(UINT64));
     }
-    Xsdt->Header.Length -= sizeof(UINT64);
+//    Xsdt->Header.Length -= sizeof(UINT64);
 	}	
+  Xsdt->Header.Length = sizeof(UINT64) * Index + sizeof(EFI_ACPI_DESCRIPTION_HEADER);
+  DBG("corrected XSDT length=%d\n", Xsdt->Header.Length);
 }
 
 EFI_STATUS InsertTable(VOID* Table, UINTN Length)

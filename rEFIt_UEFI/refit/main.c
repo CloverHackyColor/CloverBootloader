@@ -708,7 +708,7 @@ static VOID ScanLoader(VOID)
      }*/
     
     // check for Microsoft boot loader/menu
-    StrCpy(FileName, L"\\EFI\\Microsoft\\BOOT\\bootmgfw.efi");
+    StrCpy(FileName, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi");
     if (FileExists(Volume->RootDir, FileName)) {
       //     Print(L"  - Microsoft boot menu found\n");
       //    Volume->OSType = OSTYPE_WIN;
