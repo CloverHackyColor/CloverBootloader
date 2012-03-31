@@ -125,7 +125,7 @@ static VOID  OptionsMenu(VOID)
     AddMenuEntry(&OptionMenu, &MenuEntryReturn);
 //    DBG("option menu created entries=%d\n", OptionMenu.EntryCount);
   }
-    RunMenu(&OptionMenu, NULL);
+    RunMenu(&OptionMenu, &ChosenEntry);
 
   //  FreePool(Flags);
   //  FreePool(InputBootArgs);
@@ -1470,8 +1470,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   for (i = 0; i < MainMenu.EntryCount && MainMenu.Entries[i]->Row == 0 && i < 9; i++)
     MainMenu.Entries[i]->ShortcutDigit = (CHAR16)('1' + i);
   
-  DrawMenuText(L"Test Русский", 14, 0, UGAHeight-40, 5);
-  PauseForKey(L"Test fonts");
+//  DrawMenuText(L"Test Русский", 14, 0, UGAHeight-40, 5);
+//  PauseForKey(L"Test fonts");
   
     // wait for user ACK when there were errors
   FinishTextScreen(FALSE);
