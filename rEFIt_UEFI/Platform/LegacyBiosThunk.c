@@ -13,8 +13,18 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 **/
 
 #include "LegacyBiosThunk.h"
+
+
+#define DEBUG_LBTHUNK 2
+
+#if DEBUG_LBTHUNK == 2
+#define DBG(x...) AsciiPrint(x)
 // lib.h - just for PauseForKey
 #include "lib.h"
+#else
+#define DBG(x...)
+#endif
+
 
 #define EFI_CPU_EFLAGS_IF 0x200
 extern EFI_LEGACY_8259_PROTOCOL        *gLegacy8259;
@@ -40,7 +50,7 @@ InitializeBiosIntCaller (
   //
   AsmGetThunk16Properties (&RealModeBufferSize, &ExtraStackSize);
   LegacyRegionSize = (((RealModeBufferSize + ExtraStackSize) / EFI_PAGE_SIZE) + 1) * EFI_PAGE_SIZE;
-  LegacyRegionBase = 0x0C0000;
+  LegacyRegionBase = 0x100000;
   Status = gBS->AllocatePages (
                   AllocateMaxAddress,
                   EfiACPIMemoryNVS,
@@ -52,9 +62,7 @@ InitializeBiosIntCaller (
   mThunkContext->RealModeBuffer     = (VOID*)(UINTN)LegacyRegionBase;
   mThunkContext->RealModeBufferSize = LegacyRegionSize;
   mThunkContext->ThunkAttributes    = THUNK_ATTRIBUTE_DISABLE_A20_MASK_INT_15;
-  Print(L"mThunkContext->RealModeBuffer: %p, mThunkContext->RealModeBufferSize: %d\n", mThunkContext->RealModeBuffer, mThunkContext->RealModeBufferSize);
-//    mThunkContext->ThunkAttributes    = THUNK_ATTRIBUTE_BIG_REAL_MODE|THUNK_ATTRIBUTE_DISABLE_A20_MASK_INT_15;
-
+  DBG("mThunkContext->RealModeBuffer: %p, mThunkContext->RealModeBufferSize: %d\n", mThunkContext->RealModeBuffer, mThunkContext->RealModeBufferSize);
   AsmPrepareThunk16(mThunkContext);
 }
 
@@ -256,7 +264,7 @@ LegacyBiosFarCall86 (
   ThunkRegSet.E.EFLAGS.Bits.Reserved_3 = 0;
   ThunkRegSet.E.EFLAGS.Bits.IOPL       = 3;
   ThunkRegSet.E.EFLAGS.Bits.NT         = 0;
-  ThunkRegSet.E.EFLAGS.Bits.IF         = 0; //were 1
+  ThunkRegSet.E.EFLAGS.Bits.IF         = 0;
   ThunkRegSet.E.EFLAGS.Bits.TF         = 0;
   ThunkRegSet.E.EFLAGS.Bits.CF         = 0;
 
@@ -280,19 +288,12 @@ LegacyBiosFarCall86 (
   // The call to Legacy16 is a critical section to EFI
   //
 	Eflags = AsmReadEflags ();
-//	if ((Eflags & EFI_CPU_EFLAGS_IF) != 0) {
-//		DisableInterrupts ();
-//	}
-    DisableInterrupts ();
+	if ((Eflags & EFI_CPU_EFLAGS_IF) != 0) {
+		DisableInterrupts ();
+	}
 	
 //xxx - Slice
-//  AsmWriteIdtr(NULL);
-  //
-  // Set Legacy16 state. 0x08, 0x70 is legacy 8259 vector bases.
-  //
-//  Status = gLegacy8259->SetMode (gLegacy8259, Efi8259LegacyMode, NULL, NULL);
-//  ASSERT_EFI_ERROR (Status);
-  
+  //AsmWriteIdtr(NULL);
 	Stack16 = (UINT16 *)((UINT8 *) mThunkContext->RealModeBuffer + mThunkContext->RealModeBufferSize - sizeof (UINT16));
 	
 	ThunkRegSet.E.SS   = (UINT16) (((UINTN) Stack16 >> 16) << 12);
@@ -301,8 +302,10 @@ LegacyBiosFarCall86 (
 	ThunkRegSet.E.CS   = Segment;
 	ThunkRegSet.E.Eip  = Offset;
 	mThunkContext->RealModeState = &ThunkRegSet;
-    Print(L"SS=%X, ESP=%X, CS=%X, Eip=%X\n", ThunkRegSet.E.SS, ThunkRegSet.E.ESP, ThunkRegSet.E.CS, ThunkRegSet.E.Eip);
+    DBG("SS=%X, ESP=%X, CS=%X, Eip=%X\n", ThunkRegSet.E.SS, ThunkRegSet.E.ESP, ThunkRegSet.E.CS, ThunkRegSet.E.Eip);
+    #if DEBUG_LBTHUNK == 2
     PauseForKey(L"LegacyBiosFarCall86");
+    #endif
   //
   // Set Legacy16 state. 0x08, 0x70 is legacy 8259 vector bases.
   //

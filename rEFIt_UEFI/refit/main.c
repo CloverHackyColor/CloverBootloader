@@ -37,7 +37,7 @@
 #include "Platform.h"
 //#include "../include/Handle.h"
 
-#include "syslinux_mbr.h"
+//#include "syslinux_mbr.h"
 #include "Version.h"
 
 #define DEBUG_MAIN 1
@@ -75,11 +75,12 @@ static REFIT_MENU_SCREEN OptionMenu  = { L"Options", NULL, 0, NULL, 0, NULL, 0, 
 
 static VOID  OptionsMenu(VOID)
 {
+  REFIT_MENU_ENTRY  *ChosenEntry = NULL;
   if (OptionMenu.EntryCount == 0) {
     OptionMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
-    
     CHAR16* Flags = AllocateZeroPool(255);
     REFIT_INPUT_DIALOG* InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    ChosenEntry = (REFIT_MENU_ENTRY*)InputBootArgs;   
     //  UnicodeSPrint(Flags, 255, L"Boot Args:%a", gSettings.BootArgs);
     UnicodeSPrint(Flags, 255, L"Boot Args:");
     InputBootArgs->Entry.Title = Flags;
@@ -109,7 +110,7 @@ static VOID  OptionsMenu(VOID)
     
     Flags = AllocateZeroPool(30);
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 30, L"Audio ID:");
+    UnicodeSPrint(Flags, 30, L"Audio  ID:");
     InputBootArgs->Entry.Title = Flags;
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = 0;
@@ -124,7 +125,8 @@ static VOID  OptionsMenu(VOID)
     AddMenuEntry(&OptionMenu, &MenuEntryReturn);
 //    DBG("option menu created entries=%d\n", OptionMenu.EntryCount);
   }
-  RunMenu(&OptionMenu, NULL);
+    RunMenu(&OptionMenu, NULL);
+
   //  FreePool(Flags);
   //  FreePool(InputBootArgs);
 }
@@ -303,7 +305,10 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   SetupDataForOSX();
 //  PauseForKey(L"SetupBooterLog");
   Status = SetupBooterLog();
-  
+
+  //TODO - what if we start Windows?
+  Entry->LoadOptions     = PoolPrint(L"%a", gSettings.BootArgs);
+  //  Entry->LoadOptions     = InputItems[0].SValue;
   
   StartEFIImage(Entry->DevicePath, Entry->LoadOptions,
                 Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL);
@@ -344,6 +349,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   Entry->DevicePath      = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
   Entry->UseGraphicsMode = FALSE;
   Entry->LoadOptions     = PoolPrint(L"%a", gSettings.BootArgs);
+//  Entry->LoadOptions     = InputItems[0].SValue;
   
   // locate a custom icon for the loader
 //  StrCpy(IconFileName, LoaderPath);
@@ -696,7 +702,7 @@ static VOID ScanLoader(VOID)
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->BootType = BOOTING_BY_EFI;
       Entry = AddLoaderEntry(FileName, L"Recovery", Volume, Volume->OSType);
-//      continue; //boot MacOSX only
+      continue; //boot MacOSX only
     }
     
     // check for XOM - and what?
@@ -714,7 +720,7 @@ static VOID ScanLoader(VOID)
       //    Volume->OSType = OSTYPE_WIN;
       Volume->BootType = BOOTING_BY_EFI;
       Entry = AddLoaderEntry(FileName, L"Microsoft EFI boot menu", Volume, OSTYPE_WIN);
-      continue;
+ //     continue;
     }
 
     // check for grub boot loader/menu
@@ -784,7 +790,7 @@ static VOID ScanLoader(VOID)
 //
 // legacy boot functions
 //
-
+/*
 static EFI_STATUS ActivateMbrPartition(IN EFI_BLOCK_IO *BlockIO, IN UINTN PartitionIndex)
 {
     EFI_STATUS          Status;
@@ -935,16 +941,18 @@ static EFI_DEVICE_PATH *LegacyLoaderList[] = {
     (EFI_DEVICE_PATH *)LegacyLoaderDevicePath4Data,
     (EFI_DEVICE_PATH *)LegacyLoaderDevicePath5Data,
     NULL
-};
+}; */
 
 #define MAX_DISCOVERED_PATHS (16)
+#define PREBOOT_LOG L"EFI\\misc\\preboot.log"
 
 static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
 {
-    EFI_STATUS          Status;
+    EFI_STATUS          Status = EFI_UNSUPPORTED;
     EG_IMAGE            *BootLogoImage;
-    UINTN               ErrorInStep = 0;
-    EFI_DEVICE_PATH     *DiscoveredPathList[MAX_DISCOVERED_PATHS];
+//    UINTN               ErrorInStep = 0;
+//    EFI_DEVICE_PATH     *DiscoveredPathList[MAX_DISCOVERED_PATHS];
+
     egClearScreen(&DarkBackgroundPixel);
     BeginExternalScreen(TRUE, L"Booting Legacy OS");
     
@@ -954,13 +962,12 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
                       (UGAWidth  - BootLogoImage->Width ) >> 1,
                       (UGAHeight - BootLogoImage->Height) >> 1,
                       &StdBackgroundPixel);
-        
-    Status = ExtractLegacyLoaderPaths(DiscoveredPathList, MAX_DISCOVERED_PATHS, LegacyLoaderList);
+  
+/*    Status = ExtractLegacyLoaderPaths(DiscoveredPathList, MAX_DISCOVERED_PATHS, LegacyLoaderList);
     if (!EFI_ERROR(Status)) {
       Status = StartEFIImageList(DiscoveredPathList, Entry->LoadOptions, NULL, L"legacy loader", &ErrorInStep);
-
-    }
-    if (EFI_ERROR(Status)) {
+    } */
+ //   if (EFI_ERROR(Status)) {
       //try my LegacyBoot
       switch (Entry->Volume->BootType) {
         case BOOTING_BY_CD:
@@ -976,8 +983,8 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
           break;
       }
       CheckError(Status, L"while LegacyBoot");
-      if (0 && Entry->Volume->IsMbrPartition && !Entry->Volume->HasBootCode)
-         ActivateMbrPartition(Entry->Volume->WholeDiskBlockIO, Entry->Volume->MbrPartitionIndex);
+//      if (0 && Entry->Volume->IsMbrPartition && !Entry->Volume->HasBootCode)
+//         ActivateMbrPartition(Entry->Volume->WholeDiskBlockIO, Entry->Volume->MbrPartitionIndex);
 
 /*        if (ErrorInStep == 1)
             Print(L"\nPlease make sure that you have the latest firmware update installed.\n");
@@ -985,7 +992,7 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
             Print(L"\nThe firmware refused to boot from the selected volume. Note that external\n"
                   L"hard drives are not well-supported by Apple's firmware for legacy OS booting.\n");
  */
-    }
+//    }
     FinishExternalScreen();
 }
 
@@ -1463,8 +1470,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   for (i = 0; i < MainMenu.EntryCount && MainMenu.Entries[i]->Row == 0 && i < 9; i++)
     MainMenu.Entries[i]->ShortcutDigit = (CHAR16)('1' + i);
   
-//  DrawMenuText(L"Test Русский", 14, 0, UGAHeight-40, 6);
-//  PauseForKey(L"Test fonts");
+  DrawMenuText(L"Test Русский", 14, 0, UGAHeight-40, 5);
+  PauseForKey(L"Test fonts");
   
     // wait for user ACK when there were errors
   FinishTextScreen(FALSE);
@@ -1497,7 +1504,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         
       case TAG_RESET:    // Restart
         TerminateScreen();
-        gRS->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
+        gRS->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
         MainLoopRunning = FALSE;   // just in case we get this far
         break;
         

@@ -392,6 +392,10 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
                                          Volume->BlockIOOffset /*start lba*/,
                                          2048, SectorBuffer);
     if (!EFI_ERROR(Status)) {
+      // calc crc checksum of first 2 sectors - it's used later for legacy boot BIOS drive num detection
+      // note: possible future issues with AF 4K disks
+      gBS->CalculateCrc32 (SectorBuffer, 2 * 512, &Volume->DriveCRC32);
+      
       if (Volume->DiskKind == DISK_KIND_OPTICAL) { //CDROM
         CHAR8* p = (CHAR8*)&SectorBuffer[8];
 				while (*p == 0x20) {

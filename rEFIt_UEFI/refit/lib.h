@@ -134,6 +134,7 @@ typedef struct {
     EFI_BLOCK_IO        *WholeDiskBlockIO;
     EFI_DEVICE_PATH     *WholeDiskDevicePath;
     MBR_PARTITION_INFO  *MbrPartitionTable;
+    UINT32              DriveCRC32;
 } REFIT_VOLUME;
 
 //GUI types
@@ -303,7 +304,7 @@ EFI_STATUS InitializeUnicodeCollationProtocol (VOID);
 #define ATTR_SCROLLARROW (EFI_LIGHTGREEN | EFI_BACKGROUND_BLACK)
 
 #define LAYOUT_TEXT_WIDTH (780)
-#define LAYOUT_TOTAL_HEIGHT (480)
+#define LAYOUT_TOTAL_HEIGHT (376)
 #define LAYOUT_BANNER_HEIGHT (32)
 #define LAYOUT_BANNER_YOFFSET (LAYOUT_BANNER_HEIGHT + 32)
 

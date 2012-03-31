@@ -699,6 +699,8 @@ BOOLEAN setup_ati_devprop(pci_dt_t *ati_dev)
 #endif
 	
 	devprop_add_list(ati_devprop_list);
+
+    devprop_add_value(card->device, "hda-gfx", (UINT8*)"onboard-1", 10);
 	
 	
 	DBG("ATI %a %a %dMB (%a) [%04x:%04x] (subsys [%04x:%04x]):: %a\n",

@@ -39,7 +39,7 @@
 #include "egemb_back_selected_small.h"
 
 
-#define DEBUG_MENU 1
+#define DEBUG_MENU 2
 
 #if DEBUG_MENU == 2
 #define DBG(x...) AsciiPrint(x)
@@ -49,6 +49,7 @@
 #define DBG(x...)
 #endif
 
+#define PREBOOT_LOG L"EFI\\misc\\preboot.log"
 // scrolling definitions
 
 static INTN MaxItemOnScreen = -1;
@@ -428,7 +429,7 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, I
   CHAR16        *Buffer = Item->SValue;
   CHAR16        *TempString = AllocateZeroPool(255);
   SCROLL_STATE  StateLine;
-//  DBG("Enter Input Dialog\n");
+  DBG("Enter Input Dialog\n");
   InitScroll(&StateLine, 128, 128, StrLen(Item->SValue));
 	
 	do {
@@ -463,7 +464,10 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, I
           break;
         case SCAN_F2:
           LogSize = msgCursor - msgbuf;
-          Status = egSaveFile(SelfRootDir, L"EFI\\misc\\preboot.log", (UINT8*)msgbuf, LogSize);
+          Status = egSaveFile(SelfRootDir, PREBOOT_LOG, (UINT8*)msgbuf, LogSize);
+          if (EFI_ERROR(Status)) {
+            Status = egSaveFile(NULL, PREBOOT_LOG, (UINT8*)msgbuf, LogSize);
+          }
           break;
         case SCAN_F10:
           egScreenShot();
@@ -545,14 +549,14 @@ static UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC Sty
     MenuExit = 0;
     
     StyleFunc(Screen, &State, MENU_FUNCTION_INIT, NULL);
-//  DBG("scroll inited\n");
+  DBG("scroll inited\n");
     // override the starting selection with the default index, if any
     if (*DefaultEntryIndex >= 0 && *DefaultEntryIndex <= State.MaxIndex) {
         State.CurrentSelection = *DefaultEntryIndex;
         UpdateScroll(&State, SCROLL_NONE);
     }
-//  DBG("RunGenericMenu CurrentSelection=%d MenuExit=%d\n",
-//      State.CurrentSelection, MenuExit);
+  DBG("RunGenericMenu CurrentSelection=%d MenuExit=%d\n",
+      State.CurrentSelection, MenuExit);
   while (!MenuExit) {
     // update the screen
     if (State.PaintAll) {
@@ -620,9 +624,9 @@ static UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC Sty
         
       case SCAN_F2:
         LogSize = msgCursor - msgbuf;
-        Status = egSaveFile(SelfRootDir, L"EFI\\misc\\preboot.log", (UINT8*)msgbuf, LogSize);
+        Status = egSaveFile(SelfRootDir, PREBOOT_LOG, (UINT8*)msgbuf, LogSize);
         if (EFI_ERROR(Status)) {
-          Status = egSaveFile(NULL, L"EFI\\misc\\preboot.log", (UINT8*)msgbuf, LogSize);
+          Status = egSaveFile(NULL, PREBOOT_LOG, (UINT8*)msgbuf, LogSize);
         }
         break;
       case SCAN_F10:
@@ -639,6 +643,7 @@ static UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC Sty
       case CHAR_CARRIAGE_RETURN:
         
         if (Screen->Entries[State.CurrentSelection]->Tag == TAG_INPUT){
+          DBG("enter input dialog\n");
           MenuExit = InputDialog(Screen, &State, StyleFunc);
                       //((REFIT_INPUT_DIALOG*)(Screen->Entries[State.CurrentSelection]))->Value);
           if (ReadAllKeyStrokes()) {  // remove buffered key strokes
@@ -665,7 +670,7 @@ static UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC Sty
   }
 //  DBG("before cleanup\n");
   StyleFunc(Screen, &State, MENU_FUNCTION_CLEANUP, NULL);
-//   DBG("after cleanup\n"); 
+   DBG("after cleanup\n"); 
   if (ChosenEntry)
     *ChosenEntry = Screen->Entries[State.CurrentSelection];
   *DefaultEntryIndex = State.CurrentSelection;
@@ -823,13 +828,13 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
     case MENU_FUNCTION_INIT:
       // TODO: calculate available screen space
       //
-      //     DBG("MENU_FUNCTION_INIT 1\n");
+           DBG("MENU_FUNCTION_INIT 1\n");
       EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET + TextHeight * 2;
       VisibleHeight = LAYOUT_TOTAL_HEIGHT / TextHeight;
       
       InitScroll(State, Screen->EntryCount, Screen->EntryCount, VisibleHeight);              
       // determine width of the menu
-      MenuWidth = 30;  // minimum
+      MenuWidth = 50;  // minimum
       /*     for (i = 0; i < (INTN)Screen->InfoLineCount; i++) {
        ItemWidth = StrLen(Screen->InfoLines[i]);
        if (MenuWidth < ItemWidth)
@@ -843,7 +848,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
        MenuWidth = ItemWidth;
        }*/
       
-//      DBG("MENU_FUNCTION_INIT 3\n");
+      DBG("MENU_FUNCTION_INIT 3\n");
       MenuWidth = TEXT_XMARGIN * 2 + MenuWidth * GlobalConfig.CharWidth; // FontWidth;
       if (MenuWidth > LAYOUT_TEXT_WIDTH)
         MenuWidth = LAYOUT_TEXT_WIDTH;
@@ -854,7 +859,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         EntriesPosX = (UGAWidth - MenuWidth) >> 1;
       //   EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET + TextHeight * 2;
       TimeoutPosY = EntriesPosY + (Screen->EntryCount + 1) * TextHeight;
-//      DBG("MENU_FUNCTION_INIT 4\n");   
+      DBG("MENU_FUNCTION_INIT 4\n");   
       // initial painting
       SwitchToGraphicsAndClear();
       egMeasureText(Screen->Title, &ItemWidth, NULL);
@@ -870,7 +875,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         }
         EntriesPosY += TextHeight;  // also add a blank line
       }
-//      DBG("MENU_FUNCTION_INIT 5\n");    
+      DBG("MENU_FUNCTION_INIT 5\n");    
       break;
       
     case MENU_FUNCTION_CLEANUP:
@@ -881,12 +886,14 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       for (i = 0; i <= State->MaxIndex; i++) {
         if (Screen->Entries[i]->Tag == TAG_INPUT) {
           CHAR16 ResultString[255];
+          UINTN  TitleLen = StrLen(Screen->Entries[i]->Title);
+          DBG("paint Inputs\n");
           StrCpy(ResultString, Screen->Entries[i]->Title);
           StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->SValue);
           StrCat(ResultString, L" ");
           //Slice - suppose to use Row as Cursor in text
           DrawMenuText(ResultString, (i == State->CurrentSelection) ? MenuWidth : 0,
-                       EntriesPosX, EntriesPosY + i * TextHeight, Screen->Entries[i]->Row);
+                       EntriesPosX, EntriesPosY + i * TextHeight, TitleLen + Screen->Entries[i]->Row);
         }
         else
           DrawMenuText(Screen->Entries[i]->Title, (i == State->CurrentSelection) ? MenuWidth : 0,
@@ -897,37 +904,39 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
     case MENU_FUNCTION_PAINT_SELECTION:
       // redraw selection cursor
       //Last selection
-      //      DBG("MENU_FUNCTION_PAINT_SELECTION 1\n");
+            DBG("MENU_FUNCTION_PAINT_SELECTION 1\n");
       if (Screen->Entries[State->LastSelection]->Tag == TAG_INPUT) {
         CHAR16 ResultString[255];
+        UINTN  TitleLen = StrLen(Screen->Entries[State->LastSelection]->Title);
         StrCpy(ResultString, Screen->Entries[State->LastSelection]->Title);
         StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->SValue);
         StrCat(ResultString, L" ");
         DrawMenuText(ResultString, 0,
                      EntriesPosX, EntriesPosY + State->LastSelection * TextHeight,
-                     Screen->Entries[State->LastSelection]->Row);
-//        DBG("MENU_FUNCTION_PAINT_SELECTION 2\n");
+                     TitleLen + Screen->Entries[State->LastSelection]->Row);
+        DBG("MENU_FUNCTION_PAINT_SELECTION 2\n");
       }
       else {
- //       DBG("MENU_FUNCTION_PAINT_SELECTION 3\n");
+        DBG("MENU_FUNCTION_PAINT_SELECTION 3\n");
         DrawMenuText(Screen->Entries[State->LastSelection]->Title, 0,
                      EntriesPosX, EntriesPosY + State->LastSelection * TextHeight, 0xFFFF);
       }
       
-//      DBG("MENU_FUNCTION_PAINT_SELECTION 4\n");
+      DBG("MENU_FUNCTION_PAINT_SELECTION 4\n");
       //Current selection
       if (Screen->Entries[State->CurrentSelection]->Tag == TAG_INPUT) {
         CHAR16 ResultString[255];
+        UINTN  TitleLen = StrLen(Screen->Entries[State->CurrentSelection]->Title);
         StrCpy(ResultString, Screen->Entries[State->CurrentSelection]->Title);
         StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->SValue);
         StrCat(ResultString, L" ");
- //       DBG("MENU_FUNCTION_PAINT_SELECTION 5\n");
+        DBG("MENU_FUNCTION_PAINT_SELECTION 5\n");
         DrawMenuText(ResultString, MenuWidth,
                      EntriesPosX, EntriesPosY + State->CurrentSelection * TextHeight,
-                     Screen->Entries[State->CurrentSelection]->Row);
+                     TitleLen + Screen->Entries[State->CurrentSelection]->Row);
       }
       else {
- //       DBG("MENU_FUNCTION_PAINT_SELECTION 6\n");
+        DBG("MENU_FUNCTION_PAINT_SELECTION 6\n");
         DrawMenuText(Screen->Entries[State->CurrentSelection]->Title, MenuWidth,
                      EntriesPosX, EntriesPosY + State->CurrentSelection * TextHeight, 0xFFFF);
       }
@@ -940,7 +949,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       break;
       
   }
-//  DBG("scroll out\n");
+  DBG("scroll out\n");
 }
 
 //
@@ -982,8 +991,8 @@ static VOID DrawMainMenuText(IN CHAR16 *Text, IN UINTN XPos, IN UINTN YPos)
 static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
   INTN i; 
-  CHAR16* p;
-  UINTN X;
+//  CHAR16* p;
+//  UINTN X;
   
   switch (Function) {
       
@@ -1056,14 +1065,15 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
                             itemPosX[i], row1PosY);
         }
       }
-      p = Screen->Entries[State->CurrentSelection]->Title;
-      X = (UGAWidth - StrLen(p) * GlobalConfig.CharWidth) >> 1;
+/*      p = Screen->Entries[State->CurrentSelection]->Title;
+//      X = (UGAWidth - StrLen(p) * GlobalConfig.CharWidth) >> 1;
+      X = (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1;
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
         DrawMainMenuText(p, X, textPosY);
-      }  
-   /*   if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL))
+      }  */
+     if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL))
         DrawMainMenuText(Screen->Entries[State->CurrentSelection]->Title,
-                         (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY); */
+                         (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY);
       break;
       
     case MENU_FUNCTION_PAINT_SELECTION:
@@ -1082,20 +1092,21 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
         DrawMainMenuEntry(Screen->Entries[State->CurrentSelection], TRUE,
                           itemPosX[State->CurrentSelection], row1PosY);
       }
-      p = Screen->Entries[State->CurrentSelection]->Title;
-      X = (UGAWidth - StrLen(p) * GlobalConfig.CharWidth) >> 1;
+   //   p = Screen->Entries[State->CurrentSelection]->Title;
+   //   X = (UGAWidth - StrLen(p) * GlobalConfig.CharWidth) >> 1;
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-        DrawMainMenuText(p, X, textPosY);
-    //    DrawMainMenuText(Screen->Entries[State->CurrentSelection]->Title,
-    //                     (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY);
+   //     DrawMainMenuText(p, X, textPosY);
+        DrawMainMenuText(Screen->Entries[State->CurrentSelection]->Title,
+                         (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY);
       }
       break;
       
     case MENU_FUNCTION_PAINT_TIMEOUT:
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
         //screen centering
-        X = (UGAWidth - StrLen(ParamText) * GlobalConfig.CharWidth) >> 1;
-        DrawMainMenuText(ParamText, X, textPosY + TextHeight);
+ //       X = (UGAWidth - StrLen(ParamText) * GlobalConfig.CharWidth) >> 1;
+        DrawMainMenuText(ParamText, (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY + TextHeight);
+        
       }
       break;
       
