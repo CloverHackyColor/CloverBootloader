@@ -458,7 +458,7 @@ typedef struct {
   
 	// OS parameters
 	CHAR16	Language[10];
-	CHAR8   BootArgs[120];
+	CHAR8   BootArgs[256];
 	CHAR16	CustomUuid[40];
   CHAR16  DefaultBoot[40];
 	

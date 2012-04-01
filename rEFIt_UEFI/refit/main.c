@@ -66,70 +66,11 @@ static REFIT_MENU_ENTRY MenuEntryOptions  = { L"Options", TAG_OPTIONS, 1, 0, 'O'
 static REFIT_MENU_ENTRY MenuEntryAbout    = { L"About rEFIt", TAG_ABOUT, 1, 0, 'A', NULL, NULL, NULL };
 static REFIT_MENU_ENTRY MenuEntryReset    = { L"Restart Computer", TAG_RESET, 1, 0, 'R', NULL, NULL, NULL };
 static REFIT_MENU_ENTRY MenuEntryShutdown = { L"Shut Down Computer", TAG_SHUTDOWN, 1, 0, 'U', NULL, NULL, NULL };
-static REFIT_MENU_ENTRY MenuEntryReturn   = { L"Return to Main Menu", TAG_RETURN, 0, 0, 0, NULL, NULL, NULL };
+REFIT_MENU_ENTRY MenuEntryReturn   = { L"Return to Main Menu", TAG_RETURN, 0, 0, 0, NULL, NULL, NULL };
 
 static REFIT_MENU_SCREEN MainMenu    = { L"Main Menu", NULL, 0, NULL, 0, NULL, 0, L"Automatic boot" };
 static REFIT_MENU_SCREEN AboutMenu   = { L"About", NULL, 0, NULL, 0, NULL, 0, NULL };
 
-static REFIT_MENU_SCREEN OptionMenu  = { L"Options", NULL, 0, NULL, 0, NULL, 0, NULL };
-
-static VOID  OptionsMenu(VOID)
-{
-  REFIT_MENU_ENTRY  *ChosenEntry = NULL;
-  if (OptionMenu.EntryCount == 0) {
-    OptionMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
-    CHAR16* Flags = AllocateZeroPool(255);
-    REFIT_INPUT_DIALOG* InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    ChosenEntry = (REFIT_MENU_ENTRY*)InputBootArgs;   
-    //  UnicodeSPrint(Flags, 255, L"Boot Args:%a", gSettings.BootArgs);
-    UnicodeSPrint(Flags, 255, L"Boot Args:");
-    InputBootArgs->Entry.Title = Flags;
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = StrLen(InputItems[0].SValue);
-    InputBootArgs->Entry.ShortcutDigit = 0;
-    InputBootArgs->Entry.ShortcutLetter = 'O';
-    InputBootArgs->Entry.Image = NULL;
-    InputBootArgs->Entry.BadgeImage = NULL;
-    InputBootArgs->Entry.SubScreen = NULL;
-    InputBootArgs->Item = &InputItems[0];    
-    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-    
-    Flags = AllocateZeroPool(30);
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 30, L"Use DSDT mini:");
-    InputBootArgs->Entry.Title = Flags;
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = 0;
-    InputBootArgs->Entry.ShortcutDigit = 0;
-    InputBootArgs->Entry.ShortcutLetter = 'O';
-    InputBootArgs->Entry.Image = NULL;
-    InputBootArgs->Entry.BadgeImage = NULL;
-    InputBootArgs->Entry.SubScreen = NULL;
-    InputBootArgs->Item = &InputItems[1];    
-    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-    
-    Flags = AllocateZeroPool(30);
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 30, L"Audio  ID:");
-    InputBootArgs->Entry.Title = Flags;
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = 0;
-    InputBootArgs->Entry.ShortcutDigit = 0;
-    InputBootArgs->Entry.ShortcutLetter = 'O';
-    InputBootArgs->Entry.Image = NULL;
-    InputBootArgs->Entry.BadgeImage = NULL;
-    InputBootArgs->Entry.SubScreen = NULL;
-    InputBootArgs->Item = &InputItems[2];    
-    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-        
-    AddMenuEntry(&OptionMenu, &MenuEntryReturn);
-//    DBG("option menu created entries=%d\n", OptionMenu.EntryCount);
-  }
-    RunMenu(&OptionMenu, &ChosenEntry);
-
-  //  FreePool(Flags);
-  //  FreePool(InputBootArgs);
-}
 
 static VOID AboutRefit(VOID)
 {
@@ -1335,6 +1276,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   BOOLEAN           MainLoopRunning = TRUE;
   REFIT_MENU_ENTRY  *ChosenEntry;
   REFIT_MENU_ENTRY  *DefaultEntry;
+  REFIT_MENU_ENTRY  *OptionEntry;
   INTN              DefaultIndex;
   UINTN             MenuExit;
   UINTN             Size, i;
@@ -1491,7 +1433,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
     
     if (MenuExit == MENU_EXIT_OPTIONS){
-      OptionsMenu();
+      OptionsMenu(&OptionEntry);
       ApplyInputs();
       continue;
     }
@@ -1515,7 +1457,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         break;
         
       case TAG_OPTIONS:    // Options like KernelFlags, DSDTname etc.
-        OptionsMenu();
+        OptionsMenu(&OptionEntry);
         ApplyInputs();
         break;
         

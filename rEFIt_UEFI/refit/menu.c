@@ -53,6 +53,8 @@
 // scrolling definitions
 
 static INTN MaxItemOnScreen = -1;
+REFIT_MENU_SCREEN OptionMenu  = { L"Options", NULL, 0, NULL, 0, NULL, 0, NULL };
+extern REFIT_MENU_ENTRY MenuEntryReturn;
 
 typedef struct {
   INTN    CurrentSelection, LastSelection;
@@ -103,6 +105,7 @@ static UINTN row0PosY, row1PosY, textPosY;
 INPUT_ITEM *InputItems;
 UINTN  InputItemsCount = 0;
 
+UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_MENU_ENTRY **ChosenEntry);
 
 VOID FillInputs(VOID)
 {
@@ -111,9 +114,14 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = ASString;
   //even though Ascii we will keep value as Unicode to convert later
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%a ", gSettings.BootArgs);
+  InputItems[InputItemsCount].ItemType = UNIString;
+  InputItems[InputItemsCount++].SValue = L"DSDT.aml"; //default value
   InputItems[InputItemsCount].ItemType = BoolValue;
   InputItems[InputItemsCount].BValue = gSettings.UseDSDTmini;
   InputItems[InputItemsCount++].SValue = gSettings.UseDSDTmini?L"[X] ":L"[ ] ";
+  InputItems[InputItemsCount].ItemType = BoolValue;
+  InputItems[InputItemsCount].BValue = gSettings.GraphicsInjector;
+  InputItems[InputItemsCount++].SValue = gSettings.GraphicsInjector?L"[X] ":L"[ ] ";
   InputItems[InputItemsCount].ItemType = Decimal;
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%d ", gSettings.HDALayoutId);
   //and so on  
@@ -121,14 +129,25 @@ VOID FillInputs(VOID)
 
 VOID ApplyInputs(VOID)
 {
-  if (InputItems[0].Valid) {
-    AsciiSPrint(gSettings.BootArgs, 255, "%s", InputItems[0].SValue);
+  INTN i = 0;
+  if (InputItems[i].Valid) {
+    AsciiSPrint(gSettings.BootArgs, 255, "%s", InputItems[i].SValue);
   }
-  if (InputItems[1].Valid) {
-    gSettings.UseDSDTmini = InputItems[1].BValue;
+  i++;
+  if (InputItems[i].Valid) {
+    UnicodeSPrint(gSettings.DsdtName, 60, L"%s", InputItems[i].SValue);    
   }
-  if (InputItems[2].Valid) {
-    gSettings.HDALayoutId = StrDecimalToUintn((CHAR16*)&(InputItems[0].SValue));
+  i++;
+  if (InputItems[i].Valid) {
+    gSettings.UseDSDTmini = InputItems[i].BValue;
+  }
+  i++;
+  if (InputItems[i].Valid) {
+    gSettings.GraphicsInjector = InputItems[i].BValue;
+  }
+  i++;
+  if (InputItems[i].Valid) {
+    gSettings.HDALayoutId = StrDecimalToUintn((CHAR16*)&(InputItems[i].SValue));
   }
 }
 
@@ -410,12 +429,11 @@ static INTN FindMenuShortcutEntry(IN REFIT_MENU_SCREEN *Screen, IN CHAR16 Shortc
 }
 
 
-
 //
 // generic input menu function
 // usr-sse2
 //
-static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN MENU_STYLE_FUNC  StyleFunc)
+static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  StyleFunc, IN SCROLL_STATE *State) 
 {
 	EFI_STATUS    Status;
 	EFI_INPUT_KEY key;
@@ -430,6 +448,7 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, I
   CHAR16        *TempString = AllocateZeroPool(255);
   SCROLL_STATE  StateLine;
   DBG("Enter Input Dialog\n");
+  //TODO make scroll for line
   InitScroll(&StateLine, 128, 128, StrLen(Item->SValue));
 	
 	do {
@@ -502,16 +521,17 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, I
             TempString[Pos++] = key.UnicodeChar;
             for (i = Pos; i < StrLen(Buffer); i++) {
               TempString[i] = Buffer[i-1];
-            }           
+            }
+            TempString[i] = CHAR_NULL;
             StrCpy (Buffer, TempString);
+          
+           // Buffer[Pos++] = key.UnicodeChar;
           }
-          Buffer[Pos++] = key.UnicodeChar;
-          Buffer[i] = '\0';
           break;
       }
     }
     (Screen->Entries[State->CurrentSelection])->Row = Pos;
-    StyleFunc(Screen, &StateLine, MENU_FUNCTION_PAINT_SELECTION, NULL);
+    StyleFunc(Screen, State, MENU_FUNCTION_PAINT_SELECTION, NULL);
 	} while (!MenuExit);
 	switch (MenuExit) {
 		case MENU_EXIT_ENTER:
@@ -520,7 +540,7 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, I
 		case MENU_EXIT_ESCAPE:
 			Item->Valid = FALSE;
       Item->SValue = EfiStrDuplicate(Backup);
-      StyleFunc(Screen, &StateLine, MENU_FUNCTION_PAINT_SELECTION, NULL);
+      StyleFunc(Screen, State, MENU_FUNCTION_PAINT_SELECTION, NULL);
 			break;
 	}
   FreePool(TempString);
@@ -528,7 +548,7 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, I
   return 0;
 }
 
-static UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_MENU_ENTRY **ChosenEntry)
+UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_MENU_ENTRY **ChosenEntry)
 {
     SCROLL_STATE  State;
     EFI_STATUS    Status;
@@ -642,19 +662,18 @@ static UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC Sty
     switch (key.UnicodeChar) {
       case CHAR_LINEFEED:
       case CHAR_CARRIAGE_RETURN:
-        
-        if (Screen->Entries[State.CurrentSelection]->Tag == TAG_INPUT){
+        if ((Screen->Entries[State.CurrentSelection])->Tag == TAG_INPUT){
           DBG("enter input dialog\n");
-          MenuExit = InputDialog(Screen, &State, StyleFunc);
-                      //((REFIT_INPUT_DIALOG*)(Screen->Entries[State.CurrentSelection]))->Value);
-          if (ReadAllKeyStrokes()) {  // remove buffered key strokes
-            gBS->Stall(500000);     // 0.5 seconds delay
-            ReadAllKeyStrokes();    // empty the buffer again
-          }
+          MenuExit = InputDialog(&OptionMenu, StyleFunc, &State);
+          //((REFIT_INPUT_DIALOG*)(Screen->Entries[State.CurrentSelection]))->Value);
+          //       if (ReadAllKeyStrokes()) {  // remove buffered key strokes
+          //         gBS->Stall(500000);     // 0.5 seconds delay
+          //         ReadAllKeyStrokes();    // empty the buffer again
+          //       }
           
+        } else {
+            MenuExit = MENU_EXIT_ENTER;
         }
-        else 
-          MenuExit = MENU_EXIT_ENTER;
         break;
       case ' ':
         MenuExit = MENU_EXIT_DETAILS;
@@ -912,6 +931,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       // redraw selection cursor
       //Last selection
             DBG("MENU_FUNCTION_PAINT_SELECTION 1\n");
+      //usr-sse2
       if (Screen->Entries[State->LastSelection]->Tag == TAG_INPUT) {
         CHAR16 ResultString[255];
         UINTN  TitleLen = StrLen(Screen->Entries[State->LastSelection]->Title);
@@ -1120,6 +1140,109 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
   }
 }
 
+
+VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
+{
+//  REFIT_MENU_ENTRY  *ChosenEntry = NULL;
+  UINTN             MenuExit = 0;
+//  SCROLL_STATE      State;
+  CHAR16*           Flags;
+  MENU_STYLE_FUNC   Style = TextMenuStyle;
+  INTN              EntryIndex = 0;
+  
+  if (AllowGraphicsMode)
+    Style = GraphicsMenuStyle;
+
+  //remember, is you extended this menu then change procedures
+  // FillInputs and ApplyInputs
+  if (OptionMenu.EntryCount == 0) {
+  OptionMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
+  Flags = AllocateZeroPool(255);
+  REFIT_INPUT_DIALOG* InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  *ChosenEntry = (REFIT_MENU_ENTRY*)InputBootArgs;   
+  //  UnicodeSPrint(Flags, 255, L"Boot Args:%a", gSettings.BootArgs);
+  UnicodeSPrint(Flags, 255, L"Boot Args:");
+  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[0].SValue);
+  InputBootArgs->Entry.ShortcutDigit = 0;
+  InputBootArgs->Entry.ShortcutLetter = 'B';
+  InputBootArgs->Entry.Image = NULL;
+  InputBootArgs->Entry.BadgeImage = NULL;
+  InputBootArgs->Entry.SubScreen = NULL;
+  InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];    
+  AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+//1
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    UnicodeSPrint(Flags, 30, L"DSDT file name:");
+    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = StrLen(InputItems[1].SValue);
+    InputBootArgs->Entry.ShortcutDigit = 0;
+    InputBootArgs->Entry.ShortcutLetter = 'D';
+    InputBootArgs->Entry.Image = NULL;
+    InputBootArgs->Entry.BadgeImage = NULL;
+    InputBootArgs->Entry.SubScreen = NULL;
+    InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];    
+    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+    
+//2    
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  UnicodeSPrint(Flags, 30, L"Use DSDT mini:");
+  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF;
+  InputBootArgs->Entry.ShortcutDigit = 0;
+  InputBootArgs->Entry.ShortcutLetter = 'M';
+  InputBootArgs->Entry.Image = NULL;
+  InputBootArgs->Entry.BadgeImage = NULL;
+  InputBootArgs->Entry.SubScreen = NULL;
+  InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];    
+  AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+//3  
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    UnicodeSPrint(Flags, 30, L"Graphics Injector:");
+    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = 0xFFFF;
+    InputBootArgs->Entry.ShortcutDigit = 0;
+    InputBootArgs->Entry.ShortcutLetter = 'G';
+    InputBootArgs->Entry.Image = NULL;
+    InputBootArgs->Entry.BadgeImage = NULL;
+    InputBootArgs->Entry.SubScreen = NULL;
+    InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];    
+    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+//4    
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  UnicodeSPrint(Flags, 30, L"Audio  ID:");
+  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[4].SValue);
+  InputBootArgs->Entry.ShortcutDigit = 0;
+  InputBootArgs->Entry.ShortcutLetter = 'A';
+  InputBootArgs->Entry.Image = NULL;
+  InputBootArgs->Entry.BadgeImage = NULL;
+  InputBootArgs->Entry.SubScreen = NULL;
+  InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];    
+  AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  AddMenuEntry(&OptionMenu, &MenuEntryReturn);
+  FreePool(Flags);
+  //    DBG("option menu created entries=%d\n", OptionMenu.EntryCount);
+}
+  //  StyleFunc(OptionMenu, &State, MENU_FUNCTION_INIT, NULL);
+  while (!MenuExit) {  
+    
+    MenuExit = RunGenericMenu(&OptionMenu, Style, &EntryIndex, ChosenEntry);
+    if (MenuExit == MENU_EXIT_ESCAPE || (*ChosenEntry)->Tag == TAG_RETURN)
+      break;
+    if (MenuExit == MENU_EXIT_ENTER) {
+      //enter input dialog
+      MenuExit = 0;
+    }
+  }
+}
+
 //
 // user-callable dispatcher functions
 //
@@ -1156,6 +1279,9 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
         if (MenuExit == MENU_EXIT_DETAILS && TempChosenEntry->SubScreen != NULL) {
             SubMenuIndex = -1;
             MenuExit = RunGenericMenu(TempChosenEntry->SubScreen, Style, &SubMenuIndex, &TempChosenEntry);
+            if (MenuExit == MENU_EXIT_ENTER && TempChosenEntry->Tag == TAG_LOADER) {
+              AsciiSPrint(gSettings.BootArgs, 255, "%s", ((LOADER_ENTRY*)TempChosenEntry)->LoadOptions);
+            }
             if (MenuExit == MENU_EXIT_ESCAPE || TempChosenEntry->Tag == TAG_RETURN)
                 MenuExit = 0;
         }
