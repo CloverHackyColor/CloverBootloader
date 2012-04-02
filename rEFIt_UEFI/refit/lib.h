@@ -239,6 +239,7 @@ typedef struct {
   CHAR16           *VolName;
   EFI_DEVICE_PATH  *DevicePath;
   BOOLEAN          UseGraphicsMode;
+  UINT8            LoaderType;  
 } LOADER_ENTRY;
 
 typedef struct {

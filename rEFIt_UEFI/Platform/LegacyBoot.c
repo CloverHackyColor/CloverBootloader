@@ -601,8 +601,9 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
     }
     if (BiosDriveNum == 0) {
         // not found
-        Print(L"HDBoot: BIOS drive number not found\n");
-        return EFI_NOT_FOUND;
+      Print(L"HDBoot: BIOS drive number not found, using default 0x80\n");
+      BiosDriveNum = 0x80;
+//        return EFI_NOT_FOUND;
     }
   
   UINTN         LogSize;  

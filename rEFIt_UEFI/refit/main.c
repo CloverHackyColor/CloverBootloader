@@ -224,33 +224,33 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   EFI_STATUS              Status;
   egClearScreen(&DarkBackgroundPixel);
   BeginExternalScreen(Entry->UseGraphicsMode, L"Booting OS");
-  
-  SetFSInjection(Entry);
-  //PauseForKey(L"SetFSInjection");
-  
-//  PauseForKey(L"SetPrivateVarProto");
-//  SetPrivateVarProto();
-//  PauseForKey(L"PatchSmbios");
-  PatchSmbios();
-//  PauseForKey(L"PatchACPI");
-  PatchACPI(Entry->Volume);
-//  PauseForKey(L"SetVariablesForOSX");
-  SetVariablesForOSX();
-//  PauseForKey(L"FinalizeSmbios");
-  EventsInitialize ();
-  gBS->SignalEvent(OnReadyToBootEvent);
-  gBS->SignalEvent(mVirtualAddressChangeEvent);
-  
-  FinalizeSmbios();
-//  PauseForKey(L"SetupDataForOSX");
-  SetupDataForOSX();
-//  PauseForKey(L"SetupBooterLog");
-  Status = SetupBooterLog();
-
-  //TODO - what if we start Windows?
-  Entry->LoadOptions     = PoolPrint(L"%a", gSettings.BootArgs);
-  //  Entry->LoadOptions     = InputItems[0].SValue;
-  
+  if (Entry->LoaderType == OSTYPE_OSX) {
+    SetFSInjection(Entry);
+    //PauseForKey(L"SetFSInjection");
+    
+    //  PauseForKey(L"SetPrivateVarProto");
+    //  SetPrivateVarProto();
+    //  PauseForKey(L"PatchSmbios");
+    PatchSmbios();
+    //  PauseForKey(L"PatchACPI");
+    PatchACPI(Entry->Volume);
+    //  PauseForKey(L"SetVariablesForOSX");
+    SetVariablesForOSX();
+    //  PauseForKey(L"FinalizeSmbios");
+    EventsInitialize ();
+    gBS->SignalEvent(OnReadyToBootEvent);
+    gBS->SignalEvent(mVirtualAddressChangeEvent);
+    
+    FinalizeSmbios();
+    //  PauseForKey(L"SetupDataForOSX");
+    SetupDataForOSX();
+    //  PauseForKey(L"SetupBooterLog");
+    Status = SetupBooterLog();
+    
+    //TODO - what if we start Windows?
+    Entry->LoadOptions     = PoolPrint(L"%a", gSettings.BootArgs);
+    //  Entry->LoadOptions     = InputItems[0].SValue;
+  }
   StartEFIImage(Entry->DevicePath, Entry->LoadOptions,
                 Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL);
 //  PauseForKey(L"FinishExternalScreen");
@@ -341,25 +341,30 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       OSIconName = Volume->OSIconName;
       Entry->UseGraphicsMode = TRUE;
       LoaderKind = 1;
-      ShortcutLetter = 'M';      
+      ShortcutLetter = 'M';    
+      Entry->LoaderType = OSTYPE_OSX;
       break;
     case OSTYPE_WIN:
       OSIconName = L"win";
       ShortcutLetter = 'W';
       LoaderKind = 3;
+      Entry->LoaderType = OSTYPE_WIN;
       break;
     case OSTYPE_LIN:
       OSIconName = L"linux";
       LoaderKind = 2;
       ShortcutLetter = 'L';
+      Entry->LoaderType = OSTYPE_LIN;
       break;
     case OSTYPE_VAR:
     case OSTYPE_EFI:
       OSIconName = L"unknown";
       LoaderKind = 4;
       ShortcutLetter = 'U';
+      Entry->LoaderType = OSTYPE_VAR;
       break;
     default:
+      Entry->LoaderType = OSTYPE_VAR;
       break;
   }
   Entry->me.ShortcutLetter = ShortcutLetter;

@@ -514,18 +514,19 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
           MenuExit = MENU_EXIT_ENTER;
           break;
         default:
-          if (Pos < 254) {
-            for (i = 0; i < Pos; i++) {
-              TempString[i] = Buffer[i];
-            }           
-            TempString[Pos++] = key.UnicodeChar;
-            for (i = Pos; i < StrLen(Buffer); i++) {
-              TempString[i] = Buffer[i-1];
-            }
-            TempString[i] = CHAR_NULL;
-            StrCpy (Buffer, TempString);
-          
-           // Buffer[Pos++] = key.UnicodeChar;
+          if ((key.UnicodeChar >= 0x20) &&
+              (key.UnicodeChar < 0x80)){
+            if (Pos < 254) {
+              for (i = 0; i < Pos; i++) {
+                TempString[i] = Buffer[i];
+              }           
+              TempString[Pos++] = key.UnicodeChar;
+              for (i = Pos; i < StrLen(Buffer); i++) {
+                TempString[i] = Buffer[i-1];
+              }
+              TempString[i] = CHAR_NULL;
+              StrCpy (Buffer, TempString);
+            }            
           }
           break;
       }
