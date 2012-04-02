@@ -1210,7 +1210,7 @@ INTN FindDefaultEntry(VOID)
       continue;
     }
     Volume = Entry->Volume;
-    if (!StrStr(Volume->VolName, gSettings.DefaultBoot)) {
+    if (StrCmp(Volume->VolName, gSettings.DefaultBoot) != 0) {
       continue;
     }
     DBG("Default volume %s found\n", Volume->VolName);
@@ -1417,7 +1417,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   for (i = 0; i < MainMenu.EntryCount && MainMenu.Entries[i]->Row == 0 && i < 9; i++)
     MainMenu.Entries[i]->ShortcutDigit = (CHAR16)('1' + i);
   
-//  DrawMenuText(L"Test Русский", 14, 0, UGAHeight-40, 5);
+//  DrawMenuText(L"Test Русский", 14, 0, UGAHeight-40, 5);  
 //  PauseForKey(L"Test fonts");
   
     // wait for user ACK when there were errors

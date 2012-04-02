@@ -459,6 +459,9 @@ GatherPpbInfo (
   UINT8                           Value;
   EFI_PCI_IO_PROTOCOL             *PciIo;
   UINT8                           Temp;
+  UINT32                          PMemBaseLimit;
+  UINT16                          PrefetchableMemoryBase;
+  UINT16                          PrefetchableMemoryLimit;
 
   PciIoDevice = CreatePciIoDevice (
                   Bridge,
@@ -552,14 +555,22 @@ GatherPpbInfo (
             PciIoDevice,
             0x24,
             NULL,
-            NULL
+            &PMemBaseLimit
             );
 
   //
   // Test if it supports 64 memory or not
   //
-  if (!EFI_ERROR (Status)) {
-
+  // The bottom 4 bits of both the Prefetchable Memory Base and Prefetchable Memory Limit
+  // registers:
+  //   0 - the bridge supports only 32 bit addresses.
+  //   1 - the bridge supports 64-bit addresses.
+  //
+  PrefetchableMemoryBase = (UINT16)(PMemBaseLimit & 0xffff);
+  PrefetchableMemoryLimit = (UINT16)(PMemBaseLimit >> 16);
+  if (!EFI_ERROR (Status) &&
+      (PrefetchableMemoryBase & 0x000f) == 0x0001 &&
+      (PrefetchableMemoryLimit & 0x000f) == 0x0001) {
     Status = BarExisted (
               PciIoDevice,
               0x28,
