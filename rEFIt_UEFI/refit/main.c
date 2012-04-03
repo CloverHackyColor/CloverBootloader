@@ -247,7 +247,6 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     //  PauseForKey(L"SetupBooterLog");
     Status = SetupBooterLog();
     
-    //TODO - what if we start Windows?
     Entry->LoadOptions     = PoolPrint(L"%a", gSettings.BootArgs);
     //  Entry->LoadOptions     = InputItems[0].SValue;
   }
@@ -386,6 +385,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   SubEntry->DevicePath      = Entry->DevicePath;
   SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
   SubEntry->LoadOptions     = PoolPrint(L"%a", gSettings.BootArgs);
+  SubEntry->LoaderType = OSTYPE_OSX;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
   
   // loader-specific submenu entries
@@ -400,6 +400,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
     SubEntry->LoadOptions     = L"arch=x86_64";
+    SubEntry->LoaderType = OSTYPE_OSX;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     
     SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
@@ -411,6 +412,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
     SubEntry->LoadOptions     = L"arch=i386";
+    SubEntry->LoaderType = OSTYPE_OSX;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
 #endif
     
@@ -424,6 +426,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->UseGraphicsMode = FALSE;
       SubEntry->LoadOptions     = L"-v";
+      SubEntry->LoaderType = OSTYPE_OSX;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
       
 #if defined(MDE_CPU_X64)
@@ -436,6 +439,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->UseGraphicsMode = FALSE;
       SubEntry->LoadOptions     = L"-v arch=x86_64";
+      SubEntry->LoaderType = OSTYPE_OSX;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
       
       SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
@@ -447,6 +451,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->UseGraphicsMode = FALSE;
       SubEntry->LoadOptions     = L"-v arch=i386";
+      SubEntry->LoaderType = OSTYPE_OSX;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
 #endif
       
@@ -459,6 +464,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->UseGraphicsMode = FALSE;
       SubEntry->LoadOptions     = L"-v -s";
+      SubEntry->LoaderType = OSTYPE_OSX;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
       
       SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
@@ -470,6 +476,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->UseGraphicsMode = FALSE;
       SubEntry->LoadOptions     = L"-v WithKexts";
+      SubEntry->LoaderType = OSTYPE_OSX;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
     
@@ -499,6 +506,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
     SubEntry->LoadOptions     = L"-p";
+    SubEntry->LoaderType = OSTYPE_LIN;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     
     SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
@@ -510,6 +518,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = TRUE;
     SubEntry->LoadOptions     = L"-d 0 i17";
+    SubEntry->LoaderType = OSTYPE_LIN;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     
     SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
@@ -521,6 +530,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = TRUE;
     SubEntry->LoadOptions     = L"-d 0 i20";
+    SubEntry->LoaderType = OSTYPE_LIN;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     
     SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
@@ -532,6 +542,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = TRUE;
     SubEntry->LoadOptions     = L"-d 0 mini";
+    SubEntry->LoaderType = OSTYPE_LIN;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     
     AddMenuInfoLine(SubScreen, L"NOTE: This is an example. Entries");
@@ -550,6 +561,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
     SubEntry->LoadOptions     = L"-s -h";
+    SubEntry->LoaderType = OSTYPE_WIN;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     
     SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
@@ -561,6 +573,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
     SubEntry->LoadOptions     = L"-s -c";
+    SubEntry->LoaderType = OSTYPE_WIN;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     
     SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
@@ -572,6 +585,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = FALSE;
     SubEntry->LoadOptions     = L"-v";
+    SubEntry->LoaderType = OSTYPE_VAR;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     
   }
