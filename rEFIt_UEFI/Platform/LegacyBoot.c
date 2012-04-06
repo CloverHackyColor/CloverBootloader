@@ -614,7 +614,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
   }
     
   NewMask = 0x0;
-  Status = gLegacy8259->SetMask(gLegacy8259, &NewMask, NULL, NULL, NULL);
+//  Status = gLegacy8259->SetMask(gLegacy8259, &NewMask, NULL, NULL, NULL);
 	//Status = mCpu->EnableInterrupt(mCpu);
 	//CopyMem(pMBR, &tMBR, 16);
 	//pMBR->StartLBA = LbaOffset;

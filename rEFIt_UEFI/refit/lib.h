@@ -219,6 +219,7 @@ typedef struct {
   UINTN       HideBadges;
   UINTN       HideUIFlags;
   BOOLEAN     LegacyFirst;
+  BOOLEAN     NoLegacy;
   FONT_TYPE   Font;
   UINTN       CharWidth;
   CHAR16      *FontFileName;

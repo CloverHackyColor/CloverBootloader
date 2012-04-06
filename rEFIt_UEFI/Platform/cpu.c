@@ -62,7 +62,6 @@ VOID GetCPUProperties (VOID)
 {
 	UINT32		reg[4];
 	UINT64		msr = 0;
-	BOOLEAN		fix_fsb, core_i, turbo, isatom, fsbad;
   
 	EFI_STATUS			Status;
 	EFI_HANDLE			*HandleBuffer;
@@ -226,13 +225,6 @@ VOID GetCPUProperties (VOID)
 	{
 			if (gCPUStructure.Family == 0x06)
 			{
-				// port from valv branch - start
-				fix_fsb = FALSE;
-				core_i	= FALSE;
-				turbo	= FALSE;
-				isatom	= FALSE;
-				fsbad	= FALSE;
-
 				switch (gCPUStructure.Model)
 				{            
           case CPU_MODEL_NEHALEM:// Core i7 LGA1366, Xeon 5500, "Bloomfield", "Gainstown", 45nm
@@ -242,7 +234,6 @@ VOID GetCPUProperties (VOID)
           case CPU_MODEL_WESTMERE:// Core i7 LGA1366, Six-core, "Westmere", "Gulftown", 32nm
           case CPU_MODEL_NEHALEM_EX:// Core i7, Nehalem-Ex Xeon, "Beckton"
           case CPU_MODEL_WESTMERE_EX:// Core i7, Nehalem-Ex Xeon, "Eagleton"
-            core_i = TRUE;
             msr = AsmReadMsr64(MSR_PLATFORM_INFO);            
             gCPUStructure.MinRatio = (UINT8)(msr >> 40) & 0xff;
             msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);
@@ -259,7 +250,7 @@ VOID GetCPUProperties (VOID)
             {
               msr = AsmReadMsr64(MSR_TURBO_RATIO_LIMIT);
               
-              gCPUStructure.Turbo1 = (UINT8)((msr >> 0) & 0xff) * 10;
+              gCPUStructure.Turbo1 = (UINT8)((msr >> 0) & 0xff);
               gCPUStructure.Turbo2 = (UINT8)((msr >> 8) & 0xff) * 10;
               gCPUStructure.Turbo3 = (UINT8)((msr >> 16) & 0xff) * 10;
               gCPUStructure.Turbo4 = (UINT8)(msr >> 24) & 0xff; //later
@@ -274,36 +265,56 @@ VOID GetCPUProperties (VOID)
 
             gCPUStructure.MaxRatio *= 10;
             gCPUStructure.MinRatio *= 10;
+            gCPUStructure.Turbo1 *= 10;
             gCPUStructure.Turbo4 *= 10;
             
             break;
           case CPU_MODEL_SANDY_BRIDGE:// Sandy Bridge, 32nm
           case CPU_MODEL_JAKETOWN:		
-            core_i = TRUE;
             msr = AsmReadMsr64(MSR_PLATFORM_INFO);            
-            gCPUStructure.MinRatio = (UINT8)(msr >> 40) & 0xff;
-            msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);
-            TurboMsr = msr + (1 << 8);
-            gCPUStructure.MaxRatio = (UINT8)(msr >> 8) & 0xff;
-            
-            if(gCPUStructure.MaxRatio) {
-              gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.TSCFrequency, gCPUStructure.MaxRatio);
+            gCPUStructure.BusRatioMax = (UINT8)(msr >> 8) & 0xff;
+            gCPUStructure.BusRatioMin = (UINT8)(msr >> 40) & 0xff;
+            gCPUStructure.MinRatio = gCPUStructure.BusRatioMin * 10;
+            msr = AsmReadMsr64(MSR_FLEX_RATIO);
+            if ((msr >> 16) & 0x01)
+            {
+              MsgLog("non-usable FLEX_RATIO = %x\n", msr);
+              flex_ratio = (msr >> 8) & 0xff;
+              if (flex_ratio == 0) { 
+                AsmWriteMsr64(MSR_FLEX_RATIO, (msr & 0xFFFFFFFFFFFEFFFFULL)); 
+                gBS->Stall(10);
+                msr = AsmReadMsr64(MSR_FLEX_RATIO);
+                MsgLog("corrected FLEX_RATIO = %x\n", msr);
+              }
+              /*else { 
+                if(gCPUStructure.BusRatioMax > flex_ratio) 
+                  gCPUStructure.BusRatioMax = (UINT8)flex_ratio;
+              }*/
             }
             
-              msr = AsmReadMsr64(MSR_TURBO_RATIO_LIMIT);
-              //expected 0000-0000-2223-2425
-              gCPUStructure.Turbo1 = (UINT8)((msr >> 0) & 0xff) * 10;
-              gCPUStructure.Turbo2 = (UINT8)((msr >> 8) & 0xff) * 10;
-              gCPUStructure.Turbo3 = (UINT8)((msr >> 16) & 0xff) * 10;
-              gCPUStructure.Turbo4 = (UINT8)(msr >> 24) & 0xff; //later
+            if(gCPUStructure.BusRatioMax) 
+              gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.TSCFrequency, gCPUStructure.BusRatioMax);
             
+            msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);
+            gCPUStructure.MaxRatio = (UINT8)((msr >> 8) & 0xff);
+            TurboMsr = msr + (1 << 8);
+            
+            msr = AsmReadMsr64(MSR_TURBO_RATIO_LIMIT);              
+            gCPUStructure.Turbo1 = (UINT8)(msr >> 0) & 0xff;
+            gCPUStructure.Turbo2 = (UINT8)(msr >> 8) & 0xff;
+            gCPUStructure.Turbo3 = (UINT8)(msr >> 16) & 0xff;
+            gCPUStructure.Turbo4 = (UINT8)(msr >> 24) & 0xff;            
 
-              if (gCPUStructure.Cores < 4) {
-                gCPUStructure.Turbo4 = gCPUStructure.Turbo1;
-              } 
-            
+            if (gCPUStructure.Turbo4 == 0) {
+              gCPUStructure.Turbo4 = gCPUStructure.Turbo1;
+              if (gCPUStructure.Turbo4 == 0) {
+                gCPUStructure.Turbo4 = gCPUStructure.MaxRatio;
+              }                 
+            }
+            MsgLog("SandyBridge has MaxRatio=%d Turbo1=%d Turbo4=%d\n", 
+                   gCPUStructure.MaxRatio, gCPUStructure.Turbo1, gCPUStructure.Turbo4);   
             gCPUStructure.MaxRatio *= 10;
-            gCPUStructure.MinRatio *= 10;
+            gCPUStructure.Turbo1 *= 10;
             gCPUStructure.Turbo4 *= 10;
             break;
           case CPU_MODEL_ATOM://  Atom
@@ -805,17 +816,17 @@ MACHINE_TYPES GetDefaultModel()
 				DefaultType = MacPro51;
 				break;
 			case CPU_MODEL_SANDY_BRIDGE:
-				if((AsciiStrStr(gCPUStructure.BrandString, "i3")) || 
+/*				if((AsciiStrStr(gCPUStructure.BrandString, "i3")) || 
 				   (AsciiStrStr(gCPUStructure.BrandString, "i5")))
 				{
 					DefaultType = iMac112;
 					break;
 				}
 				if(AsciiStrStr(gCPUStructure.BrandString, "i7"))
-				{
+				{ */
 					DefaultType = iMac121;
 					break;
-				}
+//				}
 			case CPU_MODEL_JAKETOWN:
 				DefaultType = MacPro41;
 				break;

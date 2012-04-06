@@ -1247,6 +1247,8 @@ EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ico
         Pixel++;        
       }
     }
+    MsgLog("png decoded %dx%d datalenght=%d iconsize=%d\n",
+           NewImage->Height, NewImage->Width, FileDataLength, IconSize);
 		return NewImage;
 	}
   
