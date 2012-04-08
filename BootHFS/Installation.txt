@@ -1,0 +1,71 @@
+
+                        Installation
+                        ============
+  
+  Files Install :
+  --------------------
+   - Install clover to the partition's root directory:
+  		cp BOOT /
+		cp -r EFI /
+		sudo cp -v etc/* /etc/
+  
+  
+
+Active partitoin installation
+-----------------------------
+
+  Suppose that your partition is on /dev/disk0s2 HFS+
+  
+   - Install boot0 to the MBR:
+   		sudo fdisk -f boot0 -u -y /dev/rdisk0
+  
+   - Install boot1h to the partition's bootsector:
+  		sudo dd if=boot1h2 of=/dev/rdisk0s2
+ Attention! My boot1h differs from Chameleon's one and will works with both Clover and Chameleon. 
+
+Note: dd can't change boot sector of the system partition. You should start from other partition
+ 
+Use boot1h2 to boot a bootloaders boot1, boot2, boot3...
+
+ EFI Partition Install (FAT32) or to USB stick drive (disk1s1).
+  ---------------------------------
+  
+  Suppose that your installation is on /dev/disk0s1
+   
+   - Prepare EFI partition:
+		sudo mkdir /Volumes/EFI
+		sudo mount_msdos /dev/disk0s1 /Volumes/EFI/
+
+   - Install clover to the EFI partition's root directory:
+		cp boot /Volumes/EFI/
+		sudo umount -f  /Volumes/EFI/
+		
+   - Install boot0 to the MBR:
+   		sudo fdisk -f boot0 -u -y /dev/rdisk0
+  
+   - Install boot1f32 to the partition's bootsector:
+
+sudo fdisk -f boot0 -u -y /dev/rdisk0
+dd if=/dev/rdisk0s1 count=1 bs=512 of=origbs
+cp boot1f32alt newbs
+dd if=origbs of=newbs skip=3 seek=3 bs=1 count=87 conv=notrunc
+dd if=newbs of=/dev/rdisk0s1 count=1 bs=512
+cp BOOT /Volumes/EFI/  
+
+Enter fdisk and set EFI partitoin as active partition.
+
+
+USB stick installation
+-----------------------
+Do not reformat factory formatted stick!
+
+sudo fdisk -f boot0 -u -y /dev/rdisk1
+dd if=/dev/rdisk1s1 count=1 bs=512 of=origbs
+cp boot1f32alt newbs
+dd if=origbs of=newbs skip=3 seek=3 bs=1 count=87 conv=notrunc
+dd if=newbs of=/dev/rdisk1s1 count=1 bs=512
+cp BOOT /Volumes/Kingston/
+cp -r EFI /Volumes/Kingston/
+
+
+

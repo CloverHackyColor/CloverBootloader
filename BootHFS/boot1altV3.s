@@ -440,26 +440,22 @@ hang:
 
 	; dmazar
 	; Switch between different /boot files.
-	; Wait for a key press for max 5 seconds and if key is pressed
+	; Wait for a key press for max 2 seconds and if key is pressed
 	; then try to load /boot<pressed key>.
 	; If not found - wait for another key press again.
 	; If timeout - load default /boot file.
 	;
 setBootFile:
     mov		WORD [gMallocPtr], mallocStart	; set free space pointer
-	mov		cx, 2000						; loop counter = max 5000 miliseconds in total
+	mov		cx, 2000						; loop counter = max 2000 miliseconds in total
 .loop
 	mov		ah, 0x01						; int 0x16, Func 0x01 - get keyboard status/preview key
 	int		0x16
     jz		.wait							; no keypress - wait and loop again
-.readChar
 	xor		ah, ah							; read the char from buffer to spend it
 	int		0x16
 	; have a key - ASCII is in al - put it to file name /boot<pressed key>
 	mov		BYTE [searchCatKeyName + 8], al
-	mov		ah, 0x01						; check buffer for more
-	int		0x16
-	jnz		.readChar						; have more - read it
     jmp		SHORT .bootFileSet				; try to boot
 
 .wait
