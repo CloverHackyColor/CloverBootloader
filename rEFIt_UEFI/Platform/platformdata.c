@@ -209,5 +209,7 @@ VOID GetDefaultSettings(VOID)
   gSettings.HDAInjection = TRUE;
   gSettings.HDALayoutId = 0;
   gSettings.Mobile = gMobile;  //default
+  StrCpy(gSettings.DsdtName, L"DSDT.aml");
+//  gSettings.DsdtName = L"DSDT.aml";
   
 }

@@ -115,7 +115,7 @@ VOID FillInputs(VOID)
   //even though Ascii we will keep value as Unicode to convert later
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%a ", gSettings.BootArgs);
   InputItems[InputItemsCount].ItemType = UNIString;
-  InputItems[InputItemsCount++].SValue = L"DSDT.aml"; //default value
+  InputItems[InputItemsCount++].SValue = PoolPrint(L"%a ", gSettings.DsdtName);
   InputItems[InputItemsCount].ItemType = BoolValue;
   InputItems[InputItemsCount].BValue = gSettings.UseDSDTmini;
   InputItems[InputItemsCount++].SValue = gSettings.UseDSDTmini?L"[X] ":L"[ ] ";
@@ -677,7 +677,9 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         }
         break;
       case ' ':
-        MenuExit = MENU_EXIT_DETAILS;
+        if ((Screen->Entries[State.CurrentSelection])->Tag != TAG_INPUT){
+          MenuExit = MENU_EXIT_DETAILS;
+        }
         break;
         
       default:
@@ -855,7 +857,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         DBG("MENU_FUNCTION_INIT 1 EntriesPosY=%d VisibleHeight=%d\n", EntriesPosY, VisibleHeight);
       InitScroll(State, Screen->EntryCount, Screen->EntryCount, VisibleHeight);              
       // determine width of the menu
-      MenuWidth = 40;  // minimum
+      MenuWidth = 50;  // minimum
       /* for (i = 0; i < (INTN)Screen->InfoLineCount; i++) {
        ItemWidth = StrLen(Screen->InfoLines[i]);
        if (MenuWidth < ItemWidth)
@@ -977,18 +979,21 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       break;
       
   }
-  DBG("scroll out\n");
+//  DBG("scroll out\n");
 }
 
 //
 // graphical main menu style
 //
+static   EG_IMAGE* MainImage;
 
 static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, UINTN XPos, UINTN YPos)
 {
   LOADER_ENTRY* LEntry = (LOADER_ENTRY*)Entry;
-  EG_IMAGE* MainImage;
-  if (LEntry->Volume) {
+
+//  if (LEntry->Volume) {
+  if ((Entry->Tag == TAG_LOADER) ||
+      (Entry->Tag == TAG_LEGACY)){
     MainImage = LEntry->Volume->DriveImage;
   } else {
     MainImage = Entry->Image;
@@ -996,9 +1001,9 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, UINTN X
   if (!MainImage) {
     MainImage = LoadIcns(ThemeDir, L"icons\\osx.icns", 128);
   }
-  
+  DBG("ENtry title=%s; Width=%d\n", Entry->Title, MainImage->Width);
     BltImageCompositeBadge(SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
-                           MainImage, Entry->BadgeImage, XPos, YPos);
+                           MainImage, (Entry->Row == 0) ? Entry->BadgeImage:NULL, XPos, YPos);
 }
 
 static VOID DrawMainMenuText(IN CHAR16 *Text, IN UINTN XPos, IN UINTN YPos)
@@ -1055,7 +1060,7 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
         textPosY = row1PosY;
       
       if (!itemPosX) {
-        itemPosX = AllocatePool(sizeof(UINTN) * Screen->EntryCount);
+        itemPosX = AllocatePool(sizeof(UINT64) * Screen->EntryCount);
       }
       
       row0PosXRunning = row0PosX;
@@ -1067,6 +1072,7 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
         } else {
           itemPosX[i] = row1PosXRunning;
           row1PosXRunning += ROW1_TILESIZE + TILE_XSPACING;
+          DBG("next item in row1 at x=%d\n", row1PosXRunning);
         }
       }
       
@@ -1084,13 +1090,17 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
        for (i = 0; i <= State->MaxIndex; i++) {
         if (Screen->Entries[i]->Row == 0) {
           if ((i >= State->FirstVisible) && (i <= State->LastVisible)) {
-    //        DBG("Draw at x=%d y=%d\n", itemPosX[i - State->FirstVisible], row0PosY);
-            DrawMainMenuEntry(Screen->Entries[i], (i == State->CurrentSelection),
+    //        DBG("Draw Row0 at x=%d y=%d\n", itemPosX[i - State->FirstVisible], row0PosY);
+            DrawMainMenuEntry(Screen->Entries[i], (i == State->CurrentSelection)?1:0,
                               itemPosX[i - State->FirstVisible], row0PosY);
           }
         } else {
-          DrawMainMenuEntry(Screen->Entries[i], (i == State->CurrentSelection),
+          DBG("Draw Row1 at x=%d y=%d\n", itemPosX[i], row0PosY);
+          DrawMainMenuEntry(Screen->Entries[i], (i == State->CurrentSelection)?1:0,
                             itemPosX[i], row1PosY);
+          DBG("Selected image Title=%s: Width=%d\n",
+              (Screen->Entries[i])->Title,
+              (Screen->Entries[i])->Image->Width);
         }
       }
 /*      p = Screen->Entries[State->CurrentSelection]->Title;
@@ -1175,7 +1185,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
 //1
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 30, L"DSDT file name:");
+    UnicodeSPrint(Flags, 30, L"DSDT name:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[1].SValue);
@@ -1189,7 +1199,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     
 //2    
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  UnicodeSPrint(Flags, 30, L"Use DSDT mini:");
+  UnicodeSPrint(Flags, 30, L"Use DSDTmini:");
   InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF;
@@ -1202,7 +1212,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
 //3  
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 30, L"Graphics Injector:");
+    UnicodeSPrint(Flags, 30, L"Graphics Inject:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = 0xFFFF;

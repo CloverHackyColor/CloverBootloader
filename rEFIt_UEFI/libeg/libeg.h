@@ -144,8 +144,8 @@ typedef struct {
 } EG_PIXEL;
 
 typedef struct {
-    UINTN       Width;
-    UINTN       Height;
+    UINT64       Width;
+    UINT64      Height;
     BOOLEAN     HasAlpha;
     EG_PIXEL    *PixelData;
 } EG_IMAGE;

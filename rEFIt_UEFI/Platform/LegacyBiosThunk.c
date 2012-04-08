@@ -15,7 +15,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include "LegacyBiosThunk.h"
 
 
-#define DEBUG_LBTHUNK 2
+#define DEBUG_LBTHUNK 0
 
 #if DEBUG_LBTHUNK == 2
 #define DBG(x...) AsciiPrint(x)

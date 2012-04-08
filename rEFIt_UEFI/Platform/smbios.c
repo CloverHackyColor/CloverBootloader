@@ -417,6 +417,21 @@ VOID PatchTableType1()
 	return;
 }
 
+VOID GetTableType2()
+{
+  CHAR8* s;
+  // System Information
+  //
+	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_BASEBOARD_INFORMATION, 0);
+	if (SmbiosTable.Raw == NULL) {
+		return;
+	}
+  
+  s = GetSmbiosString(SmbiosTable, SmbiosTable.Type2->ProductName);
+  CopyMem(gSettings.OEMBoard, s, iStrLen(s, 64));
+}
+
+
 VOID PatchTableType2()
 {
   // BaseBoard Information
@@ -1305,6 +1320,7 @@ EFI_STATUS PrepatchSmbios()
 	
 	//Collect information for use in menu
 	GetTableType1();
+	GetTableType2();
 	GetTableType3();
 	GetTableType4();
 	GetTableType16();

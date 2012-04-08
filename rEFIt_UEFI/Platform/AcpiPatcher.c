@@ -372,7 +372,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 	UINT8                 *buffer = NULL;
 	UINTN        				  bufferLen = 0;
 	CHAR16*               PathPatched   = L"\\EFI\\ACPI\\patched";
-	CHAR16*               PathDsdt      = L"\\DSDT.aml";
+	CHAR16*               PathDsdt;    //  = L"\\DSDT.aml";
   CHAR16*               PathDsdtMini  = L"\\EFI\\ACPI\\mini\\DSDT.aml";
   //	CHAR16*						path = NULL;
 	UINT32*      	 			  rf = NULL;
@@ -384,7 +384,8 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   UINT32                eCntR; //, eCntX;
   UINT32                *pEntryR;
   UINT64                *pEntryX;
-  
+ 
+  PathDsdt = PoolPrint(L"\\%s", gSettings.DsdtName);
   
   CHAR16*     AcpiOemPath = PoolPrint(L"EFI\\OEM\\%a\\ACPI\\patched", gSettings.OEMProduct);
 	

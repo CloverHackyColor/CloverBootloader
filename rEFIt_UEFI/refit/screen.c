@@ -38,6 +38,17 @@
 
 #include "egemb_refit_banner.h"
 
+
+#define DEBUG_SCR 0
+
+#if DEBUG_SCR == 2
+#define DBG(x...) AsciiPrint(x)
+#elif DEBUG_SCR == 1
+#define DBG(x...) MsgLog(x)
+#else
+#define DBG(x...)
+#endif
+
 // Console defines and variables
 
 UINTN ConWidth;
@@ -435,12 +446,13 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
     CompImage = egCopyImage(BaseImage);
     TotalWidth  = BaseImage->Width;
     TotalHeight = BaseImage->Height;
-    
+//  DBG("BaseImage: Width=%d Height=%d\n", TotalWidth, TotalHeight);
     // place the top image
     CompWidth = TopImage->Width;
     if (CompWidth > TotalWidth)
         CompWidth = TotalWidth;
     OffsetX = (TotalWidth - CompWidth) >> 1;
+//  DBG("TopImage: Width=%d Height=%d\n", TopImage->Width, TopImage->Height);
     CompHeight = TopImage->Height;
     if (CompHeight > TotalHeight)
         CompHeight = TotalHeight;

@@ -225,6 +225,8 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   egClearScreen(&DarkBackgroundPixel);
   BeginExternalScreen(Entry->UseGraphicsMode, L"Booting OS");
   if (Entry->LoaderType == OSTYPE_OSX) {
+    SetDevices();
+    
     SetFSInjection(Entry);
     //PauseForKey(L"SetFSInjection");
     
@@ -1058,7 +1060,7 @@ static VOID ScanLegacy(VOID)
         } else if (Volume->HasBootCode) {
             ShowVolume = TRUE;
           DBG("Volume %d will be shown\n", VolumeIndex);
-            if (Volume->BlockIO == Volume->WholeDiskBlockIO &&
+            if (Volume->BlockIO == Volume->WholeDiskBlockIO && //never occured
                 Volume->BlockIOOffset == 0 /* &&
                 Volume->OSName == NULL */)
                 // this is a whole disk (MBR) entry; hide if we have entries for partitions
@@ -1207,7 +1209,11 @@ static VOID LoadDrivers(VOID)
   BOOLEAN ReconnectAll = FALSE; //TODO - find a reason to not reconnect
     
     // load drivers from /efi/drivers
-    ScanDriverDir(L"\\EFI\\drivers");
+#if defined(MDE_CPU_X64)
+  ScanDriverDir(L"\\EFI\\drivers64");
+#else
+  ScanDriverDir(L"\\EFI\\drivers32");
+#endif
 
   // connect all devices
     //
@@ -1359,6 +1365,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   PrepatchSmbios();
   DBG("running on %a\n", gSettings.OEMProduct);
+  DBG("... with board %a\n", gSettings.OEMBoard);
   
   GetCPUProperties();
   
@@ -1397,7 +1404,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	Status = GetUserSettings(SelfRootDir);  
   
   //setup properties
-  SetDevices();
+  //  SetDevices();
   
   PrepareFont();
   //test font
@@ -1432,8 +1439,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.EntryCount == 0) {
     MenuEntryShutdown.Image = BuiltinIcon(BUILTIN_ICON_FUNC_SHUTDOWN);
+//    DBG("Shutdown.Image->Width=%d\n", MenuEntryShutdown.Image->Width);
     AddMenuEntry(&MainMenu, &MenuEntryShutdown);
     MenuEntryReset.Image = BuiltinIcon(BUILTIN_ICON_FUNC_RESET);
+//    DBG("Reset.Image->Width=%d\n", MenuEntryReset.Image->Width);
     AddMenuEntry(&MainMenu, &MenuEntryReset);
   }
   

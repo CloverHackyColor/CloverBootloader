@@ -157,6 +157,10 @@ VOID GetCPUProperties (VOID)
   if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
     switch (gCPUStructure.Model)
     {
+      case CPU_MODEL_ATOM:
+        gCPUStructure.Cores   = (UINT8)(gCPUStructure.CoresPerPackage & 0xff);
+        gCPUStructure.Threads = (UINT8)(gCPUStructure.LogicalPerPackage & 0xff);
+        break;
       case CPU_MODEL_NEHALEM: // Intel Core i7 LGA1366 (45nm)
       case CPU_MODEL_FIELDS: // Intel Core i5, i7 LGA1156 (45nm)
       case CPU_MODEL_CLARKDALE: // Intel Core i3, i5, i7 LGA1156 (32nm) 
@@ -272,14 +276,13 @@ VOID GetCPUProperties (VOID)
           case CPU_MODEL_SANDY_BRIDGE:// Sandy Bridge, 32nm
           case CPU_MODEL_JAKETOWN:		
             msr = AsmReadMsr64(MSR_PLATFORM_INFO);            
-            gCPUStructure.BusRatioMax = (UINT8)(msr >> 8) & 0xff;
-            gCPUStructure.BusRatioMin = (UINT8)(msr >> 40) & 0xff;
-            gCPUStructure.MinRatio = gCPUStructure.BusRatioMin * 10;
+            gCPUStructure.MaxRatio = (UINT8)(msr >> 8) & 0xff;
+            gCPUStructure.MinRatio = ((UINT8)(msr >> 40) & 0xff) * 10;
             msr = AsmReadMsr64(MSR_FLEX_RATIO);
             if ((msr >> 16) & 0x01)
             {
               MsgLog("non-usable FLEX_RATIO = %x\n", msr);
-              flex_ratio = (msr >> 8) & 0xff;
+              UINT8 flex_ratio = (msr >> 8) & 0xff;
               if (flex_ratio == 0) { 
                 AsmWriteMsr64(MSR_FLEX_RATIO, (msr & 0xFFFFFFFFFFFEFFFFULL)); 
                 gBS->Stall(10);
@@ -292,8 +295,8 @@ VOID GetCPUProperties (VOID)
               }*/
             }
             
-            if(gCPUStructure.BusRatioMax) 
-              gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.TSCFrequency, gCPUStructure.BusRatioMax);
+            if(gCPUStructure.MaxRatio) 
+              gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.TSCFrequency, gCPUStructure.MaxRatio);
             
             msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);
             gCPUStructure.MaxRatio = (UINT8)((msr >> 8) & 0xff);

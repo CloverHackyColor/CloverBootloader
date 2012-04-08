@@ -161,9 +161,9 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   TextLength = StrLen(Text);
   if (TextLength * GlobalConfig.CharWidth + PosX > CompImage->Width){
     if (GlobalConfig.CharWidth) {
-      TextLength = (CompImage->Width - PosX) / GlobalConfig.CharWidth;
+      TextLength = (UINT32)(CompImage->Width - PosX) / GlobalConfig.CharWidth;
     } else
-      TextLength = (CompImage->Width - PosX) / FontWidth;
+      TextLength = (UINT32)(CompImage->Width - PosX) / FontWidth;
   }
 //  DBG("TextLength =%d PosX=%d PosY=%d\n", TextLength, PosX, PosY);
   // render it
