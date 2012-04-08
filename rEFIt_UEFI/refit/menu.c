@@ -115,7 +115,7 @@ VOID FillInputs(VOID)
   //even though Ascii we will keep value as Unicode to convert later
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%a ", gSettings.BootArgs);
   InputItems[InputItemsCount].ItemType = UNIString;
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%a ", gSettings.DsdtName);
+  InputItems[InputItemsCount++].SValue = PoolPrint(L"%s ", gSettings.DsdtName);
   InputItems[InputItemsCount].ItemType = BoolValue;
   InputItems[InputItemsCount].BValue = gSettings.UseDSDTmini;
   InputItems[InputItemsCount++].SValue = gSettings.UseDSDTmini?L"[X] ":L"[ ] ";
@@ -1185,7 +1185,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
 //1
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 30, L"DSDT name:");
+    UnicodeSPrint(Flags, 50, L"DSDT name:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[1].SValue);
@@ -1199,7 +1199,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     
 //2    
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  UnicodeSPrint(Flags, 30, L"Use DSDTmini:");
+  UnicodeSPrint(Flags, 50, L"Use DSDTmini:");
   InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF;
