@@ -167,22 +167,18 @@ VOID GetCPUProperties (VOID)
       case CPU_MODEL_NEHALEM_EX:	
       case CPU_MODEL_JAKETOWN:
       case CPU_MODEL_SANDY_BRIDGE:					
-      {
         msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);
         gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 31, 16);
         gCPUStructure.Threads = (UINT8)bitfield((UINT32)msr, 15,  0);
-      } break;
+        break;
         
       case CPU_MODEL_DALES:
       case CPU_MODEL_WESTMERE: // Intel Core i7 LGA1366 (32nm) 6 Core
       case CPU_MODEL_WESTMERE_EX:
-        
-      {
         msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);
         gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 19, 16);
         gCPUStructure.Threads = (UINT8)bitfield((UINT32)msr, 15,  0);
         break;
-      }
         
       default:		
         gCPUStructure.Cores   = (UINT8)(bitfield(gCPUStructure.CPUID[CPUID_1][EBX], 23, 16));

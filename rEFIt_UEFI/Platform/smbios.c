@@ -709,9 +709,15 @@ VOID PatchTableType4()
 				} else
 					newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCore2Solo;
 			}
-			// Set Default Family ?
-			
-		}
+  		 }
+     if (gCPUStructure.Model >= CPU_MODEL_NEHALEM) {
+       if (AsciiStrStr(gCPUStructure.BrandString, "i3"))
+     	  newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCoreI3;
+       if (AsciiStrStr(gCPUStructure.BrandString, "i5"))
+     	  newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCoreI5;
+       if (AsciiStrStr(gCPUStructure.BrandString, "i7"))
+         newSmbiosTable.Type4->ProcessorFamily = ProcessorFamilyIntelCoreI7;
+	  }
 		//spec 2.7 page 48 note 3
 		if ((newSmbiosTable.Type4->ProcessorFamily == ProcessorFamilyIntelCore2)
 			&& gCPUStructure.Mobile) {
