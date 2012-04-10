@@ -222,7 +222,7 @@ UINT8 GetBiosDriveNumForVolume(REFIT_VOLUME *Volume)
 	EFI_PHYSICAL_ADDRESS		LegacyRegion;
 	
 	DBG("Volume CRC32 = %X\n", Volume->DriveCRC32);
-	LegacyRegion = 0x100000;
+	LegacyRegion = 0x0C0000;
 	LegacyRegionPages = EFI_SIZE_TO_PAGES(sizeof(BIOS_DISK_ADDRESS_PACKET) + 2 * 512) /* dap + 2 sectors */;
 	Status = gBS->AllocatePages(AllocateMaxAddress,
 								EfiBootServicesData,
@@ -235,10 +235,10 @@ UINT8 GetBiosDriveNumForVolume(REFIT_VOLUME *Volume)
 	
 	Dap = (BIOS_DISK_ADDRESS_PACKET *)(UINTN)LegacyRegion;
 	Buffer = (UINT8 *)(UINTN)(LegacyRegion + sizeof(BIOS_DISK_ADDRESS_PACKET));
-	
+//Slice - some CD has BIOS driveNum = 0	
 	// scan drives from 0x80
 	DriveNum = 0x80;
-	for (DriveNum = 0x80; TRUE; DriveNum++) {
+	for (DriveNum = 0x80; DriveNum < 0x100; DriveNum++) {
 		Status = GetBiosDriveCRC32(DriveNum, &DriveCRC32, Dap, Buffer);
 		if (EFI_ERROR(Status)) {
 			// error or no more disks

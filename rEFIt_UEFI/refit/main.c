@@ -261,13 +261,14 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 
 static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume, UINT8               OSType)
 {
-  CHAR16          *FileName, *OSIconName;
-  CHAR16          IconFileName[256];
-  CHAR16          DiagsFileName[256];
-  CHAR16          ShortcutLetter;
-  UINTN           LoaderKind;
-  LOADER_ENTRY    *Entry, *SubEntry;
+  CHAR16            *FileName, *OSIconName;
+  CHAR16            IconFileName[256];
+  CHAR16            DiagsFileName[256];
+  CHAR16            ShortcutLetter;
+  UINTN             LoaderKind;
+  LOADER_ENTRY      *Entry, *SubEntry;
   REFIT_MENU_SCREEN *SubScreen;
+  UINT64            VolumeSize;
   
   FileName = Basename(LoaderPath);
   
@@ -376,6 +377,8 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (LoaderTitle != NULL) ? LoaderTitle : FileName, Volume->VolName);
   SubScreen->TitleImage = Entry->me.Image;
+  VolumeSize = MultU64x32 (Volume->BlockIo->Media->LastBlock, Volume->BlockIo->Media->BlockSize) >> 20;
+  AddMenuInfoLine(SubScreen, PoolPrint(L"Volume size: %dMb", VolumeSize));
   
   // default entry
   SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
@@ -1344,6 +1347,19 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   DBG("Theme: %s Path: %s\n", GlobalConfig.Theme, ThemePath);
   MainMenu.TimeoutSeconds = GlobalConfig.Timeout;
   
+  PrepatchSmbios();
+  DBG("running on %a\n", gSettings.OEMProduct);
+  DBG("... with board %a\n", gSettings.OEMBoard);
+  
+  if (FileExists(SelfRootDir, PoolPrint(L"EFI\\OEM\\%a\\config.plist", gSettings.OEMProduct))) {
+    OEMPath = PoolPrint(L"EFI\\OEM\\%a", gSettings.OEMProduct);
+  } else if (FileExists(SelfRootDir, PoolPrint(L"EFI\\OEM\\%a\\config.plist", gSettings.OEMBoard))) {
+    OEMPath = PoolPrint(L"EFI\\OEM\\%a", gSettings.OEMBoard);
+  } else {
+    OEMPath = L"EFI";
+  }
+
+  
   // disable EFI watchdog timer
   gBS->SetWatchdogTimer(0x0000, 0x0000, 0x0000, NULL);
   
@@ -1362,10 +1378,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   ZeroMem((VOID*)&gSettings, sizeof(SETTINGS_DATA));
   ScanVolumes();
-  
-  PrepatchSmbios();
-  DBG("running on %a\n", gSettings.OEMProduct);
-  DBG("... with board %a\n", gSettings.OEMBoard);
   
   GetCPUProperties();
   

@@ -152,7 +152,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
   
   CHAR16      UStr[64];  
   CHAR16*     ConfigPlistPath = L"EFI\\config.plist";
-  CHAR16*     ConfigOemPath = PoolPrint(L"EFI\\OEM\\%a\\config.plist", gSettings.OEMProduct);
+  CHAR16*     ConfigOemPath = PoolPrint(L"%s\\config.plist", OEMPath);
 	
 	// load config
   if (FileExists(SelfRootDir, ConfigOemPath)) {
@@ -900,65 +900,63 @@ EFI_STATUS SaveSettings()
 //dmazar
 CHAR16* GetExtraKextsDir(REFIT_VOLUME *Volume)
 {
-    CHAR16                      *OSTypeStr = NULL;
-    CHAR16                      *SrcDir = NULL;
-    
-    // get os version as string
-    switch (Volume->OSType) {
-        case OSTYPE_TIGER:
-            OSTypeStr = L"10.4";
-            break;
-            
-        case OSTYPE_LEO:
-            OSTypeStr = L"10.5";
-            break;
-            
-        case OSTYPE_SNOW:
-            OSTypeStr = L"10.6";
-            break;
-            
-        case OSTYPE_LION:
-            OSTypeStr = L"10.7";
-            break;
-            
-        case OSTYPE_COUGAR:
-            OSTypeStr = L"10.8";
-            break;
-            
-        default:
-            OSTypeStr = L"Other";
-            break;
+  CHAR16                      *OSTypeStr = NULL;
+  CHAR16                      *SrcDir = NULL;
+  
+  // get os version as string
+  switch (Volume->OSType) {
+    case OSTYPE_TIGER:
+      OSTypeStr = L"10.4";
+      break;
+      
+    case OSTYPE_LEO:
+      OSTypeStr = L"10.5";
+      break;
+      
+    case OSTYPE_SNOW:
+      OSTypeStr = L"10.6";
+      break;
+      
+    case OSTYPE_LION:
+      OSTypeStr = L"10.7";
+      break;
+      
+    case OSTYPE_COUGAR:
+      OSTypeStr = L"10.8";
+      break;
+      
+    default:
+      OSTypeStr = L"Other";
+      break;
+  }
+  MsgLog("OS=%s ", OSTypeStr);
+  
+  // find source injection folder with kexts
+  // note: we are just checking for existance of particular folder, not checking if it is empty or not
+  // check OEM subfolders: version speciffic or default to Other
+  SrcDir = PoolPrint(L"%s\\kexts\\%s", OEMPath, OSTypeStr);
+  if (!FileExists(SelfVolume->RootDir, SrcDir)) {
+    FreePool(SrcDir);
+    SrcDir = PoolPrint(L"%s\\kexts\\Other", OEMPath);
+    if (!FileExists(SelfVolume->RootDir, SrcDir)) {
+      FreePool(SrcDir);
+      SrcDir = NULL;
     }
-    MsgLog("OS=%s ", OSTypeStr);
-    
-    // find source injection folder with kexts
-    // note: we are just checking for existance of particular folder, not checking if it is empty or not
-    if (gSettings.OEMProduct != NULL) {
-        // check OEM subfolders: version speciffic or default to Other
-        SrcDir = PoolPrint(L"\\EFI\\OEM\\%a\\kexts\\%s", gSettings.OEMProduct, OSTypeStr);
-        if (!FileExists(SelfVolume->RootDir, SrcDir)) {
-            FreePool(SrcDir);
-            SrcDir = PoolPrint(L"\\EFI\\OEM\\%a\\kexts\\Other", gSettings.OEMProduct);
-            if (!FileExists(SelfVolume->RootDir, SrcDir)) {
-                FreePool(SrcDir);
-                SrcDir = NULL;
-            }
-        }
+  }
+  if (SrcDir == NULL) {
+    // if not found, check EFI\kexts\...
+    SrcDir = PoolPrint(L"\\EFI\\kexts\\%s", OSTypeStr);
+    if (!FileExists(SelfVolume->RootDir, SrcDir)) {
+      FreePool(SrcDir);
+      SrcDir = PoolPrint(L"\\EFI\\kexts\\Other", gSettings.OEMProduct);
+      if (!FileExists(SelfVolume->RootDir, SrcDir)) {
+        FreePool(SrcDir);
+        SrcDir = NULL;
+      }
     }
-    if (SrcDir == NULL) {
-        // if not found, check EFI\kexts\...
-        SrcDir = PoolPrint(L"\\EFI\\kexts\\%s", OSTypeStr);
-        if (!FileExists(SelfVolume->RootDir, SrcDir)) {
-            FreePool(SrcDir);
-            SrcDir = PoolPrint(L"\\EFI\\kexts\\Other", gSettings.OEMProduct);
-            if (!FileExists(SelfVolume->RootDir, SrcDir)) {
-                FreePool(SrcDir);
-                SrcDir = NULL;
-            }
-        }
-    }
-    
-    return SrcDir;
+  }
+  
+  return SrcDir;
 }
 
 EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)

@@ -405,7 +405,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
  
   PathDsdt = PoolPrint(L"\\%s", gSettings.DsdtName);
   
-  CHAR16*     AcpiOemPath = PoolPrint(L"EFI\\OEM\\%a\\ACPI\\patched", gSettings.OEMProduct);
+  CHAR16*     AcpiOemPath = PoolPrint(L"%s\\ACPI\\patched", OEMPath);
 	
 	//Slice - I want to begin from BIOS ACPI tables like with SMBIOS
 	RsdPointer = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)FindAcpiRsdPtr();

@@ -1473,10 +1473,9 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	CHAR8* version_str = (CHAR8*)AllocateZeroPool(MAX_BIOS_VERSION_LENGTH);
 	
 	if (gSettings.LoadVBios){
-    UnicodeSPrint(FileName, 24, L"EFI\\OEM\\%a\\ROM\\10de_%04x.rom",
-                         gSettings.OEMProduct, nvda_dev->device_id);
-    if (FileExists(SelfRootDir, FileName)){
-      Status = egLoadFile(SelfRootDir, FileName, &buffer, &bufferLen);
+    UnicodeSPrint(FileName, 24, L"ROM\\10de_%04x.rom", nvda_dev->device_id);
+    if (FileExists(OEMDir, FileName)){
+      Status = egLoadFile(OEMDir, FileName, &buffer, &bufferLen);
     }
     if (EFI_ERROR(Status)) {
       UnicodeSPrint(FileName, 24, L"\\EFI\\ROM\\10de_%04x.rom", nvda_dev->device_id);

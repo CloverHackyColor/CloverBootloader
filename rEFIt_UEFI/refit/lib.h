@@ -259,6 +259,8 @@ extern CHAR16           *SelfDirPath;
 extern EFI_DEVICE_PATH  *SelfDevicePath;
 extern EFI_FILE         *ThemeDir;
 extern CHAR16           *ThemePath;
+extern EFI_FILE         *OEMDir;
+extern CHAR16           *OEMPath;
 
 extern REFIT_VOLUME     *SelfVolume;
 extern REFIT_VOLUME     **Volumes;

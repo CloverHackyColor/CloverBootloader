@@ -57,6 +57,8 @@ CHAR16           *SelfDirPath;
 EFI_DEVICE_PATH  *SelfDevicePath;
 EFI_FILE         *ThemeDir;
 CHAR16           *ThemePath;
+EFI_FILE         *OEMDir;
+CHAR16           *OEMPath;
 
 
 REFIT_VOLUME     *SelfVolume = NULL;
@@ -168,6 +170,12 @@ VOID UninitRefitLib(VOID)
     ThemeDir->Close(ThemeDir);
     ThemeDir = NULL;
   }
+
+  if (OEMDir != NULL) {
+    OEMDir->Close(OEMDir);
+    OEMDir = NULL;
+  }
+  
   
 }
 
@@ -214,6 +222,7 @@ EFI_STATUS ReinitSelfLib(VOID)
   }
   SelfDeviceHandle = NewSelfHandle;
   Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+  Status = SelfRootDir->Open(SelfRootDir, &OEMDir, OEMPath, EFI_FILE_MODE_READ, 0);
   Status = SelfRootDir->Open(SelfRootDir, &SelfDir, SelfDirPath, EFI_FILE_MODE_READ, 0);
   CheckFatalError(Status, L"while reopening our installation directory");
   return Status;
@@ -234,6 +243,7 @@ EFI_STATUS FinishInitRefitLib(VOID)
      }
   }
   Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+  Status = SelfRootDir->Open(SelfRootDir, &OEMDir, OEMPath, EFI_FILE_MODE_READ, 0);
   Status = SelfRootDir->Open(SelfRootDir, &SelfDir, SelfDirPath, EFI_FILE_MODE_READ, 0);
   CheckFatalError(Status, L"while opening our installation directory");
   return Status;

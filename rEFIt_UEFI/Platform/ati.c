@@ -298,10 +298,9 @@ BOOLEAN load_vbios_file(UINT16 vendor_id, UINT16 device_id)
 	if (!gSettings.LoadVBios)
 		return FALSE;
 	
-	UnicodeSPrint(FileName, 24, L"EFI\\OEM\\%a\\ROM\\%04x_%04x.rom",
-                       gSettings.OEMProduct, vendor_id, device_id);
-  if (FileExists(SelfRootDir, FileName)){
-    Status = egLoadFile(SelfRootDir, FileName, &buffer, &bufferLen);
+	UnicodeSPrint(FileName, 24, L"\\ROM\\%04x_%04x.rom", vendor_id, device_id);
+  if (FileExists(OEMDir, FileName)){
+    Status = egLoadFile(OEMDir, FileName, &buffer, &bufferLen);
   }
   if (EFI_ERROR(Status)) {
     UnicodeSPrint(FileName, 24, L"\\EFI\\ROM\\%04x_%04x.rom", vendor_id, device_id);
