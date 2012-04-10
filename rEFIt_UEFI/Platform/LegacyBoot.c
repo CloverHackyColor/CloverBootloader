@@ -214,7 +214,7 @@ EFI_STATUS GetBiosDriveCRC32(UINT8 DriveNum, UINT32 *DriveCRC32, BIOS_DISK_ADDRE
 UINT8 GetBiosDriveNumForVolume(REFIT_VOLUME *Volume)
 {
 	EFI_STATUS					Status;
-	UINT8						DriveNum;
+	UINT16						DriveNum;
 	UINT32						DriveCRC32;
 	UINT8						*Buffer;
 	BIOS_DISK_ADDRESS_PACKET	*Dap;

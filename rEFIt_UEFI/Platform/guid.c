@@ -27,10 +27,6 @@ EFI_GUID gEfiLegacy8259ProtocolGuid             = {0x38321dba, 0x4fe0, 0x4e17, {
 
              
 //all these codes are still under the question
-// turbo - or an EFI System Partition - C12A7328-F81F-11D2-BA4B-00A0C93EC93B
-//EFI_GUID GPT_EFI_SYSTEM_PARTITION = 
-//{ 0xC12A7328, 0xF81F, 0x11D2, {0xBA, 0x4B, 0x00, 0xA0, 0xC9, 0x3E, 0xC9, 0x3B }};
-// zef - Basic Data Partition - EBD0A0A2-B9E5-4433-87C0-68B6B72699C7 for foreign OS support
 EFI_GUID GPT_MSDOS_PARTITION = \
 { 0xEBD0A0A2, 0xB9E5, 0x4433,{ 0x87, 0xC0, 0x68, 0xB6, 0xB7, 0x26, 0x99, 0xC7 }};
 // HFS+ partition - 48465300-0000-11AA-AA11-00306543ECAC
@@ -42,8 +38,6 @@ EFI_GUID GPT_EMPTY_PARTITION = \
 // Microsoft Reserved Partition - E3C9E316-0B5C-4DB8-817DF92DF00215AE
 //EFI_PART_TYPE_LEGACY_MBR_GUID {0x024DEE41, 0x33E7, 0x11D3, {0x9D, 0x69, 0x00, 0x08, 0xC7, 0x81, 0xF3, 0x9F }};
 
-
-//gEfiAppleFrameBufferInfoGuid == gEfiAppleScreenInfoGuid -realized in VBoxVgaClasDxe
 //TODO - discover the follow guids
 //gBS->LocateProtocol(8ECE08D8-A6D4-430B-A7B0-2DF318E7884A)
 //efi/configuration-table/5751DA6E-1376-4E02-BA92-D294FDD30901

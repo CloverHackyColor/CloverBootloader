@@ -377,7 +377,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (LoaderTitle != NULL) ? LoaderTitle : FileName, Volume->VolName);
   SubScreen->TitleImage = Entry->me.Image;
-  VolumeSize = MultU64x32 (Volume->BlockIo->Media->LastBlock, Volume->BlockIo->Media->BlockSize) >> 20;
+  VolumeSize = MultU64x32 (Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize) >> 20;
   AddMenuInfoLine(SubScreen, PoolPrint(L"Volume size: %dMb", VolumeSize));
   
   // default entry
