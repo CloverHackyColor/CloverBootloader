@@ -33,19 +33,6 @@ typedef struct APPLE_PT_ENTRY  {
 } APPLE_PT_ENTRY;
 #pragma pack()
 
-static UINT16
-be16_to_cpu(UINT16 x)
-{
-    return SwapBytes16(x);
-}
-
-static UINT32
-be32_to_cpu(UINT32 x)
-{
-    return SwapBytes32(x);
-}
-
-
 /**
   Install child handles if the Handle supports Apple partition table format.
 
@@ -122,11 +109,11 @@ PartitionInstallAppleChildHandles (
       }
 
       Header = (APPLE_PT_HEADER *)Block;
-      if (be16_to_cpu(Header->sbSig) != 0x4552)
+      if (SwapBytes16(Header->sbSig) != 0x4552)
       {
           break;
       }
-      SubBlockSize = be16_to_cpu(Header->sbBlkSize);
+      SubBlockSize = SwapBytes16(Header->sbBlkSize);
       BlkPerSec    = BlockSize / SubBlockSize;
 
       /* Fail if media block size isn't an exact multiple */
@@ -158,7 +145,7 @@ PartitionInstallAppleChildHandles (
 
           Entry = (APPLE_PT_ENTRY *)Block;
 
-          if (be16_to_cpu(Entry->signature) != 0x504D)
+          if (SwapBytes16(Entry->signature) != 0x504D)
           {
               Print(L"Not a new PT entry: %x", Entry->signature);
               continue;
@@ -167,11 +154,11 @@ PartitionInstallAppleChildHandles (
           /* First partition contains partitions count */
           if (Partition == 1)
           {
-             PartitionEntries  = be32_to_cpu(Entry->map_entries);
+             PartitionEntries  = SwapBytes32(Entry->map_entries);
           }
 
-          StartLba = be32_to_cpu(Entry->pblock_start);
-          SizeLbs  = be32_to_cpu(Entry->pblocks);
+          StartLba = SwapBytes32(Entry->pblock_start);
+          SizeLbs  = SwapBytes32(Entry->pblocks);
 
           if (0 && CompareMem("Apple_HFS", Entry->type, 10) == 0)
               Print(L"HFS partition (%d of %d) at LBA 0x%x size=%dM\n",
