@@ -546,6 +546,7 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 	TagPtr						prop = NULL;
   CHAR16*     SystemPlist = L"System\\Library\\CoreServices\\SystemVersion.plist";
   CHAR16*     ServerPlist = L"System\\Library\\CoreServices\\ServerVersion.plist";
+  CHAR16*     RecoveryPlist = L"\\com.apple.recovery.boot\\SystemVersion.plist";
   
   if (!Volume) {
     return EFI_NOT_FOUND;
@@ -560,6 +561,10 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 	else if(FileExists(Volume->RootDir, ServerPlist))
 	{
 		Status = egLoadFile(Volume->RootDir, ServerPlist, (UINT8 **)&plistBuffer, &plistLen);
+	}
+	else if(FileExists(Volume->RootDir, RecoveryPlist))
+	{
+		Status = egLoadFile(Volume->RootDir, RecoveryPlist, (UINT8 **)&plistBuffer, &plistLen);
 	}
 	if(!EFI_ERROR(Status))
 	{
@@ -880,6 +885,15 @@ EFI_STATUS SaveSettings()
     }
     
     //attempt to make turbo
+    if (gSettings.Turbo){
+      msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
+      DBG("MSR_IA32_MISC_ENABLE = %lx\n", msr);
+      msr &= ~(1ULL<<38);
+      AsmWriteMsr64(MSR_IA32_MISC_ENABLE, msr);
+      gBS->Stall(100);
+      msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
+      DBG("Set turbo: MSR_IA32_MISC_ENABLE = %lx\n", msr);
+    }
     if (TurboMsr != 0) {
       AsmWriteMsr64(MSR_IA32_PERF_CONTROL, TurboMsr);
       gBS->Stall(100);

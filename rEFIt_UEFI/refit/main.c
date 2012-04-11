@@ -390,7 +390,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   SubEntry->DevicePath      = Entry->DevicePath;
   SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
   SubEntry->LoadOptions     = PoolPrint(L"%a", gSettings.BootArgs);
-  SubEntry->LoaderType = OSTYPE_OSX;
+  SubEntry->LoaderType = Entry->LoaderType;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
   
   // loader-specific submenu entries

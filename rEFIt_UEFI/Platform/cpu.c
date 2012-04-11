@@ -696,6 +696,8 @@ UINT16 GetAdvancedCpuType ()
 						return 0x701; // Core i7
 						
 					case CPU_MODEL_DALES: // Intel Core i5, i7 LGA1156 (45nm) (Havendale, Auburndale)
+						if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
+							return 0x902; // Core i3
 						if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
 							return 0x602; // Core i5
 						return 0x702; // Core i7

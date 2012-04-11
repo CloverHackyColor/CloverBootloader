@@ -302,6 +302,10 @@ $BASETOOLS_DIR/EfiLdrImage -o $BUILD_DIR/FV/Efildr32 $BUILD_DIR/$PROCESSOR/EfiLo
 
 cat $BOOTSECTOR_BIN_DIR/start32.com $BOOTSECTOR_BIN_DIR/efi32.com3 $BUILD_DIR/FV/Efildr32 > $BUILD_DIR/FV/Efildr20	
 cat $BOOTSECTOR_BIN_DIR/start32H.com2 $BOOTSECTOR_BIN_DIR/efi32.com3 $BUILD_DIR/FV/Efildr32 > $BUILD_DIR/FV/boot
+cp -v $BUILD_DIR/FV/boot $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/ia32/
+cp -v $BUILD_DIR/IA32/FSInject.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers32/
+cp -v $BUILD_DIR/IA32/VBoxIso9600.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers32/
+cp -v $BUILD_DIR/IA32/VBoxExt2.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers32/
 echo Done!
 fi
 
@@ -318,7 +322,10 @@ $BASETOOLS_DIR/GenPage $BUILD_DIR/FV/Efildr20Pure -o $BUILD_DIR/FV/Efildr20
 #cat $BOOTSECTOR_BIN_DIR/Start64.com2 $BOOTSECTOR_BIN_DIR/efi64.com2 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/bootPure
 #$BASETOOLS_DIR/GenPage $BUILD_DIR/FV/bootPure -o $BUILD_DIR/FV/boot
 dd if=$BUILD_DIR/FV/Efildr20 of=$BUILD_DIR/FV/boot bs=512 skip=1
-
+cp -v $BUILD_DIR/FV/boot $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/x64/
+cp -v $BUILD_DIR/X64/FSInject.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64/
+cp -v $BUILD_DIR/X64/VBoxIso9600.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64/
+cp -v $BUILD_DIR/X64/VBoxExt2.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64/
 echo Done!
 fi
 
