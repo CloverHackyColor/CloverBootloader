@@ -1,0 +1,98 @@
+#!/bin/bash
+
+echo "==============================================="
+echo "Post Post-Install Script"
+echo "==============================================="
+
+#echo "DEBUG: $ 1 = Full path to the installation package the installer app is processing: " $1
+#echo "DEBUG: $ 2 = Full path to the installation destination: " $2
+#echo "DEBUG: $ 3 = Installation volume (mountpoint) to receive the payload: " $3
+#echo "DEBUG: $ 4 = Root directory for the system: " $4
+
+echo "preinstall: Path to installer....... $1"
+echo "preinstall: Path to destination..... $2"
+echo "preinstall: Path to dest volume..... $3"
+echo "preinstall: Root of system folder... $4"
+
+# Check target exists
+if [ ! -e "$3" ]
+then
+    echo "$3 volume does not exist!"
+    exit 1
+fi
+
+# If target volume root of current system then replace
+# / with volume name.
+if [ "$3" == "/" ]
+then
+	dest_vol="/Volumes/"$( ls -1F /Volumes | sed -n 's:@$::p' )
+else
+    dest_vol="$3"
+fi    
+
+dest_destino="$2"
+   
+# ---------------------------------------------
+# 檢查 原來的 boot 類型 並安裝新的 boot
+# ---------------------------------------------
+
+file "${dest_vol}/bootold" > "${dest_vol}/boottype"
+boottypeversion=$( grep "boot" "${dest_vol}/boottype" | awk '{ print $2 }' | tr -d '}' )
+echo "${boottypeversion}" >> "${dest_vol}/boottype"
+
+if [ "${boottypeversion}" == "data" ]; then
+	cp "${dest_vol}/bootold" "${dest_vol}/boot2"
+	chflags hidden "${dest_vol}/boot2"
+fi
+	
+rm "${dest_vol}/bootold"	
+rm "${dest_vol}/boottype"
+
+# ---------------------------------------------
+# Cleanup
+# ---------------------------------------------
+
+# remove any temporary boot sector files if they exist
+
+if [ -e "$dest_vol/tmpcham" ]; then
+	rm -rf "$dest_vol/tmpcham"
+fi
+
+if [ -e "$dest_vol/EFI/config.plist" ]; then
+	rm -rf "$dest_vol/EFI/config-org.plist"
+	chmod 777 "$dest_vol/EFI"
+	chmod 666 "$dest_vol/EFI/config.plist"
+fi
+
+if [ ! -e "$dest_vol/EFI/config.plist" ]; then
+	cp -f "$dest_vol/EFI/config-org.plist" "$dest_vol/EFI/config.plist"
+	rm -rf "$dest_vol/EFI/config-org.plist"
+	chmod 777 "$dest_vol/EFI"
+	chmod 666 "$dest_vol/EFI/config.plist"
+fi
+
+if [ -e "$dest_vol/EFI/BOOT/refit.conf" ]; then
+	cp -f "$dest_vol/EFI/BOOT/refit.conf" "$dest_vol/EFI/BOOT/refit-old.conf"
+	cp -f "$dest_vol/EFI/BOOT/refit-sample.conf" "$dest_vol/EFI/BOOT/refit.conf"
+	rm -rf "$dest_vol/EFI/BOOT/refit-sample.conf"
+	chmod 777 "$dest_vol/EFI/BOOT"
+	chmod 666 "$dest_vol/EFI/BOOT/refit.conf"
+fi
+
+if [ ! -e "$dest_vol/EFI/BOOT/refit.conf" ]; then
+	cp -f "$dest_vol/EFI/BOOT/refit-sample.conf" "$dest_vol/EFI/BOOT/refit.conf"
+	rm -rf "$dest_vol/EFI/BOOT/refit-sample.conf"
+	chmod 777 "$dest_vol/EFI/BOOT"
+	chmod 666 "$dest_vol/EFI/BOOT/refit.conf"
+fi
+
+if [ -e "$dest_vol/EFI/config-x32.plist" ]; then
+	rm -rf "$dest_vol/EFI/config-x32.plist"
+fi
+
+if [ -e "$dest_vol/EFI/config-x64.plist" ]; then
+	rm -rf "$dest_vol/EFI/config-x64.plist"
+fi
+
+
+

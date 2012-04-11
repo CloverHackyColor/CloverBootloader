@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SystemParameters</key>
+	<dict>
+		<key>boot-args</key>
+		<string>-v arch=i386</string>
+		<key>prev-lang:kbd</key>
+		<string>ru:0</string>
+		<key>DefaultBootVolume</key>
+		<string>MacHDD</string>
+		<key>CustomUUID</key>
+		<string>511CE200-1000-4000-9999-010203040506</string>
+	</dict>
+	<key>SMBIOS</key>
+	<dict>
+		<key>BiosVendor</key>
+		<string>Apple Inc.</string>
+		<key>BiosVersion</key>
+		<string>MB11.88Z.0061.B03.0809221748</string>
+		<key>BiosReleaseDate</key>
+		<string>05/03/10</string>
+		<key>Manufacturer</key>
+		<string>Apple Inc.</string>
+		<key>ProductName</key>
+		<string>MacBook1,1</string>
+		<key>Version</key>
+		<string>1.0</string>
+		<key>Family</key>
+		<string>MacBook</string>
+		<key>SerialNumber</key>
+		<string>4H629LYAU9C</string>
+		<key>BoardManufacturer</key>
+		<string>Apple Inc.</string>
+		<key>BoardSerialNumber</key>
+		<string>C02032101R5DC771H</string>
+		<key>Board-ID</key>
+		<string>Mac-F4208CC8</string>
+		<key>BoardVersion</key>
+		<string>Proto1</string>
+		<key>Mobile</key>
+		<string>Yes</string>
+		<key>LocationInChassis</key>
+		<string>Part Component</string>
+		<key>ChassisManufacturer</key>
+		<string>Apple Inc.</string>
+		<key>ChassisAssetTag</key>
+		<string>LatitudeD420</string>
+	</dict>
+	<key>CPU</key>
+	<dict>
+		<key>Turbo</key>
+		<string>No</string>
+		<key>ProcessorType</key>
+		<string>0x0201</string>
+		<key>CpuFrequencyMHz</key>
+		<string>3200</string>
+		<key>BusSpeedkHz</key>
+		<string>133330</string>
+	</dict>
+	<key>Graphics</key>
+	<dict>
+		<key>GraphicsInjector</key>
+		<string>Yes</string>
+		<key>VRAM</key>
+		<string>1024</string>
+		<key>LoadVBios</key>
+		<string>No</string>
+		<key>VideoPorts</key>
+		<string>2</string>
+		<key>FBName</key>
+		<string>Makaka</string>
+		<key>NVCAP</key>
+		<string>04000000000003000C0000000000000A00000000</string>
+		<key>display-cfg</key>
+		<string>03010300FFFF0001</string>
+	</dict>
+	<key>PCI</key>
+	<dict>
+		<key>StringInjector</key>
+		<string>No</string>
+		<key>DeviceProperties</key>
+		<string></string>
+		<key>PCIRootUID</key>
+		<string>0</string>
+		<key>HDAInjection</key>
+		<string>887</string>
+		<key>LpcTune</key>
+		<string>Yes</string>
+	</dict>
+	<key>ACPI</key>
+	<dict>
+		<key>DropOemSSDT</key>
+		<string>Yes</string>
+		<key>GenerateCStates</key>
+		<string>Yes</string>
+		<key>GeneratePStates</key>
+		<string>Yes</string>
+		<key>EnableC6</key>
+		<string>Yes</string>
+		<key>EnableC4</key>
+		<string>No</string>
+		<key>EnableC2</key>
+		<string>Yes</string>
+		<key>EnableISS</key>
+		<string>Yes</string>
+		<key>ResetAddress</key>
+		<string>0x64</string>
+		<key>ResetValue</key>
+		<string>0xFE</string>
+		<key>smartUPS</key>
+		<string>No</string>
+	</dict>
+</dict>
+</plist>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>SystemParameters</key>
+	<dict>
+		<key>boot-args</key>
+		<string>-v arch=i386 darkwake=0</string>
+		<key>prev-lang:kbd</key>
+		<string>ru:0</string>
+		<key>DefaultBootVolume</key>
+		<string>SnowHD</string>
+		<key>CustomUUID</key>
+		<string>511CE200-1000-4000-9999-010203040507</string>
+	</dict>
+	<key>SMBIOS</key>
+	<dict>
+		<key>BiosVendor</key>
+		<string>Apple Inc.</string>
+	</dict>
+</dict>
+</plist>
