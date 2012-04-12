@@ -242,7 +242,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 		filename="${drivers[$i]##*/}"	
 		mkdir -p "${3}/${filename%.efi}/Root/"
 		ditto --noextattr --noqtn --arch i386 "${drivers[$i]}" "${3}/${filename%.efi}/Root/"
-		find "${3}/${filename%.efi}" -name '.DS_Store' -or -name '.svn' -exec rm -R -f {} \; 2>/dev/null
+		find "${3}/${filename%.efi}" -name '.DS_Store' -exec rm -R -f {} \; 2>/dev/null
 		fixperms "${3}/${filename%.efi}/Root/"
 		chown 501:20 "${3}/${filename%.efi}/Root/"
 		echo "	[BUILD] ${filename%.efi}"
@@ -267,7 +267,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 		filename="${drivers[$i]##*/}"	
 		mkdir -p "${3}/${filename%.efi}/Root/"
 		ditto --noextattr --noqtn --arch i386 "${drivers[$i]}" "${3}/${filename%.efi}/Root/"
-		find "${3}/${filename%.efi}" -name '.DS_Store' -or -name '.svn' -exec rm -R -f {} \; 2>/dev/null
+		find "${3}/${filename%.efi}" -name '.DS_Store' -exec rm -R -f {} \; 2>/dev/null
 		fixperms "${3}/${filename%.efi}/Root/"
 		chown 501:20 "${3}/${filename%.efi}/Root/"
 		echo "	[BUILD] ${filename%.efi}"
@@ -617,7 +617,7 @@ makedistribution ()
 	ditto --noextattr --noqtn "${pkgroot}/Distribution" "${1}/${packagename}/Distribution"
 	ditto --noextattr --noqtn "${pkgroot}/Resources" "${1}/${packagename}/Resources"
 
-	find "${1}/${packagename}/Resources" -type d -name '.svn' -exec rm -R -f {} \; 2>/dev/null
+##	find "${1}/${packagename}/Resources" -type d -name '.svn' -exec rm -R -f {} \; 2>/dev/null
 
 	for (( i=0; i < ${#outline[*]} ; i++));
 		do

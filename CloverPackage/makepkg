@@ -36,8 +36,8 @@ cp -f package/Distribution-original package/Distribution
 title="title>Clover ${version} r${revision} x32 x64 EFI bootloader"
 perl -i -p -e "s/title>Clover_title/${title}/g" `find "package/Distribution" -type f`
 
-find "CloverV2" -name '.*' -depth -exec rm -rf {} \;
-find "package" -name '.*' -depth -exec rm -rf {} \;
+##find "CloverV2" -name '.*' -depth -exec rm -rf {} \;
+##find "package" -name '.*' -depth -exec rm -rf {} \;
 
 ########################################################################
 # Change revision to be Clover:rEFIt_UEFI = 358:361 show as installer. #
