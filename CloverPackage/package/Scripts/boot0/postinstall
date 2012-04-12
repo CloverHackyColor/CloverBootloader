@@ -1,0 +1,32 @@
+#!/usr/bin/perl
+
+$destino = $ARGV[1];
+$destino =~ s/ /\\ /g;
+$volume = $ARGV[2];
+my %mapa;
+
+open (MOUNT, "mount|");
+while (<MOUNT>) {
+	chomp;
+	$line = $_;
+	if ($line =~ /^([^ ]+) on ([^(]+) \([^)]*\)$/) {
+		$mapa{$2}=$1;
+	}
+}
+close (MOUNT);
+
+if ($mapa{$volume}) {
+	if ($mapa{$volume} =~ /^\/dev\/(disk\d)s(\d)$/) {
+		$disk = $1;
+		$partition = $2;
+		$volume =~ s/ /\\ /g;
+
+		system ($destino."/usr/local/bin/fdisk440 -f ".$destino."/usr/standalone/i386/boot0 -u -y /dev/r".$disk);
+		
+		open (PIPE, "|fdisk -e /dev/".$disk."|");
+		print PIPE "f ".$partition."\n";
+		print PIPE "write\n";
+		print PIPE "y\n";
+		print PIPE "exit\n";
+	}
+}
