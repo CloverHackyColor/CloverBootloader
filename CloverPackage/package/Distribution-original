@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+
+<installer-gui-script minSpecVersion='1'>
+
+	<options
+		hostArchitectures='i386'
+	/>
+
+	<domains enable_anywhere="true"/>
+
+	<welcome file='Welcome.rtfd'/>
+	<license file="License.rtf" sla="EA0401"/>
+	<readme  file='Description.html'/>
+	<conclusion file="Conclusion.rtfd"/>
+	<background file='background.tiff' alignment='topleft' scaling='proportional'/>
+
+	<title>Clover_title</title>
+
+	<script>
+
+	function installCheckScript()
+	{	
+		var obj = system.ioregistry.matchingClass("AppleSMC");
+		if (obj) {
+			system.log('installCheckScript: Found AppleSMC');
+			my.result.message = system.localizedStringWithFormat('Intel_Mac_message');
+			my.result.type = 'Fatal';
+			return false;
+		}
+		system.log('installCheckScript: Passed.');
+		return false;
+	}
+
+	function volCheckScript()
+	{	
+		system.log('volCheckScript: Passed.');
+		return true;
+	}
+
+	function upgrade_allowed(){
+		var upgradable = true;
+		var upgradeAction = my.choice.packageUpgradeAction;
+		
+		if((upgradeAction == "downgrade") || (upgradeAction == "mixed")){
+			my.choice.tooltip = system.localizedString('Newer_Package_Installed_message');
+			upgradable = false;
+		}
+		
+		return upgradable;
+	}
+
+	function systemHasGPT(){
+		var obj = system.ioregistry.matchingName("EFI System Partition");
+		if (obj)
+			return true;
+		return false;
+	}
+	
+	function exclusive(toggle){
+		toggle.selected = ( my.choice.selected != "false" ? "false" : "true" );
+		return ( toggle.selected != false ? false : true );
+	}
+	
+	</script>

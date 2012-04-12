@@ -2,93 +2,65 @@
 
 # workspace = CloverGrower/CloverPackage
 
-# copy boot files from Build to CloverV2.
+# Copy the Version.h to workspace.
 
-mkdir -p CloverV2/Bootloaders/ia32
-mkdir -p CloverV2/Bootloaders/x64
+cp -f ../rEFIt_UEFI/Version.h Version.h
 
-cp -f ../src/edk2/Build/CloverX64/RELEASE_GCC46/FV/boot CloverV2/Bootloaders/x64
-
-cp -f ../src/edk2/Build/Clover/RELEASE_GCC46/FV/boot CloverV2/Bootloaders/ia32
-cp -f ../src/edk2/Build/Clover/RELEASE_XCODE32/FV/boot CloverV2/Bootloaders/ia32
-
-cp -f ../src/edk2/Build/rEFIt/RELEASE_GCC46/IA32/CLOVERIA32.efi CloverV2/EFI/BOOT
-cp -f ../src/edk2/Build/rEFIt/RELEASE_GCC46/X64/CLOVERX64.efi CloverV2/EFI/BOOT
-
-mkdir -p CloverV2/BootSectors
-cp -f ../src/edk2/Clover/rEFIt_UEFI/Version.h Version.h
-cp -f ../src/edk2/Clover/rEFIt_UEFI/Version.h CloverV2/Version.h
-cp -f ../src/edk2/Clover/BootSector/bin/boot0 CloverV2/BootSectors
-cp -f ../src/edk2/Clover/BootSector/bin/boot0md CloverV2/BootSectors
-cp -f ../src/edk2/Clover/BootSector/bin/boot1f32 CloverV2/BootSectors
-cp -f ../src/edk2/Clover/BootSector/bin/boot1h CloverV2/BootSectors
-cp -f ../src/edk2/Clover/BootHFS/boot1h2 CloverV2/BootSectors
-
-mkdir -p CloverV2/doc/
-cp -f ../src/edk2/Clover/BootHFS/README.txt CloverV2/doc/README.txt
-cp -f ../src/edk2/Clover/BootHFS/boot1f32-install.sh  CloverV2/doc/boot1f32-install.sh
-
-# Get the version and revision from Version.h
-
-#version=$( grep "FIRMWARE_VERSION" Version.h | awk '{ print $3 }' | tr -d '\"' )
 version=v2
+#version=$( grep "FIRMWARE_VERSION" Version.h | awk '{ print $3 }' | tr -d '\"' )
 revision=$( grep "FIRMWARE_REVISION" Version.h | awk '{ print $3 }' | tr -d '\"' )
 
 echo "${version}" > version
 echo "${revision}" > revision
 
-# Prepare sym/i386.
+# Copy doc to CloverV2/doc.
+
+mkdir -p CloverV2/doc/
+#cp -f ../BootHFS/Installation.txt  CloverV2/doc/Installation.txt
+cp -f ../BootHFS/boot1f32-install.sh  CloverV2/doc/boot1f32-install.sh
+
+# Prepare i386 for package installer.
 
 rm -rf sym
 mkdir -p sym/i386
 cp -Rf CloverV2/Bootloaders/* sym/i386/
 cp -f CloverV2/BootSectors/* sym/i386/
 
-mkdir -p sym/pkg
-
-# Start to make pkg for 64bit.
+# Prepare Resources for package installer.
 
 rm -rf package/Resources
 mkdir -p package/Resources
-cp -Rf package/Resources-org/* package/Resources
-cp -f package/Distribution-org package/Distribution
-title="title>Clover ${version} r${revision} x64 EFI bootloader"
-perl -i -p -e "s/title>Clover_title/${title}/g" `find "package/Distribution" -type f`
-cp -f package/buildpkg-64.sh package/buildpkg.sh
+cp -Rf package/Resources-original/* package/Resources
 
-mkdir -p CloverV2/temp
-cp -f CloverV2/EFI/drivers/*32.efi CloverV2/temp/
-rm -f CloverV2/EFI/drivers/*32.efi
-mv CloverV2/EFI/tools/Shell32.efi CloverV2/temp/Shell32.efi 
-mv CloverV2/EFI/BOOT/CLOVERIA32.efi CloverV2/temp/CLOVERIA32.efi
-
-sudo make pkg
-
-mv CloverV2/temp/Shell32.efi  CloverV2/EFI/tools/Shell32.efi
-mv CloverV2/temp/CLOVERIA32.efi CloverV2/EFI/BOOT/CLOVERIA32.efi
-cp -f CloverV2/temp/*32.efi CloverV2/EFI/drivers/
-rm -rf CloverV2/temp
-
-mv sym/Clover_${version}_r${revision}_EFI.pkg sym/pkg/Clover_${version}_r${revision}_EFI_x64.pkg
-mv sym/Clover_${version}_r${revision}_EFI.pkg.md5 sym/pkg/Clover_${version}_r${revision}_EFI_x64.pkg.md5
-
-# Finish making pkg for 64bit.
-
-# Start to make pkg for 32bit + 64bit.
-
-rm -rf package/Resources
-mkdir -p package/Resources
-cp -Rf package/Resources-org/* package/Resources
-cp -f package/Distribution-org package/Distribution
+cp -f package/Distribution-original package/Distribution
 title="title>Clover ${version} r${revision} x32 x64 EFI bootloader"
 perl -i -p -e "s/title>Clover_title/${title}/g" `find "package/Distribution" -type f`
-cp -f package/buildpkg-3264.sh package/buildpkg.sh
 
+find "CloverV2" -name '.*' -depth -exec rm -rf {} \;
+find "package" -name '.*' -depth -exec rm -rf {} \;
+
+########################################################################
+# Change revision to be Clover:rEFIt_UEFI = 358:361 show as installer. #
+########################################################################
+
+# perl -i -p -e "s/%CLOVERREVISION%/358:361/g" `find "package/Resources" -type f`
+
+read -p "Modify package/Resources if necessary, then start to make the installer."
+
+# Start to make installer.
 sudo make pkg
 
-mv sym/Clover_${version}_r${revision}_EFI.pkg sym/pkg/Clover_${version}_r${revision}_EFI_x32_x64.pkg
-mv sym/Clover_${version}_r${revision}_EFI.pkg.md5 sym/pkg/Clover_${version}_r${revision}_EFI_x32_x64.pkg.md5
+cd sym
+zip Clover_${version}_r${revision}_EFI_x32_x64_pkg.zip Clover_${version}_r${revision}_EFI_x32_x64.pkg
+zip Clover_${version}_r${revision}_EFI_x32_x64_pkg.zip Clover_${version}_r${revision}_EFI_x32_x64.pkg.md5
+cd ..
 
-open sym/pkg
+open sym
 
-# Finish making pkg for 32bit + 64bit.
+rm -rf package/Resources
+rm -f package/Distribution
+
+exit 0
+
+# Finish making installer.
+

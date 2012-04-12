@@ -30,6 +30,7 @@ Active partitoin installation
 
 Note: dd can't change boot sector of the system partition. You should start from other partition
  
+Use boot1h2 to boot a bootloaders boot1, boot2, boot3...
 
  EFI Partition Install (FAT32) or to USB stick drive (disk1s1).
   ---------------------------------
@@ -48,6 +49,7 @@ Note: dd can't change boot sector of the system partition. You should start from
    		sudo fdisk440 -f boot0 -u -y /dev/rdisk0
   
    - Install boot1f32 to the partition's bootsector:
+   
 sudo fdisk440 -f boot0 -u -y /dev/rdisk0
 dd if=/dev/rdisk0s1 count=1 bs=512 of=origbs
 cp boot1f32alt newbs

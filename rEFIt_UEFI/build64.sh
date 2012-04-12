@@ -67,14 +67,14 @@ echo "#define FIRMWARE_BUILDDATE \"`date \"+%Y-%m-%d %H:%M:%S\"`\"" >> $WORKSPAC
 #echo "#define FIRMWARE_REVISION \"`svnversion -n | tr -d [:alpha:]`\"" >> $WORKSPACE/Clover/rEFIt_UEFI/Version.h
 echo "#define FIRMWARE_REVISION \"`cat Clover/rEFIt_UEFI/vers.txt`\"" >> $WORKSPACE/Clover/rEFIt_UEFI/Version.h
 #rm -f $WORKSPACE/Clover/rEFIt_UEFI/vers.txt
-
+cp $WORKSPACE/Clover/rEFIt_UEFI/Version.h $WORKSPACE/Clover/CloverPackage/
 #
 # Build the edk2 
 #
 echo $PATH
 echo `which build`
 #build -p $WORKSPACE/UnixPkg/UnixPkg.dsc         -a IA32 -t $TARGET_TOOLS $NETWORK_SUPPORT -n 3 $1 $2 $3 $4 $5 $6 $7 $8
-build -p $WORKSPACE/Clover/rEFIt_UEFI/rEFIt64.dsc -a X64 -t $TARGET_TOOLS -n 3 $*
+build -p $WORKSPACE/Clover/rEFIt_UEFI/rEFIt64.dsc -a X64  -b RELEASE -t $TARGET_TOOLS -n 3 $*
 cp $WORKSPACE/Build/rEFIt/RELEASE_GCC46/X64/CLOVERX64.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/BOOT
 exit $?
 

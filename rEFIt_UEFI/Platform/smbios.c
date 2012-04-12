@@ -1222,7 +1222,10 @@ VOID PatchTableType131()
 {
 	// Get Table Type131
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, 131, 0);
-	if (SmbiosTable.Raw == NULL) {
+	if (SmbiosTable.Raw != NULL) {
+    MsgLog("Table 131 is present, CPUType=%x\n", SmbiosTable.Type131);
+  }
+  
 		ZeroMem((VOID*)newSmbiosTable.Type131, MAX_TABLE_SIZE);
 		newSmbiosTable.Type131->Hdr.Type = 131;
 		newSmbiosTable.Type131->Hdr.Length = sizeof(SMBIOS_STRUCTURE)+2; 
@@ -1231,10 +1234,9 @@ VOID PatchTableType131()
 			newSmbiosTable.Type131->ProcessorType = gSettings.CpuType;
 		Handle = LogSmbiosTable(newSmbiosTable);
 		return;
-	}	
 		
-	LogSmbiosTable(SmbiosTable);
-	return;
+//	LogSmbiosTable(SmbiosTable);
+//	return;
 }
 
 VOID PatchTableType132()

@@ -1,0 +1,130 @@
+#
+# refit.conf
+# Configuration file for the rEFIt boot menu
+#
+
+# Timeout in seconds for the main menu screen. Setting the timeout to 0
+# disables automatic booting (i.e., no timeout).
+#
+timeout 5
+
+# Disable menu options for increased security. These are intended for a lab
+# environment where the administrator doesn't want users to mess with the
+# operating system. List the names for the options you want to hide from
+# the boot menu. Currently supported:
+#  shell       - remove the EFI shell
+#  tools       - remove all EFI tools (shell and gptsync)
+#  optical     - no booting from optical drives
+#  external    - no booting from external disks or USB flash drives
+#  internal    - no booting from internal disks; this setting is not
+#                 recommended because it locks you out of all operating
+#                 systems installed on the internal hard disks.
+#  singleuser  - remove the submenu options to boot Mac OS X in single-user
+#                 or verbose modes
+#  hwtest      - remove the submenu option to run Apple Hardware Test
+#  all         - all of the above, except for 'internal'
+#
+#disable external optical shell singleuser
+#disable all
+disable hwtest
+
+# Note: The 'disableopticalboot' and 'disableexternalboot' options from
+# Charles Ahn's patch are also supported for compatibility. They are
+# equivalent to 'disable optical' and 'disable external', respectively.
+
+# THEME SET
+#theme metal
+#theme black_green
+theme buttons
+
+#Use custom font or embedded
+# alfa - transparent embedded font
+# gray - gray embedded font
+# load - load from file with custom name
+#
+# theme independent
+#
+#font 	alfa
+font load
+
+# this font is default for theme metal and buttons, width=8
+font_file_name 	BoG_LucidaConsole_10W.png
+char_width 10
+
+# this font is used for theme black_green, width=10
+#font_file_name  WoB_PTMono_10W.png
+#char_width 10
+
+# pixel size of letters in text. depends on font and wanted design
+# may differ from letter width allowing overriding
+# default value 7 corresponding embedded font
+#
+#char_width 10
+
+# Use a custom title banner instead of the rEFIt icon and name. The file
+# path is relative to the directory where refit.efi is located. The color
+# in the top left corner of the image is used as the background color
+# for the menu screens. Currently uncompressed BMP images with color
+# depths of 24, 8, 4 or 1 bits are supported.
+# V2 - PNG image supported 
+# The location of the file theme dependent 
+#
+banner logo.png
+
+# Custom images for the selection background. There is a big one (144 x 144)
+# for the OS icons, and a small one (64 x 64) for the function icons in the
+# second row. If only a small image is given, that one is also used for
+# the big icons by stretching it in the middle. If only a big one is given,
+# the built-in default will be used for the small icons.
+#
+# Like the banner option above, these options take a filename of
+# an uncompressed BMP image file.
+# V2 - PNG image supported 
+# theme independent
+#
+selection_big   Selection_big.png
+selection_small Selection_small.png
+
+# Hide the volume badge icons in the graphical main menu. There are three
+# settings:
+#  none      - show all volume badges (default)
+#  internal  - hide badges on internal disk volumes only, allowing you to
+#              distinguish CDs and occasionally connected external disks
+#  all       - never show volume badges (not recommended)
+#
+hidebadges none
+
+# Hide various user interface elements. Here you can list the names of
+# interface elements to hide. Currently supported:
+#  banner    - the rEFIt title banner
+#  shell     - the EFI shell icon
+#  tools     - all EFI tools (shell and gptsync)
+#  funcs     - built-in functions (about, restart)
+#    ('tools' and 'funcs' together hide the complete second row of icons.)
+#  label     - text label in the menu
+#  hdbadges  - volume badges for internal disk volumes (same as
+#               'hidebadges internal')
+#  badges    - all volume badges (same as 'hidebadges all'); this setting
+#               is not recommended because it won't let you distinguish
+#               installed OSes and bootable CDs/DVDs.
+#  all       - all of the above, except for 'badges'
+#
+# Note: The 'shell' and 'tools' options are equivalent to the 'disable'
+# options with the same names.
+#
+#hideui tools funcs hdbadges
+#hideui all
+
+# Use text mode only. When enabled, this option forces rEFIt into text mode.
+#
+#textonly
+
+# List legacy options first. When enabled, legacy BIOS based boot options
+# (e.g. Windows, Linux via LILO or GRUB) will be listed first. This is
+# intended as a quick fix to change the default boot choice until full
+# configurability arrives.
+#
+#legacyfirst
+#nolegacy
+
+# EOF

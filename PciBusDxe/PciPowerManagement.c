@@ -50,12 +50,12 @@ ResetPowerManagementFeature (
   //
   // Turn off the PWE assertion and put the device into D0 State
   //
-  PowerManagementCSR = 0x8000;
+//  PowerManagementCSR = 0x8000;
 
   //
-  // Write PMCSR
+  // Read PMCSR
   //
-  PciIoDevice->PciIo.Pci.Write (
+  Status = PciIoDevice->PciIo.Pci.Read (
                            &PciIoDevice->PciIo,
                            EfiPciIoWidthUint16,
                            PowerManagementRegBlock + 4,
@@ -63,6 +63,27 @@ ResetPowerManagementFeature (
                            &PowerManagementCSR
                            );
 
-  return EFI_SUCCESS;
+  if (!EFI_ERROR (Status)) {
+    //
+    // Clear PME_Status bit
+    //
+    PowerManagementCSR |= BIT15;
+    //
+    // Clear PME_En bit. PowerState = D0.
+    //
+    PowerManagementCSR &= ~(BIT8 | BIT1 | BIT0);
+
+    //
+    // Write PMCSR
+    //
+    Status = PciIoDevice->PciIo.Pci.Write (
+                                      &PciIoDevice->PciIo,
+                                      EfiPciIoWidthUint16,
+                                      PowerManagementRegBlock + 4,
+                                      1,
+                                      &PowerManagementCSR
+                                      );
+  }
+  return Status;
 }
 
