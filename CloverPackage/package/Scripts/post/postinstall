@@ -88,7 +88,14 @@ if [ ! -e "$dest_vol/EFI/BOOT/refit.conf" ]; then
 	chmod 777 "$dest_vol/EFI/BOOT"
 	chmod 666 "$dest_vol/EFI/BOOT/refit.conf"
 fi
-
+if [ -e "$dest_vol/etc/rc.local" ]; then
+chmod 644 "$dest_vol/etc/rc.local"
+chown root:wheel "$dest_vol/etc/rc.local"
+fi
+if [ -e "$dest_vol/etc/rc.shutdown.local" ]; then
+chmod 644 "$dest_vol/etc/rc.shutdown.local"
+chown root:wheel "$dest_vol/etc/rc.shutdown.local"
+fi
 # ---------------------------------------------
 # Cleanup
 # ---------------------------------------------
