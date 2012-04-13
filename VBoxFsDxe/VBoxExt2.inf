@@ -32,9 +32,10 @@
         fsw_lib.c
 
 [Packages]
-        MdePkg/MdePkg.dec
-        IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
-#        VBoxPkg/VBoxPkg.dec
+   MdePkg/MdePkg.dec
+   IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
+   Clover/CloverPkg.dec
+#  VBoxPkg/VBoxPkg.dec
 
 [LibraryClasses]
    UefiRuntimeServicesTableLib
@@ -59,6 +60,7 @@
   gEfiSimpleFileSystemProtocolGuid
   gEfiUnicodeCollationProtocolGuid
   gEfiUnicodeCollation2ProtocolGuid
+  gMsgLogProtocolGuid
 
 [Pcd]
   gEfiMdePkgTokenSpaceGuid.PcdUefiVariableDefaultLang

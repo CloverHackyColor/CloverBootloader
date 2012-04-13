@@ -161,7 +161,6 @@ INF  IntelFrameworkModulePkg/Bus/Isa/IsaBusDxe/IsaBusDxe.inf
 INF  MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
 INF  MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
 #INF  MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
-#INF  Clover/OsxPartitionDxe/PartitionDxe.inf
 INF  Clover/PartitionDxe/PartitionDxe.inf
 
   # ACPI Support
@@ -178,7 +177,9 @@ INF  Clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
 #INF  Clover/SaveResume/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
 #INF  UefiCpuPkg/Universal/Acpi/S3Resume2Pei/S3Resume2Pei.inf
 
-
+  #Misc
+INF  Clover/MsgLog/MsgLog.inf  
+  
   # Binary INF file to support toggle among different CPU architectures.
 INF  RuleOverride=BINARY FatBinPkg/EnhancedFatDxe/Fat.inf
 

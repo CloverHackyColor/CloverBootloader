@@ -686,7 +686,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     } else {
       if (Volume->BlockIO->Media->BlockSize == 2048){
         Volume->DiskKind = DISK_KIND_OPTICAL;
-        Volume->BlockIOOffset = 0x10;
+        Volume->BlockIOOffset = 0; //0x10; //no offset already applyed!
       } else {
         Volume->BlockIOOffset = 0;
       }
@@ -790,6 +790,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
       CopyMem(DiskDevicePath, Volume->DevicePath, PartialLength);
       CopyMem((UINT8 *)DiskDevicePath + PartialLength, DevicePath, sizeof(EFI_DEVICE_PATH)); //EndDevicePath
 //      Print(L"WholeDevicePath  %s\n", DevicePathToStr(DiskDevicePath));
+      DBG("WholeDevicePath  %s\n", DevicePathToStr(DiskDevicePath));
       RemainingDevicePath = DiskDevicePath;
       Status = gBS->LocateDevicePath(&gEfiDevicePathProtocolGuid, &RemainingDevicePath, &WholeDiskHandle);
       if (EFI_ERROR(Status)) {
@@ -799,7 +800,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
         // look at the BlockIO protocol
         Status = gBS->HandleProtocol(WholeDiskHandle, &gEfiBlockIoProtocolGuid, (VOID **) &Volume->WholeDiskBlockIO);
         if (!EFI_ERROR(Status)) {
-//          DBG("WholeDiskBlockIO BlockSize=%d\n", Volume->WholeDiskBlockIO->Media->BlockSize);
+           DBG("WholeDiskBlockIO %x BlockSize=%d\n", Volume->WholeDiskBlockIO, Volume->WholeDiskBlockIO->Media->BlockSize);
           // check the media block size
           if (Volume->WholeDiskBlockIO->Media->BlockSize == 2048)
             Volume->DiskKind = DISK_KIND_OPTICAL;
@@ -813,9 +814,9 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
       }
       FreePool(DiskDevicePath);
     }
-/*  else {
+  else {
     DBG("HD path is not found\n");
-  }*/
+  }
 
     if (!Bootable) {
 #if REFIT_DEBUG > 0
@@ -1040,7 +1041,7 @@ VOID ScanVolumes(VOID)
         if (Volume->BlockIO != NULL && Volume->WholeDiskBlockIO != NULL &&
             Volume->BlockIO == Volume->WholeDiskBlockIO && Volume->BlockIOOffset == 0 &&
             Volume->MbrPartitionTable != NULL) {
-//          DBG("Volume %d has MBR\n", VolumeIndex);
+            DBG("Volume %d has MBR\n", VolumeIndex);
             MbrTable = Volume->MbrPartitionTable;
             for (PartitionIndex = 0; PartitionIndex < 4; PartitionIndex++) {
                 if (IS_EXTENDED_PART_TYPE(MbrTable[PartitionIndex].Type)) {

@@ -30,6 +30,7 @@
   AcpiPlatform.c
 
 [Packages]
+  Clover/CloverPkg.dec
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
 
@@ -58,6 +59,7 @@
   gEfiAcpiTableProtocolGuid                     # PROTOCOL ALWAYS_CONSUMED
 #  gEfiLoadedImageProtocolGuid
   gEfiSimpleFileSystemProtocolGuid
+  gMsgLogProtocolGuid
 
 [Pcd]
 #  gEfiMdeModulePkgTokenSpaceGuid.PcdAcpiTableStorageFile

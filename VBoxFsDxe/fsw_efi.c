@@ -61,6 +61,10 @@
 #endif
 #endif
 
+CHAR8 *msgCursor;
+MESSAGE_LOG_PROTOCOL *Msg; 
+
+
 /** Helper macro for stringification. */
 #define FSW_EFI_STRINGIFY(x) L#x
 /** Expands to the EFI driver name given the file system type name. */
@@ -202,6 +206,12 @@ EFI_STATUS EFIAPI fsw_efi_main(IN EFI_HANDLE         ImageHandle,
     }
 
 //	OverrideFunctions();
+  Msg = NULL;
+  msgCursor = NULL;
+  Status = BS->LocateProtocol(&gMsgLogProtocolGuid, NULL, (VOID **) &Msg);
+  if (!EFI_ERROR(Status) && (Msg != NULL)) {
+    msgCursor = Msg->Cursor;
+  }
 
     return EFI_SUCCESS;
 }

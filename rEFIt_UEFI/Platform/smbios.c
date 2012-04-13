@@ -1224,6 +1224,7 @@ VOID PatchTableType131()
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, 131, 0);
 	if (SmbiosTable.Raw != NULL) {
     MsgLog("Table 131 is present, CPUType=%x\n", SmbiosTable.Type131);
+    MsgLog("Change to: %x\n", gSettings.CpuType);
   }
   
 		ZeroMem((VOID*)newSmbiosTable.Type131, MAX_TABLE_SIZE);

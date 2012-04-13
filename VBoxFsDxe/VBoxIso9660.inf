@@ -32,6 +32,7 @@
         fsw_lib.c
 
 [Packages]
+    Clover/CloverPkg.dec
         MdePkg/MdePkg.dec
         IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
 #        VBoxPkg/VBoxPkg.dec
@@ -59,6 +60,7 @@
   gEfiSimpleFileSystemProtocolGuid
   gEfiUnicodeCollationProtocolGuid
   gEfiUnicodeCollation2ProtocolGuid
+  gMsgLogProtocolGuid
 
 [Pcd]
   gEfiMdePkgTokenSpaceGuid.PcdUefiVariableDefaultLang

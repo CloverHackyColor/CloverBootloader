@@ -7,14 +7,14 @@
  *
  */
 
-#include "MsgLog.h"
+#include <Protocol/MsgLog.h>
 
 MESSAGE_LOG_PROTOCOL MsgLogProtocol;
 EFI_HANDLE              mHandle = NULL;
 
-CHAR8 *msgbuf = NULL;
-CHAR8 *msgCursor = NULL;
-#define BOOTER_LOG_SIZE	(4 * 1024)
+//CHAR8 *msgbuf = NULL;
+//CHAR8 *msgCursor = NULL;
+//define BOOTER_LOG_SIZE	(4 * 1024)
 
 //Status = gBS->UninstallMultipleProtocolInterfaces (
   // Free  protocol occupied resource
@@ -40,20 +40,23 @@ MsgLogEntrypoint (
                     )
 {
   EFI_STATUS					Status = EFI_SUCCESS;
+  EFI_BOOT_SERVICES*			gBS; 
+  CHAR8    *tmp;
+  
+  gBS				= SystemTable->BootServices;
   mHandle = NULL;
   Status = gBS->AllocatePool (
                  EfiBootServicesData,
                  BOOTER_LOG_SIZE,
-                 (VOID**) &MsgLogProtocol->Log
+                 (VOID**) &tmp
                  );
 	if (EFI_ERROR (Status)) {
 		return Status;
 	}
-  
-  gBS->SetMem (MsgLogProtocol->Log, BOOTER_LOG_SIZE, 0);
-	
-	MsgLogProtocol->Cursor = MsgLogProtocol->Log;
-  MsgLogProtocol->SizeOfLog = 0;
+  gBS->SetMem (tmp, BOOTER_LOG_SIZE, 0);
+  MsgLogProtocol.Log = tmp;	
+	MsgLogProtocol.Cursor = tmp;
+  MsgLogProtocol.SizeOfLog = 0;
   
   Status = gBS->InstallMultipleProtocolInterfaces (
                 &mHandle,

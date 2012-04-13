@@ -48,7 +48,9 @@
 #define ISO9660_BLOCKSIZE_BITS       11
 //! Block number where the ISO9660 superblock resides.
 #define ISO9660_SUPERBLOCK_BLOCKNO   16
-
+//Slice - we already have shifted blockIO by 16
+//but we should use ParentBlockIo
+//#define ISO9660_SUPERBLOCK_BLOCKNO   0
 
 #pragma pack(1)
 

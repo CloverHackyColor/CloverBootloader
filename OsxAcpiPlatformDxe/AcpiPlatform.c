@@ -52,13 +52,19 @@
 #include <Library/PcdLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/HobLib.h>
-//#include <Library/PrintLib.h>
+#include <Library/PrintLib.h>
 
 #include <IndustryStandard/Acpi.h>
 //#include "HobGeneration.h"
+#include <Protocol/MsgLog.h> 
+
 #include "AcpiTable.h"
 
 #define RoundPage(x)  ((((unsigned)(x)) + EFI_PAGE_SIZE - 1) & ~(EFI_PAGE_SIZE - 1))
+
+CHAR8 *msgCursor;
+MESSAGE_LOG_PROTOCOL *Msg; 
+
 
 #pragma pack(1)
 
@@ -368,7 +374,14 @@ AcpiPlatformEntryPoint (
 	EFI_ACPI_DESCRIPTION_HEADER		*Table;
 	SIGNAT							Signature;
 	EFI_ACPI_TABLE_INSTANCE			*AcpiInstance;
-	
+
+  Msg = NULL;
+  Status = gBS->LocateProtocol(&gMsgLogProtocolGuid, NULL, (VOID **) &Msg);
+  if (!EFI_ERROR(Status) && (Msg != NULL)) {
+    msgCursor = Msg->Cursor;
+    BootLog("MsgLog Protocol installed in AcpiPlatform\n");
+ }
+
 	//
 	// Find the AcpiTable protocol
 	//

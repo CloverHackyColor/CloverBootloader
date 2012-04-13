@@ -26,7 +26,7 @@
   ENTRY_POINT                    = InitializeCpu
 
 [Packages]
-  DuetPkg/DuetPkg.dec
+  Clover/CloverPkg.dec
   MdePkg/MdePkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
 

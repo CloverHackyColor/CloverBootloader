@@ -93,12 +93,14 @@
   GenericBdsLib|Clover/GenericBdsLib/GenericBdsLib.inf
   SecurityManagementLib|MdeModulePkg/Library/DxeSecurityManagementLib/DxeSecurityManagementLib.inf
   CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibNull/DxeCapsuleLibNull.inf
+  #PeCoffExtraActionLib|MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
   #
   # Platform
   #
   #PlatformBdsLib|DuetPkg/Library/DuetBdsLib/PlatformBds.inf
   PlatformBdsLib|Clover/OsxBdsPlatformLib/PlatformBds.inf
-  TimerLib|DuetPkg/Library/DuetTimerLib/DuetTimerLib.inf
+  #TimerLib|DuetPkg/Library/DuetTimerLib/DuetTimerLib.inf
+  TimerLib|Clover/DuetTimerLib/DuetTimerLib.inf
   #
   # Misc
   #
@@ -308,6 +310,7 @@
 	#Clover/OsxMmcDxe/MmcDxe.inf
 #Video
   IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
+  #Clover/VBoxVgaMiniPort/VgaMiniPortDxe.inf
   #IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
   #Clover/VgaClassDxe/VgaClassDxe.inf
   #Clover/IntelGmaDxe/Gop.inf
@@ -367,7 +370,6 @@
   #Clover/SaveResume/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
   #UefiCpuPkg/Universal/Acpi/S3Resume2Pei/S3Resume2Pei.inf
 
-
   # Bios Thunk
   #IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf
   #IntelFrameworkModulePkg/Csm/LegacyBiosDxe/LegacyBiosDxe.inf
@@ -377,10 +379,11 @@
   #IntelFrameworkModulePkg/Universal/LegacyRegionDxe/LegacyRegionDxe.inf
   MdeModulePkg/Universal/LegacyRegion2Dxe/LegacyRegion2Dxe.inf
 
-  #FSInject
-  
+  # Misc
+
   Clover/FSInject/FSInject.inf
 
+  Clover/MsgLog/MsgLog.inf
   #
   # Sample Application
   #

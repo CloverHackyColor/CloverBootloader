@@ -102,13 +102,13 @@
 
 
 [Packages]
-#	DuetPkg/DuetPkg.dec
+	Clover/CloverPkg.dec
     MdePkg/MdePkg.dec
     MdeModulePkg/MdeModulePkg.dec
 #    ShellPkg/ShellPkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
   IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
-  Clover/FSInject/FSInject.dec
+#  Clover/FSInject/FSInject.dec
 
 [LibraryClasses]
   UefiApplicationEntryPoint
@@ -133,6 +133,10 @@
   gEfiAcpiTableGuid
   gEfiAcpi10TableGuid
   gEfiAcpi20TableGuid
+  gEfiAppleBootGuid
+  gEfiAppleNvramGuid
+  gEfiAppleScreenInfoGuid
+  gEfiAppleVendorGuid
   gEfiDxeServicesTableGuid
   gEfiEventReadyToBootGuid
   gEfiEventVirtualAddressChangeGuid
@@ -141,7 +145,6 @@
   gEfiFileSystemInfoGuid                        ## CONSUMES ## GUID
   gEfiFileSystemVolumeLabelInfoIdGuid
   gEfiGlobalVariableGuid
-#  gEfiLegacy8259ProtocolGuid
   gEfiPartTypeLegacyMbrGuid
   gEfiPartTypeSystemPartGuid
   gEfiSmbiosTableGuid
@@ -170,6 +173,7 @@
   gEfiFirmwareVolume2ProtocolGuid               # PROTOCOL CONSUMES
   gEfiGraphicsOutputProtocolGuid                # PROTOCOL SOMETIMES_CONSUMES
   gEfiHiiFontProtocolGuid                       # PROTOCOL CONSUMES
+  gEfiLegacy8259ProtocolGuid					## PROTOCOL SOMETIMES_CONSUMES
   gEfiLoadedImageProtocolGuid                   # PROTOCOL CONSUMES
   gEfiOEMBadgingProtocolGuid                    # PROTOCOL CONSUMES
   gEfiPciIoProtocolGuid                         # PROTOCOL CONSUMES 
@@ -192,10 +196,12 @@
   gEfiScsiPassThruProtocolGuid                  ## PROTOCOL SOMETIMES_CONSUMES
   gEfiExtScsiPassThruProtocolGuid               ## PROTOCOL SOMETIMES_CONSUMES
 
-
-  gFSInjectProtocolGuid
+  AppleDevicePropertyProtocolGuid
+  gEfiConsoleControlProtocolGuid
   
-
+  gFSInjectProtocolGuid
+  gMsgLogProtocolGuid
+  
 [FeaturePcd]
   gEfiMdePkgTokenSpaceGuid.PcdUgaConsumeSupport
 

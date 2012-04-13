@@ -58,6 +58,8 @@
 #include "VBoxFswParam.h"
 #endif
 
+#include <Protocol/MsgLog.h> 
+
 #ifndef FSW_DEBUG_LEVEL
 /**
  * Global debugging level. Can be set locally for the scope of a single

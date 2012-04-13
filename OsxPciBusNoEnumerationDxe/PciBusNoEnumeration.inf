@@ -25,7 +25,7 @@
 
 [Packages]
   MdePkg/MdePkg.dec
-  DuetPkg/DuetPkg.dec
+  Clover/CloverPkg.dec
 
 [LibraryClasses]
   DebugLib

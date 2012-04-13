@@ -38,7 +38,7 @@
 #  Debug.h
 #  PeLoader.h
 #  Support.h
-#  EfiLdrHandoff.h
+  EfiLdrHandoff.h
 #  EfiLdr.h
   EfiLoader.c
 //  Debug.c

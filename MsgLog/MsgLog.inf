@@ -24,6 +24,7 @@
   ENTRY_POINT                    = MsgLogEntrypoint
   
 [Packages]
+  Clover/CloverPkg.dec
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
 
@@ -39,7 +40,6 @@
   PrintLib
   
 [Sources]
-  MsgLog.h
   MsgLog.c
 
 [Guids]

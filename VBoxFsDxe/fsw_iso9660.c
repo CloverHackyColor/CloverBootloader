@@ -60,8 +60,23 @@
  */
 
 #include "fsw_iso9660.h"
+#include <Protocol/MsgLog.h>
 
+#ifndef DEBUG_ISO
+#define DEBUG_ISO 1
+#endif
 
+#if DEBUG_ISO == 2
+#define DBG(x...)	AsciiPrint(x)
+#elif DEBUG_ISO == 1
+#define DBG(x...)	BootLog(x)
+#else
+#define DBG(x...)
+#endif
+
+//#define MsgLog(x...) if(msgCursor){AsciiSPrint(msgCursor, BOOTER_LOG_SIZE, x); while(*msgCursor){msgCursor++;}}
+
+extern CHAR8     *msgCursor;
 // functions
 
 static fsw_status_t fsw_iso9660_volume_mount(struct fsw_iso9660_volume *vol);
@@ -284,6 +299,7 @@ static fsw_status_t fsw_iso9660_volume_mount(struct fsw_iso9660_volume *vol)
             // descriptor follows ISO 9660 standard
             if (voldesc_type == 1 && voldesc->volume_descriptor_version == 1) {
                 // suitable Primary Volume Descriptor found
+              DBG("iso9660: suitable Primary Volume Descriptor found\n");
                 if (vol->primary_voldesc) {
                     fsw_free(vol->primary_voldesc);
                     vol->primary_voldesc = NULL;
@@ -332,6 +348,7 @@ static fsw_status_t fsw_iso9660_volume_mount(struct fsw_iso9660_volume *vol)
             || pvoldesc->escape[2] == 0x45))
     {
  //       FSW_MSG_DEBUG((FSW_MSGSTR("fsw_iso9660_volume_mount: success (joliet!!!)\n")));
+      DBG("fsw_iso9660_volume_mount: success (joliet!!!)\n");
         vol->fJoliet = 1;
     }
 
@@ -354,7 +371,8 @@ static fsw_status_t fsw_iso9660_volume_mount(struct fsw_iso9660_volume *vol)
         {
             vol->fRockRidge = 1;
         } else {
-            FSW_MSG_DEBUG((FSW_MSGSTR("fsw_iso9660_volume_mount: SP magic isn't valid\n")));
+ //           FSW_MSG_DEBUG((FSW_MSGSTR("fsw_iso9660_volume_mount: SP magic isn't valid\n")));
+          DBG("fsw_iso9660_volume_mount: SP magic isn't valid\n");
         }
         skip = sp->skip;
     }
@@ -365,6 +383,7 @@ static fsw_status_t fsw_iso9660_volume_mount(struct fsw_iso9660_volume *vol)
 
 
 //    FSW_MSG_DEBUG((FSW_MSGSTR("fsw_iso9660_volume_mount: success\n")));
+  DBG("fsw_iso9660_volume_mount: success\n");
 
     return FSW_SUCCESS;
 }

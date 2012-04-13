@@ -40,7 +40,7 @@
   ComponentName.c
   Mbr.c
   Gpt.c
-#  ElTorito.c
+  ElTorito.c
   Apple.c
   Partition.c
   Partition.h

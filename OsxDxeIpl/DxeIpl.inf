@@ -24,8 +24,8 @@
   VERSION_STRING                 = 1.0
 
 [Packages]
+  Clover/CloverPkg.dec
   MdePkg/MdePkg.dec
-  DuetPkg/DuetPkg.dec
   MdeModulePkg/MdeModulePkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
 
@@ -42,7 +42,7 @@
   gLdrMemoryDescriptorGuid
 
 [Sources]
-#  DxeIpl.h
+  DxeIpl.h
   DxeInit.c
   LegacyTable.c
 #  LegacyTable.h

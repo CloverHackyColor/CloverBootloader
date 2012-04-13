@@ -36,7 +36,7 @@
 [Packages]
         MdePkg/MdePkg.dec
         IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
-        DuetPkg/DuetPkg.dec
+        Clover/CloverPkg.dec
 #        VBoxPkg/VBoxPkg.dec
 
 [LibraryClasses]
@@ -61,6 +61,7 @@
   gEfiSimpleFileSystemProtocolGuid
   gEfiUnicodeCollationProtocolGuid
   gEfiUnicodeCollation2ProtocolGuid
+  gMsgLogProtocolGuid
 
 [Pcd]
   gEfiMdePkgTokenSpaceGuid.PcdUefiVariableDefaultLang

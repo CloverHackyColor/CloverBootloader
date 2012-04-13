@@ -101,6 +101,8 @@ echo "-gcc46"
 echo
 echo "Example: ./cbuild.sh -xcode -ia32 -release"
 echo "Example: ./cbuild.sh -gcc46 -x64 -release"
+echo "example: ./cbuild.sh -32"
+echo "example: ./cbuild.sh -64"
 echo
 echo "If you want to clean a build:"
 echo "Example: ./cbuild.sh -xcode -ia32 -release -clean"
@@ -141,17 +143,26 @@ echo "Example: ./cbuild.sh -gcc46 -x64 -release"
         '-gcc46')
          fnGCC46
         ;;
+        '-32')
+         fnXcode
+         fnArchIA32
+        ;;
+        '-64')
+         fnGCC46
+         fnArchX64
+        ;;
         *)
          echo $"ERROR!"
          echo $"COMPILER: {-xcode|-xcode4|-clang|-unixgcc|-gcc46}"
-        exit 1
+		echo $"or default {-32|-64}"
+        exit 1		
     esac
 
 # 2. Argument Case
     case "$2" in
-        '')
-        fnHelpArgument && exit
-        ;;
+#        '')
+#        fnHelpArgument && exit
+#        ;;
         '-ia32')
          fnArchIA32
         ;;
@@ -159,16 +170,18 @@ echo "Example: ./cbuild.sh -gcc46 -x64 -release"
          fnArchX64
         ;;
         *)
-         echo $"ERROR!"
-         echo $"ARCH: {-ia32|-x64}"
-        exit 1
+#         echo $"ERROR!"
+#         echo $"ARCH: {-ia32|-x64}"
+#        exit 1
+		echo $"using default for compiler"
+		;;
     esac
 
 # 3. Argument Case
     case "$3" in
-        '')
-         fnHelpArgument && exit
-        ;;
+#        '')
+#         fnHelpArgument && exit
+#        ;;
         '-debug')
          fnDebug
         ;;
@@ -177,9 +190,12 @@ echo "Example: ./cbuild.sh -gcc46 -x64 -release"
          fnRelease
         ;;
         *)
-         echo $"ERROR!"
-         echo $"TYPE: {-debug|-release}"
-        exit 1
+#         echo $"ERROR!"
+#         echo $"TYPE: {-debug|-release}"
+#        exit 1
+		 echo $"default -release"
+		 fnRelease
+		 ;;
     esac
 
 # 4. Argument Case
@@ -201,7 +217,7 @@ fnMainBuildScript ()
 {
 set -e
 shopt -s nocasematch
-
+svnversion -n | tr -d [:alpha:] >vers.txt
 #
 # Setup workspace if it is not set
 #
@@ -252,12 +268,13 @@ build -p $WORKSPACE/Clover/Clover$Processor.dsc -a $PROCESSOR -b $VTARGET -t $TA
 exit $?
 fi
 
-# Build the edk2 DuetPkg
+# Build the CloverPkg
 echo Running edk2 build for Clover$Processor
 #rm $WORKSPACE/Clover/Version.h
 echo "#define FIRMWARE_VERSION \"2.31\"" > $WORKSPACE/Clover/Version.h
 echo "#define FIRMWARE_BUILDDATE \"`date \"+%Y-%m-%d %H:%M:%S\"`\"" >> $WORKSPACE/Clover/Version.h
-echo "#define FIRMWARE_REVISION L\"`svnversion -n | tr -d [:alpha:]`\"" >> $WORKSPACE/Clover/Version.h
+#echo "#define FIRMWARE_REVISION L\"`svnversion -n | tr -d [:alpha:]`\"" >> $WORKSPACE/Clover/Version.h
+echo "#define FIRMWARE_REVISION L\"`cat Clover/vers.txt`\"" >> $WORKSPACE/Clover/Version.h
 
 build -p $WORKSPACE/Clover/Clover$Processor.dsc -a $PROCESSOR -b $VTARGET -t $TARGET_TOOLS -n 3 $*
 
@@ -304,11 +321,12 @@ cat $BOOTSECTOR_BIN_DIR/start32.com $BOOTSECTOR_BIN_DIR/efi32.com3 $BUILD_DIR/FV
 cat $BOOTSECTOR_BIN_DIR/start32H.com2 $BOOTSECTOR_BIN_DIR/efi32.com3 $BUILD_DIR/FV/Efildr32 > $BUILD_DIR/FV/boot
 cp -v $BUILD_DIR/FV/boot $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/ia32/
 cp -v $BUILD_DIR/IA32/FSInject.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers32/FSInject-32.efi
-cp -v $BUILD_DIR/IA32/VBoxIso9600.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers32/VBoxIso9600-32.efi
-cp -v $BUILD_DIR/IA32/VBoxExt2.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers32/VBoxExt2-32.efi
+cp -v $BUILD_DIR/IA32/VBoxIso9600.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32/VBoxIso9600-32.efi
+cp -v $BUILD_DIR/IA32/VBoxExt2.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32/VBoxExt2-32.efi
 cp -v $BUILD_DIR/IA32/Ps2KeyboardDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32/Ps2KeyboardDxe-32.efi
 cp -v $BUILD_DIR/IA32/Ps2MouseAbsolutePointerDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32/Ps2MouseAbsolutePointerDxe-32.efi
 cp -v $BUILD_DIR/IA32/Ps2MouseDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32/Ps2MouseDxe-32.efi
+cp -v $BUILD_DIR/IA32/UsbMouseDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32/UsbMouseDxe-32.efi
 cp -v $BUILD_DIR/IA32/XhciDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32/XhciDxe-32.efi
 
 echo Done!
@@ -329,12 +347,13 @@ $BASETOOLS_DIR/GenPage $BUILD_DIR/FV/Efildr20Pure -o $BUILD_DIR/FV/Efildr20
 dd if=$BUILD_DIR/FV/Efildr20 of=$BUILD_DIR/FV/boot bs=512 skip=1
 cp -v $BUILD_DIR/FV/boot $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/x64/
 cp -v $BUILD_DIR/X64/FSInject.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64/FSInject-64.efi
-cp -v $BUILD_DIR/X64/VBoxIso9600.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64/VBoxIso9600-64.efi
-cp -v $BUILD_DIR/X64/VBoxExt2.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64/VBoxExt2-64.efi
+cp -v $BUILD_DIR/X64/VBoxIso9600.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/VBoxIso9600-64.efi
+cp -v $BUILD_DIR/X64/VBoxExt2.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/VBoxExt2-64.efi
 
 cp -v $BUILD_DIR/X64/Ps2KeyboardDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/Ps2KeyboardDxe-64.efi
 cp -v $BUILD_DIR/X64/Ps2MouseAbsolutePointerDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/Ps2MouseAbsolutePointerDxe-64.efi
 cp -v $BUILD_DIR/X64/Ps2MouseDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/Ps2MouseDxe-64.efi
+cp -v $BUILD_DIR/X64/UsbMouseDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/UsbMouseDxe-64.efi
 cp -v $BUILD_DIR/X64/XhciDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/XhciDxe-64.efi
 echo Done!
 fi

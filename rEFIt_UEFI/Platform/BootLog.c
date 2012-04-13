@@ -4,7 +4,7 @@
  *
  *  Created by Slice on 19.08.11.
 
- *  Initial concept from Kabyl
+ *  Initial idea from Kabyl
  */
 
 
@@ -17,8 +17,22 @@ CHAR8 *msgCursor = 0;
 
 VOID InitBooterLog(VOID)
 {
-	msgbuf = AllocateZeroPool(BOOTER_LOG_SIZE);
+  EFI_STATUS		Status	= EFI_SUCCESS;
+  MESSAGE_LOG_PROTOCOL*         Msg;
+  INTN  N;
+   
+	msgbuf = AllocateZeroPool(MSG_LOG_SIZE);
 	msgCursor = msgbuf;
+  
+  Status = gBS->LocateProtocol (&gMsgLogProtocolGuid, NULL, (VOID **)&Msg);
+   
+   if (!EFI_ERROR (Status)) 
+   {
+     N =(INTN)(Msg->Cursor - Msg->Log);
+     MsgLog("Log from Clover size=%d:\n", N);
+     MsgLog("%a\n", (CHAR8*)Msg->Log);
+     FreePool(Msg->Log);
+   }
 }
 
 EFI_STATUS SetupBooterLog(VOID)

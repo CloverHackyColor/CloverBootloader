@@ -1062,8 +1062,9 @@ static VOID ScanLegacy(VOID)
             HideIfOthersFound = TRUE;
         } else if (Volume->HasBootCode) {
             ShowVolume = TRUE;
-          DBG("Volume %d will be shown\n", VolumeIndex);
-            if (Volume->BlockIO == Volume->WholeDiskBlockIO && //never occured
+          DBG("Volume %d will be shown BlockIo=%x WholeIo=%x\n",
+              VolumeIndex, Volume->BlockIO, Volume->WholeDiskBlockIO);
+            if ((Volume->WholeDiskBlockIO == 0) &&
                 Volume->BlockIOOffset == 0 /* &&
                 Volume->OSName == NULL */)
                 // this is a whole disk (MBR) entry; hide if we have entries for partitions
@@ -1074,7 +1075,7 @@ static VOID ScanLegacy(VOID)
             // check for other bootable entries on the same disk
             for (VolumeIndex2 = 0; VolumeIndex2 < VolumesCount; VolumeIndex2++) {
                 if (VolumeIndex2 != VolumeIndex && Volumes[VolumeIndex2]->HasBootCode &&
-                    Volumes[VolumeIndex2]->WholeDiskBlockIO == Volume->WholeDiskBlockIO){
+                    Volumes[VolumeIndex2]->BlockIO == Volume->WholeDiskBlockIO){
                     ShowVolume = FALSE;
                   DBG("Master volume at index %d\n", VolumeIndex2);
                 }

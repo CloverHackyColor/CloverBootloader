@@ -43,6 +43,7 @@ Headers collection for procedures
 #include <Protocol/Variable.h>
 
 #include <Protocol/FSInjectProtocol.h>
+#include <Protocol/MsgLog.h>
 
 #include "lib.h"
 #include "boot.h"
@@ -100,8 +101,8 @@ Headers collection for procedures
 
 #define SAFE_LOG_SIZE	80
 
-#define BOOTER_LOG_SIZE	(64 * 1024)
-#define MsgLog(x...) {AsciiSPrint(msgCursor, BOOTER_LOG_SIZE, x); while(*msgCursor){msgCursor++;}}
+#define MSG_LOG_SIZE	(64 * 1024)
+#define MsgLog(x...) {AsciiSPrint(msgCursor, MSG_LOG_SIZE, x); while(*msgCursor){msgCursor++;}}
 
 #define CPU_MODEL_DOTHAN        0x0D
 #define CPU_MODEL_YONAH         0x0E

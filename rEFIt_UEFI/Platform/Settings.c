@@ -625,18 +625,6 @@ EFI_STATUS GetEdid(VOID)
 	EFI_STATUS						Status;
 //	UINTN i, j;
   UINTN N;
-/*	EFI_EDID_ACTIVE_PROTOCOL*                EdidActive;
-
-  //	EFI_GRAPHICS_OUTPUT_PROTOCOL	*GraphicsOutput=NULL;
-	Status = gBS->LocateProtocol (&gMsgLogProtocolGuid, NULL, (VOID **)&EdidActive);
-	
-	if (!EFI_ERROR (Status)) 
-	{
-		N = EdidActive->SizeOfEdid;
-		MsgLog("Log from Clover:\n");
-		MsgLog("%a\n", (CHAR8*)EdidActive->Edid);
-	}
-*/  
 	Status = gBS->LocateProtocol (&gEfiEdidDiscoveredProtocolGuid, NULL, (VOID **)&EdidDiscovered);
 	
 	if (!EFI_ERROR (Status)) 

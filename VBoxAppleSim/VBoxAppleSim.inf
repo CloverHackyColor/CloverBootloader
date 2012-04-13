@@ -38,7 +38,7 @@
         MdeModulePkg/MdeModulePkg.dec
         IntelFrameworkPkg/IntelFrameworkPkg.dec
         IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
-        DuetPkg/DuetPkg.dec
+        Clover/CloverPkg.dec
 # VBoxPkg/VBoxPkg.dec
 
 [LibraryClasses]
