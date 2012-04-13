@@ -13,7 +13,7 @@ Copyright (c) 2006 JLA
 #include "Platform.h"
 #include "LegacyBiosThunk.h"
 
-#define DEBUG_LBOOT 1
+#define DEBUG_LBOOT 2
 
 #if DEBUG_LBOOT == 2
 #define DBG(x...) AsciiPrint(x)

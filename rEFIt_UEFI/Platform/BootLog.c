@@ -28,10 +28,17 @@ VOID InitBooterLog(VOID)
    
    if (!EFI_ERROR (Status)) 
    {
-     N =(INTN)(Msg->Cursor - Msg->Log);
-     MsgLog("Log from Clover size=%d:\n", N);
-     MsgLog("%a\n", (CHAR8*)Msg->Log);
-     FreePool(Msg->Log);
+     if (Msg->Log && Msg->Cursor) {
+       N =(INTN)(Msg->Cursor - Msg->Log);
+       if ((N > 0) && (N < MSG_LOG_SIZE)) {
+         MsgLog("Log from Clover size=%d:\n", N);
+         MsgLog("%a\n", (CHAR8*)Msg->Log);
+         FreePool(Msg->Log);         
+       }
+       else {
+         MsgLog("no BootLog from CloverEFI\n");
+       }
+     }
    }
 }
 

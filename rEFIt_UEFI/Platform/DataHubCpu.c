@@ -15,7 +15,7 @@
  * hope that it will be useful, but WITHOUT ANY WARRANTY of any kind.
  */
 
-#define DEBUG_DH 2
+#define DEBUG_DH 1
 
 #if DEBUG_DH == 2
 #define DBG(x...) AsciiPrint(x)
@@ -177,7 +177,6 @@ VOID SetupDataForOSX()
 	Status = gBS->LocateProtocol(&gEfiDataHubProtocolGuid, NULL, (VOID**)&gDataHub);
 	if (!EFI_ERROR (Status)) 
 	{
-//		KextListSize = GetKextListSize();
 //		productName = EfiStrDuplicate(gSettings.ProductName);
 //		serialNumber = EfiStrDuplicate(gSettings.SerialNr);
     AsciiStrToUnicodeStr(gSettings.ProductName, productName);
@@ -193,7 +192,6 @@ VOID SetupDataForOSX()
 		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"SystemSerialNumber", serialNumber, StrSize(serialNumber));
 //    DBG("Custom UUID=%g\n", gUuid);
 //    Status =  LogDataHub(&gEfiMiscSubClassGuid, L"system-id", &gUuid, sizeof(EFI_GUID));		
-//		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"kext", &gKextList, KextListSize);    
 		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"Clover", CloverVersion, StrSize(CloverVersion));
 	}
 }

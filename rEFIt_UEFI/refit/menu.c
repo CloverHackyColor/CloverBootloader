@@ -693,7 +693,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
   }
 //  DBG("before cleanup\n");
   StyleFunc(Screen, &State, MENU_FUNCTION_CLEANUP, NULL);
-   DBG("after cleanup\n"); 
+//   DBG("after cleanup\n"); 
   if (ChosenEntry)
     *ChosenEntry = Screen->Entries[State.CurrentSelection];
   *DefaultEntryIndex = State.CurrentSelection;

@@ -46,6 +46,10 @@ EFI_STATUS GetNVRAMSettings(IN EFI_FILE *RootDir, CHAR16* NVRAMPlistPath)
 		DBG(" nvram.plist not present\n");
 		return Status;
 	}
+  else {
+    DBG(" nvram.plist loaded, size=%d\n", size);
+  }
+
   /* check again:
 	 fileInfo->EFI_TIME  ModificationTime;
 	 /// EFI Time Abstraction:
@@ -80,7 +84,7 @@ EFI_STATUS GetNVRAMSettings(IN EFI_FILE *RootDir, CHAR16* NVRAMPlistPath)
 		if(prop)
 		{
 			efiBootDevice = XMLDecode(prop->string);
-			MsgLog("efi-boot-device = %a\n", efiBootDevice); 
+			DBG("efi-boot-device = %a\n", efiBootDevice); 
 			
 	//		Status = XMLParseNextTag(efiBootDevice, &dictPointer, &size);
 			while (TRUE)
@@ -90,7 +94,7 @@ EFI_STATUS GetNVRAMSettings(IN EFI_FILE *RootDir, CHAR16* NVRAMPlistPath)
 					break;
 				
 				pos += size;
-				MsgLog("parsing pos=%d size=%d\n", pos, size);
+				DBG("parsing pos=%d size=%d\n", pos, size);
 				if (dict == NULL) 
 					continue;
 				if (dict->type == kTagTypeArray) 
@@ -101,7 +105,7 @@ EFI_STATUS GetNVRAMSettings(IN EFI_FILE *RootDir, CHAR16* NVRAMPlistPath)
 			
 			if(dict)
 			{
-				MsgLog("Parse efi-boot-device success, size=%d!\n", size);
+				DBG("Parse efi-boot-device success, size=%d!\n", size);
 				DBG("dict type = %d\n", dict->type);
 				if (dict->type == kTagTypeArray) {
 					dict = dict->tag; //go inside
@@ -119,7 +123,7 @@ EFI_STATUS GetNVRAMSettings(IN EFI_FILE *RootDir, CHAR16* NVRAMPlistPath)
 						prop = GetProperty(dictPointer, "UUID");
 						if(prop)
 						{
-							MsgLog("UUID property type=%d string=%a\n", prop->type, prop->string);
+							DBG("UUID property type=%d string=%a\n", prop->type, prop->string);
               //AsciiStrToUnicodeStr(prop->string, gSelectedUUID);
               AsciiStrCpy(gSelectedUUID, prop->string);
 						}									

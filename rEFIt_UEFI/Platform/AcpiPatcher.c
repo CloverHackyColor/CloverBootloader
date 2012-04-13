@@ -267,6 +267,7 @@ VOID DropTableFromRSDT (UINT32 Signature)
       for (Index2 = Index; Index2 < EntryCount; Index2++) {
         *Ptr++ = *Ptr2++;
       }
+    EntryPtr--; //SunKi
       Rsdt->Header.Length -= sizeof(UINT32);
 	}
 //	Rsdt->Header.Length = sizeof(UINT32) * Index + sizeof(EFI_ACPI_DESCRIPTION_HEADER);
@@ -320,6 +321,7 @@ VOID DropTableFromXSDT (UINT32 Signature)
       //*Ptr++ = *Ptr2++;
         CopyMem(Ptr++, Ptr2++, sizeof(UINT64));
       }
+    BasePtr--; //SunKi
       Xsdt->Header.Length -= sizeof(UINT64);
 	}	
 //  Xsdt->Header.Length = sizeof(UINT64) * Index + sizeof(EFI_ACPI_DESCRIPTION_HEADER);

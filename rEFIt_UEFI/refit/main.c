@@ -1062,7 +1062,7 @@ static VOID ScanLegacy(VOID)
             HideIfOthersFound = TRUE;
         } else if (Volume->HasBootCode) {
             ShowVolume = TRUE;
-          DBG("Volume %d will be shown BlockIo=%x WholeIo=%x\n",
+   //       DBG("Volume %d will be shown BlockIo=%x WholeIo=%x\n",
               VolumeIndex, Volume->BlockIO, Volume->WholeDiskBlockIO);
             if ((Volume->WholeDiskBlockIO == 0) &&
                 Volume->BlockIOOffset == 0 /* &&
@@ -1070,21 +1070,26 @@ static VOID ScanLegacy(VOID)
                 // this is a whole disk (MBR) entry; hide if we have entries for partitions
                 HideIfOthersFound = TRUE;
         }
-        if (HideIfOthersFound) {
-          DBG("hide volume\n");
-            // check for other bootable entries on the same disk
+        if (HideIfOthersFound) {          
+          // check for other bootable entries on the same disk
+          //if PBR exists then Hide MBR
             for (VolumeIndex2 = 0; VolumeIndex2 < VolumesCount; VolumeIndex2++) {
-                if (VolumeIndex2 != VolumeIndex && Volumes[VolumeIndex2]->HasBootCode &&
-                    Volumes[VolumeIndex2]->BlockIO == Volume->WholeDiskBlockIO){
+                if (VolumeIndex2 != VolumeIndex && 
+                    Volumes[VolumeIndex2]->HasBootCode && 
+                    Volumes[VolumeIndex2]->WholeDiskBlockIO == Volume->BlockIO){
                     ShowVolume = FALSE;
-                  DBG("Master volume at index %d\n", VolumeIndex2);
+     //             DBG("PBR volume at index %d\n", VolumeIndex2);
+                  break;
                 }
             }
+          if (!ShowVolume) {
+            DBG("hide volume %d\n", VolumeIndex);
+          }
         }
         
-        if (ShowVolume){
+        if (1 || ShowVolume){
             AddLegacyEntry(NULL, Volume);
-//            DBG("added legacy entry %d\n", VolumeIndex);
+ //           DBG("added legacy entry %d\n", VolumeIndex);
         }
     }
 }
@@ -1297,6 +1302,7 @@ INTN FindDefaultEntry(VOID)
       }
     }
     //nvram is not found or it points to wrong volume but DefaultBoot found
+    DBG("but efi-boot-disk absent\n");
     return Index;
   }
   return -1;
@@ -1372,22 +1378,22 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   //Now we have to reinit handles
   Status = ReinitSelfLib();
   if (EFI_ERROR(Status)){
-    DBG(" %r", Status);
+    Print(L" %r", Status);
     PauseForKey(L"Error reinit refit\n");
     return Status;
   }
-  
+//  DBG("reinit OK\n");
   ZeroMem((VOID*)&gSettings, sizeof(SETTINGS_DATA));
   ScanVolumes();
-  
+//  DBG("ScanVolumes OK\n");
   GetCPUProperties();
-  
+//  DBG("GetCPUProperties OK\n");
   ScanSPD();
-  
+//  DBG("ScanSPD OK\n");
   SetPrivateVarProto();
-  
+//  DBG("SetPrivateVarProto OK\n");
   GetDefaultSettings();
-  
+//  DBG("GetDefaultSettings OK\n");
   Size = 0;
   Status = gRS->GetVariable(L"boot-args",
                             &gEfiAppleBootGuid,  NULL,
@@ -1404,7 +1410,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
                                  Buffer);
 		}		
 	}
-  //  DBG("BootArgs Size=%d\n", Size);
+//  DBG("BootArgs Size=%d\n", Size);
   //  PauseForKey(L"BootArgs ok");
   
 	if ((Status == EFI_SUCCESS) && (Size != 0))
@@ -1415,31 +1421,33 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   //Second step. Load config.plist into gSettings	
 	Status = GetUserSettings(SelfRootDir);  
-  
+//  DBG("GetUserSettings OK\n");
   //setup properties
   //  SetDevices();
   
   PrepareFont();
   //test font
-  
+//  DBG("PrepareFont OK\n");
   // scan for loaders and tools, add then to the menu
   if (!GlobalConfig.NoLegacy && GlobalConfig.LegacyFirst){
 //    DBG("scan legacy first\n");
     ScanLegacy();
   }
   ScanLoader();
+//  DBG("ScanLoader OK\n");
   if (!GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst){
 //    DBG("scan legacy second\n");
     ScanLegacy();
   }
+//  DBG("ScanLegacy OK\n");
   if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
 //    DBG("scan tools\n");
     ScanTool();
   }
-  
+//  DBG("ScanTool OK\n");
   FillInputs();
   // fixed other menu entries
-    
+//   DBG("FillInputs OK\n"); 
   if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
     MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
     AddMenuEntry(&MainMenu, &MenuEntryAbout);
@@ -1470,16 +1478,19 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   FinishTextScreen(FALSE);
   
   DefaultIndex = FindDefaultEntry();
-  if (DefaultIndex >= 0) {
+//  DBG("DefaultIndex=%d and MainMenu.EntryCount=%d\n", DefaultIndex, MainMenu.EntryCount);
+  if ((DefaultIndex >= 0) && (DefaultIndex < MainMenu.EntryCount)) {
     DefaultEntry = MainMenu.Entries[DefaultIndex];
   } else {
     DefaultEntry = NULL;
   }
-
+  
   while (MainLoopRunning) {
+//    DBG("Enter main loop\n");
     MenuExit = RunMainMenu(&MainMenu, DefaultIndex, &ChosenEntry);
-    
+//    DBG("out from menu\n");
     if ((DefaultEntry != NULL) && (MenuExit == MENU_EXIT_TIMEOUT)) {
+//      DBG("boot by timeout\n");
       StartLoader((LOADER_ENTRY *)DefaultEntry);
     }
     
@@ -1488,6 +1499,16 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       ApplyInputs();
       continue;
     }
+    
+    //EjectVolume
+    if (MenuExit == MENU_EXIT_EJECT){
+      if ((ChosenEntry->Tag == TAG_LOADER) ||
+          (ChosenEntry->Tag == TAG_LEGACY)) {
+        EjectVolume(((LOADER_ENTRY *)ChosenEntry)->Volume);
+      }      
+      continue;
+    }
+    
     
     // We don't allow exiting the main menu with the Escape key.
     if (MenuExit == MENU_EXIT_ESCAPE)
