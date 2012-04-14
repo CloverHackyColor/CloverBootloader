@@ -790,7 +790,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
       CopyMem(DiskDevicePath, Volume->DevicePath, PartialLength);
       CopyMem((UINT8 *)DiskDevicePath + PartialLength, DevicePath, sizeof(EFI_DEVICE_PATH)); //EndDevicePath
 //      Print(L"WholeDevicePath  %s\n", DevicePathToStr(DiskDevicePath));
-      DBG("WholeDevicePath  %s\n", DevicePathToStr(DiskDevicePath));
+//      DBG("WholeDevicePath  %s\n", DevicePathToStr(DiskDevicePath));
       RemainingDevicePath = DiskDevicePath;
       Status = gBS->LocateDevicePath(&gEfiDevicePathProtocolGuid, &RemainingDevicePath, &WholeDiskHandle);
       if (EFI_ERROR(Status)) {
@@ -800,7 +800,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
         // look at the BlockIO protocol
         Status = gBS->HandleProtocol(WholeDiskHandle, &gEfiBlockIoProtocolGuid, (VOID **) &Volume->WholeDiskBlockIO);
         if (!EFI_ERROR(Status)) {
-           DBG("WholeDiskBlockIO %x BlockSize=%d\n", Volume->WholeDiskBlockIO, Volume->WholeDiskBlockIO->Media->BlockSize);
+ //          DBG("WholeDiskBlockIO %x BlockSize=%d\n", Volume->WholeDiskBlockIO, Volume->WholeDiskBlockIO->Media->BlockSize);
           // check the media block size
           if (Volume->WholeDiskBlockIO->Media->BlockSize == 2048)
             Volume->DiskKind = DISK_KIND_OPTICAL;

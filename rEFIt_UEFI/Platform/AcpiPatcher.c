@@ -235,43 +235,49 @@ VOID DropTableFromRSDT (UINT32 Signature)
   CHAR8 OTID[9];
   BOOLEAN 			DoubleZero = FALSE;
   
+  // Если адрес RSDT < адреса XSDT и хвост RSDT наползает на XSDT, то подрезаем хвост RSDT до начала XSDT
+  if (((UINTN)Rsdt < (UINTN)Xsdt) && (((UINTN)Rsdt + Rsdt->Header.Length) > (UINTN)Xsdt)) {
+    Rsdt->Header.Length = ((VOID*)Xsdt - (VOID*)Rsdt) & ~3;
+    DBG("Cropped Rsdt->Header.Length=%d\n", Rsdt->Header.Length);
+  }
+  
 	EntryCount = (Rsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT32);
 	if (EntryCount > 100) EntryCount = 100; //it's enough
   DBG("Drop tables from Rsdt, count=%d\n", EntryCount); 
 	EntryPtr = &Rsdt->Entry;
 	for (Index = 0; Index < EntryCount; Index++, EntryPtr++) {
-      if (*EntryPtr == 0) {
-        if (DoubleZero) {
-          Rsdt->Header.Length = sizeof(UINT32) * Index + sizeof(EFI_ACPI_DESCRIPTION_HEADER);
-          DBG("DoubleZero in RSDT table\n");
-          break;
-        }
-        DBG("First zero in RSDT table\n");
-        DoubleZero = TRUE;
-        Rsdt->Header.Length -= sizeof(UINT32);
-        continue; //avoid zero field
+    if (*EntryPtr == 0) {
+      if (DoubleZero) {
+        Rsdt->Header.Length = sizeof(UINT32) * Index + sizeof(EFI_ACPI_DESCRIPTION_HEADER);
+        DBG("DoubleZero in RSDT table\n");
+        break;
       }
-      DoubleZero = FALSE;
+      DBG("First zero in RSDT table\n");
+      DoubleZero = TRUE;
+      Rsdt->Header.Length -= sizeof(UINT32);
+      continue; //avoid zero field
+    }
+    DoubleZero = FALSE;
 	  Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
-      CopyMem((CHAR8*)&sign, (CHAR8*)&Table->Signature, 4);
-      sign[4] = 0;
-      CopyMem((CHAR8*)&OTID, (CHAR8*)&Table->OemTableId, 8);
-      OTID[8] = 0;
-      DBG(" Found table: %a  %a\n", sign, OTID);
+    CopyMem((CHAR8*)&sign, (CHAR8*)&Table->Signature, 4);
+    sign[4] = 0;
+    CopyMem((CHAR8*)&OTID, (CHAR8*)&Table->OemTableId, 8);
+    OTID[8] = 0;
+    DBG(" Found table: %a  %a\n", sign, OTID);
 	  if (Table->Signature != Signature) {
 			continue;
-      }
-      DBG(" ... dropped\n");
-      Ptr = EntryPtr;
-      Ptr2 = Ptr + 1;
-      for (Index2 = Index; Index2 < EntryCount; Index2++) {
-        *Ptr++ = *Ptr2++;
-      }
+    }
+    DBG(" ... dropped\n");
+    Ptr = EntryPtr;
+    Ptr2 = Ptr + 1;
+    for (Index2 = Index; Index2 < EntryCount; Index2++) {
+      *Ptr++ = *Ptr2++;
+    }
+    *Ptr = 0; //end of table
     EntryPtr--; //SunKi
-      Rsdt->Header.Length -= sizeof(UINT32);
+    Rsdt->Header.Length -= sizeof(UINT32);
 	}
-//	Rsdt->Header.Length = sizeof(UINT32) * Index + sizeof(EFI_ACPI_DESCRIPTION_HEADER);
-    DBG("corrected RSDT length=%d\n", Rsdt->Header.Length);
+  DBG("corrected RSDT length=%d\n", Rsdt->Header.Length);
 }
 
 VOID DropTableFromXSDT (UINT32 Signature) 
@@ -284,6 +290,11 @@ VOID DropTableFromXSDT (UINT32 Signature)
   CHAR8 sign[5];
   CHAR8 OTID[9];
   BOOLEAN 			DoubleZero = FALSE;
+  // Если адрес XSDT < адреса RSDT и хвост XSDT наползает на RSDT, то подрезаем хвост XSDT до начала RSDT
+  if (((UINTN)Xsdt < (UINTN)Rsdt) && (((UINTN)Xsdt + Xsdt->Header.Length) > (UINTN)Rsdt)) {
+    Xsdt->Header.Length = ((VOID*)Rsdt - (VOID*)Xsdt) & ~3; //align to 4 bytes
+    DBG("Cropped Xsdt->Header.Length=%d\n", Xsdt->Header.Length);
+  }
   
 	EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
   DBG("Drop tables from Xsdt, count=%d\n", EntryCount); 
@@ -293,38 +304,40 @@ VOID DropTableFromXSDT (UINT32 Signature)
   }
 	BasePtr = (UINT64*)(&(Xsdt->Entry));
 	for (Index = 0; Index < EntryCount; Index++, BasePtr++) {
-      if (*BasePtr == 0) {
-        if (DoubleZero) {
-          Xsdt->Header.Length = sizeof(UINT64) * Index + sizeof(EFI_ACPI_DESCRIPTION_HEADER);
-          DBG("DoubleZero in XSDT table\n");
-          break;
-        }
-        DBG("First zero in XSDT table\n");
-        DoubleZero = TRUE;
-        Xsdt->Header.Length -= sizeof(UINT64);
-        continue; //avoid zero field
+    if (*BasePtr == 0) {
+      if (DoubleZero) {
+        Xsdt->Header.Length = sizeof(UINT64) * Index + sizeof(EFI_ACPI_DESCRIPTION_HEADER);
+        DBG("DoubleZero in XSDT table\n");
+        break;
       }
-      CopyMem (&Entry64, (VOID*)BasePtr, sizeof(UINT64)); //value from BasePtr->
-	  Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Entry64));
-      CopyMem((CHAR8*)&sign, (CHAR8*)&Table->Signature, 4);
-      sign[4] = 0;
-      CopyMem((CHAR8*)&OTID, (CHAR8*)&Table->OemTableId, 8);
-      OTID[8] = 0;
-      DBG(" Found table: %a  %a\n", sign, OTID);
-	  if (Table->Signature != Signature) {
-		continue;
-	  }
-      DBG(" ... dropped\n");
-      Ptr = BasePtr;
-      Ptr2 = Ptr + 1;
-      for (Index2 = Index; Index2 < EntryCount; Index2++) {
-      //*Ptr++ = *Ptr2++;
-        CopyMem(Ptr++, Ptr2++, sizeof(UINT64));
-      }
-    BasePtr--; //SunKi
+      DBG("First zero in XSDT table\n");
+      DoubleZero = TRUE;
       Xsdt->Header.Length -= sizeof(UINT64);
+      continue; //avoid zero field
+    }
+    DoubleZero = FALSE;
+    CopyMem (&Entry64, (VOID*)BasePtr, sizeof(UINT64)); //value from BasePtr->
+	  Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Entry64));
+    CopyMem((CHAR8*)&sign, (CHAR8*)&Table->Signature, 4);
+    sign[4] = 0;
+    CopyMem((CHAR8*)&OTID, (CHAR8*)&Table->OemTableId, 8);
+    OTID[8] = 0;
+    DBG(" Found table: %a  %a\n", sign, OTID);
+	  if (Table->Signature != Signature) {
+      continue;
+	  }
+    DBG(" ... dropped\n");
+    Ptr = BasePtr;
+    Ptr2 = Ptr + 1;
+    for (Index2 = Index; Index2 < EntryCount; Index2++) {
+      //*Ptr++ = *Ptr2++;
+      CopyMem(Ptr++, Ptr2++, sizeof(UINT64));
+    }
+    ZeroMem(Ptr, sizeof(UINT64));
+    BasePtr--; //SunKi
+    Xsdt->Header.Length -= sizeof(UINT64);
 	}	
-//  Xsdt->Header.Length = sizeof(UINT64) * Index + sizeof(EFI_ACPI_DESCRIPTION_HEADER);
+  //  Xsdt->Header.Length = sizeof(UINT64) * Index + sizeof(EFI_ACPI_DESCRIPTION_HEADER);
   DBG("corrected XSDT length=%d\n", Xsdt->Header.Length);
 }
 
