@@ -1,0 +1,344 @@
+#!/bin/sh
+
+#  cbuild.sh
+#  Script for building CloverEFI source under OS X
+#  Supported chainloads(compilers) are XCODE32, UNIXGCC and CLANG
+#  
+#
+#  Created by Jadran Puharic on 1/6/12.
+#  
+if [ "$mygccVers" == "" ]; then
+	mygccVers=46
+fi	
+## FUNCTIONS ##
+
+fnXcode ()
+# Function: Xcode chainload
+{
+[ ! -f /usr/bin/gcc ] && \
+echo "ERROR: Install Xcode Tools from Apple before using this script." && exit
+echo "CHAINLOAD: XCODE"
+export TARGET_TOOLS=XCODE32
+}
+
+fnXcode4 ()
+# Function: Xcode chainload
+{
+[ ! -f /usr/bin/gcc ] && \
+echo "ERROR: Install Xcode Tools from Apple before using this script." && exit
+echo "CHAINLOAD: XCODE"
+export TARGET_TOOLS=XCODE41
+}
+
+fnGCC ()
+# Function: Xcode chainload
+{
+echo "CHAINLOAD: GCC$mygccVers"
+export TARGET_TOOLS="GCC${mygccVers}"
+}
+
+fnClang ()
+# Function: Clang chainload
+{
+echo "CHAINLOAD: CLANG"
+export TARGET_TOOLS=XCLANG
+}
+
+fnUnixgcc ()
+# Function: Unixgcc chainload
+{
+echo "CHAINLOAD: UNIXGCC"
+export TARGET_TOOLS=UNIXGCC
+}
+
+fnArchIA32 ()
+# Function: IA32 Arch function
+{
+echo "ARCH: IA32"
+export PROCESSOR=IA32
+export Processor=Ia32
+}
+
+fnArchX64 ()
+# Function: X64 Arch function
+{
+echo "ARCH: X64"
+export PROCESSOR=X64
+export Processor=X64
+}
+
+fnDebug ()
+# Function: Debug version of compiled source
+{
+echo "TARGET: DEBUG"
+export TARGET=DEBUG
+export VTARGET=DEBUG
+}
+
+fnRelease ()
+# Function: Release version of compiled source
+{
+echo "TARGET: RELEASE"
+export TARGET=RELEASE
+export VTARGET=RELEASE
+}
+
+fnHelp ()
+# Function: Help
+{
+echo ""
+echo "Script for building CloverEFI source on Darwin OS X"
+echo
+echo "Usage: ./cbuild.sh [COMPILER] [ARCH] [TYPE]"
+echo 
+echo "Script arguments:"
+echo "[COMPILER]   [ARCH]     [TYPE]"
+echo "-xcode       -ia32      -debug"
+echo "-clang       -x64       -release"
+echo "-unixgcc"
+echo "-gcc"
+echo
+echo "Example: ./cbuild.sh -xcode -ia32 -release"
+echo "Example: ./cbuild.sh -gcc -x64 -release"
+echo
+echo "If you want to clean a build:"
+echo "Example: ./cbuild.sh -xcode -ia32 -release -clean"
+echo "Example: ./cbuild.sh -xcode -ia32 -release -cleanall"
+echo
+}
+
+fnHelpArgument ()
+# Function: Help with arguments
+{
+echo "ERROR!"
+echo "Example: ./cbuild.sh -xcode -ia32 -release"
+echo "Example: ./cbuild.sh -gcc -x64 -release"
+}
+
+## MAIN ARGUMENT PART##
+echo "$1 $2 $3 $4"
+# 1. Argument Case
+    case "$1" in
+        '')
+         fnHelp && exit
+        ;;
+        '-help')
+         fnHelp && exit
+        ;;
+        '-xcode')
+         fnXcode
+        ;;
+        '-xcode4')
+         fnXcode4
+        ;;
+        '-clang')
+         fnClang
+        ;;
+        '-unixgcc')
+         fnUnixgcc
+        ;;
+        '-gcc')
+         fnGCC
+        ;;
+        *)
+         echo $"ERROR!"
+         echo $"COMPILER: {-xcode|-xcode4|-clang|-unixgcc|-gcc${mygccVers}}"
+        exit 1
+    esac
+
+# 2. Argument Case
+    case "$2" in
+        '')
+        fnHelpArgument && exit
+        ;;
+        '-ia32')
+         fnArchIA32
+        ;;
+        '-x64')
+         fnArchX64
+        ;;
+        *)
+         echo $"ERROR!"
+         echo $"ARCH: {-ia32|-x64}"
+        exit 1
+    esac
+
+# 3. Argument Case
+    case "$3" in
+        '')
+         fnHelpArgument && exit
+        ;;
+        '-debug')
+         fnDebug
+        ;;
+        
+        '-release')
+         fnRelease
+        ;;
+        *)
+         echo $"ERROR!"
+         echo $"TYPE: {-debug|-release}"
+        exit 1
+    esac
+
+# 4. Argument Case
+    case "$4" in
+        '-clean')
+        export ARG=clean
+        ;;
+
+        '-cleanall')
+        export ARG=cleanall
+        ;;
+    esac
+
+
+## MAIN BUILD/POSTBUILD SCRIPT PART##
+
+fnMainBuildScript ()
+# Function MAIN DUET BUILD SCRIPT
+{
+set -e
+shopt -s nocasematch
+
+#
+# Setup workspace if it is not set
+#
+if [ -z "$WORKSPACE" ]
+then
+echo Initializing workspace
+if [ ! -e `pwd`/edksetup.sh ]
+then
+cd ..
+fi
+# This version is for the tools in the BaseTools project.
+# this assumes svn pulls have the same root dir
+#  export EDK_TOOLS_PATH=`pwd`/../BaseTools
+# This version is for the tools source in edk2
+export EDK_TOOLS_PATH=`pwd`/BaseTools
+echo $EDK_TOOLS_PATH
+source edksetup.sh BaseTools
+else
+echo Building from: $WORKSPACE
+fi
+
+
+BUILD_ROOT_ARCH=$WORKSPACE/Build/Clover$PROCESSOR/"$VTARGET"_"$TARGET_TOOLS"/$PROCESSOR
+
+if  [[ ! -f `which build` || ! -f `which GenFv` ]];
+then
+# build the tools if they don't yet exist. Bin scheme
+echo Building tools as they are not in the path
+make -C $WORKSPACE/BaseTools 
+elif [[ ( -f `which build` ||  -f `which GenFv` )  && ! -d  $EDK_TOOLS_PATH/Source/C/bin ]];
+then
+# build the tools if they don't yet exist. BinWrapper scheme
+echo Building tools no $EDK_TOOLS_PATH/Source/C/bin directory
+make -C $WORKSPACE/BaseTools
+else
+echo using prebuilt tools
+fi
+
+# Cleaning part of the script if we have $4 argument: clean/cleanall
+if [[ $ARG == cleanall ]]; then
+make -C $WORKSPACE/BaseTools clean
+build -p $WORKSPACE/Clover/Clover$Processor.dsc -a $PROCESSOR -b $VTARGET -t $TARGET_TOOLS -n 3 clean
+exit $?
+fi
+
+if [[ $ARG == clean ]]; then
+build -p $WORKSPACE/Clover/Clover$Processor.dsc -a $PROCESSOR -b $VTARGET -t $TARGET_TOOLS -n 3 clean
+exit $?
+fi
+
+# Build the edk2 DuetPkg
+echo Running edk2 build for Clover$Processor
+#rm $WORKSPACE/Clover/Version.h
+echo "#define FIRMWARE_VERSION \"2.31\"" > $WORKSPACE/Clover/Version.h
+echo "#define FIRMWARE_BUILDDATE \"`date \"+%Y-%m-%d %H:%M:%S\"`\"" >> $WORKSPACE/Clover/Version.h
+echo "#define FIRMWARE_REVISION L\"`svnversion Clover -n | tr -d [:alpha:]`\"" >> $WORKSPACE/Clover/Version.h
+
+build -p $WORKSPACE/Clover/Clover$Processor.dsc -a $PROCESSOR -b $VTARGET -t $TARGET_TOOLS -n 3 $*
+
+}
+
+
+fnMainPostBuildScript ()
+# Function MAIN DUET POSTBUILD SCRIPT
+{
+
+if [ -z "$EDK_TOOLS_PATH" ]
+then
+export BASETOOLS_DIR=$WORKSPACE/BaseTools/Source/C/bin
+else
+export BASETOOLS_DIR=$EDK_TOOLS_PATH/Source/C/bin
+fi
+export BOOTSECTOR_BIN_DIR=$WORKSPACE/Clover/BootSector/bin
+export BUILD_DIR=$WORKSPACE/Build/Clover/"$VTARGET"_"$TARGET_TOOLS"
+
+#[ ! -f $BUILD_DIR/FV/DUETEFIMAINFV.z ] && \
+#echo "ERROR: Build not finished exiting PostBuild Part..." && exit
+
+#
+# Boot sector module could only be built under IA32 tool chain - sure?
+#
+
+echo Compressing DUETEFIMainFv.FV ...
+$BASETOOLS_DIR/LzmaCompress -e -o $BUILD_DIR/FV/DUETEFIMAINFV.z $BUILD_DIR/FV/DUETEFIMAINFV.Fv
+
+echo Compressing DxeMain.efi ...
+$BASETOOLS_DIR/LzmaCompress -e -o $BUILD_DIR/FV/DxeMain.z $BUILD_DIR/$PROCESSOR/DxeCore.efi
+
+echo Compressing DxeIpl.efi ...
+$BASETOOLS_DIR/LzmaCompress -e -o $BUILD_DIR/FV/DxeIpl.z $BUILD_DIR/$PROCESSOR/DxeIpl.efi	
+
+echo Generate Loader Image ...
+
+if [ $PROCESSOR = IA32 ]
+then
+$BASETOOLS_DIR/GenFw --rebase 0x10000 -o $BUILD_DIR/$PROCESSOR/EfiLoader.efi $BUILD_DIR/$PROCESSOR/EfiLoader.efi
+$BASETOOLS_DIR/EfiLdrImage -o $BUILD_DIR/FV/Efildr32 $BUILD_DIR/$PROCESSOR/EfiLoader.efi $BUILD_DIR/FV/DxeIpl.z $BUILD_DIR/FV/DxeMain.z $BUILD_DIR/FV/DUETEFIMAINFV.z
+
+cat $BOOTSECTOR_BIN_DIR/start32.com $BOOTSECTOR_BIN_DIR/efi32.com3 $BUILD_DIR/FV/Efildr32 > $BUILD_DIR/FV/Efildr20	
+cat $BOOTSECTOR_BIN_DIR/start32H.com2 $BOOTSECTOR_BIN_DIR/efi32.com3 $BUILD_DIR/FV/Efildr32 > $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/ia32/boot
+cp -v $BUILD_DIR/ia32/FSInject.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers32/FSInject-ia32.efi
+cp -v $BUILD_DIR/ia32/VBoxIso9600.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers32/VBoxIso9600-32.efi
+cp -v $BUILD_DIR/ia32/VBoxExt2.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers32/VBoxExt2-32.efi
+
+cp -v $BUILD_DIR/ia32/Ps2KeyboardDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32/Ps2KeyboardDxe-32.efi
+cp -v $BUILD_DIR/ia32/Ps2MouseAbsolutePointerDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32/Ps2MouseAbsolutePointerDxe-32.efi
+cp -v $BUILD_DIR/ia32/Ps2MouseDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32/Ps2MouseDxe-32.efi
+cp -v $BUILD_DIR/ia32/XhciDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32/XhciDxe-32.efi	
+echo Done!
+fi
+
+if [ $PROCESSOR = X64 ]
+then
+$BASETOOLS_DIR/GenFw --rebase 0x10000 -o $BUILD_DIR/$PROCESSOR/EfiLoader.efi $BUILD_DIR/$PROCESSOR/EfiLoader.efi
+$BASETOOLS_DIR/EfiLdrImage -o $BUILD_DIR/FV/Efildr64 $BUILD_DIR/$PROCESSOR/EfiLoader.efi $BUILD_DIR/FV/DxeIpl.z $BUILD_DIR/FV/DxeMain.z $BUILD_DIR/FV/DUETEFIMAINFV.z
+#cat $BOOTSECTOR_BIN_DIR/Start64.com $BOOTSECTOR_BIN_DIR/efi64.com2 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/EfildrPure
+#$BASETOOLS_DIR/GenPage $BUILD_DIR/FV/EfildrPure -o $BUILD_DIR/FV/Efildr
+#cat $BOOTSECTOR_BIN_DIR/St16_64.com $BOOTSECTOR_BIN_DIR/efi64.com2 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/Efildr16Pure
+#$BASETOOLS_DIR/GenPage $BUILD_DIR/FV/Efildr16Pure -o $BUILD_DIR/FV/Efildr16
+cat $BOOTSECTOR_BIN_DIR/Start64H.com $BOOTSECTOR_BIN_DIR/efi64.com3 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/Efildr20Pure
+$BASETOOLS_DIR/GenPage $BUILD_DIR/FV/Efildr20Pure -o $BUILD_DIR/FV/Efildr20
+#cat $BOOTSECTOR_BIN_DIR/Start64.com2 $BOOTSECTOR_BIN_DIR/efi64.com2 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/bootPure
+#$BASETOOLS_DIR/GenPage $BUILD_DIR/FV/bootPure -o $BUILD_DIR/FV/boot64
+dd if=$BUILD_DIR/FV/Efildr20 of=$WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/x64/boot bs=512 skip=1
+cp -v $BUILD_DIR/X64/FSInject.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64/FSInject-64.efi
+cp -v $BUILD_DIR/X64/VBoxIso9600.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64/VBoxIso9600-64.efi
+cp -v $BUILD_DIR/X64/VBoxExt2.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64/VBoxExt2-64.efi
+
+cp -v $BUILD_DIR/X64/Ps2KeyboardDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/Ps2KeyboardDxe-64.efi
+cp -v $BUILD_DIR/X64/Ps2MouseAbsolutePointerDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/Ps2MouseAbsolutePointerDxe-64.efi
+cp -v $BUILD_DIR/X64/Ps2MouseDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/Ps2MouseDxe-64.efi
+cp -v $BUILD_DIR/X64/XhciDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/XhciDxe-64.efi	
+echo Done!
+fi
+
+}
+
+
+# BUILD START #
+fnMainBuildScript
+fnMainPostBuildScript
