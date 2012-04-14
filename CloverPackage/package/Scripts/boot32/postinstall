@@ -1,0 +1,116 @@
+#!/bin/bash
+
+echo "==============================================="
+echo "Post Post-Install Script"
+echo "==============================================="
+
+#echo "DEBUG: $ 1 = Full path to the installation package the installer app is processing: " $1
+#echo "DEBUG: $ 2 = Full path to the installation destination: " $2
+#echo "DEBUG: $ 3 = Installation volume (mountpoint) to receive the payload: " $3
+#echo "DEBUG: $ 4 = Root directory for the system: " $4
+
+echo "preinstall: Path to installer....... $1"
+echo "preinstall: Path to destination..... $2"
+echo "preinstall: Path to dest volume..... $3"
+echo "preinstall: Root of system folder... $4"
+
+#############################################################################
+
+osxvolume="${3}"
+bootervolumename="EFI"
+bootvolume="/Volumes/$bootervolumename"
+bootdev=$( df "${osxvolume}" | sed -n '2p' | awk '{print $1}' )
+bootdev=${bootdev%s*}s1
+
+echo "==============================================="
+echo "Unmount all EFI partitions and Check their format"
+echo "*************************************"
+
+# loop through and un-mount all mounted EFI partitions - Thanks kizwan
+attempts=1
+while [ "$( df | grep EFI )" ] && [ "${attempts}" -lt 5 ]; do
+	echo "Unmounting $( df | grep EFI | awk '{print $1}' )"
+	umount -f $( df | grep EFI | awk '{print $1}' )
+	attempts=$(( ${attempts} + 1 ))
+done
+if [ ${attempts} = 5 ]; then
+	echo "failed to unmount EFI partitions."
+exit
+fi
+
+efiformat="noefi"
+
+if [ "$( fstyp ${bootdev} | grep hfs )" ]; then
+	echo "${bootdev} is currently formatted as HFS"
+	efiformat="hfs"
+fi
+if [ "$( fstyp ${bootdev} | grep msdos )" ]; then
+	echo "${bootdev} is currently formatted as msdos"
+	efiformat="msdos"
+fi
+
+echo "-----------------------------------------------"
+echo ""
+
+# Start to install boot, boot3, boot6.
+
+installtype=$( cat ${osxvolume}/installtype )
+
+if [ "${installtype}" == "bootEFI" ]; then
+
+	echo "==============================================="
+	echo "Mount EFI partition:"
+	echo "********************"
+
+	if [ ${efiformat} = "hfs" ]; then
+		[ -d "${bootvolume}" ] || mkdir -p "${bootvolume}"
+		echo "Executing command: mount_hfs -u 0 -g 0 ${bootdev} ${bootvolume}"
+		mount_hfs -u 0 -g 0 "${bootdev}" "${bootvolume}"
+	elif [ ${efiformat} = "msdos" ]; then
+		[ -d "${bootvolume}" ] || mkdir -p "${bootvolume}"
+		echo "Executing command: mount_msdos -u 0 -g 0 ${bootdev} ${bootvolume}"
+		mount_msdos -u 0 -g 0 "${bootdev}" "${bootvolume}"
+	fi
+
+	backupRootDir="$bootvolume/EFI-Backups"
+	backupDir="${backupRootDir}/"$( date -j "+%F-%Hh%M" )
+	# Create the backup dirextory
+	mkdir -p "$backupDir"
+	# Backup stage2
+	if [[ -f "$bootvolume/boot" ]];then
+		cp -p "$bootvolume/boot" "${backupDir}/boot"
+	fi
+	if [[ -f "$bootvolume/boot3" ]];then
+		cp -p "$bootvolume/boot3" "${backupDir}/boot3"
+	fi
+	if [[ -f "$bootvolume/boot6" ]];then
+		cp -p "$bootvolume/boot6" "${backupDir}/boot6"
+	fi
+	if [[ -f "$bootvolume/boot1" ]];then
+		cp -p "$bootvolume/boot1" "${backupDir}/boot1"
+	fi
+	# Backup /EFI directory
+	if [[ -d "$bootvolume/EFI" ]];then
+		sudo cp -pR "$bootvolume/EFI" "${backupDir}/EFI"
+	fi
+	find "$backupRootDir" -type d -depth 1 -empty -exec rmdir {} \; # Remove empty directories
+	rm -df "$backupRootDir"
+	
+	cp "${bootvolume}/boot" "${bootvolume}/bootold"
+	cp "${osxvolume}/usr/standalone/i386/ia32/boot" "${bootvolume}/boot"
+	cp "${osxvolume}/usr/standalone/i386/ia32/boot" "${bootvolume}/boot3"
+	cp "${osxvolume}/usr/standalone/i386/x64/boot" "${bootvolume}/boot6"
+	chflags hidden "${bootvolume}/boot"
+	chflags hidden "${bootvolume}/boot3"
+	chflags hidden "${bootvolume}/boot6"
+	echo "x32" > "${osxvolume}/boottype"
+else
+	cp "${osxvolume}/boot" "${osxvolume}/bootold"
+	cp "${osxvolume}/usr/standalone/i386/ia32/boot" "${osxvolume}/boot"
+	cp "${osxvolume}/usr/standalone/i386/ia32/boot" "${osxvolume}/boot3"
+	cp "${osxvolume}/usr/standalone/i386/x64/boot" "${osxvolume}/boot6"
+	chflags hidden "${osxvolume}/boot"
+	chflags hidden "${osxvolume}/boot3"
+	chflags hidden "${osxvolume}/boot6"
+	echo "x32" > "${osxvolume}/boottype"
+fi

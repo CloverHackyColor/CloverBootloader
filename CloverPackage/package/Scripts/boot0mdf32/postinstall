@@ -1,0 +1,42 @@
+#!/usr/bin/perl
+
+$destino = $ARGV[1];
+$destino =~ s/ /\\ /g;
+$volume = $ARGV[2];
+my %mapa;
+
+open (MOUNT, "mount|");
+while (<MOUNT>) {
+	chomp;
+	$line = $_;
+	if ($line =~ /^([^ ]+) on ([^(]+) \([^)]*\)$/) {
+		$mapa{$2}=$1;
+	}
+}
+close (MOUNT);
+
+if ($mapa{$volume}) {
+	if ($mapa{$volume} =~ /^\/dev\/(disk\d)s(\d)$/) {
+		$disk = $1;
+		$partition = $2;
+		$volume =~ s/ /\\ /g;
+		system ("mkdir -p /usr/local/bin/");
+		system ("cp -f ".$destino."/usr/local/bin/fdisk440  /usr/local/bin/fdisk440");
+		system ("/usr/local/bin/fdisk440 -f ".$destino."/usr/standalone/i386/boot0md -u -y /dev/r".$disk);
+		system ("rm -f ".$destino."/newbs");
+		system ("rm -f ".$destino."/origbs");
+		system ("dd if=/dev/r".$disk."s".$partition." count=1 bs=512 of=".$destino."/origbs");
+		system ("cp ".$destino."/usr/standalone/i386/boot1f32alt ".$destino."/newbs");
+		system ("dd if=".$destino."/origbs of=".$destino."/newbs skip=3 seek=3 bs=1 count=87 conv=notrunc");
+		system ("dd if=".$destino."/newbs of=/dev/r".$disk."s".$partition." count=1 bs=512");
+		# some pc need to write twice to work.		
+		system ("rm -f ".$destino."/origbs");
+		system ("dd if=/dev/r".$disk."s".$partition." count=1 bs=512 of=".$destino."/origbs");
+		system ("cp ".$destino."/usr/standalone/i386/boot1f32alt ".$destino."/newbs");
+		system ("dd if=".$destino."/origbs of=".$destino."/newbs skip=3 seek=3 bs=1 count=87 conv=notrunc");
+		system ("dd if=".$destino."/newbs of=/dev/r".$disk."s".$partition." count=1 bs=512");
+		system ("rm -f ".$destino."/newbs");
+		system ("rm -f ".$destino."/origbs");
+		system ("echo boot0mdf32 > ".$destino."/installtype");
+	}
+}

@@ -1,0 +1,187 @@
+#!/bin/bash
+
+echo "==============================================="
+echo "Post Post-Install Script"
+echo "==============================================="
+
+#echo "DEBUG: $ 1 = Full path to the installation package the installer app is processing: " $1
+#echo "DEBUG: $ 2 = Full path to the installation destination: " $2
+#echo "DEBUG: $ 3 = Installation volume (mountpoint) to receive the payload: " $3
+#echo "DEBUG: $ 4 = Root directory for the system: " $4
+
+echo "preinstall: Path to installer....... $1"
+echo "preinstall: Path to destination..... $2"
+echo "preinstall: Path to dest volume..... $3"
+echo "preinstall: Root of system folder... $4"
+
+#############################################################################
+
+# Check target exists
+if [ ! -e "$3" ]
+then
+    echo "$3 volume does not exist!"
+    exit 1
+fi
+
+# If target volume root of current system then replace
+# / with volume name.
+if [ "$3" == "/" ]
+then
+	dest_vol="/Volumes/"$( ls -1F /Volumes | sed -n 's:@$::p' )
+else
+    dest_vol="$3"
+fi    
+
+dest_destino="$2"
+
+fixpermsall ()
+{
+	# $1 path
+	find "${1}" -type f -exec chmod 666 {} \;
+	find "${1}" -type d -exec chmod 777 {} \;
+	chown -R 0:0 "${1}"
+}
+
+bootervolumename="EFI"
+bootvolume="/Volumes/$bootervolumename"
+
+# ---------------------------------------------
+# 檢查 原來的 boot 類型 並安裝新的 boot
+# ---------------------------------------------
+
+installtype=$( cat $dest_vol/installtype )
+
+if [ "$installtype" == "bootEFI" ]; then
+	# ---------------------------------------------
+	# 檢查 GPT EFI 分區
+	# ---------------------------------------------
+
+	file "$bootvolume/bootold" > "$bootvolume/bootoldtype"
+	boottypeversion=$( grep "boot" "$bootvolume/bootoldtype" | awk '{ print $2 }' | tr -d '}' )
+	echo "$boottypeversion" >> "$bootvolume/bootoldtype"
+	if [ "$boottypeversion" == "data" ]; then
+		cp -f "$bootvolume/bootold" "$bootvolume/boot1"
+		chflags hidden "$bootvolume/boot1"
+	fi
+	rm "$bootvolume/bootold"
+	rm "$bootvolume/bootoldtype"
+
+	if [ ! -e "$bootvolume/boot1" ]; then
+		cp -f "$dest_vol/usr/standalone/i386/bootc" "$bootvolume/boot1"
+		chflags hidden "$bootvolume/boot1"
+	fi
+
+	boottype=$( cat $dest_vol/boottype )
+
+	if [ $boottype == "x32" ]; then
+		cd "$bootvolume/EFI"
+		perl -i -p -e "s/arch=x86_64/arch=i386/g" `find "config.plist" -type f`
+	fi    
+	if [ $boottype == "x64" ]; then
+		cd "$bootvolume/EFI"
+		perl -i -p -e "s/arch=i386/arch=x86_64/g" `find "config.plist" -type f`
+	fi
+
+	if [ -e "$bootvolume/EFI/config.plist" ]; then
+		rm -f "$dest_vol/EFI/config-org.plist"
+	fi
+	if [ ! -e "$bootvolume/EFI/config.plist" ]; then
+		cp -f "$dest_vol/EFI/config-org.plist" "$dest_vol/EFI/config.plist"
+		rm -f "$dest_vol/EFI/config-org.plist"
+	fi
+	if [ -e "$bootvolume/EFI/BOOT/refit.conf" ]; then
+		cp -f "$bootvolume/EFI/BOOT/refit.conf" "$bootvolume/EFI/BOOT/refit.conf-old"
+		cp -f "$dest_vol/EFI/BOOT/refit.conf-default" "$dest_vol/EFI/BOOT/refit.conf"
+		rm -f "$dest_vol/EFI/BOOT/refit.conf-default"
+	fi
+	if [ ! -e "$bootvolume/EFI/BOOT/refit.conf" ]; then
+		cp -f "$dest_vol/EFI/BOOT/refit.conf-default" "$dest_vol/EFI/BOOT/refit.conf"
+		rm -f "$dest_vol/EFI/BOOT/refit.conf-default"
+	fi
+
+	rm -f "$dest_vol/EFI/BOOT/refit-*.conf"
+	rm -f "$bootvolume/EFI/BOOT/refit-*.conf"
+	
+	mkdir -p "$bootvolume/EFI/"
+	cp -Rf "$dest_vol/EFI/" "$bootvolume/EFI/"
+	rm -f "$dest_vol/boot"
+	rm -f "$dest_vol/boot1"
+	rm -f "$dest_vol/boot3"
+	rm -f "$dest_vol/boot6"
+	rm -rf "$dest_vol/EFI/"
+
+	fixpermsall "$bootvolume/"
+
+else
+# ---------------------------------------------
+# 檢查 非 GPT EFI 分區
+# ---------------------------------------------
+
+	file "$dest_vol/bootold" > "$dest_vol/bootoldtype"
+	boottypeversion=$( grep "boot" "$dest_vol/bootoldtype" | awk '{ print $2 }' | tr -d '}' )
+	echo "$boottypeversion" >> "$dest_vol/bootoldtype"
+	if [ "$boottypeversion" == "data" ]; then
+		cp -f "$dest_vol/bootold" "$dest_vol/boot1"
+		chflags hidden "$dest_vol/boot1"
+	fi
+	rm "$dest_vol/bootold"
+	rm "$dest_vol/bootoldtype"
+
+	if [ ! -e "$dest_vol/boot1" ]; then
+		cp -f "$dest_vol/usr/standalone/i386/bootc" "$dest_vol/boot1"
+		chflags hidden "$dest_vol/boot1"
+	fi
+
+	boottype=$( cat $dest_vol/boottype )
+
+	if [ $boottype == "x32" ]; then
+		cd "$dest_vol/EFI"
+		perl -i -p -e "s/arch=x86_64/arch=i386/g" `find "config.plist" -type f`
+	fi    
+	if [ $boottype == "x64" ]; then
+		cd "$dest_vol/EFI"
+		perl -i -p -e "s/arch=i386/arch=x86_64/g" `find "config.plist" -type f`
+	fi
+
+	if [ -e "$dest_vol/EFI/config.plist" ]; then
+		rm -f "$dest_vol/EFI/config-org.plist"
+	fi
+	if [ ! -e "$dest_vol/EFI/config.plist" ]; then
+		cp -f "$dest_vol/EFI/config-org.plist" "$dest_vol/EFI/config.plist"
+		rm -f "$dest_vol/EFI/config-org.plist"
+	fi
+	if [ -e "$dest_vol/EFI/BOOT/refit.conf" ]; then
+		cp -f "$dest_vol/EFI/BOOT/refit.conf" "$dest_vol/EFI/BOOT/refit.conf-old"
+		cp -f "$dest_vol/EFI/BOOT/refit.conf-default" "$dest_vol/EFI/BOOT/refit.conf"
+		rm -f "$dest_vol/EFI/BOOT/refit.conf-default"
+	fi
+	if [ ! -e "$dest_vol/EFI/BOOT/refit.conf" ]; then
+		cp -f "$dest_vol/EFI/BOOT/refit.conf-default" "$dest_vol/EFI/BOOT/refit.conf"
+		rm -f "$dest_vol/EFI/BOOT/refit.conf-default"
+	fi
+	rm -f "$dest_vol/EFI/BOOT/refit-*.conf"
+	
+	fixpermsall "$dest_vol/EFI"
+fi
+
+if [ -e "$dest_vol/etc/rc.local" ]; then
+chmod 644 "$dest_vol/etc/rc.local"
+chown root:wheel "$dest_vol/etc/rc.local"
+fi
+if [ -e "$dest_vol/etc/rc.shutdown.local" ]; then
+chmod 644 "$dest_vol/etc/rc.shutdown.local"
+chown root:wheel "$dest_vol/etc/rc.shutdown.local"
+fi
+
+# ---------------------------------------------
+# Cleanup
+# ---------------------------------------------
+
+# remove any temporary boot sector files if they exist
+
+if [ -e "$dest_volcham" ]; then
+	rm -rf "$dest_volcham"
+fi
+
+rm -f "$dest_vol/installtype"
+rm -f "$dest_vol/boottype"
