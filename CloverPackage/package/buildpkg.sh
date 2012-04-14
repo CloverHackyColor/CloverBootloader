@@ -87,6 +87,8 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 	ditto --noextattr --noqtn ${3%/*}/i386/bootc ${3}/Core/Root/usr/standalone/i386
 	ditto --noextattr --noqtn ${3%/*}/i386/fdisk440 ${3}/Core/Root/usr/local/bin
 	local coresize=$( du -hkc "${3}/Core/Root" | tail -n1 | awk {'print $1'} )
+	fixperms "${3}/Core/Root/"
+	chmod 755 "${3}/Core/Root/usr/local/bin/fdisk440"
 	echo "	[BUILD] i386 "
 	buildpackage "${3}/Core" "/" "" "start_visible=\"false\" start_selected=\"true\" start_enabled=\"false\"" >/dev/null 2>&1
 # End build core package
@@ -106,6 +108,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 	cp ${3}/EFIfolder/Root/EFI/BOOT/refit.conf ${3}/EFIfolder/Root/EFI/BOOT/refit.conf-default
 	rm -f ${3}/EFIfolder/Root/EFI/BOOT/refit.conf
 	local coresize=$( du -hkc "${3}/EFIfolder/Root" | tail -n1 | awk {'print $1'} )
+	fixperms "${3}/EFIfolder/Root/"
 	echo "	[BUILD] EFIfolder "
 	buildpackage "${3}/EFIfolder" "/" "" "start_visible=\"false\" start_selected=\"true\" start_enabled=\"false\"" >/dev/null 2>&1
 	
@@ -118,7 +121,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 		cp -f ${pkgroot}/Scripts/boot0/postinstall ${3}/boot0/Scripts
 		ditto --arch i386 `which SetFile` ${3}/boot0/Scripts/Tools/SetFile
 		echo "	[BUILD] boot0 "
-		buildpackage "${3}/boot0" "/" "" "start_enabled=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0hfs'])\"" >/dev/null 2>&1
+		buildpackage "${3}/boot0" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot0mdf32']) &amp;&amp; exclusive(choices['boot1no'])\"" >/dev/null 2>&1
 	# End build boot0 package 
 	
 	# build boot0hfs package 
@@ -127,40 +130,22 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 		cp -f ${pkgroot}/Scripts/boot0hfs/postinstall ${3}/boot0hfs/Scripts
 		ditto --arch i386 `which SetFile` ${3}/boot0hfs/Scripts/Tools/SetFile
 		echo "	[BUILD] boot0hfs "
-		buildpackage "${3}/boot0hfs" "/" "" "start_enabled=\"true\" start_selected=\"true\" selected=\"exclusive(choices['boot0'])\"" >/dev/null 2>&1
+		buildpackage "${3}/boot0hfs" "/" "" "start_visible=\"true\" start_selected=\"true\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0mdf32']) &amp;&amp; exclusive(choices['boot1no'])\"" >/dev/null 2>&1
 	# End build boot0hfs package 
 
-	# build boot1f32alt package 
-		mkdir -p ${3}/boot1f32alt/Root
-		mkdir -p ${3}/boot1f32alt/Scripts/Tools
-		cp -f ${pkgroot}/Scripts/boot1f32alt/postinstall ${3}/boot1f32alt/Scripts
-		ditto --arch i386 `which SetFile` ${3}/boot1f32alt/Scripts/Tools/SetFile
-		echo "	[BUILD] boot1f32alt "
-		buildpackage "${3}/boot1f32alt" "/" "" "start_enabled=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot1h']) &amp;&amp; exclusive(choices['boot1h2']) &amp;&amp; exclusive(choices['boot1no'])\"" >/dev/null 2>&1
-	# End build boot1f32alt package 
-	
-	# build boot1h package 
-		mkdir -p ${3}/boot1h/Root
-		mkdir -p ${3}/boot1h/Scripts/Tools
-		cp -f ${pkgroot}/Scripts/boot1h/postinstall ${3}/boot1h/Scripts
-		ditto --arch i386 `which SetFile` ${3}/boot1h/Scripts/Tools/SetFile
-		echo "	[BUILD] boot1h "
-		buildpackage "${3}/boot1h" "/" "" "start_enabled=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot1f32alt']) &amp;&amp; exclusive(choices['boot1h2']) &amp;&amp; exclusive(choices['boot1no'])\"" >/dev/null 2>&1
-	# End build boot1h package 
-	
-	# build boot1h2 package 
-		mkdir -p ${3}/boot1h2/Root
-		mkdir -p ${3}/boot1h2/Scripts/Tools
-		cp -f ${pkgroot}/Scripts/boot1h2/postinstall ${3}/boot1h2/Scripts
-		ditto --arch i386 `which SetFile` ${3}/boot1h2/Scripts/Tools/SetFile
-		echo "	[BUILD] boot1h2 "
-		buildpackage "${3}/boot1h2" "/" "" "start_enabled=\"true\" start_selected=\"true\" selected=\"exclusive(choices['boot1f32alt']) &amp;&amp; exclusive(choices['boot1h']) &amp;&amp; exclusive(choices['boot1no'])\"" >/dev/null 2>&1
-	# End build boot1h2 package 
+	# build boot0mdf32 package 
+		mkdir -p ${3}/boot0mdf32/Root
+		mkdir -p ${3}/boot0mdf32/Scripts/Tools
+		cp -f ${pkgroot}/Scripts/boot0mdf32/postinstall ${3}/boot0mdf32/Scripts
+		ditto --arch i386 `which SetFile` ${3}/boot0mdf32/Scripts/Tools/SetFile
+		echo "	[BUILD] boot0mdf32 "
+		buildpackage "${3}/boot0mdf32" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot1no'])\"" >/dev/null 2>&1
+	# End build boot0mdf32 package 
 
 	# build boot1no package
 		mkdir -p ${3}/boot1no/Root
 		echo "	[BUILD] boot1no "
-		buildpackage "${3}/boot1no" "/tmpcham" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot1f32alt']) &amp;&amp; exclusive(choices['boot1h']) &amp;&amp; exclusive(choices['boot1h2'])\"" >/dev/null 2>&1
+		buildpackage "${3}/boot1no" "/tmpcham" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot0mdf32'])\"" >/dev/null 2>&1
 	# End build boot1no package 
 
 	# build boot32 package 
@@ -169,7 +154,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 		cp -f ${pkgroot}/Scripts/boot32/postinstall ${3}/boot32/Scripts
 		ditto --arch i386 `which SetFile` ${3}/boot32/Scripts/Tools/SetFile
 		echo "	[BUILD] boot32 "
-		buildpackage "${3}/boot32" "/" "" "start_enabled=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot64'])\"" >/dev/null 2>&1
+		buildpackage "${3}/boot32" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot64'])\"" >/dev/null 2>&1
 	# End build boot32 package 
 
 	# build boot64 package 
@@ -178,7 +163,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 		cp -f ${pkgroot}/Scripts/boot64/postinstall ${3}/boot64/Scripts
 		ditto --arch i386 `which SetFile` ${3}/boot64/Scripts/Tools/SetFile
 		echo "	[BUILD] boot64 "
-		buildpackage "${3}/boot64" "/" "" "start_enabled=\"true\" start_selected=\"true\" selected=\"exclusive(choices['boot32'])\"" >/dev/null 2>&1
+		buildpackage "${3}/boot64" "/" "" "start_visible=\"true\" start_selected=\"true\" selected=\"exclusive(choices['boot32'])\"" >/dev/null 2>&1
 	# End build boot64 package 
 
     ((xmlindent--))
@@ -200,6 +185,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 	cp -Rf ${3%/*/*}/CloverV2/themespkg/black_green/* ${3}/black_green/Root/EFI/BOOT/themes/black_green
 	cp -f ${3%/*/*}/CloverV2/themespkg/refit.conf-black_green ${3}/black_green/Root/EFI/BOOT/refit.conf-default
 	cp -f ${3%/*/*}/CloverV2/themespkg/refit.conf-black_green ${3}/black_green/Root/EFI/BOOT/refit.conf-black_green
+	fixperms "${3}/black_green/Root/"
 	echo "	[BUILD] black_green "
 	buildpackage "${3}/black_green" "/" "" "start_visible=\"true\" start_selected=\"true\" selected=\"exclusive(choices['buttons']) &amp;&amp; exclusive(choices['metal'])\"" >/dev/null 2>&1
 
@@ -211,6 +197,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 	cp -Rf ${3%/*/*}/CloverV2/themespkg/buttons/* ${3}/buttons/Root/EFI/BOOT/themes/buttons
 	cp -f ${3%/*/*}/CloverV2/themespkg/refit.conf-buttons ${3}/buttons/Root/EFI/BOOT/refit.conf-default
 	cp -f ${3%/*/*}/CloverV2/themespkg/refit.conf-buttons ${3}/buttons/Root/EFI/BOOT/refit.conf-buttons
+	fixperms "${3}/buttons/Root/"
 	echo "	[BUILD] buttons "
 	buildpackage "${3}/buttons" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['black_green']) &amp;&amp; exclusive(choices['metal'])\"" >/dev/null 2>&1
 
@@ -222,6 +209,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 	cp -Rf ${3%/*/*}/CloverV2/themespkg/metal/* ${3}/metal/Root/EFI/BOOT/themes/metal
 	cp -f ${3%/*/*}/CloverV2/themespkg/refit.conf-metal ${3}/metal/Root/EFI/BOOT/refit.conf-default
 	cp -f ${3%/*/*}/CloverV2/themespkg/refit.conf-metal ${3}/metal/Root/EFI/BOOT/refit.conf-metal
+	fixperms "${3}/metal/Root/"
 	echo "	[BUILD] metal "
 	buildpackage "${3}/metal" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['black_green']) &amp;&amp; exclusive(choices['buttons'])\"" >/dev/null 2>&1
 
@@ -244,7 +232,6 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 		ditto --noextattr --noqtn --arch i386 "${drivers[$i]}" "${3}/${filename%.efi}/Root/"
 		find "${3}/${filename%.efi}" -name '.DS_Store' -exec rm -R -f {} \; 2>/dev/null
 		fixperms "${3}/${filename%.efi}/Root/"
-		chown 501:20 "${3}/${filename%.efi}/Root/"
 		echo "	[BUILD] ${filename%.efi}"
 		buildpackagedrivers32 "${3}/${filename%.efi}" "/EFI/drivers32" "" "start_selected=\"false\"" >/dev/null 2>&1
 		rm -R -f "${3}/${filename%.efi}"
@@ -269,7 +256,6 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 		ditto --noextattr --noqtn --arch i386 "${drivers[$i]}" "${3}/${filename%.efi}/Root/"
 		find "${3}/${filename%.efi}" -name '.DS_Store' -exec rm -R -f {} \; 2>/dev/null
 		fixperms "${3}/${filename%.efi}/Root/"
-		chown 501:20 "${3}/${filename%.efi}/Root/"
 		echo "	[BUILD] ${filename%.efi}"
 		buildpackagedrivers64 "${3}/${filename%.efi}" "/EFI/drivers64" "" "start_selected=\"false\"" >/dev/null 2>&1
 		rm -R -f "${3}/${filename%.efi}"
