@@ -270,7 +270,7 @@ VOID DropTableFromRSDT (UINT32 Signature)
     DBG(" ... dropped\n");
     Ptr = EntryPtr;
     Ptr2 = Ptr + 1;
-    for (Index2 = Index; Index2 < EntryCount; Index2++) {
+    for (Index2 = Index; Index2 < EntryCount-1; Index2++) {
       *Ptr++ = *Ptr2++;
     }
     *Ptr = 0; //end of table
@@ -329,7 +329,7 @@ VOID DropTableFromXSDT (UINT32 Signature)
     DBG(" ... dropped\n");
     Ptr = BasePtr;
     Ptr2 = Ptr + 1;
-    for (Index2 = Index; Index2 < EntryCount; Index2++) {
+    for (Index2 = Index; Index2 < EntryCount-1; Index2++) {
       //*Ptr++ = *Ptr2++;
       CopyMem(Ptr++, Ptr2++, sizeof(UINT64));
     }
