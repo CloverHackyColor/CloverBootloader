@@ -149,7 +149,7 @@ CHAR8* AppleSerialNumber[16] = //random generated
 	"W89A00AAX88", //IM71 - merom 01/09
 	"W80AA98A5PE", //IM101 - conroe? E7600 01/09
 	"W8034342DB7", //IM112
-	"W8403D24BG6", //IM121
+	"W88FY32XDHJT", //IM121
 	"W88A77AA5J4", //MP31 - xeon quad 02/09
 	"CT93051DK9Y", //MP41
 	"CG154TB9WU3"  //MP51
