@@ -30,6 +30,7 @@ AML_CHUNK* aml_add_scope(AML_CHUNK* parent, CONST CHAR8* name);
 AML_CHUNK* aml_add_name(AML_CHUNK* parent, CONST CHAR8* name);
 AML_CHUNK* aml_add_method(AML_CHUNK* parent, CONST CHAR8* name, UINT8 args);
 AML_CHUNK* aml_add_return_name(AML_CHUNK* parent, CONST CHAR8* name);
+AML_CHUNK* aml_add_return_byte(AML_CHUNK* parent, UINT8 value);
 AML_CHUNK* aml_add_package(AML_CHUNK* parent);
 AML_CHUNK* aml_add_alias(AML_CHUNK* parent, CONST CHAR8* name1, CONST CHAR8* name2);
 UINT32 aml_calculate_size(AML_CHUNK* node);

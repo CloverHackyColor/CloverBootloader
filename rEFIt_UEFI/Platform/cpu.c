@@ -817,17 +817,17 @@ MACHINE_TYPES GetDefaultModel()
 				DefaultType = MacPro51;
 				break;
 			case CPU_MODEL_SANDY_BRIDGE:
-/*				if((AsciiStrStr(gCPUStructure.BrandString, "i3")) || 
+				if((AsciiStrStr(gCPUStructure.BrandString, "i3")) || 
 				   (AsciiStrStr(gCPUStructure.BrandString, "i5")))
 				{
-					DefaultType = iMac112;
+					DefaultType = iMac121;
 					break;
 				}
 				if(AsciiStrStr(gCPUStructure.BrandString, "i7"))
-				{ */
-					DefaultType = iMac121;
+				{ 
+					DefaultType = iMac122;
 					break;
-//				}
+				}
 			case CPU_MODEL_JAKETOWN:
 				DefaultType = MacPro41;
 				break;

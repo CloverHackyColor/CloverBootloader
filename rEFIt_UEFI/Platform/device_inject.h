@@ -64,9 +64,9 @@ typedef struct pci_dt_t {
 /* Option ROM header */
 typedef struct {
 	UINT16		signature;		// 0xAA55
-	UINT8			rom_size;
+	UINT16			rom_size;
 	UINT32		entry_point;
-	UINT8			reserved[15];
+	UINT8			reserved[16];
 	UINT16		pci_header_offset;
 	UINT16		expansion_header_offset;
 } option_rom_header_t;

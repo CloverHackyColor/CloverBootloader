@@ -113,17 +113,19 @@ VOID FillInputs(VOID)
   InputItems = AllocateZeroPool(20 * sizeof(INPUT_ITEM)); //XXX
   InputItems[InputItemsCount].ItemType = ASString;
   //even though Ascii we will keep value as Unicode to convert later
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%a ", gSettings.BootArgs);
+  InputItems[InputItemsCount++].SValue = PoolPrint(L"%a", gSettings.BootArgs);
   InputItems[InputItemsCount].ItemType = UNIString;
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%s ", gSettings.DsdtName);
+  InputItems[InputItemsCount++].SValue = PoolPrint(L"%s", gSettings.DsdtName);
   InputItems[InputItemsCount].ItemType = BoolValue;
   InputItems[InputItemsCount].BValue = gSettings.UseDSDTmini;
-  InputItems[InputItemsCount++].SValue = gSettings.UseDSDTmini?L"[X] ":L"[ ] ";
+  InputItems[InputItemsCount++].SValue = gSettings.UseDSDTmini?L"[X]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue;
   InputItems[InputItemsCount].BValue = gSettings.GraphicsInjector;
-  InputItems[InputItemsCount++].SValue = gSettings.GraphicsInjector?L"[X] ":L"[ ] ";
+  InputItems[InputItemsCount++].SValue = gSettings.GraphicsInjector?L"[X]":L"[ ]";
   InputItems[InputItemsCount].ItemType = Decimal;
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d ", gSettings.HDALayoutId);
+  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.HDALayoutId);
+  InputItems[InputItemsCount].ItemType = Decimal;
+  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.UnderVoltStep);
   //and so on  
 }
 
@@ -148,6 +150,10 @@ VOID ApplyInputs(VOID)
   i++;
   if (InputItems[i].Valid) {
     gSettings.HDALayoutId = StrDecimalToUintn((CHAR16*)&(InputItems[i].SValue));
+  }
+  i++;
+  if (InputItems[i].Valid) {
+    gSettings.UnderVoltStep = StrDecimalToUintn((CHAR16*)&(InputItems[i].SValue));
   }
 }
 
@@ -1212,7 +1218,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
 //3  
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 30, L"Graphics Inject:");
+    UnicodeSPrint(Flags, 50, L"Graphics Inject:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = 0xFFFF;
@@ -1225,7 +1231,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
 //4    
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  UnicodeSPrint(Flags, 30, L"Audio  ID:");
+  UnicodeSPrint(Flags, 50, L"Audio  ID:");
   InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[4].SValue);
@@ -1236,7 +1242,20 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   InputBootArgs->Entry.SubScreen = NULL;
   InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];    
   AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-  
+    //5   
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    UnicodeSPrint(Flags, 50, L"UnderVoltStep:");
+    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = StrLen(InputItems[5].SValue);
+    InputBootArgs->Entry.ShortcutDigit = 0;
+    InputBootArgs->Entry.ShortcutLetter = 'U';
+    InputBootArgs->Entry.Image = NULL;
+    InputBootArgs->Entry.BadgeImage = NULL;
+    InputBootArgs->Entry.SubScreen = NULL;
+    InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];    
+    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+    
   AddMenuEntry(&OptionMenu, &MenuEntryReturn);
   FreePool(Flags);
   //    DBG("option menu created entries=%d\n", OptionMenu.EntryCount);

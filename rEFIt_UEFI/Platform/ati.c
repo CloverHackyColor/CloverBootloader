@@ -273,16 +273,22 @@ BOOLEAN validate_rom(option_rom_header_t *rom_header, pci_dt_t *pci_dev)
 {
 	option_rom_pci_header_t *rom_pci_header;
 	
-	if (rom_header->signature != 0xaa55)
+	if (rom_header->signature != 0xaa55){
+    DBG("invalid ROM signature %x\n", rom_header->signature);
 		return FALSE;
+  }
 	
 	rom_pci_header = (option_rom_pci_header_t *)((UINT8 *)rom_header + rom_header->pci_header_offset);
 	
-	if (rom_pci_header->signature != 0x52494350)
+	if (rom_pci_header->signature != 0x52494350){
+    DBG("invalid ROM header %x\n", rom_pci_header->signature);
 		return FALSE;
+  }
 	
-	if (rom_pci_header->vendor_id != pci_dev->vendor_id || rom_pci_header->device_id != pci_dev->device_id)
+	if (rom_pci_header->vendor_id != pci_dev->vendor_id || rom_pci_header->device_id != pci_dev->device_id){
+    DBG("invalid ROM vendor=%x deviceID=%d\n", rom_pci_header->vendor_id, rom_pci_header->device_id);
 		return FALSE;
+  }
 	
 	return TRUE;
 }
@@ -382,8 +388,10 @@ BOOLEAN read_vbios(BOOLEAN from_pci)
   }
 	
 	card->rom_size = rom_addr->rom_size * 512;
-	if (!card->rom_size)
+	if (!card->rom_size){
+    DBG("invalid ROM size =0\n");
 		return FALSE;
+  }
 	
 	card->rom = AllocateZeroPool(card->rom_size);
 	if (!card->rom)
@@ -556,6 +564,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
   INTN NameLen = 0;
 	INTN		i;
 //	int		n_ports = 0;
+  UINTN ExpansionRom = 0;
 	
 	card = AllocateZeroPool(sizeof(card_t));
 	if (!card)
@@ -594,9 +603,9 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 	card->mmio		= (UINT8 *)(UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_2) & ~0x0f);
 	card->io		= (UINT8 *)(UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_4) & ~0x03);
   pci_dev->regs = card->mmio;
-	
+	ExpansionRom = pci_config_read32(pci_dev, PCI_EXPANSION_ROM_BASE);
 	DBG("Framebuffer @0x%08X  MMIO @0x%08X	I/O Port @0x%08X ROM Addr @0x%08X\n",
-		card->fb, card->mmio, card->io, pci_config_read32(pci_dev, PCI_EXPANSION_ROM_BASE));
+		card->fb, card->mmio, card->io, ExpansionRom);
 	
 	card->posted = radeon_card_posted();
 	DBG("ATI card %a, ", card->posted ? "POSTed" : "non-POSTed");
@@ -608,7 +617,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 		if (!card->rom)
 		{
 			DBG("reading VBIOS from %a", card->posted ? "legacy space" : "PCI ROM");
-			if (card->posted)
+			if (card->posted) // && ExpansionRom != 0)
 				read_vbios(FALSE);
 			else
 				read_disabled_vbios();

@@ -97,6 +97,10 @@
 		<string>Yes</string>
 		<key>GeneratePStates</key>
 		<string>Yes</string>
+		<key>PLimitDict</key>
+		<string>1</string>
+		<key>UnderVoltStep</key>
+		<string>1</string>
 		<key>EnableC6</key>
 		<string>Yes</string>
 		<key>EnableC4</key>

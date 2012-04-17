@@ -338,6 +338,8 @@ Headers collection for procedures
 #define	AML_CHUNK_PACKAGE	0x12
 #define	AML_CHUNK_METHOD	0x14
 #define AML_CHUNK_RETURN  0xA4
+#define AML_LOCAL0        0x60
+#define AML_STORE_OP      0x70
 
 struct aml_chunk 
 {
@@ -474,12 +476,14 @@ typedef struct {
 	BOOLEAN	DropSSDT;
 	BOOLEAN	GeneratePStates;
   BOOLEAN	GenerateCStates;
-	BOOLEAN	smartUPS;
+  UINT8   PLimitDict;
+  UINT8   UnderVoltStep;
   BOOLEAN LpcTune;
   BOOLEAN EnableC2;
   BOOLEAN EnableC4;
   BOOLEAN EnableC6;
   BOOLEAN EnableISS;
+	BOOLEAN	smartUPS;
 	CHAR16	DsdtName[60];
   
   //Injections
@@ -561,6 +565,7 @@ typedef enum {
 	iMac101,
 	iMac112,
 	iMac121,
+  iMac122,
 	MacPro31,
 	MacPro41,
 	MacPro51

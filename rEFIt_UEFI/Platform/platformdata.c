@@ -14,7 +14,7 @@ CHAR8* BiosVendor = "Apple Inc.";
 
 CHAR8* AppleManufacturer = "Apple Computer, Inc."; //Old name, before 2007
 
-CHAR8* AppleFirmwareVersion[16] = 
+CHAR8* AppleFirmwareVersion[17] = 
 {
 	"MB11.88Z.0061.B03.0809221748",
 	"MB21.88Z.00A5.B07.0706270922",
@@ -29,12 +29,13 @@ CHAR8* AppleFirmwareVersion[16] =
 	"IM101.88Z.00CC.B00.0909031926",
 	"IM112.88Z.0034.B00.0802091538",
 	"IM121.88Z.0047.B00.1102091756",
+  "IM122.88Z.0047.B1D.1110171110",
 	"MP31.88Z.006C.B05.0802291410",
 	"MP41.88Z.0081.B04.0903051113",
 	"MP51.88Z.007F.B00.1008031144"
 };
 
-CHAR8* AppleBoardID[16] = //Lion DR1 compatible
+CHAR8* AppleBoardID[17] = //Lion DR1 compatible
 {
 	"Mac-F4208CC8",
 	"Mac-F4208CA9",
@@ -49,12 +50,13 @@ CHAR8* AppleBoardID[16] = //Lion DR1 compatible
 	"Mac-F2268CC8",
 	"Mac-F2238AC8",
 	"Mac-F2238BAE",
+  "Mac-942B59F58194171B",
 	"Mac-F4208DC8",
 	"Mac-F221BEC8",
 	"Mac-F22788C8"
 };
 
-CHAR8* AppleReleaseDate[16] = 
+CHAR8* AppleReleaseDate[17] = 
 {
 	"05/16/06",
 	"05/15/07",
@@ -69,12 +71,13 @@ CHAR8* AppleReleaseDate[16] =
 	"09/03/09",
 	"10/20/09",
 	"10/20/09",
+  "11/05/03",
 	"01/08/08",
 	"03/03/09",
 	"08/09/10"
 };
 
-CHAR8* AppleProductName[16] = 
+CHAR8* AppleProductName[17] = 
 {
 	"MacBook1,1",
 	"MacBook2,1",
@@ -89,12 +92,13 @@ CHAR8* AppleProductName[16] =
 	"iMac10,1",
 	"iMac11,2",
 	"iMac12,1",
+  "iMac12,2",
 	"MacPro3,1",
 	"MacPro4,1",
 	"MacPro5,1"
 };
 
-CHAR8* AppleFamilies[16] = 
+CHAR8* AppleFamilies[17] = 
 {
 	"MacBook",
 	"MacBook",
@@ -109,13 +113,14 @@ CHAR8* AppleFamilies[16] =
 	"iMac",
 	"iMac",
 	"iMac",
+  "iMac",
 	"MacPro",
 	"MacPro",
 	"MacPro"
 };
 
 
-CHAR8* AppleSystemVersion[16] = 
+CHAR8* AppleSystemVersion[17] = 
 {
 	"1.1",
 	"1.2",
@@ -130,12 +135,13 @@ CHAR8* AppleSystemVersion[16] =
 	"1.0",
 	"1.2",
 	"1.1",
+  "1.1",
 	"1.3",
 	"1.4",
 	"1.2"
 };
 
-CHAR8* AppleSerialNumber[16] = //random generated
+CHAR8* AppleSerialNumber[17] = //random generated
 {
 	"W80A041AU9B", //MB11
 	"W88A041AWGP", //MB21 - merom 05/07
@@ -149,13 +155,14 @@ CHAR8* AppleSerialNumber[16] = //random generated
 	"W89A00AAX88", //IM71 - merom 01/09
 	"W80AA98A5PE", //IM101 - conroe? E7600 01/09
 	"W8034342DB7", //IM112
-	"W88FY32XDHJT", //IM121
+	"W80CF65ADHJF", //IM121 - i5-2500
+  "W88GG136DHJW", //IM122 -i7-2600
 	"W88A77AA5J4", //MP31 - xeon quad 02/09
 	"CT93051DK9Y", //MP41
 	"CG154TB9WU3"  //MP51
 };
 //no! ChassisVersion == BoardID
-CHAR8* AppleChassisAsset[16] = 
+CHAR8* AppleChassisAsset[17] = 
 {
 	"MacBook-White",
 	"MacBook-White",
@@ -170,6 +177,7 @@ CHAR8* AppleChassisAsset[16] =
 	"iMac-Aluminum",
 	"iMac-Aluminum",
 	"iMac-Aluminum",
+  "iMac-Aluminum",
 	"Pro-Enclosure",
 	"Pro-Enclosure",
 	"Pro-Enclosure"

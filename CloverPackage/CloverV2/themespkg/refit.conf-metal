@@ -48,9 +48,8 @@ theme metal
 font load
 
 # this font is default for theme metal and buttons, width=8
-#font_file_name 	black-narrow.png
-font_file_name 	BoG_LucidaConsole_10W.png
-char_width 10
+font_file_name 	dark-wide.png
+#font_file_name 	BoG_LucidaConsole_10W.png
 
 # this font is used for theme black_green, width=10
 #font_file_name  WoB_PTMono_10W.png
@@ -60,7 +59,7 @@ char_width 10
 # may differ from letter width allowing overriding
 # default value 7 corresponding embedded font
 #
-char_width 10
+#char_width 8
 
 # Use a custom title banner instead of the rEFIt icon and name. The file
 # path is relative to the directory where refit.efi is located. The color

@@ -14,8 +14,33 @@ CONST UINT8 pss_ssdt_header[] =
   0x01, 0x6A, 0x50, 0x6D, 0x52, 0x65, 0x66, 0x00, /* ..PmRef. */
   0x43, 0x70, 0x75, 0x50, 0x6D, 0x00, 0x00, 0x00, /* CpuPm... */
   0x00, 0x30, 0x00, 0x00, 0x49, 0x4E, 0x54, 0x4C, /* .0..INTL */
-  0x23, 0x11, 0x11, 0x20							/* 1.._		*/
+  0x20, 0x03, 0x12, 0x20							/* 1.._		*/
 };
+
+
+CHAR8 cst_ssdt_header[] =
+{
+  0x53, 0x53, 0x44, 0x54, 0xE7, 0x00, 0x00, 0x00, /* SSDT.... */
+  0x01, 0x17, 0x50, 0x6D, 0x52, 0x65, 0x66, 0x41, /* ..PmRefA */
+  0x43, 0x70, 0x75, 0x43, 0x73, 0x74, 0x00, 0x00, /* CpuCst.. */
+  0x00, 0x30, 0x00, 0x00, 0x49, 0x4E, 0x54, 0x4C, /* ....INTL */
+  0x20, 0x03, 0x12, 0x20                          /* 1.._		*/
+};
+
+CHAR8 resource_template_register_fixedhw[] =
+{
+  0x11, 0x14, 0x0A, 0x11, 0x82, 0x0C, 0x00, 0x7F,
+  0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x01, 0x79, 0x00
+};
+
+CHAR8 resource_template_register_systemio[] =
+{
+  0x11, 0x14, 0x0A, 0x11, 0x82, 0x0C, 0x00, 0x01,
+  0x08, 0x00, 0x00, 0x15, 0x04, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x79, 0x00,
+};
+
 
 
 SSDT_TABLE *generate_pss_ssdt()
@@ -56,13 +81,21 @@ SSDT_TABLE *generate_pss_ssdt()
 							AsmWriteMsr64(MSR_IA32_EXT_CONFIG, (AsmReadMsr64(MSR_IA32_EXT_CONFIG) | (1 << 28))); 
 							gBS->Stall(10);
 							cpu_dynamic_fsb = (AsmReadMsr64(MSR_IA32_EXT_CONFIG) & (1 << 28))?1:0;
+              DBG("DynamicFSB=%x\n", cpu_dynamic_fsb);
 						}
 						
 						BOOLEAN cpu_noninteger_bus_ratio = (AsmReadMsr64(MSR_IA32_PERF_STATUS) & (1ULL << 46));
 						
 						initial.Control = AsmReadMsr64(MSR_IA32_PERF_STATUS);
+            DBG("Initial control=%x\n", initial.Control);
 						
 						maximum.Control = ((AsmReadMsr64(MSR_IA32_PERF_STATUS) >> 32) & 0x1F3F) | (0x4000 * cpu_noninteger_bus_ratio);
+            DBG("Maximum control=%x\n", maximum.Control);
+            if (gSettings.Turbo) {
+              maximum.FID++;
+              MsgLog("Turbo FID=%x\n", maximum.FID);
+            }
+            
 						maximum.CID = ((maximum.FID & 0x1F) << 1) | cpu_noninteger_bus_ratio;
 						
 						minimum.FID = ((AsmReadMsr64(MSR_IA32_PERF_STATUS) >> 24) & 0x1F) | (0x80 * cpu_dynamic_fsb);
@@ -90,7 +123,7 @@ SSDT_TABLE *generate_pss_ssdt()
 							
 							if (p_states_count > 32) 
 								p_states_count = 32;
-							
+							DBG("PStates count=%x", p_states_count);
 							UINT8 vidstep;
 							UINT8 i = 0, u, invalid = 0;
 							
@@ -101,7 +134,7 @@ SSDT_TABLE *generate_pss_ssdt()
 								i = u - invalid;
 								
 								p_states[i].CID = maximum.CID - u;
-								p_states[i].FID = (p_states[i].CID >> 1);
+								p_states[i].FID = (p_states[i].CID >> 1);                
 								
 								if (p_states[i].FID < 0x6) 
 								{
@@ -117,6 +150,10 @@ SSDT_TABLE *generate_pss_ssdt()
 									invalid++;
 								
 								p_states[i].VID = ((maximum.VID << 2) - (vidstep * u)) >> 2;
+                if (u < p_states_count - 1) {
+                  p_states[i].VID -= gSettings.UnderVoltStep;
+                }
+                
 								
 								UINT32 multiplier = p_states[i].FID & 0x1f;		// = 0x08
 								UINT8 half = (p_states[i].FID & 0x40)?1:0;					// = 0x00
@@ -149,6 +186,11 @@ SSDT_TABLE *generate_pss_ssdt()
               maximum.Control = (AsmReadMsr64(MSR_IA32_PERF_STATUS) >> 8) & 0xff;
             } else {
               maximum.Control = AsmReadMsr64(MSR_IA32_PERF_STATUS) & 0xff; 
+            }
+            DBG("Maximum control=%x\n", maximum.Control);
+            if (gSettings.Turbo) {
+              maximum.Control++;
+              MsgLog("Turbo control=%x\n", maximum.Control);
             }
 						
 						minimum.Control = (AsmReadMsr64(MSR_PLATFORM_INFO) >> 40) & 0xff;
@@ -195,7 +237,7 @@ SSDT_TABLE *generate_pss_ssdt()
 						AML_CHUNK* method = aml_add_name(scop, "PSS_");
 							AML_CHUNK* pack = aml_add_package(method);
 			
-								for (i = 0; i < p_states_count; i++) 
+								for (i = gSettings.PLimitDict; i < p_states_count; i++) 
 								{
 									AML_CHUNK* pstt = aml_add_package(pack);
 									
@@ -206,10 +248,23 @@ SSDT_TABLE *generate_pss_ssdt()
 									aml_add_dword(pstt, p_states[i].Control);
 									aml_add_dword(pstt, i+1); // Status
 								}
-      AML_CHUNK* met = aml_add_method(scop, "_PSS", 0);
-      AML_CHUNK* ret = aml_add_return_name(met, "PSS_");
+            AML_CHUNK* metPSS = aml_add_method(scop, "_PSS", 0);
+              aml_add_return_name(metPSS, "PSS_");
+            AML_CHUNK* metPPC = aml_add_method(scop, "_PPC", 0);
+              aml_add_return_byte(metPPC, gSettings.PLimitDict);
+            AML_CHUNK* namePCT = aml_add_name(scop, "PCT_");
+              AML_CHUNK* packPCT = aml_add_package(namePCT);
+              resource_template_register_fixedhw[8] = 0x00;
+              resource_template_register_fixedhw[9] = 0x00;
+              resource_template_register_fixedhw[18] = 0x00;
+              aml_add_buffer(packPCT, resource_template_register_fixedhw, sizeof(resource_template_register_fixedhw));
+              aml_add_buffer(packPCT, resource_template_register_fixedhw, sizeof(resource_template_register_fixedhw));
+            AML_CHUNK* metPCT = aml_add_method(scop, "_PCT", 0);
+              aml_add_return_name(metPCT, "PCT_");
+      
+            
 	
-			// Add aliases
+			// Add CPUs
 			for (i = 1; i < acpi_cpu_count; i++) 
 			{
 
@@ -217,8 +272,13 @@ SSDT_TABLE *generate_pss_ssdt()
 				
 				scop = aml_add_scope(root, name);
 //				aml_add_alias(scop, "PSS_", "_PSS");
-        met = aml_add_method(scop, "_PSS", 0);
-        ret = aml_add_return_name(met, "_PR_CPU0PSS_");
+        metPSS = aml_add_method(scop, "_PSS", 0);
+        aml_add_return_name(metPSS, "_PR_CPU0PSS_");
+        metPPC = aml_add_method(scop, "_PPC", 0);
+        aml_add_return_byte(metPPC, gSettings.PLimitDict);
+        metPCT = aml_add_method(scop, "_PCT", 0);
+        aml_add_return_name(metPCT, "_PR_CPU0PCT_");
+        
 			}
 			
 			aml_calculate_size(root);
@@ -247,30 +307,6 @@ SSDT_TABLE *generate_pss_ssdt()
 	
 	return NULL;
 }
-
-CHAR8 cst_ssdt_header[] =
-{
-  0x53, 0x53, 0x44, 0x54, 0xE7, 0x00, 0x00, 0x00, /* SSDT.... */
-  0x01, 0x17, 0x50, 0x6D, 0x52, 0x65, 0x66, 0x41, /* ..PmRefA */
-  0x43, 0x70, 0x75, 0x43, 0x73, 0x74, 0x00, 0x00, /* CpuCst.. */
-  0x00, 0x30, 0x00, 0x00, 0x49, 0x4E, 0x54, 0x4C, /* ....INTL */
-  0x23, 0x11, 0x11, 0x20                          /* 1.._		*/
-};
-
-CHAR8 resource_template_register_fixedhw[] =
-{
-  0x11, 0x14, 0x0A, 0x11, 0x82, 0x0C, 0x00, 0x7F,
-  0x01, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x01, 0x79, 0x00
-};
-
-CHAR8 resource_template_register_systemio[] =
-{
-  0x11, 0x14, 0x0A, 0x11, 0x82, 0x0C, 0x00, 0x01,
-  0x08, 0x00, 0x00, 0x15, 0x04, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0x00, 0x79, 0x00,
-};
-
 
 SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
 {
@@ -340,8 +376,8 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
     }
     else if (c3_enabled) // C3
     {
-      p_blk_lo = acpi_cpu_p_blk + 6;
-      p_blk_hi = (acpi_cpu_p_blk + 6) >> 8;
+      p_blk_lo = acpi_cpu_p_blk + 5;
+      p_blk_hi = (acpi_cpu_p_blk + 5) >> 8;
       
       tmpl = aml_add_package(pack);
       resource_template_register_systemio[11] = p_blk_lo; // C3
@@ -355,6 +391,10 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
   else
   {
     // C1
+    resource_template_register_fixedhw[8] = 0x01;
+    resource_template_register_fixedhw[9] = 0x02;
+    resource_template_register_fixedhw[18] = 0x01;
+    
     resource_template_register_fixedhw[11] = 0x00; // C1
     
     aml_add_buffer(tmpl, resource_template_register_fixedhw, sizeof(resource_template_register_fixedhw));

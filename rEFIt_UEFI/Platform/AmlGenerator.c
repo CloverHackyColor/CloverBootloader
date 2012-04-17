@@ -324,6 +324,19 @@ AML_CHUNK* aml_add_return_name(AML_CHUNK* parent, CONST CHAR8* name)
 	return node;
 }
 
+AML_CHUNK* aml_add_return_byte(AML_CHUNK* parent, UINT8 value)
+{
+	AML_CHUNK* node = aml_create_node(parent);
+	
+	if (node)
+	{
+		node->Type = AML_CHUNK_RETURN;
+		aml_add_byte(node, value);
+	}
+	
+	return node;
+}
+
 
 UINT8 aml_get_size_length(UINT32 size)
 {

@@ -348,6 +348,21 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
           gSettings.GenerateCStates = TRUE;
       }
+      gSettings.PLimitDict = 0;
+      prop = GetProperty(dictPointer,"PLimitDict");
+      if(prop)
+      {
+        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+        gSettings.PLimitDict = (UINT8)StrDecimalToUintn((CHAR16*)&UStr[0]);	
+      }
+      gSettings.UnderVoltStep = 0;
+      prop = GetProperty(dictPointer,"UnderVoltStep");
+      if(prop)
+      {
+        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+        gSettings.UnderVoltStep = (UINT8)StrDecimalToUintn((CHAR16*)&UStr[0]);	
+      }
+      
       
       prop = GetProperty(dictPointer,"ResetAddress");
       if(prop)
@@ -874,24 +889,20 @@ EFI_STATUS SaveSettings()
   if (gSettings.Turbo){
     if (gCPUStructure.Turbo4) {
       gCPUStructure.CPUFrequency = DivU64x32(gCPUStructure.Turbo4 * gCPUStructure.FSBFrequency, 10);
-    }
-    
+    }    
     //attempt to make turbo
-    if (gSettings.Turbo){
-      msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
-      DBG("MSR_IA32_MISC_ENABLE = %lx\n", msr);
-      msr &= ~(1ULL<<38);
-      AsmWriteMsr64(MSR_IA32_MISC_ENABLE, msr);
-      gBS->Stall(100);
-      msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
-      DBG("Set turbo: MSR_IA32_MISC_ENABLE = %lx\n", msr);
-    }
+    msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
+    DBG("MSR_IA32_MISC_ENABLE = %lx\n", msr);
+    msr &= ~(1ULL<<38);
+    AsmWriteMsr64(MSR_IA32_MISC_ENABLE, msr);
+    gBS->Stall(100);
+    msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
+    DBG("Set turbo: MSR_IA32_MISC_ENABLE = %lx\n", msr);
     if (TurboMsr != 0) {
       AsmWriteMsr64(MSR_IA32_PERF_CONTROL, TurboMsr);
       gBS->Stall(100);
       WaitForSts();
     }
-    
     msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);
     DBG("set turbo state msr=%x CPU=%dMHz\n", msr, DivU64x32(gCPUStructure.CPUFrequency, Mega));
   } 
