@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Workspace = edk2/Clover/CloverPackage
-
 # Copy the Version.h to workspace.
 
 cp -f ../rEFIt_UEFI/Version.h Version.h
@@ -13,27 +12,31 @@ revision=$( grep "FIRMWARE_REVISION" Version.h | awk '{ print $3 }' | tr -d '\"'
 echo "${version}" > version
 echo "${revision}" > revision
 
-# 複製 Slice 原始 ia32/boot 到 ia32/boot
-#cp -f ~/src/CloverPKG/Clover_Slice/CloverV2/boot-32/boot CloverV2/Bootloaders/ia32/boot
-#cp -f ~/src/CloverPKG/Clover_Slice/CloverV2_rev${revision}/CloverV2/boot-32/boot CloverV2/Bootloaders/ia32/boot
-# 複製 Slice 原始 ia32/boot 到 ia32/boot
-
+# Workspace = edk2/Clover/CloverPackage
 # Copy doc to CloverV2/doc.
 
 mkdir -p CloverV2/doc/
 #cp -f ../BootHFS/Installation.txt  CloverV2/doc/Installation.txt
 cp -f ../BootHFS/boot1f32-install.sh  CloverV2/doc/boot1f32-install.sh
 
-# Prepare i386 for package installer.
+# Workspace = edk2/Clover/CloverPackage
+# Prepare i386 for building package installer.
 
+if [ -d "sym" ];then
 sudo rm -rf sym
+fi
 mkdir -p sym/i386
 cp -Rf CloverV2/Bootloaders/* sym/i386/
 cp -f CloverV2/BootSectors/* sym/i386/
 
+# Workspace = edk2/Clover/CloverPackage
 # Prepare Resources for package installer.
 
+cp -f CloverV2/config.plist-FullSample/config.plist CloverV2/EFI/config-sample.plist
+
+if [ -d "package/Resources" ];then
 rm -rf package/Resources
+fi
 mkdir -p package/Resources
 cp -Rf package/Resources-original/* package/Resources
 
@@ -41,25 +44,14 @@ cp -f package/Distribution-original package/Distribution
 title="title>Clover ${version} r${revision} x32 x64 EFI bootloader"
 perl -i -p -e "s/title>Clover_title/${title}/g" `find "package/Distribution" -type f`
 
-##find "CloverV2" -name '.*' -depth -exec rm -rf {} \;
-##find "package" -name '.*' -depth -exec rm -rf {} \;
-
-########################################################################
-# Change revision to be Clover:rEFIt_UEFI = 358:361 show as installer. #
-########################################################################
-
-# perl -i -p -e "s/%CLOVERREVISION%/358:361/g" `find "package/Resources" -type f`
-
 echo " "
 echo "Modify CloverV2/EFI or package/Resources if necessary."
 echo " "
-# read -p "Press Enter to start to build the installer."
+read -p "Press Enter to start to build the installer."
 echo " "
 
 # Workspace = edk2/Clover/CloverPackage
 # Start to build installer.
-
-cp -f CloverV2/config.plist-FullSample/config.plist CloverV2/EFI/config-sample.plist
 
 sudo make pkg
 
@@ -73,7 +65,11 @@ cd ..
 
 rm -rf package/Resources
 rm -f package/Distribution
+rm -f Version.h
+rm -f version
+rm -f revision
 
+# Workspace = edk2/Clover/CloverPackage
 # Open the final folder.
 
 ls -la sym
