@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# workspace = CloverGrower/CloverPackage
+# Workspace = edk2/Clover/CloverPackage
 
 # Copy the Version.h to workspace.
 
@@ -13,6 +13,11 @@ revision=$( grep "FIRMWARE_REVISION" Version.h | awk '{ print $3 }' | tr -d '\"'
 echo "${version}" > version
 echo "${revision}" > revision
 
+# 複製 Slice 原始 ia32/boot 到 ia32/boot
+#cp -f ~/src/CloverPKG/Clover_Slice/CloverV2/boot-32/boot CloverV2/Bootloaders/ia32/boot
+#cp -f ~/src/CloverPKG/Clover_Slice/CloverV2_rev${revision}/CloverV2/boot-32/boot CloverV2/Bootloaders/ia32/boot
+# 複製 Slice 原始 ia32/boot 到 ia32/boot
+
 # Copy doc to CloverV2/doc.
 
 mkdir -p CloverV2/doc/
@@ -21,7 +26,7 @@ cp -f ../BootHFS/boot1f32-install.sh  CloverV2/doc/boot1f32-install.sh
 
 # Prepare i386 for package installer.
 
-rm -rf sym
+sudo rm -rf sym
 mkdir -p sym/i386
 cp -Rf CloverV2/Bootloaders/* sym/i386/
 cp -f CloverV2/BootSectors/* sym/i386/
@@ -45,9 +50,17 @@ perl -i -p -e "s/title>Clover_title/${title}/g" `find "package/Distribution" -ty
 
 # perl -i -p -e "s/%CLOVERREVISION%/358:361/g" `find "package/Resources" -type f`
 
-read -p "Modify package/Resources if necessary, then start to make the installer."
+echo " "
+echo "Modify CloverV2/EFI or package/Resources if necessary."
+echo " "
+# read -p "Press Enter to start to build the installer."
+echo " "
 
-# Start to make installer.
+# Workspace = edk2/Clover/CloverPackage
+# Start to build installer.
+
+cp -f CloverV2/config.plist-FullSample/config.plist CloverV2/EFI/config-sample.plist
+
 sudo make pkg
 
 cd sym
@@ -55,12 +68,17 @@ zip Clover_${version}_r${revision}_EFI_x32_x64_pkg.zip Clover_${version}_r${revi
 zip Clover_${version}_r${revision}_EFI_x32_x64_pkg.zip Clover_${version}_r${revision}_EFI_x32_x64.pkg.md5
 cd ..
 
-open sym
+# Workspace = edk2/Clover/CloverPackage/
+# Remove temp files.
 
 rm -rf package/Resources
 rm -f package/Distribution
 
+# Open the final folder.
+
+ls -la sym
+open sym
+
+# Finish building installer.
+
 exit 0
-
-# Finish making installer.
-

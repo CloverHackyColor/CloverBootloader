@@ -84,7 +84,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 	ditto --noextattr --noqtn ${3%/*}/i386/boot1f32alt ${3}/Core/Root/usr/standalone/i386
 	ditto --noextattr --noqtn ${3%/*}/i386/boot1h ${3}/Core/Root/usr/standalone/i386
 	ditto --noextattr --noqtn ${3%/*}/i386/boot1h2 ${3}/Core/Root/usr/standalone/i386
-	ditto --noextattr --noqtn ${3%/*}/i386/bootc ${3}/Core/Root/usr/standalone/i386
+#	ditto --noextattr --noqtn ${3%/*}/i386/bootc ${3}/Core/Root/usr/standalone/i386
 	ditto --noextattr --noqtn ${3%/*}/i386/fdisk440 ${3}/Core/Root/usr/local/bin
 	local coresize=$( du -hkc "${3}/Core/Root" | tail -n1 | awk {'print $1'} )
 	fixperms "${3}/Core/Root/"
@@ -107,52 +107,57 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 	rm -f ${3}/EFIfolder/Root/EFI/config.plist >/dev/null 2>&1
 	cp ${3}/EFIfolder/Root/EFI/BOOT/refit.conf ${3}/EFIfolder/Root/EFI/BOOT/refit.conf-default
 	rm -f ${3}/EFIfolder/Root/EFI/BOOT/refit.conf
+	perl -i -p -e "s/%CLOVERVERSION%/${version}/g" `find "${3}/EFIfolder/Scripts/preinstall" -type f`
+	perl -i -p -e "s/%CLOVERREVISION%/${revision}/g" `find "${3}/EFIfolder/Scripts/preinstall" -type f`
 	local coresize=$( du -hkc "${3}/EFIfolder/Root" | tail -n1 | awk {'print $1'} )
 	fixperms "${3}/EFIfolder/Root/"
+	chmod 755 "${3}/EFIfolder/Scripts/preinstall"
 	echo "	[BUILD] EFIfolder "
 	buildpackage "${3}/EFIfolder" "/" "" "start_visible=\"false\" start_selected=\"true\" start_enabled=\"false\"" >/dev/null 2>&1
 	
 # End build EFI folder package	
 
-
 	# build boot0 package 
 		mkdir -p ${3}/boot0/Root
 		mkdir -p ${3}/boot0/Scripts/Tools
 		cp -f ${pkgroot}/Scripts/boot0/postinstall ${3}/boot0/Scripts
-		ditto --arch i386 `which SetFile` ${3}/boot0/Scripts/Tools/SetFile
+		chmod 755 "${3}/boot0/Scripts/postinstall"
 		echo "	[BUILD] boot0 "
-		buildpackage "${3}/boot0" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot0mdf32']) &amp;&amp; exclusive(choices['boot1no'])\"" >/dev/null 2>&1
+		buildpackage "${3}/boot0" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot0hfsEFI']) &amp;&amp; exclusive(choices['boot1no'])\"" >/dev/null 2>&1
 	# End build boot0 package 
 	
 	# build boot0hfs package 
 		mkdir -p ${3}/boot0hfs/Root
 		mkdir -p ${3}/boot0hfs/Scripts/Tools
 		cp -f ${pkgroot}/Scripts/boot0hfs/postinstall ${3}/boot0hfs/Scripts
-		ditto --arch i386 `which SetFile` ${3}/boot0hfs/Scripts/Tools/SetFile
+		chmod 755 "${3}/boot0hfs/Scripts/postinstall"
 		echo "	[BUILD] boot0hfs "
-		buildpackage "${3}/boot0hfs" "/" "" "start_visible=\"true\" start_selected=\"true\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0mdf32']) &amp;&amp; exclusive(choices['boot1no'])\"" >/dev/null 2>&1
+		buildpackage "${3}/boot0hfs" "/" "" "start_visible=\"true\" start_selected=\"true\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0hfsEFI']) &amp;&amp; exclusive(choices['boot1no'])\"" >/dev/null 2>&1
 	# End build boot0hfs package 
 
-	# build boot0mdf32 package 
-		mkdir -p ${3}/boot0mdf32/Root
-		mkdir -p ${3}/boot0mdf32/Scripts/Tools
-		cp -f ${pkgroot}/Scripts/boot0mdf32/postinstall ${3}/boot0mdf32/Scripts
-		ditto --arch i386 `which SetFile` ${3}/boot0mdf32/Scripts/Tools/SetFile
-		echo "	[BUILD] boot0mdf32 "
-		buildpackage "${3}/boot0mdf32" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot1no'])\"" >/dev/null 2>&1
-	# End build boot0mdf32 package 
+	# build boot0hfsEFI package 
+		mkdir -p ${3}/boot0hfsEFI/Root
+		mkdir -p ${3}/boot0hfsEFI/Scripts/Tools
+		cp -f ${pkgroot}/Scripts/boot0hfsEFI/postinstall ${3}/boot0hfsEFI/Scripts
+		chmod 755 "${3}/boot0hfsEFI/Scripts/postinstall"
+		echo "	[BUILD] boot0hfsEFI "
+		buildpackage "${3}/boot0hfsEFI" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot1no'])\"" >/dev/null 2>&1
+	# End build boot0hfsEFI package 
 
 	# build boot1no package
 		mkdir -p ${3}/boot1no/Root
+		mkdir -p ${3}/boot1no/Scripts/Tools
+		cp -f ${pkgroot}/Scripts/boot1no/postinstall ${3}/boot1no/Scripts
+		chmod 755 "${3}/boot1no/Scripts/postinstall"
 		echo "	[BUILD] boot1no "
-		buildpackage "${3}/boot1no" "/tmpcham" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot0mdf32'])\"" >/dev/null 2>&1
+		buildpackage "${3}/boot1no" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot0hfsEFI'])\"" >/dev/null 2>&1
 	# End build boot1no package 
 
 	# build boot32 package 
 		mkdir -p ${3}/boot32/Root
 		mkdir -p ${3}/boot32/Scripts/Tools
 		cp -f ${pkgroot}/Scripts/boot32/postinstall ${3}/boot32/Scripts
-		ditto --arch i386 `which SetFile` ${3}/boot32/Scripts/Tools/SetFile
+		chmod 755 "${3}/boot32/Scripts/postinstall"
 		echo "	[BUILD] boot32 "
 		buildpackage "${3}/boot32" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot64'])\"" >/dev/null 2>&1
 	# End build boot32 package 
@@ -161,7 +166,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 		mkdir -p ${3}/boot64/Root
 		mkdir -p ${3}/boot64/Scripts/Tools
 		cp -f ${pkgroot}/Scripts/boot64/postinstall ${3}/boot64/Scripts
-		ditto --arch i386 `which SetFile` ${3}/boot64/Scripts/Tools/SetFile
+		chmod 755 "${3}/boot64/Scripts/postinstall"
 		echo "	[BUILD] boot64 "
 		buildpackage "${3}/boot64" "/" "" "start_visible=\"true\" start_selected=\"true\" selected=\"exclusive(choices['boot32'])\"" >/dev/null 2>&1
 	# End build boot64 package 
@@ -170,48 +175,30 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
     outline[$((outlinecount++))]="${indent[$xmlindent]}\t</line>"
 # End build Clover package
 
-# build Themes package
+
+# build Themes packages
 	echo "===================== Themes ==========================="
 	outline[$((outlinecount++))]="${indent[$xmlindent]}\t<line choice=\"Themes\">"
 	choices[$((choicescount++))]="<choice\n\tid=\"Themes\"\n\ttitle=\"Themes_title\"\n\tdescription=\"Themes_description\"\n>\n</choice>\n"
 	((xmlindent++))
 	packagesidentity="org.Clover.Themes"
 
-	rm -rf ${3}/black_green/Root/EFI
-	mkdir -p ${3}/black_green/Root/EFI/BOOT/themes/black_green
-	mkdir -p ${3}/black_green/Root/etc
-	mkdir -p ${3}/black_green/Scripts
-	cp -f ${3%/*/*}/CloverV2/themespkg/preinstall-black_green ${3}/black_green/Scripts/preinstall
-	cp -Rf ${3%/*/*}/CloverV2/themespkg/black_green/* ${3}/black_green/Root/EFI/BOOT/themes/black_green
-	cp -f ${3%/*/*}/CloverV2/themespkg/refit.conf-black_green ${3}/black_green/Root/EFI/BOOT/refit.conf-default
-	cp -f ${3%/*/*}/CloverV2/themespkg/refit.conf-black_green ${3}/black_green/Root/EFI/BOOT/refit.conf-black_green
-	fixperms "${3}/black_green/Root/"
-	echo "	[BUILD] black_green "
-	buildpackage "${3}/black_green" "/" "" "start_visible=\"true\" start_selected=\"true\" selected=\"exclusive(choices['buttons']) &amp;&amp; exclusive(choices['metal'])\"" >/dev/null 2>&1
-
-	rm -rf ${3}/buttons/Root/EFI
-	mkdir -p ${3}/buttons/Root/EFI/BOOT/themes/buttons
-	mkdir -p ${3}/buttons/Root/etc
-	mkdir -p ${3}/buttons/Scripts
-	cp -f ${3%/*/*}/CloverV2/themespkg/preinstall-buttons ${3}/buttons/Scripts/preinstall
-	cp -Rf ${3%/*/*}/CloverV2/themespkg/buttons/* ${3}/buttons/Root/EFI/BOOT/themes/buttons
-	cp -f ${3%/*/*}/CloverV2/themespkg/refit.conf-buttons ${3}/buttons/Root/EFI/BOOT/refit.conf-default
-	cp -f ${3%/*/*}/CloverV2/themespkg/refit.conf-buttons ${3}/buttons/Root/EFI/BOOT/refit.conf-buttons
-	fixperms "${3}/buttons/Root/"
-	echo "	[BUILD] buttons "
-	buildpackage "${3}/buttons" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['black_green']) &amp;&amp; exclusive(choices['metal'])\"" >/dev/null 2>&1
-
-	rm -rf ${3}/metal/Root/EFI
-	mkdir -p ${3}/metal/Root/EFI/BOOT/themes/metal
-	mkdir -p ${3}/metal/Root/etc
-	mkdir -p ${3}/metal/Scripts
-	cp -f ${3%/*/*}/CloverV2/themespkg/preinstall-metal ${3}/metal/Scripts/preinstall
-	cp -Rf ${3%/*/*}/CloverV2/themespkg/metal/* ${3}/metal/Root/EFI/BOOT/themes/metal
-	cp -f ${3%/*/*}/CloverV2/themespkg/refit.conf-metal ${3}/metal/Root/EFI/BOOT/refit.conf-default
-	cp -f ${3%/*/*}/CloverV2/themespkg/refit.conf-metal ${3}/metal/Root/EFI/BOOT/refit.conf-metal
-	fixperms "${3}/metal/Root/"
-	echo "	[BUILD] metal "
-	buildpackage "${3}/metal" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['black_green']) &amp;&amp; exclusive(choices['buttons'])\"" >/dev/null 2>&1
+	themes=($( find "${3%/*/*}/CloverV2/themespkg/" -type d -depth 1 -not -name '.svn' ))
+	for (( i = 0 ; i < ${#themes[@]} ; i++ )) 
+	do
+		theme="${themes[$i]##*/}"
+		mkdir -p "${3}/${themes[$i]##*/}/Root/EFI/BOOT/themes"
+		mkdir -p "${3}/${themes[$i]##*/}/Scripts"
+		rsync -r --exclude=.svn "${themes[$i]}/" "${3}/${themes[$i]##*/}/Root/EFI/BOOT/themes/${theme}"
+		ditto --noextattr --noqtn "${themes[$i]%/*}preinstall-${theme}" "${3}/${themes[$i]##*/}/Scripts/preinstall"
+		ditto --noextattr --noqtn "${themes[$i]%/*}refit.conf-${theme}" "${3}/${themes[$i]##*/}/Root/EFI/BOOT/refit.conf-default"
+		ditto --noextattr --noqtn "${themes[$i]%/*}refit.conf-${theme}" "${3}/${themes[$i]##*/}/Root/EFI/BOOT/refit.conf-${theme}"
+		fixperms "${3}/${themes[$i]##*/}/Root/"
+		chmod 755 "${3}/${themes[$i]##*/}/Scripts/preinstall"
+		echo "	[BUILD] ${themes[$i]##*/} "
+		buildpackage "${3}/${theme}" "/" "" "start_selected=\"false\" start_visible=\"true\"" >/dev/null 2>&1
+		rm -R -f "${3}/${i##*/}"
+	done
 
     ((xmlindent--))
     outline[$((outlinecount++))]="${indent[$xmlindent]}\t</line>"
@@ -272,6 +259,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 	mkdir -p ${3}/post/Root
 	mkdir -p ${3}/post/Scripts
 	cp -f ${pkgroot}/Scripts/post/* ${3}/post/Scripts
+	chmod 755 "${3}/post/Scripts/postinstall"
 	echo "	[BUILD] Post "
 	buildpackage "${3}/Post" "/" "" "start_visible=\"false\" start_selected=\"true\"" >/dev/null 2>&1
 	outline[$((outlinecount++))]="${indent[$xmlindent]}</choices-outline>"
@@ -392,7 +380,7 @@ if [ -d "${1}/Root" ] && [ "${1}/Scripts" ]; then
 
 	local packagename="${1##*/}"
 	local identifier=$( echo ${packagesidentity}.${packagename//_/.} | tr [:upper:] [:lower:] )
-	find "${1}" -name '.DS_Store' -delete
+	find "${1}" -name '.DS_Store' -or -name '.svn' -exec rm -R {} \+
 	local filecount=$( find "${1}/Root" | wc -l )
 	if [ "${3}" ]; then
 		local installedsize="${3}"
@@ -444,7 +432,7 @@ if [ -d "${1}/Root" ] && [ "${1}/Scripts" ]; then
 	if [ "${4}" ]; then
 		local choiceoptions="${indent[$xmlindent]}${4}\n"	
 	fi
-	choices[$((choicescount++))]="<choice\n\tid=\"${packagename// /}\"\n\ttitle=\"${packagename}_title\"\n\tdescription=\"${packagename}_description\"\n${choiceoptions}>\n\t<pkg-ref id=\"${identifier}\" installKBytes='${installedsize}' version='${version}.0.0.${timestamp}' auth='root'>#${packagename// /}.pkg</pkg-ref>\n</choice>\n"
+	choices[$((choicescount++))]="<choice\n\tid=\"${packagename// /}\"\n\ttitle=\"${packagename}_title\"\n\tdescription=\"${packagename}_description\" ${choiceoptions}>\n\t<pkg-ref id=\"${identifier}\" installKBytes='${installedsize}' version='${version}.0.0.${timestamp}' auth='root'>#${packagename// /}.pkg</pkg-ref>\n</choice>\n"
 
 	rm -R -f "${1}"
 fi
@@ -461,7 +449,7 @@ if [ -d "${1}/Root" ] && [ "${1}/Scripts" ]; then
 
 	local packagename="${1##*/}"
 	local identifier=$( echo ${packagesidentity}.${packagename//_/.} | tr [:upper:] [:lower:] )
-	find "${1}" -name '.DS_Store' -delete
+	find "${1}" -name '.DS_Store' -or -name '.svn' -exec rm -R {} \+
 	local filecount=$( find "${1}/Root" | wc -l )
 	if [ "${3}" ]; then
 		local installedsize="${3}"
@@ -530,7 +518,7 @@ if [ -d "${1}/Root" ] && [ "${1}/Scripts" ]; then
 
 	local packagename="${1##*/}"
 	local identifier=$( echo ${packagesidentity}.${packagename//_/.} | tr [:upper:] [:lower:] )
-	find "${1}" -name '.DS_Store' -delete
+	find "${1}" -name '.DS_Store' -or -name '.svn' -exec rm -R {} \+
 	local filecount=$( find "${1}/Root" | wc -l )
 	if [ "${3}" ]; then
 		local installedsize="${3}"
@@ -603,7 +591,7 @@ makedistribution ()
 	ditto --noextattr --noqtn "${pkgroot}/Distribution" "${1}/${packagename}/Distribution"
 	ditto --noextattr --noqtn "${pkgroot}/Resources" "${1}/${packagename}/Resources"
 
-##	find "${1}/${packagename}/Resources" -type d -name '.svn' -exec rm -R -f {} \; 2>/dev/null
+	find "${1}/${packagename}/Resources" -type d -name '.svn' -exec rm -R -f {} \; 2>/dev/null
 
 	for (( i=0; i < ${#outline[*]} ; i++));
 		do
@@ -625,6 +613,12 @@ makedistribution ()
 	perl -i -p -e "s/%CREDITS%/${credits}/g" `find "${1}/${packagename}/Resources" -type f`
 	perl -i -p -e "s/%PKGDEV%/${pkgdev}/g" `find "${1}/${packagename}/Resources" -type f`
 	perl -i -p -e "s/%YEAR%/${year}/g" `find "${1}/${packagename}/Resources" -type f`
+
+	old="description=\"black_green_description\" 			start_selected=\"false\""
+	new="description=\"black_green_description\" 			start_enabled=\"false\" start_selected=\"true\""
+	perl -i -p -e "s/${old}/${new}/g" `find "${1}/${packagename}/Distribution" -type f`
+	perl -i -p -e "s/description=\"Themes_description\"/description=\"Themes_description\" start_enabled=\"false\" /g" `find "${1}/${packagename}/Distribution" -type f`
+
 
 	stage=${stage/RC/Release Candidate }
 	stage=${stage/FINAL/2.0 Final}

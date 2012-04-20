@@ -1,0 +1,227 @@
+#!/bin/bash
+
+diskloader="boot0hfs"
+partitionloaderhfs="boot1h2"
+partitionloaderfat="boot1f32alt"
+bootervolumename="EFI"
+
+bootresources="${0%/*}"
+
+start ()
+{
+# $1 volume
+
+osxvolume="${@}"
+
+if [ -z "${osxvolume}" ]; then
+	echo
+	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
+	echo "Cannot find the volume. Exiting." >> "${osxvolume}/Clover_Install_Log.txt"
+	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
+	echo "Stage 0 - Stop write ${diskloader}." >> "${osxvolume}/Clover_Install_Log.txt"
+	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
+	echo "Stage 1 - Stop write ${partitionloaderhfs}." >> "${osxvolume}/Clover_Install_Log.txt"
+	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
+	exit
+fi
+
+bootdev=$( df "${osxvolume}" | sed -n '2p' | awk '{print $1}' )
+
+if [ "${bootdev}" = "${bootdev#*disk*s}" ]; then
+	echo
+	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
+	echo "ERROR Volume does not use slices." >> "${osxvolume}/Clover_Install_Log.txt"
+	echo "Volume may be stored on a RAID array." >> "${osxvolume}/Clover_Install_Log.txt"
+	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
+	echo "Stage 0 - Stop write ${diskloader}." >> "${osxvolume}/Clover_Install_Log.txt"
+	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
+	echo "Stage 1 - Stop write ${partitionloaderhfs}." >> "${osxvolume}/Clover_Install_Log.txt"
+	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
+	echo
+	exit
+fi
+
+bootuuid=$( diskutil info "$bootdev" | grep Volume\ UUID | awk {'print $3'} )
+partitiontable=$( diskutil list ${bootdev%s*} | sed -n '3p' | awk '{print $2}' )
+
+if [ ${partitiontable} != "GUID_partition_scheme" ]; then
+	echo
+	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
+	echo "ERROR Volume is not on a GPT partitioned disc." >> "${osxvolume}/Clover_Install_Log.txt"
+	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
+	echo "Stage 0 - Stop write ${diskloader}." >> "${osxvolume}/Clover_Install_Log.txt"
+	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
+	echo "Stage 1 - Stop write ${partitionloaderhfs}." >> "${osxvolume}/Clover_Install_Log.txt"
+	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
+	echo
+	exit
+fi
+
+echo "==============================================="
+echo "Partition Type Identified:"
+echo "**************************"
+echo "GPT found."
+echo "-----------------------------------------------"
+echo ""
+echo ""
+
+
+echo "==============================================="
+echo "Installer Variables Part 1:"
+echo "***************************"
+echo "OS X Volume is ${osxvolume}"
+echo "OX X Volume device is ${bootdev}"
+echo "OS X Volume UUID is ${bootuuid}"
+echo "-----------------------------------------------"
+echo ""
+echo ""
+
+
+bootvolume="/Volumes/$bootervolumename"
+bootdev=${bootdev%s*}s1
+bootrdev=${bootdev/disk/rdisk}
+bootdisk=${bootdev%s*}
+bootrdisk=${bootdisk/disk/rdisk}
+bootslice=${bootdev#*disk*s}
+
+echo "==============================================="
+echo "Installer Variables Part 2:"
+echo "***************************"
+echo "EFI Volume device is ${bootdev}"
+echo "EFI Volume raw device is ${bootrdev}"
+echo "EFI Volume slice is ${bootslice}"
+echo "Disk device is ${bootdisk}"
+echo "Disk raw device is ${bootrdisk}"
+echo "Disk loader normal is ${diskloader}"
+echo "Disk loader dual boot is also ${diskloader}"
+echo "Partition loader HFS is ${partitionloaderhfs}"
+echo "Partition loader FAT is ${partitionloaderfat}"
+echo "Filesystem loader is ${filesystemloader}"
+echo "-----------------------------------------------"
+echo ""
+echo ""
+
+}
+
+
+start ${3}
+
+if [ ! -e "/usr/local/bin/fdisk440" ]; then
+	cp -f "${osxvolume}/usr/local/bin/fdisk440" /usr/local/bin/fdisk440
+fi
+
+echo "==============================================="
+echo "Unmount all EFI partitions and Check their format"
+echo "*************************************"
+
+# loop through and un-mount all mounted EFI partitions - Thanks kizwan
+attempts=1
+while [ "$( df | grep EFI )" ] && [ "${attempts}" -lt 5 ]; do
+	echo "Unmounting $( df | grep EFI | awk '{print $1}' )"
+	umount -f $( df | grep EFI | awk '{print $1}' )
+	attempts=$(( ${attempts} + 1 ))
+done
+if [ ${attempts} = 5 ]; then
+	echo "failed to unmount EFI partitions."
+	exit
+fi
+
+if [ "$( fstyp ${bootdev} | grep hfs )" ]; then
+	echo "${bootdev} is currently formatted as HFS"
+	efiformat="hfs"
+fi
+if [ "$( fstyp ${bootdev} | grep msdos )" ]; then
+	echo "${bootdev} is currently formatted as msdos"
+	efiformat="msdos"
+fi 
+echo "-----------------------------------------------"
+
+echo " " >> "${osxvolume}/Clover_Install_Log.txt"
+partitionactive=$( /usr/local/bin/fdisk440 -d ${bootrdisk} | grep -n "*" | awk -F: '{print $1}')
+echo "Current Active Partition: ${partitionactive}" >> "${osxvolume}/Clover_Install_Log.txt"
+echo " " >> "${osxvolume}/Clover_Install_Log.txt"
+
+### Stage 0 ###
+
+echo "Stage 0 - Written ${diskloader} to ${bootdisk}" >> "${osxvolume}/Clover_Install_Log.txt"
+echo "/usr/local/bin/fdisk440 -u -f ${osxvolume}/usr/standalone/i386/${diskloader} -y ${bootdisk}" >> "${osxvolume}/Clover_Install_Log.txt"
+echo " " >> "${osxvolume}/Clover_Install_Log.txt"
+
+/usr/local/bin/fdisk440 -u -f "${osxvolume}/usr/standalone/i386/${diskloader}" -y ${bootdisk}
+
+### Stage 1 ###
+
+if [ ${efiformat} = "msdos" ]; then
+
+	echo "Stage 1 - Written ${partitionloaderfat} to ${bootrdev}" >> "${osxvolume}/Clover_Install_Log.txt"
+	echo "File system is Fat32." >> "${bootvolume}/Clover_Install_Log.txt"
+	echo "dd if=${bootrdev} count=1 bs=512 of=/tmp/origbs" >> "${osxvolume}/Clover_Install_Log.txt"
+	echo "cp ${osxvolume}/usr/standalone/i386/${partitionloaderfat} /tmp/newbs" >> "${osxvolume}/Clover_Install_Log.txt"
+	echo "dd if=/tmp/origbs of=/tmp/newbs skip=3 seek=3 bs=1 count=87 conv=notrunc" >> "${osxvolume}/Clover_Install_Log.txt"
+	echo "dd if=/tmp/newbs of=${bootrdev}" >> "${osxvolume}/Clover_Install_Log.txt"
+	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
+
+	rm -f /tmp/origbs
+	rm -f /tmp/newbs
+	
+	echo "Prepare Stage 1 loader"
+	# copy partition boot sector to origbs
+	echo "Executing command: dd if=${bootrdev} count=1 bs=512 of=/tmp/origbs"
+	dd if=${bootrdev} count=1 bs=512 of=/tmp/origbs
+	
+	# copy boot1f32 to newbs
+	echo "Executing command: cp "${osxvolume}/usr/standalone/i386/${partitionloaderfat}" /tmp/newbs"
+	cp "${osxvolume}/usr/standalone/i386/${partitionloaderfat}" /tmp/newbs
+	
+	# "merge" origbs into newbs
+	echo "Executing command: dd if=/tmp/origbs of=/tmp/newbs skip=3 seek=3 bs=1 count=87 conv=notrunc"
+	dd if=/tmp/origbs of=/tmp/newbs skip=3 seek=3 bs=1 count=87 conv=notrunc
+	
+	echo "Write Stage 1 loader"
+	
+	# write newbs to the partition boot sector
+	echo "Executing command: dd if=/tmp/newbs of=${bootrdev}"
+	dd if=/tmp/newbs of=${bootrdev}
+	echo "${efiformat}" > "${bootvolume}/formattype"
+else
+	#Azipkg: this is was failing for me, hanged at boot0: done. Got fine when i removed "bs=512 count=1" ??
+	# makes no sense but... anyway, i'd remove this!.. no need to change EFI fs if boot1f32 works fine.
+	# In fact, i'm not a fan of EFI installs so, i'd remove it all!! :)
+	echo "Write Stage 1 loader"
+	
+	# just write boot1h to the partition boot sector
+	echo "Executing command: dd if="${osxvolume}/usr/standalone/i386/${partitionloaderhfs}" of=${bootrdev}"
+
+	echo "Stage 1 - Written ${partitionloaderhfs} to ${bootrdev}" >> "${osxvolume}/Clover_Install_Log.txt"
+	echo "File system is HFS." >> "${bootvolume}/Clover_Install_Log.txt"
+	echo "dd if=${osxvolume}/usr/standalone/i386/${partitionloaderhfs} of=${bootrdev}" >> "${osxvolume}/Clover_Install_Log.txt"
+	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
+	
+	dd if="${osxvolume}/usr/standalone/i386/${partitionloaderhfs}" of=${bootrdev}
+	echo "${efiformat}" > "${bootvolume}/formattype"
+fi
+
+echo "-----------------------------------------------"
+echo ""
+
+
+
+echo "==============================================="
+echo "Mount EFI partition:"
+echo "********************"
+if [ ${efiformat} = "hfs" ]; then
+	[ -d "${bootvolume}" ] || mkdir -p "${bootvolume}"
+	echo "Executing command: mount_hfs -u 0 -g 0 ${bootdev} ${bootvolume}"
+	mount_hfs -u 0 -g 0 "${bootdev}" "${bootvolume}"
+else
+	[ -d "${bootvolume}" ] || mkdir -p "${bootvolume}"
+	echo "Executing command: mount_msdos -u 0 -g 0 ${bootdev} ${bootvolume}"
+	mount_msdos -u 0 -g 0 "${bootdev}" "${bootvolume}"
+fi
+echo "-----------------------------------------------"
+echo ""
+echo ""
+
+echo "${diskloader}EFI" > "${osxvolume}/boot0type"
+
+exit

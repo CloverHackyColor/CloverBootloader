@@ -178,6 +178,12 @@ static VOID InitSelection(VOID)
   
   if (!AllowGraphicsMode)
     return;
+  
+  SelectionBackgroundPixel.r = (GlobalConfig.SelectionColor >> 24) & 0xFF;
+  SelectionBackgroundPixel.g = (GlobalConfig.SelectionColor >> 16) & 0xFF;
+  SelectionBackgroundPixel.b = (GlobalConfig.SelectionColor >> 8) & 0xFF;
+  SelectionBackgroundPixel.a = (GlobalConfig.SelectionColor >> 0) & 0xFF;
+  
   if (SelectionImages[0] != NULL)
     return;
   

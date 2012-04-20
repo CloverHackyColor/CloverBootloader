@@ -80,10 +80,16 @@ banner logo.png
 # Like the banner option above, these options take a filename of
 # an uncompressed BMP image file.
 # V2 - PNG image supported 
-# theme independent
+# location is theme independent
 #
 selection_big   Selection_big.png
 selection_small Selection_small.png
+
+#Selection bar in menu may have different colors
+# default white RGBA={0xFF, 0xFF, 0xFF, 0x00}
+#
+selection_color 0x007F0000
+
 
 # Hide the volume badge icons in the graphical main menu. There are three
 # settings:

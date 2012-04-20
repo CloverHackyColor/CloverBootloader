@@ -58,7 +58,7 @@
 
 // global configuration with default values
 
-REFIT_CONFIG        GlobalConfig = { FALSE, 20, 0, 0, 0, FALSE, FALSE, FONT_ALFA, 12, NULL, NULL, NULL, NULL, NULL, NULL };
+REFIT_CONFIG        GlobalConfig = { FALSE, 20, 0, 0, 0, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF00, NULL, NULL, NULL, NULL, NULL, NULL };
 
 //
 // read a file into a buffer
@@ -269,6 +269,17 @@ static VOID HandleInt(IN CHAR16 **TokenList, IN UINTN TokenCount, OUT UINTN *Val
     *Value = StrDecimalToUintn(TokenList[1]);
 }
 
+static VOID HandleHex(IN CHAR16 **TokenList, IN UINTN TokenCount, OUT UINTN *Value)
+{
+  if (TokenCount < 2) {
+    return;
+  }
+  if (TokenCount > 2) {
+    return;
+  }
+  *Value = StrHexToUint64(TokenList[1]);
+}
+
 //
 // handle a parameter with a single string argument
 //
@@ -340,6 +351,9 @@ VOID ReadConfig(VOID)
         
         } else if (StriCmp(TokenList[0], L"char_width") == 0) {  
             HandleInt(TokenList, TokenCount, &(GlobalConfig.CharWidth));
+          
+        } else if (StriCmp(TokenList[0], L"selection_color") == 0) {  
+          HandleHex(TokenList, TokenCount, &(GlobalConfig.SelectionColor));
             
         } else if (StriCmp(TokenList[0], L"disable") == 0) {
             for (i = 1; i < TokenCount; i++) {

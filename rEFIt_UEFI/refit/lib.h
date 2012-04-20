@@ -222,6 +222,7 @@ typedef struct {
   BOOLEAN     NoLegacy;
   FONT_TYPE   Font;
   UINTN       CharWidth;
+  UINTN       SelectionColor;
   CHAR16      *FontFileName;
   CHAR16      *Theme;
   CHAR16      *BannerFileName;
