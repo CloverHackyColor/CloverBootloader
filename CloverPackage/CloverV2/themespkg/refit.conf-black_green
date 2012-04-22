@@ -97,8 +97,12 @@ selection_color 0x007F0000
 #  internal  - hide badges on internal disk volumes only, allowing you to
 #              distinguish CDs and occasionally connected external disks
 #  all       - never show volume badges (not recommended)
+#V2 
+#  swap		- show OSIcon as Volume and DriveIcon as Badges
+#		- default:  Drive for Volume and OS for Badge
+#  drive  - show OSIcon as Volume and no badges
 #
-hidebadges none
+hidebadges swap
 
 # Hide various user interface elements. Here you can list the names of
 # interface elements to hide. Currently supported:

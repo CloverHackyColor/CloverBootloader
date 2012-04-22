@@ -269,6 +269,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   LOADER_ENTRY      *Entry, *SubEntry;
   REFIT_MENU_SCREEN *SubScreen;
   UINT64            VolumeSize;
+//  UINTN Scale = (GlobalConfig.HideBadges==3)?6:4;
   
   FileName = Basename(LoaderPath);
   
@@ -284,9 +285,12 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   Entry->me.Row          = 0;
   Entry->Volume = Volume;
 //  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
-  if (GlobalConfig.HideBadges == 0 ||
-      (GlobalConfig.HideBadges == 1 && Volume->DiskKind != DISK_KIND_INTERNAL))
-    Entry->me.BadgeImage   = Volume->VolBadgeImage;
+  if ((GlobalConfig.HideBadges == 0) || //hide none
+      (GlobalConfig.HideBadges == 1 && Volume->DiskKind != DISK_KIND_INTERNAL)){ //hide internal
+    Entry->me.BadgeImage   = egCopyScaledImage(Volume->OSImage, 6);
+  } else if ((GlobalConfig.HideBadges == 3)) { //swap
+    Entry->me.BadgeImage   =  egCopyScaledImage(Volume->DriveImage, 4);
+  }
   Entry->LoaderPath      = EfiStrDuplicate(LoaderPath);
   Entry->VolName         = Volume->VolName;
   Entry->DevicePath      = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
@@ -1000,9 +1004,13 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Vo
     Entry->me.Image        = LoadOSIcon(Volume->OSIconName, L"legacy", FALSE);
 //  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
 //  DBG("Title=%s OSName=%s OSIconName=%s\n", LoaderTitle, Volume->OSName, Volume->OSIconName);
-    if (GlobalConfig.HideBadges == 0 ||
-        (GlobalConfig.HideBadges == 1 && Volume->DiskKind != DISK_KIND_INTERNAL))
-        Entry->me.BadgeImage   = egLoadIcon(ThemeDir, PoolPrint(L"icons\\os_%s.icns", Volume->OSIconName), 32);
+  if ((GlobalConfig.HideBadges == 0) || //hide none
+      (GlobalConfig.HideBadges == 1 && Volume->DiskKind != DISK_KIND_INTERNAL)){ //hide internal
+    Entry->me.BadgeImage   = egCopyScaledImage(Volume->OSImage, 6);
+    //    Entry->me.BadgeImage   = egLoadIcon(ThemeDir, PoolPrint(L"icons\\os_%s.icns", Volume->OSIconName), 32);
+  } else if ((GlobalConfig.HideBadges == 3)) { //swap
+    Entry->me.BadgeImage   =  egCopyScaledImage(Volume->DriveImage, 4);
+  }
     Entry->Volume          = Volume;
     Entry->LoadOptions     = (Volume->DiskKind == DISK_KIND_OPTICAL) ? L"CD" :
         ((Volume->DiskKind == DISK_KIND_EXTERNAL) ? L"USB" : L"HD");
@@ -1087,9 +1095,9 @@ static VOID ScanLegacy(VOID)
           }
         }
         
-        if (1 || ShowVolume){
+        if (ShowVolume){
             AddLegacyEntry(NULL, Volume);
- //           DBG("added legacy entry %d\n", VolumeIndex);
+            DBG("added legacy entry %d\n", VolumeIndex);
         }
     }
 }

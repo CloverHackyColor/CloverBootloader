@@ -86,6 +86,40 @@ EG_IMAGE * egCopyImage(IN EG_IMAGE *Image)
     return NewImage;
 }
 
+EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *Image, IN UINTN Ratio) //will be N/16
+{
+  EG_IMAGE        *NewImage;
+  INTN       x, x0, x1, x2, y, y0, y1, y2;
+  UINTN     NewH, NewW;
+  EG_PIXEL  *Dest;
+  
+  NewW = (Image->Width * Ratio) >> 4;
+  NewH = (Image->Height * Ratio) >> 4;
+  
+  NewImage = egCreateImage(NewW, NewH, Image->HasAlpha);
+  if (NewImage == NULL)
+    return NULL;
+  
+  Dest = NewImage->PixelData;
+  for (y = 0; y < NewH; y++) {
+    y1 = (y<<4) / Ratio;
+    y0 = ((y1 > 0)?(y1-1):y1)*Image->Width;
+    y2 = ((y1 < Image->Height)?(y1+1):y1)*Image->Width;
+    y1 *= Image->Width;
+    for (x = 0; x < NewW; x++) {
+      x1 = (x<<4) / Ratio;
+      x0 = (x1 > 0)?(x1-1):x1;
+      x2 = (x1 < Image->Width)?(x1+1):x1;
+      //TODO - make sum of 5 points
+      *Dest++ = Image->PixelData[x1+y1];
+    }
+  }
+  
+  
+  return NewImage;
+}
+
+
 VOID egFreeImage(IN EG_IMAGE *Image)
 {
     if (Image != NULL) {

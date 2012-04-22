@@ -118,7 +118,7 @@ typedef struct {
     EFI_HANDLE          DeviceHandle;
     EFI_FILE            *RootDir;
     CHAR16              *VolName;
-    EG_IMAGE            *VolBadgeImage;
+    EG_IMAGE            *OSImage;
   EG_IMAGE            *DriveImage;
     UINT8               DiskKind;
   UINT8               OSType;
@@ -220,6 +220,7 @@ typedef struct {
   UINTN       HideUIFlags;
   BOOLEAN     LegacyFirst;
   BOOLEAN     NoLegacy;
+//  BOOLEAN     DriveImage;
   FONT_TYPE   Font;
   UINTN       CharWidth;
   UINTN       SelectionColor;

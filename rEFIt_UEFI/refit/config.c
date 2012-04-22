@@ -323,7 +323,7 @@ static VOID HandleEnum(IN CHAR16 **TokenList, IN UINTN TokenCount, IN CHAR16 **E
 // read config file
 //
 
-static CHAR16 *HideBadgesEnum[3] = { L"none", L"internal", L"all" };
+static CHAR16 *HideBadgesEnum[] = { L"none", L"internal", L"all", L"swap", L"drive"};
 
 VOID ReadConfig(VOID)
 {
@@ -387,7 +387,7 @@ VOID ReadConfig(VOID)
             GlobalConfig.DisableFlags |= DISABLE_FLAG_INTERNAL;
             
         } else if (StriCmp(TokenList[0], L"hidebadges") == 0) {
-            HandleEnum(TokenList, TokenCount, HideBadgesEnum, 3, &(GlobalConfig.HideBadges));
+            HandleEnum(TokenList, TokenCount, HideBadgesEnum, 5, &(GlobalConfig.HideBadges));
             
         } else if (StriCmp(TokenList[0], L"hideui") == 0) {
             for (i = 1; i < TokenCount; i++) {

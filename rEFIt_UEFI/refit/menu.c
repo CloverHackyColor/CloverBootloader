@@ -99,10 +99,10 @@ static EG_IMAGE *TextBuffer = NULL;
 
 static UINTN row0Count, row0PosX, row0PosXRunning;
 static UINTN row1Count, row1PosX, row1PosXRunning;
-static UINTN *itemPosX;
+static UINTN *itemPosX = NULL;
 static UINTN row0PosY, row1PosY, textPosY;
 
-INPUT_ITEM *InputItems;
+INPUT_ITEM *InputItems = NULL;
 UINTN  InputItemsCount = 0;
 
 UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_MENU_ENTRY **ChosenEntry);
@@ -183,29 +183,37 @@ static VOID InitSelection(VOID)
   SelectionBackgroundPixel.g = (GlobalConfig.SelectionColor >> 16) & 0xFF;
   SelectionBackgroundPixel.b = (GlobalConfig.SelectionColor >> 8) & 0xFF;
   SelectionBackgroundPixel.a = (GlobalConfig.SelectionColor >> 0) & 0xFF;
-  
+  DBG("Selection color=%x\n", GlobalConfig.SelectionColor);
   if (SelectionImages[0] != NULL)
     return;
   
   // load small selection image
-  if (GlobalConfig.SelectionSmallFileName != NULL)
+  if (GlobalConfig.SelectionSmallFileName != NULL){
+    DBG("get SelectionSmallFileName=%s\n", GlobalConfig.SelectionSmallFileName);
     SelectionImages[2] = egLoadImage(ThemeDir, GlobalConfig.SelectionSmallFileName, FALSE);
-  if (SelectionImages[2] == NULL)
+  }
+  if (SelectionImages[2] == NULL){
+    DBG("no file SelectionSmallFileName get embedded\n");
     SelectionImages[2] = egPrepareEmbeddedImage(&egemb_back_selected_small, FALSE);
+    DBG("egPrepareEmbeddedImage OK\n");
+  }
   SelectionImages[2] = egEnsureImageSize(SelectionImages[2],
                                          ROW1_TILESIZE, ROW1_TILESIZE, &MenuBackgroundPixel);
+  DBG("egPrepareEmbeddedImage size OK\n");
   if (SelectionImages[2] == NULL)
     return;
   
   // load big selection image
   if (GlobalConfig.SelectionBigFileName != NULL) {
+    DBG("get SelectionBigFileName=%s\n", GlobalConfig.SelectionBigFileName);
     SelectionImages[0] = egLoadImage(ThemeDir, GlobalConfig.SelectionBigFileName, FALSE);
     SelectionImages[0] = egEnsureImageSize(SelectionImages[0],
                                            ROW0_TILESIZE, ROW0_TILESIZE, &MenuBackgroundPixel);
+    DBG("size ok\n");
   }
   if (SelectionImages[0] == NULL) {
     // calculate big selection image from small one
-    
+    DBG("calculate big selection image from small one\n");
     SelectionImages[0] = egCreateImage(ROW0_TILESIZE, ROW0_TILESIZE, FALSE);
     if (SelectionImages[0] == NULL) {
       egFreeImage(SelectionImages[2]);
@@ -215,6 +223,7 @@ static VOID InitSelection(VOID)
     
     DestPtr = SelectionImages[0]->PixelData;
     SrcPtr  = SelectionImages[2]->PixelData;
+    DBG("ready to scale Src=%x Dest=%x\n", SrcPtr, DestPtr);
     for (y = 0; y < ROW0_TILESIZE; y++) {
       if (y < (ROW1_TILESIZE >> 1))
         src_y = y;
@@ -235,10 +244,13 @@ static VOID InitSelection(VOID)
       }
     }
   }
-  
+  DBG("[0] Created\n");
   // non-selected background images
   SelectionImages[1] = egCreateFilledImage(ROW0_TILESIZE, ROW0_TILESIZE, FALSE, &MenuBackgroundPixel);
+  DBG("[1] Created\n");
   SelectionImages[3] = egCreateFilledImage(ROW1_TILESIZE, ROW1_TILESIZE, FALSE, &MenuBackgroundPixel);
+  DBG("[3] Created\n");
+  
 }
 
 //
@@ -1002,10 +1014,10 @@ static   EG_IMAGE* MainImage;
 static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, UINTN XPos, UINTN YPos)
 {
   LOADER_ENTRY* LEntry = (LOADER_ENTRY*)Entry;
+  
 
-//  if (LEntry->Volume) {
-  if ((Entry->Tag == TAG_LOADER) ||
-      (Entry->Tag == TAG_LEGACY)){
+  if (((Entry->Tag == TAG_LOADER) ||
+      (Entry->Tag == TAG_LEGACY)) && (GlobalConfig.HideBadges < 3)){
     MainImage = LEntry->Volume->DriveImage;
   } else {
     MainImage = Entry->Image;
@@ -1013,7 +1025,7 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, UINTN X
   if (!MainImage) {
     MainImage = LoadIcns(ThemeDir, L"icons\\osx.icns", 128);
   }
-  DBG("ENtry title=%s; Width=%d\n", Entry->Title, MainImage->Width);
+  DBG("Entry title=%s; Width=%d\n", Entry->Title, MainImage->Width);
     BltImageCompositeBadge(SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
                            MainImage, (Entry->Row == 0) ? Entry->BadgeImage:NULL, XPos, YPos);
 }
@@ -1058,7 +1070,7 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
         }
       }
       if (row0PosX > row1PosX) { //9<10
-        DBG("BUG! (index_row0 > index_row1) Needed sorting\n");
+        MsgLog("BUG! (index_row0 > index_row1) Needed sorting\n");
       }
       InitScroll(State, row0Count, Screen->EntryCount, MaxItemOnScreen);
       row0PosX = (UGAWidth + TILE_XSPACING - (ROW0_TILESIZE + TILE_XSPACING) *
@@ -1077,14 +1089,15 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       
       row0PosXRunning = row0PosX;
       row1PosXRunning = row1PosX;
-      for (i = 0; i <= Screen->EntryCount; i++) {
+ //     DBG("EntryCount =%d\n", Screen->EntryCount);
+      for (i = 0; i < Screen->EntryCount; i++) {
         if (Screen->Entries[i]->Row == 0) {
           itemPosX[i] = row0PosXRunning;
           row0PosXRunning += ROW0_TILESIZE + TILE_XSPACING;
         } else {
           itemPosX[i] = row1PosXRunning;
           row1PosXRunning += ROW1_TILESIZE + TILE_XSPACING;
-          DBG("next item in row1 at x=%d\n", row1PosXRunning);
+ //         DBG("next item in row1 at x=%d\n", row1PosXRunning);
         }
       }
       
@@ -1092,17 +1105,19 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       //InitSelection(); //Slice - I changed order because of background pixel
       SwitchToGraphicsAndClear();
       InitSelection();
+ //     DBG("main menu inited\n");
       break;
       
     case MENU_FUNCTION_CLEANUP:
       FreePool(itemPosX);
+      itemPosX = NULL;
       break;
       
     case MENU_FUNCTION_PAINT_ALL:
        for (i = 0; i <= State->MaxIndex; i++) {
         if (Screen->Entries[i]->Row == 0) {
           if ((i >= State->FirstVisible) && (i <= State->LastVisible)) {
-    //        DBG("Draw Row0 at x=%d y=%d\n", itemPosX[i - State->FirstVisible], row0PosY);
+            DBG("Draw Row0 at x=%d y=%d\n", itemPosX[i - State->FirstVisible], row0PosY);
             DrawMainMenuEntry(Screen->Entries[i], (i == State->CurrentSelection)?1:0,
                               itemPosX[i - State->FirstVisible], row0PosY);
           }

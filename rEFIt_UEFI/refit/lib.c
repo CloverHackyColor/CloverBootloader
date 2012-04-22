@@ -577,7 +577,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
       if (Volume->OSIconName) {
         CHAR16          FileName[256];
         UnicodeSPrint(FileName, 255, L"icons\\os_%s.icns", Volume->OSIconName);
-        Volume->VolBadgeImage = egLoadIcon(ThemeDir, FileName, 32);
+        Volume->OSImage = egLoadIcon(ThemeDir, FileName, 128);
         //LoadOSIcon(Volume->OSIconName, L"mac", FALSE);
       }
 
@@ -613,29 +613,24 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
     }
 }
 
-static VOID ScanVolumeDefaultIcon(IN OUT REFIT_VOLUME *Volume)
+EG_IMAGE* ScanVolumeDefaultIcon(IN UINT8 DiskKind)
 {  
     // default volume icon based on disk kind
-  switch (Volume->DiskKind) {
+  switch (DiskKind) {
     case DISK_KIND_INTERNAL:
-      Volume->DriveImage = BuiltinIcon(BUILTIN_ICON_VOL_INTERNAL);
-      break;
+      return BuiltinIcon(BUILTIN_ICON_VOL_INTERNAL);
     case DISK_KIND_EXTERNAL:
-      Volume->DriveImage = BuiltinIcon(BUILTIN_ICON_VOL_EXTERNAL);
-      break;
+      return BuiltinIcon(BUILTIN_ICON_VOL_EXTERNAL);
     case DISK_KIND_OPTICAL:
-      Volume->DriveImage = BuiltinIcon(BUILTIN_ICON_VOL_OPTICAL);
-      break;
+      return BuiltinIcon(BUILTIN_ICON_VOL_OPTICAL);
     case DISK_KIND_FIREWIRE:
-      Volume->DriveImage = BuiltinIcon(BUILTIN_ICON_VOL_FIREWIRE);
-      break;
+      return BuiltinIcon(BUILTIN_ICON_VOL_FIREWIRE);
     case DISK_KIND_BOOTER:
-      Volume->DriveImage = BuiltinIcon(BUILTIN_ICON_VOL_BOOTER);
-      break;
+      return BuiltinIcon(BUILTIN_ICON_VOL_BOOTER);
     default:
-      Volume->DriveImage = NULL;
       break;
   }
+  return NULL;
 }
 
 //at start we have only Volume->DeviceHandle
@@ -814,9 +809,9 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
       }
       FreePool(DiskDevicePath);
     }
-  else {
+/*  else {
     DBG("HD path is not found\n");
-  }
+  }*/
 
     if (!Bootable) {
 #if REFIT_DEBUG > 0
@@ -830,7 +825,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     }
 //  DBG("default volume icon based on disk kind\n");
     // default volume icon based on disk kind
-    ScanVolumeDefaultIcon(Volume);
+    Volume->DriveImage = ScanVolumeDefaultIcon(Volume->DiskKind);
 //  DBG("default volume icon OK\n");
     // open the root directory of the volume
     Volume->RootDir = EfiLibOpenRoot(Volume->DeviceHandle);
@@ -899,19 +894,13 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
 //  DBG("GetOSVersion\n");
   Status = GetOSVersion(Volume); //here we set tiger,leo,snow,lion and cougar
   if (!EFI_ERROR(Status)) {
-//    CHAR16          FileName[256];
-//    UnicodeSPrint(FileName, 255, L"icons\\os_%s.icns", Volume->OSIconName);
-    Volume->VolBadgeImage = egLoadIcon(ThemeDir, PoolPrint(L"icons\\os_%s.icns", Volume->OSIconName), 32);
-//    Volume->VolBadgeImage = LoadOSIcon(Volume->OSIconName, L"mac", FALSE);
+    Volume->OSImage = egLoadIcon(ThemeDir, PoolPrint(L"icons\\os_%s.icns", Volume->OSIconName), 128);
   }
-    // Volume->OSType = 0; //TODO - other criteria?
-    // Other EFI systems?
-    // for now do not change default values
   
     // get custom volume icon if present
-  if (FileExists(Volume->RootDir, L".VolumeIcon.icns")){
-        Volume->VolBadgeImage = LoadIcns(Volume->RootDir, L".VolumeIcon.icns", 32);
-  }
+/*  if (FileExists(Volume->RootDir, L".VolumeIcon.icns")){
+        Volume->OSImage = LoadIcns(Volume->RootDir, L".VolumeIcon.icns", 32);
+  }*/
   return EFI_SUCCESS;
 }
 
@@ -967,8 +956,7 @@ static VOID ScanExtendedPartition(REFIT_VOLUME *WholeDiskVolume, MBR_PARTITION_I
                 if (!Bootable)
                     Volume->HasBootCode = FALSE;
                 
-                ScanVolumeDefaultIcon(Volume);
-                
+                Volume->DriveImage = ScanVolumeDefaultIcon(Volume->DiskKind);                
                 AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);                
             }
         }
@@ -1017,7 +1005,7 @@ VOID ScanVolumes(VOID)
       }
     }
     FreePool(Handles);
-//  DBG("Found %d volumes\n", VolumesCount);
+  DBG("Found %d volumes\n", VolumesCount);
   if (SelfVolume == NULL){
     DBG("WARNING: SelfVolume not found"); //Slice - and what?
     SelfVolume = AllocateZeroPool(sizeof(REFIT_VOLUME));

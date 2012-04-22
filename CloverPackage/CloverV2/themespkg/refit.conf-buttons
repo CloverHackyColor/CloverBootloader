@@ -53,7 +53,6 @@ char_width 10
 
 # this font is used for theme black_green, width=10
 #font_file_name  WoB_PTMono_10W.png
-#char_width 10
 
 # pixel size of letters in text. depends on font and wanted design
 # may differ from letter width allowing overriding
@@ -97,6 +96,10 @@ selection_color 0xFFFFFF00
 #  internal  - hide badges on internal disk volumes only, allowing you to
 #              distinguish CDs and occasionally connected external disks
 #  all       - never show volume badges (not recommended)
+#V2 
+#  swap		- show OSIcon as Volume and DriveIcon as Badges
+#		- default:  Drive for Volume and OS for Badge
+#  drive  - show OSIcon as Volume and no badges
 #
 hidebadges none
 

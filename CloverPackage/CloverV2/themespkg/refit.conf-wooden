@@ -88,6 +88,10 @@ selection_color 0xB9A87400
 #  internal  - hide badges on internal disk volumes only, allowing you to
 #              distinguish CDs and occasionally connected external disks
 #  all       - never show volume badges (not recommended)
+#V2 
+#  swap		- show OSIcon as Volume and DriveIcon as Badges
+#		- default:  Drive for Volume and OS for Badge
+#  drive  - show OSIcon as Volume and no badges
 #
 hidebadges none
 
