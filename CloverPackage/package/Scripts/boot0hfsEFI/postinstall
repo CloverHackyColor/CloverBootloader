@@ -107,7 +107,8 @@ echo ""
 start ${3}
 
 if [ ! -e "/usr/local/bin/fdisk440" ]; then
-	cp -f "${osxvolume}/usr/local/bin/fdisk440" /usr/local/bin/fdisk440
+	mkdir -p /usr/local/bin
+	cp -f "${bootvolume}/usr/local/bin/fdisk440" /usr/local/bin/fdisk440
 fi
 
 echo "==============================================="

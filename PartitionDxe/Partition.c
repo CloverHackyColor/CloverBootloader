@@ -18,12 +18,18 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include "Partition.h"
 
-#define DEBUG_PAR 0
-#if DEBUG_PAR==1
-#define DBG(x...)  Print(x)
+#define DEBUG_PAR 1
+#if DEBUG_PAR==2
+#define DBG(x...)  AsciiPrint(x)
+#elif DEBUG_PAR==1
+#define DBG(x...)  BootLog(x)
 #else
 #define DBG(x...)
 #endif
+
+CHAR8 *msgCursor;
+MESSAGE_LOG_PROTOCOL *Msg = NULL; 
+
 
 //
 // Partition Driver Global Variables.
@@ -183,9 +189,9 @@ PartitionDriverBindingSupported (
   protocol, reading Device Path, and creating a child handle with a
   Disk IO and device path protocol.
 
-  @param  This                 Protocol instance pointer.
-  @param  ControllerHandle     Handle of device to bind driver to
-  @param  RemainingDevicePath  Optional parameter use to pick a specific child
+  @param[in]  This                 Protocol instance pointer.
+  @param[in]  ControllerHandle     Handle of device to bind driver to
+  @param[in]  RemainingDevicePath  Optional parameter use to pick a specific child
                                device to start.
 
   @retval EFI_SUCCESS          This driver is added to ControllerHandle
@@ -208,9 +214,20 @@ PartitionDriverBindingStart (
   EFI_DEVICE_PATH_PROTOCOL  *ParentDevicePath;
   PARTITION_DETECT_ROUTINE  *Routine;
   BOOLEAN                   MediaPresent;
-//  EFI_TPL                   OldTpl;
+  EFI_TPL                   OldTpl;
+  
+//  Msg = NULL;
+  if (Msg == NULL) {
+    Status = gBS->LocateProtocol(&gMsgLogProtocolGuid, NULL, (VOID **) &Msg);
+    if (!EFI_ERROR(Status) && (Msg != NULL)) {
+      msgCursor = Msg->Cursor;
+      BootLog("MsgLog Protocol installed in PartitionDxe\n");
+      Msg->Dirty = TRUE;
+    }    
+  }
 
-//  OldTpl = gBS->RaiseTPL (TPL_CALLBACK); 
+
+  OldTpl = gBS->RaiseTPL (TPL_CALLBACK); 
   //
   // Check RemainingDevicePath validation
   //
@@ -259,7 +276,8 @@ PartitionDriverBindingStart (
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status) && Status != EFI_ALREADY_STARTED) {
+  //Slice - DiskIo already started, what else?                
+  if (EFI_ERROR (Status) /* && Status != EFI_ALREADY_STARTED*/) {
     gBS->CloseProtocol (
           ControllerHandle,
           &gEfiDevicePathProtocolGuid,
@@ -268,7 +286,7 @@ PartitionDriverBindingStart (
           );
     goto Exit;
   }
-	DBG(L"open DiskIo status=%r\n", Status);
+//	DBG("open DiskIo status=%r\n", Status);
 
   OpenStatus = Status;
 
@@ -294,7 +312,7 @@ PartitionDriverBindingStart (
                    ParentDevicePath
                    );
       if (!EFI_ERROR (Status) || Status == EFI_MEDIA_CHANGED || Status == EFI_NO_MEDIA) {
-      		DBG(L"Handle %x check partition Status=%r\n", ControllerHandle, Status);
+      		DBG("Handle %x check partition Status=%r\n", ControllerHandle, Status);
 
         break;
       }
@@ -331,7 +349,7 @@ PartitionDriverBindingStart (
           ControllerHandle
           );
 //Slice - VBox patch	  
-	goto Exit;
+//	goto Exit;
   }
 /*  gBS->CloseProtocol (
        ControllerHandle,
@@ -341,7 +359,7 @@ PartitionDriverBindingStart (
        );
 */
 Exit:
-//  gBS->RestoreTPL (OldTpl);
+  gBS->RestoreTPL (OldTpl);
   return Status;
 }
 

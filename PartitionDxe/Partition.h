@@ -37,6 +37,12 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <IndustryStandard/Mbr.h>
 #include <IndustryStandard/ElTorito.h>
 
+#include <Protocol/MsgLog.h> 
+#include <Library/PrintLib.h>
+extern  CHAR8 *msgCursor;
+extern  MESSAGE_LOG_PROTOCOL *Msg; 
+
+
 
 //
 // Partition private data

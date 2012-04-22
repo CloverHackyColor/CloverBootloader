@@ -77,6 +77,7 @@
 //#define MsgLog(x...) if(msgCursor){AsciiSPrint(msgCursor, BOOTER_LOG_SIZE, x); while(*msgCursor){msgCursor++;}}
 
 extern CHAR8     *msgCursor;
+extern MESSAGE_LOG_PROTOCOL *Msg;
 // functions
 
 static fsw_status_t fsw_iso9660_volume_mount(struct fsw_iso9660_volume *vol);
@@ -289,6 +290,7 @@ static fsw_status_t fsw_iso9660_volume_mount(struct fsw_iso9660_volume *vol)
     blockno = ISO9660_SUPERBLOCK_BLOCKNO;
 
     do {
+      DBG("iso9660: check blockno=%d\n", blockno);
         status = fsw_block_get(vol, blockno, 0, &buffer);
         if (status)
             return status;

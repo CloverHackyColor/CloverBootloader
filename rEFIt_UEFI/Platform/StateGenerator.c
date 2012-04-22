@@ -123,7 +123,7 @@ SSDT_TABLE *generate_pss_ssdt()
 							
 							if (p_states_count > 32) 
 								p_states_count = 32;
-							DBG("PStates count=%x", p_states_count);
+							DBG("PStates count=%x\n", p_states_count);
 							UINT8 vidstep;
 							UINT8 i = 0, u, invalid = 0;
 							

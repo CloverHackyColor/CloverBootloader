@@ -66,5 +66,6 @@
 
 [Depex]
   gEfiAcpiTableProtocolGuid AND gEfiSimpleFileSystemProtocolGuid
+  AND gMsgLogProtocolGuid
   #AND gEfiLoadedImageProtocolGuid
 

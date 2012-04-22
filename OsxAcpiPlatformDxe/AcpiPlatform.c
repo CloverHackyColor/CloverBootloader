@@ -22,8 +22,10 @@
 #define LIP 0
 #define READTABLES 0
 
-#if DEBUG_ACPI==1
+#if DEBUG_ACPI==2
 #define DBG(x...)  Print(x)
+#elif DEBUG_ACPI==1
+#define DBG(x...)  BootLog(x)
 #else
 #define DBG(x...)
 #endif

@@ -1,7 +1,7 @@
 /** @file
   BDS Lib functions which contain all the code to connect console device
 
-Copyright (c) 2004 - 2011, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2004 - 2012, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -15,7 +15,6 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include "InternalBdsLib.h"
 #include <IndustryStandard/Bmp.h>
 
-#include <Protocol/BootLogo.h>
 
 /**
   Check if we need to save the EFI variable with "ConVarName" as name
@@ -602,7 +601,13 @@ ConvertBmpToGopBlt (
   UINTN                         Height;
   UINTN                         Width;
   UINTN                         ImageIndex;
+//  UINT32                        DataSizePerLine;
   BOOLEAN                       IsAllocated;
+//  UINT32                        ColorMapNum;
+
+  if (sizeof (BMP_IMAGE_HEADER) > BmpImageSize) {
+    return EFI_INVALID_PARAMETER;
+  }
 
   BmpHeader = (BMP_IMAGE_HEADER *) BmpImage;
 
@@ -616,13 +621,60 @@ ConvertBmpToGopBlt (
   if (BmpHeader->CompressionType != 0) {
     return EFI_UNSUPPORTED;
   }
+/*
+  //
+  // Only support BITMAPINFOHEADER format.
+  // BITMAPFILEHEADER + BITMAPINFOHEADER = BMP_IMAGE_HEADER
+  //
+  if (BmpHeader->HeaderSize != sizeof (BMP_IMAGE_HEADER) - OFFSET_OF(BMP_IMAGE_HEADER, HeaderSize)) {
+    return EFI_UNSUPPORTED;
+  }
 
+  //
+  // The data size in each line must be 4 byte alignment.
+  //
+  DataSizePerLine = ((BmpHeader->PixelWidth * BmpHeader->BitPerPixel + 31) >> 3) & (~0x3);
+  BltBufferSize = MultU64x32 (DataSizePerLine, BmpHeader->PixelHeight);
+  if (BltBufferSize > (UINT32) ~0) {
+    return EFI_INVALID_PARAMETER;
+  }
+
+  if ((BmpHeader->Size != BmpImageSize) || 
+      (BmpHeader->Size < BmpHeader->ImageOffset) ||
+      (BmpHeader->Size - BmpHeader->ImageOffset !=  BmpHeader->PixelHeight * DataSizePerLine)) {
+    return EFI_INVALID_PARAMETER;
+  }
+*/
   //
   // Calculate Color Map offset in the image.
   //
   Image       = BmpImage;
   BmpColorMap = (BMP_COLOR_MAP *) (Image + sizeof (BMP_IMAGE_HEADER));
+  /*
+  if (BmpHeader->ImageOffset < sizeof (BMP_IMAGE_HEADER)) {
+    return EFI_INVALID_PARAMETER;
+  }
 
+  if (BmpHeader->ImageOffset > sizeof (BMP_IMAGE_HEADER)) {
+    switch (BmpHeader->BitPerPixel) {
+      case 1:
+        ColorMapNum = 2;
+        break;
+      case 4:
+        ColorMapNum = 16;
+        break;
+      case 8:
+        ColorMapNum = 256;
+        break;
+      default:
+        ColorMapNum = 0;
+        break;
+      }
+    if (BmpHeader->ImageOffset - sizeof (BMP_IMAGE_HEADER) != sizeof (BMP_COLOR_MAP) * ColorMapNum) {
+      return EFI_INVALID_PARAMETER;
+    }
+  }
+*/
   //
   // Calculate graphics image data address in the image
   //
@@ -799,6 +851,7 @@ EnableQuietBoot (
   UINTN                         NewDestY;
   UINTN                         NewHeight;
   UINTN                         NewWidth;
+  UINT64                        BufferSize;
 
   UgaDraw = NULL;
   //
@@ -896,7 +949,11 @@ EnableQuietBoot (
 
       CoordinateX = 0;
       CoordinateY = 0;
-      Attribute   = EfiBadgingDisplayAttributeCenter;
+      if (!FeaturePcdGet(PcdBootlogoOnlyEnable)) {
+        Attribute   = EfiBadgingDisplayAttributeCenter;
+      } else {
+        Attribute   = EfiBadgingDisplayAttributeCustomized;
+      } 
     }
 
     if (Blt != NULL) {
@@ -968,6 +1025,11 @@ EnableQuietBoot (
     case EfiBadgingDisplayAttributeCenter:
       DestX = (SizeOfX - Width) / 2;
       DestY = (SizeOfY - Height) / 2;
+      break;
+
+    case EfiBadgingDisplayAttributeCustomized:
+      DestX = (SizeOfX - Width) / 2;
+      DestY = ((SizeOfY * 382) / 1000) - Height / 2;
       break;
 
     default:
@@ -1074,7 +1136,22 @@ Done:
       FreePool (Blt);
     }
 
-    LogoBlt = AllocateZeroPool (LogoWidth * LogoHeight * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+    //
+    // Ensure the LogoHeight * LogoWidth doesn't overflow
+    //
+    if (LogoHeight > DivU64x64Remainder ((UINTN) ~0, LogoWidth, NULL)) {
+      return EFI_UNSUPPORTED;
+    }
+    BufferSize = MultU64x64 (LogoWidth, LogoHeight);
+
+    //
+    // Ensure the BufferSize * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL) doesn't overflow
+    //
+    if (BufferSize > DivU64x32 ((UINTN) ~0, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL))) {
+      return EFI_UNSUPPORTED;
+    }
+
+    LogoBlt = AllocateZeroPool ((UINTN)BufferSize * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
     if (LogoBlt == NULL) {
       return EFI_OUT_OF_RESOURCES;
     }

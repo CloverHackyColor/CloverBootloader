@@ -47,6 +47,7 @@
 
 
 [Packages]
+  Clover/CloverPkg.dec
   MdePkg/MdePkg.dec
 
 
@@ -59,6 +60,7 @@
   BaseLib
   UefiDriverEntryPoint
   DebugLib
+  PrintLib
 
 
 [Guids]
@@ -73,6 +75,8 @@
   gEfiBlockIoProtocolGuid                       ## TO_START
   gEfiDevicePathProtocolGuid                    ## TO_START
   gEfiDiskIoProtocolGuid                        ## TO_START
-
+  gMsgLogProtocolGuid
+  
 [BuildOptions]
   XCODE:*_*_*_CC_FLAGS = -Os
+  GCC:*_*_*_CC_FLAGS = -Os

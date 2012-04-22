@@ -15,6 +15,14 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include "Partition.h"
 
+#define DEBUG_ELT 1
+#if DEBUG_ELT==2
+#define DBG(x...)  AsciiPrint(x)
+#elif DEBUG_ELT==1
+#define DBG(x...)  BootLog(x)
+#else
+#define DBG(x...)
+#endif
 
 /**
   Install child handles if the Handle supports El Torito format.
@@ -94,6 +102,7 @@ PartitionInstallElToritoChildHandles (
       //
       // We are pointing past the end of the device so exit
       //
+ //     DBG("ELT: end of media\n")
       break;
     }
 
@@ -117,6 +126,7 @@ PartitionInstallElToritoChildHandles (
       //
       // end of Volume descriptor list
       //
+//      DBG("ELT: end of Volume descriptor list\n");
       break;
     }
     //
@@ -125,6 +135,7 @@ PartitionInstallElToritoChildHandles (
     //
     if (VolDescriptor->PrimaryVolume.Type == CDVOL_TYPE_CODED) {
       VolSpaceSize = VolDescriptor->PrimaryVolume.VolSpaceSize[0];
+      DBG("ELT: VolSpaceSize =%d\n", VolSpaceSize); 
     }
     //
     // Is it an El Torito volume descriptor?
@@ -136,6 +147,7 @@ PartitionInstallElToritoChildHandles (
     // Read in the boot El Torito boot catalog
     //
     Lba = UNPACK_INT32 (VolDescriptor->BootRecordVolume.EltCatalog);
+    DBG("ELT: this is ELT at lba=%d\n", Lba);
     if (Lba > Media->LastBlock) {
       continue;
     }
@@ -148,7 +160,7 @@ PartitionInstallElToritoChildHandles (
                        Catalog
                        );
     if (EFI_ERROR (Status)) {
-//      DEBUG ((EFI_D_ERROR, "EltCheckDevice: error reading catalog %r\n", Status));
+      DBG ("EltCheckDevice: error reading catalog %r\n", Status);
       continue;
     }
     //
@@ -156,7 +168,8 @@ PartitionInstallElToritoChildHandles (
     // to make sure it looks like a Catalog header
     //
     if (Catalog->Catalog.Indicator != ELTORITO_ID_CATALOG || Catalog->Catalog.Id55AA != 0xAA55) {
-//      DEBUG ((EFI_D_ERROR, "EltCheckBootCatalog: El Torito boot catalog header IDs not correct\n"));
+      DBG ("EltCheckBootCatalog: El Torito boot catalog header IDs=%x not correct\n",
+           Catalog->Catalog.Indicator);
       continue;
     }
 
@@ -167,7 +180,7 @@ PartitionInstallElToritoChildHandles (
     }
 
     if ((Check & 0xFFFF) != 0) {
-      DEBUG ((EFI_D_ERROR, "EltCheckBootCatalog: El Torito boot catalog header checksum failed\n"));
+      DBG ( "EltCheckBootCatalog: El Torito boot catalog header checksum failed\n");
       continue;
     }
 
@@ -187,11 +200,12 @@ PartitionInstallElToritoChildHandles (
 
       SubBlockSize  = 512;
       SectorCount   = Catalog->Boot.SectorCount;
-
+      DBG("ELT: SectorCount   =%d\n", SectorCount);
       switch (Catalog->Boot.MediaType) {
 
       case ELTORITO_NO_EMULATION:
         SubBlockSize = Media->BlockSize;
+          DBG("ELT: SubBlockSize =%d\n", SubBlockSize);
         break;
 
       case ELTORITO_HARD_DISK:
@@ -210,7 +224,7 @@ PartitionInstallElToritoChildHandles (
         break;
 
       default:
- //       DEBUG ((EFI_D_INIT, "EltCheckDevice: unsupported El Torito boot media type %x\n", Catalog->Boot.MediaType));
+        DBG("EltCheckDevice: unsupported El Torito boot media type %x\n", Catalog->Boot.MediaType);
         SectorCount   = 0;
         SubBlockSize  = Media->BlockSize;
         break;
@@ -227,20 +241,24 @@ PartitionInstallElToritoChildHandles (
         // This is the initial/default entry
         //
         BootEntry = 0;
+        SectorCount = 0; //Slice
       }
 
       CdDev.BootEntry = (UINT32) BootEntry;
       BootEntry++;
       CdDev.PartitionStart = Catalog->Boot.Lba;
+      DBG("ELT: Partition start %d\n", CdDev.PartitionStart);
       if (SectorCount < 2) {
         //
         // When the SectorCount < 2, set the Partition as the whole CD.
         //
+        CdDev.PartitionStart = 0; //Slice
         if (VolSpaceSize > (Media->LastBlock + 1)) {
           CdDev.PartitionSize = (UINT32)(Media->LastBlock - Catalog->Boot.Lba + 1);
         } else {
           CdDev.PartitionSize = (UINT32)(VolSpaceSize - Catalog->Boot.Lba);
         }
+        DBG("ELT: WholeCD PartitionSize=%d\n", CdDev.PartitionSize);
       } else {
         CdDev.PartitionSize = DivU64x32 (
                                 MultU64x32 (
@@ -249,6 +267,7 @@ PartitionInstallElToritoChildHandles (
                                   ) + Media->BlockSize - 1,
                                 Media->BlockSize
                                 );
+        DBG("ELT: CD Partition%d Size=%d\n", Index, CdDev.PartitionSize);
       }
 
       Status = PartitionInstallChildHandle (

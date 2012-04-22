@@ -61,8 +61,17 @@
 #endif
 #endif
 
+#define DEBUG_VBFS 1
 CHAR8 *msgCursor;
-MESSAGE_LOG_PROTOCOL *Msg; 
+MESSAGE_LOG_PROTOCOL *Msg = NULL; 
+
+#if DEBUG_VBFS==2
+#define DBG(x...)  AsciiPrint(x)
+#elif DEBUG_VBFS==1
+#define DBG(x...)  BootLog(x)
+#else
+#define DBG(x...)
+#endif
 
 
 /** Helper macro for stringification. */
@@ -211,6 +220,7 @@ EFI_STATUS EFIAPI fsw_efi_main(IN EFI_HANDLE         ImageHandle,
   Status = BS->LocateProtocol(&gMsgLogProtocolGuid, NULL, (VOID **) &Msg);
   if (!EFI_ERROR(Status) && (Msg != NULL)) {
     msgCursor = Msg->Cursor;
+    BootLog("MsgLog installed into VBoxFs\n");
   }
 
     return EFI_SUCCESS;
@@ -303,7 +313,7 @@ EFI_STATUS EFIAPI fsw_efi_DriverBinding_Start(IN EFI_DRIVER_BINDING_PROTOCOL  *T
                               ControllerHandle,
                               EFI_OPEN_PROTOCOL_BY_DRIVER);
     if (EFI_ERROR(Status)) {
-//        Print(L"Fsw ERROR: OpenProtocol(DiskIo) returned %x\n", Status);
+        DBG("Fsw ERROR: OpenProtocol(DiskIo) returned %r\n", Status);
         return Status;
     }
 

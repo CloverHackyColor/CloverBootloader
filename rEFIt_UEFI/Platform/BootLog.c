@@ -29,10 +29,14 @@ VOID InitBooterLog(VOID)
    if (!EFI_ERROR (Status)) 
    {
      if (Msg->Log && Msg->Cursor) {
-       N =(INTN)(Msg->Cursor - Msg->Log);
+       N =(INTN)((INTN)Msg->Cursor - (INTN)Msg->Log);
+       MsgLog("Log from Clover size=%d:\n", N);
+       N &= 0xFFF;
        if ((N > 0) && (N < MSG_LOG_SIZE)) {
-         MsgLog("Log from Clover size=%d:\n", N);
-         MsgLog("%a\n", (CHAR8*)Msg->Log);
+         AsciiSPrint(msgCursor, N, "%a", (CHAR8*)Msg->Log);
+         //MsgLog("%a\n", (CHAR8*)Msg->Log);
+         msgCursor += N;
+         *msgCursor = 0;
          FreePool(Msg->Log);         
        }
        else {

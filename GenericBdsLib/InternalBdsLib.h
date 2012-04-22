@@ -1,7 +1,7 @@
 /** @file
   BDS library definition, include the file and data structure
 
-Copyright (c) 2004 - 2011, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2004 - 2012, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -41,6 +41,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Protocol/HiiFont.h>
 #include <Protocol/HiiImage.h>
 #include <Protocol/UsbIo.h>
+#include <Protocol/BootLogo.h>
 
 #include <Guid/MemoryTypeInformation.h>
 #include <Guid/FileInfo.h>
@@ -123,6 +124,22 @@ BdsLibGetImageHeader (
 VOID
 BdsSetMemoryTypeInformationVariable (
   VOID
+  );
+
+/**
+  Validate the EFI Boot#### or Driver#### variable (VendorGuid/Name)
+
+  @param  Variable              Boot#### variable data.
+  @param  VariableSize          Returns the size of the EFI variable that was read
+
+  @retval TRUE                  The variable data is correct.
+  @retval FALSE                 The variable data is corrupted.
+
+**/
+BOOLEAN 
+ValidateOption (
+  UINT8                     *Variable,
+  UINTN                     VariableSize
   );
 
 #endif // _BDS_LIB_H_

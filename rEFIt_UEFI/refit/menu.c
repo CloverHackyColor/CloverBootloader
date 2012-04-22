@@ -1058,7 +1058,7 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
         }
       }
       if (row0PosX > row1PosX) { //9<10
-        MsgLog("BUG! (index_row0 > index_row1) Needed sorting\n");
+        DBG("BUG! (index_row0 > index_row1) Needed sorting\n");
       }
       InitScroll(State, row0Count, Screen->EntryCount, MaxItemOnScreen);
       row0PosX = (UGAWidth + TILE_XSPACING - (ROW0_TILESIZE + TILE_XSPACING) *

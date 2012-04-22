@@ -27,7 +27,7 @@
 0x511CE018, 0x0018, 0x4002, {0x20, 0x12, 0x17, 0x38, 0x05, 0x01, 0x02, 0x03} \
 }
 
-#define BootLog(x...) if(msgCursor){AsciiSPrint(msgCursor, BOOTER_LOG_SIZE, x); while(*msgCursor){msgCursor++;}}
+#define BootLog(x...) if(msgCursor){AsciiSPrint(msgCursor, BOOTER_LOG_SIZE, x); while(*msgCursor){msgCursor++;} Msg->Cursor = msgCursor;}
 
 /* sample using
 #include <Protocol/MsgLog.h> 
@@ -45,6 +45,7 @@ MESSAGE_LOG_PROTOCOL *Msg;
 */
 typedef struct {
   UINT32    SizeOfLog;
+  BOOLEAN   Dirty;
   CHAR8     *Log;
   CHAR8     *Cursor;
 } MESSAGE_LOG_PROTOCOL;
