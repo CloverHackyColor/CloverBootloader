@@ -180,6 +180,7 @@
   gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdInstallAcpiSupportProtocol|FALSE
   gEfiMdeModulePkgTokenSpaceGuid.PcdDxeIplSwitchToLongMode|FALSE
   gPcAtChipsetPkgTokenSpaceGuid.PcdHpetMsiEnable|FALSE
+  gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdBootlogoOnlyEnable|FALSE
 
 ###################################################################################################
 #
@@ -387,7 +388,7 @@
   #
   # Sample Application
   #
-  MdeModulePkg/Application/HelloWorld/HelloWorld.inf
+  #MdeModulePkg/Application/HelloWorld/HelloWorld.inf
   #MdeModulePkg/Application/VariableInfo/VariableInfo.inf
   #rEFIt_UEFI/refit.inf
 

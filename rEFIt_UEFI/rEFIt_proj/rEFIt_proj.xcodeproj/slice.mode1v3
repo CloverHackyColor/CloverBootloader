@@ -276,7 +276,7 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>16</integer>
+									<integer>14</integer>
 									<integer>9</integer>
 									<integer>0</integer>
 								</array>
@@ -329,7 +329,7 @@
 										<key>_historyCapacity</key>
 										<integer>0</integer>
 										<key>bookmark</key>
-										<string>12DB3B7315449DFA00510A8F</string>
+										<string>12DB3BB81545B47A00510A8F</string>
 										<key>history</key>
 										<array>
 											<string>1202124214266E13004B7B93</string>
@@ -388,9 +388,9 @@
 											<string>127FEFA81544624100B6378C</string>
 											<string>127FEFA91544624100B6378C</string>
 											<string>127FEFB2154463B200B6378C</string>
-											<string>12DB3B7015449DFA00510A8F</string>
-											<string>12DB3B7115449DFA00510A8F</string>
-											<string>12DB3B7215449DFA00510A8F</string>
+											<string>12DB3BB51545B47A00510A8F</string>
+											<string>12DB3BB61545B47A00510A8F</string>
+											<string>12DB3BB71545B47A00510A8F</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -402,14 +402,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {797, 365}}</string>
+								<string>{{0, 0}, {797, 515}}</string>
 								<key>RubberWindowFrame</key>
 								<string>302 110 978 668 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
 							<key>Proportion</key>
-							<string>365pt</string>
+							<string>515pt</string>
 						</dict>
 						<dict>
 							<key>ContentConfiguration</key>
@@ -422,14 +422,14 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 370}, {797, 257}}</string>
+								<string>{{0, 520}, {797, 107}}</string>
 								<key>RubberWindowFrame</key>
 								<string>302 110 978 668 0 0 1280 778 </string>
 							</dict>
 							<key>Module</key>
 							<string>XCDetailModule</string>
 							<key>Proportion</key>
-							<string>257pt</string>
+							<string>107pt</string>
 						</dict>
 					</array>
 					<key>Proportion</key>
@@ -448,9 +448,9 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>12DB3B7415449DFA00510A8F</string>
+				<string>12DB3BB91545B47A00510A8F</string>
 				<string>1CE0B1FE06471DED0097A5F4</string>
-				<string>12DB3B7515449DFA00510A8F</string>
+				<string>12DB3BBA1545B47A00510A8F</string>
 				<string>1CE0B20306471E060097A5F4</string>
 				<string>1CE0B20506471E060097A5F4</string>
 			</array>
@@ -588,6 +588,7 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
+		<string>1C530D57069F1CE1000CFCEE</string>
 		<string>122336AD13377DFD0033F008</string>
 		<string>/Users/slice/src/edk23/Clover/rEFIt_UEFI/rEFIt_proj/rEFIt_proj.xcodeproj</string>
 	</array>
@@ -669,7 +670,7 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>122336AD13377DFD0033F008</string>
-				<string>12DB3B7615449DFA00510A8F</string>
+				<string>12DB3BAE1545B40900510A8F</string>
 				<string>1CD0528F0623707200166675</string>
 				<string>XCMainBuildResultsModuleGUID</string>
 			</array>
@@ -809,7 +810,7 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>1CDD528C0622207200134675</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>menu.c</string>
+										<string>main.c</string>
 										<key>StatusBarVisibility</key>
 										<true/>
 									</dict>
@@ -865,8 +866,8 @@
 			<key>TableOfContents</key>
 			<array>
 				<string>1C530D57069F1CE1000CFCEE</string>
-				<string>12D2E4AC15449AB70017277D</string>
-				<string>12D2E4AD15449AB70017277D</string>
+				<string>12DB3BB31545B40900510A8F</string>
+				<string>12DB3BB41545B40900510A8F</string>
 				<string>1CDD528C0622207200134675</string>
 				<string>1CD0528E0623707200166675</string>
 			</array>

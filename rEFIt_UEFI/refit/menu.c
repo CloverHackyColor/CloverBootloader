@@ -195,11 +195,11 @@ static VOID InitSelection(VOID)
   if (SelectionImages[2] == NULL){
     DBG("no file SelectionSmallFileName get embedded\n");
     SelectionImages[2] = egPrepareEmbeddedImage(&egemb_back_selected_small, FALSE);
-    DBG("egPrepareEmbeddedImage OK\n");
+//    DBG("egPrepareEmbeddedImage OK\n");
   }
   SelectionImages[2] = egEnsureImageSize(SelectionImages[2],
                                          ROW1_TILESIZE, ROW1_TILESIZE, &MenuBackgroundPixel);
-  DBG("egPrepareEmbeddedImage size OK\n");
+//  DBG("egPrepareEmbeddedImage size OK\n");
   if (SelectionImages[2] == NULL)
     return;
   
@@ -209,10 +209,10 @@ static VOID InitSelection(VOID)
     SelectionImages[0] = egLoadImage(ThemeDir, GlobalConfig.SelectionBigFileName, FALSE);
     SelectionImages[0] = egEnsureImageSize(SelectionImages[0],
                                            ROW0_TILESIZE, ROW0_TILESIZE, &MenuBackgroundPixel);
-    DBG("size ok\n");
+//    DBG("size ok\n");
   }
   if (SelectionImages[0] == NULL) {
-    // calculate big selection image from small one
+//    // calculate big selection image from small one
     DBG("calculate big selection image from small one\n");
     SelectionImages[0] = egCreateImage(ROW0_TILESIZE, ROW0_TILESIZE, FALSE);
     if (SelectionImages[0] == NULL) {
@@ -223,7 +223,7 @@ static VOID InitSelection(VOID)
     
     DestPtr = SelectionImages[0]->PixelData;
     SrcPtr  = SelectionImages[2]->PixelData;
-    DBG("ready to scale Src=%x Dest=%x\n", SrcPtr, DestPtr);
+//    DBG("ready to scale Src=%x Dest=%x\n", SrcPtr, DestPtr);
     for (y = 0; y < ROW0_TILESIZE; y++) {
       if (y < (ROW1_TILESIZE >> 1))
         src_y = y;
@@ -244,12 +244,12 @@ static VOID InitSelection(VOID)
       }
     }
   }
-  DBG("[0] Created\n");
+//  DBG("[0] Created\n");
   // non-selected background images
   SelectionImages[1] = egCreateFilledImage(ROW0_TILESIZE, ROW0_TILESIZE, FALSE, &MenuBackgroundPixel);
-  DBG("[1] Created\n");
+//  DBG("[1] Created\n");
   SelectionImages[3] = egCreateFilledImage(ROW1_TILESIZE, ROW1_TILESIZE, FALSE, &MenuBackgroundPixel);
-  DBG("[3] Created\n");
+//  DBG("[3] Created\n");
   
 }
 

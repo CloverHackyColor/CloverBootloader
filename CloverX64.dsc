@@ -379,14 +379,12 @@
   MdeModulePkg/Universal/LegacyRegion2Dxe/LegacyRegion2Dxe.inf
 
   # Misc
-
   Clover/FSInject/FSInject.inf
-
   Clover/MsgLog/MsgLog.inf
   #
   # Sample Application
   #
-  MdeModulePkg/Application/HelloWorld/HelloWorld.inf
+  #MdeModulePkg/Application/HelloWorld/HelloWorld.inf
   #MdeModulePkg/Application/VariableInfo/VariableInfo.inf
   #rEFIt_UEFI/refit.inf
 
