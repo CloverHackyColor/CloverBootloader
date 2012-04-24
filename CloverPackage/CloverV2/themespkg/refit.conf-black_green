@@ -1,6 +1,7 @@
 #
 # refit.conf
 # Configuration file for the rEFIt boot menu
+# Customized for black_green theme by blackosx
 #
 
 # Timeout in seconds for the main menu screen. Setting the timeout to 0
@@ -34,8 +35,9 @@ disable hwtest
 
 # THEME SET
 #theme metal
-theme black_green
 #theme buttons
+theme black_green
+#theme hellfire
 
 #Use custom font or embedded
 # alfa - transparent embedded font
@@ -48,11 +50,11 @@ theme black_green
 font load
 
 # this font is default for theme metal and buttons, width=8
-#font_file_name 	BoG_LucidaConsole_10W.png
-#char_width 10
+#font_file_name  WoB_mplus2mMedium_9W.png
+#char_width 9
 
 # this font is used for theme black_green, width=10
-font_file_name  WoB_PTMono_10W.png
+font_file_name  WoB_PTMono_10W_NA.png
 char_width 10
 
 # pixel size of letters in text. depends on font and wanted design
@@ -88,7 +90,7 @@ selection_small Selection_small.png
 #Selection bar in menu may have different colors
 # default white RGBA={0xFF, 0xFF, 0xFF, 0x00}
 #
-selection_color 0x007F0000
+selection_color 0x31520E00
 
 
 # Hide the volume badge icons in the graphical main menu. There are three
