@@ -24,6 +24,9 @@ EFI_EDID_DISCOVERED_PROTOCOL    *EdidDiscovered;
 //EFI_GRAPHICS_OUTPUT_PROTOCOL    *GraphicsOutput;
 UINT16                          gCPUtype;
 
+// firmware
+BOOLEAN                         gFirmwareClover = FALSE;
+
 VOID WaitForSts(VOID) {
 	UINT32 inline_timeout = 100000;
 	while (AsmReadMsr64(MSR_IA32_PERF_STATUS) & (1 << 21)) { if (!inline_timeout--) break; }

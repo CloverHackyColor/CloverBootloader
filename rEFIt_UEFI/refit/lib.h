@@ -230,6 +230,7 @@ typedef struct {
   CHAR16      *SelectionSmallFileName;
   CHAR16      *SelectionBigFileName;
   CHAR16      *DefaultSelection;
+  CHAR16      *ScreenResolution;
 } REFIT_CONFIG;
 
 // types
@@ -296,6 +297,8 @@ CHAR16 * Basename(IN CHAR16 *Path);
 VOID   ReplaceExtension(IN OUT CHAR16 *Path, IN CHAR16 *Extension);
 
 INTN FindMem(IN VOID *Buffer, IN UINTN BufferLength, IN VOID *SearchString, IN UINTN SearchStringLength);
+
+CHAR16 *FileDevicePathToStr(IN EFI_DEVICE_PATH_PROTOCOL *DevPath);
 
 EFI_STATUS InitializeUnicodeCollationProtocol (VOID);
 //

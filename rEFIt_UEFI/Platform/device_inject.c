@@ -275,9 +275,16 @@ VOID* PCIReadRom(pci_dt_t* device)
 DevPropDevice *devprop_add_device(DevPropString *string, CHAR8 *path)
 {
 	DevPropDevice	*device;
+	// CloverEFI: PcieRoot(0x0)/Pci(0x1C,0x6)/Pci(0x0,0x0)
 	const CHAR8		pciroot_string[] = "PciRoot(0x";
 	const CHAR8		pcieroot_string[] = "PcieRoot(0x";
 	const CHAR8		pci_device_string[] = "Pci(0x";
+	// on Aptio UEFI: Acpi(PNP0A03,0)/Pci(1C|6)/Pci(0|0)
+	const CHAR8		acpi_string[] = "Acpi(PNP0A03,";
+	const CHAR8		acpi_pci_device_string[] = "Pci(";
+	BOOLEAN			PciRootPath;
+	BOOLEAN			PcieRootPath;
+	BOOLEAN			AcpiPath;
 
 	if (string == NULL || path == NULL) {
 		return NULL;
@@ -286,8 +293,11 @@ DevPropDevice *devprop_add_device(DevPropString *string, CHAR8 *path)
  
 	device = AllocateZeroPool(sizeof(DevPropDevice));
 
-	if (AsciiStrnCmp(path, pciroot_string, AsciiStrLen(pciroot_string)) &&
-		AsciiStrnCmp(path, pcieroot_string, AsciiStrLen(pcieroot_string))) {
+	PciRootPath = AsciiStrnCmp(path, pciroot_string, AsciiStrLen(pciroot_string)) == 0;
+	PcieRootPath = AsciiStrnCmp(path, pcieroot_string, AsciiStrLen(pcieroot_string)) == 0;
+	AcpiPath = AsciiStrnCmp(path, acpi_string, AsciiStrLen(acpi_string)) == 0;
+
+	if (!PciRootPath && !PcieRootPath && !AcpiPath) {
 		DBG("ERROR parsing device path\n");
 		return NULL;
 	}
@@ -300,6 +310,8 @@ DevPropDevice *devprop_add_device(DevPropString *string, CHAR8 *path)
 	INT32		x, curr = 0;
 	CHAR8	buff[] = "00";
 
+	if (PciRootPath || PcieRootPath) {
+		// CloverEFI: PcieRoot(0x0)/Pci(0x1C,0x6)/Pci(0x0,0x0)
 	for (x = 0; x < AsciiStrLen(path); x++) {
 		if (!AsciiStrnCmp(&path[x], pci_device_string, AsciiStrLen(pci_device_string))) {
 			x+=AsciiStrLen(pci_device_string);
@@ -333,6 +345,44 @@ DevPropDevice *devprop_add_device(DevPropString *string, CHAR8 *path)
 			device->pci_dev_path[numpaths].function = hexstrtouint8(buff); // TODO: find dev from CHAR8 *path
 			
 			numpaths++;
+		}
+	}
+	} else if (AcpiPath) {
+		// on Aptio UEFI: Acpi(PNP0A03,0)/Pci(1C|6)/Pci(0|0)
+		for (x = 0; x < AsciiStrLen(path); x++) {
+			if (!AsciiStrnCmp(&path[x], acpi_pci_device_string, AsciiStrLen(acpi_pci_device_string))) {
+				x+=AsciiStrLen(acpi_pci_device_string);
+				curr=x;
+				while(path[++x] != '|');
+				if(x-curr == 2)
+					AsciiSPrint(buff, 3, "%c%c", path[curr], path[curr+1]);
+				else if(x-curr == 1)
+					AsciiSPrint(buff, 3, "%c", path[curr]);
+				else 
+				{
+					DBG("ERROR parsing device path\n");
+					numpaths = 0;
+					break;
+				}
+				device->pci_dev_path[numpaths].device =	hexstrtouint8(buff);
+				
+				x += 1; // |
+				curr = x;
+				while(path[++x] != ')');
+				if(x-curr == 2)
+					AsciiSPrint(buff, 3, "%c%c", path[curr], path[curr+1]);
+				else if(x-curr == 1)
+					AsciiSPrint(buff, 3, "%c", path[curr]);
+				else
+				{
+					DBG("ERROR parsing device path\n");
+					numpaths = 0;
+					break;
+				}
+				device->pci_dev_path[numpaths].function = hexstrtouint8(buff); // TODO: find dev from CHAR8 *path
+				
+				numpaths++;
+			}
 		}
 	}
 	
@@ -746,8 +796,20 @@ BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev)
         layoutId = 0; // reuse variable
         devprop_add_value(device, "PinConfigurations", (UINT8*)&layoutId, 1);
     } else {
-        DBG("HDA Controller [%04x:%04x] :: %a, HDMI audio => setting hda-gfx=onboard-1\n",
+        DBG("HDA Controller [%04x:%04x] :: %a",
             hda_dev->vendor_id, hda_dev->device_id, devicepath);
+		// HDA audio not inited on Aptio UEFI and we end up here.
+		// We'll use Settings.HDALayoutId if specified to cover that
+		// until we get the code for initing controller.
+		if (!gFirmwareClover && gSettings.HDALayoutId > 0) {
+			layoutId = gSettings.HDALayoutId;
+			DBG(" => setting layout-id=0x%x=%d", layoutId, layoutId);
+			devprop_add_value(device, "layout-id", (UINT8*)&layoutId, 4);
+			layoutId = 0; // reuse variable
+			devprop_add_value(device, "PinConfigurations", (UINT8*)&layoutId, 1);
+		}
+
+        DBG(" => possible HDMI audio => setting hda-gfx=onboard-1\n");
         devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
     }
 	

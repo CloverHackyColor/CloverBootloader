@@ -652,6 +652,7 @@ extern CHAR8*	                  AppleBoardLocation;
 extern EFI_SYSTEM_TABLE*        gST;
 extern EFI_BOOT_SERVICES*       gBS; 
 extern SETTINGS_DATA            gSettings;
+extern BOOLEAN                  gFirmwareClover;
 extern CPU_STRUCTURE            gCPUStructure;
 extern EFI_GUID                 gUuid;
 extern EFI_EDID_DISCOVERED_PROTOCOL*            EdidDiscovered;

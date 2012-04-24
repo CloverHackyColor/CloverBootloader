@@ -59,6 +59,121 @@ static UINTN egScreenHeight = 600;
 // Screen handling
 //
 
+CHAR8* egDumpGOPVideoModes(VOID)
+{
+    EFI_STATUS  Status;
+    UINT32      MaxMode;
+    UINT32      Mode;
+    UINTN       SizeOfInfo;
+    EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *Info;
+    CHAR16      *PixelFormatDesc;
+    CHAR8       *OutputBase;
+    CHAR8       *Output;
+    UINTN       OutputSize;
+    UINTN       Len;
+    
+    if (GraphicsOutput == NULL) {
+        return NULL;
+    }
+    
+    // alloc mem, caller should release
+    OutputSize = 1024;
+    OutputBase = AllocateZeroPool(OutputSize);
+    Output = OutputBase;
+    
+    // get dump
+    MaxMode = GraphicsOutput->Mode->MaxMode;
+    Mode = GraphicsOutput->Mode->Mode;
+    AsciiSPrint(Output, OutputSize, "Available graphics modes for refit.conf screen_resolution:\nCurr. Mode = %d, MaxMode = %d, FB = %lx, FB size=0x%x\n",
+          Mode, MaxMode, GraphicsOutput->Mode->FrameBufferBase, GraphicsOutput->Mode->FrameBufferSize);
+    Len = AsciiStrLen(OutputBase);
+    OutputSize = 1024 - Len;
+    Output = OutputBase + Len;
+    
+    for (Mode = 0; Mode < MaxMode; Mode++) {
+        Status = GraphicsOutput->QueryMode(GraphicsOutput, Mode, &SizeOfInfo, &Info);
+        if (Status == EFI_SUCCESS) {
+            
+            switch (Info->PixelFormat) {
+                case PixelRedGreenBlueReserved8BitPerColor:
+                    PixelFormatDesc = L"8bit RGB";
+                    break;
+                    
+                case PixelBlueGreenRedReserved8BitPerColor:
+                    PixelFormatDesc = L"8bit BGR";
+                    break;
+                    
+                case PixelBitMask:
+                    PixelFormatDesc = L"BITMASK";
+                    break;
+                    
+                case PixelBltOnly:
+                    PixelFormatDesc = L"NO FB";
+                    break;
+                    
+                default:
+                    PixelFormatDesc = L"invalid";
+                    break;
+            }
+            
+            AsciiSPrint(Output, OutputSize, "- Mode %d: %dx%d PixFmt = %s, PixPerScanLine = %d\n",
+                  Mode, Info->HorizontalResolution, Info->VerticalResolution, PixelFormatDesc, Info->PixelsPerScanLine);
+        } else {
+            AsciiSPrint(Output, OutputSize, "- Mode %d: %r\n", Mode, Status);
+        }
+        Len = AsciiStrLen(OutputBase);
+        OutputSize = 1024 - Len;
+        Output = OutputBase + Len;
+    }
+    return OutputBase;
+}
+
+EFI_STATUS egSetScreenResolution(IN CHAR16 *WidthHeight)
+{
+    EFI_STATUS  Status;
+    UINT32      Width;
+    UINT32      Height;
+    CHAR16      *HeightP;
+    UINT32      MaxMode;
+    UINT32      Mode;
+    UINTN       SizeOfInfo;
+    EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *Info;
+    
+    if (WidthHeight == NULL) {
+        return EFI_INVALID_PARAMETER;
+    }
+    // we are expecting WidthHeight=L"1024x768"
+    // parse Width and Height
+    HeightP = WidthHeight;
+    while (*HeightP != L'\0' && *HeightP != L'x' && *HeightP != L'X') {
+        HeightP++;
+    }
+    if (HeightP == L'\0') {
+        return EFI_INVALID_PARAMETER;
+    }
+    *HeightP = L'\0';
+    HeightP++;
+    Width = (UINT32)StrDecimalToUintn(WidthHeight);
+    Height = (UINT32)StrDecimalToUintn(HeightP);
+    
+    // iterate through modes and set it if found
+    MaxMode = GraphicsOutput->Mode->MaxMode;
+    for (Mode = MaxMode - 1; Mode >= 0; Mode--) {
+        Status = GraphicsOutput->QueryMode(GraphicsOutput, Mode, &SizeOfInfo, &Info);
+        if (Status == EFI_SUCCESS) {
+            if (Width == Info->HorizontalResolution && Height == Info->VerticalResolution) {
+                GraphicsOutput->SetMode(GraphicsOutput, Mode);
+                egScreenWidth = Width;
+                egScreenHeight = Height;
+                break;
+            }
+        } else {
+            Status = EFI_UNSUPPORTED;
+        }
+    }
+    return Status;
+}
+
 VOID egInitScreen(VOID)
 {
     EFI_STATUS Status;
@@ -80,6 +195,9 @@ VOID egInitScreen(VOID)
     // get screen size
     egHasGraphics = FALSE;
     if (GraphicsOutput != NULL) {
+        if (GlobalConfig.ScreenResolution != NULL) {
+            egSetScreenResolution(GlobalConfig.ScreenResolution);
+        }
         egScreenWidth = GraphicsOutput->Mode->Info->HorizontalResolution;
         egScreenHeight = GraphicsOutput->Mode->Info->VerticalResolution;
         egHasGraphics = TRUE;

@@ -381,6 +381,17 @@
   # Misc
   Clover/FSInject/FSInject.inf
   Clover/MsgLog/MsgLog.inf
+
+  
+  # Drivers for Aptio loading - should go to Clover's /EFI/drivers64 dir
+  Clover/OsxSmbiosDrv/SmbiosDxe.inf {
+	<PcdsFixedAtBuild>
+	  # SMBIOS ver 2.6
+      gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0206
+  }
+  Clover/OsxFatBinaryDrv/OsxFatBinaryDrv.inf
+
+
   #
   # Sample Application
   #

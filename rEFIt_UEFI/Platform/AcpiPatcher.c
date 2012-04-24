@@ -388,7 +388,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 {
 	EFI_STATUS										Status = EFI_SUCCESS;
 	UINTN                         Index;
-	EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER	*RsdPointer;
+	EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER	*RsdPointer = NULL;
 	EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE		*FadtPointer = NULL;	
 	EFI_ACPI_4_0_FIXED_ACPI_DESCRIPTION_TABLE		*newFadt	 = NULL;
 //	EFI_ACPI_HIGH_PRECISION_EVENT_TIMER_TABLE_HEADER	*Hpet    = NULL;
@@ -411,7 +411,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 	UINT32*      	 			  rf = NULL;
 	UINT64*       				xf = NULL;
   UINT64        				XDsdt; //save values if present
- 	UINT64        				BiosDsdt;
+ 	UINT64        				BiosDsdt = 0;
   UINT64        				XFirmwareCtrl;
   EFI_FILE      				*RootDir;
   UINT32                eCntR; //, eCntX;
@@ -422,6 +422,9 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   
   CHAR16*     AcpiOemPath = PoolPrint(L"%s\\ACPI\\patched", OEMPath);
 	
+  if (gFirmwareClover) {
+    // although it work on Aptio, no need for the following on other UEFis
+    
 	//Slice - I want to begin from BIOS ACPI tables like with SMBIOS
 	RsdPointer = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)FindAcpiRsdPtr();
   //	DBG("Found RsdPtr in BIOS: %p\n", RsdPointer);
@@ -445,6 +448,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     if (BiosDsdt == 0) {
       DBG("Cannot found DSDT in Bios tables!\n");
     }
+  }
   }
   
 #if 0	  //Slice - this codes reserved for a future

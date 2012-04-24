@@ -135,6 +135,21 @@ VOID* GetSmbiosTablesFromHob (VOID)
 	return NULL;
 }
 
+VOID *
+GetSmbiosTablesFromConfigTables (VOID)
+{
+	EFI_STATUS              Status;
+	EFI_PHYSICAL_ADDRESS    *Table;
+	
+	Status = EfiGetSystemConfigurationTable (&gEfiSmbiosTableGuid, (VOID **)  &Table);
+	if (EFI_ERROR (Status) || Table == NULL) {
+		Table = NULL;
+	}
+	
+	return Table;
+}
+
+
 // Internal functions for flat SMBIOS
 
 UINT16 SmbiosTableLength (SMBIOS_STRUCTURE_POINTER SmbiosTable)
@@ -1277,13 +1292,21 @@ EFI_STATUS PrepatchSmbios()
 	DBG("OEM Tables = %x\n", ((SMBIOS_TABLE_ENTRY_POINT*)Smbios)->TableAddress);
 	if (!Smbios) {
 		Status = EFI_NOT_FOUND;
-		Print(L"Original SMBIOS System Table not found! Getting from Hob...\n");
-		Smbios = GetSmbiosTablesFromHob ();
+		DBG("Original SMBIOS System Table not found! Getting from Hob...\n");
+		Smbios = GetSmbiosTablesFromHob();
+		DBG("HOB SMBIOS EPS=%p\n", Smbios);
 		if (!Smbios) {
-			Print(L"And here SMBIOS System Table not found! Exiting...\n");
+			DBG(L"And here SMBIOS System Table not found! Trying System table ...\n");
+			// this should work on any UEFI
+			Smbios = GetSmbiosTablesFromConfigTables();
+			DBG("ConfigTables SMBIOS EPS=%p\n", Smbios);
+		if (!Smbios) {
+				DBG("And here SMBIOS System Table not found! Exiting...\n");
 			return EFI_NOT_FOUND;
 		}		
 	}
+	}
+	
 	//original EPS and tables
 	EntryPoint = (SMBIOS_TABLE_ENTRY_POINT*)Smbios; //yes, it is old SmbiosEPS
 //	Smbios = (VOID*)(UINT32)EntryPoint->TableAddress; // here is flat Smbios database. Work with it
@@ -1375,25 +1398,85 @@ VOID PatchSmbios(VOID) //continue
 // neither by specs nor by AppleSmbios.kext	
 }	
 
+
+/// Reference SMBIOS 2.7, chapter 6.1.2.
+/// The UEFI Platform Initialization Specification reserves handle number FFFEh for its
+/// EFI_SMBIOS_PROTOCOL.Add() function to mean "assign an unused handle number automatically."
+/// This number is not used for any other purpose by the SMBIOS specification.
+#define SMBIOS_HANDLE_PI_RESERVED 0xFFFE
+
+/** adds SmbiosTable to smbios protocol */
+EFI_STATUS
+LogTableToSmbiosProtocol(IN EFI_SMBIOS_PROTOCOL *Smbios, IN UINT8 *SmbiosTable)
+{
+	EFI_STATUS         Status;
+	EFI_SMBIOS_HANDLE  SmbiosHandle;
+	
+	SmbiosHandle = SMBIOS_HANDLE_PI_RESERVED;
+	Status = Smbios->Add(Smbios, NULL, &SmbiosHandle, (EFI_SMBIOS_TABLE_HEADER*)SmbiosTable);
+	return Status;
+}
+
+/** adds all smbios tables from Smbios to installed smbios protocol */
+VOID
+LogPatchesToSmbiosProtocol(IN VOID *Smbios)
+{
+	EFI_STATUS         Status;
+	EFI_SMBIOS_PROTOCOL              *SmbiosProtocol;
+	SMBIOS_STRUCTURE_POINTER          SmbiosTable;
+	UINTN                             Type;
+	
+	//
+	// find Smbios protocol
+	//
+	Status = gBS->LocateProtocol(&gEfiSmbiosProtocolGuid, NULL, (VOID**)&SmbiosProtocol);
+	if (EFI_ERROR (Status)) {
+		return;
+	}
+	
+	//
+	// copy all entries from Smbios to SmbiosProtocol
+	//
+	for (Type = 0; Type <= 255; Type++) {
+		if (Type != 127) {
+			SmbiosTable = GetSmbiosTableFromType ((SMBIOS_TABLE_ENTRY_POINT *)Smbios, (UINT8)Type, 0);
+			if (SmbiosTable.Raw != NULL) {
+				//Print(L"SMBIOS Type=%d found.\n", Type);
+				//if (Type % 20 == 19) PauseForKey(L"continue\n");
+				LogTableToSmbiosProtocol(SmbiosProtocol, SmbiosTable.Raw);
+			}
+		}
+	}
+	return;
+}
+
+
 VOID FinalizeSmbios() //continue
 {
 	EFI_PEI_HOB_POINTERS	GuidHob;
 	EFI_PEI_HOB_POINTERS	HobStart;
-	EFI_PHYSICAL_ADDRESS    *Table;
-	UINTN					TableLength;
+	EFI_PHYSICAL_ADDRESS    *Table = NULL;
+	//UINTN					TableLength = 0;
 
 	// Get Hob List
 	HobStart.Raw = GetHobList ();
 
-	// Iteratively add Smbios Table to EFI System Table
+	if (HobStart.Raw != NULL) {
+		// find SMBIOS in hob
 	for (Index = 0; Index < sizeof (gTableGuidArray) / sizeof (*gTableGuidArray); ++Index) {
 		GuidHob.Raw = GetNextGuidHob (gTableGuidArray[Index], HobStart.Raw);
 		if (GuidHob.Raw != NULL) {
 			Table = GET_GUID_HOB_DATA (GuidHob.Guid);
-			TableLength = GET_GUID_HOB_DATA_SIZE (GuidHob);
+				//TableLength = GET_GUID_HOB_DATA_SIZE (GuidHob);
+				if (Table != NULL) {
+					break;
+				} 
+			}
+		}
+	}
 
-			if (Table != NULL) {
 				//
+	// Install SMBIOS in Config table
 				SmbiosEpsNew->TableLength = (UINT16)((UINT32)(UINTN)Current - (UINT32)(UINTN)Smbios);
 				SmbiosEpsNew->NumberOfSmbiosStructures = NumberOfRecords;
 				SmbiosEpsNew->MaxStructureSize = MaxStructureSize;
@@ -1404,13 +1487,33 @@ VOID FinalizeSmbios() //continue
 				DBG("SmbiosEpsNew->EntryPointLength = %d\n", SmbiosEpsNew->EntryPointLength);
 				DBG("DMI checksum = %d\n", Checksum8((UINT8*)SmbiosEpsNew, SmbiosEpsNew->EntryPointLength));
 					gBS->InstallConfigurationTable (&gEfiSmbiosTableGuid, (VOID*)SmbiosEpsNew);
-				*Table = (UINT32)(UINTN)SmbiosEpsNew;
 				gST->Hdr.CRC32 = 0;
-				gBS->CalculateCrc32 ((UINT8 *) &gST->Hdr, 
-											   gST->Hdr.HeaderSize, &gST->Hdr.CRC32);	
+	gBS->CalculateCrc32 ((UINT8 *) &gST->Hdr, gST->Hdr.HeaderSize, &gST->Hdr.CRC32);
 										
+	//
+	// Fix it in Hob list
+	//
+	// No smbios in Hob list on Aptio, so no need to update it there.
+	// But even if it would be there, loading of OSX would overwrite it
+	// since this list on my board is inside space needed for kernel
+	// (ha! like many other UEFI stuff).
+	// It's enough to add it to Conf.table.
+	//
+	if (Table != NULL) {
+		//PauseForKey(L"installing SMBIOS in Hob\n");
+		*Table = (UINT32)(UINTN)SmbiosEpsNew;
 			} 
+	
+	if (!gFirmwareClover) {
+		//
+		// boot.efi reads values through smbios protocol. Since it is not present
+		// on Aptio UEFI, we must add it to Clover's drivers dir (OsxSmbiosDrv.efi).
+		// Initially temp tables in this driver are empty and we are filling it with
+		// patched smbios here. This give us Clover's smbios patching
+		// in smbios protocol for boot.efi and in Conf. table for OSX.
+		//
+		LogPatchesToSmbiosProtocol(SmbiosEpsNew);
 		}
-	}	
+        
 	return;
 }

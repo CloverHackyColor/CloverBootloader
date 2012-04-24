@@ -239,9 +239,16 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     //  PauseForKey(L"SetVariablesForOSX");
     SetVariablesForOSX();
     //  PauseForKey(L"FinalizeSmbios");
+    
+    if (gFirmwareClover) {
+      // the following is not needed or not working on Aptio UEFI
+      // VirtualAddressChange - not needed at all
+      // OnReadyToBootEvent - causes rebuilding of System table and patches are lost
+      // SimpleFileSystemChangeEvent - not working
     EventsInitialize ();
     gBS->SignalEvent(OnReadyToBootEvent);
     gBS->SignalEvent(mVirtualAddressChangeEvent);
+    }
     
     FinalizeSmbios();
     //  PauseForKey(L"SetupDataForOSX");
@@ -1334,6 +1341,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   UINTN             MenuExit;
   UINTN             Size, i;
   UINT8             *Buffer = NULL;
+  CHAR8             *MsgBuffer = NULL;
  // CHAR16            *InputBuffer; //, *Y;
 //  EFI_INPUT_KEY Key;
   
@@ -1345,10 +1353,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	gRS				= SystemTable->RuntimeServices;
 	Status = EfiGetSystemConfigurationTable (&gEfiDxeServicesTableGuid, (VOID **) &gDS);
 	
+  // firmware detection
+  gFirmwareClover = StrCmp(gST->FirmwareVendor, L"CLOVER") == 0;
+	
   InitializeConsoleSim();
 	InitBooterLog();
   DBG(" \nStarting rEFIt rev %a\n", FIRMWARE_REVISION);
-  InitScreen();
+//  InitScreen();
   
   Status = InitRefitLib(ImageHandle);
   if (EFI_ERROR(Status))
@@ -1358,6 +1369,15 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   // read GUI configuration
   ReadConfig();
+  
+  // init screen and dump video modes to log
+  InitScreen();
+  MsgBuffer = egDumpGOPVideoModes();
+  if (MsgBuffer != NULL) {
+    DBG("%a", MsgBuffer);
+    FreePool(MsgBuffer);
+  }
+  
   ThemePath = PoolPrint(L"EFI\\BOOT\\themes\\%s", GlobalConfig.Theme);
   DBG("Theme: %s Path: %s\n", GlobalConfig.Theme, ThemePath);
   MainMenu.TimeoutSeconds = GlobalConfig.Timeout;
@@ -1365,6 +1385,19 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   PrepatchSmbios();
   DBG("running on %a\n", gSettings.OEMProduct);
   DBG("... with board %a\n", gSettings.OEMBoard);
+  Size = iStrLen(gSettings.OEMProduct, 64);
+  for (i=0; i<Size; i++) {
+    if (gSettings.OEMProduct[i] == 0x2F) {
+      gSettings.OEMProduct[i] = 0x5F;
+    }
+  }
+  Size = iStrLen(gSettings.OEMBoard, 64);
+  for (i=0; i<Size; i++) {
+    if (gSettings.OEMBoard[i] == 0x2F) {
+      gSettings.OEMBoard[i] = 0x5F;
+    }
+  }
+  
   
   if (FileExists(SelfRootDir, PoolPrint(L"EFI\\OEM\\%a\\config.plist", gSettings.OEMProduct))) {
     OEMPath = PoolPrint(L"EFI\\OEM\\%a", gSettings.OEMProduct);

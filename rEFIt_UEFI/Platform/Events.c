@@ -107,6 +107,12 @@ OnExitBootServices (
 	UINTN						archMode = sizeof(UINTN) * 8;
 	UINTN						Version = 0;
   
+    if (!gFirmwareClover) {
+        // DisableUsbLegacySupport() not working on Aptio UEFI
+        // (probably because of memory allocations)
+        return;
+    }
+  
   while(FALSE) //TRUE)
 	{
 		bootArgs2 = (BootArgs2*)ptr;
@@ -229,6 +235,7 @@ EventsInitialize ()
   //
   // Register the event to convert the pointer for runtime.
   //
+    /*
   gBS->CreateEventEx (
          EVT_NOTIFY_SIGNAL,
          TPL_NOTIFY,
@@ -237,7 +244,7 @@ EventsInitialize ()
          &gEfiEventVirtualAddressChangeGuid,
          &mVirtualAddressChangeEvent
          );
-  
+     */
   gBS->CreateEventEx (
          EVT_NOTIFY_SIGNAL,
          TPL_NOTIFY,

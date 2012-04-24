@@ -135,7 +135,7 @@ EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
     DBG("SelfDevicePath=%s @%x\n", DevicePathToStr(SelfDevicePath), SelfDeviceHandle);
   
   // find the current directory
-    FilePathAsString = DevicePathToStr(SelfLoadedImage->FilePath);
+    FilePathAsString = FileDevicePathToStr(SelfLoadedImage->FilePath);
     if (FilePathAsString != NULL) {
         StrCpy(BaseDirectory, FilePathAsString);
         FreePool(FilePathAsString);
@@ -1304,7 +1304,9 @@ MetaiMatch (
 			)
 {
 	if (!mUnicodeCollation) {
-		return FALSE;
+		// quick fix for driver loading on UEFIs without UnicodeCollation
+		//return FALSE;
+		return TRUE;
 	}
 	return mUnicodeCollation->MetaiMatch (mUnicodeCollation, String, Pattern);
 }
@@ -1385,6 +1387,26 @@ INTN FindMem(IN VOID *Buffer, IN UINTN BufferLength, IN VOID *SearchString, IN U
     }
     
     return -1;
+}
+
+//
+// Aptio UEFI returns File DevPath as 2 nodes (dir, file)
+// and DevicePathToStr connects them with /, but we need '\\'
+CHAR16 *FileDevicePathToStr(IN EFI_DEVICE_PATH_PROTOCOL *DevPath)
+{
+    CHAR16      *FilePath;
+    CHAR16      *Char;
+    
+    FilePath = DevicePathToStr(DevPath);
+    // fix / into '\\'
+    if (FilePath != NULL) {
+        for (Char = FilePath; *Char != L'\0'; Char++) {
+            if (*Char == L'/') {
+                *Char = L'\\';
+            }
+        }
+    }
+    return FilePath;
 }
 
 // EOF
