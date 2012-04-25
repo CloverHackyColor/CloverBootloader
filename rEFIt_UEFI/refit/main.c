@@ -1238,10 +1238,17 @@ static VOID LoadDrivers(VOID)
   ScanDriverDir(L"\\EFI\\drivers32");
 #endif
 
-  // connect new drivers
-  BdsLibConnectAllEfi();
+  // connect all devices
+    //
+  if (ReconnectAll) {
+    BdsLibDisconnectAllEfi ();
+    BdsLibConnectAll ();
+  } else {
+    // connect loaded drivers
+    BdsLibConnectAllEfi();
+  }
   
-  //	DBG("Drivers connected\n");
+	DBG("Drivers connected\n");
 }
 
 INTN FindDefaultEntry(VOID)
