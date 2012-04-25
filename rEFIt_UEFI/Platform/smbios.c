@@ -1375,7 +1375,7 @@ VOID PatchSmbios(VOID) //continue
 	PatchTableType3();
 	PatchTableType7(); //we should know handles before patch Table4
 	PatchTableType4();		
-	PatchTableType6();
+//	PatchTableType6();
 	PatchTableType9();
 	PatchTableTypeSome();
 	PatchTableType16();

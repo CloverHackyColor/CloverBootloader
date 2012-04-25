@@ -1311,8 +1311,8 @@ static VOID ReserveLowerMem(VOID)
 //Slice - I am proposed to use UEFI2.3.1 BdsLib
 static VOID LoadDrivers(VOID)
 {
-  BOOLEAN ReconnectAll = FALSE; //TODO - find a reason to not reconnect
-    
+  BOOLEAN ReconnectAll = FALSE;
+  
   // we need to reserve lower mem on Aptio to make
   // loading of driver above future kernel image
   if (!gFirmwareClover) {
