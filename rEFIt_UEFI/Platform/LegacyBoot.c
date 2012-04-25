@@ -77,7 +77,15 @@ typedef struct {
 	UINT64	lba;			// LBA of starting sector
 } BIOS_DISK_ADDRESS_PACKET;
 
-
+CONST UINT8 VideoTest[] = {
+  0xb8, 0x02, 0x00,                   //mov ax,2
+  0xcd, 0x10,                         //int 0x10
+  0x66, 0xbb, 0x0f, 0x00, 0x00, 0x00, //mov ebx, 0x0f
+  0x66, 0xb8, 0x38, 0x0e, 0x00, 0x00, //mov eax, 0x0e38
+  0x66, 0xb9, 0x10, 0x00, 0x00, 0x00, //mov ecx, 0x10
+  0xcd, 0x10,                         //int 0x10
+  0xed, 0xe4, 0xfc                    //jmp near 0x7c00
+}; //28bytes
 
 
 #pragma pack(0)
@@ -223,7 +231,7 @@ UINT8 GetBiosDriveNumForVolume(REFIT_VOLUME *Volume)
 	
 	DBG("Volume CRC32 = %X\n", Volume->DriveCRC32);
 	LegacyRegion = 0x0C0000;
-	LegacyRegionPages = EFI_SIZE_TO_PAGES(sizeof(BIOS_DISK_ADDRESS_PACKET) + 2 * 512) /* dap + 2 sectors */;
+	LegacyRegionPages = EFI_SIZE_TO_PAGES(sizeof(BIOS_DISK_ADDRESS_PACKET) + 2 * 512)+1 /* dap + 2 sectors */;
 	Status = gBS->AllocatePages(AllocateMaxAddress,
 								EfiBootServicesData,
 								LegacyRegionPages,
@@ -234,7 +242,7 @@ UINT8 GetBiosDriveNumForVolume(REFIT_VOLUME *Volume)
 	}
 	
 	Dap = (BIOS_DISK_ADDRESS_PACKET *)(UINTN)LegacyRegion;
-	Buffer = (UINT8 *)(UINTN)(LegacyRegion + sizeof(BIOS_DISK_ADDRESS_PACKET));
+	Buffer = (UINT8 *)(UINTN)(LegacyRegion + EFI_SIZE_TO_PAGES(sizeof(BIOS_DISK_ADDRESS_PACKET)));
 //Slice - some CD has BIOS driveNum = 0	
 	// scan drives from 0x80
 	DriveNum = 0x80;
