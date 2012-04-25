@@ -1230,7 +1230,6 @@ static VOID ScanDriverDir(IN CHAR16 *Path) //path to folder
 
 static VOID LoadDrivers(VOID)
 {
-  BOOLEAN ReconnectAll = FALSE; //TODO - find a reason to not reconnect
     
     // load drivers from /efi/drivers
 #if defined(MDE_CPU_X64)
@@ -1239,14 +1238,10 @@ static VOID LoadDrivers(VOID)
   ScanDriverDir(L"\\EFI\\drivers32");
 #endif
 
-  // connect all devices
-    //
-  if (ReconnectAll) {
-    BdsLibDisconnectAllEfi ();
-    BdsLibConnectAll ();
-  }
+  // connect new drivers
+  BdsLibConnectAllEfi();
   
-//	DBG("Drivers connected\n");
+  //	DBG("Drivers connected\n");
 }
 
 INTN FindDefaultEntry(VOID)

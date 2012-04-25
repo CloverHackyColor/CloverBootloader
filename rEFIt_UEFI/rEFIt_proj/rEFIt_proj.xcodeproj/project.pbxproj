@@ -24,7 +24,7 @@
 		122336C413377E150033F008 /* icns.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = icns.c; sourceTree = "<group>"; };
 		122336C513377E150033F008 /* lib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lib.c; sourceTree = "<group>"; };
 		122336C613377E150033F008 /* lib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lib.h; sourceTree = "<group>"; };
-		122336C713377E150033F008 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		122336C713377E150033F008 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; tabWidth = 2; };
 		122336C913377E150033F008 /* menu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = menu.c; sourceTree = "<group>"; };
 		122336CC13377E150033F008 /* screen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = screen.c; sourceTree = "<group>"; };
 		122336CD13377E260033F008 /* refit.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = refit.inf; path = ../refit.inf; sourceTree = SOURCE_ROOT; };
@@ -182,7 +182,7 @@
 		12A96AD3153325060041A83F /* Clover_v2_r351:354_EFI.pkg.md5 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Clover_v2_r351:354_EFI.pkg.md5"; sourceTree = "<group>"; };
 		12A96AD4153325060041A83F /* version */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = version; sourceTree = "<group>"; };
 		12A96AD5153325060041A83F /* Version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
-		12CB8F581427390E009EDAF2 /* DevicePath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DevicePath.c; sourceTree = "<group>"; };
+		12CB8F581427390E009EDAF2 /* DevicePath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DevicePath.c; sourceTree = "<group>"; tabWidth = 2; };
 		12CB8F6014273A38009EDAF2 /* GenericBdsLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericBdsLib.h; sourceTree = "<group>"; };
 		12CB8FAB14274AE1009EDAF2 /* efiConsoleControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efiConsoleControl.h; sourceTree = "<group>"; };
 		12CB8FAE14274AE1009EDAF2 /* Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Handle.h; sourceTree = "<group>"; };
@@ -191,8 +191,8 @@
 		12CB922014277F71009EDAF2 /* BdsConnect.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BdsConnect.c; sourceTree = "<group>"; };
 		12CB922114277F7D009EDAF2 /* PiBootMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PiBootMode.h; sourceTree = "<group>"; };
 		12D5B1C914F0F35E0043569D /* ati.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ati.h; sourceTree = "<group>"; };
-		12D6305C14CEA05E00E5898F /* AcpiPatcher.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AcpiPatcher.c; sourceTree = "<group>"; };
-		12D6305D14CEA05E00E5898F /* AppleEfi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppleEfi.h; sourceTree = "<group>"; };
+		12D6305C14CEA05E00E5898F /* AcpiPatcher.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = AcpiPatcher.c; sourceTree = "<group>"; tabWidth = 2; };
+		12D6305D14CEA05E00E5898F /* AppleEfi.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = AppleEfi.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		12D6305E14CEA05E00E5898F /* ati.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ati.c; sourceTree = "<group>"; };
 		12D6305F14CEA05E00E5898F /* ati_reg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ati_reg.h; sourceTree = "<group>"; };
 		12D6306014CEA05E00E5898F /* BiosVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BiosVideo.h; sourceTree = "<group>"; };
@@ -203,7 +203,7 @@
 		12D6306514CEA05E00E5898F /* cpu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cpu.c; sourceTree = "<group>"; };
 		12D6306614CEA05E00E5898F /* DataHubCpu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DataHubCpu.c; sourceTree = "<group>"; };
 		12D6306714CEA05E00E5898F /* DataHubRecords.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataHubRecords.h; sourceTree = "<group>"; };
-		12D6306814CEA05E00E5898F /* device_inject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = device_inject.c; sourceTree = "<group>"; };
+		12D6306814CEA05E00E5898F /* device_inject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = device_inject.c; sourceTree = "<group>"; usesTabs = 1; };
 		12D6306914CEA05E00E5898F /* device_inject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = device_inject.h; sourceTree = "<group>"; };
 		12D6306A14CEA05E00E5898F /* device_tree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = device_tree.c; sourceTree = "<group>"; };
 		12D6306B14CEA05E00E5898F /* device_tree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = device_tree.h; sourceTree = "<group>"; };
@@ -231,7 +231,7 @@
 		12D6308114CEA05E00E5898F /* platformdata.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = platformdata.c; sourceTree = "<group>"; };
 		12D6308214CEA05E00E5898F /* plist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = plist.c; sourceTree = "<group>"; };
 		12D6308314CEA05E00E5898F /* Settings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Settings.c; sourceTree = "<group>"; };
-		12D6308414CEA05E00E5898F /* smbios.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = smbios.c; sourceTree = "<group>"; };
+		12D6308414CEA05E00E5898F /* smbios.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = smbios.c; sourceTree = "<group>"; usesTabs = 1; };
 		12D6308514CEA05E00E5898F /* SmBios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmBios.h; sourceTree = "<group>"; };
 		12D6308614CEA05E00E5898F /* spd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = spd.c; sourceTree = "<group>"; };
 		12D6308714CEA05E00E5898F /* spd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spd.h; sourceTree = "<group>"; };

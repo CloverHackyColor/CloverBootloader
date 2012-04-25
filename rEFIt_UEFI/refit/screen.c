@@ -195,8 +195,10 @@ VOID FinishExternalScreen(VOID)
     GraphicsScreenDirty = TRUE;
     
     if (haveError) {
-        SwitchToText(FALSE);
+        // leave error messages on screen in case of error,
+        // wait for a key press, and then switch
         PauseForKey(L"");
+        SwitchToText(FALSE);
     }
     
     // reset error flag
