@@ -1269,6 +1269,8 @@ static VOID ReserveLowerMem(VOID)
     Status = gBS->GetMemoryMap(&MemoryMapSize, MemoryMap, &MapKey, &DescriptorSize, &DescriptorVersion);
     if (Status == EFI_BUFFER_TOO_SMALL) {
         FreePool(MemoryMap);
+        // MemMap can change after our AllocatePool - add more to size to cover that
+        MemoryMapSize += 256;
         MemoryMap = AllocatePool(MemoryMapSize);
         Status = gBS->GetMemoryMap(&MemoryMapSize, MemoryMap, &MapKey, &DescriptorSize, &DescriptorVersion);
     }
