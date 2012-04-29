@@ -126,7 +126,7 @@ GetSmbiosStructureSize (
   )
 {
   UINTN  FullSize;
-  UINT8  StrLen;
+  UINTN  StrLen;
   INT8*  CharInStr;
   
   if (Size == NULL || NumberOfStrings == NULL) {

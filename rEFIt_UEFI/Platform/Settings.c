@@ -3,6 +3,7 @@
 */
 
 #include "Platform.h"
+#include "ati.h"
 
 #define DEBUG_SET 1
 
@@ -16,13 +17,14 @@
 
 #define kXMLTagArray   		"array"
 
-EFI_GUID gRandomUUID = { 0x0A0B0C0D, 0x0000, 0x1010, {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 }};
+EFI_GUID gRandomUUID = {0x0A0B0C0D, 0x0000, 0x1010, {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07}};
 CHAR8                           gSelectedUUID[40];
 SETTINGS_DATA                   gSettings;
-GFX_PROPERTIES                  gGraphics;
+GFX_PROPERTIES                  gGraphics[4]; //no more then 4 graphics cards
 EFI_EDID_DISCOVERED_PROTOCOL    *EdidDiscovered;
 //EFI_GRAPHICS_OUTPUT_PROTOCOL    *GraphicsOutput;
 UINT16                          gCPUtype;
+UINTN                           NGFX = 0; // number of GFX
 
 // firmware
 BOOLEAN                         gFirmwareClover = FALSE;
@@ -668,6 +670,102 @@ EFI_STATUS GetEdid(VOID)
   return Status;
 }
 
+VOID GetDevices(VOID)
+{
+  EFI_STATUS			Status;
+	EFI_HANDLE			*HandleBuffer;
+	EFI_GUID        **ProtocolGuidArray;
+	EFI_PCI_IO_PROTOCOL *PciIo;
+	PCI_TYPE00          Pci;
+	UINTN         HandleCount;
+	UINTN         ArrayCount;
+	UINTN         HandleIndex;
+	UINTN         ProtocolIndex;
+	UINT16				did, vid;
+	UINTN         Segment;
+	UINTN         Bus;
+	UINTN         Device;
+	UINTN         Function;
+  UINTN         i;
+  radeon_card_info_t *info;
+  
+  
+  /* Scan PCI BUS */
+	Status = gBS->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
+	if (!EFI_ERROR(Status))
+	{	
+		for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++)
+		{
+			Status = gBS->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
+			if (!EFI_ERROR(Status))
+			{			
+				for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++)
+				{
+					if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex]))
+					{
+						Status = gBS->OpenProtocol(HandleBuffer[HandleIndex],&gEfiPciIoProtocolGuid,(VOID **)&PciIo,gImageHandle,NULL,EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+						if (!EFI_ERROR(Status))
+						{
+							/* Read PCI BUS */
+							Status = PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
+							Status = PciIo->Pci.Read (
+                                        PciIo,
+                                        EfiPciIoWidthUint32,
+                                        0,
+                                        sizeof (Pci) / sizeof (UINT32),
+                                        &Pci
+                                        );
+							vid = Pci.Hdr.VendorId & 0xFFFF;
+							did = (Pci.Hdr.VendorId >> 16) & 0xFF00;
+							//UINT32 class = Pci.Hdr.ClassCode[0];
+							DBG("PCI (%02x|%02x:%02x.%02x) : %04x %04x class=%02x%02x%02x\n",
+									Segment, Bus, Device, Function,
+									Pci.Hdr.VendorId, Pci.Hdr.DeviceId,
+									Pci.Hdr.ClassCode[2], Pci.Hdr.ClassCode[1], Pci.Hdr.ClassCode[0]);
+              // GFX
+              if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
+                  (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA) &&
+                  (NGFX < 4)) {
+                gGraphics[NGFX].DeviceID = Pci.Hdr.DeviceId;
+                switch (Pci.Hdr.VendorId) {
+                  case 0x1002:
+                    info = NULL;
+                    gGraphics[NGFX].Vendor = Ati;
+                    for (i = 0; radeon_cards[i].device_id ; i++)
+                    {
+                      if (radeon_cards[i].device_id == Pci.Hdr.DeviceId)
+                      {
+                        info = &radeon_cards[i];
+                        break;
+                      }
+                    }
+                    AsciiSPrint(gGraphics[NGFX].Model, 64, "%a", info->model_name);
+                    AsciiSPrint(gGraphics[NGFX].Config, 64, "%a", card_configs[info->cfg_name].name);
+                    gGraphics[NGFX].Ports = card_configs[info->cfg_name].ports;
+                    break;
+                  case 0x8086:
+                    gGraphics[NGFX].Vendor = Intel;
+                    AsciiSPrint(gGraphics[NGFX].Model, 64, "%a", get_gma_model(Pci.Hdr.DeviceId));
+                    gGraphics[NGFX].Ports = 1;
+                    break;
+                  case 0x10de:
+                    gGraphics[NGFX].Vendor = Nvidia;
+                    AsciiSPrint(gGraphics[NGFX].Model, 64, "%a", get_nvidia_model(Pci.Hdr.DeviceId));
+                    gGraphics[NGFX].Ports = 2;
+                    break;
+                  default:
+                    break;
+                }                
+                
+                NGFX++;
+              }   //if gfx             
+						}
+					}
+				}
+			}
+		}
+	}  
+}
 
 VOID SetDevices(VOID)
 {
@@ -691,8 +789,8 @@ VOID SetDevices(VOID)
   UINT16        PmCon;
   
   
-  gGraphics.Width  = UGAWidth;
-  gGraphics.Height = UGAHeight;
+//  gGraphics.Width  = UGAWidth;
+//  gGraphics.Height = UGAHeight;
   
   GetEdid();
   /* Read Pci Bus for GFX */
@@ -727,11 +825,11 @@ VOID SetDevices(VOID)
                 (Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
                 (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA)) {
 							
-              gGraphics.DeviceID = Pci.Hdr.DeviceId;
+    //          gGraphics.DeviceID = Pci.Hdr.DeviceId;
               
               switch (Pci.Hdr.VendorId) {
                 case 0x1002:
-                  gGraphics.Vendor = Ati;
+    //             gGraphics.Vendor = Ati;
     //              MsgLog("ATI GFX found\n");
                   //can't do in one step because of C-conventions
                   TmpDirty = setup_ati_devprop(&PCIdevice);
@@ -746,7 +844,7 @@ VOID SetDevices(VOID)
                   MsgLog("Intel GFX revision  =0x%x\n", PCIdevice.revision);
                   break;
                 case 0x10de:
-                  gGraphics.Vendor = Nvidia;
+    //              gGraphics.Vendor = Nvidia;
     //              MsgLog("nVidia GFX found\n");
                   TmpDirty = setup_nvidia_devprop(&PCIdevice);
                   StringDirty |=  TmpDirty;
@@ -861,7 +959,7 @@ VOID SetDevices(VOID)
     
 	}
   
-	MsgLog("CurrentMode: Width=%d Height=%d\n", gGraphics.Width, gGraphics.Height);  
+	MsgLog("CurrentMode: Width=%d Height=%d\n", UGAWidth, UGAHeight);  
 }
 
 
@@ -907,7 +1005,7 @@ EFI_STATUS SaveSettings()
       WaitForSts();
     }
     msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);
-    DBG("set turbo state msr=%x CPU=%dMHz\n", msr, DivU64x32(gCPUStructure.CPUFrequency, Mega));
+    DBG("set turbo state msr=%x CPU=%dMHz\n", msr, (INT32)DivU64x32(gCPUStructure.CPUFrequency, Mega));
   } 
   
   

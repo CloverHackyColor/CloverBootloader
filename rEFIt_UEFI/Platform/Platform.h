@@ -620,15 +620,19 @@ typedef enum {
 
 typedef struct {
   GFX_MANUFACTERER  Vendor;
+  UINT8             Ports;  
   UINT16            DeviceID;
   UINT16            Width;
   UINT16            Height;
+  CHAR8             Model[64];
+  CHAR8             Config[64];
 } GFX_PROPERTIES;
 #pragma pack(0)
 extern CHAR8                    *msgbuf;
 extern CHAR8                    *msgCursor;
 extern SMBIOS_STRUCTURE_POINTER	SmbiosTable;
-extern GFX_PROPERTIES           gGraphics;
+extern GFX_PROPERTIES           gGraphics[];
+extern UINTN                    NGFX;
 extern BOOLEAN                  gMobile;
 extern UINT32                   gCpuSpeed;  //kHz
 extern UINT16                   gCPUtype;
@@ -692,6 +696,7 @@ EFI_STATUS  InitializeConsoleSim (VOID);
 
 //Settings.c
 VOID            GetCPUProperties (VOID);
+VOID            GetDevices(VOID);
 MACHINE_TYPES   GetDefaultModel(VOID);
 UINT16          GetAdvancedCpuType(VOID);
 EFI_STATUS      GetOSVersion(IN REFIT_VOLUME *Volume);
@@ -714,7 +719,9 @@ VOID       SetDevices(VOID);
 VOID       ScanSPD();
 BOOLEAN setup_ati_devprop(pci_dt_t *ati_dev);
 BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev);
+CHAR8*  get_gma_model(IN UINT16 DeviceID);
 BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev);
+CHAR8*  get_nvidia_model(IN UINT16 DeviceID);
 
 
 EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha);

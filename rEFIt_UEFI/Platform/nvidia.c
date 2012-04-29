@@ -1284,14 +1284,14 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 }
 
 
-static CHAR8 *get_nvidia_model(UINT32 id)
+CHAR8 *get_nvidia_model(UINT16 id)
 {
-	DBG("get_nvidia_model\n");
+//	DBG("get_nvidia_model\n");
 	INT32 i;
 	CHAR8* name;
 	
 	for (i = 1; i < (sizeof(NVKnownChipsets) / sizeof(NVKnownChipsets[0])); i++) {
-		if (NVKnownChipsets[i].device == id)
+		if ((NVKnownChipsets[i].device & 0xFFFF) == id)
 		{
 			UINTN size = AsciiStrLen(NVKnownChipsets[i].name);
 			name = AllocateZeroPool(size+1);
@@ -1392,7 +1392,7 @@ BOOLEAN hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, INT32 len)
 
 UINT32 mem_detect(UINT8 nvCardType, pci_dt_t *nvda_dev)
 {
-	DBG("mem_detect\n");
+	
 	UINT64 vram_size = 0;
 	
 	if (nvCardType < NV_ARCH_50)
@@ -1420,7 +1420,7 @@ UINT32 mem_detect(UINT8 nvCardType, pci_dt_t *nvda_dev)
 		case 0x0649: vram_size = 512*1024*1024; break;	// 9600M GT
 		default: break;
 	}
-	
+	DBG("mem_detected %ld\n", vram_size);
 	return vram_size;
 }
 
@@ -1441,6 +1441,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	CHAR16        FileName[24];
   UINT8         *buffer;
   UINTN         bufferLen;
+  UINTN         j, n_ports = 0;
   option_rom_pci_header_t *rom_pci_header;
   
 		
@@ -1461,8 +1462,18 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   } else {
     videoRam = mem_detect(nvCardType, nvda_dev);
   }
- 
-	model = get_nvidia_model((nvda_dev->vendor_id << 16) | nvda_dev->device_id);
+  
+	model = get_nvidia_model(nvda_dev->device_id);
+  
+  for (j = 0; j < NGFX; j++) {    
+    if ((gGraphics[j].Vendor == Nvidia) &&
+        (gGraphics[j].DeviceID == nvda_dev->device_id)) {
+      model = gGraphics[j].Model; 
+      n_ports = gGraphics[j].Ports;
+      break;
+    }
+  }  
+  
 	
 	DBG("nVidia %a ", model);
 	DBG(" %dMB NV%02x [%04x:%04x] :: ", (UINT32)(videoRam >> 20),
@@ -1515,8 +1526,8 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 		if (rom_pci_header->signature == 0x52494350/*50434952*/) { //for some reason, the reverse byte order
 			if (rom_pci_header->device_id != nvda_dev->device_id) {
 			// Get Model from the OpROM
-			model = get_nvidia_model((rom_pci_header->vendor_id << 16) | rom_pci_header->device_id);
-				DBG(model);
+			model = get_nvidia_model(rom_pci_header->device_id);
+//				DBG(model);
 			}
 		}
 		else

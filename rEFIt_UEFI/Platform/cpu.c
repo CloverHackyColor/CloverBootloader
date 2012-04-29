@@ -495,48 +495,10 @@ VOID GetCPUProperties (VOID)
 	DBG("CPU: %d MHz\n", DivU64x32(gCPUStructure.CPUFrequency, Mega));
 	DBG("TSC: %d MHz\n",gCPUStructure.CurrentSpeed);
 	DBG("PIS: %d MHz\n",gCPUStructure.ProcessorInterconnectSpeed);
-#if DEBUG_PCI
+//#if DEBUG_PCI
 	
-	/* Scan PCI BUS */
-	Status = gBS->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
-	if (!EFI_ERROR(Status))
-	{	
-		for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++)
-		{
-			Status = gBS->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
-			if (!EFI_ERROR(Status))
-			{			
-				for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++)
-				{
-					if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex]))
-					{
-						Status = gBS->OpenProtocol(HandleBuffer[HandleIndex],&gEfiPciIoProtocolGuid,(VOID **)&PciIo,gImageHandle,NULL,EFI_OPEN_PROTOCOL_GET_PROTOCOL);
-						if (!EFI_ERROR(Status))
-						{
-							/* Read PCI BUS */
-							Status = PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
-							Status = PciIo->Pci.Read (
-													  PciIo,
-													  EfiPciIoWidthUint32,
-													  0,
-													  sizeof (Pci) / sizeof (UINT32),
-													  &Pci
-													  );
-							vid = Pci.Hdr.VendorId & 0xFFFF;
-							did = (Pci.Hdr.VendorId >> 16) & 0xFF00;
-							//UINT32 class = Pci.Hdr.ClassCode[0];
-							DBG("PCI (%02x|%02x:%02x.%02x) : %04x %04x class=%02x%02x%02x\n",
-									Segment, Bus, Device, Function,
-									Pci.Hdr.VendorId, Pci.Hdr.DeviceId,
-									Pci.Hdr.ClassCode[2], Pci.Hdr.ClassCode[1], Pci.Hdr.ClassCode[0]);
-						}
-					}
-				}
-			}
-		}
-	}
 //	WaitForKeyPress("waiting for key press...\n");
-#endif	
+//#endif	
 
 	return;
 }
@@ -749,7 +711,8 @@ MACHINE_TYPES GetDefaultModel()
 				DefaultType = MacBook21;
 				break;
 			case CPU_MODEL_PENRYN:
-				if (gGraphics.Vendor == Nvidia)
+				if ((gGraphics[0].Vendor == Nvidia) ||
+            (gGraphics[1].Vendor == Nvidia))
 				{
 					DefaultType = MacBookPro51;
 				} else
@@ -766,7 +729,8 @@ MACHINE_TYPES GetDefaultModel()
         DefaultType = MacBookPro83;
 				break;
 			default:
-				if (gGraphics.Vendor == Nvidia)
+				if ((gGraphics[0].Vendor == Nvidia) ||
+            (gGraphics[1].Vendor == Nvidia))
 				{
 					DefaultType = MacBookPro51;
 				} else

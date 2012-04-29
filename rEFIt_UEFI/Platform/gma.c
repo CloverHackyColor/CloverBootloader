@@ -51,33 +51,33 @@ UINT8 reg_TRUE[]	= { 0x01, 0x00, 0x00, 0x00 };
 UINT8 reg_FALSE[] = { 0x00, 0x00, 0x00, 0x00 };
 
 static struct gma_gpu_t KnownGPUS[] = {
-	{ 0x00000000, "Unknown"			},
-	{ 0x80862582, "GMA 915"	},
-	{ 0x80862592, "GMA 915"	},
-	{ 0x808627A2, "GMA 950"	},
-	{ 0x808627AE, "GMA 950"	},
-//	{ 0x808627A6, "Mobile GMA950"	}, //not a GPU
-	{ 0x8086A011, "Mobile GMA3150"	},
-	{ 0x8086A012, "Mobile GMA3150"	},
-	{ 0x80862772, "Desktop GMA950"	},
-//	{ 0x80862776, "Desktop GMA950"	}, //not a GPU
-//	{ 0x8086A001, "Desktop GMA3150" },
-	{ 0x8086A001, "Mobile GMA3150"	},
-	{ 0x8086A002, "Desktop GMA3150" },
-	{ 0x80862A02, "GMAX3100"		},
-//	{ 0x80862A03, "GMAX3100"		},//not a GPU
-	{ 0x80862A12, "GMAX3100"		},
-//	{ 0x80862A13, "GMAX3100"		},
-	{ 0x80862A42, "GMAX3100"		},
-//	{ 0x80862A43, "GMAX3100"		},
-//  { 0x80860044, "HD2000"  }, //host bridge
-  { 0x80860046, "HD2000"  },
-  { 0x80860112, "HD3000"  },
-  { 0x80860116, "HD3000"  },
-  { 0x80860126, "HD3000"  },
+	{ 0x0000, "Unknown"			},
+	{ 0x2582, "GMA 915"	},
+	{ 0x2592, "GMA 915"	},
+	{ 0x27A2, "GMA 950"	},
+	{ 0x27AE, "GMA 950"	},
+//	{ 0x27A6, "Mobile GMA950"	}, //not a GPU
+	{ 0xA011, "Mobile GMA3150"	},
+	{ 0xA012, "Mobile GMA3150"	},
+	{ 0x2772, "Desktop GMA950"	},
+//	{ 0x2776, "Desktop GMA950"	}, //not a GPU
+//	{ 0xA001, "Desktop GMA3150" },
+	{ 0xA001, "Mobile GMA3150"	},
+	{ 0xA002, "Desktop GMA3150" },
+	{ 0x2A02, "GMAX3100"		},
+//	{ 0x2A03, "GMAX3100"		},//not a GPU
+	{ 0x2A12, "GMAX3100"		},
+//	{ 0x2A13, "GMAX3100"		},
+	{ 0x2A42, "GMAX3100"		},
+//	{ 0x2A43, "GMAX3100"		},
+//  { 0x0044, "HD2000"  }, //host bridge
+  { 0x0046, "HD2000"  },
+  { 0x0112, "HD3000"  },
+  { 0x0116, "HD3000"  },
+  { 0x0126, "HD3000"  },
 };
 
-CHAR8 *get_gma_model(UINT32 id) {
+CHAR8 *get_gma_model(UINT16 id) {
 	INT32 i = 0;
 	
 	for (i = 0; i < (sizeof(KnownGPUS) / sizeof(KnownGPUS[0])); i++)
@@ -97,6 +97,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 //	UINT32				bar[7];
 	CHAR8					*model;
 	UINT8 BuiltIn =		0x00;
+  UINTN j;
 //	UINT8 ClassFix[4] =	{ 0x00, 0x00, 0x03, 0x00 };
 	
 	devicepath = get_pci_dev_path(gma_dev);
@@ -104,8 +105,15 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 //	bar[0] = pci_config_read32(gma_dev, PCI_BASE_ADDRESS_0);
 //	gma_dev->regs = (UINT8 *) (UINTN)(bar[0] & ~0x0f);
 	
-	model = get_gma_model((gma_dev->vendor_id << 16) | gma_dev->device_id);
-//	DBG(model);
+	model = get_gma_model(gma_dev->device_id);
+  for (j = 0; j < NGFX; j++) {    
+    if ((gGraphics[j].Vendor == Intel) &&
+        (gGraphics[j].DeviceID == gma_dev->device_id)) {
+      model = gGraphics[j].Model; 
+      break;
+    }
+  }
+//	DBG("Finally model=%a\n", model);
 	
 	DBG("Intel %a [%04x:%04x] :: %a\n",
 			model, gma_dev->vendor_id, gma_dev->device_id, devicepath);
@@ -122,7 +130,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 		return FALSE;
 	}
 
-  DualLink = ((gGraphics.Width * gGraphics.Height) > (1<<20))?1:0;
+  DualLink = ((UGAWidth * UGAHeight) > (1<<20))?1:0;
 	
   devprop_add_value(device, "model", (UINT8*)model, AsciiStrLen(model));
 	devprop_add_value(device, "device_type", (UINT8*)"display", 7);	

@@ -257,8 +257,8 @@
   #MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
   MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
   #MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
-  Clover/OsxSmbiosDxe/SmbiosDxe.inf
-  Clover/OsxSmbiosGenDxe/SmbiosGen.inf
+  #Clover/OsxSmbiosDxe/SmbiosDxe.inf
+  #Clover/OsxSmbiosGenDxe/SmbiosGen.inf
 
   #DuetPkg/FvbRuntimeService/DUETFwh.inf
   #DuetPkg/EfiLdr/EfiLdr.inf {
@@ -277,7 +277,7 @@
   Clover/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
   Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
   #UefiCpuPkg/CpuDxe/CpuDxe.inf
-  Clover/CpuDxe/Cpu.inf
+  #Clover/CpuDxe/Cpu.inf
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
   #DuetPkg/AcpiResetDxe/Reset.inf
   Clover/AcpiReset/Reset.inf
@@ -385,6 +385,16 @@
   Clover/FSInject/FSInject.inf
 
   Clover/MsgLog/MsgLog.inf
+  
+  # Drivers for Aptio loading - should go to Clover's /EFI/drivers64 dir
+  Clover/OsxSmbiosDrv/SmbiosDxe.inf {
+	<PcdsFixedAtBuild>
+	  # SMBIOS ver 2.6
+      gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0206
+  }
+  Clover/OsxFatBinaryDrv/OsxFatBinaryDrv.inf
+
+
   #
   # Sample Application
   #
