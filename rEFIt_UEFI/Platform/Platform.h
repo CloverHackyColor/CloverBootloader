@@ -51,7 +51,7 @@ Headers collection for procedures
 #include "Bmp.h"
 #include "efiConsoleControl.h"
 #include "SmBios.h"
-//#include "GenericBdsLib.h"
+#include "EfiLib/GenericBdsLib.h"
 #include "device_inject.h"
 #include "UsbMass.h"
 
@@ -317,12 +317,24 @@ Headers collection for procedures
 
 #define GEN_PMCON_1                 0xA0
 
-
 #define PCIADDR(bus, dev, func) ((1 << 31) | (bus << 16) | (dev << 11) | (func << 8))
 #define REG8(base, reg)  ((volatile UINT8 *)(UINTN)base)[(reg)]
 #define REG16(base, reg)  ((volatile UINT16 *)(UINTN)base)[(reg) >> 1]
 #define REG32(base, reg)  ((volatile UINT32 *)(UINTN)base)[(reg) >> 2]
 #define WRITEREG32(base, reg, value) REG32(base, reg) = value
+
+#define EFI_HANDLE_TYPE_UNKNOWN                     0x000
+#define EFI_HANDLE_TYPE_IMAGE_HANDLE                0x001
+#define EFI_HANDLE_TYPE_DRIVER_BINDING_HANDLE       0x002
+#define EFI_HANDLE_TYPE_DEVICE_DRIVER               0x004
+#define EFI_HANDLE_TYPE_BUS_DRIVER                  0x008
+#define EFI_HANDLE_TYPE_DRIVER_CONFIGURATION_HANDLE 0x010
+#define EFI_HANDLE_TYPE_DRIVER_DIAGNOSTICS_HANDLE   0x020
+#define EFI_HANDLE_TYPE_COMPONENT_NAME_HANDLE       0x040
+#define EFI_HANDLE_TYPE_DEVICE_HANDLE               0x080
+#define EFI_HANDLE_TYPE_PARENT_HANDLE               0x100
+#define EFI_HANDLE_TYPE_CONTROLLER_HANDLE           0x200
+#define EFI_HANDLE_TYPE_CHILD_HANDLE                0x400
 
 #define	AML_CHUNK_NONE		0xff
 #define	AML_CHUNK_ZERO		0x00

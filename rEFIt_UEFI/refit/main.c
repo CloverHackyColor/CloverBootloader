@@ -1221,6 +1221,11 @@ static VOID ScanDriverDir(IN CHAR16 *Path) //path to folder
         UnicodeSPrint(FileName, 255, L"%s\\%s", Path, DirEntry->FileName);
         Status = StartEFIImage(FileDevicePath(SelfLoadedImage->DeviceHandle, FileName),
                                L"", DirEntry->FileName, DirEntry->FileName, NULL);
+        if(!EFI_ERROR(Status))
+        {
+            BdsLibConnectAllDriversToAllControllers();
+            gBS->SetWatchdogTimer (0x0000, 0x0000, 0x0000, NULL);
+        }
     }
     Status = DirIterClose(&DirIter);
     if (Status != EFI_NOT_FOUND) {
@@ -1310,10 +1315,57 @@ static VOID ReserveLowerMem(VOID)
     FreePool(MemoryMap);
 }
 
-//Slice - I am proposed to use UEFI2.3.1 BdsLib
+/**
+ This function will connect all current system handles recursively. 
+ 
+ gBS->ConnectController() service is invoked for each handle exist in system handler buffer.
+ If the handle is bus type handler, all childrens also will be connected recursively
+ by gBS->ConnectController().
+ 
+ @retval EFI_SUCCESS           All handles and it's child handle have been connected
+ @retval EFI_STATUS            Error status returned by of gBS->LocateHandleBuffer().
+ 
+ **/
+//Slice - move back to BdsConnect.c but with more changes
+/* EFI_STATUS
+EFIAPI
+BdsLibConnectAllEfi (
+                     VOID
+                     )
+{
+    EFI_STATUS  Status;
+    UINTN       HandleCount;
+    EFI_HANDLE  *HandleBuffer;
+    UINTN       Index;
+    //BOOLEAN					IsDevice;
+    //BOOLEAN					IsParent;
+    
+    Status = gBS->LocateHandleBuffer (
+                                      AllHandles,
+                                      NULL,
+                                      NULL,
+                                      &HandleCount,
+                                      &HandleBuffer
+                                      );
+    if (EFI_ERROR (Status)) {
+        return Status;
+    }
+    
+    for (Index = 0; Index < HandleCount; Index++) {
+        Status = gBS->ConnectController (HandleBuffer[Index], NULL, NULL, TRUE);
+    }
+    
+    if (HandleBuffer != NULL) {
+        FreePool (HandleBuffer);
+    }
+    
+    return EFI_SUCCESS;
+}
+*/
+
 static VOID LoadDrivers(VOID)
 {
-  BOOLEAN ReconnectAll = FALSE;
+  //BOOLEAN ReconnectAll = FALSE;
   
   // we need to reserve lower mem on Aptio to make
   // loading of driver above future kernel image
@@ -1330,14 +1382,14 @@ static VOID LoadDrivers(VOID)
 
   // connect all devices
     //
-  if (ReconnectAll) {
-    BdsLibDisconnectAllEfi ();
-    BdsLibConnectAll ();
-  } else {
+  //if (ReconnectAll) {
+    //BdsLibDisconnectAllEfi ();
+    //BdsLibConnectAll ();
+  //} else {
     // connect loaded drivers
-    BdsLibConnectAllEfi();
-  }
-  
+ //   BdsLibConnectAllEfi();
+  //}
+//    BdsLibConnectAllDriversToAllControllers();
 	DBG("Drivers connected\n");
 }
 
@@ -1515,20 +1567,20 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         PauseForKey(L"Error reinit refit\n");
         return Status;
     }
-    //  DBG("reinit OK\n");
+//      DBG("reinit OK\n");
     ZeroMem((VOID*)&gSettings, sizeof(SETTINGS_DATA));
     ZeroMem((VOID*)&gGraphics[0], sizeof(GFX_PROPERTIES) * 4);
     ScanVolumes();
-    //  DBG("ScanVolumes OK\n");
+//      DBG("ScanVolumes OK\n");
     GetCPUProperties();
     GetDevices();
-    //  DBG("GetCPUProperties OK\n");
+//      DBG("GetCPUProperties OK\n");
     ScanSPD();
-    //  DBG("ScanSPD OK\n");
+//      DBG("ScanSPD OK\n");
     SetPrivateVarProto();
-    //  DBG("SetPrivateVarProto OK\n");
+//      DBG("SetPrivateVarProto OK\n");
     GetDefaultSettings();
-    //  DBG("GetDefaultSettings OK\n");
+//      DBG("GetDefaultSettings OK\n");
     Size = 0;
     Status = gRS->GetVariable(L"boot-args",
                               &gEfiAppleBootGuid,  NULL,
@@ -1556,20 +1608,20 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     
     //Second step. Load config.plist into gSettings	
 	Status = GetUserSettings(SelfRootDir);  
-    //  DBG("GetUserSettings OK\n");
+//      DBG("GetUserSettings OK\n");
     //setup properties
     //  SetDevices();
     
     PrepareFont();
     //test font
-    //  DBG("PrepareFont OK\n");
+//      DBG("PrepareFont OK\n");
     // scan for loaders and tools, add then to the menu
     if (!GlobalConfig.NoLegacy && GlobalConfig.LegacyFirst){
         //    DBG("scan legacy first\n");
         ScanLegacy();
     }
     ScanLoader();
-    //  DBG("ScanLoader OK\n");
+//      DBG("ScanLoader OK\n");
     if (!GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst){
         //    DBG("scan legacy second\n");
         ScanLegacy();

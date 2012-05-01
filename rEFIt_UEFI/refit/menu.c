@@ -1394,7 +1394,7 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
   AddMenuInfoLine(SubScreen, PoolPrint(L"Model: %2x/%2x/%2x",
       gCPUStructure.Family, gCPUStructure.Model, gCPUStructure.Stepping));
   AddMenuInfoLine(SubScreen, PoolPrint(L"Cores: %d Threads: %d",
-                  gCPUStructure.CoresPerPackage, gCPUStructure.LogicalPerPackage));
+                  gCPUStructure.Cores, gCPUStructure.Threads));
   AddMenuInfoLine(SubScreen, PoolPrint(L"FSB speed MHz: %d",
                   DivU64x32(gCPUStructure.FSBFrequency, Mega)));
   AddMenuInfoLine(SubScreen, PoolPrint(L"CPU speed MHz: %d",

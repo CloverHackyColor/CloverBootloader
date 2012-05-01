@@ -58,7 +58,7 @@
 
 // global configuration with default values
 
-REFIT_CONFIG        GlobalConfig = { FALSE, 20, 0, 0, 0, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF00, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+REFIT_CONFIG        GlobalConfig = { FALSE, 20, 0, 0, 0, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF00, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 
 //
 // read a file into a buffer
@@ -455,6 +455,9 @@ VOID ReadConfig(VOID)
         } else if (StriCmp(TokenList[0], L"legacyfirst") == 0) {
             GlobalConfig.LegacyFirst = TRUE;
             
+        } else if (StriCmp(TokenList[0], L"quiet") == 0) {
+          GlobalConfig.Quiet = TRUE;
+          
         } else if (StriCmp(TokenList[0], L"nolegacy") == 0) {
           GlobalConfig.NoLegacy = TRUE;
           

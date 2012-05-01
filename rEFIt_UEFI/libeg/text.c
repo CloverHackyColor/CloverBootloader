@@ -40,7 +40,7 @@
 //#define FONT_CELL_WIDTH (7)
 //#define FONT_CELL_HEIGHT (12)
 
-#define DEBUG_TEXT 1
+#define DEBUG_TEXT 0
 
 #if DEBUG_TEXT == 2
 #define DBG(x...) AsciiPrint(x)
@@ -80,14 +80,17 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN WantAlpha)
   EG_PIXEL    FirstPixel;
     
   NewImage = egLoadImage(SelfDir, PoolPrint(L"font\\%s", GlobalConfig.FontFileName), WantAlpha);
+  DBG("font loaded\n");
   if (!NewImage) {
     DBG("Font %s is not loaded, using default \n", PoolPrint(L"font\\%s", GlobalConfig.FontFileName));
     return NULL;
   }
   ImageWidth = NewImage->Width;
+  DBG("ImageWidth=%d\n", ImageWidth);
   ImageHeight = NewImage->Height;
+  DBG("ImageHeight=%d\n", ImageHeight);
   PixelPtr = NewImage->PixelData;
-  DBG("Font loaded: ImageWidth=%d ImageHeight=%d\n", ImageWidth, ImageHeight);
+  DBG("Font loaded: ImageWidth=%d ImageHeight=%d Ptr=%x\n", ImageWidth, ImageHeight, PixelPtr);
   NewFontImage = egCreateImage(ImageWidth << 4, ImageHeight >> 4, WantAlpha);
   if (NewFontImage == NULL)
     return NULL;
@@ -128,6 +131,7 @@ VOID PrepareFont(VOID)
         FontImage = egPrepareEmbeddedImage(&egemb_font_gray, TRUE);
         break;
       case FONT_LOAD:
+        DBG("load font image\n");
         FontImage = egLoadFontImage(TRUE);
         if (!FontImage) {
           ChangeFont = TRUE;

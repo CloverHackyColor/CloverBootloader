@@ -45,7 +45,8 @@
 //#include <Library/EfiShellLib.h>
 //#include "IO.h"
 #define REFIT_DEBUG (2)
-#include "GenericBdsLib.h"
+#define Print if ((!GlobalConfig.Quiet) || (GlobalConfig.TextOnly)) Print
+//#include "GenericBdsLib.h"
 
 extern EFI_HANDLE             gImageHandle;
 extern EFI_SYSTEM_TABLE*			gST;
@@ -218,6 +219,7 @@ typedef struct {
   UINTN       DisableFlags;
   UINTN       HideBadges;
   UINTN       HideUIFlags;
+  BOOLEAN     Quiet;
   BOOLEAN     LegacyFirst;
   BOOLEAN     NoLegacy;
 //  BOOLEAN     DriveImage;
