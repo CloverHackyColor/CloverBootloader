@@ -255,7 +255,8 @@
   #MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
   MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
   #MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
-  #Clover/OsxSmbiosDxe/SmbiosDxe.inf
+  Clover/OsxSmbiosDxe/SmbiosDxe.inf
+  Clover/OemSmbiosGenDxe/SmbiosGen.inf
   #Clover/OsxSmbiosGenDxe/SmbiosGen.inf
 
   #DuetPkg/FvbRuntimeService/DUETFwh.inf

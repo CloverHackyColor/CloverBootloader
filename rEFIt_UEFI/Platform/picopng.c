@@ -52,19 +52,23 @@ typedef struct png_alloc_node
 png_alloc_node_t *png_alloc_head = NULL;
 png_alloc_node_t *png_alloc_tail = NULL;
 
-png_alloc_node_t *png_alloc_find_node(void *addr)
+png_alloc_node_t *png_alloc_find_node(void *addr, UINT32 size)
 {
 	png_alloc_node_t *node;
 	for (node = png_alloc_head; node; node = node->next)
-		if (node->addr == addr)
+		if (node->addr == addr){
+      if (size && (node->size != size)) {
+        Print(L"Error: Same address %p, size: %x, requested size: %x\n", node->addr, node->size, size);
+      }
 			break;
+    }
 	return node;
 }
 
 void png_alloc_add_node(void *addr, UINT32 size)
 {
 	png_alloc_node_t *node;
-	if (png_alloc_find_node(addr))
+	if (png_alloc_find_node(addr, size))
 		return;
 	node = AllocateZeroPool(sizeof (png_alloc_node_t));
 	node->addr = addr;
@@ -108,8 +112,16 @@ void *png_alloc_realloc(void *addr, UINT32 size)
 	if (new_addr != addr) 
 	{
 		png_alloc_node_t *old_node;
-		old_node = png_alloc_find_node(addr);
-		png_alloc_remove_node(old_node);
+		old_node = png_alloc_find_node(addr, size);
+    if (old_node) {
+      png_alloc_remove_node(old_node);
+      FreePool(addr);
+    }
+    // and just for test:
+    else {
+      MsgLog("png_alloc not find node\n");
+    }
+//		png_alloc_remove_node(old_node);
 		png_alloc_add_node(new_addr, size);
 	}
 	return new_addr;
@@ -117,7 +129,7 @@ void *png_alloc_realloc(void *addr, UINT32 size)
 
 void png_alloc_free(void *addr)
 {
-	png_alloc_node_t *node = png_alloc_find_node(addr);
+	png_alloc_node_t *node = png_alloc_find_node(addr, 0);
 	if (!node)
 		return;
 	png_alloc_remove_node(node);
@@ -656,7 +668,7 @@ void Inflator_inflate(VECTOR_8 *out, const VECTOR_8 *in, UINT32 inpos)
 
 /*************************************************************************************************/
 
-int Zlib_decompress(VECTOR_8 *out, const VECTOR_8 *in) // returns error value
+INT32 Zlib_decompress(VECTOR_8 *out, const VECTOR_8 *in) // returns error value
 {
 	UINT32 CM,CINFO,FDICT;
 	if (in->size < 2)
@@ -691,7 +703,7 @@ int Zlib_decompress(VECTOR_8 *out, const VECTOR_8 *in) // returns error value
 #define CHUNK_PLTE		0x45544c50
 #define CHUNK_tRNS		0x534e5274
 
-int PNG_error;
+INT32 PNG_error;
 
 UINT32 PNG_readBitFromReversedStream(UINT32 *bitp, const UINT8 *bits)
 {
@@ -717,6 +729,11 @@ void PNG_setBitOfReversedStream(UINT32 *bitp, UINT8 *bits, UINT32 bit)
 UINT32 PNG_read32bitInt(const UINT8 *buffer)
 {
 	return (buffer[0] << 24) | (buffer[1] << 16) | (buffer[2] << 8) | buffer[3];
+}
+
+UINT32 PNG_read32bitLE(const UINT8 *buffer)
+{
+	return (buffer[3] << 24) | (buffer[2] << 16) | (buffer[1] << 8) | buffer[0];
 }
 
 int PNG_checkColorValidity(UINT32 colorType, UINT32 bd) // return type is a LodePNG error code
@@ -789,9 +806,9 @@ void PNG_readPngHeader(PNG_INFO *info, const UINT8 *in, UINT32 inlength)
 	PNG_error = PNG_checkColorValidity(info->colorType, info->bitDepth);
 }
 
-INTN PNG_paethPredictor(INTN a, INTN b, INTN c) // Paeth predicter, used by PNG filter type 4
+INT32 PNG_paethPredictor(INT32 a, INT32 b, INT32 c) // Paeth predicter, used by PNG filter type 4
 {
-	int p, pa, pb, pc;
+	INT32 p, pa, pb, pc;
 	p = a + b - c;
 	pa = p > a ? (p - a) : (a - p);
 	pb = p > b ? (p - b) : (b - p);
@@ -896,7 +913,7 @@ void PNG_adam7Pass(UINT8 *out, UINT8 *linen, UINT8 *lineo, const UINT8 *in, UINT
 	}
 }
 
-int PNG_convert(const PNG_INFO *info, VECTOR_8 *out, const UINT8 *in)
+INT32 PNG_convert(const PNG_INFO *info, VECTOR_8 *out, const UINT8 *in)
 {	// converts from any color type to 32-bit. return value = LodePNG error code
 	UINT32 i, c, numpixels,bp;
 	UINT32 bitDepth, colorType;
@@ -1027,12 +1044,13 @@ PNG_INFO *PNG_decode(/* const*/ UINT8 *in, UINT32 size)
 		UINT32 i, j;
 		UINT32 chunkLength ;
 		UINT32 chunkType;
+    UINT32 offset = 0;
 		if (pos + 8 >= size) 
 		{
 			PNG_error = 30; // error: size of the in buffer too small to contain next chunk
 			return NULL;
 		}
-		chunkLength = PNG_read32bitInt(&in[pos]);
+		chunkLength = PNG_read32bitInt(&in[pos]); //big endian? Yes!
 		pos += 4;
 		if (chunkLength > 0x7fffffff) 
 		{
@@ -1043,86 +1061,92 @@ PNG_INFO *PNG_decode(/* const*/ UINT8 *in, UINT32 size)
 			PNG_error = 35; // error: size of the in buffer too small to contain next chunk
 			return NULL;
 		}
-		chunkType = *(UINT32 *) &in[pos];
-		if (chunkType == CHUNK_IDAT) 
-		{ // IDAT: compressed image data chunk
-			UINT32 offset = 0;
-			if (idat)
-			{
-				offset = idat->size;
-				vector8_resize(idat, offset + chunkLength);
-			}
-			else
-				idat = vector8_new(chunkLength, 0);
-			for (i = 0; i < chunkLength; i++)
-				idat->data[offset + i] = in[pos + 4 + i];
-			pos += (4 + chunkLength);
-		} else if (chunkType == CHUNK_IEND) 
-		{ // IEND
-			pos += 4;
-			IEND = TRUE;
-		} else if (chunkType == CHUNK_PLTE) 
-		{ // PLTE: palette chunk
-			pos += 4; // go after the 4 letters
-			vector8_resize(info->palette, 4 * (chunkLength / 3));
-			if (info->palette->size > (4 * 256)) 
-			{
-				PNG_error = 38; // error: palette too big
-				return NULL;
-			}
-			for (i = 0; i < info->palette->size; i += 4) {
-				for (j = 0; j < 3; j++)
-					info->palette->data[i + j] = in[pos++]; // RGB
-				info->palette->data[i + 3] = 255; // alpha
-			}
-		} else if (chunkType == CHUNK_tRNS) { // tRNS: palette transparency chunk
-			pos += 4; // go after the 4 letters
-			if (info->colorType == 3) 
-			{
-				if (4 * chunkLength > info->palette->size) {
-					PNG_error = 39; // error: more alpha values given than there are palette entries
-					return NULL;
-				}
-				for (i = 0; i < chunkLength; i++)
-					info->palette->data[4 * i + 3] = in[pos++];
-			} else if (info->colorType == 0) 
-			{
-				if (chunkLength != 2) {
-					PNG_error = 40; // error: this chunk must be 2 bytes for greyscale image
-					return NULL;
-				}
-				info->key_defined = TRUE;
-				info->key_r = info->key_g = info->key_b = 256 * in[pos] + in[pos + 1];
-				pos += 2;
-			} else if (info->colorType == 2) 
-			{
-				if (chunkLength != 6) {
-					PNG_error = 41; // error: this chunk must be 6 bytes for RGB image
-					return NULL;
-				}
-				info->key_defined = TRUE;
-				info->key_r = 256 * in[pos] + in[pos + 1];
-				pos += 2;
-				info->key_g = 256 * in[pos] + in[pos + 1];
-				pos += 2;
-				info->key_b = 256 * in[pos] + in[pos + 1];
-				pos += 2;
-			} 
-			else 
-			{
-				PNG_error = 42; // error: tRNS chunk not allowed for other color models
-				return NULL;
-			}
-		} else { // it's not an implemented chunk type, so ignore it: skip over the data
-			if (!(in[pos + 0] & 32)) 
-			{
-				// error: unknown critical chunk (5th bit of first byte of chunk type is 0)
-				PNG_error = 69;
-				return NULL;
-			}
-			pos += (chunkLength + 4); // skip 4 letters and uninterpreted data of unimplemented chunk
-			known_type = FALSE;
-		}
+//		chunkType = *(UINT32 *) &in[pos];
+    chunkType = PNG_read32bitLE(&in[pos]); //read as LE to compare with our constants
+    switch (chunkType) {
+      case CHUNK_IDAT:
+        if (idat)
+        {
+          offset = idat->size;
+          vector8_resize(idat, offset + chunkLength);
+        }
+        else
+          idat = vector8_new(chunkLength, 0);
+        for (i = 0; i < chunkLength; i++)
+          idat->data[offset + i] = in[pos + 4 + i];
+        pos += (4 + chunkLength);        
+        break;
+      case CHUNK_IEND:
+        pos += 4;
+        IEND = TRUE;
+        break;
+      case CHUNK_PLTE:
+        // PLTE: palette chunk
+        pos += 4; // go after the 4 letters
+        vector8_resize(info->palette, 4 * (chunkLength / 3));
+        if (info->palette->size > (4 * 256)) 
+        {
+          PNG_error = 38; // error: palette too big
+          return NULL;
+        }
+        for (i = 0; i < info->palette->size; i += 4) {
+          for (j = 0; j < 3; j++)
+            info->palette->data[i + j] = in[pos++]; // RGB
+          info->palette->data[i + 3] = 255; // alpha
+        }
+        break;
+      case CHUNK_tRNS:
+        // tRNS: palette transparency chunk
+        pos += 4; // go after the 4 letters
+        switch (info->colorType) {
+          case 0:
+            if (chunkLength != 2) {
+              PNG_error = 40; // error: this chunk must be 2 bytes for greyscale image
+              return NULL;
+            }
+            info->key_defined = TRUE;
+            info->key_r = info->key_g = info->key_b = 256 * in[pos] + in[pos + 1];
+            pos += 2;            
+            break;
+          case 2:
+            if (chunkLength != 6) {
+              PNG_error = 41; // error: this chunk must be 6 bytes for RGB image
+              return NULL;
+            }
+            info->key_defined = TRUE;
+            info->key_r = 256 * in[pos] + in[pos + 1];
+            pos += 2;
+            info->key_g = 256 * in[pos] + in[pos + 1];
+            pos += 2;
+            info->key_b = 256 * in[pos] + in[pos + 1];
+            pos += 2;
+            break;
+          case 3:
+            if (4 * chunkLength > info->palette->size) {
+              PNG_error = 39; // error: more alpha values given than there are palette entries
+              return NULL;
+            }
+            for (i = 0; i < chunkLength; i++)
+              info->palette->data[4 * i + 3] = in[pos++];
+            break;
+          default:
+            PNG_error = 42; // error: tRNS chunk not allowed for other color models
+            return NULL;
+            break;
+        }
+        break;
+      default:
+        // it's not an implemented chunk type, so ignore it: skip over the data
+        if (!(in[pos + 0] & 0x20)) 
+        {
+          // error: unknown critical chunk (5th bit of first byte of chunk type is 0)
+          PNG_error = 69;
+          return NULL;
+        }
+        pos += (chunkLength + 4); // skip 4 letters and uninterpreted data of unimplemented chunk
+        known_type = FALSE;
+        break;
+    }
 		pos += 4; // step over CRC (which is ignored)
 	}
 	bpp = PNG_getBpp(info);
@@ -1174,7 +1198,7 @@ PNG_INFO *PNG_decode(/* const*/ UINT8 *in, UINT32 size)
 		}
 	} else 
 	{ // interlaceMethod is 1 (Adam7)
-		int i;
+		INT32 i;
 		VECTOR_8 *scanlineo, *scanlinen; // "old" and "new" scanline
 #ifndef __GNUC__
 	#pragma warning(disable: 4204)

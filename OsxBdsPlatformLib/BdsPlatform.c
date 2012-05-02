@@ -32,7 +32,7 @@ extern BOOLEAN  gConnectAllHappened;
 extern USB_CLASS_FORMAT_DEVICE_PATH gUsbClassKeyboardDevicePath;
 
 EFI_GUID                    *gTableGuidArray[] = {
-    &gEfiAcpi10TableGuid, &gEfiAcpiTableGuid, &gEfiSmbiosTableGuid //, &gEfiMpsTableGuid
+    &gEfiAcpi10TableGuid, &gEfiAcpiTableGuid, &gEfiSmbiosTableGuid , &gEfiMpsTableGuid
   };
 
 //
@@ -1200,13 +1200,13 @@ Returns:
   // Get current Boot Mode
   //
   Status = BdsLibGetBootMode (&BootMode);
-  DEBUG ((EFI_D_ERROR, "Boot Mode:%x\n", BootMode));
+//  DEBUG ((EFI_D_ERROR, "Boot Mode:%x\n", BootMode));
 
   //
   // Go the different platform policy with different boot mode
   // Notes: this part code can be change with the table policy
   //
-  ASSERT (BootMode == BOOT_WITH_FULL_CONFIGURATION);
+//  ASSERT (BootMode == BOOT_WITH_FULL_CONFIGURATION);
   //
   // Connect platform console
   //
@@ -1228,7 +1228,7 @@ Returns:
                   &UserInputDurationTime
                   );
   ASSERT (Status == EFI_SUCCESS);
-  Status = gBS->SetTimer (UserInputDurationTime, TimerRelative, 3000000);
+  Status = gBS->SetTimer (UserInputDurationTime, TimerRelative, 2000000);
   ASSERT (Status == EFI_SUCCESS);
   //
   // Memory test and Logo show
