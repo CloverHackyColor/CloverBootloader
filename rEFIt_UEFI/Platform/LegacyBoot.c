@@ -242,7 +242,7 @@ UINT8 GetBiosDriveNumForVolume(REFIT_VOLUME *Volume)
 	}
 	
 	Dap = (BIOS_DISK_ADDRESS_PACKET *)(UINTN)LegacyRegion;
-	Buffer = (UINT8 *)(UINTN)(LegacyRegion + EFI_SIZE_TO_PAGES(sizeof(BIOS_DISK_ADDRESS_PACKET)));
+	Buffer = (UINT8 *)(UINTN)(LegacyRegion + (EFI_SIZE_TO_PAGES(sizeof(BIOS_DISK_ADDRESS_PACKET)))<<12);
 //Slice - some CD has BIOS driveNum = 0	
 	// scan drives from 0x80
 	DriveNum = 0x80;
@@ -266,7 +266,7 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 {
 	EFI_BLOCK_IO* pBlockIO = volume->BlockIO;
 	Address      bootAddress = addrRealFromSegOfs(0x0000, 0x7C00);
-	UINT8        sectorBuffer[2048];
+	UINT8        *sectorBuffer; //[2048];
 	EFI_STATUS   Status = EFI_NOT_FOUND;
 	UINT64       lba;
 	UINT32       bootLoadSegment;
@@ -275,6 +275,7 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 	UINT32       bootSectors;
 	IA32_REGISTER_SET           Regs;
 	
+  sectorBuffer = AllocateAlignedPages (EFI_SIZE_TO_PAGES (2048), 64);
 	krnMemoryTop = addrRealFromSegOfs(0xA000, 0x0000);
 	addrEnablePaging(0);
 	
@@ -605,6 +606,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
         {
             DBG("Found parent volume: %s\n", DevicePathToStr(Volumes[i]->DevicePath));
             BiosDriveNum = GetBiosDriveNumForVolume(Volumes[i]);
+          break;
         }
     }
     if (BiosDriveNum == 0) {

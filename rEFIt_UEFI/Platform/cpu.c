@@ -157,10 +157,11 @@ VOID GetCPUProperties (VOID)
   if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
     switch (gCPUStructure.Model)
     {
-      case CPU_MODEL_ATOM:
+/*      case CPU_MODEL_ATOM:
         gCPUStructure.Cores   = (UINT8)(gCPUStructure.CoresPerPackage & 0xff);
         gCPUStructure.Threads = (UINT8)(gCPUStructure.LogicalPerPackage & 0xff);
         break;
+ */
       case CPU_MODEL_NEHALEM: // Intel Core i7 LGA1366 (45nm)
       case CPU_MODEL_FIELDS: // Intel Core i5, i7 LGA1156 (45nm)
       case CPU_MODEL_CLARKDALE: // Intel Core i3, i5, i7 LGA1156 (32nm) 
@@ -545,77 +546,7 @@ typedef struct {
 	PCI_DEVICE_HEADER_TYPE_REGION Device;
 } PCI_TYPE00;
 */
-/*
- VOID DumpCPU()
- {
- //	if(AsciiStrStr(gSettings.Debug,"y") || AsciiStrStr(gSettings.Debug,"Y")) {
-	Print(L"CPU:	BrandString - %a\n", gCPUStructure.BrandString);
-	Print(L"Vendor/Model/ExtModel: 0x%x/0x%x/0x%x\n", gCPUStructure.Vendor,  gCPUStructure.Model, gCPUStructure.Extmodel);
-	Print(L"Family/ExtFamily:      0x%x/0x%x\n", gCPUStructure.Family,  gCPUStructure.Extfamily);
-	Print(L"MaxCoef/CurrCoef:      0x%x/0x%x\n", gCPUStructure.MaxCoef,  gCPUStructure.CurrCoef);
-	Print(L"MaxDiv/CurrDiv:        0x%x/0x%x\n", gCPUStructure.MaxDiv,  gCPUStructure.CurrDiv);
-	Print(L"Features: 0x%08x\n",gCPUStructure.Features);
-	Print(L"Threads: %d\n",gCPUStructure.Threads);
-	Print(L"Cores: %d\n",gCPUStructure.Cores);
-	Print(L"FSB: %d MHz\n",gCPUStructure.ExternalClock);
-	Print(L"CPU: %d MHz\n",gCPUStructure.MaxSpeed);
-	Print(L"TSC: %d MHz\n",gCPUStructure.CurrentSpeed);	
-	Print(L"TjMax: %d C\n", tjmax);	
-	
-		//		Print(L"press key to continue...\n");
-	WaitForKeyPress("waiting for key press...\n");
-//	}	
-}
-*/
-/*
-VOID ShowCPU()
-{
-	int i;
-#define MAX_CPU_PROPS 11	
-	CHAR8* buf;
-	CHAR8* msg[MAX_CPU_PROPS];
-	CHAR8* msgru[MAX_CPU_PROPS];
-	for (i=0; i<MAX_CPU_PROPS; i++) {
-		msg[i]   = AllocateZeroPool(64);
-		msgru[i] = AllocateZeroPool(64);
-	}
-	buf = AllocateZeroPool(64);
-	AsciiSPrint(msg[0], 64, "CPU:	BrandString - %a", gCPUStructure.BrandString);
-	AsciiSPrint(msgru[0], 64, "%a - %a", RusToAscii(buf, L"Название ЦПУ"), gCPUStructure.BrandString);
-//	PrintMessage(4, msgru[0], MENU_ICON);
-	AsciiSPrint(msg[1], 64, "Vendor/Model/ExtModel: 0x%x/0x%x/0x%x",
-				gCPUStructure.Vendor,  gCPUStructure.Model, gCPUStructure.Extmodel);
-	AsciiSPrint(msgru[1], 64, "%a: 0x%x/0x%x/0x%x", RusToAscii(buf, L"Фирма/Модель/Ревизия"),
-				gCPUStructure.Vendor,  gCPUStructure.Model, gCPUStructure.Stepping);
-	AsciiSPrint(msg[2], 64, "Family/ExtFamily:      0x%x/0x%x", gCPUStructure.Family,  gCPUStructure.Extfamily);
-	AsciiSPrint(msgru[2], 64, "%a: 0x%x/0x%x", RusToAscii(buf, L"Семейство/Расширенное"),
-				gCPUStructure.Family,  gCPUStructure.Extfamily);
-	AsciiSPrint(msg[3], 64, "MaxCoef/CurrCoef:      0x%x/0x%x", gCPUStructure.MaxCoef,  gCPUStructure.CurrCoef);
-	AsciiSPrint(msgru[3], 64, "%a: 0x%x/0x%x", RusToAscii(buf, L"Макс.множитель/Текущий"),
-				gCPUStructure.MaxCoef,  gCPUStructure.CurrCoef);
-	AsciiSPrint(msg[4], 64, "Features: 0x%08x",gCPUStructure.Features);
-	AsciiSPrint(msgru[4], 64, "%a: 0x%08x", RusToAscii(buf, L"Возможности"), gCPUStructure.Features);
-	AsciiSPrint(msg[5], 64, "Threads: %d",gCPUStructure.Threads);
-	AsciiSPrint(msgru[5], 64, "%a: %d", RusToAscii(buf, L"Число потоков"), gCPUStructure.Threads);
-	AsciiSPrint(msg[6], 64, "Cores: %d",gCPUStructure.Cores);
-	AsciiSPrint(msgru[6], 64, "%a: %d", RusToAscii(buf, L"Число ядер"), gCPUStructure.Cores);
-	AsciiSPrint(msg[7], 64, "FSB: %d MHz",gCPUStructure.ExternalClock);
-	AsciiSPrint(msgru[7], 64, "%a: %d MHz", RusToAscii(buf, L"Частота шины"), gCPUStructure.ExternalClock);
-	AsciiSPrint(msg[8], 64, "CPU: %d MHz",gCPUStructure.MaxSpeed);
-	AsciiSPrint(msgru[8], 64, "%a: %d MHz", RusToAscii(buf, L"Частота процессора"), gCPUStructure.MaxSpeed);
-	AsciiSPrint(msg[9], 64, "TSC: %d MHz", gCPUStructure.CurrentSpeed);
-	AsciiSPrint(msgru[9], 64, "%a: %d MHz",RusToAscii(buf, L"Частота генератора"), gCPUStructure.CurrentSpeed);
-	AsciiSPrint(msg[10], 64, "TjMax: %d%cC", tjmax, 0xB0);
-	AsciiSPrint(msgru[10], 64, "%a: %d%cC", RusToAscii(buf, L"Критическая температура"), tjmax, 0xB0);
-	
-//	PrintTable (msg, msgru, MAX_CPU_PROPS);
-	for (i=0; i<MAX_CPU_PROPS; i++) {		
-		FreePool(msg[i]);
-		FreePool(msgru[i]);
-	}
-	FreePool(buf);
-}
-*/
+
 UINT16 GetStandardCpuType()
 {
 	if (gCPUStructure.Threads >= 4) 
