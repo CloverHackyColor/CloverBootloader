@@ -405,7 +405,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
       // calc crc checksum of first 2 sectors - it's used later for legacy boot BIOS drive num detection
       // note: possible future issues with AF 4K disks
       gBS->CalculateCrc32 (SectorBuffer, 2 * 512, &Volume->DriveCRC32);
-      
+      DBG("Volume has BS=%d kind=%d startlba=%d\n", BlockSize, Volume->DiskKind, Volume->BlockIOOffset);
       if (Volume->DiskKind == DISK_KIND_OPTICAL) { //CDROM
         CHAR8* p = (CHAR8*)&SectorBuffer[8];
 				while (*p == 0x20) {
@@ -681,7 +681,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     } else {
       if (Volume->BlockIO->Media->BlockSize == 2048){
         Volume->DiskKind = DISK_KIND_OPTICAL;
-        Volume->BlockIOOffset = 0; //0x10; //no offset already applyed!
+        Volume->BlockIOOffset = 0x10; // offset already applyed for FS but not for blockio
       } else {
         Volume->BlockIOOffset = 0;
       }
@@ -706,7 +706,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
           (DevicePathSubType(DevicePath) == MSG_USB_DP || DevicePathSubType(DevicePath) == MSG_USB_CLASS_DP)) {
 //        DBG("USB volume\n");
         Volume->DiskKind = DISK_KIND_EXTERNAL; 
-        break;
+   //     break;
       }
       // FIREWIRE Devices
       if (DevicePathType(DevicePath) == MESSAGING_DEVICE_PATH && 

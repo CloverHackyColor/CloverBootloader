@@ -77,6 +77,7 @@ typedef struct {
 	UINT64	lba;			// LBA of starting sector
 } BIOS_DISK_ADDRESS_PACKET;
 
+//located at 0x7F00 
 CONST UINT8 VideoTest[] = {
   0xb8, 0x02, 0x00,                   //mov ax,2
   0xcd, 0x10,                         //int 0x10
@@ -202,7 +203,10 @@ EFI_STATUS BiosReadSectorsFromDrive(UINT8 DriveNum, UINT64 Lba, UINTN NumSectors
 /** Reads first 2 sectors from given DriveNum with bios and calculates DriveCRC32.
  *  Requires Dap and Buffer to be allocated in legacy memory region.
  */
-EFI_STATUS GetBiosDriveCRC32(UINT8 DriveNum, UINT32 *DriveCRC32, BIOS_DISK_ADDRESS_PACKET *Dap, void *Buffer)
+EFI_STATUS GetBiosDriveCRC32(UINT8 DriveNum,
+                             UINT32 *DriveCRC32,
+                             BIOS_DISK_ADDRESS_PACKET *Dap,
+                             void *Buffer)
 {
 	EFI_STATUS					Status;
 	
@@ -539,6 +543,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
   UINT16                      OldMask;
   UINT16                      NewMask;
   UINTN                       i, j;  //for debug dump
+  UINT8                       *ptr;
   
 	
 	IA32_REGISTER_SET   Regs;
@@ -626,6 +631,11 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
   NewMask = 0x0;
 //  Status = gLegacy8259->SetMask(gLegacy8259, &NewMask, NULL, NULL, NULL);
 	//Status = mCpu->EnableInterrupt(mCpu);
+  //Now I want to start from VideoTest
+  ptr = (UINT8*)0x7F00;
+  CopyMem(ptr, &VideoTest[0], 30);
+  
+  
 	//CopyMem(pMBR, &tMBR, 16);
 	//pMBR->StartLBA = LbaOffset;
 	//pMBR->Size = LbaSize;
@@ -634,7 +644,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
 	Regs.X.SI = 0x07BE;
 	//Regs.X.ES = EFI_SEGMENT((UINT32) pBootSector);
 	//Regs.X.BX = EFI_OFFSET ((UINT32) pBootSector);
-	LegacyBiosFarCall86(0, 0x7c00, &Regs);
+	LegacyBiosFarCall86(0, 0x7F00, &Regs); //0x7c00
 	//LegacyBiosFarCall86(
 	//					EFI_SEGMENT((UINT32)(UINTN) pBootSector),
 	//					EFI_OFFSET ((UINT32)(UINTN) pBootSector),
