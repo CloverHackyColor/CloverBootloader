@@ -246,7 +246,7 @@ UINT8 GetBiosDriveNumForVolume(REFIT_VOLUME *Volume)
 	}
 	
 	Dap = (BIOS_DISK_ADDRESS_PACKET *)(UINTN)LegacyRegion;
-	Buffer = (UINT8 *)(UINTN)(LegacyRegion + (EFI_SIZE_TO_PAGES(sizeof(BIOS_DISK_ADDRESS_PACKET)))<<12);
+	Buffer = (UINT8 *)(UINTN)(LegacyRegion + 0x1000);
 //Slice - some CD has BIOS driveNum = 0	
 	// scan drives from 0x80
 	DriveNum = 0x80;
