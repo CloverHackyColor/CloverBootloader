@@ -267,7 +267,13 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     //PauseForKey(L"continue");
       
   }
-  StartEFIImage(Entry->DevicePath, Entry->LoadOptions,
+  else if (Entry->LoaderType == OSTYPE_LIN) {
+      
+      PatchACPI_OtherOS(L"Linux", FALSE);
+      //PauseForKey(L"continue");
+      Entry->LoadOptions     = NULL;
+  }
+    StartEFIImage(Entry->DevicePath, Entry->LoadOptions,
                 Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL);
 //  PauseForKey(L"FinishExternalScreen");
   FinishExternalScreen();

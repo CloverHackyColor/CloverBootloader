@@ -210,10 +210,10 @@ EFI_STATUS GetBiosDriveCRC32(UINT8 DriveNum,
 {
 	EFI_STATUS					Status;
 	
-	// read first 2 sectors
-	Status = BiosReadSectorsFromDrive(DriveNum, 0, 2, Dap, Buffer);
+	// read first 1 sectors
+	Status = BiosReadSectorsFromDrive(DriveNum, 0, 1, Dap, Buffer);
 	if (!EFI_ERROR(Status)) {
-		gBS->CalculateCrc32(Buffer, 2 * 512, DriveCRC32);
+		gBS->CalculateCrc32(Buffer, 1 * 512, DriveCRC32);
 		DBG("Bios drive CRC32 = %X\n", *DriveCRC32);
 	}
 	return Status;
@@ -233,7 +233,7 @@ UINT8 GetBiosDriveNumForVolume(REFIT_VOLUME *Volume)
 	UINTN						LegacyRegionPages;
 	EFI_PHYSICAL_ADDRESS		LegacyRegion;
 	
-	DBG("Volume CRC32 = %X\n", Volume->DriveCRC32);
+	DBG("Expected volume CRC32 = %X\n", Volume->DriveCRC32);
 	LegacyRegion = 0x0C0000;
 	LegacyRegionPages = EFI_SIZE_TO_PAGES(sizeof(BIOS_DISK_ADDRESS_PACKET) + 2 * 512)+1 /* dap + 2 sectors */;
 	Status = gBS->AllocatePages(AllocateMaxAddress,
@@ -246,7 +246,7 @@ UINT8 GetBiosDriveNumForVolume(REFIT_VOLUME *Volume)
 	}
 	
 	Dap = (BIOS_DISK_ADDRESS_PACKET *)(UINTN)LegacyRegion;
-	Buffer = (UINT8 *)(UINTN)(LegacyRegion + 0x1000);
+	Buffer = (UINT8 *)(UINTN)(LegacyRegion + 0x200);
 //Slice - some CD has BIOS driveNum = 0	
 	// scan drives from 0x80
 	DriveNum = 0x80;
@@ -257,6 +257,7 @@ UINT8 GetBiosDriveNumForVolume(REFIT_VOLUME *Volume)
 			DriveNum = 0;
 			break;
 		}
+    DBG("Calculated CRC=%X\n", DriveCRC32);
 		if (Volume->DriveCRC32 == DriveCRC32) {
 			break;
 		}
@@ -534,7 +535,8 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
 	EFI_STATUS                  Status		= EFI_NOT_FOUND;
 	EFI_BLOCK_IO*               pDisk     = volume->BlockIO;
 	UINT8*                      pBootSector	= (UINT8*)0x7C00;
-	//MBR_PARTITION_INFO*					pMBR      = (MBR_PARTITION_INFO*)0x7BE;
+  UINT8*                      mBootSector;
+  MBR_PARTITION_INFO*					pMBR      = (MBR_PARTITION_INFO*)0x7BE;
 	UINT32                      LbaOffset	= 0;
 	UINT32                      LbaSize		= 0;
 	HARDDRIVE_DEVICE_PATH       *HdPath     = NULL; 
@@ -542,8 +544,9 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
     UINT8                       BiosDriveNum;
   UINT16                      OldMask;
   UINT16                      NewMask;
-  UINTN                       i, j;  //for debug dump
+  UINTN                       i, i2, j;  //for debug dump
   UINT8                       *ptr;
+  UINT32                      MBRCRC32;
   
 	
 	IA32_REGISTER_SET   Regs;
@@ -595,14 +598,16 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
 	//InitializeInterruptRedirection(); //gLegacy8259);
     
 	Status = pDisk->ReadBlocks(pDisk, pDisk->Media->MediaId, 0, 512, pBootSector);
-    for (i=0; i<16; i++) {
+  DBG("PBR:\n");
+    for (i=0; i<4; i++) {
         DBG("%04x: ", i*16);
         for (j=0; j<16; j++) {
             DBG("%02x ", pBootSector[i*16+j]);
         }
         DBG("\n");
     }
-    
+  
+  mBootSector = AllocateAlignedPages(1, 16);
     // find parent disk volume and it's bios drive num
     DBG("Looking for parent disk of %s\n", DevicePathToStr(volume->DevicePath));
     BiosDriveNum = 0;
@@ -610,6 +615,19 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
         if (Volumes[i] != volume && Volumes[i]->BlockIO == volume->WholeDiskBlockIO)
         {
             DBG("Found parent volume: %s\n", DevicePathToStr(Volumes[i]->DevicePath));
+          Status = volume->WholeDiskBlockIO->ReadBlocks(volume->WholeDiskBlockIO, 
+                                       volume->WholeDiskBlockIO->Media->MediaId, 0, 512, 
+                                                        mBootSector);
+          DBG("MBR:\n");
+          for (i2=0; i<4; i++) {
+            DBG("%04x: ", i2*16);
+            for (j=0; j<16; j++) {
+              DBG("%02x ", mBootSector[i2*16+j]);
+            }
+            DBG("\n");
+          }
+          gBS->CalculateCrc32(mBootSector, 1 * 512, &MBRCRC32);
+          DBG("MBR drive CRC32 = %X\n", MBRCRC32);
             BiosDriveNum = GetBiosDriveNumForVolume(Volumes[i]);
           break;
         }
@@ -625,6 +643,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
   LogSize = msgCursor - msgbuf;
   Status = egSaveFile(SelfRootDir, L"EFI\\misc\\legacy_boot.log", (UINT8*)msgbuf, LogSize);
   if (EFI_ERROR(Status)) {
+    Print(L"can't save legacy-boot.log\n");
     Status = egSaveFile(NULL, L"EFI\\misc\\legacy_boot.log", (UINT8*)msgbuf, LogSize);
   }
     
@@ -636,10 +655,12 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
   CopyMem(ptr, &VideoTest[0], 30);
   
   
-	//CopyMem(pMBR, &tMBR, 16);
-	//pMBR->StartLBA = LbaOffset;
-	//pMBR->Size = LbaSize;
-  DBG("Ready to start\n");
+	CopyMem(pMBR, &tMBR, 16);
+	pMBR->StartLBA = LbaOffset;
+	pMBR->Size = LbaSize;
+  DBG("Ready to start from LBA=%x\n", LbaOffset);
+  return EFI_NOT_FOUND;
+  
 	Regs.X.DX = BiosDriveNum;
 	Regs.X.SI = 0x07BE;
 	//Regs.X.ES = EFI_SEGMENT((UINT32) pBootSector);
