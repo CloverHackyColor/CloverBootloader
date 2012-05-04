@@ -129,6 +129,13 @@ hidebadges none
 #
 #textonly
 
+# Disable display of text-mode output when in graphics mode. This
+# option is unnecessary on Macs, but without this option, UEFI-based
+# PCs tend to display text-mode messages relating to boot loader probing
+# over the GUI display.
+#
+#quiet
+
 # List legacy options first. When enabled, legacy BIOS based boot options
 # (e.g. Windows, Linux via LILO or GRUB) will be listed first. This is
 # intended as a quick fix to change the default boot choice until full

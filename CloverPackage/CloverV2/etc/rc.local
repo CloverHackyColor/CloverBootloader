@@ -1,5 +1,6 @@
 #!/bin/bash
 cat boot.log >boot.lo1
+echo " " >> boot.lo1
 date "+DATE: %Y-%m-%d TIME: %H:%M:%S%n" >> boot.lo1
 ioreg -lw0 -pIODeviceTree | grep boot-log > ./log.txt
 logdump=$(cat ./log.txt)

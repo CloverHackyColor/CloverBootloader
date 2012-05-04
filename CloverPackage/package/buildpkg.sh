@@ -123,7 +123,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 		cp -f ${pkgroot}/Scripts/boot0/postinstall ${3}/boot0/Scripts
 		chmod 755 "${3}/boot0/Scripts/postinstall"
 		echo "	[BUILD] boot0 "
-		buildpackage "${3}/boot0" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot0hfsEFI']) &amp;&amp; exclusive(choices['boot1no'])\"" >/dev/null 2>&1
+		buildpackage "${3}/boot0" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot0hfsEFI']) &amp;&amp; exclusive(choices['boot1no']) &amp;&amp; exclusive(choices['boot1UEFI'])\"" >/dev/null 2>&1
 	# End build boot0 package 
 	
 	# build boot0hfs package 
@@ -132,7 +132,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 		cp -f ${pkgroot}/Scripts/boot0hfs/postinstall ${3}/boot0hfs/Scripts
 		chmod 755 "${3}/boot0hfs/Scripts/postinstall"
 		echo "	[BUILD] boot0hfs "
-		buildpackage "${3}/boot0hfs" "/" "" "start_visible=\"true\" start_selected=\"true\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0hfsEFI']) &amp;&amp; exclusive(choices['boot1no'])\"" >/dev/null 2>&1
+		buildpackage "${3}/boot0hfs" "/" "" "start_visible=\"true\" start_selected=\"true\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0hfsEFI']) &amp;&amp; exclusive(choices['boot1no']) &amp;&amp; exclusive(choices['boot1UEFI'])\"" >/dev/null 2>&1
 	# End build boot0hfs package 
 
 	# build boot0hfsEFI package 
@@ -141,7 +141,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 		cp -f ${pkgroot}/Scripts/boot0hfsEFI/postinstall ${3}/boot0hfsEFI/Scripts
 		chmod 755 "${3}/boot0hfsEFI/Scripts/postinstall"
 		echo "	[BUILD] boot0hfsEFI "
-		buildpackage "${3}/boot0hfsEFI" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot1no'])\"" >/dev/null 2>&1
+		buildpackage "${3}/boot0hfsEFI" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot1no']) &amp;&amp; exclusive(choices['boot1UEFI'])\"" >/dev/null 2>&1
 	# End build boot0hfsEFI package 
 
 	# build boot1no package
@@ -150,8 +150,21 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 		cp -f ${pkgroot}/Scripts/boot1no/postinstall ${3}/boot1no/Scripts
 		chmod 755 "${3}/boot1no/Scripts/postinstall"
 		echo "	[BUILD] boot1no "
-		buildpackage "${3}/boot1no" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot0hfsEFI'])\"" >/dev/null 2>&1
+		buildpackage "${3}/boot1no" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot0hfsEFI']) &amp;&amp; exclusive(choices['boot1UEFI'])\"" >/dev/null 2>&1
 	# End build boot1no package 
+
+	# build boot1UEFI package
+		mkdir -p ${3}/boot1UEFI/Scripts/Tools
+		mkdir -p ${3}/boot1UEFI/Root/EFI/drivers32
+		mkdir -p ${3}/boot1UEFI/Root/EFI/drivers64
+		cp -Rf ${3%/*/*}/CloverV2/drivers-Off/drivers32UEFI/* ${3}/boot1UEFI/Root/EFI/drivers32
+		cp -Rf ${3%/*/*}/CloverV2/drivers-Off/drivers64UEFI/* ${3}/boot1UEFI/Root/EFI/drivers64
+		fixperms "${3}/boot1UEFI/Root/"
+		cp -f ${pkgroot}/Scripts/boot1UEFI/postinstall ${3}/boot1UEFI/Scripts
+		chmod 755 "${3}/boot1UEFI/Scripts/postinstall"
+		echo "	[BUILD] boot1UEFI "
+		buildpackage "${3}/boot1UEFI" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot0hfsEFI']) &amp;&amp; exclusive(choices['boot1no'])\"" >/dev/null 2>&1
+	# End build boot1UEFI package 
 
 	# build boot32 package 
 		mkdir -p ${3}/boot32/Root
@@ -175,8 +188,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
     outline[$((outlinecount++))]="${indent[$xmlindent]}\t</line>"
 # End build Clover package
 
-
-# build Themes packages
+# build Themes package
 	echo "===================== Themes ==========================="
 	outline[$((outlinecount++))]="${indent[$xmlindent]}\t<line choice=\"Themes\">"
 	choices[$((choicescount++))]="<choice\n\tid=\"Themes\"\n\ttitle=\"Themes_title\"\n\tdescription=\"Themes_description\"\n>\n</choice>\n"
@@ -252,55 +264,6 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 	outline[$((outlinecount++))]="${indent[$xmlindent]}\t</line>"
 
 # End build drivers-x64 packages
-
-
-# build drivers-x32 UEFI packages 
-	echo "===================== drivers32 UEFI ===================="
-	outline[$((outlinecount++))]="${indent[$xmlindent]}\t<line choice=\"Drivers32UEFI\">"
-	choices[$((choicescount++))]="<choice\n\tid=\"Drivers32UEFI\"\n\ttitle=\"Drivers32 UEFI\"\n\tdescription=\"Drivers32 for UEFI\"\n>\n</choice>\n"
-	((xmlindent++))
-	packagesidentity="org.Clover.drivers32UEFI"
-	drivers=($( find "${3%/*/*}/CloverV2/drivers-Off/drivers32UEFI" -type f -name '*.efi' -depth 1 ))
-	for (( i = 0 ; i < ${#drivers[@]} ; i++ )) 
-	do
-		filename="${drivers[$i]##*/}"	
-		mkdir -p "${3}/${filename%.efi}/Root/"
-		ditto --noextattr --noqtn --arch i386 "${drivers[$i]}" "${3}/${filename%.efi}/Root/"
-		find "${3}/${filename%.efi}" -name '.DS_Store' -exec rm -R -f {} \; 2>/dev/null
-		fixperms "${3}/${filename%.efi}/Root/"
-		echo "	[BUILD] ${filename%.efi}"
-		buildpackagedrivers32 "${3}/${filename%.efi}" "/EFI/drivers32" "" "start_selected=\"false\"" >/dev/null 2>&1
-		rm -R -f "${3}/${filename%.efi}"
-	done
-	
-	((xmlindent--))
-	outline[$((outlinecount++))]="${indent[$xmlindent]}\t</line>"
-
-# End build drivers-x32 UEFI packages
-
-# build drivers-x64 UEFI packages 
-	echo "===================== drivers64 UEFI ==================="
-	outline[$((outlinecount++))]="${indent[$xmlindent]}\t<line choice=\"Drivers64UEFI\">"
-	choices[$((choicescount++))]="<choice\n\tid=\"Drivers64UEFI\"\n\ttitle=\"Drivers64 UEFI\"\n\tdescription=\"Drivers64 for UEFI\"\n>\n</choice>\n"
-	((xmlindent++))
-	packagesidentity="org.Clover.drivers64UEFI"
-	drivers=($( find "${3%/*/*}/CloverV2/drivers-Off/drivers64UEFI" -type f -name '*.efi' -depth 1 ))
-	for (( i = 0 ; i < ${#drivers[@]} ; i++ )) 
-	do
-		filename="${drivers[$i]##*/}"	
-		mkdir -p "${3}/${filename%.efi}/Root/"
-		ditto --noextattr --noqtn --arch i386 "${drivers[$i]}" "${3}/${filename%.efi}/Root/"
-		find "${3}/${filename%.efi}" -name '.DS_Store' -exec rm -R -f {} \; 2>/dev/null
-		fixperms "${3}/${filename%.efi}/Root/"
-		echo "	[BUILD] ${filename%.efi}"
-		buildpackagedrivers64 "${3}/${filename%.efi}" "/EFI/drivers64" "" "start_selected=\"false\"" >/dev/null 2>&1
-		rm -R -f "${3}/${filename%.efi}"
-	done
-	
-	((xmlindent--))
-	outline[$((outlinecount++))]="${indent[$xmlindent]}\t</line>"
-
-# End build drivers-x64 UEFI packages
 
 # build post install package
 	echo "===================== Post ============================="
