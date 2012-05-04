@@ -261,6 +261,12 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     Entry->LoadOptions     = PoolPrint(L"%a", gSettings.BootArgs);
     //  Entry->LoadOptions     = InputItems[0].SValue;
   }
+  else if (Entry->LoaderType == OSTYPE_WIN) {
+      
+    PatchACPI_OtherOS(L"Windows", FALSE);
+    //PauseForKey(L"continue");
+      
+  }
   StartEFIImage(Entry->DevicePath, Entry->LoadOptions,
                 Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL);
 //  PauseForKey(L"FinishExternalScreen");

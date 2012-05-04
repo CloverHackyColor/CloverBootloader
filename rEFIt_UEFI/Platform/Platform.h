@@ -739,6 +739,7 @@ CHAR8*  get_nvidia_model(IN UINT16 DeviceID);
 EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha);
 
 EFI_STATUS  PatchACPI(IN REFIT_VOLUME *Volume);
+EFI_STATUS  PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT);
 UINT8       Checksum8(VOID * startPtr, UINT32 len);
 BOOLEAN     tableSign(CHAR8 *table, CONST CHAR8 *sgn);
 
