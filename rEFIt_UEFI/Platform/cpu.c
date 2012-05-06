@@ -320,8 +320,10 @@ VOID GetCPUProperties (VOID)
           case CPU_MODEL_ATOM://  Atom
           case CPU_MODEL_DOTHAN:// Pentium M, Dothan, 90nm
           case CPU_MODEL_YONAH:// Core Duo/Solo, Pentium M DC
-          case CPU_MODEL_MEROM:// Core Xeon, Core 2 Duo, 65nm, Conroe
-          case CPU_MODEL_PENRYN:// Core 2 Duo/Extreme, Xeon, 45nm
+          case CPU_MODEL_MEROM:// Core Xeon, Core 2 Duo, 65nm, Mobile
+          //case CPU_MODEL_CONROE:// Core Xeon, Core 2 Duo, 65nm, Desktop
+          case CPU_MODEL_PENRYN:// Core 2 Duo/Extreme, Xeon, 45nm , Mobile
+          //case CPU_MODEL_WOLFDALE:// Core 2 Duo/Extreme, Xeon, 45nm, Desktop
             if(AsmReadMsr64(MSR_IA32_PLATFORM_ID) & (1 << 28)){
               gCPUStructure.Mobile = TRUE;
             }
@@ -684,11 +686,11 @@ MACHINE_TYPES GetDefaultModel()
 			case CPU_MODEL_ATOM:
 				DefaultType = MacMini21;
 				break;
-			case CPU_MODEL_MEROM:
+			case CPU_MODEL_CONROE:   //Conroe
 				DefaultType = iMac81;
 				break;
-			case CPU_MODEL_PENRYN:	
-				DefaultType = MacPro31;//speedstep without patching; Hapertown is also a Penryn, according to Wikipedia
+			case CPU_MODEL_WOLFDALE:	//Wolfdale, Hapertown
+				DefaultType = iMac101;//MacPro31 - speedstep without patching; but it is Hackintosh
 				break;
 			case CPU_MODEL_NEHALEM:
 				DefaultType = MacPro41;

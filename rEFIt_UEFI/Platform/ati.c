@@ -629,8 +629,8 @@ VOID free_val(value_t *val)
 
 VOID devprop_add_list(AtiDevProp devprop_list[])
 {
+	INTN i, pnum;
 	value_t *val = AllocateZeroPool(sizeof(value_t));
-	int i, pnum;
 	
 	for (i = 0; devprop_list[i].name != NULL; i++)
 	{
@@ -735,6 +735,8 @@ BOOLEAN load_vbios_file(UINT16 vendor_id, UINT16 device_id)
 
 	if (EFI_ERROR(Status)){
     DBG("ATI ROM not found \n");
+    card->rom_size = 0;
+		card->rom = 0;
 		return FALSE;
   }
   
@@ -1040,7 +1042,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 	DBG("\n");
 	get_vram_size();
 	
-	if (gSettings.LoadVBios){
+//	if (gSettings.LoadVBios){
     load_vbios_file(pci_dev->vendor_id, pci_dev->device_id);
 		if (!card->rom)
 		{
@@ -1051,7 +1053,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 				read_disabled_vbios();
 			DBG("\n");
 		}
-  }
+//  }
 
 	
 	if (card->info->chip_family >= CHIP_FAMILY_CEDAR)
@@ -1136,7 +1138,7 @@ BOOLEAN setup_ati_devprop(pci_dt_t *ati_dev)
 	
 	devprop_add_list(ati_devprop_list);
 
-    devprop_add_value(card->device, "hda-gfx", (UINT8*)"onboard-1", 10);
+    devprop_add_value(card->device, "hda-gfx", (UINT8*)"onboard-1", 9);
 	
 	
 	DBG("ATI %a %a %dMB (%a) [%04x:%04x] (subsys [%04x:%04x]):: %a\n",

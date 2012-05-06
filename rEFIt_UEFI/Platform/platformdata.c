@@ -48,10 +48,10 @@ CHAR8* AppleBoardID[17] = //Lion DR1 compatible
 	"Mac-F4208EAA",
 	"Mac-F227BEC8",
 	"Mac-F2268CC8",
-	"Mac-F2238AC8",
+	"Mac-F2238AC8",  //iMac10,1
 	"Mac-F2238BAE",
   "Mac-942B59F58194171B",
-	"Mac-F4208DC8",
+	"Mac-F2268DC8",
 	"Mac-F221BEC8",
 	"Mac-F22788C8"
 };

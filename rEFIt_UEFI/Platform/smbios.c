@@ -1457,16 +1457,16 @@ VOID FinalizeSmbios() //continue
 	EFI_PEI_HOB_POINTERS	HobStart;
 	EFI_PHYSICAL_ADDRESS    *Table = NULL;
 	//UINTN					TableLength = 0;
-
+	
 	// Get Hob List
 	HobStart.Raw = GetHobList ();
-
+	
 	if (HobStart.Raw != NULL) {
 		// find SMBIOS in hob
-	for (Index = 0; Index < sizeof (gTableGuidArray) / sizeof (*gTableGuidArray); ++Index) {
-		GuidHob.Raw = GetNextGuidHob (gTableGuidArray[Index], HobStart.Raw);
-		if (GuidHob.Raw != NULL) {
-			Table = GET_GUID_HOB_DATA (GuidHob.Guid);
+		for (Index = 0; Index < sizeof (gTableGuidArray) / sizeof (*gTableGuidArray); ++Index) {
+			GuidHob.Raw = GetNextGuidHob (gTableGuidArray[Index], HobStart.Raw);
+			if (GuidHob.Raw != NULL) {
+				Table = GET_GUID_HOB_DATA (GuidHob.Guid);
 				//TableLength = GET_GUID_HOB_DATA_SIZE (GuidHob);
 				if (Table != NULL) {
 					break;
@@ -1474,22 +1474,22 @@ VOID FinalizeSmbios() //continue
 			}
 		}
 	}
-
-				//
+	
+	//
 	// Install SMBIOS in Config table
-				SmbiosEpsNew->TableLength = (UINT16)((UINT32)(UINTN)Current - (UINT32)(UINTN)Smbios);
-				SmbiosEpsNew->NumberOfSmbiosStructures = NumberOfRecords;
-				SmbiosEpsNew->MaxStructureSize = MaxStructureSize;
-				SmbiosEpsNew->IntermediateChecksum = 0;
-				SmbiosEpsNew->IntermediateChecksum = (UINT8)(256 - Checksum8((UINT8*)SmbiosEpsNew + 0x10, 																	SmbiosEpsNew->EntryPointLength - 0x10));
-				SmbiosEpsNew->EntryPointStructureChecksum = 0;
-				SmbiosEpsNew->EntryPointStructureChecksum = (UINT8)(256 - Checksum8((UINT8*)SmbiosEpsNew, SmbiosEpsNew->EntryPointLength));
-				DBG("SmbiosEpsNew->EntryPointLength = %d\n", SmbiosEpsNew->EntryPointLength);
-				DBG("DMI checksum = %d\n", Checksum8((UINT8*)SmbiosEpsNew, SmbiosEpsNew->EntryPointLength));
-					gBS->InstallConfigurationTable (&gEfiSmbiosTableGuid, (VOID*)SmbiosEpsNew);
-				gST->Hdr.CRC32 = 0;
+	SmbiosEpsNew->TableLength = (UINT16)((UINT32)(UINTN)Current - (UINT32)(UINTN)Smbios);
+	SmbiosEpsNew->NumberOfSmbiosStructures = NumberOfRecords;
+	SmbiosEpsNew->MaxStructureSize = MaxStructureSize;
+	SmbiosEpsNew->IntermediateChecksum = 0;
+	SmbiosEpsNew->IntermediateChecksum = (UINT8)(256 - Checksum8((UINT8*)SmbiosEpsNew + 0x10, 																	SmbiosEpsNew->EntryPointLength - 0x10));
+	SmbiosEpsNew->EntryPointStructureChecksum = 0;
+	SmbiosEpsNew->EntryPointStructureChecksum = (UINT8)(256 - Checksum8((UINT8*)SmbiosEpsNew, SmbiosEpsNew->EntryPointLength));
+	DBG("SmbiosEpsNew->EntryPointLength = %d\n", SmbiosEpsNew->EntryPointLength);
+	DBG("DMI checksum = %d\n", Checksum8((UINT8*)SmbiosEpsNew, SmbiosEpsNew->EntryPointLength));
+	gBS->InstallConfigurationTable (&gEfiSmbiosTableGuid, (VOID*)SmbiosEpsNew);
+	gST->Hdr.CRC32 = 0;
 	gBS->CalculateCrc32 ((UINT8 *) &gST->Hdr, gST->Hdr.HeaderSize, &gST->Hdr.CRC32);
-										
+	
 	//
 	// Fix it in Hob list
 	//
@@ -1502,7 +1502,7 @@ VOID FinalizeSmbios() //continue
 	if (Table != NULL) {
 		//PauseForKey(L"installing SMBIOS in Hob\n");
 		*Table = (UINT32)(UINTN)SmbiosEpsNew;
-			} 
+	} 
 	
 	if (!gFirmwareClover) {
 		//
@@ -1513,7 +1513,7 @@ VOID FinalizeSmbios() //continue
 		// in smbios protocol for boot.efi and in Conf. table for OSX.
 		//
 		LogPatchesToSmbiosProtocol(SmbiosEpsNew);
-		}
-        
+	}
+	
 	return;
 }

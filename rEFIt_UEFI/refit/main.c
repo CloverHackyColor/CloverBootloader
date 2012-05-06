@@ -268,7 +268,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       
   }
   else if (Entry->LoaderType == OSTYPE_LIN) {
-      
+      FinalizeSmbios();
       PatchACPI_OtherOS(L"Linux", FALSE);
       //PauseForKey(L"continue");
       Entry->LoadOptions     = NULL;
@@ -1615,7 +1615,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	if ((Status == EFI_SUCCESS) && (Size != 0))
 		CopyMem(gSettings.BootArgs, Buffer, Size);	
     if (Buffer) {
-        FreePool(Buffer);
+        gBS->FreePages((EFI_PHYSICAL_ADDRESS) (UINTN)Buffer, EFI_SIZE_TO_PAGES(Size));
     }
     
     //Second step. Load config.plist into gSettings	
@@ -1672,6 +1672,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         
     //  DrawMenuText(L"Test Русский", 14, 0, UGAHeight-40, 5);  
     //  PauseForKey(L"Test fonts");
+    MsgLog("StrSize of ABC=%d\n", StrSize(L"ABC"));
     
     // wait for user ACK when there were errors
     FinishTextScreen(FALSE);

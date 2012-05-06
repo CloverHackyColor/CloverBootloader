@@ -110,7 +110,7 @@ EfiLibFileSystemVolumeLabelInfo (
   
   Status = FHand->GetInfo (FHand, &gEfiFileSystemVolumeLabelInfoIdGuid, &Size, VolumeInfo);
   if (Status == EFI_BUFFER_TOO_SMALL) {
-    VolumeInfo = AllocateAlignedPages (EFI_SIZE_TO_PAGES (Size), 16);
+    VolumeInfo = AllocateZeroPool (Size);
     Status = FHand->GetInfo (FHand, &gEfiFileSystemVolumeLabelInfoIdGuid, &Size, VolumeInfo);
   }
   
@@ -181,7 +181,7 @@ EfiLibFileInfo (
   
   Status = FHand->GetInfo (FHand, &gEfiFileInfoGuid, &Size, FileInfo);
   if (Status == EFI_BUFFER_TOO_SMALL) {
-    FileInfo = AllocateAlignedPages (EFI_SIZE_TO_PAGES (Size), 16);
+    FileInfo = AllocateZeroPool (Size);
     Status = FHand->GetInfo (FHand, &gEfiFileInfoGuid, &Size, FileInfo);
   }
   
@@ -199,7 +199,7 @@ EfiLibFileSystemInfo (
   
   Status = FHand->GetInfo (FHand, &gEfiFileSystemInfoGuid, &Size, FileSystemInfo);
   if (Status == EFI_BUFFER_TOO_SMALL) {
-    FileSystemInfo = AllocateAlignedPages (EFI_SIZE_TO_PAGES (Size), 16);
+    FileSystemInfo = AllocateZeroPool (Size);
     Status = FHand->GetInfo (FHand, &gEfiFileSystemInfoGuid, &Size, FileSystemInfo);
   }
   

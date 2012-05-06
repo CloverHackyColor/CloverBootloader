@@ -352,7 +352,7 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 	
 	lba = sectorBuffer[0x28] + sectorBuffer[0x29] * 256 + sectorBuffer[0x2A] * 65536 + sectorBuffer[0x2B] * 16777216;
 	DBG("CDROMBoot: Booting LBA %ld @%x L%x\n", lba, addrToOffset(bootLoadAddress), bootSize);
-	
+	gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)sectorBuffer, 1);
 	// Read the boot sectors into the boot load address
 	Status = pBlockIO->ReadBlocks(pBlockIO, pBlockIO->Media->MediaId, lba, bootSize, addrToPointer(bootLoadAddress));
 	if (EFI_ERROR(Status)) {
@@ -632,6 +632,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
           break;
         }
     }
+  gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)mBootSector, 1);
     if (BiosDriveNum == 0) {
         // not found
       Print(L"HDBoot: BIOS drive number not found, using default 0x80\n");

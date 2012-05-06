@@ -404,7 +404,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
     if (!EFI_ERROR(Status)) {
       // calc crc checksum of first 2 sectors - it's used later for legacy boot BIOS drive num detection
       // note: possible future issues with AF 4K disks
-      gBS->CalculateCrc32 (SectorBuffer, 2 * 512, &Volume->DriveCRC32);
+      gBS->CalculateCrc32 (SectorBuffer, 1 * 512, &Volume->DriveCRC32);
       DBG("Volume has BS=%d kind=%d startlba=%d CRC=%X\n", BlockSize, Volume->DiskKind, Volume->BlockIOOffset, Volume->DriveCRC32);
       if (Volume->DiskKind == DISK_KIND_OPTICAL) { //CDROM
         CHAR8* p = (CHAR8*)&SectorBuffer[8];
@@ -611,6 +611,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
             }
         }
     }
+  gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)SectorBuffer, 1);
 }
 
 EG_IMAGE* ScanVolumeDefaultIcon(IN UINT8 DiskKind)
@@ -853,7 +854,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   if (Volume->RootDir) {
     RootInfo = EfiLibFileInfo (Volume->RootDir);
     if (RootInfo) {
-      //        DBG("  Volume name from RootFile\n");
+      MsgLog("  Volume name from RootFile\n");
       Volume->VolName = EfiStrDuplicate(RootInfo->FileName);
       FreePool(RootInfo);
     }
@@ -861,14 +862,14 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   if (!Volume->VolName) {
     FileSystemInfoPtr = EfiLibFileSystemInfo(Volume->RootDir);
     if (FileSystemInfoPtr) {
- //     DBG("  Volume name from FileSystem\n");
+      MsgLog("  Volume name from FileSystem\n");
       Volume->VolName = EfiStrDuplicate(FileSystemInfoPtr->VolumeLabel);
       FreePool(FileSystemInfoPtr);
     }
     if (!Volume->VolName) {
       VolumeInfo = EfiLibFileSystemVolumeLabelInfo(Volume->RootDir);
       if (VolumeInfo) {
-//        DBG("  Volume name from VolumeLabel\n");
+        MsgLog("  Volume name from VolumeLabel\n");
         Volume->VolName = EfiStrDuplicate(VolumeInfo->VolumeLabel);
         FreePool(VolumeInfo); 
       }  
@@ -961,6 +962,7 @@ static VOID ScanExtendedPartition(REFIT_VOLUME *WholeDiskVolume, MBR_PARTITION_I
             }
         }
     }
+  gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)SectorBuffer, 1);
 }
 
 VOID ScanVolumes(VOID)
@@ -1086,8 +1088,8 @@ VOID ScanVolumes(VOID)
                 break;
             }
             
-            FreePool(SectorBuffer1);
-            FreePool(SectorBuffer2);
+            gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)SectorBuffer1, 1);
+            gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)SectorBuffer2, 1);
         }
         
     }
@@ -1195,7 +1197,7 @@ EFI_STATUS DirNextEntry(IN EFI_FILE *Directory, IN OUT EFI_FILE_INFO **DirEntry,
         
         // read next directory entry
         LastBufferSize = BufferSize = 256;
-        Buffer = AllocateAlignedPages (EFI_SIZE_TO_PAGES (BufferSize), 16);
+        Buffer = AllocateZeroPool (BufferSize);
         for (IterCount = 0; ; IterCount++) {
             Status = Directory->Read(Directory, &BufferSize, Buffer);
             if (Status != EFI_BUFFER_TOO_SMALL || IterCount >= 4)

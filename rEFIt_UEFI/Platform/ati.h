@@ -4,7 +4,7 @@
  *  Created by Slice on 19.02.12.
  *  
  *  the code ported from Chameleon project as well as from RadeonFB by Joblo and RadeonHD by dong
- *  bis thank to Islam M. Ahmed Zaid for the updating the collection
+ *  big thank to Islam M. Ahmed Zaid for the updating the collection
  */
 
 #include "Platform.h"  //this include needed for Uefi types
@@ -169,10 +169,10 @@ typedef struct {
 
 typedef struct {
 	UINT32				flags;
-	BOOLEAN					all_ports;
+	BOOLEAN				all_ports;
 	CHAR8					*name;
-	BOOLEAN					(*get_value)(value_t *val);
-	value_t					default_val;
+	BOOLEAN				(*get_value)(value_t *val);
+	value_t				default_val;
 } AtiDevProp;
 
 BOOLEAN get_bootdisplay_val(value_t *val);

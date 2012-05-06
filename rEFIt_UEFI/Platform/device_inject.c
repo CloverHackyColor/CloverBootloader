@@ -810,7 +810,7 @@ BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev)
 		}
 
         DBG(" => possible HDMI audio => setting hda-gfx=onboard-1\n");
-        devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
+        devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 9);
     }
 	
 	return TRUE;

@@ -107,8 +107,10 @@ Headers collection for procedures
 #define CPU_MODEL_DOTHAN        0x0D
 #define CPU_MODEL_YONAH         0x0E
 #define CPU_MODEL_MEROM         0x0F  /* same as CONROE but mobile */
+#define CPU_MODEL_CONROE        0x0F  
 #define CPU_MODEL_CELERON       0x16  /* ever see? */
 #define CPU_MODEL_PENRYN        0x17  
+#define CPU_MODEL_WOLFDALE      0x17  
 #define CPU_MODEL_NEHALEM       0x1A
 #define CPU_MODEL_ATOM          0x1C
 #define CPU_MODEL_XEON_MP       0x1D  /* ever see? */

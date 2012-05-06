@@ -91,7 +91,7 @@ static EFI_STATUS ReadFile(IN EFI_FILE_HANDLE BaseDir, CHAR16 *FileName, REFIT_F
     FreePool(FileInfo);
     
     File->BufferSize = (UINTN)ReadSize;   // was limited to a few K before, so this is safe
-    File->Buffer = AllocateAlignedPages (EFI_SIZE_TO_PAGES (File->BufferSize), 16);
+    File->Buffer = AllocateZeroPool (File->BufferSize);
     Status = FileHandle->Read(FileHandle, &File->BufferSize, File->Buffer);
     if (CheckError(Status, L"while loading the configuration file")) {
         FreePool(File->Buffer);
