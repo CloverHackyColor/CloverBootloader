@@ -250,7 +250,7 @@ UINT8 GetBiosDriveNumForVolume(REFIT_VOLUME *Volume)
 //Slice - some CD has BIOS driveNum = 0	
 	// scan drives from 0x80
 	DriveNum = 0x80;
-	for (DriveNum = 0x80; DriveNum < 0x100; DriveNum++) {
+	for (DriveNum = 0x80; DriveNum < 0x90; DriveNum++) {
 		Status = GetBiosDriveCRC32(DriveNum, &DriveCRC32, Dap, Buffer);
 		if (EFI_ERROR(Status)) {
 			// error or no more disks
@@ -616,8 +616,8 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
         {
             DBG("Found parent volume: %s\n", DevicePathToStr(Volumes[i]->DevicePath));
           Status = volume->WholeDiskBlockIO->ReadBlocks(volume->WholeDiskBlockIO, 
-                                       volume->WholeDiskBlockIO->Media->MediaId, 0, 512, 
-                                                        mBootSector);
+                              volume->WholeDiskBlockIO->Media->MediaId, 0, 512, 
+                              mBootSector);
           DBG("MBR:\n");
           for (i2=0; i<4; i++) {
             DBG("%04x: ", i2*16);
@@ -659,7 +659,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
 	pMBR->StartLBA = LbaOffset;
 	pMBR->Size = LbaSize;
   DBG("Ready to start from LBA=%x\n", LbaOffset);
-  return EFI_NOT_FOUND;
+//  return EFI_NOT_FOUND;
   
 	Regs.X.DX = BiosDriveNum;
 	Regs.X.SI = 0x07BE;

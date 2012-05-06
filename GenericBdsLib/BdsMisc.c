@@ -471,10 +471,11 @@ GetDevicePathSizeEx (
 UINTN
 StrSizeEx (
   IN      CONST CHAR16              *String,
-  IN      UINTN                     MaxStringLen
+  IN      UINTN                     MaxStringSize
   )
 {
   UINTN                             Length;
+  UINTN                             MaxStringLen = MaxStringSize >> 1;
 
   ASSERT (String != NULL && MaxStringLen != 0);
   ASSERT (((UINTN) String & BIT0) == 0);
