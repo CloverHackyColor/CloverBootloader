@@ -330,13 +330,13 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x68BE,	0x00000000, CHIP_FAMILY_JUNIPER,	"ATI Radeon HD 5700 Series",		kVervet		},
 	{ 0x68BF,	0x00000000, CHIP_FAMILY_JUNIPER,	"ATI Radeon HD 5700 Series",		kVervet		},
 	
-  { 0x68C0,	0x00000000, CHIP_FAMILY_REDWOOD,	"ATI Radeon HD 5730 Series",		kVervet		},
-  { 0x68C1,	0x00000000, CHIP_FAMILY_REDWOOD,	"ATI Radeon HD 5650 Series",    kVervet		},	
-  { 0x68C8,	0x00000000, CHIP_FAMILY_REDWOOD,	"ATI Radeon HD 5650 Series",    kVervet		},	
-  { 0x68D8,	0x00000000, CHIP_FAMILY_REDWOOD,	"ATI Radeon HD 5670 Series",		kVervet		},
-	{ 0x68D9,	0x00000000, CHIP_FAMILY_REDWOOD,	"ATI Radeon HD 5570 Series",		kVervet		},
-	{ 0x68DA,	0x00000000, CHIP_FAMILY_REDWOOD,	"ATI Radeon HD 5500 Series",		kVervet		},
-	{ 0x68E0,	0x00000000, CHIP_FAMILY_REDWOOD,	"ATI Radeon HD 5470 Series",		kVervet		},	
+  { 0x68C0,	0x00000000, CHIP_FAMILY_REDWOOD,	"ATI Radeon HD 5730 Series",		kBaboon		},
+  { 0x68C1,	0x00000000, CHIP_FAMILY_REDWOOD,	"ATI Radeon HD 5650 Series",    kBaboon		},	
+  { 0x68C8,	0x00000000, CHIP_FAMILY_REDWOOD,	"ATI Radeon HD 5650 Series",    kBaboon		},	
+  { 0x68D8,	0x00000000, CHIP_FAMILY_REDWOOD,	"ATI Radeon HD 5670 Series",		kBaboon		},
+	{ 0x68D9,	0x00000000, CHIP_FAMILY_REDWOOD,	"ATI Radeon HD 5570 Series",		kBaboon		},
+	{ 0x68DA,	0x00000000, CHIP_FAMILY_REDWOOD,	"ATI Radeon HD 5500 Series",		kBaboon		},
+	{ 0x68E0,	0x00000000, CHIP_FAMILY_REDWOOD,	"ATI Radeon HD 5470 Series",		kBaboon		},	
   
 	{ 0x68F9,	0x00000000, CHIP_FAMILY_CEDAR,		"ATI Radeon HD 5400 Series",		kEulemur	},
 	
@@ -414,13 +414,13 @@ AtiDevProp ati_devprop_list[] = {
   //	{FLAGTRUE,	FALSE,	"@0,ATY,EFIDisplay",		NULL,					STRVAL("TMDSA")					},
 	
   //{FLAGTRUE,	TRUE,	"@0,AAPL,vram-memory",		get_vrammemory_val,		NULVAL							},
-  {FLAGTRUE,	TRUE,	"@0,compatible",		get_name_val,			NULVAL							},
-  {FLAGTRUE,	TRUE,	"@0,connector-type",		get_conntype_val,		NULVAL							},
-  {FLAGTRUE,	TRUE,	"@0,device_type",			NULL,					STRVAL("display")				},
+//  {FLAGTRUE,	TRUE,	"@0,compatible",		get_name_val,			NULVAL							},
+//  {FLAGTRUE,	TRUE,	"@0,connector-type",		get_conntype_val,		NULVAL							},
+//  {FLAGTRUE,	TRUE,	"@0,device_type",			NULL,					STRVAL("display")				},
   //	{FLAGTRUE,	FALSE,	"@0,display-connect-flags", NULL,					DWRVAL((UINT32)0)				},
-  {FLAGTRUE,	TRUE,	"@0,display-type",			NULL,					STRVAL("NONE")					},
+//  {FLAGTRUE,	TRUE,	"@0,display-type",			NULL,					STRVAL("NONE")					},
 	{FLAGTRUE,	TRUE,	"@0,name",					get_name_val,			NULVAL							},
-  {FLAGTRUE,	TRUE,	"@0,VRAM,memsize",			get_vrammemsize_val,	NULVAL							},
+//  {FLAGTRUE,	TRUE,	"@0,VRAM,memsize",			get_vrammemsize_val,	NULVAL							},
 	
   {FLAGTRUE,	FALSE,	"AAPL,aux-power-connected", NULL,					DWRVAL((UINT32)1)				},
   {FLAGTRUE,	FALSE,	"AAPL,backlight-control",	NULL,					DWRVAL((UINT32)0)				},
@@ -1042,7 +1042,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 	DBG("\n");
 	get_vram_size();
 	
-//	if (gSettings.LoadVBios){
+	if (gSettings.LoadVBios){
     load_vbios_file(pci_dev->vendor_id, pci_dev->device_id);
 		if (!card->rom)
 		{
@@ -1053,7 +1053,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 				read_disabled_vbios();
 			DBG("\n");
 		}
-//  }
+  }
 
 	
 	if (card->info->chip_family >= CHIP_FAMILY_CEDAR)

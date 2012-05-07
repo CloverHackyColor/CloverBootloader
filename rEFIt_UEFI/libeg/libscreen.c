@@ -52,8 +52,8 @@ static EFI_GUID GraphicsOutputProtocolGuid = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
 static EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput = NULL;
 
 static BOOLEAN egHasGraphics = FALSE;
-static UINTN egScreenWidth  = 800;
-static UINTN egScreenHeight = 600;
+static UINTN egScreenWidth  = 1024;
+static UINTN egScreenHeight = 768;
 
 //
 // Screen handling
@@ -128,9 +128,42 @@ CHAR8* egDumpGOPVideoModes(VOID)
     return OutputBase;
 }
 
+EFI_STATUS egSetMaxResolution()
+{
+  EFI_STATUS  Status = EFI_UNSUPPORTED;
+  UINT32      Width = 0;
+  UINT32      Height = 0;
+  UINT32      BestMode = 0;
+  UINT32      MaxMode;
+  UINT32      Mode;
+  UINTN       SizeOfInfo;
+  EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *Info;
+  
+  MaxMode = GraphicsOutput->Mode->MaxMode;
+  for (Mode = 0; Mode < MaxMode; Mode++) {
+    Status = GraphicsOutput->QueryMode(GraphicsOutput, Mode, &SizeOfInfo, &Info);
+    if (Status == EFI_SUCCESS) {
+      if (Width > Info->HorizontalResolution) {
+        continue;
+      }
+      if (Height > Info->VerticalResolution) {
+        continue;
+      }
+      Width = Info->HorizontalResolution;
+      Height = Info->VerticalResolution;
+      BestMode = Mode;
+    }
+  }
+  MsgLog("Found best mode %d: %dx%d\n", BestMode, Width, Height);
+  GraphicsOutput->SetMode(GraphicsOutput, Mode);
+  egScreenWidth = Width;
+  egScreenHeight = Height;
+  return Status;
+}
+
 EFI_STATUS egSetScreenResolution(IN CHAR16 *WidthHeight)
 {
-    EFI_STATUS  Status;
+    EFI_STATUS  Status = EFI_UNSUPPORTED;
     UINT32      Width;
     UINT32      Height;
     CHAR16      *HeightP;
@@ -158,7 +191,7 @@ EFI_STATUS egSetScreenResolution(IN CHAR16 *WidthHeight)
     
     // iterate through modes and set it if found
     MaxMode = GraphicsOutput->Mode->MaxMode;
-    for (Mode = MaxMode - 1; Mode >= 0; Mode--) {
+    for (Mode = 0; Mode < MaxMode; Mode++) {
         Status = GraphicsOutput->QueryMode(GraphicsOutput, Mode, &SizeOfInfo, &Info);
         if (Status == EFI_SUCCESS) {
             if (Width == Info->HorizontalResolution && Height == Info->VerticalResolution) {
@@ -197,7 +230,10 @@ VOID egInitScreen(VOID)
     if (GraphicsOutput != NULL) {
         if (GlobalConfig.ScreenResolution != NULL) {
             egSetScreenResolution(GlobalConfig.ScreenResolution);
+        } else {
+            egSetMaxResolution();
         }
+
         egScreenWidth = GraphicsOutput->Mode->Info->HorizontalResolution;
         egScreenHeight = GraphicsOutput->Mode->Info->VerticalResolution;
         egHasGraphics = TRUE;

@@ -787,11 +787,7 @@ VOID SetDevices(VOID)
   BOOLEAN       StringDirty = FALSE;
   BOOLEAN       TmpDirty = FALSE;
   UINT16        PmCon;
-  
-  
-//  gGraphics.Width  = UGAWidth;
-//  gGraphics.Height = UGAHeight;
-  
+    
   GetEdid();
   /* Read Pci Bus for GFX */
 	Status = gBS->LocateHandleBuffer (AllHandles, NULL, NULL, &HandleCount, &HandleBuffer);

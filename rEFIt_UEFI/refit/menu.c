@@ -1399,7 +1399,7 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
                   DivU64x32(gCPUStructure.FSBFrequency, Mega)));
   AddMenuInfoLine(SubScreen, PoolPrint(L"CPU speed MHz: %d",
                   DivU64x32(gCPUStructure.CPUFrequency, Mega)));
-  AddMenuInfoLine(SubScreen, PoolPrint(L"Ratio: Min=%d Max=%d Turbo=%d",
+  AddMenuInfoLine(SubScreen, PoolPrint(L"Ratio x10: Min=%d Max=%d Turbo=%d",
      gCPUStructure.MinRatio, gCPUStructure.MaxRatio, gCPUStructure.Turbo4));
   
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
@@ -1549,7 +1549,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];    //2
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     //3  
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+/*    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     UnicodeSPrint(Flags, 50, L"Graphics Inject:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
@@ -1561,7 +1561,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.SubScreen = NULL;
     InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];   //3 
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-    
+*/    
     AddMenuEntry(&OptionMenu, SubMenuSpeedStep());
     AddMenuEntry(&OptionMenu, SubMenuGraphics());
     //will be killed
