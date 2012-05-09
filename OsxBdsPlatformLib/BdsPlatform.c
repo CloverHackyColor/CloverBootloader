@@ -32,7 +32,7 @@ extern BOOLEAN  gConnectAllHappened;
 extern USB_CLASS_FORMAT_DEVICE_PATH gUsbClassKeyboardDevicePath;
 
 EFI_GUID                    *gTableGuidArray[] = {
-    &gEfiAcpi10TableGuid, &gEfiAcpiTableGuid, &gEfiSmbiosTableGuid , &gEfiMpsTableGuid
+    &gEfiAcpi10TableGuid, &gEfiAcpiTableGuid, &gEfiSmbiosTableGuid //, &gEfiMpsTableGuid
   };
 
 //
@@ -1228,7 +1228,7 @@ Returns:
                   &UserInputDurationTime
                   );
   ASSERT (Status == EFI_SUCCESS);
-  Status = gBS->SetTimer (UserInputDurationTime, TimerRelative, 2000000);
+  Status = gBS->SetTimer (UserInputDurationTime, TimerRelative, 3000000);
   ASSERT (Status == EFI_SUCCESS);
   //
   // Memory test and Logo show
@@ -1374,7 +1374,6 @@ Returns:
     BdsLibOutputStrings (gST->ConOut, TmpStr, Option->Description, L"\n\r", NULL);
     gBS->FreePool (TmpStr);
   }
-
 }
 
 EFI_STATUS

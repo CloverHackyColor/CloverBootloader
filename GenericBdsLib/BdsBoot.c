@@ -853,7 +853,7 @@ BdsLibBootViaBootOption (
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, PcdGet32 (PcdProgressCodeOsLoaderStart));
 
   Status = gBS->StartImage (ImageHandle, ExitDataSize, ExitData);
-  DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Image Return Status = %r\n", Status));
+//  DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Image Return Status = %r\n", Status));
 
   //
   // Clear the Watchdog Timer after the image returns

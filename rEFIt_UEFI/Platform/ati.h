@@ -183,6 +183,7 @@ BOOLEAN get_model_val(value_t *val);
 BOOLEAN get_conntype_val(value_t *val);
 BOOLEAN get_vrammemsize_val(value_t *val);
 BOOLEAN get_binimage_val(value_t *val);
+BOOLEAN get_binimage_owr(value_t *val);
 BOOLEAN get_romrevision_val(value_t *val);
 BOOLEAN get_deviceid_val(value_t *val);
 BOOLEAN get_mclk_val(value_t *val);

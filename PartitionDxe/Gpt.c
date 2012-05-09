@@ -2,7 +2,7 @@
   Decode a hard disk partitioned with the GPT scheme in the UEFI 2.0
   specification.
 
-Copyright (c) 2006 - 2009, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2006 - 2011, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -62,7 +62,7 @@ PartitionCheckGptEntryArrayCRC (
 
   @param[in]  BlockIo     Parent BlockIo interface.
   @param[in]  DiskIo      Disk Io Protocol.
-  @param[in]  PartHeader  Partition table header structure
+  @param[in]  PartHeader  Partition table header structure.
 
   @retval TRUE      Restoring succeeds
   @retval FALSE     Restoring failed
@@ -185,10 +185,12 @@ PartitionInstallGptChildHandles (
   EFI_PARTITION_TABLE_HEADER  *PrimaryHeader;
   EFI_PARTITION_TABLE_HEADER  *BackupHeader;
   EFI_PARTITION_ENTRY         *PartEntry;
+  EFI_PARTITION_ENTRY         *Entry;
   EFI_PARTITION_ENTRY_STATUS  *PEntryStatus;
   UINTN                       Index;
   EFI_STATUS                  GptValidStatus;
   HARDDRIVE_DEVICE_PATH       HdDev;
+  UINT32                      MediaId;
 
   ProtectiveMbr = NULL;
   PrimaryHeader = NULL;
@@ -198,9 +200,10 @@ PartitionInstallGptChildHandles (
 
   BlockSize     = BlockIo->Media->BlockSize;
   LastBlock     = BlockIo->Media->LastBlock;
+  MediaId       = BlockIo->Media->MediaId;
 
-  DEBUG ((EFI_D_INFO, " BlockSize : %d \n", BlockSize));
-  DEBUG ((EFI_D_INFO, " LastBlock : %lx \n", LastBlock));
+//  DEBUG ((EFI_D_INFO, " BlockSize : %d \n", BlockSize));
+//  DEBUG ((EFI_D_INFO, " LastBlock : %lx \n", LastBlock));
 
   GptValidStatus = EFI_NOT_FOUND;
 
@@ -217,9 +220,9 @@ PartitionInstallGptChildHandles (
   //
   Status = DiskIo->ReadDisk (
                      DiskIo,
-                     BlockIo->Media->MediaId,
+                     MediaId,
                      0,
-                     BlockIo->Media->BlockSize,
+                     BlockSize,
                      ProtectiveMbr
                      );
   if (EFI_ERROR (Status)) {
@@ -293,7 +296,7 @@ PartitionInstallGptChildHandles (
   //
   // Read the EFI Partition Entries
   //
-  PartEntry = AllocatePool (PrimaryHeader->NumberOfPartitionEntries * sizeof (EFI_PARTITION_ENTRY));
+  PartEntry = AllocatePool (PrimaryHeader->NumberOfPartitionEntries * PrimaryHeader->SizeOfPartitionEntry);
   if (PartEntry == NULL) {
     DEBUG ((EFI_D_ERROR, "Allocate pool error\n"));
     goto Done;
@@ -301,7 +304,7 @@ PartitionInstallGptChildHandles (
 
   Status = DiskIo->ReadDisk (
                      DiskIo,
-                     BlockIo->Media->MediaId,
+                     MediaId,
                      MultU64x32(PrimaryHeader->PartitionEntryLBA, BlockSize),
                      PrimaryHeader->NumberOfPartitionEntries * (PrimaryHeader->SizeOfPartitionEntry),
                      PartEntry
@@ -336,7 +339,8 @@ PartitionInstallGptChildHandles (
   // Create child device handles
   //
   for (Index = 0; Index < PrimaryHeader->NumberOfPartitionEntries; Index++) {
-    if (CompareGuid (&PartEntry[Index].PartitionTypeGUID, &gEfiPartTypeUnusedGuid) ||
+    Entry = (EFI_PARTITION_ENTRY *) ((UINT8 *) PartEntry + Index * PrimaryHeader->SizeOfPartitionEntry);
+    if (CompareGuid (&Entry->PartitionTypeGUID, &gEfiPartTypeUnusedGuid) ||
         PEntryStatus[Index].OutOfRange ||
         PEntryStatus[Index].Overlap ||
         PEntryStatus[Index].OsSpecific
@@ -356,17 +360,17 @@ PartitionInstallGptChildHandles (
     HdDev.PartitionNumber = (UINT32) Index + 1;
     HdDev.MBRType         = MBR_TYPE_EFI_PARTITION_TABLE_HEADER;
     HdDev.SignatureType   = SIGNATURE_TYPE_GUID;
-    HdDev.PartitionStart  = PartEntry[Index].StartingLBA;
-    HdDev.PartitionSize   = PartEntry[Index].EndingLBA - PartEntry[Index].StartingLBA + 1;
-    CopyMem (HdDev.Signature, &PartEntry[Index].UniquePartitionGUID, sizeof (EFI_GUID));
+    HdDev.PartitionStart  = Entry->StartingLBA;
+    HdDev.PartitionSize   = Entry->EndingLBA - Entry->StartingLBA + 1;
+    CopyMem (HdDev.Signature, &Entry->UniquePartitionGUID, sizeof (EFI_GUID));
 
-    DEBUG ((EFI_D_INFO, " Index : %d\n", (UINT32) Index));
+/*    DEBUG ((EFI_D_INFO, " Index : %d\n", (UINT32) Index));
     DEBUG ((EFI_D_INFO, " Start LBA : %lx\n", (UINT64) HdDev.PartitionStart));
-    DEBUG ((EFI_D_INFO, " End LBA : %lx\n", (UINT64) PartEntry[Index].EndingLBA));
+    DEBUG ((EFI_D_INFO, " End LBA : %lx\n", (UINT64) Entry->EndingLBA));
     DEBUG ((EFI_D_INFO, " Partition size: %lx\n", (UINT64) HdDev.PartitionSize));
     DEBUG ((EFI_D_INFO, " Start : %lx", MultU64x32 (PartEntry[Index].StartingLBA, BlockSize)));
     DEBUG ((EFI_D_INFO, " End : %lx\n", MultU64x32 (PartEntry[Index].EndingLBA, BlockSize)));
-
+*/
     Status = PartitionInstallChildHandle (
               This,
               Handle,
@@ -374,10 +378,10 @@ PartitionInstallGptChildHandles (
               BlockIo,
               DevicePath,
               (EFI_DEVICE_PATH_PROTOCOL *) &HdDev,
-              PartEntry[Index].StartingLBA,
-              PartEntry[Index].EndingLBA,
+               Entry->StartingLBA,
+               Entry->EndingLBA,
               BlockSize,
-              CompareGuid(&PartEntry[Index].PartitionTypeGUID, &gEfiPartTypeSystemPartGuid)
+               CompareGuid(&Entry->PartitionTypeGUID, &gEfiPartTypeSystemPartGuid)
               );
   }
 
@@ -426,9 +430,10 @@ PartitionValidGptTable (
   EFI_STATUS                  Status;
   UINT32                      BlockSize;
   EFI_PARTITION_TABLE_HEADER  *PartHdr;
+  UINT32                      MediaId;
 
   BlockSize = BlockIo->Media->BlockSize;
-
+  MediaId   = BlockIo->Media->MediaId;
   PartHdr   = AllocateZeroPool (BlockSize);
 
   if (PartHdr == NULL) {
@@ -440,7 +445,7 @@ PartitionValidGptTable (
   //
   Status = DiskIo->ReadDisk (
                      DiskIo,
-                     BlockIo->Media->MediaId,
+                     MediaId,
                      MultU64x32 (Lba, BlockSize),
                      BlockSize,
                      PartHdr
@@ -554,11 +559,13 @@ PartitionRestoreGptTable (
   EFI_PARTITION_TABLE_HEADER  *PartHdr;
   EFI_LBA                     PEntryLBA;
   UINT8                       *Ptr;
+  UINT32                      MediaId;
 
   PartHdr   = NULL;
   Ptr       = NULL;
 
   BlockSize = BlockIo->Media->BlockSize;
+  MediaId   = BlockIo->Media->MediaId;
 
   PartHdr   = AllocateZeroPool (BlockSize);
 
@@ -580,8 +587,8 @@ PartitionRestoreGptTable (
 
   Status = DiskIo->WriteDisk (
                      DiskIo,
-                     BlockIo->Media->MediaId,
-                     MultU64x32 (PartHdr->MyLBA, BlockIo->Media->BlockSize),
+                     MediaId,
+                     MultU64x32 (PartHdr->MyLBA, (UINT32) BlockSize),
                      BlockSize,
                      PartHdr
                      );
@@ -598,8 +605,8 @@ PartitionRestoreGptTable (
 
   Status = DiskIo->ReadDisk (
                     DiskIo,
-                    BlockIo->Media->MediaId,
-                    MultU64x32(PartHeader->PartitionEntryLBA, BlockIo->Media->BlockSize),
+                    MediaId,
+                    MultU64x32(PartHeader->PartitionEntryLBA, (UINT32) BlockSize),
                     PartHeader->NumberOfPartitionEntries * PartHeader->SizeOfPartitionEntry,
                     Ptr
                     );
@@ -609,8 +616,8 @@ PartitionRestoreGptTable (
 
   Status = DiskIo->WriteDisk (
                     DiskIo,
-                    BlockIo->Media->MediaId,
-                    MultU64x32(PEntryLBA, BlockIo->Media->BlockSize),
+                    MediaId,
+                    MultU64x32(PEntryLBA, (UINT32) BlockSize),
                     PartHeader->NumberOfPartitionEntries * PartHeader->SizeOfPartitionEntry,
                     Ptr
                     );
@@ -628,7 +635,6 @@ Done:
 
   return TRUE;
 }
-
 
 /**
   Restore Partition Table to its alternate place.
@@ -649,18 +655,19 @@ PartitionCheckGptEntry (
 {
   EFI_LBA StartingLBA;
   EFI_LBA EndingLBA;
+  EFI_PARTITION_ENTRY  *Entry;
   UINTN   Index1;
   UINTN   Index2;
-  UINT64  Attributes;
 
   DEBUG ((EFI_D_INFO, " start check partition entries\n"));
   for (Index1 = 0; Index1 < PartHeader->NumberOfPartitionEntries; Index1++) {
-    if (CompareGuid (&PartEntry[Index1].PartitionTypeGUID, &gEfiPartTypeUnusedGuid)) {
+    Entry = (EFI_PARTITION_ENTRY *) ((UINT8 *) PartEntry + Index1 * PartHeader->SizeOfPartitionEntry);
+    if (CompareGuid (&Entry->PartitionTypeGUID, &gEfiPartTypeUnusedGuid)) {
       continue;
     }
 
-    StartingLBA = PartEntry[Index1].StartingLBA;
-    EndingLBA   = PartEntry[Index1].EndingLBA;
+    StartingLBA = Entry->StartingLBA;
+    EndingLBA   = Entry->EndingLBA;
     if (StartingLBA > EndingLBA ||
         StartingLBA < PartHeader->FirstUsableLBA ||
         StartingLBA > PartHeader->LastUsableLBA ||
@@ -671,33 +678,31 @@ PartitionCheckGptEntry (
       continue;
     }
 
-    for (Index2 = Index1 + 1; Index2 < PartHeader->NumberOfPartitionEntries; Index2++) {
+    if ((Entry->Attributes & BIT1) != 0) {
+      //
+      // If Bit 1 is set, this indicate that this is an OS specific GUID partition. 
+      //
+      PEntryStatus[Index1].OsSpecific = TRUE;
+    }
 
-      if (CompareGuid (&PartEntry[Index2].PartitionTypeGUID, &gEfiPartTypeUnusedGuid)) {
+    for (Index2 = Index1 + 1; Index2 < PartHeader->NumberOfPartitionEntries; Index2++) {
+      Entry = (EFI_PARTITION_ENTRY *) ((UINT8 *) PartEntry + Index2 * PartHeader->SizeOfPartitionEntry);
+      if (CompareGuid (&Entry->PartitionTypeGUID, &gEfiPartTypeUnusedGuid)) {
         continue;
       }
 
-      if (PartEntry[Index2].EndingLBA >= StartingLBA && PartEntry[Index2].StartingLBA <= EndingLBA) {
+      if (Entry->EndingLBA >= StartingLBA && Entry->StartingLBA <= EndingLBA) {
         //
         // This region overlaps with the Index1'th region
         //
         PEntryStatus[Index1].Overlap  = TRUE;
         PEntryStatus[Index2].Overlap  = TRUE;
         continue;
-
       }
-    }
-
-    Attributes = PartEntry[Index1].Attributes;
-    if ((Attributes & BIT1) != 0) {
-      //
-      // If Bit 1 is set, this indicate that this is an OS specific GUID partition. 
-      //
-      PEntryStatus[Index1].OsSpecific = TRUE;
     }
   }
 
-  DEBUG ((EFI_D_INFO, " End check partition entries\n"));
+//  DEBUG ((EFI_D_INFO, " End check partition entries\n"));
 }
 
 
@@ -789,7 +794,7 @@ PartitionCheckCrcAltSize (
   }
 
   if ((MaxSize != 0) && (Size > MaxSize)) {
-    DEBUG ((EFI_D_ERROR, "CheckCrc32: Size > MaxSize\n"));
+ //   DEBUG ((EFI_D_ERROR, "CheckCrc32: Size > MaxSize\n"));
     return FALSE;
   }
   //
@@ -800,7 +805,7 @@ PartitionCheckCrcAltSize (
 
   Status      = gBS->CalculateCrc32 ((UINT8 *) Hdr, Size, &Crc);
   if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_ERROR, "CheckCrc32: Crc calculation failed\n"));
+//    DEBUG ((EFI_D_ERROR, "CheckCrc32: Crc calculation failed\n"));
     return FALSE;
   }
   //
@@ -811,11 +816,11 @@ PartitionCheckCrcAltSize (
   //
   // return status
   //
-  DEBUG_CODE_BEGIN ();
+/*  DEBUG_CODE_BEGIN ();
     if (OrgCrc != Crc) {
       DEBUG ((EFI_D_ERROR, "CheckCrc32: Crc check failed\n"));
     }
   DEBUG_CODE_END ();
-
+*/
   return (BOOLEAN) (OrgCrc == Crc);
 }

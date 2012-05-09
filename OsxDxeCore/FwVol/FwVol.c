@@ -3,7 +3,7 @@
   Layers on top of Firmware Block protocol to produce a file abstraction
   of FV based files.
 
-Copyright (c) 2006 - 2011, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2006 - 2012, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -294,6 +294,7 @@ FvCheck (
   EFI_STATUS                            Status;
   EFI_FIRMWARE_VOLUME_BLOCK_PROTOCOL    *Fvb;
   EFI_FIRMWARE_VOLUME_HEADER            *FwVolHeader;
+  EFI_FIRMWARE_VOLUME_EXT_HEADER        *FwVolExtHeader;
   EFI_FVB_ATTRIBUTES_2                  FvbAttributes;
   EFI_FV_BLOCK_MAP_ENTRY                *BlockMap;
   FFS_FILE_LIST_ENTRY                   *FfsFileEntry;
@@ -357,7 +358,7 @@ FvCheck (
       //
       // Check whether FvHeader is crossing the multi block range.
       //
-      if (HeaderSize > BlockMap->Length) {
+      if (Index >= BlockMap->NumBlocks) {
         BlockMap++;
         continue;
       } else if (HeaderSize > 0) {
@@ -410,7 +411,7 @@ FvCheck (
 
   //
   // go through the whole FV cache, check the consistence of the FV.
-  // Make a linked list off all the Ffs file headers
+  // Make a linked list of all the Ffs file headers
   //
   Status = EFI_SUCCESS;
   InitializeListHead (&FvDevice->FfsFileListHeader);
@@ -418,7 +419,16 @@ FvCheck (
   //
   // Build FFS list
   //
-  FfsHeader = (EFI_FFS_FILE_HEADER *) FvDevice->CachedFv;
+  if (FwVolHeader->ExtHeaderOffset != 0) {
+    //
+    // Searching for files starts on an 8 byte aligned boundary after the end of the Extended Header if it exists.
+    //
+    FwVolExtHeader = (EFI_FIRMWARE_VOLUME_EXT_HEADER *) (FvDevice->CachedFv + (FwVolHeader->ExtHeaderOffset - FwVolHeader->HeaderLength));
+    FfsHeader = (EFI_FFS_FILE_HEADER *) ((UINT8 *) FwVolExtHeader + FwVolExtHeader->ExtHeaderSize);
+    FfsHeader = (EFI_FFS_FILE_HEADER *) ALIGN_POINTER (FfsHeader, 8);
+  } else {
+    FfsHeader = (EFI_FFS_FILE_HEADER *) (FvDevice->CachedFv);
+  }
   TopFvAddress = FvDevice->EndOfCachedFv;
   while ((UINT8 *) FfsHeader < TopFvAddress) {
 
@@ -631,6 +641,7 @@ NotifyFwVolBlock (
       FvDevice->Fv.ParentHandle = Fvb->ParentHandle;
       FvDevice->IsFfs3Fv        = CompareGuid (&FwVolHeader->FileSystemGuid, &gEfiFirmwareFileSystem3Guid);
 
+      if (!EFI_ERROR (FvCheck (FvDevice))) {
       //
       // Install an New FV protocol on the existing handle
       //
@@ -641,6 +652,12 @@ NotifyFwVolBlock (
                   &FvDevice->Fv
                   );
       ASSERT_EFI_ERROR (Status);
+      } else {
+        //
+        // Free FvDevice Buffer for the corrupt FV image.
+        //
+        CoreFreePool (FvDevice);
+      }
     }
   }
 

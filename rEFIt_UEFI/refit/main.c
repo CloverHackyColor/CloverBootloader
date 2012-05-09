@@ -1511,13 +1511,23 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	
     // firmware detection
     gFirmwareClover = StrCmp(gST->FirmwareVendor, L"CLOVER") == 0;
-	
+//	DBG("Running on Firmware %s, it is Clover?%a\n", gST->FirmwareVendor, gFirmwareClover?"Yes":"No");
+    
     InitializeConsoleSim();
 	InitBooterLog();
-    DBG(" \nStarting rEFIt rev %a\n", FIRMWARE_REVISION);
+    DBG(" \nStarting rEFIt rev %a on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
     //  InitScreen();
-    
-    Status = InitRefitLib(ImageHandle);
+/*    
+    DBG("Test arithmetics\n");
+    UINT64 X = 123000123;
+    UINT32 Y = 453000;
+    UINT32 Z = DivU64x32(X, Y);
+    DBG("X=%ld Y=%d Z=%d\n", X, Y, Z);
+    X = MultU64x32(Z, Y);
+    DBG("Z*Y=%ld\n", X);
+    PauseForKey(L"Test complete");
+*/    
+    Status = InitRefitLib(gImageHandle);
     if (EFI_ERROR(Status))
         return Status;
     
@@ -1528,6 +1538,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     
     // init screen and dump video modes to log
     InitScreen();
+    
+    // disable EFI watchdog timer
+    gBS->SetWatchdogTimer(0x0000, 0x0000, 0x0000, NULL);
+
     MsgBuffer = egDumpGOPVideoModes();
     if (MsgBuffer != NULL) {
         DBG("%a", MsgBuffer);
@@ -1564,8 +1578,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
     
     
-    // disable EFI watchdog timer
-    gBS->SetWatchdogTimer(0x0000, 0x0000, 0x0000, NULL);
     
     // further bootstrap (now with config available)
     //  SetupScreen();
@@ -1585,8 +1597,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     ScanVolumes();
 //      DBG("ScanVolumes OK\n");
     GetCPUProperties();
+    DBG("GetCPUProperties OK\n");
     GetDevices();
-//      DBG("GetCPUProperties OK\n");
+    DBG("GetDevices OK\n");
     ScanSPD();
 //      DBG("ScanSPD OK\n");
     SetPrivateVarProto();
@@ -1620,25 +1633,25 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     
     //Second step. Load config.plist into gSettings	
 	Status = GetUserSettings(SelfRootDir);  
-//      DBG("GetUserSettings OK\n");
+ //     DBG("GetUserSettings OK\n");
     //setup properties
     //  SetDevices();
     
     PrepareFont();
     //test font
-//      DBG("PrepareFont OK\n");
+ //     DBG("PrepareFont OK\n");
     // scan for loaders and tools, add then to the menu
     if (!GlobalConfig.NoLegacy && GlobalConfig.LegacyFirst){
         //    DBG("scan legacy first\n");
         ScanLegacy();
     }
     ScanLoader();
-//      DBG("ScanLoader OK\n");
+ //     DBG("ScanLoader OK\n");
     if (!GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst){
         //    DBG("scan legacy second\n");
         ScanLegacy();
     }
-    //  DBG("ScanLegacy OK\n");
+ //     DBG("ScanLegacy OK\n");
     if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
         //    DBG("scan tools\n");
         ScanTool();
@@ -1646,7 +1659,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     //  DBG("ScanTool OK\n");
     FillInputs();
     // fixed other menu entries
-    //   DBG("FillInputs OK\n"); 
+//       DBG("FillInputs OK\n"); 
     if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
         MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
         AddMenuEntry(&MainMenu, &MenuEntryAbout);
@@ -1672,7 +1685,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         
     //  DrawMenuText(L"Test Русский", 14, 0, UGAHeight-40, 5);  
     //  PauseForKey(L"Test fonts");
-    MsgLog("StrSize of ABC=%d\n", StrSize(L"ABC"));
+    //MsgLog("StrSize of ABC=%d\n", StrSize(L"ABC"));
     
     // wait for user ACK when there were errors
     FinishTextScreen(FALSE);

@@ -123,10 +123,10 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue; //2
   InputItems[InputItemsCount].BValue = gSettings.UseDSDTmini;
   InputItems[InputItemsCount++].SValue = gSettings.UseDSDTmini?L"[X]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = BoolValue; //3
+  InputItems[InputItemsCount].ItemType = BoolValue; //3  -- out
   InputItems[InputItemsCount].BValue = gSettings.GraphicsInjector;
   InputItems[InputItemsCount++].SValue = gSettings.GraphicsInjector?L"[X]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = Decimal;  //4
+  InputItems[InputItemsCount].ItemType = Decimal;  //4  -- out
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.HDALayoutId);
   InputItems[InputItemsCount].ItemType = BoolValue;  //5
   InputItems[InputItemsCount].BValue = gSettings.GeneratePStates;
@@ -159,36 +159,39 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].BValue = gSettings.GraphicsInjector;
   InputItems[InputItemsCount++].SValue = gSettings.GraphicsInjector?L"[X]":L"[ ]";
   for (i=0; i<NGFX; i++) {
-    InputItems[InputItemsCount].ItemType = ASString;  //16+i*4
+    InputItems[InputItemsCount].ItemType = ASString;  //16+i*5
     InputItems[InputItemsCount++].SValue = PoolPrint(L"%a", gGraphics[i].Model);
     if (gGraphics[i].Vendor == Ati) {
-      InputItems[InputItemsCount].ItemType = ASString; //17+4i
+      InputItems[InputItemsCount].ItemType = ASString; //17+5i
       if (StrLen(gSettings.FBName) > 3) {
         InputItems[InputItemsCount++].SValue = PoolPrint(L"%s", gSettings.FBName);
       } else {
         InputItems[InputItemsCount++].SValue = PoolPrint(L"%a", gGraphics[i].Config);
       }      
     } else if (gGraphics[i].Vendor == Nvidia) {
-      InputItems[InputItemsCount].ItemType = ASString; //17+4i
+      InputItems[InputItemsCount].ItemType = ASString; //17+5i
       InputItems[InputItemsCount++].SValue = PoolPrint(L"%08x",*(UINT64*)&gSettings.Dcfg[0]);
     } else if (gGraphics[i].Vendor == Intel) {
-      InputItems[InputItemsCount].ItemType = ASString; //17+4i
+      InputItems[InputItemsCount].ItemType = ASString; //17+5i
       InputItems[InputItemsCount++].SValue = L"NA";
     }
-    InputItems[InputItemsCount].ItemType = Decimal;  //18+4i
+    InputItems[InputItemsCount].ItemType = Decimal;  //18+5i
     if (gSettings.VideoPorts > 0) {
       InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.VideoPorts);
     } else {
       InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gGraphics[i].Ports);
     }
-    
-    InputItems[InputItemsCount].ItemType = ASString; //19+4i
+
+    InputItems[InputItemsCount].ItemType = ASString; //19+5i
     for (j=0; j<20; j++) {
       a = gSettings.NVCAP[j];
       AsciiSPrint((CHAR8*)&tmp[2*j], 2, "%02x", a);
     }
     InputItems[InputItemsCount++].SValue = PoolPrint(L"%a", tmp);
-
+    
+    InputItems[InputItemsCount].ItemType = BoolValue; //20+5i
+    InputItems[InputItemsCount].BValue = gGraphics[i].LoadVBios;
+    InputItems[InputItemsCount++].SValue = gGraphics[i].LoadVBios?L"[X]":L"[ ]";
   }
   //and so on  
 }
@@ -288,7 +291,12 @@ VOID ApplyInputs(VOID)
       ZeroMem(AString, 255);
       AsciiSPrint(AString, 255, "%s", InputItems[i].SValue);
       hex2bin(AString, (UINT8*)&gSettings.NVCAP[0], 20);
-    }    
+    }  
+    i++; //20
+    if (InputItems[i].Valid) {
+      gGraphics[j].LoadVBios = InputItems[i].BValue;
+    }
+    
   }
 }
 
@@ -1340,7 +1348,7 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
   
   for (i = 0; i < NGFX; i++) {
-    N = 15 + i * 4;
+    N = 15 + i * 5;
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs->Entry.Title = PoolPrint(L"Model:");
     InputBootArgs->Entry.Tag = TAG_INPUT;
@@ -1349,7 +1357,11 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
     
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"Config:");
+    if (gGraphics[i].Vendor == Nvidia) {
+      InputBootArgs->Entry.Title = PoolPrint(L"DisplayCFG:");
+    } else {
+      InputBootArgs->Entry.Title = PoolPrint(L"FBConfig:");
+    }
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[N+2].SValue); //cursor
     InputBootArgs->Item = &InputItems[N+2];    
@@ -1361,13 +1373,25 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
     InputBootArgs->Entry.Row = StrLen(InputItems[N+3].SValue); //cursor
     InputBootArgs->Item = &InputItems[N+3];    
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-    
+
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"NVCAP:");
+    if (gGraphics[i].Vendor == Nvidia) {
+      InputBootArgs->Entry.Title = PoolPrint(L"NVCAP:");
+    } else {
+      InputBootArgs->Entry.Title = PoolPrint(L"Connectors:");
+    }
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[N+4].SValue); //cursor
     InputBootArgs->Item = &InputItems[N+4];    
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+    
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs->Entry.Title = PoolPrint(L"LoadVideoBios:");
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = 0xFFFF; //cursor
+    InputBootArgs->Item = &InputItems[N+5];    
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+    
     
   }
   AddMenuEntry(SubScreen, &MenuEntryReturn);

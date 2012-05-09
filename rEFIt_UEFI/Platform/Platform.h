@@ -539,6 +539,7 @@ typedef struct {
 	UINT32	ExternalClock; //keep this values as kHz
 	UINT32	MaxSpeed;       //MHz
 	UINT32	CurrentSpeed;   //MHz
+  UINT32  Pad;
   
   //calculated from MSR
   UINT64  MicroCode;
@@ -640,6 +641,7 @@ typedef struct {
   UINT16            Height;
   CHAR8             Model[64];
   CHAR8             Config[64];
+  BOOLEAN           LoadVBios;
 } GFX_PROPERTIES;
 #pragma pack(0)
 extern CHAR8                    *msgbuf;
@@ -648,8 +650,8 @@ extern SMBIOS_STRUCTURE_POINTER	SmbiosTable;
 extern GFX_PROPERTIES           gGraphics[];
 extern UINTN                    NGFX;
 extern BOOLEAN                  gMobile;
-extern UINT32                   gCpuSpeed;  //kHz
-extern UINT16                   gCPUtype;
+//extern UINT32                   gCpuSpeed;  //kHz
+//extern UINT16                   gCPUtype;
 extern UINT64                   TurboMsr;
 extern CHAR8*                   BiosVendor;
 extern UINT32                   mPropSize;

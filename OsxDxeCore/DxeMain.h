@@ -2,7 +2,7 @@
   The internal header file includes the common header files, defines
   internal structure and functions used by DxeCore module.
 
-Copyright (c) 2006 - 2011, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2006 - 2012, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -87,6 +87,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Library/TimerLib.h>
 #include <Library/DxeServicesLib.h>
 #include <Library/DebugAgentLib.h>
+#include <Library/CpuExceptionHandlerLib.h>
 
 
 //
@@ -134,6 +135,7 @@ typedef struct {
   UINTN           Signature;
   LIST_ENTRY      Link;         // mFvHandleList
   EFI_HANDLE      Handle;
+  EFI_GUID        FvNameGuid;
 } KNOWN_HANDLE;
 
 
@@ -164,6 +166,7 @@ typedef struct {
   BOOLEAN                         DepexProtocolError;
 
   EFI_HANDLE                      ImageHandle;
+  BOOLEAN                         IsFvImage;
 
 } EFI_CORE_DRIVER_ENTRY;
 
@@ -1244,7 +1247,7 @@ CoreGetMemoryMap (
   @param  Buffer                 The address to return a pointer to the allocated
                                  pool
 
-  @retval EFI_INVALID_PARAMETER  PoolType not valid
+  @retval EFI_INVALID_PARAMETER  PoolType not valid or Buffer is NULL
   @retval EFI_OUT_OF_RESOURCES   Size exceeds max pool size or allocation failed.
   @retval EFI_SUCCESS            Pool successfully allocated.
 
@@ -1406,7 +1409,7 @@ CoreExit (
 
 
 /**
-  Creates a general-purpose event structure.
+  Creates an event.
 
   @param  Type                   The type of event to create and its mode and
                                  attributes
@@ -1436,7 +1439,7 @@ CoreCreateEvent (
 
 
 /**
-  Creates a general-purpose event structure
+  Creates an event in a group.
 
   @param  Type                   The type of event to create and its mode and
                                  attributes
@@ -1466,7 +1469,36 @@ CoreCreateEventEx (
   OUT EFI_EVENT               *Event
   );
 
+/**
+  Creates a general-purpose event structure
 
+  @param  Type                   The type of event to create and its mode and
+                                 attributes
+  @param  NotifyTpl              The task priority level of event notifications
+  @param  NotifyFunction         Pointer to the events notification function
+  @param  NotifyContext          Pointer to the notification functions context;
+                                 corresponds to parameter "Context" in the
+                                 notification function
+  @param  EventGroup             GUID for EventGroup if NULL act the same as
+                                 gBS->CreateEvent().
+  @param  Event                  Pointer to the newly created event if the call
+                                 succeeds; undefined otherwise
+
+  @retval EFI_SUCCESS            The event structure was created
+  @retval EFI_INVALID_PARAMETER  One of the parameters has an invalid value
+  @retval EFI_OUT_OF_RESOURCES   The event could not be allocated
+
+**/
+EFI_STATUS
+EFIAPI
+CoreCreateEventInternal (
+  IN UINT32                   Type,
+  IN EFI_TPL                  NotifyTpl,
+  IN EFI_EVENT_NOTIFY         NotifyFunction, OPTIONAL
+  IN CONST VOID               *NotifyContext, OPTIONAL
+  IN CONST EFI_GUID           *EventGroup,    OPTIONAL
+  OUT EFI_EVENT               *Event
+  );
 
 /**
   Sets the type of timer and the trigger time for a timer event.
@@ -1682,8 +1714,18 @@ CoreGetMemorySpaceDescriptor (
   @param  Length                 Specified length
   @param  Attributes             Specified attributes
 
-  @retval EFI_SUCCESS            Successfully set attribute of a segment of
-                                 memory space.
+  @retval EFI_SUCCESS           The attributes were set for the memory region.
+  @retval EFI_INVALID_PARAMETER Length is zero. 
+  @retval EFI_UNSUPPORTED       The processor does not support one or more bytes of the memory
+                                resource range specified by BaseAddress and Length.
+  @retval EFI_UNSUPPORTED       The bit mask of attributes is not support for the memory resource
+                                range specified by BaseAddress and Length.
+  @retval EFI_ACCESS_DEFINED    The attributes for the memory resource range specified by
+                                BaseAddress and Length cannot be modified.
+  @retval EFI_OUT_OF_RESOURCES  There are not enough system resources to modify the attributes of
+                                the memory resource range.
+  @retval EFI_NOT_AVAILABLE_YET The attributes cannot be set because CPU architectural protocol is
+                                not available yet.
 
 **/
 EFI_STATUS
@@ -2476,6 +2518,66 @@ EFIAPI
 CoreEmptyCallbackFunction (
   IN EFI_EVENT                Event,
   IN VOID                     *Context
+  );
+
+/**
+  Read data from Firmware Block by FVB protocol Read. 
+  The data may cross the multi block ranges.
+
+  @param  Fvb                   The FW_VOL_BLOCK_PROTOCOL instance from which to read data.
+  @param  StartLba              Pointer to StartLba.
+                                On input, the start logical block index from which to read.
+                                On output,the end logical block index after reading.
+  @param  Offset                Pointer to Offset
+                                On input, offset into the block at which to begin reading.
+                                On output, offset into the end block after reading.
+  @param  DataSize              Size of data to be read.
+  @param  Data                  Pointer to Buffer that the data will be read into.
+
+  @retval EFI_SUCCESS           Successfully read data from firmware block.
+  @retval others
+**/
+EFI_STATUS
+ReadFvbData (
+  IN     EFI_FIRMWARE_VOLUME_BLOCK_PROTOCOL     *Fvb,
+  IN OUT EFI_LBA                                *StartLba,
+  IN OUT UINTN                                  *Offset,
+  IN     UINTN                                  DataSize,
+  OUT    UINT8                                  *Data
+  );
+
+/**
+  Given the supplied FW_VOL_BLOCK_PROTOCOL, allocate a buffer for output and
+  copy the real length volume header into it.
+
+  @param  Fvb                   The FW_VOL_BLOCK_PROTOCOL instance from which to
+                                read the volume header
+  @param  FwVolHeader           Pointer to pointer to allocated buffer in which
+                                the volume header is returned.
+
+  @retval EFI_OUT_OF_RESOURCES  No enough buffer could be allocated.
+  @retval EFI_SUCCESS           Successfully read volume header to the allocated
+                                buffer.
+
+**/
+EFI_STATUS
+GetFwVolHeader (
+  IN     EFI_FIRMWARE_VOLUME_BLOCK_PROTOCOL     *Fvb,
+  OUT    EFI_FIRMWARE_VOLUME_HEADER             **FwVolHeader
+  );
+
+/**
+  Verify checksum of the firmware volume header.
+
+  @param  FvHeader       Points to the firmware volume header to be checked
+
+  @retval TRUE           Checksum verification passed
+  @retval FALSE          Checksum verification failed
+
+**/
+BOOLEAN
+VerifyFvHeaderChecksum (
+  IN EFI_FIRMWARE_VOLUME_HEADER *FvHeader
   );
 
 #endif

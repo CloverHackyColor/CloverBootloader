@@ -475,7 +475,7 @@ StrSizeEx (
   )
 {
   UINTN                             Length;
-  UINTN                             MaxStringLen = MaxStringSize >> 1;
+  UINTN                             MaxStringLen = (MaxStringSize-1) >> 1;
 
   ASSERT (String != NULL && MaxStringLen != 0);
   ASSERT (((UINTN) String & BIT0) == 0);
@@ -740,9 +740,11 @@ BdsLibVariableToOption (
   }
 
   FreePool (Variable);
+  FreePool (Option->Description);
+  FreePool (Option->DevicePath);
+  FreePool (Option->LoadOptions);
   FreePool (Option);
   return NULL;
-
 }
 
 /**

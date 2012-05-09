@@ -89,9 +89,9 @@ VOID GetCPUProperties (VOID)
   gCPUStructure.SubDivider = 0;
 	gCPUStructure.MaxSpeed = 0;
 	gSettings.CpuFreqMHz = 0;
-	gCPUStructure.FSBFrequency = gCPUStructure.ExternalClock  * kilo; //kHz -> Hz
+	gCPUStructure.FSBFrequency = MultU64x32(gCPUStructure.ExternalClock, kilo); //kHz -> Hz
 //	gCPUStructure.CPUFrequency = 0;
-	gCPUStructure.TSCFrequency = gCPUStructure.CurrentSpeed * Mega; //MHz -> Hz
+	gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
   gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
 	gCPUStructure.ProcessorInterconnectSpeed = 0;
 	gCPUStructure.Mobile = FALSE; //not same as gMobile
@@ -226,6 +226,7 @@ VOID GetCPUProperties (VOID)
 	{
 			if (gCPUStructure.Family == 0x06)
 			{
+//        DBG("Get min and max ratio\n");
 				switch (gCPUStructure.Model)
 				{            
           case CPU_MODEL_NEHALEM:// Core i7 LGA1366, Xeon 5500, "Bloomfield", "Gainstown", 45nm
@@ -311,7 +312,7 @@ VOID GetCPUProperties (VOID)
                 gCPUStructure.Turbo4 = gCPUStructure.MaxRatio;
               }                 
             }
-            MsgLog("SandyBridge has MaxRatio=%d Turbo1=%d Turbo4=%d\n", 
+            DBG("SandyBridge has MaxRatio=%d Turbo1=%d Turbo4=%d\n", 
                    gCPUStructure.MaxRatio, gCPUStructure.Turbo1, gCPUStructure.Turbo4);   
             gCPUStructure.MaxRatio *= 10;
             gCPUStructure.Turbo1 *= 10;
@@ -398,19 +399,25 @@ VOID GetCPUProperties (VOID)
 	}
   
 #endif
-  BusSpeed = (UINT32)DivU64x32(gCPUStructure.FSBFrequency, kilo); //Hz -> kHz
-  DBG("FSBFrequency=%dMHz\n", DivU64x32(gCPUStructure.FSBFrequency, Mega));
+//  DBG("take FSB\n");
+  UINT64 tmpU = gCPUStructure.FSBFrequency;
+//  DBG("divide by 1000\n");
+  BusSpeed = (UINT32)DivU64x32(tmpU, kilo); //Hz -> kHz
+//  DBG("FSBFrequency=%dMHz\n", DivU64x32(tmpU, Mega));
      //now check if SMBIOS has ExternalClock = 4xBusSpeed
   if ((BusSpeed > 50*kilo) && (gCPUStructure.ExternalClock > BusSpeed * 3)) { //khz
     gCPUStructure.ExternalClock = BusSpeed;
   } else {
-    gCPUStructure.FSBFrequency = MultU64x32(gCPUStructure.ExternalClock, kilo); //kHz -> Hz
-    DBG("Corrected FSBFrequency=%dMHz\n", DivU64x32(gCPUStructure.FSBFrequency, Mega));
+    tmpU = MultU64x32(gCPUStructure.ExternalClock, kilo); //kHz -> Hz
+    gCPUStructure.FSBFrequency = tmpU;
   }
+  tmpU = gCPUStructure.FSBFrequency;
+  DBG("Corrected FSBFrequency=%dMHz\n", DivU64x32(tmpU, Mega));
 	
 	if (gCPUStructure.Model >= CPU_MODEL_NEHALEM) {
 		//Slice - for Nehalem we can do more calculation as in Cham
     // but this algo almost always wrong
+    //
 		// thanks to dgobe for i3/i5/i7 bus speed detection
 		qpimult = 2; //init
 		/* Scan PCI BUS For QPI Frequency */
@@ -434,7 +441,6 @@ VOID GetCPUProperties (VOID)
 								if ((Bus & 0x3F) != 0x3F) {
 									continue;
 								}
-								DBG("Found CPU at bus 0x%02x dev=%x funs=%x\n", Bus, Device, Function);
 								Status = PciIo->Pci.Read (
 									PciIo,
 									EfiPciIoWidthUint32,
@@ -456,6 +462,7 @@ VOID GetCPUProperties (VOID)
 								}*/
 								if ((vid == 0x8086) && (did >= 0x2C00)
 									&& (Device == 2) && (Function == 1)) {
+                  DBG("Found CPU at bus 0x%02x dev=%x funs=%x\n", Bus, Device, Function);                 
 									Status = PciIo->Mem.Read (
 															  PciIo,
 															  EfiPciIoWidthUint32,
@@ -494,7 +501,7 @@ VOID GetCPUProperties (VOID)
 	DBG("Features: 0x%08x\n",gCPUStructure.Features);
 	DBG("Threads: %d\n",gCPUStructure.Threads);
 	DBG("Cores: %d\n",gCPUStructure.Cores);
-	DBG("FSB: %d MHz\n",DivU64x32(gCPUStructure.ExternalClock, kilo));
+	DBG("FSB: %d MHz\n", DivU64x32(gCPUStructure.ExternalClock, kilo));
 	DBG("CPU: %d MHz\n", DivU64x32(gCPUStructure.CPUFrequency, Mega));
 	DBG("TSC: %d MHz\n",gCPUStructure.CurrentSpeed);
 	DBG("PIS: %d MHz\n",gCPUStructure.ProcessorInterconnectSpeed);

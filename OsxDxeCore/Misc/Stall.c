@@ -1,7 +1,7 @@
 /** @file
   UEFI Miscellaneous boot Services Stall service implementation
 
-Copyright (c) 2006 - 2008, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2006 - 2011, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -18,7 +18,14 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include "DxeMain.h"
 
+/**
+  Internal worker function to call the Metronome Architectural Protocol for 
+  the number of ticks specified by the UINT64 Counter value.  WaitForTick() 
+  service of the Metronome Architectural Protocol uses a UINT32 for the number
+  of ticks to wait, so this function loops when Counter is larger than 0xffffffff.
 
+  @param  Counter           Number of ticks to wait.
+*/
 
 /**
   Introduces a fine-grained stall.

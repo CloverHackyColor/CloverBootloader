@@ -155,7 +155,7 @@ EFI_STATUS egSetMaxResolution()
     }
   }
   MsgLog("Found best mode %d: %dx%d\n", BestMode, Width, Height);
-  GraphicsOutput->SetMode(GraphicsOutput, Mode);
+  GraphicsOutput->SetMode(GraphicsOutput, BestMode);
   egScreenWidth = Width;
   egScreenHeight = Height;
   return Status;

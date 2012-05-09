@@ -451,24 +451,29 @@ VOID PatchTableType2()
 {
   // BaseBoard Information
 	// 
+	NewSize = 0x0F; //sizeof(SMBIOS_TABLE_TYPE2);
+	ZeroMem((VOID*)newSmbiosTable.Type2, MAX_TABLE_SIZE);	
+	
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_BASEBOARD_INFORMATION, 0);
 	if (SmbiosTable.Raw == NULL) {
-//		Print(L"SmbiosTable: Type 2 (BaseBoard Information) not found!\n");
-		return;
-	}
-	Size = SmbiosTable.Type2->Hdr.Length; //old size
-	TableSize = SmbiosTableLength(SmbiosTable); //including strings
-	NewSize = 0x0F; //sizeof(SMBIOS_TABLE_TYPE2);
-	ZeroMem((VOID*)newSmbiosTable.Type2, MAX_TABLE_SIZE);
-	
-	if (NewSize > Size) {
-		CopyMem((VOID*)newSmbiosTable.Type2, (VOID*)SmbiosTable.Type2, Size); //copy main table
-		CopyMem((CHAR8*)newSmbiosTable.Type2 + NewSize, (CHAR8*)SmbiosTable.Type2 + Size, TableSize - Size); //copy strings
-		newSmbiosTable.Type2->Hdr.Length = NewSize;
+		MsgLog("SmbiosTable: Type 2 (BaseBoard Information) not found, create new\n");
+		//Create new one
+		newSmbiosTable.Type2->Hdr.Type = 2;
+		newSmbiosTable.Type2->Hdr.Handle = 0x0200; //common rule
+		
 	} else {
-		CopyMem((VOID*)newSmbiosTable.Type2, (VOID*)SmbiosTable.Type2, TableSize); //copy full table
+		Size = SmbiosTable.Type2->Hdr.Length; //old size
+		TableSize = SmbiosTableLength(SmbiosTable); //including strings
+		
+		if (NewSize > Size) {
+			CopyMem((VOID*)newSmbiosTable.Type2, (VOID*)SmbiosTable.Type2, Size); //copy main table
+			CopyMem((CHAR8*)newSmbiosTable.Type2 + NewSize, (CHAR8*)SmbiosTable.Type2 + Size, TableSize - Size); //copy strings			
+		} else {
+			CopyMem((VOID*)newSmbiosTable.Type2, (VOID*)SmbiosTable.Type2, TableSize); //copy full table
+		}	
 	}
-	
+
+	newSmbiosTable.Type2->Hdr.Length = NewSize;
 	newSmbiosTable.Type2->ChassisHandle = mHandle3;	//from GetTableType3
 	newSmbiosTable.Type2->BoardType = BaseBoardTypeMotherBoard;
 	ZeroMem((VOID*)&newSmbiosTable.Type2->FeatureFlag, sizeof(BASE_BOARD_FEATURE_FLAGS));
@@ -491,6 +496,7 @@ VOID PatchTableType2()
 	if(iStrLen(gSettings.LocationInChassis, 64)>0){
 		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type2->LocationInChassis, gSettings.LocationInChassis);
 	}
+	//what about Asset Tag??? Not used in real mac. till now.
 	
 	//Slice - for the table2 one patch more needed
 	/* spec

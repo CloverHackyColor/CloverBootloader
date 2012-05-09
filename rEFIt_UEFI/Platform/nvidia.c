@@ -1430,7 +1430,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	//DBG("setup_nvidia_devprop\n");
 	DevPropDevice	*device = NULL;
 	CHAR8					*devicepath = NULL;
-	
+	BOOLEAN       load_vbios = gSettings.LoadVBios;
 	UINT8					*rom = NULL;
 	UINT8					nvCardType = 0;
 	UINT32				videoRam = 0;
@@ -1470,6 +1470,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
         (gGraphics[j].DeviceID == nvda_dev->device_id)) {
       model = gGraphics[j].Model; 
       n_ports = gGraphics[j].Ports;
+      load_vbios = gGraphics[j].LoadVBios;
       break;
     }
   }  
@@ -1483,7 +1484,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	const INT32 MAX_BIOS_VERSION_LENGTH = 32;
 	CHAR8* version_str = (CHAR8*)AllocateZeroPool(MAX_BIOS_VERSION_LENGTH);
 	
-	if (gSettings.LoadVBios){
+	if (load_vbios){
     UnicodeSPrint(FileName, 24, L"ROM\\10de_%04x.rom", nvda_dev->device_id);
     if (FileExists(OEMDir, FileName)){
       Status = egLoadFile(OEMDir, FileName, &buffer, &bufferLen);

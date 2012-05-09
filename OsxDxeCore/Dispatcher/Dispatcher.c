@@ -168,6 +168,7 @@ CoreFvToDevicePath (
                                 EFI_CORE_DRIVER_ENTRY so that the PE image can be
                                 read out of the FV at a later time.
   @param  DriverName            Name of driver to add to mDiscoveredList.
+  @param  Type                  Fv File Type of file to add to mDiscoveredList.
 
   @retval EFI_SUCCESS           If driver was added to the mDiscoveredList.
   @retval EFI_ALREADY_STARTED   The driver has already been started. Only one
@@ -179,7 +180,8 @@ EFI_STATUS
 CoreAddToDriverList (
   IN  EFI_FIRMWARE_VOLUME2_PROTOCOL   *Fv,
   IN  EFI_HANDLE                      FvHandle,
-  IN  EFI_GUID                        *DriverName
+  IN  EFI_GUID                        *DriverName,
+  IN  EFI_FV_FILETYPE                 Type
   );
 
 /**
@@ -477,7 +479,7 @@ CoreDispatcher (
       // Untrused to Scheduled it would have already been loaded so we may need to
       // skip the LoadImage
       //
-      if (DriverEntry->ImageHandle == NULL) {
+      if (DriverEntry->ImageHandle == NULL && !DriverEntry->IsFvImage) {
         DEBUG ((DEBUG_INFO, "Loading driver %g\n", &DriverEntry->FileName));
         Status = CoreLoadImage (
                         FALSE,
@@ -530,12 +532,19 @@ CoreDispatcher (
       CoreReleaseDispatcherLock ();
 
  
+      if (DriverEntry->IsFvImage) {
+        //
+        // Produce a firmware volume block protocol for FvImage so it gets dispatched from. 
+        //
+        Status = CoreProcessFvImageFile (DriverEntry->Fv, DriverEntry->FvHandle, &DriverEntry->FileName);
+      } else {
       REPORT_STATUS_CODE_WITH_EXTENDED_DATA (
         EFI_PROGRESS_CODE,
         (EFI_SOFTWARE_DXE_CORE | EFI_SW_PC_INIT_BEGIN),
         &DriverEntry->ImageHandle,
         sizeof (DriverEntry->ImageHandle)
         );
+        ASSERT (DriverEntry->ImageHandle != NULL);
 
       Status = CoreStartImage (DriverEntry->ImageHandle, NULL, NULL);
 
@@ -545,6 +554,7 @@ CoreDispatcher (
         &DriverEntry->ImageHandle,
         sizeof (DriverEntry->ImageHandle)
         );
+      }
 
       ReturnStatus = EFI_SUCCESS;
     }
@@ -699,25 +709,104 @@ FvHasBeenProcessed (
 
 /**
   Remember that Fv protocol on FvHandle has had it's drivers placed on the
-  mDiscoveredList. This fucntion adds entries on the mFvHandleList. Items are
-  never removed/freed from the mFvHandleList.
+  mDiscoveredList. This fucntion adds entries on the mFvHandleList if new 
+  entry is different from one in mFvHandleList by checking FvImage Guid.
+  Items are never removed/freed from the mFvHandleList.
 
   @param  FvHandle              The handle of a FV that has been processed
 
+  @return A point to new added FvHandle entry. If FvHandle with the same FvImage guid
+          has been added, NULL will return. 
+
 **/
-VOID
+KNOWN_HANDLE * 
 FvIsBeingProcesssed (
   IN  EFI_HANDLE    FvHandle
   )
 {
+  EFI_STATUS                            Status;
+  EFI_GUID                              FvNameGuid;
+  BOOLEAN                               FvNameGuidIsFound;
+  UINT32                                ExtHeaderOffset;
+  EFI_FIRMWARE_VOLUME_BLOCK_PROTOCOL    *Fvb;
+  EFI_FIRMWARE_VOLUME_HEADER            *FwVolHeader;
+  EFI_FV_BLOCK_MAP_ENTRY                *BlockMap;
+  UINTN                                 LbaOffset;
+  UINTN                                 Index;
+  EFI_LBA                               LbaIndex;
+  LIST_ENTRY                            *Link;
   KNOWN_HANDLE  *KnownHandle;
 
-  KnownHandle = AllocatePool (sizeof (KNOWN_HANDLE));
+  //
+  // Get the FirmwareVolumeBlock protocol on that handle
+  //
+  FvNameGuidIsFound = FALSE;
+  Status = CoreHandleProtocol (FvHandle, &gEfiFirmwareVolumeBlockProtocolGuid, (VOID **)&Fvb);
+  if (!EFI_ERROR (Status)) {
+    //
+    // Get the full FV header based on FVB protocol.
+    //
+    ASSERT (Fvb != NULL);
+    Status = GetFwVolHeader (Fvb, &FwVolHeader);
+    if (!EFI_ERROR (Status)) {
+      ASSERT (FwVolHeader != NULL);
+      if (VerifyFvHeaderChecksum (FwVolHeader) && FwVolHeader->ExtHeaderOffset != 0) {
+        ExtHeaderOffset = (UINT32) FwVolHeader->ExtHeaderOffset;
+        BlockMap  = FwVolHeader->BlockMap;
+        LbaIndex  = 0;
+        LbaOffset = 0;
+        //
+        // Find LbaIndex and LbaOffset for FV extension header based on BlockMap.
+        //
+        while ((BlockMap->NumBlocks != 0) || (BlockMap->Length != 0)) {
+          for (Index = 0; Index < BlockMap->NumBlocks && ExtHeaderOffset >= BlockMap->Length; Index ++) {
+            ExtHeaderOffset -= BlockMap->Length;
+            LbaIndex ++;
+          }
+          //
+          // Check whether FvExtHeader is crossing the multi block range.
+          //
+          if (Index < BlockMap->NumBlocks) {
+            LbaOffset = ExtHeaderOffset;
+            break;
+          }
+          BlockMap++;
+        }
+        //
+        // Read FvNameGuid from FV extension header.
+        //
+        Status = ReadFvbData (Fvb, &LbaIndex, &LbaOffset, sizeof (FvNameGuid), (UINT8 *) &FvNameGuid);
+        if (!EFI_ERROR (Status)) {
+          FvNameGuidIsFound = TRUE;
+        }
+      }
+      CoreFreePool (FwVolHeader);
+    }
+  }
+
+  if (FvNameGuidIsFound) {
+    //
+    // Check whether the FV image with the found FvNameGuid has been processed.
+    //
+    for (Link = mFvHandleList.ForwardLink; Link != &mFvHandleList; Link = Link->ForwardLink) {
+      KnownHandle = CR(Link, KNOWN_HANDLE, Link, KNOWN_HANDLE_SIGNATURE);
+      if (CompareGuid (&FvNameGuid, &KnownHandle->FvNameGuid)) {
+        DEBUG ((EFI_D_ERROR, "FvImage on FvHandle %p and %p has the same FvNameGuid %g.\n", FvHandle, KnownHandle->Handle, FvNameGuid));
+        return NULL;
+      }
+    }
+  }
+
+  KnownHandle = AllocateZeroPool (sizeof (KNOWN_HANDLE));
   ASSERT (KnownHandle != NULL);
 
   KnownHandle->Signature = KNOWN_HANDLE_SIGNATURE;
   KnownHandle->Handle = FvHandle;
+  if (FvNameGuidIsFound) {
+    CopyGuid (&KnownHandle->FvNameGuid, &FvNameGuid);
+  }
   InsertTailList (&mFvHandleList, &KnownHandle->Link);
+  return KnownHandle;
 }
 
 
@@ -784,6 +873,7 @@ CoreFvToDevicePath (
                                 EFI_CORE_DRIVER_ENTRY so that the PE image can be
                                 read out of the FV at a later time.
   @param  DriverName            Name of driver to add to mDiscoveredList.
+  @param  Type                  Fv File Type of file to add to mDiscoveredList.
 
   @retval EFI_SUCCESS           If driver was added to the mDiscoveredList.
   @retval EFI_ALREADY_STARTED   The driver has already been started. Only one
@@ -795,7 +885,8 @@ EFI_STATUS
 CoreAddToDriverList (
   IN  EFI_FIRMWARE_VOLUME2_PROTOCOL   *Fv,
   IN  EFI_HANDLE                      FvHandle,
-  IN  EFI_GUID                        *DriverName
+  IN  EFI_GUID                        *DriverName,
+  IN  EFI_FV_FILETYPE                 Type
   )
 {
   EFI_CORE_DRIVER_ENTRY               *DriverEntry;
@@ -807,6 +898,9 @@ CoreAddToDriverList (
   //
   DriverEntry = AllocateZeroPool (sizeof (EFI_CORE_DRIVER_ENTRY));
   ASSERT (DriverEntry != NULL);
+  if (Type == EFI_FV_FILETYPE_FIRMWARE_VOLUME_IMAGE) {
+    DriverEntry->IsFvImage = TRUE;
+  }
 
   DriverEntry->Signature        = EFI_CORE_DRIVER_ENTRY_SIGNATURE;
   CopyGuid (&DriverEntry->FileName, DriverName);
@@ -830,7 +924,7 @@ CoreAddToDriverList (
   Check if a FV Image type file (EFI_FV_FILETYPE_FIRMWARE_VOLUME_IMAGE) is
   described by a EFI_HOB_FIRMWARE_VOLUME2 Hob.
 
-  @param  FvHandle              The handle which FVB protocol installed on.
+  @param  FvNameGuid            The FV image guid specified.
   @param  DriverName            The driver guid specified.
 
   @retval TRUE                  This file is found in a EFI_HOB_FIRMWARE_VOLUME2
@@ -840,7 +934,7 @@ CoreAddToDriverList (
 **/
 BOOLEAN
 FvFoundInHobFv2 (
-  IN  EFI_HANDLE                      FvHandle,
+  IN  CONST EFI_GUID                  *FvNameGuid,
   IN  CONST EFI_GUID                  *DriverName
   )
 {
@@ -849,7 +943,11 @@ FvFoundInHobFv2 (
   HobFv2.Raw = GetHobList ();
 
   while ((HobFv2.Raw = GetNextHob (EFI_HOB_TYPE_FV2, HobFv2.Raw)) != NULL) {
-    if (CompareGuid (DriverName, &HobFv2.FirmwareVolume2->FileName)) {
+    //
+    // Compare parent FvNameGuid and FileGuid both.
+    //
+    if (CompareGuid (DriverName, &HobFv2.FirmwareVolume2->FileName) &&
+        CompareGuid (FvNameGuid, &HobFv2.FirmwareVolume2->FvName)) {
       return TRUE;
     }
     HobFv2.Raw = GET_NEXT_HOB (HobFv2);
@@ -1006,7 +1104,8 @@ CoreFwVolEventProtocolNotify (
   LIST_ENTRY                    *Link;
   UINT32                        AuthenticationStatus;
   UINTN                         SizeOfBuffer;
-
+  VOID                          *DepexBuffer;
+  KNOWN_HANDLE                  *KnownHandle;
 
   while (TRUE) {
     BufferSize = sizeof (EFI_HANDLE);
@@ -1034,7 +1133,14 @@ CoreFwVolEventProtocolNotify (
     //
     // Since we are about to process this Fv mark it as processed.
     //
-    FvIsBeingProcesssed (FvHandle);
+    KnownHandle = FvIsBeingProcesssed (FvHandle);
+    if (KnownHandle == NULL) {
+      //
+      // The FV with the same FV name guid has already been processed. 
+      // So lets skip it!
+      //
+      continue;
+    }
 
     Status = CoreHandleProtocol (FvHandle, &gEfiFirmwareVolume2ProtocolGuid, (VOID **)&Fv);
     if (EFI_ERROR (Status) || Fv == NULL) {
@@ -1117,20 +1223,86 @@ CoreFwVolEventProtocolNotify (
             // Check if this EFI_FV_FILETYPE_FIRMWARE_VOLUME_IMAGE file has already
             // been extracted.
             //
-            if (FvFoundInHobFv2 (FvHandle, &NameGuid)) {
+            if (FvFoundInHobFv2 (&KnownHandle->FvNameGuid, &NameGuid)) {
               continue;
             }
             //
-            // Found a firmware volume image. Produce a firmware volume block
-            // protocol for it so it gets dispatched from. This is usually a
-            // capsule.
+            // Check if this EFI_FV_FILETYPE_FIRMWARE_VOLUME_IMAGE file has PEI depex section.
+            //
+            DepexBuffer  = NULL;
+            SizeOfBuffer = 0;
+            Status = Fv->ReadSection (
+                           Fv,
+                           &NameGuid,
+                           EFI_SECTION_PEI_DEPEX,
+                           0,
+                           &DepexBuffer,
+                           &SizeOfBuffer,
+                           &AuthenticationStatus
+                           );
+            if (!EFI_ERROR (Status)) {
+              //
+              // If PEI depex section is found, this FV image will be ignored in DXE phase.
+              // Now, DxeCore doesn't support FV image with more one type DEPEX section.
+              //
+              FreePool (DepexBuffer);
+              continue;
+            }
+
+            //
+            // Check if this EFI_FV_FILETYPE_FIRMWARE_VOLUME_IMAGE file has SMM depex section.
+            //
+            DepexBuffer  = NULL;
+            SizeOfBuffer = 0;
+            Status = Fv->ReadSection (
+                           Fv,
+                           &NameGuid,
+                           EFI_SECTION_SMM_DEPEX,
+                           0,
+                           &DepexBuffer,
+                           &SizeOfBuffer,
+                           &AuthenticationStatus
+                           );
+            if (!EFI_ERROR (Status)) {
+              //
+              // If SMM depex section is found, this FV image will be ignored in DXE phase.
+              // Now, DxeCore doesn't support FV image with more one type DEPEX section.
+              //
+              FreePool (DepexBuffer);
+              continue;
+            }
+
+            //
+            // Check if this EFI_FV_FILETYPE_FIRMWARE_VOLUME_IMAGE file has DXE depex section.
+            //
+            DepexBuffer  = NULL;
+            SizeOfBuffer = 0;
+            Status = Fv->ReadSection (
+                           Fv,
+                           &NameGuid,
+                           EFI_SECTION_DXE_DEPEX,
+                           0,
+                           &DepexBuffer,
+                           &SizeOfBuffer,
+                           &AuthenticationStatus
+                           );
+            if (EFI_ERROR (Status)) {
+              //
+              // If no depex section, produce a firmware volume block protocol for it so it gets dispatched from. 
             //
             CoreProcessFvImageFile (Fv, FvHandle, &NameGuid);
           } else {
             //
+              // If depex section is found, this FV image will be dispatched until its depex is evaluated to TRUE.
+              //
+              FreePool (DepexBuffer);
+              CoreAddToDriverList (Fv, FvHandle, &NameGuid, Type);
+            }
+          } else {
+            //
             // Transition driver from Undiscovered to Discovered state
             //
-            CoreAddToDriverList (Fv, FvHandle, &NameGuid);
+            CoreAddToDriverList (Fv, FvHandle, &NameGuid, Type);
           }
         }
       } while (!EFI_ERROR (GetNextFileStatus));

@@ -414,9 +414,9 @@ AtiDevProp ati_devprop_list[] = {
   //	{FLAGTRUE,	FALSE,	"@0,ATY,EFIDisplay",		NULL,					STRVAL("TMDSA")					},
 	
   //{FLAGTRUE,	TRUE,	"@0,AAPL,vram-memory",		get_vrammemory_val,		NULVAL							},
-//  {FLAGTRUE,	TRUE,	"@0,compatible",		get_name_val,			NULVAL							},
-//  {FLAGTRUE,	TRUE,	"@0,connector-type",		get_conntype_val,		NULVAL							},
-//  {FLAGTRUE,	TRUE,	"@0,device_type",			NULL,					STRVAL("display")				},
+  {FLAGTRUE,	TRUE,	"@0,compatible",		get_name_val,			NULVAL							},
+  {FLAGTRUE,	TRUE,	"@0,connector-type",		get_conntype_val,		NULVAL							},
+  {FLAGTRUE,	TRUE,	"@0,device_type",			NULL,					STRVAL("display")				},
   //	{FLAGTRUE,	FALSE,	"@0,display-connect-flags", NULL,					DWRVAL((UINT32)0)				},
 //  {FLAGTRUE,	TRUE,	"@0,display-type",			NULL,					STRVAL("NONE")					},
 	{FLAGTRUE,	TRUE,	"@0,name",					get_name_val,			NULVAL							},
@@ -424,6 +424,7 @@ AtiDevProp ati_devprop_list[] = {
 	
   {FLAGTRUE,	FALSE,	"AAPL,aux-power-connected", NULL,					DWRVAL((UINT32)1)				},
   {FLAGTRUE,	FALSE,	"AAPL,backlight-control",	NULL,					DWRVAL((UINT32)0)				},
+	{FLAGTRUE,	FALSE,	"AAPL,overwrite_binimage",	get_binimage_owr,		NULVAL							},
 	{FLAGTRUE,	FALSE,	"ATY,bin_image",	get_binimage_val,		NULVAL							},
 	{FLAGTRUE,	FALSE,	"ATY,Copyright",	NULL,	STRVAL("Copyright AMD Inc. All Rights Reserved. 2005-2011") },
 	{FLAGTRUE,	FALSE,	"ATY,Card#",			get_romrevision_val,	NULVAL							},
@@ -497,14 +498,24 @@ BOOLEAN get_model_val(value_t *val)
 	return TRUE;
 }
 
+static CONST UINT32 ct[] = {0x200, 0x400, 0x800, 0x4};
+
 BOOLEAN get_conntype_val(value_t *val)
 {
 //Connector types:
-//0x4 : DisplayPort
+//0x200: VGA
 //0x400: DL DVI-I
 //0x800: HDMI
-
-	return FALSE;
+//0x4 : DisplayPort
+  static UINT32 cti = 0;
+  
+  val->type = kCst;
+	val->size = 4;
+	val->data = (UINT8 *)&ct[cti];
+  
+  cti++;
+  
+	return TRUE;
 }
 
 BOOLEAN get_vrammemsize_val(value_t *val)
@@ -535,6 +546,24 @@ BOOLEAN get_binimage_val(value_t *val)
 	
 	return TRUE;
 }
+
+BOOLEAN get_binimage_owr(value_t *val)
+{
+	static UINT32 v = 0;
+  
+	if (gSettings.LoadVBios)
+		return FALSE;
+		
+	v = 1;
+	val->type = kCst;
+	val->size = 4;
+	val->data = (UINT8 *)&v;
+	
+	
+	return TRUE;
+}
+
+
 
 BOOLEAN get_romrevision_val(value_t *val)
 {
@@ -977,7 +1006,7 @@ BOOLEAN devprop_add_pci_config_space(VOID)
 
 static BOOLEAN init_card(pci_dt_t *pci_dev)
 {
-//	BOOLEAN	add_vbios = TRUE;
+	BOOLEAN	add_vbios = gSettings.LoadVBios;
 	CHAR8	*name;
 	CHAR8	*name_parent;
   CHAR8 *CfgName;
@@ -1007,6 +1036,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
         (gGraphics[j].DeviceID == pci_dev->device_id)) {
       model = gGraphics[j].Model; 
       n_ports = gGraphics[j].Ports;
+      add_vbios = gGraphics[j].LoadVBios;
       break;
     }
   }  
@@ -1025,6 +1055,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
       }
     }
     if (!card->info->cfg_name) {
+      DBG("...compatible config is not found\n");
       return FALSE;
     }
 	}

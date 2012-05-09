@@ -659,9 +659,9 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   CopyMem(Volume->DevicePath, DiskDevicePath, DevicePathSize);
   
 //    Volume->DevicePath = DuplicateDevicePath(DevicePathFromHandle(Volume->DeviceHandle));
-#if 0 //REFIT_DEBUG > 0
+#if REFIT_DEBUG > 0
     if (Volume->DevicePath != NULL) {
-        Print(L"* %s\n", DevicePathToStr(Volume->DevicePath));
+        DBG("* %s\n", DevicePathToStr(Volume->DevicePath));
 #if REFIT_DEBUG >= 2
  //       DumpHex(1, 0, GetDevicePathSize(Volume->DevicePath), Volume->DevicePath);
 #endif
@@ -681,9 +681,11 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
       return Status;
     } else {
       if (Volume->BlockIO->Media->BlockSize == 2048){
+        DBG("found optical drive\n");
         Volume->DiskKind = DISK_KIND_OPTICAL;
         Volume->BlockIOOffset = 0x10; // offset already applyed for FS but not for blockio
       } else {
+//        DBG("found HD drive\n");
         Volume->BlockIOOffset = 0;
       }
     }
@@ -854,7 +856,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   if (Volume->RootDir) {
     RootInfo = EfiLibFileInfo (Volume->RootDir);
     if (RootInfo) {
-      MsgLog("  Volume name from RootFile\n");
+//      MsgLog("  Volume name from RootFile\n"); //usually
       Volume->VolName = EfiStrDuplicate(RootInfo->FileName);
       FreePool(RootInfo);
     }
@@ -869,7 +871,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     if (!Volume->VolName) {
       VolumeInfo = EfiLibFileSystemVolumeLabelInfo(Volume->RootDir);
       if (VolumeInfo) {
-        MsgLog("  Volume name from VolumeLabel\n");
+//        MsgLog("  Volume name from VolumeLabel\n");
         Volume->VolName = EfiStrDuplicate(VolumeInfo->VolumeLabel);
         FreePool(VolumeInfo); 
       }  
@@ -978,27 +980,26 @@ VOID ScanVolumes(VOID)
     UINT8                   *SectorBuffer1, *SectorBuffer2;
     UINTN                   SectorSum, i;
 //  EFI_INPUT_KEY Key;
-    
-//    DBG("Scanning volumes...\n");
+        DBG("Scanning volumes...\n");
     
     // get all BlockIo handles
     Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiBlockIoProtocolGuid, NULL, &HandleCount, &Handles);
     if (Status == EFI_NOT_FOUND)
         return;  
-    
+  DBG("found %d volumes with blockIO\n", HandleCount);
     // first pass: collect information about all handles
     for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
         
       Volume = AllocateZeroPool(sizeof(REFIT_VOLUME));
       Volume->DeviceHandle = Handles[HandleIndex];
       if (Volume->DeviceHandle == SelfDeviceHandle){
-//        DBG("this is SelfVolume at index %d\n", HandleIndex);
+        DBG("this is SelfVolume at index %d\n", HandleIndex);
         SelfVolume = Volume;  
       }
       
       Status = ScanVolume(Volume);
       if (!EFI_ERROR(Status)) {
-//        DBG("Found Volume %s at index=%d\n", Volume->VolName, HandleIndex);
+        DBG("Found Volume %s at index=%d\n", Volume->VolName, HandleIndex);
         AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
         
       } else {
@@ -1007,7 +1008,7 @@ VOID ScanVolumes(VOID)
       }
     }
     FreePool(Handles);
-  DBG("Found %d volumes\n", VolumesCount);
+//  DBG("Found %d volumes\n", VolumesCount);
   if (SelfVolume == NULL){
     DBG("WARNING: SelfVolume not found"); //Slice - and what?
     SelfVolume = AllocateZeroPool(sizeof(REFIT_VOLUME));
