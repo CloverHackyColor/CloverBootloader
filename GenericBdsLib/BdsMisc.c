@@ -740,9 +740,9 @@ BdsLibVariableToOption (
   }
 
   FreePool (Variable);
+  FreePool (Option->LoadOptions);
   FreePool (Option->Description);
   FreePool (Option->DevicePath);
-  FreePool (Option->LoadOptions);
   FreePool (Option);
   return NULL;
 }

@@ -210,10 +210,11 @@ EFI_STATUS GetBiosDriveCRC32(UINT8 DriveNum,
 {
 	EFI_STATUS					Status;
 	
-	// read first 1 sectors
-	Status = BiosReadSectorsFromDrive(DriveNum, 0, 1, Dap, Buffer);
+	// read first 2 sectors
+	Status = BiosReadSectorsFromDrive(DriveNum, 0, 2, Dap, Buffer);
 	if (!EFI_ERROR(Status)) {
-		gBS->CalculateCrc32(Buffer, 1 * 512, DriveCRC32);
+    *DriveCRC32 = 0;
+		gBS->CalculateCrc32(Buffer, 2 * 512, DriveCRC32);
 		DBG("Bios drive CRC32 = %X\n", *DriveCRC32);
 	}
 	return Status;
@@ -614,9 +615,10 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
     for (i = 0; i < VolumesCount; i++) {
         if (Volumes[i] != volume && Volumes[i]->BlockIO == volume->WholeDiskBlockIO)
         {
+        	MBRCRC32 = 0;
             DBG("Found parent volume: %s\n", DevicePathToStr(Volumes[i]->DevicePath));
           Status = volume->WholeDiskBlockIO->ReadBlocks(volume->WholeDiskBlockIO, 
-                              volume->WholeDiskBlockIO->Media->MediaId, 0, 512, 
+                              volume->WholeDiskBlockIO->Media->MediaId, 0, 2*512, 
                               mBootSector);
           DBG("MBR:\n");
           for (i2=0; i<4; i++) {
@@ -626,7 +628,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
             }
             DBG("\n");
           }
-          gBS->CalculateCrc32(mBootSector, 1 * 512, &MBRCRC32);
+          gBS->CalculateCrc32(mBootSector, 2 * 512, &MBRCRC32);
           DBG("MBR drive CRC32 = %X\n", MBRCRC32);
             BiosDriveNum = GetBiosDriveNumForVolume(Volumes[i]);
           break;
@@ -649,7 +651,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
   }
     
   NewMask = 0x0;
-//  Status = gLegacy8259->SetMask(gLegacy8259, &NewMask, NULL, NULL, NULL);
+  Status = gLegacy8259->SetMask(gLegacy8259, &NewMask, NULL, NULL, NULL);
 	//Status = mCpu->EnableInterrupt(mCpu);
   //Now I want to start from VideoTest
   ptr = (UINT8*)0x7F00;
