@@ -33,8 +33,8 @@
 [Sources]
   EfiLib/GenericBdsLib.h
   EfiLib/BmLib.c
-  EfiLib/DevicePath.c
-  EfiLib/BdsConnect.c #included into GenericBdsLib
+ # EfiLib/DevicePath.c
+ # EfiLib/BdsConnect.c #included into GenericBdsLib
   refit/main.c
   refit/config.c
   refit/icns.c
@@ -125,10 +125,10 @@
   HobLib
   MemoryAllocationLib
   IoLib
-#  HiiLib
+  HiiLib
   EfiFileLib
   PeCoffLib
-#  GenericBdsLib
+  GenericBdsLib
 
 [Guids]
   gEfiAcpiTableGuid

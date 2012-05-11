@@ -227,14 +227,14 @@ EFI_STATUS GetBiosDriveCRC32(UINT8 DriveNum,
 UINT8 GetBiosDriveNumForVolume(REFIT_VOLUME *Volume)
 {
 	EFI_STATUS					Status;
-	UINT16						DriveNum;
+	UINT16						DriveNum, BestNum;
 	UINT32						DriveCRC32;
 	UINT8						*Buffer;
 	BIOS_DISK_ADDRESS_PACKET	*Dap;
 	UINTN						LegacyRegionPages;
 	EFI_PHYSICAL_ADDRESS		LegacyRegion;
 	
-	DBG("Expected volume CRC32 = %X\n", Volume->DriveCRC32);
+//	DBG("Expected volume CRC32 = %X\n", Volume->DriveCRC32);
 	LegacyRegion = 0x0C0000;
 	LegacyRegionPages = EFI_SIZE_TO_PAGES(sizeof(BIOS_DISK_ADDRESS_PACKET) + 2 * 512)+1 /* dap + 2 sectors */;
 	Status = gBS->AllocatePages(AllocateMaxAddress,
@@ -250,22 +250,24 @@ UINT8 GetBiosDriveNumForVolume(REFIT_VOLUME *Volume)
 	Buffer = (UINT8 *)(UINTN)(LegacyRegion + 0x200);
 //Slice - some CD has BIOS driveNum = 0	
 	// scan drives from 0x80
-	DriveNum = 0x80;
-	for (DriveNum = 0x80; DriveNum < 0x90; DriveNum++) {
+  BestNum = 0;
+	for (DriveNum = 0x80; DriveNum < 0x88; DriveNum++) {
+    DriveCRC32 = 0;
 		Status = GetBiosDriveCRC32(DriveNum, &DriveCRC32, Dap, Buffer);
 		if (EFI_ERROR(Status)) {
 			// error or no more disks
-			DriveNum = 0;
-			break;
+			//DriveNum = 0;
+			continue;
 		}
-    DBG("Calculated CRC=%X\n", DriveCRC32);
+    BestNum = DriveNum;
+    DBG("Calculated CRC=%X at drive 0x%x\n", DriveCRC32, BestNum);
 		if (Volume->DriveCRC32 == DriveCRC32) {
 			break;
 		}
 	}
 	gBS->FreePages(LegacyRegion, LegacyRegionPages);
-	DBG("Returning Bios drive %X\n", DriveNum);
-	return DriveNum;
+	DBG("Returning Bios drive %X\n", BestNum);
+	return BestNum;
 }
 
 EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
@@ -597,8 +599,8 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
   DBG("Thunk allocated\n");
 	InitializeBiosIntCaller(); //mThunkContext);
 	//InitializeInterruptRedirection(); //gLegacy8259);
-    
-	Status = pDisk->ReadBlocks(pDisk, pDisk->Media->MediaId, 0, 512, pBootSector);
+  mBootSector = AllocateAlignedPages(1, 16);  
+	Status = pDisk->ReadBlocks(pDisk, pDisk->Media->MediaId, 0, 2*512, mBootSector);
   DBG("PBR:\n");
     for (i=0; i<4; i++) {
         DBG("%04x: ", i*16);
@@ -607,8 +609,8 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
         }
         DBG("\n");
     }
-  
-  mBootSector = AllocateAlignedPages(1, 16);
+  CopyMem(pBootSector, mBootSector, 1024);
+//  mBootSector = AllocateAlignedPages(1, 16);
     // find parent disk volume and it's bios drive num
     DBG("Looking for parent disk of %s\n", DevicePathToStr(volume->DevicePath));
     BiosDriveNum = 0;
@@ -621,7 +623,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
                               volume->WholeDiskBlockIO->Media->MediaId, 0, 2*512, 
                               mBootSector);
           DBG("MBR:\n");
-          for (i2=0; i<4; i++) {
+          for (i2=0; i<4; i2++) {
             DBG("%04x: ", i2*16);
             for (j=0; j<16; j++) {
               DBG("%02x ", mBootSector[i2*16+j]);
@@ -637,7 +639,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
   gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)mBootSector, 1);
     if (BiosDriveNum == 0) {
         // not found
-      Print(L"HDBoot: BIOS drive number not found, using default 0x80\n");
+      DBG("HDBoot: BIOS drive number not found, using default 0x80\n");
       BiosDriveNum = 0x80;
 //        return EFI_NOT_FOUND;
     }
@@ -661,7 +663,8 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
 	CopyMem(pMBR, &tMBR, 16);
 	pMBR->StartLBA = LbaOffset;
 	pMBR->Size = LbaSize;
-  DBG("Ready to start from LBA=%x\n", LbaOffset);
+  Print(L"Ready to start from LBA=%x\n", LbaOffset); //log is closed
+//  Status = gLegacy8259->SetMask(gLegacy8259, &OldMask, NULL, NULL, NULL);
 //  return EFI_NOT_FOUND;
   
 	Regs.X.DX = BiosDriveNum;

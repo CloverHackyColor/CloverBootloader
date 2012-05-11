@@ -291,14 +291,14 @@ PartitionInstallGptChildHandles (
 
   }
 
-  DEBUG ((EFI_D_INFO, " Valid primary and Valid backup partition table\n"));
+//  DEBUG ((EFI_D_INFO, " Valid primary and Valid backup partition table\n"));
 
   //
   // Read the EFI Partition Entries
   //
   PartEntry = AllocatePool (PrimaryHeader->NumberOfPartitionEntries * PrimaryHeader->SizeOfPartitionEntry);
   if (PartEntry == NULL) {
-    DEBUG ((EFI_D_ERROR, "Allocate pool error\n"));
+//    DEBUG ((EFI_D_ERROR, "Allocate pool error\n"));
     goto Done;
   }
 
@@ -311,17 +311,17 @@ PartitionInstallGptChildHandles (
                      );
   if (EFI_ERROR (Status)) {
     GptValidStatus = Status;
-    DEBUG ((EFI_D_ERROR, " Partition Entry ReadDisk error\n"));
+//    DEBUG ((EFI_D_ERROR, " Partition Entry ReadDisk error\n"));
     goto Done;
   }
 
-  DEBUG ((EFI_D_INFO, " Partition entries read block success\n"));
+//  DEBUG ((EFI_D_INFO, " Partition entries read block success\n"));
 
-  DEBUG ((EFI_D_INFO, " Number of partition entries: %d\n", PrimaryHeader->NumberOfPartitionEntries));
+//  DEBUG ((EFI_D_INFO, " Number of partition entries: %d\n", PrimaryHeader->NumberOfPartitionEntries));
 
   PEntryStatus = AllocateZeroPool (PrimaryHeader->NumberOfPartitionEntries * sizeof (EFI_PARTITION_ENTRY_STATUS));
   if (PEntryStatus == NULL) {
-    DEBUG ((EFI_D_ERROR, "Allocate pool error\n"));
+//    DEBUG ((EFI_D_ERROR, "Allocate pool error\n"));
     goto Done;
   }
 
@@ -385,7 +385,7 @@ PartitionInstallGptChildHandles (
               );
   }
 
-  DEBUG ((EFI_D_INFO, "Prepare to Free Pool\n"));
+//  DEBUG ((EFI_D_INFO, "Prepare to Free Pool\n"));
 
 Done:
   if (ProtectiveMbr != NULL) {

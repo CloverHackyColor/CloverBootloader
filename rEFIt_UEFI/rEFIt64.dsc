@@ -51,7 +51,7 @@
   
   PeCoffLib|Clover/VBoxPeCoffLib/VBoxPeCoffLib.inf
   PeCoffGetEntryPointLib|MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
-#  GenericBdsLib|Clover/GenericBdsLib/GenericBdsLib.inf
+  GenericBdsLib|Clover/GenericBdsLib/GenericBdsLib.inf
   TimerLib|Clover/DuetTimerLib/DuetTimerLib.inf
   UefiUsbLib|MdePkg/Library/UefiUsbLib/UefiUsbLib.inf
   UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf

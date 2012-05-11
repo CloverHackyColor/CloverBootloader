@@ -259,7 +259,7 @@ static EG_IMAGE * egDecodeAny(IN UINT8 *FileData, IN UINTN FileDataLength,
   else if (StriCmp(Format, L"ICNS") == 0)
     DecodeFunc = egDecodeICNS;
   else if (StriCmp(Format, L"PNG") == 0){
-    DBG("decode PNG\n");
+//    DBG("decode PNG\n");
     DecodeFunc = egDecodePNG;
   }
 //  else if (StriCmp(Format, L"TGA") == 0)
@@ -267,7 +267,7 @@ static EG_IMAGE * egDecodeAny(IN UINT8 *FileData, IN UINTN FileDataLength,
   
   if (DecodeFunc == NULL)
     return NULL;
-  DBG("will decode data=%x len=%d icns=%d alpha=%c\n", FileData, FileDataLength, IconSize, WantAlpha?'Y':'N'); 
+//  DBG("will decode data=%x len=%d icns=%d alpha=%c\n", FileData, FileDataLength, IconSize, WantAlpha?'Y':'N'); 
   // decode it
   NewImage = DecodeFunc(FileData, FileDataLength, IconSize, WantAlpha);
   
@@ -286,15 +286,15 @@ EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN BOOLE
     
     // load file
     Status = egLoadFile(BaseDir, FileName, &FileData, &FileDataLength);
-  DBG("File=%s loaded with status=%r\n", FileName, Status);
+//  DBG("File=%s loaded with status=%r\n", FileName, Status);
     if (EFI_ERROR(Status))
         return NULL;
     
     // decode it
     NewImage = egDecodeAny(FileData, FileDataLength, egFindExtension(FileName), 128, WantAlpha);
-  DBG("decoded\n");
+//  DBG("decoded\n");
     FreePool(FileData);
-   DBG("FreePool OK\n"); 
+//   DBG("FreePool OK\n"); 
     return NewImage;
 }
 

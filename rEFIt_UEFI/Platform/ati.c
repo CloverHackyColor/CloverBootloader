@@ -314,10 +314,10 @@ radeon_card_info_t radeon_cards[] = {
   //Hoolock, Langur, Orangutan, Zonalis  
 	{ 0x688D,	0x00000000, CHIP_FAMILY_CYPRESS,	"AMD FireStream 9350",			  	kZonalis	},
 	
-	{ 0x6898,	0x00000000, CHIP_FAMILY_CYPRESS,	"ATI Radeon HD 5870 Series",		kZonalis	},
-	{ 0x6899,	0x00000000, CHIP_FAMILY_CYPRESS,	"ATI Radeon HD 5850 Series",		kZonalis	},
+	{ 0x6898,	0x00000000, CHIP_FAMILY_CYPRESS,	"ATI Radeon HD 5870 Series",		kUakari	},
+	{ 0x6899,	0x00000000, CHIP_FAMILY_CYPRESS,	"ATI Radeon HD 5850 Series",		kUakari	},
 	{ 0x689C,	0x00000000, CHIP_FAMILY_HEMLOCK,	"ATI Radeon HD 5900 Series",		kUakari		},
-	{ 0x689E,	0x00000000, CHIP_FAMILY_CYPRESS,	"ATI Radeon HD 5800 Series",		kZonalis	},
+	{ 0x689E,	0x00000000, CHIP_FAMILY_CYPRESS,	"ATI Radeon HD 5800 Series",		kUakari	},
   
   { 0x68A0,	0x00000000, CHIP_FAMILY_JUNIPER,	"ATI Radeon HD 5770 Series",		kHoolock	},
   { 0x68A1,	0x00000000, CHIP_FAMILY_JUNIPER,	"ATI Radeon HD 5770 Series",		kHoolock	},
@@ -514,6 +514,7 @@ BOOLEAN get_conntype_val(value_t *val)
 	val->data = (UINT8 *)&ct[cti];
   
   cti++;
+  if(cti > 3) cti = 0;
   
 	return TRUE;
 }
@@ -551,7 +552,7 @@ BOOLEAN get_binimage_owr(value_t *val)
 {
 	static UINT32 v = 0;
   
-	if (gSettings.LoadVBios)
+	if (!gSettings.LoadVBios)
 		return FALSE;
 		
 	v = 1;
@@ -763,8 +764,8 @@ BOOLEAN load_vbios_file(UINT16 vendor_id, UINT16 device_id)
   }
 
 	if (EFI_ERROR(Status)){
-    DBG("ATI ROM not found \n");
-    card->rom_size = 0;
+ 	    DBG("ATI ROM not found \n");
+	    card->rom_size = 0;
 		card->rom = 0;
 		return FALSE;
   }
@@ -1007,14 +1008,14 @@ BOOLEAN devprop_add_pci_config_space(VOID)
 static BOOLEAN init_card(pci_dt_t *pci_dev)
 {
 	BOOLEAN	add_vbios = gSettings.LoadVBios;
-	CHAR8	*name;
-	CHAR8	*name_parent;
-  CHAR8 *CfgName;
-  CHAR8 *model;
-  INTN NameLen = 0;
+	CHAR8		*name;
+	CHAR8		*name_parent;
+    CHAR8 		*CfgName;
+    CHAR8 		*model;
+    INTN  		NameLen = 0;
 	INTN		i, j;
 	INTN		n_ports = 0;
-  UINTN ExpansionRom = 0;
+    UINTN 		ExpansionRom = 0;
 	
 	card = AllocateZeroPool(sizeof(card_t));
 	if (!card)
@@ -1045,19 +1046,19 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 	{
 		DBG("Unsupported ATI card! Device ID: [%04x:%04x] Subsystem ID: [%08x] \n", 
 				pci_dev->vendor_id, pci_dev->device_id, pci_dev->subsys_id);
-    DBG("search for brothers family\n");
-    for (i = 0; radeon_cards[i].device_id ; i++)
-    {
-      if ((radeon_cards[i].device_id & ~0xf) == (pci_dev->device_id & ~0xf))
-      {
-        card->info = &radeon_cards[i];
-        break;
-      }
-    }
-    if (!card->info->cfg_name) {
-      DBG("...compatible config is not found\n");
-      return FALSE;
-    }
+   		 DBG("search for brothers family\n");
+    	for (i = 0; radeon_cards[i].device_id ; i++)
+    	{
+      		if ((radeon_cards[i].device_id & ~0xf) == (pci_dev->device_id & ~0xf))
+      		{
+        		card->info = &radeon_cards[i];
+        		break;
+      		}
+    	}
+    	if (!card->info->cfg_name) {
+      		DBG("...compatible config is not found\n");
+      		return FALSE;
+    	}
 	}
 	
 	card->fb		= (UINT8 *)(UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_0) & ~0x0f);

@@ -450,8 +450,9 @@ GetDevicePathSizeEx (
   return Size;
 }
 
-/**
-  Returns the length of a Null-terminated Unicode string. If the length is 
+
+ //Slice - this is wrong description
+/**  Returns the length of a Null-terminated Unicode string. If the length is 
   bigger than MaxStringLen, return length 0 to indicate that this is an 
   invalidate string.
 
@@ -466,7 +467,24 @@ GetDevicePathSizeEx (
 
   @retval 0                An invalid string.
   @retval Others           The length of String.
+**/
+//new one
+/**  Returns the size of a Null-terminated Unicode string in bytes. If the length is 
+ bigger than MaxStringLen, return size 0 to indicate that this is an 
+ invalidate string.
 
+ This function returns the (number of Unicode characters+1)*2 in the Null-terminated
+ Unicode string specified by String. 
+ 
+ If String is NULL, then ASSERT().
+ If String is not aligned on a 16-bit boundary, then ASSERT().
+ 
+ @param  String           A pointer to a Null-terminated Unicode string.
+ @param  MaxStringSize     Max string size of the string.
+ 
+ @retval 0                An invalid string.
+ @retval Others           The size of String.
+ For example StrSizeEx(L"A", 100) == 4; -- two bytes for Unicode L'A', and two bytes for L'\0'
 **/
 UINTN
 StrSizeEx (

@@ -58,7 +58,7 @@ png_alloc_node_t *png_alloc_find_node(void *addr, UINT32 size)
 	for (node = png_alloc_head; node; node = node->next)
 		if (node->addr == addr){
       if (size && (node->size != size)) {
-        Print(L"Error: Same address %p, size: %x, requested size: %x\n", node->addr, node->size, size);
+ //       Print(L"Error: Same address %p, size: %x, requested size: %x\n", node->addr, node->size, size);
       }
 			break;
     }
@@ -115,12 +115,12 @@ void *png_alloc_realloc(void *addr, UINT32 size)
 		old_node = png_alloc_find_node(addr, size);
     if (old_node) {
       png_alloc_remove_node(old_node);
-      FreePool(addr);
+ //     FreePool(addr);
     }
     // and just for test:
-    else {
-      MsgLog("png_alloc not find node\n");
-    }
+//    else {
+//      MsgLog("png_alloc not find node\n");
+//    }
 //		png_alloc_remove_node(old_node);
 		png_alloc_add_node(new_addr, size);
 	}

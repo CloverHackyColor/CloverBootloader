@@ -981,7 +981,8 @@ VOID ScanVolumes(VOID)
     UINT8                   *SectorBuffer1, *SectorBuffer2;
     UINTN                   SectorSum, i;
 //  EFI_INPUT_KEY Key;
-        DBG("Scanning volumes...\n");
+    
+//    DBG("Scanning volumes...\n");
     
     // get all BlockIo handles
     Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiBlockIoProtocolGuid, NULL, &HandleCount, &Handles);

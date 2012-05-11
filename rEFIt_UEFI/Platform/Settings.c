@@ -785,7 +785,7 @@ VOID GetDevices(VOID)
 	UINTN         Function;
   UINTN         i;
   radeon_card_info_t *info;
-  DBG("Enter GetDevices()\n");
+//  DBG("Enter GetDevices()\n");
   
   /* Scan PCI BUS */
 	Status = gBS->LocateHandleBuffer(AllHandles, NULL, NULL, &HandleCount, &HandleBuffer);

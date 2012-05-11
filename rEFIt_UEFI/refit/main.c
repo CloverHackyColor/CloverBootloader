@@ -1233,11 +1233,6 @@ static VOID ScanDriverDir(IN CHAR16 *Path) //path to folder
         UnicodeSPrint(FileName, 255, L"%s\\%s", Path, DirEntry->FileName);
         Status = StartEFIImage(FileDevicePath(SelfLoadedImage->DeviceHandle, FileName),
                                L"", DirEntry->FileName, DirEntry->FileName, NULL);
-        if(!EFI_ERROR(Status))
-        {
-            BdsLibConnectAllDriversToAllControllers();
-            gBS->SetWatchdogTimer (0x0000, 0x0000, 0x0000, NULL);
-        }
     }
     Status = DirIterClose(&DirIter);
     if (Status != EFI_NOT_FOUND) {
@@ -1401,7 +1396,13 @@ static VOID LoadDrivers(VOID)
     // connect loaded drivers
  //   BdsLibConnectAllEfi();
   //}
-//    BdsLibConnectAllDriversToAllControllers();
+  if (!gFirmwareClover) {
+    BdsLibConnectAllEfi();
+  }
+   else {
+    DBG("ConnectAll\n");
+    BdsLibConnectAllDriversToAllControllers();
+   }
 	DBG("Drivers connected\n");
 }
 
@@ -1597,9 +1598,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     ScanVolumes();
 //      DBG("ScanVolumes OK\n");
     GetCPUProperties();
-    DBG("GetCPUProperties OK\n");
     GetDevices();
-    DBG("GetDevices OK\n");
+//    DBG("GetDevices OK\n");
     ScanSPD();
 //      DBG("ScanSPD OK\n");
     SetPrivateVarProto();
@@ -1685,7 +1685,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         
     //  DrawMenuText(L"Test Русский", 14, 0, UGAHeight-40, 5);  
     //  PauseForKey(L"Test fonts");
-    //MsgLog("StrSize of ABC=%d\n", StrSize(L"ABC"));
+    MsgLog("StrSize of ABC=%d\n", StrSize(L"ABC"));
+    MsgLog("sizeof ABC=%d\n", sizeof(L"ABC"));
     
     // wait for user ACK when there were errors
     FinishTextScreen(FALSE);
