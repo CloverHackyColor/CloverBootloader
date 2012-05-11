@@ -384,6 +384,61 @@ EFI_STATUS InsertTable(VOID* Table, UINTN Length)
   return Status;
 }
 
+VOID        SaveOemDsdt(VOID)
+{
+  EFI_STATUS						Status = EFI_SUCCESS;
+  EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER	*RsdPointer = NULL;
+  EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE		*FadtPointer = NULL;	
+  EFI_PHYSICAL_ADDRESS	dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS; 
+  UINT64        				BiosDsdt = 0;
+	UINT8                 *buffer = NULL;
+	UINTN        				  bufferLen = 0;
+  CHAR16*               OriginDsdt   = L"\\EFI\\ACPI\\origin\\DSDT.aml";
+  CHAR16*     OriginOemPath = PoolPrint(L"%s\\ACPI\\origin\\DSDT.aml", OEMPath);
+  
+  RsdPointer = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)FindAcpiRsdPtr();
+  Rsdt = (RSDT_TABLE*)(UINTN)(RsdPointer->RsdtAddress);
+  if (Rsdt == NULL || Rsdt->Header.Signature != EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
+    Xsdt = (XSDT_TABLE *)(UINTN)(RsdPointer->XsdtAddress);
+  }
+  if (Rsdt) {
+    FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Rsdt->Entry);
+  } else if (Xsdt) {
+    FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Xsdt->Entry);
+  }
+  BiosDsdt = FadtPointer->XDsdt;
+  if (BiosDsdt == 0) {
+    BiosDsdt = FadtPointer->Dsdt;
+    if (BiosDsdt == 0) {
+      DBG("Cannot found DSDT in Bios tables!\n");
+    }
+  }
+  bufferLen = ((EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)BiosDsdt)->Length;
+  Status = gBS->AllocatePages (
+                               AllocateMaxAddress,
+                               EfiACPIReclaimMemory,
+                               EFI_SIZE_TO_PAGES(bufferLen),
+                               &dsdt
+                               );
+  
+  //if success insert dsdt pointer into ACPI tables
+  if(!EFI_ERROR(Status))
+  {
+    buffer = (UINT8*)(UINTN)dsdt;
+    CopyMem(buffer, (UINT8*)(UINTN)BiosDsdt, bufferLen);
+    Status = egSaveFile(SelfRootDir, OriginOemPath, buffer, bufferLen);
+    if (EFI_ERROR(Status)) {
+      Status = egSaveFile(SelfRootDir, OriginDsdt, buffer, bufferLen);
+      if (EFI_ERROR(Status)) {
+        MsgLog("Save OriginDsdt failed=%r\n", Status);
+      }
+    }	else {
+      MsgLog("Saved OriginDsdt into OEM folder\n");
+    }	
+    gBS->FreePages(dsdt, EFI_SIZE_TO_PAGES(bufferLen));
+  }
+}
+
 EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 {
 	EFI_STATUS										Status = EFI_SUCCESS;
@@ -632,7 +687,10 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       Xsdt->Entry = (UINT64)((UINT32)(UINTN)newFadt);
       Xsdt->Header.Checksum = 0;
       Xsdt->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)Xsdt, Xsdt->Header.Length));
-    }    
+    } 
+    FadtPointer->Header.Checksum = 0;
+    FadtPointer->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)FadtPointer, FadtPointer->Header.Length));
+
   }
   
 /*  

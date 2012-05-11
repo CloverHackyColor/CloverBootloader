@@ -95,7 +95,8 @@ SSDT_TABLE *generate_pss_ssdt()
               maximum.FID++;
               MsgLog("Turbo FID=%x\n", maximum.FID);
             }
-            
+            MsgLog("UnderVoltStep=%d\n", gSettings.UnderVoltStep);
+            MsgLog("PLimitDict=%d\n", gSettings.PLimitDict);
 						maximum.CID = ((maximum.FID & 0x1F) << 1) | cpu_noninteger_bus_ratio;
 						
 						minimum.FID = ((AsmReadMsr64(MSR_IA32_PERF_STATUS) >> 24) & 0x1F) | (0x80 * cpu_dynamic_fsb);

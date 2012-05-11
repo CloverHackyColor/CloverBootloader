@@ -746,6 +746,7 @@ EFI_STATUS  PatchACPI(IN REFIT_VOLUME *Volume);
 EFI_STATUS  PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT);
 UINT8       Checksum8(VOID * startPtr, UINT32 len);
 BOOLEAN     tableSign(CHAR8 *table, CONST CHAR8 *sgn);
+VOID        SaveOemDsdt(VOID);
 
 EFI_STATUS  EventsInitialize(VOID);
 EFI_STATUS  EjectVolume(IN REFIT_VOLUME *Volume);

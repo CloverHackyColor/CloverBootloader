@@ -232,10 +232,12 @@ VOID ApplyInputs(VOID)
   i++; //7
   if (InputItems[i].Valid) {
     gSettings.PLimitDict = StrDecimalToUintn((CHAR16*)&(InputItems[i].SValue));
-  }
+    DBG("Item 7=PLimitDict %d\n", gSettings.PLimitDict);
+ }
   i++; //8
   if (InputItems[i].Valid) {
     gSettings.UnderVoltStep = StrDecimalToUintn((CHAR16*)&(InputItems[i].SValue));
+    DBG("Item 8=UnderVoltStep %d\n", gSettings.UnderVoltStep);
   }
   i++; //9
   if (InputItems[i].Valid) {
@@ -260,7 +262,11 @@ VOID ApplyInputs(VOID)
   i++; //14
   if (InputItems[i].Valid) {
     gCPUStructure.ProcessorInterconnectSpeed = StrDecimalToUintn((CHAR16*)&(InputItems[i].SValue));
+    DBG("Apply ProcessorInterconnectSpeed=%d\n", gCPUStructure.ProcessorInterconnectSpeed);
+  } else {
+    DBG("PIS is not valid?\n");
   }
+
   i++; //15
   if (InputItems[i].Valid) {
     gSettings.GraphicsInjector = InputItems[i].BValue;
@@ -817,6 +823,9 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         if (EFI_ERROR(Status)) {
           Status = egSaveFile(NULL, PREBOOT_LOG, (UINT8*)msgbuf, LogSize);
         }
+        break;
+      case SCAN_F4:
+        SaveOemDsdt();
         break;
       case SCAN_F10:
         egScreenShot();
