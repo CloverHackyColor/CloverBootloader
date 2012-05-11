@@ -1685,8 +1685,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         
     //  DrawMenuText(L"Test Русский", 14, 0, UGAHeight-40, 5);  
     //  PauseForKey(L"Test fonts");
-    MsgLog("StrSize of ABC=%d\n", StrSize(L"ABC"));
-    MsgLog("sizeof ABC=%d\n", sizeof(L"ABC"));
+    // MsgLog("StrSize of ABC=%d\n", StrSize(L"ABC")); //result=8
+    // MsgLog("sizeof ABC=%d\n", sizeof(L"ABC"));  //result=8
     
     // wait for user ACK when there were errors
     FinishTextScreen(FALSE);
@@ -1710,7 +1710,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         
         if (MenuExit == MENU_EXIT_OPTIONS){
             OptionsMenu(&OptionEntry);
-            ApplyInputs();
+            //ApplyInputs();
             continue;
         }
         
@@ -1744,7 +1744,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
                 
             case TAG_OPTIONS:    // Options like KernelFlags, DSDTname etc.
                 OptionsMenu(&OptionEntry);
-                ApplyInputs();
+                //ApplyInputs();
                 break;
                 
             case TAG_ABOUT:    // About rEFIt

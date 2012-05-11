@@ -39,7 +39,7 @@
 #include "egemb_back_selected_small.h"
 
 
-#define DEBUG_MENU 0
+#define DEBUG_MENU 1
 
 #if DEBUG_MENU == 2
 #define DBG(x...) AsciiPrint(x)
@@ -201,7 +201,7 @@ VOID ApplyInputs(VOID)
   INTN i = 0;
   INTN j;
   CHAR8  AString[256];
-  
+  DBG("ApplyInputs\n");
   if (InputItems[i].Valid) {
     AsciiSPrint(gSettings.BootArgs, 255, "%s", InputItems[i].SValue);
   }
@@ -219,7 +219,7 @@ VOID ApplyInputs(VOID)
   }
   i++; //4
   if (InputItems[i].Valid) {
-    gSettings.HDALayoutId = StrDecimalToUintn((CHAR16*)&(InputItems[i].SValue));
+    gSettings.HDALayoutId = StrDecimalToUintn(InputItems[i].SValue);
   }
   i++; //5
   if (InputItems[i].Valid) {
@@ -231,12 +231,13 @@ VOID ApplyInputs(VOID)
   }
   i++; //7
   if (InputItems[i].Valid) {
-    gSettings.PLimitDict = StrDecimalToUintn((CHAR16*)&(InputItems[i].SValue));
+//    DBG("InputItems[i]: %s\n", InputItems[i].SValue);
+    gSettings.PLimitDict = StrDecimalToUintn(InputItems[i].SValue);
     DBG("Item 7=PLimitDict %d\n", gSettings.PLimitDict);
  }
   i++; //8
   if (InputItems[i].Valid) {
-    gSettings.UnderVoltStep = StrDecimalToUintn((CHAR16*)&(InputItems[i].SValue));
+    gSettings.UnderVoltStep = StrDecimalToUintn(InputItems[i].SValue);
     DBG("Item 8=UnderVoltStep %d\n", gSettings.UnderVoltStep);
   }
   i++; //9
@@ -261,7 +262,7 @@ VOID ApplyInputs(VOID)
   }
   i++; //14
   if (InputItems[i].Valid) {
-    gCPUStructure.ProcessorInterconnectSpeed = StrDecimalToUintn((CHAR16*)&(InputItems[i].SValue));
+    gCPUStructure.ProcessorInterconnectSpeed = StrDecimalToUintn(InputItems[i].SValue);
     DBG("Apply ProcessorInterconnectSpeed=%d\n", gCPUStructure.ProcessorInterconnectSpeed);
   } else {
     DBG("PIS is not valid?\n");
@@ -290,7 +291,7 @@ VOID ApplyInputs(VOID)
     }
     i++; //18
     if (InputItems[i].Valid) {
-      gGraphics[j].Ports = StrDecimalToUintn((CHAR16*)&(InputItems[i].SValue));
+      gGraphics[j].Ports = StrDecimalToUintn(InputItems[i].SValue);
     }    
     i++; //19
     if (InputItems[i].Valid) {
@@ -332,17 +333,17 @@ static VOID InitSelection(VOID)
   SelectionBackgroundPixel.g = (GlobalConfig.SelectionColor >> 16) & 0xFF;
   SelectionBackgroundPixel.b = (GlobalConfig.SelectionColor >> 8) & 0xFF;
   SelectionBackgroundPixel.a = (GlobalConfig.SelectionColor >> 0) & 0xFF;
-  DBG("Selection color=%x\n", GlobalConfig.SelectionColor);
+//  DBG("Selection color=%x\n", GlobalConfig.SelectionColor);
   if (SelectionImages[0] != NULL)
     return;
   
   // load small selection image
   if (GlobalConfig.SelectionSmallFileName != NULL){
-    DBG("get SelectionSmallFileName=%s\n", GlobalConfig.SelectionSmallFileName);
+//    DBG("get SelectionSmallFileName=%s\n", GlobalConfig.SelectionSmallFileName);
     SelectionImages[2] = egLoadImage(ThemeDir, GlobalConfig.SelectionSmallFileName, FALSE);
   }
   if (SelectionImages[2] == NULL){
-    DBG("no file SelectionSmallFileName get embedded\n");
+//    DBG("no file SelectionSmallFileName get embedded\n");
     SelectionImages[2] = egPrepareEmbeddedImage(&egemb_back_selected_small, FALSE);
 //    DBG("egPrepareEmbeddedImage OK\n");
   }
@@ -354,7 +355,7 @@ static VOID InitSelection(VOID)
   
   // load big selection image
   if (GlobalConfig.SelectionBigFileName != NULL) {
-    DBG("get SelectionBigFileName=%s\n", GlobalConfig.SelectionBigFileName);
+//    DBG("get SelectionBigFileName=%s\n", GlobalConfig.SelectionBigFileName);
     SelectionImages[0] = egLoadImage(ThemeDir, GlobalConfig.SelectionBigFileName, FALSE);
     SelectionImages[0] = egEnsureImageSize(SelectionImages[0],
                                            ROW0_TILESIZE, ROW0_TILESIZE, &MenuBackgroundPixel);
@@ -362,7 +363,7 @@ static VOID InitSelection(VOID)
   }
   if (SelectionImages[0] == NULL) {
 //    // calculate big selection image from small one
-    DBG("calculate big selection image from small one\n");
+//    DBG("calculate big selection image from small one\n");
     SelectionImages[0] = egCreateImage(ROW0_TILESIZE, ROW0_TILESIZE, FALSE);
     if (SelectionImages[0] == NULL) {
       egFreeImage(SelectionImages[2]);
@@ -428,8 +429,8 @@ static VOID InitScroll(OUT SCROLL_STATE *State, IN UINTN ItemCount, IN UINTN Max
   State->PaintSelection = FALSE;
   
   State->LastVisible = State->FirstVisible + State->MaxVisible;
-  DBG("InitScroll: MaxIndex=%d, FirstVisible=%d, MaxVisible=%d, MaxFirstVisible=%d\n",
-      State->MaxIndex, State->FirstVisible, State->MaxVisible, State->MaxFirstVisible);
+//  DBG("InitScroll: MaxIndex=%d, FirstVisible=%d, MaxVisible=%d, MaxFirstVisible=%d\n",
+//      State->MaxIndex, State->FirstVisible, State->MaxVisible, State->MaxFirstVisible);
   // 14 0 7 2 => MaxScroll = 9 ItemCount=10 MaxCount=15
 }
 
@@ -620,9 +621,10 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
   CHAR16        *Buffer = Item->SValue;
   CHAR16        *TempString = AllocateZeroPool(255);
   SCROLL_STATE  StateLine;
-  DBG("Enter Input Dialog\n");
+//  DBG("Enter Input Dialog\n");
   //TODO make scroll for line
   InitScroll(&StateLine, 128, 128, StrLen(Item->SValue));
+  MsgLog("initial SValue: %s\n", Item->SValue);
 	
 	do {
     if (Item->ItemType == BoolValue) {
@@ -718,7 +720,7 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
 			break;
 	}
   FreePool(TempString);
-	
+	MsgLog("EDITED: %s\n", Item->SValue);
   return 0;
 }
 
@@ -1080,7 +1082,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         }
         EntriesPosY += TextHeight;  // also add a blank line
       }
-      DBG("MENU_FUNCTION_INIT finished\n");    
+ //     DBG("MENU_FUNCTION_INIT finished\n");    
       break;
       
     case MENU_FUNCTION_CLEANUP:
@@ -1654,6 +1656,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
       MenuExit = 0;
     }
   }
+  ApplyInputs();
 }
 
 //
