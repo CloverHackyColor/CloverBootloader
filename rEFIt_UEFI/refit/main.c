@@ -391,6 +391,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       Entry->LoaderType = OSTYPE_VAR;
       break;
     default:
+      OSIconName = L"unknown";
       Entry->LoaderType = OSTYPE_VAR;
       break;
   }
@@ -1066,7 +1067,7 @@ static VOID ScanLegacy(VOID)
     for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
         Volume = Volumes[VolumeIndex];
 #if 0 // REFIT_DEBUG > 0
-        Print(L" %d %s\n  %d %d %s %d %s\n",
+        DBG(" %d %s\n  %d %d %s %d %s\n",
               VolumeIndex, DevicePathToStr(Volume->DevicePath),
               Volume->DiskKind, Volume->MbrPartitionIndex,
               Volume->IsAppleLegacy ? L"AL" : L"--", Volume->HasBootCode,
@@ -1091,8 +1092,8 @@ static VOID ScanLegacy(VOID)
             HideIfOthersFound = TRUE;
         } else if (Volume->HasBootCode) {
             ShowVolume = TRUE;
-   //       DBG("Volume %d will be shown BlockIo=%x WholeIo=%x\n",
-   //           VolumeIndex, Volume->BlockIO, Volume->WholeDiskBlockIO);
+ //           DBG("Volume %d will be shown BlockIo=%x WholeIo=%x\n",
+ //             VolumeIndex, Volume->BlockIO, Volume->WholeDiskBlockIO);
             if ((Volume->WholeDiskBlockIO == 0) &&
                 Volume->BlockIOOffset == 0 /* &&
                 Volume->OSName == NULL */)
@@ -1118,7 +1119,8 @@ static VOID ScanLegacy(VOID)
         
         if (ShowVolume){
             AddLegacyEntry(NULL, Volume);
-            DBG("added legacy entry %d\n", VolumeIndex);
+            DBG("added legacy entry %d OSType=%d Name=%s Icon=%s\n",
+                VolumeIndex, Volume->OSType, Volume->VolName? Volume->VolName: L"<null>", Volume->OSIconName);
         }
     }
 }
@@ -1518,15 +1520,15 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	InitBooterLog();
     DBG(" \nStarting rEFIt rev %a on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
     //  InitScreen();
-/*    
+    
     DBG("Test arithmetics\n");
     UINT64 X = 123000123;
     UINT32 Y = 453000;
     UINT32 Z = DivU64x32(X, Y);
-    DBG("X=%ld Y=%d Z=%d\n", X, Y, Z);
+    DBG("X=%ld Y=%d Z=%d again=%d\n", X, Y, Z, DivU64x32(X, Y));
     X = MultU64x32(Z, Y);
-    DBG("Z*Y=%ld\n", X);
-    PauseForKey(L"Test complete");
+    DBG("Z*Y=%ld again=%ld\n", X, MultU64x32(Z, Y));
+/*    PauseForKey(L"Test complete");
 */    
     Status = InitRefitLib(gImageHandle);
     if (EFI_ERROR(Status))
@@ -1633,7 +1635,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     
     //Second step. Load config.plist into gSettings	
 	Status = GetUserSettings(SelfRootDir);  
- //     DBG("GetUserSettings OK\n");
+//      DBG("GetUserSettings OK\n");
     //setup properties
     //  SetDevices();
     
@@ -1646,20 +1648,20 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         ScanLegacy();
     }
     ScanLoader();
- //     DBG("ScanLoader OK\n");
+//      DBG("ScanLoader OK\n");
     if (!GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst){
         //    DBG("scan legacy second\n");
         ScanLegacy();
     }
  //     DBG("ScanLegacy OK\n");
     if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
-        //    DBG("scan tools\n");
+//            DBG("scan tools\n");
         ScanTool();
     }
     //  DBG("ScanTool OK\n");
     FillInputs();
     // fixed other menu entries
-//       DBG("FillInputs OK\n"); 
+    //       DBG("FillInputs OK\n"); 
     if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
         MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
         AddMenuEntry(&MainMenu, &MenuEntryAbout);

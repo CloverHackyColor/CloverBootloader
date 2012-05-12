@@ -273,10 +273,10 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x9552,	0x00000000, CHIP_FAMILY_RV710,		"ATI Mobility Radeon HD 4300 Series",	kShrike },
 	{ 0x9553,	0x00000000, CHIP_FAMILY_RV710,		"ATI Mobility Radeon HD 4330 Series",	kShrike },
   //9583, 9588 - Lamna, Hypoprion HD2600
-  { 0x9581,	0x00000000, CHIP_FAMILY_RV630,		"ATI Radeon HD 3600 XT",          kLamna		},
-  { 0x9583,	0x00000000, CHIP_FAMILY_RV630,		"ATI Radeon HD 2600 XT",          kLamna		},	
-	{ 0x9588,	0x00000000, CHIP_FAMILY_RV630,		"ATI Radeon HD 2600 XT",          kLamna		},
-	{ 0x9589,	0x00000000, CHIP_FAMILY_RV630,		"ATI Radeon HD 2600 PRO",         kLamna		},
+  { 0x9581,	0x00000000, CHIP_FAMILY_RV630,		"ATI Radeon HD 2600 XT",          kHypoprion		},
+  { 0x9583,	0x00000000, CHIP_FAMILY_RV630,		"ATI Radeon HD 2600 XT",          kHypoprion		},	
+	{ 0x9588,	0x00000000, CHIP_FAMILY_RV630,		"ATI Radeon HD 2600 XT",          kHypoprion		},
+	{ 0x9589,	0x00000000, CHIP_FAMILY_RV630,		"ATI Radeon HD 2600 PRO",         kHypoprion		},
 	{ 0x958A,	0x00000000, CHIP_FAMILY_RV630,		"ATI Radeon HD 2600 X2 Series",		kLamna		},
 	{ 0x958B,	0x00000000, CHIP_FAMILY_RV630,		"ATI Radeon HD 2600 X2 Series",		kLamna		},
 	{ 0x958C,	0x00000000, CHIP_FAMILY_RV630,		"ATI Radeon HD 2600 X2 Series",		kLamna		},
@@ -354,10 +354,10 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x6739,	0x00000000, CHIP_FAMILY_BARTS,		"AMD Radeon HD 6850 Series",		kDuckweed  },
 	{ 0x673E,	0x00000000, CHIP_FAMILY_BARTS,		"AMD Radeon HD 6790 Series",		kDuckweed	},
 	
-	{ 0x6740,	0x00000000, CHIP_FAMILY_TURKS,		"AMD Radeon HD 6770M Series",		kDuckweed		},
-	{ 0x6741,	0x00000000, CHIP_FAMILY_TURKS,		"AMD Radeon HD 6650M Series",	  kDuckweed		}, // kOsmunda },
-	{ 0x6758,	0x00000000, CHIP_FAMILY_TURKS,		"AMD Radeon HD 6670 Series",		kDuckweed   },
-	{ 0x6759,	0x00000000, CHIP_FAMILY_TURKS,		"AMD Radeon HD 6500 Series",		kDuckweed   },
+	{ 0x6740,	0x00000000, CHIP_FAMILY_TURKS,		"AMD Radeon HD 6770M Series",		kPithecia		},
+	{ 0x6741,	0x00000000, CHIP_FAMILY_TURKS,		"AMD Radeon HD 6650M Series",	  kPithecia		}, // kOsmunda },
+	{ 0x6758,	0x00000000, CHIP_FAMILY_TURKS,		"AMD Radeon HD 6670 Series",		kPithecia   },
+	{ 0x6759,	0x00000000, CHIP_FAMILY_TURKS,		"AMD Radeon HD 6570 Series",		kPithecia   },
   
 	{ 0x6760,	0x00000000, CHIP_FAMILY_CAICOS,		"AMD Radeon HD 6400M Series",		kBulrushes	},
 	{ 0x6761,	0x00000000, CHIP_FAMILY_CAICOS,		"AMD Radeon HD 6430M Series",		kBulrushes	},
@@ -410,41 +410,41 @@ const CHAR8 *chip_family_name[] = {
 };
 
 AtiDevProp ati_devprop_list[] = {
-	{FLAGTRUE,	FALSE,	"@0,AAPL,boot-display",		get_bootdisplay_val,	NULVAL							},
-  //	{FLAGTRUE,	FALSE,	"@0,ATY,EFIDisplay",		NULL,					STRVAL("TMDSA")					},
+	{FLAGTRUE,	FALSE,	"@0,AAPL,boot-display",		get_bootdisplay_val,	NULVAL				},
+  //	{FLAGTRUE,	FALSE,	"@0,ATY,EFIDisplay",		NULL,					STRVAL("TMDSA")			},
 	
-  //{FLAGTRUE,	TRUE,	"@0,AAPL,vram-memory",		get_vrammemory_val,		NULVAL							},
-  {FLAGTRUE,	TRUE,	"@0,override-no-connector",		get_edid_val,		NULVAL	},
-  {FLAGTRUE,	TRUE,	"@0,compatible",		get_name_val,			NULVAL					},
-  {FLAGTRUE,	TRUE,	"@0,connector-type",		get_conntype_val,		NULVAL		},
-  {FLAGTRUE,	TRUE,	"@0,device_type",			NULL,					STRVAL("display")	},
-  //	{FLAGTRUE,	FALSE,	"@0,display-connect-flags", NULL,					DWRVAL((UINT32)0)				},
-  {FLAGTRUE,	FALSE,	"@0,display-link-component-bits", NULL,					DWRVAL((UINT32)6)				},
-//  {FLAGTRUE,	TRUE,	"@0,display-type",			NULL,					STRVAL("NONE")					},
-	{FLAGTRUE,	TRUE,	"@0,name",					get_name_val,			NULVAL							},
-//  {FLAGTRUE,	TRUE,	"@0,VRAM,memsize",			get_vrammemsize_val,	NULVAL							},
+  //{FLAGTRUE,	TRUE,	"@0,AAPL,vram-memory",		get_vrammemory_val,		NULVAL				},
+  {FLAGTRUE,	TRUE,	"@0,override-no-connector",		get_edid_val,       NULVAL        },
+  {FLAGTRUE,	TRUE,	"@0,compatible",              get_name_val,       NULVAL				},
+  {FLAGTRUE,	TRUE,	"@0,connector-type",          get_conntype_val,		NULVAL        },
+  {FLAGTRUE,	TRUE,	"@0,device_type",             NULL,					STRVAL("display")   },
+//	{FLAGTRUE,	FALSE,	"@0,display-connect-flags", NULL,				DWRVAL((UINT32)0)   },
+  {FLAGTRUE,	FALSE,	"@0,display-link-component-bits", NULL,		DWRVAL((UINT32)6)		},
+//  {FLAGTRUE,	TRUE,	"@0,display-type",          NULL,					STRVAL("NONE")			},
+	{FLAGTRUE,	TRUE,	"@0,name",                    get_name_val,			NULVAL          },
+//  {FLAGTRUE,	TRUE,	"@0,VRAM,memsize",			get_vrammemsize_val,	NULVAL          },
 	
-  {FLAGTRUE,	FALSE,	"AAPL,aux-power-connected", NULL,					DWRVAL((UINT32)1)				},
-  {FLAGTRUE,	FALSE,	"AAPL,backlight-control",	NULL,					DWRVAL((UINT32)0)				},
-	{FLAGTRUE,	FALSE,	"AAPL,overwrite_binimage",	get_binimage_owr,		NULVAL							},
-	{FLAGTRUE,	FALSE,	"ATY,bin_image",	get_binimage_val,		NULVAL							},
+  {FLAGTRUE,	FALSE,	"AAPL,aux-power-connected", NULL,					DWRVAL((UINT32)1)		},
+  {FLAGTRUE,	FALSE,	"AAPL,backlight-control",	NULL,					DWRVAL((UINT32)0)			},
+	{FLAGTRUE,	FALSE,	"AAPL,overwrite_binimage",	get_binimage_owr,		NULVAL				},
+	{FLAGTRUE,	FALSE,	"ATY,bin_image",            get_binimage_val,		NULVAL				},
 	{FLAGTRUE,	FALSE,	"ATY,Copyright",	NULL,	STRVAL("Copyright AMD Inc. All Rights Reserved. 2005-2011") },
-	{FLAGTRUE,	FALSE,	"ATY,Card#",			get_romrevision_val,	NULVAL							},
-	{FLAGTRUE,	FALSE,	"ATY,VendorID",		NULL,					WRDVAL((UINT16)0x1002)		},
-	{FLAGTRUE,	FALSE,	"ATY,DeviceID",		get_deviceid_val,		NULVAL							},
+	{FLAGTRUE,	FALSE,	"ATY,Card#",			get_romrevision_val,	NULVAL                },
+	{FLAGTRUE,	FALSE,	"ATY,VendorID",		NULL,					WRDVAL((UINT16)0x1002)        },
+	{FLAGTRUE,	FALSE,	"ATY,DeviceID",		get_deviceid_val,		NULVAL                  },
 	
   //	{FLAGTRUE,	FALSE,	"ATY,MCLK",					get_mclk_val,			NULVAL							},
   //	{FLAGTRUE,	FALSE,	"ATY,SCLK",					get_sclk_val,			NULVAL							},
   //	{FLAGTRUE,	FALSE,	"ATY,RefCLK",				get_refclk_val,			DWRVAL((UINT32)0x0a8c)		},
 	
-  {FLAGTRUE,	FALSE,	"ATY,PlatformInfo",			get_platforminfo_val,	NULVAL							},
+  {FLAGTRUE,	FALSE,	"ATY,PlatformInfo",			get_platforminfo_val,	NULVAL					},
 	
-	{FLAGTRUE,	FALSE,	"name",						get_nameparent_val,		NULVAL							},
-	{FLAGTRUE,	FALSE,	"device_type",		get_nameparent_val,		NULVAL							},
-	{FLAGTRUE,	FALSE,	"model",					get_model_val,			STRVAL("ATI Radeon")			},
-  {FLAGTRUE,	FALSE,	"VRAM,totalsize",			get_vramtotalsize_val,	NULVAL							},
+	{FLAGTRUE,	FALSE,	"name",						get_nameparent_val,     NULVAL							},
+	{FLAGTRUE,	FALSE,	"device_type",		get_nameparent_val,     NULVAL							},
+	{FLAGTRUE,	FALSE,	"model",					get_model_val,          STRVAL("ATI Radeon")},
+  {FLAGTRUE,	FALSE,	"VRAM,totalsize",	get_vramtotalsize_val,	NULVAL              },
 	
-	{FLAGTRUE,	FALSE,	NULL,						NULL,					NULVAL							}
+	{FLAGTRUE,	FALSE,	NULL,	NULL,	NULVAL}
 };
 
 BOOLEAN get_bootdisplay_val(value_t *val)
@@ -472,7 +472,13 @@ BOOLEAN get_vrammemory_val(value_t *val)
 
 BOOLEAN get_edid_val(value_t *val)
 {
-	return FALSE;
+  if (!gEDID) {
+    return FALSE;
+  }
+  val->type = kPtr;
+  val->size = 128;
+  val->data = (UINT8 *)gEDID;
+	return TRUE;
 }
 
 

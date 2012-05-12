@@ -26,12 +26,13 @@ Abstract:
  */
 
 EFI_SMBIOS_PROTOCOL         *gSmbios;
-
+/*
 EFI_STATUS
 GetSystemConfigurationTable (
   IN EFI_GUID *TableGuid,
   OUT VOID **Table
   )
+ */
 /*++
 
 Routine Description:
@@ -51,6 +52,7 @@ Returns:
   EFI_SUCCESS     - Found the table
 
 --*/
+/*
 {
   UINTN Index;
 
@@ -64,7 +66,7 @@ Returns:
 
   return EFI_NOT_FOUND;
 }
-
+*/
 VOID *
 GetSmbiosTablesFromConfigTables (
   VOID
@@ -73,10 +75,10 @@ GetSmbiosTablesFromConfigTables (
   EFI_STATUS              Status;
   EFI_PHYSICAL_ADDRESS       *Table;
   
-  Status = GetSystemConfigurationTable (&gEfiSmbiosTableGuid, (VOID **)  &Table);
+  Status = EfiGetSystemConfigurationTable (&gEfiSmbiosTableGuid, (VOID **)  &Table);
   if (EFI_ERROR (Status) || Table == NULL) {
-	Table = NULL;
-	Print(L"GetSmbiosTablesFromConfigTables: not found\n");
+	  Table = NULL;
+	//  Print(L"GetSmbiosTablesFromConfigTables: not found\n");
   }
 
   return Table;

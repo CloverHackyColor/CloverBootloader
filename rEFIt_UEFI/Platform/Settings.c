@@ -24,6 +24,7 @@ CHAR8                           gSelectedUUID[40];
 SETTINGS_DATA                   gSettings;
 GFX_PROPERTIES                  gGraphics[4]; //no more then 4 graphics cards
 EFI_EDID_DISCOVERED_PROTOCOL    *EdidDiscovered;
+UINT8                           *gEDID = NULL;
 //EFI_GRAPHICS_OUTPUT_PROTOCOL    *GraphicsOutput;
 //UINT16                          gCPUtype;
 UINTN                           NGFX = 0; // number of GFX
@@ -651,6 +652,8 @@ EFI_STATUS GetEdid(VOID)
 	EFI_STATUS						Status;
 //	UINTN i, j;
   UINTN N;
+  gEDID = NULL;
+  
 	Status = gBS->LocateProtocol (&gEfiEdidDiscoveredProtocolGuid, NULL, (VOID **)&EdidDiscovered);
 	
 	if (!EFI_ERROR (Status)) 
@@ -658,9 +661,10 @@ EFI_STATUS GetEdid(VOID)
 		N = EdidDiscovered->SizeOfEdid;
     MsgLog("EdidDiscovered size=%d\n", N);
 		if (N == 0) {
-			MsgLog("EdidDiscovered size=0\n");
 			return EFI_NOT_FOUND;
 		}
+    gEDID = AllocateAlignedPages(EFI_SIZE_TO_PAGES(N), 128);
+    CopyMem(gEDID, EdidDiscovered->Edid, N);
 /*		for (i=0; i<N; i+=16) {
 			MsgLog("%02x: ", i);
 			for (j=0; j<16; j++) {

@@ -177,6 +177,7 @@ typedef struct {
 
 BOOLEAN get_bootdisplay_val(value_t *val);
 BOOLEAN get_vrammemory_val(value_t *val);
+BOOLEAN get_edid_val(value_t *val);
 BOOLEAN get_name_val(value_t *val);
 BOOLEAN get_nameparent_val(value_t *val);
 BOOLEAN get_model_val(value_t *val);

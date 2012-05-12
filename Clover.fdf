@@ -97,7 +97,7 @@ INF IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 	# foreign file system support
 #INF  Clover/VBoxFsDxe/VBoxHfs.inf
 #INF  Clover/VBoxFsDxe/VBoxFsDxe.inf
-#INF  Clover/VBoxFsDxe/VBoxIso9660.inf
+INF  Clover/VBoxFsDxe/VBoxIso9660.inf
 #INF  Clover/VBoxFsDxe/VBoxExt2.inf
 INF  RuleOverride=BINARY Clover/HFSPlus/HFSPlus.inf
 

@@ -676,6 +676,7 @@ extern BOOLEAN                  gFirmwareClover;
 extern CPU_STRUCTURE            gCPUStructure;
 extern EFI_GUID                 gUuid;
 extern EFI_EDID_DISCOVERED_PROTOCOL*            EdidDiscovered;
+extern UINT8                                    *gEDID;
 extern CHAR8*                   gDeviceProperties;
 extern CHAR8*                   cDeviceProperties;
 extern INPUT_ITEM               *InputItems;
