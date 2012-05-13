@@ -391,6 +391,7 @@
       gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0206
   }
   Clover/OsxFatBinaryDrv/OsxFatBinaryDrv.inf
+  Clover/OsxAptioFixDrv/OsxAptioFixDrv.inf
 
 
   #
