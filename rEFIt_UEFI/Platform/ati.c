@@ -512,7 +512,7 @@ BOOLEAN get_model_val(value_t *val)
 	return TRUE;
 }
 
-static CONST UINT32 ct[] = {0x200, 0x400, 0x800, 0x4};
+static CONST UINT32 ct[] = {0x02, 0x200, 0x400, /*0x800,*/ 0x4};
 
 BOOLEAN get_conntype_val(value_t *val)
 {

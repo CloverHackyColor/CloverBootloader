@@ -360,9 +360,10 @@ cp -v $BUILD_DIR/X64/XhciDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/driver
 echo Done!
 cp -v $BUILD_DIR/X64/OsxSmbiosDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/OsxSmbiosDrv-64.efi
 cp -v $BUILD_DIR/X64/OsxFatBinaryDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/OsxFatBinaryDrv-64.efi
+cp -v $BUILD_DIR/X64/OsxAptioFixDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/OsxAptioFixDrv-64.efi
 fi
 
-}
+} 
 
 # BUILD START #
 fnMainBuildScript

@@ -58,8 +58,8 @@
 
 EFI_HANDLE              gImageHandle;
 EFI_SYSTEM_TABLE*       gST;
-EFI_BOOT_SERVICES*			gBS; 
-EFI_RUNTIME_SERVICES*		gRS;
+EFI_BOOT_SERVICES*		gBS; 
+EFI_RUNTIME_SERVICES*	gRS;
 EFI_DXE_SERVICES*       gDS;
 
 static REFIT_MENU_ENTRY MenuEntryOptions  = { L"Options", TAG_OPTIONS, 1, 0, 'O', NULL, NULL, NULL };
@@ -1520,7 +1520,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	InitBooterLog();
     DBG(" \nStarting rEFIt rev %a on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
     //  InitScreen();
-    
+/*    
     DBG("Test arithmetics\n");
     UINT64 X = 123000123;
     UINT32 Y = 453000;
@@ -1528,7 +1528,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     DBG("X=%ld Y=%d Z=%d again=%d\n", X, Y, Z, DivU64x32(X, Y));
     X = MultU64x32(Z, Y);
     DBG("Z*Y=%ld again=%ld\n", X, MultU64x32(Z, Y));
-/*    PauseForKey(L"Test complete");
+    PauseForKey(L"Test complete");
 */    
     Status = InitRefitLib(gImageHandle);
     if (EFI_ERROR(Status))
@@ -1635,7 +1635,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     
     //Second step. Load config.plist into gSettings	
 	Status = GetUserSettings(SelfRootDir);  
-//      DBG("GetUserSettings OK\n");
+      DBG("GetUserSettings OK\n");
     //setup properties
     //  SetDevices();
     
@@ -1644,13 +1644,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
  //     DBG("PrepareFont OK\n");
     // scan for loaders and tools, add then to the menu
     if (!GlobalConfig.NoLegacy && GlobalConfig.LegacyFirst){
-        //    DBG("scan legacy first\n");
+            DBG("scan legacy first\n");
         ScanLegacy();
     }
     ScanLoader();
-//      DBG("ScanLoader OK\n");
+      DBG("ScanLoader OK\n");
     if (!GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst){
-        //    DBG("scan legacy second\n");
+            DBG("scan legacy second\n");
         ScanLegacy();
     }
  //     DBG("ScanLegacy OK\n");
@@ -1658,10 +1658,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //            DBG("scan tools\n");
         ScanTool();
     }
-    //  DBG("ScanTool OK\n");
+      DBG("ScanTool OK\n");
     FillInputs();
     // fixed other menu entries
-    //       DBG("FillInputs OK\n"); 
+           DBG("FillInputs OK\n"); 
     if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
         MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
         AddMenuEntry(&MainMenu, &MenuEntryAbout);
@@ -1682,8 +1682,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
     
     // assign shortcut keys
-    for (i = 0; i < MainMenu.EntryCount && MainMenu.Entries[i]->Row == 0 && i < 9; i++)
+    DBG("First entries in main menu\n");
+    for (i = 0; i < MainMenu.EntryCount && MainMenu.Entries[i]->Row == 0 && i < 9; i++){
         MainMenu.Entries[i]->ShortcutDigit = (CHAR16)('1' + i);
+        DBG("%d: %s %d\n", i, MainMenu.Entries[i]->Title, MainMenu.Entries[i]->Tag);
+    }
         
     //  DrawMenuText(L"Test Русский", 14, 0, UGAHeight-40, 5);  
     //  PauseForKey(L"Test fonts");

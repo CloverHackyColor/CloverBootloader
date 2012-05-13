@@ -31,6 +31,7 @@
 #
 
 [Sources]
+  EfiLib/GenericBdsLib.h
   EfiLib/BmLib.c
   EfiLib/DevicePath.c #included into GenericBdsLib
   EfiLib/BdsConnect.c #included into GenericBdsLib
