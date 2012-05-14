@@ -59,7 +59,7 @@ font_file_name 	dark-wide.png
 # may differ from letter width allowing overriding
 # default value 7 corresponding embedded font
 #
-#char_width 8
+char_width 8
 
 # Use a custom title banner instead of the rEFIt icon and name. The file
 # path is relative to the directory where refit.efi is located. The color
@@ -69,7 +69,7 @@ font_file_name 	dark-wide.png
 # V2 - PNG image supported 
 # The location of the file theme dependent 
 #
-banner logo.png
+banner logo-org.png
 
 # Custom images for the selection background. There is a big one (144 x 144)
 # for the OS icons, and a small one (64 x 64) for the function icons in the
