@@ -62,7 +62,8 @@ extern EFI_RUNTIME_SERVICES*	gRS;
 #define TAG_INFO     (7)
 #define TAG_OPTIONS  (8)
 #define TAG_INPUT    (9)
-#define TAG_RETURN       (99)
+#define TAG_HELP     (10)
+#define TAG_RETURN   (99)
 
 
 //
@@ -386,7 +387,8 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id);
 #define BUILTIN_ICON_VOL_OPTICAL    (9)
 #define BUILTIN_ICON_VOL_FIREWIRE   (10)
 #define BUILTIN_ICON_VOL_BOOTER     (11)
-#define BUILTIN_ICON_COUNT          (12)
+#define BUILTIN_ICON_FUNC_HELP      (12)
+#define BUILTIN_ICON_COUNT          (13)
 
 //
 // menu module
@@ -398,6 +400,7 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id);
 #define MENU_EXIT_TIMEOUT (4)
 #define MENU_EXIT_OPTIONS (5)
 #define MENU_EXIT_EJECT   (6)
+#define MENU_EXIT_HELP   (7)
 
 VOID AddMenuInfoLine(IN REFIT_MENU_SCREEN *Screen, IN CHAR16 *InfoLine);
 VOID AddMenuEntry(IN REFIT_MENU_SCREEN *Screen, IN REFIT_MENU_ENTRY *Entry);

@@ -206,15 +206,15 @@ EFI_STATUS BiosReadSectorsFromDrive(UINT8 DriveNum, UINT64 Lba, UINTN NumSectors
 EFI_STATUS GetBiosDriveCRC32(UINT8 DriveNum,
                              UINT32 *DriveCRC32,
                              BIOS_DISK_ADDRESS_PACKET *Dap,
-                             void *Buffer)
+                             VOID *Buffer)
 {
 	EFI_STATUS					Status;
 	
 	// read first 2 sectors
 	Status = BiosReadSectorsFromDrive(DriveNum, 0, 2, Dap, Buffer);
 	if (!EFI_ERROR(Status)) {
-    *DriveCRC32 = 0;
-		gBS->CalculateCrc32(Buffer, 2 * 512, DriveCRC32);
+    *DriveCRC32 = GetCrc32(Buffer, 2 * 512);
+		//gBS->CalculateCrc32(Buffer, 2 * 512, DriveCRC32);
 		DBG("Bios drive CRC32 = %X\n", *DriveCRC32);
 	}
 	return Status;
@@ -630,7 +630,8 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
             }
             DBG("\n");
           }
-          gBS->CalculateCrc32(mBootSector, 2 * 512, &MBRCRC32);
+          //gBS->CalculateCrc32(mBootSector, 2 * 512, &MBRCRC32);
+          MBRCRC32 = GetCrc32(mBootSector, 2 * 512);
           DBG("MBR drive CRC32 = %X\n", MBRCRC32);
             BiosDriveNum = GetBiosDriveNumForVolume(Volumes[i]);
           break;

@@ -819,6 +819,9 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         MenuExit = MENU_EXIT_OPTIONS;
         break;
         
+      case SCAN_F1:
+        MenuExit = MENU_EXIT_HELP;
+        break;
       case SCAN_F2:
         LogSize = msgCursor - msgbuf;
         Status = egSaveFile(SelfRootDir, PREBOOT_LOG, (UINT8*)msgbuf, LogSize);

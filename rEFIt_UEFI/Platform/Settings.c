@@ -22,6 +22,7 @@
 //EFI_GUID gRandomUUID = {0x0A0B0C0D, 0x0000, 0x1010, {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07}};
 CHAR8                           gSelectedUUID[40];
 SETTINGS_DATA                   gSettings;
+LANGUAGES                       gLanguage;
 GFX_PROPERTIES                  gGraphics[4]; //no more then 4 graphics cards
 EFI_EDID_DISCOVERED_PROTOCOL    *EdidDiscovered;
 UINT8                           *gEDID = NULL;
@@ -35,6 +36,21 @@ BOOLEAN                         gFirmwareClover = FALSE;
 VOID WaitForSts(VOID) {
 	UINT32 inline_timeout = 100000;
 	while (AsmReadMsr64(MSR_IA32_PERF_STATUS) & (1 << 21)) { if (!inline_timeout--) break; }
+}
+
+UINT32 GetCrc32(UINT8 *Buffer, UINTN Size)
+{
+  UINTN i, x, len;
+  UINT32* fake = (UINT32*)Buffer;
+  x = 0;
+  if (!fake) {
+    return 0;
+  }
+  len = Size >> 2;
+  for (i=0; i<len; i++) {
+    x ^= fake[i];
+  }  
+  return x;
 }
 
 EFI_STATUS GetNVRAMSettings(IN EFI_FILE *RootDir, CHAR16* NVRAMPlistPath)
@@ -197,21 +213,28 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 			return EFI_UNSUPPORTED;
 		}
 		//*** SYSTEM ***//
-    dictPointer = GetProperty(dict,"SystemParameters");
+    dictPointer = GetProperty(dict, "SystemParameters");
     if (dictPointer) {
-      prop = GetProperty(dictPointer,"prev-lang:kbd");
+      prop = GetProperty(dictPointer, "prev-lang:kbd");
       if(prop)
       {
-        AsciiStrToUnicodeStr(prop->string, gSettings.Language);
+ //       AsciiStrToUnicodeStr(prop->string, gSettings.Language);
+        AsciiStrCpy(gSettings.Language,  prop->string);
+        if (AsciiStrStr(prop->string, "en")) {
+          gLanguage = english;
+        } else
+          if (AsciiStrStr(prop->string, "ru")) {
+            gLanguage = russian;
+          } //else
       }
       
-      prop = GetProperty(dictPointer,"boot-args");
+      prop = GetProperty(dictPointer, "boot-args");
       if(prop)
       {
         AsciiStrCpy(gSettings.BootArgs, prop->string);
       } 
       
-      prop = GetProperty(dictPointer,"DefaultBootVolume");
+      prop = GetProperty(dictPointer, "DefaultBootVolume");
       if(prop)
       {
         AsciiStrToUnicodeStr(prop->string, gSettings.DefaultBoot);

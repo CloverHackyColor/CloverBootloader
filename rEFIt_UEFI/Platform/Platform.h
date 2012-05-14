@@ -475,7 +475,7 @@ typedef struct {
 	UINT16	CpuType;
   
 	// OS parameters
-	CHAR16	Language[10];
+	CHAR8 	Language[16];
 	CHAR8   BootArgs[256];
 	CHAR16	CustomUuid[40];
   CHAR16  DefaultBoot[40];
@@ -626,6 +626,13 @@ typedef struct {
 } DMI;
 
 typedef enum {
+  english,  //en
+  russian,  //ru
+  chinese   //cn
+  //something else? add, please
+} LANGUAGES;
+
+typedef enum {
   Unknown,
 	Ati,
 	Intel,
@@ -672,6 +679,7 @@ extern CHAR8*	                  AppleBoardLocation;
 extern EFI_SYSTEM_TABLE*        gST;
 extern EFI_BOOT_SERVICES*       gBS; 
 extern SETTINGS_DATA            gSettings;
+extern LANGUAGES                gLanguage;
 extern BOOLEAN                  gFirmwareClover;
 extern CPU_STRUCTURE            gCPUStructure;
 extern EFI_GUID                 gUuid;
@@ -712,6 +720,7 @@ UINT8       hexstrtouint8 (CHAR8* buf); //one or two hex letters to one byte
 EFI_STATUS  InitializeConsoleSim (VOID);
 
 //Settings.c
+UINT32          GetCrc32(UINT8 *Buffer, UINTN Size);
 VOID            GetCPUProperties (VOID);
 VOID            GetDevices(VOID);
 MACHINE_TYPES   GetDefaultModel(VOID);

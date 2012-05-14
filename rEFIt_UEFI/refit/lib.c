@@ -408,8 +408,10 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
     if (!EFI_ERROR(Status) && (SectorBuffer[1] != 0)) {
       // calc crc checksum of first 2 sectors - it's used later for legacy boot BIOS drive num detection
       // note: possible future issues with AF 4K disks
-      Volume->DriveCRC32 = 0;
-      gBS->CalculateCrc32 (SectorBuffer, 2 * 512, &Volume->DriveCRC32);
+      *Bootable = TRUE;
+      Volume->HasBootCode = TRUE; //we assume that all CD are bootable
+      Volume->DriveCRC32 = GetCrc32(SectorBuffer, 2 * 512);
+      //gBS->CalculateCrc32 (SectorBuffer, 2 * 512, &Volume->DriveCRC32);
       DBG("Volume has BS=%d kind=%d startlba=%d CRC=%X\n", BlockSize, Volume->DiskKind, Volume->BlockIOOffset, Volume->DriveCRC32);
       if (Volume->DiskKind == DISK_KIND_OPTICAL) { //CDROM
         CHAR8* p = (CHAR8*)&SectorBuffer[8];
@@ -603,8 +605,8 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
         // NOTE: If you add an operating system with a name that starts with 'W' or 'L', you
         //  need to fix AddLegacyEntry in main.c.
         
-#if 0 // REFIT_DEBUG > 0
-        Print(L"  Result of bootcode detection: %s %s (%s)\n",
+#if  REFIT_DEBUG > 0
+        DBG("  Result of bootcode detection: %s %s (%s)\n",
               Volume->HasBootCode ? L"bootable" : L"non-bootable",
               Volume->OSName, Volume->OSIconName);
 #endif

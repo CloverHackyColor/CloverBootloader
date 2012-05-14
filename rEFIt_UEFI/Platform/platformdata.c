@@ -190,6 +190,7 @@ VOID GetDefaultSettings(VOID)
 {
   MACHINE_TYPES   Model;
   
+  gLanguage         = english;
   Model             = GetDefaultModel();
   gSettings.CpuType	= GetAdvancedCpuType();
 //  gSettings.BusSpeed = DivU64x32(gCPUStructure.FSBFrequency, kilo); //Hz -> kHz

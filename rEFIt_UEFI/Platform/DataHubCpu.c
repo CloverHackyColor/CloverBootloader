@@ -122,10 +122,16 @@ EFI_STATUS SetVariablesForOSX()
 	UINTN       bootArgsLen = 120; 
 	CHAR8*      None	= "none";
 	CHAR8*      BA = &gSettings.BootArgs[119];
+  UINTN       LangLen = 16;
   
 	while ((*BA == ' ') || (*BA == 0)) {
 		BA--; bootArgsLen--;
 	}
+  BA = &gSettings.Language[15];
+  while ((*BA == ' ') || (*BA == 0)) {
+		BA--; LangLen--;
+	}
+  
 	
 	Status = gRS->SetVariable(L"BootNext",  &gEfiAppleNvramGuid, //&gEfiGlobalVarGuid,
                                          /*	EFI_VARIABLE_NON_VOLATILE | */EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
@@ -151,6 +157,10 @@ EFI_STATUS SetVariablesForOSX()
 	Status = gRS->SetVariable(L"platform-uuid", &gEfiAppleBootGuid, 
                                          /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          16 ,&gUuid);
+  Status = gRS->SetVariable(L"prev-lang:kbd", &gEfiAppleBootGuid, 
+                            /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                                LangLen ,&gSettings.Language);
+  
   return Status;
 }
 

@@ -59,6 +59,7 @@ BUILTIN_ICON BuiltinIconTable[BUILTIN_ICON_COUNT] = {
     { NULL, L"icons\\vol_optical.icns", 128 },
     { NULL, L"icons\\vol_firewire.icns", 128 },
     { NULL, L"icons\\vol_clover.icns", 128 },
+    { NULL, L"icons\\func_help.png", 128 },
 };
 
 EG_IMAGE * BuiltinIcon(IN UINTN Id)

@@ -70,7 +70,7 @@ REFIT_MENU_ENTRY MenuEntryReturn   = { L"Return to Main Menu", TAG_RETURN, 0, 0,
 
 static REFIT_MENU_SCREEN MainMenu    = { L"Main Menu", NULL, 0, NULL, 0, NULL, 0, L"Automatic boot" };
 static REFIT_MENU_SCREEN AboutMenu   = { L"About", NULL, 0, NULL, 0, NULL, 0, NULL };
-
+static REFIT_MENU_SCREEN HelpMenu   = { L"Help", NULL, 0, NULL, 0, NULL, 0, NULL };
 
 static VOID AboutRefit(VOID)
 {
@@ -108,6 +108,43 @@ static VOID AboutRefit(VOID)
     
     RunMenu(&AboutMenu, NULL);
 }
+
+static VOID HelpRefit(VOID)
+{
+    if (HelpMenu.EntryCount == 0) {
+        HelpMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_HELP);
+        if (gLanguage == russian) {
+            AddMenuInfoLine(&HelpMenu, L"F1  - Помощь по горячим клавишам");
+            AddMenuInfoLine(&HelpMenu, L"F2  - Сохранить отчет в preboot.log (только если FAT32)");
+            AddMenuInfoLine(&HelpMenu, L"F4  - Извлечь оригинальный DSDT, сохранить в EFI/ACPI/origin/ (только FAT32)");
+            AddMenuInfoLine(&HelpMenu, L"F10 - Снимок экрана в папку EFI/misc/ (только FAT32)");
+            AddMenuInfoLine(&HelpMenu, L"F12 - Извлечь указанный DVD");
+            AddMenuInfoLine(&HelpMenu, L"Пробел - Подробнее о выбранном пункте");
+            AddMenuInfoLine(&HelpMenu, L"Цифры 1-9 - Быстрый запуск тома по порядку расположения в меню");
+            AddMenuInfoLine(&HelpMenu, L"A - О загрузчике");
+            AddMenuInfoLine(&HelpMenu, L"O - Дополнительные настройки");
+            AddMenuInfoLine(&HelpMenu, L"R - Теплый перезапуск");
+            AddMenuInfoLine(&HelpMenu, L"U - Выключить");
+
+        } else {
+            AddMenuInfoLine(&HelpMenu, L"F1  - This help");
+            AddMenuInfoLine(&HelpMenu, L"F2  - Save preboot.log (FAT32 only)");
+            AddMenuInfoLine(&HelpMenu, L"F4  - Save original DSDT into EFI/ACPI/origin/ (FAT32 only)");
+            AddMenuInfoLine(&HelpMenu, L"F10 - Save screenshot into EFI/misc/ (FAT32 only)");
+            AddMenuInfoLine(&HelpMenu, L"F12 - Eject selected volume (DVD)");
+            AddMenuInfoLine(&HelpMenu, L"Space - Details about selected menu entry");
+            AddMenuInfoLine(&HelpMenu, L"Digits 1-9 - Shortcut to menu entry");
+            AddMenuInfoLine(&HelpMenu, L"A - Menu About");
+            AddMenuInfoLine(&HelpMenu, L"O - Menu Options");
+            AddMenuInfoLine(&HelpMenu, L"R - Soft Reset");
+            AddMenuInfoLine(&HelpMenu, L"U - Shutdown");
+        }        
+        AddMenuEntry(&HelpMenu, &MenuEntryReturn);
+    }
+    
+    RunMenu(&HelpMenu, NULL);
+}
+
 
 static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
                                     IN CHAR16 *LoadOptions, IN CHAR16 *LoadOptionsPrefix,
@@ -1635,7 +1672,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     
     //Second step. Load config.plist into gSettings	
 	Status = GetUserSettings(SelfRootDir);  
-      DBG("GetUserSettings OK\n");
+//      DBG("GetUserSettings OK\n");
     //setup properties
     //  SetDevices();
     
@@ -1648,7 +1685,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         ScanLegacy();
     }
     ScanLoader();
-      DBG("ScanLoader OK\n");
+//      DBG("ScanLoader OK\n");
     if (!GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst){
             DBG("scan legacy second\n");
         ScanLegacy();
@@ -1658,10 +1695,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //            DBG("scan tools\n");
         ScanTool();
     }
-      DBG("ScanTool OK\n");
+//      DBG("ScanTool OK\n");
     FillInputs();
     // fixed other menu entries
-           DBG("FillInputs OK\n"); 
+    //           DBG("FillInputs OK\n"); 
     if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
         MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
         AddMenuEntry(&MainMenu, &MenuEntryAbout);
@@ -1716,6 +1753,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         if (MenuExit == MENU_EXIT_OPTIONS){
             OptionsMenu(&OptionEntry);
             //ApplyInputs();
+            continue;
+        }
+        
+        if (MenuExit == MENU_EXIT_HELP){
+            HelpRefit();
             continue;
         }
         
