@@ -341,8 +341,7 @@ EFI_STATUS EjectVolume(IN REFIT_VOLUME *Volume)
 	//		Cdb[1] |= 0x01;
       Cdb[1] = 0x01;
 			Cdb[4] = 0x02; //eject command. NO DESCRIPTION IN HEADERS
-			Status = EFI_UNSUPPORTED;
-      //TODO - it hangs			
+		//	Status = EFI_UNSUPPORTED;
 			Status    = UsbMass->Transport->ExecCommand (
                                                    UsbMass->Context,
                                                    &Cdb,
