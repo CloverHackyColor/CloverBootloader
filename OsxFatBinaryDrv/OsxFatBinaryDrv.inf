@@ -32,7 +32,9 @@
 [LibraryClasses]
   UefiDriverEntryPoint
   UefiLib
-  PcdLib
+  UefiBootServicesTableLib
+  DebugLib
+  DevicePathLib
 
 [Guids]
 gEfiFileInfoGuid                              ## CONSUMES ## GUID
@@ -41,6 +43,7 @@ gEfiFileInfoGuid                              ## CONSUMES ## GUID
 
 [Protocols]
 gEfiSimpleFileSystemProtocolGuid              # PROTOCOL CONSUMES
+gEfiLoadFileProtocolGuid                      # PROTOCOL CONSUMES
 
 
 

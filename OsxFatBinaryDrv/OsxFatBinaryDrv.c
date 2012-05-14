@@ -8,19 +8,12 @@
 
 **/
 
-#include <Uefi.h>
+//#include <Uefi.h>
 #include <Library/UefiLib.h>
-#include <Library/UefiApplicationEntryPoint.h>	
-#include <PiDxe.h>
-#include <Library/DebugLib.h>
-#include <Library/MemoryAllocationLib.h>
 #include <Library/UefiBootServicesTableLib.h>
+#include <Library/DebugLib.h>
 #include <Library/DevicePathLib.h>
-#include <Library/UefiLib.h>
-#include <Library/DxeServicesLib.h>
-#include <Protocol/FirmwareVolume2.h>
 #include <Protocol/LoadedImage.h>
-#include <Protocol/LoadFile2.h>
 #include <Protocol/LoadFile.h>
 #include <Protocol/SimpleFileSystem.h>
 #include <Guid/FileInfo.h>     
@@ -48,8 +41,6 @@ typedef struct fat_arch {
 	UINT32 size; /* size of this object file */
 	UINT32 align; /* alignment as a power of 2, nécessaire pour 64 */
 } fat_arch;
-
-EFI_BOOT_SERVICES *gBS;
 
 /*********************************/
 
@@ -87,7 +78,6 @@ UefiMain (
 
 
 	Status = EFI_SUCCESS;
-	gBS = SystemTable->BootServices;
 
 	OverrideFunctions();
 
@@ -99,37 +89,42 @@ UefiMain (
 
 /* La fonction de Load qui va overwrite la fonction de LoadImage de base*/
 EFI_STATUS EFIAPI ovrLoadImage(
-				BOOLEAN BootPolicy, 
-				EFI_HANDLE ParentImageHandle, 
-				EFI_DEVICE_PATH_PROTOCOL *FilePath,
-				VOID *SourceBuffer, 
-				UINTN SourceSize, 
-				EFI_HANDLE *ImageHandle)
+				BOOLEAN						BootPolicy, 
+				EFI_HANDLE					ParentImageHandle, 
+				EFI_DEVICE_PATH_PROTOCOL	*FilePath,
+				VOID						*SourceBuffer, 
+				UINTN						SourceSize, 
+				EFI_HANDLE					*ImageHandle)
 {
 
-	EFI_STATUS Status = EFI_INVALID_PARAMETER;
-	EFI_DEVICE_PATH_PROTOCOL *TempFilePath;
-	FILEPATH_DEVICE_PATH *FilePathNode;
-	EFI_HANDLE DeviceHandle;
-	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *Volume;
-	EFI_FILE_HANDLE FileHandle;
-	EFI_FILE_HANDLE LastHandle;
-	EFI_LOAD_FILE_PROTOCOL *LoadFile;
-	EFI_FILE_INFO *FileInfo;
-	UINTN FileInfoSize;
-	FILEPATH_DEVICE_PATH *OriginalFilePathNode;
+	EFI_DEVICE_PATH_PROTOCOL	*RemainingDevicePath;
+	EFI_STATUS					Status = EFI_INVALID_PARAMETER;
+	FILEPATH_DEVICE_PATH		*FilePathNode;
+	EFI_HANDLE					DeviceHandle;
+	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL	*Volume;
+	EFI_FILE_HANDLE				FileHandle;
+	EFI_FILE_HANDLE				LastHandle;
+	EFI_LOAD_FILE_PROTOCOL		*LoadFile;
+	EFI_FILE_INFO				*FileInfo;
+	UINTN						FileInfoSize;
+	FILEPATH_DEVICE_PATH		*OriginalFilePathNode;
 
-	BOOLEAN FreeSourceBuffer = FALSE;
-	BOOLEAN FreeSrcBuffer = FALSE;
-	VOID *SrcBuffer = 0;
-	fat_header *FatHeader;
-	fat_arch *FatArch;
-	UINT32 i;
+	BOOLEAN						FreeSourceBuffer = FALSE;
+	BOOLEAN						FreeSrcBuffer = FALSE;
+	VOID						*SrcBuffer = 0;
+	fat_header					*FatHeader;
+	fat_arch					*FatArch;
+	UINT32						i;
 
+	EFI_LOADED_IMAGE_PROTOCOL	*Image;
+	EFI_STATUS					Status2;
+	
 	/*Print(L"Entering ovrLoadImage\n");*/
 
 
 	OriginalFilePathNode = NULL;
+	DeviceHandle = 0;
+	RemainingDevicePath = NULL;
 
 	while (SourceBuffer == NULL)
 	{
@@ -149,6 +144,9 @@ EFI_STATUS EFIAPI ovrLoadImage(
 		(VOID*)&Volume, &DeviceHandle);*/
 		Status = gBS->LocateDevicePath (&gEfiSimpleFileSystemProtocolGuid, (EFI_DEVICE_PATH_PROTOCOL **)&FilePathNode, &DeviceHandle);
 		if (!EFI_ERROR (Status)) {
+		
+			RemainingDevicePath = (EFI_DEVICE_PATH_PROTOCOL *)FilePathNode;
+			
 			Status = gBS->HandleProtocol (DeviceHandle, &gEfiSimpleFileSystemProtocolGuid, (VOID**)&Volume);
 
 			if (!EFI_ERROR(Status))
@@ -164,7 +162,7 @@ EFI_STATUS EFIAPI ovrLoadImage(
 					// Because the device path consists of one or more FILE PATH MEDIA DEVICE PATH
 					// nodes, It assures the fields in device path nodes are 2 byte aligned.
 					//
-					FilePathNode = /*(FILEPATH_DEVICE_PATH *)gDevicePathUtilities->*/(FILEPATH_DEVICE_PATH *)DuplicateDevicePath((EFI_DEVICE_PATH_PROTOCOL *)(UINTN)FilePathNode);
+					FilePathNode = (FILEPATH_DEVICE_PATH *)DuplicateDevicePath((EFI_DEVICE_PATH_PROTOCOL *)FilePathNode);
 					if (FilePathNode == NULL)
 					{
 						FileHandle->Close(FileHandle);
@@ -236,7 +234,6 @@ EFI_STATUS EFIAPI ovrLoadImage(
 							// Allocate space for the file
 							//
 							ASSERT (FileInfo != NULL);
-							/*SourceBuffer = EfiLibAllocatePool((UINTN)FileInfo->FileSize);*/
 							gBS->AllocatePool (EfiBootServicesData, (UINTN)FileInfo->FileSize, &SourceBuffer);   
 
 							if (SourceBuffer != NULL)
@@ -268,11 +265,10 @@ EFI_STATUS EFIAPI ovrLoadImage(
 		// Try LoadFile style
 		//
 
-		TempFilePath = FilePath;
-		/*Status = DevicePathToInterface(&gEfiLoadFileProtocolGuid, &TempFilePath, (VOID*) &LoadFile, &DeviceHandle);*/
-		Status = gBS->LocateDevicePath (&gEfiSimpleFileSystemProtocolGuid, (EFI_DEVICE_PATH_PROTOCOL **) &TempFilePath, &DeviceHandle);
+		RemainingDevicePath = FilePath;
+		Status = gBS->LocateDevicePath (&gEfiLoadFileProtocolGuid, &RemainingDevicePath, &DeviceHandle);
 		if (!EFI_ERROR (Status)) {
-			Status = gBS->HandleProtocol (DeviceHandle, &gEfiSimpleFileSystemProtocolGuid, (VOID**)&LoadFile);
+			Status = gBS->HandleProtocol (DeviceHandle, &gEfiLoadFileProtocolGuid, (VOID**)&LoadFile);
 
 			if (!EFI_ERROR(Status))
 			{
@@ -281,7 +277,7 @@ EFI_STATUS EFIAPI ovrLoadImage(
 				//
 				ASSERT(SourceSize == 0);
 				ASSERT(SourceBuffer == NULL);
-				Status = LoadFile->LoadFile(LoadFile, TempFilePath, BootPolicy, &SourceSize, SourceBuffer);
+				Status = LoadFile->LoadFile(LoadFile, RemainingDevicePath, BootPolicy, &SourceSize, SourceBuffer);
 				if (Status == EFI_BUFFER_TOO_SMALL)
 				{
 					/*SourceBuffer = EfiLibAllocatePool(SourceSize);*/
@@ -289,7 +285,7 @@ EFI_STATUS EFIAPI ovrLoadImage(
 					if (SourceBuffer == NULL)
 						Status = EFI_OUT_OF_RESOURCES;
 					else
-						Status = LoadFile->LoadFile(LoadFile, TempFilePath, BootPolicy, &SourceSize, SourceBuffer);
+						Status = LoadFile->LoadFile(LoadFile, RemainingDevicePath, BootPolicy, &SourceSize, SourceBuffer);
 				}
 
 				if (!EFI_ERROR(Status))
@@ -344,6 +340,30 @@ EFI_STATUS EFIAPI ovrLoadImage(
 		if (SourceBuffer)
 			gBS->FreePool(SourceBuffer);
 
+	//
+	// dmazar: some boards do not put device handle to EfiLoadedImageProtocol->DeviceHandle
+	// when image is loaded from SrcBuffer, and then boot.efi fails.
+	// we'll fix EfiLoadedImageProtocol here.
+	//
+	if (!EFI_ERROR(Status) && DeviceHandle != 0)
+	{
+		Status2 = gBS->OpenProtocol (
+			*ImageHandle,
+			&gEfiLoadedImageProtocolGuid,
+			(VOID **) &Image,
+			gImageHandle,
+			NULL,
+			EFI_OPEN_PROTOCOL_GET_PROTOCOL
+		);
+		if (!EFI_ERROR(Status2))
+		{
+			if (Image->DeviceHandle != DeviceHandle)
+			{
+				Image->DeviceHandle = DeviceHandle;
+				Image->FilePath = DuplicateDevicePath(RemainingDevicePath);
+			}
+		}
+	}
 	/*Print(L"Exiting ovrLoadImage\n");*/
 	return Status;
 }
@@ -360,33 +380,3 @@ VOID OverrideFunctions(VOID)
 	gBS->CalculateCrc32(gBS, sizeof(EFI_BOOT_SERVICES), &gBS->Hdr.CRC32);
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
