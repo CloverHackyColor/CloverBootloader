@@ -1530,6 +1530,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 {
     EFI_STATUS Status;
     BOOLEAN           MainLoopRunning = TRUE;
+    BOOLEAN           ReinitDesktop = TRUE;
     REFIT_MENU_ENTRY  *ChosenEntry;
     REFIT_MENU_ENTRY  *DefaultEntry;
     REFIT_MENU_ENTRY  *OptionEntry;
@@ -1677,6 +1678,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     //  SetDevices();
     
     PrepareFont();
+    FillInputs();
+    
+    do {
     //test font
  //     DBG("PrepareFont OK\n");
     // scan for loaders and tools, add then to the menu
@@ -1696,7 +1700,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         ScanTool();
     }
 //      DBG("ScanTool OK\n");
-    FillInputs();
     // fixed other menu entries
     //           DBG("FillInputs OK\n"); 
     if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
@@ -1719,7 +1722,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
     
     // assign shortcut keys
-    DBG("First entries in main menu\n");
+   DBG("First entries in main menu\n");
     for (i = 0; i < MainMenu.EntryCount && MainMenu.Entries[i]->Row == 0 && i < 9; i++){
         MainMenu.Entries[i]->ShortcutDigit = (CHAR16)('1' + i);
         DBG("%d: %s %d\n", i, MainMenu.Entries[i]->Title, MainMenu.Entries[i]->Tag);
@@ -1765,7 +1768,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         if (MenuExit == MENU_EXIT_EJECT){
             if ((ChosenEntry->Tag == TAG_LOADER) ||
                 (ChosenEntry->Tag == TAG_LEGACY)) {
-                EjectVolume(((LOADER_ENTRY *)ChosenEntry)->Volume);
+                Status = EjectVolume(((LOADER_ENTRY *)ChosenEntry)->Volume);
+                if (!EFI_ERROR(Status)) {
+                    break; //main loop is broken so Reinit all
+                }
             }      
             continue;
         }
@@ -1773,7 +1779,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         
         // We don't allow exiting the main menu with the Escape key.
         if (MenuExit == MENU_EXIT_ESCAPE)
-            continue;
+            break;   //refresh main menu
+ //           continue;
         
         switch (ChosenEntry->Tag) {
                 
@@ -1812,6 +1819,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
                 
         }
     }
+        
+        ReinitRefitLib();
+    } while (ReinitDesktop);
     
     // If we end up here, things have gone wrong. Try to reboot, and if that
     // fails, go into an endless loop.

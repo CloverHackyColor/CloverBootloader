@@ -202,7 +202,8 @@ OnSimpleFileSystem (
   
 	OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
   
-  ReinitVolumes();
+//  ReinitRefitLib();
+  DrawMenuText(L"OnSimpleFileSystem", 0, 0, UGAHeight-40, 1);
   
 	gBS->RestoreTPL (OldTpl);
   
