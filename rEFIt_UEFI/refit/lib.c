@@ -418,10 +418,12 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
 				while (*p == 0x20) {
 					p++;
 				}
-        for (i=0; i<63 && (*p != 0); i++, p++) {
+        for (i=0; i<30 && (*p >= 0x20) && (*p <= 'z'); i++, p++) {
           tmp[i] = *p;
         }
         tmp[i] = 0;
+        while (tmp[--i] == 0x20) {}
+        tmp[i+1] = 0;
 			//	if (*p != 0) {
 					AsciiStrToUnicodeStr((CHAR8*)&tmp[0], volumeName);
 			//	}
@@ -433,7 +435,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
 					//		StrCpy(Volume->VolName, volumeName);
               DBG("Found AppleDVD\n");
 							Volume->OSType = OSTYPE_OSX;
-							Volume->BootType = BOOTING_BY_CD; //sure?
+							Volume->BootType = BOOTING_BY_EFI; //sure? or _BY_CD?
               Volume->OSIconName = L"mac";
 							break;
 						}

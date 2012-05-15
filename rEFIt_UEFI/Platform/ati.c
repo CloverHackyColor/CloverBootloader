@@ -425,10 +425,14 @@ AtiDevProp ati_devprop_list[] = {
 //  {FLAGTRUE,	TRUE,	"@0,VRAM,memsize",			get_vrammemsize_val,	NULVAL          },
 	
   {FLAGTRUE,	FALSE,	"AAPL,aux-power-connected", NULL,					DWRVAL((UINT32)1)		},
-  {FLAGTRUE,	FALSE,	"AAPL,backlight-control",	NULL,					DWRVAL((UINT32)0)			},
+  {FLAGTRUE,	FALSE,	"AAPL00,DualLink",          NULL,					DWRVAL((UINT32)1)		},
+  {FLAGMOBILE,	FALSE,	"AAPL,HasPanel",          NULL,					DWRVAL((UINT32)1)   },
+  {FLAGMOBILE,	FALSE,	"AAPL,HasLid",            NULL,					DWRVAL((UINT32)1)   },
+  {FLAGMOBILE,	FALSE,	"AAPL,backlight-control", NULL,					DWRVAL((UINT32)0)   },
 	{FLAGTRUE,	FALSE,	"AAPL,overwrite_binimage",	get_binimage_owr,		NULVAL				},
 	{FLAGTRUE,	FALSE,	"ATY,bin_image",            get_binimage_val,		NULVAL				},
 	{FLAGTRUE,	FALSE,	"ATY,Copyright",	NULL,	STRVAL("Copyright AMD Inc. All Rights Reserved. 2005-2011") },
+  {FLAGTRUE,	FALSE,	"ATY,EFIVersion",	NULL,	STRVAL("01.00.3180")                  },
 	{FLAGTRUE,	FALSE,	"ATY,Card#",			get_romrevision_val,	NULVAL                },
 	{FLAGTRUE,	FALSE,	"ATY,VendorID",		NULL,					WRDVAL((UINT16)0x1002)        },
 	{FLAGTRUE,	FALSE,	"ATY,DeviceID",		get_deviceid_val,		NULVAL                  },
@@ -472,9 +476,15 @@ BOOLEAN get_vrammemory_val(value_t *val)
 
 BOOLEAN get_edid_val(value_t *val)
 {
+  static UINT32 v = 0;
+	
+	if (v)
+		return FALSE;
+	  
   if (!gEDID) {
     return FALSE;
   }
+  v = 1;
   val->type = kPtr;
   val->size = 128;
   val->data = (UINT8 *)gEDID;
@@ -671,6 +681,16 @@ VOID free_val(value_t *val)
 	ZeroMem(val, sizeof(value_t));
 }
 
+//  {FLAGTRUE,	TRUE,	"@0,compatible",    get_name_val,       NULVAL				},
+// 	{FLAGTRUE,	FALSE,	"ATY,VendorID",		NULL,					WRDVAL((UINT16)0x1002)        },
+/*typedef struct {
+	UINT32				flags;
+	BOOLEAN				all_ports;
+	CHAR8					*name;
+	BOOLEAN				(*get_value)(value_t *val);
+	value_t				default_val;
+} AtiDevProp;
+*/
 VOID devprop_add_list(AtiDevProp devprop_list[])
 {
 	INTN i, pnum;
@@ -1100,12 +1120,18 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 			DBG("\n");
 		}
   }
-
 	
 	if (card->info->chip_family >= CHIP_FAMILY_CEDAR)
 	{
+    DBG("ATI Radeon EVERGREEN family\n");
 		card->flags |= EVERGREEN;
 	}
+  
+  if (gMobile) {
+    DBG("ATI Mobile Radeon\n");
+    card->flags |= FLAGMOBILE;
+  }
+  
 	NameLen = StrLen(gSettings.FBName);
   if (NameLen > 3) {  //fool proof: cfg_name is 4 character or more.
     CfgName = AllocateZeroPool(NameLen);

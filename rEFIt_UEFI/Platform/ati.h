@@ -158,6 +158,7 @@ typedef struct {
 #define MKFLAG(n)			(1 << n)
 #define FLAGTRUE			MKFLAG(0)
 #define EVERGREEN			MKFLAG(1)
+#define FLAGMOBILE    MKFLAG(2)
 
 //static UINT8 atN = 0;
 

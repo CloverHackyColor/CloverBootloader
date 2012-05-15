@@ -294,13 +294,13 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 	}
 	
 	// Load El Torito boot record volume descriptor
-	Status = pBlockIO->ReadBlocks(pBlockIO, pBlockIO->Media->MediaId, 0x11, 2048, &sectorBuffer);
+	Status = pBlockIO->ReadBlocks(pBlockIO, pBlockIO->Media->MediaId, 0x11, 2048, sectorBuffer);
 	if (EFI_ERROR(Status)) {
 		// Retry in case the CD was swapped out
 		Status = gBS->HandleProtocol(volume->DeviceHandle, &gEfiBlockIoProtocolGuid, (VOID **) &pBlockIO);
 		if (!EFI_ERROR(Status)) {
 			//      pCDROMBlockIO = pBlockIO;
-			Status = pBlockIO->ReadBlocks(pBlockIO, pBlockIO->Media->MediaId, 0x11, 2048, &sectorBuffer);
+			Status = pBlockIO->ReadBlocks(pBlockIO, pBlockIO->Media->MediaId, 0x11, 2048, sectorBuffer);
 		}
 		if (EFI_ERROR(Status)) {
 			Print(L"CDROMBoot: Unable to read block %X: %r\n", 0x11, Status);
@@ -315,7 +315,7 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 	
 	// Find the boot catalog
 	lba = sectorBuffer[0x47] + sectorBuffer[0x48] * 256 + sectorBuffer[0x49] * 65536 + sectorBuffer[0x4A] * 16777216;
-	Status = pBlockIO->ReadBlocks(pBlockIO, pBlockIO->Media->MediaId, lba, 2048, &sectorBuffer);
+	Status = pBlockIO->ReadBlocks(pBlockIO, pBlockIO->Media->MediaId, lba, 2048, sectorBuffer);
 	if (EFI_ERROR(Status)) {
 		Print(L"CDROMBoot: Unable to read block %X: %r\n", lba, Status);
 		return Status;
@@ -362,6 +362,15 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 		Print(L"CDROMBoot: Unable to read block %ld: %r\n", lba, Status);
 		return Status;
 	}
+  
+  UINTN         LogSize;  
+  LogSize = msgCursor - msgbuf;
+  Status = egSaveFile(SelfRootDir, L"EFI\\misc\\legacy_boot.log", (UINT8*)msgbuf, LogSize);
+  if (EFI_ERROR(Status)) {
+    Print(L"can't save legacy-boot.log\n");
+    Status = egSaveFile(NULL, L"EFI\\misc\\legacy_boot.log", (UINT8*)msgbuf, LogSize);
+  }
+    
 	
 	// Configure drive
 	//  hd82 = pBlockIO;
@@ -375,25 +384,26 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 	if (EFI_ERROR(Status)) {
 		return Status;
 	}
-  mCpu = NULL;
+/*  mCpu = NULL;
   Status = gBS->LocateProtocol (&gEfiCpuArchProtocolGuid, NULL, (VOID **) &mCpu);
 	if (EFI_ERROR(Status)) {
 		return Status;
 	}
-
+*/
 	
 	Status = gBS->AllocatePool (EfiBootServicesData,sizeof(THUNK_CONTEXT),(VOID **)&mThunkContext);
 	if (EFI_ERROR (Status)) {
 		return Status;
 	}
 	InitializeBiosIntCaller(); //mThunkContext);
-	InitializeInterruptRedirection(); //gLegacy8259);
-  Status = mCpu->EnableInterrupt(mCpu);  
+  //	InitializeInterruptRedirection(); //gLegacy8259);
+  // Status = mCpu->EnableInterrupt(mCpu);  
   
-	Regs.X.DX = 0x82;
+	Regs.X.DX = 0; //0x82;
 	//	Regs.X.SI = (UINT16)activePartition;
 	//Regs.X.ES = EFI_SEGMENT((UINT32) pBootSector);
 	//Regs.X.BX = EFI_OFFSET ((UINT32) pBootSector);
+//  LegacyBiosFarCall86(0, 0x7c00, &Regs);
 	LegacyBiosFarCall86(
 						EFI_SEGMENT((UINT32) addrToOffset(bootLoadAddress)),
 						EFI_OFFSET ((UINT32) addrToOffset(bootLoadAddress)),
