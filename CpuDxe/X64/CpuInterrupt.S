@@ -31,15 +31,19 @@ ASM_PFX(mExceptionCodeSize): .long  9
   ASM_GLOBAL ASM_PFX(InitDescriptor)
 
 ASM_PFX(InitDescriptor):
-        movq    GDT_BASE(%rip),%rax              # EAX=PHYSICAL address of gdt
-        movq    %rax, (gdtr + 2)(%rip)              # Put address of gdt into the gdtr
-        lgdt    gdtr(%rip)
+#        movq    GDT_BASE(%rip),%rax              # EAX=PHYSICAL address of gdt
+#        movq    %rax, (gdtr + 2)(%rip)              # Put address of gdt into the gdtr
+#        lgdt    gdtr(%rip)
+        movabs  $gdtr, %rax
+        lgdt    (%rax)
         movq    $0x18, %rax
         movl    %eax, %gs
         movl    %eax, %fs
-        movq    IDT_BASE(%rip),%rax              # EAX=PHYSICAL address of idt
-        movq    %rax, (idtr + 2)(%rip)              # Put address of idt into the idtr
-        lidt    idtr(%rip)
+#        movq    IDT_BASE(%rip),%rax              # EAX=PHYSICAL address of idt
+#        movq    %rax, (idtr + 2)(%rip)              # Put address of idt into the idtr
+#        lidt    idtr(%rip)
+        movabs  $idtr, %rax
+        lidt    (%rax)
         ret
 
 # VOID
@@ -522,7 +526,7 @@ ExceptionDone:
   .data
 
 gdtr: .short GDT_END - GDT_BASE - 1   # GDT limit
-      .quad 0                         # (GDT base gets set above)
+      .quad GDT_BASE                  # (GDT base gets set above)
 ##############################################################################
 #   global descriptor table (GDT)
 ##############################################################################
@@ -614,7 +618,7 @@ SPARE4_SEL    = .-GDT_BASE            # Selector [0x40]
 GDT_END:
 
 idtr: .short IDT_END - IDT_BASE - 1   # IDT limit
-      .quad 0                         # (IDT base gets set above)
+      .quad IDT_BASE                  # (IDT base gets set above)
 ##############################################################################
 #   interrupt descriptor table (IDT)
 #
@@ -831,7 +835,7 @@ SIMD_EXCEPTION_SEL  = .-IDT_BASE
   # macro .rept isn't used here because Apple GAS compiler doesn't support it.
   # No. 1
         .short 0            # offset 15:0
-        .short SYS_CODE_SEL # selector 15:0
+        .short SYS_CODE64_SEL # selector 15:0
         .byte 0             # 0 for interrupt gate
         .byte 0x0e | 0x80   # (10001110)type = 386 interrupt gate, present
         .short 0            # offset 31:16
@@ -839,7 +843,7 @@ SIMD_EXCEPTION_SEL  = .-IDT_BASE
         .long 0             # for reserved
   # No. 2
         .short 0            # offset 15:0
-        .short SYS_CODE_SEL # selector 15:0
+        .short SYS_CODE64_SEL # selector 15:0
         .byte 0             # 0 for interrupt gate
         .byte 0x0e | 0x80   # (10001110)type = 386 interrupt gate, present
         .short 0            # offset 31:16
@@ -847,7 +851,7 @@ SIMD_EXCEPTION_SEL  = .-IDT_BASE
         .long 0             # for reserved
   # No. 3
         .short 0            # offset 15:0
-        .short SYS_CODE_SEL # selector 15:0
+        .short SYS_CODE64_SEL # selector 15:0
         .byte 0             # 0 for interrupt gate
         .byte 0x0e | 0x80   # (10001110)type = 386 interrupt gate, present
         .short 0            # offset 31:16
@@ -855,7 +859,7 @@ SIMD_EXCEPTION_SEL  = .-IDT_BASE
         .long 0             # for reserved
   # No. 4
         .short 0            # offset 15:0
-        .short SYS_CODE_SEL # selector 15:0
+        .short SYS_CODE64_SEL # selector 15:0
         .byte 0             # 0 for interrupt gate
         .byte 0x0e | 0x80   # (10001110)type = 386 interrupt gate, present
         .short 0            # offset 31:16
@@ -863,7 +867,7 @@ SIMD_EXCEPTION_SEL  = .-IDT_BASE
         .long 0             # for reserved
   # No. 5
         .short 0            # offset 15:0
-        .short SYS_CODE_SEL # selector 15:0
+        .short SYS_CODE64_SEL # selector 15:0
         .byte 0             # 0 for interrupt gate
         .byte 0x0e | 0x80   # (10001110)type = 386 interrupt gate, present
         .short 0            # offset 31:16
@@ -871,7 +875,7 @@ SIMD_EXCEPTION_SEL  = .-IDT_BASE
         .long 0             # for reserved
   # No. 6
         .short 0            # offset 15:0
-        .short SYS_CODE_SEL # selector 15:0
+        .short SYS_CODE64_SEL # selector 15:0
         .byte 0             # 0 for interrupt gate
         .byte 0x0e | 0x80   # (10001110)type = 386 interrupt gate, present
         .short 0            # offset 31:16
@@ -879,7 +883,7 @@ SIMD_EXCEPTION_SEL  = .-IDT_BASE
         .long 0             # for reserved
   # No. 7
         .short 0            # offset 15:0
-        .short SYS_CODE_SEL # selector 15:0
+        .short SYS_CODE64_SEL # selector 15:0
         .byte 0             # 0 for interrupt gate
         .byte 0x0e | 0x80   # (10001110)type = 386 interrupt gate, present
         .short 0            # offset 31:16
@@ -887,7 +891,7 @@ SIMD_EXCEPTION_SEL  = .-IDT_BASE
         .long 0             # for reserved
   # No. 8
         .short 0            # offset 15:0
-        .short SYS_CODE_SEL # selector 15:0
+        .short SYS_CODE64_SEL # selector 15:0
         .byte 0             # 0 for interrupt gate
         .byte 0x0e | 0x80   # (10001110)type = 386 interrupt gate, present
         .short 0            # offset 31:16
@@ -895,7 +899,7 @@ SIMD_EXCEPTION_SEL  = .-IDT_BASE
         .long 0             # for reserved
   # No. 9
         .short 0            # offset 15:0
-        .short SYS_CODE_SEL # selector 15:0
+        .short SYS_CODE64_SEL # selector 15:0
         .byte 0             # 0 for interrupt gate
         .byte 0x0e | 0x80   # (10001110)type = 386 interrupt gate, present
         .short 0            # offset 31:16
@@ -903,7 +907,7 @@ SIMD_EXCEPTION_SEL  = .-IDT_BASE
         .long 0             # for reserved
   # No. 10
         .short 0            # offset 15:0
-        .short SYS_CODE_SEL # selector 15:0
+        .short SYS_CODE64_SEL # selector 15:0
         .byte 0             # 0 for interrupt gate
         .byte 0x0e | 0x80   # (10001110)type = 386 interrupt gate, present
         .short 0            # offset 31:16
@@ -911,7 +915,7 @@ SIMD_EXCEPTION_SEL  = .-IDT_BASE
         .long 0             # for reserved
   # No. 11
         .short 0            # offset 15:0
-        .short SYS_CODE_SEL # selector 15:0
+        .short SYS_CODE64_SEL # selector 15:0
         .byte 0             # 0 for interrupt gate
         .byte 0x0e | 0x80   # (10001110)type = 386 interrupt gate, present
         .short 0            # offset 31:16
@@ -919,7 +923,7 @@ SIMD_EXCEPTION_SEL  = .-IDT_BASE
         .long 0             # for reserved
   # No. 12
         .short 0            # offset 15:0
-        .short SYS_CODE_SEL # selector 15:0
+        .short SYS_CODE64_SEL # selector 15:0
         .byte 0             # 0 for interrupt gate
         .byte 0x0e | 0x80   # (10001110)type = 386 interrupt gate, present
         .short 0            # offset 31:16

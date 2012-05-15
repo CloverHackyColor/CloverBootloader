@@ -762,13 +762,28 @@ static VOID ScanLoader(VOID)
     }
 
     // check for grub boot loader/menu
-    StrCpy(FileName, L"\\EFI\\grub\\grub.efi");
-    if (FileExists(Volume->RootDir, FileName)) {
+#if defined(MDE_CPU_X64)
+      StrCpy(FileName, L"\\EFI\\grub\\grubx64.efi");
+#else
+      StrCpy(FileName, L"\\EFI\\grub\\grub.efi");
+#endif
+      
+      if (FileExists(Volume->RootDir, FileName)) {
   //    Volume->OSType = OSTYPE_LIN;
       Volume->BootType = BOOTING_BY_EFI;
       Entry = AddLoaderEntry(FileName, L"Grub EFI boot menu", Volume, OSTYPE_LIN);
  //     continue;
     }
+      // check for Gentoo boot loader/menu
+#if defined(MDE_CPU_X64)
+      StrCpy(FileName, L"\\EFI\\Gentoo\\grubx64.efi");
+#else
+      StrCpy(FileName, L"\\EFI\\Gentoo\\grub.efi");
+#endif
+      if (FileExists(Volume->RootDir, FileName)) {
+          Volume->BootType = BOOTING_BY_EFI;
+          Entry = AddLoaderEntry(FileName, L"Gentoo EFI boot menu", Volume, OSTYPE_LIN);
+      }
     
     // check for Redhat boot loader/menu
     StrCpy(FileName, L"\\EFI\\RedHat\\grub.efi");
