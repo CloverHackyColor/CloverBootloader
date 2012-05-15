@@ -116,11 +116,11 @@ static VOID HelpRefit(VOID)
         if (gLanguage == russian) {
             AddMenuInfoLine(&HelpMenu, L"F1  - Помощь по горячим клавишам");
             AddMenuInfoLine(&HelpMenu, L"F2  - Сохранить отчет в preboot.log (только если FAT32)");
-            AddMenuInfoLine(&HelpMenu, L"F4  - Извлечь оригинальный DSDT, сохранить в EFI/ACPI/origin/ (только FAT32)");
+            AddMenuInfoLine(&HelpMenu, L"F4  - Родной DSDT сохранить в EFI/ACPI/origin/ (FAT32)");
             AddMenuInfoLine(&HelpMenu, L"F10 - Снимок экрана в папку EFI/misc/ (только FAT32)");
             AddMenuInfoLine(&HelpMenu, L"F12 - Извлечь указанный DVD");
             AddMenuInfoLine(&HelpMenu, L"Пробел - Подробнее о выбранном пункте");
-            AddMenuInfoLine(&HelpMenu, L"Цифры 1-9 - Быстрый запуск тома по порядку расположения в меню");
+            AddMenuInfoLine(&HelpMenu, L"Цифры 1-9 - Быстрый запуск тома по порядку в меню");
             AddMenuInfoLine(&HelpMenu, L"A - О загрузчике");
             AddMenuInfoLine(&HelpMenu, L"O - Дополнительные настройки");
             AddMenuInfoLine(&HelpMenu, L"R - Теплый перезапуск");
@@ -129,7 +129,7 @@ static VOID HelpRefit(VOID)
         } else {
             AddMenuInfoLine(&HelpMenu, L"F1  - This help");
             AddMenuInfoLine(&HelpMenu, L"F2  - Save preboot.log (FAT32 only)");
-            AddMenuInfoLine(&HelpMenu, L"F4  - Save original DSDT into EFI/ACPI/origin/ (FAT32 only)");
+            AddMenuInfoLine(&HelpMenu, L"F4  - Save oem DSDT into EFI/ACPI/origin/ (FAT32 only)");
             AddMenuInfoLine(&HelpMenu, L"F10 - Save screenshot into EFI/misc/ (FAT32 only)");
             AddMenuInfoLine(&HelpMenu, L"F12 - Eject selected volume (DVD)");
             AddMenuInfoLine(&HelpMenu, L"Space - Details about selected menu entry");
@@ -1511,9 +1511,10 @@ INTN FindDefaultEntry(VOID)
           return Index2;
         }     
       }
+       DBG("but efi-boot-disk absent\n"); 
     }
     //nvram is not found or it points to wrong volume but DefaultBoot found
-    DBG("but efi-boot-disk absent\n");
+    
     return Index;
   }
   return -1;
@@ -1635,7 +1636,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //      DBG("reinit OK\n");
     ZeroMem((VOID*)&gSettings, sizeof(SETTINGS_DATA));
     ZeroMem((VOID*)&gGraphics[0], sizeof(GFX_PROPERTIES) * 4);
-    ScanVolumes();
+//    ScanVolumes();
 //      DBG("ScanVolumes OK\n");
     GetCPUProperties();
     GetDevices();
@@ -1669,20 +1670,21 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 		CopyMem(gSettings.BootArgs, Buffer, Size);	
     if (Buffer) {
         gBS->FreePages((EFI_PHYSICAL_ADDRESS) (UINTN)Buffer, EFI_SIZE_TO_PAGES(Size));
+        Buffer = NULL;
     }
     
     //Second step. Load config.plist into gSettings	
 	Status = GetUserSettings(SelfRootDir);  
 //      DBG("GetUserSettings OK\n");
-    //setup properties
-    //  SetDevices();
     
+    //test font
+ //     DBG("PrepareFont OK\n");
     PrepareFont();
     FillInputs();
     
     do {
-    //test font
- //     DBG("PrepareFont OK\n");
+        MainMenu.EntryCount = 0;
+        ScanVolumes();
     // scan for loaders and tools, add then to the menu
     if (!GlobalConfig.NoLegacy && GlobalConfig.LegacyFirst){
             DBG("scan legacy first\n");
@@ -1722,12 +1724,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
     
     // assign shortcut keys
-   DBG("First entries in main menu\n");
+/*   DBG("First entries in main menu\n");
     for (i = 0; i < MainMenu.EntryCount && MainMenu.Entries[i]->Row == 0 && i < 9; i++){
         MainMenu.Entries[i]->ShortcutDigit = (CHAR16)('1' + i);
         DBG("%d: %s %d\n", i, MainMenu.Entries[i]->Title, MainMenu.Entries[i]->Tag);
     }
-        
+*/        
     //  DrawMenuText(L"Test Русский", 14, 0, UGAHeight-40, 5);  
     //  PauseForKey(L"Test fonts");
     // MsgLog("StrSize of ABC=%d\n", StrSize(L"ABC")); //result=8
@@ -1819,7 +1821,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
                 
         }
     }
-        
+        UninitRefitLib();
         ReinitRefitLib();
     } while (ReinitDesktop);
     

@@ -69,7 +69,7 @@ char_width 8
 # V2 - PNG image supported 
 # The location of the file theme dependent 
 #
-banner logo-org.png
+banner logo_metal4.png
 
 # Custom images for the selection background. There is a big one (144 x 144)
 # for the OS icons, and a small one (64 x 64) for the function icons in the
@@ -80,7 +80,7 @@ banner logo-org.png
 # Like the banner option above, these options take a filename of
 # an uncompressed BMP image file.
 # V2 - PNG image supported 
-# theme independent
+# theme dependent
 #
 selection_big   Selection_big.png
 selection_small Selection_small.png

@@ -1140,7 +1140,10 @@ static VOID UninitVolumes(VOID)
         Volume->DeviceHandle = NULL;
         Volume->BlockIO = NULL;
         Volume->WholeDiskBlockIO = NULL;
+      FreePool(Volume);
     }
+  VolumesCount = 0; 
+  
 }
 
 VOID ReinitVolumes(VOID)
@@ -1169,13 +1172,14 @@ VOID ReinitVolumes(VOID)
         // get the root directory
         Volume->RootDir = EfiLibOpenRoot(Volume->DeviceHandle);
         
-      } else
-        CheckError(Status, L"from LocateDevicePath");
+      }
+      //else
+      //  CheckError(Status, L"from LocateDevicePath");
     }
     
     if (Volume->WholeDiskDevicePath != NULL) {
       // get the handle for that path
-      RemainingDevicePath = Volume->WholeDiskDevicePath;
+      RemainingDevicePath = DuplicateDevicePath(Volume->WholeDiskDevicePath);
       Status = gBS->LocateDevicePath(&gEfiBlockIoProtocolGuid, &RemainingDevicePath, &WholeDiskHandle);
       
       if (!EFI_ERROR(Status)) {
@@ -1185,8 +1189,9 @@ VOID ReinitVolumes(VOID)
           Volume->WholeDiskBlockIO = NULL;
           CheckError(Status, L"from HandleProtocol");
         }
-      } else
-        CheckError(Status, L"from LocateDevicePath");
+      }
+      //else
+      //  CheckError(Status, L"from LocateDevicePath");
     }
   }
   VolumesCount = VolumesFound;
