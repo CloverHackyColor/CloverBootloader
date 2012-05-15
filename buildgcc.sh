@@ -22,7 +22,7 @@
 #
 export BINUTILS_VERSION=binutils-2.22
 export GCC_VERSION=4.6.3
-export GMP_VERSION=gmp-5.0.4
+export GMP_VERSION=gmp-5.0.5
 export MPFR_VERSION=mpfr-3.1.0
 export MPC_VERSION=mpc-0.9
 

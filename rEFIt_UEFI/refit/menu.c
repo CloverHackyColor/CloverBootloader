@@ -1115,8 +1115,6 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       
     case MENU_FUNCTION_PAINT_SELECTION:
       // redraw selection cursor
-      //Last selection
-//            DBG("MENU_FUNCTION_PAINT_SELECTION 1\n");
       //usr-sse2
       if (Screen->Entries[State->LastSelection]->Tag == TAG_INPUT) {
         CHAR16 ResultString[255];
@@ -1127,16 +1125,12 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         DrawMenuText(ResultString, 0,
                      EntriesPosX, EntriesPosY + State->LastSelection * TextHeight,
                      TitleLen + Screen->Entries[State->LastSelection]->Row);
-///        DBG("MENU_FUNCTION_PAINT_SELECTION 2\n");
       }
       else {
-//        DBG("MENU_FUNCTION_PAINT_SELECTION 3\n");
         DrawMenuText(Screen->Entries[State->LastSelection]->Title, 0,
                      EntriesPosX, EntriesPosY + State->LastSelection * TextHeight, 0xFFFF);
       }
-      
-//      DBG("MENU_FUNCTION_PAINT_SELECTION 4\n");
-      //Current selection
+            //Current selection
       if (Screen->Entries[State->CurrentSelection]->Tag == TAG_INPUT) {
         CHAR16 ResultString[255];
         UINTN  TitleLen = StrLen(Screen->Entries[State->CurrentSelection]->Title);
@@ -1289,12 +1283,6 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
               (Screen->Entries[i])->Image->Width); */
         }
       }
-/*      p = Screen->Entries[State->CurrentSelection]->Title;
-//      X = (UGAWidth - StrLen(p) * GlobalConfig.CharWidth) >> 1;
-      X = (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1;
-      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-        DrawMainMenuText(p, X, textPosY);
-      }  */
      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL))
         DrawMainMenuText(Screen->Entries[State->CurrentSelection]->Title,
                          (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY);
