@@ -315,24 +315,18 @@ ShrinkMemMap(
 		if ((Desc->Attribute == PrevDesc->Attribute) && (PrevDesc->PhysicalStart + Bytes == Desc->PhysicalStart)) {
 			if (Desc->Type == EfiBootServicesCode
 				|| Desc->Type == EfiBootServicesData
-				|| Desc->Type == EfiConventionalMemory
-				|| Desc->Type == EfiLoaderCode
-				|| Desc->Type == EfiLoaderData
+				//|| Desc->Type == EfiConventionalMemory
+				//|| Desc->Type == EfiLoaderCode
+				//|| Desc->Type == EfiLoaderData
 				)
 			{
 				CanBeJoined = PrevDesc->Type == EfiBootServicesCode
 					|| PrevDesc->Type == EfiBootServicesData
-					|| PrevDesc->Type == EfiConventionalMemory
-					|| PrevDesc->Type == EfiLoaderCode
-					|| PrevDesc->Type == EfiLoaderData;
-			}/* else if (Desc->Type == EfiRuntimeServicesCode 
-						|| Desc->Type == EfiRuntimeServicesData 
-						)
-			{
-				CanBeJoined = PrevDesc->Type == EfiRuntimeServicesCode 
-					|| PrevDesc->Type == EfiRuntimeServicesData;
+					//|| PrevDesc->Type == EfiConventionalMemory
+					//|| PrevDesc->Type == EfiLoaderCode
+					//|| PrevDesc->Type == EfiLoaderData
+					;
 			}
-			*/
 		}
 		
 		if (CanBeJoined) {

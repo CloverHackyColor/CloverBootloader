@@ -466,6 +466,7 @@ KernelEntryPatchJumpBack(UINTN bootArgs)
 	BootArgs2			*BA2 = pBootArgs;
 	
 	PRINT("BACK FROM KERNEL: BootArgs = %x, KernelEntry: %x\n", bootArgs, AsmKernelEntry);
+	BootArgsPrint(pBootArgs);
 	
 	if (gRelocBase > 0) {
 
@@ -487,9 +488,7 @@ KernelEntryPatchJumpBack(UINTN bootArgs)
 		DevTreeFix(pBootArgs);
 		
 		// fix boot args
-		//BootArgsPrint(pBootArgs);
 		BootArgsFix(pBootArgs, gRelocBase);
-		//BootArgsPrint(pBootArgs);
 		
 		
 		// and finally copy kernel boot image to a proper place
@@ -501,8 +500,10 @@ KernelEntryPatchJumpBack(UINTN bootArgs)
 				(VOID *)(UINTN)(gRelocBase + kaddr),
 				ksize);
 		bootArgs = bootArgs - gRelocBase;
+		pBootArgs = (VOID*)bootArgs;
 	}
 	PRINT("BACK TO KERNEL: BootArgs = %x\n", bootArgs);
+	BootArgsPrint(pBootArgs);
 	
 	return bootArgs;
 }

@@ -1301,9 +1301,10 @@ static VOID ReserveLowerMem(VOID)
     EFI_PHYSICAL_ADDRESS    Addr;
     //UINTN                   Index;
     
-    // we'll block lower 96MB - more then enough
-    // kernel will probably not go more then 0x4000000
-    LowTopAddr = 0x6000000;
+    // we'll block lower 320MB - more then enough
+    // kernel is not that large, but some UEFIs have large MMIO areas
+	// that are mapped in kernel block by boot.efi
+    LowTopAddr = 0x14000000;
     
     // first we'll check if this is needed at all by allocating page
     // and testing if it is below LowTopAddr
@@ -1334,8 +1335,8 @@ static VOID ReserveLowerMem(VOID)
     //Index = 1;
     MemoryMapEnd = (EFI_MEMORY_DESCRIPTOR*)((UINT8*)MemoryMap + MemoryMapSize);
     for (Desc = MemoryMap; Desc < MemoryMapEnd; Desc = NEXT_MEMORY_DESCRIPTOR(Desc, DescriptorSize)) {
-        if (Desc->PhysicalStart >= LowTopAddr) {
-            break;
+        if (Desc->PhysicalStart < 0x100000 || Desc->PhysicalStart >= LowTopAddr) {
+            continue;
         }
         if (Desc->Type == EfiConventionalMemory) {
             // free block found

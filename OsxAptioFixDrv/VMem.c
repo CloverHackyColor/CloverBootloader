@@ -52,7 +52,7 @@
   * We need to have it preallocated during boot services.
   */
 UINT8	*VmMemoryPool = NULL;
-UINTN	VmMemoryPoolFreePages = 0;
+INTN	VmMemoryPoolFreePages = 0;
 
 VOID
 GetCurrentPageTable(PAGE_MAP_AND_DIRECTORY_POINTER **PageTable, UINTN *Flags)
@@ -329,10 +329,12 @@ VmAllocatePages(UINTN NumPages)
 	}
 	return (VOID*)Addr;
 	*/
-	if (VmMemoryPoolFreePages >= NumPages) {
+	if (VmMemoryPoolFreePages >= (INTN)NumPages) {
 		AllocatedPages = VmMemoryPool;
 		VmMemoryPool += EFI_PAGES_TO_SIZE(NumPages);
 		VmMemoryPoolFreePages -= NumPages;
+	} else {
+		CpuDeadLoop();
 	}
 	return AllocatedPages;
 }

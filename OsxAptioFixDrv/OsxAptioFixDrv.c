@@ -66,7 +66,7 @@ typedef struct _START_IMG_CONTEXT {
 //#define DEBUG_FORCE_RELOC_ADDRESS		0 // no reloc
 
 // defines the size of block that will be allocated for kernel image relocation
-#define KERNEL_BLOCK_SIZE_PAGES		0x6000 // 96MB block
+#define KERNEL_BLOCK_SIZE_PAGES		0x14000 // 320MB block
 
 /*
 #define KERNEL_ENTRIES_NUM			2
@@ -191,7 +191,7 @@ AllocateRelocBlock()
 	} else {
 		gRelocBase = Addr;
 		PRINT("OsxAptioFixDrv: AllocateRelocBlock(): gRelocBase set to %lx\n", gRelocBase);
-		Print(L"OsxAptioFixDrv: AllocateRelocBlock(): gRelocBase set to %lx\n", gRelocBase);
+		//Print(L"OsxAptioFixDrv: AllocateRelocBlock(): gRelocBase set to %lx\n", gRelocBase);
 		//gBS->Stall(5 * 1000 * 1000);
 	}
 
@@ -361,6 +361,11 @@ MOExitBootServices (
 		gBS->Stall(20 * 1000 * 1000);
 		return EFI_NOT_FOUND;
 	}
+	
+	// TEST
+	//Print(L"\nOsxAptioFixDrv: Stack at: %lx, Loaded at %lx, and kernel would be %lx - %lx\n",
+	//	  RSP, gOurImageStart, gMinAllocatedAddr, gMaxAllocatedAddr);
+	//gBS->Stall(20000000);
 
 	
 	
@@ -548,7 +553,7 @@ RunImageWithOverridesAndHighStack(IN EFI_HANDLE ImageHandle, OUT UINTN *ExitData
 		
 	} else {
 		// stack is already high enough - just use normal function call
-		RunImageWithOverrides(&ImgContext, NULL);
+		RunImageWithOverrides(ImgContext, NULL);
 	}
 	
 	// release mem and return Status

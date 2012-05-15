@@ -119,7 +119,7 @@ BootArgsFix(VOID *bootArgs, EFI_PHYSICAL_ADDRESS gRellocBase)
 		// Lion and up
 		BA2->MemoryMap = BA2->MemoryMap - (UINT32)gRellocBase;
 		BA2->deviceTreeP = BA2->deviceTreeP - (UINT32)gRellocBase;
-		BA2->kaddr = BA1->kaddr - (UINT32)gRellocBase;
+		BA2->kaddr = BA2->kaddr - (UINT32)gRellocBase;
 	}
 	
 }
