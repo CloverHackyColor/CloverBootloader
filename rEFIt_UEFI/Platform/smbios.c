@@ -1244,7 +1244,7 @@ VOID PatchTableType131()
 	// Get Table Type131
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, 131, 0);
 	if (SmbiosTable.Raw != NULL) {
-    MsgLog("Table 131 is present, CPUType=%x\n", SmbiosTable.Type131);
+    MsgLog("Table 131 is present, CPUType=%x\n", SmbiosTable.Type131->ProcessorType);
     MsgLog("Change to: %x\n", gSettings.CpuType);
   }
   
@@ -1256,32 +1256,29 @@ VOID PatchTableType131()
 			newSmbiosTable.Type131->ProcessorType = gSettings.CpuType;
 		Handle = LogSmbiosTable(newSmbiosTable);
 		return;
-		
-//	LogSmbiosTable(SmbiosTable);
-//	return;
 }
 
 VOID PatchTableType132()
 {
 	// Get Table Type132
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, 132, 0);
-	if (SmbiosTable.Raw == NULL) {
+	if (SmbiosTable.Raw != NULL) {
+		MsgLog("Table 132 is present, QPI=%x\n", SmbiosTable.Type132->ProcessorBusSpeed);
+    MsgLog("Change to: %x\n", gSettings.QPI);
+  }
+	
 		ZeroMem((VOID*)newSmbiosTable.Type132, MAX_TABLE_SIZE);
 		newSmbiosTable.Type132->Hdr.Type = 132;
 		newSmbiosTable.Type132->Hdr.Length = sizeof(SMBIOS_STRUCTURE)+2; 
 		newSmbiosTable.Type132->Hdr.Handle = 0x8400; //ugly
 	// Patch ProcessorBusSpeed
-		if(gCPUStructure.ProcessorInterconnectSpeed){
-			newSmbiosTable.Type132->ProcessorBusSpeed = gCPUStructure.ProcessorInterconnectSpeed;
+		if(gSettings.QPI){
+			newSmbiosTable.Type132->ProcessorBusSpeed = gSettings.QPI;
 		} else {
 			newSmbiosTable.Type132->ProcessorBusSpeed = DivU64x32(gSettings.BusSpeed, kilo)  << 2;
 		}
 		Handle = LogSmbiosTable(newSmbiosTable);
 		return;
-	}
-	
-	LogSmbiosTable(SmbiosTable);
-	return;
 }
 
 

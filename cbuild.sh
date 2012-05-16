@@ -101,8 +101,10 @@ echo "-gcc46"
 echo
 echo "Example: ./cbuild.sh -xcode -ia32 -release"
 echo "Example: ./cbuild.sh -gcc46 -x64 -release"
+echo "Example: ./cbuild.sh -gcc46 -ia32 -release"
 echo "example: ./cbuild.sh -32"
 echo "example: ./cbuild.sh -64"
+echo "example: ./cbuild.sh -34"
 echo
 echo "If you want to clean a build:"
 echo "Example: ./cbuild.sh -xcode -ia32 -release -clean"
@@ -147,6 +149,10 @@ echo "Example: ./cbuild.sh -gcc46 -x64 -release"
          fnXcode
          fnArchIA32
         ;;
+        '-34')
+         fnGCC46
+         fnArchIA32
+        ;;
         '-64')
          fnGCC46
          fnArchX64
@@ -154,7 +160,7 @@ echo "Example: ./cbuild.sh -gcc46 -x64 -release"
         *)
          echo $"ERROR!"
          echo $"COMPILER: {-xcode|-xcode4|-clang|-unixgcc|-gcc46}"
-		echo $"or default {-32|-64}"
+		echo $"or default {-32|-64|-34}"
         exit 1		
     esac
 

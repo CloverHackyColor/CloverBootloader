@@ -58,6 +58,8 @@
 		<string>3200</string>
 		<key>BusSpeedkHz</key>
 		<string>133330</string>
+		<key>QPI</key>
+		<string>4800</string>
 	</dict>
 	<key>Graphics</key>
 	<dict>

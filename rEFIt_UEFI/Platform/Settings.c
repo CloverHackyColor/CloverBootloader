@@ -556,6 +556,14 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           DBG("Config set Turbo\n");
         }
       }
+      prop = GetProperty(dictPointer,"QPI");
+      gSettings.QPI = gCPUStructure.ProcessorInterconnectSpeed; //MHz
+      if(prop)
+      {
+        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+        gSettings.QPI = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
+        DBG("Config set QPI=%dMHz\n", gSettings.QPI);
+      }
       prop = GetProperty(dictPointer,"CpuFrequencyMHz");
       if(prop)
       {

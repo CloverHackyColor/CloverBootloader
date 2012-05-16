@@ -473,6 +473,8 @@ typedef struct {
 	CHAR8	MemorySpeed[64];
 	// SMBIOS TYPE131
 	UINT16	CpuType;
+  // SMBIOS TYPE132
+  UINT16	QPI;
   
 	// OS parameters
 	CHAR8 	Language[16];

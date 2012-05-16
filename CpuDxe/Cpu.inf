@@ -53,6 +53,8 @@
 [Protocols]
   gEfiCpuArchProtocolGuid
   gEfiLegacy8259ProtocolGuid
+  gMsgLogProtocolGuid
+
 
 [Depex]
   gEfiLegacy8259ProtocolGuid

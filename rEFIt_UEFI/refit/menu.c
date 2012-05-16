@@ -154,7 +154,7 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].BValue = gSettings.EnableISS;
   InputItems[InputItemsCount++].SValue = gSettings.EnableISS?L"[X]":L"[ ]";
   InputItems[InputItemsCount].ItemType = Decimal;  //14
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gCPUStructure.ProcessorInterconnectSpeed);
+  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.QPI);
   InputItems[InputItemsCount].ItemType = BoolValue; //15
   InputItems[InputItemsCount].BValue = gSettings.GraphicsInjector;
   InputItems[InputItemsCount++].SValue = gSettings.GraphicsInjector?L"[X]":L"[ ]";
@@ -262,8 +262,8 @@ VOID ApplyInputs(VOID)
   }
   i++; //14
   if (InputItems[i].Valid) {
-    gCPUStructure.ProcessorInterconnectSpeed = StrDecimalToUintn(InputItems[i].SValue);
-    DBG("Apply ProcessorInterconnectSpeed=%d\n", gCPUStructure.ProcessorInterconnectSpeed);
+    gSettings.QPI = StrDecimalToUintn(InputItems[i].SValue);
+    DBG("Apply ProcessorInterconnectSpeed=%d\n", gSettings.QPI);
   } /*else {
     DBG("PIS is not valid?\n");
   } */

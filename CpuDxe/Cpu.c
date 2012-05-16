@@ -17,6 +17,12 @@ Abstract:
 --*/
 
 #include "CpuDxe.h"
+#include <Protocol/MsgLog.h> 
+
+CHAR8 *msgCursor;
+MESSAGE_LOG_PROTOCOL *Msg; 
+
+
 
 extern VOID BiosPutC(CHAR8 ch);
 //
@@ -1042,6 +1048,13 @@ Returns:
   EFI_8259_IRQ                Irq;
   UINT32                      InterruptVector;
 
+  Msg = NULL;
+  Status = gBS->LocateProtocol(&gMsgLogProtocolGuid, NULL, (VOID **) &Msg);
+  if (!EFI_ERROR(Status) && (Msg != NULL)) {
+    msgCursor = Msg->Cursor;
+    BootLog("MsgLog Protocol installed in CpuDxe\n");
+  }
+  
   //
   // Find the Legacy8259 protocol.
   //
@@ -1116,7 +1129,7 @@ InitializeBiosIntCaller (
   //
   AsmGetThunk16Properties (&RealModeBufferSize, &ExtraStackSize);
 
-  LegacyRegionBase = 0x100000;
+  LegacyRegionBase = 0x0C0000;
   Status = gBS->AllocatePages (
                   AllocateMaxAddress,
                   EfiACPIMemoryNVS,
@@ -1172,7 +1185,7 @@ LegacyBiosInt86 (
   // The call to Legacy16 is a critical section to EFI
   //
   Eflags = AsmReadEflags ();
-  if ((Eflags | EFI_CPU_EFLAGS_IF) != 0) {
+  if ((Eflags & EFI_CPU_EFLAGS_IF) != 0) {
     DisableInterrupts ();
   }
 
@@ -1202,7 +1215,7 @@ LegacyBiosInt86 (
   //
   // End critical section
   //
-  if ((Eflags | EFI_CPU_EFLAGS_IF) != 0) {
+  if ((Eflags & EFI_CPU_EFLAGS_IF) != 0) {
     EnableInterrupts ();
   }
 

@@ -104,7 +104,7 @@ InitializeInterruptRedirection (
   // Get LegacyRegion
   //
   LegacyRegionLength = sizeof(InterruptRedirectionCode);
-  LegacyRegionBase = 0x010000;
+  LegacyRegionBase = 0x0C0000;
   Status = gBS->AllocatePages (
                   AllocateMaxAddress,
                   EfiACPIMemoryNVS,
@@ -264,7 +264,7 @@ LegacyBiosFarCall86 (
   ThunkRegSet.E.EFLAGS.Bits.Reserved_3 = 0;
   ThunkRegSet.E.EFLAGS.Bits.IOPL       = 3;
   ThunkRegSet.E.EFLAGS.Bits.NT         = 0;
-  ThunkRegSet.E.EFLAGS.Bits.IF         = 0;
+  ThunkRegSet.E.EFLAGS.Bits.IF         = 0; //why???
   ThunkRegSet.E.EFLAGS.Bits.TF         = 0;
   ThunkRegSet.E.EFLAGS.Bits.CF         = 0;
 
