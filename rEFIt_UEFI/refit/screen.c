@@ -366,6 +366,7 @@ VOID SwitchToGraphicsAndClear(VOID)
 VOID BltClearScreen(IN BOOLEAN ShowBanner)
 {
     static EG_IMAGE *Banner = NULL;
+  UINTN BanHeight = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_HEIGHT;
     
     if (ShowBanner && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER)) {
         // load banner on first call
@@ -380,10 +381,11 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
         
         // clear and draw banner
         egClearScreen(&MenuBackgroundPixel);
-        if (Banner != NULL)
-            BltImage(Banner, (UGAWidth - Banner->Width) >> 1,
-                     ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_HEIGHT - Banner->Height);
+      if (Banner != NULL){
         
+        BltImage(Banner, (UGAWidth - Banner->Width) >> 1,
+                     (BanHeight >= Banner->Height) ? (BanHeight - Banner->Height) : 0);
+      } 
     } else {
         // clear to standard background color
         egClearScreen(&StdBackgroundPixel);
