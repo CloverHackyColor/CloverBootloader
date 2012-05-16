@@ -139,10 +139,11 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x2592:
     case 0x27A2:
     case 0x27AE:
-    case 0x0116:  
-    case 0x0126:  
       devprop_add_value(device, "AAPL,HasPanel", reg_TRUE, 4);
       devprop_add_value(device, "built-in", &BuiltIn, 1);
+    case 0x0116:  
+    case 0x0126:  
+      devprop_add_value(device, "AAPL01,DualLink", (UINT8 *)&DualLink, 1);
       break;
     case 0x2772:
  //   case 0x0045:  
@@ -150,6 +151,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x0112:  
     case 0xA002:  
       devprop_add_value(device, "built-in", &BuiltIn, 1);
+      devprop_add_value(device, "AAPL01,DualLink", (UINT8 *)&DualLink, 1);
       break;
     case 0x2A02:
     case 0x2A12:

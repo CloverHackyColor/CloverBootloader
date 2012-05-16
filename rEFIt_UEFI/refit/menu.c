@@ -109,7 +109,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
 
 VOID FillInputs(VOID)
 {
-  INTN i,j; //for cycles
+  UINTN i,j; //for cycles
   CHAR8 tmp[40];
   UINT8 a;
   
@@ -199,7 +199,7 @@ VOID FillInputs(VOID)
 VOID ApplyInputs(VOID)
 {
   INTN i = 0;
-  INTN j;
+  UINTN j;
   CHAR8  AString[256];
   DBG("ApplyInputs\n");
   if (InputItems[i].Valid) {
@@ -232,12 +232,12 @@ VOID ApplyInputs(VOID)
   i++; //7
   if (InputItems[i].Valid) {
 //    DBG("InputItems[i]: %s\n", InputItems[i].SValue);
-    gSettings.PLimitDict = StrDecimalToUintn(InputItems[i].SValue);
+    gSettings.PLimitDict = (UINT8)(StrDecimalToUintn(InputItems[i].SValue) & 0x7F);
     DBG("Item 7=PLimitDict %d\n", gSettings.PLimitDict);
  }
   i++; //8
   if (InputItems[i].Valid) {
-    gSettings.UnderVoltStep = StrDecimalToUintn(InputItems[i].SValue);
+    gSettings.UnderVoltStep = (UINT8)(StrDecimalToUintn(InputItems[i].SValue) & 0x3F);
     DBG("Item 8=UnderVoltStep %d\n", gSettings.UnderVoltStep);
   }
   i++; //9
@@ -264,9 +264,9 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gCPUStructure.ProcessorInterconnectSpeed = StrDecimalToUintn(InputItems[i].SValue);
     DBG("Apply ProcessorInterconnectSpeed=%d\n", gCPUStructure.ProcessorInterconnectSpeed);
-  } else {
+  } /*else {
     DBG("PIS is not valid?\n");
-  }
+  } */
 
   i++; //15
   if (InputItems[i].Valid) {
@@ -291,7 +291,7 @@ VOID ApplyInputs(VOID)
     }
     i++; //18
     if (InputItems[i].Valid) {
-      gGraphics[j].Ports = StrDecimalToUintn(InputItems[i].SValue);
+      gGraphics[j].Ports = (UINT8)(StrDecimalToUintn(InputItems[i].SValue) & 0x0F);
     }    
     i++; //19
     if (InputItems[i].Valid) {
@@ -1200,7 +1200,7 @@ static VOID DrawMainMenuText(IN CHAR16 *Text, IN UINTN XPos, IN UINTN YPos)
 
 static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
-  INTN i; 
+  UINTN i; 
 //  CHAR16* p;
 //  UINTN X;
   
@@ -1328,7 +1328,7 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 
 REFIT_MENU_ENTRY  *SubMenuGraphics()
 {
-  INTN  i, N;
+  UINTN  i, N;
   REFIT_MENU_ENTRY   *Entry; //, *SubEntry;
   REFIT_MENU_SCREEN  *SubScreen;
   REFIT_INPUT_DIALOG *InputBootArgs;
@@ -1524,6 +1524,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   MENU_STYLE_FUNC   SubStyle;
   INTN              EntryIndex = 0;
   INTN              SubMenuIndex;
+  REFIT_INPUT_DIALOG* InputBootArgs;
   
   if (AllowGraphicsMode)
     Style = GraphicsMenuStyle;
@@ -1533,7 +1534,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   if (OptionMenu.EntryCount == 0) {
     OptionMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
     Flags = AllocateZeroPool(255);
-    REFIT_INPUT_DIALOG* InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     *ChosenEntry = (REFIT_MENU_ENTRY*)InputBootArgs;   
     //  UnicodeSPrint(Flags, 255, L"Boot Args:%a", gSettings.BootArgs);
     UnicodeSPrint(Flags, 255, L"Boot Args:");

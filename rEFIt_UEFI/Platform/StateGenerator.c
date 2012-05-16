@@ -46,7 +46,7 @@ CHAR8 resource_template_register_systemio[] =
 SSDT_TABLE *generate_pss_ssdt()
 {	
   CHAR8 name[9];
-  struct p_state initial, maximum, minimum, p_states[32];
+  P_STATE initial, maximum, minimum, p_states[32];
   UINT8 p_states_count = 0;		
   BOOLEAN cpu_dynamic_fsb = FALSE;
   UINT8	acpi_cpu_count = gCPUStructure.Cores;

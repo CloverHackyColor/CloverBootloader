@@ -131,7 +131,7 @@ PeCoffLoaderGetPeHeader (
   //
   // Read the DOS image header to check for its existence
   //
-  ImageContext->FatOffset = Offset;
+  ImageContext->FatOffset = (UINT32)Offset;
   Size = sizeof (EFI_IMAGE_DOS_HEADER);
   Status = ImageContext->ImageRead (
                            ImageContext->Handle,

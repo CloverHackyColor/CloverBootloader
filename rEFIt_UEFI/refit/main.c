@@ -1756,7 +1756,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     
     DefaultIndex = FindDefaultEntry();
     //  DBG("DefaultIndex=%d and MainMenu.EntryCount=%d\n", DefaultIndex, MainMenu.EntryCount);
-    if ((DefaultIndex >= 0) && (DefaultIndex < MainMenu.EntryCount)) {
+    if ((DefaultIndex >= 0) && (DefaultIndex < (INTN)MainMenu.EntryCount)) {
         DefaultEntry = MainMenu.Entries[DefaultIndex];
     } else {
         DefaultEntry = NULL;

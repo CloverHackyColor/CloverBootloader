@@ -386,7 +386,7 @@ struct p_state
 	UINT32	Frequency;
 };
 
-//typedef struct p_state P_STATE;
+typedef struct p_state P_STATE;
 
 typedef enum {
 	kTagTypeNone,

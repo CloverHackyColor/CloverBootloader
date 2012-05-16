@@ -119,7 +119,7 @@ DisableUsbLegacySupport(
 								
 								MsgLog("USB UHCI reset for device %04x\n", Pci.Hdr.DeviceId); 
 								break;
-							case PCI_IF_OHCI:
+	/*						case PCI_IF_OHCI:
 								
 								Base = 0;
 								Status = PciIo->Pci.Read(PciIo, EfiPciIoWidthUint32, 0x10, 1, &Base);
@@ -128,7 +128,7 @@ DisableUsbLegacySupport(
 								*(UINT32 *)(UINTN)(Base + OHCI_CONTROL) = Command & OHCI_CTRL_MASK;
 								Command = *(UINT32 *)(UINTN)(Base + OHCI_CONTROL);
 								MsgLog("USB OHCI reset for device %04x control=0x%x\n", Pci.Hdr.DeviceId, Command);
-								break;
+								break;*/
 							case PCI_IF_EHCI:
               case PCI_IF_XHCI:  
 								//Slice - the algo is reworked from Chameleon
