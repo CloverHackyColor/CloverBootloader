@@ -410,6 +410,11 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
       // note: possible future issues with AF 4K disks
       *Bootable = TRUE;
       Volume->HasBootCode = TRUE; //we assume that all CD are bootable
+      DBG("check SectorBuffer\n");
+      for (i=0; i<32; i++) {
+        DBG("%2x ", SectorBuffer[i]);
+      }
+      DBG("\n");
       Volume->DriveCRC32 = GetCrc32(SectorBuffer, 2 * 512);
       //gBS->CalculateCrc32 (SectorBuffer, 2 * 512, &Volume->DriveCRC32);
       DBG("Volume has BS=%d kind=%d startlba=%d CRC=%X\n", BlockSize, Volume->DiskKind, Volume->BlockIOOffset, Volume->DriveCRC32);

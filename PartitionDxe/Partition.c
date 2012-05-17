@@ -292,11 +292,17 @@ PartitionDriverBindingStart (
 
   //
   // Try to read blocks when there's media or it is removable physical partition.
+  //Slice - what is removable physical partition if media not present???
   //
   Status       = EFI_UNSUPPORTED;
   MediaPresent = BlockIo->Media->MediaPresent;
-  if (BlockIo->Media->MediaPresent ||
-      (BlockIo->Media->RemovableMedia && !BlockIo->Media->LogicalPartition)) {
+  if (MediaPresent /*||
+      (BlockIo->Media->RemovableMedia && !BlockIo->Media->LogicalPartition) */ ) {
+    DBG("Media present %c, removable %c, logical %c\n", 
+        MediaPresent?'Y':'N',
+        BlockIo->Media->RemovableMedia?'Y':'N',
+        BlockIo->Media->LogicalPartition?'Y':'N');
+        
     //
     // Try for GPT, then El Torito, and then legacy MBR partition types. If the
     // media supports a given partition type install child handles to represent
@@ -313,7 +319,9 @@ PartitionDriverBindingStart (
                    );
       if (!EFI_ERROR (Status) || Status == EFI_MEDIA_CHANGED || Status == EFI_NO_MEDIA) {
       		DBG("Handle %x check partition Status=%r\n", ControllerHandle, Status);
-
+        if (Status != EFI_NO_MEDIA) {
+   //       DBG("Parent=%s\n", DevicePathToStr(ParentDevicePath)); //have no function
+        }
         break;
       }
       Routine++;
