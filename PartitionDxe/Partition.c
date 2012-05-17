@@ -296,8 +296,10 @@ PartitionDriverBindingStart (
   //
   Status       = EFI_UNSUPPORTED;
   MediaPresent = BlockIo->Media->MediaPresent;
-  if (MediaPresent /*||
-      (BlockIo->Media->RemovableMedia && !BlockIo->Media->LogicalPartition) */ ) {
+//  if (MediaPresent /*||
+//     (BlockIo->Media->RemovableMedia && !BlockIo->Media->LogicalPartition) */ ) {
+  if (!BlockIo->Media->RemovableMedia  ||
+      (MediaPresent && !BlockIo->Media->LogicalPartition)) {
     DBG("Media present %c, removable %c, logical %c\n", 
         MediaPresent?'Y':'N',
         BlockIo->Media->RemovableMedia?'Y':'N',

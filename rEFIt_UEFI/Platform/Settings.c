@@ -40,16 +40,21 @@ VOID WaitForSts(VOID) {
 
 UINT32 GetCrc32(UINT8 *Buffer, UINTN Size)
 {
-  UINTN i, x, len;
-  UINT32* fake = (UINT32*)Buffer;
+  UINTN i, len;
+  UINT64 x;
+  UINT32 *fake = (UINT32*)Buffer;
   x = 0;
   if (!fake) {
+    DBG("Buffer=NULL\n");
     return 0;
   }
   len = Size >> 2;
+//  DBG("Buffer len=%d fake[]=\n", len);
   for (i=0; i<len; i++) {
-    x ^= fake[i];
-  }  
+//    DBG("%X ", fake[i]);
+    x += fake[i];
+  }
+//  DBG("\n");
   return x;
 }
 

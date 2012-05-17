@@ -215,7 +215,7 @@ EFI_STATUS GetBiosDriveCRC32(UINT8 DriveNum,
 	if (!EFI_ERROR(Status)) {
     *DriveCRC32 = GetCrc32(Buffer, 2 * 512);
 		//gBS->CalculateCrc32(Buffer, 2 * 512, DriveCRC32);
-		DBG("Bios drive CRC32 = %X\n", *DriveCRC32);
+		DBG("Bios drive CRC32 = 0x%x\n", *DriveCRC32);
 	}
 	return Status;
 }
@@ -642,7 +642,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
           }
           //gBS->CalculateCrc32(mBootSector, 2 * 512, &MBRCRC32);
           MBRCRC32 = GetCrc32(mBootSector, 2 * 512);
-          DBG("MBR drive CRC32 = %X\n", MBRCRC32);
+          DBG("MBR drive CRC32 = 0x%x\n", MBRCRC32);
             BiosDriveNum = GetBiosDriveNumForVolume(Volumes[i]);
           break;
         }

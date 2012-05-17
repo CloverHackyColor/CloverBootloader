@@ -386,6 +386,8 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
     UINTN       BlockSize = 0;  
     CHAR16      volumeName[255];
   CHAR8         tmp[64];
+  UINT32        VCrc32;
+  CHAR16      *kind = NULL;
     
     Volume->HasBootCode = FALSE;
     Volume->OSIconName = NULL;
@@ -410,14 +412,28 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
       // note: possible future issues with AF 4K disks
       *Bootable = TRUE;
       Volume->HasBootCode = TRUE; //we assume that all CD are bootable
-      DBG("check SectorBuffer\n");
+/*      DBG("check SectorBuffer\n");
       for (i=0; i<32; i++) {
         DBG("%2x ", SectorBuffer[i]);
       }
-      DBG("\n");
-      Volume->DriveCRC32 = GetCrc32(SectorBuffer, 2 * 512);
+      DBG("\n"); */
+      VCrc32 = GetCrc32(SectorBuffer, 512 * 2);
+      Volume->DriveCRC32 = VCrc32;
       //gBS->CalculateCrc32 (SectorBuffer, 2 * 512, &Volume->DriveCRC32);
-      DBG("Volume has BS=%d kind=%d startlba=%d CRC=%X\n", BlockSize, Volume->DiskKind, Volume->BlockIOOffset, Volume->DriveCRC32);
+      switch (Volume->DiskKind ) {
+        case DISK_KIND_OPTICAL:
+          kind = L"DVD";
+          break;
+        case DISK_KIND_INTERNAL:
+          kind = L"HDD";
+          break;
+        case DISK_KIND_EXTERNAL:
+          kind = L"USB";
+          break;
+        default:
+          break;
+      }
+      DBG("Volume kind=%s CRC=0x%x\n", kind, VCrc32);
       if (Volume->DiskKind == DISK_KIND_OPTICAL) { //CDROM
         CHAR8* p = (CHAR8*)&SectorBuffer[8];
 				while (*p == 0x20) {
@@ -855,7 +871,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
 #endif
     Volume->HasBootCode = FALSE;
   }
-    DBG("default volume icon based on disk kind\n");
+//    DBG("default volume icon based on disk kind\n");
   // default volume icon based on disk kind
   Volume->DriveImage = ScanVolumeDefaultIcon(Volume->DiskKind);
   //  DBG("default volume icon OK\n");
@@ -867,17 +883,17 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     // TODO: signal that we had an error
     //Slice - there is LegacyBoot volume
     //properties are set before
-        DBG("LegacyBoot volume\n");
+    //    DBG("LegacyBoot volume\n");
     
     if (HdPath) {
       tmpName = (CHAR16*)AllocateZeroPool(60);
-            DBG("Create legacyName\n");
+ //           DBG("Create legacyName\n");
       UnicodeSPrint(tmpName, 60, L"Legacy HD%d", HdPath->PartitionNumber);
       Volume->VolName = EfiStrDuplicate(tmpName);
       FreePool(tmpName);
     } else if (!Volume->VolName) {
-      DBG("MasterVolume\n");
-      Volume->VolName =  L"Legacy OS";
+//      DBG("MasterVolume\n");
+      Volume->VolName =  L"Whole Disc Boot";
     }
     //
     Volume->OSImage = egLoadIcon(ThemeDir, PoolPrint(L"icons\\os_legacy.icns"), 128);
@@ -1374,6 +1390,14 @@ InitializeUnicodeCollationProtocol (VOID)
 								  NULL,
 								  (VOID **) &mUnicodeCollation
 								  );
+  if (EFI_ERROR(Status)) {
+    Status = gBS->LocateProtocol (
+                  &gEfiUnicodeCollationProtocolGuid,
+                  NULL,
+                  (VOID **) &mUnicodeCollation
+                  );
+    
+  }
 	return Status;
 }
 

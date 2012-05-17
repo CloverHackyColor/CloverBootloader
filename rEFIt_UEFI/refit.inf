@@ -162,6 +162,7 @@
   gEfiSimpleTextInProtocolGuid                            # ALWAYS_CONSUMED
   gEfiSimpleTextInputExProtocolGuid                       # ALWAYS_CONSUMED
   gEfiSimpleTextOutProtocolGuid                           # ALWAYS_CONSUMED
+  gEfiUnicodeCollationProtocolGuid                       # ALWAYS_CONSUMED  
   gEfiUnicodeCollation2ProtocolGuid                       # ALWAYS_CONSUMED  
   
   gEfiAcpiS3SaveProtocolGuid                    # PROTOCOL CONSUMES
