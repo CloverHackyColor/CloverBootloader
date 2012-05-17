@@ -57,4 +57,4 @@
 
 
 [Depex]
-  gEfiLegacy8259ProtocolGuid
+  gEfiLegacy8259ProtocolGuid AND gMsgLogProtocolGuid
