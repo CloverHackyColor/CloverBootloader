@@ -770,6 +770,12 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
       FreePool(TimeoutMessage);
     }
     
+    if (gEvent) {
+      MenuExit = MENU_EXIT_ESCAPE;
+      State.PaintAll = TRUE;
+      break;
+    }
+    
     // read key press (and wait for it if applicable)
     Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &key);
     if (Status == EFI_NOT_READY) {

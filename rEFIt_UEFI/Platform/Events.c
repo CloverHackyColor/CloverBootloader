@@ -201,12 +201,28 @@ OnSimpleFileSystem (
   EFI_TPL		OldTpl;
   
 	OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
-  
+  gEvent = 1;
 //  ReinitRefitLib();
   DrawMenuText(L"OnSimpleFileSystem", 0, 0, UGAHeight-40, 1);
   
 	gBS->RestoreTPL (OldTpl);
   
+}  
+
+EFI_STATUS
+GuiEventsInitialize ()
+{
+  gEvent = 0;
+  gBS->CreateEventEx (
+                      EVT_NOTIFY_SIGNAL,
+                      TPL_NOTIFY,
+                      OnSimpleFileSystem,
+                      NULL,
+                      &gEfiSimpleFileSystemProtocolGuid,
+                      &mSimpleFileSystemChangeEvent
+                      );
+  
+    return EFI_SUCCESS;
 }  
 
 EFI_STATUS
@@ -246,15 +262,6 @@ EventsInitialize ()
          &mVirtualAddressChangeEvent
          );
      */
-  gBS->CreateEventEx (
-         EVT_NOTIFY_SIGNAL,
-         TPL_NOTIFY,
-         OnSimpleFileSystem,
-         NULL,
-         &gEfiSimpleFileSystemProtocolGuid,
-         &mSimpleFileSystemChangeEvent
-         );
-  
   
   return EFI_SUCCESS;
 }

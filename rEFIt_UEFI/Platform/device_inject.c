@@ -142,9 +142,14 @@ DevPropDevice *devprop_add_device(DevPropString *string, CHAR8 *path)
 	// on Aptio UEFI: Acpi(PNP0A03,0)/Pci(1C|6)/Pci(0|0)
 	const CHAR8		acpi_string[] = "Acpi(PNP0A03,";
 	const CHAR8		acpi_pci_device_string[] = "Pci(";
+	// on TianoCore.org EFI: Acpi(PNP0A08,0x0)/Pci(0x1F,0x2)/
+	const CHAR8		acpi_tiano_string[] = "Acpi(PNP0A08,0x";
+//	const CHAR8		acpi_tiano_pci_device_string[] = "Pci(0x"; //same as pci_device_string
+	
 	BOOLEAN			PciRootPath;
 	BOOLEAN			PcieRootPath;
 	BOOLEAN			AcpiPath;
+	BOOLEAN			AcpiTianoPath;
 
 	if (string == NULL || path == NULL) {
 		return NULL;
@@ -156,22 +161,24 @@ DevPropDevice *devprop_add_device(DevPropString *string, CHAR8 *path)
 	PciRootPath = AsciiStrnCmp(path, pciroot_string, AsciiStrLen(pciroot_string)) == 0;
 	PcieRootPath = AsciiStrnCmp(path, pcieroot_string, AsciiStrLen(pcieroot_string)) == 0;
 	AcpiPath = AsciiStrnCmp(path, acpi_string, AsciiStrLen(acpi_string)) == 0;
+	AcpiTianoPath = AsciiStrnCmp(path, acpi_tiano_string, AsciiStrLen(acpi_tiano_string)) == 0;
 
-	if (!PciRootPath && !PcieRootPath && !AcpiPath) {
+	if (!PciRootPath && !PcieRootPath && !AcpiPath && !AcpiTianoPath) {
 		DBG("ERROR parsing device path (no root)\n");
 		return NULL;
 	}
 
-	ZeroMem((VOID*)device, sizeof(DevPropDevice));
+//	ZeroMem((VOID*)device, sizeof(DevPropDevice));
 	device->acpi_dev_path._UID = gSettings.PCIRootUID;
   // *getPciRootUID();0; //FIXME: what if 0?
 
-	INT32 numpaths = 0;
-	INT32		x, curr = 0;
-	CHAR8	buff[] = "00";
+	INT32  numpaths = 0;
+	INT32	 x, curr  = 0;
+	CHAR8	 buff[]   = "00";
 
-	if (PciRootPath || PcieRootPath) {
+	if (PciRootPath || PcieRootPath || AcpiTianoPath) {
 		// CloverEFI: PcieRoot(0x0)/Pci(0x1C,0x6)/Pci(0x0,0x0)
+		// Tianocore: Acpi(PNP0A08,0x0)/Pci(0x1,0x0)/Pci(0x0,0x1)
 	for (x = 0; x < AsciiStrLen(path); x++) {
 		if (!AsciiStrnCmp(&path[x], pci_device_string, AsciiStrLen(pci_device_string))) {
 			x+=AsciiStrLen(pci_device_string);
@@ -255,7 +262,11 @@ DevPropDevice *devprop_add_device(DevPropString *string, CHAR8 *path)
 	device->acpi_dev_path.length = 0x0c;
 	device->acpi_dev_path.type = 0x02;
 	device->acpi_dev_path.subtype = 0x01;
-	device->acpi_dev_path._HID = 0xd041030a;
+	if (PcieRootPath || AcpiTianoPath) {
+		device->acpi_dev_path._HID = 0xd041080a;
+	} else {
+		device->acpi_dev_path._HID = 0xd041030a;
+	}
 	
 	device->num_pci_devpaths = numpaths;
 	device->length = 24 + (6*numpaths);

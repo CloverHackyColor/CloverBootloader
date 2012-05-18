@@ -412,11 +412,11 @@ const CHAR8 *chip_family_name[] = {
 	"Turks",
 	""
 };
-
+#define TEST_CHAM 0
 AtiDevProp ati_devprop_list[] = {
 	{FLAGTRUE,	FALSE,	"@0,AAPL,boot-display",		get_bootdisplay_val,	NULVAL				},
   //	{FLAGTRUE,	FALSE,	"@0,ATY,EFIDisplay",		NULL,					STRVAL("TMDSA")			},
-	
+#if TEST_CHAM	
   //{FLAGTRUE,	TRUE,	"@0,AAPL,vram-memory",		get_vrammemory_val,		NULVAL				},
   {FLAGTRUE,	TRUE,	"@0,override-no-connector",		get_edid_val,       NULVAL        },
   {FLAGTRUE,	TRUE,	"@0,compatible",              get_name_val,       NULVAL				},
@@ -425,6 +425,7 @@ AtiDevProp ati_devprop_list[] = {
 //	{FLAGTRUE,	FALSE,	"@0,display-connect-flags", NULL,				DWRVAL((UINT32)0)   },
   {FLAGTRUE,	FALSE,	"@0,display-link-component-bits", NULL,		DWRVAL((UINT32)6)		},
   {FLAGMOBILE,	TRUE,	"@0,display-type",          get_display_type,		NULVAL  			},
+#endif  
 	{FLAGTRUE,	TRUE,	"@0,name",                    get_name_val,			NULVAL          },
 //  {FLAGTRUE,	TRUE,	"@0,VRAM,memsize",			get_vrammemsize_val,	NULVAL          },
 	
@@ -450,8 +451,9 @@ AtiDevProp ati_devprop_list[] = {
 	{FLAGTRUE,	FALSE,	"name",						get_nameparent_val,     NULVAL							},
 	{FLAGTRUE,	FALSE,	"device_type",		get_nameparent_val,     NULVAL							},
 	{FLAGTRUE,	FALSE,	"model",					get_model_val,          STRVAL("ATI Radeon")},
+#if TEST_CHAM  
   {FLAGTRUE,	FALSE,	"VRAM,totalsize",	get_vramtotalsize_val,	NULVAL              },
-	
+#endif	
 	{FLAGTRUE,	FALSE,	NULL,	NULL,	NULVAL}
 };
 

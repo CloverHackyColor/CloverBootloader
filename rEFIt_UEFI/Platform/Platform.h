@@ -701,10 +701,11 @@ extern EFI_GUID gEfiPartTypeSystemPartGuid;
 extern EFI_GUID gMsgLogProtocolGuid;
 extern EFI_GUID gEfiLegacy8259ProtocolGuid;
 
-extern EFI_EVENT   mVirtualAddressChangeEvent;
-extern EFI_EVENT   OnReadyToBootEvent;
-extern EFI_EVENT   ExitBootServiceEvent;
-extern EFI_EVENT   mSimpleFileSystemChangeEvent;
+extern EFI_EVENT  mVirtualAddressChangeEvent;
+extern EFI_EVENT  OnReadyToBootEvent;
+extern EFI_EVENT  ExitBootServiceEvent;
+extern EFI_EVENT  mSimpleFileSystemChangeEvent;
+extern UINTN      gEvent;
 
 VOID        WaitForSts(VOID);
 
@@ -720,7 +721,7 @@ BOOLEAN     hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, INT32 len);
 UINT8       hexstrtouint8 (CHAR8* buf); //one or two hex letters to one byte
 
 EFI_STATUS  InitializeConsoleSim (VOID);
-
+EFI_STATUS  GuiEventsInitialize (VOID);
 //Settings.c
 UINT32          GetCrc32(UINT8 *Buffer, UINTN Size);
 VOID            GetCPUProperties (VOID);

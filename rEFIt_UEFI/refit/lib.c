@@ -511,7 +511,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
           
         } else if (FindMem(SectorBuffer, 512, "Geom\0Hard Disk\0Read\0 Error", 26) >= 0) {   // GRUB
           Volume->HasBootCode = TRUE;
-          Volume->OSIconName = L"grub,linux";
+          Volume->OSIconName = L"linux";
           Volume->OSName = L"Linux";
           
  /*       } else if ((*((UINT32 *)(SectorBuffer)) == 0x8ec031fa &&

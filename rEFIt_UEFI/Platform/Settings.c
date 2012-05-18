@@ -32,6 +32,7 @@ UINTN                           NGFX = 0; // number of GFX
 
 // firmware
 BOOLEAN                         gFirmwareClover = FALSE;
+UINTN                           gEvent;
 
 VOID WaitForSts(VOID) {
 	UINT32 inline_timeout = 100000;
