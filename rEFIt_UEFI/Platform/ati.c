@@ -1213,7 +1213,8 @@ BOOLEAN setup_ati_devprop(pci_dt_t *ati_dev)
 		string = devprop_create_string();
 	
 	devicepath = get_pci_dev_path(ati_dev);
-	card->device = devprop_add_device(string, devicepath);
+	//card->device = devprop_add_device(string, devicepath);
+	card->device = devprop_add_device_pci(string, ati_dev);
 	if (!card->device)
 		return FALSE;
 	// -------------------------------------------------

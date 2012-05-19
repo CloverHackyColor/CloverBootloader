@@ -121,7 +121,8 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 	if (!string)
 		string = devprop_create_string();
 	
-	device = devprop_add_device(string, devicepath); //AllocatePool inside
+	//device = devprop_add_device(string, devicepath); //AllocatePool inside
+	device = devprop_add_device_pci(string, gma_dev);
 	
 	if (!device)
 	{

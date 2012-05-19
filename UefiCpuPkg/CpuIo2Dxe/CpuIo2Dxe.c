@@ -175,10 +175,14 @@ CpuIoCheckParameter (
 
   //
   // Check to see if Buffer is aligned
+/*  // (IA-32 allows UINT64 and INT64 data types to be 32-bit aligned.)
   //
+  if (((UINTN)Buffer & ((MIN (sizeof (UINTN), mInStride[Width])  - 1))) != 0) {
+    return EFI_UNSUPPORTED;
+  }*/
   if (((UINTN)Buffer & (mInStride[Width] - 1)) != 0) {
     return EFI_UNSUPPORTED;
-  }
+  }  
 
   return EFI_SUCCESS;
 }

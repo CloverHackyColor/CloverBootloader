@@ -213,6 +213,7 @@ Returns:
 
 --*/
 {
+  BootLog("CPU init type=%x\n", InitType);
   return EFI_UNSUPPORTED;
 }
 

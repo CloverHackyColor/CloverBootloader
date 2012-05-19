@@ -1590,7 +1590,8 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	if (!string) {
 		string = devprop_create_string();
 	}
-	device = devprop_add_device(string, devicepath);
+	//device = devprop_add_device(string, devicepath);
+	device = devprop_add_device_pci(string, nvda_dev);
 	devprop_add_nvidia_template(device);
 
 	

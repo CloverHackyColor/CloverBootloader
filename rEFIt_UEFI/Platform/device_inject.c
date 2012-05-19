@@ -23,10 +23,10 @@
 #endif
 
 UINT32 devices_number = 1;
-UINT32 builtin_set = 0;
+UINT32 builtin_set    = 0;
 DevPropString *string = 0;
-UINT8 *stringdata = 0;
-UINT32 stringlength = 0;
+UINT8  *stringdata    = 0;
+UINT32 stringlength   = 0;
 
 //pci_dt_t* nvdevice;
 
@@ -58,6 +58,7 @@ DevPropString *devprop_create_string(VOID)
 	return string;
 }
 
+/*
 UINT8 ascii_hex_to_int (CHAR8* buf)
 {
 	INT8 i = 0;
@@ -82,6 +83,7 @@ UINT8 ascii_hex_to_int (CHAR8* buf)
 	}
 	return i;
 }
+*/
 
 CHAR8 *get_pci_dev_path(pci_dt_t *PciDt)
 {
@@ -131,7 +133,8 @@ UINT32 pci_config_read32(pci_dt_t *PciDt, UINT8 reg)
   }
   return res;										 
 }
- 
+
+/*
 DevPropDevice *devprop_add_device(DevPropString *string, CHAR8 *path)
 {
 	DevPropDevice	*device;
@@ -297,6 +300,82 @@ DevPropDevice *devprop_add_device(DevPropString *string, CHAR8 *path)
 	
 	return device;
 }
+*/
+
+DevPropDevice *devprop_add_device_pci(DevPropString *string, pci_dt_t *PciDt)
+{
+	EFI_DEVICE_PATH_PROTOCOL		*DevicePath;
+	DevPropDevice               *device;
+	INTN                        NumPaths;
+  
+	
+	if (string == NULL || PciDt == NULL) {
+		return NULL;
+	}
+	
+	DevicePath = DevicePathFromHandle(PciDt->DeviceHandle);
+ 	DBG("devprop_add_device_pci %s ", DevicePathToStr(DevicePath));
+	if (!DevicePath)
+		return NULL;
+	
+	device = AllocateZeroPool(sizeof(DevPropDevice));
+	
+	device->numentries = 0x00;
+	
+	//
+	// check and copy ACPI_DEVICE_PATH
+	//
+	if (DevicePath->Type == ACPI_DEVICE_PATH && DevicePath->SubType == ACPI_DP) {
+		CopyMem(&device->acpi_dev_path, DevicePath, sizeof(struct ACPIDevPath));
+		DBG("ACPI HID=%x, UID=%x ", device->acpi_dev_path._HID, device->acpi_dev_path._UID);
+	} else {
+		DBG("not ACPI\n");
+		return NULL;
+	}
+	
+	//
+	// copy PCI paths
+	//
+	for (NumPaths = 0; NumPaths < MAX_PCI_DEV_PATHS; NumPaths++) {
+		DevicePath = NextDevicePathNode(DevicePath);
+		if (DevicePath->Type == HARDWARE_DEVICE_PATH && DevicePath->SubType == HW_PCI_DP) {
+			CopyMem(&device->pci_dev_path[NumPaths], DevicePath, sizeof(struct PCIDevPath));
+			DBG("PCI[%d] f=%x, d=%x ", NumPaths, device->pci_dev_path[NumPaths].function, device->pci_dev_path[NumPaths].device);
+		} else {
+			// not PCI path - break the loop
+			DBG("not PCI ");
+			break;
+		}
+	}
+	
+	if (NumPaths == 0) {
+		DBG("no PCI\n");
+		return NULL;
+	}
+	
+	DBG("-> NumPaths=%d\n", NumPaths);
+	device->num_pci_devpaths = NumPaths;
+	device->length = 24 + (6 * NumPaths);
+	
+	device->path_end.length = 0x04;
+	device->path_end.type = 0x7f;
+	device->path_end.subtype = 0xff;
+	
+	device->string = string;
+	device->data = NULL;
+	string->length += device->length;
+	
+	if(!string->entries)
+		if((string->entries = (DevPropDevice**)AllocatePool(sizeof(device)))== NULL)
+			return 0;
+	
+	string->entries[string->numentries++] = (DevPropDevice*)AllocatePool(sizeof(device));
+	string->entries[string->numentries-1] = device;
+	
+	return device;
+}
+
+
 
 BOOLEAN devprop_add_value(DevPropDevice *device, CHAR8 *nm, UINT8 *vl, UINT32 len)
 {
@@ -388,7 +467,7 @@ CHAR8 *devprop_generate_string(DevPropString *string)
 		AsciiSPrint(buffer, len, "%02x%02x%04x%08x%08x", string->entries[i]->acpi_dev_path.type,
 				string->entries[i]->acpi_dev_path.subtype,
 				dp_swap16(string->entries[i]->acpi_dev_path.length),
-				string->entries[i]->acpi_dev_path._HID,
+				dp_swap32(string->entries[i]->acpi_dev_path._HID),
 				dp_swap32(string->entries[i]->acpi_dev_path._UID));
 
 		buffer += 24;
@@ -454,7 +533,8 @@ BOOLEAN set_eth_props(pci_dt_t *eth_dev)
     string = devprop_create_string();
     
   devicepath = get_pci_dev_path(eth_dev);
-  device = devprop_add_device(string, devicepath);
+  //device = devprop_add_device(string, devicepath);
+  device = devprop_add_device_pci(string, eth_dev);
   if (!device)
     return FALSE;
 	// -------------------------------------------------
@@ -486,7 +566,8 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
     string = devprop_create_string();
   
   devicepath = get_pci_dev_path(usb_dev);
-  device = devprop_add_device(string, devicepath);
+  //device = devprop_add_device(string, devicepath);
+  device = devprop_add_device_pci(string, usb_dev);
   if (!device)
     return FALSE;
 	// -------------------------------------------------
@@ -593,14 +674,15 @@ UINT32 HDA_getCodecVendorAndDeviceIds(EFI_PCI_IO_PROTOCOL *PciIo) {
 		
 		return 0;
 	}
-  
+  //Slice - TODO check codecAdr=2 - it is my Dell 1525.
 	// all ok - read Ids
 	return HDA_IC_sendVerb(PciIo, 0/*codecAdr*/, 0/*nodeId*/, 0xF0000/*verb*/);
 }
 
-UINT32 getLayoutIdFromVendorAndDeviceId(UINT32 vendorDeviceId) {
+UINT32 getLayoutIdFromVendorAndDeviceId(UINT32 vendorDeviceId) 
+{
 	UINT32	layoutId = 0;
-	UINT8	hexDigit = 0;
+	UINT8	  hexDigit = 0;
 	// extract device id - 2 lower bytes,
 	// convert it to decimal like this: 0x0887 => 887 decimal
 	hexDigit = vendorDeviceId & 0xF;
@@ -641,7 +723,8 @@ BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev)
 		string = devprop_create_string();
   
 	devicepath = get_pci_dev_path(hda_dev);
-	device = devprop_add_device(string, devicepath);
+	//device = devprop_add_device(string, devicepath);
+  device = devprop_add_device_pci(string, hda_dev);
 	if (!device)
 		return FALSE;
   
