@@ -18,7 +18,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include "Partition.h"
 
-#define DEBUG_PAR 1
+#define DEBUG_PAR 0
 #if DEBUG_PAR==2
 #define DBG(x...)  AsciiPrint(x)
 #elif DEBUG_PAR==1
@@ -300,11 +300,11 @@ PartitionDriverBindingStart (
      (BlockIo->Media->RemovableMedia && !BlockIo->Media->LogicalPartition) ) {
 //  if (!BlockIo->Media->RemovableMedia  ||
 //      (MediaPresent && !BlockIo->Media->LogicalPartition)) {
-    DBG("Media present %c, removable %c, logical %c\n", 
+/*    DBG("Media present %c, removable %c, logical %c\n", 
         MediaPresent?'Y':'N',
         BlockIo->Media->RemovableMedia?'Y':'N',
         BlockIo->Media->LogicalPartition?'Y':'N');
-        
+*/        
     //
     // Try for GPT, then El Torito, and then legacy MBR partition types. If the
     // media supports a given partition type install child handles to represent

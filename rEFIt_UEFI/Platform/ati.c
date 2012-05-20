@@ -412,7 +412,7 @@ const CHAR8 *chip_family_name[] = {
 	"Turks",
 	""
 };
-#define TEST_CHAM 0
+#define TEST_CHAM 1
 AtiDevProp ati_devprop_list[] = {
 	{FLAGTRUE,	FALSE,	"@0,AAPL,boot-display",		get_bootdisplay_val,	NULVAL				},
   //	{FLAGTRUE,	FALSE,	"@0,ATY,EFIDisplay",		NULL,					STRVAL("TMDSA")			},
@@ -423,7 +423,7 @@ AtiDevProp ati_devprop_list[] = {
   {FLAGTRUE,	TRUE,	"@0,connector-type",          get_conntype_val,		NULVAL        },
   {FLAGTRUE,	TRUE,	"@0,device_type",             NULL,					STRVAL("display")   },
 //	{FLAGTRUE,	FALSE,	"@0,display-connect-flags", NULL,				DWRVAL((UINT32)0)   },
-  {FLAGTRUE,	FALSE,	"@0,display-link-component-bits", NULL,		DWRVAL((UINT32)6)		},
+  {FLAGMOBILE,	FALSE,	"@0,display-link-component-bits", NULL,		DWRVAL((UINT32)6)	},
   {FLAGMOBILE,	TRUE,	"@0,display-type",          get_display_type,		NULVAL  			},
 #endif  
 	{FLAGTRUE,	TRUE,	"@0,name",                    get_name_val,			NULVAL          },
@@ -498,11 +498,15 @@ BOOLEAN get_edid_val(value_t *val)
 }
 
 static CONST CHAR8* dtyp[] = {"LCD", "CRT", "DVI", "NONE"};
+static UINT32 dti = 0;
 
 BOOLEAN get_display_type(value_t *val)
 {
-  static UINT32 dti = 0;
-  
+
+  dti++;
+  if (dti > 3) {
+    dti = 0;
+  }
 	val->type = kStr;
 	val->size = 4;
 	val->data = (UINT8 *)dtyp[dti];
