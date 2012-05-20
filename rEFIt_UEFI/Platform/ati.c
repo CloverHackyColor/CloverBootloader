@@ -351,8 +351,8 @@ radeon_card_info_t radeon_cards[] = {
 	
 	{ 0x6720,	0x00000000, CHIP_FAMILY_BARTS,		"AMD Radeon HD 6900M Series",		kDuckweed	},	
 	{ 0x6722,	0x00000000, CHIP_FAMILY_BARTS,		"AMD Radeon HD 6900M Series",		kDuckweed	},	
-	{ 0x6738,	0x00000000, CHIP_FAMILY_BARTS,		"AMD Radeon HD 6870 Series",		kDuckweed },
-	{ 0x6739,	0x00000000, CHIP_FAMILY_BARTS,		"AMD Radeon HD 6850 Series",		kDuckweed },
+	{ 0x6738,	0x00000000, CHIP_FAMILY_BARTS,		"AMD Radeon HD 6870 Series",		kDuckweed  },
+	{ 0x6739,	0x00000000, CHIP_FAMILY_BARTS,		"AMD Radeon HD 6850 Series",		kDuckweed  },
 	{ 0x673E,	0x00000000, CHIP_FAMILY_BARTS,		"AMD Radeon HD 6790 Series",		kDuckweed	},
 	
 	{ 0x6740,	0x00000000, CHIP_FAMILY_TURKS,		"AMD Radeon HD 6770M Series",		kPithecia		},
@@ -412,20 +412,19 @@ const CHAR8 *chip_family_name[] = {
 	"Turks",
 	""
 };
-#define TEST_CHAM 1
+
 AtiDevProp ati_devprop_list[] = {
 	{FLAGTRUE,	FALSE,	"@0,AAPL,boot-display",		get_bootdisplay_val,	NULVAL				},
   //	{FLAGTRUE,	FALSE,	"@0,ATY,EFIDisplay",		NULL,					STRVAL("TMDSA")			},
-#if TEST_CHAM	
+	
   //{FLAGTRUE,	TRUE,	"@0,AAPL,vram-memory",		get_vrammemory_val,		NULVAL				},
   {FLAGTRUE,	TRUE,	"@0,override-no-connector",		get_edid_val,       NULVAL        },
   {FLAGTRUE,	TRUE,	"@0,compatible",              get_name_val,       NULVAL				},
   {FLAGTRUE,	TRUE,	"@0,connector-type",          get_conntype_val,		NULVAL        },
   {FLAGTRUE,	TRUE,	"@0,device_type",             NULL,					STRVAL("display")   },
 //	{FLAGTRUE,	FALSE,	"@0,display-connect-flags", NULL,				DWRVAL((UINT32)0)   },
-  {FLAGMOBILE,	FALSE,	"@0,display-link-component-bits", NULL,		DWRVAL((UINT32)6)	},
-  {FLAGMOBILE,	TRUE,	"@0,display-type",          get_display_type,		NULVAL  			},
-#endif  
+  {FLAGTRUE,	FALSE,	"@0,display-link-component-bits", NULL,		DWRVAL((UINT32)6)		},
+//  {FLAGTRUE,	TRUE,	"@0,display-type",          NULL,					STRVAL("NONE")			},
 	{FLAGTRUE,	TRUE,	"@0,name",                    get_name_val,			NULVAL          },
 //  {FLAGTRUE,	TRUE,	"@0,VRAM,memsize",			get_vrammemsize_val,	NULVAL          },
 	
@@ -451,9 +450,8 @@ AtiDevProp ati_devprop_list[] = {
 	{FLAGTRUE,	FALSE,	"name",						get_nameparent_val,     NULVAL							},
 	{FLAGTRUE,	FALSE,	"device_type",		get_nameparent_val,     NULVAL							},
 	{FLAGTRUE,	FALSE,	"model",					get_model_val,          STRVAL("ATI Radeon")},
-#if TEST_CHAM  
   {FLAGTRUE,	FALSE,	"VRAM,totalsize",	get_vramtotalsize_val,	NULVAL              },
-#endif	
+	
 	{FLAGTRUE,	FALSE,	NULL,	NULL,	NULVAL}
 };
 
@@ -870,7 +868,7 @@ void get_vram_size(void)
         card->vram_size = REG32(card->mmio, RADEON_CONFIG_APER_SIZE);
         //Slice - previously I successfully made Radeon9000 working
         //by writing this register
-    //    WRITEREG32(card->mmio, RADEON_CONFIG_MEMSIZE, 0x30000);
+        WRITEREG32(card->mmio, RADEON_CONFIG_MEMSIZE, 0x30000);
       }
     }
   }	

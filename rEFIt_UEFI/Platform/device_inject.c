@@ -326,7 +326,13 @@ DevPropDevice *devprop_add_device_pci(DevPropString *string, pci_dt_t *PciDt)
 	// check and copy ACPI_DEVICE_PATH
 	//
 	if (DevicePath->Type == ACPI_DEVICE_PATH && DevicePath->SubType == ACPI_DP) {
-		CopyMem(&device->acpi_dev_path, DevicePath, sizeof(struct ACPIDevPath));
+//		CopyMem(&device->acpi_dev_path, DevicePath, sizeof(struct ACPIDevPath));
+		device->acpi_dev_path.length = 0x0c;
+		device->acpi_dev_path.type = 0x02;
+		device->acpi_dev_path.subtype = 0x01;
+		device->acpi_dev_path._HID = 0x0a0341d0;
+		device->acpi_dev_path._UID = gSettings.PCIRootUID; 
+				
 		DBG("ACPI HID=%x, UID=%x ", device->acpi_dev_path._HID, device->acpi_dev_path._UID);
 	} else {
 		DBG("not ACPI\n");
