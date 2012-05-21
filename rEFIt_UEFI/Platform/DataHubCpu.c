@@ -179,7 +179,7 @@ VOID SetupDataForOSX()
 	
   //fool proof
   if ((FrontSideBus < (50 * Mega)) ||  (FrontSideBus > (500 * Mega))){
-    DBG("FrontSideBus=%d\n", FrontSideBus);
+    DBG("Wrong FrontSideBus=%d\n", FrontSideBus);
     FrontSideBus = 100 * Mega;
   }
   
@@ -201,7 +201,9 @@ VOID SetupDataForOSX()
 		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"Model", productName, StrSize(productName));
 		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"SystemSerialNumber", serialNumber, StrSize(serialNumber));
 //    DBG("Custom UUID=%g\n", gUuid);
-//    Status =  LogDataHub(&gEfiMiscSubClassGuid, L"system-id", &gUuid, sizeof(EFI_GUID));		
+    if (gSettings.InjectSystemID) {
+      Status =  LogDataHub(&gEfiMiscSubClassGuid, L"system-id", &gUuid, sizeof(EFI_GUID));
+    }    		
 		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"Clover", CloverVersion, StrSize(CloverVersion));
 	}
 }

@@ -500,14 +500,17 @@ typedef struct {
   BOOLEAN EnableC6;
   BOOLEAN EnableISS;
 	BOOLEAN	smartUPS;
+  BOOLEAN PatchNMI;
 	CHAR16	DsdtName[60];
   
   //Injections
   BOOLEAN StringInjector;
+  BOOLEAN InjectSystemID;
   //Graphics
   UINT16  PCIRootUID;
   BOOLEAN GraphicsInjector;
   BOOLEAN LoadVBios;
+  BOOLEAN PatchVBios;
   CHAR16  FBName[16];
   UINT16  VideoPorts;
   UINT64  VRAM;

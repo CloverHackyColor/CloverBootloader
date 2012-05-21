@@ -251,7 +251,14 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         AsciiStrToUnicodeStr(prop->string, gSettings.CustomUuid);
         Status = StrToGuidLE(gSettings.CustomUuid, &gUuid);
         //else value from SMBIOS
-      }      
+      }  
+      prop = GetProperty(dictPointer,"InjectSystemID");
+      gSettings.InjectSystemID = FALSE;
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+          gSettings.InjectSystemID = TRUE;
+      }            
     }
 //Graphics
     
@@ -261,7 +268,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       if(prop)
       {
         if ((prop->string[0] == 'n') || (prop->string[0] == 'N'))
-          gSettings.GraphicsInjector=FALSE;
+          gSettings.GraphicsInjector = FALSE;
       }      
       prop = GetProperty(dictPointer,"VRAM");
       if(prop)
@@ -276,6 +283,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
           gSettings.LoadVBios = TRUE;
+      }
+      prop = GetProperty(dictPointer,"PatchVBios");
+      gSettings.PatchVBios = FALSE;
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+          gSettings.PatchVBios = TRUE;
       }
       prop = GetProperty(dictPointer,"VideoPorts");
       if(prop)
@@ -457,6 +471,14 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           DBG("Config set smartUPS present\n");
         }
       }
+      prop = GetProperty(dictPointer,"PatchNMI");
+      gSettings.PatchNMI = FALSE;
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+          gSettings.PatchNMI = TRUE;
+      }
+      
     }
 
     		

@@ -262,6 +262,10 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 {
   EFI_STATUS              Status;
   egClearScreen(&DarkBackgroundPixel);
+  MsgLog("Turbo=%c\n", gSettings.Turbo?'Y':'N');
+  MsgLog("PatchNMI=%c\n", gSettings.PatchNMI?'Y':'N');
+  MsgLog("PatchVBios=%c\n", gSettings.PatchVBios?'Y':'N');
+      
   BeginExternalScreen(Entry->UseGraphicsMode, L"Booting OS");
   if (Entry->LoaderType == OSTYPE_OSX) {
     SetDevices();
@@ -283,12 +287,11 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       // the following is not needed or not working on Aptio UEFI
       // VirtualAddressChange - not needed at all
       // OnReadyToBootEvent - causes rebuilding of System table and patches are lost
-      // SimpleFileSystemChangeEvent - not working
-    EventsInitialize ();
-    gBS->SignalEvent(OnReadyToBootEvent);
-    gBS->SignalEvent(mVirtualAddressChangeEvent);
+      // SimpleFileSystemChangeEvent - not working - it will be at the start of refit
+      EventsInitialize ();
+      gBS->SignalEvent(OnReadyToBootEvent);
+      //gBS->SignalEvent(mVirtualAddressChangeEvent);
     }
-    
     FinalizeSmbios();
     //  PauseForKey(L"SetupDataForOSX");
     SetupDataForOSX();

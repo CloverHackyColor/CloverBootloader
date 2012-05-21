@@ -124,10 +124,11 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].BValue = gSettings.UseDSDTmini;
   InputItems[InputItemsCount++].SValue = gSettings.UseDSDTmini?L"[X]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //3  -- out
-  InputItems[InputItemsCount].BValue = gSettings.GraphicsInjector;
-  InputItems[InputItemsCount++].SValue = gSettings.GraphicsInjector?L"[X]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = Decimal;  //4  -- out
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.HDALayoutId);
+  InputItems[InputItemsCount].BValue = gSettings.StringInjector;
+  InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[X]":L"[ ]";
+  InputItems[InputItemsCount].ItemType = BoolValue; //4  -- out
+  InputItems[InputItemsCount].BValue = gSettings.InjectSystemID;
+  InputItems[InputItemsCount++].SValue = gSettings.InjectSystemID?L"[X]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue;  //5
   InputItems[InputItemsCount].BValue = gSettings.GeneratePStates;
   InputItems[InputItemsCount++].SValue = gSettings.GeneratePStates?L"[X]":L"[ ]";
@@ -156,42 +157,50 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = Decimal;  //14
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.QPI);
   InputItems[InputItemsCount].ItemType = BoolValue; //15
+  InputItems[InputItemsCount].BValue = gSettings.PatchNMI;
+  InputItems[InputItemsCount++].SValue = gSettings.PatchNMI?L"[X]":L"[ ]";
+  InputItemsCount += 4;
+  InputItems[InputItemsCount].ItemType = BoolValue; //20
   InputItems[InputItemsCount].BValue = gSettings.GraphicsInjector;
   InputItems[InputItemsCount++].SValue = gSettings.GraphicsInjector?L"[X]":L"[ ]";
   for (i=0; i<NGFX; i++) {
-    InputItems[InputItemsCount].ItemType = ASString;  //16+i*5
+    InputItems[InputItemsCount].ItemType = ASString;  //21+i*6
     InputItems[InputItemsCount++].SValue = PoolPrint(L"%a", gGraphics[i].Model);
     if (gGraphics[i].Vendor == Ati) {
-      InputItems[InputItemsCount].ItemType = ASString; //17+5i
+      InputItems[InputItemsCount].ItemType = ASString; //22+6i
       if (StrLen(gSettings.FBName) > 3) {
         InputItems[InputItemsCount++].SValue = PoolPrint(L"%s", gSettings.FBName);
       } else {
         InputItems[InputItemsCount++].SValue = PoolPrint(L"%a", gGraphics[i].Config);
       }      
     } else if (gGraphics[i].Vendor == Nvidia) {
-      InputItems[InputItemsCount].ItemType = ASString; //17+5i
+      InputItems[InputItemsCount].ItemType = ASString; //22+6i
       InputItems[InputItemsCount++].SValue = PoolPrint(L"%08x",*(UINT64*)&gSettings.Dcfg[0]);
     } else if (gGraphics[i].Vendor == Intel) {
-      InputItems[InputItemsCount].ItemType = ASString; //17+5i
+      InputItems[InputItemsCount].ItemType = ASString; //22+6i
       InputItems[InputItemsCount++].SValue = L"NA";
     }
-    InputItems[InputItemsCount].ItemType = Decimal;  //18+5i
+    InputItems[InputItemsCount].ItemType = Decimal;  //23+6i
     if (gSettings.VideoPorts > 0) {
       InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.VideoPorts);
     } else {
       InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gGraphics[i].Ports);
     }
 
-    InputItems[InputItemsCount].ItemType = ASString; //19+5i
+    InputItems[InputItemsCount].ItemType = ASString; //24+6i
     for (j=0; j<20; j++) {
       a = gSettings.NVCAP[j];
       AsciiSPrint((CHAR8*)&tmp[2*j], 2, "%02x", a);
     }
     InputItems[InputItemsCount++].SValue = PoolPrint(L"%a", tmp);
     
-    InputItems[InputItemsCount].ItemType = BoolValue; //20+5i
+    InputItems[InputItemsCount].ItemType = BoolValue; //25+6i
     InputItems[InputItemsCount].BValue = gGraphics[i].LoadVBios;
     InputItems[InputItemsCount++].SValue = gGraphics[i].LoadVBios?L"[X]":L"[ ]";
+    
+    InputItems[InputItemsCount].ItemType = BoolValue; //26+6i
+    InputItems[InputItemsCount].BValue = gSettings.PatchVBios;
+    InputItems[InputItemsCount++].SValue = gSettings.PatchVBios?L"[X]":L"[ ]";
   }
   //and so on  
 }
@@ -215,11 +224,11 @@ VOID ApplyInputs(VOID)
   }
   i++; //3
   if (InputItems[i].Valid) {
-    gSettings.GraphicsInjector = InputItems[i].BValue;
+    gSettings.StringInjector = InputItems[i].BValue;
   }
   i++; //4
   if (InputItems[i].Valid) {
-    gSettings.HDALayoutId = StrDecimalToUintn(InputItems[i].SValue);
+    gSettings.InjectSystemID = InputItems[i].BValue;
   }
   i++; //5
   if (InputItems[i].Valid) {
@@ -267,17 +276,21 @@ VOID ApplyInputs(VOID)
   } /*else {
     DBG("PIS is not valid?\n");
   } */
-
   i++; //15
+  if (InputItems[i].Valid) {
+    gSettings.PatchNMI = InputItems[i].BValue;
+  }
+  
+  i+=4; //20
   if (InputItems[i].Valid) {
     gSettings.GraphicsInjector = InputItems[i].BValue;
   }
   for (j = 0; j < NGFX; j++) {
-    i++; //16
+    i++; //21
     if (InputItems[i].Valid) {
       AsciiSPrint(gGraphics[j].Model, 64, "%s",  InputItems[i].SValue);
     }
-    i++; //17
+    i++; //22
     if (InputItems[i].Valid) {
       if (gGraphics[j].Vendor == Ati) {
         UnicodeSPrint(gSettings.FBName, 16, L"%s", InputItems[i].SValue); 
@@ -289,19 +302,23 @@ VOID ApplyInputs(VOID)
         //nothing to do
       }
     }
-    i++; //18
+    i++; //23
     if (InputItems[i].Valid) {
       gGraphics[j].Ports = (UINT8)(StrDecimalToUintn(InputItems[i].SValue) & 0x0F);
     }    
-    i++; //19
+    i++; //24
     if (InputItems[i].Valid) {
       ZeroMem(AString, 255);
       AsciiSPrint(AString, 255, "%s", InputItems[i].SValue);
       hex2bin(AString, (UINT8*)&gSettings.NVCAP[0], 20);
     }  
-    i++; //20
+    i++; //25
     if (InputItems[i].Valid) {
       gGraphics[j].LoadVBios = InputItems[i].BValue;
+    }
+    i++; //26
+    if (InputItems[i].Valid) {
+      gSettings.PatchVBios = InputItems[i].BValue;
     }
     
   }
@@ -618,13 +635,15 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
   UINTN         Pos = (Screen->Entries[State->CurrentSelection])->Row;
   INPUT_ITEM    *Item = ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item;
   CHAR16        *Backup = EfiStrDuplicate(Item->SValue);
-  CHAR16        *Buffer = Item->SValue;
+  CHAR16        *Buffer = Item->SValue; //AllocateZeroPool(255);
   CHAR16        *TempString = AllocateZeroPool(255);
   SCROLL_STATE  StateLine;
+  
+//  StrCpy(Buffer, Item->SValue);
 //  DBG("Enter Input Dialog\n");
   //TODO make scroll for line
   InitScroll(&StateLine, 128, 128, StrLen(Item->SValue));
-  MsgLog("initial SValue: %s\n", Item->SValue);
+//  MsgLog("initial SValue: %s\n", Item->SValue);
 	
 	do {
     if (Item->ItemType == BoolValue) {
@@ -696,7 +715,7 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
                 TempString[i] = Buffer[i];
               }           
               TempString[Pos++] = key.UnicodeChar;
-              for (i = Pos; i < StrLen(Buffer); i++) {
+              for (i = Pos; i < StrLen(Buffer)+1; i++) {
                 TempString[i] = Buffer[i-1];
               }
               TempString[i] = CHAR_NULL;
@@ -711,7 +730,8 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
 	} while (!MenuExit);
 	switch (MenuExit) {
 		case MENU_EXIT_ENTER:
-      Item->Valid = TRUE;      
+      Item->Valid = TRUE;   
+      Item->SValue = EfiStrDuplicate(Buffer);
 			break;
 		case MENU_EXIT_ESCAPE:
 			Item->Valid = FALSE;
@@ -720,6 +740,7 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
 			break;
 	}
   FreePool(TempString);
+  FreePool(Buffer);
 	MsgLog("EDITED: %s\n", Item->SValue);
   return 0;
 }
@@ -1065,8 +1086,12 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       if (MenuWidth > LAYOUT_TEXT_WIDTH)
         MenuWidth = LAYOUT_TEXT_WIDTH;
       
-      if (Screen->TitleImage)
+      if (Screen->TitleImage) {
+        if (MenuWidth > (UGAWidth - TITLEICON_SPACING - Screen->TitleImage->Width)) {
+          MenuWidth = UGAWidth - TITLEICON_SPACING - Screen->TitleImage->Width - 2;
+        }        
         EntriesPosX = (UGAWidth - (Screen->TitleImage->Width + TITLEICON_SPACING + MenuWidth)) >> 1;
+      }
       else
         EntriesPosX = (UGAWidth - MenuWidth) >> 1;
       //   EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET + TextHeight * 2;
@@ -1352,11 +1377,11 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
   InputBootArgs->Entry.Title = PoolPrint(L"GraphicsInjector:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Item = &InputItems[15];    
+  InputBootArgs->Item = &InputItems[20];    
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
   
   for (i = 0; i < NGFX; i++) {
-    N = 15 + i * 5;
+    N = 20 + i * 6;
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs->Entry.Title = PoolPrint(L"Model:");
     InputBootArgs->Entry.Tag = TAG_INPUT;
@@ -1400,6 +1425,12 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
     InputBootArgs->Item = &InputItems[N+5];    
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
     
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs->Entry.Title = PoolPrint(L"PatchVideoBios:");
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = 0xFFFF; //cursor
+    InputBootArgs->Item = &InputItems[N+6];    
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
     
   }
   AddMenuEntry(SubScreen, &MenuEntryReturn);
@@ -1582,8 +1613,8 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];    //2
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     //3  
-/*    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 50, L"Graphics Inject:");
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    UnicodeSPrint(Flags, 50, L"String Injection:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = 0xFFFF;
@@ -1594,7 +1625,20 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.SubScreen = NULL;
     InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];   //3 
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-*/    
+    //4 
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    UnicodeSPrint(Flags, 50, L"Inject SystemID:");
+    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = 0xFFFF;
+    InputBootArgs->Entry.ShortcutDigit = 0;
+    InputBootArgs->Entry.ShortcutLetter = 'S';
+    InputBootArgs->Entry.Image = NULL;
+    InputBootArgs->Entry.BadgeImage = NULL;
+    InputBootArgs->Entry.SubScreen = NULL;
+    InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];   //4
+    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+    
     AddMenuEntry(&OptionMenu, SubMenuSpeedStep());
     AddMenuEntry(&OptionMenu, SubMenuGraphics());
     //will be killed
@@ -1611,20 +1655,21 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
      InputBootArgs->Entry.SubScreen = NULL;
      InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];    
      AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+     */
      //5   
      InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-     UnicodeSPrint(Flags, 50, L"UnderVoltStep:");
+     UnicodeSPrint(Flags, 50, L"PatchNMI:");
      InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
      InputBootArgs->Entry.Tag = TAG_INPUT;
-     InputBootArgs->Entry.Row = StrLen(InputItems[5].SValue);
+     InputBootArgs->Entry.Row = 0xFFFF;
      InputBootArgs->Entry.ShortcutDigit = 0;
-     InputBootArgs->Entry.ShortcutLetter = 'U';
+     InputBootArgs->Entry.ShortcutLetter = 'N';
      InputBootArgs->Entry.Image = NULL;
      InputBootArgs->Entry.BadgeImage = NULL;
      InputBootArgs->Entry.SubScreen = NULL;
-     InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];    
+     InputBootArgs->Item = &InputItems[15];    
      AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-     */    
+        
     AddMenuEntry(&OptionMenu, &MenuEntryReturn);
     FreePool(Flags);
     //    DBG("option menu created entries=%d\n", OptionMenu.EntryCount);

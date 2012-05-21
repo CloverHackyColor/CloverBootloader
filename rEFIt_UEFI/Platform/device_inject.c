@@ -4,7 +4,7 @@
 /*
  *	Cleaned and merged by iNDi
  */
-// UEFI adaptation by usr-sse2
+// UEFI adaptation by usr-sse2, then slice, dmazar
 
 
 
@@ -46,7 +46,7 @@ static UINT32 dp_swap32(UINT32 toswap)
 
 DevPropString *devprop_create_string(VOID)
 {
-	DBG("Begin creating strings for devices:\n");
+//	DBG("Begin creating strings for devices:\n");
 	string = (DevPropString*)AllocateZeroPool(sizeof(DevPropString));
 	
 	if(string == NULL)
@@ -133,7 +133,7 @@ UINT32 pci_config_read32(pci_dt_t *PciDt, UINT8 reg)
   }
   return res;										 
 }
-
+//dmazar: replaced by devprop_add_device_pci
 /*
 DevPropDevice *devprop_add_device(DevPropString *string, CHAR8 *path)
 {
@@ -314,7 +314,7 @@ DevPropDevice *devprop_add_device_pci(DevPropString *string, pci_dt_t *PciDt)
 	}
 	
 	DevicePath = DevicePathFromHandle(PciDt->DeviceHandle);
- 	DBG("devprop_add_device_pci %s ", DevicePathToStr(DevicePath));
+// 	DBG("devprop_add_device_pci %s ", DevicePathToStr(DevicePath));
 	if (!DevicePath)
 		return NULL;
 	
@@ -333,9 +333,9 @@ DevPropDevice *devprop_add_device_pci(DevPropString *string, pci_dt_t *PciDt)
 		device->acpi_dev_path._HID = 0x0a0341d0;
 		device->acpi_dev_path._UID = gSettings.PCIRootUID; 
 				
-		DBG("ACPI HID=%x, UID=%x ", device->acpi_dev_path._HID, device->acpi_dev_path._UID);
+//		DBG("ACPI HID=%x, UID=%x ", device->acpi_dev_path._HID, device->acpi_dev_path._UID);
 	} else {
-		DBG("not ACPI\n");
+//		DBG("not ACPI\n");
 		return NULL;
 	}
 	
@@ -346,20 +346,20 @@ DevPropDevice *devprop_add_device_pci(DevPropString *string, pci_dt_t *PciDt)
 		DevicePath = NextDevicePathNode(DevicePath);
 		if (DevicePath->Type == HARDWARE_DEVICE_PATH && DevicePath->SubType == HW_PCI_DP) {
 			CopyMem(&device->pci_dev_path[NumPaths], DevicePath, sizeof(struct PCIDevPath));
-			DBG("PCI[%d] f=%x, d=%x ", NumPaths, device->pci_dev_path[NumPaths].function, device->pci_dev_path[NumPaths].device);
+//			DBG("PCI[%d] f=%x, d=%x ", NumPaths, device->pci_dev_path[NumPaths].function, device->pci_dev_path[NumPaths].device);
 		} else {
 			// not PCI path - break the loop
-			DBG("not PCI ");
+//			DBG("not PCI ");
 			break;
 		}
 	}
 	
 	if (NumPaths == 0) {
-		DBG("no PCI\n");
+		DBG("NumPaths == 0 \n");
 		return NULL;
 	}
 	
-	DBG("-> NumPaths=%d\n", NumPaths);
+//	DBG("-> NumPaths=%d\n", NumPaths);
 	device->num_pci_devpaths = NumPaths;
 	device->length = 24 + (6 * NumPaths);
 	
