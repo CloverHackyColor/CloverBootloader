@@ -68,6 +68,7 @@ BOOLEAN AllowGraphicsMode;
 
 EG_PIXEL StdBackgroundPixel  = { 0xbf, 0xbf, 0xbf, 0 };
 EG_PIXEL MenuBackgroundPixel = { 0xbf, 0xbf, 0xbf, 0 };
+EG_PIXEL InputBackgroundPixel = { 0xcf, 0xcf, 0xcf, 0 };
 
 
 static BOOLEAN GraphicsScreenDirty;
@@ -390,8 +391,11 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
         // clear to standard background color
         egClearScreen(&StdBackgroundPixel);
     }
-    
-    GraphicsScreenDirty = FALSE;
+   InputBackgroundPixel.r = (MenuBackgroundPixel.r + 10) & 0xFF;
+   InputBackgroundPixel.g = (MenuBackgroundPixel.g + 10) & 0xFF;
+   InputBackgroundPixel.b = (MenuBackgroundPixel.b + 10) & 0xFF;
+  
+   GraphicsScreenDirty = FALSE;
 }
 
 VOID BltImage(IN EG_IMAGE *Image, IN UINTN XPos, IN UINTN YPos)

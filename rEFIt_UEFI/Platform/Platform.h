@@ -654,7 +654,9 @@ typedef struct {
   CHAR8             Model[64];
   CHAR8             Config[64];
   BOOLEAN           LoadVBios;
+//  BOOLEAN           PatchVBios;
 } GFX_PROPERTIES;
+
 #pragma pack(0)
 extern CHAR8                    *msgbuf;
 extern CHAR8                    *msgCursor;

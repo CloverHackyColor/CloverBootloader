@@ -338,6 +338,8 @@ extern BOOLEAN AllowGraphicsMode;
 
 extern EG_PIXEL StdBackgroundPixel;
 extern EG_PIXEL MenuBackgroundPixel;
+extern EG_PIXEL InputBackgroundPixel;
+
 
 VOID InitScreen(VOID);
 VOID SetupScreen(VOID);

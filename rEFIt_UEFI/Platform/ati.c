@@ -433,7 +433,7 @@ AtiDevProp ati_devprop_list[] = {
   {FLAGMOBILE,	FALSE,	"AAPL,HasPanel",          NULL,					DWRVAL((UINT32)1)   },
   {FLAGMOBILE,	FALSE,	"AAPL,HasLid",            NULL,					DWRVAL((UINT32)1)   },
   {FLAGMOBILE,	FALSE,	"AAPL,backlight-control", NULL,					DWRVAL((UINT32)0)   },
-	{FLAGTRUE,	FALSE,	"AAPL,overwrite_binimage",	get_binimage_owr,		NULVAL				},
+//	{FLAGTRUE,	FALSE,	"AAPL,overwrite_binimage",	get_binimage_owr,		NULVAL				},
 	{FLAGTRUE,	FALSE,	"ATY,bin_image",            get_binimage_val,		NULVAL				},
 	{FLAGTRUE,	FALSE,	"ATY,Copyright",	NULL,	STRVAL("Copyright AMD Inc. All Rights Reserved. 2005-2011") },
   {FLAGTRUE,	FALSE,	"ATY,EFIVersion",	NULL,	STRVAL("01.00.3180")                  },
@@ -802,10 +802,10 @@ BOOLEAN load_vbios_file(UINT16 vendor_id, UINT16 device_id)
 	UINTN bufferLen;
 	CHAR16 FileName[24];
   UINT8*  buffer;
-	
-//	getBoolForKey(key, &do_load, &bootInfo->chameleonConfig);
-	if (!gSettings.LoadVBios)
-		return FALSE;
+
+	//if we are here then TRUE
+//	if (!gSettings.LoadVBios)
+//		return FALSE;
 	
 	UnicodeSPrint(FileName, 24, L"\\ROM\\%04x_%04x.rom", vendor_id, device_id);
   if (FileExists(OEMDir, FileName)){
@@ -1129,7 +1129,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 	DBG("\n");
 	get_vram_size();
 	
-	if (gSettings.LoadVBios){
+	if (add_vbios){
     load_vbios_file(pci_dev->vendor_id, pci_dev->device_id);
 		if (!card->rom)
 		{

@@ -159,48 +159,47 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue; //15
   InputItems[InputItemsCount].BValue = gSettings.PatchNMI;
   InputItems[InputItemsCount++].SValue = gSettings.PatchNMI?L"[X]":L"[ ]";
-  InputItemsCount += 4;
+  InputItems[InputItemsCount].ItemType = BoolValue; //16
+  InputItems[InputItemsCount].BValue = gSettings.PatchVBios;
+  InputItems[InputItemsCount++].SValue = gSettings.PatchVBios?L"[X]":L"[ ]";
+  InputItemsCount += 3;
   InputItems[InputItemsCount].ItemType = BoolValue; //20
   InputItems[InputItemsCount].BValue = gSettings.GraphicsInjector;
   InputItems[InputItemsCount++].SValue = gSettings.GraphicsInjector?L"[X]":L"[ ]";
   for (i=0; i<NGFX; i++) {
-    InputItems[InputItemsCount].ItemType = ASString;  //21+i*6
+    InputItems[InputItemsCount].ItemType = ASString;  //21+i*5
     InputItems[InputItemsCount++].SValue = PoolPrint(L"%a", gGraphics[i].Model);
     if (gGraphics[i].Vendor == Ati) {
-      InputItems[InputItemsCount].ItemType = ASString; //22+6i
+      InputItems[InputItemsCount].ItemType = ASString; //22+5i
       if (StrLen(gSettings.FBName) > 3) {
         InputItems[InputItemsCount++].SValue = PoolPrint(L"%s", gSettings.FBName);
       } else {
         InputItems[InputItemsCount++].SValue = PoolPrint(L"%a", gGraphics[i].Config);
       }      
     } else if (gGraphics[i].Vendor == Nvidia) {
-      InputItems[InputItemsCount].ItemType = ASString; //22+6i
+      InputItems[InputItemsCount].ItemType = ASString; //22+5i
       InputItems[InputItemsCount++].SValue = PoolPrint(L"%08x",*(UINT64*)&gSettings.Dcfg[0]);
     } else if (gGraphics[i].Vendor == Intel) {
-      InputItems[InputItemsCount].ItemType = ASString; //22+6i
+      InputItems[InputItemsCount].ItemType = ASString; //22+5i
       InputItems[InputItemsCount++].SValue = L"NA";
     }
-    InputItems[InputItemsCount].ItemType = Decimal;  //23+6i
+    InputItems[InputItemsCount].ItemType = Decimal;  //23+5i
     if (gSettings.VideoPorts > 0) {
       InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.VideoPorts);
     } else {
       InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gGraphics[i].Ports);
     }
 
-    InputItems[InputItemsCount].ItemType = ASString; //24+6i
+    InputItems[InputItemsCount].ItemType = ASString; //24+5i
     for (j=0; j<20; j++) {
       a = gSettings.NVCAP[j];
       AsciiSPrint((CHAR8*)&tmp[2*j], 2, "%02x", a);
     }
     InputItems[InputItemsCount++].SValue = PoolPrint(L"%a", tmp);
     
-    InputItems[InputItemsCount].ItemType = BoolValue; //25+6i
+    InputItems[InputItemsCount].ItemType = BoolValue; //25+5i
     InputItems[InputItemsCount].BValue = gGraphics[i].LoadVBios;
     InputItems[InputItemsCount++].SValue = gGraphics[i].LoadVBios?L"[X]":L"[ ]";
-    
-    InputItems[InputItemsCount].ItemType = BoolValue; //26+6i
-    InputItems[InputItemsCount].BValue = gSettings.PatchVBios;
-    InputItems[InputItemsCount++].SValue = gSettings.PatchVBios?L"[X]":L"[ ]";
   }
   //and so on  
 }
@@ -280,8 +279,12 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gSettings.PatchNMI = InputItems[i].BValue;
   }
+  i++; //16
+  if (InputItems[i].Valid) {
+    gSettings.PatchVBios = InputItems[i].BValue;
+  }
   
-  i+=4; //20
+  i+=3; //20
   if (InputItems[i].Valid) {
     gSettings.GraphicsInjector = InputItems[i].BValue;
   }
@@ -315,10 +318,6 @@ VOID ApplyInputs(VOID)
     i++; //25
     if (InputItems[i].Valid) {
       gGraphics[j].LoadVBios = InputItems[i].BValue;
-    }
-    i++; //26
-    if (InputItems[i].Valid) {
-      gSettings.PatchVBios = InputItems[i].BValue;
     }
     
   }
@@ -1035,7 +1034,13 @@ VOID DrawMenuText(IN CHAR16 *Text, IN UINTN SelectedWidth, IN UINTN XPos, IN UIN
     if (TextBuffer == NULL)
         TextBuffer = egCreateImage(LAYOUT_TEXT_WIDTH, TextHeight, FALSE);
     
+  if (Cursor == 0xFFFF) {
     egFillImage(TextBuffer, &MenuBackgroundPixel);
+  } else {
+    egFillImage(TextBuffer, &InputBackgroundPixel);
+  }
+
+    
     if (SelectedWidth > 0) {
         // draw selection bar background
         egFillImageArea(TextBuffer, 0, 0, SelectedWidth, TextBuffer->Height,
@@ -1373,15 +1378,23 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
   SubScreen->Title = Entry->Title;
   SubScreen->TitleImage = Entry->Image;
   AddMenuInfoLine(SubScreen, PoolPrint(L"Number of VideoCards=%d", NGFX));
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"PatchVideoBios:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[16];    
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+    
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"GraphicsInjector:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF; //cursor
   InputBootArgs->Item = &InputItems[20];    
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-  
+
   for (i = 0; i < NGFX; i++) {
-    N = 20 + i * 6;
+    N = 20 + i * 5;
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs->Entry.Title = PoolPrint(L"Model:");
     InputBootArgs->Entry.Tag = TAG_INPUT;
@@ -1425,18 +1438,10 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
     InputBootArgs->Item = &InputItems[N+5];    
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
     
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"PatchVideoBios:");
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = 0xFFFF; //cursor
-    InputBootArgs->Item = &InputItems[N+6];    
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-    
   }
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;                
-  return Entry;
-  
+  return Entry;  
 }  
 
 REFIT_MENU_ENTRY  *SubMenuSpeedStep()
