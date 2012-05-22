@@ -549,7 +549,14 @@ CoreLoadPeImage (
                      );         
       } 
     } else {
-      if (Image->ImageContext.ImageAddress >= 0x100000 || Image->ImageContext.RelocationsStripped) {
+      //
+      // Some HFS+ drivers have ImageAddress set to 0x10000000 and are loaded to that address.
+      // This causes problems when loading MountainLion from time to time, since ML is loaded
+      // to "random" address in memory.
+      // By commenting out following condition, such drivers would be loaded to normal high
+      // memory addresses like other drivers.
+      //
+      if (/*Image->ImageContext.ImageAddress >= 0x100000 || */ Image->ImageContext.RelocationsStripped) {
         Status = CoreAllocatePages (
                    AllocateAddress,
                    (EFI_MEMORY_TYPE) (Image->ImageContext.ImageCodeMemoryType),

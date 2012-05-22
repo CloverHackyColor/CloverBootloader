@@ -254,6 +254,15 @@ static EFI_STATUS StartEFIImage(IN EFI_DEVICE_PATH *DevicePath,
 }
 
 //
+// Null ConOut OutputString() implementation - for blocking
+// text output from boot.efi when booting in graphics mode
+//
+EFI_STATUS
+NullConOutOutputString(IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This, IN CHAR16 *String) {
+	return EFI_SUCCESS;
+}
+
+//
 // EFI OS loader functions
 //
 EG_PIXEL DarkBackgroundPixel  = { 0x0, 0x0, 0x0, 0 };
@@ -261,6 +270,9 @@ EG_PIXEL DarkBackgroundPixel  = { 0x0, 0x0, 0x0, 0 };
 static VOID StartLoader(IN LOADER_ENTRY *Entry)
 {
   EFI_STATUS              Status;
+  BOOLEAN                 BlockConOut = FALSE;
+  EFI_TEXT_STRING         ConOutOutputString;
+  
   egClearScreen(&DarkBackgroundPixel);
   MsgLog("Turbo=%c\n", gSettings.Turbo?'Y':'N');
   MsgLog("PatchNMI=%c\n", gSettings.PatchNMI?'Y':'N');
@@ -300,6 +312,14 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     
     Entry->LoadOptions     = PoolPrint(L"%a", gSettings.BootArgs);
     //  Entry->LoadOptions     = InputItems[0].SValue;
+    
+    // blocking boot.efi output if -v is not specified
+    // note: this blocks output even if -v is specified in
+    // /Library/Preferences/SystemConfiguration/com.apple.Boot.plist
+    // which is wrong
+    if (Entry->LoadOptions == NULL || StrStr(Entry->LoadOptions, L"-v") == NULL) {
+      BlockConOut = TRUE;
+    }
   }
   else if (Entry->LoaderType == OSTYPE_WIN) {
       
@@ -313,8 +333,22 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       //PauseForKey(L"continue");
       Entry->LoadOptions     = NULL;
   }
-    StartEFIImage(Entry->DevicePath, Entry->LoadOptions,
+  
+  if (BlockConOut) {
+    // save orig OutputString and replace it with
+    // null implementation
+    ConOutOutputString = gST->ConOut->OutputString;
+    gST->ConOut->OutputString = NullConOutOutputString;
+  }
+  
+  StartEFIImage(Entry->DevicePath, Entry->LoadOptions,
                 Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL);
+  
+  if (BlockConOut) {
+    // return back orig OutputString
+    gST->ConOut->OutputString = ConOutOutputString;
+  }
+  
 //  PauseForKey(L"FinishExternalScreen");
   FinishExternalScreen();
 //  PauseForKey(L"System started?!");
