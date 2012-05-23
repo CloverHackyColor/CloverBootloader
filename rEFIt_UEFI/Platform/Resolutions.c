@@ -1,49 +1,9 @@
 /*
- *  resolution.h
- *  
- *	NOTE: I don't beleive this code is production ready / should be in trunk
- * Atleast, not in it's current state. 
  *
  *  Created by Evan Lojewski on 3/4/10.
  *  Copyright 2009. All rights reserved.
  *
  */
-#ifndef _RESOLUTION_H_
-#define _RESOLUTION_H_
-
-//#include "libsaio.h"
-//#include "edid.h"  //included
-#include "915resolution.h"
-
-
-void patchVideoBios()
-{		
-	UInt32 x = 0, y = 0, bp = 0;
-	
-	getResolution(&x, &y, &bp);
-	verbose("getResolution: %dx%dx%d\n", (int)x, (int)y, (int)bp);
-	
-	if (x != 0 &&
-		y != 0 && 
-		bp != 0)
-	{
-		vbios_map * map;
-		
-		map = open_vbios(CT_UNKNOWN);
-		if(map)
-		{
-			unlock_vbios(map);
-			
-			set_mode(map, x, y, bp, 0, 0);
-			
-			relock_vbios(map);
-			
-			close_vbios(map);
-		}
-	}
-}
-
-
 /* Copied from 915 resolution created by steve tomljenovic
  *
  * This code is based on the techniques used in :
@@ -58,26 +18,22 @@ void patchVideoBios()
  *
  * This source code is into the public domain.
  */
+/* 
+* based on work of DieBuche http://www.insanelymac.com/forum/index.php?showtopic=211294
+*
+* UEFI Clover adaptation - Slice 2012
+*
+*/
 
-/**
- **
- **/
+#include "Platform.h"
+#include "Resolutions.h"
 
-#define CONFIG_MECH_ONE_ADDR	0xCF8
-#define CONFIG_MECH_ONE_DATA	0xCFC
-
-int freqs[] = { 60, 75, 85 };
-
-UInt32 get_chipset_id(void)
-{
-	outl(CONFIG_MECH_ONE_ADDR, 0x80000000);
-	return inl(CONFIG_MECH_ONE_DATA);
-}
-
+//Slice - nonsense. Obsolete chipset list
+//will get from our GetDevice()
 chipset_type get_chipset(UInt32 id)
 {
 	chipset_type type;
-		
+  
 	switch (id) {
 		case 0x35758086:
 			type = CT_830;
@@ -126,7 +82,7 @@ chipset_type get_chipset(UInt32 id)
 		case 0x277c8086:
 			type = CT_975X;
 			break;
-
+      
 		case 0x29a08086:
 			type = CT_G965;
 			break;
@@ -143,15 +99,15 @@ chipset_type get_chipset(UInt32 id)
 		case 0X2e908086:
 			type = CT_B43;
 			break;
-
+      
 		case 0x2e208086:
 			type = CT_P45;
 			break;
-
+      
 		case 0x2e308086:
 			type = CT_G41;
 			break;
-					
+      
 		case 0x29c08086:
 			type = CT_G31;
 			break;
@@ -172,7 +128,7 @@ chipset_type get_chipset(UInt32 id)
 		case 0x29e08086:
 			type = CT_X48;
 			break;			
-				
+      
 		case 0x2a408086:
 			type = CT_GM45;
 			break;
@@ -185,7 +141,7 @@ chipset_type get_chipset(UInt32 id)
 				//getc();
 				type = CT_UNKNOWN_INTEL;
 				//type = CT_UNKNOWN;
-
+        
 			}
 			else
 			{
@@ -195,6 +151,14 @@ chipset_type get_chipset(UInt32 id)
 	}
 	return type;
 }
+
+//Slice 
+//int getMode(edid_mode *mode) 
+//details about largest LCD mode. Will prepare in BioasVideo
+
+//here we want to get LCD screen resolution that is disabled by VideoBios
+//getResolution(&x, &y, &bp); -> getMode
+
 
 vbios_resolution_type1 * map_type1_resolution(vbios_map * map, UInt16 res)
 {
@@ -239,13 +203,6 @@ char detect_bios_type(vbios_map * map, char modeline, int entry_size)
 	}
 	
 	return (r2-r1-6) % entry_size == 0;
-}
-
-void close_vbios(vbios_map * map);
-
-char detect_ati_bios_type(vbios_map * map)
-{	
-	return map->mode_table_size % sizeof(ATOM_MODE_TIMING) == 0;
 }
 
 
@@ -318,14 +275,14 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 		/*
 		 * check if we have NVIDIA
 		 */
-
+    
 		int i = 0;
 		while (i < 512)
 		{ // we don't need to look through the whole bios, just the first 512 bytes
 			if ((	map->bios_ptr[i]   == 'N') 
-				&& (map->bios_ptr[i+1] == 'V') 
-				&& (map->bios_ptr[i+2] == 'I') 
-				&& (map->bios_ptr[i+3] == 'D')) 
+          && (map->bios_ptr[i+1] == 'V') 
+          && (map->bios_ptr[i+2] == 'I') 
+          && (map->bios_ptr[i+3] == 'D')) 
 			{
 				map->bios = BT_NVDA;
 				unsigned short nv_data_table_offset = 0;
@@ -337,9 +294,9 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 				while (i < 0x300)
 				{ //We don't need to look for the table in the whole bios, the 768 first bytes only
 					if ((	map->bios_ptr[i] == 0x44) 
-						&& (map->bios_ptr[i+1] == 0x01) 
-						&& (map->bios_ptr[i+2] == 0x04) 
-						&& (map->bios_ptr[i+3] == 0x00))
+              && (map->bios_ptr[i+1] == 0x01) 
+              && (map->bios_ptr[i+2] == 0x04) 
+              && (map->bios_ptr[i+3] == 0x00))
 					{
 						nv_data_table_offset = (unsigned short) (map->bios_ptr[i+4] | (map->bios_ptr[i+5] << 8));
 						break;
@@ -388,7 +345,7 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 	 * check for others
 	 */
 	
-
+  
 	
 	/*
 	 * Figure out where the mode table is 
@@ -403,7 +360,7 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 			vbios_mode * mode_ptr = (vbios_mode *) p;
 			
 			if (((mode_ptr[0].mode & 0xf0) == 0x30) && ((mode_ptr[1].mode & 0xf0) == 0x30) &&
-				((mode_ptr[2].mode & 0xf0) == 0x30) && ((mode_ptr[3].mode & 0xf0) == 0x30))
+          ((mode_ptr[2].mode & 0xf0) == 0x30) && ((mode_ptr[3].mode & 0xf0) == 0x30))
 			{
 				map->mode_table = mode_ptr;
 			}
@@ -468,7 +425,7 @@ void unlock_vbios(vbios_map * map)
 {
 	
 	map->unlocked = TRUE;
-
+  
 	switch (map->chipset) {
 		case CT_UNKNOWN:
 			break;
@@ -569,55 +526,24 @@ void relock_vbios(vbios_map * map)
 	
 #if DEBUG
 	{
-        UInt32 t = inl(CONFIG_MECH_ONE_DATA);
+    UInt32 t = inl(CONFIG_MECH_ONE_DATA);
 		verbose("relock PAM: (0x%08x)\n", t);
 	}
 #endif
 }
 
 
-int getMode(edid_mode *mode)
-{
-	char* edidInfo = readEDID();
-			
-	if(!edidInfo) return 1;
-//Slice
-	if(!fb_parse_edid((struct EDID *)edidInfo, mode)) 
-	{
-		free( edidInfo );
-		return 1;
-	}
-/*	mode->pixel_clock = (edidInfo[55] << 8) | edidInfo[54];
-	mode->h_active =  edidInfo[56] | ((edidInfo[58] & 0xF0) << 4);
-	mode->h_blanking = ((edidInfo[58] & 0x0F) << 8) | edidInfo[57];
-	mode->v_active = edidInfo[59] | ((edidInfo[61] & 0xF0) << 4);
-	mode->v_blanking = ((edidInfo[61] & 0x0F) << 8) | edidInfo[60];
-	mode->h_sync_offset = ((edidInfo[65] & 0xC0) >> 2) | edidInfo[62];
-	mode->h_sync_width = (edidInfo[65] & 0x30) | edidInfo[63];
-	mode->v_sync_offset = (edidInfo[65] & 0x0C) | ((edidInfo[64] & 0x0C) >> 2);
-	mode->v_sync_width = ((edidInfo[65] & 0x3) << 2) | (edidInfo[64] & 0x03);
-*/		
-		
-	free( edidInfo );
-		
-	if(!mode->h_active) return 1;
-	
-	return 0;
-		
-}
-
-
 static void gtf_timings(UInt32 x, UInt32 y, UInt32 freq,
-						unsigned long *clock,
-						UInt16 *hsyncstart, UInt16 *hsyncend, UInt16 *hblank,
-						UInt16 *vsyncstart, UInt16 *vsyncend, UInt16 *vblank)
+                        unsigned long *clock,
+                        UInt16 *hsyncstart, UInt16 *hsyncend, UInt16 *hblank,
+                        UInt16 *vsyncstart, UInt16 *vsyncend, UInt16 *vblank)
 {
 	UInt32 hbl, vbl, vfreq;
 	
 	vbl = y + (y+1)/(20000.0/(11*freq) - 1) + 1.5;
 	vfreq = vbl * freq;
 	hbl = 16 * (int)(x * (30.0 - 300000.0 / vfreq) /
-					 +            (70.0 + 300000.0 / vfreq) / 16.0 + 0.5);
+                   +            (70.0 + 300000.0 / vfreq) / 16.0 + 0.5);
 	
 	*vsyncstart = y;
 	*vsyncend = y + 3;
@@ -638,7 +564,7 @@ void set_mode(vbios_map * map, /*UInt32 mode,*/ UInt32 x, UInt32 y, UInt32 bp, U
 	switch(map->bios) {
 		case BT_INTEL:
 			return;
-
+      
 		case BT_1:
 		{
 			vbios_resolution_type1 * res = map_type1_resolution(map, map->mode_table[i].resolution);
@@ -677,9 +603,9 @@ void set_mode(vbios_map * map, /*UInt32 mode,*/ UInt32 x, UInt32 y, UInt32 bp, U
 					modeline->y1 = modeline->y2 = y-1;
 					
 					gtf_timings(x, y, freqs[j], &modeline->clock,
-								&modeline->hsyncstart, &modeline->hsyncend,
-								&modeline->hblank, &modeline->vsyncstart,
-								&modeline->vsyncend, &modeline->vblank);
+                      &modeline->hsyncstart, &modeline->hsyncend,
+                      &modeline->hblank, &modeline->vsyncstart,
+                      &modeline->vsyncend, &modeline->vblank);
 					
 					if (htotal)
 						modeline->htotal = htotal;
@@ -709,9 +635,9 @@ void set_mode(vbios_map * map, /*UInt32 mode,*/ UInt32 x, UInt32 y, UInt32 bp, U
 					modeline->y1 = modeline->y2 = y-1;
 					
 					gtf_timings(x, y, freqs[j], &modeline->clock,
-								&modeline->hsyncstart, &modeline->hsyncend,
-								&modeline->hblank, &modeline->vsyncstart,
-								&modeline->vsyncend, &modeline->vblank);
+                      &modeline->hsyncstart, &modeline->hsyncend,
+                      &modeline->hblank, &modeline->vsyncstart,
+                      &modeline->vsyncend, &modeline->vblank);
 					if (htotal)
 						modeline->htotal = htotal;
 					else
@@ -730,51 +656,29 @@ void set_mode(vbios_map * map, /*UInt32 mode,*/ UInt32 x, UInt32 y, UInt32 bp, U
 		case BT_ATI_1:
 		{
 			edid_mode mode;
-				
+      
 			ATOM_MODE_TIMING *mode_timing = (ATOM_MODE_TIMING *) map->ati_mode_table;
-
+      
 			//if (mode.pixel_clock && (mode.h_active == x) && (mode.v_active == y) && !force) {
 			if (!getMode(&mode)) {
 				mode_timing->usCRTC_H_Total = mode.h_active + mode.h_blanking;
 				mode_timing->usCRTC_H_Disp = mode.h_active;
 				mode_timing->usCRTC_H_SyncStart = mode.h_active + mode.h_sync_offset;
 				mode_timing->usCRTC_H_SyncWidth = mode.h_sync_width;
-					
+        
 				mode_timing->usCRTC_V_Total = mode.v_active + mode.v_blanking;
 				mode_timing->usCRTC_V_Disp = mode.v_active;
 				mode_timing->usCRTC_V_SyncStart = mode.v_active + mode.v_sync_offset;
 				mode_timing->usCRTC_V_SyncWidth = mode.v_sync_width;
-
+        
 				mode_timing->usPixelClock = mode.pixel_clock;
 			}
-			/*else
-			{
-				vbios_modeline_type2 modeline;
-
-				cvt_timings(x, y, freqs[0], &modeline.clock,
-							&modeline.hsyncstart, &modeline.hsyncend,
-							&modeline.hblank, &modeline.vsyncstart,
-							&modeline.vsyncend, &modeline.vblank, 0);
-
-				mode_timing->usCRTC_H_Total = x + modeline.hblank;
-				mode_timing->usCRTC_H_Disp = x;
-				mode_timing->usCRTC_H_SyncStart = modeline.hsyncstart;
-				mode_timing->usCRTC_H_SyncWidth = modeline.hsyncend - modeline.hsyncstart;
-
-				mode_timing->usCRTC_V_Total = y + modeline.vblank;
-				mode_timing->usCRTC_V_Disp = y;
-				mode_timing->usCRTC_V_SyncStart = modeline.vsyncstart;
-				mode_timing->usCRTC_V_SyncWidth = modeline.vsyncend - modeline.vsyncstart;
-												
-				mode_timing->usPixelClock = modeline.clock;
-			 }*/
-	
 			break;
 		}
 		case BT_ATI_2:
 		{
 			edid_mode mode;
-						
+      
 			ATOM_DTD_FORMAT *mode_timing = (ATOM_DTD_FORMAT *) map->ati_mode_table;
 			
 			/*if (mode.pixel_clock && (mode.h_active == x) && (mode.v_active == y) && !force) {*/
@@ -783,38 +687,14 @@ void set_mode(vbios_map * map, /*UInt32 mode,*/ UInt32 x, UInt32 y, UInt32 bp, U
 				mode_timing->usHActive = mode.h_active;
 				mode_timing->usHSyncOffset = mode.h_sync_offset;
 				mode_timing->usHSyncWidth = mode.h_sync_width;
-										
+        
 				mode_timing->usVBlanking_Time = mode.v_blanking;
 				mode_timing->usVActive = mode.v_active;
 				mode_timing->usVSyncOffset = mode.v_sync_offset;
 				mode_timing->usVSyncWidth = mode.v_sync_width;
-										
+        
 				mode_timing->usPixClk = mode.pixel_clock;
 			}
-			/*else
-			{
-				vbios_modeline_type2 modeline;
-			
-				cvt_timings(x, y, freqs[0], &modeline.clock,
-							&modeline.hsyncstart, &modeline.hsyncend,
-							&modeline.hblank, &modeline.vsyncstart,
-							&modeline.vsyncend, &modeline.vblank, 0);
-											
-				mode_timing->usHBlanking_Time = modeline.hblank;
-													mode_timing->usHActive = x;
-													mode_timing->usHSyncOffset = modeline.hsyncstart - x;
-													mode_timing->usHSyncWidth = modeline.hsyncend - modeline.hsyncstart;
-													
-													mode_timing->usVBlanking_Time = modeline.vblank;
-													mode_timing->usVActive = y;
-													mode_timing->usVSyncOffset = modeline.vsyncstart - y;
-													mode_timing->usVSyncWidth = modeline.hsyncend - modeline.hsyncstart;
-													
-													mode_timing->usPixClk = modeline.clock;
-												}
-			 */
-				
-			
 			break;
 		}
 		case BT_NVDA:
@@ -837,27 +717,6 @@ void set_mode(vbios_map * map, /*UInt32 mode,*/ UInt32 x, UInt32 y, UInt32 bp, U
 				
 				mode_timing[i].usPixel_Clock = mode.pixel_clock;
 			}
-			/*else
-			 {
-			 vbios_modeline_type2 modeline;
-			 
-			 cvt_timings(x, y, freqs[0], &modeline.clock,
-			 &modeline.hsyncstart, &modeline.hsyncend,
-			 &modeline.hblank, &modeline.vsyncstart,
-			 &modeline.vsyncend, &modeline.vblank, 0);
-			 
-			 mode_timing[i].usH_Total = x + modeline.hblank - 1;
-			 mode_timing[i].usH_Active = x;
-			 mode_timing[i].usH_SyncStart = modeline.hsyncstart - 1;
-			 mode_timing[i].usH_SyncEnd = modeline.hsyncend - 1;
-			 
-			 mode_timing[i].usV_Total = y + modeline.vblank - 1;
-			 mode_timing[i].usV_Active = y;
-			 mode_timing[i].usV_SyncStart = modeline.vsyncstart - 1;
-			 mode_timing[i].usV_SyncEnd = modeline.vsyncend - 1;
-			 
-			 mode_timing[i].usPixel_Clock = modeline.clock;
-			 }*/
 			break;
 		}
 		case BT_UNKNOWN:
@@ -865,8 +724,34 @@ void set_mode(vbios_map * map, /*UInt32 mode,*/ UInt32 x, UInt32 y, UInt32 bp, U
 			break;
 		}
 	}
-	//		}
-	//	}
 }
 
-#endif // _RESOLUTION_H_
+
+VOID patchVideoBios()
+{		
+	UINT32 x = 0, y = 0, bp = 32;
+	vbios_map * map;
+  
+ //here we want to get LCD screen resolution that is disabled by VideoBios
+	getResolution(&x, &y, &bp);
+	
+	if (x != 0 &&
+      y != 0 && 
+      bp != 0)
+	{
+		
+		
+		map = open_vbios(CT_UNKNOWN);
+		if(map)
+		{
+			unlock_vbios(map);
+			
+			set_mode(map, x, y, bp, 0, 0);
+			
+			relock_vbios(map);
+			
+			close_vbios(map);
+		}
+	}
+}
+

@@ -473,6 +473,14 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   UINT32                eCntR; //, eCntX;
   UINT32                *pEntryR;
   UINT64                *pEntryX;
+  EFI_ACPI_DESCRIPTION_HEADER *TableHeader;
+  // -===== APIC =====-
+  EFI_ACPI_DESCRIPTION_HEADER                           *ApicTable;
+  EFI_ACPI_2_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER   *ApicHeader;
+  EFI_ACPI_2_0_PROCESSOR_LOCAL_APIC_STRUCTURE           *ProcLocalApic;
+  EFI_ACPI_2_0_LOCAL_APIC_NMI_STRUCTURE                 *LocalApicNMI;
+  UINTN                                                 ApicLen;
+  UINT8                                                 CPUBase;
   
   PathDsdt = PoolPrint(L"\\%s", gSettings.DsdtName);
   
@@ -819,6 +827,13 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     
     if(!EFI_ERROR(Status))
     {
+      //before insert we should checksum it
+      if (buffer) {
+        TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)buffer;
+        TableHeader->Checksum = 0;
+        TableHeader->Checksum = (UINT8)(256-Checksum8((CHAR8*)buffer, TableHeader->Length));
+      }
+      //
       //       DBG("read success\n");
       Status = InsertTable((VOID*)buffer, bufferLen);  
       if(EFI_ERROR(Status)){
@@ -826,6 +841,56 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       }
     }  
   }
+  
+  //Slice - this is a time to patch MADT table. 
+  //
+  // 1. For CPU base number 0 or 1.  codes from SunKi
+  // 2. For absent NMI subtable
+  if (gSettings.PatchNMI) {
+    xf = ScanXSDT(APIC_SIGN);
+    if (xf) {
+      ApicTable = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)(*xf);
+      ApicLen = ApicTable->Length;
+      ApicHeader = (EFI_ACPI_2_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER*)(UINTN)(*xf + sizeof(EFI_ACPI_DESCRIPTION_HEADER));
+      ProcLocalApic = (EFI_ACPI_2_0_PROCESSOR_LOCAL_APIC_STRUCTURE *)(UINTN)(*xf + sizeof(EFI_ACPI_2_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER));
+      DBG("ApicTable = 0x%x, ApicHeader = 0x%x, ProcLocalApic = 0x%x\n", ApicTable, ApicHeader, ProcLocalApic);
+      if (ProcLocalApic->Type == 0) {
+        CPUBase = ProcLocalApic->AcpiProcessorId; //we want first instance
+      } else {
+        CPUBase = 0;
+      }
+
+//      while ((ProcLocalApic->Type == 0)) { // && (ProcLocalApic->Flags == 1)) {
+        //      Print(L" ProcId = %d, ApicId = %d, Flags = %d\n\r", ProcLocalApic->AcpiProcessorId, ProcLocalApic->ApicId, ProcLocalApic->Flags);
+        //      if ((ProcLocalApic->AcpiProcessorId) != ProcLocalApic->ApicId) {
+        //        ProcLocalApic->AcpiProcessorId = ProcLocalApic->ApicId;
+        //        Pause(L"Found (ProcId ) != ApicId !!!\n\r");
+ //     }
+ //     ProcLocalApic++;
+      DBG("ProcLocalApic = 0x%x (ProcLocalApic->Length = %d) CPUBase=%d\n", ProcLocalApic, ProcLocalApic->Length, CPUBase);
+ //reallocate table     
+      BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
+      Status=gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);
+      if(!EFI_ERROR(Status))
+      {
+        //save old table and drop it from XSDT
+        CopyMem((VOID*)(UINTN)BufferPtr, ApicTable, ApicTable->Length);
+        DropTableFromXSDT(APIC_SIGN);
+        ApicTable = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)BufferPtr;
+        LocalApicNMI = (EFI_ACPI_2_0_LOCAL_APIC_NMI_STRUCTURE*)((UINTN)BufferPtr + sizeof(EFI_ACPI_2_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER));
+        //then search if it presents else insert new subtables
+        
+        // insert corrected MADT
+        Status = InsertTable((VOID*)ApicTable, ApicTable->Length);
+      }      
+      
+      ApicTable->Checksum = 0;
+      ApicTable->Checksum = (UINT8)(256-Checksum8((CHAR8*)ApicTable, ApicTable->Length));
+      
+    } 
+      else DBG("No APIC table Found !!!\n");
+  } 
+
   
   if (gSettings.GeneratePStates) {
     Status = EFI_NOT_FOUND;
@@ -962,7 +1027,7 @@ EFI_STATUS LoadAndInjectAcpiTable(CHAR16 *AcpiOemPath, CHAR16 *PathPatched, CHAR
 	EFI_STATUS                    Status;
 	UINT8                         *Buffer = NULL;
 	UINTN                         BufferLen = 0;
-  EFI_ACPI_DESCRIPTION_HEADER   *TableHeader;
+  EFI_ACPI_DESCRIPTION_HEADER   *TableHeader = NULL;
   
   
   // load if exists
@@ -970,6 +1035,13 @@ EFI_STATUS LoadAndInjectAcpiTable(CHAR16 *AcpiOemPath, CHAR16 *PathPatched, CHAR
   
   if(!EFI_ERROR(Status))
   {
+    //before insert we should checksum it
+    if (Buffer) {
+      TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)Buffer;
+      TableHeader->Checksum = 0;
+      TableHeader->Checksum = (UINT8)(256-Checksum8((CHAR8*)Buffer, TableHeader->Length));
+    }
+
     // loaded - insert it into XSDT/RSDT
     Status = InsertTable((VOID*)Buffer, BufferLen);
     
@@ -978,7 +1050,7 @@ EFI_STATUS LoadAndInjectAcpiTable(CHAR16 *AcpiOemPath, CHAR16 *PathPatched, CHAR
       DBG("Table %s inserted.\n", TableName);
       
       // if this was SLIC, then update IDs in XSDT/RSDT
-      TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)Buffer;
+      
       if (TableHeader->Signature == SIGNATURE_32('S', 'L', 'I', 'C'))
       {
         if (Rsdt)

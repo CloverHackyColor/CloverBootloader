@@ -75,9 +75,9 @@ MESSAGE_LOG_PROTOCOL *Msg = NULL;
 
 
 /** Helper macro for stringification. */
-#define FSW_EFI_STRINGIFY(x) L#x
+#define FSW_EFI_STRINGIFY(x) #x
 /** Expands to the EFI driver name given the file system type name. */
-#define FSW_EFI_DRIVER_NAME(t) L"Fsw " FSW_EFI_STRINGIFY(t) L" File System Driver"
+#define FSW_EFI_DRIVER_NAME(t) L"Clover " FSW_EFI_STRINGIFY(t) L" File System Driver"
 
 // function prototypes
 
@@ -433,13 +433,13 @@ EFI_STATUS EFIAPI fsw_efi_ComponentName_GetDriverName(IN  EFI_COMPONENT_NAME_PRO
 {
     if (Language == NULL || DriverName == NULL)
         return EFI_INVALID_PARAMETER;
-#if 0
+//#if 0
 
     if (Language[0] == 'e' && Language[1] == 'n' && Language[2] == 'g' && Language[3] == 0) {
         *DriverName = FSW_EFI_DRIVER_NAME(FSTYPE);
         return EFI_SUCCESS;
     }
-#endif
+//#endif
     return EFI_UNSUPPORTED;
 }
 
@@ -934,7 +934,7 @@ EFI_STATUS fsw_efi_dnode_getinfo(IN FSW_FILE_DATA *File,
 
         Status = fsw_efi_dnode_fill_FileInfo(Volume, File->shand.dnode, BufferSize, Buffer);
 
-    } else if (CompareGuid(InformationType, &GUID_NAME(FileSystemInfo)) == 0) {
+    } else if (CompareGuid(InformationType, &GUID_NAME(FileSystemInfo))) {
 #if DEBUG_LEVEL
         Print(L"fsw_efi_dnode_getinfo: FILE_SYSTEM_INFO\n");
 #endif

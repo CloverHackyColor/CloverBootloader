@@ -342,12 +342,12 @@ UINT8 aml_get_size_length(UINT32 size)
 {
 	if (size + 1 <= 0x3f)
 		return 1;
-	else if (size + 2 <= 0x3fff)
+	else if (size + 2 <= 0xfff) /* Encode in 4 bits and 1 byte */
 		return 2;
-	else if (size + 3 <= 0x3fffff)
+	else if (size + 3 <= 0xfffff) /* Encode in 4 bits and 2 bytes */
 		return 3;
 	
-	return 4;
+	return 4; /* Encode 0xfffffff in 4 bits and 2 bytes */
 }
 
 UINT32 aml_calculate_size(AML_CHUNK* node)
@@ -464,25 +464,25 @@ UINT32 aml_write_buffer(CONST CHAR8* value, UINT32 size, CHAR8* buffer, UINT32 o
 
 UINT32 aml_write_size(UINT32 size, CHAR8* buffer, UINT32 offset)
 {
-	if (size <= 0x3f)
+	if (size <= 0x3f) /* simple 1 byte length in 6 bits */
 	{
 		buffer[offset++] = size;
 	}
-	else if (size <= 0x3fff) 
+	else if (size <= 0xfff) 
 	{
-		buffer[offset++] = 0x40 | (size & 0xf);
-		buffer[offset++] = (size >> 4) & 0xff;
+		buffer[offset++] = 0x40 | (size & 0xf); /* 0x40 is type, 0x0X is first nibble of length */
+		buffer[offset++] = (size >> 4) & 0xff; /* +1 bytes for rest length */
 	}
-	else if (size <= 0x3fffff) 
+	else if (size <= 0xfffff) 
 	{
-		buffer[offset++] = 0x80 | (size & 0xf);
-		buffer[offset++] = (size >> 4) & 0xff;
+		buffer[offset++] = 0x80 | (size & 0xf); /* 0x80 is type, 0x0X is first nibble of length */
+		buffer[offset++] = (size >> 4) & 0xff; /* +2 bytes for rest length */
 		buffer[offset++] = (size >> 12) & 0xff;
 	}
     else 
 	{
-		buffer[offset++] = 0xc0 | (size & 0xf);
-		buffer[offset++] = (size >> 4) & 0xff;
+		buffer[offset++] = 0xc0 | (size & 0xf); /* 0xC0 is type, 0x0X is first nibble of length */
+		buffer[offset++] = (size >> 4) & 0xff; /* +3 bytes for rest length */
 		buffer[offset++] = (size >> 12) & 0xff;
 		buffer[offset++] = (size >> 20) & 0xff;
 	}

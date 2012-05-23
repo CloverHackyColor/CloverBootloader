@@ -188,7 +188,7 @@ radeon_card_info_t radeon_cards[] = {
   { 0x724D, 0x00000000, CHIP_FAMILY_R580, "ATI Radeon HD Desktop ",			kAlopias		 },
   { 0x724E, 0x00000000, CHIP_FAMILY_R580, "ATI Radeon HD Desktop ",			kAlopias		 },
   { 0x724F, 0x00000000, CHIP_FAMILY_R580, "ATI Radeon HD Desktop ",			kAlopias		 },
-  { 0x7280, 0x00000000, CHIP_FAMILY_RV570, "ATI Radeon HD Desktop ",		kAlopias		 },
+  { 0x7280, 0x00000000, CHIP_FAMILY_RV570, "ATI Radeon X1950 Pro ",		kAlopias		 },
   { 0x7281, 0x00000000, CHIP_FAMILY_RV560, "ATI Radeon HD Desktop ",		kAlopias		 },
   { 0x7283, 0x00000000, CHIP_FAMILY_RV560, "ATI Radeon HD Desktop ",		kAlopias		 },
   { 0x7284, 0x00000000, CHIP_FAMILY_R580, "ATI Radeon HD Mobile ",			kAlopias		 },
@@ -298,6 +298,9 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x9710,	0x00000000, CHIP_FAMILY_RS880,		"ATI Radeon HD 4200",				kNull		},
 	{ 0x9715,	0x00000000, CHIP_FAMILY_RS880,		"ATI Radeon HD 4250",				kNull		},
 	{ 0x9714,	0x00000000, CHIP_FAMILY_RS880,		"ATI Radeon HD 4290",				kNull		},
+  
+  //what about ATI6320 devID=0x9806? same as 4330 but IGP
+  
   //X3000 - 0x68881002 0x68891002 0x68981002 0x68991002 0x689C1002 0x689D1002 0x68801002 0x68901002 0x68A81002
   //0x68A91002 0x68B81002 0x68B91002  0x68BE1002 0x68A01002 0x68A11002 0x68B01002 0x68B11002  0x68C81002
   //0x68C91002 0x68D81002 0x68D91002 0x68DE1002 0x68C01002 0x68C11002 0x68D01002 0x68D11002 0x68E81002

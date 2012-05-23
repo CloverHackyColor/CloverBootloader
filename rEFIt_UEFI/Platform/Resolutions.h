@@ -11,7 +11,7 @@
 #ifndef __RESOLUTION_H
 #define __RESOLUTION_H
 
-#include "shortatombios.h"
+#include "AtomBios.h"
 #include "edid.h"
 
 //Slice - moved to edid.h
