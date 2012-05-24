@@ -323,7 +323,7 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
   UINT8   acpi_cpu_count = Number; //gCPUStructure.Cores;
   UINT8   cstates_count;
   UINT32  acpi_cpu_p_blk;
-  CHAR8 name[9];
+  CHAR8 name2[9];
   CHAR8 name0[9];
   CHAR8 name1[13];
   
@@ -450,9 +450,9 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
   INTN i;
   for (i = 1; i < acpi_cpu_count; i++) 
   {
-    AsciiSPrint(name, 9, "_PR_CPU%1d", i + FirstID);
+    AsciiSPrint(name2, 9, "_PR_CPU%1d", i + FirstID);
     
-    scop = aml_add_scope(root, name);
+    scop = aml_add_scope(root, name2);
     met = aml_add_method(scop, "_CST", 0);
     ret = aml_add_return_name(met, name1);
     

@@ -480,7 +480,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   EFI_ACPI_DESCRIPTION_HEADER *TableHeader;
   // -===== APIC =====-
   EFI_ACPI_DESCRIPTION_HEADER                           *ApicTable;
-  EFI_ACPI_2_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER   *ApicHeader;
+//  EFI_ACPI_2_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER   *ApicHeader;
   EFI_ACPI_2_0_PROCESSOR_LOCAL_APIC_STRUCTURE           *ProcLocalApic;
   EFI_ACPI_2_0_LOCAL_APIC_NMI_STRUCTURE                 *LocalApicNMI;
   UINTN             ApicLen;
@@ -854,6 +854,8 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   DBG("----------- size of APIC PROC = %d\n", sizeof(EFI_ACPI_2_0_PROCESSOR_LOCAL_APIC_STRUCTURE));
   //
   // 1. For CPU base number 0 or 1.  codes from SunKi
+  CPUBase = 0;
+  ApicCPUNum = 0;  
   // 2. For absent NMI subtable
     xf = ScanXSDT(APIC_SIGN);
     if (xf) {
@@ -865,10 +867,8 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       //
       if (ProcLocalApic->Type == 0) {
         CPUBase = ProcLocalApic->AcpiProcessorId; //we want first instance
-      } else {
-        CPUBase = 0;
-      }
-      ApicCPUNum = 0;
+      } 
+
       while ((ProcLocalApic->Type == 0) && (ProcLocalApic->Length == 8)) {
         ProcLocalApic++;
         ApicCPUNum++;
@@ -924,7 +924,11 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       } 
     } 
       else DBG("No APIC table Found !!!\n");
-
+  //fool proof
+  if ((ApicCPUNum == 0) || (ApicCPUNum > 16)) {
+    ApicCPUNum = gCPUStructure.Threads;
+  }
+  
   
   if (gSettings.GeneratePStates) {
     Status = EFI_NOT_FOUND;
