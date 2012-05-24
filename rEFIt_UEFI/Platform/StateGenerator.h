@@ -24,8 +24,8 @@
 typedef EFI_ACPI_DESCRIPTION_HEADER SSDT_TABLE;
 
 
-SSDT_TABLE *generate_pss_ssdt(VOID);
-SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt);
+SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number);
+SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, UINT8 FirstID, UINTN Number);
 
 
 #endif /* !__LIBSAIO_ACPI_PATCHER_H */

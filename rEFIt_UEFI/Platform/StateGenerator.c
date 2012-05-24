@@ -43,13 +43,15 @@ CHAR8 resource_template_register_systemio[] =
 
 
 
-SSDT_TABLE *generate_pss_ssdt()
+SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
 {	
   CHAR8 name[9];
+  CHAR8 name1[13];
+  CHAR8 name2[13];
   P_STATE initial, maximum, minimum, p_states[32];
   UINT8 p_states_count = 0;		
   BOOLEAN cpu_dynamic_fsb = FALSE;
-  UINT8	acpi_cpu_count = gCPUStructure.Cores;
+  UINT8	acpi_cpu_count = Number; //gCPUStructure.Cores;
 
 	if (gCPUStructure.Vendor != CPU_VENDOR_INTEL) {
 		MsgLog ("Not an Intel platform: P-States will not be generated !!!\n");
@@ -234,7 +236,10 @@ SSDT_TABLE *generate_pss_ssdt()
 			
 			AML_CHUNK* root = aml_create_node(NULL);
 				aml_add_buffer(root, (CONST CHAR8*)&pss_ssdt_header[0], sizeof(pss_ssdt_header)); // SSDT header
-					AML_CHUNK* scop = aml_add_scope(root, "_PR_CPU0");
+          AsciiSPrint(name, 9, "_PR_CPU%1d", FirstID);
+          AsciiSPrint(name1, 13, "_PR_CPU%1dPSS_", FirstID);
+          AsciiSPrint(name2, 13, "_PR_CPU%1dPCT_", FirstID);
+					AML_CHUNK* scop = aml_add_scope(root, name);
 						AML_CHUNK* method = aml_add_name(scop, "PSS_");
 							AML_CHUNK* pack = aml_add_package(method);
 			
@@ -269,16 +274,15 @@ SSDT_TABLE *generate_pss_ssdt()
 			for (i = 1; i < acpi_cpu_count; i++) 
 			{
 
-				AsciiSPrint(name, 9, "_PR_CPU%1d",i);
+				AsciiSPrint(name, 9, "_PR_CPU%1d", i + FirstID);
 				
 				scop = aml_add_scope(root, name);
-//				aml_add_alias(scop, "PSS_", "_PSS");
         metPSS = aml_add_method(scop, "_PSS", 0);
-        aml_add_return_name(metPSS, "_PR_CPU0PSS_");
+        aml_add_return_name(metPSS, name1);
         metPPC = aml_add_method(scop, "_PPC", 0);
         aml_add_return_byte(metPPC, gSettings.PLimitDict);
         metPCT = aml_add_method(scop, "_PCT", 0);
-        aml_add_return_name(metPCT, "_PR_CPU0PCT_");
+        aml_add_return_name(metPCT, name2);
         
 			}
 			
@@ -309,21 +313,24 @@ SSDT_TABLE *generate_pss_ssdt()
 	return NULL;
 }
 
-SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
+SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, UINT8 FirstID, UINTN Number)
 {
   BOOLEAN c2_enabled = gSettings.EnableC2;
   BOOLEAN c3_enabled;
   BOOLEAN c4_enabled = gSettings.EnableC4;
   BOOLEAN cst_using_systemio = gSettings.EnableISS;
   UINT8   p_blk_lo, p_blk_hi;
-  UINT8   acpi_cpu_count = gCPUStructure.Cores;
+  UINT8   acpi_cpu_count = Number; //gCPUStructure.Cores;
   UINT8   cstates_count;
   UINT32  acpi_cpu_p_blk;
+  CHAR8 name[9];
+  CHAR8 name0[9];
+  CHAR8 name1[13];
   
   if (!fadt) {
     return NULL;
   }
-  
+    
   acpi_cpu_p_blk = fadt->Pm1aEvtBlk + 0x10;
   c2_enabled = c2_enabled || (fadt->PLvl2Lat < 100);
   c3_enabled = (fadt->PLvl3Lat < 1000);
@@ -331,7 +338,9 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
   
   AML_CHUNK* root = aml_create_node(NULL);
   aml_add_buffer(root, cst_ssdt_header, sizeof(cst_ssdt_header)); // SSDT header
-  AML_CHUNK* scop = aml_add_scope(root, "_PR_CPU0");
+  AsciiSPrint(name0, 9, "_PR_CPU%1d", FirstID);
+  AsciiSPrint(name1, 13, "_PR_CPU%1dCST_", FirstID);
+  AML_CHUNK* scop = aml_add_scope(root, name0);
   AML_CHUNK* name = aml_add_name(scop, "CST_");
   AML_CHUNK* pack = aml_add_package(name);
   aml_add_byte(pack, cstates_count);
@@ -437,18 +446,15 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt)
   AML_CHUNK* met = aml_add_method(scop, "_CST", 0);
   AML_CHUNK* ret = aml_add_return_name(met, "CST_");
 
-//  aml_calculate_size(scop);
   // Aliases
   INTN i;
   for (i = 1; i < acpi_cpu_count; i++) 
   {
-    CHAR8 name[9];
-    AsciiSPrint(name, 9, "_PR_CPU%1d", i);
+    AsciiSPrint(name, 9, "_PR_CPU%1d", i + FirstID);
     
     scop = aml_add_scope(root, name);
-//    aml_add_alias(scop, "CST_", "_CST");
     met = aml_add_method(scop, "_CST", 0);
-    ret = aml_add_return_name(met, "_PR_CPU0CST_");
+    ret = aml_add_return_name(met, name1);
     
   }
   
