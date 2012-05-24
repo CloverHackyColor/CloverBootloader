@@ -169,6 +169,7 @@ VOID FillInputs(VOID)
   for (i=0; i<NGFX; i++) {
     InputItems[InputItemsCount].ItemType = ASString;  //21+i*5
     InputItems[InputItemsCount++].SValue = PoolPrint(L"%a", gGraphics[i].Model);
+    
     if (gGraphics[i].Vendor == Ati) {
       InputItems[InputItemsCount].ItemType = ASString; //22+5i
       if (StrLen(gSettings.FBName) > 3) {
@@ -183,6 +184,7 @@ VOID FillInputs(VOID)
       InputItems[InputItemsCount].ItemType = ASString; //22+5i
       InputItems[InputItemsCount++].SValue = L"NA";
     }
+    
     InputItems[InputItemsCount].ItemType = Decimal;  //23+5i
     if (gSettings.VideoPorts > 0) {
       InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.VideoPorts);
@@ -730,7 +732,7 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
 	switch (MenuExit) {
 		case MENU_EXIT_ENTER:
       Item->Valid = TRUE;   
-      Item->SValue = EfiStrDuplicate(Buffer);
+//      Item->SValue = EfiStrDuplicate(Buffer);
 			break;
 		case MENU_EXIT_ESCAPE:
 			Item->Valid = FALSE;
@@ -1643,38 +1645,23 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.SubScreen = NULL;
     InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];   //4
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+    //5   
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    UnicodeSPrint(Flags, 50, L"PatchNMI:");
+    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = 0xFFFF;
+    InputBootArgs->Entry.ShortcutDigit = 0;
+    InputBootArgs->Entry.ShortcutLetter = 'N';
+    InputBootArgs->Entry.Image = NULL;
+    InputBootArgs->Entry.BadgeImage = NULL;
+    InputBootArgs->Entry.SubScreen = NULL;
+    InputBootArgs->Item = &InputItems[15];    
+    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+    
     
     AddMenuEntry(&OptionMenu, SubMenuSpeedStep());
     AddMenuEntry(&OptionMenu, SubMenuGraphics());
-    //will be killed
-    //4    
-    /*    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-     UnicodeSPrint(Flags, 50, L"Audio  ID:");
-     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
-     InputBootArgs->Entry.Tag = TAG_INPUT;
-     InputBootArgs->Entry.Row = StrLen(InputItems[4].SValue);
-     InputBootArgs->Entry.ShortcutDigit = 0;
-     InputBootArgs->Entry.ShortcutLetter = 'A';
-     InputBootArgs->Entry.Image = NULL;
-     InputBootArgs->Entry.BadgeImage = NULL;
-     InputBootArgs->Entry.SubScreen = NULL;
-     InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];    
-     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-     */
-     //5   
-     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-     UnicodeSPrint(Flags, 50, L"PatchNMI:");
-     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
-     InputBootArgs->Entry.Tag = TAG_INPUT;
-     InputBootArgs->Entry.Row = 0xFFFF;
-     InputBootArgs->Entry.ShortcutDigit = 0;
-     InputBootArgs->Entry.ShortcutLetter = 'N';
-     InputBootArgs->Entry.Image = NULL;
-     InputBootArgs->Entry.BadgeImage = NULL;
-     InputBootArgs->Entry.SubScreen = NULL;
-     InputBootArgs->Item = &InputItems[15];    
-     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-        
     AddMenuEntry(&OptionMenu, &MenuEntryReturn);
     FreePool(Flags);
     //    DBG("option menu created entries=%d\n", OptionMenu.EntryCount);
