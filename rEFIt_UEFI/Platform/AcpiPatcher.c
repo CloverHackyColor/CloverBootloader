@@ -892,7 +892,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
         {
           //save old table and drop it from XSDT
           CopyMem((VOID*)(UINTN)BufferPtr, ApicTable, ApicTable->Length);
-          DropTableFromXSDT(APIC_SIGN);
+//          DropTableFromXSDT(APIC_SIGN);
           //      ApicTable = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)BufferPtr;
           SubTable = (UINT8*)((UINTN)BufferPtr + sizeof(EFI_ACPI_2_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER));
           while (*SubTable != 4) {
@@ -915,10 +915,11 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
               LocalApicNMI++;
             }
             ApicTable->Length += ApicCPUNum * 6;
+            DBG("ApicTable new Length=%d\n", ApicTable->Length);
             ApicTable->Checksum = 0;
             ApicTable->Checksum = (UINT8)(256-Checksum8((CHAR8*)ApicTable, ApicTable->Length));
             // insert corrected MADT
-            Status = InsertTable((VOID*)ApicTable, ApicTable->Length);
+     //       Status = InsertTable((VOID*)ApicTable, ApicTable->Length);
           }
         }      
       } 
@@ -926,10 +927,13 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       else DBG("No APIC table Found !!!\n");
   //fool proof
   if ((ApicCPUNum == 0) || (ApicCPUNum > 16)) {
-    ApicCPUNum = gCPUStructure.Threads;
+    if (gCPUStructure.Threads >= gCPUStructure.Cores) {
+      ApicCPUNum = gCPUStructure.Threads;
+    } else {
+      ApicCPUNum = gCPUStructure.Cores;
+    }
   }
-  
-  
+    
   if (gSettings.GeneratePStates) {
     Status = EFI_NOT_FOUND;
     Ssdt = generate_pss_ssdt(CPUBase, ApicCPUNum);
