@@ -456,7 +456,7 @@ GetDevicePathSizeEx (
   bigger than MaxStringLen, return length 0 to indicate that this is an 
   invalidate string.
 
-  This function returns the number of Unicode characters in the Null-terminated
+  This function returns the byte length of Unicode characters in the Null-terminated
   Unicode string specified by String. 
 
   If String is NULL, then ASSERT().
@@ -467,44 +467,26 @@ GetDevicePathSizeEx (
 
   @retval 0                An invalid string.
   @retval Others           The length of String.
-**/
-//new one
-/**  Returns the size of a Null-terminated Unicode string in bytes. If the length is 
- bigger than MaxStringLen, return size 0 to indicate that this is an 
- invalidate string.
-
- This function returns the (number of Unicode characters+1)*2 in the Null-terminated
- Unicode string specified by String. 
  
- If String is NULL, then ASSERT().
- If String is not aligned on a 16-bit boundary, then ASSERT().
- 
- @param  String           A pointer to a Null-terminated Unicode string.
- @param  MaxStringSize     Max string size of the string.
- 
- @retval 0                An invalid string.
- @retval Others           The size of String.
- For example StrSizeEx(L"A", 100) == 4; -- two bytes for Unicode L'A', and two bytes for L'\0'
 **/
 UINTN
 StrSizeEx (
   IN      CONST CHAR16              *String,
-  IN      UINTN                     MaxStringSize
+  IN      UINTN                     MaxStringLen
   )
 {
   UINTN                             Length;
-  UINTN                             MaxStringLen = (MaxStringSize-1) >> 1;
 
   ASSERT (String != NULL && MaxStringLen != 0);
   ASSERT (((UINTN) String & BIT0) == 0);
 
-  for (Length = 0; *String != L'\0' && MaxStringLen != Length; String++, Length++);
+  for (Length = 0; *String != L'\0' && MaxStringLen != Length; String++, Length+=2);
 
   if (*String != L'\0' && MaxStringLen == Length) {
     return 0;
   }
 
-  return (Length + 1) * sizeof (*String);
+  return Length + 2;
 }
 
 /**
@@ -526,8 +508,11 @@ ValidateOption (
   UINT16                    FilePathSize;
   UINT8                     *TempPtr;
   EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
-  EFI_DEVICE_PATH_PROTOCOL  *TempPath;
   UINTN                     TempSize;
+
+  if (VariableSize <= sizeof (UINT16) + sizeof (UINT32)) {
+    return FALSE;
+  }
 
   //
   // Skip the option attribute
@@ -544,7 +529,7 @@ ValidateOption (
   //
   // Get the option's description string size
   //
-  TempSize = StrSizeEx ((CHAR16 *) TempPtr, VariableSize);
+  TempSize = StrSizeEx ((CHAR16 *) TempPtr, VariableSize - sizeof (UINT16) - sizeof (UINT32));
   TempPtr += TempSize;
 
   //
@@ -560,21 +545,11 @@ ValidateOption (
     return FALSE;
   }
 
-  if (TempSize + FilePathSize + sizeof (UINT16) + sizeof (UINT16) > VariableSize) {
+  if (TempSize + FilePathSize + sizeof (UINT16) + sizeof (UINT32) > VariableSize) {
     return FALSE;
   }
 
-  TempPath = DevicePath;
-  while (FilePathSize > 0) {
-    TempSize = GetDevicePathSizeEx (TempPath, FilePathSize);
-    if (TempSize == 0) {
-      return FALSE;
-    }
-    FilePathSize = (UINT16) (FilePathSize - TempSize);
-    TempPath    += TempSize;
-  }
-
-  return TRUE;
+  return GetDevicePathSizeEx (DevicePath, FilePathSize) != 0;
 }
 
 /**
@@ -627,13 +602,12 @@ BdsLibVariableToOption (
   UINT8                     *TempPtr;
   UINTN                     VariableSize;
   EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
-  EFI_DEVICE_PATH_PROTOCOL  *TempPath;
   BDS_COMMON_OPTION         *Option;
   VOID                      *LoadOptions;
   UINT32                    LoadOptionsSize;
   CHAR16                    *Description;
   UINT8                     NumOff;
-  UINTN                     TempSize;
+
   //
   // Read the variable. We will never free this data.
   //
@@ -678,11 +652,7 @@ BdsLibVariableToOption (
   //
   // Get the option's description string size
   //
-  TempSize = StrSizeEx ((CHAR16 *) TempPtr, VariableSize);
-  if (TempSize == 0) {
-    return NULL;
-  }
-  TempPtr += TempSize;
+  TempPtr += StrSize((CHAR16 *) TempPtr);
 
   //
   // Get the option's device path
@@ -691,25 +661,9 @@ BdsLibVariableToOption (
   TempPtr    += FilePathSize;
 
   //
-  // Validation device path.
-  //
-  TempPath       = DevicePath;
-  while (FilePathSize > 0) {
-    TempSize = GetDevicePathSizeEx (TempPath, FilePathSize);
-    if (TempSize == 0) {
-      return NULL;
-    }
-    FilePathSize = (UINT16) (FilePathSize - TempSize);
-    TempPath    += TempSize;
-  }
-
-  //
   // Get load opion data.
   //
   LoadOptions     = TempPtr;
-  if (VariableSize < (UINTN)(TempPtr - Variable)) {
-    return NULL;
-  }
   LoadOptionsSize = (UINT32) (VariableSize - (UINTN) (TempPtr - Variable));
 
   //
@@ -758,9 +712,9 @@ BdsLibVariableToOption (
   }
 
   FreePool (Variable);
-  FreePool (Option->LoadOptions);
   FreePool (Option->Description);
   FreePool (Option->DevicePath);
+  FreePool (Option->LoadOptions);
   FreePool (Option);
   return NULL;
 }

@@ -882,7 +882,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
         ApicCPUNum = gCPUStructure.Threads;
       }
       
-      DBG("ProcLocalApic = 0x%x (ProcLocalApic->Length = %d) CPUBase=%d Number=%d\n", ProcLocalApic, ProcLocalApic->Length, CPUBase, ApicCPUNum);
+      DBG(" CPUBase=%d Number=%d\n", CPUBase, ApicCPUNum);
  //reallocate table  
       if (gSettings.PatchNMI) {
         
@@ -892,34 +892,44 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
         {
           //save old table and drop it from XSDT
           CopyMem((VOID*)(UINTN)BufferPtr, ApicTable, ApicTable->Length);
-//          DropTableFromXSDT(APIC_SIGN);
-          //      ApicTable = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)BufferPtr;
+          DropTableFromXSDT(APIC_SIGN);
+          ApicTable = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)BufferPtr;
+          ApicTable->Revision = EFI_ACPI_4_0_MULTIPLE_APIC_DESCRIPTION_TABLE_REVISION;
+          CopyMem(&ApicTable->OemId, oemID, 6);
+          CopyMem(&ApicTable->OemTableId, oemTableID, 8);
+          ApicTable->OemRevision = 0x00000001;
+          CopyMem(&ApicTable->CreatorId, creatorID, 4);
+          
           SubTable = (UINT8*)((UINTN)BufferPtr + sizeof(EFI_ACPI_2_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER));
-          while (*SubTable != 4) {
+          while (*SubTable != EFI_ACPI_4_0_LOCAL_APIC_NMI) {
+            DBG("Found subtable in MADT: type=%d\n", *SubTable);
             bufferLen = (UINTN)SubTable[1];
             SubTable += bufferLen;
             if (((UINTN)SubTable - (UINTN)BufferPtr) >= ApicTable->Length) {
               break;
             }
           }
-          if (*SubTable == 4) {
+          if (*SubTable == EFI_ACPI_4_0_LOCAL_APIC_NMI) {
             DBG("LocalApicNMI is already present, no patch needed\n");
           } else {
             LocalApicNMI = (EFI_ACPI_2_0_LOCAL_APIC_NMI_STRUCTURE*)((UINTN)ApicTable + ApicTable->Length);
             for (Index = 0; Index < ApicCPUNum; Index++) {
-              LocalApicNMI->Type = 4;
-              LocalApicNMI->Length = 6;
+              LocalApicNMI->Type = EFI_ACPI_4_0_LOCAL_APIC_NMI;
+              LocalApicNMI->Length = sizeof(EFI_ACPI_4_0_LOCAL_APIC_NMI_STRUCTURE);
               LocalApicNMI->AcpiProcessorId = CPUBase + Index;
               LocalApicNMI->Flags = 5;
               LocalApicNMI->LocalApicLint = 1;
               LocalApicNMI++;
+              ApicTable->Length += LocalApicNMI->Length;
             }
-            ApicTable->Length += ApicCPUNum * 6;
             DBG("ApicTable new Length=%d\n", ApicTable->Length);
-            ApicTable->Checksum = 0;
-            ApicTable->Checksum = (UINT8)(256-Checksum8((CHAR8*)ApicTable, ApicTable->Length));
             // insert corrected MADT
-     //       Status = InsertTable((VOID*)ApicTable, ApicTable->Length);
+          }
+          ApicTable->Checksum = 0;
+          ApicTable->Checksum = (UINT8)(256-Checksum8((CHAR8*)ApicTable, ApicTable->Length));
+          Status = InsertTable((VOID*)ApicTable, ApicTable->Length);
+          if (!EFI_ERROR(Status)) {
+            DBG("New APIC table successfully inserted\n");
           }
         }      
       } 
