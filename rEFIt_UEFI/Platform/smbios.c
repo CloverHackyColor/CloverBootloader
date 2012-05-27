@@ -1401,59 +1401,6 @@ VOID PatchSmbios(VOID) //continue
 // neither by specs nor by AppleSmbios.kext	
 }	
 
-
-/// Reference SMBIOS 2.7, chapter 6.1.2.
-/// The UEFI Platform Initialization Specification reserves handle number FFFEh for its
-/// EFI_SMBIOS_PROTOCOL.Add() function to mean "assign an unused handle number automatically."
-/// This number is not used for any other purpose by the SMBIOS specification.
-#define SMBIOS_HANDLE_PI_RESERVED 0xFFFE
-
-/** adds SmbiosTable to smbios protocol */
-EFI_STATUS
-LogTableToSmbiosProtocol(IN EFI_SMBIOS_PROTOCOL *Smbios, IN UINT8 *SmbiosTable)
-{
-	EFI_STATUS         Status;
-	EFI_SMBIOS_HANDLE  SmbiosHandle;
-	
-	SmbiosHandle = SMBIOS_HANDLE_PI_RESERVED;
-	Status = Smbios->Add(Smbios, NULL, &SmbiosHandle, (EFI_SMBIOS_TABLE_HEADER*)SmbiosTable);
-	return Status;
-}
-
-/** adds all smbios tables from Smbios to installed smbios protocol */
-VOID
-LogPatchesToSmbiosProtocol(IN VOID *Smbios)
-{
-	EFI_STATUS         Status;
-	EFI_SMBIOS_PROTOCOL              *SmbiosProtocol;
-	SMBIOS_STRUCTURE_POINTER          SmbiosTable;
-	UINTN                             Type;
-	
-	//
-	// find Smbios protocol
-	//
-	Status = gBS->LocateProtocol(&gEfiSmbiosProtocolGuid, NULL, (VOID**)&SmbiosProtocol);
-	if (EFI_ERROR (Status)) {
-		return;
-	}
-	
-	//
-	// copy all entries from Smbios to SmbiosProtocol
-	//
-	for (Type = 0; Type <= 255; Type++) {
-		if (Type != 127) {
-			SmbiosTable = GetSmbiosTableFromType ((SMBIOS_TABLE_ENTRY_POINT *)Smbios, (UINT8)Type, 0);
-			if (SmbiosTable.Raw != NULL) {
-				//Print(L"SMBIOS Type=%d found.\n", Type);
-				//if (Type % 20 == 19) PauseForKey(L"continue\n");
-				LogTableToSmbiosProtocol(SmbiosProtocol, SmbiosTable.Raw);
-			}
-		}
-	}
-	return;
-}
-
-
 VOID FinalizeSmbios() //continue
 {
 	EFI_PEI_HOB_POINTERS	GuidHob;
@@ -1506,17 +1453,6 @@ VOID FinalizeSmbios() //continue
 		//PauseForKey(L"installing SMBIOS in Hob\n");
 		*Table = (UINT32)(UINTN)SmbiosEpsNew;
 	} 
-	
-	if (!gFirmwareClover) {
-		//
-		// boot.efi reads values through smbios protocol. Since it is not present
-		// on Aptio UEFI, we must add it to Clover's drivers dir (OsxSmbiosDrv.efi).
-		// Initially temp tables in this driver are empty and we are filling it with
-		// patched smbios here. This give us Clover's smbios patching
-		// in smbios protocol for boot.efi and in Conf. table for OSX.
-		//
-		LogPatchesToSmbiosProtocol(SmbiosEpsNew);
-	}
 	
 	return;
 }
