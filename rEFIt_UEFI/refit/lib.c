@@ -1183,6 +1183,8 @@ VOID ReinitVolumes(VOID)
     if (!Volume) {
       continue;
     }
+    DBG("Volume %d at reinit found:\n", VolumeIndex);
+    DBG("Volume->DevicePath=%s\n", DevicePathToStr(Volume->DevicePath));
     VolumesFound++;
     if (Volume->DevicePath != NULL) {
       // get the handle for that path

@@ -291,7 +291,7 @@ LegacyBiosFarCall86 (
 	if ((Eflags & EFI_CPU_EFLAGS_IF) != 0) {
 		DisableInterrupts ();
 	}
-    DisableInterrupts ();
+//    DisableInterrupts ();
 	
 //xxx - Slice
   //AsmWriteIdtr(NULL);

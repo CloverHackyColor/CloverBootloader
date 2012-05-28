@@ -163,7 +163,7 @@ VOID FinishTextScreen(IN BOOLEAN WaitAlways)
 {
     if (haveError || WaitAlways) {
         SwitchToText(FALSE);
-        PauseForKey(L"");
+        PauseForKey(L"FinishTextScreen");
     }
     
     // reset error flag
@@ -198,7 +198,7 @@ VOID FinishExternalScreen(VOID)
     if (haveError) {
         // leave error messages on screen in case of error,
         // wait for a key press, and then switch
-        PauseForKey(L"");
+        PauseForKey(L"was error, press any key\n");
         SwitchToText(FALSE);
     }
     

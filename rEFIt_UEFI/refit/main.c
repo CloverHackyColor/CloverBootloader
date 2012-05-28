@@ -151,79 +151,79 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
                                     IN CHAR16 *ImageTitle,
                                     OUT UINTN *ErrorInStep)
 {
-    EFI_STATUS              Status, ReturnStatus;
-    EFI_HANDLE              ChildImageHandle;
-    EFI_LOADED_IMAGE        *ChildLoadedImage;
-    UINTN                   DevicePathIndex;
-    CHAR16                  ErrorInfo[256];
-    CHAR16                  *FullLoadOptions = NULL;
-    
-    Print(L"Starting %s\n", ImageTitle);
+  EFI_STATUS              Status, ReturnStatus;
+  EFI_HANDLE              ChildImageHandle;
+  EFI_LOADED_IMAGE        *ChildLoadedImage;
+  UINTN                   DevicePathIndex;
+  CHAR16                  ErrorInfo[256];
+  CHAR16                  *FullLoadOptions = NULL;
+  
+  Print(L"Starting %s\n", ImageTitle);
+  if (ErrorInStep != NULL)
+    *ErrorInStep = 0;
+  
+  // load the image into memory
+  ReturnStatus = Status = EFI_NOT_FOUND;  // in case the list is empty
+  for (DevicePathIndex = 0; DevicePaths[DevicePathIndex] != NULL; DevicePathIndex++) {
+    ReturnStatus = Status = gBS->LoadImage(FALSE, SelfImageHandle, DevicePaths[DevicePathIndex], NULL, 0, &ChildImageHandle);
+    if (ReturnStatus != EFI_NOT_FOUND)
+      break;
+  }
+  UnicodeSPrint(ErrorInfo, 255, L"while loading %s", ImageTitle);
+  if (CheckError(Status, ErrorInfo)) {
     if (ErrorInStep != NULL)
-        *ErrorInStep = 0;
-    
-    // load the image into memory
-    ReturnStatus = Status = EFI_NOT_FOUND;  // in case the list is empty
-    for (DevicePathIndex = 0; DevicePaths[DevicePathIndex] != NULL; DevicePathIndex++) {
-        ReturnStatus = Status = gBS->LoadImage(FALSE, SelfImageHandle, DevicePaths[DevicePathIndex], NULL, 0, &ChildImageHandle);
-        if (ReturnStatus != EFI_NOT_FOUND)
-            break;
-    }
-    UnicodeSPrint(ErrorInfo, 255, L"while loading %s", ImageTitle);
-    if (CheckError(Status, ErrorInfo)) {
-        if (ErrorInStep != NULL)
-            *ErrorInStep = 1;
-        goto bailout;
+      *ErrorInStep = 1;
+    goto bailout;
+  }
+  
+  // set load options
+  if (LoadOptions != NULL) {
+    ReturnStatus = Status = gBS->HandleProtocol(ChildImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &ChildLoadedImage);
+    if (CheckError(Status, L"while getting a LoadedImageProtocol handle")) {
+      if (ErrorInStep != NULL)
+        *ErrorInStep = 2;
+      goto bailout_unload;
     }
     
-    // set load options
-    if (LoadOptions != NULL) {
-        ReturnStatus = Status = gBS->HandleProtocol(ChildImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &ChildLoadedImage);
-        if (CheckError(Status, L"while getting a LoadedImageProtocol handle")) {
-            if (ErrorInStep != NULL)
-                *ErrorInStep = 2;
-            goto bailout_unload;
-        }
-        
-        if (LoadOptionsPrefix != NULL) {
-            FullLoadOptions = PoolPrint(L"%s %s ", LoadOptionsPrefix, LoadOptions);
-            // NOTE: That last space is also added by the EFI shell and seems to be significant
-            //  when passing options to Apple's boot.efi...
-            LoadOptions = FullLoadOptions;
-        }
-        // NOTE: We also include the terminating null in the length for safety.
-        ChildLoadedImage->LoadOptions = (VOID *)LoadOptions;
-        ChildLoadedImage->LoadOptionsSize = ((UINT32)StrLen(LoadOptions) + 1) * sizeof(CHAR16);
-        Print(L"Using load options '%s'\n", LoadOptions);
+    if (LoadOptionsPrefix != NULL) {
+      FullLoadOptions = PoolPrint(L"%s %s ", LoadOptionsPrefix, LoadOptions);
+      // NOTE: That last space is also added by the EFI shell and seems to be significant
+      //  when passing options to Apple's boot.efi...
+      LoadOptions = FullLoadOptions;
     }
-    //Print(L"Image loaded at: %p\n", ChildLoadedImage->ImageBase);
-    //PauseForKey(L"continue");
-    
-    // close open file handles
-    UninitRefitLib();
-    
-    // turn control over to the image
+    // NOTE: We also include the terminating null in the length for safety.
+    ChildLoadedImage->LoadOptions = (VOID *)LoadOptions;
+    ChildLoadedImage->LoadOptionsSize = ((UINT32)StrLen(LoadOptions) + 1) * sizeof(CHAR16);
+    Print(L"Using load options '%s'\n", LoadOptions);
+  }
+  //Print(L"Image loaded at: %p\n", ChildLoadedImage->ImageBase);
+  //PauseForKey(L"continue");
+  
+  // close open file handles
+  UninitRefitLib();
+  
+  // turn control over to the image
   //
   // Before calling the image, enable the Watchdog Timer for
   // the 5 Minute period - Slice - NO! 60seconds is enough
   //  
   gBS->SetWatchdogTimer (60, 0x0000, 0x00, NULL);
   
-    ReturnStatus = Status = gBS->StartImage(ChildImageHandle, NULL, NULL);
+  ReturnStatus = Status = gBS->StartImage(ChildImageHandle, NULL, NULL);
   //
   // Clear the Watchdog Timer after the image returns
   //
   gBS->SetWatchdogTimer (0x0000, 0x0000, 0x0000, NULL);
   
   // control returns here when the child image calls Exit()
-    UnicodeSPrint(ErrorInfo, 255, L"returned from %s", ImageTitle);
-    if (CheckError(Status, ErrorInfo)) {
-        if (ErrorInStep != NULL)
-            *ErrorInStep = 3;
-    }
-    
-    // re-open file handles
-    Status = ReinitRefitLib();  
+  UnicodeSPrint(ErrorInfo, 255, L"returned from %s", ImageTitle);
+  if (CheckError(Status, ErrorInfo)) {
+    if (ErrorInStep != NULL)
+      *ErrorInStep = 3;
+  }
+  
+  // re-open file handles
+  Status = ReinitRefitLib();  
   //Slice
   if (EFI_ERROR(Status)) {
     goto bailout_unload;
@@ -231,14 +231,14 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   if (!EFI_ERROR(ReturnStatus)) { //why unload driver?!
     goto bailout;
   }
-   
+  
 bailout_unload:
-    // unload the image, we don't care if it works or not...
-    Status = gBS->UnloadImage(ChildImageHandle);
+  // unload the image, we don't care if it works or not...
+  Status = gBS->UnloadImage(ChildImageHandle);
 bailout:
-    if (FullLoadOptions != NULL)
-        FreePool(FullLoadOptions);
-    return ReturnStatus;
+  if (FullLoadOptions != NULL)
+    FreePool(FullLoadOptions);
+  return ReturnStatus;
 }
 
 static EFI_STATUS StartEFIImage(IN EFI_DEVICE_PATH *DevicePath,
@@ -1224,7 +1224,7 @@ static VOID StartTool(IN LOADER_ENTRY *Entry)
     BeginExternalScreen(Entry->UseGraphicsMode, Entry->me.Title + 6);  // assumes "Start <title>" as assigned below
     StartEFIImage(Entry->DevicePath, Entry->LoadOptions, Basename(Entry->LoaderPath),
                   Basename(Entry->LoaderPath), NULL);
-    FinishExternalScreen();
+//    FinishExternalScreen();
 //  ReinitSelfLib();
 }
 
@@ -1736,6 +1736,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     FillInputs();
     
     do {
+   //   PauseForKey(L"Enter main cycle");
         MainMenu.EntryCount = 0;
         ScanVolumes();
         // scan for loaders and tools, add then to the menu
@@ -1798,7 +1799,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         } else {
             DefaultEntry = NULL;
         }
-        
+       // PauseForKey(L"Enter main loop");
         while (MainLoopRunning) {
             //    DBG("Enter main loop\n");
             MenuExit = RunMainMenu(&MainMenu, DefaultIndex, &ChosenEntry);
@@ -1870,13 +1871,17 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
                     
                 case TAG_TOOL:     // Start a EFI tool
                     StartTool((LOADER_ENTRY *)ChosenEntry);
+                  BdsLibConnectAllDriversToAllControllers();
+                  PauseForKey(L"Returned from StartTool\n");
                     MainLoopRunning = FALSE;
                     break;
                     
-            }
-        }
+            } //switch
+        } //MainLoopRunning
         UninitRefitLib();
+   //   PauseForKey(L"After uninit");
         ReinitRefitLib();
+  //    PauseForKey(L"After ReinitRefitLib");
     } while (ReinitDesktop);
     
     // If we end up here, things have gone wrong. Try to reboot, and if that
