@@ -1715,6 +1715,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
             DefaultEntry = NULL;
         }
        // PauseForKey(L"Enter main loop");
+      MainLoopRunning = TRUE;
         while (MainLoopRunning) {
             //    DBG("Enter main loop\n");
             MenuExit = RunMainMenu(&MainMenu, DefaultIndex, &ChosenEntry);
