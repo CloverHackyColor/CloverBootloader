@@ -735,7 +735,8 @@ MACHINE_TYPES   GetDefaultModel(VOID);
 UINT16          GetAdvancedCpuType(VOID);
 EFI_STATUS      GetOSVersion(IN REFIT_VOLUME *Volume);
 EFI_STATUS      GetUserSettings(IN EFI_FILE *RootDir);
-EFI_STATUS      GetNVRAMSettings(IN EFI_FILE *RootDir, CHAR16* NVRAMPlistPath);
+EFI_STATUS      GetNVRAMSettings(VOID);
+EFI_STATUS      GetNVRAMPlistSettings(IN EFI_FILE *RootDir, CHAR16* NVRAMPlistPath);
 EFI_STATUS      GetEdid(VOID);
 EFI_STATUS      SetFSInjection(IN LOADER_ENTRY *Entry);
 

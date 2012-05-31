@@ -1420,9 +1420,55 @@ INTN FindDefaultEntry(VOID)
   REFIT_VOLUME    *Volume;
   LOADER_ENTRY    *Entry, *Entry2, *Entry3;
   CHAR16*          VolumeUUID;
-  CHAR16*          buf;
-//   search volume with name in gSettings.DefaultBoot
-  for (Index = 0; Index < MainMenu.EntryCount && MainMenu.Entries[Index]->Row == 0; Index++){
+  CHAR16*          SelectedUUID;
+  CHAR16*          SelectedUUID2;
+  CHAR16*          DevPath;
+  CHAR16*          DevPath2;
+  
+  
+  //
+  // first try NVRAM variable
+  //
+  Status = GetNVRAMSettings();
+  if (Status == EFI_SUCCESS) {
+    
+    // get UUID as Unicode string
+    SelectedUUID = PoolPrint(L"%a", gSelectedUUID);
+    
+    // search volume with gSelectedUUID
+    for (Index = 0; Index < MainMenu.EntryCount && MainMenu.Entries[Index]->Row == 0; Index++) {
+      
+      Entry = (LOADER_ENTRY*)MainMenu.Entries[Index];
+      if (!Entry->Volume) {
+        continue;
+      }
+      
+      DevPath = DevicePathToStr(Entry->Volume->DevicePath);
+      VolumeUUID = StrStr(DevPath, L"GPT");
+      if (!VolumeUUID) {
+        continue;
+      }
+      
+      if (StrStr(VolumeUUID, SelectedUUID))
+      {
+        FreePool(SelectedUUID);
+        FreePool(DevPath);
+        DBG("Default boot redirected by NVRAM efi-boot-disk to %s\n", Entry->Volume->VolName);
+        return Index;
+      }
+      FreePool(DevPath);
+    }
+    
+    FreePool(SelectedUUID);
+  }
+  
+
+  //
+  // then try DefaultBoot and nvram.plist
+  //
+  
+  //   search volume with name in gSettings.DefaultBoot
+  for (Index = 0; Index < MainMenu.EntryCount && MainMenu.Entries[Index]->Row == 0; Index++) {
     Entry = (LOADER_ENTRY*)MainMenu.Entries[Index];
     if (!Entry->Volume) {
       continue;
@@ -1433,53 +1479,63 @@ INTN FindDefaultEntry(VOID)
     }
     DBG("Default volume %s found\n", Volume->VolName);
     //   search nvram.plist on the volume    
-    Status = GetNVRAMSettings(Volume->RootDir, L"nvram.plist");
+    Status = GetNVRAMPlistSettings(Volume->RootDir, L"nvram.plist");
     if (!EFI_ERROR(Status)) {
       //   search volume with gSelectedUUID
       DBG("nvram.plist found, UUID to boot=%a\n", gSelectedUUID);
-      for (Index2 = 0; Index2 < MainMenu.EntryCount &&
-           MainMenu.Entries[Index2]->Row == 0; Index2++){
+      // get UUID as Unicode string
+      SelectedUUID = PoolPrint(L"%a", gSelectedUUID);
+      for (Index2 = 0; Index2 < MainMenu.EntryCount && MainMenu.Entries[Index2]->Row == 0; Index2++) {
         Entry2 = (LOADER_ENTRY*)MainMenu.Entries[Index2];
         if (!Entry2->Volume) {
           continue;
         }
-        buf = DevicePathToStr(Entry2->Volume->DevicePath);
-        VolumeUUID = StrStr(buf, L"GPT");
+        DevPath = DevicePathToStr(Entry2->Volume->DevicePath);
+        VolumeUUID = StrStr(DevPath, L"GPT");
         if (!VolumeUUID) {
           continue;
         }
-        if (StrStr(VolumeUUID, PoolPrint(L"%a", gSelectedUUID)))
+        if (StrStr(VolumeUUID, SelectedUUID))
         {
           //second pass search for user return from those partition
-          Status = GetNVRAMSettings(Entry2->Volume->RootDir, L"nvram.plist");
+          Status = GetNVRAMPlistSettings(Entry2->Volume->RootDir, L"nvram.plist");
           if (!EFI_ERROR(Status)) {
             //   search volume with gSelectedUUID
             DBG("nvram.plist found, UUID to boot=%a\n", gSelectedUUID);
-            for (Index3 = 0; Index3 < MainMenu.EntryCount &&
-                 MainMenu.Entries[Index3]->Row == 0; Index3++){
+            SelectedUUID2 = PoolPrint(L"%a", gSelectedUUID);
+            for (Index3 = 0; Index3 < MainMenu.EntryCount && MainMenu.Entries[Index3]->Row == 0; Index3++) {
               Entry3 = (LOADER_ENTRY*)MainMenu.Entries[Index3];
               if (!Entry3->Volume) {
                 continue;
               }
-              buf = DevicePathToStr(Entry3->Volume->DevicePath);
-              VolumeUUID = StrStr(buf, L"GPT");
+              DevPath2 = DevicePathToStr(Entry3->Volume->DevicePath);
+              VolumeUUID = StrStr(DevPath2, L"GPT");
               if (!VolumeUUID) {
                 continue;
               }
-              if (StrStr(VolumeUUID, PoolPrint(L"%a", gSelectedUUID)))
+              if (StrStr(VolumeUUID, SelectedUUID2))
               {
                 //second pass
-                
+                FreePool(DevPath);
+                FreePool(DevPath2);
+                FreePool(SelectedUUID);
+                FreePool(SelectedUUID2);
                 DBG("Default boot redirected to %s\n", Entry3->Volume->VolName);
                 return Index3;
               }     
+              FreePool(DevPath2);
             }
+            FreePool(SelectedUUID2);
           }
+          FreePool(DevPath);
+          FreePool(SelectedUUID);
           DBG("Default boot redirected to %s\n", Entry2->Volume->VolName);
           return Index2;
-        }     
+        }
+        FreePool(DevPath);
       }
-       DBG("but efi-boot-disk absent\n"); 
+      FreePool(SelectedUUID);
+      DBG("but efi-boot-disk absent\n"); 
     }
     //nvram is not found or it points to wrong volume but DefaultBoot found
     
