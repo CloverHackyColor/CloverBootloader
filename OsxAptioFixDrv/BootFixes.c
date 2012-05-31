@@ -21,32 +21,25 @@
 #include "FlatDevTree/device_tree.h"
 
 
-// set to 1 to print calls to console
-#define CONSOLE_OUTPUT 0
-// set to 1 to print calls to serial
-// requires
+// DBG_TO: 0=no debug, 1=serial, 2=console
+// serial requires
 // [PcdsFixedAtBuild]
 //  gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x07
 //  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
 // in package DSC file
-#define SERIAL_OUTPUT 1
+#define DBG_TO 0
 
-#if CONSOLE_OUTPUT && SERIAL_OUTPUT
-	#define PRINT(...) {\
-		DebugPrint(1, __VA_ARGS__);\
-		AsciiPrint(__VA_ARGS__);\
-	}
-#elif CONSOLE_OUTPUT
-	#define PRINT(...) AsciiPrint(__VA_ARGS__);
-#elif SERIAL_OUTPUT
-	#define PRINT(...) DebugPrint(1, __VA_ARGS__);
-	//#define PRINT(...) NVRAMDebugLog(__VA_ARGS__);
+#if DBG_TO == 2
+	#define DBG(...) AsciiPrint(__VA_ARGS__);
+#elif DBG_TO == 1
+	#define DBG(...) DebugPrint(1, __VA_ARGS__);
 #else
-	#define PRINT(...)
+	#define DBG(...)
 #endif
 
-
-
+// for debugging with NVRAM
+//#define DBGnvr(...) NVRAMDebugLog(__VA_ARGS__);
+#define DBGnvr(...)
 
 
 // kernel start and size - from boot args
@@ -57,9 +50,72 @@ UINT32	ksize;
 void PrintSample2(unsigned char *sample, int size) {
 	int i;
 	for (i = 0; i < size; i++) {
-		PRINT(" %02x", *sample);
+		DBG(" %02x", *sample);
 		sample++;
 	}
+}
+
+
+/** Saves current 64 bit state and copies MyAsmCopyAndJumpToKernel32 function to higher mem
+  * (for copying kernel back to proper place and jumping back to it).
+  */
+EFI_STATUS
+PrepareJumpFromKernel(VOID)
+{
+	EFI_STATUS				Status;
+	EFI_PHYSICAL_ADDRESS	HigherMem;
+	UINTN					Size;
+	
+	//
+	// chek if already prepared
+	//
+	if (MyAsmCopyAndJumpToKernel32Addr != 0) {
+		DBG("PrepareJumpFromKernel() - already prepared\n");
+		return EFI_SUCCESS;
+	}
+	
+	//
+	// save current 64bit state - will be restored later in callback from kernel jump
+	//
+	MyAsmPrepareJumpFromKernel();
+	
+	//
+	// allocate higher memory for MyAsmCopyAndJumpToKernel32 code
+	//
+	HigherMem = 0x100000000;
+	Status = AllocatePagesFromTop(EfiLoaderData, 1, &HigherMem);
+	if (Status != EFI_SUCCESS) {
+		Print(L"OsxAptioFixDrv: PrepareJumpFromKernel(): can not allocate mem for MyAsmCopyAndJumpToKernel32 (0x%x pages on mem top): %r\n",
+			  1, Status);
+		return Status;
+	}
+	
+	//
+	// and relocate it to higher mem
+	//
+	MyAsmCopyAndJumpToKernel32Addr = (UINT32)HigherMem;
+	
+	Size = (UINT8*)&MyAsmCopyAndJumpToKernel32End - (UINT8*)&MyAsmCopyAndJumpToKernel32;
+	if (Size > EFI_PAGES_TO_SIZE(1)) {
+		Print(L"Size of MyAsmCopyAndJumpToKernel32 code is too big\n");
+		return EFI_BUFFER_TOO_SMALL;
+	}
+	
+	CopyMem((VOID *)(UINTN)MyAsmCopyAndJumpToKernel32Addr, (VOID *)&MyAsmCopyAndJumpToKernel32, Size);
+	
+	/*
+	Print(L"PrepareJumpFromKernel(): MyAsmCopyAndJumpToKernel32 relocated from %p, to %x, size = %x\n",
+		&MyAsmCopyAndJumpToKernel32, MyAsmCopyAndJumpToKernel32Addr, Size);
+	gBS->Stall(10*1000000);
+	*/
+	
+	DBG("PrepareJumpFromKernel(): MyAsmCopyAndJumpToKernel32 relocated from %p, to %x, size = %x\n",
+		&MyAsmCopyAndJumpToKernel32, MyAsmCopyAndJumpToKernel32Addr, Size);
+	DBG("SavedCR3 = %x, SavedGDTR = %x, SavedIDTR = %x\n", SavedCR3, SavedGDTR, SavedIDTR);
+	DBGnvr("PrepareJumpFromKernel(): MyAsmCopyAndJumpToKernel32 relocated from %p, to %x, size = %x\n",
+		&MyAsmCopyAndJumpToKernel32, MyAsmCopyAndJumpToKernel32Addr, Size);
+	
+	return Status;
 }
 
 /** Patches kernel entry point with jump to MyAsmJumpFromKernel32 (AsmFuncsX64). This will then call KernelEntryPatchJumpBack. */
@@ -72,7 +128,7 @@ KernelEntryPatchJump(UINT32 KernelEntry)
 	
 	Status = EFI_SUCCESS;
 
-	PRINT("KernelEntryPatchJump KernelEntry (reloc): %lx (%lx)\n", KernelEntry, KernelEntry + gRelocBase);
+	DBG("KernelEntryPatchJump KernelEntry (reloc): %lx (%lx)\n", KernelEntry, KernelEntry + gRelocBase);
 	
 	// patch real KernelEntry with 32 bit opcode for:
 	//   mov ecx, MyAsmJumpFromKernel32
@@ -86,7 +142,7 @@ KernelEntryPatchJump(UINT32 KernelEntry)
 	p[5] = 0xFF; p[6] = 0xE1;
 	//p[5] = 0xF4; //HLT - works
 
-	PRINT("\nEntry point %p is now: ", KernelEntry);
+	DBG("\nEntry point %p is now: ", KernelEntry);
 	PrintSample2(p, 12);
 	
 	// pass KernelEntry to assembler funcs
@@ -113,7 +169,7 @@ KernelEntryPatchJumpFill(VOID)
 	UINT64					JumpCode;
 	UINTN					MyAsmJumpFromKernel32Addr;
 	
-	PRINT("KernelEntryPatchJumpFill: %p - %p\n", Start, Start + Length);
+	DBG("KernelEntryPatchJumpFill: %p - %p\n", Start, Start + Length);
 	
 	// patch with 32 bit opcode for:
 	//   mov ecx, MyAsmJumpFromKernel32
@@ -141,11 +197,11 @@ KernelEntryPatchHalt(UINT32 KernelEntry)
 	
 	Status = EFI_SUCCESS;
 	
-	PRINT("KernelEntryPatchHalt KernelEntry (reloc): %lx (%lx)", KernelEntry, KernelEntry + gRelocBase);
+	DBG("KernelEntryPatchHalt KernelEntry (reloc): %lx (%lx)", KernelEntry, KernelEntry + gRelocBase);
 	p = (UINT8 *)(UINTN) KernelEntry;
 	*p= 0xf4; // HLT instruction
 	PrintSample2(p, 4);
-	PRINT("\n");
+	DBG("\n");
 	
 	return Status;
 }
@@ -159,12 +215,12 @@ KernelEntryPatchZero (UINT32 KernelEntry)
 	
 	Status = EFI_SUCCESS;
 	
-	PRINT("KernelEntryPatchZero KernelEntry (reloc): %lx (%lx)", KernelEntry, KernelEntry + gRelocBase);
+	DBG("KernelEntryPatchZero KernelEntry (reloc): %lx (%lx)", KernelEntry, KernelEntry + gRelocBase);
 	p = (UINT8 *)(UINTN) KernelEntry;
 	//*p= 0xf4;
 	p[0]= 0; p[1]= 0; p[2]= 0; p[3]= 0; // invalid instruction
 	PrintSample2(p, 4);
-	PRINT("\n");
+	DBG("\n");
 	
 	return Status;
 }
@@ -210,7 +266,8 @@ AssignVirtualAddressesToMemMap(VOID *pBootArgs)
 	
 	Desc = MemoryMap;
 	NumEntries = MemoryMapSize / DescriptorSize;
-	PRINT("AssignVirtualAddressesToMemMap: Size=%d, Addr=%p, DescSize=%d\n", MemoryMapSize, MemoryMap, DescriptorSize);
+	DBG("AssignVirtualAddressesToMemMap: Size=%d, Addr=%p, DescSize=%d\n", MemoryMapSize, MemoryMap, DescriptorSize);
+	DBGnvr("AssignVirtualAddressesToMemMap: Size=%d, Addr=%p, DescSize=%d\n", MemoryMapSize, MemoryMap, DescriptorSize);
 
 	// get current VM page table
 	GetCurrentPageTable(&PageTable, &Flags);
@@ -223,21 +280,25 @@ AssignVirtualAddressesToMemMap(VOID *pBootArgs)
 				// for RT block - assign from kernel block
 				Desc->VirtualStart = KernelRTBlock + 0xffffff8000000000;
 				// map RT area virtual addresses - SetVirtualAddresMap on Ami Aptio does not work without this
-				PRINT("Adding mapping 0x%x pages: VA %lx => PH %lx ", Desc->NumberOfPages, Desc->VirtualStart, Desc->PhysicalStart);
+				DBG("Adding mapping 0x%x pages: VA %lx => PH %lx ", Desc->NumberOfPages, Desc->VirtualStart, Desc->PhysicalStart);
+				DBGnvr("- 0x%x pages: VA %lx => PH %lx ", Desc->NumberOfPages, Desc->VirtualStart, Desc->PhysicalStart);
 				Status = VmMapVirtualPages(PageTable, Desc->VirtualStart, Desc->NumberOfPages, Desc->PhysicalStart);
-				PRINT("%r\n", Status);
+				DBGnvr("%r\n", Status);
+				DBG("%r\n", Status);
 				// next kernel block
 				KernelRTBlock += BlockSize;
 			} else {
 				// for MMIO block - assign from kernel block
 				Desc->VirtualStart = KernelRTBlock + 0xffffff8000000000;
-				PRINT("Adding mapping 0x%x pages: VA %lx => PH %lx ", Desc->NumberOfPages, Desc->VirtualStart, Desc->PhysicalStart);
+				DBG("Adding mapping 0x%x pages: VA %lx => PH %lx ", Desc->NumberOfPages, Desc->VirtualStart, Desc->PhysicalStart);
+				DBGnvr("- 0x%x pages: VA %lx => PH %lx ", Desc->NumberOfPages, Desc->VirtualStart, Desc->PhysicalStart);
 				Status = VmMapVirtualPages(PageTable, Desc->VirtualStart, Desc->NumberOfPages, Desc->PhysicalStart);
-				PRINT("%r\n", Status);
+				DBGnvr("%r\n", Status);
+				DBG("%r\n", Status);
 				// next kernel block
 				KernelRTBlock += BlockSize;
 			}
-			PRINT("=> 0x%lx -> 0x%lx\n", Desc->PhysicalStart, Desc->VirtualStart);
+			DBG("=> 0x%lx -> 0x%lx\n", Desc->PhysicalStart, Desc->VirtualStart);
 		}
 		Desc = NEXT_MEMORY_DESCRIPTOR(Desc, DescriptorSize);
 		//WaitForKeyPress(L"End: press a key to continue\n");
@@ -275,7 +336,7 @@ DefragmentRuntimeServices(VOID *pBootArgs)
 		NumEntries = BA2->MemoryMapSize / BA2->MemoryMapDescriptorSize;
 	}
 	
-	PRINT("DefragmentRuntimeServices: pBootArgs->efiSystemTable = %x\n", *efiSystemTable);
+	DBG("DefragmentRuntimeServices: pBootArgs->efiSystemTable = %x\n", *efiSystemTable);
 	
 	for (Index = 0; Index < NumEntries; Index++) {
 		// defragment only RT blocks
@@ -285,13 +346,13 @@ DefragmentRuntimeServices(VOID *pBootArgs)
 
 			BlockSize = EFI_PAGES_TO_SIZE(Desc->NumberOfPages);
 			
-			PRINT("-Copy %p <- %p, size=0x%lx\n", KernelRTBlock + gRelocBase, (VOID*)(UINTN)Desc->PhysicalStart, BlockSize);
+			DBG("-Copy %p <- %p, size=0x%lx\n", KernelRTBlock + gRelocBase, (VOID*)(UINTN)Desc->PhysicalStart, BlockSize);
 			CopyMem(KernelRTBlock + gRelocBase, (VOID*)(UINTN)Desc->PhysicalStart, BlockSize);
 						
 			if (Desc->PhysicalStart <= *efiSystemTable &&  *efiSystemTable < (Desc->PhysicalStart + BlockSize)) {
 				// block contains sys table - update bootArgs with new address
 				*efiSystemTable = (UINT32)((UINTN)KernelRTBlock + (*efiSystemTable - Desc->PhysicalStart));
-				PRINT("new pBootArgs->efiSystemTable = %x\n", *efiSystemTable);
+				DBG("new pBootArgs->efiSystemTable = %x\n", *efiSystemTable);
 			}
 			
 			// mark old RT block in MemMap as free mem
@@ -300,7 +361,7 @@ DefragmentRuntimeServices(VOID *pBootArgs)
 		}
 		Desc = NEXT_MEMORY_DESCRIPTOR(Desc, DescriptorSize);
 	}
-	WaitForKeyPress(L"END press a key to continue\n");
+	//WaitForKeyPress(L"END press a key to continue\n");
 
 	// no need to further fix mem map - OSX is fine with RT stuff reported only in bootArgs
 }
@@ -346,13 +407,14 @@ RuntimeServicesFix(VOID *pBootArgs)
 		DescriptorVersion = BA2->MemoryMapDescriptorVersion;
 	}
 	
-	PRINT("RuntimeServicesFix: efiRSPageStart=%x, efiRSPageCount=%x, efiRSVirtualPageStart=%lx\n",
+	DBGnvr("RuntimeServicesFix ...\n");
+	DBG("RuntimeServicesFix: efiRSPageStart=%x, efiRSPageCount=%x, efiRSVirtualPageStart=%lx\n",
 		*efiRuntimeServicesPageStart, efiRuntimeServicesPageCount, *efiRuntimeServicesVirtualPageStart);
 	// fix runtime entries
 	*efiRuntimeServicesPageStart -= gRelocBasePage;
 	// VirtualPageStart is ok in boot args (a miracle!), but we'll do it anyway
 	*efiRuntimeServicesVirtualPageStart = 0x000ffffff8000000 + *efiRuntimeServicesPageStart;
-	PRINT("RuntimeServicesFix: efiRSPageStart=%x, efiRSPageCount=%x, efiRSVirtualPageStart=%lx\n",
+	DBG("RuntimeServicesFix: efiRSPageStart=%x, efiRSPageCount=%x, efiRSVirtualPageStart=%lx\n",
 		*efiRuntimeServicesPageStart, efiRuntimeServicesPageCount, *efiRuntimeServicesVirtualPageStart);
 	
 	// assign virtual addresses
@@ -360,14 +422,17 @@ RuntimeServicesFix(VOID *pBootArgs)
 	
 	PrintMemMap(MemoryMapSize, MemoryMap, DescriptorSize, DescriptorVersion);
 	// virtualize them
+	DBGnvr("SetVirtualAddressMap ... ");
 	Status = gRT->SetVirtualAddressMap(MemoryMapSize, DescriptorSize, DescriptorVersion, MemoryMap);
+	DBGnvr("%r\n", Status);
 	
-	PRINT("SetVirtualAddressMap() = Status: %r\n", Status);
+	DBG("SetVirtualAddressMap() = Status: %r\n", Status);
 	if (EFI_ERROR (Status)) {
 		CpuDeadLoop();
 	}
 	
 	// and defragment
+	DBGnvr("DefragmentRuntimeServices ...\n");
 	DefragmentRuntimeServices(pBootArgs);
 }
 
@@ -406,33 +471,34 @@ DevTreeFix(VOID *pBootArgs)
 		// Lion and up
 		DevTree = (DTEntry)(UINTN)BA2->deviceTreeP;
 	}
-	PRINT("Fixing DevTree at %p\n", DevTree);
+	DBG("Fixing DevTree at %p\n", DevTree);
+	DBGnvr("Fixing DevTree at %p\n", DevTree);
 	DTInit(DevTree);
 	if (DTLookupEntry(NULL, "/chosen/memory-map", &MemMap) == kSuccess) {
-		PRINT("Found /chosen/memory-map\n");
+		DBG("Found /chosen/memory-map\n");
 		if (DTCreatePropertyIteratorNoAlloc(MemMap, PropIter) == kSuccess) {
-			PRINT("DTCreatePropertyIterator OK\n");
+			DBG("DTCreatePropertyIterator OK\n");
 			while (DTIterateProperties(PropIter, &PropName) == kSuccess) {
-				PRINT("= %a, val len=%d: ", PropName, PropIter->currentProperty->length);
+				DBG("= %a, val len=%d: ", PropName, PropIter->currentProperty->length);
 				// all /chosen/memory-map props have DTMemMapEntry (address, length)
 				// values. we need to correct the address
 				
 				// basic check that value is 2 * UINT32
 				if (PropIter->currentProperty->length != 2 * sizeof(UINT32)) {
 					// not DTMemMapEntry, usually "name" property
-					PRINT("NOT DTMemMapEntry\n");
+					DBG("NOT DTMemMapEntry\n");
 					continue;
 				}
 				
 				// get value (Address and Length)
 				PropValue = (DTMemMapEntry*)(((UINT8*)PropIter->currentProperty) + sizeof(DeviceTreeNodeProperty));
-				PRINT("MM Addr = %x, Len = %x ", PropValue->Address, PropValue->Length);
+				DBG("MM Addr = %x, Len = %x ", PropValue->Address, PropValue->Length);
 				
 				// second check - Address is in our reloc block
 				if ((PropValue->Address < gRelocBase + kaddr)
 					|| (PropValue->Address >= gRelocBase + kaddr + ksize))
 				{
-					PRINT("DTMemMapEntry->Address is not in reloc block, skipping\n");
+					DBG("DTMemMapEntry->Address is not in reloc block, skipping\n");
 					continue;
 				}
 				
@@ -440,16 +506,16 @@ DevTreeFix(VOID *pBootArgs)
 				if (AsciiStrnCmp(PropName, BOOTER_KEXT_PREFIX, AsciiStrLen(BOOTER_KEXT_PREFIX)) == 0) {
 					// yes - fix kext pointers
 					KextInfo = (BooterKextFileInfo*)(UINTN)PropValue->Address;
-					PRINT(" = KEXT %a at %x ", (CHAR8*)(UINTN)KextInfo->bundlePathPhysAddr, KextInfo->infoDictPhysAddr);
+					DBG(" = KEXT %a at %x ", (CHAR8*)(UINTN)KextInfo->bundlePathPhysAddr, KextInfo->infoDictPhysAddr);
 					KextInfo->infoDictPhysAddr -= (UINT32)gRelocBase;
 					KextInfo->executablePhysAddr -= (UINT32)gRelocBase;
 					KextInfo->bundlePathPhysAddr -= (UINT32)gRelocBase;
-					PRINT("-> %x ", KextInfo->infoDictPhysAddr);
+					DBG("-> %x ", KextInfo->infoDictPhysAddr);
 				}
 				
 				// fix address in mem map entry
 				PropValue->Address -= (UINT32)gRelocBase;
-				PRINT("=> Fixed MM Addr = %x\n", PropValue->Address);
+				DBG("=> Fixed MM Addr = %x\n", PropValue->Address);
 			}
 		}
 	}
@@ -465,7 +531,8 @@ KernelEntryPatchJumpBack(UINTN bootArgs)
 	BootArgs1			*BA1 = pBootArgs;
 	BootArgs2			*BA2 = pBootArgs;
 	
-	PRINT("BACK FROM KERNEL: BootArgs = %x, KernelEntry: %x\n", bootArgs, AsmKernelEntry);
+	DBG("BACK FROM KERNEL: BootArgs = %x, KernelEntry: %x\n", bootArgs, AsmKernelEntry);
+	DBGnvr("BACK FROM KERNEL: BootArgs = %x, KernelEntry: %x\n", bootArgs, AsmKernelEntry);
 	BootArgsPrint(pBootArgs);
 	
 	if (gRelocBase > 0) {
@@ -488,24 +555,39 @@ KernelEntryPatchJumpBack(UINTN bootArgs)
 		DevTreeFix(pBootArgs);
 		
 		// fix boot args
+		DBGnvr("BootArgsFix ...\n");
 		BootArgsFix(pBootArgs, gRelocBase);
 		
-		
+		/*
 		// and finally copy kernel boot image to a proper place
-		PRINT("CopyMem %p <= %p (%x)\n",
+		DBG("COPY KERNEL: %p <= %p (%x)\n",
+			(VOID *)(UINTN)kaddr,
+			(VOID *)(UINTN)(gRelocBase + kaddr),
+			ksize);
+		DBGnvr("COPY KERNEL: %p <= %p (%x)\n",
 			(VOID *)(UINTN)kaddr,
 			(VOID *)(UINTN)(gRelocBase + kaddr),
 			ksize);
 		CopyMem((VOID *)(UINTN)kaddr,
 				(VOID *)(UINTN)(gRelocBase + kaddr),
 				ksize);
+		*/
+		
+		BootArgsPrint(pBootArgs);
+	
 		bootArgs = bootArgs - gRelocBase;
 		pBootArgs = (VOID*)bootArgs;
+		
+		// set vars for copying kernel
+		AsmKernelImageStartReloc = (UINT32) (gRelocBase + kaddr);
+		AsmKernelImageStart = kaddr;
+		AsmKernelImageSize = ksize;
 	}
-	PRINT("BACK TO KERNEL: BootArgs = %x\n", bootArgs);
-	BootArgsPrint(pBootArgs);
 	
+	DBG("BACK TO KERNEL: BootArgs = %x, KImgStartReloc = %x, KImgStart = %x, KImgSize = %x\n",
+		bootArgs, AsmKernelImageStartReloc, AsmKernelImageStart, AsmKernelImageSize);
+	DBGnvr("BACK TO KERNEL: BootArgs = %x, KImgStartReloc = %x, KImgStart = %x, KImgSize = %x\n",
+		bootArgs, AsmKernelImageStartReloc, AsmKernelImageStart, AsmKernelImageSize);
+		
 	return bootArgs;
 }
-
-

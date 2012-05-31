@@ -25,37 +25,25 @@
 #include "Lib.h"
 
 
-// set to 1 to print calls to console
-#define CONSOLE_OUTPUT 0
-// set to 1 to print calls to serial
-// requires
+// DBG_TO: 0=no debug, 1=serial, 2=console
+// serial requires
 // [PcdsFixedAtBuild]
 //  gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x07
 //  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
 // in package DSC file
-#define SERIAL_OUTPUT 1
+#define DBG_TO 0
 
-#if CONSOLE_OUTPUT && SERIAL_OUTPUT
-	#define PRINT(...) {\
-		DebugPrint(1, __VA_ARGS__);\
-		AsciiPrint(__VA_ARGS__);\
-	}
-#elif CONSOLE_OUTPUT
-	#define PRINT(...) AsciiPrint(__VA_ARGS__);
-#elif SERIAL_OUTPUT
-	#define PRINT(...) DebugPrint(1, __VA_ARGS__);
+#if DBG_TO == 2
+	#define DBG(...) AsciiPrint(__VA_ARGS__);
+#elif DBG_TO == 1
+	#define DBG(...) DebugPrint(1, __VA_ARGS__);
 #else
-	#define PRINT(...)
+	#define DBG(...)
 #endif
 
-typedef struct _START_IMG_CONTEXT {
-	VOID						*JumpBufferBase;
-	BASE_LIBRARY_JUMP_BUFFER	*JumpBuffer;
-	EFI_HANDLE					ImageHandle;
-	UINTN						*ExitDataSize;
-	CHAR16						**ExitData;
-	EFI_STATUS					StartImageStatus;
-} START_IMG_CONTEXT;
+// for debugging with NVRAM
+//#define DBGnvr(...) NVRAMDebugLog(__VA_ARGS__);
+#define DBGnvr(...)
 
 
 // if defined then force specified reloc address
@@ -76,6 +64,15 @@ UINT64 KernelEntries[][2] =
 	{0x02b8000, 0xB80010C000BCC789} // Lion 10.7.3 and probably 10.7.2 and 10.7.1
 };
 */
+
+typedef struct _START_IMG_CONTEXT {
+	VOID						*JumpBufferBase;
+	BASE_LIBRARY_JUMP_BUFFER	*JumpBuffer;
+	EFI_HANDLE					ImageHandle;
+	UINTN						*ExitDataSize;
+	CHAR16						**ExitData;
+	EFI_STATUS					StartImageStatus;
+} START_IMG_CONTEXT;
 
 
 // placeholders for storing original Boot Services functions
@@ -113,10 +110,10 @@ DetectKernel(VOID)
 	gKernelEntry = 0;
 	for (Index = 0; Index < KERNEL_ENTRIES_NUM; Index++) {
 		p64 = (UINT64*)(gRelocBase + KernelEntries[Index][0]);
-		PRINT("DetectKernel: checking %x for %lx -> contains %lx\n", KernelEntries[Index][0], KernelEntries[Index][1], *p64);
+		DBG("DetectKernel: checking %x for %lx -> contains %lx\n", KernelEntries[Index][0], KernelEntries[Index][1], *p64);
 		if (*p64 == KernelEntries[Index][1]) {
 			gKernelEntry = (UINT32)KernelEntries[Index][0];
-			PRINT("Found gKernelEntry at %x\n", gKernelEntry);
+			DBG("Found gKernelEntry at %x\n", gKernelEntry);
 		}
 	}
 }
@@ -136,10 +133,12 @@ AllocateHighStack(IN UINTN StackSizePages, OUT EFI_PHYSICAL_ADDRESS *StackBottom
 			  StackSizePages, Status);
 		return Status;
 	}
-	PRINT("Stack alloc ok: %lx\n", *StackBottom);
 	
 	// set stack top
 	*StackTop = *StackBottom + EFI_PAGES_TO_SIZE(StackSizePages) - 8;
+
+	DBG("Stack alloc ok: %lx - %lx\n", *StackBottom, *StackTop);
+	DBGnvr("Stack alloc ok: %lx - %lx\n", *StackBottom, *StackTop);
 	
 	return EFI_SUCCESS;
 }
@@ -171,6 +170,8 @@ AllocateRelocBlock()
 	if (Status != EFI_SUCCESS) {
 		Print(L"OsxAptioFixDrv: AllocateRelocBlock(): can not allocate relocation block (0x%x pages at 0x%lx): %r\n",
 			NumberOfPages, gRelocBase, Status);
+	} else {
+		DBGnvr("gRelocBase set to %lx - %lx\n", gRelocBase, gRelocBase + EFI_PAGES_TO_SIZE(NumberOfPages) - 1);
 	}
 	if (gRelocBase == 0x100000) {
 		// debugging without relocation
@@ -184,15 +185,14 @@ AllocateRelocBlock()
 	Addr = 0x100000000; // max address
 	Status = AllocatePagesFromTop(EfiBootServicesData, NumberOfPages, &Addr);
 	if (Status != EFI_SUCCESS) {
-		PRINT("OsxAptioFixDrv: AllocateRelocBlock(): can not allocate relocation block (0x%x pages below 0x%lx): %r\n",
+		DBG("OsxAptioFixDrv: AllocateRelocBlock(): can not allocate relocation block (0x%x pages below 0x%lx): %r\n",
 			NumberOfPages, 0x100000000, Status);
 		Print(L"OsxAptioFixDrv: AllocateRelocBlock(): can not allocate relocation block (0x%x pages below 0x%lx): %r\n",
 			NumberOfPages, 0x100000000, Status);
 	} else {
 		gRelocBase = Addr;
-		PRINT("OsxAptioFixDrv: AllocateRelocBlock(): gRelocBase set to %lx\n", gRelocBase);
-		//Print(L"OsxAptioFixDrv: AllocateRelocBlock(): gRelocBase set to %lx\n", gRelocBase);
-		//gBS->Stall(5 * 1000 * 1000);
+		DBG("OsxAptioFixDrv: AllocateRelocBlock(): gRelocBase set to %lx - %lx\n", gRelocBase, gRelocBase + EFI_PAGES_TO_SIZE(NumberOfPages) - 1);
+		DBGnvr("gRelocBase set to %lx - %lx\n", gRelocBase, gRelocBase + EFI_PAGES_TO_SIZE(NumberOfPages) - 1);
 	}
 
 #endif
@@ -234,14 +234,16 @@ MOHandleProtocol(
 			if (res == EFI_SUCCESS) {
 				// return it
 				*Interface = GraphicsOutput;
-				PRINT("->HandleProtocol(%p, %s, %p) = %r (returning from other handle)\n", Handle, GuidStr(Protocol), *Interface, res);
+				DBG("->HandleProtocol(%p, %s, %p) = %r (returning from other handle)\n", Handle, GuidStr(Protocol), *Interface, res);
+				DBGnvr("->HandleProtocol(%p, %s, %p) = %r (from other handle)\n", Handle, GuidStr(Protocol), *Interface, res);
 				return res;
 			}
 		}
+		DBGnvr("->HandleProtocol(%p, %s, %p) = %r\n", Handle, GuidStr(Protocol), *Interface, res);
 	} else {
 		res = gHandleProtocol(Handle, Protocol, Interface);
 	}
-	PRINT("->HandleProtocol(%p, %s, %p) = %r\n", Handle, GuidStr(Protocol), *Interface, res);
+	DBG("->HandleProtocol(%p, %s, %p) = %r\n", Handle, GuidStr(Protocol), *Interface, res);
 	return res;
 }
 
@@ -259,8 +261,11 @@ MOAllocatePages (
 {
 	EFI_STATUS					Status;
 	EFI_PHYSICAL_ADDRESS		UpperAddr;
+	EFI_PHYSICAL_ADDRESS		MemoryIn;
+	BOOLEAN						FromRelocBlock = FALSE;
 	
-	//PRINT("AllocatePages(%s, %s, %x, %lx)", EfiAllocateTypeDesc[Type], EfiMemoryTypeDesc[MemoryType], NumberOfPages, *Memory);
+
+	MemoryIn = *Memory;
 	if (Type == AllocateAddress && MemoryType == EfiLoaderData && *Memory < EFI_PAGES_TO_SIZE(KERNEL_BLOCK_SIZE_PAGES)) {
 		// called from boot.efi
 		
@@ -272,7 +277,8 @@ MOAllocatePages (
 		// give it from our allocated block
 		*Memory += gRelocBase;
 		//Status = gStoredAllocatePages(Type, MemoryType, NumberOfPages, Memory);
-		return EFI_SUCCESS;
+		FromRelocBlock = TRUE;
+		Status = EFI_SUCCESS;
 		
 	} else {
 		// default page allocation
@@ -280,6 +286,8 @@ MOAllocatePages (
 		
 	}
 
+	//DBG("AllocatePages(%s, %s, %x, %lx/%lx) = %r %c\n",
+	//	EfiAllocateTypeDesc[Type], EfiMemoryTypeDesc[MemoryType], NumberOfPages, MemoryIn, *Memory, Status, FromRelocBlock ? L'+' : L' ');
 	return Status;
 }
 
@@ -301,6 +309,7 @@ MOGetMemoryMap (
 
 	Status = gStoredGetMemoryMap(MemoryMapSize, MemoryMap, MapKey, DescriptorSize, DescriptorVersion);
 	//PrintMemMap(*MemoryMapSize, MemoryMap, *DescriptorSize, *DescriptorVersion);
+	DBGnvr("GetMemoryMap: %p = %r\n", MemoryMap, Status);
 	if (Status == EFI_SUCCESS) {
 		ShrinkMemMap(MemoryMapSize, MemoryMap, *DescriptorSize, *DescriptorVersion);
 		//PrintMemMap(*MemoryMapSize, MemoryMap, *DescriptorSize, *DescriptorVersion);
@@ -343,6 +352,7 @@ MOExitBootServices (
 	}
 	*/
 	
+	/* not needed any more - now we have kernel copying by MyAsmCopyAndJumpToKernel32 relocated to higher mem
 	// check if we are too low in memory and will overwrite ourself if we continue
 	if (gMaxAllocatedAddr > gOurImageStart) {
 		Print(L"\nOsxAptioFixDrv: Loaded too low! Loaded at %lx, and kernel would be %lx - %lx\n",
@@ -351,6 +361,7 @@ MOExitBootServices (
 		gBS->Stall(20 * 1000 * 1000);
 		return EFI_NOT_FOUND;
 	}
+	*/
 	
 	// check again for stack - if relocation did not work for some reason
 	RSP = MyAsmReadSp();
@@ -373,6 +384,7 @@ MOExitBootServices (
 	Status = EFI_SUCCESS;
 	//Print(L"ExitBootServices()\n");
 	Status = gStoredExitBootServices(ImageHandle, MapKey);
+	DBGnvr("ExitBootServices:  = %r\n", Status);
 	if (EFI_ERROR (Status)) {
 		Print(L"ExitBootServices() = Status: %r\n", Status);
 		//CpuDeadLoop();
@@ -410,7 +422,12 @@ RunImageWithOverrides(IN VOID *Context1, IN VOID *Context2)
 	ImgContext = (START_IMG_CONTEXT *)Context1;
 	
 	// save current 64bit state - will be restored later in callback from kernel jump
-	MyAsmPrepareJumpFromKernel();
+	// and relocate MyAsmCopyAndJumpToKernel32 code to higher mem (for copying kernel back to
+	// proper place and jumping back to it)
+	ImgContext->StartImageStatus = PrepareJumpFromKernel();
+	if (EFI_ERROR(ImgContext->StartImageStatus)) {
+		return;
+	}
 	
 	// init VMem memory pool - will be used after ExitBootServices
 	ImgContext->StartImageStatus = VmAllocateMemoryPool();
@@ -514,7 +531,8 @@ RunImageWithOverridesAndHighStack(IN EFI_HANDLE ImageHandle, OUT UINTN *ExitData
 	
 	// read current stack
 	RSP = MyAsmReadSp();
-	PRINT("Current stack: RSP=%lx\n", RSP);
+	DBG("Current stack: RSP=%lx\n", RSP);
+	DBGnvr("Current stack: RSP=%lx\n", RSP);
 		
 	// check if stack is too low
 	if (RSP < EFI_PAGES_TO_SIZE(KERNEL_BLOCK_SIZE_PAGES)) {
@@ -577,26 +595,27 @@ MOStartImage (
 	EFI_LOADED_IMAGE_PROTOCOL	*Image;
 	CHAR16						*FilePathText = NULL;
 	
-	PRINT("StartImage(%lx)\n", ImageHandle);
+	DBG("StartImage(%lx)\n", ImageHandle);
 
 	// find out image name from EfiLoadedImageProtocol
 	Status = gBS->OpenProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &Image, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
 	if (Status != EFI_SUCCESS) {
-		PRINT("ERROR: MOStartImage: OpenProtocol(gEfiLoadedImageProtocolGuid) = %r\n", Status);
+		DBG("ERROR: MOStartImage: OpenProtocol(gEfiLoadedImageProtocolGuid) = %r\n", Status);
 		return EFI_INVALID_PARAMETER;
 	}
 	FilePathText = FileDevicePathToText(Image->FilePath);
 	if (FilePathText != NULL) {
-		PRINT("FilePath: %s\n", FilePathText);
+		DBG("FilePath: %s\n", FilePathText);
 	}
-	PRINT("ImageBase: %p - %lx (%lx)\n", Image->ImageBase, (UINT64)Image->ImageBase + Image->ImageSize, Image->ImageSize);
+	DBG("ImageBase: %p - %lx (%lx)\n", Image->ImageBase, (UINT64)Image->ImageBase + Image->ImageSize, Image->ImageSize);
 	Status = gBS->CloseProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, gImageHandle, NULL);
 	if (EFI_ERROR(Status)) {
-		PRINT("CloseProtocol error: %r\n", Status);
+		DBG("CloseProtocol error: %r\n", Status);
 	}
 
-	// check if this is boot.efi - not a valid check - should be fixed!
-	if (StrStr(FilePathText, L"boot.efi") || StrStr(FilePathText, L"BOOT.EFI")) {
+	//Print(L"OsxAptioFixDrv: Starting image %s\n", FilePathText);
+	// check if this is boot.efi
+	if (StrStriBasic(FilePathText, L"boot.efi")) {
 		Print(L"OsxAptioFixDrv: Starting overrides for %s\n", FilePathText);
 
 		// run with our overrides
@@ -627,13 +646,13 @@ OvrSetVirtualAddressMap(
 {
 	EFI_STATUS			Status;
 	
-	PRINT("->SetVirtualAddressMap(%d, %d, 0x%x, %p) START ...\n", MemoryMapSize, DescriptorSize, DescriptorVersion, VirtualMap);
+	DBG("->SetVirtualAddressMap(%d, %d, 0x%x, %p) START ...\n", MemoryMapSize, DescriptorSize, DescriptorVersion, VirtualMap);
 	PrintSystemTable(gST);
 	WaitForKeyPress(L"SetVirtualAddressMap: press a key to continue\n");
 	PrintMemMap(MemoryMapSize, VirtualMap, DescriptorSize, DescriptorVersion);
 	Status = EFI_SUCCESS;
 	//Status = OrgSetVirtualAddressMap(MemoryMapSize, DescriptorSize, DescriptorVersion, VirtualMap);
-	//PRINT("->SetVirtualAddressMap(%d, %d, 0x%x, %p) END = %r\n", MemoryMapSize, DescriptorSize, DescriptorVersion, VirtualMap, Status);
+	//DBG("->SetVirtualAddressMap(%d, %d, 0x%x, %p) END = %r\n", MemoryMapSize, DescriptorSize, DescriptorVersion, VirtualMap, Status);
 	//PrintSystemTable(gST);
 	return Status;
 }

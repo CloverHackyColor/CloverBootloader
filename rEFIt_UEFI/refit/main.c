@@ -1333,86 +1333,6 @@ static VOID ScanDriverDir(IN CHAR16 *Path) //path to folder
 }
 
 
-// dmazar: we need to make OsxRelocationOverride.efi loads
-// high enough in memory on Aptio to enable it to copy kernel image
-// to lower mem when needed.
-// we'll do it by reserving lower mem pages before driver loading.
-static VOID ReserveLowerMem(VOID)
-{
-    EFI_STATUS              Status;
-    UINTN                   MemoryMapSize;
-    EFI_MEMORY_DESCRIPTOR   *MemoryMap;
-    UINTN                   MapKey;
-    UINTN                   DescriptorSize;
-    UINT32                  DescriptorVersion;
-    EFI_MEMORY_DESCRIPTOR   *MemoryMapEnd;
-	EFI_MEMORY_DESCRIPTOR   *Desc;
-    
-    UINTN                   NumPages;
-    EFI_PHYSICAL_ADDRESS    LowTopAddr;
-    EFI_PHYSICAL_ADDRESS    Addr;
-    //UINTN                   Index;
-    
-    // we'll block lower 320MB - more then enough
-    // kernel is not that large, but some UEFIs have large MMIO areas
-	// that are mapped in kernel block by boot.efi
-    LowTopAddr = 0x14000000;
-    
-    // first we'll check if this is needed at all by allocating page
-    // and testing if it is below LowTopAddr
-    Status = gBS->AllocatePages(AllocateAnyPages, EfiBootServicesCode, 1, &Addr);
-    if ((Addr + EFI_PAGES_TO_SIZE(1) > LowTopAddr)) {
-        // no need to do reservation since
-        // mem is allocated from top in this case
-        gBS->FreePages(Addr, 1);
-        return;
-    }
-    
-    MemoryMapSize = 4096;
-    MemoryMap = AllocatePool(MemoryMapSize);
-    Status = gBS->GetMemoryMap(&MemoryMapSize, MemoryMap, &MapKey, &DescriptorSize, &DescriptorVersion);
-    if (Status == EFI_BUFFER_TOO_SMALL) {
-        FreePool(MemoryMap);
-        // MemMap can change after our AllocatePool - add more to size to cover that
-        MemoryMapSize += 256;
-        MemoryMap = AllocatePool(MemoryMapSize);
-        Status = gBS->GetMemoryMap(&MemoryMapSize, MemoryMap, &MapKey, &DescriptorSize, &DescriptorVersion);
-    }
-    
-    if (EFI_ERROR(Status)) {
-        FreePool(MemoryMap);
-        return;
-    }
-    
-    //Index = 1;
-    MemoryMapEnd = (EFI_MEMORY_DESCRIPTOR*)((UINT8*)MemoryMap + MemoryMapSize);
-    for (Desc = MemoryMap; Desc < MemoryMapEnd; Desc = NEXT_MEMORY_DESCRIPTOR(Desc, DescriptorSize)) {
-        if (Desc->PhysicalStart < 0x100000 || Desc->PhysicalStart >= LowTopAddr) {
-            continue;
-        }
-        if (Desc->Type == EfiConventionalMemory) {
-            // free block found
-            if (Desc->PhysicalStart + EFI_PAGES_TO_SIZE(Desc->NumberOfPages) <= LowTopAddr) {
-                // free block under our LowTopAddr - allocate it
-                NumPages = Desc->NumberOfPages;
-            } else {
-                // start of block is lower, but end is higher then LowTopAddr.
-                // allocate up to LowTopAddr.
-                NumPages = EFI_SIZE_TO_PAGES(LowTopAddr - Desc->PhysicalStart);
-            }
-            Status = gBS->AllocatePages(AllocateAddress,
-                                        EfiBootServicesData,
-                                        NumPages,
-                                        &Desc->PhysicalStart);
-            //Print(L"Alloc NumPg=%x, Addr=%lx, Status=%r\n", NumPages, Desc->PhysicalStart, Status);
-            //if ((Index % 10) == 0) PauseForKey(L"continue");
-            //Index++;
-        }
-	}
-    
-    // release mem
-    FreePool(MemoryMap);
-}
 
 /**
  This function will connect all current system handles recursively. 
@@ -1466,11 +1386,6 @@ static VOID LoadDrivers(VOID)
 {
   //BOOLEAN ReconnectAll = FALSE;
   
-  // we need to reserve lower mem on Aptio to make
-  // loading of driver above future kernel image
-  if (!gFirmwareClover) {
-    ReserveLowerMem();
-  }
     
     // load drivers from /efi/drivers
 #if defined(MDE_CPU_X64)

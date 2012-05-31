@@ -28,29 +28,22 @@
 #include "Lib.h"
 
 
-// set to 1 to print calls to console
-#define CONSOLE_OUTPUT 0
-// set to 1 to print calls to serial
-// requires
+// DBG_TO: 0=no debug, 1=serial, 2=console
+// serial requires
 // [PcdsFixedAtBuild]
 //  gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x07
 //  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
 // in package DSC file
-#define SERIAL_OUTPUT 1
+#define DBG_TO 0
 
-#if CONSOLE_OUTPUT && SERIAL_OUTPUT
-	#define PRINT(...) {\
-		DebugPrint(1, __VA_ARGS__);\
-		AsciiPrint(__VA_ARGS__);\
-	}
-#elif CONSOLE_OUTPUT
-	#define PRINT(...) AsciiPrint(__VA_ARGS__);
-#elif SERIAL_OUTPUT
-	#define PRINT(...) DebugPrint(1, __VA_ARGS__);
-	//#define PRINT(...) NVRAMDebugLog(__VA_ARGS__);
+#if DBG_TO == 2
+	#define DBG(...) AsciiPrint(__VA_ARGS__);
+#elif DBG_TO == 1
+	#define DBG(...) DebugPrint(1, __VA_ARGS__);
 #else
-	#define PRINT(...)
+	#define DBG(...)
 #endif
+
 
 CHAR16 *EfiMemoryTypeDesc[EfiMaxMemoryType] = {
 	L"reserved",
@@ -213,7 +206,7 @@ ToUpperChar(IN CHAR16 Chr)
 {
 	CHAR8	C;
 	
-	if (Chr > 0x100) return Chr;
+	if (Chr > 0xFF) return Chr;
 	C = (CHAR8)Chr;
 	return ((C >= 'a' && C <= 'z') ? C - ('a' - 'A') : C);
 }
@@ -226,8 +219,6 @@ StrCmpiBasic(IN CHAR16 *String1, IN CHAR16 *String2)
 {
 	CHAR16	Chr1;
 	CHAR16	Chr2;
-	
-	PRINT("Cmpi('%s', '%s') ", String1, String2);
 	
 	if (String1 == NULL || String2 == NULL) {
 		return 1;
@@ -248,8 +239,51 @@ StrCmpiBasic(IN CHAR16 *String1, IN CHAR16 *String2)
 		Chr2 = ToUpperChar(*String2);
 	}
 	
-	PRINT("=%s ", (Chr1 - Chr2) ? L"NEQ" : L"EQ");
 	return Chr1 - Chr2;
+}
+
+/** Returns the first occurrence of a Null-terminated Unicode SearchString
+  * in a Null-terminated Unicode String.
+  * Compares just first 8 bits of chars (valid for ASCII), case insensitive.
+  * Copied from MdePkg/Library/BaseLib/String.c and modified
+  */
+CHAR16*
+EFIAPI
+StrStriBasic(
+  IN      CONST CHAR16              *String,
+  IN      CONST CHAR16              *SearchString
+  )
+{
+  CONST CHAR16 *FirstMatch;
+  CONST CHAR16 *SearchStringTmp;
+
+
+  if (*SearchString == L'\0') {
+    return (CHAR16 *) String;
+  }
+
+  while (*String != L'\0') {
+    SearchStringTmp = SearchString;
+    FirstMatch = String;
+    
+    while ((ToUpperChar(*String) == ToUpperChar(*SearchStringTmp)) 
+            && (*String != L'\0')) {
+      String++;
+      SearchStringTmp++;
+    } 
+    
+    if (*SearchStringTmp == L'\0') {
+      return (CHAR16 *) FirstMatch;
+    }
+
+    if (*String == L'\0') {
+      return NULL;
+    }
+
+    String = FirstMatch + 1;
+  }
+
+  return NULL;
 }
 
 /** Returns TRUE if String1 starts with String2, FALSE otherwise. Compares just first 8 bits of chars (valid for ASCII), case insensitive.. */
@@ -260,8 +294,6 @@ StriStartsWithBasic(IN CHAR16 *String1, IN CHAR16 *String2)
 	CHAR16	Chr1;
 	CHAR16	Chr2;
 	BOOLEAN Result;
-	
-	PRINT("StriStarts('%s', '%s') ", String1, String2);
 	
 	if (String1 == NULL || String2 == NULL) {
 		return FALSE;
@@ -285,7 +317,6 @@ StriStartsWithBasic(IN CHAR16 *String1, IN CHAR16 *String2)
 	Result = ((Chr1 == L'\0') && (Chr2 == L'\0'))
 	|| ((Chr1 != L'\0') && (Chr2 == L'\0'));
 	
-	PRINT("=%s \n", Result ? L"TRUE" : L"FALSE");
 	return Result;
 }
 
@@ -366,11 +397,11 @@ PrintMemMap(
 	
 	Desc = MemoryMap;
 	NumEntries = MemoryMapSize / DescriptorSize;
-	PRINT("MEMMAP: Size=%d, Addr=%p, DescSize=%d, DescVersion: 0x%x\n", MemoryMapSize, MemoryMap, DescriptorSize, DescriptorVersion);
-	PRINT("Type       Start            End       VStart               # Pages          Attributes\n");
+	DBG("MEMMAP: Size=%d, Addr=%p, DescSize=%d, DescVersion: 0x%x\n", MemoryMapSize, MemoryMap, DescriptorSize, DescriptorVersion);
+	DBG("Type       Start            End       VStart               # Pages          Attributes\n");
 	for (Index = 0; Index < NumEntries; Index++) {
 		Bytes = (((UINTN) Desc->NumberOfPages) * EFI_PAGE_SIZE);
-		PRINT("%-12s %lX-%lX %lX  %lX %lX\n",
+		DBG("%-12s %lX-%lX %lX  %lX %lX\n",
 			EfiMemoryTypeDesc[Desc->Type],
 			Desc->PhysicalStart,
 			Desc->PhysicalStart + Bytes - 1,
@@ -389,12 +420,12 @@ PrintMemMap(
 VOID EFIAPI
 PrintSystemTable(IN EFI_SYSTEM_TABLE  *ST)
 {
-	PRINT("SysTable: %p\n", ST);
-	PRINT("- FirmwareVendor: %p, %s\n", ST->FirmwareVendor, ST->FirmwareVendor);
-	PRINT("- ConsoleInHandle: %p, ConIn: %p\n", ST->ConsoleInHandle, ST->ConIn);
-	PRINT("- RuntimeServices: %p, BootServices: %p, ConfigurationTable: %p\n", ST->RuntimeServices, ST->BootServices, ST->ConfigurationTable);
-	PRINT("RT:\n");
-	PRINT("- GetVariable: %p, SetVariable: %p\n", ST->RuntimeServices->GetVariable, ST->RuntimeServices->SetVariable);
+	DBG("SysTable: %p\n", ST);
+	DBG("- FirmwareVendor: %p, %s\n", ST->FirmwareVendor, ST->FirmwareVendor);
+	DBG("- ConsoleInHandle: %p, ConIn: %p\n", ST->ConsoleInHandle, ST->ConIn);
+	DBG("- RuntimeServices: %p, BootServices: %p, ConfigurationTable: %p\n", ST->RuntimeServices, ST->BootServices, ST->ConfigurationTable);
+	DBG("RT:\n");
+	DBG("- GetVariable: %p, SetVariable: %p\n", ST->RuntimeServices->GetVariable, ST->RuntimeServices->SetVariable);
 }
 
 VOID
@@ -475,7 +506,7 @@ FileDevicePathToText(EFI_DEVICE_PATH_PROTOCOL *FilePathProto)
 	FilePathText[0] = L'\0';
 	i = 4;
 	SizeAll = 0;
-	//PRINT("FilePathProto->Type: %d, SubType: %d, Length: %d\n", FilePathProto->Type, FilePathProto->SubType, DevicePathNodeLength(FilePathProto));
+	//DBG("FilePathProto->Type: %d, SubType: %d, Length: %d\n", FilePathProto->Type, FilePathProto->SubType, DevicePathNodeLength(FilePathProto));
 	while (FilePathProto != NULL && FilePathProto->Type != END_DEVICE_PATH_TYPE && i > 0) {
 		if (FilePathProto->Type == MEDIA_DEVICE_PATH && FilePathProto->SubType == MEDIA_FILEPATH_DP) {
 			FilePath = (FILEPATH_DEVICE_PATH *) FilePathProto;
@@ -489,9 +520,9 @@ FileDevicePathToText(EFI_DEVICE_PATH_PROTOCOL *FilePathProto)
 			}
 		}
 		FilePathProto = NextDevicePathNode(FilePathProto);
-		//PRINT("FilePathProto->Type: %d, SubType: %d, Length: %d\n", FilePathProto->Type, FilePathProto->SubType, DevicePathNodeLength(FilePathProto));
+		//DBG("FilePathProto->Type: %d, SubType: %d, Length: %d\n", FilePathProto->Type, FilePathProto->SubType, DevicePathNodeLength(FilePathProto));
 		i--;
-		//PRINT("FilePathText: %s\n", FilePathText);
+		//DBG("FilePathText: %s\n", FilePathText);
 	}
 	
 	OutFilePathText = NULL;
@@ -550,14 +581,14 @@ AllocatePagesFromTop(
 	
 	Status = EFI_NOT_FOUND;
 	
-	//PRINT("Search for Pages=%x, TopAddr=%lx\n", Pages, *Memory);
-	//PRINT("MEMMAP: Size=%d, Addr=%p, DescSize=%d, DescVersion: 0x%x\n", MemoryMapSize, MemoryMap, DescriptorSize, DescriptorVersion);
-	//PRINT("Type       Start            End       VStart               # Pages          Attributes\n");
+	//DBG("Search for Pages=%x, TopAddr=%lx\n", Pages, *Memory);
+	//DBG("MEMMAP: Size=%d, Addr=%p, DescSize=%d, DescVersion: 0x%x\n", MemoryMapSize, MemoryMap, DescriptorSize, DescriptorVersion);
+	//DBG("Type       Start            End       VStart               # Pages          Attributes\n");
 	MemoryMapEnd = NEXT_MEMORY_DESCRIPTOR(MemoryMap, MemoryMapSize);
 	Desc = PREV_MEMORY_DESCRIPTOR(MemoryMapEnd, DescriptorSize);
 	for ( ; Desc >= MemoryMap; Desc = PREV_MEMORY_DESCRIPTOR(Desc, DescriptorSize)) {
 		/*
-		PRINT("%-12s %lX-%lX %lX  %lX %lX\n",
+		DBG("%-12s %lX-%lX %lX  %lX %lX\n",
 			EfiMemoryTypeDesc[Desc->Type],
 			Desc->PhysicalStart,
 			Desc->PhysicalStart + EFI_PAGES_TO_SIZE(Desc->NumberOfPages) - 1,
@@ -575,17 +606,17 @@ AllocatePagesFromTop(
 			if (Desc->PhysicalStart + EFI_PAGES_TO_SIZE(Desc->NumberOfPages) <= *Memory) {
 				// the whole block is unded Memory - allocate from the top of the block
 				*Memory = Desc->PhysicalStart + EFI_PAGES_TO_SIZE(Desc->NumberOfPages - Pages);
-				//PRINT("found the whole block under top mem, allocating at %lx\n", *Memory);
+				//DBG("found the whole block under top mem, allocating at %lx\n", *Memory);
 			} else {
 				// the block contains enough pages under Memory, but spans above it - allocate below Memory.
 				*Memory = *Memory - EFI_PAGES_TO_SIZE(Pages);
-				//PRINT("found the whole block under top mem, allocating at %lx\n", *Memory);
+				//DBG("found the whole block under top mem, allocating at %lx\n", *Memory);
 			}
 			Status = gBS->AllocatePages(AllocateAddress,
 										MemoryType,
 										Pages,
 										Memory);
-			//PRINT("Alloc Pages=%x, Addr=%lx, Status=%r\n", Pages, *Memory, Status);
+			//DBG("Alloc Pages=%x, Addr=%lx, Status=%r\n", Pages, *Memory, Status);
 			break;
 		}
 	}

@@ -15,6 +15,11 @@ ASM_GLOBAL ASM_PFX(SavedGDTR)
 ASM_GLOBAL ASM_PFX(SavedIDTR)
 ASM_GLOBAL ASM_PFX(AsmKernelEntry)
 
+ASM_GLOBAL ASM_PFX(AsmKernelImageStartReloc)
+ASM_GLOBAL ASM_PFX(AsmKernelImageStart)
+ASM_GLOBAL ASM_PFX(AsmKernelImageSize)
+ASM_GLOBAL ASM_PFX(MyAsmCopyAndJumpToKernel32Addr)
+
 	.data
 # variables accessed from both 32 and 64 bit code
 # need to have this exactly in this order
@@ -56,9 +61,30 @@ SavedDS32:				.word 0
 SavedESP32Off =			. - DataBase
 SavedESP32:				.long 0
 
-# kernel entry
+# kernel entry - 32 bit
 AsmKernelEntryOff =			. - DataBase
 ASM_PFX(AsmKernelEntry):	.long 0
+
+#
+# for copying kernel image from reloc block to proper mem place
+#
+
+# kernel image start in reloc block (source) - 32 bit
+AsmKernelImageStartRelocOff =				. - DataBase
+ASM_PFX(AsmKernelImageStartReloc):			.long 0
+
+# kernel image start (destination) - 32 bit
+AsmKernelImageStartOff =					. - DataBase
+ASM_PFX(AsmKernelImageStart):				.long 0
+
+# kernel image size - 32 bit
+AsmKernelImageSizeOff =						. - DataBase
+ASM_PFX(AsmKernelImageSize):				.long 0
+
+# address of relocated MyAsmCopyAndJumpToKernel32 - 32 bit
+MyAsmCopyAndJumpToKernel32AddrOff =						. - DataBase
+ASM_PFX(MyAsmCopyAndJumpToKernel32Addr):				.long 0
+
 
 	.align 2
 
@@ -314,12 +340,29 @@ DataBaseAdr:	.long 0
 	movl	SavedESP32Off(%ebx), %esp
 
 	#
-	# set boot args pointer to eax and jump to kernel
+	# prepare vars for copying kernel to proper mem
+	# and jump to kernel: set registers as needed
+	# by MyAsmCopyAndJumpToKernel32
 	#
+	
+	# boot args back from edi
 	movl	%edi, %eax
-	movl	AsmKernelEntryOff(%ebx), %ebx
-	#hlt	# uncomment to stop here for test
-	jmp		*%ebx			# jmp DWORD PTR ebx in 32 bit
+	# kernel entry point
+	movl	AsmKernelEntryOff(%ebx), %edx
+	
+	# source, destination and size for kernel copy
+	movl	AsmKernelImageStartRelocOff(%ebx), %esi
+	movl	AsmKernelImageStartOff(%ebx), %edi
+	movl	AsmKernelImageSizeOff(%ebx), %ecx
+	
+	# address of relocated MyAsmCopyAndJumpToKernel32
+	movl	MyAsmCopyAndJumpToKernel32AddrOff(%ebx), %ebx
+	# note: ebx not valid as a pointer to DataBase any more
+	
+	#
+	# jump to MyAsmCopyAndJumpToKernel32
+	#
+	jmp		*%ebx
 
 
 _RETF64:
@@ -327,3 +370,52 @@ _RETF64:
 _RETF32:
 	retf
 
+
+	
+#------------------------------------------------------------------------------
+# MyAsmCopyAndJumpToKernel32
+# 
+# This is the last part of the code - it will copy kernel image from reloc
+# block to proper mem place and jump to kernel.
+# It's 32 bit code and runs after switching back to 32 bit.
+# This code will be relocated (copied) to higher mem by PrepareJumpFromKernel().
+#
+# Expects:
+# EAX = address of boot args (proper address, not from reloc block)
+# EDX = kernel entry point
+# ESI = start of kernel image in reloc block (source)
+# EDI = proper start of kernel image (destination)
+# ECX = kernel image size in bytes
+#------------------------------------------------------------------------------
+ASM_GLOBAL ASM_PFX(MyAsmCopyAndJumpToKernel32)
+ASM_PFX(MyAsmCopyAndJumpToKernel32):
+
+	.code32
+	
+	#
+	# we will move double words (4 bytes)
+	# so ajust ECX to number of double words.
+	# just in case ECX is not multiple of 4 - inc by 1
+	#
+	shrl	$2, %ecx
+	incl	%ecx
+	
+	#
+	# copy kernel image from reloc block to proper mem place.
+	# all params should be already set:
+	# ECX = number of double words
+	# DS:ESI = source
+	# ES:EDI = destination
+	#
+	cld								# direction is up
+	rep movsd
+	
+	#
+	# and finally jump to kernel:
+	# EAX already contains bootArgs pointer,
+	# and EDX contains kernel entry point
+	#
+	jmp		*%edx
+
+ASM_GLOBAL ASM_PFX(MyAsmCopyAndJumpToKernel32End)
+ASM_PFX(MyAsmCopyAndJumpToKernel32End):

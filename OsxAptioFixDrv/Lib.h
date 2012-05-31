@@ -59,6 +59,14 @@ UINTN
 EFIAPI
 StrCmpiBasic(IN CHAR16 *String1, IN CHAR16 *String2);
 
+
+/** Returns the first occurrence of a SearchString in a String.
+  * Compares just first 8 bits of chars (valid for ASCII), case insensitive.
+  */
+CHAR16*
+EFIAPI
+StrStriBasic(IN CONST CHAR16 *String, IN CONST CHAR16 *SearchString);
+
 /** Returns TRUE if String1 starts with String2, FALSE otherwise. Compares just first 8 bits of chars (valid for ASCII), case insensitive. */
 BOOLEAN
 EFIAPI

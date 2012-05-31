@@ -25,28 +25,26 @@
 #include "Lib.h"
 
 
-// set to 1 to print calls to console
-#define CONSOLE_OUTPUT 0
-// set to 1 to print calls to serial
-// requires
+// DBG_TO: 0=no debug, 1=serial, 2=console
+// serial requires
 // [PcdsFixedAtBuild]
 //  gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x07
 //  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
 // in package DSC file
-#define SERIAL_OUTPUT 0
+#define DBG_TO 0
 
-#if CONSOLE_OUTPUT && SERIAL_OUTPUT
-	#define PRINT(...) {\
-		DebugPrint(1, __VA_ARGS__);\
-		AsciiPrint(__VA_ARGS__);\
-	}
-#elif CONSOLE_OUTPUT
-	#define PRINT(...) AsciiPrint(__VA_ARGS__);
-#elif SERIAL_OUTPUT
-	#define PRINT(...) DebugPrint(1, __VA_ARGS__);
+#if DBG_TO == 2
+	#define DBG(...) AsciiPrint(__VA_ARGS__);
+#elif DBG_TO == 1
+	#define DBG(...) DebugPrint(1, __VA_ARGS__);
 #else
-	#define PRINT(...)
+	#define DBG(...)
 #endif
+
+// for debugging with NVRAM
+//#define DBGnvr(...) NVRAMDebugLog(__VA_ARGS__);
+#define DBGnvr(...)
+
 
 /** Memory allocation for VM map pages that we will create with VmMapVirtualPage.
   * We need to have it preallocated during boot services.
@@ -60,7 +58,7 @@ GetCurrentPageTable(PAGE_MAP_AND_DIRECTORY_POINTER **PageTable, UINTN *Flags)
 	UINTN	CR3;
 	
 	CR3 = AsmReadCr3();
-	PRINT("GetCurrentPageTable: CR3 = 0x%lx\n", CR3);
+	DBG("GetCurrentPageTable: CR3 = 0x%lx\n", CR3);
 	*PageTable = (PAGE_MAP_AND_DIRECTORY_POINTER*)(UINTN)(CR3 & CR3_ADDR_MASK);
 	*Flags = CR3 & (CR3_FLAG_PWT | CR3_FLAG_PCD);
 }
@@ -73,10 +71,10 @@ PrintPageTablePTE(PAGE_TABLE_4K_ENTRY *PTE, VIRTUAL_ADDR VA)
 	
 	for (Index = 0; Index < 10; Index++) {
 		VA.Pg4K.PTOffset = Index;
-		PRINT("      PTE %03x at %p = %lx => ", Index, PTE, PTE->Uint64);
+		DBG("      PTE %03x at %p = %lx => ", Index, PTE, PTE->Uint64);
 		// 4KB PTE
 		Start = (PTE->Uint64 & PT_ADDR_MASK_4K);
-		PRINT("4KB Fl: %lx VA: %lx - %lx ==> PH %lx - %lx\n",
+		DBG("4KB Fl: %lx VA: %lx - %lx ==> PH %lx - %lx\n",
 			(PTE->Uint64 & ~PT_ADDR_MASK_4K), VA.Uint64, VA.Uint64 + 0x1000 - 1, Start, Start + 0x1000 - 1);
 		PTE++;
 	}
@@ -93,15 +91,15 @@ PrintPageTablePDE(PAGE_MAP_AND_DIRECTORY_POINTER *PDE, VIRTUAL_ADDR VA)
 	
 	for (Index = 0; Index < 10; Index++) {
 		VA.Pg4K.PDOffset = Index;
-		PRINT("    PDE %03x at %p = %lx => ", Index, PDE, PDE->Uint64);
+		DBG("    PDE %03x at %p = %lx => ", Index, PDE, PDE->Uint64);
 		if (PDE->Bits.MustBeZero & 0x1) {
 			// 2MB PDE
 			PT2M = (PAGE_TABLE_2M_ENTRY *)PDE;
 			Start = (PT2M->Uint64 & PT_ADDR_MASK_2M);
-			PRINT("2MB Fl: %lx VA: %lx - %lx ==> PH %lx - %lx\n",
+			DBG("2MB Fl: %lx VA: %lx - %lx ==> PH %lx - %lx\n",
 				(PT2M->Uint64 & ~PT_ADDR_MASK_2M), VA.Uint64, VA.Uint64 + 0x200000 - 1, Start, Start + 0x200000 - 1);
 		} else {
-			PRINT("  Fl: %lx %lx ->\n", (PDE->Uint64 & ~PT_ADDR_MASK_4K), (PDE->Uint64 & PT_ADDR_MASK_4K));
+			DBG("  Fl: %lx %lx ->\n", (PDE->Uint64 & ~PT_ADDR_MASK_4K), (PDE->Uint64 & PT_ADDR_MASK_4K));
 			PTE = (PAGE_TABLE_4K_ENTRY *)(PDE->Uint64 & PT_ADDR_MASK_4K);
 			PrintPageTablePTE(PTE, VA);
 		}
@@ -120,15 +118,15 @@ PrintPageTablePDPE(PAGE_MAP_AND_DIRECTORY_POINTER *PDPE, VIRTUAL_ADDR VA)
 	
 	for (Index = 0; Index < 10; Index++) {
 		VA.Pg4K.PDPOffset = Index;
-		PRINT("  PDPE %03x at %p = %lx => ", Index, PDPE, PDPE->Uint64);
+		DBG("  PDPE %03x at %p = %lx => ", Index, PDPE, PDPE->Uint64);
 		if (PDPE->Bits.MustBeZero & 0x1) {
 			// 1GB PDPE
 			PT1G = (PAGE_TABLE_1G_ENTRY *)PDPE;
 			Start = (PT1G->Uint64 & PT_ADDR_MASK_1G);
-			PRINT("1GB Fl: %lx VA: %lx - %lx ==> PH %lx - %lx\n",
+			DBG("1GB Fl: %lx VA: %lx - %lx ==> PH %lx - %lx\n",
 				(PT1G->Uint64 & ~PT_ADDR_MASK_1G), VA.Uint64, VA.Uint64 + 0x40000000 - 1, Start, Start + 0x40000000 - 1);
 		} else {
-			PRINT("  Fl: %lx %lx ->\n", (PDPE->Uint64 & ~PT_ADDR_MASK_4K), (PDPE->Uint64 & PT_ADDR_MASK_4K));
+			DBG("  Fl: %lx %lx ->\n", (PDPE->Uint64 & ~PT_ADDR_MASK_4K), (PDPE->Uint64 & PT_ADDR_MASK_4K));
 			PDE = (PAGE_MAP_AND_DIRECTORY_POINTER *)(PDPE->Uint64 & PT_ADDR_MASK_4K);
 			PrintPageTablePDE(PDE, VA);
 		}
@@ -145,13 +143,13 @@ PrintPageTable(PAGE_MAP_AND_DIRECTORY_POINTER *PageTable, UINTN Flags)
 	PAGE_MAP_AND_DIRECTORY_POINTER	*PML4;
 	PAGE_MAP_AND_DIRECTORY_POINTER	*PDPE;
 	
-	PRINT("PrintPageTable: %p, Flags: PWT: %d, PCD: %d\n", PageTable, (Flags & CR3_FLAG_PWT), (Flags & CR3_FLAG_PCD));
+	DBG("PrintPageTable: %p, Flags: PWT: %d, PCD: %d\n", PageTable, (Flags & CR3_FLAG_PWT), (Flags & CR3_FLAG_PCD));
 	PML4 = PageTable;
 	for (Index = 0; Index < 3; Index++) {
 		VA.Uint64 = 0;
 		VA.Pg4K.PML4Offset = Index;
 		VA_FIX_SIGN_EXTEND(VA);
-		PRINT("PML4 %03x at %p = %lx => Fl: %lx %lx ->\n", Index, PML4, PML4->Uint64, (PML4->Uint64 & ~PT_ADDR_MASK_4K), (PML4->Uint64 & PT_ADDR_MASK_4K));
+		DBG("PML4 %03x at %p = %lx => Fl: %lx %lx ->\n", Index, PML4, PML4->Uint64, (PML4->Uint64 & ~PT_ADDR_MASK_4K), (PML4->Uint64 & PT_ADDR_MASK_4K));
 		PDPE = (PAGE_MAP_AND_DIRECTORY_POINTER *)(PML4->Uint64 & PT_ADDR_MASK_4K);
 		PrintPageTablePDPE(PDPE, VA);
 		PML4++;
@@ -175,8 +173,8 @@ GetPhysicalAddr(PAGE_MAP_AND_DIRECTORY_POINTER *PageTable, EFI_VIRTUAL_ADDRESS  
 	
 	VA.Uint64 = (UINT64)VirtualAddr;
 	//VA_FIX_SIGN_EXTEND(VA);
-	PRINT("PageTable: %p\n", PageTable);
-	PRINT("VA: %lx => Indexes PML4=%x, PDP=%x, PD=%x, PT=%x\n",
+	DBG("PageTable: %p\n", PageTable);
+	DBG("VA: %lx => Indexes PML4=%x, PDP=%x, PD=%x, PT=%x\n",
 		VA.Uint64, VA.Pg4K.PML4Offset, VA.Pg4K.PDPOffset, VA.Pg4K.PDOffset, VA.Pg4K.PTOffset);
 	
 	// PML4
@@ -190,12 +188,12 @@ GetPhysicalAddr(PAGE_MAP_AND_DIRECTORY_POINTER *PageTable, EFI_VIRTUAL_ADDRESS  
 	VAEnd.Pg4K.PML4Offset = VA.Pg4K.PML4Offset;
 	VA_FIX_SIGN_EXTEND(VAEnd);
 	// print it
-	PRINT("PML4[%03x] at %p = %lx Region: %lx - %lx\n", VA.Pg4K.PML4Offset, PML4, PML4->Uint64, VAStart.Uint64, VAEnd.Uint64);
+	DBG("PML4[%03x] at %p = %lx Region: %lx - %lx\n", VA.Pg4K.PML4Offset, PML4, PML4->Uint64, VAStart.Uint64, VAEnd.Uint64);
 	if (!PML4->Bits.Present) {
-		PRINT("-> Mapping not present!\n");
+		DBG("-> Mapping not present!\n");
 		return EFI_NO_MAPPING;
 	}
-	PRINT("-> Nx:%x|A:%x|PCD:%x|PWT:%x|US:%x|RW:%x|P:%x -> %lx\n",
+	DBG("-> Nx:%x|A:%x|PCD:%x|PWT:%x|US:%x|RW:%x|P:%x -> %lx\n",
 		PML4->Bits.Nx, PML4->Bits.Accessed,
 		PML4->Bits.CacheDisabled, PML4->Bits.WriteThrough,
 		PML4->Bits.UserSupervisor, PML4->Bits.ReadWrite, PML4->Bits.Present,
@@ -207,15 +205,15 @@ GetPhysicalAddr(PAGE_MAP_AND_DIRECTORY_POINTER *PageTable, EFI_VIRTUAL_ADDRESS  
 	PDPE += VA.Pg4K.PDPOffset;
 	VAStart.Pg4K.PDPOffset = VA.Pg4K.PDPOffset;
 	VAEnd.Pg4K.PDPOffset = VA.Pg4K.PDPOffset;
-	PRINT("PDPE[%03x] at %p = %lx Region: %lx - %lx\n", VA.Pg4K.PDPOffset, PDPE, PDPE->Uint64, VAStart.Uint64, VAEnd.Uint64);
+	DBG("PDPE[%03x] at %p = %lx Region: %lx - %lx\n", VA.Pg4K.PDPOffset, PDPE, PDPE->Uint64, VAStart.Uint64, VAEnd.Uint64);
 	if (!PDPE->Bits.Present) {
-		PRINT("-> Mapping not present!\n");
+		DBG("-> Mapping not present!\n");
 		return EFI_NO_MAPPING;
 	}
 	if (PDPE->Bits.MustBeZero & 0x1) {
 		// 1GB PDPE
 		PTE1G = (PAGE_TABLE_1G_ENTRY *)PDPE;
-		PRINT("-> Nx:%x|G:%x|PAT:%x|D:%x|A:%x|PCD:%x|PWT:%x|US:%x|RW:%x|P:%x\n",
+		DBG("-> Nx:%x|G:%x|PAT:%x|D:%x|A:%x|PCD:%x|PWT:%x|US:%x|RW:%x|P:%x\n",
 			PTE1G->Bits.Nx, PTE1G->Bits.Global, PTE1G->Bits.PAT,
 			PTE1G->Bits.Dirty, PTE1G->Bits.Accessed,
 			PTE1G->Bits.CacheDisabled, PTE1G->Bits.WriteThrough,
@@ -223,10 +221,10 @@ GetPhysicalAddr(PAGE_MAP_AND_DIRECTORY_POINTER *PageTable, EFI_VIRTUAL_ADDRESS  
 			);
 		Start = (PTE1G->Uint64 & PT_ADDR_MASK_1G);
 		*PhysicalAddr = Start + VA.Pg1G.PhysPgOffset;
-		PRINT("-> 1GB page %lx - %lx => %lx\n", Start, Start + 0x40000000 - 1, *PhysicalAddr);
+		DBG("-> 1GB page %lx - %lx => %lx\n", Start, Start + 0x40000000 - 1, *PhysicalAddr);
 		return EFI_SUCCESS;
 	}
-	PRINT("-> Nx:%x|A:%x|PCD:%x|PWT:%x|US:%x|RW:%x|P:%x -> %lx\n",
+	DBG("-> Nx:%x|A:%x|PCD:%x|PWT:%x|US:%x|RW:%x|P:%x -> %lx\n",
 		PDPE->Bits.Nx, PDPE->Bits.Accessed,
 		PDPE->Bits.CacheDisabled, PDPE->Bits.WriteThrough,
 		PDPE->Bits.UserSupervisor, PDPE->Bits.ReadWrite, PDPE->Bits.Present,
@@ -238,15 +236,15 @@ GetPhysicalAddr(PAGE_MAP_AND_DIRECTORY_POINTER *PageTable, EFI_VIRTUAL_ADDRESS  
 	PDE += VA.Pg4K.PDOffset;
 	VAStart.Pg4K.PDOffset = VA.Pg4K.PDOffset;
 	VAEnd.Pg4K.PDOffset = VA.Pg4K.PDOffset;
-	PRINT("PDE[%03x] at %p = %lx Region: %lx - %lx\n", VA.Pg4K.PDOffset, PDE, PDE->Uint64, VAStart.Uint64, VAEnd.Uint64);
+	DBG("PDE[%03x] at %p = %lx Region: %lx - %lx\n", VA.Pg4K.PDOffset, PDE, PDE->Uint64, VAStart.Uint64, VAEnd.Uint64);
 	if (!PDE->Bits.Present) {
-		PRINT("-> Mapping not present!\n");
+		DBG("-> Mapping not present!\n");
 		return EFI_NO_MAPPING;
 	}
 	if (PDE->Bits.MustBeZero & 0x1) {
 		// 2MB PDE
 		PTE2M = (PAGE_TABLE_2M_ENTRY *)PDE;
-		PRINT("-> Nx:%x|G:%x|PAT:%x|D:%x|A:%x|PCD:%x|PWT:%x|US:%x|RW:%x|P:%x\n",
+		DBG("-> Nx:%x|G:%x|PAT:%x|D:%x|A:%x|PCD:%x|PWT:%x|US:%x|RW:%x|P:%x\n",
 			PTE2M->Bits.Nx, PTE2M->Bits.Global, PTE2M->Bits.PAT,
 			PTE2M->Bits.Dirty, PTE2M->Bits.Accessed,
 			PTE2M->Bits.CacheDisabled, PTE2M->Bits.WriteThrough,
@@ -254,10 +252,10 @@ GetPhysicalAddr(PAGE_MAP_AND_DIRECTORY_POINTER *PageTable, EFI_VIRTUAL_ADDRESS  
 			);
 		Start = (PTE2M->Uint64 & PT_ADDR_MASK_2M);
 		*PhysicalAddr = Start + VA.Pg2M.PhysPgOffset;
-		PRINT("-> 2MB page %lx - %lx => %lx\n", Start, Start + 0x200000 - 1, *PhysicalAddr);
+		DBG("-> 2MB page %lx - %lx => %lx\n", Start, Start + 0x200000 - 1, *PhysicalAddr);
 		return EFI_SUCCESS;
 	}
-	PRINT("-> Nx:%x|A:%x|PCD:%x|PWT:%x|US:%x|RW:%x|P:%x -> %lx\n",
+	DBG("-> Nx:%x|A:%x|PCD:%x|PWT:%x|US:%x|RW:%x|P:%x -> %lx\n",
 		PDE->Bits.Nx, PDE->Bits.Accessed,
 		PDE->Bits.CacheDisabled, PDE->Bits.WriteThrough,
 		PDE->Bits.UserSupervisor, PDE->Bits.ReadWrite, PDE->Bits.Present,
@@ -269,12 +267,12 @@ GetPhysicalAddr(PAGE_MAP_AND_DIRECTORY_POINTER *PageTable, EFI_VIRTUAL_ADDRESS  
 	PTE4K += VA.Pg4K.PTOffset;
 	VAStart.Pg4K.PTOffset = VA.Pg4K.PTOffset;
 	VAEnd.Pg4K.PTOffset = VA.Pg4K.PTOffset;
-	PRINT("PTE[%03x] at %p = %lx Region: %lx - %lx\n", VA.Pg4K.PTOffset, PTE4K, PTE4K->Uint64, VAStart.Uint64, VAEnd.Uint64);
+	DBG("PTE[%03x] at %p = %lx Region: %lx - %lx\n", VA.Pg4K.PTOffset, PTE4K, PTE4K->Uint64, VAStart.Uint64, VAEnd.Uint64);
 	if (!PTE4K->Bits.Present) {
-		PRINT("-> Mapping not present!\n");
+		DBG("-> Mapping not present!\n");
 		return EFI_NO_MAPPING;
 	}
-	PRINT("-> Nx:%x|G:%x|PAT:%x|D:%x|A:%x|PCD:%x|PWT:%x|US:%x|RW:%x|P:%x -> %lx\n",
+	DBG("-> Nx:%x|G:%x|PAT:%x|D:%x|A:%x|PCD:%x|PWT:%x|US:%x|RW:%x|P:%x -> %lx\n",
 		PTE4K->Bits.Nx, PTE4K->Bits.Global, PTE4K->Bits.PAT,
 		PTE4K->Bits.Dirty, PTE4K->Bits.Accessed,
 		PTE4K->Bits.CacheDisabled, PTE4K->Bits.WriteThrough,
@@ -307,7 +305,8 @@ VmAllocateMemoryPool(VOID)
 		Print(L"VmAllocateMemoryPool: AllocatePagesFromTop(EfiBootServicesData) = %r\n", Status);
 	} else {
 		VmMemoryPool = (UINT8*)Addr;
-		PRINT("VmMemoryPool = %lx\n", VmMemoryPool);
+		DBG("VmMemoryPool = %lx - %lx\n", VmMemoryPool, VmMemoryPool + EFI_PAGES_TO_SIZE(VmMemoryPoolFreePages) - 1);
+		DBGnvr("VmMemoryPool = %lx - %lx\n", VmMemoryPool, VmMemoryPool + EFI_PAGES_TO_SIZE(VmMemoryPoolFreePages) - 1);
 	}
 	return Status;
 }
@@ -334,6 +333,7 @@ VmAllocatePages(UINTN NumPages)
 		VmMemoryPool += EFI_PAGES_TO_SIZE(NumPages);
 		VmMemoryPoolFreePages -= NumPages;
 	} else {
+		DBGnvr("VmAllocatePages - no more pages!\n");
 		CpuDeadLoop();
 	}
 	return AllocatedPages;
@@ -358,8 +358,8 @@ VmMapVirtualPage(PAGE_MAP_AND_DIRECTORY_POINTER *PageTable, EFI_VIRTUAL_ADDRESS 
 	
 	VA.Uint64 = (UINT64)VirtualAddr;
 	//VA_FIX_SIGN_EXTEND(VA);
-	PRINT("VmMapVirtualPage VA %lx => PA %lx\nPageTable: %p\n", VirtualAddr, PhysicalAddr, PageTable);
-	PRINT("VA: %lx => Indexes PML4=%x, PDP=%x, PD=%x, PT=%x\n",
+	DBG("VmMapVirtualPage VA %lx => PA %lx\nPageTable: %p\n", VirtualAddr, PhysicalAddr, PageTable);
+	DBG("VA: %lx => Indexes PML4=%x, PDP=%x, PD=%x, PT=%x\n",
 		VA.Uint64, VA.Pg4K.PML4Offset, VA.Pg4K.PDPOffset, VA.Pg4K.PDOffset, VA.Pg4K.PTOffset);
 	
 	// PML4
@@ -369,7 +369,7 @@ VmMapVirtualPage(PAGE_MAP_AND_DIRECTORY_POINTER *PageTable, EFI_VIRTUAL_ADDRESS 
 	// since we may mess the mapping of first virtual region (happens in VBox and probably DUET).
 	// check for this on first call and if true, just clear our PML4 - we'll rebuild it in later step
 	if (PML4 != PageTable && PML4->Bits.Present && PageTable->Bits.PageTableBaseAddress == PML4->Bits.PageTableBaseAddress) {
-		PRINT("PML4 points to the same table as first PML4 - releasing it and rebuiding in a separate table\n");
+		DBG("PML4 points to the same table as first PML4 - releasing it and rebuiding in a separate table\n");
 		PML4->Uint64 = 0;
 	}
 	
@@ -381,12 +381,12 @@ VmMapVirtualPage(PAGE_MAP_AND_DIRECTORY_POINTER *PageTable, EFI_VIRTUAL_ADDRESS 
 	VAEnd.Pg4K.PML4Offset = VA.Pg4K.PML4Offset;
 	VA_FIX_SIGN_EXTEND(VAEnd);
 	// print it
-	PRINT("PML4[%03x] at %p = %lx Region: %lx - %lx\n", VA.Pg4K.PML4Offset, PML4, PML4->Uint64, VAStart.Uint64, VAEnd.Uint64);
+	DBG("PML4[%03x] at %p = %lx Region: %lx - %lx\n", VA.Pg4K.PML4Offset, PML4, PML4->Uint64, VAStart.Uint64, VAEnd.Uint64);
 	if (!PML4->Bits.Present) {
-		PRINT("-> Mapping not present, creating new PML4 entry and page with PDPE entries!\n");
+		DBG("-> Mapping not present, creating new PML4 entry and page with PDPE entries!\n");
 		PDPE = (PAGE_MAP_AND_DIRECTORY_POINTER *)VmAllocatePages(1);
 		if (PDPE == NULL) {
-			PRINT("No memory - exiting.\n");
+			DBG("No memory - exiting.\n");
 			return EFI_NO_MAPPING;
 		}
 		
@@ -407,10 +407,10 @@ VmMapVirtualPage(PAGE_MAP_AND_DIRECTORY_POINTER *PageTable, EFI_VIRTUAL_ADDRESS 
 		PML4->Uint64 = ((UINT64)PDPE) & PT_ADDR_MASK_4K;
 		PML4->Bits.ReadWrite = 1;
 		PML4->Bits.Present = 1;
-		PRINT("added to PLM4 as %lx\n", PML4->Uint64);
+		DBG("added to PLM4 as %lx\n", PML4->Uint64);
 		// and continue with mapping ...
 	}
-	PRINT("-> Nx:%x|A:%x|PCD:%x|PWT:%x|US:%x|RW:%x|P:%x -> %lx\n",
+	DBG("-> Nx:%x|A:%x|PCD:%x|PWT:%x|US:%x|RW:%x|P:%x -> %lx\n",
 		PML4->Bits.Nx, PML4->Bits.Accessed,
 		PML4->Bits.CacheDisabled, PML4->Bits.WriteThrough,
 		PML4->Bits.UserSupervisor, PML4->Bits.ReadWrite, PML4->Bits.Present,
@@ -422,19 +422,19 @@ VmMapVirtualPage(PAGE_MAP_AND_DIRECTORY_POINTER *PageTable, EFI_VIRTUAL_ADDRESS 
 	PDPE += VA.Pg4K.PDPOffset;
 	VAStart.Pg4K.PDPOffset = VA.Pg4K.PDPOffset;
 	VAEnd.Pg4K.PDPOffset = VA.Pg4K.PDPOffset;
-	PRINT("PDPE[%03x] at %p = %lx Region: %lx - %lx\n", VA.Pg4K.PDPOffset, PDPE, PDPE->Uint64, VAStart.Uint64, VAEnd.Uint64);
+	DBG("PDPE[%03x] at %p = %lx Region: %lx - %lx\n", VA.Pg4K.PDPOffset, PDPE, PDPE->Uint64, VAStart.Uint64, VAEnd.Uint64);
 	if (!PDPE->Bits.Present || (PDPE->Bits.MustBeZero & 0x1)) {
-		PRINT("-> Mapping not present or mapped as 1GB page, creating new PDPE entry and page with PDE entries!\n");
+		DBG("-> Mapping not present or mapped as 1GB page, creating new PDPE entry and page with PDE entries!\n");
 		PDE = (PAGE_MAP_AND_DIRECTORY_POINTER *)VmAllocatePages(1);
 		if (PDE == NULL) {
-			PRINT("No memory - exiting.\n");
+			DBG("No memory - exiting.\n");
 			return EFI_NO_MAPPING;
 		}
 		ZeroMem(PDE, EFI_PAGE_SIZE);
 		
 		if (PDPE->Bits.MustBeZero & 0x1) {
 			// was 1GB page - init new PDE array to get the same mapping but with 2MB pages
-			PRINT("-> was 1GB page, initing new PDE array to get the same mapping but with 2MB pages!\n");
+			DBG("-> was 1GB page, initing new PDE array to get the same mapping but with 2MB pages!\n");
 			PTE2M = (PAGE_TABLE_2M_ENTRY *)PDE;
 			Start = (PDPE->Uint64 & PT_ADDR_MASK_1G);
 			for (Index = 0; Index < 512; Index++) {
@@ -451,10 +451,10 @@ VmMapVirtualPage(PAGE_MAP_AND_DIRECTORY_POINTER *PageTable, EFI_VIRTUAL_ADDRESS 
 		PDPE->Uint64 = ((UINT64)PDE) & PT_ADDR_MASK_4K;
 		PDPE->Bits.ReadWrite = 1;
 		PDPE->Bits.Present = 1;
-		PRINT("added to PDPE as %lx\n", PDPE->Uint64);
+		DBG("added to PDPE as %lx\n", PDPE->Uint64);
 		// and continue with mapping ...
 	}
-	PRINT("-> Nx:%x|A:%x|PCD:%x|PWT:%x|US:%x|RW:%x|P:%x -> %lx\n",
+	DBG("-> Nx:%x|A:%x|PCD:%x|PWT:%x|US:%x|RW:%x|P:%x -> %lx\n",
 		PDPE->Bits.Nx, PDPE->Bits.Accessed,
 		PDPE->Bits.CacheDisabled, PDPE->Bits.WriteThrough,
 		PDPE->Bits.UserSupervisor, PDPE->Bits.ReadWrite, PDPE->Bits.Present,
@@ -466,19 +466,19 @@ VmMapVirtualPage(PAGE_MAP_AND_DIRECTORY_POINTER *PageTable, EFI_VIRTUAL_ADDRESS 
 	PDE += VA.Pg4K.PDOffset;
 	VAStart.Pg4K.PDOffset = VA.Pg4K.PDOffset;
 	VAEnd.Pg4K.PDOffset = VA.Pg4K.PDOffset;
-	PRINT("PDE[%03x] at %p = %lx Region: %lx - %lx\n", VA.Pg4K.PDOffset, PDE, PDE->Uint64, VAStart.Uint64, VAEnd.Uint64);
+	DBG("PDE[%03x] at %p = %lx Region: %lx - %lx\n", VA.Pg4K.PDOffset, PDE, PDE->Uint64, VAStart.Uint64, VAEnd.Uint64);
 	if (!PDE->Bits.Present || (PDE->Bits.MustBeZero & 0x1)) {
-		PRINT("-> Mapping not present or mapped as 2MB page, creating new PDE entry and page with PTE4K entries!\n");
+		DBG("-> Mapping not present or mapped as 2MB page, creating new PDE entry and page with PTE4K entries!\n");
 		PTE4K = (PAGE_TABLE_4K_ENTRY *)VmAllocatePages(1);
 		if (PTE4K == NULL) {
-			PRINT("No memory - exiting.\n");
+			DBG("No memory - exiting.\n");
 			return EFI_NO_MAPPING;
 		}
 		ZeroMem(PTE4K, EFI_PAGE_SIZE);
 		
 		if (PDE->Bits.MustBeZero & 0x1) {
 			// was 2MB page - init new PTE array to get the same mapping but with 4KB pages
-			PRINT("-> was 2MB page - initing new PTE array to get the same mapping but with 4KB pages!\n");
+			DBG("-> was 2MB page - initing new PTE array to get the same mapping but with 4KB pages!\n");
 			PTE4KTmp = (PAGE_TABLE_4K_ENTRY *)PTE4K;
 			Start = (PDE->Uint64 & PT_ADDR_MASK_2M);
 			for (Index = 0; Index < 512; Index++) {
@@ -494,10 +494,10 @@ VmMapVirtualPage(PAGE_MAP_AND_DIRECTORY_POINTER *PageTable, EFI_VIRTUAL_ADDRESS 
 		PDE->Uint64 = ((UINT64)PTE4K) & PT_ADDR_MASK_4K;
 		PDE->Bits.ReadWrite = 1;
 		PDE->Bits.Present = 1;
-		PRINT("added to PDE as %lx\n", PDE->Uint64);
+		DBG("added to PDE as %lx\n", PDE->Uint64);
 		// and continue with mapping ...
 	}
-	PRINT("-> Nx:%x|A:%x|PCD:%x|PWT:%x|US:%x|RW:%x|P:%x -> %lx\n",
+	DBG("-> Nx:%x|A:%x|PCD:%x|PWT:%x|US:%x|RW:%x|P:%x -> %lx\n",
 		PDE->Bits.Nx, PDE->Bits.Accessed,
 		PDE->Bits.CacheDisabled, PDE->Bits.WriteThrough,
 		PDE->Bits.UserSupervisor, PDE->Bits.ReadWrite, PDE->Bits.Present,
@@ -509,11 +509,11 @@ VmMapVirtualPage(PAGE_MAP_AND_DIRECTORY_POINTER *PageTable, EFI_VIRTUAL_ADDRESS 
 	PTE4K += VA.Pg4K.PTOffset;
 	VAStart.Pg4K.PTOffset = VA.Pg4K.PTOffset;
 	VAEnd.Pg4K.PTOffset = VA.Pg4K.PTOffset;
-	PRINT("PTE[%03x] at %p = %lx Region: %lx - %lx\n", VA.Pg4K.PTOffset, PTE4K, PTE4K->Uint64, VAStart.Uint64, VAEnd.Uint64);
+	DBG("PTE[%03x] at %p = %lx Region: %lx - %lx\n", VA.Pg4K.PTOffset, PTE4K, PTE4K->Uint64, VAStart.Uint64, VAEnd.Uint64);
 	if (PTE4K->Bits.Present) {
-		PRINT("mapping already present - remapping!\n");
+		DBG("mapping already present - remapping!\n");
 	}
-	PRINT("-> Nx:%x|G:%x|PAT:%x|D:%x|A:%x|PCD:%x|PWT:%x|US:%x|RW:%x|P:%x -> %lx\n",
+	DBG("-> Nx:%x|G:%x|PAT:%x|D:%x|A:%x|PCD:%x|PWT:%x|US:%x|RW:%x|P:%x -> %lx\n",
 		PTE4K->Bits.Nx, PTE4K->Bits.Global, PTE4K->Bits.PAT,
 		PTE4K->Bits.Dirty, PTE4K->Bits.Accessed,
 		PTE4K->Bits.CacheDisabled, PTE4K->Bits.WriteThrough,
@@ -524,7 +524,7 @@ VmMapVirtualPage(PAGE_MAP_AND_DIRECTORY_POINTER *PageTable, EFI_VIRTUAL_ADDRESS 
 	PTE4K->Uint64 = ((UINT64)PhysicalAddr) & PT_ADDR_MASK_4K;
 	PTE4K->Bits.ReadWrite = 1;
 	PTE4K->Bits.Present = 1;
-	PRINT("added to PTE4K as %lx\n", PTE4K->Uint64);
+	DBG("added to PTE4K as %lx\n", PTE4K->Uint64);
 	
 	return EFI_SUCCESS;
 
@@ -542,7 +542,7 @@ VmMapVirtualPages(PAGE_MAP_AND_DIRECTORY_POINTER *PageTable, EFI_VIRTUAL_ADDRESS
 		VirtualAddr += 0x1000;
 		PhysicalAddr += 0x1000;
 		NumPages--;
-		PRINT("NumPages: %d, %lx => %lx\n", NumPages, VirtualAddr, PhysicalAddr);
+		DBG("NumPages: %d, %lx => %lx\n", NumPages, VirtualAddr, PhysicalAddr);
 		//WaitForKeyPress(L"press a key to continue\n");
 	}
 	return Status;
