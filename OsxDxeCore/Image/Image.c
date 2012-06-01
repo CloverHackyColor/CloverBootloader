@@ -418,7 +418,7 @@ GetPeCoffImageFixLoadingAssignedAddress(
      }
      SectionHeaderOffset += sizeof (EFI_IMAGE_SECTION_HEADER);
    }
-   DEBUG ((EFI_D_INFO|EFI_D_LOAD, "LOADING MODULE FIXED INFO: Loading module at fixed address 0x%11p. Status = %r \n", (VOID *)(UINTN)(ImageContext->ImageAddress), Status));
+//   DEBUG ((EFI_D_INFO|EFI_D_LOAD, "LOADING MODULE FIXED INFO: Loading module at fixed address 0x%11p. Status = %r \n", (VOID *)(UINTN)(ImageContext->ImageAddress), Status));
    return Status;
 }
 /**
@@ -475,8 +475,8 @@ CoreLoadPeImage (
       // The PE/COFF loader can support loading image types that can be executed.
       // If we loaded an image type that we can not execute return EFI_UNSUPORTED.
       //
-      DEBUG ((EFI_D_ERROR, "Image type %s can't be loaded ", GetMachineTypeName(Image->ImageContext.Machine)));
-      DEBUG ((EFI_D_ERROR, "on %s UEFI system.\n", GetMachineTypeName(mDxeCoreImageMachineType)));
+//      DEBUG ((EFI_D_ERROR, "Image type %s can't be loaded ", GetMachineTypeName(Image->ImageContext.Machine)));
+//      DEBUG ((EFI_D_ERROR, "on %s UEFI system.\n", GetMachineTypeName(mDxeCoreImageMachineType)));
       return EFI_UNSUPPORTED;
     }
   }
@@ -539,7 +539,7 @@ CoreLoadPeImage (
           //
       	  // If the code memory is not ready, invoke CoreAllocatePage with AllocateAnyPages to load the driver.
       	  //
-          DEBUG ((EFI_D_INFO|EFI_D_LOAD, "LOADING MODULE FIXED ERROR: Loading module at fixed address failed since specified memory is not available.\n"));
+  //        DEBUG ((EFI_D_INFO|EFI_D_LOAD, "LOADING MODULE FIXED ERROR: Loading module at fixed address failed since specified memory is not available.\n"));
         
           Status = CoreAllocatePages (
                      AllocateAnyPages,
@@ -1494,6 +1494,11 @@ CoreStartImage (
   LOADED_IMAGE_PRIVATE_DATA     *LastImage;
   UINT64                        HandleDatabaseKey;
   UINTN                         SetJumpFlag;
+  UINT64                        Tick;
+  EFI_HANDLE                    Handle;
+
+  Tick = 0;
+  Handle = ImageHandle;
 
   Image = CoreLoadedImageInfo (ImageHandle);
   if (Image == NULL  ||  Image->Started) {
@@ -1508,15 +1513,14 @@ CoreStartImage (
     // Do not ASSERT here, because image might be loaded via EFI_IMAGE_MACHINE_CROSS_TYPE_SUPPORTED
     // But it can not be started.
     //
-    DEBUG ((EFI_D_ERROR, "Image type %s can't be started ", GetMachineTypeName(Image->Machine)));
-    DEBUG ((EFI_D_ERROR, "on %s UEFI system.\n", GetMachineTypeName(mDxeCoreImageMachineType)));
+//    DEBUG ((EFI_D_ERROR, "Image type %s can't be started ", GetMachineTypeName(Image->Machine)));
+ //   DEBUG ((EFI_D_ERROR, "on %s UEFI system.\n", GetMachineTypeName(mDxeCoreImageMachineType)));
     return EFI_UNSUPPORTED;
   }
 
-  //
-  // Don't profile Objects or invalid start requests
-  //
-  PERF_START (ImageHandle, "StartImage:", NULL, 0);
+  PERF_CODE (
+    Tick = GetPerformanceCounter ();
+  );
 
 
   //
@@ -1536,7 +1540,12 @@ CoreStartImage (
   //
   Image->JumpBuffer = AllocatePool (sizeof (BASE_LIBRARY_JUMP_BUFFER) + BASE_LIBRARY_JUMP_BUFFER_ALIGNMENT);
   if (Image->JumpBuffer == NULL) {
-    PERF_END (ImageHandle, "StartImage:", NULL, 0);
+    //
+    // Image may be unloaded after return with failure,
+    // then ImageHandle may be invalid, so use NULL handle to record perf log.
+    //
+    PERF_START (NULL, "StartImage:", NULL, Tick);
+    PERF_END (NULL, "StartImage:", NULL, 0);
     return EFI_OUT_OF_RESOURCES;
   }
   Image->JumpContext = ALIGN_POINTER (Image->JumpBuffer, BASE_LIBRARY_JUMP_BUFFER_ALIGNMENT);
@@ -1627,12 +1636,17 @@ CoreStartImage (
   //
   if (EFI_ERROR (Image->Status) || Image->Type == EFI_IMAGE_SUBSYSTEM_EFI_APPLICATION) {
     CoreUnloadAndCloseImage (Image, TRUE);
+    //
+    // ImageHandle may be invalid after the image is unloaded, so use NULL handle to record perf log.
+    //
+    Handle = NULL;
   }
 
   //
   // Done
   //
-  PERF_END (ImageHandle, "StartImage:", NULL, 0);
+  PERF_START (Handle, "StartImage:", NULL, Tick);
+  PERF_END (Handle, "StartImage:", NULL, 0);
   return Status;
 }
 

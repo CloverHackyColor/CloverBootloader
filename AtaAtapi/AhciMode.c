@@ -1,7 +1,7 @@
 /** @file
   The file for AHCI mode of ATA host controller.
   
-  Copyright (c) 2010 - 2011, Intel Corporation. All rights reserved.<BR>
+  Copyright (c) 2010 - 2012, Intel Corporation. All rights reserved.<BR>
   This program and the accompanying materials                          
   are licensed and made available under the terms and conditions of the BSD License         
   which accompanies this distribution.  The full text of the license may be found at        
@@ -2285,6 +2285,8 @@ AhciModeInitialization (
         //
         // No device detected at this port.
         //
+        Offset = EFI_AHCI_PORT_START + Port * EFI_AHCI_PORT_REG_WIDTH + EFI_AHCI_PORT_CMD;
+        AhciAndReg (PciIo, Offset, (UINT32) ~(EFI_AHCI_PORT_CMD_SUD));
         continue;
       }
  //     DEBUG ((EFI_D_ERROR, "wait for PxTFD.BSY and PxTFD.DRQ and PxTFD.ERR to be zero\n"));
@@ -2357,7 +2359,7 @@ AhciModeInitialization (
       //
       // If the device is a hard disk, then try to enable S.M.A.R.T feature
       //
-      if (DeviceType == EfiIdeHarddisk) {
+      if ((DeviceType == EfiIdeHarddisk) && PcdGetBool (PcdAtaSmartEnable)) {
         AhciAtaSmartSupport (
           PciIo,
           AhciRegisters,

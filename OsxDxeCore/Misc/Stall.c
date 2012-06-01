@@ -25,7 +25,19 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
   of ticks to wait, so this function loops when Counter is larger than 0xffffffff.
 
   @param  Counter           Number of ticks to wait.
-*/
+
+**/
+VOID
+CoreInternalWaitForTick (
+  IN UINT64  Counter
+  )
+{
+  while ((Counter & 0xffffffff00000000ULL) != 0) {
+    gMetronome->WaitForTick (gMetronome, 0xffffffff);
+    Counter -= 0xffffffff;
+  }
+  gMetronome->WaitForTick (gMetronome, (UINT32)Counter);
+}
 
 /**
   Introduces a fine-grained stall.
@@ -43,7 +55,7 @@ CoreStall (
   IN UINTN            Microseconds
   )
 {
-  UINT32  Counter;
+  UINT64  Counter;
   UINT32  Remainder;
 
   if (gMetronome == NULL) {

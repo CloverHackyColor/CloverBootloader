@@ -1,7 +1,7 @@
 /** @file
   The platform boot manager reference implementation
 
-Copyright (c) 2004 - 2011, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2004 - 2012, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -232,6 +232,14 @@ CallBootManager (
 
   BdsLibEnumerateAllBootOption (&mBootOptionsList);
 
+  //
+  // Group the legacy boot options for the same device type
+  //
+  GroupMultipleLegacyBootOption4SameType ();
+
+  InitializeListHead (&mBootOptionsList);
+  BdsLibBuildOptionFromVar (&mBootOptionsList, L"BootOrder");
+
   HiiHandle = gBootManagerPrivate.HiiHandle;
 
   //
@@ -268,9 +276,9 @@ CallBootManager (
     mKeyInput++;
 
     //
-    // Don't display the boot option marked as LOAD_OPTION_HIDDEN
+    // Don't display the hidden/inactive boot option
     //
-    if ((Option->Attribute & LOAD_OPTION_HIDDEN) != 0) {
+    if (((Option->Attribute & LOAD_OPTION_HIDDEN) != 0) || ((Option->Attribute & LOAD_OPTION_ACTIVE) == 0)) {
       continue;
     }
 
@@ -365,6 +373,11 @@ CallBootManager (
   // Will leave browser, check any reset required change is applied? if yes, reset system
   //
   SetupResetReminder ();
+
+  //
+  // Restore to original mode before launching boot option.
+  //
+  BdsSetConsoleMode (FALSE);
 
   //
   // parse the selected option

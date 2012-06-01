@@ -1,7 +1,7 @@
 /** @file
   Perform the platform memory test
 
-Copyright (c) 2004 - 2009, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2004 - 2012, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -281,13 +281,16 @@ BdsMemoryTest (
     return EFI_SUCCESS;
   }
 
+  if (!FeaturePcdGet(PcdBootlogoOnlyEnable)) {
   TmpStr = GetStringById (STRING_TOKEN (STR_ESC_TO_SKIP_MEM_TEST));
 
   if (TmpStr != NULL) {
     PrintXY (10, 10, NULL, NULL, TmpStr);
     FreePool (TmpStr);
   }
-
+  } else {
+    DEBUG ((EFI_D_INFO, "Enter memory test.\n"));
+  }
   do {
     Status = GenMemoryTest->PerformMemoryTest (
                               GenMemoryTest,
@@ -306,6 +309,7 @@ BdsMemoryTest (
       ASSERT (0);
     }
 
+    if (!FeaturePcdGet(PcdBootlogoOnlyEnable)) {
     TempData = (UINT32) DivU64x32 (TotalMemorySize, 16);
     TestPercent = (UINTN) DivU64x32 (
                             DivU64x32 (MultU64x32 (TestedMemorySize, 100), 16),
@@ -338,10 +342,14 @@ BdsMemoryTest (
     }
 
     PreviousValue = TestPercent;
+    } else {
+      DEBUG ((EFI_D_INFO, "Perform memory test (ESC to skip).\n"));
+    }
 
     KeyStatus     = gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
     if (!EFI_ERROR (KeyStatus) && (Key.ScanCode == SCAN_ESC)) {
       if (!RequireSoftECCInit) {
+        if (!FeaturePcdGet(PcdBootlogoOnlyEnable)) {
         TmpStr = GetStringById (STRING_TOKEN (STR_PERFORM_MEM_TEST));
         if (TmpStr != NULL) {
           PlatformBdsShowProgress (
@@ -356,6 +364,7 @@ BdsMemoryTest (
         }
 
         PrintXY (10, 10, NULL, NULL, L"100");
+        }
         Status = GenMemoryTest->Finished (GenMemoryTest);
         goto Done;
       }
@@ -367,6 +376,7 @@ BdsMemoryTest (
   Status = GenMemoryTest->Finished (GenMemoryTest);
 
 Done:
+  if (!FeaturePcdGet(PcdBootlogoOnlyEnable)) {
   UnicodeValueToString (StrTotalMemory, COMMA_TYPE, TotalMemorySize, 0);
   if (StrTotalMemory[0] == L',') {
     StrTotalMemory++;
@@ -388,7 +398,12 @@ Done:
     (UINTN) PreviousValue
     );
 
+  } else {
+    DEBUG ((EFI_D_INFO, "%d bytes of system memory tested OK\r\n", TotalMemorySize));
+  }
+  
   FreePool (Pos);
+
 
   //
   // Use a DynamicHii type pcd to save the boot status, which is used to

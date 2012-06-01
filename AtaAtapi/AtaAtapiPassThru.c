@@ -263,7 +263,7 @@ AtaPassThruPassThruExecute (
                      Packet->Timeout,
                      Task
                      );
-          DBG(L"AtaPioDataInOut UDMA Status=%r\n", Status);
+ //         DBG(L"AtaPioDataInOut UDMA Status=%r\n", Status);
           break;
         case EFI_ATA_PASS_THRU_PROTOCOL_UDMA_DATA_OUT:
           Status = AtaUdmaInOut (
@@ -1060,7 +1060,7 @@ CreateNewDeviceInfo (
   DeviceInfo->Port           = Port;
   DeviceInfo->PortMultiplier = PortMultiplier;
   DeviceInfo->Type           = DeviceType;
-	DBG(L"Creating DeviceInfo for Chan=%d dev=%d type=%a\n", Port, PortMultiplier, DeviceType == EfiIdeCdrom ? "cdrom   " : "harddisk");
+//	DBG(L"Creating DeviceInfo for Chan=%d dev=%d type=%a\n", Port, PortMultiplier, DeviceType == EfiIdeCdrom ? "cdrom   " : "harddisk");
   if (IdentifyData != NULL) {
 //	  DBG(L" IdentifyData copied\n");
     DeviceInfo->IdentifyData = AllocateCopyPool (sizeof (EFI_IDENTIFY_DATA), IdentifyData);
@@ -1882,7 +1882,7 @@ ExtScsiPassThruPassThru (
   Instance = EXT_SCSI_PASS_THRU_PRIVATE_DATA_FROM_THIS (This);
 
   if ((Packet == NULL) || (Packet->Cdb == NULL)) {
-	  DBG(L"(Packet == NULL) || (Packet->Cdb == NULL)\n");
+//	  DBG(L"(Packet == NULL) || (Packet->Cdb == NULL)\n");
     return EFI_INVALID_PARAMETER;
   }
 
@@ -1891,7 +1891,7 @@ ExtScsiPassThruPassThru (
   //
   if ((Packet->CdbLength != 6) && (Packet->CdbLength != 10) &&
       (Packet->CdbLength != 12) && (Packet->CdbLength != 16)) {
-	  DBG(L"Packet->CdbLength = %d\n", Packet->CdbLength);
+//	  DBG(L"Packet->CdbLength = %d\n", Packet->CdbLength);
     return EFI_INVALID_PARAMETER;
   }
   
@@ -1964,7 +1964,7 @@ ExtScsiPassThruPassThru (
       }
 
       Status = AtaPacketCommandExecute (Instance->PciIo, &Instance->IdeRegisters[Port], Port, PortMultiplier, Packet);
- 	   DBG(L"AtaPacketCommandExecute Multiplier=%d Status=%r\n", PortMultiplier, Status);
+ //	   DBG(L"AtaPacketCommandExecute Multiplier=%d Status=%r\n", PortMultiplier, Status);
       break;
     case EfiAtaAhciMode:
       Status = AhciPacketCommandExecute (Instance->PciIo, &Instance->AhciRegisters, Port, PortMultiplier, Packet);
