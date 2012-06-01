@@ -203,6 +203,8 @@ OnSimpleFileSystem (
 	OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
   gEvent = 1;
 //  ReinitRefitLib();
+  //ScanVolumes();
+  //enter GUI
   DrawMenuText(L"OnSimpleFileSystem", 0, 0, UGAHeight-40, 1);
   
 	gBS->RestoreTPL (OldTpl);
@@ -212,17 +214,43 @@ OnSimpleFileSystem (
 EFI_STATUS
 GuiEventsInitialize ()
 {
+  EFI_STATUS				Status;
+  EFI_EVENT				Event;
+  VOID*					Registration;
+	VOID*					RegSimpleFileSystem;
+  
+  
   gEvent = 0;
-  gBS->CreateEventEx (
+  Status = gBS->CreateEvent (
                       EVT_NOTIFY_SIGNAL,
                       TPL_NOTIFY,
                       OnSimpleFileSystem,
                       NULL,
+                      &Event);
+  if(!EFI_ERROR(Status))
+	{
+		Status = gBS->RegisterProtocolNotify (
                       &gEfiSimpleFileSystemProtocolGuid,
-                      &mSimpleFileSystemChangeEvent
-                      );
+                      Event,
+                      &RegSimpleFileSystem);
+	}
+
+  // register notify for exit boot services
+	Status = gBS->CreateEvent (EVT_SIGNAL_EXIT_BOOT_SERVICES,
+                             TPL_CALLBACK,
+                             OnExitBootServices, 
+                             NULL,
+                             &ExitBootServiceEvent);
+	if(!EFI_ERROR(Status))
+	{
+		Status = gBS->RegisterProtocolNotify (
+                      &gEfiStatusCodeRuntimeProtocolGuid,
+                      ExitBootServiceEvent, 
+                      &Registration);
+	} 
   
-    return EFI_SUCCESS;
+  
+  return Status;
 }  
 
 EFI_STATUS

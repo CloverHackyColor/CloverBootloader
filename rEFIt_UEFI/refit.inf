@@ -182,6 +182,7 @@
   gEfiScsiIoProtocolGuid                        ## PROTOCOL SOMETIMES_CONSUMES
   gEfiScsiPassThruProtocolGuid                  ## PROTOCOL SOMETIMES_CONSUMES
   gEfiSimpleNetworkProtocolGuid                 # PROTOCOL CONSUMES
+  gEfiStatusCodeRuntimeProtocolGuid				# PROTOCOL CONSUMES
   gEfiUgaDrawProtocolGuid |PcdUgaConsumeSupport # PROTOCOL SOMETIMES_CONSUMES
   
   gEfiAbsolutePointerProtocolGuid
@@ -194,9 +195,6 @@
   gEfiSimplePointerProtocolGuid
   gEfiSmbiosProtocolGuid
   gEfiSecurityArchProtocolGuid  
-  gEfiScsiIoProtocolGuid                        ## PROTOCOL SOMETIMES_CONSUMES
-  gEfiScsiPassThruProtocolGuid                  ## PROTOCOL SOMETIMES_CONSUMES
-  gEfiExtScsiPassThruProtocolGuid               ## PROTOCOL SOMETIMES_CONSUMES
 
   AppleDevicePropertyProtocolGuid
   gEfiConsoleControlProtocolGuid

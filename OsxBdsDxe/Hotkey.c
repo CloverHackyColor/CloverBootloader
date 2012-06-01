@@ -331,8 +331,8 @@ HotkeyBoot (
       //
       // Call platform action to indicate the boot fail
       //
-      mHotkeyBootOption->StatusString = GetStringById (STRING_TOKEN (STR_BOOT_FAILED));
-      PlatformBdsBootFail (mHotkeyBootOption, Status, ExitData, ExitDataSize);
+      mHotkeyBootOption->StatusString = NULL; //GetStringById (STRING_TOKEN (STR_BOOT_FAILED));
+     // PlatformBdsBootFail (mHotkeyBootOption, Status, ExitData, ExitDataSize);
     } else {
       //
       // Call platform action to indicate the boot success

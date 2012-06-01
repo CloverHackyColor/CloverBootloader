@@ -193,7 +193,8 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
     }
     // NOTE: We also include the terminating null in the length for safety.
     ChildLoadedImage->LoadOptions = (VOID *)LoadOptions;
-    ChildLoadedImage->LoadOptionsSize = ((UINT32)StrLen(LoadOptions) + 1) * sizeof(CHAR16);
+    ChildLoadedImage->LoadOptionsSize = (UINT32)StrSize(LoadOptions);
+    //((UINT32)StrLen(LoadOptions) + 1) * sizeof(CHAR16);
     Print(L"Using load options '%s'\n", LoadOptions);
   }
   //Print(L"Image loaded at: %p\n", ChildLoadedImage->ImageBase);
@@ -207,7 +208,7 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   // Before calling the image, enable the Watchdog Timer for
   // the 5 Minute period - Slice - NO! 60seconds is enough
   //  
-  gBS->SetWatchdogTimer (60, 0x0000, 0x00, NULL);
+//  gBS->SetWatchdogTimer (60, 0x0000, 0x00, NULL);
   
   ReturnStatus = Status = gBS->StartImage(ChildImageHandle, NULL, NULL);
   //
@@ -300,8 +301,8 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       // VirtualAddressChange - not needed at all
       // OnReadyToBootEvent - causes rebuilding of System table and patches are lost
       // SimpleFileSystemChangeEvent - not working - it will be at the start of refit
-      EventsInitialize ();
-      gBS->SignalEvent(OnReadyToBootEvent);
+     // EventsInitialize ();
+     // gBS->SignalEvent(OnReadyToBootEvent);
       //gBS->SignalEvent(mVirtualAddressChangeEvent);
     }
     FinalizeSmbios();
@@ -1553,313 +1554,317 @@ EFIAPI
 RefitMain (IN EFI_HANDLE           ImageHandle,
            IN EFI_SYSTEM_TABLE     *SystemTable)
 {
-    EFI_STATUS Status;
-    BOOLEAN           MainLoopRunning = TRUE;
-    BOOLEAN           ReinitDesktop = TRUE;
-    REFIT_MENU_ENTRY  *ChosenEntry;
-    REFIT_MENU_ENTRY  *DefaultEntry;
-    REFIT_MENU_ENTRY  *OptionEntry;
-    INTN              DefaultIndex;
-    UINTN             MenuExit;
-    UINTN             Size, i;
-    UINT8             *Buffer = NULL;
-    CHAR8             *MsgBuffer = NULL;
-    // CHAR16            *InputBuffer; //, *Y;
-    //  EFI_INPUT_KEY Key;
-    
-    // bootstrap
-    //    InitializeLib(ImageHandle, SystemTable);
+  EFI_STATUS Status;
+  BOOLEAN           MainLoopRunning = TRUE;
+  BOOLEAN           ReinitDesktop = TRUE;
+  REFIT_MENU_ENTRY  *ChosenEntry;
+  REFIT_MENU_ENTRY  *DefaultEntry;
+  REFIT_MENU_ENTRY  *OptionEntry;
+  INTN              DefaultIndex;
+  UINTN             MenuExit;
+  UINTN             Size, i;
+  UINT8             *Buffer = NULL;
+  CHAR8             *MsgBuffer = NULL;
+  // CHAR16            *InputBuffer; //, *Y;
+  //  EFI_INPUT_KEY Key;
+  
+  // bootstrap
+  //    InitializeLib(ImageHandle, SystemTable);
 	gST				= SystemTable;
 	gImageHandle	= ImageHandle;
 	gBS				= SystemTable->BootServices;
 	gRS				= SystemTable->RuntimeServices;
 	Status = EfiGetSystemConfigurationTable (&gEfiDxeServicesTableGuid, (VOID **) &gDS);
 	
-    // firmware detection
-    gFirmwareClover = StrCmp(gST->FirmwareVendor, L"CLOVER") == 0;
-    //	DBG("Running on Firmware %s, it is Clover?%a\n", gST->FirmwareVendor, gFirmwareClover?"Yes":"No");
-    
-    InitializeConsoleSim();
+  // firmware detection
+  gFirmwareClover = StrCmp(gST->FirmwareVendor, L"CLOVER") == 0;
+  //	DBG("Running on Firmware %s, it is Clover?%a\n", gST->FirmwareVendor, gFirmwareClover?"Yes":"No");
+  
+  InitializeConsoleSim();
 	InitBooterLog();
-    DBG(" \nStarting rEFIt rev %a on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
-    //  InitScreen();
-    /*    
-     DBG("Test arithmetics\n");
-     UINT64 X = 123000123;
-     UINT32 Y = 453000;
-     UINT32 Z = DivU64x32(X, Y);
-     DBG("X=%ld Y=%d Z=%d again=%d\n", X, Y, Z, DivU64x32(X, Y));
-     X = MultU64x32(Z, Y);
-     DBG("Z*Y=%ld again=%ld\n", X, MultU64x32(Z, Y));
-     PauseForKey(L"Test complete");
-     */    
-    Status = InitRefitLib(gImageHandle);
-    if (EFI_ERROR(Status))
-        return Status;
-    
-    InitializeUnicodeCollationProtocol();
-    
-    // read GUI configuration
-    ReadConfig();
-    
-    // init screen and dump video modes to log
-    InitScreen();
-    
-    // disable EFI watchdog timer
-    gBS->SetWatchdogTimer(0x0000, 0x0000, 0x0000, NULL);
-    
-    MsgBuffer = egDumpGOPVideoModes();
-    if (MsgBuffer != NULL) {
-        DBG("%a", MsgBuffer);
-        FreePool(MsgBuffer);
+  DBG(" \nStarting rEFIt rev %a on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
+  //  InitScreen();
+  /*    
+   DBG("Test arithmetics\n");
+   UINT64 X = 123000123;
+   UINT32 Y = 453000;
+   UINT32 Z = DivU64x32(X, Y);
+   DBG("X=%ld Y=%d Z=%d again=%d\n", X, Y, Z, DivU64x32(X, Y));
+   X = MultU64x32(Z, Y);
+   DBG("Z*Y=%ld again=%ld\n", X, MultU64x32(Z, Y));
+   PauseForKey(L"Test complete");
+   */    
+  Status = InitRefitLib(gImageHandle);
+  if (EFI_ERROR(Status))
+    return Status;
+  
+  InitializeUnicodeCollationProtocol();
+  
+  // read GUI configuration
+  ReadConfig();
+  
+  // init screen and dump video modes to log
+  InitScreen();
+  
+  // disable EFI watchdog timer
+  gBS->SetWatchdogTimer(0x0000, 0x0000, 0x0000, NULL);
+  
+  MsgBuffer = egDumpGOPVideoModes();
+  if (MsgBuffer != NULL) {
+    DBG("%a", MsgBuffer);
+    FreePool(MsgBuffer);
+  }
+  
+  ThemePath = PoolPrint(L"EFI\\BOOT\\themes\\%s", GlobalConfig.Theme);
+  DBG("Theme: %s Path: %s\n", GlobalConfig.Theme, ThemePath);
+  MainMenu.TimeoutSeconds = GlobalConfig.Timeout;
+  
+  PrepatchSmbios();
+  DBG("running on %a\n", gSettings.OEMProduct);
+  DBG("... with board %a\n", gSettings.OEMBoard);
+  Size = iStrLen(gSettings.OEMProduct, 64);
+  for (i=0; i<Size; i++) {
+    if (gSettings.OEMProduct[i] == 0x2F) {
+      gSettings.OEMProduct[i] = 0x5F;
     }
-    
-    ThemePath = PoolPrint(L"EFI\\BOOT\\themes\\%s", GlobalConfig.Theme);
-    DBG("Theme: %s Path: %s\n", GlobalConfig.Theme, ThemePath);
-    MainMenu.TimeoutSeconds = GlobalConfig.Timeout;
-
-    PrepatchSmbios();
-    DBG("running on %a\n", gSettings.OEMProduct);
-    DBG("... with board %a\n", gSettings.OEMBoard);
-    Size = iStrLen(gSettings.OEMProduct, 64);
-    for (i=0; i<Size; i++) {
-        if (gSettings.OEMProduct[i] == 0x2F) {
-            gSettings.OEMProduct[i] = 0x5F;
-        }
+  }
+  Size = iStrLen(gSettings.OEMBoard, 64);
+  for (i=0; i<Size; i++) {
+    if (gSettings.OEMBoard[i] == 0x2F) {
+      gSettings.OEMBoard[i] = 0x5F;
     }
-    Size = iStrLen(gSettings.OEMBoard, 64);
-    for (i=0; i<Size; i++) {
-        if (gSettings.OEMBoard[i] == 0x2F) {
-            gSettings.OEMBoard[i] = 0x5F;
-        }
-    }
-    
-    
-    if (FileExists(SelfRootDir, PoolPrint(L"EFI\\OEM\\%a\\config.plist", gSettings.OEMProduct))) {
-        OEMPath = PoolPrint(L"EFI\\OEM\\%a", gSettings.OEMProduct);
-    } else if (FileExists(SelfRootDir, PoolPrint(L"EFI\\OEM\\%a\\config.plist", gSettings.OEMBoard))) {
-        OEMPath = PoolPrint(L"EFI\\OEM\\%a", gSettings.OEMBoard);
-    } else {
-        OEMPath = L"EFI";
-    }
-    
-    // further bootstrap (now with config available)
-    //  SetupScreen();
-    
-    LoadDrivers();
-    
-    //Now we have to reinit handles
-    Status = ReinitSelfLib();
-    if (EFI_ERROR(Status)){
-        Print(L" %r", Status);
-        PauseForKey(L"Error reinit refit\n");
-        return Status;
-    }
-    //      DBG("reinit OK\n");
-    ZeroMem((VOID*)&gSettings, sizeof(SETTINGS_DATA));
-    ZeroMem((VOID*)&gGraphics[0], sizeof(GFX_PROPERTIES) * 4);
-    //    ScanVolumes();
-    //      DBG("ScanVolumes OK\n");
-    GuiEventsInitialize();
-
-    GetCPUProperties();
-    GetDevices();
-    //    DBG("GetDevices OK\n");
-    ScanSPD();
-    //      DBG("ScanSPD OK\n");
-    SetPrivateVarProto();
-    //      DBG("SetPrivateVarProto OK\n");
-    GetDefaultSettings();
-    //      DBG("GetDefaultSettings OK\n");
-    Size = 0;
-    Status = gRS->GetVariable(L"boot-args",
-                              &gEfiAppleBootGuid,  NULL,
-                              &Size, 										   
-                              Buffer);
+  }
+  
+  
+  if (FileExists(SelfRootDir, PoolPrint(L"EFI\\OEM\\%a\\config.plist", gSettings.OEMProduct))) {
+    OEMPath = PoolPrint(L"EFI\\OEM\\%a", gSettings.OEMProduct);
+  } else if (FileExists(SelfRootDir, PoolPrint(L"EFI\\OEM\\%a\\config.plist", gSettings.OEMBoard))) {
+    OEMPath = PoolPrint(L"EFI\\OEM\\%a", gSettings.OEMBoard);
+  } else {
+    OEMPath = L"EFI";
+  }
+  
+  // further bootstrap (now with config available)
+  //  SetupScreen();
+  
+  LoadDrivers();
+  
+  //Now we have to reinit handles
+  Status = ReinitSelfLib();
+  if (EFI_ERROR(Status)){
+    Print(L" %r", Status);
+    PauseForKey(L"Error reinit refit\n");
+    return Status;
+  }
+  //      DBG("reinit OK\n");
+  ZeroMem((VOID*)&gSettings, sizeof(SETTINGS_DATA));
+  ZeroMem((VOID*)&gGraphics[0], sizeof(GFX_PROPERTIES) * 4);
+  //    ScanVolumes();
+  //      DBG("ScanVolumes OK\n");
+  GuiEventsInitialize();
+  
+  GetCPUProperties();
+  GetDevices();
+  //    DBG("GetDevices OK\n");
+  ScanSPD();
+  //      DBG("ScanSPD OK\n");
+  SetPrivateVarProto();
+  //      DBG("SetPrivateVarProto OK\n");
+  GetDefaultSettings();
+  //      DBG("GetDefaultSettings OK\n");
+  Size = 0;
+  Status = gRS->GetVariable(L"boot-args",
+                            &gEfiAppleBootGuid,  NULL,
+                            &Size, 										   
+                            Buffer);
 	if (Status == EFI_BUFFER_TOO_SMALL) {
 		Buffer = (UINT8 *) AllocateAlignedPages (EFI_SIZE_TO_PAGES(Size), 16);		
 		if (!Buffer){
 			DBG("Errors allocating kernel flags!\n");
  		} else {
 			Status = gRS->GetVariable (L"boot-args",
-                                       &gEfiAppleBootGuid, NULL,
-                                       &Size, 
-                                       Buffer);
+                                 &gEfiAppleBootGuid, NULL,
+                                 &Size, 
+                                 Buffer);
 		}		
 	}
-    //  DBG("BootArgs Size=%d\n", Size);
-    //  PauseForKey(L"BootArgs ok");
-    
+  //  DBG("BootArgs Size=%d\n", Size);
+  //  PauseForKey(L"BootArgs ok");
+  
 	if ((Status == EFI_SUCCESS) && (Size != 0))
 		CopyMem(gSettings.BootArgs, Buffer, Size);	
-        if (Buffer) {
-            gBS->FreePages((EFI_PHYSICAL_ADDRESS) (UINTN)Buffer, EFI_SIZE_TO_PAGES(Size));
-            Buffer = NULL;
-        }
-    
-    //Second step. Load config.plist into gSettings	
+    if (Buffer) {
+      gBS->FreePages((EFI_PHYSICAL_ADDRESS) (UINTN)Buffer, EFI_SIZE_TO_PAGES(Size));
+      Buffer = NULL;
+    }
+  
+  //Second step. Load config.plist into gSettings	
 	Status = GetUserSettings(SelfRootDir);  
-    //      DBG("GetUserSettings OK\n");
+  //      DBG("GetUserSettings OK\n");
+  
+  //test font
+  //     DBG("PrepareFont OK\n");
+  PrepareFont();
+  FillInputs();
+  
+  do {
+//     PauseForKey(L"Enter main cycle");
+    MainMenu.EntryCount = 0;
+    ScanVolumes();
+    // scan for loaders and tools, add then to the menu
+    if (!GlobalConfig.NoLegacy && GlobalConfig.LegacyFirst){
+      DBG("scan legacy first\n");
+      ScanLegacy();
+    }
+    ScanLoader();
+    //      DBG("ScanLoader OK\n");
+    if (!GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst){
+      DBG("scan legacy second\n");
+      ScanLegacy();
+    }
+    //     DBG("ScanLegacy OK\n");
+    if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
+      //            DBG("scan tools\n");
+      ScanTool();
+    }
+    //      DBG("ScanTool OK\n");
+    // fixed other menu entries
+    //           DBG("FillInputs OK\n"); 
+    if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
+      MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
+      AddMenuEntry(&MainMenu, &MenuEntryAbout);
+    }
     
-    //test font
-    //     DBG("PrepareFont OK\n");
-    PrepareFont();
-    FillInputs();
+    if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
+      MenuEntryOptions.Image = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
+      AddMenuEntry(&MainMenu, &MenuEntryOptions);
+    }  
     
-    do {
-   //   PauseForKey(L"Enter main cycle");
-        MainMenu.EntryCount = 0;
-        ScanVolumes();
-        // scan for loaders and tools, add then to the menu
-        if (!GlobalConfig.NoLegacy && GlobalConfig.LegacyFirst){
-            DBG("scan legacy first\n");
-            ScanLegacy();
-        }
-        ScanLoader();
-        //      DBG("ScanLoader OK\n");
-        if (!GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst){
-            DBG("scan legacy second\n");
-            ScanLegacy();
-        }
-        //     DBG("ScanLegacy OK\n");
-        if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
-            //            DBG("scan tools\n");
-            ScanTool();
-        }
-        //      DBG("ScanTool OK\n");
-        // fixed other menu entries
-        //           DBG("FillInputs OK\n"); 
-        if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
-            MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
-            AddMenuEntry(&MainMenu, &MenuEntryAbout);
-        }
-        
-        if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
-            MenuEntryOptions.Image = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
-            AddMenuEntry(&MainMenu, &MenuEntryOptions);
-        }  
-        
-        if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.EntryCount == 0) {
-            MenuEntryShutdown.Image = BuiltinIcon(BUILTIN_ICON_FUNC_SHUTDOWN);
-            //    DBG("Shutdown.Image->Width=%d\n", MenuEntryShutdown.Image->Width);
-            AddMenuEntry(&MainMenu, &MenuEntryShutdown);
-            MenuEntryReset.Image = BuiltinIcon(BUILTIN_ICON_FUNC_RESET);
-            //    DBG("Reset.Image->Width=%d\n", MenuEntryReset.Image->Width);
-            AddMenuEntry(&MainMenu, &MenuEntryReset);
-        }
-        
-        // assign shortcut keys
-        /*   DBG("First entries in main menu\n");
-         for (i = 0; i < MainMenu.EntryCount && MainMenu.Entries[i]->Row == 0 && i < 9; i++){
-         MainMenu.Entries[i]->ShortcutDigit = (CHAR16)('1' + i);
-         DBG("%d: %s %d\n", i, MainMenu.Entries[i]->Title, MainMenu.Entries[i]->Tag);
-         }
-         */        
-        //  DrawMenuText(L"Test Русский", 14, 0, UGAHeight-40, 5);  
-        //  PauseForKey(L"Test fonts");
-        // MsgLog("StrSize of ABC=%d\n", StrSize(L"ABC")); //result=8
-        // MsgLog("sizeof ABC=%d\n", sizeof(L"ABC"));  //result=8
-        
-        // wait for user ACK when there were errors
-        FinishTextScreen(FALSE);
-        
-        DefaultIndex = FindDefaultEntry();
-        //  DBG("DefaultIndex=%d and MainMenu.EntryCount=%d\n", DefaultIndex, MainMenu.EntryCount);
-        if ((DefaultIndex >= 0) && (DefaultIndex < (INTN)MainMenu.EntryCount)) {
-            DefaultEntry = MainMenu.Entries[DefaultIndex];
-        } else {
-            DefaultEntry = NULL;
-        }
-       // PauseForKey(L"Enter main loop");
-      MainLoopRunning = TRUE;
-        while (MainLoopRunning) {
-            //    DBG("Enter main loop\n");
-            MenuExit = RunMainMenu(&MainMenu, DefaultIndex, &ChosenEntry);
-            //    DBG("out from menu\n");
-            if ((DefaultEntry != NULL) && (MenuExit == MENU_EXIT_TIMEOUT)) {
-                //      DBG("boot by timeout\n");
-                StartLoader((LOADER_ENTRY *)DefaultEntry);
-            }
-            
-            if (MenuExit == MENU_EXIT_OPTIONS){
-                OptionsMenu(&OptionEntry);
-                //ApplyInputs();
-                continue;
-            }
-            
-            if (MenuExit == MENU_EXIT_HELP){
-                HelpRefit();
-                continue;
-            }
-            
-            //EjectVolume
-            if (MenuExit == MENU_EXIT_EJECT){
-                if ((ChosenEntry->Tag == TAG_LOADER) ||
-                    (ChosenEntry->Tag == TAG_LEGACY)) {
-                    Status = EjectVolume(((LOADER_ENTRY *)ChosenEntry)->Volume);
-                    if (!EFI_ERROR(Status)) {
-                        break; //main loop is broken so Reinit all
-                    }
-                }      
-                continue;
-            }
-            
-            
-            // We don't allow exiting the main menu with the Escape key.
-            if (MenuExit == MENU_EXIT_ESCAPE)
-                break;   //refresh main menu
-            //           continue;
-            
-            switch (ChosenEntry->Tag) {
-                    
-                case TAG_RESET:    // Restart
-                    TerminateScreen();
-                    gRS->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
-                    MainLoopRunning = FALSE;   // just in case we get this far
-                    break;
-                    
-                case TAG_SHUTDOWN: // Shut Down
-                    TerminateScreen();
-                    gRS->ResetSystem(EfiResetShutdown, EFI_SUCCESS, 0, NULL);
-                    MainLoopRunning = FALSE;   // just in case we get this far
-                    break;
-                    
-                case TAG_OPTIONS:    // Options like KernelFlags, DSDTname etc.
-                    OptionsMenu(&OptionEntry);
-                    //ApplyInputs();
-                    break;
-                    
-                case TAG_ABOUT:    // About rEFIt
-                    AboutRefit();
-                    break;
-                    
-                case TAG_LOADER:   // Boot OS via .EFI loader
-                    StartLoader((LOADER_ENTRY *)ChosenEntry);
-                    break;
-                    
-                case TAG_LEGACY:   // Boot legacy OS
-                    StartLegacy((LEGACY_ENTRY *)ChosenEntry);
-                    break;
-                    
-                case TAG_TOOL:     // Start a EFI tool
-                    StartTool((LOADER_ENTRY *)ChosenEntry);
-                  BdsLibConnectAllDriversToAllControllers();
-                  PauseForKey(L"Returned from StartTool\n");
-                    MainLoopRunning = FALSE;
-                    break;
-                    
-            } //switch
-        } //MainLoopRunning
-        UninitRefitLib();
-   //   PauseForKey(L"After uninit");
-        ReinitRefitLib();
-  //    PauseForKey(L"After ReinitRefitLib");
-    } while (ReinitDesktop);
+    if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.EntryCount == 0) {
+      MenuEntryShutdown.Image = BuiltinIcon(BUILTIN_ICON_FUNC_SHUTDOWN);
+      //    DBG("Shutdown.Image->Width=%d\n", MenuEntryShutdown.Image->Width);
+      AddMenuEntry(&MainMenu, &MenuEntryShutdown);
+      MenuEntryReset.Image = BuiltinIcon(BUILTIN_ICON_FUNC_RESET);
+      //    DBG("Reset.Image->Width=%d\n", MenuEntryReset.Image->Width);
+      AddMenuEntry(&MainMenu, &MenuEntryReset);
+    }
     
-    // If we end up here, things have gone wrong. Try to reboot, and if that
-    // fails, go into an endless loop.
-    gRS->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
-    EndlessIdleLoop();
+    // assign shortcut keys
+    /*   DBG("First entries in main menu\n");
+     for (i = 0; i < MainMenu.EntryCount && MainMenu.Entries[i]->Row == 0 && i < 9; i++){
+     MainMenu.Entries[i]->ShortcutDigit = (CHAR16)('1' + i);
+     DBG("%d: %s %d\n", i, MainMenu.Entries[i]->Title, MainMenu.Entries[i]->Tag);
+     }
+     */        
+    //  DrawMenuText(L"Test Русский", 14, 0, UGAHeight-40, 5);  
+    //  PauseForKey(L"Test fonts");
+    // MsgLog("StrSize of ABC=%d\n", StrSize(L"ABC")); //result=8
+    // MsgLog("sizeof ABC=%d\n", sizeof(L"ABC"));  //result=8
     
-    return EFI_SUCCESS;
+    // wait for user ACK when there were errors
+    FinishTextScreen(FALSE);
+    
+    DefaultIndex = FindDefaultEntry();
+    //  DBG("DefaultIndex=%d and MainMenu.EntryCount=%d\n", DefaultIndex, MainMenu.EntryCount);
+    if ((DefaultIndex >= 0) && (DefaultIndex < (INTN)MainMenu.EntryCount)) {
+      DefaultEntry = MainMenu.Entries[DefaultIndex];
+    } else {
+      DefaultEntry = NULL;
+    }
+    // PauseForKey(L"Enter main loop");
+    MainLoopRunning = TRUE;
+    while (MainLoopRunning) {
+      //    DBG("Enter main loop\n");
+      MenuExit = RunMainMenu(&MainMenu, DefaultIndex, &ChosenEntry);
+      //    DBG("out from menu\n");
+      if ((DefaultEntry != NULL) && (MenuExit == MENU_EXIT_TIMEOUT)) {
+        //      DBG("boot by timeout\n");
+        StartLoader((LOADER_ENTRY *)DefaultEntry);
+      }
+      
+      if (MenuExit == MENU_EXIT_OPTIONS){
+        OptionsMenu(&OptionEntry);
+        //ApplyInputs();
+        continue;
+      }
+      
+      if (MenuExit == MENU_EXIT_HELP){
+        HelpRefit();
+        continue;
+      }
+      
+      //EjectVolume
+      if (MenuExit == MENU_EXIT_EJECT){
+        if ((ChosenEntry->Tag == TAG_LOADER) ||
+            (ChosenEntry->Tag == TAG_LEGACY)) {
+          Status = EjectVolume(((LOADER_ENTRY *)ChosenEntry)->Volume);
+          if (!EFI_ERROR(Status)) {
+            break; //main loop is broken so Reinit all
+          }
+        }      
+        continue;
+      }
+      
+      
+      // We don't allow exiting the main menu with the Escape key.
+      if (MenuExit == MENU_EXIT_ESCAPE)
+        break;   //refresh main menu
+      //           continue;
+      
+      switch (ChosenEntry->Tag) {
+          
+        case TAG_RESET:    // Restart
+          TerminateScreen();
+          gRS->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
+          MainLoopRunning = FALSE;   // just in case we get this far
+          break;
+          
+        case TAG_SHUTDOWN: // Shut Down
+          TerminateScreen();
+          gRS->ResetSystem(EfiResetShutdown, EFI_SUCCESS, 0, NULL);
+          MainLoopRunning = FALSE;   // just in case we get this far
+          break;
+          
+        case TAG_OPTIONS:    // Options like KernelFlags, DSDTname etc.
+          OptionsMenu(&OptionEntry);
+          //ApplyInputs();
+          break;
+          
+        case TAG_ABOUT:    // About rEFIt
+          AboutRefit();
+          break;
+          
+        case TAG_LOADER:   // Boot OS via .EFI loader
+          StartLoader((LOADER_ENTRY *)ChosenEntry);
+          break;
+          
+        case TAG_LEGACY:   // Boot legacy OS
+          StartLegacy((LEGACY_ENTRY *)ChosenEntry);
+          break;
+          
+        case TAG_TOOL:     // Start a EFI tool
+          StartTool((LOADER_ENTRY *)ChosenEntry);
+          TerminateScreen(); //does not happen
+       //   return EFI_SUCCESS;
+          //  BdsLibConnectAllDriversToAllControllers();
+          PauseForKey(L"Returned from StartTool\n");
+          MainLoopRunning = FALSE;
+          break;
+          
+      } //switch
+    } //MainLoopRunning
+    UninitRefitLib();
+    //   PauseForKey(L"After uninit");
+    //reconnectAll
+    ReinitRefitLib();
+    //    PauseForKey(L"After ReinitRefitLib");
+  } while (ReinitDesktop);
+  
+  // If we end up here, things have gone wrong. Try to reboot, and if that
+  // fails, go into an endless loop.
+  //Slice - NO!!! Return to EFI GUI
+  //   gRS->ResetSystem(EfiResetCold, EFI_SUCCESS, 0, NULL);
+  //   EndlessIdleLoop();
+  
+  return EFI_SUCCESS;
 }

@@ -233,8 +233,8 @@ BdsBootDeviceSelect (
       //
       // Call platform action to indicate the boot fail
       //
-      BootOption->StatusString = GetStringById (STRING_TOKEN (STR_BOOT_FAILED));
-      PlatformBdsBootFail (BootOption, Status, ExitData, ExitDataSize);
+      BootOption->StatusString = NULL; //GetStringById (STRING_TOKEN (STR_BOOT_FAILED));
+      //PlatformBdsBootFail (BootOption, Status, ExitData, ExitDataSize);
 
       //
       // Check the next boot option
