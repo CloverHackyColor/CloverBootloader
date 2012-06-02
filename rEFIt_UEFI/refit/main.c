@@ -211,7 +211,7 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
 //  gBS->SetWatchdogTimer (60, 0x0000, 0x00, NULL);
   
   ReturnStatus = Status = gBS->StartImage(ChildImageHandle, NULL, NULL);
-  PauseForKey(L"Returned from StartImage\n");
+//  PauseForKey(L"Returned from StartImage\n");
   //
   // Clear the Watchdog Timer after the image returns
   //
@@ -226,14 +226,15 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
     if (ErrorInStep != NULL)
       *ErrorInStep = 3;
   }
-  PauseForKey(L"Error checked\n");
+//  PauseForKey(L"Error checked\n");
   // re-open file handles
-  Status = ReinitRefitLib();  
-  PauseForKey(L"ReinitRefitLib OK\n");
+//  Status = ReinitRefitLib();  
+//  PauseForKey(L"ReinitRefitLib OK\n");
   //Slice
-  if (EFI_ERROR(Status)) {
+/*  if (EFI_ERROR(Status)) {
     goto bailout_unload;
   }
+ */
   if (!EFI_ERROR(ReturnStatus)) { //why unload driver?!
     goto bailout;
   }
@@ -1562,6 +1563,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   EFI_STATUS Status;
   BOOLEAN           MainLoopRunning = TRUE;
   BOOLEAN           ReinitDesktop = TRUE;
+  BOOLEAN           AfterTool = FALSE;
   REFIT_MENU_ENTRY  *ChosenEntry;
   REFIT_MENU_ENTRY  *DefaultEntry;
   REFIT_MENU_ENTRY  *OptionEntry;
@@ -1714,6 +1716,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   do {
 //     PauseForKey(L"Enter main cycle");
+    AfterTool = FALSE;
     MainMenu.EntryCount = 0;
     ScanVolumes();
     // scan for loaders and tools, add then to the menu
@@ -1852,18 +1855,21 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
           TerminateScreen(); //does not happen
        //   return EFI_SUCCESS;
           //  BdsLibConnectAllDriversToAllControllers();
-          PauseForKey(L"Returned from StartTool\n");
+      //    PauseForKey(L"Returned from StartTool\n");
           MainLoopRunning = FALSE;
+          AfterTool = TRUE;
           break;
           
       } //switch
     } //MainLoopRunning
-    UninitRefitLib();
-    //   PauseForKey(L"After uninit");
-    //reconnectAll
-    BdsLibConnectAllDriversToAllControllers();
-    ReinitRefitLib();
-    //    PauseForKey(L"After ReinitRefitLib");
+    if (!AfterTool) {
+      UninitRefitLib();
+      //   PauseForKey(L"After uninit");
+      //reconnectAll
+      BdsLibConnectAllDriversToAllControllers();
+      ReinitRefitLib();
+      //    PauseForKey(L"After ReinitRefitLib");      
+    }
   } while (ReinitDesktop);
   
   // If we end up here, things have gone wrong. Try to reboot, and if that

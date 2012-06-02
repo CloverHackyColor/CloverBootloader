@@ -463,7 +463,7 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwarePerformanceDataTableS3Support|FALSE|BOOLEAN|0x00010064
 
   ## This PCD specified whether the S.M.A.R.T feature of attached ATA hard disks are enabled.
-  gEfiMdeModulePkgTokenSpaceGuid.PcdAtaSmartEnable|TRUE|BOOLEAN|0x00010065
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAtaSmartEnable|FALSE|BOOLEAN|0x00010065
 
 [PcdsFeatureFlag.IA32, PcdsFeatureFlag.X64]
   ##
