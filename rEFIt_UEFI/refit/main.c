@@ -211,20 +211,25 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
 //  gBS->SetWatchdogTimer (60, 0x0000, 0x00, NULL);
   
   ReturnStatus = Status = gBS->StartImage(ChildImageHandle, NULL, NULL);
+  PauseForKey(L"Returned from StartImage\n");
   //
   // Clear the Watchdog Timer after the image returns
   //
   gBS->SetWatchdogTimer (0x0000, 0x0000, 0x0000, NULL);
   
   // control returns here when the child image calls Exit()
-  UnicodeSPrint(ErrorInfo, 255, L"returned from %s", ImageTitle);
+  if (ImageTitle) {
+    UnicodeSPrint(ErrorInfo, 255, L"returned from %s", ImageTitle);
+  }
+  
   if (CheckError(Status, ErrorInfo)) {
     if (ErrorInStep != NULL)
       *ErrorInStep = 3;
   }
-  
+  PauseForKey(L"Error checked\n");
   // re-open file handles
   Status = ReinitRefitLib();  
+  PauseForKey(L"ReinitRefitLib OK\n");
   //Slice
   if (EFI_ERROR(Status)) {
     goto bailout_unload;
@@ -1225,7 +1230,7 @@ static VOID StartTool(IN LOADER_ENTRY *Entry)
     BeginExternalScreen(Entry->UseGraphicsMode, Entry->me.Title + 6);  // assumes "Start <title>" as assigned below
     StartEFIImage(Entry->DevicePath, Entry->LoadOptions, Basename(Entry->LoaderPath),
                   Basename(Entry->LoaderPath), NULL);
-//    FinishExternalScreen();
+    FinishExternalScreen();
 //  ReinitSelfLib();
 }
 
@@ -1856,6 +1861,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     UninitRefitLib();
     //   PauseForKey(L"After uninit");
     //reconnectAll
+    BdsLibConnectAllDriversToAllControllers();
     ReinitRefitLib();
     //    PauseForKey(L"After ReinitRefitLib");
   } while (ReinitDesktop);

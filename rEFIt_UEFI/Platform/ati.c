@@ -453,7 +453,7 @@ AtiDevProp ati_devprop_list[] = {
 	{FLAGTRUE,	FALSE,	"name",						get_nameparent_val,     NULVAL							},
 	{FLAGTRUE,	FALSE,	"device_type",		get_nameparent_val,     NULVAL							},
 	{FLAGTRUE,	FALSE,	"model",					get_model_val,          STRVAL("ATI Radeon")},
-  {FLAGTRUE,	FALSE,	"VRAM,totalsize",	get_vramtotalsize_val,	NULVAL              },
+//  {FLAGTRUE,	FALSE,	"VRAM,totalsize",	get_vramtotalsize_val,	NULVAL              },
 	
 	{FLAGTRUE,	FALSE,	NULL,	NULL,	NULVAL}
 };

@@ -12,6 +12,8 @@
 		<string>MacHDD</string>
 		<key>CustomUUID</key>
 		<string>511CE200-1000-4000-9999-010203040506</string>
+		<key>InjectSystemID</key>
+		<string>No</string>
 	</dict>
 	<key>SMBIOS</key>
 	<dict>
@@ -69,6 +71,8 @@
 		<string>1024</string>
 		<key>LoadVBios</key>
 		<string>No</string>
+		<key>PatchVBios</key>
+		<string>No</string>
 		<key>VideoPorts</key>
 		<string>2</string>
 		<key>FBName</key>
@@ -87,7 +91,7 @@
 		<key>PCIRootUID</key>
 		<string>0</string>
 		<key>HDAInjection</key>
-		<string>887</string>
+		<string>Detect</string>
 		<key>LpcTune</key>
 		<string>Yes</string>
 	</dict>
@@ -116,6 +120,8 @@
 		<key>ResetValue</key>
 		<string>0xFE</string>
 		<key>smartUPS</key>
+		<string>No</string>
+		<key>PatchNMI</key>
 		<string>No</string>
 	</dict>
 </dict>
