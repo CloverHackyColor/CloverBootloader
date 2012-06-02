@@ -205,7 +205,8 @@ OnSimpleFileSystem (
 //  ReinitRefitLib();
   //ScanVolumes();
   //enter GUI
-  DrawMenuText(L"OnSimpleFileSystem", 0, 0, UGAHeight-40, 1);
+ // DrawMenuText(L"OnSimpleFileSystem", 0, 0, UGAHeight-40, 1);
+  MsgLog("OnSimpleFileSystem occured\n");
   
 	gBS->RestoreTPL (OldTpl);
   

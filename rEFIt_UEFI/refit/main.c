@@ -1781,6 +1781,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
     // PauseForKey(L"Enter main loop");
     MainLoopRunning = TRUE;
+    gEvent = 0; //clear to cancel loop
     while (MainLoopRunning) {
       //    DBG("Enter main loop\n");
       MenuExit = RunMainMenu(&MainMenu, DefaultIndex, &ChosenEntry);
@@ -1866,10 +1867,18 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       UninitRefitLib();
       //   PauseForKey(L"After uninit");
       //reconnectAll
-      BdsLibConnectAllDriversToAllControllers();
-      ReinitRefitLib();
+      if (!gFirmwareClover) {
+        BdsLibConnectAllEfi();
+      }
+      else {
+        DBG("ConnectAll after refresh menu\n");
+        BdsLibConnectAllDriversToAllControllers();
+      }
+      //  ReinitRefitLib();
       //    PauseForKey(L"After ReinitRefitLib");      
     }
+    ReinitSelfLib();
+//    PauseForKey(L"After ReinitSelfLib"); 
   } while (ReinitDesktop);
   
   // If we end up here, things have gone wrong. Try to reboot, and if that
