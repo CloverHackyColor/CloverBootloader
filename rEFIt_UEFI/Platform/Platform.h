@@ -414,10 +414,11 @@ typedef struct Symbol Symbol, *SymbolPtr;
 typedef struct {
   
   UINT32		type;
-  CHAR8     *string;
+  CHAR8			*string;
+  UINT8			*data;
   UINT32		offset;
-  VOID      *tag;
-  VOID      *tagNext;
+  VOID			*tag;
+  VOID			*tagNext;
   
 }Tag, *TagPtr;
 
@@ -670,7 +671,9 @@ extern UINT64                   TurboMsr;
 extern CHAR8*                   BiosVendor;
 extern UINT32                   mPropSize;
 extern UINT8*                   mProperties;
-extern CHAR8                    gSelectedUUID[];
+extern CHAR8                    *gEfiBootDevice;
+extern EFI_DEVICE_PATH_PROTOCOL *gEfiBootDeviceData;
+extern EFI_GUID                 *gEfiBootDeviceGuid;
 extern CHAR8*                   AppleSystemVersion[];
 extern CHAR8*	                  AppleFirmwareVersion[];
 extern CHAR8*	                  AppleReleaseDate[];
@@ -736,7 +739,7 @@ UINT16          GetAdvancedCpuType(VOID);
 EFI_STATUS      GetOSVersion(IN REFIT_VOLUME *Volume);
 EFI_STATUS      GetUserSettings(IN EFI_FILE *RootDir);
 EFI_STATUS      GetNVRAMSettings(VOID);
-EFI_STATUS      GetNVRAMPlistSettings(IN EFI_FILE *RootDir, CHAR16* NVRAMPlistPath);
+EFI_STATUS      GetNVRAMPlistSettings(IN EFI_FILE *RootDir, IN CHAR16* NVRAMPlistPath);
 EFI_STATUS      GetEdid(VOID);
 EFI_STATUS      SetFSInjection(IN LOADER_ENTRY *Entry);
 
@@ -773,6 +776,7 @@ EFI_STATUS  EjectVolume(IN REFIT_VOLUME *Volume);
 EFI_STATUS  bootElTorito(IN REFIT_VOLUME*	volume);
 EFI_STATUS  bootMBR(IN REFIT_VOLUME* volume);
 EFI_STATUS  bootPBR(IN REFIT_VOLUME* volume);
+//EFI_STATUS  bootLegacyBiosLegacyBoot(IN REFIT_VOLUME* volume);
 
 CHAR8*      XMLDecode(const CHAR8* src);
 EFI_STATUS  ParseXML(const CHAR8* buffer, TagPtr * dict);
@@ -789,5 +793,9 @@ VOID        PatchSmbios(VOID);
 VOID        FinalizeSmbios(VOID);
 
 EFI_STATUS  DisableUsbLegacySupport(VOID);
+
+UINT8		*Base64Decode(IN CHAR8 *EncodedData, OUT UINTN *DecodedSize);
+EFI_GUID	*FindGPTPartitionGuidInDevicePath(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath);
+
 
 #endif

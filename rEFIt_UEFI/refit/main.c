@@ -1420,134 +1420,259 @@ static VOID LoadDrivers(VOID)
 	DBG("Drivers connected\n");
 }
 
-INTN FindDefaultEntry(VOID)
+/** Searches for GPT HDD dev path node and return pointer to partition GUID or NULL. */
+EFI_GUID *FindGPTPartitionGuidInDevicePath(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 {
-  EFI_STATUS      Status;
-  UINTN           Index, Index2, Index3;
-  REFIT_VOLUME    *Volume;
-  LOADER_ENTRY    *Entry, *Entry2, *Entry3;
-  CHAR16*          VolumeUUID;
-  CHAR16*          SelectedUUID;
-  CHAR16*          SelectedUUID2;
-  CHAR16*          DevPath;
-  CHAR16*          DevPath2;
+  HARDDRIVE_DEVICE_PATH   *HDDDevPath;
+  EFI_GUID                *Guid = NULL;
+  
+  if (DevicePath == NULL) {
+    return NULL;
+  }
+  
+  while (!IsDevicePathEndType(DevicePath)
+         &&
+         !(DevicePathType(DevicePath) == MEDIA_DEVICE_PATH && DevicePathSubType(DevicePath) == MEDIA_HARDDRIVE_DP)
+         )
+  {
+    DevicePath = NextDevicePathNode(DevicePath);
+  }
+  
+  if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH
+      && DevicePathSubType(DevicePath) == MEDIA_HARDDRIVE_DP)
+  {
+    HDDDevPath = (HARDDRIVE_DEVICE_PATH*)DevicePath;
+    if (HDDDevPath->SignatureType == SIGNATURE_TYPE_GUID) {
+      Guid = (EFI_GUID*)HDDDevPath->Signature;
+    }
+  }
+  return Guid;
+}
+
+/** returns given time as miliseconds */
+UINT64 GetEfiTimeInMs(IN EFI_TIME *T)
+{
+  UINT64              TimeMs;
+  
+  TimeMs = T->Year;
+  TimeMs = TimeMs * 12 + T->Month;
+  TimeMs = TimeMs * 31 + T->Day; // counting with 31 day
+  TimeMs = TimeMs * 24 + T->Hour;
+  TimeMs = TimeMs * 60 + T->Minute;
+  TimeMs = TimeMs * 60 + T->Second;
+  TimeMs = TimeMs * 1000 + T->Nanosecond / 1000000;
+  // timezone?
+  DBG("%d-%d-%d %d:%d:%d (%ld ms)", T->Year, T->Month, T->Day, T->Hour, T->Minute, T->Second, TimeMs);
+  
+  return TimeMs;
+}
+
+INTN FindDefaultEntryNVRAM(VOID)
+{
+  EFI_STATUS          Status;
+  UINTN               Index;
+  REFIT_VOLUME        *Volume;
+  LOADER_ENTRY        *Entry;
+  EFI_GUID            *Guid;
   
   
-  //
-  // first try NVRAM variable
-  //
+  DBG("Checking NVRAM for efi-boot-device ...\n");
+  
+  // this will fill gEfiBootDeviceGuid, gEfiBootDevice, gEfiBootDeviceData
   Status = GetNVRAMSettings();
-  if (Status == EFI_SUCCESS) {
+  
+  if (Status == EFI_SUCCESS && gEfiBootDeviceGuid != NULL) {
     
-    // get UUID as Unicode string
-    SelectedUUID = PoolPrint(L"%a", gSelectedUUID);
+    DBG(" found efi-boot-device Guid = %g\n searching for that volume", gEfiBootDeviceGuid);
     
-    // search volume with gSelectedUUID
+    // find GPT volume with gEfiBootDeviceGuid
     for (Index = 0; Index < MainMenu.EntryCount && MainMenu.Entries[Index]->Row == 0; Index++) {
       
       Entry = (LOADER_ENTRY*)MainMenu.Entries[Index];
-      if (!Entry->Volume) {
+      if (!Entry->Volume || !Entry->Volume->RootDir) {
         continue;
       }
       
-      DevPath = DevicePathToStr(Entry->Volume->DevicePath);
-      VolumeUUID = StrStr(DevPath, L"GPT");
-      if (!VolumeUUID) {
-        continue;
-      }
+      Volume = Entry->Volume;
+      Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
       
-      if (StrStr(VolumeUUID, SelectedUUID))
-      {
-        FreePool(SelectedUUID);
-        FreePool(DevPath);
-        DBG("Default boot redirected by NVRAM efi-boot-disk to %s\n", Entry->Volume->VolName);
+      if (Guid && CompareGuid(Guid, gEfiBootDeviceGuid)) {
+        // that's the one
+        DBG(" -  found\nBoot redirected to Volume %d. '%s', GUID = %g\n", Index, Volume->VolName, Guid);
         return Index;
       }
-      FreePool(DevPath);
     }
     
-    FreePool(SelectedUUID);
+    DBG(" - not found\n");
   }
   
+  return -1;
+}
+
+INTN FindDefaultEntryNVRAMPlist(VOID)
+{
+  EFI_STATUS          Status;
+  UINTN               Index;
+  REFIT_VOLUME        *Volume;
+  LOADER_ENTRY        *Entry;
+  EFI_GUID            *Guid;
+  EFI_FILE_HANDLE     FileHandle;
+  EFI_FILE_INFO       *FileInfo;
+  UINT64              LastModifTimeMs;
+  UINT64              ModifTimeMs;
+  REFIT_VOLUME        *VolumeWithLatestNvramPlist;
+
 
   //
-  // then try DefaultBoot and nvram.plist
+  // find latest nvram.plist
+  //
+  
+  DBG("Searching volumes for latest nvram.plist ...\n");
+  
+  LastModifTimeMs = 0;
+  VolumeWithLatestNvramPlist = NULL;
+  
+  for (Index = 0; Index < MainMenu.EntryCount && MainMenu.Entries[Index]->Row == 0; Index++) {
+    
+    Entry = (LOADER_ENTRY*)MainMenu.Entries[Index];
+    if (!Entry->Volume || !Entry->Volume->RootDir) {
+      continue;
+    }
+    
+    Volume = Entry->Volume;
+    Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
+    
+    DBG("%d. Volume '%s', GUID = %g", Index, Volume->VolName, Guid);
+    if (Guid == NULL) {
+      // not a GUID partition
+      DBG(" - not GPT - skipping!\n");
+      continue;
+    }
+    
+    // check if nvram.plist exists
+    Status = Volume->RootDir->Open(Volume->RootDir, &FileHandle, L"nvram.plist", EFI_FILE_MODE_READ, 0);
+    if (EFI_ERROR(Status)) {
+      DBG(" - no nvram.plist - skipping!\n");
+      continue;
+    }
+    
+    // get nvram.plist modification date
+    FileInfo = EfiLibFileInfo(FileHandle);
+    if (FileInfo == NULL) {
+      DBG(" - no nvram.plist file info - skipping!\n");
+      FileHandle->Close(FileHandle);
+      continue;
+    }
+    
+    DBG(" Modified = ");
+    ModifTimeMs = GetEfiTimeInMs(&FileInfo->ModificationTime);
+    FreePool(FileInfo);
+    FileHandle->Close(FileHandle);
+    
+    // check if newer
+    if (LastModifTimeMs < ModifTimeMs) {
+      
+      DBG(" - newer - will use this one\n");
+      VolumeWithLatestNvramPlist = Volume;
+      LastModifTimeMs = ModifTimeMs;
+      
+    } else {
+      DBG(" - older - skipping!\n");
+    }
+  }
+  
+  //
+  // if we have nvram.plist - load it and get efi-boot-device partition Guid
+  //
+  
+  if (VolumeWithLatestNvramPlist != NULL) {
+    
+    DBG("Loading nvram.plist from Vol '%s' -", VolumeWithLatestNvramPlist->VolName);
+    
+    // this will fill gEfiBootDeviceGuid, gEfiBootDevice, gEfiBootDeviceData
+    Status = GetNVRAMPlistSettings(VolumeWithLatestNvramPlist->RootDir, L"nvram.plist");
+    
+    if (gEfiBootDeviceGuid == NULL || EFI_ERROR(Status)) {
+      DBG(" efi-boot-device not found: %r\n", Status);
+    } else {
+      
+      DBG(" found efi-boot-device Guid = %g\n searching for that volume", gEfiBootDeviceGuid);
+      
+      // find GPT volume with gEfiBootDeviceGuid
+      for (Index = 0; Index < MainMenu.EntryCount && MainMenu.Entries[Index]->Row == 0; Index++) {
+        
+        Entry = (LOADER_ENTRY*)MainMenu.Entries[Index];
+        if (!Entry->Volume || !Entry->Volume->RootDir) {
+          continue;
+        }
+        
+        Volume = Entry->Volume;
+        Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
+        
+        if (Guid && CompareGuid(Guid, gEfiBootDeviceGuid)) {
+          // that's the one
+          DBG(" -  found\nBoot redirected to Volume %d. '%s', GUID = %g\n", Index, Volume->VolName, Guid);
+          return Index;
+        }
+      }
+      
+      DBG(" - not found\n");
+    }
+  }
+  
+  return -1;
+}
+
+INTN FindDefaultEntry(VOID)
+{
+  INTN                Index;
+  REFIT_VOLUME        *Volume;
+  LOADER_ENTRY        *Entry;
+
+  
+  //
+  // try to get efi-boot-device
+  //
+  
+  if (!gFirmwareClover) {
+    
+    // UEFI boot: from NVRAM
+    Index = FindDefaultEntryNVRAM();
+    
+  } else {
+    
+    // CloverEFI boot: from latest nvram.plist
+    Index = FindDefaultEntryNVRAMPlist();
+    
+  }
+  
+  if (Index > -1) {
+    return Index;
+  }
+  
+  
+  //
+  // if not found so far, then try DefaultBoot
   //
   
   //   search volume with name in gSettings.DefaultBoot
   for (Index = 0; Index < MainMenu.EntryCount && MainMenu.Entries[Index]->Row == 0; Index++) {
+    
     Entry = (LOADER_ENTRY*)MainMenu.Entries[Index];
     if (!Entry->Volume) {
       continue;
     }
+    
     Volume = Entry->Volume;
     if (StrCmp(Volume->VolName, gSettings.DefaultBoot) != 0) {
       continue;
     }
-    DBG("Default volume %s found\n", Volume->VolName);
-    //   search nvram.plist on the volume    
-    Status = GetNVRAMPlistSettings(Volume->RootDir, L"nvram.plist");
-    if (!EFI_ERROR(Status)) {
-      //   search volume with gSelectedUUID
-      DBG("nvram.plist found, UUID to boot=%a\n", gSelectedUUID);
-      // get UUID as Unicode string
-      SelectedUUID = PoolPrint(L"%a", gSelectedUUID);
-      for (Index2 = 0; Index2 < MainMenu.EntryCount && MainMenu.Entries[Index2]->Row == 0; Index2++) {
-        Entry2 = (LOADER_ENTRY*)MainMenu.Entries[Index2];
-        if (!Entry2->Volume) {
-          continue;
-        }
-        DevPath = DevicePathToStr(Entry2->Volume->DevicePath);
-        VolumeUUID = StrStr(DevPath, L"GPT");
-        if (!VolumeUUID) {
-          continue;
-        }
-        if (StrStr(VolumeUUID, SelectedUUID))
-        {
-          //second pass search for user return from those partition
-          Status = GetNVRAMPlistSettings(Entry2->Volume->RootDir, L"nvram.plist");
-          if (!EFI_ERROR(Status)) {
-            //   search volume with gSelectedUUID
-            DBG("nvram.plist found, UUID to boot=%a\n", gSelectedUUID);
-            SelectedUUID2 = PoolPrint(L"%a", gSelectedUUID);
-            for (Index3 = 0; Index3 < MainMenu.EntryCount && MainMenu.Entries[Index3]->Row == 0; Index3++) {
-              Entry3 = (LOADER_ENTRY*)MainMenu.Entries[Index3];
-              if (!Entry3->Volume) {
-                continue;
-              }
-              DevPath2 = DevicePathToStr(Entry3->Volume->DevicePath);
-              VolumeUUID = StrStr(DevPath2, L"GPT");
-              if (!VolumeUUID) {
-                continue;
-              }
-              if (StrStr(VolumeUUID, SelectedUUID2))
-              {
-                //second pass
-                FreePool(DevPath);
-                FreePool(DevPath2);
-                FreePool(SelectedUUID);
-                FreePool(SelectedUUID2);
-                DBG("Default boot redirected to %s\n", Entry3->Volume->VolName);
-                return Index3;
-              }     
-              FreePool(DevPath2);
-            }
-            FreePool(SelectedUUID2);
-          }
-          FreePool(DevPath);
-          FreePool(SelectedUUID);
-          DBG("Default boot redirected to %s\n", Entry2->Volume->VolName);
-          return Index2;
-        }
-        FreePool(DevPath);
-      }
-      FreePool(SelectedUUID);
-      DBG("but efi-boot-disk absent\n"); 
-    }
-    //nvram is not found or it points to wrong volume but DefaultBoot found
     
+    DBG("Default volume %s found\n", Volume->VolName);
     return Index;
   }
+  
+  DBG("No efi-boot-device or default volume found\n");
   return -1;
 }
  

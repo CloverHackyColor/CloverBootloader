@@ -161,7 +161,18 @@ EFI_STATUS SetVariablesForOSX()
                             /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                 LangLen ,&gSettings.Language);
   
-  return Status;
+	if (gFirmwareClover && gEfiBootDeviceData != NULL) {
+		Status = gRS->SetVariable(L"efi-boot-device-data",  &gEfiAppleBootGuid,
+						 /*	EFI_VARIABLE_NON_VOLATILE | */EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+						 GetDevicePathSize(gEfiBootDeviceData) , gEfiBootDeviceData);
+	}
+	if (gFirmwareClover && gEfiBootDevice != NULL) {
+		Status = gRS->SetVariable(L"efi-boot-device",  &gEfiAppleBootGuid,
+						 /*	EFI_VARIABLE_NON_VOLATILE | */EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+						 AsciiStrLen(gEfiBootDevice) + 1, gEfiBootDevice);
+	}
+	
+	return Status;
 }
 
 VOID SetupDataForOSX()

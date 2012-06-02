@@ -20,7 +20,11 @@
 //#define kXMLTagArray   		"array"
 
 //EFI_GUID gRandomUUID = {0x0A0B0C0D, 0x0000, 0x1010, {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07}};
-CHAR8                           gSelectedUUID[40];
+
+CHAR8                           *gEfiBootDevice = NULL;
+EFI_DEVICE_PATH_PROTOCOL        *gEfiBootDeviceData = NULL;
+EFI_GUID                        *gEfiBootDeviceGuid = NULL;
+
 SETTINGS_DATA                   gSettings;
 LANGUAGES                       gLanguage;
 GFX_PROPERTIES                  gGraphics[4]; //no more then 4 graphics cards
@@ -60,14 +64,15 @@ UINT32 GetCrc32(UINT8 *Buffer, UINTN Size)
 }
 
 /** Extracts volume UUID to gSelectedUUID from efi-boot-device XML string. */
+/*
 EFI_STATUS GetUUIDFromEfiBootDeviceString(CHAR8 *efiBootDevice)
 {
 	EFI_STATUS	Status;
 	UINTN		size;
-	TagPtr		dict;
+	TagPtr		dict = NULL;
 	TagPtr		prop;
-	TagPtr		dictPointer;
 	UINT32		pos;
+	
 	
 	
 	Status = EFI_NOT_FOUND;
@@ -76,51 +81,59 @@ EFI_STATUS GetUUIDFromEfiBootDeviceString(CHAR8 *efiBootDevice)
 	while (TRUE)
 	{
 		Status = XMLParseNextTag(efiBootDevice + pos, &dict, (UINT32 *)&size);
+		DBG("parsing pos=%d size=%d, Status = %r\n", pos, size, Status);
 		if (EFI_ERROR(Status))
 			break;
 		
 		pos += size;
 		DBG("parsing pos=%d size=%d\n", pos, size);
+		
 		if (dict == NULL) 
 			continue;
+		
 		if (dict->type == kTagTypeArray) 
 			break;
 		
 		FreeTag(dict);
+		dict = NULL;
 	}
 	
-	if(dict)
+	if(dict && size > 0)
 	{
 		DBG("Parse efi-boot-device success, size=%d!\n", size);
 		DBG("dict type = %d\n", dict->type);
+		prop = dict;
 		if (dict->type == kTagTypeArray) {
-			dict = dict->tag; //go inside
+			prop = dict->tag; //go inside
 			DBG("  next dict type = %d\n", dict->type);
 		}
 		
-		prop = GetProperty(dict, "IOMatch");
-		if (prop) {
-			DBG("IOMatch success!\n");
-			dictPointer = prop;
-			prop = GetProperty(dictPointer, "IOPropertyMatch");
+		if (prop->type == kTagTypeDict) {
+			prop = GetProperty(prop, "IOMatch");
 			if (prop) {
-				DBG("IOPropertyMatch success!\n");
-				dictPointer = prop;
-				prop = GetProperty(dictPointer, "UUID");
-				if(prop)
-				{
-					DBG("UUID property type=%d string=%a\n", prop->type, prop->string);
-					//AsciiStrToUnicodeStr(prop->string, gSelectedUUID);
-					AsciiStrCpy(gSelectedUUID, prop->string);
-					Status = EFI_SUCCESS;
-				}									
+				DBG("IOMatch success!\n");
+				prop = GetProperty(prop, "IOPropertyMatch");
+				if (prop) {
+					DBG("IOPropertyMatch success!\n");
+					prop = GetProperty(prop, "UUID");
+					if(prop)
+					{
+						DBG("UUID property type=%d string=%a\n", prop->type, prop->string);
+						AsciiStrCpy(gSelectedUUID, prop->string);
+						Status = EFI_SUCCESS;
+					}									
+				}
 			}
 		}
+	}
+	
+	if (dict) {
 		FreeTag(dict);
 	}
 	
 	return Status;
 }
+ */
 
 /** Reads and returns value of NVRAM variable. */
 VOID *GetNVRAMVariable(IN CHAR16 *VariableName, IN EFI_GUID *VendorGuid, OUT UINTN *DataSize)
@@ -147,25 +160,35 @@ VOID *GetNVRAMVariable(IN CHAR16 *VariableName, IN EFI_GUID *VendorGuid, OUT UIN
 EFI_STATUS GetNVRAMSettings(VOID)
 {
 	EFI_STATUS	Status;
-	UINTN		size;
-	CHAR8*		efiBootDevice;
+	UINTN		Size;
+	EFI_GUID	*Guid;
 
 	Status = EFI_NOT_FOUND;
 	
-	efiBootDevice = GetNVRAMVariable(L"efi-boot-device", &gEfiAppleBootGuid, &size);
-	if (efiBootDevice != NULL) {
-		DBG("NVRAM efi-boot-device = %a\n", efiBootDevice);
-		Status = GetUUIDFromEfiBootDeviceString(efiBootDevice);
-		// do we need SaveSettings() here?
-		//SaveSettings();
-		FreePool(efiBootDevice);
+	gEfiBootDeviceData = GetNVRAMVariable(L"efi-boot-device-data", &gEfiAppleBootGuid, &Size);
+	if (gEfiBootDeviceData != NULL) {
+		DBG(" efi-boot-device-data = %s\n", DevicePathToStr(gEfiBootDeviceData));
+		Guid = FindGPTPartitionGuidInDevicePath(gEfiBootDeviceData);
+		if (Guid != NULL) {
+			gEfiBootDeviceGuid = AllocatePool(sizeof(EFI_GUID));
+			if (gEfiBootDeviceGuid != NULL) {
+				CopyMem(gEfiBootDeviceGuid, Guid, sizeof(EFI_GUID));
+				DBG(" Guid = %g\n", gEfiBootDeviceGuid);
+				Status = EFI_SUCCESS;
+			}
+		}
+	}
+	
+	gEfiBootDevice = GetNVRAMVariable(L"efi-boot-device", &gEfiAppleBootGuid, &Size);
+	if (gEfiBootDevice != NULL) {
+		DBG(" efi-boot-device = %a\n", gEfiBootDevice);
 	}
 	
 	return Status;
 }
 
-/** Reads efi-boot-device variable from NVRAMPlistPath and extracts volume UUID into gSelectedUUID. */
-EFI_STATUS GetNVRAMPlistSettings(IN EFI_FILE *RootDir, CHAR16* NVRAMPlistPath)
+/** Reads efi-boot-device variable from NVRAMPlistPath and extracts partition Guid into gSelectedGuid. */
+EFI_STATUS GetNVRAMPlistSettings(IN EFI_FILE *RootDir, IN CHAR16* NVRAMPlistPath)
 {
 	EFI_STATUS	Status;
 	UINTN		size;
@@ -173,64 +196,63 @@ EFI_STATUS GetNVRAMPlistSettings(IN EFI_FILE *RootDir, CHAR16* NVRAMPlistPath)
 	CHAR8*		efiBootDevice;
 	TagPtr		dict;
 	TagPtr		prop;
+	EFI_GUID	*Guid;
 	
 	
 	//
-	// then continue with nvram.plist
+	// load nvram.plist
 	//
 	
 	Status = egLoadFile(RootDir, NVRAMPlistPath, (UINT8**)&gNvramPtr, &size);
-	if(EFI_ERROR(Status))
-	{
+	if(EFI_ERROR(Status)) {
 		DBG(" nvram.plist not present\n");
 		return Status;
 	}
 	
 	DBG(" nvram.plist loaded, size=%d\n", size);
 	
-	/* check again:
-	 fileInfo->EFI_TIME  ModificationTime;
-	 /// EFI Time Abstraction:
-	 ///  Year:       1900 - 9999
-	 ///  Month:      1 - 12
-	 ///  Day:        1 - 31
-	 ///  Hour:       0 - 23
-	 ///  Minute:     0 - 59
-	 ///  Second:     0 - 59
-	 ///  Nanosecond: 0 - 999,999,999
-	 ///  TimeZone:   -1440 to 1440 or 2047
-	 If we found nvram.plist at startVolume then we compare ModificationTimes, and use it if
-	 the file is more recent then loaded.
-	 */	 
-	
-	
 	Status = EFI_NOT_FOUND;
 	
-	if(ParseXML((const CHAR8*)gNvramPtr, &dict) != EFI_SUCCESS)
-	{
-		DBG("nvram file error\n");
+	if(ParseXML((const CHAR8*)gNvramPtr, &dict) != EFI_SUCCESS) {
+		DBG(" nvram file error\n");
 		return EFI_UNSUPPORTED;
 	}
-	//for a example	
-	/*		prop = GetProperty(dict, "boot-args");
-	 if(prop)
-	 {
-	 AsciiStrToUnicodeStr(prop->string, gSettings.BootArgs);
-	 }
-	 */
-	prop = GetProperty(dict, "efi-boot-device");
-	if(prop)
-	{
-		efiBootDevice = XMLDecode(prop->string);
-		DBG("efi-boot-device = %a\n", efiBootDevice); 
-		
-		//		Status = XMLParseNextTag(efiBootDevice, &dictPointer, &size);
-		Status = GetUUIDFromEfiBootDeviceString(efiBootDevice);
-		
+	
+	Status = EFI_UNSUPPORTED;
+	
+	prop = GetProperty(dict, "efi-boot-device-data");
+	if (prop && prop->type == kTagTypeData && prop->data) {
+		gEfiBootDeviceData = DuplicateDevicePath((EFI_DEVICE_PATH_PROTOCOL*)prop->data);
+		DBG(" efi-boot-device-data = %s\n", DevicePathToStr(gEfiBootDeviceData));
+		Guid = FindGPTPartitionGuidInDevicePath(gEfiBootDeviceData);
+		if (Guid != NULL) {
+			gEfiBootDeviceGuid = AllocatePool(sizeof(EFI_GUID));
+			if (gEfiBootDeviceGuid != NULL) {
+				CopyMem(gEfiBootDeviceGuid, Guid, sizeof(EFI_GUID));
+				DBG(" Guid = %g\n", gEfiBootDeviceGuid);
+				Status = EFI_SUCCESS;
+			}
+		}
 	}
 	
-	SaveSettings();
-	
+	efiBootDevice = NULL;
+	prop = GetProperty(dict, "efi-boot-device");
+	if (prop) {
+		if(prop->type == kTagTypeString) {
+			efiBootDevice = XMLDecode(prop->string);
+		} else if (prop->type == kTagTypeData) {
+			efiBootDevice = (CHAR8*)prop->data;
+		}
+		if (efiBootDevice != NULL) {
+			// copy in a new buffer
+			size = AsciiStrLen(efiBootDevice) + 1;
+			gEfiBootDevice = AllocatePool(size);
+			CopyMem(gEfiBootDevice, efiBootDevice, size);
+			DBG(" efi-boot-device = %a\n", gEfiBootDevice);
+		}
+	}
+
+	FreeTag(dict);
 	FreePool(gNvramPtr);
 	
 	return Status;

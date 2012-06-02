@@ -574,6 +574,7 @@ EFI_STATUS ParseTagData(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 	EFI_STATUS	Status;
 	UINT32		length;
 	TagPtr		tmpTag;
+	CHAR8*		string;
 
 	Status = FixDataMatchingTag(buffer, kXMLTagData,&length);
 	if (EFI_ERROR(Status))
@@ -583,9 +584,11 @@ EFI_STATUS ParseTagData(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 	if (tmpTag == 0) 
 		return EFI_UNSUPPORTED;
 //Slice - correction as Apple 2003
-	CHAR8* string = NewSymbol(buffer);
+	string = NewSymbol(buffer);
 	tmpTag->type = kTagTypeData;
 	tmpTag->string = string;
+	// dmazar: base64 decode data
+	tmpTag->data = Base64Decode(tmpTag->string, NULL);
 	tmpTag->tag = NULL;
 	tmpTag->offset = buffer_start ? buffer - buffer_start: 0;
 	tmpTag->tagNext = NULL;
@@ -739,6 +742,7 @@ TagPtr NewTag( void )
 		{
 			tag[cnt].type = kTagTypeNone;
 			tag[cnt].string = 0;
+			tag[cnt].data = 0;
 			tag[cnt].tag = 0;
 			tag[cnt].tagNext = tag + cnt + 1;
 		}
@@ -762,6 +766,7 @@ void FreeTag( TagPtr tag )
 		return;
 
 	if (tag->string) FreeSymbol(tag->string);
+	if (tag->data) FreePool(tag->data);
 
 	FreeTag(tag->tag);
 	FreeTag(tag->tagNext);
@@ -769,6 +774,7 @@ void FreeTag( TagPtr tag )
 	// Clear and free the tag.
 	tag->type = kTagTypeNone;
 	tag->string = NULL;
+	tag->data = NULL;
 	tag->tag = NULL;
 	tag->offset = 0;
 	tag->tagNext = gTagsFree;
