@@ -268,6 +268,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 	TagPtr      prop;
 	TagPtr      dictPointer;
 	CHAR8*      gConfigPtr = NULL;
+  UINTN       i; 
   
   CHAR16      UStr[64];  
   CHAR16*     ConfigPlistPath = L"EFI\\config.plist";
@@ -369,6 +370,10 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
           gSettings.LoadVBios = TRUE;
       }
+      for (i=0; i<NGFX; i++) {
+        gGraphics[i].LoadVBios = gSettings.LoadVBios; //default
+      }
+      
       prop = GetProperty(dictPointer,"PatchVBios");
       gSettings.PatchVBios = FALSE;
       if(prop)
@@ -905,7 +910,7 @@ VOID GetDevices(VOID)
             default:
               break;
           }                
-          
+
           NGFX++;
         }   //if gfx             
       }
@@ -1015,6 +1020,7 @@ VOID GetDevices(VOID)
 	}  
 }
 #endif //SHORT_LOCATE
+
 VOID SetDevices(VOID)
 {
 //	EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  *modeInfo;

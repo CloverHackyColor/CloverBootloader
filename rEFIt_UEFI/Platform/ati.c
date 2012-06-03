@@ -436,7 +436,7 @@ AtiDevProp ati_devprop_list[] = {
   {FLAGMOBILE,	FALSE,	"AAPL,HasPanel",          NULL,					DWRVAL((UINT32)1)   },
   {FLAGMOBILE,	FALSE,	"AAPL,HasLid",            NULL,					DWRVAL((UINT32)1)   },
   {FLAGMOBILE,	FALSE,	"AAPL,backlight-control", NULL,					DWRVAL((UINT32)0)   },
-//	{FLAGTRUE,	FALSE,	"AAPL,overwrite_binimage",	get_binimage_owr,		NULVAL				},
+	{FLAGTRUE,	FALSE,	"AAPL,overwrite_binimage",	get_binimage_owr,		NULVAL				},
 	{FLAGTRUE,	FALSE,	"ATY,bin_image",            get_binimage_val,		NULVAL				},
 	{FLAGTRUE,	FALSE,	"ATY,Copyright",	NULL,	STRVAL("Copyright AMD Inc. All Rights Reserved. 2005-2011") },
   {FLAGTRUE,	FALSE,	"ATY,EFIVersion",	NULL,	STRVAL("01.00.3180")                  },

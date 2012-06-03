@@ -114,6 +114,7 @@ static VOID HelpRefit(VOID)
     if (HelpMenu.EntryCount == 0) {
         HelpMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_HELP);
         if (gLanguage == russian) {
+            AddMenuInfoLine(&HelpMenu, L"ESC - Выход из подменю, обновление главного меню");
             AddMenuInfoLine(&HelpMenu, L"F1  - Помощь по горячим клавишам");
             AddMenuInfoLine(&HelpMenu, L"F2  - Сохранить отчет в preboot.log (только если FAT32)");
             AddMenuInfoLine(&HelpMenu, L"F4  - Родной DSDT сохранить в EFI/ACPI/origin/ (FAT32)");
@@ -127,6 +128,7 @@ static VOID HelpRefit(VOID)
             AddMenuInfoLine(&HelpMenu, L"U - Выключить");
 
         } else {
+            AddMenuInfoLine(&HelpMenu, L"ESC - Escape from submenu, Refresh main menu");
             AddMenuInfoLine(&HelpMenu, L"F1  - This help");
             AddMenuInfoLine(&HelpMenu, L"F2  - Save preboot.log (FAT32 only)");
             AddMenuInfoLine(&HelpMenu, L"F4  - Save oem DSDT into EFI/ACPI/origin/ (FAT32 only)");

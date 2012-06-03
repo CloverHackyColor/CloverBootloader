@@ -286,7 +286,7 @@ VOID ApplyInputs(VOID)
     gSettings.PatchVBios = InputItems[i].BValue;
   }
   
-  i+=3; //20
+  i = 20; //20
   if (InputItems[i].Valid) {
     gSettings.GraphicsInjector = InputItems[i].BValue;
   }
