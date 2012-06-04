@@ -289,6 +289,8 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       
   BeginExternalScreen(Entry->UseGraphicsMode, L"Booting OS");
   if (Entry->LoaderType == OSTYPE_OSX) {
+    
+    Entry->LoadOptions     = PoolPrint(L"%a", gSettings.BootArgs); //moved here, before using Entry ;)
     SetDevices();
     
     SetFSInjection(Entry);
@@ -318,8 +320,6 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     SetupDataForOSX();
     //  PauseForKey(L"SetupBooterLog");
     Status = SetupBooterLog();
-    
-    Entry->LoadOptions     = PoolPrint(L"%a", gSettings.BootArgs);
     //  Entry->LoadOptions     = InputItems[0].SValue;
     
     // blocking boot.efi output if -v is not specified

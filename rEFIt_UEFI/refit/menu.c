@@ -314,8 +314,10 @@ VOID ApplyInputs(VOID)
     i++; //24
     if (InputItems[i].Valid) {
       ZeroMem(AString, 255);
-      AsciiSPrint(AString, 255, "%s", InputItems[i].SValue);
-      hex2bin(AString, (UINT8*)&gSettings.NVCAP[0], 20);
+      if (StrLen(InputItems[i].SValue) > 0) {
+        AsciiSPrint(AString, 255, "%s", InputItems[i].SValue);
+        hex2bin(AString, (UINT8*)&gSettings.NVCAP[0], 20);
+      }
     }  
     i++; //25
     if (InputItems[i].Valid) {
