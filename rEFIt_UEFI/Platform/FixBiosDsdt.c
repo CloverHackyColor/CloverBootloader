@@ -1745,7 +1745,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         // Intel GMA and HD
         if (DisplayVendor[0] == 0x8086)
         {
-            CHAR8 *modelname = get_gma_model((DisplayVendor[0] << 16 | DisplayID[0] <<0));
+            CHAR8 *modelname = get_gma_model(DisplayID[0]);
             if (AsciiStrnCmp(modelname, "Unknown", 7) == 0)
             {
                 DBG("Found Unsupported Intel Display Card Vendor id 0x%04x, device id 0x%04x, don't patch DSDT.\n",
@@ -1753,7 +1753,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
                 return len;
             }   
             
-            CHAR8 ClassFix[] =	{ 0x00, 0x00, 0x03, 0x00 };   
+            //CHAR8 ClassFix[] =	{ 0x00, 0x00, 0x03, 0x00 };   
             // add Method(_DSM,4,NotSerialized) for GFX0
             //if (!DISPLAYFIX)
             //{
@@ -1779,70 +1779,70 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
                 aml_add_byte_buffer(pack, Yes, sizeof(Yes)); 
                 aml_add_string(pack, "built-in");
                 aml_add_byte_buffer(pack, (CHAR8*)0x01, 1); 
-                aml_add_string(pack, "class-code");
-                aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix)); 
+            //    aml_add_string(pack, "class-code");
+            //    aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix)); 
             } 
             else if (AsciiStrnCmp(modelname, "Desktop GMA950", 14) == 0 ||
                        AsciiStrnCmp(modelname, "Desktop GMA3150", 15) == 0)
             {
                 aml_add_string(pack, "built-in");
                 aml_add_byte_buffer(pack, (CHAR8*)0x01, 1); 
-                aml_add_string(pack, "class-code");
-                aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
+           //     aml_add_string(pack, "class-code");
+           //     aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
             } 
             else if (AsciiStrnCmp(modelname, "GMAX3100", 8) == 0)
             {
                 aml_add_string(pack, "AAPL,HasPanel");
-                aml_add_byte_buffer(pack, GMAX3100_vals[0], 4); 
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[0], 4); 
                 aml_add_string(pack, "AAPL,SelfRefreshSupported");
-                aml_add_byte_buffer(pack, GMAX3100_vals[1], 4); 
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[1], 4); 
                 aml_add_string(pack, "AAPL,backlight-control");
-                aml_add_byte_buffer(pack, GMAX3100_vals[3], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[2], 4);
                 aml_add_string(pack, "AAPL00,blackscreen-preferences");
-                aml_add_byte_buffer(pack, GMAX3100_vals[4], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[3], 4);
                 aml_add_string(pack, "AAPL01,BacklightIntensity");
-                aml_add_byte_buffer(pack, GMAX3100_vals[5], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[4], 4);
                 aml_add_string(pack, "AAPL01,blackscreen-preferences");
-                aml_add_byte_buffer(pack, GMAX3100_vals[6], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[5], 4);
                 aml_add_string(pack, "AAPL01,DataJustify");
-                aml_add_byte_buffer(pack, GMAX3100_vals[7], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[6], 4);
                 aml_add_string(pack, "AAPL01,Depth");
-                aml_add_byte_buffer(pack, GMAX3100_vals[8], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[7], 4);
                 aml_add_string(pack, "AAPL01,Dither");
-                aml_add_byte_buffer(pack, GMAX3100_vals[9], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[8], 4);
                 aml_add_string(pack, "AAPL01,DualLink");
-                aml_add_byte_buffer(pack, GMAX3100_vals[10], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[9], 4);
                 aml_add_string(pack, "AAPL01,Height");
-                aml_add_byte_buffer(pack, GMAX3100_vals[11], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[10], 4);
                 aml_add_string(pack, "AAPL01,Interlace");
-                aml_add_byte_buffer(pack, GMAX3100_vals[12], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[11], 4);
                 aml_add_string(pack, "AAPL01,Inverter");
-                aml_add_byte_buffer(pack, GMAX3100_vals[13], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[12], 4);
                 aml_add_string(pack, "AAPL01,InverterCurrent");
-                aml_add_byte_buffer(pack, GMAX3100_vals[14], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[13], 4);
                 aml_add_string(pack, "AAPL01,InverterCurrency");
-                aml_add_byte_buffer(pack, GMAX3100_vals[15], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[14], 4);
                 aml_add_string(pack, "AAPL01,LinkFormat");
-                aml_add_byte_buffer(pack, GMAX3100_vals[16], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[15], 4);
                 aml_add_string(pack, "AAPL01,LinkType");
-                aml_add_byte_buffer(pack, GMAX3100_vals[17], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[16], 4);
                 aml_add_string(pack, "AAPL01,Pipe");
-                aml_add_byte_buffer(pack, GMAX3100_vals[18], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[17], 4);
                 aml_add_string(pack, "AAPL01,PixelFormat");
-                aml_add_byte_buffer(pack, GMAX3100_vals[19], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[18], 4);
                 aml_add_string(pack, "AAPL01,Refresh");
-                aml_add_byte_buffer(pack, GMAX3100_vals[20], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[19], 4);
                 aml_add_string(pack, "AAPL01,Stretch");
-                aml_add_byte_buffer(pack, GMAX3100_vals[21], 4);
-                aml_add_string(pack, "class-code");
-                aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[20], 4);
+           //     aml_add_string(pack, "class-code");
+           //     aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
                 aml_add_string(pack, "AAPL01,boot-display");
                 aml_add_byte_buffer(pack, Yes, sizeof(Yes));
             }
             else if (AsciiStrnCmp(modelname, "Intel HD Graphics 2000 Mobile", 29) == 0)
             {
-                aml_add_string(pack, "class-code");
-                aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
+            //    aml_add_string(pack, "class-code");
+            //    aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
                 aml_add_string(pack, "hda-gfx");
                 aml_add_string_buffer(pack, "onboard-1");
                 aml_add_string(pack, "AAPL00,PixelFormat");
@@ -1882,8 +1882,8 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
             }
             else if (AsciiStrnCmp(modelname, "Intel HD Graphics 3000 Mobile", 29) == 0)
             {
-                aml_add_string(pack, "class-code");
-                aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
+          //      aml_add_string(pack, "class-code");
+          //      aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
                 aml_add_string(pack, "hda-gfx");
                 aml_add_string_buffer(pack, "onboard-1");
                 aml_add_string(pack, "AAPL00,PixelFormat");
@@ -1927,8 +1927,8 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
             {
                 aml_add_string(pack, "built-in");
                 aml_add_byte_buffer(pack, (CHAR8*)0x01, 1);
-                aml_add_string(pack, "class-code");
-                aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
+          //      aml_add_string(pack, "class-code");
+          //      aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
                 aml_add_string(pack, "device-id");
                 aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[0], 4);
                 aml_add_string(pack, "hda-gfx");
@@ -1944,8 +1944,8 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
             {
                 aml_add_string(pack, "built-in");
                 aml_add_byte_buffer(pack, (CHAR8*)0x01, 1);
-                aml_add_string(pack, "class-code");
-                aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
+          //      aml_add_string(pack, "class-code");
+          //      aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
                 aml_add_string(pack, "device-id");
                 aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[0], 4);
                 aml_add_string(pack, "hda-gfx");
@@ -2286,7 +2286,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
         // Intel GMA and HD
         if (DisplayVendor[1] == 0x8086)
         {
-            CHAR8 *modelname = get_gma_model((DisplayVendor[1] << 16 | DisplayID[1] <<0));
+            CHAR8 *modelname = get_gma_model(DisplayID[1]);
             if (AsciiStrnCmp(modelname, "Unknown", 7) == 0)
             {
                 DBG("Found Unsupported Intel Display Card Vendor id 0x%04x, device id 0x%04x, don't patch DSDT.\n",
@@ -2294,7 +2294,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
                 return len;
             }   
             
-            CHAR8 ClassFix[] =	{ 0x00, 0x00, 0x03, 0x00 };   
+            //CHAR8 ClassFix[] =	{ 0x00, 0x00, 0x03, 0x00 };   
             // add Method(_DSM,4,NotSerialized) for GFX0
             //if (!DISPLAYFIX)
             //{
@@ -2320,70 +2320,70 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
                 aml_add_byte_buffer(pack, Yes, sizeof(Yes)); 
                 aml_add_string(pack, "built-in");
                 aml_add_byte_buffer(pack, (CHAR8*)0x01, 1); 
-                aml_add_string(pack, "class-code");
-                aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix)); 
+             //   aml_add_string(pack, "class-code");
+             //   aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix)); 
             } 
             else if (AsciiStrnCmp(modelname, "Desktop GMA950", 14) == 0 ||
                        AsciiStrnCmp(modelname, "Desktop GMA3150", 15) == 0)
             {
                 aml_add_string(pack, "built-in");
                 aml_add_byte_buffer(pack, (CHAR8*)0x01, 1); 
-                aml_add_string(pack, "class-code");
-                aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
+            //    aml_add_string(pack, "class-code");
+            //    aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
             } 
             else if (AsciiStrnCmp(modelname, "GMAX3100", 8) == 0)
             {
                 aml_add_string(pack, "AAPL,HasPanel");
-                aml_add_byte_buffer(pack, GMAX3100_vals[0], 4); 
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[0], 4); 
                 aml_add_string(pack, "AAPL,SelfRefreshSupported");
-                aml_add_byte_buffer(pack, GMAX3100_vals[1], 4); 
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[1], 4); 
                 aml_add_string(pack, "AAPL,backlight-control");
-                aml_add_byte_buffer(pack, GMAX3100_vals[3], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[2], 4);
                 aml_add_string(pack, "AAPL00,blackscreen-preferences");
-                aml_add_byte_buffer(pack, GMAX3100_vals[4], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[3], 4);
                 aml_add_string(pack, "AAPL01,BacklightIntensity");
-                aml_add_byte_buffer(pack, GMAX3100_vals[5], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[4], 4);
                 aml_add_string(pack, "AAPL01,blackscreen-preferences");
-                aml_add_byte_buffer(pack, GMAX3100_vals[6], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[5], 4);
                 aml_add_string(pack, "AAPL01,DataJustify");
-                aml_add_byte_buffer(pack, GMAX3100_vals[7], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[6], 4);
                 aml_add_string(pack, "AAPL01,Depth");
-                aml_add_byte_buffer(pack, GMAX3100_vals[8], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[7], 4);
                 aml_add_string(pack, "AAPL01,Dither");
-                aml_add_byte_buffer(pack, GMAX3100_vals[9], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[8], 4);
                 aml_add_string(pack, "AAPL01,DualLink");
-                aml_add_byte_buffer(pack, GMAX3100_vals[10], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[9], 4);
                 aml_add_string(pack, "AAPL01,Height");
-                aml_add_byte_buffer(pack, GMAX3100_vals[11], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[10], 4);
                 aml_add_string(pack, "AAPL01,Interlace");
-                aml_add_byte_buffer(pack, GMAX3100_vals[12], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[11], 4);
                 aml_add_string(pack, "AAPL01,Inverter");
-                aml_add_byte_buffer(pack, GMAX3100_vals[13], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[12], 4);
                 aml_add_string(pack, "AAPL01,InverterCurrent");
-                aml_add_byte_buffer(pack, GMAX3100_vals[14], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[13], 4);
                 aml_add_string(pack, "AAPL01,InverterCurrency");
-                aml_add_byte_buffer(pack, GMAX3100_vals[15], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[14], 4);
                 aml_add_string(pack, "AAPL01,LinkFormat");
-                aml_add_byte_buffer(pack, GMAX3100_vals[16], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[15], 4);
                 aml_add_string(pack, "AAPL01,LinkType");
-                aml_add_byte_buffer(pack, GMAX3100_vals[17], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[16], 4);
                 aml_add_string(pack, "AAPL01,Pipe");
-                aml_add_byte_buffer(pack, GMAX3100_vals[18], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[17], 4);
                 aml_add_string(pack, "AAPL01,PixelFormat");
-                aml_add_byte_buffer(pack, GMAX3100_vals[19], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[18], 4);
                 aml_add_string(pack, "AAPL01,Refresh");
-                aml_add_byte_buffer(pack, GMAX3100_vals[20], 4);
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[19], 4);
                 aml_add_string(pack, "AAPL01,Stretch");
-                aml_add_byte_buffer(pack, GMAX3100_vals[21], 4);
-                aml_add_string(pack, "class-code");
-                aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
+                aml_add_byte_buffer(pack, GMAX3100_vals_bad[20], 4);
+           //     aml_add_string(pack, "class-code");
+           //     aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
                 aml_add_string(pack, "AAPL01,boot-display");
                 aml_add_byte_buffer(pack, Yes, sizeof(Yes));
             }
             else if (AsciiStrnCmp(modelname, "Intel HD Graphics 2000 Mobile", 29) == 0)
             {
-                aml_add_string(pack, "class-code");
-                aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
+          //      aml_add_string(pack, "class-code");
+          //      aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
                 aml_add_string(pack, "hda-gfx");
                 aml_add_string_buffer(pack, "onboard-1");
                 aml_add_string(pack, "AAPL00,PixelFormat");
@@ -2423,8 +2423,8 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
             }
             else if (AsciiStrnCmp(modelname, "Intel HD Graphics 3000 Mobile", 29) == 0)
             {
-                aml_add_string(pack, "class-code");
-                aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
+           //     aml_add_string(pack, "class-code");
+           //     aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
                 aml_add_string(pack, "hda-gfx");
                 aml_add_string_buffer(pack, "onboard-1");
                 aml_add_string(pack, "AAPL00,PixelFormat");
@@ -2468,8 +2468,8 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
             {
                 aml_add_string(pack, "built-in");
                 aml_add_byte_buffer(pack, (CHAR8*)0x01, 1);
-                aml_add_string(pack, "class-code");
-                aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
+          //      aml_add_string(pack, "class-code");
+          //      aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
                 aml_add_string(pack, "device-id");
                 aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[1], 4);
                 aml_add_string(pack, "hda-gfx");
@@ -2485,8 +2485,8 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
             {
                 aml_add_string(pack, "built-in");
                 aml_add_byte_buffer(pack, (CHAR8*)0x01, 1);
-                aml_add_string(pack, "class-code");
-                aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
+          //      aml_add_string(pack, "class-code");
+         //       aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
                 aml_add_string(pack, "device-id");
                 aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[1], 4);
                 aml_add_string(pack, "hda-gfx");
@@ -2614,9 +2614,9 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
             aml_add_byte_buffer(pack, (CHAR8*)&DisplayVendor[1], 4); 
             aml_add_string(pack, "ATY,DeviceID");
             aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[1], 4); 
-            aml_add_string(pack, "device-id");
-            CHAR8 data[] = {0xE1,0x68,0x00,0x00};
-            aml_add_byte_buffer(pack, data, sizeof(data));
+       //     aml_add_string(pack, "device-id");
+       //     CHAR8 data[] = {0xE1,0x68,0x00,0x00};
+       //     aml_add_byte_buffer(pack, data, sizeof(data));
             aml_add_string(pack, "org-device-id");
             aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[1], 4); 
             aml_add_string(pack, "hda-gfx");
@@ -4092,13 +4092,13 @@ VOID FixBiosDsdt ()
     if (BiosDsdt == 0)
         return;
         
-    UINT8* temp = (UINT8*)BiosDsdt;
+    UINT8* temp = (UINT8*)(UINTN)BiosDsdt;
         
     DBG("\nAuto patch BiosDSDT Starting.................\n\n");
     
     //DBG("orgBiosDsdtLen = 0x%08x\n", orgBiosDsdtLen);
     
-    // Frist check hardware address
+    // First check hardware address
     CheckHardware();
     
     // find ACPI CPU name and hardware address

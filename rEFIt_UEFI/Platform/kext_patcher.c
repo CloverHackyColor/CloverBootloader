@@ -343,7 +343,7 @@ VOID KextPatcher_driver_ATI()
                         
                         //(const _DeviceTreeBuffer *)
                         //deviceTreeEntry->getBytesNoCopy(0, sizeof(deviceTreeBuffer));
-				        kextFileInfo = (_BooterKextFileInfo *)temp1;
+				        kextFileInfo = (_BooterKextFileInfo *)(UINTN)temp1;
 				        //if (count<3)
 				        //{
 				        //    DBG(L"Driver addr = 0x%08x, Length = 0x%08x\n", driverAddr, driverSize);

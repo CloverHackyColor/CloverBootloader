@@ -5,7 +5,7 @@
 
 #ifndef _DISPLAY_H_
 #define _DISPLAY_H_
-
+/*
 UINT8 hexstrtouint8 (CHAR8* buf)
 {
 	INT8 i;
@@ -59,7 +59,7 @@ BOOLEAN hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, INT32 len)
 	}
 	return TRUE;
 }
-
+*/
 // ATI Card
 typedef struct {
 	CHAR8		*name;
@@ -1900,7 +1900,7 @@ UINT32 nv_mem_detect(pci_dt_t *nvda_dev)
 
 // Intel GMA .. HDXXXX
 
-CHAR8 GMAX3100_vals[22][4] = {
+CHAR8 GMAX3100_vals_bad[21][4] = {
 	{ 0x01,0x00,0x00,0x00 },
 	{ 0x01,0x00,0x00,0x00 },
 	{ 0x01,0x00,0x00,0x00 },
@@ -1962,7 +1962,7 @@ CHAR8 HD3000_vals[17][4] = {
 	{ 0x01,0x00,0x00,0x00 },
 	{ 0x00,0x00,0x01,0x00 },
 };
-
+//Brainless Hackintoshing
 CHAR8 HD2000_tbl_info[18] = {
 	0x30,0x44,0x02,0x02,0x02,0x02,0x00,0x00,0x00,
 	0x00,0x01,0x02,0x02,0x02,0x00,0x01,0x02,0x02
@@ -1983,7 +1983,7 @@ CHAR8 HD3000_os_info[20] = {
 	0x30,0x49,0x01,0x12,0x12,0x12,0x08,0x00,0x00,0x01,
 	0xf0,0x1f,0x01,0x00,0x00,0x00,0x10,0x07,0x00,0x00
 };
-
+/*
 struct gma_gpu_t {
 	unsigned device;
 	char *name;
@@ -2015,7 +2015,7 @@ static struct gma_gpu_t KnownGPUS[] = {
 	{ 0x80860126, "Intel HD Graphics 3000 Mobile"	},
 };
 
-CHAR8 *get_gma_model(UINT32 id) 
+CHAR8 *get_gma_name(UINT32 id) 
 {
 	UINT32 i = 0;
 	
@@ -2026,5 +2026,5 @@ CHAR8 *get_gma_model(UINT32 id)
 	}
 	return KnownGPUS[0].name;
 }
-
+*/
 #endif
