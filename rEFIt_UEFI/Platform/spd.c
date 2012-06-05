@@ -161,7 +161,7 @@ CHAR8* getVendorName(RAM_SLOT_INFO* slot, UINT32 base, UINT8 slot_num)
             if (bank==vendorMap[i].bank && code==vendorMap[i].code)
                 return vendorMap[i].name;
     }
-    else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR2) {
+    else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR2 || spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR) {
         if(spd[64]==0x7f) {
             for (i=64; i<72 && spd[i]==0x7f;i++) {
 			  bank++;
@@ -199,7 +199,7 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
             return 800;
         }
     } 
-    else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR2)  {
+    else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR2 || spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR)  {
         switch(spd[9]) {
         case 0x50:
             return 400;
@@ -227,7 +227,7 @@ CHAR8* getDDRSerial(UINT8* spd)
     {
 	AsciiSPrint(asciiSerial, 16, "%X%X%X%X%X%X%X%X", SMST(122) /*& 0x7*/, SLST(122), SMST(123), SLST(123), SMST(124), SLST(124), SMST(125), SLST(125));
     }
-    else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR2) // DDR2 or DDR
+    else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR2 || spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR) // DDR2 or DDR
     { 
 	AsciiSPrint(asciiSerial, 16, "%X%X%X%X%X%X%X%X", SMST(95) /*& 0x7*/, SLST(95), SMST(96), SLST(96), SMST(97), SLST(97), SMST(98), SLST(98));
     }
@@ -245,7 +245,7 @@ CHAR8* getDDRPartNum(UINT8* spd, UINT32 base, INTN slot)
     if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR3) {
 		start = 128;
 	}
-    else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR2) {
+    else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR2 || spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR) {
 		start = 73;
 	}
 	
@@ -357,6 +357,14 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
             init_spd(slot->spd, base, i);
 		
             switch (slot->spd[SPD_MEMORY_TYPE])  {
+            case SPD_MEMORY_TYPE_SDRAM_DDR:
+                
+                slot->ModuleSize = (((1 << ((slot->spd[SPD_NUM_ROWS] & 0x0f)
+									 + (slot->spd[SPD_NUM_COLUMNS] & 0x0f) - 17)) * 
+                                    ((slot->spd[SPD_NUM_DIMM_BANKS] & 0x7) + 1) *
+									slot->spd[SPD_NUM_BANKS_PER_SDRAM])/3)*2;
+                break;
+
             case SPD_MEMORY_TYPE_SDRAM_DDR2:
                 
                 slot->ModuleSize = ((1 << ((slot->spd[SPD_NUM_ROWS] & 0x0f)

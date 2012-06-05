@@ -233,7 +233,7 @@ extern INTN DTRestartEntryIteration(DTEntryIterator iterator);
 
  Get Property
 */
-extern INTN DTGetProperty(const DTEntry entry, const CHAR8 *propertyName, void **propertyValue, UINTN *propertySize);
+extern INTN DTGetProperty(const DTEntry entry, const CHAR8 *propertyName, void **propertyValue, UINT32 *propertySize);
 
 /*
 -------------------------------------------------------------------------------

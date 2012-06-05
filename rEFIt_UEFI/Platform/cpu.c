@@ -152,7 +152,9 @@ VOID GetCPUProperties (VOID)
     gCPUStructure.CPUID[CPUID_87][EDX] & (UINT32)CPUID_EXTFEATURE_TSCI;
 	}
   
-  
+  if ((bit(9) & gCPUStructure.CPUID[CPUID_1][2]) != 0) {
+		SSSE3 = TRUE;
+	}
   
   if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
     switch (gCPUStructure.Model)

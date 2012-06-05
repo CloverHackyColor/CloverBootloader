@@ -136,6 +136,13 @@ EFI_STATUS SetVariablesForOSX()
 	Status = gRS->SetVariable(L"BootNext",  &gEfiAppleNvramGuid, //&gEfiGlobalVarGuid,
                                          /*	EFI_VARIABLE_NON_VOLATILE | */EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          sizeof(BootNext) ,&BootNext);
+  //  gIOHibernateBoot0082Key = OSSymbol::withCString("8BE4DF61-93CA-11D2-AA0D-00E098032B8C:Boot0082");
+  //			uint16_t bits = 0x0082;
+  //  gIOHibernateBootNextData = OSData::withBytes(&bits, sizeof(bits));
+  //  gIOHibernateBoot0082Data <- "boot-device-path"  
+
+
+  
 	Status = gRS->SetVariable(L"BackgroundClear", &gEfiAppleNvramGuid,
                                          /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          sizeof(BackgroundClear), &BackgroundClear);

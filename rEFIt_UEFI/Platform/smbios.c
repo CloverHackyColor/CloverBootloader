@@ -930,11 +930,12 @@ VOID GetTableType16()
 		Print(L"SmbiosTable: Type 16 (Physical Memory Array) not found!\n");
 		return;
 	}
-	TotalCount = newSmbiosTable.Type16->NumberOfMemoryDevices;
+	TotalCount = SmbiosTable.Type16->NumberOfMemoryDevices;
 	if (!TotalCount) {
 		TotalCount = MAX_SLOT_COUNT;
 	}
 	gDMI->MaxMemorySlots = TotalCount;
+	DBG("Total Memory Slots Count = %d\n", TotalCount);
 	return;
 }
 
@@ -961,10 +962,17 @@ VOID PatchTableType16()
 //	newSmbiosTable.Type16->Location = MemoryArrayLocationProprietaryAddonCard;
 //	newSmbiosTable.Type16->Use = MemoryArrayUseSystemMemory;
 //	newSmbiosTable.Type16->MemoryErrorCorrection = MemoryErrorCorrectionMultiBitEcc;
+    if (gDMI->DIMM[2] && Index == 1 &&  newSmbiosTable.Type16->NumberOfMemoryDevices == 2)
+    {
+        gDMI->MaxMemorySlots = gDMI->CntMemorySlots;
+        newSmbiosTable.Type16->NumberOfMemoryDevices = gDMI->CntMemorySlots;
+    }
 	TotalCount = newSmbiosTable.Type16->NumberOfMemoryDevices;
 	if (!TotalCount) {
 		TotalCount = MAX_SLOT_COUNT;
 	}
+	DBG("NumberOfMemoryDevices = %d\n", newSmbiosTable.Type16->NumberOfMemoryDevices);
+	DBG("TotalCount = %d\n", TotalCount);
 	mHandle16 = LogSmbiosTable(newSmbiosTable);
 	return;
 }
@@ -978,6 +986,7 @@ VOID GetTableType17()
 	gDMI->MemoryModules = 0;
 	for (Index = 0; Index < TotalCount; Index++) {
 		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, Index);
+		DBG("Index = %d\n", Index);
 		if (SmbiosTable.Raw == NULL) {
 //			Print(L"SmbiosTable: Type 17 (Memory Device number %d) not found!\n", Index);
 			continue;
@@ -989,6 +998,10 @@ VOID GetTableType17()
 		if (SmbiosTable.Type17->Speed > 0) {
 			gRAM->DIMM[Index].Frequency = SmbiosTable.Type17->Speed;
 		}
+		DBG("CntMemorySlots = %d\n", gDMI->CntMemorySlots)
+		DBG("gDMI->MemoryModules = %d\n", gDMI->MemoryModules)
+		DBG("SmbiosTable.Type17->Speed = %d\n", SmbiosTable.Type17->Speed)
+		DBG("SmbiosTable.Type17->Size = %d\n", SmbiosTable.Type17->Size)
 	}
 }
 		
@@ -999,8 +1012,10 @@ VOID PatchTableType17()
   //
 	for (Index = 0; Index < TotalCount; Index++) {
 		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, Index);
+		//}
+		DBG("Index = %d\n",Index);
 		if (SmbiosTable.Raw == NULL) {
-//			Print(L"SmbiosTable: Type 17 (Memory Device number %d) not found!\n", Index);
+//		//	Print(L"SmbiosTable: Type 17 (Memory Device number %d) not found!\n", Index);
 			continue;
 		}
 		TableSize = SmbiosTableLength(SmbiosTable);
@@ -1008,8 +1023,14 @@ VOID PatchTableType17()
 		CopyMem((VOID*)newSmbiosTable.Type17, (VOID*)SmbiosTable.Type17, TableSize);
 		Once = TRUE;		
 		newSmbiosTable.Type17->MemoryArrayHandle = mHandle16;
+		if (gDMI->DIMM[2] && Index == 1 &&  TotalCount == 2)
+		{
+		    newSmbiosTable.Type17->Size =  gRAM->DIMM[2].ModuleSize;
+		    newSmbiosTable.Type17->Speed = gRAM->DIMM[2].Frequency;
+		}
 		mMemory17[Index] = mTotalSystemMemory + newSmbiosTable.Type17->Size;
 		mTotalSystemMemory = mMemory17[Index];
+		DBG("mTotalSystemMemory = %d\n", mMemory17[Index]);
 		
 		
 #if NOTSPD		
@@ -1058,6 +1079,10 @@ VOID PatchTableType17()
 */
 #else
 		INTN map = gDMI->DIMM[Index];
+		if (gDMI->DIMM[2] && Index == 1 &&  TotalCount == 2)
+		{
+		    map = gDMI->DIMM[2];
+		}		
 		if (gRAM->DIMM[map].InUse) {
 			newSmbiosTable.Type17->MemoryType = gRAM->DIMM[map].Type;
 		}

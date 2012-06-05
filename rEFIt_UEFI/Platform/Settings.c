@@ -753,6 +753,9 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 		prop = GetProperty(dict, "ProductVersion");
 		if(prop != NULL)
 		{
+		    OSVersion = AllocateZeroPool(AsciiStrLen(prop->string));
+    		AsciiStrCpy(OSVersion, prop->string);
+
 			// Tiger
 			if(AsciiStrStr(prop->string, "10.4") != 0){
         Volume->OSType = OSTYPE_TIGER;
@@ -846,7 +849,7 @@ VOID GetDevices(VOID)
   radeon_card_info_t *info;
 //  DBG("Enter GetDevices()\n");
   NGFX = 0;
-  /* Scan PCI handles */
+  // Scan PCI handles 
   Status = gBS->LocateHandleBuffer (
                                     ByProtocol,
                                     &gEfiPciIoProtocolGuid,
@@ -862,7 +865,7 @@ VOID GetDevices(VOID)
                                     (VOID **)&PciIo
                                     );
       if (!EFI_ERROR (Status)) {
-        /* Read PCI BUS */
+        // Read PCI BUS 
         Status = PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
         Status = PciIo->Pci.Read (
                                   PciIo,
@@ -940,7 +943,7 @@ VOID GetDevices(VOID)
   radeon_card_info_t *info;
 //  DBG("Enter GetDevices()\n");
   
-  /* Scan PCI BUS */
+  // Scan PCI BUS 
 	Status = gBS->LocateHandleBuffer(AllHandles, NULL, NULL, &HandleCount, &HandleBuffer);
   DBG("found %d handles\n", HandleCount);
 	if (!EFI_ERROR(Status))
@@ -958,7 +961,7 @@ VOID GetDevices(VOID)
 						Status = gBS->OpenProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID **)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
 						if (!EFI_ERROR(Status))
 						{
-							/* Read PCI BUS */
+							// Read PCI BUS 
 							Status = PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
 							Status = PciIo->Pci.Read (
                                         PciIo,
@@ -1043,7 +1046,7 @@ VOID SetDevices(VOID)
   UINT16        PmCon;
     
   GetEdid();
-  /* Read Pci Bus for GFX */
+  // Read Pci Bus for GFX 
 	Status = gBS->LocateHandleBuffer (AllHandles, NULL, NULL, &HandleCount, &HandleBuffer);
 	if (!EFI_ERROR(Status)) {
 		for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {

@@ -70,6 +70,10 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr);
 EFI_STATUS ParseTagData(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr);
 EFI_STATUS ParseTagDate(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr);
 EFI_STATUS ParseTagBoolean(CHAR8* buffer, TagPtr * tag, UINT32 type,UINT32* lenPtr);
+
+EFI_STATUS GetElement( TagPtr dict, INTN id,  TagPtr *dict1);
+INTN GetTagCount( TagPtr dict );
+
 TagPtr     NewTag( void );
 EFI_STATUS FixDataMatchingTag( CHAR8* buffer, CHAR8* tag,UINT32* lenPtr);
 CHAR8*      NewSymbol(CHAR8* string);
@@ -133,6 +137,49 @@ XMLDecode(const CHAR8* src)
 
     return out;
 }                    
+
+INTN GetTagCount( TagPtr dict )
+{
+	INTN count = 0;
+	TagPtr tagList, tag;
+
+    if (dict->type != kTagTypeDict && dict->type != kTagTypeArray) return 0;
+	tag = 0;
+    tagList = dict->tag;
+    while (tagList)
+    {
+		tag = tagList;
+        tagList = tag->tagNext;
+		
+		if (((tag->type != kTagTypeKey) && ((tag->string == 0) || (tag->string[0] == 0)))
+			&& (dict->type != kTagTypeArray)	// If we are an array, any element is valid
+			) continue;
+		
+		//if(tag->type == kTagTypeKey) printf("Located key %s\n", tag->string);
+
+		count++;
+    }
+	
+	return count;
+}
+
+EFI_STATUS GetElement( TagPtr dict, INTN id,  TagPtr * dict1)
+{    
+	if(dict->type != kTagTypeArray) return EFI_UNSUPPORTED;
+	
+	*dict1 = NULL;
+	
+	INTN element = 0;
+	*dict1 = dict->tag;
+
+	while(element < id)
+	{
+		element++;
+		*dict1 = dict->tagNext;
+	}
+	
+	return EFI_SUCCESS;
+}           
 
 // Expects to see one dictionary in the XML file, the final pos will be returned
 // If the pos is not equal to the strlen, then there are multiple dicts

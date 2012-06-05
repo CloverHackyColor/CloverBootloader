@@ -29,10 +29,10 @@
 #ifndef _MKEXT_H_
 #define _MKEXT_H_ 1
 
-#include <sys/cdefs.h>
-#include <sys/types.h>
+#include <cdefs.h>
+#include <types.h>
 
-#include <mach/machine.h>
+//#include <mach/machine.h>
 
 /*********************************************************************
 * Mkext File Format

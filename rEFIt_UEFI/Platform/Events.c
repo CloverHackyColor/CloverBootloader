@@ -12,7 +12,16 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include "Platform.h"
 #include "device_tree.h"
+#include "kernel_patcher.h"
+#include "mkext.h"
 
+#define PATCH_DEBUG 1
+
+#if PATCH_DEBUG
+#define DBG(x...)	Print(x);
+#else
+#define DBG(x...)
+#endif
 
 EFI_EVENT   mVirtualAddressChangeEvent = NULL;
 EFI_EVENT   OnReadyToBootEvent = NULL;
@@ -102,70 +111,99 @@ OnExitBootServices (
   BootArgs1*				bootArgs1;
 	BootArgs2*				bootArgs2;
 	UINT8*						ptr=(UINT8*)(UINTN)0x100000;
-//	DTEntry						efiPlatform;
+  //	DTEntry						efiPlatform;
 	CHAR8*						dtRoot;
-	UINTN						archMode = sizeof(UINTN) * 8;
+	UINT8						archMode = sizeof(UINTN) * 8;
 	UINTN						Version = 0;
+	VOID*                   KernelData=(VOID*)0x00200000; // Kernel address should be alway on here
+	
+  dtRoot = NULL;
   
-    if (!gFirmwareClover) {
-        // DisableUsbLegacySupport() not working on Aptio UEFI
-        // (probably because of memory allocations)
-        return;
-    }
+  if (!gFirmwareClover) {
+    // DisableUsbLegacySupport() not working on Aptio UEFI
+    // (probably because of memory allocations)
+    return;
+  }
   
-  while(FALSE) //TRUE)
+  while(TRUE)
 	{
 		bootArgs2 = (BootArgs2*)ptr;
 		bootArgs1 = (BootArgs1*)ptr;
     
-		/* search bootargs for 10.7 */
-		if(((bootArgs2->Revision == 0) || (bootArgs2->Revision == 0)) && bootArgs2->Version==2)
+		// patch bootargs for 10.7
+		if (bootArgs2->Revision==0 && bootArgs2->Version==2 && (AsciiStrStr(OSVersion,"10.8")!=0 || AsciiStrStr(OSVersion,"10.7")!=0) &&
+		    bootArgs2->efiMode == archMode && (bootArgs2->deviceTreeLength > 1024))
 		{
-			if (((UINTN)bootArgs2->efiMode == 32) || ((UINTN)bootArgs2->efiMode == 64)){
-				dtRoot = (CHAR8*)(UINTN)bootArgs2->deviceTreeP;
-				bootArgs2->efiMode = archMode; //correct to EFI arch
-				Version = 2;
-				break;
-			} 
-      
-      /* search bootargs for 10.4 - 10.6.x */
-		} else if(((bootArgs1->Revision==6) ||
-               (bootArgs1->Revision==5) || 
-               (bootArgs1->Revision==4)) &&
-               (bootArgs1->Version ==1)){
-      
-			if (((UINTN)bootArgs1->efiMode == 32) ||
-          ((UINTN)bootArgs1->efiMode == 64)){
-				dtRoot = (CHAR8*)(UINTN)bootArgs1->deviceTreeP;
-				bootArgs1->efiMode = archMode;
-				Version = 1;
-				break;
-			}
-		}
-    
-		ptr+=0x1000;
-		if((UINT32)(UINTN)ptr > 0x3000000)
-		{
-			Print(L"bootArgs not found!\n");
-//			gBS->Stall(5000000);
-//			return;
+      DBG(L"Boot OS %a\n", OSVersion);;
+      dtRoot = (CHAR8*)(UINTN)bootArgs2->deviceTreeP;
+      //DBG(L"Found bootArgs2! and address at 0x%08x\n", ptr);
+      //DBG(L"bootArgs2->kaddr = 0x%08x and bootArgs2->ksize =  0x%08x\n", bootArgs2->kaddr, bootArgs2->ksize);
+      //DBG(L"bootArgs2->efiMode = 0x%02x\n", bootArgs2->efiMode);
+      Version = 2;
       break;
-		}
-	}
-/*  
-  if(Version==2) {
+    } 
+		// patch bootargs for 10.4 - 10.6.x 		       
+		if ((bootArgs1->Revision==6 || bootArgs1->Revision==5 || bootArgs1->Revision==4) && bootArgs1->Version==1 &&
+		    ((AsciiStrStr(OSVersion,"10.5")!=0) || (AsciiStrStr(OSVersion,"10.6")!=0)) && 
+		    bootArgs1->efiMode == archMode && (bootArgs1->deviceTreeLength > 1024) )
+		{
+      DBG(L"Boot OS %a\n", OSVersion);
+      dtRoot = (CHAR8*)(UINTN)bootArgs1->deviceTreeP;
+			//DBG(L"Found bootArgs1! and address at 0x%08x\n", ptr);
+      //DBG(L"bootArgs1->kaddr = 0x%08x and bootArgs1->ksize =  0x%08x\n", bootArgs1->kaddr, bootArgs1->ksize);
+      //DBG(L"bootArgs1->efiMode = 0x%02x\n", bootArgs1->efiMode);
+      Version = 1;
+      break;
+    }
+    
+		ptr += 0x1000;
+  }
+  
+  
+  if (gCPUStructure.Family!=0x06 && AsciiStrStr(OSVersion,"10.7")==0 )
+  {
+    //DBG(L"\nKernel patch start!\n");    
+    while(TRUE)
+		{
+      // Parse through the load commands
+      if(MACH_GET_MAGIC(KernelData) == MH_MAGIC)
+      {
+        //DBG(L"found Kernel address patch start!, address = 0x%08x\n", KernelData);
+        KernelPatcher_32(KernelData);
+        break;
+      }
+      if(MACH_GET_MAGIC(KernelData) == MH_MAGIC_64)
+      {
+        //DBG(L"found Kernel address patch start!, address = 0x%08x\n", KernelData);
+        KernelPatcher_64(KernelData);
+        break;
+      }
+      KernelData += 1;
+    }
+  }
+  
+  KextPatcher_Start();
+	
+#if PATCH_DEBUG    
+  //gBS->Stall(10000000);
+#endif
+  
+  
+  if (Version==2) {
 		CorrectMemoryMap(bootArgs2->MemoryMap,
                      bootArgs2->MemoryMapDescriptorSize,
                      &bootArgs2->MemoryMapSize);
 		bootArgs2->efiSystemTable = (UINT32)(UINTN)gST;
 		
-	}else if(Version==1) {
+	}
+	else if (Version==1) 
+	{
 		CorrectMemoryMap(bootArgs1->MemoryMap,
                      bootArgs1->MemoryMapDescriptorSize,
                      &bootArgs1->MemoryMapSize);
 		bootArgs1->efiSystemTable = (UINT32)(UINTN)gST;
 	}
-*/  
+  
   DisableUsbLegacySupport();
   
 }

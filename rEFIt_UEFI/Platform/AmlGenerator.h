@@ -36,4 +36,13 @@ AML_CHUNK* aml_add_alias(AML_CHUNK* parent, CONST CHAR8* name1, CONST CHAR8* nam
 UINT32 aml_calculate_size(AML_CHUNK* node);
 UINT32 aml_write_node(AML_CHUNK* node, CHAR8* buffer, UINT32 offset);
 
+// add by pcj
+AML_CHUNK* aml_add_string(AML_CHUNK* parent, CONST CHAR8* string);
+AML_CHUNK* aml_add_byte_buffer(AML_CHUNK* parent, CONST CHAR8* data,UINT32 size);
+AML_CHUNK* aml_add_string_buffer(AML_CHUNK* parent, CONST CHAR8* string);
+AML_CHUNK* aml_add_device(AML_CHUNK* parent, CONST CHAR8* name);
+AML_CHUNK* aml_add_local0(AML_CHUNK* parent);
+AML_CHUNK* aml_add_store(AML_CHUNK* parent);
+AML_CHUNK* aml_add_return(AML_CHUNK* parent);
+
 #endif /* !_AML_GENERATOR_H */

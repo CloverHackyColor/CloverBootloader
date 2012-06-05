@@ -105,7 +105,7 @@ FindChild(RealDTEntry cur, CHAR8 *buf)
 	RealDTEntry	child;
 	UINT32      index;
 	CHAR8*			str;
-	UINTN      dummy;
+	UINT32      dummy;
 
 	if (cur->nChildren == 0) {
 		return NULL;
@@ -363,7 +363,7 @@ DTRestartEntryIteration(DTEntryIterator iterator)
 }
 
 INTN
-DTGetProperty(CONST DTEntry entry, CONST char *propertyName, VOID **propertyValue, UINTN *propertySize)
+DTGetProperty(CONST DTEntry entry, CONST CHAR8 *propertyName, VOID **propertyValue, UINT32 *propertySize)
 {
 	DeviceTreeNodeProperty *prop;
 	UINTN k;

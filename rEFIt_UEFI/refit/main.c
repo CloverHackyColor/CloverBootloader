@@ -210,7 +210,7 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   // Before calling the image, enable the Watchdog Timer for
   // the 5 Minute period - Slice - NO! 60seconds is enough
   //  
-//  gBS->SetWatchdogTimer (60, 0x0000, 0x00, NULL);
+  gBS->SetWatchdogTimer (180, 0x0000, 0x00, NULL);
   
   ReturnStatus = Status = gBS->StartImage(ChildImageHandle, NULL, NULL);
 //  PauseForKey(L"Returned from StartImage\n");
@@ -289,6 +289,12 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       
   BeginExternalScreen(Entry->UseGraphicsMode, L"Booting OS");
   if (Entry->LoaderType == OSTYPE_OSX) {
+    // first patchACPI and find PCIROOT and RTC
+    // but before ACPI patch we need smbios patch
+    PatchSmbios();    
+    PatchACPI(Entry->Volume);
+
+    Status = GetOSVersion(Entry->Volume);
     
     Entry->LoadOptions     = PoolPrint(L"%a", gSettings.BootArgs); //moved here, before using Entry ;)
     SetDevices();
@@ -299,9 +305,9 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     //  PauseForKey(L"SetPrivateVarProto");
     //  SetPrivateVarProto();
     //  PauseForKey(L"PatchSmbios");
-    PatchSmbios();
+//    PatchSmbios();
     //  PauseForKey(L"PatchACPI");
-    PatchACPI(Entry->Volume);
+//    PatchACPI(Entry->Volume);
     //  PauseForKey(L"SetVariablesForOSX");
     SetVariablesForOSX();
     //  PauseForKey(L"FinalizeSmbios");
@@ -589,7 +595,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->UseGraphicsMode = FALSE;
-      SubEntry->LoadOptions     = L"-v WithKexts";
+      SubEntry->LoadOptions     = L"-v WithKexts"; //default arch 10.6->32bit, 10.7->64bit
       SubEntry->LoaderType = OSTYPE_OSX;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }

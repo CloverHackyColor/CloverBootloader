@@ -354,6 +354,22 @@ Headers collection for procedures
 #define AML_CHUNK_RETURN  0xA4
 #define AML_LOCAL0        0x60
 #define AML_STORE_OP      0x70
+//-----------------------------------
+// define add by pcj
+#define	AML_CHUNK_BUFFER	0x11
+#define	AML_CHUNK_STRING_BUFFER	0x15
+#define	AML_CHUNK_OP	    0x5B
+#define	AML_CHUNK_REFOF	    0x71
+#define	AML_CHUNK_DEVICE	0x82
+#define	AML_CHUNK_LOCAL0	0x60
+#define	AML_CHUNK_LOCAL1	0x61
+#define	AML_CHUNK_LOCAL2	0x62
+
+#define	AML_CHUNK_ARG0	    0x68
+#define	AML_CHUNK_ARG1	    0x69
+#define	AML_CHUNK_ARG2	    0x6A
+#define	AML_CHUNK_ARG3	    0x6B
+
 
 struct aml_chunk 
 {
@@ -714,6 +730,18 @@ extern EFI_EVENT  OnReadyToBootEvent;
 extern EFI_EVENT  ExitBootServiceEvent;
 extern EFI_EVENT  mSimpleFileSystemChangeEvent;
 extern UINTN      gEvent;
+
+//CHAR8*   orgBiosDsdt;
+extern UINT64   BiosDsdt;
+extern UINT32   BiosDsdtLen;
+extern UINT8	acpi_cpu_count;
+extern CHAR8*   acpi_cpu_name[32];
+extern CHAR8*   OSVersion;
+extern BOOLEAN  SSSE3;
+
+VOID   FixBiosDsdt (VOID);
+//-----------------------------------
+
 
 VOID        WaitForSts(VOID);
 

@@ -38,6 +38,16 @@ CONST CHAR8	creatorID[4]   = APPLE_CREATOR_ID;
 RSDT_TABLE										*Rsdt = NULL;
 XSDT_TABLE										*Xsdt = NULL;	
 
+//CHAR8*   orgBiosDsdt;
+UINT64   BiosDsdt;
+UINT32   BiosDsdtLen;
+UINT8	 acpi_cpu_count;
+CHAR8*   acpi_cpu_name[32];
+CHAR8*   OSVersion;
+BOOLEAN  SSSE3;
+
+//-----------------------------------
+
 
 #define NUM_TABLES 19
 CHAR16* ACPInames[NUM_TABLES] = {
@@ -391,9 +401,9 @@ VOID        SaveOemDsdt(VOID)
   EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER	*RsdPointer = NULL;
   EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE		*FadtPointer = NULL;	
   EFI_PHYSICAL_ADDRESS	dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS; 
-  UINT64        				BiosDsdt = 0;
+//  UINT64        				BiosDsdt = 0;
 	UINT8                 *buffer = NULL;
-	UINTN        				  bufferLen = 0;
+//	UINTN        				  bufferLen = 0;
   CHAR16*               OriginDsdt   = L"\\EFI\\ACPI\\origin\\DSDT.aml";
   CHAR16*     OriginOemPath = PoolPrint(L"%s\\ACPI\\origin\\DSDT.aml", OEMPath);
   
@@ -414,11 +424,11 @@ VOID        SaveOemDsdt(VOID)
       DBG("Cannot found DSDT in Bios tables!\n");
     }
   }
-  bufferLen = ((EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)BiosDsdt)->Length;
+  BiosDsdtLen = ((EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)BiosDsdt)->Length;
   Status = gBS->AllocatePages (
                                AllocateMaxAddress,
                                EfiACPIReclaimMemory,
-                               EFI_SIZE_TO_PAGES(bufferLen),
+                               EFI_SIZE_TO_PAGES(BiosDsdtLen),
                                &dsdt
                                );
   
@@ -426,17 +436,17 @@ VOID        SaveOemDsdt(VOID)
   if(!EFI_ERROR(Status))
   {
     buffer = (UINT8*)(UINTN)dsdt;
-    CopyMem(buffer, (UINT8*)(UINTN)BiosDsdt, bufferLen);
-    Status = egSaveFile(SelfRootDir, OriginOemPath, buffer, bufferLen);
+    CopyMem(buffer, (UINT8*)(UINTN)BiosDsdt, BiosDsdtLen);
+    Status = egSaveFile(SelfRootDir, OriginOemPath, buffer, BiosDsdtLen);
     if (EFI_ERROR(Status)) {
-      Status = egSaveFile(SelfRootDir, OriginDsdt, buffer, bufferLen);
+      Status = egSaveFile(SelfRootDir, OriginDsdt, buffer, BiosDsdtLen);
       if (EFI_ERROR(Status)) {
         MsgLog("Save OriginDsdt failed=%r\n", Status);
       }
     }	else {
       MsgLog("Saved OriginDsdt into OEM folder\n");
     }	
-    gBS->FreePages(dsdt, EFI_SIZE_TO_PAGES(bufferLen));
+    gBS->FreePages(dsdt, EFI_SIZE_TO_PAGES(BiosDsdtLen));
   }
 }
 
