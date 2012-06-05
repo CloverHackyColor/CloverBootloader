@@ -123,12 +123,12 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue; //2
   InputItems[InputItemsCount].BValue = gSettings.UseDSDTmini;
   InputItems[InputItemsCount++].SValue = gSettings.UseDSDTmini?L"[X]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = BoolValue; //3  -- out
+  InputItems[InputItemsCount].ItemType = BoolValue; //3 
   InputItems[InputItemsCount].BValue = gSettings.StringInjector;
   InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[X]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = BoolValue; //4  -- out
-  InputItems[InputItemsCount].BValue = gSettings.InjectSystemID;
-  InputItems[InputItemsCount++].SValue = gSettings.InjectSystemID?L"[X]":L"[ ]";
+  InputItems[InputItemsCount].ItemType = BoolValue; //4 
+  InputItems[InputItemsCount].BValue = gSettings.DropSSDT;
+  InputItems[InputItemsCount++].SValue = gSettings.DropSSDT?L"[X]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue;  //5
   InputItems[InputItemsCount].BValue = gSettings.GeneratePStates;
   InputItems[InputItemsCount++].SValue = gSettings.GeneratePStates?L"[X]":L"[ ]";
@@ -229,7 +229,7 @@ VOID ApplyInputs(VOID)
   }
   i++; //4
   if (InputItems[i].Valid) {
-    gSettings.InjectSystemID = InputItems[i].BValue;
+    gSettings.DropSSDT = InputItems[i].BValue;
   }
   i++; //5
   if (InputItems[i].Valid) {
@@ -1636,7 +1636,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     //4 
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 50, L"Inject SystemID:");
+    UnicodeSPrint(Flags, 50, L"Drop OEM SSDT:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = 0xFFFF;

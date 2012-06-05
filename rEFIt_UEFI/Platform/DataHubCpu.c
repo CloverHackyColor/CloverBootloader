@@ -119,9 +119,9 @@ EFI_STATUS SetVariablesForOSX()
 	UINT32      BackgroundClear = 0x00000000;
 	UINT32      FwFeatures      = 0x80000015; //Slice - get it from SMBIOS
 	UINT32      FwFeaturesMask  = 0x800003ff;
-	UINTN       bootArgsLen = 120; 
+	UINTN       bootArgsLen = 256; 
 	CHAR8*      None	= "none";
-	CHAR8*      BA = &gSettings.BootArgs[119];
+	CHAR8*      BA = &gSettings.BootArgs[255];
   UINTN       LangLen = 16;
   
 	while ((*BA == ' ') || (*BA == 0)) {
@@ -132,7 +132,7 @@ EFI_STATUS SetVariablesForOSX()
 		BA--; LangLen--;
 	}
   
-	
+//some NVRAM variables	
 	Status = gRS->SetVariable(L"BootNext",  &gEfiAppleNvramGuid, //&gEfiGlobalVarGuid,
                                          /*	EFI_VARIABLE_NON_VOLATILE | */EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          sizeof(BootNext) ,&BootNext);
@@ -145,7 +145,8 @@ EFI_STATUS SetVariablesForOSX()
 	Status = gRS->SetVariable(L"FirmwareFeaturesMask", &gEfiAppleNvramGuid,
                                          EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          sizeof(FwFeaturesMask), &FwFeaturesMask);
-  
+
+// options variables  
 	Status = gRS->SetVariable(L"boot-args", &gEfiAppleBootGuid, 
                                          /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          bootArgsLen ,&gSettings.BootArgs);
@@ -164,7 +165,7 @@ EFI_STATUS SetVariablesForOSX()
 	if (gFirmwareClover && gEfiBootDeviceData != NULL) {
 		Status = gRS->SetVariable(L"efi-boot-device-data",  &gEfiAppleBootGuid,
 						 /*	EFI_VARIABLE_NON_VOLATILE | */EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-						 GetDevicePathSize(gEfiBootDeviceData) , gEfiBootDeviceData);
+						 GetDevicePathSize(gEfiBootDeviceData) , gEfiBootDeviceData);    
 	}
 	if (gFirmwareClover && gEfiBootDevice != NULL) {
 		Status = gRS->SetVariable(L"efi-boot-device",  &gEfiAppleBootGuid,

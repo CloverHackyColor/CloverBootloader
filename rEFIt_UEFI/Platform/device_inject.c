@@ -727,38 +727,38 @@ BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev)
 	
 	if (!string)
 		string = devprop_create_string();
-  
-	devicepath = get_pci_dev_path(hda_dev);
-	//device = devprop_add_device(string, devicepath);
-  device = devprop_add_device_pci(string, hda_dev);
-	if (!device)
-		return FALSE;
-  
-    codecId = HDA_getCodecVendorAndDeviceIds(PciIo);
     
-    if (codecId != 0) {
-        if (gSettings.HDALayoutId > 0) {
-            // layoutId is specified - use it
-            layoutId = (UINT32)gSettings.HDALayoutId;
-            DBG("HDA Controller [%04x:%04x] :: %a => specified layout-id=0x%x=%d\n", hda_dev->vendor_id, hda_dev->device_id, devicepath, layoutId, layoutId);
-        } else {
-            // use detection: layoutId=codec dviceId or use default 12
-            layoutId = getLayoutIdFromVendorAndDeviceId(codecId);
-            if (layoutId == 0) {
-                layoutId = 12;
-            }
-        }
-    }
-    
-    if (layoutId > 0) {
-        DBG("HDA Controller [%04x:%04x] :: %a, detected codec: %04x:%04x => setting layout-id=0x%x=%d\n",
-            hda_dev->vendor_id, hda_dev->device_id, devicepath, codecId >> 16, codecId & 0xFFFF, layoutId, layoutId);
-        devprop_add_value(device, "layout-id", (UINT8*)&layoutId, 4);
-        layoutId = 0; // reuse variable
-        devprop_add_value(device, "PinConfigurations", (UINT8*)&layoutId, 1);
+    devicepath = get_pci_dev_path(hda_dev);
+    //device = devprop_add_device(string, devicepath);
+    device = devprop_add_device_pci(string, hda_dev);
+    if (!device)
+      return FALSE;
+  
+  codecId = HDA_getCodecVendorAndDeviceIds(PciIo);
+  
+  if (codecId != 0) {
+    if (gSettings.HDALayoutId > 0) {
+      // layoutId is specified - use it
+      layoutId = (UINT32)gSettings.HDALayoutId;
+      DBG("HDA Controller [%04x:%04x] :: %a => specified layout-id=0x%x=%d\n", hda_dev->vendor_id, hda_dev->device_id, devicepath, layoutId, layoutId);
     } else {
-        DBG("HDA Controller [%04x:%04x] :: %a",
-            hda_dev->vendor_id, hda_dev->device_id, devicepath);
+      // use detection: layoutId=codec dviceId or use default 12
+      layoutId = getLayoutIdFromVendorAndDeviceId(codecId);
+      if (layoutId == 0) {
+        layoutId = 12;
+      }
+    }
+  }
+  
+  if (layoutId > 0) {
+    DBG("HDA Controller [%04x:%04x] :: %a, detected codec: %04x:%04x => setting layout-id=0x%x=%d\n",
+        hda_dev->vendor_id, hda_dev->device_id, devicepath, codecId >> 16, codecId & 0xFFFF, layoutId, layoutId);
+    devprop_add_value(device, "layout-id", (UINT8*)&layoutId, 4);
+    layoutId = 0; // reuse variable
+    devprop_add_value(device, "PinConfigurations", (UINT8*)&layoutId, 1);
+  } else {
+    DBG("HDA Controller [%04x:%04x] :: %a",
+        hda_dev->vendor_id, hda_dev->device_id, devicepath);
 		// HDA audio not inited on Aptio UEFI and we end up here.
 		// We'll use Settings.HDALayoutId if specified to cover that
 		// until we get the code for initing controller.
@@ -769,10 +769,10 @@ BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev)
 			layoutId = 0; // reuse variable
 			devprop_add_value(device, "PinConfigurations", (UINT8*)&layoutId, 1);
 		}
-
-        DBG(" => possible HDMI audio => setting hda-gfx=onboard-1\n");
-        devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 9);
-    }
+    
+    DBG(" => possible HDMI audio => setting hda-gfx=onboard-1\n");
+    devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 9);
+  }
 	
 	return TRUE;
 }
