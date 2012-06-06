@@ -94,7 +94,7 @@ static CHAR16 ArrowDown[2] = { ARROW_DOWN, 0 };
 #define ROW0_SCROLLSIZE (100)
 
 static EG_IMAGE *SelectionImages[4] = { NULL, NULL, NULL, NULL };
-static EG_PIXEL SelectionBackgroundPixel = { 0xff, 0xff, 0xff, 0 };
+static EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0 };
 static EG_IMAGE *TextBuffer = NULL;
 
 static UINTN row0Count, row0PosX, row0PosXRunning;
@@ -162,7 +162,10 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue; //16
   InputItems[InputItemsCount].BValue = gSettings.PatchVBios;
   InputItems[InputItemsCount++].SValue = gSettings.PatchVBios?L"[X]":L"[ ]";
-  InputItemsCount += 3;
+  InputItems[InputItemsCount].ItemType = Decimal;  //17
+  InputItems[InputItemsCount++].SValue = PoolPrint(L"0x%X", gSettings.FixDsdt);
+  
+  InputItemsCount = 20;
   InputItems[InputItemsCount].ItemType = BoolValue; //20
   InputItems[InputItemsCount].BValue = gSettings.GraphicsInjector;
   InputItems[InputItemsCount++].SValue = gSettings.GraphicsInjector?L"[X]":L"[ ]";
@@ -284,6 +287,10 @@ VOID ApplyInputs(VOID)
   i++; //16
   if (InputItems[i].Valid) {
     gSettings.PatchVBios = InputItems[i].BValue;
+  }
+  i++; //17
+  if (InputItems[i].Valid) {
+    gSettings.FixDsdt = (UINT32)StrHexToUint64(InputItems[i].SValue);
   }
   
   i = 20; //20
@@ -1647,7 +1654,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.SubScreen = NULL;
     InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];   //4
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-    //5   
+    //15   
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     UnicodeSPrint(Flags, 50, L"PatchNMI:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
@@ -1659,6 +1666,19 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.BadgeImage = NULL;
     InputBootArgs->Entry.SubScreen = NULL;
     InputBootArgs->Item = &InputItems[15];    
+    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+    //17   
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    UnicodeSPrint(Flags, 50, L"Fix DSDT mask:");
+    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = StrLen(InputItems[17].SValue);
+    InputBootArgs->Entry.ShortcutDigit = 0;
+    InputBootArgs->Entry.ShortcutLetter = 'M';
+    InputBootArgs->Entry.Image = NULL;
+    InputBootArgs->Entry.BadgeImage = NULL;
+    InputBootArgs->Entry.SubScreen = NULL;
+    InputBootArgs->Item = &InputItems[17];    
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     
     

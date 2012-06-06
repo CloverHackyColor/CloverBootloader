@@ -792,7 +792,10 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     DBG("DSDT found in Clover volume\n");
     Status = egLoadFile(SelfRootDir, PoolPrint(L"%s%s", PathPatched, PathDsdt), &buffer, &bufferLen);
   }
-  //apply DSDT
+  //
+  //apply DSDT loaded from a file into buffer
+  //else FADT will contain old BIOS DSDT
+  //
   if (!EFI_ERROR(Status)) {
     Status = gBS->AllocatePages (
                                  AllocateMaxAddress,
@@ -814,6 +817,11 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       FadtPointer->Header.Checksum = (UINT8)(256-Checksum8((CHAR8*)FadtPointer,FadtPointer->Header.Length));
     }
   } 
+  
+  //native DSDT or loaded we want to apply autoFix to this
+  if (gSettings.FixDsdt) {
+    FixBiosDsdt((UINT8*)(UINTN)FadtPointer->Dsdt);
+  }
   
   if (gSettings.DropSSDT) {
     DropTableFromXSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE);

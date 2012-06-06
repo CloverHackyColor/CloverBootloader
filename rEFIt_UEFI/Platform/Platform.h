@@ -359,16 +359,36 @@ Headers collection for procedures
 #define	AML_CHUNK_BUFFER	0x11
 #define	AML_CHUNK_STRING_BUFFER	0x15
 #define	AML_CHUNK_OP	    0x5B
-#define	AML_CHUNK_REFOF	    0x71
+#define	AML_CHUNK_REFOF	  0x71
 #define	AML_CHUNK_DEVICE	0x82
 #define	AML_CHUNK_LOCAL0	0x60
 #define	AML_CHUNK_LOCAL1	0x61
 #define	AML_CHUNK_LOCAL2	0x62
 
-#define	AML_CHUNK_ARG0	    0x68
-#define	AML_CHUNK_ARG1	    0x69
-#define	AML_CHUNK_ARG2	    0x6A
-#define	AML_CHUNK_ARG3	    0x6B
+#define	AML_CHUNK_ARG0	  0x68
+#define	AML_CHUNK_ARG1	  0x69
+#define	AML_CHUNK_ARG2	  0x6A
+#define	AML_CHUNK_ARG3	  0x6B
+
+//DSDT fixes MASK
+//0x00FF
+#define FIX_DTGP      bit(0)
+#define FIX_WARNING   bit(1)
+#define FIX_SHUTDOWN  bit(2)
+#define FIX_MCHC      bit(3)
+#define FIX_HPET      bit(4)
+#define FIX_LPC       bit(5)
+#define FIX_IPIC      bit(6)
+#define FIX_SBUS      bit(7)
+//0xFF00
+#define FIX_DISPLAY   bit(8)
+#define FIX_IDE       bit(9)
+#define FIX_SATA      bit(10)
+#define FIX_FIREWIRE  bit(11)
+#define FIX_USB       bit(12)
+#define FIX_LAN       bit(13)
+#define FIX_WIFI      bit(14)
+#define FIX_HDA       bit(15)
 
 
 struct aml_chunk 
@@ -519,6 +539,7 @@ typedef struct {
 	BOOLEAN	smartUPS;
   BOOLEAN PatchNMI;
 	CHAR16	DsdtName[60];
+  UINT32  FixDsdt;
   
   //Injections
   BOOLEAN StringInjector;
@@ -742,7 +763,7 @@ extern CHAR8*   acpi_cpu_name[32];
 extern CHAR8*   OSVersion;
 extern BOOLEAN  SSSE3;
 
-VOID   FixBiosDsdt (VOID);
+VOID   FixBiosDsdt (UINT8* Dsdt);
 //-----------------------------------
 
 

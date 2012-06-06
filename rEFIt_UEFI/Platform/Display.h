@@ -5,6 +5,8 @@
 
 #ifndef _DISPLAY_H_
 #define _DISPLAY_H_
+
+#include "ati.h"
 /*
 UINT8 hexstrtouint8 (CHAR8* buf)
 {
@@ -61,6 +63,7 @@ BOOLEAN hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, INT32 len)
 }
 */
 // ATI Card
+/*
 typedef struct {
 	CHAR8		*name;
 	UINT8			ports;
@@ -170,31 +173,31 @@ typedef enum {
 
 typedef enum {
 	CHIP_FAMILY_UNKNOW,
-	/* IGP */
+	// IGP 
 	CHIP_FAMILY_RS600,
 	CHIP_FAMILY_RS690,
 	CHIP_FAMILY_RS740,
 	CHIP_FAMILY_RS780,
 	CHIP_FAMILY_RS880,
-	/* R600 */
+	// R600 
 	CHIP_FAMILY_R600,
 	CHIP_FAMILY_RV610,
 	CHIP_FAMILY_RV620,
 	CHIP_FAMILY_RV630,
 	CHIP_FAMILY_RV635,
 	CHIP_FAMILY_RV670,
-	/* R700 */
+	// R700 
 	CHIP_FAMILY_RV710,
 	CHIP_FAMILY_RV730,
 	CHIP_FAMILY_RV740,
 	CHIP_FAMILY_RV770,
-	/* Evergreen */
+	// Evergreen 
 	CHIP_FAMILY_CEDAR,
 	CHIP_FAMILY_CYPRESS,
 	CHIP_FAMILY_HEMLOCK,
 	CHIP_FAMILY_JUNIPER,
 	CHIP_FAMILY_REDWOOD,
-	/* Northern Islands */
+	// Northern Islands 
 	CHIP_FAMILY_BARTS,
 	CHIP_FAMILY_CAICOS,
 	CHIP_FAMILY_CAYMAN,
@@ -210,7 +213,8 @@ typedef struct {
   CHAR8*         model;
   ati_config_name_t	cfg_name;
 } ati_card_t;
-
+*/
+/*
 static ati_card_t radeon_cards[] = {
 	
 	{ 0x0000,	0x00000000, CHIP_FAMILY_UNKNOW,		NULL,						kNull		},
@@ -467,7 +471,7 @@ static ati_card_t radeon_cards[] = {
 	{ 0x95C5,	0x01041A93, CHIP_FAMILY_RV620,		"Qimonda Radeon HD 3450",			kNull		},
 	{ 0x95C5,	0x01051A93, CHIP_FAMILY_RV620,		"Qimonda Radeon HD 3450",			kNull		},
 
-	/* Evergreen */
+	// Evergreen 
 	{ 0x6898,	0x0B001002, CHIP_FAMILY_CYPRESS,	"ATI Radeon HD 5870",				kZonalis	},
 
 	{ 0x6898,	0x032E1043, CHIP_FAMILY_CYPRESS,	"ATI Radeon HD 5870",				kUakari		},
@@ -599,7 +603,7 @@ static ati_card_t radeon_cards[] = {
 	{ 0x68F9,	0x303A1682, CHIP_FAMILY_CEDAR,		"ATI Radeon HD 5450",				kEulemur	},
 	{ 0x68E1,	0x3000174B, CHIP_FAMILY_CEDAR,		"ATI Radeon HD 5450",				kEulemur	},
 
-	/* Northen Islands */
+	// Northen Islands 
 	{ 0x6718,	0x0B001002, CHIP_FAMILY_CAYMAN,		"AMD Radeon HD 6970",				kNull		},
 	{ 0x6718,	0x67181002, CHIP_FAMILY_CAYMAN,		"AMD Radeon HD 6970",				kNull		},
 	{ 0x6718,	0x31301682, CHIP_FAMILY_CAYMAN,		"AMD Radeon HD 6970",				kNull		},
@@ -672,7 +676,7 @@ static ati_card_t radeon_cards[] = {
 	{ 0x6779,	0xE164174B, CHIP_FAMILY_CAICOS,		"AMD Radeon HD 6450",				kBulrushes	},
 	{ 0x6779,	0xE180174B, CHIP_FAMILY_CAICOS,		"AMD Radeon HD 6450",				kPithecia	}, // ErmaC 
 
-	/* standard/default models */
+	// standard/default models 
 	{ 0x9400,	0x00000000, CHIP_FAMILY_R600,		"ATI Radeon HD 2900 XT",			kNull		},
 	{ 0x9405,	0x00000000, CHIP_FAMILY_R600,		"ATI Radeon HD 2900 GT",			kNull		},
 
@@ -723,7 +727,7 @@ static ati_card_t radeon_cards[] = {
 	{ 0x95C0,	0x00000000, CHIP_FAMILY_RV620,		"ATI Radeon HD 3400 Series",			kIago		},
 	{ 0x95C5,	0x00000000, CHIP_FAMILY_RV620,		"ATI Radeon HD 3400 Series",			kIago		},
 
-	/* IGP */
+	// IGP 
 	{ 0x9610,	0x00000000, CHIP_FAMILY_RS780,		"ATI Radeon HD 3200 Graphics",			kNull		},
 	{ 0x9611,	0x00000000, CHIP_FAMILY_RS780,		"ATI Radeon 3100 Graphics",			kNull		},
 	{ 0x9614,	0x00000000, CHIP_FAMILY_RS780,		"ATI Radeon HD 3300 Graphics",			kNull		},
@@ -733,7 +737,7 @@ static ati_card_t radeon_cards[] = {
 	{ 0x9715,	0x00000000, CHIP_FAMILY_RS880,		"ATI Radeon HD 4250",				kNull		},
 	{ 0x9714,	0x00000000, CHIP_FAMILY_RS880,		"ATI Radeon HD 4290",				kNull		},
 
-	/* Evergreen */
+	// Evergreen
 	{ 0x688D,	0x00000000, CHIP_FAMILY_CYPRESS,	"AMD FireStream 9350",				kUakari		},
 
 	{ 0x6898,	0x00000000, CHIP_FAMILY_CYPRESS,	"ATI Radeon HD 5800 Series",			kUakari		},
@@ -754,7 +758,7 @@ static ati_card_t radeon_cards[] = {
 
 	{ 0x68F9,	0x00000000, CHIP_FAMILY_CEDAR,		"ATI Radeon HD 5400 Series",			kNull		},
 
-	/* Northen Islands */
+	// Northen Islands 
 	{ 0x6718,	0x00000000, CHIP_FAMILY_CAYMAN,		"AMD Radeon HD 6970 Series",			kNull		},
 	{ 0x6719,	0x00000000, CHIP_FAMILY_CAYMAN,		"AMD Radeon HD 6950 Series",			kGibba		},
 
@@ -777,98 +781,105 @@ static ati_card_t radeon_cards[] = {
 	{ 0x6770,	0x00000000, CHIP_FAMILY_CAICOS,		"AMD Radeon HD 6400 Series",			kNull		},
 	{ 0x6779,	0x00000000, CHIP_FAMILY_CAICOS,		"AMD Radeon HD 6450 Series",			kBulrushes	},
 
-	/* Southen Islands */
+	// Southen Islands 
 
 };
-
+*/
 CHAR8 *ati_name(UINT16 device_id, UINT32 sub_id)
 {
-    INT32	i;
+    INT32	i = 0;
 
-	for (i=1; i< (sizeof(radeon_cards) / sizeof(radeon_cards[0])); i++) {
-		if (radeon_cards[i].deviceid == device_id && radeon_cards[i].subid == sub_id) {
-			return radeon_cards[i].model;
+//	for (i=1; i< (sizeof(radeon_cards) / sizeof(radeon_cards[0])); i++) {
+  while (radeon_cards[i].device_id) {
+		if (radeon_cards[i].device_id == device_id /* && radeon_cards[i].subsys_id == sub_id */) {
+			return (CHAR8*)radeon_cards[i].model_name;
 		}
+    i++;
 	}
-	return radeon_cards[0].model;
+	return NULL; //radeon_cards[0].model_name;
 }
 
 CHAR8 *ati_cfg_name(UINT16 device_id, UINT32 sub_id)
 {
-    INT32	i;
+    INT32	i = 0;
 
-	for (i=1; i< (sizeof(radeon_cards) / sizeof(radeon_cards[0])); i++) 
+//	for (i=1; i< (sizeof(radeon_cards) / sizeof(radeon_cards[0])); i++) 
+  while (radeon_cards[i].device_id)
 	{
-		if (radeon_cards[i].deviceid == device_id && radeon_cards[i].subid == sub_id) 
+		if (radeon_cards[i].device_id == device_id /* && radeon_cards[i].subsys_id == sub_id */) 
 		{
-			 return ati_card_configs[radeon_cards[i].cfg_name].name;
+			 return (CHAR8*)card_configs[radeon_cards[i].cfg_name].name;
 		}
+    i++;
 	}
-	return radeon_cards[0].model;
+	return NULL; //radeon_cards[0].model_name;
 }
 
 UINT8 ati_port(UINT16 device_id, UINT32 sub_id)
 {
-    INT32	i;
+    INT32	i = 0;
 
-	for (i=1; i< (sizeof(radeon_cards) / sizeof(radeon_cards[0])); i++) 
+//	for (i=1; i< (sizeof(radeon_cards) / sizeof(radeon_cards[0])); i++) 
+  while (radeon_cards[i].device_id)
 	{
-		if (radeon_cards[i].deviceid == device_id && radeon_cards[i].subid == sub_id) 
+		if (radeon_cards[i].device_id == device_id /* && radeon_cards[i].subsys_id == sub_id*/ ) 
 		{
-            return ati_card_configs[radeon_cards[i].cfg_name].ports;
+            return card_configs[radeon_cards[i].cfg_name].ports;
 		}
+    i++;
 	}
-	return ati_card_configs[0].ports;
+	return 2; //card_configs[0].ports;
 }
 
 UINT32 ATI_vram_size(pci_dt_t *ati_dev)
-{
-
-    INT32	i;
-    
-    ati_chip_family_t chip_family=0;
-
-	for (i=1; i< (sizeof(radeon_cards) / sizeof(radeon_cards[0])); i++) 
+{  
+  INT32	i = 0;
+  
+  ati_chip_family_t chip_family=0;
+  
+  //	for (i=1; i< (sizeof(radeon_cards) / sizeof(radeon_cards[0])); i++) 
+  while (radeon_cards[i].device_id)
 	{
-		if (radeon_cards[i].deviceid == ati_dev->device_id && radeon_cards[i].subid == ati_dev->subsys_id.subsys_id) 
+		if (radeon_cards[i].device_id == ati_dev->device_id) // && radeon_cards[i].subsys_id == ati_dev->subsys_id.subsys_id ) 
 		{
-			 chip_family = radeon_cards[i].ati_chip_family;
-			 break;
+      chip_family = radeon_cards[i].chip_family;
+      break;
 		}
+    i++;
 	}
 	
 	UINT8 *mmio = (UINT8*)(UINTN)(pci_config_read32(ati_dev, PCI_BASE_ADDRESS_2) & ~0x0f);
 	
 	UINT64 vram_size = 128 << 20; //default 128Mb, this is minimum for OS
-
-    if (chip_family >= CHIP_FAMILY_CEDAR) 
-    {
-      // size in MB on evergreen
-      // XXX watch for overflow!!!
-      vram_size = REG32(mmio, 0x5428) << 20;
-    } else if (chip_family >= CHIP_FAMILY_R600) 
-    {
-			vram_size = REG32(mmio, 0x5428);
-    }
-    else 
-    {
-      vram_size = REG32(mmio, 0x00f8);
-      if (vram_size == 0) 
-      {
-          vram_size = REG32(mmio, 0x0108);
-        //Slice - previously I successfully made Radeon9000 working
-        //by writing this register
-    //    WRITEREG32(card->mmio, RADEON_CONFIG_MEMSIZE, 0x30000);
-      }
-    }
   
-    return vram_size;	
+  if (chip_family >= CHIP_FAMILY_CEDAR) 
+  {
+    // size in MB on evergreen
+    // XXX watch for overflow!!!
+    vram_size = REG32(mmio, R600_CONFIG_MEMSIZE) << 20;
+  } else if (chip_family >= CHIP_FAMILY_R600) 
+  {
+    vram_size = REG32(mmio, R600_CONFIG_MEMSIZE);
+  }
+  else 
+  {
+    vram_size = REG32(mmio, RADEON_CONFIG_MEMSIZE);
+    if (vram_size == 0) 
+    {
+      vram_size = REG32(mmio, RADEON_CONFIG_APER_SIZE);
+      //Slice - previously I successfully made Radeon9000 working
+      //by writing this register
+      //    WRITEREG32(card->mmio, RADEON_CONFIG_MEMSIZE, 0x30000);
+    }
+  }
+  
+  return vram_size;	
 }
 
 CHAR8* ATI_romrevision(pci_dt_t *ati_dev)
 {
-    CHAR8* cRev="109-B77101-11";
-    
+  CHAR8* cRev="109-B77101-11";
+  
 	option_rom_header_t *rom_addr;
 	
 	//rom_addr = (option_rom_header_t *)(UINTN)(pci_config_read32(ati_dev, 0x30) & ~0x7ff);
@@ -882,7 +893,7 @@ CHAR8* ATI_romrevision(pci_dt_t *ati_dev)
 	rev = (UINT8*)rom_addr + *(UINT8 *)((UINT8*)rom_addr + 0x6e);
 	
 	CopyMem(cRev, rev, AsciiStrLen((CHAR8 *)rev));
-
+  
 	return cRev;
 }
 

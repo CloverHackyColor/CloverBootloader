@@ -39,7 +39,7 @@ card_config_t card_configs[] = {
 	{"Flicker",		3},
 	{"Galago",		2},
 	{"Gliff",		3},
-	{"Hoolock",		3},
+	{"Hoolock",		1},
 	{"Hypoprion",	2},
 	{"Iago",		2},
 	{"Kakapo",		3},
@@ -203,11 +203,11 @@ radeon_card_info_t radeon_cards[] = {
   { 0x7297, 0x00000000, CHIP_FAMILY_RV560, "ATI Radeon HD Desktop ",		kAlopias		 },
   //IGP  
   { 0x791E, 0x00000000, CHIP_FAMILY_RS690, "ATI Radeon IGP ",			kNull		 },
-  { 0x791F, 0x00000000, CHIP_FAMILY_RS690, "ATI Radeon IGP ",			kNull		},
+  { 0x791F, 0x00000000, CHIP_FAMILY_RS690, "ATI Radeon IGP ",			kNull		 },
   { 0x796C, 0x00000000, CHIP_FAMILY_RS740, "ATI Radeon IGP ",			kNull		 },
-  { 0x796D, 0x00000000, CHIP_FAMILY_RS740, "ATI Radeon IGP ",			kNull		},
-  { 0x796E, 0x00000000, CHIP_FAMILY_RS740, "ATI Radeon IGP ",			kNull		},
-  { 0x796F, 0x00000000, CHIP_FAMILY_RS740, "ATI Radeon HD ",			kNull		 },
+  { 0x796D, 0x00000000, CHIP_FAMILY_RS740, "ATI Radeon IGP ",			kNull		 },
+  { 0x796E, 0x00000000, CHIP_FAMILY_RS740, "ATI Radeon IGP ",			kNull		 },
+  { 0x796F, 0x00000000, CHIP_FAMILY_RS740, "ATI Radeon IGP ",			kNull		 },
   
 	
   //X2000 0x94001002 0x94011002 0x94021002 0x94031002 0x95811002 0x95831002 0x95881002 0x94c81002 0x94c91002 
@@ -224,13 +224,13 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x940B,	0x00000000, CHIP_FAMILY_R600,		"ATI Radeon HD 2900 GT",			kNull		},
 	{ 0x940F,	0x00000000, CHIP_FAMILY_R600,		"ATI Radeon HD 2900 GT",			kNull		},
   //9440, 944A - Cardinal	
-	{ 0x9440,	0x00000000, CHIP_FAMILY_RV770,		"ATI Radeon HD 4870 ",		kMotmot		},
+	{ 0x9440,	0x00000000, CHIP_FAMILY_RV770,		"ATI Radeon HD 4870 ",        kMotmot		},
 	{ 0x9441,	0x00000000, CHIP_FAMILY_RV770,		"ATI Radeon HD 4870 X2",			kMotmot		},
-	{ 0x9442,	0x00000000, CHIP_FAMILY_RV770,		"ATI Radeon HD 4850 Series",		kMotmot		},
+	{ 0x9442,	0x00000000, CHIP_FAMILY_RV770,		"ATI Radeon HD 4850 Series",	kMotmot		},
 	{ 0x9443,	0x00000000, CHIP_FAMILY_RV770,		"ATI Radeon HD 4850 X2",			kMotmot		},
-	{ 0x944A,	0x00000000, CHIP_FAMILY_RV770,		"ATI Radeon HD 4800 Series",		kMotmot		},
-	{ 0x944C,	0x00000000, CHIP_FAMILY_RV770,		"ATI Radeon HD 4830 Series",		kMotmot		},
-	{ 0x944E,	0x00000000, CHIP_FAMILY_RV770,		"ATI Radeon HD 4810 Series",		kMotmot		},
+	{ 0x944A,	0x00000000, CHIP_FAMILY_RV770,		"ATI Radeon HD 4800 Series",	kMotmot		},
+	{ 0x944C,	0x00000000, CHIP_FAMILY_RV770,		"ATI Radeon HD 4830 Series",	kMotmot		},
+	{ 0x944E,	0x00000000, CHIP_FAMILY_RV770,		"ATI Radeon HD 4810 Series",	kMotmot		},
 	
 	{ 0x9450,	0x00000000, CHIP_FAMILY_RV770,		"AMD FireStream 9270",				kMotmot		},
 	{ 0x9452,	0x00000000, CHIP_FAMILY_RV770,		"AMD FireStream 9250",				kMotmot		},
@@ -853,7 +853,7 @@ BOOLEAN load_vbios_file(UINT16 vendor_id, UINT16 device_id)
 
 void get_vram_size(void)
 {
-	chip_family_t chip_family = card->info->chip_family;
+	ati_chip_family_t chip_family = card->info->chip_family;
 	
 	card->vram_size = 128 << 20; //default 128Mb, this is minimum for OS
   if (gSettings.VRAM != 0) {
@@ -913,7 +913,7 @@ BOOLEAN read_vbios(BOOLEAN from_pci)
 BOOLEAN read_disabled_vbios(VOID)
 {
 	BOOLEAN ret = FALSE;
-	chip_family_t chip_family = card->info->chip_family;
+	ati_chip_family_t chip_family = card->info->chip_family;
 	
 	if (chip_family >= CHIP_FAMILY_RV770)
 	{

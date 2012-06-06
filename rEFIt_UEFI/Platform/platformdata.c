@@ -214,11 +214,11 @@ VOID GetDefaultSettings(VOID)
   
   gSettings.ResetAddr  = 0x64; //I wish it will be default
   gSettings.ResetVal = 0xFE;
+  gSettings.FixDsdt  = 0xFF; //only ISA fixes and warnings. No injectors by default.
   gSettings.GraphicsInjector = TRUE;
   gSettings.HDAInjection = TRUE;
   gSettings.HDALayoutId = 0;
   gSettings.Mobile = gMobile;  //default
   StrCpy(gSettings.DsdtName, L"DSDT.aml");
-//  gSettings.DsdtName = L"DSDT.aml";
   
 }

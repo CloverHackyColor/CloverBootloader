@@ -510,8 +510,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
         gSettings.UnderVoltStep = (UINT8)StrDecimalToUintn((CHAR16*)&UStr[0]);	
       }
-      
-      
+            
       prop = GetProperty(dictPointer,"ResetAddress");
       if(prop)
       {
@@ -574,6 +573,12 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
           gSettings.PatchNMI = TRUE;
+      }
+      prop = GetProperty(dictPointer,"FixDsdtMask");
+      if(prop)
+      {
+        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+        gSettings.FixDsdt  = StrHexToUint64(UStr); 
       }
       
     }
@@ -725,8 +730,8 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 	EFI_STATUS				Status = EFI_NOT_FOUND;
 	CHAR8*						plistBuffer = 0;
 	UINTN             plistLen;
-	TagPtr						dict=NULL;
-	TagPtr						prop = NULL;
+	TagPtr						dict  = NULL;
+	TagPtr						prop  = NULL;
   CHAR16*     SystemPlist = L"System\\Library\\CoreServices\\SystemVersion.plist";
   CHAR16*     ServerPlist = L"System\\Library\\CoreServices\\ServerVersion.plist";
   CHAR16*     RecoveryPlist = L"\\com.apple.recovery.boot\\SystemVersion.plist";

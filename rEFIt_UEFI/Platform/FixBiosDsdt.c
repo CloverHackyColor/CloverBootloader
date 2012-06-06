@@ -4087,160 +4087,191 @@ UINT32 FIXOTHER (UINT8 *dsdt, INTN len)
     
 }
 
-VOID FixBiosDsdt ()
+VOID FixBiosDsdt (UINT8* temp)
 {    
-    if (BiosDsdt == 0)
-        return;
-        
-    UINT8* temp = (UINT8*)(UINTN)BiosDsdt;
-        
-    DBG("\nAuto patch BiosDSDT Starting.................\n\n");
-    
-    //DBG("orgBiosDsdtLen = 0x%08x\n", orgBiosDsdtLen);
-    
-    // First check hardware address
-    CheckHardware();
-    
-    // find ACPI CPU name and hardware address
-    findCPU(temp, BiosDsdtLen);
-    
-    // add Method (DTGP, 5, NotSerialized)
-    CopyMem((VOID*)temp+BiosDsdtLen, dtgp, sizeof(dtgp));
-    BiosDsdtLen += sizeof(dtgp);
-    
-    // get PCIRootUID and all DSDT Fix address
-    gSettings.PCIRootUID = findPciRoot(temp, BiosDsdtLen);
-    
-    // Fix HPET
-    if (HPETADR)
+  UINT32 DsdtLen;
+  if (!temp)
+    return;
+  
+  DsdtLen = ((EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)temp)->Length;
+  if ((DsdtLen < 10) || (DsdtLen > 100000)) { //fool proof
+    DBG("DSDT length out of range\n");
+    return;
+  }
+  //   UINT8* temp = (UINT8*)(UINTN)BiosDsdt;
+  
+  DBG("\nAuto patch BiosDSDT Starting.................\n\n");
+  
+  //DBG("orgBiosDsdtLen = 0x%08x\n", orgBiosDsdtLen);
+  
+  // First check hardware address
+  CheckHardware();
+  
+  // find ACPI CPU name and hardware address
+  findCPU(temp, DsdtLen);
+  
+  // add Method (DTGP, 5, NotSerialized)
+  if ((gSettings.FixDsdt & FIX_DTGP)) {
+    CopyMem((VOID*)temp+DsdtLen, dtgp, sizeof(dtgp));
+    DsdtLen += sizeof(dtgp);
+  }
+  
+  // get PCIRootUID and all DSDT Fix address
+  gSettings.PCIRootUID = findPciRoot(temp, DsdtLen);
+  
+  // Fix HPET
+  if (HPETADR && (gSettings.FixDsdt & FIX_HPET))
+  {
+    DBG("patch HPET in DSDT \n");
+    DsdtLen = FixHPET(temp, DsdtLen, HPETADR);
+  }
+  /*    else // if don't had HPET inject HPET is not use.
+   {
+   DsdtLen = ADDHPET(temp, DsdtLen);
+   }
+   */    
+  // Fix RTC
+  if (RTCADR  && (gSettings.FixDsdt & FIX_HPET))
+  {
+    DBG("patch RTC in DSDT \n");
+    DsdtLen = FixRTC(temp, DsdtLen, RTCADR);
+  }
+  
+  // Fix TMR
+  if (TMRADR  && (gSettings.FixDsdt & FIX_HPET))
+  {
+    DBG("patch TMR in DSDT \n");
+    DsdtLen = FixTMR(temp, DsdtLen, TMRADR);
+  }
+  
+  // Fix PIC or IPIC
+  if (PICADR && (gSettings.FixDsdt & FIX_IPIC))
+  {
+    DBG("patch IPIC in DSDT \n");
+    DsdtLen = FixPIC(temp, DsdtLen, PICADR);
+  }
+  
+  // Fix LPC if don't had HPET don't need to inject LPC??
+  if (LPCBFIX && (gCPUStructure.Family == 0x06)  && (gSettings.FixDsdt & FIX_LPC))
+  {
+    DBG("patch LPC in DSDT \n");
+    DsdtLen = FIXLPCB(temp, DsdtLen);
+  }
+  
+  // Fix Display
+  /*    if(AsciiStrStr(gSettings.BootArgs,"-display") || AsciiStrStr(gSettings.BootArgs,"-DISPLAY"))
+   {
+   DBG("disable Display inject\n");
+   }
+   else*/
+  if (gSettings.FixDsdt & FIX_DISPLAY) {
+    if (DisplayADR1[0])
     {
-        BiosDsdtLen = FixHPET(temp, BiosDsdtLen, HPETADR);
-    }
-/*    else // if don't had HPET inject HPET is not use.
-    {
-        BiosDsdtLen = ADDHPET(temp, BiosDsdtLen);
-    }
-*/    
-    // Fix RTC
-    if (RTCADR)
-    {
-        BiosDsdtLen = FixRTC(temp, BiosDsdtLen, RTCADR);
-    }
-    
-    // Fix TMR
-    if (TMRADR)
-    {
-        BiosDsdtLen = FixTMR(temp, BiosDsdtLen, TMRADR);
-    }
-    
-    // Fix PIC or IPIC
-    if (PICADR)
-    {
-        BiosDsdtLen = FixPIC(temp, BiosDsdtLen, PICADR);
-    }
-        
-    // Fix LPC if don't had HPET don't need to inject LPC??
-    if (LPCBFIX && (gCPUStructure.Family == 0x06))
-    {
-        BiosDsdtLen = FIXLPCB(temp, BiosDsdtLen);
-    }
-    
-    // Fix Display
-    if(AsciiStrStr(gSettings.BootArgs,"-display") || AsciiStrStr(gSettings.BootArgs,"-DISPLAY"))
-    {
-        DBG("disable Display inject\n");
-    }
-    else
-    {
-        if (DisplayADR1[0])
-        {
-            BiosDsdtLen = FIXDisplay1(temp, BiosDsdtLen);
-        }
-        
-        if (DisplayADR1[1])
-        {
-            BiosDsdtLen = FIXDisplay2(temp, BiosDsdtLen);
-        }
-    }
-    
-    // Fix Network
-    if (NetworkADR1)
-    {
-        BiosDsdtLen = FIXNetwork(temp, BiosDsdtLen);
-    }
-    
-    // Fix SBUS
-    if (SBUSADR1)
-    {
-        BiosDsdtLen = FIXSBUS(temp, BiosDsdtLen);
+      DBG("patch Display0 in DSDT \n");
+      DsdtLen = FIXDisplay1(temp, DsdtLen);
     }
     
-    // Fix IDE inject
-    if (IDEFIX && (IDEVENDOR == 0x8086 || IDEVENDOR == 0x11ab))
+    if (DisplayADR1[1])
     {
-        BiosDsdtLen = FIXIDE(temp, BiosDsdtLen);
-    }
-    
-    // Fix SATA AHCI orange icon
-    if (SATAAHCIADR && SATAAHCIVENDOR == 0x8086)
-    {
-        BiosDsdtLen = FIXSATAAHCI(temp, BiosDsdtLen);
-    }
-    
-    // Fix SATA inject
-    if (SATAFIX && SATAVENDOR == 0x8086)
-    {
-        BiosDsdtLen = FIXSATA(temp, BiosDsdtLen);
-    }
-    
-    // Fix Firewire
-    if (FirewireADR1)
-    {
-        BiosDsdtLen = FIXFirewire(temp, BiosDsdtLen);
-    }
-    
-    // HDA HDEF
-    if (HDAFIX)
-    {
-        BiosDsdtLen = AddHDEF(temp, BiosDsdtLen);
-    }
-    
-    //Always add MCHC for PM
-    if (gCPUStructure.Family == 0x06) BiosDsdtLen = AddMCHC(temp, BiosDsdtLen);
-
-    // Always Fix USB
-    BiosDsdtLen = FIXUSB(temp, BiosDsdtLen);
-    
+      DBG("patch Display1 in DSDT \n");
+      DsdtLen = FIXDisplay2(temp, DsdtLen);
+    }    
+  }
+  
+  // Fix Network
+  if (NetworkADR1 && (gSettings.FixDsdt & FIX_LAN))
+  {
+    DBG("patch LAN in DSDT \n");
+    DsdtLen = FIXNetwork(temp, DsdtLen);
+  }
+  
+  // Fix SBUS
+  if (SBUSADR1  && (gSettings.FixDsdt & FIX_SBUS))
+  {
+    DBG("patch SBUS in DSDT \n");
+    DsdtLen = FIXSBUS(temp, DsdtLen);
+  }
+  
+  // Fix IDE inject
+  if (IDEFIX && (IDEVENDOR == 0x8086 || IDEVENDOR == 0x11ab)  && (gSettings.FixDsdt & FIX_IDE))
+  {
+    DBG("patch IDE in DSDT \n");
+    DsdtLen = FIXIDE(temp, DsdtLen);
+  }
+  
+  // Fix SATA AHCI orange icon
+  if (SATAAHCIADR && (SATAAHCIVENDOR == 0x8086)  && (gSettings.FixDsdt & FIX_SATA))
+  {
+    DBG("patch AHCI in DSDT \n");
+    DsdtLen = FIXSATAAHCI(temp, DsdtLen);
+  }
+  
+  // Fix SATA inject
+  if (SATAFIX && (SATAVENDOR == 0x8086)  && (gSettings.FixDsdt & FIX_SATA))
+  {
+    DBG("patch SATA in DSDT \n");
+    DsdtLen = FIXSATA(temp, DsdtLen);
+  }
+  
+  // Fix Firewire
+  if (FirewireADR1  && (gSettings.FixDsdt & FIX_FIREWIRE))
+  {
+    DBG("patch FRWR in DSDT \n");
+    DsdtLen = FIXFirewire(temp, DsdtLen);
+  }
+  
+  // HDA HDEF
+  if (HDAFIX  && (gSettings.FixDsdt & FIX_HDA))
+  {
+    DBG("patch HDEF in DSDT \n");
+    DsdtLen = AddHDEF(temp, DsdtLen);
+  }
+  
+  //Always add MCHC for PM
+  if ((gCPUStructure.Family == 0x06)  && (gSettings.FixDsdt & FIX_MCHC))
+  {
+    DBG("patch MCHC in DSDT \n");
+    DsdtLen = AddMCHC(temp, DsdtLen);
+  }
+  
+  // Always Fix USB
+  if ((gSettings.FixDsdt & FIX_USB)) {
+    DBG("patch USB in DSDT \n");
+    DsdtLen = FIXUSB(temp, DsdtLen);
+  }
+  
+  if ((gSettings.FixDsdt & FIX_WARNING)) {
+    DBG("patch warnings \n");
     // Always Fix alias cpu FIX cpus=1
-    BiosDsdtLen = FIXCPU1(temp, BiosDsdtLen);
+    DsdtLen = FIXCPU1(temp, DsdtLen);
     
     // Always Fix _WAK Return value
-    BiosDsdtLen = FIXWAK(temp, BiosDsdtLen);
+    DsdtLen = FIXWAK(temp, DsdtLen);
     
     // USB Device remove error Fix
-    BiosDsdtLen = FIXGPE(temp, BiosDsdtLen);
-/*    
-    // pwrb add _CID sleep button fix
-    //BiosDsdtLen = FIXPWRB(temp, BiosDsdtLen);
-*/    
+    DsdtLen = FIXGPE(temp, DsdtLen);
+    /*    
+     // pwrb add _CID sleep button fix
+     //DsdtLen = FIXPWRB(temp, DsdtLen);
+     */    
     // other compiler warning fix _T_X,  MUTE .... USB _PRW value form 0x04 => 0x01
-    BiosDsdtLen = FIXOTHER(temp, BiosDsdtLen);
-    
-    // Fix SHUTDOWN For ASUS
-    //if (ASUSFIX)
-    //{
-        BiosDsdtLen = FIXSHUTDOWN_ASUS(temp, BiosDsdtLen);
-    //}
-                
-    // Finish DSDT patch and resize DSDT Length
-    temp[4] = (BiosDsdtLen & 0x000000FF) >>  0;
-    temp[5] = (BiosDsdtLen & 0x0000FF00) >>  8;
-    temp[6] = (BiosDsdtLen & 0x00FF0000) >> 16;
-    temp[7] = (BiosDsdtLen & 0xFF000000) >> 24;
-    
-    //DBG("orgBiosDsdtLen = 0x%08x\n", orgBiosDsdtLen);
-    
-    DBG("\nAuto patch BiosDSDT Finish.................\n\n");
-
-    //PauseForKey(L"waiting for key press...\n");
+    DsdtLen = FIXOTHER(temp, DsdtLen);
+  } 
+  // Fix SHUTDOWN For ASUS
+  if ((gSettings.FixDsdt & FIX_SHUTDOWN))
+  {
+    DsdtLen = FIXSHUTDOWN_ASUS(temp, DsdtLen);
+  }
+  
+  // Finish DSDT patch and resize DSDT Length
+  temp[4] = (DsdtLen & 0x000000FF) >>  0;
+  temp[5] = (DsdtLen & 0x0000FF00) >>  8;
+  temp[6] = (DsdtLen & 0x00FF0000) >> 16;
+  temp[7] = (DsdtLen & 0xFF000000) >> 24;
+  
+  //DBG("orgBiosDsdtLen = 0x%08x\n", orgBiosDsdtLen);
+  
+  DBG("\nAuto patch BiosDSDT Finish.................\n\n");
+  
+  //PauseForKey(L"waiting for key press...\n");
 }

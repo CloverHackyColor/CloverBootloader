@@ -304,153 +304,158 @@ UINT8 ATI[] =
 
 VOID KextPatcher_driver_ATI()
 {     
-    UINT64              plistAddr=0;
-    UINT64              plistSize=0;
-    UINT64              driverAddr=0;
-    UINT64              driverSize=0;
-	DTEntry				memoryMap;
-    _BooterKextFileInfo * kextFileInfo   = NULL;
-    //const _DeviceTreeBuffer   * deviceTreeBuffer        = NULL;
-    CHAR8*				plistBuffer;
-    TagPtr				dict;
-	TagPtr				prop;
-	CHAR8*              temp=0;
+  UINT64              plistAddr  = 0;
+  UINT64              plistSize  = 0;
+  UINT64              driverAddr = 0;
+  UINT64              driverSize = 0;
+	DTEntry             memoryMap;
+  _BooterKextFileInfo *kextFileInfo   = NULL;
+  CHAR8               *plistBuffer;
+  TagPtr              dict;
+	TagPtr              prop;
+	CHAR8               *temp  = NULL;
 	UINT64              temp1;
-	UINTN count=0;
-	BOOLEAN check = FALSE;
-      
-    if (dtRoot)
-    {
-        DTInit(dtRoot);
-	    if (DTLookupEntry(NULL,"/chosen/memory-map",&memoryMap))
-	    {
-		    DTPropertyIterator mmPropIter;
-            CHAR8*	ptrmm;
-		    if (DTCreatePropertyIterator(memoryMap,&mmPropIter))
-		    {   
- 			    while (DTIterateProperties(mmPropIter,&ptrmm))
-			    {	
-				    if (AsciiStrStr(ptrmm,"Driver-")!=0)
-				    {
-				        temp = AllocateZeroPool (AsciiStrLen(ptrmm)-6);
-				        CopyMem(temp, ptrmm+7, AsciiStrLen(ptrmm)-6);
-				        //DTGetProperty(memoryMap, ptrmm, &driverAddr, &driverSize);
-				        //if (count<3)
-				        //{
-         				//   DBG(L"Found %a, temp = %a, change = 0x%08x\n", ptrmm, temp, AsciiStrHexToUint64(temp));
-         				//} 
-                        temp1 = AsciiStrHexToUint64(temp);
-                        
-                        //(const _DeviceTreeBuffer *)
-                        //deviceTreeEntry->getBytesNoCopy(0, sizeof(deviceTreeBuffer));
-				        kextFileInfo = (_BooterKextFileInfo *)(UINTN)temp1;
-				        //if (count<3)
-				        //{
-				        //    DBG(L"Driver addr = 0x%08x, Length = 0x%08x\n", driverAddr, driverSize);
-				        //    DBG(L"Driver addr = 0x%08x, Length = 0x%08x\n", kextFileInfo->executablePhysAddr, kextFileInfo->executableLength);
-				        //    DBG(L"Plist addr = 0x%08x, Length = 0x%08x\n", kextFileInfo->infoDictPhysAddr, kextFileInfo->infoDictLength);
-				        //}
-				        plistAddr = kextFileInfo->infoDictPhysAddr;
-				        plistSize = kextFileInfo->infoDictLength;
-				        driverAddr = kextFileInfo->executablePhysAddr;
-				        driverSize = kextFileInfo->executableLength;
-				        plistBuffer = AllocateZeroPool ((kextFileInfo->infoDictLength)+1);
-				        CopyMem(plistBuffer,(UINT8*)(UINTN)kextFileInfo->infoDictPhysAddr, kextFileInfo->infoDictLength);
-				        if(ParseXML(plistBuffer, &dict) != EFI_SUCCESS)
-		                {
-		                    //if (count<4)
-		                    //{
-		                    //    DBG(L"Not Found Plist\n");
-			                //}
-		                }
-		                else
-		                {
-		                    if (dict)
-		                    {
-		                        //DBG(L"ParseXML Done\n");
-		                        prop = GetProperty(dict, "CFBundleIdentifier");
-		                        if (prop)
-		                        {
-		                            //DBG(L"Found Prop\n");
-		                            if (AsciiStrStr(prop->string, "ATI5000"))
-		                            {
-		                                DBG(L"Found ATI5000Controller\n");
-				                        KextPatcher_ATI(kextFileInfo->executablePhysAddr, kextFileInfo->executableLength);
-				                        FreePool(plistBuffer);
-				                        FreePool(temp);
-				                        FreePool(dict);
-				                        check = TRUE;
-				                        break;
-				                    }
-				                    if (AsciiStrStr(prop->string, "FakeSMC"))
-		                            {
-		                                DBG(L"Found FakeSMC\n");
-				                    }
-				                }
-				            }
-				        }    
-				        count++;
-				        FreePool(plistBuffer);
-				        FreePool(temp);
-				        FreePool(dict);
+	UINTN               count = 0;
+	BOOLEAN             check = FALSE;
+  DTPropertyIterator  mmPropIter;
+  CHAR8               *ptrmm;
 
-				    }
-				    //if(AsciiStrStr(ptrmm,"DriversPackage-")!=0)
-				    //{
-				    //    DBG(L"Found %a\n", ptrmm);
-				    //    break;
-				    //}
+  
+  if (dtRoot)
+  {
+    DTInit(dtRoot);
+    if (DTLookupEntry(NULL,"/chosen/memory-map", &memoryMap))
+    {
+      if (DTCreatePropertyIterator(memoryMap, &mmPropIter))
+      {   
+        while (DTIterateProperties(mmPropIter, &ptrmm))
+        {	
+          if (AsciiStrStr(ptrmm,"Driver-"))
+          {
+            temp = AllocateZeroPool (AsciiStrLen(ptrmm)-6);
+            CopyMem(temp, ptrmm+7, AsciiStrLen(ptrmm)-6);
+            //DTGetProperty(memoryMap, ptrmm, &driverAddr, &driverSize);
+            //if (count<3)
+            //{
+            //   DBG(L"Found %a, temp = %a, change = 0x%08x\n", ptrmm, temp, AsciiStrHexToUint64(temp));
+            //} 
+            temp1 = AsciiStrHexToUint64(temp);
+            
+            //(const _DeviceTreeBuffer *)
+            //deviceTreeEntry->getBytesNoCopy(0, sizeof(deviceTreeBuffer));
+            kextFileInfo = (_BooterKextFileInfo *)(UINTN)temp1;
+            //if (count<3)
+            //{
+            //    DBG(L"Driver addr = 0x%08x, Length = 0x%08x\n", driverAddr, driverSize);
+            //    DBG(L"Driver addr = 0x%08x, Length = 0x%08x\n", kextFileInfo->executablePhysAddr, kextFileInfo->executableLength);
+            //    DBG(L"Plist addr = 0x%08x, Length = 0x%08x\n", kextFileInfo->infoDictPhysAddr, kextFileInfo->infoDictLength);
+            //}
+            plistAddr = kextFileInfo->infoDictPhysAddr;
+            plistSize = kextFileInfo->infoDictLength;
+            driverAddr = kextFileInfo->executablePhysAddr;
+            driverSize = kextFileInfo->executableLength;
+            plistBuffer = AllocateZeroPool ((kextFileInfo->infoDictLength)+1);
+            CopyMem(plistBuffer,(UINT8*)(UINTN)kextFileInfo->infoDictPhysAddr, kextFileInfo->infoDictLength);
+            if(ParseXML(plistBuffer, &dict) != EFI_SUCCESS)
+            {
+              //if (count<4)
+              //{
+              //    DBG(L"Not Found Plist\n");
+              //}
+            }
+            else
+            {
+              if (dict)
+              {
+                //DBG(L"ParseXML Done\n");
+                prop = GetProperty(dict, "CFBundleIdentifier");
+                if (prop)
+                {
+                  //DBG(L"Found Prop\n");
+                  if (AsciiStrStr(prop->string, "ATI5000"))
+                  {
+                    DBG(L"Found ATI5000Controller\n");
+                    KextPatcher_ATI(kextFileInfo->executablePhysAddr, kextFileInfo->executableLength);
+                   // FreePool(plistBuffer);
+                   // FreePool(temp);
+                   // FreePool(dict);
+                    check = TRUE;
+                    break;
+                  }
+                  if (AsciiStrStr(prop->string, "FakeSMC"))
+                  {
+                    DBG(L"Found FakeSMC\n");
+                  }
+                }
+              }
+            }    
+            count++;
+            FreePool(plistBuffer);
+            FreePool(temp);
+            //FreePool(dict); -- do not free pool that you didn't allocate
+            
+          }
+          //if(AsciiStrStr(ptrmm,"DriversPackage-")!=0)
+          //{
+          //    DBG(L"Found %a\n", ptrmm);
+          //    break;
+          //}
 				}
 				
 				//if (!check)
 				//{
-			    //    KextPatcher_ATI(0x000A0000, 0x9C100000);
+        //    KextPatcher_ATI(0x000A0000, 0x9C100000);
 				//}
-		        //DBG(L"Driver count = %d\n", count);
-		    } 
-	    }
+        //DBG(L"Driver count = %d\n", count);
+      } 
+    }
 	}
 }
  
 VOID KextPatcher_ATI(UINT32 driverAddr, UINT32 driverSize)
 {
- 
-    UINT8* bytes = (UINT8*)(UINTN)driverAddr;
-    UINTN i, j;
-    UINTN count=0;
-    BOOLEAN CHECK=FALSE;
-    
-    //DBG(L"KextPatcher_ATI Start.\n");
-    
-    for (i=0; i<driverSize; i++)	 
-    {   
-        for (j=0; j<(sizeof(Eulemur)); j++)
-        {
-            if (bytes[i+j] == Hoolock[j])
-            {
-                CHECK = TRUE;
-            }
-            else
-            {
-                CHECK = FALSE;
-                break;
-            }
-        }
-              
-        if (CHECK)
-        {
-            //DBG(L"Found ATI Code\n");
-            for (j=0; j<(sizeof(ATI)); j++)
-            {
-                bytes[i+j] = ATI[j];
-            }
-            CHECK = FALSE;
-            if (count) break;
-            
-            count++;
-        }
-        i++;
+  
+  UINT8*  bytes = (UINT8*)(UINTN)driverAddr;
+  UINTN   i, j;
+  UINTN   count = 0;
+  BOOLEAN CHECK = FALSE;
+  
+  //DBG(L"KextPatcher_ATI Start.\n");
+  
+  for (i=0; i<driverSize; i++)	 
+  {   
+    for (j=0; j<(sizeof(Hoolock)); j++)
+    {
+      if (!(CHECK = (bytes[i+j] == Hoolock[j]))) { //Slice
+        break;
+      }      
+/*      
+      if (bytes[i+j] == Hoolock[j])
+      {
+        CHECK = TRUE;
+      }
+      else
+      {
+        CHECK = FALSE;
+        break;
+      }
+ */
     }
+   
+    if (CHECK)
+    {
+      //DBG(L"Found ATI Code\n");
+      for (j=0; j<(sizeof(ATI)); j++)
+      {
+        bytes[i+j] = ATI[j];
+      }
+      CHECK = FALSE;
+      if (count) break;
+      
+      count++;
+    }
+ //   i++; -- it is in for()
+  }
 }
 
 VOID InjectKernelCache(VOID* binary)
