@@ -785,6 +785,13 @@ static VOID ScanLoader(VOID)
       Entry = AddLoaderEntry(FileName, L"OS X Install", Volume, Volume->OSType);
       continue; //boot MacOSX only
     }
+    // check for Mac OS X Install Data
+    StrCpy(FileName, L"\\Mac OS X Install Data\\boot.efi");
+    if (FileExists(Volume->RootDir, FileName)) {
+      Volume->BootType = BOOTING_BY_EFI;
+      Entry = AddLoaderEntry(FileName, L"Mac OS X Install", Volume, Volume->OSType);
+      continue; //boot MacOSX only
+    }
     //============ add in end ============
     
     // check for Mac OS X Recovery Boot
