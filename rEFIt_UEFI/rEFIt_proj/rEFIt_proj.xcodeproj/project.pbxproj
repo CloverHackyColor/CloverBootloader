@@ -95,7 +95,7 @@
 		12D6308014CEA05E00E5898F /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
 		12D6308114CEA05E00E5898F /* platformdata.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = platformdata.c; sourceTree = "<group>"; };
 		12D6308214CEA05E00E5898F /* plist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = plist.c; sourceTree = "<group>"; };
-		12D6308314CEA05E00E5898F /* Settings.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Settings.c; sourceTree = "<group>"; };
+		12D6308314CEA05E00E5898F /* Settings.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = Settings.c; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
 		12D6308414CEA05E00E5898F /* smbios.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = smbios.c; sourceTree = "<group>"; usesTabs = 1; };
 		12D6308514CEA05E00E5898F /* SmBios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmBios.h; sourceTree = "<group>"; };
 		12D6308614CEA05E00E5898F /* spd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = spd.c; sourceTree = "<group>"; };

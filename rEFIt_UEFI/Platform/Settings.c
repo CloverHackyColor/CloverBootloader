@@ -344,7 +344,14 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
           gSettings.InjectSystemID = TRUE;
-      }            
+      }
+      
+      prop = GetProperty(dictPointer, "LegacyBoot");
+      if(prop)
+      {
+        AsciiStrToUnicodeStr(prop->string, gSettings.LegacyBoot);
+      }
+      
     }
 //Graphics
     
@@ -1193,7 +1200,7 @@ VOID SetDevices(VOID)
                 MsgLog("Set PmCon value=%x\n", PmCon);                   
                 
               } 
-            }                
+            }
 					}
 				}
       }        

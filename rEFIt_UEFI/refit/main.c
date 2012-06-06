@@ -244,9 +244,9 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
 bailout_unload:
   // unload the image, we don't care if it works or not...
   Status = gBS->UnloadImage(ChildImageHandle);
-bailout:
   if (FullLoadOptions != NULL)
     FreePool(FullLoadOptions);
+bailout:
   return ReturnStatus;
 }
 
@@ -1082,7 +1082,14 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
           Status = bootMBR(Entry->Volume);
           break;
         case BOOTING_BY_PBR:
-          Status = bootPBR(Entry->Volume);
+          if (StrCmp(gSettings.LegacyBoot, L"LegacyBiosDefault") == 0) {
+            Status = bootLegacyBiosDefault(Entry->Volume);
+          } else if (StrCmp(gSettings.LegacyBoot, L"PBRtest") == 0) {
+            Status = bootPBRtest(Entry->Volume);
+          } else {
+            // default
+            Status = bootPBR(Entry->Volume);
+          }
           break;
         default:
           break;
@@ -1166,7 +1173,7 @@ static VOID ScanLegacy(VOID)
     BOOLEAN                 ShowVolume, HideIfOthersFound;
     REFIT_VOLUME            *Volume;
     
- //   Print(L"Scanning for legacy boot volumes...\n");
+    // Print(L"Scanning for legacy boot volumes... VolumesCount = %d\n", VolumesCount);
     
     for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
         Volume = Volumes[VolumeIndex];
@@ -1196,8 +1203,8 @@ static VOID ScanLegacy(VOID)
             HideIfOthersFound = TRUE;
         } else if (Volume->HasBootCode) {
             ShowVolume = TRUE;
- //           DBG("Volume %d will be shown BlockIo=%x WholeIo=%x\n",
- //             VolumeIndex, Volume->BlockIO, Volume->WholeDiskBlockIO);
+            //DBG("Volume %d will be shown BlockIo=%x WholeIo=%x\n",
+            //  VolumeIndex, Volume->BlockIO, Volume->WholeDiskBlockIO);
             if ((Volume->WholeDiskBlockIO == 0) &&
                 Volume->BlockIOOffset == 0 /* &&
                 Volume->OSName == NULL */)
@@ -1462,7 +1469,7 @@ UINT64 GetEfiTimeInMs(IN EFI_TIME *T)
 {
   UINT64              TimeMs;
   
-  TimeMs = T->Year;
+  TimeMs = T->Year - 1900;
   TimeMs = TimeMs * 12 + T->Month;
   TimeMs = TimeMs * 31 + T->Day; // counting with 31 day
   TimeMs = TimeMs * 24 + T->Hour;

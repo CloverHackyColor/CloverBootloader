@@ -537,6 +537,9 @@ typedef struct {
  	// HDA
  	BOOLEAN HDAInjection;
  	UINTN   HDALayoutId;
+	
+	// LegacyBoot
+	CHAR16  LegacyBoot[32];
   
 } SETTINGS_DATA;
 
@@ -804,7 +807,8 @@ EFI_STATUS  EjectVolume(IN REFIT_VOLUME *Volume);
 EFI_STATUS  bootElTorito(IN REFIT_VOLUME*	volume);
 EFI_STATUS  bootMBR(IN REFIT_VOLUME* volume);
 EFI_STATUS  bootPBR(IN REFIT_VOLUME* volume);
-//EFI_STATUS  bootLegacyBiosLegacyBoot(IN REFIT_VOLUME* volume);
+EFI_STATUS  bootPBRtest(IN REFIT_VOLUME* volume);
+EFI_STATUS  bootLegacyBiosDefault(IN REFIT_VOLUME* volume);
 
 CHAR8*      XMLDecode(const CHAR8* src);
 EFI_STATUS  ParseXML(const CHAR8* buffer, TagPtr * dict);

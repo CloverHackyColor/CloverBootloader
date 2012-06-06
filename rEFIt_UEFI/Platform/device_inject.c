@@ -625,7 +625,7 @@ UINT32 HDA_IC_sendVerb(EFI_PCI_IO_PROTOCOL *PciIo, UINT32 codecAdr, UINT32 nodeI
 	UINT64		data64 = 0;
 	
 	// poll ICS[0] to become 0
-	Status = PciIo->PollMem(PciIo, EfiPciIoWidthUint16, 0/*bar*/, HDA_ICS/*offset*/, 0x1/*mask*/, 0/*value*/, 10000000/*delay in 100ns*/, &data64);
+	Status = PciIo->PollMem(PciIo, EfiPciIoWidthUint16, 0/*bar*/, HDA_ICS/*offset*/, 0x1/*mask*/, 0/*value*/, 500000/*delay in 100ns*/, &data64);
 	ics = (UINT16)(data64 & 0xFFFF);
 	//DBG("poll ICS[0] == 0: Status=%r, ICS=%x, ICS[0]=%d\n", Status, ics, ics & 0x0001);
 	if (EFI_ERROR(Status)) return 0;
@@ -640,7 +640,7 @@ UINT32 HDA_IC_sendVerb(EFI_PCI_IO_PROTOCOL *PciIo, UINT32 codecAdr, UINT32 nodeI
 	//DBG("ICS[1:0] = 11b: Status=%r\n", Status);
 	if (EFI_ERROR(Status)) return 0;
 	// poll ICS[1:0] to become 10b
-	Status = PciIo->PollMem(PciIo, EfiPciIoWidthUint16, 0/*bar*/, HDA_ICS/*offset*/, 0x3/*mask*/, 0x2/*value*/, 10000000/*delay in 100ns*/, &data64);
+	Status = PciIo->PollMem(PciIo, EfiPciIoWidthUint16, 0/*bar*/, HDA_ICS/*offset*/, 0x3/*mask*/, 0x2/*value*/, 500000/*delay in 100ns*/, &data64);
 	//DBG("poll ICS[0] == 0: Status=%r\n", Status);
 	if (EFI_ERROR(Status)) return 0;
 	// read IRI for VendorId/DeviceId
