@@ -162,7 +162,7 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue; //16
   InputItems[InputItemsCount].BValue = gSettings.PatchVBios;
   InputItems[InputItemsCount++].SValue = gSettings.PatchVBios?L"[X]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = Decimal;  //17
+  InputItems[InputItemsCount].ItemType = Hex;  //17
   InputItems[InputItemsCount++].SValue = PoolPrint(L"0x%X", gSettings.FixDsdt);
   
   InputItemsCount = 20;
@@ -867,7 +867,10 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         }
         break;
       case SCAN_F4:
-        SaveOemDsdt();
+        SaveOemDsdt(FALSE); //no patches
+        break;
+      case SCAN_F5:
+        SaveOemDsdt(TRUE); //full patch
         break;
       case SCAN_F10:
         egScreenShot();

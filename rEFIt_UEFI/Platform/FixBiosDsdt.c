@@ -4093,7 +4093,7 @@ VOID FixBiosDsdt (UINT8* temp)
   if (!temp)
     return;
   
-  DsdtLen = ((EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)temp)->Length;
+  DsdtLen = ((EFI_ACPI_DESCRIPTION_HEADER*)temp)->Length;
   if ((DsdtLen < 10) || (DsdtLen > 100000)) { //fool proof
     DBG("DSDT length out of range\n");
     return;
@@ -4270,6 +4270,9 @@ VOID FixBiosDsdt (UINT8* temp)
   temp[7] = (DsdtLen & 0xFF000000) >> 24;
   
   //DBG("orgBiosDsdtLen = 0x%08x\n", orgBiosDsdtLen);
+  ((EFI_ACPI_DESCRIPTION_HEADER*)temp)->Checksum = 0;
+  ((EFI_ACPI_DESCRIPTION_HEADER*)temp)->Checksum = (UINT8)(256-Checksum8(temp, DsdtLen));
+  
   
   DBG("\nAuto patch BiosDSDT Finish.................\n\n");
   

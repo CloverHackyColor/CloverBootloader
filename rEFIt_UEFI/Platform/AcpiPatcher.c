@@ -395,7 +395,7 @@ EFI_STATUS InsertTable(VOID* Table, UINTN Length)
   return Status;
 }
 
-VOID        SaveOemDsdt(VOID)
+VOID        SaveOemDsdt(BOOLEAN FullPatch)
 {
   EFI_STATUS						Status = EFI_SUCCESS;
   EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER	*RsdPointer = NULL;
@@ -405,7 +405,7 @@ VOID        SaveOemDsdt(VOID)
 	UINT8                 *buffer = NULL;
 //	UINTN        				  bufferLen = 0;
   CHAR16*               OriginDsdt   = L"\\EFI\\ACPI\\origin\\DSDT.aml";
-  CHAR16*     OriginOemPath = PoolPrint(L"%s\\ACPI\\origin\\DSDT.aml", OEMPath);
+  CHAR16*     OriginOemPath = PoolPrint(L"%s\\ACPI\\origin\\DSDT-%x.aml", OEMPath, gSettings.FixDsdt);
   
   RsdPointer = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)FindAcpiRsdPtr();
   Rsdt = (RSDT_TABLE*)(UINTN)(RsdPointer->RsdtAddress);
@@ -437,6 +437,13 @@ VOID        SaveOemDsdt(VOID)
   {
     buffer = (UINT8*)(UINTN)dsdt;
     CopyMem(buffer, (UINT8*)(UINTN)BiosDsdt, BiosDsdtLen);
+    if (FullPatch) {
+//      UINT32 OldMask = gSettings.FixDsdt;
+//      gSettings.FixDsdt = 0xFFFF;
+      FixBiosDsdt(buffer);
+//      gSettings.FixDsdt = OldMask;
+      BiosDsdtLen = ((EFI_ACPI_DESCRIPTION_HEADER*)buffer)->Length;
+    }
     Status = egSaveFile(SelfRootDir, OriginOemPath, buffer, BiosDsdtLen);
     if (EFI_ERROR(Status)) {
       Status = egSaveFile(SelfRootDir, OriginDsdt, buffer, BiosDsdtLen);
@@ -867,9 +874,9 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   }
   
   //Slice - this is a time to patch MADT table. 
-  DBG("Fool proof: size of APIC NMI  = %d\n", sizeof(EFI_ACPI_2_0_LOCAL_APIC_NMI_STRUCTURE));
-  DBG("----------- size of APIC DESC = %d\n", sizeof(EFI_ACPI_2_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER));
-  DBG("----------- size of APIC PROC = %d\n", sizeof(EFI_ACPI_2_0_PROCESSOR_LOCAL_APIC_STRUCTURE));
+//  DBG("Fool proof: size of APIC NMI  = %d\n", sizeof(EFI_ACPI_2_0_LOCAL_APIC_NMI_STRUCTURE));
+//  DBG("----------- size of APIC DESC = %d\n", sizeof(EFI_ACPI_2_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER));
+//  DBG("----------- size of APIC PROC = %d\n", sizeof(EFI_ACPI_2_0_PROCESSOR_LOCAL_APIC_STRUCTURE));
   //
   // 1. For CPU base number 0 or 1.  codes from SunKi
   CPUBase = 0;
