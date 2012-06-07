@@ -15,8 +15,8 @@ Then, follow the stage 1 and stage 2 to install 10.7.x or 10.8.x to GPT, and aut
 ---------
 
 1.Remove kernelcache in InstallESD.dmg/Library/Preferences/SystemConfiguration/com.apple.Boot.plist.
-¡@<key>Kernel Cache</key>          remove this line.
-¡@<string>xxxxxxxxxxxxx</string>   remove this line.
+  <key>Kernel Cache</key>          remove this line.
+  <string>xxxxxxxxxxxxx</string>   remove this line.
 
 2.Copy BaseSystem.dmg/System/Library/Extensions to partition of InstallESD.dmg and add other kexts (FakeSMC.kext).
 
@@ -27,15 +27,15 @@ Then, follow the stage 1 and stage 2 to install 10.7.x or 10.8.x to GPT, and aut
 ---------
 
 1.Remove kernelcache in target partition's /OS X Install Data/com.apple.Boot.plist.
-¡@<key>Kernel Cache</key>          remove this line.
-¡@<string>xxxxxxxxxxxxx</string>   remove this line.
-¡@( 10.7.x is /Mac OS X Install Data/com.apple.Boot.plist )
+  <key>Kernel Cache</key>          remove this line.
+  <string>xxxxxxxxxxxxx</string>   remove this line.
+  ( 10.7.x is /Mac OS X Install Data/com.apple.Boot.plist )
 
 2.Copy InstallESD.dmg/System/Library/CoreServices and /mach_kernel to target partition's / .
 
 3.Copy BaseSystem.dmg/System/Library/Extensions to target partition's / and add other kexts (FakeSMC.kext).
 
 4.Boot to "OS X Install" with "Boot Mac OS X with extra kexts (skips cache)" and finish the installation.
-¡@(10.7.x is "Mac OS X Install") 
+  (10.7.x is "Mac OS X Install") 
 
 ==========================================================================================================================
