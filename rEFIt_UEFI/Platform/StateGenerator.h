@@ -9,7 +9,7 @@
 #include "AmlGenerator.h"
 
 #ifndef DEBUG_AML
-#define DEBUG_AML 2
+#define DEBUG_AML 1
 #endif
 
 #if DEBUG_AML==2
