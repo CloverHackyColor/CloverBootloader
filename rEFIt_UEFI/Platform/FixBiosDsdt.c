@@ -875,7 +875,7 @@ UINT32 move_data(UINT32 size, UINT8* buffer, UINT32 len, INT32 offset)
     return len + offset;
 }
 
-UINTN findSB(UINT8 *dsdt, UINT32 maxAdr) //return address of size field of Scope=0x10
+UINTN findSB(UINT8 *dsdt, UINT32 len, UINT32 maxAdr) //return address of size field of Scope=0x10
 {
   INTN    i, j;
   UINTN   SBadr = 0;
@@ -886,7 +886,7 @@ UINTN findSB(UINT8 *dsdt, UINT32 maxAdr) //return address of size field of Scope
           SBADR = i-j+1;
           SBSIZE = get_size(dsdt, SBADR);
           //DBG("found Scope(\\_SB) address = 0x%08x size = 0x%08x\n", SBADR, SBSIZE);
-          if (SBSIZE) {  //if zero then search more
+          if ((SBSIZE != 0) && (SBSIZE < len)) {  //if zero then search more
             SBadr = SBADR;
             break;
           }          
@@ -923,28 +923,28 @@ UINTN CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr) //return final length 
   i = adr;
   while (i>20) {  //find devices
     j = findOuterDevice(dsdt, i);
+//    DBG("  Found dev at %d\n", i);
     if (!j) {
-      i--;
-      continue;
+      break;
     }
     size = get_size(dsdt, j);
     if ((j+size) > adr) {  //Yes - it is outer
       len = write_size(j, dsdt, len, size);
     }    
-    i = j;
+    i = j - 3;
   }
   i = adr;
   while (i>20) { //find scopes
-    j = findSB(dsdt, i);
+    j = findSB(dsdt, len, i);
+//    DBG("  Found _SB at %d\n", i);
     if (!j) {
-      i--;
-      continue;
+      break;
     }
     size = get_size(dsdt, j);
     if ((j+size) > adr) {  //Yes - it is outer
       len = write_size(j, dsdt, len, size);
     }    
-    i = j;    
+    i = j - 3;    //if found then search again from found 
   }  
   return len;
 }

@@ -8,13 +8,13 @@
 
 #include "AmlGenerator.h"
 
-#ifndef DEBUG_ACPI
-#define DEBUG_ACPI 1
+#ifndef DEBUG_AML
+#define DEBUG_AML 2
 #endif
 
-#if DEBUG_ACPI==2
+#if DEBUG_AML==2
 #define DBG(x...)  AsciiPrint(x)
-#elif DEBUG_ACPI==1
+#elif DEBUG_AML==1
 #define DBG(x...)  MsgLog(x)
 #else
 #define DBG(x...)
