@@ -35,6 +35,7 @@ AML_CHUNK* aml_add_package(AML_CHUNK* parent);
 AML_CHUNK* aml_add_alias(AML_CHUNK* parent, CONST CHAR8* name1, CONST CHAR8* name2);
 UINT32 aml_calculate_size(AML_CHUNK* node);
 UINT32 aml_write_node(AML_CHUNK* node, CHAR8* buffer, UINT32 offset);
+UINT32 aml_write_size(UINT32 size, CHAR8* buffer, UINT32 offset);
 
 // add by pcj
 AML_CHUNK* aml_add_string(AML_CHUNK* parent, CONST CHAR8* string);

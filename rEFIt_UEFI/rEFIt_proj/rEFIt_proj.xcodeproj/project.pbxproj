@@ -108,6 +108,7 @@
 		12D6308D14CEA05E00E5898F /* UsbMassBoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbMassBoot.h; sourceTree = "<group>"; };
 		12D6308E14CEA05E00E5898F /* UsbMassImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbMassImpl.h; sourceTree = "<group>"; };
 		12D6308F14CEA05E00E5898F /* VesaBiosExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VesaBiosExtensions.h; sourceTree = "<group>"; };
+		12DE470B1581D0B6008187A7 /* AcpiAml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AcpiAml.h; sourceTree = "<group>"; };
 		26440C83157AADDF0077A476 /* b64cdecode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = b64cdecode.c; sourceTree = "<group>"; };
 		26440C84157AADDF0077A476 /* b64cdecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = b64cdecode.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -196,6 +197,7 @@
 				26440C84157AADDF0077A476 /* b64cdecode.h */,
 				126C264B1510C3C9005AB30D /* AmlGenerator.c */,
 				126C264C1510C3C9005AB30D /* AmlGenerator.h */,
+				12DE470B1581D0B6008187A7 /* AcpiAml.h */,
 				12D6305C14CEA05E00E5898F /* AcpiPatcher.c */,
 				12D6305D14CEA05E00E5898F /* AppleEfi.h */,
 				12D5B1C914F0F35E0043569D /* ati.h */,

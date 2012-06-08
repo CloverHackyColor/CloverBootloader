@@ -5,6 +5,7 @@
  *  Created by Mozodojo on 20/07/10.
  *  Copyright 2010 mozo. All rights reserved.
  *
+ * additions and corrections by Slice and pcj, 2012.
  */
 
 #include "AmlGenerator.h"
@@ -484,14 +485,14 @@ UINT32 aml_calculate_size(AML_CHUNK* node)
 				node->Size += node->Length;
 				break;  
             
-            case AML_CHUNK_METHOD:  
+      case AML_CHUNK_METHOD:  
 			case AML_CHUNK_SCOPE:
 			case AML_CHUNK_BUFFER: 
 				node->Size += 1 + node->Length;
 				node->Size += aml_get_size_length(node->Size);
 				break;
 				
-            case AML_CHUNK_DEVICE:
+      case AML_CHUNK_DEVICE:
 				node->Size += 2 + node->Length;
 				node->Size += aml_get_size_length(node->Size);
 				break;
@@ -519,8 +520,8 @@ UINT32 aml_calculate_size(AML_CHUNK* node)
 			case AML_CHUNK_QWORD:
 			case AML_CHUNK_ALIAS:
 			case AML_CHUNK_NAME:
-            case AML_CHUNK_RETURN:
-            case AML_CHUNK_STRING:
+      case AML_CHUNK_RETURN:
+      case AML_CHUNK_STRING:
 				node->Size += 1 + node->Length;
 				break;
 		}
