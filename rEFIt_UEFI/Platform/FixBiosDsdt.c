@@ -1402,7 +1402,7 @@ UINT32 FixRTC (UINT8 *dsdt, UINT32 len, UINT32 adr)
             if (dsdt[n-j] == 0x82 && dsdt[n-j-1] == 0x5B)
             {
               rtcsize = get_size(dsdt, n-j+1);
-              //DBG("RTC adr = 0x%08x size = 0x%08x\n", n-j+1, rtcsize);
+              DBG("RTC adr = 0x%08x size = 0x%08x\n", n-j+1, rtcsize);
               len = write_size(n-j+1, dsdt, len, rtcsize); //sizeoffset autochanged
               CorrectOuters(dsdt, len, n-j-2);
               break;
