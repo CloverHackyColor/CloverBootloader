@@ -281,9 +281,9 @@ AssignVirtualAddressesToMemMap(VOID *pBootArgs)
 				Desc->VirtualStart = KernelRTBlock + 0xffffff8000000000;
 				// map RT area virtual addresses - SetVirtualAddresMap on Ami Aptio does not work without this
 				DBG("Adding mapping 0x%x pages: VA %lx => PH %lx ", Desc->NumberOfPages, Desc->VirtualStart, Desc->PhysicalStart);
-				DBGnvr("- 0x%x pages: VA %lx => PH %lx ", Desc->NumberOfPages, Desc->VirtualStart, Desc->PhysicalStart);
+				//DBGnvr("- 0x%x pages: VA %lx => PH %lx ", Desc->NumberOfPages, Desc->VirtualStart, Desc->PhysicalStart);
 				Status = VmMapVirtualPages(PageTable, Desc->VirtualStart, Desc->NumberOfPages, Desc->PhysicalStart);
-				DBGnvr("%r\n", Status);
+				//DBGnvr("%r\n", Status);
 				DBG("%r\n", Status);
 				// next kernel block
 				KernelRTBlock += BlockSize;
@@ -291,9 +291,9 @@ AssignVirtualAddressesToMemMap(VOID *pBootArgs)
 				// for MMIO block - assign from kernel block
 				Desc->VirtualStart = KernelRTBlock + 0xffffff8000000000;
 				DBG("Adding mapping 0x%x pages: VA %lx => PH %lx ", Desc->NumberOfPages, Desc->VirtualStart, Desc->PhysicalStart);
-				DBGnvr("- 0x%x pages: VA %lx => PH %lx ", Desc->NumberOfPages, Desc->VirtualStart, Desc->PhysicalStart);
+				//DBGnvr("- 0x%x pages: VA %lx => PH %lx ", Desc->NumberOfPages, Desc->VirtualStart, Desc->PhysicalStart);
 				Status = VmMapVirtualPages(PageTable, Desc->VirtualStart, Desc->NumberOfPages, Desc->PhysicalStart);
-				DBGnvr("%r\n", Status);
+				//DBGnvr("%r\n", Status);
 				DBG("%r\n", Status);
 				// next kernel block
 				KernelRTBlock += BlockSize;
@@ -530,6 +530,13 @@ KernelEntryPatchJumpBack(UINTN bootArgs)
 	VOID 				*pBootArgs = (VOID*)bootArgs;
 	BootArgs1			*BA1 = pBootArgs;
 	BootArgs2			*BA2 = pBootArgs;
+
+	UINTN					MemoryMapSize;
+	EFI_MEMORY_DESCRIPTOR	*MemoryMap;
+	UINTN					DescriptorSize;
+	UINT32					DescriptorVersion;
+	//UINT8					*Ptr8;
+	
 	
 	DBG("BACK FROM KERNEL: BootArgs = %x, KernelEntry: %x\n", bootArgs, AsmKernelEntry);
 	DBGnvr("BACK FROM KERNEL: BootArgs = %x, KernelEntry: %x\n", bootArgs, AsmKernelEntry);
@@ -541,12 +548,44 @@ KernelEntryPatchJumpBack(UINTN bootArgs)
 			// pre Lion
 			kaddr = BA1->kaddr - (UINT32)gRelocBase;
 			ksize = BA1->ksize;
+			
+			// make memmap smaller
+			MemoryMapSize = BA1->MemoryMapSize;
+			MemoryMap = (EFI_MEMORY_DESCRIPTOR*)(UINTN)BA1->MemoryMap;
+			DescriptorSize = BA1->MemoryMapDescriptorSize;
+			DescriptorVersion = BA1->MemoryMapDescriptorVersion;
+			
+			DBG("ShrinkMemMap: Size 0x%lx", MemoryMapSize);
+			DBGnvr("ShrinkMemMap: Size 0x%lx", MemoryMapSize);
+			ShrinkMemMap(&MemoryMapSize, MemoryMap, DescriptorSize, DescriptorVersion);
+			
+			BA1->MemoryMapSize = (UINT32)MemoryMapSize;
+			
+			DBG(" -> 0x%lx\n", MemoryMapSize);
+			DBGnvr(" -> 0x%lx\n", MemoryMapSize);
+			
+			
 		} else {
 			// Lion and up
 			kaddr = BA2->kaddr - (UINT32)gRelocBase;
 			ksize = BA2->ksize;
+			
+			// make memmap smaller
+			MemoryMapSize = BA2->MemoryMapSize;
+			MemoryMap = (EFI_MEMORY_DESCRIPTOR*)(UINTN)BA2->MemoryMap;
+			DescriptorSize = BA2->MemoryMapDescriptorSize;
+			DescriptorVersion = BA2->MemoryMapDescriptorVersion;
+			
+			DBG("ShrinkMemMap: Size 0x%lx", MemoryMapSize);
+			DBGnvr("ShrinkMemMap: Size 0x%lx", MemoryMapSize);
+			ShrinkMemMap(&MemoryMapSize, MemoryMap, DescriptorSize, DescriptorVersion);
+			
+			BA2->MemoryMapSize = (UINT32)MemoryMapSize;
+			
+			DBG(" -> 0x%lx\n", MemoryMapSize);
+			DBGnvr(" -> 0x%lx\n", MemoryMapSize);
+			
 		}
-
 		
 		// fix runtime stuff
 		RuntimeServicesFix(pBootArgs);
@@ -588,6 +627,11 @@ KernelEntryPatchJumpBack(UINTN bootArgs)
 		bootArgs, AsmKernelImageStartReloc, AsmKernelImageStart, AsmKernelImageSize);
 	DBGnvr("BACK TO KERNEL: BootArgs = %x, KImgStartReloc = %x, KImgStart = %x, KImgSize = %x\n",
 		bootArgs, AsmKernelImageStartReloc, AsmKernelImageStart, AsmKernelImageSize);
+	
+	// debug for jumping back to kernel
+	// put HLT to kernel entry point
+	//Ptr8 = (UINT8*)(UINTN)(AsmKernelEntry + gRelocBase);
+	//*Ptr8 = 0xf4; // HLT instruction
 		
 	return bootArgs;
 }

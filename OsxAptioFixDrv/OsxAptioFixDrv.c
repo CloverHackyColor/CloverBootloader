@@ -311,7 +311,7 @@ MOGetMemoryMap (
 	//PrintMemMap(*MemoryMapSize, MemoryMap, *DescriptorSize, *DescriptorVersion);
 	DBGnvr("GetMemoryMap: %p = %r\n", MemoryMap, Status);
 	if (Status == EFI_SUCCESS) {
-		ShrinkMemMap(MemoryMapSize, MemoryMap, *DescriptorSize, *DescriptorVersion);
+		//ShrinkMemMap(MemoryMapSize, MemoryMap, *DescriptorSize, *DescriptorVersion);
 		//PrintMemMap(*MemoryMapSize, MemoryMap, *DescriptorSize, *DescriptorVersion);
 	}
 	
@@ -373,20 +373,14 @@ MOExitBootServices (
 		return EFI_NOT_FOUND;
 	}
 	
-	// TEST
-	//Print(L"\nOsxAptioFixDrv: Stack at: %lx, Loaded at %lx, and kernel would be %lx - %lx\n",
-	//	  RSP, gOurImageStart, gMinAllocatedAddr, gMaxAllocatedAddr);
-	//gBS->Stall(20000000);
-
-	
-	
 	// for  tests: we can just return EFI_SUCCESS and continue using Print for debug.
 	Status = EFI_SUCCESS;
 	//Print(L"ExitBootServices()\n");
 	Status = gStoredExitBootServices(ImageHandle, MapKey);
 	DBGnvr("ExitBootServices:  = %r\n", Status);
 	if (EFI_ERROR (Status)) {
-		Print(L"ExitBootServices() = Status: %r\n", Status);
+		Print(L"OsxAptioFixDrv: ExitBootServices() = Status: %r ... waiting 10 secs ...\n", Status);
+		gBS->Stall(10*1000000);
 		//CpuDeadLoop();
 	} else {
 		//KernelEntryPatchJump(gKernelEntry);

@@ -455,7 +455,7 @@ CHAR8	*DebugLogBufferPtr = NULL;
 EFI_STATUS
 NVRAMDebugLog(CHAR8 *Format, ...)
 {
-	EFI_STATUS	Status;
+	/*EFI_STATUS	Status;
 	VA_LIST		Marker;
 	UINTN		DataSize;
 	UINTN		DataWritten;
@@ -478,16 +478,17 @@ NVRAMDebugLog(CHAR8 *Format, ...)
 	DebugLogBufferPtr += DataWritten;
 	
 	// delete prev value
-	Status = gRT->SetVariable(L"DebugLog", &gVendorGuid,
-		EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_NON_VOLATILE,
-		0, DebugLogBuffer);
-	
+	//Status = gRT->SetVariable(L"DebugLog", &gEfiAppleBootGuid,
+	//	EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_NON_VOLATILE,
+	//	0, DebugLogBuffer);
 	// write new value
-	Status = gRT->SetVariable(L"DebugLog", &gVendorGuid,
+	Status = gRT->SetVariable(L"DebugLog", &gEfiAppleBootGuid,
 		EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_NON_VOLATILE,
 		DebugLogBufferPtr - DebugLogBuffer + 1, DebugLogBuffer);
 	
 	return Status;
+	*/
+	return EFI_SUCCESS;
 }
 
 /** Returns file path from FilePathProto in allocated memory. Mem should be released by caler.*/
