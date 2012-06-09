@@ -227,9 +227,9 @@ CHAR8 dtgp[] = // Method (DTGP, 5, NotSerialized) ......
 
 CHAR8 sbus[] = 
 {              //  Device (SBUS) ......
-   0x5B, 0x82, 0x47,
-   0x09, 0x53, 0x42, 0x55, 0x53, 0x08, 0x5F, 0x41,
-   0x44, 0x52, 0x0C, 0x03, 0x00, 0x1F, 0x00, 0x5B,
+   0x5B, 0x82, 0x47, 0x09, 0x53, 0x42, 0x55, 0x53, 
+   0x08, 0x5F, 0x41, 0x44, 0x52, 
+   0x0C, 0x03, 0x00, 0x1F, 0x00, 0x5B,
    0x80, 0x50, 0x42, 0x41, 0x53, 0x02, 0x0A, 0x20,
    0x0A, 0x02, 0x5B, 0x81, 0x0B, 0x50, 0x42, 0x41,
    0x53, 0x01, 0x42, 0x41, 0x53, 0x30, 0x10, 0x14,
@@ -281,13 +281,13 @@ CHAR8 hpet0[] =
   0x08, 0x5F, 0x48, 0x49, 0x44, 0x0C, 0x41, 0xD0, 0x01, 0x03,         //Name (_HID, EisaId ("PNP0103"))
   0x08, 0x5F, 0x43, 0x49, 0x44, 0x0C, 0x41, 0xD0, 0x0C, 0x01,         //Name (_CID, EisaId ("PNP0C01"))
   0x08, 0x41, 0x54, 0x54, 0x30, 0x11, 0x14, 0x0A, 0x11,               //Name (ATT0, ResourceTemplate ()
-  0x22, 0x01, 0x09, 0x86, 0x09, 0x00, 0x01,                           //IRQNoFlags () {0,8,11}
-                                                                      //Memory32Fixed (ReadWrite,
-  0x00, 0x00, 0xD0, 0xFE, 0x00, 0x04, 0x00, 0x00, 0x79, 0x00,         //0xFED00000, 0x00000400, )
+  0x22, 0x01, 0x09,                                                   //  IRQNoFlags () {0,8,11}
+  0x86, 0x09, 0x00, 0x01,                                             //  Memory32Fixed (ReadWrite,
+  0x00, 0x00, 0xD0, 0xFE, 0x00, 0x04, 0x00, 0x00, 0x79, 0x00,         //    0xFED00000, 0x00000400, )
   0x14, 0x09, 0x5F, 0x53, 0x54, 0x41, 0x00,                           //Method (_STA, 0, NotSerialized)
-  0xA4, 0x0A, 0x0F,                                                   //Return (0x0F)
+  0xA4, 0x0A, 0x0F,                                                   //  Return (0x0F)
   0x14, 0x0B, 0x5F, 0x43, 0x52, 0x53, 0x00,                           //Method (_CRS, 0, NotSerialized)
-  0xA4, 0x41, 0x54, 0x54, 0x30                                        //Return (ATT0)
+  0xA4, 0x41, 0x54, 0x54, 0x30                                        //  Return (ATT0)
 };
 
 CHAR8 hpet1[] =  // Name (_CID, EisaId ("PNP0C01"))
@@ -794,19 +794,18 @@ UINT32 write_size(UINT32 adr, UINT8* buffer, UINT32 len, UINT32 oldsize)
 {
     UINT32 i;
     UINT32 size;
-    size = oldsize + sizeoffset;
+    size = (INT32)oldsize + sizeoffset;
     // data move to back
     if ( (oldsize <= 0x3f && size > 0x3f) || (oldsize<=0x0fff && size > 0x0fff) ||
          (oldsize <= 0x0fffff && size > 0x0fffff) ) 
     {
         //DBG("size different, data will move to back 1 byte\n"); 
-        for (i=0; i<len+1-adr; i++) 
-        {
-            buffer[len+1-i] = buffer[len-i];
-        }
-        len += 1;
-        size += 1;
-        sizeoffset += 1;
+      for (i=len; i>adr; i--) {
+        buffer[i+1] = buffer[i];
+      }
+      len += 1;
+      size += 1;
+      sizeoffset += 1;
     }  // data move to front
     else if ((size <= 0x3f && oldsize > 0x3f) || (size<=0x0fff && oldsize > 0x0fff) ||
              (size <= 0x0fffff && oldsize > 0x0fffff)) 
@@ -820,7 +819,7 @@ UINT32 write_size(UINT32 adr, UINT8* buffer, UINT32 len, UINT32 oldsize)
         sizeoffset -= 1;
     }
     
-    //DBG("size =0x%08x, adr = 0x%08x, offset = 0x%08x\n", size, adr, offset);
+    DBG("size =0x%08x, adr = 0x%08x, offset = 0x%08x\n", size, adr, sizeoffset);
     //offset = size;
   aml_write_size(size, (CHAR8 *)buffer, adr); //reuse existing codes  
 /*	if (size <= 0x3f)
@@ -882,11 +881,11 @@ UINTN findSB(UINT8 *dsdt, UINT32 len, UINT32 maxAdr) //return address of size fi
   for (i=maxAdr; i>20; i--) { //there is an ACPI header so no sense to search lower
     if (dsdt[i] == '_' && dsdt[i+1] == 'S' && dsdt[i+2] == 'B' && dsdt[i+3] == '_') {
       for (j=0; j<10; j++) {
-        if (dsdt[i-j] == 0x10) {
+        if ((dsdt[i-j] == 0x10) && (dsdt[i-j-1] != 0x0A)) {
           SBADR = i-j+1;
           SBSIZE = get_size(dsdt, SBADR);
           //DBG("found Scope(\\_SB) address = 0x%08x size = 0x%08x\n", SBADR, SBSIZE);
-          if ((SBSIZE != 0) && (SBSIZE < len)) {  //if zero then search more
+          if ((SBSIZE != 0) && (SBSIZE < len)) {  //if zero or too large then search more
             SBadr = SBADR;
             break;
           }          
@@ -905,7 +904,7 @@ UINTN findOuterDevice (UINT8 *dsdt, UINT32 maxAdr) //return address of size fiel
   INTN    i;
   UINTN   Size = 0;
   for (i=maxAdr; i>20; i--) { 
-    if ((dsdt[i] == 0x5B) && (dsdt[i+1] == 0x82) ) { //device candidate
+    if ((dsdt[i] == 0x5B) && (dsdt[i+1] == 0x82) && (dsdt[i-1] != 0x0A)) { //device candidate
       Size = get_size(dsdt, i+2);
       if (Size) {
         return i+2;
@@ -1289,7 +1288,14 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
             dsdt[j+4] == 0x44 && dsdt[j+5] == 0x0C && dsdt[j+6] == 0x41 && dsdt[j+7] == 0xD0 &&
             dsdt[j+8] == 0x01 && dsdt[j+9] == 0x03)
         {
-          HPETADR = j;
+          for (k=j; k>20; k--)
+          {
+            if (dsdt[k] == 0x82 && dsdt[k-1] == 0x5B)
+            {
+              HPETADR = k+1; //pointer to size
+              break;
+            }
+          }
           //DBG("found HPET device in DSDT\n");
         } // End HPET    
         
@@ -1298,22 +1304,28 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
             dsdt[j+4] == 0x44 && dsdt[j+5] == 0x0C && dsdt[j+6] == 0x41 && dsdt[j+7] == 0xD0 &&
             dsdt[j+8] == 0x01 && dsdt[j+9] == 0x00 )
         {
-          //device_name[6] = AllocateZeroPool(5);
-          //CopyMem(device_name[6], dsdt+j-4, 4);
-          //DBG("found TMR device Name is %a\n", 
-          //    device_name[6]);
-          TMRADR = j;
+          for (k=j; k>20; k--)
+          {
+            if (dsdt[k] == 0x82 && dsdt[k-1] == 0x5B)
+            {
+              TMRADR = k+1; //pointer to size
+              break;
+            }
+          }
         } // End TMR  
         
         // Find Device PIC or IPIC  PNP0000
         if (dsdt[j] == 0x08 && dsdt[j+1] == 0x5F && dsdt[j+2] == 0x48 && dsdt[j+3] == 0x49 &&
             dsdt[j+4] == 0x44 && dsdt[j+5] == 0x0B && dsdt[j+6] == 0x41 && dsdt[j+7] == 0xD0 )
         {
-          //device_name[8] = AllocateZeroPool(5);
-          //CopyMem(device_name[8], dsdt+j-4, 4);
-          //DBG("found PIC device Name is %a\n", 
-          //    device_name[8]);
-          PICADR = j;
+          for (k=j; k>20; k--)
+          {
+            if (dsdt[k] == 0x82 && dsdt[k-1] == 0x5B)
+            {
+              PICADR = k+1; //pointer to size
+              break;
+            }
+          }
         } // End PIC
         
         // Find Device RTC // Name (_HID, EisaId ("PNP0B00")) for RTC
@@ -1321,12 +1333,14 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
             dsdt[j+4] == 0x44 && dsdt[j+5] == 0x0C && dsdt[j+6] == 0x41 && dsdt[j+7] == 0xD0 &&
             dsdt[j+8] == 0x0B && dsdt[j+9] == 0x00 )
         {
-          // Copy RTC device Name to Array
-          //device_name[5] = AllocateZeroPool(5);
-          //CopyMem(device_name[5], dsdt+j-4, 4);
-          //DBG("found RTC device Name is %a\n", 
-          //    device_name[5]);
-          RTCADR = j;
+          for (k=j; k>20; k--)
+          {
+            if (dsdt[k] == 0x82 && dsdt[k-1] == 0x5B)
+            {
+              RTCADR = k+1; //pointer to size
+              break;
+            }
+          }
         } // End RTC
         
       } // n loop => j=n+i
@@ -1341,21 +1355,50 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
 	return root;
 }
 
-UINT32 FixRTC (UINT8 *dsdt, UINT32 len, UINT32 adr)
+UINT32 FixRTC (UINT8 *dsdt, UINT32 len)
 {
 	UINT32 i, j, k, l;
-	UINT32 m, n;
-	UINT32 IOADR  = 0;
-	UINT32 RESADR = 0;
+  //	UINT32 m, n;
+	UINT32 IOADR   = 0;
+	UINT32 RESADR  = 0;
+  UINT32 adr     = 0;
+  UINT32 rtcsize = 0;
+  
+  DBG("Start RTC Fix\n");
+  
+  for (j=20; j<len; j++) {
+    // Find Device RTC // Name (_HID, EisaId ("PNP0B00")) for RTC
+    if (dsdt[j] == 0x08 && dsdt[j+1] == 0x5F && dsdt[j+2] == 0x48 && dsdt[j+3] == 0x49 &&  
+        dsdt[j+4] == 0x44 && dsdt[j+5] == 0x0C && dsdt[j+6] == 0x41 && dsdt[j+7] == 0xD0 &&
+        dsdt[j+8] == 0x0B && dsdt[j+9] == 0x00 )
+    {
+      for (k=j; k>20; k--)
+      {
+        if (dsdt[k] == 0x82 && dsdt[k-1] == 0x5B) //Device()
+        {
+          RTCADR = k+1; //pointer to size
+          adr = RTCADR;
+          break;
+        }
+      }
+      break;
+    } // End RTC    
+  }
+  
+  rtcsize = get_size(dsdt, adr);
+  if (!rtcsize) {
+    DBG("BUG! rtcsize not found\n");
+    return len;
+  }
   
  	sizeoffset = 0;  // for check how many byte add or remove
- 
+  
   // Fix RTC
 	// Find Name(_CRS, ResourceTemplate ()) find ResourceTemplate 0x11
-	DBG("Start RTC Fix\n");
+	
 	//DBG("len = 0x%08x, adr = 0x%08x.\n", len, adr);
-	for (i=adr; i<adr+500; i++) 
-	{   // IO (Decode16, ((0x0070, 0x0070)) =>> find this
+	for (i=adr+4; i<adr+rtcsize; i++) {
+	  // IO (Decode16, ((0x0070, 0x0070)) =>> find this
     if (dsdt[i] == 0x70 && dsdt[i+1] == 0x00 && dsdt[i+2] == 0x70 && dsdt[i+3] == 0x00) 
     {   
       // First Fix RTC CMOS Reset Problem
@@ -1365,71 +1408,65 @@ UINT32 FixRTC (UINT8 *dsdt, UINT32 len, UINT32 adr)
         dsdt[i+5] = 0x02;  //Length
         DBG("found RTC Length not match, Maybe will case CMOS reset will patch it.\n");
       }
-      
-      for (l=adr; l<adr+100; l++)
+      for (l=adr+4; l<i; l++)
       {
-        if (dsdt[l] == 0x11)  RESADR = l+1;  // ResourceTemplate ==> 0x11 for Buffer SizeADR + 1 will not over 1 byte
-        // Format 11, size, ...... , 79, 01
-        if (dsdt[l] == 0x0A)  IOADR = l+1;   // IO (Decode16 ==> 0A for byte 
-        // SizeADR + 1 will not over 1 byte Format => 0A, size, ...., 47, 01
-        if (dsdt[l] == 0x22)  // Had IRQNoFlag
+        if (dsdt[l] == 0x11 && dsdt[l+2] == 0x0A)
         {
-          m=l;
-          for (k=m; k<m+20; k++)   
-          {
-            if (dsdt[k] == 0x79)
-            {
-              sizeoffset = m - k;
-              //DBG("found RTC had IRQNoFlag will move %d bytes\n", sizeoffset);
-              // First move offset byte remove IRQNoFlag
-              len = move_data(m, dsdt, len, sizeoffset);
-              // Fix IO (Decode16, size and _CRS size 
-              dsdt[RESADR] += sizeoffset;
-              dsdt[IOADR] += sizeoffset;
-              break;
-            }
-          }
-        }
-        
-        // if offset > 0 Fix Device RTC size
-        if (sizeoffset != 0) 
-        {        
-          UINT32 rtcsize;
-          n=adr-4;
-          // RTC size
-          for (j=0; j<15; j++)
-          {
-            if (dsdt[n-j] == 0x82 && dsdt[n-j-1] == 0x5B)
-            {
-              rtcsize = get_size(dsdt, n-j+1);
-              DBG("RTC adr = 0x%08x size = 0x%08x\n", n-j+1, rtcsize);
-              len = write_size(n-j+1, dsdt, len, rtcsize); //sizeoffset autochanged
-              CorrectOuters(dsdt, len, n-j-2);
-              break;
-            }
-          }
-          
- /*         // Fix LPCB size
-          len = write_size(LPCBADR, dsdt, len, sizeoffset, LPCBSIZE);
-          LPCBSIZE += sizeoffset;
-          // Fix PCIX size
-          len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
-          PCISIZE += sizeoffset;
-          // Fix Scope(\_SB) size
-          len = write_size(SBADR, dsdt, len, sizeoffset, SBSIZE);
-          SBSIZE += sizeoffset;
-  */
-          //DBG("Finish RTC patch");		
-          break;        
-        } // offset if
-      } // l loop
-     // break;  -- search more
-		}
+          RESADR = l+1;  //Format 11, size, 0A, size-3,... 79, 00
+          IOADR = l+3;  //IO (Decode16 ==> 47, 01
+        }  
+      }        
+      break;
+    }
     if ((dsdt[i+1] == 0x5B) && (dsdt[i+2] == 0x82)) {
       break; //end of RTC device and begin of new Device()
+    }    
+  }
+  
+  for (l=adr+4; l<adr+rtcsize; l++)
+  {
+    if ((dsdt[l] == 0x22) && (l>IOADR) && (l<IOADR+dsdt[IOADR]))  // Had IRQNoFlag
+    {
+      for (k=l; k<l+20; k++)   
+      {
+        if ((dsdt[k] == 0x79) || ((dsdt[k] == 0x47) && (dsdt[k+1] == 0x01)) || ((dsdt[k] == 0x86) && (dsdt[k+1] == 0x09)))
+        {
+          sizeoffset = l - k;  //usually = -3
+          DBG("found RTC had IRQNoFlag will move %d bytes\n", sizeoffset);
+          // First move offset byte remove IRQNoFlag
+          len = move_data(l, dsdt, len, sizeoffset);
+          // Fix IO (Decode16, size and _CRS size 
+          dsdt[RESADR] += sizeoffset;
+          dsdt[IOADR] += sizeoffset;
+          break;
+        }
+      }
     }
     
-	} // i loop
+    // if offset > 0 Fix Device RTC size
+    if (sizeoffset != 0) 
+    {        
+      
+      // RTC size
+      for (j=adr; j>20; j--)
+      {
+        if (dsdt[j] == 0x82 && dsdt[j-1] == 0x5B)
+        {
+          rtcsize = get_size(dsdt, j+1);
+          if (!rtcsize) {
+            DBG("BUG! rtcsize not found\n");
+            continue;
+          }
+          DBG("RTC adr = 0x%08x size = 0x%08x shift = 0x%04x\n", j+1, rtcsize, sizeoffset);
+          len = write_size(j+1, dsdt, len, rtcsize); //sizeoffset autochanged
+          CorrectOuters(dsdt, len, j-2);
+          break;
+        }
+      }
+      DBG("Finish RTC patch");		
+      break;        
+    } // sizeoffset if
+  } // l loop
 	
 	// need fix other device address
 	if (TMRADR > RTCADR) TMRADR += sizeoffset;
@@ -1449,35 +1486,61 @@ UINT32 FixRTC (UINT8 *dsdt, UINT32 len, UINT32 adr)
 }	
 
 
-UINT32 FixTMR (UINT8 *dsdt, UINT32 len, UINT32 adr)
+UINT32 FixTMR (UINT8 *dsdt, UINT32 len)
 {
 	UINT32 i, j, k;
-	UINT32 m, n;
-	sizeoffset=0;  // for check how many byte add or remove
+//	UINT32 m, n;
 	UINT32 IOADR=0;
 	UINT32 RESADR=0;
+  UINT32 adr=0;
+  UINT32 tmrsize;
   
+  for (j=20; j<len; j++) {
+    // Find Device TMR   PNP0100
+    if (dsdt[j] == 0x08 && dsdt[j+1] == 0x5F && dsdt[j+2] == 0x48 && dsdt[j+3] == 0x49 &&
+        dsdt[j+4] == 0x44 && dsdt[j+5] == 0x0C && dsdt[j+6] == 0x41 && dsdt[j+7] == 0xD0 &&
+        dsdt[j+8] == 0x01 && dsdt[j+9] == 0x00 )
+    {
+      for (k=j; k>20; k--)
+      {
+        if (dsdt[k] == 0x82 && dsdt[k-1] == 0x5B)
+        {
+          TMRADR = k+1; //pointer to size
+          adr = TMRADR;
+          tmrsize = get_size(dsdt, adr);
+          if (tmrsize) {
+            break;
+          }
+        }
+      }
+      break;
+    } // End TMR      
+  }
+  
+  	sizeoffset=0;  // for check how many byte add or remove
+
   // Fix TMR
 	// Find Name(_CRS, ResourceTemplate ()) find ResourceTemplate 0x11
 	DBG("Start TMR Fix\n");
 	//DBG("len = 0x%08x, adr = 0x%08x.\n", len, adr);
 	for (i=adr; i<adr+500; i++) //until next Device()
 	{  
-		if (dsdt[i] == 0x11)  RESADR = i+1;  // ResourceTemplate ==> 0x11 for Buffer SizeADR + 1 will not over 1 byte
-    // Format 11, size, ...... , 79, 01
-		if (dsdt[i] == 0x0A)  IOADR = i+1;   // IO (Decode16 ==> 0A for byte 
-    // SizeADR + 1 will not over 1 byte Format => 0A, size, ...., 47, 01
+    if (dsdt[i] == 0x11 && dsdt[i+2] == 0x0A)
+		{
+      RESADR = i+1;  //Format 11, size, 0A, size-3,... 79, 00
+      IOADR = i+3;  //IO (Decode16 ==> 47, 01
+		}  
+    
     if (dsdt[i] == 0x22)  // Had IRQNoFlag
     {
-      m=i;
-      for (k=m; k<m+20; k++)   
+       for (k=i; k<i+20; k++)   
       {
-        if (dsdt[k] == 0x79)
-        {
-          sizeoffset = m - k;
+        if ((dsdt[k] == 0x79) || ((dsdt[k] == 0x47) && (dsdt[k+1] == 0x01)) ||
+            ((dsdt[k] == 0x86) && (dsdt[k+1] == 0x09))) {
+          sizeoffset = i - k;
           //DBG("found TMR had IRQNoFlag will move %d bytes\n", sizeoffset);
           // First move offset byte remove IRQNoFlag
-          len = move_data(m, dsdt, len, sizeoffset);
+          len = move_data(i, dsdt, len, sizeoffset);
           // Fix IO (Decode16, size and _CRS size 
           dsdt[RESADR] += sizeoffset;
           dsdt[IOADR] += sizeoffset;
@@ -1489,33 +1552,19 @@ UINT32 FixTMR (UINT8 *dsdt, UINT32 len, UINT32 adr)
     // if offset > 0 Fix Device TMR size
 		if (sizeoffset != 0) 
     {        
-      UINT32 tmrsize;
-      k=0;
-      n=adr-4;
       // RTC size
-      for (j=0; j<15; j++)
+      for (j=adr; j>20; j--)
       {
-        if (dsdt[n-j] == 0x82 && dsdt[n-j-1] == 0x5B)
+        if (dsdt[j] == 0x82 && dsdt[j-1] == 0x5B)
         {
-          tmrsize = get_size(dsdt, n-j+1);
+          tmrsize = get_size(dsdt, j+1);
           //DBG("TMR adr = 0x%08x size = 0x%08x\n", n-j+1, tmrsize);
-          len = write_size(n-j+1, dsdt, len, tmrsize);
-          CorrectOuters(dsdt, len, n-j-2);
+          len = write_size(j+1, dsdt, len, tmrsize);
+          CorrectOuters(dsdt, len, j-2);
           break;
         }
       }
-/*      
-      // Fix LPCB size
-      len = write_size(LPCBADR, dsdt, len, sizeoffset, LPCBSIZE);
-      LPCBSIZE += sizeoffset;
-      // Fix PCIX size
-      len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
-      PCISIZE += sizeoffset;
-      // Fix Scope(\_SB) size
-      len = write_size(SBADR, dsdt, len, sizeoffset, SBSIZE);
-      SBSIZE += sizeoffset;
- */
-      //DBG("Finish RTC patch");		
+      //DBG("Finish TMR patch");		
              
     } // offset if
     
@@ -1539,32 +1588,55 @@ UINT32 FixTMR (UINT8 *dsdt, UINT32 len, UINT32 adr)
 	return len;
 }	
 
-UINT32 FixPIC (UINT8 *dsdt, UINT32 len, UINT32 adr)
+UINT32 FixPIC (UINT8 *dsdt, UINT32 len)
 {
 	UINT32 i, j, k;
 	UINT32 m, n;
 	UINT32 IOADR  = 0;
 	UINT32 RESADR = 0;
+  UINT32 adr = 0;
+  
+  DBG("Start PIC Fix\n");
+  for (j=20; j<len; j++) {
+    // Find Device PIC or IPIC  PNP0000
+    if (dsdt[j] == 0x08 && dsdt[j+1] == 0x5F && dsdt[j+2] == 0x48 && dsdt[j+3] == 0x49 &&
+        dsdt[j+4] == 0x44 && dsdt[j+5] == 0x0B && dsdt[j+6] == 0x41 && dsdt[j+7] == 0xD0 )
+    {
+      for (k=j; k>20; k--)
+      {
+        if (dsdt[k] == 0x82 && dsdt[k-1] == 0x5B)
+        {
+          PICADR = k+1; //pointer to size
+          adr = PICADR;
+          break;
+        }
+      }
+      break;
+    } // End PIC    
+  }
+  
   
   sizeoffset = 0;  // for check how many byte add or remove
   
   // Fix PIC
 	// Find Name(_CRS, ResourceTemplate ()) find ResourceTemplate 0x11
-	DBG("Start PIC Fix\n");
+	
 	//DBG("len = 0x%08x, adr = 0x%08x.\n", len, adr);
 	for (i=adr; i<adr+500; i++) 
 	{  
-		if (dsdt[i] == 0x11)  RESADR = i+1;  // ResourceTemplate ==> 0x11 for Buffer SizeADR + 1 will not over 1 byte
-    // Format 11, size, ...... , 79, 01
-		if (dsdt[i] == 0x0A)  IOADR = i+1;   // IO (Decode16 ==> 0A for byte 
-    // SizeADR + 1 will not over 1 byte Format => 0A, size, ...., 47, 01
+    if (dsdt[i] == 0x11 && dsdt[i+2] == 0x0A)
+		{
+      RESADR = i+1;  //Format 11, size, 0A, size-3,... 79, 00
+      IOADR = i+3;  //IO (Decode16 ==> 47, 01
+		}  
+    
     if (dsdt[i] == 0x22)  // Had IRQNoFlag
     {
       m=i;
       for (k=m; k<m+20; k++)   
       {
-        if (dsdt[k] == 0x79)
-        {
+        if ((dsdt[k] == 0x79) || ((dsdt[k] == 0x47) && (dsdt[k+1] == 0x01)) ||
+            ((dsdt[k] == 0x86) && (dsdt[k+1] == 0x09))) {
           sizeoffset = m - k;
           //DBG("found PIC had IRQNoFlag will move %d bytes\n", sizeoffset);
           // First move offset byte remove IRQNoFlag
@@ -1581,7 +1653,7 @@ UINT32 FixPIC (UINT8 *dsdt, UINT32 len, UINT32 adr)
 		if (sizeoffset != 0 ) 
     {        
       UINT32 picsize;
-      n=adr-4;
+      n=adr;
       // PIC size
       for (j=0; j<15; j++)
       {
@@ -1594,17 +1666,6 @@ UINT32 FixPIC (UINT8 *dsdt, UINT32 len, UINT32 adr)
           break;
         }
       }
-/*      
-      // Fix LPCB size
-      len = write_size(LPCBADR, dsdt, len, sizeoffset, LPCBSIZE);
-      LPCBSIZE += sizeoffset;
-      // Fix PCIX size
-      len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
-      PCISIZE += sizeoffset;
-      // Fix Scope(\_SB) size
-      len = write_size(SBADR, dsdt, len, sizeoffset, SBSIZE);
-      SBSIZE += sizeoffset;
- */
       //DBG("Finish PIC patch");		
     //  break;        
     } // offset if
@@ -1628,23 +1689,54 @@ UINT32 FixPIC (UINT8 *dsdt, UINT32 len, UINT32 adr)
 	return len;
 }	
 
-UINT32 FixHPET (UINT8* dsdt, UINT32 len, UINT32 adr)
+UINT32 FixHPET (UINT8* dsdt, UINT32 len)
 {
-  UINT32  i, j;
+  UINT32  i, j, k;
 	UINT32  IOADR  = 0;
 	UINT32  RESADR = 0;
-  INT32   offset  = 0;
+  INT32   offset = 0;
+  UINT32  adr    = 0;
   BOOLEAN CidExist = FALSE;
+  UINT32 hpetsize = 0;
+  
+	DBG("Start HPET Fix\n");  
+  
+  for (j=20; j<len; j++) {
+    // Find Device HPET   // PNP0103
+    if (dsdt[j] == 0x08 && dsdt[j+1] == 0x5F && dsdt[j+2] == 0x48 && dsdt[j+3] == 0x49 &&
+        dsdt[j+4] == 0x44 && dsdt[j+5] == 0x0C && dsdt[j+6] == 0x41 && dsdt[j+7] == 0xD0 &&
+        dsdt[j+8] == 0x01 && dsdt[j+9] == 0x03)
+    {
+      for (k=j; k>20; k--)
+      {
+        if (dsdt[k] == 0x82 && dsdt[k-1] == 0x5B)
+        {
+          HPETADR = k+1; //pointer to size
+          adr = HPETADR;
+          hpetsize = get_size(dsdt, adr);
+          if (hpetsize) {
+            break;
+          }          
+        }
+      }
+      break;
+      //DBG("found HPET device in DSDT\n");
+    } // End HPET        
+  }
+  
+  if (!hpetsize) {
+    return len;
+  }
   
  	sizeoffset = 0;  // for check how many byte add or remove
   
   // Fix HPET
 	// Find Name(_CRS, ResourceTemplate ()) find ResourceTemplate 0x11
-	DBG("Start HPET Fix\n");
+
 	//DBG("len = 0x%08x, adr = 0x%08x.\n", len, adr);
 	// add _CID
   //Check if _CID exists
-  for (i=adr; i<adr+500; i++) {
+  for (i=adr; i<adr+hpetsize; i++) {
     if ((dsdt[i] == 0x5F) && (dsdt[i+1] == 0x43) && (dsdt[i+2] == 0x49) && (dsdt[i+3] == 0x44)) {
       CidExist = TRUE;
       break;
@@ -1660,7 +1752,7 @@ UINT32 FixHPET (UINT8* dsdt, UINT32 len, UINT32 adr)
   }
 	
 	// add IRQNoFlags
-	for (i=adr; i<adr+500; i++) 
+	for (i=adr; i<adr+hpetsize; i++) 
 	{  
 		//if (dsdt[i] == 0x11)  RESADR = i+1;  // ResourceTemplate ==> 0x11 for Buffer SizeADR + 1 will not over 1 byte
 		//                                     // Format 11, size, ...... , 79, 01
@@ -1685,8 +1777,10 @@ UINT32 FixHPET (UINT8* dsdt, UINT32 len, UINT32 adr)
       CopyMem(dsdt+i, hpet2, sizeoffset);
       sizeoffset += offset;
       
-      // get HPET size
-      for (j=0; j<30; j++)
+      // set HPET size
+      len = write_size(HPETADR, dsdt, len, hpetsize);
+      CorrectOuters(dsdt, len, HPETADR-2);
+/*      for (j=0; j<30; j++)
       {
         if (dsdt[adr-j] == 0x82 && dsdt[adr-j-1] == 0x5B)
         {
@@ -1696,18 +1790,7 @@ UINT32 FixHPET (UINT8* dsdt, UINT32 len, UINT32 adr)
           CorrectOuters(dsdt, len, adr-j-2);
           break;
         }
-      }
-/*      
-      // Fix LPCB size
-      len = write_size(LPCBADR, dsdt, len, sizeoffset, LPCBSIZE);
-      LPCBSIZE += sizeoffset;
-      // Fix PCIX size
-      len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
-      PCISIZE += sizeoffset;
-      // Fix Scope(\_SB) size
-      len = write_size(SBADR, dsdt, len, sizeoffset, SBSIZE);
-      SBSIZE += sizeoffset;
- */
+      } */
       break;        
     } // offset if
     if ((dsdt[i+1] == 0x5B) && (dsdt[i+2] == 0x82)) {
@@ -3693,7 +3776,7 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
   
 	AML_CHUNK* root = aml_create_node(NULL);
 	
-	// add Method(_DSM,4,NotSerialized) for USB
+	// add Method(_DSM,4,NotSerialized) 
   AML_CHUNK* met = aml_add_method(root, "_DSM", 4);
   met = aml_add_store(met);
   AML_CHUNK* pack = aml_add_package(met);
@@ -4320,37 +4403,39 @@ VOID FixBiosDsdt (UINT8* temp)
   // get PCIRootUID and all DSDT Fix address
   gSettings.PCIRootUID = findPciRoot(temp, DsdtLen);
   
-  // Fix HPET
-  if (HPETADR && (gSettings.FixDsdt & FIX_HPET))
-  {
-    DBG("patch HPET in DSDT \n");
-    DsdtLen = FixHPET(temp, DsdtLen, HPETADR);
-  }
-  /*    else // if don't had HPET inject HPET is not use.
-   {
-   DsdtLen = ADDHPET(temp, DsdtLen);
-   }
-   */    
   // Fix RTC
   if (RTCADR  && (gSettings.FixDsdt & FIX_HPET))
   {
     DBG("patch RTC in DSDT \n");
-    DsdtLen = FixRTC(temp, DsdtLen, RTCADR);
+    DsdtLen = FixRTC(temp, DsdtLen);
   }
   
   // Fix TMR
   if (TMRADR  && (gSettings.FixDsdt & FIX_HPET))
   {
     DBG("patch TMR in DSDT \n");
-    DsdtLen = FixTMR(temp, DsdtLen, TMRADR);
+    DsdtLen = FixTMR(temp, DsdtLen);
   }
   
   // Fix PIC or IPIC
   if (PICADR && (gSettings.FixDsdt & FIX_IPIC))
   {
     DBG("patch IPIC in DSDT \n");
-    DsdtLen = FixPIC(temp, DsdtLen, PICADR);
+    DsdtLen = FixPIC(temp, DsdtLen);
   }
+  
+  // Fix HPET
+  if (HPETADR && (gSettings.FixDsdt & FIX_HPET))
+  {
+    DBG("patch HPET in DSDT \n");
+    DsdtLen = FixHPET(temp, DsdtLen);
+  }
+  /*    else // if don't had HPET inject HPET is not use.
+   {
+   DsdtLen = ADDHPET(temp, DsdtLen);
+   }
+   */    
+  
   
   // Fix LPC if don't had HPET don't need to inject LPC??
   if (LPCBFIX && (gCPUStructure.Family == 0x06)  && (gSettings.FixDsdt & FIX_LPC))
