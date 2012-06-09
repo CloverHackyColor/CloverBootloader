@@ -849,16 +849,19 @@ UINT32 write_size(UINT32 adr, UINT8* buffer, UINT32 len, UINT32 oldsize)
 	return len;
 }
 
-//                size => move data start address
+//                start => move data start address
 //                offset => data move how many byte 
-UINT32 move_data(UINT32 size, UINT8* buffer, UINT32 len, INT32 offset)
+//                len => initial length of the buffer
+// return final length of the buffer
+// we suppose that buffer allocation is more then len+offset
+UINT32 move_data(UINT32 start, UINT8* buffer, UINT32 len, INT32 offset)
 {
     UINT32 i;
 
     if (offset<0)
     {
         //DBG("move to front\n");
-        for (i=size; i<len+offset; i++) 
+        for (i=start; i<len+offset; i++) 
         {
             buffer[i] = buffer[i-offset];
         }
@@ -866,9 +869,10 @@ UINT32 move_data(UINT32 size, UINT8* buffer, UINT32 len, INT32 offset)
     else // data move to back
     {
         //DBG("move to back\n");
-        for (i=0; i<len+offset-size; i++) 
+        
+        for (i=len-1; i>=start; i--)
         {
-             buffer[len+offset-i] = buffer[len-i];
+             buffer[i+offset] = buffer[i];
         }
     }        
     
@@ -928,7 +932,8 @@ UINTN CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr) //return final length 
       break;
     }
     size = get_size(dsdt, j);
-    if ((j+size) > adr) {  //Yes - it is outer
+    if ((j+size) > adr+4) {  //Yes - it is outer
+      DBG("found outer device begin=%x end=%x\n", j, j+size);
       len = write_size(j, dsdt, len, size);
     }    
     i = j - 3;
@@ -941,7 +946,8 @@ UINTN CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr) //return final length 
       break;
     }
     size = get_size(dsdt, j);
-    if ((j+size) > adr) {  //Yes - it is outer
+    if ((j+size) > adr+4) {  //Yes - it is outer
+      DBG("found outer scope begin=%x end=%x\n", j, j+size);
       len = write_size(j, dsdt, len, size);
     }    
     i = j - 3;    //if found then search again from found 
@@ -1364,6 +1370,7 @@ UINT32 FixRTC (UINT8 *dsdt, UINT32 len)
 	UINT32 RESADR  = 0;
   UINT32 adr     = 0;
   UINT32 rtcsize = 0;
+  INT32  offset  = 0;
   
   DBG("Start RTC Fix\n");
   
@@ -1451,8 +1458,12 @@ UINT32 FixRTC (UINT8 *dsdt, UINT32 len)
     // if offset > 0 Fix Device RTC size
     if (sizeoffset != 0) 
     {        
-      
       // RTC size
+      len = write_size(adr, dsdt, len, rtcsize); //sizeoffset autochanged
+      CorrectOuters(dsdt, len, adr-3);
+      offset += sizeoffset;      
+      sizeoffset = 0;
+/*      
       for (j=adr; j>20; j--)
       {
         if (dsdt[j] == 0x82 && dsdt[j-1] == 0x5B)
@@ -1465,28 +1476,28 @@ UINT32 FixRTC (UINT8 *dsdt, UINT32 len)
           DBG("RTC adr = 0x%08x size = 0x%08x shift = 0x%04x\n", j+1, rtcsize, sizeoffset);
           len = write_size(j+1, dsdt, len, rtcsize); //sizeoffset autochanged
           CorrectOuters(dsdt, len, j-2);
+          sizeoffset = 0;
           break;
         }
       }
-      DBG("Finish RTC patch");		
-      break;        
+ */
     } // sizeoffset if
   } // l loop
+      DBG("Finish RTC patch");		
 	
 	// need fix other device address
-	if (TMRADR > RTCADR) TMRADR += sizeoffset;
-	if (PICADR > RTCADR) PICADR += sizeoffset;
-	if (HPETADR > RTCADR) HPETADR += sizeoffset;
-	if (DisplayADR[0] > RTCADR) DisplayADR[0] += sizeoffset;
-	if (DisplayADR[1] > RTCADR) DisplayADR[1] += sizeoffset;
-	if (NetworkADR > RTCADR) NetworkADR += sizeoffset;
-	if (FirewireADR > RTCADR) FirewireADR += sizeoffset;
-	if (SBUSADR > RTCADR) SBUSADR += sizeoffset;
-	if (IDEADR > RTCADR) IDEADR += sizeoffset;
-	if (SATAADR > RTCADR) SATAADR += sizeoffset;
-	if (SATAAHCIADR > RTCADR) SATAAHCIADR += sizeoffset;
-  
-	
+	if (TMRADR > RTCADR) TMRADR += offset;
+	if (PICADR > RTCADR) PICADR += offset;
+	if (HPETADR > RTCADR) HPETADR += offset;
+	if (DisplayADR[0] > RTCADR) DisplayADR[0] += offset;
+	if (DisplayADR[1] > RTCADR) DisplayADR[1] += offset;
+	if (NetworkADR > RTCADR) NetworkADR += offset;
+	if (FirewireADR > RTCADR) FirewireADR += offset;
+	if (SBUSADR > RTCADR) SBUSADR += offset;
+	if (IDEADR > RTCADR) IDEADR += offset;
+	if (SATAADR > RTCADR) SATAADR += offset;
+	if (SATAAHCIADR > RTCADR) SATAAHCIADR += offset;
+  	
 	return len;
 }	
 
@@ -1495,10 +1506,11 @@ UINT32 FixTMR (UINT8 *dsdt, UINT32 len)
 {
 	UINT32 i, j, k;
 //	UINT32 m, n;
-	UINT32 IOADR=0;
-	UINT32 RESADR=0;
-  UINT32 adr=0;
-  UINT32 tmrsize;
+	UINT32 IOADR   = 0;
+	UINT32 RESADR  = 0;
+  UINT32 adr     = 0;
+  UINT32 tmrsize = 0;
+  INT32  offset  = 0;
   
   for (j=20; j<len; j++) {
     // Find Device TMR   PNP0100
@@ -1513,6 +1525,7 @@ UINT32 FixTMR (UINT8 *dsdt, UINT32 len)
           TMRADR = k+1; //pointer to size
           adr = TMRADR;
           tmrsize = get_size(dsdt, adr);
+          DBG("TMR size=%x at %x\n", tmrsize, adr);
           if (tmrsize) {
             break;
           }
@@ -1528,17 +1541,19 @@ UINT32 FixTMR (UINT8 *dsdt, UINT32 len)
 	// Find Name(_CRS, ResourceTemplate ()) find ResourceTemplate 0x11
 	DBG("Start TMR Fix\n");
 	//DBG("len = 0x%08x, adr = 0x%08x.\n", len, adr);
-	for (i=adr; i<adr+500; i++) //until next Device()
+  j = 0;
+	for (i=adr; i<adr+tmrsize; i++) //until next Device()
 	{  
     if (dsdt[i] == 0x11 && dsdt[i+2] == 0x0A)
 		{
       RESADR = i+1;  //Format 11, size, 0A, size-3,... 79, 00
       IOADR = i+3;  //IO (Decode16 ==> 47, 01
+      j = get_size(dsdt, IOADR);
 		}  
     
     if (dsdt[i] == 0x22)  // Had IRQNoFlag
     {
-       for (k=i; k<i+20; k++)   
+      for (k=i; k<i+j; k++)   
       {
         if ((dsdt[k] == 0x79) || ((dsdt[k] == 0x47) && (dsdt[k+1] == 0x01)) ||
             ((dsdt[k] == 0x86) && (dsdt[k+1] == 0x09))) {
@@ -1557,8 +1572,12 @@ UINT32 FixTMR (UINT8 *dsdt, UINT32 len)
     // if offset > 0 Fix Device TMR size
 		if (sizeoffset != 0) 
     {        
-      // RTC size
-      for (j=adr; j>20; j--)
+      // TMR size
+      len = write_size(adr, dsdt, len, tmrsize);
+      CorrectOuters(dsdt, len, adr-3);
+      offset += sizeoffset;
+      sizeoffset = 0;
+/*      for (j=adr; j>20; j--)
       {
         if (dsdt[j] == 0x82 && dsdt[j-1] == 0x5B)
         {
@@ -1569,6 +1588,7 @@ UINT32 FixTMR (UINT8 *dsdt, UINT32 len)
           break;
         }
       }
+ */
       //DBG("Finish TMR patch");		
              
     } // offset if
@@ -1579,16 +1599,16 @@ UINT32 FixTMR (UINT8 *dsdt, UINT32 len)
 	} // i loop
 	
 	// need fix other device address
-	if (PICADR > TMRADR) PICADR += sizeoffset;
-	if (HPETADR > TMRADR) HPETADR += sizeoffset;
-  if (DisplayADR[0] > TMRADR) DisplayADR[0] += sizeoffset;
-  if (DisplayADR[1] > TMRADR) DisplayADR[1] += sizeoffset;
-	if (NetworkADR > TMRADR) NetworkADR += sizeoffset;
-	if (FirewireADR > TMRADR) FirewireADR += sizeoffset;
-	if (SBUSADR > TMRADR) SBUSADR += sizeoffset;
-	if (IDEADR > TMRADR) IDEADR += sizeoffset;
-	if (SATAADR > TMRADR) SATAADR += sizeoffset;
-	if (SATAAHCIADR > TMRADR) SATAAHCIADR += sizeoffset;
+	if (PICADR > TMRADR) PICADR += offset;
+	if (HPETADR > TMRADR) HPETADR += offset;
+  if (DisplayADR[0] > TMRADR) DisplayADR[0] += offset;
+  if (DisplayADR[1] > TMRADR) DisplayADR[1] += offset;
+	if (NetworkADR > TMRADR) NetworkADR += offset;
+	if (FirewireADR > TMRADR) FirewireADR += offset;
+	if (SBUSADR > TMRADR) SBUSADR += offset;
+	if (IDEADR > TMRADR) IDEADR += offset;
+	if (SATAADR > TMRADR) SATAADR += offset;
+	if (SATAAHCIADR > TMRADR) SATAAHCIADR += offset;
 	
 	return len;
 }	
@@ -1596,10 +1616,12 @@ UINT32 FixTMR (UINT8 *dsdt, UINT32 len)
 UINT32 FixPIC (UINT8 *dsdt, UINT32 len)
 {
 	UINT32 i, j, k;
-	UINT32 m, n;
+//	UINT32 m, n;
 	UINT32 IOADR  = 0;
 	UINT32 RESADR = 0;
   UINT32 adr = 0;
+  INT32  offset = 0;
+  UINT32 picsize;
   
   DBG("Start PIC Fix\n");
   for (j=20; j<len; j++) {
@@ -1613,13 +1635,19 @@ UINT32 FixPIC (UINT8 *dsdt, UINT32 len)
         {
           PICADR = k+1; //pointer to size
           adr = PICADR;
-          break;
+          picsize = get_size(dsdt, adr);
+          if (picsize) {
+            break;
+          }
         }
       }
       break;
     } // End PIC    
   }
   
+  if (!picsize) {
+    return len;
+  }
   
   sizeoffset = 0;  // for check how many byte add or remove
   
@@ -1627,7 +1655,7 @@ UINT32 FixPIC (UINT8 *dsdt, UINT32 len)
 	// Find Name(_CRS, ResourceTemplate ()) find ResourceTemplate 0x11
 	
 	//DBG("len = 0x%08x, adr = 0x%08x.\n", len, adr);
-	for (i=adr; i<adr+500; i++) 
+	for (i=adr; i<adr+picsize; i++) 
 	{  
     if (dsdt[i] == 0x11 && dsdt[i+2] == 0x0A)
 		{
@@ -1637,15 +1665,14 @@ UINT32 FixPIC (UINT8 *dsdt, UINT32 len)
     
     if (dsdt[i] == 0x22)  // Had IRQNoFlag
     {
-      m=i;
-      for (k=m; k<m+20; k++)   
+      for (k=i; k<i+dsdt[IOADR]; k++)   
       {
         if ((dsdt[k] == 0x79) || ((dsdt[k] == 0x47) && (dsdt[k+1] == 0x01)) ||
             ((dsdt[k] == 0x86) && (dsdt[k+1] == 0x09))) {
-          sizeoffset = m - k;
+          sizeoffset = i - k;
           //DBG("found PIC had IRQNoFlag will move %d bytes\n", sizeoffset);
           // First move offset byte remove IRQNoFlag
-          len = move_data(m, dsdt, len, sizeoffset);
+          len = move_data(i, dsdt, len, sizeoffset);
           // Fix IO (Decode16, size and _CRS size 
           dsdt[RESADR] += sizeoffset;
           dsdt[IOADR] += sizeoffset;
@@ -1657,8 +1684,11 @@ UINT32 FixPIC (UINT8 *dsdt, UINT32 len)
     // if offset > 0 Fix Device PIC size
 		if (sizeoffset != 0 ) 
     {        
-      UINT32 picsize;
-      n=adr;
+      len = write_size(adr, dsdt, len, picsize);
+      CorrectOuters(dsdt, len, adr-3);
+      offset += sizeoffset;
+      sizeoffset = 0;
+/*      n=adr;
       // PIC size
       for (j=0; j<15; j++)
       {
@@ -1671,6 +1701,7 @@ UINT32 FixPIC (UINT8 *dsdt, UINT32 len)
           break;
         }
       }
+ */
       //DBG("Finish PIC patch");		
     //  break;        
     } // offset if
@@ -1681,15 +1712,15 @@ UINT32 FixPIC (UINT8 *dsdt, UINT32 len)
 	} // i loop
 	
 	// need fix other device address
-	if (HPETADR > PICADR) HPETADR += sizeoffset;
-  if (DisplayADR[0] > PICADR) DisplayADR[0] += sizeoffset;
-  if (DisplayADR[1] > PICADR) DisplayADR[1] += sizeoffset;
-	if (NetworkADR > PICADR) NetworkADR += sizeoffset;
-	if (FirewireADR > PICADR) FirewireADR += sizeoffset;
-	if (SBUSADR > PICADR) SBUSADR += sizeoffset;
-	if (IDEADR > PICADR) IDEADR += sizeoffset;
-	if (SATAADR > PICADR) SATAADR += sizeoffset;
-	if (SATAAHCIADR > PICADR) SATAAHCIADR += sizeoffset;
+	if (HPETADR > PICADR) HPETADR += offset;
+  if (DisplayADR[0] > PICADR) DisplayADR[0] += offset;
+  if (DisplayADR[1] > PICADR) DisplayADR[1] += offset;
+	if (NetworkADR > PICADR) NetworkADR += offset;
+	if (FirewireADR > PICADR) FirewireADR += offset;
+	if (SBUSADR > PICADR) SBUSADR += offset;
+	if (IDEADR > PICADR) IDEADR += offset;
+	if (SATAADR > PICADR) SATAADR += offset;
+	if (SATAAHCIADR > PICADR) SATAAHCIADR += offset;
 	
 	return len;
 }	
@@ -1784,7 +1815,7 @@ UINT32 FixHPET (UINT8* dsdt, UINT32 len)
       
       // set HPET size
       len = write_size(HPETADR, dsdt, len, hpetsize);
-      CorrectOuters(dsdt, len, HPETADR-2);
+      CorrectOuters(dsdt, len, HPETADR-3);
 /*      for (j=0; j<30; j++)
       {
         if (dsdt[adr-j] == 0x82 && dsdt[adr-j-1] == 0x5B)
@@ -2391,7 +2422,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
     {
       if (dsdt[DisplayADR[0]-i] == 0x82 && dsdt[DisplayADR[0]-i-1] == 0x5B)
       {
-        adr1 = DisplayADR[0]-i+1;
+        adr1 = DisplayADR[0]-i+1;  
         adr = get_size(dsdt, adr1);
         break;
       }
@@ -2408,7 +2439,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       CopyMem(dsdt+devadr1+devadr, display, sizeoffset);
       len = write_size(devadr1, dsdt, len, devadr);
     }
-    CorrectOuters(dsdt, len, adr1-1);
+    CorrectOuters(dsdt, len, adr1-3);
 /*    
     // Fix Device Display size
     len = write_size(adr1, dsdt, len, adr);
@@ -2424,7 +2455,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   {
     len = move_data(PCIADR+PCISIZE, dsdt, len, sizeoffset);
     CopyMem(dsdt+PCIADR+PCISIZE, display, sizeoffset);
-    CorrectOuters(dsdt, len, PCIADR-2);
+    CorrectOuters(dsdt, len, PCIADR-3);
     /*
     // Fix PCIX size
     len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
@@ -2957,7 +2988,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
     }
     // Fix Device Display size
     len = write_size(adr1, dsdt, len, adr);
-    CorrectOuters(dsdt, len, adr-2);
+    CorrectOuters(dsdt, len, adr-3);
 /*    
     // Fix PCIX size
     len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
@@ -2971,7 +3002,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
   {
     len = move_data(PCIADR+PCISIZE, dsdt, len, sizeoffset);
     CopyMem(dsdt+PCIADR+PCISIZE, display, sizeoffset);
-    CorrectOuters(dsdt, len, PCIADR-2);
+    CorrectOuters(dsdt, len, PCIADR-3);
 /*    
     // Fix PCIX size
     len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
@@ -3102,7 +3133,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     CopyMem(dsdt+adr1+adr, network, sizeoffset);
     // Fix Device network size
     len = write_size(adr1, dsdt, len, adr);
-    CorrectOuters(dsdt, len, adr-2);
+    CorrectOuters(dsdt, len, adr-3);
 /*    
     // Fix PCIX size
     len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
@@ -3116,7 +3147,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
   {
     len = move_data(PCIADR+PCISIZE, dsdt, len, sizeoffset);
     CopyMem(dsdt+PCIADR+PCISIZE, network, sizeoffset);
-    CorrectOuters(dsdt, len, PCIADR-2);
+    CorrectOuters(dsdt, len, PCIADR-3);
 /*    
     // Fix PCIX size
     len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
@@ -3175,7 +3206,7 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
     CopyMem(dsdt+adr1+adr, bus0, sizeoffset);
     // Fix Device sbus size
     len = write_size(adr1, dsdt, len, adr);
-    CorrectOuters(dsdt, len, adr-2);
+    CorrectOuters(dsdt, len, adr-3);
     //DBG("SBUS code size fix = 0x%08x\n", sizeoffset);
 /*    
     // Fix PCIX size
@@ -3190,7 +3221,7 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
   {
     len = move_data(PCIADR+PCISIZE, dsdt, len, sizeoffset);
     CopyMem(dsdt+PCIADR+PCISIZE, sbus, sizeoffset);
-    CorrectOuters(dsdt, len, PCIADR-2);
+    CorrectOuters(dsdt, len, PCIADR-3);
 /*    
     // Fix PCIX size
     len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
@@ -3260,7 +3291,7 @@ UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
   // Fix PCIX size
   len = write_size(PCIADR, dsdt, len, PCISIZE);
 	PCISIZE += sizeoffset;
-  CorrectOuters(dsdt, len, PCIADR-2);
+  CorrectOuters(dsdt, len, PCIADR-3);
   /*
 	// Fix _SB_ size
   len = write_size(SBADR, dsdt, len, sizeoffset, SBSIZE);
@@ -3334,7 +3365,7 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
     CopyMem(dsdt+adr1+adr, firewire, sizeoffset);
     // Fix Device network size
     len = write_size(adr1, dsdt, len, adr);
-    CorrectOuters(dsdt, len, adr-2);
+    CorrectOuters(dsdt, len, adr-3);
     /*
     // Fix PCIX size
     len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
@@ -3348,7 +3379,7 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
   {
     len = move_data(PCIADR+PCISIZE, dsdt, len, sizeoffset);
     CopyMem(dsdt+PCIADR+PCISIZE, firewire, sizeoffset);
-    CorrectOuters(dsdt, len, PCIADR-2);
+    CorrectOuters(dsdt, len, PCIADR-3);
     /*
     // Fix PCIX size
     len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
@@ -3407,7 +3438,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len)
   // always add on PCIX back
   len = move_data(PCIADR+PCISIZE, dsdt, len, sizeoffset);
   CopyMem(dsdt+PCIADR+PCISIZE, hdef, sizeoffset);
-  CorrectOuters(dsdt, len, PCIADR-2);
+  CorrectOuters(dsdt, len, PCIADR-3);
   /*
   // Fix PCIX size
   len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
@@ -3533,7 +3564,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
             }
             // Fix Device network size
             len = write_size(adr1, dsdt, len, adr);
-            CorrectOuters(dsdt, len, adr-2);
+            CorrectOuters(dsdt, len, adr-3);
             /*
             // Fix PCIX size
             len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
@@ -3671,7 +3702,7 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
     CopyMem(dsdt+IDEADR, ide, sizeoffset);
     // Fix Device ide size
     len = write_size(adr1, dsdt, len, adr);
-    CorrectOuters(dsdt, len, adr-2);
+    CorrectOuters(dsdt, len, adr-3);
     /*
     // Fix PCIX size
     len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
@@ -3749,7 +3780,7 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
     CopyMem(dsdt+SATAAHCIADR, sata, sizeoffset);
     // Fix Device network size
     len = write_size(adr1, dsdt, len, adr);
-    CorrectOuters(dsdt, len, adr-2);
+    CorrectOuters(dsdt, len, adr-3);
     /*
     // Fix PCIX size
     len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
@@ -3826,7 +3857,7 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
     CopyMem(dsdt+SATAADR, sata, sizeoffset);
     // Fix Device SATA size
     len = write_size(adr1, dsdt, len, adr);
-    CorrectOuters(dsdt, len, adr-2);
+    CorrectOuters(dsdt, len, adr-3);
     /*
     // Fix PCIX size
     len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
