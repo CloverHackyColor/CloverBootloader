@@ -744,7 +744,7 @@ UINT32 get_size(UINT8* Buffer, UINT32 adr)
 	
 	temp = Buffer[adr] & 0xF0; //keep bits 0x30 to check if this is valid size field
 	
-	if(temp <= 30)			    // 0
+	if(temp <= 0x30)			    // 0
 	{
 		temp = Buffer[adr];		
 	}
@@ -767,6 +767,7 @@ UINT32 get_size(UINT8* Buffer, UINT32 adr)
 		        Buffer[adr+3]         << 20;	
 	} 
   else {
+    DBG("wrong pointer to %x\n", adr);
     return 0;  //this means wrong pointer to size field
   }
 
@@ -1374,18 +1375,22 @@ UINT32 FixRTC (UINT8 *dsdt, UINT32 len)
     {
       for (k=j; k>20; k--)
       {
-        if (dsdt[k] == 0x82 && dsdt[k-1] == 0x5B) //Device()
+        if ((dsdt[k] == 0x82) && (dsdt[k-1] == 0x5B)) //Device()
         {
           RTCADR = k+1; //pointer to size
           adr = RTCADR;
-          break;
+          rtcsize = get_size(dsdt, adr);
+          DBG("RTC addr=%x RTC size=%x\n", adr, rtcsize);
+          if (rtcsize) {
+            break;
+          }
         }
       }
       break;
     } // End RTC    
   }
   
-  rtcsize = get_size(dsdt, adr);
+  
   if (!rtcsize) {
     DBG("BUG! rtcsize not found\n");
     return len;
