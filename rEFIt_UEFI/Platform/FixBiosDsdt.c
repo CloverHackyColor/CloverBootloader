@@ -2990,7 +2990,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
     }
     // Fix Device Display size
     len = write_size(adr1, dsdt, len, adr);
-    CorrectOuters(dsdt, len, adr-3);
+    CorrectOuters(dsdt, len, adr1-3);
 /*    
     // Fix PCIX size
     len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
@@ -3135,7 +3135,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     CopyMem(dsdt+adr1+adr, network, sizeoffset);
     // Fix Device network size
     len = write_size(adr1, dsdt, len, adr);
-    CorrectOuters(dsdt, len, adr-3);
+    CorrectOuters(dsdt, len, adr1-3);
 /*    
     // Fix PCIX size
     len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
@@ -3181,6 +3181,12 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
   DBG("Start SBUS Fix\n");
 	//DBG("len = 0x%08x\n", len);
   
+  PCISIZE = get_size(dsdt, PCIADR);
+  if (!PCISIZE) {
+    DBG("wrong PCI0 address, patch SBUS will not be applyed\n");
+    return len;
+  }
+  
   if (SBUSADR)
     sizeoffset = sizeof(bus0);
   else
@@ -3208,7 +3214,7 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
     CopyMem(dsdt+adr1+adr, bus0, sizeoffset);
     // Fix Device sbus size
     len = write_size(adr1, dsdt, len, adr);
-    CorrectOuters(dsdt, len, adr-3);
+    CorrectOuters(dsdt, len, adr1-3);
     //DBG("SBUS code size fix = 0x%08x\n", sizeoffset);
 /*    
     // Fix PCIX size
@@ -3223,15 +3229,11 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
   {
     len = move_data(PCIADR+PCISIZE, dsdt, len, sizeoffset);
     CopyMem(dsdt+PCIADR+PCISIZE, sbus, sizeoffset);
-    CorrectOuters(dsdt, len, PCIADR-3);
-/*    
+    
     // Fix PCIX size
     len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
     PCISIZE += sizeoffset;
-    // Fix _SB_ size
-    len = write_size(SBADR, dsdt, len, sizeoffset, SBSIZE);
-    SBSIZE += sizeoffset;
- */
+    CorrectOuters(dsdt, len, PCIADR-3);
   }
   
   if (SBUSADR) 
@@ -3254,7 +3256,12 @@ UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
   
   DBG("Start Add MCHC\n");
 	//DBG("len = 0x%08x\n", len);
-	
+  PCISIZE = get_size(dsdt, PCIADR);
+  if (!PCISIZE) {
+    DBG("wrong PCI0 address, patch MCHC will not be applyed\n");
+    return len;
+  }
+  	
   AML_CHUNK* device = aml_add_device(root, "MCHC");
   aml_add_name(device, "_ADR");
   aml_add_byte(device, 0x00); 
@@ -3313,6 +3320,11 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
   
   DBG("Start Firewire Fix\n");
 	//DBG("len = 0x%08x\n", len);
+  PCISIZE = get_size(dsdt, PCIADR);
+  if (!PCISIZE) {
+    DBG("wrong PCI0 address, patch FRWR will not be applyed\n");
+    return len;
+  }
   
   AML_CHUNK* device = aml_add_device(root, "FRWR");
   aml_add_name(device, "_ADR");
@@ -3367,11 +3379,8 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
     CopyMem(dsdt+adr1+adr, firewire, sizeoffset);
     // Fix Device network size
     len = write_size(adr1, dsdt, len, adr);
-    CorrectOuters(dsdt, len, adr-3);
+    CorrectOuters(dsdt, len, adr1-3);
     /*
-    // Fix PCIX size
-    len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
-    PCISIZE += sizeoffset;
     // Fix _SB_ size
     len = write_size(SBADR, dsdt, len, sizeoffset, SBSIZE);
     SBSIZE += sizeoffset;
@@ -3381,11 +3390,11 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
   {
     len = move_data(PCIADR+PCISIZE, dsdt, len, sizeoffset);
     CopyMem(dsdt+PCIADR+PCISIZE, firewire, sizeoffset);
-    CorrectOuters(dsdt, len, PCIADR-3);
-    /*
     // Fix PCIX size
     len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
     PCISIZE += sizeoffset;
+    CorrectOuters(dsdt, len, PCIADR-3);
+    /*
     // Fix _SB_ size
     len = write_size(SBADR, dsdt, len, sizeoffset, SBSIZE);
     SBSIZE += sizeoffset;
@@ -3440,11 +3449,11 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len)
   // always add on PCIX back
   len = move_data(PCIADR+PCISIZE, dsdt, len, sizeoffset);
   CopyMem(dsdt+PCIADR+PCISIZE, hdef, sizeoffset);
-  CorrectOuters(dsdt, len, PCIADR-3);
-  /*
   // Fix PCIX size
   len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
 	PCISIZE += sizeoffset;
+  CorrectOuters(dsdt, len, PCIADR-3);
+  /*
 	// Fix _SB_ size
   len = write_size(SBADR, dsdt, len, sizeoffset, SBSIZE);
 	SBSIZE += sizeoffset;
@@ -3566,7 +3575,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
             }
             // Fix Device network size
             len = write_size(adr1, dsdt, len, adr);
-            CorrectOuters(dsdt, len, adr-3);
+            CorrectOuters(dsdt, len, adr1-3);
             /*
             // Fix PCIX size
             len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
@@ -3704,7 +3713,7 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
     CopyMem(dsdt+IDEADR, ide, sizeoffset);
     // Fix Device ide size
     len = write_size(adr1, dsdt, len, adr);
-    CorrectOuters(dsdt, len, adr-3);
+    CorrectOuters(dsdt, len, adr1-3);
     /*
     // Fix PCIX size
     len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
@@ -3782,7 +3791,7 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
     CopyMem(dsdt+SATAAHCIADR, sata, sizeoffset);
     // Fix Device network size
     len = write_size(adr1, dsdt, len, adr);
-    CorrectOuters(dsdt, len, adr-3);
+    CorrectOuters(dsdt, len, adr1-3);
     /*
     // Fix PCIX size
     len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
@@ -3859,7 +3868,7 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
     CopyMem(dsdt+SATAADR, sata, sizeoffset);
     // Fix Device SATA size
     len = write_size(adr1, dsdt, len, adr);
-    CorrectOuters(dsdt, len, adr-3);
+    CorrectOuters(dsdt, len, adr1-3);
     /*
     // Fix PCIX size
     len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
