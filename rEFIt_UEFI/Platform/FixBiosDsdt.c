@@ -3231,7 +3231,7 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
     CopyMem(dsdt+PCIADR+PCISIZE, sbus, sizeoffset);
     
     // Fix PCIX size
-    len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
+    len = write_size(PCIADR, dsdt, len, PCISIZE);
     PCISIZE += sizeoffset;
     CorrectOuters(dsdt, len, PCIADR-3);
   }
@@ -3391,7 +3391,7 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
     len = move_data(PCIADR+PCISIZE, dsdt, len, sizeoffset);
     CopyMem(dsdt+PCIADR+PCISIZE, firewire, sizeoffset);
     // Fix PCIX size
-    len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
+    len = write_size(PCIADR, dsdt, len, PCISIZE);
     PCISIZE += sizeoffset;
     CorrectOuters(dsdt, len, PCIADR-3);
     /*
@@ -3450,7 +3450,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len)
   len = move_data(PCIADR+PCISIZE, dsdt, len, sizeoffset);
   CopyMem(dsdt+PCIADR+PCISIZE, hdef, sizeoffset);
   // Fix PCIX size
-  len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
+  len = write_size(PCIADR, dsdt, len, PCISIZE);
 	PCISIZE += sizeoffset;
   CorrectOuters(dsdt, len, PCIADR-3);
   /*
