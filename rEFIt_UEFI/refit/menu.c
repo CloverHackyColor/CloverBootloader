@@ -867,7 +867,8 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         }
         break;
       case SCAN_F4:
-        SaveOemDsdt(FALSE); //no patches
+        //SaveOemDsdt(FALSE); //no patches
+        SaveOemTables();
         break;
       case SCAN_F5:
         SaveOemDsdt(TRUE); //full patch

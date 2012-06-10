@@ -395,6 +395,432 @@ EFI_STATUS InsertTable(VOID* Table, UINTN Length)
   return Status;
 }
 
+/** Saves Buffer of Length to disk as DirName\\FileName. */
+EFI_STATUS SaveBufferToDisk(VOID *Buffer, UINTN Length, CHAR16 *DirName, CHAR16 *FileName)
+{
+	EFI_STATUS		Status;
+	
+	if (DirName == NULL || FileName == NULL) {
+		return EFI_INVALID_PARAMETER;
+	}
+	
+	FileName = PoolPrint(L"%s\\%s", DirName, FileName);
+	if (FileName == NULL) {
+		return EFI_OUT_OF_RESOURCES;
+	}
+	
+	Status = egSaveFile(SelfRootDir, FileName, Buffer, Length);
+	if (EFI_ERROR(Status)) {
+		Status = egSaveFile(NULL, FileName, Buffer, Length);
+	}
+	
+	FreePool(FileName);
+	
+	return Status;
+}
+
+/** Saves Table to disk as DirName\\FileName (DirName != NULL)
+ *  or just prints basic table data to log (DirName == NULL).
+ */
+EFI_STATUS DumpTable(EFI_ACPI_DESCRIPTION_HEADER *Table, CHAR16 *DirName, CHAR16 *FileName, UINTN *SsdtCount)
+{
+	EFI_STATUS		Status;
+	CHAR8					Signature[5];
+	CHAR8					OemTableId[9];
+	BOOLEAN				ReleaseFileName = FALSE;
+	
+	// Take Signature and OemId for printing
+	CopyMem((CHAR8*)&Signature, (CHAR8*)&Table->Signature, 4);
+	Signature[4] = 0;
+	CopyMem((CHAR8*)&OemTableId, (CHAR8*)&Table->OemTableId, 8);
+	OemTableId[8] = 0;
+	
+	DBG(" %p: '%a', '%a', Rev: %d, Len: %d", Table, Signature, OemTableId, Table->Revision, Table->Length);
+	
+	if (DirName == NULL) {
+		// just debug log dump
+		return EFI_SUCCESS;
+	}
+	
+	if (FileName == NULL) {
+		// take the name from the signature
+		if (Table->Signature == EFI_ACPI_1_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE && SsdtCount != NULL) {
+			// Ssdt counter
+			if (*SsdtCount == 0) {
+				FileName = PoolPrint(L"%a.aml", Signature);
+			} else {
+				// *SsdtCount == 1 -> SSDT-0.aml
+				FileName = PoolPrint(L"%a-%d.aml", Signature, *SsdtCount - 1);
+			}
+			*SsdtCount = *SsdtCount + 1;
+		} else {
+			FileName = PoolPrint(L"%a.aml", Signature);
+		}
+		
+		if (FileName == NULL) {
+			return EFI_OUT_OF_RESOURCES;
+		}
+		ReleaseFileName = TRUE;
+	}
+	DBG(" -> %s", FileName);
+	
+	// Save it
+	Status = SaveBufferToDisk((VOID*)Table, Table->Length, DirName, FileName);
+	
+	if (ReleaseFileName) {
+		FreePool(FileName);
+	}
+	
+	return Status;
+}
+
+/** Saves to disk (DirName != NULL) or prints to log (DirName == NULL) Fadt tables: Dsdt and Facs. */
+EFI_STATUS DumpFadtTables(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt, CHAR16 *DirName)
+{
+	EFI_ACPI_DESCRIPTION_HEADER										*Table;
+	EFI_ACPI_2_0_FIRMWARE_ACPI_CONTROL_STRUCTURE	*Facs;
+	EFI_STATUS		Status  = EFI_SUCCESS;
+	UINT64				DsdtAdr;
+	UINT64				FacsAdr;
+	CHAR8					Signature[5];
+	
+	//
+	// if Fadt->Revision < 3 (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION), then it is Acpi 1.0
+	// and fields after Flags are not available
+	//
+	
+	DBG("      (Dsdt: %x, Facs: %x", Fadt->Dsdt, Fadt->FirmwareCtrl);
+	
+	// for Acpi 1.0
+	DsdtAdr = Fadt->Dsdt;
+	FacsAdr = Fadt->FirmwareCtrl;
+	
+	if (Fadt->Header.Revision >= EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION) {
+		// Acpi 2.0 or up
+		// may have it in XDsdt or XFirmwareCtrl
+		DBG(", XDsdt: %lx, XFacs: %lx", Fadt->XDsdt, Fadt->XFirmwareCtrl);
+		if (Fadt->XDsdt != 0) {
+			DsdtAdr = Fadt->XDsdt;
+		}
+		if (Fadt->XFirmwareCtrl != 0) {
+			FacsAdr = Fadt->XFirmwareCtrl;
+		}
+	}
+	DBG(")\n");
+	
+	//
+	// Save Dsdt
+	//
+	if (DsdtAdr != 0) {
+		DBG("     ");
+		Table = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)DsdtAdr;
+		Status = DumpTable(Table, DirName,  NULL, NULL);
+		if (EFI_ERROR(Status)) {
+			DBG(" - %r\n", Status);
+			return Status;
+		}
+		DBG("\n");
+	}
+	//
+	// Save Facs
+	//
+	if (FacsAdr != 0) {
+		// Taking it as structure from Acpi 2.0 just to get Version (it's reserved field in Acpi 1.0 and == 0)
+		Facs = (EFI_ACPI_2_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)FacsAdr;
+		// Take Signature for printing
+		CopyMem((CHAR8*)&Signature, (CHAR8*)&Facs->Signature, 4);
+		Signature[4] = 0;
+		DBG("      %p: '%a', Ver: %d, Len: %d", Facs, Signature, Facs->Version, Facs->Length);
+		if (DirName != NULL) {
+			DBG(" -> FACS.aml");
+			Status = SaveBufferToDisk((VOID*)Facs, Facs->Length, DirName, L"FACS.aml");
+			if (EFI_ERROR(Status)) {
+				DBG(" - %r\n", Status);
+				return Status;
+			}
+		}
+		
+		DBG("\n");
+	}
+
+	return Status;
+}
+
+/** Saves to disk (DirName != NULL)
+ *  or prints to debug log (DirName == NULL)
+ *  ACPI tables given by RsdPtr.
+ *  Takes tables from Xsdt if present or from Rsdt if Xsdt is not present.
+ */
+VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
+{
+	EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER	*RsdPtr;
+	RSDT_TABLE																		*Rsdt;
+	XSDT_TABLE																		*Xsdt;
+	EFI_ACPI_DESCRIPTION_HEADER										*Table;
+	EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE			*Fadt;
+
+	EFI_STATUS		Status;
+	UINTN					Length;
+	CHAR8					Signature[9];
+	UINT32				*EntryPtr32;
+	UINT64				*EntryPtr64;
+	UINTN					EntryCount;
+	INTN					Index;
+	UINTN					SsdtCount;
+	
+	
+	//
+	// RSDP
+	// Take it as Acpi 2.0, but take care that if RsdPtr->Revision == 0
+	// then it is actually Acpi 1.0 and fields after RsdtAddress (like XsdtAddress)
+	// are not available 
+	//
+	
+	RsdPtr = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER *) RsdPtrVoid;
+	if (DirName != NULL) {
+		DBG("Saving ACPI tables from RSDP %p to %s ...\n", RsdPtr, DirName);
+	} else {
+		DBG("Printing ACPI tables from RSDP %p ...\n", RsdPtr);
+	}
+	
+	if (RsdPtr->Signature != EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER_SIGNATURE) {
+		DBG(" RsdPrt at %p has invaid signature 0x%lx - exiting.\n", RsdPtr, RsdPtr->Signature);
+		return;
+	}
+	
+	// Take Signature and OemId for printing
+	CopyMem((CHAR8*)&Signature, (CHAR8*)&RsdPtr->Signature, 8);
+	Signature[8] = 0;
+	
+	// Take Rsdt and Xsdt
+	Rsdt = NULL;
+	Xsdt = NULL;
+	
+	DBG(" %p: '%a', Rev: %d", RsdPtr, Signature, RsdPtr->Revision);
+	if (RsdPtr->Revision == 0) {
+		// Acpi 1.0
+		Length = sizeof(EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER);
+		DBG(" (Acpi 1.0)");
+	} else {
+		// Acpi 2.0 or newer
+		Length = RsdPtr->Length;
+		DBG(" (Acpi 2.0 or newer)");
+	}
+	DBG(", Len: %d", Length);
+	
+	//
+	// Save RsdPtr
+	//
+	if (DirName != NULL) {
+		DBG(" -> RSDP.aml");
+		Status = SaveBufferToDisk((VOID*)RsdPtr, Length, DirName, L"RSDP.aml");
+		if (EFI_ERROR(Status)) {
+			DBG(" - %r\n", Status);
+			return;
+		}
+	}
+	DBG("\n");
+	
+	if (RsdPtr->Revision == 0) {
+		// Acpi 1.0 - no Xsdt
+		Rsdt = (RSDT_TABLE*)(UINTN)(RsdPtr->RsdtAddress);
+		DBG("  (Rsdt: %p)\n", Rsdt);
+	} else {
+		// Acpi 2.0 or newer - may have Xsdt and/or Rsdt
+		Rsdt = (RSDT_TABLE*)(UINTN)(RsdPtr->RsdtAddress);
+		Xsdt = (XSDT_TABLE *)(UINTN)(RsdPtr->XsdtAddress);
+		DBG("  (Xsdt: %p, Rsdt: %p)\n", Xsdt, Rsdt);
+	}
+	
+	if (Rsdt == NULL && Xsdt == NULL) {
+		DBG(" No Rsdt and Xsdt - exiting.\n");
+		return;
+	}
+	
+	//
+	// Save Xsdt
+	//
+	if (Xsdt != NULL) {
+		DBG(" ");
+		Status = DumpTable((EFI_ACPI_DESCRIPTION_HEADER *)Xsdt, DirName,  L"XSDT.aml", NULL);
+		if (EFI_ERROR(Status)) {
+			DBG(" - %r\n", Status);
+			return;
+		}
+		DBG("\n");
+	}
+	
+	//
+	// Save Rsdt
+	//
+	if (Rsdt != NULL) {
+		DBG(" ");
+		Status = DumpTable((EFI_ACPI_DESCRIPTION_HEADER *)Rsdt, DirName,  L"RSDT.aml", NULL);
+		if (EFI_ERROR(Status)) {
+			DBG(" - %r\n", Status);
+			return;
+		}
+		DBG("\n");
+	}
+	
+	if (Xsdt != NULL) {
+		
+		//
+		// Take tables from Xsdt
+		//
+		
+		EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
+		if (EntryCount > 100) EntryCount = 100; //it's enough
+		DBG("  Tables in Xsdt: %d\n", EntryCount); 
+		
+		// iterate over table entries
+		EntryPtr64 = (UINT64*)&Xsdt->Entry;
+		SsdtCount = 0;
+		for (Index = 0; Index < EntryCount; Index++, EntryPtr64++) {
+			DBG("  %d.", Index);
+			
+			// skip NULL entries
+			if (*EntryPtr64 == 0) {
+				DBG(" = 0\n", Index);
+				continue;
+			}
+			
+			// Save table with the name from signature
+			Table = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)(*EntryPtr64);
+			
+			Status = DumpTable(Table, DirName,  NULL /* take the name from the signature*/, &SsdtCount);
+			if (EFI_ERROR(Status)) {
+				DBG(" - %r\n", Status);
+				return;
+			}
+			DBG("\n");
+			
+			if (Table->Signature == EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE) {
+				//
+				// Fadt - save Dsdt and Facs
+				//
+				Fadt = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)Table;
+				Status = DumpFadtTables(Fadt, DirName);
+				if (EFI_ERROR(Status)) {
+					return;
+				}
+			}
+		}
+		
+		// block saving of Rsdt tables
+		DirName = NULL;
+		
+	} // if Xsdt
+	
+	
+	if (Rsdt != NULL) {
+		
+		//
+		// Take tables from Rsdt
+		// if saved from Xsdt already, then just print debug
+		//
+		
+		EntryCount = (Rsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT32);
+		if (EntryCount > 100) EntryCount = 100; //it's enough
+		DBG("  Tables in Rsdt: %d\n", EntryCount); 
+		
+		// iterate over table entries
+		EntryPtr32 = (UINT32*)&Rsdt->Entry;
+		SsdtCount = 0;
+		for (Index = 0; Index < EntryCount; Index++, EntryPtr32++) {
+			DBG("  %d.", Index);
+			
+			// skip NULL entries
+			if (*EntryPtr32 == 0) {
+				DBG(" = 0\n", Index);
+				continue;
+			}
+			
+			// Save table with the name from signature
+			Table = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)(*EntryPtr32);
+			Status = DumpTable(Table, DirName,  NULL /* take the name from the signature*/, &SsdtCount);
+			if (EFI_ERROR(Status)) {
+				DBG(" - %r\n", Status);
+				return;
+			}
+			DBG("\n");
+			
+			if (Table->Signature == EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE) {
+				//
+				// Fadt - save Dsdt and Facs
+				//
+				Fadt = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)Table;
+				Status = DumpFadtTables(Fadt, DirName);
+				if (EFI_ERROR(Status)) {
+					return;
+				}
+			}
+		}
+	} // if Rsdt
+	
+}
+
+/** Saves OEM ACPI tables to disk.
+ *  Searches BIOS, then UEFI Sys.Tables for Acpi 2.0 or newer tables, then for Acpi 1.0 tables
+ *  CloverEFI:
+ *   - saves first one found, dump others to log
+ *  UEFI:
+ *   - saves first one found in UEFI Sys.Tables, dump others to log
+ *
+ * Dumping of other tables to log can be removed if it turns out that there is no value in doing it.
+ */
+VOID SaveOemTables()
+{
+	EFI_STATUS			Status;
+	VOID						*RsdPtr;
+  CHAR16					*AcpiOriginPath = PoolPrint(L"%s\\ACPI\\origin", OEMPath);
+	BOOLEAN					Saved = FALSE;
+	
+	
+	//
+	// Search in BIOS
+	// CloverEFI - Save
+	// UEFI - just print to log
+	//
+	RsdPtr = NULL;
+	RsdPtr = FindAcpiRsdPtr();
+	if (RsdPtr != NULL) {
+		DBG("Found BIOS RSDP at %p\n", RsdPtr);
+		if (gFirmwareClover) {
+			// Save it 
+			DumpTables(RsdPtr, AcpiOriginPath);
+			Saved = TRUE;
+		} else {
+			// just print to log
+			DumpTables(RsdPtr, NULL);
+		}
+	}
+	
+	//
+	// Search Acpi 2.0 or newer in UEFI Sys.Tables
+	//
+	RsdPtr = NULL;
+	Status = EfiGetSystemConfigurationTable (&gEfiAcpi20TableGuid, &RsdPtr);
+	if (RsdPtr != NULL) {
+		DBG("Found UEFI Acpi 2.0 RSDP at %p\n", RsdPtr);
+		// if tables already saved, then just print to log
+		DumpTables(RsdPtr, Saved ? NULL : AcpiOriginPath);
+		Saved = TRUE;
+	}
+	
+	//
+	// Then search Acpi 1.0 UEFI Sys.Tables
+	//
+	RsdPtr = NULL;
+	Status = EfiGetSystemConfigurationTable (&gEfiAcpi10TableGuid, &RsdPtr);
+	if (RsdPtr != NULL) {
+		DBG("Found UEFI Acpi 1.0 RSDP at %p\n", RsdPtr);
+		// if tables already saved, then just print to log
+		DumpTables(RsdPtr, Saved ? NULL : AcpiOriginPath);
+		Saved = TRUE;
+	}
+}
+
 VOID        SaveOemDsdt(BOOLEAN FullPatch)
 {
   EFI_STATUS						Status = EFI_SUCCESS;
@@ -404,31 +830,57 @@ VOID        SaveOemDsdt(BOOLEAN FullPatch)
 //  UINT64        				BiosDsdt = 0;
 	UINT8                 *buffer = NULL;
 //	UINTN        				  bufferLen = 0;
-  CHAR16*               OriginDsdt   = L"\\EFI\\ACPI\\origin\\DSDT.aml";
-  CHAR16*     OriginOemPath = PoolPrint(L"%s\\ACPI\\origin\\DSDT-%x.aml", OEMPath, gSettings.FixDsdt);
+  CHAR16*     OriginDsdt = PoolPrint(L"%s\\ACPI\\origin\\DSDT.aml", OEMPath);
+  CHAR16*     OriginDsdtFixed = PoolPrint(L"%s\\ACPI\\origin\\DSDT-%x.aml", OEMPath, gSettings.FixDsdt);
+	UINTN				Pages;
   
-  RsdPointer = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)FindAcpiRsdPtr();
+  
+	if (gFirmwareClover) {
+		RsdPointer = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)FindAcpiRsdPtr();
+	} else {
+		Status = EfiGetSystemConfigurationTable (&gEfiAcpi20TableGuid, (VOID**)&RsdPointer);
+		if (EFI_ERROR(Status)) {
+			Status = EfiGetSystemConfigurationTable (&gEfiAcpi10TableGuid, (VOID**)&RsdPointer);
+		}
+	}
+	
+	if (RsdPointer == NULL) {
+		return;
+	}
+	
   Rsdt = (RSDT_TABLE*)(UINTN)(RsdPointer->RsdtAddress);
-  if (Rsdt == NULL || Rsdt->Header.Signature != EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
-    Xsdt = (XSDT_TABLE *)(UINTN)(RsdPointer->XsdtAddress);
-  }
+	if (RsdPointer->Revision > 0) {
+		if (Rsdt == NULL || Rsdt->Header.Signature != EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
+			Xsdt = (XSDT_TABLE *)(UINTN)(RsdPointer->XsdtAddress);
+		}
+	}
+	if (Rsdt == NULL && Xsdt == NULL) {
+		return;
+	}
+	
   if (Rsdt) {
     FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Rsdt->Entry);
   } else if (Xsdt) {
     FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Xsdt->Entry);
   }
-  BiosDsdt = FadtPointer->XDsdt;
-  if (BiosDsdt == 0) {
-    BiosDsdt = FadtPointer->Dsdt;
-    if (BiosDsdt == 0) {
-      DBG("Cannot found DSDT in Bios tables!\n");
-    }
-  }
+	if (FadtPointer == NULL) {
+		return;
+	}
+	
+	BiosDsdt = FadtPointer->Dsdt;
+	if (FadtPointer->Header.Revision >= EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION && FadtPointer->XDsdt != 0) {
+		BiosDsdt = FadtPointer->XDsdt;
+	}
+	if (BiosDsdt == 0) {
+		DBG("Cannot found DSDT in Bios tables!\n");
+	}
+	
   BiosDsdtLen = ((EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)BiosDsdt)->Length;
+	Pages = EFI_SIZE_TO_PAGES(BiosDsdtLen + BiosDsdtLen / 8); // take some extra space for patches
   Status = gBS->AllocatePages (
                                AllocateMaxAddress,
-                               EfiACPIReclaimMemory,
-                               EFI_SIZE_TO_PAGES(BiosDsdtLen),
+                               EfiBootServicesData,
+                               Pages,
                                &dsdt
                                );
   
@@ -443,17 +895,18 @@ VOID        SaveOemDsdt(BOOLEAN FullPatch)
       FixBiosDsdt(buffer);
 //      gSettings.FixDsdt = OldMask;
       BiosDsdtLen = ((EFI_ACPI_DESCRIPTION_HEADER*)buffer)->Length;
+			OriginDsdt = OriginDsdtFixed;
     }
-    Status = egSaveFile(SelfRootDir, OriginOemPath, buffer, BiosDsdtLen);
+    Status = egSaveFile(SelfRootDir, OriginDsdt, buffer, BiosDsdtLen);
     if (EFI_ERROR(Status)) {
-      Status = egSaveFile(SelfRootDir, OriginDsdt, buffer, BiosDsdtLen);
-      if (EFI_ERROR(Status)) {
-        MsgLog("Save OriginDsdt failed=%r\n", Status);
-      }
-    }	else {
-      MsgLog("Saved OriginDsdt into OEM folder\n");
-    }	
-    gBS->FreePages(dsdt, EFI_SIZE_TO_PAGES(BiosDsdtLen));
+      Status = egSaveFile(NULL, OriginDsdt, buffer, BiosDsdtLen);
+    }
+		if (!EFI_ERROR(Status)) {
+      MsgLog("DSDT saved to %s\n", OriginDsdt);
+		} else {
+			MsgLog("Saving DSDT to % s failed - %r\n", OriginDsdt, Status);
+		}
+    gBS->FreePages(dsdt, Pages);
   }
 }
 
