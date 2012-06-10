@@ -1733,7 +1733,8 @@ UINT32 FixHPET (UINT8* dsdt, UINT32 len)
   INT32   offset = 0;
   UINT32  adr    = 0;
   BOOLEAN CidExist = FALSE;
-  UINT32 hpetsize = 0;
+  UINT32  hpetsize = 0;
+  UINT32  hidAddr = 0;
   
 	DBG("Start HPET Fix\n");  
   
@@ -1743,6 +1744,7 @@ UINT32 FixHPET (UINT8* dsdt, UINT32 len)
         dsdt[j+4] == 0x44 && dsdt[j+5] == 0x0C && dsdt[j+6] == 0x41 && dsdt[j+7] == 0xD0 &&
         dsdt[j+8] == 0x01 && dsdt[j+9] == 0x03)
     {
+      hidAddr = j;
       for (k=j; k>20; k--)
       {
         if (dsdt[k] == 0x82 && dsdt[k-1] == 0x5B)
@@ -1783,8 +1785,8 @@ UINT32 FixHPET (UINT8* dsdt, UINT32 len)
   }
   if (!CidExist) {
     offset = sizeof(hpet1);
-    len = move_data(adr+10, dsdt, len, offset);
-    CopyMem(dsdt+adr+10, hpet1, offset);    
+    len = move_data(hidAddr+10, dsdt, len, offset);
+    CopyMem(dsdt+hidAddr+10, hpet1, offset);    
   }
 	
 	// add IRQNoFlags

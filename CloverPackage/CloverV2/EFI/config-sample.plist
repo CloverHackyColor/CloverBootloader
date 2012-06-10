@@ -123,6 +123,8 @@
 		<string>No</string>
 		<key>PatchNMI</key>
 		<string>No</string>
+		<key>FixDsdtMask</key>
+		<string>0xFFFF</string>
 	</dict>
 </dict>
 </plist>
