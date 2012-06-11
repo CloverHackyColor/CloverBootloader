@@ -702,22 +702,10 @@ BdsLibVariableToOption (
                + (UINT16) (CharToUint (VariableName[NumOff+2]) * 0x10)
                + (UINT16) (CharToUint (VariableName[NumOff+3]) * 0x1);
   }
-  //
-  // Insert active entry to BdsDeviceList
-  //
-  if ((Option->Attribute & LOAD_OPTION_ACTIVE) == LOAD_OPTION_ACTIVE) {
     InsertTailList (BdsCommonOptionList, &Option->Link);
     FreePool (Variable);
     return Option;
   }
-
-  FreePool (Variable);
-  FreePool (Option->Description);
-  FreePool (Option->DevicePath);
-  FreePool (Option->LoadOptions);
-  FreePool (Option);
-  return NULL;
-}
 
 /**
   Process BootOrder, or DriverOrder variables, by calling
@@ -838,6 +826,7 @@ BdsLibGetVariableAndSize (
     //
     Buffer = AllocateZeroPool (BufferSize);
     if (Buffer == NULL) {
+      *VariableSize = 0;
       return NULL;
     }
     //
@@ -845,7 +834,9 @@ BdsLibGetVariableAndSize (
     //
     Status = gRT->GetVariable (Name, VendorGuid, NULL, &BufferSize, Buffer);
     if (EFI_ERROR (Status)) {
+      FreePool (Buffer);
       BufferSize = 0;
+      Buffer     = NULL;
     }
   }
 
