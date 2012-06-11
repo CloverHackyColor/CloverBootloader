@@ -324,9 +324,9 @@ VOID GetCPUProperties (VOID)
           case CPU_MODEL_DOTHAN:// Pentium M, Dothan, 90nm
           case CPU_MODEL_YONAH:// Core Duo/Solo, Pentium M DC
           case CPU_MODEL_MEROM:// Core Xeon, Core 2 Duo, 65nm, Mobile
-          //case CPU_MODEL_CONROE:// Core Xeon, Core 2 Duo, 65nm, Desktop
+          //case CPU_MODEL_CONROE:// Core Xeon, Core 2 Duo, 65nm, Desktop like Merom but not mobile
           case CPU_MODEL_PENRYN:// Core 2 Duo/Extreme, Xeon, 45nm , Mobile
-          //case CPU_MODEL_WOLFDALE:// Core 2 Duo/Extreme, Xeon, 45nm, Desktop
+          //case CPU_MODEL_WOLFDALE:// Core 2 Duo/Extreme, Xeon, 45nm, Desktop like Penryn but not Mobile
             if(AsmReadMsr64(MSR_IA32_PLATFORM_ID) & (1 << 28)){
               gCPUStructure.Mobile = TRUE;
             }
@@ -702,13 +702,13 @@ MACHINE_TYPES GetDefaultModel()
 				DefaultType = iMac101;//MacPro31 - speedstep without patching; but it is Hackintosh
 				break;
 			case CPU_MODEL_NEHALEM:
-				DefaultType = MacPro41;
+				DefaultType = iMac111;
 				break;
 			case CPU_MODEL_NEHALEM_EX:
 				DefaultType = MacPro41;
 				break;
 			case CPU_MODEL_FIELDS:
-				DefaultType = iMac112;
+				DefaultType = iMac113;
 				break;
 			case CPU_MODEL_DALES: 
 				DefaultType = iMac112;

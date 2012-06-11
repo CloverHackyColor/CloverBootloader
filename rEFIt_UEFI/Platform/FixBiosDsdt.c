@@ -1728,11 +1728,11 @@ UINT32 FixPIC (UINT8 *dsdt, UINT32 len)
 UINT32 FixHPET (UINT8* dsdt, UINT32 len)
 {
   UINT32  i, j, k;
-	UINT32  IOADR  = 0;
-	UINT32  RESADR = 0;
-  INT32   offset = 0;
+//	UINT32  IOADR  = 0;
+//	UINT32  RESADR = 0;
+//  INT32   offset = 0;
   UINT32  adr    = 0;
-  BOOLEAN CidExist = FALSE;
+//  BOOLEAN CidExist = FALSE;
   UINT32  hpetsize = 0;
   UINT32  hidAddr = 0;
   
@@ -1761,13 +1761,23 @@ UINT32 FixHPET (UINT8* dsdt, UINT32 len)
       //DBG("found HPET device in DSDT\n");
     } // End HPET        
   }
-  
-  if (!hpetsize) {
-    return len;
+ 
+  sizeoffset = sizeof(hpet0);
+  if (hpetsize) {
+    i = HPETADR - 2;
+    j = hpetsize + 2;
+    sizeoffset -= j;
+    len = move_data(i, dsdt, len, sizeoffset);   
+    // add HPET code 
+    CopyMem(dsdt+i, hpet0, sizeof(hpet0));
+
+  } else {
+    len = move_data(LPCBADR+LPCBSIZE, dsdt, len, sizeoffset);
+    // add HPET code 
+    CopyMem(dsdt+LPCBADR+LPCBSIZE, hpet0, sizeoffset);
   }
-  
- 	sizeoffset = 0;  // for check how many byte add or remove
-  
+	
+#if 0  
   // Fix HPET
 	// Find Name(_CRS, ResourceTemplate ()) find ResourceTemplate 0x11
 
@@ -1835,7 +1845,9 @@ UINT32 FixHPET (UINT8* dsdt, UINT32 len)
       break; //end of HPET device and begin of new Device()
     }    
 	} // i loop
-	
+#endif  //don't correct HPET as we add ready to use one	
+  
+  CorrectOuters(dsdt, len, HPETADR-3);
 	// need fix other device address
 	if (TMRADR > HPETADR) TMRADR += sizeoffset;
 	if (PICADR > HPETADR) PICADR += sizeoffset;

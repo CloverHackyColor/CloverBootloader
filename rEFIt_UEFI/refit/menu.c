@@ -114,7 +114,7 @@ VOID FillInputs(VOID)
   UINT8 a;
   
   InputItemsCount = 0; 
-  InputItems = AllocateZeroPool(20 * sizeof(INPUT_ITEM)); //XXX
+  InputItems = AllocateZeroPool(40 * sizeof(INPUT_ITEM)); //XXX
   InputItems[InputItemsCount].ItemType = ASString;  //0
   //even though Ascii we will keep value as Unicode to convert later
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%a", gSettings.BootArgs);
