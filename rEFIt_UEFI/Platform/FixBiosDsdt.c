@@ -1688,20 +1688,6 @@ UINT32 FixPIC (UINT8 *dsdt, UINT32 len)
       CorrectOuters(dsdt, len, adr-3);
       offset += sizeoffset;
       sizeoffset = 0;
-/*      n=adr;
-      // PIC size
-      for (j=0; j<15; j++)
-      {
-        if (dsdt[n-j] == 0x82 && dsdt[n-j-1] == 0x5B)
-        {
-          picsize = get_size(dsdt, n-j+1);
-          //DBG("PIC adr = 0x%08x size = 0x%08x\n", n-j+1, picsize);
-          len = write_size(n-j+1, dsdt, len, picsize);
-          CorrectOuters(dsdt, len, n-j-2);
-          break;
-        }
-      }
- */
       //DBG("Finish PIC patch");		
     //  break;        
     } // offset if
@@ -1930,12 +1916,13 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
   CopyMem(dsdt+LPCBADR1, lpcb, sizeoffset);
 	len = write_size(LPCBADR, dsdt, len, LPCBSIZE);
 	LPCBSIZE += sizeoffset;
+  CorrectOuters(dsdt, len, LPCBADR-3);
 	// Fix PCIX size
-	len = write_size(PCIADR, dsdt, len, PCISIZE);
-	PCISIZE += sizeoffset;
+//	len = write_size(PCIADR, dsdt, len, PCISIZE);
+//	PCISIZE += sizeoffset;
 	// Fix Scope(\_SB) size
-	len = write_size(SBADR, dsdt, len, SBSIZE);
-	SBSIZE += sizeoffset;
+//	len = write_size(SBADR, dsdt, len, SBSIZE);
+//	SBSIZE += sizeoffset;
   
   if (DisplayADR[0] > LPCBADR) DisplayADR[0] += sizeoffset;
   if (DisplayADR[1] > LPCBADR) DisplayADR[1] += sizeoffset;
