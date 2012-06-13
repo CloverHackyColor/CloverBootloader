@@ -1,3 +1,0 @@
-echo "#define FIRMWARE_VERSION \"2.31\"" > Version.h
-echo "#define FIRMWARE_BUILDDATE \"`date \"+%Y-%m-%d %H:%M:%S\"`\"" >> Version.h
-echo "#define FIRMWARE_REVISION \"`svnversion -n | tr -d [:alpha:]`\"" >> Version.h

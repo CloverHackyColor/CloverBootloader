@@ -117,9 +117,13 @@ VOID FillInputs(VOID)
   InputItems = AllocateZeroPool(40 * sizeof(INPUT_ITEM)); //XXX
   InputItems[InputItemsCount].ItemType = ASString;  //0
   //even though Ascii we will keep value as Unicode to convert later
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%a", gSettings.BootArgs);
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(255);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 255, L"%a", gSettings.BootArgs);
+//InputItems[InputItemsCount++].SValue = PoolPrint(L"%a", gSettings.BootArgs);
   InputItems[InputItemsCount].ItemType = UNIString; //1
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%s", gSettings.DsdtName);
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(63);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.DsdtName);
+//  InputItems[InputItemsCount++].SValue = PoolPrint(L"%s", gSettings.DsdtName);
   InputItems[InputItemsCount].ItemType = BoolValue; //2
   InputItems[InputItemsCount].BValue = gSettings.UseDSDTmini;
   InputItems[InputItemsCount++].SValue = gSettings.UseDSDTmini?L"[X]":L"[ ]";
@@ -136,9 +140,9 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].BValue = gSettings.Turbo;
   InputItems[InputItemsCount++].SValue = gSettings.Turbo?L"[X]":L"[ ]";
   InputItems[InputItemsCount].ItemType = Decimal;  //7
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.PLimitDict);
+  InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gSettings.PLimitDict);
   InputItems[InputItemsCount].ItemType = Decimal;  //8
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.UnderVoltStep);
+  InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gSettings.UnderVoltStep);
   InputItems[InputItemsCount].ItemType = BoolValue; //9
   InputItems[InputItemsCount].BValue = gSettings.GenerateCStates;
   InputItems[InputItemsCount++].SValue = gSettings.GenerateCStates?L"[X]":L"[ ]";
@@ -163,7 +167,9 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].BValue = gSettings.PatchVBios;
   InputItems[InputItemsCount++].SValue = gSettings.PatchVBios?L"[X]":L"[ ]";
   InputItems[InputItemsCount].ItemType = Hex;  //17
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"0x%X", gSettings.FixDsdt);
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(36);
+  UnicodeSPrint(InputItems[17].SValue, 36, L"0x%X", gSettings.FixDsdt);
+  //PoolPrint(L"0x%X", gSettings.FixDsdt);
   
   InputItemsCount = 20;
   InputItems[InputItemsCount].ItemType = BoolValue; //20
@@ -277,9 +283,7 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gSettings.QPI = StrDecimalToUintn(InputItems[i].SValue);
     DBG("Apply ProcessorInterconnectSpeed=%d\n", gSettings.QPI);
-  } /*else {
-    DBG("PIS is not valid?\n");
-  } */
+  }
   i++; //15
   if (InputItems[i].Valid) {
     gSettings.PatchNMI = InputItems[i].BValue;
@@ -745,12 +749,13 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
 			break;
 		case MENU_EXIT_ESCAPE:
 			Item->Valid = FALSE;
-      Item->SValue = EfiStrDuplicate(Backup);
+      UnicodeSPrint(Item->SValue, 255, L"%s", Backup);
+   //   Item->SValue = EfiStrDuplicate(Backup);
       StyleFunc(Screen, State, MENU_FUNCTION_PAINT_SELECTION, NULL);
 			break;
 	}
   FreePool(TempString);
-  FreePool(Buffer);
+//  FreePool(Buffer);  //do not free memory that you was not allocated
 	MsgLog("EDITED: %s\n", Item->SValue);
   return 0;
 }
@@ -1046,25 +1051,25 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 
 VOID DrawMenuText(IN CHAR16 *Text, IN UINTN SelectedWidth, IN UINTN XPos, IN UINTN YPos, IN UINTN Cursor)
 {
-    if (TextBuffer == NULL)
-        TextBuffer = egCreateImage(LAYOUT_TEXT_WIDTH, TextHeight, FALSE);
-    
+  if (TextBuffer == NULL)
+    TextBuffer = egCreateImage(LAYOUT_TEXT_WIDTH, TextHeight, FALSE);
+  
   if (Cursor == 0xFFFF) {
     egFillImage(TextBuffer, &MenuBackgroundPixel);
   } else {
     egFillImage(TextBuffer, &InputBackgroundPixel);
   }
-
-    
-    if (SelectedWidth > 0) {
-        // draw selection bar background
-        egFillImageArea(TextBuffer, 0, 0, SelectedWidth, TextBuffer->Height,
-                        &SelectionBackgroundPixel);
-    }
-    
-    // render the text
-    egRenderText(Text, TextBuffer, TEXT_XMARGIN, TEXT_YMARGIN, Cursor);
-    BltImage(TextBuffer, XPos, YPos);
+  
+  
+  if (SelectedWidth > 0) {
+    // draw selection bar background
+    egFillImageArea(TextBuffer, 0, 0, SelectedWidth, TextBuffer->Height,
+                    &SelectionBackgroundPixel);
+  }
+  
+  // render the text
+  egRenderText(Text, TextBuffer, TEXT_XMARGIN, TEXT_YMARGIN, Cursor);
+  BltImage(TextBuffer, XPos, YPos);
 }
 
 static UINTN MenuWidth, EntriesPosX, EntriesPosY, TimeoutPosY;
@@ -1218,10 +1223,9 @@ static   EG_IMAGE* MainImage;
 static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, UINTN XPos, UINTN YPos)
 {
   LOADER_ENTRY* LEntry = (LOADER_ENTRY*)Entry;
-  
-
+    
   if (((Entry->Tag == TAG_LOADER) ||
-      (Entry->Tag == TAG_LEGACY)) && (GlobalConfig.HideBadges < 3)){
+       (Entry->Tag == TAG_LEGACY)) && (GlobalConfig.HideBadges < 3)){
     MainImage = LEntry->Volume->DriveImage;
   } else {
     MainImage = Entry->Image;
@@ -1229,9 +1233,9 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, UINTN X
   if (!MainImage) {
     MainImage = LoadIcns(ThemeDir, L"icons\\osx.icns", 128);
   }
-//  DBG("Entry title=%s; Width=%d\n", Entry->Title, MainImage->Width);
-    BltImageCompositeBadge(SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
-                           MainImage, (Entry->Row == 0) ? Entry->BadgeImage:NULL, XPos, YPos);
+  //  DBG("Entry title=%s; Width=%d\n", Entry->Title, MainImage->Width);
+  BltImageCompositeBadge(SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
+                         MainImage, (Entry->Row == 0) ? Entry->BadgeImage:NULL, XPos, YPos);
 }
 
 static VOID DrawMainMenuText(IN CHAR16 *Text, IN UINTN XPos, IN UINTN YPos)

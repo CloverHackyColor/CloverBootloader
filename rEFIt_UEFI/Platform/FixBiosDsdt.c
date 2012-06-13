@@ -499,6 +499,8 @@ VOID CheckHardware()
                                         );
 							vid = Pci.Hdr.VendorId & 0xFFFF;
 							did = (Pci.Hdr.VendorId >> 16) & 0xFF00;
+              
+              UINT32 deviceid = Pci.Hdr.DeviceId | Pci.Hdr.VendorId << 16;
 							//UINT32 class = Pci.Hdr.ClassCode[0];
 							//DBG("PCI (%02x|%02x:%02x.%02x) : %04x %04x class=%02x%02x%02x\n",
 							//		Segment, Bus, Device, Function,
@@ -558,7 +560,6 @@ VOID CheckHardware()
                 {
                   NetworkADR1 = GetPciADR(tmp, 0);
                   NetworkADR2 = GetPciADR(tmp, 1);
-                  UINT32 deviceid = Pci.Hdr.DeviceId | Pci.Hdr.VendorId << 16;
                   Netmodel = get_net_model(deviceid);
                   
                 }
@@ -634,8 +635,6 @@ VOID CheckHardware()
                 if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_BRIDGE) &&
                     (Pci.Hdr.ClassCode[1] == PCI_CLASS_BRIDGE_ISA))
                 {
-                  UINT32 deviceid = Pci.Hdr.DeviceId | Pci.Hdr.VendorId << 16;
-                  //DBG("deviceid = 0x%08x\n", deviceid);
                   LPCBFIX = get_lpc_model(deviceid);
                 }
                 
@@ -645,7 +644,6 @@ VOID CheckHardware()
                 {
                   IDEADR1 = GetPciADR(tmp, 0);
                   IDEADR2 = GetPciADR(tmp, 1);
-                  UINT32 deviceid = Pci.Hdr.DeviceId | Pci.Hdr.VendorId << 16;
                   IDEFIX = get_ide_model(deviceid);
                   IDEVENDOR = Pci.Hdr.VendorId;
                 }
@@ -657,7 +655,6 @@ VOID CheckHardware()
                 {
                   SATAADR1 = GetPciADR(tmp, 0);
                   SATAADR2 = GetPciADR(tmp, 1);
-                  UINT32 deviceid = Pci.Hdr.DeviceId | Pci.Hdr.VendorId << 16;
                   SATAFIX = get_ide_model(deviceid);
                   SATAVENDOR = Pci.Hdr.VendorId;
                 }
@@ -669,7 +666,6 @@ VOID CheckHardware()
                 {
                   SATAAHCIADR1 = GetPciADR(tmp, 0);
                   SATAAHCIADR2 = GetPciADR(tmp, 1);
-                  //UINT32 deviceid = Pci.Hdr.DeviceId | Pci.Hdr.VendorId << 16;
                   //AHCIFIX = get_ahci_model(deviceid);
                   SATAAHCIVENDOR = Pci.Hdr.VendorId;
                 }
