@@ -99,10 +99,11 @@ Headers collection for procedures
 #define EFI_SCSI_OP_LENGTH_TEN      0xa
 #define EFI_SCSI_OP_LENGTH_SIXTEEN  0x10
 
-#define SAFE_LOG_SIZE	80
+//#define SAFE_LOG_SIZE	80
 
-#define MSG_LOG_SIZE	(64 * 1024)
-#define MsgLog(x...) {AsciiSPrint(msgCursor, MSG_LOG_SIZE, x); while(*msgCursor){msgCursor++;}}
+#define MSG_LOG_SIZE	(256 * 1024)
+//#define MsgLog(x...) {AsciiSPrint(msgCursor, MSG_LOG_SIZE, x); while(*msgCursor){msgCursor++;}}
+#define MsgLog(x...) {if ((msgCursor-msgbuf)<(MSG_LOG_SIZE-1)) {AsciiSPrint(msgCursor, (MSG_LOG_SIZE-(msgCursor-msgbuf)), x); while(*msgCursor){msgCursor++;}}}
 
 #define CPU_MODEL_DOTHAN        0x0D
 #define CPU_MODEL_YONAH         0x0E
@@ -110,7 +111,7 @@ Headers collection for procedures
 #define CPU_MODEL_CONROE        0x0F  
 #define CPU_MODEL_CELERON       0x16  /* ever see? */
 #define CPU_MODEL_PENRYN        0x17  
-#define CPU_MODEL_WOLFDALE      0x17  
+#define CPU_MODEL_WOLFDALE      0x17  /* kind of penryn */
 #define CPU_MODEL_NEHALEM       0x1A
 #define CPU_MODEL_ATOM          0x1C
 #define CPU_MODEL_XEON_MP       0x1D  /* ever see? */
@@ -176,7 +177,7 @@ Headers collection for procedures
 
 #define CPUID_FEATURE_SSE3    _HBit(0)	/* Streaming SIMD extensions 3 */
 #define CPUID_FEATURE_PCLMULQDQ _HBit(1) /* PCLMULQDQ Instruction */
-
+#define CPUID_FEATURE_DTES64    _HBit(2)  /* 64-bit DS layout */
 #define CPUID_FEATURE_MONITOR _HBit(3)	/* Monitor/mwait */
 #define CPUID_FEATURE_DSCPL   _HBit(4)	/* Debug Store CPL */
 #define CPUID_FEATURE_VMX     _HBit(5)	/* VMX */
@@ -185,18 +186,35 @@ Headers collection for procedures
 #define CPUID_FEATURE_TM2     _HBit(8)	/* Thermal Monitor 2 */
 #define CPUID_FEATURE_SSSE3   _HBit(9)	/* Supplemental SSE3 instructions */
 #define CPUID_FEATURE_CID     _HBit(10)	/* L1 Context ID */
-
+#define CPUID_FEATURE_SEGLIM64  _HBit(11) /* 64-bit segment limit checking */
 #define CPUID_FEATURE_CX16    _HBit(13)	/* CmpXchg16b instruction */
 #define CPUID_FEATURE_xTPR    _HBit(14)	/* Send Task PRiority msgs */
 #define CPUID_FEATURE_PDCM    _HBit(15)	/* Perf/Debug Capability MSR */
 
+#define CPUID_FEATURE_PCID    _HBit(17) /* ASID-PCID support */
 #define CPUID_FEATURE_DCA     _HBit(18)	/* Direct Cache Access */
 #define CPUID_FEATURE_SSE4_1  _HBit(19)	/* Streaming SIMD extensions 4.1 */
 #define CPUID_FEATURE_SSE4_2  _HBit(20)	/* Streaming SIMD extensions 4.2 */
 #define CPUID_FEATURE_xAPIC   _HBit(21)	/* Extended APIC Mode */
+#define CPUID_FEATURE_MOVBE   _HBit(22) /* MOVBE instruction */
 #define CPUID_FEATURE_POPCNT  _HBit(23)	/* POPCNT instruction */
+#define CPUID_FEATURE_TSCTMR  _HBit(24) /* TSC deadline timer */
 #define CPUID_FEATURE_AES     _HBit(25)	/* AES instructions */
+#define CPUID_FEATURE_XSAVE   _HBit(26) /* XSAVE instructions */
+#define CPUID_FEATURE_OSXSAVE _HBit(27) /* XGETBV/XSETBV instructions */
+#define CPUID_FEATURE_AVX1_0	_HBit(28) /* AVX 1.0 instructions */
+#define CPUID_FEATURE_RDRAND	_HBit(29) /* RDRAND instruction */
+#define CPUID_FEATURE_F16C	  _HBit(30) /* Float16 convert instructions */
 #define CPUID_FEATURE_VMM     _HBit(31)	/* VMM (Hypervisor) present */
+
+/*
+ * Leaf 7, subleaf 0 additional features.
+ * Bits returned in %ebx to a CPUID request with {%eax,%ecx} of (0x7,0x0}:
+ */
+#define CPUID_LEAF7_FEATURE_RDWRFSGS _Bit(0)	/* FS/GS base read/write */
+#define CPUID_LEAF7_FEATURE_SMEP     _Bit(7)	/* Supervisor Mode Execute Protect */
+#define CPUID_LEAF7_FEATURE_ENFSTRG  _Bit(9)	/* ENhanced Fast STRinG copy */
+
 
 /*
  * The CPUID_EXTFEATURE_XXX values define 64-bit values
@@ -228,10 +246,10 @@ Headers collection for procedures
 #define MSR_IA32_BIOS_SIGN_ID       0x008B   /* microcode version */
 #define MSR_FSB_FREQ                0x00CD	 /* limited use - not for i7						*/
 #define	MSR_PLATFORM_INFO           0x00CE   /* limited use - MinRatio for i7 but Max for Yonah	*/
-/* turbo for penryn */
+                                             /* turbo for penryn */
 #define MSR_IA32_EXT_CONFIG         0x00EE	 /* limited use - not for i7						*/
 #define MSR_FLEX_RATIO              0x0194	 /* limited use - not for Penryn or older			*/
-//see no value on most CPUs
+                                             //see no value on most CPUs
 #define	MSR_IA32_PERF_STATUS        0x0198
 #define MSR_IA32_PERF_CONTROL       0x0199
 #define MSR_IA32_CLOCK_MODULATION   0x019A
