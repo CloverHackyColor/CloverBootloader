@@ -652,6 +652,9 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
   CHAR16        *Buffer = Item->SValue; //AllocateZeroPool(255);
   CHAR16        *TempString = AllocateZeroPool(255);
   SCROLL_STATE  StateLine;
+  //FiXME: LineSize
+  UINTN         LineSize = 32;
+  
   
 //  StrCpy(Buffer, Item->SValue);
 //  DBG("Enter Input Dialog\n");
@@ -674,16 +677,30 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
       
       switch (key.ScanCode) {
         case SCAN_RIGHT:
-          if (Pos < StrLen(Buffer)) Pos++;
+          if (Pos + Item->LineShift < StrLen(Buffer)) {
+            if (Pos < LineSize)
+              Pos++;
+            else
+              Item->LineShift++;
+          }
           break;
         case SCAN_LEFT:
-          if (Pos>0) Pos--;
+          if (Pos>0)
+            Pos--;
+          else if (Item->LineShift > 0)
+            Item->LineShift--;
           break;
         case SCAN_HOME:
           Pos = 0;
+          Item->LineShift=0;
           break;
         case SCAN_END:
+          if (StrLen(Buffer)<LineSize)
           Pos = StrLen(Buffer);
+          else {
+            Pos = LineSize;
+            Item->LineShift = StrLen(Buffer) - LineSize;
+          }
           break;
         case SCAN_ESC:
           MenuExit = MENU_EXIT_ESCAPE;
@@ -720,16 +737,22 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
         case CHAR_LINEFEED:
         case CHAR_CARRIAGE_RETURN:
           MenuExit = MENU_EXIT_ENTER;
+          Pos = 0;
+          Item->LineShift = 0;
           break;
         default:
           if ((key.UnicodeChar >= 0x20) &&
               (key.UnicodeChar < 0x80)){
-            if (Pos < 254) {
-              for (i = 0; i < Pos; i++) {
+            if (Pos + Item->LineShift < 254) {
+              for (i = 0; i < Pos + Item->LineShift; i++) {
                 TempString[i] = Buffer[i];
               }           
-              TempString[Pos++] = key.UnicodeChar;
-              for (i = Pos; i < StrLen(Buffer)+1; i++) {
+              TempString[Pos + Item->LineShift] = key.UnicodeChar;
+              if (Pos < LineSize)
+                Pos++;
+              else
+                Item->LineShift++;
+              for (i = Pos + Item->LineShift; i < StrLen(Buffer)+1; i++) {
                 TempString[i] = Buffer[i-1];
               }
               TempString[i] = CHAR_NULL;
@@ -755,7 +778,7 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
 			break;
 	}
   FreePool(TempString);
-//  FreePool(Buffer);  //do not free memory that you was not allocated
+//  FreePool(Buffer);  //do not free memory that you did not allocate
 	MsgLog("EDITED: %s\n", Item->SValue);
   return 0;
 }
@@ -1176,7 +1199,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         CHAR16 ResultString[255];
         UINTN  TitleLen = StrLen(Screen->Entries[State->LastSelection]->Title);
         StrCpy(ResultString, Screen->Entries[State->LastSelection]->Title);
-        StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->SValue);
+        StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->SValue + ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->LineShift);
         StrCat(ResultString, L" ");
         DrawMenuText(ResultString, 0,
                      EntriesPosX, EntriesPosY + State->LastSelection * TextHeight,
@@ -1191,7 +1214,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         CHAR16 ResultString[255];
         UINTN  TitleLen = StrLen(Screen->Entries[State->CurrentSelection]->Title);
         StrCpy(ResultString, Screen->Entries[State->CurrentSelection]->Title);
-        StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->SValue);
+        StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->SValue + ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->LineShift);
         StrCat(ResultString, L" ");
 //        DBG("MENU_FUNCTION_PAINT_SELECTION 5\n");
         DrawMenuText(ResultString, MenuWidth,

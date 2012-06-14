@@ -158,6 +158,7 @@ typedef struct {
 //  UINT64  UValue;
 //  CHAR8*  AValue;
   CHAR16* SValue;
+  UINTN   LineShift;
 } INPUT_ITEM;
 
 struct _refit_menu_screen;
