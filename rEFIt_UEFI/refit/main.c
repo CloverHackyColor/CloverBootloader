@@ -1697,7 +1697,7 @@ INTN FindDefaultEntry(VOID)
   DBG("No efi-boot-device or default volume found\n");
   return -1;
 }
- 
+
 //
 // main entry point
 //
@@ -1771,7 +1771,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   ThemePath = PoolPrint(L"EFI\\BOOT\\themes\\%s", GlobalConfig.Theme);
   DBG("Theme: %s Path: %s\n", GlobalConfig.Theme, ThemePath);
-  MainMenu.TimeoutSeconds = GlobalConfig.Timeout;
+  MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
   
   PrepatchSmbios();
   DBG("running on %a\n", gSettings.OEMProduct);
@@ -1930,8 +1930,16 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     MainLoopRunning = TRUE;
     gEvent = 0; //clear to cancel loop
     while (MainLoopRunning) {
-      //    DBG("Enter main loop\n");
-      MenuExit = RunMainMenu(&MainMenu, DefaultIndex, &ChosenEntry);
+      if (GlobalConfig.Timeout == 0 && DefaultEntry != NULL && !ReadAllKeyStrokes()) {
+        // go strait to DefaultVolume loading
+        MenuExit = MENU_EXIT_TIMEOUT;
+      } else {
+        //    DBG("Enter main loop\n");
+        MenuExit = RunMainMenu(&MainMenu, DefaultIndex, &ChosenEntry);
+      }
+      // disable default boot - have sense only in the first run
+      GlobalConfig.Timeout = -1;
+      
       //    DBG("out from menu\n");
       if ((DefaultEntry != NULL) && (MenuExit == MENU_EXIT_TIMEOUT)) {
         //      DBG("boot by timeout\n");

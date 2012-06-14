@@ -217,7 +217,7 @@ typedef struct {
 
 typedef struct {
   BOOLEAN     TextOnly;
-  UINTN       Timeout;
+  INTN        Timeout;
   UINTN       DisableFlags;
   UINTN       HideBadges;
   UINTN       HideUIFlags;
