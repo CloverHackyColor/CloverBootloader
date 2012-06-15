@@ -1233,8 +1233,8 @@ Returns:
   //
   // Memory test and Logo show
   //
-  PlatformBdsDiagnostics (IGNORE, TRUE, BaseMemoryTest);
-
+//  PlatformBdsDiagnostics (IGNORE, TRUE, BaseMemoryTest);
+  PlatformBdsDiagnostics (IGNORE, FALSE, BaseMemoryTest); //Slice - I want silent boot but with Memory test
   //
   // Perform some platform specific connect sequence
   //
@@ -1245,7 +1245,7 @@ Returns:
   // have the time out
   //
   // BUGBUG: hard code timeout to 5 second to show logo in graphic mode.
-  Timeout = 3;  
+  Timeout = 0;  
   if (Timeout != 0) {
     PlatformBdsEnterFrontPage (Timeout, FALSE);
   }
@@ -1284,7 +1284,7 @@ Returns:
   gBS->CloseEvent (UserInputDurationTime);
   Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
   
-  if (!EFI_ERROR (Status)) {
+  if (0) { //!EFI_ERROR (Status)) {
     //
     // Enter Setup if user input 
     //

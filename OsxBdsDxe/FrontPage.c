@@ -1018,43 +1018,43 @@ PlatformBdsEnterFrontPage (
     // After the console is ready, get current video resolution 
     // and text mode before launching setup at first time.
     //
-  Status = gBS->HandleProtocol (
-                  gST->ConsoleOutHandle,
-                  &gEfiGraphicsOutputProtocolGuid,
-                  (VOID**)&GraphicsOutput
-                  );
-  if (EFI_ERROR (Status)) {
-    GraphicsOutput = NULL;
-  }
-
-  Status = gBS->HandleProtocol (
-                  gST->ConsoleOutHandle,
-                  &gEfiSimpleTextOutProtocolGuid,
-                  (VOID**)&SimpleTextOut
-                  );
-  if (EFI_ERROR (Status)) {
-    SimpleTextOut = NULL;
-  }  
-
+    Status = gBS->HandleProtocol (
+                                  gST->ConsoleOutHandle,
+                                  &gEfiGraphicsOutputProtocolGuid,
+                                  (VOID**)&GraphicsOutput
+                                  );
+    if (EFI_ERROR (Status)) {
+      GraphicsOutput = NULL;
+    }
+    
+    Status = gBS->HandleProtocol (
+                                  gST->ConsoleOutHandle,
+                                  &gEfiSimpleTextOutProtocolGuid,
+                                  (VOID**)&SimpleTextOut
+                                  );
+    if (EFI_ERROR (Status)) {
+      SimpleTextOut = NULL;
+    }  
+    
     if (GraphicsOutput != NULL) {
-              //
+      //
       // Get current video resolution and text mode.
-              //
+      //
       mBootHorizontalResolution = GraphicsOutput->Mode->Info->HorizontalResolution;
       mBootVerticalResolution   = GraphicsOutput->Mode->Info->VerticalResolution;
-            }
-            
+    }
+    
     if (SimpleTextOut != NULL) {
       Status = SimpleTextOut->QueryMode (
-                                SimpleTextOut,
-                                SimpleTextOut->Mode->Mode,
-                                &BootTextColumn,
-                                &BootTextRow
-                             );
+                                         SimpleTextOut,
+                                         SimpleTextOut->Mode->Mode,
+                                         &BootTextColumn,
+                                         &BootTextRow
+                                         );
       mBootTextModeColumn = (UINT32)BootTextColumn;
       mBootTextModeRow    = (UINT32)BootTextRow;
-  }
-
+    }
+    
     //
     // Get user defined text mode for setup.
     //
@@ -1062,10 +1062,10 @@ PlatformBdsEnterFrontPage (
     mSetupVerticalResolution   = PcdGet32 (PcdSetupVideoVerticalResolution);      
     mSetupTextModeColumn       = PcdGet32 (PcdSetupConOutColumn);
     mSetupTextModeRow          = PcdGet32 (PcdSetupConOutRow);
-
+    
     mModeInitialized           = TRUE;
-}
-
+  }
+  
 
 
   HotkeyBoot ();
