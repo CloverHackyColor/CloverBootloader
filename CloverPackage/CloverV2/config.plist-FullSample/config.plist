@@ -33,6 +33,8 @@
 		<string>MacBook</string>
 		<key>SerialNumber</key>
 		<string>4H629LYAU9C</string>
+		<key>SmUUID</key>
+		<string>00000000-0000-1000-8000-010203040506</string>
 		<key>BoardManufacturer</key>
 		<string>Apple Inc.</string>
 		<key>BoardSerialNumber</key>

@@ -162,9 +162,11 @@ EFI_STATUS SetVariablesForOSX()
                                          5 , (VOID*)None);
   // we should have two UUID: platform and system
   // NO! Only Platform is the best solution
+      if (!gSettings.InjectSystemID) {
 	Status = gRS->SetVariable(L"platform-uuid", &gEfiAppleBootGuid, 
                                          /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          16 ,&gUuid);
+      }
   Status = gRS->SetVariable(L"prev-lang:kbd", &gEfiAppleBootGuid, 
                             /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                 LangLen ,&gSettings.Language);

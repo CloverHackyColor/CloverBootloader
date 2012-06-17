@@ -501,6 +501,7 @@ typedef struct {
 	CHAR8	ProductName[64];
 	CHAR8	VersionNr[64];
 	CHAR8	SerialNr[64];
+  EFI_GUID SmUUID;
 //	CHAR8	Uuid[64];
 //	CHAR8	SKUNumber[64];
 	CHAR8	FamilyName[64];

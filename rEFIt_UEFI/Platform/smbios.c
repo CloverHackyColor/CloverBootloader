@@ -369,17 +369,17 @@ VOID GetTableType1()
 		return;
 	}
 		
-	CopyMem(&gUuid, (VOID*)&SmbiosTable.Type1->Uuid, 16);
+	CopyMem((VOID*)&gSettings.SmUUID, (VOID*)&SmbiosTable.Type1->Uuid, 16);
 	//AsciiStrToUnicodeStr(GetSmbiosString(SmbiosTable, SmbiosTable.Type1->ProductName), gSettings.OEMProduct);
   s = GetSmbiosString(SmbiosTable, SmbiosTable.Type1->ProductName);
   CopyMem(gSettings.OEMProduct, s, iStrLen(s, 64));
 	//Check the validity
-	if ((gUuid.Data3 & 0xF000) == 0) {
+/*	if ((gUuid.Data3 & 0xF000) == 0) {
 		CopyMem(&gUuid, (VOID*)&gEfiSmbiosTableGuid, 16); //gPlatformUuid
 		gUuid.Data1 ^= 0x1234; //random 
 		gUuid.Data2 ^= 0x2341;
 		gUuid.Data3 ^= 0x3412;
-	}
+	} */
 	return;
 }
 
@@ -405,8 +405,8 @@ VOID PatchTableType1()
 	newSmbiosTable.Type1->WakeUpType = SystemWakeupTypePowerSwitch;
 	Once = TRUE;
 	
-	if((gUuid.Data3 & 0xF000) != 0) {
-		CopyMem((VOID*)&newSmbiosTable.Type1->Uuid, &gUuid, 16);
+	if((gSettings.SmUUID.Data3 & 0xF000) != 0) {
+		CopyMem((VOID*)&newSmbiosTable.Type1->Uuid, (VOID*)&gSettings.SmUUID, 16);
 	}
 	
 	if(iStrLen(gSettings.ManufactureName, 64)>0){

@@ -627,6 +627,12 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       {
         AsciiStrCpy(gSettings.SerialNr, prop->string);
       }
+      prop = GetProperty(dictPointer,"SmUUID");
+      if(prop)
+      {
+        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+        Status = StrToGuidLE((CHAR16*)&UStr[0], &gSettings.SmUUID);
+      }  
       
       prop = GetProperty(dictPointer,"BoardManufacturer");
       if(prop)
