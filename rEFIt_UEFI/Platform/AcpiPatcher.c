@@ -1449,13 +1449,15 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     } 
       else DBG("No APIC table Found !!!\n");
   //fool proof
-  if ((ApicCPUNum == 0) || (ApicCPUNum > 16)) {
+  //It's appeared that APIC CPU number is wrong
+  //so return to CPU structure
+//  if ((ApicCPUNum == 0) || (ApicCPUNum > 16)) {
     if (gCPUStructure.Threads >= gCPUStructure.Cores) {
       ApicCPUNum = gCPUStructure.Threads;
     } else {
       ApicCPUNum = gCPUStructure.Cores;
     }
-  }
+//  }
     
   if (gSettings.GeneratePStates) {
     Status = EFI_NOT_FOUND;
