@@ -450,15 +450,15 @@ VOID CheckHardware()
 {
   EFI_STATUS			Status;
 	EFI_HANDLE			*HandleBuffer;
-	EFI_GUID        **ProtocolGuidArray;
+//	EFI_GUID        **ProtocolGuidArray;
 	EFI_PCI_IO_PROTOCOL *PciIo;
 	PCI_TYPE00          Pci;
 	UINTN         HandleCount;
-	UINTN         ArrayCount;
+//	UINTN         ArrayCount;
 	UINTN         HandleIndex;
-	UINTN         ProtocolIndex;
+//	UINTN         ProtocolIndex;
   
-	UINT16		  did, vid;
+  //	UINT16		  did, vid;
 	UINTN         Segment;
 	UINTN         Bus;
 	UINTN         Device;
@@ -473,210 +473,223 @@ VOID CheckHardware()
 	UINTN gfxid=0;
 	
 	/* Scan PCI BUS */
-	Status = gBS->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
-	if (!EFI_ERROR(Status))
-	{	
-		for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++)
-		{
-			Status = gBS->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
-			if (!EFI_ERROR(Status))
-			{			
-				for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++)
-				{
-					if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex]))
-					{
-						Status = gBS->OpenProtocol(HandleBuffer[HandleIndex],&gEfiPciIoProtocolGuid,(VOID **)&PciIo,gImageHandle,NULL,EFI_OPEN_PROTOCOL_GET_PROTOCOL);
-						if (!EFI_ERROR(Status))
-						{
-							/* Read PCI BUS */
-							Status = PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
-							Status = PciIo->Pci.Read (
-                                        PciIo,
-                                        EfiPciIoWidthUint32,
-                                        0,
-                                        sizeof (Pci) / sizeof (UINT32),
-                                        &Pci
-                                        );
-							vid = Pci.Hdr.VendorId & 0xFFFF;
-							did = (Pci.Hdr.VendorId >> 16) & 0xFF00;
-              
-              UINT32 deviceid = Pci.Hdr.DeviceId | Pci.Hdr.VendorId << 16;
-							//UINT32 class = Pci.Hdr.ClassCode[0];
-							//DBG("PCI (%02x|%02x:%02x.%02x) : %04x %04x class=%02x%02x%02x\n",
-							//		Segment, Bus, Device, Function,
-							//		Pci.Hdr.VendorId, Pci.Hdr.DeviceId,
-							//		Pci.Hdr.ClassCode[2], Pci.Hdr.ClassCode[1], Pci.Hdr.ClassCode[0]);
-							
-							// add for auto patch dsdt get DSDT Device _ADR
-							PCIdevice.DeviceHandle = HandleBuffer[HandleIndex];
-              DevicePath = DevicePathFromHandle (PCIdevice.DeviceHandle);
-              if (DevicePath)
-              {
-                devpathstr = DevicePathToStr(DevicePath);
-                tmp = AllocateZeroPool((StrLen(devpathstr)+1)*sizeof(CHAR8));
-                UnicodeStrToAsciiStr(devpathstr, tmp);		
-                //DBG("Device patch = %a \n", tmp);
-                
-                //Display ADR
-                if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
-                    (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA)) {
-                  DisplayADR1[display] = GetPciADR(tmp, 0);
-                  DisplayADR2[display] = GetPciADR(tmp, 1);
-                  DisplayVendor[display] = Pci.Hdr.VendorId;
-                  DisplayID[display] = Pci.Hdr.DeviceId;
-                  DisplaySubID[display] = Pci.Device.SubsystemID << 16| Pci.Device.SubsystemVendorID << 0;
-                  // for get display data
-                  Displaydevice[display].DeviceHandle = HandleBuffer[HandleIndex];
-                  Displaydevice[display].dev.addr = PCIADDR(Bus, Device, Function);
-                  Displaydevice[display].vendor_id = Pci.Hdr.VendorId;
-                  Displaydevice[display].device_id = Pci.Hdr.DeviceId;
-                  Displaydevice[display].revision = Pci.Hdr.RevisionID;
-                  Displaydevice[display].subclass = Pci.Hdr.ClassCode[0];
-                  Displaydevice[display].class_id = *((UINT16*)(Pci.Hdr.ClassCode+1));
-                  Displaydevice[display].subsys_id.subsys.vendor_id = Pci.Device.SubsystemVendorID;
-                  Displaydevice[display].subsys_id.subsys.device_id = Pci.Device.SubsystemID;
-                  //
-                  // Detect if PCI Express Device
-                  //
-                  //
-                  // Go through the Capability list
-                  //
-                  PCI_IO_DEVICE *PciIoDevice;
-                  PciIoDevice = PCI_IO_DEVICE_FROM_PCI_IO_THIS (PciIo);
-                  if (PciIoDevice->IsPciExp)
-                  {
-                    if (display==0)
-                      Display1PCIE = TRUE;
-                    else
-                      Display2PCIE = TRUE;
-                  }
-                  
-                  display++;
-                }
-                
-                //Network ADR
-                if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
-                    (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_ETHERNET))
-                {
-                  NetworkADR1 = GetPciADR(tmp, 0);
-                  NetworkADR2 = GetPciADR(tmp, 1);
-                  Netmodel = get_net_model(deviceid);
-                  
-                }
-                
-                //Fireware ADR
-                if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
-                    (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_FIREWIRE))
-                {
-                  FirewireADR1 = GetPciADR(tmp, 0);
-                  FirewireADR2 = GetPciADR(tmp, 1);
-                }
-                
-                //SBUS ADR
-                if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
-                    (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_SMB))
-                {
-                  SBUSADR1 = GetPciADR(tmp, 0);
-                  SBUSADR2 = GetPciADR(tmp, 1);
-                }
-                
-                //USB
-                if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
-                    (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_USB)) 
-                {
-                  USBADR[usb] = GetPciADR(tmp, 0);
-                  if (USBIDFIX)
-                  {
-                    //if (USBADR[usb] == 0x001D0000 && Pci.Hdr.DeviceId != 0x3a34) Pci.Hdr.DeviceId = 0x3a34;
-                    //if (USBADR[usb] == 0x001D0001 && Pci.Hdr.DeviceId != 0x3a35) Pci.Hdr.DeviceId = 0x3a35;
-                    //if (USBADR[usb] == 0x001D0002 && Pci.Hdr.DeviceId != 0x3a36) Pci.Hdr.DeviceId = 0x3a36;
-                    //if (USBADR[usb] == 0x001D0003 && Pci.Hdr.DeviceId != 0x3a37) Pci.Hdr.DeviceId = 0x3a37;
-                    //if (USBADR[usb] == 0x001A0000 && Pci.Hdr.DeviceId != 0x3a37) Pci.Hdr.DeviceId = 0x3a37;
-                    //if (USBADR[usb] == 0x001A0001 && Pci.Hdr.DeviceId != 0x3a38) Pci.Hdr.DeviceId = 0x3a38;
-                    //if (USBADR[usb] == 0x001A0002 && Pci.Hdr.DeviceId != 0x3a39) Pci.Hdr.DeviceId = 0x3a39;
-                    //if (USBADR[usb] == 0x001D0007 && Pci.Hdr.DeviceId != 0x3a3a) Pci.Hdr.DeviceId = 0x3a3a;
-                    //if (USBADR[usb] == 0x001A0007 && Pci.Hdr.DeviceId != 0x3a3c) Pci.Hdr.DeviceId = 0x3a3c;
-                  }       
-                  USBID[usb] = Pci.Hdr.DeviceId;
-                  USB20[usb] = (Pci.Hdr.ClassCode[0] == 0x20)?1:0;
-                  usb++;
-                }
-                
-                // HDA Auido
-                if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
-                    (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA))
-                {
-                  HDAADR = GetPciADR(tmp, 0);
-                  UINT32 codecId = 0, layoutId = 0;
-                  codecId = HDA_getCodecVendorAndDeviceIds(PciIo);
-                  if (codecId >0)
-                  {
-                    layoutId = getLayoutIdFromVendorAndDeviceId(codecId);
-                    if (layoutId == 0) {
-                      layoutId = 12;
-                    }
-                  }
-                  if (layoutId > 0)
-                  {
-                    HDAFIX = TRUE;
-                    HDAcodecId = codecId;
-                    HDAlayoutId = layoutId;
-                  } 
-                  else
-                  {
-                    GFXHDAFIX = TRUE;
-                    GfxcodecId[gfxid] = codecId;
-                    GfxlayoutId[gfxid] = layoutId;
-                    gfxid++;
-                  }                                   
-                }
-                
-                // LPC
-                if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_BRIDGE) &&
-                    (Pci.Hdr.ClassCode[1] == PCI_CLASS_BRIDGE_ISA))
-                {
-                  LPCBFIX = get_lpc_model(deviceid);
-                }
-                
-                // IDE device
-                if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MASS_STORAGE) &&
-                    (Pci.Hdr.ClassCode[1] == PCI_CLASS_MASS_STORAGE_IDE))
-                {
-                  IDEADR1 = GetPciADR(tmp, 0);
-                  IDEADR2 = GetPciADR(tmp, 1);
-                  IDEFIX = get_ide_model(deviceid);
-                  IDEVENDOR = Pci.Hdr.VendorId;
-                }
-                
-                // SATA 
-                if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MASS_STORAGE) &&
-                    (Pci.Hdr.ClassCode[1] == PCI_CLASS_MASS_STORAGE_SATADPA) &&
-                    (Pci.Hdr.ClassCode[0] == 0x00))
-                {
-                  SATAADR1 = GetPciADR(tmp, 0);
-                  SATAADR2 = GetPciADR(tmp, 1);
-                  SATAFIX = get_ide_model(deviceid);
-                  SATAVENDOR = Pci.Hdr.VendorId;
-                }
-                
-                // SATA AHCI
-                if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MASS_STORAGE) &&
-                    (Pci.Hdr.ClassCode[1] == PCI_CLASS_MASS_STORAGE_SATADPA) &&
-                    (Pci.Hdr.ClassCode[0] == 0x01))
-                {
-                  SATAAHCIADR1 = GetPciADR(tmp, 0);
-                  SATAAHCIADR2 = GetPciADR(tmp, 1);
-                  //AHCIFIX = get_ahci_model(deviceid);
-                  SATAAHCIVENDOR = Pci.Hdr.VendorId;
-                }
-							}
-							// detected finish						
-						}
-					}
-				}
-			}
-		}
-	}
+  /*	Status = gBS->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
+   if (!EFI_ERROR(Status))
+   {	
+   for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++)
+   {
+   Status = gBS->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
+   if (!EFI_ERROR(Status))
+   {			
+   for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++)
+   {
+   if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex]))
+   {
+   Status = gBS->OpenProtocol(HandleBuffer[HandleIndex],&gEfiPciIoProtocolGuid,(VOID **)&PciIo,gImageHandle,NULL,EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+   if (!EFI_ERROR(Status))
+   {
+   */              
+  // Scan PCI handles 
+  Status = gBS->LocateHandleBuffer (
+                                    ByProtocol,
+                                    &gEfiPciIoProtocolGuid,
+                                    NULL,
+                                    &HandleCount,
+                                    &HandleBuffer
+                                    );
+  if (!EFI_ERROR (Status)) {
+    for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
+      Status = gBS->HandleProtocol (
+                                    HandleBuffer[HandleIndex],
+                                    &gEfiPciIoProtocolGuid,
+                                    (VOID **)&PciIo
+                                    );
+      if (!EFI_ERROR (Status)) {
+        
+        /* Read PCI BUS */
+        Status = PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
+        Status = PciIo->Pci.Read (
+                                  PciIo,
+                                  EfiPciIoWidthUint32,
+                                  0,
+                                  sizeof (Pci) / sizeof (UINT32),
+                                  &Pci
+                                  );
+        //					vid = Pci.Hdr.VendorId & 0xFFFF;
+        //					did = (Pci.Hdr.VendorId >> 16) & 0xFF00;
+        
+        UINT32 deviceid = Pci.Hdr.DeviceId | Pci.Hdr.VendorId << 16;
+        
+        // add for auto patch dsdt get DSDT Device _ADR
+        PCIdevice.DeviceHandle = HandleBuffer[HandleIndex];
+        DevicePath = DevicePathFromHandle (PCIdevice.DeviceHandle);
+        if (DevicePath)
+        {
+          devpathstr = DevicePathToStr(DevicePath);
+          tmp = AllocateZeroPool((StrLen(devpathstr)+1)*sizeof(CHAR8));
+          UnicodeStrToAsciiStr(devpathstr, tmp);		
+          //DBG("Device patch = %a \n", tmp);
+          
+          //Display ADR
+          if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
+              (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA)) {
+            DisplayADR1[display] = GetPciADR(tmp, 0);
+            DisplayADR2[display] = GetPciADR(tmp, 1);
+            DisplayVendor[display] = Pci.Hdr.VendorId;
+            DisplayID[display] = Pci.Hdr.DeviceId;
+            DisplaySubID[display] = Pci.Device.SubsystemID << 16| Pci.Device.SubsystemVendorID << 0;
+            // for get display data
+            Displaydevice[display].DeviceHandle = HandleBuffer[HandleIndex];
+            Displaydevice[display].dev.addr = PCIADDR(Bus, Device, Function);
+            Displaydevice[display].vendor_id = Pci.Hdr.VendorId;
+            Displaydevice[display].device_id = Pci.Hdr.DeviceId;
+            Displaydevice[display].revision = Pci.Hdr.RevisionID;
+            Displaydevice[display].subclass = Pci.Hdr.ClassCode[0];
+            Displaydevice[display].class_id = *((UINT16*)(Pci.Hdr.ClassCode+1));
+            Displaydevice[display].subsys_id.subsys.vendor_id = Pci.Device.SubsystemVendorID;
+            Displaydevice[display].subsys_id.subsys.device_id = Pci.Device.SubsystemID;
+            //
+            // Detect if PCI Express Device
+            //
+            //
+            // Go through the Capability list
+            //
+            PCI_IO_DEVICE *PciIoDevice;
+            PciIoDevice = PCI_IO_DEVICE_FROM_PCI_IO_THIS (PciIo);
+            if (PciIoDevice->IsPciExp)
+            {
+              if (display==0)
+                Display1PCIE = TRUE;
+              else
+                Display2PCIE = TRUE;
+            }
+            
+            display++;
+          }
+          
+          //Network ADR
+          if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
+              (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_ETHERNET))
+          {
+            NetworkADR1 = GetPciADR(tmp, 0);
+            NetworkADR2 = GetPciADR(tmp, 1);
+            Netmodel = get_net_model(deviceid);
+            
+          }
+          
+          //Fireware ADR
+          if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
+              (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_FIREWIRE))
+          {
+            FirewireADR1 = GetPciADR(tmp, 0);
+            FirewireADR2 = GetPciADR(tmp, 1);
+          }
+          
+          //SBUS ADR
+          if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
+              (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_SMB))
+          {
+            SBUSADR1 = GetPciADR(tmp, 0);
+            SBUSADR2 = GetPciADR(tmp, 1);
+          }
+          
+          //USB
+          if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
+              (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_USB)) 
+          {
+            USBADR[usb] = GetPciADR(tmp, 0);
+            if (USBIDFIX)
+            {
+              //if (USBADR[usb] == 0x001D0000 && Pci.Hdr.DeviceId != 0x3a34) Pci.Hdr.DeviceId = 0x3a34;
+              //if (USBADR[usb] == 0x001D0001 && Pci.Hdr.DeviceId != 0x3a35) Pci.Hdr.DeviceId = 0x3a35;
+              //if (USBADR[usb] == 0x001D0002 && Pci.Hdr.DeviceId != 0x3a36) Pci.Hdr.DeviceId = 0x3a36;
+              //if (USBADR[usb] == 0x001D0003 && Pci.Hdr.DeviceId != 0x3a37) Pci.Hdr.DeviceId = 0x3a37;
+              //if (USBADR[usb] == 0x001A0000 && Pci.Hdr.DeviceId != 0x3a37) Pci.Hdr.DeviceId = 0x3a37;
+              //if (USBADR[usb] == 0x001A0001 && Pci.Hdr.DeviceId != 0x3a38) Pci.Hdr.DeviceId = 0x3a38;
+              //if (USBADR[usb] == 0x001A0002 && Pci.Hdr.DeviceId != 0x3a39) Pci.Hdr.DeviceId = 0x3a39;
+              //if (USBADR[usb] == 0x001D0007 && Pci.Hdr.DeviceId != 0x3a3a) Pci.Hdr.DeviceId = 0x3a3a;
+              //if (USBADR[usb] == 0x001A0007 && Pci.Hdr.DeviceId != 0x3a3c) Pci.Hdr.DeviceId = 0x3a3c;
+            }       
+            USBID[usb] = Pci.Hdr.DeviceId;
+            USB20[usb] = (Pci.Hdr.ClassCode[0] == 0x20)?1:0;
+            usb++;
+          }
+          
+          // HDA Auido
+          if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
+              (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA))
+          {
+            HDAADR = GetPciADR(tmp, 0);
+            UINT32 codecId = 0, layoutId = 0;
+            codecId = HDA_getCodecVendorAndDeviceIds(PciIo);
+            if (codecId >0)
+            {
+              layoutId = getLayoutIdFromVendorAndDeviceId(codecId);
+              if (layoutId == 0) {
+                layoutId = 12;
+              }
+            }
+            if (layoutId > 0)
+            {
+              HDAFIX = TRUE;
+              HDAcodecId = codecId;
+              HDAlayoutId = layoutId;
+            } 
+            else
+            {
+              GFXHDAFIX = TRUE;
+              GfxcodecId[gfxid] = codecId;
+              GfxlayoutId[gfxid] = layoutId;
+              gfxid++;
+            }                                   
+          }
+          
+          // LPC
+          if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_BRIDGE) &&
+              (Pci.Hdr.ClassCode[1] == PCI_CLASS_BRIDGE_ISA))
+          {
+            LPCBFIX = get_lpc_model(deviceid);
+          }
+          
+          // IDE device
+          if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MASS_STORAGE) &&
+              (Pci.Hdr.ClassCode[1] == PCI_CLASS_MASS_STORAGE_IDE))
+          {
+            IDEADR1 = GetPciADR(tmp, 0);
+            IDEADR2 = GetPciADR(tmp, 1);
+            IDEFIX = get_ide_model(deviceid);
+            IDEVENDOR = Pci.Hdr.VendorId;
+          }
+          
+          // SATA 
+          if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MASS_STORAGE) &&
+              (Pci.Hdr.ClassCode[1] == PCI_CLASS_MASS_STORAGE_SATADPA) &&
+              (Pci.Hdr.ClassCode[0] == 0x00))
+          {
+            SATAADR1 = GetPciADR(tmp, 0);
+            SATAADR2 = GetPciADR(tmp, 1);
+            SATAFIX = get_ide_model(deviceid);
+            SATAVENDOR = Pci.Hdr.VendorId;
+          }
+          
+          // SATA AHCI
+          if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MASS_STORAGE) &&
+              (Pci.Hdr.ClassCode[1] == PCI_CLASS_MASS_STORAGE_SATADPA) &&
+              (Pci.Hdr.ClassCode[0] == 0x01))
+          {
+            SATAAHCIADR1 = GetPciADR(tmp, 0);
+            SATAAHCIADR2 = GetPciADR(tmp, 1);
+            //AHCIFIX = get_ahci_model(deviceid);
+            SATAAHCIVENDOR = Pci.Hdr.VendorId;
+          }
+        }
+        // detected finish						
+      }
+    }
+  }
+  //			}
+  //		}
+  //	}
 }
 
 VOID findCPU(UINT8* dsdt, UINT32 length)
@@ -852,27 +865,20 @@ UINT32 write_size(UINT32 adr, UINT8* buffer, UINT32 len, UINT32 oldsize)
 // we suppose that buffer allocation is more then len+offset
 UINT32 move_data(UINT32 start, UINT8* buffer, UINT32 len, INT32 offset)
 {
-    UINT32 i;
-
-    if (offset<0)
-    {
-        //DBG("move to front\n");
-        for (i=start; i<len+offset; i++) 
-        {
-            buffer[i] = buffer[i-offset];
-        }
+  UINT32 i;
+  
+  if (offset<0) {
+    for (i=start; i<len+offset; i++) {
+      buffer[i] = buffer[i-offset];
     }
-    else // data move to back
-    {
-        //DBG("move to back\n");
-        
-        for (i=len-1; i>=start; i--)
-        {
-             buffer[i+offset] = buffer[i];
-        }
-    }        
-    
-    return len + offset;
+  }
+  else  { // data move to back        
+    for (i=len-1; i>=start; i--) {
+      buffer[i+offset] = buffer[i];
+    }
+  }        
+  
+  return len + offset;
 }
 
 UINTN findSB(UINT8 *dsdt, UINT32 len, UINT32 maxAdr) //return address of size field of Scope=0x10
@@ -951,13 +957,52 @@ UINTN CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr) //return final length 
   return len;
 }
 
+//len = DeleteDevice("AZAL", dsdt, len);
+UINT32 DeleteDevice(CONST CHAR8 *Name, UINT8 *dsdt, UINT32 len)
+{
+  UINTN i, j;
+  INT32 size = 0;
+  for (i=20; i<len; i++) {
+    if ((dsdt[i+0] == Name[0]) && (dsdt[i+1] == Name[1]) &&
+        (dsdt[i+2] == Name[2]) && (dsdt[i+3] == Name[3]) &&
+        ((dsdt[i-3] == 0x82) || (dsdt[i-2] == 0x82)) && 
+        ((dsdt[i-4] == 0x5B) || (dsdt[i-3] == 0x5B))) {
+      if (dsdt[i-3] == 0x82) {
+        j = i - 2;
+      } else {
+        j = i - 1;
+      }
+      size = get_size(dsdt, j);
+      len = move_data(j-2, dsdt, len, -2-size);
+      len = CorrectOuters(dsdt, len, j-3);
+    }
+  }
+  return len;
+}
+
+//ReplaceName(dsdt, "AZAL", "HDEF");
+VOID ReplaceName(UINT8 *dsdt, UINT32 len, CONST CHAR8 *OldName, CONST CHAR8 *NewName)
+{
+  UINTN i;
+  for (i=20; i<len; i++) {
+    if ((dsdt[i+0] == OldName[0]) && (dsdt[i+1] == OldName[1]) &&
+        (dsdt[i+2] == OldName[2]) && (dsdt[i+3] == OldName[3])) {
+      dsdt[i+0] = NewName[0];
+      dsdt[i+1] = NewName[1];
+      dsdt[i+2] = NewName[2];
+      dsdt[i+3] = NewName[3];
+    }       
+  }
+}
+
+
 // Find PCIRootUID and all need Fix Device 
 UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
 {
 	INTN    i, j, k, n, m=0;
 	INTN    root = 0;
 	INTN    step = 0;
-
+  
 	for (i=0; i<len-20; i++) 
 	{
     // find Scope(\_SB) ...
@@ -1459,24 +1504,6 @@ UINT32 FixRTC (UINT8 *dsdt, UINT32 len)
       CorrectOuters(dsdt, len, adr-3);
       offset += sizeoffset;      
       sizeoffset = 0;
-/*      
-      for (j=adr; j>20; j--)
-      {
-        if (dsdt[j] == 0x82 && dsdt[j-1] == 0x5B)
-        {
-          rtcsize = get_size(dsdt, j+1);
-          if (!rtcsize) {
-            DBG("BUG! rtcsize not found\n");
-            continue;
-          }
-          DBG("RTC adr = 0x%08x size = 0x%08x shift = 0x%04x\n", j+1, rtcsize, sizeoffset);
-          len = write_size(j+1, dsdt, len, rtcsize); //sizeoffset autochanged
-          CorrectOuters(dsdt, len, j-2);
-          sizeoffset = 0;
-          break;
-        }
-      }
- */
     } // sizeoffset if
   } // l loop
       DBG("Finish RTC patch");		
@@ -1573,20 +1600,6 @@ UINT32 FixTMR (UINT8 *dsdt, UINT32 len)
       CorrectOuters(dsdt, len, adr-3);
       offset += sizeoffset;
       sizeoffset = 0;
-/*      for (j=adr; j>20; j--)
-      {
-        if (dsdt[j] == 0x82 && dsdt[j-1] == 0x5B)
-        {
-          tmrsize = get_size(dsdt, j+1);
-          //DBG("TMR adr = 0x%08x size = 0x%08x\n", n-j+1, tmrsize);
-          len = write_size(j+1, dsdt, len, tmrsize);
-          CorrectOuters(dsdt, len, j-2);
-          break;
-        }
-      }
- */
-      //DBG("Finish TMR patch");		
-             
     } // offset if
     
     if ((dsdt[i+1] == 0x5B) && (dsdt[i+2] == 0x82)) {
@@ -1952,7 +1965,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   
   UINT32 devadr=0, devadr1=0;
   BOOLEAN DISPLAYFIX = FALSE;
-  // get ide device size
+  // get device size
   for (i=0; i<100; i++)
   {
     if (dsdt[DisplayADR[0]-i] == 0x82 && dsdt[DisplayADR[0]-i-1] == 0x5B)
@@ -1981,6 +1994,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
           break;
         }
       }  
+      len = DeleteDevice("CRT_", dsdt, len);
       break;
     }
   }
@@ -2087,10 +2101,10 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         aml_add_byte_buffer(pack, GMAX3100_vals_bad[11], 4);
         aml_add_string(pack, "AAPL01,Inverter");
         aml_add_byte_buffer(pack, GMAX3100_vals_bad[12], 4);
-        aml_add_string(pack, "AAPL01,InverterCurrent");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[13], 4);
-        aml_add_string(pack, "AAPL01,InverterCurrency");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[14], 4);
+ //       aml_add_string(pack, "AAPL01,InverterCurrent");
+ //       aml_add_byte_buffer(pack, GMAX3100_vals_bad[13], 4);
+ //       aml_add_string(pack, "AAPL01,InverterCurrency");
+ //       aml_add_byte_buffer(pack, GMAX3100_vals_bad[14], 4);
         aml_add_string(pack, "AAPL01,LinkFormat");
         aml_add_byte_buffer(pack, GMAX3100_vals_bad[15], 4);
         aml_add_string(pack, "AAPL01,LinkType");
@@ -2437,30 +2451,12 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       len = write_size(devadr1, dsdt, len, devadr);
     }
     CorrectOuters(dsdt, len, adr1-3);
-/*    
-    // Fix Device Display size
-    len = write_size(adr1, dsdt, len, adr);
-    // Fix PCIX size
-    len = write_size(PCIADR, dsdt, len, PCISIZE);
-    PCISIZE += sizeoffset;
-    // Fix _SB_ size
-    len = write_size(SBADR, dsdt, len, SBSIZE);
-    SBSIZE += sizeoffset;
- */
   }
   else
   {
     len = move_data(PCIADR+PCISIZE, dsdt, len, sizeoffset);
     CopyMem(dsdt+PCIADR+PCISIZE, display, sizeoffset);
     CorrectOuters(dsdt, len, PCIADR-3);
-    /*
-    // Fix PCIX size
-    len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
-    PCISIZE += sizeoffset;
-    // Fix _SB_ size
-    len = write_size(SBADR, dsdt, len, sizeoffset, SBSIZE);
-    SBSIZE += sizeoffset;
-     */
   }
   
   if (DisplayADR[0])
@@ -2527,6 +2523,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
           break;
         }
       }  
+      len = DeleteDevice("CRT_", dsdt, len);
       break;
     }
   }
@@ -3131,28 +3128,12 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     // Fix Device network size
     len = write_size(adr1, dsdt, len, adr);
     CorrectOuters(dsdt, len, adr1-3);
-/*    
-    // Fix PCIX size
-    len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
-    PCISIZE += sizeoffset;
-    // Fix _SB_ size
-    len = write_size(SBADR, dsdt, len, sizeoffset, SBSIZE);
-    SBSIZE += sizeoffset;
- */
   }
   else
   {
     len = move_data(PCIADR+PCISIZE, dsdt, len, sizeoffset);
     CopyMem(dsdt+PCIADR+PCISIZE, network, sizeoffset);
     CorrectOuters(dsdt, len, PCIADR-3);
-/*    
-    // Fix PCIX size
-    len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
-    PCISIZE += sizeoffset;
-    // Fix _SB_ size
-    len = write_size(SBADR, dsdt, len, sizeoffset, SBSIZE);
-    SBSIZE += sizeoffset;
- */
   }
   
   if (NetworkADR) 
@@ -3211,14 +3192,6 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
     len = write_size(adr1, dsdt, len, adr);
     CorrectOuters(dsdt, len, adr1-3);
     //DBG("SBUS code size fix = 0x%08x\n", sizeoffset);
-/*    
-    // Fix PCIX size
-    len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
-    PCISIZE += sizeoffset;
-    // Fix _SB_ size
-    len = write_size(SBADR, dsdt, len, sizeoffset, SBSIZE);
-    SBSIZE += sizeoffset;
- */
   }
   else
   {
@@ -3389,11 +3362,6 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
     len = write_size(PCIADR, dsdt, len, PCISIZE);
     PCISIZE += sizeoffset;
     CorrectOuters(dsdt, len, PCIADR-3);
-    /*
-    // Fix _SB_ size
-    len = write_size(SBADR, dsdt, len, sizeoffset, SBSIZE);
-    SBSIZE += sizeoffset;
-     */
   }
   
   //DBG("len = 0x%08x\n", len);
@@ -3403,7 +3371,10 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
 }
 
 UINT32 AddHDEF (UINT8 *dsdt, UINT32 len)
-{    
+{   
+  len = DeleteDevice("AZAL", dsdt, len);
+  ReplaceName(dsdt, len, "AZAL", "HDEF");
+  
   AML_CHUNK* root = aml_create_node(NULL);
   
   DBG("Start Add Device HDEF\n");
@@ -3568,25 +3539,15 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
             {
               CopyMem(dsdt+adr1+adr, USBDATA1, sizeoffset);
             }
-            // Fix Device network size
+            // Fix Device USB size
             len = write_size(adr1, dsdt, len, adr);
             CorrectOuters(dsdt, len, adr1-3);
-            /*
-            // Fix PCIX size
-            len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
-            PCISIZE += sizeoffset;
-            // Fix _SB_ size
-            len = write_size(SBADR, dsdt, len, sizeoffset, SBSIZE);
-            SBSIZE += sizeoffset;
-             */
             break;
           }  
         }
       }
     }
   }
-  
-  //DBG("len = 0x%08x\n", len);
   
   return len;
   
@@ -3787,14 +3748,6 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
     // Fix Device network size
     len = write_size(adr1, dsdt, len, adr);
     CorrectOuters(dsdt, len, adr1-3);
-    /*
-    // Fix PCIX size
-    len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
-    PCISIZE += sizeoffset;
-    // Fix _SB_ size
-    len = write_size(SBADR, dsdt, len, sizeoffset, SBSIZE);
-    SBSIZE += sizeoffset;
-     */
   }
   
   if (SATAAHCIADR) 
@@ -3864,14 +3817,6 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
     // Fix Device SATA size
     len = write_size(adr1, dsdt, len, adr);
     CorrectOuters(dsdt, len, adr1-3);
-    /*
-    // Fix PCIX size
-    len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
-    PCISIZE += sizeoffset;
-    // Fix _SB_ size
-    len = write_size(SBADR, dsdt, len, sizeoffset, SBSIZE);
-    SBSIZE += sizeoffset;
-     */
   }
   
   if (SATAADR) 

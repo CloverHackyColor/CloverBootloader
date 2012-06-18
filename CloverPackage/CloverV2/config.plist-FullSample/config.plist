@@ -14,6 +14,8 @@
 		<string>511CE200-1000-4000-9999-010203040506</string>
 		<key>InjectSystemID</key>
 		<string>No</string>
+		<key>LegacyBoot</key>
+		<string>PBR</string>
 	</dict>
 	<key>SMBIOS</key>
 	<dict>
