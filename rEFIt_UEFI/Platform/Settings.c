@@ -901,6 +901,10 @@ VOID GetDevices(VOID)
             (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA) &&
             (NGFX < 4)) {
           gGraphics[NGFX].DeviceID = Pci.Hdr.DeviceId;
+          gGraphics[NGFX].Segment = Segment;
+          gGraphics[NGFX].Bus = Bus;
+          gGraphics[NGFX].Device = Device;
+          gGraphics[NGFX].Function = Function;
           switch (Pci.Hdr.VendorId) {
             case 0x1002:
               info = NULL;
@@ -1000,6 +1004,10 @@ VOID GetDevices(VOID)
                   (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA) &&
                   (NGFX < 4)) {
                 gGraphics[NGFX].DeviceID = Pci.Hdr.DeviceId;
+                gGraphics[NGFX].Segment = Segment;
+                gGraphics[NGFX].Bus = Bus;
+                gGraphics[NGFX].Device = Device;
+                gGraphics[NGFX].Function = Function;
                 switch (Pci.Hdr.VendorId) {
                   case 0x1002:
                     info = NULL;

@@ -717,6 +717,10 @@ typedef struct {
   CHAR8             Config[64];
   BOOLEAN           LoadVBios;
 //  BOOLEAN           PatchVBios;
+  UINTN             Segment;
+  UINTN             Bus;
+  UINTN             Device;
+  UINTN             Function;
 } GFX_PROPERTIES;
 
 #pragma pack(0)

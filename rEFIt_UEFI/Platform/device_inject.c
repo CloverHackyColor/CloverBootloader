@@ -721,6 +721,42 @@ UINT32 getLayoutIdFromVendorAndDeviceId(UINT32 vendorDeviceId)
 	return layoutId;
 }
 
+BOOLEAN IsHDMIAudio(EFI_HANDLE PciDevHandle)
+{
+  EFI_STATUS          Status;
+  EFI_PCI_IO_PROTOCOL *PciIo;
+  UINTN               Segment;
+	UINTN               Bus;
+	UINTN               Device;
+	UINTN               Function;
+	UINTN               Index;
+
+  // get device PciIo protocol
+  Status = gBS->OpenProtocol(PciDevHandle, &gEfiPciIoProtocolGuid, (VOID **)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
+  if (EFI_ERROR(Status)) {
+    return FALSE;
+  }
+  
+  // get device location
+  Status = PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
+  if (EFI_ERROR(Status)) {
+    return FALSE;
+  }
+  
+  // iterate over all GFX devices and check for sibling
+  for (Index = 0; Index < NGFX; Index++) {
+    if (gGraphics[Index].Segment == Segment
+        && gGraphics[Index].Bus == Bus
+        && gGraphics[Index].Device == Device
+        )
+    {
+      return TRUE;
+    }
+  }
+  
+  return FALSE;
+}
+
 BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev)
 {
 	CHAR8           *devicepath;
@@ -741,33 +777,40 @@ BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev)
     return FALSE;
   
   DBG("HDA Controller [%04x:%04x] :: %a =>", hda_dev->vendor_id, hda_dev->device_id, devicepath);
-  if (gSettings.HDALayoutId > 0) {
-    // layoutId is specified - use it
-    layoutId = (UINT32)gSettings.HDALayoutId;
-    DBG(" specified layout-id=%d (0x%x)", layoutId, layoutId);
-  } else {
-    // use detection: layoutId=codec dviceId or use default 12
-    codecId = HDA_getCodecVendorAndDeviceIds(PciIo);
-    if (codecId != 0) {
-      DBG(" detected codec: %04x:%04x", codecId >> 16, codecId & 0xFFFF);
-      layoutId = getLayoutIdFromVendorAndDeviceId(codecId);
-    } else {
-      DBG(" codec not detected");
-    }
-    // if not detected - use 12 as default
-    if (layoutId == 0) {
-      layoutId = 12;
-    }
-    DBG(", using layout-id=%d (0x%x)", layoutId, layoutId);
-  }
   
-  // for now, we'll set the same layout, PinConfigurations, hda-gfx
-  // to all audio devices
-  devprop_add_value(device, "layout-id", (UINT8*)&layoutId, 4);
-  layoutId = 0; // reuse variable
-  devprop_add_value(device, "PinConfigurations", (UINT8*)&layoutId, 1);
-  DBG(", setting hda-gfx=onboard-1\n");
-  devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 9);
+  if (IsHDMIAudio(hda_dev->DeviceHandle)) {
+    
+    DBG(" HDMI Audio, setting hda-gfx=onboard-1\n");
+    devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 10);
+    
+  } else {
+    
+    // HDA - determine layout-id
+    if (gSettings.HDALayoutId > 0) {
+      // layoutId is specified - use it
+      layoutId = (UINT32)gSettings.HDALayoutId;
+      DBG(" setting specified layout-id=%d (0x%x)\n", layoutId, layoutId);
+    } else {
+      // use detection: layoutId=codec dviceId or use default 12
+      codecId = HDA_getCodecVendorAndDeviceIds(PciIo);
+      if (codecId != 0) {
+        DBG(" detected codec: %04x:%04x", codecId >> 16, codecId & 0xFFFF);
+        layoutId = getLayoutIdFromVendorAndDeviceId(codecId);
+      } else {
+        DBG(" codec not detected");
+      }
+      // if not detected - use 12 as default
+      if (layoutId == 0) {
+        layoutId = 12;
+      }
+      DBG(", setting layout-id=%d (0x%x)\n", layoutId, layoutId);
+    }
+    // inject layout and pin config
+    devprop_add_value(device, "layout-id", (UINT8*)&layoutId, 4);
+    layoutId = 0; // reuse variable
+    devprop_add_value(device, "PinConfigurations", (UINT8*)&layoutId, 1);
+    
+  }
   
 	return TRUE;
 }
