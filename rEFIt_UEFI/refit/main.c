@@ -50,6 +50,14 @@
 #define DBG(x...)
 #endif
 
+#define DEBUG_TIME 0
+
+#if DEBUG_TIME == 1
+  #define DBGT(...) { DBG("[%a] ", DbgTime()); DBG(__VA_ARGS__) }
+#else
+  #define DBGT(...)
+#endif
+
 // variables
 
 #define MACOSX_LOADER_PATH      L"\\System\\Library\\CoreServices\\boot.efi"
@@ -282,6 +290,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   BOOLEAN                 BlockConOut = FALSE;
   EFI_TEXT_STRING         ConOutOutputString;
   
+  DBGT("StartLoader() start\n");
   egClearScreen(&DarkBackgroundPixel);
   MsgLog("Turbo=%c\n", gSettings.Turbo?'Y':'N');
   MsgLog("PatchNMI=%c\n", gSettings.PatchNMI?'Y':'N');
@@ -325,6 +334,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     //  PauseForKey(L"SetupDataForOSX");
     SetupDataForOSX();
     //  PauseForKey(L"SetupBooterLog");
+    DBGT("Closing log\n");
     Status = SetupBooterLog();
     //  Entry->LoadOptions     = InputItems[0].SValue;
     
@@ -1471,20 +1481,22 @@ EFI_GUID *FindGPTPartitionGuidInDevicePath(IN EFI_DEVICE_PATH_PROTOCOL *DevicePa
   return Guid;
 }
 
-/** returns given time as miliseconds */
+/** returns given time as miliseconds.
+ *  assumes 31 days per month, so it's not correct,
+ *  but is enough for basic checks.
+ */
 UINT64 GetEfiTimeInMs(IN EFI_TIME *T)
 {
   UINT64              TimeMs;
   
   TimeMs = T->Year - 1900;
-  TimeMs = TimeMs * 12 + T->Month;
-  TimeMs = TimeMs * 31 + T->Day; // counting with 31 day
-  TimeMs = TimeMs * 24 + T->Hour;
-  TimeMs = TimeMs * 60 + T->Minute;
-  TimeMs = TimeMs * 60 + T->Second;
-  TimeMs = TimeMs * 1000 + T->Nanosecond / 1000000;
-  // timezone?
-  DBG("%d-%d-%d %d:%d:%d (%ld ms)", T->Year, T->Month, T->Day, T->Hour, T->Minute, T->Second, TimeMs);
+  // is 64bit multiply workign in 32 bit?
+  TimeMs = MultU64x32(TimeMs, 12) + T->Month;
+  TimeMs = MultU64x32(TimeMs, 31) + T->Day; // counting with 31 day
+  TimeMs = MultU64x32(TimeMs, 24) + T->Hour;
+  TimeMs = MultU64x32(TimeMs, 60) + T->Minute;
+  TimeMs = MultU64x32(TimeMs, 60) + T->Second;
+  TimeMs = MultU64x32(TimeMs, 1000) + DivU64x32(T->Nanosecond, 1000000);
   
   return TimeMs;
 }
@@ -1501,7 +1513,10 @@ INTN FindDefaultEntryNVRAM(VOID)
   DBG("Checking NVRAM for efi-boot-device ...\n");
   
   // this will fill gEfiBootDeviceGuid, gEfiBootDevice, gEfiBootDeviceData
-  Status = GetNVRAMSettings();
+  Status = EFI_SUCCESS;
+  if (gEfiBootDeviceGuid == NULL) {
+    Status = GetNVRAMSettings();
+  }
   
   if (Status == EFI_SUCCESS && gEfiBootDeviceGuid != NULL) {
     
@@ -1588,6 +1603,10 @@ INTN FindDefaultEntryNVRAMPlist(VOID)
     
     DBG(" Modified = ");
     ModifTimeMs = GetEfiTimeInMs(&FileInfo->ModificationTime);
+    DBG("%d-%d-%d %d:%d:%d (%ld ms)",
+        FileInfo->ModificationTime.Year, FileInfo->ModificationTime.Month, FileInfo->ModificationTime.Day,
+        FileInfo->ModificationTime.Hour, FileInfo->ModificationTime.Minute, FileInfo->ModificationTime.Second,
+        ModifTimeMs);
     FreePool(FileInfo);
     FileHandle->Close(FileHandle);
     
@@ -1728,6 +1747,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	gImageHandle	= ImageHandle;
 	gBS				= SystemTable->BootServices;
 	gRS				= SystemTable->RuntimeServices;
+  
 	Status = EfiGetSystemConfigurationTable (&gEfiDxeServicesTableGuid, (VOID **) &gDS);
 	
   // firmware detection
@@ -1774,6 +1794,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
   
   PrepatchSmbios();
+
+  // init debug time - must be after PrepatchSmbios()
+  DbgTimeInit();
+  
   DBG("running on %a\n", gSettings.OEMProduct);
   DBG("... with board %a\n", gSettings.OEMBoard);
   Size = iStrLen(gSettings.OEMProduct, 64);
@@ -1801,7 +1825,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   // further bootstrap (now with config available)
   //  SetupScreen();
   
+  DBGT("LoadDrivers() start\n");
   LoadDrivers();
+  DBGT("LoadDrivers() end\n");
   
   //Now we have to reinit handles
   Status = ReinitSelfLib();
@@ -1820,7 +1846,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   GetCPUProperties();
   GetDevices();
   //    DBG("GetDevices OK\n");
+  DBGT("ScanSPD() start\n");
   ScanSPD();
+  DBGT("ScanSPD() end\n");
   //      DBG("ScanSPD OK\n");
   SetPrivateVarProto();
   //      DBG("SetPrivateVarProto OK\n");
@@ -1861,26 +1889,41 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   PrepareFont();
   FillInputs();
   
+  if (!gFirmwareClover && GlobalConfig.Timeout == 0 && !ReadAllKeyStrokes()) {
+    // UEFI boot: get gEfiBootDeviceGuid, gEfiBootDevice, gEfiBootDeviceData
+    // from NVRAM - and if present, ScanVolumes() will skip scanning other volumes
+    // in the first run.
+    // this speeds up loading of default OSX volume.
+    Status = GetNVRAMSettings();
+    DBGT("GetNVRAMSettings()\n");
+  }
+  
   do {
 //     PauseForKey(L"Enter main cycle");
+    DBGT("Enter main cycle\n");
     AfterTool = FALSE;
     MainMenu.EntryCount = 0;
     ScanVolumes();
+    DBGT("ScanVolumes()\n");
     // scan for loaders and tools, add then to the menu
     if (!GlobalConfig.NoLegacy && GlobalConfig.LegacyFirst){
       DBG("scan legacy first\n");
       ScanLegacy();
+      DBGT("ScanLegacy()\n");
     }
     ScanLoader();
+    DBGT("ScanLoader()\n");
     //      DBG("ScanLoader OK\n");
     if (!GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst){
       DBG("scan legacy second\n");
       ScanLegacy();
+      DBGT("ScanLegacy()\n");
     }
     //     DBG("ScanLegacy OK\n");
     if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
       //            DBG("scan tools\n");
       ScanTool();
+      DBGT("ScanTool()\n");
     }
     //      DBG("ScanTool OK\n");
     // fixed other menu entries
@@ -1918,8 +1961,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     
     // wait for user ACK when there were errors
     FinishTextScreen(FALSE);
+    DBGT("FinishTextScreen()\n");
     
     DefaultIndex = FindDefaultEntry();
+    DBGT("FindDefaultEntry()\n");
     //  DBG("DefaultIndex=%d and MainMenu.EntryCount=%d\n", DefaultIndex, MainMenu.EntryCount);
     if ((DefaultIndex >= 0) && (DefaultIndex < (INTN)MainMenu.EntryCount)) {
       DefaultEntry = MainMenu.Entries[DefaultIndex];
@@ -1935,7 +1980,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         MenuExit = MENU_EXIT_TIMEOUT;
       } else {
         //    DBG("Enter main loop\n");
+        DBGT("RunMainMenu() start\n");
         MenuExit = RunMainMenu(&MainMenu, DefaultIndex, &ChosenEntry);
+        DBGT("RunMainMenu() end\n");
       }
       // disable default boot - have sense only in the first run
       GlobalConfig.Timeout = -1;
@@ -1944,6 +1991,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       if ((DefaultEntry != NULL) && (MenuExit == MENU_EXIT_TIMEOUT)) {
         //      DBG("boot by timeout\n");
         StartLoader((LOADER_ENTRY *)DefaultEntry);
+        // if something goes wrong - break main loop to reinit volumes
+        break;
       }
       
       if (MenuExit == MENU_EXIT_OPTIONS){

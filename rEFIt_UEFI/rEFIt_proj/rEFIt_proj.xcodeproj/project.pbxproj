@@ -22,7 +22,7 @@
 		122336C013377E050033F008 /* text.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = text.c; sourceTree = "<group>"; };
 		122336C213377E150033F008 /* config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = config.c; sourceTree = "<group>"; };
 		122336C413377E150033F008 /* icns.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = icns.c; sourceTree = "<group>"; };
-		122336C513377E150033F008 /* lib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lib.c; sourceTree = "<group>"; };
+		122336C513377E150033F008 /* lib.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = lib.c; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
 		122336C613377E150033F008 /* lib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lib.h; sourceTree = "<group>"; };
 		122336C713377E150033F008 /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
 		122336C913377E150033F008 /* menu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = menu.c; sourceTree = "<group>"; };
@@ -64,7 +64,7 @@
 		12D6306114CEA05E00E5898F /* Bmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bmp.h; sourceTree = "<group>"; };
 		12D6306214CEA05E00E5898F /* boot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boot.h; sourceTree = "<group>"; };
 		12D6306314CEA05E00E5898F /* BootLog.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BootLog.c; sourceTree = "<group>"; };
-		12D6306414CEA05E00E5898F /* Console.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Console.c; sourceTree = "<group>"; };
+		12D6306414CEA05E00E5898F /* Console.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = Console.c; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
 		12D6306514CEA05E00E5898F /* cpu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cpu.c; sourceTree = "<group>"; };
 		12D6306614CEA05E00E5898F /* DataHubCpu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DataHubCpu.c; sourceTree = "<group>"; };
 		12D6306714CEA05E00E5898F /* DataHubRecords.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataHubRecords.h; sourceTree = "<group>"; };
@@ -109,6 +109,7 @@
 		12D6308E14CEA05E00E5898F /* UsbMassImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbMassImpl.h; sourceTree = "<group>"; };
 		12D6308F14CEA05E00E5898F /* VesaBiosExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VesaBiosExtensions.h; sourceTree = "<group>"; };
 		12DE470B1581D0B6008187A7 /* AcpiAml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AcpiAml.h; sourceTree = "<group>"; };
+		260720AF15907388009CC463 /* DbgTime.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DbgTime.c; sourceTree = "<group>"; };
 		26440C83157AADDF0077A476 /* b64cdecode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = b64cdecode.c; sourceTree = "<group>"; };
 		26440C84157AADDF0077A476 /* b64cdecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = b64cdecode.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -192,6 +193,7 @@
 		12D6305B14CEA05E00E5898F /* Platform */ = {
 			isa = PBXGroup;
 			children = (
+				260720AF15907388009CC463 /* DbgTime.c */,
 				122B6216157E80BA00D06F37 /* _types.h */,
 				26440C83157AADDF0077A476 /* b64cdecode.c */,
 				26440C84157AADDF0077A476 /* b64cdecode.h */,

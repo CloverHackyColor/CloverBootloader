@@ -872,5 +872,11 @@ EFI_STATUS  DisableUsbLegacySupport(VOID);
 UINT8		*Base64Decode(IN CHAR8 *EncodedData, OUT UINTN *DecodedSize);
 EFI_GUID	*FindGPTPartitionGuidInDevicePath(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath);
 
+// Inits debug time. Must be called after PrepatchSmbios().
+VOID		DbgTimeInit(VOID);
+// Returns debug time as string for print: secs:milis - sec:milis (from start - from last call)
+// Returned buffer should not be released.
+CHAR8*		DbgTime(VOID);
+
 
 #endif

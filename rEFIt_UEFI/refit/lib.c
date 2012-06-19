@@ -1029,6 +1029,8 @@ VOID ScanVolumes(VOID)
     UINTN                   PartitionIndex;
     UINT8                   *SectorBuffer1, *SectorBuffer2;
     UINTN                   SectorSum, i;
+    EFI_DEVICE_PATH_PROTOCOL  *VolumeDevicePath;
+    EFI_GUID                *Guid;
 //  EFI_INPUT_KEY Key;
     
 //    DBG("Scanning volumes...\n");
@@ -1040,7 +1042,17 @@ VOID ScanVolumes(VOID)
   DBG("found %d volumes with blockIO\n", HandleCount);
     // first pass: collect information about all handles
     for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
-        
+      
+      // for quick default volume boot - skip volumes other then self volume and GPT volume with gEfiBootDeviceGuid
+      if (GlobalConfig.Timeout == 0 && gEfiBootDeviceGuid != NULL && Handles[HandleIndex] != SelfDeviceHandle) {
+        VolumeDevicePath = DevicePathFromHandle(Handles[HandleIndex]);
+        Guid = FindGPTPartitionGuidInDevicePath(VolumeDevicePath);
+        if (!Guid || !CompareGuid(Guid, gEfiBootDeviceGuid)) {
+          // not self volume and not default volume - skip it
+          continue;
+        }
+      }
+      
       Volume = AllocateZeroPool(sizeof(REFIT_VOLUME));
       Volume->DeviceHandle = Handles[HandleIndex];
       if (Volume->DeviceHandle == SelfDeviceHandle){

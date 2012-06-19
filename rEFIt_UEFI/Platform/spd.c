@@ -111,7 +111,7 @@ UINT8 smb_read_byte_intel(UINT32 base, UINT8 adr, UINT8 cmd)
     while ( IoRead8(base + SMBHSTSTS) & 0x01)    // wait until read
     {  
      t2 = AsmReadTsc(); //rdtsc(l2, h2);
-     t = DivU64x32((t2 - t1), DivU64x32(gCPUStructure.TSCFrequency, 100));
+     t = DivU64x32((t2 - t1), DivU64x32(gCPUStructure.TSCFrequency, 1000));
      if (t > 5)
       return 0xFF;                  // break
     }
@@ -125,7 +125,7 @@ UINT8 smb_read_byte_intel(UINT32 base, UINT8 adr, UINT8 cmd)
  	while (!( IoRead8(base + SMBHSTSTS) & 0x02))		// wait til command finished
 	{	
 		t2 = AsmReadTsc();
-		t = DivU64x32(t2 - t1, DivU64x32(gCPUStructure.TSCFrequency, 100));
+		t = DivU64x32(t2 - t1, DivU64x32(gCPUStructure.TSCFrequency, 1000));
 		if (t > 5)
 			break;									// break after 5ms
     }

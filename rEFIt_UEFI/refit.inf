@@ -105,6 +105,7 @@
     Platform/FixBiosDsdt.c
 	Platform/kernel_patcher.c
 	Platform/kext_patcher.c
+	Platform/DbgTime.c
 
 
 [Packages]
