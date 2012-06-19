@@ -624,8 +624,15 @@ UINT32 HDA_IC_sendVerb(EFI_PCI_IO_PROTOCOL *PciIo, UINT32 codecAdr, UINT32 nodeI
 	UINT32		data32 = 0;
 	UINT64		data64 = 0;
 	
+  // about that polling below ...
+  // spec says that delay is in 100ns units. value 1.000.000.0
+  // should then be 1 second, but users of newer Aptio boards were reporting
+  // delays of 10-20 secs wen this value was used. maybe this polling timeout
+  // value does not mean the same on all implementations?
+  // anyway, delay is lowered now to 10.000.0 (10 milis).
+  
 	// poll ICS[0] to become 0
-	Status = PciIo->PollMem(PciIo, EfiPciIoWidthUint16, 0/*bar*/, HDA_ICS/*offset*/, 0x1/*mask*/, 0/*value*/, 500000/*delay in 100ns*/, &data64);
+	Status = PciIo->PollMem(PciIo, EfiPciIoWidthUint16, 0/*bar*/, HDA_ICS/*offset*/, 0x1/*mask*/, 0/*value*/, 100000/*delay in 100ns*/, &data64);
 	ics = (UINT16)(data64 & 0xFFFF);
 	//DBG("poll ICS[0] == 0: Status=%r, ICS=%x, ICS[0]=%d\n", Status, ics, ics & 0x0001);
 	if (EFI_ERROR(Status)) return 0;
@@ -640,7 +647,7 @@ UINT32 HDA_IC_sendVerb(EFI_PCI_IO_PROTOCOL *PciIo, UINT32 codecAdr, UINT32 nodeI
 	//DBG("ICS[1:0] = 11b: Status=%r\n", Status);
 	if (EFI_ERROR(Status)) return 0;
 	// poll ICS[1:0] to become 10b
-	Status = PciIo->PollMem(PciIo, EfiPciIoWidthUint16, 0/*bar*/, HDA_ICS/*offset*/, 0x3/*mask*/, 0x2/*value*/, 500000/*delay in 100ns*/, &data64);
+	Status = PciIo->PollMem(PciIo, EfiPciIoWidthUint16, 0/*bar*/, HDA_ICS/*offset*/, 0x3/*mask*/, 0x2/*value*/, 100000/*delay in 100ns*/, &data64);
 	//DBG("poll ICS[0] == 0: Status=%r\n", Status);
 	if (EFI_ERROR(Status)) return 0;
 	// read IRI for VendorId/DeviceId
@@ -689,6 +696,7 @@ UINT32 getLayoutIdFromVendorAndDeviceId(UINT32 vendorDeviceId)
 {
 	UINT32	layoutId = 0;
 	UINT8	  hexDigit = 0;
+  
 	// extract device id - 2 lower bytes,
 	// convert it to decimal like this: 0x0887 => 887 decimal
 	hexDigit = vendorDeviceId & 0xF;
@@ -713,8 +721,6 @@ UINT32 getLayoutIdFromVendorAndDeviceId(UINT32 vendorDeviceId)
 	return layoutId;
 }
 
-
-
 BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev)
 {
 	CHAR8           *devicepath;
@@ -725,54 +731,43 @@ BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev)
 		return FALSE;
 	}
 	
-	if (!string)
+  if (!string)
 		string = devprop_create_string();
     
-    devicepath = get_pci_dev_path(hda_dev);
-    //device = devprop_add_device(string, devicepath);
-    device = devprop_add_device_pci(string, hda_dev);
-    if (!device)
-      return FALSE;
+  devicepath = get_pci_dev_path(hda_dev);
+  //device = devprop_add_device(string, devicepath);
+  device = devprop_add_device_pci(string, hda_dev);
+  if (!device)
+    return FALSE;
   
-  codecId = HDA_getCodecVendorAndDeviceIds(PciIo);
-  
-  if (codecId != 0) {
-    if (gSettings.HDALayoutId > 0) {
-      // layoutId is specified - use it
-      layoutId = (UINT32)gSettings.HDALayoutId;
-      DBG("HDA Controller [%04x:%04x] :: %a => specified layout-id=0x%x=%d\n", hda_dev->vendor_id, hda_dev->device_id, devicepath, layoutId, layoutId);
-    } else {
-      // use detection: layoutId=codec dviceId or use default 12
-      layoutId = getLayoutIdFromVendorAndDeviceId(codecId);
-      if (layoutId == 0) {
-        layoutId = 12;
-      }
-    }
-  }
-  
-  if (layoutId > 0) {
-    DBG("HDA Controller [%04x:%04x] :: %a, detected codec: %04x:%04x => setting layout-id=0x%x=%d\n",
-        hda_dev->vendor_id, hda_dev->device_id, devicepath, codecId >> 16, codecId & 0xFFFF, layoutId, layoutId);
-    devprop_add_value(device, "layout-id", (UINT8*)&layoutId, 4);
-    layoutId = 0; // reuse variable
-    devprop_add_value(device, "PinConfigurations", (UINT8*)&layoutId, 1);
+  DBG("HDA Controller [%04x:%04x] :: %a =>", hda_dev->vendor_id, hda_dev->device_id, devicepath);
+  if (gSettings.HDALayoutId > 0) {
+    // layoutId is specified - use it
+    layoutId = (UINT32)gSettings.HDALayoutId;
+    DBG(" specified layout-id=%d (0x%x)", layoutId, layoutId);
   } else {
-    DBG("HDA Controller [%04x:%04x] :: %a",
-        hda_dev->vendor_id, hda_dev->device_id, devicepath);
-		// HDA audio not inited on Aptio UEFI and we end up here.
-		// We'll use Settings.HDALayoutId if specified to cover that
-		// until we get the code for initing controller.
-		if (!gFirmwareClover && gSettings.HDALayoutId > 0) {
-			layoutId = gSettings.HDALayoutId;
-			DBG(" => setting layout-id=0x%x=%d", layoutId, layoutId);
-			devprop_add_value(device, "layout-id", (UINT8*)&layoutId, 4);
-			layoutId = 0; // reuse variable
-			devprop_add_value(device, "PinConfigurations", (UINT8*)&layoutId, 1);
-		}
-    
-    DBG(" => possible HDMI audio => setting hda-gfx=onboard-1\n");
-    devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 9);
+    // use detection: layoutId=codec dviceId or use default 12
+    codecId = HDA_getCodecVendorAndDeviceIds(PciIo);
+    if (codecId != 0) {
+      DBG(" detected codec: %04x:%04x", codecId >> 16, codecId & 0xFFFF);
+      layoutId = getLayoutIdFromVendorAndDeviceId(codecId);
+    } else {
+      DBG(" codec not detected");
+    }
+    // if not detected - use 12 as default
+    if (layoutId == 0) {
+      layoutId = 12;
+    }
+    DBG(", using layout-id=%d (0x%x)", layoutId, layoutId);
   }
-	
+  
+  // for now, we'll set the same layout, PinConfigurations, hda-gfx
+  // to all audio devices
+  devprop_add_value(device, "layout-id", (UINT8*)&layoutId, 4);
+  layoutId = 0; // reuse variable
+  devprop_add_value(device, "PinConfigurations", (UINT8*)&layoutId, 1);
+  DBG(", setting hda-gfx=onboard-1\n");
+  devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 9);
+  
 	return TRUE;
 }
