@@ -378,72 +378,36 @@ CHAR8* get_net_model(UINT32 id) {
 	return NetChipsets[0].name;
 }
 
-UINT32 GetPciADR(CHAR8* path, UINT32 value)
+VOID GetPciADR(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINT32 *Addr1, OUT UINT32 *Addr2)
 {
-	const CHAR8		pciroot_string[] = "PciRoot(0x";
-	const CHAR8		pcieroot_string[] = "PcieRoot(0x";
-	const CHAR8		pci_device_string[] = "Pci(0x";
-
-	if (path == NULL) {
-		return 0;
-	}
- 
-	if (AsciiStrnCmp(path, pciroot_string, AsciiStrLen(pciroot_string)) &&
-		AsciiStrnCmp(path, pcieroot_string, AsciiStrLen(pcieroot_string))) {
-		DBG("ERROR parsing device path\n");
-		return 0;
-	}
-
-	INT32 numpaths = 0;
-	INT32 x, curr = 0;
-	CHAR8 buff[] = "00";
-	UINT8  temp1=0,temp2=0, temp3=0, temp4=0;
-
-	for (x = 0; x < AsciiStrLen(path); x++) {
-		if (!AsciiStrnCmp(&path[x], pci_device_string, AsciiStrLen(pci_device_string))) {
-			x+=AsciiStrLen(pci_device_string);
-			curr=x;
-			while(path[++x] != ',');
-			if(x-curr == 2)
-				AsciiSPrint(buff, 3, "%c%c", path[curr], path[curr+1]);
-			else if(x-curr == 1)
-				AsciiSPrint(buff, 3, "%c", path[curr]);
-			else 
-			{
-				DBG("ERROR parsing device path\n");
-				numpaths = 0;
-				break;
-			}
-			
-			if(numpaths == 0) temp1 = hexstrtouint8(buff);
-			if(numpaths == 1) temp3 = hexstrtouint8(buff);
-			
-			x += 3; // 0x
-			curr = x;
-			while(path[++x] != ')');
-			if(x-curr == 2)
-				AsciiSPrint(buff, 3, "%c%c", path[curr], path[curr+1]);
-			else if(x-curr == 1)
-				AsciiSPrint(buff, 3, "%c", path[curr]);
-			else
-			{
-				DBG("ERROR parsing device path\n");
-				numpaths = 0;
-				break;
-			}
-			
-			if(numpaths == 0) temp2 = hexstrtouint8(buff);
-			if(numpaths == 1) temp4 = hexstrtouint8(buff);			
-			
-			numpaths++;
-		}
-	}
-	
-	if(value == 0) 
-	   return temp2 << 0 | 0x00 << 8 | temp1 << 16 | 0x00 << 24;
-	else
-	   return temp4 << 0 | 0x00 << 8 | temp3 << 16 | 0x00 << 24;	
-	      
+  PCI_DEVICE_PATH *PciNode;
+  UINTN           PciNodeCount;
+  
+  // default to 0
+  if (Addr1 != NULL) *Addr1 = 0;
+  if (Addr2 != NULL) *Addr2 = 0;
+  
+  // sanity check - expecting ACPI path for PciRoot
+  if (DevicePath->Type != ACPI_DEVICE_PATH && DevicePath->SubType != ACPI_DP) {
+    return;
+  }
+  
+  PciNodeCount = 0;
+  while (!IsDevicePathEndType(DevicePath)) {
+    if (DevicePath->Type == HARDWARE_DEVICE_PATH && DevicePath->SubType == HW_PCI_DP) {
+      PciNodeCount++;
+      PciNode = (PCI_DEVICE_PATH *)DevicePath;
+      if (PciNodeCount == 1 && Addr1 != NULL) {
+        *Addr1 = PciNode->Device << 16 | PciNode->Function;
+      } else if (PciNodeCount == 2 && Addr2 != NULL) {
+        *Addr2 = PciNode->Device << 16 | PciNode->Function;
+      } else {
+        break;
+      }
+    }
+    DevicePath = NextDevicePathNode(DevicePath);
+  }
+  return;
 }
 
 VOID CheckHardware()
@@ -464,10 +428,9 @@ VOID CheckHardware()
 	UINTN         Device;
 	UINTN         Function;
   
-	pci_dt_t              PCIdevice;
-	CHAR8*		tmp;
-	CHAR16*		devpathstr = NULL;
+	pci_dt_t      PCIdevice;
 	EFI_DEVICE_PATH_PROTOCOL*	DevicePath = NULL;
+  
 	usb=0;
 	UINTN display=0;
 	UINTN gfxid=0;
@@ -525,16 +488,13 @@ VOID CheckHardware()
         DevicePath = DevicePathFromHandle (PCIdevice.DeviceHandle);
         if (DevicePath)
         {
-          devpathstr = DevicePathToStr(DevicePath);
-          tmp = AllocateZeroPool((StrLen(devpathstr)+1)*sizeof(CHAR8));
-          UnicodeStrToAsciiStr(devpathstr, tmp);		
-          //DBG("Device patch = %a \n", tmp);
+          //DBG("Device patch = %s \n", DevicePathToStr(DevicePath));
           
           //Display ADR
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA)) {
-            DisplayADR1[display] = GetPciADR(tmp, 0);
-            DisplayADR2[display] = GetPciADR(tmp, 1);
+            GetPciADR(DevicePath, &DisplayADR1[display], &DisplayADR2[display]);
+            //DBG("DisplayADR1[%d] = 0x%x, DisplayADR2[%d] = 0x%x\n", display, DisplayADR1[display], display, DisplayADR2[display]);
             DisplayVendor[display] = Pci.Hdr.VendorId;
             DisplayID[display] = Pci.Hdr.DeviceId;
             DisplaySubID[display] = Pci.Device.SubsystemID << 16| Pci.Device.SubsystemVendorID << 0;
@@ -571,8 +531,8 @@ VOID CheckHardware()
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_ETHERNET))
           {
-            NetworkADR1 = GetPciADR(tmp, 0);
-            NetworkADR2 = GetPciADR(tmp, 1);
+            GetPciADR(DevicePath, &NetworkADR1, &NetworkADR2);
+            //DBG("NetworkADR1 = 0x%x, NetworkADR2 = 0x%x\n", NetworkADR1, NetworkADR2);
             Netmodel = get_net_model(deviceid);
             
           }
@@ -581,23 +541,24 @@ VOID CheckHardware()
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_FIREWIRE))
           {
-            FirewireADR1 = GetPciADR(tmp, 0);
-            FirewireADR2 = GetPciADR(tmp, 1);
+            GetPciADR(DevicePath, &FirewireADR1, &FirewireADR2);
+            //DBG("FirewireADR1 = 0x%x, FirewireADR2 = 0x%x\n", FirewireADR1, FirewireADR2);
           }
           
           //SBUS ADR
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_SMB))
           {
-            SBUSADR1 = GetPciADR(tmp, 0);
-            SBUSADR2 = GetPciADR(tmp, 1);
+            GetPciADR(DevicePath, &SBUSADR1, &SBUSADR2);
+            //DBG("SBUSADR1 = 0x%x, SBUSADR2 = 0x%x\n", SBUSADR1, SBUSADR2);
           }
           
           //USB
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_USB)) 
           {
-            USBADR[usb] = GetPciADR(tmp, 0);
+            GetPciADR(DevicePath, &USBADR[usb], NULL);
+            //DBG("USBADR[%d] = 0x%x\n", usb, USBADR[usb]);
             if (USBIDFIX)
             {
               //if (USBADR[usb] == 0x001D0000 && Pci.Hdr.DeviceId != 0x3a34) Pci.Hdr.DeviceId = 0x3a34;
@@ -619,7 +580,8 @@ VOID CheckHardware()
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA))
           {
-            HDAADR = GetPciADR(tmp, 0);
+            GetPciADR(DevicePath, &HDAADR, NULL);
+            //DBG("HDAADR = 0x%x\n", HDAADR);
             UINT32 codecId = 0, layoutId = 0;
             codecId = HDA_getCodecVendorAndDeviceIds(PciIo);
             if (codecId >0)
@@ -655,8 +617,8 @@ VOID CheckHardware()
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MASS_STORAGE) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_MASS_STORAGE_IDE))
           {
-            IDEADR1 = GetPciADR(tmp, 0);
-            IDEADR2 = GetPciADR(tmp, 1);
+            GetPciADR(DevicePath, &IDEADR1, &IDEADR2);
+            //DBG("IDEADR1 = 0x%x, IDEADR2 = 0x%x\n", IDEADR1, IDEADR2);
             IDEFIX = get_ide_model(deviceid);
             IDEVENDOR = Pci.Hdr.VendorId;
           }
@@ -666,8 +628,8 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_MASS_STORAGE_SATADPA) &&
               (Pci.Hdr.ClassCode[0] == 0x00))
           {
-            SATAADR1 = GetPciADR(tmp, 0);
-            SATAADR2 = GetPciADR(tmp, 1);
+            GetPciADR(DevicePath, &SATAADR1, &SATAADR2);
+            //DBG("SATAADR1 = 0x%x, SATAADR2 = 0x%x\n", SATAADR1, SATAADR2);
             SATAFIX = get_ide_model(deviceid);
             SATAVENDOR = Pci.Hdr.VendorId;
           }
@@ -677,8 +639,8 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_MASS_STORAGE_SATADPA) &&
               (Pci.Hdr.ClassCode[0] == 0x01))
           {
-            SATAAHCIADR1 = GetPciADR(tmp, 0);
-            SATAAHCIADR2 = GetPciADR(tmp, 1);
+            GetPciADR(DevicePath, &SATAAHCIADR1, &SATAAHCIADR2);
+            //DBG("SATAAHCIADR1 = 0x%x, SATAAHCIADR2 = 0x%x\n", SATAAHCIADR1, SATAAHCIADR2);
             //AHCIFIX = get_ahci_model(deviceid);
             SATAAHCIVENDOR = Pci.Hdr.VendorId;
           }
