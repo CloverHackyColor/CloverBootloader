@@ -169,7 +169,8 @@ VOID GetCPUProperties (VOID)
       case CPU_MODEL_CLARKDALE: // Intel Core i3, i5, i7 LGA1156 (32nm) 
       case CPU_MODEL_NEHALEM_EX:	
       case CPU_MODEL_JAKETOWN:
-      case CPU_MODEL_SANDY_BRIDGE:					
+      case CPU_MODEL_SANDY_BRIDGE:	
+			case CPU_MODEL_IVY_BRIDGE:	
         msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);
         gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 31, 16);
         gCPUStructure.Threads = (UINT8)bitfield((UINT32)msr, 15,  0);
@@ -274,6 +275,7 @@ VOID GetCPUProperties (VOID)
             
             break;
           case CPU_MODEL_SANDY_BRIDGE:// Sandy Bridge, 32nm
+          case CPU_MODEL_IVY_BRIDGE:  
           case CPU_MODEL_JAKETOWN:		
             msr = AsmReadMsr64(MSR_PLATFORM_INFO);            
             gCPUStructure.MaxRatio = (UINT8)(msr >> 8) & 0xff;
@@ -601,7 +603,7 @@ UINT16 GetAdvancedCpuType ()
 						
 					case CPU_MODEL_DALES: // Intel Core i5, i7 LGA1156 (45nm) (Havendale, Auburndale)
 						if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
-							return 0x902; // Core i3
+							return 0x901; // Core i3 //why not 902? Ask Apple
 						if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
 							return 0x602; // Core i5
 						return 0x702; // Core i7
@@ -619,6 +621,7 @@ UINT16 GetAdvancedCpuType ()
 					case CPU_MODEL_WESTMERE_EX: // Intel Core i7 LGA1366 (45nm) 6 Core ???
 						return 0x701; // Core i7
 					case CPU_MODEL_SANDY_BRIDGE:
+          case CPU_MODEL_IVY_BRIDGE:  
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
 							return 0x903; // Core i3
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
@@ -662,6 +665,7 @@ MACHINE_TYPES GetDefaultModel()
 				break;
 			case CPU_MODEL_JAKETOWN:
 			case CPU_MODEL_SANDY_BRIDGE: 
+      case CPU_MODEL_IVY_BRIDGE: //this is not true, should be new MacBook  
 				if((AsciiStrStr(gCPUStructure.BrandString, "i3")) || 
 				   (AsciiStrStr(gCPUStructure.BrandString, "i5")))
 				{
@@ -723,6 +727,7 @@ MACHINE_TYPES GetDefaultModel()
 				DefaultType = MacPro51;
 				break;
 			case CPU_MODEL_SANDY_BRIDGE:
+      case CPU_MODEL_IVY_BRIDGE:   //should be new iMac  
 				if((AsciiStrStr(gCPUStructure.BrandString, "i3")) || 
 				   (AsciiStrStr(gCPUStructure.BrandString, "i5")))
 				{

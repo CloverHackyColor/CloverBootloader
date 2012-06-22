@@ -123,6 +123,8 @@ EFI_STATUS SetVariablesForOSX()
 	CHAR8*      None	= "none";
 	CHAR8*      BA = &gSettings.BootArgs[255];
   UINTN       LangLen = 16;
+  CHAR8*      FmmName = &gSettings.FamilyName[0];
+  UINTN       FmmLen  = AsciiStrLen(FmmName);
   
 	while ((*BA == ' ') || (*BA == 0)) {
 		BA--; bootArgsLen--;
@@ -181,7 +183,11 @@ EFI_STATUS SetVariablesForOSX()
 						 /*	EFI_VARIABLE_NON_VOLATILE | */EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
 						 AsciiStrLen(gEfiBootDevice) + 1, gEfiBootDevice);
 	}
-	
+
+  Status = gRS->SetVariable(L"fmm-computer-name", &gEfiAppleBootGuid, 
+                            /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                            FmmLen , (VOID*)FmmName);
+  
 	return Status;
 }
 

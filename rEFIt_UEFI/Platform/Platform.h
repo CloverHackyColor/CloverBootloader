@@ -124,6 +124,7 @@ Headers collection for procedures
 #define CPU_MODEL_JAKETOWN      0x2D  /* ever see? */
 #define CPU_MODEL_NEHALEM_EX    0x2E
 #define CPU_MODEL_WESTMERE_EX   0x2F
+#define CPU_MODEL_IVY_BRIDGE    0x3A
 
 #define CPU_VENDOR_INTEL  0x756E6547
 #define CPU_VENDOR_AMD    0x68747541
@@ -373,7 +374,7 @@ Headers collection for procedures
 #define AML_LOCAL0        0x60
 #define AML_STORE_OP      0x70
 //-----------------------------------
-// define add by pcj
+// defines added by pcj
 #define	AML_CHUNK_BUFFER	0x11
 #define	AML_CHUNK_STRING_BUFFER	0x15
 #define	AML_CHUNK_OP	    0x5B

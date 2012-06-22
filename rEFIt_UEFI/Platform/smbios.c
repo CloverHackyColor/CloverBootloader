@@ -756,7 +756,7 @@ VOID PatchTableType4()
 		newSmbiosTable.Type4->ProcessorId.Signature.ProcessorType		= gCPUStructure.Type;
 		newSmbiosTable.Type4->ProcessorId.Signature.ProcessorXModel		= gCPUStructure.Extmodel;
 		newSmbiosTable.Type4->ProcessorId.Signature.ProcessorXFamily	= gCPUStructure.Extfamily;
-    CopyMem((VOID*)&newSmbiosTable.Type4->ProcessorId.FeatureFlags, (VOID*)&gCPUStructure.Features, 4);
+//    CopyMem((VOID*)&newSmbiosTable.Type4->ProcessorId.FeatureFlags, (VOID*)&gCPUStructure.Features, 4);
 //		newSmbiosTable.Type4->ProcessorId.FeatureFlags = (PROCESSOR_FEATURE_FLAGS)(UINT32)gCPUStructure.Features;
 		if (Size <= 0x26) {
 			newSmbiosTable.Type4->ProcessorFamily2 = newSmbiosTable.Type4->ProcessorFamily;
@@ -1050,7 +1050,8 @@ VOID PatchTableType17()
 					case CPU_MODEL_WESTMERE_EX:						
 					case CPU_MODEL_XEON_MP:						
 					case CPU_MODEL_LINCROFT:						
-					case CPU_MODEL_SANDY_BRIDGE:						
+					case CPU_MODEL_SANDY_BRIDGE:	
+					case CPU_MODEL_IVY_BRIDGE:
 					case CPU_MODEL_JAKETOWN:
 						
 						newSmbiosTable.Type17->MemoryType = MemoryTypeDdr3;

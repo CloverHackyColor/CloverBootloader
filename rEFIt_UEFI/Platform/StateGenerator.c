@@ -182,8 +182,10 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
 					case CPU_MODEL_WESTMERE_EX:	// Intel Xeon E7
           case CPU_MODEL_SANDY_BRIDGE:		// Intel Core i3, i5, i7 LGA1155 (32nm)
           case CPU_MODEL_JAKETOWN:	// Intel Xeon E3
+          case CPU_MODEL_IVY_BRIDGE:  
 					{
             if ((gCPUStructure.Model == CPU_MODEL_SANDY_BRIDGE) ||
+                (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE) ||
                 (gCPUStructure.Model == CPU_MODEL_JAKETOWN))
             {
               maximum.Control = (AsmReadMsr64(MSR_IA32_PERF_STATUS) >> 8) & 0xff;
