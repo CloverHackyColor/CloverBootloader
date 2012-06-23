@@ -25,7 +25,7 @@
 
   .data
   ASM_GLOBAL ASM_PFX(mExceptionCodeSize)
-ASM_PFX(mExceptionCodeSize): .long  9
+  ASM_PFX(mExceptionCodeSize): .long  9
 
   .text
   ASM_GLOBAL ASM_PFX(InitDescriptor)

@@ -408,7 +408,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   if ((GlobalConfig.HideBadges == 0) || //hide none
       (GlobalConfig.HideBadges == 1 && Volume->DiskKind != DISK_KIND_INTERNAL)){ //hide internal
     Entry->me.BadgeImage   = egCopyScaledImage(Volume->OSImage, 6);
-  } else if ((GlobalConfig.HideBadges == 3)) { //swap
+  } else if (GlobalConfig.HideBadges == 3) { //swap
     Entry->me.BadgeImage   =  egCopyScaledImage(Volume->DriveImage, 4);
   }
   Entry->LoaderPath      = EfiStrDuplicate(LoaderPath);
@@ -1158,7 +1158,7 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Vo
       (GlobalConfig.HideBadges == 1 && Volume->DiskKind != DISK_KIND_INTERNAL)){ //hide internal
     Entry->me.BadgeImage   = egCopyScaledImage(Volume->OSImage, 6);
     //    Entry->me.BadgeImage   = egLoadIcon(ThemeDir, PoolPrint(L"icons\\os_%s.icns", Volume->OSIconName), 32);
-  } else if ((GlobalConfig.HideBadges == 3)) { //swap
+  } else if (GlobalConfig.HideBadges == 3) { //swap
     Entry->me.BadgeImage   =  egCopyScaledImage(Volume->DriveImage, 4);
   }
     Entry->Volume          = Volume;

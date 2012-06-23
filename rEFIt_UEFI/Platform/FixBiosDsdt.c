@@ -1592,7 +1592,7 @@ UINT32 FixPIC (UINT8 *dsdt, UINT32 len)
 	UINT32 RESADR = 0;
   UINT32 adr = 0;
   INT32  offset = 0;
-  UINT32 picsize;
+  UINT32 picsize = 0;
   
   DBG("Start PIC Fix\n");
   for (j=20; j<len; j++) {

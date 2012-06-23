@@ -1371,7 +1371,7 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       break;
       
     case MENU_FUNCTION_PAINT_SELECTION:
-      if ((Screen->Entries[State->LastSelection]->Row == 0)) {
+      if (Screen->Entries[State->LastSelection]->Row == 0) {
         DrawMainMenuEntry(Screen->Entries[State->LastSelection], FALSE,
                       itemPosX[State->LastSelection - State->FirstVisible], row0PosY);
       } else {

@@ -584,8 +584,8 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
   devprop_add_value(device, "AAPL,current-in-sleep",  (UINT8*)&current_in_sleep, 2);
   devprop_add_value(device, "AAPL,clock-id", (UINT8*)&clock_id, 1);
   clock_id++;
-  fake_devid = usb_dev->device_id && 0xFFFF;
-  if ((fake_devid && 0xFF00) == 0x2900) {
+  fake_devid = usb_dev->device_id & 0xFFFF;
+  if ((fake_devid & 0xFF00) == 0x2900) {
     fake_devid &= 0xFEFF;
     devprop_add_value(device, "device-id", (UINT8*)&fake_devid, 4);
   }

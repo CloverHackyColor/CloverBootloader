@@ -41,8 +41,15 @@ export TARGET_TOOLS=GCC46
 fnClang ()
 # Function: Clang chainload
 {
-echo "CHAINLOAD: CLANG"
+echo "CHAINLOAD: XCODE CLANG"
 export TARGET_TOOLS=XCLANG
+}
+
+fnLClang ()
+# Function: Clang chainload
+{
+echo "CHAINLOAD: LLVM CLANG"
+export TARGET_TOOLS=LCLANG
 }
 
 fnUnixgcc ()
@@ -106,6 +113,7 @@ echo "-xcode       -ia32      -debug"
 echo "-clang       -x64       -release"
 echo "-unixgcc"
 echo "-gcc46"
+echo "-llvm"
 echo
 echo "Example: ./cbuild.sh -xcode -ia32 -release"
 echo "Example: ./cbuild.sh -gcc46 -x64 -release"
@@ -113,7 +121,6 @@ echo "Example: ./cbuild.sh -gcc46 -ia32 -release"
 echo "example: ./cbuild.sh -32"
 echo "example: ./cbuild.sh -64"
 echo "example: ./cbuild.sh -34"
-echo "example: ./cbuild.sh -mc"
 echo
 echo "If you want to clean a build:"
 echo "Example: ./cbuild.sh -xcode -ia32 -release -clean"
@@ -147,6 +154,9 @@ echo "Example: ./cbuild.sh -gcc46 -x64 -release"
         ;;
         '-clang')
          fnClang
+        ;;
+        '-llvm')
+        fnLClang
         ;;
         '-unixgcc')
          fnUnixgcc

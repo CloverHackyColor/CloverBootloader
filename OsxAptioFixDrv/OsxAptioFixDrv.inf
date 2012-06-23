@@ -49,6 +49,7 @@
 [Sources.X64]
   X64/AsmFuncsX64.asm
   X64/AsmFuncsX64.S | GCC
+  X64/AsmFuncsX64.S | XCODE
 
 [Guids]
   gEfiFileInfoGuid								## CONSUMES
@@ -67,5 +68,5 @@
 
 [BuildOptions]
   MSFT:*_*_*_ASM_FLAGS = /Fl
-  GCC:*_*_*_ASM_FLAGS = -Wa,-a=AsmList.txt
+#  GCC:*_*_*_ASM_FLAGS = -Wall,-a=AsmList.txt
 
