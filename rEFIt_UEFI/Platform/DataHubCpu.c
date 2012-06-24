@@ -117,14 +117,14 @@ EFI_STATUS SetVariablesForOSX()
 	UINT16		 *BootNext = NULL;	//it already presents in EFI FW. First GetVariable ?
   
 	UINT32      BackgroundClear = 0x00000000;
-	UINT32      FwFeatures      = 0x80000015; //Slice - get it from SMBIOS
-	UINT32      FwFeaturesMask  = 0x800003ff;
+	UINT32      FwFeatures      = 0x80001417; //Slice - get it from SMBIOS
+	UINT32      FwFeaturesMask  = 0x80003fff;
 	UINTN       bootArgsLen = 256; 
 	CHAR8*      None	= "none";
 	CHAR8*      BA = &gSettings.BootArgs[255];
   UINTN       LangLen = 16;
-  CHAR8*      FmmName = &gSettings.FamilyName[0];
-  UINTN       FmmLen  = AsciiStrLen(FmmName);
+//  CHAR8*      FmmName = &gSettings.FamilyName[0];
+//  UINTN       FmmLen  = AsciiStrLen(FmmName);
   
 	while ((*BA == ' ') || (*BA == 0)) {
 		BA--; bootArgsLen--;
@@ -183,11 +183,12 @@ EFI_STATUS SetVariablesForOSX()
 						 /*	EFI_VARIABLE_NON_VOLATILE | */EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
 						 AsciiStrLen(gEfiBootDevice) + 1, gEfiBootDevice);
 	}
-
+/*
   Status = gRS->SetVariable(L"fmm-computer-name", &gEfiAppleBootGuid, 
-                            /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                      //        EFI_VARIABLE_NON_VOLATILE 
+              EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                             FmmLen , (VOID*)FmmName);
-  
+*/  
 	return Status;
 }
 

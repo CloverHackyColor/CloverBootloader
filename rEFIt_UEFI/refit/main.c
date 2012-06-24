@@ -1446,10 +1446,10 @@ static VOID LoadDrivers(VOID)
     BdsLibConnectAllEfi();
   }
    else {
-    DBG("ConnectAll\n");
+ //   DBG("ConnectAll\n");
     BdsLibConnectAllDriversToAllControllers();
    }
-	DBG("Drivers connected\n");
+//	DBG("Drivers connected\n");
 }
 
 /** Searches for GPT HDD dev path node and return pointer to partition GUID or NULL. */
@@ -1915,7 +1915,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     DBGT("ScanLoader()\n");
     //      DBG("ScanLoader OK\n");
     if (!GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst){
-      DBG("scan legacy second\n");
+//      DBG("scan legacy second\n");
       ScanLegacy();
       DBGT("ScanLegacy()\n");
     }

@@ -21,7 +21,7 @@
 
 
 #ifndef DEBUG_SPD
-#define DEBUG_SPD 0
+#define DEBUG_SPD 1
 #endif
 
 #if DEBUG_SPD == 2
@@ -271,127 +271,127 @@ INTN mapping []= {0,2,1,3,4,6,5,7,8,10,9,11};
 VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
 { 
 	EFI_STATUS		Status;
-    INTN			i, speed;
-    UINT8			spd_size, spd_type;
-    UINT32			base, mmio, hostc;
+  INTN			i, speed;
+  UINT8			spd_size, spd_type;
+  UINT32			base, mmio, hostc;
 	UINT16			Command;
-    RAM_SLOT_INFO*  slot;
+  RAM_SLOT_INFO*  slot;
 	BOOLEAN			fullBanks;
 	UINT8*			spdbuf;
 	UINT16			vid, did;
 	
 	vid = gPci.Hdr.VendorId;
 	did = gPci.Hdr.DeviceId;
-
+  
 	Status = PciIo->Pci.Read (
-							  PciIo, 
-							  EfiPciIoWidthUint16, 
-							  PCI_COMMAND_OFFSET, 
-							  1, 
-							  &Command
-							  );
+                            PciIo, 
+                            EfiPciIoWidthUint16, 
+                            PCI_COMMAND_OFFSET, 
+                            1, 
+                            &Command
+                            );
 	
 	Command |= 1;	
 	Status = PciIo->Pci.Write (
-							 PciIo, 
-							 EfiPciIoWidthUint16, 
-							 PCI_COMMAND_OFFSET, 
-							 1, 
-							 &Command
-							 );
+                             PciIo, 
+                             EfiPciIoWidthUint16, 
+                             PCI_COMMAND_OFFSET, 
+                             1, 
+                             &Command
+                             );
 	
 	DBG("SMBus CmdReg: 0x%x\n", Command);
-
+  
 	Status = PciIo->Pci.Read (
-							  PciIo,
-							  EfiPciIoWidthUint32,
-							  0x10,
-							  1,
-							  &mmio
-							  );
-	
-	Status = PciIo->Pci.Read (
-							  PciIo,
-							  EfiPciIoWidthUint32,
-							  0x20,
-							  1,
-							  &base
-							  );
-	
-    base &= 0xFFFE;
+                            PciIo,
+                            EfiPciIoWidthUint32,
+                            0x10,
+                            1,
+                            &mmio
+                            );
 	
 	Status = PciIo->Pci.Read (
-							  PciIo,
-							  EfiPciIoWidthUint32,
-							  0x40,
-							  1,
-							  &hostc
-							  );
+                            PciIo,
+                            EfiPciIoWidthUint32,
+                            0x20,
+                            1,
+                            &base
+                            );
 	
-
-    MsgLog("Scanning SMBus [%04x:%04x], mmio: 0x%x, ioport: 0x%x, hostc: 0x%x\n", 
-		vid, did, mmio, base, hostc);
-
+  base &= 0xFFFE;
+	
+	Status = PciIo->Pci.Read (
+                            PciIo,
+                            EfiPciIoWidthUint32,
+                            0x40,
+                            1,
+                            &hostc
+                            );
+	
+  
+  MsgLog("Scanning SMBus [%04x:%04x], mmio: 0x%x, ioport: 0x%x, hostc: 0x%x\n", 
+         vid, did, mmio, base, hostc);
+  
 	// needed at least for laptops
-    fullBanks = (gDMI->MemoryModules == gDMI->CntMemorySlots);
-
+  fullBanks = (gDMI->MemoryModules == gDMI->CntMemorySlots);
+  
 	spdbuf = AllocateZeroPool(MAX_SPD_SIZE);
 	
-    // Search MAX_RAM_SLOTS slots
-    for (i = 0; i <  MAX_RAM_SLOTS; i++){
-        slot = &gRAM->DIMM[i];
-        spd_size = smb_read_byte_intel(base, 0x50 + i, 0);
+  // Search MAX_RAM_SLOTS slots
+  for (i = 0; i <  MAX_RAM_SLOTS; i++){
+    slot = &gRAM->DIMM[i];
+    spd_size = smb_read_byte_intel(base, 0x50 + i, 0);
 		if (spd_size != 0xFF) {
-			DBG("SPD[0] (size): %d @0x%x \n", spd_size, 0x50 + i);
+			DBG("SPD[0] (size): 0x%02x @0x%x \n", spd_size, 0x50 + i);
 		}
 		
-        // Check spd is present
-        if (spd_size && (spd_size != 0xff))
-        {
+    // Check spd is present
+    if (spd_size && (spd_size != 0xff))
+    {
 			slot->spd = spdbuf;
-            slot->InUse = TRUE;
-
-            ZeroMem(slot->spd, spd_size);
-            
-            // Copy spd data into buffer
-            init_spd(slot->spd, base, i);
-		
-            switch (slot->spd[SPD_MEMORY_TYPE])  {
-            case SPD_MEMORY_TYPE_SDRAM_DDR:
-                
-                slot->ModuleSize = (((1 << ((slot->spd[SPD_NUM_ROWS] & 0x0f)
-									 + (slot->spd[SPD_NUM_COLUMNS] & 0x0f) - 17)) * 
-                                    ((slot->spd[SPD_NUM_DIMM_BANKS] & 0x7) + 1) *
-									slot->spd[SPD_NUM_BANKS_PER_SDRAM])/3)*2;
-                break;
-
-            case SPD_MEMORY_TYPE_SDRAM_DDR2:
-                
-                slot->ModuleSize = ((1 << ((slot->spd[SPD_NUM_ROWS] & 0x0f)
-									 + (slot->spd[SPD_NUM_COLUMNS] & 0x0f) - 17)) * 
-                                    ((slot->spd[SPD_NUM_DIMM_BANKS] & 0x7) + 1) *
-									slot->spd[SPD_NUM_BANKS_PER_SDRAM]);
-                break;
-                
-            case SPD_MEMORY_TYPE_SDRAM_DDR3:
-                
-                slot->ModuleSize = ((slot->spd[4] & 0x0f) + 28 ) + ((slot->spd[8] & 0x7)  + 3 );
-                slot->ModuleSize -= (slot->spd[7] & 0x7) + 25;
-                slot->ModuleSize = ((1 << slot->ModuleSize) * (((slot->spd[7] >> 3) & 0x1f) + 1));
-                
-                break;
-            }
-            
-            spd_type = (slot->spd[SPD_MEMORY_TYPE] < ((UINT8) 12) ? slot->spd[SPD_MEMORY_TYPE] : 0);
-            slot->Type = spd_mem_to_smbios[spd_type];
-            slot->PartNo = getDDRPartNum(slot->spd, base, i);
-            slot->Vendor = getVendorName(slot, base, i);
-            slot->SerialNo = getDDRSerial(slot->spd);
+      slot->InUse = TRUE;
+      
+      ZeroMem(slot->spd, spd_size);
+      
+      // Copy spd data into buffer
+      init_spd(slot->spd, base, i);
+      
+      switch (slot->spd[SPD_MEMORY_TYPE])  {
+        case SPD_MEMORY_TYPE_SDRAM_DDR:
+          
+          slot->ModuleSize = (((1 << ((slot->spd[SPD_NUM_ROWS] & 0x0f)
+                                      + (slot->spd[SPD_NUM_COLUMNS] & 0x0f) - 17)) * 
+                               ((slot->spd[SPD_NUM_DIMM_BANKS] & 0x7) + 1) *
+                               slot->spd[SPD_NUM_BANKS_PER_SDRAM])/3)*2;
+          break;
+          
+        case SPD_MEMORY_TYPE_SDRAM_DDR2:
+          
+          slot->ModuleSize = ((1 << ((slot->spd[SPD_NUM_ROWS] & 0x0f)
+                                     + (slot->spd[SPD_NUM_COLUMNS] & 0x0f) - 17)) * 
+                              ((slot->spd[SPD_NUM_DIMM_BANKS] & 0x7) + 1) *
+                              slot->spd[SPD_NUM_BANKS_PER_SDRAM]);
+          break;
+          
+        case SPD_MEMORY_TYPE_SDRAM_DDR3:
+          
+          slot->ModuleSize = ((slot->spd[4] & 0x0f) + 28 ) + ((slot->spd[8] & 0x7)  + 3 );
+          slot->ModuleSize -= (slot->spd[7] & 0x7) + 25;
+          slot->ModuleSize = ((1 << slot->ModuleSize) * (((slot->spd[7] >> 3) & 0x1f) + 1));
+          
+          break;
+      }
+      
+      spd_type = (slot->spd[SPD_MEMORY_TYPE] < ((UINT8) 12) ? slot->spd[SPD_MEMORY_TYPE] : 0);
+      slot->Type = spd_mem_to_smbios[spd_type];
+      slot->PartNo = getDDRPartNum(slot->spd, base, i);
+      slot->Vendor = getVendorName(slot, base, i);
+      slot->SerialNo = getDDRSerial(slot->spd);
 			//XXX - when we can FreePool allocated for these buffers?
-            // determine spd speed
-            speed = getDDRspeedMhz(slot->spd);
+      // determine spd speed
+      speed = getDDRspeedMhz(slot->spd);
 			DBG("DDR speed %dMHz \n", speed);
-            if (slot->Frequency<speed) slot->Frequency = speed;
+      if (slot->Frequency<speed) slot->Frequency = speed;
 			
 			// pci memory controller if available, is more reliable
 			if (gRAM->Frequency > 0) {
@@ -408,26 +408,26 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
 				slot->Frequency = freq;
 				DBG("RAM speed %dMHz \n", freq);
 			}
-
+      
 			MsgLog("Slot: %d Type %d %dMB (%a) %dMHz Vendor=%a \n PartNo=%a SerialNo=%a \n", 
-                       i, 
-                       (int)slot->Type,
-                       slot->ModuleSize, 
-                       spd_memory_types[spd_type],
-                       slot->Frequency,
-                       slot->Vendor,
-                       slot->PartNo,
-                       slot->SerialNo); 
-            
-
-        }
-
-        // laptops sometimes show slot 0 and 2 with slot 1 empty when only 2 slots are presents so:
-        gDMI->DIMM[i]= (i>0 && gRAM->DIMM[1].InUse==FALSE && fullBanks && gDMI->CntMemorySlots == 2)?mapping[i] : i; // for laptops case, mapping setup would need to be more generic than this
-        
+             i, 
+             (int)slot->Type,
+             slot->ModuleSize, 
+             spd_memory_types[spd_type],
+             slot->Frequency,
+             slot->Vendor,
+             slot->PartNo,
+             slot->SerialNo); 
+      
+      
+    }
+    
+    // laptops sometimes show slot 0 and 2 with slot 1 empty when only 2 slots are presents so:
+    gDMI->DIMM[i]= (i>0 && gRAM->DIMM[1].InUse==FALSE && fullBanks && gDMI->CntMemorySlots == 2)?mapping[i] : i; // for laptops case, mapping setup would need to be more generic than this
+    
 		slot->spd = NULL;
-
-    } // for
+    
+  } // for
 }
 /*
 static struct smbus_controllers_t smbus_controllers[] = {

@@ -7,6 +7,24 @@
 #include "Display.h"
 #include <OsxPciBusNoEnumerationDxe/PciCommand.h>
 
+#ifdef DBG
+#undef DBG
+#endif
+
+#ifndef DEBUG_FIX
+#define DEBUG_FIX 1
+#endif
+
+#if DEBUG_FIX==2
+#define DBG(x, ...)  AsciiPrint(x)
+#elif DEBUG_FIX==1
+#define DBG(x, ...)  MsgLog(x)
+#else
+#define DBG(x, ...)
+#endif
+
+
+
 //CHAR8*  device_name[10];  // 0=>Display  1=>network  2=>firewire 3=>LPCB 4=>HDAAudio 5=>RTC 6=>TMR 7=>SBUS 8=>PIC
 CHAR8*  UsbName[10];
 CHAR8*  Netmodel;
@@ -488,13 +506,13 @@ VOID CheckHardware()
         DevicePath = DevicePathFromHandle (PCIdevice.DeviceHandle);
         if (DevicePath)
         {
-          //DBG("Device patch = %s \n", DevicePathToStr(DevicePath));
+          DBG("Device patch = %s \n", DevicePathToStr(DevicePath));
           
           //Display ADR
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA)) {
             GetPciADR(DevicePath, &DisplayADR1[display], &DisplayADR2[display]);
-            //DBG("DisplayADR1[%d] = 0x%x, DisplayADR2[%d] = 0x%x\n", display, DisplayADR1[display], display, DisplayADR2[display]);
+            DBG("DisplayADR1[%d] = 0x%x, DisplayADR2[%d] = 0x%x\n", display, DisplayADR1[display], display, DisplayADR2[display]);
             DisplayVendor[display] = Pci.Hdr.VendorId;
             DisplayID[display] = Pci.Hdr.DeviceId;
             DisplaySubID[display] = Pci.Device.SubsystemID << 16| Pci.Device.SubsystemVendorID << 0;
@@ -532,7 +550,7 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_ETHERNET))
           {
             GetPciADR(DevicePath, &NetworkADR1, &NetworkADR2);
-            //DBG("NetworkADR1 = 0x%x, NetworkADR2 = 0x%x\n", NetworkADR1, NetworkADR2);
+            DBG("NetworkADR1 = 0x%x, NetworkADR2 = 0x%x\n", NetworkADR1, NetworkADR2);
             Netmodel = get_net_model(deviceid);
             
           }
@@ -542,7 +560,7 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_FIREWIRE))
           {
             GetPciADR(DevicePath, &FirewireADR1, &FirewireADR2);
-            //DBG("FirewireADR1 = 0x%x, FirewireADR2 = 0x%x\n", FirewireADR1, FirewireADR2);
+            DBG("FirewireADR1 = 0x%x, FirewireADR2 = 0x%x\n", FirewireADR1, FirewireADR2);
           }
           
           //SBUS ADR
@@ -550,7 +568,7 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_SMB))
           {
             GetPciADR(DevicePath, &SBUSADR1, &SBUSADR2);
-            //DBG("SBUSADR1 = 0x%x, SBUSADR2 = 0x%x\n", SBUSADR1, SBUSADR2);
+            DBG("SBUSADR1 = 0x%x, SBUSADR2 = 0x%x\n", SBUSADR1, SBUSADR2);
           }
           
           //USB
@@ -558,7 +576,7 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_USB)) 
           {
             GetPciADR(DevicePath, &USBADR[usb], NULL);
-            //DBG("USBADR[%d] = 0x%x\n", usb, USBADR[usb]);
+            DBG("USBADR[%d] = 0x%x\n", usb, USBADR[usb]);
             if (USBIDFIX)
             {
               //if (USBADR[usb] == 0x001D0000 && Pci.Hdr.DeviceId != 0x3a34) Pci.Hdr.DeviceId = 0x3a34;
@@ -581,7 +599,7 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA))
           {
             GetPciADR(DevicePath, &HDAADR, NULL);
-            //DBG("HDAADR = 0x%x\n", HDAADR);
+            DBG("HDAADR = 0x%x\n", HDAADR);
             UINT32 codecId = 0, layoutId = 0;
             codecId = HDA_getCodecVendorAndDeviceIds(PciIo);
             if (codecId >0)
@@ -618,7 +636,7 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_MASS_STORAGE_IDE))
           {
             GetPciADR(DevicePath, &IDEADR1, &IDEADR2);
-            //DBG("IDEADR1 = 0x%x, IDEADR2 = 0x%x\n", IDEADR1, IDEADR2);
+            DBG("IDEADR1 = 0x%x, IDEADR2 = 0x%x\n", IDEADR1, IDEADR2);
             IDEFIX = get_ide_model(deviceid);
             IDEVENDOR = Pci.Hdr.VendorId;
           }
@@ -629,7 +647,7 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[0] == 0x00))
           {
             GetPciADR(DevicePath, &SATAADR1, &SATAADR2);
-            //DBG("SATAADR1 = 0x%x, SATAADR2 = 0x%x\n", SATAADR1, SATAADR2);
+            DBG("SATAADR1 = 0x%x, SATAADR2 = 0x%x\n", SATAADR1, SATAADR2);
             SATAFIX = get_ide_model(deviceid);
             SATAVENDOR = Pci.Hdr.VendorId;
           }
@@ -640,7 +658,7 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[0] == 0x01))
           {
             GetPciADR(DevicePath, &SATAAHCIADR1, &SATAAHCIADR2);
-            //DBG("SATAAHCIADR1 = 0x%x, SATAAHCIADR2 = 0x%x\n", SATAAHCIADR1, SATAAHCIADR2);
+            DBG("SATAAHCIADR1 = 0x%x, SATAAHCIADR2 = 0x%x\n", SATAAHCIADR1, SATAAHCIADR2);
             //AHCIFIX = get_ahci_model(deviceid);
             SATAAHCIVENDOR = Pci.Hdr.VendorId;
           }
@@ -738,7 +756,7 @@ UINT32 get_size(UINT8* Buffer, UINT32 adr)
 		        Buffer[adr+3]         << 20;	
 	} 
   else {
-    DBG("wrong pointer to %x\n", adr);
+    DBG("wrong pointer to size field at %x\n", adr);
     return 0;  //this means wrong pointer to size field
   }
 
@@ -791,32 +809,9 @@ UINT32 write_size(UINT32 adr, UINT8* buffer, UINT32 len, UINT32 oldsize)
         sizeoffset -= 1;
     }
     
-    DBG("size =0x%08x, adr = 0x%08x, offset = 0x%08x\n", size, adr, sizeoffset);
+    DBG("write size =0x%08x, adr = 0x%08x, offset = 0x%08x\n", size, adr, sizeoffset);
     //offset = size;
   aml_write_size(size, (CHAR8 *)buffer, adr); //reuse existing codes  
-/*	if (size <= 0x3f)
-	{
-		buffer[adr] = size;
-	}
-	else if (size <= 0x0fff) 
-	{
-		buffer[adr]   = 0x40 | (size & 0xf);
-		buffer[adr+1] = (size >> 4) & 0xff;     
-	}
-	else if (size <= 0x0fffff) 
-	{
-		buffer[adr]   = 0x80 | (size & 0xf);
-		buffer[adr+1] = (size >> 4) & 0xff;
-		buffer[adr+2] = (size >> 12) & 0xff;
-	}
-    else 
-	{
-		buffer[adr]   = 0xc0 | (size & 0xf);
-		buffer[adr+1] = (size >> 4) & 0xff;
-		buffer[adr+2] = (size >> 12) & 0xff;
-		buffer[adr+3] = (size >> 20) & 0xff;
-	}	
-*/	
 	return len;
 }
 
@@ -4416,7 +4411,7 @@ VOID FixBiosDsdt (UINT8* temp)
   // Fix Network
   if (NetworkADR1 && (gSettings.FixDsdt & FIX_LAN))
   {
-    DBG("patch LAN in DSDT \n");
+//    DBG("patch LAN in DSDT \n");
     DsdtLen = FIXNetwork(temp, DsdtLen);
   }
   

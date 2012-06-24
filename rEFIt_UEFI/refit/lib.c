@@ -433,7 +433,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
         default:
           break;
       }
-      DBG("Volume kind=%s CRC=0x%x\n", kind, VCrc32);
+ //     DBG("Volume kind=%s CRC=0x%x\n", kind, VCrc32);
       if (Volume->DiskKind == DISK_KIND_OPTICAL) { //CDROM
         CHAR8* p = (CHAR8*)&SectorBuffer[8];
 				while (*p == 0x20) {
@@ -628,7 +628,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
         // NOTE: If you add an operating system with a name that starts with 'W' or 'L', you
         //  need to fix AddLegacyEntry in main.c.
         
-#if  REFIT_DEBUG > 0
+#if 0 //  REFIT_DEBUG > 0
         DBG("  Result of bootcode detection: %s %s (%s)\n",
               Volume->HasBootCode ? L"bootable" : L"non-bootable",
               Volume->OSName, Volume->OSIconName);
@@ -1071,7 +1071,7 @@ VOID ScanVolumes(VOID)
       }
     }
     FreePool(Handles);
-  DBG("Found %d volumes\n", VolumesCount);
+//  DBG("Found %d volumes\n", VolumesCount);
   if (SelfVolume == NULL){
     DBG("WARNING: SelfVolume not found"); //Slice - and what?
     SelfVolume = AllocateZeroPool(sizeof(REFIT_VOLUME));

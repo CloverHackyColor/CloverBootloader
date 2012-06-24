@@ -982,7 +982,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     }
     //  DBG("Found FADT in BIOS: %p\n", FadtPointer);
     Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)(FadtPointer->FirmwareCtrl);
-    DBG("Found FACS in BIOS: %p\n", Facs);
+//    DBG("Found FACS in BIOS: %p\n", Facs);
     BiosDsdt = FadtPointer->XDsdt;
     if (BiosDsdt == 0) {
       BiosDsdt = FadtPointer->Dsdt;

@@ -21,7 +21,7 @@
 
 #include "Platform.h"
 
-#define DEBUG_SMBIOS 0
+#define DEBUG_SMBIOS 1
 
 #if DEBUG_SMBIOS == 2
 #define DBG(x...) AsciiPrint(x)
@@ -190,7 +190,7 @@ EFI_STATUS UpdateSmbiosString (SMBIOS_STRUCTURE_POINTER SmbiosTable, SMBIOS_TABL
 	if ((SmbiosTable.Raw == NULL) || !Buffer || !Field) {
 		return EFI_NOT_FOUND;
 	}
-
+/*
 	if (Once) {
 		DBG("Raw table data:\n");
 		for (ALength=0; ALength<Length; ALength++){
@@ -200,7 +200,7 @@ EFI_STATUS UpdateSmbiosString (SMBIOS_STRUCTURE_POINTER SmbiosTable, SMBIOS_TABL
 		DBG("\n");
 		Once = FALSE;
 	}
-
+*/
 	AString = (CHAR8*)(SmbiosTable.Raw + SmbiosTable.Hdr->Length); //first string
 	while (Index != *Field) {
 		if (*AString) {
@@ -223,8 +223,8 @@ EFI_STATUS UpdateSmbiosString (SMBIOS_STRUCTURE_POINTER SmbiosTable, SMBIOS_TABL
 	// AString is at place to copy
 	ALength = iStrLen(AString, 0);
 	BLength = iStrLen(Buffer, SMBIOS_STRING_MAX_LENGTH);
-	DBG("Table type %d field %d\n", SmbiosTable.Hdr->Type, *Field);
-	DBG("Old string length=%d new length=%d\n", ALength, BLength);
+//	DBG("Table type %d field %d\n", SmbiosTable.Hdr->Type, *Field);
+//	DBG("Old string length=%d new length=%d\n", ALength, BLength);
 	if (BLength > ALength) {
 		//Shift right
 		C1 = (CHAR8*)SmbiosTable.Raw + Length; //old end
@@ -245,7 +245,7 @@ EFI_STATUS UpdateSmbiosString (SMBIOS_STRUCTURE_POINTER SmbiosTable, SMBIOS_TABL
 	CopyMem(AString, Buffer, BLength);
 	*(AString + BLength) = 0; // not sure there is 0	
 
-#if DEBUG_SMBIOS != 0
+#if 0 // DEBUG_SMBIOS != 0
 	DBG("Old table length=%d, calculated new=%d\n", Length, Length+BLength-ALength);
 	Length = SmbiosTableLength(SmbiosTable);
 	DBG("New table length=%d\n", Length);
@@ -787,6 +787,7 @@ VOID PatchTableType4()
 
 VOID PatchTableType6()
 {
+  UINT8 SizeField = 0;
 	//
 	// MemoryModule (TYPE 6)
 
@@ -799,9 +800,18 @@ VOID PatchTableType6()
 //			MsgLog("SMBIOS Table 6 index %d not found\n", Index);
 			continue;
 		}
-		mInstalled[Index]	=  (1ULL << (SmbiosTable.Type6->InstalledSize.InstalledOrEnabledSize & 0x7F)) * (1024 * 1024);
+    SizeField = SmbiosTable.Type6->InstalledSize.InstalledOrEnabledSize & 0x7F;
+    if (SizeField < 0x7D) {
+      mInstalled[Index]	=  (1ULL << SizeField) * (1024 * 1024);
+    } else if (SizeField == 0x7F) {
+      mInstalled[Index]	= 0;
+    } else
+    		mInstalled[Index]	=  4096ULL * (1024ULL * 1024ULL);
 		MsgLog("MEMORY_MODULE %d Installed %x ", Index, mInstalled[Index]);
-		mEnabled[Index]		= (1ULL << ((UINT8)SmbiosTable.Type6->EnabledSize.InstalledOrEnabledSize & 0x7F)) * (1024 * 1024);
+    if (SizeField >= 0x7D) {
+      mEnabled[Index]		= 0;
+    } else
+      mEnabled[Index]		= (1ULL << ((UINT8)SmbiosTable.Type6->EnabledSize.InstalledOrEnabledSize & 0x7F)) * (1024 * 1024);
 		MsgLog(" Enabled %x \n", mEnabled[Index]);
 		LogSmbiosTable(SmbiosTable);		
 	}
@@ -906,7 +916,7 @@ VOID PatchTableTypeSome()
 	//
 	// Different types 
 	for (IndexType = 0; IndexType < 13; IndexType++) {
-		for (Index = 0; Index < 16; Index++) {
+		for (Index = 0; Index < 32; Index++) {
 			SmbiosTable = GetSmbiosTableFromType(EntryPoint, tableTypes[IndexType], Index);
 			if (SmbiosTable.Raw == NULL) {
 				continue;
@@ -962,7 +972,7 @@ VOID PatchTableType16()
 //	newSmbiosTable.Type16->Location = MemoryArrayLocationProprietaryAddonCard;
 //	newSmbiosTable.Type16->Use = MemoryArrayUseSystemMemory;
 //	newSmbiosTable.Type16->MemoryErrorCorrection = MemoryErrorCorrectionMultiBitEcc;
-    if (gDMI->DIMM[2] && Index == 1 &&  newSmbiosTable.Type16->NumberOfMemoryDevices == 2)
+/*    if (gDMI->DIMM[2] && Index == 1 &&  newSmbiosTable.Type16->NumberOfMemoryDevices == 2)
     {
         gDMI->MaxMemorySlots = gDMI->CntMemorySlots;
         newSmbiosTable.Type16->NumberOfMemoryDevices = gDMI->CntMemorySlots;
@@ -970,9 +980,7 @@ VOID PatchTableType16()
 	TotalCount = newSmbiosTable.Type16->NumberOfMemoryDevices;
 	if (!TotalCount) {
 		TotalCount = MAX_SLOT_COUNT;
-	}
-	DBG("NumberOfMemoryDevices = %d\n", newSmbiosTable.Type16->NumberOfMemoryDevices);
-	DBG("TotalCount = %d\n", TotalCount);
+	} */
 	mHandle16 = LogSmbiosTable(newSmbiosTable);
 	return;
 }
@@ -986,7 +994,7 @@ VOID GetTableType17()
 	gDMI->MemoryModules = 0;
 	for (Index = 0; Index < TotalCount; Index++) {
 		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, Index);
-		DBG("Index = %d\n", Index);
+		DBG("Type 17 Index = %d\n", Index);
 		if (SmbiosTable.Raw == NULL) {
 //			Print(L"SmbiosTable: Type 17 (Memory Device number %d) not found!\n", Index);
 			continue;
@@ -998,8 +1006,8 @@ VOID GetTableType17()
 		if (SmbiosTable.Type17->Speed > 0) {
 			gRAM->DIMM[Index].Frequency = SmbiosTable.Type17->Speed;
 		}
-		DBG("CntMemorySlots = %d\n", gDMI->CntMemorySlots)
-		DBG("gDMI->MemoryModules = %d\n", gDMI->MemoryModules)
+//		DBG("CntMemorySlots = %d\n", gDMI->CntMemorySlots)
+//		DBG("gDMI->MemoryModules = %d\n", gDMI->MemoryModules)
 		DBG("SmbiosTable.Type17->Speed = %d\n", SmbiosTable.Type17->Speed)
 		DBG("SmbiosTable.Type17->Size = %d\n", SmbiosTable.Type17->Size)
 	}
@@ -1023,11 +1031,11 @@ VOID PatchTableType17()
 		CopyMem((VOID*)newSmbiosTable.Type17, (VOID*)SmbiosTable.Type17, TableSize);
 		Once = TRUE;		
 		newSmbiosTable.Type17->MemoryArrayHandle = mHandle16;
-		if (gDMI->DIMM[2] && Index == 1 &&  TotalCount == 2)
+/*		if (gDMI->DIMM[2] && Index == 1 &&  TotalCount == 2)
 		{
 		    newSmbiosTable.Type17->Size =  gRAM->DIMM[2].ModuleSize;
 		    newSmbiosTable.Type17->Speed = gRAM->DIMM[2].Frequency;
-		}
+		} */
 		mMemory17[Index] = mTotalSystemMemory + newSmbiosTable.Type17->Size;
 		mTotalSystemMemory = mMemory17[Index];
 		DBG("mTotalSystemMemory = %d\n", mMemory17[Index]);
@@ -1080,13 +1088,23 @@ VOID PatchTableType17()
 */
 #else
 		INTN map = gDMI->DIMM[Index];
+    INTN map0 = map;
 		if (gDMI->DIMM[2] && Index == 1 &&  TotalCount == 2)
 		{
+      DBG(" Index=1 but DIMM[2] present. Redirect map: old=%d\n", map);
 		    map = gDMI->DIMM[2];
+      DBG("...new map=%d\n", map);
 		}		
 		if (gRAM->DIMM[map].InUse) {
+      DBG("new map InUse\n");
 			newSmbiosTable.Type17->MemoryType = gRAM->DIMM[map].Type;
-		}
+		} else {
+      map = map0;
+      if (gRAM->DIMM[map].InUse) {
+        DBG("old map InUse\n");
+        newSmbiosTable.Type17->MemoryType = gRAM->DIMM[map].Type;
+      }
+    }
 		
 		if(iStrLen(gRAM->DIMM[map].Vendor, 64)>0 && gRAM->DIMM[map].InUse){
 			UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM->DIMM[map].Vendor);			
@@ -1135,7 +1153,7 @@ PatchTableType19 ()
 	for (Index=0; Index<TotalCount+1; Index++) {
 		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_ARRAY_MAPPED_ADDRESS, Index);
 		if (SmbiosTable.Raw == NULL) {			
-			break;
+			continue;
 		}
 		if (SmbiosTable.Type19->EndingAddress > TotalEnd) {
 			TotalEnd = SmbiosTable.Type19->EndingAddress;
@@ -1213,8 +1231,8 @@ VOID PatchTableType128()
 		newSmbiosTable.Type128->Hdr.Type = 128;
 		newSmbiosTable.Type128->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE128); 
 		newSmbiosTable.Type128->Hdr.Handle = 0x8000; //common rule
-		newSmbiosTable.Type128->FirmwareFeatures = 0x80000015; //imac112 -> 0x1403
-		newSmbiosTable.Type128->FirmwareFeaturesMask = 0x800003ff; // 0xffff
+		newSmbiosTable.Type128->FirmwareFeatures = 0x80001417; //imac112 -> 0x1403
+		newSmbiosTable.Type128->FirmwareFeaturesMask = 0x80003fff; // 0xffff
 		/*
 		 FW_REGION_RESERVED   = 0,
 		 FW_REGION_RECOVERY   = 1,
@@ -1317,20 +1335,20 @@ EFI_STATUS PrepatchSmbios()
 
 	// Get SMBIOS Tables
 	Smbios = FindOemSMBIOSPtr();
-	DBG("OEM SMBIOS EPS=%p\n", Smbios);
-	DBG("OEM Tables = %x\n", ((SMBIOS_TABLE_ENTRY_POINT*)Smbios)->TableAddress);
+//	DBG("OEM SMBIOS EPS=%p\n", Smbios);
+//	DBG("OEM Tables = %x\n", ((SMBIOS_TABLE_ENTRY_POINT*)Smbios)->TableAddress);
 	if (!Smbios) {
 		Status = EFI_NOT_FOUND;
-		DBG("Original SMBIOS System Table not found! Getting from Hob...\n");
+//		DBG("Original SMBIOS System Table not found! Getting from Hob...\n");
 		Smbios = GetSmbiosTablesFromHob();
-		DBG("HOB SMBIOS EPS=%p\n", Smbios);
+//		DBG("HOB SMBIOS EPS=%p\n", Smbios);
 		if (!Smbios) {
-			DBG(L"And here SMBIOS System Table not found! Trying System table ...\n");
+//			DBG("And here SMBIOS System Table not found! Trying System table ...\n");
 			// this should work on any UEFI
 			Smbios = GetSmbiosTablesFromConfigTables();
-			DBG("ConfigTables SMBIOS EPS=%p\n", Smbios);
+//			DBG("ConfigTables SMBIOS EPS=%p\n", Smbios);
 		if (!Smbios) {
-				DBG("And here SMBIOS System Table not found! Exiting...\n");
+//				DBG("And here SMBIOS System Table not found! Exiting...\n");
 			return EFI_NOT_FOUND;
 		}		
 	}
@@ -1346,11 +1364,11 @@ EFI_STATUS PrepatchSmbios()
 	Status = gBS->AllocatePages (AllocateMaxAddress, EfiACPIMemoryNVS, /*EfiACPIReclaimMemory, 	*/
 	EFI_SIZE_TO_PAGES(BufferLen), &BufferPtr);
 	if (EFI_ERROR (Status)) {
-		Print(L"There is error allocating pages in EfiACPIMemoryNVS!\n");
+//		Print(L"There is error allocating pages in EfiACPIMemoryNVS!\n");
 		Status = gBS->AllocatePages (AllocateMaxAddress,  /*EfiACPIMemoryNVS, */EfiACPIReclaimMemory,
 											   ROUND_PAGE(BufferLen)/EFI_PAGE_SIZE, &BufferPtr);
 		if (EFI_ERROR (Status)) {
-			Print(L"There is error allocating pages in EfiACPIReclaimMemory!\n");
+//			Print(L"There is error allocating pages in EfiACPIReclaimMemory!\n");
 		}
 	}
 //	DBG("Buffer @ %p\n", BufferPtr);
@@ -1404,7 +1422,7 @@ VOID PatchSmbios(VOID) //continue
 	PatchTableType3();
 	PatchTableType7(); //we should know handles before patch Table4
 	PatchTableType4();		
-//	PatchTableType6();
+	PatchTableType6();
 	PatchTableType9();
 	PatchTableTypeSome();
 	PatchTableType16();
@@ -1417,9 +1435,7 @@ VOID PatchSmbios(VOID) //continue
 	PatchTableType132();
 	AddSmbiosEndOfTable();
 	if(MaxStructureSize > MAX_TABLE_SIZE){
-//	   SHOW_ON_ERROR(Status, "Found too large SMBIOS table! Correct settings and try again.",
-//					 L"Длинновата у вас таблица! Укоротите в меню что-нибудь...", STOP_ICON);
-    Print(L"Too long SMBIOS!\n");
+//    Print(L"Too long SMBIOS!\n");
 	}
 	FreePool((VOID*)newSmbiosTable.Raw);	
 	
@@ -1460,8 +1476,8 @@ VOID FinalizeSmbios() //continue
 	SmbiosEpsNew->IntermediateChecksum = (UINT8)(256 - Checksum8((UINT8*)SmbiosEpsNew + 0x10, 																	SmbiosEpsNew->EntryPointLength - 0x10));
 	SmbiosEpsNew->EntryPointStructureChecksum = 0;
 	SmbiosEpsNew->EntryPointStructureChecksum = (UINT8)(256 - Checksum8((UINT8*)SmbiosEpsNew, SmbiosEpsNew->EntryPointLength));
-	DBG("SmbiosEpsNew->EntryPointLength = %d\n", SmbiosEpsNew->EntryPointLength);
-	DBG("DMI checksum = %d\n", Checksum8((UINT8*)SmbiosEpsNew, SmbiosEpsNew->EntryPointLength));
+//	DBG("SmbiosEpsNew->EntryPointLength = %d\n", SmbiosEpsNew->EntryPointLength);
+//	DBG("DMI checksum = %d\n", Checksum8((UINT8*)SmbiosEpsNew, SmbiosEpsNew->EntryPointLength));
 	gBS->InstallConfigurationTable (&gEfiSmbiosTableGuid, (VOID*)SmbiosEpsNew);
 	gST->Hdr.CRC32 = 0;
 	gBS->CalculateCrc32 ((UINT8 *) &gST->Hdr, gST->Hdr.HeaderSize, &gST->Hdr.CRC32);
