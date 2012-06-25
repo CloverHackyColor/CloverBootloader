@@ -1011,10 +1011,10 @@ VOID GetTableType17()
 		DBG("SmbiosTable.Type17->Speed = %d\n", SmbiosTable.Type17->Speed);
 		DBG("SmbiosTable.Type17->Size = %d\n", SmbiosTable.Type17->Size);
 		if ((SmbiosTable.Type17->Size & 0x8000) == 0) {
-			mMemory17[Index] = mTotalSystemMemory + SmbiosTable.Type17->Size;  //Mb
-			mTotalSystemMemory = mMemory17[Index];
+			mTotalSystemMemory += SmbiosTable.Type17->Size; //Mb
+			mMemory17[Index] = SmbiosTable.Type17->Size > 0 ? mTotalSystemMemory : 0;
 		}
-		DBG("mTotalSystemMemory = %d\n", mMemory17[Index]);
+		DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
 	}
 }
 		
@@ -1026,7 +1026,7 @@ VOID PatchTableType17()
 	for (Index = 0; Index < TotalCount; Index++) {
 		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, Index);
 		//}
-		DBG("Index = %d\n",Index);
+		//DBG("SMBIOS Type 17 Index = %d:\n", Index);
 		if (SmbiosTable.Raw == NULL) {
 //		//	Print(L"SmbiosTable: Type 17 (Memory Device number %d) not found!\n", Index);
 			continue;
@@ -1041,9 +1041,9 @@ VOID PatchTableType17()
 		    newSmbiosTable.Type17->Size =  gRAM->DIMM[2].ModuleSize;
 		    newSmbiosTable.Type17->Speed = gRAM->DIMM[2].Frequency;
 		} 
-		mMemory17[Index] = mTotalSystemMemory + newSmbiosTable.Type17->Size;
-		mTotalSystemMemory = mMemory17[Index];
-		DBG("mTotalSystemMemory = %d\n", mMemory17[Index]);
+		mTotalSystemMemory += newSmbiosTable.Type17->Size;
+		mMemory17[Index] = newSmbiosTable.Type17->Size > 0 ? mTotalSystemMemory : 0;
+		DBG("mMemory17[%d] = %d, mTotalSystemMemory = %d\n", Index, mMemory17[Index], mTotalSystemMemory);
 */		
 		
 #if NOTSPD		
@@ -1127,7 +1127,6 @@ VOID PatchTableType17()
 		
 #endif
 		mHandle17[Index] = LogSmbiosTable(newSmbiosTable);
-				
 	}
 	return;
 }
@@ -1197,13 +1196,19 @@ VOID PatchTableType20 ()
 		TableSize = SmbiosTableLength(SmbiosTable);
 		ZeroMem((VOID*)newSmbiosTable.Type20, MAX_TABLE_SIZE);
 		CopyMem((VOID*)newSmbiosTable.Type20, (VOID*)SmbiosTable.Type20, TableSize);
-		for (j=TotalCount; j>0; j--) {
+		for (j=0; j < TotalCount; j++) {
 			//EndingAddress in kb while mMemory in Mb
-			if (((UINT64)mMemory17[j]  << 10) > newSmbiosTable.Type20->EndingAddress)
-			{
+			DBG("Type20[%d]->End = 0x%lx, mMemory17[%d] = 0x%lx",
+				Index, newSmbiosTable.Type20->EndingAddress, j, (UINT64)mMemory17[j]  << 10);
+			if (((UINT64)mMemory17[j]  << 10) > newSmbiosTable.Type20->EndingAddress) {	
 				newSmbiosTable.Type20->MemoryDeviceHandle = mHandle17[j];
+				DBG(" MemoryDeviceHandle = 0x%x\n", newSmbiosTable.Type20->MemoryDeviceHandle);
+				mMemory17[j] = 0; // used
+				break;
 			}
+			DBG("\n");
 		}
+		
 		newSmbiosTable.Type20->MemoryArrayMappedAddressHandle = mHandle19;
 		//
 		// Record Smbios Type 20
