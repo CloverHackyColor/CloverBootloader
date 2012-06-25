@@ -1008,8 +1008,13 @@ VOID GetTableType17()
 		}
 //		DBG("CntMemorySlots = %d\n", gDMI->CntMemorySlots)
 //		DBG("gDMI->MemoryModules = %d\n", gDMI->MemoryModules)
-		DBG("SmbiosTable.Type17->Speed = %d\n", SmbiosTable.Type17->Speed)
-		DBG("SmbiosTable.Type17->Size = %d\n", SmbiosTable.Type17->Size)
+		DBG("SmbiosTable.Type17->Speed = %d\n", SmbiosTable.Type17->Speed);
+		DBG("SmbiosTable.Type17->Size = %d\n", SmbiosTable.Type17->Size);
+		if ((SmbiosTable.Type17->Size & 0x8000) == 0) {
+			mMemory17[Index] = mTotalSystemMemory + SmbiosTable.Type17->Size;  //Mb
+			mTotalSystemMemory = mMemory17[Index];
+		}
+		DBG("mTotalSystemMemory = %d\n", mMemory17[Index]);
 	}
 }
 		
@@ -1035,11 +1040,11 @@ VOID PatchTableType17()
 		{
 		    newSmbiosTable.Type17->Size =  gRAM->DIMM[2].ModuleSize;
 		    newSmbiosTable.Type17->Speed = gRAM->DIMM[2].Frequency;
-		} */
+		} 
 		mMemory17[Index] = mTotalSystemMemory + newSmbiosTable.Type17->Size;
 		mTotalSystemMemory = mMemory17[Index];
 		DBG("mTotalSystemMemory = %d\n", mMemory17[Index]);
-		
+*/		
 		
 #if NOTSPD		
 	//	SmbiosTable.Type17->FormFactor = MemoryFormFactorProprietaryCard; //why?
@@ -1192,8 +1197,9 @@ VOID PatchTableType20 ()
 		TableSize = SmbiosTableLength(SmbiosTable);
 		ZeroMem((VOID*)newSmbiosTable.Type20, MAX_TABLE_SIZE);
 		CopyMem((VOID*)newSmbiosTable.Type20, (VOID*)SmbiosTable.Type20, TableSize);
-		for (j=0; j<TotalCount; j++) {
-			if (((UINT32)mMemory17[j]  << 20) < newSmbiosTable.Type20->EndingAddress)
+		for (j=TotalCount; j>0; j--) {
+			//EndingAddress in kb while mMemory in Mb
+			if (((UINT64)mMemory17[j]  << 10) > newSmbiosTable.Type20->EndingAddress)
 			{
 				newSmbiosTable.Type20->MemoryDeviceHandle = mHandle17[j];
 			}

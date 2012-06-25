@@ -25,7 +25,7 @@
 
 
 
-//CHAR8*  device_name[10];  // 0=>Display  1=>network  2=>firewire 3=>LPCB 4=>HDAAudio 5=>RTC 6=>TMR 7=>SBUS 8=>PIC
+CHAR8*  device_name[10];  // 0=>Display  1=>network  2=>firewire 3=>LPCB 4=>HDAAudio 5=>RTC 6=>TMR 7=>SBUS 8=>PIC
 CHAR8*  UsbName[10];
 CHAR8*  Netmodel;
 
@@ -1159,15 +1159,15 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
           if (dsdt[j-8] == 0x0C && dsdt[j-9] == 0x52 && dsdt[j-10] == 0x44 && dsdt[j-11] == 0x41 &&
               dsdt[j-12] == 0x5F && dsdt[j-13] == 0x08)
           {
-            //DBG("device NAME(_ADR,0x%08x) before is Name(_ADR,0x%02x%02x%02x%02x) this is not network device\n",
-            //       NetworkADR1, dsdt[j-4], dsdt[j-5], dsdt[j-6], dsdt[j-7]);
+            DBG("device NAME(_ADR,0x%08x) before is Name(_ADR,0x%02x%02x%02x%02x) this is not network device\n",
+                   NetworkADR1, dsdt[j-4], dsdt[j-5], dsdt[j-6], dsdt[j-7]);
           } 
           else 
           {
-            //device_name[1] = AllocateZeroPool(5);
-            //CopyMem(device_name[1], dsdt+j, 4);
-            //DBG("found NetWork device NAME(_ADR,0x%08x) And Name is %a\n", 
-            //    NetworkADR1, device_name[1]);
+            device_name[1] = AllocateZeroPool(5);
+            CopyMem(device_name[1], dsdt+j, 4);
+            DBG("found NetWork device NAME(_ADR,0x%08x) And Name is %a\n", 
+                NetworkADR1, device_name[1]);
             NetworkName = TRUE;
             NetworkADR = j;
           }
@@ -1183,20 +1183,20 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
           if (dsdt[j-8] == 0x0C && dsdt[j-9] == 0x52 && dsdt[j-10] == 0x44 && dsdt[j-11] == 0x41 &&
               dsdt[j-12] == 0x5F && dsdt[j-13] == 0x08)
           {
-            //DBG("device NAME(_ADR,0x%08x) before is Name(_ADR,0x%02x%02x%02x%02x) this is not Firewire device\n",
-            //       FirewireADR1, dsdt[j-4], dsdt[j-5], dsdt[j-6], dsdt[j-7]);
+            DBG("device NAME(_ADR,0x%08x) before is Name(_ADR,0x%02x%02x%02x%02x) this is not Firewire device\n",
+                   FirewireADR1, dsdt[j-4], dsdt[j-5], dsdt[j-6], dsdt[j-7]);
           } 
           else 
           {
-            //device_name[2] = AllocateZeroPool(5);
-            //CopyMem(device_name[2], dsdt+j, 4);
-            //DBG("found Firewire device NAME(_ADR,0x%08x) And Name is %a\n", 
-            //    FirewireADR1, device_name[2]);
+            device_name[2] = AllocateZeroPool(5);
+            CopyMem(device_name[2], dsdt+j, 4);
+            DBG("found Firewire device NAME(_ADR,0x%08x) And Name is %a\n", 
+                FirewireADR1, device_name[2]);
             FirewireADR = j;
           }
         } // End Firewire
         
-        // Find HDA Devide Address
+        // Find HDA Deviсe Address
         if (HDAADR != 0x00000000 && HDAFIX &&
             dsdt[j+4] == 0x08 && dsdt[j+5] == 0x5F && dsdt[j+6] == 0x41 && dsdt[j+7] == 0x44 &&
             dsdt[j+8] == 0x52 && dsdt[j+9] == 0x0C && dsdt[j+10] == ((HDAADR & 0x000000ff) >> 0) && 
@@ -1206,8 +1206,8 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
           if (dsdt[j-8] == 0x0C && dsdt[j-9] == 0x52 && dsdt[j-10] == 0x44 && dsdt[j-11] == 0x41 &&
               dsdt[j-12] == 0x5F && dsdt[j-13] == 0x08)
           {
-            //DBG("device NAME(_ADR,0x%08x) before is Name(_ADR,0x%02x%02x%02x%02x) this is not HDA Audio device\n",
-            //       FirewireADR1, dsdt[j-4], dsdt[j-5], dsdt[j-6], dsdt[j-7]);
+            DBG("device NAME(_ADR,0x%08x) before is Name(_ADR,0x%02x%02x%02x%02x) this is not HDA Audio device\n",
+                   FirewireADR1, dsdt[j-4], dsdt[j-5], dsdt[j-6], dsdt[j-7]);
           }
           else
           {
@@ -1215,8 +1215,8 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
             CopyMem(device_name, dsdt+j, 4);
             if (dsdt[j] != 'H' || dsdt[j+1] != 'D' || dsdt[j+2] != 'E' || dsdt[j+3] != 'F') 
             {
-              //DBG("found HDA device NAME(_ADR,0x%08x) And Name is %a, it is not HDEF will patch to HDEF\n", 
-              //       HDAADR, device_name[4]);
+              DBG("found HDA device NAME(_ADR,0x%08x) And Name is %a, it is not HDEF will patch to HDEF\n", 
+                     HDAADR, device_name[4]);
               for (k=0; len<len-20; k++) 
               {
                 if (dsdt[k] == device_name[0] && dsdt[k+1] == device_name[1] &&
@@ -1241,8 +1241,8 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
           if (dsdt[j-8] == 0x0C && dsdt[j-9] == 0x52 && dsdt[j-10] == 0x44 && dsdt[j-11] == 0x41 &&
               dsdt[j-12] == 0x5F && dsdt[j-13] == 0x08)
           {
-            //DBG("device NAME(_ADR,0x001F0000) before is Name(_ADR,0x%02x%02x%02x%02x) this is not LPCB device\n",
-            //       dsdt[j-4], dsdt[j-5], dsdt[j-6], dsdt[j-7]);
+            DBG("device NAME(_ADR,0x001F0000) before is Name(_ADR,0x%02x%02x%02x%02x) this is not LPCB device\n",
+                   dsdt[j-4], dsdt[j-5], dsdt[j-6], dsdt[j-7]);
           }
           else
           {
@@ -1255,14 +1255,14 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
               {
                 LPCBADR = j-k+1;
                 LPCBSIZE = get_size(dsdt, j-k+1);
-                //DBG("found Device(LPCB) address = 0x%08x size = 0x%08x\n", LPCBADR, LPCBSIZE);
+                DBG("found Device(LPCB) address = 0x%08x size = 0x%08x\n", LPCBADR, LPCBSIZE);
                 break;
               }
             }
-            //device_name[3] = AllocateZeroPool(5);
-            //CopyMem(device_name[3], dsdt+j, 4);
-            //DBG("found LPCB device NAME(_ADR,0x001F0000) And Name is %a\n", 
-            //    device_name[3]);
+            device_name[3] = AllocateZeroPool(5);
+            CopyMem(device_name[3], dsdt+j, 4);
+            DBG("found LPCB device NAME(_ADR,0x001F0000) And Name is %a\n", 
+                device_name[3]);
           }
         }  // End LPCB
         
@@ -1275,15 +1275,15 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
           if (dsdt[j-8] == 0x0C && dsdt[j-9] == 0x52 && dsdt[j-10] == 0x44 && dsdt[j-11] == 0x41 &&
               dsdt[j-12] == 0x5F && dsdt[j-13] == 0x08)
           {
-            //DBG("device NAME(_ADR,0x001F0003) before is Name(_ADR,0x%02x%02x%02x%02x) this is not SBUS device\n",
-            //       dsdt[j-4], dsdt[j-5], dsdt[j-6], dsdt[j-7]);
+            DBG("device NAME(_ADR,0x001F0003) before is Name(_ADR,0x%02x%02x%02x%02x) this is not SBUS device\n",
+                   dsdt[j-4], dsdt[j-5], dsdt[j-6], dsdt[j-7]);
           }
           else
           {
-            //device_name[7] = AllocateZeroPool(5);
-            //CopyMem(device_name[7], dsdt+j, 4);
-            //DBG("found SBUS device NAME(_ADR,0x001F0003) And Name is %a\n", 
-            //     device_name[7]);
+            device_name[7] = AllocateZeroPool(5);
+            CopyMem(device_name[7], dsdt+j, 4);
+            DBG("found SBUS device NAME(_ADR,0x001F0003) And Name is %a\n", 
+                 device_name[7]);
             SBUSADR = j;
           }
         } // end SBUS
@@ -2433,6 +2433,8 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   
 }
 
+CHAR8 data2[] = {0xe0,0x00,0x56,0x28};
+CHAR8 Yes[] = {0x01,0x00,0x00,0x00};
 
 UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
 {
@@ -2444,8 +2446,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
   AML_CHUNK* root = aml_create_node(NULL);
   AML_CHUNK* gfx0 = aml_create_node(NULL);
   AML_CHUNK* met = aml_create_node(NULL);
-  
-  CHAR8 Yes[] = {0x01,0x00,0x00,0x00};
+    
   CHAR8 *portname;
   CHAR8 *CFGname;
   
@@ -2892,7 +2893,6 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       //CHAR8 data1[] = {0x12,0x00,0x00,0x00};
       //aml_add_byte_buffer(pack, data1, sizeof(data1));
       aml_add_string(pack, "PinConfigurations");
-      CHAR8 data2[] = {0xe0,0x00,0x56,0x28};
       aml_add_byte_buffer(pack, data2, sizeof(data2));
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));

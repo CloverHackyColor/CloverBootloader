@@ -1478,7 +1478,7 @@ typedef struct {
   UINT16                    MemoryErrorInformationHandle; //6
   UINT16                    TotalWidth; //8
   UINT16                    DataWidth; //0x0A
-  UINT16                    Size;  //0x0C
+  UINT16                    Size;  //0x0C  //bit15=1 - kb =0 - Mb, if 0x7FFF then see extended size
   UINT8                     FormFactor;  //0x0E          ///< The enumeration value from MEMORY_FORM_FACTOR.
   UINT8                     DeviceSet; //0x0F
   SMBIOS_TABLE_STRING       DeviceLocator; //0x10

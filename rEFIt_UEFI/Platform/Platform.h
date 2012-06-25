@@ -121,7 +121,7 @@ Headers collection for procedures
 #define CPU_MODEL_LINCROFT      0x27
 #define CPU_MODEL_SANDY_BRIDGE	0x2A
 #define CPU_MODEL_WESTMERE      0x2C
-#define CPU_MODEL_JAKETOWN      0x2D  /* ever see? */
+#define CPU_MODEL_JAKETOWN      0x2D  /* Sandy Bridge Xeon LGA2011 */
 #define CPU_MODEL_NEHALEM_EX    0x2E
 #define CPU_MODEL_WESTMERE_EX   0x2F
 #define CPU_MODEL_IVY_BRIDGE    0x3A
