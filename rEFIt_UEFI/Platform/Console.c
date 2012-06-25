@@ -78,10 +78,10 @@ InitializeConsoleSim ()
   
   
   Status = gBS->InstallMultipleProtocolInterfaces (
-      &gImageHandle,
-      &gEfiConsoleControlProtocolGuid,
-      &gConsoleController,
-      NULL
+                       &gImageHandle,
+                       &gEfiConsoleControlProtocolGuid,
+                       &gConsoleController,
+                       NULL
                                                    );
   
   // get background clear

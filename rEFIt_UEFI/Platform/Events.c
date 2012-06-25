@@ -160,7 +160,7 @@ OnExitBootServices (
   }
   
   
-  if (gCPUStructure.Family!=0x06 && AsciiStrStr(OSVersion,"10.7")==0 )
+  if ((gCPUStructure.Family!=0x06 && AsciiStrStr(OSVersion,"10.7")==0)||(gCPUStructure.Model==CPU_MODEL_ATOM && AsciiStrStr(OSVersion,"10.7")==0) )
   {
     //DBG(L"\nKernel patch start!\n");    
     while(TRUE)
