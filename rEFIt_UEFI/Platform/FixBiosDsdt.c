@@ -295,17 +295,17 @@ CHAR8 hpet[] =
 
 CHAR8 hpet0[] =
 {
-  0x5B, 0x82, 0x4A, 0x04, 0x48, 0x50, 0x45, 0x54,                     //Device (HPET)
-  0x08, 0x5F, 0x48, 0x49, 0x44, 0x0C, 0x41, 0xD0, 0x01, 0x03,         //Name (_HID, EisaId ("PNP0103"))
-  0x08, 0x5F, 0x43, 0x49, 0x44, 0x0C, 0x41, 0xD0, 0x0C, 0x01,         //Name (_CID, EisaId ("PNP0C01"))
-  0x08, 0x41, 0x54, 0x54, 0x30, 0x11, 0x14, 0x0A, 0x11,               //Name (ATT0, ResourceTemplate ()
-  0x22, 0x01, 0x09,                                                   //  IRQNoFlags () {0,8,11}
-  0x86, 0x09, 0x00, 0x01,                                             //  Memory32Fixed (ReadWrite,
-  0x00, 0x00, 0xD0, 0xFE, 0x00, 0x04, 0x00, 0x00, 0x79, 0x00,         //    0xFED00000, 0x00000400, )
-  0x14, 0x09, 0x5F, 0x53, 0x54, 0x41, 0x00,                           //Method (_STA, 0, NotSerialized)
-  0xA4, 0x0A, 0x0F,                                                   //  Return (0x0F)
-  0x14, 0x0B, 0x5F, 0x43, 0x52, 0x53, 0x00,                           //Method (_CRS, 0, NotSerialized)
-  0xA4, 0x41, 0x54, 0x54, 0x30                                        //  Return (ATT0)
+  0x5B, 0x82, 0x4A, 0x04, 0x48, 0x50, 0x45, 0x54,                 //Device (HPET)
+  0x08, 0x5F, 0x48, 0x49, 0x44, 0x0C, 0x41, 0xD0, 0x01, 0x03,     //Name (_HID, EisaId ("PNP0103"))
+  0x08, 0x5F, 0x43, 0x49, 0x44, 0x0C, 0x41, 0xD0, 0x0C, 0x01,     //Name (_CID, EisaId ("PNP0C01"))
+  0x08, 0x41, 0x54, 0x54, 0x30, 0x11, 0x14, 0x0A, 0x11,           //Name (ATT0, ResourceTemplate ()
+  0x86, 0x09, 0x00, 0x01,                                         //  Memory32Fixed (ReadWrite,
+  0x00, 0x00, 0xD0, 0xFE, 0x00, 0x04, 0x00, 0x00,                 //    0xFED00000, 0x00000400, )
+  0x22, 0x01, 0x09, 0x79, 0x00,                                   //  IRQNoFlags () {0,8,11}
+  0x14, 0x09, 0x5F, 0x53, 0x54, 0x41, 0x00,                       //Method (_STA, 0, NotSerialized)
+  0xA4, 0x0A, 0x0F,                                               //  Return (0x0F)
+  0x14, 0x0B, 0x5F, 0x43, 0x52, 0x53, 0x00,                       //Method (_CRS, 0, NotSerialized)
+  0xA4, 0x41, 0x54, 0x54, 0x30                                    //  Return (ATT0)
 };
 
 CHAR8 hpet1[] =  // Name (_CID, EisaId ("PNP0C01"))
@@ -1727,6 +1727,7 @@ UINT32 FixHPET (UINT8* dsdt, UINT32 len)
     len = move_data(LPCBADR+LPCBSIZE, dsdt, len, sizeoffset);
     // add HPET code 
     CopyMem(dsdt+LPCBADR+LPCBSIZE, hpet0, sizeoffset);
+    HPETADR = LPCBADR + LPCBSIZE + 2;
   }
 	
 #if 0  
@@ -1856,7 +1857,7 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
   
 	AML_CHUNK* root = aml_create_node(NULL);
 	
-	// add Method(_DSM,4,NotSerialized) for USB
+	// add Method(_DSM,4,NotSerialized) for LPC
   AML_CHUNK* met = aml_add_method(root, "_DSM", 4);
   met = aml_add_store(met);
   AML_CHUNK* pack = aml_add_package(met);
@@ -1883,12 +1884,6 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
 	len = write_size(LPCBADR, dsdt, len, LPCBSIZE);
 	LPCBSIZE += sizeoffset;
   CorrectOuters(dsdt, len, LPCBADR-3);
-	// Fix PCIX size
-//	len = write_size(PCIADR, dsdt, len, PCISIZE);
-//	PCISIZE += sizeoffset;
-	// Fix Scope(\_SB) size
-//	len = write_size(SBADR, dsdt, len, SBSIZE);
-//	SBSIZE += sizeoffset;
   
   if (DisplayADR[0] > LPCBADR) DisplayADR[0] += sizeoffset;
   if (DisplayADR[1] > LPCBADR) DisplayADR[1] += sizeoffset;

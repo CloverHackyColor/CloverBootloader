@@ -807,12 +807,12 @@ VOID PatchTableType6()
       mInstalled[Index]	= 0;
     } else
     		mInstalled[Index]	=  4096ULL * (1024ULL * 1024ULL);
-		MsgLog("MEMORY_MODULE %d Installed %x ", Index, mInstalled[Index]);
+		MsgLog("Table 6 MEMORY_MODULE %d Installed %x ", Index, mInstalled[Index]);
     if (SizeField >= 0x7D) {
       mEnabled[Index]		= 0;
     } else
       mEnabled[Index]		= (1ULL << ((UINT8)SmbiosTable.Type6->EnabledSize.InstalledOrEnabledSize & 0x7F)) * (1024 * 1024);
-		MsgLog(" Enabled %x \n", mEnabled[Index]);
+		MsgLog("... enabled %x \n", mEnabled[Index]);
 		LogSmbiosTable(SmbiosTable);		
 	}
 
@@ -907,11 +907,30 @@ VOID PatchTableType9()
 	return;
 }
 
+VOID PatchTableType11()
+{
+	CHAR8		*OEMString = "Apple inc. uses Clover"; //something else here?
+  // System Information
+  // 
+	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_OEM_STRINGS, 0);
+	if (SmbiosTable.Raw == NULL) {
+		return;
+	}
+//	TableSize = SmbiosTableLength(SmbiosTable);
+	ZeroMem((VOID*)newSmbiosTable.Type11, MAX_TABLE_SIZE);
+	CopyMem((VOID*)newSmbiosTable.Type11, (VOID*)SmbiosTable.Type11, 5); //minimum, other bytes = 0
+	
+	newSmbiosTable.Type11->StringCount = 1;
+	UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type11->StringCount, OEMString);
+	
+	LogSmbiosTable(newSmbiosTable);
+	return;
+}	
 		  
 VOID PatchTableTypeSome()
 {
 	//some unused but interesting tables. Just log as is
-	UINT8 tableTypes[13] = {8, 10, 11, 18, 21, 22, 27, 28, 32, 33, 129, 217, 219};
+	UINT8 tableTypes[13] = {8, 10, 18, 21, 22, 27, 28, 32, 33, 129, 217, 219};
 	UINTN	IndexType;
 	//
 	// Different types 
@@ -1021,6 +1040,9 @@ VOID GetTableType17()
 
 VOID PatchTableType17()
 {
+	CHAR8	deviceLocator[10];
+	CHAR8	bankLocator[10];
+	
   // Memory Device
   //
 	for (Index = 0; Index < TotalCount; Index++) {
@@ -1046,7 +1068,7 @@ VOID PatchTableType17()
 		DBG("mMemory17[%d] = %d, mTotalSystemMemory = %d\n", Index, mMemory17[Index], mTotalSystemMemory);
 */		
 		
-#if NOTSPD		
+	
 	//	SmbiosTable.Type17->FormFactor = MemoryFormFactorProprietaryCard; //why?
 		switch (gCPUStructure.Family) 		
 		{				
@@ -1074,10 +1096,11 @@ VOID PatchTableType17()
 						newSmbiosTable.Type17->MemoryType = MemoryTypeDdr2;						
 						break;						
 				}				
-			}				
+			}	
+				//else keep as is
 		}
 		//??? - correct for table 6?
-
+#if NOTSPD	
 		if(iStrLen(gSettings.MemoryManufacturer, 64)>0){
 			UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gSettings.MemoryManufacturer);			
 		}
@@ -1094,6 +1117,7 @@ VOID PatchTableType17()
 #else
 		INTN map = gDMI->DIMM[Index];
     INTN map0 = map;
+		MEMORY_DEVICE_TYPE spdType;
 		if (gDMI->DIMM[2] && Index == 1 &&  TotalCount == 2)
 		{
       DBG(" Index=1 but DIMM[2] present. Redirect map: old=%d\n", map);
@@ -1102,15 +1126,19 @@ VOID PatchTableType17()
 		}		
 		if (gRAM->DIMM[map].InUse) {
       DBG("new map InUse\n");
-			newSmbiosTable.Type17->MemoryType = gRAM->DIMM[map].Type;
-		} else {
+		} else if (gRAM->DIMM[map0].InUse){
       map = map0;
-      if (gRAM->DIMM[map].InUse) {
-        DBG("old map InUse\n");
-        newSmbiosTable.Type17->MemoryType = gRAM->DIMM[map].Type;
-      }
-    }
-		
+			DBG("old map InUse\n");
+    } else {
+			DBG("both map not In Use. TODO?\n");
+		}
+
+		spdType = gRAM->DIMM[map].Type;
+		if ((spdType == MemoryTypeDdr2) ||
+				(spdType == MemoryTypeDdr3)) {
+			newSmbiosTable.Type17->MemoryType = spdType;
+		}
+				
 		if(iStrLen(gRAM->DIMM[map].Vendor, 64)>0 && gRAM->DIMM[map].InUse){
 			UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM->DIMM[map].Vendor);			
 		}
@@ -1123,9 +1151,15 @@ VOID PatchTableType17()
 		if(gRAM->DIMM[map].Frequency>0 && gRAM->DIMM[map].InUse){
 			newSmbiosTable.Type17->Speed = gRAM->DIMM[map].Frequency;			
 		}
-		 
-		
 #endif
+		
+		//now I want to update deviceLocator and bankLocator		
+	
+		AsciiSPrint(deviceLocator, 10, "DIMM%d",  Index >> 1);
+		AsciiSPrint(bankLocator, 10, "BANK%d", Index & 1);
+		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
+		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, (CHAR8*)&bankLocator[0]);
+		
 		mHandle17[Index] = LogSmbiosTable(newSmbiosTable);
 	}
 	return;
