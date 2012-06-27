@@ -128,7 +128,7 @@
 //#include <IndustryStandard/Acpi40.h>
 #include <IndustryStandard/HighPrecisionEventTimerTable.h>
 #include <IndustryStandard/Scsi.h>
-
+#include <IndustryStandard/Atapi.h>
 
 /* types */
 

@@ -1,4 +1,4 @@
-/** @file
+/** @file DevicePath.c
   BDS internal function define the default device path string, it can be
   replaced by platform device path.
 
@@ -28,7 +28,6 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
           The buffer allocation is not packed.
 
 **/
-
 CHAR16 *
 EFIAPI
 CatPrint (
