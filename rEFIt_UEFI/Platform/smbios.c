@@ -930,11 +930,12 @@ VOID PatchTableType11()
 VOID PatchTableTypeSome()
 {
 	//some unused but interesting tables. Just log as is
-	UINT8 tableTypes[13] = {8, 10, 18, 21, 22, 27, 28, 32, 33, 129, 217, 219};
+#define NUM_OTHER_TYPES 12	
+	UINT8 tableTypes[NUM_OTHER_TYPES] = {8, 10, 18, 21, 22, 27, 28, 32, 33, 129, 217, 219};
 	UINTN	IndexType;
 	//
 	// Different types 
-	for (IndexType = 0; IndexType < 13; IndexType++) {
+	for (IndexType = 0; IndexType < NUM_OTHER_TYPES; IndexType++) {
 		for (Index = 0; Index < 32; Index++) {
 			SmbiosTable = GetSmbiosTableFromType(EntryPoint, tableTypes[IndexType], Index);
 			if (SmbiosTable.Raw == NULL) {

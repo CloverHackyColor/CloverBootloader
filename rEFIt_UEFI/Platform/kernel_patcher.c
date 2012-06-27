@@ -100,7 +100,7 @@ VOID KernelPatcher_64(VOID* kernelData)
     UINT32 patchLocation=0, patchLocation1=0;
     UINT32 i;
     
-    if (AsciiStrnCmp(OSVersion,"10.7",4)==0) return;
+//    if (AsciiStrnCmp(OSVersion,"10.7",4)==0) return;
         
     DBG(L"Found _cpuid_set_info _panic Start\n");
     // _cpuid_set_info _panic address
