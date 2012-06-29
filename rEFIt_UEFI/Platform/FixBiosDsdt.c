@@ -411,14 +411,14 @@ VOID GetPciADR(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINT32 *Addr1, OUT U
   }
   
   PciNodeCount = 0;
-  while (!IsDevicePathEndType(DevicePath)) {
+  while (DevicePath && !IsDevicePathEndType(DevicePath)) {
     if (DevicePath->Type == HARDWARE_DEVICE_PATH && DevicePath->SubType == HW_PCI_DP) {
       PciNodeCount++;
       PciNode = (PCI_DEVICE_PATH *)DevicePath;
       if (PciNodeCount == 1 && Addr1 != NULL) {
-        *Addr1 = PciNode->Device << 16 | PciNode->Function;
+        *Addr1 = (PciNode->Device << 16) | PciNode->Function;
       } else if (PciNodeCount == 2 && Addr2 != NULL) {
-        *Addr2 = PciNode->Device << 16 | PciNode->Function;
+        *Addr2 = (PciNode->Device << 16) | PciNode->Function;
       } else {
         break;
       }
@@ -447,7 +447,7 @@ VOID CheckHardware()
 	UINTN         Function;
   
 	pci_dt_t      PCIdevice;
-	EFI_DEVICE_PATH_PROTOCOL*	DevicePath = NULL;
+	EFI_DEVICE_PATH_PROTOCOL *DevicePath = NULL;
   
 	usb=0;
 	UINTN display=0;
@@ -512,10 +512,11 @@ VOID CheckHardware()
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA)) {
             GetPciADR(DevicePath, &DisplayADR1[display], &DisplayADR2[display]);
+            DBG("Display PciAdr=0x%x\n", (Device << 16) | Function);
             DBG("DisplayADR1[%d] = 0x%x, DisplayADR2[%d] = 0x%x\n", display, DisplayADR1[display], display, DisplayADR2[display]);
             DisplayVendor[display] = Pci.Hdr.VendorId;
             DisplayID[display] = Pci.Hdr.DeviceId;
-            DisplaySubID[display] = Pci.Device.SubsystemID << 16| Pci.Device.SubsystemVendorID << 0;
+            DisplaySubID[display] = (Pci.Device.SubsystemID << 16) | (Pci.Device.SubsystemVendorID << 0);
             // for get display data
             Displaydevice[display].DeviceHandle = HandleBuffer[HandleIndex];
             Displaydevice[display].dev.addr = PCIADDR(Bus, Device, Function);
@@ -2961,7 +2962,6 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
   
   if (DisplayADR[1])
   {
-    //if (DisplayADR[1] > DisplayADR[1]) DisplayADR[1] += sizeoffset;
     if (FirewireADR > DisplayADR[1]) FirewireADR += sizeoffset;
     if (NetworkADR > DisplayADR[1]) NetworkADR += sizeoffset;
     if (SBUSADR > DisplayADR[1]) SBUSADR += sizeoffset;
@@ -3086,6 +3086,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     len = move_data(PCIADR+PCISIZE, dsdt, len, sizeoffset);
     CopyMem(dsdt+PCIADR+PCISIZE, network, sizeoffset);
     CorrectOuters(dsdt, len, PCIADR-3);
+    NetworkADR = PCIADR + PCISIZE + 2;
   }
   
   if (NetworkADR) 
@@ -3097,9 +3098,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     if (SATAAHCIADR > NetworkADR) SATAAHCIADR += sizeoffset;
   }
   //DBG("len = 0x%08x\n", len);
-  
   return len;
-  
 }
 
 UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
@@ -3134,15 +3133,16 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
         adr1 = SBUSADR-i+1;
         adr = get_size(dsdt, adr1);
         //DBG("SBUS adr = 0x%08x, size = 0x%08x\n", adr1, adr);
-        break;
+        if (adr) break;
       }
     }
-    // move data to back for add network 
+    // move data to back for add sbus 
     len = move_data(adr1+adr, dsdt, len, sizeoffset);
     CopyMem(dsdt+adr1+adr, bus0, sizeoffset);
     // Fix Device sbus size
     len = write_size(adr1, dsdt, len, adr);
     CorrectOuters(dsdt, len, adr1-3);
+    SBUSADR = adr1;
     //DBG("SBUS code size fix = 0x%08x\n", sizeoffset);
   }
   else
@@ -3152,8 +3152,10 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
     
     // Fix PCIX size
     len = write_size(PCIADR, dsdt, len, PCISIZE);
+    SBUSADR = PCIADR+PCISIZE+2;
     PCISIZE += sizeoffset;
     CorrectOuters(dsdt, len, PCIADR-3);
+    
   }
   
   if (SBUSADR) 
@@ -3291,7 +3293,7 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
         adr1 = FirewireADR-i+1;
         adr = get_size(dsdt, adr1);
         //DBG("Network adr = 0x%08x, size = 0x%08x\n", adr1, adr);
-        break;
+        if(adr) break;
       }
     }
     // move data to back for add network 
@@ -3300,6 +3302,7 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
     // Fix Device network size
     len = write_size(adr1, dsdt, len, adr);
     CorrectOuters(dsdt, len, adr1-3);
+    FirewireADR = adr1;
     /*
     // Fix _SB_ size
     len = write_size(SBADR, dsdt, len, sizeoffset, SBSIZE);
@@ -3314,12 +3317,10 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
     len = write_size(PCIADR, dsdt, len, PCISIZE);
     PCISIZE += sizeoffset;
     CorrectOuters(dsdt, len, PCIADR-3);
+    FirewireADR = PCIADR+PCISIZE+2; 
   }
-  
   //DBG("len = 0x%08x\n", len);
-  
   return len;
-  
 }
 
 UINT32 AddHDEF (UINT8 *dsdt, UINT32 len)
@@ -3351,7 +3352,6 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len)
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized)
   
-  
   aml_calculate_size(root);
   
   CHAR8 *hdef = AllocateZeroPool(root->Size);
@@ -3377,9 +3377,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len)
 	SBSIZE += sizeoffset;
   */
   //DBG("len = 0x%08x\n", len);
-  
   return len;
-  
 }
 
 UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
@@ -3422,8 +3420,8 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   aml_add_word(pack1, 0x03E8);
   aml_add_string(pack1, "AAPL,current-in-sleep");
   aml_add_word(pack1, 0x0BB8);
-  aml_add_string(pack1, "AAPL,device-internal");
-  aml_add_byte(pack1, 0x02);
+//  aml_add_string(pack1, "AAPL,device-internal");
+//  aml_add_byte(pack1, 0x02);
   CHAR8 data[] = {0x00};
   aml_add_byte_buffer(pack1, data, sizeof(data));
   aml_add_local0(met1);
@@ -3622,14 +3620,6 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
     // Fix Device ide size
     len = write_size(adr1, dsdt, len, adr);
     CorrectOuters(dsdt, len, adr1-3);
-    /*
-    // Fix PCIX size
-    len = write_size(PCIADR, dsdt, len, sizeoffset, PCISIZE);
-    PCISIZE += sizeoffset;
-    // Fix _SB_ size
-    len = write_size(SBADR, dsdt, len, sizeoffset, SBSIZE);
-    SBSIZE += sizeoffset;
-     */
   }
   
   if (IDEADR) 
@@ -3805,6 +3795,7 @@ UINT32 FIXCPU1 (UINT8 *dsdt, UINT32 len)
         if (dsdt[i-j] == 0x10)
         {
           prsize = get_size(dsdt, i-j+1);
+          if(!prsize) continue;
           prsize1 = prsize;
           pradr = i-j+1;
           // size > 0x3F there should be had P_states code so don't fix

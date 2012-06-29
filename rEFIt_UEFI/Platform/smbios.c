@@ -913,12 +913,15 @@ VOID PatchTableType11()
   // System Information
   // 
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_OEM_STRINGS, 0);
-	if (SmbiosTable.Raw == NULL) {
-		return;
+	if (SmbiosTable.Raw != NULL) {
+		MsgLog("Table 11 present, but rewritten for us\n");
 	}
 //	TableSize = SmbiosTableLength(SmbiosTable);
 	ZeroMem((VOID*)newSmbiosTable.Type11, MAX_TABLE_SIZE);
-	CopyMem((VOID*)newSmbiosTable.Type11, (VOID*)SmbiosTable.Type11, 5); //minimum, other bytes = 0
+//	CopyMem((VOID*)newSmbiosTable.Type11, (VOID*)SmbiosTable.Type11, 5); //minimum, other bytes = 0
+	newSmbiosTable.Type11->Hdr.Type = EFI_SMBIOS_TYPE_OEM_STRINGS;
+	newSmbiosTable.Type11->Hdr.Length = sizeof(SMBIOS_STRUCTURE)+2; 
+	newSmbiosTable.Type11->Hdr.Handle = 0x0B00; //common rule
 	
 	newSmbiosTable.Type11->StringCount = 1;
 	UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type11->StringCount, OEMString);

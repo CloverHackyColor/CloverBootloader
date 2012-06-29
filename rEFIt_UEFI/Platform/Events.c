@@ -185,8 +185,7 @@ GuiEventsInitialize ()
 {
 	EFI_STATUS				Status;
 	EFI_EVENT				Event;
-	//VOID*					Registration;
-	VOID*					RegSimpleFileSystem;
+	VOID*				  	RegSimpleFileSystem;
 	
 	
 	gEvent = 0;
@@ -211,7 +210,8 @@ EFI_STATUS
 EFIAPI
 EventsInitialize ()
 {
-	EFI_STATUS				Status;
+	EFI_STATUS			Status;
+	VOID*           Registration = NULL;
 	
 	//
 	// Register the event to reclaim variable for OS usage.
@@ -232,7 +232,15 @@ EventsInitialize ()
 							   OnExitBootServices, 
 							   NULL,
 							   &ExitBootServiceEvent);
-	
+  if(!EFI_ERROR(Status))
+	{
+		Status = gBS->RegisterProtocolNotify (
+                 &gEfiStatusCodeRuntimeProtocolGuid,
+                 ExitBootServiceEvent,
+                 &Registration);
+	} 
+  
+  
 	//
 	// Register the event to convert the pointer for runtime.
 	//

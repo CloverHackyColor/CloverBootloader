@@ -3181,8 +3181,8 @@ BdsLibEnumerateAllBootOption (
   // The Removable[] array is used by the for-loop below to create removable media boot options 
   // at first, and then to create fixed media boot options.
   //
-  Removable[1]  = FALSE;
-  Removable[0]  = TRUE;
+  Removable[0]  = FALSE;
+  Removable[1]  = TRUE;
 
   gBS->LocateHandleBuffer (
         ByProtocol,

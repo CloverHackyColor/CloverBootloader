@@ -74,10 +74,6 @@ INF  MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
 #INF  MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
 INF  Clover/OsxSmbiosDxe/SmbiosDxe.inf
 INF  Clover/OemSmbiosGenDxe/SmbiosGen.inf
-#INF  Clover/OsxSmbiosDrv/SmbiosDxe.inf
-#INF  DuetPkg/SmbiosGenDxe/SmbiosGen.inf
-#INF  Clover/OsxSmbiosGenDxe/SmbiosGen.inf
-#INF  DuetPkg/FvbRuntimeService/DUETFwh.inf
 #INF  IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf
 INF  Clover/OsxBdsDxe/BdsDxe.inf
 #INF  MdeModulePkg/Universal/EbcDxe/EbcDxe.inf

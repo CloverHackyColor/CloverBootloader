@@ -42,6 +42,12 @@ READ_STATUS        = TRUE
 READ_LOCK_CAP      = TRUE
 READ_LOCK_STATUS   = TRUE
 
+APRIORI PEI {
+  INF  MdeModulePkg/Universal/ReportStatusCodeRouter/Pei/ReportStatusCodeRouterPei.inf
+  INF  MdeModulePkg/Universal/StatusCodeHandler/Pei/StatusCodeHandlerPei.inf
+  INF  MdeModulePkg/Universal/PCD/Pei/Pcd.inf
+  }
+
 APRIORI DXE {
   INF  MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
   INF  PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
@@ -68,16 +74,11 @@ INF  MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
 #INF  MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
 INF  Clover/OsxSmbiosDxe/SmbiosDxe.inf
 INF  Clover/OemSmbiosGenDxe/SmbiosGen.inf
-#INF  Clover/OsxSmbiosDrv/SmbiosDxe.inf
-#INF  DuetPkg/SmbiosGenDxe/SmbiosGen.inf
-#INF  Clover/OsxSmbiosGenDxe/SmbiosGen.inf
-#INF  DuetPkg/FvbRuntimeService/DUETFwh.inf
 #INF  IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf
 INF Clover/OsxBdsDxe/BdsDxe.inf
 #INF  MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
 INF  MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
-#INF  Clover/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
-INF  UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
+INF  Clover/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
 #INF  Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
 #INF  UefiCpuPkg/CpuDxe/CpuDxe.inf
 #INF  IntelFrameworkModulePkg/Universal/CpuIoDxe/CpuIoDxe.inf

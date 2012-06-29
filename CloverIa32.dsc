@@ -54,7 +54,6 @@
   #BaseMemoryLib|MdePkg/Library/BaseMemoryLibSse2/BaseMemoryLibSse2.inf
   PrintLib|MdePkg/Library/BasePrintLib/BasePrintLib.inf
   CpuLib|MdePkg/Library/BaseCpuLib/BaseCpuLib.inf
-  #CpuIA32Lib|EdkCompatibilityPkg/Foundation/Cpu/Pentium/CpuIA32Lib/CpuIA32Lib_Edk2.inf
   IoLib|MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsic.inf
   PciLib|MdePkg/Library/BasePciLibCf8/BasePciLibCf8.inf
   PciCf8Lib|MdePkg/Library/BasePciCf8Lib/BasePciCf8Lib.inf
@@ -66,7 +65,6 @@
   PeCoffLib|Clover/VBoxPeCoffLib/VBoxPeCoffLib.inf
   PeCoffExtraActionLib|MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
   PeCoffGetEntryPointLib|MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
-  #ResetSystemLib|PcAtChipsetPkg/Library/ResetSystemLib/ResetSystemLib.inf
   #
   # UEFI & PI
   #
@@ -259,9 +257,7 @@
   #MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
   Clover/OsxSmbiosDxe/SmbiosDxe.inf
   Clover/OemSmbiosGenDxe/SmbiosGen.inf
-  #Clover/OsxSmbiosGenDxe/SmbiosGen.inf
 
-  #DuetPkg/FvbRuntimeService/DUETFwh.inf
   #DuetPkg/EfiLdr/EfiLdr.inf {
   Clover/OsxEfiLdr/EfiLdr.inf {
     <LibraryClasses>
@@ -382,17 +378,10 @@
   MdeModulePkg/Universal/LegacyRegion2Dxe/LegacyRegion2Dxe.inf
 
   # Misc
-
   Clover/FSInject/FSInject.inf
-
   Clover/MsgLog/MsgLog.inf
   
   # Drivers for Aptio loading - should go to Clover's /EFI/drivers64 dir
-  Clover/OsxSmbiosDrv/SmbiosDxe.inf {
-	<PcdsFixedAtBuild>
-	  # SMBIOS ver 2.6
-      gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0206
-  }
   Clover/OsxFatBinaryDrv/OsxFatBinaryDrv.inf
 
 

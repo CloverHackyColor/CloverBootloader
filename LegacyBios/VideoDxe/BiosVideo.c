@@ -172,7 +172,8 @@ BiosVideoDriverBindingSupported (
   }
 
   Status = EFI_UNSUPPORTED;
-  if (Pci.Hdr.ClassCode[2] == 0x03 || (Pci.Hdr.ClassCode[2] == 0x00 && Pci.Hdr.ClassCode[1] == 0x01)) {
+  if ((Pci.Hdr.ClassCode[2] == 0x03 && Pci.Hdr.ClassCode[1] == 0x00)||
+       (Pci.Hdr.ClassCode[2] == 0x00 && Pci.Hdr.ClassCode[1] == 0x01)) {
 
     Status = EFI_SUCCESS;
     //
@@ -192,7 +193,8 @@ BiosVideoDriverBindingSupported (
         //
         if (Node->DevPath.Type != ACPI_DEVICE_PATH ||
             Node->DevPath.SubType != ACPI_ADR_DP ||
-            DevicePathNodeLength(&Node->DevPath) != sizeof(ACPI_ADR_DEVICE_PATH)) {
+            DevicePathNodeLength(&Node->DevPath) < sizeof(ACPI_ADR_DEVICE_PATH)) {  
+          //Mars Lin suggested that "<" instead of "!="
           Status = EFI_UNSUPPORTED;
         }
       }
