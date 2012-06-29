@@ -196,6 +196,11 @@ AllocateRelocBlock()
 	}
 
 #endif
+	// set reloc addr in runtime vars for boot manager
+	Print(L"OsxAptioFixDrv: AllocateRelocBlock(): gRelocBase set to %lx - %lx\n", gRelocBase, gRelocBase + EFI_PAGES_TO_SIZE(NumberOfPages) - 1);
+	/*Status = */gRT->SetVariable(L"OsxAptioFixDrv-RelocBase", &gEfiAppleBootGuid, 
+							  /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+							  sizeof(gRelocBase) ,&gRelocBase);
 	return Status;
 }
 

@@ -399,6 +399,20 @@ DTCreatePropertyIterator(CONST DTEntry entry, DTPropertyIterator *iterator)
 	return kSuccess;
 }
 
+// dmazar: version without mem alloc which can be used during or after ExitBootServices.
+// caller should not call DTDisposePropertyIterator when using this version.
+INTN
+DTCreatePropertyIteratorNoAlloc(CONST DTEntry entry, DTPropertyIterator iterator)
+{
+	RealDTPropertyIterator iter = iterator;
+	
+	iter->entry = entry;
+	iter->currentProperty = NULL;
+	iter->currentIndex = 0;
+	
+	return kSuccess;
+}
+
 INTN
 DTDisposePropertyIterator(DTPropertyIterator iterator)
 {

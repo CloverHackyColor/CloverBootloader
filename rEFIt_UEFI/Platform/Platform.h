@@ -575,12 +575,17 @@ typedef struct {
   UINT8   Dcfg[8];
   UINT8   NVCAP[20];
  	
- 	// HDA
- 	BOOLEAN HDAInjection;
- 	UINTN   HDALayoutId;
-	
-	// LegacyBoot
-	CHAR16  LegacyBoot[32];
+  // HDA
+  BOOLEAN HDAInjection;
+  UINTN   HDALayoutId;
+  
+  // LegacyBoot
+  CHAR16  LegacyBoot[32];
+  
+  // KernelAndKextPatches
+  BOOLEAN KPKernelCpu;
+  BOOLEAN KPATIConnectorInfo;
+  BOOLEAN KPAsusAICPUPM;
   
 } SETTINGS_DATA;
 

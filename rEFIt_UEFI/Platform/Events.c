@@ -98,116 +98,44 @@ VOID CorrectMemoryMap(IN UINT32 memMap,
 	
 }
 
-
-
 VOID
 EFIAPI
-OnExitBootServices (
-                    IN      EFI_EVENT  Event,
-                    IN      VOID       *Context
-                    )
+OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
 {
-  //
-  BootArgs1*				bootArgs1;
-	BootArgs2*				bootArgs2;
-	UINT8*						ptr=(UINT8*)(UINTN)0x100000;
-  //	DTEntry						efiPlatform;
-	CHAR8*						dtRoot;
-	UINT8						archMode = sizeof(UINTN) * 8;
-	UINTN						Version = 0;
-	VOID*                   KernelData=(VOID*)0x00200000; // Kernel address should be alway on here
 	
-  dtRoot = NULL;
-  
-  if (!gFirmwareClover) {
-    // DisableUsbLegacySupport() not working on Aptio UEFI
-    // (probably because of memory allocations)
-    return;
-  }
-  
-  while(TRUE)
-	{
-		bootArgs2 = (BootArgs2*)ptr;
-		bootArgs1 = (BootArgs1*)ptr;
-    
-		// patch bootargs for 10.7
-		if (bootArgs2->Revision==0 && bootArgs2->Version==2 && (AsciiStrStr(OSVersion,"10.8")!=0 || AsciiStrStr(OSVersion,"10.7")!=0) &&
-		    bootArgs2->efiMode == archMode && (bootArgs2->deviceTreeLength > 1024))
-		{
-      DBG(L"Boot OS %a\n", OSVersion);;
-      dtRoot = (CHAR8*)(UINTN)bootArgs2->deviceTreeP;
-      //DBG(L"Found bootArgs2! and address at 0x%08x\n", ptr);
-      //DBG(L"bootArgs2->kaddr = 0x%08x and bootArgs2->ksize =  0x%08x\n", bootArgs2->kaddr, bootArgs2->ksize);
-      //DBG(L"bootArgs2->efiMode = 0x%02x\n", bootArgs2->efiMode);
-      Version = 2;
-      break;
-    } 
-		// patch bootargs for 10.4 - 10.6.x 		       
-		if ((bootArgs1->Revision==6 || bootArgs1->Revision==5 || bootArgs1->Revision==4) && bootArgs1->Version==1 &&
-		    ((AsciiStrStr(OSVersion,"10.5")!=0) || (AsciiStrStr(OSVersion,"10.6")!=0)) && 
-		    bootArgs1->efiMode == archMode && (bootArgs1->deviceTreeLength > 1024) )
-		{
-      DBG(L"Boot OS %a\n", OSVersion);
-      dtRoot = (CHAR8*)(UINTN)bootArgs1->deviceTreeP;
-			//DBG(L"Found bootArgs1! and address at 0x%08x\n", ptr);
-      //DBG(L"bootArgs1->kaddr = 0x%08x and bootArgs1->ksize =  0x%08x\n", bootArgs1->kaddr, bootArgs1->ksize);
-      //DBG(L"bootArgs1->efiMode = 0x%02x\n", bootArgs1->efiMode);
-      Version = 1;
-      break;
-    }
-    
-		ptr += 0x1000;
-  }
-  
-  if ((gCPUStructure.Family!=0x06 && AsciiStrStr(OSVersion,"10.7")!=0)||
-      (gCPUStructure.Model==CPU_MODEL_ATOM && AsciiStrStr(OSVersion,"10.7")!=0) ||
-      (gCPUStructure.Model==CPU_MODEL_IVY_BRIDGE && AsciiStrStr(OSVersion,"10.7")!=0)
-      )
-  {
-    //DBG(L"\nKernel patch start!\n");    
-    while(TRUE)
-		{
-      // Parse through the load commands
-      if(MACH_GET_MAGIC(KernelData) == MH_MAGIC)
-      {
-        //DBG(L"found Kernel address patch start!, address = 0x%08x\n", KernelData);
-        KernelPatcher_32(KernelData);
-        break;
-      }
-      if(MACH_GET_MAGIC(KernelData) == MH_MAGIC_64)
-      {
-        //DBG(L"found Kernel address patch start!, address = 0x%08x\n", KernelData);
-        KernelPatcher_64(KernelData);
-        break;
-      }
-      KernelData += 1;
-    }
-  }
-  
-  KextPatcher_Start();
+	//
+	// Patch kernel and kexts if needed
+	//
+	KernelAndKextsPatcherStart();
 	
-#if PATCH_DEBUG    
-  //gBS->Stall(10000000);
-#endif
-  
-  
-  if (Version==2) {
-		CorrectMemoryMap(bootArgs2->MemoryMap,
-                     bootArgs2->MemoryMapDescriptorSize,
-                     &bootArgs2->MemoryMapSize);
-		bootArgs2->efiSystemTable = (UINT32)(UINTN)gST;
+	if (gFirmwareClover) {
 		
+		//
+		// Correct memmap.
+		// Reuse bootArgs detected in KernelAndKextsPatcherStart()
+		//
+		if (bootArgs2 != NULL) {
+			CorrectMemoryMap(bootArgs2->MemoryMap,
+							 bootArgs2->MemoryMapDescriptorSize,
+							 &bootArgs2->MemoryMapSize);
+			// is this needed?
+			//bootArgs2->efiSystemTable = (UINT32)(UINTN)gST;
+			
+		}
+		else if (bootArgs1 != NULL) 
+		{
+			CorrectMemoryMap(bootArgs1->MemoryMap,
+							 bootArgs1->MemoryMapDescriptorSize,
+							 &bootArgs1->MemoryMapSize);
+			// is this needed?
+			//bootArgs1->efiSystemTable = (UINT32)(UINTN)gST;
+		}
+		
+		// Note: blocks on Aptio
+		DisableUsbLegacySupport();
 	}
-	else if (Version==1) 
-	{
-		CorrectMemoryMap(bootArgs1->MemoryMap,
-                     bootArgs1->MemoryMapDescriptorSize,
-                     &bootArgs1->MemoryMapSize);
-		bootArgs1->efiSystemTable = (UINT32)(UINTN)gST;
-	}
-  
-  DisableUsbLegacySupport();
-  
+	
+	//gBS->Stall(20000000);
 }
 
 VOID
@@ -238,101 +166,88 @@ OnSimpleFileSystem (
                     IN      VOID       *Context
                     )
 {
-  EFI_TPL		OldTpl;
-  
+	EFI_TPL		OldTpl;
+	
 	OldTpl = gBS->RaiseTPL (TPL_NOTIFY);
-  gEvent = 1;
-//  ReinitRefitLib();
-  //ScanVolumes();
-  //enter GUI
- // DrawMenuText(L"OnSimpleFileSystem", 0, 0, UGAHeight-40, 1);
-  MsgLog("OnSimpleFileSystem occured\n");
-  
+	gEvent = 1;
+	//  ReinitRefitLib();
+	//ScanVolumes();
+	//enter GUI
+	// DrawMenuText(L"OnSimpleFileSystem", 0, 0, UGAHeight-40, 1);
+	MsgLog("OnSimpleFileSystem occured\n");
+	
 	gBS->RestoreTPL (OldTpl);
-  
+	
 }  
 
 EFI_STATUS
 GuiEventsInitialize ()
 {
-  EFI_STATUS				Status;
-  EFI_EVENT				Event;
-  VOID*					Registration;
+	EFI_STATUS				Status;
+	EFI_EVENT				Event;
+	//VOID*					Registration;
 	VOID*					RegSimpleFileSystem;
-  
-  
-  gEvent = 0;
-  Status = gBS->CreateEvent (
-                      EVT_NOTIFY_SIGNAL,
-                      TPL_NOTIFY,
-                      OnSimpleFileSystem,
-                      NULL,
-                      &Event);
-  if(!EFI_ERROR(Status))
-	{
-		Status = gBS->RegisterProtocolNotify (
-                      &gEfiSimpleFileSystemProtocolGuid,
-                      Event,
-                      &RegSimpleFileSystem);
-	}
-
-  // register notify for exit boot services
-	Status = gBS->CreateEvent (EVT_SIGNAL_EXIT_BOOT_SERVICES,
-                             TPL_CALLBACK,
-                             OnExitBootServices, 
-                             NULL,
-                             &ExitBootServiceEvent);
+	
+	
+	gEvent = 0;
+	Status = gBS->CreateEvent (
+							   EVT_NOTIFY_SIGNAL,
+							   TPL_NOTIFY,
+							   OnSimpleFileSystem,
+							   NULL,
+							   &Event);
 	if(!EFI_ERROR(Status))
 	{
 		Status = gBS->RegisterProtocolNotify (
-                      &gEfiStatusCodeRuntimeProtocolGuid,
-                      ExitBootServiceEvent, 
-                      &Registration);
-	} 
-  
-  
-  return Status;
+											  &gEfiSimpleFileSystemProtocolGuid,
+											  Event,
+											  &RegSimpleFileSystem);
+	}
+	
+	return Status;
 }  
 
 EFI_STATUS
 EFIAPI
 EventsInitialize ()
 {
-  //
-  // Register the event to reclaim variable for OS usage.
-  //
-  EfiCreateEventReadyToBoot(&OnReadyToBootEvent);
-/*  EfiCreateEventReadyToBootEx (
-    TPL_NOTIFY, 
-    OnReadyToBoot, 
-    NULL, 
-    &OnReadyToBootEvent
-    );  */           
-
-  gBS->CreateEventEx (
-         EVT_NOTIFY_SIGNAL,
-         TPL_NOTIFY,
-         OnExitBootServices,
-         NULL,
-         &gEfiEventExitBootServicesGuid,
-         &ExitBootServiceEvent
-         ); 
-
-  //
-  // Register the event to convert the pointer for runtime.
-  //
+	EFI_STATUS				Status;
+	
+	//
+	// Register the event to reclaim variable for OS usage.
+	//
+	//EfiCreateEventReadyToBoot(&OnReadyToBootEvent);
+	/*  EfiCreateEventReadyToBootEx (
+	 TPL_NOTIFY, 
+	 OnReadyToBoot, 
+	 NULL, 
+	 &OnReadyToBootEvent
+	 );  */           
+	
+	//
+	// Register notify for exit boot services
+	//
+	Status = gBS->CreateEvent (EVT_SIGNAL_EXIT_BOOT_SERVICES,
+							   TPL_CALLBACK,
+							   OnExitBootServices, 
+							   NULL,
+							   &ExitBootServiceEvent);
+	
+	//
+	// Register the event to convert the pointer for runtime.
+	//
     /*
-  gBS->CreateEventEx (
-         EVT_NOTIFY_SIGNAL,
-         TPL_NOTIFY,
-         VirtualAddressChangeEvent,
-         NULL,
-         &gEfiEventVirtualAddressChangeGuid,
-         &mVirtualAddressChangeEvent
-         );
+	 gBS->CreateEventEx (
+	 EVT_NOTIFY_SIGNAL,
+	 TPL_NOTIFY,
+	 VirtualAddressChangeEvent,
+	 NULL,
+	 &gEfiEventVirtualAddressChangeGuid,
+	 &mVirtualAddressChangeEvent
+	 );
      */
-  
-  return EFI_SUCCESS;
+	
+	return EFI_SUCCESS;
 }
 
 EFI_STATUS EjectVolume(IN REFIT_VOLUME *Volume)

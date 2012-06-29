@@ -44,7 +44,6 @@ UINT32   BiosDsdtLen;
 UINT8	 acpi_cpu_count;
 CHAR8*   acpi_cpu_name[32];
 CHAR8*   OSVersion;
-BOOLEAN  SSSE3;
 
 //-----------------------------------
 

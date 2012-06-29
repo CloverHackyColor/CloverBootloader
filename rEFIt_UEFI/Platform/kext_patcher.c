@@ -5,9 +5,8 @@
 
 #include "kernel_patcher.h"
 #include "fakesmc.h"
-#include "device_tree.h"
 
-#define KEXT_DEBUG 1
+#define KEXT_DEBUG 0
 
 #if KEXT_DEBUG
 #define DBG(x...)	Print(x);
@@ -15,269 +14,13 @@
 #define DBG(x...)
 #endif
 
-#define kPrelinkTextSegment                "__PRELINK_TEXT"
-#define kPrelinkTextSection                "__text"
-
-#define kPrelinkLinkStateSegment           "__PRELINK_STATE"
-#define kPrelinkKernelLinkStateSection     "__kernel"
-#define kPrelinkKextsLinkStateSection      "__kexts"
-
-#define kPrelinkInfoSegment                "__PRELINK_INFO"
-#define kPrelinkInfoSection                "__info"
-
-#define kPrelinkBundlePathKey              "_PrelinkBundlePath"
-#define kPrelinkExecutableRelativePathKey  "_PrelinkExecutableRelativePath"
-#define kPrelinkExecutableLoadKey          "_PrelinkExecutableLoadAddr"
-#define kPrelinkExecutableSourceKey        "_PrelinkExecutableSourceAddr"
-#define kPrelinkExecutableSizeKey          "_PrelinkExecutableSize"
-#define kPrelinkInfoDictionaryKey          "_PrelinkInfoDictionary"
-#define kPrelinkInterfaceUUIDKey           "_PrelinkInterfaceUUID"
-#define kPrelinkKmodInfoKey                "_PrelinkKmodInfo"
-#define kPrelinkLinkStateKey               "_PrelinkLinkState"
-#define kPrelinkLinkStateSizeKey           "_PrelinkLinkStateSize"
-
-#define kPropCFBundleIdentifier ("CFBundleIdentifier")
-#define kPropCFBundleExecutable ("CFBundleExecutable")
-#define kPropOSBundleRequired   ("OSBundleRequired")
-#define kPropOSBundleLibraries  ("OSBundleLibraries")
-#define kPropIOKitPersonalities ("IOKitPersonalities")
-#define kPropIONameMatch        ("IONameMatch")
-
-typedef struct _BooterKextFileInfo {
-    UINT32  infoDictPhysAddr;
-    UINT32  infoDictLength;
-    UINT32  executablePhysAddr;
-    UINT32  executableLength;
-    UINT32  bundlePathPhysAddr;
-    UINT32  bundlePathLength;
-} _BooterKextFileInfo;
-
-typedef struct _DeviceTreeBuffer {
-    uint32_t paddr;
-    uint32_t length;
-} _DeviceTreeBuffer;
-
-UINT32     KextAddr=0;
-UINT32     KextAddr1=0;
-UINT32     KextLength=0;
-UINT32     KextInfoAddr=0;
-UINT32     KextInfoAddr1=0;
-UINT32     KextInfoLength=0;
-
-VOID KextPatcher_Start()
-{
-
-    VOID*      KernelData=(VOID*)0x00200000;
-
-    while(TRUE)
-    {
-      	// Parse through the load commands
-        if(MACH_GET_MAGIC(KernelData) == MH_MAGIC || MACH_GET_MAGIC(KernelData) == MH_MAGIC_64)
-	    {
-	        //DBG(L"found Kernel address patch start!\n");
-            break;
-        }
-        KernelData += 1;
-    }
-    
-    Get_PreLink(KernelData);
-    
-    if (KextAddr!=0 && KextLength !=0 && (DisplayVendor[0] == 0x1002 || DisplayVendor[1] == 0x1002))
-    {
-        KextPatcher_ATI(KextAddr, KextLength);
-    }
-    
-    if (KextAddr!=0 && KextLength ==0 && (DisplayVendor[0] == 0x1002 || DisplayVendor[1] == 0x1002))
-    {
-        KextPatcher_driver_ATI();
-    }
-    
-    //if (KextAddr!=0 && KextLength!=0)
-    //{
-    //    InjectKernelCache(KernelData);
-    //}
-}
-    
-VOID Get_PreLink(VOID* binary)
-{
-  UINT32 ncmds, cmdsize;
-  UINT32 binaryIndex;
-  UINTN  cnt;
-    
-  switch (MACH_GET_MAGIC(binary))
-	{
-		case MH_MAGIC:
-			binaryIndex = sizeof(struct mach_header);
-			break;
-		case MH_MAGIC_64:
-			binaryIndex = sizeof(struct mach_header_64);
-			break;
-		default:
-			return;
-	}
-/*			
-  DBG(L"magic:      %x\n", (unsigned)mH->magic);
-  DBG(L"cputype:    %x\n", (unsigned)mH->cputype);
-  DBG(L"cpusubtype: %x\n", (unsigned)mH->cpusubtype);
-  DBG(L"filetype:   %x\n", (unsigned)mH->filetype);
-  DBG(L"ncmds:      %x\n", (unsigned)mH->ncmds);
-  DBG(L"sizeofcmds: %x\n", (unsigned)mH->sizeofcmds);
-  DBG(L"flags:      %x\n", (unsigned)mH->flags);
-*/
-  ncmds = MACH_GET_NCMDS(binary);
-  
-  struct load_command *loadCommand = NULL;
-  
-  //struct segment_command *segCmd;
-  struct segment_command_64 *segCmd64;
-  
-  for (cnt = 0; cnt < ncmds; cnt++) {
-      loadCommand = binary + binaryIndex;
-      cmdsize = loadCommand->cmdsize;
-    
-      switch (loadCommand->cmd) 
-      {
-	        case LC_SEGMENT_64: 
-	             segCmd64 = binary + binaryIndex;	
-	             //DBG(L"segCmd64->segname = %a\n",segCmd64->segname);
-	             //DBG(L"segCmd64->vmaddr = 0x%08x\n",segCmd64->vmaddr)
-	             //DBG(L"segCmd64->vmsize = 0x%08x\n",segCmd64->vmsize); 
-	             if (AsciiStrCmp(segCmd64->segname, "__PRELINK_TEXT") == 0)
-	             {
-	                 KextAddr = segCmd64->vmaddr;
-	                 KextLength = segCmd64->vmsize;
-	                 KextAddr1 = (UINT32)(UINTN)binary + binaryIndex;
-	                 //DBG(L"cmd = 0x%08x\n",segCmd64->cmd);
-	                 //DBG(L"cmdsize = 0x%08x\n",segCmd64->cmdsize);
-	                 //DBG(L"vmaddr = 0x%08x\n",segCmd64->vmaddr);
-	                 //DBG(L"vmsize = 0x%08x\n",segCmd64->vmsize);
-	                 //DBG(L"fileoff = 0x%08x\n",segCmd64->fileoff);
-	                 //DBG(L"filesize = 0x%08x\n",segCmd64->filesize);
-	                 //DBG(L"maxprot = 0x%08x\n",segCmd64->maxprot);
-	                 //DBG(L"initprot = 0x%08x\n",segCmd64->initprot);
-	                 //DBG(L"nsects = 0x%08x\n",segCmd64->nsects);
-	                 //DBG(L"flags = 0x%08x\n",segCmd64->flags);
-	                 //DBG(L"Found PRELINK_TEXT\n");
-	             }
-	             if (AsciiStrCmp(segCmd64->segname, "__PRELINK_INFO") == 0)
-	             {
-	                 //KextInfoAddr = segCmd64->vmaddr;
-	                 //KextInfoLength = segCmd64->vmsize;
-	                 //DBG(L"cmd = 0x%08x\n",segCmd64->cmd);
-	                 //DBG(L"cmdsize = 0x%08x\n",segCmd64->cmdsize);
-	                 //DBG(L"vmaddr = 0x%08x\n",segCmd64->vmaddr);
-	                 //DBG(L"vmsize = 0x%08x\n",segCmd64->vmsize);
-	                 //DBG(L"fileoff = 0x%08x\n",segCmd64->fileoff);
-	                 //DBG(L"filesize = 0x%08x\n",segCmd64->filesize);
-	                 //DBG(L"maxprot = 0x%08x\n",segCmd64->maxprot);
-	                 //DBG(L"initprot = 0x%08x\n",segCmd64->initprot);
-	                 //DBG(L"nsects = 0x%08x\n",segCmd64->nsects);
-	                 //DBG(L"flags = 0x%08x\n",segCmd64->flags);
-	                 //DBG(L"Found PRELINK_INFO\n");
-	                 UINT32 sectionIndex;
-                     sectionIndex = sizeof(struct segment_command_64);
-                     struct section_64 *sect;
-                    
-                     while(sectionIndex < segCmd64->cmdsize)
-                     {
-                         sect = binary + binaryIndex + sectionIndex;
-                         sectionIndex += sizeof(struct section_64);
-                                                
-                         if(AsciiStrCmp(sect->sectname, "__info") == 0 && AsciiStrCmp(sect->segname, "__PRELINK_INFO") == 0)
-                         {
-                             // __TEXT,__text found, save the offset and address for when looking for the calls.
-                             //DBG(L"__info found address = 0x%08x\n",sect->addr);
-                             //DBG(L"__info found size = 0x%08x\n",sect->size);
-                             KextInfoAddr1 = (UINT32)(UINTN)binary + binaryIndex + sectionIndex;
-                             KextInfoAddr = sect->addr;
-	                         KextInfoLength = sect->size;
-                             //CHAR8* DATA = AllocateZeroPool (sect->size);
-                             //CopyMem(DATA, (CHAR8*)&sect->addr, sect->size);
-                             //TagPtr						dict=NULL;
-                             //if(ParseXML(DATA, &dict) == EFI_SUCCESS)
-		                     //{
-			                 //   DBG(L"%a\n",dict);
-		                     //}
-                             //textSection = sect->offset;
-                             //textAddress = sect->addr;
-                         }					
-                     }	
-	             } /*
-	             if (AsciiStrCmp(segCmd64->segname, "__TEXT") == 0)
-	             {
-	                 KextInfoAddr = segCmd64->vmaddr;
-	                 KextInfoLength = segCmd64->vmsize;
-	                 //DBG(L"cmd = 0x%08x\n",segCmd64->cmd);
-	                 //DBG(L"cmdsize = 0x%08x\n",segCmd64->cmdsize);
-	                 //DBG(L"vmaddr = 0x%08x\n",segCmd64->vmaddr);
-	                 //DBG(L"vmsize = 0x%08x\n",segCmd64->vmsize);
-	                 //DBG(L"fileoff = 0x%08x\n",segCmd64->fileoff);
-	                 //DBG(L"filesize = 0x%08x\n",segCmd64->filesize);
-	                 //DBG(L"maxprot = 0x%08x\n",segCmd64->maxprot);
-	                 //DBG(L"initprot = 0x%08x\n",segCmd64->initprot);
-	                 //DBG(L"nsects = 0x%08x\n",segCmd64->nsects);
-	                 //DBG(L"flags = 0x%08x\n",segCmd64->flags);
-	                 //DBG(L"Found PRELINK_TEXT\n");
-	                 UINT32 sectionIndex;
-                     sectionIndex = sizeof(struct segment_command_64);
-                     struct section_64 *sect;
-                    
-                     while(sectionIndex < segCmd64->cmdsize)
-                     {
-                         sect = binary + binaryIndex + sectionIndex;
-                        
-                         sectionIndex += sizeof(struct section_64);
-                        
-                         //if(section_handler) section_handler(sect->sectname, segCommand->segname, sect->offset, sect->addr);
-                        
-                         if(AsciiStrCmp(sect->sectname, "__txet") == 0)
-                         {
-                             // __TEXT,__text found, save the offset and address for when looking for the calls.
-                             //DBG(L"__text found address = 0x%08x\n",sect->addr);
-                             //DBG(L"_cpuid_set_info found address = 0x%08x\n",sect->size);
-                             //CHAR8* DATA = AllocateZeroPool (sect->size);
-                             //CopyMem(DATA, (CHAR8*)&sect->addr, sect->size);
-                             //TagPtr						dict=NULL;
-                             //if(ParseXML(DATA, &dict) == EFI_SUCCESS)
-		                     //{
-			                 //   DBG(L"%a\n",dict);
-		                     //}
-                             
-                             //textSection = sect->offset;
-                             //textAddress = sect->addr;
-                         }					
-                     }	
-	             }*/
-	             break; /*
-            case LC_SEGMENT:
-            	 segCmd = binary + binaryIndex;	 
-            	 //DBG(L"segCmd->segname = %a\n",segCmd->segname);
-	             //DBG(L"segCmd->vmaddr = 0x%08x\n",segCmd->vmaddr)
-	             //DBG(L"segCmd->vmsize = 0x%08x\n",segCmd->vmsize);
-	             if (AsciiStrCmp(segCmd->segname, "__PRELINK_TEXT") == 0)
-	             {
-	                 KextAddr = segCmd->vmaddr;
-	                 KextLength = segCmd->vmsize;
-	                 //DBG(L"prelinkData = 0x%08x\n",KextAddr);
-	                 //DBG(L"preLinksize = 0x%08x\n",KextLength);
-	                 //DBG(L"Found PRELINK_TEXT\n");
-	             }
-	             if (AsciiStrCmp(segCmd->segname, "__PRELINK_INFO") == 0)
-	             {
-	                 KextInfoAddr = segCmd->vmaddr;
-	                 KextInfoLength = segCmd->vmsize;
-	                 //DBG(L"prelinkData = 0x%08x\n",KextInfoAddr);
-	                 //DBG(L"preLinksize = 0x%08x\n",KextInfoLength);
-	                 //DBG(L"Found PRELINK_INFO\n");
-	             }
-                 break; */
-            default:
-                 break;
-      }  
-      binaryIndex += cmdsize;
-  }	
-  return;
-}
+////////////////////////////////////
+//
+// ATIConnectorInfo patch
+// bcc9's patch: http://www.insanelymac.com/forum/index.php?showtopic=249642
+// 
+// Currently still speciffic to pcj. Should be amended with some config to be generic.
+//
 
 // ATI card
 UINT8 Hoolock[] =
@@ -302,165 +45,417 @@ UINT8 ATI[] =
     0x10, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x01    //VGA
 };
 
-VOID KextPatcher_driver_ATI()
-{     
-  UINT64              plistAddr  = 0;
-  UINT64              plistSize  = 0;
-  UINT64              driverAddr = 0;
-  UINT64              driverSize = 0;
-	DTEntry             memoryMap;
-  _BooterKextFileInfo *kextFileInfo   = NULL;
-  CHAR8               *plistBuffer;
-  TagPtr              dict;
-	TagPtr              prop;
-	CHAR8               *temp  = NULL;
-	UINT64              temp1;
-	UINTN               count = 0;
-	BOOLEAN             check = FALSE;
-  DTPropertyIterator  mmPropIter;
-  CHAR8               *ptrmm;
-
-  
-  if (dtRoot)
-  {
-    DTInit(dtRoot);
-    if (DTLookupEntry(NULL,"/chosen/memory-map", &memoryMap))
-    {
-      if (DTCreatePropertyIterator(memoryMap, &mmPropIter))
-      {   
-        while (DTIterateProperties(mmPropIter, &ptrmm))
-        {	
-          if (AsciiStrStr(ptrmm,"Driver-"))
-          {
-            temp = AllocateZeroPool (AsciiStrLen(ptrmm)-6);
-            CopyMem(temp, ptrmm+7, AsciiStrLen(ptrmm)-6);
-            //DTGetProperty(memoryMap, ptrmm, &driverAddr, &driverSize);
-            //if (count<3)
-            //{
-            //   DBG(L"Found %a, temp = %a, change = 0x%08x\n", ptrmm, temp, AsciiStrHexToUint64(temp));
-            //} 
-            temp1 = AsciiStrHexToUint64(temp);
-            
-            //(const _DeviceTreeBuffer *)
-            //deviceTreeEntry->getBytesNoCopy(0, sizeof(deviceTreeBuffer));
-            kextFileInfo = (_BooterKextFileInfo *)(UINTN)temp1;
-            //if (count<3)
-            //{
-            //    DBG(L"Driver addr = 0x%08x, Length = 0x%08x\n", driverAddr, driverSize);
-            //    DBG(L"Driver addr = 0x%08x, Length = 0x%08x\n", kextFileInfo->executablePhysAddr, kextFileInfo->executableLength);
-            //    DBG(L"Plist addr = 0x%08x, Length = 0x%08x\n", kextFileInfo->infoDictPhysAddr, kextFileInfo->infoDictLength);
-            //}
-            plistAddr = kextFileInfo->infoDictPhysAddr;
-            plistSize = kextFileInfo->infoDictLength;
-            driverAddr = kextFileInfo->executablePhysAddr;
-            driverSize = kextFileInfo->executableLength;
-            plistBuffer = AllocateZeroPool ((kextFileInfo->infoDictLength)+1);
-            CopyMem(plistBuffer,(UINT8*)(UINTN)kextFileInfo->infoDictPhysAddr, kextFileInfo->infoDictLength);
-            if(ParseXML(plistBuffer, &dict) != EFI_SUCCESS)
-            {
-              //if (count<4)
-              //{
-              //    DBG(L"Not Found Plist\n");
-              //}
-            }
-            else
-            {
-              if (dict)
-              {
-                //DBG(L"ParseXML Done\n");
-                prop = GetProperty(dict, "CFBundleIdentifier");
-                if (prop)
-                {
-                  //DBG(L"Found Prop\n");
-                  if (AsciiStrStr(prop->string, "ATI5000"))
-                  {
-                    DBG(L"Found ATI5000Controller\n");
-                    KextPatcher_ATI(kextFileInfo->executablePhysAddr, kextFileInfo->executableLength);
-                   // FreePool(plistBuffer);
-                   // FreePool(temp);
-                   // FreePool(dict);
-                    check = TRUE;
-                    break;
-                  }
-                  if (AsciiStrStr(prop->string, "FakeSMC"))
-                  {
-                    DBG(L"Found FakeSMC\n");
-                  }
-                }
-              }
-            }    
-            count++;
-            FreePool(plistBuffer);
-            FreePool(temp);
-            //FreePool(dict); -- do not free pool that you didn't allocate
-            
-          }
-          //if(AsciiStrStr(ptrmm,"DriversPackage-")!=0)
-          //{
-          //    DBG(L"Found %a\n", ptrmm);
-          //    break;
-          //}
-				}
-				
-				//if (!check)
-				//{
-        //    KextPatcher_ATI(0x000A0000, 0x9C100000);
-				//}
-        //DBG(L"Driver count = %d\n", count);
-      } 
-    }
-	}
-}
- 
-VOID KextPatcher_ATI(UINT32 driverAddr, UINT32 driverSize)
+VOID ATIConnectorInfoPatch(UINT8 *Driver, UINT32 DriverSize)
 {
   
-  UINT8*  bytes = (UINT8*)(UINTN)driverAddr;
-  UINTN   i, j;
+  UINTN   i;
   UINTN   count = 0;
-  BOOLEAN CHECK = FALSE;
   
-  //DBG(L"KextPatcher_ATI Start.\n");
+  DBG(L"ATIConnectorInfoPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
   
-  for (i=0; i<driverSize; i++)	 
+  for (i=0; i<DriverSize; i++)	 
   {   
-    for (j=0; j<(sizeof(Hoolock)); j++)
+    if (CompareMem(Driver + i, Hoolock, sizeof(Hoolock)) == 0)
     {
-      if (!(CHECK = (bytes[i+j] == Hoolock[j]))) { //Slice
-        break;
-      }      
-/*      
-      if (bytes[i+j] == Hoolock[j])
-      {
-        CHECK = TRUE;
-      }
-      else
-      {
-        CHECK = FALSE;
-        break;
-      }
- */
-    }
-   
-    if (CHECK)
-    {
-      //DBG(L"Found ATI Code\n");
-      for (j=0; j<(sizeof(ATI)); j++)
-      {
-        bytes[i+j] = ATI[j];
-      }
-      CHECK = FALSE;
+      DBG(L"Found ATI Code - patching\n");
+      CopyMem(Driver + i, ATI, sizeof(ATI));
+      
       if (count) break;
       
       count++;
     }
- //   i++; -- it is in for()
+  }
+  //gBS->Stall(5000000);
+}
+
+
+////////////////////////////////////
+//
+// AsusAICPUPM patch
+//
+// fLaked's SpeedStepper patch for Asus (and some other) boards:
+// http://www.insanelymac.com/forum/index.php?showtopic=258611
+// 
+
+UINT8   MovlE2ToEcx[] = { 0xB9, 0xE2, 0x00, 0x00, 0x00 };
+UINT8   Wrmsr[]       = { 0x0F, 0x30 };
+
+VOID AsusAICPUPMPatch(UINT8 *Driver, UINT32 DriverSize)
+{
+  UINTN   Index1;
+  UINTN   Index2;
+  UINTN   Count = 0;
+  
+  DBG(L"AsusAICPUPMPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
+  
+  // todo: we should scan only __text __TEXT
+  for (Index1 = 0; Index1 < DriverSize; Index1++) {
+    // search for MovlE2ToEcx
+    if (CompareMem(Driver + Index1, MovlE2ToEcx, sizeof(MovlE2ToEcx)) == 0) {
+      // search for wrmsr in next few bytes
+      for (Index2 = Index1 + sizeof(MovlE2ToEcx); Index2 < Index1 + sizeof(MovlE2ToEcx) + 16; Index2++) {
+        if (Driver[Index2] == Wrmsr[0] && Driver[Index2 + 1] == Wrmsr[1]) {
+          // found it - patch it with nops
+          Count++;
+          Driver[Index2] = 0x90;
+          Driver[Index2 + 1] = 0x90;
+          DBG(L" %d. patched at 0x%x\n", Count, Index2);
+        }
+      }
+    }
+  }
+  DBG(L"= %d patches\n", Count);
+  //gBS->Stall(2000000);
+}
+
+
+
+////////////////////////////////////
+//
+// Place other kext patches here
+//
+
+// ...
+
+
+
+////////////////////////////////////
+//
+// Generic kext patch functions
+//
+
+
+//
+// PatchKext is called for every kext from prelinked kernel (kernelcache) or from DevTree (booting with drivers).
+// Add kext detection code here and call kext speciffic patch function.
+//
+VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
+{
+  
+  if (gSettings.KPATIConnectorInfo && AsciiStrStr(InfoPlist, "com.apple.kext.ATI5000Controller")) {
+    ATIConnectorInfoPatch(Driver, DriverSize);
+  }
+  else if (gSettings.KPAsusAICPUPM && AsciiStrStr(InfoPlist, "<string>com.apple.driver.AppleIntelCPUPowerManagement</string>")) {
+    AsusAICPUPMPatch(Driver, DriverSize);
   }
 }
 
+//
+// Returns parsed hex integer key.
+// Plist - kext pist
+// Key - key to find
+// WholePlist - _PrelinkInfoDictionary, used to find referenced values
+//
+// Searches for Key in Plist and it's value:
+// a) <integer ID="26" size="64">0x2b000</integer>
+//    returns 0x2b000
+// b) <integer IDREF="26"/>
+//    searches for <integer ID="26"... from WholePlist
+//    and returns value from that referenced field
+//
+// Whole function is here since we should avoid ParseXML() and it's
+// memory allocations during ExitBootServices(). And it seems that 
+// ParseXML() does not support IDREF.
+// This func is hard to read and debug and probably not reliable,
+// but it seems it works.
+//
+UINT64 GetPlistHexValue(CHAR8 *Plist, CHAR8 *Key, CHAR8 *WholePlist)
+{
+  CHAR8     *Value;
+  CHAR8     *IntTag;
+  UINT64    NumValue = 0;
+  CHAR8     *IDStart;
+  CHAR8     *IDEnd;
+  UINTN     IDLen;
+  CHAR8     Buffer[48];
+  //static INTN   DbgCount = 0;
+  
+  // search for Key
+  Value = AsciiStrStr(Plist, Key);
+  if (Value == NULL) {
+    //DBG(L"\nNo key: %a\n", Key);
+    return 0;
+  }
+  
+  // search for <integer
+  IntTag = AsciiStrStr(Value, "<integer");
+  if (IntTag == NULL) {
+    DBG(L"\nNo integer\n");
+    return 0;
+  }
+  
+  // find <integer end
+  Value = AsciiStrStr(IntTag, ">");
+  if (Value == NULL) {
+    DBG(L"\nNo <integer end\n");
+    return 0;
+  }
+  
+  if (Value[-1] != '/') {
+    
+    // normal case: value is here
+    NumValue = AsciiStrHexToUint64(Value + 1);
+    return NumValue;
+    
+  }
+  
+  // it might be a reference: IDREF="173"/>
+  Value = AsciiStrStr(IntTag, "<integer IDREF=\"");
+  if (Value != IntTag) {
+    DBG(L"\nNo <integer IDREF=\"\n");
+    return 0;
+  }
+  
+  // compose <integer ID="xxx" in the Buffer
+  IDStart = AsciiStrStr(IntTag, "\"") + 1;
+  IDEnd = AsciiStrStr(IDStart, "\"");
+  IDLen = IDEnd - IDStart;
+  /*
+  if (DbgCount < 3) {
+    AsciiStrnCpy(Buffer, Value, sizeof(Buffer) - 1);
+    DBG(L"\nRef: '%a'\n", Buffer);
+  }
+   */
+  if (IDLen > 8) {
+    DBG(L"\nIDLen too big\n");
+    return 0;
+  }
+  AsciiStrCpy(Buffer, "<integer ID=\"");
+  AsciiStrnCat(Buffer, IDStart, IDLen);
+  AsciiStrCat(Buffer, "\"");
+  /*
+  if (DbgCount < 3) {
+    DBG(L"Searching: '%a'\n", Buffer);
+  }
+  */
+  
+  // and search whole plist for ID
+  IntTag = AsciiStrStr(WholePlist, Buffer);
+  if (IntTag == NULL) {
+    DBG(L"\nNo %a\n", Buffer);
+    return 0;
+  }
+  
+  // got it. find closing >
+  /*
+  if (DbgCount < 3) {
+    AsciiStrnCpy(Buffer, IntTag, sizeof(Buffer) - 1);
+    DBG(L"Found: '%a'\n", Buffer);
+  }
+  */
+  Value = AsciiStrStr(IntTag, ">");
+  if (Value == NULL) {
+    DBG(L"\nNo <integer end\n");
+    return 0;
+  }
+  if (Value[-1] == '/') {
+    DBG(L"\nInvalid <integer IDREF end\n");
+    return 0;
+  }
+  
+  // we should have value now
+  NumValue = AsciiStrHexToUint64(Value + 1);
+  
+  /*
+  if (DbgCount < 3) {
+    AsciiStrnCpy(Buffer, IntTag, sizeof(Buffer) - 1);
+    DBG(L"Found num: %x\n", NumValue);
+    gBS->Stall(10000000);
+  }
+   DbgCount++;
+  */
+  
+  return NumValue;
+}
+
+//
+// Iterates over kexts in kernelcache
+// and calls PatchKext() for each.
+//
+// PrelinkInfo section contains following plist, without spaces:
+// <dict>
+//   <key>_PrelinkInfoDictionary</key>
+//   <array>
+//     <!-- start of kext Info.plist -->
+//     <dict>
+//       <key>CFBundleName</key>
+//       <string>MAC Framework Pseudoextension</string>
+//       <key>_PrelinkExecutableLoadAddr</key>
+//       <integer size="64">0xffffff7f8072f000</integer>
+//       <!-- Kext size -->
+//       <key>_PrelinkExecutableSize</key>
+//       <integer size="64">0x3d0</integer>
+//       <!-- Kext address -->
+//       <key>_PrelinkExecutableSourceAddr</key>
+//       <integer size="64">0xffffff80009a3000</integer>
+//       ...
+//     </dict>
+//     <!-- start of next kext Info.plist -->
+//     <dict>
+//       ...
+//     </dict>
+//       ...
+VOID PatchPrelinkedKexts(VOID)
+{
+  CHAR8     *WholePlist;
+  CHAR8     *DictPtr;
+  CHAR8     *InfoPlistStart = NULL;
+  CHAR8     *InfoPlistEnd = NULL;
+  INTN      DictLevel = 0;
+  CHAR8     SavedValue;
+  //INTN      DbgCount = 0;
+  UINT32    KextAddr;
+  UINT32    KextSize;
+  
+  
+  WholePlist = (CHAR8*)(UINTN)PrelinkInfoAddr;
+  DictPtr = WholePlist;
+  
+  while ((DictPtr = AsciiStrStr(DictPtr, "dict>")) != NULL) {
+    
+    if (DictPtr[-1] == '<') {
+      // opening dict
+      DictLevel++;
+      if (DictLevel == 2) {
+        // kext start
+        InfoPlistStart = DictPtr - 1;
+      }
+      
+    } else if (DictPtr[-2] == '<' && DictPtr[-1] == '/') {
+      
+      // closing dict
+      if (DictLevel == 2 && InfoPlistStart != NULL) {
+        // kext end
+        InfoPlistEnd = DictPtr + 5 /* "dict>" */;
+        
+        // terminate Info.plist with 0
+        SavedValue = *InfoPlistEnd;
+        *InfoPlistEnd = '\0';
+        
+        // get kext address from _PrelinkExecutableSourceAddr
+        // truncate to 32 bit to get physical addr
+        KextAddr = (UINT32)GetPlistHexValue(InfoPlistStart, kPrelinkExecutableSourceKey, WholePlist);
+        KextAddr += KernelRelocBase;
+        KextSize = (UINT32)GetPlistHexValue(InfoPlistStart, kPrelinkExecutableSizeKey, WholePlist);
+        
+        /*if (DbgCount < 3
+            || DbgCount == 100 || DbgCount == 101 || DbgCount == 102
+            ) {
+          DBG(L"\n\nKext: St = %x, Size = %x\n", KextAddr, KextSize);
+          DBG(L"Info: St = %p, End = %p\n%a\n", InfoPlistStart, InfoPlistEnd, InfoPlistStart);
+          gBS->Stall(20000000);
+        }
+         */
+        
+        // patch it
+        PatchKext(
+                  (UINT8*)(UINTN)KextAddr,
+                  KextSize,
+                  InfoPlistStart,
+                  InfoPlistEnd - InfoPlistStart
+                  );
+        
+        // return saved char
+        *InfoPlistEnd = SavedValue;
+        //DbgCount++;
+      }
+      
+      DictLevel--;
+      
+    }
+    DictPtr += 5;
+  }
+}
+
+//
+// Iterates over kexts loaded by booter
+// and calls PatchKext() for each.
+//
+VOID PatchLoadedKexts(VOID)
+{
+	DTEntry             MMEntry;
+  _BooterKextFileInfo *KextFileInfo;
+  CHAR8               *PropName;
+  _DeviceTreeBuffer   *PropEntry;
+  CHAR8               SavedValue;
+  CHAR8               *InfoPlist;
+	struct OpaqueDTPropertyIterator OPropIter;
+	DTPropertyIterator	PropIter = &OPropIter;
+	//UINTN               DbgCount = 0;
+
+  
+  DBG(L"\nPatchLoadedKexts ... dtRoot = %p\n", dtRoot);
+  
+  if (!dtRoot) {
+    return;
+  }
+  
+  DTInit(dtRoot);
+  
+  if (DTLookupEntry(NULL,"/chosen/memory-map", &MMEntry) == kSuccess)
+  {
+    if (DTCreatePropertyIteratorNoAlloc(MMEntry, PropIter) == kSuccess)
+    {   
+      while (DTIterateProperties(PropIter, &PropName) == kSuccess)
+      {	
+        //DBG(L"Prop: %a\n", PropName);
+        if (AsciiStrStr(PropName,"Driver-"))
+        {
+          // PropEntry _DeviceTreeBuffer is the value of Driver-XXXXXX property
+          PropEntry = (_DeviceTreeBuffer*)(((UINT8*)PropIter->currentProperty) + sizeof(DeviceTreeNodeProperty));
+          //if (DbgCount < 3) DBG(L"%a: paddr = %x, length = %x\n", PropName, PropEntry->paddr, PropEntry->length);
+          
+          // PropEntry->paddr points to _BooterKextFileInfo
+          KextFileInfo = (_BooterKextFileInfo *)(UINTN)PropEntry->paddr;
+          
+          // Info.plist should be terminated with 0, but will also do it just in case
+          InfoPlist = (CHAR8*)(UINTN)KextFileInfo->infoDictPhysAddr;
+          SavedValue = InfoPlist[KextFileInfo->infoDictLength];
+          InfoPlist[KextFileInfo->infoDictLength] = '\0';
+          
+          PatchKext(
+                    (UINT8*)(UINTN)KextFileInfo->executablePhysAddr,
+                    KextFileInfo->executableLength,
+                    InfoPlist,
+                    KextFileInfo->infoDictLength
+                    );
+          
+          InfoPlist[KextFileInfo->infoDictLength] = SavedValue;
+          //DbgCount++;
+        }
+        //if(AsciiStrStr(PropName,"DriversPackage-")!=0)
+        //{
+        //    DBG(L"Found %a\n", PropName);
+        //    break;
+        //}
+      }
+    } 
+  }
+}
+
+//
+// Entry for all kext patches.
+// Will iterate through kext in prelinked kernel (kernelcache)
+// or DevTree (drivers boot) and do patches.
+//
+VOID KextPatcherStart(VOID)
+{
+  if (isKernelcache) {
+    
+    PatchPrelinkedKexts();
+    
+  } else {
+    
+    PatchLoadedKexts();
+    
+  }
+}
+
+
+ 
 VOID InjectKernelCache(VOID* binary)
 {
-    UINT8* bytes = (UINT8*)(UINTN)KextInfoAddr;
+    UINT8* bytes = (UINT8*)(UINTN)PrelinkInfoAddr;
     //UINT32 i, j, k;
     //EFI_STATUS		Status = EFI_SUCCESS;
     //CHAR8*			plistBuffer;
@@ -494,10 +489,10 @@ VOID InjectKernelCache(VOID* binary)
 		}
 	}
 	*/
-	//plistBuffer = AllocateZeroPool (KextInfoLength+1+sizeof(Info_plist));
-	//CopyMem(plistBuffer,(UINT8*)(UINTN)KextInfoAddr, KextInfoLength);
+	//plistBuffer = AllocateZeroPool (PrelinkInfoSize+1+sizeof(Info_plist));
+	//CopyMem(plistBuffer,(UINT8*)(UINTN)PrelinkInfoAddr, PrelinkInfoSize);
 	/*
-	for (i=0; i<(sizeof(KextInfoLength)-29); i++)
+	for (i=0; i<(sizeof(PrelinkInfoSize)-29); i++)
 	{
 	    for (j=0; j<29; j++)
 	    {
@@ -518,13 +513,13 @@ VOID InjectKernelCache(VOID* binary)
 	    //    DBG(L"Found InfoPlist\n");
 	    //    if (Data && DataSize)
 	    //    {
-	    //        CopyMem(Data, bytes, KextInfoLength-15);
-	    //        CopyMem(Data+(KextInfoLength-15), Info_plist, sizeof(Info_plist));
-	    //        CopyMem(Data+(KextInfoLength-15)+sizeof(Info_plist), bytes+(KextInfoLength-15), 15);
-	            //backupBuffer = AllocateZeroPool (KextInfoLength-k+1);
-	            //CopyMem(backupBuffer,(UINT8*)(UINTN)KextInfoAddr+k, KextInfoLength-k);
+	    //        CopyMem(Data, bytes, PrelinkInfoSize-15);
+	    //        CopyMem(Data+(PrelinkInfoSize-15), Info_plist, sizeof(Info_plist));
+	    //        CopyMem(Data+(PrelinkInfoSize-15)+sizeof(Info_plist), bytes+(PrelinkInfoSize-15), 15);
+	            //backupBuffer = AllocateZeroPool (PrelinkInfoSize-k+1);
+	            //CopyMem(backupBuffer,(UINT8*)(UINTN)PrelinkInfoAddr+k, PrelinkInfoSize-k);
 	            //CopyMem(plistBuffer+k, Info_plist, sizeof(Info_plist));
-	            //CopyMem(plistBuffer+k+sizeof(Info_plist), backupBuffer, KextInfoLength-k);
+	            //CopyMem(plistBuffer+k+sizeof(Info_plist), backupBuffer, PrelinkInfoSize-k);
 	            //FreePool(backupBuffer);
 	    //        break;
 	    //    }
@@ -610,7 +605,7 @@ VOID InjectKernelCache(VOID* binary)
 		FreePool(plistBuffer);
     }
 jump: 
-    for (i=0;i<KextInfoLength;i++)
+    for (i=0;i<PrelinkInfoSize;i++)
     {
         if (bytes[i] == 'F' && bytes[i+1] == 'a' && bytes[i+2] == 'k' && bytes[i+3] == 'e' &&
             bytes[i+4] == 'S' && bytes[i+5] == 'M' && bytes[i+6] == 'C')
@@ -620,16 +615,16 @@ jump:
         }
     }
     */
-    if (KextInfoAddr && KextInfoLength)
+    if (PrelinkInfoAddr && PrelinkInfoSize)
     {       
         DBG(L"InjectKernelCache Start\n");
         UINT8* NewKextAddr = (UINT8*)(UINTN)0x1C100000;
         CopyMem(NewKextAddr, FakeSMC, sizeof(FakeSMC));
-        CopyMem(NewKextAddr+sizeof(FakeSMC), (UINT8*)(UINTN)KextAddr, KextLength);
-        UINT8* NewKextInfoAddr = NewKextAddr+KextLength+sizeof(FakeSMC);
-        CopyMem(NewKextInfoAddr, (UINT8*)(UINTN)bytes, KextInfoLength-15);
-        CopyMem(NewKextInfoAddr+(KextInfoLength-15), Info_plist, sizeof(Info_plist));
-        CopyMem(NewKextInfoAddr+(KextInfoLength-15)+sizeof(Info_plist), (UINT8*)(UINTN)bytes+(KextInfoLength-15), 15);
+        CopyMem(NewKextAddr+sizeof(FakeSMC), (UINT8*)(UINTN)PrelinkTextAddr, PrelinkTextSize);
+        UINT8* NewKextInfoAddr = NewKextAddr+PrelinkTextSize+sizeof(FakeSMC);
+        CopyMem(NewKextInfoAddr, (UINT8*)(UINTN)bytes, PrelinkInfoSize-15);
+        CopyMem(NewKextInfoAddr+(PrelinkInfoSize-15), Info_plist, sizeof(Info_plist));
+        CopyMem(NewKextInfoAddr+(PrelinkInfoSize-15)+sizeof(Info_plist), (UINT8*)(UINTN)bytes+(PrelinkInfoSize-15), 15);
         
         struct segment_command *segCmd;
         struct segment_command_64 *segCmd64;
@@ -639,20 +634,20 @@ jump:
         switch (MACH_GET_MAGIC(binary))
 	    {
 		      case MH_MAGIC:
-			       segCmd = (struct segment_command*)(UINTN)KextAddr1;
+			       segCmd = (struct segment_command*)(UINTN)PrelinkTextLoadCmdAddr;
 			       segCmd->vmaddr = (UINT32)(UINTN)NewKextAddr;
 	               segCmd->vmsize += sizeof(FakeSMC);
 	               segCmd->filesize += sizeof(FakeSMC);
-	               sect = (struct section*)(UINTN)KextInfoAddr1;
+	               sect = (struct section*)(UINTN)PrelinkInfoLoadCmdAddr;
 	               sect->addr = (UINT32)(UINTN)NewKextInfoAddr;
 	               sect->size += sizeof(Info_plist);	
 			       break;
 		      case MH_MAGIC_64:
-			       segCmd64 = (struct segment_command_64*)(UINTN)KextAddr1;
+			       segCmd64 = (struct segment_command_64*)(UINTN)PrelinkTextLoadCmdAddr;
 			       segCmd64->vmaddr = (UINT64)(UINTN)NewKextAddr;
 	               segCmd64->vmsize += sizeof(FakeSMC);
 	               segCmd64->filesize += sizeof(FakeSMC);
-	               sect64 = (struct section_64*)(UINTN)KextInfoAddr1;
+	               sect64 = (struct section_64*)(UINTN)PrelinkInfoLoadCmdAddr;
 	               sect64->addr = (UINT64)(UINTN)NewKextInfoAddr;
 	               sect64->size += sizeof(Info_plist);	               
 			       break;
@@ -662,3 +657,4 @@ jump:
     }
     DBG(L"InjectKernelCache Done\n");  
 }
+

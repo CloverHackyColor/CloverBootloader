@@ -248,6 +248,12 @@ extern INTN DTGetProperty(const DTEntry entry, const CHAR8 *propertyName, void *
 extern INTN DTCreatePropertyIterator(const DTEntry entry,
 					DTPropertyIterator *iterator);
 
+/*
+ dmazar: version without mem alloc which can be used during or after ExitBootServices.
+ caller should not call DTDisposePropertyIterator when using this version.
+ */
+extern INTN DTCreatePropertyIteratorNoAlloc(CONST DTEntry entry, DTPropertyIterator iterator);
+
 /* Dispose Property Iterator*/
 extern INTN DTDisposePropertyIterator(DTPropertyIterator iterator);
 

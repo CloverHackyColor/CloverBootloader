@@ -321,15 +321,15 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     SetVariablesForOSX();
     //  PauseForKey(L"FinalizeSmbios");
     
-    if (gFirmwareClover) {
+    //if (gFirmwareClover) {
       // the following is not needed or not working on Aptio UEFI
       // VirtualAddressChange - not needed at all
       // OnReadyToBootEvent - causes rebuilding of System table and patches are lost
       // SimpleFileSystemChangeEvent - not working - it will be at the start of refit
-     // EventsInitialize ();
+    EventsInitialize();
      // gBS->SignalEvent(OnReadyToBootEvent);
       //gBS->SignalEvent(mVirtualAddressChangeEvent);
-    }
+    //}
     FinalizeSmbios();
     //  PauseForKey(L"SetupDataForOSX");
     SetupDataForOSX();

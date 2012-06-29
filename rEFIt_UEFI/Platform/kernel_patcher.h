@@ -2,9 +2,10 @@
  * Copyright (c) 2009-2010 Frank peng. All rights reserved.
  *
  */
-#include <Platform.h>
-#include <loader.h>
-#include <nlist.h>
+#include "Platform.h"
+#include "loader.h"
+#include "nlist.h"
+#include "device_tree.h"
 
 #ifndef __LIBSAIO_KERNEL_PATCHER_H
 #define __LIBSAIO_KERNEL_PATCHER_H
@@ -27,31 +28,95 @@
 #define MACH_GET_NCMDS(hdr)        (((struct mach_header_64*)(hdr))->ncmds)
 #define SC_GET_CMD(hdr)            (((struct segment_command_64*)(hdr))->cmd)
 
+
+#define kPrelinkTextSegment                "__PRELINK_TEXT"
+#define kPrelinkTextSection                "__text"
+
+#define kPrelinkLinkStateSegment           "__PRELINK_STATE"
+#define kPrelinkKernelLinkStateSection     "__kernel"
+#define kPrelinkKextsLinkStateSection      "__kexts"
+
+#define kPrelinkInfoSegment                "__PRELINK_INFO"
+#define kPrelinkInfoSection                "__info"
+
+#define kPrelinkBundlePathKey              "_PrelinkBundlePath"
+#define kPrelinkExecutableRelativePathKey  "_PrelinkExecutableRelativePath"
+#define kPrelinkExecutableLoadKey          "_PrelinkExecutableLoadAddr"
+#define kPrelinkExecutableSourceKey        "_PrelinkExecutableSourceAddr"
+#define kPrelinkExecutableSizeKey          "_PrelinkExecutableSize"
+#define kPrelinkInfoDictionaryKey          "_PrelinkInfoDictionary"
+#define kPrelinkInterfaceUUIDKey           "_PrelinkInterfaceUUID"
+#define kPrelinkKmodInfoKey                "_PrelinkKmodInfo"
+#define kPrelinkLinkStateKey               "_PrelinkLinkState"
+#define kPrelinkLinkStateSizeKey           "_PrelinkLinkStateSize"
+
+#define kPropCFBundleIdentifier ("CFBundleIdentifier")
+#define kPropCFBundleExecutable ("CFBundleExecutable")
+#define kPropOSBundleRequired   ("OSBundleRequired")
+#define kPropOSBundleLibraries  ("OSBundleLibraries")
+#define kPropIOKitPersonalities ("IOKitPersonalities")
+#define kPropIONameMatch        ("IONameMatch")
+
+typedef struct _BooterKextFileInfo {
+    UINT32  infoDictPhysAddr;
+    UINT32  infoDictLength;
+    UINT32  executablePhysAddr;
+    UINT32  executableLength;
+    UINT32  bundlePathPhysAddr;
+    UINT32  bundlePathLength;
+} _BooterKextFileInfo;
+
+typedef struct _DeviceTreeBuffer {
+    uint32_t paddr;
+    uint32_t length;
+} _DeviceTreeBuffer;
+
+
+
+extern EFI_PHYSICAL_ADDRESS KernelRelocBase;
+extern BootArgs1    *bootArgs1;
+extern BootArgs2    *bootArgs2;
+extern CHAR8        *dtRoot;
+extern VOID         *KernelData;
+extern BOOLEAN      isKernelcache;
+extern BOOLEAN      is64BitKernel;
+
+// notes:
+// - 64bit segCmd64->vmaddr is 0xffffff80xxxxxxxx and we are taking
+//   only lower 32bit part into PrelinkTextAddr
+// - PrelinkTextAddr is segCmd64->vmaddr + KernelRelocBase
+extern UINT32       PrelinkTextLoadCmdAddr;
+extern UINT32       PrelinkTextAddr;
+extern UINT32       PrelinkTextSize;
+
+// notes:
+// - 64bit sect->addr is 0xffffff80xxxxxxxx and we are taking
+//   only lower 32bit part into PrelinkInfoAddr
+// - PrelinkInfoAddr is sect->addr + KernelRelocBase
+extern UINT32       PrelinkInfoLoadCmdAddr;
+extern UINT32       PrelinkInfoAddr;
+extern UINT32       PrelinkInfoSize;
+
 extern UINT32 DisplayVendor[2];
-//extern UINT32     KextAddr;
-extern UINT32     KextLength;
 //VOID findCPUfamily();
 
-CHAR8* dtRoot;
 
 //UINT64 kernelsize;
-
-VOID KernelPatcher_64(VOID* kernelData);
-VOID KernelPatcher_32(VOID* kernelData);
 
 VOID Patcher_SSE3_5(VOID* kernelData);
 VOID Patcher_SSE3_6(VOID* kernelData);
 VOID Patcher_SSE3_7(VOID* kernelData);
 
+VOID KernelAndKextsPatcherStart(VOID);
+
 //VOID register_kernel_symbol(CONST CHAR8* name);
 //UINT64 symbol_handler(CHAR8* symbolName, UINT64 addr);
 //INTN locate_symbols(VOID* kernelData);
 
-VOID KextPatcher_Start();
-VOID Get_PreLink(VOID* binary);
-VOID KextPatcher_driver_ATI();
-VOID KextPatcher_ATI(UINT32 driverAddr, UINT32 driverSize);
-VOID InjectKernelCache(VOID* binary);
+//
+// kext_patcher.c
+//
+VOID KextPatcherStart();
 
 
-#endif /* !__BOOT2_KERNEL_PATCHER_H */
+#endif /* !__LIBSAIO_KERNEL_PATCHER_H */

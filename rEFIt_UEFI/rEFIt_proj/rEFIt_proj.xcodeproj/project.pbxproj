@@ -32,10 +32,9 @@
 		122B6217157E80E600D06F37 /* cdefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cdefs.h; sourceTree = "<group>"; };
 		122B6218157E811000D06F37 /* Display.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Display.h; sourceTree = "<group>"; };
 		122B6219157E813100D06F37 /* fakesmc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fakesmc.h; sourceTree = "<group>"; };
-		122B621A157E813100D06F37 /* FixBiosDsdt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = FixBiosDsdt.c; sourceTree = "<group>"; };
-		122B621B157E814100D06F37 /* kernel_patcher.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kernel_patcher.c; sourceTree = "<group>"; };
-		122B621C157E814100D06F37 /* kernel_patcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kernel_patcher.h; sourceTree = "<group>"; };
-		122B621D157E814100D06F37 /* kext_patcher.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kext_patcher.c; sourceTree = "<group>"; };
+		122B621A157E813100D06F37 /* FixBiosDsdt.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = FixBiosDsdt.c; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
+		122B621C157E814100D06F37 /* kernel_patcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = kernel_patcher.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		122B621D157E814100D06F37 /* kext_patcher.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = kext_patcher.c; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
 		122B621E157E815100D06F37 /* loader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = loader.h; sourceTree = "<group>"; };
 		122B621F157E815D00D06F37 /* nlist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nlist.h; sourceTree = "<group>"; };
 		122B6220157E817C00D06F37 /* sse3_5_patcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sse3_5_patcher.h; sourceTree = "<group>"; };
@@ -53,7 +52,7 @@
 		12CB8FAE14274AE1009EDAF2 /* Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Handle.h; sourceTree = "<group>"; };
 		12CB917114276985009EDAF2 /* IO.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IO.c; sourceTree = "<group>"; };
 		12CB91AB14276D8E009EDAF2 /* IO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IO.h; sourceTree = "<group>"; };
-		12CB922014277F71009EDAF2 /* BdsConnect.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BdsConnect.c; sourceTree = "<group>"; };
+		12CB922014277F71009EDAF2 /* BdsConnect.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = BdsConnect.c; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
 		12CB922114277F7D009EDAF2 /* PiBootMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PiBootMode.h; sourceTree = "<group>"; };
 		12D5B1C914F0F35E0043569D /* ati.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ati.h; sourceTree = "<group>"; };
 		12D6305C14CEA05E00E5898F /* AcpiPatcher.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = AcpiPatcher.c; sourceTree = "<group>"; tabWidth = 2; };
@@ -76,7 +75,7 @@
 		12D6306D14CEA05E00E5898F /* DT_Add.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DT_Add.c; sourceTree = "<group>"; };
 		12D6306E14CEA05E00E5898F /* DT_Add.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DT_Add.h; sourceTree = "<group>"; };
 		12D6306F14CEA05E00E5898F /* DT_pseudo-C.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "DT_pseudo-C.h"; sourceTree = "<group>"; };
-		12D6307014CEA05E00E5898F /* Events.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Events.c; sourceTree = "<group>"; };
+		12D6307014CEA05E00E5898F /* Events.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = Events.c; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		12D6307114CEA05E00E5898F /* gma.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gma.c; sourceTree = "<group>"; };
 		12D6307214CEA05E00E5898F /* gma.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gma.h; sourceTree = "<group>"; };
 		12D6307314CEA05E00E5898F /* guid.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = guid.c; sourceTree = "<group>"; };
@@ -92,10 +91,10 @@
 		12D6307D14CEA05E00E5898F /* pci.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pci.c; sourceTree = "<group>"; };
 		12D6307E14CEA05E00E5898F /* picopng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = picopng.c; sourceTree = "<group>"; usesTabs = 1; };
 		12D6307F14CEA05E00E5898F /* picopng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = picopng.h; sourceTree = "<group>"; };
-		12D6308014CEA05E00E5898F /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
+		12D6308014CEA05E00E5898F /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
 		12D6308114CEA05E00E5898F /* platformdata.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = platformdata.c; sourceTree = "<group>"; };
 		12D6308214CEA05E00E5898F /* plist.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = plist.c; sourceTree = "<group>"; };
-		12D6308314CEA05E00E5898F /* Settings.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = Settings.c; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
+		12D6308314CEA05E00E5898F /* Settings.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.c; path = Settings.c; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
 		12D6308414CEA05E00E5898F /* smbios.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = smbios.c; sourceTree = "<group>"; usesTabs = 1; };
 		12D6308514CEA05E00E5898F /* SmBios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmBios.h; sourceTree = "<group>"; };
 		12D6308614CEA05E00E5898F /* spd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = spd.c; sourceTree = "<group>"; };
@@ -110,6 +109,12 @@
 		12D6308F14CEA05E00E5898F /* VesaBiosExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VesaBiosExtensions.h; sourceTree = "<group>"; };
 		12DE470B1581D0B6008187A7 /* AcpiAml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AcpiAml.h; sourceTree = "<group>"; };
 		260720AF15907388009CC463 /* DbgTime.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DbgTime.c; sourceTree = "<group>"; };
+		261A9E611599E0340006F036 /* kernel_patcher.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = kernel_patcher.c; sourceTree = "<group>"; usesTabs = 0; xcLanguageSpecificationIdentifier = xcode.lang.c; };
+		261A9E631599E0340006F036 /* kext_patcher.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = kext_patcher.c; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
+		261A9E661599E08C0006F036 /* vm_prot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vm_prot.h; sourceTree = "<group>"; };
+		261A9E671599E0F20006F036 /* types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = types.h; sourceTree = "<group>"; };
+		261A9E681599E1290006F036 /* cdefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cdefs.h; sourceTree = "<group>"; };
+		261A9E691599E2740006F036 /* nlist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nlist.h; sourceTree = "<group>"; };
 		26440C83157AADDF0077A476 /* b64cdecode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = b64cdecode.c; sourceTree = "<group>"; };
 		26440C84157AADDF0077A476 /* b64cdecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = b64cdecode.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -193,27 +198,27 @@
 		12D6305B14CEA05E00E5898F /* Platform */ = {
 			isa = PBXGroup;
 			children = (
-				260720AF15907388009CC463 /* DbgTime.c */,
 				122B6216157E80BA00D06F37 /* _types.h */,
-				26440C83157AADDF0077A476 /* b64cdecode.c */,
-				26440C84157AADDF0077A476 /* b64cdecode.h */,
-				126C264B1510C3C9005AB30D /* AmlGenerator.c */,
-				126C264C1510C3C9005AB30D /* AmlGenerator.h */,
 				12DE470B1581D0B6008187A7 /* AcpiAml.h */,
 				12D6305C14CEA05E00E5898F /* AcpiPatcher.c */,
+				126C264B1510C3C9005AB30D /* AmlGenerator.c */,
+				126C264C1510C3C9005AB30D /* AmlGenerator.h */,
 				12D6305D14CEA05E00E5898F /* AppleEfi.h */,
-				12D5B1C914F0F35E0043569D /* ati.h */,
 				12D6305E14CEA05E00E5898F /* ati.c */,
+				12D5B1C914F0F35E0043569D /* ati.h */,
 				12D6305F14CEA05E00E5898F /* ati_reg.h */,
+				26440C83157AADDF0077A476 /* b64cdecode.c */,
+				26440C84157AADDF0077A476 /* b64cdecode.h */,
 				12D6306014CEA05E00E5898F /* BiosVideo.h */,
 				12D6306114CEA05E00E5898F /* Bmp.h */,
 				12D6306214CEA05E00E5898F /* boot.h */,
 				12D6306314CEA05E00E5898F /* BootLog.c */,
-				122B6217157E80E600D06F37 /* cdefs.h */,
+				261A9E681599E1290006F036 /* cdefs.h */,
 				12D6306414CEA05E00E5898F /* Console.c */,
 				12D6306514CEA05E00E5898F /* cpu.c */,
 				12D6306614CEA05E00E5898F /* DataHubCpu.c */,
 				12D6306714CEA05E00E5898F /* DataHubRecords.h */,
+				260720AF15907388009CC463 /* DbgTime.c */,
 				12D6306814CEA05E00E5898F /* device_inject.c */,
 				12D6306914CEA05E00E5898F /* device_inject.h */,
 				12D6306A14CEA05E00E5898F /* device_tree.c */,
@@ -230,17 +235,18 @@
 				12D6307214CEA05E00E5898F /* gma.h */,
 				12D6307314CEA05E00E5898F /* guid.c */,
 				12D6307414CEA05E00E5898F /* Injectors.c */,
-				122B621B157E814100D06F37 /* kernel_patcher.c */,
+				261A9E611599E0340006F036 /* kernel_patcher.c */,
 				122B621C157E814100D06F37 /* kernel_patcher.h */,
-				122B621D157E814100D06F37 /* kext_patcher.c */,
+				261A9E631599E0340006F036 /* kext_patcher.c */,
 				12D6307514CEA05E00E5898F /* LegacyBiosThunk.c */,
 				12D6307614CEA05E00E5898F /* LegacyBiosThunk.h */,
 				12D6307714CEA05E00E5898F /* LegacyBoot.c */,
+				122B6217157E80E600D06F37 /* cdefs.h */,
 				122B621E157E815100D06F37 /* loader.h */,
 				12D6307814CEA05E00E5898F /* memvendors.h */,
 				12D6307914CEA05E00E5898F /* mkext.c */,
 				12D6307A14CEA05E00E5898F /* mkext.h */,
-				122B621F157E815D00D06F37 /* nlist.h */,
+				261A9E691599E2740006F036 /* nlist.h */,
 				12D6307B14CEA05E00E5898F /* nvidia.c */,
 				12D6307C14CEA05E00E5898F /* nvidia.h */,
 				12D6307D14CEA05E00E5898F /* pci.c */,
@@ -258,14 +264,21 @@
 				122B6221157E817C00D06F37 /* sse3_patcher.h */,
 				12D6308814CEA05E00E5898F /* StateGenerator.c */,
 				12D6308914CEA05E00E5898F /* StateGenerator.h */,
+				122B621C157E814100D06F37 /* kernel_patcher.h */,
 				122B6222157E818700D06F37 /* stdint.h */,
 				12D6308A14CEA05E00E5898F /* stringTable.c */,
-				122B6223157E819100D06F37 /* types.h */,
+				261A9E671599E0F20006F036 /* types.h */,
+				122B621D157E814100D06F37 /* kext_patcher.c */,
 				12D6308B14CEA05E00E5898F /* usbfix.c */,
 				12D6308C14CEA05E00E5898F /* UsbMass.h */,
 				12D6308D14CEA05E00E5898F /* UsbMassBoot.h */,
 				12D6308E14CEA05E00E5898F /* UsbMassImpl.h */,
 				12D6308F14CEA05E00E5898F /* VesaBiosExtensions.h */,
+				261A9E661599E08C0006F036 /* vm_prot.h */,
+				122B621E157E815100D06F37 /* loader.h */,
+				122B621F157E815D00D06F37 /* nlist.h */,
+				122B6222157E818700D06F37 /* stdint.h */,
+				122B6223157E819100D06F37 /* types.h */,
 				122B6224157E819B00D06F37 /* vm_prot.h */,
 			);
 			name = Platform;

@@ -724,7 +724,35 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         DBG("Config set BusSpeed=%dkHz\n", gSettings.BusSpeed);
       }      
     }
-      	    
+    
+    // KernelAndKextPatches
+    gSettings.KPKernelCpu = TRUE; // enabled by default
+    dictPointer = GetProperty(dict,"KernelAndKextPatches");
+    if (dictPointer) {
+        prop = GetProperty(dictPointer,"KernelCpu");
+        if(prop)
+        {
+            gSettings.KPKernelCpu = FALSE;
+            if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+                gSettings.KPKernelCpu = TRUE;
+            }
+        }
+        prop = GetProperty(dictPointer,"ATIConnectorInfo");
+        if(prop)
+        {
+            if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+                gSettings.KPATIConnectorInfo = TRUE;
+            }
+        }
+        prop = GetProperty(dictPointer,"AsusAICPUPM");
+        if(prop)
+        {
+            if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+                gSettings.KPAsusAICPUPM = TRUE;
+            }
+        }
+    }
+    
 		SaveSettings();
 	}	
 //  DBG("config.plist read and return %r\n", Status);
