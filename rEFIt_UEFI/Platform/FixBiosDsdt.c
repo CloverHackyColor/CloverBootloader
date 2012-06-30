@@ -820,7 +820,7 @@ UINT32 write_size(UINT32 adr, UINT8* buffer, UINT32 len, UINT32 oldsize)
         sizeoffset -= 1;
     }
     
-    DBG("write size =0x%08x, adr = 0x%08x, offset = 0x%08x\n", size, adr, sizeoffset);
+//    DBG("write size =0x%08x, adr = 0x%08x, offset = 0x%08x\n", size, adr, sizeoffset);
     //offset = size;
   aml_write_size(size, (CHAR8 *)buffer, adr); //reuse existing codes  
 	return len;
@@ -1175,6 +1175,13 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
           } 
           else 
           {
+            //TODO - no this is not a LAN, this is bridge
+            // we have to find next Device
+            /*
+             Device (NIC)
+             {
+                Name (_ADR, Zero) - this is NetworkADR2
+              */
             device_name[1] = AllocateZeroPool(5);
             CopyMem(device_name[1], dsdt+j, 4);
             DBG("found NetWork device NAME(_ADR,0x%08x) And Name is %a\n", 

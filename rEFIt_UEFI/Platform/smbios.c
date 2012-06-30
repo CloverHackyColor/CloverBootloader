@@ -893,13 +893,37 @@ VOID PatchTableType9()
 	 SegmentGroupNum: 0x4350
 	 BusNum: 0x49
 	 DevFuncNum: 0x31
-	 
-	 */
 
+	 Real Mac always contain Airport table 9 as
+	 09 0D xx xx 01 A5 08 03 03 00 00 04 06 "AirPort"
+	 */
+	CHAR8* AirPort = "AirPort";
+	
 	for (Index = 0; Index < 64; Index++) { 
 		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_SYSTEM_SLOTS,Index);
 		if (SmbiosTable.Raw == NULL) {
-			continue;
+			if (Arpt.Valid) {
+				ZeroMem((VOID*)newSmbiosTable.Type9, MAX_TABLE_SIZE);
+				newSmbiosTable.Type9->Hdr.Type = EFI_SMBIOS_TYPE_SYSTEM_SLOTS;
+				newSmbiosTable.Type9->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE9);
+				newSmbiosTable.Type9->Hdr.Handle = 0x0900 + Index;
+				newSmbiosTable.Type9->SlotDesignation = 1;
+				newSmbiosTable.Type9->SlotType = SlotTypePciExpress;
+				newSmbiosTable.Type9->SlotDataBusWidth = SlotDataBusWidth1X;
+				newSmbiosTable.Type9->CurrentUsage = SlotUsageAvailable;
+				newSmbiosTable.Type9->SlotLength = SlotLengthShort;
+				newSmbiosTable.Type9->SlotID = 0;
+				newSmbiosTable.Type9->MISC_SLOT_CHARACTERISTICS1 = 0x04;
+				newSmbiosTable.Type9->MISC_SLOT_CHARACTERISTICS2 = 0x06;
+				// take this from PCI bus for WiFi card
+				newSmbiosTable.Type9->SegmentGroupNum = Arpt.SegmentGroupNum;
+				newSmbiosTable.Type9->BusNum = Arpt.BusNum;
+				newSmbiosTable.Type9->DevFuncNum = Arpt.DevFuncNum;
+				//
+				UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type9->SlotDesignation, AirPort);
+				LogSmbiosTable(newSmbiosTable);
+			}
+			break;
 		}
 		LogSmbiosTable(SmbiosTable);		
 	}
@@ -933,8 +957,8 @@ VOID PatchTableType11()
 VOID PatchTableTypeSome()
 {
 	//some unused but interesting tables. Just log as is
-#define NUM_OTHER_TYPES 12	
-	UINT8 tableTypes[NUM_OTHER_TYPES] = {8, 10, 18, 21, 22, 27, 28, 32, 33, 129, 217, 219};
+#define NUM_OTHER_TYPES 11	
+	UINT8 tableTypes[NUM_OTHER_TYPES] = {8, 10, 18, 21, 22, 27, 28, 32, 33, /*129,*/ 217, 219};
 	UINTN	IndexType;
 	//
 	// Different types 
@@ -1236,11 +1260,11 @@ VOID PatchTableType20 ()
 		CopyMem((VOID*)newSmbiosTable.Type20, (VOID*)SmbiosTable.Type20, TableSize);
 		for (j=0; j < TotalCount; j++) {
 			//EndingAddress in kb while mMemory in Mb
-			DBG("Type20[%d]->End = 0x%lx, mMemory17[%d] = 0x%lx",
-				Index, newSmbiosTable.Type20->EndingAddress, j, (UINT64)mMemory17[j]  << 10);
 			if (((UINT64)mMemory17[j]  << 10) > newSmbiosTable.Type20->EndingAddress) {	
 				newSmbiosTable.Type20->MemoryDeviceHandle = mHandle17[j];
-				DBG(" MemoryDeviceHandle = 0x%x\n", newSmbiosTable.Type20->MemoryDeviceHandle);
+				DBG("Type20[%d]->End = 0x%lx, mMemory17[%d] = 0x%lx\n",
+						Index, newSmbiosTable.Type20->EndingAddress, j, (UINT64)mMemory17[j]  << 10);
+//				DBG(" MemoryDeviceHandle = 0x%x\n", newSmbiosTable.Type20->MemoryDeviceHandle);
 				mMemory17[j] = 0; // used
 				break;
 			}
@@ -1280,8 +1304,8 @@ VOID PatchTableType128()
 		newSmbiosTable.Type128->Hdr.Type = 128;
 		newSmbiosTable.Type128->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE128); 
 		newSmbiosTable.Type128->Hdr.Handle = 0x8000; //common rule
-		newSmbiosTable.Type128->FirmwareFeatures = 0x80001417; //imac112 -> 0x1403
-		newSmbiosTable.Type128->FirmwareFeaturesMask = 0x80003fff; // 0xffff
+		newSmbiosTable.Type128->FirmwareFeatures = gFwFeatures; //0x80001417; //imac112 -> 0x1403
+		newSmbiosTable.Type128->FirmwareFeaturesMask = 0xC0007fff; // 0xffff
 		/*
 		 FW_REGION_RESERVED   = 0,
 		 FW_REGION_RECOVERY   = 1,
@@ -1292,16 +1316,16 @@ VOID PatchTableType128()
 		 FW_REGION_DIAGVAULT  = 5,		 
 		 */
 		//TODO - Slice - I have an idea that region should be the same as Efivar.bin
-		newSmbiosTable.Type128->RegionCount = 2; 
+		newSmbiosTable.Type128->RegionCount = 1; 
 		newSmbiosTable.Type128->RegionType[0] = FW_REGION_MAIN; 
 		//UpAddress = mTotalSystemMemory << 20; //Mb -> b
 		//			gHob->MemoryAbove1MB.PhysicalStart;
 		newSmbiosTable.Type128->FlashMap[0].StartAddress = 0xFFE00000; //0xF0000;
 		//			gHob->MemoryAbove1MB.PhysicalStart + gHob->MemoryAbove1MB.ResourceLength - 1;
 		newSmbiosTable.Type128->FlashMap[0].EndAddress = 0xFFEFFFFF;
-		newSmbiosTable.Type128->RegionType[1] = FW_REGION_NVRAM; //Efivar
-		newSmbiosTable.Type128->FlashMap[1].StartAddress = 0x15000; //0xF0000;
-		newSmbiosTable.Type128->FlashMap[1].EndAddress = 0x1FFFF;
+//		newSmbiosTable.Type128->RegionType[1] = FW_REGION_NVRAM; //Efivar
+//		newSmbiosTable.Type128->FlashMap[1].StartAddress = 0x15000; //0xF0000;
+//		newSmbiosTable.Type128->FlashMap[1].EndAddress = 0x1FFFF;
 		//region type=1 also present in mac
 		LogSmbiosTable(newSmbiosTable);
 		return ;		

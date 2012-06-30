@@ -28,6 +28,7 @@ EFI_GUID                        *gEfiBootDeviceGuid = NULL;
 SETTINGS_DATA                   gSettings;
 LANGUAGES                       gLanguage;
 GFX_PROPERTIES                  gGraphics[4]; //no more then 4 graphics cards
+SLOT_DEVICE                     Arpt;
 EFI_EDID_DISCOVERED_PROTOCOL    *EdidDiscovered;
 UINT8                           *gEDID = NULL;
 //EFI_GRAPHICS_OUTPUT_PROTOCOL    *GraphicsOutput;
@@ -262,19 +263,19 @@ EFI_STATUS GetNVRAMPlistSettings(IN EFI_FILE *RootDir, IN CHAR16* NVRAMPlistPath
 
 EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 {
-	EFI_STATUS	Status = EFI_NOT_FOUND;
-	UINTN       size;
-	TagPtr      dict;
-	TagPtr      prop;
-	TagPtr      dictPointer;
-	CHAR8*      gConfigPtr = NULL;
+  EFI_STATUS	Status = EFI_NOT_FOUND;
+  UINTN       size;
+  TagPtr      dict;
+  TagPtr      prop;
+  TagPtr      dictPointer;
+  CHAR8*      gConfigPtr = NULL;
   UINTN       i; 
   
   CHAR16      UStr[64];  
   CHAR16*     ConfigPlistPath = L"EFI\\config.plist";
   CHAR16*     ConfigOemPath = PoolPrint(L"%s\\config.plist", OEMPath);
-	
-	// load config
+  
+  // load config
   if (FileExists(SelfRootDir, ConfigOemPath)) {
     Status = egLoadFile(SelfRootDir, ConfigOemPath, (UINT8**)&gConfigPtr, &size);
   } else {
@@ -293,24 +294,24 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
   }
   
   
-	if(EFI_ERROR(Status)) {
-		DBG("Error loading config.plist! Status=%r\n", Status);
-		return Status;
-	}
-	if(gConfigPtr)
-	{		
-		if(ParseXML((const CHAR8*)gConfigPtr, &dict) != EFI_SUCCESS)
-		{
-			DBG(" config error\n");
-			return EFI_UNSUPPORTED;
-		}
-		//*** SYSTEM ***//
+  if(EFI_ERROR(Status)) {
+    DBG("Error loading config.plist! Status=%r\n", Status);
+    return Status;
+  }
+  if(gConfigPtr)
+  {		
+    if(ParseXML((const CHAR8*)gConfigPtr, &dict) != EFI_SUCCESS)
+    {
+      DBG(" config error\n");
+      return EFI_UNSUPPORTED;
+    }
+    //*** SYSTEM ***//
     dictPointer = GetProperty(dict, "SystemParameters");
     if (dictPointer) {
       prop = GetProperty(dictPointer, "prev-lang:kbd");
       if(prop)
       {
- //       AsciiStrToUnicodeStr(prop->string, gSettings.Language);
+        //       AsciiStrToUnicodeStr(prop->string, gSettings.Language);
         AsciiStrCpy(gSettings.Language,  prop->string);
         if (AsciiStrStr(prop->string, "en")) {
           gLanguage = english;
@@ -353,7 +354,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       }
       
     }
-//Graphics
+    //Graphics
     
     dictPointer = GetProperty(dict,"Graphics");
     if (dictPointer) {
@@ -413,7 +414,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       } 
       
     }    
-
+    
     dictPointer = GetProperty(dict,"PCI");
     if (dictPointer) {
       
@@ -470,8 +471,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         }
       }      
     }
-        
-		//*** ACPI ***//
+    
+    //*** ACPI ***//
     
     dictPointer = GetProperty(dict,"ACPI");
     if (dictPointer) {
@@ -510,7 +511,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
         gSettings.UnderVoltStep = (UINT8)StrDecimalToUintn((CHAR16*)&UStr[0]);	
       }
-            
+      
       prop = GetProperty(dictPointer,"ResetAddress");
       if(prop)
       {
@@ -580,11 +581,9 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
         gSettings.FixDsdt  = StrHexToUint64(UStr); 
       }
-      
     }
-
-    		
-		//*** SMBIOS ***//
+    
+    //*** SMBIOS ***//
     dictPointer = GetProperty(dict,"SMBIOS");
     if (dictPointer) {
       prop = GetProperty(dictPointer,"BiosVendor");
@@ -678,8 +677,15 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       {
         AsciiStrCpy(gSettings.ChassisAssetTag, prop->string);
       }
+      //gFwFeatures = 0xC0001403 - by default
+      prop = GetProperty(dictPointer, "FirmwareFeatures");
+      if(prop)
+      {
+        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+        gFwFeatures = (UINT32)StrHexToUint64((CHAR16*)&UStr[0]);
+      }
     }
-
+    
     //CPU
     dictPointer = GetProperty(dict,"CPU");
     if (dictPointer) {
@@ -729,35 +735,35 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
     gSettings.KPKernelCpu = TRUE; // enabled by default
     dictPointer = GetProperty(dict,"KernelAndKextPatches");
     if (dictPointer) {
-        prop = GetProperty(dictPointer,"KernelCpu");
-        if(prop)
-        {
-            gSettings.KPKernelCpu = FALSE;
-            if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
-                gSettings.KPKernelCpu = TRUE;
-            }
+      prop = GetProperty(dictPointer,"KernelCpu");
+      if(prop)
+      {
+        gSettings.KPKernelCpu = FALSE;
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+          gSettings.KPKernelCpu = TRUE;
         }
-        prop = GetProperty(dictPointer,"ATIConnectorInfo");
-        if(prop)
-        {
-            if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
-                gSettings.KPATIConnectorInfo = TRUE;
-            }
+      }
+      prop = GetProperty(dictPointer,"ATIConnectorInfo");
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+          gSettings.KPATIConnectorInfo = TRUE;
         }
-        prop = GetProperty(dictPointer,"AsusAICPUPM");
-        if(prop)
-        {
-            if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
-                gSettings.KPAsusAICPUPM = TRUE;
-            }
+      }
+      prop = GetProperty(dictPointer,"AsusAICPUPM");
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+          gSettings.KPAsusAICPUPM = TRUE;
         }
+      }
     }
     
-		SaveSettings();
-	}	
-//  DBG("config.plist read and return %r\n", Status);
-	return Status;
-}	
+    SaveSettings();
+  }	
+  //  DBG("config.plist read and return %r\n", Status);
+  return Status;
+}
 
 EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 {
@@ -965,7 +971,15 @@ VOID GetDevices(VOID)
           }                
 
           NGFX++;
-        }   //if gfx             
+        }   //if gfx    
+        else if((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
+                (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_OTHER))
+        {
+          Arpt.SegmentGroupNum = Segment;
+          Arpt.BusNum = Bus;
+          Arpt.DevFuncNum = (Device << 4) | (Function & 0x0F);
+          Arpt.Valid = TRUE;
+        }
       }
     }
   }

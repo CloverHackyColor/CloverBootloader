@@ -729,6 +729,12 @@ typedef struct {
   UINTN             Function;
 } GFX_PROPERTIES;
 
+typedef struct {
+  UINT16                      SegmentGroupNum;
+  UINT8                       BusNum;
+  UINT8                       DevFuncNum;  
+} SLOT_DEVICE;
+
 #pragma pack(0)
 extern CHAR8                    *msgbuf;
 extern CHAR8                    *msgCursor;
@@ -762,8 +768,10 @@ extern EFI_BOOT_SERVICES*       gBS;
 extern SETTINGS_DATA            gSettings;
 extern LANGUAGES                gLanguage;
 extern BOOLEAN                  gFirmwareClover;
+extern UINT32                   gFwFeatures;
 extern CPU_STRUCTURE            gCPUStructure;
 extern EFI_GUID                 gUuid;
+extern SLOT_DEVICE              Arpt;
 extern EFI_EDID_DISCOVERED_PROTOCOL*            EdidDiscovered;
 extern UINT8                                    *gEDID;
 extern CHAR8*                   gDeviceProperties;

@@ -14,6 +14,8 @@ CHAR8* BiosVendor = "Apple Inc.";
 
 CHAR8* AppleManufacturer = "Apple Computer, Inc."; //Old name, before 2007
 
+UINT32 gFwFeatures = 0xC0001403; //default valuse
+
 CHAR8* AppleFirmwareVersion[] = 
 {
 	"MB11.88Z.0061.B03.0809221748",
@@ -230,11 +232,12 @@ VOID GetDefaultSettings(VOID)
   
   gSettings.ResetAddr  = 0x64; //I wish it will be default
   gSettings.ResetVal = 0xFE;
-  gSettings.FixDsdt  = 0xFF; //only ISA fixes and warnings. No injectors by default.
+  gSettings.FixDsdt  = 0xF7; //only ISA fixes and warnings. No injectors by default.
   gSettings.GraphicsInjector = TRUE;
   gSettings.HDAInjection = TRUE;
   gSettings.HDALayoutId = 0;
   gSettings.Mobile = gMobile;  //default
   StrCpy(gSettings.DsdtName, L"DSDT.aml");
+  Arpt.Valid = FALSE;
 
 }
