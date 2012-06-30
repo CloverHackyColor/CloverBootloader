@@ -45,11 +45,11 @@ DisableUsbLegacySupport(
  --*/
 {
 	EFI_STATUS					Status = EFI_SUCCESS;
-	EFI_HANDLE					*HandleArray;
-	UINTN						HandleArrayCount;
-	UINTN						Index;
+	EFI_HANDLE					*HandleArray = NULL;
+	UINTN             HandleArrayCount = 0;
+	UINTN             Index;
 	EFI_PCI_IO_PROTOCOL			*PciIo;
-	PCI_TYPE00					Pci;
+	PCI_TYPE00              Pci;
 	UINT16						Command;
 	UINT32						HcCapParams;
 	UINT32						ExtendCap;
@@ -62,8 +62,8 @@ DisableUsbLegacySupport(
 	UINT32						usbcmd, usbsts, usbintr;			
 	UINT32						usblegsup, usblegctlsts;		
 	
-	UINTN						isOSowned;
-	UINTN						isBIOSowned;
+	UINTN             isOSowned;
+	UINTN             isBIOSowned;
 	BOOLEAN						isOwnershipConflict;
 	
 	//

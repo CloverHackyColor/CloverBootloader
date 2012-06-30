@@ -634,7 +634,7 @@ UINT32 HDA_IC_sendVerb(EFI_PCI_IO_PROTOCOL *PciIo, UINT32 codecAdr, UINT32 nodeI
 	// poll ICS[0] to become 0
 	Status = PciIo->PollMem(PciIo, EfiPciIoWidthUint16, 0/*bar*/, HDA_ICS/*offset*/, 0x1/*mask*/, 0/*value*/, 100000/*delay in 100ns*/, &data64);
 	ics = (UINT16)(data64 & 0xFFFF);
-	//DBG("poll ICS[0] == 0: Status=%r, ICS=%x, ICS[0]=%d\n", Status, ics, ics & 0x0001);
+	//DBG("poll ICS[0] == 0: Status=%r, ICS=%x, ICS[0]=%d\n", Status, ics, (ics & 0x0001));
 	if (EFI_ERROR(Status)) return 0;
 	// prepare and write verb to ICO
 	data32 = codecAdr << 28 | ((nodeId & 0xFF)<<20) | (verb & 0xFFFFF);
@@ -672,7 +672,7 @@ UINT32 HDA_getCodecVendorAndDeviceIds(EFI_PCI_IO_PROTOCOL *PciIo) {
 	
 	// check if controller is out of reset - GCTL-08h[CRST-bit 0] == 1
 	Status = PciIo->Mem.Read(PciIo, EfiPciIoWidthUint32, 0, HDA_GCTL, 1, &data32);
-	//DBG("check CRST == 1: Status=%r, CRST=%d\n", Status, data32 & 0x1);
+	//DBG("check CRST == 1: Status=%r, CRST=%d\n", Status, (data32 & 0x1));
 	if (EFI_ERROR(Status)) {
 		return 0;
 	}
@@ -794,7 +794,7 @@ BOOLEAN set_hda_props(EFI_PCI_IO_PROTOCOL *PciIo, pci_dt_t *hda_dev)
       // use detection: layoutId=codec dviceId or use default 12
       codecId = HDA_getCodecVendorAndDeviceIds(PciIo);
       if (codecId != 0) {
-        DBG(" detected codec: %04x:%04x", codecId >> 16, codecId & 0xFFFF);
+        DBG(" detected codec: %04x:%04x", (codecId >> 16), (codecId & 0xFFFF));
         layoutId = getLayoutIdFromVendorAndDeviceId(codecId);
       } else {
         DBG(" codec not detected");

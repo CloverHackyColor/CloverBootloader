@@ -390,7 +390,7 @@ VOID GetCPUProperties (VOID)
                                                MultU64x32(gCPUStructure.TSCFrequency,
                                                          gCPUStructure.SubDivider),
                                                gCPUStructure.MaxRatio);
-		//		DBG("%d.%d\n", currcoef / currdiv, ((currcoef % currdiv) * 100) / currdiv);
+		//		DBG("%d.%d\n", (currcoef / currdiv), (((currcoef % currdiv) * 100) / currdiv));
 			}
 			else
 			{

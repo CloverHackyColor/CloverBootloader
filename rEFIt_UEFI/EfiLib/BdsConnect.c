@@ -576,9 +576,9 @@ BdsLibConnectUsbDevByShortFormDP(
   }
 
   if ((DevicePathType (RemainingDevicePath) != MESSAGING_DEVICE_PATH) ||
-      ((DevicePathSubType (RemainingDevicePath) != MSG_USB_CLASS_DP)
-      && (DevicePathSubType (RemainingDevicePath) != MSG_USB_WWID_DP)
-      )) {
+      ((DevicePathSubType (RemainingDevicePath) != MSG_USB_CLASS_DP) &&
+       (DevicePathSubType (RemainingDevicePath) != MSG_USB_WWID_DP))
+      ) {
     return EFI_INVALID_PARAMETER;
   }
 

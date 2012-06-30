@@ -16,11 +16,11 @@
 #endif
 
 #if DEBUG_FIX==2
-#define DBG(x, ...)  AsciiPrint(x)
+#define DBG(x...)  AsciiPrint(x)
 #elif DEBUG_FIX==1
-#define DBG(x, ...)  MsgLog(x)
+#define DBG(x...)  MsgLog(x)
 #else
-#define DBG(x, ...)
+#define DBG(x...)
 #endif
 
 
@@ -400,21 +400,25 @@ VOID GetPciADR(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINT32 *Addr1, OUT U
 {
   PCI_DEVICE_PATH *PciNode;
   UINTN           PciNodeCount;
-  
   // default to 0
   if (Addr1 != NULL) *Addr1 = 0;
   if (Addr2 != NULL) *Addr2 = 0;
   
+  EFI_DEVICE_PATH_PROTOCOL *TmpDevicePath = DuplicateDevicePath(DevicePath);
+  if (!TmpDevicePath) {
+    return;
+  }
+  
   // sanity check - expecting ACPI path for PciRoot
-  if (DevicePath->Type != ACPI_DEVICE_PATH && DevicePath->SubType != ACPI_DP) {
+  if (TmpDevicePath->Type != ACPI_DEVICE_PATH && TmpDevicePath->SubType != ACPI_DP) {
     return;
   }
   
   PciNodeCount = 0;
-  while (DevicePath && !IsDevicePathEndType(DevicePath)) {
-    if (DevicePath->Type == HARDWARE_DEVICE_PATH && DevicePath->SubType == HW_PCI_DP) {
+  while (TmpDevicePath && !IsDevicePathEndType(TmpDevicePath)) {
+    if (TmpDevicePath->Type == HARDWARE_DEVICE_PATH && TmpDevicePath->SubType == HW_PCI_DP) {
       PciNodeCount++;
-      PciNode = (PCI_DEVICE_PATH *)DevicePath;
+      PciNode = (PCI_DEVICE_PATH *)TmpDevicePath;
       if (PciNodeCount == 1 && Addr1 != NULL) {
         *Addr1 = (PciNode->Device << 16) | PciNode->Function;
       } else if (PciNodeCount == 2 && Addr2 != NULL) {
@@ -423,7 +427,7 @@ VOID GetPciADR(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINT32 *Addr1, OUT U
         break;
       }
     }
-    DevicePath = NextDevicePathNode(DevicePath);
+    TmpDevicePath = NextDevicePathNode(TmpDevicePath);
   }
   return;
 }
@@ -431,11 +435,12 @@ VOID GetPciADR(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINT32 *Addr1, OUT U
 VOID CheckHardware()
 {
   EFI_STATUS			Status;
-	EFI_HANDLE			*HandleBuffer;
+	EFI_HANDLE			*HandleBuffer = NULL;
+  EFI_HANDLE      Handle;
 //	EFI_GUID        **ProtocolGuidArray;
 	EFI_PCI_IO_PROTOCOL *PciIo;
 	PCI_TYPE00          Pci;
-	UINTN         HandleCount;
+	UINTN         HandleCount = 0;
 //	UINTN         ArrayCount;
 	UINTN         HandleIndex;
 //	UINTN         ProtocolIndex;
@@ -479,9 +484,11 @@ VOID CheckHardware()
                                     &HandleBuffer
                                     );
   if (!EFI_ERROR (Status)) {
+    DBG("PciIo handles count=%d\n", HandleCount);
     for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
+      Handle = HandleBuffer[HandleIndex];
       Status = gBS->HandleProtocol (
-                                    HandleBuffer[HandleIndex],
+                                    Handle,
                                     &gEfiPciIoProtocolGuid,
                                     (VOID **)&PciIo
                                     );
@@ -502,8 +509,8 @@ VOID CheckHardware()
         UINT32 deviceid = Pci.Hdr.DeviceId | Pci.Hdr.VendorId << 16;
         
         // add for auto patch dsdt get DSDT Device _ADR
-        PCIdevice.DeviceHandle = HandleBuffer[HandleIndex];
-        DevicePath = DevicePathFromHandle (PCIdevice.DeviceHandle);
+        PCIdevice.DeviceHandle = Handle;
+        DevicePath = DevicePathFromHandle (Handle);
         if (DevicePath)
         {
           DBG("Device patch = %s \n", DevicePathToStr(DevicePath));
@@ -512,8 +519,11 @@ VOID CheckHardware()
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA)) {
             GetPciADR(DevicePath, &DisplayADR1[display], &DisplayADR2[display]);
-            DBG("Display PciAdr=0x%x\n", (Device << 16) | Function);
-            DBG("DisplayADR1[%d] = 0x%x, DisplayADR2[%d] = 0x%x\n", display, DisplayADR1[display], display, DisplayADR2[display]);
+            DBG("Display PciAdr=0x%x\n", ((Device << 16) | Function));
+            UINT32 dadr1 = DisplayADR1[display];
+            UINT32 dadr2 = DisplayADR2[display];
+            DBG("DisplayADR1[%d] = 0x%x, DisplayADR2[%d] = 0x%x\n", display, dadr1, display, dadr2);
+            dadr2 = dadr1; //to avoid warning "unused variable" :(
             DisplayVendor[display] = Pci.Hdr.VendorId;
             DisplayID[display] = Pci.Hdr.DeviceId;
             DisplaySubID[display] = (Pci.Device.SubsystemID << 16) | (Pci.Device.SubsystemVendorID << 0);
@@ -1717,11 +1727,11 @@ UINT32 FixHPET (UINT8* dsdt, UINT32 len)
  
   sizeoffset = sizeof(hpet0);
   if (hpetsize) {
-    i = HPETADR - 2;
+    i = HPETADR - 2;  //pointer to device
     j = hpetsize + 2;
     sizeoffset -= j;
-    len = move_data(i, dsdt, len, sizeoffset);   
-    // add HPET code 
+    len = move_data(i, dsdt, len, sizeoffset);   //destroy old HPET
+    // add new HPET code 
     CopyMem(dsdt+i, hpet0, sizeof(hpet0));
 
   } else {
@@ -1782,17 +1792,6 @@ UINT32 FixHPET (UINT8* dsdt, UINT32 len)
       // set HPET size
       len = write_size(HPETADR, dsdt, len, hpetsize);
       CorrectOuters(dsdt, len, HPETADR-3);
-/*      for (j=0; j<30; j++)
-      {
-        if (dsdt[adr-j] == 0x82 && dsdt[adr-j-1] == 0x5B)
-        {
-          UINT32 hpetsize = get_size(dsdt, adr-j+1);
-          //DBG("HPET adr = 0x%08x size = 0x%08x\n", adr-j+1, hpetsize);
-          len = write_size(adr-j+1, dsdt, len, hpetsize);
-          CorrectOuters(dsdt, len, adr-j-2);
-          break;
-        }
-      } */
       break;        
     } // offset if
     if ((dsdt[i+1] == 0x5B) && (dsdt[i+2] == 0x82)) {
@@ -4328,6 +4327,7 @@ VOID FixBiosDsdt (UINT8* temp)
   if ((gSettings.FixDsdt & FIX_DTGP)) {
     CopyMem((VOID*)temp+DsdtLen, dtgp, sizeof(dtgp));
     DsdtLen += sizeof(dtgp);
+    ((EFI_ACPI_DESCRIPTION_HEADER*)temp)->Length = DsdtLen;
   }
   
   // get PCIRootUID and all DSDT Fix address
@@ -4355,17 +4355,11 @@ VOID FixBiosDsdt (UINT8* temp)
   }
   
   // Fix HPET
-  if (HPETADR && (gSettings.FixDsdt & FIX_HPET))
+  if ((gSettings.FixDsdt & FIX_HPET) != 0)
   {
     DBG("patch HPET in DSDT \n");
     DsdtLen = FixHPET(temp, DsdtLen);
   }
-  /*    else // if don't had HPET inject HPET is not use.
-   {
-   DsdtLen = ADDHPET(temp, DsdtLen);
-   }
-   */    
-  
   
   // Fix LPC if don't had HPET don't need to inject LPC??
   if (LPCBFIX && (gCPUStructure.Family == 0x06)  && (gSettings.FixDsdt & FIX_LPC))

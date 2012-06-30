@@ -310,7 +310,7 @@ EFI_STATUS ExtractLegacyLoaderPaths(EFI_DEVICE_PATH **PathList, UINTN MaxPaths, 
     EFI_STATUS          Status;
     UINTN               HandleCount = 0;
     UINTN               HandleIndex, HardcodedIndex;
-    EFI_HANDLE          *Handles;
+    EFI_HANDLE          *Handles = NULL;
     EFI_HANDLE          Handle;
     UINTN               PathCount = 0;
     UINTN               PathIndex;
@@ -1062,7 +1062,7 @@ VOID ScanVolumes(VOID)
       
       Status = ScanVolume(Volume);
       if (!EFI_ERROR(Status)) {
-        DBG("Found Volume %s at index=%d\n", Volume->VolName, HandleIndex);
+   //     DBG("Found Volume %s at index=%d\n", Volume->VolName, HandleIndex);
         AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
         
       } else {

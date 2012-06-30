@@ -1372,59 +1372,8 @@ static VOID ScanDriverDir(IN CHAR16 *Path) //path to folder
 }
 
 
-
-/**
- This function will connect all current system handles recursively. 
- 
- gBS->ConnectController() service is invoked for each handle exist in system handler buffer.
- If the handle is bus type handler, all childrens also will be connected recursively
- by gBS->ConnectController().
- 
- @retval EFI_SUCCESS           All handles and it's child handle have been connected
- @retval EFI_STATUS            Error status returned by of gBS->LocateHandleBuffer().
- 
- **/
-//Slice - move back to BdsConnect.c but with more changes
-/* EFI_STATUS
-EFIAPI
-BdsLibConnectAllEfi (
-                     VOID
-                     )
-{
-    EFI_STATUS  Status;
-    UINTN       HandleCount;
-    EFI_HANDLE  *HandleBuffer;
-    UINTN       Index;
-    //BOOLEAN					IsDevice;
-    //BOOLEAN					IsParent;
-    
-    Status = gBS->LocateHandleBuffer (
-                                      AllHandles,
-                                      NULL,
-                                      NULL,
-                                      &HandleCount,
-                                      &HandleBuffer
-                                      );
-    if (EFI_ERROR (Status)) {
-        return Status;
-    }
-    
-    for (Index = 0; Index < HandleCount; Index++) {
-        Status = gBS->ConnectController (HandleBuffer[Index], NULL, NULL, TRUE);
-    }
-    
-    if (HandleBuffer != NULL) {
-        FreePool (HandleBuffer);
-    }
-    
-    return EFI_SUCCESS;
-}
-*/
-
 static VOID LoadDrivers(VOID)
 {
-  //BOOLEAN ReconnectAll = FALSE;
-  
     
     // load drivers from /efi/drivers
 #if defined(MDE_CPU_X64)
@@ -1433,15 +1382,6 @@ static VOID LoadDrivers(VOID)
   ScanDriverDir(L"\\EFI\\drivers32");
 #endif
 
-  // connect all devices
-    //
-  //if (ReconnectAll) {
-    //BdsLibDisconnectAllEfi ();
-    //BdsLibConnectAll ();
-  //} else {
-    // connect loaded drivers
- //   BdsLibConnectAllEfi();
-  //}
   if (!gFirmwareClover) {
     BdsLibConnectAllEfi();
   }
