@@ -1144,10 +1144,10 @@ typedef struct {
 typedef struct {
   SMBIOS_STRUCTURE            Hdr;
   SMBIOS_TABLE_STRING         SlotDesignation;
-  UINT8                       SlotType;                 ///< The enumeration value from MISC_SLOT_TYPE.
-  UINT8                       SlotDataBusWidth;         ///< The enumeration value from MISC_SLOT_DATA_BUS_WIDTH.
-  UINT8                       CurrentUsage;             ///< The enumeration value from MISC_SLOT_USAGE.
-  UINT8                       SlotLength;               ///< The enumeration value from MISC_SLOT_LENGTH.
+  UINT8                       SlotType;          ///< The enumeration value from MISC_SLOT_TYPE.
+  UINT8                       SlotDataBusWidth;  ///< The enumeration value from MISC_SLOT_DATA_BUS_WIDTH.
+  UINT8                       CurrentUsage;      ///< The enumeration value from MISC_SLOT_USAGE.
+  UINT8                       SlotLength;        ///< The enumeration value from MISC_SLOT_LENGTH.
   UINT16                      SlotID;
   MISC_SLOT_CHARACTERISTICS1  SlotCharacteristics1;
   MISC_SLOT_CHARACTERISTICS2  SlotCharacteristics2;

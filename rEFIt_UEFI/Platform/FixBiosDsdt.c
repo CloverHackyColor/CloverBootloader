@@ -1175,7 +1175,7 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
           } 
           else 
           {
-            //TODO - no this is not a LAN, this is bridge
+            //TODO - no this is not a LAN, this is bridge of the lan
             // we have to find next Device
             /*
              Device (NIC)

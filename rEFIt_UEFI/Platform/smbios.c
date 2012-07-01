@@ -913,8 +913,8 @@ VOID PatchTableType9()
 				newSmbiosTable.Type9->CurrentUsage = SlotUsageAvailable;
 				newSmbiosTable.Type9->SlotLength = SlotLengthShort;
 				newSmbiosTable.Type9->SlotID = 0;
-				newSmbiosTable.Type9->MISC_SLOT_CHARACTERISTICS1 = 0x04;
-				newSmbiosTable.Type9->MISC_SLOT_CHARACTERISTICS2 = 0x06;
+				newSmbiosTable.Type9->SlotCharacteristics1.Provides33Volts = 1;
+				newSmbiosTable.Type9->SlotCharacteristics2.HotPlugDevicesSupported = 1;
 				// take this from PCI bus for WiFi card
 				newSmbiosTable.Type9->SegmentGroupNum = Arpt.SegmentGroupNum;
 				newSmbiosTable.Type9->BusNum = Arpt.BusNum;

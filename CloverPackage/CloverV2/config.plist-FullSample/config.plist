@@ -2,6 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>KernelAndKextPatches</key>
+	<dict>
+		<key>KernelCpu</key>
+		<string>No</string>
+		<key>ATIConnectorInfo</key>
+		<string>No</string>
+		<key>AsusAICPUPM</key>
+		<string>No</string>
+	</dict>
 	<key>SystemParameters</key>
 	<dict>
 		<key>boot-args</key>
@@ -53,6 +62,8 @@
 		<string>Apple Inc.</string>
 		<key>ChassisAssetTag</key>
 		<string>LatitudeD420</string>
+		<key>FirmwareFeatures</key>
+		<string>0xC0001403</string>
 	</dict>
 	<key>CPU</key>
 	<dict>
