@@ -976,6 +976,7 @@ VOID GetDevices(VOID)
         else if((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
                 (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_OTHER))
         {
+          DBG("Found AirPort. Landing enabled...\n");
           Arpt.SegmentGroupNum = Segment;
           Arpt.BusNum = Bus;
           Arpt.DevFuncNum = (Device << 4) | (Function & 0x0F);

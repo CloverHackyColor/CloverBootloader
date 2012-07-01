@@ -1497,7 +1497,7 @@ VOID PatchSmbios(VOID) //continue
 	PatchTableType4();		
 	PatchTableType6();
 	PatchTableType9();
-  PatchTableType11();
+ // PatchTableType11();
 	PatchTableTypeSome();
 	PatchTableType16();
 	PatchTableType17();
