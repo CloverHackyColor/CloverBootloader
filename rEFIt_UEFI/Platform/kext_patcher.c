@@ -124,6 +124,23 @@ VOID AsusAICPUPMPatch(UINT8 *Driver, UINT32 DriverSize)
 // Generic kext patch functions
 //
 
+//
+// Called from SetFSInjection(), before boot.efi is started,
+// to allow patchers to prepare FSInject to force load needed kexts.
+//
+VOID KextPatcherRegisterKexts(FSINJECTION_PROTOCOL *FSInject, FSI_STRING_LIST *ForceLoadKexts)
+{
+  if (gSettings.KPATIConnectorInfo) {
+    FSInject->AddStringToList(ForceLoadKexts, L"\\ATI5000Controller.kext\\Contents\\Info.plist");
+    FSInject->AddStringToList(ForceLoadKexts, L"\\IOGraphicsFamily.kext\\Info.plist");
+    FSInject->AddStringToList(ForceLoadKexts, L"\\ATISupport.kext\\Contents\\Info.plist");
+  }
+}
+
+
+
+
+
 
 //
 // PatchKext is called for every kext from prelinked kernel (kernelcache) or from DevTree (booting with drivers).

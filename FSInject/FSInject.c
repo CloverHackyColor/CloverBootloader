@@ -32,47 +32,21 @@ Module Name:
 #include "FSInject.h"
 
 
-// set to 1 to print calls to console
-#define CONSOLE_OUTPUT 0
-// set to 1 to print calls to serial
-// requires
+// DBG_TO: 0=no debug, 1=serial, 2=console
+// serial requires
 // [PcdsFixedAtBuild]
 //  gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x07
 //  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
 // in package DSC file
-#define SERIAL_OUTPUT 0
+#define DBG_TO 0
 
-#ifdef __GNUC__
-
-#if CONSOLE_OUTPUT && SERIAL_OUTPUT
-	#define PRINT(format, ...) {\
-		DebugPrint(1, format , ## __VA_ARGS__);\
-		Print(L##format , ## __VA_ARGS__);\
-	}
-#elif CONSOLE_OUTPUT
-	#define PRINT(format, ...) Print(L##format , ## __VA_ARGS__);
-#elif SERIAL_OUTPUT
-	#define PRINT(format, ...) DebugPrint(1, format , ## __VA_ARGS__);
+#if DBG_TO == 2
+#define DBG(...) AsciiPrint(__VA_ARGS__);
+#elif DBG_TO == 1
+#define DBG(...) DebugPrint(1, __VA_ARGS__);
 #else
-	#define PRINT(format, ...)
+#define DBG(...)
 #endif
-
-#else // __GNUC__
-
-#if CONSOLE_OUTPUT && SERIAL_OUTPUT
-	#define PRINT(format, ...) {\
-		DebugPrint(1, format, __VA_ARGS__);\
-		Print(L##format, __VA_ARGS__);\
-	}
-#elif CONSOLE_OUTPUT
-	#define PRINT(format, ...) Print(L##format, __VA_ARGS__);
-#elif SERIAL_OUTPUT
-	#define PRINT(format, ...) DebugPrint(1, format, __VA_ARGS__);
-#else
-	#define PRINT(format, ...)
-#endif
-
-#endif // __GNUC__
 
 
 #define TEST 0
@@ -177,7 +151,7 @@ StrCmpiBasic(IN CHAR16 *String1, IN CHAR16 *String2)
 	CHAR16	Chr1;
 	CHAR16	Chr2;
 	
-	PRINT("Cmpi('%s', '%s') ", String1, String2);
+	DBG("Cmpi('%s', '%s') ", String1, String2);
 	
 	if (String1 == NULL || String2 == NULL) {
 		return 1;
@@ -198,7 +172,7 @@ StrCmpiBasic(IN CHAR16 *String1, IN CHAR16 *String2)
 		Chr2 = ToUpperChar(*String2);
 	}
     
-	PRINT("=%s ", (Chr1 - Chr2) ? L"NEQ" : L"EQ");
+	DBG("=%s ", (Chr1 - Chr2) ? L"NEQ" : L"EQ");
 	return Chr1 - Chr2;
 }
 
@@ -211,7 +185,7 @@ StriStartsWithBasic(IN CHAR16 *String1, IN CHAR16 *String2)
 	CHAR16	Chr2;
     BOOLEAN Result;
 	
-	PRINT("StriStarts('%s', '%s') ", String1, String2);
+	DBG("StriStarts('%s', '%s') ", String1, String2);
 	
 	if (String1 == NULL || String2 == NULL) {
 		return FALSE;
@@ -235,7 +209,7 @@ StriStartsWithBasic(IN CHAR16 *String1, IN CHAR16 *String2)
     Result = ((Chr1 == L'\0') && (Chr2 == L'\0'))
     || ((Chr1 != L'\0') && (Chr2 == L'\0'));
     
-	PRINT("=%s \n", Result ? L"TRUE" : L"FALSE");
+	DBG("=%s \n", Result ? L"TRUE" : L"FALSE");
 	return Result;
 }
 
@@ -248,7 +222,7 @@ GetNormalizedFName(IN CHAR16 *Parent, IN CHAR16 *FName)
 	CHAR16			*TmpStr2;
 	UINTN			Len;
 	
-	//PRINT("('%s' + '%s')", Parent, FName);
+	//DBG("('%s' + '%s')", Parent, FName);
 	// case: FName starts with \ "\System\Xx"
 	// we'll just use it as is, but we are wrong if "\System\Xx\..\Yy\.\Zz" or similar
 	if (FName[0] == L'\\') {
@@ -288,7 +262,7 @@ GetNormalizedFName(IN CHAR16 *Parent, IN CHAR16 *FName)
 		}
 		FName = StrCat(TmpStr, FName); 
 	}
-	PRINT("='%s' ", FName);
+	DBG("='%s' ", FName);
 	return FName;
 }
 
@@ -307,9 +281,9 @@ GetInjectionFName(IN CHAR16 *TgtDir, IN CHAR16 *SrcDir, IN CHAR16 *FName)
 	CHAR16	*Str2;
 	UINTN	Size;
 	
-	PRINT("InjFName('%s', '%s', '%s')", TgtDir, SrcDir, FName);
+	DBG("InjFName('%s', '%s', '%s')", TgtDir, SrcDir, FName);
 	if (TgtDir == NULL || SrcDir == NULL || FName == NULL) {
-		PRINT("=NULL0 ");
+		DBG("=NULL0 ");
 		return NULL;
 	}
 	// check if FName starts with TgtDir, kind of case insensitive (only ASCII chars)
@@ -325,12 +299,12 @@ GetInjectionFName(IN CHAR16 *TgtDir, IN CHAR16 *SrcDir, IN CHAR16 *FName)
 	}
 	// if FName starts with TgtDir, then *Str1 should be '\0'
 	if (*Str1 != L'\0') {
-		PRINT("=NULL1 ");
+		DBG("=NULL1 ");
 		return NULL;
 	}
 	// if FName is a file inside TgtDir, then *Str2 should be == '\\'
 	if (*Str2 != L'\\') {
-		PRINT("=NULL2 ");
+		DBG("=NULL2 ");
 		return NULL;
 	}
 	// we are at '\\' with Str2 - copy from here to the end to SrcDir
@@ -341,7 +315,7 @@ GetInjectionFName(IN CHAR16 *TgtDir, IN CHAR16 *SrcDir, IN CHAR16 *FName)
 		StrCpy(Str1, SrcDir);
 		StrCat(Str1, Str2);
 	}
-	PRINT("='%s' ", Str1);
+	DBG("='%s' ", Str1);
 	return Str1;
 }
 
@@ -362,13 +336,13 @@ OpenFileProtocol(
 	// open volume
 	Status = VolumeFS->OpenVolume(VolumeFS, &RootFP);
 	if (EFI_ERROR(Status)) {
-		PRINT("Can not OpenVolume: %r ", Status);
+		DBG("Can not OpenVolume: %r ", Status);
 		return NULL;
 	}
 	// open file/dir
 	Status = RootFP->Open(RootFP, &FP, FName, OpenMode, Attributes);
 	if (EFI_ERROR(Status)) {
-		PRINT("Can not Open '%s': %r ", FName, Status);
+		DBG("Can not Open '%s': %r ", FName, Status);
 		FP = NULL;
 	}
 	RootFP->Close(RootFP);
@@ -397,27 +371,33 @@ FSI_FP_Open(
 	CHAR16					*InjFName = NULL;
 	FSI_FILE_PROTOCOL		*FSIThis;
 	FSI_FILE_PROTOCOL		*FSINew;
-	UINTN					i;
+	FSI_STRING_LIST			*StringList;
+	FSI_STRING_LIST_ENTRY	*StringEntry;
 
-	PRINT("FSI_FP %p.Open('%s', %x, %x) ", This, FileName, OpenMode, Attributes);
+	DBG("FSI_FP %p.Open('%s', %x, %x) ", This, FileName, OpenMode, Attributes);
 	FSIThis = FSI_FROM_FILE_PROTOCOL(This);
 	NewFName = GetNormalizedFName(FSIThis->FName, FileName);
     
-	if (FSIThis->FSI_FS->BlacklistCnt > 0) {
+	StringList = FSIThis->FSI_FS->Blacklist;
+	if (StringList != NULL && !IsListEmpty(&StringList->List)) {
 		// blocking files in Blacklist
-		for (i=0; i<FSIThis->FSI_FS->BlacklistCnt; i++) {
-			if (StriStartsWithBasic(NewFName, FSIThis->FSI_FS->Blacklist[i])) {
-				PRINT("Blacklisted\n");
-            return EFI_NOT_FOUND;
-        }
-    }
+		for (StringEntry = (FSI_STRING_LIST_ENTRY *)GetFirstNode(&StringList->List);
+			 !IsNull (&StringList->List, &StringEntry->List);
+			 StringEntry = (FSI_STRING_LIST_ENTRY *)GetNextNode(&StringList->List, &StringEntry->List)
+			 )
+		{
+			if (StriStartsWithBasic(NewFName, StringEntry->String)) {
+				DBG("Blacklisted\n");
+				return EFI_NOT_FOUND;
+			}
+		}
 	}
 	
 	// create our FP implementation
 	FSINew = CreateFSInjectFP();
 	if (FSINew == NULL) {
 		Status = EFI_OUT_OF_RESOURCES;
-		PRINT("CreateFSInjectFP Status=%r\n", Status);
+		DBG("CreateFSInjectFP Status=%r\n", Status);
 		return Status;
 	}
 	FSINew->FSI_FS = FSIThis->FSI_FS;		// saving reference to parent FS protocol
@@ -430,9 +410,9 @@ FSI_FP_Open(
 		// call original target implementation to get NewHandle
 		Status = FSIThis->TgtFP->Open(FSIThis->TgtFP, NewHandle, NewFName, OpenMode, Attributes);
 		if (EFI_ERROR(Status)) {
-			PRINT("TgtFP->Open=%r ", Status);
+			DBG("TgtFP->Open=%r ", Status);
 		} else {
-			PRINT("Opened with TgtFP ");
+			DBG("Opened with TgtFP ");
 			FSINew->FromTgt = TRUE;
 			// save new orig target handle
 			FSINew->TgtFP = *NewHandle;
@@ -454,10 +434,10 @@ FSI_FP_Open(
 		FSINew->SrcFP = OpenFileProtocol(FSIThis->FSI_FS->SrcFS, InjFName, OpenMode, Attributes);
 		if (FSINew->SrcFP == NULL) {
 			Status = EFI_DEVICE_ERROR;
-			PRINT("SrcFP->Open=%r ", Status);
+			DBG("SrcFP->Open=%r ", Status);
 		} else {
 			Status = EFI_SUCCESS;
-			PRINT("Opened with SrcFP ");
+			DBG("Opened with SrcFP ");
 		}
 	}
 
@@ -468,11 +448,11 @@ FSI_FP_Open(
 		FSINew->TgtFP = OpenFileProtocol(FSIThis->FSI_FS->TgtFS, NewFName, OpenMode, Attributes);
 		if (FSINew->TgtFP != NULL) {
 			Status = EFI_SUCCESS;
-			PRINT("Opened with TgtFP ");
+			DBG("Opened with TgtFP ");
 			FSINew->FromTgt = TRUE;
 		} else {
 			Status = EFI_DEVICE_ERROR;
-			PRINT("TgtFS->OpenVolume Status=%r\n", Status);
+			DBG("TgtFS->OpenVolume Status=%r\n", Status);
 		}
 	}
 	}
@@ -494,9 +474,9 @@ FSI_FP_Open(
 		// in case of error, it will be NULL - all should run fine then, but without injection
 		FSINew->SrcFP = OpenFileProtocol(FSINew->FSI_FS->SrcFS, FSINew->FSI_FS->SrcDir, EFI_FILE_MODE_READ, 0);
 		if (FSINew->SrcFP != NULL) {
-			PRINT("Opened also with SrcFP ");
+			DBG("Opened also with SrcFP ");
 		} else {
-			PRINT("Error opening with SrcFP ");
+			DBG("Error opening with SrcFP ");
 		}
 	}
 		
@@ -504,13 +484,13 @@ FSI_FP_Open(
 	// set our implementation as a result
 	*NewHandle = &(FSINew->FP);
 	
-	PRINT("= EFI_SUCCESS, NewHandle=%p, FName='%s'\n", *NewHandle, FSINew->FName);
+	DBG("= EFI_SUCCESS, NewHandle=%p, FName='%s'\n", *NewHandle, FSINew->FName);
 	return EFI_SUCCESS;
 	
 ErrorExit:
 	if (FSINew->FName != NULL) FreePool(FSINew->FName);
 	if (FSINew != NULL) FreePool(FSINew);
-	PRINT("= %r\n", Status);
+	DBG("= %r\n", Status);
 	return Status;
 }
 
@@ -522,7 +502,7 @@ FSI_FP_Close(IN EFI_FILE_PROTOCOL  *This)
 	EFI_STATUS				Status = EFI_SUCCESS;
 	FSI_FILE_PROTOCOL		*FSIThis;
 	
-	PRINT("FSI_FP %p.Close() ", This);
+	DBG("FSI_FP %p.Close() ", This);
 	
 	FSIThis = FSI_FROM_FILE_PROTOCOL(This);
 	
@@ -536,13 +516,13 @@ FSI_FP_Close(IN EFI_FILE_PROTOCOL  *This)
 		FSIThis->SrcFP->Close(FSIThis->SrcFP);
 		FSIThis->SrcFP = NULL;
 	}
-	PRINT("FName='%s' ", FSIThis->FName);
+	DBG("FName='%s' ", FSIThis->FName);
 	if (FSIThis->FName != NULL) {
 		FreePool(FSIThis->FName);
 		FSIThis->FName = NULL;
 	}
 	FreePool(FSIThis);
-	PRINT("= %r\n", Status);
+	DBG("= %r\n", Status);
 	return Status;
 }
 
@@ -554,7 +534,7 @@ FSI_FP_Delete(IN EFI_FILE_PROTOCOL  *This)
 	EFI_STATUS				Status = EFI_WARN_DELETE_FAILURE;
 	FSI_FILE_PROTOCOL		*FSIThis;
 	
-	PRINT("FSI_FP %p.Delete()\n", This);
+	DBG("FSI_FP %p.Delete()\n", This);
 	
 	FSIThis = FSI_FROM_FILE_PROTOCOL(This);
 	
@@ -573,7 +553,7 @@ FSI_FP_Delete(IN EFI_FILE_PROTOCOL  *This)
 		FSIThis->FName = NULL;
 	}
 	FreePool(FSIThis);
-	PRINT("= %r\n", Status);
+	DBG("= %r\n", Status);
 	return Status;
 }
 
@@ -590,8 +570,11 @@ FSI_FP_Read(
 	FSI_FILE_PROTOCOL		*FSIThis;
 	EFI_FILE_INFO			*FInfo;
 	UINTN					BufferSizeOrig;
+	CHAR8					*String;
+	FSI_STRING_LIST			*StringList;
+	FSI_STRING_LIST_ENTRY	*StringEntry;
 	
-	PRINT("FSI_FP %p.Read(%d, %p) ", This, *BufferSize, Buffer);
+	DBG("FSI_FP %p.Read(%d, %p) ", This, *BufferSize, Buffer);
 	
 	FSIThis = FSI_FROM_FILE_PROTOCOL(This);
 	if (FSIThis->TgtFP != NULL && FSIThis->SrcFP != NULL) {
@@ -607,6 +590,26 @@ FSI_FP_Read(
 	} else if (FSIThis->TgtFP != NULL) {
 		// do it with target FP
 		Status = FSIThis->TgtFP->Read(FSIThis->TgtFP, BufferSize, Buffer);
+		StringList = FSIThis->FSI_FS->ForceLoadKexts;
+        if (Status == EFI_SUCCESS && StringList != NULL && FSIThis->FName != NULL) {
+			// check ForceLoadKexts
+			for (StringEntry = (FSI_STRING_LIST_ENTRY *)GetFirstNode(&StringList->List);
+				 !IsNull (&StringList->List, &StringEntry->List);
+				 StringEntry = (FSI_STRING_LIST_ENTRY *)GetNextNode(&StringList->List, &StringEntry->List)
+				 )
+			{
+				if (StrStr(FSIThis->FName, StringEntry->String) != NULL) {
+					//Print(L"\nGot: %s\n", FSIThis->FName);
+					String = (CHAR8*)Buffer;
+					String = AsciiStrStr(String, "<string>Safe Boot</string>");
+					if (String != NULL) {
+						CopyMem (String, "<string>Root</string>     ", 26);
+						//Print(L"Forced to load: %s\n", FSIThis->FName);
+						//gBS->Stall(5000000);
+					}
+				}
+			}
+        }
 	} else if (FSIThis->SrcFP != NULL) {
 		// do it with source FP
 		Status = FSIThis->SrcFP->Read(FSIThis->SrcFP, BufferSize, Buffer);
@@ -614,9 +617,9 @@ FSI_FP_Read(
 	
 	if (Status == EFI_SUCCESS && FSIThis->IsDir && *BufferSize > 0) {
 		FInfo = (EFI_FILE_INFO *)Buffer;
-		PRINT("= %r, *BufferSize=%d, dir entry FileName='%s'\n", Status, *BufferSize, FInfo->FileName);
+		DBG("= %r, *BufferSize=%d, dir entry FileName='%s'\n", Status, *BufferSize, FInfo->FileName);
 	} else {
-		PRINT("= %r, *BufferSize=%d\n", Status, *BufferSize);
+		DBG("= %r, *BufferSize=%d\n", Status, *BufferSize);
 	}
 	return Status;
 }
@@ -633,7 +636,7 @@ FSI_FP_Write(
 	EFI_STATUS				Status = EFI_DEVICE_ERROR;
 	FSI_FILE_PROTOCOL		*FSIThis;
 	
-	PRINT("FSI_FP %p.Write(%d, %p) ", This, *BufferSize, Buffer);
+	DBG("FSI_FP %p.Write(%d, %p) ", This, *BufferSize, Buffer);
 	
 	FSIThis = FSI_FROM_FILE_PROTOCOL(This);
 	
@@ -644,7 +647,7 @@ FSI_FP_Write(
 		// do it with source FP
 		Status = FSIThis->SrcFP->Write(FSIThis->SrcFP, BufferSize, Buffer);
 	}
-	PRINT("= %r, *BufferSize=%d\n", Status, *BufferSize);
+	DBG("= %r, *BufferSize=%d\n", Status, *BufferSize);
 	return Status;
 }
 
@@ -659,7 +662,7 @@ FSI_FP_SetPosition(
 	EFI_STATUS				Status = EFI_DEVICE_ERROR;
 	FSI_FILE_PROTOCOL		*FSIThis;
 	
-	PRINT("FSI_FP %p.SetPosition(%d) ", This, Position);
+	DBG("FSI_FP %p.SetPosition(%d) ", This, Position);
 	
 	FSIThis = FSI_FROM_FILE_PROTOCOL(This);
 	
@@ -671,7 +674,7 @@ FSI_FP_SetPosition(
 		// and with Src
 		Status = FSIThis->SrcFP->SetPosition(FSIThis->SrcFP, Position);
 	}
-	PRINT("= %r\n", Status);
+	DBG("= %r\n", Status);
 	return Status;
 }
 
@@ -686,7 +689,7 @@ FSI_FP_GetPosition(
 	EFI_STATUS				Status = EFI_DEVICE_ERROR;
 	FSI_FILE_PROTOCOL		*FSIThis;
 	
-	PRINT("FSI_FP %p.GetPosition() ", This);
+	DBG("FSI_FP %p.GetPosition() ", This);
 	
 	FSIThis = FSI_FROM_FILE_PROTOCOL(This);
 	
@@ -697,7 +700,7 @@ FSI_FP_GetPosition(
 		// do it with source FP
 		Status = FSIThis->SrcFP->GetPosition(FSIThis->SrcFP, Position);
 	}
-	PRINT("= %r, Position=%d\n", Status, Position);
+	DBG("= %r, Position=%d\n", Status, Position);
 	return Status;
 }
 
@@ -715,7 +718,7 @@ FSI_FP_GetInfo(
 	FSI_FILE_PROTOCOL		*FSIThis;
 	EFI_FILE_INFO 			*FInfo;
 	
-	PRINT("FSI_FP %p.GetInfo(%s, %d, %p) ", This, GuidStr(InformationType), *BufferSize, Buffer);
+	DBG("FSI_FP %p.GetInfo(%s, %d, %p) ", This, GuidStr(InformationType), *BufferSize, Buffer);
 
 	FSIThis = FSI_FROM_FILE_PROTOCOL(This);
 	
@@ -734,7 +737,7 @@ FSI_FP_GetInfo(
 			FSIThis->IsDir = FInfo->Attribute & EFI_FILE_DIRECTORY;
 		}
 	}
-	PRINT("= %r, BufferSize=%d\n", Status, *BufferSize);
+	DBG("= %r, BufferSize=%d\n", Status, *BufferSize);
 	return Status;
 }
 
@@ -751,7 +754,7 @@ FSI_FP_SetInfo(
 	EFI_STATUS				Status = EFI_DEVICE_ERROR;
 	FSI_FILE_PROTOCOL		*FSIThis;
 	
-	PRINT("FSI_FP %p.SetInfo(%s, %d, %p) ", This, GuidStr(InformationType), BufferSize, Buffer);
+	DBG("FSI_FP %p.SetInfo(%s, %d, %p) ", This, GuidStr(InformationType), BufferSize, Buffer);
 	
 	FSIThis = FSI_FROM_FILE_PROTOCOL(This);
 	
@@ -762,7 +765,7 @@ FSI_FP_SetInfo(
 		// do it with source FP
 		Status = FSIThis->SrcFP->SetInfo(FSIThis->SrcFP, InformationType, BufferSize, Buffer);
 	}
-	PRINT("= %r\n", Status);
+	DBG("= %r\n", Status);
 	return Status;
 }
 
@@ -776,7 +779,7 @@ FSI_FP_Flush(
 	EFI_STATUS				Status = EFI_DEVICE_ERROR;
 	FSI_FILE_PROTOCOL		*FSIThis;
 	
-	PRINT("FSI_FP %p.Flush() ", This);
+	DBG("FSI_FP %p.Flush() ", This);
 	
 	FSIThis = FSI_FROM_FILE_PROTOCOL(This);
 	
@@ -787,7 +790,7 @@ FSI_FP_Flush(
 		// do it with source FP
 		Status = FSIThis->SrcFP->Flush(FSIThis->SrcFP);
 	}
-	PRINT("= %r\n", Status);
+	DBG("= %r\n", Status);
 	return Status;
 }
 
@@ -847,13 +850,13 @@ FSI_SFS_OpenVolume(
 	FSI_SIMPLE_FILE_SYSTEM_PROTOCOL		*FSIThis;
 	FSI_FILE_PROTOCOL					*FSINew;
 	
-	PRINT("FSI_FS %p.OpenVolume() ", This);
+	DBG("FSI_FS %p.OpenVolume() ", This);
 	FSIThis = FSI_FROM_SIMPLE_FILE_SYSTEM(This);
 	
 	// do it with target FS
 	Status = FSIThis->TgtFS->OpenVolume(FSIThis->TgtFS, Root);
 	if (EFI_ERROR(Status)) {
-		PRINT("TgtFS->OpenVolume Status=%r\n", Status);
+		DBG("TgtFS->OpenVolume Status=%r\n", Status);
 		return Status;
 	}
 	
@@ -861,7 +864,7 @@ FSI_SFS_OpenVolume(
 	FSINew = CreateFSInjectFP();
 	if (FSINew == NULL) {
 		Status = EFI_OUT_OF_RESOURCES;
-		PRINT("CreateFSInjectFP: %r\n", Status);
+		DBG("CreateFSInjectFP: %r\n", Status);
 		return Status;
 	}
 	FSINew->FSI_FS = FSIThis;		// saving reference to parent FS protocol
@@ -872,7 +875,7 @@ FSI_SFS_OpenVolume(
 
 	// set it as result
 	*Root = &FSINew->FP;
-	PRINT("= %r, returning Root=%p\n", Status, *Root);
+	DBG("= %r, returning Root=%p\n", Status, *Root);
 	
 	return Status;
 } 
@@ -887,36 +890,35 @@ FSI_SFS_OpenVolume(
  * FSINJECTION_PROTOCOL.Install implementation.
  */
 EFI_STATUS
+EFIAPI
 FSInjectionInstall (
 	IN EFI_HANDLE			TgtHandle,
 	IN CHAR16				*TgtDir,
 	IN EFI_HANDLE			SrcHandle,
 	IN CHAR16				*SrcDir,
-	IN UINTN				BlacklistCnt,
-	CHAR16					*Blacklist[]
+	IN FSI_STRING_LIST		*Blacklist,
+	IN FSI_STRING_LIST		*ForceLoadKexts
 )
 {
 	EFI_STATUS							Status;
 	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL		*TgtFS;
 	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL		*SrcFS;
 	FSI_SIMPLE_FILE_SYSTEM_PROTOCOL		*OurFS;
-	UINTN								Size;
-	UINTN								i;
 	
 	
-	PRINT("FSInjectionInstall ...\n");
+	DBG("FSInjectionInstall ...\n");
 	
 	// get existing target EFI_SIMPLE_FILE_SYSTEM_PROTOCOL
 	Status = gBS->OpenProtocol(TgtHandle, &gEfiSimpleFileSystemProtocolGuid, (void **)&TgtFS, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
 	if (EFI_ERROR(Status)) {
-		PRINT("- target OpenProtocol(gEfiSimpleFileSystemProtocolGuid): %r\n", Status);
+		DBG("- target OpenProtocol(gEfiSimpleFileSystemProtocolGuid): %r\n", Status);
 		return Status;
 	}
 	
 	// get existing source EFI_SIMPLE_FILE_SYSTEM_PROTOCOL
 	Status = gBS->OpenProtocol(SrcHandle, &gEfiSimpleFileSystemProtocolGuid, (void **)&SrcFS, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
 	if (EFI_ERROR(Status)) {
-		PRINT("- source OpenProtocol(gEfiSimpleFileSystemProtocolGuid): %r\n", Status);
+		DBG("- source OpenProtocol(gEfiSimpleFileSystemProtocolGuid): %r\n", Status);
 		return Status;
 	}
 	
@@ -924,7 +926,7 @@ FSInjectionInstall (
 	OurFS = AllocateZeroPool(sizeof(FSI_SIMPLE_FILE_SYSTEM_PROTOCOL));
 	if (OurFS == NULL) {
 		Status = EFI_OUT_OF_RESOURCES;
-		PRINT("- AllocateZeroPool(FSI_SIMPLE_FILE_SYSTEM_PROTOCOL): %r\n", Status);
+		DBG("- AllocateZeroPool(FSI_SIMPLE_FILE_SYSTEM_PROTOCOL): %r\n", Status);
 		return Status;
 	}
 	OurFS->Signature = FSI_SIMPLE_FILE_SYSTEM_PROTOCOL_SIGNATURE;
@@ -939,52 +941,75 @@ FSInjectionInstall (
 	
 	if (OurFS->TgtDir == NULL || OurFS->SrcDir == NULL) {
 		Status = EFI_OUT_OF_RESOURCES;
-		PRINT("- AllocateCopyPool for TgtDir or SrcDir: %r\n", Status);
+		DBG("- AllocateCopyPool for TgtDir or SrcDir: %r\n", Status);
 		goto ErrorExit;
 	}
 	
-	if (BlacklistCnt > 0 && Blacklist != NULL) {
-		// size of array of char16 pointers
-		Size = sizeof(CHAR16 *) * BlacklistCnt;
-		OurFS->Blacklist = AllocateZeroPool(Size);
-		if (OurFS->Blacklist == NULL) {
-			Status = EFI_OUT_OF_RESOURCES;
-			PRINT("- AllocateCopyPool for Blacklist: %r\n", Status);
-			goto ErrorExit;
-		}
-		// copy array of file names
-		for(i = 0; i<BlacklistCnt; i++) {
-			OurFS->Blacklist[i] = AllocateCopyPool(StrSize(Blacklist[i]), Blacklist[i]);
-			if (OurFS->Blacklist[i] == NULL) {
-				Status = EFI_OUT_OF_RESOURCES;
-				PRINT("- AllocateCopyPool for Blacklist file: %r\n", Status);
-				goto ErrorExit;
-			}
-		}
-		OurFS->BlacklistCnt = BlacklistCnt;
+	if (Blacklist != NULL && !IsListEmpty(&Blacklist->List)) {
+		OurFS->Blacklist = Blacklist;
+	}
+	
+	if (ForceLoadKexts != NULL && !IsListEmpty(&ForceLoadKexts->List)) {
+		OurFS->ForceLoadKexts = ForceLoadKexts;
 	}
 	
 	// replace existing tagret EFI_SIMPLE_FILE_SYSTEM_PROTOCOL with out implementation
 	Status = gBS->ReinstallProtocolInterface(TgtHandle, &gEfiSimpleFileSystemProtocolGuid, TgtFS, &OurFS->FS);
 	if (EFI_ERROR(Status)) {
-		PRINT("- ReinstallProtocolInterface(): %r\n", Status);
+		DBG("- ReinstallProtocolInterface(): %r\n", Status);
 		return Status;
 	}
 	
-	PRINT("- Our FSI_SIMPLE_FILE_SYSTEM_PROTOCOL installed on handle: %X\n", TgtHandle);
+	DBG("- Our FSI_SIMPLE_FILE_SYSTEM_PROTOCOL installed on handle: %X\n", TgtHandle);
 	return EFI_SUCCESS;
 	
 ErrorExit:
-	if (OurFS->Blacklist != NULL) {
-		for(i = 0; i<BlacklistCnt; i++) {
-			if (OurFS->Blacklist[i] != NULL) FreePool(OurFS->Blacklist[i]);
-		}
-		FreePool(OurFS->Blacklist);
-	}
 	if (OurFS->TgtDir != NULL) FreePool(OurFS->TgtDir);
 	if (OurFS->SrcDir != NULL) FreePool(OurFS->SrcDir);
 	FreePool(OurFS);
 	return Status;
+}
+
+
+/**
+ * FSINJECTION_PROTOCOL.CreateStringList() implementation.
+ */
+FSI_STRING_LIST *
+EFIAPI
+FSInjectionCreateStringList(VOID)
+{
+	FSI_STRING_LIST	*List;
+	
+	List = AllocateZeroPool(sizeof(FSI_STRING_LIST));
+	if (List != NULL) {
+		InitializeListHead(&List->List);
+	}
+	return List;
+}
+
+
+/**
+ * FSINJECTION_PROTOCOL.AddStringToList() implementation.
+ */
+FSI_STRING_LIST *
+EFIAPI
+FSInjectionAddStringToList(FSI_STRING_LIST *List, CHAR16 *String)
+{
+	FSI_STRING_LIST_ENTRY	*Entry;
+	UINTN					StringSize;
+	
+	if (List == NULL || String == NULL) {
+		return NULL;
+	}
+	
+	StringSize = StrSize(String); // num of bytes, including null terminator
+		
+	Entry = AllocateZeroPool(sizeof(FSI_STRING_LIST_ENTRY) + StringSize);
+	if (Entry != NULL) {
+		StrCpy(Entry->String, String);
+		InsertTailList(&List->List, &Entry->List);
+	}
+	return Entry != NULL ? List : NULL;
 }
 
 
@@ -1002,15 +1027,17 @@ InstallFSInjectionProtocol (VOID)
 	// install FSINJECTION_PROTOCOL to new handle
 	FSInjection = AllocateZeroPool(sizeof(FSINJECTION_PROTOCOL));
 	if (FSInjection == NULL)	 {
-		PRINT("Can not allocate memory for FSINJECTION_PROTOCOL\n");
+		DBG("Can not allocate memory for FSINJECTION_PROTOCOL\n");
 		return EFI_OUT_OF_RESOURCES;
 	}
 	
 	FSInjection->Install = FSInjectionInstall;
+	FSInjection->CreateStringList = FSInjectionCreateStringList;
+	FSInjection->AddStringToList = FSInjectionAddStringToList;
 	FSIHandle = NULL; // install to new handle
 	Status = gBS->InstallMultipleProtocolInterfaces(&FSIHandle, &gFSInjectProtocolGuid, FSInjection, NULL);
 	if (EFI_ERROR(Status)) {
-		PRINT("InstallFSInjectionProtocol: error installing FSINJECTION_PROTOCOL, Status = %r\n", Status);
+		DBG("InstallFSInjectionProtocol: error installing FSINJECTION_PROTOCOL, Status = %r\n", Status);
 	}
 	return Status;
 }
@@ -1033,13 +1060,7 @@ FSInjectEntrypoint (
 {
 	EFI_STATUS					Status;
 #if TEST
-	CHAR16	*Blacklist[] = {
-		L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\kernelcache",
-		L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\Extensions.mkext",
-		L"\\System\\Library\\Extensions.mkext",
-		L"\\com.apple.recovery.boot\\kernelcache",
-		L"\\com.apple.recovery.boot\\Extensions.mkext"
-	};
+	FSI_STRING_LIST				*Blacklist;
 #endif
 	
 	Status = InstallFSInjectionProtocol();
@@ -1048,8 +1069,14 @@ FSInjectEntrypoint (
 	}
 	
 #if TEST
-	//Status = InstallTestFSinjection(L"\\System\\Library\\Extensions", L"\\Users\\dmazar\\Inject", 2, Blacklist);
-	Status = InstallTestFSinjection(L"\\Users\\dmazar", L"\\efi\\kext\\10_7", 2, Blacklist);
+	Blacklist = FSInjectionCreateStringList();
+	FSInjectionAddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\kernelcache");
+	FSInjectionAddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\Extensions.mkext");
+	FSInjectionAddStringToList(Blacklist, L"\\System\\Library\\Extensions.mkext");
+	FSInjectionAddStringToList(Blacklist, L"\\com.apple.recovery.boot\\kernelcache");
+	FSInjectionAddStringToList(Blacklist, L"\\com.apple.recovery.boot\\Extensions.mkext");
+	
+	Status = InstallTestFSinjection(L"\\Users\\dmazar", L"\\efi\\kext\\10_7", Blacklist, NULL);
 	if (EFI_ERROR(Status)) {
 		return Status;
 	}

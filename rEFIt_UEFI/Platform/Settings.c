@@ -3,6 +3,7 @@
 */
 
 #include "Platform.h"
+#include "kernel_patcher.h"
 #include "ati.h"
 
 #define DEBUG_SET 1
@@ -1410,10 +1411,10 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
     REFIT_VOLUME                *Volume;
     FSINJECTION_PROTOCOL        *FSInject;
     CHAR16                      *SrcDir = NULL;
-    CHAR16                      *Blacklist[16]; // reserve place for up to 16 file names
-    UINTN                       BlacklistCnt = 0;
     BOOLEAN                     InjectionNeeded = FALSE;
     BOOLEAN                     BlockCaches = FALSE;
+    FSI_STRING_LIST             *Blacklist;
+    FSI_STRING_LIST             *ForceLoadKexts;
     
     MsgLog("FSInjection: ");
     
@@ -1444,7 +1445,7 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
         SrcDir = GetExtraKextsDir(Volume);
         if (SrcDir != NULL) {
             // we have found it - injection will be done
-    MsgLog("Injecting kexts from: '%s' ", SrcDir);
+            MsgLog("Injecting kexts from: '%s' ", SrcDir);
             BlockCaches = TRUE;
             InjectionNeeded = TRUE;
             
@@ -1460,18 +1461,30 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
     
     if (BlockCaches) {
         // add caches to blacklist
-        Blacklist[BlacklistCnt++] = L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\kernelcache";
-        Blacklist[BlacklistCnt++] = L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\Extensions.mkext";
-        Blacklist[BlacklistCnt++] = L"\\System\\Library\\Extensions.mkext";
-        Blacklist[BlacklistCnt++] = L"\\com.apple.recovery.boot\\kernelcache";
-        Blacklist[BlacklistCnt++] = L"\\com.apple.recovery.boot\\Extensions.mkext";
+        Blacklist = FSInject->CreateStringList();
+        if (Blacklist == NULL) {
+            MsgLog("- not enough memory!\n");
+            return EFI_NOT_STARTED;
+        }
+        FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\kernelcache");
+        FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\Extensions.mkext");
+        FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Extensions.mkext");
+        FSInject->AddStringToList(Blacklist, L"\\com.apple.recovery.boot\\kernelcache");
+        FSInject->AddStringToList(Blacklist, L"\\com.apple.recovery.boot\\Extensions.mkext");
         
     }
     
-    //Print(L"FSInject->Install(%X, %s, %X, %s, %d, %p) ...\n", Volume->DeviceHandle, L"\\system\\library\\extensions", SelfVolume->DeviceHandle, SrcDir, BlacklistCnt, Blacklist);
+    // prepare list of kext that will be forced to load
+    ForceLoadKexts = FSInject->CreateStringList();
+    if (ForceLoadKexts == NULL) {
+        MsgLog("- not enough memory!\n");
+        return EFI_NOT_STARTED;
+    }
+    KextPatcherRegisterKexts(FSInject, ForceLoadKexts);
+
     Status = FSInject->Install(Volume->DeviceHandle, L"\\System\\Library\\Extensions",
                                SelfVolume->DeviceHandle, SrcDir,
-                               BlacklistCnt, Blacklist);
+                               Blacklist, ForceLoadKexts);
     
     if (SrcDir != NULL) FreePool(SrcDir);
     

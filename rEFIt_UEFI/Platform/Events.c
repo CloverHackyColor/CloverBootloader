@@ -103,6 +103,11 @@ EFIAPI
 OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
 {
 	
+	
+	// test
+	//Print(L"\nOnExitBootServices!\n");
+	//gBS->Stall(5000000); // 5 secs
+	
 	//
 	// Patch kernel and kexts if needed
 	//
@@ -211,7 +216,7 @@ EFIAPI
 EventsInitialize ()
 {
 	EFI_STATUS			Status;
-	VOID*           Registration = NULL;
+	//VOID*           Registration = NULL;
 	
 	//
 	// Register the event to reclaim variable for OS usage.
@@ -232,13 +237,15 @@ EventsInitialize ()
 							   OnExitBootServices, 
 							   NULL,
 							   &ExitBootServiceEvent);
-  if(!EFI_ERROR(Status))
+  /*
+	if(!EFI_ERROR(Status))
 	{
 		Status = gBS->RegisterProtocolNotify (
                  &gEfiStatusCodeRuntimeProtocolGuid,
                  ExitBootServiceEvent,
                  &Registration);
-	} 
+	}
+   */
   
   
 	//

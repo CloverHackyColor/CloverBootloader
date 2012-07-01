@@ -29,8 +29,8 @@ typedef struct {
 	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL		*SrcFS;			// FS with injection dir we are replacing
 	CHAR16								*SrcDir;		// injection dir that contains files that will be injected into TgtDir
 	
-	UINTN								BlacklistCnt;	// number of file names in Blacklist
-	CHAR16								**Blacklist;	// pointer to array of pointers - file names to be blocked on target volume
+	FSI_STRING_LIST						*Blacklist;		// linked list of file names to be blocked on target volume
+	FSI_STRING_LIST						*ForceLoadKexts;// linked list of kext plists
 } FSI_SIMPLE_FILE_SYSTEM_PROTOCOL;
 
 /** Signature for FSI_SIMPLE_FILE_SYSTEM_PROTOCOL */

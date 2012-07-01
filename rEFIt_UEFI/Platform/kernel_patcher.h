@@ -113,8 +113,22 @@ VOID KernelAndKextsPatcherStart(VOID);
 //UINT64 symbol_handler(CHAR8* symbolName, UINT64 addr);
 //INTN locate_symbols(VOID* kernelData);
 
+
+/////////////////////
 //
 // kext_patcher.c
+//
+
+//
+// Called from SetFSInjection(), before boot.efi is started,
+// to allow patchers to prepare FSInject to force load needed kexts.
+//
+VOID KextPatcherRegisterKexts(FSINJECTION_PROTOCOL *FSInject, FSI_STRING_LIST *ForceLoadKexts);
+
+//
+// Entry for all kext patches.
+// Will iterate through kext in prelinked kernel (kernelcache)
+// or DevTree (drivers boot) and do patches.
 //
 VOID KextPatcherStart();
 

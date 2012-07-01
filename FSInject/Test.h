@@ -14,4 +14,4 @@ GetVolumeHandleWithDir(CHAR16 *SearchDir, OUT EFI_HANDLE *Handle);
 
 EFI_STATUS
 EFIAPI
-InstallTestFSinjection(CHAR16 *TargetDir, CHAR16 *InjectionDir, UINTN BlacklistCnt, CHAR16 *Blacklist[]);
+InstallTestFSinjection(CHAR16 *TargetDir, CHAR16 *InjectionDir, IN FSI_STRING_LIST *Blacklist, IN FSI_STRING_LIST *ForceLoadKexts);
