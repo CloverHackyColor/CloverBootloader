@@ -389,6 +389,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   LOADER_ENTRY      *Entry, *SubEntry;
   REFIT_MENU_SCREEN *SubScreen;
   UINT64            VolumeSize;
+  BOOLEAN           UsesSlideArg;
 //  UINTN Scale = (GlobalConfig.HideBadges==3)?6:4;
   
   FileName = Basename(LoaderPath);
@@ -505,6 +506,10 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   VolumeSize = MultU64x32 (Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize) >> 20;
   AddMenuInfoLine(SubScreen, PoolPrint(L"Volume size: %dMb", VolumeSize));
   
+  // Aptio UEFI ML boot requires slide=0
+  // if user have it in BootArgs, then propagate it to submenu entries
+  UsesSlideArg = AsciiStrStr(gSettings.BootArgs, "slide=0") != 0; 
+  
   // default entry
   SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
   SubEntry->me.Title        = (LoaderKind == 1) ? L"Boot Mac OS X" : PoolPrint(L"Run %s", FileName);
@@ -529,7 +534,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
-    SubEntry->LoadOptions     = L"arch=x86_64";
+    SubEntry->LoadOptions     = UsesSlideArg ? L"arch=x86_64 slide=0" : L"arch=x86_64";
     SubEntry->LoaderType = OSTYPE_OSX;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     
@@ -555,7 +560,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->UseGraphicsMode = FALSE;
-      SubEntry->LoadOptions     = L"-v";
+      SubEntry->LoadOptions     = UsesSlideArg ? L"-v slide=0" : L"-v";
       SubEntry->LoaderType = OSTYPE_OSX;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
       
@@ -568,7 +573,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->UseGraphicsMode = FALSE;
-      SubEntry->LoadOptions     = L"-v arch=x86_64";
+      SubEntry->LoadOptions     = UsesSlideArg ? L"-v arch=x86_64 slide=0" : L"-v arch=x86_64";
       SubEntry->LoaderType = OSTYPE_OSX;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
       
@@ -593,7 +598,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->UseGraphicsMode = FALSE;
-      SubEntry->LoadOptions     = L"-v -s";
+      SubEntry->LoadOptions     = UsesSlideArg ? L"-v -s slide=0" : L"-v -s";
       SubEntry->LoaderType = OSTYPE_OSX;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
       
@@ -605,7 +610,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->UseGraphicsMode = FALSE;
-      SubEntry->LoadOptions     = L"-v WithKexts"; //default arch 10.6->32bit, 10.7->64bit
+      SubEntry->LoadOptions     = UsesSlideArg ? L"-v slide=0 WithKexts" : L"-v WithKexts"; //default arch 10.6->32bit, 10.7->64bit
       SubEntry->LoaderType = OSTYPE_OSX;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
@@ -800,6 +805,16 @@ static VOID ScanLoader(VOID)
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->BootType = BOOTING_BY_EFI;
       Entry = AddLoaderEntry(FileName, L"Mac OS X Install", Volume, Volume->OSType);
+      continue; //boot MacOSX only
+    }
+    // dmazar: ML install from Lion to empty partition
+    // starting (Lion) partition: /.IABootFiles with boot.efi and kernelcache,
+    // and with DMGs used from Install app.
+    // destination partition: just logs and config
+    StrCpy(FileName, L"\\.IABootFiles\\boot.efi");
+    if (FileExists(Volume->RootDir, FileName)) {
+      Volume->BootType = BOOTING_BY_EFI;
+      Entry = AddLoaderEntry(FileName, L"OS X Install", Volume, Volume->OSType);
       continue; //boot MacOSX only
     }
     //============ add in end ============
