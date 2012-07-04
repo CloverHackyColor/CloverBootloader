@@ -247,8 +247,10 @@ VOID GetCPUProperties (VOID)
             
             if(gCPUStructure.MaxRatio) {
               gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.TSCFrequency, gCPUStructure.MaxRatio);
+            } else {
+              gCPUStructure.FSBFrequency = 100ULL * Mega;
             }
-            
+
             if ((gCPUStructure.Model != CPU_MODEL_NEHALEM_EX) &&
                 (gCPUStructure.Model != CPU_MODEL_WESTMERE_EX) &&
                 (gCPUStructure.Model != CPU_MODEL_FIELDS))
@@ -297,9 +299,12 @@ VOID GetCPUProperties (VOID)
               }*/
             }
             
-            if(gCPUStructure.MaxRatio) 
+            if(gCPUStructure.MaxRatio) {
               gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.TSCFrequency, gCPUStructure.MaxRatio);
-            
+            } else {
+              gCPUStructure.FSBFrequency = 100ULL * Mega;
+            }
+
             msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);
             gCPUStructure.MaxRatio = (UINT8)((msr >> 8) & 0xff);
             TurboMsr = msr + (1 << 8);
@@ -337,6 +342,7 @@ VOID GetCPUProperties (VOID)
             gCPUStructure.MaxRatio = (UINT32)(msr >> 8) & 0x1f;
             gCPUStructure.SubDivider = (UINT32)(msr >> 14) & 0x1;
             gCPUStructure.MinRatio = 60;
+            if(!gCPUStructure.MaxRatio) gCPUStructure.MaxRatio = 6; // :(
             gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.TSCFrequency * 2,
                                                    gCPUStructure.MaxRatio * 2 + gCPUStructure.SubDivider);
             gCPUStructure.MaxRatio = gCPUStructure.MaxRatio * 10 + gCPUStructure.SubDivider * 5; 
@@ -344,6 +350,9 @@ VOID GetCPUProperties (VOID)
             break;
           default:	
             gCPUStructure.MinRatio = 60;
+            if (!gCPUStructure.FSBFrequency) {
+              gCPUStructure.FSBFrequency = 100ULL * Mega;
+            }
             gCPUStructure.MaxRatio = DivU64x32(gCPUStructure.TSCFrequency, gCPUStructure.FSBFrequency) * 10;
             gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
             break;
@@ -353,6 +362,9 @@ VOID GetCPUProperties (VOID)
 			{
         msr = AsmReadMsr64(MSR_IA32_PLATFORM_ID);
         TurboMsr = 0;
+        if (!gCPUStructure.FSBFrequency) {
+          gCPUStructure.FSBFrequency = 100ULL * Mega;
+        }        
         if (((msr >> 31) & 0x01) != 0) {
           gCPUStructure.MaxRatio = (UINT8)((msr >> 8) & 0x1f) * 10;
           gCPUStructure.MinRatio = gCPUStructure.MaxRatio; //no speedstep

@@ -130,8 +130,8 @@ InstallMiscSmbios (
 	SMBIOS_STRUCTURE_POINTER          SmbiosTable;
 	UINTN	i, j;
 	//
-  for (j=0; j<128; j++) {
-    for (i=0; i<16; i++) {
+  for (j=0; j<256; j++) {
+    for (i=0; i<128; i++) {
       SmbiosTable = GetSmbiosTableFromType ((SMBIOS_TABLE_ENTRY_POINT *)Smbios, j, i);
       if (SmbiosTable.Raw == NULL) {			
         break;

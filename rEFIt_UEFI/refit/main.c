@@ -1745,6 +1745,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
   
   ThemePath = PoolPrint(L"EFI\\BOOT\\themes\\%s", GlobalConfig.Theme);
+  Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+  // if (EFI_ERROR (Status)) { return Status; }
   DBG("Theme: %s Path: %s\n", GlobalConfig.Theme, ThemePath);
   MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
   
@@ -1755,6 +1757,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   DBG("running on %a\n", gSettings.OEMProduct);
   DBG("... with board %a\n", gSettings.OEMBoard);
+  //replace / with _
   Size = iStrLen(gSettings.OEMProduct, 64);
   for (i=0; i<Size; i++) {
     if (gSettings.OEMProduct[i] == 0x2F) {

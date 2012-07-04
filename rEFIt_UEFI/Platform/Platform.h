@@ -673,7 +673,7 @@ typedef struct {
 	BOOLEAN	InUse;
 } RAM_SLOT_INFO; 
 
-#define MAX_SLOT_COUNT	8
+#define MAX_SLOT_COUNT	64
 #define MAX_RAM_SLOTS	16
 
 typedef struct {
