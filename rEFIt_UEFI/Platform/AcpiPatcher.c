@@ -1334,7 +1334,9 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       DBG("OEM table %s found\n", ACPInames[Index]);
       Status = egLoadFile(SelfRootDir, FullName, &buffer, &bufferLen);
     }
-    
+ //will not search common folder if OEM folder exists
+ // if not exists then  AcpiOemPath is already to be common folder  
+/*    
     if (EFI_ERROR(Status)) {
       FullName = PoolPrint(L"%s\\%s", PathPatched, ACPInames[Index]);
       if (FileExists(SelfRootDir, FullName)) {
@@ -1342,7 +1344,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
         Status = egLoadFile(SelfRootDir, FullName, &buffer, &bufferLen);        
       }
     }
-    
+*/    
     if(!EFI_ERROR(Status))
     {
       //before insert we should checksum it

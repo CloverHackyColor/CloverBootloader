@@ -1184,17 +1184,21 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
              {
                 Name (_ADR, Zero) - this is NetworkADR2
               */
+          DBG("found NetworkADR1 at %x\n", j);
           NetworkADR = devFind(dsdt, j);
+          DBG("now NetworkADR=%x\n", NetworkADR); 
           BridgeSize = get_size(dsdt, NetworkADR);
+          DBG("its size=%x\n", BridgeSize);
           for (k=NetworkADR+9; k<NetworkADR+BridgeSize; k++) {
             if (NetworkADR2 != 0xFFFE &&
                 CmpAdr(dsdt, k, NetworkADR2))
             {
+              DBG("found NetworkADR2 at %x\n", k);
               NetworkADR = devFind(dsdt, k);
               device_name[1] = AllocateZeroPool(5);
               CopyMem(device_name[1], dsdt+k, 4);
-              DBG("found NetWork device NAME(_ADR,0x%08x) And Name is %a\n", 
-                  NetworkADR1, device_name[1]);
+              DBG("found NetWork device NAME(_ADR,0x%08x) at %x And Name is %a\n", 
+                  NetworkADR1, k, device_name[1]);
               NetworkName = TRUE;   
               break;
             }
@@ -1260,7 +1264,7 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
           LPCBSIZE = get_size(dsdt, LPCBADR);
             device_name[3] = AllocateZeroPool(5);
             CopyMem(device_name[3], dsdt+j, 4);
-            DBG("found LPCB device NAME(_ADR,0x001F0000) And Name is %a\n", 
+            DBG("found LPCB device NAME(_ADR,0x001F0000) at %x And Name is %a\n", j,
                 device_name[3]);
         }  // End LPCB
         
@@ -2706,6 +2710,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
   AML_CHUNK* root = aml_create_node(NULL);
   
   DBG("Start NetWork Fix\n");
+  DBG("NetworkADR1=%x NetworkADR2=%x NetworkName=%x\n", NetworkADR1, NetworkADR2, NetworkName);
 	//DBG("len = 0x%08x\n", len);
   // Display device_id 
   if (NetworkADR1) {
@@ -2781,13 +2786,14 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
   aml_write_node(root, network, 0);
   
   aml_destroy_node(root);
-  
+  DBG("NetworkADR=%x\n", NetworkADR);
   if (NetworkADR)
   {
     UINT32 adr=0, adr1=0;
     // get Network device size
     adr1 = devFind(dsdt, NetworkADR);
     adr = get_size(dsdt, adr1);
+    DBG("found Network device @%x size=5x\n", adr1, adr);
     // move data to back for add network 
     len = move_data(adr1+adr, dsdt, len, sizeoffset);
     CopyMem(dsdt+adr1+adr, network, sizeoffset);
@@ -3317,7 +3323,7 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
     // move data to back for add SATA
     len = move_data(SATAAHCIADR, dsdt, len, sizeoffset);
     CopyMem(dsdt+SATAAHCIADR, sata, sizeoffset);
-    // Fix Device network size
+    // Fix Device SATA size
     len = write_size(adr1, dsdt, len, adr);
     CorrectOuters(dsdt, len, adr1-3);
   }

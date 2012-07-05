@@ -1245,7 +1245,7 @@ PatchTableType19 ()
 
 VOID PatchTableType20 ()
 {
-	UINTN	j = 0;
+	UINTN	j = 0, k = 0, m = 0;
 	//
 	// Generate Memory Array Mapped Address info (TYPE 20)
 	// not needed neither for Apple nor for EFI
@@ -1260,15 +1260,17 @@ VOID PatchTableType20 ()
 		CopyMem((VOID*)newSmbiosTable.Type20, (VOID*)SmbiosTable.Type20, TableSize);
 		for (j=0; j < TotalCount; j++) {
 			//EndingAddress in kb while mMemory in Mb
-			if (((UINT64)mMemory17[j]  << 10) > newSmbiosTable.Type20->EndingAddress) {	
+			if ((mMemory17[j]  << 10) > newSmbiosTable.Type20->EndingAddress) {	
 				newSmbiosTable.Type20->MemoryDeviceHandle = mHandle17[j];
-				DBG("Type20[%d]->End = 0x%lx, mMemory17[%d] = 0x%lx\n",
-						Index, newSmbiosTable.Type20->EndingAddress, j, (UINT64)mMemory17[j]  << 10);
+				k = newSmbiosTable.Type20->EndingAddress;
+				m = mMemory17[j]  << 10;
+				DBG("Type20[%d]->End = 0x%x, mMemory17[%d] = 0x%x\n",
+						Index, k, j, m);
 //				DBG(" MemoryDeviceHandle = 0x%x\n", newSmbiosTable.Type20->MemoryDeviceHandle);
 				mMemory17[j] = 0; // used
 				break;
 			}
-			DBG("\n");
+		//	DBG("\n");
 		}
 		
 		newSmbiosTable.Type20->MemoryArrayMappedAddressHandle = mHandle19;
