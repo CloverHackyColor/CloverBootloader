@@ -582,295 +582,295 @@ VOID Patcher_SSE3_7(VOID* kernelData)
 
 VOID Get_PreLink()
 {
-    UINT32  ncmds, cmdsize;
-    UINT32  binaryIndex;
-    UINTN   cnt;
-    UINT8*  binary = (UINT8*)KernelData;
-    struct load_command         *loadCommand;
-    //struct  segment_command   *segCmd;
-    struct segment_command_64   *segCmd64;
+  UINT32  ncmds, cmdsize;
+  UINT32  binaryIndex;
+  UINTN   cnt;
+  UINT8*  binary = (UINT8*)KernelData;
+  struct load_command         *loadCommand;
+  //struct  segment_command   *segCmd;
+  struct segment_command_64   *segCmd64;
+  
+  
+  if (is64BitKernel) {
+    binaryIndex = sizeof(struct mach_header_64);
+  } else {
+    binaryIndex = sizeof(struct mach_header);
+  }
+  
+  ncmds = MACH_GET_NCMDS(binary);
+  
+  for (cnt = 0; cnt < ncmds; cnt++) {
+    loadCommand = (struct load_command *)(binary + binaryIndex);
+    cmdsize = loadCommand->cmdsize;
     
-    
-    if (is64BitKernel) {
-        binaryIndex = sizeof(struct mach_header_64);
-    } else {
-        binaryIndex = sizeof(struct mach_header);
-    }
-    
-    ncmds = MACH_GET_NCMDS(binary);
-    
-    for (cnt = 0; cnt < ncmds; cnt++) {
-        loadCommand = (struct load_command *)(binary + binaryIndex);
-        cmdsize = loadCommand->cmdsize;
-        
-        switch (loadCommand->cmd) 
+    switch (loadCommand->cmd) 
+    {
+      case LC_SEGMENT_64: 
+        segCmd64 = (struct segment_command_64 *)loadCommand;
+        //DBG(L"segCmd64->segname = %a\n",segCmd64->segname);
+        //DBG(L"segCmd64->vmaddr = 0x%08x\n",segCmd64->vmaddr)
+        //DBG(L"segCmd64->vmsize = 0x%08x\n",segCmd64->vmsize); 
+        if (AsciiStrCmp(segCmd64->segname, kPrelinkTextSegment) == 0)
         {
-            case LC_SEGMENT_64: 
-                segCmd64 = (struct segment_command_64 *)loadCommand;
-                //DBG(L"segCmd64->segname = %a\n",segCmd64->segname);
-                //DBG(L"segCmd64->vmaddr = 0x%08x\n",segCmd64->vmaddr)
-                //DBG(L"segCmd64->vmsize = 0x%08x\n",segCmd64->vmsize); 
-                if (AsciiStrCmp(segCmd64->segname, kPrelinkTextSegment) == 0)
-                {
-                    DBG(L"Found PRELINK_TEXT\n");
-                    if (segCmd64->vmsize > 0) {
-                        // 64bit segCmd64->vmaddr is 0xffffff80xxxxxxxx
-                        // PrelinkTextAddr = xxxxxxxx + KernelRelocBase
-                        PrelinkTextAddr = (UINT32)(segCmd64->vmaddr ? segCmd64->vmaddr + KernelRelocBase : 0);
-                        PrelinkTextSize = (UINT32)segCmd64->vmsize;
-                        PrelinkTextLoadCmdAddr = (UINT32)(UINTN)segCmd64;
-                    }
-                    DBG(L"at %p: vmaddr = 0x%lx, vmsize = 0x%lx\n", segCmd64, segCmd64->vmaddr, segCmd64->vmsize);
-                    DBG(L"PrelinkTextLoadCmdAddr = 0x%x, PrelinkTextAddr = 0x%x, PrelinkTextSize = 0x%x\n",
-                        PrelinkTextLoadCmdAddr, PrelinkTextAddr, PrelinkTextSize);
-                    //DBG(L"cmd = 0x%08x\n",segCmd64->cmd);
-                    //DBG(L"cmdsize = 0x%08x\n",segCmd64->cmdsize);
-                    //DBG(L"vmaddr = 0x%08x\n",segCmd64->vmaddr);
-                    //DBG(L"vmsize = 0x%08x\n",segCmd64->vmsize);
-                    //DBG(L"fileoff = 0x%08x\n",segCmd64->fileoff);
-                    //DBG(L"filesize = 0x%08x\n",segCmd64->filesize);
-                    //DBG(L"maxprot = 0x%08x\n",segCmd64->maxprot);
-                    //DBG(L"initprot = 0x%08x\n",segCmd64->initprot);
-                    //DBG(L"nsects = 0x%08x\n",segCmd64->nsects);
-                    //DBG(L"flags = 0x%08x\n",segCmd64->flags);
-                }
-                if (AsciiStrCmp(segCmd64->segname, kPrelinkInfoSegment) == 0)
-                {
-                    DBG(L"Found PRELINK_INFO\n");
-                    //DBG(L"cmd = 0x%08x\n",segCmd64->cmd);
-                    //DBG(L"cmdsize = 0x%08x\n",segCmd64->cmdsize);
-                    DBG(L"vmaddr = 0x%08x\n",segCmd64->vmaddr);
-                    DBG(L"vmsize = 0x%08x\n",segCmd64->vmsize);
-                    //DBG(L"fileoff = 0x%08x\n",segCmd64->fileoff);
-                    //DBG(L"filesize = 0x%08x\n",segCmd64->filesize);
-                    //DBG(L"maxprot = 0x%08x\n",segCmd64->maxprot);
-                    //DBG(L"initprot = 0x%08x\n",segCmd64->initprot);
-                    //DBG(L"nsects = 0x%08x\n",segCmd64->nsects);
-                    //DBG(L"flags = 0x%08x\n",segCmd64->flags);
-                    UINT32 sectionIndex;
-                    sectionIndex = sizeof(struct segment_command_64);
-                    struct section_64 *sect;
-                    
-                    while(sectionIndex < segCmd64->cmdsize)
-                    {
-                        sect = (struct section_64 *)((UINT8*)segCmd64 + sectionIndex);
-                        sectionIndex += sizeof(struct section_64);
-                        
-                        if(AsciiStrCmp(sect->sectname, kPrelinkInfoSection) == 0 && AsciiStrCmp(sect->segname, kPrelinkInfoSegment) == 0)
-                        {
-                            if (sect->size > 0) {
-                                // 64bit sect->addr is 0xffffff80xxxxxxxx
-                                // PrelinkInfoAddr = xxxxxxxx + KernelRelocBase
-                                PrelinkInfoLoadCmdAddr = (UINT32)(UINTN)sect;
-                                PrelinkInfoAddr = (UINT32)(sect->addr ? sect->addr + KernelRelocBase : 0);
-                                PrelinkInfoSize = (UINT32)sect->size;
-                            }
-                            DBG(L"__info found at %p: addr = 0x%lx, size = 0x%lx\n", sect, sect->addr, sect->size);
-                            DBG(L"PrelinkInfoLoadCmdAddr = 0x%x, PrelinkInfoAddr = 0x%x, PrelinkInfoSize = 0x%x\n",
-                                PrelinkInfoLoadCmdAddr, PrelinkInfoAddr, PrelinkInfoSize);
-                        }
-                    }
-                }
-                break;
-                /*
-                        case LC_SEGMENT:
-                        segCmd = binary + binaryIndex; 
-                        //DBG(L"segCmd->segname = %a\n",segCmd->segname);
-                        //DBG(L"segCmd->vmaddr = 0x%08x\n",segCmd->vmaddr)
-                        //DBG(L"segCmd->vmsize = 0x%08x\n",segCmd->vmsize);
-                        if (AsciiStrCmp(segCmd->segname, "__PRELINK_TEXT") == 0)
-                        {
-                        PrelinkTextAddr = segCmd->vmaddr + KernelRelocBase;
-                        PrelinkTextSize = segCmd->vmsize;
-                        //DBG(L"prelinkData = 0x%08x\n",PrelinkTextAddr);
-                        //DBG(L"preLinksize = 0x%08x\n",PrelinkTextSize);
-                        //DBG(L"Found PRELINK_TEXT\n");
-                        }
-                        if (AsciiStrCmp(segCmd->segname, "__PRELINK_INFO") == 0)
-                        {
-                        PrelinkInfoAddr = segCmd->vmaddr + KernelRelocBase;
-                        PrelinkInfoSize = segCmd->vmsize;
-                        //DBG(L"prelinkData = 0x%08x\n",PrelinkInfoAddr);
-                        //DBG(L"preLinksize = 0x%08x\n",PrelinkInfoSize);
-                        //DBG(L"Found PRELINK_INFO\n");
-                        }
-                        break; */
-            default:
-                break;
-        }  
-        binaryIndex += cmdsize;
-    }
-    
-    return;
+          DBG(L"Found PRELINK_TEXT\n");
+          if (segCmd64->vmsize > 0) {
+            // 64bit segCmd64->vmaddr is 0xffffff80xxxxxxxx
+            // PrelinkTextAddr = xxxxxxxx + KernelRelocBase
+            PrelinkTextAddr = (UINT32)(segCmd64->vmaddr ? segCmd64->vmaddr + KernelRelocBase : 0);
+            PrelinkTextSize = (UINT32)segCmd64->vmsize;
+            PrelinkTextLoadCmdAddr = (UINT32)(UINTN)segCmd64;
+          }
+          DBG(L"at %p: vmaddr = 0x%lx, vmsize = 0x%lx\n", segCmd64, segCmd64->vmaddr, segCmd64->vmsize);
+          DBG(L"PrelinkTextLoadCmdAddr = 0x%x, PrelinkTextAddr = 0x%x, PrelinkTextSize = 0x%x\n",
+              PrelinkTextLoadCmdAddr, PrelinkTextAddr, PrelinkTextSize);
+          //DBG(L"cmd = 0x%08x\n",segCmd64->cmd);
+          //DBG(L"cmdsize = 0x%08x\n",segCmd64->cmdsize);
+          //DBG(L"vmaddr = 0x%08x\n",segCmd64->vmaddr);
+          //DBG(L"vmsize = 0x%08x\n",segCmd64->vmsize);
+          //DBG(L"fileoff = 0x%08x\n",segCmd64->fileoff);
+          //DBG(L"filesize = 0x%08x\n",segCmd64->filesize);
+          //DBG(L"maxprot = 0x%08x\n",segCmd64->maxprot);
+          //DBG(L"initprot = 0x%08x\n",segCmd64->initprot);
+          //DBG(L"nsects = 0x%08x\n",segCmd64->nsects);
+          //DBG(L"flags = 0x%08x\n",segCmd64->flags);
+        }
+        if (AsciiStrCmp(segCmd64->segname, kPrelinkInfoSegment) == 0)
+        {
+          DBG(L"Found PRELINK_INFO\n");
+          //DBG(L"cmd = 0x%08x\n",segCmd64->cmd);
+          //DBG(L"cmdsize = 0x%08x\n",segCmd64->cmdsize);
+          DBG(L"vmaddr = 0x%08x\n",segCmd64->vmaddr);
+          DBG(L"vmsize = 0x%08x\n",segCmd64->vmsize);
+          //DBG(L"fileoff = 0x%08x\n",segCmd64->fileoff);
+          //DBG(L"filesize = 0x%08x\n",segCmd64->filesize);
+          //DBG(L"maxprot = 0x%08x\n",segCmd64->maxprot);
+          //DBG(L"initprot = 0x%08x\n",segCmd64->initprot);
+          //DBG(L"nsects = 0x%08x\n",segCmd64->nsects);
+          //DBG(L"flags = 0x%08x\n",segCmd64->flags);
+          UINT32 sectionIndex;
+          sectionIndex = sizeof(struct segment_command_64);
+          struct section_64 *sect;
+          
+          while(sectionIndex < segCmd64->cmdsize)
+          {
+            sect = (struct section_64 *)((UINT8*)segCmd64 + sectionIndex);
+            sectionIndex += sizeof(struct section_64);
+            
+            if(AsciiStrCmp(sect->sectname, kPrelinkInfoSection) == 0 && AsciiStrCmp(sect->segname, kPrelinkInfoSegment) == 0)
+            {
+              if (sect->size > 0) {
+                // 64bit sect->addr is 0xffffff80xxxxxxxx
+                // PrelinkInfoAddr = xxxxxxxx + KernelRelocBase
+                PrelinkInfoLoadCmdAddr = (UINT32)(UINTN)sect;
+                PrelinkInfoAddr = (UINT32)(sect->addr ? sect->addr + KernelRelocBase : 0);
+                PrelinkInfoSize = (UINT32)sect->size;
+              }
+              DBG(L"__info found at %p: addr = 0x%lx, size = 0x%lx\n", sect, sect->addr, sect->size);
+              DBG(L"PrelinkInfoLoadCmdAddr = 0x%x, PrelinkInfoAddr = 0x%x, PrelinkInfoSize = 0x%x\n",
+                  PrelinkInfoLoadCmdAddr, PrelinkInfoAddr, PrelinkInfoSize);
+            }
+          }
+        }
+        break;
+        /*
+         case LC_SEGMENT:
+         segCmd = binary + binaryIndex; 
+         //DBG(L"segCmd->segname = %a\n",segCmd->segname);
+         //DBG(L"segCmd->vmaddr = 0x%08x\n",segCmd->vmaddr)
+         //DBG(L"segCmd->vmsize = 0x%08x\n",segCmd->vmsize);
+         if (AsciiStrCmp(segCmd->segname, "__PRELINK_TEXT") == 0)
+         {
+         PrelinkTextAddr = segCmd->vmaddr + KernelRelocBase;
+         PrelinkTextSize = segCmd->vmsize;
+         //DBG(L"prelinkData = 0x%08x\n",PrelinkTextAddr);
+         //DBG(L"preLinksize = 0x%08x\n",PrelinkTextSize);
+         //DBG(L"Found PRELINK_TEXT\n");
+         }
+         if (AsciiStrCmp(segCmd->segname, "__PRELINK_INFO") == 0)
+         {
+         PrelinkInfoAddr = segCmd->vmaddr + KernelRelocBase;
+         PrelinkInfoSize = segCmd->vmsize;
+         //DBG(L"prelinkData = 0x%08x\n",PrelinkInfoAddr);
+         //DBG(L"preLinksize = 0x%08x\n",PrelinkInfoSize);
+         //DBG(L"Found PRELINK_INFO\n");
+         }
+         break; */
+      default:
+        break;
+    }  
+    binaryIndex += cmdsize;
+  }
+  
+  return;
 }
 
 VOID
 FindBootArgs(VOID)
 {
-    UINT8           *ptr;
-    UINT8           archMode = sizeof(UINTN) * 8;
+  UINT8           *ptr;
+  UINT8           archMode = sizeof(UINTN) * 8;
+  
+  // start searching from 0x200000.
+  ptr = (UINT8*)(UINTN)0x200000;
+  
+  
+  while(TRUE) {
     
-    // start searching from 0x200000.
-    ptr = (UINT8*)(UINTN)0x200000;
+    // check bootargs for 10.7 and up
+    bootArgs2 = (BootArgs2*)ptr;
     
-
-    while(TRUE) {
-        
-        // check bootargs for 10.7 and up
-        bootArgs2 = (BootArgs2*)ptr;
-        
-        if (bootArgs2->Version==2 && bootArgs2->Revision==0
-            // plus additional checks - some values are not inited by boot.efi yet
-            && bootArgs2->efiMode == archMode
-            && bootArgs2->kaddr == 0 && bootArgs2->ksize == 0
-            && bootArgs2->efiSystemTable == 0
-            )
-        {
-            // set vars
-            dtRoot = (CHAR8*)(UINTN)bootArgs2->deviceTreeP;
-            KernelSlide = bootArgs2->kernelSlide;
-            
-            DBG(L"Found bootArgs2 at 0x%08x, DevTree at %p\n", ptr, dtRoot);
-            //DBG(L"bootArgs2->kaddr = 0x%08x and bootArgs2->ksize =  0x%08x\n", bootArgs2->kaddr, bootArgs2->ksize);
-            //DBG(L"bootArgs2->efiMode = 0x%02x\n", bootArgs2->efiMode);
-            DBG(L"bootArgs2->CommandLine = %a\n", bootArgs2->CommandLine);
-            DBG(L"bootArgs2->__reserved1[] = %x %x\n", bootArgs2->__reserved1[0], bootArgs2->__reserved1[1]);
-            DBG(L"bootArgs2->kernelSlide = %x\n", bootArgs2->kernelSlide);
-            //gBS->Stall(5000000);
-            
-            // disable other pointer
-            bootArgs1 = NULL;
-            break;
-        }
-
-        // check bootargs for 10.4 - 10.6.x  
-        bootArgs1 = (BootArgs1*)ptr;
-        
-        if (bootArgs1->Version==1
-            && (bootArgs1->Revision==6 || bootArgs1->Revision==5 || bootArgs1->Revision==4)
-            // plus additional checks - some values are not inited by boot.efi yet
-            && bootArgs1->efiMode == archMode
-            && bootArgs1->kaddr == 0 && bootArgs1->ksize == 0
-            && bootArgs1->efiSystemTable == 0
-            )
-        {
-            // set vars
-            dtRoot = (CHAR8*)(UINTN)bootArgs1->deviceTreeP;
-            
-            DBG(L"Found bootArgs1 at 0x%08x, DevTree at %p\n", ptr, dtRoot);
-            //DBG(L"bootArgs1->kaddr = 0x%08x and bootArgs1->ksize =  0x%08x\n", bootArgs1->kaddr, bootArgs1->ksize);
-            //DBG(L"bootArgs1->efiMode = 0x%02x\n", bootArgs1->efiMode);
-            
-            // disable other pointer
-            bootArgs2 = NULL;
-            break;
-        }
-
-        ptr += 0x1000;
+    if (bootArgs2->Version==2 && bootArgs2->Revision==0
+        // plus additional checks - some values are not inited by boot.efi yet
+        && bootArgs2->efiMode == archMode
+        && bootArgs2->kaddr == 0 && bootArgs2->ksize == 0
+        && bootArgs2->efiSystemTable == 0
+        )
+    {
+      // set vars
+      dtRoot = (CHAR8*)(UINTN)bootArgs2->deviceTreeP;
+      KernelSlide = bootArgs2->kernelSlide;
+      
+      DBG(L"Found bootArgs2 at 0x%08x, DevTree at %p\n", ptr, dtRoot);
+      //DBG(L"bootArgs2->kaddr = 0x%08x and bootArgs2->ksize =  0x%08x\n", bootArgs2->kaddr, bootArgs2->ksize);
+      //DBG(L"bootArgs2->efiMode = 0x%02x\n", bootArgs2->efiMode);
+      DBG(L"bootArgs2->CommandLine = %a\n", bootArgs2->CommandLine);
+      DBG(L"bootArgs2->__reserved1[] = %x %x\n", bootArgs2->__reserved1[0], bootArgs2->__reserved1[1]);
+      DBG(L"bootArgs2->kernelSlide = %x\n", bootArgs2->kernelSlide);
+      //gBS->Stall(5000000);
+      
+      // disable other pointer
+      bootArgs1 = NULL;
+      break;
     }
+    
+    // check bootargs for 10.4 - 10.6.x  
+    bootArgs1 = (BootArgs1*)ptr;
+    
+    if (bootArgs1->Version==1
+        && (bootArgs1->Revision==6 || bootArgs1->Revision==5 || bootArgs1->Revision==4)
+        // plus additional checks - some values are not inited by boot.efi yet
+        && bootArgs1->efiMode == archMode
+        && bootArgs1->kaddr == 0 && bootArgs1->ksize == 0
+        && bootArgs1->efiSystemTable == 0
+        )
+    {
+      // set vars
+      dtRoot = (CHAR8*)(UINTN)bootArgs1->deviceTreeP;
+      
+      DBG(L"Found bootArgs1 at 0x%08x, DevTree at %p\n", ptr, dtRoot);
+      //DBG(L"bootArgs1->kaddr = 0x%08x and bootArgs1->ksize =  0x%08x\n", bootArgs1->kaddr, bootArgs1->ksize);
+      //DBG(L"bootArgs1->efiMode = 0x%02x\n", bootArgs1->efiMode);
+      
+      // disable other pointer
+      bootArgs2 = NULL;
+      break;
+    }
+    
+    ptr += 0x1000;
+  }
 }
 
 VOID
 KernelAndKextPatcherInit(VOID)
 {
-    if (PatcherInited) {
-        return;
-    }
-    
-    PatcherInited = TRUE;
-    
-    // KernelRelocBase will normally be 0
-    // but if OsxAptioFixDrv is used, then it will be > 0
-    SetKernelRelocBase();
-    DBG(L"KernelRelocBase = %lx\n", KernelRelocBase);
-    
-    // Find bootArgs - we need then for proper detection
-    // of kernel Mach-O header
-    FindBootArgs();
-    if (bootArgs1 == NULL && bootArgs2 == NULL) {
-        DBG(L"BootArgs not found - skipping patches!\n");
-        return;
-    }
-    
-    // Find kernel Mach-O header:
-    // for ML: bootArgs2->kernelSlide + 0x00200000
-    // for older versions: just 0x200000
-    // for AptioFix booting - it's always at KernelRelocBase + 0x200000
-    KernelData = (VOID*)(UINTN)(KernelSlide + KernelRelocBase + 0x00200000);
-    
-    // check that it is Mach-O header and detect architecture
-    if(MACH_GET_MAGIC(KernelData) == MH_MAGIC || MACH_GET_MAGIC(KernelData) == MH_CIGAM)
-    {
-        DBG(L"Found 32 bit kernel at 0x%p\n", KernelData);
-        is64BitKernel = FALSE;
-    }
-    else if(MACH_GET_MAGIC(KernelData) == MH_MAGIC_64 || MACH_GET_MAGIC(KernelData) == MH_CIGAM_64)
-    {
-        DBG(L"Found 64 bit kernel at 0x%p\n", KernelData);
-        is64BitKernel = TRUE;
-    }
-    else {
-        // not valid Mach-O header - exiting
-        DBG(L"Kernel not found at 0x%p - skipping patches!", KernelData);
-        KernelData = NULL;
-        return;
-    }
-    
-    // find __PRELINK_TEXT and __PRELINK_INFO
-    Get_PreLink(KernelData);
-    
-    
-    isKernelcache = PrelinkTextSize > 0 && PrelinkInfoSize > 0;
-    DBG(L"isKernelcache: %s\n", isKernelcache ? L"Yes" : L"No");
+  if (PatcherInited) {
+    return;
+  }
+  
+  PatcherInited = TRUE;
+  
+  // KernelRelocBase will normally be 0
+  // but if OsxAptioFixDrv is used, then it will be > 0
+  SetKernelRelocBase();
+  DBG(L"KernelRelocBase = %lx\n", KernelRelocBase);
+  
+  // Find bootArgs - we need then for proper detection
+  // of kernel Mach-O header
+  FindBootArgs();
+  if (bootArgs1 == NULL && bootArgs2 == NULL) {
+    DBG(L"BootArgs not found - skipping patches!\n");
+    return;
+  }
+  
+  // Find kernel Mach-O header:
+  // for ML: bootArgs2->kernelSlide + 0x00200000
+  // for older versions: just 0x200000
+  // for AptioFix booting - it's always at KernelRelocBase + 0x200000
+  KernelData = (VOID*)(UINTN)(KernelSlide + KernelRelocBase + 0x00200000);
+  
+  // check that it is Mach-O header and detect architecture
+  if(MACH_GET_MAGIC(KernelData) == MH_MAGIC || MACH_GET_MAGIC(KernelData) == MH_CIGAM)
+  {
+    DBG(L"Found 32 bit kernel at 0x%p\n", KernelData);
+    is64BitKernel = FALSE;
+  }
+  else if(MACH_GET_MAGIC(KernelData) == MH_MAGIC_64 || MACH_GET_MAGIC(KernelData) == MH_CIGAM_64)
+  {
+    DBG(L"Found 64 bit kernel at 0x%p\n", KernelData);
+    is64BitKernel = TRUE;
+  }
+  else {
+    // not valid Mach-O header - exiting
+    DBG(L"Kernel not found at 0x%p - skipping patches!", KernelData);
+    KernelData = NULL;
+    return;
+  }
+  
+  // find __PRELINK_TEXT and __PRELINK_INFO
+  Get_PreLink(); //KernelData);
+  
+  
+  isKernelcache = PrelinkTextSize > 0 && PrelinkInfoSize > 0;
+  DBG(L"isKernelcache: %s\n", isKernelcache ? L"Yes" : L"No");
 }
 
 VOID
 KernelAndKextsPatcherStart(VOID)
 {
-    
-    // we will call KernelAndKextPatcherInit() only if needed
-    
-    if (gSettings.KPKernelCpu) {
-        
-        //
-        // Kernel patches
-        //
-        DBG(L"KernelCpu patch enabled");
-        if ((gCPUStructure.Family!=0x06 && AsciiStrStr(OSVersion,"10.7")!=0)||
-            (gCPUStructure.Model==CPU_MODEL_ATOM && AsciiStrStr(OSVersion,"10.7")!=0) ||
-            (gCPUStructure.Model==CPU_MODEL_IVY_BRIDGE && AsciiStrStr(OSVersion,"10.7")!=0)
-            )
-        {
-            KernelAndKextPatcherInit();
-            if (KernelData == NULL) {
-                return;
-            }
-            
-            DBG(L"KernelCpu Start");
-            
-            if(is64BitKernel) {
-                KernelPatcher_64(KernelData);
-            } else {
-                KernelPatcher_32(KernelData);
-            }
-        }
-        
-    }
+  
+  // we will call KernelAndKextPatcherInit() only if needed
+  
+  if (gSettings.KPKernelCpu) {
     
     //
-    // Kext patches
+    // Kernel patches
     //
-    if (
-           gSettings.KPATIConnectorInfo
-        || gSettings.KPAsusAICPUPM
+    DBG(L"KernelCpu patch enabled");
+    if ((gCPUStructure.Family!=0x06 && AsciiStrStr(OSVersion,"10.7")!=0)||
+        (gCPUStructure.Model==CPU_MODEL_ATOM && AsciiStrStr(OSVersion,"10.7")!=0) ||
+        (gCPUStructure.Model==CPU_MODEL_IVY_BRIDGE && AsciiStrStr(OSVersion,"10.7")!=0)
         )
     {
-        KernelAndKextPatcherInit();
-        if (KernelData == NULL) {
-            return;
-        }
-        
-        KextPatcherStart();
+      KernelAndKextPatcherInit();
+      if (KernelData == NULL) {
+        return;
+      }
+      
+      DBG(L"KernelCpu Start");
+      
+      if(is64BitKernel) {
+        KernelPatcher_64(KernelData);
+      } else {
+        KernelPatcher_32(KernelData);
+      }
     }
     
+  }
+  
+  //
+  // Kext patches
+  //
+  if (
+      gSettings.KPATIConnectorInfo
+      || gSettings.KPAsusAICPUPM
+      )
+  {
+    KernelAndKextPatcherInit();
+    if (KernelData == NULL) {
+      return;
+    }
+    
+    KextPatcherStart();
+  }
+  
 }

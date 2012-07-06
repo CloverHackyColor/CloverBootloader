@@ -43,6 +43,7 @@ BOOLEAN ASUSFIX;
 BOOLEAN USBIDFIX = TRUE;
 BOOLEAN Display1PCIE;
 BOOLEAN Display2PCIE;
+BOOLEAN FirewireName;
 
 // for Fix DSDT, we need record Scope(\_SB), Device(PCI), Device(LPCB) address and size
 UINT32   SBADR;
@@ -805,6 +806,7 @@ UINT32 write_offset(UINT32 adr, UINT8* buffer, UINT32 len, UINT32 offset)
 }
 
 //return final buffer len +/- 1 from original
+//this procedure assumes hidden parameter - global valiable sizeoffset
 UINT32 write_size(UINT32 adr, UINT8* buffer, UINT32 len, UINT32 oldsize)
 {
     UINT32 i;
@@ -909,7 +911,7 @@ UINTN CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr) //return final length 
   UINTN   size = 0;
   
   i = adr;
-  while (i>20) {  //find devices
+  while (i>20) {  //find devices that previous to adr
     j = findOuterDevice(dsdt, i);
 //    DBG("  Found dev at %d\n", i);
     if (!j) {
@@ -918,9 +920,9 @@ UINTN CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr) //return final length 
     size = get_size(dsdt, j);
     if ((j+size) > adr+4) {  //Yes - it is outer
 //      DBG("found outer device begin=%x end=%x\n", j, j+size);
-      len = write_size(j, dsdt, len, size);
+      len = write_size(j, dsdt, len, size);  //size corrected to sizeoffset at address j
     }    
-    i = j - 3;
+    i = j - 3;  //step over Device()
   }
   i = adr;
   while (i>20) { //find scopes
@@ -956,6 +958,8 @@ UINT32 DeleteDevice(CONST CHAR8 *Name, UINT8 *dsdt, UINT32 len)
       }
       size = get_size(dsdt, j);
       len = move_data(j-2, dsdt, len, -2-size);
+      //to correct outers we have to calculate offset
+      sizeoffset = -2 - size;
       len = CorrectOuters(dsdt, len, j-3);
     }
   }
@@ -1233,18 +1237,29 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
           
         } // End Network
         
+        FirewireName = FALSE;
         // Firewire Address
         if (FirewireADR1 != 0x00000000 && 
             CmpAdr(dsdt, j, FirewireADR1))
         {
           FirewireADR = devFind(dsdt, j);
           BridgeSize = get_size(dsdt, FirewireADR);
-          for (k=FirewireADR+9; k<FirewireADR+BridgeSize; k++) {
-            if (FirewireADR2 != 0xFFFE &&
-                CmpAdr(dsdt, k, FirewireADR2))
-            {
-              FirewireADR = devFind(dsdt, k);
-              break;
+          if (FirewireADR2 != 0xFFFE ){
+            for (k=FirewireADR+9; k<FirewireADR+BridgeSize; k++) {
+              if (CmpAdr(dsdt, k, FirewireADR2))
+              {
+                FirewireADR = devFind(dsdt, k);
+                device_name[2] = AllocateZeroPool(5);
+                CopyMem(device_name[2], dsdt+k, 4);
+                DBG("found Firewire device NAME(_ADR,0x%08x) at %x And Name is %a\n", 
+                    FirewireADR2, k, device_name[2]);
+                if (dsdt[k] != 'F' || dsdt[k+1] != 'R' || dsdt[k+2] != 'W' || dsdt[k+3] != 'R') {
+                  DBG("Replace the name with FRWR\n");
+                  ReplaceName(dsdt, len, device_name[2], "FRWR");
+                }              
+                FirewireName = TRUE;   
+                break;
+              }
             }
           }
           
@@ -1700,7 +1715,7 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
   
   FixAddr(LPCBADR, sizeoffset);  
   //DBG("len = 0x%08x\n", len);
-  
+  FreePool(lpcb);
   return len;
   
 }
@@ -1719,6 +1734,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   CHAR8 Yes[] = {0x01,0x00,0x00,0x00};
   CHAR8 *portname;
   CHAR8 *CFGname;
+  CHAR8 *name;
   UINT32 devadr=0, devadr1=0;
   BOOLEAN DISPLAYFIX = FALSE;
   
@@ -2078,7 +2094,8 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         AsciiSPrint(portname, 8, "@%d,name", i);
         aml_add_string(pack, portname);
         aml_add_string_buffer(pack, CFGname);  
-      }          
+      } 
+      
       CHAR8 *cardver = ATI_romrevision(&Displaydevice[0]);
       aml_add_string(pack, "ATY,Card#");
       aml_add_string_buffer(pack, cardver);       
@@ -2089,7 +2106,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       aml_add_string(pack, "model");
       aml_add_string_buffer(pack, modelname);
       aml_add_string(pack, "name");
-      CHAR8 *name = AllocateZeroPool(sizeof(cfgname)+11);
+      name = AllocateZeroPool(sizeof(cfgname)+11);
       AsciiSPrint(name, sizeof(cfgname)+11, "ATY,%aParent", cfgname);
       aml_add_string_buffer(pack, name);  
       aml_add_string(pack, "ATY,VendorID");
@@ -2196,7 +2213,9 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   {
     FixAddr(DisplayADR[0], sizeoffset); 
   }
-
+  FreePool(CFGname);
+  FreePool(name);
+  FreePool(display);
   return len;  
 }
 
@@ -2216,6 +2235,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
     
   CHAR8 *portname;
   CHAR8 *CFGname;
+  CHAR8 *name;
   
   UINT32 devadr=0, devadr1=0;
   BOOLEAN DISPLAYFIX = FALSE;
@@ -2604,7 +2624,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       aml_add_string(pack, "model");
       aml_add_string_buffer(pack, modelname);
       aml_add_string(pack, "name");
-      CHAR8 *name = AllocateZeroPool(sizeof(cfgname)+11);
+      name = AllocateZeroPool(sizeof(cfgname)+11);
       AsciiSPrint(name, sizeof(cfgname)+11, "ATY,%aParent", cfgname);
       aml_add_string_buffer(pack, name);  
       aml_add_string(pack, "ATY,VendorID");
@@ -2735,6 +2755,9 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
   {
     FixAddr(DisplayADR[1], sizeoffset); 
   }
+  FreePool(CFGname);
+  FreePool(name);
+  FreePool(display);
   
   return len;  
 }
@@ -2755,7 +2778,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     //      AML_CHUNK* net = aml_add_device(root, "ETH1");
     //      aml_add_name(net, "_ADR");
     //      aml_add_dword(net, NetworkADR1);
-    AML_CHUNK* dev = aml_add_device(net, "GIGE");
+    AML_CHUNK* dev = aml_add_device(root, "GIGE");
     aml_add_name(dev, "_ADR");
     if (NetworkADR2) 
     {
@@ -2825,6 +2848,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     FixAddr(NetworkADR, sizeoffset); 
   }
   //DBG("len = 0x%08x\n", len);
+  FreePool(network);
   return len;
 }
 
@@ -2840,7 +2864,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
    //   AML_CHUNK* net = aml_add_device(root, "ETH1");
    //   aml_add_name(net, "_ADR");
    //   aml_add_dword(net, NetworkADR1);
-      AML_CHUNK* dev = aml_add_device(net, "ARPT");
+      AML_CHUNK* dev = aml_add_device(root, "ARPT");
       aml_add_name(dev, "_ADR");
       if (ArptADR2) 
       {
@@ -2888,7 +2912,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
   aml_write_node(root, network, 0);
   
   aml_destroy_node(root);
-  DBG("NetworkADR=%x add size=%x\n", NetworkADR, sizeoffset);
+  DBG("NetworkADR=%x add size=%x\n", ArptADR, sizeoffset);
   if (ArptADR)
   {
     UINT32 adr=0, adr1=0;
@@ -2908,7 +2932,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     len = move_data(PCIADR+PCISIZE, dsdt, len, sizeoffset);
     CopyMem(dsdt+PCIADR+PCISIZE, network, sizeoffset);
     CorrectOuters(dsdt, len, PCIADR-3);
-    NetworkADR = PCIADR + PCISIZE + 2;
+    ArptADR = PCIADR + PCISIZE + 2;
   }
   
   if (ArptADR) 
@@ -2916,6 +2940,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     FixAddr(ArptADR, sizeoffset); 
   }
   //DBG("len = 0x%08x\n", len);
+  FreePool(network);
   return len;
 }
 
@@ -3027,7 +3052,7 @@ UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
   len = write_size(PCIADR, dsdt, len, PCISIZE);
 	PCISIZE += sizeoffset;
   CorrectOuters(dsdt, len, PCIADR-3);
-  
+  FreePool(mchc);
   return len;
   
 }
@@ -3035,7 +3060,7 @@ UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
 UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
 {
 //  UINT32 i;
-  
+  AML_CHUNK* met;
   AML_CHUNK* root = aml_create_node(NULL);
   
   DBG("Start Firewire Fix\n");
@@ -3046,19 +3071,21 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
     return len;
   }
   
-  AML_CHUNK* device = aml_add_device(root, "FRWR");
-  aml_add_name(device, "_ADR");
-  
-  if (FirewireADR2 < 0x3F) {
-    aml_add_byte(device, FirewireADR2);
-  } else {
-    aml_add_dword(device, FirewireADR2);
-  }
-  
-  aml_add_name(device, "_GPE");
-  aml_add_byte(device, 0x1A);
-  // add Method(_DSM,4,NotSerialized) for FRWR
-  AML_CHUNK* met = aml_add_method(device, "_DSM", 4);
+  if (!FirewireName) {
+    AML_CHUNK* device = aml_add_device(root, "FRWR");
+    aml_add_name(device, "_ADR");
+    if (FirewireADR2) {
+      if (FirewireADR2 <= 0x3F) {
+        aml_add_byte(device, FirewireADR2);
+      } else {
+        aml_add_dword(device, FirewireADR2);
+      }
+    } else aml_add_byte(device, 0);
+    aml_add_name(device, "_GPE");
+    aml_add_byte(device, 0x1A);
+    met = aml_add_method(device, "_DSM", 4);
+  } else
+    met = aml_add_method(root, "_DSM", 4);
   AML_CHUNK* stro = aml_add_store(met);
   AML_CHUNK* pack = aml_add_package(stro);
   aml_add_string(pack, "fwhub");
@@ -3106,6 +3133,7 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
   if (FirewireADR) {
     FixAddr(FirewireADR, sizeoffset);
   }
+  FreePool(firewire);
   return len;
 }
 
@@ -3157,6 +3185,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len)
   len = write_size(PCIADR, dsdt, len, PCISIZE);
 	PCISIZE += sizeoffset;
   CorrectOuters(dsdt, len, PCIADR-3);
+  FreePool(hdef);
   return len;
 }
 
@@ -3257,7 +3286,8 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
       }
     }
   }
-  
+  FreePool(USBDATA1);
+  FreePool(USBDATA2);
   return len;
   
 }
@@ -3377,7 +3407,7 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
   {
     FixAddr(IDEADR, sizeoffset);
   }
-  
+  FreePool(ide);
   return len;
 }
 
@@ -3433,7 +3463,7 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
   {
     FixAddr(SATAAHCIADR, sizeoffset);
   }
-  
+  FreePool(sata);
   return len;
 }
 
@@ -3491,7 +3521,7 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
   {
      FixAddr(SATAADR, sizeoffset);
   }
-  
+  FreePool(sata);
   return len;
 }
 
@@ -3850,7 +3880,7 @@ UINT32 FIXSHUTDOWN_ASUS (UINT8 *dsdt, INTN len)
   
 }
 
-
+//Slice - this procedure was not corrected and mostly wrong
 UINT32 FIXOTHER (UINT8 *dsdt, INTN len)
 {
 	INTN i, j, k, m, offset, l;
@@ -3998,7 +4028,10 @@ UINT32 FIXOTHER (UINT8 *dsdt, INTN len)
    }
    }            
    */            
-  
+  for (j=0; j<usb; j++){
+    FreePool(UsbName[j]);
+  }
+    
 	// fix _T_0 _T_1 _T_2 _T_3
 	for (i=0; i<len-10; i++) { 
 		if (dsdt[i] == '_' && dsdt[i+1] == 'T' && dsdt[i+2] == '_' &&
