@@ -1733,8 +1733,8 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   
   CHAR8 Yes[] = {0x01,0x00,0x00,0x00};
   CHAR8 *portname;
-  CHAR8 *CFGname;
-  CHAR8 *name;
+  CHAR8 *CFGname = NULL;
+  CHAR8 *name = NULL;
   UINT32 devadr=0, devadr1=0;
   BOOLEAN DISPLAYFIX = FALSE;
   
@@ -2213,8 +2213,13 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   {
     FixAddr(DisplayADR[0], sizeoffset); 
   }
-  FreePool(CFGname);
-  FreePool(name);
+  if (CFGname) {
+    FreePool(CFGname);
+  }
+  if (name) {
+    FreePool(name);
+  } 
+  
   FreePool(display);
   return len;  
 }
@@ -2234,8 +2239,8 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
   AML_CHUNK* met = aml_create_node(NULL);
     
   CHAR8 *portname;
-  CHAR8 *CFGname;
-  CHAR8 *name;
+  CHAR8 *CFGname = NULL;
+  CHAR8 *name = NULL;
   
   UINT32 devadr=0, devadr1=0;
   BOOLEAN DISPLAYFIX = FALSE;
@@ -2755,8 +2760,12 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
   {
     FixAddr(DisplayADR[1], sizeoffset); 
   }
-  FreePool(CFGname);
-  FreePool(name);
+  if (CFGname) {
+    FreePool(CFGname);
+  }
+  if (name) {
+    FreePool(name);
+  } 
   FreePool(display);
   
   return len;  
