@@ -25,7 +25,7 @@
 
 
 
-CHAR8*  device_name[10];  // 0=>Display  1=>network  2=>firewire 3=>LPCB 4=>HDAAudio 5=>RTC 6=>TMR 7=>SBUS 8=>PIC
+CHAR8*  device_name[10];  // 0=>Display  1=>network  2=>firewire 3=>LPCB 4=>HDAAudio 5=>RTC 6=>TMR 7=>SBUS 8=>PIC 9=>Airport
 CHAR8*  UsbName[10];
 CHAR8*  Netmodel;
 
@@ -34,6 +34,8 @@ BOOLEAN GFXHDAFIX;
 BOOLEAN DisplayName1;
 BOOLEAN DisplayName2;
 BOOLEAN NetworkName;
+BOOLEAN ArptName;
+BOOLEAN ArptBCM;
 BOOLEAN LPCBFIX;
 BOOLEAN IDEFIX;
 BOOLEAN SATAFIX;
@@ -211,7 +213,7 @@ static struct ide_chipsets_t ide_chipset[] =
     {0x808627c4},
     {0x80862828},
 };
-
+//2820? 2825?
 struct ahci_chipsets_t {
     UINT32 id;
 };
@@ -487,7 +489,7 @@ VOID CheckHardware()
                                     &HandleBuffer
                                     );
   if (!EFI_ERROR (Status)) {
-    DBG("PciIo handles count=%d\n", HandleCount);
+//    DBG("PciIo handles count=%d\n", HandleCount);
     for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
       Handle = HandleBuffer[HandleIndex];
       Status = gBS->HandleProtocol (
@@ -516,16 +518,16 @@ VOID CheckHardware()
         DevicePath = DevicePathFromHandle (Handle);
         if (DevicePath)
         {
-          DBG("Device patch = %s \n", DevicePathToStr(DevicePath));
+  //        DBG("Device patch = %s \n", DevicePathToStr(DevicePath));
           
           //Display ADR
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA)) {
             GetPciADR(DevicePath, &DisplayADR1[display], &DisplayADR2[display]);
-            DBG("Display PciAdr=0x%x\n", ((Device << 16) | Function));
+   //         DBG("Display PciAdr=0x%x\n", ((Device << 16) | Function));
             UINT32 dadr1 = DisplayADR1[display];
             UINT32 dadr2 = DisplayADR2[display];
-            DBG("DisplayADR1[%d] = 0x%x, DisplayADR2[%d] = 0x%x\n", display, dadr1, display, dadr2);
+  //          DBG("DisplayADR1[%d] = 0x%x, DisplayADR2[%d] = 0x%x\n", display, dadr1, display, dadr2);
             dadr2 = dadr1; //to avoid warning "unused variable" :(
             DisplayVendor[display] = Pci.Hdr.VendorId;
             DisplayID[display] = Pci.Hdr.DeviceId;
@@ -564,7 +566,7 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_ETHERNET))
           {
             GetPciADR(DevicePath, &NetworkADR1, &NetworkADR2);
-            DBG("NetworkADR1 = 0x%x, NetworkADR2 = 0x%x\n", NetworkADR1, NetworkADR2);
+ //           DBG("NetworkADR1 = 0x%x, NetworkADR2 = 0x%x\n", NetworkADR1, NetworkADR2);
             Netmodel = get_net_model(deviceid);            
           }
           
@@ -573,8 +575,9 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_OTHER))
           {
             GetPciADR(DevicePath, &ArptADR1, &ArptADR2);
-            DBG("ArptADR1 = 0x%x, ArptADR2 = 0x%x\n", ArptADR1, ArptADR2);
-   //         Netmodel = get_net_model(deviceid);            
+   //         DBG("ArptADR1 = 0x%x, ArptADR2 = 0x%x\n", ArptADR1, ArptADR2);
+   //         Netmodel = get_net_model(deviceid);  
+            ArptBCM = (deviceid == 0x14e44315);
           }
           
           //Firewire ADR
@@ -582,7 +585,7 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_FIREWIRE))
           {
             GetPciADR(DevicePath, &FirewireADR1, &FirewireADR2);
-            DBG("FirewireADR1 = 0x%x, FirewireADR2 = 0x%x\n", FirewireADR1, FirewireADR2);
+ //           DBG("FirewireADR1 = 0x%x, FirewireADR2 = 0x%x\n", FirewireADR1, FirewireADR2);
           }
           
           //SBUS ADR
@@ -590,7 +593,7 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_SMB))
           {
             GetPciADR(DevicePath, &SBUSADR1, &SBUSADR2);
-            DBG("SBUSADR1 = 0x%x, SBUSADR2 = 0x%x\n", SBUSADR1, SBUSADR2);
+ //           DBG("SBUSADR1 = 0x%x, SBUSADR2 = 0x%x\n", SBUSADR1, SBUSADR2);
           }
           
           //USB
@@ -598,7 +601,7 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_USB)) 
           {
             GetPciADR(DevicePath, &USBADR[usb], NULL);
-            DBG("USBADR[%d] = 0x%x\n", usb, USBADR[usb]);
+  //          DBG("USBADR[%d] = 0x%x\n", usb, USBADR[usb]);
             if (USBIDFIX)
             {
               //if (USBADR[usb] == 0x001D0000 && Pci.Hdr.DeviceId != 0x3a34) Pci.Hdr.DeviceId = 0x3a34;
@@ -621,7 +624,7 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA))
           {
             GetPciADR(DevicePath, &HDAADR, NULL);
-            DBG("HDAADR = 0x%x\n", HDAADR);
+  //          DBG("HDAADR = 0x%x\n", HDAADR);
             UINT32 codecId = 0, layoutId = 0;
             codecId = HDA_getCodecVendorAndDeviceIds(PciIo);
             if (codecId >0)
@@ -658,7 +661,7 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_MASS_STORAGE_IDE))
           {
             GetPciADR(DevicePath, &IDEADR1, &IDEADR2);
-            DBG("IDEADR1 = 0x%x, IDEADR2 = 0x%x\n", IDEADR1, IDEADR2);
+  //          DBG("IDEADR1 = 0x%x, IDEADR2 = 0x%x\n", IDEADR1, IDEADR2);
             IDEFIX = get_ide_model(deviceid);
             IDEVENDOR = Pci.Hdr.VendorId;
           }
@@ -669,7 +672,7 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[0] == 0x00))
           {
             GetPciADR(DevicePath, &SATAADR1, &SATAADR2);
-            DBG("SATAADR1 = 0x%x, SATAADR2 = 0x%x\n", SATAADR1, SATAADR2);
+ //           DBG("SATAADR1 = 0x%x, SATAADR2 = 0x%x\n", SATAADR1, SATAADR2);
             SATAFIX = get_ide_model(deviceid);
             SATAVENDOR = Pci.Hdr.VendorId;
           }
@@ -680,7 +683,7 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[0] == 0x01))
           {
             GetPciADR(DevicePath, &SATAAHCIADR1, &SATAAHCIADR2);
-            DBG("SATAAHCIADR1 = 0x%x, SATAAHCIADR2 = 0x%x\n", SATAAHCIADR1, SATAAHCIADR2);
+  //          DBG("SATAAHCIADR1 = 0x%x, SATAAHCIADR2 = 0x%x\n", SATAAHCIADR1, SATAAHCIADR2);
             //AHCIFIX = get_ahci_model(deviceid);
             SATAAHCIVENDOR = Pci.Hdr.VendorId;
           }
@@ -914,7 +917,7 @@ UINTN CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr) //return final length 
     }
     size = get_size(dsdt, j);
     if ((j+size) > adr+4) {  //Yes - it is outer
-      DBG("found outer device begin=%x end=%x\n", j, j+size);
+//      DBG("found outer device begin=%x end=%x\n", j, j+size);
       len = write_size(j, dsdt, len, size);
     }    
     i = j - 3;
@@ -928,7 +931,7 @@ UINTN CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr) //return final length 
     }
     size = get_size(dsdt, j);
     if ((j+size) > adr+4) {  //Yes - it is outer
-      DBG("found outer scope begin=%x end=%x\n", j, j+size);
+//      DBG("found outer scope begin=%x end=%x\n", j, j+size);
       len = write_size(j, dsdt, len, size);
     }    
     i = j - 3;    //if found then search again from found 
@@ -963,7 +966,7 @@ UINT32 DeleteDevice(CONST CHAR8 *Name, UINT8 *dsdt, UINT32 len)
 VOID ReplaceName(UINT8 *dsdt, UINT32 len, CONST CHAR8 *OldName, CONST CHAR8 *NewName)
 {
   UINTN i;
-  for (i=20; i<len; i++) {
+  for (i=30; i<len; i++) {
     if ((dsdt[i+0] == OldName[0]) && (dsdt[i+1] == OldName[1]) &&
         (dsdt[i+2] == OldName[2]) && (dsdt[i+3] == OldName[3])) {
       dsdt[i+0] = NewName[0];
@@ -974,34 +977,46 @@ VOID ReplaceName(UINT8 *dsdt, UINT32 len, CONST CHAR8 *OldName, CONST CHAR8 *New
   }
 }
 
-// if (CmpAdr(dsdt, j+10, NetworkADR1))
+// if (CmpAdr(dsdt, j, NetworkADR1))
 BOOLEAN CmpAdr (UINT8 *dsdt, UINT32 j, UINT32 PciAdr)
 { 
   // Name (_ADR, 0x001f0001)
-  return ((dsdt[j + 4] == 0x08) &&
+  return (BOOLEAN)
+         ((dsdt[j + 4] == 0x08) &&
           (dsdt[j + 5] == 0x5F) &&
           (dsdt[j + 6] == 0x41) &&
           (dsdt[j + 7] == 0x44) &&
           (dsdt[j + 8] == 0x52) &&
-          (((dsdt[j + 9] == 0x0C) &&
+          (//--------------------
+           ((dsdt[j +  9] == 0x0C) &&
             (dsdt[j + 10] == ((PciAdr & 0x000000ff) >> 0)) &&
             (dsdt[j + 11] == ((PciAdr & 0x0000ff00) >> 8)) &&
             (dsdt[j + 12] == ((PciAdr & 0x00ff0000) >> 16)) &&
-            (dsdt[j + 13] == ((PciAdr & 0xff000000) >> 24))) ||
-           ((dsdt[j + 9] == 0x0B) &&
+            (dsdt[j + 13] == ((PciAdr & 0xff000000) >> 24))
+           ) ||
+           //--------------------
+           ((dsdt[j +  9] == 0x0B) &&
             (dsdt[j + 10] == ((PciAdr & 0x000000ff) >> 0)) &&
-            (dsdt[j + 11] == ((PciAdr & 0x0000ff00) >> 8))) ||
-           ((dsdt[j + 9] == 0x0A) &&
-            (dsdt[j + 10] == (PciAdr & 0x000000ff))) ||
-           ((dsdt[j + 9] == 0x00) && (PciAdr == 0)) ||              
-           ((dsdt[j + 9] == 0x01) && (PciAdr == 1)) 
-           ));
+            (dsdt[j + 11] == ((PciAdr & 0x0000ff00) >> 8)) &&
+            (PciAdr < 0x10000)
+           ) ||
+           //-----------------------
+           ((dsdt[j +  9] == 0x0A) &&
+            (dsdt[j + 10] == (PciAdr & 0x000000ff)) &&
+            (PciAdr < 0x100)
+           ) ||
+           //-----------------
+           ((dsdt[j +  9] == 0x00) && (PciAdr == 0)) ||    
+           //------------------
+           ((dsdt[j +  9] == 0x01) && (PciAdr == 1)) 
+          )
+        );
 }
 
 BOOLEAN CmpPNP (UINT8 *dsdt, UINT32 j, UINT16 PNP)
 {
   // Name (_HID, EisaId ("PNP0C0F"))
-  return ((dsdt[j + 0] == 0x08) &&
+  return (BOOLEAN)((dsdt[j + 0] == 0x08) &&
           (dsdt[j + 1] == 0x5F) &&
           (dsdt[j + 2] == 0x48) &&
           (dsdt[j + 3] == 0x49) &&
@@ -1048,7 +1063,7 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
 	INTN    step = 0;
   UINT32  BridgeSize;
   
-	for (i=0; i<len-20; i++) 
+	for (i=20; i<len-20; i++) 
 	{
     // find Scope(\_SB) ...
 		if (dsdt[i] == '_' && dsdt[i+1] == 'S' && dsdt[i+2] == 'B' && dsdt[i+3] == '_' &&
@@ -1114,8 +1129,8 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
         {
           PCIADR = i-j+1;
           PCISIZE = get_size(dsdt, i-j+1);
-          //DBG("found Device(PCIX) address = 0x%08x size = 0x%08x\n", PCIADR, PCISIZE);
-          break;
+//          DBG("found Device(PCIX) address = 0x%08x size = 0x%08x\n", PCIADR, PCISIZE);
+          if(PCISIZE) break;
         }
       }
       
@@ -1128,6 +1143,7 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
         if (DisplayADR1[0] != 0x00000000 && 
             CmpAdr(dsdt, j, DisplayADR1[0]))
         {
+          DBG("Found DisplayADR1[0]=%x at %x\n", DisplayADR1[0], j);
 //There is a one place where I will keep this check. But this is a nonsense
 // excluded everywhere          
           
@@ -1151,6 +1167,7 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
         if (DisplayADR1[1] != 0x00000000 && 
             CmpAdr(dsdt, j, DisplayADR1[1]))
         {
+  //        DBG("Found DisplayADR1[1]=%x at %x\n", DisplayADR1[1], j);
             DisplayName2 = TRUE;
             DisplayADR[1] = devFind(dsdt, j);
         } // End Display
@@ -1158,21 +1175,26 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
         if (IDEADR1 != 0x00000000 && 
             CmpAdr(dsdt, j, IDEADR1))
         {
+  //        DBG("Found IDEADR1=%x at %x\n", IDEADR1, j);
             IDEADR = devFind(dsdt, j);
         } // End IDE
         
         if (SATAADR1 != 0x00000000 && 
             CmpAdr(dsdt, j, SATAADR1))
         {
+  //        DBG("Found SATAADR1=%x at %x\n", SATAADR1, j);
             SATAADR = devFind(dsdt, j);
         } // End SATA
         
         if (SATAAHCIADR1 != 0x00000000 && 
-            CmpAdr(dsdt, j, SATAAHCIADR))
+            CmpAdr(dsdt, j, SATAAHCIADR1))
         {
+          DBG("Found SATAAHCIADR1=%x at %x\n", SATAAHCIADR1, j);
             SATAAHCIADR = devFind(dsdt, j);
+          DBG("... SATAAHCIADR=%x\n", SATAAHCIADR);
         } // End SATA AHCI
         
+        NetworkName = FALSE;
         // Network Address
         if (NetworkADR1 != 0x00000000 &&
             CmpAdr(dsdt, j, NetworkADR1))
@@ -1184,23 +1206,28 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
              {
                 Name (_ADR, Zero) - this is NetworkADR2
               */
-          DBG("found NetworkADR1 at %x\n", j);
+ //         DBG("found NetworkADR1=%x at %x\n", NetworkADR1, j);
           NetworkADR = devFind(dsdt, j);
-          DBG("now NetworkADR=%x\n", NetworkADR); 
+ //         DBG("now NetworkADR=%x\n", NetworkADR); 
           BridgeSize = get_size(dsdt, NetworkADR);
-          DBG("its size=%x\n", BridgeSize);
-          for (k=NetworkADR+9; k<NetworkADR+BridgeSize; k++) {
-            if (NetworkADR2 != 0xFFFE &&
-                CmpAdr(dsdt, k, NetworkADR2))
-            {
-              DBG("found NetworkADR2 at %x\n", k);
-              NetworkADR = devFind(dsdt, k);
-              device_name[1] = AllocateZeroPool(5);
-              CopyMem(device_name[1], dsdt+k, 4);
-              DBG("found NetWork device NAME(_ADR,0x%08x) at %x And Name is %a\n", 
-                  NetworkADR1, k, device_name[1]);
-              NetworkName = TRUE;   
-              break;
+    //      DBG("its size=%x\n", BridgeSize);
+          if (NetworkADR2 != 0xFFFE){
+            for (k=NetworkADR+9; k<NetworkADR+BridgeSize; k++) {
+              if (CmpAdr(dsdt, k, NetworkADR2))
+              {
+         //       DBG("found NetworkADR2 at %x\n", k);
+                NetworkADR = devFind(dsdt, k);
+                device_name[1] = AllocateZeroPool(5);
+                CopyMem(device_name[1], dsdt+k, 4);
+                DBG("found NetWork device NAME(_ADR,0x%08x) at %x And Name is %a\n", 
+                    NetworkADR2, k, device_name[1]);
+                if (dsdt[k] != 'G' || dsdt[k+1] != 'I' || dsdt[k+2] != 'G' || dsdt[k+3] != 'E') {
+                  DBG("Replace the name with GIGE\n");
+                  ReplaceName(dsdt, len, device_name[1], "GIGE");
+                }              
+                NetworkName = TRUE;   
+                break;
+              }
             }
           }
           
@@ -1223,18 +1250,29 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
           
         } // End Firewire
 
+        ArptName = FALSE;
         // AirPort Address
         if (ArptADR1 != 0x00000000 && 
             CmpAdr(dsdt, j, ArptADR1))
         {
           ArptADR = devFind(dsdt, j);
           BridgeSize = get_size(dsdt, ArptADR);
-          for (k=ArptADR+9; k<ArptADR+BridgeSize; k++) {
-            if (ArptADR2 != 0xFFFE &&
-                CmpAdr(dsdt, k, ArptADR2))
-            {
-              ArptADR = devFind(dsdt, k);
-              break;
+          if (ArptADR2 != 0xFFFE){
+            for (k=ArptADR+9; k<ArptADR+BridgeSize; k++) {
+              if (CmpAdr(dsdt, k, ArptADR2))
+              {
+                ArptADR = devFind(dsdt, k);
+                device_name[9] = AllocateZeroPool(5);
+                CopyMem(device_name[9], dsdt+k, 4);
+                DBG("found Airport device NAME(_ADR,0x%08x) at %x And Name is %a\n", 
+                    ArptADR2, k, device_name[9]);
+                if (dsdt[k] != 'A' || dsdt[k+1] != 'R' || dsdt[k+2] != 'P' || dsdt[k+3] != 'T') {
+                  DBG("Replace the name with ARPT\n");
+                  ReplaceName(dsdt, len, device_name[9], "ARPT");
+                }   
+                ArptName = TRUE;
+                break;
+              }
             }
           }
           
@@ -1266,6 +1304,10 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
             CopyMem(device_name[3], dsdt+j, 4);
             DBG("found LPCB device NAME(_ADR,0x001F0000) at %x And Name is %a\n", j,
                 device_name[3]);
+          if (dsdt[j] != 'L' || dsdt[j+1] != 'P' || dsdt[j+2] != 'C' || dsdt[j+3] != 'B') {
+            DBG("Replace the name with LPCB\n");
+            ReplaceName(dsdt, len, device_name[3], "LPCB");
+          }
         }  // End LPCB
         
         // Find Device SBUS
@@ -1324,7 +1366,7 @@ UINT32 FixRTC (UINT8 *dsdt, UINT32 len)
       RTCADR = devFind(dsdt, j);
       adr = RTCADR;
       rtcsize = get_size(dsdt, adr);
-      DBG("RTC addr=%x RTC size=%x\n", adr, rtcsize);
+  //    DBG("RTC addr=%x RTC size=%x\n", adr, rtcsize);
       if (rtcsize) {
         break;
       }
@@ -1398,7 +1440,7 @@ UINT32 FixRTC (UINT8 *dsdt, UINT32 len)
       sizeoffset = 0;
     } // sizeoffset if
   } // l loop
-      DBG("Finish RTC patch");		
+//      DBG("Finish RTC patch");		
 	
 	// need fix other device address
 	if (TMRADR > RTCADR) TMRADR += offset;
@@ -1426,7 +1468,7 @@ UINT32 FixTMR (UINT8 *dsdt, UINT32 len)
       TMRADR = devFind(dsdt, j);
       adr = TMRADR;
       tmrsize = get_size(dsdt, adr);
-      DBG("TMR size=%x at %x\n", tmrsize, adr);
+ //     DBG("TMR size=%x at %x\n", tmrsize, adr);
       if (tmrsize) {
         break;
       }
@@ -1437,7 +1479,7 @@ UINT32 FixTMR (UINT8 *dsdt, UINT32 len)
 
   // Fix TMR
 	// Find Name(_CRS, ResourceTemplate ()) find ResourceTemplate 0x11
-	DBG("Start TMR Fix\n");
+//	DBG("Start TMR Fix\n");
 	//DBG("len = 0x%08x, adr = 0x%08x.\n", len, adr);
   j = 0;
 	for (i=adr; i<adr+tmrsize; i++) //until next Device()
@@ -1499,7 +1541,7 @@ UINT32 FixPIC (UINT8 *dsdt, UINT32 len)
   INT32  offset = 0;
   UINT32 picsize = 0;
   
-  DBG("Start PIC Fix\n");
+ // DBG("Start PIC Fix\n");
   for (j=20; j<len; j++) {
     // Find Device PIC or IPIC  PNP0000
     if (CmpPNP(dsdt, j, 0x0000))
@@ -1507,7 +1549,7 @@ UINT32 FixPIC (UINT8 *dsdt, UINT32 len)
       PICADR = devFind(dsdt, j);
       adr = PICADR;
       picsize = get_size(dsdt, adr);
-      DBG("PIC size=%x at %x\n", picsize, adr);
+ //     DBG("PIC size=%x at %x\n", picsize, adr);
       if (picsize) {
         break;
       }
@@ -1579,7 +1621,7 @@ UINT32 FixHPET (UINT8* dsdt, UINT32 len)
   UINT32  adr    = 0;
   UINT32  hpetsize = 0;
   
-	DBG("Start HPET Fix\n");  
+//	DBG("Start HPET Fix\n");  
   
   for (j=20; j<len; j++) {
     // Find Device HPET   // PNP0103
@@ -1588,7 +1630,7 @@ UINT32 FixHPET (UINT8* dsdt, UINT32 len)
       HPETADR = devFind(dsdt, j);
       adr = HPETADR;
       hpetsize = get_size(dsdt, adr);
-      DBG("HPET size=%x at %x\n", hpetsize, adr);
+ //     DBG("HPET size=%x at %x\n", hpetsize, adr);
       if (hpetsize) {
         break;
       }
@@ -1623,7 +1665,7 @@ UINT32 FixHPET (UINT8* dsdt, UINT32 len)
 
 UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
 {   
-  DBG("Start LPCB Fix\n");
+//  DBG("Start LPCB Fix\n");
 	//DBG("len = 0x%08x\n", len);
   
 	AML_CHUNK* root = aml_create_node(NULL);
@@ -1698,17 +1740,18 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   if (DisplayADR1[0]) {
     if (!DisplayName1) 
     {
-      AML_CHUNK* pegp = aml_add_device(root, "PEGP");
-      aml_add_name(pegp, "_ADR");
-      aml_add_dword(pegp, DisplayADR1[0]);
-      gfx0 = aml_add_device(pegp, "GFX0");
+//      AML_CHUNK* pegp = aml_add_device(root, "PEGP");
+//      aml_add_name(pegp, "_ADR");
+//      aml_add_dword(pegp, DisplayADR1[0]);
+      gfx0 = aml_add_device(root, "GFX0");
       aml_add_name(gfx0, "_ADR");
       if (DisplayADR2[0] > 0x3F)
         aml_add_dword(gfx0, DisplayADR2[0]);
       else
         aml_add_byte(gfx0, DisplayADR2[0]);
     }
-    else 
+    //Slice - don't add device as we have one
+/*    else 
     {   
       if(!DISPLAYFIX && DisplayVendor[0] != 0x8086)
       { 
@@ -1720,7 +1763,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
           aml_add_byte(gfx0, DisplayADR2[0]);  
       }
     }
-    
+ */   
     // Intel GMA and HD
     if (DisplayVendor[0] == 0x8086)
     {
@@ -1739,8 +1782,9 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       //    met = aml_add_method(gfx0, "_DSM", 4);
       //}
       //else
-      //{
-      met = aml_add_method(root, "_DSM", 4);
+      //{      
+      
+      met = aml_add_method(gfx0, "_DSM", 4);
       //}
       met = aml_add_store(met);
       AML_CHUNK* pack = aml_add_package(met);
@@ -1751,8 +1795,8 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       aml_add_string(pack, "device_type");
       aml_add_string_buffer(pack, "display");
       //
-      if (AsciiStrnCmp(modelname, "Mobile GMA950", 13) == 0 ||
-          AsciiStrnCmp(modelname, "Mobile GMA3150", 14) == 0)
+      if ((AsciiStrnCmp(modelname, "Mobile GMA950", 13) == 0) ||
+          (AsciiStrnCmp(modelname, "Mobile GMA3150", 14) == 0))
       {
         aml_add_string(pack, "AAPL,HasPanel");
         aml_add_byte_buffer(pack, Yes, sizeof(Yes)); 
@@ -2125,15 +2169,8 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   {
     UINT32 adr=0, adr1=0;
     // get Display device size
-    for (i=0; i<10; i++)
-    {
-      if (dsdt[DisplayADR[0]-i] == 0x82 && dsdt[DisplayADR[0]-i-1] == 0x5B)
-      {
-        adr1 = DisplayADR[0]-i+1;  
-        adr = get_size(dsdt, adr1);
-        break;
-      }
-    }
+    adr1 = devFind(dsdt, DisplayADR[0]);
+    adr = get_size(dsdt, adr1);
     // move data to back for add Display
     if (!DISPLAYFIX)
     { 
@@ -2705,75 +2742,49 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
 
 UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
 {
-//  UINT32 i;
-  
+  //  UINT32 i;
+  AML_CHUNK* met;
   AML_CHUNK* root = aml_create_node(NULL);
   
   DBG("Start NetWork Fix\n");
+  
   DBG("NetworkADR1=%x NetworkADR2=%x NetworkName=%x\n", NetworkADR1, NetworkADR2, NetworkName);
 	//DBG("len = 0x%08x\n", len);
-  // Display device_id 
-  if (NetworkADR1) {
-    if (!NetworkName) 
+  if (!NetworkName) //there is no network device at dsdt, creating new one
+  {
+    //      AML_CHUNK* net = aml_add_device(root, "ETH1");
+    //      aml_add_name(net, "_ADR");
+    //      aml_add_dword(net, NetworkADR1);
+    AML_CHUNK* dev = aml_add_device(net, "GIGE");
+    aml_add_name(dev, "_ADR");
+    if (NetworkADR2) 
     {
-      AML_CHUNK* net = aml_add_device(root, "ETH1");
-      aml_add_name(net, "_ADR");
-      aml_add_dword(net, NetworkADR1);
-      AML_CHUNK* dev = aml_add_device(net, "GIGE");
-      aml_add_name(dev, "_ADR");
-      if (NetworkADR2) 
-      {
-        if (NetworkADR2> 0x3F)
-          aml_add_dword(dev, NetworkADR2);
-        else
-          aml_add_byte(dev, NetworkADR2);
-      }
+      if (NetworkADR2> 0x3F)
+        aml_add_dword(dev, NetworkADR2);
       else
-      {
-        aml_add_byte(dev, 0x00);
-      }
-      // add Method(_DSM,4,NotSerialized) for network
-      AML_CHUNK* met = aml_add_method(dev, "_DSM", 4);
-      met = aml_add_store(met);
-      AML_CHUNK* pack = aml_add_package(met);
-      aml_add_string(pack, "built-in");
-      CHAR8 data[] = {0x00};
-      aml_add_byte_buffer(pack, data, sizeof(data));
-      aml_add_string(pack, "model");
-      aml_add_string_buffer(pack, Netmodel);
-      aml_add_local0(met);
-      aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
-      // finish Method(_DSM,4,NotSerialized)
+        aml_add_byte(dev, NetworkADR2);
     }
     else
-    {    
-      AML_CHUNK* net = aml_add_device(root, "GIGE");
-      aml_add_name(net, "_ADR");
-      if (NetworkADR2) 
-      {
-        if (NetworkADR2> 0x3F)
-          aml_add_dword(net, NetworkADR2);
-        else
-          aml_add_byte(net, NetworkADR2);
-      }
-      else
-      {
-        aml_add_byte(net, 0x00);
-      }
-      // add Method(_DSM,4,NotSerialized) for GIGE
-      AML_CHUNK* met = aml_add_method(net, "_DSM", 4);
-      met = aml_add_store(met);
-      AML_CHUNK* pack = aml_add_package(met);
-      aml_add_string(pack, "built-in");
-      CHAR8 data[] = {0x00};
-      aml_add_byte_buffer(pack, data, sizeof(data));
-      aml_add_string(pack, "model");
-      aml_add_string_buffer(pack, Netmodel);
-      aml_add_local0(met);
-      aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
-      // finish Method(_DSM,4,NotSerialized)
+    {
+      aml_add_byte(dev, 0x00);
     }
-  }
+    met = aml_add_method(dev, "_DSM", 4);
+  } else {
+    met = aml_add_method(root, "_DSM", 4);
+  }  
+  // add Method(_DSM,4,NotSerialized) for network
+  met = aml_add_store(met);
+  AML_CHUNK* pack = aml_add_package(met);
+  aml_add_string(pack, "built-in");
+  CHAR8 data[] = {0x00};
+  aml_add_byte_buffer(pack, data, sizeof(data));
+  aml_add_string(pack, "model");
+  aml_add_string_buffer(pack, Netmodel);
+  aml_add_string(pack, "device_type");
+  aml_add_string_buffer(pack, "Ethernet");
+  aml_add_local0(met);
+  aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
+  // finish Method(_DSM,4,NotSerialized)
   
   aml_calculate_size(root);
   
@@ -2786,7 +2797,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
   aml_write_node(root, network, 0);
   
   aml_destroy_node(root);
-  DBG("NetworkADR=%x\n", NetworkADR);
+  DBG("NetworkADR=%x add size=%x\n", NetworkADR, sizeoffset);
   if (NetworkADR)
   {
     UINT32 adr=0, adr1=0;
@@ -2817,6 +2828,97 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
   return len;
 }
 
+UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
+{
+  AML_CHUNK* met;
+  AML_CHUNK* root = aml_create_node(NULL);
+  
+  DBG("Start Airport Fix\n");
+  if (!ArptADR1) return len;
+    if (!ArptName) {//there is no Airport device at dsdt, creating new one
+    // but we propose that bridge exists
+   //   AML_CHUNK* net = aml_add_device(root, "ETH1");
+   //   aml_add_name(net, "_ADR");
+   //   aml_add_dword(net, NetworkADR1);
+      AML_CHUNK* dev = aml_add_device(net, "ARPT");
+      aml_add_name(dev, "_ADR");
+      if (ArptADR2) 
+      {
+        if (ArptADR2> 0x3F)
+          aml_add_dword(dev, ArptADR2);
+        else
+          aml_add_byte(dev, ArptADR2);
+      }
+      else
+      {
+        aml_add_byte(dev, 0x00);
+      }
+      met = aml_add_method(dev, "_DSM", 4);
+    } else {
+      met = aml_add_method(root, "_DSM", 4);
+    }  
+  // add Method(_DSM,4,NotSerialized) for network
+      met = aml_add_store(met);
+      AML_CHUNK* pack = aml_add_package(met);
+      aml_add_string(pack, "built-in");
+      CHAR8 data[] = {0x00};
+      aml_add_byte_buffer(pack, data, sizeof(data));
+  if (ArptBCM) {
+    aml_add_string(pack, "model");
+    aml_add_string_buffer(pack, "Dell Wireless 1395");
+    aml_add_string(pack, "name");
+    aml_add_string_buffer(pack, "pci14e4,4312");
+    aml_add_string(pack, "device-id");
+    CHAR8 data[] = {0x12, 0x43, 0x00, 0x00};
+    aml_add_byte_buffer(pack, data, 4);    
+  }
+  aml_add_string(pack, "device_type");
+  aml_add_string_buffer(pack, "Airport");
+
+  aml_add_local0(met);
+      aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
+      // finish Method(_DSM,4,NotSerialized)
+   
+  aml_calculate_size(root);
+  
+  CHAR8 *network = AllocateZeroPool(root->Size);
+  
+  sizeoffset = root->Size;
+  
+  aml_write_node(root, network, 0);
+  
+  aml_destroy_node(root);
+  DBG("NetworkADR=%x add size=%x\n", NetworkADR, sizeoffset);
+  if (ArptADR)
+  {
+    UINT32 adr=0, adr1=0;
+    // get Airport device size
+    adr1 = devFind(dsdt, ArptADR);
+    adr = get_size(dsdt, adr1);
+    DBG("found Airport device @%x size=5x\n", adr1, adr);
+    // move data to back for add network 
+    len = move_data(adr1+adr, dsdt, len, sizeoffset);
+    CopyMem(dsdt+adr1+adr, network, sizeoffset);
+    // Fix Device network size
+    len = write_size(adr1, dsdt, len, adr);
+    CorrectOuters(dsdt, len, adr1-3);
+  }
+  else
+  {
+    len = move_data(PCIADR+PCISIZE, dsdt, len, sizeoffset);
+    CopyMem(dsdt+PCIADR+PCISIZE, network, sizeoffset);
+    CorrectOuters(dsdt, len, PCIADR-3);
+    NetworkADR = PCIADR + PCISIZE + 2;
+  }
+  
+  if (ArptADR) 
+  {
+    FixAddr(ArptADR, sizeoffset); 
+  }
+  //DBG("len = 0x%08x\n", len);
+  return len;
+}
+
 UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
 {
 //  UINT32 i;
@@ -2835,7 +2937,7 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
   else
     sizeoffset = sizeof(sbus); 
   
-  //DBG("SBUS code size = 0x%08x\n", sizeoffset);
+  DBG("SBUS code size = 0x%08x\n", sizeoffset);
     
   if (SBUSADR)
   {
@@ -2850,10 +2952,11 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
     len = write_size(adr1, dsdt, len, adr);
     CorrectOuters(dsdt, len, adr1-3);
     SBUSADR = adr1;
-    //DBG("SBUS code size fix = 0x%08x\n", sizeoffset);
+    DBG("SBUS code size fix = 0x%08x\n", sizeoffset);
   }
   else
   {
+    DBG("SBUS absent, adding to the end of PCI0 at %x\n", PCIADR+PCISIZE);
     len = move_data(PCIADR+PCISIZE, dsdt, len, sizeoffset);
     CopyMem(dsdt+PCIADR+PCISIZE, sbus, sizeoffset);
     
@@ -2971,8 +3074,6 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
   
   sizeoffset = root->Size;
   
-  //DBG("Network code size = 0x%08x\n", sizeoffset);
-  
   aml_write_node(root, firewire, 0);
   
   aml_destroy_node(root);
@@ -3022,7 +3123,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len)
   aml_add_name(device, "_ADR");
   aml_add_dword(device, 0x001B0000);  
   
-	// add Method(_DSM,4,NotSerialized) for USB
+	// add Method(_DSM,4,NotSerialized) 
   AML_CHUNK* met = aml_add_method(device, "_DSM", 4);
   met = aml_add_store(met);
   AML_CHUNK* pack = aml_add_package(met);
@@ -3264,9 +3365,9 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
   
   if (IDEADR)
   {
-    // move data to back for add IDE 
-    len = move_data(IDEADR, dsdt, len, sizeoffset);
-    CopyMem(dsdt+IDEADR, ide, sizeoffset);
+    // move data to back for add DSM 
+    len = move_data(adr1+adr, dsdt, len, sizeoffset);
+    CopyMem(dsdt+adr1+adr, ide, sizeoffset);
     // Fix Device ide size
     len = write_size(adr1, dsdt, len, adr);
     CorrectOuters(dsdt, len, adr1-3);
@@ -3318,11 +3419,11 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
   {
     UINT32 adr=0, adr1=0;
     // get ide device size
-    adr1 = devFind(dsdt, SATAAHCIADR);
+    adr1 = devFind(dsdt, SATAAHCIADR+2);
     adr = get_size(dsdt, adr1);
-    // move data to back for add SATA
-    len = move_data(SATAAHCIADR, dsdt, len, sizeoffset);
-    CopyMem(dsdt+SATAAHCIADR, sata, sizeoffset);
+    // move data to back for add DSM
+    len = move_data(adr1+adr, dsdt, len, sizeoffset);
+    CopyMem(dsdt+adr1+adr, sata, sizeoffset);
     // Fix Device SATA size
     len = write_size(adr1, dsdt, len, adr);
     CorrectOuters(dsdt, len, adr1-3);
@@ -3378,9 +3479,9 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
     // get ide device size
     adr1 = devFind(dsdt, SATAADR);
     adr = get_size(dsdt, adr1);
-    // move data to back for add SATA
-    len = move_data(SATAADR, dsdt, len, sizeoffset);
-    CopyMem(dsdt+SATAADR, sata, sizeoffset);
+    // move data to back for add DSM
+    len = move_data(adr1+adr, dsdt, len, sizeoffset);
+    CopyMem(dsdt+adr1+adr, sata, sizeoffset);
     // Fix Device SATA size
     len = write_size(adr1, dsdt, len, adr);
     CorrectOuters(dsdt, len, adr1-3);
@@ -4017,6 +4118,13 @@ VOID FixBiosDsdt (UINT8* temp)
   {
 //    DBG("patch LAN in DSDT \n");
     DsdtLen = FIXNetwork(temp, DsdtLen);
+  }
+
+  // Fix Airport
+  if (ArptADR1 && (gSettings.FixDsdt & FIX_WIFI))
+  {
+    //    DBG("patch LAN in DSDT \n");
+    DsdtLen = FIXAirport(temp, DsdtLen);
   }
   
   // Fix SBUS
