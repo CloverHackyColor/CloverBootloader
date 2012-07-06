@@ -105,7 +105,7 @@ VOID AsusAICPUPMPatch(UINT8 *Driver, UINT32 DriverSize)
     }
   }
   DBG(L"= %d patches\n", Count);
-  //gBS->Stall(2000000);
+  //gBS->Stall(1000000);
 }
 
 
@@ -149,7 +149,11 @@ VOID KextPatcherRegisterKexts(FSINJECTION_PROTOCOL *FSInject, FSI_STRING_LIST *F
 VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
 {
   
-  if (gSettings.KPATIConnectorInfo && AsciiStrStr(InfoPlist, "com.apple.kext.ATI5000Controller")) {
+  if (gSettings.KPATIConnectorInfo
+      && (AsciiStrStr(InfoPlist, "com.apple.kext.ATI5000Controller")
+          || AsciiStrStr(InfoPlist, "com.apple.kext.AMD5000Controller" /* ML */)
+          )
+      ) {
     ATIConnectorInfoPatch(Driver, DriverSize);
   }
   else if (gSettings.KPAsusAICPUPM && AsciiStrStr(InfoPlist, "<string>com.apple.driver.AppleIntelCPUPowerManagement</string>")) {
@@ -352,7 +356,12 @@ VOID PatchPrelinkedKexts(VOID)
         // get kext address from _PrelinkExecutableSourceAddr
         // truncate to 32 bit to get physical addr
         KextAddr = (UINT32)GetPlistHexValue(InfoPlistStart, kPrelinkExecutableSourceKey, WholePlist);
+        // KextAddr is always relative to 0x200000
+        // and if KernelSlide is != 0 then KextAddr must be adjusted
+        KextAddr += KernelSlide;
+        // and adjust for AptioFixDrv's KernelRelocBase
         KextAddr += KernelRelocBase;
+        
         KextSize = (UINT32)GetPlistHexValue(InfoPlistStart, kPrelinkExecutableSizeKey, WholePlist);
         
         /*if (DbgCount < 3

@@ -26,6 +26,8 @@
 
 #define MACH_GET_MAGIC(hdr)        (((struct mach_header_64*)(hdr))->magic)
 #define MACH_GET_NCMDS(hdr)        (((struct mach_header_64*)(hdr))->ncmds)
+#define MACH_GET_CPU(hdr)          (((struct mach_header_64*)(hdr))->cputype)
+#define MACH_GET_FLAGS(hdr)        (((struct mach_header_64*)(hdr))->flags)
 #define SC_GET_CMD(hdr)            (((struct segment_command_64*)(hdr))->cmd)
 
 
@@ -78,6 +80,7 @@ extern BootArgs1    *bootArgs1;
 extern BootArgs2    *bootArgs2;
 extern CHAR8        *dtRoot;
 extern VOID         *KernelData;
+extern UINT32       KernelSlide;
 extern BOOLEAN      isKernelcache;
 extern BOOLEAN      is64BitKernel;
 

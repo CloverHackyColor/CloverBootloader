@@ -20,9 +20,12 @@ BootArgs1   *bootArgs1 = NULL;
 BootArgs2   *bootArgs2 = NULL;
 CHAR8       *dtRoot = NULL;
 VOID        *KernelData = NULL;
+UINT32      KernelSlide = 0;
 BOOLEAN     isKernelcache = FALSE;
 BOOLEAN     is64BitKernel = FALSE;
 BOOLEAN     SSSE3;
+
+BOOLEAN     PatcherInited = FALSE;
 
 // notes:
 // - 64bit segCmd64->vmaddr is 0xffffff80xxxxxxxx and we are taking
@@ -702,84 +705,120 @@ VOID Get_PreLink()
 }
 
 VOID
-KernelAndKextPatcherInit(VOID)
+FindBootArgs(VOID)
 {
     UINT8           *ptr;
     UINT8           archMode = sizeof(UINTN) * 8;
-    BOOLEAN         SearchBootArgs1;
+    
+    // start searching from 0x200000.
+    ptr = (UINT8*)(UINTN)0x200000;
+    
+
+    while(TRUE) {
+        
+        // check bootargs for 10.7 and up
+        bootArgs2 = (BootArgs2*)ptr;
+        
+        if (bootArgs2->Version==2 && bootArgs2->Revision==0
+            // plus additional checks - some values are not inited by boot.efi yet
+            && bootArgs2->efiMode == archMode
+            && bootArgs2->kaddr == 0 && bootArgs2->ksize == 0
+            && bootArgs2->efiSystemTable == 0
+            )
+        {
+            // set vars
+            dtRoot = (CHAR8*)(UINTN)bootArgs2->deviceTreeP;
+            KernelSlide = bootArgs2->kernelSlide;
+            
+            DBG(L"Found bootArgs2 at 0x%08x, DevTree at %p\n", ptr, dtRoot);
+            //DBG(L"bootArgs2->kaddr = 0x%08x and bootArgs2->ksize =  0x%08x\n", bootArgs2->kaddr, bootArgs2->ksize);
+            //DBG(L"bootArgs2->efiMode = 0x%02x\n", bootArgs2->efiMode);
+            DBG(L"bootArgs2->CommandLine = %a\n", bootArgs2->CommandLine);
+            DBG(L"bootArgs2->__reserved1[] = %x %x\n", bootArgs2->__reserved1[0], bootArgs2->__reserved1[1]);
+            DBG(L"bootArgs2->kernelSlide = %x\n", bootArgs2->kernelSlide);
+            //gBS->Stall(5000000);
+            
+            // disable other pointer
+            bootArgs1 = NULL;
+            break;
+        }
+
+        // check bootargs for 10.4 - 10.6.x  
+        bootArgs1 = (BootArgs1*)ptr;
+        
+        if (bootArgs1->Version==1
+            && (bootArgs1->Revision==6 || bootArgs1->Revision==5 || bootArgs1->Revision==4)
+            // plus additional checks - some values are not inited by boot.efi yet
+            && bootArgs1->efiMode == archMode
+            && bootArgs1->kaddr == 0 && bootArgs1->ksize == 0
+            && bootArgs1->efiSystemTable == 0
+            )
+        {
+            // set vars
+            dtRoot = (CHAR8*)(UINTN)bootArgs1->deviceTreeP;
+            
+            DBG(L"Found bootArgs1 at 0x%08x, DevTree at %p\n", ptr, dtRoot);
+            //DBG(L"bootArgs1->kaddr = 0x%08x and bootArgs1->ksize =  0x%08x\n", bootArgs1->kaddr, bootArgs1->ksize);
+            //DBG(L"bootArgs1->efiMode = 0x%02x\n", bootArgs1->efiMode);
+            
+            // disable other pointer
+            bootArgs2 = NULL;
+            break;
+        }
+
+        ptr += 0x1000;
+    }
+}
+
+VOID
+KernelAndKextPatcherInit(VOID)
+{
+    if (PatcherInited) {
+        return;
+    }
+    
+    PatcherInited = TRUE;
     
     // KernelRelocBase will normally be 0
     // but if OsxAptioFixDrv is used, then it will be > 0
     SetKernelRelocBase();
     DBG(L"KernelRelocBase = %lx\n", KernelRelocBase);
     
-    // Find kernel address: should be at 0x00200000 and
-    // start with Mach-O header
-    KernelData = (VOID*)(UINTN)(KernelRelocBase + 0x00200000);
-    while(TRUE)
+    // Find bootArgs - we need then for proper detection
+    // of kernel Mach-O header
+    FindBootArgs();
+    if (bootArgs1 == NULL && bootArgs2 == NULL) {
+        DBG(L"BootArgs not found - skipping patches!\n");
+        return;
+    }
+    
+    // Find kernel Mach-O header:
+    // for ML: bootArgs2->kernelSlide + 0x00200000
+    // for older versions: just 0x200000
+    // for AptioFix booting - it's always at KernelRelocBase + 0x200000
+    KernelData = (VOID*)(UINTN)(KernelSlide + KernelRelocBase + 0x00200000);
+    
+    // check that it is Mach-O header and detect architecture
+    if(MACH_GET_MAGIC(KernelData) == MH_MAGIC || MACH_GET_MAGIC(KernelData) == MH_CIGAM)
     {
-        // Parse through the load commands
-        if(MACH_GET_MAGIC(KernelData) == MH_MAGIC)
-        {
-            DBG(L"Found 32 bit kernel at 0x%08x\n", KernelData);
-            is64BitKernel = FALSE;
-            break;
-        }
-        if(MACH_GET_MAGIC(KernelData) == MH_MAGIC_64)
-        {
-            DBG(L"Found 64 bit kernel at 0x%08x\n", KernelData);
-            is64BitKernel = TRUE;
-            break;
-        }
-        KernelData += 1;
+        DBG(L"Found 32 bit kernel at 0x%p\n", KernelData);
+        is64BitKernel = FALSE;
+    }
+    else if(MACH_GET_MAGIC(KernelData) == MH_MAGIC_64 || MACH_GET_MAGIC(KernelData) == MH_CIGAM_64)
+    {
+        DBG(L"Found 64 bit kernel at 0x%p\n", KernelData);
+        is64BitKernel = TRUE;
+    }
+    else {
+        // not valid Mach-O header - exiting
+        DBG(L"Kernel not found at 0x%p - skipping patches!", KernelData);
+        KernelData = NULL;
+        return;
     }
     
     // find __PRELINK_TEXT and __PRELINK_INFO
     Get_PreLink(KernelData);
     
-    // find boot args. they are near the end of kernel image.
-    // start searching from kernel start.
-    // ... and set dtRoot
-    ptr = (UINT8*)KernelData;
-    
-    SearchBootArgs1 = (AsciiStrStr(OSVersion,"10.5") !=0 ) || (AsciiStrStr(OSVersion,"10.6") !=0 );
-    DBG(L"Boot OS %a, searching for BootArgs%d\n", OSVersion, SearchBootArgs1 ? 1 : 2);
-    
-    if (SearchBootArgs1) {
-        // find bootargs for 10.4 - 10.6.x                
-        while(TRUE) {
-            
-            bootArgs1 = (BootArgs1*)ptr;
-            
-            if (bootArgs1->Version==1 && (bootArgs1->Revision==6 || bootArgs1->Revision==5 || bootArgs1->Revision==4) && bootArgs1->efiMode == archMode)
-            {
-                dtRoot = (CHAR8*)(UINTN)bootArgs1->deviceTreeP;
-                DBG(L"Found bootArgs1 at 0x%08x, DevTree at %p\n", ptr, dtRoot);
-                //DBG(L"bootArgs1->kaddr = 0x%08x and bootArgs1->ksize =  0x%08x\n", bootArgs1->kaddr, bootArgs1->ksize);
-                //DBG(L"bootArgs1->efiMode = 0x%02x\n", bootArgs1->efiMode);
-                break;
-            }
-            
-            ptr += 0x1000;
-        }
-    } else {
-        // find bootargs for 10.7 and up
-        while(TRUE) {
-            
-            bootArgs2 = (BootArgs2*)ptr;
-            
-            if (bootArgs2->Version==2 && bootArgs2->Revision==0 && bootArgs2->efiMode == archMode)
-            {
-                dtRoot = (CHAR8*)(UINTN)bootArgs2->deviceTreeP;
-                DBG(L"Found bootArgs2 at 0x%08x, DevTree at %p\n", ptr, dtRoot);
-                //DBG(L"bootArgs2->kaddr = 0x%08x and bootArgs2->ksize =  0x%08x\n", bootArgs2->kaddr, bootArgs2->ksize);
-                //DBG(L"bootArgs2->efiMode = 0x%02x\n", bootArgs2->efiMode);
-                break;
-            } 
-            
-            ptr += 0x1000;
-        }
-    }
     
     isKernelcache = PrelinkTextSize > 0 && PrelinkInfoSize > 0;
     DBG(L"isKernelcache: %s\n", isKernelcache ? L"Yes" : L"No");
@@ -788,24 +827,27 @@ KernelAndKextPatcherInit(VOID)
 VOID
 KernelAndKextsPatcherStart(VOID)
 {
-    //
-    // Find boot args and other needed params
-    // for patches.
-    //
-    KernelAndKextPatcherInit();
     
-    //
-    // Kernel patches
-    //
+    // we will call KernelAndKextPatcherInit() only if needed
+    
     if (gSettings.KPKernelCpu) {
         
+        //
+        // Kernel patches
+        //
         DBG(L"KernelCpu patch enabled");
         if ((gCPUStructure.Family!=0x06 && AsciiStrStr(OSVersion,"10.7")!=0)||
             (gCPUStructure.Model==CPU_MODEL_ATOM && AsciiStrStr(OSVersion,"10.7")!=0) ||
             (gCPUStructure.Model==CPU_MODEL_IVY_BRIDGE && AsciiStrStr(OSVersion,"10.7")!=0)
             )
         {
+            KernelAndKextPatcherInit();
+            if (KernelData == NULL) {
+                return;
+            }
+            
             DBG(L"KernelCpu Start");
+            
             if(is64BitKernel) {
                 KernelPatcher_64(KernelData);
             } else {
@@ -823,6 +865,11 @@ KernelAndKextsPatcherStart(VOID)
         || gSettings.KPAsusAICPUPM
         )
     {
+        KernelAndKextPatcherInit();
+        if (KernelData == NULL) {
+            return;
+        }
+        
         KextPatcherStart();
     }
     

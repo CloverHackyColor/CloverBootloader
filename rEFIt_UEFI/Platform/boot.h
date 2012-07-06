@@ -176,7 +176,7 @@ typedef struct {
 	UINT64			efiRuntimeServicesVirtualPageStart; /* virtual address of defragmented runtime pages */
 
 	UINT32			efiSystemTable;   /* physical address of system table in runtime area */
-	UINT32			__reserved2;
+	UINT32			kernelSlide;      /* in Lion: reserved and 0; in ML: kernel image "sliding offset" (KASLR slide) */
 
 	UINT32			performanceDataStart; /* physical address of log */
 	UINT32			performanceDataSize;

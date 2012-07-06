@@ -104,10 +104,6 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
 {
 	
 	
-	// test
-	//Print(L"\nOnExitBootServices!\n");
-	//gBS->Stall(5000000); // 5 secs
-	
 	//
 	// Patch kernel and kexts if needed
 	//
@@ -115,32 +111,9 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
 	
 	if (gFirmwareClover) {
 		
-		//
-		// Correct memmap.
-		// Reuse bootArgs detected in KernelAndKextsPatcherStart()
-		//
-		if (bootArgs2 != NULL) {
-			CorrectMemoryMap(bootArgs2->MemoryMap,
-							 bootArgs2->MemoryMapDescriptorSize,
-							 &bootArgs2->MemoryMapSize);
-			// is this needed?
-			//bootArgs2->efiSystemTable = (UINT32)(UINTN)gST;
-			
-		}
-		else if (bootArgs1 != NULL) 
-		{
-			CorrectMemoryMap(bootArgs1->MemoryMap,
-							 bootArgs1->MemoryMapDescriptorSize,
-							 &bootArgs1->MemoryMapSize);
-			// is this needed?
-			//bootArgs1->efiSystemTable = (UINT32)(UINTN)gST;
-		}
-		
 		// Note: blocks on Aptio
 		DisableUsbLegacySupport();
 	}
-	
-	//gBS->Stall(20000000);
 }
 
 VOID
