@@ -331,19 +331,36 @@ VOID PatchTableType0()
 	// 
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_BIOS_INFORMATION, 0);
 	if (SmbiosTable.Raw == NULL) {
-//		Print(L"SmbiosTable: Type 0 (Bios Information) not found!\n");
-		
+//		Print(L"SmbiosTable: Type 0 (Bios Information) not found!\n");	
 		return;
 	}
 	TableSize = SmbiosTableLength(SmbiosTable);
 	ZeroMem((VOID*)newSmbiosTable.Type0, MAX_TABLE_SIZE);
 	CopyMem((VOID*)newSmbiosTable.Type0, (VOID*)SmbiosTable.Type0, TableSize); //can't point to union
-	
+/* Real Mac
+ BIOS Information (Type 0)
+ Raw Data:
+ Header and Data:
+ 00 18 2E 00 01 02 00 00 03 7F 80 98 01 00 00 00
+ 00 00 C1 02 00 01 FF FF
+ Strings:
+ Apple Inc.
+ MBP81.88Z.0047.B22.1109281426
+ 09/28/11
+
+ */
 	newSmbiosTable.Type0->BiosSegment = 0; //like in Mac
 	newSmbiosTable.Type0->SystemBiosMajorRelease = 0;
 	newSmbiosTable.Type0->SystemBiosMinorRelease = 1;
-	newSmbiosTable.Type0->BiosCharacteristics.BiosCharacteristicsNotSupported = 0;
+//	newSmbiosTable.Type0->BiosCharacteristics.BiosCharacteristicsNotSupported = 0;
 //	newSmbiosTable.Type0->BIOSCharacteristicsExtensionBytes[1] |= 8; //UefiSpecificationSupported;
+	//Slice: ----------------------
+	//there is a bug in AppleSMBIOS-42 v1.7
+	//to eliminate this I have to zero first byte in the field
+	*(UINT8*)&newSmbiosTable.Type0->BiosCharacteristics = 0;
+	//dunno about latest version but there is a way to set good characteristics
+	//if use patched AppleSMBIOS
+	//----------------
 	Once = TRUE;
 	if(iStrLen(gSettings.VendorName, 64)>0){
 		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type0->Vendor, gSettings.VendorName);

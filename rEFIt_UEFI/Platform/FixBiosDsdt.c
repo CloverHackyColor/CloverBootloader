@@ -113,6 +113,8 @@ struct lpc_device_t
 	UINT32		id;
 };
 
+static CHAR8 data[] = {0x00};
+
 static struct lpc_device_t lpc_chipset[] =
 {
     {0x00000000},
@@ -594,7 +596,7 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_SMB))
           {
             GetPciADR(DevicePath, &SBUSADR1, &SBUSADR2);
- //           DBG("SBUSADR1 = 0x%x, SBUSADR2 = 0x%x\n", SBUSADR1, SBUSADR2);
+            DBG("SBUSADR1 = 0x%x, SBUSADR2 = 0x%x\n", SBUSADR1, SBUSADR2);
           }
           
           //USB
@@ -1066,6 +1068,12 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
 	INTN    root = 0;
 	INTN    step = 0;
   UINT32  BridgeSize;
+  //initialising
+  NetworkName = FALSE;
+  DisplayName1 = FALSE;
+  DisplayName2 = FALSE;
+  FirewireName = FALSE;
+  ArptName = FALSE;
   
 	for (i=20; i<len-20; i++) 
 	{
@@ -1197,8 +1205,7 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
             SATAAHCIADR = devFind(dsdt, j);
           DBG("... SATAAHCIADR=%x\n", SATAAHCIADR);
         } // End SATA AHCI
-        
-        NetworkName = FALSE;
+                
         // Network Address
         if (NetworkADR1 != 0x00000000 &&
             CmpAdr(dsdt, j, NetworkADR1))
@@ -1219,7 +1226,7 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
             for (k=NetworkADR+9; k<NetworkADR+BridgeSize; k++) {
               if (CmpAdr(dsdt, k, NetworkADR2))
               {
-         //       DBG("found NetworkADR2 at %x\n", k);
+                DBG("found NetworkADR2 at %x\n", k);
                 NetworkADR = devFind(dsdt, k);
                 device_name[1] = AllocateZeroPool(5);
                 CopyMem(device_name[1], dsdt+k, 4);
@@ -1236,8 +1243,7 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
           }
           
         } // End Network
-        
-        FirewireName = FALSE;
+                
         // Firewire Address
         if (FirewireADR1 != 0x00000000 && 
             CmpAdr(dsdt, j, FirewireADR1))
@@ -1265,7 +1271,6 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
           
         } // End Firewire
 
-        ArptName = FALSE;
         // AirPort Address
         if (ArptADR1 != 0x00000000 && 
             CmpAdr(dsdt, j, ArptADR1))
@@ -2808,7 +2813,6 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
   met = aml_add_store(met);
   AML_CHUNK* pack = aml_add_package(met);
   aml_add_string(pack, "built-in");
-  CHAR8 data[] = {0x00};
   aml_add_byte_buffer(pack, data, sizeof(data));
   aml_add_string(pack, "model");
   aml_add_string_buffer(pack, Netmodel);
@@ -2894,7 +2898,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
       met = aml_add_store(met);
       AML_CHUNK* pack = aml_add_package(met);
       aml_add_string(pack, "built-in");
-      CHAR8 data[] = {0x00};
+
       aml_add_byte_buffer(pack, data, sizeof(data));
   if (ArptBCM) {
     aml_add_string(pack, "model");
@@ -3216,6 +3220,13 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   AML_CHUNK* pack = aml_add_package(met);
   aml_add_string(pack, "device-id");
   aml_add_byte_buffer(pack, (CONST CHAR8*)&USBID[0], 4);
+  aml_add_string(pack, "built-in");
+  aml_add_byte_buffer(pack, data, sizeof(data));
+  aml_add_string(pack, "device_type");
+  aml_add_string_buffer(pack, "UHCI");
+  aml_add_string(pack, "AAPL,clock-id");
+  aml_add_byte_buffer(pack, data, sizeof(data));
+  
   aml_add_local0(met);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized)      
@@ -3233,6 +3244,12 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   AML_CHUNK* pack1 = aml_add_package(met1);
   aml_add_string(pack1, "device-id");
   aml_add_byte_buffer(pack1, (CONST CHAR8*)&USBID[0], 4);
+  aml_add_string(pack1, "built-in");
+  aml_add_byte_buffer(pack1, data, sizeof(data));
+  aml_add_string(pack1, "device_type");
+  aml_add_string_buffer(pack1, "EHCI");
+  aml_add_string(pack1, "AAPL,clock-id");
+  aml_add_byte_buffer(pack1, data, sizeof(data));
   aml_add_string(pack1, "AAPL,current-available");
   aml_add_word(pack1, 0x05DC);
   aml_add_string(pack1, "AAPL,current-extra");
@@ -3241,14 +3258,14 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   aml_add_word(pack1, 0x0BB8);
 //  aml_add_string(pack1, "AAPL,device-internal");
 //  aml_add_byte(pack1, 0x02);
-  CHAR8 data[] = {0x00};
+
   aml_add_byte_buffer(pack1, data, sizeof(data));
   aml_add_local0(met1);
   aml_add_buffer(met1, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized)
   
   aml_calculate_size(root1);
-  CHAR8 *USBDATA2 = AllocateZeroPool(root->Size);
+  CHAR8 *USBDATA2 = AllocateZeroPool(root1->Size);
   size2 = root1->Size;
   //DBG("USB code size = 0x%08x\n", sizeoffset);
   aml_write_node(root1, USBDATA2, 0);

@@ -10,7 +10,9 @@
 		<string>No</string>
 		<key>AsusAICPUPM</key>
 		<string>No</string>
-	</dict>
+		<key>AppleRTC</key>
+        <string>Yes</string>
+ 	</dict>
 	<key>SystemParameters</key>
 	<dict>
 		<key>boot-args</key>
