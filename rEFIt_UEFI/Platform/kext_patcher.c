@@ -14,6 +14,54 @@
 #define DBG(x...)
 #endif
 
+
+//
+// Searches Source for Search pattern of size SearchSize
+// and returns the number of occurences.
+//
+UINTN SearchAndCount(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN SearchSize)
+{
+  UINTN     NumFounds = 0;
+  UINT8     *End = Source + SourceSize;
+  
+  while (Source < End) {   
+    if (CompareMem(Source, Search, SearchSize) == 0) {
+      NumFounds++;
+      Source += SearchSize;
+    } else {
+      Source++;
+    }
+  }
+  return NumFounds;
+}
+
+//
+// Searches Source for Search pattern of size SearchSize
+// and replaces it with Replace up to MaxReplaces times.
+// If MaxReplaces <= 0, then there is no restriction on number of replaces.
+// Replace should have the same size as Search. 
+// Returns number of replaces done.
+//
+UINTN SearchAndReplace(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN SearchSize, UINT8 *Replace, INTN MaxReplaces)
+{
+  UINTN     NumReplaces = 0;
+  BOOLEAN   NoReplacesRestriction = MaxReplaces <= 0;
+  UINT8     *End = Source + SourceSize;
+  
+  while (Source < End && (NoReplacesRestriction || MaxReplaces > 0)) {   
+    if (CompareMem(Source, Search, SearchSize) == 0) {
+      CopyMem(Source, Replace, SearchSize);
+      NumReplaces++;
+      MaxReplaces--;
+      Source += SearchSize;
+    } else {
+      Source++;
+    }
+  }
+  return NumReplaces;
+}
+
+
 ////////////////////////////////////
 //
 // ATIConnectorInfo patch
@@ -112,6 +160,79 @@ VOID AsusAICPUPMPatch(UINT8 *Driver, UINT32 DriverSize)
 
 ////////////////////////////////////
 //
+// AppleRTCPatch patch
+//
+// AppleRTC patch to prevent CMOS reset:
+// http://www.insanelymac.com/forum/index.php?showtopic=253992
+// http://www.insanelymac.com/forum/index.php?showtopic=276066
+// 
+
+UINT8   LionSearch_X64[]  = { 0x75, 0x30, 0x44, 0x89, 0xf8 };
+UINT8   LionReplace_X64[] = { 0xeb, 0x30, 0x44, 0x89, 0xf8 };
+
+UINT8   LionSearch_i386[]  = { 0x75, 0x3d, 0x8b, 0x75, 0x08 };
+UINT8   LionReplace_i386[] = { 0xeb, 0x3d, 0x8b, 0x75, 0x08 };
+
+UINT8   MLSearch[]  = { 0x75, 0x30, 0x89, 0xd8 };
+UINT8   MLReplace[] = { 0xeb, 0x30, 0x89, 0xd8 };
+
+//
+// We can not rely on OSVersion global variable for OS version detection,
+// since in some cases it is not correct (install of ML from Lion, for example).
+// So, we'll use "brute-force" method - just try to pacth.
+// Actually, we'll at least check that if we can find only one instance of code that
+// we are planning to patch.
+//
+
+VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize)
+{
+
+  UINTN   Num = 0;
+  UINTN   NumLion_X64 = 0;
+  UINTN   NumLion_i386 = 0;
+  UINTN   NumML = 0;
+  
+  DBG(L"\nAppleRTCPatch: driverAddr = %x, driverSize = %x\nOSVersion (not reliable) = %a\n", Driver, DriverSize, OSVersion);
+  
+  if (is64BitKernel) {
+    NumLion_X64 = SearchAndCount(Driver, DriverSize, LionSearch_X64, sizeof(LionSearch_X64));
+    NumML = SearchAndCount(Driver, DriverSize, MLSearch, sizeof(MLSearch));
+  } else {
+    NumLion_i386 = SearchAndCount(Driver, DriverSize, LionSearch_i386, sizeof(LionSearch_i386));
+  }
+  
+  if (NumLion_X64 + NumLion_i386 + NumML > 1) {
+    // more then one pattern found - we do not know what to do with it
+    // and we'll skipp it
+    DBG(L"==> ERROR: multiple patterns found (LionX64: %d, Lioni386: %d, ML: %d) - skipping patching!\n",
+        NumLion_X64, NumLion_i386, NumML);
+    //gBS->Stall(10000000);
+    return;
+  }
+  
+  if (NumLion_X64 == 1) {
+    Num = SearchAndReplace(Driver, DriverSize, LionSearch_X64, sizeof(LionSearch_X64), LionReplace_X64, 1);
+    DBG(L"==> Lion X64: %d replaces done.\n", Num);
+  }
+  else if (NumLion_i386 == 1) {
+    Num = SearchAndReplace(Driver, DriverSize, LionSearch_i386, sizeof(LionSearch_i386), LionReplace_i386, 1);
+    DBG(L"==> Lion i386: %d replaces done.\n", Num);
+  }
+  else if (NumML == 1) {
+    Num = SearchAndReplace(Driver, DriverSize, MLSearch, sizeof(MLSearch), MLReplace, 1);
+    DBG(L"==> MountainLion X64: %d replaces done.\n", Num);
+  }
+  else {
+    DBG(L"==> Patterns not found - no patching done.\n");
+  }
+  
+  //gBS->Stall(5000000);
+}
+
+
+
+////////////////////////////////////
+//
 // Place other kext patches here
 //
 
@@ -159,6 +280,11 @@ VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPl
   else if (gSettings.KPAsusAICPUPM && AsciiStrStr(InfoPlist, "<string>com.apple.driver.AppleIntelCPUPowerManagement</string>")) {
     AsusAICPUPMPatch(Driver, DriverSize);
   }
+  else if (gSettings.KPAppleRTC && AsciiStrStr(InfoPlist, "com.apple.driver.AppleRTC")) {
+    AppleRTCPatch(Driver, DriverSize);
+  }
+  
+  
 }
 
 //

@@ -758,6 +758,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.KPAsusAICPUPM = TRUE;
         }
       }
+      prop = GetProperty(dictPointer,"AppleRTC");
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+          gSettings.KPAppleRTC = TRUE;
+        }
+      }
     }
     
     SaveSettings();

@@ -586,6 +586,7 @@ typedef struct {
   BOOLEAN KPKernelCpu;
   BOOLEAN KPATIConnectorInfo;
   BOOLEAN KPAsusAICPUPM;
+  BOOLEAN KPAppleRTC;
   
 } SETTINGS_DATA;
 
