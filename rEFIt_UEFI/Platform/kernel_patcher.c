@@ -839,7 +839,6 @@ KernelAndKextsPatcherStart(VOID)
     if ((gCPUStructure.Family!=0x06 && AsciiStrStr(OSVersion,"10.7")!=0)||
         (gCPUStructure.Model==CPU_MODEL_ATOM && AsciiStrStr(OSVersion,"10.7")!=0) ||
         (gCPUStructure.Model==CPU_MODEL_IVY_BRIDGE && AsciiStrStr(OSVersion,"10.7")!=0)
-        || gSettings.KPAppleRTC
         )
     {
       KernelAndKextPatcherInit();
@@ -864,6 +863,7 @@ KernelAndKextsPatcherStart(VOID)
   if (
       gSettings.KPATIConnectorInfo
       || gSettings.KPAsusAICPUPM
+      || gSettings.KPAppleRTC
       )
   {
     KernelAndKextPatcherInit();

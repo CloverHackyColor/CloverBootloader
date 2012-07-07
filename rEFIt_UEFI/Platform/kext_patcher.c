@@ -160,9 +160,8 @@ VOID AsusAICPUPMPatch(UINT8 *Driver, UINT32 DriverSize)
 
 ////////////////////////////////////
 //
-// AppleRTCPatch patch
+// AppleRTC patch to prevent CMOS reset
 //
-// AppleRTC patch to prevent CMOS reset:
 // http://www.insanelymac.com/forum/index.php?showtopic=253992
 // http://www.insanelymac.com/forum/index.php?showtopic=276066
 // 
