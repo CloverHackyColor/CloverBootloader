@@ -1259,9 +1259,9 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   DsdtLoaded = FALSE;
   if (!EFI_ERROR(Status)) {
     // if we will apply fixes, allocate additional space
-		if (gSettings.FixDsdt) {
+//		if (gSettings.FixDsdt) { //unconditional
 			bufferLen = bufferLen + bufferLen / 8;
-		}
+//		}
 
     Status = gBS->AllocatePages (
                                  AllocateMaxAddress,
@@ -1285,9 +1285,6 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     }
   } 
   
-  //native DSDT or loaded we want to apply autoFix to this
-//  if (gSettings.FixDsdt) { //fix even with zero mask because we want to know PCIRootUID
-//    FixBiosDsdt((UINT8*)(UINTN)FadtPointer->Dsdt);
 		if (!DsdtLoaded) {
 			// allocate space for fixes
 			TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)FadtPointer->Dsdt;
@@ -1312,10 +1309,12 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 				FadtPointer->Header.Checksum = 0;
 				FadtPointer->Header.Checksum = (UINT8)(256 - Checksum8((CHAR8*)FadtPointer, FadtPointer->Header.Length));
 			}
-			
-			FixBiosDsdt((UINT8*)(UINTN)FadtPointer->Dsdt);  //checksum inside
 		}
-//  }
+  
+  //native DSDT or loaded we want to apply autoFix to this
+  //  if (gSettings.FixDsdt) { //fix even with zero mask because we want to know PCIRootUID
+  FixBiosDsdt((UINT8*)(UINTN)FadtPointer->Dsdt);
+  
   
   if (gSettings.DropSSDT) {
     DropTableFromXSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE);

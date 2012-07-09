@@ -290,7 +290,7 @@ CHAR8 bus0[] =
    0x0A, 0x57, 0x60, 0x44, 0x54, 0x47, 0x50, 0x68,
    0x69, 0x6A, 0x6B, 0x71, 0x60, 0xA4, 0x60
 };
-
+/*
 CHAR8 hpet[] =
 {
     0x5B, 0x82, 0x3C, 0x48, 0x50, 0x45, 0x54, 0x08, 0x5F, 0x48, 0x49, 0x44,
@@ -300,7 +300,7 @@ CHAR8 hpet[] =
     0x00, 0x10, 0x79, 0x00, 0x14, 0x09, 0x5F, 0x53, 0x54, 0x41, 0x00, 0xA4,
     0x0A, 0x0F
 };
-
+*/
 CHAR8 hpet0[] =
 {
   0x5B, 0x82, 0x4A, 0x04, 0x48, 0x50, 0x45, 0x54,                 //Device (HPET)
@@ -310,8 +310,9 @@ CHAR8 hpet0[] =
   0x86, 0x09, 0x00, 0x01,                                         //  Memory32Fixed (ReadWrite,
   0x00, 0x00, 0xD0, 0xFE, 0x00, 0x04, 0x00, 0x00,                 //    0xFED00000, 0x00000400, )
   0x22, 0x01, 0x09, 0x79, 0x00,                                   //  IRQNoFlags () {0,8,11}
-  0x14, 0x09, 0x5F, 0x53, 0x54, 0x41, 0x00,                       //Method (_STA, 0, NotSerialized)
-  0xA4, 0x0A, 0x0F,                                               //  Return (0x0F)
+//  0x14, 0x09, 0x5F, 0x53, 0x54, 0x41, 0x00,                       //Method (_STA, 0, NotSerialized)
+//  0xA4, 0x0A, 0x0F,                                               //  Return (0x0F)
+  0x08, 0x5F, 0x53, 0x54, 0x41, 0x0A, 0x0F                        //  Name (_STA, 0x0F)
   0x14, 0x0B, 0x5F, 0x43, 0x52, 0x53, 0x00,                       //Method (_CRS, 0, NotSerialized)
   0xA4, 0x41, 0x54, 0x54, 0x30                                    //  Return (ATT0)
 };
@@ -321,10 +322,10 @@ CHAR8 hpet1[] =  // Name (_CID, EisaId ("PNP0C01"))
     0x08, 0x5F, 0x43, 0x49, 0x44, 0x0C, 0x41, 0xD0, 0x0C, 0x01
 };
 
-CHAR8 hpet2[] = 
+CHAR8 hpet2[] =  
 {
 //   0x22, 0x01, 0x00, 0x22, 0x00, 0x01, 0x22, 0x00, 0x08, 0x22, 0x00, 0x10
-  0x22, 0x01, 0x09
+  0x22, 0x01, 0x09 //  IRQNoFlags () {0,8,11}
 };
 
 CHAR8 wakret[] =
@@ -336,6 +337,8 @@ CHAR8 pwrb[] =
 {
   0x86, 0x5C, 0x2E, 0x5F, 0x53, 0x42, 0x5F, 0x50, 0x57, 0x52, 0x42, 0x0A, 0x02
 };
+
+//08 5F 50 52 57 12 06 02 0A 1C 0A 03  //Name (_PRW, Package (0x02){0x1C, 0x03}
 
 CHAR8 dtgp_1[] =    // DTGP (Arg0, Arg1, Arg2, Arg3, RefOf (Local0))  
 {                   // Return (Local0)
@@ -353,6 +356,16 @@ CHAR8 pwrbcid[] =
 CHAR8 shutdown[] =
 {
     0xA0, 0x05, 0x93, 0x68, 0x0A, 0x05, 0xA1, 0x01
+};
+
+CHAR8 pnlf[] =
+{
+  0x5B, 0x82, 0x2D, 0x50, 0x4E, 0x4C, 0x46,                         //Device (PNLF)
+  0x08, 0x5F, 0x48, 0x49, 0x44, 0x0C, 0x06, 0x10, 0x00, 0x02,       //  Name (_HID, EisaId ("APP0002"))
+  0x08, 0x5F, 0x43, 0x49, 0x44,                                     //  Name (_CID, 
+  0x0D, 0x62, 0x61, 0x63, 0x6B, 0x6C, 0x69, 0x67, 0x68, 0x74, 0x00, //              "backlight")
+  0x08, 0x5F, 0x55, 0x49, 0x44, 0x0A, 0x0A,                         //  Name (_UID, 0x0A)
+  0x08, 0x5F, 0x53, 0x54, 0x41, 0x0A, 0x0B                          //  Name (_STA, 0x0B)
 };
 
 // for HDA from device_inject.c and mark device_inject function
@@ -511,10 +524,8 @@ VOID CheckHardware()
                                   sizeof (Pci) / sizeof (UINT32),
                                   &Pci
                                   );
-        //					vid = Pci.Hdr.VendorId & 0xFFFF;
-        //					did = (Pci.Hdr.VendorId >> 16) & 0xFF00;
         
-        UINT32 deviceid = Pci.Hdr.DeviceId | Pci.Hdr.VendorId << 16;
+        UINT32 deviceid = Pci.Hdr.DeviceId | (Pci.Hdr.VendorId << 16);
         
         // add for auto patch dsdt get DSDT Device _ADR
         PCIdevice.DeviceHandle = Handle;
@@ -528,10 +539,10 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA)) {
             GetPciADR(DevicePath, &DisplayADR1[display], &DisplayADR2[display]);
    //         DBG("Display PciAdr=0x%x\n", ((Device << 16) | Function));
-            UINT32 dadr1 = DisplayADR1[display];
-            UINT32 dadr2 = DisplayADR2[display];
+   //         UINT32 dadr1 = DisplayADR1[display];
+   //         UINT32 dadr2 = DisplayADR2[display];
   //          DBG("DisplayADR1[%d] = 0x%x, DisplayADR2[%d] = 0x%x\n", display, dadr1, display, dadr2);
-            dadr2 = dadr1; //to avoid warning "unused variable" :(
+  //          dadr2 = dadr1; //to avoid warning "unused variable" :(
             DisplayVendor[display] = Pci.Hdr.VendorId;
             DisplayID[display] = Pci.Hdr.DeviceId;
             DisplaySubID[display] = (Pci.Device.SubsystemID << 16) | (Pci.Device.SubsystemVendorID << 0);
@@ -559,8 +570,7 @@ VOID CheckHardware()
                 Display1PCIE = TRUE;
               else
                 Display2PCIE = TRUE;
-            }
-            
+            }            
             display++;
           }
           
@@ -579,7 +589,7 @@ VOID CheckHardware()
           {
             GetPciADR(DevicePath, &ArptADR1, &ArptADR2);
    //         DBG("ArptADR1 = 0x%x, ArptADR2 = 0x%x\n", ArptADR1, ArptADR2);
-   //         Netmodel = get_net_model(deviceid);  
+   //         Netmodel = get_arpt_model(deviceid);  
             ArptBCM = (deviceid == 0x14e44315);
           }
           
@@ -596,28 +606,29 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_SMB))
           {
             GetPciADR(DevicePath, &SBUSADR1, &SBUSADR2);
-            DBG("SBUSADR1 = 0x%x, SBUSADR2 = 0x%x\n", SBUSADR1, SBUSADR2);
+//            DBG("SBUSADR1 = 0x%x, SBUSADR2 = 0x%x\n", SBUSADR1, SBUSADR2);
           }
           
           //USB
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_USB)) 
           {
+            UINT16 DID = Pci.Hdr.DeviceId;
             GetPciADR(DevicePath, &USBADR[usb], NULL);
   //          DBG("USBADR[%d] = 0x%x\n", usb, USBADR[usb]);
             if (USBIDFIX)
             {
-              //if (USBADR[usb] == 0x001D0000 && Pci.Hdr.DeviceId != 0x3a34) Pci.Hdr.DeviceId = 0x3a34;
-              //if (USBADR[usb] == 0x001D0001 && Pci.Hdr.DeviceId != 0x3a35) Pci.Hdr.DeviceId = 0x3a35;
-              //if (USBADR[usb] == 0x001D0002 && Pci.Hdr.DeviceId != 0x3a36) Pci.Hdr.DeviceId = 0x3a36;
-              //if (USBADR[usb] == 0x001D0003 && Pci.Hdr.DeviceId != 0x3a37) Pci.Hdr.DeviceId = 0x3a37;
-              //if (USBADR[usb] == 0x001A0000 && Pci.Hdr.DeviceId != 0x3a37) Pci.Hdr.DeviceId = 0x3a37;
-              //if (USBADR[usb] == 0x001A0001 && Pci.Hdr.DeviceId != 0x3a38) Pci.Hdr.DeviceId = 0x3a38;
-              //if (USBADR[usb] == 0x001A0002 && Pci.Hdr.DeviceId != 0x3a39) Pci.Hdr.DeviceId = 0x3a39;
-              //if (USBADR[usb] == 0x001D0007 && Pci.Hdr.DeviceId != 0x3a3a) Pci.Hdr.DeviceId = 0x3a3a;
-              //if (USBADR[usb] == 0x001A0007 && Pci.Hdr.DeviceId != 0x3a3c) Pci.Hdr.DeviceId = 0x3a3c;
+              if (USBADR[usb] == 0x001D0000 && DID != 0x3a34) DID = 0x3a34;
+              if (USBADR[usb] == 0x001D0001 && DID != 0x3a35) DID = 0x3a35;
+              if (USBADR[usb] == 0x001D0002 && DID != 0x3a36) DID = 0x3a36;
+              if (USBADR[usb] == 0x001D0003 && DID != 0x3a37) DID = 0x3a37;
+              if (USBADR[usb] == 0x001A0000 && DID != 0x3a37) DID = 0x3a37;
+              if (USBADR[usb] == 0x001A0001 && DID != 0x3a38) DID = 0x3a38;
+              if (USBADR[usb] == 0x001A0002 && DID != 0x3a39) DID = 0x3a39;
+              if (USBADR[usb] == 0x001D0007 && DID != 0x3a3a) DID = 0x3a3a;
+              if (USBADR[usb] == 0x001A0007 && DID != 0x3a3c) DID = 0x3a3c;
             }       
-            USBID[usb] = Pci.Hdr.DeviceId;
+            USBID[usb] = DID;
             USB20[usb] = (Pci.Hdr.ClassCode[0] == 0x20)?1:0;
             usb++;
           }
@@ -867,6 +878,21 @@ UINT32 move_data(UINT32 start, UINT8* buffer, UINT32 len, INT32 offset)
   return len + offset;
 }
 
+//if (!FindMethod(dsdt, len, "DTGP")) 
+// return address of size field. Assume size not more then 0x0FFF = 4095 bytes
+UINTN FindMethod(UINT8 *dsdt, UINT32 len, CONST CHAR8* Name)
+{
+  UINTN i;
+  for (i=20; i<len; i++) {
+    if (((dsdt[i] == 0x14) || (dsdt[i+1] == 0x14)) &&
+        (dsdt[i+3] == Name[0]) && (dsdt[i+4] == Name[1]) &&
+        (dsdt[i+5] == Name[2]) && (dsdt[i+6] == Name[3])){
+      return (dsdt[i+1] == 0x14)?(i+2):(i+1);
+    }
+  }
+  return 0;
+}
+
 UINTN findSB(UINT8 *dsdt, UINT32 len, UINT32 maxAdr) //return address of size field of Scope=0x10
 {
   INTN    i, j;
@@ -963,8 +989,9 @@ UINT32 DeleteDevice(CONST CHAR8 *Name, UINT8 *dsdt, UINT32 len)
       //to correct outers we have to calculate offset
       sizeoffset = -2 - size;
       len = CorrectOuters(dsdt, len, j-3);
+      FixAddr(j, sizeoffset);
     }
-  }
+  }  
   return len;
 }
 
@@ -1367,6 +1394,66 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
 	return root;
 }
 
+/*
+UINT32 FixADP1 (UINT8* dsdt, INTN len)
+{
+  UINT32 i, j;
+  UINT32 adr=0, size;
+  
+  for (i=20; i<len-10; i++) {
+    //find Name (_HID, "ACPI0003")
+  }    
+ // read evice name, replace to ADP1
+ //check for
+ Name (_PRW, Package (0x02)
+ {
+   0x1C, 
+   0x03
+ })
+//if absent - add it 
+}
+ 5B 82 4B 04 41 44 50 31 //device (ADP1)
+ 08 5F 48 49 44 0D       //	name (_HID.
+ 41 43 50 49 30 30 30 33 00 // ACPI0003
+ 08 5F 50 52 57 12 06 02 0A 1C 0A 03	.._PRW..
+  
+*/
+UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
+{
+  DBG("Start PNLF Fix\n");
+  UINT32 i, j;
+  UINT32  adr  = 0;
+  UINT32  size = 0;
+  for (i=20; i<len-10; i++) {  //search APP0002
+    if ((dsdt[i + 0] == 0x08) &&
+        (dsdt[i + 1] == 0x5F) &&
+        (dsdt[i + 2] == 0x48) &&
+        (dsdt[i + 3] == 0x49) &&
+        (dsdt[i + 4] == 0x44) &&
+        (dsdt[i + 5] == 0x0C) &&
+        (dsdt[i + 6] == 0x06) &&
+        (dsdt[i + 7] == 0x10) &&
+        (dsdt[i + 8] == 0x00) &&
+        (dsdt[i + 9] == 0x02)){
+      return len; //the device already exists
+    }
+  }
+  //search a good place, for example before PWRB PNP0C0C
+  for (i=20; i<len; i++) {
+    if (CmpPNP(dsdt, i, 0x0C0C)) {
+      adr = devFind(dsdt, i);
+      break
+    }
+  }
+  i = adr - 2;
+  sizeoffset = sizeof(pnlf);
+  len = move_data(i, dsdt, len, sizeoffset);
+  CopyMem(dsdt+i, pnlf, sizeof(pnlf));
+  CorrectOuters(dsdt, len, adr-2);
+  FixAddr(adr, sizeoffset);
+	return len;  
+}
+
 UINT32 FixRTC (UINT8 *dsdt, UINT32 len)
 {
 	UINT32 i, j, k, l;
@@ -1742,8 +1829,6 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   CHAR8 *name = NULL;
   UINT32 devadr=0, devadr1=0;
   BOOLEAN DISPLAYFIX = FALSE;
-  
-  len = DeleteDevice("CRT_", dsdt, len);  
   
   // get device size
   devadr1 = devFind(dsdt, DisplayADR[0]);
@@ -3626,10 +3711,8 @@ UINT32 FIXCPU1 (UINT8 *dsdt, UINT32 len)
     //if (LPCBADR > pradr) LPCBADR += (sizeoffset*count);
     if (SBADR > pradr) SBADR += (sizeoffset*count);
   }
-  //DBG("len = 0x%08x\n", len);
   
-  return len;           
-  
+  return len;             
 }
 
 UINT32 FIXWAK (UINT8 *dsdt, UINT32 len)
@@ -3643,7 +3726,7 @@ UINT32 FIXWAK (UINT8 *dsdt, UINT32 len)
 	
 	sizeoffset = 0;
   
-	for (i=0; i<len-5; i++) 
+	for (i=20; i<len-5; i++) 
 	{ 	
 		if(dsdt[i] == '_' && dsdt[i+1] == 'W' && dsdt[i+2] == 'A' && dsdt[i+3] == 'K')
 		{
@@ -3667,6 +3750,7 @@ UINT32 FIXWAK (UINT8 *dsdt, UINT32 len)
           len = move_data(wakadr+waksize, dsdt, len, sizeoffset);
           CopyMem(dsdt+wakadr+waksize, wakret, sizeoffset);
           len = write_size(wakadr, dsdt, len, waksize);
+          CorrectOuters(dsdt, len, wakadr-2);
           break;
         }
       }
@@ -3681,8 +3765,7 @@ UINT32 FIXWAK (UINT8 *dsdt, UINT32 len)
   }
   //DBG("len = 0x%08x\n", len);
   
-  return len;           
-  
+  return len;             
 }
 
 UINT32 FIXGPE (UINT8 *dsdt, UINT32 len)
@@ -3824,12 +3907,10 @@ UINT32 FIXGPE (UINT8 *dsdt, UINT32 len)
     
   }
   
-  //DBG("len = 0x%08x\n", len);
-  
-  return len;           
-  
+  return len;             
 }
 
+//not corrected
 UINT32 FIXPWRB (UINT8* dsdt, INTN len)
 {
   UINT32 i, j;
@@ -3866,8 +3947,7 @@ UINT32 FIXPWRB (UINT8* dsdt, INTN len)
     }
   }
   
-  return len;
-  
+  return len;  
 }
 
 UINT32 FIXSHUTDOWN_ASUS (UINT8 *dsdt, INTN len)
@@ -3902,8 +3982,7 @@ UINT32 FIXSHUTDOWN_ASUS (UINT8 *dsdt, INTN len)
     }
 	}
   
-  return len;
-  
+  return len;  
 }
 
 //Slice - this procedure was not corrected and mostly wrong
@@ -3915,18 +3994,8 @@ UINT32 FIXOTHER (UINT8 *dsdt, INTN len)
 	// Fix USB _PRW value for 0x0X, 0x04 ==> 0x0X, 0x01
 	for(j=0; j<usb; j++) {
     for (i=0; i<len-5; i++) { 
-      if (dsdt[i+4] == 0x08 && dsdt[i+5] == 0x5F && dsdt[i+6] == 0x41 && dsdt[i+7] == 0x44 &&
-          dsdt[i+8] == 0x52 && dsdt[i+9] == 0x0C && dsdt[i+10] == ((USBADR[j] & 0x000000ff) >> 0) && dsdt[i+11] == ((USBADR[j] & 0x0000ff00) >> 8 ) &&
-          dsdt[i+12] == ((USBADR[j] & 0x00ff0000) >> 16) && dsdt[i+13] == ((USBADR[j] & 0xff000000) >> 24))
+      if (CmpAdr(dsdr, i, USBADR[j])
       {
-        if (dsdt[i-8] == 0x0C && dsdt[i-9] == 0x52 && dsdt[i-10] == 0x44 && dsdt[i-11] == 0x41 &&
-            dsdt[i-12] == 0x5F && dsdt[i-13] == 0x08)
-        {
-          //DBG("device NAME(_ADR,0x%08x) before is Name(_ADR,0x%02x%02x%02x%02x) this is not USB device\n",
-          //        USBADR[j], dsdt[i-4], dsdt[i-5], dsdt[i-6], dsdt[i-7]);
-        } 
-        else 
-        {
           // get USB name
           UsbName[j] = AllocateZeroPool(5);
           CopyMem(UsbName[j], dsdt+i, 4);
@@ -3951,7 +4020,6 @@ UINT32 FIXOTHER (UINT8 *dsdt, INTN len)
               }
               break;
             }
-          }
           for (k=i+1; k<i+200; k++) 
           {
             if (dsdt[k] == 0x14 && dsdt[k+2] == '_' && dsdt[k+3] == 'S' && dsdt[k+4] == '3' && dsdt[k+5] == 'D') 
@@ -4091,7 +4159,7 @@ VOID FixBiosDsdt (UINT8* temp)
     return;
   
   DsdtLen = ((EFI_ACPI_DESCRIPTION_HEADER*)temp)->Length;
-  if ((DsdtLen < 10) || (DsdtLen > 100000)) { //fool proof
+  if ((DsdtLen < 20) || (DsdtLen > 100000)) { //fool proof
     DBG("DSDT length out of range\n");
     return;
   }
@@ -4109,9 +4177,11 @@ VOID FixBiosDsdt (UINT8* temp)
   
   // add Method (DTGP, 5, NotSerialized)
   if ((gSettings.FixDsdt & FIX_DTGP)) {
-    CopyMem((VOID*)temp+DsdtLen, dtgp, sizeof(dtgp));
-    DsdtLen += sizeof(dtgp);
-    ((EFI_ACPI_DESCRIPTION_HEADER*)temp)->Length = DsdtLen;
+    if (!FindMethod(dsdt, DsdtLen, "DTGP")) {
+      CopyMem((VOID*)temp+DsdtLen, dtgp, sizeof(dtgp));
+      DsdtLen += sizeof(dtgp);
+      ((EFI_ACPI_DESCRIPTION_HEADER*)temp)->Length = DsdtLen;      
+    }
   }
   
   // get PCIRootUID and all DSDT Fix address
@@ -4153,11 +4223,6 @@ VOID FixBiosDsdt (UINT8* temp)
   }
   
   // Fix Display
-  /*    if(AsciiStrStr(gSettings.BootArgs,"-display") || AsciiStrStr(gSettings.BootArgs,"-DISPLAY"))
-   {
-   DBG("disable Display inject\n");
-   }
-   else*/
   if (gSettings.FixDsdt & FIX_DISPLAY) {
     if (DisplayADR1[0])
     {
@@ -4175,14 +4240,14 @@ VOID FixBiosDsdt (UINT8* temp)
   // Fix Network
   if (NetworkADR1 && (gSettings.FixDsdt & FIX_LAN))
   {
-//    DBG("patch LAN in DSDT \n");
+    DBG("patch LAN in DSDT \n");
     DsdtLen = FIXNetwork(temp, DsdtLen);
   }
 
   // Fix Airport
   if (ArptADR1 && (gSettings.FixDsdt & FIX_WIFI))
   {
-    //    DBG("patch LAN in DSDT \n");
+    DBG("patch Airport in DSDT \n");
     DsdtLen = FIXAirport(temp, DsdtLen);
   }
   
@@ -4251,6 +4316,19 @@ VOID FixBiosDsdt (UINT8* temp)
     
     // USB Device remove error Fix
     DsdtLen = FIXGPE(temp, DsdtLen);
+    
+    //I want these fixes even if no Display fix. We have GraphicsInjector
+    len = DeleteDevice("CRT_", dsdt, len);  
+    len = DeleteDevice("DVI_", dsdt, len);
+    //good company
+    len = DeleteDevice("SPKR", dsdt, len);
+    len = DeleteDevice("ECP_", dsdt, len);
+    len = DeleteDevice("LPT_", dsdt, len);
+    
+    if (gMobile) {
+      DsdtLen = AddPNLF(temp, DsdtLen);
+    }
+
     /*    
      // pwrb add _CID sleep button fix
      //DsdtLen = FIXPWRB(temp, DsdtLen);

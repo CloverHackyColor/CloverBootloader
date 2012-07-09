@@ -232,7 +232,7 @@ VOID GetDefaultSettings(VOID)
   
   gSettings.ResetAddr  = 0x64; //I wish it will be default
   gSettings.ResetVal = 0xFE;
-  gSettings.FixDsdt  = 0xF7; //only ISA fixes and warnings. No injectors by default.
+  gSettings.FixDsdt  = 0x00; //No fixes as we apply patches even for patched DSDT
   gSettings.GraphicsInjector = TRUE;
   gSettings.HDAInjection = TRUE;
   gSettings.HDALayoutId = 0;
