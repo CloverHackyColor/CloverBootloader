@@ -878,9 +878,29 @@ UINT32 move_data(UINT32 start, UINT8* buffer, UINT32 len, INT32 offset)
   return len + offset;
 }
 
+UINT32 FindBin (UINT8 *dsdt, UINT32 len, CHAR8* bin, UINTN size)
+{
+  UINT32 i, j;
+  BOOLEAN eq;
+  
+  for (i=20; i<len-size; i++) {
+    eq = TRUE;
+    for (j=0; j<size; j++) {
+      if (dsdt[i+j] != bin[j]) {
+        eq = FALSE;
+        break;
+      }
+    }
+    if (eq) {
+      return i;
+    }
+  }
+  return 0;
+}
+                
 //if (!FindMethod(dsdt, len, "DTGP")) 
 // return address of size field. Assume size not more then 0x0FFF = 4095 bytes
-UINTN FindMethod(UINT8 *dsdt, UINT32 len, CONST CHAR8* Name)
+UINT32 FindMethod (UINT8 *dsdt, UINT32 len, CONST CHAR8* Name)
 {
   UINTN i;
   for (i=20; i<len; i++) {
@@ -985,6 +1005,7 @@ VOID ReplaceName(UINT8 *dsdt, UINT32 len, CONST CHAR8 *OldName, CONST CHAR8 *New
 }
 
 // if (CmpAdr(dsdt, j, NetworkADR1))
+// Name (_ADR, 0x90000)                
 BOOLEAN CmpAdr (UINT8 *dsdt, UINT32 j, UINT32 PciAdr)
 { 
   // Name (_ADR, 0x001f0001)
@@ -1394,29 +1415,50 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
 	return root;
 }
 
+
+CHAR8 acpi3[] = {
+  0x08, 0x5F, 0x48, 0x49, 0x44, 0x0D,
+  0x41, 0x43, 0x50, 0x49, 0x30, 0x30, 0x30, 0x33, 0x00
+};
+
+CHAR8 prw1c[] = {
+  0x08, 0x5F, 0x50, 0x52, 0x57, 0x12, 0x06, 0x02, 0x0A, 0x1C, 0x0A, 0x03
+};
+
+// read device name, replace to ADP1
+//check for
+/* Name (_PRW, Package (0x02)
+ {
+ 0x1C, 
+ 0x03
+ }) */
+//if absent - add it 
+
+/*
+ 5B 82 4B 04 41 44 50 31            //device (ADP1)
+ 08 5F 48 49 44 0D                  //	name (_HID.
+ 41 43 50 49 30 30 30 33 00         // ACPI0003
+ 08 5F 50 52 57 12 06 02 0A 1C 0A 03	//.._PRW..
+ 
+ */
 /*
 UINT32 FixADP1 (UINT8* dsdt, INTN len)
 {
   UINT32 i, j;
-  UINT32 adr=0, size;
+  UINT32 adr, size;
+  
+  j = FindBin(dsdt, len, acpi3, sizeof(acpi3));
+  if (j == 0) {
+    // not found - create new one
+  }
+  adr = devFind(dsdt, j);
+  size = get_size(dsdt, adr);
   
   for (i=20; i<len-10; i++) {
-    //find Name (_HID, "ACPI0003")
-  }    
- // read evice name, replace to ADP1
- //check for
- Name (_PRW, Package (0x02)
- {
-   0x1C, 
-   0x03
- })
-//if absent - add it 
+    //
+  } 
+  return len;
 }
- 5B 82 4B 04 41 44 50 31 //device (ADP1)
- 08 5F 48 49 44 0D       //	name (_HID.
- 41 43 50 49 30 30 30 33 00 // ACPI0003
- 08 5F 50 52 57 12 06 02 0A 1C 0A 03	.._PRW..
-  
 */
 UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
 {
