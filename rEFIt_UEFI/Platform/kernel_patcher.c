@@ -860,12 +860,7 @@ KernelAndKextsPatcherStart(VOID)
   //
   // Kext patches
   //
-  if (
-      gSettings.KPATIConnectorInfo
-      || gSettings.KPAsusAICPUPM
-      || gSettings.KPAppleRTC
-      )
-  {
+  if (gSettings.KPKextPatchesNeeded) {
     KernelAndKextPatcherInit();
     if (KernelData == NULL) {
       return;

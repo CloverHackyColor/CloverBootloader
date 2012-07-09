@@ -635,7 +635,7 @@ EFI_STATUS ParseTagData(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 	tmpTag->type = kTagTypeData;
 	tmpTag->string = string;
 	// dmazar: base64 decode data
-	tmpTag->data = Base64Decode(tmpTag->string, NULL);
+	tmpTag->data = Base64Decode(tmpTag->string, &tmpTag->dataLen);
 	tmpTag->tag = NULL;
 	tmpTag->offset = buffer_start ? buffer - buffer_start: 0;
 	tmpTag->tagNext = NULL;
@@ -790,6 +790,7 @@ TagPtr NewTag( void )
 			tag[cnt].type = kTagTypeNone;
 			tag[cnt].string = 0;
 			tag[cnt].data = 0;
+			tag[cnt].dataLen = 0;
 			tag[cnt].tag = 0;
 			tag[cnt].tagNext = tag + cnt + 1;
 		}
@@ -822,6 +823,7 @@ void FreeTag( TagPtr tag )
 	tag->type = kTagTypeNone;
 	tag->string = NULL;
 	tag->data = NULL;
+	tag->dataLen = 0;
 	tag->tag = NULL;
 	tag->offset = 0;
 	tag->tagNext = gTagsFree;

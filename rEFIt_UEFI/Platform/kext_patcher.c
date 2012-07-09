@@ -62,59 +62,112 @@ UINTN SearchAndReplace(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN Se
 }
 
 
+
 ////////////////////////////////////
 //
-// ATIConnectorInfo patch
+// ATIConnectors patch
+//
 // bcc9's patch: http://www.insanelymac.com/forum/index.php?showtopic=249642
-// 
-// Currently still speciffic to pcj. Should be amended with some config to be generic.
 //
 
-// ATI card
-UINT8 Hoolock[] =
-{
-    0x00, 0x04, 0x00, 0x00, 0x04, 0x06, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x21, 0x03, 0x05, 0x01,
-    0x00, 0x04, 0x00, 0x00, 0x04, 0x06, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x11, 0x02, 0x04, 0x02,
-    0x04, 0x00, 0x00, 0x00, 0x14, 0x02, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x02, 0x04, 0x01, 0x03
-};
+// inited or not?
+BOOLEAN ATIConnectorsPatchInited = FALSE;
 
-UINT8 Eulemur[] =
-{
-    0x04, 0x00, 0x00, 0x00, 0x14, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x01, 0x02, 0x01, 0x04,
-    0x00, 0x08, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x71, 0x00, 0x00, 0x12, 0x04, 0x04, 0x02,
-    0x10, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x01
-};
+// ATIConnectorsController's boundle IDs for
+// 0: ATI version - Lion, SnowLeo 10.6.7 2011 MBP
+// 1: AMD version - ML
+CHAR8 ATIKextBoundleId[2][64];
 
-// if you want apple icon show, connector port data should be on last port
-UINT8 ATI[] =
+//
+// Inits patcher: prepares ATIKextBoundleIds.
+//
+VOID ATIConnectorsPatchInit(VOID)
 {
-    0x04, 0x00, 0x00, 0x00, 0x14, 0x02, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x10, 0x11, 0x01, 0x02,   //DVI
-    0x00, 0x08, 0x00, 0x00, 0x04, 0x02, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x11, 0x22, 0x05, 0x04,   //HDMI
-    0x10, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x00, 0x01    //VGA
-};
-
-VOID ATIConnectorInfoPatch(UINT8 *Driver, UINT32 DriverSize)
-{
+  //
+  // prepar boundle ids
+  //
   
-  UINTN   i;
-  UINTN   count = 0;
+  // Lion, SnowLeo 10.6.7 2011 MBP
+  AsciiSPrint(ATIKextBoundleId[0],
+              sizeof(ATIKextBoundleId[0]),
+              "com.apple.kext.ATI%sController",
+              gSettings.KPATIConnectorsController
+              );
+  // ML
+  AsciiSPrint(ATIKextBoundleId[1],
+              sizeof(ATIKextBoundleId[1]),
+              "com.apple.kext.AMD%sController",
+              gSettings.KPATIConnectorsController
+              );
   
-  DBG(L"ATIConnectorInfoPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
+  ATIConnectorsPatchInited = TRUE;
   
-  for (i=0; i<DriverSize; i++)	 
-  {   
-    if (CompareMem(Driver + i, Hoolock, sizeof(Hoolock)) == 0)
-    {
-      DBG(L"Found ATI Code - patching\n");
-      CopyMem(Driver + i, ATI, sizeof(ATI));
-      
-      if (count) break;
-      
-      count++;
-    }
-  }
-  //gBS->Stall(5000000);
+  //DBG(L"Boundle1: %a\n", ATIKextBoundleId[0]);
+  //DBG(L"Boundle2: %a\n", ATIKextBoundleId[1]);
+  //gBS->Stall(10000000);
 }
+
+//
+// Registers kexts that need force-load during WithKexts boot. 
+//
+VOID ATIConnectorsPatchRegisterKexts(FSINJECTION_PROTOCOL *FSInject, FSI_STRING_LIST *ForceLoadKexts)
+{
+  
+  // for future?
+  FSInject->AddStringToList(ForceLoadKexts,
+                            PoolPrint(L"\\AMD%sController.kext\\Contents\\Info.plist", gSettings.KPATIConnectorsController)
+                            );
+  // Lion, ML, SnowLeo 10.6.7 2011 MBP
+  FSInject->AddStringToList(ForceLoadKexts,
+                            PoolPrint(L"\\ATI%sController.kext\\Contents\\Info.plist", gSettings.KPATIConnectorsController)
+                            );
+  // SnowLeo
+  FSInject->AddStringToList(ForceLoadKexts, L"\\ATIFramebuffer.kext\\Contents\\Info.plist");
+  
+  // dependencies
+  FSInject->AddStringToList(ForceLoadKexts, L"\\IOGraphicsFamily.kext\\Info.plist");
+  FSInject->AddStringToList(ForceLoadKexts, L"\\ATISupport.kext\\Contents\\Info.plist");
+}
+
+//
+// Patch function.
+//
+VOID ATIConnectorsPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
+{
+  
+  UINTN   Num = 0;
+  CHAR8   *BoundleId = NULL;
+  
+  DBG(L"\nATIConnectorsPatch: driverAddr = %x, driverSize = %x\nController = %s\n",
+      Driver, DriverSize, gSettings.KPATIConnectorsController);
+  
+  if (AsciiStrStr(InfoPlist, ATIKextBoundleId[0]) != NULL) {
+    BoundleId = ATIKextBoundleId[0];
+  } else if (AsciiStrStr(InfoPlist, ATIKextBoundleId[1]) != NULL) {
+    BoundleId = ATIKextBoundleId[1];
+  } else if (AsciiStrStr(InfoPlist, "com.apple.kext.ATIFramebuffer") != NULL) {
+    BoundleId = "com.apple.kext.ATIFramebuffer";
+  }
+  DBG(L"Kext BoundleId = %a\n", BoundleId);
+  
+  
+  // number od occurences od Data should be 1
+  Num = SearchAndCount(Driver, DriverSize, gSettings.KPATIConnectorsData, gSettings.KPATIConnectorsDataLen);
+  if (Num > 1) {
+    Print(L"==> KPATIConnectorsData found %d times - skipping patching!\n", Num);
+    return;
+  }
+  
+  // patch
+  Num = SearchAndReplace(Driver,
+                         DriverSize,
+                         gSettings.KPATIConnectorsData,
+                         gSettings.KPATIConnectorsDataLen,
+                         gSettings.KPATIConnectorsPatch,
+                         1);
+  DBG(L"==> patched %d times!\n", Num);
+}
+
 
 
 ////////////////////////////////////
@@ -134,7 +187,7 @@ VOID AsusAICPUPMPatch(UINT8 *Driver, UINT32 DriverSize)
   UINTN   Index2;
   UINTN   Count = 0;
   
-  DBG(L"AsusAICPUPMPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
+  DBG(L"\nAsusAICPUPMPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
   
   // todo: we should scan only __text __TEXT
   for (Index1 = 0; Index1 < DriverSize; Index1++) {
@@ -153,7 +206,6 @@ VOID AsusAICPUPMPatch(UINT8 *Driver, UINT32 DriverSize)
     }
   }
   DBG(L"= %d patches\n", Count);
-  //gBS->Stall(1000000);
 }
 
 
@@ -203,9 +255,9 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize)
   if (NumLion_X64 + NumLion_i386 + NumML > 1) {
     // more then one pattern found - we do not know what to do with it
     // and we'll skipp it
-    DBG(L"==> ERROR: multiple patterns found (LionX64: %d, Lioni386: %d, ML: %d) - skipping patching!\n",
+    Print(L"AppleRTCPatch: ERROR: multiple patterns found (LionX64: %d, Lioni386: %d, ML: %d) - skipping patching!\n",
         NumLion_X64, NumLion_i386, NumML);
-    //gBS->Stall(10000000);
+    gBS->Stall(5000000);
     return;
   }
   
@@ -224,8 +276,6 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize)
   else {
     DBG(L"==> Patterns not found - no patching done.\n");
   }
-  
-  //gBS->Stall(5000000);
 }
 
 
@@ -250,17 +300,10 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize)
 //
 VOID KextPatcherRegisterKexts(FSINJECTION_PROTOCOL *FSInject, FSI_STRING_LIST *ForceLoadKexts)
 {
-  if (gSettings.KPATIConnectorInfo) {
-    FSInject->AddStringToList(ForceLoadKexts, L"\\ATI5000Controller.kext\\Contents\\Info.plist");
-    FSInject->AddStringToList(ForceLoadKexts, L"\\IOGraphicsFamily.kext\\Info.plist");
-    FSInject->AddStringToList(ForceLoadKexts, L"\\ATISupport.kext\\Contents\\Info.plist");
+  if (gSettings.KPATIConnectorsController != NULL) {
+    ATIConnectorsPatchRegisterKexts(FSInject, ForceLoadKexts);
   }
 }
-
-
-
-
-
 
 //
 // PatchKext is called for every kext from prelinked kernel (kernelcache) or from DevTree (booting with drivers).
@@ -269,20 +312,41 @@ VOID KextPatcherRegisterKexts(FSINJECTION_PROTOCOL *FSInject, FSI_STRING_LIST *F
 VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
 {
   
-  if (gSettings.KPATIConnectorInfo
-      && (AsciiStrStr(InfoPlist, "com.apple.kext.ATI5000Controller")
-          || AsciiStrStr(InfoPlist, "com.apple.kext.AMD5000Controller" /* ML */)
-          )
-      ) {
-    ATIConnectorInfoPatch(Driver, DriverSize);
-  }
-  else if (gSettings.KPAsusAICPUPM && AsciiStrStr(InfoPlist, "<string>com.apple.driver.AppleIntelCPUPowerManagement</string>")) {
-    AsusAICPUPMPatch(Driver, DriverSize);
-  }
-  else if (gSettings.KPAppleRTC && AsciiStrStr(InfoPlist, "com.apple.driver.AppleRTC")) {
-    AppleRTCPatch(Driver, DriverSize);
+  if (gSettings.KPATIConnectorsController != NULL) {
+    //
+    // ATIConnectors
+    //
+    if (!ATIConnectorsPatchInited) {
+      ATIConnectorsPatchInit();
+    }
+    if (   AsciiStrStr(InfoPlist, ATIKextBoundleId[0]) != NULL  // ATI boundle id
+        || AsciiStrStr(InfoPlist, ATIKextBoundleId[1]) != NULL  // AMD boundle id
+        || AsciiStrStr(InfoPlist, "com.apple.kext.ATIFramebuffer") != NULL // SnowLeo
+        )
+    {
+      ATIConnectorsPatch(Driver, DriverSize, InfoPlist, InfoPlistSize);
+      return;
+    }
   }
   
+  
+  if (gSettings.KPAsusAICPUPM
+           && AsciiStrStr(InfoPlist, "<string>com.apple.driver.AppleIntelCPUPowerManagement</string>") != NULL)
+  {
+    //
+    // AsusAICPUPM
+    //
+    AsusAICPUPMPatch(Driver, DriverSize);
+  }
+  
+  else if (gSettings.KPAppleRTC
+           && AsciiStrStr(InfoPlist, "com.apple.driver.AppleRTC") != NULL)
+  {
+    //
+    // AppleRTC
+    //
+    AppleRTCPatch(Driver, DriverSize);
+  }
   
 }
 
@@ -600,6 +664,8 @@ VOID KextPatcherStart(VOID)
     PatchLoadedKexts();
     
   }
+  
+  //gBS->Stall(20000000);
 }
 
 

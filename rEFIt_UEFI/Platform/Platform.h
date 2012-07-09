@@ -471,6 +471,7 @@ typedef struct {
   UINT32		type;
   CHAR8			*string;
   UINT8			*data;
+  UINTN			dataLen;
   UINT32		offset;
   VOID			*tag;
   VOID			*tagNext;
@@ -584,9 +585,13 @@ typedef struct {
   
   // KernelAndKextPatches
   BOOLEAN KPKernelCpu;
-  BOOLEAN KPATIConnectorInfo;
+  BOOLEAN KPKextPatchesNeeded;
   BOOLEAN KPAsusAICPUPM;
   BOOLEAN KPAppleRTC;
+  CHAR16  *KPATIConnectorsController;
+  UINT8   *KPATIConnectorsData;
+  UINTN   KPATIConnectorsDataLen;
+  UINT8   *KPATIConnectorsPatch;
   
 } SETTINGS_DATA;
 

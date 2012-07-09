@@ -261,6 +261,45 @@ EFI_STATUS GetNVRAMPlistSettings(IN EFI_FILE *RootDir, IN CHAR16* NVRAMPlistPath
 }	
 
 
+//
+// returns binary setting in a new allocated buffer and data length in dataLen.
+// data can be specified in <data></data> base64 encoded
+// or in <string></string> hex encoded
+//
+VOID *GetDataSetting(IN TagPtr dict, IN CHAR8 *propName, OUT UINTN *dataLen)
+{
+    TagPtr  prop;
+    UINT8   *data = NULL;
+    UINTN   len;
+    //UINTN   i;
+    
+    prop = GetProperty(dict, propName);
+    if (prop) {
+        if (prop->data != NULL && prop->dataLen > 0) {
+            // data property
+            data = AllocatePool(prop->dataLen);
+            CopyMem(data, prop->data, prop->dataLen);
+            if (dataLen != NULL) {
+                *dataLen = prop->dataLen;
+            }
+            //DBG("Data: %p, Len: %d = ", data, prop->dataLen);
+            //for (i = 0; i < prop->dataLen; i++) DBG("%02x ", data[i]);
+            //DBG("\n");
+        } else {
+            // assume data in hex encoded string property
+            len = AsciiStrLen(prop->string) / 2; // 2 chars per byte
+            data = AllocatePool(len);
+            hex2bin(prop->string, data, len);
+            if (dataLen != NULL) {
+                *dataLen = len;
+            }
+            //DBG("Data(str): %p, Len: %d = ", data, len);
+            //for (i = 0; i < len; i++) DBG("%02x ", data[i]);
+            //DBG("\n");
+        }
+    }
+    return data;
+}
 
 EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 {
@@ -734,6 +773,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
     
     // KernelAndKextPatches
     gSettings.KPKernelCpu = TRUE; // enabled by default
+    gSettings.KPKextPatchesNeeded = FALSE;
     dictPointer = GetProperty(dict,"KernelAndKextPatches");
     if (dictPointer) {
       prop = GetProperty(dictPointer,"KernelCpu");
@@ -744,11 +784,33 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.KPKernelCpu = TRUE;
         }
       }
-      prop = GetProperty(dictPointer,"ATIConnectorInfo");
+      prop = GetProperty(dictPointer,"ATIConnectorsController");
       if(prop)
       {
-        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
-          gSettings.KPATIConnectorInfo = TRUE;
+        // ATIConnectors patch
+        gSettings.KPATIConnectorsController = AllocateZeroPool((AsciiStrLen(prop->string) + 1) * sizeof(CHAR16));
+        AsciiStrToUnicodeStr(prop->string, gSettings.KPATIConnectorsController);
+        
+        gSettings.KPATIConnectorsData = GetDataSetting(dictPointer, "ATIConnectorsData", &gSettings.KPATIConnectorsDataLen);
+        gSettings.KPATIConnectorsPatch = GetDataSetting(dictPointer, "ATIConnectorsPatch", &i);
+        
+        if (gSettings.KPATIConnectorsData == NULL
+            || gSettings.KPATIConnectorsPatch == NULL
+            || gSettings.KPATIConnectorsDataLen == 0
+            || gSettings.KPATIConnectorsDataLen != i)
+        {
+          // invalid params - no patching
+          DBG("ATIConnectors patch: invalid parameters!\n");
+          if (gSettings.KPATIConnectorsController != NULL) FreePool(gSettings.KPATIConnectorsController);
+          if (gSettings.KPATIConnectorsData != NULL) FreePool(gSettings.KPATIConnectorsData);
+          if (gSettings.KPATIConnectorsPatch != NULL) FreePool(gSettings.KPATIConnectorsPatch);
+          gSettings.KPATIConnectorsController = NULL;
+          gSettings.KPATIConnectorsData = NULL;
+          gSettings.KPATIConnectorsPatch = NULL;
+          gSettings.KPATIConnectorsDataLen = 0;
+        } else {
+          // ok
+          gSettings.KPKextPatchesNeeded = TRUE;
         }
       }
       prop = GetProperty(dictPointer,"AsusAICPUPM");
@@ -756,6 +818,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
           gSettings.KPAsusAICPUPM = TRUE;
+          gSettings.KPKextPatchesNeeded = TRUE;
         }
       }
       prop = GetProperty(dictPointer,"AppleRTC");
@@ -763,6 +826,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
           gSettings.KPAppleRTC = TRUE;
+          gSettings.KPKextPatchesNeeded = TRUE;
         }
       }
     }
