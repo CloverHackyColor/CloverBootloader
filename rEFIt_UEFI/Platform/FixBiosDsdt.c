@@ -312,7 +312,7 @@ CHAR8 hpet0[] =
   0x22, 0x01, 0x09, 0x79, 0x00,                                   //  IRQNoFlags () {0,8,11}
 //  0x14, 0x09, 0x5F, 0x53, 0x54, 0x41, 0x00,                       //Method (_STA, 0, NotSerialized)
 //  0xA4, 0x0A, 0x0F,                                               //  Return (0x0F)
-  0x08, 0x5F, 0x53, 0x54, 0x41, 0x0A, 0x0F                        //  Name (_STA, 0x0F)
+  0x08, 0x5F, 0x53, 0x54, 0x41, 0x0A, 0x0F,                       //  Name (_STA, 0x0F)
   0x14, 0x0B, 0x5F, 0x43, 0x52, 0x53, 0x00,                       //Method (_CRS, 0, NotSerialized)
   0xA4, 0x41, 0x54, 0x54, 0x30                                    //  Return (ATT0)
 };
@@ -969,32 +969,6 @@ UINTN CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr) //return final length 
   return len;
 }
 
-//len = DeleteDevice("AZAL", dsdt, len);
-UINT32 DeleteDevice(CONST CHAR8 *Name, UINT8 *dsdt, UINT32 len)
-{
-  UINTN i, j;
-  INT32 size = 0;
-  for (i=20; i<len; i++) {
-    if ((dsdt[i+0] == Name[0]) && (dsdt[i+1] == Name[1]) &&
-        (dsdt[i+2] == Name[2]) && (dsdt[i+3] == Name[3]) &&
-        ((dsdt[i-3] == 0x82) || (dsdt[i-2] == 0x82)) && 
-        ((dsdt[i-4] == 0x5B) || (dsdt[i-3] == 0x5B))) {
-      if (dsdt[i-3] == 0x82) {
-        j = i - 2;
-      } else {
-        j = i - 1;
-      }
-      size = get_size(dsdt, j);
-      len = move_data(j-2, dsdt, len, -2-size);
-      //to correct outers we have to calculate offset
-      sizeoffset = -2 - size;
-      len = CorrectOuters(dsdt, len, j-3);
-      FixAddr(j, sizeoffset);
-    }
-  }  
-  return len;
-}
-
 //ReplaceName(dsdt, "AZAL", "HDEF");
 VOID ReplaceName(UINT8 *dsdt, UINT32 len, CONST CHAR8 *OldName, CONST CHAR8 *NewName)
 {
@@ -1086,6 +1060,32 @@ VOID FixAddr(UINT32 MinAdr, UINT32 offset)
 	if (SATAADR > MinAdr) SATAADR += offset;
 	if (SATAAHCIADR > MinAdr) SATAAHCIADR += offset;
   if (ArptADR > MinAdr) ArptADR += offset;
+}
+
+//len = DeleteDevice("AZAL", dsdt, len);
+UINT32 DeleteDevice(CONST CHAR8 *Name, UINT8 *dsdt, UINT32 len)
+{
+  UINT32 i, j;
+  INT32 size = 0;
+  for (i=20; i<len; i++) {
+    if ((dsdt[i+0] == Name[0]) && (dsdt[i+1] == Name[1]) &&
+        (dsdt[i+2] == Name[2]) && (dsdt[i+3] == Name[3]) &&
+        ((dsdt[i-3] == 0x82) || (dsdt[i-2] == 0x82)) && 
+        ((dsdt[i-4] == 0x5B) || (dsdt[i-3] == 0x5B))) {
+      if (dsdt[i-3] == 0x82) {
+        j = i - 2;
+      } else {
+        j = i - 1;
+      }
+      size = get_size(dsdt, j);
+      len = move_data(j-2, dsdt, len, -2-size);
+      //to correct outers we have to calculate offset
+      sizeoffset = -2 - size;
+      len = CorrectOuters(dsdt, len, j-3);
+      FixAddr(j, sizeoffset);
+    }
+  }  
+  return len;
 }
 
 // Find PCIRootUID and all need Fix Device 
@@ -1421,9 +1421,9 @@ UINT32 FixADP1 (UINT8* dsdt, INTN len)
 UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
 {
   DBG("Start PNLF Fix\n");
-  UINT32 i, j;
+  UINT32 i; //, j;
   UINT32  adr  = 0;
-  UINT32  size = 0;
+//  UINT32  size = 0;
   for (i=20; i<len-10; i++) {  //search APP0002
     if ((dsdt[i + 0] == 0x08) &&
         (dsdt[i + 1] == 0x5F) &&
@@ -1442,7 +1442,7 @@ UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
   for (i=20; i<len; i++) {
     if (CmpPNP(dsdt, i, 0x0C0C)) {
       adr = devFind(dsdt, i);
-      break
+      break;
     }
   }
   i = adr - 2;
@@ -3994,7 +3994,7 @@ UINT32 FIXOTHER (UINT8 *dsdt, INTN len)
 	// Fix USB _PRW value for 0x0X, 0x04 ==> 0x0X, 0x01
 	for(j=0; j<usb; j++) {
     for (i=0; i<len-5; i++) { 
-      if (CmpAdr(dsdr, i, USBADR[j])
+      if (CmpAdr(dsdt, i, USBADR[j]))
       {
           // get USB name
           UsbName[j] = AllocateZeroPool(5);
@@ -4177,7 +4177,7 @@ VOID FixBiosDsdt (UINT8* temp)
   
   // add Method (DTGP, 5, NotSerialized)
   if ((gSettings.FixDsdt & FIX_DTGP)) {
-    if (!FindMethod(dsdt, DsdtLen, "DTGP")) {
+    if (!FindMethod(temp, DsdtLen, "DTGP")) {
       CopyMem((VOID*)temp+DsdtLen, dtgp, sizeof(dtgp));
       DsdtLen += sizeof(dtgp);
       ((EFI_ACPI_DESCRIPTION_HEADER*)temp)->Length = DsdtLen;      
@@ -4318,12 +4318,12 @@ VOID FixBiosDsdt (UINT8* temp)
     DsdtLen = FIXGPE(temp, DsdtLen);
     
     //I want these fixes even if no Display fix. We have GraphicsInjector
-    len = DeleteDevice("CRT_", dsdt, len);  
-    len = DeleteDevice("DVI_", dsdt, len);
+    DsdtLen = DeleteDevice("CRT_", temp, DsdtLen);  
+    DsdtLen = DeleteDevice("DVI_", temp, DsdtLen);
     //good company
-    len = DeleteDevice("SPKR", dsdt, len);
-    len = DeleteDevice("ECP_", dsdt, len);
-    len = DeleteDevice("LPT_", dsdt, len);
+    DsdtLen = DeleteDevice("SPKR", temp, DsdtLen);
+    DsdtLen = DeleteDevice("ECP_", temp, DsdtLen);
+    DsdtLen = DeleteDevice("LPT_", temp, DsdtLen);
     
     if (gMobile) {
       DsdtLen = AddPNLF(temp, DsdtLen);
