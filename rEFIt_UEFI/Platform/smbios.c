@@ -921,6 +921,7 @@ VOID PatchTableType9()
 		if (SmbiosTable.Raw == NULL) {
 			break;
 		}
+		DBG("add table 9 #%d\n", Index);
 		LogSmbiosTable(SmbiosTable);		
 	}
 	if (Arpt.Valid) {
@@ -944,6 +945,8 @@ VOID PatchTableType9()
 		DBG("insert table 9 for Airport\n");
 		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type9->SlotDesignation, AirPort);
 		LogSmbiosTable(newSmbiosTable);
+	} else {
+		DBG("no airport\n");
 	}
 	
 	return;

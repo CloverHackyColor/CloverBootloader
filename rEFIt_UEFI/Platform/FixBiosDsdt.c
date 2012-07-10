@@ -91,7 +91,7 @@ UINT32 SATAAHCIVENDOR;
 UINT32 DisplayVendor[2];
 UINT16 DisplayID[2];
 UINT32 DisplaySubID[2];
-
+UINT32 PWRBADR;
 
 UINT32 HDAADR;
 UINT32 USBADR[12];
@@ -103,7 +103,7 @@ UINT32 HDAlayoutId=0;
 UINT32 GfxcodecId[2];
 UINT32 GfxlayoutId[2];
 
-pci_dt_t              Displaydevice[2];
+pci_dt_t   Displaydevice[2];
 
 
 INTN usb;
@@ -271,8 +271,8 @@ CHAR8 sbus[] =
    0x6C, 0x74, 0x00, 0x14, 0x22, 0x5F, 0x44, 0x53,
    0x4D, 0x04, 0x70, 0x12, 0x0D, 0x02, 0x0D, 0x61,
    0x64, 0x64, 0x72, 0x65, 0x73, 0x73, 0x00, 0x0A,
-   0x57, 0x60, 0x44, 0x54, 0x47, 0x50, 0x68, 0x69,
-   0x6A, 0x6B, 0x71, 0x60, 0xA4, 0x60
+   0x57, 0x60, 0x44, 0x54, 0x47, 0x50, 0x68, 0x69, 
+   0x6A, 0x6B, 0x71, 0x60, 0xA4, 0x60               //0x93
 };
 
 CHAR8 bus0[] =
@@ -333,7 +333,7 @@ CHAR8 wakret[] =
     0xA4, 0x12, 0x04, 0x02, 0x00, 0x00
 };
 
-CHAR8 pwrb[] =
+CHAR8 pwrb[] = //?
 {
   0x86, 0x5C, 0x2E, 0x5F, 0x53, 0x42, 0x5F, 0x50, 0x57, 0x52, 0x42, 0x0A, 0x02
 };
@@ -382,6 +382,33 @@ CHAR8 pnlf[] =
 CHAR8 app2[] = //Name (_HID, EisaId("APP0002"))
 {
   0x08, 0x5F, 0x48, 0x49, 0x44, 0x0C, 0x06, 0x10, 0x00, 0x02
+};
+
+CHAR8 darwin[] =
+{  //addresses shifted by 0x24
+  0x08, 0x56, 0x45, 0x52, // 00000020    " .. .VER"
+  0x30, 0x0D, 0x43, 0x6C, 0x6F, 0x76, 0x65, 0x72, // 00000028    "0.Clover"
+  0x20, 0x61, 0x75, 0x74, 0x6F, 0x70, 0x61, 0x74, // 00000030    " autopat"
+  0x63, 0x68, 0x65, 0x64, 0x00, 0x08, 0x57, 0x58, // 00000038    "ched..WX"
+  0x50, 0x31, 0x0D, 0x57, 0x69, 0x6E, 0x64, 0x6F, // 00000040    "P1.Windo"
+  0x77, 0x73, 0x20, 0x32, 0x30, 0x30, 0x31, 0x00, // 00000048    "ws 2001."
+  0x14, 0x12, 0x47, 0x45, 0x54, 0x39, 0x02, 0x8C, // 00000050    "..GET9.."
+  0x68, 0x69, 0x54, 0x43, 0x48, 0x39, 0xA4, 0x54, // 00000058    "hiTCH9.T"
+  0x43, 0x48, 0x39, 0x14, 0x40, 0x05, 0x53, 0x54, // 00000060    "CH9.@.ST"
+  0x52, 0x39, 0x02, 0x08, 0x53, 0x54, 0x52, 0x38, // 00000068    "R9..STR8"
+  0x11, 0x03, 0x0A, 0x50, 0x08, 0x53, 0x54, 0x52, // 00000070    "...P.STR"
+  0x39, 0x11, 0x03, 0x0A, 0x50, 0x70, 0x68, 0x53, // 00000078    "9...PphS"
+  0x54, 0x52, 0x38, 0x70, 0x69, 0x53, 0x54, 0x52, // 00000080    "TR8piSTR"
+  0x39, 0x70, 0x00, 0x60, 0x70, 0x01, 0x61, 0xA2, // 00000088    "9p.`p.a."
+  0x22, 0x61, 0x70, 0x47, 0x45, 0x54, 0x39, 0x53, // 00000090    ""apGET9S"
+  0x54, 0x52, 0x38, 0x60, 0x61, 0x70, 0x47, 0x45, // 00000098    "TR8`apGE"
+  0x54, 0x39, 0x53, 0x54, 0x52, 0x39, 0x60, 0x62, // 000000A0    "T9STR9`b"
+  0xA0, 0x07, 0x92, 0x93, 0x61, 0x62, 0xA4, 0x00, // 000000A8    "....ab.."
+  0x75, 0x60, 0xA4, 0x01, 0x14, 0x15, 0x4F, 0x4F, // 000000B0    "u`....OO"
+  0x53, 0x49, 0x01, 0xA0, 0x0C, 0x53, 0x54, 0x52, // 000000B8    "SI...STR"
+  0x39, 0x57, 0x58, 0x50, 0x31, 0x68, 0xA4, 0x01, // 000000C0    "9WXP1h.."
+  0xA4, 0x00                               		  // 000000C8    ".."
+  
 };
 
 // for HDA from device_inject.c and mark device_inject function
@@ -622,7 +649,7 @@ VOID CheckHardware()
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_SMB))
           {
             GetPciADR(DevicePath, &SBUSADR1, &SBUSADR2);
-//            DBG("SBUSADR1 = 0x%x, SBUSADR2 = 0x%x\n", SBUSADR1, SBUSADR2);
+            DBG("SBUSADR1 = 0x%x, SBUSADR2 = 0x%x\n", SBUSADR1, SBUSADR2);
           }
           
           //USB
@@ -1395,9 +1422,12 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
         }  // End LPCB
         
         // Find Device SBUS
-        if (CmpAdr(dsdt, j, 0x001F0003))
+        if (CmpAdr(dsdt, j, SBUSADR1))
         {
           SBUSADR = devFind(dsdt, j);
+          if (SBUSADR) {
+            DBG("device (SBUS) found\n");
+          }
         } // end SBUS
         
         // Find Device HPET   // PNP0103
@@ -1484,9 +1514,18 @@ UINT32 FixADP1 (UINT8* dsdt, INTN len)
   CopyMem(dsdt+j, prw1c, sizeof(prw1c));
   len = write_size(adr, dsdt, len, size);
   CorrectOuters(dsdt, len, adr-3);
-  FixAddr(adr, sizeoffset);
-  
+  FixAddr(adr, sizeoffset);  
   return len;
+}
+
+UINT32 FIXDarwin (UINT8* dsdt, INTN len)
+{
+  DBG("Start Darwin Fix\n");
+  UINT32  adr  = 0x24;
+  sizeoffset = sizeof(darwin);
+  len = move_data(adr, dsdt, len, sizeoffset);
+  CopyMem(dsdt+adr, darwin, sizeoffset);
+  return len;  
 }
 
 UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
@@ -1502,6 +1541,7 @@ UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
   for (i=20; i<len; i++) {
     if (CmpPNP(dsdt, i, 0x0C0C)) {
       adr = devFind(dsdt, i);
+      PWRBADR = adr;
       break;
     }
   }
@@ -1511,6 +1551,7 @@ UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
   CopyMem(dsdt+i, pnlf, sizeof(pnlf));
   CorrectOuters(dsdt, len, adr-3);
   FixAddr(adr, sizeoffset);
+  PWRBADR =+ sizeoffset;
 	return len;  
 }
 
@@ -1583,7 +1624,8 @@ UINT32 FixRTC (UINT8 *dsdt, UINT32 len)
     {
       for (k=l; k<l+20; k++)   
       {
-        if ((dsdt[k] == 0x79) || ((dsdt[k] == 0x47) && (dsdt[k+1] == 0x01)) || ((dsdt[k] == 0x86) && (dsdt[k+1] == 0x09)))
+        if ((dsdt[k] == 0x79) || ((dsdt[k] == 0x47) && (dsdt[k+1] == 0x01)) ||
+            ((dsdt[k] == 0x86) && (dsdt[k+1] == 0x09)))
         {
           sizeoffset = l - k;  //usually = -3
           DBG("found RTC had IRQNoFlag will move %d bytes\n", sizeoffset);
@@ -2985,7 +3027,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     // get Network device size
     adr1 = devFind(dsdt, NetworkADR);
     adr = get_size(dsdt, adr1);
-    DBG("found Network device @%x size=5x\n", adr1, adr);
+    DBG("found Network device @%x size=%x\n", adr1, adr);
     // move data to back for add network 
     len = move_data(adr1+adr, dsdt, len, sizeoffset);
     CopyMem(dsdt+adr1+adr, network, sizeoffset);
@@ -3077,7 +3119,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     // get Airport device size
     adr1 = devFind(dsdt, ArptADR);
     adr = get_size(dsdt, adr1);
-    DBG("found Airport device @%x size=5x\n", adr1, adr);
+    DBG("found Airport device @%x size=%x\n", adr1, adr);
     // move data to back for add network 
     len = move_data(adr1+adr, dsdt, len, sizeoffset);
     CopyMem(dsdt+adr1+adr, network, sizeoffset);
@@ -3107,7 +3149,6 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
 //  UINT32 i;
   
   DBG("Start SBUS Fix\n");
-	//DBG("len = 0x%08x\n", len);
   
   PCISIZE = get_size(dsdt, PCIADR);
   if (!PCISIZE) {
@@ -3211,8 +3252,7 @@ UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
 	PCISIZE += sizeoffset;
   CorrectOuters(dsdt, len, PCIADR-3);
   FreePool(mchc);
-  return len;
-  
+  return len;  
 }
 
 UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
@@ -3487,10 +3527,10 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
   }  
   
 	AML_CHUNK* root = aml_create_node(NULL);
-	
+	AML_CHUNK* device = root;
 	if (PATAFIX)
 	{
-    AML_CHUNK* device = aml_add_device(root, "ICHX");
+    device = aml_add_device(root, "ICHX");
     aml_add_name(device, "_ADR");
     if (IDEADR2 < 0x3F) {
       aml_add_byte(device, IDEADR2);
@@ -4251,7 +4291,7 @@ VOID FixBiosDsdt (UINT8* temp)
   // Fix RTC
   if (RTCADR  && (gSettings.FixDsdt & FIX_HPET))
   {
-    DBG("patch RTC in DSDT \n");
+//    DBG("patch RTC in DSDT \n");
     DsdtLen = FixRTC(temp, DsdtLen);
   }
   
@@ -4279,7 +4319,7 @@ VOID FixBiosDsdt (UINT8* temp)
   // Fix LPC if don't had HPET don't need to inject LPC??
   if (LPCBFIX && (gCPUStructure.Family == 0x06)  && (gSettings.FixDsdt & FIX_LPC))
   {
-    DBG("patch LPC in DSDT \n");
+//    DBG("patch LPC in DSDT \n");
     DsdtLen = FIXLPCB(temp, DsdtLen);
   }
   
@@ -4287,13 +4327,13 @@ VOID FixBiosDsdt (UINT8* temp)
   if (gSettings.FixDsdt & FIX_DISPLAY) {
     if (DisplayADR1[0])
     {
-      DBG("patch Display0 in DSDT \n");
+//      DBG("patch Display0 in DSDT \n");
       DsdtLen = FIXDisplay1(temp, DsdtLen);
     }
     
     if (DisplayADR1[1])
     {
-      DBG("patch Display1 in DSDT \n");
+//      DBG("patch Display1 in DSDT \n");
       DsdtLen = FIXDisplay2(temp, DsdtLen);
     }    
   }
@@ -4301,28 +4341,28 @@ VOID FixBiosDsdt (UINT8* temp)
   // Fix Network
   if (NetworkADR1 && (gSettings.FixDsdt & FIX_LAN))
   {
-    DBG("patch LAN in DSDT \n");
+//    DBG("patch LAN in DSDT \n");
     DsdtLen = FIXNetwork(temp, DsdtLen);
   }
 
   // Fix Airport
   if (ArptADR1 && (gSettings.FixDsdt & FIX_WIFI))
   {
-    DBG("patch Airport in DSDT \n");
+//    DBG("patch Airport in DSDT \n");
     DsdtLen = FIXAirport(temp, DsdtLen);
   }
   
   // Fix SBUS
   if (SBUSADR1  && (gSettings.FixDsdt & FIX_SBUS))
   {
-    DBG("patch SBUS in DSDT \n");
+//    DBG("patch SBUS in DSDT \n");
     DsdtLen = FIXSBUS(temp, DsdtLen);
   }
   
   // Fix IDE inject
   if (IDEFIX && (IDEVENDOR == 0x8086 || IDEVENDOR == 0x11ab)  && (gSettings.FixDsdt & FIX_IDE))
   {
-    DBG("patch IDE in DSDT \n");
+//    DBG("patch IDE in DSDT \n");
     DsdtLen = FIXIDE(temp, DsdtLen);
   }
   
@@ -4390,12 +4430,14 @@ VOID FixBiosDsdt (UINT8* temp)
       DsdtLen = AddPNLF(temp, DsdtLen);
     }
 
-        
      // pwrb add _CID sleep button fix
      DsdtLen = FIXPWRB(temp, DsdtLen);
      DsdtLen = FixADP1(temp, DsdtLen); 
     // other compiler warning fix _T_X,  MUTE .... USB _PRW value form 0x04 => 0x01
 //    DsdtLen = FIXOTHER(temp, DsdtLen);
+//    if (OSX) {
+      DsdtLen = FIXDarwin(temp, DsdtLen);
+//    }
   } 
   // Fix SHUTDOWN For ASUS
   if ((gSettings.FixDsdt & FIX_SHUTDOWN))
