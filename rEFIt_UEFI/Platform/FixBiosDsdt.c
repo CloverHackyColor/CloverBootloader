@@ -303,7 +303,7 @@ CHAR8 hpet[] =
 */
 CHAR8 hpet0[] =
 {
-  0x5B, 0x82, 0x4A, 0x04, 0x48, 0x50, 0x45, 0x54,                 //Device (HPET)
+  0x5B, 0x82, 0x47, 0x04, 0x48, 0x50, 0x45, 0x54,                 //Device (HPET)
   0x08, 0x5F, 0x48, 0x49, 0x44, 0x0C, 0x41, 0xD0, 0x01, 0x03,     //Name (_HID, EisaId ("PNP0103"))
   0x08, 0x5F, 0x43, 0x49, 0x44, 0x0C, 0x41, 0xD0, 0x0C, 0x01,     //Name (_CID, EisaId ("PNP0C01"))
   0x08, 0x41, 0x54, 0x54, 0x30, 0x11, 0x14, 0x0A, 0x11,           //Name (ATT0, ResourceTemplate ()
@@ -316,7 +316,7 @@ CHAR8 hpet0[] =
   0x14, 0x0B, 0x5F, 0x43, 0x52, 0x53, 0x00,                       //Method (_CRS, 0, NotSerialized)
   0xA4, 0x41, 0x54, 0x54, 0x30                                    //  Return (ATT0)
 };
-
+/*
 CHAR8 hpet1[] =  // Name (_CID, EisaId ("PNP0C01"))
 {
     0x08, 0x5F, 0x43, 0x49, 0x44, 0x0C, 0x41, 0xD0, 0x0C, 0x01
@@ -327,7 +327,7 @@ CHAR8 hpet2[] =
 //   0x22, 0x01, 0x00, 0x22, 0x00, 0x01, 0x22, 0x00, 0x08, 0x22, 0x00, 0x10
   0x22, 0x01, 0x09 //  IRQNoFlags () {0,8,11}
 };
-
+*/
 CHAR8 wakret[] =
 {
     0xA4, 0x12, 0x04, 0x02, 0x00, 0x00
@@ -338,7 +338,18 @@ CHAR8 pwrb[] =
   0x86, 0x5C, 0x2E, 0x5F, 0x53, 0x42, 0x5F, 0x50, 0x57, 0x52, 0x42, 0x0A, 0x02
 };
 
-//08 5F 50 52 57 12 06 02 0A 1C 0A 03  //Name (_PRW, Package (0x02){0x1C, 0x03}
+
+CHAR8 acpi3[] = {
+  0x08, 0x5F, 0x48, 0x49, 0x44, 0x0D,
+  0x41, 0x43, 0x50, 0x49, 0x30, 0x30, 0x30, 0x33, 0x00
+};
+
+  //Name (_PRW, Package (0x02){0x1C, 0x03}
+CHAR8 prw1c[] = 
+{
+  0x08, 0x5F, 0x50, 0x52, 0x57, 0x12, 0x06, 0x02, 0x0A, 0x1C, 0x0A, 0x03
+};
+
 
 CHAR8 dtgp_1[] =    // DTGP (Arg0, Arg1, Arg2, Arg3, RefOf (Local0))  
 {                   // Return (Local0)
@@ -366,6 +377,11 @@ CHAR8 pnlf[] =
   0x0D, 0x62, 0x61, 0x63, 0x6B, 0x6C, 0x69, 0x67, 0x68, 0x74, 0x00, //              "backlight")
   0x08, 0x5F, 0x55, 0x49, 0x44, 0x0A, 0x0A,                         //  Name (_UID, 0x0A)
   0x08, 0x5F, 0x53, 0x54, 0x41, 0x0A, 0x0B                          //  Name (_STA, 0x0B)
+};
+
+CHAR8 app2[] = //Name (_HID, EisaId("APP0002"))
+{
+  0x08, 0x5F, 0x48, 0x49, 0x44, 0x0C, 0x06, 0x10, 0x00, 0x02
 };
 
 // for HDA from device_inject.c and mark device_inject function
@@ -989,7 +1005,7 @@ UINTN CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr) //return final length 
   return len;
 }
 
-//ReplaceName(dsdt, "AZAL", "HDEF");
+//ReplaceName(dsdt, len, "AZAL", "HDEF");
 VOID ReplaceName(UINT8 *dsdt, UINT32 len, CONST CHAR8 *OldName, CONST CHAR8 *NewName)
 {
   UINTN i;
@@ -1416,15 +1432,6 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
 }
 
 
-CHAR8 acpi3[] = {
-  0x08, 0x5F, 0x48, 0x49, 0x44, 0x0D,
-  0x41, 0x43, 0x50, 0x49, 0x30, 0x30, 0x30, 0x33, 0x00
-};
-
-CHAR8 prw1c[] = {
-  0x08, 0x5F, 0x50, 0x52, 0x57, 0x12, 0x06, 0x02, 0x0A, 0x1C, 0x0A, 0x03
-};
-
 // read device name, replace to ADP1
 //check for
 /* Name (_PRW, Package (0x02)
@@ -1441,44 +1448,55 @@ CHAR8 prw1c[] = {
  08 5F 50 52 57 12 06 02 0A 1C 0A 03	//.._PRW..
  
  */
-/*
+
 UINT32 FixADP1 (UINT8* dsdt, INTN len)
 {
   UINT32 i, j;
   UINT32 adr, size;
+  CHAR8 Name[4];
   
   j = FindBin(dsdt, len, acpi3, sizeof(acpi3));
   if (j == 0) {
-    // not found - create new one
+    // not found - create new one or do nothing
+    DBG("no device(AC) exists\n");
+    return len;
   }
   adr = devFind(dsdt, j);
   size = get_size(dsdt, adr);
-  
-  for (i=20; i<len-10; i++) {
-    //
+  //check name and replace
+  if (size < 0x40) {
+    j = adr + 1;
+  } else {
+    j = adr + 2;
+  }
+  for (i=0; i<4; i++) {
+    Name[i] = dsdt[j+i];
   } 
+  ReplaceName(dsdt, len, Name, "ADP1");  
+  //find PRW
+  if(FindBin(dsdt+adr, size, prw1c, 8)){
+    DBG("_prw is present\n");
+    return len;
+  }  
+  j = adr + size;
+  sizeoffset = sizeof(prw1c);
+  len = move_data(j, dsdt, len, sizeoffset);
+  CopyMem(dsdt+j, prw1c, sizeof(prw1c));
+  len = write_size(adr, dsdt, len, size);
+  CorrectOuters(dsdt, len, adr-3);
+  FixAddr(adr, sizeoffset);
+  
   return len;
 }
-*/
+
 UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
 {
   DBG("Start PNLF Fix\n");
   UINT32 i; //, j;
   UINT32  adr  = 0;
 //  UINT32  size = 0;
-  for (i=20; i<len-10; i++) {  //search APP0002
-    if ((dsdt[i + 0] == 0x08) &&
-        (dsdt[i + 1] == 0x5F) &&
-        (dsdt[i + 2] == 0x48) &&
-        (dsdt[i + 3] == 0x49) &&
-        (dsdt[i + 4] == 0x44) &&
-        (dsdt[i + 5] == 0x0C) &&
-        (dsdt[i + 6] == 0x06) &&
-        (dsdt[i + 7] == 0x10) &&
-        (dsdt[i + 8] == 0x00) &&
-        (dsdt[i + 9] == 0x02)){
-      return len; //the device already exists
-    }
+  if (FindBin(dsdt, len, app2, 10)) {
+    return len; //the device already exists
   }
   //search a good place, for example before PWRB PNP0C0C
   for (i=20; i<len; i++) {
@@ -1491,7 +1509,7 @@ UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
   sizeoffset = sizeof(pnlf);
   len = move_data(i, dsdt, len, sizeoffset);
   CopyMem(dsdt+i, pnlf, sizeof(pnlf));
-  CorrectOuters(dsdt, len, adr-2);
+  CorrectOuters(dsdt, len, adr-3);
   FixAddr(adr, sizeoffset);
 	return len;  
 }
@@ -3411,6 +3429,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
           
           adr1 = devFind(dsdt, j);
           adr = get_size(dsdt, adr1);
+          //UINT32 k = (adr > 0x3F)?1:0; 
           if (USB20[i])
           {
             CopyMem(USBDATA2+28, (VOID*)&USBID[i], 4);
@@ -3418,7 +3437,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
           }
           else
           {
-            CopyMem(USBDATA1+26, (VOID*)&USBID[i], 4);
+            CopyMem(USBDATA1+28, (VOID*)&USBID[i], 4);
             sizeoffset = size1;
           }
           
@@ -4371,10 +4390,10 @@ VOID FixBiosDsdt (UINT8* temp)
       DsdtLen = AddPNLF(temp, DsdtLen);
     }
 
-    /*    
+        
      // pwrb add _CID sleep button fix
-     //DsdtLen = FIXPWRB(temp, DsdtLen);
-     */    
+     DsdtLen = FIXPWRB(temp, DsdtLen);
+     DsdtLen = FixADP1(temp, DsdtLen); 
     // other compiler warning fix _T_X,  MUTE .... USB _PRW value form 0x04 => 0x01
 //    DsdtLen = FIXOTHER(temp, DsdtLen);
   } 

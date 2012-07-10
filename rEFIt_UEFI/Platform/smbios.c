@@ -919,30 +919,31 @@ VOID PatchTableType9()
 	for (Index = 0; Index < 64; Index++) { 
 		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_SYSTEM_SLOTS,Index);
 		if (SmbiosTable.Raw == NULL) {
-			if (Arpt.Valid) {
-				ZeroMem((VOID*)newSmbiosTable.Type9, MAX_TABLE_SIZE);
-				newSmbiosTable.Type9->Hdr.Type = EFI_SMBIOS_TYPE_SYSTEM_SLOTS;
-				newSmbiosTable.Type9->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE9);
-				newSmbiosTable.Type9->Hdr.Handle = 0x0900 + Index;
-				newSmbiosTable.Type9->SlotDesignation = 1;
-				newSmbiosTable.Type9->SlotType = SlotTypePciExpress;
-				newSmbiosTable.Type9->SlotDataBusWidth = SlotDataBusWidth1X;
-				newSmbiosTable.Type9->CurrentUsage = SlotUsageAvailable;
-				newSmbiosTable.Type9->SlotLength = SlotLengthShort;
-				newSmbiosTable.Type9->SlotID = 0;
-				newSmbiosTable.Type9->SlotCharacteristics1.Provides33Volts = 1;
-				newSmbiosTable.Type9->SlotCharacteristics2.HotPlugDevicesSupported = 1;
-				// take this from PCI bus for WiFi card
-				newSmbiosTable.Type9->SegmentGroupNum = Arpt.SegmentGroupNum;
-				newSmbiosTable.Type9->BusNum = Arpt.BusNum;
-				newSmbiosTable.Type9->DevFuncNum = Arpt.DevFuncNum;
-				//
-				UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type9->SlotDesignation, AirPort);
-				LogSmbiosTable(newSmbiosTable);
-			}
 			break;
 		}
 		LogSmbiosTable(SmbiosTable);		
+	}
+	if (Arpt.Valid) {
+		ZeroMem((VOID*)newSmbiosTable.Type9, MAX_TABLE_SIZE);
+		newSmbiosTable.Type9->Hdr.Type = EFI_SMBIOS_TYPE_SYSTEM_SLOTS;
+		newSmbiosTable.Type9->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE9);
+		newSmbiosTable.Type9->Hdr.Handle = 0x0900 + Index;
+		newSmbiosTable.Type9->SlotDesignation = 1;
+		newSmbiosTable.Type9->SlotType = SlotTypePciExpress;
+		newSmbiosTable.Type9->SlotDataBusWidth = SlotDataBusWidth1X;
+		newSmbiosTable.Type9->CurrentUsage = SlotUsageAvailable;
+		newSmbiosTable.Type9->SlotLength = SlotLengthShort;
+		newSmbiosTable.Type9->SlotID = 0;
+		newSmbiosTable.Type9->SlotCharacteristics1.Provides33Volts = 1;
+		newSmbiosTable.Type9->SlotCharacteristics2.HotPlugDevicesSupported = 1;
+		// take this from PCI bus for WiFi card
+		newSmbiosTable.Type9->SegmentGroupNum = Arpt.SegmentGroupNum;
+		newSmbiosTable.Type9->BusNum = Arpt.BusNum;
+		newSmbiosTable.Type9->DevFuncNum = Arpt.DevFuncNum;
+		//
+		DBG("insert table 9 for Airport\n");
+		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type9->SlotDesignation, AirPort);
+		LogSmbiosTable(newSmbiosTable);
 	}
 	
 	return;
@@ -974,8 +975,8 @@ VOID PatchTableType11()
 VOID PatchTableTypeSome()
 {
 	//some unused but interesting tables. Just log as is
-#define NUM_OTHER_TYPES 11	
-	UINT8 tableTypes[NUM_OTHER_TYPES] = {8, 10, 18, 21, 22, 27, 28, 32, 33, /*129,*/ 217, 219};
+#define NUM_OTHER_TYPES 12	
+	UINT8 tableTypes[NUM_OTHER_TYPES] = {8, 10, 18, 21, 22, 27, 28, 32, 33, 129, 217, 219};
 	UINTN	IndexType;
 	//
 	// Different types 
@@ -988,7 +989,6 @@ VOID PatchTableTypeSome()
 			LogSmbiosTable(SmbiosTable);		
 		}
 	}
-
 	return;
 }
 
