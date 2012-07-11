@@ -952,7 +952,6 @@ EFI_STATUS GetEdid(VOID)
   return Status;
 }
 
-#if SHORT_LOCATE == 1
 VOID GetDevices(VOID)
 {
   EFI_STATUS			Status;
@@ -1057,126 +1056,16 @@ VOID GetDevices(VOID)
     }
   }
 }  
-#else
-      
-      
-VOID GetDevices(VOID)
-{
-  EFI_STATUS			Status;
-	UINTN           HandleCount = 0;
-	EFI_HANDLE			*HandleBuffer = NULL;
-	EFI_GUID        **ProtocolGuidArray;
-	EFI_PCI_IO_PROTOCOL *PciIo;
-	PCI_TYPE00          Pci;
-	UINTN         ArrayCount;
-	UINTN         HandleIndex;
-	UINTN         ProtocolIndex;
-	UINT16				did, vid;
-	UINTN         Segment;
-	UINTN         Bus;
-	UINTN         Device;
-	UINTN         Function;
-  UINTN         i;
-  radeon_card_info_t *info;
-//  DBG("Enter GetDevices()\n");
-  
-  // Scan PCI BUS 
-	Status = gBS->LocateHandleBuffer(AllHandles, NULL, NULL, &HandleCount, &HandleBuffer);
-  DBG("found %d handles\n", HandleCount);
-	if (!EFI_ERROR(Status))
-	{	
-		for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++)
-		{
-			Status = gBS->ProtocolsPerHandle(HandleBuffer[HandleIndex], &ProtocolGuidArray, &ArrayCount);
-			if (!EFI_ERROR(Status))
-			{		
-   //     DBG("protocol array count = %d\n", ArrayCount);
-				for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++)
-				{
-					if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex]))
-					{
-						Status = gBS->OpenProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID **)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
-						if (!EFI_ERROR(Status))
-						{
-							// Read PCI BUS 
-							Status = PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
-							Status = PciIo->Pci.Read (
-                                        PciIo,
-                                        EfiPciIoWidthUint32,
-                                        0,
-                                        sizeof (Pci) / sizeof (UINT32),
-                                        &Pci
-                                        );
-							vid = Pci.Hdr.VendorId & 0xFFFF;
-							did = (Pci.Hdr.VendorId >> 16) & 0xFF00;
-							//UINT32 class = Pci.Hdr.ClassCode[0];
-							DBG("PCI (%02x|%02x:%02x.%02x) : %04x %04x class=%02x%02x%02x\n",
-									Segment, Bus, Device, Function,
-									Pci.Hdr.VendorId, Pci.Hdr.DeviceId,
-									Pci.Hdr.ClassCode[2], Pci.Hdr.ClassCode[1], Pci.Hdr.ClassCode[0]);
-              // GFX
-              if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
-                  (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA) &&
-                  (NGFX < 4)) {
-                gGraphics[NGFX].DeviceID = Pci.Hdr.DeviceId;
-                gGraphics[NGFX].Segment = Segment;
-                gGraphics[NGFX].Bus = Bus;
-                gGraphics[NGFX].Device = Device;
-                gGraphics[NGFX].Function = Function;
-                switch (Pci.Hdr.VendorId) {
-                  case 0x1002:
-                    info = NULL;
-                    gGraphics[NGFX].Vendor = Ati;
-                    for (i = 0; radeon_cards[i].device_id ; i++)
-                    {
-                      if (radeon_cards[i].device_id == Pci.Hdr.DeviceId)
-                      {
-                        info = &radeon_cards[i];
-                        break;
-                      }
-                    }
-                    AsciiSPrint(gGraphics[NGFX].Model, 64, "%a", info->model_name);
-                    AsciiSPrint(gGraphics[NGFX].Config, 64, "%a", card_configs[info->cfg_name].name);
-                    gGraphics[NGFX].Ports = card_configs[info->cfg_name].ports;
-                    break;
-                  case 0x8086:
-                    gGraphics[NGFX].Vendor = Intel;
-                    AsciiSPrint(gGraphics[NGFX].Model, 64, "%a", get_gma_model(Pci.Hdr.DeviceId));
-                    DBG("Found GFX model=%a\n", gGraphics[NGFX].Model);
-                    gGraphics[NGFX].Ports = 1;
-                    break;
-                  case 0x10de:
-                    gGraphics[NGFX].Vendor = Nvidia;
-                    AsciiSPrint(gGraphics[NGFX].Model, 64, "%a", get_nvidia_model(Pci.Hdr.DeviceId));
-                    gGraphics[NGFX].Ports = 2;
-                    break;
-                  default:
-                    break;
-                }                
-                
-                NGFX++;
-              }   //if gfx             
-						}
-					}
-				}
-			}
-		}
-	}  
-}
-#endif //SHORT_LOCATE
 
 VOID SetDevices(VOID)
 {
-//	EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  *modeInfo;
+  //	EFI_GRAPHICS_OUTPUT_MODE_INFORMATION  *modeInfo;
   EFI_STATUS						Status;
   EFI_PCI_IO_PROTOCOL		*PciIo;
 	PCI_TYPE00            Pci;
 	UINTN                 HandleCount;
-	UINTN                 ArrayCount;
-	UINTN                 HandleIndex;
-	UINTN                 ProtocolIndex;
+	UINTN                 Index;
 	EFI_HANDLE            *HandleBuffer;
-	EFI_GUID              **ProtocolGuidArray;
 	pci_dt_t              PCIdevice;
   UINTN         Segment;
 	UINTN         Bus;
@@ -1185,159 +1074,162 @@ VOID SetDevices(VOID)
   BOOLEAN       StringDirty = FALSE;
   BOOLEAN       TmpDirty = FALSE;
   UINT16        PmCon;
-    
+  
   GetEdid();
-  // Read Pci Bus for GFX 
-	Status = gBS->LocateHandleBuffer (AllHandles, NULL, NULL, &HandleCount, &HandleBuffer);
-	if (!EFI_ERROR(Status)) {
-		for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
-			Status = gBS->ProtocolsPerHandle (HandleBuffer[HandleIndex], &ProtocolGuidArray, &ArrayCount);
-			if (!EFI_ERROR(Status)) {
-				for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
-					if (CompareGuid( &gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex])) {
-						Status = gBS->OpenProtocol (HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID **)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
-						if (EFI_ERROR(Status)) {
-							continue;
-						}
-            ZeroMem((UINT8*)&Pci, sizeof(PCI_TYPE00)); //paranoia
-            Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, 0, sizeof (Pci) / sizeof (UINT32), &Pci);
-            if (EFI_ERROR (Status)) {
-              continue;
-            }
-            Status = PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
-						PCIdevice.DeviceHandle = HandleBuffer[HandleIndex];
-						PCIdevice.dev.addr = PCIADDR(Bus, Device, Function);
-						PCIdevice.vendor_id = Pci.Hdr.VendorId;
-						PCIdevice.device_id = Pci.Hdr.DeviceId;
-						PCIdevice.revision = Pci.Hdr.RevisionID;
-						PCIdevice.subclass = Pci.Hdr.ClassCode[0];
-						PCIdevice.class_id = *((UINT16*)(Pci.Hdr.ClassCode+1));
-						PCIdevice.subsys_id.subsys.vendor_id = Pci.Device.SubsystemVendorID;
-						PCIdevice.subsys_id.subsys.device_id = Pci.Device.SubsystemID;
-            // GFX
-            if (gSettings.GraphicsInjector &&
-                (Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
-                (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA)) {
-							
-    //          gGraphics.DeviceID = Pci.Hdr.DeviceId;
+  // Scan PCI handles 
+  Status = gBS->LocateHandleBuffer (
+                                    ByProtocol,
+                                    &gEfiPciIoProtocolGuid,
+                                    NULL,
+                                    &HandleCount,
+                                    &HandleBuffer
+                                    );
+  if (!EFI_ERROR (Status)) {
+    for (Index = 0; Index < HandleCount; Index++) {
+      Status = gBS->HandleProtocol (HandleBuffer[Index], &gEfiPciIoProtocolGuid, (VOID **)&PciIo);
+      if (!EFI_ERROR (Status)) {
+        // Read PCI BUS 
+        Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, 0, sizeof (Pci) / sizeof (UINT32), &Pci);
+        if (EFI_ERROR (Status)) {
+          continue;
+        }
+        Status = PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
+        PCIdevice.DeviceHandle = HandleBuffer[Index];
+        PCIdevice.dev.addr = PCIADDR(Bus, Device, Function);
+        PCIdevice.vendor_id = Pci.Hdr.VendorId;
+        PCIdevice.device_id = Pci.Hdr.DeviceId;
+        PCIdevice.revision = Pci.Hdr.RevisionID;
+        PCIdevice.subclass = Pci.Hdr.ClassCode[0];
+        PCIdevice.class_id = *((UINT16*)(Pci.Hdr.ClassCode+1));
+        PCIdevice.subsys_id.subsys.vendor_id = Pci.Device.SubsystemVendorID;
+        PCIdevice.subsys_id.subsys.device_id = Pci.Device.SubsystemID;
+        // GFX
+        if (gSettings.GraphicsInjector &&
+            (Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
+            (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA)) {
+          
+          //          gGraphics.DeviceID = Pci.Hdr.DeviceId;
+          
+          switch (Pci.Hdr.VendorId) {
+            case 0x1002:
+              //             gGraphics.Vendor = Ati;
+              //              MsgLog("ATI GFX found\n");
+              //can't do in one step because of C-conventions
+              TmpDirty = setup_ati_devprop(&PCIdevice);
+              StringDirty |=  TmpDirty;
               
-              switch (Pci.Hdr.VendorId) {
-                case 0x1002:
-    //             gGraphics.Vendor = Ati;
-    //              MsgLog("ATI GFX found\n");
-                  //can't do in one step because of C-conventions
-                  TmpDirty = setup_ati_devprop(&PCIdevice);
-                  StringDirty |=  TmpDirty;
-									
-                  break;
-                case 0x8086:
-                  
-                  TmpDirty = setup_gma_devprop(&PCIdevice);
-                  StringDirty |=  TmpDirty;
-    //              MsgLog("Intel GFX device_id =0x%x\n", PCIdevice.device_id);
-                  MsgLog("Intel GFX revision  =0x%x\n", PCIdevice.revision);
-                  break;
-                case 0x10de:
-    //              gGraphics.Vendor = Nvidia;
-    //              MsgLog("nVidia GFX found\n");
-                  TmpDirty = setup_nvidia_devprop(&PCIdevice);
-                  StringDirty |=  TmpDirty;
-                  break;
-                default:
-                  break;
-              }
+              break;
+            case 0x8086:
+              
+              TmpDirty = setup_gma_devprop(&PCIdevice);
+              StringDirty |=  TmpDirty;
+              //              MsgLog("Intel GFX device_id =0x%x\n", PCIdevice.device_id);
+              MsgLog("Intel GFX revision  =0x%x\n", PCIdevice.revision);
+              break;
+            case 0x10de:
+              //              gGraphics.Vendor = Nvidia;
+              //              MsgLog("nVidia GFX found\n");
+              TmpDirty = setup_nvidia_devprop(&PCIdevice);
+              StringDirty |=  TmpDirty;
+              break;
+            default:
+              break;
+          }
+        }
+        
+        //LAN
+        else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
+                 (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_ETHERNET)) {
+          //           MsgLog("Ethernet device found\n");
+          if (!(gSettings.FixDsdt & FIX_LAN)) {
+            TmpDirty = set_eth_props(&PCIdevice);
+            StringDirty |=  TmpDirty;
+          }
+        }
+        
+        //USB
+        else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
+                 (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_USB)) {
+          //             MsgLog("USB device found\n");
+          //set properties if no DSDT patch
+          if (!(gSettings.FixDsdt & FIX_USB)) {
+            TmpDirty = set_usb_props(&PCIdevice);
+            StringDirty |=  TmpDirty;
+          }
+        }
+        
+        // HDA
+        else if (gSettings.HDAInjection &&
+                 (Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
+                 (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA)) {
+          //							MsgLog("HDA device found\n");
+          TmpDirty = set_hda_props(PciIo, &PCIdevice);
+          StringDirty |=  TmpDirty;
+        }
+        
+        //LPC
+        else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_BRIDGE) &&
+                 (Pci.Hdr.ClassCode[1] == PCI_CLASS_BRIDGE_ISA))
+        {
+          if (gSettings.LpcTune) {
+            Status = PciIo->Pci.Read (
+                                      PciIo, 
+                                      EfiPciIoWidthUint16, 
+                                      GEN_PMCON_1, 
+                                      1, 
+                                      &PmCon
+                                      );
+            MsgLog("Initial PmCon value=%x\n", PmCon);  
+            if (gSettings.EnableC6) {
+              PmCon |= 1 << 11;	
+              DBG("C6 enabled\n");
+            } else {
+              PmCon &= ~(1 << 11);
+              DBG("C6 disabled\n");
+            }
+            /*           if (gSettings.EnableC2) {
+             PmCon |= 1 << 10;	
+             DBG("BIOS_PCIE enabled\n");
+             } else {
+             PmCon &= ~(1 << 10);
+             DBG("BIOS_PCIE disabled\n");
+             }
+             */
+            if (gSettings.EnableC4) {
+              PmCon |= 1 << 7;	
+              DBG("C4 enabled\n");
+            } else {
+              PmCon &= ~(1 << 7);
+              DBG("C4 disabled\n");
+            }
+            if (gSettings.EnableISS) {
+              PmCon |= 1 << 3;	
+              DBG("SpeedStep enabled\n");
+            } else {
+              PmCon &= ~(1 << 3);
+              DBG("SpeedStep disabled\n");
             }
             
-            //LAN
-            else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
-                     (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_ETHERNET)) {
-   //           MsgLog("Ethernet device found\n");
-							TmpDirty = set_eth_props(&PCIdevice);
-							StringDirty |=  TmpDirty;
-            }
+            Status = PciIo->Pci.Write (
+                                       PciIo, 
+                                       EfiPciIoWidthUint16, 
+                                       GEN_PMCON_1, 
+                                       1, 
+                                       &PmCon
+                                       );
             
-            //USB
-            else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_SERIAL) &&
-                     (Pci.Hdr.ClassCode[1] == PCI_CLASS_SERIAL_USB)) {
- //             MsgLog("USB device found\n");
-							TmpDirty = set_usb_props(&PCIdevice);
-							StringDirty |=  TmpDirty;
-						}
-						
-						// HDA
-						else if (gSettings.HDAInjection &&
-                     (Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
-                     (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA)) {
-//							MsgLog("HDA device found\n");
-							TmpDirty = set_hda_props(PciIo, &PCIdevice);
-							StringDirty |=  TmpDirty;
-            }
-						
-            //LPC
-            else if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_BRIDGE) &&
-                     (Pci.Hdr.ClassCode[1] == PCI_CLASS_BRIDGE_ISA))
-            {
-              if (gSettings.LpcTune) {
-                Status = PciIo->Pci.Read (
-                                          PciIo, 
-                                          EfiPciIoWidthUint16, 
-                                          GEN_PMCON_1, 
-                                          1, 
-                                          &PmCon
-                                          );
-                MsgLog("Initial PmCon value=%x\n", PmCon);  
-                if (gSettings.EnableC6) {
-                  PmCon |= 1 << 11;	
-                  DBG("C6 enabled\n");
-                } else {
-                  PmCon &= ~(1 << 11);
-                  DBG("C6 disabled\n");
-                }
-     /*           if (gSettings.EnableC2) {
-                  PmCon |= 1 << 10;	
-                  DBG("BIOS_PCIE enabled\n");
-                } else {
-                  PmCon &= ~(1 << 10);
-                  DBG("BIOS_PCIE disabled\n");
-                }
-      */
-                if (gSettings.EnableC4) {
-                  PmCon |= 1 << 7;	
-                  DBG("C4 enabled\n");
-                } else {
-                  PmCon &= ~(1 << 7);
-                  DBG("C4 disabled\n");
-                }
-                if (gSettings.EnableISS) {
-                  PmCon |= 1 << 3;	
-                  DBG("SpeedStep enabled\n");
-                } else {
-                  PmCon &= ~(1 << 3);
-                  DBG("SpeedStep disabled\n");
-                }
-                
-                Status = PciIo->Pci.Write (
-                                           PciIo, 
-                                           EfiPciIoWidthUint16, 
-                                           GEN_PMCON_1, 
-                                           1, 
-                                           &PmCon
-                                           );
-                
-                Status = PciIo->Pci.Read (
-                                          PciIo, 
-                                          EfiPciIoWidthUint16, 
-                                          GEN_PMCON_1, 
-                                          1, 
-                                          &PmCon
-                                          );
-                MsgLog("Set PmCon value=%x\n", PmCon);                   
-                
-              } 
-            }
-					}
-				}
-      }        
+            Status = PciIo->Pci.Read (
+                                      PciIo, 
+                                      EfiPciIoWidthUint16, 
+                                      GEN_PMCON_1, 
+                                      1, 
+                                      &PmCon
+                                      );
+            MsgLog("Set PmCon value=%x\n", PmCon);                   
+            
+          } 
+        }
+      }
     }
   }
 	
@@ -1347,18 +1239,13 @@ VOID SetDevices(VOID)
     gDeviceProperties = AllocateAlignedPages(EFI_SIZE_TO_PAGES(stringlength + 1), 64);
     CopyMem(gDeviceProperties, (VOID*)devprop_generate_string(string), stringlength);
     gDeviceProperties[stringlength] = 0;
-//    DBG(gDeviceProperties);
-//    DBG("\n");   
-    StringDirty = FALSE;
-    
+    //    DBG(gDeviceProperties);
+    //    DBG("\n");   
+    StringDirty = FALSE;    
 	}
   
 	MsgLog("CurrentMode: Width=%d Height=%d\n", UGAWidth, UGAHeight);  
 }
-
-
-#define	MSR_IA32_PERF_STATUS        0x0198
-#define MSR_IA32_PERF_CONTROL       0x0199
 
 EFI_STATUS SaveSettings()
 {

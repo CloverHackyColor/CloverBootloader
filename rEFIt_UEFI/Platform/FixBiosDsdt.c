@@ -29,8 +29,8 @@ CHAR8*  device_name[10];  // 0=>Display  1=>network  2=>firewire 3=>LPCB 4=>HDAA
 CHAR8*  UsbName[10];
 CHAR8*  Netmodel;
 
-BOOLEAN HDAFIX;
-BOOLEAN GFXHDAFIX;
+BOOLEAN HDAFIX = TRUE;
+BOOLEAN GFXHDAFIX = TRUE;
 BOOLEAN DisplayName1;
 BOOLEAN DisplayName2;
 BOOLEAN NetworkName;
@@ -250,7 +250,7 @@ CHAR8 dtgp[] = // Method (DTGP, 5, NotSerialized) ......
    0x01, 0xA0, 0x06, 0x93, 0x6A, 0x01, 0xA4, 0x01,
    0x70, 0x11, 0x03, 0x01, 0x00, 0x6C, 0xA4, 0x00
 };
-
+/*
 CHAR8 sbus[] = 
 {              //  Device (SBUS) ......
    0x5B, 0x82, 0x47, 0x09, 0x53, 0x42, 0x55, 0x53, 
@@ -274,6 +274,40 @@ CHAR8 sbus[] =
    0x57, 0x60, 0x44, 0x54, 0x47, 0x50, 0x68, 0x69, 
    0x6A, 0x6B, 0x71, 0x60, 0xA4, 0x60               //0x93
 };
+*/
+CHAR8 sbus1[] = 
+{              //  Device (SBUS) _ADR,1F0003
+  0x5B, 0x82, 0x49, 0x0E, 0x53, 0x42, 0x55, 0x53,  // 00000080    "[.I.SBUS"
+  0x08, 0x5F, 0x41, 0x44, 0x52, 0x0C,              // 00000088    "._ADR."
+  0x03, 0x00, 0x1F, 0x00, 0x5B, 0x82, 0x4B, 0x05,  // 00000090    "....[.K."
+  0x42, 0x55, 0x53, 0x30, 0x08, 0x5F, 0x43, 0x49,  // 00000098    "BUS0._CI"
+  0x44, 0x0D, 0x73, 0x6D, 0x62, 0x75, 0x73, 0x00,  // 000000A0    "D.smbus."
+  0x08, 0x5F, 0x41, 0x44, 0x52, 0x00, 0x5B, 0x82,  // 000000A8    "._ADR.[."
+  0x41, 0x04, 0x44, 0x56, 0x4C, 0x30, 0x08, 0x5F,  // 000000B0    "A.DVL0._"
+  0x41, 0x44, 0x52, 0x0A, 0x57, 0x08, 0x5F, 0x43,  // 000000B8    "ADR.W._C"
+  0x49, 0x44, 0x0D, 0x64, 0x69, 0x61, 0x67, 0x73,  // 000000C0    "ID.diags"
+  0x76, 0x61, 0x75, 0x6C, 0x74, 0x00, 0x14, 0x22,  // 000000C8    "vault..""
+  0x5F, 0x44, 0x53, 0x4D, 0x04, 0x70, 0x12, 0x0D,  // 000000D0    "_DSM.p.."
+  0x02, 0x0D, 0x61, 0x64, 0x64, 0x72, 0x65, 0x73,  // 000000D8    "..addres"
+  0x73, 0x00, 0x0A, 0x57, 0x60, 0x44, 0x54, 0x47,  // 000000E0    "s..W`DTG"
+  0x50, 0x68, 0x69, 0x6A, 0x6B, 0x71, 0x60, 0xA4,  // 000000E8    "Phijkq`."
+  0x60, 0x14, 0x4B, 0x07, 0x5F, 0x44, 0x53, 0x4D,  // 000000F0    "`.K._DSM"
+  0x04, 0x70, 0x12, 0x45, 0x06, 0x08, 0x0D, 0x62,  // 000000F8    ".p.E...b"
+  0x75, 0x69, 0x6C, 0x74, 0x2D, 0x69, 0x6E, 0x00,  // 00000100    "uilt-in."
+  0x11, 0x03, 0x01, 0x01, 0x0D, 0x64, 0x65, 0x76,  // 00000108    ".....dev"
+  0x69, 0x63, 0x65, 0x2D, 0x69, 0x64, 0x00, 0x11,  // 00000110    "ice-id.."
+  0x07, 0x0A, 0x04, 0x30, 0x3A, 0x00, 0x00, 0x0D,  // 00000118    "...0:..."
+  0x6D, 0x6F, 0x64, 0x65, 0x6C, 0x00, 0x11, 0x1E,  // 00000120    "model..."
+  0x0A, 0x1B, 0x49, 0x6E, 0x74, 0x65, 0x6C, 0x20,  // 00000128    "..Intel "
+  0x38, 0x32, 0x38, 0x30, 0x31, 0x4A, 0x49, 0x20,  // 00000130    "82801JI "
+  0x49, 0x43, 0x48, 0x31, 0x30, 0x20, 0x46, 0x61,  // 00000138    "ICH10 Fa"
+  0x6D, 0x69, 0x6C, 0x79, 0x00, 0x0D, 0x6E, 0x61,  // 00000140    "mily..na"
+  0x6D, 0x65, 0x00, 0x11, 0x14, 0x0A, 0x11, 0x53,  // 00000148    "me.....S"
+  0x4D, 0x42, 0x75, 0x73, 0x20, 0x63, 0x6F, 0x6E,  // 00000150    "MBus con"
+  0x74, 0x72, 0x6F, 0x6C, 0x6C, 0x65, 0x72, 0x00,  // 00000158    "troller."
+  0x60, 0x44, 0x54, 0x47, 0x50, 0x68, 0x69, 0x6A,  // 00000160    "`DTGPhij"
+  0x6B, 0x71, 0x60, 0xA4, 0x60  
+};
 
 CHAR8 bus0[] =
 {
@@ -290,6 +324,41 @@ CHAR8 bus0[] =
    0x0A, 0x57, 0x60, 0x44, 0x54, 0x47, 0x50, 0x68,
    0x69, 0x6A, 0x6B, 0x71, 0x60, 0xA4, 0x60
 };
+
+CHAR8 patafix[] =
+{
+/*  OperationRegion (IDET, PCI_Config, 0x40, 0x04)
+  Field (IDET, WordAcc, NoLock, Preserve)
+  {
+    M1,     8, 
+    M2,     8, 
+    M3,     8, 
+    M4,     8
+  }
+  
+  Method (_INI, 0, NotSerialized)
+  {
+    Store (0x07, M1)
+    Store (0xE3, M2)
+    Store (Zero, M3)
+    Store (0xC0, M4)
+    Return (Zero)
+  }
+*/  
+  0x5B, 
+  0x80, 0x49, 0x44, 0x45, 0x54, 0x02, 0x0A, 0x40, //000001C0    ".IDET..@"
+  0x0A, 0x04, 0x5B, 0x81, 0x1A, 0x49, 0x44, 0x45, //000001C8    "..[..IDE"
+  0x54, 0x02, 0x4D, 0x31, 0x5F, 0x5F, 0x08, 0x4D, //000001D0    "T.M1__.M"
+  0x32, 0x5F, 0x5F, 0x08, 0x4D, 0x33, 0x5F, 0x5F, //000001D8    "2__.M3__"
+  0x08, 0x4D, 0x34, 0x5F, 0x5F, 0x08, 0x14, 0x23, //000001E0    ".M4__..#"
+  0x5F, 0x49, 0x4E, 0x49, 0x00, 0x70, 0x0A, 0x07, //000001E8    "_INI.p.."
+  0x4D, 0x31, 0x5F, 0x5F, 0x70, 0x0A, 0xE3, 0x4D, //000001F0    "M1__p..M"
+  0x32, 0x5F, 0x5F, 0x70, 0x00, 0x4D, 0x33, 0x5F, //000001F8    "2__p.M3_"
+  0x5F, 0x70, 0x0A, 0xC0, 0x4D, 0x34, 0x5F, 0x5F, //00000200    "_p..M4__"
+  0xA4, 0x00                                 	    //00000208    ".."
+  
+};
+
 /*
 CHAR8 hpet[] =
 {
@@ -496,6 +565,12 @@ VOID GetPciADR(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINT32 *Addr1, OUT U
   return;
 }
 
+BOOLEAN NativeUSB(UINT16 DID)
+{
+  UINT16 d = DID & 0xFF00;
+  return ((d == 0x2600) || (d == 0x2700) || (d == 0x2800) || (d == 0x3a00));
+}
+
 VOID CheckHardware()
 {
   EFI_STATUS			Status;
@@ -661,22 +736,22 @@ VOID CheckHardware()
   //          DBG("USBADR[%d] = 0x%x\n", usb, USBADR[usb]);
             if (USBIDFIX)
             {
-              if (USBADR[usb] == 0x001D0000 && DID != 0x3a34) DID = 0x3a34;
-              if (USBADR[usb] == 0x001D0001 && DID != 0x3a35) DID = 0x3a35;
-              if (USBADR[usb] == 0x001D0002 && DID != 0x3a36) DID = 0x3a36;
-              if (USBADR[usb] == 0x001D0003 && DID != 0x3a37) DID = 0x3a37;
-              if (USBADR[usb] == 0x001A0000 && DID != 0x3a37) DID = 0x3a37;
-              if (USBADR[usb] == 0x001A0001 && DID != 0x3a38) DID = 0x3a38;
-              if (USBADR[usb] == 0x001A0002 && DID != 0x3a39) DID = 0x3a39;
-              if (USBADR[usb] == 0x001D0007 && DID != 0x3a3a) DID = 0x3a3a;
-              if (USBADR[usb] == 0x001A0007 && DID != 0x3a3c) DID = 0x3a3c;
+              if (USBADR[usb] == 0x001D0000 && !NativeUSB(DID)) DID = 0x3a34;
+              if (USBADR[usb] == 0x001D0001 && !NativeUSB(DID)) DID = 0x3a35;
+              if (USBADR[usb] == 0x001D0002 && !NativeUSB(DID)) DID = 0x3a36;
+              if (USBADR[usb] == 0x001D0003 && !NativeUSB(DID)) DID = 0x3a37;
+              if (USBADR[usb] == 0x001A0000 && !NativeUSB(DID)) DID = 0x3a37;
+              if (USBADR[usb] == 0x001A0001 && !NativeUSB(DID)) DID = 0x3a38;
+              if (USBADR[usb] == 0x001A0002 && !NativeUSB(DID)) DID = 0x3a39;
+              if (USBADR[usb] == 0x001D0007 && !NativeUSB(DID)) DID = 0x3a3a;
+              if (USBADR[usb] == 0x001A0007 && !NativeUSB(DID)) DID = 0x3a3c;
             }       
             USBID[usb] = DID;
             USB20[usb] = (Pci.Hdr.ClassCode[0] == 0x20)?1:0;
             usb++;
           }
           
-          // HDA Auido
+          // HDA Audio
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA))
           {
@@ -1522,17 +1597,38 @@ UINT32 FIXDarwin (UINT8* dsdt, INTN len)
 {
   DBG("Start Darwin Fix\n");
   UINT32  adr  = 0x24;
+  ReplaceName(dsdt, len, "_OSI", "OOSI");
   sizeoffset = sizeof(darwin);
   len = move_data(adr, dsdt, len, sizeoffset);
   CopyMem(dsdt+adr, darwin, sizeoffset);
   return len;  
 }
 
+
+VOID FixS3D (UINT8* dsdt, INTN len)
+{
+  DBG("Start _S3D Fix\n");
+  UINT32 i;
+  for (i=20; i<len-5; i++) {
+    if ((dsdt[i + 0] == 0x08) &&
+        (dsdt[i + 1] == '_') &&
+        (dsdt[i + 2] == 'S') &&
+        (dsdt[i + 3] == '3') &&
+        (dsdt[i + 4] == 'D') &&
+        (dsdt[i + 5] == 0x0A) &&
+        (dsdt[i + 6] == 0x02)) {
+      dsdt[i + 6] = 3;
+    }
+  }
+}  
+
 UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
 {
   DBG("Start PNLF Fix\n");
-  UINT32 i; //, j;
+  UINT32 i, j, size;
   UINT32  adr  = 0;
+  CHAR8 Name[4];
+
 //  UINT32  size = 0;
   if (FindBin(dsdt, len, app2, 10)) {
     return len; //the device already exists
@@ -1542,8 +1638,22 @@ UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
     if (CmpPNP(dsdt, i, 0x0C0C)) {
       adr = devFind(dsdt, i);
       PWRBADR = adr;
+      size = get_size(dsdt, adr);
+      //check name and replace
+      if (size < 0x40) {
+        j = adr + 1;
+      } else {
+        j = adr + 2;
+      }
+      for (i=0; i<4; i++) {
+        Name[i] = dsdt[j+i];
+      } 
+      ReplaceName(dsdt, len, Name, "PWRB");        
       break;
     }
+  }
+  if (!adr) {
+    return len;
   }
   i = adr - 2;
   sizeoffset = sizeof(pnlf);
@@ -3148,7 +3258,7 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
 {
 //  UINT32 i;
   
-  DBG("Start SBUS Fix\n");
+  DBG("Start SBUS Fix PCI=%x\n");
   
   PCISIZE = get_size(dsdt, PCIADR);
   if (!PCISIZE) {
@@ -3159,9 +3269,9 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
   if (SBUSADR)
     sizeoffset = sizeof(bus0);
   else
-    sizeoffset = sizeof(sbus); 
+    sizeoffset = sizeof(sbus1); 
   
-  DBG("SBUS code size = 0x%08x\n", sizeoffset);
+  DBG("SBUS address %x code size = 0x%08x\n", SBUSADR, sizeoffset);
     
   if (SBUSADR)
   {
@@ -3182,7 +3292,7 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
   {
     DBG("SBUS absent, adding to the end of PCI0 at %x\n", PCIADR+PCISIZE);
     len = move_data(PCIADR+PCISIZE, dsdt, len, sizeoffset);
-    CopyMem(dsdt+PCIADR+PCISIZE, sbus, sizeoffset);
+    CopyMem(dsdt+PCIADR+PCISIZE, sbus1, sizeoffset);
     
     // Fix PCIX size
     len = write_size(PCIADR, dsdt, len, PCISIZE);
@@ -3609,8 +3719,17 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
   {
     // move data to back for add DSM 
     len = move_data(adr1+adr, dsdt, len, sizeoffset);
-    CopyMem(dsdt+adr1+adr, ide, sizeoffset);
+    CopyMem(dsdt+adr1+adr, ide, sizeoffset);  
+    j = adr1+adr;
     // Fix Device ide size
+    len = write_size(adr1, dsdt, len, adr);    
+    CorrectOuters(dsdt, len, adr1-3);
+    
+    //add patafix
+    sizeoffset = sizeof(patafix);
+    adr = get_size(dsdt, adr1);
+    len = move_data(j, dsdt, len, sizeoffset);
+    CopyMem(dsdt+j, patafix, sizeoffset); 
     len = write_size(adr1, dsdt, len, adr);
     CorrectOuters(dsdt, len, adr1-3);
   }
@@ -3877,10 +3996,10 @@ UINT32 FIXGPE (UINT8 *dsdt, UINT32 len)
   UINT32 pwrbadr=0;
   UINT32 pwrbsize=0;
   UINT32 usbcount=0;
-  UINT32 adr=0;
+//  UINT32 adr=0;
   INT32  offset=0;
   sizeoffset = sizeof(pwrb);
-  BOOLEAN pwrbfix = FALSE;
+//  BOOLEAN pwrbfix = FALSE;
   BOOLEAN usbpwrb = FALSE;
   BOOLEAN foundpwrb = FALSE;
   
@@ -3949,32 +4068,6 @@ UINT32 FIXGPE (UINT8 *dsdt, UINT32 len)
                 break;
               }
             }
-            if (usbpwrb)
-            {   // check if there had PWRB             
-              for (m=pwrbadr; m<pwrbadr+pwrbsize; m++)
-              {
-                if (dsdt[m] == 'P' && dsdt[m+1] == 'W' && dsdt[m+2] == 'R' && dsdt[m+3] == 'B')
-                {
-                  //DBG( "found PWRB don't patch.\n");
-                  pwrbfix = TRUE;
-                  break;
-                }
-              }
-            }
-            if (pwrbfix)
-              break;
-            else if (usbpwrb)
-            {
-              if (pwrbadr == adr) break;  // same Method
-              len = move_data(pwrbadr+pwrbsize, dsdt, len, sizeoffset);
-              CopyMem(dsdt+pwrbadr+pwrbsize, pwrb, sizeoffset);
-              len = write_size(pwrbadr, dsdt, len, pwrbsize);
-              offset += sizeoffset;
-              usbpwrb = FALSE;
-              usbcount++;
-              adr = pwrbadr;
-              break;
-            }
           }
         }
       }
@@ -4014,40 +4107,24 @@ UINT32 FIXGPE (UINT8 *dsdt, UINT32 len)
 //not corrected
 UINT32 FIXPWRB (UINT8* dsdt, INTN len)
 {
-  UINT32 i, j;
+  UINT32 i;
   UINT32 adr=0, size;
   for (i=0; i<len-10; i++)
   {
     if (dsdt[i] == 'P' && dsdt[i+1] == 'W' && dsdt[i+2] == 'R' && dsdt[i+3] == 'B' &&
         (dsdt[i-2] == 0x82 || dsdt[i-3] == 0x82 || dsdt[i-4] == 0x82))
     {
-      for (j=0; j<10; j++)
-      {
-        if (dsdt[i-j] == 0x82 && dsdt[i-j-1] == 0x5B)
-        {
-          size = get_size(dsdt, i-j+1);
-          adr = i-j+1;
-          sizeoffset = sizeof(pwrbcid);
-          len = move_data(adr+size, dsdt, len, sizeoffset);
-          CopyMem(dsdt+adr+size, pwrbcid, sizeoffset);
-          len = write_size(adr, dsdt, len, size);
-          if (PCIADR < adr && PCIADR+PCISIZE > adr)
-          {
-            len = write_size(PCIADR, dsdt, len, PCISIZE);
-            PCISIZE += sizeoffset;
-          }
-          if (SBADR < adr && SBADR+SBSIZE > adr)
-          {
-            len = write_size(SBADR, dsdt, len, SBSIZE);
-            SBSIZE += sizeoffset;
-          }
-          break;
-        }
-      }
+      adr = devFind(dsdt, i);
+      size = get_size(dsdt, adr);
+      sizeoffset = sizeof(pwrbcid);
+      len = move_data(i+4, dsdt, len, sizeoffset);
+      CopyMem(dsdt+i+4, pwrbcid, sizeoffset);
+      len = write_size(adr, dsdt, len, size);
+      CorrectOuters(dsdt, len, adr-3);
       break;    
     }
   }
-  
+  FixAddr(adr, sizeoffset);
   return len;  
 }
 
@@ -4416,7 +4493,7 @@ VOID FixBiosDsdt (UINT8* temp)
     DsdtLen = FIXWAK(temp, DsdtLen);
     
     // USB Device remove error Fix
-    DsdtLen = FIXGPE(temp, DsdtLen);
+   // DsdtLen = FIXGPE(temp, DsdtLen);
     
     //I want these fixes even if no Display fix. We have GraphicsInjector
     DsdtLen = DeleteDevice("CRT_", temp, DsdtLen);  
@@ -4425,16 +4502,19 @@ VOID FixBiosDsdt (UINT8* temp)
     DsdtLen = DeleteDevice("SPKR", temp, DsdtLen);
     DsdtLen = DeleteDevice("ECP_", temp, DsdtLen);
     DsdtLen = DeleteDevice("LPT_", temp, DsdtLen);
+    DsdtLen = DeleteDevice("FDC0", temp, DsdtLen);
+    DsdtLen = DeleteDevice("ECP1", temp, DsdtLen);
+    DsdtLen = DeleteDevice("LPT1", temp, DsdtLen);
     
     if (gMobile) {
       DsdtLen = AddPNLF(temp, DsdtLen);
     }
-
+    FixS3D(temp, DsdtLen);
      // pwrb add _CID sleep button fix
-     DsdtLen = FIXPWRB(temp, DsdtLen);
+//     DsdtLen = FIXPWRB(temp, DsdtLen);
      DsdtLen = FixADP1(temp, DsdtLen); 
     // other compiler warning fix _T_X,  MUTE .... USB _PRW value form 0x04 => 0x01
-//    DsdtLen = FIXOTHER(temp, DsdtLen);
+//     DsdtLen = FIXOTHER(temp, DsdtLen);
 //    if (OSX) {
       DsdtLen = FIXDarwin(temp, DsdtLen);
 //    }
@@ -4451,6 +4531,7 @@ VOID FixBiosDsdt (UINT8* temp)
   temp[6] = (DsdtLen & 0x00FF0000) >> 16;
   temp[7] = (DsdtLen & 0xFF000000) >> 24;
   
+  CopyMem((UINT8*)((EFI_ACPI_DESCRIPTION_HEADER*)temp)->OemId, (UINT8*)BiosVendor, 6);
   //DBG("orgBiosDsdtLen = 0x%08x\n", orgBiosDsdtLen);
   ((EFI_ACPI_DESCRIPTION_HEADER*)temp)->Checksum = 0;
   ((EFI_ACPI_DESCRIPTION_HEADER*)temp)->Checksum = (UINT8)(256-Checksum8(temp, DsdtLen));
