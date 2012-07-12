@@ -172,7 +172,7 @@ CHAR8* AppleSerialNumber[] = //random generated
 	"W8034342DB7", //IM112 - Clarkdale
   "QP0312PBDNR", //IM113 - lynnfield
 	"W80CF65ADHJF", //IM121 - i5-2500 - sandy
-  "W88GG136DHJW", //IM122 -i7-2600
+  "W88GG136DHJQ", //IM122 -i7-2600
 	"W88A77AA5J4", //MP31 - xeon quad 02/09
 	"CT93051DK9Y", //MP41
 	"CG154TB9WU3"  //MP51

@@ -824,9 +824,6 @@ VOID CheckHardware()
       }
     }
   }
-  //			}
-  //		}
-  //	}
 }
 
 VOID findCPU(UINT8* dsdt, UINT32 length)
@@ -996,12 +993,13 @@ UINT32 move_data(UINT32 start, UINT8* buffer, UINT32 len, INT32 offset)
   return len + offset;
 }
 
+//the procedure can find array UINT8 sizeof N inside part of large array size of len
 UINT32 FindBin (UINT8 *dsdt, UINT32 len, CHAR8* bin, UINTN size)
 {
   UINT32 i, j;
   BOOLEAN eq;
   
-  for (i=20; i<len-size; i++) {
+  for (i=0; i<len-size; i++) {
     eq = TRUE;
     for (j=0; j<size; j++) {
       if (dsdt[i+j] != bin[j]) {
@@ -4336,16 +4334,42 @@ VOID FixBiosDsdt (UINT8* temp)
   if (!temp)
     return;
   
+  //Reenter requires ZERO values
+
+  HDAFIX = TRUE;
+  GFXHDAFIX = TRUE;
+  USBIDFIX = TRUE;
+  SBADR = 0;
+  SBSIZE = 0;
+  PCIADR = 0;
+  PCISIZE = 0;
+  LPCBADR = 0;
+  LPCBADR1 = 0;
+  LPCBSIZE = 0;
+  IDEADR = 0;
+  SATAADR = 0;
+  SATAAHCIADR = 0;
+
+  RTCADR = 0;
+  TMRADR = 0;
+  PICADR = 0;
+  HPETADR = 0;
+  DisplayADR[0] = 0;
+  DisplayADR[1] = 0;
+  FirewireADR = 0;
+  NetworkADR = 0;
+  ArptADR = 0;
+  SBUSADR = 0;
+  sizeoffset = 0;
+  
+  
   DsdtLen = ((EFI_ACPI_DESCRIPTION_HEADER*)temp)->Length;
   if ((DsdtLen < 20) || (DsdtLen > 100000)) { //fool proof
     DBG("DSDT length out of range\n");
     return;
   }
-  //   UINT8* temp = (UINT8*)(UINTN)BiosDsdt;
   
-  DBG("\nAuto patch BiosDSDT Starting.................\n\n");
-  
-  //DBG("orgBiosDsdtLen = 0x%08x\n", orgBiosDsdtLen);
+  DBG("\nAuto patch DSDT Starting.................\n\n");
   
   // First check hardware address
   CheckHardware();
