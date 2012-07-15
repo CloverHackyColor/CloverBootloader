@@ -1438,7 +1438,7 @@ CHAR16 * Basename(IN CHAR16 *Path)
 
 VOID ReplaceExtension(IN OUT CHAR16 *Path, IN CHAR16 *Extension)
 {
-    UINTN i;
+    INTN i;
     
     for (i = StrLen(Path); i >= 0; i--) {
         if (Path[i] == '.') {

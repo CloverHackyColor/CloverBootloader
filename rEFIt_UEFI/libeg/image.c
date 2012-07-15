@@ -235,7 +235,7 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName,
 
 static CHAR16 * egFindExtension(IN CHAR16 *FileName)
 {
-    UINTN i;
+    INTN i;
     
     for (i = StrLen(FileName); i >= 0; i--) {
         if (FileName[i] == '.')
