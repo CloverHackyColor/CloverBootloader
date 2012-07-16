@@ -243,7 +243,7 @@ static struct ahci_chipsets_t ahci_chipset[] =
     {0x10de0b88},
 };
 
-CHAR8 dtgp[] = // Method (DTGP, 5, NotSerialized) ......
+UINT8 dtgp[] = // Method (DTGP, 5, NotSerialized) ......
 {
    0x14, 0x3F, 0x44, 0x54, 0x47, 0x50, 0x05, 0xA0, 
    0x30, 0x93, 0x68, 0x11, 0x13, 0x0A, 0x10, 0xC6,
@@ -255,7 +255,7 @@ CHAR8 dtgp[] = // Method (DTGP, 5, NotSerialized) ......
    0x70, 0x11, 0x03, 0x01, 0x00, 0x6C, 0xA4, 0x00
 };
 /*
-CHAR8 sbus[] = 
+UINT8 sbus[] = 
 {              //  Device (SBUS) ......
    0x5B, 0x82, 0x47, 0x09, 0x53, 0x42, 0x55, 0x53, 
    0x08, 0x5F, 0x41, 0x44, 0x52, 
@@ -279,7 +279,7 @@ CHAR8 sbus[] =
    0x6A, 0x6B, 0x71, 0x60, 0xA4, 0x60               //0x93
 };
 */
-CHAR8 sbus1[] = 
+UINT8 sbus1[] = 
 {              //  Device (SBUS) _ADR,1F0003 size=E9+2=EB
   0x5B, 0x82, 0x49, 0x0E, 0x53, 0x42, 0x55, 0x53,  // 00000080    "[.I.SBUS"
   0x08, 0x5F, 0x41, 0x44, 0x52, 0x0C,              // 00000088    "._ADR."
@@ -313,7 +313,7 @@ CHAR8 sbus1[] =
   0x6B, 0x71, 0x60, 0xA4, 0x60  
 };
 
-CHAR8 bus0[] =
+UINT8 bus0[] =
 {  //size=5B+2=5D
    0x5B, 0x82, 0x4B, 0x05, 0x42, 0x55,
    0x53, 0x30, 0x08, 0x5F, 0x43, 0x49, 0x44, 0x0D,
@@ -329,7 +329,7 @@ CHAR8 bus0[] =
    0x69, 0x6A, 0x6B, 0x71, 0x60, 0xA4, 0x60
 };
 
-CHAR8 patafix[] =
+UINT8 patafix[] =
 {
 /*  OperationRegion (IDET, PCI_Config, 0x40, 0x04)
   Field (IDET, WordAcc, NoLock, Preserve)
@@ -364,7 +364,7 @@ CHAR8 patafix[] =
 };
 
 /*
-CHAR8 hpet[] =
+UINT8 hpet[] =
 {
     0x5B, 0x82, 0x3C, 0x48, 0x50, 0x45, 0x54, 0x08, 0x5F, 0x48, 0x49, 0x44,
     0x0C, 0x41, 0xD0, 0x01, 0x03, 0x08, 0x5F, 0x43, 0x52, 0x53, 0x11, 0x1D,
@@ -374,7 +374,7 @@ CHAR8 hpet[] =
     0x0A, 0x0F
 };
 */
-CHAR8 hpet0[] =
+UINT8 hpet0[] =
 {
   0x5B, 0x82, 0x47, 0x04, 0x48, 0x50, 0x45, 0x54,                 //Device (HPET)
   0x08, 0x5F, 0x48, 0x49, 0x44, 0x0C, 0x41, 0xD0, 0x01, 0x03,     //Name (_HID, EisaId ("PNP0103"))
@@ -390,12 +390,12 @@ CHAR8 hpet0[] =
   0xA4, 0x41, 0x54, 0x54, 0x30                                    //  Return (ATT0)
 };
 /*
-CHAR8 hpet1[] =  // Name (_CID, EisaId ("PNP0C01"))
+UINT8 hpet1[] =  // Name (_CID, EisaId ("PNP0C01"))
 {
     0x08, 0x5F, 0x43, 0x49, 0x44, 0x0C, 0x41, 0xD0, 0x0C, 0x01
 };
 
-CHAR8 hpet2[] =  
+UINT8 hpet2[] =  
 {
 //   0x22, 0x01, 0x00, 0x22, 0x00, 0x01, 0x22, 0x00, 0x08, 0x22, 0x00, 0x10
   0x22, 0x01, 0x09 //  IRQNoFlags () {0,8,11}
@@ -979,7 +979,7 @@ UINT32 write_offset(UINT32 adr, UINT8* buffer, UINT32 len, INT32 offset)
 */
 //Slice - I excluded check (oldsize <= 0x0fffff && size > 0x0fffff)
 //because I think size of DSDT will never be 1Mb
-INT32 write_size(UINT32 adr, CHAR8* buffer, UINT32 len, INT32 sizeoffset)
+INT32 write_size(UINT32 adr, UINT8* buffer, UINT32 len, INT32 sizeoffset)
 {
   UINT32 size, oldsize;
   INT32 offset = 0;
@@ -1001,7 +1001,7 @@ INT32 write_size(UINT32 adr, CHAR8* buffer, UINT32 len, INT32 sizeoffset)
   }
   len = move_data(adr, buffer, len, offset);
   size += offset;
-  aml_write_size(size, buffer, adr); //reuse existing codes  
+  aml_write_size(size, (CHAR8 *)buffer, adr); //reuse existing codes  
 	return offset;
 }
 
@@ -1648,7 +1648,7 @@ UINT32 FixHPET (UINT8* dsdt, UINT32 len)
   UINT32  hpetsize = 0;
   INT32   sizeoffset = sizeof(hpet0);
   INT32   shift = 0;
-  UINT32  LPCBADR, LPCBSIZE;
+  UINT32  LPCBADR = 0, LPCBSIZE = 0;
   
 //	DBG("Start HPET Fix\n");  
   //have to find LPC
@@ -1659,7 +1659,10 @@ UINT32 FixHPET (UINT8* dsdt, UINT32 len)
       LPCBSIZE = get_size(dsdt, LPCBADR);
     }  // End LPCB find
   }
-  
+  if (!LPCBSIZE) {
+    DBG("No LPCB device! Patch HPET will not be applyed\n");
+    return len;
+  }
   for (j=20; j<len; j++) {
     // Find Device HPET   // PNP0103
     if (CmpPNP(dsdt, j, 0x0103))
@@ -1756,7 +1759,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
 {
   UINT32 i, j, k;
   INT32 sizeoffset = 0;
-  UINT32 PCIADR = 0, PCISIZE;
+  UINT32 PCIADR = 0, PCISIZE = 0;
   PCIADR = GetPciDevice(dsdt, len);
   if (PCIADR) {
     PCISIZE = get_size(dsdt, PCIADR);
@@ -2254,7 +2257,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
   INT32 sizeoffset;
   
   DBG("Start Display2 Fix\n");
-  UINT32 PCIADR, PCISIZE;
+  UINT32 PCIADR, PCISIZE = 0;
   PCIADR = GetPciDevice(dsdt, len);
   if (PCIADR) {
     PCISIZE = get_size(dsdt, PCIADR);
@@ -2759,8 +2762,8 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
 UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
 {
   UINT32 i, k;
-  UINT32 NetworkADR, BridgeSize, Size;
-  UINT32 PCIADR, PCISIZE;
+  UINT32 NetworkADR = 0, BridgeSize, Size;
+  UINT32 PCIADR, PCISIZE = 0;
   INT32 sizeoffset;
   if (!NetworkADR1) return len;
   DBG("Start NetWork Fix\n");
@@ -2786,6 +2789,9 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
       NetworkADR = devFind(dsdt, i);
       //         DBG("now NetworkADR=%x\n", NetworkADR); 
       BridgeSize = get_size(dsdt, NetworkADR);
+      if (!BridgeSize) {
+        continue;
+      }
       //      DBG("its size=%x\n", BridgeSize);
       if (NetworkADR2 != 0xFFFE){
         for (k=NetworkADR+9; k<NetworkADR+BridgeSize; k++) {
@@ -2877,8 +2883,8 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
 UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
 {
   UINT32  i, k;
-  UINT32 ArptADR, BridgeSize, Size;
-  UINT32 PCIADR, PCISIZE;
+  UINT32 ArptADR = 0, BridgeSize, Size;
+  UINT32 PCIADR, PCISIZE = 0;
   INT32 sizeoffset;
   
   if (!ArptADR1) return len; // no device - no patch
@@ -2896,6 +2902,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     if (CmpAdr(dsdt, i, ArptADR1)) {
       ArptADR = devFind(dsdt, i);
       BridgeSize = get_size(dsdt, ArptADR);
+      if(!BridgeSize) continue;
       if (ArptADR2 != 0xFFFE){
         for (k=ArptADR+9; k<ArptADR+BridgeSize; k++) {
           if (CmpAdr(dsdt, k, ArptADR2)) {
@@ -2989,7 +2996,7 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
 {
   UINT32  i, k;
   UINT32  SBUSADR=0, Size;
-  UINT32 PCIADR, PCISIZE;
+  UINT32 PCIADR, PCISIZE = 0;
   INT32 sizeoffset;
   PCIADR = GetPciDevice(dsdt, len);
   if (PCIADR) {
@@ -3055,7 +3062,7 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
 UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
 {    
   UINT32  k;
-  UINT32 PCIADR, PCISIZE;
+  UINT32 PCIADR, PCISIZE = 0;
   INT32 sizeoffset;
   PCIADR = GetPciDevice(dsdt, len);
   if (PCIADR) {
@@ -3108,10 +3115,10 @@ UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
 UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
 {
   UINT32  i, k;
-  UINT32 FirewireADR, BridgeSize,  Size;
+  UINT32 FirewireADR = 0, BridgeSize,  Size;
   INT32 sizeoffset;
   
-  UINT32 PCIADR, PCISIZE;
+  UINT32 PCIADR, PCISIZE = 0;
   PCIADR = GetPciDevice(dsdt, len);
   if (PCIADR) {
     PCISIZE = get_size(dsdt, PCIADR);
@@ -3203,7 +3210,7 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
 UINT32 AddHDEF (UINT8 *dsdt, UINT32 len)
 {  
   UINT32  i, k;
-  UINT32 PCIADR, PCISIZE;
+  UINT32 PCIADR, PCISIZE = 0;
   INT32 sizeoffset;
   PCIADR = GetPciDevice(dsdt, len);
   if (PCIADR) {
@@ -3211,7 +3218,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len)
   }
   if (!PCISIZE) return len; //what is the bad DSDT ?!
   DBG("Start HDA Fix\n");
-  UINT32 HDAADR, BridgeSize, Size;
+  UINT32 HDAADR = 0, BridgeSize = 0, Size;
 //  len = DeleteDevice("AZAL", dsdt, len);
  
   // HDA Address
@@ -3413,7 +3420,7 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
   BOOLEAN PATAFIX=TRUE;    
   for (i=0x20; i<len-10; i++) {    
     if (CmpAdr(dsdt, i, IDEADR1)) {
-              DBG("Found IDEADR1=%x at %x\n", IDEADR1, j);
+              DBG("Found IDEADR1=%x at %x\n", IDEADR1, i);
       IDEADR = devFind(dsdt, i);
       BridgeSize = get_size(dsdt, IDEADR);
       if (BridgeSize) break;
@@ -3886,7 +3893,7 @@ UINT32 FIXPWRB (UINT8* dsdt, INTN len)
 UINT32 FIXSHUTDOWN_ASUS (UINT8 *dsdt, UINT32 len)
 {
 	INTN i, j, sizeoffset;
-	UINT32 adr, adr1, adr2, size, shift = 0;
+	UINT32 adr, adr1 = 0, adr2, size, shift = 0;
 	
 	DBG("Start SHUTDOWN Fix len=%x\n", len);
   adr = FindMethod(dsdt, len, "_PTS");
@@ -3902,6 +3909,7 @@ UINT32 FIXSHUTDOWN_ASUS (UINT8 *dsdt, UINT32 len)
    */
   sizeoffset = sizeof(shutdown); // == 8
   size = get_size(dsdt, adr);
+  adr1 = adr;
   for (j=0; j<20; j++) {
     if ((dsdt[adr+j] == 'T') && (dsdt[adr+j+1] == 'S')) {
       adr1 = adr+j+3; //address of body
