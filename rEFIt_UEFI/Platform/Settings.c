@@ -392,6 +392,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       {
         AsciiStrToUnicodeStr(prop->string, gSettings.LegacyBoot);
       }
+      //BacklightLevel
+      prop = GetProperty(dictPointer,"BacklightLevel");
+      if(prop)
+      {
+        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+        gSettings.BacklightLevel = (UINT16)StrHexToUint64((CHAR16*)&UStr[0]);	
+      }
       
     }
     //Graphics
@@ -516,6 +523,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
     
     dictPointer = GetProperty(dict,"ACPI");
     if (dictPointer) {
+      //gSettings.DsdtName by default is "DSDT.aml", but name "BIOS" will mean autopatch
+      prop = GetProperty(dictPointer, "DsdtName");
+      if(prop)
+      {
+        AsciiStrToUnicodeStr(prop->string, gSettings.DsdtName);
+      }
+      
       prop = GetProperty(dictPointer,"DropOemSSDT");
       gSettings.DropSSDT = FALSE;
       if(prop)
@@ -957,21 +971,19 @@ VOID GetDevices(VOID)
   EFI_STATUS			Status;
 	UINTN           HandleCount = 0;
 	EFI_HANDLE			*HandleArray = NULL;
-//	EFI_GUID        **ProtocolGuidArray;
 	EFI_PCI_IO_PROTOCOL *PciIo;
 	PCI_TYPE00          Pci;
-//	UINTN         ArrayCount;
 	UINTN         Index;
-//	UINTN         ProtocolIndex;
-//	UINT16				did, vid;
 	UINTN         Segment = 0;
 	UINTN         Bus = 0;
 	UINTN         Device = 0;
 	UINTN         Function = 0;
   UINTN         i;
   radeon_card_info_t *info;
-//  DBG("Enter GetDevices()\n");
+
   NGFX = 0;
+  Arpt.Valid = FALSE;
+  
   // Scan PCI handles 
   Status = gBS->LocateHandleBuffer (
                                     ByProtocol,

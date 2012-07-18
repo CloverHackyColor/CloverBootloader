@@ -677,7 +677,6 @@ MACHINE_TYPES GetDefaultModel()
 				break;
 			case CPU_MODEL_JAKETOWN:
 			case CPU_MODEL_SANDY_BRIDGE: 
-      case CPU_MODEL_IVY_BRIDGE: //this is not true, should be new MacBook  
 				if((AsciiStrStr(gCPUStructure.BrandString, "i3")) || 
 				   (AsciiStrStr(gCPUStructure.BrandString, "i5")))
 				{
@@ -685,6 +684,9 @@ MACHINE_TYPES GetDefaultModel()
 					break;
 				}
         DefaultType = MacBookPro83;
+				break;
+      case CPU_MODEL_IVY_BRIDGE:   
+        DefaultType = MacBookAir52;
 				break;
 			default:
 				if ((gGraphics[0].Vendor == Nvidia) ||
@@ -751,6 +753,8 @@ MACHINE_TYPES GetDefaultModel()
 					DefaultType = iMac122;
 					break;
 				}
+				DefaultType = MacPro51;
+				break;
 			case CPU_MODEL_JAKETOWN:
 				DefaultType = MacPro41;
 				break;

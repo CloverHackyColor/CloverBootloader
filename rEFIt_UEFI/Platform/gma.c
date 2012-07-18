@@ -75,6 +75,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x0112, "HD3000"  },
   { 0x0116, "HD3000"  },
   { 0x0126, "HD3000"  },
+  { 0x0166, "HD4000"  },
 };
 
 CHAR8 *get_gma_model(UINT16 id) {
@@ -138,6 +139,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   switch (gma_dev->device_id) {
     case 0x0116:  
     case 0x0126:  
+    case 0x0166:  
     case 0xA011:  
     case 0xA012:  
       devprop_add_value(device, "AAPL01,DualLink", (UINT8 *)&DualLink, 1);

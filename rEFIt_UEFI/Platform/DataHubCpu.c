@@ -125,6 +125,7 @@ EFI_STATUS SetVariablesForOSX()
   UINTN       LangLen = 16;
 //  CHAR8*      FmmName = &gSettings.FamilyName[0];
 //  UINTN       FmmLen  = AsciiStrLen(FmmName);
+  UINT16      BacklightLevel = 0x0503;
   
 	while ((*BA == ' ') || (*BA == 0)) {
 		BA--; bootArgsLen--;
@@ -189,6 +190,12 @@ EFI_STATUS SetVariablesForOSX()
               EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                             FmmLen , (VOID*)FmmName);
 */  
+  if (gMobile && (gSettings.BacklightLevel != 0xFFFF)) {
+    Status = gRS->SetVariable(L"backlight-level", &gEfiAppleBootGuid, 
+                              /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                              sizeof(BacklightLevel) ,&gSettings.BacklightLevel);    
+  }
+  
 	return Status;
 }
 

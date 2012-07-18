@@ -27,6 +27,8 @@
 		<string>No</string>
 		<key>LegacyBoot</key>
 		<string>PBR</string>
+		<key>BacklightLevel</key>
+		<string>0x0101</string>
 	</dict>
 	<key>SMBIOS</key>
 	<dict>
@@ -114,6 +116,8 @@
 	</dict>
 	<key>ACPI</key>
 	<dict>
+		<key>DsdtName</key>
+		<string>DSDT.aml</string>
 		<key>DropOemSSDT</key>
 		<string>Yes</string>
 		<key>GenerateCStates</key>

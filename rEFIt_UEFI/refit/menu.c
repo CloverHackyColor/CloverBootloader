@@ -114,16 +114,14 @@ VOID FillInputs(VOID)
   UINT8 a;
   
   InputItemsCount = 0; 
-  InputItems = AllocateZeroPool(40 * sizeof(INPUT_ITEM)); //XXX
+  InputItems = AllocateZeroPool(60 * sizeof(INPUT_ITEM)); //XXX
   InputItems[InputItemsCount].ItemType = ASString;  //0
   //even though Ascii we will keep value as Unicode to convert later
   InputItems[InputItemsCount].SValue = AllocateZeroPool(255);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 255, L"%a", gSettings.BootArgs);
-//InputItems[InputItemsCount++].SValue = PoolPrint(L"%a", gSettings.BootArgs);
   InputItems[InputItemsCount].ItemType = UNIString; //1
   InputItems[InputItemsCount].SValue = AllocateZeroPool(63);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.DsdtName);
-//  InputItems[InputItemsCount++].SValue = PoolPrint(L"%s", gSettings.DsdtName);
   InputItems[InputItemsCount].ItemType = BoolValue; //2
   InputItems[InputItemsCount].BValue = gSettings.UseDSDTmini;
   InputItems[InputItemsCount++].SValue = gSettings.UseDSDTmini?L"[X]":L"[ ]";
@@ -168,8 +166,10 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount++].SValue = gSettings.PatchVBios?L"[X]":L"[ ]";
   InputItems[InputItemsCount].ItemType = Hex;  //17
   InputItems[InputItemsCount].SValue = AllocateZeroPool(36);
-  UnicodeSPrint(InputItems[17].SValue, 36, L"0x%X", gSettings.FixDsdt);
-  //PoolPrint(L"0x%X", gSettings.FixDsdt);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 36, L"0x%X", gSettings.FixDsdt);
+  InputItems[InputItemsCount].ItemType = Hex;  //18
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(36);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 36, L"0x%X", gSettings.BacklightLevel);
   
   InputItemsCount = 20;
   InputItems[InputItemsCount].ItemType = BoolValue; //20
@@ -212,7 +212,18 @@ VOID FillInputs(VOID)
     InputItems[InputItemsCount].BValue = gGraphics[i].LoadVBios;
     InputItems[InputItemsCount++].SValue = gGraphics[i].LoadVBios?L"[X]":L"[ ]";
   }
-  //and so on  
+  //and so on 
+  InputItemsCount = 45;
+  InputItems[InputItemsCount].ItemType = BoolValue; //16
+  InputItems[InputItemsCount].BValue = gSettings.KPKernelCpu;
+  InputItems[InputItemsCount++].SValue = gSettings.KPKernelCpu?L"[X]":L"[ ]";
+  InputItems[InputItemsCount].ItemType = BoolValue; //16
+  InputItems[InputItemsCount].BValue = gSettings.KPAsusAICPUPM;
+  InputItems[InputItemsCount++].SValue = gSettings.KPAsusAICPUPM?L"[X]":L"[ ]";
+  InputItems[InputItemsCount].ItemType = BoolValue; //16
+  InputItems[InputItemsCount].BValue = gSettings.KPAppleRTC;
+  InputItems[InputItemsCount++].SValue = gSettings.KPAppleRTC?L"[X]":L"[ ]";
+  
 }
 
 VOID ApplyInputs(VOID)
@@ -296,6 +307,10 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gSettings.FixDsdt = (UINT32)StrHexToUint64(InputItems[i].SValue);
   }
+  i++; //18
+  if (InputItems[i].Valid) {
+    gSettings.BacklightLevel = (UINT32)StrHexToUint64(InputItems[i].SValue);
+  }
   
   i = 20; //20
   if (InputItems[i].Valid) {
@@ -333,9 +348,22 @@ VOID ApplyInputs(VOID)
     i++; //25
     if (InputItems[i].Valid) {
       gGraphics[j].LoadVBios = InputItems[i].BValue;
-    }
-    
+    }    
+  }  //end of Graphics Cards
+  // next number == 42
+  i = 45;
+  if (InputItems[i].Valid) {
+    gSettings.KPKernelCpu = InputItems[i].BValue;
   }
+  i++; //46
+  if (InputItems[i].Valid) {
+    gSettings.KPAsusAICPUPM = InputItems[i].BValue;
+  }
+  i++; //47
+  if (InputItems[i].Valid) {
+    gSettings.KPAppleRTC = InputItems[i].BValue;
+  }
+  gSettings.KPKextPatchesNeeded = (gSettings.KPAsusAICPUPM || gSettings.KPAppleRTC);
 }
 
 VOID FreeItems(VOID)
@@ -364,37 +392,29 @@ static VOID InitSelection(VOID)
   SelectionBackgroundPixel.g = (GlobalConfig.SelectionColor >> 16) & 0xFF;
   SelectionBackgroundPixel.b = (GlobalConfig.SelectionColor >> 8) & 0xFF;
   SelectionBackgroundPixel.a = (GlobalConfig.SelectionColor >> 0) & 0xFF;
-//  DBG("Selection color=%x\n", GlobalConfig.SelectionColor);
   if (SelectionImages[0] != NULL)
     return;
   
   // load small selection image
   if (GlobalConfig.SelectionSmallFileName != NULL){
-//    DBG("get SelectionSmallFileName=%s\n", GlobalConfig.SelectionSmallFileName);
     SelectionImages[2] = egLoadImage(ThemeDir, GlobalConfig.SelectionSmallFileName, FALSE);
   }
   if (SelectionImages[2] == NULL){
-//    DBG("no file SelectionSmallFileName get embedded\n");
     SelectionImages[2] = egPrepareEmbeddedImage(&egemb_back_selected_small, FALSE);
-//    DBG("egPrepareEmbeddedImage OK\n");
   }
   SelectionImages[2] = egEnsureImageSize(SelectionImages[2],
                                          ROW1_TILESIZE, ROW1_TILESIZE, &MenuBackgroundPixel);
-//  DBG("egPrepareEmbeddedImage size OK\n");
   if (SelectionImages[2] == NULL)
     return;
   
   // load big selection image
   if (GlobalConfig.SelectionBigFileName != NULL) {
-//    DBG("get SelectionBigFileName=%s\n", GlobalConfig.SelectionBigFileName);
     SelectionImages[0] = egLoadImage(ThemeDir, GlobalConfig.SelectionBigFileName, FALSE);
     SelectionImages[0] = egEnsureImageSize(SelectionImages[0],
                                            ROW0_TILESIZE, ROW0_TILESIZE, &MenuBackgroundPixel);
-//    DBG("size ok\n");
   }
   if (SelectionImages[0] == NULL) {
 //    // calculate big selection image from small one
-//    DBG("calculate big selection image from small one\n");
     SelectionImages[0] = egCreateImage(ROW0_TILESIZE, ROW0_TILESIZE, FALSE);
     if (SelectionImages[0] == NULL) {
       egFreeImage(SelectionImages[2]);
@@ -404,7 +424,6 @@ static VOID InitSelection(VOID)
     
     DestPtr = SelectionImages[0]->PixelData;
     SrcPtr  = SelectionImages[2]->PixelData;
-//    DBG("ready to scale Src=%x Dest=%x\n", SrcPtr, DestPtr);
     for (y = 0; y < ROW0_TILESIZE; y++) {
       if (y < (ROW1_TILESIZE >> 1))
         src_y = y;
@@ -425,13 +444,9 @@ static VOID InitSelection(VOID)
       }
     }
   }
-//  DBG("[0] Created\n");
   // non-selected background images
   SelectionImages[1] = egCreateFilledImage(ROW0_TILESIZE, ROW0_TILESIZE, FALSE, &MenuBackgroundPixel);
-//  DBG("[1] Created\n");
-  SelectionImages[3] = egCreateFilledImage(ROW1_TILESIZE, ROW1_TILESIZE, FALSE, &MenuBackgroundPixel);
-//  DBG("[3] Created\n");
-  
+  SelectionImages[3] = egCreateFilledImage(ROW1_TILESIZE, ROW1_TILESIZE, FALSE, &MenuBackgroundPixel);  
 }
 
 //
@@ -1601,6 +1616,48 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
   return Entry;
 }
 
+REFIT_MENU_ENTRY  *SubMenuBinaries()
+{
+  REFIT_MENU_ENTRY   *Entry; //, *SubEntry;
+  REFIT_MENU_SCREEN  *SubScreen;
+  REFIT_INPUT_DIALOG *InputBootArgs;
+  
+  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
+  Entry->Title = PoolPrint(L"Binaries patching menu ->");
+  Entry->Image =  OptionMenu.TitleImage;
+  Entry->Tag = TAG_OPTIONS;
+  // create the submenu
+  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+  SubScreen->Title = Entry->Title;
+  SubScreen->TitleImage = Entry->Image;
+  AddMenuInfoLine(SubScreen, PoolPrint(L"%a", gCPUStructure.BrandString));
+
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Kernel Support CPU:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[45];    
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"AppleIntelCPUPM patch:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[46];    
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"AppleRTC patch:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[47];    
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+    
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  Entry->SubScreen = SubScreen;                
+  return Entry;
+}  
+
 VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
 {
   REFIT_MENU_ENTRY  *TmpChosenEntry = NULL;
@@ -1709,16 +1766,29 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[17].SValue);
     InputBootArgs->Entry.ShortcutDigit = 0;
-    InputBootArgs->Entry.ShortcutLetter = 'M';
+    InputBootArgs->Entry.ShortcutLetter = 'F';
     InputBootArgs->Entry.Image = NULL;
     InputBootArgs->Entry.BadgeImage = NULL;
     InputBootArgs->Entry.SubScreen = NULL;
     InputBootArgs->Item = &InputItems[17];    
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-    
+    //18
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    UnicodeSPrint(Flags, 50, L"Backlight level:");
+    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = StrLen(InputItems[18].SValue);
+    InputBootArgs->Entry.ShortcutDigit = 0;
+    InputBootArgs->Entry.ShortcutLetter = 'L';
+    InputBootArgs->Entry.Image = NULL;
+    InputBootArgs->Entry.BadgeImage = NULL;
+    InputBootArgs->Entry.SubScreen = NULL;
+    InputBootArgs->Item = &InputItems[18];    
+    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     
     AddMenuEntry(&OptionMenu, SubMenuSpeedStep());
     AddMenuEntry(&OptionMenu, SubMenuGraphics());
+    AddMenuEntry(&OptionMenu, SubMenuBinaries());
     AddMenuEntry(&OptionMenu, &MenuEntryReturn);
     FreePool(Flags);
     //    DBG("option menu created entries=%d\n", OptionMenu.EntryCount);

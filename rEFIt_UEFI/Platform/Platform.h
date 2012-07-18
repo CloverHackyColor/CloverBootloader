@@ -539,6 +539,7 @@ typedef struct {
 	CHAR8   BootArgs[256];
 	CHAR16	CustomUuid[40];
   CHAR16  DefaultBoot[40];
+  UINT16  BacklightLevel;
 	
 	// GUI parameters
 	BOOLEAN	Debug;
@@ -652,6 +653,7 @@ typedef enum {
 	MacBookPro81,
 	MacBookPro83,
 	MacBookAir31,
+  MacBookAir52,
 	MacMini21,
 	iMac81,
 	iMac101,
