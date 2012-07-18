@@ -36,6 +36,7 @@ BOOLEAN DisplayName2;
 BOOLEAN NetworkName;
 BOOLEAN ArptName;
 BOOLEAN ArptBCM;
+BOOLEAN ArptAtheros;
 BOOLEAN LPCBFIX;
 BOOLEAN IDEFIX;
 BOOLEAN SATAFIX;
@@ -719,6 +720,7 @@ VOID CheckHardware()
    //         DBG("ArptADR1 = 0x%x, ArptADR2 = 0x%x\n", ArptADR1, ArptADR2);
    //         Netmodel = get_arpt_model(deviceid);  
             ArptBCM = (deviceid == 0x14e44315);
+            ArptAtheros = (Pci.Hdr.VendorId == 0x168c);
           }
           
           //Firewire ADR
@@ -2955,9 +2957,25 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     aml_add_string(pack, "device-id");
     CHAR8 data[] = {0x12, 0x43, 0x00, 0x00};
     aml_add_byte_buffer(pack, data, 4);    
+  } else if (ArptAtheros) {
+    aml_add_string(pack, "model");
+    aml_add_string_buffer(pack, "Atheros AR9285 WiFi card");
+    aml_add_string(pack, "name");
+    aml_add_string_buffer(pack, "pci168c,2a");
+    aml_add_string(pack, "device-id");
+    CHAR8 data1[] = {0x2a, 0x00, 0x00, 0x00};
+    aml_add_byte_buffer(pack, data1, 4);        
+    aml_add_string(pack, "subsystem-id");
+    CHAR8 data2[] = {0x8F, 0x00, 0x00, 0x00};
+    aml_add_byte_buffer(pack, data2, 4);        
+    aml_add_string(pack, "subsystem-vendor-id");
+    CHAR8 data3[] = {0x6B, 0x10, 0x00, 0x00};
+    aml_add_byte_buffer(pack, data3, 4);        
   }
   aml_add_string(pack, "device_type");
   aml_add_string_buffer(pack, "Airport");
+  aml_add_string(pack, "AAPL,slot-name");
+  aml_add_string_buffer(pack, "AirPort");
   
   aml_add_local0(met);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));

@@ -632,13 +632,18 @@ UINT16 GetAdvancedCpuType ()
 					case CPU_MODEL_WESTMERE: // Intel Core i7 LGA1366 (32nm) 6 Core (Gulftown, Westmere-EP, Westmere-WS)
 					case CPU_MODEL_WESTMERE_EX: // Intel Core i7 LGA1366 (45nm) 6 Core ???
 						return 0x701; // Core i7
-					case CPU_MODEL_SANDY_BRIDGE:
-          case CPU_MODEL_IVY_BRIDGE:  
+					case CPU_MODEL_SANDY_BRIDGE:  
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
 							return 0x903; // Core i3
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
               return 0x603; // Core i5
 						return 0x703;
+          case CPU_MODEL_IVY_BRIDGE:  
+            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
+							return 0x901; // Core i3 - Apple doesn't use it
+            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
+              return 0x604; // Core i5
+						return 0x704;
 				}
 			}
 		}
