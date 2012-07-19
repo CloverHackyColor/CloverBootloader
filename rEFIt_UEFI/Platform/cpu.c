@@ -239,6 +239,20 @@ VOID GetCPUProperties (VOID)
           case CPU_MODEL_WESTMERE:// Core i7 LGA1366, Six-core, "Westmere", "Gulftown", 32nm
           case CPU_MODEL_NEHALEM_EX:// Core i7, Nehalem-Ex Xeon, "Beckton"
           case CPU_MODEL_WESTMERE_EX:// Core i7, Nehalem-Ex Xeon, "Eagleton"
+       //since rev 553     
+            msr = AsmReadMsr64(MSR_FLEX_RATIO);
+            if ((msr >> 16) & 0x01)
+            {
+              MsgLog("non-usable FLEX_RATIO = %x\n", msr);
+              UINT8 flex_ratio = (msr >> 8) & 0xff;
+              if (flex_ratio == 0) { 
+                AsmWriteMsr64(MSR_FLEX_RATIO, (msr & 0xFFFFFFFFFFFEFFFFULL)); 
+                gBS->Stall(10);
+                msr = AsmReadMsr64(MSR_FLEX_RATIO);
+                MsgLog("corrected FLEX_RATIO = %x\n", msr);
+              }
+            }
+     //       
             msr = AsmReadMsr64(MSR_PLATFORM_INFO);            
             gCPUStructure.MinRatio = (UINT8)(msr >> 40) & 0xff;
             msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);
