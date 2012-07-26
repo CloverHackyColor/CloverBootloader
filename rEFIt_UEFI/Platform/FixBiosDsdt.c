@@ -1912,7 +1912,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "AAPL01,boot-display");
         aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       }
-      else if (AsciiStrnCmp(modelname, "Intel HD Graphics 2000 Mobile", 29) == 0)
+      else if (AsciiStrnCmp(modelname, "HD2000", 29) == 0)
       {
         //    aml_add_string(pack, "class-code");
         //    aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
@@ -1953,7 +1953,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "AAPL00,boot-display");
         aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       }
-      else if (AsciiStrnCmp(modelname, "Intel HD Graphics 3000 Mobile", 29) == 0)
+      else if (AsciiStrnCmp(modelname, "HD3000", 29) == 0)
       {
         //      aml_add_string(pack, "class-code");
         //      aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
@@ -2422,7 +2422,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "AAPL01,boot-display");
         aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       }
-      else if (AsciiStrnCmp(modelname, "Intel HD Graphics 2000 Mobile", 29) == 0)
+      else if (AsciiStrnCmp(modelname, "HD2000", 29) == 0)
       {
         //      aml_add_string(pack, "class-code");
         //      aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
@@ -2463,7 +2463,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "AAPL00,boot-display");
         aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       }
-      else if (AsciiStrnCmp(modelname, "Intel HD Graphics 3000 Mobile", 29) == 0)
+      else if (AsciiStrnCmp(modelname, "HD3000", 29) == 0)
       {
         //     aml_add_string(pack, "class-code");
         //     aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));

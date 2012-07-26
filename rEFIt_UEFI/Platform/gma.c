@@ -72,6 +72,7 @@ static struct gma_gpu_t KnownGPUS[] = {
 //	{ 0x2A43, "GMAX3100"		},
 //  { 0x0044, "HD2000"  }, //host bridge
   { 0x0046, "HD2000"  },
+  { 0x0102, "HD3000"  },
   { 0x0112, "HD3000"  },
   { 0x0116, "HD3000"  },
   { 0x0126, "HD3000"  },

@@ -318,6 +318,7 @@
   # IDE/AHCI Support
   #Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
   #Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
+  #DuetPkg/SataControllerDxe/SataControllerDxe.inf
   Clover/SataControllerDxe/SataControllerDxe.inf
   #MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
   Clover/AtaAtapi/AtaAtapiPassThru.inf

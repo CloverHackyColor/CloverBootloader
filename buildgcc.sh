@@ -104,6 +104,7 @@ echo
 [ ! -d ${DIR_GCC} ] && mkdir ${DIR_GCC}
 [ ! -d ${DIR_DOWNLOADS} ] && mkdir ${DIR_DOWNLOADS}
 [ ! -d ${DIR_LOGS} ] && mkdir ${DIR_LOGS}
+[ ! -d ${PREFIX}/include ] && mkdir ${PREFIX}/include
 echo
 
 
