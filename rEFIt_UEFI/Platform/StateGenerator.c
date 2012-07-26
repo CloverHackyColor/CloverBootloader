@@ -48,7 +48,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
   CHAR8 name[9];
   CHAR8 name1[13];
   CHAR8 name2[13];
-  P_STATE initial, maximum, minimum, p_states[32];
+  P_STATE initial, maximum, minimum, p_states[64];
   UINT8 p_states_count = 0;		
   BOOLEAN cpu_dynamic_fsb = FALSE;
   UINT8	acpi_cpu_count = Number; //gCPUStructure.Cores;
@@ -210,13 +210,20 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
 						}
 						else
 						{
-							UINT8 i;
+							UINT8 i, j;
 							p_states_count = 0;
 							
 							for (i = maximum.Control; i >= minimum.Control; i--) 
 							{
-								p_states[p_states_count].Control = i;
-								p_states[p_states_count].CID = p_states[p_states_count].Control << 1;
+                j = i;
+                if ((gCPUStructure.Model == CPU_MODEL_SANDY_BRIDGE) ||
+                    (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE) ||
+                    (gCPUStructure.Model == CPU_MODEL_JAKETOWN))
+                {
+                  j = i << 8;
+                }
+								p_states[p_states_count].Control = j;
+								p_states[p_states_count].CID = j;
 								p_states[p_states_count].Frequency = DivU64x32(gCPUStructure.FSBFrequency, Mega) * i;
 								p_states_count++;
 							}

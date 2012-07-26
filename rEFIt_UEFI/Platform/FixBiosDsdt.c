@@ -491,6 +491,9 @@ CHAR8 darwin[] =
   
 };
 
+CHAR8 ClassFix[] =	{ 0x00, 0x00, 0x03, 0x00 };   
+
+
 // for HDA from device_inject.c and mark device_inject function
 extern UINT32 HDA_IC_sendVerb(EFI_PCI_IO_PROTOCOL *PciIo, UINT32 codecAdr, UINT32 nodeId, UINT32 verb);
 extern UINT32 HDA_getCodecVendorAndDeviceIds(EFI_PCI_IO_PROTOCOL *PciIo);
@@ -1825,7 +1828,6 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         return len;
       }   
       
-      //CHAR8 ClassFix[] =	{ 0x00, 0x00, 0x03, 0x00 };   
       // add Method(_DSM,4,NotSerialized) for GFX0
       //if (!DISPLAYFIX)
       //{
@@ -1914,8 +1916,8 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       }
       else if (AsciiStrnCmp(modelname, "HD2000", 29) == 0)
       {
-        //    aml_add_string(pack, "class-code");
-        //    aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
+            aml_add_string(pack, "class-code");
+            aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
         aml_add_string(pack, "hda-gfx");
         aml_add_string_buffer(pack, "onboard-1");
         aml_add_string(pack, "AAPL00,PixelFormat");
@@ -1952,6 +1954,9 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         aml_add_byte_buffer(pack, HD2000_os_info, 20);
         aml_add_string(pack, "AAPL00,boot-display");
         aml_add_byte_buffer(pack, Yes, sizeof(Yes));
+        aml_add_string(pack, "built-in");
+        aml_add_byte_buffer(pack, (CHAR8*)0x01, 1);
+        
       }
       else if (AsciiStrnCmp(modelname, "HD3000", 29) == 0)
       {
@@ -2049,49 +2054,54 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         met = aml_add_method(root, "_DSM", 4);
       }
       met = aml_add_store(met);
+      //Slice - next I mark what is in Natit, and what no
       AML_CHUNK* pack = aml_add_package(met);
-      aml_add_string(pack, "AAPL,aux-power-connected");
+      aml_add_string(pack, "AAPL,aux-power-connected");  //-
       aml_add_byte_buffer(pack, Yes, sizeof(Yes));
-      aml_add_string(pack, "AAPL00,DualLink");
+      aml_add_string(pack, "AAPL00,DualLink");          //-
       aml_add_byte_buffer(pack, Yes, sizeof(Yes));
-      aml_add_string(pack, "@0,AAPL,boot-display");
+      aml_add_string(pack, "@0,AAPL,boot-display");     //-
       aml_add_byte_buffer(pack, Yes, sizeof(Yes));  
       aml_add_string(pack, "@0,name");
-      aml_add_string_buffer(pack, "NVDA,Display-A");  
+      aml_add_string_buffer(pack, "NVDA,Display-A");  //+
       aml_add_string(pack, "@0,compatible");
-      aml_add_string_buffer(pack, "NVDA,NVMac");  
+      aml_add_string_buffer(pack, "NVDA,NVMac");    //+
       aml_add_string(pack, "@0,device_type");
-      aml_add_string_buffer(pack, "display");  
+      aml_add_string_buffer(pack, "display");     //+
       aml_add_string(pack, "@1,name");
-      aml_add_string_buffer(pack, "NVDA,Display-B");  
+      aml_add_string_buffer(pack, "NVDA,Display-B");      //+
       aml_add_string(pack, "@1,compatible");
-      aml_add_string_buffer(pack, "NVDA,NVMac"); 
+      aml_add_string_buffer(pack, "NVDA,NVMac");    //+
       aml_add_string(pack, "@1,device_type");
-      aml_add_string_buffer(pack, "display"); 
+      aml_add_string_buffer(pack, "display");       //+
       aml_add_string(pack, "device_type");
-      aml_add_string_buffer(pack, "NVDA,Parent"); 
+      aml_add_string_buffer(pack, "NVDA,Parent");   //+
       aml_add_string(pack, "NVCAP");
-      aml_add_byte_buffer(pack, NVCAP, sizeof(NVCAP)); 
+      aml_add_byte_buffer(pack, NVCAP, sizeof(NVCAP));  //+
       aml_add_string(pack, "NVPM");
-      aml_add_byte_buffer(pack, NVPM, sizeof(NVPM)); 
+      aml_add_byte_buffer(pack, NVPM, sizeof(NVPM));  //+
       aml_add_string(pack, "model");
-      aml_add_string_buffer(pack, modelname); 
+      aml_add_string_buffer(pack, modelname);       //+
       aml_add_string(pack, "rom-revision");
-      aml_add_string_buffer(pack, "pcj auto patch DSDT ver1.0");
+      aml_add_string_buffer(pack, "Clover auto patch DSDT ver1.1");  //+
       aml_add_string(pack, "hda-gfx");
-      aml_add_string_buffer(pack, "onboard-1"); 
+      aml_add_string_buffer(pack, "onboard-1");         //-
       UINT32 vedioram = nv_mem_detect(&Displaydevice[0]); 
-      aml_add_string(pack, "VRAM,totalsize");
+      aml_add_string(pack, "VRAM,totalsize");         //+
       aml_add_dword(pack, vedioram); 
-      aml_add_string(pack, "device-id");
-      aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[0], 4);
+//      aml_add_string(pack, "device-id");              //-
+//      aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[0], 4);
+      aml_add_string(pack, "name");
+      aml_add_string_buffer(pack, "display");       //+
+/*
       if (!Display1PCIE)
       {
-        aml_add_string(pack, "IOPCIExpressLinkCapabilities");
+        aml_add_string(pack, "IOPCIExpressLinkCapabilities"); //-
         aml_add_dword(pack, 0x130d1) ;//0x1e80); 
-        aml_add_string(pack, "IOPCIExpressLinkStatus");
+        aml_add_string(pack, "IOPCIExpressLinkStatus");     //-
         aml_add_dword(pack, 0x10880); //0x880); 
       }
+ */
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
       // finish Method(_DSM,4,NotSerialized)
@@ -2147,9 +2157,9 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       aml_add_byte_buffer(pack, (CHAR8*)&DisplayVendor[0], 4); 
       aml_add_string(pack, "ATY,DeviceID");
       aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[0], 4); 
-      aml_add_string(pack, "device-id");
-      CHAR8 data[] = {0xE1,0x68,0x00,0x00};
-      aml_add_byte_buffer(pack, data, sizeof(data));
+ //     aml_add_string(pack, "device-id");
+ //     CHAR8 data[] = {0xE1,0x68,0x00,0x00};
+ //     aml_add_byte_buffer(pack, data, sizeof(data));
       aml_add_string(pack, "org-device-id");
       aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[0], 4); 
       aml_add_string(pack, "hda-gfx");
