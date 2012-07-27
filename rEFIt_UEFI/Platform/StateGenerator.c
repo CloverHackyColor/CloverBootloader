@@ -245,9 +245,15 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
 			
 			AML_CHUNK* root = aml_create_node(NULL);
 				aml_add_buffer(root, (CONST CHAR8*)&pss_ssdt_header[0], sizeof(pss_ssdt_header)); // SSDT header
-          AsciiSPrint(name, 9, "_PR_CPU%1d", FirstID);
+ /*
+      AsciiSPrint(name, 9, "_PR_CPU%1d", FirstID);
           AsciiSPrint(name1, 13, "_PR_CPU%1dPSS_", FirstID);
           AsciiSPrint(name2, 13, "_PR_CPU%1dPCT_", FirstID);
+  */
+      AsciiSPrint(name, 9, "_PR_%4a", acpi_cpu_name[FirstID]);
+      AsciiSPrint(name1, 13, "_PR_%4aPSS_", acpi_cpu_name[FirstID]);
+      AsciiSPrint(name2, 13, "_PR_%4aPCT_", acpi_cpu_name[FirstID]);
+     
 					AML_CHUNK* scop = aml_add_scope(root, name);
 						AML_CHUNK* method = aml_add_name(scop, "PSS_");
 							AML_CHUNK* pack = aml_add_package(method);
@@ -257,11 +263,11 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
 									AML_CHUNK* pstt = aml_add_package(pack);
 									
 									aml_add_dword(pstt, p_states[i].Frequency);
-									aml_add_dword(pstt, 0x00000000); // Power
+									aml_add_dword(pstt, p_states[i].Frequency<<3); // Power
 									aml_add_dword(pstt, 0x0000000A); // Latency
 									aml_add_dword(pstt, 0x0000000A); // Latency
 									aml_add_dword(pstt, p_states[i].Control);
-									aml_add_dword(pstt, i+1); // Status
+									aml_add_dword(pstt, p_states[i].Control); // Status
 								}
             AML_CHUNK* metPSS = aml_add_method(scop, "_PSS", 0);
               aml_add_return_name(metPSS, "PSS_");
@@ -283,7 +289,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
 			for (i = 1; i < acpi_cpu_count; i++) 
 			{
 
-				AsciiSPrint(name, 9, "_PR_CPU%1d", i + FirstID);
+				AsciiSPrint(name, 9, "_PR_%4a", acpi_cpu_name[i + FirstID]);
 				
 				scop = aml_add_scope(root, name);
         metPSS = aml_add_method(scop, "_PSS", 0);
@@ -347,8 +353,8 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
   
   AML_CHUNK* root = aml_create_node(NULL);
   aml_add_buffer(root, cst_ssdt_header, sizeof(cst_ssdt_header)); // SSDT header
-  AsciiSPrint(name0, 9, "_PR_CPU%1d", FirstID);
-  AsciiSPrint(name1, 13, "_PR_CPU%1dCST_", FirstID);
+  AsciiSPrint(name0, 9, "_PR_%4a", acpi_cpu_name[FirstID]);
+  AsciiSPrint(name1, 13, "_PR_%4aCST_", acpi_cpu_name[FirstID]);
   AML_CHUNK* scop = aml_add_scope(root, name0);
   AML_CHUNK* name = aml_add_name(scop, "CST_");
   AML_CHUNK* pack = aml_add_package(name);
@@ -459,7 +465,7 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
   INTN i;
   for (i = 1; i < acpi_cpu_count; i++) 
   {
-    AsciiSPrint(name2, 9, "_PR_CPU%1d", i + FirstID);
+    AsciiSPrint(name2, 9, "_PR_%4a", acpi_cpu_name[i + FirstID]);
     
     scop = aml_add_scope(root, name2);
     met = aml_add_method(scop, "_CST", 0);

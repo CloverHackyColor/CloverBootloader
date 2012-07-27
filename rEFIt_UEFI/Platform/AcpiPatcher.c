@@ -1312,14 +1312,14 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 		}
   
   //native DSDT or loaded we want to apply autoFix to this
-  //  if (gSettings.FixDsdt) { //fix even with zero mask because we want to know PCIRootUID
+  //  if (gSettings.FixDsdt) { //fix even with zero mask because we want to know PCIRootUID and CPUBase and count(?)
   FixBiosDsdt((UINT8*)(UINTN)FadtPointer->Dsdt);
   
   
   if (gSettings.DropSSDT) {
     DropTableFromXSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE);
     DropTableFromRSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE);
-  } else {
+  } else { //do the empty drop to clean xsdt
     DropTableFromXSDT(XXXX_SIGN);
     DropTableFromRSDT(XXXX_SIGN);
   }
@@ -1333,17 +1333,6 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       DBG("OEM table %s found\n", ACPInames[Index]);
       Status = egLoadFile(SelfRootDir, FullName, &buffer, &bufferLen);
     }
- //will not search common folder if OEM folder exists
- // if not exists then  AcpiOemPath is already to be common folder  
-/*    
-    if (EFI_ERROR(Status)) {
-      FullName = PoolPrint(L"%s\\%s", PathPatched, ACPInames[Index]);
-      if (FileExists(SelfRootDir, FullName)) {
-        DBG("Common table %s found\n", ACPInames[Index]);
-        Status = egLoadFile(SelfRootDir, FullName, &buffer, &bufferLen);        
-      }
-    }
-*/    
     if(!EFI_ERROR(Status))
     {
       //before insert we should checksum it
@@ -1367,7 +1356,8 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 //  DBG("----------- size of APIC PROC = %d\n", sizeof(EFI_ACPI_2_0_PROCESSOR_LOCAL_APIC_STRUCTURE));
   //
   // 1. For CPU base number 0 or 1.  codes from SunKi
-  CPUBase = 0;
+  CPUBase = acpi_cpu_name[0][3] - '0'; //"CPU0"
+  INTN ApicCPUBase = 0;
   ApicCPUNum = 0;  
   // 2. For absent NMI subtable
     xf = ScanXSDT(APIC_SIGN);
@@ -1379,7 +1369,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       // but = 1 for stupid ASUS
       //
       if (ProcLocalApic->Type == 0) {
-        CPUBase = ProcLocalApic->AcpiProcessorId; //we want first instance
+        ApicCPUBase = ProcLocalApic->AcpiProcessorId; //we want first instance
       } 
 
       while ((ProcLocalApic->Type == 0) && (ProcLocalApic->Length == 8)) {
@@ -1395,7 +1385,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
         ApicCPUNum = gCPUStructure.Threads;
       }
       
-      DBG(" CPUBase=%d Number=%d\n", CPUBase, ApicCPUNum);
+      DBG(" CPUBase=%d and ApicCPUBase=%d ApicCPUNum=%d\n", CPUBase, ApicCPUBase, ApicCPUNum);
  //reallocate table  
       if (gSettings.PatchNMI) {
         
@@ -1414,14 +1404,24 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
           CopyMem(&ApicTable->CreatorId, creatorID, 4);
           
           SubTable = (UINT8*)((UINTN)BufferPtr + sizeof(EFI_ACPI_2_0_MULTIPLE_APIC_DESCRIPTION_TABLE_HEADER));
+          Index = CPUBase;
           while (*SubTable != EFI_ACPI_4_0_LOCAL_APIC_NMI) {
             DBG("Found subtable in MADT: type=%d\n", *SubTable);
+            //xxx - OSX paniced
+  /*          
+            if (*SubTable == EFI_ACPI_4_0_PROCESSOR_LOCAL_APIC) {
+              ProcLocalApic = (EFI_ACPI_2_0_PROCESSOR_LOCAL_APIC_STRUCTURE *)SubTable;
+              ProcLocalApic->AcpiProcessorId = Index;
+              Index++;
+            }
+  */          
             bufferLen = (UINTN)SubTable[1];
             SubTable += bufferLen;
             if (((UINTN)SubTable - (UINTN)BufferPtr) >= ApicTable->Length) {
               break;
             }
           }
+          
           if (*SubTable == EFI_ACPI_4_0_LOCAL_APIC_NMI) {
             DBG("LocalApicNMI is already present, no patch needed\n");
           } else {
@@ -1444,6 +1444,11 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
           if (!EFI_ERROR(Status)) {
             DBG("New APIC table successfully inserted\n");
           }
+          CHAR16* PatchedAPIC = L"\\EFI\\ACPI\\origin\\APCI-p.aml";
+          Status = egSaveFile(SelfRootDir, PatchedAPIC, (UINT8 *)ApicTable, ApicTable->Length);
+          if (EFI_ERROR(Status)) {
+            Status = egSaveFile(NULL, PatchedAPIC,  (UINT8 *)ApicTable, ApicTable->Length);
+          }          
         }      
       } 
     } 

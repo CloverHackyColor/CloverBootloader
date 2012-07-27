@@ -293,7 +293,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   DBGT("StartLoader() start\n");
   egClearScreen(&DarkBackgroundPixel);
   MsgLog("Turbo=%c\n", gSettings.Turbo?'Y':'N');
-  MsgLog("PatchNMI=%c\n", gSettings.PatchNMI?'Y':'N');
+  MsgLog("PatchAPIC=%c\n", gSettings.PatchNMI?'Y':'N');
   MsgLog("PatchVBios=%c\n", gSettings.PatchVBios?'Y':'N');
       
   BeginExternalScreen(Entry->UseGraphicsMode, L"Booting OS");
