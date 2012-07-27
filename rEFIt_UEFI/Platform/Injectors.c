@@ -119,6 +119,7 @@ EFI_STATUS GetScreenInfo(VOID* This, UINT64* baseAddress, UINT64* frameBufferSiz
                               (VOID **) &GraphicsOutput);
 	if(EFI_ERROR(Status))
 		return EFI_UNSUPPORTED;
+  //this print never occured so this procedure is redundant
 	Print(L"GetScreenInfo called with args: %lx %lx %lx %lx %lx %lx\n",
         baseAddress, frameBufferSize, bpr, w, h, colorDepth);
 	*frameBufferSize = (UINT64)GraphicsOutput->Mode->FrameBufferSize;

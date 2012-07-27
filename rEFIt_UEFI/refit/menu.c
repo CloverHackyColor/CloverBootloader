@@ -170,6 +170,8 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = Hex;  //18
   InputItems[InputItemsCount].SValue = AllocateZeroPool(36);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 36, L"0x%X", gSettings.BacklightLevel);
+  InputItems[InputItemsCount].ItemType = Decimal;  //19
+  InputItems[InputItemsCount++].SValue = PoolPrint(L"%06d", gSettings.BusSpeed);
   
   InputItemsCount = 20;
   InputItems[InputItemsCount].ItemType = BoolValue; //20
@@ -310,6 +312,11 @@ VOID ApplyInputs(VOID)
   i++; //18
   if (InputItems[i].Valid) {
     gSettings.BacklightLevel = (UINT32)StrHexToUint64(InputItems[i].SValue);
+  }  
+  i++; //19
+  if (InputItems[i].Valid) {
+    gSettings.BusSpeed = StrDecimalToUintn(InputItems[i].SValue);
+    DBG("Apply BusSpeed=%d\n", gSettings.BusSpeed);
   }
   
   i = 20; //20
@@ -364,6 +371,8 @@ VOID ApplyInputs(VOID)
     gSettings.KPAppleRTC = InputItems[i].BValue;
   }
   gSettings.KPKextPatchesNeeded = (gSettings.KPAsusAICPUPM || gSettings.KPAppleRTC);
+  
+  SaveSettings();
 }
 
 VOID FreeItems(VOID)
@@ -1601,6 +1610,14 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
   InputBootArgs->Entry.Row = 0xFFFF; //cursor
   InputBootArgs->Entry.ShortcutLetter = '2';
   InputBootArgs->Item = &InputItems[13];    
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"BusSpeed [kHz]:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[19].SValue); //cursor
+  InputBootArgs->Entry.ShortcutLetter = 'B';
+  InputBootArgs->Item = &InputItems[19];    
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
   
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));

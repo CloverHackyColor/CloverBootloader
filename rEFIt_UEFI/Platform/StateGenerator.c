@@ -210,7 +210,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
 						}
 						else
 						{
-							UINT8 i, j;
+							UINT32 i, j;
 							p_states_count = 0;
 							
 							for (i = maximum.Control; i >= minimum.Control; i--) 

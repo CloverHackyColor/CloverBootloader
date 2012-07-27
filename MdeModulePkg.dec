@@ -153,7 +153,7 @@
   ## Performance protocol guid that also acts as the performance HOB guid and performance variable GUID
   #  Include/Guid/Performance.h
   gPerformanceProtocolGuid       = { 0x76B6BDFA, 0x2ACD, 0x4462, { 0x9E, 0x3F, 0xCB, 0x58, 0xC9, 0x69, 0xD9, 0x37 } }
-  gSmmPerformanceProtocolGuid    = { 0xf866226a, 0xeaa5, 0x4f5a, { 0xa9, 0xa, 0x6c, 0xfb, 0xa5, 0x7c, 0x58, 0x8e } }
+  gSmmPerformanceProtocolGuid    = { 0xf866226a, 0xeaa5, 0x4f5a, { 0xa9, 0xa,  0x6c, 0xfb, 0xa5, 0x7c, 0x58, 0x8e } }
   gPerformanceExProtocolGuid     = { 0x1ea81bec, 0xf01a, 0x4d98, { 0xa2, 0x1,  0x4a, 0x61, 0xce, 0x2f, 0xc0, 0x22 } }
   gSmmPerformanceExProtocolGuid  = { 0x931fc048, 0xc71d, 0x4455, { 0x89, 0x30, 0x47, 0x6,  0x30, 0xe3, 0xe,  0xe5 } }
 
@@ -461,9 +461,6 @@
 
   ## If TRUE, S3 performance data will be supported in ACPI FPDT table.
   gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwarePerformanceDataTableS3Support|FALSE|BOOLEAN|0x00010064
-
-  ## This PCD specified whether the S.M.A.R.T feature of attached ATA hard disks are enabled.
-  gEfiMdeModulePkgTokenSpaceGuid.PcdAtaSmartEnable|FALSE|BOOLEAN|0x00010065
 
 [PcdsFeatureFlag.IA32, PcdsFeatureFlag.X64]
   ##
@@ -816,6 +813,9 @@
   ## This PCD specifies the additional pad size in FPDT Basic Boot Performance Table for 
   #  the extension FPDT boot records got after ReadyToBoot and before ExitBootService.
   gEfiMdeModulePkgTokenSpaceGuid.PcdExtFpdtBootRecordPadSize|0x0|UINT32|0x0001005F
+
+  ## This PCD specified whether the S.M.A.R.T feature of attached ATA hard disks are enabled.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdAtaSmartEnable|TRUE|BOOLEAN|0x00010065
 
 [PcdsPatchableInModule]
   ## Specify  memory size with page number for PEI code when 

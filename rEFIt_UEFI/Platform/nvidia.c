@@ -1370,7 +1370,7 @@ BOOLEAN hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, INT32 len)
 	CHAR8	buf[3];
 	
 	if (hex == NULL || bin == NULL || len <= 0 || AsciiStrLen(hex) != len * 2) {
-		DBG("[ERROR] bin2hex input error\n");
+//		DBG("[ERROR] bin2hex input error\n"); //this is not error, this is empty value
 		return FALSE;
 	}
 	

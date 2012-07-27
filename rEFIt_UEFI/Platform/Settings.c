@@ -1275,8 +1275,7 @@ EFI_STATUS SaveSettings()
     gCPUStructure.MaxSpeed = DivU64x32(gSettings.BusSpeed, 100) * gCPUStructure.MaxRatio; //kHz->MHz
   }
 
-  if ((gSettings.CpuFreqMHz != 0) &&
-      (gSettings.CpuFreqMHz > 100) &&
+  if ((gSettings.CpuFreqMHz > 100) &&
       (gSettings.CpuFreqMHz < 20000)){
     gCPUStructure.MaxSpeed = gSettings.CpuFreqMHz;
   }
