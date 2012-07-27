@@ -1403,7 +1403,10 @@ static VOID LoadDrivers(VOID)
     
     // load drivers from /efi/drivers
 #if defined(MDE_CPU_X64)
-  ScanDriverDir(L"\\EFI\\drivers64");
+  if (gFirmwareClover) {
+    ScanDriverDir(L"\\EFI\\drivers64");
+  } else
+    ScanDriverDir(L"\\EFI\\drivers64UEFI");
 #else
   ScanDriverDir(L"\\EFI\\drivers32");
 #endif
