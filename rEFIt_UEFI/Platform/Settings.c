@@ -578,7 +578,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
         gSettings.ResetVal = (UINT8)StrHexToUint64((CHAR16*)&UStr[0]);	
       }
-      //other known pair is 0x02F9/0x06
+      //other known pair is 0x0CF9/0x06
       
       prop = GetProperty(dictPointer,"EnableC6");
       gSettings.EnableC6 = FALSE;

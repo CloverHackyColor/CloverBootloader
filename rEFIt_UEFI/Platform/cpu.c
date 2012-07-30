@@ -761,6 +761,10 @@ MACHINE_TYPES GetDefaultModel()
 				break;
 			case CPU_MODEL_SANDY_BRIDGE:
       case CPU_MODEL_IVY_BRIDGE:   //should be new iMac  
+        if (gGraphics[0].Vendor == Intel) {
+          DefaultType = MacMini51;
+					break;
+        }
 				if((AsciiStrStr(gCPUStructure.BrandString, "i3")) || 
 				   (AsciiStrStr(gCPUStructure.BrandString, "i5")))
 				{

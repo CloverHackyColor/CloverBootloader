@@ -190,7 +190,14 @@ VOID FillInputs(VOID)
       }      
     } else if (gGraphics[i].Vendor == Nvidia) {
       InputItems[InputItemsCount].ItemType = ASString; //22+5i
-      InputItems[InputItemsCount++].SValue = PoolPrint(L"%08x",*(UINT64*)&gSettings.Dcfg[0]);
+      InputItems[InputItemsCount].SValue = AllocateZeroPool(20);
+      for (j=0; j<8; j++) {
+        a = gSettings.Dcfg[j];
+        AsciiSPrint((CHAR8*)&tmp[2*j], 2, "%02x", a);
+      }
+      UnicodeSPrint(InputItems[InputItemsCount++].SValue, 20, L"%a", tmp);
+      
+  //    InputItems[InputItemsCount++].SValue = PoolPrint(L"%08x",*(UINT64*)&gSettings.Dcfg[0]);
     } else if (gGraphics[i].Vendor == Intel) {
       InputItems[InputItemsCount].ItemType = ASString; //22+5i
       InputItems[InputItemsCount++].SValue = L"NA";
@@ -202,13 +209,14 @@ VOID FillInputs(VOID)
     } else {
       InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gGraphics[i].Ports);
     }
-
+    InputItems[InputItemsCount].SValue = AllocateZeroPool(42);
     InputItems[InputItemsCount].ItemType = ASString; //24+5i
     for (j=0; j<20; j++) {
       a = gSettings.NVCAP[j];
       AsciiSPrint((CHAR8*)&tmp[2*j], 2, "%02x", a);
     }
-    InputItems[InputItemsCount++].SValue = PoolPrint(L"%a", tmp);
+//    InputItems[InputItemsCount++].SValue = PoolPrint(L"%a", tmp);
+    UnicodeSPrint(InputItems[InputItemsCount++].SValue, 42, L"%a", tmp);
     
     InputItems[InputItemsCount].ItemType = BoolValue; //25+5i
     InputItems[InputItemsCount].BValue = gGraphics[i].LoadVBios;

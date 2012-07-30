@@ -1429,7 +1429,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
             for (Index = 0; Index < ApicCPUNum; Index++) {
               LocalApicNMI->Type = EFI_ACPI_4_0_LOCAL_APIC_NMI;
               LocalApicNMI->Length = sizeof(EFI_ACPI_4_0_LOCAL_APIC_NMI_STRUCTURE);
-              LocalApicNMI->AcpiProcessorId = CPUBase + Index;
+              LocalApicNMI->AcpiProcessorId = ApicCPUBase + Index;
               LocalApicNMI->Flags = 5;
               LocalApicNMI->LocalApicLint = 1;
               LocalApicNMI++;

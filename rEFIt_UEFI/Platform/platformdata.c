@@ -28,6 +28,7 @@ CHAR8* AppleFirmwareVersion[] =
 	"MBA31.88Z.0061.B01.0712201139",
   "MBA51.88Z.00EF.B00.1205221442",
 	"MM21.88Z.009A.B00.0706281359",
+  "MM51.88Z.006C.B05.1102291410",
 	"IM81.88Z.00C1.B00.0803051705",
 	"IM101.88Z.00CC.B00.0909031926",
   "IM111.88Z.0034.B02.1003171314",
@@ -52,6 +53,7 @@ CHAR8* AppleBoardID[] = //Lion DR1 compatible
 	"Mac-942452F5819B1C1B",  //MBA31
   "Mac-2E6FAB96566FE58C",  //MBA52 - i5-3427U IVY BRIDGE IntelHD4000 did=166
 	"Mac-F4208EAA",  //MM21 - merom GMA950 07/07
+  "Mac-8ED6AF5B48C039E1",  //MM51 - Sandy + Intel 30000
 	"Mac-F227BEC8",  //IM81 - merom 01/09
 	"Mac-F2268CC8",  //IM101 - wolfdale? E7600 01/
   "Mac-F2268DAE",  //IM111 - Nehalem
@@ -76,6 +78,7 @@ CHAR8* AppleReleaseDate[] =
 	"12/20/07",
   "05/22/2012", //mba52
 	"08/07/07",  //mm21
+  "02/29/11",  //MM51
 	"03/05/08",
 	"09/03/09",  //im101
 	"03/17/10",
@@ -100,6 +103,7 @@ CHAR8* AppleProductName[] =
 	"MacBookAir3,1",
   "MacBookAir5,2",
 	"Macmini2,1",
+  "Macmini5,1",
 	"iMac8,1",
 	"iMac10,1",
   "iMac11,1",
@@ -124,6 +128,7 @@ CHAR8* AppleFamilies[] =
 	"MacBookAir",
   "MacBook Air",
 	"Macmini",
+  "Mac mini",
 	"iMac",
 	"iMac",
 	"iMac",
@@ -149,6 +154,7 @@ CHAR8* AppleSystemVersion[] =
 	"1.0",
   "1.0",
   "1.1",
+  "1.0",
 	"1.3",
 	"1.0",
   "1.0",
@@ -170,9 +176,10 @@ CHAR8* AppleSerialNumber[] = //random generated
 	"W88439FE1G0", //MBP51
   "W89F9196DH2G", //MBP81 - i5 SB IntelHD3000
   "W88F9CDEDF93", //MBP83 -i7 SB  ATI
-	"W8649476DQX", //MBA31
+	"W8649476DQX",  //MBA31
   "C02HRJXWDRVC", //MBA52 - IvyBridge
-	"W88A56BYYL2", //MM21 - merom GMA950 07/07
+	"W88A56BYYL2",  //MM21 - merom GMA950 07/07
+  "C07G3VUFDJD0", //MM51
 	"W89A00AAX88", //IM81 - merom 01/09
 	"W80AA98A5PE", //IM101 - wolfdale? E7600 01/09
   "G8942B1V5PJ", //IM111 - Nehalem
@@ -197,6 +204,7 @@ CHAR8* AppleChassisAsset[] =
 	"Air-Enclosure",
   "Air-Enclosure",
 	"Mini-Aluminum",
+  "Mini-Aluminum",
 	"iMac-Aluminum",
 	"iMac-Aluminum",
 	"iMac-Aluminum",

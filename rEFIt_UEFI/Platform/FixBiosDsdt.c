@@ -1901,8 +1901,8 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       }
       else if (AsciiStrnCmp(modelname, "HD3000", 29) == 0)
       {
-        //      aml_add_string(pack, "class-code");
-        //      aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
+              aml_add_string(pack, "class-code");
+              aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
         aml_add_string(pack, "hda-gfx");
         aml_add_string_buffer(pack, "onboard-1");
         aml_add_string(pack, "AAPL00,PixelFormat");
@@ -2032,8 +2032,8 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       aml_add_dword(pack, vedioram); 
 //      aml_add_string(pack, "device-id");              //-
 //      aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[0], 4);
-      aml_add_string(pack, "name");
-      aml_add_string_buffer(pack, "display");       //+
+//      aml_add_string(pack, "name");
+//      aml_add_string_buffer(pack, "display");       //+
 /*
       if (!Display1PCIE)
       {
@@ -2375,8 +2375,8 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       }
       else if (AsciiStrnCmp(modelname, "HD2000", 29) == 0)
       {
-        //      aml_add_string(pack, "class-code");
-        //      aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
+              aml_add_string(pack, "class-code");
+              aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
         aml_add_string(pack, "hda-gfx");
         aml_add_string_buffer(pack, "onboard-1");
         aml_add_string(pack, "AAPL00,PixelFormat");
@@ -2416,8 +2416,10 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       }
       else if (AsciiStrnCmp(modelname, "HD3000", 29) == 0)
       {
-        //     aml_add_string(pack, "class-code");
-        //     aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
+             aml_add_string(pack, "class-code");
+             aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
+ //       aml_add_string(pack, "device-id");
+ //       aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[1], 4); // inject 0x0116
         aml_add_string(pack, "hda-gfx");
         aml_add_string_buffer(pack, "onboard-1");
         aml_add_string(pack, "AAPL00,PixelFormat");
@@ -2478,8 +2480,8 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       {
         aml_add_string(pack, "built-in");
         aml_add_byte_buffer(pack, (CHAR8*)0x01, 1);
-        //      aml_add_string(pack, "class-code");
-        //       aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
+              aml_add_string(pack, "class-code");
+              aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
         aml_add_string(pack, "device-id");
         aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[1], 4);
         aml_add_string(pack, "hda-gfx");

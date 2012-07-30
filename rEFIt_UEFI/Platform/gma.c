@@ -73,7 +73,7 @@ static struct gma_gpu_t KnownGPUS[] = {
 //  { 0x0044, "HD2000"  }, //host bridge
   { 0x0046, "HD2000"  },
   { 0x0102, "HD3000"  },
-  { 0x0112, "HD3000"  },
+  { 0x0112, "HD2000"  },
   { 0x0116, "HD3000"  },
   { 0x0126, "HD3000"  },
   { 0x0166, "HD4000"  },
@@ -100,7 +100,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 	CHAR8					*model;
 	UINT8 BuiltIn =		0x00;
   UINTN j;
-//	UINT8 ClassFix[4] =	{ 0x00, 0x00, 0x03, 0x00 };
+	UINT8 ClassFix[4] =	{ 0x00, 0x00, 0x03, 0x00 };
 	
 	devicepath = get_pci_dev_path(gma_dev);
 	
@@ -138,6 +138,8 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   devprop_add_value(device, "model", (UINT8*)model, AsciiStrLen(model));
 	devprop_add_value(device, "device_type", (UINT8*)"display", 7);	
   switch (gma_dev->device_id) {
+    case 0x0102: 
+      devprop_add_value(device, "class-code",						ClassFix, 4);
     case 0x0116:  
     case 0x0126:  
     case 0x0166:  
