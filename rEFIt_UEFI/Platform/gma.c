@@ -73,13 +73,13 @@ static struct gma_gpu_t KnownGPUS[] = {
 	{ 0x2A42, "GMAX3100"		},
 //	{ 0x2A43, "GMAX3100"		},
 //  { 0x0044, "HD2000"  }, //host bridge
-  { 0x0046, "HD2000"  },
-  { 0x0102, "HD3000"  },
-  { 0x0112, "HD2000"  },
-  { 0x0116, "HD3000"  },
-  { 0x0126, "HD3000"  },
-  { 0x0166, "HD4000"  }, //
-  { 0x0162, "Desktop HD4000"  }  //Desktop??
+  { 0x0046, "Intel HD Graphics 2000"  }, 
+  { 0x0102, "Intel HD Graphics 3000"  },
+  { 0x0112, "Intel HD Graphics 3000"  },
+  { 0x0116, "Intel HD Graphics 3000"  },
+  { 0x0126, "Intel HD Graphics 3000"  },
+  { 0x0166, "Intel HD Graphics 4000"  }, //
+  { 0x0162, "Intel HD Graphics 4000"  }  //Desktop??
  
 };
 

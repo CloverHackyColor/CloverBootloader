@@ -1956,6 +1956,8 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         aml_add_byte_buffer(pack, HD2000_tbl_info, 18);
         aml_add_string(pack, "AAPL,os-info");
         aml_add_byte_buffer(pack, HD2000_os_info, 20);
+//        aml_add_string(pack, "AAPL,snb-platform-id");
+//        aml_add_byte_buffer(pack, HD3000_vals[16], 4);
         aml_add_string(pack, "AAPL00,boot-display");
         aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       }
@@ -1973,6 +1975,8 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         aml_add_byte_buffer(pack, HD3000_tbl_info, 18);
         aml_add_string(pack, "AAPL,os-info");
         aml_add_byte_buffer(pack, HD3000_os_info, 20);
+        aml_add_string(pack, "AAPL,snb-platform-id");
+        aml_add_byte_buffer(pack, HD3000_vals[16], 4);
         aml_add_string(pack, "AAPL00,boot-display");
         aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       }
@@ -2490,6 +2494,8 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
         aml_add_byte_buffer(pack, HD3000_tbl_info, 18);
         aml_add_string(pack, "AAPL,os-info");
         aml_add_byte_buffer(pack, HD3000_os_info, 20);
+        aml_add_string(pack, "AAPL,snb-platform-id");
+        aml_add_byte_buffer(pack, HD3000_vals[16], 4);
         aml_add_string(pack, "AAPL00,boot-display");
         aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       }
