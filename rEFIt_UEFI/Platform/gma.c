@@ -21,7 +21,7 @@
 extern CHAR8*						gDeviceProperties;
 
 //Slice - corrected all values, still not sure
-UINT8 GMAX3100_vals[23][4] = {
+UINT8 GMAX3100_vals[25][4] = {
 	{ 0x01,0x00,0x00,0x00 },	//0 "AAPL,HasPanel"
 	{ 0x01,0x00,0x00,0x00 },	//1 "AAPL,SelfRefreshSupported"
 	{ 0x01,0x00,0x00,0x00 },	//2 "AAPL,aux-power-connected"
@@ -44,7 +44,9 @@ UINT8 GMAX3100_vals[23][4] = {
 	{ 0x3B,0x00,0x00,0x00 },	//19 "AAPL01,Stretch"
 	{ 0xc8,0x95,0x00,0x00 },	//20 "AAPL01,InverterFrequency"
 	{ 0x6B,0x10,0x00,0x00 },	//21 "subsystem-vendor-id"
-	{ 0xA2,0x00,0x00,0x00 }		//22 "subsystem-id"
+	{ 0xA2,0x00,0x00,0x00 },	//22 "subsystem-id"
+    { 0x05,0x00,0x62,0x01 },    //23 "AAPL,ig-platform-id" HD4000 //STLVNUB
+    { 0x09,0x00,0x66,0x01 }     //24 "AAPL,ig-platform-id" HD4000
 };
 
 UINT8 reg_TRUE[]	= { 0x01, 0x00, 0x00, 0x00 };
@@ -76,7 +78,9 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x0112, "HD2000"  },
   { 0x0116, "HD3000"  },
   { 0x0126, "HD3000"  },
-  { 0x0166, "HD4000"  },
+  { 0x0166, "HD4000"  }, //
+  { 0x0162, "Desktop HD4000"  }  //Desktop??
+ 
 };
 
 CHAR8 *get_gma_model(UINT16 id) {
@@ -142,8 +146,13 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       devprop_add_value(device, "class-code",						ClassFix, 4);
     case 0x0116:  
     case 0x0126:  
-    case 0x0166:  
-    case 0xA011:  
+    case 0x0162:
+    case 0x0166:
+      if (gma_dev->device_id == 0x162)
+          devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[23], 4);
+      else if (gma_dev->device_id == 0x166)
+          devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[24], 4);
+    case 0xA011:
     case 0xA012:  
       devprop_add_value(device, "AAPL01,DualLink", (UINT8 *)&DualLink, 1);
     case 0x2582:
