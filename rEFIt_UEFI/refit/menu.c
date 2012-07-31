@@ -123,8 +123,8 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].SValue = AllocateZeroPool(63);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.DsdtName);
   InputItems[InputItemsCount].ItemType = BoolValue; //2
-  InputItems[InputItemsCount].BValue = gSettings.UseDSDTmini;
-  InputItems[InputItemsCount++].SValue = gSettings.UseDSDTmini?L"[X]":L"[ ]";
+  InputItems[InputItemsCount].BValue = gSettings.MemoryFix;
+  InputItems[InputItemsCount++].SValue = gSettings.MemoryFix?L"[X]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //3 
   InputItems[InputItemsCount].BValue = gSettings.StringInjector;
   InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[X]":L"[ ]";
@@ -251,7 +251,7 @@ VOID ApplyInputs(VOID)
   }
   i++; //2
   if (InputItems[i].Valid) {
-    gSettings.UseDSDTmini = InputItems[i].BValue;
+    gSettings.MemoryFix = InputItems[i].BValue;
   }
   i++; //3
   if (InputItems[i].Valid) {
@@ -1734,7 +1734,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     
     //2    
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 50, L"Use DSDTmini:");
+    UnicodeSPrint(Flags, 50, L"MemoryFix:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = 0xFFFF;

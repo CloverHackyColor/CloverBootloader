@@ -540,6 +540,7 @@ typedef struct {
 	CHAR16	CustomUuid[40];
   CHAR16  DefaultBoot[40];
   UINT16  BacklightLevel;
+  BOOLEAN MemoryFix;
 	
 	// GUI parameters
 	BOOLEAN	Debug;
