@@ -814,6 +814,11 @@
   #  the extension FPDT boot records got after ReadyToBoot and before ExitBootService.
   gEfiMdeModulePkgTokenSpaceGuid.PcdExtFpdtBootRecordPadSize|0x0|UINT32|0x0001005F
 
+  ## This PCD specifies whether ConIn device are connected on demand. If TRUE, ConIn
+  #  device are not connected during BDS and ReadKeyStroke/ReadKeyStrokeEx produced
+  #  by Consplitter should be called before any real key read operation.
+  gEfiMdeModulePkgTokenSpaceGuid.PcdConInConnectOnDemand|FALSE|BOOLEAN|0x10000060
+
   ## This PCD specified whether the S.M.A.R.T feature of attached ATA hard disks are enabled.
   gEfiMdeModulePkgTokenSpaceGuid.PcdAtaSmartEnable|TRUE|BOOLEAN|0x00010065
 
@@ -834,7 +839,8 @@
   #  the feature of Loading Module at Fixed Address is enabled
   gEfiMdeModulePkgTokenSpaceGuid.PcdLoadFixAddressSmmCodePageNumber|0|UINT32|0x0000002c
 
-[PcdsDynamic, PcdsDynamicEx]
+[PcdsDynamic]
+#, PcdsDynamicEx]
   ## This dynamic PCD hold an address to point to private data structure used in DxeS3BootScriptLib library
   #  instance which records the S3 boot script table start address, length, etc. To introduce this PCD is
   #  only for DxeS3BootScriptLib instance implementation purpose. The platform developer should make sure the

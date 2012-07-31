@@ -265,6 +265,30 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 
 # End build drivers-x64 packages
 
+# build drivers-x64UEFI packages 
+	echo "===================== drivers64UEFI ========================"
+	outline[$((outlinecount++))]="${indent[$xmlindent]}\t<line choice=\"Drivers64UEFI\">"
+	choices[$((choicescount++))]="<choice\n\tid=\"Drivers64UEFI\"\n\ttitle=\"Drivers64UEFI\"\n\tdescription=\"Drivers64UEFI\"\n>\n</choice>\n"
+	((xmlindent++))
+	packagesidentity="org.Clover.drivers64UEFI"
+	drivers=($( find "${3%/*/*}/CloverV2/drivers-Off/drivers64UEFI" -type f -name '*.efi' -depth 1 ))
+	for (( i = 0 ; i < ${#drivers[@]} ; i++ )) 
+	do
+		filename="${drivers[$i]##*/}"	
+		mkdir -p "${3}/${filename%.efi}/Root/"
+		ditto --noextattr --noqtn --arch i386 "${drivers[$i]}" "${3}/${filename%.efi}/Root/"
+		find "${3}/${filename%.efi}" -name '.DS_Store' -exec rm -R -f {} \; 2>/dev/null
+		fixperms "${3}/${filename%.efi}/Root/"
+		echo "	[BUILD] ${filename%.efi}"
+		buildpackagedrivers64 "${3}/${filename%.efi}" "/EFI/drivers64UEFI" "" "start_selected=\"false\"" >/dev/null 2>&1
+		rm -R -f "${3}/${filename%.efi}"
+	done
+	
+	((xmlindent--))
+	outline[$((outlinecount++))]="${indent[$xmlindent]}\t</line>"
+
+# End build drivers-x64UEFI packages
+
 # build post install package
 	echo "===================== Post ============================="
 	packagesidentity="org.Clover"
