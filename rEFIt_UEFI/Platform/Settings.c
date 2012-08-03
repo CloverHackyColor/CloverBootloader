@@ -451,8 +451,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       
       prop = GetProperty(dictPointer,"NVCAP");
       if(prop)
-      {      
+      {     
         hex2bin(prop->string, (UINT8*)&gSettings.NVCAP[0], 20);
+        DBG("Read NVCAP:")
+        for (i=0; i<20; i++) {
+          DBG("%02x", gSettings.NVCAP[i]);
+        }
+        DBG("\n");
       } 
       prop = GetProperty(dictPointer,"display-cfg");
       if(prop)

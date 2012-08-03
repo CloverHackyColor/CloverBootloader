@@ -60,11 +60,11 @@ VOID CorrectMemoryMap(IN UINT32 memMap,
    *memMapSize += memDescriptorSize;
    }
    */	
-  //
-  //step 3. convert BootServiceData to conventional
-  //
   memDescriptor = (EfiMemoryRange *)(UINTN)memMap;
   for (Index = 0; Index < *memMapSize / memDescriptorSize; Index ++) {
+    //
+    //step 3. convert BootServiceData to conventional
+    //
     switch (memDescriptor->Type) {
       case EfiLoaderData:
       case EfiBootServicesCode:
@@ -75,7 +75,16 @@ VOID CorrectMemoryMap(IN UINT32 memMap,
       default:
         break;
     }
-  }  
+    //
+    //step 4. free reserved memory
+    if ((memDescriptor->Type == EfiReservedMemoryType) &&
+        (memDescriptor->Attribute == EFI_MEMORY_WB)) {
+      memDescriptor->Type = EfiConventionalMemory;
+      memDescriptor->Attribute = 0;
+    }
+    //
+    
+  } //EFI_MEMORY_WB 
   
 	if(gSettings.Debug==TRUE) {
 		
