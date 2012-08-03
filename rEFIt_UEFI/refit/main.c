@@ -334,6 +334,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     //  PauseForKey(L"SetupDataForOSX");
     SetupDataForOSX();
     //  PauseForKey(L"SetupBooterLog");
+    LoadKexts(Entry);
     DBGT("Closing log\n");
     Status = SetupBooterLog();
     //  Entry->LoadOptions     = InputItems[0].SValue;

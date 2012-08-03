@@ -52,8 +52,11 @@ Headers collection for procedures
 #include "efiConsoleControl.h"
 #include "SmBios.h"
 #include "EfiLib/GenericBdsLib.h"
-#include "device_inject.h"
 #include "UsbMass.h"
+
+#include "device_inject.h"
+#include "kext_inject.h"
+
 
 /* Decimal powers: */
 #define kilo (1000ULL)
@@ -844,6 +847,9 @@ EFI_STATUS      GetNVRAMSettings(VOID);
 EFI_STATUS      GetNVRAMPlistSettings(IN EFI_FILE *RootDir, IN CHAR16* NVRAMPlistPath);
 EFI_STATUS      GetEdid(VOID);
 EFI_STATUS      SetFSInjection(IN LOADER_ENTRY *Entry);
+CHAR16*         GetExtraKextsDir(REFIT_VOLUME *Volume);
+EFI_STATUS      LoadKexts(IN LOADER_ENTRY *Entry);
+
 
 EFI_STATUS
 LogDataHub(

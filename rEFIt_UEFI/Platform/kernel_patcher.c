@@ -6,6 +6,7 @@
 #include "kernel_patcher.h"
 #include "sse3_patcher.h"
 #include "sse3_5_patcher.h"
+#include "kext_inject.c"
 
 #define KERNEL_DEBUG 0
 
@@ -868,5 +869,33 @@ KernelAndKextsPatcherStart(VOID)
     
     KextPatcherStart();
   }
+
+  //
+  // Kext add
+  //
+  if (AsciiStrStr(gSettings.BootArgs, "WithKexts") == NULL)
+  {
+    KernelAndKextPatcherInit();
+    if (KernelData == NULL) {
+      return;
+    }
+
+    UINT32      deviceTreeP;
+    UINT32      deviceTreeLength;
+    EFI_STATUS  Status;
+
+    if (bootArgs1 != NULL) {
+        deviceTreeP = bootArgs1->deviceTreeP;
+        deviceTreeLength = bootArgs1->deviceTreeLength;
+    } else if (bootArgs2 != NULL) {
+        deviceTreeP = bootArgs2->deviceTreeP;
+        deviceTreeLength = bootArgs2->deviceTreeLength;
+    } else return;
+
+    Status = InjectKexts(deviceTreeP, &deviceTreeLength);
+
+    if (!EFI_ERROR(Status)) KernelBooterExtensionsPatch(KernelData);
+  }
+
   
 }
