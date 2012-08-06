@@ -113,6 +113,7 @@
 	Platform/kernel_patcher.h
 	Platform/kernel_patcher.c
 	Platform/kext_patcher.c
+	Platform/kext_inject.c
 	Platform/DbgTime.c
 
 

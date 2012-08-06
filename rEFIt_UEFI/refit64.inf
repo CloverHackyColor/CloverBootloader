@@ -113,6 +113,7 @@
 	Platform/kernel_patcher.h
 	Platform/kernel_patcher.c
 	Platform/kext_patcher.c
+	Platform/kext_inject.c
 	Platform/DbgTime.c
 
 
@@ -196,6 +197,7 @@
   gEfiScsiIoProtocolGuid                        ## PROTOCOL SOMETIMES_CONSUMES
   gEfiScsiPassThruProtocolGuid                  ## PROTOCOL SOMETIMES_CONSUMES
   gEfiSimpleNetworkProtocolGuid                 # PROTOCOL CONSUMES
+  gEfiStatusCodeRuntimeProtocolGuid				# PROTOCOL CONSUMES
   gEfiUgaDrawProtocolGuid |PcdUgaConsumeSupport # PROTOCOL SOMETIMES_CONSUMES
   
   gEfiAbsolutePointerProtocolGuid
@@ -208,7 +210,6 @@
   gEfiSimplePointerProtocolGuid
   gEfiSmbiosProtocolGuid
   gEfiSecurityArchProtocolGuid  
-  gEfiStatusCodeRuntimeProtocolGuid
 
   AppleDevicePropertyProtocolGuid
   gEfiConsoleControlProtocolGuid

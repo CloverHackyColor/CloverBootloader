@@ -80,6 +80,8 @@
   DxeServicesTableLib|MdePkg/Library/DxeServicesTableLib/DxeServicesTableLib.inf
   EfiFileLib|EmbeddedPkg/Library/EfiFileLib/EfiFileLib.inf
   #FileHandleLib|ShellPkg/Library/BaseFileHandleLib/BaseFileHandleLib.inf
+  UefiCpuLib|UefiCpuPkg/Library/BaseUefiCpuLib/BaseUefiCpuLib.inf
+  SecurityManagementLib|MdeModulePkg/Library/DxeSecurityManagementLib/DxeSecurityManagementLib.inf
   
   #
   # Generic Modules
@@ -213,7 +215,7 @@
       ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
   }
  #MdeModulePkg/Core/Dxe/DxeMain.inf {
-  Clover/OsxDxeCore/DxeMain.inf {
+ Clover/OsxDxeCore/DxeMain.inf {
     #
     # Enable debug output for DxeCore module, this is a sample for how to enable debug output
     # for a module. If need turn on debug output for other module, please copy following overriden
@@ -272,9 +274,9 @@
   }
   #MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
   Clover/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
-  Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
-  #UefiCpuPkg/CpuDxe/CpuDxe.inf
-  Clover/CpuDxe/Cpu.inf
+  #Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
+  UefiCpuPkg/CpuDxe/CpuDxe.inf
+  #Clover/CpuDxe/Cpu.inf
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
   #DuetPkg/AcpiResetDxe/Reset.inf
   Clover/AcpiReset/Reset.inf
@@ -313,12 +315,13 @@
   #Clover/VgaClassDxe/VgaClassDxe.inf
   #Clover/IntelGmaDxe/Gop.inf
   #DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
-  Clover/BiosVideo/BiosVideo.inf
+  #Clover/BiosVideo/BiosVideo.inf
+  Clover/BiosVideoAuto/BiosVideo.inf
+
 
   # IDE/AHCI Support
   #Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
   #Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
-  #DuetPkg/SataControllerDxe/SataControllerDxe.inf
   Clover/SataControllerDxe/SataControllerDxe.inf
   #MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
   Clover/AtaAtapi/AtaAtapiPassThru.inf
@@ -350,7 +353,7 @@
  
   # ACPI Support
   #MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
-   Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
+  Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
   #MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
   Clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
 
@@ -382,7 +385,7 @@
   Clover/FSInject/FSInject.inf
   Clover/MsgLog/MsgLog.inf
   
-  # Drivers for Aptio loading - should go to Clover's /EFI/drivers64 dir
+  # Drivers for Aptio loading - should go to Clover's /EFI/drivers64UEFI dir
   Clover/OsxFatBinaryDrv/OsxFatBinaryDrv.inf
   Clover/OsxAptioFixDrv/OsxAptioFixDrv.inf
 

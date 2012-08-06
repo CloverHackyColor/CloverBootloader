@@ -179,7 +179,7 @@ CHAR8* AppleSerialNumber[] = //random generated
 	"W8649476DQX",  //MBA31
   "C02HRJXWDRVC", //MBA52 - IvyBridge
 	"W88A56BYYL2",  //MM21 - merom GMA950 07/07
-  "C07G3VUFDJD0", //MM51
+  "C07G3VUFDJD0", //MM51 - sandy
 	"W89A00AAX88", //IM81 - merom 01/09
 	"W80AA98A5PE", //IM101 - wolfdale? E7600 01/09
   "G8942B1V5PJ", //IM111 - Nehalem

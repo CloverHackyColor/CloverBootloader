@@ -15,7 +15,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include "kernel_patcher.h"
 #include "mkext.h"
 
-#define PATCH_DEBUG 1
+#define PATCH_DEBUG 0
+#define MEM_DEB 0
 
 #if PATCH_DEBUG
 #define DBG(x...)	Print(x);
@@ -28,7 +29,23 @@ EFI_EVENT   OnReadyToBootEvent = NULL;
 EFI_EVENT   ExitBootServiceEvent = NULL;
 EFI_EVENT   mSimpleFileSystemChangeEvent = NULL;
 
+VOID WaitForCR()
+{
+  EFI_STATUS    Status;
+  EFI_INPUT_KEY key;
+  UINTN         ind;
 
+  while (TRUE) {
+    Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &key);
+    if (Status == EFI_NOT_READY) {
+      gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &ind);
+      continue;
+    }
+    if (key.UnicodeChar == CHAR_CARRIAGE_RETURN) {
+      break;
+    }
+  }
+}
 
 VOID CorrectMemoryMap(IN UINT32 memMap, 
                       IN UINT32 memDescriptorSize,
@@ -37,9 +54,15 @@ VOID CorrectMemoryMap(IN UINT32 memMap,
 	EfiMemoryRange*		memDescriptor;
 	UINT64              Bytes;
 	UINT32				Index;
+  CHAR16        tmp[80];
+  EFI_INPUT_KEY Key;
+//  UINTN         ind;
 	//
 	//step 1. Check for last empty descriptors
 	//
+ // PauseForKey(L"Check for last empty descriptors");
+//  gST->ConOut->OutputString (gST->ConOut, L"Check for last empty descriptors\n\r");
+//  gBS->Stall(2000000);
 	memDescriptor = (EfiMemoryRange *)(UINTN)(memMap + *memMapSize - memDescriptorSize);
 	while ((memDescriptor->NumberOfPages == 0) || (memDescriptor->NumberOfPages > (1<<25)))
 	{
@@ -71,37 +94,71 @@ VOID CorrectMemoryMap(IN UINT32 memMap,
       case EfiBootServicesData:  
         memDescriptor->Type = EfiConventionalMemory;
         memDescriptor->Attribute = 0;
+    //    DBG(L"Range BS %x corrected to conventional\n", memDescriptor->PhysicalStart);
+        if(MEM_DEB) {
+          UnicodeSPrint(tmp, 80, L"Range BS %x corrected to conventional\n\r", memDescriptor->PhysicalStart);
+          gST->ConOut->OutputString (gST->ConOut, tmp);
+         // gBS->Stall(2000000);
+          WaitForCR();
+        }
         break;
       default:
         break;
     }
     //
-    //step 4. free reserved memory
+    //step 4. free reserved memory if cachable
     if ((memDescriptor->Type == EfiReservedMemoryType) &&
         (memDescriptor->Attribute == EFI_MEMORY_WB)) {
       memDescriptor->Type = EfiConventionalMemory;
       memDescriptor->Attribute = 0;
+//      DBG(L"Range WB %x corrected to conventional\n", memDescriptor->PhysicalStart);
+      if(MEM_DEB) {
+        UnicodeSPrint(tmp, 80, L"Range WB %x corrected to conventional\n\r", memDescriptor->PhysicalStart);
+        gST->ConOut->OutputString (gST->ConOut, tmp);
+        //gBS->Stall(2000000);
+        WaitForCR();
+      }
     }
     //
-    
-  } //EFI_MEMORY_WB 
+  }
   
-	if(gSettings.Debug==TRUE) {
+	if(MEM_DEB) {
+    gST->ConOut->OutputString (gST->ConOut, L"press any key to dump MemoryMap\r\n");
+//    gBS->Stall(2000000);
+    WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+    
+    gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
 		
-//		WaitForKeyPress("press any key to dump MemoryMap");
+//		PauseForKey(L"press any key to dump MemoryMap");
 		memDescriptor = (EfiMemoryRange *)(UINTN)memMap;
 		for (Index = 0; Index < *memMapSize / memDescriptorSize; Index ++) {
 			Bytes = LShiftU64 (memDescriptor->NumberOfPages, 12);
-			Print(L"%lX-%lX  %lX %lX %X\n",
+	//		DBG(L"%lX-%lX  %lX %lX %X\n",
+      UnicodeSPrint(tmp, 80, L"%lX-%lX pages %lX type %lX attr %X \r\n\r\t",
                  memDescriptor->PhysicalStart, 
                  memDescriptor->PhysicalStart + Bytes - 1,
-                 memDescriptor->NumberOfPages, 
-                 memDescriptor->Attribute,
-                 (UINTN)memDescriptor->Type);
+                 memDescriptor->NumberOfPages,
+                 (UINTN)memDescriptor->Type,
+                 memDescriptor->Attribute
+                 );
+      gST->ConOut->OutputString (gST->ConOut, tmp);
+//      gBS->Stall(2000000);
+      
 			memDescriptor = (EfiMemoryRange *)((UINTN)memDescriptor + memDescriptorSize);
-//			if (Index % 20 == 19) {
-	//			WaitForKeyPress("press any key to next");
-  //			}
+			if (Index % 20 == 19) {
+				gST->ConOut->OutputString (gST->ConOut, L"press any key\r\n");
+        WaitForSingleEvent (gST->ConIn->WaitForKey, 0);
+//        gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
+/*        if (ReadAllKeyStrokes()) {  // remove buffered key strokes
+          gBS->Stall(5000000);     // 5 seconds delay
+          ReadAllKeyStrokes();    // empty the buffer again
+        }
+        
+        gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &ind);
+        ReadAllKeyStrokes();        // empty the buffer to protect the menu
+        WaitForCR();
+ */
+  		}
 		}
 	}
 	
@@ -111,12 +168,14 @@ VOID
 EFIAPI
 OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
 {
-		
+//	Print(L"OnExitBootServices.....+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
+  gST->ConOut->OutputString (gST->ConOut, L"+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
 	//
 	// Patch kernel and kexts if needed
 	//
 	KernelAndKextsPatcherStart();
-	
+    gBS->Stall(2000000);
+	//PauseForKey(L"press any key to MemoryFix");
 	if (gSettings.MemoryFix) {
     BootArgs1*				bootArgs1;
     BootArgs2*				bootArgs2;
@@ -138,6 +197,8 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
           dtRoot = (CHAR8*)(UINTN)bootArgs2->deviceTreeP;
           bootArgs2->efiMode = archMode; //correct to EFI arch
           Version = 2;
+     //     DBG(L"found bootarg v2");
+          gST->ConOut->OutputString (gST->ConOut, L"found bootarg v2");
           break;
         } 
         
@@ -152,6 +213,8 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
           dtRoot = (CHAR8*)(UINTN)bootArgs1->deviceTreeP;
           bootArgs1->efiMode = archMode;
           Version = 1;
+   //       DBG(L"found bootarg v1");
+          gST->ConOut->OutputString (gST->ConOut, L"found bootarg v1");
           break;
         }
       }
@@ -159,8 +222,9 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
       ptr+=0x1000;
       if((UINT32)(UINTN)ptr > 0x3000000)
       {
-        Print(L"bootArgs not found!\n");
-        //			gBS->Stall(5000000);
+ //       Print(L"bootArgs not found!\n");
+        gST->ConOut->OutputString (gST->ConOut, L"bootArgs not found!");
+        gBS->Stall(5000000);
         //			return;
         break;
       }
@@ -257,7 +321,7 @@ EFIAPI
 EventsInitialize ()
 {
 	EFI_STATUS			Status;
-	//VOID*           Registration = NULL;
+	VOID*           Registration = NULL;
 	
 	//
 	// Register the event to reclaim variable for OS usage.
@@ -278,7 +342,7 @@ EventsInitialize ()
 							   OnExitBootServices, 
 							   NULL,
 							   &ExitBootServiceEvent);
-  /*
+  
 	if(!EFI_ERROR(Status))
 	{
 		Status = gBS->RegisterProtocolNotify (
@@ -286,7 +350,7 @@ EventsInitialize ()
                  ExitBootServiceEvent,
                  &Registration);
 	}
-   */
+   
   
   
 	//

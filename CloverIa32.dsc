@@ -133,7 +133,7 @@
 [LibraryClasses.common.DXE_CORE]
   HobLib|MdePkg/Library/DxeCoreHobLib/DxeCoreHobLib.inf
   MemoryAllocationLib|MdeModulePkg/Library/DxeCoreMemoryAllocationLib/DxeCoreMemoryAllocationLib.inf
- 
+
 [LibraryClasses.common.PEIM]
   MemoryAllocationLib|MdePkg/Library/PeiMemoryAllocationLib/PeiMemoryAllocationLib.inf
   HobLib|MdePkg/Library/PeiHobLib/PeiHobLib.inf
@@ -313,7 +313,9 @@
   #Clover/VgaClassDxe/VgaClassDxe.inf
   #Clover/IntelGmaDxe/Gop.inf
   #DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
-  Clover/BiosVideo/BiosVideo.inf
+  #Clover/BiosVideo/BiosVideo.inf
+  Clover/BiosVideoAuto/BiosVideo.inf
+
 
   # IDE/AHCI Support
   #Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
@@ -358,7 +360,7 @@
   #MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
   #Clover/OsxPartitionDxe/PartitionDxe.inf
   Clover/PartitionDxe/PartitionDxe.inf
-  
+
   #FD
   #IntelFrameworkModulePkg/Universal/Acpi/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
   #Clover/SaveResume/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
@@ -381,7 +383,7 @@
   Clover/FSInject/FSInject.inf
   Clover/MsgLog/MsgLog.inf
   
-  # Drivers for Aptio loading - should go to Clover's /EFI/drivers64 dir
+  # Drivers for Aptio loading - should go to Clover's /EFI/drivers64UEFI ??? dir
   Clover/OsxFatBinaryDrv/OsxFatBinaryDrv.inf
 
 
