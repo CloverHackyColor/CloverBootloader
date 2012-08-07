@@ -9,7 +9,7 @@
 
 #include "ati.h"
 
-#define DEBUG_ATI 1
+#define DEBUG_ATI 2
 
 #if DEBUG_ATI == 2
 #define DBG(x...) AsciiPrint(x)
@@ -875,6 +875,7 @@ void get_vram_size(void)
       }
     }
   }	
+  DBG("ATI: get_vram_size returned 0x%x\n", card->vram_size);
 }
 
 BOOLEAN read_vbios(BOOLEAN from_pci)
@@ -890,7 +891,7 @@ BOOLEAN read_vbios(BOOLEAN from_pci)
 		rom_addr = (option_rom_header_t *)0xc0000;
 	
 	if (!validate_rom(rom_addr, card->pci_dev)){
-    DBG("There is no ROM @C0000\n");
+    DBG("There is no ROM @0x%x\n", rom_addr);
  //   gBS->Stall(3000000);
 		return FALSE;
   }
@@ -1142,7 +1143,10 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 			else
 				read_disabled_vbios();
 			DBG("\n");
-		}
+		} else {
+      DBG("VideoBIOS read from file\n");
+    }
+
   }
 	
 	if (card->info->chip_family >= CHIP_FAMILY_CEDAR)

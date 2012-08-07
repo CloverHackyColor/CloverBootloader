@@ -610,7 +610,7 @@ VOID CheckHardware()
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA)) {
             GetPciADR(DevicePath, &DisplayADR1[display], &DisplayADR2[display]);
-            DBG("VideoCard devID=0x%x\n", ((Device << 16) | Function));
+            DBG("VideoCard devID=0x%x\n", ((Pci.Hdr.DeviceId << 16) | Pci.Hdr.VendorId));
             UINT32 dadr1 = DisplayADR1[display];
             UINT32 dadr2 = DisplayADR2[display];
             DBG("DisplayADR1[%d] = 0x%x, DisplayADR2[%d] = 0x%x\n", display, dadr1, display, dadr2);

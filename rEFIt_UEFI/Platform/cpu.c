@@ -171,8 +171,8 @@ VOID GetCPUProperties (VOID)
       case CPU_MODEL_JAKETOWN:
       case CPU_MODEL_SANDY_BRIDGE:	
 			case CPU_MODEL_IVY_BRIDGE:	
-        msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);
-        gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 31, 16);
+        msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);  //0x35
+        gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 31, 16);  
         gCPUStructure.Threads = (UINT8)bitfield((UINT32)msr, 15,  0);
         break;
         
@@ -293,10 +293,10 @@ VOID GetCPUProperties (VOID)
           case CPU_MODEL_SANDY_BRIDGE:// Sandy Bridge, 32nm
           case CPU_MODEL_IVY_BRIDGE:  
           case CPU_MODEL_JAKETOWN:		
-            msr = AsmReadMsr64(MSR_PLATFORM_INFO);            
+            msr = AsmReadMsr64(MSR_PLATFORM_INFO);       //0xCE     
             gCPUStructure.MaxRatio = (UINT8)(msr >> 8) & 0xff;
             gCPUStructure.MinRatio = ((UINT8)(msr >> 40) & 0xff) * 10;
-            msr = AsmReadMsr64(MSR_FLEX_RATIO);
+            msr = AsmReadMsr64(MSR_FLEX_RATIO);   //0x194
             if ((msr >> 16) & 0x01)
             {
               MsgLog("non-usable FLEX_RATIO = %x\n", msr);
@@ -319,11 +319,11 @@ VOID GetCPUProperties (VOID)
               gCPUStructure.FSBFrequency = 100ULL * Mega;
             }
 
-            msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);
+            msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);  //0x198
             gCPUStructure.MaxRatio = (UINT8)((msr >> 8) & 0xff);
             TurboMsr = msr + (1 << 8);
             
-            msr = AsmReadMsr64(MSR_TURBO_RATIO_LIMIT);              
+            msr = AsmReadMsr64(MSR_TURBO_RATIO_LIMIT);   //0x1AD           
             gCPUStructure.Turbo1 = (UINT8)(msr >> 0) & 0xff;
             gCPUStructure.Turbo2 = (UINT8)(msr >> 8) & 0xff;
             gCPUStructure.Turbo3 = (UINT8)(msr >> 16) & 0xff;
