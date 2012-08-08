@@ -3,6 +3,9 @@
  *
  *  Copyright (C) 2009  Jasmin Fazlic, iNDi
  *
+ *	NVidia injector modified by Fabio (ErmaC) on May 2012,
+ *	for allow the cosmetics injection also based on SubVendorID and SubDeviceID.
+ *
  *  NVidia injector is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or
@@ -15,12 +18,9 @@
  *
  *  You should have received a copy of the GNU General Public License
  *  along with NVidia injector.  If not, see <http://www.gnu.org/licenses/>.
- */
- /*
+ *
  * Alternatively you can choose to comply with APSL
- */
- 
-/*
+ *
  * DCB-Table parsing is based on software (nouveau driver) originally distributed under following license:
  *
  *
@@ -56,10 +56,12 @@ extern CHAR8* gDeviceProperties;
 	
 BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev);
 
-struct nv_chipsets_t {
-	UINT32 device;
-	CHAR8 *name;
-};
+typedef struct
+{
+	UINT32 device; // VendorID + DeviceID
+	UINT32 subdev; // SubdeviceID + SubvendorID
+	CHAR8 *name_model;
+}nvidia_card_info_t;
 
 #define DCB_MAX_NUM_ENTRIES 16
 #define DCB_MAX_NUM_I2C_ENTRIES 16
@@ -71,6 +73,19 @@ struct bios {
 	UINT8		size;			/* Size in multiples of 512 */
 };
 
+#define NVIDIA_ROM_SIZE				0x10000
+#define PATCH_ROM_SUCCESS			1
+#define PATCH_ROM_SUCCESS_HAS_LVDS	2
+#define PATCH_ROM_FAILED			0
+#define MAX_NUM_DCB_ENTRIES			16
+#define TYPE_GROUPED				0xff
+
+#define NVCAP_LEN ( sizeof(default_NVCAP) / sizeof(UINT8) )
+#define NVPM_LEN ( sizeof(default_NVPM) / sizeof(UINT8) )
+#define DCFG0_LEN ( sizeof(default_dcfg_0) / sizeof(UINT8) )
+#define DCFG1_LEN ( sizeof(default_dcfg_1) / sizeof(UINT8) )
+
+#define NV_SUB_IDS							0x00000000
 #define NV_PMC_OFFSET							0x000000
 #define NV_PMC_SIZE								0x2ffff
 #define NV_PDISPLAY_OFFSET						0x610000

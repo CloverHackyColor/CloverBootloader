@@ -816,6 +816,8 @@ static VOID ScanLoader(VOID)
     StrCpy(FileName, L"\\OS X Install Data\\boot.efi");
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->BootType = BOOTING_BY_EFI;
+      Volume->OSType = OSTYPE_COUGAR;
+      Volume->OSIconName = L"cougar";
       Entry = AddLoaderEntry(FileName, L"OS X Install", Volume, Volume->OSType);
       continue; //boot MacOSX only
     }
@@ -823,6 +825,8 @@ static VOID ScanLoader(VOID)
     StrCpy(FileName, L"\\Mac OS X Install Data\\boot.efi");
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->BootType = BOOTING_BY_EFI;
+      Volume->OSType = OSTYPE_LION;
+      Volume->OSIconName = L"lion";      
       Entry = AddLoaderEntry(FileName, L"Mac OS X Install", Volume, Volume->OSType);
       continue; //boot MacOSX only
     }
@@ -833,6 +837,8 @@ static VOID ScanLoader(VOID)
     StrCpy(FileName, L"\\.IABootFiles\\boot.efi");
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->BootType = BOOTING_BY_EFI;
+      Volume->OSType = OSTYPE_COUGAR;
+      Volume->OSIconName = L"cougar";
       Entry = AddLoaderEntry(FileName, L"OS X Install", Volume, Volume->OSType);
       continue; //boot MacOSX only
     }
@@ -842,6 +848,7 @@ static VOID ScanLoader(VOID)
     StrCpy(FileName,  L"\\com.apple.recovery.boot\\boot.efi");
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->BootType = BOOTING_BY_EFI;
+//      Volume->OSType = OSTYPE_COUGAR; //my recovery partition is recognized
       Entry = AddLoaderEntry(FileName, L"Recovery", Volume, Volume->OSType);
       continue; //boot MacOSX only
     }
