@@ -867,6 +867,7 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
   CHAR16*     SystemPlist = L"System\\Library\\CoreServices\\SystemVersion.plist";
   CHAR16*     ServerPlist = L"System\\Library\\CoreServices\\ServerVersion.plist";
   CHAR16*     RecoveryPlist = L"\\com.apple.recovery.boot\\SystemVersion.plist";
+  CHAR16*     InstallPlist = L"\\OS X Install Data\\com.apple.Boot.plist";
   
   if (!Volume) {
     return EFI_NOT_FOUND;
@@ -886,6 +887,16 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 	{
 		Status = egLoadFile(Volume->RootDir, RecoveryPlist, (UINT8 **)&plistBuffer, &plistLen);
 	}
+  else if(FileExists(Volume->RootDir, InstallPlist))
+	{
+    
+    Volume->OSType = OSTYPE_COUGAR;
+    Volume->OSIconName = L"mac";
+    Volume->BootType = BOOTING_BY_EFI;
+    return EFI_SUCCESS;
+	}
+
+  
 	if(!EFI_ERROR(Status))
 	{
 		if(ParseXML(plistBuffer, &dict) != EFI_SUCCESS)
@@ -946,7 +957,7 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 EFI_STATUS GetEdid(VOID)
 {
 	EFI_STATUS						Status;
-//	UINTN i, j;
+	UINTN i, j;
   UINTN N;
   gEDID = NULL;
   
@@ -961,13 +972,13 @@ EFI_STATUS GetEdid(VOID)
 		}
     gEDID = AllocateAlignedPages(EFI_SIZE_TO_PAGES(N), 128);
     CopyMem(gEDID, EdidDiscovered->Edid, N);
-/*		for (i=0; i<N; i+=16) {
+		for (i=0; i<N; i+=16) {
 			MsgLog("%02x: ", i);
 			for (j=0; j<16; j++) {
 				MsgLog("%02x ", EdidDiscovered->Edid[i+j]);
 			}
 			MsgLog("\n");		   
-		} */
+		}
 	}
   return Status;
 }

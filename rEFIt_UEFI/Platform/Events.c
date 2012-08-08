@@ -87,8 +87,8 @@ VOID CorrectMemoryMap(IN UINT32 memMap,
   for (Index = 0; Index < *memMapSize / memDescriptorSize; Index ++) {
     //
     //step 3. convert BootServiceData to conventional
-    //
-    switch (memDescriptor->Type) {
+    // not needed as performed by mach_kernel
+/*    switch (memDescriptor->Type) {
       case EfiLoaderData:
       case EfiBootServicesCode:
       case EfiBootServicesData:  
@@ -105,19 +105,29 @@ VOID CorrectMemoryMap(IN UINT32 memMap,
       default:
         break;
     }
+ */
     //
     //step 4. free reserved memory if cachable
     if ((memDescriptor->Type == EfiReservedMemoryType) &&
         (memDescriptor->Attribute == EFI_MEMORY_WB)) {
       memDescriptor->Type = EfiConventionalMemory;
-      memDescriptor->Attribute = 0;
+      memDescriptor->Attribute = 0xF;
 //      DBG(L"Range WB %x corrected to conventional\n", memDescriptor->PhysicalStart);
       if(MEM_DEB) {
         UnicodeSPrint(tmp, 80, L"Range WB %x corrected to conventional\n\r", memDescriptor->PhysicalStart);
         gST->ConOut->OutputString (gST->ConOut, tmp);
         //gBS->Stall(2000000);
-        WaitForCR();
+ //       WaitForCR();
       }
+    }
+    //
+    //step 5. free reserved memory if base >= 20000 & <= 60000
+    //xxx
+    if ((memDescriptor->Type == EfiReservedMemoryType) &&
+        (memDescriptor->PhysicalStart >= 0x20000000) &&
+        (memDescriptor->PhysicalStart <= 0x60000000)) {
+      memDescriptor->Type = EfiConventionalMemory;
+      memDescriptor->Attribute = 0xF;
     }
     //
   }
