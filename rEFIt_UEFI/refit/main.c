@@ -119,40 +119,58 @@ static VOID AboutRefit(VOID)
 
 static VOID HelpRefit(VOID)
 {
-    if (HelpMenu.EntryCount == 0) {
-        HelpMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_HELP);
-        if (gLanguage == russian) {
-            AddMenuInfoLine(&HelpMenu, L"ESC - Выход из подменю, обновление главного меню");
-            AddMenuInfoLine(&HelpMenu, L"F1  - Помощь по горячим клавишам");
-            AddMenuInfoLine(&HelpMenu, L"F2  - Сохранить отчет в preboot.log (только если FAT32)");
-            AddMenuInfoLine(&HelpMenu, L"F4  - Родной DSDT сохранить в EFI/ACPI/origin/ (FAT32)");
-            AddMenuInfoLine(&HelpMenu, L"F10 - Снимок экрана в папку EFI/misc/ (только FAT32)");
-            AddMenuInfoLine(&HelpMenu, L"F12 - Извлечь указанный DVD");
-            AddMenuInfoLine(&HelpMenu, L"Пробел - Подробнее о выбранном пункте");
-            AddMenuInfoLine(&HelpMenu, L"Цифры 1-9 - Быстрый запуск тома по порядку в меню");
-            AddMenuInfoLine(&HelpMenu, L"A - О загрузчике");
-            AddMenuInfoLine(&HelpMenu, L"O - Дополнительные настройки");
-            AddMenuInfoLine(&HelpMenu, L"R - Теплый перезапуск");
-            AddMenuInfoLine(&HelpMenu, L"U - Выключить");
-
-        } else {
-            AddMenuInfoLine(&HelpMenu, L"ESC - Escape from submenu, Refresh main menu");
-            AddMenuInfoLine(&HelpMenu, L"F1  - This help");
-            AddMenuInfoLine(&HelpMenu, L"F2  - Save preboot.log (FAT32 only)");
-            AddMenuInfoLine(&HelpMenu, L"F4  - Save oem DSDT into EFI/ACPI/origin/ (FAT32 only)");
-            AddMenuInfoLine(&HelpMenu, L"F10 - Save screenshot into EFI/misc/ (FAT32 only)");
-            AddMenuInfoLine(&HelpMenu, L"F12 - Eject selected volume (DVD)");
-            AddMenuInfoLine(&HelpMenu, L"Space - Details about selected menu entry");
-            AddMenuInfoLine(&HelpMenu, L"Digits 1-9 - Shortcut to menu entry");
-            AddMenuInfoLine(&HelpMenu, L"A - Menu About");
-            AddMenuInfoLine(&HelpMenu, L"O - Menu Options");
-            AddMenuInfoLine(&HelpMenu, L"R - Soft Reset");
-            AddMenuInfoLine(&HelpMenu, L"U - Shutdown");
-        }        
-        AddMenuEntry(&HelpMenu, &MenuEntryReturn);
-    }
-    
-    RunMenu(&HelpMenu, NULL);
+  if (HelpMenu.EntryCount == 0) {
+    HelpMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_HELP);
+    switch (gLanguage)
+    {
+      case russian:
+        AddMenuInfoLine(&HelpMenu, L"ESC - Выход из подменю, обновление главного меню");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Помощь по горячим клавишам");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Сохранить отчет в preboot.log (только если FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Родной DSDT сохранить в EFI/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Снимок экрана в папку EFI/misc/ (только FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Извлечь указанный DVD");
+        AddMenuInfoLine(&HelpMenu, L"Пробел - Подробнее о выбранном пункте");
+        AddMenuInfoLine(&HelpMenu, L"Цифры 1-9 - Быстрый запуск тома по порядку в меню");
+        AddMenuInfoLine(&HelpMenu, L"A - О загрузчике");
+        AddMenuInfoLine(&HelpMenu, L"O - Дополнительные настройки");
+        AddMenuInfoLine(&HelpMenu, L"R - Теплый перезапуск");
+        AddMenuInfoLine(&HelpMenu, L"U - Выключить");
+        break;
+      case italian:
+        AddMenuInfoLine(&HelpMenu, L"ESC - Esci dal submenu, Aggiorna menu principale");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Aiuto");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Salva il preboot.log (solo su FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Salva il DSDT oem in EFI/ACPI/origin/ (solo suFAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Salva screenshot in EFI/misc/ (solo su FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Espelli il volume selezionato (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Spazio - Dettagli sul menu selezionato");
+        AddMenuInfoLine(&HelpMenu, L"Digita 1-9 - Abbreviazioni per il menu");
+        AddMenuInfoLine(&HelpMenu, L"A - Informazioni");
+        AddMenuInfoLine(&HelpMenu, L"O - Menu Opzioni");
+        AddMenuInfoLine(&HelpMenu, L"R - Riavvio");
+        AddMenuInfoLine(&HelpMenu, L"U - Spegnimento");
+        break;
+      case english:
+      default:
+        AddMenuInfoLine(&HelpMenu, L"ESC - Escape from submenu, Refresh main menu");
+        AddMenuInfoLine(&HelpMenu, L"F1  - This help");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Save preboot.log (FAT32 only)");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Save oem DSDT into EFI/ACPI/origin/ (FAT32 only)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Save screenshot into EFI/misc/ (FAT32 only)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Eject selected volume (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Space - Details about selected menu entry");
+        AddMenuInfoLine(&HelpMenu, L"Digits 1-9 - Shortcut to menu entry");
+        AddMenuInfoLine(&HelpMenu, L"A - Menu About");
+        AddMenuInfoLine(&HelpMenu, L"O - Menu Options");
+        AddMenuInfoLine(&HelpMenu, L"R - Soft Reset");
+        AddMenuInfoLine(&HelpMenu, L"U - Shutdown");
+        break;
+    }        
+    AddMenuEntry(&HelpMenu, &MenuEntryReturn);
+  }
+  
+  RunMenu(&HelpMenu, NULL);
 }
 
 

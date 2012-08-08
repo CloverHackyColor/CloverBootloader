@@ -714,6 +714,7 @@ typedef struct {
 typedef enum {
   english,  //en
   russian,  //ru
+  italian,  //it
   chinese   //cn
   //something else? add, please
 } LANGUAGES;

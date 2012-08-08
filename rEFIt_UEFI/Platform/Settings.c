@@ -354,11 +354,12 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         //       AsciiStrToUnicodeStr(prop->string, gSettings.Language);
         AsciiStrCpy(gSettings.Language,  prop->string);
         if (AsciiStrStr(prop->string, "en")) {
-          gLanguage = english;
-        } else
-          if (AsciiStrStr(prop->string, "ru")) {
+            gLanguage = english;
+        } else if (AsciiStrStr(prop->string, "ru")) {
             gLanguage = russian;
-          } //else
+        } else if (AsciiStrStr(prop->string, "it")) {
+            gLanguage = italian;
+        }
       }
       
       prop = GetProperty(dictPointer, "boot-args");
