@@ -868,8 +868,8 @@ BOOLEAN setup_ati_devprop(pci_dt_t *ati_dev);
 BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev);
 CHAR8*  get_gma_model(IN UINT16 DeviceID);
 BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev);
-CHAR8*  get_nvidia_model(IN UINT16 DeviceID);
-
+//CHAR8*  get_nvidia_model(IN UINT16 DeviceID);
+CHAR8 *get_nvidia_model(UINT32 device_id, UINT32 subsys_id);
 
 EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha);
 

@@ -1052,7 +1052,7 @@ VOID GetDevices(VOID)
               break;
             case 0x10de:
               gGraphics[NGFX].Vendor = Nvidia;
-              AsciiSPrint(gGraphics[NGFX].Model, 64, "%a", get_nvidia_model(Pci.Hdr.DeviceId));
+              AsciiSPrint(gGraphics[NGFX].Model, 64, "%a", get_nvidia_model(Pci.Hdr.DeviceId, Pci.Device.SubsystemID));
               gGraphics[NGFX].Ports = 2;
               break;
             default:
