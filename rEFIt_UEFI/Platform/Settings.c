@@ -867,7 +867,8 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
   CHAR16*     SystemPlist = L"System\\Library\\CoreServices\\SystemVersion.plist";
   CHAR16*     ServerPlist = L"System\\Library\\CoreServices\\ServerVersion.plist";
   CHAR16*     RecoveryPlist = L"\\com.apple.recovery.boot\\SystemVersion.plist";
-  CHAR16*     InstallPlist = L"\\OS X Install Data\\com.apple.Boot.plist";
+  CHAR16*     InstallLionPlist = L"\\Mac OS X Install Data\\com.apple.Boot.plist";
+  CHAR16*     InstallMountainPlist = L"\\OS X Install Data\\com.apple.Boot.plist";
   
   if (!Volume) {
     return EFI_NOT_FOUND;
@@ -887,15 +888,22 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 	{
 		Status = egLoadFile(Volume->RootDir, RecoveryPlist, (UINT8 **)&plistBuffer, &plistLen);
 	}
-  else if(FileExists(Volume->RootDir, InstallPlist))
+	/* Mac OS X Lion Installer */
+  else if(FileExists(Volume->RootDir, InstallLionPlist))
 	{
-    
-    Volume->OSType = OSTYPE_COUGAR;
-    Volume->OSIconName = L"mac";
+		Volume->OSType = OSTYPE_LION;
+		Volume->OSIconName = L"mac";
     Volume->BootType = BOOTING_BY_EFI;
     return EFI_SUCCESS;
 	}
-
+	/* Mac OS X Mountain Lion Installer */
+  else if(FileExists(Volume->RootDir, InstallMountainPlist))
+	{
+		Volume->OSType = OSTYPE_COUGAR;
+		Volume->OSIconName = L"mac";
+    Volume->BootType = BOOTING_BY_EFI;
+    return EFI_SUCCESS;
+	}
   
 	if(!EFI_ERROR(Status))
 	{
@@ -1063,7 +1071,10 @@ VOID GetDevices(VOID)
               break;
             case 0x10de:
               gGraphics[NGFX].Vendor = Nvidia;
-              AsciiSPrint(gGraphics[NGFX].Model, 64, "%a", get_nvidia_model(Pci.Hdr.DeviceId, Pci.Device.SubsystemID));
+              AsciiSPrint(gGraphics[NGFX].Model, 64, "%a",
+                          get_nvidia_model(((Pci.Hdr.VendorId <<16) | Pci.Hdr.DeviceId),
+                                           ((Pci.Device.SubsystemVendorID << 16) | Pci.Device.SubsystemID)));
+              DBG("Found NVidia model=%a\n", gGraphics[NGFX].Model);
               gGraphics[NGFX].Ports = 2;
               break;
             default:
