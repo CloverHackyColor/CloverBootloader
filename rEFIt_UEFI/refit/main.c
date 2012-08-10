@@ -1731,7 +1731,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   INTN              DefaultIndex;
   UINTN             MenuExit;
   UINTN             Size, i;
-  UINT8             *Buffer = NULL;
   CHAR8             *MsgBuffer = NULL;
   // CHAR16            *InputBuffer; //, *Y;
   //  EFI_INPUT_KEY Key;
@@ -1852,7 +1851,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   //      DBG("SetPrivateVarProto OK\n");
   GetDefaultSettings();
   //      DBG("GetDefaultSettings OK\n");
-  Size = 0;
+  //is it obsolete?
+/*  Size = 0;
+ UINT8             *Buffer = NULL;
+
   Status = gRS->GetVariable(L"boot-args",
                             &gEfiAppleBootGuid,  NULL,
                             &Size, 										   
@@ -1877,7 +1879,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       gBS->FreePages((EFI_PHYSICAL_ADDRESS) (UINTN)Buffer, EFI_SIZE_TO_PAGES(Size));
       Buffer = NULL;
     }
-  
+*/  
   //Second step. Load config.plist into gSettings	
 	Status = GetUserSettings(SelfRootDir);  
   //      DBG("GetUserSettings OK\n");

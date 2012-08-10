@@ -206,7 +206,8 @@ GenMemoryMap (
       //
       // Update Memory Ceiling
       //
-      if ((BaseAddress >= 0x100000) && (BaseAddress < 0x100000000ULL)) {
+      //Slice - there was (BaseAddress >= 0x100000ULL) - the bred of sieve of cable
+      if ((BaseAddress >= 0x60000000ULL) && (BaseAddress < 0x100000000ULL)) {
         if (Ceiling > BaseAddress) {
           Ceiling = BaseAddress;
         }
