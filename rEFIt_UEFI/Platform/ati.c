@@ -430,6 +430,7 @@ AtiDevProp ati_devprop_list[] = {
 //  {FLAGTRUE,	TRUE,	"@0,display-type",          NULL,					STRVAL("NONE")			},
 	{FLAGTRUE,	TRUE,	"@0,name",                    get_name_val,			NULVAL          },
 //  {FLAGTRUE,	TRUE,	"@0,VRAM,memsize",			get_vrammemsize_val,	NULVAL          },
+  {FLAGTRUE,	TRUE,	"@0,ATY,memsize",			get_vrammemsize_val,	NULVAL          },
 	
   {FLAGTRUE,	FALSE,	"AAPL,aux-power-connected", NULL,					DWRVAL((UINT32)1)		},
   {FLAGTRUE,	FALSE,	"AAPL00,DualLink",          NULL,					DWRVAL((UINT32)1)		},
@@ -871,7 +872,7 @@ void get_vram_size(void)
         card->vram_size = REG32(card->mmio, RADEON_CONFIG_APER_SIZE);
         //Slice - previously I successfully made Radeon9000 working
         //by writing this register
-        WRITEREG32(card->mmio, RADEON_CONFIG_MEMSIZE, 0x30000);
+      //  WRITEREG32(card->mmio, RADEON_CONFIG_MEMSIZE, 0x30000);
       }
     }
   }	
