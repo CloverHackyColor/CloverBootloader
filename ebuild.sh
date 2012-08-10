@@ -380,7 +380,8 @@ cp -v $BUILD_DIR/X64/FSInject.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/d
 cp -v $BUILD_DIR/X64/FSInject.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64UEFI/FSInject-64.efi
 #cp -v $BUILD_DIR/X64/VBoxIso9600.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/VBoxIso9600-64.efi
 cp -v $BUILD_DIR/X64/VBoxExt2.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/VBoxExt2-64.efi
-cp -v $BUILD_DIR/X64/PartitionDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/PartitionDxe.efi-64.efi
+cp -v $BUILD_DIR/X64/PartitionDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/PartitionDxe-64.efi
+cp -v $BUILD_DIR/X64/DataHubDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/DataHubDxe-64.efi
 
 #cp -v $BUILD_DIR/X64/Ps2KeyboardDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/Ps2KeyboardDxe-64.efi
 #cp -v $BUILD_DIR/X64/Ps2MouseAbsolutePointerDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/Ps2MouseAbsolutePointerDxe-64.efi
@@ -403,7 +404,7 @@ cp -v $BUILD_DIR/FV/boot7 $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/X
 cp -v $BUILD_DIR/X64/FSInject.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64/FSInject-64.efi
 #cp -v $BUILD_DIR/X64/VBoxIso9600.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/VBoxIso9600-64.efi
 cp -v $BUILD_DIR/X64/VBoxExt2.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/VBoxExt2-64.efi
-cp -v $BUILD_DIR/X64/PartitionDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/PartitionDxe.efi-64.efi
+cp -v $BUILD_DIR/X64/PartitionDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/PartitionDxe-64.efi
 
 #cp -v $BUILD_DIR/X64/Ps2KeyboardDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/Ps2KeyboardDxe-64.efi
 #cp -v $BUILD_DIR/X64/Ps2MouseAbsolutePointerDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/Ps2MouseAbsolutePointerDxe-64.efi
