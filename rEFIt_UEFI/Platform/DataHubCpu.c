@@ -79,7 +79,7 @@ CopyRecord(PLATFORM_DATA* Rec, const CHAR16* Name, VOID* Val, UINT32 ValLen)
     return (sizeof(EFI_SUBCLASS_TYPE1_HEADER) + 8 + Rec->NameLen + Rec->ValLen);
 }
 
-EFI_STATUS EFIAPI
+EFI_STATUS
 LogDataHub(
            EFI_GUID					*TypeGuid,
            CHAR16                      *Name,

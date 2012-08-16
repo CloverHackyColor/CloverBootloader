@@ -292,7 +292,7 @@ static EFI_STATUS StartEFIImage(IN EFI_DEVICE_PATH *DevicePath,
 // Null ConOut OutputString() implementation - for blocking
 // text output from boot.efi when booting in graphics mode
 //
-EFI_STATUS
+EFI_STATUS EFIAPI
 NullConOutOutputString(IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This, IN CHAR16 *String) {
 	return EFI_SUCCESS;
 }

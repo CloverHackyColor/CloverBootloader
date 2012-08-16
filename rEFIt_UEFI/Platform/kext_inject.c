@@ -166,7 +166,7 @@ UINT32 GetKextsSize()
 	return kextsSize;
 }
 
-EFI_STATUS EFIAPI LoadKexts(IN LOADER_ENTRY *Entry)
+EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 {
 	EFI_STATUS              Status;
 	REFIT_VOLUME            *Volume;
@@ -242,7 +242,7 @@ EFI_STATUS EFIAPI LoadKexts(IN LOADER_ENTRY *Entry)
 ////////////////////
 // OnExitBootServices
 ////////////////////
-EFI_STATUS EFIAPI InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP, IN UINT32* deviceTreeLength)
+EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP, IN UINT32* deviceTreeLength)
 {
 	UINT8					*dtEntry = (UINT8*)(UINTN) deviceTreeP;
 	UINTN					dtLength = (UINTN) *deviceTreeLength;

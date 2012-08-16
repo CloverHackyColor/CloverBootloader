@@ -68,7 +68,6 @@ EFI_CONSOLE_CONTROL_PROTOCOL gConsoleController =
 //EFI_GUID gEfiConsoleControlProtocolGuid = EFI_CONSOLE_CONTROL_PROTOCOL_GUID;
 
 EFI_STATUS
-EFIAPI
 InitializeConsoleSim ()
 {
   EFI_STATUS              Status;

@@ -86,8 +86,8 @@ typedef struct
 ////////////////////
 // functions
 ////////////////////
-EFI_STATUS EFIAPI LoadKexts(IN LOADER_ENTRY *Entry);
-EFI_STATUS EFIAPI InjectKexts(IN UINT32 deviceTreeP, IN UINT32* deviceTreeLength);
+EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry);
+EFI_STATUS InjectKexts(IN UINT32 deviceTreeP, IN UINT32* deviceTreeLength);
 
 VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *KernelData);
 

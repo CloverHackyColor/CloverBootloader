@@ -107,7 +107,7 @@ typedef struct {
 	EFI_SCREEN_INFO_FUNCTION GetScreenInfo;	
 } EFI_INTERFACE_SCREEN_INFO;
 
-EFI_STATUS GetScreenInfo(VOID* This, UINT64* baseAddress, UINT64* frameBufferSize,
+EFI_STATUS EFIAPI GetScreenInfo(VOID* This, UINT64* baseAddress, UINT64* frameBufferSize,
                          UINT32* bpr, UINT32* w, UINT32* h, UINT32* colorDepth)
 {
 	EFI_GRAPHICS_OUTPUT_PROTOCOL	*GraphicsOutput=NULL;
@@ -139,7 +139,7 @@ EFI_INTERFACE_SCREEN_INFO mScreenInfo=
 	GetScreenInfo
 };
 
-EFI_STATUS EFIAPI
+EFI_STATUS
 SetPrivateVarProto(VOID)
 {
   EFI_STATUS  Status;

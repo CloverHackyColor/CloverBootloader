@@ -145,7 +145,6 @@ EfiStrDuplicate (
 }
 //Compare strings case insensitive
 INTN
-EFIAPI
 StriCmp (
 		IN      CONST CHAR16              *FirstString,
 		IN      CONST CHAR16              *SecondString

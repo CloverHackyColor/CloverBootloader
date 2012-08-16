@@ -327,7 +327,6 @@ GuiEventsInitialize ()
 }  
 
 EFI_STATUS
-EFIAPI
 EventsInitialize ()
 {
 	EFI_STATUS			Status;
