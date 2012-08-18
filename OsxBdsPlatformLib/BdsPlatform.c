@@ -157,6 +157,7 @@ UpdateMemoryMap (
   UINTN                           Index;
   EFI_PHYSICAL_ADDRESS            Memory;
   EFI_GCD_MEMORY_SPACE_DESCRIPTOR Descriptor;
+  EFI_PHYSICAL_ADDRESS            FirstNonConventionalAddr;
   
   GuidHob.Raw = GetFirstGuidHob (&gLdrMemoryDescriptorGuid);
   if (GuidHob.Raw == NULL) {
@@ -174,6 +175,7 @@ UpdateMemoryMap (
   //
   // Add ACPINVS, ACPIReclaim, and Reserved memory to MemoryMap
   //
+  FirstNonConventionalAddr = 0xFFFFFFFF;
   for (Index = 0; Index < MemoryDescHob.MemDescCount; Index++) {
     if (MemoryDescHob.MemDesc[Index].PhysicalStart < 0x100000) {
       continue;
@@ -190,6 +192,11 @@ UpdateMemoryMap (
 //      DEBUG ((EFI_D_ERROR, "PageNumber    - 0x%016lx, ", MemoryDescHob.MemDesc[Index].NumberOfPages));
 //      DEBUG ((EFI_D_ERROR, "Attribute     - 0x%016lx, ", MemoryDescHob.MemDesc[Index].Attribute));
 //      DEBUG ((EFI_D_ERROR, "Type          - 0x%08x\n", MemoryDescHob.MemDesc[Index].Type));
+      
+      if (MemoryDescHob.MemDesc[Index].PhysicalStart < FirstNonConventionalAddr) {
+        FirstNonConventionalAddr = MemoryDescHob.MemDesc[Index].PhysicalStart;
+      }
+      
       if ((MemoryDescHob.MemDesc[Index].Type == EfiRuntimeServicesData) ||
           (MemoryDescHob.MemDesc[Index].Type == EfiRuntimeServicesCode)) {
         //
@@ -277,6 +284,34 @@ UpdateMemoryMap (
         continue;
       }
     }
+  }
+  
+  //
+  // dmazar: Part of mem fix when "available" memory regions are marked as "reserved"
+  // if they were above first non-avaialable region in BIOS mem map.
+  // We have left those regions as EfiConventionalMemory in EfiLdr/Support.c GenMemoryMap()
+  // and now we will add them to GCD and UEFI mem map
+  //
+  for (Index = 0; Index < MemoryDescHob.MemDescCount; Index++) {
+    if (MemoryDescHob.MemDesc[Index].PhysicalStart < 0x100000) {
+      continue;
+    }
+    if (MemoryDescHob.MemDesc[Index].PhysicalStart >= 0x100000000ULL) {
+      continue;
+    }
+    if (MemoryDescHob.MemDesc[Index].Type != EfiConventionalMemory) {
+      continue;
+    }
+    if (MemoryDescHob.MemDesc[Index].PhysicalStart < FirstNonConventionalAddr) {
+      continue;
+    }
+    // this is our candidate - add it
+    Status = gDS->AddMemorySpace (
+                                  EfiGcdMemoryTypeSystemMemory,
+                                  MemoryDescHob.MemDesc[Index].PhysicalStart,
+                                  LShiftU64 (MemoryDescHob.MemDesc[Index].NumberOfPages, EFI_PAGE_SHIFT),
+                                  MemoryDescHob.MemDesc[Index].Attribute
+                                  );
   }
   
 }

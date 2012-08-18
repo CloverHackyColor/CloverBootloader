@@ -206,8 +206,7 @@ GenMemoryMap (
       //
       // Update Memory Ceiling
       //
-      //Slice - there was (BaseAddress >= 0x100000ULL) - the bred of sieve of cable
-      if ((BaseAddress >= 0x60000000ULL) && (BaseAddress < 0x100000000ULL)) {
+      if ((BaseAddress >= 0x100000) && (BaseAddress < 0x100000000ULL)) {
         if (Ceiling > BaseAddress) {
           Ceiling = BaseAddress;
         }
@@ -224,6 +223,7 @@ GenMemoryMap (
   }
   
   //Slice - Add two more descriptors?
+  /* dmazar: does not have effect, so removed
   EfiAddMemoryDescriptor (
                           NumberOfMemoryMapEntries,
                           EfiMemoryDescriptor,
@@ -241,9 +241,15 @@ GenMemoryMap (
                           0x20,
                           EFI_MEMORY_UC
                           );
+   */
+  
   //
   // Update MemoryMap according to Ceiling
   //
+  /* dmazar: Or not?
+   * We'll leave BIOS mem map untouched and add those EfiConventionalMemory
+   * areas to UEFI mem map in BdsPlatformLib:UpdateMemoryMap().
+   *
   for (Index = 0; Index < *NumberOfMemoryMapEntries; Index++) {
     if ((EfiMemoryDescriptor[Index].Type == EfiConventionalMemory) &&
         (EfiMemoryDescriptor[Index].PhysicalStart > 0x100000) && 
@@ -253,4 +259,5 @@ GenMemoryMap (
       }
     }
   }
+   */
 }
