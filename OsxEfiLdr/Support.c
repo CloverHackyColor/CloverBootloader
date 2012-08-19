@@ -206,7 +206,8 @@ GenMemoryMap (
       //
       // Update Memory Ceiling
       //
-      if ((BaseAddress >= 0x100000) && (BaseAddress < 0x100000000ULL)) {
+      //Slice - there was (BaseAddress >= 0x100000ULL) - the bred of sieve of cable 0x60000000ULL
+      if ((BaseAddress >= 0x100000ULL) && (BaseAddress < 0x100000000ULL)) {
         if (Ceiling > BaseAddress) {
           Ceiling = BaseAddress;
         }
@@ -252,9 +253,9 @@ GenMemoryMap (
    *
   for (Index = 0; Index < *NumberOfMemoryMapEntries; Index++) {
     if ((EfiMemoryDescriptor[Index].Type == EfiConventionalMemory) &&
-        (EfiMemoryDescriptor[Index].PhysicalStart > 0x100000) && 
+        (EfiMemoryDescriptor[Index].PhysicalStart > 0x100000ULL) && 
         (EfiMemoryDescriptor[Index].PhysicalStart < 0x100000000ULL)) {
-      if (EfiMemoryDescriptor[Index].PhysicalStart >= Ceiling) {
+      if (EfiMemoryDescriptor[Index].PhysicalStart >= Ceiling){
         EfiMemoryDescriptor[Index].Type = EfiReservedMemoryType;
       }
     }

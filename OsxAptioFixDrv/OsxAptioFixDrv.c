@@ -239,7 +239,7 @@ MOHandleProtocol(
 			if (res == EFI_SUCCESS) {
 				// return it
 				*Interface = GraphicsOutput;
-				DBG("->HandleProtocol(%p, %s, %p) = %r (returning from other handle)\n", Handle, GuidStr(Protocol), *Interface, res);
+	//			DBG("->HandleProtocol(%p, %s, %p) = %r (returning from other handle)\n", Handle, GuidStr(Protocol), *Interface, res);
 				DBGnvr("->HandleProtocol(%p, %s, %p) = %r (from other handle)\n", Handle, GuidStr(Protocol), *Interface, res);
 				return res;
 			}
@@ -248,7 +248,7 @@ MOHandleProtocol(
 	} else {
 		res = gHandleProtocol(Handle, Protocol, Interface);
 	}
-	DBG("->HandleProtocol(%p, %s, %p) = %r\n", Handle, GuidStr(Protocol), *Interface, res);
+//	DBG("->HandleProtocol(%p, %s, %p) = %r\n", Handle, GuidStr(Protocol), *Interface, res);
 	return res;
 }
 
@@ -300,6 +300,8 @@ MOAllocatePages (
 /** gBS->GetMemoryMap override:
   * Returns shrinked memory map. I think kernel can handle up to 128 entries.
   */
+UINTN LastMapKey = 0;
+
 EFI_STATUS
 EFIAPI
 MOGetMemoryMap (
@@ -319,7 +321,7 @@ MOGetMemoryMap (
 		//ShrinkMemMap(MemoryMapSize, MemoryMap, *DescriptorSize, *DescriptorVersion);
 		//PrintMemMap(*MemoryMapSize, MemoryMap, *DescriptorSize, *DescriptorVersion);
 	}
-	
+	LastMapKey = (Status == EFI_SUCCESS) ? *MapKey : 0;
 	return Status;
 }
 
@@ -337,6 +339,12 @@ MOExitBootServices (
 	EFI_STATUS					Status;
 	//UINT64						*p64;
 	UINT64						RSP;
+	UINTN						MemoryMapSize;
+	EFI_MEMORY_DESCRIPTOR		*MemoryMap;
+	UINTN					 	NewMapKey;
+	UINTN						DescriptorSize;
+	UINT32						DescriptorVersion;
+	
 	
 	
 	// we'll try to resolve the need for kernel entry point
@@ -384,16 +392,55 @@ MOExitBootServices (
 	Status = gStoredExitBootServices(ImageHandle, MapKey);
 	DBGnvr("ExitBootServices:  = %r\n", Status);
 	if (EFI_ERROR (Status)) {
-		Print(L"OsxAptioFixDrv: ExitBootServices() = Status: %r ... waiting 10 secs ...\n", Status);
+		DBG(L"OsxAptioFixDrv: ExitBootServices() = Status: %r ... waiting 10 secs ...\n", Status);
+        Print(L"MapKey = %lx, LastMapKey = %lx\n", MapKey, LastMapKey);
+		Print(L"Trying again in 5 secs with new GetMemoryMap ...\n");
+
 		gBS->Stall(10*1000000);
 		//CpuDeadLoop();
+		// we'll try to ExitBootServices by obtaining new MapKey
+		MemoryMapSize = 1; // this can probably work with 0 and with MemoryMap = NULL
+		MemoryMap = AllocatePool(MemoryMapSize);
+		Status = gStoredGetMemoryMap(&MemoryMapSize, MemoryMap, &NewMapKey, &DescriptorSize, &DescriptorVersion);
+		if (Status == EFI_BUFFER_TOO_SMALL) {
+			// OK. Space needed for mem map is in MemoryMapSize
+			FreePool(MemoryMap);
+			// Important: next AllocatePool can increase mem map size - we must add some space for this
+			MemoryMapSize += 256;
+			MemoryMap = AllocatePool(MemoryMapSize);
+			Status = gStoredGetMemoryMap(&MemoryMapSize, MemoryMap, &NewMapKey, &DescriptorSize, &DescriptorVersion);
+			
+			if (Status == EFI_SUCCESS) {
+				// we have latest mem map and NewMapKey
+				// we'll try again ExitBootServices with NewMapKey
+				Status = gStoredExitBootServices(ImageHandle, NewMapKey);
+				if (EFI_ERROR (Status)) {
+					// Error!
+					Print(L"OsxAptioFixDrv: ExitBootServices() 2nd try = Status: %r\n", Status);
+				}
+			} else {
+				Print(L"OsxAptioFixDrv: ExitBootServices(), GetMemoryMap() 2nd call = Status: %r\n", Status);
+				Status = EFI_INVALID_PARAMETER;
+			}
+
 	} else {
 		//KernelEntryPatchJump(gKernelEntry);
-		KernelEntryPatchJumpFill();
+		//KernelEntryPatchJumpFill();
 		// TEST
 		//KernelEntryPatchHalt(gKernelEntry);
 		//KernelEntryPatchZero(gKernelEntry);
+    // error in first call to GetMemoryMap
+    DBG(L"OsxAptioFixDrv: ExitBootServices(), GetMemoryMap() 1st call = Status: %r\n", Status);
+    Status = EFI_INVALID_PARAMETER;
+    }
 	}
+    if (Status == EFI_SUCCESS) {
+      KernelEntryPatchJumpFill();
+    } else {
+      Print(L"... waiting 10 secs ...\n");
+      gBS->Stall(10*1000000);
+    }
+
 	return Status;
 }
 
@@ -457,7 +504,7 @@ RunImageWithOverrides(IN VOID *Context1, IN VOID *Context2)
 	gBS->HandleProtocol = MOHandleProtocol;
 
 	gBS->Hdr.CRC32 = 0;
-	gBS->CalculateCrc32(gBS, sizeof(EFI_BOOT_SERVICES), &gBS->Hdr.CRC32);
+	gBS->CalculateCrc32(gBS, gBS->Hdr.HeaderSize, &gBS->Hdr.CRC32);
 	
 	/* for test
 	OrgSetVirtualAddressMap = gRT->SetVirtualAddressMap;
@@ -480,7 +527,7 @@ RunImageWithOverrides(IN VOID *Context1, IN VOID *Context2)
 	gBS->HandleProtocol = gHandleProtocol;
 
 	gBS->Hdr.CRC32 = 0;
-	gBS->CalculateCrc32(gBS, sizeof(EFI_BOOT_SERVICES), &gBS->Hdr.CRC32);
+	gBS->CalculateCrc32(gBS, gBS->Hdr.HeaderSize, &gBS->Hdr.CRC32);
 	
 	/* for test
 	gRT->SetVirtualAddressMap = OrgSetVirtualAddressMap;
@@ -714,7 +761,7 @@ OsxAptioFixDrvEntrypoint (
 	gStartImage = gBS->StartImage;
 	gBS->StartImage = MOStartImage;
 	gBS->Hdr.CRC32 = 0;
-	gBS->CalculateCrc32(gBS, sizeof(EFI_BOOT_SERVICES), &gBS->Hdr.CRC32);
+	gBS->CalculateCrc32(gBS, gBS->Hdr.HeaderSize, &gBS->Hdr.CRC32);
 	
 	return EFI_SUCCESS;
 }

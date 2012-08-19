@@ -46,6 +46,24 @@
 		123D85D814D94B29000AF00B /* refit64.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = refit64.inf; path = ../refit64.inf; sourceTree = SOURCE_ROOT; };
 		126C264B1510C3C9005AB30D /* AmlGenerator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AmlGenerator.c; sourceTree = "<group>"; };
 		126C264C1510C3C9005AB30D /* AmlGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AmlGenerator.h; sourceTree = "<group>"; };
+		12913A5715D8937F005CA601 /* AsmFuncs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AsmFuncs.h; sourceTree = "<group>"; };
+		12913A5815D8937F005CA601 /* BootArgs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootArgs.c; sourceTree = "<group>"; };
+		12913A5915D8937F005CA601 /* BootArgs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BootArgs.h; sourceTree = "<group>"; };
+		12913A5A15D8937F005CA601 /* BootFixes.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootFixes.c; sourceTree = "<group>"; };
+		12913A5B15D8937F005CA601 /* BootFixes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BootFixes.h; sourceTree = "<group>"; };
+		12913A5C15D8937F005CA601 /* DecodedKernelCheck.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DecodedKernelCheck.c; sourceTree = "<group>"; };
+		12913A5D15D8937F005CA601 /* DecodedKernelCheck.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DecodedKernelCheck.h; sourceTree = "<group>"; };
+		12913A5F15D8937F005CA601 /* device_tree.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = device_tree.c; sourceTree = "<group>"; };
+		12913A6015D8937F005CA601 /* device_tree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = device_tree.h; sourceTree = "<group>"; };
+		12913A6115D8937F005CA601 /* Lib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Lib.c; sourceTree = "<group>"; };
+		12913A6215D8937F005CA601 /* Lib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lib.h; sourceTree = "<group>"; };
+		12913A6315D8937F005CA601 /* OsxAptioFixDrv.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OsxAptioFixDrv.c; sourceTree = "<group>"; };
+		12913A6415D8937F005CA601 /* OsxAptioFixDrv.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OsxAptioFixDrv.inf; sourceTree = "<group>"; };
+		12913A6515D8937F005CA601 /* VMem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = VMem.c; sourceTree = "<group>"; };
+		12913A6615D8937F005CA601 /* VMem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VMem.h; sourceTree = "<group>"; };
+		12913A6815D8937F005CA601 /* AsmFuncsX64.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = AsmFuncsX64.asm; sourceTree = "<group>"; };
+		12913A6915D8937F005CA601 /* AsmFuncsX64.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = AsmFuncsX64.S; sourceTree = "<group>"; };
+		12913A6A15D8937F005CA601 /* TestAsm32.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = TestAsm32.asm; sourceTree = "<group>"; };
 		12CB8F581427390E009EDAF2 /* DevicePath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DevicePath.c; sourceTree = "<group>"; tabWidth = 4; };
 		12CB8F6014273A38009EDAF2 /* GenericBdsLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericBdsLib.h; sourceTree = "<group>"; };
 		12CB8FAB14274AE1009EDAF2 /* efiConsoleControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efiConsoleControl.h; sourceTree = "<group>"; };
@@ -134,6 +152,7 @@
 				12D6305B14CEA05E00E5898F /* Platform */,
 				122336C113377E150033F008 /* refit */,
 				122336B113377E050033F008 /* libeg */,
+				12913A5615D8937F005CA601 /* OsxAptioFixDrv */,
 			);
 			name = rEFIt_proj;
 			sourceTree = "<group>";
@@ -186,6 +205,48 @@
 			name = refit;
 			path = ../refit;
 			sourceTree = SOURCE_ROOT;
+		};
+		12913A5615D8937F005CA601 /* OsxAptioFixDrv */ = {
+			isa = PBXGroup;
+			children = (
+				12913A5715D8937F005CA601 /* AsmFuncs.h */,
+				12913A5815D8937F005CA601 /* BootArgs.c */,
+				12913A5915D8937F005CA601 /* BootArgs.h */,
+				12913A5A15D8937F005CA601 /* BootFixes.c */,
+				12913A5B15D8937F005CA601 /* BootFixes.h */,
+				12913A5C15D8937F005CA601 /* DecodedKernelCheck.c */,
+				12913A5D15D8937F005CA601 /* DecodedKernelCheck.h */,
+				12913A5E15D8937F005CA601 /* FlatDevTree */,
+				12913A6115D8937F005CA601 /* Lib.c */,
+				12913A6215D8937F005CA601 /* Lib.h */,
+				12913A6315D8937F005CA601 /* OsxAptioFixDrv.c */,
+				12913A6415D8937F005CA601 /* OsxAptioFixDrv.inf */,
+				12913A6515D8937F005CA601 /* VMem.c */,
+				12913A6615D8937F005CA601 /* VMem.h */,
+				12913A6715D8937F005CA601 /* X64 */,
+			);
+			name = OsxAptioFixDrv;
+			path = ../../OsxAptioFixDrv;
+			sourceTree = "<group>";
+		};
+		12913A5E15D8937F005CA601 /* FlatDevTree */ = {
+			isa = PBXGroup;
+			children = (
+				12913A5F15D8937F005CA601 /* device_tree.c */,
+				12913A6015D8937F005CA601 /* device_tree.h */,
+			);
+			path = FlatDevTree;
+			sourceTree = "<group>";
+		};
+		12913A6715D8937F005CA601 /* X64 */ = {
+			isa = PBXGroup;
+			children = (
+				12913A6815D8937F005CA601 /* AsmFuncsX64.asm */,
+				12913A6915D8937F005CA601 /* AsmFuncsX64.S */,
+				12913A6A15D8937F005CA601 /* TestAsm32.asm */,
+			);
+			path = X64;
+			sourceTree = "<group>";
 		};
 		12CB8FAA14274AE1009EDAF2 /* include */ = {
 			isa = PBXGroup;

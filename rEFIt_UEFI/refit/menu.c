@@ -50,6 +50,7 @@
 #endif
 
 #define PREBOOT_LOG L"EFI\\misc\\preboot.log"
+#define VBIOS_BIN L"EFI\\misc\\c0000.bin"
 // scrolling definitions
 
 static INTN MaxItemOnScreen = -1;
@@ -745,6 +746,12 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
             Status = egSaveFile(NULL, PREBOOT_LOG, (UINT8*)msgbuf, LogSize);
           }
           break;
+        case SCAN_F6:
+          Status = egSaveFile(SelfRootDir, VBIOS_BIN, (UINT8*)0xc0000, 0x20000);
+          if (EFI_ERROR(Status)) {
+            Status = egSaveFile(NULL, VBIOS_BIN, (UINT8*)0xc0000, 0x20000);
+          }
+          break;
         case SCAN_F10:
           egScreenShot();
           break;
@@ -936,6 +943,12 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         break;
       case SCAN_F5:
         SaveOemDsdt(TRUE); //full patch
+        break;
+      case SCAN_F6:
+        Status = egSaveFile(SelfRootDir, VBIOS_BIN, (UINT8*)0xc0000, 0x20000);
+        if (EFI_ERROR(Status)) {
+          Status = egSaveFile(NULL, VBIOS_BIN, (UINT8*)0xc0000, 0x20000);
+        }
         break;
       case SCAN_F10:
         egScreenShot();

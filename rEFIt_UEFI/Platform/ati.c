@@ -872,7 +872,7 @@ void get_vram_size(void)
         card->vram_size = REG32(card->mmio, RADEON_CONFIG_APER_SIZE);
         //Slice - previously I successfully made Radeon9000 working
         //by writing this register
-      //  WRITEREG32(card->mmio, RADEON_CONFIG_MEMSIZE, 0x30000);
+        WRITEREG32(card->mmio, RADEON_CONFIG_MEMSIZE, card->vram_size);
       }
     }
   }	

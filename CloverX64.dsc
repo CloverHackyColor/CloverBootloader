@@ -247,7 +247,8 @@
   MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
   MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
   MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
-  MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf {
+  #MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf {
+  Clover/ConSplitterDxe/ConSplitterDxe.inf {
     <LibraryClasses>
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
   }
@@ -315,8 +316,8 @@
   #Clover/VgaClassDxe/VgaClassDxe.inf
   #Clover/IntelGmaDxe/Gop.inf
   #DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
-  #Clover/BiosVideo/BiosVideo.inf
-  Clover/BiosVideoAuto/BiosVideo.inf
+  Clover/BiosVideo/BiosVideo.inf
+  #Clover/BiosVideoAuto/BiosVideo.inf
 
 
   # IDE/AHCI Support
