@@ -184,7 +184,7 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
 	// Patch kernel and kexts if needed
 	//
 	KernelAndKextsPatcherStart();
-    gBS->Stall(2000000);
+//    gBS->Stall(2000000);
 	//PauseForKey(L"press any key to MemoryFix");
 	if (gSettings.MemoryFix) {
     BootArgs1*				bootArgs1;

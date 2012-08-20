@@ -379,7 +379,7 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gSettings.KPAppleRTC = InputItems[i].BValue;
   }
-  gSettings.KPKextPatchesNeeded = (gSettings.KPAsusAICPUPM || gSettings.KPAppleRTC);
+  gSettings.KPKextPatchesNeeded = (gSettings.KPAsusAICPUPM || gSettings.KPAppleRTC || (gSettings.KPATIConnectorsPatch != NULL));
   
   SaveSettings();
 }

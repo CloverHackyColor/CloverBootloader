@@ -270,7 +270,7 @@ VOID *GetDataSetting(IN TagPtr dict, IN CHAR8 *propName, OUT UINTN *dataLen)
 {
     TagPtr  prop;
     UINT8   *data = NULL;
-    UINTN   len;
+    INTN   len;
     //UINTN   i;
     
     prop = GetProperty(dict, propName);
@@ -459,6 +459,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           DBG("%02x", gSettings.NVCAP[i]);
         }
         DBG("\n");
+        //thus confirmed this procedure is working
       } 
       prop = GetProperty(dictPointer,"display-cfg");
       if(prop)
