@@ -353,8 +353,8 @@
   IntelFrameworkModulePkg/Bus/Isa/Ps2MouseDxe/Ps2MouseDxe.inf
  
   # ACPI Support
-  MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
-  #Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
+  #MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
+  Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
   #MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
   Clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
 

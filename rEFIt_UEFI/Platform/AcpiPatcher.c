@@ -1018,6 +1018,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 		DBG("AcpiTableLen %x\n", AcpiTableLen);
 	} else
 #else	
+  if (!RsdPointer) //if we have RsdPointer from BIOS them nothing to do here
 	{
 		//try to find in SystemTable
 		for(Index = 0; Index < gST->NumberOfTableEntries; Index++)
