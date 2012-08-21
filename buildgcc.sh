@@ -56,15 +56,15 @@ export DIR_LOGS=$DIR_GCC/logs
 
 ## Paths for GCC (Xcode 4.1 fix) - works with Xcode 3.2 - Xcode 4.2
 #
-#export CC="/usr/bin/gcc"
-#export CXX="/usr/bin/g++"
-#export CPP="/usr/bin/cpp"
-#export LD="/usr/bin/ld" 
+export CC="/usr/bin/gcc"
+export CXX="/usr/bin/g++"
+export CPP="/usr/bin/cpp"
+export LD="/usr/bin/ld" 
 
-export CC="/opt/local/bin/gcc-apple-4.2"
-export CXX="/opt/local/bin/g++-apple-4.2"
-export CPP="/opt/local/bin/cpp-apple-4.2"
-export LD="/opt/local/bin/ld"
+#export CC="/opt/local/bin/gcc-apple-4.2"
+#export CXX="/opt/local/bin/g++-apple-4.2"
+#export CPP="/opt/local/bin/cpp-apple-4.2"
+#export LD="/opt/local/bin/ld"
 
 # Here we set MAKEFLAGS for GCC so it knows how many cores can use
 # faster compile!

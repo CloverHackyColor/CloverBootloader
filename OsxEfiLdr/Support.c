@@ -224,16 +224,31 @@ GenMemoryMap (
   }
   
   //Slice - Add two more descriptors?
-  /* dmazar: does not have effect, so removed
+  /* dmazar: does not have effect, so removed */
+  //Slice - or no! This is only thing that resolve memory KP in SnowLeopard
+  //гык-sse2 http://www.projectosx.com/forum/index.php?showtopic=2008&view=findpost&p=13284
+  //slice http://www.projectosx.com/forum/index.php?showtopic=2008&view=findpost&p=14702
+  //dmazar http://www.projectosx.com/forum/index.php?showtopic=2008&view=findpost&p=16046
+  //solution half a year later http://www.projectosx.com/forum/index.php?showtopic=2008&view=findpost&p=16405
+  /* but it should be more exact
+   ebda = (UINT16*)0x040E;
+   ebda_adr = *ebda << 4;
+   size =  0xA0000 - ebda_adr;
+   pages = size >> 12;
+   // what about fool proof?
+   for now I am proposing 9F000 and 1 page  = 4kb. It is not common case.
+  */
+  UINT64 EBDAaddr = 0x9E000;
+  UINT64 EBDAsize = 2;
   EfiAddMemoryDescriptor (
                           NumberOfMemoryMapEntries,
                           EfiMemoryDescriptor,
                           EfiReservedMemoryType,
-                          (EFI_PHYSICAL_ADDRESS)0x9F000,
-                          1,
+                          (EFI_PHYSICAL_ADDRESS)EBDAaddr,
+                          EBDAsize,
                           EFI_MEMORY_UC
                           );
-  
+ // this is just BIOS rom protection. Seems to be not needed. 
   EfiAddMemoryDescriptor (
                           NumberOfMemoryMapEntries,
                           EfiMemoryDescriptor,
@@ -242,7 +257,7 @@ GenMemoryMap (
                           0x20,
                           EFI_MEMORY_UC
                           );
-   */
+   
   
   //
   // Update MemoryMap according to Ceiling
