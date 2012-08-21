@@ -80,7 +80,9 @@
   DxeServicesTableLib|MdePkg/Library/DxeServicesTableLib/DxeServicesTableLib.inf
   EfiFileLib|EmbeddedPkg/Library/EfiFileLib/EfiFileLib.inf
   #FileHandleLib|ShellPkg/Library/BaseFileHandleLib/BaseFileHandleLib.inf
-
+  UefiCpuLib|UefiCpuPkg/Library/BaseUefiCpuLib/BaseUefiCpuLib.inf
+  SecurityManagementLib|MdeModulePkg/Library/DxeSecurityManagementLib/DxeSecurityManagementLib.inf
+  
   #
   # Generic Modules
   #
@@ -245,7 +247,7 @@
   MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
   MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
   MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
-# MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf {
+  #MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf {
   Clover/ConSplitterDxe/ConSplitterDxe.inf {
     <LibraryClasses>
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
@@ -273,7 +275,7 @@
   }
   #MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
   Clover/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
-  Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
+  #Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
   #UefiCpuPkg/CpuDxe/CpuDxe.inf
   Clover/CpuDxe/Cpu.inf
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
@@ -314,8 +316,8 @@
   #Clover/VgaClassDxe/VgaClassDxe.inf
   #Clover/IntelGmaDxe/Gop.inf
   #DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
-  #Clover/BiosVideo/BiosVideo.inf
-  Clover/BiosVideoAuto/BiosVideo.inf
+  Clover/BiosVideo/BiosVideo.inf
+  #Clover/BiosVideoAuto/BiosVideo.inf
 
 
   # IDE/AHCI Support
@@ -351,8 +353,8 @@
   IntelFrameworkModulePkg/Bus/Isa/Ps2MouseDxe/Ps2MouseDxe.inf
  
   # ACPI Support
-  #MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
-  Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
+  MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
+  #Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
   #MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
   Clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
 
@@ -384,7 +386,7 @@
   Clover/FSInject/FSInject.inf
   Clover/MsgLog/MsgLog.inf
   
-  # Drivers for Aptio loading - should go to Clover's /EFI/drivers64UEFI ??? dir
+  # Drivers for Aptio loading - should go to Clover's /EFI/drivers64UEFI dir
   Clover/OsxFatBinaryDrv/OsxFatBinaryDrv.inf
 
 

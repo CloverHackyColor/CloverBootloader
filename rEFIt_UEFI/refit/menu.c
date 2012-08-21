@@ -235,6 +235,19 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].BValue = gSettings.KPAppleRTC;
   InputItems[InputItemsCount++].SValue = gSettings.KPAppleRTC?L"[X]":L"[ ]";
   
+  InputItems[InputItemsCount].ItemType = BoolValue; //48
+  InputItems[InputItemsCount].BValue = gSettings.bDropAPIC;
+  InputItems[InputItemsCount++].SValue = gSettings.bDropAPIC?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].ItemType = BoolValue; //49
+  InputItems[InputItemsCount].BValue = gSettings.bDropMCFG;
+  InputItems[InputItemsCount++].SValue = gSettings.bDropMCFG?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].ItemType = BoolValue; //50
+  InputItems[InputItemsCount].BValue = gSettings.bDropHPET;
+  InputItems[InputItemsCount++].SValue = gSettings.bDropHPET?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].ItemType = BoolValue; //51
+  InputItems[InputItemsCount].BValue = gSettings.bDropECDT;
+  InputItems[InputItemsCount++].SValue = gSettings.bDropECDT?L"[+]":L"[ ]"; 
+  
 }
 
 VOID ApplyInputs(VOID)
@@ -380,6 +393,23 @@ VOID ApplyInputs(VOID)
     gSettings.KPAppleRTC = InputItems[i].BValue;
   }
   gSettings.KPKextPatchesNeeded = (gSettings.KPAsusAICPUPM || gSettings.KPAppleRTC || (gSettings.KPATIConnectorsPatch != NULL));
+  
+  i++; //48
+  if (InputItems[i].Valid) {
+    gSettings.bDropAPIC = InputItems[i].BValue;
+  }
+  i++; //49
+  if (InputItems[i].Valid) {
+    gSettings.bDropMCFG = InputItems[i].BValue;
+  }
+  i++; //50
+  if (InputItems[i].Valid) {
+    gSettings.bDropHPET = InputItems[i].BValue;
+  }
+  i++; //51
+  if (InputItems[i].Valid) {
+    gSettings.bDropECDT = InputItems[i].BValue;
+  }
   
   SaveSettings();
 }
@@ -1822,6 +1852,50 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.BadgeImage = NULL;
     InputBootArgs->Entry.SubScreen = NULL;
     InputBootArgs->Item = &InputItems[18];    
+    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+    
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    UnicodeSPrint(Flags, 50, L"Drop OEM APIC:");
+    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = 0xFFFF;
+    InputBootArgs->Entry.Image = NULL;
+    InputBootArgs->Entry.BadgeImage = NULL;
+    InputBootArgs->Entry.SubScreen = NULL;
+    InputBootArgs->Item = &InputItems[48];
+    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+    
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    UnicodeSPrint(Flags, 50, L"Drop OEM MCFG:");
+    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = 0xFFFF;
+    InputBootArgs->Entry.Image = NULL;
+    InputBootArgs->Entry.BadgeImage = NULL;
+    InputBootArgs->Entry.SubScreen = NULL;
+    InputBootArgs->Item = &InputItems[49];
+    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+    
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    UnicodeSPrint(Flags, 50, L"Drop OEM HPET:");
+    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = 0xFFFF;
+    InputBootArgs->Entry.Image = NULL;
+    InputBootArgs->Entry.BadgeImage = NULL;
+    InputBootArgs->Entry.SubScreen = NULL;
+    InputBootArgs->Item = &InputItems[50];
+    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+    
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    UnicodeSPrint(Flags, 50, L"Drop OEM ECDT:");
+    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = 0xFFFF;
+    InputBootArgs->Entry.Image = NULL;
+    InputBootArgs->Entry.BadgeImage = NULL;
+    InputBootArgs->Entry.SubScreen = NULL;
+    InputBootArgs->Item = &InputItems[51];
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     
     AddMenuEntry(&OptionMenu, SubMenuSpeedStep());

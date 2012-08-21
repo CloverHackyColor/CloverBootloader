@@ -642,6 +642,34 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
         gSettings.FixDsdt  = StrHexToUint64(UStr); 
       }
+      prop = GetProperty(dictPointer,"DropAPIC");
+      gSettings.bDropAPIC = FALSE;
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+          gSettings.bDropAPIC = TRUE;
+      }
+      prop = GetProperty(dictPointer,"DropMCFG");
+      gSettings.bDropMCFG = FALSE;
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+          gSettings.bDropMCFG = TRUE;
+      }
+      prop = GetProperty(dictPointer,"DropHPET");
+      gSettings.bDropHPET = FALSE;
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+          gSettings.bDropHPET = TRUE;
+      }
+      prop = GetProperty(dictPointer,"DropECDT");
+      gSettings.bDropECDT = FALSE;
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+          gSettings.bDropECDT = TRUE;
+      }
     }
     
     //*** SMBIOS ***//

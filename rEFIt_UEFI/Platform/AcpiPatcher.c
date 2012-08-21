@@ -25,6 +25,8 @@ Re-Work by Slice 2011.
 #define XXXX_SIGN        SIGNATURE_32('X','X','X','X')
 #define HPET_SIGN        SIGNATURE_32('H','P','E','T')
 #define APIC_SIGN        SIGNATURE_32('A','P','I','C')
+#define MCFG_SIGN        SIGNATURE_32('M','C','F','G')
+#define ECDT_SIGN        SIGNATURE_32('E','C','D','T')
 #define APPLE_OEM_ID        { 'A', 'P', 'P', 'L', 'E', ' ' }
 #define APPLE_OEM_TABLE_ID  { 'A', 'p', 'p', 'l', 'e', '0', '0', ' ' }
 #define APPLE_CREATOR_ID    { 'L', 'o', 'k', 'i' }
@@ -1315,6 +1317,30 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   //  if (gSettings.FixDsdt) { //fix even with zero mask because we want to know PCIRootUID and CPUBase and count(?)
   FixBiosDsdt((UINT8*)(UINTN)FadtPointer->Dsdt);
   
+  if (gSettings.bDropAPIC) {
+    xf = ScanXSDT(APIC_SIGN);
+    if(xf) { DropTableFromXSDT(APIC_SIGN); }
+    rf = ScanRSDT(APIC_SIGN);
+    if(rf) { DropTableFromRSDT(APIC_SIGN); }
+    }
+  if (gSettings.bDropMCFG) {
+		xf = ScanXSDT(MCFG_SIGN);
+		if(xf) { DropTableFromXSDT(MCFG_SIGN); }
+		rf = ScanRSDT(MCFG_SIGN);
+		if(rf) { DropTableFromRSDT(MCFG_SIGN); }
+		}
+  if (gSettings.bDropHPET) {
+		xf = ScanXSDT(HPET_SIGN);
+		if(xf) { DropTableFromXSDT(HPET_SIGN); }
+		rf = ScanRSDT(HPET_SIGN);
+		if(rf) { DropTableFromRSDT(HPET_SIGN); }
+		}
+  if (gSettings.bDropECDT) {
+		xf = ScanXSDT(ECDT_SIGN);
+		if(xf) { DropTableFromXSDT(ECDT_SIGN); }
+		rf = ScanRSDT(ECDT_SIGN);
+		if(rf) { DropTableFromRSDT(ECDT_SIGN); }
+		}
   
   if (gSettings.DropSSDT) {
     DropTableFromXSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE);

@@ -126,6 +126,14 @@
 		<string>DSDT.aml</string>
 		<key>DropOemSSDT</key>
 		<string>Yes</string>
+		<key>DropAPIC</key>
+		<string>No</string>
+		<key>DropMCFG</key>
+		<string>No</string>
+		<key>DropHPET</key>
+		<string>No</string>
+		<key>DropECDT</key>
+		<string>No</string>
 		<key>GenerateCStates</key>
 		<string>Yes</string>
 		<key>GeneratePStates</key>

@@ -566,6 +566,10 @@ typedef struct {
   BOOLEAN PatchNMI;
 	CHAR16	DsdtName[60];
   UINT32  FixDsdt;
+  BOOLEAN bDropAPIC;
+  BOOLEAN bDropMCFG;
+  BOOLEAN bDropHPET;
+  BOOLEAN bDropECDT;
   
   //Injections
   BOOLEAN StringInjector;
