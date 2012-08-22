@@ -1018,7 +1018,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 		DBG("AcpiTableLen %x\n", AcpiTableLen);
 	} else
 #else	
-  if (!RsdPointer) //if we have RsdPointer from BIOS them nothing to do here
+  if (1) //!RsdPointer) //if we have RsdPointer from BIOS them nothing to do here
 	{
 		//try to find in SystemTable
 		for(Index = 0; Index < gST->NumberOfTableEntries; Index++)
@@ -1036,6 +1036,20 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 				continue;
 			}
 		}
+    if (!Facs && RsdPointer) {
+      Rsdt = (RSDT_TABLE*)(UINTN)(RsdPointer->RsdtAddress);
+      if (Rsdt == NULL || Rsdt->Header.Signature != EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
+        Xsdt = (XSDT_TABLE *)(UINTN)(RsdPointer->XsdtAddress);
+      }
+      if (Rsdt) {
+        FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Rsdt->Entry);
+      } else if (Xsdt) {
+        FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Xsdt->Entry);
+      }
+      DBG("Found FADT in System table: %p\n", FadtPointer);
+      Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)(FadtPointer->FirmwareCtrl);
+      DBG("Found FACS in System table: %p\n", Facs);
+    }
 	}
 #endif	
   

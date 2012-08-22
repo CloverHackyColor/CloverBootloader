@@ -421,7 +421,8 @@ AtiDevProp ati_devprop_list[] = {
   //	{FLAGTRUE,	FALSE,	"@0,ATY,EFIDisplay",		NULL,					STRVAL("TMDSA")			},
 	
   //{FLAGTRUE,	TRUE,	"@0,AAPL,vram-memory",		get_vrammemory_val,		NULVAL				},
-  {FLAGTRUE,	TRUE,	"@0,override-no-connect",		get_edid_val,       NULVAL        },
+  //later I wish to find the better application for the key. For now disabled
+//  {FLAGTRUE,	TRUE,	"@0,override-no-connect",		get_edid_val,       NULVAL        },
   {FLAGTRUE,	TRUE,	"@0,compatible",              get_name_val,       NULVAL				},
 //  {FLAGTRUE,	TRUE,	"@0,connector-type",          get_conntype_val,		NULVAL        },
   {FLAGTRUE,	TRUE,	"@0,device_type",             NULL,					STRVAL("display")   },
