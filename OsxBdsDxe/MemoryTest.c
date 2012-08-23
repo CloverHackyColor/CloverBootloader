@@ -346,6 +346,7 @@ BdsMemoryTest (
       DEBUG ((EFI_D_INFO, "Perform memory test (ESC to skip).\n"));
     }
 
+    if (!PcdGetBool (PcdConInConnectOnDemand)) {
     KeyStatus     = gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
     if (!EFI_ERROR (KeyStatus) && (Key.ScanCode == SCAN_ESC)) {
       if (!RequireSoftECCInit) {
@@ -370,6 +371,7 @@ BdsMemoryTest (
       }
 
       TestAbort = TRUE;
+    }
     }
   } while (Status != EFI_NOT_FOUND);
 

@@ -1,6 +1,6 @@
 /*++
 
-Copyright (c) 2005 - 2009, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2005 - 2012, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials                          
 are licensed and made available under the terms and conditions of the BSD License         
 which accompanies this distribution.  The full text of the license may be found at        
@@ -867,8 +867,6 @@ Returns:
   //UINT64      BarValue64;
   UINT32      OriginalValue;
   UINT32      Mask;
-  UINT32      Data;
-  UINT8       Index;
   EFI_STATUS  Status;
 
   OriginalValue = 0;
@@ -991,12 +989,7 @@ Returns:
       //
       // Fix the length to support some spefic 64 bit BAR
       //
-      Data  = Value;
-      Index = 0;
-      for (Data = Value; Data != 0; Data >>= 1) {
-        Index ++;
-      }
-      Value |= ((UINT32)(-1) << Index); 
+      Value |= ((UINT32)(-1) << HighBitSet32 (Value)); 
 
       //
       // Calculate the size of 64bit bar

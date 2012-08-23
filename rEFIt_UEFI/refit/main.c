@@ -85,7 +85,7 @@ static VOID AboutRefit(VOID)
 //  CHAR8* Revision = NULL;
     if (AboutMenu.EntryCount == 0) {
         AboutMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
-        AddMenuInfoLine(&AboutMenu, L"rEFIt Version 1.03 UEFI by Slice");
+        AddMenuInfoLine(&AboutMenu, L"rEFIt Version 1.04 UEFI by Slice");
 #ifdef FIRMWARE_BUILDDATE
         AddMenuInfoLine(&AboutMenu, PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
 #else
@@ -128,7 +128,9 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"F1  - Помощь по горячим клавишам");
         AddMenuInfoLine(&HelpMenu, L"F2  - Сохранить отчет в preboot.log (только если FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F4  - Родной DSDT сохранить в EFI/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F10 - Снимок экрана в папку EFI/misc/ (только FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Патченный DSDT сохранить в EFI/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Сохранить ВидеоБиос в EFI/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Снимок экрана в папку EFI/misc/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F12 - Извлечь указанный DVD");
         AddMenuInfoLine(&HelpMenu, L"Пробел - Подробнее о выбранном пункте");
         AddMenuInfoLine(&HelpMenu, L"Цифры 1-9 - Быстрый запуск тома по порядку в меню");
@@ -142,6 +144,8 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"F1  - Aiuto");
         AddMenuInfoLine(&HelpMenu, L"F2  - Salva il preboot.log (solo su FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F4  - Salva il DSDT oem in EFI/ACPI/origin/ (solo suFAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Salva il patched DSDT in EFI/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Salva il VideoBios in EFI/misc/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F10 - Salva screenshot in EFI/misc/ (solo su FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F12 - Espelli il volume selezionato (DVD)");
         AddMenuInfoLine(&HelpMenu, L"Spazio - Dettagli sul menu selezionato");
@@ -156,8 +160,10 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"ESC - Escape from submenu, Refresh main menu");
         AddMenuInfoLine(&HelpMenu, L"F1  - This help");
         AddMenuInfoLine(&HelpMenu, L"F2  - Save preboot.log (FAT32 only)");
-        AddMenuInfoLine(&HelpMenu, L"F4  - Save oem DSDT into EFI/ACPI/origin/ (FAT32 only)");
-        AddMenuInfoLine(&HelpMenu, L"F10 - Save screenshot into EFI/misc/ (FAT32 only)");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Save oem DSDT into EFI/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Save patched DSDT into EFI/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Save VideoBios into EFI/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Save screenshot into EFI/misc/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F12 - Eject selected volume (DVD)");
         AddMenuInfoLine(&HelpMenu, L"Space - Details about selected menu entry");
         AddMenuInfoLine(&HelpMenu, L"Digits 1-9 - Shortcut to menu entry");

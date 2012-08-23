@@ -1,7 +1,7 @@
 /** @file
   PCI Rom supporting funtions implementation for PCI Bus module.
 
-Copyright (c) 2006 - 2011, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2006 - 2012, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -327,9 +327,7 @@ ContainEfiImage (
 {
   PCI_EXPANSION_ROM_HEADER  *RomHeader;
   PCI_DATA_STRUCTURE        *RomPcir;
-  BOOLEAN                   FirstCheck;
 
-  FirstCheck = TRUE;
   RomHeader  = RomImage;
   if (RomHeader == NULL) {
     return FALSE;
@@ -338,15 +336,10 @@ ContainEfiImage (
 
   while ((UINT8 *) RomHeader < (UINT8 *) RomImage + RomSize) {
     if (RomHeader->Signature != PCI_EXPANSION_ROM_HEADER_SIGNATURE) {
-      if (FirstCheck) {
-        return FALSE;
-      } else {
         RomHeader = (PCI_EXPANSION_ROM_HEADER *) ((UINT8 *) RomHeader + 512);
         continue;
       }
-    }
 
-    FirstCheck = FALSE;
     RomPcir    = (PCI_DATA_STRUCTURE *) ((UINT8 *) RomHeader + RomHeader->PcirOffset);
 
     if (RomPcir->CodeType == PCI_CODE_TYPE_EFI_IMAGE) {
