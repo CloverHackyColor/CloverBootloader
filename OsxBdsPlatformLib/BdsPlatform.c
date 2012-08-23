@@ -297,7 +297,7 @@ UpdateMemoryMap (
       continue;
     }
     if (MemoryDescHob.MemDesc[Index].PhysicalStart >= 0x100000000ULL) {
-      continue;
+//      continue;
     }
     if (MemoryDescHob.MemDesc[Index].Type != EfiConventionalMemory) {
       continue;
@@ -377,8 +377,10 @@ Returns:
               //
               Command = 0;
               Status = PciIo->Pci.Write (PciIo, EfiPciIoWidthUint16, 0xC0, 1, &Command);
-            } else if ((PCI_IF_EHCI == Class[0]) ||
-                       (PCI_IF_XHCI == Class[0])) {
+   //         } else if ((PCI_IF_EHCI == Class[0]) ||
+   //                    (PCI_IF_XHCI == Class[0])) {
+              } else if (PCI_IF_EHCI == Class[0]) {
+
               //
               // Found the EHCI, then disable the legacy support
               //
@@ -449,7 +451,6 @@ Returns:
 
 --*/
 {
-	
 	GetSystemTablesFromHob ();
 	
 	UpdateMemoryMap ();
@@ -1320,7 +1321,7 @@ Returns:
   gBS->CloseEvent (UserInputDurationTime);
   Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &Key);
   
-  if (0) { //!EFI_ERROR (Status)) {
+  if (!EFI_ERROR (Status)) {
     //
     // Enter Setup if user input 
     //
@@ -1410,6 +1411,7 @@ Returns:
     BdsLibOutputStrings (gST->ConOut, TmpStr, Option->Description, L"\n\r", NULL);
     gBS->FreePool (TmpStr);
   }
+
 }
 
 EFI_STATUS
@@ -1537,15 +1539,15 @@ Returns:
 	VOID                  *AcpiTableOri;
 	VOID                  *AcpiTableNew;
 	EFI_STATUS            Status;
-//	EFI_PHYSICAL_ADDRESS  BufferPtr;
+	EFI_PHYSICAL_ADDRESS  BufferPtr;
 //	UINT32					RsdtAddr;
-	EFI_ACPI_TABLE_PROTOCOL         *AcpiTable;
-	EFI_ACPI_TABLE_INSTANCE			*AcpiInstance;
+//	EFI_ACPI_TABLE_PROTOCOL         *AcpiTable;
+//	EFI_ACPI_TABLE_INSTANCE			*AcpiInstance;
 	
 	
 	AcpiTableOri    =  (VOID *)(UINTN)(*(UINT64*)(*Table));
 	if (((UINTN)AcpiTableOri < 0x100000) && ((UINTN)AcpiTableOri > 0xE0000)) {
-/*		BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
+    BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
 		Status = gBS->AllocatePages (
 									 AllocateMaxAddress,
 									 EfiACPIMemoryNVS,
@@ -1554,20 +1556,7 @@ Returns:
 									 );
 		ASSERT_EFI_ERROR (Status);
 		AcpiTableNew = (VOID *)(UINTN)BufferPtr;
-//		RsdtAddr = ((EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)AcpiTableOri)->RsdtAddress;
-*/
-		Status = gBS->LocateProtocol (&gEfiAcpiTableProtocolGuid, NULL, (VOID**)&AcpiTable);
-		if (EFI_ERROR (Status)) {
-			return EFI_ABORTED;
-		}
- 
-		AcpiInstance = EFI_ACPI_TABLE_INSTANCE_FROM_THIS(AcpiTable);
-		AcpiTableNew = (VOID *)(UINTN)AcpiInstance->Rsdp3;
-/*		
-		RsdtAddr = AcpiInstance->Rsdt3;		
 		CopyMem (AcpiTableNew, AcpiTableOri, TableLen);
-		((EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)AcpiTableNew)->RsdtAddress = RsdtAddr;
- */
 	} else {
 		AcpiTableNew = AcpiTableOri;
 	}

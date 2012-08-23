@@ -31,7 +31,6 @@
   BdsPlatform.c
   PlatformData.c
   BdsPlatform.h
-#  Cpu.c
 
 [Packages]
   MdePkg/MdePkg.dec
