@@ -239,6 +239,10 @@ VOID SetupDataForOSX()
     if (gSettings.InjectSystemID) {
       Status =  LogDataHub(&gEfiMiscSubClassGuid, L"system-id", &gUuid, sizeof(EFI_GUID));
     }    		
-		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"Clover", CloverVersion, StrSize(CloverVersion));
+//		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"Clover", CloverVersion, StrSize(CloverVersion));
 	}
+  else {
+    Print(L"DataHubProtocol is not found! Load the module DataHubDxe manually!\n");
+    gBS->Stall(5000000);
+  }  
 }
