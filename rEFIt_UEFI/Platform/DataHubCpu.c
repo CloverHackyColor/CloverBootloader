@@ -202,7 +202,7 @@ EFI_STATUS SetVariablesForOSX()
 VOID SetupDataForOSX()
 {
 	EFI_STATUS			Status;	
-	CHAR16*				CloverVersion = L"2.0";
+//	CHAR16*				CloverVersion = L"2.0";
   
 //	UINT32				KextListSize;
 	UINT32				devPathSupportedVal = 1;
