@@ -387,9 +387,6 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
 	// -------------------------------------------------
 	DBG("USB Controller [%04x:%04x] :: %a\n", usb_dev->vendor_id, usb_dev->device_id, devicepath);
   //  DBG("Setting dev.prop built-in=0x%x\n", builtin);
-  devprop_add_value(device, "AAPL,current-available", (UINT8*)&current_available, 2);
-  devprop_add_value(device, "AAPL,current-extra",     (UINT8*)&current_extra, 2);
-  devprop_add_value(device, "AAPL,current-in-sleep",  (UINT8*)&current_in_sleep, 2);
   devprop_add_value(device, "AAPL,clock-id", (UINT8*)&clock_id, 1);
   clock_id++;
   fake_devid = usb_dev->device_id & 0xFFFF;
@@ -406,6 +403,9 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
       break;
     case PCI_IF_EHCI:
       devprop_add_value(device, "device_type", (UINT8*)"EHCI", 4);
+      devprop_add_value(device, "AAPL,current-available", (UINT8*)&current_available, 2);
+      devprop_add_value(device, "AAPL,current-extra",     (UINT8*)&current_extra, 2);
+      devprop_add_value(device, "AAPL,current-in-sleep",  (UINT8*)&current_in_sleep, 2);      
       break;
     case PCI_IF_XHCI:
       devprop_add_value(device, "device_type", (UINT8*)"XHCI", 4);
