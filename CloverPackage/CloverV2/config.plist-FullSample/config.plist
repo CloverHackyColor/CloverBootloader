@@ -117,6 +117,8 @@
 		<string>0</string>
 		<key>HDAInjection</key>
 		<string>Detect</string>
+		<key>USBInjection</key>
+		<string>Yes</string>
 		<key>LpcTune</key>
 		<string>Yes</string>
 	</dict>

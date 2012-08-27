@@ -523,7 +523,18 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           // assume it's a decimal layout id
           gSettings.HDALayoutId = AsciiStrDecimalToUintn(prop->string);
         }
-      }      
+      }
+      // USB
+      prop = GetProperty(dictPointer,"USBInjection");
+      if(prop)
+      {
+        // enabled by default
+        // syntax: USBInjection=Yes/No
+        if ((prop->string[0] == 'n') || (prop->string[0] == 'N')) {
+          gSettings.USBInjection = FALSE;
+        }
+      }
+
     }
     
     //*** ACPI ***//
@@ -1222,8 +1233,10 @@ VOID SetDevices(VOID)
           //             MsgLog("USB device found\n");
           //set properties if no DSDT patch
           if (!(gSettings.FixDsdt & FIX_USB)) {
-            TmpDirty = set_usb_props(&PCIdevice);
-            StringDirty |=  TmpDirty;
+            if (gSettings.USBInjection) {
+              TmpDirty = set_usb_props(&PCIdevice);
+              StringDirty |=  TmpDirty;
+            }
           }
         }
         

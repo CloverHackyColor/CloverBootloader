@@ -589,6 +589,9 @@ typedef struct {
   BOOLEAN HDAInjection;
   UINTN   HDALayoutId;
   
+  // USB DeviceTree injection
+  BOOLEAN USBInjection;
+  
   // LegacyBoot
   CHAR16  LegacyBoot[32];
   

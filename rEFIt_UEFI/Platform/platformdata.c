@@ -252,6 +252,7 @@ VOID GetDefaultSettings(VOID)
   gSettings.GraphicsInjector = TRUE;
   gSettings.HDAInjection = TRUE;
   gSettings.HDALayoutId = 0;
+  gSettings.USBInjection = TRUE; // enabled by default to have the same behavior as before
   gSettings.Mobile = gMobile;  //default
   StrCpy(gSettings.DsdtName, L"DSDT.aml");
   gSettings.BacklightLevel = 0xFFFF; //0x0503; //the value from MBA52
