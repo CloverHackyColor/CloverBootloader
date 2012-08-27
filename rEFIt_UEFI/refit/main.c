@@ -203,7 +203,7 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
     if (ReturnStatus != EFI_NOT_FOUND)
       break;
   }
-  UnicodeSPrint(ErrorInfo, 255, L"while loading %s", ImageTitle);
+  UnicodeSPrint(ErrorInfo, 512, L"while loading %s", ImageTitle);
   if (CheckError(Status, ErrorInfo)) {
     if (ErrorInStep != NULL)
       *ErrorInStep = 1;
@@ -253,7 +253,7 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   
   // control returns here when the child image calls Exit()
   if (ImageTitle) {
-    UnicodeSPrint(ErrorInfo, 255, L"returned from %s", ImageTitle);
+    UnicodeSPrint(ErrorInfo, 512, L"returned from %s", ImageTitle);
   }
   
   if (CheckError(Status, ErrorInfo)) {
@@ -773,15 +773,15 @@ static VOID ScanLoaderDir(IN REFIT_VOLUME *Volume, IN CHAR16 *Path)
       continue;   // skip this
     
     if (Path)
-      UnicodeSPrint(FileName, 255, L"\\%s\\%s", Path, DirEntry->FileName);
+      UnicodeSPrint(FileName, 512, L"\\%s\\%s", Path, DirEntry->FileName);
     else
-      UnicodeSPrint(FileName, 255, L"\\%s", DirEntry->FileName);
+      UnicodeSPrint(FileName, 512, L"\\%s", DirEntry->FileName);
 //    AddLoaderEntry(FileName, NULL, Volume);
   }
   Status = DirIterClose(&DirIter);
   if (Status != EFI_NOT_FOUND) {
     if (Path)
-      UnicodeSPrint(FileName, 255, L"while scanning the %s directory", Path);
+      UnicodeSPrint(FileName, 512, L"while scanning the %s directory", Path);
     else
       StrCpy(FileName, L"while scanning the root directory");
     CheckError(Status, FileName);
@@ -1372,7 +1372,7 @@ static VOID ScanTool(VOID)
         DBG("found tools\\Shell64.efi\n");
       }
 #else
-      UnicodeSPrint(FileName, 255, L"\\EFI\\BOOT\\apps\\shell.efi");
+      UnicodeSPrint(FileName, 512, L"\\EFI\\BOOT\\apps\\shell.efi");
       if (FileExists(SelfRootDir, FileName)) {
         Entry = AddToolEntry(FileName, L"EFI Shell", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
         DBG("found apps\\shell.efi\n");
@@ -1418,13 +1418,13 @@ static VOID ScanDriverDir(IN CHAR16 *Path) //path to folder
         if (DirEntry->FileName[0] == '.')
             continue;   // skip this
         
-        UnicodeSPrint(FileName, 255, L"%s\\%s", Path, DirEntry->FileName);
+        UnicodeSPrint(FileName, 512, L"%s\\%s", Path, DirEntry->FileName);
         Status = StartEFIImage(FileDevicePath(SelfLoadedImage->DeviceHandle, FileName),
                                L"", DirEntry->FileName, DirEntry->FileName, NULL);
     }
     Status = DirIterClose(&DirIter);
     if (Status != EFI_NOT_FOUND) {
-        UnicodeSPrint(FileName, 255, L"while scanning the %s directory", Path);
+        UnicodeSPrint(FileName, 512, L"while scanning the %s directory", Path);
         CheckError(Status, FileName);
     }
 }

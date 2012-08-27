@@ -619,7 +619,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
       
       if (Volume->OSIconName) {
         CHAR16          FileName[256];
-        UnicodeSPrint(FileName, 255, L"icons\\os_%s.icns", Volume->OSIconName);
+        UnicodeSPrint(FileName, 512, L"icons\\os_%s.icns", Volume->OSIconName);
         Volume->OSImage = egLoadIcon(ThemeDir, FileName, 128);
         //LoadOSIcon(Volume->OSIconName, L"mac", FALSE);
       }
@@ -935,7 +935,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     if (HdPath) {      
       
       tmpName = (CHAR16*)AllocateZeroPool(128);
-      UnicodeSPrint(tmpName, 60, L"Unknown HD%d", HdPath->PartitionNumber);
+      UnicodeSPrint(tmpName, 128, L"Unknown HD%d", HdPath->PartitionNumber);
       Volume->VolName = EfiStrDuplicate(tmpName);
       FreePool(tmpName);
       // NOTE: this is normal for Apple's VenMedia device paths

@@ -67,7 +67,7 @@ EFI_STATUS EFIAPI LoadKext(IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OU
 	TagPtr		dict = NULL;
 	TagPtr		prop = NULL;
 
-	UnicodeSPrint(TempName, 255, L"%s\\%s", FileName, L"Contents\\Info.plist");
+	UnicodeSPrint(TempName, 512, L"%s\\%s", FileName, L"Contents\\Info.plist");
 	Status = egLoadFile(SelfVolume->RootDir, TempName, &infoDictBuffer, &infoDictBufferLength);
 	if (EFI_ERROR(Status)) {
 		MsgLog("Failed to load extra kext: %s\n", FileName);
@@ -81,7 +81,7 @@ EFI_STATUS EFIAPI LoadKext(IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OU
 		prop=GetProperty(dict,"CFBundleExecutable");
 		if(prop!=0) {
 			AsciiStrToUnicodeStr(prop->string,Executable);
-			UnicodeSPrint(TempName, 255, L"%s\\%s\\%s", FileName, L"Contents\\MacOS",Executable);
+			UnicodeSPrint(TempName, 512, L"%s\\%s\\%s", FileName, L"Contents\\MacOS",Executable);
 			Status = egLoadFile(SelfVolume->RootDir, TempName, &executableBuffer, &executableBufferLength);
 			if (EFI_ERROR(Status)) {
 				FreePool(infoDictBuffer);
@@ -202,17 +202,17 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 			if (KextFile->FileName[0] == '.' || StrStr(KextFile->FileName, L".kext") == NULL)
 				continue;   // skip this
 			
-			UnicodeSPrint(FileName, 255, L"%s\\%s", SrcDir, KextFile->FileName);
+			UnicodeSPrint(FileName, 512, L"%s\\%s", SrcDir, KextFile->FileName);
 			MsgLog("Extra kext: %s\n", FileName);
 			AddKext(FileName, archCpuType);
 
-			UnicodeSPrint(PlugIns, 255, L"%s\\%s", FileName, L"Contents\\PlugIns");
+			UnicodeSPrint(PlugIns, 512, L"%s\\%s", FileName, L"Contents\\PlugIns");
 			DirIterOpen(SelfVolume->RootDir, PlugIns, &PlugInIter);
 			while (DirIterNext(&PlugInIter, 1, L"*.kext", &PlugInFile)) {
 				if (PlugInFile->FileName[0] == '.' || StrStr(PlugInFile->FileName, L".kext") == NULL)
 					continue;   // skip this
 				
-				UnicodeSPrint(FileName, 255, L"%s\\%s", PlugIns, PlugInFile->FileName);
+				UnicodeSPrint(FileName, 512, L"%s\\%s", PlugIns, PlugInFile->FileName);
 				MsgLog("Extra PlugIn kext: %s\n", FileName);
 				AddKext(FileName, archCpuType);
 			}

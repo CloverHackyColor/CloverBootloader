@@ -834,6 +834,13 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
 		}
 	}
 	DBG("\n");
+  
+  if (!acpi_cpu_count) {
+    for (i=0; i<8; i++) {
+      acpi_cpu_name[i] = AllocateZeroPool(5);
+      AsciiSPrint(acpi_cpu_name[i], 5, "CPU%1d", i);
+    }
+  }
 	return;
 }
 

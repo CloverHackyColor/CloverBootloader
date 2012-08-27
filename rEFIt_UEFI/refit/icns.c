@@ -106,7 +106,7 @@ EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconNam
             continue;
         CopyMem(CutoutName, OSIconName + StartIndex, (Index - StartIndex) * sizeof(CHAR16));
         CutoutName[Index - StartIndex] = 0;
-        UnicodeSPrint(FileName, 255, L"icons\\%s_%s.icns",
+        UnicodeSPrint(FileName, 512, L"icons\\%s_%s.icns",
                BootLogo ? L"boot" : L"os", CutoutName);
         
         // try to load it
@@ -116,7 +116,7 @@ EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconNam
     }
     
     // try the fallback name
-    UnicodeSPrint(FileName, 255, L"icons\\%s_%s.icns",
+    UnicodeSPrint(FileName, 512, L"icons\\%s_%s.icns",
            BootLogo ? L"boot" : L"os", FallbackIconName);
     Image = egLoadIcon(ThemeDir, FileName, 128);
     if (Image != NULL)

@@ -261,7 +261,7 @@ VOID ApplyInputs(VOID)
   }
   i++; //1
   if (InputItems[i].Valid) {
-    UnicodeSPrint(gSettings.DsdtName, 60, L"%s", InputItems[i].SValue);    
+    UnicodeSPrint(gSettings.DsdtName, 120, L"%s", InputItems[i].SValue);
   }
   i++; //2
   if (InputItems[i].Valid) {
@@ -353,7 +353,7 @@ VOID ApplyInputs(VOID)
     i++; //22
     if (InputItems[i].Valid) {
       if (gGraphics[j].Vendor == Ati) {
-        UnicodeSPrint(gSettings.FBName, 16, L"%s", InputItems[i].SValue); 
+        UnicodeSPrint(gSettings.FBName, 32, L"%s", InputItems[i].SValue);
       } else if (gGraphics[j].Vendor == Nvidia) {
         ZeroMem(AString, 255);
         AsciiSPrint(AString, 255, "%s", InputItems[i].SValue);
@@ -1763,7 +1763,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     //1
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 50, L"DSDT name:");
+    UnicodeSPrint(Flags, 255, L"DSDT name:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[1].SValue);
@@ -1777,7 +1777,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     
     //2    
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 50, L"MemoryFix:");
+    UnicodeSPrint(Flags, 255, L"MemoryFix:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = 0xFFFF;
@@ -1790,7 +1790,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     //3  
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 50, L"String Injection:");
+    UnicodeSPrint(Flags, 255, L"String Injection:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = 0xFFFF;
@@ -1803,7 +1803,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     //4 
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 50, L"Drop OEM SSDT:");
+    UnicodeSPrint(Flags, 255, L"Drop OEM SSDT:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = 0xFFFF;
@@ -1816,7 +1816,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     //15   
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 50, L"PatchAPIC:");
+    UnicodeSPrint(Flags, 255, L"PatchAPIC:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = 0xFFFF;
@@ -1829,7 +1829,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     //17   
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 50, L"Fix DSDT mask:");
+    UnicodeSPrint(Flags, 255, L"Fix DSDT mask:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[17].SValue);
@@ -1842,7 +1842,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     //18
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 50, L"Backlight level:");
+    UnicodeSPrint(Flags, 255, L"Backlight level:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[18].SValue);
@@ -1855,7 +1855,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 50, L"Drop OEM APIC:");
+    UnicodeSPrint(Flags, 255, L"Drop OEM APIC:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = 0xFFFF;
@@ -1866,7 +1866,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 50, L"Drop OEM MCFG:");
+    UnicodeSPrint(Flags, 255, L"Drop OEM MCFG:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = 0xFFFF;
@@ -1877,7 +1877,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 50, L"Drop OEM HPET:");
+    UnicodeSPrint(Flags, 255, L"Drop OEM HPET:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = 0xFFFF;
@@ -1888,7 +1888,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 50, L"Drop OEM ECDT:");
+    UnicodeSPrint(Flags, 255, L"Drop OEM ECDT:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = 0xFFFF;
