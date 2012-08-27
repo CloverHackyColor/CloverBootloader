@@ -127,6 +127,8 @@ typedef struct {
 } BootArgs2;
 
 
-VOID EFIAPI BootArgsPrint(VOID *bootArgs);
-VOID EFIAPI BootArgsFix(VOID *bootArgs,	EFI_PHYSICAL_ADDRESS gRellocBase);
+VOID  EFIAPI BootArgsPrint(VOID *bootArgs);
+VOID  EFIAPI BootArgsFix(VOID *bootArgs, EFI_PHYSICAL_ADDRESS gRellocBase);
+VOID* EFIAPI BootArgsFind(IN EFI_PHYSICAL_ADDRESS Start);
+
 

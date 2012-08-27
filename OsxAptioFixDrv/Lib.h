@@ -102,13 +102,27 @@ VOID
 WaitForKeyPress(CHAR16 *Message);
 
 /** Writes to NVRAM variable DebugLog. */
+/*
 EFI_STATUS
 NVRAMDebugLog(CHAR8 *Format, ...);
+ */
 
 /** Returns file path from FilePath device path in allocated memory. Mem should be released by caller.*/
 CHAR16 *
 EFIAPI
 FileDevicePathToText(EFI_DEVICE_PATH_PROTOCOL *FilePathProto);
+
+/** Helper function that calls GetMemoryMap(), allocates space for mem map and returns it. */
+EFI_STATUS
+EFIAPI
+GetMemoryMapAlloc (
+	IN EFI_GET_MEMORY_MAP			GetMemoryMapFunction,
+	OUT UINTN						*MemoryMapSize,
+	OUT EFI_MEMORY_DESCRIPTOR		**MemoryMap,
+	OUT UINTN						*MapKey,
+	OUT UINTN						*DescriptorSize,
+	OUT UINT32						*DescriptorVersion
+);
 
 /** Alloctes Pages from the top of mem, up to address specified in Memory. Returns allocated address in Memory. */
 EFI_STATUS

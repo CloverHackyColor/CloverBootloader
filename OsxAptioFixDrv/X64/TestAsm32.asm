@@ -287,7 +287,7 @@ MyAsmJumpFromKernel32   ENDP
 ; EDI = proper start of kernel image (destination)
 ; ECX = kernel image size in bytes
 ;------------------------------------------------------------------------------
-        align 08h
+		align 08h
 MyAsmCopyAndJumpToKernel32   PROC
 	
 	;

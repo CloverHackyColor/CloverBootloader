@@ -151,9 +151,9 @@ GDT_END:
 #------------------------------------------------------------------------------
 ASM_GLOBAL ASM_PFX(MyAsmReadSp)
 ASM_PFX(MyAsmReadSp):
-    movq	%rsp, %rax 
+	movq	%rsp, %rax 
 	add		$8, %rax			# return SP as caller see it
-    ret
+	ret
 
 #------------------------------------------------------------------------------
 # VOID

@@ -6,23 +6,13 @@
 
 **/
 
-//#include <Library/BaseLib.h>
 #include <Library/UefiLib.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/UefiRuntimeServicesTableLib.h>
 #include <Library/BaseMemoryLib.h>
-//#include <Library/CpuLib.h>
-//#include <Library/IoLib.h>
 #include <Library/DebugLib.h>
-#include <Library/DevicePathLib.h>
-#include <Library/PeCoffLib.h>
-
-#include <Protocol/LoadedImage.h>
-#include <Protocol/Ebc.h>
-#include <Protocol/Runtime.h>
 
 #include "VMem.h"
 #include "Lib.h"
+#include "NVRAMDebug.h"
 
 
 // DBG_TO: 0=no debug, 1=serial, 2=console
@@ -40,10 +30,6 @@
 #else
 	#define DBG(...)
 #endif
-
-// for debugging with NVRAM
-//#define DBGnvr(...) NVRAMDebugLog(__VA_ARGS__);
-#define DBGnvr(...)
 
 
 /** Memory allocation for VM map pages that we will create with VmMapVirtualPage.
@@ -78,7 +64,7 @@ PrintPageTablePTE(PAGE_TABLE_4K_ENTRY *PTE, VIRTUAL_ADDR VA)
 			(PTE->Uint64 & ~PT_ADDR_MASK_4K), VA.Uint64, VA.Uint64 + 0x1000 - 1, Start, Start + 0x1000 - 1);
 		PTE++;
 	}
-	WaitForKeyPress(L"more ...");
+	//WaitForKeyPress(L"more ...");
 }
 
 VOID
@@ -105,7 +91,7 @@ PrintPageTablePDE(PAGE_MAP_AND_DIRECTORY_POINTER *PDE, VIRTUAL_ADDR VA)
 		}
 		PDE++;
 	}
-	WaitForKeyPress(L"more ...");
+	//WaitForKeyPress(L"more ...");
 }
 
 VOID
@@ -132,7 +118,7 @@ PrintPageTablePDPE(PAGE_MAP_AND_DIRECTORY_POINTER *PDPE, VIRTUAL_ADDR VA)
 		}
 		PDPE++;
 	}
-	WaitForKeyPress(L"more ...");
+	//WaitForKeyPress(L"more ...");
 }
 
 VOID
@@ -154,7 +140,7 @@ PrintPageTable(PAGE_MAP_AND_DIRECTORY_POINTER *PageTable, UINTN Flags)
 		PrintPageTablePDPE(PDPE, VA);
 		PML4++;
 	}
-	WaitForKeyPress(L"END");
+	//WaitForKeyPress(L"END");
 }
 
 EFI_STATUS 
@@ -297,7 +283,7 @@ VmAllocateMemoryPool(VOID)
 		return EFI_SUCCESS;
 	}
 
-	VmMemoryPoolFreePages = 0x2000; // 32 MB should be more then enough
+	VmMemoryPoolFreePages = 0x200; // 2 MB should be enough
 	Addr = 0x100000000; // max address
 	
 	Status = AllocatePagesFromTop(EfiBootServicesData, VmMemoryPoolFreePages, &Addr);

@@ -6,7 +6,6 @@
 
 **/
 
-#include <Library/BaseLib.h>
 #include <Library/UefiLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
@@ -23,6 +22,7 @@
 #include "AsmFuncs.h"
 #include "VMem.h"
 #include "Lib.h"
+#include "NVRAMDebug.h"
 
 
 // DBG_TO: 0=no debug, 1=serial, 2=console
@@ -41,20 +41,14 @@
 	#define DBG(...)
 #endif
 
-// for debugging with NVRAM
-//#define DBGnvr(...) NVRAMDebugLog(__VA_ARGS__);
-#define DBGnvr(...)
 
-
-// if defined then force specified reloc address
-// if not defined then tries to find proper reloc address
-// usefull to specify some rounded address for debug, or for simulating reloc process
-// in DUET
-//#define DEBUG_FORCE_RELOC_ADDRESS		0x20000000 // 512MB
-//#define DEBUG_FORCE_RELOC_ADDRESS		0 // no reloc
 
 // defines the size of block that will be allocated for kernel image relocation
-#define KERNEL_BLOCK_SIZE_PAGES		0x14000 // 320MB block
+//#define KERNEL_BLOCK_SIZE_PAGES		0x20000 // 512MB block
+
+// defines the size of block that will be allocated for kernel image relocation,
+// without RT and MMIO regions
+#define KERNEL_BLOCK_NO_RT_SIZE_PAGES	0x4000 // 64MB for
 
 /*
 #define KERNEL_ENTRIES_NUM			2
@@ -89,6 +83,8 @@ EFI_PHYSICAL_ADDRESS gMaxAllocatedAddr = 0;
 
 // relocation base address
 EFI_PHYSICAL_ADDRESS gRelocBase = 0;
+// relocation block size in pages
+UINTN gRelocSizePages = 0;
 
 // start of our image
 EFI_PHYSICAL_ADDRESS gOurImageStart = 0;
@@ -119,6 +115,60 @@ DetectKernel(VOID)
 }
 */
 
+/** Helper function that calls GetMemoryMap() and returns new MapKey.
+ * Uses gStoredGetMemoryMap, so can be called only after gStoredGetMemoryMap is set.
+ */
+EFI_STATUS
+GetMemoryMapKey(OUT UINTN *MapKey)
+{
+	EFI_STATUS					Status;
+	UINTN						MemoryMapSize;
+	EFI_MEMORY_DESCRIPTOR		*MemoryMap;
+	UINTN						DescriptorSize;
+	UINT32						DescriptorVersion;
+	
+	Status = GetMemoryMapAlloc(gStoredGetMemoryMap, &MemoryMapSize, &MemoryMap, MapKey, &DescriptorSize, &DescriptorVersion);
+	return Status;
+}
+
+/** Helper function that calculates number of RT and MMIO pages from mem map. */
+EFI_STATUS
+GetNumberOfRTPages(OUT UINTN *NumPages)
+{
+	EFI_STATUS					Status;
+	UINTN						MemoryMapSize;
+	EFI_MEMORY_DESCRIPTOR		*MemoryMap;
+	UINTN						MapKey;
+	UINTN						DescriptorSize;
+	UINT32						DescriptorVersion;
+	UINTN						NumEntries;
+	UINTN						Index;
+	EFI_MEMORY_DESCRIPTOR		*Desc;
+	
+	Status = GetMemoryMapAlloc(gBS->GetMemoryMap, &MemoryMapSize, &MemoryMap, &MapKey, &DescriptorSize, &DescriptorVersion);
+	if (EFI_ERROR(Status)) {
+		return Status;
+	}
+	
+	//
+	// Sum RT and MMIO areas - all that have runtime attribute
+	//
+	
+	*NumPages = 0;
+	Desc = MemoryMap;
+	NumEntries = MemoryMapSize / DescriptorSize;
+	
+	for (Index = 0; Index < NumEntries; Index++) {
+		if ((Desc->Attribute & EFI_MEMORY_RUNTIME) != 0) {
+			*NumPages += Desc->NumberOfPages;
+		}
+		Desc = NEXT_MEMORY_DESCRIPTOR(Desc, DescriptorSize);
+	}
+
+	return Status;
+}
+
+
 /** Allocates StackSizePages for stack high in memory. Returns stack bottom and top. */
 EFI_STATUS
 AllocateHighStack(IN UINTN StackSizePages, OUT EFI_PHYSICAL_ADDRESS *StackBottom, OUT EFI_PHYSICAL_ADDRESS *StackTop)
@@ -127,7 +177,7 @@ AllocateHighStack(IN UINTN StackSizePages, OUT EFI_PHYSICAL_ADDRESS *StackBottom
 
 	// set max address and allocate mem
 	*StackBottom = 0x100000000;
-	Status = AllocatePagesFromTop(EfiLoaderData, StackSizePages, StackBottom);
+	Status = AllocatePagesFromTop(EfiBootServicesData, StackSizePages, StackBottom);
 	if (Status != EFI_SUCCESS) {
 		Print(L"OsxAptioFixDrv: AllocateHighStack(): can not allocate mem for stack (0x%x pages on mem top): %r\n",
 			  StackSizePages, Status);
@@ -152,52 +202,59 @@ ReleaseHighStack(IN EFI_PHYSICAL_ADDRESS StackBottom, IN UINTN StackSizePages)
 }
 
 
+/** Calculate the size of reloc block.
+  * gRelocSizePages = KERNEL_BLOCK_NO_RT_SIZE_PAGES + RT&MMIO pages
+  */
+EFI_STATUS
+CalculateRelocBlockSize(VOID)
+{
+	EFI_STATUS				Status;
+	UINTN					NumPagesRT;
+	
+	
+	// Sum pages needed for RT and MMIO areas
+	Status = GetNumberOfRTPages(&NumPagesRT);
+	if (EFI_ERROR(Status)) {
+		DBGnvr("GetNumberOfRTPages: %r\n", Status);
+		DBG("OsxAptioFixDrv: CalculateRelocBlockSize(): GetNumberOfRTPages: %r\n", Status);
+		Print(L"OsxAptioFixDrv: CalculateRelocBlockSize(): GetNumberOfRTPages: %r\n", Status);
+		return Status;
+	}
+	
+	gRelocSizePages = KERNEL_BLOCK_NO_RT_SIZE_PAGES + NumPagesRT;
+	DBGnvr("Reloc block: %x pages (%d MB) = kernel %x (%d MB) + RT&MMIO %x (%d MB)\n",
+		   gRelocSizePages, EFI_PAGES_TO_SIZE(gRelocSizePages) >> 20,
+		   KERNEL_BLOCK_NO_RT_SIZE_PAGES, EFI_PAGES_TO_SIZE(KERNEL_BLOCK_NO_RT_SIZE_PAGES) >> 20,
+		   NumPagesRT, EFI_PAGES_TO_SIZE(NumPagesRT) >> 20
+		   );
+	
+	return Status;
+}
+
 /** Allocate free block on top of mem for kernel image relocation (will be returned to boot.efi for kernel boot image). */
 EFI_STATUS
 AllocateRelocBlock()
 {
 	EFI_STATUS				Status;
-	UINTN					NumberOfPages = KERNEL_BLOCK_SIZE_PAGES;
-	
-#ifdef DEBUG_FORCE_RELOC_ADDRESS	
-
-	gRelocBase = DEBUG_FORCE_RELOC_ADDRESS;
-	if (gRelocBase == 0) {
-		// debugging without relocation
-		gRelocBase = 0x100000;
-	}
-	Status = gBS->AllocatePages(AllocateAddress, EfiLoaderData, NumberOfPages, &gRelocBase);
-	if (Status != EFI_SUCCESS) {
-		Print(L"OsxAptioFixDrv: AllocateRelocBlock(): can not allocate relocation block (0x%x pages at 0x%lx): %r\n",
-			NumberOfPages, gRelocBase, Status);
-	} else {
-		DBGnvr("gRelocBase set to %lx - %lx\n", gRelocBase, gRelocBase + EFI_PAGES_TO_SIZE(NumberOfPages) - 1);
-	}
-	if (gRelocBase == 0x100000) {
-		// debugging without relocation
-		gRelocBase = 0;
-	}
-	
-#else
 	EFI_PHYSICAL_ADDRESS	Addr;
+	
 	
 	gRelocBase = 0;
 	Addr = 0x100000000; // max address
-	Status = AllocatePagesFromTop(EfiBootServicesData, NumberOfPages, &Addr);
+	Status = AllocatePagesFromTop(EfiBootServicesData, gRelocSizePages, &Addr);
 	if (Status != EFI_SUCCESS) {
 		DBG("OsxAptioFixDrv: AllocateRelocBlock(): can not allocate relocation block (0x%x pages below 0x%lx): %r\n",
-			NumberOfPages, 0x100000000, Status);
+			gRelocSizePages, 0x100000000, Status);
 		Print(L"OsxAptioFixDrv: AllocateRelocBlock(): can not allocate relocation block (0x%x pages below 0x%lx): %r\n",
-			NumberOfPages, 0x100000000, Status);
+			gRelocSizePages, 0x100000000, Status);
 	} else {
 		gRelocBase = Addr;
-		DBG("OsxAptioFixDrv: AllocateRelocBlock(): gRelocBase set to %lx - %lx\n", gRelocBase, gRelocBase + EFI_PAGES_TO_SIZE(NumberOfPages) - 1);
-		DBGnvr("gRelocBase set to %lx - %lx\n", gRelocBase, gRelocBase + EFI_PAGES_TO_SIZE(NumberOfPages) - 1);
+		DBG("OsxAptioFixDrv: AllocateRelocBlock(): gRelocBase set to %lx - %lx\n", gRelocBase, gRelocBase + EFI_PAGES_TO_SIZE(gRelocSizePages) - 1);
+		DBGnvr("gRelocBase set to %lx - %lx\n", gRelocBase, gRelocBase + EFI_PAGES_TO_SIZE(gRelocSizePages) - 1);
 	}
 
-#endif
 	// set reloc addr in runtime vars for boot manager
-	Print(L"OsxAptioFixDrv: AllocateRelocBlock(): gRelocBase set to %lx - %lx\n", gRelocBase, gRelocBase + EFI_PAGES_TO_SIZE(NumberOfPages) - 1);
+	//Print(L"OsxAptioFixDrv: AllocateRelocBlock(): gRelocBase set to %lx - %lx\n", gRelocBase, gRelocBase + EFI_PAGES_TO_SIZE(gRelocSizePages) - 1);
 	/*Status = */gRT->SetVariable(L"OsxAptioFixDrv-RelocBase", &gEfiAppleBootGuid, 
 							  /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
 							  sizeof(gRelocBase) ,&gRelocBase);
@@ -209,7 +266,7 @@ EFI_STATUS
 FreeRelocBlock()
 {
 	
-	return gBS->FreePages(gRelocBase, KERNEL_BLOCK_SIZE_PAGES);
+	return gBS->FreePages(gRelocBase, gRelocSizePages);
 }
 
 
@@ -271,11 +328,33 @@ MOAllocatePages (
 	
 
 	MemoryIn = *Memory;
-	if (Type == AllocateAddress && MemoryType == EfiLoaderData && *Memory < EFI_PAGES_TO_SIZE(KERNEL_BLOCK_SIZE_PAGES)) {
+	if (Type == AllocateAddress && MemoryType == EfiLoaderData) {
 		// called from boot.efi
 		
-		// store min and max mem - can be used later to determine start and end of kernel boot image
 		UpperAddr = *Memory + EFI_PAGES_TO_SIZE(NumberOfPages);
+		
+		// check if the requested mem can be served from reloc block
+		if (UpperAddr >= EFI_PAGES_TO_SIZE(gRelocSizePages)) {
+			// no - exceeds our block - signal error
+			Print(L"OsxAptipFixDrv: Error - requested memory exceeds our allocated relocation block\n");
+			Print(L"Requested mem: %lx - %lx, Pages: %x, Size: %lx\n",
+				  *Memory, UpperAddr - 1,
+				  NumberOfPages, EFI_PAGES_TO_SIZE(NumberOfPages)
+				  );
+			Print(L"Reloc block: %lx - %lx, Pages: %x, Size: %lx\n",
+				  gRelocBase, gRelocBase + EFI_PAGES_TO_SIZE(gRelocSizePages) - 1,
+				  gRelocSizePages, EFI_PAGES_TO_SIZE(gRelocSizePages)
+				  );
+			Print(L"Reloc block can handle mem requests: %lx - %lx\n",
+				  0, EFI_PAGES_TO_SIZE(gRelocSizePages) - 1
+				  );
+			Print(L"Exiting in 30 secs ...\n");
+			gBS->Stall(30 * 1000000);
+			
+			return EFI_OUT_OF_RESOURCES;
+		}
+		
+		// store min and max mem - can be used later to determine start and end of kernel boot image
 		if (gMinAllocatedAddr == 0 || *Memory < gMinAllocatedAddr) gMinAllocatedAddr = *Memory;
 		if (UpperAddr > gMaxAllocatedAddr) gMaxAllocatedAddr = UpperAddr;
 		
@@ -325,7 +404,6 @@ MOGetMemoryMap (
 	return Status;
 }
 
-
 /** gBS->ExitBootServices override:
   * Patches kernel entry point with jump to our code.
   */
@@ -339,11 +417,8 @@ MOExitBootServices (
 	EFI_STATUS					Status;
 	//UINT64						*p64;
 	UINT64						RSP;
-	UINTN						MemoryMapSize;
-	EFI_MEMORY_DESCRIPTOR		*MemoryMap;
 	UINTN					 	NewMapKey;
-	UINTN						DescriptorSize;
-	UINT32						DescriptorVersion;
+	//VOID						*BootArgs;
 	
 	
 	
@@ -386,63 +461,141 @@ MOExitBootServices (
 		return EFI_NOT_FOUND;
 	}
 	
+	// BootArgs test
+	//BootArgs = BootArgsFind(gRelocBase + 0x0200000);
+	//BootArgsPrint(BootArgs);
+	
 	// for  tests: we can just return EFI_SUCCESS and continue using Print for debug.
 	Status = EFI_SUCCESS;
 	//Print(L"ExitBootServices()\n");
 	Status = gStoredExitBootServices(ImageHandle, MapKey);
 	DBGnvr("ExitBootServices:  = %r\n", Status);
 	if (EFI_ERROR (Status)) {
-		DBG(L"OsxAptioFixDrv: ExitBootServices() = Status: %r ... waiting 10 secs ...\n", Status);
-        Print(L"MapKey = %lx, LastMapKey = %lx\n", MapKey, LastMapKey);
-		Print(L"Trying again in 5 secs with new GetMemoryMap ...\n");
+		Print(L"OsxAptioFixDrv: Error ExitBootServices() = Status: %r\n", Status);
+		Print(L"MapKey = %lx, LastMapKey = %lx\n", MapKey, LastMapKey);
+		Print(L"This is an error and should be resolved.\nFor now, we will force ExitBootServices() once again in 10 secs with new GetMemoryMap ...\n");
 
 		gBS->Stall(10*1000000);
 		//CpuDeadLoop();
-		// we'll try to ExitBootServices by obtaining new MapKey
-		MemoryMapSize = 1; // this can probably work with 0 and with MemoryMap = NULL
-		MemoryMap = AllocatePool(MemoryMapSize);
-		Status = gStoredGetMemoryMap(&MemoryMapSize, MemoryMap, &NewMapKey, &DescriptorSize, &DescriptorVersion);
-		if (Status == EFI_BUFFER_TOO_SMALL) {
-			// OK. Space needed for mem map is in MemoryMapSize
-			FreePool(MemoryMap);
-			// Important: next AllocatePool can increase mem map size - we must add some space for this
-			MemoryMapSize += 256;
-			MemoryMap = AllocatePool(MemoryMapSize);
-			Status = gStoredGetMemoryMap(&MemoryMapSize, MemoryMap, &NewMapKey, &DescriptorSize, &DescriptorVersion);
-			
-			if (Status == EFI_SUCCESS) {
-				// we have latest mem map and NewMapKey
-				// we'll try again ExitBootServices with NewMapKey
-				Status = gStoredExitBootServices(ImageHandle, NewMapKey);
-				if (EFI_ERROR (Status)) {
-					// Error!
-					Print(L"OsxAptioFixDrv: ExitBootServices() 2nd try = Status: %r\n", Status);
-				}
-			} else {
-				Print(L"OsxAptioFixDrv: ExitBootServices(), GetMemoryMap() 2nd call = Status: %r\n", Status);
-				Status = EFI_INVALID_PARAMETER;
+		
+		Status = GetMemoryMapKey(&NewMapKey);
+		DBGnvr("ExitBootServices: GetMemoryMapKey = %r\n", Status);
+		if (Status == EFI_SUCCESS) {
+			// we have latest mem map and NewMapKey
+			// we'll try again ExitBootServices with NewMapKey
+			Status = gStoredExitBootServices(ImageHandle, NewMapKey);
+			DBGnvr("ExitBootServices: 2nd try = %r\n", Status);
+			if (EFI_ERROR (Status)) {
+				// Error!
+				Print(L"OsxAptioFixDrv: Error ExitBootServices() 2nd try = Status: %r\n", Status);
 			}
-
-	} else {
-		//KernelEntryPatchJump(gKernelEntry);
-		//KernelEntryPatchJumpFill();
-		// TEST
-		//KernelEntryPatchHalt(gKernelEntry);
-		//KernelEntryPatchZero(gKernelEntry);
-    // error in first call to GetMemoryMap
-    DBG(L"OsxAptioFixDrv: ExitBootServices(), GetMemoryMap() 1st call = Status: %r\n", Status);
-    Status = EFI_INVALID_PARAMETER;
-    }
+		} else {
+			Print(L"OsxAptioFixDrv: Error ExitBootServices(), GetMemoryMapKey() = Status: %r\n", Status);
+			Status = EFI_INVALID_PARAMETER;
+		}
+		
 	}
-    if (Status == EFI_SUCCESS) {
-      KernelEntryPatchJumpFill();
-    } else {
-      Print(L"... waiting 10 secs ...\n");
-      gBS->Stall(10*1000000);
-    }
-
+	
+	if (Status == EFI_SUCCESS) {
+		//KernelEntryPatchJumpFill();
+		KernelEntryFromMachOPatchJump();
+        //CpuDeadLoop();
+	} else {
+		Print(L"... waiting 10 secs ...\n");
+		gBS->Stall(10*1000000);
+	}
+	
 	return Status;
 }
+
+/* for test
+EFI_SET_VIRTUAL_ADDRESS_MAP OrgSetVirtualAddressMap = NULL;
+EFI_CONVERT_POINTER	OrgConvertPointer = NULL;
+
+UINT32 OrgRTCRC32 = 0;
+
+VOID
+AddVirtualToPhysicalMappings(
+	IN UINTN					MemoryMapSize,
+	IN UINTN					DescriptorSize,
+	IN UINT32					DescriptorVersion,
+	IN EFI_MEMORY_DESCRIPTOR	*VirtualMap
+)
+{
+	UINTN					NumEntries;
+	UINTN					Index;
+	EFI_MEMORY_DESCRIPTOR	*Desc;
+	PAGE_MAP_AND_DIRECTORY_POINTER	*PageTable;
+	UINTN					Flags;
+	
+	Desc = VirtualMap;
+	NumEntries = MemoryMapSize / DescriptorSize;
+	
+	// get current VM page table
+	GetCurrentPageTable(&PageTable, &Flags);
+	
+	for (Index = 0; Index < NumEntries; Index++) {
+		// assign virtual addresses to all EFI_MEMORY_RUNTIME marked pages (including MMIO)
+		if ((Desc->Attribute & EFI_MEMORY_RUNTIME) != 0) {
+			DBGnvr("Map pages: %lx (%x) -> %lx\n", Desc->VirtualStart, Desc->NumberOfPages, Desc->PhysicalStart);
+			VmMapVirtualPages(PageTable, Desc->VirtualStart, Desc->NumberOfPages, Desc->PhysicalStart);
+		}
+		Desc = NEXT_MEMORY_DESCRIPTOR(Desc, DescriptorSize);
+	}
+	VmFlashCaches();
+}
+
+EFI_STATUS EFIAPI
+OvrSetVirtualAddressMap(
+	IN UINTN			MemoryMapSize,
+	IN UINTN			DescriptorSize,
+	IN UINT32			DescriptorVersion,
+	IN EFI_MEMORY_DESCRIPTOR	*VirtualMap
+)
+{
+	EFI_STATUS			Status;
+	
+	DBGnvr("->SetVirtualAddressMap(%d, %d, 0x%x, %p) START ...\n", MemoryMapSize, DescriptorSize, DescriptorVersion, VirtualMap);
+	//PrintSystemTable(gST);
+	//WaitForKeyPress(L"SetVirtualAddressMap: press a key to continue\n");
+	//PrintMemMap(MemoryMapSize, VirtualMap, DescriptorSize, DescriptorVersion);
+	//Status = EFI_SUCCESS;
+	
+	// restore origs
+	gRT->Hdr.CRC32 = OrgRTCRC32;
+	gRT->SetVirtualAddressMap = OrgSetVirtualAddressMap;
+	
+	AddVirtualToPhysicalMappings(MemoryMapSize, DescriptorSize, DescriptorVersion, VirtualMap);
+	
+	Status = OrgSetVirtualAddressMap(MemoryMapSize, DescriptorSize, DescriptorVersion, VirtualMap);
+	DBGnvr("->SetVirtualAddressMap() = %r\n", Status);
+	
+	//DBG("->SetVirtualAddressMap(%d, %d, 0x%x, %p) START ...\n", MemoryMapSize, DescriptorSize, DescriptorVersion, VirtualMap);
+	//PrintSystemTable(gST);
+	//WaitForKeyPress(L"SetVirtualAddressMap: press a key to continue\n");
+	//PrintMemMap(MemoryMapSize, VirtualMap, DescriptorSize, DescriptorVersion);
+	//Status = EFI_SUCCESS;
+	//Status = OrgSetVirtualAddressMap(MemoryMapSize, DescriptorSize, DescriptorVersion, VirtualMap);
+	//DBG("->SetVirtualAddressMap(%d, %d, 0x%x, %p) END = %r\n", MemoryMapSize, DescriptorSize, DescriptorVersion, VirtualMap, Status);
+	//PrintSystemTable(gST);
+	return Status;
+}
+
+EFI_STATUS EFIAPI
+OvrConvertPointer(
+	IN UINTN			DebugDisposition,
+	IN OUT VOID			**Address
+)
+{
+	EFI_STATUS			Status;
+	VOID				*AddressIn = *Address;
+	
+	Status = OrgConvertPointer(DebugDisposition, Address);
+	DBGnvr("->ConvertPointer(%d, %p/%p) = %r\n", DebugDisposition, AddressIn, *Address, Status);
+	return Status;
+}
+*/
+
 
 
 
@@ -507,12 +660,13 @@ RunImageWithOverrides(IN VOID *Context1, IN VOID *Context2)
 	gBS->CalculateCrc32(gBS, gBS->Hdr.HeaderSize, &gBS->Hdr.CRC32);
 	
 	/* for test
+	OrgRTCRC32 = gRT->Hdr.CRC32;
 	OrgSetVirtualAddressMap = gRT->SetVirtualAddressMap;
 	gRT->SetVirtualAddressMap = OvrSetVirtualAddressMap;
-	OrgConvertPointer = gRT->ConvertPointer;
-	gRT->ConvertPointer = OvrConvertPointer;
+	//OrgConvertPointer = gRT->ConvertPointer;
+	//gRT->ConvertPointer = OvrConvertPointer;
 	gRT->Hdr.CRC32 = 0;
-	gBS->CalculateCrc32(gRT, sizeof(EFI_RUNTIME_SERVICES), &gRT->Hdr.CRC32);
+	gBS->CalculateCrc32(gRT, gRT->Hdr.HeaderSize, &gRT->Hdr.CRC32);
 	*/
 	
 	// run image
@@ -531,9 +685,8 @@ RunImageWithOverrides(IN VOID *Context1, IN VOID *Context2)
 	
 	/* for test
 	gRT->SetVirtualAddressMap = OrgSetVirtualAddressMap;
-	gRT->ConvertPointer = OrgConvertPointer;
-	gRT->Hdr.CRC32 = 0;
-	gBS->CalculateCrc32(gRT, sizeof(EFI_RUNTIME_SERVICES), &gRT->Hdr.CRC32);
+	//gRT->ConvertPointer = OrgConvertPointer;
+	gRT->Hdr.CRC32 = OrgRTCRC32;
 	*/
 	
 	// release reloc block
@@ -575,13 +728,16 @@ RunImageWithOverridesAndHighStack(IN EFI_HANDLE ImageHandle, OUT UINTN *ExitData
 	ImgContext->ExitData = ExitData;
 	ImgContext->StartImageStatus = EFI_SUCCESS;
 	
+	// calculate the needed size for reloc block
+	CalculateRelocBlockSize();
+	
 	// read current stack
 	RSP = MyAsmReadSp();
 	DBG("Current stack: RSP=%lx\n", RSP);
 	DBGnvr("Current stack: RSP=%lx\n", RSP);
 		
-	// check if stack is too low
-	if (RSP < EFI_PAGES_TO_SIZE(KERNEL_BLOCK_SIZE_PAGES)) {
+	// check if stack is too low - must be > gRelocSize
+	if (RSP < EFI_PAGES_TO_SIZE(gRelocSizePages)) {
 		
 		// too low - allocate new stack higher in memory
 		Status = AllocateHighStack(StackSizePages, &StackBottom, &StackTop);
@@ -677,46 +833,6 @@ MOStartImage (
 	}
 	return Status;
 }
-
-/* for test
-EFI_SET_VIRTUAL_ADDRESS_MAP OrgSetVirtualAddressMap = NULL;
-EFI_CONVERT_POINTER	OrgConvertPointer = NULL;
-
-EFI_STATUS EFIAPI
-OvrSetVirtualAddressMap(
-	IN UINTN			MemoryMapSize,
-	IN UINTN			DescriptorSize,
-	IN UINT32			DescriptorVersion,
-	IN EFI_MEMORY_DESCRIPTOR	*VirtualMap
-)
-{
-	EFI_STATUS			Status;
-	
-	DBG("->SetVirtualAddressMap(%d, %d, 0x%x, %p) START ...\n", MemoryMapSize, DescriptorSize, DescriptorVersion, VirtualMap);
-	PrintSystemTable(gST);
-	WaitForKeyPress(L"SetVirtualAddressMap: press a key to continue\n");
-	PrintMemMap(MemoryMapSize, VirtualMap, DescriptorSize, DescriptorVersion);
-	Status = EFI_SUCCESS;
-	//Status = OrgSetVirtualAddressMap(MemoryMapSize, DescriptorSize, DescriptorVersion, VirtualMap);
-	//DBG("->SetVirtualAddressMap(%d, %d, 0x%x, %p) END = %r\n", MemoryMapSize, DescriptorSize, DescriptorVersion, VirtualMap, Status);
-	//PrintSystemTable(gST);
-	return Status;
-}
-
-EFI_STATUS EFIAPI
-OvrConvertPointer(
-	IN UINTN			DebugDisposition,
-	IN OUT VOID			**Address
-)
-{
-	EFI_STATUS			Status;
-	VOID				*AddressIn = *Address;
-	
-	Status = OrgConvertPointer(DebugDisposition, Address);
-	NVRAMDebugLog("->ConvertPointer(%d, %p/%p) = %r\n", DebugDisposition, AddressIn, *Address, Status);
-	return Status;
-}
-*/
 
 
 /** Saves the lowest mem address of our image. Will be used later

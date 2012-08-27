@@ -45,7 +45,13 @@
   Lib.h
   FlatDevTree/device_tree.h
   FlatDevTree/device_tree.c
-
+  NVRAMDebug.h
+  NVRAMDebug.c
+  Mach-O/UefiLoader.h
+  Mach-O/loader.h
+  Mach-O/Mach-O.h
+  Mach-O/Mach-O.c
+  
 [Sources.X64]
   X64/AsmFuncsX64.asm
   X64/AsmFuncsX64.S | GCC

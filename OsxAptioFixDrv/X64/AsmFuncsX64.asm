@@ -95,7 +95,7 @@ MyAsmCopyAndJumpToKernel32AddrOff	EQU $-DataBase
 MyAsmCopyAndJumpToKernel32Addr		DD			0
 
 
-        align 02h
+		align 02h
 
 ; GDT not used since we are reusing UEFI state
 ; but left here in case will be needed.
@@ -105,7 +105,7 @@ GDTROff			EQU $-DataBase
 GDTR			dw GDT_END - GDT_BASE - 1   ; GDT limit
 GDTR_BASE		dq 0                        ; GDT base - needs to be set in code
 
-        align 08h
+		align 08h
 ; GDT
 GDT_BASE:
 ; null descriptor
@@ -129,10 +129,10 @@ CODE64_SEL		equ $-GDT_BASE			; 0x08
 ; 32 bit and 64 bit data segment descriptor (in 64 bit almost all is ignored, so can be reused)
 DATA_SEL		equ $-GDT_BASE			; 0x10
 		dw 0FFFFh		; limit 0xFFFFF
-		dw 0            ; base 0
+		dw 0			; base 0
 		db 0
-		db 092h         ; P=1 | DPL=00 | S=1 (User) # Type=2=0010: Code/Data=0 | E:Expand-Down=0 | W:Writable=1 | A:Accessed=0
-		db 0CFh         ; Flags=C=1100: G:Granularity=1 (4K) | D/B=1 D not used when E=0, for stack B=1 means 32 bit stack | L:Long=0 not used | AVL=0
+		db 092h			; P=1 | DPL=00 | S=1 (User) # Type=2=0010: Code/Data=0 | E:Expand-Down=0 | W:Writable=1 | A:Accessed=0
+		db 0CFh			; Flags=C=1100: G:Granularity=1 (4K) | D/B=1 D not used when E=0, for stack B=1 means 32 bit stack | L:Long=0 not used | AVL=0
 		db 0
 
 ; 32 bit code segment descriptor
@@ -155,9 +155,9 @@ GDT_END:
 ;   );
 ;------------------------------------------------------------------------------
 MyAsmReadSp   PROC
-    mov     rax, rsp
+	mov		rax, rsp
 	add		rax, 8			; return SP as caller see it
-    ret
+	ret
 MyAsmReadSp   ENDP
 
 
@@ -407,7 +407,7 @@ MyAsmJumpFromKernel32   ENDP
 ; EDI = proper start of kernel image (destination)
 ; ECX = kernel image size in bytes
 ;------------------------------------------------------------------------------
-        align 08h
+		align 08h
 MyAsmCopyAndJumpToKernel32   PROC
 	
 	;

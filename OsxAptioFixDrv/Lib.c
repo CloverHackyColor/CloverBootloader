@@ -6,7 +6,6 @@
 
 **/
 
-//#include <Library/BaseLib.h>
 #include <Library/UefiLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/MemoryAllocationLib.h>
@@ -250,8 +249,8 @@ StrCmpiBasic(IN CHAR16 *String1, IN CHAR16 *String2)
 CHAR16*
 EFIAPI
 StrStriBasic(
-  IN      CONST CHAR16              *String,
-  IN      CONST CHAR16              *SearchString
+	IN CONST CHAR16		*String,
+	IN CONST CHAR16		*SearchString
   )
 {
   CONST CHAR16 *FirstMatch;
@@ -259,28 +258,28 @@ StrStriBasic(
 
 
   if (*SearchString == L'\0') {
-    return (CHAR16 *) String;
+	return (CHAR16 *) String;
   }
 
   while (*String != L'\0') {
-    SearchStringTmp = SearchString;
-    FirstMatch = String;
-    
-    while ((ToUpperChar(*String) == ToUpperChar(*SearchStringTmp)) 
-            && (*String != L'\0')) {
-      String++;
-      SearchStringTmp++;
-    } 
-    
-    if (*SearchStringTmp == L'\0') {
-      return (CHAR16 *) FirstMatch;
-    }
+	SearchStringTmp = SearchString;
+	FirstMatch = String;
+	
+	while ((ToUpperChar(*String) == ToUpperChar(*SearchStringTmp)) 
+			&& (*String != L'\0')) {
+		String++;
+		SearchStringTmp++;
+	} 
+	
+	if (*SearchStringTmp == L'\0') {
+		return (CHAR16 *) FirstMatch;
+	}
 
-    if (*String == L'\0') {
-      return NULL;
-    }
+	if (*String == L'\0') {
+		return NULL;
+	}
 
-    String = FirstMatch + 1;
+	String = FirstMatch + 1;
   }
 
   return NULL;
@@ -410,11 +409,11 @@ PrintMemMap(
 			Desc->Attribute
 		);
 		Desc = NEXT_MEMORY_DESCRIPTOR(Desc, DescriptorSize);
-		if ((Index + 1) % 16 == 0) {
-			WaitForKeyPress(L"press a key to continue\n");
-		}
+		//if ((Index + 1) % 16 == 0) {
+		//	WaitForKeyPress(L"press a key to continue\n");
+		//}
 	}
-	WaitForKeyPress(L"End: press a key to continue\n");
+	//WaitForKeyPress(L"End: press a key to continue\n");
 }
 
 VOID EFIAPI
@@ -431,7 +430,6 @@ PrintSystemTable(IN EFI_SYSTEM_TABLE  *ST)
 VOID
 WaitForKeyPress(CHAR16 *Message)
 {
-#if CONSOLE_OUTPUT
 	EFI_STATUS		Status;
 	UINTN			index;
 	EFI_INPUT_KEY	key;
@@ -444,9 +442,9 @@ WaitForKeyPress(CHAR16 *Message)
 	do {
 		Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &key);
 	} while(Status == EFI_SUCCESS);
-#endif
 }
 
+/*
 #define DEBUG_LOG_SIZE 16384
 
 CHAR8	DebugLogBuffer[DEBUG_LOG_SIZE];
@@ -455,7 +453,7 @@ CHAR8	*DebugLogBufferPtr = NULL;
 EFI_STATUS
 NVRAMDebugLog(CHAR8 *Format, ...)
 {
-	/*EFI_STATUS	Status;
+	EFI_STATUS	Status;
 	VA_LIST		Marker;
 	UINTN		DataSize;
 	UINTN		DataWritten;
@@ -487,9 +485,9 @@ NVRAMDebugLog(CHAR8 *Format, ...)
 		DebugLogBufferPtr - DebugLogBuffer + 1, DebugLogBuffer);
 	
 	return Status;
-	*/
-	return EFI_SUCCESS;
+	//return EFI_SUCCESS;
 }
+ */
 
 /** Returns file path from FilePathProto in allocated memory. Mem should be released by caler.*/
 CHAR16 *
@@ -541,6 +539,37 @@ FileDevicePathToText(EFI_DEVICE_PATH_PROTOCOL *FilePathProto)
 	return OutFilePathText;
 }
 
+/** Helper function that calls GetMemoryMap(), allocates space for mem map and returns it. */
+EFI_STATUS
+EFIAPI
+GetMemoryMapAlloc (
+	IN EFI_GET_MEMORY_MAP				GetMemoryMapFunction,
+	OUT UINTN						*MemoryMapSize,
+	OUT EFI_MEMORY_DESCRIPTOR		**MemoryMap,
+	OUT UINTN						*MapKey,
+	OUT UINTN						*DescriptorSize,
+	OUT UINT32						*DescriptorVersion
+)
+{
+	EFI_STATUS					Status;
+	
+	*MemoryMapSize = 0;
+	*MemoryMap = NULL;
+	Status = GetMemoryMapFunction(MemoryMapSize, *MemoryMap, MapKey, DescriptorSize, DescriptorVersion);
+	if (Status == EFI_BUFFER_TOO_SMALL) {
+		// OK. Space needed for mem map is in MemoryMapSize
+		// Important: next AllocatePool can increase mem map size - we must add some space for this
+		*MemoryMapSize += 256;
+		*MemoryMap = AllocatePool(*MemoryMapSize);
+		Status = GetMemoryMapFunction(MemoryMapSize, *MemoryMap, MapKey, DescriptorSize, DescriptorVersion);
+		if (EFI_ERROR(Status)) {
+			FreePool(*MemoryMap);
+		}
+	}
+	
+	return Status;
+}
+
 /** Alloctes Pages from the top of mem, up to address specified in Memory. Returns allocated address in Memory. */
 EFI_STATUS
 EFIAPI
@@ -558,25 +587,24 @@ AllocatePagesFromTop(
 	UINT32					DescriptorVersion;
 	EFI_MEMORY_DESCRIPTOR	*MemoryMapEnd;
 	EFI_MEMORY_DESCRIPTOR	*Desc;
-	//EFI_LOCK				MemLock;
 	
-	// protect us from changes in memmap by drivers
-	//EfiInitializeLock(&MemLock, TPL_NOTIFY);
-	//EfiAcquireLock(&MemLock);
 	
-	MemoryMapSize = 1;
-	MemoryMap = AllocatePool(MemoryMapSize);
+	Status = GetMemoryMapAlloc(gBS->GetMemoryMap, &MemoryMapSize, &MemoryMap, &MapKey, &DescriptorSize, &DescriptorVersion);
+	/*
+	MemoryMapSize = 0;
+	MemoryMap = NULL;
 	Status = gBS->GetMemoryMap(&MemoryMapSize, MemoryMap, &MapKey, &DescriptorSize, &DescriptorVersion);
 	if (Status == EFI_BUFFER_TOO_SMALL) {
-		FreePool(MemoryMap);
 		MemoryMapSize += 256; // allocating pool can increase future mem map size
 		MemoryMap = AllocatePool(MemoryMapSize);
 		Status = gBS->GetMemoryMap(&MemoryMapSize, MemoryMap, &MapKey, &DescriptorSize, &DescriptorVersion);
+		if (EFI_ERROR(Status)) {
+			FreePool(*MemoryMap);
+		}
 	}
+	 */
 	
 	if (EFI_ERROR(Status)) {
-		//EfiReleaseLock(&MemLock);
-		FreePool(MemoryMap);
 		return Status;
 	}
 	
@@ -621,8 +649,6 @@ AllocatePagesFromTop(
 			break;
 		}
 	}
-	
-	//EfiReleaseLock(&MemLock);
 	
 	// release mem
 	FreePool(MemoryMap);

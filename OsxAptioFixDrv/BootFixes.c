@@ -6,7 +6,6 @@
 
 **/
 
-#include <Library/BaseLib.h>
 #include <Library/UefiLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
@@ -19,6 +18,8 @@
 #include "VMem.h"
 #include "Lib.h"
 #include "FlatDevTree/device_tree.h"
+#include "Mach-O/Mach-O.h"
+#include "NVRAMDebug.h"
 
 
 // DBG_TO: 0=no debug, 1=serial, 2=console
@@ -36,10 +37,6 @@
 #else
 	#define DBG(...)
 #endif
-
-// for debugging with NVRAM
-//#define DBGnvr(...) NVRAMDebugLog(__VA_ARGS__);
-#define DBGnvr(...)
 
 
 // kernel start and size - from boot args
@@ -83,7 +80,7 @@ PrepareJumpFromKernel(VOID)
 	// allocate higher memory for MyAsmCopyAndJumpToKernel32 code
 	//
 	HigherMem = 0x100000000;
-	Status = AllocatePagesFromTop(EfiLoaderData, 1, &HigherMem);
+	Status = AllocatePagesFromTop(EfiBootServicesCode, 1, &HigherMem);
 	if (Status != EFI_SUCCESS) {
 		Print(L"OsxAptioFixDrv: PrepareJumpFromKernel(): can not allocate mem for MyAsmCopyAndJumpToKernel32 (0x%x pages on mem top): %r\n",
 			  1, Status);
@@ -132,14 +129,14 @@ KernelEntryPatchJump(UINT32 KernelEntry)
 	
 	// patch real KernelEntry with 32 bit opcode for:
 	//   mov ecx, MyAsmJumpFromKernel32
-	//   jmp ecx	
-	// = B9, <4 bytes address of MyAsmJumpFromKernel32>, FF, E1
+	//   call ecx
+	// = B9, <4 bytes address of MyAsmJumpFromKernel32>, FF, D1
 	// note: KernelEntry + gRelocBase is not patched - no need for this
 	p = (UINT8 *)(UINTN) KernelEntry;
 	p[0] = 0xB9;
 	MyAsmJumpFromKernel32Addr = (UINTN)MyAsmJumpFromKernel32;
 	CopyMem((VOID *) (p + 1), (VOID *)&MyAsmJumpFromKernel32Addr, 4);
-	p[5] = 0xFF; p[6] = 0xE1;
+	p[5] = 0xFF; p[6] = 0xD1;
 	//p[5] = 0xF4; //HLT - works
 
 	DBG("\nEntry point %p is now: ", KernelEntry);
@@ -149,6 +146,26 @@ KernelEntryPatchJump(UINT32 KernelEntry)
 	AsmKernelEntry = KernelEntry;
 	
 	return Status;
+}
+
+/** Reads kernel entry from Mach-O load command and patches it with jump to MyAsmJumpFromKernel32. */
+EFI_STATUS
+KernelEntryFromMachOPatchJump(VOID)
+{
+	VOID					*MachOImage;
+	UINTN					KernelEntry;
+	
+	MachOImage = (VOID*)(UINTN)(gRelocBase + 0x200000);
+	DBG("KernelEntryFromMachOPatchJump: MachOImage = %p\n", MachOImage);
+	
+	KernelEntry = MachOGetEntryAddress(MachOImage);
+	DBG("KernelEntryFromMachOPatchJump: KernelEntry = %x\n", KernelEntry);
+	
+	if (KernelEntry == 0) {
+		return EFI_NOT_FOUND;
+	}
+	
+	return KernelEntryPatchJump((UINT32)KernelEntry);
 }
 
 /** Fills every 8 bytes from 0x10.0000 - 0x40.0000 with jump to MyAsmJumpFromKernel32 (AsmFuncsX64).
@@ -535,7 +552,6 @@ KernelEntryPatchJumpBack(UINTN bootArgs)
 	EFI_MEMORY_DESCRIPTOR	*MemoryMap;
 	UINTN					DescriptorSize;
 	UINT32					DescriptorVersion;
-	//UINT8					*Ptr8;
 	
 	
 	DBG("BACK FROM KERNEL: BootArgs = %x, KernelEntry: %x\n", bootArgs, AsmKernelEntry);
@@ -597,21 +613,6 @@ KernelEntryPatchJumpBack(UINTN bootArgs)
 		DBGnvr("BootArgsFix ...\n");
 		BootArgsFix(pBootArgs, gRelocBase);
 		
-		/*
-		// and finally copy kernel boot image to a proper place
-		DBG("COPY KERNEL: %p <= %p (%x)\n",
-			(VOID *)(UINTN)kaddr,
-			(VOID *)(UINTN)(gRelocBase + kaddr),
-			ksize);
-		DBGnvr("COPY KERNEL: %p <= %p (%x)\n",
-			(VOID *)(UINTN)kaddr,
-			(VOID *)(UINTN)(gRelocBase + kaddr),
-			ksize);
-		CopyMem((VOID *)(UINTN)kaddr,
-				(VOID *)(UINTN)(gRelocBase + kaddr),
-				ksize);
-		*/
-		
 		BootArgsPrint(pBootArgs);
 	
 		bootArgs = bootArgs - gRelocBase;
@@ -629,9 +630,10 @@ KernelEntryPatchJumpBack(UINTN bootArgs)
 		bootArgs, AsmKernelImageStartReloc, AsmKernelImageStart, AsmKernelImageSize);
 	
 	// debug for jumping back to kernel
-	// put HLT to kernel entry point
-	//Ptr8 = (UINT8*)(UINTN)(AsmKernelEntry + gRelocBase);
-	//*Ptr8 = 0xf4; // HLT instruction
+	// put HLT to kernel entry point to stop there
+    //SetMem((VOID*)(UINTN)(AsmKernelEntry + gRelocBase), 1, 0xF4);
+	// put 0 to kernel entry point to restart
+    //SetMem64((VOID*)(UINTN)(AsmKernelEntry + gRelocBase), 1, 0);
 		
 	return bootArgs;
 }
