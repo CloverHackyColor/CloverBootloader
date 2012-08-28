@@ -261,7 +261,7 @@ VOID ApplyInputs(VOID)
   }
   i++; //1
   if (InputItems[i].Valid) {
-    UnicodeSPrint(gSettings.DsdtName, 120, L"%s", InputItems[i].SValue);
+    UnicodeSPrint(gSettings.DsdtName, 120, L"%s", InputItems[i].SValue);    
   }
   i++; //2
   if (InputItems[i].Valid) {
@@ -353,7 +353,7 @@ VOID ApplyInputs(VOID)
     i++; //22
     if (InputItems[i].Valid) {
       if (gGraphics[j].Vendor == Ati) {
-        UnicodeSPrint(gSettings.FBName, 32, L"%s", InputItems[i].SValue);
+        UnicodeSPrint(gSettings.FBName, 32, L"%s", InputItems[i].SValue); 
       } else if (gGraphics[j].Vendor == Nvidia) {
         ZeroMem(AString, 255);
         AsciiSPrint(AString, 255, "%s", InputItems[i].SValue);

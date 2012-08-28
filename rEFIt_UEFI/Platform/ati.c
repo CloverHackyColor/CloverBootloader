@@ -836,13 +836,13 @@ BOOLEAN load_vbios_file(UINT16 vendor_id, UINT16 device_id)
     }
   }
 
-	if (EFI_ERROR(Status)){
+	if (EFI_ERROR(Status) || (bufferLen == 0)){
  	    DBG("ATI ROM not found \n");
 	    card->rom_size = 0;
 		card->rom = 0;
 		return FALSE;
   }
-  
+  DBG("Loaded ROM len=%d\n", bufferLen);
 	card->rom_size = bufferLen;
 	card->rom = AllocateZeroPool(bufferLen);
 	if (!card->rom)
@@ -859,7 +859,7 @@ BOOLEAN load_vbios_file(UINT16 vendor_id, UINT16 device_id)
 	}
 	
 	card->rom_size = ((option_rom_header_t *)card->rom)->rom_size * 512;
-	
+	DBG("Calculated ROM len=%d\n", card->rom_size);
 //	close(fd);
   FreePool(buffer);
 	
@@ -872,12 +872,14 @@ void get_vram_size(void)
 	
 	card->vram_size = 128 << 20; //default 128Mb, this is minimum for OS
   if (gSettings.VRAM != 0) {
-    card->vram_size = gSettings.VRAM;
+    card->vram_size = gSettings.VRAM << 20;
+    DBG("Set VRAM from config=%dMb", card->vram_size >> 20);
   } else {
     if (chip_family >= CHIP_FAMILY_CEDAR) {
       // size in MB on evergreen
       // XXX watch for overflow!!!
       card->vram_size = REG32(card->mmio, R600_CONFIG_MEMSIZE) << 20;
+      DBG("Set VRAM for Cedar=%d", card->vram_size);
     } else if (chip_family >= CHIP_FAMILY_R600) {
 			card->vram_size = REG32(card->mmio, R600_CONFIG_MEMSIZE);
     } else {
