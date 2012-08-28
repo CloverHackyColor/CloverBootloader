@@ -159,6 +159,10 @@
 #
 ################################################################################
 [PcdsFixedAtBuild]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdSmbiosVersion|0x0206
+  gEfiMdeModulePkgTokenSpaceGuid.PcdHelloWorldPrintString|L"UEFI Hello Clover!\n"|VOID*|64
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareVendor|L"CLOVER"|VOID*|32
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwareRevision|0x00010010
   gEfiMdePkgTokenSpaceGuid.PcdReportStatusCodePropertyMask|0x0
   gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x0
   gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x0
@@ -167,13 +171,23 @@
   gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiFloppyBEnable|FALSE
   gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiCom1Enable|FALSE
   gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiCom2Enable|FALSE
-  
-  
-[PcdsDynamicDefault.common]
   gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress|0xF0000000
   gPcAtChipsetPkgTokenSpaceGuid.Pcd8259LegacyModeMask|0xFFFC
+  
+[PcdsPatchableInModule]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow|0
+  gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn|0
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution|0
+  gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution|0
+  
+[PcdsDynamicDefault.common]
+  #gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress|0xF0000000
+  #gPcAtChipsetPkgTokenSpaceGuid.Pcd8259LegacyModeMask|0xFFFC
 
 [PcdsFeatureFlag]
+  gEfiMdeModulePkgTokenSpaceGuid.PcdStatusCodeUseSerial|FALSE
+  gEfiMdeModulePkgTokenSpaceGuid.PcdRecoveryOnFatFloppyDisk|FALSE
+  gEfiMdeModulePkgTokenSpaceGuid.PcdFirmwarePerformanceDataTableS3Support|FALSE
   gEfiMdeModulePkgTokenSpaceGuid.PcdTurnOffUsbLegacySupport|TRUE
   gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdPlatformCsmSupport|FALSE
   gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdPs2MouseExtendedVerification|FALSE

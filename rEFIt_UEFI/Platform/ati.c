@@ -858,7 +858,7 @@ BOOLEAN load_vbios_file(UINT16 vendor_id, UINT16 device_id)
 		return FALSE;
 	}
 	
-	card->rom_size = ((option_rom_header_t *)card->rom)->rom_size * 512;
+	card->rom_size = ((option_rom_header_t *)card->rom)->rom_size; // * 512; -- why???
 	DBG("Calculated ROM len=%d\n", card->rom_size);
 //	close(fd);
   FreePool(buffer);
