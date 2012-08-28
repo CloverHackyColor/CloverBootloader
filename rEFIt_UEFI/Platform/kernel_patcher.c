@@ -588,7 +588,7 @@ VOID Get_PreLink()
   UINTN   cnt;
   UINT8*  binary = (UINT8*)KernelData;
   struct load_command         *loadCommand;
-  //struct  segment_command   *segCmd;
+  struct  segment_command     *segCmd;
   struct segment_command_64   *segCmd64;
   
   
@@ -613,7 +613,7 @@ VOID Get_PreLink()
         //DBG(L"segCmd64->vmsize = 0x%08x\n",segCmd64->vmsize); 
         if (AsciiStrCmp(segCmd64->segname, kPrelinkTextSegment) == 0)
         {
-          DBG(L"Found PRELINK_TEXT\n");
+          DBG(L"Found PRELINK_TEXT, 64bit\n");
           if (segCmd64->vmsize > 0) {
             // 64bit segCmd64->vmaddr is 0xffffff80xxxxxxxx
             // PrelinkTextAddr = xxxxxxxx + KernelRelocBase
@@ -637,7 +637,7 @@ VOID Get_PreLink()
         }
         if (AsciiStrCmp(segCmd64->segname, kPrelinkInfoSegment) == 0)
         {
-          DBG(L"Found PRELINK_INFO\n");
+          DBG(L"Found PRELINK_INFO, 64bit\n");
           //DBG(L"cmd = 0x%08x\n",segCmd64->cmd);
           //DBG(L"cmdsize = 0x%08x\n",segCmd64->cmdsize);
           DBG(L"vmaddr = 0x%08x\n",segCmd64->vmaddr);
@@ -673,35 +673,72 @@ VOID Get_PreLink()
           }
         }
         break;
-        /*
-         case LC_SEGMENT:
-         segCmd = binary + binaryIndex; 
-         //DBG(L"segCmd->segname = %a\n",segCmd->segname);
-         //DBG(L"segCmd->vmaddr = 0x%08x\n",segCmd->vmaddr)
-         //DBG(L"segCmd->vmsize = 0x%08x\n",segCmd->vmsize);
-         if (AsciiStrCmp(segCmd->segname, "__PRELINK_TEXT") == 0)
-         {
-         PrelinkTextAddr = segCmd->vmaddr + KernelRelocBase;
-         PrelinkTextSize = segCmd->vmsize;
-         //DBG(L"prelinkData = 0x%08x\n",PrelinkTextAddr);
-         //DBG(L"preLinksize = 0x%08x\n",PrelinkTextSize);
-         //DBG(L"Found PRELINK_TEXT\n");
-         }
-         if (AsciiStrCmp(segCmd->segname, "__PRELINK_INFO") == 0)
-         {
-         PrelinkInfoAddr = segCmd->vmaddr + KernelRelocBase;
-         PrelinkInfoSize = segCmd->vmsize;
-         //DBG(L"prelinkData = 0x%08x\n",PrelinkInfoAddr);
-         //DBG(L"preLinksize = 0x%08x\n",PrelinkInfoSize);
-         //DBG(L"Found PRELINK_INFO\n");
-         }
-         break; */
+
+      case LC_SEGMENT:
+        segCmd = (struct segment_command *)loadCommand;
+        //DBG(L"segCmd->segname = %a\n",segCmd->segname);
+        //DBG(L"segCmd->vmaddr = 0x%08x\n",segCmd->vmaddr)
+        //DBG(L"segCmd->vmsize = 0x%08x\n",segCmd->vmsize);
+        if (AsciiStrCmp(segCmd->segname, kPrelinkTextSegment) == 0)
+        {
+          DBG(L"Found PRELINK_TEXT, 32bit\n");
+          if (segCmd->vmsize > 0) {
+            // PrelinkTextAddr = vmaddr + KernelRelocBase
+            PrelinkTextAddr = (UINT32)(segCmd->vmaddr ? segCmd->vmaddr + KernelRelocBase : 0);
+            PrelinkTextSize = (UINT32)segCmd->vmsize;
+            PrelinkTextLoadCmdAddr = (UINT32)(UINTN)segCmd;
+          }
+          DBG(L"at %p: vmaddr = 0x%lx, vmsize = 0x%lx\n", segCmd, segCmd->vmaddr, segCmd->vmsize);
+          DBG(L"PrelinkTextLoadCmdAddr = 0x%x, PrelinkTextAddr = 0x%x, PrelinkTextSize = 0x%x\n",
+              PrelinkTextLoadCmdAddr, PrelinkTextAddr, PrelinkTextSize);
+          //gBS->Stall(30*1000000);
+        }
+        if (AsciiStrCmp(segCmd->segname, kPrelinkInfoSegment) == 0)
+        {
+          DBG(L"Found PRELINK_INFO, 32bit\n");
+          //DBG(L"cmd = 0x%08x\n",segCmd->cmd);
+          //DBG(L"cmdsize = 0x%08x\n",segCmd->cmdsize);
+          DBG(L"vmaddr = 0x%08x\n",segCmd->vmaddr);
+          DBG(L"vmsize = 0x%08x\n",segCmd->vmsize);
+          //DBG(L"fileoff = 0x%08x\n",segCmd->fileoff);
+          //DBG(L"filesize = 0x%08x\n",segCmd->filesize);
+          //DBG(L"maxprot = 0x%08x\n",segCmd->maxprot);
+          //DBG(L"initprot = 0x%08x\n",segCmd->initprot);
+          //DBG(L"nsects = 0x%08x\n",segCmd->nsects);
+          //DBG(L"flags = 0x%08x\n",segCmd->flags);
+          UINT32 sectionIndex;
+          sectionIndex = sizeof(struct segment_command);
+          struct section *sect;
+          
+          while(sectionIndex < segCmd->cmdsize)
+          {
+            sect = (struct section *)((UINT8*)segCmd + sectionIndex);
+            sectionIndex += sizeof(struct section);
+            
+            if(AsciiStrCmp(sect->sectname, kPrelinkInfoSection) == 0 && AsciiStrCmp(sect->segname, kPrelinkInfoSegment) == 0)
+            {
+              if (sect->size > 0) {
+                // PrelinkInfoAddr = sect->addr + KernelRelocBase
+                PrelinkInfoLoadCmdAddr = (UINT32)(UINTN)sect;
+                PrelinkInfoAddr = (UINT32)(sect->addr ? sect->addr + KernelRelocBase : 0);
+                PrelinkInfoSize = (UINT32)sect->size;
+              }
+              DBG(L"__info found at %p: addr = 0x%lx, size = 0x%lx\n", sect, sect->addr, sect->size);
+              DBG(L"PrelinkInfoLoadCmdAddr = 0x%x, PrelinkInfoAddr = 0x%x, PrelinkInfoSize = 0x%x\n",
+                  PrelinkInfoLoadCmdAddr, PrelinkInfoAddr, PrelinkInfoSize);
+              //gBS->Stall(30*1000000);
+            }
+          }
+        }
+        break;
+        
       default:
         break;
-    }  
+    }
     binaryIndex += cmdsize;
   }
   
+  //gBS->Stall(20*1000000);
   return;
 }
 

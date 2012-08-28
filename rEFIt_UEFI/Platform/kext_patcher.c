@@ -166,6 +166,7 @@ VOID ATIConnectorsPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT
                          gSettings.KPATIConnectorsPatch,
                          1);
   DBG(L"==> patched %d times!\n", Num);
+  //gBS->Stall(5*1000000);
 }
 
 
@@ -206,6 +207,7 @@ VOID AsusAICPUPMPatch(UINT8 *Driver, UINT32 DriverSize)
     }
   }
   DBG(L"= %d patches\n", Count);
+  //gBS->Stall(5*1000000);
 }
 
 
@@ -276,6 +278,7 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize)
   else {
     DBG(L"==> Patterns not found - no patching done.\n");
   }
+  //gBS->Stall(5*1000000);
 }
 
 
