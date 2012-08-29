@@ -4096,7 +4096,7 @@ VOID FixBiosDsdt (UINT8* temp)
   USBIDFIX = TRUE;  
   
   DsdtLen = ((EFI_ACPI_DESCRIPTION_HEADER*)temp)->Length;
-  if ((DsdtLen < 20) || (DsdtLen > 100000)) { //fool proof
+  if ((DsdtLen < 20) || (DsdtLen > 200000)) { //fool proof
     DBG("DSDT length out of range\n");
     return;
   }

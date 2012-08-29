@@ -1398,6 +1398,10 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   //
   // 1. For CPU base number 0 or 1.  codes from SunKi
   CPUBase = acpi_cpu_name[0][3] - '0'; //"CPU0"
+  if ((UINT8)CPUBase > 11) {
+    DBG("Abnormal CPUBase=%x will set to 0\n", CPUBase);
+    CPUBase = 0;
+  }
   INTN ApicCPUBase = 0;
   ApicCPUNum = 0;  
   // 2. For absent NMI subtable
