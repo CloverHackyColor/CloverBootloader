@@ -3217,9 +3217,9 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	// get card type
 	nvCardType = (REG32(nvda_dev->regs, 0) >> 20) & 0x1ff;
 	
-	// Amount of VRAM in kilobytes
+	// Amount of VRAM in kilobytes (?) no, it is already in bytes!!!
   if (gSettings.VRAM != 0) {
-    videoRam = gSettings.VRAM << 20;
+    videoRam = gSettings.VRAM;
   } else {
     videoRam = mem_detect(nvCardType, nvda_dev);
   }
