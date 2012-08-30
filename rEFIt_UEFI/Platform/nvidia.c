@@ -3109,10 +3109,10 @@ BOOLEAN IsHexDigit (CHAR8 c) {
 }
 
 
-BOOLEAN hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, INT32 len) //assume len = number of UINT8 values
+INT32 hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, INT32 len) //assume len = number of UINT8 values
 {
 	CHAR8	*p;
-	INT32	i;
+	INT32	i, outlen = 0;
 	CHAR8	buf[3];
 	
 	if (hex == NULL || bin == NULL || len <= 0 || AsciiStrLen(hex) < len * 2) {
@@ -3125,6 +3125,12 @@ BOOLEAN hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, INT32 len) //assume len = number 
 	
 	for (i = 0; i < len; i++)
 	{
+    while ((*p == 0x20) || (*p == ',')) {
+      p++; //skip spaces and commas
+    }
+    if (*p == 0) {
+      break;
+    }
 		if (!IsHexDigit(p[0]) || !IsHexDigit(p[1])) {
 			DBG("[ERROR] bin2hex '%a' syntax error\n", hex);
 			return -2;
@@ -3132,8 +3138,10 @@ BOOLEAN hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, INT32 len) //assume len = number 
 		buf[0] = *p++;
 		buf[1] = *p++;
 		bin[i] = hexstrtouint8(buf);
+    outlen++;
 	}
-	return TRUE;
+  bin[outlen] = 0;
+	return outlen;
 }
 
 UINT32 mem_detect(UINT8 nvCardType, pci_dt_t *nvda_dev)

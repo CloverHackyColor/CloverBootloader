@@ -65,7 +65,7 @@ GetDeviceProps(IN     APPLE_GETVAR_PROTOCOL   *This,
 	{
     cnt = (UINT32)AsciiStrLen(gDeviceProperties) / 2;
 		binStr = AllocateZeroPool(cnt);
-    if(hex2bin(gDeviceProperties, binStr, cnt)){
+    if((cnt = hex2bin(gDeviceProperties, binStr, cnt)) != 0){
       *BufferSize = cnt;    
       CopyMem(Buffer, binStr,  cnt);
       return EFI_SUCCESS;      
@@ -73,7 +73,7 @@ GetDeviceProps(IN     APPLE_GETVAR_PROTOCOL   *This,
   } else if ((cDeviceProperties!=NULL) && AsciiStrLen(cDeviceProperties)>3) {
     cnt = (UINT32)AsciiStrLen(cDeviceProperties) / 2;
 		binStr = AllocateZeroPool(cnt);
-    if(hex2bin(cDeviceProperties, binStr, cnt)){
+    if((cnt = hex2bin(cDeviceProperties, binStr, cnt)) != 0){
       *BufferSize = cnt;    
       CopyMem(Buffer, binStr,  cnt);
       return EFI_SUCCESS;      

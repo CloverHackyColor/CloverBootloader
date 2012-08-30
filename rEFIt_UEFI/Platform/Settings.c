@@ -289,7 +289,7 @@ VOID *GetDataSetting(IN TagPtr dict, IN CHAR8 *propName, OUT UINTN *dataLen)
             // assume data in hex encoded string property
             len = AsciiStrLen(prop->string) / 2; // 2 chars per byte
             data = AllocatePool(len);
-            hex2bin(prop->string, data, len);
+            len = hex2bin(prop->string, data, len);
             if (dataLen != NULL) {
                 *dataLen = len;
             }
@@ -1329,6 +1329,7 @@ VOID SetDevices(VOID)
 	MsgLog("CurrentMode: Width=%d Height=%d\n", UGAWidth, UGAHeight);  
 }
 
+static BOOLEAN AlreadyDone = FALSE;
 EFI_STATUS SaveSettings()
 {
   UINT64  msr;
@@ -1350,7 +1351,7 @@ EFI_STATUS SaveSettings()
     gCPUStructure.MaxSpeed = gSettings.CpuFreqMHz;
   }
   
-  if (gSettings.Turbo){
+  if (gSettings.Turbo && !AlreadyDone){
     if (gCPUStructure.Turbo4) {
       gCPUStructure.CPUFrequency = DivU64x32(gCPUStructure.Turbo4 * gCPUStructure.FSBFrequency, 10);
     }    
@@ -1374,6 +1375,7 @@ EFI_STATUS SaveSettings()
     tmpU = DivU64x32(gCPUStructure.CPUFrequency, Mega);
     DBG("... CPU to %ldMHz\n", tmpU);
 //    DBG("set turbo state msr=%x CPU=%dMHz\n", msr, (INT32)DivU64x32(gCPUStructure.CPUFrequency, Mega));
+    AlreadyDone = TRUE;
   } 
   
   tmpU = DivU64x32(gCPUStructure.CPUFrequency, Mega);
