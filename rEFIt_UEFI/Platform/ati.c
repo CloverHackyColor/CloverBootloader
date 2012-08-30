@@ -915,7 +915,7 @@ BOOLEAN read_vbios(BOOLEAN from_pci)
 		return FALSE;
   }
 	
-	card->rom_size = rom_addr->rom_size * 512;
+	card->rom_size = rom_addr->rom_size; // * 512; -- no! the size alredy in bytes.
 	if (!card->rom_size){
     DBG("invalid ROM size =0\n");
 		return FALSE;
