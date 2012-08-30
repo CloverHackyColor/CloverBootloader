@@ -838,7 +838,7 @@ VOID        ApplyInputs(VOID);
 
 EFI_STATUS  StrToGuid (IN  CHAR16   *Str, OUT EFI_GUID *Guid);
 EFI_STATUS  StrToGuidLE (IN  CHAR16   *Str, OUT EFI_GUID *Guid);
-BOOLEAN     hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, INT32 len);
+INT32       hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, INT32 len);
 UINT8       hexstrtouint8 (CHAR8* buf); //one or two hex letters to one byte
 
 EFI_STATUS  InitializeConsoleSim (VOID);

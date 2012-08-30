@@ -875,6 +875,7 @@ void get_vram_size(void)
   if (gSettings.VRAM != 0) {
     card->vram_size = gSettings.VRAM;
     DBG("Set VRAM from config=%dMb\n", card->vram_size >> 20);
+//    WRITEREG32(card->mmio, RADEON_CONFIG_MEMSIZE, card->vram_size);
   } else {
     if (chip_family >= CHIP_FAMILY_CEDAR) {
       // size in MB on evergreen
