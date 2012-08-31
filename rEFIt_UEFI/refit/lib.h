@@ -105,6 +105,7 @@ typedef struct {
 #define OSTYPE_VAR				(3)
 #define OSTYPE_LIN				(4)
 #define OSTYPE_EFI        (5)
+#define OSTYPE_WINEFI     (6)
 #define OSTYPE_TIGER			(14)
 #define OSTYPE_LEO				(15)
 #define OSTYPE_SNOW				(16)

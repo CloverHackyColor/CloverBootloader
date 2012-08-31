@@ -61,7 +61,8 @@ char_width 9
 # V2 - PNG image supported 
 # The location of the file theme dependent 
 #
-banner logo_wooden.png
+banner logo_matreshka.png
+#banner logo_wooden.png
 
 # Custom images for the selection background. There is a big one (144 x 144)
 # for the OS icons, and a small one (64 x 64) for the function icons in the
