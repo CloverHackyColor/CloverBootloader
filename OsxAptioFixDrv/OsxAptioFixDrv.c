@@ -386,7 +386,7 @@ MOExitBootServices (
 {
 	EFI_STATUS					Status;
 	//UINT64						*p64;
-	UINT64						RSP;
+	//UINT64						RSP;
 	UINTN					 	NewMapKey;
 	//VOID						*BootArgs;
 	
@@ -397,6 +397,7 @@ MOExitBootServices (
 	
 	//CheckDecodedKernel();
 	
+    /*
 	// check again for stack - if relocation did not work for some reason
 	RSP = MyAsmReadSp();
 	if (RSP < gMaxAllocatedAddr) {
@@ -406,6 +407,7 @@ MOExitBootServices (
 		gBS->Stall(20 * 1000 * 1000);
 		return EFI_NOT_FOUND;
 	}
+	*/
 	
 	// BootArgs test
 	//BootArgs = BootArgsFind(gRelocBase + 0x0200000);
@@ -682,8 +684,19 @@ RunImageWithOverridesAndHighStack(IN EFI_HANDLE ImageHandle, OUT UINTN *ExitData
 	DBG("Current stack: RSP=%lx\n", RSP);
 	DBGnvr("Current stack: RSP=%lx\n", RSP);
 		
+	//
+	// Stack relocation is not needed any more since we are copying kernel
+	// boot image, and by this corrupting stack, in MyAsmCopyAndJumpToKernel32
+	// as the last step in execution. This part of the code does not use
+	// stack but jumps to kernel, and kernel will set up it's own stack.
+	//
+	// I am leaving the code here since it may be used in some variants
+	// of the driver or for some testing.
+	//
+	
 	// check if stack is too low - must be > gRelocSize
-	if (RSP < EFI_PAGES_TO_SIZE(gRelocSizePages)) {
+	//if (RSP < EFI_PAGES_TO_SIZE(gRelocSizePages)) {
+	if (FALSE) {
 		
 		// too low - allocate new stack higher in memory
 		Status = AllocateHighStack(StackSizePages, &StackBottom, &StackTop);
