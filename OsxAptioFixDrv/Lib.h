@@ -75,6 +75,14 @@ BOOLEAN
 EFIAPI
 StriStartsWithBasic(IN CHAR16 *String1, IN CHAR16 *String2);
 
+/** Applies some fixes to mem map. */
+VOID EFIAPI
+FixMemMap(
+	IN UINTN					MemoryMapSize,
+	IN EFI_MEMORY_DESCRIPTOR	*MemoryMap,
+	IN UINTN					DescriptorSize,
+	IN UINT32					DescriptorVersion
+);
 /** Shrinks mem map by joining EfiBootServicesCode and EfiBootServicesData records. */
 VOID EFIAPI
 ShrinkMemMap(
@@ -100,12 +108,6 @@ PrintSystemTable(IN EFI_SYSTEM_TABLE  *ST);
 /** Prints Message and waits for a key press. */
 VOID
 WaitForKeyPress(CHAR16 *Message);
-
-/** Writes to NVRAM variable DebugLog. */
-/*
-EFI_STATUS
-NVRAMDebugLog(CHAR8 *Format, ...);
- */
 
 /** Returns file path from FilePath device path in allocated memory. Mem should be released by caller.*/
 CHAR16 *

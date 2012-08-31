@@ -246,7 +246,11 @@ KernelEntryPatchZero (UINT32 KernelEntry)
 /** Assignes virtual addresses to runtime areas in memory map
   * and adds virtual to physical mapping to system's pagemap
   * because calling of SetVirtualAddressMap() does not work
-  * on Aptio without that.
+  * on my Aptio without that. Probably because some driver
+  * has a bug and is trying to access new virtual addresses
+  * during the change.
+  * Linux and Windows are doing the same thing and problem is
+  * not visible there.
   */
 VOID
 AssignVirtualAddressesToMemMap(VOID *pBootArgs)
@@ -290,33 +294,36 @@ AssignVirtualAddressesToMemMap(VOID *pBootArgs)
 	GetCurrentPageTable(&PageTable, &Flags);
 	
 	for (Index = 0; Index < NumEntries; Index++) {
+		
 		// assign virtual addresses to all EFI_MEMORY_RUNTIME marked pages (including MMIO)
 		if ((Desc->Attribute & EFI_MEMORY_RUNTIME) != 0) {
 			BlockSize = EFI_PAGES_TO_SIZE(Desc->NumberOfPages);
 			if (Desc->Type == EfiRuntimeServicesCode || Desc->Type == EfiRuntimeServicesData) {
 				// for RT block - assign from kernel block
 				Desc->VirtualStart = KernelRTBlock + 0xffffff8000000000;
-				// map RT area virtual addresses - SetVirtualAddresMap on Ami Aptio does not work without this
 				DBG("Adding mapping 0x%x pages: VA %lx => PH %lx ", Desc->NumberOfPages, Desc->VirtualStart, Desc->PhysicalStart);
-				//DBGnvr("- 0x%x pages: VA %lx => PH %lx ", Desc->NumberOfPages, Desc->VirtualStart, Desc->PhysicalStart);
+				//DBGnvr(" %s %lx => %lx (0x%x)\n", EfiMemoryTypeDesc[Desc->Type], Desc->VirtualStart, Desc->PhysicalStart, Desc->NumberOfPages);
 				Status = VmMapVirtualPages(PageTable, Desc->VirtualStart, Desc->NumberOfPages, Desc->PhysicalStart);
-				//DBGnvr("%r\n", Status);
+				DBG("%r\n", Status);
+				// next kernel block
+				KernelRTBlock += BlockSize;
+			} else if (Desc->Type == EfiMemoryMappedIO || Desc->Type == EfiMemoryMappedIOPortSpace) {
+				// for MMIO block - assign from kernel block
+				Desc->VirtualStart = KernelRTBlock + 0xffffff8000000000;
+				DBG("Adding mapping 0x%x pages: VA %lx => PH %lx ", Desc->NumberOfPages, Desc->VirtualStart, Desc->PhysicalStart);
+				//DBGnvr(" %s %lx => %lx (0x%x)\n", EfiMemoryTypeDesc[Desc->Type], Desc->VirtualStart, Desc->PhysicalStart, Desc->NumberOfPages);
+				Status = VmMapVirtualPages(PageTable, Desc->VirtualStart, Desc->NumberOfPages, Desc->PhysicalStart);
 				DBG("%r\n", Status);
 				// next kernel block
 				KernelRTBlock += BlockSize;
 			} else {
-				// for MMIO block - assign from kernel block
-				Desc->VirtualStart = KernelRTBlock + 0xffffff8000000000;
-				DBG("Adding mapping 0x%x pages: VA %lx => PH %lx ", Desc->NumberOfPages, Desc->VirtualStart, Desc->PhysicalStart);
-				//DBGnvr("- 0x%x pages: VA %lx => PH %lx ", Desc->NumberOfPages, Desc->VirtualStart, Desc->PhysicalStart);
-				Status = VmMapVirtualPages(PageTable, Desc->VirtualStart, Desc->NumberOfPages, Desc->PhysicalStart);
-				//DBGnvr("%r\n", Status);
-				DBG("%r\n", Status);
-				// next kernel block
-				KernelRTBlock += BlockSize;
+				// runtime flag, but not RT and not MMIO - what now???
+				DBG(" %s with RT flag: %lx (0x%x) - ???\n", EfiMemoryTypeDesc[Desc->Type], Desc->PhysicalStart, Desc->NumberOfPages);
+				DBGnvr(" %s with RT flag: %lx (0x%x) - ???\n", EfiMemoryTypeDesc[Desc->Type], Desc->PhysicalStart, Desc->NumberOfPages);
 			}
 			DBG("=> 0x%lx -> 0x%lx\n", Desc->PhysicalStart, Desc->VirtualStart);
 		}
+		
 		Desc = NEXT_MEMORY_DESCRIPTOR(Desc, DescriptorSize);
 		//WaitForKeyPress(L"End: press a key to continue\n");
 	}
@@ -631,9 +638,9 @@ KernelEntryPatchJumpBack(UINTN bootArgs)
 	
 	// debug for jumping back to kernel
 	// put HLT to kernel entry point to stop there
-    //SetMem((VOID*)(UINTN)(AsmKernelEntry + gRelocBase), 1, 0xF4);
+	//SetMem((VOID*)(UINTN)(AsmKernelEntry + gRelocBase), 1, 0xF4);
 	// put 0 to kernel entry point to restart
-    //SetMem64((VOID*)(UINTN)(AsmKernelEntry + gRelocBase), 1, 0);
+	//SetMem64((VOID*)(UINTN)(AsmKernelEntry + gRelocBase), 1, 0);
 		
 	return bootArgs;
 }

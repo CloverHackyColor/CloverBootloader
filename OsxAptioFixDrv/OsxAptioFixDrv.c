@@ -43,21 +43,10 @@
 
 
 
-// defines the size of block that will be allocated for kernel image relocation
-//#define KERNEL_BLOCK_SIZE_PAGES		0x20000 // 512MB block
-
 // defines the size of block that will be allocated for kernel image relocation,
 // without RT and MMIO regions
 #define KERNEL_BLOCK_NO_RT_SIZE_PAGES	0x4000 // 64MB for
 
-/*
-#define KERNEL_ENTRIES_NUM			2
-UINT64 KernelEntries[][2] =
-{
-	{0x02ba000, 0xB80010C000BCC789}, // Lion 10.7.4
-	{0x02b8000, 0xB80010C000BCC789} // Lion 10.7.3 and probably 10.7.2 and 10.7.1
-};
-*/
 
 typedef struct _START_IMG_CONTEXT {
 	VOID						*JumpBufferBase;
@@ -89,31 +78,6 @@ UINTN gRelocSizePages = 0;
 // start of our image
 EFI_PHYSICAL_ADDRESS gOurImageStart = 0;
 
-
-/*
-// kernel entry point
-UINT32 gKernelEntry = 0;
-*/
-
-/** Sets gKernelEntry by checking loaded kernel in memory against KernelEntries array. gKernelEntry will be 0 if not detected. */
-/*
-VOID
-DetectKernel(VOID)
-{
-	UINTN		Index;
-	UINT64		*p64;
-	
-	gKernelEntry = 0;
-	for (Index = 0; Index < KERNEL_ENTRIES_NUM; Index++) {
-		p64 = (UINT64*)(gRelocBase + KernelEntries[Index][0]);
-		DBG("DetectKernel: checking %x for %lx -> contains %lx\n", KernelEntries[Index][0], KernelEntries[Index][1], *p64);
-		if (*p64 == KernelEntries[Index][1]) {
-			gKernelEntry = (UINT32)KernelEntries[Index][0];
-			DBG("Found gKernelEntry at %x\n", gKernelEntry);
-		}
-	}
-}
-*/
 
 /** Helper function that calls GetMemoryMap() and returns new MapKey.
  * Uses gStoredGetMemoryMap, so can be called only after gStoredGetMemoryMap is set.
@@ -149,6 +113,11 @@ GetNumberOfRTPages(OUT UINTN *NumPages)
 	if (EFI_ERROR(Status)) {
 		return Status;
 	}
+	
+	//
+	// Apply some fixes
+	//
+	FixMemMap(MemoryMapSize, MemoryMap, DescriptorSize, DescriptorVersion);
 	
 	//
 	// Sum RT and MMIO areas - all that have runtime attribute
@@ -397,6 +366,7 @@ MOGetMemoryMap (
 	//PrintMemMap(*MemoryMapSize, MemoryMap, *DescriptorSize, *DescriptorVersion);
 	DBGnvr("GetMemoryMap: %p = %r\n", MemoryMap, Status);
 	if (Status == EFI_SUCCESS) {
+		FixMemMap(*MemoryMapSize, MemoryMap, *DescriptorSize, *DescriptorVersion);
 		//ShrinkMemMap(MemoryMapSize, MemoryMap, *DescriptorSize, *DescriptorVersion);
 		//PrintMemMap(*MemoryMapSize, MemoryMap, *DescriptorSize, *DescriptorVersion);
 	}
@@ -425,31 +395,7 @@ MOExitBootServices (
 	// we'll try to resolve the need for kernel entry point
 	// with KernelEntryPatchJumpFill(). see this func for details.
 	
-	/*
 	//CheckDecodedKernel();
-	
-	// check if this is the kernel we know
-	DetectKernel();
-	if (gKernelEntry == 0) {
-		Print(L"\nOsxAptioFixDrv: Unknown kernel.\nThis test works only with 64 bit Lion 10.7.4, 10.7.3 and probably 10.7.2 and 10.7.1.\n");
-		p64 = (UINT64 *)(UINTN)(gRelocBase + 0x02ba000);
-		Print(L"Kernel sample from 0x02ba000 = %lx\n", *p64);
-		Print(L"Waiting 20 seconds then exiting ...\n");
-		gBS->Stall(20 * 1000 * 1000);
-		return EFI_NOT_FOUND;
-	}
-	*/
-	
-	/* not needed any more - now we have kernel copying by MyAsmCopyAndJumpToKernel32 relocated to higher mem
-	// check if we are too low in memory and will overwrite ourself if we continue
-	if (gMaxAllocatedAddr > gOurImageStart) {
-		Print(L"\nOsxAptioFixDrv: Loaded too low! Loaded at %lx, and kernel would be %lx - %lx\n",
-			gOurImageStart, gMinAllocatedAddr, gMaxAllocatedAddr);
-		Print(L"Waiting 20 seconds then exiting ...\n");
-		gBS->Stall(20 * 1000 * 1000);
-		return EFI_NOT_FOUND;
-	}
-	*/
 	
 	// check again for stack - if relocation did not work for some reason
 	RSP = MyAsmReadSp();
@@ -499,7 +445,7 @@ MOExitBootServices (
 	if (Status == EFI_SUCCESS) {
 		//KernelEntryPatchJumpFill();
 		KernelEntryFromMachOPatchJump();
-        //CpuDeadLoop();
+		//CpuDeadLoop();
 	} else {
 		Print(L"... waiting 10 secs ...\n");
 		gBS->Stall(10*1000000);

@@ -24,8 +24,8 @@ typedef struct Boot_Video	Boot_Video;
 
 /* Values for v_display */
 
-#define GRAPHICS_MODE         1
-#define FB_TEXT_MODE          2
+#define GRAPHICS_MODE			1
+#define FB_TEXT_MODE			2
 
 /* Boot argument structure - passed into Mach kernel at boot time.
  * "Revision" can be incremented for compatible changes
@@ -45,84 +45,91 @@ typedef struct Boot_Video	Boot_Video;
 #define kBootArgsEfiMode32		32
 #define kBootArgsEfiMode64		64
 
+/* Bitfields for boot_args->flags */
+#define kBootArgsFlagRebootOnPanic	(1 << 0)
+#define kBootArgsFlagHiDPI		(1 << 1)
+
 #define BOOT_LINE_LENGTH		1024
 
 /* version 1 before Lion */
 typedef struct {
-    UINT16    Revision;	/* Revision of boot_args structure */
-    UINT16    Version;	/* Version of boot_args structure */
+	UINT16		Revision;			/* Revision of boot_args structure */
+	UINT16		Version;			/* Version of boot_args structure */
 
-    CHAR8        CommandLine[BOOT_LINE_LENGTH];	/* Passed in command line */
+	CHAR8		CommandLine[BOOT_LINE_LENGTH];	/* Passed in command line */
 
-    UINT32    MemoryMap;  /* Physical address of memory map */
-    UINT32    MemoryMapSize;
-    UINT32    MemoryMapDescriptorSize;
-    UINT32    MemoryMapDescriptorVersion;
+	UINT32		MemoryMap;			/* Physical address of memory map */
+	UINT32		MemoryMapSize;
+	UINT32		MemoryMapDescriptorSize;
+	UINT32		MemoryMapDescriptorVersion;
 
-    Boot_Video	Video;		/* Video Information */
+	Boot_Video	Video;				/* Video Information */
 
-    UINT32    deviceTreeP;	  /* Physical address of flattened device tree */
-    UINT32    deviceTreeLength; /* Length of flattened tree */
+	UINT32		deviceTreeP;		/* Physical address of flattened device tree */
+	UINT32		deviceTreeLength;	/* Length of flattened tree */
 
-    UINT32    kaddr;            /* Physical address of beginning of kernel text */
-    UINT32    ksize;            /* Size of combined kernel text+data+efi */
+	UINT32		kaddr;				/* Physical address of beginning of kernel text */
+	UINT32		ksize;				/* Size of combined kernel text+data+efi */
 
-    UINT32    efiRuntimeServicesPageStart; /* physical address of defragmented runtime pages */
-    UINT32    efiRuntimeServicesPageCount;
-    UINT32    efiSystemTable;   /* physical address of system table in runtime area */
+	UINT32		efiRuntimeServicesPageStart;	/* physical address of defragmented runtime pages */
+	UINT32		efiRuntimeServicesPageCount;
+	UINT32		efiSystemTable;		/* physical address of system table in runtime area */
 
-    UINT8     efiMode;       /* 32 = 32-bit, 64 = 64-bit */
-    UINT8     __reserved1[3];
-    UINT32    __reserved2[1];
-    UINT32    performanceDataStart; /* physical address of log */
-    UINT32    performanceDataSize;
-    UINT64    efiRuntimeServicesVirtualPageStart; /* virtual address of defragmented runtime pages */
-    UINT32    __reserved3[2];
+	UINT8		efiMode;			/* 32 = 32-bit, 64 = 64-bit */
+	UINT8		__reserved1[3];
+	UINT32		__reserved2[1];
+	UINT32		performanceDataStart;	/* physical address of log */
+	UINT32		performanceDataSize;
+	UINT64		efiRuntimeServicesVirtualPageStart;	/* virtual address of defragmented runtime pages */
+	UINT32		__reserved3[2];
 
 } BootArgs1;
 
 /* version2 as used in Lion */
 typedef struct {
 
-	UINT16			Revision;	/* Revision of boot_args structure */
-	UINT16			Version;	/* Version of boot_args structure */
+	UINT16		Revision;			/* Revision of boot_args structure */
+	UINT16		Version;			/* Version of boot_args structure */
 
-	UINT8			efiMode;    /* 32 = 32-bit, 64 = 64-bit */
-	UINT8			debugMode;  /* Bit field with behavior changes */
-	UINT8			__reserved1[2];
+	UINT8		efiMode;			/* 32 = 32-bit, 64 = 64-bit */
+	UINT8		debugMode;			/* Bit field with behavior changes */
+	UINT16		flags;
 
-	CHAR8			CommandLine[BOOT_LINE_LENGTH];	/* Passed in command line */
+	CHAR8		CommandLine[BOOT_LINE_LENGTH];	/* Passed in command line */
 
-	UINT32			MemoryMap;  /* Physical address of memory map */
-	UINT32			MemoryMapSize;
-	UINT32			MemoryMapDescriptorSize;
-	UINT32			MemoryMapDescriptorVersion;
+	UINT32		MemoryMap;			/* Physical address of memory map */
+	UINT32		MemoryMapSize;
+	UINT32		MemoryMapDescriptorSize;
+	UINT32		MemoryMapDescriptorVersion;
 
-	Boot_Video		Video;		/* Video Information */
+	Boot_Video	Video;				/* Video Information */
 
-	UINT32			deviceTreeP;	  /* Physical address of flattened device tree */
-	UINT32			deviceTreeLength; /* Length of flattened tree */
+	UINT32		deviceTreeP;		/* Physical address of flattened device tree */
+	UINT32		deviceTreeLength;	/* Length of flattened tree */
 
-	UINT32			kaddr;            /* Physical address of beginning of kernel text */
-	UINT32			ksize;            /* Size of combined kernel text+data+efi */
+	UINT32		kaddr;				/* Physical address of beginning of kernel text */
+	UINT32		ksize;				/* Size of combined kernel text+data+efi */
 
-	UINT32			efiRuntimeServicesPageStart; /* physical address of defragmented runtime pages */
-	UINT32			efiRuntimeServicesPageCount;
-	UINT64			efiRuntimeServicesVirtualPageStart; /* virtual address of defragmented runtime pages */
+	UINT32		efiRuntimeServicesPageStart;	/* physical address of defragmented runtime pages */
+	UINT32		efiRuntimeServicesPageCount;
+	UINT64		efiRuntimeServicesVirtualPageStart;	/* virtual address of defragmented runtime pages */
 
-	UINT32			efiSystemTable;   /* physical address of system table in runtime area */
-	UINT32			__reserved2;
+	UINT32		efiSystemTable;		/* physical address of system table in runtime area */
+	UINT32		kslide;
 
-	UINT32			performanceDataStart; /* physical address of log */
-	UINT32			performanceDataSize;
+	UINT32		performanceDataStart;	/* physical address of log */
+	UINT32		performanceDataSize;
 
-	UINT32			keyStoreDataStart; /* physical address of key store data */
-	UINT32			keyStoreDataSize;
-	UINT64			bootMemStart; /* physical address of interpreter boot memory */
-	UINT64			bootMemSize;
-    UINT64			PhysicalMemorySize;
-    UINT64			FSBFrequency;
-    UINT32			__reserved4[734];
+	UINT32		keyStoreDataStart;	/* physical address of key store data */
+	UINT32		keyStoreDataSize;
+	UINT64		bootMemStart;		/* physical address of interpreter boot memory */
+	UINT64		bootMemSize;
+	UINT64		PhysicalMemorySize;
+	UINT64		FSBFrequency;
+	UINT64		pciConfigSpaceBaseAddress;
+	UINT32		pciConfigSpaceStartBusNumber;
+	UINT32		pciConfigSpaceEndBusNumber;
+	UINT32		__reserved4[730];
 
 } BootArgs2;
 
