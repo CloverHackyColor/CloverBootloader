@@ -403,7 +403,7 @@
   # Drivers for Aptio loading - should go to Clover's /EFI/drivers64UEFI dir
   Clover/OsxFatBinaryDrv/OsxFatBinaryDrv.inf
   Clover/OsxAptioFixDrv/OsxAptioFixDrv.inf
-
+  Clover/OsxLowMemFixDrv/OsxLowMemFixDrv.inf
 
   #
   # Sample Application

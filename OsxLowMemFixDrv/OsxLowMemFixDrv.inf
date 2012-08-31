@@ -1,0 +1,59 @@
+##
+#
+# Low memory fixes for some UEFI boards to load OSX.
+#
+# by dmazar, based on modbin info:
+# http://www.projectosx.com/forum/index.php?showtopic=2428&st=0&p=17766&#entry17766
+#
+# confirmed by akbar102 with Aspire 5750G with InsydeH2O UEFI:
+# http://www.projectosx.com/forum/index.php?showtopic=2428&st=300&p=19078&#entry19078
+#
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = OsxLowMemFixDrv
+  FILE_GUID                      = 5c3173bf-28af-4c10-b288-1fdff4c8b213
+  MODULE_TYPE                    = UEFI_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = OsxLowMemFixDrvEntrypoint
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+  DuetPkg/DuetPkg.dec
+
+[LibraryClasses]
+  UefiLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  UefiDriverEntryPoint
+  BaseLib
+  CpuLib
+  DevicePathLib
+  
+[Sources]
+  OsxLowMemFixDrv.c
+  Lib.h
+  Lib.c
+
+[Guids]
+  gEfiFileInfoGuid								## CONSUMES
+  gEfiFileSystemInfoGuid						## CONSUMES
+  gEfiFileSystemVolumeLabelInfoIdGuid			## CONSUMES
+
+[Protocols]
+  gEfiLoadedImageProtocolGuid
+  gEfiDevicePathProtocolGuid
+  gEfiSimpleFileSystemProtocolGuid
+  gEfiBlockIoProtocolGuid
+  gEfiDiskIoProtocolGuid
+  gEfiGraphicsOutputProtocolGuid
+
+[Depex]
+
+[BuildOptions]
+
