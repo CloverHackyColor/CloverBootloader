@@ -14,7 +14,7 @@ CHAR8* BiosVendor = "Apple Inc.";
 
 CHAR8* AppleManufacturer = "Apple Computer, Inc."; //Old name, before 2007
 
-UINT32 gFwFeatures = 0xC0001403; //default valuse
+UINT32 gFwFeatures = 0xC001f537; //default valuse
 
 CHAR8* AppleFirmwareVersion[] = 
 {
@@ -254,7 +254,8 @@ VOID GetDefaultSettings(VOID)
   gSettings.HDALayoutId = 0;
   gSettings.USBInjection = TRUE; // enabled by default to have the same behavior as before
   gSettings.Mobile = gMobile;  //default
+  gSettings.ChassisType = 0;
   StrCpy(gSettings.DsdtName, L"DSDT.aml");
-  gSettings.BacklightLevel = 0xFFFF; //0x0503; //the value from MBA52
+  gSettings.BacklightLevel = 0xFFFF; //0x0503; -- the value from MBA52
 
 }

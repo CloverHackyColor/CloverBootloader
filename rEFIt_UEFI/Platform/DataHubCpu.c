@@ -118,7 +118,7 @@ EFI_STATUS SetVariablesForOSX()
   
 	UINT32      BackgroundClear = 0x00000000;
 	UINT32      FwFeatures      = gFwFeatures; //0x80001417; //Slice - get it from SMBIOS
-	UINT32      FwFeaturesMask  = 0xC0007fff;
+	UINT32      FwFeaturesMask  = 0xC003ffff;
 	UINTN       bootArgsLen = 256; 
 	CHAR8*      None	= "none";
 	CHAR8*      BA = &gSettings.BootArgs[255];

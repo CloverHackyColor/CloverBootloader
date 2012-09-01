@@ -413,7 +413,7 @@ VOID PatchTableType1()
 	//Increase table size
 	Size = SmbiosTable.Type1->Hdr.Length; //old size
 	TableSize = SmbiosTableLength(SmbiosTable); //including strings
-	NewSize = sizeof(SMBIOS_TABLE_TYPE1);
+	NewSize = 27; //sizeof(SMBIOS_TABLE_TYPE1);
 	ZeroMem((VOID*)newSmbiosTable.Type1, MAX_TABLE_SIZE);
 	CopyMem((VOID*)newSmbiosTable.Type1, (VOID*)SmbiosTable.Type1, Size); //copy main table
 	CopyMem((CHAR8*)newSmbiosTable.Type1+NewSize, (CHAR8*)SmbiosTable.Type1+Size, TableSize - Size); //copy strings
@@ -468,7 +468,7 @@ VOID PatchTableType2()
 {
   // BaseBoard Information
 	// 
-	NewSize = 0x0F; //sizeof(SMBIOS_TABLE_TYPE2);
+	NewSize = 0x10; //sizeof(SMBIOS_TABLE_TYPE2);
 	ZeroMem((VOID*)newSmbiosTable.Type2, MAX_TABLE_SIZE);	
 	
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_BASEBOARD_INFORMATION, 0);
@@ -539,7 +539,7 @@ VOID GetTableType3()
 		return;
 	}
 	mHandle3 = SmbiosTable.Type3->Hdr.Handle;
-	gMobile = ((SmbiosTable.Type3->Type) >= 8);
+	gMobile = ((SmbiosTable.Type3->Type) >= 8) && (SmbiosTable.Type3->Type != 0x0D)); //iMac is desktop!
 
 	return;
 }
@@ -569,11 +569,15 @@ VOID PatchTableType3()
 	newSmbiosTable.Type3->BootupState = ChassisStateSafe;
 	newSmbiosTable.Type3->PowerSupplyState = ChassisStateSafe;
 	newSmbiosTable.Type3->ThermalState = ChassisStateOther;
-	newSmbiosTable.Type3->SecurityStatus = ChassisSecurityStatusNone;
+	newSmbiosTable.Type3->SecurityStatus = ChassisSecurityStatusOther; //ChassisSecurityStatusNone;
 	newSmbiosTable.Type3->NumberofPowerCords = 1;
 	newSmbiosTable.Type3->ContainedElementCount = 0;
 	newSmbiosTable.Type3->ContainedElementRecordLength = 0;
 	Once = TRUE;
+	
+	if (gSettings.ChassisType != 0) {
+		newSmbiosTable.Type3->Type = gSettings.ChassisType;
+	}
 		
 	if(iStrLen(gSettings.ChassisManufacturer, 64)>0){
 		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type3->Manufacturer, gSettings.ChassisManufacturer);
@@ -978,8 +982,8 @@ VOID PatchTableType11()
 VOID PatchTableTypeSome()
 {
 	//some unused but interesting tables. Just log as is
-#define NUM_OTHER_TYPES 12	
-	UINT8 tableTypes[NUM_OTHER_TYPES] = {8, 10, 18, 21, 22, 27, 28, 32, 33, 129, 217, 219};
+#define NUM_OTHER_TYPES 13	
+	UINT8 tableTypes[NUM_OTHER_TYPES] = {8, 10, 13, 18, 21, 22, 27, 28, 32, 33, 129, 217, 219};
 	UINTN	IndexType;
 	//
 	// Different types 
@@ -1327,7 +1331,7 @@ VOID PatchTableType128()
 		newSmbiosTable.Type128->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE128); 
 		newSmbiosTable.Type128->Hdr.Handle = 0x8000; //common rule
 		newSmbiosTable.Type128->FirmwareFeatures = gFwFeatures; //0x80001417; //imac112 -> 0x1403
-		newSmbiosTable.Type128->FirmwareFeaturesMask = 0xC0007fff; // 0xffff
+		newSmbiosTable.Type128->FirmwareFeaturesMask = 0xC003ff37; // 0xffff
 		/*
 		 FW_REGION_RESERVED   = 0,
 		 FW_REGION_RECOVERY   = 1,

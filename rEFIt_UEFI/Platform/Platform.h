@@ -520,6 +520,7 @@ typedef struct {
   CHAR8 OEMBoard[64];
 	// SMBIOS TYPE3
   BOOLEAN Mobile;
+  UINT8 ChassisType;
 	CHAR8	ChassisManufacturer[64];
 	CHAR8	ChassisAssetTag[64]; 
 	// SMBIOS TYPE4

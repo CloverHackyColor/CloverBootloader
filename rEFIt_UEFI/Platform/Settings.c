@@ -779,7 +779,14 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       {
         AsciiStrCpy(gSettings.ChassisAssetTag, prop->string);
       }
-      //gFwFeatures = 0xC0001403 - by default
+      prop = GetProperty(dictPointer,"ChassisType");
+      if(prop)
+      {
+        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+        gSettings.ChassisType = (UINT8)StrHexToUint64((CHAR16*)&UStr[0]);
+        DBG("Config set ChassisType=0x%x\n", gSettings.ChassisType);
+      }
+     //gFwFeatures = 0xC0001403 - by default
       prop = GetProperty(dictPointer, "FirmwareFeatures");
       if(prop)
       {

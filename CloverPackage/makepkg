@@ -32,7 +32,8 @@ cp -f CloverV2/BootSectors/* sym/i386/
 # Workspace = edk2/Clover/CloverPackage
 # Prepare Resources for package installer.
 
-cp -f CloverV2/config.plist-FullSample/config.plist CloverV2/EFI/config-sample.plist
+cp -r -f CloverV2/doc  CloverV2/EFI/doc
+cp -r -f CloverV2/config.plist-FullSample CloverV2/EFI/doc/
 
 if [ -d "package/Resources" ];then
 rm -rf package/Resources
@@ -68,6 +69,8 @@ rm -f package/Distribution
 rm -f Version.h
 rm -f version
 rm -f revision
+rm -rf CloverV2/EFI/doc
+rm -rf CloverV2/EFI/doc/config.plist-FullSample
 
 # Workspace = edk2/Clover/CloverPackage
 # Open the final folder.
