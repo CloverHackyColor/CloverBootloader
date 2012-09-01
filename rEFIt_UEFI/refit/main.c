@@ -139,6 +139,22 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"R - Теплый перезапуск");
         AddMenuInfoLine(&HelpMenu, L"U - Выключить");
         break;
+      case spanish:
+        AddMenuInfoLine(&HelpMenu, L"ESC - Salir de submenu o actualizar el menu principal");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Esta Ayuda");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Guardar preboot.log (Solo FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Guardar DSDT oem en EFI/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Guardar DSDT parcheado en EFI/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Guardar VideoBios en EFI/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Guardar Captura de pantalla en EFI/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Expulsar volumen seleccionado (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Espacio - Detalles acerca selected menu entry");
+        AddMenuInfoLine(&HelpMenu, L"Digitos 1-9 - Atajo a la entrada del menu");
+        AddMenuInfoLine(&HelpMenu, L"A - Menu Acerca de");
+        AddMenuInfoLine(&HelpMenu, L"O - Menu Optiones");
+        AddMenuInfoLine(&HelpMenu, L"R - Reiniciar Equipo");
+        AddMenuInfoLine(&HelpMenu, L"U - Apagar");
+        break;
       case italian:
         AddMenuInfoLine(&HelpMenu, L"ESC - Esci dal submenu, Aggiorna menu principale");
         AddMenuInfoLine(&HelpMenu, L"F1  - Aiuto");

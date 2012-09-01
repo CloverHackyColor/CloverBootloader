@@ -359,6 +359,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             gLanguage = russian;
         } else if (AsciiStrStr(prop->string, "it")) {
             gLanguage = italian;
+        } else if (AsciiStrStr(prop->string, "es")) {
+          gLanguage = spanish;
         }
       }
       

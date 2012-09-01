@@ -722,6 +722,7 @@ typedef enum {
   english,  //en
   russian,  //ru
   italian,  //it
+  spanish,  //es
   chinese   //cn
   //something else? add, please
 } LANGUAGES;
