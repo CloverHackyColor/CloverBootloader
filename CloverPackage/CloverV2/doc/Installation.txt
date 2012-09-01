@@ -51,7 +51,7 @@ Note: dd can't change boot sector of the system partition. You should start from
    - Install boot0 to the MBR:
    		sudo fdisk440 -f boot0 -u -y /dev/rdisk0
   
-   - Install boot1f32 to the partition's bootsector:
+   - Install boot1f32alt to the partition's bootsector:
    
 sudo fdisk440 -f boot0 -u -y /dev/rdisk0
 dd if=/dev/rdisk0s1 count=1 bs=512 of=origbs

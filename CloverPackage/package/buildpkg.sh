@@ -123,7 +123,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 		cp -f ${pkgroot}/Scripts/boot0/postinstall ${3}/boot0/Scripts
 		chmod 755 "${3}/boot0/Scripts/postinstall"
 		echo "	[BUILD] boot0 "
-		buildpackage "${3}/boot0" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot0hfsEFI']) &amp;&amp; exclusive(choices['boot1no']) &amp;&amp; exclusive(choices['boot1UEFI'])\"" >/dev/null 2>&1
+		buildpackage "${3}/boot0" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot0EFI']) &amp;&amp; exclusive(choices['boot1no']) &amp;&amp; exclusive(choices['boot1UEFI'])\"" >/dev/null 2>&1
 	# End build boot0 package 
 	
 	# build boot0hfs package 
@@ -132,17 +132,17 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 		cp -f ${pkgroot}/Scripts/boot0hfs/postinstall ${3}/boot0hfs/Scripts
 		chmod 755 "${3}/boot0hfs/Scripts/postinstall"
 		echo "	[BUILD] boot0hfs "
-		buildpackage "${3}/boot0hfs" "/" "" "start_visible=\"true\" start_selected=\"true\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0hfsEFI']) &amp;&amp; exclusive(choices['boot1no']) &amp;&amp; exclusive(choices['boot1UEFI'])\"" >/dev/null 2>&1
+		buildpackage "${3}/boot0hfs" "/" "" "start_visible=\"true\" start_selected=\"true\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0EFI']) &amp;&amp; exclusive(choices['boot1no']) &amp;&amp; exclusive(choices['boot1UEFI'])\"" >/dev/null 2>&1
 	# End build boot0hfs package 
 
-	# build boot0hfsEFI package 
-		mkdir -p ${3}/boot0hfsEFI/Root
-		mkdir -p ${3}/boot0hfsEFI/Scripts/Tools
-		cp -f ${pkgroot}/Scripts/boot0hfsEFI/postinstall ${3}/boot0hfsEFI/Scripts
-		chmod 755 "${3}/boot0hfsEFI/Scripts/postinstall"
-		echo "	[BUILD] boot0hfsEFI "
-		buildpackage "${3}/boot0hfsEFI" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot1no']) &amp;&amp; exclusive(choices['boot1UEFI'])\"" >/dev/null 2>&1
-	# End build boot0hfsEFI package 
+	# build boot0EFI package 
+		mkdir -p ${3}/boot0EFI/Root
+		mkdir -p ${3}/boot0EFI/Scripts/Tools
+		cp -f ${pkgroot}/Scripts/boot0EFI/postinstall ${3}/boot0EFI/Scripts
+		chmod 755 "${3}/boot0EFI/Scripts/postinstall"
+		echo "	[BUILD] boot0EFI "
+		buildpackage "${3}/boot0EFI" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot1no']) &amp;&amp; exclusive(choices['boot1UEFI'])\"" >/dev/null 2>&1
+	# End build boot0EFI package 
 
 	# build boot1no package
 		mkdir -p ${3}/boot1no/Root
@@ -150,7 +150,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 		cp -f ${pkgroot}/Scripts/boot1no/postinstall ${3}/boot1no/Scripts
 		chmod 755 "${3}/boot1no/Scripts/postinstall"
 		echo "	[BUILD] boot1no "
-		buildpackage "${3}/boot1no" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot0hfsEFI']) &amp;&amp; exclusive(choices['boot1UEFI'])\"" >/dev/null 2>&1
+		buildpackage "${3}/boot1no" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot0EFI']) &amp;&amp; exclusive(choices['boot1UEFI'])\"" >/dev/null 2>&1
 	# End build boot1no package 
 
 	# build boot1UEFI package
@@ -165,7 +165,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 		cp -f ${pkgroot}/Scripts/boot1UEFI/postinstall ${3}/boot1UEFI/Scripts
 		chmod 755 "${3}/boot1UEFI/Scripts/postinstall"
 		echo "	[BUILD] boot1UEFI "
-		buildpackage "${3}/boot1UEFI" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot0hfsEFI']) &amp;&amp; exclusive(choices['boot1no'])\"" >/dev/null 2>&1
+		buildpackage "${3}/boot1UEFI" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot0EFI']) &amp;&amp; exclusive(choices['boot1no'])\"" >/dev/null 2>&1
 	# End build boot1UEFI package 
 
 	# build boot32 package 

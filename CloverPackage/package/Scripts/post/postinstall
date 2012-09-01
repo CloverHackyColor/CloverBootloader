@@ -139,9 +139,9 @@ if [ "$( df | grep EFI )" ] && [ "${installtype}" == "boot0hfsEFI" ]; then
 	cp -f "${osxvolume}/boot" "${bootvolume}/boot"
 	cp -f "${osxvolume}/boot3" "${bootvolume}/boot3"
 	cp -f "${osxvolume}/boot6" "${bootvolume}/boot6"
-	chflags hidden "${bootvolume}/boot"
-	chflags hidden "${bootvolume}/boot3"
-	chflags hidden "${bootvolume}/boot6"
+#	chflags hidden "${bootvolume}/boot"
+#	chflags hidden "${bootvolume}/boot3"
+#	chflags hidden "${bootvolume}/boot6"
 	
 	echo "cp -f ${osxvolume}/boot ${bootvolume}/boot" >> "${osxvolume}/Clover_Install_Log.txt"
 	echo "cp -f ${osxvolume}/boot3 ${bootvolume}/boot3" >> "${osxvolume}/Clover_Install_Log.txt"
