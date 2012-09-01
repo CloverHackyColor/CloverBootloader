@@ -157,8 +157,10 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 		mkdir -p ${3}/boot1UEFI/Scripts/Tools
 		mkdir -p ${3}/boot1UEFI/Root/EFI/drivers32
 		mkdir -p ${3}/boot1UEFI/Root/EFI/drivers64
+		mkdir -p ${3}/boot1UEFI/Root/EFI/drivers64UEFI
 		cp -Rf ${3%/*/*}/CloverV2/drivers-Off/drivers32UEFI/* ${3}/boot1UEFI/Root/EFI/drivers32
-		cp -Rf ${3%/*/*}/CloverV2/drivers-Off/drivers64UEFI/* ${3}/boot1UEFI/Root/EFI/drivers64
+		cp -Rf ${3%/*/*}/CloverV2/drivers-Off/drivers64/* ${3}/boot1UEFI/Root/EFI/drivers64
+		cp -Rf ${3%/*/*}/CloverV2/drivers-Off/drivers64UEFI/* ${3}/boot1UEFI/Root/EFI/drivers64UEFI
 		fixperms "${3}/boot1UEFI/Root/"
 		cp -f ${pkgroot}/Scripts/boot1UEFI/postinstall ${3}/boot1UEFI/Scripts
 		chmod 755 "${3}/boot1UEFI/Scripts/postinstall"

@@ -371,7 +371,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       BlockConOut = TRUE;
     }
   }
-  else if (Entry->LoaderType == OSTYPE_WIN) {
+  else if ((Entry->LoaderType == OSTYPE_WIN) ||  (Entry->LoaderType == OSTYPE_WINEFI)){
       
     PatchACPI_OtherOS(L"Windows", FALSE);
     //PauseForKey(L"continue");
@@ -501,6 +501,12 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       ShortcutLetter = 'W';
       LoaderKind = 3;
       Entry->LoaderType = OSTYPE_WIN;
+      break;
+    case OSTYPE_WINEFI:
+      OSIconName = L"vista";
+      ShortcutLetter = 'V';
+      LoaderKind = 3;
+      Entry->LoaderType = OSTYPE_WINEFI;
       break;
     case OSTYPE_LIN:
       OSIconName = L"linux";
@@ -873,7 +879,7 @@ static VOID ScanLoader(VOID)
       //     Print(L"  - Microsoft boot menu found\n");
       //    Volume->OSType = OSTYPE_WIN;
       Volume->BootType = BOOTING_BY_EFI;
-      Entry = AddLoaderEntry(FileName, L"Microsoft EFI boot menu", Volume, OSTYPE_WIN);
+      Entry = AddLoaderEntry(FileName, L"Microsoft EFI boot menu", Volume, OSTYPE_WINEFI);
  //     continue;
     }
 
