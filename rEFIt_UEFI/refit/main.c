@@ -188,16 +188,16 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"U - Spegnimento");
         break;
       case german:
-        AddMenuInfoLine(&HelpMenu, L"ESC - Zurück aus Untermenue, Hauptmenue erneuern");
+        AddMenuInfoLine(&HelpMenu, L"ESC - Zurueck aus Untermenue, Hauptmenue erneuern");
         AddMenuInfoLine(&HelpMenu, L"F1  - Diese Hilfe");
-        AddMenuInfoLine(&HelpMenu, L"F2  - Sichere preboot.log (nur mit  FAT32 möglich)");
-        AddMenuInfoLine(&HelpMenu, L"F4  - Sichere OEM DSDT in EFI/ACPI/origin/ (nur mit FAT32 möglich)");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Sichere preboot.log (nur mit FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Sichere OEM DSDT in EFI/ACPI/origin/ (nur mit FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F5  - Sichere gepatchtes DSDT in EFI/ACPI/origin/ (FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F6  - Sichere VideoBios in EFI/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F10 - Sichere Bildschirmfoto in EFI/misc/ (nur mit FAT32 möglich)");
-        AddMenuInfoLine(&HelpMenu, L"F12 - Gewähltes Volume auswerfen (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Sichere Bildschirmfoto in EFI/misc/ (nur mit FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Volume auswerfen (DVD)");
         AddMenuInfoLine(&HelpMenu, L"Leertaste - Details über den gewählten Menue Eintrag");
-        AddMenuInfoLine(&HelpMenu, L"Zahlen 1-9 - Abkürzung zum gewählten Menue Eintrag");
+        AddMenuInfoLine(&HelpMenu, L"Zahlen 1-9 - Kurzwahl zum Menue Eintrag");
         AddMenuInfoLine(&HelpMenu, L"A - Menue Informationen");
         AddMenuInfoLine(&HelpMenu, L"O - Menue Optionen");
         AddMenuInfoLine(&HelpMenu, L"R - Neustart");
