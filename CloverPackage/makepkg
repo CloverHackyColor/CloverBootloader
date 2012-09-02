@@ -33,7 +33,7 @@ cp -f CloverV2/BootSectors/* sym/i386/
 # Prepare Resources for package installer.
 
 cp -r -f CloverV2/doc  CloverV2/EFI/doc
-cp -r -f CloverV2/config.plist-FullSample CloverV2/EFI/doc/
+#cp -r -f CloverV2/config.plist-FullSample CloverV2/EFI/doc/
 
 if [ -d "package/Resources" ];then
 rm -rf package/Resources
