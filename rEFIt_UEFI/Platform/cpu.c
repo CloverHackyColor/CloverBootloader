@@ -688,8 +688,7 @@ MACHINE_TYPES GetDefaultModel()
 				break;
 			case CPU_MODEL_PENRYN:
 				if ((gGraphics[0].Vendor == Nvidia) ||
-            (gGraphics[1].Vendor == Nvidia))
-				{
+            (gGraphics[1].Vendor == Nvidia)) {
 					DefaultType = MacBookPro51;
 				} else
 					DefaultType = MacBook41;
@@ -697,8 +696,7 @@ MACHINE_TYPES GetDefaultModel()
 			case CPU_MODEL_JAKETOWN:
 			case CPU_MODEL_SANDY_BRIDGE: 
 				if((AsciiStrStr(gCPUStructure.BrandString, "i3")) || 
-				   (AsciiStrStr(gCPUStructure.BrandString, "i5")))
-				{
+				   (AsciiStrStr(gCPUStructure.BrandString, "i5"))) {
 					DefaultType = MacBookPro81;
 					break;
 				}
@@ -709,8 +707,7 @@ MACHINE_TYPES GetDefaultModel()
 				break;
 			default:
 				if ((gGraphics[0].Vendor == Nvidia) ||
-            (gGraphics[1].Vendor == Nvidia))
-				{
+            (gGraphics[1].Vendor == Nvidia)) {
 					DefaultType = MacBookPro51;
 				} else
 					DefaultType = MacBook52;
@@ -760,7 +757,7 @@ MACHINE_TYPES GetDefaultModel()
 				DefaultType = MacPro51;
 				break;
 			case CPU_MODEL_SANDY_BRIDGE:
-      case CPU_MODEL_IVY_BRIDGE:   //should be new iMac  
+      case CPU_MODEL_IVY_BRIDGE:   //should be new iMac  13,2
         if (gGraphics[0].Vendor == Intel) {
           DefaultType = MacMini51;
 					break;

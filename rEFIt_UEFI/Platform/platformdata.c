@@ -25,6 +25,7 @@ CHAR8* AppleFirmwareVersion[] =
 	"MBP51.88Z.007E.B05.0906151647",
   "MBP81.88Z.0047.B04.1102071707",
   "MBP83.88Z.0047.B24.1110261426",
+  "MBP91.88Z.00D3.B06.1205101904",
 	"MBA31.88Z.0061.B01.0712201139",
   "MBA51.88Z.00EF.B00.1205221442",
 	"MM21.88Z.009A.B00.0706281359",
@@ -50,6 +51,7 @@ CHAR8* AppleBoardID[] = //Lion DR1 compatible
 	"Mac-F42D86C8",  //MBP51
   "Mac-94245B3640C91C81",  //MBP81 - i5 SB IntelHD3000
   "Mac-942459F5819B171B",  //MBP83 - i7 SB  ATI
+  "Mac-6F01561E16C75D06",  //MBP92 - i5-3210M IvyBridge HD4000
 	"Mac-942452F5819B1C1B",  //MBA31
   "Mac-2E6FAB96566FE58C",  //MBA52 - i5-3427U IVY BRIDGE IntelHD4000 did=166
 	"Mac-F4208EAA",  //MM21 - merom GMA950 07/07
@@ -75,6 +77,7 @@ CHAR8* AppleReleaseDate[] =
 	"06/15/09",  //mbp51
   "02/07/11",
   "10/26/11",
+  "05/10/2012", //MBP92
 	"12/20/07",
   "05/22/2012", //mba52
 	"08/07/07",  //mm21
@@ -100,6 +103,7 @@ CHAR8* AppleProductName[] =
 	"MacBookPro5,1",
   "MacBookPro8,1",
   "MacBookPro8,3",
+  "MacBookPro9,2",
 	"MacBookAir3,1",
   "MacBookAir5,2",
 	"Macmini2,1",
@@ -125,6 +129,7 @@ CHAR8* AppleFamilies[] =
 	"MacBookPro",
   "MacBookPro",
   "MacBookPro",
+  "MacBook Pro",
 	"MacBookAir",
   "MacBook Air",
 	"Macmini",
@@ -151,6 +156,7 @@ CHAR8* AppleSystemVersion[] =
 	"1.0",
 	"1.0",
   "1.0",
+  "1.0",
 	"1.0",
   "1.0",
   "1.1",
@@ -176,6 +182,7 @@ CHAR8* AppleSerialNumber[] = //random generated
 	"W88439FE1G0", //MBP51
   "W89F9196DH2G", //MBP81 - i5 SB IntelHD3000
   "W88F9CDEDF93", //MBP83 -i7 SB  ATI
+  "C02HMAX6DTY3", //MBP92 - i5 IvyBridge HD4000
 	"W8649476DQX",  //MBA31
   "C02HRJXWDRVC", //MBA52 - IvyBridge
 	"W88A56BYYL2",  //MM21 - merom GMA950 07/07
@@ -201,6 +208,7 @@ CHAR8* AppleChassisAsset[] =
 	"MacBook-Aluminum",
 	"MacBook-Aluminum",
 	"MacBook-Aluminum",
+  "MacBook-Aluminum",
 	"Air-Enclosure",
   "Air-Enclosure",
 	"Mini-Aluminum",

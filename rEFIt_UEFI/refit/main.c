@@ -155,6 +155,22 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"R - Reiniciar Equipo");
         AddMenuInfoLine(&HelpMenu, L"U - Apagar");
         break;
+      case portuguese:
+        AddMenuInfoLine(&HelpMenu, L"ESC - Sai do submenu, atualiza o menu principal");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Esta ajuda");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Salva preboot.log (somente FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Salva oem DSDT em EFI/ACPI/origin/ (somente FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Salva DSDT corrigido em EFI/ACPI/origin/ (somente FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Salva VideoBios em EFI/misc/ (somente FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Salva screenshot em EFI/misc/ (somente FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Ejeta o volume selecionado (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Espaco - Detalhes sobre a opcao do menu selecionada");
+        AddMenuInfoLine(&HelpMenu, L"Tecle 1-9 - Atalho para as entradas do menu");
+        AddMenuInfoLine(&HelpMenu, L"A - Sobre o Menu");
+        AddMenuInfoLine(&HelpMenu, L"O - Opcoes do Menu");
+        AddMenuInfoLine(&HelpMenu, L"R - Reiniciar");
+        AddMenuInfoLine(&HelpMenu, L"U - Desligar");
+        break;
       case italian:
         AddMenuInfoLine(&HelpMenu, L"ESC - Esci dal submenu, Aggiorna menu principale");
         AddMenuInfoLine(&HelpMenu, L"F1  - Aiuto");

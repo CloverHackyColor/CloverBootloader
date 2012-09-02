@@ -664,6 +664,7 @@ typedef enum {
 	MacBookPro51,
 	MacBookPro81,
 	MacBookPro83,
+  MacBookPro92,
 	MacBookAir31,
   MacBookAir52,
 	MacMini21,
@@ -724,6 +725,7 @@ typedef enum {
   russian,  //ru
   italian,  //it
   spanish,  //es
+  portuguese, //pt
   chinese   //cn
   //something else? add, please
 } LANGUAGES;

@@ -354,13 +354,15 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         //       AsciiStrToUnicodeStr(prop->string, gSettings.Language);
         AsciiStrCpy(gSettings.Language,  prop->string);
         if (AsciiStrStr(prop->string, "en")) {
-            gLanguage = english;
+          gLanguage = english;
         } else if (AsciiStrStr(prop->string, "ru")) {
-            gLanguage = russian;
+          gLanguage = russian;
         } else if (AsciiStrStr(prop->string, "it")) {
-            gLanguage = italian;
+          gLanguage = italian;
         } else if (AsciiStrStr(prop->string, "es")) {
           gLanguage = spanish;
+        } else if (AsciiStrStr(prop->string, "pt")) {
+          gLanguage = portuguese;
         }
       }
       
