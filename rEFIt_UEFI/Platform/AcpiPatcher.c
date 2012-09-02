@@ -1489,12 +1489,15 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
           if (!EFI_ERROR(Status)) {
             DBG("New APIC table successfully inserted\n");
           }
-          CHAR16* PatchedAPIC = L"\\EFI\\ACPI\\origin\\APCI-p.aml";
+          CHAR16* PatchedAPIC = L"\\EFI\\ACPI\\origin\\APIC-p.aml";
           Status = egSaveFile(SelfRootDir, PatchedAPIC, (UINT8 *)ApicTable, ApicTable->Length);
           if (EFI_ERROR(Status)) {
             Status = egSaveFile(NULL, PatchedAPIC,  (UINT8 *)ApicTable, ApicTable->Length);
           }          
-        }      
+          if (!EFI_ERROR(Status)) {
+            DBG("Patched APIC table saved into efi/acpi/patched \n");
+          }
+       }
       } 
     } 
       else DBG("No APIC table Found !!!\n");

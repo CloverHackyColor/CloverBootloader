@@ -362,7 +362,9 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         } else if (AsciiStrStr(prop->string, "es")) {
           gLanguage = spanish;
         } else if (AsciiStrStr(prop->string, "pt")) {
-          gLanguage = portuguese;
+          gLanguage = portuguese; 
+        } else if (AsciiStrStr(prop->string, "ge")) {
+          gLanguage = german;
         }
       }
       
