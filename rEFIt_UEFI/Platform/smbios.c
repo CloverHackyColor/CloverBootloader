@@ -539,7 +539,7 @@ VOID GetTableType3()
 		return;
 	}
 	mHandle3 = SmbiosTable.Type3->Hdr.Handle;
-	gMobile = ((SmbiosTable.Type3->Type) >= 8) && (SmbiosTable.Type3->Type != 0x0D)); //iMac is desktop!
+	gMobile = ((SmbiosTable.Type3->Type) >= 8) && (SmbiosTable.Type3->Type != 0x0D); //iMac is desktop!
 
 	return;
 }
