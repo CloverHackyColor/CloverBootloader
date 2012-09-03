@@ -371,6 +371,16 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE0410,	0x174B3058,	"PC Partner GeForce GT 330" },
 
 	// 0420 - 042F
+	{ 0x10DE0421,	0x1043034F,	"Asus GeForce 8500 GT" },
+	{ 0x10DE0421,	0x1043050D,	"Asus GeForce 8500 GT" },
+	{ 0x10DE0421,	0x1043050E,	"Asus GeForce 8500 GT" },
+	{ 0x10DE0421,	0x10431617,	"Asus GeForce 8500 GT" },
+	{ 0x10DE0421,	0x104381F7,	"Asus GeForce 8500 GT" },
+	{ 0x10DE0421,	0x14620921,	"MSi GeForce 8500GT" },
+	{ 0x10DE0421,	0x14620960,	"MSi GeForce 8500GT" },
+	{ 0x10DE0421,	0x14620961,	"MSi GeForce 8500GT" },
+	{ 0x10DE0421,	0x174B8010,	"PC Partner GeForce 8500 GT" },
+
 	{ 0x10DE0426,	0x10338897,	"NEC GeForce 8400M GT" },
 	{ 0x10DE0426,	0x104381F7,	"Asus GeForce 8400M GT" },
 	{ 0x10DE0426,	0x104D9005,	"Sony GeForce 8400M GT" },
@@ -551,7 +561,7 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE0618,	0x102802A2,	"Dell GeForce GTX 260M" },
 	{ 0x10DE0618,	0x10431A52,	"Asus GeForce GTX 260M" },
 	{ 0x10DE0618,	0x10432028,	"Asus GeForce GTX 170M" },
-	{ 0x10DE0618,	0x1043202B,	"Asus GTX 680" },
+	{ 0x10DE0618,	0x1043202B,	"Asus GeForce GTX 680" },
 	{ 0x10DE0618,	0x10432033,	"Asus GeForce GTX 260M" },
 	{ 0x10DE0618,	0x15580481,	"Clevo/Kapok GeForce GTX 260M" },
 	{ 0x10DE0618,	0x15580577,	"Clevo/Kapok GeForce GTX 260M" },
@@ -565,13 +575,30 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE0622,	0x10621432,	"MSi GeForce 9600GT" },
 	// 0630 - 063F
 	// 0640 - 064F
+	{ 0x10DE0640,	0x101910BD,	"Elitegroup GeForge 9500 GT" },
+	{ 0x10DE0640,	0x101910C0,	"Elitegroup GeForge 9500 GT" },
+	{ 0x10DE0640,	0x1043829A,	"Asus GeForge 9500 GT" },
+	{ 0x10DE0640,	0x104382B4,	"Asus GeForge 9500 GT" },
+	{ 0x10DE0640,	0x104382FD,	"Asus GeForge 9500 GT" },
 	{ 0x10DE0640,	0x106B00AD,	"Apple GeForge 9500 GT" },
 	{ 0x10DE0640,	0x106B00B3,	"Apple GeForge 9500 GT" },
 	{ 0x10DE0640,	0x106B061B,	"Apple GeForge 9500 GT" },
+	{ 0x10DE0640,	0x10B01401,	"Gainward GeForge 9500 GT" },
+	{ 0x10DE0640,	0x10DE0551,	"nVidia GeForge 9500 GT" },
+	{ 0x10DE0640,	0x10DE057D,	"nVidia GeForge 9500 GT" },
+	{ 0x10DE0640,	0x10DE0648,	"nVidia GeForge 9500 GT" },
 	{ 0x10DE0640,	0x10DE077F,	"Inno3D GeForge 9500GT HDMI" },
+	{ 0x10DE0640,	0x14583498,	"GigaByte GeForge 9500 GT" },
+	{ 0x10DE0640,	0x145834A9,	"GigaByte GeForge 9500 GT" },
 	{ 0x10DE0640,	0x14621290,	"MSi GeForge 9500 GT" },
 	{ 0x10DE0640,	0x14621291,	"MSi GeForge 9500 GT" },
+	{ 0x10DE0640,	0x14621575,	"MSi GeForge 9500 GT" },
 	{ 0x10DE0640,	0x16423796,	"Bitland GeForge 9500 GT" },
+	{ 0x10DE0640,	0x1682400A,	"XFX GeForge 9500 GT" },
+	{ 0x10DE0640,	0x196E0643,	"PNY GeForge 9500GT" },
+	{ 0x10DE0640,	0x19DA7046,	"Zotac GeForge 9500 GT" },
+	{ 0x10DE0640,	0x1ACC9091,	"Point of View GeForge 9500 GT" },
+	{ 0x10DE0640,	0x3842C958,	"EVGA GeForge 9500 GT" },
 
 	{ 0x10DE0647,	0x106B00A9,	"Apple GeForge 9600M GT" },
 	{ 0x10DE0647,	0x106B00B0,	"Apple GeForge 9600M GT" },
@@ -769,6 +796,7 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE0A20,	0x16423920,	"Bitland GeForce GT 220" },
 
 	{ 0x10DE0A28,	0x10338897,	"NEC GeForce GT 230" },
+	{ 0x10DE0A28,	0x103C1000,	"HP GeForce GT 230" },
 	{ 0x10DE0A28,	0x103C2AA7,	"HP GeForce GT 230" },
 	{ 0x10DE0A28,	0x103C363C,	"HP GeForce GT 230" },
 	{ 0x10DE0A28,	0x103C363E,	"HP GeForce GT 230" },
@@ -962,7 +990,26 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE0DC0,	0x174B2178,	"PC Partner GeForce GT 440" },
 
 	{ 0x10DE0DC4,	0x10438365,	"Asus GeForce GTS 450" },
+	{ 0x10DE0DC4,	0x10438375,	"Asus GeForce GTS 450" },
 	{ 0x10DE0DC4,	0x1043837A,	"Asus GeForce GTS 450" },
+	{ 0x10DE0DC4,	0x10B00401,	"Gainward GeForce GTS 450" },
+	{ 0x10DE0DC4,	0x10B00801,	"Gainward GeForce GTS 450" },
+	{ 0x10DE0DC4,	0x10DE085A,	"nVidia GeForce GTS 450" },
+	{ 0x10DE0DC4,	0x145834FE,	"Gigabyte GeForce GTS 450" },
+	{ 0x10DE0DC4,	0x14583500,	"Gigabyte GeForce GTS 450" },
+	{ 0x10DE0DC4,	0x14583507,	"Gigabyte GeForce GTS 450" },
+	{ 0x10DE0DC4,	0x14622360,	"MSi GeForce GTS 450" },
+	{ 0x10DE0DC4,	0x14622364,	"MSi GeForce GTS 450" },
+	{ 0x10DE0DC4,	0x14628096,	"MSi GeForce GTS 450" },
+	{ 0x10DE0DC4,	0x196E085A,	"PNY GeForce GTS 450" },
+	{ 0x10DE0DC4,	0x19DA1184,	"Zotac GeForce GTS 450" },
+	{ 0x10DE0DC4,	0x19DA1194,	"Zotac GeForce GTS 450" },
+	{ 0x10DE0DC4,	0x19DA2184,	"Zotac GeForce GTS 450" },
+	{ 0x10DE0DC4,	0x19DA3194,	"Zotac GeForce GTS 450" },
+	{ 0x10DE0DC4,	0x1ACC4513,	"Point of View GeForce GTS 450" },
+	{ 0x10DE0DC4,	0x1ACC4523,	"Point of View GeForce GTS 450" },
+	{ 0x10DE0DC4,	0x1ACC45C2,	"Point of View GeForce GTS 450" },
+	{ 0x10DE0DC4,	0x38421452,	"EVGA GeForce GTS 450" },
 
 	{ 0x10DE0DCD,	0x10280491,	"Dell GeForce GT 555M" },
 	{ 0x10DE0DCD,	0x102804B7,	"Dell GeForce GT 555M" },
@@ -1137,6 +1184,16 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE0DF5,	0x10280511,	"Dell GeForce GT 525M" },
 	{ 0x10DE0DF5,	0x10280521,	"Dell GeForce GT 525M" },
 
+	{ 0x10DE0DF6,	0x10431712,	"Asus GeForce GT 550M" },
+	{ 0x10DE0DF6,	0x10432049,	"Asus GeForce GT 550M" },
+	{ 0x10DE0DF6,	0x1043204D,	"Asus GeForce GT 550M" },
+	{ 0x10DE0DF6,	0x14582525,	"GigaByte GeForce GT 550M" },
+	{ 0x10DE0DF6,	0x14582532,	"GigaByte GeForce GT 550M" },
+	{ 0x10DE0DF6,	0x14C00059,	"Compal GeForce GT 550M" },
+	{ 0x10DE0DF6,	0x17AA3981,	"Lenovo GeForce GT 550M" },
+	{ 0x10DE0DF6,	0x1B0A20A5,	"Pegatron GeForce GT 550M" },
+	{ 0x10DE0DF6,	0x1BAB2002,	"GeForce GT 550M" },
+
 	{ 0x10DE0DFE,	0x10431407,	"Asus GF108 ES" },
 	{ 0x10DE0DFE,	0x10431447,	"Asus GF108 ES" },
 	{ 0x10DE0DFE,	0x10431482,	"Asus GF108 ES" },
@@ -1149,7 +1206,7 @@ static nvidia_card_info_t nvidia_cards[] = {
 	// 0E00 - 0E0F
 	// 0E10 - 0E1F
 	// 0E20 - 0E2F
-	{ 0x10DE0E22,	0x1043835D,	"Asus GeForce GTX 460" },
+	{ 0x10DE0E22,	0x1043835D,	"Asus ENGTX460" },
 	{ 0x10DE0E22,	0x10B00401,	"Gainward GeForce GTX 460" },
 	{ 0x10DE0E22,	0x10B00801,	"Gainward GeForce GTX 460" },
 	{ 0x10DE0E22,	0x10DE0804,	"nVidia GeForce GTX 460" },
@@ -1358,18 +1415,30 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE1055,	0x104D908A,	"Sony GeForce 410M" },
 	{ 0x10DE1055,	0x104D908B,	"Sony GeForce 410M" },
 
-	{ 0x10DE1058,	0x10431457,	"Asus GeForce 610M" },
+	{ 0x10DE1058,	0x10431457,	"Asus GeForce GT 610M" },
+	{ 0x10DE1058,	0x10431652,	"Asus GeForce GT 610M" },
+	{ 0x10DE1058,	0x17AA397D,	"Lenovo GeForce GT 610M" },
+	{ 0x10DE1058,	0x17AA5001,	"Lenovo GeForce GT 610M" },
 
+	{ 0x10DE105A,	0x10250505,	"Acer GeForce 610M" },
+	{ 0x10DE105A,	0x10250507,	"Acer GeForce 610M" },
+	{ 0x10DE105A,	0x10280579,	"Dell GeForce 610M" },
+	{ 0x10DE105A,	0x103C1898,	"HP GeForce 610M" },
 	{ 0x10DE105A,	0x10432129,	"Asus GeForce 610M" },
 
 	// 1060 - 106F
 	// 1070 - 107F
 	{ 0x10DE107D,	0x103C094E,	"HP NVS 310" },
 	// 1080 - 108F
+	{ 0x10DE1080,	0x10438379,	"Asus GeForce GTX 580" },
+	{ 0x10DE1080,	0x10438385,	"Asus GeForce GTX 580" },
 	{ 0x10DE1080,	0x104383BB,	"Asus GeForce GTX 580" },
 	{ 0x10DE1080,	0x10B00401,	"Gainward GeForce GTX 580" },
+	{ 0x10DE1080,	0x1458350F,	"Gigabyte GeForce GTX 580" },
 	{ 0x10DE1080,	0x1458351B,	"Gigabyte GeForce GTX 580" },
+	{ 0x10DE1080,	0x1458351E,	"Gigabyte GeForce GTX 580" },
 	{ 0x10DE1080,	0x14622550,	"MSi GeForce GTX 580" },
+	{ 0x10DE1080,	0x14622561,	"MSI N580GTX Lightning" }, // The Real Deal
 	{ 0x10DE1080,	0x196E086A,	"PNY GeForce GTX 580" },
 	{ 0x10DE1080,	0x19DA2203,	"Zotac GeForce GTX 580" },
 	{ 0x10DE1080,	0x38421582,	"EVGA GeForce GTX 580" },
@@ -1476,7 +1545,9 @@ static nvidia_card_info_t nvidia_cards[] = {
 	// 1160 - 116F
 	// 1170 - 117F
 	// 1180 - 118F
+	{ 0x10DE1180,	0x00001255,	"Afox GTX 680" },
 	{ 0x10DE1180,	0x104383F0,	"Asus GTX680-2GD5" },
+	{ 0x10DE1180,	0x104383F6,	"Asus GTX 680 Direct CU II" },
 	{ 0x10DE1180,	0x104383F7,	"Asus GTX 680 Direct CU II" },
 	{ 0x10DE1180,	0x10DE0969,	"nVidia GTX 680" },
 	{ 0x10DE1180,	0x10DE097A,	"nVidia GeForce GTX 680" },
@@ -1491,6 +1562,10 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE1180,	0x38422680,	"EVGA GTX 680" },
 	{ 0x10DE1180,	0x38422682,	"EVGA GTX 680 SC" },
 
+	{ 0x10DE1183,	0x10DE1000,	"nVidia GTX 660 Ti" },
+	{ 0x10DE1183,	0x14622843,	"MSi GTX 660 Ti" },
+	{ 0x10DE1183,	0x19DA1280,	"Zoac GTX 660 Ti" },
+
 	{ 0x10DE1185,	0x174B2260,	"PC Partner GeForce GTX 660" },
 
 	{ 0x10DE1188,	0x10438406,	"Asus GeForce GTX 690" },
@@ -1500,6 +1575,7 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE1189,	0x10438405,	"Asus GTX 670 Direct CU II TOP" },
 	{ 0x10DE1189,	0x10DE097A,	"nVidia GeForce GTX 670" },
 	{ 0x10DE1189,	0x14583542,	"Gigabyte GeForce GTX 670" },
+	{ 0x10DE1189,	0x14622840,	"MSi GeForce GTX 670" },
 	{ 0x10DE1189,	0x15691189,	"Palit GTX 670 JetStream" },
 	{ 0x10DE1189,	0x174B1260,	"PC Partner GeForce GTX 670" },
 	{ 0x10DE1189,	0x19DA1255,	"Zotac GTX 670 AMP! Edition" },
@@ -1508,6 +1584,17 @@ static nvidia_card_info_t nvidia_cards[] = {
 	// 1190 - 119F
 	// 11A0 - 11AF
 	// 11B0 - 11BF
+	{ 0x10DE11BC,	0x1028053F,	"Dell Quadro K5000M" },
+	{ 0x10DE11BC,	0x1028153F,	"Dell Quadro K5000M" },
+	{ 0x10DE11BC,	0x10CF1762,	"Fujitsu Quadro K5000M" },
+	{ 0x10DE11BC,	0x15580270,	"Clevo Quadro K5000M" },
+	{ 0x10DE11BC,	0x15580371,	"Clevo Quadro K5000M" },
+
+	{ 0x10DE11BD,	0x10CF1761,	"Fujitsu Quadro K4000M" },
+
+	{ 0x10DE11BE,	0x10CF1760,	"Fujitsu Quadro K3000M" },
+	{ 0x10DE11BE,	0x15585105,	"Clevo Quadro K3000M" },
+	{ 0x10DE11BE,	0x15587102,	"Clevo Quadro K3000M" },
 	// 11C0 - 11CF
 	// 11D0 - 11DF
 	// 11E0 - 11EF
@@ -1530,6 +1617,8 @@ static nvidia_card_info_t nvidia_cards[] = {
 
 	{ 0x10DE1206,	0x10DE0958,	"nVidia GeForce GTX 555" },
 
+	{ 0x10DE1207,	0x174B0645,	"PC Partner GeForce GT 645" },
+
 	{ 0x10DE1210,	0x10431487,	"Asus GeForce GTX 570M" },
 	{ 0x10DE1210,	0x10432104,	"Asus GeForce GTX 570M" },
 	{ 0x10DE1210,	0x1179FB12,	"Toshiba GeForce GTX 570M" },
@@ -1549,16 +1638,19 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE1211,	0x15587200,	"Clevo GeForce GTX 580M" },
 
 	{ 0x10DE1212,	0x1028057B,	"Dell GeForce GTX 675M" },
+	{ 0x10DE1212,	0x10DE095D,	"nVidia GeForce GTX 675M" },
 	{ 0x10DE1212,	0x144DC0D0,	"Samsung GeForce GTX 675M" },
 	{ 0x10DE1212,	0x146210CB,	"MSi GeForce GTX 675M" },
 
 	{ 0x10DE1213,	0x102804BA,	"Dell GeForce GTX 670M" },
 	{ 0x10DE1213,	0x10432119,	"Dell GeForce GTX 670M" },
 	{ 0x10DE1213,	0x10432120,	"Dell GeForce GTX 670M" },
+	{ 0x10DE1213,	0x10DE095E,	"nVidia GeForce GTX 670M" },
 	{ 0x10DE1213,	0x1179FB12,	"Toshiba GeForce GTX 670M" },
 	{ 0x10DE1213,	0x1179FB18,	"Toshiba GeForce GTX 670M" },
 	{ 0x10DE1213,	0x1179FB1A,	"Toshiba GeForce GTX 670M" },
 	{ 0x10DE1213,	0x146210CB,	"MSi GeForce GTX 670M" },
+	{ 0x10DE1213,	0x15585105,	"Clevo GeForce GTX 670M" },
 
 	{ 0x10DE1241,	0x10DE091D,	"nVidia GeForce GT 545" },
 
@@ -1602,6 +1694,7 @@ static nvidia_card_info_t nvidia_cards[] = {
 
 	{ 0x10DE124B,	0x10438540,	"Asus GeForce GT 640" },
 	{ 0x10DE124B,	0x14622319,	"MSi GeForce GT 640" },
+	{ 0x10DE124B,	0x1462231A,	"MSi GeForce GT 640" },
 	{ 0x10DE124B,	0x174B0640,	"PC Partner GeForce GT 640" },
 
 	{ 0x10DE124D,	0x10280491,	"Dell GeForce GT 555M" },
@@ -2574,13 +2667,17 @@ static nvidia_card_info_t nvidia_cards[] = {
 	// 1170 - 117F
 	// 1180 - 118F
 	{ 0x10DE1180,	NV_SUB_IDS,	"GeForce GTX 680" },
-	{ 0x10DE1183,	NV_SUB_IDS,	"GeForce GTX 660 TI" },
+	{ 0x10DE1183,	NV_SUB_IDS,	"GeForce GTX 660 Ti" },
 	{ 0x10DE1185,	NV_SUB_IDS,	"GeForce GTX 660" },
 	{ 0x10DE1188,	NV_SUB_IDS,	"GeForce GTX 690" },
 	{ 0x10DE1189,	NV_SUB_IDS,	"GeForce GTX 670" },
+	{ 0x10DE118F,	NV_SUB_IDS,	"Tesla K10" },
 	// 1190 - 119F
 	// 11A0 - 11AF
 	// 11B0 - 11BF
+	{ 0x10DE11BC,	NV_SUB_IDS,	"Quadro K5000M" },
+	{ 0x10DE11BD,	NV_SUB_IDS,	"Quadro K4000M" },
+	{ 0x10DE11BE,	NV_SUB_IDS,	"Quadro K3000M" },
 	// 11C0 - 11CF
 	// 11D0 - 11DF
 	// 11E0 - 11EF
@@ -2858,8 +2955,9 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 		return PATCH_ROM_FAILED;
 	}
 	
-	if (numentries >= MAX_NUM_DCB_ENTRIES)
+	if (numentries >= MAX_NUM_DCB_ENTRIES){
 		numentries = MAX_NUM_DCB_ENTRIES;
+	}
 	
 	UINT8 num_outputs = 0, i = 0;
 	

@@ -203,6 +203,22 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"R - Neustart");
         AddMenuInfoLine(&HelpMenu, L"U - Ausschalten");
         break;		
+      case indonesian:
+        AddMenuInfoLine(&HelpMenu, L"ESC - Keluar dari sub menu, merefresh main menu");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Tampilan Help ini");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Menimpan preboot.log (hanya untuk FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Menyimpan oem DSDT di EFI/ACPI/origin/ (hanya untuk FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Menyimpan patched DSDT di EFI/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Menyimpan VideoBios di EFI/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Menyimpan screenshot di EFI/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Eject Volume yg terpilih (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Spasi - Detail dari menu yang terpilih");
+        AddMenuInfoLine(&HelpMenu, L"Tombol 1-9 - Shorcut ke menu yang ada");
+        AddMenuInfoLine(&HelpMenu, L"A - About menu");
+        AddMenuInfoLine(&HelpMenu, L"O - Opsi menu");
+        AddMenuInfoLine(&HelpMenu, L"R - Soft Reset");
+        AddMenuInfoLine(&HelpMenu, L"U - Shutdown");
+        break;
       case english:
       default:
         AddMenuInfoLine(&HelpMenu, L"ESC - Escape from submenu, Refresh main menu");

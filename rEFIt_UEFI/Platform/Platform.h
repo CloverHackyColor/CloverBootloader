@@ -723,8 +723,9 @@ typedef struct {
 typedef enum {
   english,  //en
   russian,  //ru
-  german,
+  german,   //ge
   italian,  //it
+  indonesian, //id
   spanish,  //es
   portuguese, //pt
   chinese   //cn

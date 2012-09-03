@@ -365,6 +365,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gLanguage = portuguese; 
         } else if (AsciiStrStr(prop->string, "ge")) {
           gLanguage = german;
+        } else if (AsciiStrStr(prop->string, "id")) {
+          gLanguage = indonesian;
         }
       }
       
@@ -472,7 +474,6 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       {      
         hex2bin(prop->string, (UINT8*)&gSettings.Dcfg[0], 8);
       } 
-      
     }    
     
     dictPointer = GetProperty(dict,"PCI");
@@ -540,7 +541,6 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.USBInjection = FALSE;
         }
       }
-
     }
     
     //*** ACPI ***//
