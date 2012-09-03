@@ -345,7 +345,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       DBG(" config error\n");
       return EFI_UNSUPPORTED;
     }
-    //*** SYSTEM ***//
+    //*** SYSTEM ***
     dictPointer = GetProperty(dict, "SystemParameters");
     if (dictPointer) {
       prop = GetProperty(dictPointer, "prev-lang:kbd");

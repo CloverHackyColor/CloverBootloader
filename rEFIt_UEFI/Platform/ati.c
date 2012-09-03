@@ -1143,7 +1143,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 	card->mmio		= (UINT8 *)(UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_2) & ~0x0f);
 	card->io		= (UINT8 *)(UINTN)(pci_config_read32(pci_dev, PCI_BASE_ADDRESS_4) & ~0x03);
   pci_dev->regs = card->mmio;
-	ExpansionRom = pci_config_read32(pci_dev, PCI_EXPANSION_ROM_BASE);
+	ExpansionRom = pci_config_read32(pci_dev, PCI_EXPANSION_ROM_BASE); //0x30 as Chimera
 	DBG("Framebuffer @0x%08X  MMIO @0x%08X	I/O Port @0x%08X ROM Addr @0x%08X\n",
 		card->fb, card->mmio, card->io, ExpansionRom);
 	
