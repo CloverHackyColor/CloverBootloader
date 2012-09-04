@@ -9,7 +9,7 @@
 
 #include "ati.h"
 
-#define DEBUG_ATI 2
+#define DEBUG_ATI 1
 
 #if DEBUG_ATI == 2
 #define DBG(x...) AsciiPrint(x)
