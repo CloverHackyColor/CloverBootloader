@@ -1331,17 +1331,20 @@ VOID SetDevices(VOID)
   }
 	
   if (StringDirty) {
+    
     stringlength = string->length * 2;
     DBG("stringlength = %d\n", stringlength);
 //    gDeviceProperties = AllocateAlignedPages(EFI_SIZE_TO_PAGES(stringlength + 1), 64);
-    gDeviceProperties = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;    
+    EFI_PHYSICAL_ADDRESS  BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
+    
     Status = gBS->AllocatePages (
                                  AllocateMaxAddress,
                                  EfiACPIReclaimMemory,
                                  EFI_SIZE_TO_PAGES(stringlength+1),
-                                 &gDeviceProperties
+                                 &BufferPtr
                                  );
-    if (!EFI_ERROR(Status) {
+    if (!EFI_ERROR(Status)) {
+      gDeviceProperties = (CHAR8*)(UINTN)BufferPtr; 
       CopyMem(gDeviceProperties, (VOID*)devprop_generate_string(string), stringlength);
       gDeviceProperties[stringlength] = 0;
       //    DBG(gDeviceProperties);
