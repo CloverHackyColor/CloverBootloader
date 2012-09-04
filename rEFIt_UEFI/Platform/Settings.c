@@ -366,7 +366,9 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         } else if (AsciiStrStr(prop->string, "ge")) {
           gLanguage = german;
         } else if (AsciiStrStr(prop->string, "id")) {
-          gLanguage = indonesian;
+          gLanguage = indonesian; 
+        } else if (AsciiStrStr(prop->string, "fr")) {
+          gLanguage = french;
         }
       }
       
@@ -1330,13 +1332,22 @@ VOID SetDevices(VOID)
 	
   if (StringDirty) {
     stringlength = string->length * 2;
-    
-    gDeviceProperties = AllocateAlignedPages(EFI_SIZE_TO_PAGES(stringlength + 1), 64);
-    CopyMem(gDeviceProperties, (VOID*)devprop_generate_string(string), stringlength);
-    gDeviceProperties[stringlength] = 0;
-    //    DBG(gDeviceProperties);
-    //    DBG("\n");   
-    StringDirty = FALSE;    
+    DBG("stringlength = %d\n", stringlength);
+//    gDeviceProperties = AllocateAlignedPages(EFI_SIZE_TO_PAGES(stringlength + 1), 64);
+    gDeviceProperties = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;    
+    Status = gBS->AllocatePages (
+                                 AllocateMaxAddress,
+                                 EfiACPIReclaimMemory,
+                                 EFI_SIZE_TO_PAGES(stringlength+1),
+                                 &gDeviceProperties
+                                 );
+    if (!EFI_ERROR(Status) {
+      CopyMem(gDeviceProperties, (VOID*)devprop_generate_string(string), stringlength);
+      gDeviceProperties[stringlength] = 0;
+      //    DBG(gDeviceProperties);
+      //    DBG("\n");   
+      StringDirty = FALSE;          
+    }
 	}
   
 	MsgLog("CurrentMode: Width=%d Height=%d\n", UGAWidth, UGAHeight);  

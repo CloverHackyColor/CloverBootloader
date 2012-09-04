@@ -724,6 +724,7 @@ typedef enum {
   english,  //en
   russian,  //ru
   german,   //ge
+  french,   //fr
   italian,  //it
   indonesian, //id
   spanish,  //es

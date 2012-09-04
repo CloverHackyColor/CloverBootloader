@@ -154,7 +154,7 @@ typedef struct {
 
   BOOLEAN                            KeyEventSignalState;
   BOOLEAN                            InputEventSignalState;
-  EFI_EVENT                          ConnectConInEvent;
+  EFI_EVENT                          ConnectConIn;
 } TEXT_IN_SPLITTER_PRIVATE_DATA;
 
 #define TEXT_IN_SPLITTER_PRIVATE_DATA_FROM_THIS(a)  \

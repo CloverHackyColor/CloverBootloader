@@ -203,6 +203,22 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"R - Neustart");
         AddMenuInfoLine(&HelpMenu, L"U - Ausschalten");
         break;		
+      case french:
+        AddMenuInfoLine(&HelpMenu, L"ESC - Quitter sous-menu, Retour menu principal");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Aide");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Enregistrer preboot.log (FAT32 only)");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Enregistrer oem DSDT dans EFI/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Enregistrer DSDT modifie dans EFI/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Enregistrer VideoBios dans EFI/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Enregistrer la capture ecran dans EFI/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Ejecter le volume (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Space - Details a propos du menu selectionne");
+        AddMenuInfoLine(&HelpMenu, L"Digits 1-9 - Raccourci vers entree menu");
+        AddMenuInfoLine(&HelpMenu, L"A - A propos");
+        AddMenuInfoLine(&HelpMenu, L"O - Options Menu");
+        AddMenuInfoLine(&HelpMenu, L"R - Redemarrer");
+        AddMenuInfoLine(&HelpMenu, L"U - Eteindre");
+        break;
       case indonesian:
         AddMenuInfoLine(&HelpMenu, L"ESC - Keluar dari sub menu, merefresh main menu");
         AddMenuInfoLine(&HelpMenu, L"F1  - Tampilan Help ini");
