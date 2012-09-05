@@ -498,8 +498,25 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       prop = GetProperty(dictPointer,"DeviceProperties");
       if(prop)
       {
-        cDeviceProperties = AllocateZeroPool(AsciiStrLen(prop->string)+1);
+        UINTN stringlength = AsciiStrLen(prop->string);
+        cDeviceProperties = AllocateZeroPool(stringlength + 1);
         AsciiStrCpy(cDeviceProperties, prop->string);
+        //-------
+        EFI_PHYSICAL_ADDRESS  BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;        
+        Status = gBS->AllocatePages (
+                                     AllocateMaxAddress,
+                                     EfiACPIReclaimMemory,
+                                     EFI_SIZE_TO_PAGES(stringlength) + 1,
+                                     &BufferPtr
+                                     );
+        if (!EFI_ERROR(Status)) {
+          cProperties = (CHAR8*)(UINTN)BufferPtr; 
+          cPropSize = stringlength / 2;
+          cPropSize = hex2bin(cDeviceProperties, cProperties, cPropSize);
+          DBG("Injected EFIString of length %d\n", cPropSize);
+        }
+        //---------      
+        
       }
       prop = GetProperty(dictPointer,"LpcTune");
       gSettings.LpcTune = FALSE;
@@ -1334,7 +1351,7 @@ VOID SetDevices(VOID)
     
     stringlength = string->length * 2;
     DBG("stringlength = %d\n", stringlength);
-//    gDeviceProperties = AllocateAlignedPages(EFI_SIZE_TO_PAGES(stringlength + 1), 64);
+   // gDeviceProperties = AllocateAlignedPages(EFI_SIZE_TO_PAGES(stringlength + 1), 64);
     EFI_PHYSICAL_ADDRESS  BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
     
     Status = gBS->AllocatePages (
@@ -1344,12 +1361,16 @@ VOID SetDevices(VOID)
                                  &BufferPtr
                                  );
     if (!EFI_ERROR(Status)) {
-      gDeviceProperties = (CHAR8*)(UINTN)BufferPtr; 
-      CopyMem(gDeviceProperties, (VOID*)devprop_generate_string(string), stringlength);
+      mProperties = (CHAR8*)(UINTN)BufferPtr; 
+      gDeviceProperties = (VOID*)devprop_generate_string(string);
       gDeviceProperties[stringlength] = 0;
-      //    DBG(gDeviceProperties);
-      //    DBG("\n");   
-      StringDirty = FALSE;          
+          DBG(gDeviceProperties);
+          DBG("\n");   
+      StringDirty = FALSE;
+      //-------
+      mPropSize = (UINT32)AsciiStrLen(gDeviceProperties) / 2;
+      mPropSize = hex2bin(gDeviceProperties, mProperties, mPropSize);
+      //---------      
     }
 	}
   

@@ -27,9 +27,12 @@ EFI_GUID gAppleScreenInfoGuid = {
 	0xe316e100, 0x0751, 0x4c49, {0x90, 0x56, 0x48, 0x6c, 0x7e, 0x47, 0x29, 0x03}
 };
 
-//UINT32 mPropSize = 0;
-//UINT8* mProperties = NULL;
+UINT32 mPropSize = 0;
+UINT8* mProperties = NULL;
 CHAR8* gDeviceProperties = NULL;
+
+UINT32 cPropSize = 0;
+UINT8* cProperties = NULL;
 CHAR8* cDeviceProperties = NULL;
 
 typedef struct _APPLE_GETVAR_PROTOCOL APPLE_GETVAR_PROTOCOL;
@@ -61,23 +64,21 @@ GetDeviceProps(IN     APPLE_GETVAR_PROTOCOL   *This,
   UINT32		cnt = 0;
 	UINT8     *binStr = NULL;
 
-  if(!gSettings.StringInjector && (gDeviceProperties!=NULL) && (AsciiStrLen(gDeviceProperties)>3))
+  if(!gSettings.StringInjector && (mProperties != NULL) && (mPropSize > 1))
 	{
-    cnt = (UINT32)AsciiStrLen(gDeviceProperties) / 2;
-		binStr = AllocateZeroPool(cnt);
-    if((cnt = hex2bin(gDeviceProperties, binStr, cnt)) != 0){
-      *BufferSize = cnt;    
-      CopyMem(Buffer, binStr,  cnt);
-      return EFI_SUCCESS;      
+    if (*BufferSize < mPropSize) {
+      *BufferSize = mPropSize;
+      return EFI_BUFFER_TOO_SMALL;
     }
-  } else if ((cDeviceProperties!=NULL) && AsciiStrLen(cDeviceProperties)>3) {
-    cnt = (UINT32)AsciiStrLen(cDeviceProperties) / 2;
-		binStr = AllocateZeroPool(cnt);
-    if((cnt = hex2bin(cDeviceProperties, binStr, cnt)) != 0){
-      *BufferSize = cnt;    
-      CopyMem(Buffer, binStr,  cnt);
-      return EFI_SUCCESS;      
-    } 
+    CopyMem(Buffer, mProperties,  mPropSize);
+    return EFI_SUCCESS;      
+  } else if ((cProperties != NULL) && (cPropSize > 1)) {
+    if (*BufferSize < cPropSize) {
+      *BufferSize = cPropSize;
+      return EFI_BUFFER_TOO_SMALL;
+    }
+    CopyMem(Buffer, cProperties,  cPropSize);
+    return EFI_SUCCESS;      
   }
   *BufferSize = 0;    
 	return EFI_SUCCESS;
