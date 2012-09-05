@@ -130,7 +130,7 @@ DisableUsbLegacySupport(
 								MsgLog("USB OHCI reset for device %04x control=0x%x\n", Pci.Hdr.DeviceId, Command);
 								break;*/
 							case PCI_IF_EHCI:
-              case PCI_IF_XHCI:  
+           //   case PCI_IF_XHCI:  //do not do thing that you don't study!
 								//Slice - the algo is reworked from Chameleon
 								// it looks like redundant but it works so I will not reduce it
 								//
