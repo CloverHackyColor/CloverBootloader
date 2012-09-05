@@ -164,16 +164,16 @@ ASM_PFX(MyAsmReadSp):
 ASM_GLOBAL ASM_PFX(MyAsmPrepareJumpFromKernel)
 ASM_PFX(MyAsmPrepareJumpFromKernel):
 	# save 64 bit state
-	sgdt	ASM_PFX(SavedGDTR)
-	sidt	ASM_PFX(SavedIDTR)
+	sgdt	ASM_PFX(SavedGDTR)(%rip)
+	sidt	ASM_PFX(SavedIDTR)(%rip)
 	movq	%cr3, %rax
-	movq	%rax, ASM_PFX(SavedCR3)
-	movw	%cs, SavedCS
-	movw	%ds, SavedDS
+	movq	%rax, ASM_PFX(SavedCR3)(%rip)
+	movw	%cs, SavedCS(%rip)
+	movw	%ds, SavedDS(%rip)
 
 	# pass DataBase to 32 bit code
-	lea		DataBase, %rax
-	movl	%eax, DataBaseAdr
+	lea		DataBase(%rip), %rax
+	movl	%eax, DataBaseAdr(%rip)
 
 	ret
 

@@ -33,6 +33,7 @@
   
 [Sources]
   OsxAptioFixDrv.c
+  AsmFuncs.h
   BootFixes.c
   BootFixes.h
   DecodedKernelCheck.c
@@ -70,9 +71,11 @@
   gEfiDiskIoProtocolGuid
   gEfiGraphicsOutputProtocolGuid
 
+# if built as runtime driver
 [Depex]
+  TRUE
 
 [BuildOptions]
-  MSFT:*_*_*_ASM_FLAGS = /Fl
-#  GCC:*_*_*_ASM_FLAGS = -Wall,-a=AsmList.txt
-
+# To generate assembled listings
+#  MSFT:*_*_*_ASM_FLAGS = /Fl
+#  GCC:*_*_*_ASM_FLAGS = -Wa,-a=AsmList.txt
