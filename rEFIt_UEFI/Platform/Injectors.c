@@ -61,8 +61,8 @@ GetDeviceProps(IN     APPLE_GETVAR_PROTOCOL   *This,
                IN     CHAR8                   *Buffer,
                IN OUT UINT32                  *BufferSize)
 { 
-  UINT32		cnt = 0;
-	UINT8     *binStr = NULL;
+//  UINT32		cnt = 0;
+//	UINT8     *binStr = NULL;
 
   if(!gSettings.StringInjector && (mProperties != NULL) && (mPropSize > 1))
 	{
@@ -121,8 +121,8 @@ EFI_STATUS EFIAPI GetScreenInfo(VOID* This, UINT64* baseAddress, UINT64* frameBu
 	if(EFI_ERROR(Status))
 		return EFI_UNSUPPORTED;
   //this print never occured so this procedure is redundant
-	Print(L"GetScreenInfo called with args: %lx %lx %lx %lx %lx %lx\n",
-        baseAddress, frameBufferSize, bpr, w, h, colorDepth);
+//	Print(L"GetScreenInfo called with args: %lx %lx %lx %lx %lx %lx\n",
+//        baseAddress, frameBufferSize, bpr, w, h, colorDepth);
 	*frameBufferSize = (UINT64)GraphicsOutput->Mode->FrameBufferSize;
 	*baseAddress = (UINT64)GraphicsOutput->Mode->FrameBufferBase;
 	*w = (UINT32)GraphicsOutput->Mode->Info->HorizontalResolution;

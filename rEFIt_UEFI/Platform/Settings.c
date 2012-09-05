@@ -510,7 +510,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
                                      &BufferPtr
                                      );
         if (!EFI_ERROR(Status)) {
-          cProperties = (CHAR8*)(UINTN)BufferPtr; 
+          cProperties = (UINT8*)(UINTN)BufferPtr; 
           cPropSize = stringlength / 2;
           cPropSize = hex2bin(cDeviceProperties, cProperties, cPropSize);
           DBG("Injected EFIString of length %d\n", cPropSize);
@@ -1361,7 +1361,7 @@ VOID SetDevices(VOID)
                                  &BufferPtr
                                  );
     if (!EFI_ERROR(Status)) {
-      mProperties = (CHAR8*)(UINTN)BufferPtr; 
+      mProperties = (UINT8*)(UINTN)BufferPtr; 
       gDeviceProperties = (VOID*)devprop_generate_string(string);
       gDeviceProperties[stringlength] = 0;
           DBG(gDeviceProperties);
@@ -1369,7 +1369,9 @@ VOID SetDevices(VOID)
       StringDirty = FALSE;
       //-------
       mPropSize = (UINT32)AsciiStrLen(gDeviceProperties) / 2;
+      DBG("Preliminary size of mProperties=%d\n", mPropSize);
       mPropSize = hex2bin(gDeviceProperties, mProperties, mPropSize);
+      DBG("Final size of mProperties=%d\n", mPropSize);
       //---------      
     }
 	}
