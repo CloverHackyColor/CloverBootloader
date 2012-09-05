@@ -648,7 +648,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           DBG("Config set smartUPS present\n");
         }
       }
-      prop = GetProperty(dictPointer,"PatchNMI");
+      prop = GetProperty(dictPointer,"PatchAPIC");
       gSettings.PatchNMI = FALSE;
       if(prop)
       {
