@@ -59,7 +59,7 @@ EFI_STATUS EFIAPI LoadKext(IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OU
 	UINTN		infoDictBufferLength = 0;
 	UINT8*		executableBuffer = 0;
 	UINTN		executableBufferLength = 0;
-	UINT8*		bundlePathBuffer = 0;
+	CHAR8*		bundlePathBuffer = 0;
 	UINTN		bundlePathBufferLength = 0;
 	CHAR16		TempName[256];
 	CHAR16		Executable[256];
@@ -95,9 +95,9 @@ EFI_STATUS EFIAPI LoadKext(IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OU
 				return EFI_NOT_FOUND;
 			}
 		}
-		// TODO: dmazar - StrLen(FileName) is not correct, plus check: bundlePathBuffer should probably be ascii string
-		bundlePathBufferLength = StrLen(FileName);
-		bundlePathBuffer = AllocateCopyPool(bundlePathBufferLength, FileName);
+		bundlePathBufferLength = StrLen(FileName) + 1;
+		bundlePathBuffer = AllocateZeroPool(bundlePathBufferLength);
+		UnicodeStrToAsciiStr(FileName, bundlePathBuffer);
 
 		kext->length = sizeof(_BooterKextFileInfo) + infoDictBufferLength + executableBufferLength + bundlePathBufferLength;
 		kext->paddr = (UINT32)(UINTN)AllocatePool(kext->length);
