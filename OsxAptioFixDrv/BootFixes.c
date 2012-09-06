@@ -43,6 +43,11 @@
 UINT32	kaddr;
 UINT32	ksize;
 
+// buffer for virtual address map - only for RT areas
+// note: DescriptorSize is usually > sizeof(EFI_MEMORY_DESCRIPTOR)
+// so this buffer can hold less then 64 descriptors
+EFI_MEMORY_DESCRIPTOR gVirtualMemoryMap[64];
+
 
 void PrintSample2(unsigned char *sample, int size) {
 	int i;
@@ -242,6 +247,69 @@ KernelEntryPatchZero (UINT32 KernelEntry)
 	return Status;
 }
 
+//
+// Some UEFIs are converting pointers to virtual addresses even if they do not
+// point to regions with RT flag. This means that those UEFIs are using
+// Desc->VirtualStart even for non-RT regions. Linux had issues with this:
+// http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=commit;h=7cb00b72876ea2451eb79d468da0e8fb9134aa8a
+// They are doing it Windows way now - copying RT descriptors to separate
+// mem map and passing that stripped map to SetVirtualAddressMap().
+// We'll do the same, although it seems that just assigning
+// VirtualStart = PhysicalStart for non-RT areas also does the job.
+//
+
+/** Copies RT flagged areas to separate memmap and calls SetVirtualAddressMap() only with tat partial memmap. */
+EFI_STATUS
+ExecSetVirtualAddressesToMemMap(
+	IN UINTN			MemoryMapSize,
+	IN UINTN			DescriptorSize,
+	IN UINT32			DescriptorVersion,
+	IN EFI_MEMORY_DESCRIPTOR	*MemoryMap
+)
+{
+	UINTN					NumEntries;
+	UINTN					Index;
+	EFI_MEMORY_DESCRIPTOR	*Desc;
+	EFI_MEMORY_DESCRIPTOR	*VirtualDesc;
+	UINTN					VirtualMapSize;
+	EFI_STATUS				Status;
+	
+	Desc = MemoryMap;
+	NumEntries = MemoryMapSize / DescriptorSize;
+	VirtualDesc = gVirtualMemoryMap;
+	VirtualMapSize = 0;
+	DBG("ExecSetVirtualAddressesToMemMap: Size=%d, Addr=%p, DescSize=%d\n", MemoryMapSize, MemoryMap, DescriptorSize);
+	
+	for (Index = 0; Index < NumEntries; Index++) {
+		
+		if ((Desc->Attribute & EFI_MEMORY_RUNTIME) != 0) {
+			
+			// check if there is enough space in gVirtualMemoryMap
+			if (VirtualMapSize + DescriptorSize > sizeof(gVirtualMemoryMap)) {
+				DBGnvr("ERROR: too much mem map RT areas\n");
+				return EFI_OUT_OF_RESOURCES;
+			}
+			
+			// copy region with EFI_MEMORY_RUNTIME flag to gVirtualMemoryMap
+			//DBGnvr(" %lx (%lx)\n", Desc->PhysicalStart, Desc->NumberOfPages);
+			CopyMem((VOID*)VirtualDesc, (VOID*)Desc, DescriptorSize);
+			
+			// next gVirtualMemoryMap slot
+			VirtualDesc = NEXT_MEMORY_DESCRIPTOR(VirtualDesc, DescriptorSize);
+			VirtualMapSize += DescriptorSize;
+		}
+		
+		Desc = NEXT_MEMORY_DESCRIPTOR(Desc, DescriptorSize);
+	}
+	
+	DBGnvr("ExecSetVirtualAddressesToMemMap: Size=%d, Addr=%p, DescSize=%d\nSetVirtualAddressMap ... ",
+		   VirtualMapSize, MemoryMap, DescriptorSize);
+	Status = gRT->SetVirtualAddressMap(VirtualMapSize, DescriptorSize, DescriptorVersion, gVirtualMemoryMap);
+	DBGnvr("%r\n", Status);
+	
+	return Status;
+}
+
 
 /** Assignes virtual addresses to runtime areas in memory map
   * and adds virtual to physical mapping to system's pagemap
@@ -372,6 +440,7 @@ DefragmentRuntimeServices(VOID *pBootArgs)
 			
 			DBG("-Copy %p <- %p, size=0x%lx\n", KernelRTBlock + gRelocBase, (VOID*)(UINTN)Desc->PhysicalStart, BlockSize);
 			CopyMem(KernelRTBlock + gRelocBase, (VOID*)(UINTN)Desc->PhysicalStart, BlockSize);
+			//SetMem((VOID*)(UINTN)Desc->PhysicalStart, BlockSize, 0);
 						
 			if (Desc->PhysicalStart <= *efiSystemTable &&  *efiSystemTable < (Desc->PhysicalStart + BlockSize)) {
 				// block contains sys table - update bootArgs with new address
@@ -444,16 +513,22 @@ RuntimeServicesFix(VOID *pBootArgs)
 	// assign virtual addresses
 	AssignVirtualAddressesToMemMap(pBootArgs);
 	
-	PrintMemMap(MemoryMapSize, MemoryMap, DescriptorSize, DescriptorVersion);
-	// virtualize them
-	DBGnvr("SetVirtualAddressMap ... ");
-	Status = gRT->SetVirtualAddressMap(MemoryMapSize, DescriptorSize, DescriptorVersion, MemoryMap);
-	DBGnvr("%r\n", Status);
+	//PrintMemMap(MemoryMapSize, MemoryMap, DescriptorSize, DescriptorVersion);
+	//PrintSystemTable(gST);
 	
-	DBG("SetVirtualAddressMap() = Status: %r\n", Status);
+	// virtualize them
+	//DBGnvr("SetVirtualAddressMap ... ");
+	//Status = gRT->SetVirtualAddressMap(MemoryMapSize, DescriptorSize, DescriptorVersion, MemoryMap);
+	//DBGnvr("%r\n", Status);
+	
+	Status = ExecSetVirtualAddressesToMemMap(MemoryMapSize, DescriptorSize, DescriptorVersion, MemoryMap);
+	
+	//DBG("SetVirtualAddressMap() = Status: %r\n", Status);
 	if (EFI_ERROR (Status)) {
 		CpuDeadLoop();
 	}
+	
+	//PrintSystemTable(gST);
 	
 	// and defragment
 	DBGnvr("DefragmentRuntimeServices ...\n");

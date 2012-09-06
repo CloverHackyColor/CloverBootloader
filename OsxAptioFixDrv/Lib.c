@@ -500,12 +500,25 @@ PrintMemMap(
 VOID EFIAPI
 PrintSystemTable(IN EFI_SYSTEM_TABLE  *ST)
 {
+	UINTN			Index;
+	
+	
 	DBG("SysTable: %p\n", ST);
 	DBG("- FirmwareVendor: %p, %s\n", ST->FirmwareVendor, ST->FirmwareVendor);
 	DBG("- ConsoleInHandle: %p, ConIn: %p\n", ST->ConsoleInHandle, ST->ConIn);
 	DBG("- RuntimeServices: %p, BootServices: %p, ConfigurationTable: %p\n", ST->RuntimeServices, ST->BootServices, ST->ConfigurationTable);
 	DBG("RT:\n");
 	DBG("- GetVariable: %p, SetVariable: %p\n", ST->RuntimeServices->GetVariable, ST->RuntimeServices->SetVariable);
+	
+	DBGnvr("SysTable: %p\n", ST);
+	DBGnvr("- FirmwareVendor: %p, %s\n", ST->FirmwareVendor, ST->FirmwareVendor);
+	DBGnvr("- ConsoleInHandle: %p, ConIn: %p\n", ST->ConsoleInHandle, ST->ConIn);
+	DBGnvr("- RuntimeServices: %p, BootServices: %p, ConfigurationTable: %p\n", ST->RuntimeServices, ST->BootServices, ST->ConfigurationTable);
+	DBGnvr("RT GetVariable: %p, SetVariable: %p\n", ST->RuntimeServices->GetVariable, ST->RuntimeServices->SetVariable);
+	
+	for(Index = 0; Index < ST->NumberOfTableEntries; Index++) {
+		DBGnvr("ConfTab: %p\n", ST->ConfigurationTable[Index].VendorTable);
+	}
 }
 
 VOID
