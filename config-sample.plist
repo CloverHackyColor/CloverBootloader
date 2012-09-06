@@ -18,6 +18,37 @@
 		<string>No</string>
 		<key>AppleRTC</key>
         <string>Yes</string>
+        <key>KextsToPatch</key>
+		<dict>
+			<key>0</key>
+			<dict>
+				<key>Name</key>
+				<string>AppleSDHC</string>
+				<key>Find</key>
+				<data>TA==</data>
+				<key>Replace</key>
+				<data>TB==</data>					
+			</dict>			
+			<key>1</key>
+			<dict>
+				<key>Name</key>
+				<string>AppleHDAController</string>
+				<key>Find</key>
+				<data>TA==</data>
+				<key>Replace</key>
+				<data>TB==</data>					
+			</dict>			
+			<key>2</key>
+			<dict>
+				<key>Name</key>
+				<string>IOBlockStorage</string>
+				<key>Find</key>
+				<data>TA==</data>
+				<key>Replace</key>
+				<data>TB==</data>					
+			</dict>			
+		</dict>
+
  	</dict>
 	<key>SystemParameters</key>
 	<dict>

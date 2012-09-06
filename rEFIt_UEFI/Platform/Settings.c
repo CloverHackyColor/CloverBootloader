@@ -921,6 +921,42 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.KPKextPatchesNeeded = TRUE;
         }
       }
+      
+      prop = GetProperty(dictPointer,"KextsToPatch");
+      if(prop) {
+        UINTN  j;
+        CHAR8 ANum[4];
+        i = 0;
+        do {
+          AsciiSPrint(Anum, 4, "%d", i);
+          dictPointer = GetProperty(prop, ANum);
+          if (!dictPointer) {
+            break;
+          }
+          dict = GetProperty(dictPointer,"Name");
+          if (dict) {
+            gSettings.AnyKext[i] = AllocateZeroPool(256); //dunno about size of kext name
+            AsciiSPrint(gSettings.AnyKext[i], 256, "%a", dict->string);
+          }
+          
+          gSettings.AnyKextData[i] = GetDataSetting(dictPointer,"Find",
+                                                    &gSettings.AnyKextDataLen[i]);
+          gSettings.AnyKextPatch[i] = GetDataSetting(dictPointer,"Replace", &j);
+          if (gSettings.AnyKextDataLen[i] != j) {
+            DBG("wrong data to patch kext %a\n", gSettings.AnyKext[i]);
+            gSettings.AnyKext[i][0] = 0; //just erase name
+            continue; //same i
+          }
+          
+          i++;
+          if (i>99) {
+            break;
+          }
+        } while (TRUE);
+        gSettings.NrKexts = i;
+        //there is one moment. This data is allocated in BS memory but will be used 
+        // after OnExitBootServices. This is wrong and these arrays should be reallocated
+      }
     }
     
     SaveSettings();

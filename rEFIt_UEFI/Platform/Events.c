@@ -305,7 +305,7 @@ GuiEventsInitialize ()
 {
 	EFI_STATUS				Status;
 	EFI_EVENT				Event;
-	VOID*				  	RegSimpleFileSystem;
+	VOID*				  	RegSimpleFileSystem = NULL;
 	
 	
 	gEvent = 0;
@@ -460,7 +460,7 @@ EFI_STATUS EjectVolume(IN REFIT_VOLUME *Volume)
 	//		Cdb[1]  = (UINT8) (USB_BOOT_LUN(UsbMass->Lun) & EFI_SCSI_LOGICAL_UNIT_NUMBER_MASK);
 	//		Cdb[1] |= 0x01;
       Cdb[1] = 0x01;
-			Cdb[4] = 0x02; //eject command. NO DESCRIPTION IN HEADERS
+			Cdb[4] = ATA_CMD_SUBOP_EJECT_DISC; //eject command. 
 		//	Status = EFI_UNSUPPORTED;
 			Status    = UsbMass->Transport->ExecCommand (
                                                    UsbMass->Context,

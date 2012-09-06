@@ -2082,7 +2082,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       //    DBG("out from menu\n");
       if ((DefaultEntry != NULL) && (MenuExit == MENU_EXIT_TIMEOUT)) {
         //      DBG("boot by timeout\n");
-        StartLoader((LOADER_ENTRY *)DefaultEntry);
+        if (DefaultEntry->Tag == TAG_LOADER) {
+          StartLoader((LOADER_ENTRY *)DefaultEntry);
+        } else if (DefaultEntry->Tag == TAG_LEGACY){
+          StartLegacy((LEGACY_ENTRY *)DefaultEntry);
+        }
         // if something goes wrong - break main loop to reinit volumes
         break;
       }

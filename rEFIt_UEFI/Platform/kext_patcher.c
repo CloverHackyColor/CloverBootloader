@@ -296,6 +296,25 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize)
 //
 // Generic kext patch functions
 //
+//
+VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, INT32 N) //CHAR8 *InfoPlist, UINT32 InfoPlistSize)
+{
+  
+  UINTN   Num = 0;
+  
+  DBG(L"\nAnyKextPatch: driverAddr = %x, driverSize = %x\AnyKext = %s\n",
+      Driver, DriverSize, gSettings.AnyKext[N]);
+    
+  // patch
+  Num = SearchAndReplace(Driver,
+                         DriverSize,
+                         gSettings.AnyKextData[N],
+                         gSettings.AnyKextDataLen[N],
+                         gSettings.AnyKextPatch[N],
+                         -1);
+  DBG(L"==> patched %d times!\n", Num);
+  //gBS->Stall(5*1000000);
+}
 
 //
 // Called from SetFSInjection(), before boot.efi is started,
@@ -303,9 +322,18 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize)
 //
 VOID KextPatcherRegisterKexts(FSINJECTION_PROTOCOL *FSInject, FSI_STRING_LIST *ForceLoadKexts)
 {
+  INTN i;
+  
   if (gSettings.KPATIConnectorsController != NULL) {
     ATIConnectorsPatchRegisterKexts(FSInject, ForceLoadKexts);
   }
+  
+  for (i = 0; i < gSettings.NrKexts; i++) {
+    if (AsciiStrStr(InfoPlist, gSettings.AnyKext[i]) != NULL) {
+      FSInject->AddStringToList(ForceLoadKexts, PoolPrint(L"\\%a.kext\\Contents\\Info.plist", gSettings.AnyKext[i]) );        
+    }
+  }
+
 }
 
 //
@@ -314,6 +342,7 @@ VOID KextPatcherRegisterKexts(FSINJECTION_PROTOCOL *FSInject, FSI_STRING_LIST *F
 //
 VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
 {
+  INT32 i;
   
   if (gSettings.KPATIConnectorsController != NULL) {
     //
@@ -331,8 +360,7 @@ VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPl
       return;
     }
   }
-  
-  
+    
   if (gSettings.KPAsusAICPUPM
            && AsciiStrStr(InfoPlist, "<string>com.apple.driver.AppleIntelCPUPowerManagement</string>") != NULL)
   {
@@ -341,8 +369,8 @@ VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPl
     //
     AsusAICPUPMPatch(Driver, DriverSize);
   }
-  
-  else if (gSettings.KPAppleRTC
+  else
+    if (gSettings.KPAppleRTC
            && AsciiStrStr(InfoPlist, "com.apple.driver.AppleRTC") != NULL)
   {
     //
@@ -350,7 +378,15 @@ VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPl
     //
     AppleRTCPatch(Driver, DriverSize);
   }
-  
+  else {
+    //others
+    for (i = 0; i < gSettings.NrKexts; i++) {
+      if ((AsciiStrStr(InfoPlist, gSettings.AnyKext[i]) != NULL) && (gSettings.AnyKextDataLen[i] > 0)) {
+        AnyKextPatch(Driver, DriverSize, i);
+      }
+    }    
+  }
+
 }
 
 //

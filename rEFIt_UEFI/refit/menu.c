@@ -224,14 +224,17 @@ VOID FillInputs(VOID)
     InputItems[InputItemsCount++].SValue = gGraphics[i].LoadVBios?L"[X]":L"[ ]";
   }
   //and so on 
-  InputItemsCount = 45;
-  InputItems[InputItemsCount].ItemType = BoolValue; //16
+  InputItemsCount = 44; 
+  InputItems[InputItemsCount].ItemType = BoolValue; //44
+  InputItems[InputItemsCount].BValue = gSettings.KextPatchesAllowed;
+  InputItems[InputItemsCount++].SValue = gSettings.KextPatchesAllowed?L"[X]":L"[ ]";
+  InputItems[InputItemsCount].ItemType = BoolValue; //45
   InputItems[InputItemsCount].BValue = gSettings.KPKernelCpu;
   InputItems[InputItemsCount++].SValue = gSettings.KPKernelCpu?L"[X]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = BoolValue; //16
+  InputItems[InputItemsCount].ItemType = BoolValue; //46
   InputItems[InputItemsCount].BValue = gSettings.KPAsusAICPUPM;
   InputItems[InputItemsCount++].SValue = gSettings.KPAsusAICPUPM?L"[X]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = BoolValue; //16
+  InputItems[InputItemsCount].ItemType = BoolValue; //47
   InputItems[InputItemsCount].BValue = gSettings.KPAppleRTC;
   InputItems[InputItemsCount++].SValue = gSettings.KPAppleRTC?L"[X]":L"[ ]";
   
@@ -380,7 +383,11 @@ VOID ApplyInputs(VOID)
     }    
   }  //end of Graphics Cards
   // next number == 42
-  i = 45;
+  i = 44;
+  if (InputItems[i].Valid) {
+    gSettings.KextPatchesAllowed = InputItems[i].BValue;
+  }  
+  i++; //45
   if (InputItems[i].Valid) {
     gSettings.KPKernelCpu = InputItems[i].BValue;
   }
@@ -1700,6 +1707,13 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   SubScreen->TitleImage = Entry->Image;
   AddMenuInfoLine(SubScreen, PoolPrint(L"%a", gCPUStructure.BrandString));
 
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Kext patching allowed:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[44];    
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"Kernel Support CPU:");
   InputBootArgs->Entry.Tag = TAG_INPUT;

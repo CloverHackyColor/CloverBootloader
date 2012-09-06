@@ -1086,7 +1086,10 @@ CoreLoadImageCommon (
   if (SourceBuffer != NULL) {
     FHand.Source     = SourceBuffer;
     FHand.SourceSize = SourceSize;
-    CoreLocateDevicePath (&gEfiDevicePathProtocolGuid, &HandleFilePath, &DeviceHandle);
+    Status = CoreLocateDevicePath (&gEfiDevicePathProtocolGuid, &HandleFilePath, &DeviceHandle);
+    if (EFI_ERROR (Status)) {
+      DeviceHandle = NULL;
+    }
     if (SourceSize > 0) {
       Status = EFI_SUCCESS;
     } else {

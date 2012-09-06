@@ -32,6 +32,7 @@ Headers collection for procedures
 
 #include <IndustryStandard/Acpi10.h>
 #include <IndustryStandard/Acpi20.h>
+#include <IndustryStandard/Atapi.h>
 
 #include <Protocol/Cpu.h>
 #include <Protocol/CpuIo.h>
@@ -601,10 +602,16 @@ typedef struct {
   BOOLEAN KPKextPatchesNeeded;
   BOOLEAN KPAsusAICPUPM;
   BOOLEAN KPAppleRTC;
+  BOOLEAN KextPatchesAllowed;
   CHAR16  *KPATIConnectorsController;
   UINT8   *KPATIConnectorsData;
   UINTN   KPATIConnectorsDataLen;
   UINT8   *KPATIConnectorsPatch;
+  INT32   NrKexts;
+  CHAR8*  AnyKext[100];
+  UINTN   AnyKextDataLen[100];
+  UINT8   *AnyKextData[100];
+  UINT8   *AnyKextPatch[100];
   
 } SETTINGS_DATA;
 
