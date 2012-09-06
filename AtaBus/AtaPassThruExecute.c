@@ -26,9 +26,9 @@
 
 #define DEBUG_EXEC 0
 #if DEBUG_EXEC==1
-#define DBG(x...)  Print(x)
+#define DBG(...)  Print(__VA_ARGS__)
 #else
-#define DBG(x...)
+#define DBG(...)
 #endif
 
 

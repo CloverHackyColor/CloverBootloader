@@ -17,11 +17,11 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #define DEBUG_ELT 1
 #if DEBUG_ELT==2
-#define DBG(x...)  AsciiPrint(x)
+#define DBG(...)  AsciiPrint(__VA_ARGS__)
 #elif DEBUG_ELT==1
-#define DBG(x...)  BootLog(x)
+#define DBG(...)  BootLog(__VA_ARGS__)
 #else
-#define DBG(x...)
+#define DBG(...)	
 #endif
 
 /**

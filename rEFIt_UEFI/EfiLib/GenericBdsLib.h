@@ -381,12 +381,12 @@ BdsLibConnectAllDriversToAllControllers (
   This function connects all system drivers to controllers.
 
 **/
-VOID
+/*VOID
 EFIAPI
 BdsLibConnectAll (
   VOID
   );
-
+*/
 /**
   This function creates all handles associated with the given device
   path node. If the handle associated with one device path node cannot
@@ -445,12 +445,12 @@ BdsLibDisconnectAllEfi (
   and make every simpletxt device a potential console device.
 
 **/
-VOID
+/*VOID
 EFIAPI
 BdsLibConnectAllConsoles (
   VOID
   );
-
+*/
 
 /**
   This function will connect console device based on the console
@@ -461,12 +461,12 @@ BdsLibConnectAllConsoles (
   @retval EFI_STATUS               Return the status of BdsLibConnectConsoleVariable ().
 
 **/
-EFI_STATUS
+/*EFI_STATUS
 EFIAPI
 BdsLibConnectAllDefaultConsoles (
   VOID
   );
-
+*/
 /**
   This function updates the console variable based on ConVarName. It can
   add or remove one specific console device path from the variable

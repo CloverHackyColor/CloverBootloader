@@ -11,9 +11,9 @@
 #define KERNEL_DEBUG 0
 
 #if KERNEL_DEBUG
-#define DBG(x...)    Print(x);
+#define DBG(...)    Print(__VA_ARGS__);
 #else
-#define DBG(x...)
+#define DBG(...)	
 #endif
 
 EFI_PHYSICAL_ADDRESS    KernelRelocBase = 0;
@@ -899,7 +899,7 @@ KernelAndKextsPatcherStart(VOID)
   //
   // Kext patches
   //
-  if (gSettings.KPKextPatchesNeeded) {
+  if (gSettings.KPKextPatchesNeeded && gSettings.KextPatchesAllowed) {
     KernelAndKextPatcherInit();
     if (KernelData == NULL) {
       return;

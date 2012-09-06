@@ -9,9 +9,9 @@
 #define KEXT_DEBUG 0
 
 #if KEXT_DEBUG
-#define DBG(x...)	Print(x);
+#define DBG(...)	Print();
 #else
-#define DBG(x...)
+#define DBG(...)	
 #endif
 
 
@@ -329,9 +329,7 @@ VOID KextPatcherRegisterKexts(FSINJECTION_PROTOCOL *FSInject, FSI_STRING_LIST *F
   }
   
   for (i = 0; i < gSettings.NrKexts; i++) {
-    if (AsciiStrStr(InfoPlist, gSettings.AnyKext[i]) != NULL) {
-      FSInject->AddStringToList(ForceLoadKexts, PoolPrint(L"\\%a.kext\\Contents\\Info.plist", gSettings.AnyKext[i]) );        
-    }
+    FSInject->AddStringToList(ForceLoadKexts, PoolPrint(L"\\%a.kext\\Contents\\Info.plist", gSettings.AnyKext[i]) );        
   }
 
 }

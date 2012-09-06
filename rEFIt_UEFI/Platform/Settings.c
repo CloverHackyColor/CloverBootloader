@@ -9,11 +9,11 @@
 #define DEBUG_SET 1
 
 #if DEBUG_SET == 2
-#define DBG(x...) AsciiPrint(x)
+#define DBG(...) AsciiPrint(__VA_ARGS__)
 #elif DEBUG_SET == 1
-#define DBG(x...) MsgLog(x)
+#define DBG(...) MsgLog(__VA_ARGS__)
 #else
-#define DBG(x...)
+#define DBG(...)	
 #endif
 
 #define SHORT_LOCATE 1
@@ -928,7 +928,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         CHAR8 ANum[4];
         i = 0;
         do {
-          AsciiSPrint(Anum, 4, "%d", i);
+          AsciiSPrint(ANum, 4, "%d", i);
           dictPointer = GetProperty(prop, ANum);
           if (!dictPointer) {
             break;
@@ -937,8 +937,9 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           if (dict) {
             gSettings.AnyKext[i] = AllocateZeroPool(256); //dunno about size of kext name
             AsciiSPrint(gSettings.AnyKext[i], 256, "%a", dict->string);
+            DBG("Prepare to patch of %a\n", gSettings.AnyKext[i]);
           }
-          
+          gSettings.KPKextPatchesNeeded = TRUE;
           gSettings.AnyKextData[i] = GetDataSetting(dictPointer,"Find",
                                                     &gSettings.AnyKextDataLen[i]);
           gSettings.AnyKextPatch[i] = GetDataSetting(dictPointer,"Replace", &j);
@@ -947,15 +948,17 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             gSettings.AnyKext[i][0] = 0; //just erase name
             continue; //same i
           }
-          
+          DBG("... data length=%d\n", gSettings.AnyKextDataLen[i]);
           i++;
           if (i>99) {
+            DBG("too many kexts to patch\n");
             break;
           }
         } while (TRUE);
         gSettings.NrKexts = i;
         //there is one moment. This data is allocated in BS memory but will be used 
         // after OnExitBootServices. This is wrong and these arrays should be reallocated
+        // but I am not sure
       }
     }
     

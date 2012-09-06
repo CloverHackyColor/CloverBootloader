@@ -24,11 +24,11 @@
 #define DEBUG_SMBIOS 1
 
 #if DEBUG_SMBIOS == 2
-#define DBG(x...) AsciiPrint(x)
+#define DBG(...) AsciiPrint(__VA_ARGS__)
 #elif DEBUG_SMBIOS == 1
-#define DBG(x...) MsgLog(x)
+#define DBG(...) MsgLog(__VA_ARGS__)
 #else
-#define DBG(x...)
+#define DBG(...)	
 #endif
 
 #define _Bit(n)			(1ULL << n)

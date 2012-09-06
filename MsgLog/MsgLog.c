@@ -24,11 +24,11 @@ extern  MESSAGE_LOG_PROTOCOL *Msg;
 
 @main.c
  #if DEBUG_ACPI==2
- #define DBG(x...)  AsciiPrint(x)
+ #define DBG(...)  AsciiPrint(__VA_ARGS__)
  #elif DEBUG_ACPI==1
- #define DBG(x...)  BootLog(x)
+ #define DBG(...)  BootLog(__VA_ARGS__)
  #else
- #define DBG(x...)
+ #define DBG(...)	
  #endif
  
  CHAR8 *msgCursor;

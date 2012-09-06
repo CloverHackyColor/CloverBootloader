@@ -15,9 +15,9 @@
 #endif
 
 #if DEBUG_PCI
-#define DBG(x...)		verbose(x)
+#define DBG(...)		verbose(__VA_ARGS__)
 #else
-#define DBG(x...)
+#define DBG(...)
 #endif
 
 pci_dt_t	*root_pci_dev;

@@ -67,11 +67,11 @@
 #endif
 
 #if DEBUG_ISO == 2
-#define DBG(x...)	AsciiPrint(x)
+#define DBG(...)	AsciiPrint(__VA_ARGS__)
 #elif DEBUG_ISO == 1
-#define DBG(x...)	BootLog(x)
+#define DBG(...)	BootLog(__VA_ARGS__)
 #else
-#define DBG(x...)
+#define DBG(...)	
 #endif
 
 //#define MsgLog(x...) if(msgCursor){AsciiSPrint(msgCursor, BOOTER_LOG_SIZE, x); while(*msgCursor){msgCursor++;}}

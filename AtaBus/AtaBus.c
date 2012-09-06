@@ -21,9 +21,9 @@
 #define DEBUG_ATABUS 0
 
 #if DEBUG_ATABUS==1
-#define DBG(x...)  Print(x)
+#define DBG(...)  Print(__VA_ARGS__)
 #else
-#define DBG(x...)
+#define DBG(...)
 #endif
 
 //

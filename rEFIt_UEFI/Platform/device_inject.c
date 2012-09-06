@@ -15,11 +15,11 @@
 #endif
 
 #if DEBUG_INJECT == 2
-#define DBG(x...)	AsciiPrint(x)
+#define DBG(...)	AsciiPrint(__VA_ARGS__)
 #elif DEBUG_INJECT == 1
-#define DBG(x...) MsgLog(x)
+#define DBG(...) MsgLog(__VA_ARGS__)
 #else
-#define DBG(x...)
+#define DBG(...)	
 #endif
 
 UINT32 devices_number = 1;

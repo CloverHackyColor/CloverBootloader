@@ -23,11 +23,11 @@
 #define READTABLES 0
 
 #if DEBUG_ACPI==2
-#define DBG(x...)  Print(x)
+#define DBG(...)  Print(__VA_ARGS__)
 #elif DEBUG_ACPI==1
-#define DBG(x...)  BootLog(x)
+#define DBG(...)  BootLog(__VA_ARGS__)
 #else
-#define DBG(x...)
+#define DBG(...)
 #endif
 
 #include <Uefi.h>

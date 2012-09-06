@@ -42,11 +42,11 @@
 #define DEBUG_MENU 1
 
 #if DEBUG_MENU == 2
-#define DBG(x...) AsciiPrint(x)
+#define DBG(...) AsciiPrint(__VA_ARGS__)
 #elif DEBUG_MENU == 1
-#define DBG(x...) MsgLog(x)
+#define DBG(...) MsgLog(__VA_ARGS__)
 #else
-#define DBG(x...)
+#define DBG(...)	
 #endif
 
 #define PREBOOT_LOG L"EFI\\misc\\preboot.log"

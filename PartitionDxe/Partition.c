@@ -20,11 +20,11 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #define DEBUG_PAR 0
 #if DEBUG_PAR==2
-#define DBG(x...)  AsciiPrint(x)
+#define DBG(...)  AsciiPrint(__VA_ARGS__)
 #elif DEBUG_PAR==1
-#define DBG(x...)  BootLog(x)
+#define DBG(...)  BootLog(__VA_ARGS__)
 #else
-#define DBG(x...)
+#define DBG(...)	
 #endif
 
 CHAR8 *msgCursor;

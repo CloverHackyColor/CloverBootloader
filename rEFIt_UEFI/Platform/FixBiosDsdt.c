@@ -16,11 +16,11 @@
 #endif
 
 #if DEBUG_FIX==2
-#define DBG(x...)  AsciiPrint(x)
+#define DBG(...)  AsciiPrint(__VA_ARGS__)
 #elif DEBUG_FIX==1
-#define DBG(x...)  MsgLog(x)
+#define DBG(...)  MsgLog(__VA_ARGS__)
 #else
-#define DBG(x...)
+#define DBG(...)	
 #endif
 
 

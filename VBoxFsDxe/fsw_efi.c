@@ -66,11 +66,11 @@ CHAR8 *msgCursor;
 MESSAGE_LOG_PROTOCOL *Msg = NULL; 
 
 #if DEBUG_VBFS==2
-#define DBG(x...)  AsciiPrint(x)
+#define DBG(...)  AsciiPrint(__VA_ARGS__)
 #elif DEBUG_VBFS==1
-#define DBG(x...)  BootLog(x)
+#define DBG(...)  BootLog(__VA_ARGS__)
 #else
-#define DBG(x...)
+#define DBG(...)	
 #endif
 
 

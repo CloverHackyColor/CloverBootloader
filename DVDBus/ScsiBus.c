@@ -19,9 +19,9 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #define DEBUG_SCSIBUS 0
 
 #if DEBUG_SCSIBUS==1
-#define DBG(x...)  Print(x)
+#define DBG(...)  Print(__VA_ARGS__)
 #else
-#define DBG(x...)
+#define DBG(...)
 #endif
 
 

@@ -18,11 +18,11 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #define DEBUG_LBTHUNK 0
 
 #if DEBUG_LBTHUNK == 2
-#define DBG(x...) AsciiPrint(x)
+#define DBG(...) AsciiPrint(__VA_ARGS__)
 // lib.h - just for PauseForKey
 #include "lib.h"
 #else
-#define DBG(x...)
+#define DBG(...)	
 #endif
 
 

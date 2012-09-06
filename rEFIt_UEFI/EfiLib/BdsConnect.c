@@ -22,7 +22,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
   console connected.
 
 **/
-VOID
+/*VOID
 EFIAPI
 BdsLibConnectAll (
   VOID
@@ -44,7 +44,7 @@ BdsLibConnectAll (
   //
   BdsLibConnectAllDefaultConsoles ();
 }
-
+*/
 
 /**
   This function will connect all the system drivers to all controllers
@@ -53,7 +53,7 @@ BdsLibConnectAll (
   if the system have console device.
 
 **/
-VOID
+/*VOID
 BdsLibGenericConnectAll (
   VOID
   )
@@ -64,7 +64,7 @@ BdsLibGenericConnectAll (
   BdsLibConnectAllDriversToAllControllers ();
   BdsLibConnectAllConsoles ();
 }
-
+*/
 
 /**
   This function will create all handles associate with every device

@@ -56,11 +56,11 @@
 #endif
 
 #if DEBUG_NVIDIA == 2
-#define DBG(x...) AsciiPrint(x)
+#define DBG(...) AsciiPrint(__VA_ARGS__)
 #elif DEBUG_NVIDIA == 1
-#define DBG(x...) MsgLog(x)
+#define DBG(...) MsgLog(__VA_ARGS__)
 #else
-#define DBG(x...)
+#define DBG(...)	
 #endif
 
 
@@ -2892,6 +2892,8 @@ EFI_STATUS read_nVidia_PROM(pci_dt_t *nvda_dev, VOID* rom)
 
 static INT32 patch_nvidia_rom(UINT8 *rom)
 {
+  UINT8 num_outputs = 0, i = 0;
+  
 	DBG("patch_nvidia_rom\n");
 	if (!rom || (rom[0] != 0x55 && rom[1] != 0xaa)) {
 		DBG("FALSE ROM signature: 0x%02x%02x\n", rom[0], rom[1]);
@@ -2959,14 +2961,12 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 		numentries = MAX_NUM_DCB_ENTRIES;
 	}
 	
-	UINT8 num_outputs = 0, i = 0;
-	
 	struct dcbentry
 	{
 		UINT8 type;
 		UINT8 index;
 		UINT8 *heads;
-	} entries[numentries];
+	} entries[MAX_NUM_DCB_ENTRIES];
 	
 	for (i = 0; i < numentries; i++)
 	{

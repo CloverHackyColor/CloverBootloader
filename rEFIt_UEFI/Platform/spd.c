@@ -25,11 +25,11 @@
 #endif
 
 #if DEBUG_SPD == 2
-#define DBG(x...)	AsciiPrint(x)
+#define DBG(...)	AsciiPrint(__VA_ARGS__)
 #elif DEBUG_SPD == 1
-#define DBG(x...)	MsgLog(x)
+#define DBG(...)	MsgLog(__VA_ARGS__)
 #else
-#define DBG(x...)
+#define DBG(...)
 #endif
 
 //extern EFI_DATA_HUB_PROTOCOL			*gDataHub;
