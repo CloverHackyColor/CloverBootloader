@@ -95,6 +95,7 @@ EFI_STATUS EFIAPI LoadKext(IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OU
 				return EFI_NOT_FOUND;
 			}
 		}
+		// TODO: dmazar - StrLen(FileName) is not correct, plus check: bundlePathBuffer should probably be ascii string
 		bundlePathBufferLength = StrLen(FileName);
 		bundlePathBuffer = AllocateCopyPool(bundlePathBufferLength, FileName);
 
@@ -187,6 +188,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 	UINTN					extra_size;
 	VOID					*extra;
 
+	// TODO: dmazar - archCpuType from detected kernel_patcher/is64BitKernel ?
 	if     (AsciiStrStr(gSettings.BootArgs,"arch=x86_64")!=NULL)	archCpuType = CPU_TYPE_X86_64;
 	else if(AsciiStrStr(gSettings.BootArgs,"arch=i386")!=NULL)		archCpuType = CPU_TYPE_I386;
 	else if(AsciiStrnCmp(OSVersion,"10.8",4)==0)    	         	archCpuType = CPU_TYPE_X86_64;
@@ -250,7 +252,8 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
 	DTEntry					platformEntry;
 	DTEntry					memmapEntry;
 	CHAR8 					*ptr;
-	DTPropertyIterator		iter;
+	struct OpaqueDTPropertyIterator OPropIter;
+	DTPropertyIterator		iter = &OPropIter;
 	DeviceTreeNodeProperty	*prop = NULL;
 
 	UINT8					*infoPtr = 0;
@@ -279,7 +282,7 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
 
 	DTInit(dtEntry);
 	if(DTLookupEntry(NULL,"/chosen/memory-map",&memmapEntry)==kSuccess) {
-		if(DTCreatePropertyIterator(memmapEntry,&iter)==kSuccess) {
+		if(DTCreatePropertyIteratorNoAlloc(memmapEntry,iter)==kSuccess) {
 			while(DTIterateProperties(iter,&ptr)==kSuccess) {
 				prop = iter->currentProperty;
 				drvPtr = (UINT8*) prop;
@@ -288,11 +291,10 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
 				}
 			}
 		}
-		DTDisposePropertyIterator(iter);
 	}
 
 	if(DTLookupEntry(NULL,"/efi/platform",&platformEntry)==kSuccess) {
-		if(DTCreatePropertyIterator(platformEntry,&iter)==kSuccess) {
+		if(DTCreatePropertyIteratorNoAlloc(platformEntry,iter)==kSuccess) {
 			while(DTIterateProperties(iter,&ptr)==kSuccess) {
 				prop = iter->currentProperty;
 				if(AsciiStrCmp(prop->name,"mm_extra")==0) {
@@ -303,7 +305,6 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
 				}
 			}
 		}
-		DTDisposePropertyIterator(iter);
 	}
 
 	if (drvPtr == 0 || infoPtr == 0 || extraPtr == 0 || drvPtr > infoPtr || drvPtr > extraPtr || infoPtr > extraPtr) {
