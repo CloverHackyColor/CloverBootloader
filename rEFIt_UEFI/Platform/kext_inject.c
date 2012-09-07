@@ -1,5 +1,12 @@
-#include "kext_inject.h"
-#include "kext_patcher.c"
+#include "Platform.h"
+
+#define KEXT_INJECT_DEBUG 0
+
+#if KEXT_INJECT_DEBUG
+#define DBG(...)	Print(__VA_ARGS__);
+#else
+#define DBG(...)
+#endif
 
 
 ////////////////////
@@ -188,7 +195,6 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 	UINTN					extra_size;
 	VOID					*extra;
 
-	// TODO: dmazar - archCpuType from detected kernel_patcher/is64BitKernel ?
 	if     (AsciiStrStr(gSettings.BootArgs,"arch=x86_64")!=NULL)	archCpuType = CPU_TYPE_X86_64;
 	else if(AsciiStrStr(gSettings.BootArgs,"arch=i386")!=NULL)		archCpuType = CPU_TYPE_I386;
 	else if(AsciiStrnCmp(OSVersion,"10.8",4)==0)    	         	archCpuType = CPU_TYPE_X86_64;

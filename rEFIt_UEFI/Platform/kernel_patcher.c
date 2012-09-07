@@ -3,10 +3,13 @@
  *
  */
 
+#include "Platform.h"
+#include "loader.h"
+#include "device_tree.h"
+
 #include "kernel_patcher.h"
 #include "sse3_patcher.h"
 #include "sse3_5_patcher.h"
-#include "kext_inject.c"
 
 #define KERNEL_DEBUG 0
 

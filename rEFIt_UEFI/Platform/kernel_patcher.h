@@ -2,13 +2,10 @@
  * Copyright (c) 2009-2010 Frank peng. All rights reserved.
  *
  */
-#include "Platform.h"
-#include "loader.h"
-#include "nlist.h"
-#include "device_tree.h"
 
 #ifndef __LIBSAIO_KERNEL_PATCHER_H
 #define __LIBSAIO_KERNEL_PATCHER_H
+
 
 #define CPUFAMILY_INTEL_6_13		0xaa33392b
 #define CPUFAMILY_INTEL_YONAH		0x73d67300
@@ -134,6 +131,21 @@ VOID KextPatcherRegisterKexts(FSINJECTION_PROTOCOL *FSInject, FSI_STRING_LIST *F
 // or DevTree (drivers boot) and do patches.
 //
 VOID KextPatcherStart();
+
+//
+// Searches Source for Search pattern of size SearchSize
+// and returns the number of occurences.
+//
+UINTN SearchAndCount(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN SearchSize);
+
+//
+// Searches Source for Search pattern of size SearchSize
+// and replaces it with Replace up to MaxReplaces times.
+// If MaxReplaces <= 0, then there is no restriction on number of replaces.
+// Replace should have the same size as Search.
+// Returns number of replaces done.
+//
+UINTN SearchAndReplace(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN SearchSize, UINT8 *Replace, INTN MaxReplaces);
 
 
 #endif /* !__LIBSAIO_KERNEL_PATCHER_H */

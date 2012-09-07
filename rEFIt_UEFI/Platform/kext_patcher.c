@@ -3,13 +3,17 @@
  *
  */
 
+#include "Platform.h"
+#include "loader.h"
+#include "device_tree.h"
+
 #include "kernel_patcher.h"
 #include "fakesmc.h"
 
 #define KEXT_DEBUG 0
 
 #if KEXT_DEBUG
-#define DBG(...)	Print();
+#define DBG(...)	Print(__VA_ARGS__);
 #else
 #define DBG(...)	
 #endif
