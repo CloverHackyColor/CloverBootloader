@@ -75,7 +75,7 @@ MESSAGE_LOG_PROTOCOL *Msg = NULL;
 
 
 /** Helper macro for stringification. */
-#define FSW_EFI_STRINGIFY(x) #x
+#define FSW_EFI_STRINGIFY(x) L ## #x
 /** Expands to the EFI driver name given the file system type name. */
 #define FSW_EFI_DRIVER_NAME(t) L"Clover " FSW_EFI_STRINGIFY(t) L" File System Driver"
 

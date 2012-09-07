@@ -350,12 +350,13 @@ static fsw_status_t fsw_iso9660_volume_mount(struct fsw_iso9660_volume *vol)
             || pvoldesc->escape[2] == 0x45))
     {
  //       FSW_MSG_DEBUG((FSW_MSGSTR("fsw_iso9660_volume_mount: success (joliet!!!)\n")));
-      DBG("fsw_iso9660_volume_mount: success (joliet!!!)\n");
+ //     DBG("fsw_iso9660_volume_mount: success (joliet!!!)\n");
         vol->fJoliet = 1;
     }
 
 
-    rootdir = pvoldesc->root_directory;
+    //rootdir = pvoldesc->root_directory;
+  fsw_memcpy(&rootdir, &pvoldesc->root_directory, sizeof(struct iso9660_dirrec));
     sua_pos = (sizeof(struct iso9660_dirrec)) + rootdir.file_identifier_length + (rootdir.file_identifier_length % 2) - 2;
     //int sua_size = rootdir.dirrec_length - rootdir.file_identifier_length;
     //FSW_MSG_DEBUG((FSW_MSGSTR("fsw_iso9660_volume_mount: success (SUA(pos:%x, sz:%d)!!!)\n"), sua_pos, sua_size));

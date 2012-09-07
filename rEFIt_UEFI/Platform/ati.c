@@ -428,7 +428,30 @@ const CHAR8 *chip_family_name[] = {
 	"Turks",
 	""
 };
-
+//TODO - check and implement
+/*"@0,display-link-component-bits",
+Buffer (0x04)
+{
+  0x06, 0x00, 0x00, 0x00
+},
+"@0,display-pixel-component-bits",
+Buffer (0x04)
+{
+  0x06, 0x00, 0x00, 0x00
+},
+"AAPL00,Dither",
+Buffer (0x04)
+{
+  0x00, 0x00, 0x00, 0x00
+},
+"@0,display-dither-support",
+Buffer (0x04)
+{
+  0x00, 0x00, 0x00, 0x00
+},
+*/
+//TODO - override-no-connect is useful for non-DDC monitor
+// in this case the value should be from config.plist 
 AtiDevProp ati_devprop_list[] = {
 	{FLAGTRUE,	FALSE,	"@0,AAPL,boot-display",		get_bootdisplay_val,	NULVAL				},
   //	{FLAGTRUE,	FALSE,	"@0,ATY,EFIDisplay",		NULL,					STRVAL("TMDSA")			},
@@ -561,20 +584,23 @@ BOOLEAN get_model_val(value_t *val)
 	return TRUE;
 }
 
-static CONST UINT32 ct[] = {0x02, 0x200, 0x400, /*0x800,*/ 0x4};
-
+static CONST UINT32 ctm[] = {0x02, 0x10, 0x800, 0x400}; //mobile
+static CONST UINT32 ctd[] = {0x04, 0x10, 0x800, 0x400}; //desktop
+//TODO - get connectors from ATIConnectorPatch
 BOOLEAN get_conntype_val(value_t *val)
 {
 //Connector types:
-//0x200: VGA
-//0x400: DL DVI-I
+//0x10:  VGA
+//0x04:  DL DVI-I
 //0x800: HDMI
-//0x4 : DisplayPort
+//0x400: DisplayPort
+//0x02:  LVDS  
+  UINT32* ct = &ctd[0]; 
   static UINT32 cti = 0;
   
   val->type = kCst;
 	val->size = 4;
-	val->data = (UINT8 *)&ct[cti];
+	val->data = (UINT8*)&ct[cti];
   
   cti++;
   if(cti > 3) cti = 0;

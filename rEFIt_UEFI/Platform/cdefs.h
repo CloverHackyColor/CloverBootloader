@@ -479,7 +479,7 @@
 #  define	__DARWIN_LDBL_COMPAT(x)	/* nothing */
 #  define	__DARWIN_LDBL_COMPAT2(x) /* nothing */
 #  define	__DARWIN_LONG_DOUBLE_IS_DOUBLE	1
-#elif defined(__i386__) || defined(__x86_64__)
+#elif defined(__i386__) || defined(__x86_64__) || defined(_M_IX86) || defined(_M_X64) || defined(_M_AMD64)
 #  define	__DARWIN_LDBL_COMPAT(x)	/* nothing */
 #  define	__DARWIN_LDBL_COMPAT2(x) /* nothing */
 #  define	__DARWIN_LONG_DOUBLE_IS_DOUBLE	0

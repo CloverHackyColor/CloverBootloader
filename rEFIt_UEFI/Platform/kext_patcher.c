@@ -333,7 +333,9 @@ VOID KextPatcherRegisterKexts(FSINJECTION_PROTOCOL *FSInject, FSI_STRING_LIST *F
   }
   
   for (i = 0; i < gSettings.NrKexts; i++) {
-    FSInject->AddStringToList(ForceLoadKexts, PoolPrint(L"\\%a.kext\\Contents\\Info.plist", gSettings.AnyKext[i]) );        
+    FSInject->AddStringToList(ForceLoadKexts,
+                              PoolPrint(L"\\%a.kext\\Contents\\Info.plist",
+                              gSettings.AnyKext[i]) );        
   }
 
 }
@@ -381,7 +383,9 @@ VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPl
     AppleRTCPatch(Driver, DriverSize);
   }
   else {
+    //
     //others
+    //
     for (i = 0; i < gSettings.NrKexts; i++) {
       if ((AsciiStrStr(InfoPlist, gSettings.AnyKext[i]) != NULL) && (gSettings.AnyKextDataLen[i] > 0)) {
         AnyKextPatch(Driver, DriverSize, i);

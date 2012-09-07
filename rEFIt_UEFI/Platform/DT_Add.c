@@ -12,7 +12,7 @@
 
 #define RoundToLong(x)	(((x) + 3) & ~3)
 #define kAllocSize 4096
-#define DPRINTF(x...)
+#define DPRINTF(...)
 
 static Node *rootNode;
 

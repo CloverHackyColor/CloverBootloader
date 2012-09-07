@@ -27,7 +27,7 @@
 0x511CE018, 0x0018, 0x4002, {0x20, 0x12, 0x17, 0x38, 0x05, 0x01, 0x02, 0x03} \
 }
 
-#define BootLog(x...) if(msgCursor){AsciiSPrint(msgCursor, BOOTER_LOG_SIZE, x); while(*msgCursor){msgCursor++;} Msg->Cursor = msgCursor;}
+#define BootLog(...) if(msgCursor){AsciiSPrint(msgCursor, BOOTER_LOG_SIZE, __VA_ARGS__); while(*msgCursor){msgCursor++;} Msg->Cursor = msgCursor;}
 
 /* sample using
 #include <Protocol/MsgLog.h> 
