@@ -469,22 +469,22 @@ AtiDevProp ati_devprop_list[] = {
 //  {FLAGTRUE,	TRUE,	"@0,VRAM,memsize",			get_vrammemsize_val,	NULVAL          },
   {FLAGTRUE,	TRUE,	"@0,ATY,memsize",			get_vrammemsize_val,	NULVAL          },
 	
-  {FLAGTRUE,	FALSE,	"AAPL,aux-power-connected", NULL,					DWRVAL((UINT32)1)		},
-  {FLAGTRUE,	FALSE,	"AAPL00,DualLink",          NULL,					DWRVAL((UINT32)1)		},
-  {FLAGMOBILE,	FALSE,	"AAPL,HasPanel",          NULL,					DWRVAL((UINT32)1)   },
-  {FLAGMOBILE,	FALSE,	"AAPL,HasLid",            NULL,					DWRVAL((UINT32)1)   },
-  {FLAGMOBILE,	FALSE,	"AAPL,backlight-control", NULL,					DWRVAL((UINT32)0)   },
+  {FLAGTRUE,	FALSE,	"AAPL,aux-power-connected", NULL,					DWRVAL((CHAR8 *)(UINTN)1)		},
+  {FLAGTRUE,	FALSE,	"AAPL00,DualLink",          NULL,					DWRVAL((CHAR8 *)(UINTN)1)		},
+  {FLAGMOBILE,	FALSE,	"AAPL,HasPanel",          NULL,					DWRVAL((CHAR8 *)(UINTN)1)   },
+  {FLAGMOBILE,	FALSE,	"AAPL,HasLid",            NULL,					DWRVAL((CHAR8 *)(UINTN)1)   },
+  {FLAGMOBILE,	FALSE,	"AAPL,backlight-control", NULL,					DWRVAL((CHAR8 *)(UINTN)0)   },
 	{FLAGTRUE,	FALSE,	"AAPL,overwrite_binimage",	get_binimage_owr,		NULVAL				},
 	{FLAGTRUE,	FALSE,	"ATY,bin_image",            get_binimage_val,		NULVAL				},
 	{FLAGTRUE,	FALSE,	"ATY,Copyright",	NULL,	STRVAL("Copyright AMD Inc. All Rights Reserved. 2005-2011") },
   {FLAGTRUE,	FALSE,	"ATY,EFIVersion",	NULL,	STRVAL("01.00.3180")                  },
 	{FLAGTRUE,	FALSE,	"ATY,Card#",			get_romrevision_val,	NULVAL                },
-	{FLAGTRUE,	FALSE,	"ATY,VendorID",		NULL,					WRDVAL((UINT16)0x1002)        },
+	{FLAGTRUE,	FALSE,	"ATY,VendorID",		NULL,					WRDVAL((CHAR8 *)(UINTN)0x1002)        },
 	{FLAGTRUE,	FALSE,	"ATY,DeviceID",		get_deviceid_val,		NULVAL                  },
 	
   //	{FLAGTRUE,	FALSE,	"ATY,MCLK",					get_mclk_val,			NULVAL							},
   //	{FLAGTRUE,	FALSE,	"ATY,SCLK",					get_sclk_val,			NULVAL							},
-  {FLAGTRUE,	FALSE,	"ATY,RefCLK",				get_refclk_val,			DWRVAL((UINT32)0x0a8c)		},
+  {FLAGTRUE,	FALSE,	"ATY,RefCLK",				get_refclk_val,			DWRVAL((CHAR8 *)(UINTN)0x0a8c)		},
 	
   {FLAGTRUE,	FALSE,	"ATY,PlatformInfo",			get_platforminfo_val,	NULVAL					},
 	
@@ -578,7 +578,7 @@ BOOLEAN get_model_val(value_t *val)
 		return FALSE;
 	
 	val->type = kStr;
-	val->size = AsciiStrLen(card->info->model_name);
+	val->size = (UINT32)AsciiStrLen(card->info->model_name);
 	val->data = (UINT8 *)card->info->model_name;
 	
 	return TRUE;
@@ -595,7 +595,7 @@ BOOLEAN get_conntype_val(value_t *val)
 //0x800: HDMI
 //0x400: DisplayPort
 //0x02:  LVDS  
-  UINT32* ct = &ctd[0]; 
+  UINT32* ct = (UINT32*)&ctd[0];
   static UINT32 cti = 0;
   
   val->type = kCst;
@@ -614,7 +614,7 @@ BOOLEAN get_vrammemsize_val(value_t *val)
 	static UINT64 memsize;
 	
 	idx++;
-	memsize = ((UINT64)card->vram_size << 32);
+	memsize = LShiftU64((UINT64)card->vram_size, 32);
 	if (idx == 0)
 		memsize = memsize | (UINT64)card->vram_size;
 	
@@ -674,7 +674,7 @@ BOOLEAN get_romrevision_val(value_t *val)
 	rev = card->rom + *(UINT8 *)(card->rom + OFFSET_TO_GET_ATOMBIOS_STRINGS_START);
 
 	val->type = kPtr;
-	val->size = AsciiStrLen((CHAR8 *)rev);
+	val->size = (UINT32)AsciiStrLen((CHAR8 *)rev);
   if ((val->size < 3) || (val->size > 30)) { //fool proof. Real value 13
     rev = (UINT8 *)cRev;
     val->size = 13;
@@ -776,7 +776,7 @@ VOID devprop_add_list(AtiDevProp devprop_list[])
 					{
 						if (devprop_list[i].get_value(val))
 						{
-							devprop_list[i].name[1] = 0x30 + pnum; // convert to ascii
+							devprop_list[i].name[1] = (CHAR8)(0x30 + pnum); // convert to ascii
 							devprop_add_value(card->device, devprop_list[i].name, val->data, val->size);
 							free_val(val);
 						}
@@ -800,7 +800,7 @@ VOID devprop_add_list(AtiDevProp devprop_list[])
 					{
 						if (devprop_list[i].default_val.type != kNul)
 						{
-							devprop_list[i].name[1] = 0x30 + pnum; // convert to ascii
+							devprop_list[i].name[1] = (CHAR8)(0x30 + pnum); // convert to ascii
 							devprop_add_value(card->device, devprop_list[i].name,
 								devprop_list[i].default_val.type == kCst ?
 								(UINT8 *)&(devprop_list[i].default_val.data) : devprop_list[i].default_val.data,
@@ -843,9 +843,9 @@ BOOLEAN validate_rom(option_rom_header_t *rom_header, pci_dt_t *pci_dev)
 BOOLEAN load_vbios_file(UINT16 vendor_id, UINT16 device_id)
 {
   EFI_STATUS            Status = EFI_NOT_FOUND;
-	UINTN bufferLen;
+	UINTN bufferLen = 0;
 	CHAR16 FileName[24];
-  UINT8*  buffer;
+  UINT8*  buffer = 0;
 
 	//if we are here then TRUE
 //	if (!gSettings.LoadVBios)
@@ -869,7 +869,7 @@ BOOLEAN load_vbios_file(UINT16 vendor_id, UINT16 device_id)
 		return FALSE;
   }
   DBG("Loaded ROM len=%d\n", bufferLen);
-	card->rom_size = bufferLen;
+	card->rom_size = (UINT32)bufferLen;
 	card->rom = AllocateZeroPool(bufferLen);
 	if (!card->rom)
 		return FALSE;
@@ -907,7 +907,7 @@ void get_vram_size(void)
       // size in MB on evergreen
       // XXX watch for overflow!!!
       card->vram_size = REG32(card->mmio, R600_CONFIG_MEMSIZE) << 20;
-      DBG("Set VRAM for Cedar=%d", card->vram_size);
+      DBG("Set VRAM for Cedar=%d\n", card->vram_size);
     } else if (chip_family >= CHIP_FAMILY_R600) {
 			card->vram_size = REG32(card->mmio, R600_CONFIG_MEMSIZE);
     } else {
@@ -916,7 +916,7 @@ void get_vram_size(void)
         card->vram_size = REG32(card->mmio, RADEON_CONFIG_APER_SIZE);
         //Slice - previously I successfully made Radeon9000 working
         //by writing this register
-        WRITEREG32(card->mmio, RADEON_CONFIG_MEMSIZE, card->vram_size);
+        WRITEREG32(card->mmio, RADEON_CONFIG_MEMSIZE, (UINT32)card->vram_size);
       }
     }
   }	
@@ -930,10 +930,10 @@ BOOLEAN read_vbios(BOOLEAN from_pci)
 	if (from_pci)
 	{
 		rom_addr = (option_rom_header_t *)(UINTN)(pci_config_read32(card->pci_dev, PCI_EXPANSION_ROM_BASE) & ~0x7ff);
-		DBG(" @0x%x", rom_addr);
+		DBG(" @0x%x\n", rom_addr);
 	}
 	else
-		rom_addr = (option_rom_header_t *)0xc0000;
+		rom_addr = (option_rom_header_t *)(UINTN)0xc0000;
 	
 	if (!validate_rom(rom_addr, card->pci_dev)){
     DBG("There is no ROM @0x%x\n", rom_addr);
@@ -1117,7 +1117,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
     CHAR8 		*CfgName;
     CHAR8 		*model;
     INTN  		NameLen = 0;
-	INTN		i, j;
+	UINTN		i, j;
 	INTN		n_ports = 0;
     UINTN 		ExpansionRom = 0;
 	
@@ -1221,7 +1221,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 
 	if (n_ports > 0)
 	{
-		card->ports = n_ports; // use it.
+		card->ports = (UINT8)n_ports; // use it.
 		DBG("(AtiPorts) Nr of ports set to: %d\n", card->ports);
   }
 	else// if (card->cfg_name > 0) // do we want 0 ports if fb is kNull or mistyped ?
@@ -1242,13 +1242,13 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 	name = AllocateZeroPool(24);
 	AsciiSPrint(name, 24, "ATY,%a", card->cfg_name);
 	aty_name.type = kStr;
-	aty_name.size = AsciiStrLen(name);
+	aty_name.size = (UINT32)AsciiStrLen(name);
 	aty_name.data = (UINT8 *)name;
 	
   name_parent = AllocateZeroPool(24);
 	AsciiSPrint(name_parent, 24, "ATY,%aParent", card->cfg_name);
 	aty_nameparent.type = kStr;
-	aty_nameparent.size = AsciiStrLen(name_parent);
+	aty_nameparent.size = (UINT32)AsciiStrLen(name_parent);
 	aty_nameparent.data = (UINT8 *)name_parent;
 //how can we free pool when we leave the procedure? Make all pointers global?	
 	return TRUE;

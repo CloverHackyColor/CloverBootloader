@@ -23,6 +23,7 @@ Copyright (c) 2006 JLA
 #define DBG(...)	
 #endif
 
+#pragma pack(push)
 #pragma pack(1)
 
 //template
@@ -88,8 +89,7 @@ CONST UINT8 VideoTest[] = {
   0xed, 0xe4, 0xfc                    //jmp near 0x7c00
 }; //28bytes
 
-
-#pragma pack(0)
+#pragma pack(pop)
 
 #define ADDRT_REAL   0   // Segment:Offset (16:16)
 #define ADDRT_FLAT   1   // Segment is 0, Offset is 32 bit flat address
@@ -175,7 +175,7 @@ EFI_STATUS BiosReadSectorsFromDrive(UINT8 DriveNum, UINT64 Lba, UINTN NumSectors
 	// init disk access packet
 	Dap->size = sizeof(BIOS_DISK_ADDRESS_PACKET);
 	Dap->unused = 0;
-	Dap->numSectors = NumSectors;
+	Dap->numSectors = (UINT16)NumSectors;
 	Dap->buffSegment = (UINT16) (((UINTN) Buffer >> 16) << 12);
 	Dap->buffOffset = (UINT16) (UINTN) Buffer;
 	Dap->lba = Lba;
@@ -227,7 +227,7 @@ EFI_STATUS GetBiosDriveCRC32(UINT8 DriveNum,
 UINT8 GetBiosDriveNumForVolume(REFIT_VOLUME *Volume)
 {
 	EFI_STATUS					Status;
-	UINT16						DriveNum, BestNum;
+	UINT8						DriveNum, BestNum;
 	UINT32						DriveCRC32;
 	UINT8						*Buffer;
 	BIOS_DISK_ADDRESS_PACKET	*Dap;
@@ -277,11 +277,12 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 	UINT8        *sectorBuffer; //[2048];
 	EFI_STATUS   Status = EFI_NOT_FOUND;
 	UINT64       lba;
-	UINT32       bootLoadSegment;
+	UINT16       bootLoadSegment;
 	Address      bootLoadAddress;
 	UINT32       bootSize;
 	UINT32       bootSectors;
 	IA32_REGISTER_SET           Regs;
+   UINTN         LogSize;
 	
   sectorBuffer = AllocateAlignedPages (EFI_SIZE_TO_PAGES (2048), 64);
 	krnMemoryTop = addrRealFromSegOfs(0xA000, 0x0000);
@@ -363,7 +364,6 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 		return Status;
 	}
   
-  UINTN         LogSize;  
   LogSize = msgCursor - msgbuf;
   Status = egSaveFile(SelfRootDir, L"EFI\\misc\\legacy_boot.log", (UINT8*)msgbuf, LogSize);
   if (EFI_ERROR(Status)) {
@@ -419,13 +419,14 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
 	EFI_STATUS			Status			= EFI_NOT_FOUND;
 	EFI_BLOCK_IO*		pDisk			= volume->BlockIO;
 	//UINT8*				pMBR			= (void*)0x600;
-	UINT8*				pMBR			= (void*)0x7C00;
+	UINT8*				pMBR			= (UINT8*)(UINTN)0x7C00;
 	//UINT8*				pBootSector		= (void*)0x7C00;
 	//MBR_PARTITION_INFO*			activePartition = NULL;
 	//UINTN				partitionIndex;
 	IA32_REGISTER_SET           Regs;
     UINTN                       i, j;
     UINT8                       BiosDriveNum;
+    UINTN         LogSize;
     
 	gBS->SetMem (&Regs, sizeof (Regs), 0);
 	addrEnablePaging(0);
@@ -466,7 +467,6 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
         DBG("\n");
     }
   
-  UINTN         LogSize;  
   LogSize = msgCursor - msgbuf;
   Status = egSaveFile(SelfRootDir, L"EFI\\misc\\legacy_boot.log", (UINT8*)msgbuf, LogSize);
   if (EFI_ERROR(Status)) {
@@ -547,9 +547,9 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
 {
 	EFI_STATUS                  Status		= EFI_NOT_FOUND;
 	EFI_BLOCK_IO*               pDisk     = volume->BlockIO;
-	UINT8*                      pBootSector	= (UINT8*)0x7C00;
+	UINT8*                      pBootSector	= (UINT8*)(UINTN)0x7C00;
   UINT8*                      mBootSector;
-  MBR_PARTITION_INFO*					pMBR      = (MBR_PARTITION_INFO*)0x7BE;
+  MBR_PARTITION_INFO*					pMBR      = (MBR_PARTITION_INFO*)(UINTN)0x7BE;
 	UINT32                      LbaOffset	= 0;
 	UINT32                      LbaSize		= 0;
 	HARDDRIVE_DEVICE_PATH       *HdPath     = NULL; 
@@ -560,7 +560,7 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
   UINTN                       i, i2, j;  //for debug dump
   UINT8                       *ptr;
   UINT32                      MBRCRC32;
-  
+  UINTN         LogSize;
 	
 	IA32_REGISTER_SET   Regs;
 	gBS->SetMem (&Regs, sizeof (Regs), 0);
@@ -579,8 +579,8 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
 	
 	if (HdPath != NULL) {
     DBG("boot from partition %s\n", DevicePathToStr((EFI_DEVICE_PATH *)HdPath));
-		LbaOffset	= HdPath->PartitionStart;
-		LbaSize		= HdPath->PartitionSize;
+		LbaOffset	= (UINT32)HdPath->PartitionStart;
+		LbaSize		= (UINT32)HdPath->PartitionSize;
         DBG("starting from 0x%x LBA \n", LbaOffset);
 	} else {
 		return Status;
@@ -655,7 +655,6 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
 //        return EFI_NOT_FOUND;
     }
   
-  UINTN         LogSize;  
   LogSize = msgCursor - msgbuf;
   Status = egSaveFile(SelfRootDir, L"EFI\\misc\\legacy_boot.log", (UINT8*)msgbuf, LogSize);
   if (EFI_ERROR(Status)) {
@@ -667,7 +666,7 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
   Status = gLegacy8259->SetMask(gLegacy8259, &NewMask, NULL, NULL, NULL);
 	//Status = mCpu->EnableInterrupt(mCpu);
   //Now I want to start from VideoTest
-  ptr = (UINT8*)0x7F00;
+  ptr = (UINT8*)(UINTN)0x7F00;
   CopyMem(ptr, &VideoTest[0], 30);
   
   
@@ -834,8 +833,8 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
 	
 	if (HdPath != NULL) {
 		DBG("boot from partition %s\n", DevicePathToStr((EFI_DEVICE_PATH *)HdPath));
-		LbaOffset	= HdPath->PartitionStart;
-		LbaSize		= HdPath->PartitionSize;
+		LbaOffset	= (UINT32)HdPath->PartitionStart;
+		LbaSize		= (UINT32)HdPath->PartitionSize;
         DBG("starting from 0x%x LBA \n", LbaOffset);
 	} else {
 		return Status;

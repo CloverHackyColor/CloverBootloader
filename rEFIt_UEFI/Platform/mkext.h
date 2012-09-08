@@ -160,7 +160,7 @@ typedef struct mkext_basic_header {
 typedef struct mkext2_file_entry {
     uint32_t  compressed_size;  // if zero, file is not compressed
     uint32_t  full_size;        // full size of data w/o this struct
-    uint8_t   data[0];          // data is inline to this struct
+    //uint8_t   data[0];          // data is inline to this struct
 } mkext2_file_entry;
 
 typedef struct mkext2_header {

@@ -417,7 +417,7 @@ VOID PatchTableType1()
 	ZeroMem((VOID*)newSmbiosTable.Type1, MAX_TABLE_SIZE);
 	CopyMem((VOID*)newSmbiosTable.Type1, (VOID*)SmbiosTable.Type1, Size); //copy main table
 	CopyMem((CHAR8*)newSmbiosTable.Type1+NewSize, (CHAR8*)SmbiosTable.Type1+Size, TableSize - Size); //copy strings
-	newSmbiosTable.Type1->Hdr.Length = NewSize;
+	newSmbiosTable.Type1->Hdr.Length = (UINT8)NewSize;
 	
 	newSmbiosTable.Type1->WakeUpType = SystemWakeupTypePowerSwitch;
 	Once = TRUE;
@@ -490,7 +490,7 @@ VOID PatchTableType2()
 		}	
 	}
 
-	newSmbiosTable.Type2->Hdr.Length = NewSize;
+	newSmbiosTable.Type2->Hdr.Length = (UINT8)NewSize;
 	newSmbiosTable.Type2->ChassisHandle = mHandle3;	//from GetTableType3
 	newSmbiosTable.Type2->BoardType = BaseBoardTypeMotherBoard;
 	ZeroMem((VOID*)&newSmbiosTable.Type2->FeatureFlag, sizeof(BASE_BOARD_FEATURE_FLAGS));
@@ -561,7 +561,7 @@ VOID PatchTableType3()
 	if (NewSize > Size) {
 		CopyMem((VOID*)newSmbiosTable.Type3, (VOID*)SmbiosTable.Type3, Size); //copy main table
 		CopyMem((CHAR8*)newSmbiosTable.Type3 + NewSize, (CHAR8*)SmbiosTable.Type3 + Size, TableSize - Size); //copy strings
-		newSmbiosTable.Type3->Hdr.Length = NewSize;
+		newSmbiosTable.Type3->Hdr.Length = (UINT8)NewSize;
 	} else {
 		CopyMem((VOID*)newSmbiosTable.Type3, (VOID*)SmbiosTable.Type3, TableSize); //copy full table
 	}
@@ -615,7 +615,7 @@ VOID GetTableType4()
     res = SmbiosTable.Type4->ExternalClock % 10;
   }
 
-	gCPUStructure.ExternalClock = SmbiosTable.Type4->ExternalClock * 1000 + res * 110;//MHz->kHz  
+	gCPUStructure.ExternalClock = (UINT32)((SmbiosTable.Type4->ExternalClock * 1000) + (res * 110));//MHz->kHz  
 //	UnicodeSPrint(gSettings.BusSpeed, 10, L"%d", gCPUStructure.ExternalClock);
 //  gSettings.BusSpeed = gCPUStructure.ExternalClock; //why duplicate??
 	gCPUStructure.CurrentSpeed = SmbiosTable.Type4->CurrentSpeed;
@@ -656,9 +656,9 @@ VOID PatchTableType4()
 		ZeroMem((VOID*)newSmbiosTable.Type4, MAX_TABLE_SIZE);
 		CopyMem((VOID*)newSmbiosTable.Type4, (VOID*)SmbiosTable.Type4, Size); //copy main table
 		CopyMem((CHAR8*)newSmbiosTable.Type4+NewSize, (CHAR8*)SmbiosTable.Type4+Size, TableSize - Size); //copy strings
-		newSmbiosTable.Type4->Hdr.Length = NewSize;
+		newSmbiosTable.Type4->Hdr.Length = (UINT8)NewSize;
 
-		newSmbiosTable.Type4->MaxSpeed = gCPUStructure.CurrentSpeed;	
+		newSmbiosTable.Type4->MaxSpeed = (UINT16)gCPUStructure.CurrentSpeed;	
 		//old version has no such fields. Fill now
 		if (Size <= 0x20){
 			//sanity check and clear
@@ -669,7 +669,7 @@ VOID PatchTableType4()
 		if (Size <= 0x23) {  //Smbios <=2.3
 			newSmbiosTable.Type4->CoreCount = gCPUStructure.Cores;
 			newSmbiosTable.Type4->ThreadCount = gCPUStructure.Threads;
-			newSmbiosTable.Type4->ProcessorCharacteristics = gCPUStructure.Features;
+			newSmbiosTable.Type4->ProcessorCharacteristics = (UINT16)gCPUStructure.Features;
 		} //else we propose DMI data is better then cpuid().
 		if (newSmbiosTable.Type4->CoreCount < newSmbiosTable.Type4->EnabledCoreCount) {
 			newSmbiosTable.Type4->EnabledCoreCount = gCPUStructure.Cores;
@@ -823,7 +823,7 @@ VOID PatchTableType6()
 		}
     SizeField = SmbiosTable.Type6->InstalledSize.InstalledOrEnabledSize & 0x7F;
     if (SizeField < 0x7D) {
-      mInstalled[Index]	=  (1ULL << SizeField) * (1024 * 1024);
+      mInstalled[Index]	=  LShiftU64(1ULL, 20 + SizeField);
     } else if (SizeField == 0x7F) {
       mInstalled[Index]	= 0;
     } else
@@ -832,7 +832,7 @@ VOID PatchTableType6()
     if (SizeField >= 0x7D) {
       mEnabled[Index]		= 0;
     } else
-      mEnabled[Index]		= (1ULL << ((UINT8)SmbiosTable.Type6->EnabledSize.InstalledOrEnabledSize & 0x7F)) * (1024 * 1024);
+      mEnabled[Index]		= LShiftU64(1ULL, 20 + ((UINT8)SmbiosTable.Type6->EnabledSize.InstalledOrEnabledSize & 0x7F));
 		MsgLog("... enabled %x \n", mEnabled[Index]);
 		LogSmbiosTable(SmbiosTable);		
 	}
@@ -932,7 +932,7 @@ VOID PatchTableType9()
 		ZeroMem((VOID*)newSmbiosTable.Type9, MAX_TABLE_SIZE);
 		newSmbiosTable.Type9->Hdr.Type = EFI_SMBIOS_TYPE_SYSTEM_SLOTS;
 		newSmbiosTable.Type9->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE9);
-		newSmbiosTable.Type9->Hdr.Handle = 0x0900 + Index;
+		newSmbiosTable.Type9->Hdr.Handle = (UINT16)(0x0900 + Index);
 		newSmbiosTable.Type9->SlotDesignation = 1;
 		newSmbiosTable.Type9->SlotType = SlotTypePciExpress;
 		newSmbiosTable.Type9->SlotDataBusWidth = SlotDataBusWidth1X;
@@ -1015,7 +1015,7 @@ VOID GetTableType16()
 	if (!TotalCount) {
 		TotalCount = MAX_SLOT_COUNT;
 	}
-	gDMI->MaxMemorySlots = TotalCount;
+	gDMI->MaxMemorySlots = (UINT8)TotalCount;
 	DBG("Total Memory Slots Count = %d\n", TotalCount);
 	return;
 }
@@ -1083,7 +1083,7 @@ VOID GetTableType17()
 		DBG("SmbiosTable.Type17->Size = %d\n", SmbiosTable.Type17->Size);
 		if ((SmbiosTable.Type17->Size & 0x8000) == 0) {
 			mTotalSystemMemory += SmbiosTable.Type17->Size; //Mb
-			mMemory17[Index] = SmbiosTable.Type17->Size > 0 ? mTotalSystemMemory : 0;
+			mMemory17[Index] = (UINT16)(SmbiosTable.Type17->Size > 0 ? mTotalSystemMemory : 0);
 		}
 		DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
 	}
@@ -1094,6 +1094,9 @@ VOID PatchTableType17()
 {
 	CHAR8	deviceLocator[10];
 	CHAR8	bankLocator[10];
+   INTN map = gDMI->DIMM[Index];
+   INTN map0 = map;
+   MEMORY_DEVICE_TYPE spdType;
 	
   // Memory Device
   //
@@ -1167,9 +1170,8 @@ VOID PatchTableType17()
 		}
 */
 #else
-		INTN map = gDMI->DIMM[Index];
-    INTN map0 = map;
-		MEMORY_DEVICE_TYPE spdType;
+		map = gDMI->DIMM[Index];
+      map0 = map;
 		if (gDMI->DIMM[2] && Index == 1 &&  TotalCount == 2)
 		{
       DBG(" Index=1 but DIMM[2] present. Redirect map: old=%d\n", map);
@@ -1201,7 +1203,7 @@ VOID PatchTableType17()
 			UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gRAM->DIMM[map].PartNo);		
 		}
 		if(gRAM->DIMM[map].Frequency>0 && gRAM->DIMM[map].InUse){
-			newSmbiosTable.Type17->Speed = gRAM->DIMM[map].Frequency;			
+			newSmbiosTable.Type17->Speed = (UINT16)gRAM->DIMM[map].Frequency;			
 		}
 #endif
 		
@@ -1240,7 +1242,7 @@ PatchTableType19 ()
 	UINT32	TotalEnd = 0; 
 	UINT8	PartWidth = 1;
 	UINT16  SomeHandle = 0x1300; //as a common rule handle=(type<<8 + index)
-	for (Index=0; Index<TotalCount+1; Index++) {
+	for (Index=0; Index<=TotalCount; Index++) {
 		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_ARRAY_MAPPED_ADDRESS, Index);
 		if (SmbiosTable.Raw == NULL) {			
 			continue;
@@ -1284,7 +1286,7 @@ VOID PatchTableType20 ()
 		CopyMem((VOID*)newSmbiosTable.Type20, (VOID*)SmbiosTable.Type20, TableSize);
 		for (j=0; j < TotalCount; j++) {
 			//EndingAddress in kb while mMemory in Mb
-			if ((mMemory17[j]  << 10) > newSmbiosTable.Type20->EndingAddress) {	
+			if ((UINT32)(mMemory17[j] << 10) > newSmbiosTable.Type20->EndingAddress) {	
 				newSmbiosTable.Type20->MemoryDeviceHandle = mHandle17[j];
 				k = newSmbiosTable.Type20->EndingAddress;
 				m = mMemory17[j]  << 10;
@@ -1418,7 +1420,7 @@ VOID PatchTableType132()
 		if(gSettings.QPI){
 			newSmbiosTable.Type132->ProcessorBusSpeed = gSettings.QPI;
 		} else {
-			newSmbiosTable.Type132->ProcessorBusSpeed = DivU64x32(gSettings.BusSpeed, kilo)  << 2;
+			newSmbiosTable.Type132->ProcessorBusSpeed = (UINT16)(DivU64x32(gSettings.BusSpeed, kilo) << 2);
 		}
 		Handle = LogSmbiosTable(newSmbiosTable);
 		return;

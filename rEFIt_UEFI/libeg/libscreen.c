@@ -210,7 +210,7 @@ EFI_STATUS egSetScreenResolution(IN CHAR16 *WidthHeight)
 VOID egInitScreen(VOID)
 {
     EFI_STATUS Status;
-    UINT32 UGAWidth, UGAHeight, UGADepth, UGARefreshRate;
+    UINT32 Width, Height, Depth, RefreshRate;
     
     // get protocols
     Status = EfiLibLocateProtocol(&ConsoleControlProtocolGuid, (VOID **) &ConsoleControl);
@@ -238,18 +238,18 @@ VOID egInitScreen(VOID)
         egScreenHeight = GraphicsOutput->Mode->Info->VerticalResolution;
         egHasGraphics = TRUE;
     } else if (UgaDraw != NULL) {
-        Status = UgaDraw->GetMode(UgaDraw, &UGAWidth, &UGAHeight, &UGADepth, &UGARefreshRate);
+        Status = UgaDraw->GetMode(UgaDraw, &Width, &Height, &Depth, &RefreshRate);
         if (EFI_ERROR(Status)) {
             UgaDraw = NULL;   // graphics not available
         } else {
-            egScreenWidth  = UGAWidth;
-            egScreenHeight = UGAHeight;
+            egScreenWidth  = Width;
+            egScreenHeight = Height;
             egHasGraphics = TRUE;
         }
     }
 }
 
-VOID egGetScreenSize(OUT UINTN *ScreenWidth, OUT UINTN *ScreenHeight)
+VOID egGetScreenSize(OUT UINT64 *ScreenWidth, OUT UINT64 *ScreenHeight)
 {
     if (ScreenWidth != NULL)
         *ScreenWidth = egScreenWidth;
@@ -334,29 +334,29 @@ VOID egClearScreen(IN EG_PIXEL *Color)
     }
 }
 
-VOID egDrawImage(IN EG_IMAGE *Image, IN UINTN ScreenPosX, IN UINTN ScreenPosY)
+VOID egDrawImage(IN EG_IMAGE *Image, IN UINT64 ScreenPosX, IN UINT64 ScreenPosY)
 {
     if (!egHasGraphics)
         return;
     
     if (Image->HasAlpha) {
         Image->HasAlpha = FALSE;
-        egSetPlane(PLPTR(Image, a), 0, Image->Width * Image->Height);
+        egSetPlane(PLPTR(Image, a), 0, MultU64x64(Image->Width, Image->Height));
     }
     
     if (GraphicsOutput != NULL) {
         GraphicsOutput->Blt(GraphicsOutput, (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)Image->PixelData, EfiBltBufferToVideo,
-                            0, 0, ScreenPosX, ScreenPosY, Image->Width, Image->Height, 0);
+                            0, 0, (UINTN)ScreenPosX, (UINTN)ScreenPosY, (UINTN)Image->Width, (UINTN)Image->Height, 0);
     } else if (UgaDraw != NULL) {
         UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)Image->PixelData, EfiUgaBltBufferToVideo,
-                     0, 0, ScreenPosX, ScreenPosY, Image->Width, Image->Height, 0);
+                     0, 0, (UINTN)ScreenPosX, (UINTN)ScreenPosY, (UINTN)Image->Width, (UINTN)Image->Height, 0);
     }
 }
 
 VOID egDrawImageArea(IN EG_IMAGE *Image,
-                     IN UINTN AreaPosX, IN UINTN AreaPosY,
-                     IN UINTN AreaWidth, IN UINTN AreaHeight,
-                     IN UINTN ScreenPosX, IN UINTN ScreenPosY)
+                     IN UINT64 AreaPosX, IN UINT64 AreaPosY,
+                     IN UINT64 AreaWidth, IN UINT64 AreaHeight,
+                     IN UINT64 ScreenPosX, IN UINT64 ScreenPosY)
 {
     if (!egHasGraphics)
         return;
@@ -372,10 +372,12 @@ VOID egDrawImageArea(IN EG_IMAGE *Image,
     
     if (GraphicsOutput != NULL) {
         GraphicsOutput->Blt(GraphicsOutput, (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)Image->PixelData, EfiBltBufferToVideo,
-                            AreaPosX, AreaPosY, ScreenPosX, ScreenPosY, AreaWidth, AreaHeight, Image->Width * 4);
+                            (UINTN)AreaPosX, (UINTN)AreaPosY, (UINTN)ScreenPosX, (UINTN)ScreenPosY,
+                            (UINTN)AreaWidth, (UINTN)AreaHeight, (UINTN)Image->Width * 4);
     } else if (UgaDraw != NULL) {
         UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)Image->PixelData, EfiUgaBltBufferToVideo,
-                     AreaPosX, AreaPosY, ScreenPosX, ScreenPosY, AreaWidth, AreaHeight, Image->Width * 4);
+                     (UINTN)AreaPosX, (UINTN)AreaPosY, (UINTN)ScreenPosX, (UINTN)ScreenPosY,
+                     (UINTN)AreaWidth, (UINTN)AreaHeight, (UINTN)Image->Width * 4);
     }
 }
 
@@ -406,10 +408,10 @@ EFI_STATUS egScreenShot(VOID)
     if (GraphicsOutput != NULL) {
         GraphicsOutput->Blt(GraphicsOutput, (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)Image->PixelData,
                             EfiBltVideoToBltBuffer,
-                            0, 0, 0, 0, Image->Width, Image->Height, 0);
+                            0, 0, 0, 0, (UINTN)Image->Width, (UINTN)Image->Height, 0);
     } else if (UgaDraw != NULL) {
         UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)Image->PixelData, EfiUgaVideoToBltBuffer,
-                     0, 0, 0, 0, Image->Width, Image->Height, 0);
+                     0, 0, 0, 0, (UINTN)Image->Width, (UINTN)Image->Height, 0);
     }
     
     // encode as BMP

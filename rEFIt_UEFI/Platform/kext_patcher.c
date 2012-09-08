@@ -594,7 +594,7 @@ VOID PatchPrelinkedKexts(VOID)
         // and if KernelSlide is != 0 then KextAddr must be adjusted
         KextAddr += KernelSlide;
         // and adjust for AptioFixDrv's KernelRelocBase
-        KextAddr += KernelRelocBase;
+        KextAddr += (UINT32)KernelRelocBase;
         
         KextSize = (UINT32)GetPlistHexValue(InfoPlistStart, kPrelinkExecutableSizeKey, WholePlist);
         
@@ -612,7 +612,7 @@ VOID PatchPrelinkedKexts(VOID)
                   (UINT8*)(UINTN)KextAddr,
                   KextSize,
                   InfoPlistStart,
-                  InfoPlistEnd - InfoPlistStart
+                  (UINT32)(InfoPlistEnd - InfoPlistStart)
                   );
         
         // return saved char
@@ -879,20 +879,20 @@ jump:
     */
     if (PrelinkInfoAddr && PrelinkInfoSize)
     {       
-        DBG(L"InjectKernelCache Start\n");
         UINT8* NewKextAddr = (UINT8*)(UINTN)0x1C100000;
-        CopyMem(NewKextAddr, FakeSMC, sizeof(FakeSMC));
-        CopyMem(NewKextAddr+sizeof(FakeSMC), (UINT8*)(UINTN)PrelinkTextAddr, PrelinkTextSize);
         UINT8* NewKextInfoAddr = NewKextAddr+PrelinkTextSize+sizeof(FakeSMC);
-        CopyMem(NewKextInfoAddr, (UINT8*)(UINTN)bytes, PrelinkInfoSize-15);
-        CopyMem(NewKextInfoAddr+(PrelinkInfoSize-15), Info_plist, sizeof(Info_plist));
-        CopyMem(NewKextInfoAddr+(PrelinkInfoSize-15)+sizeof(Info_plist), (UINT8*)(UINTN)bytes+(PrelinkInfoSize-15), 15);
-        
         struct segment_command *segCmd;
         struct segment_command_64 *segCmd64;
         struct section_64 *sect64;
         struct section    *sect;
-    
+
+        DBG(L"InjectKernelCache Start\n");
+        CopyMem(NewKextAddr, FakeSMC, sizeof(FakeSMC));
+        CopyMem(NewKextAddr+sizeof(FakeSMC), (UINT8*)(UINTN)PrelinkTextAddr, PrelinkTextSize);
+        CopyMem(NewKextInfoAddr, (UINT8*)(UINTN)bytes, PrelinkInfoSize-15);
+        CopyMem(NewKextInfoAddr+(PrelinkInfoSize-15), Info_plist, sizeof(Info_plist));
+        CopyMem(NewKextInfoAddr+(PrelinkInfoSize-15)+sizeof(Info_plist), (UINT8*)(UINTN)bytes+(PrelinkInfoSize-15), 15);
+        
         switch (MACH_GET_MAGIC(binary))
 	    {
 		      case MH_MAGIC:

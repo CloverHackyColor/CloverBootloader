@@ -179,7 +179,7 @@ VOID    egInitScreen(VOID);
 CHAR8*  egDumpGOPVideoModes(VOID);
 EFI_STATUS egSetScreenResolution(IN CHAR16 *WidthHeight); 
 EFI_STATUS egSetMaxResolution(VOID);
-VOID    egGetScreenSize(OUT UINTN *ScreenWidth, OUT UINTN *ScreenHeight);
+VOID    egGetScreenSize(OUT UINT64 *ScreenWidth, OUT UINT64 *ScreenHeight);
 CHAR16* egScreenDescription(VOID);
 BOOLEAN egHasGraphicsMode(VOID);
 BOOLEAN egIsGraphicsModeEnabled(VOID);
@@ -189,8 +189,8 @@ VOID    egSetGraphicsModeEnabled(IN BOOLEAN Enable);
 //  is running in text mode. egHasGraphicsMode() only determines
 //  if libeg can draw to the screen in graphics mode.
 
-EG_IMAGE * egCreateImage(IN UINTN Width, IN UINTN Height, IN BOOLEAN HasAlpha);
-EG_IMAGE * egCreateFilledImage(IN UINTN Width, IN UINTN Height, IN BOOLEAN HasAlpha, IN EG_PIXEL *Color);
+EG_IMAGE * egCreateImage(IN UINT64 Width, IN UINT64 Height, IN BOOLEAN HasAlpha);
+EG_IMAGE * egCreateFilledImage(IN UINT64 Width, IN UINT64 Height, IN BOOLEAN HasAlpha, IN EG_PIXEL *Color);
 EG_IMAGE * egCopyImage(IN EG_IMAGE *Image);
 EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *Image, IN UINTN Ratio);
 VOID       egFreeImage(IN EG_IMAGE *Image);
@@ -209,20 +209,20 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName,
 
 VOID egFillImage(IN OUT EG_IMAGE *CompImage, IN EG_PIXEL *Color);
 VOID egFillImageArea(IN OUT EG_IMAGE *CompImage,
-                     IN UINTN AreaPosX, IN UINTN AreaPosY,
-                     IN UINTN AreaWidth, IN UINTN AreaHeight,
+                     IN UINT64 AreaPosX, IN UINT64 AreaPosY,
+                     IN UINT64 AreaWidth, IN UINT64 AreaHeight,
                      IN EG_PIXEL *Color);
-VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN UINTN PosX, IN UINTN PosY);
+VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN UINT64 PosX, IN UINT64 PosY);
 VOID PrepareFont(VOID);
-VOID egMeasureText(IN CHAR16 *Text, OUT UINTN *Width, OUT UINTN *Height);
-VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage, IN UINTN PosX, IN UINTN PosY, IN UINTN Cursor);
+VOID egMeasureText(IN CHAR16 *Text, OUT UINT64 *Width, OUT UINT64 *Height);
+VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage, IN UINT64 PosX, IN UINT64 PosY, IN UINT64 Cursor);
 
 VOID egClearScreen(IN EG_PIXEL *Color);
-VOID egDrawImage(IN EG_IMAGE *Image, IN UINTN ScreenPosX, IN UINTN ScreenPosY);
+VOID egDrawImage(IN EG_IMAGE *Image, IN UINT64 ScreenPosX, IN UINT64 ScreenPosY);
 VOID egDrawImageArea(IN EG_IMAGE *Image,
-                     IN UINTN AreaPosX, IN UINTN AreaPosY,
-                     IN UINTN AreaWidth, IN UINTN AreaHeight,
-                     IN UINTN ScreenPosX, IN UINTN ScreenPosY);
+                     IN UINT64 AreaPosX, IN UINT64 AreaPosY,
+                     IN UINT64 AreaWidth, IN UINT64 AreaHeight,
+                     IN UINT64 ScreenPosX, IN UINT64 ScreenPosY);
 
 EFI_STATUS egScreenShot(VOID);
 

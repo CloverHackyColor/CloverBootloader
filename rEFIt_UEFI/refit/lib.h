@@ -325,17 +325,17 @@ EFI_STATUS InitializeUnicodeCollationProtocol (VOID);
 //#define FONT_CELL_WIDTH (7)
 //#define FONT_CELL_HEIGHT (12)
 
-extern UINTN FontWidth;
-extern UINTN FontHeight;
-extern UINTN TextHeight;
+extern UINT64 FontWidth;
+extern UINT64 FontHeight;
+extern UINT64 TextHeight;
 
 
 extern UINTN ConWidth;
 extern UINTN ConHeight;
 extern CHAR16 *BlankLine;
 
-extern UINTN UGAWidth;
-extern UINTN UGAHeight;
+extern UINT64 UGAWidth;
+extern UINT64 UGAHeight;
 extern BOOLEAN AllowGraphicsMode;
 
 extern EG_PIXEL StdBackgroundPixel;
@@ -362,10 +362,10 @@ BOOLEAN CheckError(IN EFI_STATUS Status, IN CHAR16 *where);
 
 VOID SwitchToGraphicsAndClear(VOID);
 VOID BltClearScreen(IN BOOLEAN ShowBanner);
-VOID BltImage(IN EG_IMAGE *Image, IN UINTN XPos, IN UINTN YPos);
-VOID BltImageAlpha(IN EG_IMAGE *Image, IN UINTN XPos, IN UINTN YPos, IN EG_PIXEL *BackgroundPixel);
-VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN UINTN XPos, IN UINTN YPos);
-VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG_IMAGE *BadgeImage, IN UINTN XPos, IN UINTN YPos);
+VOID BltImage(IN EG_IMAGE *Image, IN UINT64 XPos, IN UINT64 YPos);
+VOID BltImageAlpha(IN EG_IMAGE *Image, IN UINT64 XPos, IN UINT64 YPos, IN EG_PIXEL *BackgroundPixel);
+VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN UINT64 XPos, IN UINT64 YPos);
+VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG_IMAGE *BadgeImage, IN UINT64 XPos, IN UINT64 YPos);
 
 //
 // icns loader module
@@ -411,7 +411,7 @@ VOID AddMenuEntry(IN REFIT_MENU_SCREEN *Screen, IN REFIT_MENU_ENTRY *Entry);
 VOID FreeMenu(IN REFIT_MENU_SCREEN *Screen);
 UINTN RunMenu(IN REFIT_MENU_SCREEN *Screen, OUT REFIT_MENU_ENTRY **ChosenEntry);
 UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT REFIT_MENU_ENTRY **ChosenEntry);
-VOID DrawMenuText(IN CHAR16 *Text, IN UINTN SelectedWidth, IN UINTN XPos, IN UINTN YPos, IN UINTN Cursor);
+VOID DrawMenuText(IN CHAR16 *Text, IN UINT64 SelectedWidth, IN UINT64 XPos, IN UINT64 YPos, IN UINT64 Cursor);
 VOID ReinitVolumes(VOID);
 BOOLEAN ReadAllKeyStrokes(VOID);
 VOID  OptionsMenu(OUT REFIT_MENU_ENTRY  **ChosenEntry);

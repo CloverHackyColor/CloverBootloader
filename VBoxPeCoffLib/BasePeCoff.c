@@ -122,7 +122,7 @@ PeCoffLoaderGetPeHeader (
         if (nlist[i].CpuType == EFI_FAT_CPU_TYPE)
         {
             ImageContext->IsFat = TRUE;
-            ImageContext->FatOffset = Offset;
+            ImageContext->FatOffset = (UINT32)Offset;
             Offset = nlist[i].Offset;
             break;
         }

@@ -654,7 +654,7 @@ static fsw_status_t fsw_iso9660_read_dirrec(struct fsw_iso9660_volume *vol, stru
          if (   rc == FSW_SUCCESS
              && sp != NULL)
          {
-            sp_off = (fsw_u8 *)&sp[1] - (fsw_u8*)dirrec + sp->skip;
+            sp_off = (int)((fsw_u8 *)&sp[1] - (fsw_u8*)dirrec + sp->skip);
          }
          rc = rr_find_nm(vol, dirrec, sp_off,  &dirrec_buffer->name);
          if (rc == FSW_SUCCESS)

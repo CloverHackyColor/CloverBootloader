@@ -90,7 +90,7 @@ AML_CHUNK* aml_add_buffer(AML_CHUNK* parent, CONST CHAR8* buffer, UINT32 size)
 	if (node) 
 	{
 		node->Type = AML_CHUNK_NONE;
-		node->Length = size;
+		node->Length = (UINT16)size;
 		node->Buffer = AllocateZeroPool (node->Length);
 		CopyMem(node->Buffer, buffer, node->Length);
 	}
@@ -205,11 +205,11 @@ UINT32 aml_fill_name(AML_CHUNK* node, CONST CHAR8* name)
 			
 	if (count == 1) 
 	{
-		node->Length = 4 + root;
+		node->Length = (UINT16)(4 + root);
 		node->Buffer = AllocateZeroPool (node->Length+4);
 		CopyMem(node->Buffer, name, 4 + root);
     offset += 4 + root;
-		return offset;
+		return (UINT32)offset;
 	}
 	
 	if (count == 2) 
@@ -220,17 +220,17 @@ UINT32 aml_fill_name(AML_CHUNK* node, CONST CHAR8* name)
 		node->Buffer[offset++] = 0x2e; // Double name
 		CopyMem(node->Buffer+offset, name + root, 8);
     offset += 8;
-		return offset;
+		return (UINT32)offset;
 	}
 	
-	node->Length = 3 + count*4;
+	node->Length = (UINT16)(3 + (count << 2));
 	node->Buffer = AllocateZeroPool (node->Length+4);
 	node->Buffer[offset++] = 0x5c; // Root Char
 	node->Buffer[offset++] = 0x2f; // Multi name
-	node->Buffer[offset++] = count; // Names count
+	node->Buffer[offset++] = (CHAR8)count; // Names count
 	CopyMem(node->Buffer+offset, name + root, count*4);
 	offset += count*4;
-	return offset; //node->Length;
+	return (UINT32)offset; //node->Length;
 }
 
 AML_CHUNK* aml_add_scope(AML_CHUNK* parent, CONST CHAR8* name)
@@ -267,9 +267,8 @@ AML_CHUNK* aml_add_method(AML_CHUNK* parent, CONST CHAR8* name, UINT8 args)
 	
 	if (node)
 	{
+      UINTN offset = aml_fill_name(node, name);
 		node->Type = AML_CHUNK_METHOD;
-		
-		UINTN offset = aml_fill_name(node, name);
     node->Length++;
     node->Buffer[offset] = args;
 //    AML_CHUNK* meth = aml_add_byte(node, args);
@@ -385,10 +384,10 @@ AML_CHUNK* aml_add_byte_buffer(AML_CHUNK* parent, CONST CHAR8* data, UINT32 size
 	{
 	    INTN offset=0;
 		node->Type = AML_CHUNK_BUFFER;
-		node->Length = size + 2;
+		node->Length = (UINT8)(size + 2);
 		node->Buffer = AllocateZeroPool (node->Length);
 		node->Buffer[offset++] = AML_CHUNK_BYTE;
-		node->Buffer[offset++] = size;
+		node->Buffer[offset++] = (CHAR8)size;
 		CopyMem(node->Buffer+offset,data, node->Length);
 	}
 	
@@ -404,10 +403,10 @@ AML_CHUNK* aml_add_string_buffer(AML_CHUNK* parent, CONST CHAR8* string)
 	    UINTN offset=0;
 	    UINTN len = AsciiStrLen(string);
 		node->Type = AML_CHUNK_BUFFER;
-		node->Length = len + 3;
+		node->Length = (UINT8)(len + 3);
 		node->Buffer = AllocateZeroPool (node->Length);
 		node->Buffer[offset++] = AML_CHUNK_BYTE;
-		node->Buffer[offset++] = len;
+		node->Buffer[offset++] = (CHAR8)len;
 		CopyMem(node->Buffer+offset,string, len);
 		node->Buffer[offset+len] = '\0';
 	}
@@ -423,7 +422,7 @@ AML_CHUNK* aml_add_string(AML_CHUNK* parent, CONST CHAR8* string)
 	{
 	    INTN len = AsciiStrLen(string);
 		node->Type = AML_CHUNK_STRING;
-		node->Length = len + 1;
+		node->Length = (UINT8)(len + 1);
 		node->Buffer = AllocateZeroPool (len);
 		CopyMem(node->Buffer,string, len);
 		node->Buffer[len] = '\0';
@@ -462,17 +461,16 @@ UINT32 aml_calculate_size(AML_CHUNK* node)
 {
 	if (node)
 	{
-		node->Size = 0;
-		
 		// Calculate child nodes size
 		AML_CHUNK* child = node->First;
 		UINT8 child_count = 0;
 		
+      node->Size = 0;
 		while (child) 
 		{
 			child_count++;
 			
-			node->Size += aml_calculate_size(child);
+			node->Size += (UINT16)aml_calculate_size(child);
 			
 			child = child->Next;
 		}
@@ -585,7 +583,7 @@ UINT32 aml_write_size(UINT32 size, CHAR8* buffer, UINT32 offset)
 {
 	if (size <= 0x3f) /* simple 1 byte length in 6 bits */
 	{
-		buffer[offset++] = size;
+		buffer[offset++] = (CHAR8)size;
 	}
 	else if (size <= 0xfff) 
 	{
@@ -614,6 +612,7 @@ UINT32 aml_write_node(AML_CHUNK* node, CHAR8* buffer, UINT32 offset)
 	if (node && buffer) 
 	{
 		UINT32 old = offset;
+      AML_CHUNK* child = node->First;
 		
 		switch (node->Type) 
 		{
@@ -669,8 +668,6 @@ UINT32 aml_write_node(AML_CHUNK* node, CHAR8* buffer, UINT32 offset)
 				break;
 		}
 
-		AML_CHUNK* child = node->First;
-		
 		while (child) 
 		{
 			offset = aml_write_node(child, buffer, offset);

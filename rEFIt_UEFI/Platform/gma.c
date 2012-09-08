@@ -137,9 +137,9 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 		return FALSE;
 	}
 
-  DualLink = ((UGAWidth * UGAHeight) > (1<<20))?1:0;
+  DualLink = (MultU64x64(UGAWidth, UGAHeight) > (1<<20))?1:0;
 	
-  devprop_add_value(device, "model", (UINT8*)model, AsciiStrLen(model));
+  devprop_add_value(device, "model", (UINT8*)model, (UINT32)AsciiStrLen(model));
 	devprop_add_value(device, "device_type", (UINT8*)"display", 7);	
   switch (gma_dev->device_id) {
     case 0x0102: 

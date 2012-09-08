@@ -75,7 +75,7 @@ VOID GetCPUProperties (VOID)
 	UINT32				qpibusspeed; //units=kHz
 	UINT16				qpimult = 2;
   UINT32        BusSpeed = 0; //units kHz
-
+  UINT64        tmpU;
 	UINT16				did, vid;
 	UINTN         Segment;
 	UINTN         Bus;
@@ -243,8 +243,8 @@ VOID GetCPUProperties (VOID)
             msr = AsmReadMsr64(MSR_FLEX_RATIO);
             if ((msr >> 16) & 0x01)
             {
-              MsgLog("non-usable FLEX_RATIO = %x\n", msr);
               UINT8 flex_ratio = (msr >> 8) & 0xff;
+              MsgLog("non-usable FLEX_RATIO = %x\n", msr);
               if (flex_ratio == 0) { 
                 AsmWriteMsr64(MSR_FLEX_RATIO, (msr & 0xFFFFFFFFFFFEFFFFULL)); 
                 gBS->Stall(10);
@@ -276,7 +276,7 @@ VOID GetCPUProperties (VOID)
               gCPUStructure.Turbo3 = (UINT8)((msr >> 16) & 0xff) * 10;
               gCPUStructure.Turbo4 = (UINT8)(msr >> 24) & 0xff; //later
             } else {
-              gCPUStructure.Turbo4 = gCPUStructure.MaxRatio + 1;
+              gCPUStructure.Turbo4 = (UINT16)(gCPUStructure.MaxRatio + 1);
             }
 
             
@@ -299,8 +299,8 @@ VOID GetCPUProperties (VOID)
             msr = AsmReadMsr64(MSR_FLEX_RATIO);   //0x194
             if ((msr >> 16) & 0x01)
             {
-              MsgLog("non-usable FLEX_RATIO = %x\n", msr);
               UINT8 flex_ratio = (msr >> 8) & 0xff;
+              MsgLog("non-usable FLEX_RATIO = %x\n", msr);
               if (flex_ratio == 0) { 
                 AsmWriteMsr64(MSR_FLEX_RATIO, (msr & 0xFFFFFFFFFFFEFFFFULL)); 
                 gBS->Stall(10);
@@ -332,7 +332,7 @@ VOID GetCPUProperties (VOID)
             if (gCPUStructure.Turbo4 == 0) {
               gCPUStructure.Turbo4 = gCPUStructure.Turbo1;
               if (gCPUStructure.Turbo4 == 0) {
-                gCPUStructure.Turbo4 = gCPUStructure.MaxRatio;
+                gCPUStructure.Turbo4 = (UINT16)gCPUStructure.MaxRatio;
               }                 
             }
             DBG("SandyBridge has MaxRatio=%d Turbo1=%d Turbo4=%d\n", 
@@ -360,14 +360,14 @@ VOID GetCPUProperties (VOID)
             gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.TSCFrequency * 2,
                                                    gCPUStructure.MaxRatio * 2 + gCPUStructure.SubDivider);
             gCPUStructure.MaxRatio = gCPUStructure.MaxRatio * 10 + gCPUStructure.SubDivider * 5; 
-            gCPUStructure.Turbo4 = gCPUStructure.MaxRatio + 10;            
+            gCPUStructure.Turbo4 = (UINT16)(gCPUStructure.MaxRatio + 10);
             break;
           default:	
             gCPUStructure.MinRatio = 60;
             if (!gCPUStructure.FSBFrequency) {
               gCPUStructure.FSBFrequency = 100ULL * Mega;
             }
-            gCPUStructure.MaxRatio = DivU64x32(gCPUStructure.TSCFrequency, gCPUStructure.FSBFrequency) * 10;
+            gCPUStructure.MaxRatio = (UINT32)(DivU64x64Remainder(gCPUStructure.TSCFrequency, gCPUStructure.FSBFrequency, 0) * 10);
             gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
             break;
 				}
@@ -383,7 +383,7 @@ VOID GetCPUProperties (VOID)
           gCPUStructure.MaxRatio = (UINT8)((msr >> 8) & 0x1f) * 10;
           gCPUStructure.MinRatio = gCPUStructure.MaxRatio; //no speedstep
         } else {
-          gCPUStructure.MaxRatio = DivU64x32(gCPUStructure.TSCFrequency, gCPUStructure.FSBFrequency);
+          gCPUStructure.MaxRatio = (UINT32)DivU64x64Remainder(gCPUStructure.TSCFrequency, gCPUStructure.FSBFrequency, 0);
         }
         gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
 			}
@@ -430,7 +430,7 @@ VOID GetCPUProperties (VOID)
   
 #endif
 //  DBG("take FSB\n");
-  UINT64 tmpU = gCPUStructure.FSBFrequency;
+  tmpU = gCPUStructure.FSBFrequency;
 //  DBG("divide by 1000\n");
   BusSpeed = (UINT32)DivU64x32(tmpU, kilo); //Hz -> kHz
 //  DBG("FSBFrequency=%dMHz\n", DivU64x32(tmpU, Mega));

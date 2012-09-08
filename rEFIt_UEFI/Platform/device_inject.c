@@ -114,7 +114,7 @@ DevPropDevice *devprop_add_device_pci(DevPropString *string, pci_dt_t *PciDt)
 {
 	EFI_DEVICE_PATH_PROTOCOL		*DevicePath;
 	DevPropDevice               *device;
-	INTN                        NumPaths;
+	UINT32                        NumPaths;
   
 	
 	if (string == NULL || PciDt == NULL) {
@@ -168,8 +168,8 @@ DevPropDevice *devprop_add_device_pci(DevPropString *string, pci_dt_t *PciDt)
 	}
 	
 //	DBG("-> NumPaths=%d\n", NumPaths);
-	device->num_pci_devpaths = NumPaths;
-	device->length = 24 + (6 * NumPaths);
+	device->num_pci_devpaths = (UINT8)NumPaths;
+	device->length = (UINT32)(24U + (6U * NumPaths));
 	
 	device->path_end.length = 0x04;
 	device->path_end.type = 0x7f;
@@ -209,14 +209,14 @@ BOOLEAN devprop_add_value(DevPropDevice *device, CHAR8 *nm, UINT8 *vl, UINT32 le
   }
   DBG("\n"); */
 	l = AsciiStrLen(nm);
-	length = ((l * 2) + len + (2 * sizeof(UINT32)) + 2);
+	length = (UINT32)((l * 2) + len + (2 * sizeof(UINT32)) + 2);
 	data = (UINT8*)AllocateZeroPool(length);
   if(!data)
     return FALSE;
   
   off= 0;
   
-  data[off+1] = ((l * 2) + 6) >> 8;
+  data[off+1] = (UINT8)(((l * 2) + 6) >> 8);
   data[off] =   ((l * 2) + 6) & 0x00FF;
   
   off += 4;
@@ -229,7 +229,7 @@ BOOLEAN devprop_add_value(DevPropDevice *device, CHAR8 *nm, UINT8 *vl, UINT32 le
   off += 2;
   l = len;
   datalength = (UINT32*)&data[off];
-  *datalength = l + 4;
+  *datalength = (UINT32)(l + 4);
   off += 4;
   for(i = 0 ; i < l ; i++, off++)
   {
@@ -259,12 +259,12 @@ BOOLEAN devprop_add_value(DevPropDevice *device, CHAR8 *nm, UINT8 *vl, UINT32 le
 CHAR8 *devprop_generate_string(DevPropString *string)
 {
   UINTN len = string->length * 2;
-	INT32 i = 0, x = 0;
-  
-	DBG("devprop_generate_string\n");
+	INT32 i = 0;
+   UINT32 x = 0;
 	CHAR8 *buffer = (CHAR8*)AllocatePool(len + 1);
 	CHAR8 *ptr = buffer;
 	
+   DBG("devprop_generate_string\n");
 	if(!buffer)
 		return NULL;
 
@@ -274,6 +274,7 @@ CHAR8 *devprop_generate_string(DevPropString *string)
 	
 	while(i < string->numentries)
 	{
+      UINT8 *dataptr = string->entries[i]->data;
 		AsciiSPrint(buffer, len, "%08x%04x%04x", dp_swap32(string->entries[i]->length),
 				dp_swap16(string->entries[i]->numentries), string->entries[i]->WHAT2); //FIXME: wrong buffer sizes!
 		
@@ -300,7 +301,6 @@ CHAR8 *devprop_generate_string(DevPropString *string)
 				dp_swap16(string->entries[i]->path_end.length));
 		
 		buffer += 8;
-		UINT8 *dataptr = string->entries[i]->data;
 		for(x = 0; x < (string->entries[i]->length) - (24 + (6 * string->entries[i]->num_pci_devpaths)); x++)
 		{
 			AsciiSPrint(buffer, len, "%02x", *dataptr++);
@@ -313,11 +313,11 @@ CHAR8 *devprop_generate_string(DevPropString *string)
 
 VOID devprop_free_string(DevPropString *string)
 {
+   INT32 i;
 	//DBG("devprop_free_string\n");
 	if(!string)
 		return;
 	
-	INT32 i;
 	for(i = 0; i < string->numentries; i++)
 	{
 		if(string->entries[i])

@@ -209,13 +209,13 @@ UpdateConCOMPage (
   IN BMM_CALLBACK_DATA                *CallbackData
   )
 {
+  /*
   BM_MENU_ENTRY *NewMenuEntry;
   UINT16        Index;
 
   CallbackData->BmmAskSaveOrNot = FALSE;
 
   UpdatePageStart (CallbackData);
-
 
   for (Index = 0; Index < TerminalMenu.MenuNumber; Index++) {
     NewMenuEntry = BOpt_GetMenuEntry (&TerminalMenu, Index);
@@ -231,6 +231,7 @@ UpdateConCOMPage (
   }
 
   UpdatePageEnd (CallbackData);
+  //*/
 }
 
 /**

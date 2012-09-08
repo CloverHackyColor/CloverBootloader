@@ -205,7 +205,7 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
       {
         if (((UINTN)bootArgs2->efiMode == 32) || ((UINTN)bootArgs2->efiMode == 64)){
           dtRoot = (CHAR8*)(UINTN)bootArgs2->deviceTreeP;
-          bootArgs2->efiMode = archMode; //correct to EFI arch
+          bootArgs2->efiMode = (UINT8)archMode; //correct to EFI arch
           Version = 2;
      //     DBG(L"found bootarg v2");
           gST->ConOut->OutputString (gST->ConOut, L"found bootarg v2");
@@ -221,7 +221,7 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
         if (((UINTN)bootArgs1->efiMode == 32) ||
             ((UINTN)bootArgs1->efiMode == 64)){
           dtRoot = (CHAR8*)(UINTN)bootArgs1->deviceTreeP;
-          bootArgs1->efiMode = archMode;
+          bootArgs1->efiMode = (UINT8)archMode;
           Version = 1;
    //       DBG(L"found bootarg v1");
           gST->ConOut->OutputString (gST->ConOut, L"found bootarg v1");

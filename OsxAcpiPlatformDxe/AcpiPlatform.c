@@ -217,7 +217,7 @@ InstallLegacyTables (
 		}
 */ 
 		//First scan for RSDT
-		EntryCount = (TableSize - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT32);
+		EntryCount = (UINT32)(TableSize - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT32);
 		DBG(L"RSDT table length %d\n", EntryCount);
 		EntryPtr = &Rsdt->Entry;
 		Fadt = (EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE*)((UINTN)(*EntryPtr));

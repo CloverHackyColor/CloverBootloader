@@ -62,8 +62,8 @@ static VOID DrawScreenHeader(IN CHAR16 *Title);
 
 // UGA defines and variables
 
-UINTN   UGAWidth;
-UINTN   UGAHeight;
+UINT64   UGAWidth;
+UINT64   UGAHeight;
 BOOLEAN AllowGraphicsMode;
 
 EG_PIXEL StdBackgroundPixel  = { 0xbf, 0xbf, 0xbf, 0 };
@@ -367,7 +367,7 @@ VOID SwitchToGraphicsAndClear(VOID)
 VOID BltClearScreen(IN BOOLEAN ShowBanner)
 {
     static EG_IMAGE *Banner = NULL;
-  UINTN BanHeight = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_HEIGHT;
+  UINT64 BanHeight = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_HEIGHT;
     
     if (ShowBanner && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER)) {
         // load banner on first call
@@ -398,13 +398,13 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
    GraphicsScreenDirty = FALSE;
 }
 
-VOID BltImage(IN EG_IMAGE *Image, IN UINTN XPos, IN UINTN YPos)
+VOID BltImage(IN EG_IMAGE *Image, IN UINT64 XPos, IN UINT64 YPos)
 {
     egDrawImage(Image, XPos, YPos);
     GraphicsScreenDirty = TRUE;
 }
 
-VOID BltImageAlpha(IN EG_IMAGE *Image, IN UINTN XPos, IN UINTN YPos, IN EG_PIXEL *BackgroundPixel)
+VOID BltImageAlpha(IN EG_IMAGE *Image, IN UINT64 XPos, IN UINT64 YPos, IN EG_PIXEL *BackgroundPixel)
 {
     EG_IMAGE *CompImage;
     
@@ -418,9 +418,9 @@ VOID BltImageAlpha(IN EG_IMAGE *Image, IN UINTN XPos, IN UINTN YPos, IN EG_PIXEL
     GraphicsScreenDirty = TRUE;
 }
 
-VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN UINTN XPos, IN UINTN YPos)
+VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN UINT64 XPos, IN UINT64 YPos)
 {
-    UINTN TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY;
+    UINT64 TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY;
     EG_IMAGE *CompImage;
     
     // initialize buffer with base image
@@ -445,9 +445,9 @@ VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN UINTN X
     GraphicsScreenDirty = TRUE;
 }
 
-VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG_IMAGE *BadgeImage, IN UINTN XPos, IN UINTN YPos)
+VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG_IMAGE *BadgeImage, IN UINT64 XPos, IN UINT64 YPos)
 {
-    UINTN TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY;
+    UINT64 TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY;
     EG_IMAGE *CompImage;
     
     // initialize buffer with base image

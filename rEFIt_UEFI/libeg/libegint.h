@@ -50,20 +50,20 @@ typedef EG_IMAGE * (*EG_DECODE_FUNC)(IN UINT8 *FileData, IN UINTN FileDataLength
 /* functions */
 
 VOID egRestrictImageArea(IN EG_IMAGE *Image,
-                         IN UINTN AreaPosX, IN UINTN AreaPosY,
-                         IN OUT UINTN *AreaWidth, IN OUT UINTN *AreaHeight);
+                         IN UINT64 AreaPosX, IN UINT64 AreaPosY,
+                         IN OUT UINT64 *AreaWidth, IN OUT UINT64 *AreaHeight);
 VOID egRawCopy(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
-               IN UINTN Width, IN UINTN Height,
-               IN UINTN CompLineOffset, IN UINTN TopLineOffset);
+               IN UINT64 Width, IN UINT64 Height,
+               IN UINT64 CompLineOffset, IN UINT64 TopLineOffset);
 VOID egRawCompose(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
-                  IN UINTN Width, IN UINTN Height,
-                  IN UINTN CompLineOffset, IN UINTN TopLineOffset);
+                  IN UINT64 Width, IN UINT64 Height,
+                  IN UINT64 CompLineOffset, IN UINT64 TopLineOffset);
 
 #define PLPTR(imagevar, colorname) ((UINT8 *) &((imagevar)->PixelData->colorname))
 
 VOID egDecompressIcnsRLE(IN OUT UINT8 **CompData, IN OUT UINTN *CompLen, IN UINT8 *DestPlanePtr, IN UINTN PixelCount);
 VOID egInsertPlane(IN UINT8 *SrcDataPtr, IN UINT8 *DestPlanePtr, IN UINTN PixelCount);
-VOID egSetPlane(IN UINT8 *DestPlanePtr, IN UINT8 Value, IN UINTN PixelCount);
+VOID egSetPlane(IN UINT8 *DestPlanePtr, IN UINT8 Value, IN UINT64 PixelCount);
 VOID egCopyPlane(IN UINT8 *SrcPlanePtr, IN UINT8 *DestPlanePtr, IN UINTN PixelCount);
 
 EG_IMAGE * egDecodeBMP(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha);

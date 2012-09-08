@@ -52,15 +52,15 @@
 
 
 static EG_IMAGE *FontImage = NULL;
-UINTN FontWidth = 7;
-UINTN FontHeight = 12;
-UINTN TextHeight;
+UINT64 FontWidth = 7;
+UINT64 FontHeight = 12;
+UINT64 TextHeight;
 
 //
 // Text rendering
 //
 
-VOID egMeasureText(IN CHAR16 *Text, OUT UINTN *Width, OUT UINTN *Height)
+VOID egMeasureText(IN CHAR16 *Text, OUT UINT64 *Width, OUT UINT64 *Height)
 {
     if (Width != NULL)
         *Width = StrLen(Text) * GlobalConfig.CharWidth;
@@ -74,8 +74,8 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN WantAlpha)
   EG_IMAGE            *NewFontImage;
 //  UINTN     FontWidth;  //using global variables
 //  UINTN     FontHeight;
-  UINTN     ImageWidth, ImageHeight;
-  UINTN     x, y, Ypos, j;
+  UINT64     ImageWidth, ImageHeight;
+  UINT64     x, y, Ypos, j;
   EG_PIXEL    *PixelPtr;
   EG_PIXEL    FirstPixel;
     
@@ -100,7 +100,7 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN WantAlpha)
   FirstPixel = *PixelPtr;
   for (y=0; y<16; y++) {
     for (j=0; j<FontHeight; j++) {
-      Ypos = ((j << 4) + y) * ImageWidth;
+      Ypos = MultU64x64(LShiftU64(j, 4) + y, ImageWidth);
       for (x=0; x<ImageWidth; x++) {
        if (WantAlpha && 
            (PixelPtr->b == FirstPixel.b) &&
@@ -152,28 +152,28 @@ VOID PrepareFont(VOID)
 }
 
 VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
-                  IN UINTN PosX, IN UINTN PosY, IN UINTN Cursor)
+                  IN UINT64 PosX, IN UINT64 PosY, IN UINT64 Cursor)
 {
   EG_PIXEL        *BufferPtr;
   EG_PIXEL        *FontPixelData;
-  UINTN           BufferLineOffset, FontLineOffset;
-  UINTN           TextLength;
+  UINT64           BufferLineOffset, FontLineOffset;
+  UINT64           TextLength;
   UINTN           i, c, c1;
-  UINTN           Shift = 0;
+  UINT64           Shift = 0;
   
   // clip the text
   TextLength = StrLen(Text);
-  if (TextLength * GlobalConfig.CharWidth + PosX > CompImage->Width){
+  if ((MultU64x64(TextLength, GlobalConfig.CharWidth) + PosX) > CompImage->Width){
     if (GlobalConfig.CharWidth) {
-      TextLength = (UINT32)(CompImage->Width - PosX) / GlobalConfig.CharWidth;
+      TextLength = DivU64x64Remainder((CompImage->Width - PosX), GlobalConfig.CharWidth, 0);
     } else
-      TextLength = (UINT32)(CompImage->Width - PosX) / FontWidth;
+      TextLength = DivU64x64Remainder((CompImage->Width - PosX), FontWidth, 0);
   }
 //  DBG("TextLength =%d PosX=%d PosY=%d\n", TextLength, PosX, PosY);
   // render it
   BufferPtr = CompImage->PixelData;
   BufferLineOffset = CompImage->Width;
-  BufferPtr += PosX + PosY * BufferLineOffset;
+  BufferPtr += PosX + MultU64x64(PosY, BufferLineOffset);
   FontPixelData = FontImage->PixelData;
   FontLineOffset = FontImage->Width;
   if (GlobalConfig.CharWidth < FontWidth) {

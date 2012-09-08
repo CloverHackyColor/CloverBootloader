@@ -2759,16 +2759,15 @@ static UINT32 read32(UINT8 *ptr, UINT16 offset)
 }
 #endif
 
-EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, VOID* rom, UINT8 arch)
+EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, VOID* rom, UINT16 arch)
 {
-	DBG("read_nVidia_ROM\n");
 	EFI_STATUS Status;
 	EFI_PCI_IO_PROTOCOL		*PciIo;
 	PCI_TYPE00				Pci;
-  
   UINT32 vbios_vram = 0;
   UINT32 old_bar0_pramin = 0;
   
+  DBG("read_nVidia_ROM\n"); 
   Status = gBS->OpenProtocol(nvda_dev->DeviceHandle, &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
   if (EFI_ERROR(Status)) return EFI_NOT_FOUND;
   Status = PciIo->Pci.Read(PciIo,EfiPciIoWidthUint32, 0, sizeof(Pci) / sizeof(UINT32), &Pci);
@@ -2840,12 +2839,12 @@ EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, VOID* rom, UINT8 arch)
 
 EFI_STATUS read_nVidia_PROM(pci_dt_t *nvda_dev, VOID* rom)
 {
-	DBG("PROM\n");
 	EFI_STATUS Status;
 	EFI_PCI_IO_PROTOCOL		*PciIo;
 	PCI_TYPE00				Pci;
   UINT32 value;
   
+  DBG("PROM\n");
   Status = gBS->OpenProtocol(nvda_dev->DeviceHandle, &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
   if (EFI_ERROR(Status)) return EFI_NOT_FOUND;
   Status = PciIo->Pci.Read(PciIo,EfiPciIoWidthUint32, 0, sizeof(Pci) / sizeof(UINT32), &Pci);
@@ -2889,10 +2888,23 @@ EFI_STATUS read_nVidia_PROM(pci_dt_t *nvda_dev, VOID* rom)
   return EFI_SUCCESS;										 
 }
 
-
 static INT32 patch_nvidia_rom(UINT8 *rom)
 {
   UINT8 num_outputs = 0, i = 0;
+  UINT8 dcbtable_version;
+  UINT8 headerlength	 = 0;
+  UINT8 numentries		 = 0;
+  UINT8 recordlength	 = 0;
+  UINT8 channel1 = 0, channel2 = 0;
+  UINT16 dcbptr;
+  UINT8 *dcbtable;
+  UINT8 *togroup;
+  INT32 has_lvds = FALSE;
+  struct dcbentry {
+	 UINT8 type;
+	 UINT8 index;
+	 UINT8 *heads;
+  }entries[MAX_NUM_DCB_ENTRIES];
   
 	DBG("patch_nvidia_rom\n");
 	if (!rom || (rom[0] != 0x55 && rom[1] != 0xaa)) {
@@ -2900,7 +2912,7 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 		return PATCH_ROM_FAILED;
 	}
 	
-	UINT16 dcbptr = swap16(read16(rom, 0x36));
+   dcbptr = swap16(read16(rom, 0x36));
 	if(!dcbptr) {
 		DBG("no dcb table found\n");
 		return PATCH_ROM_FAILED;
@@ -2908,11 +2920,8 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 //	else
 //		DBG("dcb table at offset 0x%04x\n", dcbptr);
 	 
-	UINT8 *dcbtable		 = &rom[dcbptr];
-	UINT8 dcbtable_version = dcbtable[0];
-	UINT8 headerlength	 = 0;
-	UINT8 numentries		 = 0;
-	UINT8 recordlength	 = 0;
+	dcbtable		 = &rom[dcbptr];
+	dcbtable_version = dcbtable[0];
 	
 	if (dcbtable_version >= 0x20)
 	{
@@ -2961,13 +2970,6 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 		numentries = MAX_NUM_DCB_ENTRIES;
 	}
 	
-	struct dcbentry
-	{
-		UINT8 type;
-		UINT8 index;
-		UINT8 *heads;
-	} entries[MAX_NUM_DCB_ENTRIES];
-	
 	for (i = 0; i < numentries; i++)
 	{
 		UINT32 connection;
@@ -2985,9 +2987,6 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 		entries[num_outputs].index = num_outputs;
 		entries[num_outputs++].heads = (UINT8*)&(dcbtable[(headerlength + recordlength * i) + 1]);
 	}
-	
-	INT32 has_lvds = FALSE;
-	UINT8 channel1 = 0, channel2 = 0;
 	
 	for (i = 0; i < num_outputs; i++)
 	{
@@ -3077,8 +3076,7 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 	}
 	
 	// if we have left ungrouped outputs merge them to the empty channel
-	UINT8 *togroup;// = (channel1 ? (channel2 ? NULL : &channel2) : &channel1);
-	togroup = &channel2;
+	togroup = &channel2;// = (channel1 ? (channel2 ? NULL : &channel2) : &channel1);
 	
 	for (i = 0; i < num_outputs; i++)
 	{
@@ -3141,8 +3139,8 @@ CHAR8 *get_nvidia_model(UINT32 device_id, UINT32 subsys_id)
 
 static INT32 devprop_add_nvidia_template(DevPropDevice *device)
 {
-	DBG("devprop_add_nvidia_template\n");
 	CHAR8 tmp[16];
+	DBG("devprop_add_nvidia_template\n");
 	
 	if (!device)
 		return 0;
@@ -3173,7 +3171,7 @@ static INT32 devprop_add_nvidia_template(DevPropDevice *device)
 	}
 	
 	AsciiSPrint(tmp, 16, "Slot-%x",devices_number);
-	devprop_add_value(device, "AAPL,slot-name", (UINT8 *) tmp, AsciiStrLen(tmp));
+	devprop_add_value(device, "AAPL,slot-name", (UINT8 *) tmp, (UINT32)AsciiStrLen(tmp));
 	devices_number++;
 	
 	return 1;
@@ -3207,10 +3205,10 @@ BOOLEAN IsHexDigit (CHAR8 c) {
 }
 
 
-INT32 hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, INT32 len) //assume len = number of UINT8 values
+UINT32 hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, UINT32 len) //assume len = number of UINT8 values
 {
 	CHAR8	*p;
-	INT32	i, outlen = 0;
+	UINT32	i, outlen = 0;
 	CHAR8	buf[3];
 	
 	if (hex == NULL || bin == NULL || len <= 0 || AsciiStrLen(hex) < len * 2) {
@@ -3231,7 +3229,7 @@ INT32 hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, INT32 len) //assume len = number of
     }
 		if (!IsHexDigit(p[0]) || !IsHexDigit(p[1])) {
 			DBG("[ERROR] bin2hex '%a' syntax error\n", hex);
-			return -2;
+			return 0;
 		}
 		buf[0] = *p++;
 		buf[1] = *p++;
@@ -3242,7 +3240,7 @@ INT32 hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, INT32 len) //assume len = number of
 	return outlen;
 }
 
-UINT32 mem_detect(UINT8 nvCardType, pci_dt_t *nvda_dev)
+UINT64 mem_detect(UINT16 nvCardType, pci_dt_t *nvda_dev)
 {
 	
 	UINT64 vram_size = 0;
@@ -3294,14 +3292,14 @@ UINT32 mem_detect(UINT8 nvCardType, pci_dt_t *nvda_dev)
 
 BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 {
+   const INT32 MAX_BIOS_VERSION_LENGTH = 32;
   EFI_STATUS            Status = EFI_NOT_FOUND;
-	//DBG("setup_nvidia_devprop\n");
 	DevPropDevice	*device = NULL;
 	CHAR8					*devicepath = NULL;
 	BOOLEAN       load_vbios = gSettings.LoadVBios;
 	UINT8					*rom = NULL;
-	UINT8					nvCardType = 0;
-	UINT32				videoRam = 0;
+	UINT16					nvCardType = 0;
+	UINT64				videoRam = 0;
 	UINT32				bar[7];
 	UINT32				boot_display = 0;
 	INT32					nvPatch = 0;
@@ -3310,8 +3308,13 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   UINT8         *buffer;
   UINTN         bufferLen;
   UINTN         j, n_ports = 0;
+  INT32 i, version_start;
+  INT32 crlf_count = 0;
   option_rom_pci_header_t *rom_pci_header;
-  
+  CHAR8* s;
+  CHAR8* s1;
+  CHAR8* version_str = (CHAR8*)AllocateZeroPool(MAX_BIOS_VERSION_LENGTH);
+  //DBG("setup_nvidia_devprop\n");
 //	DBG("%x:%x\n",nvda_dev->vendor_id, nvda_dev->device_id);
 	devicepath = get_pci_dev_path(nvda_dev);
 	bar[0] = pci_config_read32(nvda_dev, PCI_BASE_ADDRESS_0);
@@ -3342,15 +3345,10 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
     }
   }  
   
-	
 	DBG("nVidia %a ", model);
 	DBG(" %dMB NV%02x [%04x:%04x] :: ", (UINT32)(videoRam >> 20),
 			   nvCardType, nvda_dev->vendor_id, nvda_dev->device_id);
 		
-
-	const INT32 MAX_BIOS_VERSION_LENGTH = 32;
-	CHAR8* version_str = (CHAR8*)AllocateZeroPool(MAX_BIOS_VERSION_LENGTH);
-	
 	if (load_vbios){
     UnicodeSPrint(FileName, 48, L"ROM\\10de_%04x.rom", nvda_dev->device_id);
     if (FileExists(OEMDir, FileName)){
@@ -3404,11 +3402,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 		}
 	
 	// get bios version
-	
 		//ZeroMem((VOID*)version_str, MAX_BIOS_VERSION_LENGTH);
-	
-	INT32 i, version_start;
-	INT32 crlf_count = 0;
 	
 	// only search the first 384 bytes
 	for (i = 0; i < 0x180; i++)
@@ -3433,8 +3427,8 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 						{
 							version_start += 8;
 						}
-						CHAR8* s = (CHAR8*)(rom + version_start);
-            CHAR8* s1 = version_str;
+						s = (CHAR8*)(rom + version_start);
+            s1 = version_str;
             while ((*s > ' ') && (*s < 'z') && ((INTN)(s1 - version_str) < MAX_BIOS_VERSION_LENGTH)) {
               *s1++ = *s++;
             }
@@ -3495,8 +3489,8 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   } else {
     devprop_add_value(device, "VRAM,totalsize", (UINT8*)&videoRam, 4);
   }	
-	devprop_add_value(device, "model", (UINT8*)model, AsciiStrLen(model));
-	devprop_add_value(device, "rom-revision", (UINT8*)version_str, AsciiStrLen(version_str));
+	devprop_add_value(device, "model", (UINT8*)model, (UINT32)AsciiStrLen(model));
+	devprop_add_value(device, "rom-revision", (UINT8*)version_str, (UINT32)AsciiStrLen(version_str));
   if ((gSettings.Dcfg[0] != 0) && (gSettings.Dcfg[1] != 0)) {
     devprop_add_value(device, "@0,display-cfg", &gSettings.Dcfg[0], DCFG0_LEN);
     devprop_add_value(device, "@1,display-cfg", &gSettings.Dcfg[4], DCFG1_LEN);

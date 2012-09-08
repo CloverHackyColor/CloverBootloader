@@ -121,7 +121,7 @@ LoadOpRomImage (
 VOID
 RomDecode (
   IN PCI_IO_DEVICE   *PciDevice,
-  IN UINTN           RomBarIndex,
+  IN UINT32           RomBarIndex,
   IN UINT32          RomBar,
   IN BOOLEAN         Enable
   );

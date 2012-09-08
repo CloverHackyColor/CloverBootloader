@@ -369,7 +369,7 @@ LoadOpRomImage (
   IN UINT64          RomBase
   )
 {
-  UINTN                     RomBarIndex;
+  UINT32                     RomBarIndex;
   UINT8                     Indicator;
   UINT16                    OffsetPcir;
   UINT32                    RomBarOffset;
@@ -564,7 +564,7 @@ LoadOpRomImage (
 VOID
 RomDecode (
   IN PCI_IO_DEVICE   *PciDevice,
-  IN UINTN           RomBarIndex,
+  IN UINT32          RomBarIndex,
   IN UINT32          RomBar,
   IN BOOLEAN         Enable
   )

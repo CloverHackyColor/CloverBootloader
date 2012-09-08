@@ -161,6 +161,8 @@ GenMemoryMap (
   UINTN                 Index;
   UINTN                 Attr;
   UINT64                Ceiling;
+  UINT64                EBDAaddr = 0x9E000;
+  UINT64                EBDAsize = 2;
 
   Ceiling = 0xFFFFFFFF;
   for (Index = 0; Index < BiosMemoryMap->MemoryMapSize / sizeof(BIOS_MEMORY_MAP_ENTRY); Index++) {
@@ -238,8 +240,6 @@ GenMemoryMap (
    // what about fool proof?
    for now I am proposing 9F000 and 1 page  = 4kb. It is not common case.
   */
-  UINT64 EBDAaddr = 0x9E000;
-  UINT64 EBDAsize = 2;
   EfiAddMemoryDescriptor (
                           NumberOfMemoryMapEntries,
                           EfiMemoryDescriptor,

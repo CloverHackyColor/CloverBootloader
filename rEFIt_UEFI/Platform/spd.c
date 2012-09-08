@@ -111,7 +111,7 @@ UINT8 smb_read_byte_intel(UINT32 base, UINT8 adr, UINT8 cmd)
     while ( IoRead8(base + SMBHSTSTS) & 0x01)    // wait until read
     {  
      t2 = AsmReadTsc(); //rdtsc(l2, h2);
-     t = DivU64x32((t2 - t1), DivU64x32(gCPUStructure.TSCFrequency, 1000));
+     t = DivU64x64Remainder((t2 - t1), DivU64x32(gCPUStructure.TSCFrequency, 1000), 0);
      if (t > 5)
       return 0xFF;                  // break
     }
@@ -125,7 +125,7 @@ UINT8 smb_read_byte_intel(UINT32 base, UINT8 adr, UINT8 cmd)
  	while (!( IoRead8(base + SMBHSTSTS) & 0x02))		// wait til command finished
 	{	
 		t2 = AsmReadTsc();
-		t = DivU64x32(t2 - t1, DivU64x32(gCPUStructure.TSCFrequency, 1000));
+		t = DivU64x64Remainder((t2 - t1), DivU64x32(gCPUStructure.TSCFrequency, 1000), 0);
 		if (t > 5)
 			break;									// break after 5ms
     }
@@ -165,9 +165,9 @@ CHAR8* getVendorName(RAM_SLOT_INFO* slot, UINT32 base, UINT8 slot_num)
         if(spd[64]==0x7f) {
             for (i=64; i<72 && spd[i]==0x7f;i++) {
 			  bank++;
-			  READ_SPD(spd, base, slot_num,i+1); // prefetch next spd byte to read for next loop
+			  READ_SPD(spd, base, slot_num, (UINT8)(i+1)); // prefetch next spd byte to read for next loop
 			}
-			READ_SPD(spd, base, slot_num,i);
+			READ_SPD(spd, base, slot_num, (UINT8)i);
             code = spd[i];
         } else {
             code = spd[64]; 
@@ -236,11 +236,11 @@ CHAR8* getDDRSerial(UINT8* spd)
 }
 
 /** Get DDR3 or DDR2 Part Number, always return a valid ptr */
-CHAR8* getDDRPartNum(UINT8* spd, UINT32 base, INTN slot)
+CHAR8* getDDRPartNum(UINT8* spd, UINT32 base, UINT8 slot)
 {
-	CHAR8* asciiPartNo; //[32];
-	asciiPartNo = AllocatePool(32);
-	INTN i, start=0, index = 0;
+   UINT8 i, start=0, index = 0;
+   CHAR8 c;
+	CHAR8* asciiPartNo = AllocatePool(32); //[32];
 
     if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR3) {
 		start = 128;
@@ -251,7 +251,6 @@ CHAR8* getDDRPartNum(UINT8* spd, UINT32 base, INTN slot)
 	
     // Check that the spd part name is zero terminated and that it is ascii:
     ZeroMem(asciiPartNo, 32);  //sizeof(asciiPartNo));
-	CHAR8 c;
 	for (i=start; i < start + 32; i++) {
 		READ_SPD(spd, base, slot, i); // only read once the corresponding model part (ddr3 or ddr2)
 		c = spd[i];
@@ -271,8 +270,7 @@ INTN mapping []= {0,2,1,3,4,6,5,7,8,10,9,11};
 VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
 { 
 	EFI_STATUS		Status;
-  INTN			i, speed;
-  UINT8			spd_size, spd_type;
+  UINT8			i, speed, spd_size, spd_type;
   UINT32			base, mmio, hostc;
 	UINT16			Command;
   RAM_SLOT_INFO*  slot;
@@ -389,7 +387,7 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
       slot->SerialNo = getDDRSerial(slot->spd);
 			//XXX - when we can FreePool allocated for these buffers?
       // determine spd speed
-      speed = getDDRspeedMhz(slot->spd);
+      speed = (UINT8)getDDRspeedMhz(slot->spd);
 			DBG("DDR speed %dMHz \n", speed);
       if (slot->Frequency<speed) slot->Frequency = speed;
 			
@@ -423,7 +421,7 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
     }
     
     // laptops sometimes show slot 0 and 2 with slot 1 empty when only 2 slots are presents so:
-    gDMI->DIMM[i]= (i>0 && gRAM->DIMM[1].InUse==FALSE && fullBanks && gDMI->CntMemorySlots == 2)?mapping[i] : i; // for laptops case, mapping setup would need to be more generic than this
+    gDMI->DIMM[i]= (UINT32)((i>0 && gRAM->DIMM[1].InUse==FALSE && fullBanks && gDMI->CntMemorySlots == 2)?mapping[i] : i); // for laptops case, mapping setup would need to be more generic than this
     
 		slot->spd = NULL;
     

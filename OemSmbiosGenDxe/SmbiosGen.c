@@ -132,7 +132,7 @@ InstallMiscSmbios (
 	//
   for (j=0; j<256; j++) {
     for (i=0; i<128; i++) {
-      SmbiosTable = GetSmbiosTableFromType ((SMBIOS_TABLE_ENTRY_POINT *)Smbios, j, i);
+      SmbiosTable = GetSmbiosTableFromType ((SMBIOS_TABLE_ENTRY_POINT *)Smbios, (UINT8)j, i);
       if (SmbiosTable.Raw == NULL) {			
         break;
       }		

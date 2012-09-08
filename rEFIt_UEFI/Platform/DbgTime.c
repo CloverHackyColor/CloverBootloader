@@ -57,16 +57,16 @@ VOID DbgTimeInit(VOID)
 // Returned buffer should not be released.
 CHAR8* DbgTime(VOID)
 {
-	UINTN    dTStart;
-	UINTN    dTLast;
+	UINT64    dTStart;
+	UINT64    dTLast;
 	UINT64    CurrentTsc;
 	
 	DbgTTxt[0] = '\0';
 	
 	if (DbgTFreqDivMs) {
 		CurrentTsc = AsmReadTsc();
-		dTStart = (UINTN)DivU64x32(CurrentTsc - DbgTStartTsc, DbgTFreqDivMs);
-		dTLast = (UINTN)DivU64x32(CurrentTsc - DbgTLastTsc, DbgTFreqDivMs);
+		dTStart = ((CurrentTsc - DbgTStartTsc) / DbgTFreqDivMs);
+		dTLast = ((CurrentTsc - DbgTLastTsc) / DbgTFreqDivMs);
 		AsciiSPrint(DbgTTxt, sizeof(DbgTTxt),
 					"%ld:%03ld - %ld:%03ld",
 					(dTStart / 1000), (dTStart % 1000),

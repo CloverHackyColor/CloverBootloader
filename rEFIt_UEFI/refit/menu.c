@@ -98,8 +98,8 @@ static EG_IMAGE *SelectionImages[4] = { NULL, NULL, NULL, NULL };
 static EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0 };
 static EG_IMAGE *TextBuffer = NULL;
 
-static UINTN row0Count, row0PosX, row0PosXRunning;
-static UINTN row1Count, row1PosX, row1PosXRunning;
+static INTN row0Count, row0PosX, row0PosXRunning;
+static INTN row1Count, row1PosX, row1PosXRunning;
 static UINTN *itemPosX = NULL;
 static UINTN row0PosY, row1PosY, textPosY;
 
@@ -319,7 +319,7 @@ VOID ApplyInputs(VOID)
   }
   i++; //14
   if (InputItems[i].Valid) {
-    gSettings.QPI = StrDecimalToUintn(InputItems[i].SValue);
+    gSettings.QPI = (UINT16)StrDecimalToUintn(InputItems[i].SValue);
     DBG("Apply ProcessorInterconnectSpeed=%d\n", gSettings.QPI);
   }
   i++; //15
@@ -336,11 +336,11 @@ VOID ApplyInputs(VOID)
   }
   i++; //18
   if (InputItems[i].Valid) {
-    gSettings.BacklightLevel = (UINT32)StrHexToUint64(InputItems[i].SValue);
+    gSettings.BacklightLevel = (UINT16)StrHexToUint64(InputItems[i].SValue);
   }  
   i++; //19
   if (InputItems[i].Valid) {
-    gSettings.BusSpeed = StrDecimalToUintn(InputItems[i].SValue);
+    gSettings.BusSpeed = (UINT32)StrDecimalToUintn(InputItems[i].SValue);
     DBG("Apply BusSpeed=%d\n", gSettings.BusSpeed);
   }
   
@@ -784,9 +784,9 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
           }
           break;
         case SCAN_F6:
-          Status = egSaveFile(SelfRootDir, VBIOS_BIN, (UINT8*)0xc0000, 0x20000);
+          Status = egSaveFile(SelfRootDir, VBIOS_BIN, (UINT8*)(UINTN)0xc0000, 0x20000);
           if (EFI_ERROR(Status)) {
-            Status = egSaveFile(NULL, VBIOS_BIN, (UINT8*)0xc0000, 0x20000);
+            Status = egSaveFile(NULL, VBIOS_BIN, (UINT8*)(UINTN)0xc0000, 0x20000);
           }
           break;
         case SCAN_F10:
@@ -982,9 +982,9 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         SaveOemDsdt(TRUE); //full patch
         break;
       case SCAN_F6:
-        Status = egSaveFile(SelfRootDir, VBIOS_BIN, (UINT8*)0xc0000, 0x20000);
+        Status = egSaveFile(SelfRootDir, VBIOS_BIN, (UINT8*)(UINTN)0xc0000, 0x20000);
         if (EFI_ERROR(Status)) {
-          Status = egSaveFile(NULL, VBIOS_BIN, (UINT8*)0xc0000, 0x20000);
+          Status = egSaveFile(NULL, VBIOS_BIN, (UINT8*)(UINTN)0xc0000, 0x20000);
         }
         break;
       case SCAN_F10:
@@ -1158,7 +1158,7 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 // graphical generic style
 //
 
-VOID DrawMenuText(IN CHAR16 *Text, IN UINTN SelectedWidth, IN UINTN XPos, IN UINTN YPos, IN UINTN Cursor)
+VOID DrawMenuText(IN CHAR16 *Text, IN UINT64 SelectedWidth, IN UINT64 XPos, IN UINT64 YPos, IN UINT64 Cursor)
 {
   if (TextBuffer == NULL)
     TextBuffer = egCreateImage(LAYOUT_TEXT_WIDTH, TextHeight, FALSE);
@@ -1181,13 +1181,13 @@ VOID DrawMenuText(IN CHAR16 *Text, IN UINTN SelectedWidth, IN UINTN XPos, IN UIN
   BltImage(TextBuffer, XPos, YPos);
 }
 
-static UINTN MenuWidth, EntriesPosX, EntriesPosY, TimeoutPosY;
+static UINT64 MenuWidth, EntriesPosX, EntriesPosY, TimeoutPosY;
 
 static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
   INTN i;
-  UINTN ItemWidth = 0;
-  UINTN X;  
+  UINT64 ItemWidth = 0;
+  UINT64 X;  
   UINTN VisibleHeight = 0; //assume vertical layout
   
   switch (Function) {
@@ -1196,8 +1196,8 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       // TODO: calculate available screen space
       //
          
-      EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET + TextHeight * 2;
-      VisibleHeight = (LAYOUT_TOTAL_HEIGHT - LAYOUT_BANNER_YOFFSET - TextHeight * 2)/ TextHeight;
+      EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET + (TextHeight << 1);
+      VisibleHeight = (UINTN)MultU64x64((LAYOUT_TOTAL_HEIGHT - LAYOUT_BANNER_YOFFSET - (TextHeight << 1)), TextHeight);
 //        DBG("MENU_FUNCTION_INIT 1 EntriesPosY=%d VisibleHeight=%d\n", EntriesPosY, VisibleHeight);
       InitScroll(State, Screen->EntryCount, Screen->EntryCount, VisibleHeight);              
       // determine width of the menu
@@ -1229,7 +1229,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       else
         EntriesPosX = (UGAWidth - MenuWidth) >> 1;
       //   EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET + TextHeight * 2;
-      TimeoutPosY = EntriesPosY + (Screen->EntryCount + 1) * TextHeight;
+      TimeoutPosY = EntriesPosY + MultU64x64((Screen->EntryCount + 1), TextHeight);
          
       // initial painting
       SwitchToGraphicsAndClear();
@@ -1268,12 +1268,12 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
           StrCat(ResultString, L" ");
           //Slice - suppose to use Row as Cursor in text
           DrawMenuText(ResultString, (i == State->CurrentSelection) ? MenuWidth : 0,
-                       EntriesPosX, EntriesPosY + i * TextHeight, TitleLen + Screen->Entries[i]->Row);
+                       EntriesPosX, EntriesPosY + MultU64x64(i, TextHeight), TitleLen + Screen->Entries[i]->Row);
         }
         else {
 //          DBG("paint entry %d title=%s\n", i, Screen->Entries[i]->Title);
           DrawMenuText(Screen->Entries[i]->Title, (i == State->CurrentSelection) ? MenuWidth : 0,
-                       EntriesPosX, EntriesPosY + i * TextHeight, 0xFFFF);
+                       EntriesPosX, EntriesPosY + MultU64x64(i, TextHeight), 0xFFFF);
         }
       }
       break;
@@ -1288,12 +1288,12 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->SValue + ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->LineShift);
         StrCat(ResultString, L" ");
         DrawMenuText(ResultString, 0,
-                     EntriesPosX, EntriesPosY + State->LastSelection * TextHeight,
+                     EntriesPosX, EntriesPosY + MultU64x64(State->LastSelection, TextHeight),
                      TitleLen + Screen->Entries[State->LastSelection]->Row);
       }
       else {
         DrawMenuText(Screen->Entries[State->LastSelection]->Title, 0,
-                     EntriesPosX, EntriesPosY + State->LastSelection * TextHeight, 0xFFFF);
+                     EntriesPosX, EntriesPosY + MultU64x64(State->LastSelection, TextHeight), 0xFFFF);
       }
             //Current selection
       if (Screen->Entries[State->CurrentSelection]->Tag == TAG_INPUT) {
@@ -1304,13 +1304,13 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         StrCat(ResultString, L" ");
 //        DBG("MENU_FUNCTION_PAINT_SELECTION 5\n");
         DrawMenuText(ResultString, MenuWidth,
-                     EntriesPosX, EntriesPosY + State->CurrentSelection * TextHeight,
+                     EntriesPosX, EntriesPosY + MultU64x64(State->CurrentSelection, TextHeight),
                      TitleLen + Screen->Entries[State->CurrentSelection]->Row);
       }
       else {
 //        DBG("MENU_FUNCTION_PAINT_SELECTION 6\n");
         DrawMenuText(Screen->Entries[State->CurrentSelection]->Title, MenuWidth,
-                     EntriesPosX, EntriesPosY + State->CurrentSelection * TextHeight, 0xFFFF);
+                     EntriesPosX, EntriesPosY + MultU64x64(State->CurrentSelection, TextHeight), 0xFFFF);
       }
       
       break;
@@ -1347,9 +1347,9 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, UINTN X
                          MainImage, (Entry->Row == 0) ? Entry->BadgeImage:NULL, XPos, YPos);
 }
 
-static VOID DrawMainMenuText(IN CHAR16 *Text, IN UINTN XPos, IN UINTN YPos)
+static VOID DrawMainMenuText(IN CHAR16 *Text, IN UINT64 XPos, IN UINT64 YPos)
 {
-    UINTN TextWidth;
+    UINT64 TextWidth;
     
     if (TextBuffer == NULL)
         TextBuffer = egCreateImage(LAYOUT_TEXT_WIDTH, TextHeight, FALSE);
@@ -1364,36 +1364,36 @@ static VOID DrawMainMenuText(IN CHAR16 *Text, IN UINTN XPos, IN UINTN YPos)
 
 static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
-  UINTN i; 
+  INTN i; 
 //  CHAR16* p;
 //  UINTN X;
   
   switch (Function) {
       
     case MENU_FUNCTION_INIT:
-      MaxItemOnScreen = (UGAWidth - ROW0_SCROLLSIZE * 2) / (ROW0_TILESIZE + TILE_XSPACING); //8
+      MaxItemOnScreen = (INTN)MultU64x32((UGAWidth - ROW0_SCROLLSIZE * 2), (ROW0_TILESIZE + TILE_XSPACING)); //8
       row0PosX = 0;
       row1PosX = Screen->EntryCount;
       // layout
       row0Count = 0; //Nr items in row0
       row1Count = 0;
-      for (i = 0; i < Screen->EntryCount; i++) {
+      for (i = 0; i < (INTN)Screen->EntryCount; i++) {
         if (Screen->Entries[i]->Row == 0) {
           row0Count++;
-          CONSTRAIN_MIN(row0PosX, i);
+          CONSTRAIN_MIN(row0PosX, (INTN)i);
         } else {
           row1Count++;
-          CONSTRAIN_MAX(row1PosX, i);
+          CONSTRAIN_MAX(row1PosX, (INTN)i);
         }
       }
       if (row0PosX > row1PosX) { //9<10
         MsgLog("BUG! (index_row0 > index_row1) Needed sorting\n");
       }
       InitScroll(State, row0Count, Screen->EntryCount, MaxItemOnScreen);
-      row0PosX = (UGAWidth + TILE_XSPACING - (ROW0_TILESIZE + TILE_XSPACING) *
+      row0PosX = (INTN)(UGAWidth + TILE_XSPACING - (ROW0_TILESIZE + TILE_XSPACING) *
                   ((MaxItemOnScreen < row0Count)?MaxItemOnScreen:row0Count)) >> 1;
-      row0PosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET;
-      row1PosX = (UGAWidth + TILE_XSPACING - (ROW1_TILESIZE + TILE_XSPACING) * row1Count) >> 1;
+      row0PosY = (INTN)((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET;
+      row1PosX = (INTN)(UGAWidth + TILE_XSPACING - (ROW1_TILESIZE + TILE_XSPACING) * row1Count) >> 1;
       row1PosY = row0PosY + ROW0_TILESIZE + TILE_YSPACING;
       if (row1Count > 0)
         textPosY = row1PosY + ROW1_TILESIZE + TILE_YSPACING;
@@ -1407,7 +1407,7 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       row0PosXRunning = row0PosX;
       row1PosXRunning = row1PosX;
  //     DBG("EntryCount =%d\n", Screen->EntryCount);
-      for (i = 0; i < Screen->EntryCount; i++) {
+      for (i = 0; i < (INTN)Screen->EntryCount; i++) {
         if (Screen->Entries[i]->Row == 0) {
           itemPosX[i] = row0PosXRunning;
           row0PosXRunning += ROW0_TILESIZE + TILE_XSPACING;
@@ -1966,7 +1966,7 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
 {
     MENU_STYLE_FUNC Style = TextMenuStyle;
     MENU_STYLE_FUNC MainStyle = TextMenuStyle;
-    REFIT_MENU_ENTRY *TempChosenEntry;
+    REFIT_MENU_ENTRY *TempChosenEntry = 0;
     UINTN MenuExit = 0;
     INTN DefaultEntryIndex = DefaultSelection;
     INTN SubMenuIndex;

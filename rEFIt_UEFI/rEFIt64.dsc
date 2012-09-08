@@ -19,7 +19,7 @@
   PLATFORM_VERSION               = 0.92
   DSC_SPECIFICATION              = 0x00010006
   OUTPUT_DIRECTORY               = Build/rEFIt
-  SUPPORTED_ARCHITECTURES        = IA32|X64
+  SUPPORTED_ARCHITECTURES        = X64
   BUILD_TARGETS                  = DEBUG|RELEASE
   SKUID_IDENTIFIER               = DEFAULT
 
@@ -71,6 +71,7 @@
 	Clover/rEFIt_UEFI/refit64.inf
 
 [BuildOptions]
+  MSFT:*_*_*_CC_FLAGS = /wd4028 /FAcs -DMDEPKG_NDEBUG
   XCODE:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
   GCC:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
 

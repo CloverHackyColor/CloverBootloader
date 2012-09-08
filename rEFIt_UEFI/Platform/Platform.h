@@ -429,17 +429,21 @@ struct aml_chunk
 
 typedef struct aml_chunk AML_CHUNK;
 
+struct p_state_vid_fid
+{
+	UINT8 VID;	// Voltage ID
+	UINT8 FID;	// Frequency ID
+};
+
+union p_state_control
+{
+	UINT16 Control;
+	struct p_state_vid_fid VID_FID;
+};
+
 struct p_state 
 {
-	union 
-	{
-		UINT16 Control;
-		struct 
-		{
-			UINT8 VID;	// Voltage ID
-			UINT8 FID;	// Frequency ID
-		};
-	};
+	union p_state_control Control;
 	
 	UINT32		CID;		// Compare ID
 	UINT32	Frequency;
@@ -460,6 +464,7 @@ typedef enum {
 	kTagTypeArray
 } TAG_TYPE;
 
+#pragma pack(push)
 #pragma pack(1)
 
 struct Symbol {
@@ -771,7 +776,7 @@ typedef struct {
   BOOLEAN           Valid;
 } SLOT_DEVICE;
 
-#pragma pack(0)
+#pragma pack(pop)
 extern CHAR8                    *msgbuf;
 extern CHAR8                    *msgCursor;
 extern SMBIOS_STRUCTURE_POINTER	SmbiosTable;
@@ -854,7 +859,7 @@ VOID        ApplyInputs(VOID);
 
 EFI_STATUS  StrToGuid (IN  CHAR16   *Str, OUT EFI_GUID *Guid);
 EFI_STATUS  StrToGuidLE (IN  CHAR16   *Str, OUT EFI_GUID *Guid);
-INT32       hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, INT32 len);
+UINT32       hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, UINT32 len);
 UINT8       hexstrtouint8 (CHAR8* buf); //one or two hex letters to one byte
 
 EFI_STATUS  InitializeConsoleSim (VOID);

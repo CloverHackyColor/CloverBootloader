@@ -220,18 +220,18 @@ UINT64* ScanXSDT (UINT32 Signature)
 	EFI_ACPI_DESCRIPTION_HEADER		*Table;
 	UINTN							Index;
 	UINT32							EntryCount;
-	UINT64							*BasePtr;
+	CHAR8							*BasePtr;
 	UINT64							Entry64;
 
 	EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
-	BasePtr = (UINT64*)(&(Xsdt->Entry));
-	for (Index = 0; Index < EntryCount; Index ++, BasePtr++) 
+	BasePtr = (CHAR8*)(&(Xsdt->Entry));
+	for (Index = 0; Index < EntryCount; Index ++, BasePtr+=sizeof(UINT64)) 
 	{
 		CopyMem (&Entry64, (VOID*)BasePtr, sizeof(UINT64)); //value from BasePtr->
 		Table = (EFI_ACPI_DESCRIPTION_HEADER *)((UINTN)(Entry64));
 		if (Table->Signature==Signature) 
 		{
-			return BasePtr; //pointer to the table entry
+			return (UINT64 *)BasePtr; //pointer to the table entry
 		}
 	}
 	return NULL;
@@ -249,7 +249,7 @@ VOID DropTableFromRSDT (UINT32 Signature)
   
   // Если адрес RSDT < адреса XSDT и хвост RSDT наползает на XSDT, то подрезаем хвост RSDT до начала XSDT
   if (((UINTN)Rsdt < (UINTN)Xsdt) && (((UINTN)Rsdt + Rsdt->Header.Length) > (UINTN)Xsdt)) {
-    Rsdt->Header.Length = ((VOID*)Xsdt - (VOID*)Rsdt) & ~3;
+    Rsdt->Header.Length = ((UINTN)Xsdt - (UINTN)Rsdt) & ~3;
     DBG("Cropped Rsdt->Header.Length=%d\n", Rsdt->Header.Length);
   }
   
@@ -260,7 +260,7 @@ VOID DropTableFromRSDT (UINT32 Signature)
 	for (Index = 0; Index < EntryCount; Index++, EntryPtr++) {
     if (*EntryPtr == 0) {
       if (DoubleZero) {
-        Rsdt->Header.Length = sizeof(UINT32) * Index + sizeof(EFI_ACPI_DESCRIPTION_HEADER);
+        Rsdt->Header.Length = (UINT32)(sizeof(UINT32) * Index + sizeof(EFI_ACPI_DESCRIPTION_HEADER));
         DBG("DoubleZero in RSDT table\n");
         break;
       }
@@ -297,14 +297,14 @@ VOID DropTableFromXSDT (UINT32 Signature)
 	EFI_ACPI_DESCRIPTION_HEADER     *Table;
 	UINTN               Index, Index2;
 	UINT32							EntryCount;
-	UINT64							*BasePtr, *Ptr, *Ptr2;
+	CHAR8							*BasePtr, *Ptr, *Ptr2;
 	UINT64							Entry64;
   CHAR8 sign[5];
   CHAR8 OTID[9];
   BOOLEAN 			DoubleZero = FALSE;
   // Если адрес XSDT < адреса RSDT и хвост XSDT наползает на RSDT, то подрезаем хвост XSDT до начала RSDT
   if (((UINTN)Xsdt < (UINTN)Rsdt) && (((UINTN)Xsdt + Xsdt->Header.Length) > (UINTN)Rsdt)) {
-    Xsdt->Header.Length = ((VOID*)Rsdt - (VOID*)Xsdt) & ~3; //align to 4 bytes
+    Xsdt->Header.Length = ((UINTN)Rsdt - (UINTN)Xsdt) & ~3; //align to 4 bytes
     DBG("Cropped Xsdt->Header.Length=%d\n", Xsdt->Header.Length);
   }
   
@@ -314,11 +314,11 @@ VOID DropTableFromXSDT (UINT32 Signature)
     DBG("BUG! Too many XSDT entries \n");
     EntryCount = 50;
   }
-	BasePtr = (UINT64*)(&(Xsdt->Entry));
-	for (Index = 0; Index < EntryCount; Index++, BasePtr++) {
+	BasePtr = (CHAR8*)(&(Xsdt->Entry));
+	for (Index = 0; Index < EntryCount; Index++, BasePtr+=sizeof(UINT64)) {
     if (*BasePtr == 0) {
       if (DoubleZero) {
-        Xsdt->Header.Length = sizeof(UINT64) * Index + sizeof(EFI_ACPI_DESCRIPTION_HEADER);
+        Xsdt->Header.Length = (UINT32)(sizeof(UINT64) * Index + sizeof(EFI_ACPI_DESCRIPTION_HEADER));
         DBG("DoubleZero in XSDT table\n");
         break;
       }
@@ -564,9 +564,9 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 	UINTN					Length;
 	CHAR8					Signature[9];
 	UINT32				*EntryPtr32;
-	UINT64				*EntryPtr64;
+	CHAR8 				*EntryPtr;
 	UINTN					EntryCount;
-	INTN					Index;
+	UINTN					Index;
 	UINTN					SsdtCount;
 	
 	
@@ -675,9 +675,10 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 		DBG("  Tables in Xsdt: %d\n", EntryCount); 
 		
 		// iterate over table entries
-		EntryPtr64 = (UINT64*)&Xsdt->Entry;
+		EntryPtr = (CHAR8*)&Xsdt->Entry;
 		SsdtCount = 0;
-		for (Index = 0; Index < EntryCount; Index++, EntryPtr64++) {
+		for (Index = 0; Index < EntryCount; Index++, EntryPtr+=sizeof(UINT64)) {
+         UINT64	*EntryPtr64 = (UINT64 *)EntryPtr;
 			DBG("  %d.", Index);
 			
 			// skip NULL entries
@@ -938,6 +939,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 	CHAR16*               PathPatched   = L"\\EFI\\ACPI\\patched";
 	CHAR16*               PathDsdt;    //  = L"\\DSDT.aml";
   CHAR16*               PathDsdtMini  = L"\\EFI\\ACPI\\mini\\DSDT.aml";
+  CHAR16*               PatchedAPIC = L"\\EFI\\ACPI\\origin\\APIC-p.aml";
   //	CHAR16*						path = NULL;
 	UINT32*      	 			  rf = NULL;
 	UINT64*       				xf = NULL;
@@ -947,7 +949,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   EFI_FILE      				*RootDir;
   UINT32                eCntR; //, eCntX;
   UINT32                *pEntryR;
-  UINT64                *pEntryX;
+  CHAR8                 *pEntry;
   EFI_ACPI_DESCRIPTION_HEADER *TableHeader;
   // -===== APIC =====-
   EFI_ACPI_DESCRIPTION_HEADER                           *ApicTable;
@@ -959,11 +961,10 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   UINTN             ApicCPUNum;
   UINT8             *SubTable;
   BOOLEAN           DsdtLoaded = FALSE;
-  
+  INTN              ApicCPUBase = 0;
+  CHAR16*           AcpiOemPath = PoolPrint(L"%s\\ACPI\\patched", OEMPath);
   PathDsdt = PoolPrint(L"\\%s", gSettings.DsdtName);
   
-  CHAR16*     AcpiOemPath = PoolPrint(L"%s\\ACPI\\patched", OEMPath);
-	
   if (gFirmwareClover) {
     // although it work on Aptio, no need for the following on other UEFis
     
@@ -1091,14 +1092,15 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       Xsdt->Header.CreatorId = Rsdt->Header.CreatorId;
       Xsdt->Header.CreatorRevision = Rsdt->Header.CreatorRevision;
       pEntryR = (UINT32*)(&(Rsdt->Entry));
-      pEntryX = (UINT64*)(&(Xsdt->Entry));
+      pEntry = (CHAR8*)(&(Xsdt->Entry));
       for (Index = 0; Index < eCntR; Index ++) 
       {
+        UINT64  *pEntryX = (UINT64 *)pEntry;
         DBG("RSDT entry = 0x%x\n", *pEntryR);
         if (*pEntryR != 0) {
           *pEntryX = 0;
           CopyMem ((VOID*)pEntryX, (VOID*)pEntryR, sizeof(UINT32));
-          pEntryR++;pEntryX++;
+          pEntryR++;pEntry+=sizeof(UINT64);
         } else {
           DBG("... skip it\n");
           Xsdt->Header.Length -= sizeof(UINT64);
@@ -1123,8 +1125,8 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   Status = gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);		
   if(!EFI_ERROR(Status))
   {
-    newFadt = (EFI_ACPI_4_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)BufferPtr;
     UINT32 oldLength = ((EFI_ACPI_DESCRIPTION_HEADER*)FadtPointer)->Length;
+    newFadt = (EFI_ACPI_4_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)BufferPtr;
     DBG("old FADT length=%x\n", oldLength);
     CopyMem((UINT8*)newFadt, (UINT8*)FadtPointer, oldLength); //old data
     newFadt->Header.Length = 0xF4; 				
@@ -1151,7 +1153,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     //ACPIspec said that if Xdsdt !=0 then Dsdt must be =0. But real Mac no! Both values present
     if (BiosDsdt) {
       newFadt->XDsdt = BiosDsdt;
-      newFadt->Dsdt = BiosDsdt;
+      newFadt->Dsdt = (UINT32)BiosDsdt;
     } else 
       if (newFadt->Dsdt) {
         newFadt->XDsdt = (UINT64)(newFadt->Dsdt);
@@ -1368,8 +1370,8 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   
   //find other ACPI tables
   for (Index = 0; Index < NUM_TABLES; Index++) {
-    Status = EFI_NOT_FOUND;
     CHAR16* FullName = PoolPrint(L"%s\\%s", AcpiOemPath, ACPInames[Index]);
+    Status = EFI_NOT_FOUND;
     if (FileExists(SelfRootDir, FullName)) {
       DBG("OEM table %s found\n", ACPInames[Index]);
       Status = egLoadFile(SelfRootDir, FullName, &buffer, &bufferLen);
@@ -1402,7 +1404,6 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     DBG("Abnormal CPUBase=%x will set to 0\n", CPUBase);
     CPUBase = 0;
   }
-  INTN ApicCPUBase = 0;
   ApicCPUNum = 0;  
   // 2. For absent NMI subtable
     xf = ScanXSDT(APIC_SIGN);
@@ -1474,7 +1475,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
             for (Index = 0; Index < ApicCPUNum; Index++) {
               LocalApicNMI->Type = EFI_ACPI_4_0_LOCAL_APIC_NMI;
               LocalApicNMI->Length = sizeof(EFI_ACPI_4_0_LOCAL_APIC_NMI_STRUCTURE);
-              LocalApicNMI->AcpiProcessorId = ApicCPUBase + Index;
+              LocalApicNMI->AcpiProcessorId = (UINT8)(ApicCPUBase + Index);
               LocalApicNMI->Flags = 5;
               LocalApicNMI->LocalApicLint = 1;
               LocalApicNMI++;
@@ -1489,7 +1490,6 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
           if (!EFI_ERROR(Status)) {
             DBG("New APIC table successfully inserted\n");
           }
-          CHAR16* PatchedAPIC = L"\\EFI\\ACPI\\origin\\APIC-p.aml";
           Status = egSaveFile(SelfRootDir, PatchedAPIC, (UINT8 *)ApicTable, ApicTable->Length);
           if (EFI_ERROR(Status)) {
             Status = egSaveFile(NULL, PatchedAPIC,  (UINT8 *)ApicTable, ApicTable->Length);

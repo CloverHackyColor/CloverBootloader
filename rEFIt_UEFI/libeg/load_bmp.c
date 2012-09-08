@@ -204,24 +204,24 @@ EG_IMAGE * egDecodeBMP(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ico
 // Save BMP image
 //
 
-VOID egEncodeBMP(IN EG_IMAGE *Image, OUT UINT8 **FileDataReturn, OUT UINTN *FileDataLengthReturn)
+VOID egEncodeBMP(IN EG_IMAGE *Image, OUT UINT8 **FileDataReturn, OUT UINT64 *FileDataLengthReturn)
 {
     BMP_IMAGE_HEADER    *BmpHeader;
     UINT8               *FileData;
-    UINTN               FileDataLength;
+    UINT64               FileDataLength;
     UINT8               *ImagePtr;
     UINT8               *ImagePtrBase;
-    UINTN               ImageLineOffset;
+    UINT64               ImageLineOffset;
     EG_PIXEL            *PixelPtr;
-    UINTN               x, y;
+    UINT64               x, y;
     
-    ImageLineOffset = Image->Width * 3;
+    ImageLineOffset = MultU64x32(Image->Width, 3);
     if ((ImageLineOffset % 4) != 0)
         ImageLineOffset = ImageLineOffset + (4 - (ImageLineOffset % 4));
     
     // allocate buffer for file data
-    FileDataLength = sizeof(BMP_IMAGE_HEADER) + Image->Height * ImageLineOffset;
-    FileData = AllocateZeroPool(FileDataLength);
+    FileDataLength = sizeof(BMP_IMAGE_HEADER) + MultU64x64(Image->Height, ImageLineOffset);
+    FileData = AllocateZeroPool((UINTN)FileDataLength);
     if (FileData == NULL) {
         Print(L"Error allocate %d bytes\n", FileDataLength);
         *FileDataReturn = NULL;
@@ -233,11 +233,11 @@ VOID egEncodeBMP(IN EG_IMAGE *Image, OUT UINT8 **FileDataReturn, OUT UINTN *File
     BmpHeader = (BMP_IMAGE_HEADER *)FileData;
     BmpHeader->CharB = 'B';
     BmpHeader->CharM = 'M';
-    BmpHeader->Size = FileDataLength;
+    BmpHeader->Size = (UINT32)FileDataLength;
     BmpHeader->ImageOffset = sizeof(BMP_IMAGE_HEADER);
     BmpHeader->HeaderSize = 40;
-    BmpHeader->PixelWidth = Image->Width;
-    BmpHeader->PixelHeight = Image->Height;
+    BmpHeader->PixelWidth = (UINT32)Image->Width;
+    BmpHeader->PixelHeight = (UINT32)Image->Height;
     BmpHeader->Planes = 1;
     BmpHeader->BitPerPixel = 24;
     BmpHeader->CompressionType = 0;

@@ -266,7 +266,7 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
                                     OUT UINTN *ErrorInStep)
 {
   EFI_STATUS              Status, ReturnStatus;
-  EFI_HANDLE              ChildImageHandle;
+  EFI_HANDLE              ChildImageHandle = 0;
   EFI_LOADED_IMAGE        *ChildLoadedImage;
   UINTN                   DevicePathIndex;
   CHAR16                  ErrorInfo[256];
@@ -392,7 +392,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 {
   EFI_STATUS              Status;
   BOOLEAN                 BlockConOut = FALSE;
-  EFI_TEXT_STRING         ConOutOutputString;
+  EFI_TEXT_STRING         ConOutOutputString = 0;
   
   DBGT("StartLoader() start\n");
   egClearScreen(&DarkBackgroundPixel);
@@ -1225,8 +1225,8 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
     BootLogoImage = LoadOSIcon(Entry->Volume->OSIconName, L"legacy", TRUE);
     if (BootLogoImage != NULL)
         BltImageAlpha(BootLogoImage,
-                      (UGAWidth  - BootLogoImage->Width ) >> 1,
-                      (UGAHeight - BootLogoImage->Height) >> 1,
+                      RShiftU64(UGAWidth  - BootLogoImage->Width, 1),
+                      RShiftU64(UGAHeight - BootLogoImage->Height, 1),
                       &StdBackgroundPixel);
   
 /*    Status = ExtractLegacyLoaderPaths(DiscoveredPathList, MAX_DISCOVERED_PATHS, LegacyLoaderList);
@@ -1784,7 +1784,7 @@ INTN FindDefaultEntry(VOID)
   //
   
   //   search volume with name in gSettings.DefaultBoot
-  for (Index = 0; Index < MainMenu.EntryCount && MainMenu.Entries[Index]->Row == 0; Index++) {
+  for (Index = 0; ((Index < (INTN)MainMenu.EntryCount) && (MainMenu.Entries[Index]->Row == 0)); Index++) {
     
     Entry = (LOADER_ENTRY*)MainMenu.Entries[Index];
     if (!Entry->Volume) {
@@ -1817,9 +1817,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   BOOLEAN           MainLoopRunning = TRUE;
   BOOLEAN           ReinitDesktop = TRUE;
   BOOLEAN           AfterTool = FALSE;
-  REFIT_MENU_ENTRY  *ChosenEntry;
-  REFIT_MENU_ENTRY  *DefaultEntry;
-  REFIT_MENU_ENTRY  *OptionEntry;
+  REFIT_MENU_ENTRY  *ChosenEntry = NULL;
+  REFIT_MENU_ENTRY  *DefaultEntry = NULL;
+  REFIT_MENU_ENTRY  *OptionEntry = NULL;
   INTN              DefaultIndex;
   UINTN             MenuExit;
   UINTN             Size, i;

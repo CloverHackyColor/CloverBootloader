@@ -48,7 +48,7 @@ VOID WaitForSts(VOID) {
 UINT32 GetCrc32(UINT8 *Buffer, UINTN Size)
 {
   UINTN i, len;
-  UINT64 x;
+  UINT32 x;
   UINT32 *fake = (UINT32*)Buffer;
   x = 0;
   if (!fake) {
@@ -270,7 +270,7 @@ VOID *GetDataSetting(IN TagPtr dict, IN CHAR8 *propName, OUT UINTN *dataLen)
 {
     TagPtr  prop;
     UINT8   *data = NULL;
-    INTN   len;
+    UINT32   len;
     //UINTN   i;
     
     prop = GetProperty(dict, propName);
@@ -287,7 +287,7 @@ VOID *GetDataSetting(IN TagPtr dict, IN CHAR8 *propName, OUT UINTN *dataLen)
             //DBG("\n");
         } else {
             // assume data in hex encoded string property
-            len = AsciiStrLen(prop->string) / 2; // 2 chars per byte
+            len = (UINT32)(AsciiStrLen(prop->string) >> 1); // 2 chars per byte
             data = AllocatePool(len);
             len = hex2bin(prop->string, data, len);
             if (dataLen != NULL) {
@@ -498,11 +498,11 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       prop = GetProperty(dictPointer,"DeviceProperties");
       if(prop)
       {
+        EFI_PHYSICAL_ADDRESS  BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
         UINTN stringlength = AsciiStrLen(prop->string);
         cDeviceProperties = AllocateZeroPool(stringlength + 1);
         AsciiStrCpy(cDeviceProperties, prop->string);
         //-------
-        EFI_PHYSICAL_ADDRESS  BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;        
         Status = gBS->AllocatePages (
                                      AllocateMaxAddress,
                                      EfiACPIReclaimMemory,
@@ -511,7 +511,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
                                      );
         if (!EFI_ERROR(Status)) {
           cProperties = (UINT8*)(UINTN)BufferPtr; 
-          cPropSize = stringlength / 2;
+          cPropSize = (UINT32)(stringlength >> 1);
           cPropSize = hex2bin(cDeviceProperties, cProperties, cPropSize);
           DBG("Injected EFIString of length %d\n", cPropSize);
         }
@@ -676,7 +676,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       if(prop)
       {
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-        gSettings.FixDsdt  = StrHexToUint64(UStr); 
+        gSettings.FixDsdt  = (UINT32)StrHexToUint64(UStr); 
       }
       prop = GetProperty(dictPointer,"DropAPIC");
       gSettings.bDropAPIC = FALSE;
@@ -831,7 +831,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         }
       }
       prop = GetProperty(dictPointer,"QPI");
-      gSettings.QPI = gCPUStructure.ProcessorInterconnectSpeed; //MHz
+      gSettings.QPI = (UINT16)gCPUStructure.ProcessorInterconnectSpeed; //MHz
       if(prop)
       {
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
@@ -879,11 +879,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       prop = GetProperty(dictPointer,"ATIConnectorsController");
       if(prop)
       {
+        UINTN len = 0;
         // ATIConnectors patch
         gSettings.KPATIConnectorsController = AllocateZeroPool((AsciiStrLen(prop->string) + 1) * sizeof(CHAR16));
         AsciiStrToUnicodeStr(prop->string, gSettings.KPATIConnectorsController);
         
-        gSettings.KPATIConnectorsData = GetDataSetting(dictPointer, "ATIConnectorsData", &gSettings.KPATIConnectorsDataLen);
+        gSettings.KPATIConnectorsData = GetDataSetting(dictPointer, "ATIConnectorsData", &len);
+        gSettings.KPATIConnectorsDataLen = len;
         gSettings.KPATIConnectorsPatch = GetDataSetting(dictPointer, "ATIConnectorsPatch", &i);
         
         if (gSettings.KPATIConnectorsData == NULL
@@ -955,7 +957,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             break;
           }
         } while (TRUE);
-        gSettings.NrKexts = i;
+        gSettings.NrKexts = (INT32)i;
         //there is one moment. This data is allocated in BS memory but will be used 
         // after OnExitBootServices. This is wrong and these arrays should be reallocated
         // but I am not sure
@@ -1198,9 +1200,9 @@ VOID GetDevices(VOID)
                 (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_OTHER))
         {
           DBG("Found AirPort. Landing enabled...\n");
-          Arpt.SegmentGroupNum = Segment;
-          Arpt.BusNum = Bus;
-          Arpt.DevFuncNum = (Device << 4) | (Function & 0x0F);
+          Arpt.SegmentGroupNum = (UINT16)Segment;
+          Arpt.BusNum = (UINT8)Bus;
+          Arpt.DevFuncNum = (UINT8)((Device << 4) | (Function & 0x0F));
           Arpt.Valid = TRUE;
         }
       }
@@ -1246,7 +1248,7 @@ VOID SetDevices(VOID)
         }
         Status = PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
         PCIdevice.DeviceHandle = HandleBuffer[Index];
-        PCIdevice.dev.addr = PCIADDR(Bus, Device, Function);
+        PCIdevice.dev.addr = (UINT32)PCIADDR(Bus, Device, Function);
         PCIdevice.vendor_id = Pci.Hdr.VendorId;
         PCIdevice.device_id = Pci.Hdr.DeviceId;
         PCIdevice.revision = Pci.Hdr.RevisionID;
@@ -1387,11 +1389,10 @@ VOID SetDevices(VOID)
   }
 	
   if (StringDirty) {
-    
+    EFI_PHYSICAL_ADDRESS  BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
     stringlength = string->length * 2;
     DBG("stringlength = %d\n", stringlength);
    // gDeviceProperties = AllocateAlignedPages(EFI_SIZE_TO_PAGES(stringlength + 1), 64);
-    EFI_PHYSICAL_ADDRESS  BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
     
     Status = gBS->AllocatePages (
                                  AllocateMaxAddress,
@@ -1431,8 +1432,8 @@ EFI_STATUS SaveSettings()
       (gSettings.BusSpeed > 10 * kilo) &&
       (gSettings.BusSpeed < 500 * kilo)){
     gCPUStructure.ExternalClock = gSettings.BusSpeed;
-    gCPUStructure.FSBFrequency = gSettings.BusSpeed * kilo; //kHz -> Hz
-    gCPUStructure.MaxSpeed = DivU64x32(gSettings.BusSpeed, 100) * gCPUStructure.MaxRatio; //kHz->MHz
+    gCPUStructure.FSBFrequency = MultU64x64(gSettings.BusSpeed, kilo); //kHz -> Hz
+    gCPUStructure.MaxSpeed = (UINT32)(DivU64x32(gSettings.BusSpeed, 100) * gCPUStructure.MaxRatio); //kHz->MHz
   }
 
   if ((gSettings.CpuFreqMHz > 100) &&
@@ -1442,7 +1443,7 @@ EFI_STATUS SaveSettings()
   
   if (gSettings.Turbo && !AlreadyDone){
     if (gCPUStructure.Turbo4) {
-      gCPUStructure.CPUFrequency = DivU64x32(gCPUStructure.Turbo4 * gCPUStructure.FSBFrequency, 10);
+      gCPUStructure.CPUFrequency = DivU64x32(MultU64x64(gCPUStructure.Turbo4, gCPUStructure.FSBFrequency), 10);
     }    
     //attempt to make turbo
     msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
@@ -1544,7 +1545,7 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
     CHAR16                      *SrcDir = NULL;
     BOOLEAN                     InjectionNeeded = FALSE;
     BOOLEAN                     BlockCaches = FALSE;
-    FSI_STRING_LIST             *Blacklist;
+    FSI_STRING_LIST             *Blacklist = 0;
     FSI_STRING_LIST             *ForceLoadKexts;
     
     MsgLog("FSInjection: ");

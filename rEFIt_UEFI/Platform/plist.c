@@ -103,7 +103,13 @@ XMLDecode(const CHAR8* src)
     const CHAR8 *s;
     CHAR8 *out, *o;
     
-    if ( !src || !(len = AsciiStrLen(src)) || !(out = AllocateZeroPool(len+1)) )
+    if (!src)
+        return 0;
+    len = AsciiStrLen(src);
+    if (!len)
+       return 0;
+    out = AllocateZeroPool(len+1);
+    if (!out)
         return 0;
     
     o = out;
@@ -165,13 +171,13 @@ INTN GetTagCount( TagPtr dict )
 
 EFI_STATUS GetElement( TagPtr dict, INTN id,  TagPtr * dict1)
 {    
+   INTN element = 0;
+   
 	if(dict->type != kTagTypeArray) return EFI_UNSUPPORTED;
 	
-	*dict1 = NULL;
-	
-	INTN element = 0;
+   // Don't know why this was here...
+   //*dict1 = NULL;
 	*dict1 = dict->tag;
-
 	while(element < id)
 	{
 		element++;
@@ -422,7 +428,7 @@ EFI_STATUS ParseTagList( CHAR8* buffer, TagPtr * tag, UINT32 type, UINT32 empty,
 
 	tmpTag->type = type;
 	tmpTag->string = 0;
-	tmpTag->offset = buffer_start ? buffer - buffer_start : 0;
+	tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start : 0);
 	tmpTag->tag = tagList;
 	tmpTag->tagNext = 0;
 
@@ -469,7 +475,7 @@ EFI_STATUS ParseTagKey( char * buffer, TagPtr * tag,UINT32* lenPtr)
 	tmpTag->type = kTagTypeKey;
 	tmpTag->string = string;
 	tmpTag->tag = subTag;
-	tmpTag->offset = buffer_start ? buffer - buffer_start: 0;
+	tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
 	tmpTag->tagNext = 0;
 
 	*tag = tmpTag;
@@ -507,7 +513,7 @@ EFI_STATUS ParseTagString(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 	tmpTag->string = string;
 	tmpTag->tag = NULL;
 	tmpTag->tagNext = NULL;
-	tmpTag->offset = buffer_start ? buffer - buffer_start: 0;
+	tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
 	*tag = tmpTag;
 	*lenPtr=length;
 
@@ -598,14 +604,14 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 		}
 		
 		if (negative)
-			integer = -integer;
+			integer = (UINT32)-(INT32)integer;
 	}
 
 	
 	tmpTag->type = kTagTypeInteger;
 	tmpTag->string = (CHAR8*)(UINTN)integer;
 	tmpTag->tag = NULL;
-	tmpTag->offset = buffer_start ? buffer - buffer_start: 0;
+	tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
 	tmpTag->tagNext = NULL;
 
 	*tag = tmpTag;
@@ -619,7 +625,8 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 EFI_STATUS ParseTagData(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 {
 	EFI_STATUS	Status;
-	UINT32		length;
+	UINT32		length = 0;
+   UINTN       len = 0;
 	TagPtr		tmpTag;
 	CHAR8*		string;
 
@@ -635,9 +642,10 @@ EFI_STATUS ParseTagData(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 	tmpTag->type = kTagTypeData;
 	tmpTag->string = string;
 	// dmazar: base64 decode data
-	tmpTag->data = Base64Decode(tmpTag->string, &tmpTag->dataLen);
+	tmpTag->data = (UINT8 *)Base64Decode(tmpTag->string, &len);
+   tmpTag->dataLen = len;
 	tmpTag->tag = NULL;
-	tmpTag->offset = buffer_start ? buffer - buffer_start: 0;
+	tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
 	tmpTag->tagNext = NULL;
 
 	*tag = tmpTag;
@@ -667,7 +675,7 @@ EFI_STATUS ParseTagDate(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 	tmpTag->string = NULL;
 	tmpTag->tag = NULL;
 	tmpTag->tagNext = NULL;
-	tmpTag->offset = buffer_start ? buffer - buffer_start: 0;
+	tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
 
 	*tag = tmpTag;
 
@@ -689,7 +697,7 @@ EFI_STATUS ParseTagBoolean(CHAR8* buffer, TagPtr * tag, UINT32 type,UINT32* lenP
 	tmpTag->string = NULL;
 	tmpTag->tag = NULL;
 	tmpTag->tagNext = NULL;
-	tmpTag->offset = buffer_start ? buffer - buffer_start: 0;
+	tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
 
 	*tag = tmpTag;
 	*lenPtr=0;

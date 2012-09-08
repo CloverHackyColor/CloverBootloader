@@ -287,7 +287,7 @@ LegacyBiosFarCall86 (
   //
   // The call to Legacy16 is a critical section to EFI
   //
-	Eflags = AsmReadEflags ();
+	Eflags = (UINT32)AsmReadEflags ();
 	if ((Eflags & EFI_CPU_EFLAGS_IF) != 0) {
 		DisableInterrupts ();
 	}

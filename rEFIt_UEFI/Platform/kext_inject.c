@@ -70,9 +70,9 @@ EFI_STATUS EFIAPI LoadKext(IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OU
 	UINTN		bundlePathBufferLength = 0;
 	CHAR16		TempName[256];
 	CHAR16		Executable[256];
-
 	TagPtr		dict = NULL;
 	TagPtr		prop = NULL;
+   _BooterKextFileInfo *infoAddr = NULL;
 
 	UnicodeSPrint(TempName, 512, L"%s\\%s", FileName, L"Contents\\Info.plist");
 	Status = egLoadFile(SelfVolume->RootDir, TempName, &infoDictBuffer, &infoDictBufferLength);
@@ -106,17 +106,18 @@ EFI_STATUS EFIAPI LoadKext(IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OU
 		bundlePathBuffer = AllocateZeroPool(bundlePathBufferLength);
 		UnicodeStrToAsciiStr(FileName, bundlePathBuffer);
 
-		kext->length = sizeof(_BooterKextFileInfo) + infoDictBufferLength + executableBufferLength + bundlePathBufferLength;
-		kext->paddr = (UINT32)(UINTN)AllocatePool(kext->length);
-		((_BooterKextFileInfo*)(UINTN) kext->paddr)->infoDictPhysAddr = sizeof(_BooterKextFileInfo);
-		((_BooterKextFileInfo*)(UINTN) kext->paddr)->infoDictLength = infoDictBufferLength;
-		((_BooterKextFileInfo*)(UINTN) kext->paddr)->executablePhysAddr = sizeof(_BooterKextFileInfo) + infoDictBufferLength;
-		((_BooterKextFileInfo*)(UINTN) kext->paddr)->executableLength = executableBufferLength;
-		((_BooterKextFileInfo*)(UINTN) kext->paddr)->bundlePathPhysAddr = sizeof(_BooterKextFileInfo) + infoDictBufferLength + executableBufferLength;
-		((_BooterKextFileInfo*)(UINTN) kext->paddr)->bundlePathLength = bundlePathBufferLength;
-		CopyMem((VOID*)(UINTN)kext->paddr + sizeof(_BooterKextFileInfo), infoDictBuffer, infoDictBufferLength);
-		CopyMem((VOID*)(UINTN)kext->paddr + sizeof(_BooterKextFileInfo) + infoDictBufferLength, executableBuffer, executableBufferLength);
-		CopyMem((VOID*)(UINTN)kext->paddr + sizeof(_BooterKextFileInfo) + infoDictBufferLength + executableBufferLength, bundlePathBuffer, bundlePathBufferLength);
+		kext->length = (UINT32)(sizeof(_BooterKextFileInfo) + infoDictBufferLength + executableBufferLength + bundlePathBufferLength);
+		infoAddr = (_BooterKextFileInfo *)AllocatePool(kext->length);
+		infoAddr->infoDictPhysAddr = sizeof(_BooterKextFileInfo);
+		infoAddr->infoDictLength = (UINT32)infoDictBufferLength;
+		infoAddr->executablePhysAddr = (UINT32)(sizeof(_BooterKextFileInfo) + infoDictBufferLength);
+		infoAddr->executableLength = (UINT32)executableBufferLength;
+		infoAddr->bundlePathPhysAddr = (UINT32)(sizeof(_BooterKextFileInfo) + infoDictBufferLength + executableBufferLength);
+		infoAddr->bundlePathLength = (UINT32)bundlePathBufferLength;
+      kext->paddr = (UINT32)(UINTN)infoAddr;
+		CopyMem((CHAR8 *)infoAddr + sizeof(_BooterKextFileInfo), infoDictBuffer, infoDictBufferLength);
+		CopyMem((CHAR8 *)infoAddr + sizeof(_BooterKextFileInfo) + infoDictBufferLength, executableBuffer, executableBufferLength);
+		CopyMem((CHAR8 *)infoAddr + sizeof(_BooterKextFileInfo) + infoDictBufferLength + executableBufferLength, bundlePathBuffer, bundlePathBufferLength);
 		FreePool(infoDictBuffer);
 		FreePool(executableBuffer);
 		FreePool(bundlePathBuffer);
@@ -233,10 +234,10 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 	if (GetKextCount() > 0) {
 		mm_extra_size = GetKextCount() * (sizeof(DeviceTreeNodeProperty) + sizeof(_DeviceTreeBuffer));
 		mm_extra = AllocateZeroPool(mm_extra_size - sizeof(DeviceTreeNodeProperty));
-		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"mm_extra", mm_extra, mm_extra_size - sizeof(DeviceTreeNodeProperty));
+      Status =  LogDataHub(&gEfiMiscSubClassGuid, L"mm_extra", mm_extra, (UINT32)(mm_extra_size - sizeof(DeviceTreeNodeProperty)));
 		extra_size = GetKextsSize();
 		extra = AllocateZeroPool(extra_size - sizeof(DeviceTreeNodeProperty) + EFI_PAGE_SIZE);
-		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"extra", extra, extra_size - sizeof(DeviceTreeNodeProperty) + EFI_PAGE_SIZE);
+		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"extra", extra, (UINT32)(extra_size - sizeof(DeviceTreeNodeProperty) + EFI_PAGE_SIZE));
 		MsgLog("count: %d       \n", GetKextCount());
 		MsgLog("mm_extra_size: %d       \n", mm_extra_size);
 		MsgLog("extra_size: %d       \n", extra_size);
@@ -327,7 +328,7 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
 	// platformEntry->nProperties--;
 	offset = sizeof(DeviceTreeNodeProperty)+((DeviceTreeNodeProperty*) extraPtr)->length;
 	CopyMem(extraPtr, extraPtr+offset, dtLength-(UINTN)(extraPtr-dtEntry)-offset);
-	*deviceTreeLength -= offset; 
+	*deviceTreeLength -= (UINT32)offset; 
 
 	KextBase = RoundPage(dtEntry + *deviceTreeLength);
 	if(!IsListEmpty(&gKextList)) {
@@ -344,7 +345,7 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
 			prop = ((DeviceTreeNodeProperty*) drvPtr);
 			prop->length = sizeof(_DeviceTreeBuffer);
 			mm = (_DeviceTreeBuffer*) (((UINT8*)prop) + sizeof(DeviceTreeNodeProperty));
-			mm->paddr = KextBase;
+			mm->paddr = (UINT32)KextBase;
 			mm->length = KextEntry->kext.length;
 			AsciiSPrint(prop->name, 31, "Driver-%x", KextBase);
 

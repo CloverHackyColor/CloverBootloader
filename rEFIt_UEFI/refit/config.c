@@ -277,7 +277,7 @@ static VOID HandleHex(IN CHAR16 **TokenList, IN UINTN TokenCount, OUT UINTN *Val
   if (TokenCount > 2) {
     return;
   }
-  *Value = StrHexToUint64(TokenList[1]);
+  *Value = (UINTN)StrHexToUint64(TokenList[1]);
 }
 
 //

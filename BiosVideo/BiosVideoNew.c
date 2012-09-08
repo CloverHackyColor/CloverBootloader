@@ -1460,7 +1460,7 @@ BiosVideoCheckForVbe (
 	 ((UINTN) BiosVideoPrivate->VbeInformationBlock->VideoModePtr & 0x0000ffff)
 	 );
 	 */
-	PreferMode = -1;
+	PreferMode = (UINTN)-1;
 	ModeNumber = 0;
 //	MsgLog("VbeModes: @%x\n", (UINTN)ModeNumberPtr);
 	for (; *ModeNumberPtr != VESA_BIOS_EXTENSIONS_END_OF_MODE_LIST; ModeNumberPtr++) {//0xffff
@@ -1604,7 +1604,7 @@ BiosVideoCheckForVbe (
 			(BiosVideoPrivate->VbeModeInformationBlock->YResolution >= HighestVerticalResolution)) {
 			HighestHorizontalResolution = BiosVideoPrivate->VbeModeInformationBlock->XResolution;
 			HighestVerticalResolution = BiosVideoPrivate->VbeModeInformationBlock->YResolution;
-			HighestResolutionMode = ModeNumber;
+			HighestResolutionMode = (UINT16)ModeNumber;
 //			MsgLog("best mode: %d\n", ModeNumber);
 		}
 		// later -

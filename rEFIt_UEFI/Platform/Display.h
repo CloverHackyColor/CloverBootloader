@@ -834,6 +834,8 @@ UINT8 ati_port(UINT16 device_id, UINT32 sub_id)
 UINT32 ATI_vram_size(pci_dt_t *ati_dev)
 {  
   INT32	i = 0;
+  UINT8 *mmio;
+  UINT32 vram_size = 128 << 20; //default 128Mb, this is minimum for OS
   
   ati_chip_family_t chip_family=0;
   
@@ -848,9 +850,7 @@ UINT32 ATI_vram_size(pci_dt_t *ati_dev)
     i++;
 	}
 	
-	UINT8 *mmio = (UINT8*)(UINTN)(pci_config_read32(ati_dev, PCI_BASE_ADDRESS_2) & ~0x0f);
-	
-	UINT64 vram_size = 128 << 20; //default 128Mb, this is minimum for OS
+	mmio = (UINT8*)(UINTN)(pci_config_read32(ati_dev, PCI_BASE_ADDRESS_2) & ~0x0f);
   
   if (chip_family >= CHIP_FAMILY_CEDAR) 
   {
@@ -879,13 +879,12 @@ UINT32 ATI_vram_size(pci_dt_t *ati_dev)
 CHAR8* ATI_romrevision(pci_dt_t *ati_dev)
 {
   CHAR8* cRev="109-B77101-11";
+  UINT8 *rev;
   
 	option_rom_header_t *rom_addr;
 	
 	//rom_addr = (option_rom_header_t *)(UINTN)(pci_config_read32(ati_dev, 0x30) & ~0x7ff);
-	rom_addr = (option_rom_header_t *)0xc0000;
-	
-	UINT8 *rev;
+	rom_addr = (option_rom_header_t *)(UINTN)0xc0000;
 	
 	if (!rom_addr)
 		return cRev;
@@ -1858,7 +1857,7 @@ CHAR8 *nv_name(UINT16 vendor_id, UINT16 device_id)
 
 	for (i=1; i< (sizeof(NVKnowns) / sizeof(NVKnowns[0])); i++) 
 	{
-		if (NVKnowns[i].device == (vendor_id << 16| device_id << 0)) 
+		if (NVKnowns[i].device == ((UINT32)(vendor_id << 16) | (UINT32)(device_id << 0)))
 		{
 			return NVKnowns[i].name;
 		}
@@ -1866,16 +1865,17 @@ CHAR8 *nv_name(UINT16 vendor_id, UINT16 device_id)
 	return NVKnowns[0].name;
 }
 
-UINT32 nv_mem_detect(pci_dt_t *nvda_dev)
+UINT64 nv_mem_detect(pci_dt_t *nvda_dev)
 {
 	UINT32				bar[7];
+   UINT16 nvCardType;
+   UINT64 vram_size = 0;
+
     bar[0] = pci_config_read32(nvda_dev, PCI_BASE_ADDRESS_0);
     nvda_dev->regs = (UINT8 *)(UINTN)(bar[0] & ~0x0f);
 		
 	// get card type
-	UINT8 nvCardType = (REG32(nvda_dev->regs, 0) >> 20) & 0x1ff;
-	
-	UINT64 vram_size = 0;
+	nvCardType = (REG32(nvda_dev->regs, 0) >> 20) & 0x1ff;
 	
 	// Workaround for GT 420/430 & 9600M GT
 	switch (nvda_dev->device_id)

@@ -146,6 +146,8 @@ VOID KernelPatcher_64(VOID* kernelData)
     UINT8       *bytes = (UINT8*)kernelData;
     UINT32      patchLocation=0, patchLocation1=0;
     UINT32      i;
+    UINT32      jumpaddr;
+    UINT32      cpuid_family_addr;
     
     //if (AsciiStrnCmp(OSVersion,"10.7",4)==0) return;
         
@@ -201,7 +203,7 @@ VOID KernelPatcher_64(VOID* kernelData)
     bytes[patchLocation + 3] = 0x90;
     bytes[patchLocation + 4] = 0x90;
     
-    UINT32 jumpaddr = patchLocation;
+    jumpaddr = patchLocation;
          
     for (i=0;i<500;i++) 
     {
@@ -235,8 +237,6 @@ VOID KernelPatcher_64(VOID* kernelData)
         DBG(L"Can't Found jumpaddr address.\n");
         return;  //can't find jump location
     }
-    
-    UINT32 cpuid_family_addr;
     
     if (check) 
     {
@@ -276,10 +276,10 @@ VOID KernelPatcher_64(VOID* kernelData)
     bytes[patchLocation -  7] = 0xC7;
     bytes[patchLocation -  6] = 0x05;
 
-    bytes[patchLocation -  5] = (cpuid_family_addr & 0x000000FF) >>  0;
-    bytes[patchLocation -  4] = (cpuid_family_addr & 0x0000FF00) >>  8;
-    bytes[patchLocation -  3] = (cpuid_family_addr & 0x00FF0000) >> 16;
-    bytes[patchLocation -  2] = (cpuid_family_addr & 0xFF000000) >> 24;
+    bytes[patchLocation -  5] = (cpuid_family_addr & 0x000000FF);
+    bytes[patchLocation -  4] = (UINT8)((cpuid_family_addr & 0x0000FF00) >>  8);
+    bytes[patchLocation -  3] = (UINT8)((cpuid_family_addr & 0x00FF0000) >> 16);
+    bytes[patchLocation -  2] = (UINT8)((cpuid_family_addr & 0xFF000000) >> 24);
     
     bytes[patchLocation -  1] = CPUIDFAMILY_DEFAULT; //cpuid_family need alway set 0x06
     bytes[patchLocation +  0] = CPUID_MODEL_YONAH;   //cpuid_model set CPUID_MODEL_MEROM
@@ -305,6 +305,7 @@ VOID KernelPatcher_32(VOID* kernelData)
     UINT8* bytes = (UINT8*)kernelData;
     UINT32 patchLocation=0, patchLocation1=0;
     UINT32 i;
+    UINT32 jumpaddr;
         
     DBG(L"Found _cpuid_set_info _panic Start\n");
     // _cpuid_set_info _panic address
@@ -358,7 +359,7 @@ VOID KernelPatcher_32(VOID* kernelData)
     bytes[patchLocation + 3] = 0x90;
     bytes[patchLocation + 4] = 0x90;
      
-    UINT32 jumpaddr = patchLocation;
+    jumpaddr = patchLocation;
      
     for (i=0;i<500;i++) 
     {
@@ -640,6 +641,9 @@ VOID Get_PreLink()
         }
         if (AsciiStrCmp(segCmd64->segname, kPrelinkInfoSegment) == 0)
         {
+          UINT32 sectionIndex;
+          struct section_64 *sect;
+
           DBG(L"Found PRELINK_INFO, 64bit\n");
           //DBG(L"cmd = 0x%08x\n",segCmd64->cmd);
           //DBG(L"cmdsize = 0x%08x\n",segCmd64->cmdsize);
@@ -651,9 +655,7 @@ VOID Get_PreLink()
           //DBG(L"initprot = 0x%08x\n",segCmd64->initprot);
           //DBG(L"nsects = 0x%08x\n",segCmd64->nsects);
           //DBG(L"flags = 0x%08x\n",segCmd64->flags);
-          UINT32 sectionIndex;
           sectionIndex = sizeof(struct segment_command_64);
-          struct section_64 *sect;
           
           while(sectionIndex < segCmd64->cmdsize)
           {
@@ -698,6 +700,9 @@ VOID Get_PreLink()
         }
         if (AsciiStrCmp(segCmd->segname, kPrelinkInfoSegment) == 0)
         {
+          UINT32 sectionIndex;
+          struct section *sect;
+
           DBG(L"Found PRELINK_INFO, 32bit\n");
           //DBG(L"cmd = 0x%08x\n",segCmd->cmd);
           //DBG(L"cmdsize = 0x%08x\n",segCmd->cmdsize);
@@ -709,9 +714,7 @@ VOID Get_PreLink()
           //DBG(L"initprot = 0x%08x\n",segCmd->initprot);
           //DBG(L"nsects = 0x%08x\n",segCmd->nsects);
           //DBG(L"flags = 0x%08x\n",segCmd->flags);
-          UINT32 sectionIndex;
           sectionIndex = sizeof(struct segment_command);
-          struct section *sect;
           
           while(sectionIndex < segCmd->cmdsize)
           {
@@ -916,14 +919,14 @@ KernelAndKextsPatcherStart(VOID)
   //
   if (AsciiStrStr(gSettings.BootArgs, "WithKexts") == NULL)
   {
+    UINT32      deviceTreeP;
+    UINT32      deviceTreeLength;
+    EFI_STATUS  Status;
+
     KernelAndKextPatcherInit();
     if (KernelData == NULL) {
       return;
     }
-
-    UINT32      deviceTreeP;
-    UINT32      deviceTreeLength;
-    EFI_STATUS  Status;
 
     if (bootArgs1 != NULL) {
         deviceTreeP = bootArgs1->deviceTreeP;

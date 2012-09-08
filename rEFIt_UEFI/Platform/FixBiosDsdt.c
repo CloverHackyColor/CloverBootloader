@@ -111,7 +111,7 @@ UINT32 GfxlayoutId[2];
 pci_dt_t   Displaydevice[2];
 
 
-INTN usb;
+UINTN usb;
 
 struct lpc_device_t 
 {
@@ -506,12 +506,13 @@ VOID GetPciADR(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINT32 *Addr1, OUT U
 {
   PCI_DEVICE_PATH *PciNode;
   UINTN           PciNodeCount;
+  EFI_DEVICE_PATH_PROTOCOL *TmpDevicePath = DuplicateDevicePath(DevicePath);
+
   // default to 0
   if (Addr1 != NULL) *Addr1 = 0;
   if (Addr2 != NULL) *Addr2 = 0xFFFE; //some code we will consider as "non-exists" b/c 0 is meaningful value
                                       // as well as 0xFFFF
   
-  EFI_DEVICE_PATH_PROTOCOL *TmpDevicePath = DuplicateDevicePath(DevicePath);
   if (!TmpDevicePath) {
     return;
   }
@@ -563,11 +564,10 @@ VOID CheckHardware()
   
 	pci_dt_t      PCIdevice;
 	EFI_DEVICE_PATH_PROTOCOL *DevicePath = NULL;
-  
-	usb=0;
 	UINTN display=0;
 	UINTN gfxid=0;
 	
+   usb=0;
   // Scan PCI handles 
   Status = gBS->LocateHandleBuffer (
                                     ByProtocol,
@@ -586,7 +586,7 @@ VOID CheckHardware()
                                     (VOID **)&PciIo
                                     );
       if (!EFI_ERROR (Status)) {
-        
+        UINT32 deviceid;
         /* Read PCI BUS */
         Status = PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
         Status = PciIo->Pci.Read (
@@ -597,7 +597,7 @@ VOID CheckHardware()
                                   &Pci
                                   );
         
-        UINT32 deviceid = Pci.Hdr.DeviceId | (Pci.Hdr.VendorId << 16);
+        deviceid = Pci.Hdr.DeviceId | (Pci.Hdr.VendorId << 16);
         
         // add for auto patch dsdt get DSDT Device _ADR
         PCIdevice.DeviceHandle = Handle;
@@ -609,10 +609,13 @@ VOID CheckHardware()
           //Display ADR
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA)) {
+            UINT32 dadr1, dadr2;
+            PCI_IO_DEVICE *PciIoDevice;
+
             GetPciADR(DevicePath, &DisplayADR1[display], &DisplayADR2[display]);
             DBG("VideoCard devID=0x%x\n", ((Pci.Hdr.DeviceId << 16) | Pci.Hdr.VendorId));
-            UINT32 dadr1 = DisplayADR1[display];
-            UINT32 dadr2 = DisplayADR2[display];
+            dadr1 = DisplayADR1[display];
+            dadr2 = DisplayADR2[display];
             DBG("DisplayADR1[%d] = 0x%x, DisplayADR2[%d] = 0x%x\n", display, dadr1, display, dadr2);
                  dadr2 = dadr1; //to avoid warning "unused variable" :(
             DisplayVendor[display] = Pci.Hdr.VendorId;
@@ -620,7 +623,7 @@ VOID CheckHardware()
             DisplaySubID[display] = (Pci.Device.SubsystemID << 16) | (Pci.Device.SubsystemVendorID << 0);
             // for get display data
             Displaydevice[display].DeviceHandle = HandleBuffer[HandleIndex];
-            Displaydevice[display].dev.addr = PCIADDR(Bus, Device, Function);
+            Displaydevice[display].dev.addr = (UINT32)PCIADDR(Bus, Device, Function);
             Displaydevice[display].vendor_id = Pci.Hdr.VendorId;
             Displaydevice[display].device_id = Pci.Hdr.DeviceId;
             Displaydevice[display].revision = Pci.Hdr.RevisionID;
@@ -634,7 +637,6 @@ VOID CheckHardware()
             //
             // Go through the Capability list
             //
-            PCI_IO_DEVICE *PciIoDevice;
             PciIoDevice = PCI_IO_DEVICE_FROM_PCI_IO_THIS (PciIo);
             if (PciIoDevice->IsPciExp)
             {
@@ -711,9 +713,9 @@ VOID CheckHardware()
           if ((Pci.Hdr.ClassCode[2] == PCI_CLASS_MEDIA) &&
               (Pci.Hdr.ClassCode[1] == PCI_CLASS_MEDIA_HDA))
           {
+             UINT32 codecId = 0, layoutId = 0;
             GetPciADR(DevicePath, &HDAADR1, NULL);
   //          DBG("HDAADR = 0x%x\n", HDAADR1);
-            UINT32 codecId = 0, layoutId = 0;
             codecId = HDA_getCodecVendorAndDeviceIds(PciIo);
             if (codecId >0)
             {
@@ -907,7 +909,7 @@ UINT32 get_size(UINT8* Buffer, UINT32 adr)
 //return 1 if new size is two bytes else 0
 UINT32 write_offset(UINT32 adr, UINT8* buffer, UINT32 len, INT32 offset)
 {
-  INT32 i, shift = 0;
+  UINT32 i, shift = 0;
   UINT32 size = offset + 1;
   
   if (size >= 0x3F) {
@@ -983,7 +985,7 @@ UINT32 FindBin (UINT8 *dsdt, UINT32 len, CHAR8* bin, UINTN N)
 // return address of size field. Assume size not more then 0x0FFF = 4095 bytes
 UINT32 FindMethod (UINT8 *dsdt, UINT32 len, CONST CHAR8* Name)
 {
-  UINTN i;
+  UINT32 i;
   for (i=20; i<len; i++) {
     if (((dsdt[i] == 0x14) || (dsdt[i+1] == 0x14)) &&
         (dsdt[i+3] == Name[0]) && (dsdt[i+4] == Name[1]) &&
@@ -1160,7 +1162,7 @@ UINT32 DeleteDevice(CONST CHAR8 *Name, UINT8 *dsdt, UINT32 len)
 UINT32 GetPciDevice(UINT8 *dsdt, UINT32 len)
 {
   UINT32 i;
-  UINT32 PCIADR, PCISIZE;
+  UINT32 PCIADR = 0, PCISIZE = 0;
   for (i=20; i<len; i++) {
     // Find Device PCI0   // PNP0A03
     if (CmpPNP(dsdt, i, 0x0A03))
@@ -1195,6 +1197,8 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
 {
 	UINTN    j;
 	UINTN    root = 0;
+   UINT32 PCIADR, PCISIZE;
+
   //initialising
   NetworkName = FALSE;
   DisplayName1 = FALSE;
@@ -1202,7 +1206,6 @@ UINTN  findPciRoot (UINT8 *dsdt, UINT32 len)
   FirewireName = FALSE;
   ArptName = FALSE;
   
-  UINT32 PCIADR, PCISIZE;
   PCIADR = GetPciDevice(dsdt, len);
   if (PCIADR) {
     PCISIZE = get_size(dsdt, PCIADR);
@@ -1295,8 +1298,8 @@ UINT32 FixADP1 (UINT8* dsdt, UINT32 len)
 
 UINT32 FIXDarwin (UINT8* dsdt, UINT32 len)
 {
-  DBG("Start Darwin Fix\n");
   CONST UINT32  adr  = 0x24;
+  DBG("Start Darwin Fix\n");
   ReplaceName(dsdt, len, "_OSI", "OOSI");
   len = move_data(adr, dsdt, len, sizeof(darwin));
   CopyMem(dsdt+adr, darwin, sizeof(darwin));
@@ -1305,8 +1308,8 @@ UINT32 FIXDarwin (UINT8* dsdt, UINT32 len)
 
 VOID FixS3D (UINT8* dsdt, UINT32 len)
 {
-  DBG("Start _S3D Fix\n");
   UINT32 i;
+  DBG("Start _S3D Fix\n");
   for (i=20; i<len-5; i++) {
     if ((dsdt[i + 0] == 0x08) &&
         (dsdt[i + 1] == '_') &&
@@ -1322,9 +1325,9 @@ VOID FixS3D (UINT8* dsdt, UINT32 len)
 
 UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
 {
-  DBG("Start PNLF Fix\n");
   UINT32 i; //, j, size;
   UINT32  adr  = 0;
+  DBG("Start PNLF Fix\n");
 
   if (FindBin(dsdt, len, app2, 10)) {
     return len; //the device already exists
@@ -1427,8 +1430,8 @@ UINT32 FixRTC (UINT8 *dsdt, UINT32 len)
           len = move_data(l, dsdt, len, sizeoffset);
           DBG("...len=%x\n", len);
           // Fix IO (Decode16, size and _CRS size 
-          dsdt[RESADR] += sizeoffset;
-          dsdt[IOADR] += sizeoffset;
+          dsdt[RESADR] += (UINT8)sizeoffset;
+          dsdt[IOADR] += (UINT8)sizeoffset;
           break;
         }
       }
@@ -1498,8 +1501,8 @@ UINT32 FixTMR (UINT8 *dsdt, UINT32 len)
           // First move offset byte remove IRQNoFlag
           len = move_data(i, dsdt, len, sizeoffset);
           // Fix IO (Decode16, size and _CRS size 
-          dsdt[RESADR] += sizeoffset;
-          dsdt[IOADR] += sizeoffset;
+          dsdt[RESADR] += (UINT8)sizeoffset;
+          dsdt[IOADR] += (UINT8)sizeoffset;
           break;
         }
       }
@@ -1570,8 +1573,8 @@ UINT32 FixPIC (UINT8 *dsdt, UINT32 len)
           // First move offset byte remove IRQNoFlag
           len = move_data(i, dsdt, len, sizeoffset);
           // Fix IO (Decode16, size and _CRS size 
-          dsdt[RESADR] += sizeoffset;
-          dsdt[IOADR] += sizeoffset;
+          dsdt[RESADR] += (UINT8)sizeoffset;
+          dsdt[IOADR] += (UINT8)sizeoffset;
           break;
         }
       }
@@ -1655,9 +1658,14 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
 { 
   UINT32 j;
   INT32 sizeoffset, shift = 0;
+  UINT32  LPCBADR = 0, LPCBSIZE = 0, LPCBADR1 = 0;
+  AML_CHUNK* root;
+  AML_CHUNK* met;
+  AML_CHUNK* pack;
+  CHAR8 data[] = {0x18, 0x3A, 0x00, 0x00};
+  CHAR8 *lpcb;
   DBG("Start LPCB Fix\n");
 	//DBG("len = 0x%08x\n", len);
-  UINT32  LPCBADR, LPCBSIZE, LPCBADR1;
   //have to find LPC
   for (j=0x20; j<len-10; j++) {
     if (CmpAdr(dsdt, j, 0x001F0000))
@@ -1676,20 +1684,19 @@ UINT32 FIXLPCB (UINT8 *dsdt, UINT32 len)
   LPCBADR1 = LPCBADR + LPCBSIZE;
   ReplaceName(dsdt, len, device_name[3], "LPCB"); 
   
-	AML_CHUNK* root = aml_create_node(NULL);
+	root = aml_create_node(NULL);
 	// add Method(_DSM,4,NotSerialized) for LPC
-  AML_CHUNK* met = aml_add_method(root, "_DSM", 4);
+  met = aml_add_method(root, "_DSM", 4);
   met = aml_add_store(met);
-  AML_CHUNK* pack = aml_add_package(met);
+  pack = aml_add_package(met);
   aml_add_string(pack, "device-id");
-  CHAR8 data[] = {0x18, 0x3A, 0x00, 0x00};
   aml_add_byte_buffer(pack, data, 4);
   aml_add_local0(met);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized)
   
   aml_calculate_size(root);
-  CHAR8 *lpcb = AllocateZeroPool(root->Size);  
+  lpcb = AllocateZeroPool(root->Size);  
   sizeoffset = root->Size;  
   aml_write_node(root, lpcb, 0);      
   aml_destroy_node(root);
@@ -1713,6 +1720,17 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   UINT32 i, j, k;
   INT32 sizeoffset = 0;
   UINT32 PCIADR = 0, PCISIZE = 0;
+  CHAR8 *portname;
+  CHAR8 *CFGname = NULL;
+  CHAR8 *name = NULL;
+  CHAR8 *display;
+  UINT32 devadr=0, devsize=0, devadr1=0, devsize1=0;
+  AML_CHUNK* root;
+  AML_CHUNK* gfx0;
+  AML_CHUNK* met;
+  BOOLEAN DISPLAYFIX = FALSE;
+  DisplayName1 = FALSE;
+
   PCIADR = GetPciDevice(dsdt, len);
   if (PCIADR) {
     PCISIZE = get_size(dsdt, PCIADR);
@@ -1722,16 +1740,10 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   DBG("Start Display1 Fix\n");
 	//DBG("len = 0x%08x\n", len);
   // Display device_id 
-  AML_CHUNK* root = aml_create_node(NULL);
-  AML_CHUNK* gfx0 = aml_create_node(NULL);
-  AML_CHUNK* met = aml_create_node(NULL);
+  root = aml_create_node(NULL);
+  gfx0 = aml_create_node(NULL);
+  met = aml_create_node(NULL);
   
-  CHAR8 *portname;
-  CHAR8 *CFGname = NULL;
-  CHAR8 *name = NULL;
-  UINT32 devadr=0, devsize=0, devadr1=0, devsize1=0;
-  BOOLEAN DISPLAYFIX = FALSE;
-  DisplayName1 = FALSE;
 //search DisplayADR1[0]
   for (j=0x20; j<len-10; j++) {
     if (DisplayADR1[0] != 0x00000000 && 
@@ -1763,11 +1775,12 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       if (DisplayADR2[0] > 0x3F)
         aml_add_dword(gfx0, DisplayADR2[0]);
       else
-        aml_add_byte(gfx0, DisplayADR2[0]);
+        aml_add_byte(gfx0, (UINT8)DisplayADR2[0]);
     }
     // Intel GMA and HD
     if (DisplayVendor[0] == 0x8086)
     {
+      AML_CHUNK* pack;
       CHAR8 *modelname = get_gma_model(DisplayID[0]);
       if (AsciiStrnCmp(modelname, "Unknown", 7) == 0)
       {
@@ -1787,7 +1800,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       met = aml_add_method(gfx0, "_DSM", 4);
       //}
       met = aml_add_store(met);
-      AML_CHUNK* pack = aml_add_package(met);
+      pack = aml_add_package(met);
       aml_add_string(pack, "AAPL,aux-power-connected");
       aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       aml_add_string(pack, "model");
@@ -1801,7 +1814,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "AAPL,HasPanel");
         aml_add_byte_buffer(pack, Yes, sizeof(Yes)); 
         aml_add_string(pack, "built-in");
-        aml_add_byte_buffer(pack, (CHAR8*)0x01, 1); 
+        aml_add_byte_buffer(pack, (CHAR8*)(UINTN)0x01, 1); 
         //    aml_add_string(pack, "class-code");
         //    aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix)); 
       } 
@@ -1809,7 +1822,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
                AsciiStrnCmp(modelname, "Desktop GMA3150", 15) == 0)
       {
         aml_add_string(pack, "built-in");
-        aml_add_byte_buffer(pack, (CHAR8*)0x01, 1); 
+        aml_add_byte_buffer(pack, (CHAR8*)(UINTN)0x01, 1); 
         //     aml_add_string(pack, "class-code");
         //     aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
       } 
@@ -1903,7 +1916,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "AAPL00,boot-display");
         aml_add_byte_buffer(pack, Yes, sizeof(Yes));
         aml_add_string(pack, "built-in");
-        aml_add_byte_buffer(pack, (CHAR8*)0x01, 1);
+        aml_add_byte_buffer(pack, (CHAR8*)(UINTN)0x01, 1);
         
       }
       else if (AsciiStrnCmp(modelname, "HD3000", 29) == 0)
@@ -1952,7 +1965,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       else if (AsciiStrnCmp(modelname, "Intel HD Graphics 2000", 22) == 0)
       {
         aml_add_string(pack, "built-in");
-        aml_add_byte_buffer(pack, (CHAR8*)0x01, 1);
+        aml_add_byte_buffer(pack, (CHAR8*)(UINTN)0x01, 1);
         //      aml_add_string(pack, "class-code");
         //      aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
         aml_add_string(pack, "device-id");
@@ -1971,7 +1984,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       else if (AsciiStrnCmp(modelname, "Intel HD Graphics 3000", 22) == 0)
       {
         aml_add_string(pack, "built-in");
-        aml_add_byte_buffer(pack, (CHAR8*)0x01, 1);
+        aml_add_byte_buffer(pack, (CHAR8*)(UINTN)0x01, 1);
         //      aml_add_string(pack, "class-code");
         //      aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
         aml_add_string(pack, "device-id");
@@ -1995,7 +2008,9 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
     // NVIDIA
     if (DisplayVendor[0] == 0x10DE)
     {
-      CHAR8 *modelname = nv_name(DisplayVendor[0], DisplayID[0]);
+      AML_CHUNK* pack;
+      UINT64 vedioram;
+      CHAR8 *modelname = nv_name((UINT16)DisplayVendor[0], DisplayID[0]);
       // add Method(_DSM,4,NotSerialized) for GFX0
       if (!DISPLAYFIX)
       {
@@ -2007,7 +2022,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       }
       met = aml_add_store(met);
       //Slice - next I mark what is in Natit, and what no
-      AML_CHUNK* pack = aml_add_package(met);
+      pack = aml_add_package(met);
       aml_add_string(pack, "AAPL,aux-power-connected");  //-
       aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       aml_add_string(pack, "AAPL00,DualLink");          //-
@@ -2038,9 +2053,9 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       aml_add_string_buffer(pack, "Clover auto patch DSDT ver1.1");  //+
       aml_add_string(pack, "hda-gfx");
       aml_add_string_buffer(pack, "onboard-1");         //-
-      UINT32 vedioram = nv_mem_detect(&Displaydevice[0]); 
+      vedioram = nv_mem_detect(&Displaydevice[0]); 
       aml_add_string(pack, "VRAM,totalsize");         //+
-      aml_add_dword(pack, vedioram); 
+      aml_add_dword(pack, (UINT32)vedioram); 
 //      aml_add_string(pack, "device-id");              //-
 //      aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[0], 4);
 //      aml_add_string(pack, "name");
@@ -2062,6 +2077,11 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
     // ATI
     if (DisplayVendor[0] == 0x1002)
     {
+      AML_CHUNK* pack;
+      UINT32 vedioram;
+      UINT8 ports;
+      CHAR8 *cfgname;
+      CHAR8 *cardver;
       CHAR8 *modelname = ati_name(DisplayID[0], DisplaySubID[0]);
       // add Method(_DSM,4,NotSerialized) for GFX0
       if (!DISPLAYFIX)
@@ -2073,15 +2093,15 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         met = aml_add_method(root, "_DSM", 4);
       }
       met = aml_add_store(met);
-      AML_CHUNK* pack = aml_add_package(met);
+      pack = aml_add_package(met);
       aml_add_string(pack, "AAPL,aux-power-connected");
       aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       aml_add_string(pack, "AAPL00,DualLink");
       aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       aml_add_string(pack, "@0,AAPL,boot-display");
       aml_add_byte_buffer(pack, Yes, sizeof(Yes));
-      UINT8 ports = ati_port(DisplayID[0], DisplaySubID[0]);
-      CHAR8 *cfgname = ati_cfg_name(DisplayID[0], DisplaySubID[0]);
+      ports = ati_port(DisplayID[0], DisplaySubID[0]);
+      cfgname = ati_cfg_name(DisplayID[0], DisplaySubID[0]);
       CFGname = AllocateZeroPool(sizeof(cfgname)+5);
       AsciiSPrint(CFGname, sizeof(cfgname)+5, "ATY,%a", cfgname);
       for (i=0; i<ports; i++)
@@ -2092,7 +2112,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         aml_add_string_buffer(pack, CFGname);  
       } 
       
-      CHAR8 *cardver = ATI_romrevision(&Displaydevice[0]);
+      cardver = ATI_romrevision(&Displaydevice[0]);
       aml_add_string(pack, "ATY,Card#");
       aml_add_string_buffer(pack, cardver);       
       aml_add_string(pack, "ATY,Copyright");
@@ -2116,7 +2136,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[0], 4); 
       aml_add_string(pack, "hda-gfx");
       aml_add_string_buffer(pack, "onboard-1");
-      UINT32 vedioram = ATI_vram_size(&Displaydevice[0]); 
+      vedioram = ATI_vram_size(&Displaydevice[0]); 
       aml_add_string(pack, "VRAM,totalsize");
       aml_add_dword(pack, vedioram); 
       if (!Display1PCIE)
@@ -2134,13 +2154,16 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
     // HDAU
     if (GFXHDAFIX)
     {
+      CHAR8 data2[] = {0xe0,0x00,0x56,0x28};
+      AML_CHUNK* met;
+      AML_CHUNK* pack;
       AML_CHUNK* device = aml_add_device(root, "HDAU");
       aml_add_name(device, "_ADR");
       aml_add_byte(device, 0x01);
       // add Method(_DSM,4,NotSerialized) for GFX0
-      AML_CHUNK* met = aml_add_method(device, "_DSM", 4);
+      met = aml_add_method(device, "_DSM", 4);
       met = aml_add_store(met);
-      AML_CHUNK* pack = aml_add_package(met);
+      pack = aml_add_package(met);
       //aml_add_string(pack, "device-id");
       //CHAR8 data[] = {0x38,0xAA,0x00,0x00};
       //aml_add_byte_buffer(pack, data, sizeof(data));
@@ -2158,7 +2181,6 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       //CHAR8 data1[] = {0x12,0x00,0x00,0x00};
       //aml_add_byte_buffer(pack, data1, sizeof(data1));
       aml_add_string(pack, "PinConfigurations");
-      CHAR8 data2[] = {0xe0,0x00,0x56,0x28};
       aml_add_byte_buffer(pack, data2, sizeof(data2));
       aml_add_local0(met);
       aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
@@ -2167,7 +2189,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
   }
   
   aml_calculate_size(root);  
-  CHAR8 *display = AllocateZeroPool(root->Size);
+  display = AllocateZeroPool(root->Size);
   sizeoffset = root->Size;
   aml_write_node(root, display, 0);  
   aml_destroy_node(root);
@@ -2219,25 +2241,28 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
 {
   UINT32 i, j, k;
   INT32 sizeoffset;
+  UINT32 PCIADR, PCISIZE = 0;
+  AML_CHUNK* root;
+  AML_CHUNK* gfx0;
+  AML_CHUNK* met;
+  CHAR8 *portname;
+  CHAR8 *CFGname = NULL;
+  CHAR8 *name = NULL;
+  CHAR8 *display;
+  UINT32 devadr=0, devsize=0, devadr1=0, devsize1=0;
+  BOOLEAN DISPLAYFIX = FALSE;
   
   DBG("Start Display2 Fix\n");
-  UINT32 PCIADR, PCISIZE = 0;
   PCIADR = GetPciDevice(dsdt, len);
   if (PCIADR) {
     PCISIZE = get_size(dsdt, PCIADR);
   }
   if (!PCISIZE) return len; //what is the bad DSDT ?!
   
-  AML_CHUNK* root = aml_create_node(NULL);
-  AML_CHUNK* gfx0 = aml_create_node(NULL);
-  AML_CHUNK* met = aml_create_node(NULL);
-    
-  CHAR8 *portname;
-  CHAR8 *CFGname = NULL;
-  CHAR8 *name = NULL;
+  root = aml_create_node(NULL);
+  gfx0 = aml_create_node(NULL);
+  met = aml_create_node(NULL);
   
-  UINT32 devadr=0, devsize=0, devadr1=0, devsize1;
-  BOOLEAN DISPLAYFIX = FALSE;
   for (j=0x20; j<len-10; j++) {
     if (DisplayADR1[1] != 0x00000000 && 
         CmpAdr(dsdt, j, DisplayADR1[1]))
@@ -2272,7 +2297,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       if (DisplayADR2[1] > 0x3F)
         aml_add_dword(gfx0, DisplayADR2[1]);
       else
-        aml_add_byte(gfx0, DisplayADR2[1]);
+        aml_add_byte(gfx0, (UINT8)DisplayADR2[1]);
     }
     else 
     {    
@@ -2283,13 +2308,14 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
         if (DisplayADR2[1] > 0x3F)
           aml_add_dword(gfx0, DisplayADR2[1]);
         else
-          aml_add_byte(gfx0, DisplayADR2[1]);  
+          aml_add_byte(gfx0, (UINT8)DisplayADR2[1]);  
       }
     }
     
     // Intel GMA and HD
     if (DisplayVendor[1] == 0x8086)
     {
+      AML_CHUNK* pack;
       CHAR8 *modelname = get_gma_model(DisplayID[1]);
       if (AsciiStrnCmp(modelname, "Unknown", 7) == 0)
       {
@@ -2309,7 +2335,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       met = aml_add_method(root, "_DSM", 4);
       //}
       met = aml_add_store(met);
-      AML_CHUNK* pack = aml_add_package(met);
+      pack = aml_add_package(met);
       aml_add_string(pack, "AAPL,aux-power-connected");
       aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       aml_add_string(pack, "model");
@@ -2323,7 +2349,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "AAPL,HasPanel");
         aml_add_byte_buffer(pack, Yes, sizeof(Yes)); 
         aml_add_string(pack, "built-in");
-        aml_add_byte_buffer(pack, (CHAR8*)0x01, 1); 
+        aml_add_byte_buffer(pack, (CHAR8*)(UINTN)0x01, 1); 
         //   aml_add_string(pack, "class-code");
         //   aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix)); 
       } 
@@ -2331,7 +2357,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
                AsciiStrnCmp(modelname, "Desktop GMA3150", 15) == 0)
       {
         aml_add_string(pack, "built-in");
-        aml_add_byte_buffer(pack, (CHAR8*)0x01, 1); 
+        aml_add_byte_buffer(pack, (CHAR8*)(UINTN)0x01, 1); 
         //    aml_add_string(pack, "class-code");
         //    aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
       } 
@@ -2473,7 +2499,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       else if (AsciiStrnCmp(modelname, "Intel HD Graphics 2000", 22) == 0)
       {
         aml_add_string(pack, "built-in");
-        aml_add_byte_buffer(pack, (CHAR8*)0x01, 1);
+        aml_add_byte_buffer(pack, (CHAR8*)(UINTN)0x01, 1);
         //      aml_add_string(pack, "class-code");
         //      aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
         aml_add_string(pack, "device-id");
@@ -2490,7 +2516,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       else if (AsciiStrnCmp(modelname, "Intel HD Graphics 3000", 22) == 0)
       {
         aml_add_string(pack, "built-in");
-        aml_add_byte_buffer(pack, (CHAR8*)0x01, 1);
+        aml_add_byte_buffer(pack, (CHAR8*)(UINTN)0x01, 1);
               aml_add_string(pack, "class-code");
               aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
         aml_add_string(pack, "device-id");
@@ -2514,7 +2540,9 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
     // NVIDIA
     if (DisplayVendor[1] == 0x10DE)
     {
-      CHAR8 *modelname = nv_name(DisplayVendor[1], DisplayID[1]);
+      AML_CHUNK* pack;
+      UINT64 vedioram;
+      CHAR8 *modelname = nv_name((UINT16)DisplayVendor[1], DisplayID[1]);
       // add Method(_DSM,4,NotSerialized) for GFX0
       if (!DISPLAYFIX)
       {
@@ -2525,7 +2553,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
         met = aml_add_method(root, "_DSM", 4);
       }
       met = aml_add_store(met);
-      AML_CHUNK* pack = aml_add_package(met);
+      pack = aml_add_package(met);
       aml_add_string(pack, "AAPL,aux-power-connected");
       aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       aml_add_string(pack, "AAPL00,DualLink");
@@ -2556,9 +2584,9 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       aml_add_string_buffer(pack, "pcj auto patch DSDT ver1.0");
       aml_add_string(pack, "hda-gfx");
       aml_add_string_buffer(pack, "onboard-1"); 
-      UINT32 vedioram = nv_mem_detect(&Displaydevice[1]); 
+      vedioram = nv_mem_detect(&Displaydevice[1]); 
       aml_add_string(pack, "VRAM,totalsize");
-      aml_add_dword(pack, vedioram); 
+      aml_add_dword(pack, (UINT32)vedioram); 
       aml_add_string(pack, "device-id");
       aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[1], 4);
       if (!Display2PCIE)
@@ -2576,6 +2604,11 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
     // ATI
     if (DisplayVendor[1] == 0x1002)
     {
+      AML_CHUNK* pack;
+      UINT8 ports;
+      UINT64 vedioram;
+      CHAR8 *cardver;
+      CHAR8 *cfgname;
       CHAR8 *modelname = ati_name(DisplayID[1], DisplaySubID[1]);
       // add Method(_DSM,4,NotSerialized) for GFX0
       if (!DISPLAYFIX)
@@ -2587,15 +2620,15 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
         met = aml_add_method(root, "_DSM", 4);
       }
       met = aml_add_store(met);
-      AML_CHUNK* pack = aml_add_package(met);
+      pack = aml_add_package(met);
       aml_add_string(pack, "AAPL,aux-power-connected");
       aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       aml_add_string(pack, "AAPL00,DualLink");
       aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       aml_add_string(pack, "@0,AAPL,boot-display");
       aml_add_byte_buffer(pack, Yes, sizeof(Yes));  
-      UINT8 ports = ati_port(DisplayID[1], DisplaySubID[1]);
-      CHAR8 *cfgname = ati_cfg_name(DisplayID[1], DisplaySubID[1]);
+      ports = ati_port(DisplayID[1], DisplaySubID[1]);
+      cfgname = ati_cfg_name(DisplayID[1], DisplaySubID[1]);
       CFGname = AllocateZeroPool(sizeof(cfgname)+5);
       AsciiSPrint(CFGname, sizeof(cfgname)+5, "ATY,%a", cfgname);
       for (i=0; i<ports; i++)
@@ -2605,7 +2638,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, portname);
         aml_add_string_buffer(pack, CFGname);  
       }          
-      CHAR8 *cardver = ATI_romrevision(&Displaydevice[1]);
+      cardver = ATI_romrevision(&Displaydevice[1]);
       aml_add_string(pack, "ATY,Card#");
       aml_add_string_buffer(pack, cardver);       
       aml_add_string(pack, "ATY,Copyright");
@@ -2629,9 +2662,9 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[1], 4); 
       aml_add_string(pack, "hda-gfx");
       aml_add_string_buffer(pack, "onboard-1");
-      UINT32 vedioram = ATI_vram_size(&Displaydevice[1]); 
+      vedioram = ATI_vram_size(&Displaydevice[1]); 
       aml_add_string(pack, "VRAM,totalsize");
-      aml_add_dword(pack, vedioram); 
+      aml_add_dword(pack, (UINT32)vedioram); 
       if (!Display1PCIE)
       {
         aml_add_string(pack, "IOPCIExpressLinkCapabilities");
@@ -2647,13 +2680,15 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
     // HDAU
     if (GFXHDAFIX)
     {
+      AML_CHUNK* met;
+      AML_CHUNK* pack;
       AML_CHUNK* device = aml_add_device(root, "HDAU");
       aml_add_name(device, "_ADR");
       aml_add_byte(device, 0x01);
       // add Method(_DSM,4,NotSerialized) for GFX0
-      AML_CHUNK* met = aml_add_method(device, "_DSM", 4);
+      met = aml_add_method(device, "_DSM", 4);
       met = aml_add_store(met);
-      AML_CHUNK* pack = aml_add_package(met);
+      pack = aml_add_package(met);
       //aml_add_string(pack, "device-id");
       //CHAR8 data[] = {0x38,0xAA,0x00,0x00};
       //aml_add_byte_buffer(pack, data, sizeof(data));
@@ -2679,7 +2714,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
   }
   
   aml_calculate_size(root);  
-  CHAR8 *display = AllocateZeroPool(root->Size);
+  display = AllocateZeroPool(root->Size);
   sizeoffset = root->Size;
   aml_write_node(root, display, 0);  
   aml_destroy_node(root);  
@@ -2733,6 +2768,11 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
   UINT32 NetworkADR = 0, BridgeSize, Size;
   UINT32 PCIADR, PCISIZE = 0;
   INT32 sizeoffset;
+  AML_CHUNK* met;
+  AML_CHUNK* root;
+  AML_CHUNK* pack;
+  CHAR8 *network;
+
   if (!NetworkADR1) return len;
   DBG("Start NetWork Fix\n");
   
@@ -2784,8 +2824,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
     } // End if Network
   }
     
-  AML_CHUNK* met;
-  AML_CHUNK* root = aml_create_node(NULL);
+  root = aml_create_node(NULL);
   
   DBG("NetworkADR1=%x NetworkADR2=%x\n", NetworkADR1, NetworkADR2);
   if (!NetworkName) //there is no network device at dsdt, creating new one
@@ -2797,7 +2836,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
       if (NetworkADR2> 0x3F)
         aml_add_dword(dev, NetworkADR2);
       else
-        aml_add_byte(dev, NetworkADR2);
+        aml_add_byte(dev, (UINT8)NetworkADR2);
     }
     else
     {
@@ -2809,7 +2848,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
   }  
   // add Method(_DSM,4,NotSerialized) for network
   met = aml_add_store(met);
-  AML_CHUNK* pack = aml_add_package(met);
+  pack = aml_add_package(met);
   aml_add_string(pack, "built-in");
   aml_add_byte_buffer(pack, data, sizeof(data));
   aml_add_string(pack, "model");
@@ -2820,7 +2859,7 @@ UINT32 FIXNetwork (UINT8 *dsdt, UINT32 len)
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized)
   aml_calculate_size(root);  
-  CHAR8 *network = AllocateZeroPool(root->Size);
+  network = AllocateZeroPool(root->Size);
   sizeoffset = root->Size;
   DBG("network DSM created, size=%x\n", sizeoffset);
   aml_write_node(root, network, 0);  
@@ -2854,6 +2893,10 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
   UINT32 ArptADR = 0, BridgeSize, Size;
   UINT32 PCIADR, PCISIZE = 0;
   INT32 sizeoffset;
+  AML_CHUNK* met;
+  AML_CHUNK* root;
+  AML_CHUNK* pack;
+  CHAR8 *network;
   
   if (!ArptADR1) return len; // no device - no patch
   
@@ -2889,8 +2932,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
     } // End ArptADR2
   }
   
-  AML_CHUNK* met;
-  AML_CHUNK* root = aml_create_node(NULL);
+  root = aml_create_node(NULL);
   if (!ArptName) {//there is no Airport device at dsdt, creating new one
     AML_CHUNK* dev = aml_add_device(root, "ARPT");
     aml_add_name(dev, "_ADR");
@@ -2899,7 +2941,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
       if (ArptADR2> 0x3F)
         aml_add_dword(dev, ArptADR2);
       else
-        aml_add_byte(dev, ArptADR2);
+        aml_add_byte(dev, (UINT8)ArptADR2);
     }
     else
     {
@@ -2911,31 +2953,31 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
   }  
   // add Method(_DSM,4,NotSerialized) for network
   met = aml_add_store(met);
-  AML_CHUNK* pack = aml_add_package(met);
+  pack = aml_add_package(met);
   aml_add_string(pack, "built-in");
   
   aml_add_byte_buffer(pack, data, sizeof(data));
   if (ArptBCM) {
+    CHAR8 data[] = {0x12, 0x43, 0x00, 0x00};
     aml_add_string(pack, "model");
     aml_add_string_buffer(pack, "Dell Wireless 1395");
     aml_add_string(pack, "name");
     aml_add_string_buffer(pack, "pci14e4,4312");
     aml_add_string(pack, "device-id");
-    CHAR8 data[] = {0x12, 0x43, 0x00, 0x00};
     aml_add_byte_buffer(pack, data, 4);    
   } else if (ArptAtheros) {
+    CHAR8 data1[] = {0x2a, 0x00, 0x00, 0x00};
+    CHAR8 data2[] = {0x8F, 0x00, 0x00, 0x00};
+    CHAR8 data3[] = {0x6B, 0x10, 0x00, 0x00};
     aml_add_string(pack, "model");
     aml_add_string_buffer(pack, "Atheros AR9285 WiFi card");
     aml_add_string(pack, "name");
     aml_add_string_buffer(pack, "pci168c,2a");
     aml_add_string(pack, "device-id");
-    CHAR8 data1[] = {0x2a, 0x00, 0x00, 0x00};
     aml_add_byte_buffer(pack, data1, 4);        
     aml_add_string(pack, "subsystem-id");
-    CHAR8 data2[] = {0x8F, 0x00, 0x00, 0x00};
     aml_add_byte_buffer(pack, data2, 4);        
     aml_add_string(pack, "subsystem-vendor-id");
-    CHAR8 data3[] = {0x6B, 0x10, 0x00, 0x00};
     aml_add_byte_buffer(pack, data3, 4);        
   }
   aml_add_string(pack, "device_type");
@@ -2948,7 +2990,7 @@ UINT32 FIXAirport (UINT8 *dsdt, UINT32 len)
   // finish Method(_DSM,4,NotSerialized)
   
   aml_calculate_size(root);  
-  CHAR8 *network = AllocateZeroPool(root->Size);  
+  network = AllocateZeroPool(root->Size);  
   sizeoffset = root->Size;  
   aml_write_node(root, network, 0);  
   aml_destroy_node(root);
@@ -3048,6 +3090,13 @@ UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
   UINT32  k;
   UINT32 PCIADR, PCISIZE = 0;
   INT32 sizeoffset;
+  AML_CHUNK* root;
+  AML_CHUNK* device;
+  AML_CHUNK* met;
+  AML_CHUNK* pack;
+  CHAR8 data[] = {0x44,0x00,0x00,0x00};
+  CHAR8 *mchc;
+
   PCIADR = GetPciDevice(dsdt, len);
   if (PCIADR) {
     PCISIZE = get_size(dsdt, PCIADR);
@@ -3058,18 +3107,17 @@ UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
   }
   
   DBG("Start Add MCHC\n");
-  AML_CHUNK* root = aml_create_node(NULL);
+  root = aml_create_node(NULL);
   	
-  AML_CHUNK* device = aml_add_device(root, "MCHC");
+  device = aml_add_device(root, "MCHC");
   aml_add_name(device, "_ADR");
   aml_add_byte(device, 0x00); 
   
 	// add Method(_DSM,4,NotSerialized) for MCHC
-  AML_CHUNK* met = aml_add_method(device, "_DSM", 4);
+  met = aml_add_method(device, "_DSM", 4);
   met = aml_add_store(met);
-  AML_CHUNK* pack = aml_add_package(met);
+  pack = aml_add_package(met);
   aml_add_string(pack, "device-id");
-  CHAR8 data[] = {0x44,0x00,0x00,0x00};
   aml_add_byte_buffer(pack, data, sizeof(data));
   aml_add_string(pack, "name");
   aml_add_string(pack, "pci8086,44");
@@ -3080,7 +3128,7 @@ UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
   // finish Method(_DSM,4,NotSerialized) 
   
   aml_calculate_size(root);  
-  CHAR8 *mchc = AllocateZeroPool(root->Size);
+  mchc = AllocateZeroPool(root->Size);
   sizeoffset = root->Size;
   aml_write_node(root, mchc, 0);  
   aml_destroy_node(root);
@@ -3101,8 +3149,14 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
   UINT32  i, k;
   UINT32 FirewireADR = 0, BridgeSize,  Size;
   INT32 sizeoffset;
-  
   UINT32 PCIADR, PCISIZE = 0;
+  AML_CHUNK* met;
+  AML_CHUNK* root;
+  AML_CHUNK* stro;
+  AML_CHUNK* pack;
+  CHAR8 data[] = {0x00,0x00,0x00,0x00};
+  CHAR8 *firewire;
+  
   PCIADR = GetPciDevice(dsdt, len);
   if (PCIADR) {
     PCISIZE = get_size(dsdt, PCIADR);
@@ -3137,8 +3191,7 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
   }
   
   
-  AML_CHUNK* met;
-  AML_CHUNK* root = aml_create_node(NULL);
+  root = aml_create_node(NULL);
   
   DBG("Start Firewire Fix\n");
   
@@ -3147,7 +3200,7 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
     aml_add_name(device, "_ADR");
     if (FirewireADR2) {
       if (FirewireADR2 <= 0x3F) {
-        aml_add_byte(device, FirewireADR2);
+        aml_add_byte(device, (UINT8)FirewireADR2);
       } else {
         aml_add_dword(device, FirewireADR2);
       }
@@ -3157,17 +3210,16 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
     met = aml_add_method(device, "_DSM", 4);
   } else
     met = aml_add_method(root, "_DSM", 4);
-  AML_CHUNK* stro = aml_add_store(met);
-  AML_CHUNK* pack = aml_add_package(stro);
+  stro = aml_add_store(met);
+  pack = aml_add_package(stro);
   aml_add_string(pack, "fwhub");
-  CHAR8 data[] = {0x00,0x00,0x00,0x00};
   aml_add_byte_buffer(pack, data, sizeof(data));
   aml_add_local0(stro);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized)  
   
   aml_calculate_size(root);
-  CHAR8 *firewire = AllocateZeroPool(root->Size);
+  firewire = AllocateZeroPool(root->Size);
   sizeoffset = root->Size;
   aml_write_node(root, firewire, 0);
   aml_destroy_node(root);
@@ -3196,13 +3248,19 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len)
   UINT32  i, k;
   UINT32 PCIADR, PCISIZE = 0;
   INT32 sizeoffset;
+  UINT32 HDAADR = 0, BridgeSize = 0, Size;
+  AML_CHUNK* root;
+  AML_CHUNK* met;
+  AML_CHUNK* device;
+  AML_CHUNK* pack;
+  CHAR8 *hdef;
+
   PCIADR = GetPciDevice(dsdt, len);
   if (PCIADR) {
     PCISIZE = get_size(dsdt, PCIADR);
   }
   if (!PCISIZE) return len; //what is the bad DSDT ?!
   DBG("Start HDA Fix\n");
-  UINT32 HDAADR = 0, BridgeSize = 0, Size;
 //  len = DeleteDevice("AZAL", dsdt, len);
  
   // HDA Address
@@ -3221,9 +3279,7 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len)
     } // End HDA
   }
   
-  AML_CHUNK* root = aml_create_node(NULL);
-  AML_CHUNK* met;
-  AML_CHUNK* device;
+  root = aml_create_node(NULL);
   if (HDAFIX) {
     DBG("Start Add Device HDEF\n");
     device = aml_add_device(root, "HDEF");
@@ -3236,20 +3292,20 @@ UINT32 AddHDEF (UINT8 *dsdt, UINT32 len)
     met = aml_add_method(root, "_DSM", 4);
   
   met = aml_add_store(met);
-  AML_CHUNK* pack = aml_add_package(met);
+  pack = aml_add_package(met);
   //aml_add_string(pack, "codec-id");
   //aml_add_byte_buffer(pack, (CHAR8*)&HDAcodecId, 4);
   aml_add_string(pack, "layout-id");
   aml_add_byte_buffer(pack, (CHAR8*)&HDAlayoutId, 4);
   aml_add_string(pack, "PinConfigurations");
-  CHAR8 data[] = {};
-  aml_add_byte_buffer(pack, data, sizeof(data));
+  //CHAR8 data[] = {};
+  aml_add_byte_buffer(pack, 0, 0);//data, sizeof(data));
   aml_add_local0(met);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized)
   
   aml_calculate_size(root);  
-  CHAR8 *hdef = AllocateZeroPool(root->Size);
+  hdef = AllocateZeroPool(root->Size);
   sizeoffset = root->Size;
   aml_write_node(root, hdef, 0);
   aml_destroy_node(root);
@@ -3279,17 +3335,25 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   UINT32 size1, size2;    
   UINT32 adr=0, adr1=0;
   INT32 sizeoffset;
+  AML_CHUNK* root;
+  AML_CHUNK* root1;
+  AML_CHUNK* met;
+  AML_CHUNK* pack;
+  AML_CHUNK* met1;
+  AML_CHUNK* pack1;
+  CHAR8 *USBDATA1;
+  CHAR8 *USBDATA2;
   
   DBG("Start USB Fix\n");
 	//DBG("len = 0x%08x\n", len);
   
-	AML_CHUNK* root = aml_create_node(NULL);
-	AML_CHUNK* root1 = aml_create_node(NULL);
+	root = aml_create_node(NULL);
+	root1 = aml_create_node(NULL);
   
   // add Method(_DSM,4,NotSerialized) for USB
-  AML_CHUNK* met = aml_add_method(root, "_DSM", 4);
+  met = aml_add_method(root, "_DSM", 4);
   met = aml_add_store(met);
-  AML_CHUNK* pack = aml_add_package(met);
+  pack = aml_add_package(met);
   aml_add_string(pack, "device-id");
   aml_add_byte_buffer(pack, (CONST CHAR8*)&USBID[0], 4);
   aml_add_string(pack, "built-in");
@@ -3304,16 +3368,16 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   // finish Method(_DSM,4,NotSerialized)      
   aml_calculate_size(root);
   
-  CHAR8 *USBDATA1 = AllocateZeroPool(root->Size);
+  USBDATA1 = AllocateZeroPool(root->Size);
   size1 = root->Size;
   //DBG("USB code size = 0x%08x\n", sizeoffset);
   aml_write_node(root, USBDATA1, 0);
   aml_destroy_node(root);
   
   // add Method(_DSM,4,NotSerialized) for USB
-  AML_CHUNK* met1 = aml_add_method(root1, "_DSM", 4);
+  met1 = aml_add_method(root1, "_DSM", 4);
   met1 = aml_add_store(met1);
-  AML_CHUNK* pack1 = aml_add_package(met1);
+  pack1 = aml_add_package(met1);
   aml_add_string(pack1, "device-id");
   aml_add_byte_buffer(pack1, (CONST CHAR8*)&USBID[0], 4);
   aml_add_string(pack1, "built-in");
@@ -3337,7 +3401,7 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   // finish Method(_DSM,4,NotSerialized)
   
   aml_calculate_size(root1);
-  CHAR8 *USBDATA2 = AllocateZeroPool(root1->Size);
+  USBDATA2 = AllocateZeroPool(root1->Size);
   size2 = root1->Size;
   //DBG("USB code size = 0x%08x\n", sizeoffset);
   aml_write_node(root1, USBDATA2, 0);
@@ -3397,11 +3461,15 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
 {
   UINT32  i, k;
   UINT32 j;
-  UINT32 IDEADR, BridgeSize; //, Size;
+  UINT32 IDEADR = 0, BridgeSize = 0; //, Size;
   INT32 sizeoffset;
+  AML_CHUNK* root;
+  AML_CHUNK* device;
+  CHAR8 *ide;
+  BOOLEAN PATAFIX=TRUE;
+
   if (!IDEADR1) return len;
   
-  BOOLEAN PATAFIX=TRUE;    
   for (i=0x20; i<len-10; i++) {    
     if (CmpAdr(dsdt, i, IDEADR1)) {
               DBG("Found IDEADR1=%x at %x\n", IDEADR1, i);
@@ -3422,25 +3490,29 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
     }
   }  
   
-	AML_CHUNK* root = aml_create_node(NULL);
-	AML_CHUNK* device = root;
+	root = aml_create_node(NULL);
+	device = root;
 	if (PATAFIX)
 	{
+    AML_CHUNK* met;
+    AML_CHUNK* pack;
+    AML_CHUNK* device1;
+    AML_CHUNK* device2;
+    CHAR8 data[] = {0x9E,0x26,0x00,0x00};
+    CHAR8 data1[] = {0x86,0x80,0x00,0x00};
     device = aml_add_device(root, "ICHX");
     aml_add_name(device, "_ADR");
     if (IDEADR2 < 0x3F) {
-      aml_add_byte(device, IDEADR2);
+      aml_add_byte(device, (UINT8)IDEADR2);
     } else {
       aml_add_dword(device, IDEADR2);
     }
-    AML_CHUNK* met = aml_add_method(device, "_DSM", 4);
+    met = aml_add_method(device, "_DSM", 4);
     met = aml_add_store(met);
-    AML_CHUNK* pack = aml_add_package(met);
+    pack = aml_add_package(met);
     aml_add_string(pack, "device-id");
-    CHAR8 data[] = {0x9E,0x26,0x00,0x00};
     aml_add_byte_buffer(pack, data, sizeof(data));
     aml_add_string(pack, "vendor-id");
-    CHAR8 data1[] = {0x86,0x80,0x00,0x00};
     aml_add_byte_buffer(pack, data1, sizeof(data1));
     aml_add_string(pack, "name");
     aml_add_string(pack, "pci8086,269e");
@@ -3448,10 +3520,10 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
     aml_add_string(pack, "pci8086,269e");
     aml_add_local0(met);
     aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
-    AML_CHUNK* device1 = aml_add_device(device, "PRIM");
+    device1 = aml_add_device(device, "PRIM");
     aml_add_name(device1, "_ADR");
     aml_add_byte(device1, 0x00);
-    AML_CHUNK* device2 = aml_add_device(device1, "MAST");
+    device2 = aml_add_device(device1, "MAST");
     aml_add_name(device2, "_ADR");
     aml_add_byte(device2, 0x00);
     device2 = aml_add_device(device1, "SLAV");
@@ -3471,14 +3543,15 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
   }
   else
   {
+    CHAR8 data[] = {0x9E,0x26,0x00,0x00};
+    CHAR8 data1[] = {0x86,0x80,0x00,0x00};
+    AML_CHUNK* pack;
     AML_CHUNK* met = aml_add_method(root, "_DSM", 4);
     met = aml_add_store(met);
-    AML_CHUNK* pack = aml_add_package(met);
+    pack = aml_add_package(met);
     aml_add_string(pack, "device-id");
-    CHAR8 data[] = {0x9E,0x26,0x00,0x00};
     aml_add_byte_buffer(pack, data, sizeof(data));
     aml_add_string(pack, "vendor-id");
-    CHAR8 data1[] = {0x86,0x80,0x00,0x00};
     aml_add_byte_buffer(pack, data1, sizeof(data1));
     aml_add_string(pack, "name");
     aml_add_string(pack, "pci8086,269e");
@@ -3490,7 +3563,7 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
   // finish Method(_DSM,4,NotSerialized) 
   
   aml_calculate_size(root);  
-  CHAR8 *ide = AllocateZeroPool(root->Size);
+  ide = AllocateZeroPool(root->Size);
   sizeoffset = root->Size;
   aml_write_node(root, ide, 0);  
   aml_destroy_node(root);
@@ -3522,8 +3595,15 @@ UINT32 FIXIDE (UINT8 *dsdt, UINT32 len)
 UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
 {
   UINT32  i, k;
-  UINT32 SATAAHCIADR, BridgeSize; //, Size;
+  UINT32 SATAAHCIADR = 0, BridgeSize = 0; //, Size;
   INT32 sizeoffset;
+  AML_CHUNK* root;
+  AML_CHUNK* met;
+  AML_CHUNK* pack;
+  CHAR8 data[] = {0x81, 0x26, 0x00, 0x00};
+  CHAR8 data1[] = {0x86, 0x80, 0x00, 0x00};
+  CHAR8 *sata;
+
   if (!SATAAHCIADR1) return len;
   
   for (i=0x20; i<len-10; i++) {    
@@ -3538,24 +3618,22 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
     
   DBG("Start SATA AHCI Fix\n");
   
-	AML_CHUNK* root = aml_create_node(NULL);
+	root = aml_create_node(NULL);
 	
 	// add Method(_DSM,4,NotSerialized) 
-  AML_CHUNK* met = aml_add_method(root, "_DSM", 4);
+  met = aml_add_method(root, "_DSM", 4);
   met = aml_add_store(met);
-  AML_CHUNK* pack = aml_add_package(met);
+  pack = aml_add_package(met);
   aml_add_string(pack, "device-id");
-  CHAR8 data[] = {0x81, 0x26, 0x00, 0x00};
   aml_add_byte_buffer(pack, data, 4);
   aml_add_string(pack, "vendor-id");
-  CHAR8 data1[] = {0x86, 0x80, 0x00, 0x00};
   aml_add_byte_buffer(pack, data1, 4);
   aml_add_local0(met);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized)
   
   aml_calculate_size(root);  
-  CHAR8 *sata = AllocateZeroPool(root->Size); 
+  sata = AllocateZeroPool(root->Size); 
   sizeoffset = root->Size;
   aml_write_node(root, sata, 0);  
   aml_destroy_node(root);
@@ -3575,8 +3653,15 @@ UINT32 FIXSATAAHCI (UINT8 *dsdt, UINT32 len)
 UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
 {
   UINT32  i, k;
-  UINT32 SATAADR, BridgeSize; //, Size;
+  UINT32 SATAADR = 0, BridgeSize = 0; //, Size;
   INT32 sizeoffset;
+  AML_CHUNK* root;
+  AML_CHUNK* met;
+  AML_CHUNK* pack;
+  CHAR8 data[] = {0x80, 0x26, 0x00, 0x00};
+  CHAR8 data1[] = {0x86, 0x80, 0x00, 0x00};
+  CHAR8 *sata;
+
   if (!SATAADR1) return len;
   
   for (i=0x20; i<len-10; i++) {    
@@ -3591,23 +3676,21 @@ UINT32 FIXSATA (UINT8 *dsdt, UINT32 len)
   
   DBG("Start SATA Fix\n");
   
-	AML_CHUNK* root = aml_create_node(NULL);
+	root = aml_create_node(NULL);
 	// add Method(_DSM,4,NotSerialized) 
-  AML_CHUNK* met = aml_add_method(root, "_DSM", 4);
+  met = aml_add_method(root, "_DSM", 4);
   met = aml_add_store(met);
-  AML_CHUNK* pack = aml_add_package(met);
+  pack = aml_add_package(met);
   aml_add_string(pack, "device-id");
-  CHAR8 data[] = {0x80, 0x26, 0x00, 0x00};
   aml_add_byte_buffer(pack, data, 4);
   aml_add_string(pack, "vendor-id");
-  CHAR8 data1[] = {0x86, 0x80, 0x00, 0x00};
   aml_add_byte_buffer(pack, data1, 4);
   aml_add_local0(met);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
   // finish Method(_DSM,4,NotSerialized)
   
   aml_calculate_size(root);
-  CHAR8 *sata = AllocateZeroPool(root->Size);
+  sata = AllocateZeroPool(root->Size);
   sizeoffset = root->Size;
   aml_write_node(root, sata, 0);  
   aml_destroy_node(root);
@@ -3704,12 +3787,11 @@ UINT32 FIXWAK (UINT8 *dsdt, UINT32 len)
   UINT32 i, j, k;
   UINT32 wakadr=0;
   UINT32 waksize=0;
+  UINT32 sizeoffset = 0;
   
   DBG("Start _WAK Return Fix\n");
   DBG("len = 0x%08x\n", len);
 	
-	UINT32 sizeoffset = 0;
-  
 	for (i=20; i<len-5; i++) 
 	{ 	
 		if(dsdt[i] == '_' && dsdt[i+1] == 'W' && dsdt[i+2] == 'A' && dsdt[i+3] == 'K')
@@ -3759,10 +3841,11 @@ UINT32 FIXGPE (UINT8 *dsdt, UINT32 len)
 //  UINT32 adr=0;
   INT32  offset=0;
   INT32 sizeoffset;
-  sizeoffset = sizeof(pwrb);
 //  BOOLEAN pwrbfix = FALSE;
   BOOLEAN usbpwrb = FALSE;
 //  BOOLEAN foundpwrb = FALSE;
+
+  sizeoffset = sizeof(pwrb);
   if (!PWRBADR) {
     return len;
   }
@@ -3833,7 +3916,7 @@ UINT32 FIXGPE (UINT8 *dsdt, UINT32 len)
   return len;             
 }
 
-UINT32 FIXPWRB (UINT8* dsdt, INTN len)
+UINT32 FIXPWRB (UINT8* dsdt, UINT32 len)
 {
   UINT32 i, j=0;
   UINT32 adr=0, hid=0, size = 0;
@@ -3876,7 +3959,7 @@ UINT32 FIXPWRB (UINT8* dsdt, INTN len)
 
 UINT32 FIXSHUTDOWN_ASUS (UINT8 *dsdt, UINT32 len)
 {
-	INTN i, j, sizeoffset;
+	UINT32 i, j, sizeoffset;
 	UINT32 adr, adr1 = 0, adr2, size, shift = 0;
 	
 	DBG("Start SHUTDOWN Fix len=%x\n", len);
@@ -3919,7 +4002,7 @@ UINT32 FIXSHUTDOWN_ASUS (UINT8 *dsdt, UINT32 len)
 //Slice - this procedure was not corrected and mostly wrong
 UINT32 FIXOTHER (UINT8 *dsdt, UINT32 len)
 {
-	INTN i, j, k, m, offset, l;
+	UINT32 i, j, k, m, offset, l;
 	UINT32 size;
 	
 	// Fix USB _PRW value for 0x0X, 0x04 ==> 0x0X, 0x01
@@ -4112,7 +4195,7 @@ VOID FixBiosDsdt (UINT8* temp)
   // add Method (DTGP, 5, NotSerialized)
   if ((gSettings.FixDsdt & FIX_DTGP)) {
     if (!FindMethod(temp, DsdtLen, "DTGP")) {
-      CopyMem((VOID*)temp+DsdtLen, dtgp, sizeof(dtgp));
+      CopyMem((CHAR8 *)temp+DsdtLen, dtgp, sizeof(dtgp));
       DsdtLen += sizeof(dtgp);
       ((EFI_ACPI_DESCRIPTION_HEADER*)temp)->Length = DsdtLen;      
     }
@@ -4121,7 +4204,7 @@ VOID FixBiosDsdt (UINT8* temp)
   // get PCIRootUID and all DSDT Fix address : NetworkADR = devFind(dsdt, k);
   // ReplaceName(dsdt, len, device_name[1], "GIGE");??
   // move Rename into dedicated places
-  gSettings.PCIRootUID = findPciRoot(temp, DsdtLen);
+  gSettings.PCIRootUID = (UINT16)findPciRoot(temp, DsdtLen);
   
   // Fix RTC
   if ((gSettings.FixDsdt & FIX_HPET) != 0)
@@ -4284,10 +4367,10 @@ VOID FixBiosDsdt (UINT8* temp)
   }
   
   // Finish DSDT patch and resize DSDT Length
-  temp[4] = (DsdtLen & 0x000000FF) >>  0;
-  temp[5] = (DsdtLen & 0x0000FF00) >>  8;
-  temp[6] = (DsdtLen & 0x00FF0000) >> 16;
-  temp[7] = (DsdtLen & 0xFF000000) >> 24;
+  temp[4] = (DsdtLen & 0x000000FF);
+  temp[5] = (UINT8)((DsdtLen & 0x0000FF00) >>  8);
+  temp[6] = (UINT8)((DsdtLen & 0x00FF0000) >> 16);
+  temp[7] = (UINT8)((DsdtLen & 0xFF000000) >> 24);
   
   CopyMem((UINT8*)((EFI_ACPI_DESCRIPTION_HEADER*)temp)->OemId, (UINT8*)BiosVendor, 6);
   //DBG("orgBiosDsdtLen = 0x%08x\n", orgBiosDsdtLen);

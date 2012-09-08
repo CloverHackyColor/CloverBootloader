@@ -55,7 +55,7 @@ CoreStall (
   IN UINTN            Microseconds
   )
 {
-  UINT64  Counter;
+  UINT32  Counter;
   UINT32  Remainder;
 
   if (gMetronome == NULL) {

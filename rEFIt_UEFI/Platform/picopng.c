@@ -1244,7 +1244,7 @@ EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ico
   PNG_INFO            *info;
   UINT8               AlphaValue;
   EG_PIXEL            *Pixel;
-  INTN                x, y;
+  UINTN                x, y;
   
   // read and check header
   if (FileDataLength < sizeof(BMP_IMAGE_HEADER) || FileData == NULL)
