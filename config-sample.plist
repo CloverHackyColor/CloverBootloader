@@ -8,27 +8,27 @@
 		<string>No</string>
 		<key>ATIConnectorInfo</key>
 		<string>No</string>
-        <key>ATIConnectorsController</key>
-        <string>6000</string>
-        <key>ATIConnectorsData</key>
-        <string>000400000403000000010000210302040400000014020000000100000000040310000000100000000001000000000001</string>
-        <key>ATIConnectorsPatch</key>
-        <string>040000001402000000010000000004040004000004030000000100001102010500000000000000000000000000000000</string>
-        <key>AsusAICPUPM</key>
+		<key>ATIConnectorsController</key>
+		<string>6000</string>
+		<key>ATIConnectorsData</key>
+		<string>000400000403000000010000210302040400000014020000000100000000040310000000100000000001000000000001</string>
+		<key>ATIConnectorsPatch</key>
+		<string>040000001402000000010000000004040004000004030000000100001102010500000000000000000000000000000000</string>
+		<key>AsusAICPUPM</key>
 		<string>No</string>
 		<key>AppleRTC</key>
-        <string>Yes</string>
-        <key>KextsToPatch</key>
+		<string>Yes</string>
+		<key>KextsToPatch</key>
 		<dict>
 			<key>0</key>
 			<dict>
 				<key>Name</key>
-				<string>AppleSDHC</string>
+				<string>VoodooHDA</string>
 				<key>Find</key>
-				<data>TA==</data>
+				<data>SGVhZHBob25lcwA=</data>
 				<key>Replace</key>
-				<data>TB==</data>					
-			</dict>			
+				<data>VGVsZXBob25lcwA=</data>
+			</dict>
 			<key>1</key>
 			<dict>
 				<key>Name</key>
@@ -36,8 +36,8 @@
 				<key>Find</key>
 				<data>TA==</data>
 				<key>Replace</key>
-				<data>TB==</data>					
-			</dict>			
+				<data>TA==</data>
+			</dict>
 			<key>2</key>
 			<dict>
 				<key>Name</key>
@@ -45,11 +45,10 @@
 				<key>Find</key>
 				<data>TA==</data>
 				<key>Replace</key>
-				<data>TB==</data>					
-			</dict>			
+				<data>TA==</data>
+			</dict>
 		</dict>
-
- 	</dict>
+	</dict>
 	<key>SystemParameters</key>
 	<dict>
 		<key>boot-args</key>

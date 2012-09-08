@@ -316,7 +316,7 @@ VOID DropTableFromXSDT (UINT32 Signature)
   }
 	BasePtr = (CHAR8*)(&(Xsdt->Entry));
 	for (Index = 0; Index < EntryCount; Index++, BasePtr+=sizeof(UINT64)) {
-    if (*BasePtr == 0) {
+    if (*(UINT64*)BasePtr == 0) {
       if (DoubleZero) {
         Xsdt->Header.Length = (UINT32)(sizeof(UINT64) * Index + sizeof(EFI_ACPI_DESCRIPTION_HEADER));
         DBG("DoubleZero in XSDT table\n");
