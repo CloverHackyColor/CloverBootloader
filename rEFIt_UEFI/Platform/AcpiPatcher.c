@@ -220,18 +220,18 @@ UINT64* ScanXSDT (UINT32 Signature)
 	EFI_ACPI_DESCRIPTION_HEADER		*Table;
 	UINTN							Index;
 	UINT32							EntryCount;
-	CHAR8							*BasePtr;
+	UINT64							*BasePtr;
 	UINT64							Entry64;
 
 	EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
-	BasePtr = (CHAR8*)(&(Xsdt->Entry));
-	for (Index = 0; Index < EntryCount; Index ++, BasePtr+=sizeof(UINT64)) 
+	BasePtr = (UINT64*)(&(Xsdt->Entry));
+	for (Index = 0; Index < EntryCount; Index ++, BasePtr++) 
 	{
 		CopyMem (&Entry64, (VOID*)BasePtr, sizeof(UINT64)); //value from BasePtr->
 		Table = (EFI_ACPI_DESCRIPTION_HEADER *)((UINTN)(Entry64));
 		if (Table->Signature==Signature) 
 		{
-			return (UINT64 *)BasePtr; //pointer to the table entry
+			return BasePtr; //pointer to the table entry
 		}
 	}
 	return NULL;
@@ -249,7 +249,7 @@ VOID DropTableFromRSDT (UINT32 Signature)
   
   // Если адрес RSDT < адреса XSDT и хвост RSDT наползает на XSDT, то подрезаем хвост RSDT до начала XSDT
   if (((UINTN)Rsdt < (UINTN)Xsdt) && (((UINTN)Rsdt + Rsdt->Header.Length) > (UINTN)Xsdt)) {
-    Rsdt->Header.Length = ((UINTN)Xsdt - (UINTN)Rsdt) & ~3;
+    Rsdt->Header.Length = ((VOID*)Xsdt - (VOID*)Rsdt) & ~3;
     DBG("Cropped Rsdt->Header.Length=%d\n", Rsdt->Header.Length);
   }
   
@@ -297,14 +297,14 @@ VOID DropTableFromXSDT (UINT32 Signature)
 	EFI_ACPI_DESCRIPTION_HEADER     *Table;
 	UINTN               Index, Index2;
 	UINT32							EntryCount;
-	CHAR8							*BasePtr, *Ptr, *Ptr2;
+	UINT64							*BasePtr, *Ptr, *Ptr2;
 	UINT64							Entry64;
   CHAR8 sign[5];
   CHAR8 OTID[9];
   BOOLEAN 			DoubleZero = FALSE;
   // Если адрес XSDT < адреса RSDT и хвост XSDT наползает на RSDT, то подрезаем хвост XSDT до начала RSDT
   if (((UINTN)Xsdt < (UINTN)Rsdt) && (((UINTN)Xsdt + Xsdt->Header.Length) > (UINTN)Rsdt)) {
-    Xsdt->Header.Length = ((UINTN)Rsdt - (UINTN)Xsdt) & ~3; //align to 4 bytes
+    Xsdt->Header.Length = ((VOID*)Rsdt - (VOID*)Xsdt) & ~3; //align to 4 bytes
     DBG("Cropped Xsdt->Header.Length=%d\n", Xsdt->Header.Length);
   }
   
@@ -314,8 +314,8 @@ VOID DropTableFromXSDT (UINT32 Signature)
     DBG("BUG! Too many XSDT entries \n");
     EntryCount = 50;
   }
-	BasePtr = (CHAR8*)(&(Xsdt->Entry));
-	for (Index = 0; Index < EntryCount; Index++, BasePtr+=sizeof(UINT64)) {
+	BasePtr = (UINT64*)(&(Xsdt->Entry));
+	for (Index = 0; Index < EntryCount; Index++, BasePtr++) {
     if (*BasePtr == 0) {
       if (DoubleZero) {
         Xsdt->Header.Length = (UINT32)(sizeof(UINT64) * Index + sizeof(EFI_ACPI_DESCRIPTION_HEADER));
@@ -564,9 +564,9 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 	UINTN					Length;
 	CHAR8					Signature[9];
 	UINT32				*EntryPtr32;
-	CHAR8 				*EntryPtr;
+	UINT64				*EntryPtr64;
 	UINTN					EntryCount;
-	UINTN					Index;
+	INTN					Index;
 	UINTN					SsdtCount;
 	
 	
@@ -675,10 +675,9 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 		DBG("  Tables in Xsdt: %d\n", EntryCount); 
 		
 		// iterate over table entries
-		EntryPtr = (CHAR8*)&Xsdt->Entry;
+		EntryPtr64 = (UINT64*)&Xsdt->Entry;
 		SsdtCount = 0;
-		for (Index = 0; Index < EntryCount; Index++, EntryPtr+=sizeof(UINT64)) {
-         UINT64	*EntryPtr64 = (UINT64 *)EntryPtr;
+		for (Index = 0; Index < EntryCount; Index++, EntryPtr64++) {
 			DBG("  %d.", Index);
 			
 			// skip NULL entries
@@ -949,7 +948,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   EFI_FILE      				*RootDir;
   UINT32                eCntR; //, eCntX;
   UINT32                *pEntryR;
-  CHAR8                 *pEntry;
+  UINT64                *pEntryX;
   EFI_ACPI_DESCRIPTION_HEADER *TableHeader;
   // -===== APIC =====-
   EFI_ACPI_DESCRIPTION_HEADER                           *ApicTable;
@@ -962,9 +961,9 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   UINT8             *SubTable;
   BOOLEAN           DsdtLoaded = FALSE;
   INTN              ApicCPUBase = 0;
-  CHAR16*           AcpiOemPath = PoolPrint(L"%s\\ACPI\\patched", OEMPath);
+  CHAR16*     AcpiOemPath = PoolPrint(L"%s\\ACPI\\patched", OEMPath);
   PathDsdt = PoolPrint(L"\\%s", gSettings.DsdtName);
-  
+	
   if (gFirmwareClover) {
     // although it work on Aptio, no need for the following on other UEFis
     
@@ -1092,15 +1091,14 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       Xsdt->Header.CreatorId = Rsdt->Header.CreatorId;
       Xsdt->Header.CreatorRevision = Rsdt->Header.CreatorRevision;
       pEntryR = (UINT32*)(&(Rsdt->Entry));
-      pEntry = (CHAR8*)(&(Xsdt->Entry));
+      pEntryX = (UINT64*)(&(Xsdt->Entry));
       for (Index = 0; Index < eCntR; Index ++) 
       {
-        UINT64  *pEntryX = (UINT64 *)pEntry;
         DBG("RSDT entry = 0x%x\n", *pEntryR);
         if (*pEntryR != 0) {
           *pEntryX = 0;
           CopyMem ((VOID*)pEntryX, (VOID*)pEntryR, sizeof(UINT32));
-          pEntryR++;pEntry+=sizeof(UINT64);
+          pEntryR++;pEntryX++;
         } else {
           DBG("... skip it\n");
           Xsdt->Header.Length -= sizeof(UINT64);
