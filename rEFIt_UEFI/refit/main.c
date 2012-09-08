@@ -40,7 +40,11 @@
 //#include "syslinux_mbr.h"
 #include "Version.h"
 
+#ifndef DEBUG_ALL
 #define DEBUG_MAIN 1
+#else
+#define DEBUG_MAIN DEBUG_ALL
+#endif
 
 #if DEBUG_MAIN == 2
 #define DBG(...) AsciiPrint(__VA_ARGS__)
@@ -50,7 +54,11 @@
 #define DBG(...)
 #endif
 
+#ifndef DEBUG_ALL
 #define DEBUG_TIME 0
+#else
+#define DEBUG_TIME DEBUG_ALL
+#endif
 
 #if DEBUG_TIME == 1
   #define DBGT(...) { DBG("[%a] ", DbgTime()); DBG(__VA_ARGS__) }

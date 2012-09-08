@@ -14,10 +14,16 @@
 /*
  Slice 2011 - corrections for MacOS
  Load and install patched DSDT.aml, SSDT-N.aml
+ 
+ For now this module is obsolete but it needed just to install native ACPI tables into gST
  */
 
 #ifndef DEBUG_ACPI
+#ifndef DEBUG_ALL
 #define DEBUG_ACPI 0
+#else
+#define DEBUG_ACPI DEBUG_ALL
+#endif
 #endif
 #define LIP 0
 #define READTABLES 0

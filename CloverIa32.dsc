@@ -421,7 +421,7 @@
 #
 ###################################################################################################
 [BuildOptions]
-  MSFT:*_*_*_CC_FLAGS = /FAsc /FR$(@R).SBR
+  MSFT:*_*_*_CC_FLAGS = /FAsc /FR$(@R).SBR -DMDEPKG_NDEBUG
   XCODE:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
   GCC:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
 

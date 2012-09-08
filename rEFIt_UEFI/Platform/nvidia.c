@@ -52,7 +52,11 @@
 #include "device_inject.h"
 
 #ifndef DEBUG_NVIDIA
+#ifndef DEBUG_ALL
 #define DEBUG_NVIDIA 1
+#else
+#define DEBUG_NVIDIA DEBUG_ALL
+#endif
 #endif
 
 #if DEBUG_NVIDIA == 2

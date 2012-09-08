@@ -14,8 +14,11 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include "LegacyBiosThunk.h"
 
-
+#ifndef DEBUG_ALL
 #define DEBUG_LBTHUNK 0
+#else
+#define DEBUG_LBTHUNK DEBUG_ALL
+#endif
 
 #if DEBUG_LBTHUNK == 2
 #define DBG(...) AsciiPrint(__VA_ARGS__)

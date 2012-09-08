@@ -220,18 +220,18 @@ UINT64* ScanXSDT (UINT32 Signature)
 	EFI_ACPI_DESCRIPTION_HEADER		*Table;
 	UINTN							Index;
 	UINT32							EntryCount;
-	UINT64							*BasePtr;
+	CHAR8							*BasePtr;
 	UINT64							Entry64;
 
 	EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
-	BasePtr = (UINT64*)(&(Xsdt->Entry));
-	for (Index = 0; Index < EntryCount; Index ++, BasePtr++) 
+	BasePtr = (CHAR8*)(&(Xsdt->Entry));
+	for (Index = 0; Index < EntryCount; Index ++, BasePtr+=sizeof(UINT64)) 
 	{
 		CopyMem (&Entry64, (VOID*)BasePtr, sizeof(UINT64)); //value from BasePtr->
 		Table = (EFI_ACPI_DESCRIPTION_HEADER *)((UINTN)(Entry64));
 		if (Table->Signature==Signature) 
 		{
-			return BasePtr; //pointer to the table entry
+			return (UINT64 *)BasePtr; //pointer to the table entry
 		}
 	}
 	return NULL;
@@ -249,7 +249,7 @@ VOID DropTableFromRSDT (UINT32 Signature)
   
   // Если адрес RSDT < адреса XSDT и хвост RSDT наползает на XSDT, то подрезаем хвост RSDT до начала XSDT
   if (((UINTN)Rsdt < (UINTN)Xsdt) && (((UINTN)Rsdt + Rsdt->Header.Length) > (UINTN)Xsdt)) {
-    Rsdt->Header.Length = ((VOID*)Xsdt - (VOID*)Rsdt) & ~3;
+    Rsdt->Header.Length = ((UINTN)Xsdt - (UINTN)Rsdt) & ~3;
     DBG("Cropped Rsdt->Header.Length=%d\n", Rsdt->Header.Length);
   }
   
@@ -297,14 +297,14 @@ VOID DropTableFromXSDT (UINT32 Signature)
 	EFI_ACPI_DESCRIPTION_HEADER     *Table;
 	UINTN               Index, Index2;
 	UINT32							EntryCount;
-	UINT64							*BasePtr, *Ptr, *Ptr2;
+	CHAR8							*BasePtr, *Ptr, *Ptr2;
 	UINT64							Entry64;
   CHAR8 sign[5];
   CHAR8 OTID[9];
   BOOLEAN 			DoubleZero = FALSE;
   // Если адрес XSDT < адреса RSDT и хвост XSDT наползает на RSDT, то подрезаем хвост XSDT до начала RSDT
   if (((UINTN)Xsdt < (UINTN)Rsdt) && (((UINTN)Xsdt + Xsdt->Header.Length) > (UINTN)Rsdt)) {
-    Xsdt->Header.Length = ((VOID*)Rsdt - (VOID*)Xsdt) & ~3; //align to 4 bytes
+    Xsdt->Header.Length = ((UINTN)Rsdt - (UINTN)Xsdt) & ~3; //align to 4 bytes
     DBG("Cropped Xsdt->Header.Length=%d\n", Xsdt->Header.Length);
   }
   
@@ -314,8 +314,8 @@ VOID DropTableFromXSDT (UINT32 Signature)
     DBG("BUG! Too many XSDT entries \n");
     EntryCount = 50;
   }
-	BasePtr = (UINT64*)(&(Xsdt->Entry));
-	for (Index = 0; Index < EntryCount; Index++, BasePtr++) {
+	BasePtr = (CHAR8*)(&(Xsdt->Entry));
+	for (Index = 0; Index < EntryCount; Index++, BasePtr+=sizeof(UINT64)) {
     if (*BasePtr == 0) {
       if (DoubleZero) {
         Xsdt->Header.Length = (UINT32)(sizeof(UINT64) * Index + sizeof(EFI_ACPI_DESCRIPTION_HEADER));
@@ -340,13 +340,15 @@ VOID DropTableFromXSDT (UINT32 Signature)
 	  }
     DBG(" ... dropped\n");
     Ptr = BasePtr;
-    Ptr2 = Ptr + 1;
+    Ptr2 = Ptr + sizeof(UINT64);
     for (Index2 = Index; Index2 < EntryCount-1; Index2++) {
       //*Ptr++ = *Ptr2++;
-      CopyMem(Ptr++, Ptr2++, sizeof(UINT64));
+      CopyMem(Ptr, Ptr2, sizeof(UINT64));
+      Ptr+=sizeof(UINT64);
+      Ptr2+=sizeof(UINT64);
     }
  //   ZeroMem(Ptr, sizeof(UINT64));
-    BasePtr--; //SunKi
+    BasePtr-=sizeof(UINT64); //SunKi
     Xsdt->Header.Length -= sizeof(UINT64);
 	}	
   //  Xsdt->Header.Length = sizeof(UINT64) * Index + sizeof(EFI_ACPI_DESCRIPTION_HEADER);
@@ -564,9 +566,9 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 	UINTN					Length;
 	CHAR8					Signature[9];
 	UINT32				*EntryPtr32;
-	UINT64				*EntryPtr64;
+	CHAR8 				*EntryPtr;
 	UINTN					EntryCount;
-	INTN					Index;
+	UINTN					Index;
 	UINTN					SsdtCount;
 	
 	
@@ -675,9 +677,10 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 		DBG("  Tables in Xsdt: %d\n", EntryCount); 
 		
 		// iterate over table entries
-		EntryPtr64 = (UINT64*)&Xsdt->Entry;
+		EntryPtr = (CHAR8*)&Xsdt->Entry;
 		SsdtCount = 0;
-		for (Index = 0; Index < EntryCount; Index++, EntryPtr64++) {
+		for (Index = 0; Index < EntryCount; Index++, EntryPtr+=sizeof(UINT64)) {
+         UINT64	*EntryPtr64 = (UINT64 *)EntryPtr;
 			DBG("  %d.", Index);
 			
 			// skip NULL entries
@@ -948,7 +951,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   EFI_FILE      				*RootDir;
   UINT32                eCntR; //, eCntX;
   UINT32                *pEntryR;
-  UINT64                *pEntryX;
+  CHAR8                 *pEntry;
   EFI_ACPI_DESCRIPTION_HEADER *TableHeader;
   // -===== APIC =====-
   EFI_ACPI_DESCRIPTION_HEADER                           *ApicTable;
@@ -1091,14 +1094,16 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       Xsdt->Header.CreatorId = Rsdt->Header.CreatorId;
       Xsdt->Header.CreatorRevision = Rsdt->Header.CreatorRevision;
       pEntryR = (UINT32*)(&(Rsdt->Entry));
-      pEntryX = (UINT64*)(&(Xsdt->Entry));
+      pEntry = (CHAR8*)(&(Xsdt->Entry));
       for (Index = 0; Index < eCntR; Index ++) 
       {
+        UINT64  *pEntryX = (UINT64 *)pEntry;
         DBG("RSDT entry = 0x%x\n", *pEntryR);
         if (*pEntryR != 0) {
           *pEntryX = 0;
           CopyMem ((VOID*)pEntryX, (VOID*)pEntryR, sizeof(UINT32));
-          pEntryR++;pEntryX++;
+          pEntryR++;
+          pEntry += sizeof(UINT64);
         } else {
           DBG("... skip it\n");
           Xsdt->Header.Length -= sizeof(UINT64);

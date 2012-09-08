@@ -18,7 +18,11 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include "Partition.h"
 
+#ifndef DEBUG_ALL
 #define DEBUG_PAR 0
+#else
+#define DEBUG_PAR DEBUG_ALL
+#endif
 #if DEBUG_PAR==2
 #define DBG(...)  AsciiPrint(__VA_ARGS__)
 #elif DEBUG_PAR==1

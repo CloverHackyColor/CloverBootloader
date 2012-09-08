@@ -7,7 +7,11 @@
 #include "gma.h"
 
 #ifndef DEBUG_GMA
+#ifndef DEBUG_ALL
 #define DEBUG_GMA 1
+#else
+#define DEBUG_GMA DEBUG_ALL
+#endif
 #endif
 
 #if DEBUG_GMA == 2

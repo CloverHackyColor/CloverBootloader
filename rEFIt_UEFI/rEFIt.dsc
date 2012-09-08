@@ -71,7 +71,7 @@
 	Clover/rEFIt_UEFI/refit.inf
 
 [BuildOptions]
-  MSFT:*_*_*_CC_FLAGS = /wd4028 /FAcs -DMDEPKG_NDEBUG
+  MSFT:*_*_*_CC_FLAGS = /wd4028 /FAcs /FR$(@R).SBR -DMDEPKG_NDEBUG
   XCODE:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
   GCC:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
 

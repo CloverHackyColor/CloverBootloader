@@ -15,7 +15,11 @@
  * hope that it will be useful, but WITHOUT ANY WARRANTY of any kind.
  */
 
+#ifndef DEBUG_ALL
 #define DEBUG_DH 1
+#else
+#define DEBUG_DH DEBUG_ALL
+#endif
 
 #if DEBUG_DH == 2
 #define DBG(...) AsciiPrint(__VA_ARGS__)

@@ -39,7 +39,11 @@
 
 #define MAX_FILE_SIZE (1024*1024*1024)
 
+#ifndef DEBUG_ALL
 #define DEBUG_IMG 0
+#else
+#define DEBUG_IMG DEBUG_ALL
+#endif
 
 #if DEBUG_IMG == 2
 #define DBG(...) AsciiPrint(__VA_ARGS__)

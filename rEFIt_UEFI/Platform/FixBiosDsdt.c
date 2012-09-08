@@ -12,7 +12,11 @@
 #endif
 
 #ifndef DEBUG_FIX
+#ifndef DEBUG_ALL
 #define DEBUG_FIX 1
+#else
+#define DEBUG_FIX DEBUG_ALL
+#endif
 #endif
 
 #if DEBUG_FIX==2

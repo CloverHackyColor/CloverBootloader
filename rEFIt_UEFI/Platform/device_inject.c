@@ -11,7 +11,11 @@
 #include "Platform.h"
 
 #ifndef DEBUG_INJECT
+#ifndef DEBUG_ALL
 #define DEBUG_INJECT 1
+#else
+#define DEBUG_INJECT DEBUG_ALL
+#endif
 #endif
 
 #if DEBUG_INJECT == 2

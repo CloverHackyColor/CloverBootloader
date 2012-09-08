@@ -36,7 +36,11 @@
 
 #include "Platform.h"
 
+#ifndef DEBUG_ALL
 #define DEBUG_LIB 1
+#else
+#define DEBUG_LIB DEBUG_ALL
+#endif
 
 #if DEBUG_LIB == 2
 #define DBG(...) AsciiPrint(__VA_ARGS__)

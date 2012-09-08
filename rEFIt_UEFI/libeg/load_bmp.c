@@ -260,7 +260,7 @@ VOID egEncodeBMP(IN EG_IMAGE *Image, OUT UINT8 **FileDataReturn, OUT UINTN *File
     }
     
     *FileDataReturn = FileData;
-    *FileDataLengthReturn = FileDataLength;
+    *FileDataLengthReturn = (UINTN)FileDataLength;
 }
 
 /* EOF */

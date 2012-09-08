@@ -13,7 +13,11 @@ Copyright (c) 2006 JLA
 #include "Platform.h"
 #include "LegacyBiosThunk.h"
 
+#ifndef DEBUG_ALL
 #define DEBUG_LBOOT 1
+#else
+#define DEBUG_LBOOT DEBUG_ALL
+#endif
 
 #if DEBUG_LBOOT == 2
 #define DBG(...) AsciiPrint(__VA_ARGS__)
@@ -705,7 +709,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
 {
 	EFI_STATUS					Status			= EFI_NOT_FOUND;
 	EFI_BLOCK_IO				*pDisk			= volume->BlockIO;
-	UINT8						*pBootSector	= (UINT8*)0x7C00;
+	UINT8						*pBootSector	= (UINT8*)(UINTN)0x7C00;
 	UINT8						*mBootSector;
 	UINT32                      LbaOffset		= 0;
 	UINT32                      LbaSize			= 0;
