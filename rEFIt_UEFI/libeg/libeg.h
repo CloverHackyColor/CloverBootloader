@@ -192,7 +192,7 @@ VOID    egSetGraphicsModeEnabled(IN BOOLEAN Enable);
 EG_IMAGE * egCreateImage(IN UINT64 Width, IN UINT64 Height, IN BOOLEAN HasAlpha);
 EG_IMAGE * egCreateFilledImage(IN UINT64 Width, IN UINT64 Height, IN BOOLEAN HasAlpha, IN EG_PIXEL *Color);
 EG_IMAGE * egCopyImage(IN EG_IMAGE *Image);
-EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *Image, IN UINTN Ratio);
+EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *Image, IN UINT64 Ratio);
 VOID       egFreeImage(IN EG_IMAGE *Image);
 
 EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN BOOLEAN WantAlpha);

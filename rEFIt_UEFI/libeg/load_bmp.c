@@ -204,7 +204,7 @@ EG_IMAGE * egDecodeBMP(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ico
 // Save BMP image
 //
 
-VOID egEncodeBMP(IN EG_IMAGE *Image, OUT UINT8 **FileDataReturn, OUT UINT64 *FileDataLengthReturn)
+VOID egEncodeBMP(IN EG_IMAGE *Image, OUT UINT8 **FileDataReturn, OUT UINTN *FileDataLengthReturn)
 {
     BMP_IMAGE_HEADER    *BmpHeader;
     UINT8               *FileData;
