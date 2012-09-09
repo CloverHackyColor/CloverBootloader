@@ -668,12 +668,13 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
       BiosDriveNum = 0x80;
 //        return EFI_NOT_FOUND;
     }
-  
+/*
   Status = SaveBooterLog(SelfRootDir, LEGBOOT_LOG);
   if (EFI_ERROR(Status)) {
     DBG("can't save legacy-boot.log\n");
     Status = SaveBooterLog(NULL, LEGBOOT_LOG);
   }
+ */
   /*
   LogSize = msgCursor - msgbuf;
   Status = egSaveFile(SelfRootDir, LEGBOOT_LOG, (UINT8*)msgbuf, LogSize);
@@ -712,6 +713,12 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
 	// Success - Should never get here 
   //else
   Status = gLegacy8259->SetMask(gLegacy8259, &OldMask, NULL, NULL, NULL);
+  //if not success then save legacyboot.log
+  Status = SaveBooterLog(SelfRootDir, LEGBOOT_LOG);
+  if (EFI_ERROR(Status)) {
+    DBG("can't save legacy-boot.log\n");
+    Status = SaveBooterLog(NULL, LEGBOOT_LOG);
+  }
 
 	return EFI_SUCCESS;	
 	
@@ -911,11 +918,12 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
 	//
 	// dump log to legacy_boot.log
 	//
-   Status = SaveBooterLog(SelfRootDir, LEGBOOT_LOG);
+/*   Status = SaveBooterLog(SelfRootDir, LEGBOOT_LOG);
    if (EFI_ERROR(Status)) {
      DBG("can't save legacy-boot.log\n");
      Status = SaveBooterLog(NULL, LEGBOOT_LOG);
    }
+ */
    /*
 	LogSize = msgCursor - msgbuf;
 	Status = egSaveFile(SelfRootDir, LEGBOOT_LOG, (UINT8*)msgbuf, LogSize);
@@ -943,9 +951,14 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
 	LegacyBiosFarCall86(0, 0x7c00, &Regs);
 	
 	//Status = gLegacy8259->SetMask(gLegacy8259, &OldMask, NULL, NULL, NULL);
-	PauseForKey(L"continue ...\n");
+	PauseForKey(L"save legacy-boot.log ...\n");
+  Status = SaveBooterLog(SelfRootDir, LEGBOOT_LOG);
+  if (EFI_ERROR(Status)) {
+    DBG("can't save legacy-boot.log\n");
+    Status = SaveBooterLog(NULL, LEGBOOT_LOG);
+  }
 	
-	return EFI_SUCCESS;	
+	return EFI_SUCCESS;
 	
 }	
 
