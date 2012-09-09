@@ -23,12 +23,10 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #else
 #define DEBUG_PAR DEBUG_ALL
 #endif
-#if DEBUG_PAR==2
-#define DBG(...)  AsciiPrint(__VA_ARGS__)
-#elif DEBUG_PAR==1
-#define DBG(...)  BootLog(__VA_ARGS__)
+#if DEBUG_PAR==0
+#define DBG(...)
 #else
-#define DBG(...)	
+#define DBG(...) DebugLog(DEBUG_PAR, __VA_ARGS__)	
 #endif
 
 CHAR8 *msgCursor;

@@ -15,12 +15,10 @@
 #define DEBUG_ATI DEBUG_ALL
 #endif
 
-#if DEBUG_ATI == 2
-#define DBG(...) AsciiPrint(__VA_ARGS__)
-#elif DEBUG_ATI == 1
-#define DBG(...) MsgLog(__VA_ARGS__)
-#else
+#if DEBUG_ATI == 0
 #define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_ATI, __VA_ARGS__)
 #endif
 
 

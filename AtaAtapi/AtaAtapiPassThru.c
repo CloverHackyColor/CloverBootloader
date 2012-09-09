@@ -15,13 +15,16 @@
 
 #include "AtaAtapiPassThru.h"
 
-
+#ifndef DEBUG_ALL
 #define DEBUG_ATAATAPI 0
-
-#if DEBUG_ATAATAPI==1
-#define DBG(...)  Print(__VA_ARGS__)
 #else
+#define DEBUG_ATAATAPI DEBUG_ALL
+#endif
+
+#if DEBUG_ATAATAPI==0
 #define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_ATAATAPI, __VA_ARGS__)
 #endif
 
 //

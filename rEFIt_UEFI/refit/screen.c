@@ -38,15 +38,16 @@
 
 #include "egemb_refit_banner.h"
 
-
+#ifndef DEBUG_ALL
 #define DEBUG_SCR 0
-
-#if DEBUG_SCR == 2
-#define DBG(...) AsciiPrint(__VA_ARGS__)
-#elif DEBUG_SCR == 1
-#define DBG(...) MsgLog(__VA_ARGS__)
 #else
-#define DBG(...)	
+#define DEBUG_SCR DEBUG_ALL
+#endif
+
+#if DEBUG_SCR == 0
+#define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_SCR, __VA_ARGS__)	
 #endif
 
 // Console defines and variables

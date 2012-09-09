@@ -44,15 +44,13 @@
 #define DEBUG_MENU DEBUG_ALL
 #endif
 
-#if DEBUG_MENU == 2
-#define DBG(...) AsciiPrint(__VA_ARGS__)
-#elif DEBUG_MENU == 1
-#define DBG(...) MsgLog(__VA_ARGS__)
+#if DEBUG_MENU == 0
+#define DBG(...)
 #else
-#define DBG(...)	
+#define DBG(...) DebugLog(DEBUG_MENU, __VA_ARGS__)	
 #endif
 
-#define PREBOOT_LOG L"EFI\\misc\\preboot.log"
+//#define PREBOOT_LOG L"EFI\\misc\\preboot.log"
 #define VBIOS_BIN L"EFI\\misc\\c0000.bin"
 // scrolling definitions
 
@@ -718,7 +716,7 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
 	UINTN         ind = 0;
 	UINTN         i = 0;
 	UINTN         MenuExit = 0;
-	UINTN         LogSize;
+   //UINTN         LogSize;
   UINTN         Pos = (Screen->Entries[State->CurrentSelection])->Row;
   INPUT_ITEM    *Item = ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item;
   CHAR16        *Backup = EfiStrDuplicate(Item->SValue);
@@ -780,11 +778,17 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
           continue;
           break;
         case SCAN_F2:
+          Status = SaveBooterLog(SelfRootDir, PREBOOT_LOG);
+          if (EFI_ERROR(Status)) {
+            Status = SaveBooterLog(NULL, PREBOOT_LOG);
+          }
+          /*
           LogSize = msgCursor - msgbuf;
           Status = egSaveFile(SelfRootDir, PREBOOT_LOG, (UINT8*)msgbuf, LogSize);
           if (EFI_ERROR(Status)) {
             Status = egSaveFile(NULL, PREBOOT_LOG, (UINT8*)msgbuf, LogSize);
           }
+          */
           break;
         case SCAN_F6:
           Status = egSaveFile(SelfRootDir, VBIOS_BIN, (UINT8*)(UINTN)0xc0000, 0x20000);
@@ -873,7 +877,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
     UINTN         TimeoutCountdown = 0;
     CHAR16        *TimeoutMessage;
     UINTN         MenuExit;
-    UINTN         LogSize;
+    //UINTN         LogSize;
   
     //no default - no timeout!
     if ((*DefaultEntryIndex != -1) && (Screen->TimeoutSeconds > 0)) {
@@ -971,11 +975,17 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         MenuExit = MENU_EXIT_HELP;
         break;
       case SCAN_F2:
+        Status = SaveBooterLog(SelfRootDir, PREBOOT_LOG);
+        if (EFI_ERROR(Status)) {
+          Status = SaveBooterLog(NULL, PREBOOT_LOG);
+        }
+        /*
         LogSize = msgCursor - msgbuf;
         Status = egSaveFile(SelfRootDir, PREBOOT_LOG, (UINT8*)msgbuf, LogSize);
         if (EFI_ERROR(Status)) {
           Status = egSaveFile(NULL, PREBOOT_LOG, (UINT8*)msgbuf, LogSize);
         }
+        */
         break;
       case SCAN_F4:
         //SaveOemDsdt(FALSE); //no patches

@@ -42,12 +42,10 @@
 #define DEBUG_CFG DEBUG_ALL
 #endif
 
-#if DEBUG_CFG == 2
-#define DBG(...) AsciiPrint(__VA_ARGS__)
-#elif DEBUG_CFG == 1
-#define DBG(...) MsgLog(__VA_ARGS__)
+#if DEBUG_CFG == 0
+#define DBG(...)
 #else
-#define DBG(...)	
+#define DBG(...) DebugLog(DEBUG_CFG, __VA_ARGS__)
 #endif
 
 

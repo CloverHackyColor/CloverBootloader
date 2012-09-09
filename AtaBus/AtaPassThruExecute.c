@@ -24,11 +24,16 @@
 
 #include "AtaBus.h"
 
+#ifndef DEBUG_ALL
 #define DEBUG_EXEC 0
-#if DEBUG_EXEC==1
-#define DBG(...)  Print(__VA_ARGS__)
 #else
+#define DEBUG_EXEC DEBUG_ALL
+#endif
+
+#if DEBUG_EXEC==0
 #define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_EXEC, __VA_ARGS__)
 #endif
 
 

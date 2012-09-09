@@ -20,12 +20,10 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #define DEBUG_LBTHUNK DEBUG_ALL
 #endif
 
-#if DEBUG_LBTHUNK == 2
-#define DBG(...) AsciiPrint(__VA_ARGS__)
-// lib.h - just for PauseForKey
-#include "lib.h"
+#if DEBUG_LBTHUNK == 0
+#define DBG(...)
 #else
-#define DBG(...)	
+#define DBG(...) DebugLog(DEBUG_LBTHUNK, __VA_ARGS__)
 #endif
 
 

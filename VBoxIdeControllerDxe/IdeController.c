@@ -33,15 +33,27 @@
 
 #include "IdeController.h"
 
+#ifndef DEBUG_ALL
+
 #define DEBUG_IDE 0
 
-#if DEBUG_IDE==1
-#define DBG(x...)  Print(x)
 #else
-#define DBG(x...)
+
+#define DEBUG_IDE DEBUG_ALL
+
 #endif
 
 
+
+#if DEBUG_IDE==0
+
+#define DBG(...)
+
+#else
+
+#define DBG(...) DebugLog(DEBUG_IDE, __VA_ARGS__)
+
+#endif
 
 //
 //  EFI_DRIVER_BINDING_PROTOCOL instance

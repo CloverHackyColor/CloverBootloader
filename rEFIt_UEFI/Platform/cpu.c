@@ -38,18 +38,16 @@
 
 #ifndef DEBUG_ALL
 #define DEBUG_CPU 1
-#define DEBUG_PCI 1
+//#define DEBUG_PCI 1
 #else
 #define DEBUG_CPU DEBUG_ALL
-#define DEBUG_PCI DEBUG_ALL
+//#define DEBUG_PCI DEBUG_ALL
 #endif
 
-#if DEBUG_CPU == 2
-#define DBG(...) AsciiPrint(__VA_ARGS__)
-#elif DEBUG_CPU == 1
-#define DBG(...) MsgLog(__VA_ARGS__)
+#if DEBUG_CPU == 0
+#define DBG(...)
 #else
-#define DBG(...)	
+#define DBG(...) DebugLog(DEBUG_CPU, __VA_ARGS__)	
 #endif
 
 UINT8							gDefaultType; 

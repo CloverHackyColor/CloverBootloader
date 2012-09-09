@@ -46,12 +46,10 @@
 #define DEBUG_MAIN DEBUG_ALL
 #endif
 
-#if DEBUG_MAIN == 2
-#define DBG(...) AsciiPrint(__VA_ARGS__)
-#elif DEBUG_MAIN == 1
-#define DBG(...) MsgLog(__VA_ARGS__)
-#else
+#if DEBUG_MAIN == 0
 #define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_MAIN, __VA_ARGS__)
 #endif
 
 #ifndef DEBUG_ALL
@@ -60,10 +58,10 @@
 #define DEBUG_TIME DEBUG_ALL
 #endif
 
-#if DEBUG_TIME == 1
-  #define DBGT(...) { DBG("[%a] ", DbgTime()); DBG(__VA_ARGS__) }
-#else
+#if DEBUG_TIME == 0
   #define DBGT(...)
+#else
+  #define DBGT(...) { DBG("[%a] ", DbgTime()); DBG(__VA_ARGS__); }
 #endif
 
 // variables
@@ -1218,7 +1216,7 @@ static EFI_DEVICE_PATH *LegacyLoaderList[] = {
 }; */
 
 #define MAX_DISCOVERED_PATHS (16)
-#define PREBOOT_LOG L"EFI\\misc\\preboot.log"
+//#define PREBOOT_LOG L"EFI\\misc\\preboot.log"
 
 static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
 {

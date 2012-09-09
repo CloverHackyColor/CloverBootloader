@@ -40,14 +40,16 @@
 //#define FONT_CELL_WIDTH (7)
 //#define FONT_CELL_HEIGHT (12)
 
+#ifndef DEBUG_ALL
 #define DEBUG_TEXT 0
-
-#if DEBUG_TEXT == 2
-#define DBG(...) AsciiPrint(__VA_ARGS__)
-#elif DEBUG_TEXT == 1
-#define DBG(...) MsgLog(__VA_ARGS__)
 #else
-#define DBG(...)	
+#define DEBUG_TEXT DEBUG_ALL
+#endif
+
+#if DEBUG_TEXT == 0
+#define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_TEXT, __VA_ARGS__)
 #endif
 
 

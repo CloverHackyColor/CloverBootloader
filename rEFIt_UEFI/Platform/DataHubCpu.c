@@ -21,12 +21,10 @@
 #define DEBUG_DH DEBUG_ALL
 #endif
 
-#if DEBUG_DH == 2
-#define DBG(...) AsciiPrint(__VA_ARGS__)
-#elif DEBUG_DH == 1
-#define DBG(...) MsgLog(__VA_ARGS__)
+#if DEBUG_DH == 0
+#define DBG(...)
 #else
-#define DBG(...)	
+#define DBG(...) DebugLog(DEBUG_DH, __VA_ARGS__)	
 #endif
 
 

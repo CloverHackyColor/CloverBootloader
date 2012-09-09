@@ -9,15 +9,17 @@
 #include "AmlGenerator.h"
 
 #ifndef DEBUG_AML
+#ifndef DEBUG_ALL
 #define DEBUG_AML 1
+#else
+#define DEBUG_AML DEBUG_ALL
+#endif
 #endif
 
-#if DEBUG_AML==2
-#define DBG(...)  AsciiPrint(__VA_ARGS__)
-#elif DEBUG_AML==1
-#define DBG(...)  MsgLog(__VA_ARGS__)
+#if DEBUG_AML==0
+#define DBG(...)
 #else
-#define DBG(...)	
+#define DBG(...) DebugLog(DEBUG_AML, __VA_ARGS__)	
 #endif
 
 

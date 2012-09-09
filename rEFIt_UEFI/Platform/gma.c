@@ -14,12 +14,10 @@
 #endif
 #endif
 
-#if DEBUG_GMA == 2
-#define DBG(...)	AsciiPrint(__VA_ARGS__)
-#elif DEBUG_GMA == 1
-#define DBG(...) MsgLog(__VA_ARGS__)
+#if DEBUG_GMA == 0
+#define DBG(...)
 #else
-#define DBG(...)	
+#define DBG(...) DebugLog(DEBUG_GMA, __VA_ARGS__)
 #endif
 
 extern CHAR8*						gDeviceProperties;

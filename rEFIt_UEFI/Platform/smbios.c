@@ -21,14 +21,16 @@
 
 #include "Platform.h"
 
+#ifndef DEBUG_ALL
 #define DEBUG_SMBIOS 1
-
-#if DEBUG_SMBIOS == 2
-#define DBG(...) AsciiPrint(__VA_ARGS__)
-#elif DEBUG_SMBIOS == 1
-#define DBG(...) MsgLog(__VA_ARGS__)
 #else
-#define DBG(...)	
+#define DEBUG_SMBIOS DEBUG_ALL
+#endif
+
+#if DEBUG_SMBIOS == 0
+#define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_SMBIOS, __VA_ARGS__)
 #endif
 
 #define _Bit(n)			(1ULL << n)

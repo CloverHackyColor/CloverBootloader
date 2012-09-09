@@ -8,14 +8,16 @@
 
 #include "Platform.h"
 
+#ifndef DEBUG_ALL
 #define DEBUG_USB 0
-
-#if DEBUG_USB == 2
-#define DBG(...) AsciiPrint(__VA_ARGS__)
-#elif DEBUG_USB == 1
-#define DBG(...) MsgLog(__VA_ARGS__)
 #else
-#define DBG(...)	
+#define DEBUG_USB DEBUG_ALL
+#endif
+
+#if DEBUG_USB == 0
+#define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_USB, __VA_ARGS__)
 #endif
 
 

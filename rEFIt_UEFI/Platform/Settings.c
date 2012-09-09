@@ -6,14 +6,16 @@
 #include "kernel_patcher.h"
 #include "ati.h"
 
+#ifndef DEBUG_ALL
 #define DEBUG_SET 1
-
-#if DEBUG_SET == 2
-#define DBG(...) AsciiPrint(__VA_ARGS__)
-#elif DEBUG_SET == 1
-#define DBG(...) MsgLog(__VA_ARGS__)
 #else
-#define DBG(...)	
+#define DEBUG_SET DEBUG_ALL
+#endif
+
+#if DEBUG_SET == 0
+#define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_SET, __VA_ARGS__)
 #endif
 
 #define SHORT_LOCATE 1
@@ -464,7 +466,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       if(prop)
       {     
         hex2bin(prop->string, (UINT8*)&gSettings.NVCAP[0], 20);
-        DBG("Read NVCAP:")
+        DBG("Read NVCAP:");
         for (i=0; i<20; i++) {
           DBG("%02x", gSettings.NVCAP[i]);
         }

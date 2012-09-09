@@ -45,12 +45,10 @@
 #define DEBUG_IMG DEBUG_ALL
 #endif
 
-#if DEBUG_IMG == 2
-#define DBG(...) AsciiPrint(__VA_ARGS__)
-#elif DEBUG_IMG == 1
-#define DBG(...) MsgLog(__VA_ARGS__)
+#if DEBUG_IMG == 0
+#define DBG(...)
 #else
-#define DBG(...)	
+#define DBG(...) DebugLog(DEBUG_IMG, __VA_ARGS__)	
 #endif
 
 //

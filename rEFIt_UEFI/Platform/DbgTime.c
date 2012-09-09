@@ -60,17 +60,18 @@ CHAR8* DbgTime(VOID)
 	UINT64    dTStart;
 	UINT64    dTLast;
 	UINT64    CurrentTsc;
+   UINT64    start, start2, last, last2;
 	
 	DbgTTxt[0] = '\0';
 	
 	if (DbgTFreqDivMs) {
 		CurrentTsc = AsmReadTsc();
-		dTStart = ((CurrentTsc - DbgTStartTsc) / DbgTFreqDivMs);
-		dTLast = ((CurrentTsc - DbgTLastTsc) / DbgTFreqDivMs);
+		dTStart = DivU64x64Remainder((CurrentTsc - DbgTStartTsc), DbgTFreqDivMs, 0);
+		dTLast = DivU64x64Remainder((CurrentTsc - DbgTLastTsc), DbgTFreqDivMs, 0);
+      start = DivU64x64Remainder(dTStart, 1000, &start2);
+      last = DivU64x64Remainder(dTLast, 1000, &last2);
 		AsciiSPrint(DbgTTxt, sizeof(DbgTTxt),
-					"%ld:%03ld - %ld:%03ld",
-					(dTStart / 1000), (dTStart % 1000),
-					(dTLast / 1000), (dTLast % 1000));
+					"%ld:%03ld - %ld:%03ld", start, start2, last, last2);
 		DbgTLastTsc = CurrentTsc;
 	}
 	

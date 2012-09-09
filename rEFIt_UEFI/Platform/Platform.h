@@ -110,8 +110,13 @@ Headers collection for procedures
 //#define SAFE_LOG_SIZE	80
 
 #define MSG_LOG_SIZE	(256 * 1024)
+#define PREBOOT_LOG L"EFI\\misc\\preboot.log"
+#define LEGBOOT_LOG L"EFI\\misc\\legacy_boot.log"
+#define BOOT_LOG L"EFI\\misc\\boot.log"
+#define SYSTEM_LOG L"EFI\\misc\\system.log"
 //#define MsgLog(x...) {AsciiSPrint(msgCursor, MSG_LOG_SIZE, x); while(*msgCursor){msgCursor++;}}
-#define MsgLog(...) {AsciiSPrint(msgCursor, (MSG_LOG_SIZE-(msgCursor-msgbuf)), __VA_ARGS__); while(*msgCursor){msgCursor++;}}
+//#define MsgLog(...) {AsciiSPrint(msgCursor, (MSG_LOG_SIZE-(msgCursor-msgbuf)), __VA_ARGS__); while(*msgCursor){msgCursor++;}}
+#define MsgLog(...) DebugLog(1, __VA_ARGS__)
 
 #define CPU_MODEL_DOTHAN        0x0D
 #define CPU_MODEL_YONAH         0x0E
@@ -781,8 +786,8 @@ typedef struct {
 } SLOT_DEVICE;
 
 #pragma pack(pop)
-extern CHAR8                    *msgbuf;
-extern CHAR8                    *msgCursor;
+//extern CHAR8                    *msgbuf;
+//extern CHAR8                    *msgCursor;
 extern SMBIOS_STRUCTURE_POINTER	SmbiosTable;
 extern GFX_PROPERTIES           gGraphics[];
 extern UINTN                    NGFX;
@@ -857,6 +862,8 @@ VOID        WaitForSts(VOID);
 
 VOID        InitBooterLog(VOID);
 EFI_STATUS  SetupBooterLog(VOID);
+EFI_STATUS  SaveBooterLog(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName);
+VOID        DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...);
 VOID        GetDefaultSettings(VOID);
 VOID        FillInputs(VOID);
 VOID        ApplyInputs(VOID);

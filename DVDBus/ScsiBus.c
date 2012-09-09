@@ -16,12 +16,16 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include "ScsiBus.h"
 
+#ifndef DEBUG_ALL
 #define DEBUG_SCSIBUS 0
-
-#if DEBUG_SCSIBUS==1
-#define DBG(...)  Print(__VA_ARGS__)
 #else
+#define DEBUG_SCSIBUS DEBUG_ALL
+#endif
+
+#if DEBUG_SCSIBUS==0
 #define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_SCSIBUS, __VA_ARGS__)
 #endif
 
 

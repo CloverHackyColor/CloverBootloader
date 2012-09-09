@@ -42,12 +42,10 @@
 #define DEBUG_LIB DEBUG_ALL
 #endif
 
-#if DEBUG_LIB == 2
-#define DBG(...) AsciiPrint(__VA_ARGS__)
-#elif DEBUG_LIB == 1
-#define DBG(...) MsgLog(__VA_ARGS__)
+#if DEBUG_LIB == 0
+#define DBG(...)
 #else
-#define DBG(...)	
+#define DBG(...) DebugLog(DEBUG_LIB, __VA_ARGS__)
 #endif
 
 // variables

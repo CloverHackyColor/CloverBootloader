@@ -11,13 +11,17 @@
 #include "pci_root.h"
 
 #ifndef DEBUG_PCI
+#ifndef DEBUG_ALL
 #define DEBUG_PCI 0
+#else
+#define DEBUG_PCI DEBUG_ALL
+#endif
 #endif
 
-#if DEBUG_PCI
-#define DBG(...)		verbose(__VA_ARGS__)
-#else
+#if DEBUG_PCI==0
 #define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_PCI, __VA_ARGS__)
 #endif
 
 pci_dt_t	*root_pci_dev;

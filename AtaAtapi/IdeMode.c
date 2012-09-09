@@ -14,14 +14,17 @@
 
 #include "AtaAtapiPassThru.h"
 
+#ifndef DEBUG_ALL
 #define DEBUG_ATA 0
-
-#if DEBUG_ATA==1
-#define DBG(...)  Print(__VA_ARGS__)
 #else
-#define DBG(...)	
+#define DEBUG_ATA DEBUG_ALL
 #endif
 
+#if DEBUG_ATA==0
+#define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_ATA, __VA_ARGS__)
+#endif
 
 BOOLEAN ChannelDeviceDetected = FALSE;
 BOOLEAN SlaveDeviceExist      = FALSE;

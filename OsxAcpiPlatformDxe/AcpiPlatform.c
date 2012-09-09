@@ -22,7 +22,8 @@
 #ifndef DEBUG_ALL
 #define DEBUG_ACPI 0
 #else
-#define DEBUG_ACPI DEBUG_ALL
+#define DEBUG_ACPI 1
+//DEBUG_ALL
 #endif
 #endif
 #define LIP 0

@@ -59,12 +59,10 @@
 #endif
 #endif
 
-#if DEBUG_NVIDIA == 2
-#define DBG(...) AsciiPrint(__VA_ARGS__)
-#elif DEBUG_NVIDIA == 1
-#define DBG(...) MsgLog(__VA_ARGS__)
+#if DEBUG_NVIDIA == 0
+#define DBG(...)
 #else
-#define DBG(...)	
+#define DBG(...) DebugLog(DEBUG_NVIDIA, __VA_ARGS__)
 #endif
 
 

@@ -19,12 +19,10 @@
 #endif
 #endif
 
-#if DEBUG_FIX==2
-#define DBG(...)  AsciiPrint(__VA_ARGS__)
-#elif DEBUG_FIX==1
-#define DBG(...)  MsgLog(__VA_ARGS__)
+#if DEBUG_FIX==0
+#define DBG(...)
 #else
-#define DBG(...)	
+#define DBG(...) DebugLog(DEBUG_FIX, __VA_ARGS__)	
 #endif
 
 
