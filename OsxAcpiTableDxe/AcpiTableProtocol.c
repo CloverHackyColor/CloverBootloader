@@ -1873,13 +1873,13 @@ AcpiTableAcpiTableConstructor (
 	GuidHob.Raw = GetFirstGuidHob (&gEfiAcpi10TableGuid);
 	if (GuidHob.Raw) {
 		Pointer = (UINT8 *)GET_GUID_HOB_DATA (GuidHob.Guid);
-		Print(L"Pointer to ACPI1: %x\n", Pointer);
+		DBG("Pointer to ACPI1: %x\n", Pointer);
 		if (Pointer) {
-			Print(L" Point to RSDP: %x\n", *Pointer);
+			DBG(" Point to RSDP: %x\n", *Pointer);
 			AcpiTableInstance->Rsdp1 = (EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER *) (UINTN)*Pointer;
 			if (AcpiTableInstance->Rsdp1) {
 				AcpiTableInstance->Rsdt1 = (EFI_ACPI_DESCRIPTION_HEADER *)(AcpiTableInstance->Rsdp1->RsdtAddress);
-				Print(L" Point to RSDT: %x\n", AcpiTableInstance->Rsdt1);
+				DBG(" Point to RSDT: %x\n", AcpiTableInstance->Rsdt1);
 			}
 //			AcpiTableInstance->Xsdt = (EFI_ACPI_DESCRIPTION_HEADER *)(AcpiTableInstance->Rsdp1->XsdtAddress);
 		}
@@ -1889,14 +1889,14 @@ AcpiTableAcpiTableConstructor (
 	if (GuidHob.Raw) {
 		Pointer = (UINT8 *)GET_GUID_HOB_DATA (GuidHob.Guid);
 		if (Pointer) {
-			Print(L"Pointer to ACPI2: %x\n", Pointer);
+			DBG("Pointer to ACPI2: %x\n", Pointer);
 			AcpiTableInstance->Rsdp3 = (EFI_ACPI_3_0_ROOT_SYSTEM_DESCRIPTION_POINTER *) (UINTN)*Pointer;
-			Print(L" Point to RSDP: %x\n", *Pointer);
+			DBG(" Point to RSDP: %x\n", *Pointer);
 			AcpiTableInstance->Rsdt3 = (EFI_ACPI_DESCRIPTION_HEADER *)(AcpiTableInstance->Rsdp3->RsdtAddress);
 //		CopyMem(&AcpiTableInstance->Xsdt, AcpiTableInstance->Rsdp3->XsdtAddress, sizeof (UINT64));
-			Print(L" Point to RSDT: %x\n", AcpiTableInstance->Rsdt3);
+			DBG(" Point to RSDT: %x\n", AcpiTableInstance->Rsdt3);
 			AcpiTableInstance->Xsdt = (EFI_ACPI_DESCRIPTION_HEADER *)(UINTN)(AcpiTableInstance->Rsdp3->XsdtAddress);
-			Print(L" Point to XSDT: %x\n", AcpiTableInstance->Xsdt);
+			DBG(" Point to XSDT: %x\n", AcpiTableInstance->Xsdt);
 		} //else
 		//Slice: TODO if we found only Acpi1.0 we need to convert it to Acpi2.0
 		// like I did in Chameleon		

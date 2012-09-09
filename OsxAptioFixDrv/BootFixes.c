@@ -87,7 +87,7 @@ PrepareJumpFromKernel(VOID)
 	HigherMem = 0x100000000;
 	Status = AllocatePagesFromTop(EfiBootServicesCode, 1, &HigherMem);
 	if (Status != EFI_SUCCESS) {
-		Print(L"OsxAptioFixDrv: PrepareJumpFromKernel(): can not allocate mem for MyAsmCopyAndJumpToKernel32 (0x%x pages on mem top): %r\n",
+		DBG("OsxAptioFixDrv: PrepareJumpFromKernel(): can not allocate mem for MyAsmCopyAndJumpToKernel32 (0x%x pages on mem top): %r\n",
 			  1, Status);
 		return Status;
 	}
@@ -99,14 +99,14 @@ PrepareJumpFromKernel(VOID)
 	
 	Size = (UINT8*)&MyAsmCopyAndJumpToKernel32End - (UINT8*)&MyAsmCopyAndJumpToKernel32;
 	if (Size > EFI_PAGES_TO_SIZE(1)) {
-		Print(L"Size of MyAsmCopyAndJumpToKernel32 code is too big\n");
+		DBG("Size of MyAsmCopyAndJumpToKernel32 code is too big\n");
 		return EFI_BUFFER_TOO_SMALL;
 	}
 	
 	CopyMem((VOID *)(UINTN)MyAsmCopyAndJumpToKernel32Addr, (VOID *)&MyAsmCopyAndJumpToKernel32, Size);
 	
 	/*
-	Print(L"PrepareJumpFromKernel(): MyAsmCopyAndJumpToKernel32 relocated from %p, to %x, size = %x\n",
+	DBG("PrepareJumpFromKernel(): MyAsmCopyAndJumpToKernel32 relocated from %p, to %x, size = %x\n",
 		&MyAsmCopyAndJumpToKernel32, MyAsmCopyAndJumpToKernel32Addr, Size);
 	gBS->Stall(10*1000000);
 	*/

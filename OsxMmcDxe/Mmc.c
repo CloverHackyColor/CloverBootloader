@@ -381,7 +381,7 @@ CheckCardsCallback (
                     );
 
       if (EFI_ERROR(Status)) {
-        Print(L"MMC Card: Error reinstalling BlockIo interface\n");
+        DBG("MMC Card: Error reinstalling BlockIo interface\n");
       }
     }
 

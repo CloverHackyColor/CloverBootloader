@@ -315,7 +315,7 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
 	}
 
 	if (drvPtr == 0 || infoPtr == 0 || extraPtr == 0 || drvPtr > infoPtr || drvPtr > extraPtr || infoPtr > extraPtr) {
-		Print(L"\nInvalid device tree for kext injection");
+		DBG("\nInvalid device tree for kext injection");
 		return EFI_INVALID_PARAMETER;
 	}
 

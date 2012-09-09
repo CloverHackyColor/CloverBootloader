@@ -333,7 +333,7 @@ VOID PatchTableType0()
 	// 
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_BIOS_INFORMATION, 0);
 	if (SmbiosTable.Raw == NULL) {
-//		Print(L"SmbiosTable: Type 0 (Bios Information) not found!\n");	
+//		DBG("SmbiosTable: Type 0 (Bios Information) not found!\n");	
 		return;
 	}
 	TableSize = SmbiosTableLength(SmbiosTable);
@@ -384,7 +384,7 @@ VOID GetTableType1()
   //
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_SYSTEM_INFORMATION, 0);
 	if (SmbiosTable.Raw == NULL) {
-		Print(L"SmbiosTable: Type 1 (System Information) not found!\n");
+		DBG("SmbiosTable: Type 1 (System Information) not found!\n");
 		return;
 	}
 		
@@ -536,7 +536,7 @@ VOID GetTableType3()
   //
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_SYSTEM_ENCLOSURE, 0);
 	if (SmbiosTable.Raw == NULL) {
-		Print(L"SmbiosTable: Type 3 (System Chassis Information) not found!\n");
+		DBG("SmbiosTable: Type 3 (System Chassis Information) not found!\n");
 		gMobile = FALSE; //default value
 		return;
 	}
@@ -552,7 +552,7 @@ VOID PatchTableType3()
   //
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_SYSTEM_ENCLOSURE, 0);
 	if (SmbiosTable.Raw == NULL) {
-//		Print(L"SmbiosTable: Type 3 (System Chassis Information) not found!\n");
+//		DBG("SmbiosTable: Type 3 (System Chassis Information) not found!\n");
 		return;
 	}
 	Size = SmbiosTable.Type3->Hdr.Length; //old size
@@ -607,7 +607,7 @@ VOID GetTableType4()
   
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_PROCESSOR_INFORMATION, 0);
 	if (SmbiosTable.Raw == NULL) {
-		Print(L"SmbiosTable: Type 4 (Processor Information) not found!\n");
+		DBG("SmbiosTable: Type 4 (Processor Information) not found!\n");
 		return;
 	}
   res = (SmbiosTable.Type4->ExternalClock * 3 + 2) % 100;
@@ -1010,7 +1010,7 @@ VOID GetTableType16()
 	// Get Table Type16 and set Device Count
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_PHYSICAL_MEMORY_ARRAY, 0);
 	if (SmbiosTable.Raw == NULL) {
-		Print(L"SmbiosTable: Type 16 (Physical Memory Array) not found!\n");
+		DBG("SmbiosTable: Type 16 (Physical Memory Array) not found!\n");
 		return;
 	}
 	TotalCount = SmbiosTable.Type16->NumberOfMemoryDevices;
@@ -1035,7 +1035,7 @@ VOID PatchTableType16()
 	// Get Table Type16 and set Device Count
 	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_PHYSICAL_MEMORY_ARRAY, 0);
 	if (SmbiosTable.Raw == NULL) {
-		Print(L"SmbiosTable: Type 16 (Physical Memory Array) not found!\n");
+		DBG("SmbiosTable: Type 16 (Physical Memory Array) not found!\n");
 		return;
 	}
 	TableSize = SmbiosTableLength(SmbiosTable);
@@ -1069,7 +1069,7 @@ VOID GetTableType17()
 		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, Index);
 		DBG("Type 17 Index = %d\n", Index);
 		if (SmbiosTable.Raw == NULL) {
-//			Print(L"SmbiosTable: Type 17 (Memory Device number %d) not found!\n", Index);
+//			DBG("SmbiosTable: Type 17 (Memory Device number %d) not found!\n", Index);
 			continue;
 		}
 		gDMI->CntMemorySlots++;
@@ -1107,7 +1107,7 @@ VOID PatchTableType17()
 		//}
 		//DBG("SMBIOS Type 17 Index = %d:\n", Index);
 		if (SmbiosTable.Raw == NULL) {
-//		//	Print(L"SmbiosTable: Type 17 (Memory Device number %d) not found!\n", Index);
+//		//	DBG("SmbiosTable: Type 17 (Memory Device number %d) not found!\n", Index);
 			continue;
 		}
 		TableSize = SmbiosTableLength(SmbiosTable);
@@ -1467,11 +1467,11 @@ EFI_STATUS PrepatchSmbios()
 	Status = gBS->AllocatePages (AllocateMaxAddress, EfiACPIMemoryNVS, /*EfiACPIReclaimMemory, 	*/
 	EFI_SIZE_TO_PAGES(BufferLen), &BufferPtr);
 	if (EFI_ERROR (Status)) {
-//		Print(L"There is error allocating pages in EfiACPIMemoryNVS!\n");
+//		DBG("There is error allocating pages in EfiACPIMemoryNVS!\n");
 		Status = gBS->AllocatePages (AllocateMaxAddress,  /*EfiACPIMemoryNVS, */EfiACPIReclaimMemory,
 											   ROUND_PAGE(BufferLen)/EFI_PAGE_SIZE, &BufferPtr);
 		if (EFI_ERROR (Status)) {
-//			Print(L"There is error allocating pages in EfiACPIReclaimMemory!\n");
+//			DBG("There is error allocating pages in EfiACPIReclaimMemory!\n");
 		}
 	}
 //	DBG("Buffer @ %p\n", BufferPtr);
@@ -1539,7 +1539,7 @@ VOID PatchSmbios(VOID) //continue
 	PatchTableType132();
 	AddSmbiosEndOfTable();
 	if(MaxStructureSize > MAX_TABLE_SIZE){
-//    Print(L"Too long SMBIOS!\n");
+//    DBG("Too long SMBIOS!\n");
 	}
 	FreePool((VOID*)newSmbiosTable.Raw);	
 	

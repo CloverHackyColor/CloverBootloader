@@ -292,7 +292,7 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 	
 	// No device, no game
 	if (!pBlockIO) {
-		Print(L"CDROMBoot: No CDROM to boot from\n");
+		DBG("CDROMBoot: No CDROM to boot from\n");
 		return Status;
 	}
 	
@@ -306,13 +306,13 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 			Status = pBlockIO->ReadBlocks(pBlockIO, pBlockIO->Media->MediaId, 0x11, 2048, sectorBuffer);
 		}
 		if (EFI_ERROR(Status)) {
-			Print(L"CDROMBoot: Unable to read block %X: %r\n", 0x11, Status);
+			DBG("CDROMBoot: Unable to read block %X: %r\n", 0x11, Status);
 			return Status;
 		}
 	}
 	
 	if (AsciiStrCmp((CHAR8*)(sectorBuffer + 0x7), "EL TORITO SPECIFICATION")) {
-		Print(L"CDROMBoot: Not an El Torito Specification disk\n");
+		DBG("CDROMBoot: Not an El Torito Specification disk\n");
 		return Status;
 	}
 	
@@ -320,28 +320,28 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 	lba = sectorBuffer[0x47] + sectorBuffer[0x48] * 256 + sectorBuffer[0x49] * 65536 + sectorBuffer[0x4A] * 16777216;
 	Status = pBlockIO->ReadBlocks(pBlockIO, pBlockIO->Media->MediaId, lba, 2048, sectorBuffer);
 	if (EFI_ERROR(Status)) {
-		Print(L"CDROMBoot: Unable to read block %X: %r\n", lba, Status);
+		DBG("CDROMBoot: Unable to read block %X: %r\n", lba, Status);
 		return Status;
 	}
 	
 	if (sectorBuffer[0x00] != 1 || sectorBuffer[0x1E] != 0x55 || sectorBuffer[0x1F] != 0xAA) {
-		Print(L"CDROMBoot: Invalid El Torito validation entry in boot catalog LBA %X\n", lba);
+		DBG("CDROMBoot: Invalid El Torito validation entry in boot catalog LBA %X\n", lba);
 		//    DumpHex(0, 0, 64, sectorBuffer);
 		return Status;
 	}
 	
 	if (sectorBuffer[0x01] != 0) {
-		Print(L"CDROMBoot: Platform mismatch: %d\n", sectorBuffer[0x01]);
+		DBG("CDROMBoot: Platform mismatch: %d\n", sectorBuffer[0x01]);
 		return Status;
 	}
 	
 	if (sectorBuffer[0x20] != 0x88) {
-		Print(L"CDROMBoot: CD-ROM is not bootable\n");
+		DBG("CDROMBoot: CD-ROM is not bootable\n");
 		return Status;
 	}
 	
 	if (sectorBuffer[0x21] != 0) {
-		Print(L"CDROMBoot: Currently only non-emulated CDROMs are supported");
+		DBG("CDROMBoot: Currently only non-emulated CDROMs are supported");
 		return Status;
 	}
 	
@@ -352,7 +352,7 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 	bootSize = bootSectors * pBlockIO->Media->BlockSize;
 	bootLoadAddress = addrRealFromSegOfs(bootLoadSegment, 0);
 	if (addrLT(bootLoadAddress, bootAddress) || addrGTE(bootLoadAddress, krnMemoryTop)) {
-		Print(L"CDROMBoot: Illegal boot load address %xL%x\n", addrToOffset(bootLoadAddress), bootSize);
+		DBG("CDROMBoot: Illegal boot load address %xL%x\n", addrToOffset(bootLoadAddress), bootSize);
 		return Status;
 	}
 	
@@ -362,19 +362,19 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 	// Read the boot sectors into the boot load address
 	Status = pBlockIO->ReadBlocks(pBlockIO, pBlockIO->Media->MediaId, lba, bootSize, addrToPointer(bootLoadAddress));
 	if (EFI_ERROR(Status)) {
-		Print(L"CDROMBoot: Unable to read block %ld: %r\n", lba, Status);
+		DBG("CDROMBoot: Unable to read block %ld: %r\n", lba, Status);
 		return Status;
 	}
   
    Status = SaveBooterLog(SelfRootDir, LEGBOOT_LOG);
   if (EFI_ERROR(Status)) {
-    Print(L"can't save legacy-boot.log\n");
+    DBG("can't save legacy-boot.log\n");
     Status = SaveBooterLog(NULL, LEGBOOT_LOG);
   }
   /*LogSize = msgCursor - msgbuf;
   Status = egSaveFile(SelfRootDir, LEGBOOT_LOG, (UINT8*)msgbuf, LogSize);
   if (EFI_ERROR(Status)) {
-    Print(L"can't save legacy-boot.log\n");
+    DBG("can't save legacy-boot.log\n");
     Status = egSaveFile(NULL, LEGBOOT_LOG, (UINT8*)msgbuf, LogSize);
   }
   */
@@ -463,7 +463,7 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
 	// Read the MBR
 	Status = pDisk->ReadBlocks(pDisk, pDisk->Media->MediaId, 0, 512, pMBR);
 	if (EFI_ERROR(Status)) {
-		Print(L"HDBoot: Unable to read MBR: %r\n", Status);
+		DBG("HDBoot: Unable to read MBR: %r\n", Status);
 		return Status;
 	}
 	
@@ -489,7 +489,7 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
     
 	// Check validity of MBR
 	if (pMBR[510] != 0x55 || pMBR[511] != 0xAA) {
-		Print(L"HDBoot: Invalid MBR signature 0x%02X%02X (not 0xAA55)\n", pMBR[511], pMBR[510]);
+		DBG("HDBoot: Invalid MBR signature 0x%02X%02X (not 0xAA55)\n", pMBR[511], pMBR[510]);
 		Status = EFI_NOT_FOUND; 
 		return Status;
 	}
@@ -497,7 +497,7 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
 	BiosDriveNum = GetBiosDriveNumForVolume(volume);
 	if (BiosDriveNum == 0) {
 		// not found
-		Print(L"HDBoot: BIOS drive number not found\n");
+		DBG("HDBoot: BIOS drive number not found\n");
 		return EFI_NOT_FOUND;
 	}
 	
@@ -513,7 +513,7 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
 		
 		// Is the partition valid?
 		if (partition->StartLBA == 0 || partition->Size == 0) {
-			Print(L"HDBoot: Invalid active partition %d: (%08X L %08X)\n", partition->StartLBA, partition->Size);
+			DBG("HDBoot: Invalid active partition %d: (%08X L %08X)\n", partition->StartLBA, partition->Size);
 			return Status;
 		}
 		
@@ -533,14 +533,14 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
 	// Read the boot sector
 	Status = pDisk->ReadBlocks(pDisk, pDisk->Media->MediaId, activePartition->StartLBA, 512, pBootSector);
 	if (EFI_ERROR(Status)) {
-		Print(L"HDBoot: Unable to read partition %d's boot sector: %r\n", partitionIndex, Status);
+		DBG("HDBoot: Unable to read partition %d's boot sector: %r\n", partitionIndex, Status);
 		Status = EFI_NOT_FOUND;
 		return Status;
 	}
 	
 	// Check boot sector
 	if (pBootSector[0x1FE] != 0x55 || pBootSector[0x1FF] != 0xAA) {
-		Print(L"HDBoot: Invalid Boot Sector signature 0x%02X%02X (not 0xAA55)\n", pBootSector[0x1FF], pBootSector[0x1FE]);
+		DBG("HDBoot: Invalid Boot Sector signature 0x%02X%02X (not 0xAA55)\n", pBootSector[0x1FF], pBootSector[0x1FE]);
 		Status = EFI_NOT_FOUND;
 		return Status;
 	}
@@ -671,14 +671,14 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
   
   Status = SaveBooterLog(SelfRootDir, LEGBOOT_LOG);
   if (EFI_ERROR(Status)) {
-    Print(L"can't save legacy-boot.log\n");
+    DBG("can't save legacy-boot.log\n");
     Status = SaveBooterLog(NULL, LEGBOOT_LOG);
   }
   /*
   LogSize = msgCursor - msgbuf;
   Status = egSaveFile(SelfRootDir, LEGBOOT_LOG, (UINT8*)msgbuf, LogSize);
   if (EFI_ERROR(Status)) {
-    Print(L"can't save legacy-boot.log\n");
+    DBG("can't save legacy-boot.log\n");
     Status = egSaveFile(NULL, LEGBOOT_LOG, (UINT8*)msgbuf, LogSize);
   }
   */
@@ -694,7 +694,7 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
 	CopyMem(pMBR, &tMBR, 16);
 	pMBR->StartLBA = LbaOffset;
 	pMBR->Size = LbaSize;
-  Print(L"Ready to start from LBA=%x\n", LbaOffset); //log is closed
+  DBG("Ready to start from LBA=%x\n", LbaOffset); //log is closed
 //  Status = gLegacy8259->SetMask(gLegacy8259, &OldMask, NULL, NULL, NULL);
 //  return EFI_NOT_FOUND;
   
@@ -913,14 +913,14 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
 	//
    Status = SaveBooterLog(SelfRootDir, LEGBOOT_LOG);
    if (EFI_ERROR(Status)) {
-     Print(L"can't save legacy-boot.log\n");
+     DBG("can't save legacy-boot.log\n");
      Status = SaveBooterLog(NULL, LEGBOOT_LOG);
    }
    /*
 	LogSize = msgCursor - msgbuf;
 	Status = egSaveFile(SelfRootDir, LEGBOOT_LOG, (UINT8*)msgbuf, LogSize);
 	if (EFI_ERROR(Status)) {
-		Print(L"can't save legacy-boot.log\n");
+		DBG("can't save legacy-boot.log\n");
 		Status = egSaveFile(NULL, LEGBOOT_LOG, (UINT8*)msgbuf, LogSize);
 	}
    */

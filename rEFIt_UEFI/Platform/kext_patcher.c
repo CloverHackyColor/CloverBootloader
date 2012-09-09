@@ -158,7 +158,7 @@ VOID ATIConnectorsPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT
   // number od occurences od Data should be 1
   Num = SearchAndCount(Driver, DriverSize, gSettings.KPATIConnectorsData, gSettings.KPATIConnectorsDataLen);
   if (Num > 1) {
-    Print(L"==> KPATIConnectorsData found %d times - skipping patching!\n", Num);
+    DBG("==> KPATIConnectorsData found %d times - skipping patching!\n", Num);
     return;
   }
   
@@ -261,7 +261,7 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize)
   if (NumLion_X64 + NumLion_i386 + NumML > 1) {
     // more then one pattern found - we do not know what to do with it
     // and we'll skipp it
-    Print(L"AppleRTCPatch: ERROR: multiple patterns found (LionX64: %d, Lioni386: %d, ML: %d) - skipping patching!\n",
+    DBG("AppleRTCPatch: ERROR: multiple patterns found (LionX64: %d, Lioni386: %d, ML: %d) - skipping patching!\n",
         NumLion_X64, NumLion_i386, NumML);
     gBS->Stall(5000000);
     return;

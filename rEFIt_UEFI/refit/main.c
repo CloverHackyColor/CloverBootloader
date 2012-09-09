@@ -278,7 +278,7 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   CHAR16                  ErrorInfo[256];
   CHAR16                  *FullLoadOptions = NULL;
   
-  Print(L"Starting %s\n", ImageTitle);
+  DBG("Starting %s\n", ImageTitle);
   if (ErrorInStep != NULL)
     *ErrorInStep = 0;
   
@@ -315,9 +315,9 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
     ChildLoadedImage->LoadOptions = (VOID *)LoadOptions;
     ChildLoadedImage->LoadOptionsSize = (UINT32)StrSize(LoadOptions);
     //((UINT32)StrLen(LoadOptions) + 1) * sizeof(CHAR16);
-    Print(L"Using load options '%s'\n", LoadOptions);
+    DBG("Using load options '%s'\n", LoadOptions);
   }
-  //Print(L"Image loaded at: %p\n", ChildLoadedImage->ImageBase);
+  //DBG("Image loaded at: %p\n", ChildLoadedImage->ImageBase);
   //PauseForKey(L"continue");
   
   // close open file handles
