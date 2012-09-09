@@ -55,6 +55,16 @@
 
 #endif
 
+#if DEBUG_IDE==0
+
+#define DBG(...)
+
+#else
+
+#define DBG(...) DebugLog(DEBUG_IDE, __VA_ARGS__)
+
+#endif
+
 //
 //  EFI_DRIVER_BINDING_PROTOCOL instance
 //

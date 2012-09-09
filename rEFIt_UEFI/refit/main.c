@@ -735,7 +735,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     // check for Apple hardware diagnostics
     StrCpy(DiagsFileName, L"\\System\\Library\\CoreServices\\.diagnostics\\diags.efi");
     if (FileExists(Volume->RootDir, DiagsFileName) && !(GlobalConfig.DisableFlags & DISABLE_FLAG_HWTEST)) {
-      Print(L"  - Apple Hardware Test found\n");
+      DBG("  - Apple Hardware Test found\n");
       
       SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
       SubEntry->me.Title        = L"Run Apple Hardware Test";
@@ -1927,7 +1927,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   //Now we have to reinit handles
   Status = ReinitSelfLib();
   if (EFI_ERROR(Status)){
-    Print(L" %r", Status);
+    DebugLog(2, " %r", Status);
     PauseForKey(L"Error reinit refit\n");
     return Status;
   }

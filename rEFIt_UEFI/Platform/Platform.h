@@ -116,7 +116,11 @@ Headers collection for procedures
 #define SYSTEM_LOG L"EFI\\misc\\system.log"
 //#define MsgLog(x...) {AsciiSPrint(msgCursor, MSG_LOG_SIZE, x); while(*msgCursor){msgCursor++;}}
 //#define MsgLog(...) {AsciiSPrint(msgCursor, (MSG_LOG_SIZE-(msgCursor-msgbuf)), __VA_ARGS__); while(*msgCursor){msgCursor++;}}
-#define MsgLog(...) DebugLog(1, __VA_ARGS__)
+#ifndef DEBUG_ALL
+#define MsgLog(...) DebugLog(0, __VA_ARGS__)
+#else
+#define MsgLog(...) DebugLog(DEBUG_ALL, __VA_ARGS__)
+#endif
 
 #define CPU_MODEL_DOTHAN        0x0D
 #define CPU_MODEL_YONAH         0x0E
