@@ -271,8 +271,9 @@ INTN mapping []= {0,2,1,3,4,6,5,7,8,10,9,11};
 /** Read from smbus the SPD content and interpret it for detecting memory attributes */
 VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
 { 
-	EFI_STATUS		Status;
-  UINT8			i, speed, spd_size, spd_type;
+	EFI_STATUS	Status;
+  UINT16      speed;
+  UINT8       i, spd_size, spd_type;
   UINT32			base, mmio, hostc;
 	UINT16			Command;
   RAM_SLOT_INFO*  slot;
@@ -389,7 +390,7 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
       slot->SerialNo = getDDRSerial(slot->spd);
 			//XXX - when we can FreePool allocated for these buffers?
       // determine spd speed
-      speed = (UINT8)getDDRspeedMhz(slot->spd);
+      speed = (UINT16)getDDRspeedMhz(slot->spd);
 			DBG("DDR speed %dMHz \n", speed);
       if (slot->Frequency<speed) slot->Frequency = speed;
 			
