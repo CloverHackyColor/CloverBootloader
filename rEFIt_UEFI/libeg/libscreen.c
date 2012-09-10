@@ -181,7 +181,7 @@ EFI_STATUS egSetScreenResolution(IN CHAR16 *WidthHeight)
     while (*HeightP != L'\0' && *HeightP != L'x' && *HeightP != L'X') {
         HeightP++;
     }
-    if (HeightP == L'\0') {
+    if (*HeightP == L'\0') {
         return EFI_INVALID_PARAMETER;
     }
     *HeightP = L'\0';
@@ -229,7 +229,9 @@ VOID egInitScreen(VOID)
     egHasGraphics = FALSE;
     if (GraphicsOutput != NULL) {
         if (GlobalConfig.ScreenResolution != NULL) {
-            egSetScreenResolution(GlobalConfig.ScreenResolution);
+            if (EFI_ERROR(egSetScreenResolution(GlobalConfig.ScreenResolution))) {
+               egSetMaxResolution();
+            }
         } else {
             egSetMaxResolution();
         }
