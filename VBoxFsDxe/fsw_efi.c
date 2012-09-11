@@ -215,14 +215,14 @@ EFI_STATUS EFIAPI fsw_efi_main(IN EFI_HANDLE         ImageHandle,
     }
 
 //	OverrideFunctions();
-  Msg = NULL;
+/*  Msg = NULL;
   msgCursor = NULL;
   Status = BS->LocateProtocol(&gMsgLogProtocolGuid, NULL, (VOID **) &Msg);
   if (!EFI_ERROR(Status) && (Msg != NULL)) {
     msgCursor = Msg->Cursor;
     BootLog("MsgLog installed into VBoxFs\n");
   }
-
+*/
     return EFI_SUCCESS;
 }
 

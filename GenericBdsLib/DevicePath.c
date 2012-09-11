@@ -79,7 +79,7 @@ CatPrint (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -101,7 +101,7 @@ DevPathPci (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -123,7 +123,7 @@ DevPathPccard (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -151,7 +151,7 @@ DevPathMemMap (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -296,7 +296,7 @@ DevPathVendor (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -322,7 +322,7 @@ DevPathAcpi (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -440,7 +440,7 @@ DevPathExtendedAcpi (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -472,7 +472,7 @@ DevPathAdrAcpi (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -499,7 +499,7 @@ DevPathAtapi (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -521,7 +521,7 @@ DevPathScsi (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -543,7 +543,7 @@ DevPathFibre (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -565,7 +565,7 @@ DevPath1394 (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -587,7 +587,7 @@ DevPathUsb (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -615,7 +615,7 @@ DevPathUsbWWID (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -637,7 +637,7 @@ DevPathLogicalUnit (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -667,7 +667,7 @@ DevPathUsbClass (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -704,7 +704,7 @@ DevPathSata (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -726,7 +726,7 @@ DevPathI2O (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -762,7 +762,7 @@ DevPathMacAddr (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -792,7 +792,7 @@ DevPathIPv4 (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -833,7 +833,7 @@ DevPathIPv6 (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -863,7 +863,7 @@ DevPathInfiniBand (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -948,7 +948,7 @@ DevPathUart (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -1063,7 +1063,7 @@ DevPathHardDrive (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -1085,7 +1085,7 @@ DevPathCDROM (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -1107,7 +1107,7 @@ DevPathFilePath (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -1129,7 +1129,7 @@ DevPathMediaProtocol (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -1151,7 +1151,7 @@ DevPathFvFilePath (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -1178,7 +1178,7 @@ DevPathRelativeOffsetRange (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -1234,7 +1234,7 @@ DevPathBssBss (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -1253,7 +1253,7 @@ DevPathEndInstance (
 
   @param Str             The buffer holding the output string.
                          This buffer contains the length of the
-                         string and the maixmum length reserved
+                         string and the maximum length reserved
                          for the string buffer.
   @param DevPath         The device path.
 
@@ -1548,7 +1548,7 @@ DevicePathToStr (
       DumpNode = DevPathNodeUnknown;
     }
     //
-    //  Put a path seperator in if needed
+    //  Put a path separator in if needed
     //
     if ((Str.Len != 0) && (DumpNode != DevPathEndInstance)) {
       CatPrint (&Str, L"/");

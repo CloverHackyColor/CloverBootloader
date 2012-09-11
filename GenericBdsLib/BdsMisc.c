@@ -130,7 +130,7 @@ BdsLibLoadDrivers (
 
 /**
   Get the Option Number that does not used.
-  Try to locate the specific option variable one by one utile find a free number.
+  Try to locate the specific option variable one by one until find a free number.
 
   @param  VariableName          Indicate if the boot#### or driver#### option
 
