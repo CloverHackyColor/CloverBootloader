@@ -122,6 +122,10 @@
 	<dict>
 		<key>GraphicsInjector</key>
 		<string>Yes</string>
+		<key>InjectEDID</key>
+		<string>Yes</string>
+		<key>CustomEDID</key>
+		<data>AP///////wAyDADfAAAAAAASAQOAIRV4CunVmVlTjigmUFQAAAABAQEBAQEBAQEBAQEBAQEB3iGgcFCEHzAgIFYAS88QAAAY3iGgcFCEHzAgIFYAS88QAAAAAAAA/gBXNjU3RwAxNTRXUDEKAAAA/gAjMz1IZYSq/wIBCiAgAJo=</data>
 		<key>VRAM</key>
 		<string>1024</string>
 		<key>LoadVBios</key>
