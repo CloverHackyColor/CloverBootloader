@@ -140,9 +140,13 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 	}
 
   DualLink = (MultU64x64(UGAWidth, UGAHeight) > (1<<20))?1:0;
-	
+  if (gSettings.InjectEDID) {
+    devprop_add_value(device, "@AAPL00,override-no-connect", gSettings.CustomEDID, 128);
+  }
+  
   devprop_add_value(device, "model", (UINT8*)model, (UINT32)AsciiStrLen(model));
 	devprop_add_value(device, "device_type", (UINT8*)"display", 7);	
+  devprop_add_value(device, "subsystem-vendor-id", GMAX3100_vals[21], 4);
   switch (gma_dev->device_id) {
     case 0x0102: 
       devprop_add_value(device, "class-code",						ClassFix, 4);
@@ -199,7 +203,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       devprop_add_value(device, "AAPL01,Stretch", GMAX3100_vals[19], 4);
       devprop_add_value(device, "AAPL01,InverterFrequency", GMAX3100_vals[20], 4);
       //		devprop_add_value(device, "class-code",						ClassFix, 4);
-      devprop_add_value(device, "subsystem-vendor-id", GMAX3100_vals[21], 4);
+//      devprop_add_value(device, "subsystem-vendor-id", GMAX3100_vals[21], 4);
       devprop_add_value(device, "subsystem-id", GMAX3100_vals[22], 4);
       devprop_add_value(device, "built-in", &BuiltIn, 1);
       break;

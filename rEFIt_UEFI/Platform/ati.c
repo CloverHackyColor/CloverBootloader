@@ -460,12 +460,19 @@ AtiDevProp ati_devprop_list[] = {
 	
   //{FLAGTRUE,	TRUE,	"@0,AAPL,vram-memory",		get_vrammemory_val,		NULVAL				},
   //later I wish to find the better application for the key. For now disabled
- // {FLAGTRUE,	TRUE,	"@AAPL00,override-no-connect",		get_edid_val,       NULVAL        },
+  {FLAGTRUE,	TRUE,	"@AAPL00,override-no-connect",		get_edid_val,       NULVAL        },
   {FLAGTRUE,	TRUE,	"@0,compatible",              get_name_val,       NULVAL				},
 //  {FLAGTRUE,	TRUE,	"@0,connector-type",          get_conntype_val,		NULVAL        },
   {FLAGTRUE,	TRUE,	"@0,device_type",             NULL,					STRVAL("display")   },
 //	{FLAGTRUE,	FALSE,	"@0,display-connect-flags", NULL,				DWRVAL((UINT32)0)   },
-//  {FLAGTRUE,	FALSE,	"@0,display-link-component-bits", NULL,		DWRVAL((UINT32)6)		},
+  
+  //some set of properties for mobile radeons
+  {FLAGMOBILE,	FALSE,	"@0,display-link-component-bits",  NULL,		DWRVAL((UINT32)6)	},
+  {FLAGMOBILE,	FALSE,	"@0,display-pixel-component-bits", NULL,		DWRVAL((UINT32)6)	},
+  {FLAGMOBILE,	FALSE,	"@0,display-dither-support",       NULL,		DWRVAL((UINT32)0)	},
+  {FLAGTRUE,  	FALSE,	"@AAPL00,Dither", NULL,		DWRVAL((CHAR8 *)(UINTN)0)	},
+  
+  
 //  {FLAGTRUE,	TRUE,	"@0,display-type",          NULL,					STRVAL("NONE")			},
 	{FLAGTRUE,	TRUE,	"@0,name",                    get_name_val,			NULVAL          },
 //  {FLAGTRUE,	TRUE,	"@0,VRAM,memsize",			get_vrammemsize_val,	NULVAL          },
@@ -524,6 +531,9 @@ BOOLEAN get_vrammemory_val(value_t *val)
 BOOLEAN get_edid_val(value_t *val)
 {
   static UINT32 v = 0;
+  if (!gSettings.InjectEDID) {
+    return FALSE;
+  }
 	
 	if (v)
 		return FALSE;
@@ -534,7 +544,7 @@ BOOLEAN get_edid_val(value_t *val)
   v = 1;
   val->type = kPtr;
   val->size = 128;
-  val->data = (UINT8 *)gEDID;
+  val->data = (UINT8 *)gSettings.CustomEDID;
 	return TRUE;
 }
 
@@ -588,17 +598,23 @@ BOOLEAN get_model_val(value_t *val)
 
 static CONST UINT32 ctm[] = {0x02, 0x10, 0x800, 0x400}; //mobile
 static CONST UINT32 ctd[] = {0x04, 0x10, 0x800, 0x400}; //desktop
+static UINT32 cti = 0;
+
 //TODO - get connectors from ATIConnectorPatch
 BOOLEAN get_conntype_val(value_t *val)
 {
+  UINT32* ct;
 //Connector types:
 //0x10:  VGA
 //0x04:  DL DVI-I
 //0x800: HDMI
 //0x400: DisplayPort
 //0x02:  LVDS  
-  UINT32* ct = (UINT32*)&ctd[0];
-  static UINT32 cti = 0;
+  
+  if (gMobile) {
+    ct = (UINT32*)&ctm[0];
+  } else
+    ct = (UINT32*)&ctd[0];
   
   val->type = kCst;
 	val->size = 4;

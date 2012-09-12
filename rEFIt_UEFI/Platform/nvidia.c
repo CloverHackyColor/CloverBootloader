@@ -3491,6 +3491,9 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
   } else {
     devprop_add_value(device, "VRAM,totalsize", (UINT8*)&videoRam, 4);
   }	
+  if (gSettings.InjectEDID) {
+    devprop_add_value(device, "@AAPL00,override-no-connect", gSettings.CustomEDID, 128);
+  }
 	devprop_add_value(device, "model", (UINT8*)model, (UINT32)AsciiStrLen(model));
 	devprop_add_value(device, "rom-revision", (UINT8*)version_str, (UINT32)AsciiStrLen(version_str));
   if ((gSettings.Dcfg[0] != 0) && (gSettings.Dcfg[1] != 0)) {

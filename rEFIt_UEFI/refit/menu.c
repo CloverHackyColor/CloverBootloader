@@ -116,7 +116,7 @@ VOID FillInputs(VOID)
   UINT8 a;
   
   InputItemsCount = 0; 
-  InputItems = AllocateZeroPool(60 * sizeof(INPUT_ITEM)); //XXX
+  InputItems = AllocateZeroPool(64 * sizeof(INPUT_ITEM)); //XXX
   InputItems[InputItemsCount].ItemType = ASString;  //0
   //even though Ascii we will keep value as Unicode to convert later
   InputItems[InputItemsCount].SValue = AllocateZeroPool(255);
@@ -173,8 +173,11 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].SValue = AllocateZeroPool(36);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 36, L"0x%X", gSettings.BacklightLevel);
   InputItems[InputItemsCount].ItemType = Decimal;  //19
-  InputItems[InputItemsCount++].SValue = PoolPrint(L"%06d", gSettings.BusSpeed);
-  
+  if (gSettings.BusSpeed > 20000) {
+    InputItems[InputItemsCount++].SValue = PoolPrint(L"%06d", gSettings.BusSpeed);
+  } else {
+    InputItems[InputItemsCount++].SValue = PoolPrint(L"%06d", gCPUStructure.ExternalClock);
+  }
   InputItemsCount = 20;
   InputItems[InputItemsCount].ItemType = BoolValue; //20
   InputItems[InputItemsCount].BValue = gSettings.GraphicsInjector;
@@ -251,7 +254,11 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue; //51
   InputItems[InputItemsCount].BValue = gSettings.bDropECDT;
   InputItems[InputItemsCount++].SValue = gSettings.bDropECDT?L"[+]":L"[ ]"; 
-  
+
+  InputItems[InputItemsCount].ItemType = BoolValue; //52
+  InputItems[InputItemsCount].BValue = gSettings.InjectEDID;
+  InputItems[InputItemsCount++].SValue = gSettings.InjectEDID?L"[+]":L"[ ]"; 
+
 }
 
 VOID ApplyInputs(VOID)
@@ -418,8 +425,12 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gSettings.bDropECDT = InputItems[i].BValue;
   }
+  i++; //52
+  if (InputItems[i].Valid) {
+    gSettings.InjectEDID = InputItems[i].BValue;
+  }
   
-  SaveSettings();
+  SaveSettings(); 
 }
 
 VOID FreeItems(VOID)
@@ -1521,10 +1532,10 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
   AddMenuInfoLine(SubScreen, PoolPrint(L"Number of VideoCards=%d", NGFX));
   
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"PatchVideoBios:");
+  InputBootArgs->Entry.Title = PoolPrint(L"InjectEDID:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Item = &InputItems[16];    
+  InputBootArgs->Item = &InputItems[52];    
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
     
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));

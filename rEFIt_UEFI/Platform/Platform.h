@@ -599,6 +599,8 @@ typedef struct {
   BOOLEAN GraphicsInjector;
   BOOLEAN LoadVBios;
   BOOLEAN PatchVBios;
+  BOOLEAN InjectEDID;
+  UINT8   *CustomEDID;
   CHAR16  FBName[16];
   UINT16  VideoPorts;
   UINT64  VRAM;

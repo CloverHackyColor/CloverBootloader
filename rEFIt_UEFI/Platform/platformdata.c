@@ -260,6 +260,7 @@ VOID GetDefaultSettings(VOID)
   gSettings.ResetVal = 0xFE;
   gSettings.FixDsdt  = 0x00; //No fixes as we apply patches even for patched DSDT
   gSettings.GraphicsInjector = TRUE;
+  gSettings.CustomEDID = NULL;
   gSettings.HDAInjection = TRUE;
   gSettings.HDALayoutId = 0;
   gSettings.USBInjection = TRUE; // enabled by default to have the same behavior as before

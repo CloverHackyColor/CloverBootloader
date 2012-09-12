@@ -279,7 +279,7 @@ VOID *GetDataSetting(IN TagPtr dict, IN CHAR8 *propName, OUT UINTN *dataLen)
     if (prop) {
         if (prop->data != NULL && prop->dataLen > 0) {
             // data property
-            data = AllocatePool(prop->dataLen);
+            data = AllocateZeroPool(prop->dataLen);
             CopyMem(data, prop->data, prop->dataLen);
             if (dataLen != NULL) {
                 *dataLen = prop->dataLen;
@@ -290,7 +290,7 @@ VOID *GetDataSetting(IN TagPtr dict, IN CHAR8 *propName, OUT UINTN *dataLen)
         } else {
             // assume data in hex encoded string property
             len = (UINT32)(AsciiStrLen(prop->string) >> 1); // 2 chars per byte
-            data = AllocatePool(len);
+            data = AllocateZeroPool(len);
             len = hex2bin(prop->string, data, len);
             if (dataLen != NULL) {
                 *dataLen = len;
@@ -441,6 +441,26 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       for (i=0; i<NGFX; i++) {
         gGraphics[i].LoadVBios = gSettings.LoadVBios; //default
       }
+      //InjectEDID
+      prop = GetProperty(dictPointer,"InjectEDID");
+      gSettings.InjectEDID = FALSE;
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+          gSettings.InjectEDID = TRUE;
+      }
+      prop = GetProperty(dictPointer,"CustomEDID");
+      if(prop)
+      {  
+        UINTN j = 128;
+        gSettings.CustomEDID = GetDataSetting(dictPointer,"CustomEDID", &j);
+        if (j != 128) {
+          DBG("CustomEDID has wrong length=%d\n", j);
+        }
+//        gSettings.CustomEDID = AllocateZeroPool(256);
+//        hex2bin(prop->string, gSettings.CustomEDID, 128);
+      } 
+      
       
       prop = GetProperty(dictPointer,"PatchVBios");
       gSettings.PatchVBios = FALSE;
@@ -1094,6 +1114,9 @@ EFI_STATUS GetEdid(VOID)
 			return EFI_NOT_FOUND;
 		}
     gEDID = AllocateAlignedPages(EFI_SIZE_TO_PAGES(N), 128);
+    if (!gSettings.CustomEDID) {
+      gSettings.CustomEDID = gEDID; //copy pointer but data if no CustomEDID
+    }
     CopyMem(gEDID, EdidDiscovered->Edid, N);
 		for (i=0; i<N; i+=16) {
 			MsgLog("%02x: ", i);
@@ -1435,7 +1458,7 @@ EFI_STATUS SaveSettings()
       (gSettings.BusSpeed < 500 * kilo)){
     gCPUStructure.ExternalClock = gSettings.BusSpeed;
     gCPUStructure.FSBFrequency = MultU64x64(gSettings.BusSpeed, kilo); //kHz -> Hz
-    gCPUStructure.MaxSpeed = (UINT32)(DivU64x32(gSettings.BusSpeed, 100) * gCPUStructure.MaxRatio); //kHz->MHz
+    gCPUStructure.MaxSpeed = (UINT32)(DivU64x32((UINT64)gSettings.BusSpeed  * gCPUStructure.MaxRatio, 10000)); //kHz->MHz
   }
 
   if ((gSettings.CpuFreqMHz > 100) &&
