@@ -96,7 +96,8 @@ VOID DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...)
    UINTN offset = 0;
    
    // Make sure the buffer is intact for writing
-   if (!FormatString || !msgbuf || !msgCursor ||
+   if (GlobalConfig.NoLogging ||
+       !FormatString || !msgbuf || !msgCursor ||
        (msgCursor < msgbuf) ||
        (msgCursor >= (msgbuf + MSG_LOG_SIZE)) ||
        (DebugMode < 0))

@@ -60,7 +60,7 @@
 
 // global configuration with default values
 
-REFIT_CONFIG        GlobalConfig = { FALSE, -1, 0, 0, 0, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF00, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+REFIT_CONFIG        GlobalConfig = { FALSE, -1, 0, 0, 0, FALSE, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF00, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 
 //
 // read a file into a buffer
@@ -469,6 +469,8 @@ VOID ReadConfig(VOID)
         } else if (StriCmp(TokenList[0], L"screen_resolution") == 0) {
             HandleString(TokenList, TokenCount, &(GlobalConfig.ScreenResolution));
             
+        } else if (StriCmp(TokenList[0], L"nolog") == 0) {
+           GlobalConfig.NoLogging = TRUE;
         } else {
             DBG(" unknown configuration command: %s\n", TokenList[0]);
         }

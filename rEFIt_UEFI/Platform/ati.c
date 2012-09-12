@@ -467,9 +467,9 @@ AtiDevProp ati_devprop_list[] = {
 //	{FLAGTRUE,	FALSE,	"@0,display-connect-flags", NULL,				DWRVAL((UINT32)0)   },
   
   //some set of properties for mobile radeons
-  {FLAGMOBILE,	FALSE,	"@0,display-link-component-bits",  NULL,		DWRVAL((UINT32)6)	},
-  {FLAGMOBILE,	FALSE,	"@0,display-pixel-component-bits", NULL,		DWRVAL((UINT32)6)	},
-  {FLAGMOBILE,	FALSE,	"@0,display-dither-support",       NULL,		DWRVAL((UINT32)0)	},
+  {FLAGMOBILE,	FALSE,	"@0,display-link-component-bits",  NULL,		DWRVAL((UINTN)6)	},
+  {FLAGMOBILE,	FALSE,	"@0,display-pixel-component-bits", NULL,		DWRVAL((UINTN)6)	},
+  {FLAGMOBILE,	FALSE,	"@0,display-dither-support",       NULL,		DWRVAL((UINTN)0)	},
   {FLAGTRUE,  	FALSE,	"@AAPL00,Dither", NULL,		DWRVAL((CHAR8 *)(UINTN)0)	},
   
   
