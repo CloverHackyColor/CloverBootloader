@@ -686,13 +686,13 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 			
 			// skip NULL entries
 			//if (*EntryPtr64 == 0) {
-      if (ReadUnaligned64((CONST UINT64)EntryPtr) == 0) {
+      if (ReadUnaligned64((CONST UINT64*)EntryPtr) == 0) {
         DBG(" = 0\n", Index);
 				continue;
 			}
 			
 			// Save table with the name from signature
-			Table = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)(ReadUnaligned64((CONST UINT64)EntryPtr));
+			Table = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)(ReadUnaligned64((CONST UINT64*)EntryPtr));
 			
 			Status = DumpTable(Table, DirName,  NULL /* take the name from the signature*/, &SsdtCount);
 			if (EFI_ERROR(Status)) {
