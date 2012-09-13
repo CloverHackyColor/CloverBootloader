@@ -57,8 +57,8 @@ echo " "
 sudo make pkg
 
 cd sym
-zip Clover_${version}_r${revision}_EFI_x32_x64_pkg.zip Clover_${version}_r${revision}_EFI_x32_x64.pkg
-zip Clover_${version}_r${revision}_EFI_x32_x64_pkg.zip Clover_${version}_r${revision}_EFI_x32_x64.pkg.md5
+zip Clover_${version}_r${revision}.zip Clover_${version}_r${revision}_EFI_x32_x64.pkg
+zip Clover_${version}_r${revision}.zip Clover_${version}_r${revision}_EFI_x32_x64.pkg.md5
 cd ..
 
 # Workspace = edk2/Clover/CloverPackage/

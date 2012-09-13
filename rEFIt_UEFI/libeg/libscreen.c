@@ -232,12 +232,15 @@ VOID egInitScreen(VOID)
             if (EFI_ERROR(egSetScreenResolution(GlobalConfig.ScreenResolution))) {
                egSetMaxResolution();
             }
+            /*else {
+              egScreenWidth = GraphicsOutput->Mode->Info->HorizontalResolution;
+              egScreenHeight = GraphicsOutput->Mode->Info->VerticalResolution;
+            }*/
+
         } else {
             egSetMaxResolution();
         }
 
-        egScreenWidth = GraphicsOutput->Mode->Info->HorizontalResolution;
-        egScreenHeight = GraphicsOutput->Mode->Info->VerticalResolution;
         egHasGraphics = TRUE;
     } else if (UgaDraw != NULL) {
         Status = UgaDraw->GetMode(UgaDraw, &Width, &Height, &Depth, &RefreshRate);

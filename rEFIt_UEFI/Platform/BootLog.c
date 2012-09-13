@@ -60,9 +60,11 @@ EFI_STATUS SetupBooterLog(VOID)
 	LogSize  = msgCursor - msgbuf;
 	Status =  LogDataHub(&gEfiMiscSubClassGuid, L"boot-log", msgbuf, (UINT32)LogSize);
    // Save BOOT_LOG only once on successful boot
-   Status = SaveBooterLog(SelfRootDir, BOOT_LOG);
-  if (EFI_ERROR(Status)) {
-    Status = SaveBooterLog(NULL, BOOT_LOG);
+  if (!GlobalConfig.NoLogging){
+    Status = SaveBooterLog(SelfRootDir, BOOT_LOG);
+    if (EFI_ERROR(Status)) {
+      Status = SaveBooterLog(NULL, BOOT_LOG);
+    }
   }
    /*
   Status = egSaveFile(SelfRootDir, BootLogName, (UINT8*)msgbuf, LogSize);
@@ -96,7 +98,7 @@ VOID DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...)
    UINTN offset = 0;
    
    // Make sure the buffer is intact for writing
-   if (GlobalConfig.NoLogging ||
+   if (/*GlobalConfig.NoLogging || */
        !FormatString || !msgbuf || !msgCursor ||
        (msgCursor < msgbuf) ||
        (msgCursor >= (msgbuf + MSG_LOG_SIZE)) ||
@@ -117,7 +119,7 @@ VOID DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...)
       AsciiPrint(msgCursor);
 
    // Print message to log file
-   if (DebugMode >= 1)
+   if ((DebugMode >= 1) && !GlobalConfig.NoLogging)
    {
       UINTN LogSize = offset;
       EFI_FILE_HANDLE LogFile = NULL;
