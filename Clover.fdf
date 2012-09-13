@@ -76,7 +76,7 @@ INF  Clover/OsxSmbiosDxe/SmbiosDxe.inf
 INF  Clover/OemSmbiosGenDxe/SmbiosGen.inf
 #INF  IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf
 INF  Clover/OsxBdsDxe/BdsDxe.inf
-#INF  MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
+INF  MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
 INF  MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
 INF  Clover/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
 #INF  Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
