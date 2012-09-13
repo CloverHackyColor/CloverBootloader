@@ -464,13 +464,13 @@ AtiDevProp ati_devprop_list[] = {
   {FLAGTRUE,	TRUE,	"@0,compatible",              get_name_val,       NULVAL				},
 //  {FLAGTRUE,	TRUE,	"@0,connector-type",          get_conntype_val,		NULVAL        },
   {FLAGTRUE,	TRUE,	"@0,device_type",             NULL,					STRVAL("display")   },
-//	{FLAGTRUE,	FALSE,	"@0,display-connect-flags", NULL,				DWRVAL((UINT32)0)   },
+//	{FLAGTRUE,	FALSE,	"@0,display-connect-flags", NULL,				DWRVAL(0)   },
   
   //some set of properties for mobile radeons
-  {FLAGMOBILE,	FALSE,	"@0,display-link-component-bits",  NULL,		DWRVAL((UINTN)6)	},
-  {FLAGMOBILE,	FALSE,	"@0,display-pixel-component-bits", NULL,		DWRVAL((UINTN)6)	},
-  {FLAGMOBILE,	FALSE,	"@0,display-dither-support",       NULL,		DWRVAL((UINTN)0)	},
-  {FLAGTRUE,  	FALSE,	"AAPL00,Dither", NULL,		DWRVAL((CHAR8 *)(UINTN)0)	},
+  {FLAGMOBILE,	FALSE,	"@0,display-link-component-bits",  NULL,		DWRVAL(6)	},
+  {FLAGMOBILE,	FALSE,	"@0,display-pixel-component-bits", NULL,		DWRVAL(6)	},
+  {FLAGMOBILE,	FALSE,	"@0,display-dither-support",       NULL,		DWRVAL(0)	},
+  {FLAGTRUE,  	FALSE,	"AAPL00,Dither", NULL,		DWRVAL(0)	},
   
   
 //  {FLAGTRUE,	TRUE,	"@0,display-type",          NULL,					STRVAL("NONE")			},
@@ -478,22 +478,22 @@ AtiDevProp ati_devprop_list[] = {
 //  {FLAGTRUE,	TRUE,	"@0,VRAM,memsize",			get_vrammemsize_val,	NULVAL          },
   {FLAGTRUE,	TRUE,	"@0,ATY,memsize",			get_vrammemsize_val,	NULVAL          },
 	
-  {FLAGTRUE,	FALSE,	"AAPL,aux-power-connected", NULL,					DWRVAL((CHAR8 *)(UINTN)1)		},
-  {FLAGTRUE,	FALSE,	"AAPL00,DualLink",          NULL,					DWRVAL((CHAR8 *)(UINTN)1)		},
-  {FLAGMOBILE,	FALSE,	"AAPL,HasPanel",          NULL,					DWRVAL((CHAR8 *)(UINTN)1)   },
-  {FLAGMOBILE,	FALSE,	"AAPL,HasLid",            NULL,					DWRVAL((CHAR8 *)(UINTN)1)   },
-  {FLAGMOBILE,	FALSE,	"AAPL,backlight-control", NULL,					DWRVAL((CHAR8 *)(UINTN)0)   },
+  {FLAGTRUE,	FALSE,	"AAPL,aux-power-connected", NULL,					DWRVAL(1)		},
+  {FLAGTRUE,	FALSE,	"AAPL00,DualLink",          NULL,					DWRVAL(1)		},
+  {FLAGMOBILE,	FALSE,	"AAPL,HasPanel",          NULL,					DWRVAL(1)   },
+  {FLAGMOBILE,	FALSE,	"AAPL,HasLid",            NULL,					DWRVAL(1)   },
+  {FLAGMOBILE,	FALSE,	"AAPL,backlight-control", NULL,					DWRVAL(0)   },
 	{FLAGTRUE,	FALSE,	"AAPL,overwrite_binimage",	get_binimage_owr,		NULVAL				},
 	{FLAGTRUE,	FALSE,	"ATY,bin_image",            get_binimage_val,		NULVAL				},
 	{FLAGTRUE,	FALSE,	"ATY,Copyright",	NULL,	STRVAL("Copyright AMD Inc. All Rights Reserved. 2005-2011") },
   {FLAGTRUE,	FALSE,	"ATY,EFIVersion",	NULL,	STRVAL("01.00.3180")                  },
 	{FLAGTRUE,	FALSE,	"ATY,Card#",			get_romrevision_val,	NULVAL                },
-	{FLAGTRUE,	FALSE,	"ATY,VendorID",		NULL,					WRDVAL((CHAR8 *)(UINTN)0x1002)        },
+	{FLAGTRUE,	FALSE,	"ATY,VendorID",		NULL,					WRDVAL(0x1002)        },
 	{FLAGTRUE,	FALSE,	"ATY,DeviceID",		get_deviceid_val,		NULVAL                  },
 	
   //	{FLAGTRUE,	FALSE,	"ATY,MCLK",					get_mclk_val,			NULVAL							},
   //	{FLAGTRUE,	FALSE,	"ATY,SCLK",					get_sclk_val,			NULVAL							},
-  {FLAGTRUE,	FALSE,	"ATY,RefCLK",				get_refclk_val,			DWRVAL((CHAR8 *)(UINTN)0x0a8c)		},
+  {FLAGTRUE,	FALSE,	"ATY,RefCLK",				get_refclk_val,			DWRVAL(0x0a8c)		},
 	
   {FLAGTRUE,	FALSE,	"ATY,PlatformInfo",			get_platforminfo_val,	NULVAL					},
 	
@@ -765,7 +765,7 @@ VOID free_val(value_t *val)
 }
 
 //  {FLAGTRUE,	TRUE,	"@0,compatible",    get_name_val,       NULVAL				},
-// 	{FLAGTRUE,	FALSE,	"ATY,VendorID",		NULL,					WRDVAL((UINT16)0x1002)        },
+// 	{FLAGTRUE,	FALSE,	"ATY,VendorID",		NULL,					WRDVAL(0x1002)        },
 /*typedef struct {
 	UINT32				flags;
 	BOOLEAN				all_ports;
