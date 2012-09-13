@@ -145,5 +145,6 @@ hidebadges swap
 #
 #legacyfirst
 #nolegacy
+nolog
 
 # EOF

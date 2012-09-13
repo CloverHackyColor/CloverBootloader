@@ -141,5 +141,6 @@ hidebadges drive
 #
 #legacyfirst
 #nolegacy
+nolog
 
 # EOF

@@ -135,5 +135,6 @@ hidebadges none
 #
 #legacyfirst
 #nolegacy
+nolog
 
 # EOF
