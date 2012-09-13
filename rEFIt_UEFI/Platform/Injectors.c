@@ -70,6 +70,7 @@ GetDeviceProps(IN     APPLE_GETVAR_PROTOCOL   *This,
       *BufferSize = mPropSize;
       return EFI_BUFFER_TOO_SMALL;
     }
+    *BufferSize = mPropSize;
     CopyMem(Buffer, mProperties,  mPropSize);
     return EFI_SUCCESS;      
   } else if ((cProperties != NULL) && (cPropSize > 1)) {
@@ -77,6 +78,7 @@ GetDeviceProps(IN     APPLE_GETVAR_PROTOCOL   *This,
       *BufferSize = cPropSize;
       return EFI_BUFFER_TOO_SMALL;
     }
+    *BufferSize = cPropSize;
     CopyMem(Buffer, cProperties,  cPropSize);
     return EFI_SUCCESS;      
   }
