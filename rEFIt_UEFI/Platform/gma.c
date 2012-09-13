@@ -141,7 +141,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 
   DualLink = (MultU64x64(UGAWidth, UGAHeight) > (1<<20))?1:0;
   if (gSettings.InjectEDID) {
-    devprop_add_value(device, "@AAPL00,override-no-connect", gSettings.CustomEDID, 128);
+    devprop_add_value(device, "AAPL00,override-no-connect", gSettings.CustomEDID, 128);
   }
   
   devprop_add_value(device, "model", (UINT8*)model, (UINT32)AsciiStrLen(model));

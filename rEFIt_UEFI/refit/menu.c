@@ -1221,7 +1221,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       //
          
       EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET + (TextHeight << 1);
-      VisibleHeight = (UINTN)MultU64x64((LAYOUT_TOTAL_HEIGHT - LAYOUT_BANNER_YOFFSET - (TextHeight << 1)), TextHeight);
+      VisibleHeight = (UINTN)DivU64x64Remainder((LAYOUT_TOTAL_HEIGHT - LAYOUT_BANNER_YOFFSET - (TextHeight << 1)), TextHeight, NULL);
 //        DBG("MENU_FUNCTION_INIT 1 EntriesPosY=%d VisibleHeight=%d\n", EntriesPosY, VisibleHeight);
       InitScroll(State, Screen->EntryCount, Screen->EntryCount, VisibleHeight);              
       // determine width of the menu
@@ -1395,7 +1395,7 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
   switch (Function) {
       
     case MENU_FUNCTION_INIT:
-      MaxItemOnScreen = (INTN)MultU64x32((UGAWidth - ROW0_SCROLLSIZE * 2), (ROW0_TILESIZE + TILE_XSPACING)); //8
+      MaxItemOnScreen = (INTN)DivU64x64Remainder((UGAWidth - ROW0_SCROLLSIZE * 2), (ROW0_TILESIZE + TILE_XSPACING), NULL); //8
       row0PosX = 0;
       row1PosX = Screen->EntryCount;
       // layout

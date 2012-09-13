@@ -460,7 +460,7 @@ AtiDevProp ati_devprop_list[] = {
 	
   //{FLAGTRUE,	TRUE,	"@0,AAPL,vram-memory",		get_vrammemory_val,		NULVAL				},
   //later I wish to find the better application for the key. For now disabled
-  {FLAGTRUE,	TRUE,	"@AAPL00,override-no-connect",		get_edid_val,       NULVAL        },
+  {FLAGTRUE,	TRUE,	"AAPL00,override-no-connect",		get_edid_val,       NULVAL        },
   {FLAGTRUE,	TRUE,	"@0,compatible",              get_name_val,       NULVAL				},
 //  {FLAGTRUE,	TRUE,	"@0,connector-type",          get_conntype_val,		NULVAL        },
   {FLAGTRUE,	TRUE,	"@0,device_type",             NULL,					STRVAL("display")   },
@@ -470,7 +470,7 @@ AtiDevProp ati_devprop_list[] = {
   {FLAGMOBILE,	FALSE,	"@0,display-link-component-bits",  NULL,		DWRVAL((UINTN)6)	},
   {FLAGMOBILE,	FALSE,	"@0,display-pixel-component-bits", NULL,		DWRVAL((UINTN)6)	},
   {FLAGMOBILE,	FALSE,	"@0,display-dither-support",       NULL,		DWRVAL((UINTN)0)	},
-  {FLAGTRUE,  	FALSE,	"@AAPL00,Dither", NULL,		DWRVAL((CHAR8 *)(UINTN)0)	},
+  {FLAGTRUE,  	FALSE,	"AAPL00,Dither", NULL,		DWRVAL((CHAR8 *)(UINTN)0)	},
   
   
 //  {FLAGTRUE,	TRUE,	"@0,display-type",          NULL,					STRVAL("NONE")			},

@@ -314,9 +314,9 @@ VOID DropTableFromXSDT (UINT32 Signature)
     DBG("BUG! Too many XSDT entries \n");
     EntryCount = 50;
   }
-	BasePtr = (CHAR8*)(&(Xsdt->Entry));
-	for (Index = 0; Index < EntryCount; Index++, BasePtr+=sizeof(UINT64)) {
-    if (*(UINT64*)BasePtr == 0) {
+	BasePtr = (CHAR8*)(UINTN)(&(Xsdt->Entry));
+	for (Index = 0; Index < EntryCount; Index++, BasePtr += sizeof(UINT64)) {
+    if (ReadUnaligned64((CONST UINT64*)BasePtr) == 0) {
       if (DoubleZero) {
         Xsdt->Header.Length = (UINT32)(sizeof(UINT64) * Index + sizeof(EFI_ACPI_DESCRIPTION_HEADER));
         DBG("DoubleZero in XSDT table\n");
@@ -344,11 +344,11 @@ VOID DropTableFromXSDT (UINT32 Signature)
     for (Index2 = Index; Index2 < EntryCount-1; Index2++) {
       //*Ptr++ = *Ptr2++;
       CopyMem(Ptr, Ptr2, sizeof(UINT64));
-      Ptr+=sizeof(UINT64);
-      Ptr2+=sizeof(UINT64);
+      Ptr  += sizeof(UINT64);
+      Ptr2 += sizeof(UINT64);
     }
  //   ZeroMem(Ptr, sizeof(UINT64));
-    BasePtr-=sizeof(UINT64); //SunKi
+    BasePtr -= sizeof(UINT64); //SunKi
     Xsdt->Header.Length -= sizeof(UINT64);
 	}	
   //  Xsdt->Header.Length = sizeof(UINT64) * Index + sizeof(EFI_ACPI_DESCRIPTION_HEADER);
@@ -389,7 +389,8 @@ EFI_STATUS InsertTable(VOID* Table, UINTN Length)
     //insert into XSDT
     if (Xsdt) {
       XPtr = (UINT64*)((UINTN)Xsdt + Xsdt->Header.Length);
-      *XPtr = (UINT64)(UINTN)BufferPtr;
+     // *XPtr = (UINT64)(UINTN)BufferPtr;
+      WriteUnaligned64(XPtr, (UINT64)BufferPtr);
       Xsdt->Header.Length += sizeof(UINT64);
       //        DBG("Xsdt->Length = %d\n", Xsdt->Header.Length);
     }        
@@ -679,18 +680,19 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 		// iterate over table entries
 		EntryPtr = (CHAR8*)&Xsdt->Entry;
 		SsdtCount = 0;
-		for (Index = 0; Index < EntryCount; Index++, EntryPtr+=sizeof(UINT64)) {
-         UINT64	*EntryPtr64 = (UINT64 *)EntryPtr;
+		for (Index = 0; Index < EntryCount; Index++, EntryPtr += sizeof(UINT64)) {
+//         UINT64	*EntryPtr64 = (UINT64 *)EntryPtr;
 			DBG("  %d.", Index);
 			
 			// skip NULL entries
-			if (*EntryPtr64 == 0) {
-				DBG(" = 0\n", Index);
+			//if (*EntryPtr64 == 0) {
+      if (ReadUnaligned64((CONST UINT64)EntryPtr) == 0) {
+        DBG(" = 0\n", Index);
 				continue;
 			}
 			
 			// Save table with the name from signature
-			Table = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)(*EntryPtr64);
+			Table = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)(ReadUnaligned64((CONST UINT64)EntryPtr));
 			
 			Status = DumpTable(Table, DirName,  NULL /* take the name from the signature*/, &SsdtCount);
 			if (EFI_ERROR(Status)) {
