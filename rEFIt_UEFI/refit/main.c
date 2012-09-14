@@ -68,7 +68,7 @@
 
 #define MACOSX_LOADER_PATH      L"\\System\\Library\\CoreServices\\boot.efi"
 
-
+static CHAR8 FirmwareRevisionStr[] = FIRMWARE_REVISION_STR;
 
 EFI_HANDLE              gImageHandle;
 EFI_SYSTEM_TABLE*       gST;
@@ -1892,6 +1892,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   // init debug time - must be after PrepatchSmbios()
   DbgTimeInit();
   
+  DBG("%a\n", FirmwareRevisionStr);
   DBG("running on %a\n", gSettings.OEMProduct);
   DBG("... with board %a\n", gSettings.OEMBoard);
   //replace / with _
