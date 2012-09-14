@@ -7,7 +7,7 @@ cp -f ../rEFIt_UEFI/Version.h Version.h
 
 version=v2
 #version=$( grep "FIRMWARE_VERSION" Version.h | awk '{ print $3 }' | tr -d '\"' )
-revision=$( grep "FIRMWARE_REVISION" Version.h | awk '{ print $3 }' | tr -d '\"' )
+revision=$( grep "FIRMWARE_REVISION" Version.h | awk '{ print $3 }' | tr -d '\"' | tr ":" "_" )
 
 echo "${version}" > version
 echo "${revision}" > revision
@@ -57,8 +57,8 @@ echo " "
 sudo make pkg
 
 cd sym
-zip Clover_${version}_r${revision}.zip Clover_${version}_r${revision}_EFI_x32_x64.pkg
-zip Clover_${version}_r${revision}.zip Clover_${version}_r${revision}_EFI_x32_x64.pkg.md5
+zip Clover_${version}_r${revision}.zip Clover_${version}_r${revision}.pkg
+zip Clover_${version}_r${revision}.zip Clover_${version}_r${revision}.pkg.md5
 cd ..
 
 # Workspace = edk2/Clover/CloverPackage/
