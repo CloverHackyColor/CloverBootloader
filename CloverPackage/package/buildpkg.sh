@@ -28,7 +28,7 @@ COL_RESET="\x1b[39;49;00m"
 #version=$( grep FIRMWARE_VERSION Version.h | awk '{ print $3 }' | tr -d '\"' )
 version=$( cat version )
 stage=${version##*-}
-revision=$( grep FIRMWARE_REVISION Version.h | awk '{ print $3 }' | tr -d '\"' )
+revision=$( grep FIRMWARE_REVISION Version.h | awk '{ print $3 }' | tr -d '\"' | tr ":" "_" )
 builddate=$( grep FIRMWARE_BUILDDATE Version.h | awk '{ print $3,$4 }' | tr -d '\"' )
 timestamp=$( date -j -f "%Y-%m-%d %H:%M:%S" "${builddate}" "+%s" )
 
@@ -664,10 +664,10 @@ makedistribution ()
 
 	find "${1}/${packagename}" -name '.DS_Store' -delete
 	pushd "${1}/${packagename}" >/dev/null
-	xar -c -f "${1%/*}/${packagename// /}_${version}_r${revision}_EFI_x32_x64.pkg" --compression none .
+	xar -c -f "${1%/*}/${packagename// /}_${version}_r${revision}.pkg" --compression none .
 	popd >/dev/null
 
-    SetFile -a C "${1%/*}/${packagename// /}_${version}_r${revision}_EFI_x32_x64.pkg"
+    SetFile -a C "${1%/*}/${packagename// /}_${version}_r${revision}.pkg"
 
 #    DeRez -only icns "${pkgroot}/Icons/CloverPKG.icns" > tempicns.rsrc
 #    Rez -append tempicns.rsrc -o "${1%/*}/${packagename// /}_${version}_r${revision}_EFI_x32_x64.pkg"
@@ -675,8 +675,8 @@ makedistribution ()
 #    rm -f tempicns.rsrc
 # End
 
-	md5=$( md5 "${1%/*}/${packagename// /}_${version}_r${revision}_EFI_x32_x64.pkg" | awk {'print $4'} )
-	echo "MD5 (${packagename// /}_${version}_r${revision}_EFI_x32_x64.pkg) = ${md5}" > "${1%/*}/${packagename// /}_${version}_r${revision}_EFI_x32_x64.pkg.md5"
+	md5=$( md5 "${1%/*}/${packagename// /}_${version}_r${revision}.pkg" | awk {'print $4'} )
+	echo "MD5 (${packagename// /}_${version}_r${revision}.pkg) = ${md5}" > "${1%/*}/${packagename// /}_${version}_r${revision}.pkg.md5"
 	echo ""	
 
 	echo -e $COL_GREEN"	--------------------------"$COL_RESET
@@ -685,7 +685,7 @@ makedistribution ()
 	echo ""	
 	echo -e $COL_GREEN"	Build info."
 	echo -e $COL_GREEN"	==========="
-	echo -e $COL_BLUE"	Package name:	"$COL_RESET"${packagename// /}_${version}_r${revision}_EFI_x32_x64.pkg"
+	echo -e $COL_BLUE"	Package name:	"$COL_RESET"${packagename// /}_${version}_r${revision}.pkg"
 	echo -e $COL_BLUE"	MD5:		"$COL_RESET"$md5"
 	echo -e $COL_BLUE"	Version:	"$COL_RESET"$version"
 #	echo -e $COL_BLUE"	Stage:		"$COL_RESET"$stage"
