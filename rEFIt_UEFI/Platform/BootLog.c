@@ -13,7 +13,7 @@ extern  EFI_GUID  gEfiMiscSubClassGuid;
 
 CHAR8 *msgbuf = 0;
 CHAR8 *msgCursor = 0;
-BOOLEAN msgHadSelfRoot = FALSE;
+CHAR8 *msgLast = 0;
 
 VOID InitBooterLog(VOID)
 {
@@ -23,7 +23,7 @@ VOID InitBooterLog(VOID)
    
    // Allocate MsgLog
 	msgbuf = AllocateZeroPool(MSG_LOG_SIZE);
-	msgCursor = msgbuf;
+	msgLast = msgCursor = msgbuf;
   
    // Search for Clover log and copy to MsgLog
   Status = gBS->LocateProtocol (&gMsgLogProtocolGuid, NULL, (VOID **)&Msg);
@@ -144,10 +144,14 @@ VOID DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...)
             {
                LogFile->SetPosition(LogFile, Info->FileSize);
                // If we haven't had root before this write out whole log
-               if (!msgHadSelfRoot)
+               if (!msgLast)
                {
-                  LogSize += (msgCursor - msgbuf);
-                  LogFile->Write(LogFile, &LogSize, msgbuf);
+                  msgLast = msgbuf;
+               }
+               if (msgLast < msgCursor)
+               {
+                  LogSize += (msgCursor - msgLast);
+                  LogFile->Write(LogFile, &LogSize, msgLast);
                }
                else
                {
@@ -159,11 +163,10 @@ VOID DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...)
          }
       }
    }
-   if (SelfRootDir)
-   {
-      msgHadSelfRoot = TRUE;
-   }
-
    // Advance log buffer
    msgCursor += offset;
+   if (SelfRootDir)
+   {
+      msgLast = msgCursor;
+   }
 }
