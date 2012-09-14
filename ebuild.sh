@@ -1,6 +1,6 @@
 #!/bin/sh
 
-#  cbuild.sh
+#  ebuild.sh ->ebuild.sh  //renamed to be unique file begining from E
 #  Script for building CloverEFI source under OS X
 #  Supported chainloads(compilers) are XCODE32, UNIXGCC and CLANG
 #  
@@ -105,7 +105,7 @@ fnHelp ()
 echo ""
 echo "Script for building CloverEFI source on Darwin OS X"
 echo
-echo "Usage: ./cbuild.sh [COMPILER] [ARCH] [TYPE]"
+echo "Usage: ./ebuild.sh [COMPILER] [ARCH] [TYPE]"
 echo 
 echo "Script arguments:"
 echo "[COMPILER]   [ARCH]     [TYPE]"
@@ -115,16 +115,16 @@ echo "-unixgcc"
 echo "-gcc46"
 echo "-llvm"
 echo
-echo "Example: ./cbuild.sh -xcode -ia32 -release"
-echo "Example: ./cbuild.sh -gcc46 -x64 -release"
-echo "Example: ./cbuild.sh -gcc46 -ia32 -release"
-echo "example: ./cbuild.sh -32"
-echo "example: ./cbuild.sh -64"
-echo "example: ./cbuild.sh -34"
+echo "Example: ./ebuild.sh -xcode -ia32 -release"
+echo "Example: ./ebuild.sh -gcc46 -x64 -release"
+echo "Example: ./ebuild.sh -gcc46 -ia32 -release"
+echo "example: ./ebuild.sh -32"
+echo "example: ./ebuild.sh -64"
+echo "example: ./ebuild.sh -34"
 echo
 echo "If you want to clean a build:"
-echo "Example: ./cbuild.sh -xcode -ia32 -release -clean"
-echo "Example: ./cbuild.sh -xcode -ia32 -release -cleanall"
+echo "Example: ./ebuild.sh -gcc46 -x64 -release -clean"
+echo "Example: ./ebuild.sh -xcode -ia32 -release -cleanall"
 echo
 }
 
@@ -132,8 +132,8 @@ fnHelpArgument ()
 # Function: Help with arguments
 {
 echo "ERROR!"
-echo "Example: ./cbuild.sh -xcode -ia32 -release"
-echo "Example: ./cbuild.sh -gcc46 -x64 -release"
+echo "Example: ./ebuild.sh -xcode -ia32 -release"
+echo "Example: ./ebuild.sh -gcc46 -x64 -release"
 }
 
 ## MAIN ARGUMENT PART##

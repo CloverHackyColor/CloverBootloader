@@ -20,11 +20,13 @@ Revision History:
 
 #include "EfiLdr.h"
 #include "Support.h"
-//#include "Debug.h"
+#include "Debug.h"
 #include "PeLoader.h"
 #include "LzmaDecompress.h"
 //#include "TianoDecompress.h"
+#include "../Version.h"
 
+//static CHAR8 CloverRev[] = FIRMWARE_REVISION_STR;
 VOID
 SystemHang (
   CHAR8        *Message
@@ -35,6 +37,7 @@ SystemHang (
     Message
     );
  */
+  PrintString (FIRMWARE_REVISION_STR);
   CpuDeadLoop();
 }
 

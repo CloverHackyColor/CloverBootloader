@@ -24,8 +24,9 @@
   VERSION_STRING                 = 1.0
 
 [Packages]
+	Clover/CloverPkg.dec
   MdePkg/MdePkg.dec
-  MdeModulePkg/MdeModulePkg.dec
+#  MdeModulePkg/MdeModulePkg.dec
   IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
 
 [LibraryClasses]
@@ -41,7 +42,7 @@
   EfiLdrHandoff.h
 #  EfiLdr.h
   EfiLoader.c
-//  Debug.c
+  Debug.c
   PeLoader.c
   Support.c
   #TianoDecompress.c
