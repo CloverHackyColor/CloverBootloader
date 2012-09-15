@@ -12,6 +12,7 @@ revision=$( grep "FIRMWARE_REVISION" Version.h | awk '{ print $3 }' | tr -d '\"'
 echo "${version}" > version
 echo "${revision}" > revision
 
+
 # Workspace = edk2/Clover/CloverPackage
 # Copy doc to CloverV2/doc.
 

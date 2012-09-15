@@ -28,7 +28,7 @@ COL_RESET="\x1b[39;49;00m"
 #version=$( grep FIRMWARE_VERSION Version.h | awk '{ print $3 }' | tr -d '\"' )
 version=$( cat version )
 stage=${version##*-}
-revision=$( grep FIRMWARE_REVISION Version.h | awk '{ print $3 }' | tr -d '\"' | tr ":" "_" )
+revision=$( grep "FIRMWARE_REVISION " Version.h | awk '{ print $3 }' | tr -d '\"' | tr ":" "_" )
 builddate=$( grep FIRMWARE_BUILDDATE Version.h | awk '{ print $3,$4 }' | tr -d '\"' )
 timestamp=$( date -j -f "%Y-%m-%d %H:%M:%S" "${builddate}" "+%s" )
 

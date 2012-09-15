@@ -66,7 +66,7 @@ echo "#define FIRMWARE_VERSION \"2.31\"" > $WORKSPACE/Clover/rEFIt_UEFI/Version.
 echo "#define FIRMWARE_BUILDDATE \"`date \"+%Y-%m-%d %H:%M:%S\"`\"" >> $WORKSPACE/Clover/rEFIt_UEFI/Version.h
 #echo "#define FIRMWARE_REVISION \"`svnversion -n | tr -d [:alpha:]`\"" >> $WORKSPACE/Clover/rEFIt_UEFI/Version.h
 echo "#define FIRMWARE_REVISION \"`cat Clover/rEFIt_UEFI/vers.txt`\"" >> $WORKSPACE/Clover/rEFIt_UEFI/Version.h
-echo "#define FIRMWARE_REVISION_STR \"Clover revision: `cat Clover/rEFIt_UEFI/vers.txt`\"" >> $WORKSPACE/Clover/rEFIt_UEFI/Version.h
+echo "#define REVISION_STR \"Clover revision: `cat Clover/rEFIt_UEFI/vers.txt`\"" >> $WORKSPACE/Clover/rEFIt_UEFI/Version.h
 #rm -f $WORKSPACE/Clover/rEFIt_UEFI/vers.txt
 cp $WORKSPACE/Clover/rEFIt_UEFI/Version.h $WORKSPACE/Clover/CloverPackage/
 #

@@ -37,7 +37,7 @@ SystemHang (
     Message
     );
  */
-  PrintString (FIRMWARE_REVISION_STR);
+  PrintString (REVISION_STR);
   CpuDeadLoop();
 }
 

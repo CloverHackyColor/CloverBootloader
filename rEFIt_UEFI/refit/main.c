@@ -1891,8 +1891,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   // init debug time - must be after PrepatchSmbios()
   DbgTimeInit();
-#ifdef FIRMWARE_REVISION_STR
-  MsgLog(FIRMWARE_REVISION_STR);
+#ifdef REVISION_STR
+  MsgLog(REVISION_STR);
 #endif
   DBG("running on %a\n", gSettings.OEMProduct);
   DBG("... with board %a\n", gSettings.OEMBoard);
