@@ -82,7 +82,7 @@ rem have edk2 prepare to build
       echo #define FIRMWARE_VERSION "2.31">> Version.h
       echo #define FIRMWARE_BUILDDATE "%BUILDDATE%">> Version.h
       echo #define FIRMWARE_REVISION "%SVNREVISION%">> Version.h
-      echo #define FIRMWARE_REVISION_STR "Clover revision: %SVNREVISION%">> Version.h
+      echo #define REVISION_STR "Clover revision: %SVNREVISION%">> Version.h
       cd %CURRENTDIR%
 
       rem build clover
