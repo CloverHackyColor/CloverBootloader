@@ -886,6 +886,9 @@ static VOID ScanLoader(VOID)
   REFIT_VOLUME            *Volume;
   CHAR16                  FileName[256];
   LOADER_ENTRY            *Entry;
+  CHAR16                  VolumeString[256];
+  INT32                   HVi;
+  CHAR16                  *HV;
   
   //    Print(L"Scanning for boot loaders...\n");
   
@@ -900,11 +903,21 @@ static VOID ScanLoader(VOID)
         (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_INTERNAL)))
       continue;
     
+    StrCpy(VolumeString, DevicePathToStr(Volume->DevicePath));
+    HV = NULL;
+	for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
+	  HV = StrStr(VolumeString, gSettings.HVHideStrings[HVi]);
+	  if (HV != NULL) break;
+	}
+	if (HV != NULL)
+	  continue;
+    
     // check for Mac OS X boot loader
     StrCpy(FileName, MACOSX_LOADER_PATH);
     if (FileExists(Volume->RootDir, FileName)) {
       //     Print(L"  - Mac OS X boot file found\n");
       Volume->BootType = BOOTING_BY_EFI;
+      if (!gSettings.HVHideAllOSX)
       Entry = AddLoaderEntry(FileName, L"Mac OS X", Volume, Volume->OSType);
  //     continue; //boot MacOSX only
     }
@@ -916,6 +929,7 @@ static VOID ScanLoader(VOID)
       Volume->BootType = BOOTING_BY_EFI;
       Volume->OSType = OSTYPE_COUGAR;
       Volume->OSIconName = L"cougar";
+      if (!gSettings.HVHideAllOSXInstall)
       Entry = AddLoaderEntry(FileName, L"OS X Install", Volume, Volume->OSType);
       continue; //boot MacOSX only
     }
@@ -925,6 +939,7 @@ static VOID ScanLoader(VOID)
       Volume->BootType = BOOTING_BY_EFI;
       Volume->OSType = OSTYPE_LION;
       Volume->OSIconName = L"lion";      
+      if (!gSettings.HVHideAllOSXInstall)
       Entry = AddLoaderEntry(FileName, L"Mac OS X Install", Volume, Volume->OSType);
       continue; //boot MacOSX only
     }
@@ -937,6 +952,7 @@ static VOID ScanLoader(VOID)
       Volume->BootType = BOOTING_BY_EFI;
       Volume->OSType = OSTYPE_COUGAR;
       Volume->OSIconName = L"cougar";
+      if (!gSettings.HVHideAllOSXInstall)
       Entry = AddLoaderEntry(FileName, L"OS X Install", Volume, Volume->OSType);
       continue; //boot MacOSX only
     }
@@ -947,6 +963,7 @@ static VOID ScanLoader(VOID)
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->BootType = BOOTING_BY_EFI;
 //      Volume->OSType = OSTYPE_COUGAR; //my recovery partition is recognized
+      if (!gSettings.HVHideAllRecovery)
       Entry = AddLoaderEntry(FileName, L"Recovery", Volume, Volume->OSType);
       continue; //boot MacOSX only
     }
@@ -965,6 +982,7 @@ static VOID ScanLoader(VOID)
       //     Print(L"  - Microsoft boot menu found\n");
       //    Volume->OSType = OSTYPE_WIN;
       Volume->BootType = BOOTING_BY_EFI;
+      if (!gSettings.HVHideAllWindowsEFI)
       Entry = AddLoaderEntry(FileName, L"Microsoft EFI boot menu", Volume, OSTYPE_WINEFI);
  //     continue;
     }
@@ -979,6 +997,7 @@ static VOID ScanLoader(VOID)
       if (FileExists(Volume->RootDir, FileName)) {
   //    Volume->OSType = OSTYPE_LIN;
       Volume->BootType = BOOTING_BY_EFI;
+      if (!gSettings.HVHideAllGrub)
       Entry = AddLoaderEntry(FileName, L"Grub EFI boot menu", Volume, OSTYPE_LIN);
  //     continue;
     }
@@ -990,6 +1009,7 @@ static VOID ScanLoader(VOID)
 #endif
       if (FileExists(Volume->RootDir, FileName)) {
           Volume->BootType = BOOTING_BY_EFI;
+          if (!gSettings.HVHideAllGentoo)
           Entry = AddLoaderEntry(FileName, L"Gentoo EFI boot menu", Volume, OSTYPE_LIN);
       }
     
@@ -1001,6 +1021,7 @@ static VOID ScanLoader(VOID)
 #endif
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->BootType = BOOTING_BY_EFI;
+      if (!gSettings.HVHideAllGentoo)
       Entry = AddLoaderEntry(FileName, L"Gentoo EFI kernel", Volume, OSTYPE_LIN);
     }
     
@@ -1009,6 +1030,7 @@ static VOID ScanLoader(VOID)
     if (FileExists(Volume->RootDir, FileName)) {
  //     Volume->OSType = OSTYPE_LIN;
       Volume->BootType = BOOTING_BY_EFI;
+      if (!gSettings.HVHideAllRedHat)
       Entry = AddLoaderEntry(FileName, L"RedHat EFI boot menu", Volume, OSTYPE_LIN);
 //      continue;
     }
@@ -1018,6 +1040,7 @@ static VOID ScanLoader(VOID)
     if (FileExists(Volume->RootDir, FileName)) {
 //      Volume->OSType = OSTYPE_LIN;
       Volume->BootType = BOOTING_BY_EFI;
+      if (!gSettings.HVHideAllRedHat)
       Entry = AddLoaderEntry(FileName, L"RedHat EFI boot menu", Volume, OSTYPE_LIN);
  //     continue;
     }
@@ -1031,6 +1054,7 @@ static VOID ScanLoader(VOID)
     if (FileExists(Volume->RootDir, FileName)) {
 //      Volume->OSType = OSTYPE_LIN;
       Volume->BootType = BOOTING_BY_EFI;
+      if (!gSettings.HVHideAllUbuntu)
       Entry = AddLoaderEntry(FileName, L"Ubuntu EFI boot menu", Volume, OSTYPE_LIN);
 //      continue;
     }
@@ -1040,6 +1064,7 @@ static VOID ScanLoader(VOID)
     if (FileExists(Volume->RootDir, FileName)) {
 //      Volume->OSType = OSTYPE_LIN;
       Volume->BootType = BOOTING_BY_EFI;
+      if (!gSettings.HVHideAllSuSe)
       Entry = AddLoaderEntry(FileName, L"OpenSuse EFI boot menu", Volume, OSTYPE_LIN);
 //      continue;
     }
@@ -1053,6 +1078,7 @@ static VOID ScanLoader(VOID)
     if (FileExists(Volume->RootDir, FileName)) {
 //      Volume->OSType = OSTYPE_VAR;
       Volume->BootType = BOOTING_BY_EFI;
+      if (!gSettings.HVHideAllUEFI)
       AddLoaderEntry(FileName, L"UEFI boot menu", Volume, OSTYPE_VAR);
 //      continue;
     }
@@ -1892,9 +1918,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   // init debug time - must be after PrepatchSmbios()
   DbgTimeInit();
 #ifdef REVISION_STR
-  MsgLog(REVISION_STR);
+  MsgLog(REVISION_STR); 
 #endif
-  DBG("running on %a\n", gSettings.OEMProduct);
+  DBG("  running on %a\n", gSettings.OEMProduct);
   DBG("... with board %a\n", gSettings.OEMBoard);
   //replace / with _
   Size = iStrLen(gSettings.OEMProduct, 64);
@@ -2006,7 +2032,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     ScanVolumes();
     DBGT("ScanVolumes()\n");
     // scan for loaders and tools, add then to the menu
-    if (!GlobalConfig.NoLegacy && GlobalConfig.LegacyFirst){
+    if (!GlobalConfig.NoLegacy && GlobalConfig.LegacyFirst && !gSettings.HVHideAllLegacy){
       DBG("scan legacy first\n");
       ScanLegacy();
       DBGT("ScanLegacy()\n");
@@ -2014,7 +2040,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     ScanLoader();
     DBGT("ScanLoader()\n");
     //      DBG("ScanLoader OK\n");
-    if (!GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst){
+    if (!GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst && !gSettings.HVHideAllLegacy){
 //      DBG("scan legacy second\n");
       ScanLegacy();
       DBGT("ScanLegacy()\n");

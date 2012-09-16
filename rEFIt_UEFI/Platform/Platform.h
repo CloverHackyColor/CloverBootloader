@@ -632,6 +632,20 @@ typedef struct {
   UINTN   AnyKextDataLen[100];
   UINT8   *AnyKextData[100];
   UINT8   *AnyKextPatch[100];
+  //Volumes hiding
+  BOOLEAN HVHideAllOSX;
+  BOOLEAN HVHideAllOSXInstall;
+  BOOLEAN HVHideAllRecovery;
+  BOOLEAN HVHideAllWindowsEFI;
+  BOOLEAN HVHideAllGrub;
+  BOOLEAN HVHideAllGentoo;
+  BOOLEAN HVHideAllRedHat;
+  BOOLEAN HVHideAllUbuntu;
+  BOOLEAN HVHideAllSuSe;
+  BOOLEAN HVHideAllUEFI;
+  BOOLEAN HVHideAllLegacy;
+  CHAR16  *HVHideStrings[100];
+  INT32   HVCount;
   
 } SETTINGS_DATA;
 

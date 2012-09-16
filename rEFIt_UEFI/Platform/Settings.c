@@ -307,13 +307,15 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 {
   EFI_STATUS	Status = EFI_NOT_FOUND;
   UINTN       size;
-  TagPtr      dict;
+  TagPtr      dict, dict2;
   TagPtr      prop;
   TagPtr      dictPointer;
   CHAR8*      gConfigPtr = NULL;
-  UINTN       i; 
+  UINTN       i;
+  CHAR8       ANum[4];
+
   
-  CHAR16      UStr[64];  
+  CHAR16      UStr[64];
   CHAR16*     ConfigPlistPath = L"EFI\\config.plist";
   CHAR16*     ConfigOemPath = PoolPrint(L"%s\\config.plist", OEMPath);
   
@@ -949,7 +951,6 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       prop = GetProperty(dictPointer,"KextsToPatch");
       if(prop) {
         UINTN  j;
-        CHAR8 ANum[4];
         i = 0;
         do {
           AsciiSPrint(ANum, 4, "%d", i);
@@ -957,10 +958,10 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           if (!dictPointer) {
             break;
           }
-          dict = GetProperty(dictPointer,"Name");
-          if (dict) {
+          dict2 = GetProperty(dictPointer,"Name");
+          if (dict2) {
             gSettings.AnyKext[i] = AllocateZeroPool(256); //dunno about size of kext name
-            AsciiSPrint(gSettings.AnyKext[i], 256, "%a", dict->string);
+            AsciiSPrint(gSettings.AnyKext[i], 256, "%a", dict2->string);
             DBG("Prepare to patch of %a\n", gSettings.AnyKext[i]);
           }
           gSettings.KPKextPatchesNeeded = TRUE;
@@ -984,6 +985,122 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         // after OnExitBootServices. This is wrong and these arrays should be reallocated
         // but I am not sure
       }
+    }
+ //Volumes hiding   
+    dictPointer = GetProperty(dict,"Volumes");
+    if (dictPointer) {
+      gSettings.HVHideAllOSX = FALSE;
+      prop = GetProperty(dictPointer,"HideAllOSX");
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+          gSettings.HVHideAllOSX = TRUE;
+        }
+      }
+      gSettings.HVHideAllOSXInstall = FALSE;
+      prop = GetProperty(dictPointer,"HideAllOSXInstall");
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+          gSettings.HVHideAllOSXInstall = TRUE;
+        }
+      }
+      gSettings.HVHideAllRecovery = FALSE;
+      prop = GetProperty(dictPointer,"HideAllRecovery");
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+          gSettings.HVHideAllRecovery = TRUE;
+        }
+      }
+      gSettings.HVHideAllWindowsEFI = FALSE;
+      prop = GetProperty(dictPointer,"HideAllWindowsEFI");
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+          gSettings.HVHideAllWindowsEFI = TRUE;
+        }
+      }
+      gSettings.HVHideAllGrub = FALSE;
+      prop = GetProperty(dictPointer,"HideAllGrub");
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+          gSettings.HVHideAllGrub = TRUE;
+        }
+      }
+      gSettings.HVHideAllGentoo = FALSE;
+      prop = GetProperty(dictPointer,"HideAllGentoo");
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+          gSettings.HVHideAllGentoo = TRUE;
+        }
+      }
+      gSettings.HVHideAllRedHat = FALSE;
+      prop = GetProperty(dictPointer,"HideAllRedHat");
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+          gSettings.HVHideAllRedHat = TRUE;
+        }
+      }
+      gSettings.HVHideAllUbuntu = FALSE;
+      prop = GetProperty(dictPointer,"HideAllUbuntu");
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+          gSettings.HVHideAllUbuntu = TRUE;
+        }
+      }
+      gSettings.HVHideAllSuSe = FALSE;
+      prop = GetProperty(dictPointer,"HideAllSuSe");
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+          gSettings.HVHideAllSuSe = TRUE;
+        }
+      }
+      gSettings.HVHideAllUEFI = FALSE;
+      prop = GetProperty(dictPointer,"HideAllUEFI");
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+          gSettings.HVHideAllUEFI = TRUE;
+        }
+      }
+      gSettings.HVHideAllLegacy = FALSE;
+      prop = GetProperty(dictPointer,"HideAllLegacy");
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+          gSettings.HVHideAllLegacy = TRUE;
+        }
+      }
+      
+      prop = GetProperty(dictPointer,"HideVolumes");
+      if(prop) {
+        i = 0;
+        do {
+          AsciiSPrint(ANum, 4, "%d", i);
+          dictPointer = GetProperty(prop, ANum);
+          if (!dictPointer) {
+            break;
+          }
+          dict2 = GetProperty(dictPointer,"VolumeString");
+          if (dict2) {
+            gSettings.HVHideStrings[i] = AllocateZeroPool(256);
+            UnicodeSPrint(gSettings.HVHideStrings[i], 256, L"%a", dict2->string);
+            DBG("Hiding Volume with string: %s\n", gSettings.HVHideStrings[i]);
+          }
+          i++;
+          if (i>99) {
+            break;
+          }
+        } while (TRUE); // What is this for?
+        gSettings.HVCount = (INT32)i;
+      }
+    
     }
     
     SaveSettings();
