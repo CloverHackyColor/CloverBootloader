@@ -1371,6 +1371,7 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, UINTN X
                          MainImage, (Entry->Row == 0) ? Entry->BadgeImage:NULL, XPos, YPos);
 }
 
+/*
 static VOID DrawMainMenuBadge(IN EG_IMAGE  *BadgeImage, IN UINT64 XPos, IN UINT64 YPos)
 {
   
@@ -1379,7 +1380,7 @@ static VOID DrawMainMenuBadge(IN EG_IMAGE  *BadgeImage, IN UINT64 XPos, IN UINT6
   
   BltImage(ImageBuffer, XPos, YPos);
 }
-
+*/
 static VOID DrawMainMenuText(IN CHAR16 *Text, IN UINT64 XPos, IN UINT64 YPos)
 {
     UINT64 TextWidth;
@@ -1483,7 +1484,10 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
         DrawMainMenuText(Screen->Entries[State->CurrentSelection]->Title,
                          (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY);
-//        BltImage(Screen->Entries[State->CurrentSelection]->BadgeImage, ((UGAWidth - LAYOUT_TEXT_WIDTH) >> 1) - 34, textPosY 1 12);
+        if ((Screen->Entries[State->CurrentSelection]->Row == 0) &&
+            (GlobalConfig.HideBadges == 0)) {
+          BltImage(Screen->Entries[State->CurrentSelection]->BadgeImage, ((UGAWidth - LAYOUT_TEXT_WIDTH) >> 1) - 34, textPosY + 12);
+        }
       }
       break;
       
