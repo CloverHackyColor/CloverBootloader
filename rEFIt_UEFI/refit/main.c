@@ -1375,14 +1375,14 @@ static VOID ScanLegacy(VOID)
               VolumeIndex, DevicePathToStr(Volume->DevicePath),
               Volume->DiskKind, Volume->MbrPartitionIndex,
               Volume->IsAppleLegacy ? L"AL" : L"--", Volume->HasBootCode,
-               Volume->VolName ? Volume->VolName : L"(no name)");
+              Volume->VolName ? Volume->VolName : L"(no name)");
 #endif
         
         // skip volume if its kind is configured as disabled
         if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_OPTICAL)) ||
             (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_EXTERNAL)) ||
             (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_INTERNAL)))
-            continue;
+          continue;
         
         if ((Volume->BootType == BOOTING_BY_EFI) ||
             (Volume->BootType == BOOTING_BY_BOOTEFI)) {
@@ -1421,7 +1421,7 @@ static VOID ScanLegacy(VOID)
           }
         }
         
-        if (ShowVolume){
+        if (ShowVolume && (Volume->OSType != OSTYPE_HIDE)){
             AddLegacyEntry(NULL, Volume);
             DBG("added legacy entry %d OSType=%d Name=%s Icon=%s\n",
                 VolumeIndex, Volume->OSType, Volume->VolName? Volume->VolName: L"<null>", Volume->OSIconName);

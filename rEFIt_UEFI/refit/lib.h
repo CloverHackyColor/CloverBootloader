@@ -111,7 +111,7 @@ typedef struct {
 #define OSTYPE_SNOW				(16)
 #define OSTYPE_LION				(17)
 #define OSTYPE_COUGAR  		(18)
-
+#define OSTYPE_HIDE       (100)
 
 
 #define IS_EXTENDED_PART_TYPE(type) ((type) == 0x05 || (type) == 0x0f || (type) == 0x85)

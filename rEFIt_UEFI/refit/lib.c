@@ -1034,7 +1034,10 @@ VOID ScanVolumes(VOID)
     EFI_DEVICE_PATH_PROTOCOL  *VolumeDevicePath;
     EFI_GUID                *Guid;
 //  EFI_INPUT_KEY Key;
-    
+  CHAR16                  VolumeString[256];
+  INT32                   HVi;
+  CHAR16                  *HV;
+  
 //    DBG("Scanning volumes...\n");
     
     // get all BlockIo handles
@@ -1066,7 +1069,14 @@ VOID ScanVolumes(VOID)
       if (!EFI_ERROR(Status)) {
    //     DBG("Found Volume %s at index=%d\n", Volume->VolName, HandleIndex);
         AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
-        
+        StrCpy(VolumeString, DevicePathToStr(Volume->DevicePath));
+        HV = NULL;
+        for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
+          HV = StrStr(VolumeString, gSettings.HVHideStrings[HVi]);
+          if (HV != NULL) break;
+        }
+        if (HV != NULL) Volume->OSType = OSTYPE_HIDE;
+          
       } else {
         DBG("wrong volume Nr%d?!\n", HandleIndex);
         FreePool(Volume);
