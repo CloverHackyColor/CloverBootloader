@@ -1484,7 +1484,8 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
         DrawMainMenuText(Screen->Entries[State->CurrentSelection]->Title,
                          (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY);
-        if ((Screen->Entries[State->CurrentSelection]->Row == 0) &&
+        //show badges - exclude 0 && when it will work fine
+        if (0 && (Screen->Entries[State->CurrentSelection]->Row == 0) &&
             (GlobalConfig.HideBadges == 0)) {
           BltImage(Screen->Entries[State->CurrentSelection]->BadgeImage, ((UGAWidth - LAYOUT_TEXT_WIDTH) >> 1) - 34, textPosY + 12);
         }
