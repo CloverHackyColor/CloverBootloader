@@ -2,6 +2,9 @@
 rem windows batch script for building clover
 rem 2012-09-06 apianti
 
+rem get default EDK2 tools and arch
+@call %WORKSPACE%\Clover\GetVariables.bat
+
 rem setup current dir and edk2 if needed
 pushd .
 set CURRENTDIR=%CD%
@@ -109,17 +112,27 @@ rem have edk2 prepare to build
       :buildall
          rem build all
          echo Building all...
-         echo Building CloverIa32...
-         build -p %WORKSPACE%\Clover\CloverIa32.dsc %*
+         echo Building CloverEFI IA32 (boot) ...
+         build -p %WORKSPACE%\Clover\CloverIa32.dsc -a IA32 %*
          if not x"%errorlevel%" == x"0" goto exitscript
-         build -p %WORKSPACE%\Clover\rEFIt_UEFI\rEFIt.dsc %*
+		 call PostBuild.bat IA32
+		 
+         echo Building CloverIA32.efi ...
+         build -p %WORKSPACE%\Clover\rEFIt_UEFI\rEFIt.dsc -a IA32 %*
          if not x"%errorlevel%" == x"0" goto exitscript
-         echo Building CloverX64...
-         build -p %WORKSPACE%\Clover\CloverX64.dsc %*
+         copy /b %WORKSPACE%\Build\rEFIt\%TARGET%_%TOOL_CHAIN_TAG%\IA32\CLOVERIA32.efi %WORKSPACE%\Clover\CloverPackage\CloverV2\EFI\BOOT
          if not x"%errorlevel%" == x"0" goto exitscript
-         build -p %WORKSPACE%\Clover\rEFIt_UEFI\rEFIt64.dsc %*
+		 
+         echo Building CloverEFI X64 (boot) ...
+         build -p %WORKSPACE%\Clover\CloverX64.dsc -a X64 %*
          if not x"%errorlevel%" == x"0" goto exitscript
-         rem todo: copy output files to structured folders
+		 call PostBuild.bat X64
+		 
+         echo Building CloverX64.efi ...
+         build -p %WORKSPACE%\Clover\rEFIt_UEFI\rEFIt64.dsc -a X64 %*
+         if not x"%errorlevel%" == x"0" goto exitscript
+         copy /b %WORKSPACE%\Build\rEFIt\%TARGET%_%TOOL_CHAIN_TAG%\X64\CLOVERX64.efi %WORKSPACE%\Clover\CloverPackage\CloverV2\EFI\BOOT
+         if not x"%errorlevel%" == x"0" goto exitscript
          goto exitscript
    
 :searchforedk
