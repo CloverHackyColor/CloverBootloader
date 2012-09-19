@@ -35,6 +35,7 @@
  */
 
 #include "Platform.h"
+#include "Version.h"
 
 #include "egemb_back_selected_small.h"
 
@@ -114,9 +115,10 @@ VOID FillInputs(VOID)
   UINTN i,j; //for cycles
   CHAR8 tmp[40];
   UINT8 a;
+  BOOLEAN bit;
   
   InputItemsCount = 0; 
-  InputItems = AllocateZeroPool(64 * sizeof(INPUT_ITEM)); //XXX
+  InputItems = AllocateZeroPool(100 * sizeof(INPUT_ITEM)); //XXX
   InputItems[InputItemsCount].ItemType = ASString;  //0
   //even though Ascii we will keep value as Unicode to convert later
   InputItems[InputItemsCount].SValue = AllocateZeroPool(255);
@@ -258,7 +260,13 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue; //52
   InputItems[InputItemsCount].BValue = gSettings.InjectEDID;
   InputItems[InputItemsCount++].SValue = gSettings.InjectEDID?L"[+]":L"[ ]"; 
-
+  
+  for (j=0; j<16; j++) {
+    InputItems[InputItemsCount].ItemType = BoolValue; //53+j
+    bit = (gSettings.FixDsdt & (1<<j)) != 0;
+    InputItems[InputItemsCount].BValue = bit;
+    InputItems[InputItemsCount++].SValue = bit?L"[+]":L"[ ]";     
+  }
 }
 
 VOID ApplyInputs(VOID)
@@ -429,7 +437,15 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gSettings.InjectEDID = InputItems[i].BValue;
   }
-  
+  k=0;
+  for (j=0; j<16; j++) {
+    i++; //53-69
+    if (InputItems[i].Valid && InputItems[i].BValue) {
+      k += (1<<j);
+    }
+  }
+  gSettings.FixDsdt = k;
+ 
   SaveSettings(); 
 }
 
@@ -1484,12 +1500,14 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
         DrawMainMenuText(Screen->Entries[State->CurrentSelection]->Title,
                          (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY);
-        //show badges - exclude 0 && when it will work fine
-        if (0 && (Screen->Entries[State->CurrentSelection]->Row == 0) &&
-            (GlobalConfig.HideBadges == 0)) {
-          BltImage(Screen->Entries[State->CurrentSelection]->BadgeImage, ((UGAWidth - LAYOUT_TEXT_WIDTH) >> 1) - 34, textPosY + 12);
-        }
       }
+#ifdef FIRMWARE_REVISION
+      DrawMainMenuText(FIRMWARE_REVISION,
+                       (UGAWidth - LAYOUT_TEXT_WIDTH), UGAHeight - 10);
+#else
+      DrawMainMenuText(gST->FirmwareRevision,
+                       (UGAWidth - LAYOUT_TEXT_WIDTH), UGAHeight - 10);
+#endif
       break;
       
     case MENU_FUNCTION_PAINT_SELECTION:
@@ -1514,6 +1532,11 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
    //     DrawMainMenuText(p, X, textPosY);
         DrawMainMenuText(Screen->Entries[State->CurrentSelection]->Title,
                          (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY);
+        //show badges - exclude 0 && when it will work fine
+        if (0 && (Screen->Entries[State->CurrentSelection]->Row == 0) &&
+            (GlobalConfig.HideBadges == 0)) {
+          BltImage(Screen->Entries[State->CurrentSelection]->BadgeImage, ((UGAWidth - LAYOUT_TEXT_WIDTH) >> 1) - 34, textPosY + 12);
+        }
       }
       break;
       
@@ -1778,7 +1801,155 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;                
   return Entry;
-}  
+} 
+
+REFIT_MENU_ENTRY  *SubMenuDsdtFix()
+{
+  REFIT_MENU_ENTRY   *Entry; //, *SubEntry;
+  REFIT_MENU_SCREEN  *SubScreen;
+  REFIT_INPUT_DIALOG *InputBootArgs;
+  CHAR16*           Flags;
+  Flags = AllocateZeroPool(255);
+  
+  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
+  Entry->Title = PoolPrint(L"DSDT fix mask [0x%04x]->", gSettings.FixDsdt);
+  Entry->Image =  OptionMenu.TitleImage;
+  Entry->Tag = TAG_OPTIONS;
+  // create the submenu
+  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+  SubScreen->Title = Entry->Title;
+  SubScreen->TitleImage = Entry->Image;
+
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  UnicodeSPrint(Flags, 255, L"DSDT name:");
+  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[1].SValue);
+  InputBootArgs->Entry.ShortcutDigit = 0;
+  InputBootArgs->Entry.ShortcutLetter = 'D';
+  InputBootArgs->Entry.Image = NULL;
+  InputBootArgs->Entry.BadgeImage = NULL;
+  InputBootArgs->Entry.SubScreen = NULL;
+  InputBootArgs->Item = &InputItems[1];    //1
+  AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Add DTGP    :");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[53];    
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Fix warnings:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[54];    
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Fix shutdown:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[55];    
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Add MCHC    :");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[56];    
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Fix HPET    :");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[57];    
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Fake LPC    :");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[58];    
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Fix IPIC    :");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[59];    
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Add SMBUS   :");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[60];    
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Fix display :");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[61];    
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Fix IDE     :");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[62];    
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Fix SATA    :");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[63];    
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Fix Firewire:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[64];    
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Fix USB     :");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[65];    
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Fix LAN     :");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[66];    
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Fix Airport :");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[67];    
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Fix sound   :");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[68];    
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  Entry->SubScreen = SubScreen;                
+  return Entry;
+} 
+
 
 VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
 {
@@ -1813,10 +1984,10 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.Image = NULL;
     InputBootArgs->Entry.BadgeImage = NULL;
     InputBootArgs->Entry.SubScreen = NULL;
-    InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];    //0
+    InputBootArgs->Item = &InputItems[0];    //0
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     //1
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+/*    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     UnicodeSPrint(Flags, 255, L"DSDT name:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
@@ -1826,9 +1997,9 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.Image = NULL;
     InputBootArgs->Entry.BadgeImage = NULL;
     InputBootArgs->Entry.SubScreen = NULL;
-    InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];    //1
+    InputBootArgs->Item = &InputItems[1];    //1
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-    
+   
     //2    
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     UnicodeSPrint(Flags, 255, L"MemoryFix:");
@@ -1840,8 +2011,9 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.Image = NULL;
     InputBootArgs->Entry.BadgeImage = NULL;
     InputBootArgs->Entry.SubScreen = NULL;
-    InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];    //2
+    InputBootArgs->Item = &InputItems[2];    //2
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+ */
     //3  
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     UnicodeSPrint(Flags, 255, L"String Injection:");
@@ -1853,7 +2025,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.Image = NULL;
     InputBootArgs->Entry.BadgeImage = NULL;
     InputBootArgs->Entry.SubScreen = NULL;
-    InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];   //3 
+    InputBootArgs->Item = &InputItems[3];   //3 
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     //4 
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
@@ -1866,7 +2038,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.Image = NULL;
     InputBootArgs->Entry.BadgeImage = NULL;
     InputBootArgs->Entry.SubScreen = NULL;
-    InputBootArgs->Item = &InputItems[OptionMenu.EntryCount];   //4
+    InputBootArgs->Item = &InputItems[4];   //4
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     //15   
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
@@ -1882,7 +2054,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Item = &InputItems[15];    
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     //17   
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+/*    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     UnicodeSPrint(Flags, 255, L"Fix DSDT mask:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
@@ -1894,6 +2066,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.SubScreen = NULL;
     InputBootArgs->Item = &InputItems[17];    
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+ */
     //18
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     UnicodeSPrint(Flags, 255, L"Backlight level:");
@@ -1951,7 +2124,8 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.SubScreen = NULL;
     InputBootArgs->Item = &InputItems[51];
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-    
+
+    AddMenuEntry(&OptionMenu, SubMenuDsdtFix());
     AddMenuEntry(&OptionMenu, SubMenuSpeedStep());
     AddMenuEntry(&OptionMenu, SubMenuGraphics());
     AddMenuEntry(&OptionMenu, SubMenuBinaries());
