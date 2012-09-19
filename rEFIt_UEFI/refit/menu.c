@@ -273,6 +273,7 @@ VOID ApplyInputs(VOID)
 {
   INTN i = 0;
   UINTN j;
+  UINT16 k;
   CHAR8  AString[256];
   DBG("ApplyInputs\n");
   if (InputItems[i].Valid) {
@@ -1502,7 +1503,7 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
                          (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY);
       }
 #ifdef FIRMWARE_REVISION
-      DrawMainMenuText(FIRMWARE_REVISION,
+      DrawMainMenuText(L""FIRMWARE_REVISION,
                        (UGAWidth - LAYOUT_TEXT_WIDTH), UGAHeight - 10);
 #else
       DrawMainMenuText(gST->FirmwareRevision,
