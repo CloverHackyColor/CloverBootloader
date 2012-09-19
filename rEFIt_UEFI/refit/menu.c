@@ -285,7 +285,7 @@ VOID ApplyInputs(VOID)
   }
   i++; //2
   if (InputItems[i].Valid) {
-    gSettings.MemoryFix = InputItems[i].BValue;
+ //   gSettings.MemoryFix = InputItems[i].BValue;
   }
   i++; //3
   if (InputItems[i].Valid) {
@@ -440,8 +440,8 @@ VOID ApplyInputs(VOID)
   }
   k=0;
   for (j=0; j<16; j++) {
-    i++; //53-69
-    if (InputItems[i].Valid && InputItems[i].BValue) {
+    i++; //53-68
+    if (InputItems[i].BValue) {
       k += (1<<j);
     }
   }
@@ -1502,13 +1502,15 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
         DrawMainMenuText(Screen->Entries[State->CurrentSelection]->Title,
                          (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY);
       }
+      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION)){
 #ifdef FIRMWARE_REVISION
-      DrawMainMenuText(L""FIRMWARE_REVISION,
-                       (UGAWidth - LAYOUT_TEXT_WIDTH), UGAHeight - 10);
+        DrawMainMenuText(PoolPrint(L"%a ", FIRMWARE_REVISION),
+                       (UGAWidth - LAYOUT_TEXT_WIDTH), UGAHeight - 20);
 #else
       DrawMainMenuText(gST->FirmwareRevision,
-                       (UGAWidth - LAYOUT_TEXT_WIDTH), UGAHeight - 10);
+                       (UGAWidth - LAYOUT_TEXT_WIDTH), UGAHeight - 20);
 #endif
+      }
       break;
       
     case MENU_FUNCTION_PAINT_SELECTION:
@@ -1534,10 +1536,10 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
         DrawMainMenuText(Screen->Entries[State->CurrentSelection]->Title,
                          (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY);
         //show badges - exclude 0 && when it will work fine
-        if (0 && (Screen->Entries[State->CurrentSelection]->Row == 0) &&
-            (GlobalConfig.HideBadges == 0)) {
+  /*      if (0 && (Screen->Entries[State->CurrentSelection]->Row == 0) &&
+            (GlobalConfig.HideBadges == 2)) { //when "all"
           BltImage(Screen->Entries[State->CurrentSelection]->BadgeImage, ((UGAWidth - LAYOUT_TEXT_WIDTH) >> 1) - 34, textPosY + 12);
-        }
+        } */
       }
       break;
       
@@ -2148,8 +2150,10 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
         SubStyle = Style;
         while (!SubMenuExit) {  
           SubMenuExit = RunGenericMenu((*ChosenEntry)->SubScreen, SubStyle, &SubMenuIndex, &TmpChosenEntry);
-          if (SubMenuExit == MENU_EXIT_ESCAPE || TmpChosenEntry->Tag == TAG_RETURN)
+          if (SubMenuExit == MENU_EXIT_ESCAPE || TmpChosenEntry->Tag == TAG_RETURN){
+            ApplyInputs();
             break;
+          }
           if (SubMenuExit == MENU_EXIT_ENTER) {
             //enter input dialog
             SubMenuExit = 0;

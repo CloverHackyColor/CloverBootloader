@@ -1235,9 +1235,9 @@ EFI_STATUS GetEdid(VOID)
       gSettings.CustomEDID = gEDID; //copy pointer but data if no CustomEDID
     }
     CopyMem(gEDID, EdidDiscovered->Edid, N);
-		for (i=0; i<N; i+=16) {
-			MsgLog("%02x: ", i);
-			for (j=0; j<16; j++) {
+		for (i=0; i<N; i+=10) {
+			MsgLog("%02d | ", i);
+			for (j=0; j<10; j++) {
 				MsgLog("%02x ", EdidDiscovered->Edid[i+j]);
 			}
 			MsgLog("\n");		   

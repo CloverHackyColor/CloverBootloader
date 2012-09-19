@@ -407,6 +407,8 @@ VOID ReadConfig(VOID)
                     GlobalConfig.HideUIFlags |= HIDEUI_FLAG_FUNCS;
                 } else if (StriCmp(FlagName, L"label") == 0) {
                     GlobalConfig.HideUIFlags |= HIDEUI_FLAG_LABEL;
+                } else if (StriCmp(FlagName, L"revision") == 0) {
+                  GlobalConfig.HideUIFlags |= HIDEUI_FLAG_REVISION;
                 } else if (StriCmp(FlagName, L"hdbadges") == 0) {
                     if (GlobalConfig.HideBadges < 1)
                         GlobalConfig.HideBadges = 1;

@@ -159,9 +159,11 @@ EFI_STATUS SetVariablesForOSX()
                                          sizeof(FwFeaturesMask), &FwFeaturesMask);
 
 // options variables  
+#if ICLOUD
 	Status = gRS->SetVariable(L"boot-args", &gEfiAppleBootGuid, 
                                          /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          bootArgsLen ,&gSettings.BootArgs);
+#endif
 	Status = gRS->SetVariable(L"security-mode", &gEfiAppleBootGuid, 
                                          /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          5 , (VOID*)None);

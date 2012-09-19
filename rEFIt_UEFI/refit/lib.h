@@ -214,6 +214,7 @@ typedef struct {
 #define HIDEUI_FLAG_BANNER      (0x0001)
 #define HIDEUI_FLAG_FUNCS       (0x0002)
 #define HIDEUI_FLAG_LABEL       (0x0004)
+#define HIDEUI_FLAG_REVISION    (0x0008)
 #define HIDEUI_ALL              (0xffff)
 
 typedef struct {
