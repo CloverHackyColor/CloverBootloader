@@ -128,46 +128,46 @@ VOID FillInputs(VOID)
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.DsdtName);
   InputItems[InputItemsCount].ItemType = BoolValue; //2
   InputItems[InputItemsCount].BValue = gSettings.MemoryFix;
-  InputItems[InputItemsCount++].SValue = gSettings.MemoryFix?L"[X]":L"[ ]";
+  InputItems[InputItemsCount++].SValue = gSettings.MemoryFix?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //3 
   InputItems[InputItemsCount].BValue = gSettings.StringInjector;
-  InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[X]":L"[ ]";
+  InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //4 
   InputItems[InputItemsCount].BValue = gSettings.DropSSDT;
-  InputItems[InputItemsCount++].SValue = gSettings.DropSSDT?L"[X]":L"[ ]";
+  InputItems[InputItemsCount++].SValue = gSettings.DropSSDT?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue;  //5
   InputItems[InputItemsCount].BValue = gSettings.GeneratePStates;
-  InputItems[InputItemsCount++].SValue = gSettings.GeneratePStates?L"[X]":L"[ ]";
+  InputItems[InputItemsCount++].SValue = gSettings.GeneratePStates?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue;  //6
   InputItems[InputItemsCount].BValue = gSettings.Turbo;
-  InputItems[InputItemsCount++].SValue = gSettings.Turbo?L"[X]":L"[ ]";
+  InputItems[InputItemsCount++].SValue = gSettings.Turbo?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = Decimal;  //7
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gSettings.PLimitDict);
   InputItems[InputItemsCount].ItemType = Decimal;  //8
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gSettings.UnderVoltStep);
   InputItems[InputItemsCount].ItemType = BoolValue; //9
   InputItems[InputItemsCount].BValue = gSettings.GenerateCStates;
-  InputItems[InputItemsCount++].SValue = gSettings.GenerateCStates?L"[X]":L"[ ]";
+  InputItems[InputItemsCount++].SValue = gSettings.GenerateCStates?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //10
   InputItems[InputItemsCount].BValue = gSettings.EnableC2;
-  InputItems[InputItemsCount++].SValue = gSettings.EnableC2?L"[X]":L"[ ]";
+  InputItems[InputItemsCount++].SValue = gSettings.EnableC2?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //11
   InputItems[InputItemsCount].BValue = gSettings.EnableC4;
-  InputItems[InputItemsCount++].SValue = gSettings.EnableC4?L"[X]":L"[ ]";
+  InputItems[InputItemsCount++].SValue = gSettings.EnableC4?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //12
   InputItems[InputItemsCount].BValue = gSettings.EnableC6;
-  InputItems[InputItemsCount++].SValue = gSettings.EnableC6?L"[X]":L"[ ]";
+  InputItems[InputItemsCount++].SValue = gSettings.EnableC6?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //13
   InputItems[InputItemsCount].BValue = gSettings.EnableISS;
-  InputItems[InputItemsCount++].SValue = gSettings.EnableISS?L"[X]":L"[ ]";
+  InputItems[InputItemsCount++].SValue = gSettings.EnableISS?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = Decimal;  //14
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.QPI);
   InputItems[InputItemsCount].ItemType = BoolValue; //15
   InputItems[InputItemsCount].BValue = gSettings.PatchNMI;
-  InputItems[InputItemsCount++].SValue = gSettings.PatchNMI?L"[X]":L"[ ]";
+  InputItems[InputItemsCount++].SValue = gSettings.PatchNMI?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //16
   InputItems[InputItemsCount].BValue = gSettings.PatchVBios;
-  InputItems[InputItemsCount++].SValue = gSettings.PatchVBios?L"[X]":L"[ ]";
+  InputItems[InputItemsCount++].SValue = gSettings.PatchVBios?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = Hex;  //17
   InputItems[InputItemsCount].SValue = AllocateZeroPool(36);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 36, L"0x%X", gSettings.FixDsdt);
@@ -183,7 +183,7 @@ VOID FillInputs(VOID)
   InputItemsCount = 20;
   InputItems[InputItemsCount].ItemType = BoolValue; //20
   InputItems[InputItemsCount].BValue = gSettings.GraphicsInjector;
-  InputItems[InputItemsCount++].SValue = gSettings.GraphicsInjector?L"[X]":L"[ ]";
+  InputItems[InputItemsCount++].SValue = gSettings.GraphicsInjector?L"[+]":L"[ ]";
   for (i=0; i<NGFX; i++) {
     InputItems[InputItemsCount].ItemType = ASString;  //21+i*5
     InputItems[InputItemsCount++].SValue = PoolPrint(L"%a", gGraphics[i].Model);
@@ -227,22 +227,22 @@ VOID FillInputs(VOID)
     
     InputItems[InputItemsCount].ItemType = BoolValue; //25+5i
     InputItems[InputItemsCount].BValue = gGraphics[i].LoadVBios;
-    InputItems[InputItemsCount++].SValue = gGraphics[i].LoadVBios?L"[X]":L"[ ]";
+    InputItems[InputItemsCount++].SValue = gGraphics[i].LoadVBios?L"[+]":L"[ ]";
   }
   //and so on 
   InputItemsCount = 44; 
   InputItems[InputItemsCount].ItemType = BoolValue; //44
   InputItems[InputItemsCount].BValue = gSettings.KextPatchesAllowed;
-  InputItems[InputItemsCount++].SValue = gSettings.KextPatchesAllowed?L"[X]":L"[ ]";
+  InputItems[InputItemsCount++].SValue = gSettings.KextPatchesAllowed?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //45
   InputItems[InputItemsCount].BValue = gSettings.KPKernelCpu;
-  InputItems[InputItemsCount++].SValue = gSettings.KPKernelCpu?L"[X]":L"[ ]";
+  InputItems[InputItemsCount++].SValue = gSettings.KPKernelCpu?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //46
   InputItems[InputItemsCount].BValue = gSettings.KPAsusAICPUPM;
-  InputItems[InputItemsCount++].SValue = gSettings.KPAsusAICPUPM?L"[X]":L"[ ]";
+  InputItems[InputItemsCount++].SValue = gSettings.KPAsusAICPUPM?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //47
   InputItems[InputItemsCount].BValue = gSettings.KPAppleRTC;
-  InputItems[InputItemsCount++].SValue = gSettings.KPAppleRTC?L"[X]":L"[ ]";
+  InputItems[InputItemsCount++].SValue = gSettings.KPAppleRTC?L"[+]":L"[ ]";
   
   InputItems[InputItemsCount].ItemType = BoolValue; //48
   InputItems[InputItemsCount].BValue = gSettings.bDropAPIC;
@@ -764,7 +764,7 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
 	do {
     if (Item->ItemType == BoolValue) {
       Item->BValue = !Item->BValue;
-      Item->SValue = Item->BValue?L"[X] ":L"[ ] ";
+      Item->SValue = Item->BValue?L"[+] ":L"[ ] ";
       MenuExit = MENU_EXIT_ENTER;
     } else {
     
@@ -1204,7 +1204,7 @@ VOID DrawMenuText(IN CHAR16 *Text, IN UINT64 SelectedWidth, IN UINT64 XPos, IN U
   if (TextBuffer == NULL)
     TextBuffer = egCreateImage(LAYOUT_TEXT_WIDTH, TextHeight, FALSE);
   
-  if (Cursor == 0xFFFF) {
+  if (Cursor != 0xFFFF) {
     egFillImage(TextBuffer, &MenuBackgroundPixel);
   } else {
     egFillImage(TextBuffer, &InputBackgroundPixel);
@@ -1536,10 +1536,10 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
         DrawMainMenuText(Screen->Entries[State->CurrentSelection]->Title,
                          (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY);
         //show badges - exclude 0 && when it will work fine
-  /*      if (0 && (Screen->Entries[State->CurrentSelection]->Row == 0) &&
+        if ((Screen->Entries[State->CurrentSelection]->Row == 0) &&
             (GlobalConfig.HideBadges == 2)) { //when "all"
-          BltImage(Screen->Entries[State->CurrentSelection]->BadgeImage, ((UGAWidth - LAYOUT_TEXT_WIDTH) >> 1) - 34, textPosY + 12);
-        } */
+          BltImageAlpha(Screen->Entries[State->CurrentSelection]->BadgeImage, ((UGAWidth - LAYOUT_TEXT_WIDTH) >> 1) - 34, textPosY + 8, &MenuBackgroundPixel);
+        } 
       }
       break;
       
@@ -1815,7 +1815,9 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   Flags = AllocateZeroPool(255);
   
   Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
-  Entry->Title = PoolPrint(L"DSDT fix mask [0x%04x]->", gSettings.FixDsdt);
+  Entry->Title = AllocateZeroPool(255);
+  UnicodeSPrint(Entry->Title, 255, L"DSDT fix mask [0x%04x]->", gSettings.FixDsdt);
+//  Entry->Title = PoolPrint(L"DSDT fix mask [0x%04x]->", gSettings.FixDsdt);
   Entry->Image =  OptionMenu.TitleImage;
   Entry->Tag = TAG_OPTIONS;
   // create the submenu
@@ -1965,6 +1967,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   MENU_STYLE_FUNC   SubStyle;
   INTN              EntryIndex = 0;
   INTN              SubMenuIndex;
+  INTN              DFIndex = 9;
   REFIT_INPUT_DIALOG* InputBootArgs;
   
   if (AllowGraphicsMode)
@@ -2127,7 +2130,8 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.SubScreen = NULL;
     InputBootArgs->Item = &InputItems[51];
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-
+    
+    DFIndex = OptionMenu.EntryCount;
     AddMenuEntry(&OptionMenu, SubMenuDsdtFix());
     AddMenuEntry(&OptionMenu, SubMenuSpeedStep());
     AddMenuEntry(&OptionMenu, SubMenuGraphics());
@@ -2152,13 +2156,16 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
           SubMenuExit = RunGenericMenu((*ChosenEntry)->SubScreen, SubStyle, &SubMenuIndex, &TmpChosenEntry);
           if (SubMenuExit == MENU_EXIT_ESCAPE || TmpChosenEntry->Tag == TAG_RETURN){
             ApplyInputs();
+            if (SubMenuIndex == DFIndex) {
+              UnicodeSPrint((*ChosenEntry)->SubScreen->Title, 255, L"DSDT fix mask [0x%04x]->", gSettings.FixDsdt);
+            }
             break;
           }
           if (SubMenuExit == MENU_EXIT_ENTER) {
             //enter input dialog
             SubMenuExit = 0;
           }            
-        }
+        } //while(!SubMenuExit)
       }
       MenuExit = 0;
     }

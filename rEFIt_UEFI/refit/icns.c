@@ -60,6 +60,10 @@ BUILTIN_ICON BuiltinIconTable[BUILTIN_ICON_COUNT] = {
     { NULL, L"icons\\vol_firewire.icns", 128 },
     { NULL, L"icons\\vol_clover.icns", 128 },
     { NULL, L"icons\\func_help.png", 128 },
+  { NULL, L"icons\\vol_internal_hfs.icns", 128 },
+  { NULL, L"icons\\vol_internal_ntfs.icns", 128 },
+  { NULL, L"icons\\vol_internal_ext3.icns", 128 },
+
 };
 
 EG_IMAGE * BuiltinIcon(IN UINTN Id)
@@ -67,8 +71,12 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
     if (Id >= BUILTIN_ICON_COUNT)
         return NULL;
     
-    if (BuiltinIconTable[Id].Image == NULL)
-        BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, BuiltinIconTable[Id].Path, BuiltinIconTable[Id].PixelSize);
+  if (BuiltinIconTable[Id].Image == NULL) {
+    BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, BuiltinIconTable[Id].Path, BuiltinIconTable[Id].PixelSize);
+    if (!BuiltinIconTable[Id].Image) {
+      BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, BuiltinIconTable[7].Path, BuiltinIconTable[Id].PixelSize);
+    }
+  }
     
     return BuiltinIconTable[Id].Image;
 }

@@ -659,12 +659,33 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
   gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)SectorBuffer, 1);
 }
 
-EG_IMAGE* ScanVolumeDefaultIcon(IN UINT8 DiskKind)
+EG_IMAGE* ScanVolumeDefaultIcon(REFIT_VOLUME *Volume) //IN UINT8 DiskKind)
 {  
+  UINTN IconNum;
     // default volume icon based on disk kind
-  switch (DiskKind) {
+  switch (Volume->DiskKind) {
     case DISK_KIND_INTERNAL:
-      return BuiltinIcon(BUILTIN_ICON_VOL_INTERNAL);
+      switch (Volume->OSType) {
+        case OSTYPE_OSX: 
+        case OSTYPE_TIGER: 
+        case OSTYPE_LEO:
+        case OSTYPE_SNOW:
+        case OSTYPE_LION:
+        case OSTYPE_COUGAR:
+          IconNum = BUILTIN_ICON_VOL_INTERNAL_HFS;
+          break;
+        case OSTYPE_LIN:
+          IconNum = BUILTIN_ICON_VOL_INTERNAL_EXT3;
+          break;
+        case OSTYPE_WIN:
+        case OSTYPE_WINEFI:
+          IconNum = BUILTIN_ICON_VOL_INTERNAL_NTFS;
+          break;
+        default:
+          IconNum = BUILTIN_ICON_VOL_INTERNAL;
+          break;
+      }
+      return BuiltinIcon(IconNum);
     case DISK_KIND_EXTERNAL:
       return BuiltinIcon(BUILTIN_ICON_VOL_EXTERNAL);
     case DISK_KIND_OPTICAL:
@@ -875,7 +896,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   }
 //    DBG("default volume icon based on disk kind\n");
   // default volume icon based on disk kind
-  Volume->DriveImage = ScanVolumeDefaultIcon(Volume->DiskKind);
+  Volume->DriveImage = ScanVolumeDefaultIcon(Volume); //->DiskKind);
   //  DBG("default volume icon OK\n");
   // open the root directory of the volume
   Volume->RootDir = EfiLibOpenRoot(Volume->DeviceHandle);
@@ -1011,7 +1032,7 @@ static VOID ScanExtendedPartition(REFIT_VOLUME *WholeDiskVolume, MBR_PARTITION_I
                 if (!Bootable)
                     Volume->HasBootCode = FALSE;
                 
-                Volume->DriveImage = ScanVolumeDefaultIcon(Volume->DiskKind);                
+              Volume->DriveImage = ScanVolumeDefaultIcon(Volume); //->DiskKind);                
                 AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);                
             }
         }

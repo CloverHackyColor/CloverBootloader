@@ -346,7 +346,7 @@ VOID egDrawImage(IN EG_IMAGE *Image, IN UINT64 ScreenPosX, IN UINT64 ScreenPosY)
     
     if (Image->HasAlpha) {
         Image->HasAlpha = FALSE;
-        egSetPlane(PLPTR(Image, a), 0, MultU64x64(Image->Width, Image->Height));
+        egSetPlane(PLPTR(Image, a), 0, MultU64x64(Image->Width, Image->Height)); //fill image->alfa by 0
     }
     
     if (GraphicsOutput != NULL) {
@@ -427,7 +427,7 @@ EFI_STATUS egScreenShot(VOID)
         return EFI_NO_MEDIA;
     }
   
-  for (Index=0; Index < 20; Index++) {
+  for (Index=0; Index < 60; Index++) {
     UnicodeSPrint(ScreenshotName, 256, L"EFI\\misc\\screenshot%d.bmp", Index);
     if(!FileExists(SelfRootDir, ScreenshotName)){
       Status = egSaveFile(SelfRootDir, ScreenshotName, FileData, FileDataLength);
@@ -438,7 +438,7 @@ EFI_STATUS egScreenShot(VOID)
   }
   // else save to file on the ESP
   if (EFI_ERROR(Status)) {
-    for (Index=0; Index < 20; Index++) {
+    for (Index=0; Index < 60; Index++) {
       UnicodeSPrint(ScreenshotName, 256, L"EFI\\misc\\screenshot%d.bmp", Index);
 //     if(!FileExists(NULL, ScreenshotName)){
         Status = egSaveFile(NULL, ScreenshotName, FileData, FileDataLength);

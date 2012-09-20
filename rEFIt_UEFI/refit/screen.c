@@ -401,14 +401,19 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
 
 VOID BltImage(IN EG_IMAGE *Image, IN UINT64 XPos, IN UINT64 YPos)
 {
-    egDrawImage(Image, XPos, YPos);
-    GraphicsScreenDirty = TRUE;
+  if (!Image) {
+    return;
+  }  
+  egDrawImage(Image, XPos, YPos);
+  GraphicsScreenDirty = TRUE;
 }
 
 VOID BltImageAlpha(IN EG_IMAGE *Image, IN UINT64 XPos, IN UINT64 YPos, IN EG_PIXEL *BackgroundPixel)
 {
     EG_IMAGE *CompImage;
-    
+    if (!Image) {
+      return;
+    }
     // compose on background
     CompImage = egCreateFilledImage(Image->Width, Image->Height, FALSE, BackgroundPixel);
     egComposeImage(CompImage, Image, 0, 0);
@@ -423,7 +428,11 @@ VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN UINT64 
 {
     UINT64 TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY;
     EG_IMAGE *CompImage;
-    
+  
+  if (!BaseImage || !TopImage) {
+    return;
+  }
+  
     // initialize buffer with base image
     CompImage = egCopyImage(BaseImage);
     TotalWidth  = BaseImage->Width;
@@ -451,7 +460,11 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
     UINT64 TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY;
     EG_IMAGE *CompImage;
     
-    // initialize buffer with base image
+  if (!BaseImage || !TopImage) {
+    return;
+  }
+  
+  // initialize buffer with base image
     CompImage = egCopyImage(BaseImage);
     TotalWidth  = BaseImage->Width;
     TotalHeight = BaseImage->Height;

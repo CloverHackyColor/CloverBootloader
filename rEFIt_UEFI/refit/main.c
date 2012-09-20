@@ -420,34 +420,13 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     
     SetFSInjection(Entry);
     //PauseForKey(L"SetFSInjection");
-    
-    //  PauseForKey(L"SetPrivateVarProto");
-    //  SetPrivateVarProto();
-    //  PauseForKey(L"PatchSmbios");
-//    PatchSmbios();
-    //  PauseForKey(L"PatchACPI");
-//    PatchACPI(Entry->Volume);
-    //  PauseForKey(L"SetVariablesForOSX");
     SetVariablesForOSX();
-    //  PauseForKey(L"FinalizeSmbios");
-    
-    //if (gFirmwareClover) {
-      // the following is not needed or not working on Aptio UEFI
-      // VirtualAddressChange - not needed at all
-      // OnReadyToBootEvent - causes rebuilding of System table and patches are lost
-      // SimpleFileSystemChangeEvent - not working - it will be at the start of refit
     EventsInitialize();
-     // gBS->SignalEvent(OnReadyToBootEvent);
-      //gBS->SignalEvent(mVirtualAddressChangeEvent);
-    //}
     FinalizeSmbios();
-    //  PauseForKey(L"SetupDataForOSX");
     SetupDataForOSX();
-    //  PauseForKey(L"SetupBooterLog");
     LoadKexts(Entry);
     DBGT("Closing log\n");
     Status = SetupBooterLog();
-    //  Entry->LoadOptions     = InputItems[0].SValue;
     
     // blocking boot.efi output if -v is not specified
     // note: this blocks output even if -v is specified in
