@@ -1538,7 +1538,7 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
         //show badges - exclude 0 && when it will work fine
         if ((Screen->Entries[State->CurrentSelection]->Row == 0) &&
             (GlobalConfig.HideBadges == HDBADGES_ALL)) {
-          BltImageAlpha(Screen->Entries[State->CurrentSelection]->Volume->OSImage,
+          BltImageAlpha(((LOADER_ENTRY*)Screen->Entries[State->CurrentSelection])->Volume->OSImage,
                         ((UGAWidth - LAYOUT_TEXT_WIDTH) >> 1) - 34, textPosY + 8, &MenuBackgroundPixel);
         } 
       }

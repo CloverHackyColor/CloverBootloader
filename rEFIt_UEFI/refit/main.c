@@ -518,7 +518,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   Entry->UseGraphicsMode = FALSE;
   Entry->LoadOptions     = PoolPrint(L"%a", gSettings.BootArgs);
 //  Entry->LoadOptions     = InputItems[0].SValue;
-  
+
   // locate a custom icon for the loader
 //  StrCpy(IconFileName, LoaderPath);
   StrCpy(IconFileName, Volume->OSIconName);
