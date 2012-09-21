@@ -127,8 +127,8 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].SValue = AllocateZeroPool(63);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.DsdtName);
   InputItems[InputItemsCount].ItemType = BoolValue; //2
-  InputItems[InputItemsCount].BValue = gSettings.MemoryFix;
-  InputItems[InputItemsCount++].SValue = gSettings.MemoryFix?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].BValue = gSettings.BlockRT;
+  InputItems[InputItemsCount++].SValue = gSettings.BlockRT?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //3 
   InputItems[InputItemsCount].BValue = gSettings.StringInjector;
   InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[+]":L"[ ]";
@@ -285,7 +285,7 @@ VOID ApplyInputs(VOID)
   }
   i++; //2
   if (InputItems[i].Valid) {
- //   gSettings.MemoryFix = InputItems[i].BValue;
+    gSettings.BlockRT = InputItems[i].BValue;
   }
   i++; //3
   if (InputItems[i].Valid) {
@@ -2006,21 +2006,21 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.SubScreen = NULL;
     InputBootArgs->Item = &InputItems[1];    //1
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-   
+*/   
     //2    
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 255, L"MemoryFix:");
+    UnicodeSPrint(Flags, 255, L"iCloudFix:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = 0xFFFF;
     InputBootArgs->Entry.ShortcutDigit = 0;
-    InputBootArgs->Entry.ShortcutLetter = 'M';
+    InputBootArgs->Entry.ShortcutLetter = 'C';
     InputBootArgs->Entry.Image = NULL;
     InputBootArgs->Entry.BadgeImage = NULL;
     InputBootArgs->Entry.SubScreen = NULL;
     InputBootArgs->Item = &InputItems[2];    //2
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
- */
+
     //3  
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     UnicodeSPrint(Flags, 255, L"String Injection:");
