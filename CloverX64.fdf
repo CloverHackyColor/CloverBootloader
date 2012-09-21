@@ -22,7 +22,7 @@
 # module statements.
 #
 ################################################################################
-[FV.DuetEfiMainFv]
+[FV.DuetEfiMainFvX64]
 BlockSize          = 0x10000
 NumBlocks          = 0x2a
 FvAlignment        = 16         #FV alignment and FV attributes setting.
