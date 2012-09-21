@@ -106,6 +106,7 @@ typedef struct {
 #define OSTYPE_LIN				(4)
 #define OSTYPE_EFI        (5)
 #define OSTYPE_WINEFI     (6)
+#define OSTYPE_RECOVERY		(10)
 #define OSTYPE_TIGER			(14)
 #define OSTYPE_LEO				(15)
 #define OSTYPE_SNOW				(16)
@@ -216,6 +217,12 @@ typedef struct {
 #define HIDEUI_FLAG_LABEL       (0x0004)
 #define HIDEUI_FLAG_REVISION    (0x0008)
 #define HIDEUI_ALL              (0xffff)
+
+#define HDBADGES_NONE   0
+#define HDBADGES_INT    1
+#define HDBADGES_ALL    2
+#define HDBADGES_SWAP   3
+#define HDBADGES_DRIVE  4
 
 typedef struct {
   BOOLEAN     TextOnly;

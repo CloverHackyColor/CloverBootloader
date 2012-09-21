@@ -1505,10 +1505,10 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION)){
 #ifdef FIRMWARE_REVISION
         DrawMainMenuText(PoolPrint(L"%a ", FIRMWARE_REVISION),
-                       (UGAWidth - LAYOUT_TEXT_WIDTH), UGAHeight - 20);
+                       (UGAWidth - GlobalConfig.CharWidth * 8), UGAHeight - 20);
 #else
       DrawMainMenuText(gST->FirmwareRevision,
-                       (UGAWidth - LAYOUT_TEXT_WIDTH), UGAHeight - 20);
+                       (UGAWidth - GlobalConfig.CharWidth * 8), UGAHeight - 20);
 #endif
       }
       break;
@@ -1537,8 +1537,9 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
                          (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY);
         //show badges - exclude 0 && when it will work fine
         if ((Screen->Entries[State->CurrentSelection]->Row == 0) &&
-            (GlobalConfig.HideBadges == 2)) { //when "all"
-          BltImageAlpha(Screen->Entries[State->CurrentSelection]->BadgeImage, ((UGAWidth - LAYOUT_TEXT_WIDTH) >> 1) - 34, textPosY + 8, &MenuBackgroundPixel);
+            (GlobalConfig.HideBadges == HDBADGES_ALL)) {
+          BltImageAlpha(Screen->Entries[State->CurrentSelection]->Volume->OSImage,
+                        ((UGAWidth - LAYOUT_TEXT_WIDTH) >> 1) - 34, textPosY + 8, &MenuBackgroundPixel);
         } 
       }
       break;

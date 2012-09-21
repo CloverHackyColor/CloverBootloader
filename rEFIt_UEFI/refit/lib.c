@@ -674,6 +674,9 @@ EG_IMAGE* ScanVolumeDefaultIcon(REFIT_VOLUME *Volume) //IN UINT8 DiskKind)
         case OSTYPE_COUGAR:
           IconNum = BUILTIN_ICON_VOL_INTERNAL_HFS;
           break;
+        case OSTYPE_RECOVERY:
+          IconNum = BUILTIN_ICON_VOL_INTERNAL_REC;
+          break;          
         case OSTYPE_LIN:
           IconNum = BUILTIN_ICON_VOL_INTERNAL_EXT3;
           break;

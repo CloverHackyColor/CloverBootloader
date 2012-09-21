@@ -506,10 +506,10 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   Entry->me.Row          = 0;
   Entry->Volume = Volume;
 //  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
-  if ((GlobalConfig.HideBadges == 0) || //hide none
-      (GlobalConfig.HideBadges == 1 && Volume->DiskKind != DISK_KIND_INTERNAL)){ //hide internal
+  if ((GlobalConfig.HideBadges == HDBADGES_NONE) || 
+      (GlobalConfig.HideBadges == HDBADGES_INT && Volume->DiskKind != DISK_KIND_INTERNAL)){
     Entry->me.BadgeImage   = egCopyScaledImage(Volume->OSImage, 6);
-  } else if (GlobalConfig.HideBadges == 3) { //swap
+  } else if (GlobalConfig.HideBadges == HDBADGES_SWAP) { 
     Entry->me.BadgeImage   =  egCopyScaledImage(Volume->DriveImage, 4);
   }
   Entry->LoaderPath      = EfiStrDuplicate(LoaderPath);
@@ -565,6 +565,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     case OSTYPE_SNOW:
     case OSTYPE_LION:
     case OSTYPE_COUGAR:
+    case OSTYPE_RECOVERY:
       OSIconName = Volume->OSIconName;
       Entry->UseGraphicsMode = TRUE;
       LoaderKind = 1;
@@ -591,7 +592,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       break;
     case OSTYPE_VAR:
     case OSTYPE_EFI:
-      OSIconName = L"unknown";
+      OSIconName = L"clover";
       LoaderKind = 4;
       ShortcutLetter = 'U';
       Entry->LoaderType = OSTYPE_VAR;
@@ -951,10 +952,11 @@ static VOID ScanLoader(VOID)
     StrCpy(FileName,  L"\\com.apple.recovery.boot\\boot.efi");
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->BootType = BOOTING_BY_EFI;
-//      Volume->OSType = OSTYPE_COUGAR; //my recovery partition is recognized
+      Volume->OSType = OSTYPE_RECOVERY; 
+      Volume->OSIconName = L"mac";
       if (!gSettings.HVHideAllRecovery)
-      Entry = AddLoaderEntry(FileName, L"Recovery", Volume, Volume->OSType);
-      continue; //boot MacOSX only
+        Entry = AddLoaderEntry(FileName, L"Recovery", Volume, Volume->OSType);
+      continue; //boot recovery only
     }
     
     // check for XOM - and what?
@@ -1319,11 +1321,11 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Vo
     Entry->me.Image        = LoadOSIcon(Volume->OSIconName, L"legacy", FALSE);
 //  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
 //  DBG("Title=%s OSName=%s OSIconName=%s\n", LoaderTitle, Volume->OSName, Volume->OSIconName);
-  if ((GlobalConfig.HideBadges == 0) || //hide none
-      (GlobalConfig.HideBadges == 1 && Volume->DiskKind != DISK_KIND_INTERNAL)){ //hide internal
+  if ((GlobalConfig.HideBadges == HDBADGES_NONE) || 
+      (GlobalConfig.HideBadges == HDBADGES_INT && Volume->DiskKind != DISK_KIND_INTERNAL)){ //hide internal
     Entry->me.BadgeImage   = egCopyScaledImage(Volume->OSImage, 6);
     //    Entry->me.BadgeImage   = egLoadIcon(ThemeDir, PoolPrint(L"icons\\os_%s.icns", Volume->OSIconName), 32);
-  } else if (GlobalConfig.HideBadges == 3) { //swap
+  } else if (GlobalConfig.HideBadges == HDBADGES_SWAP) {
     Entry->me.BadgeImage   =  egCopyScaledImage(Volume->DriveImage, 4);
   }
     Entry->Volume          = Volume;
