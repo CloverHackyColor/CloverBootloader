@@ -404,7 +404,8 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id);
 #define BUILTIN_ICON_VOL_INTERNAL_HFS    (13)
 #define BUILTIN_ICON_VOL_INTERNAL_NTFS   (14)
 #define BUILTIN_ICON_VOL_INTERNAL_EXT3   (15)
-#define BUILTIN_ICON_COUNT          (16)
+#define BUILTIN_ICON_VOL_INTERNAL_REC    (16)
+#define BUILTIN_ICON_COUNT          (17)
 
 //
 // menu module
