@@ -158,12 +158,17 @@ EFI_STATUS SetVariablesForOSX()
                                          EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          sizeof(FwFeaturesMask), &FwFeaturesMask);
 
-// options variables  
-#if ICLOUD
+  Status = gRS->SetVariable(L"MLB", &gEfiAppleNvramGuid,
+                            EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                            64, &gSettings.SerialNr);
+  
+
+// options variables
+//#if ICLOUD
 	Status = gRS->SetVariable(L"boot-args", &gEfiAppleBootGuid, 
                                          /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          bootArgsLen ,&gSettings.BootArgs);
-#endif
+//#endif
 	Status = gRS->SetVariable(L"security-mode", &gEfiAppleBootGuid, 
                                          /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          5 , (VOID*)None);

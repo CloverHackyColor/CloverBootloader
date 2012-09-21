@@ -188,10 +188,10 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
 	//
 	// Block gRT->GetVariable() for kernel.
 	//
-	if (gSettings.BlockRT) {
+/*	if (gSettings.BlockRT) {
 		BlockRTInstall();
 	}
-
+*/
 	
 //    gBS->Stall(2000000);
 	//PauseForKey(L"press any key to MemoryFix");
@@ -388,10 +388,10 @@ EventsInitialize ()
 	//
 	// Set up blocking of gRT->GetVariable() for kernel.
 	//
-	if (gSettings.BlockRT) {
+/*	if (gSettings.BlockRT) {
 		BlockRTSetup();
 	}
-	
+*/	
 	return EFI_SUCCESS;
 }
 
