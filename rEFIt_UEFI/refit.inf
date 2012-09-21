@@ -115,6 +115,7 @@
 	Platform/kext_patcher.c
 	Platform/kext_inject.c
 	Platform/DbgTime.c
+	Platform/BlockRT.c
 
 
 [Packages]
