@@ -125,6 +125,7 @@ EFI_STATUS SetVariablesForOSX()
 	CHAR8*      None	= "none";
 	CHAR8*      BA = &gSettings.BootArgs[255];
   UINTN       LangLen = 16;
+  UINTN       SNLen = 20;
 //  CHAR8*      FmmName = &gSettings.FamilyName[0];
 //  UINTN       FmmLen  = AsciiStrLen(FmmName);
   UINT16      BacklightLevel = 0x0503;
@@ -135,6 +136,10 @@ EFI_STATUS SetVariablesForOSX()
   BA = &gSettings.Language[15];
   while ((*BA == ' ') || (*BA == 0)) {
 		BA--; LangLen--;
+	}
+  BA = &gSettings.SerialNr[19];
+  while ((*BA == ' ') || (*BA == 0)) {
+		BA--; SNLen--;
 	}
   
 //some NVRAM variables	
@@ -160,8 +165,13 @@ EFI_STATUS SetVariablesForOSX()
 
   Status = gRS->SetVariable(L"MLB", &gEfiAppleNvramGuid,
                             EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                            64, &gSettings.SerialNr);
+                            SNLen, &gSettings.SerialNr);
+ 
+  Status = gRS->SetVariable(L"ROM", &gEfiAppleNvramGuid,
+                            EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                            6, &gSettings.SmUUID.Data4);
   
+
 
 // options variables
 //#if ICLOUD

@@ -61,18 +61,16 @@ GetDeviceProps(IN     APPLE_GETVAR_PROTOCOL   *This,
                IN     CHAR8                   *Buffer,
                IN OUT UINT32                  *BufferSize)
 { 
-//  UINT32		cnt = 0;
-//	UINT8     *binStr = NULL;
-/*  EFI_STATUS    Status;
+  EFI_STATUS    Status;
 
   if (gSettings.BlockRT) {
     Status = gRT->SetVariable(L"ROM", &gEfiAppleNvramGuid, 0, 0, NULL);
-    Print(L"Deleting ROM: %r\n", Status);
-    Status = gRT->SetVariable(L"MLB", &gEfiAppleNvramGuid, 0, 0, NULL);
-    Print(L"Deleting MLB: %r\n", Status);
-    gBS->Stall(2000000);
+//    Print(L"Deleting ROM: %r\n", Status);
+//    Status = gRT->SetVariable(L"MLB", &gEfiAppleNvramGuid, 0, 0, NULL);
+//    Print(L"Deleting MLB: %r\n", Status);
+//    gBS->Stall(2000000);
   }
-*/
+
 
   if(!gSettings.StringInjector && (mProperties != NULL) && (mPropSize > 1))
 	{
