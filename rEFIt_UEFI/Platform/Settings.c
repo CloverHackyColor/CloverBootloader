@@ -415,20 +415,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         gSettings.BacklightLevel = (UINT16)StrHexToUint64((CHAR16*)&UStr[0]);	
       }
       
-      // BlockRT (block runtime services GetVariable() call)
-      gSettings.BlockRT = FALSE;
-      prop = GetProperty(dictPointer,"BlockRT");
-      if(prop)
-      {
-        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
-          gSettings.BlockRT = TRUE;
-      }
-      // iCloudFix = synonym for BlockRT
+      // iCloudFix
+      gSettings.iCloudFix = FALSE;
       prop = GetProperty(dictPointer,"iCloudFix");
       if(prop)
       {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
-          gSettings.BlockRT = TRUE;
+          gSettings.iCloudFix = TRUE;
       }
       
     }

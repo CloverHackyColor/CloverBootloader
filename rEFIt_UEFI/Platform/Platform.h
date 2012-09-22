@@ -647,8 +647,8 @@ typedef struct {
   CHAR16  *HVHideStrings[100];
   INT32   HVCount;
   
-  // BlockRT, iCloudFix
-  BOOLEAN BlockRT;
+  // iCloudFix
+  BOOLEAN iCloudFix;
   
 } SETTINGS_DATA;
 
@@ -975,13 +975,6 @@ VOID		DbgTimeInit(VOID);
 // Returns debug time as string for print: secs:milis - sec:milis (from start - from last call)
 // Returned buffer should not be released.
 CHAR8*		DbgTime(VOID);
-
-
-//
-// BlockRT.c
-//
-EFI_STATUS  BlockRTSetup();
-VOID        BlockRTInstall();
 
 
 #endif

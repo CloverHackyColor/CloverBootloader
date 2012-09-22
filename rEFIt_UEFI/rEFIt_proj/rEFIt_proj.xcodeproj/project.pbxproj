@@ -1775,7 +1775,7 @@
 		12D6306314CEA05E00E5898F /* BootLog.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BootLog.c; sourceTree = "<group>"; };
 		12D6306414CEA05E00E5898F /* Console.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = Console.c; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
 		12D6306514CEA05E00E5898F /* cpu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cpu.c; sourceTree = "<group>"; };
-		12D6306614CEA05E00E5898F /* DataHubCpu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DataHubCpu.c; sourceTree = "<group>"; };
+		12D6306614CEA05E00E5898F /* DataHubCpu.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = DataHubCpu.c; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
 		12D6306714CEA05E00E5898F /* DataHubRecords.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataHubRecords.h; sourceTree = "<group>"; };
 		12D6306814CEA05E00E5898F /* device_inject.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = device_inject.c; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
 		12D6306914CEA05E00E5898F /* device_inject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = device_inject.h; sourceTree = "<group>"; };
@@ -1789,7 +1789,7 @@
 		12D6307114CEA05E00E5898F /* gma.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gma.c; sourceTree = "<group>"; };
 		12D6307214CEA05E00E5898F /* gma.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gma.h; sourceTree = "<group>"; };
 		12D6307314CEA05E00E5898F /* guid.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = guid.c; sourceTree = "<group>"; };
-		12D6307414CEA05E00E5898F /* Injectors.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Injectors.c; sourceTree = "<group>"; };
+		12D6307414CEA05E00E5898F /* Injectors.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = Injectors.c; sourceTree = "<group>"; tabWidth = 2; };
 		12D6307514CEA05E00E5898F /* LegacyBiosThunk.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = LegacyBiosThunk.c; sourceTree = "<group>"; };
 		12D6307614CEA05E00E5898F /* LegacyBiosThunk.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyBiosThunk.h; sourceTree = "<group>"; };
 		12D6307714CEA05E00E5898F /* LegacyBoot.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = LegacyBoot.c; sourceTree = "<group>"; };
@@ -1828,7 +1828,6 @@
 		261A9E681599E1290006F036 /* cdefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cdefs.h; sourceTree = "<group>"; };
 		26440C83157AADDF0077A476 /* b64cdecode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = b64cdecode.c; sourceTree = "<group>"; };
 		26440C84157AADDF0077A476 /* b64cdecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = b64cdecode.h; sourceTree = "<group>"; };
-		2C118E8B160C4D190064BDF1 /* BlockRT.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BlockRT.c; sourceTree = "<group>"; usesTabs = 1; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -5338,7 +5337,6 @@
 				26440C83157AADDF0077A476 /* b64cdecode.c */,
 				26440C84157AADDF0077A476 /* b64cdecode.h */,
 				12D6306014CEA05E00E5898F /* BiosVideo.h */,
-				2C118E8B160C4D190064BDF1 /* BlockRT.c */,
 				12D6306114CEA05E00E5898F /* Bmp.h */,
 				12D6306214CEA05E00E5898F /* boot.h */,
 				12D6306314CEA05E00E5898F /* BootLog.c */,

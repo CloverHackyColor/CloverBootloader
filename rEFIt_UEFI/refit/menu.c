@@ -127,8 +127,8 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].SValue = AllocateZeroPool(63);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.DsdtName);
   InputItems[InputItemsCount].ItemType = BoolValue; //2
-  InputItems[InputItemsCount].BValue = gSettings.BlockRT;
-  InputItems[InputItemsCount++].SValue = gSettings.BlockRT?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].BValue = gSettings.iCloudFix;
+  InputItems[InputItemsCount++].SValue = gSettings.iCloudFix?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //3 
   InputItems[InputItemsCount].BValue = gSettings.StringInjector;
   InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[+]":L"[ ]";
@@ -285,7 +285,7 @@ VOID ApplyInputs(VOID)
   }
   i++; //2
   if (InputItems[i].Valid) {
-    gSettings.BlockRT = InputItems[i].BValue;
+    gSettings.iCloudFix = InputItems[i].BValue;
   }
   i++; //3
   if (InputItems[i].Valid) {

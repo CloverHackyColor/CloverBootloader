@@ -422,15 +422,6 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     //PauseForKey(L"SetFSInjection");
     SetVariablesForOSX();
     
-    // check for BlockRT/iCloudFix in bootargs (can be easily added when needed from Clover GUI)
-    // until we get this in options menu.
-    if (Entry->LoadOptions != NULL &&
-        (StrStr(Entry->LoadOptions, L"BlockRT") != NULL || StrStr(Entry->LoadOptions, L"iCloudFix") != NULL)
-        )
-    {
-      gSettings.BlockRT = TRUE;
-    }
-
     EventsInitialize();
     FinalizeSmbios();
     SetupDataForOSX();
