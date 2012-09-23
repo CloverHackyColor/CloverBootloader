@@ -6,8 +6,6 @@
 	<dict>
 		<key>KernelCpu</key>
 		<string>No</string>
-		<key>ATIConnectorInfo</key>
-		<string>No</string>
 		<key>ATIConnectorsController</key>
 		<string>6000</string>
 		<key>ATIConnectorsData</key>
@@ -51,6 +49,8 @@
 	</dict>
 	<key>SystemParameters</key>
 	<dict>
+		<key>iCloudFix</key>
+		<string>Yes</string>
 		<key>boot-args</key>
 		<string>-v arch=i386</string>
 		<key>prev-lang:kbd</key>
@@ -64,7 +64,7 @@
 		<key>LegacyBoot</key>
 		<string>PBR</string>
 		<key>BacklightLevel</key>
-		<string>0x0101</string>
+		<string>0x0501</string>
 	</dict>
 	<key>SMBIOS</key>
 	<dict>
@@ -156,6 +156,39 @@
 		<key>LpcTune</key>
 		<string>Yes</string>
 	</dict>
+	<key>Volumes</key>
+	<dict>
+		<key>HideAllOSX</key>
+		<string>No</string>
+		<key>HideAllOSXInstall</key>
+		<string>No</string>
+		<key>HideAllRecovery</key>
+		<string>No</string>
+		<key>HideAllWindowsEFI</key>
+		<string>No</string>
+		<key>HideAllGrub</key>
+		<string>No</string>
+		<key>HideAllGentoo</key>
+		<string>No</string>
+		<key>HideAllRedHat</key>
+		<string>No</string>
+		<key>HideAllUbuntu</key>
+		<string>No</string>
+		<key>HideAllSuSe</key>
+		<string>No</string>
+		<key>HideAllUEFI</key>
+		<string>No</string>
+		<key>HideAllLegacy</key>
+		<string>No</string>
+		<key>HideVolumes</key>
+		<dict>
+			<key>0</key>
+			<dict>
+				<key>VolumeString</key>
+				<string>HD(1,GPT,E223FF7F-F2DA-4DBB-B765-756F2D95B0FE</string>
+			</dict>
+		</dict>
+	</dict>
 	<key>ACPI</key>
 	<dict>
 		<key>DsdtName</key>
@@ -192,7 +225,7 @@
 		<string>0xFE</string>
 		<key>smartUPS</key>
 		<string>No</string>
-		<key>PatchNMI</key>
+		<key>PatchAPIC</key>
 		<string>No</string>
 		<key>FixDsdtMask</key>
 		<string>0xFFFF</string>
