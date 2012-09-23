@@ -118,27 +118,27 @@ typedef struct {
 #define IS_EXTENDED_PART_TYPE(type) ((type) == 0x05 || (type) == 0x0f || (type) == 0x85)
 
 typedef struct {
-    EFI_DEVICE_PATH     *DevicePath;
-    EFI_HANDLE          DeviceHandle;
-    EFI_FILE            *RootDir;
-    CHAR16              *VolName;
-    EG_IMAGE            *OSImage;
+  EFI_DEVICE_PATH     *DevicePath;
+  EFI_HANDLE          DeviceHandle;
+  EFI_FILE            *RootDir;
+  CHAR16              *VolName;
+  EG_IMAGE            *OSImage;
   EG_IMAGE            *DriveImage;
-    UINT8               DiskKind;
+  UINT8               DiskKind;
   UINT8               OSType;
   UINT8               BootType;
-    BOOLEAN             IsAppleLegacy;
-    BOOLEAN             HasBootCode;
-    CHAR16              *OSIconName;
-    CHAR16              *OSName;
-    BOOLEAN             IsMbrPartition;
-    UINTN               MbrPartitionIndex;
-    EFI_BLOCK_IO        *BlockIO;
-    UINT64              BlockIOOffset;
-    EFI_BLOCK_IO        *WholeDiskBlockIO;
-    EFI_DEVICE_PATH     *WholeDiskDevicePath;
-    MBR_PARTITION_INFO  *MbrPartitionTable;
-    UINT32              DriveCRC32;
+  BOOLEAN             IsAppleLegacy;
+  BOOLEAN             HasBootCode;
+  CHAR16              *OSIconName;
+  CHAR16              *OSName;
+  BOOLEAN             IsMbrPartition;
+  UINTN               MbrPartitionIndex;
+  EFI_BLOCK_IO        *BlockIO;
+  UINT64              BlockIOOffset;
+  EFI_BLOCK_IO        *WholeDiskBlockIO;
+  EFI_DEVICE_PATH     *WholeDiskDevicePath;
+  MBR_PARTITION_INFO  *MbrPartitionTable;
+  UINT32              DriveCRC32;
 } REFIT_VOLUME;
 
 //GUI types
@@ -163,6 +163,26 @@ typedef struct {
   UINTN   LineShift;
 } INPUT_ITEM;
 
+typedef enum {
+  ActionNone,
+  ActionHelp,
+  ActionSelect,
+  ActionEnter,
+  ActionDeselect,
+  ActionDestroy,
+  ActionFinish
+} ACTION;
+
+#define SCREEN_UNKNOWN    0
+#define SCREEN_MAIN       1
+#define SCREEN_ABOUT      2
+#define SCREEN_HELP       3
+#define SCREEN_OPTIONS    4
+#define SCREEN_GRAPHICS   5
+#define SCREEN_CPU        6
+#define SCREEN_BINARIES   7
+#define SCREEN_DSDT       8
+
 struct _refit_menu_screen;
 
 typedef struct _refit_menu_entry {
@@ -173,6 +193,10 @@ typedef struct _refit_menu_entry {
   CHAR16      ShortcutLetter;
   EG_IMAGE    *Image;
   EG_IMAGE    *BadgeImage;
+  EG_RECT     Place;
+  ACTION      AtClick;
+  ACTION      AtDoubleClick;
+  ACTION      AtRightClick;
   struct _refit_menu_screen *SubScreen;
 } REFIT_MENU_ENTRY;
 
@@ -182,6 +206,7 @@ typedef struct _refit_input_dialog {
 } REFIT_INPUT_DIALOG;
 
 typedef struct _refit_menu_screen {
+  UINTN       ID;
   CHAR16      *Title;
   EG_IMAGE    *TitleImage;
   UINTN       InfoLineCount;
@@ -372,7 +397,7 @@ BOOLEAN CheckError(IN EFI_STATUS Status, IN CHAR16 *where);
 VOID SwitchToGraphicsAndClear(VOID);
 VOID BltClearScreen(IN BOOLEAN ShowBanner);
 VOID BltImage(IN EG_IMAGE *Image, IN UINT64 XPos, IN UINT64 YPos);
-VOID BltImageAlpha(IN EG_IMAGE *Image, IN UINT64 XPos, IN UINT64 YPos, IN EG_PIXEL *BackgroundPixel);
+VOID BltImageAlpha(IN EG_IMAGE *Image, IN UINT64 XPos, IN UINT64 YPos, IN EG_PIXEL *BackgroundPixel, INTN Scale);
 VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN UINT64 XPos, IN UINT64 YPos);
 VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG_IMAGE *BadgeImage, IN UINT64 XPos, IN UINT64 YPos);
 

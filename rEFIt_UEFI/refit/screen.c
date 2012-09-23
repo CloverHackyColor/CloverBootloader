@@ -392,9 +392,9 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
         // clear to standard background color
         egClearScreen(&StdBackgroundPixel);
     }
-   InputBackgroundPixel.r = (MenuBackgroundPixel.r + 10) & 0xFF;
-   InputBackgroundPixel.g = (MenuBackgroundPixel.g + 10) & 0xFF;
-   InputBackgroundPixel.b = (MenuBackgroundPixel.b + 10) & 0xFF;
+   InputBackgroundPixel.r = (MenuBackgroundPixel.r + 0) & 0xFF;
+   InputBackgroundPixel.g = (MenuBackgroundPixel.g + 0) & 0xFF;
+   InputBackgroundPixel.b = (MenuBackgroundPixel.b + 0) & 0xFF;
   
    GraphicsScreenDirty = FALSE;
 }
@@ -408,20 +408,29 @@ VOID BltImage(IN EG_IMAGE *Image, IN UINT64 XPos, IN UINT64 YPos)
   GraphicsScreenDirty = TRUE;
 }
 
-VOID BltImageAlpha(IN EG_IMAGE *Image, IN UINT64 XPos, IN UINT64 YPos, IN EG_PIXEL *BackgroundPixel)
+VOID BltImageAlpha(IN EG_IMAGE *Image, IN UINT64 XPos, IN UINT64 YPos, IN EG_PIXEL *BackgroundPixel, INTN Scale)
 {
-    EG_IMAGE *CompImage;
-    if (!Image) {
-      return;
-    }
-    // compose on background
-    CompImage = egCreateFilledImage(Image->Width, Image->Height, FALSE, BackgroundPixel);
-    egComposeImage(CompImage, Image, 0, 0);
-    
-    // blit to screen and clean up
-    egDrawImage(CompImage, XPos, YPos);
-    egFreeImage(CompImage);
-    GraphicsScreenDirty = TRUE;
+  EG_IMAGE *CompImage;
+  EG_IMAGE *NewImage = NULL;
+  UINTN Width = Scale << 3;
+  UINTN Height = Width;
+  
+  if (Image) {
+    NewImage = egCopyScaledImage(Image, Scale); //will be Scale/16
+    Width = NewImage->Width;
+    Height = NewImage->Height;
+  }
+  // compose on background
+  CompImage = egCreateFilledImage(Width, Height, FALSE, BackgroundPixel);
+  egComposeImage(CompImage, NewImage, 0, 0);
+  
+  // blit to screen and clean up
+  egDrawImage(CompImage, XPos, YPos);
+  egFreeImage(CompImage);
+  if (NewImage) {
+    egFreeImage(NewImage);
+  }  
+  GraphicsScreenDirty = TRUE;
 }
 
 VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN UINT64 XPos, IN UINT64 YPos)

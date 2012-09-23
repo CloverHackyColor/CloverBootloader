@@ -57,28 +57,29 @@ BUILTIN_ICON BuiltinIconTable[BUILTIN_ICON_COUNT] = {
     { NULL, L"icons\\vol_internal.icns", 128 },
     { NULL, L"icons\\vol_external.icns", 128 },
     { NULL, L"icons\\vol_optical.icns", 128 },
-    { NULL, L"icons\\vol_firewire.icns", 128 },
+    { NULL, L"icons\\vol_firewire.icns", 128 }, //10
     { NULL, L"icons\\vol_clover.icns", 128 },
     { NULL, L"icons\\func_help.png", 128 },
   { NULL, L"icons\\vol_internal_hfs.icns", 128 },
   { NULL, L"icons\\vol_internal_ntfs.icns", 128 },
   { NULL, L"icons\\vol_internal_ext3.icns", 128 },
-  { NULL, L"icons\\vol_recovery.icns", 128 },
+  { NULL, L"icons\\vol_recovery.icns", 128 }, //16
 };
 
 EG_IMAGE * BuiltinIcon(IN UINTN Id)
 {
-    if (Id >= BUILTIN_ICON_COUNT)
-        return NULL;
-    
+  if (Id >= BUILTIN_ICON_COUNT)
+    return NULL;
+  
   if (BuiltinIconTable[Id].Image == NULL) {
     BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, BuiltinIconTable[Id].Path, BuiltinIconTable[Id].PixelSize);
     if (!BuiltinIconTable[Id].Image) {
       BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, BuiltinIconTable[7].Path, BuiltinIconTable[Id].PixelSize);
     }
+    if (!BuiltinIconTable[Id].Image)
+      BuiltinIconTable[Id].Image = DummyImage(BuiltinIconTable[Id].PixelSize);
   }
-    
-    return BuiltinIconTable[Id].Image;
+  return BuiltinIconTable[Id].Image;
 }
 
 //
@@ -87,54 +88,54 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
 
 EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconName, BOOLEAN BootLogo)
 {
-    EG_IMAGE        *Image;
-    CHAR16          CutoutName[16];
-    CHAR16          FileName[256];
-    UINTN           StartIndex, Index, NextIndex;
-    
-    if (GlobalConfig.TextOnly)      // skip loading if it's not used anyway
-        return NULL;
-    Image = NULL;
-    
-    // try the names from OSIconName
-    for (StartIndex = 0; OSIconName != NULL && OSIconName[StartIndex]; StartIndex = NextIndex) {
-        // find the next name in the list
-        NextIndex = 0;
-        for (Index = StartIndex; OSIconName[Index]; Index++) {
-            if (OSIconName[Index] == ',') {
-                NextIndex = Index + 1;
-                break;
-            }
-        }
-        if (OSIconName[Index] == 0)
-            NextIndex = Index;
-        
-        // construct full path
-        if (Index > StartIndex + 15)   // prevent buffer overflow
-            continue;
-        CopyMem(CutoutName, OSIconName + StartIndex, (Index - StartIndex) * sizeof(CHAR16));
-        CutoutName[Index - StartIndex] = 0;
-        UnicodeSPrint(FileName, 512, L"icons\\%s_%s.icns",
-               BootLogo ? L"boot" : L"os", CutoutName);
-        
-        // try to load it
-        Image = egLoadIcon(ThemeDir, FileName, 128);
-        if (Image != NULL)
-            return Image;
+  EG_IMAGE        *Image;
+  CHAR16          CutoutName[16];
+  CHAR16          FileName[256];
+  UINTN           StartIndex, Index, NextIndex;
+  
+  if (GlobalConfig.TextOnly)      // skip loading if it's not used anyway
+    return NULL;
+  Image = NULL;
+  
+  // try the names from OSIconName
+  for (StartIndex = 0; OSIconName != NULL && OSIconName[StartIndex]; StartIndex = NextIndex) {
+    // find the next name in the list
+    NextIndex = 0;
+    for (Index = StartIndex; OSIconName[Index]; Index++) {
+      if (OSIconName[Index] == ',') {
+        NextIndex = Index + 1;
+        break;
+      }
     }
+    if (OSIconName[Index] == 0)
+      NextIndex = Index;
     
-    // try the fallback name
+    // construct full path
+    if (Index > StartIndex + 15)   // prevent buffer overflow
+      continue;
+    CopyMem(CutoutName, OSIconName + StartIndex, (Index - StartIndex) * sizeof(CHAR16));
+    CutoutName[Index - StartIndex] = 0;
     UnicodeSPrint(FileName, 512, L"icons\\%s_%s.icns",
-           BootLogo ? L"boot" : L"os", FallbackIconName);
+                  BootLogo ? L"boot" : L"os", CutoutName);
+    
+    // try to load it
     Image = egLoadIcon(ThemeDir, FileName, 128);
     if (Image != NULL)
-        return Image;
-    
-    // try the fallback name with os_ instead of boot_
-    if (BootLogo)
-        return LoadOSIcon(NULL, FallbackIconName, FALSE);
-    
-    return DummyImage(128);
+      return Image;
+  }
+  
+  // try the fallback name
+  UnicodeSPrint(FileName, 512, L"icons\\%s_%s.icns",
+                BootLogo ? L"boot" : L"os", FallbackIconName);
+  Image = egLoadIcon(ThemeDir, FileName, 128);
+  if (Image != NULL)
+    return Image;
+  
+  // try the fallback name with os_ instead of boot_
+  if (BootLogo)
+    return LoadOSIcon(NULL, FallbackIconName, FALSE);
+  
+  return DummyImage(128);
 }
 
 //
@@ -190,7 +191,7 @@ EG_IMAGE * LoadIcnsFallback(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN 
         return NULL;
     
     Image = LoadIcns(BaseDir, FileName, PixelSize);
-    if (Image == NULL)
-        Image = DummyImage(PixelSize);
+//    if (Image == NULL)
+//        Image = DummyImage(PixelSize);
     return Image;
 }

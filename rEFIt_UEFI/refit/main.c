@@ -76,22 +76,22 @@ EFI_BOOT_SERVICES*		gBS;
 EFI_RUNTIME_SERVICES*	gRS;
 EFI_DXE_SERVICES*       gDS;
 
-static REFIT_MENU_ENTRY MenuEntryOptions  = { L"Options", TAG_OPTIONS, 1, 0, 'O', NULL, NULL, NULL };
-static REFIT_MENU_ENTRY MenuEntryAbout    = { L"About rEFIt", TAG_ABOUT, 1, 0, 'A', NULL, NULL, NULL };
-static REFIT_MENU_ENTRY MenuEntryReset    = { L"Restart Computer", TAG_RESET, 1, 0, 'R', NULL, NULL, NULL };
-static REFIT_MENU_ENTRY MenuEntryShutdown = { L"Shut Down Computer", TAG_SHUTDOWN, 1, 0, 'U', NULL, NULL, NULL };
-REFIT_MENU_ENTRY MenuEntryReturn   = { L"Return to Main Menu", TAG_RETURN, 0, 0, 0, NULL, NULL, NULL };
+static REFIT_MENU_ENTRY MenuEntryOptions  = { L"Options", TAG_OPTIONS, 1, 0, 'O', NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone, NULL };
+static REFIT_MENU_ENTRY MenuEntryAbout    = { L"About rEFIt", TAG_ABOUT, 1, 0, 'A', NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone,  NULL };
+static REFIT_MENU_ENTRY MenuEntryReset    = { L"Restart Computer", TAG_RESET, 1, 0, 'R', NULL, NULL, {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone,  NULL };
+static REFIT_MENU_ENTRY MenuEntryShutdown = { L"Shut Down Computer", TAG_SHUTDOWN, 1, 0, 'U', NULL, NULL, {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone,  NULL };
+REFIT_MENU_ENTRY MenuEntryReturn   = { L"Return to Main Menu", TAG_RETURN, 0, 0, 0, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone,  NULL };
 
-static REFIT_MENU_SCREEN MainMenu    = { L"Main Menu", NULL, 0, NULL, 0, NULL, 0, L"Automatic boot" };
-static REFIT_MENU_SCREEN AboutMenu   = { L"About", NULL, 0, NULL, 0, NULL, 0, NULL };
-static REFIT_MENU_SCREEN HelpMenu   = { L"Help", NULL, 0, NULL, 0, NULL, 0, NULL };
+static REFIT_MENU_SCREEN MainMenu    = {1, L"Main Menu", NULL, 0, NULL, 0, NULL, 0, L"Automatic boot" };
+static REFIT_MENU_SCREEN AboutMenu   = {2, L"About", NULL, 0, NULL, 0, NULL, 0, NULL };
+static REFIT_MENU_SCREEN HelpMenu    = {3, L"Help",  NULL, 0, NULL, 0, NULL, 0, NULL };
 
 static VOID AboutRefit(VOID)
 {
 //  CHAR8* Revision = NULL;
     if (AboutMenu.EntryCount == 0) {
         AboutMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
-        AddMenuInfoLine(&AboutMenu, L"rEFIt Version 1.04 UEFI by Slice");
+        AddMenuInfoLine(&AboutMenu, L"rEFIt Version 1.05 UEFI by Slice");
 #ifdef FIRMWARE_BUILDDATE
         AddMenuInfoLine(&AboutMenu, PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
 #else
@@ -112,7 +112,7 @@ static VOID AboutRefit(VOID)
         AddMenuInfoLine(&AboutMenu, L" Platform: unknown");
 #endif
 #ifdef FIRMWARE_REVISION
-        AddMenuInfoLine(&AboutMenu, PoolPrint(L" Firmware: %s rev %a", gST->FirmwareVendor, FIRMWARE_REVISION));
+        AddMenuInfoLine(&AboutMenu, PoolPrint(L" Firmware: %s rev %s", gST->FirmwareVendor, FIRMWARE_REVISION));
 #else
       AddMenuInfoLine(&AboutMenu, PoolPrint(L" Firmware: %s rev %d", gST->FirmwareVendor, gST->FirmwareRevision));
 #endif
@@ -470,7 +470,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //  PauseForKey(L"System started?!");
 }
 
-static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume, UINT8               OSType)
+static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume, UINT8 OSType)
 {
   CHAR16            *FileName, *OSIconName;
   CHAR16            IconFileName[256];
@@ -481,7 +481,6 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   REFIT_MENU_SCREEN *SubScreen;
   UINT64            VolumeSize;
   BOOLEAN           UsesSlideArg;
-//  UINTN Scale = (GlobalConfig.HideBadges==3)?6:4;
   
   FileName = Basename(LoaderPath);
   
@@ -499,7 +498,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
 //  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
   if ((GlobalConfig.HideBadges == HDBADGES_NONE) || 
       (GlobalConfig.HideBadges == HDBADGES_INT && Volume->DiskKind != DISK_KIND_INTERNAL)){
-    Entry->me.BadgeImage   = egCopyScaledImage(Volume->OSImage, 6);
+    Entry->me.BadgeImage   = egCopyScaledImage(Volume->OSImage, 8);
   } else if (GlobalConfig.HideBadges == HDBADGES_SWAP) { 
     Entry->me.BadgeImage   =  egCopyScaledImage(Volume->DriveImage, 4);
   }
@@ -519,6 +518,10 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   } else if (FileExists(SelfRootDir, IconFileName)) {
     Entry->me.Image = LoadIcns(SelfRootDir, IconFileName, 128);
   }
+  //actions
+  Entry->me.AtClick = ActionSelect;
+  Entry->me.AtDoubleClick = ActionEnter;
+  Entry->me.AtRightClick = ActionHelp;
   
   // detect specific loaders
   OSIconName = NULL;
@@ -618,7 +621,8 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   SubEntry->DevicePath      = Entry->DevicePath;
   SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
   SubEntry->LoadOptions     = PoolPrint(L"%a", gSettings.BootArgs);
-  SubEntry->LoaderType = Entry->LoaderType;
+  SubEntry->LoaderType      = Entry->LoaderType;
+  SubEntry->me.AtClick      = ActionEnter;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
   
   // loader-specific submenu entries
@@ -633,7 +637,8 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
     SubEntry->LoadOptions     = UsesSlideArg ? L"arch=x86_64 slide=0" : L"arch=x86_64";
-    SubEntry->LoaderType = OSTYPE_OSX;
+    SubEntry->LoaderType      = OSTYPE_OSX;
+    SubEntry->me.AtClick      = ActionEnter;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     
     SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
@@ -645,7 +650,8 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
     SubEntry->LoadOptions     = L"arch=i386";
-    SubEntry->LoaderType = OSTYPE_OSX;
+    SubEntry->LoaderType      = OSTYPE_OSX;
+    SubEntry->me.AtClick      = ActionEnter;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
 #endif
     
@@ -659,7 +665,8 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->UseGraphicsMode = FALSE;
       SubEntry->LoadOptions     = UsesSlideArg ? L"-v slide=0" : L"-v";
-      SubEntry->LoaderType = OSTYPE_OSX;
+      SubEntry->LoaderType      = OSTYPE_OSX;
+      SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
       
 #if defined(MDE_CPU_X64)
@@ -672,7 +679,8 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->UseGraphicsMode = FALSE;
       SubEntry->LoadOptions     = UsesSlideArg ? L"-v arch=x86_64 slide=0" : L"-v arch=x86_64";
-      SubEntry->LoaderType = OSTYPE_OSX;
+      SubEntry->LoaderType      = OSTYPE_OSX;
+      SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
       
       SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
@@ -684,7 +692,8 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->UseGraphicsMode = FALSE;
       SubEntry->LoadOptions     = L"-v arch=i386";
-      SubEntry->LoaderType = OSTYPE_OSX;
+      SubEntry->LoaderType      = OSTYPE_OSX;
+      SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
 #endif
       
@@ -697,7 +706,8 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->UseGraphicsMode = FALSE;
       SubEntry->LoadOptions     = UsesSlideArg ? L"-v -s slide=0" : L"-v -s";
-      SubEntry->LoaderType = OSTYPE_OSX;
+      SubEntry->LoaderType      = OSTYPE_OSX;
+      SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
       
       SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
@@ -709,7 +719,8 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->UseGraphicsMode = FALSE;
       SubEntry->LoadOptions     = UsesSlideArg ? L"-v slide=0 WithKexts" : L"-v WithKexts"; //default arch 10.6->32bit, 10.7->64bit
-      SubEntry->LoaderType = OSTYPE_OSX;
+      SubEntry->LoaderType      = OSTYPE_OSX;
+      SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
     
@@ -726,6 +737,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = FileDevicePath(Volume->DeviceHandle, SubEntry->LoaderPath);
       SubEntry->UseGraphicsMode = TRUE;
+      SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
     
@@ -739,7 +751,8 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
     SubEntry->LoadOptions     = L"-p";
-    SubEntry->LoaderType = OSTYPE_LIN;
+    SubEntry->LoaderType      = OSTYPE_LIN;
+    SubEntry->me.AtClick      = ActionEnter;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     
     SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
@@ -751,7 +764,8 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = TRUE;
     SubEntry->LoadOptions     = L"-d 0 i17";
-    SubEntry->LoaderType = OSTYPE_LIN;
+    SubEntry->LoaderType      = OSTYPE_LIN;
+    SubEntry->me.AtClick      = ActionEnter;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     
     SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
@@ -763,7 +777,8 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = TRUE;
     SubEntry->LoadOptions     = L"-d 0 i20";
-    SubEntry->LoaderType = OSTYPE_LIN;
+    SubEntry->LoaderType      = OSTYPE_LIN;
+    SubEntry->me.AtClick      = ActionEnter;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     
     SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
@@ -775,7 +790,8 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = TRUE;
     SubEntry->LoadOptions     = L"-d 0 mini";
-    SubEntry->LoaderType = OSTYPE_LIN;
+    SubEntry->LoaderType      = OSTYPE_LIN;
+    SubEntry->me.AtClick      = ActionEnter;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     
     AddMenuInfoLine(SubScreen, L"NOTE: This is an example. Entries");
@@ -794,7 +810,8 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
     SubEntry->LoadOptions     = L"-s -h";
-    SubEntry->LoaderType = OSTYPE_WIN;
+    SubEntry->LoaderType      = OSTYPE_WIN;
+    SubEntry->me.AtClick      = ActionEnter;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     
     SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
@@ -806,7 +823,8 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
     SubEntry->LoadOptions     = L"-s -c";
-    SubEntry->LoaderType = OSTYPE_WIN;
+    SubEntry->LoaderType      = OSTYPE_WIN;
+    SubEntry->me.AtClick      = ActionEnter;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     
     SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
@@ -818,7 +836,8 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = FALSE;
     SubEntry->LoadOptions     = L"-v";
-    SubEntry->LoaderType = OSTYPE_VAR;
+    SubEntry->LoaderType      = OSTYPE_VAR;
+    SubEntry->me.AtClick      = ActionEnter;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     
   }
@@ -980,7 +999,7 @@ static VOID ScanLoader(VOID)
   //    Volume->OSType = OSTYPE_LIN;
       Volume->BootType = BOOTING_BY_EFI;
       if (!gSettings.HVHideAllGrub)
-      Entry = AddLoaderEntry(FileName, L"Grub EFI boot menu", Volume, OSTYPE_LIN);
+        Entry = AddLoaderEntry(FileName, L"Grub EFI boot menu", Volume, OSTYPE_LIN);
  //     continue;
     }
       // check for Gentoo boot loader/menu
@@ -1241,7 +1260,7 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
         BltImageAlpha(BootLogoImage,
                       RShiftU64(UGAWidth  - BootLogoImage->Width, 1),
                       RShiftU64(UGAHeight - BootLogoImage->Height, 1),
-                      &StdBackgroundPixel);
+                      &StdBackgroundPixel, 1);
   
 /*    Status = ExtractLegacyLoaderPaths(DiscoveredPathList, MAX_DISCOVERED_PATHS, LegacyLoaderList);
     if (!EFI_ERROR(Status)) {
@@ -1285,61 +1304,68 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
 
 static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume)
 {
-    LEGACY_ENTRY            *Entry, *SubEntry;
-    REFIT_MENU_SCREEN       *SubScreen;
-    CHAR16                  *VolDesc;
-    CHAR16                  ShortcutLetter = 0;
-    
-    if (LoaderTitle == NULL) {
-        if (Volume->OSName != NULL) {
-            LoaderTitle = Volume->OSName;
-            if (LoaderTitle[0] == 'W' || LoaderTitle[0] == 'L')
-                ShortcutLetter = LoaderTitle[0];
-        } else
-            LoaderTitle = L"Legacy OS";
-    }
-    if (Volume->VolName != NULL)
-        VolDesc = Volume->VolName;
-    else
-        VolDesc = (Volume->DiskKind == DISK_KIND_OPTICAL) ? L"CD" : L"HD";
-    
-    // prepare the menu entry
-    Entry = AllocateZeroPool(sizeof(LEGACY_ENTRY));
-    Entry->me.Title        = PoolPrint(L"Boot %s from %s", LoaderTitle, VolDesc);
-    Entry->me.Tag          = TAG_LEGACY;
-    Entry->me.Row          = 0;
-    Entry->me.ShortcutLetter = ShortcutLetter;
-    Entry->me.Image        = LoadOSIcon(Volume->OSIconName, L"legacy", FALSE);
-//  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
-//  DBG("Title=%s OSName=%s OSIconName=%s\n", LoaderTitle, Volume->OSName, Volume->OSIconName);
-  if ((GlobalConfig.HideBadges == HDBADGES_NONE) || 
+  LEGACY_ENTRY            *Entry, *SubEntry;
+  REFIT_MENU_SCREEN       *SubScreen;
+  CHAR16                  *VolDesc;
+  CHAR16                  ShortcutLetter = 0;
+  
+  if (LoaderTitle == NULL) {
+    if (Volume->OSName != NULL) {
+      LoaderTitle = Volume->OSName;
+      if (LoaderTitle[0] == 'W' || LoaderTitle[0] == 'L')
+        ShortcutLetter = LoaderTitle[0];
+    } else
+      LoaderTitle = L"Legacy OS";
+  }
+  if (Volume->VolName != NULL)
+    VolDesc = Volume->VolName;
+  else
+    VolDesc = (Volume->DiskKind == DISK_KIND_OPTICAL) ? L"CD" : L"HD";
+  
+  // prepare the menu entry
+  Entry = AllocateZeroPool(sizeof(LEGACY_ENTRY));
+  Entry->me.Title        = PoolPrint(L"Boot %s from %s", LoaderTitle, VolDesc);
+  Entry->me.Tag          = TAG_LEGACY;
+  Entry->me.Row          = 0;
+  Entry->me.ShortcutLetter = ShortcutLetter;
+  Entry->me.Image        = LoadOSIcon(Volume->OSIconName, L"legacy", FALSE);
+  //  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
+  //  DBG("Title=%s OSName=%s OSIconName=%s\n", LoaderTitle, Volume->OSName, Volume->OSIconName);
+  
+  //actions
+  Entry->me.AtClick = ActionSelect;
+  Entry->me.AtDoubleClick = ActionEnter;
+  Entry->me.AtRightClick = ActionHelp;
+  
+  if ((GlobalConfig.HideBadges == HDBADGES_NONE) ||
       (GlobalConfig.HideBadges == HDBADGES_INT && Volume->DiskKind != DISK_KIND_INTERNAL)){ //hide internal
-    Entry->me.BadgeImage   = egCopyScaledImage(Volume->OSImage, 6);
+    Entry->me.BadgeImage   = egCopyScaledImage(Volume->OSImage, 8);
     //    Entry->me.BadgeImage   = egLoadIcon(ThemeDir, PoolPrint(L"icons\\os_%s.icns", Volume->OSIconName), 32);
   } else if (GlobalConfig.HideBadges == HDBADGES_SWAP) {
     Entry->me.BadgeImage   =  egCopyScaledImage(Volume->DriveImage, 4);
   }
-    Entry->Volume          = Volume;
-    Entry->LoadOptions     = (Volume->DiskKind == DISK_KIND_OPTICAL) ? L"CD" :
-        ((Volume->DiskKind == DISK_KIND_EXTERNAL) ? L"USB" : L"HD");
-    
-    // create the submenu
-    SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
-    SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", LoaderTitle, VolDesc);
-    SubScreen->TitleImage = Entry->me.Image;
-    
-    // default entry
-    SubEntry = AllocateZeroPool(sizeof(LEGACY_ENTRY));
-    SubEntry->me.Title        = PoolPrint(L"Boot %s", LoaderTitle);
-    SubEntry->me.Tag          = TAG_LEGACY;
-    SubEntry->Volume          = Entry->Volume;
-    SubEntry->LoadOptions     = Entry->LoadOptions;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-    
-    AddMenuEntry(SubScreen, &MenuEntryReturn);
-    Entry->me.SubScreen = SubScreen;
-    AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
-    return Entry;
+  Entry->Volume          = Volume;
+  Entry->LoadOptions     = (Volume->DiskKind == DISK_KIND_OPTICAL) ? L"CD" :
+  ((Volume->DiskKind == DISK_KIND_EXTERNAL) ? L"USB" : L"HD");
+  
+  // create the submenu
+  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+  SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", LoaderTitle, VolDesc);
+  SubScreen->TitleImage = Entry->me.Image;
+  
+  // default entry
+  SubEntry = AllocateZeroPool(sizeof(LEGACY_ENTRY));
+  SubEntry->me.Title        = PoolPrint(L"Boot %s", LoaderTitle);
+  SubEntry->me.Tag          = TAG_LEGACY;
+  SubEntry->Volume          = Entry->Volume;
+  SubEntry->LoadOptions     = Entry->LoadOptions;
+  SubEntry->me.AtClick      = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+  
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  Entry->me.SubScreen = SubScreen;
+  AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
+  return Entry;
 }
 
 static VOID ScanLegacy(VOID)
@@ -1429,21 +1455,25 @@ static LOADER_ENTRY * AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle
                                    IN EG_IMAGE *Image,
                                    IN CHAR16 ShortcutLetter, IN BOOLEAN UseGraphicsMode)
 {
-    LOADER_ENTRY *Entry;
-    
-    Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-    
-    Entry->me.Title = PoolPrint(L"Start %s", LoaderTitle);
-    Entry->me.Tag = TAG_TOOL;
-    Entry->me.Row = 1;
-    Entry->me.ShortcutLetter = ShortcutLetter;
-    Entry->me.Image = Image;
-    Entry->LoaderPath = EfiStrDuplicate(LoaderPath);
-    Entry->DevicePath = FileDevicePath(SelfDeviceHandle, Entry->LoaderPath);
-    Entry->UseGraphicsMode = UseGraphicsMode;
-    
-    AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
-    return Entry;
+  LOADER_ENTRY *Entry;
+  
+  Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+  
+  Entry->me.Title = PoolPrint(L"Start %s", LoaderTitle);
+  Entry->me.Tag = TAG_TOOL;
+  Entry->me.Row = 1;
+  Entry->me.ShortcutLetter = ShortcutLetter;
+  Entry->me.Image = Image;
+  Entry->LoaderPath = EfiStrDuplicate(LoaderPath);
+  Entry->DevicePath = FileDevicePath(SelfDeviceHandle, Entry->LoaderPath);
+  Entry->UseGraphicsMode = UseGraphicsMode;
+  //actions
+  Entry->me.AtClick = ActionSelect;
+  Entry->me.AtDoubleClick = ActionEnter;
+  Entry->me.AtRightClick = ActionHelp;
+  
+  AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
+  return Entry;
 }
 
 static VOID ScanTool(VOID)
@@ -1856,7 +1886,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   InitializeConsoleSim();
 	InitBooterLog();
-  DBG(" \nStarting rEFIt rev %a on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
+  DBG(" \nStarting rEFIt rev %s on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
   //  InitScreen();
   /*    
    DBG("Test arithmetics\n");

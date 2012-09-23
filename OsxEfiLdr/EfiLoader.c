@@ -26,7 +26,6 @@ Revision History:
 //#include "TianoDecompress.h"
 #include "../Version.h"
 
-//static CHAR8 CloverRev[] = FIRMWARE_REVISION_STR;
 VOID
 SystemHang (
   CHAR8        *Message
