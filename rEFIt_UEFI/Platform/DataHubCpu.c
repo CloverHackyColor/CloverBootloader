@@ -261,6 +261,8 @@ VOID SetupDataForOSX()
 //		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"Clover", CloverVersion, StrSize(CloverVersion));
 	}
   else {
+    // this is the error message that we want user to see on the screen!
+    Print(L"DataHubProtocol is not found! Load the module DataHubDxe manually!\n");
     DBG("DataHubProtocol is not found! Load the module DataHubDxe manually!\n");
     gBS->Stall(5000000);
   }  
