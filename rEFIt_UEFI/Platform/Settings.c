@@ -782,6 +782,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       prop = GetProperty(dictPointer,"SerialNumber");
       if(prop)
       {
+        ZeroMem(gSettings.SerialNr, 64);
         AsciiStrCpy(gSettings.SerialNr, prop->string);
       }
       prop = GetProperty(dictPointer,"SmUUID");

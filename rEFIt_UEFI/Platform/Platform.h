@@ -39,6 +39,7 @@ Headers collection for procedures
 #include <Protocol/DataHub.h>
 #include <Protocol/DevicePathToText.h>
 #include <Protocol/FrameworkHii.h>
+#include <Protocol/SimplePointer.h>
 #include <Protocol/Smbios.h>
 #include <Protocol/VariableWrite.h>
 #include <Protocol/Variable.h>

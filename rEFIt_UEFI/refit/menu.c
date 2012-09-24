@@ -1543,12 +1543,13 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
         i = StrLen(Screen->Entries[State->CurrentSelection]->Title);
         DrawMainMenuText(Screen->Entries[State->CurrentSelection]->Title,
                          (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY);
-        //show badge
-        if ((Screen->Entries[State->CurrentSelection]->Row == 0) &&
-            (GlobalConfig.HideBadges == HDBADGES_ALL)) {
           if (OldY) {
             BltImageAlpha(NULL, OldX, OldY, &MenuBackgroundPixel, 8);
           }
+       
+        //show badge
+        if ((Screen->Entries[State->CurrentSelection]->Row == 0) &&
+            (GlobalConfig.HideBadges == HDBADGES_ALL)) {
           OldX = ((UGAWidth - i * GlobalConfig.CharWidth) >> 1) - 80;
           OldY = textPosY - TextHeight;
           BltImageAlpha(((LOADER_ENTRY*)Screen->Entries[State->CurrentSelection])->Volume->OSImage,

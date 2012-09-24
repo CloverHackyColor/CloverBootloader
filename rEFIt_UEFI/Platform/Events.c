@@ -28,7 +28,7 @@ EFI_EVENT   mVirtualAddressChangeEvent = NULL;
 EFI_EVENT   OnReadyToBootEvent = NULL;
 EFI_EVENT   ExitBootServiceEvent = NULL;
 EFI_EVENT   mSimpleFileSystemChangeEvent = NULL;
-
+/*
 VOID WaitForCR()
 {
   EFI_STATUS    Status;
@@ -46,7 +46,7 @@ VOID WaitForCR()
     }
   }
 }
-
+*/
 VOID CorrectMemoryMap(IN UINT32 memMap, 
                       IN UINT32 memDescriptorSize,
                       IN OUT UINT32 *memMapSize)
