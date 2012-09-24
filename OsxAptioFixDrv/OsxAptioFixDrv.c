@@ -33,10 +33,12 @@
 // in package DSC file
 #define DBG_TO 0
 
-#if DBG_TO == 0
-	#define DBG(...)
+#if DBG_TO == 2
+	#define DBG(...) AsciiPrint(__VA_ARGS__);
+#elif DBG_TO == 1
+	#define DBG(...) DebugPrint(1, __VA_ARGS__);
 #else
-	#define DBG(...) DebugLog(DBG_TO, __VA_ARGS__)
+	#define DBG(...)
 #endif
 
 
@@ -146,7 +148,7 @@ AllocateHighStack(IN UINTN StackSizePages, OUT EFI_PHYSICAL_ADDRESS *StackBottom
 	*StackBottom = 0x100000000;
 	Status = AllocatePagesFromTop(EfiBootServicesData, StackSizePages, StackBottom);
 	if (Status != EFI_SUCCESS) {
-		DBG("OsxAptioFixDrv: AllocateHighStack(): can not allocate mem for stack (0x%x pages on mem top): %r\n",
+		Print(L"OsxAptioFixDrv: AllocateHighStack(): can not allocate mem for stack (0x%x pages on mem top): %r\n",
 			  StackSizePages, Status);
 		return Status;
 	}
@@ -184,7 +186,7 @@ CalculateRelocBlockSize(VOID)
 	if (EFI_ERROR(Status)) {
 		DBGnvr("GetNumberOfRTPages: %r\n", Status);
 		DBG("OsxAptioFixDrv: CalculateRelocBlockSize(): GetNumberOfRTPages: %r\n", Status);
-		DBG("OsxAptioFixDrv: CalculateRelocBlockSize(): GetNumberOfRTPages: %r\n", Status);
+		Print(L"OsxAptioFixDrv: CalculateRelocBlockSize(): GetNumberOfRTPages: %r\n", Status);
 		return Status;
 	}
 	
@@ -212,7 +214,7 @@ AllocateRelocBlock()
 	if (Status != EFI_SUCCESS) {
 		DBG("OsxAptioFixDrv: AllocateRelocBlock(): can not allocate relocation block (0x%x pages below 0x%lx): %r\n",
 			gRelocSizePages, 0x100000000, Status);
-		DBG("OsxAptioFixDrv: AllocateRelocBlock(): can not allocate relocation block (0x%x pages below 0x%lx): %r\n",
+		Print(L"OsxAptioFixDrv: AllocateRelocBlock(): can not allocate relocation block (0x%x pages below 0x%lx): %r\n",
 			gRelocSizePages, 0x100000000, Status);
 	} else {
 		gRelocBase = Addr;
@@ -221,7 +223,7 @@ AllocateRelocBlock()
 	}
 
 	// set reloc addr in runtime vars for boot manager
-	//DBG("OsxAptioFixDrv: AllocateRelocBlock(): gRelocBase set to %lx - %lx\n", gRelocBase, gRelocBase + EFI_PAGES_TO_SIZE(gRelocSizePages) - 1);
+	//Print(L"OsxAptioFixDrv: AllocateRelocBlock(): gRelocBase set to %lx - %lx\n", gRelocBase, gRelocBase + EFI_PAGES_TO_SIZE(gRelocSizePages) - 1);
 	/*Status = */gRT->SetVariable(L"OsxAptioFixDrv-RelocBase", &gEfiAppleBootGuid, 
 							  /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
 							  sizeof(gRelocBase) ,&gRelocBase);
@@ -303,19 +305,19 @@ MOAllocatePages (
 		// check if the requested mem can be served from reloc block
 		if (UpperAddr >= EFI_PAGES_TO_SIZE(gRelocSizePages)) {
 			// no - exceeds our block - signal error
-			DBG("OsxAptipFixDrv: Error - requested memory exceeds our allocated relocation block\n");
-			DBG("Requested mem: %lx - %lx, Pages: %x, Size: %lx\n",
+			Print(L"OsxAptipFixDrv: Error - requested memory exceeds our allocated relocation block\n");
+			Print(L"Requested mem: %lx - %lx, Pages: %x, Size: %lx\n",
 				  *Memory, UpperAddr - 1,
 				  NumberOfPages, EFI_PAGES_TO_SIZE(NumberOfPages)
 				  );
-			DBG("Reloc block: %lx - %lx, Pages: %x, Size: %lx\n",
+			Print(L"Reloc block: %lx - %lx, Pages: %x, Size: %lx\n",
 				  gRelocBase, gRelocBase + EFI_PAGES_TO_SIZE(gRelocSizePages) - 1,
 				  gRelocSizePages, EFI_PAGES_TO_SIZE(gRelocSizePages)
 				  );
-			DBG("Reloc block can handle mem requests: %lx - %lx\n",
+			Print(L"Reloc block can handle mem requests: %lx - %lx\n",
 				  0, EFI_PAGES_TO_SIZE(gRelocSizePages) - 1
 				  );
-			DBG("Exiting in 30 secs ...\n");
+			Print(L"Exiting in 30 secs ...\n");
 			gBS->Stall(30 * 1000000);
 			
 			return EFI_OUT_OF_RESOURCES;
@@ -399,9 +401,9 @@ MOExitBootServices (
 	// check again for stack - if relocation did not work for some reason
 	RSP = MyAsmReadSp();
 	if (RSP < gMaxAllocatedAddr) {
-		DBG("\nOsxAptioFixDrv: Stack too low! Currently at %lx, and kernel would be %lx - %lx\n",
+		Print(L"\nOsxAptioFixDrv: Stack too low! Currently at %lx, and kernel would be %lx - %lx\n",
 			RSP, gMinAllocatedAddr, gMaxAllocatedAddr);
-		DBG("Waiting 20 seconds then exiting ...\n");
+		Print(L"Waiting 20 seconds then exiting ...\n");
 		gBS->Stall(20 * 1000 * 1000);
 		return EFI_NOT_FOUND;
 	}
@@ -413,13 +415,13 @@ MOExitBootServices (
 	
 	// for  tests: we can just return EFI_SUCCESS and continue using Print for debug.
 	Status = EFI_SUCCESS;
-	//DBG("ExitBootServices()\n");
+	//Print(L"ExitBootServices()\n");
 	Status = gStoredExitBootServices(ImageHandle, MapKey);
 	DBGnvr("ExitBootServices:  = %r\n", Status);
 	if (EFI_ERROR (Status)) {
-		DBG("OsxAptioFixDrv: Error ExitBootServices() = Status: %r\n", Status);
-		DBG("MapKey = %lx, LastMapKey = %lx\n", MapKey, LastMapKey);
-		DBG("This is an error and should be resolved.\nFor now, we will force ExitBootServices() once again in 10 secs with new GetMemoryMap ...\n");
+		Print(L"OsxAptioFixDrv: Error ExitBootServices() = Status: %r\n", Status);
+		Print(L"MapKey = %lx, LastMapKey = %lx\n", MapKey, LastMapKey);
+		Print(L"This is an error and should be resolved.\nFor now, we will force ExitBootServices() once again in 10 secs with new GetMemoryMap ...\n");
 
 		gBS->Stall(10*1000000);
 		//CpuDeadLoop();
@@ -433,10 +435,10 @@ MOExitBootServices (
 			DBGnvr("ExitBootServices: 2nd try = %r\n", Status);
 			if (EFI_ERROR (Status)) {
 				// Error!
-				DBG("OsxAptioFixDrv: Error ExitBootServices() 2nd try = Status: %r\n", Status);
+				Print(L"OsxAptioFixDrv: Error ExitBootServices() 2nd try = Status: %r\n", Status);
 			}
 		} else {
-			DBG("OsxAptioFixDrv: Error ExitBootServices(), GetMemoryMapKey() = Status: %r\n", Status);
+			Print(L"OsxAptioFixDrv: Error ExitBootServices(), GetMemoryMapKey() = Status: %r\n", Status);
 			Status = EFI_INVALID_PARAMETER;
 		}
 		
@@ -447,7 +449,7 @@ MOExitBootServices (
 		KernelEntryFromMachOPatchJump();
 		//CpuDeadLoop();
 	} else {
-		DBG("... waiting 10 secs ...\n");
+		Print(L"... waiting 10 secs ...\n");
 		gBS->Stall(10*1000000);
 	}
 	
@@ -559,7 +561,7 @@ RunImageWithOverrides(IN VOID *Context1, IN VOID *Context2)
 	UINT64						RSP;
 	
 	RSP = MyAsmReadSp();
-	DBG("RunImageWithOverrides: Current stack: RSP=%lx\n", RSP);
+	Print(L"RunImageWithOverrides: Current stack: RSP=%lx\n", RSP);
 	gBS->Stall(10 * 1000000);
 	*/
 	
@@ -772,10 +774,10 @@ MOStartImage (
 		DBG("CloseProtocol error: %r\n", Status);
 	}
 
-	//DBG("OsxAptioFixDrv: Starting image %s\n", FilePathText);
+	//Print(L"OsxAptioFixDrv: Starting image %s\n", FilePathText);
 	// check if this is boot.efi
 	if (StrStriBasic(FilePathText, L"boot.efi")) {
-		DBG("OsxAptioFixDrv: Starting overrides for %s\n", FilePathText);
+		Print(L"OsxAptioFixDrv: Starting overrides for %s\n", FilePathText);
 
 		// run with our overrides
 		Status = RunImageWithOverridesAndHighStack(ImageHandle, ExitDataSize, ExitData);
@@ -825,7 +827,7 @@ OsxAptioFixDrvEntrypoint (
 	// find out where we are loaded so we can notify later if kernel could overwrite us
 	Status = SaveOurImageStart();
 	if (Status != EFI_SUCCESS) {
-		DBG("OsxAptioFixDrv: SaveOurImageStart = %r\n", Status);
+		Print(L"OsxAptioFixDrv: SaveOurImageStart = %r\n", Status);
 		return Status;
 	}
 	

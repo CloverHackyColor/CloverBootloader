@@ -288,7 +288,7 @@ VmAllocateMemoryPool(VOID)
 	
 	Status = AllocatePagesFromTop(EfiBootServicesData, VmMemoryPoolFreePages, &Addr);
 	if (Status != EFI_SUCCESS) {
-		DBG("VmAllocateMemoryPool: AllocatePagesFromTop(EfiBootServicesData) = %r\n", Status);
+		Print(L"VmAllocateMemoryPool: AllocatePagesFromTop(EfiBootServicesData) = %r\n", Status);
 	} else {
 		VmMemoryPool = (UINT8*)Addr;
 		DBG("VmMemoryPool = %lx - %lx\n", VmMemoryPool, VmMemoryPool + EFI_PAGES_TO_SIZE(VmMemoryPoolFreePages) - 1);
