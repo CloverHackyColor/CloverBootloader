@@ -6,8 +6,9 @@
 //
 // Initial idea comes from iBoot project by OS_Ninja and Ujen
 // their sources are under GNU License but I don't know what is the subject for licensing here.
-// my sources are quite different while Mouse interfaces comes from Tiano,
-// for example ConSplitterDxe
+// my sources are quite different while Mouse/Events interfaces comes from Tiano,
+// for example ConSplitterDxe or BdsDxe/FrontPage
+// anyway thanks for good tutorial how to do and how not to do
 // 
 
 #include "Platform.h"
@@ -47,3 +48,39 @@ EFI_STATUS MouseInit()
   
   returm Status;
 }
+
+EFI_STATUS WaitForMouseRelease()
+{
+  EFI_STATUS Status = EFI_SUCCESS;
+  
+}
+
+#if UNDERCONSTRUCTION
+
+TimeoutRemain = TimeoutDefault;
+while (TimeoutRemain != 0) {
+  
+  Status = WaitForSingleEvent (gST->ConIn->WaitForKey, ONE_SECOND);
+  if (Status != EFI_TIMEOUT) {
+    break;
+  }
+  TimeoutRemain--;
+  
+  if (!FeaturePcdGet(PcdBootlogoOnlyEnable)) {
+    //
+    // Show progress
+    //
+    if (TmpStr != NULL) {
+      PlatformBdsShowProgress (
+                               Foreground,
+                               Background,
+                               TmpStr,
+                               Color,
+                               ((TimeoutDefault - TimeoutRemain) * 100 / TimeoutDefault),
+                               0
+                               );
+    }
+  }
+}
+
+#endif

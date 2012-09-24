@@ -47,6 +47,7 @@
 		126C264B1510C3C9005AB30D /* AmlGenerator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AmlGenerator.c; sourceTree = "<group>"; };
 		126C264C1510C3C9005AB30D /* AmlGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AmlGenerator.h; sourceTree = "<group>"; };
 		12961B4215FCEC91008D77FB /* AcpiPatcher.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AcpiPatcher.c; sourceTree = "<group>"; };
+		12B3BB4216102570006734DD /* Pointer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Pointer.c; sourceTree = "<group>"; };
 		12B7000015F921AB00177D35 /* efildr.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = efildr.c; sourceTree = "<group>"; };
 		12B7000115F921AB00177D35 /* EfiLdr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EfiLdr.h; sourceTree = "<group>"; };
 		12B7000215F921AB00177D35 /* EfiLdr.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = EfiLdr.inf; sourceTree = "<group>"; };
@@ -5384,6 +5385,7 @@
 				12D6308014CEA05E00E5898F /* Platform.h */,
 				12D6308114CEA05E00E5898F /* platformdata.c */,
 				12D6308214CEA05E00E5898F /* plist.c */,
+				12B3BB4216102570006734DD /* Pointer.c */,
 				12D6308314CEA05E00E5898F /* Settings.c */,
 				12D6308414CEA05E00E5898F /* smbios.c */,
 				12D6308514CEA05E00E5898F /* SmBios.h */,

@@ -241,7 +241,7 @@ VOID GetCPUProperties (VOID)
           case CPU_MODEL_WESTMERE:// Core i7 LGA1366, Six-core, "Westmere", "Gulftown", 32nm
           case CPU_MODEL_NEHALEM_EX:// Core i7, Nehalem-Ex Xeon, "Beckton"
           case CPU_MODEL_WESTMERE_EX:// Core i7, Nehalem-Ex Xeon, "Eagleton"
-       //since rev 553     
+       //since rev 553 bcc9 patch
             msr = AsmReadMsr64(MSR_FLEX_RATIO);
             if ((msr >> 16) & 0x01)
             {
@@ -301,6 +301,7 @@ VOID GetCPUProperties (VOID)
             msr = AsmReadMsr64(MSR_FLEX_RATIO);   //0x194
             if ((msr >> 16) & 0x01)
             {
+              // bcc9 patch
               UINT8 flex_ratio = (msr >> 8) & 0xff;
               MsgLog("non-usable FLEX_RATIO = %x\n", msr);
               if (flex_ratio == 0) { 
@@ -656,7 +657,7 @@ UINT16 GetAdvancedCpuType ()
 						return 0x703;
           case CPU_MODEL_IVY_BRIDGE:  
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
-							return 0x901; // Core i3 - Apple doesn't use it
+							return 0x903; // Core i3 - Apple doesn't use it
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
               return 0x604; // Core i5
 						return 0x704;
