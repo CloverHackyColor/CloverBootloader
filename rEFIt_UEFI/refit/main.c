@@ -241,6 +241,22 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"R - Soft Reset");
         AddMenuInfoLine(&HelpMenu, L"U - Shutdown");
         break;
+      case polish:
+        AddMenuInfoLine(&HelpMenu, L"ESC - Wyjście z podmenu, Odświeżenie głównego menu");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Pomoc");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Zapis preboot.log (tylko dla FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Zapis czystych tabel DSDT do EFI/ACPI/origin/ (tylko dla FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Zapis zmodyfikowanego DSDT do EFI/ACPI/origin/ (tylko dla FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Zapis BIOSu karty graficznej do EFI/misc/ (tylko dla FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Zapis zrzutu ekranu do EFI/misc/ (tylko dla FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Wysunięcie zaznaczonego dysku (tylko dla DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Spacja - Informacje na temat dostępnych opcji dla zaznaczonego dysku");
+        AddMenuInfoLine(&HelpMenu, L"Znaki 1-9 - Skróty do opcji dla zaznaczonego dysku");
+        AddMenuInfoLine(&HelpMenu, L"A - Menu Informacyjne");
+        AddMenuInfoLine(&HelpMenu, L"O - Menu Opcje");
+        AddMenuInfoLine(&HelpMenu, L"R - Restart komputera");
+        AddMenuInfoLine(&HelpMenu, L"U - Wyłączenie komputera");
+        break;
       case english:
       default:
         AddMenuInfoLine(&HelpMenu, L"ESC - Escape from submenu, Refresh main menu");

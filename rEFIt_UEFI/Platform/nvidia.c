@@ -1608,7 +1608,8 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE11BE,	0x10CF1760,	"Fujitsu Quadro K3000M" },
 	{ 0x10DE11BE,	0x15585105,	"Clevo Quadro K3000M" },
 	{ 0x10DE11BE,	0x15587102,	"Clevo Quadro K3000M" },
-	// 11C0 - 11CF
+  { 0x10DE11C0,	0x10DE0995,	"Inno3D GeForce GTX660" },
+	// 11C1 - 11CF
 	// 11D0 - 11DF
 	// 11E0 - 11EF
 	// 11F0 - 11FF
@@ -2684,14 +2685,16 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE1185,	NV_SUB_IDS,	"GeForce GTX 660" },
 	{ 0x10DE1188,	NV_SUB_IDS,	"GeForce GTX 690" },
 	{ 0x10DE1189,	NV_SUB_IDS,	"GeForce GTX 670" },
-	{ 0x10DE118F,	NV_SUB_IDS,	"Tesla K10" },
+  // 118A - 118F
 	// 1190 - 119F
 	// 11A0 - 11AF
 	// 11B0 - 11BF
 	{ 0x10DE11BC,	NV_SUB_IDS,	"Quadro K5000M" },
 	{ 0x10DE11BD,	NV_SUB_IDS,	"Quadro K4000M" },
 	{ 0x10DE11BE,	NV_SUB_IDS,	"Quadro K3000M" },
-	// 11C0 - 11CF
+	{ 0x10DE118F,	NV_SUB_IDS,	"Tesla K10" },
+  { 0x10DE11C0,	NV_SUB_IDS,	"GeForce GTX 660" },
+	// 11C1 - 11CF
 	// 11D0 - 11DF
 	// 11E0 - 11EF
 	// 11F0 - 11FF
@@ -2855,8 +2858,8 @@ EFI_STATUS read_nVidia_PROM(pci_dt_t *nvda_dev, VOID* rom)
 {
 	EFI_STATUS Status;
 	EFI_PCI_IO_PROTOCOL		*PciIo;
-	PCI_TYPE00				Pci;
-  UINT32 value;
+	PCI_TYPE00            Pci;
+  UINT32                value;
 
   DBG("PROM\n");
   Status = gBS->OpenProtocol(nvda_dev->DeviceHandle, &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);

@@ -773,6 +773,7 @@ typedef enum {
   italian,  //it
   indonesian, //id
   spanish,  //es
+  polish,   //pl
   portuguese, //pt
   chinese   //cn
   //something else? add, please
