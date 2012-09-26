@@ -242,7 +242,7 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"U - Shutdown");
         break;
       case polish:
-        AddMenuInfoLine(&HelpMenu, L"ESC - Wyjście z podmenu, Odświeżenie głównego menu");
+/*        AddMenuInfoLine(&HelpMenu, L"ESC - Wyjście z podmenu, Odświeżenie głównego menu");
         AddMenuInfoLine(&HelpMenu, L"F1  - Pomoc");
         AddMenuInfoLine(&HelpMenu, L"F2  - Zapis preboot.log (tylko dla FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F4  - Zapis czystych tabel DSDT do EFI/ACPI/origin/ (tylko dla FAT32)");
@@ -255,7 +255,22 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"A - Menu Informacyjne");
         AddMenuInfoLine(&HelpMenu, L"O - Menu Opcje");
         AddMenuInfoLine(&HelpMenu, L"R - Restart komputera");
-        AddMenuInfoLine(&HelpMenu, L"U - Wyłączenie komputera");
+        AddMenuInfoLine(&HelpMenu, L"U - Wyłączenie komputera");*/
+        
+        AddMenuInfoLine(&HelpMenu, L"ESC - Wyjscie z podmenu, Odświeżenie glownego menu");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Pomoc");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Zapis preboot.log (tylko FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Zapis DSDT do EFI/ACPI/origin/ (tylko FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Zapis poprawionego DSDT do EFI/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Zapis BIOSu k. graficznej do EFI/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Zapis zrzutu ekranu do EFI/misc/ (tylko FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Wysunięcie zaznaczonego dysku (tylko dla DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Spacja - Informacje nt. dostepnych opcji dla zaznaczonego dysku");
+        AddMenuInfoLine(&HelpMenu, L"Znaki 1-9 - Skroty opcji dla wybranego dysku");
+        AddMenuInfoLine(&HelpMenu, L"A - Menu Informacyjne");
+        AddMenuInfoLine(&HelpMenu, L"O - Menu Opcje");
+        AddMenuInfoLine(&HelpMenu, L"R - Restart komputera");
+        AddMenuInfoLine(&HelpMenu, L"U - Wylaczenie komputera");
         break;
       case english:
       default:
