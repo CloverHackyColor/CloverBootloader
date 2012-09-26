@@ -723,7 +723,9 @@ typedef enum {
   iMac122,
 	MacPro31,
 	MacPro41,
-	MacPro51
+	MacPro51,
+  
+	MaxMachineType
   
 } MACHINE_TYPES;
 
@@ -889,6 +891,8 @@ VOID        InitBooterLog(VOID);
 EFI_STATUS  SetupBooterLog(VOID);
 EFI_STATUS  SaveBooterLog(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName);
 VOID        DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...);
+VOID        SetDMISettingsForModel(MACHINE_TYPES Model);
+MACHINE_TYPES GetModelFromString(CHAR8 *ProductName);
 VOID        GetDefaultSettings(VOID);
 VOID        FillInputs(VOID);
 VOID        ApplyInputs(VOID);

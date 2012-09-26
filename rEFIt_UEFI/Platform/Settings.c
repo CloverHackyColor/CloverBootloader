@@ -746,6 +746,20 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
     //*** SMBIOS ***//
     dictPointer = GetProperty(dict,"SMBIOS");
     if (dictPointer) {
+      prop = GetProperty(dictPointer,"ProductName");
+      if(prop)
+      {
+        AsciiStrCpy(gSettings.ProductName, prop->string);
+        // let's fill all other fields based on this ProductName
+        // to serve as default
+        {
+          MACHINE_TYPES Model;
+          Model = GetModelFromString(gSettings.ProductName);
+          if (Model != MaxMachineType) {
+            SetDMISettingsForModel(Model);
+          }
+        }
+      }
       prop = GetProperty(dictPointer,"BiosVendor");
       if(prop)
       {
@@ -765,11 +779,6 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       if(prop)
       {
         AsciiStrCpy(gSettings.ManufactureName, prop->string);
-      }
-      prop = GetProperty(dictPointer,"ProductName");
-      if(prop)
-      {
-        AsciiStrCpy(gSettings.ProductName, prop->string);
       }
       prop = GetProperty(dictPointer,"Version");
       if(prop)

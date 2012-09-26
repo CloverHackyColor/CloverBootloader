@@ -228,6 +228,38 @@ CHAR8* AppleChassisAsset[] =
 CHAR8* AppleBoardSN = "C02140302D5DMT31M";
 CHAR8* AppleBoardLocation = "Part Component";
 
+VOID SetDMISettingsForModel(MACHINE_TYPES Model)
+{
+  AsciiStrCpy(gSettings.VendorName,             BiosVendor);
+  AsciiStrCpy(gSettings.RomVersion,             AppleFirmwareVersion[Model]);
+  AsciiStrCpy(gSettings.ReleaseDate,            AppleReleaseDate[Model]);
+  AsciiStrCpy(gSettings.ManufactureName,        BiosVendor);
+  AsciiStrCpy(gSettings.ProductName,            AppleProductName[Model]);
+  AsciiStrCpy(gSettings.VersionNr,              AppleSystemVersion[Model]);
+  AsciiStrCpy(gSettings.SerialNr,               AppleSerialNumber[Model]);
+  AsciiStrCpy(gSettings.FamilyName,             AppleFamilies[Model]);
+  AsciiStrCpy(gSettings.BoardManufactureName,   BiosVendor);
+  AsciiStrCpy(gSettings.BoardSerialNumber,      AppleBoardSN);
+  AsciiStrCpy(gSettings.BoardNumber,            AppleBoardID[Model]);
+  AsciiStrCpy(gSettings.BoardVersion,           AppleSystemVersion[Model]);
+  AsciiStrCpy(gSettings.LocationInChassis,      AppleBoardLocation);
+  AsciiStrCpy(gSettings.ChassisManufacturer,    BiosVendor);
+  AsciiStrCpy(gSettings.ChassisAssetTag,        AppleChassisAsset[Model]);
+}
+
+MACHINE_TYPES GetModelFromString(CHAR8 *ProductName)
+{
+  UINTN   Index;
+  
+  for (Index = 0; Index < MaxMachineType; Index++) {
+    if (AsciiStrCmp(AppleProductName[Index], ProductName) == 0) {
+      return Index;
+    }
+  }
+  // return ending enum as "not found"
+  return MaxMachineType;
+}
+
 VOID GetDefaultSettings(VOID)
 {
   MACHINE_TYPES   Model;
@@ -238,21 +270,7 @@ VOID GetDefaultSettings(VOID)
 //  gSettings.BusSpeed = DivU64x32(gCPUStructure.FSBFrequency, kilo); //Hz -> kHz
 //  gSettings.CpuFreqMHz = DivU64x32(gCPUStructure.CPUFrequency, Mega); //Hz ->MHz
   
-	AsciiStrCpy(gSettings.VendorName,             BiosVendor);
-  AsciiStrCpy(gSettings.RomVersion,             AppleFirmwareVersion[Model]);
-	AsciiStrCpy(gSettings.ReleaseDate,            AppleReleaseDate[Model]);
-	AsciiStrCpy(gSettings.ManufactureName,        BiosVendor);
-	AsciiStrCpy(gSettings.ProductName,            AppleProductName[Model]);
-	AsciiStrCpy(gSettings.VersionNr,              AppleSystemVersion[Model]);
-	AsciiStrCpy(gSettings.SerialNr,               AppleSerialNumber[Model]);
-	AsciiStrCpy(gSettings.FamilyName,             AppleFamilies[Model]);	
-	AsciiStrCpy(gSettings.BoardManufactureName,   BiosVendor);
-  AsciiStrCpy(gSettings.BoardSerialNumber,      AppleBoardSN);
-	AsciiStrCpy(gSettings.BoardNumber,            AppleBoardID[Model]);
-  AsciiStrCpy(gSettings.BoardVersion,           AppleSystemVersion[Model]);
-	AsciiStrCpy(gSettings.LocationInChassis,      AppleBoardLocation);
-	AsciiStrCpy(gSettings.ChassisManufacturer,    BiosVendor);
-	AsciiStrCpy(gSettings.ChassisAssetTag,        AppleChassisAsset[Model]);
+  SetDMISettingsForModel(Model);
  
   gSettings.KextPatchesAllowed = TRUE;
   gSettings.NrKexts = 0;
