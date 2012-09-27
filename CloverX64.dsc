@@ -399,6 +399,7 @@
   # Misc
   Clover/FSInject/FSInject.inf
   Clover/MsgLog/MsgLog.inf
+  Clover/DumpUefiCalls/DumpUefiCalls.inf
   
   # Drivers for Aptio loading - should go to Clover's /EFI/drivers64UEFI dir
   Clover/OsxFatBinaryDrv/OsxFatBinaryDrv.inf

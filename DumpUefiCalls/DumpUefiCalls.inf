@@ -1,0 +1,110 @@
+## @file
+#
+# Driver for dumping boot loader UEFI calls.
+#
+# By dmazar, 26/09/2012             
+#
+# Feel free to use it, debug it, extend it, but please report back changes/additions to
+# http://www.projectosx.com/
+#
+# How to use:
+#
+#  Users of Clover boot manager can just place the driver to appropriate drivers folder
+#  (for example /EFI/drivers64). Other users will probably know how to load it.
+#
+# How it works:
+#
+#  Driver overrides gBS->StartImage() in order to be able to detect boot loader starting (DumpUefiCalls.c).
+#
+#  When boot loader is about te be started, driver overrides all boot (gBS) and runtime (gRT) services
+#  with small wrappers that will call original plartform services and log each call (BootServices.c, RuntimeServices.c).
+#
+#  When ExitBootServices() is called driver will also print UEFI system table (with configuration tables)
+#  and UEFI variables (RT vars).
+#
+#  Logging is done through PRINT definition (Common.h) which gets replaced by LogPrint() (Log.c).
+#  Logs can be directed to screen, serial and disk file (LOG_TO_SCREEN, LOG_TO_SERIAL, LOG_TO_FILE in Common.h).
+#
+#  Logs to serial are interesting when used in VBox (VMWare?, QEmu?) because driver can continue to dump UEFI
+#  calls even during runtime phase, after ExitBootServices() and when OS is running.
+#  This requires WORK_DURING_RUNTIME to be set to 1 in Common.h. That is also a reason why is driver made as runtime driver.
+#
+#  Logs to screen and file work only up to ExitBootServices() because they depend on boot services to be running.
+#
+#  PRINT_SHELL_VARS in Common.h is set to 0 to avoid dumping of uninteresting shell vars data. Can be set to 1.
+#
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = DumpUefiCalls
+  FILE_GUID                      = B7F22AE1-9D87-4CD6-8EB1-171573908835
+#  MODULE_TYPE                    = UEFI_DRIVER
+  MODULE_TYPE                    = DXE_RUNTIME_DRIVER
+  VERSION_STRING                 = 1.0
+  ENTRY_POINT                    = DumpUefiCallsEntrypoint
+#
+# The following information is for reference only and not required by the build tools.
+#
+#  VALID_ARCHITECTURES           = X64 IA32
+#
+
+[Packages]
+  MdePkg/MdePkg.dec
+
+[LibraryClasses]
+  UefiLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  BaseMemoryLib
+  MemoryAllocationLib
+  UefiDriverEntryPoint
+  BaseLib
+  DevicePathLib
+  DebugLib
+  
+[Sources]
+  DumpUefiCalls.c
+  Lib.h
+  Lib.c
+  BootServices.h
+  BootServices.c
+  RuntimeServices.h
+  RuntimeServices.c
+  Log.h
+  Log.c
+  MemLog.h
+  MemLog.c
+  FileLib.h
+  FileLib.c
+
+
+[Guids]
+  gEfiFileInfoGuid
+  gEfiFileSystemInfoGuid
+  gEfiFileSystemVolumeLabelInfoIdGuid
+  gEfiEventVirtualAddressChangeGuid
+  gEfiAcpi10TableGuid
+  gEfiAcpi20TableGuid
+  gEfiDebugImageInfoTableGuid
+  gEfiDxeServicesTableGuid
+  gEfiHobListGuid
+  gEfiMpsTableGuid
+  gEfiSmbiosTableGuid
+  gEfiPartTypeSystemPartGuid
+  
+
+[Protocols]
+  gEfiLoadedImageProtocolGuid
+  gEfiDevicePathProtocolGuid
+  gEfiSimpleFileSystemProtocolGuid
+  gEfiBlockIoProtocolGuid
+  gEfiDiskIoProtocolGuid
+  gEfiGraphicsOutputProtocolGuid
+
+[Depex]
+  TRUE  
+  
+[BuildOptions]
+#  MSFT:*_*_*_ASM_FLAGS = /Fl
+

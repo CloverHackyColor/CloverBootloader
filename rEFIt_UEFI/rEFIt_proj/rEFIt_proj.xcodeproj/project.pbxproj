@@ -1829,6 +1829,27 @@
 		261A9E681599E1290006F036 /* cdefs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cdefs.h; sourceTree = "<group>"; };
 		26440C83157AADDF0077A476 /* b64cdecode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = b64cdecode.c; sourceTree = "<group>"; };
 		26440C84157AADDF0077A476 /* b64cdecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = b64cdecode.h; sourceTree = "<group>"; };
+		2C0DB53E16145CFD00CA37F9 /* cbuild.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = cbuild.sh; path = ../../cbuild.sh; sourceTree = "<group>"; };
+		2C0DB54016145D3400CA37F9 /* Clover.fdf */ = {isa = PBXFileReference; lastKnownFileType = text; name = Clover.fdf; path = ../../Clover.fdf; sourceTree = "<group>"; };
+		2C0DB54116145D3400CA37F9 /* CloverIa32.dsc */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverIa32.dsc; path = ../../CloverIa32.dsc; sourceTree = "<group>"; };
+		2C0DB54216145D3400CA37F9 /* CloverPkg.dec */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverPkg.dec; path = ../../CloverPkg.dec; sourceTree = "<group>"; };
+		2C0DB54316145D3400CA37F9 /* CloverX64.dsc */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverX64.dsc; path = ../../CloverX64.dsc; sourceTree = "<group>"; };
+		2C0DB54416145D3400CA37F9 /* CloverX64.fdf */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverX64.fdf; path = ../../CloverX64.fdf; sourceTree = "<group>"; };
+		2C91841F161439DD0018BDC3 /* BootServices.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootServices.c; sourceTree = "<group>"; usesTabs = 1; };
+		2C918420161439DD0018BDC3 /* BootServices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BootServices.h; sourceTree = "<group>"; usesTabs = 1; };
+		2C918421161439DD0018BDC3 /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; usesTabs = 1; };
+		2C918422161439DD0018BDC3 /* DumpUefiCalls.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DumpUefiCalls.c; sourceTree = "<group>"; usesTabs = 1; };
+		2C918423161439DD0018BDC3 /* DumpUefiCalls.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = DumpUefiCalls.inf; sourceTree = "<group>"; };
+		2C918424161439DD0018BDC3 /* FileLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = FileLib.c; sourceTree = "<group>"; usesTabs = 1; };
+		2C918425161439DD0018BDC3 /* FileLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FileLib.h; sourceTree = "<group>"; usesTabs = 1; };
+		2C918426161439DD0018BDC3 /* Lib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Lib.c; sourceTree = "<group>"; usesTabs = 1; };
+		2C918427161439DD0018BDC3 /* Lib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lib.h; sourceTree = "<group>"; usesTabs = 1; };
+		2C918428161439DD0018BDC3 /* Log.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Log.c; sourceTree = "<group>"; usesTabs = 1; };
+		2C918429161439DD0018BDC3 /* Log.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Log.h; sourceTree = "<group>"; usesTabs = 1; };
+		2C91842A161439DD0018BDC3 /* MemLog.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MemLog.c; sourceTree = "<group>"; usesTabs = 1; };
+		2C91842B161439DD0018BDC3 /* MemLog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MemLog.h; sourceTree = "<group>"; usesTabs = 1; };
+		2C91842C161439DD0018BDC3 /* RuntimeServices.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = RuntimeServices.c; sourceTree = "<group>"; usesTabs = 1; };
+		2C91842D161439DD0018BDC3 /* RuntimeServices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RuntimeServices.h; sourceTree = "<group>"; usesTabs = 1; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -4582,13 +4603,28 @@
 		12B7FECE15F9212500177D35 /* CloverEFI */ = {
 			isa = PBXGroup;
 			children = (
-				12B7004C15F9221400177D35 /* VBoxPeCoffLib */,
-				12B7005315F9222C00177D35 /* VBoxFsDxe */,
-				12B7004715F9220000177D35 /* SataControllerDxe */,
-				12B7003A15F921D400177D35 /* PciRootBridgeDxe */,
-				12B7001615F921BC00177D35 /* OsxPciBusNoEnumerationDxe */,
-				12B7002D15F921BC00177D35 /* OsxSmbiosDxe */,
-				12B7003115F921BC00177D35 /* PartitionDxe */,
+				12B7FED015F9215700177D35 /* AcpiReset */,
+				12B7FED315F9215700177D35 /* AtaAtapi */,
+				12B7FEDC15F9215700177D35 /* AtaBus */,
+				12B7FEE215F9215700177D35 /* BiosKeyboard */,
+				12B7FEE915F9215700177D35 /* BiosVideo */,
+				2C0DB53E16145CFD00CA37F9 /* cbuild.sh */,
+				2C0DB54016145D3400CA37F9 /* Clover.fdf */,
+				2C0DB54116145D3400CA37F9 /* CloverIa32.dsc */,
+				2C0DB54216145D3400CA37F9 /* CloverPkg.dec */,
+				2C0DB54316145D3400CA37F9 /* CloverX64.dsc */,
+				2C0DB54416145D3400CA37F9 /* CloverX64.fdf */,
+				12B7FEF115F9217300177D35 /* ConSplitterDxe */,
+				12B7FEF715F9217300177D35 /* CpuDxe */,
+				12B7FF0115F9217300177D35 /* DuetTimerLib */,
+				2C91841E161439DD0018BDC3 /* DumpUefiCalls */,
+				12B7FF0415F9217300177D35 /* DVDBus */,
+				12B7FF0915F9217300177D35 /* DVDDisk */,
+				12B7FF0E15F9217300177D35 /* ebuild.sh */,
+				12B7FF0F15F9217300177D35 /* FSInject */,
+				12B7FF1915F9217300177D35 /* GenericBdsLib */,
+				12B7FF2515F9217F00177D35 /* Include */,
+				12B7FF3915F9219800177D35 /* LzmaCustomDecompressLib */,
 				12B7FF4C15F921AB00177D35 /* MsgLog */,
 				12B7FF4F15F921AB00177D35 /* OemSmbiosGenDxe */,
 				12B7FF5415F921AB00177D35 /* OsxAcpiPlatformDxe */,
@@ -4601,21 +4637,13 @@
 				12B7FFFD15F921AB00177D35 /* OsxEfiLdr */,
 				12B7000C15F921AB00177D35 /* OsxFatBinaryDrv */,
 				12B7000F15F921AB00177D35 /* OsxLowMemFixDrv */,
-				12B7FF3915F9219800177D35 /* LzmaCustomDecompressLib */,
-				12B7FF2515F9217F00177D35 /* Include */,
-				12B7FEF115F9217300177D35 /* ConSplitterDxe */,
-				12B7FEF715F9217300177D35 /* CpuDxe */,
-				12B7FF0115F9217300177D35 /* DuetTimerLib */,
-				12B7FF0415F9217300177D35 /* DVDBus */,
-				12B7FF0915F9217300177D35 /* DVDDisk */,
-				12B7FF0E15F9217300177D35 /* ebuild.sh */,
-				12B7FF0F15F9217300177D35 /* FSInject */,
-				12B7FF1915F9217300177D35 /* GenericBdsLib */,
-				12B7FED015F9215700177D35 /* AcpiReset */,
-				12B7FED315F9215700177D35 /* AtaAtapi */,
-				12B7FEDC15F9215700177D35 /* AtaBus */,
-				12B7FEE215F9215700177D35 /* BiosKeyboard */,
-				12B7FEE915F9215700177D35 /* BiosVideo */,
+				12B7001615F921BC00177D35 /* OsxPciBusNoEnumerationDxe */,
+				12B7002D15F921BC00177D35 /* OsxSmbiosDxe */,
+				12B7003115F921BC00177D35 /* PartitionDxe */,
+				12B7003A15F921D400177D35 /* PciRootBridgeDxe */,
+				12B7004715F9220000177D35 /* SataControllerDxe */,
+				12B7005315F9222C00177D35 /* VBoxFsDxe */,
+				12B7004C15F9221400177D35 /* VBoxPeCoffLib */,
 			);
 			name = CloverEFI;
 			sourceTree = "<group>";
@@ -5415,6 +5443,29 @@
 			name = Platform;
 			path = ../Platform;
 			sourceTree = SOURCE_ROOT;
+		};
+		2C91841E161439DD0018BDC3 /* DumpUefiCalls */ = {
+			isa = PBXGroup;
+			children = (
+				2C91841F161439DD0018BDC3 /* BootServices.c */,
+				2C918420161439DD0018BDC3 /* BootServices.h */,
+				2C918421161439DD0018BDC3 /* Common.h */,
+				2C918422161439DD0018BDC3 /* DumpUefiCalls.c */,
+				2C918423161439DD0018BDC3 /* DumpUefiCalls.inf */,
+				2C918424161439DD0018BDC3 /* FileLib.c */,
+				2C918425161439DD0018BDC3 /* FileLib.h */,
+				2C918426161439DD0018BDC3 /* Lib.c */,
+				2C918427161439DD0018BDC3 /* Lib.h */,
+				2C918428161439DD0018BDC3 /* Log.c */,
+				2C918429161439DD0018BDC3 /* Log.h */,
+				2C91842A161439DD0018BDC3 /* MemLog.c */,
+				2C91842B161439DD0018BDC3 /* MemLog.h */,
+				2C91842C161439DD0018BDC3 /* RuntimeServices.c */,
+				2C91842D161439DD0018BDC3 /* RuntimeServices.h */,
+			);
+			name = DumpUefiCalls;
+			path = ../../DumpUefiCalls;
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
