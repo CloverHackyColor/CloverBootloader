@@ -142,6 +142,20 @@ typedef enum {
 typedef struct {
     UINT8 b, g, r, a;
 } EG_PIXEL;
+/*
+typedef struct {
+  UINT8 Blue;
+  UINT8 Green;
+  UINT8 Red;
+  UINT8 Reserved;
+} EFI_GRAPHICS_OUTPUT_BLT_PIXEL;
+
+typedef union {
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL Pixel;
+  UINT32                        Raw;
+} EFI_GRAPHICS_OUTPUT_BLT_PIXEL_UNION;
+*/
+
 
 typedef struct {
     UINT64      Width;
