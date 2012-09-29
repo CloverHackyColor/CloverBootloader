@@ -417,8 +417,8 @@ VOID BltImageAlpha(IN EG_IMAGE *Image, IN UINT64 XPos, IN UINT64 YPos, IN EG_PIX
   
   if (Image) {
     NewImage = egCopyScaledImage(Image, Scale); //will be Scale/16
-    Width = NewImage->Width;
-    Height = NewImage->Height;
+    Width = (UINTN)NewImage->Width;
+    Height = (UINTN)NewImage->Height;
   }
   // compose on background
   CompImage = egCreateFilledImage(Width, Height, FALSE, BackgroundPixel);

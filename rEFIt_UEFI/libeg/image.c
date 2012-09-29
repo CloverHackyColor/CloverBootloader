@@ -126,13 +126,13 @@ EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *Image, IN UINT64 Ratio) //will be N/16
       //TODO - make sum of 5 points
      // *Dest++ = Image->PixelData[x1+y1];
       
-      Dest->b = DivU64x64Remainder(Image->PixelData[x1+y1].b * 2 +
+      Dest->b = (UINT8)DivU64x64Remainder(Image->PixelData[x1+y1].b * 2 +
                                    Image->PixelData[x0+y1].b + Image->PixelData[x2+y1].b +
                                    Image->PixelData[x1+y0].b + Image->PixelData[x1+y2].b, 6, 0);
-      Dest->g = DivU64x64Remainder(Image->PixelData[x1+y1].g * 2 +
+      Dest->g = (UINT8)DivU64x64Remainder(Image->PixelData[x1+y1].g * 2 +
                                    Image->PixelData[x0+y1].g + Image->PixelData[x2+y1].g +
                                    Image->PixelData[x1+y0].g + Image->PixelData[x1+y2].g, 6, 0);
-      Dest->r = DivU64x64Remainder(Image->PixelData[x1+y1].r * 2 +
+      Dest->r = (UINT8)DivU64x64Remainder(Image->PixelData[x1+y1].r * 2 +
                                    Image->PixelData[x0+y1].r + Image->PixelData[x2+y1].r +
                                    Image->PixelData[x1+y0].r + Image->PixelData[x1+y2].r, 6, 0);
       Dest->a = Image->PixelData[x1+y1].a;

@@ -1306,10 +1306,10 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         CHAR16 ResultString[255];
 
         TitleLen = StrLen(Screen->Entries[i]->Title);
-        Screen->Entries[i]->Place.XPos = EntriesPosX;
-        Screen->Entries[i]->Place.YPos = EntriesPosY + MultU64x64(i, TextHeight);
+        Screen->Entries[i]->Place.XPos = (UINTN)EntriesPosX;
+        Screen->Entries[i]->Place.YPos = (UINTN)(EntriesPosY + MultU64x64(i, TextHeight));
         Screen->Entries[i]->Place.Width = TitleLen * GlobalConfig.CharWidth;
-        Screen->Entries[i]->Place.Height = TextHeight;
+        Screen->Entries[i]->Place.Height = (UINTN)TextHeight;
         
         if (Screen->Entries[i]->Tag == TAG_INPUT) {
  //         DBG("paint Inputs TitleLen=%d\n", TitleLen);
@@ -1397,8 +1397,8 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, UINTN X
                          MainImage, (Entry->Row == 0) ? Entry->BadgeImage:NULL, XPos, YPos);
   Entry->Place.XPos = XPos;
   Entry->Place.YPos = YPos;
-  Entry->Place.Width = MainImage->Width;
-  Entry->Place.Height = MainImage->Height;
+  Entry->Place.Width = (UINTN)MainImage->Width;
+  Entry->Place.Height = (UINTN)MainImage->Height;
 }
 
 /*
@@ -1550,8 +1550,8 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
         //show badge
         if ((Screen->Entries[State->CurrentSelection]->Row == 0) &&
             (GlobalConfig.HideBadges == HDBADGES_ALL)) {
-          OldX = ((UGAWidth - i * GlobalConfig.CharWidth) >> 1) - 80;
-          OldY = textPosY - TextHeight;
+          OldX = (UINTN)((UGAWidth - i * GlobalConfig.CharWidth) >> 1) - 80;
+          OldY = (UINTN)(textPosY - TextHeight);
           BltImageAlpha(((LOADER_ENTRY*)Screen->Entries[State->CurrentSelection])->Volume->OSImage,
                         OldX, OldY, &MenuBackgroundPixel, 8);
         } 
