@@ -79,8 +79,8 @@ const CHAR8 *nvidia_name_1[]			=	{ "@1,name",		"NVDA,Display-B" };
 const CHAR8 *nvidia_slot_name[]		=	{ "AAPL,slot-name", "Slot-1"		 };
 
 static UINT8 default_NVCAP[]= {
-	0x04, 0x00, 0x00, 0x00,  0x00, 0x00, 0x03, 0x00,
-	0x0C, 0x00, 0x00, 0x00,  0x00, 0x00, 0x00, 0x07,
+	0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x00,
+	0x0C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x07,
 	0x00, 0x00, 0x00, 0x00
 };
 
@@ -477,7 +477,7 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE0603,	0x1B0A9044,	"Pegatron GeForce GT 230" },
 
 	{ 0x10DE0604,	0x10DE0504,	"nVidia GeForce 9800 GX2" },
-
+  { 0x10DE0605,	0x145834A2,	"Gigabyte GV-N98TOC-512H" },
 	{ 0x10DE0605,	0x10DE0612,	"nVidia GeForce 9800 GT" },
 	{ 0x10DE0605,	0x10DE062D,	"nVidia GeForce 9800 GT" },
 	{ 0x10DE0605,	0x14621460,	"MSi GeForce 9800 GT" },
@@ -632,6 +632,7 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE06CD,	0x10DE079F,	"Point of View GeForce GTX 470" },
 	{ 0x10DE06CD,	0x10DE979F,	"nVidia GeForce GTX 470" },
 	{ 0x10DE06CD,	0x145834F5,	"GigaByte GeForce GTX 470" },
+  { 0x10DE06CD,	0x14622220,	"MSi GeForce GTX 470 Twin Frozr II" },
 	{ 0x10DE06CD,	0x19DA0010,	"Zotac GTX 470" },
 	{ 0x10DE06CD,	0x19DA1153,	"Zotac GeForce GTX 470" },
 	{ 0x10DE06CD,	0x38421472,	"EVGA GeForce GTX 470" },
@@ -1594,9 +1595,22 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE1189,	0x19DA1255,	"Zotac GTX 670 AMP! Edition" },
 	{ 0x10DE1189,	0x38422672,	"EVGA GTX 670" },
 	{ 0x10DE1189,	0x38422678,	"EVGA GTX 670" },
+  // 118A - 118F
 	// 1190 - 119F
-	// 11A0 - 11AF
-	// 11B0 - 11BF
+  { 0x10DE11A0,	0x10280550,	"Dell GeForce GTX 680M" },
+	{ 0x10DE11A0,	0x10280551,	"Dell GeForce GTX 680M" },
+	{ 0x10DE11A0,	0x1028057B,	"Dell GeForce GTX 680M" },
+	{ 0x10DE11A0,	0x10280580,	"Dell GeForce GTX 680M" },
+	{ 0x10DE11A0,	0x146210BC,	"MSi GeForce GTX 680M" },
+	{ 0x10DE11A0,	0x146210BE,	"MSi GeForce GTX 680M" },
+	{ 0x10DE11A0,	0x15580270,	"Clevo GeForce GTX 680M" },
+	{ 0x10DE11A0,	0x15580271,	"Clevo GeForce GTX 680M" },
+	{ 0x10DE11A0,	0x15580371,	"Clevo GeForce GTX 680M" },
+	{ 0x10DE11A0,	0x15580372,	"Clevo GeForce GTX 680M" },
+	{ 0x10DE11A0,	0x15585105,	"Clevo GeForce GTX 680M" },
+	{ 0x10DE11A0,	0x15587102,	"Clevo GeForce GTX 680M" },
+	// 11A1 - 11AF
+	// 11B0 - 11BB
 	{ 0x10DE11BC,	0x1028053F,	"Dell Quadro K5000M" },
 	{ 0x10DE11BC,	0x1028153F,	"Dell Quadro K5000M" },
 	{ 0x10DE11BC,	0x10CF1762,	"Fujitsu Quadro K5000M" },
@@ -1608,12 +1622,12 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE11BE,	0x10CF1760,	"Fujitsu Quadro K3000M" },
 	{ 0x10DE11BE,	0x15585105,	"Clevo Quadro K3000M" },
 	{ 0x10DE11BE,	0x15587102,	"Clevo Quadro K3000M" },
+  // 11BF
   { 0x10DE11C0,	0x10DE0995,	"Inno3D GeForce GTX660" },
 	// 11C1 - 11CF
 	// 11D0 - 11DF
 	// 11E0 - 11EF
-	// 11F0 - 11FF
-	// 1200 - 120F
+	// 11F0 - 11FF	
 	{ 0x10DE1200,	0x1043838B,	"Asus GeForce GTX 560 Ti" },
 	{ 0x10DE1200,	0x10438390,	"Asus GeForce GTX 560 Ti" },
 	{ 0x10DE1200,	0x104383BF,	"Asus GeForce GTX 560 Ti" },
@@ -1628,7 +1642,7 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE1201,	0x104383B4,	"Asus GeForce GTX 560" },
 	{ 0x10DE1201,	0x10DE0895,	"nVidia GeForce GTX 560" },
 	{ 0x10DE1201,	0x14622383,	"MSi GeForce GTX 560" },
-
+  // 1202 - 1205
 	{ 0x10DE1206,	0x10DE0958,	"nVidia GeForce GTX 555" },
 
 	{ 0x10DE1207,	0x174B0645,	"PC Partner GeForce GT 645" },
@@ -2685,14 +2699,14 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE1185,	NV_SUB_IDS,	"GeForce GTX 660" },
 	{ 0x10DE1188,	NV_SUB_IDS,	"GeForce GTX 690" },
 	{ 0x10DE1189,	NV_SUB_IDS,	"GeForce GTX 670" },
-  // 118A - 118F
+  // 118A - 118E
+  { 0x10DE118F,	NV_SUB_IDS,	"Tesla K10" },
 	// 1190 - 119F
 	// 11A0 - 11AF
 	// 11B0 - 11BF
 	{ 0x10DE11BC,	NV_SUB_IDS,	"Quadro K5000M" },
 	{ 0x10DE11BD,	NV_SUB_IDS,	"Quadro K4000M" },
 	{ 0x10DE11BE,	NV_SUB_IDS,	"Quadro K3000M" },
-	{ 0x10DE118F,	NV_SUB_IDS,	"Tesla K10" },
   { 0x10DE11C0,	NV_SUB_IDS,	"GeForce GTX 660" },
 	// 11C1 - 11CF
 	// 11D0 - 11DF
@@ -2780,16 +2794,21 @@ EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, VOID* rom, UINT16 arch)
 	EFI_STATUS Status;
 	EFI_PCI_IO_PROTOCOL		*PciIo;
 	PCI_TYPE00			Pci;
-
+  
   UINT32 vbios_vram = 0;
   UINT32 old_bar0_pramin = 0;
-
-  DBG("read_nVidia_ROM\n"); 
+  
+  DBG("read_nVidia_ROM\n");
   Status = gBS->OpenProtocol(nvda_dev->DeviceHandle, &gEfiPciIoProtocolGuid, (VOID**)&PciIo, gImageHandle, NULL, EFI_OPEN_PROTOCOL_GET_PROTOCOL);
-  if (EFI_ERROR(Status)) return EFI_NOT_FOUND;
+  if (EFI_ERROR(Status)) {
+    return EFI_NOT_FOUND;
+  }
+  
   Status = PciIo->Pci.Read(PciIo,EfiPciIoWidthUint32, 0, sizeof(Pci) / sizeof(UINT32), &Pci);
-  if (EFI_ERROR(Status)) return EFI_NOT_FOUND;
-
+  if (EFI_ERROR(Status)) {
+    return EFI_NOT_FOUND;
+  }
+  
   if (arch>=0x50) {
     DBG("Using PRAMIN fixups\n");
     Status = PciIo->Mem.Read(
@@ -2801,7 +2820,7 @@ EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, VOID* rom, UINT16 arch)
                              &vbios_vram
                              );
     vbios_vram = (vbios_vram & ~0xff) << 8;
-
+    
     Status = PciIo->Mem.Read(
                              PciIo,
                              EfiPciIoWidthUint32,
@@ -2810,12 +2829,12 @@ EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, VOID* rom, UINT16 arch)
                              1,
                              &old_bar0_pramin
                              );
-
+    
     if (vbios_vram == 0)
       vbios_vram = (old_bar0_pramin << 16) + 0xf0000;
-
+    
     vbios_vram >>= 16;
-
+    
     Status = PciIo->Mem.Write(
                               PciIo,
                               EfiPciIoWidthUint32,
@@ -2825,7 +2844,7 @@ EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, VOID* rom, UINT16 arch)
                               &vbios_vram
                               );
   }
-
+  
   Status = PciIo->Mem.Read(
                            PciIo,
                            EfiPciIoWidthUint8,
@@ -2834,7 +2853,7 @@ EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, VOID* rom, UINT16 arch)
                            NVIDIA_ROM_SIZE,
                            rom
                            );
-
+  
   if (arch>=0x50) {
     Status = PciIo->Mem.Write(
                               PciIo,
@@ -2845,7 +2864,7 @@ EFI_STATUS read_nVidia_PRAMIN(pci_dt_t *nvda_dev, VOID* rom, UINT16 arch)
                               &old_bar0_pramin
                               );
   }
-
+  
   if (EFI_ERROR(Status)) {
     DBG("read_nVidia_ROM failed\n");
     return Status;
