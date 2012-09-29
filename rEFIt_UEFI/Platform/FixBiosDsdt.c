@@ -988,10 +988,12 @@ UINT32 FindBin (UINT8 *dsdt, UINT32 len, CHAR8* bin, UINTN N)
 UINT32 FindMethod (UINT8 *dsdt, UINT32 len, CONST CHAR8* Name)
 {
   UINT32 i;
-  for (i=20; i<len; i++) {
-    if (((dsdt[i] == 0x14) || (dsdt[i+1] == 0x14)) &&
+  for (i=20; i<len-7; i++) {
+    if (((dsdt[i] == 0x14) || (dsdt[i+1] == 0x14) || (dsdt[i-1] == 0x14)) &&
         (dsdt[i+3] == Name[0]) && (dsdt[i+4] == Name[1]) &&
-        (dsdt[i+5] == Name[2]) && (dsdt[i+6] == Name[3])){
+        (dsdt[i+5] == Name[2]) && (dsdt[i+6] == Name[3])
+        ){
+      if (dsdt[i-1] == 0x14) return i;
       return (dsdt[i+1] == 0x14)?(i+2):(i+1); //pointer to size field 
     }
   }
@@ -3968,6 +3970,7 @@ UINT32 FIXSHUTDOWN_ASUS (UINT8 *dsdt, UINT32 len)
   adr = FindMethod(dsdt, len, "_PTS");
   if (!adr) {
     DBG("no _PTS???\n");
+    return len;
   }
   /*
       adr \  _  P  T  S       insert               offset
