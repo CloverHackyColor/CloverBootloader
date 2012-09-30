@@ -19,6 +19,10 @@
 #define DBG(...)	
 #endif
 
+// runtime debug
+#define DBG_RT(...)    if (gSettings.KPDebug) { Print(__VA_ARGS__); }
+
+
 EFI_PHYSICAL_ADDRESS    KernelRelocBase = 0;
 BootArgs1   *bootArgs1 = NULL;
 BootArgs2   *bootArgs2 = NULL;
@@ -874,12 +878,13 @@ KernelAndKextsPatcherStart(VOID)
   
   // we will call KernelAndKextPatcherInit() only if needed
   
+  DBG_RT(L"\nKernelCpu patch: ");
   if (gSettings.KPKernelCpu) {
     
     //
     // Kernel patches
     //
-    DBG(L"KernelCpu patch enabled");
+    DBG_RT(L"Enabled: ");
     if ((gCPUStructure.Family!=0x06 && AsciiStrStr(OSVersion,"10.7")!=0)||
         (gCPUStructure.Model==CPU_MODEL_ATOM &&
          ((AsciiStrStr(OSVersion,"10.7")!=0) || AsciiStrStr(OSVersion,"10.6")!=0)) ||
@@ -888,30 +893,58 @@ KernelAndKextsPatcherStart(VOID)
     {
       KernelAndKextPatcherInit();
       if (KernelData == NULL) {
+        if (gSettings.KPDebug) {
+          DBG_RT(L"ERROR: Kernel not found\n");
+          gBS->Stall(5000000);
+        }
         return;
       }
       
-      DBG(L"KernelCpu Start");
-      
       if(is64BitKernel) {
+        DBG_RT(L"64 bit patch ...");
         KernelPatcher_64(KernelData);
       } else {
+        DBG_RT(L"32 bit patch ...");
         KernelPatcher_32(KernelData);
       }
+      DBG_RT(L" OK\n");
+    } else {
+      DBG_RT(L" Not executed!\n");
     }
-    
+  } else {
+    DBG_RT(L"Not done - Disabled.\n");
+  }
+  if (gSettings.KPDebug) {
+    gBS->Stall(5000000);
   }
   
   //
   // Kext patches
   //
+  DBG_RT(L"\nKextPatches Needed: %c, Allowed: %c ... ",
+         (gSettings.KPKextPatchesNeeded ? L'Y' : L'n'),
+         (gSettings.KextPatchesAllowed ? L'Y' : L'n')
+         );
   if (gSettings.KPKextPatchesNeeded && gSettings.KextPatchesAllowed) {
     KernelAndKextPatcherInit();
     if (KernelData == NULL) {
+      if (gSettings.KPDebug) {
+        DBG_RT(L"ERROR: Kernel not found\n");
+        gBS->Stall(5000000);
+      }
       return;
     }
     
+    DBG_RT(L"Kext patching STARTED\n");
     KextPatcherStart();
+    DBG_RT(L"\nKext patching ENDED\n");
+    
+  } else {
+    DBG_RT(L"Not needed or not allowed\n");
+  }
+  if (gSettings.KPDebug) {
+    DBG_RT(L"pausing 10 secs ...\n\n");
+    gBS->Stall(10000000);
   }
 
   //
@@ -940,6 +973,5 @@ KernelAndKextsPatcherStart(VOID)
 
     if (!EFI_ERROR(Status)) KernelBooterExtensionsPatch(KernelData);
   }
-
   
 }

@@ -4,6 +4,8 @@
 <dict>
 	<key>KernelAndKextPatches</key>
 	<dict>
+		<key>Debug</key>
+		<string>No</string>
 		<key>KernelCpu</key>
 		<string>No</string>
 		<key>ATIConnectorsController</key>

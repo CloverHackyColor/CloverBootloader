@@ -620,6 +620,7 @@ typedef struct {
   CHAR16  LegacyBoot[32];
   
   // KernelAndKextPatches
+  BOOLEAN KPDebug;
   BOOLEAN KPKernelCpu;
   BOOLEAN KPKextPatchesNeeded;
   BOOLEAN KPAsusAICPUPM;

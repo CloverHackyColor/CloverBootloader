@@ -869,6 +869,14 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
     gSettings.KPKextPatchesNeeded = FALSE;
     dictPointer = GetProperty(dict,"KernelAndKextPatches");
     if (dictPointer) {
+      gSettings.KPDebug = FALSE;
+      prop = GetProperty(dictPointer,"Debug");
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+          gSettings.KPDebug = TRUE;
+        }
+      }
       prop = GetProperty(dictPointer,"KernelCpu");
       if(prop)
       {

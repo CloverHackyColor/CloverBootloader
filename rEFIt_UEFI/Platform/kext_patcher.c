@@ -18,6 +18,8 @@
 #define DBG(...)	
 #endif
 
+// runtime debug
+#define DBG_RT(...)    if (gSettings.KPDebug) { Print(__VA_ARGS__); }
 
 //
 // Searches Source for Search pattern of size SearchSize
@@ -142,7 +144,7 @@ VOID ATIConnectorsPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT
   UINTN   Num = 0;
   CHAR8   *BoundleId = NULL;
   
-  DBG(L"\nATIConnectorsPatch: driverAddr = %x, driverSize = %x\nController = %s\n",
+  DBG_RT(L"\nATIConnectorsPatch: driverAddr = %x, driverSize = %x\nController = %s\n",
       Driver, DriverSize, gSettings.KPATIConnectorsController);
   
   if (AsciiStrStr(InfoPlist, ATIKextBoundleId[0]) != NULL) {
@@ -152,13 +154,14 @@ VOID ATIConnectorsPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT
   } else if (AsciiStrStr(InfoPlist, "com.apple.kext.ATIFramebuffer") != NULL) {
     BoundleId = "com.apple.kext.ATIFramebuffer";
   }
-  DBG(L"Kext BoundleId = %a\n", BoundleId);
+  DBG_RT(L"Kext BoundleId = %a\n", BoundleId);
   
   
-  // number od occurences od Data should be 1
+  // number of occurences od Data should be 1
   Num = SearchAndCount(Driver, DriverSize, gSettings.KPATIConnectorsData, gSettings.KPATIConnectorsDataLen);
   if (Num > 1) {
-    Print(L"==> KPATIConnectorsData found %d times - skipping patching!\n", Num);
+    // error message - shoud always be printed
+    Print(L"==> KPATIConnectorsData found %d times in %a - skipping patching!\n", Num, BoundleId);
     gBS->Stall(5*1000000);
     return;
   }
@@ -170,8 +173,14 @@ VOID ATIConnectorsPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT
                          gSettings.KPATIConnectorsDataLen,
                          gSettings.KPATIConnectorsPatch,
                          1);
-  DBG(L"==> patched %d times!\n", Num);
-  //gBS->Stall(5*1000000);
+  if (gSettings.KPDebug) {
+    if (Num > 0) {
+      DBG_RT(L"==> patched %d times!\n", Num);
+    } else {
+      DBG_RT(L"==> NOT patched!\n");
+    }
+    gBS->Stall(5000000);
+  }
 }
 
 
@@ -193,7 +202,7 @@ VOID AsusAICPUPMPatch(UINT8 *Driver, UINT32 DriverSize)
   UINTN   Index2;
   UINTN   Count = 0;
   
-  DBG(L"\nAsusAICPUPMPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
+  DBG_RT(L"\nAsusAICPUPMPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
   
   // todo: we should scan only __text __TEXT
   for (Index1 = 0; Index1 < DriverSize; Index1++) {
@@ -206,13 +215,15 @@ VOID AsusAICPUPMPatch(UINT8 *Driver, UINT32 DriverSize)
           Count++;
           Driver[Index2] = 0x90;
           Driver[Index2 + 1] = 0x90;
-          DBG(L" %d. patched at 0x%x\n", Count, Index2);
+          DBG_RT(L" %d. patched at 0x%x\n", Count, Index2);
         }
       }
     }
   }
-  DBG(L"= %d patches\n", Count);
-  //gBS->Stall(5*1000000);
+  DBG_RT(L"= %d patches\n", Count);
+  if (gSettings.KPDebug) {
+    gBS->Stall(5000000);
+  }
 }
 
 
@@ -250,7 +261,7 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize)
   UINTN   NumLion_i386 = 0;
   UINTN   NumML = 0;
   
-  DBG(L"\nAppleRTCPatch: driverAddr = %x, driverSize = %x\nOSVersion (not reliable) = %a\n", Driver, DriverSize, OSVersion);
+  DBG_RT(L"\nAppleRTCPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
   
   if (is64BitKernel) {
     NumLion_X64 = SearchAndCount(Driver, DriverSize, LionSearch_X64, sizeof(LionSearch_X64));
@@ -270,20 +281,22 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize)
   
   if (NumLion_X64 == 1) {
     Num = SearchAndReplace(Driver, DriverSize, LionSearch_X64, sizeof(LionSearch_X64), LionReplace_X64, 1);
-    DBG(L"==> Lion X64: %d replaces done.\n", Num);
+    DBG_RT(L"==> Lion X64: %d replaces done.\n", Num);
   }
   else if (NumLion_i386 == 1) {
     Num = SearchAndReplace(Driver, DriverSize, LionSearch_i386, sizeof(LionSearch_i386), LionReplace_i386, 1);
-    DBG(L"==> Lion i386: %d replaces done.\n", Num);
+    DBG_RT(L"==> Lion i386: %d replaces done.\n", Num);
   }
   else if (NumML == 1) {
     Num = SearchAndReplace(Driver, DriverSize, MLSearch, sizeof(MLSearch), MLReplace, 1);
-    DBG(L"==> MountainLion X64: %d replaces done.\n", Num);
+    DBG_RT(L"==> MountainLion X64: %d replaces done.\n", Num);
   }
   else {
-    DBG(L"==> Patterns not found - no patching done.\n");
+    DBG_RT(L"==> Patterns not found - patching NOT done.\n");
   }
-  //gBS->Stall(5*1000000);
+  if (gSettings.KPDebug) {
+    gBS->Stall(5000000);
+  }
 }
 
 
@@ -307,7 +320,7 @@ VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, INT32 N) //CHAR8 *InfoPlist,
   
   UINTN   Num = 0;
   
-  DBG(L"\nAnyKextPatch: driverAddr = %x, driverSize = %x\AnyKext = %s\n",
+  DBG_RT(L"\nAnyKextPatch: driverAddr = %x, driverSize = %x\nAnyKext = %s\n",
       Driver, DriverSize, gSettings.AnyKext[N]);
     
   // patch
@@ -317,8 +330,14 @@ VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, INT32 N) //CHAR8 *InfoPlist,
                          gSettings.AnyKextDataLen[N],
                          gSettings.AnyKextPatch[N],
                          -1);
-  DBG(L"==> patched %d times!\n", Num);
-  //gBS->Stall(5*1000000);
+  if (gSettings.KPDebug) {
+    if (Num > 0) {
+      DBG_RT(L"==> patched %d times!\n", Num);
+    } else {
+      DBG_RT(L"==> NOT patched!\n");
+    }
+    gBS->Stall(5000000);
+  }
 }
 
 //
@@ -388,7 +407,7 @@ VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPl
     //others
     //
     for (i = 0; i < gSettings.NrKexts; i++) {
-      if ((AsciiStrStr(InfoPlist, gSettings.AnyKext[i]) != NULL) && (gSettings.AnyKextDataLen[i] > 0)) {
+      if ((gSettings.AnyKextDataLen[i] > 0) && (AsciiStrStr(InfoPlist, gSettings.AnyKext[i]) != NULL)) {
         AnyKextPatch(Driver, DriverSize, i);
       }
     }    
@@ -702,11 +721,18 @@ VOID PatchLoadedKexts(VOID)
 VOID KextPatcherStart(VOID)
 {
   if (isKernelcache) {
-    
+    DBG_RT(L"\nPatching kernelcache ... in 5 secs ...\n");
+    if (gSettings.KPDebug) {
+      gBS->Stall(5000000);
+    }
     PatchPrelinkedKexts();
     
   } else {
     
+    DBG_RT(L"\nPatching loaded kexts ... in 5 secs ...\n");
+    if (gSettings.KPDebug) {
+      gBS->Stall(5000000);
+    }
     PatchLoadedKexts();
     
   }
