@@ -591,6 +591,7 @@ typedef struct {
   BOOLEAN bDropMCFG;
   BOOLEAN bDropHPET;
   BOOLEAN bDropECDT;
+  BOOLEAN RememberBIOS;
   
   //Injections
   BOOLEAN StringInjector;
@@ -872,6 +873,9 @@ extern EFI_EVENT  OnReadyToBootEvent;
 extern EFI_EVENT  ExitBootServiceEvent;
 extern EFI_EVENT  mSimpleFileSystemChangeEvent;
 extern UINTN      gEvent;
+//mouse
+extern ACTION gAction;
+extern UINTN  gItemID;
 
 //CHAR8*   orgBiosDsdt;
 extern UINT64   BiosDsdt;
@@ -880,10 +884,12 @@ extern UINT8	acpi_cpu_count;
 extern CHAR8*   acpi_cpu_name[32];
 extern CHAR8*   OSVersion;
 extern BOOLEAN  SSSE3;
-
-VOID   FixBiosDsdt (UINT8* Dsdt);
 //-----------------------------------
 
+VOID        FixBiosDsdt (UINT8* Dsdt);
+EFI_STATUS  MouseBirth();
+VOID        KillMouse();
+EFI_STATUS  WaitForInputEvent(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault);
 
 VOID        WaitForSts(VOID);
 

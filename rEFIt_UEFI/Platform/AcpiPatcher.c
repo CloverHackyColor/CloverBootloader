@@ -969,7 +969,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   CHAR16*     AcpiOemPath = PoolPrint(L"%s\\ACPI\\patched", OEMPath);
   PathDsdt = PoolPrint(L"\\%s", gSettings.DsdtName);
 	
-  if (gFirmwareClover) {
+  if (gFirmwareClover || gSettings.RememberBIOS) {
     // although it work on Aptio, no need for the following on other UEFis
     
     //Slice - I want to begin from BIOS ACPI tables like with SMBIOS

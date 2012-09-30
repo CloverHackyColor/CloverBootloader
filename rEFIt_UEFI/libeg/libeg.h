@@ -165,8 +165,8 @@ typedef struct {
 } EG_IMAGE;
 
 typedef struct {
-  UINTN     XPos;
-  UINTN     YPos;
+  INTN     XPos;
+  INTN     YPos;
   UINTN     Width;
   UINTN     Height;
 } EG_RECT;

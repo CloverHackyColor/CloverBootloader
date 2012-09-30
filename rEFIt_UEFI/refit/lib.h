@@ -141,6 +141,32 @@ typedef struct {
   UINT32              DriveCRC32;
 } REFIT_VOLUME;
 
+//mouse types
+typedef enum {
+  NoEvents,
+  Move,
+  LeftClick,
+  RightClick,
+  DoubleClick,
+  ScrollClick,
+  ScrollDown,
+  ScrollUp
+} MOUSE_EVENT;
+
+typedef struct _pointers {
+  EFI_SIMPLE_POINTER_PROTOCOL *SimplePointerProtocol;
+  EG_IMAGE *Pointer;
+  EG_IMAGE *newImage;
+  EG_IMAGE *oldImage;
+  
+  EG_RECT  newPlace;
+  EG_RECT  oldPlace;
+  
+  EFI_TIME	LastClickTime;
+  EFI_SIMPLE_POINTER_STATE    State;
+  MOUSE_EVENT MouseEvent;
+} POINTERS;
+
 //GUI types
 typedef enum {
   BoolValue,

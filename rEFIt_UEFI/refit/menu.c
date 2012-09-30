@@ -962,8 +962,9 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
       } else if (HaveTimeout) {
         gBS->Stall(100000);
         TimeoutCountdown--;
-      } else
+      } else {
         gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &index);
+      }
       continue;
     }
     if (HaveTimeout) {
