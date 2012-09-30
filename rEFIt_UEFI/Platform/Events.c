@@ -308,7 +308,6 @@ GuiEventsInitialize ()
 	EFI_EVENT				Event;
 	VOID*				  	RegSimpleFileSystem = NULL;
 	
-	
 	gEvent = 0;
 	Status = gBS->CreateEvent (
 							   EVT_NOTIFY_SIGNAL,
@@ -323,6 +322,7 @@ GuiEventsInitialize ()
 											  Event,
 											  &RegSimpleFileSystem);
 	}
+	
 	
 	return Status;
 }  

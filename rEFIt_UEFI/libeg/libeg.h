@@ -245,6 +245,8 @@ VOID egDrawImageArea(IN EG_IMAGE *Image,
                      IN UINT64 AreaPosX, IN UINT64 AreaPosY,
                      IN UINT64 AreaWidth, IN UINT64 AreaHeight,
                      IN UINT64 ScreenPosX, IN UINT64 ScreenPosY);
+VOID egTakeImage(IN EG_IMAGE *Image, INTN ScreenPosX, INTN ScreenPosY,
+                 IN UINTN AreaWidth, IN UINTN AreaHeight);
 
 EFI_STATUS egScreenShot(VOID);
 

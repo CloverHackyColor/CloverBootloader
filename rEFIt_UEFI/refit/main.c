@@ -72,8 +72,8 @@
 
 EFI_HANDLE              gImageHandle;
 EFI_SYSTEM_TABLE*       gST;
-EFI_BOOT_SERVICES*		gBS; 
-EFI_RUNTIME_SERVICES*	gRS;
+EFI_BOOT_SERVICES*		  gBS; 
+EFI_RUNTIME_SERVICES*	  gRS;
 EFI_DXE_SERVICES*       gDS;
 
 static REFIT_MENU_ENTRY MenuEntryOptions  = { L"Options", TAG_OPTIONS, 1, 0, 'O', NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone, NULL };
@@ -434,29 +434,39 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   DBGT("StartLoader() start\n");
   egClearScreen(&DarkBackgroundPixel);
   MsgLog("Turbo=%c\n", gSettings.Turbo?'Y':'N');
-  MsgLog("PatchAPIC=%c\n", gSettings.PatchNMI?'Y':'N');
-  MsgLog("PatchVBios=%c\n", gSettings.PatchVBios?'Y':'N');
-      
+//  MsgLog("PatchAPIC=%c\n", gSettings.PatchNMI?'Y':'N');
+//  MsgLog("PatchVBios=%c\n", gSettings.PatchVBios?'Y':'N');
+//  DBG("KillMouse\n");
+  KillMouse();
+//    DBG("BeginExternalScreen\n");
   BeginExternalScreen(Entry->UseGraphicsMode, L"Booting OS");
   if (Entry->LoaderType == OSTYPE_OSX) {
     // first patchACPI and find PCIROOT and RTC
     // but before ACPI patch we need smbios patch
-    PatchSmbios();    
+//    DBG("PatchSmbios\n");
+    PatchSmbios();
+//    DBG("PatchACPI\n");
     PatchACPI(Entry->Volume);
-
+//DBG("GetOSVersion\n");
     Status = GetOSVersion(Entry->Volume);
     
     Entry->LoadOptions     = PoolPrint(L"%a", gSettings.BootArgs); //moved here, before using Entry ;)
+//    DBG("SetDevices\n");
     SetDevices();
-    
+//    DBG("SetFSInjection\n");
     SetFSInjection(Entry);
     //PauseForKey(L"SetFSInjection");
+//    DBG("SetVariablesForOSX\n");
     SetVariablesForOSX();
-    
+//    DBG("EventsInitialize\n");
     EventsInitialize();
+//    DBG("FinalizeSmbios\n");
     FinalizeSmbios();
+//    DBG("SetupDataForOSX\n");
     SetupDataForOSX();
+//    DBG("LoadKexts\n");
     LoadKexts(Entry);
+//    DBG("SetupBooterLog\n");
     DBGT("Closing log\n");
     Status = SetupBooterLog();
     
@@ -487,7 +497,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     ConOutOutputString = gST->ConOut->OutputString;
     gST->ConOut->OutputString = NullConOutOutputString;
   }
-  
+//  DBG("StartEFIImage\n");
   StartEFIImage(Entry->DevicePath, Entry->LoadOptions,
                 Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL);
   
@@ -544,15 +554,15 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
 //  StrCpy(IconFileName, LoaderPath);
   StrCpy(IconFileName, Volume->OSIconName);
 //  ReplaceExtension(IconFileName, L".icns");
-  if (FileExists(Volume->RootDir, IconFileName)){
+/*  if (FileExists(Volume->RootDir, IconFileName)){
     Entry->me.Image = LoadIcns(Volume->RootDir, IconFileName, 128);
   } else if (FileExists(SelfRootDir, IconFileName)) {
     Entry->me.Image = LoadIcns(SelfRootDir, IconFileName, 128);
-  }
+  } */
   //actions
   Entry->me.AtClick = ActionSelect;
   Entry->me.AtDoubleClick = ActionEnter;
-  Entry->me.AtRightClick = ActionHelp;
+  Entry->me.AtRightClick = ActionDetails;
   
   // detect specific loaders
   OSIconName = NULL;
@@ -628,7 +638,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       break;
   }
   Entry->me.ShortcutLetter = ShortcutLetter;
-  if (Entry->me.Image == NULL)
+//  if (Entry->me.Image == NULL)
     Entry->me.Image = LoadOSIcon(OSIconName, L"unknown", FALSE);
   
   // create the submenu
@@ -1366,10 +1376,11 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Vo
   //actions
   Entry->me.AtClick = ActionSelect;
   Entry->me.AtDoubleClick = ActionEnter;
-  Entry->me.AtRightClick = ActionHelp;
+  Entry->me.AtRightClick = ActionDetails;
   
   if ((GlobalConfig.HideBadges == HDBADGES_NONE) ||
-      (GlobalConfig.HideBadges == HDBADGES_INT && Volume->DiskKind != DISK_KIND_INTERNAL)){ //hide internal
+      (GlobalConfig.HideBadges == HDBADGES_INT &&
+       Volume->DiskKind != DISK_KIND_INTERNAL)) { //hide internal
     Entry->me.BadgeImage   = egCopyScaledImage(Volume->OSImage, 8);
     //    Entry->me.BadgeImage   = egLoadIcon(ThemeDir, PoolPrint(L"icons\\os_%s.icns", Volume->OSIconName), 32);
   } else if (GlobalConfig.HideBadges == HDBADGES_SWAP) {

@@ -162,7 +162,7 @@ typedef struct _pointers {
   EG_RECT  newPlace;
   EG_RECT  oldPlace;
   
-  EFI_TIME	LastClickTime;
+  UINT64	LastClickTime;  //not EFI_TIME
   EFI_SIMPLE_POINTER_STATE    State;
   MOUSE_EVENT MouseEvent;
 } POINTERS;
@@ -196,6 +196,8 @@ typedef enum {
   ActionEnter,
   ActionDeselect,
   ActionDestroy,
+  ActionOptions,
+  ActionDetails,
   ActionFinish
 } ACTION;
 

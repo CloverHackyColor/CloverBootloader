@@ -11,7 +11,8 @@
 // anyway thanks for good tutorial how to do and how not to do
 // 
 
-#include "Platform.h"
+//#include "Platform.h"
+#include "libegint.h"   //this includes platform.h 
 
 #ifndef DEBUG_ALL
 #define DEBUG_MOUSE 1
@@ -32,18 +33,40 @@ UINTN  PointerHeight = 16;
 ACTION gAction;
 UINTN  gItemID;
 
-POINTERS gPointer;
+POINTERS gPointer = {NULL, NULL, NULL, NULL, {0, 0, 16, 16}, {0, 0, 16, 16}, 0,
+  {0, 0, 0, FALSE, FALSE}, NoEvents};
+
+VOID RedrawPointer()
+{
+  //always assumed
+  /*  if (!gPointer.SimplePointerProtocol) {
+   return;
+   }*/
+  egDrawImage(gPointer.oldImage, gPointer.oldPlace.XPos, gPointer.oldPlace.YPos);
+  // take background image
+  egTakeImage(gPointer.oldImage, gPointer.newPlace.XPos, gPointer.newPlace.YPos,
+              PointerWidth, PointerHeight);
+  CopyMem(&gPointer.oldPlace, &gPointer.newPlace, sizeof(EG_RECT));
+  egRawCopy(gPointer.newImage->PixelData, gPointer.oldImage->PixelData,
+            PointerWidth, PointerHeight,
+            gPointer.newImage->Width,
+            gPointer.oldImage->Width);
+  egComposeImage(gPointer.newImage, gPointer.Pointer, 0, 0);
+  egDrawImage(gPointer.newImage, gPointer.oldPlace.XPos, gPointer.oldPlace.YPos);
+}
 
 EFI_STATUS MouseBirth()
 {
   EFI_STATUS Status = EFI_UNSUPPORTED;
-  EFI_SIMPLE_POINTER_MODE       *CurrentMode;
-  
+  EFI_SIMPLE_POINTER_MODE  *CurrentMode;
+//  EG_PIXEL pi;
+  if (gPointer.SimplePointerProtocol) { //do not double
+    return EFI_SUCCESS;
+  }
   Status = gBS->LocateProtocol (&gEfiSimplePointerProtocolGuid, NULL, (VOID**)&gPointer.SimplePointerProtocol);
-	if(EFI_ERROR(Status))
-	{
+	if(EFI_ERROR(Status)) {
 		MsgLog("No mouse!\n");
-    returm Status;
+    return Status;
 	}
   CurrentMode = gPointer.SimplePointerProtocol->Mode;
   DBG("Found Mouse device:\n");
@@ -52,15 +75,19 @@ EFI_STATUS MouseBirth()
   DBG(" - ResolutionZ=%d\n", CurrentMode->ResolutionZ);
   DBG(" - Left button %a present\n", CurrentMode->LeftButton?" ":"not");
   DBG(" - Right button %a present\n\n", CurrentMode->RightButton?" ":"not");
+  //TODO - config and menu?
+  CurrentMode->ResolutionX = 2;
+  CurrentMode->ResolutionY = 2;
+  CurrentMode->ResolutionZ = 0;
   
   //there may be also trackpad protocol but afaik it is not properly work and
   // trackpad is usually controlled by simple mouse driver
   
-  gPointer.Pointer = egLoadIcon(ThemeDir, L"icons\\pointer.icns", 32);
-	if(!gPointer.Pointer)
-	{
+  gPointer.Pointer = egLoadIcon(ThemeDir, L"icons\\pointer.icns", PointerWidth);
+	if(!gPointer.Pointer) {
 		DBG("No pointer image!\n");
-    returm EFI_NOT_FOUND;
+    gPointer.SimplePointerProtocol = NULL;
+    return EFI_NOT_FOUND;
 	}
   
   gPointer.oldPlace.XPos = UGAWidth >> 2;
@@ -71,45 +98,34 @@ EFI_STATUS MouseBirth()
   
   gPointer.oldImage = egCreateImage(PointerWidth, PointerHeight, FALSE);
   gPointer.newImage = egCreateFilledImage(PointerWidth, PointerHeight, FALSE, &MenuBackgroundPixel);
-  if (GraphicsOutput != NULL) {
-    GraphicsOutput->Blt(GraphicsOutput,
-                        (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)gPointer.oldImage->PixelData,
-                        EfiBltVideoToBltBuffer,
-                        gPointer.oldPlace.XPos,
-                        gPointer.oldPlace.YPos,
-                        0, 0, PointerWidth, PointerHeight,
-                        UGAWidth * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
-  }
+  egTakeImage(gPointer.oldImage, gPointer.oldPlace.XPos, gPointer.oldPlace.YPos,
+              PointerWidth, PointerHeight);
+/*
+  pi = gPointer.oldImage->PixelData[0];
+  DBG("Pixel data at start\n");
+  DBG(" Blue=%x Green=%x Red=%x Alfa=%x\n\n", pi.b, pi.g, pi.r, pi.a);
+ */
+  RedrawPointer();
   gPointer.MouseEvent = NoEvents;
-  returm Status;
+  return Status;
 }
 
 VOID KillMouse()
 {
+  EG_PIXEL pi;
+  
+  if (!gPointer.SimplePointerProtocol) {
+    return;
+  }
+  pi = gPointer.oldImage->PixelData[0];
+  DBG("Pixel data at mouse death\n");
+  DBG(" Blue=%x Green=%x Red=%x Alfa=%x\n\n", pi.b, pi.g, pi.r, pi.a);
+
   egFreeImage(gPointer.newImage);
   egFreeImage(gPointer.oldImage);
   egFreeImage(gPointer.Pointer);
   gPointer.MouseEvent = NoEvents;
-}
-
-VOID RedrawPointer()
-{
-  egDrawImage(gPointer.oldImage, gPointer.oldPlace.XPos, gPointer.oldPlace.YPos);
- // take background image
-  if (GraphicsOutput != NULL) {
-    GraphicsOutput->Blt(GraphicsOutput,
-                        (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)gPointer.oldImage->PixelData,
-                        EfiBltVideoToBltBuffer,
-                        gPointer.oldPlace.XPos,
-                        gPointer.oldPlace.YPos,
-                        0, 0, PointerWidth, PointerHeight,
-                        UGAWidth * sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
-  }
-  CopyMem(&gPointer.oldPlace, &gPointer.newPlace, sizeof(EG_RECT));
-  egRawCopy(&gPointer.newImage->PixelData, &gPointer.oldImage->PixelData, 
-            PointerWidth, PointerHeight, 0, 0);
-  egComposeImage(gPointer.newImage, gPointer.Pointer, 0, 0);
-  egDrawImage(gPointer.newImage, gPointer.oldPlace.XPos, gPointer.oldPlace.YPos);
+  gPointer.SimplePointerProtocol = NULL;
 }
 
 // input - tsc
@@ -125,7 +141,12 @@ VOID UpdatePointer()
   UINT64   Now;
   EFI_STATUS Status = EFI_SUCCESS;
   EFI_SIMPLE_POINTER_STATE	tmpState;
-  
+ 
+  //always assumed
+/*  if (!gPointer.SimplePointerProtocol) {
+    return;
+  }*/
+
 //  Now = gRS->GetTime(&Now, NULL);
   Now = AsmReadTsc();
   Status = gPointer.SimplePointerProtocol->GetState(gPointer.SimplePointerProtocol, &tmpState);
@@ -154,7 +175,6 @@ VOID UpdatePointer()
     if (gPointer.newPlace.YPos > UGAHeight) gPointer.newPlace.YPos = UGAHeight;
   
     RedrawPointer();
-
   }
 //  return Status;
 }
@@ -170,8 +190,13 @@ BOOLEAN MouseInRect(EG_RECT Place)
 EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
 {
   EFI_STATUS Status = EFI_TIMEOUT;
-  gAction = ActionNone;
   UINTN EntryId;
+  
+  gAction = ActionNone;
+  
+  if (!Screen) {
+    return EFI_TIMEOUT;
+  }
   if (gPointer.MouseEvent != NoEvents){
     for (EntryId = 0; EntryId < Screen->EntryCount; EntryId++) {
       if (MouseInRect(Screen->Entries[EntryId]->Place)) {
@@ -196,6 +221,7 @@ EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
   }
   if (gAction != ActionNone) {
     Status = EFI_SUCCESS;
+    gPointer.MouseEvent = NoEvents; //clear event as set action
   }
   return Status;
 }
@@ -203,10 +229,13 @@ EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
 #define ONE_SECOND  10000000
 #define ONE_MSECOND    10000
 
+// mouse events depends on Screen
+// TimeoutDefault for a wait in 0.1 seconds
+// return EFI_TIMEOUT if no inputs
 EFI_STATUS WaitForInputEvent(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault)
 {
   EFI_STATUS Status = EFI_SUCCESS;
-  UINTN TimeoutRemain = TimeoutDefault * 100;
+  UINTN TimeoutRemain = TimeoutDefault * 10;
   while (TimeoutRemain != 0) {
     
     Status = WaitForSingleEvent (gST->ConIn->WaitForKey, ONE_MSECOND * 10);
@@ -214,11 +243,13 @@ EFI_STATUS WaitForInputEvent(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault)
       break;
     }
     TimeoutRemain--;
-    UpdatePointer();
-    Status = CheckMouseEvent(Screen); //out: gItemID, gAction
-    if (Status != EFI_TIMEOUT) { //this check should return timeout if no mouse events occured
-      break;
-    }    
+    if (gPointer.SimplePointerProtocol) {
+      UpdatePointer();
+      Status = CheckMouseEvent(Screen); //out: gItemID, gAction
+      if (Status != EFI_TIMEOUT) { //this check should return timeout if no mouse events occured
+        break;
+      }
+    }
   }
   return Status;
 }

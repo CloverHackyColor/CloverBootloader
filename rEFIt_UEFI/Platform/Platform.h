@@ -482,7 +482,7 @@ typedef enum {
 #pragma pack(1)
 
 struct Symbol {
-	UINT32        refCount;
+	UINTN         refCount;
 	struct Symbol *next;
 	CHAR8         string[1];
 };
@@ -491,11 +491,11 @@ typedef struct Symbol Symbol, *SymbolPtr;
 
 typedef struct {
   
-  UINT32		type;
+  UINTN	  	type;
   CHAR8			*string;
   UINT8			*data;
   UINTN			dataLen;
-  UINT32		offset;
+  UINTN 		offset;
   VOID			*tag;
   VOID			*tagNext;
   
@@ -858,6 +858,7 @@ extern UINT32                   cPropSize;
 extern UINT8*                   cProperties;
 extern CHAR8*                   cDeviceProperties;
 extern INPUT_ITEM               *InputItems;
+extern EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput;
 
 extern EFI_GUID	gEfiAppleBootGuid;
 extern EFI_GUID	gEfiAppleNvramGuid;
@@ -881,7 +882,7 @@ extern UINTN  gItemID;
 //CHAR8*   orgBiosDsdt;
 extern UINT64   BiosDsdt;
 extern UINT32   BiosDsdtLen;
-extern UINT8	acpi_cpu_count;
+extern UINT8	  acpi_cpu_count;
 extern CHAR8*   acpi_cpu_name[32];
 extern CHAR8*   OSVersion;
 extern BOOLEAN  SSSE3;
@@ -906,7 +907,7 @@ VOID        ApplyInputs(VOID);
 
 EFI_STATUS  StrToGuid (IN  CHAR16   *Str, OUT EFI_GUID *Guid);
 EFI_STATUS  StrToGuidLE (IN  CHAR16   *Str, OUT EFI_GUID *Guid);
-UINT32       hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, UINT32 len);
+UINT32      hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, UINT32 len);
 UINT8       hexstrtouint8 (CHAR8* buf); //one or two hex letters to one byte
 
 EFI_STATUS  InitializeConsoleSim (VOID);
@@ -939,14 +940,14 @@ VOID       SetupDataForOSX();
 EFI_STATUS SetPrivateVarProto(VOID);
 VOID       SetDevices(VOID);
 VOID       ScanSPD();
-BOOLEAN setup_ati_devprop(pci_dt_t *ati_dev);
-BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev);
-CHAR8*  get_gma_model(IN UINT16 DeviceID);
-BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev);
+BOOLEAN    setup_ati_devprop(pci_dt_t *ati_dev);
+BOOLEAN    setup_gma_devprop(pci_dt_t *gma_dev);
+CHAR8      *get_gma_model(IN UINT16 DeviceID);
+BOOLEAN    setup_nvidia_devprop(pci_dt_t *nvda_dev);
 //CHAR8*  get_nvidia_model(IN UINT16 DeviceID);
-CHAR8 *get_nvidia_model(UINT32 device_id, UINT32 subsys_id);
+CHAR8      *get_nvidia_model(UINT32 device_id, UINT32 subsys_id);
 
-EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha);
+EG_IMAGE    *egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha);
 
 EFI_STATUS  PatchACPI(IN REFIT_VOLUME *Volume);
 EFI_STATUS  PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT);
@@ -980,14 +981,14 @@ VOID        FinalizeSmbios(VOID);
 
 EFI_STATUS  DisableUsbLegacySupport(VOID);
 
-UINT8		*Base64Decode(IN CHAR8 *EncodedData, OUT UINTN *DecodedSize);
-EFI_GUID	*FindGPTPartitionGuidInDevicePath(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath);
+UINT8		    *Base64Decode(IN CHAR8 *EncodedData, OUT UINTN *DecodedSize);
+EFI_GUID	  *FindGPTPartitionGuidInDevicePath(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath);
 
 // Inits debug time. Must be called after PrepatchSmbios().
-VOID		DbgTimeInit(VOID);
+VOID		    DbgTimeInit(VOID);
 // Returns debug time as string for print: secs:milis - sec:milis (from start - from last call)
 // Returned buffer should not be released.
-CHAR8*		DbgTime(VOID);
+CHAR8       *DbgTime(VOID);
 
 
 #endif

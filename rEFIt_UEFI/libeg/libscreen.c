@@ -49,7 +49,7 @@ static EFI_GUID UgaDrawProtocolGuid = EFI_UGA_DRAW_PROTOCOL_GUID;
 static EFI_UGA_DRAW_PROTOCOL *UgaDraw = NULL;
 
 static EFI_GUID GraphicsOutputProtocolGuid = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
-static EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput = NULL;
+EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput = NULL;
 
 static BOOLEAN egHasGraphics = FALSE;
 static UINTN egScreenWidth  = 1024;
@@ -384,6 +384,19 @@ VOID egDrawImageArea(IN EG_IMAGE *Image,
                      (UINTN)AreaPosX, (UINTN)AreaPosY, (UINTN)ScreenPosX, (UINTN)ScreenPosY,
                      (UINTN)AreaWidth, (UINTN)AreaHeight, (UINTN)Image->Width * 4);
     }
+}
+
+VOID egTakeImage(IN EG_IMAGE *Image, INTN ScreenPosX, INTN ScreenPosY,
+                 IN UINTN AreaWidth, IN UINTN AreaHeight)
+{
+  if (GraphicsOutput != NULL) {
+    GraphicsOutput->Blt(GraphicsOutput,
+                        (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)Image->PixelData,
+                        EfiBltVideoToBltBuffer,
+                        ScreenPosX,
+                        ScreenPosY,
+                        0, 0, AreaWidth, AreaHeight,  0);
+  }
 }
 
 //

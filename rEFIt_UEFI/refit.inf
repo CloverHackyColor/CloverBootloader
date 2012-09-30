@@ -87,6 +87,7 @@
 	Platform/Platform.h
 	Platform/platformdata.c
 	Platform/plist.c
+	Platform/Pointer.c
 	Platform/Settings.c
 	Platform/smbios.c
 #	Platform/SmBios.h

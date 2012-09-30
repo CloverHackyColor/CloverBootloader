@@ -160,7 +160,7 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   EG_PIXEL        *FontPixelData;
   UINT64           BufferLineOffset, FontLineOffset;
   UINT64           TextLength;
-  UINTN           i, c, c1;
+  UINTN            i, c, c1;
   UINT64           Shift = 0;
   
   // clip the text
@@ -189,7 +189,7 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
       else
         c -= 0x20;        
     } else {
-      c1 = (((c >=0x410) ? c -= 0x350 : c) & 0xff); //Russian letters
+      c1 = (((c >=0x410) ? (c -= 0x350) : c) & 0xff); //Russian letters
       c = c1;
     }
     
