@@ -151,27 +151,42 @@ EFI_STATUS SetVariablesForOSX()
   //  gIOHibernateBootNextData = OSData::withBytes(&bits, sizeof(bits));
   //  gIOHibernateBoot0082Data <- "boot-device-path"  
 
+  //
+  // Following deletes are just temporary to delete them from NVRAM
+  // for UEFI boot users. We are now setting those vars as volatile
+  // (does not go to NVRAM) since we are adding those
+  // on every boot. This will save some NVRAM writes on UEFI boards.
+  // Remove those lines in a month ot two.
+  // dmazar, 27/09/2012
+  //
+  Status = gRS->SetVariable(L"FirmwareFeatures", &gEfiAppleNvramGuid, 0, 0, NULL);
+  Status = gRS->SetVariable(L"FirmwareFeaturesMask", &gEfiAppleNvramGuid, 0, 0, NULL);
+  Status = gRS->SetVariable(L"MLB", &gEfiAppleNvramGuid, 0, 0, NULL);
+  Status = gRS->SetVariable(L"ROM", &gEfiAppleNvramGuid, 0, 0, NULL);
+  //
+  // end of delete lines
+  //
 
   
 	Status = gRS->SetVariable(L"BackgroundClear", &gEfiAppleNvramGuid,
                                          /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          sizeof(BackgroundClear), &BackgroundClear);
 	Status = gRS->SetVariable(L"FirmwareFeatures", &gEfiAppleNvramGuid,
-                                         EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                                         /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          sizeof(FwFeatures),&FwFeatures);
 	Status = gRS->SetVariable(L"FirmwareFeaturesMask", &gEfiAppleNvramGuid,
-                                         EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                                         /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          sizeof(FwFeaturesMask), &FwFeaturesMask);
 
-  Status = gRS->SetVariable(L"MLB", &gEfiAppleNvramGuid,
-                            EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                            SNLen, &gSettings.SerialNr);
+  if (gSettings.iCloudFix) {
+    Status = gRS->SetVariable(L"MLB", &gEfiAppleNvramGuid,
+                              EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                              SNLen, &gSettings.SerialNr);
  
-  Status = gRS->SetVariable(L"ROM", &gEfiAppleNvramGuid,
-                            EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                            6, &gSettings.SmUUID.Data4);
-  
-
+    Status = gRS->SetVariable(L"ROM", &gEfiAppleNvramGuid,
+                              EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                              6, &gSettings.SmUUID.Data4);
+  }
 
 // options variables
 //#if ICLOUD
