@@ -705,9 +705,9 @@ PrintRTVariables(
 {
 	EFI_STATUS		Status;
 	UINT32			Attributes;
-	UINT64			MaximumVariableStorageSize;
-	UINT64			RemainingVariableStorageSize;
-	UINT64			MaximumVariableSize;
+	//UINT64			MaximumVariableStorageSize;
+	//UINT64			RemainingVariableStorageSize;
+	//UINT64			MaximumVariableSize;
 	UINTN			VariableNameSize;
 	UINTN			VariableNameBufferSize;
 	UINTN			VariableDataSize;
@@ -717,6 +717,7 @@ PrintRTVariables(
 	//
 	// Print storage info
 	//
+	/*
 	PRINT("Vars storage:\n");
 	PRINT("   Attrib: MaximumVariableStorageSize, RemainingVariableStorageSize, MaximumVariableSize\n");
 	// NV+BS
@@ -737,6 +738,7 @@ PrintRTVariables(
 	} else {
 		PRINT("%ld, %ld, %ld\n", MaximumVariableStorageSize, RemainingVariableStorageSize, MaximumVariableSize);
 	}
+	*/
 	
 	//
 	// Print all vars

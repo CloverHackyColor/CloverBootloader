@@ -430,13 +430,14 @@ OvrExitBootServices(
 	
 	PRINT("->ExitBootServices(%p, 0x%x) ...\n", ImageHandle, MapKey);
 	
+	// Set flag to FALSE to stop some loggers from messing with memory
+	InBootServices = FALSE;
+	
 	// Call original
 	Status = gOrgBS.ExitBootServices(ImageHandle, MapKey);
 	
 	if (Status == EFI_SUCCESS) {
 	
-		// No more boot services - set flag to FALSE
-		InBootServices = FALSE;
 		PRINT("... ExitBootServices = %r\n", Status);
 		
 	} else {
@@ -448,9 +449,6 @@ OvrExitBootServices(
 		//
 		PRINT("... ExitBootServices = %r\n", Status);
 		PRINT("Forcing ExitBootServices ...\n");
-		
-		// Set flag to FALSE to stop some loggers from messing with memory
-		InBootServices = FALSE;
 		
 		Status = GetMemoryMapKey(&NewMapKey);
 		if (Status == EFI_SUCCESS) {

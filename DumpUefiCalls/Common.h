@@ -25,7 +25,7 @@
 //  gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
 // in package DSC file
 //
-#define LOG_TO_SCREEN		1
+#define LOG_TO_SCREEN		0
 #define LOG_TO_SERIAL		0
 #define LOG_TO_FILE			1
 
