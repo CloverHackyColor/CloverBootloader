@@ -114,6 +114,10 @@ typedef struct Boot_Video	Boot_Video;
 #define kBootArgsEfiMode32              32
 #define kBootArgsEfiMode64              64
 
+/* Bitfields for boot_args->flags */
+#define kBootArgsFlagRebootOnPanic	(1 << 0)
+#define kBootArgsFlagHiDPI		(1 << 1)
+
 typedef struct {
     UINT16    Revision;	/* Revision of boot_args structure */
     UINT16    Version;	/* Version of boot_args structure */
@@ -154,7 +158,7 @@ typedef struct {
 
 	UINT8			efiMode;    /* 32 = 32-bit, 64 = 64-bit */
 	UINT8			debugMode;  /* Bit field with behavior changes */
-	UINT8			__reserved1[2];
+	UINT16			flags;
 
 	CHAR8			CommandLine[BOOT_LINE_LENGTH];	/* Passed in command line */
 
@@ -176,7 +180,7 @@ typedef struct {
 	UINT64			efiRuntimeServicesVirtualPageStart; /* virtual address of defragmented runtime pages */
 
 	UINT32			efiSystemTable;   /* physical address of system table in runtime area */
-	UINT32			kernelSlide;      /* in Lion: reserved and 0; in ML: kernel image "sliding offset" (KASLR slide) */
+	UINT32			kslide;      /* in Lion: reserved and 0; in ML: kernel image "sliding offset" (KASLR slide) */
 
 	UINT32			performanceDataStart; /* physical address of log */
 	UINT32			performanceDataSize;
@@ -185,7 +189,13 @@ typedef struct {
 	UINT32			keyStoreDataSize;
 	UINT64			bootMemStart; /* physical address of interpreter boot memory */
 	UINT64			bootMemSize;
-	UINT32			__reserved4[738];
+	UINT64			PhysicalMemorySize;
+	UINT64			FSBFrequency;
+	UINT64			pciConfigSpaceBaseAddress;
+	UINT32			pciConfigSpaceStartBusNumber;
+	UINT32			pciConfigSpaceEndBusNumber;
+	UINT32			__reserved4[730];
+    
 
 } BootArgs2;
 

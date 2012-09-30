@@ -772,14 +772,14 @@ FindBootArgs(VOID)
     {
       // set vars
       dtRoot = (CHAR8*)(UINTN)bootArgs2->deviceTreeP;
-      KernelSlide = bootArgs2->kernelSlide;
+      KernelSlide = bootArgs2->kslide;
       
       DBG(L"Found bootArgs2 at 0x%08x, DevTree at %p\n", ptr, dtRoot);
       //DBG(L"bootArgs2->kaddr = 0x%08x and bootArgs2->ksize =  0x%08x\n", bootArgs2->kaddr, bootArgs2->ksize);
       //DBG(L"bootArgs2->efiMode = 0x%02x\n", bootArgs2->efiMode);
       DBG(L"bootArgs2->CommandLine = %a\n", bootArgs2->CommandLine);
       DBG(L"bootArgs2->__reserved1[] = %x %x\n", bootArgs2->__reserved1[0], bootArgs2->__reserved1[1]);
-      DBG(L"bootArgs2->kernelSlide = %x\n", bootArgs2->kernelSlide);
+      DBG(L"bootArgs2->kslide = %x\n", bootArgs2->kslide);
       //gBS->Stall(5000000);
       
       // disable other pointer
@@ -837,7 +837,7 @@ KernelAndKextPatcherInit(VOID)
   }
   
   // Find kernel Mach-O header:
-  // for ML: bootArgs2->kernelSlide + 0x00200000
+  // for ML: bootArgs2->kslide + 0x00200000
   // for older versions: just 0x200000
   // for AptioFix booting - it's always at KernelRelocBase + 0x200000
   KernelData = (VOID*)(UINTN)(KernelSlide + KernelRelocBase + 0x00200000);
