@@ -2684,7 +2684,7 @@
 		12D6308E14CEA05E00E5898F /* UsbMassImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbMassImpl.h; sourceTree = "<group>"; };
 		12D6308F14CEA05E00E5898F /* VesaBiosExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VesaBiosExtensions.h; sourceTree = "<group>"; };
 		12DE470B1581D0B6008187A7 /* AcpiAml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AcpiAml.h; sourceTree = "<group>"; };
-		12E06DFA15CBC24D0069E011 /* kext_inject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kext_inject.c; sourceTree = "<group>"; };
+		12E06DFA15CBC24D0069E011 /* kext_inject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kext_inject.c; sourceTree = "<group>"; usesTabs = 1; };
 		12E06DFB15CBC24D0069E011 /* kext_inject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kext_inject.h; sourceTree = "<group>"; };
 		260720AF15907388009CC463 /* DbgTime.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DbgTime.c; sourceTree = "<group>"; };
 		261A9E611599E0340006F036 /* kernel_patcher.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = kernel_patcher.c; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; xcLanguageSpecificationIdentifier = xcode.lang.c; };

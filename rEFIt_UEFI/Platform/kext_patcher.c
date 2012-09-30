@@ -721,7 +721,7 @@ VOID PatchLoadedKexts(VOID)
 VOID KextPatcherStart(VOID)
 {
   if (isKernelcache) {
-    DBG_RT(L"\nPatching kernelcache ... in 5 secs ...\n");
+    DBG_RT(L"Patching kernelcache ...\n");
     if (gSettings.KPDebug) {
       gBS->Stall(5000000);
     }
@@ -729,15 +729,13 @@ VOID KextPatcherStart(VOID)
     
   } else {
     
-    DBG_RT(L"\nPatching loaded kexts ... in 5 secs ...\n");
+    DBG_RT(L"Patching loaded kexts ...\n");
     if (gSettings.KPDebug) {
       gBS->Stall(5000000);
     }
     PatchLoadedKexts();
     
   }
-  
-  //gBS->Stall(20000000);
 }
 
 

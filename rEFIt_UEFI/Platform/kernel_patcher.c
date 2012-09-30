@@ -935,7 +935,7 @@ KernelAndKextsPatcherStart(VOID)
       return;
     }
     
-    DBG_RT(L"Kext patching STARTED\n");
+    DBG_RT(L"\nKext patching STARTED\n");
     KextPatcherStart();
     DBG_RT(L"\nKext patching ENDED\n");
     
@@ -943,7 +943,7 @@ KernelAndKextsPatcherStart(VOID)
     DBG_RT(L"Not needed or not allowed\n");
   }
   if (gSettings.KPDebug) {
-    DBG_RT(L"pausing 10 secs ...\n\n");
+    DBG_RT(L"Pausing 10 secs ...\n\n");
     gBS->Stall(10000000);
   }
 

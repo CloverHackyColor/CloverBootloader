@@ -8,6 +8,9 @@
 #define DBG(...)
 #endif
 
+// runtime debug
+#define DBG_RT(...)    if (gSettings.KPDebug) { Print(__VA_ARGS__); }
+
 
 ////////////////////
 // globals
@@ -273,8 +276,21 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
 	UINTN					KextBase = 0;
 	_DeviceTreeBuffer		*mm;
 	_BooterKextFileInfo		*drvinfo;
+	
+	UINT32					KextCount;
+	UINTN					Index;
+	
 
-	if (GetKextCount() == 0) return EFI_SUCCESS;
+	DBG_RT(L"\nInjectKexts: ");
+	KextCount = GetKextCount();
+	if (KextCount == 0) {
+		DBG_RT(L"no kexts to inject.\nPausing 5 secs ...\n");
+		if (gSettings.KPDebug) {
+			gBS->Stall(5000000);
+		}
+		return EFI_NOT_FOUND;
+	}
+	DBG_RT(L"%d kexts ...\n", KextCount);
 
 	// kextsBase = Desc->PhysicalStart + (((UINTN) Desc->NumberOfPages) * EFI_PAGE_SIZE);
 	// kextsPages = EFI_SIZE_TO_PAGES(kext.length);
@@ -315,7 +331,7 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
 	}
 
 	if (drvPtr == 0 || infoPtr == 0 || extraPtr == 0 || drvPtr > infoPtr || drvPtr > extraPtr || infoPtr > extraPtr) {
-		Print(L"\nInvalid device tree for kext injection");
+		Print(L"\nInvalid device tree for kext injection\n");
         gBS->Stall(5000000);
 		return EFI_INVALID_PARAMETER;
 	}
@@ -333,6 +349,7 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
 
 	KextBase = RoundPage(dtEntry + *deviceTreeLength);
 	if(!IsListEmpty(&gKextList)) {
+		Index = 1;
 		for (Link = gKextList.ForwardLink; Link != &gKextList; Link = Link->ForwardLink) {
 			KextEntry = CR(Link, KEXT_ENTRY, Link, KEXT_SIGNATURE);
 
@@ -352,9 +369,15 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
 
 			drvPtr += sizeof(DeviceTreeNodeProperty) + sizeof(_DeviceTreeBuffer);
 			KextBase = RoundPage(KextBase + KextEntry->kext.length);
+			DBG_RT(L" %d - %a\n", Index, (CHAR8 *)(UINTN)drvinfo->bundlePathPhysAddr);
+			Index++;
 		}
 	}
 
+	if (gSettings.KPDebug) {
+		DBG_RT(L"Done.\n");
+		gBS->Stall(5000000);
+	}
 	return EFI_SUCCESS;
 }
 
@@ -391,7 +414,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *KernelData)
   UINTN   NumLion_i386 = 0;
   UINTN   NumML = 0;
   
-  DBG(L"\nKernelBooterExtensionsPatch: kernelAddr = %x\nOSVersion (not reliable) = %a\n", KernelData, OSVersion);
+  DBG_RT(L"\nPatching kernel for injected kexts\n");
   
   if (is64BitKernel) {
 	NumLion_X64 = SearchAndCount(KernelData, KERNEL_MAX_SIZE, KBELionSearch_X64, sizeof(KBELionSearch_X64));
@@ -403,27 +426,30 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *KernelData)
   if (NumLion_X64 + NumLion_i386 + NumML > 1) {
 	// more then one pattern found - we do not know what to do with it
 	// and we'll skipp it
-	DBG(L"==> ERROR: multiple patterns found (LionX64: %d, Lioni386: %d, ML: %d) - skipping patching!\n",
+	Print(L"\nERROR patching kernel for injected kexts:\nmultiple patterns found (LionX64: %d, Lioni386: %d, ML: %d) - skipping patching!\n",
 		NumLion_X64, NumLion_i386, NumML);
-	//gBS->Stall(10000000);
+	gBS->Stall(10000000);
 	return;
   }
   
   if (NumLion_X64 == 1) {
 	Num = SearchAndReplace(KernelData, KERNEL_MAX_SIZE, KBELionSearch_X64, sizeof(KBELionSearch_X64), KBELionReplace_X64, 1);
-	DBG(L"==> Lion X64: %d replaces done.\n", Num);
+	DBG_RT(L"==> Lion X64: %d replaces done.\n", Num);
   }
   else if (NumLion_i386 == 1) {
 	Num = SearchAndReplace(KernelData, KERNEL_MAX_SIZE, KBELionSearch_i386, sizeof(KBELionSearch_i386), KBELionReplace_i386, 1);
-	DBG(L"==> Lion i386: %d replaces done.\n", Num);
+	DBG_RT(L"==> Lion i386: %d replaces done.\n", Num);
   }
   else if (NumML == 1) {
 	Num = SearchAndReplace(KernelData, KERNEL_MAX_SIZE, KBEMLSearch, sizeof(KBEMLSearch), KBEMLReplace, 1);
-	DBG(L"==> MountainLion X64: %d replaces done.\n", Num);
+	DBG_RT(L"==> MountainLion X64: %d replaces done.\n", Num);
   }
   else {
-	DBG(L"==> Patterns not found - no patching done.\n");
+	DBG_RT(L"==> ERROR: NOT patched - unknown kernel.\n");
   }
   
-  //gBS->Stall(5000000);
+  if (gSettings.KPDebug) {
+    DBG_RT(L"Pausing 5 secs ...\n");
+    gBS->Stall(5000000);
+  }
 }
