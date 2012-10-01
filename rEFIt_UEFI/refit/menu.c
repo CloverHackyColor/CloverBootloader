@@ -273,6 +273,8 @@ VOID FillInputs(VOID)
   InputItemsCount = 70;
   InputItems[InputItemsCount].ItemType = Decimal;  //70
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.PointerSpeed);
+  InputItems[InputItemsCount].ItemType = Decimal;  //71
+  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.DoubleClickTime);
 
 }
 
@@ -453,14 +455,19 @@ VOID ApplyInputs(VOID)
     }
   }
   gSettings.FixDsdt = k;
+  DBG("Applyed FixDsdt=%04x\n", k);
   
   i = 70;
   if (InputItems[i].Valid) {
     gSettings.PointerSpeed = StrDecimalToUintn(InputItems[i].SValue);
     DBG("Pointer Speed=%d\n", gSettings.PointerSpeed);
   }
+  i++;
+  if (InputItems[i].Valid) {
+    gSettings.DoubleClickTime = StrDecimalToUintn(InputItems[i].SValue);
+    DBG("DoubleClickTime=%d ms\n", gSettings.DoubleClickTime);
+  }
   
- 
   SaveSettings(); 
 }
 
@@ -2271,14 +2278,24 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.Title = PoolPrint(L"Pointer speed:");
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[70].SValue); //cursor
-    InputBootArgs->Entry.ShortcutLetter = 'Q';
+    InputBootArgs->Entry.ShortcutLetter = 'P';
     InputBootArgs->Item = &InputItems[70];    
     InputBootArgs->Entry.AtClick = ActionSelect;
     InputBootArgs->Entry.AtDoubleClick = ActionEnter;
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     
-    //18
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs->Entry.Title = PoolPrint(L"DoubleClick Time [ms]:");
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = StrLen(InputItems[71].SValue); //cursor
+    InputBootArgs->Entry.ShortcutLetter = 'D';
+    InputBootArgs->Item = &InputItems[71];
+    InputBootArgs->Entry.AtClick = ActionSelect;
+    InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+    
+    //18
+ /*   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     UnicodeSPrint(Flags, 255, L"Backlight level:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
@@ -2292,7 +2309,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.AtClick = ActionSelect;
     InputBootArgs->Entry.AtDoubleClick = ActionEnter;
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-    
+*/    
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     UnicodeSPrint(Flags, 255, L"Drop OEM APIC:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
@@ -2372,7 +2389,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   //          ApplyInputs();
             if ((*ChosenEntry)->SubScreen->ID == SCREEN_DSDT) {
               UnicodeSPrint((*ChosenEntry)->Title, 255, L"DSDT fix mask [0x%04x]->", gSettings.FixDsdt);
-              MsgLog("@ESC: %s", (*ChosenEntry)->Title);
+              MsgLog("@ESC: %s\n", (*ChosenEntry)->Title);
             }
             break;
           }
@@ -2380,9 +2397,15 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
             //enter input dialog
             SubMenuExit = 0;
             if ((*ChosenEntry)->SubScreen->ID == SCREEN_DSDT) {
+              CHAR16 *TmpTitle;
               ApplyInputs();
-              UnicodeSPrint((*ChosenEntry)->Title, 255, L"DSDT fix mask [0x%04x]->", gSettings.FixDsdt);
-              MsgLog("@ENTER: %s", (*ChosenEntry)->Title);
+              TmpTitle = PoolPrint(L"DSDT fix mask [0x%04x]->", gSettings.FixDsdt);
+         //     UnicodeSPrint((*ChosenEntry)->Title, 255, L"DSDT fix mask [0x%04x]->", gSettings.FixDsdt);
+              MsgLog("@ENTER: tmp=%s\n", TmpTitle);
+              while (*TmpTitle) {
+                *(*ChosenEntry)->Title++ = *TmpTitle++;
+              }
+              MsgLog("@ENTER: choosen=%s\n", (*ChosenEntry)->Title);
             }
           }
         } //while(!SubMenuExit)

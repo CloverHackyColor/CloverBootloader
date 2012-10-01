@@ -286,5 +286,7 @@ VOID GetDefaultSettings(VOID)
   gSettings.ChassisType = 0;
   StrCpy(gSettings.DsdtName, L"DSDT.aml");
   gSettings.BacklightLevel = 0xFFFF; //0x0503; -- the value from MBA52
+  gSettings.PointerSpeed = 2;
+  gSettings.DoubleClickTime = 500;
 
 }

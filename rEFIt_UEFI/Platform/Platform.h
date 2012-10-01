@@ -655,6 +655,7 @@ typedef struct {
   
   //Pointer
   INTN    PointerSpeed;
+  UINT64  DoubleClickTime;
   
 } SETTINGS_DATA;
 

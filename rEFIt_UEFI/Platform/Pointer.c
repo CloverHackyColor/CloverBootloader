@@ -41,13 +41,8 @@ VOID HidePointer()
   egDrawImage(gPointer.oldImage, gPointer.oldPlace.XPos, gPointer.oldPlace.YPos);
 }
 
-VOID RedrawPointer()
+VOID DrawPointer()
 {
-  //always assumed
-  /*  if (!gPointer.SimplePointerProtocol) {
-   return;
-   }*/
-  HidePointer();
   // take background image
   egTakeImage(gPointer.oldImage, gPointer.newPlace.XPos, gPointer.newPlace.YPos,
               PointerWidth, PointerHeight);
@@ -58,6 +53,17 @@ VOID RedrawPointer()
             gPointer.oldImage->Width);
   egComposeImage(gPointer.newImage, gPointer.Pointer, 0, 0);
   egDrawImage(gPointer.newImage, gPointer.oldPlace.XPos, gPointer.oldPlace.YPos);
+  
+}
+
+VOID RedrawPointer()
+{
+  //always assumed
+  /*  if (!gPointer.SimplePointerProtocol) {
+   return;
+   }*/
+  HidePointer();
+  DrawPointer();
 }
 
 EFI_STATUS MouseBirth()
@@ -66,7 +72,7 @@ EFI_STATUS MouseBirth()
   EFI_SIMPLE_POINTER_MODE  *CurrentMode;
 //  EG_PIXEL pi;
   if (gPointer.SimplePointerProtocol) { //do not double
-    RedrawPointer();
+    DrawPointer();
     return EFI_SUCCESS;
   }
   Status = gBS->LocateProtocol (&gEfiSimplePointerProtocolGuid, NULL, (VOID**)&gPointer.SimplePointerProtocol);
@@ -95,7 +101,7 @@ EFI_STATUS MouseBirth()
     gPointer.SimplePointerProtocol = NULL;
     return EFI_NOT_FOUND;
 	}
-  
+  gPointer.LastClickTime = AsmReadTsc();
   gPointer.oldPlace.XPos = UGAWidth >> 2;
   gPointer.oldPlace.YPos = UGAHeight >> 2;
   gPointer.oldPlace.Width = PointerWidth;
@@ -111,21 +117,21 @@ EFI_STATUS MouseBirth()
   DBG("Pixel data at start\n");
   DBG(" Blue=%x Green=%x Red=%x Alfa=%x\n\n", pi.b, pi.g, pi.r, pi.a);
  */
-  RedrawPointer();
+  DrawPointer();
   gPointer.MouseEvent = NoEvents;
   return Status;
 }
 
 VOID KillMouse()
 {
-  EG_PIXEL pi;
+//  EG_PIXEL pi;
   
   if (!gPointer.SimplePointerProtocol) {
     return;
   }
-  pi = gPointer.oldImage->PixelData[0];
-  DBG("Pixel data at mouse death\n");
-  DBG(" Blue=%x Green=%x Red=%x Alfa=%x\n\n", pi.b, pi.g, pi.r, pi.a);
+//  pi = gPointer.oldImage->PixelData[0];
+  DBG("Mouse death\n");
+//  DBG(" Blue=%x Green=%x Red=%x Alfa=%x\n\n", pi.b, pi.g, pi.r, pi.a);
 
   egFreeImage(gPointer.newImage);
   egFreeImage(gPointer.oldImage);
@@ -159,7 +165,7 @@ VOID UpdatePointer()
   if (!EFI_ERROR(Status)) {
     if (gPointer.State.LeftButton && !tmpState.LeftButton) { //release left
       //TODO - time for double click 500ms into menu
-      if (TimeDiff(gPointer.LastClickTime, Now) < 500) {
+      if (TimeDiff(gPointer.LastClickTime, Now) < gSettings.DoubleClickTime) {
         gPointer.MouseEvent = DoubleClick;
       } else {
         gPointer.MouseEvent = LeftClick;

@@ -6,6 +6,8 @@
 	<dict>
 		<key>Speed</key>
 		<string>8</string>
+		<key>DoubleClickTime</key>
+		<string>500</string>
 	</dict>
 	<key>KernelAndKextPatches</key>
 	<dict>

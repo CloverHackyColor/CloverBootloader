@@ -424,6 +424,12 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
         gSettings.PointerSpeed = StrDecimalToUintn((CHAR16*)&UStr[0]);
       }
+      prop = GetProperty(dictPointer, "DoubleClickTime");
+      if(prop) {
+        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+        gSettings.DoubleClickTime = StrDecimalToUintn((CHAR16*)&UStr[0]);
+      }
+      
     }
     
     //Graphics
