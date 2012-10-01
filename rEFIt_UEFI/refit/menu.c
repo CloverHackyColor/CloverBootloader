@@ -2275,7 +2275,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Item = &InputItems[70];    
     InputBootArgs->Entry.AtClick = ActionSelect;
     InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     
     //18
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
@@ -2290,6 +2290,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.SubScreen = NULL;
     InputBootArgs->Item = &InputItems[18];
     InputBootArgs->Entry.AtClick = ActionSelect;
+    InputBootArgs->Entry.AtDoubleClick = ActionEnter;
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
