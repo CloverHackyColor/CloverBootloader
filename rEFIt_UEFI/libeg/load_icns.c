@@ -167,7 +167,7 @@ EG_IMAGE * egDecodeICNS(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ic
             
             Ptr += BlockLen;
         }
-        
+        //TODO - take different larger size if not found
         /* FUTURE: try to load a different size and scale it later
             if (DataPtr == NULL && FetchPixelSize == 32) {
                 FetchPixelSize = 128;

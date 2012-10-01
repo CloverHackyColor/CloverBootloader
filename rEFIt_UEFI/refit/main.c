@@ -1301,7 +1301,7 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
         BltImageAlpha(BootLogoImage,
                       RShiftU64(UGAWidth  - BootLogoImage->Width, 1),
                       RShiftU64(UGAHeight - BootLogoImage->Height, 1),
-                      &StdBackgroundPixel, 1);
+                      &StdBackgroundPixel, 16);
   
 /*    Status = ExtractLegacyLoaderPaths(DiscoveredPathList, MAX_DISCOVERED_PATHS, LegacyLoaderList);
     if (!EFI_ERROR(Status)) {

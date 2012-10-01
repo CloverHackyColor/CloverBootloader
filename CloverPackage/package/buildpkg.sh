@@ -667,12 +667,13 @@ makedistribution ()
 	xar -c -f "${1%/*}/${packagename// /}_${version}_r${revision}.pkg" --compression none .
 	popd >/dev/null
 
-    SetFile -a C "${1%/*}/${packagename// /}_${version}_r${revision}.pkg"
-
-#    DeRez -only icns "${pkgroot}/Icons/CloverPKG.icns" > tempicns.rsrc
-#    Rez -append tempicns.rsrc -o "${1%/*}/${packagename// /}_${version}_r${revision}_EFI_x32_x64.pkg"
-#    SetFile -a C "${1%/*}/${packagename// /}_${version}_r${revision}_EFI_x32_x64.pkg"
-#    rm -f tempicns.rsrc
+	# Icon pkg reworked by ErmaC
+	ditto -xk "${pkgroot}/Icon.zip" "${1%/*}/${packagename}"
+	DeRez -only icns "${1%/*}/${packagename}/Icon.icns" > tempicns.rsrc
+	Rez -append tempicns.rsrc -o "${1%/*}/${packagename// /}_${version}_r${revision}.pkg"
+	SetFile -a C "${1%/*}/${packagename// /}_${version}_r${revision}.pkg"
+	rm -R "${1%/*}/${packagename}"
+	rm -rf tempicns.rsrc
 # End
 
 	md5=$( md5 "${1%/*}/${packagename// /}_${version}_r${revision}.pkg" | awk {'print $4'} )

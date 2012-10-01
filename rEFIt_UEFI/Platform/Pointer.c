@@ -28,13 +28,18 @@
 
 
 //TODO - make them theme dependent?
-UINTN  PointerWidth = 16;
-UINTN  PointerHeight = 16;
+UINTN  PointerWidth = 32;
+UINTN  PointerHeight = 32;
 ACTION gAction;
 UINTN  gItemID;
 
-POINTERS gPointer = {NULL, NULL, NULL, NULL, {0, 0, 16, 16}, {0, 0, 16, 16}, 0,
+POINTERS gPointer = {NULL, NULL, NULL, NULL, {0, 0, 32, 32}, {0, 0, 32, 32}, 0,
   {0, 0, 0, FALSE, FALSE}, NoEvents};
+
+VOID HidePointer()
+{
+  egDrawImage(gPointer.oldImage, gPointer.oldPlace.XPos, gPointer.oldPlace.YPos);
+}
 
 VOID RedrawPointer()
 {
@@ -42,7 +47,7 @@ VOID RedrawPointer()
   /*  if (!gPointer.SimplePointerProtocol) {
    return;
    }*/
-  egDrawImage(gPointer.oldImage, gPointer.oldPlace.XPos, gPointer.oldPlace.YPos);
+  HidePointer();
   // take background image
   egTakeImage(gPointer.oldImage, gPointer.newPlace.XPos, gPointer.newPlace.YPos,
               PointerWidth, PointerHeight);
@@ -61,6 +66,7 @@ EFI_STATUS MouseBirth()
   EFI_SIMPLE_POINTER_MODE  *CurrentMode;
 //  EG_PIXEL pi;
   if (gPointer.SimplePointerProtocol) { //do not double
+    RedrawPointer();
     return EFI_SUCCESS;
   }
   Status = gBS->LocateProtocol (&gEfiSimplePointerProtocolGuid, NULL, (VOID**)&gPointer.SimplePointerProtocol);
@@ -76,8 +82,8 @@ EFI_STATUS MouseBirth()
   DBG(" - Left button %a present\n", CurrentMode->LeftButton?" ":"not");
   DBG(" - Right button %a present\n\n", CurrentMode->RightButton?" ":"not");
   //TODO - config and menu?
-  CurrentMode->ResolutionX = 2;
-  CurrentMode->ResolutionY = 2;
+  CurrentMode->ResolutionX = gSettings.PointerSpeed;
+  CurrentMode->ResolutionY = gSettings.PointerSpeed;
   CurrentMode->ResolutionZ = 0;
   
   //there may be also trackpad protocol but afaik it is not properly work and

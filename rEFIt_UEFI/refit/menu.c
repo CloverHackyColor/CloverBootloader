@@ -269,6 +269,11 @@ VOID FillInputs(VOID)
     InputItems[InputItemsCount].BValue = bit;
     InputItems[InputItemsCount++].SValue = bit?L"[+]":L"[ ]";     
   }
+  
+  InputItemsCount = 70;
+  InputItems[InputItemsCount].ItemType = Decimal;  //70
+  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.PointerSpeed);
+
 }
 
 VOID ApplyInputs(VOID)
@@ -448,6 +453,13 @@ VOID ApplyInputs(VOID)
     }
   }
   gSettings.FixDsdt = k;
+  
+  i = 70;
+  if (InputItems[i].Valid) {
+    gSettings.PointerSpeed = StrDecimalToUintn(InputItems[i].SValue);
+    DBG("Pointer Speed=%d\n", gSettings.PointerSpeed);
+  }
+  
  
   SaveSettings(); 
 }
@@ -1335,7 +1347,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       if (Screen->TitleImage)
         BltImageAlpha(Screen->TitleImage,
                       EntriesPosX - (Screen->TitleImage->Width + TITLEICON_SPACING), EntriesPosY,
-                      &MenuBackgroundPixel, 1);
+                      &MenuBackgroundPixel, 16);
       if (Screen->InfoLineCount > 0) {
 //        DBG("painting InfoLines count=%d x=%d\n", Screen->InfoLineCount, EntriesPosX);
         for (i = 0; i < (INTN)Screen->InfoLineCount; i++) {
@@ -1350,7 +1362,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       break;
       
     case MENU_FUNCTION_CLEANUP:
-      // nothing to do
+      HidePointer();
       break;
       
     case MENU_FUNCTION_PAINT_ALL:
@@ -1379,6 +1391,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
                        EntriesPosX, Screen->Entries[i]->Place.YPos, 0xFFFF);
         }
       }
+      MouseBirth();
       break;
       
     case MENU_FUNCTION_PAINT_SELECTION:
@@ -1437,7 +1450,8 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, UINTN X
   LOADER_ENTRY* LEntry = (LOADER_ENTRY*)Entry;
     
   if (((Entry->Tag == TAG_LOADER) || (Entry->Tag == TAG_LEGACY)) &&
-        (GlobalConfig.HideBadges < 3)){
+        (GlobalConfig.HideBadges < 3) &&
+      (Entry->Row == 0)){
     MainImage = LEntry->Volume->DriveImage;
   } else {
     MainImage = Entry->Image;
@@ -1454,16 +1468,6 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, UINTN X
   Entry->Place.Height = (UINTN)MainImage->Height;
 }
 
-/*
-static VOID DrawMainMenuBadge(IN EG_IMAGE  *BadgeImage, IN UINT64 XPos, IN UINT64 YPos)
-{
-  
-//  if (ImageBuf == NULL)
-//    ImageBuf = egCreateImage(32, 32, FALSE);
-  
-  BltImageAlpha(ImageBuffer, XPos, YPos, &MenuBackgroundPixel, 1);
-}
-*/
 static VOID DrawMainMenuText(IN CHAR16 *Text, IN UINT64 XPos, IN UINT64 YPos)
 {
     UINT64 TextWidth;
@@ -1549,6 +1553,7 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
     case MENU_FUNCTION_CLEANUP:
       FreePool(itemPosX);
       itemPosX = NULL;
+      HidePointer();
       break;
       
     case MENU_FUNCTION_PAINT_ALL:
@@ -2261,6 +2266,17 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Item = &InputItems[17];    
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
  */
+    
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs->Entry.Title = PoolPrint(L"Pointer speed:");
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = StrLen(InputItems[70].SValue); //cursor
+    InputBootArgs->Entry.ShortcutLetter = 'Q';
+    InputBootArgs->Item = &InputItems[70];    
+    InputBootArgs->Entry.AtClick = ActionSelect;
+    InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+    
     //18
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     UnicodeSPrint(Flags, 255, L"Backlight level:");

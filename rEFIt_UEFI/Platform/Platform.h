@@ -653,6 +653,9 @@ typedef struct {
   // iCloudFix
   BOOLEAN iCloudFix;
   
+  //Pointer
+  INTN    PointerSpeed;
+  
 } SETTINGS_DATA;
 
 typedef struct {
@@ -891,6 +894,7 @@ extern BOOLEAN  SSSE3;
 VOID        FixBiosDsdt (UINT8* Dsdt);
 EFI_STATUS  MouseBirth();
 VOID        KillMouse();
+VOID        HidePointer();
 EFI_STATUS  WaitForInputEvent(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault);
 
 VOID        WaitForSts(VOID);

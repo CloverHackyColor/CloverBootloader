@@ -416,6 +416,16 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.iCloudFix = TRUE;
       }      
     }
+
+    dictPointer = GetProperty(dict, "Pointer");
+    if (dictPointer) {
+      prop = GetProperty(dictPointer, "Speed");
+      if(prop) {
+        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+        gSettings.PointerSpeed = StrDecimalToUintn((CHAR16*)&UStr[0]);
+      }
+    }
+    
     //Graphics
     
     dictPointer = GetProperty(dict, "Graphics");
