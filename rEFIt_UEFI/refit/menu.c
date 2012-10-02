@@ -989,7 +989,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
     switch (gAction) {
       case ActionSelect:
         State.CurrentSelection = gItemID;
-        State.PaintSelection = TRUE;
+        State.PaintAll = TRUE;
         break;
       case ActionEnter:
         State.CurrentSelection = gItemID;

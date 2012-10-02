@@ -29,7 +29,8 @@ Copyright (c) 2006 JLA
 #pragma pack(1)
 
 //template
-CONST MBR_PARTITION_INFO tMBR = {0x80, {0xFE, 0xFF, 0xFF}, 0x06, {0xFE, 0xFF, 0xFF}, 0, 0};
+//CONST MBR_PARTITION_INFO tMBR = {0x80, {0xFE, 0xFF, 0xFF}, 0x06, {0xFE, 0xFF, 0xFF}, 0, 0};
+CONST MBR_PARTITION_INFO tMBR = {0x80, {0xFE, 0xFF, 0xFF}, 0xEE, {0xFE, 0xFF, 0xFF}, 0, 0};
 
 typedef struct {
   UINT8 loader[0x1BE];
@@ -184,6 +185,19 @@ EFI_STATUS BiosReadSectorsFromDrive(UINT8 DriveNum, UINT64 Lba, UINTN NumSectors
 	
 	// set registers
 	gBS->SetMem (&Regs, sizeof (Regs), 0);
+  
+	// first reset disk controller as the controller seems to be in an undefined state sometimes
+	DBG("Reset disk controller: %x\n", DriveNum);
+	Regs.H.AH = 0x00;		// INT 13h AH=00h: Reset disk controller
+	Regs.H.DL = DriveNum;
+	Status = EFI_SUCCESS;
+	if (LegacyBiosInt86(0x13, &Regs)) {
+		// TRUE = error
+		Status = EFI_NOT_FOUND;
+		return Status;
+	}
+	
+	// next, read sector
 	Regs.H.AH = 0x42;		// INT 13h AH=42h: Extended Read Sectors From Drive
 	Regs.H.DL = DriveNum;
 	Regs.E.DS = (UINT16) (((UINTN) Dap >> 16) << 12);
@@ -262,7 +276,7 @@ UINT8 GetBiosDriveNumForVolume(REFIT_VOLUME *Volume)
 			continue;
 		}
     BestNum = DriveNum;
-    DBG("Calculated CRC=%X at drive 0x%x\n", DriveCRC32, BestNum);
+    DBG("Calculated CRC=%X at drive 0x%x\n", Volume->DriveCRC32, BestNum);
 		if (Volume->DriveCRC32 == DriveCRC32) {
 			break;
 		}
@@ -733,28 +747,28 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
 {
 	EFI_STATUS					Status			= EFI_NOT_FOUND;
 	EFI_BLOCK_IO				*pDisk			= volume->BlockIO;
-	UINT8						*pBootSector	= (UINT8*)(UINTN)0x7C00;
-	UINT8						*mBootSector;
+	UINT8               *pBootSector	= (UINT8*)(UINTN)0x7C00;
+	UINT8               *mBootSector;
 	UINT32                      LbaOffset		= 0;
 	UINT32                      LbaSize			= 0;
 	HARDDRIVE_DEVICE_PATH       *HdPath			= NULL; 
 	EFI_DEVICE_PATH_PROTOCOL    *DevicePath		= volume->DevicePath;
-    UINT8                       BiosDriveNum;
+  UINT8                       BiosDriveNum;
 	//UINT16                      OldMask;
 	//UINT16                      NewMask;
 	UINTN                       i, j;  //for debug dump
-	IA32_REGISTER_SET			Regs;
+	IA32_REGISTER_SET           Regs;
 	//UINTN						LogSize;  
 	
-	EFI_LEGACY_BIOS_PROTOCOL	*LegacyBios;
-	//UINT16						HddCount;
-	//HDD_INFO					*HddInfo = NULL;
-	UINT16						BbsCount;
-	BBS_TABLE					*BbsTable = NULL;
-	BBS_TABLE					*BbsTableIt = NULL;
-	CHAR16						*BbsPriorityTxt;
-	CHAR16						*BbsDevTypeTxt;
-	
+	EFI_LEGACY_BIOS_PROTOCOL    *LegacyBios;
+	//UINT16                    HddCount;
+	//HDD_INFO                  *HddInfo = NULL;
+	UINT16                      BbsCount;
+	BBS_TABLE                   *BbsTable = NULL;
+	BBS_TABLE                   *BbsTableIt = NULL;
+	CHAR16                      *BbsPriorityTxt;
+	CHAR16                      *BbsDevTypeTxt;
+	MBR_PARTITION_INFO          *pMBR = (MBR_PARTITION_INFO*)(UINTN)0x11BE; // typical location boot0 installs it, should be unused otherwise...
 	
 	//
 	// get EfiLegacy8259Protocol - mandatory
@@ -943,7 +957,24 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
 	//
 	gBS->SetMem (&Regs, sizeof (Regs), 0);
 	Regs.X.DX = BiosDriveNum;
-	
+
+  // set up SI to partition table entry, some boot1 boot code (such a boot1f32 and boot1h) depend on it
+  if (volume->IsMbrPartition) {
+    CopyMem(pMBR, volume->MbrPartitionTable, 4*16); // copy to lower memory, same location as boot0
+    Regs.X.SI = (UINT16)(UINTN)&pMBR[volume->MbrPartitionIndex];
+  }
+  // apparently gpt without mbr, should this be legacy bootable?
+  // boot0.s fakes an partition entry, so lets do the same...
+  else {
+    CopyMem(pMBR, &tMBR, 16);
+    pMBR->StartLBA = LbaOffset;
+    pMBR->Size = LbaSize;
+    Regs.X.SI = (UINT16)(UINTN)pMBR;
+  }
+  
+  DBG("mbr: %x index: %x pointer: %x dx: %x si: %x\n", volume->IsMbrPartition, volume->MbrPartitionIndex, volume->MbrPartitionTable, Regs.X.DX, Regs.X.SI);
+  DBG("pmbr: %x start: %x size: %x\n", pMBR[volume->MbrPartitionIndex], pMBR[volume->MbrPartitionIndex].StartLBA, pMBR[volume->MbrPartitionIndex].Size);
+  
 	//
 	// call 16bit partition boot code
 	//
@@ -958,8 +989,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
     Status = SaveBooterLog(NULL, LEGBOOT_LOG);
   }
 	
-	return EFI_SUCCESS;
-	
+	return EFI_SUCCESS;	
 }	
 
 /** For some UEFI boots that have EfiLegacyBiosProtocol.

@@ -51,20 +51,21 @@ BUILTIN_ICON BuiltinIconTable[BUILTIN_ICON_COUNT] = {
   { NULL, L"icons\\func_options.png",        48 },
   { NULL, L"icons\\func_reset.png",          48 },
   { NULL, L"icons\\func_shutdown.png",       48 },
+  { NULL, L"icons\\func_help.png",          128 }, //5
   { NULL, L"icons\\tool_shell.png",          48 },
   { NULL, L"icons\\tool_part.png",           48 },
   { NULL, L"icons\\tool_rescue.png",         48 },
+  { NULL, L"icons\\pointer.png",             32 },
   
-  { NULL, L"icons\\vol_internal.icns",      128 }, //7
+  { NULL, L"icons\\vol_internal.icns",      128 }, //7+2
   { NULL, L"icons\\vol_external.icns",      128 },
   { NULL, L"icons\\vol_optical.icns",       128 },
-  { NULL, L"icons\\vol_firewire.icns",      128 }, //10
+  { NULL, L"icons\\vol_firewire.icns",      128 }, //12
   { NULL, L"icons\\vol_clover.icns",        128 },
-  { NULL, L"icons\\func_help.png",          128 },
   { NULL, L"icons\\vol_internal_hfs.icns",  128 },
   { NULL, L"icons\\vol_internal_ntfs.icns", 128 },
   { NULL, L"icons\\vol_internal_ext3.icns", 128 },
-  { NULL, L"icons\\vol_recovery.icns",      128 }, //16
+  { NULL, L"icons\\vol_recovery.icns",      128 }, //17
 };
 
 EG_IMAGE * BuiltinIcon(IN UINTN Id)
@@ -74,8 +75,8 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
   
   if (BuiltinIconTable[Id].Image == NULL) {
     BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, BuiltinIconTable[Id].Path, BuiltinIconTable[Id].PixelSize);
-    if (!BuiltinIconTable[Id].Image) {
-      BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, BuiltinIconTable[7].Path, BuiltinIconTable[Id].PixelSize);
+    if (!BuiltinIconTable[Id].Image && (Id >= 9)) {
+      BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, BuiltinIconTable[BUILTIN_ICON_VOL_INTERNAL].Path, BuiltinIconTable[Id].PixelSize);
     }
     if (!BuiltinIconTable[Id].Image)
       BuiltinIconTable[Id].Image = DummyImage(BuiltinIconTable[Id].PixelSize);

@@ -10,6 +10,8 @@
 // for example ConSplitterDxe or BdsDxe/FrontPage
 // anyway thanks for good tutorial how to do and how not to do
 // 
+// Any usage for SMBIOS here?
+/// Built-in Pointing Device (Type 21).
 
 //#include "Platform.h"
 #include "libegint.h"   //this includes platform.h 
@@ -95,8 +97,10 @@ EFI_STATUS MouseBirth()
   //there may be also trackpad protocol but afaik it is not properly work and
   // trackpad is usually controlled by simple mouse driver
   
-  gPointer.Pointer = egLoadIcon(ThemeDir, L"icons\\pointer.icns", PointerWidth);
+//  gPointer.Pointer = egLoadIcon(ThemeDir, L"icons\\pointer.icns", PointerWidth);
+  gPointer.Pointer = BuiltinIcon(BUILTIN_ICON_POINTER);
 	if(!gPointer.Pointer) {
+    
 		DBG("No pointer image!\n");
     gPointer.SimplePointerProtocol = NULL;
     return EFI_NOT_FOUND;

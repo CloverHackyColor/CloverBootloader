@@ -1045,69 +1045,69 @@ static VOID ScanExtendedPartition(REFIT_VOLUME *WholeDiskVolume, MBR_PARTITION_I
 
 VOID ScanVolumes(VOID)
 {
-    EFI_STATUS              Status;
-    UINTN                   HandleCount = 0;
-    UINTN                   HandleIndex;
-    EFI_HANDLE              *Handles = NULL;
-    REFIT_VOLUME            *Volume, *WholeDiskVolume;
-    UINTN                   VolumeIndex, VolumeIndex2;
-    MBR_PARTITION_INFO      *MbrTable;
-    UINTN                   PartitionIndex;
-    UINT8                   *SectorBuffer1, *SectorBuffer2;
-    UINTN                   SectorSum, i;
-    EFI_DEVICE_PATH_PROTOCOL  *VolumeDevicePath;
-    EFI_GUID                *Guid;
-//  EFI_INPUT_KEY Key;
+  EFI_STATUS              Status;
+  UINTN                   HandleCount = 0;
+  UINTN                   HandleIndex;
+  EFI_HANDLE              *Handles = NULL;
+  REFIT_VOLUME            *Volume, *WholeDiskVolume;
+  UINTN                   VolumeIndex, VolumeIndex2;
+  MBR_PARTITION_INFO      *MbrTable;
+  UINTN                   PartitionIndex;
+  UINT8                   *SectorBuffer1, *SectorBuffer2;
+  UINTN                   SectorSum, i;
+  EFI_DEVICE_PATH_PROTOCOL  *VolumeDevicePath;
+  EFI_GUID                *Guid;
+  //  EFI_INPUT_KEY Key;
   CHAR16                  VolumeString[256];
   INT32                   HVi;
   CHAR16                  *HV;
   
-//    DBG("Scanning volumes...\n");
-    
-    // get all BlockIo handles
-    Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiBlockIoProtocolGuid, NULL, &HandleCount, &Handles);
-    if (Status == EFI_NOT_FOUND)
-        return;  
+  //    DBG("Scanning volumes...\n");
+  
+  // get all BlockIo handles
+  Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiBlockIoProtocolGuid, NULL, &HandleCount, &Handles);
+  if (Status == EFI_NOT_FOUND)
+    return;  
   DBG("found %d volumes with blockIO\n", HandleCount);
-    // first pass: collect information about all handles
-    for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
-      
-      // for quick default volume boot - skip volumes other then self volume and GPT volume with gEfiBootDeviceGuid
-      if (GlobalConfig.Timeout == 0 && gEfiBootDeviceGuid != NULL && Handles[HandleIndex] != SelfDeviceHandle) {
-        VolumeDevicePath = DevicePathFromHandle(Handles[HandleIndex]);
-        Guid = FindGPTPartitionGuidInDevicePath(VolumeDevicePath);
-        if (!Guid || !CompareGuid(Guid, gEfiBootDeviceGuid)) {
-          // not self volume and not default volume - skip it
-          continue;
-        }
-      }
-      
-      Volume = AllocateZeroPool(sizeof(REFIT_VOLUME));
-      Volume->DeviceHandle = Handles[HandleIndex];
-      if (Volume->DeviceHandle == SelfDeviceHandle){
-        DBG("this is SelfVolume at index %d\n", HandleIndex);
-        SelfVolume = Volume;  
-      }
-      
-      Status = ScanVolume(Volume);
-      if (!EFI_ERROR(Status)) {
-   //     DBG("Found Volume %s at index=%d\n", Volume->VolName, HandleIndex);
-        AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
-        StrCpy(VolumeString, DevicePathToStr(Volume->DevicePath));
-        HV = NULL;
-        for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
-          HV = StrStr(VolumeString, gSettings.HVHideStrings[HVi]);
-          if (HV != NULL) break;
-        }
-        if (HV != NULL) Volume->OSType = OSTYPE_HIDE;
-          
-      } else {
-        DBG("wrong volume Nr%d?!\n", HandleIndex);
-        FreePool(Volume);
+  // first pass: collect information about all handles
+  for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
+    
+    // for quick default volume boot - skip volumes other then self volume and GPT volume with gEfiBootDeviceGuid
+    if (GlobalConfig.Timeout == 0 && gEfiBootDeviceGuid != NULL && Handles[HandleIndex] != SelfDeviceHandle) {
+      VolumeDevicePath = DevicePathFromHandle(Handles[HandleIndex]);
+      Guid = FindGPTPartitionGuidInDevicePath(VolumeDevicePath);
+      if (!Guid || !CompareGuid(Guid, gEfiBootDeviceGuid)) {
+        // not self volume and not default volume - skip it
+        continue;
       }
     }
-    FreePool(Handles);
-//  DBG("Found %d volumes\n", VolumesCount);
+    
+    Volume = AllocateZeroPool(sizeof(REFIT_VOLUME));
+    Volume->DeviceHandle = Handles[HandleIndex];
+    if (Volume->DeviceHandle == SelfDeviceHandle){
+      DBG("this is SelfVolume at index %d\n", HandleIndex);
+      SelfVolume = Volume;  
+    }
+    
+    Status = ScanVolume(Volume);
+    if (!EFI_ERROR(Status)) {
+      //     DBG("Found Volume %s at index=%d\n", Volume->VolName, HandleIndex);
+      AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
+      StrCpy(VolumeString, DevicePathToStr(Volume->DevicePath));
+      HV = NULL;
+      for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
+        HV = StrStr(VolumeString, gSettings.HVHideStrings[HVi]);
+        if (HV != NULL) break;
+      }
+      if (HV != NULL) Volume->OSType = OSTYPE_HIDE;
+      
+    } else {
+      DBG("wrong volume Nr%d?!\n", HandleIndex);
+      FreePool(Volume);
+    }
+  }
+  FreePool(Handles);
+  //  DBG("Found %d volumes\n", VolumesCount);
   if (SelfVolume == NULL){
     DBG("WARNING: SelfVolume not found"); //Slice - and what?
     SelfVolume = AllocateZeroPool(sizeof(REFIT_VOLUME));
@@ -1119,100 +1119,101 @@ VOID ScanVolumes(VOID)
     SelfVolume->OSType = OSTYPE_EFI;
     SelfVolume->HasBootCode = TRUE;
     SelfVolume->BootType = BOOTING_BY_PBR;
- //   AddListElement((VOID ***) &Volumes, &VolumesCount, SelfVolume);
-//    DBG("SelfVolume Nr %d created\n", VolumesCount);
+    //   AddListElement((VOID ***) &Volumes, &VolumesCount, SelfVolume);
+    //    DBG("SelfVolume Nr %d created\n", VolumesCount);
   }
+  
+  // second pass: relate partitions and whole disk devices
+  for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
+    Volume = Volumes[VolumeIndex];
     
-    // second pass: relate partitions and whole disk devices
-    for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
-        Volume = Volumes[VolumeIndex];
-        
-        // check MBR partition table for extended partitions
-        if (Volume->BlockIO != NULL && Volume->WholeDiskBlockIO != NULL &&
-            Volume->BlockIO == Volume->WholeDiskBlockIO && Volume->BlockIOOffset == 0 &&
-            Volume->MbrPartitionTable != NULL) {
-            DBG("Volume %d has MBR\n", VolumeIndex);
-            MbrTable = Volume->MbrPartitionTable;
-            for (PartitionIndex = 0; PartitionIndex < 4; PartitionIndex++) {
-                if (IS_EXTENDED_PART_TYPE(MbrTable[PartitionIndex].Type)) {
-                    ScanExtendedPartition(Volume, MbrTable + PartitionIndex);
-                }
-            }
+    // check MBR partition table for extended partitions
+    if (Volume->BlockIO != NULL && Volume->WholeDiskBlockIO != NULL &&
+        Volume->BlockIO == Volume->WholeDiskBlockIO && Volume->BlockIOOffset == 0 &&
+        Volume->MbrPartitionTable != NULL) {
+      DBG("Volume %d has MBR\n", VolumeIndex);
+      MbrTable = Volume->MbrPartitionTable;
+      for (PartitionIndex = 0; PartitionIndex < 4; PartitionIndex++) {
+        if (IS_EXTENDED_PART_TYPE(MbrTable[PartitionIndex].Type)) {
+          ScanExtendedPartition(Volume, MbrTable + PartitionIndex);
         }
-        
-        // search for corresponding whole disk volume entry
-        WholeDiskVolume = NULL;
-        if (Volume->BlockIO != NULL && Volume->WholeDiskBlockIO != NULL &&
-            Volume->BlockIO != Volume->WholeDiskBlockIO) {
-            for (VolumeIndex2 = 0; VolumeIndex2 < VolumesCount; VolumeIndex2++) {
-                if (Volumes[VolumeIndex2]->BlockIO == Volume->WholeDiskBlockIO &&
-                    Volumes[VolumeIndex2]->BlockIOOffset == 0)
-                    WholeDiskVolume = Volumes[VolumeIndex2];
-            }
-        }
-        if (WholeDiskVolume != NULL && WholeDiskVolume->MbrPartitionTable != NULL) {
-            // check if this volume is one of the partitions in the table
-            MbrTable = WholeDiskVolume->MbrPartitionTable;
-            SectorBuffer1 = AllocateAlignedPages (EFI_SIZE_TO_PAGES (512), 16);
-            SectorBuffer2 = AllocateAlignedPages (EFI_SIZE_TO_PAGES (512), 16);
-            
-            for (PartitionIndex = 0; PartitionIndex < 4; PartitionIndex++) {
-                // check size
-                if ((UINT64)(MbrTable[PartitionIndex].Size) != Volume->BlockIO->Media->LastBlock + 1)
-                    continue;
-                
-                // compare boot sector read through offset vs. directly
-                Status = Volume->BlockIO->ReadBlocks(Volume->BlockIO, Volume->BlockIO->Media->MediaId,
-                                                     Volume->BlockIOOffset, 512, SectorBuffer1);
-                if (EFI_ERROR(Status))
-                    break;
-                Status = Volume->WholeDiskBlockIO->ReadBlocks(Volume->WholeDiskBlockIO, Volume->WholeDiskBlockIO->Media->MediaId,
-                                                              MbrTable[PartitionIndex].StartLBA, 512, SectorBuffer2);
-                if (EFI_ERROR(Status))
-                    break;
-                if (CompareMem(SectorBuffer1, SectorBuffer2, 512) != 0)
-                    continue;
-                SectorSum = 0;
-                for (i = 0; i < 512; i++)
-                    SectorSum += SectorBuffer1[i];
-                if (SectorSum < 1000)
-                    continue;
-                
-                // TODO: mark entry as non-bootable if it is an extended partition
-                
-                // now we're reasonably sure the association is correct...
-                Volume->IsMbrPartition = TRUE;
-                Volume->MbrPartitionIndex = PartitionIndex;
-                if (Volume->VolName == NULL)
-                    Volume->VolName = PoolPrint(L"Partition %d", PartitionIndex + 1);
-                break;
-            }
-            
-            gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)SectorBuffer1, 1);
-            gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)SectorBuffer2, 1);
-        }
-        
+      }
     }
+    
+    // search for corresponding whole disk volume entry
+    WholeDiskVolume = NULL;
+    if (Volume->BlockIO != NULL && Volume->WholeDiskBlockIO != NULL &&
+        Volume->BlockIO != Volume->WholeDiskBlockIO) {
+      for (VolumeIndex2 = 0; VolumeIndex2 < VolumesCount; VolumeIndex2++) {
+        if (Volumes[VolumeIndex2]->BlockIO == Volume->WholeDiskBlockIO &&
+            Volumes[VolumeIndex2]->BlockIOOffset == 0)
+          WholeDiskVolume = Volumes[VolumeIndex2];
+      }
+    }
+    if (WholeDiskVolume != NULL && WholeDiskVolume->MbrPartitionTable != NULL) {
+      // check if this volume is one of the partitions in the table
+      MbrTable = WholeDiskVolume->MbrPartitionTable;
+      SectorBuffer1 = AllocateAlignedPages (EFI_SIZE_TO_PAGES (512), 16);
+      SectorBuffer2 = AllocateAlignedPages (EFI_SIZE_TO_PAGES (512), 16);
+      
+      for (PartitionIndex = 0; PartitionIndex < 4; PartitionIndex++) {
+        // check size
+        if ((UINT64)(MbrTable[PartitionIndex].Size) != Volume->BlockIO->Media->LastBlock + 1)
+          continue;
+        
+        // compare boot sector read through offset vs. directly
+        Status = Volume->BlockIO->ReadBlocks(Volume->BlockIO, Volume->BlockIO->Media->MediaId,
+                                             Volume->BlockIOOffset, 512, SectorBuffer1);
+        if (EFI_ERROR(Status))
+          break;
+        Status = Volume->WholeDiskBlockIO->ReadBlocks(Volume->WholeDiskBlockIO, Volume->WholeDiskBlockIO->Media->MediaId,
+                                                      MbrTable[PartitionIndex].StartLBA, 512, SectorBuffer2);
+        if (EFI_ERROR(Status))
+          break;
+        if (CompareMem(SectorBuffer1, SectorBuffer2, 512) != 0)
+          continue;
+        SectorSum = 0;
+        for (i = 0; i < 512; i++)
+          SectorSum += SectorBuffer1[i];
+        if (SectorSum < 1000)
+          continue;
+        
+        // TODO: mark entry as non-bootable if it is an extended partition
+        
+        // now we're reasonably sure the association is correct...
+        Volume->IsMbrPartition = TRUE;
+        Volume->MbrPartitionTable = MbrTable;
+        Volume->MbrPartitionIndex = PartitionIndex;
+        if (Volume->VolName == NULL)
+          Volume->VolName = PoolPrint(L"Partition %d", PartitionIndex + 1);
+        break;
+      }
+      
+      gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)SectorBuffer1, 1);
+      gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)SectorBuffer2, 1);
+    }
+    
+  }
 }
 
 static VOID UninitVolumes(VOID)
 {
-    REFIT_VOLUME            *Volume;
-    UINTN                   VolumeIndex;
+  REFIT_VOLUME            *Volume;
+  UINTN                   VolumeIndex;
+  
+  for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
+    Volume = Volumes[VolumeIndex];
     
-    for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
-        Volume = Volumes[VolumeIndex];
-        
-        if (Volume->RootDir != NULL) {
-            Volume->RootDir->Close(Volume->RootDir);
-            Volume->RootDir = NULL;
-        }
-        
-        Volume->DeviceHandle = NULL;
-        Volume->BlockIO = NULL;
-        Volume->WholeDiskBlockIO = NULL;
-      FreePool(Volume);
+    if (Volume->RootDir != NULL) {
+      Volume->RootDir->Close(Volume->RootDir);
+      Volume->RootDir = NULL;
     }
+    
+    Volume->DeviceHandle = NULL;
+    Volume->BlockIO = NULL;
+    Volume->WholeDiskBlockIO = NULL;
+    FreePool(Volume);
+  }
   VolumesCount = 0; 
   
 }
