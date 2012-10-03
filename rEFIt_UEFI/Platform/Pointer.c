@@ -386,12 +386,12 @@ EFI_STATUS WaitForInputEvent(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault)
   return Status;
 }
 
-// TimeoutDefault for a wait in 0.1 seconds
+// TimeoutDefault for a wait in seconds
 // return EFI_TIMEOUT if no inputs
 EFI_STATUS WaitForInputEventOld(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault)
 {
   EFI_STATUS Status = EFI_SUCCESS;
-  UINTN TimeoutRemain = TimeoutDefault * 10;
+  UINTN TimeoutRemain = TimeoutDefault * 100;
   while (TimeoutRemain != 0) {
     
 //    Status = WaitForSingleEvent (gST->ConIn->WaitForKey, ONE_MSECOND * 10);
