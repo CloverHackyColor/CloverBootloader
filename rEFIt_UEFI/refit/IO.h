@@ -169,4 +169,22 @@ WaitForSingleEvent (
 					IN UINT64           Timeout OPTIONAL
 					);
 
+EFI_STATUS
+WaitForSingleEvent2 (
+          IN EFI_EVENT        Event1,
+          IN EFI_EVENT        Event2,
+          IN UINT64           Timeout OPTIONAL
+          );
+
+// timeout will be in ms here, as small as 1ms and up
+EFI_STATUS
+WaitFor2EventWithTsc (
+                      IN EFI_EVENT        Event1,
+                      IN EFI_EVENT        Event2,
+                      IN UINT64           Timeout OPTIONAL
+                    );
+
+
+
+
 #endif

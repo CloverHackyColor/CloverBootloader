@@ -84,15 +84,15 @@ EFI_STATUS MouseBirth()
 	}
   CurrentMode = gPointer.SimplePointerProtocol->Mode;
   DBG("Found Mouse device:\n");
-  DBG(" - ResolutionX=%d\n", CurrentMode->ResolutionX);
-  DBG(" - ResolutionY=%d\n", CurrentMode->ResolutionY);
-  DBG(" - ResolutionZ=%d\n", CurrentMode->ResolutionZ);
+  DBG(" - ResolutionX=%ld\n", CurrentMode->ResolutionX);
+  DBG(" - ResolutionY=%ld\n", CurrentMode->ResolutionY);
+  DBG(" - ResolutionZ=%ld\n", CurrentMode->ResolutionZ);
   DBG(" - Left button %a present\n", CurrentMode->LeftButton?" ":"not");
   DBG(" - Right button %a present\n\n", CurrentMode->RightButton?" ":"not");
   //TODO - config and menu?
-  CurrentMode->ResolutionX = gSettings.PointerSpeed;
-  CurrentMode->ResolutionY = gSettings.PointerSpeed;
-  CurrentMode->ResolutionZ = 0;
+  //CurrentMode->ResolutionX = gSettings.PointerSpeed;
+  //CurrentMode->ResolutionY = gSettings.PointerSpeed;
+  //CurrentMode->ResolutionZ = 0;
   
   //there may be also trackpad protocol but afaik it is not properly work and
   // trackpad is usually controlled by simple mouse driver
@@ -151,13 +151,45 @@ UINT64 TimeDiff(UINT64 t0, UINT64 t1)
   return DivU64x64Remainder((t1 - t0), DivU64x32(gCPUStructure.TSCFrequency, 1000), 0);
 }
 
+VOID PrintPointerVars(
+                      INT32     RelX,
+                      INT32     RelY,
+                      INTN      ScreenRelX,
+                      INTN      ScreenRelY,
+                      INTN      XPosPrev,
+                      INTN      YPosPrev,
+                      INTN      XPos,
+                      INTN      YPos
+                      )
+{
+  EFI_SIMPLE_POINTER_MODE  *CurrentMode;
+  UINT64   Now;
+  
+  CurrentMode = gPointer.SimplePointerProtocol->Mode;
+  Now = AsmReadTsc();
+  gST->ConOut->SetCursorPosition (gST->ConOut, 0, 0);
+  Print(L"%ld                           \n", Now);
+  Print(L"Resolution X, Y: %ld, %ld           \n", CurrentMode->ResolutionX, CurrentMode->ResolutionY);
+  Print(L"Relative X, Y: %ld, %ld (%d, %d milimeters)           \n",
+        RelX, RelX, DivU64x64Remainder(RelX, CurrentMode->ResolutionX, NULL),
+        DivU64x64Remainder(RelY, CurrentMode->ResolutionY, NULL)
+        );
+  Print(L"X: %d + %d = %d -> %d               \n", XPosPrev, ScreenRelX, (XPosPrev + ScreenRelX), XPos);
+  Print(L"Y: %d + %d = %d -> %d               \n", YPosPrev, ScreenRelY, (YPosPrev + ScreenRelY), YPos);
+}
+
 VOID UpdatePointer()
 {
 //  EFI_TIME Now;
-  UINT64   Now;
-  EFI_STATUS Status = EFI_SUCCESS;
+  UINT64                    Now;
+  EFI_STATUS                Status = EFI_SUCCESS;
   EFI_SIMPLE_POINTER_STATE	tmpState;
- 
+  EFI_SIMPLE_POINTER_MODE   *CurrentMode;
+  INTN                      XPosPrev;
+  INTN                      YPosPrev;
+  INTN                      ScreenRelX;
+  INTN                      ScreenRelY;
+  
   //always assumed
 /*  if (!gPointer.SimplePointerProtocol) {
     return;
@@ -182,14 +214,39 @@ VOID UpdatePointer()
       gPointer.MouseEvent = NoEvents;
     
     CopyMem(&gPointer.State, &tmpState, sizeof(EFI_SIMPLE_POINTER_STATE));
-    gPointer.newPlace.XPos += gPointer.State.RelativeMovementX;
+/*    gPointer.newPlace.XPos += gPointer.State.RelativeMovementX;
     if (gPointer.newPlace.XPos < 0) gPointer.newPlace.XPos = 0;
     if (gPointer.newPlace.XPos > UGAWidth) gPointer.newPlace.XPos = UGAWidth;
     
     gPointer.newPlace.YPos += gPointer.State.RelativeMovementY;
     if (gPointer.newPlace.YPos < 0) gPointer.newPlace.YPos = 0;
     if (gPointer.newPlace.YPos > UGAHeight) gPointer.newPlace.YPos = UGAHeight;
-  
+*/
+   CurrentMode = gPointer.SimplePointerProtocol->Mode;
+   
+   XPosPrev = gPointer.newPlace.XPos;
+   ScreenRelX = (INTN)UGAWidth * (INTN)gPointer.State.RelativeMovementX / (INTN)CurrentMode->ResolutionX / 100;
+   gPointer.newPlace.XPos += ScreenRelX;
+   if (gPointer.newPlace.XPos < 0) gPointer.newPlace.XPos = 0;
+   if (gPointer.newPlace.XPos > UGAWidth - 32) gPointer.newPlace.XPos = UGAWidth - 32;
+   
+   YPosPrev = gPointer.newPlace.YPos;
+   ScreenRelY = (INTN)UGAHeight * (INTN)gPointer.State.RelativeMovementY / (INTN)CurrentMode->ResolutionY / 100;
+   gPointer.newPlace.YPos += ScreenRelY;
+   if (gPointer.newPlace.YPos < 0) gPointer.newPlace.YPos = 0;
+   if (gPointer.newPlace.YPos > UGAHeight - 32) gPointer.newPlace.YPos = UGAHeight - 32;
+   
+   PrintPointerVars(gPointer.State.RelativeMovementX,
+                    gPointer.State.RelativeMovementY,
+                    ScreenRelX,
+                    ScreenRelY,
+                    XPosPrev,
+                    YPosPrev,
+                    gPointer.newPlace.XPos,
+                    gPointer.newPlace.YPos
+                    );
+   
+    
     RedrawPointer();
   }
 //  return Status;
@@ -246,26 +303,84 @@ EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
 #define ONE_MSECOND    10000
 
 // mouse events depends on Screen
-// TimeoutDefault for a wait in 0.1 seconds
+// TimeoutDefault for a wait in seconds
 // return EFI_TIMEOUT if no inputs
 EFI_STATUS WaitForInputEvent(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault)
 {
-  EFI_STATUS Status = EFI_SUCCESS;
-  UINTN TimeoutRemain = TimeoutDefault * 10;
+  EFI_STATUS  Status        = EFI_SUCCESS;
+  EFI_STATUS  MouseStatus   = EFI_SUCCESS;
+//  UINTN       TimeoutRemain = TimeoutDefault * 10; // 10 times 100 milisecs
+  UINTN       TimeoutRemain = TimeoutDefault * 200; // 200 * 5ms = 1sec
+  //
+  // Note: using 100 milisec timout because less then that does not work on some UEFIs
+  //
+  if (!gPointer.SimplePointerProtocol) {
+    TimeoutRemain = TimeoutDefault * 10;  //temporary
+  }
+  
+  
   while (TimeoutRemain != 0) {
     
-    Status = WaitForSingleEvent (gST->ConIn->WaitForKey, ONE_MSECOND * 10);
-    if (Status != EFI_TIMEOUT) {
-      break;
+    /*    Status = WaitForSingleEvent (gST->ConIn->WaitForKey, ONE_MSECOND * 10);
+     if (Status != EFI_TIMEOUT) {
+     break;
+     } */
+    if (gPointer.SimplePointerProtocol != NULL && gPointer.SimplePointerProtocol->WaitForInput != NULL) {
+      //
+      // Regular case with proper mouse driver.
+      // Waiting for: key press, mouse event or timer 100ms.
+      // Status:
+      //  EFI_TIMEOUT - timer timeout
+      //  other       - key press and mouse event
+      //
+/*      Status = WaitForSingleEvent2 (
+                                    gST->ConIn->WaitForKey,
+                                    gPointer.SimplePointerProtocol->WaitForInput,
+                                    ONE_MSECOND * 100
+                                    );
+ */
+      Status = WaitFor2EventWithTsc (
+                                    gST->ConIn->WaitForKey,
+                                    gPointer.SimplePointerProtocol->WaitForInput,
+                                    ONE_MSECOND * 5
+                                    );
+      
+    } else {
+      //
+      // No mouse, or invalid mouse driver (without SimplePointerProtocol->WaitForInput, appears on some UEFIs)
+      // Waiting for: key press, or timer 100ms.
+      // Status:
+      //  EFI_TIMEOUT - timer timeout
+      //  other       - key press
+      //
+      Status = WaitForSingleEvent (gST->ConIn->WaitForKey, ONE_MSECOND * 100);
     }
-    TimeoutRemain--;
+    //
+    // Always update mouse pointer
+    //
     if (gPointer.SimplePointerProtocol) {
       UpdatePointer();
-      Status = CheckMouseEvent(Screen); //out: gItemID, gAction
-      if (Status != EFI_TIMEOUT) { //this check should return timeout if no mouse events occured
+      MouseStatus = CheckMouseEvent (Screen); //out: gItemID, gAction
+      if (MouseStatus == EFI_SUCCESS) {
+        // EFI_SUCCESS = mouse events occured - stop waiting and process event
+        Status = EFI_SUCCESS;        
         break;
       }
     }
+ 
+    //
+    // If timer timeout - continue waiting if not done
+    //
+    if (Status == EFI_TIMEOUT) {
+      TimeoutRemain--;
+      continue;
+    }
+ 
+ //
+ // No mouse event, no timeout - must be a key press.
+ // Stop waiting and process event.
+ //
+    break;    
   }
   return Status;
 }

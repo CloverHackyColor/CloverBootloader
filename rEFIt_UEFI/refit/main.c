@@ -1910,6 +1910,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   UINTN             MenuExit;
   UINTN             Size, i;
   CHAR8             *MsgBuffer = NULL;
+  UINT64            TscDiv;
+  UINT64            TscRemainder = 0;
+  
   // CHAR16            *InputBuffer; //, *Y;
   //  EFI_INPUT_KEY Key;
   
@@ -2030,36 +2033,15 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   SetPrivateVarProto();
   //      DBG("SetPrivateVarProto OK\n");
   GetDefaultSettings();
-  //      DBG("GetDefaultSettings OK\n");
-  //is it obsolete?
-/*  Size = 0;
- UINT8             *Buffer = NULL;
-
-  Status = gRS->GetVariable(L"boot-args",
-                            &gEfiAppleBootGuid,  NULL,
-                            &Size, 										   
-                            Buffer);
-	if (Status == EFI_BUFFER_TOO_SMALL) {
-		Buffer = (UINT8 *) AllocateAlignedPages (EFI_SIZE_TO_PAGES(Size), 16);		
-		if (!Buffer){
-			DBG("Errors allocating kernel flags!\n");
- 		} else {
-			Status = gRS->GetVariable (L"boot-args",
-                                 &gEfiAppleBootGuid, NULL,
-                                 &Size, 
-                                 Buffer);
-		}		
-	}
-  //  DBG("BootArgs Size=%d\n", Size);
-  //  PauseForKey(L"BootArgs ok");
+  DBG("Calibrated TSC frequency =%ld =%ldMHz\n", gCPUStructure.TSCCalibr, DivU64x32(gCPUStructure.TSCCalibr, Mega));
+  DBG("CPU calculated TSC frequency =%ld\n", gCPUStructure.TSCFrequency);
+  TscDiv = DivU64x64Remainder(gCPUStructure.TSCCalibr, gCPUStructure.TSCFrequency, &TscRemainder);
+  if ((TscRemainder > 400 * Mega) || (TscDiv > 1))
+  {
+    Print(L"There is a problem with TSC detection and calibration! Assume calibrated one\n");
+    gCPUStructure.TSCFrequency = gCPUStructure.TSCCalibr;
+  }
   
-	if ((Status == EFI_SUCCESS) && (Size != 0))
-		CopyMem(gSettings.BootArgs, Buffer, Size);	
-    if (Buffer) {
-      gBS->FreePages((EFI_PHYSICAL_ADDRESS) (UINTN)Buffer, EFI_SIZE_TO_PAGES(Size));
-      Buffer = NULL;
-    }
-*/  
   //Second step. Load config.plist into gSettings	
 	Status = GetUserSettings(SelfRootDir);  
   //      DBG("GetUserSettings OK\n");
@@ -2126,19 +2108,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       //    DBG("Reset.Image->Width=%d\n", MenuEntryReset.Image->Width);
       AddMenuEntry(&MainMenu, &MenuEntryReset);
     }
-    
-    // assign shortcut keys
-    /*   DBG("First entries in main menu\n");
-     for (i = 0; i < MainMenu.EntryCount && MainMenu.Entries[i]->Row == 0 && i < 9; i++){
-     MainMenu.Entries[i]->ShortcutDigit = (CHAR16)('1' + i);
-     DBG("%d: %s %d\n", i, MainMenu.Entries[i]->Title, MainMenu.Entries[i]->Tag);
-     }
-     */        
-    //  DrawMenuText(L"Test Русский", 14, 0, UGAHeight-40, 5);  
-    //  PauseForKey(L"Test fonts");
-    // MsgLog("StrSize of ABC=%d\n", StrSize(L"ABC")); //result=8
-    // MsgLog("sizeof ABC=%d\n", sizeof(L"ABC"));  //result=8
-    
+        
     // wait for user ACK when there were errors
     FinishTextScreen(FALSE);
     DBGT("FinishTextScreen()\n");

@@ -703,6 +703,8 @@ typedef struct {
 	UINT16  Turbo2; //2 Core
 	UINT16  Turbo3; //3 Core
 	UINT16  Turbo4; //4 Core
+  
+  UINT64  TSCCalibr;
     
 } CPU_STRUCTURE;
 

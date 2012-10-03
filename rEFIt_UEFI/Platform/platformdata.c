@@ -263,6 +263,7 @@ MACHINE_TYPES GetModelFromString(CHAR8 *ProductName)
 VOID GetDefaultSettings(VOID)
 {
   MACHINE_TYPES   Model;
+  UINT64 t0, t1;
   
   gLanguage         = english;
   Model             = GetDefaultModel();
@@ -288,5 +289,10 @@ VOID GetDefaultSettings(VOID)
   gSettings.BacklightLevel = 0xFFFF; //0x0503; -- the value from MBA52
   gSettings.PointerSpeed = 2;
   gSettings.DoubleClickTime = 500;
+  
+  t0 = AsmReadTsc();
+  gBS->Stall(100000); //100ms
+  t1 = AsmReadTsc();
+  gCPUStructure.TSCCalibr = (t1 - t0) * 10; //ticks for 1second
 
 }

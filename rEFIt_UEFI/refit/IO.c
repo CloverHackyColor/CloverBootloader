@@ -1275,6 +1275,98 @@ WaitForSingleEvent (
 	return Status;
 }
 
+//set Timeout in ms
+EFI_STATUS
+WaitFor2EventWithTsc (
+                     IN  EFI_EVENT        Event1,
+                     IN  EFI_EVENT        Event2,
+                     IN  UINT64           Timeout OPTIONAL
+                    )
+{
+	EFI_STATUS				Status;
+	UINTN             Index;
+	EFI_EVENT					WaitList[2];
+  UINT64            t0, t1;
+  UINT64            Delta = DivU64x64Remainder(Timeout * gCPUStructure.TSCFrequency, 1000, NULL);
+
+  if (Timeout != 0)
+  {
+    t0 = AsmReadTsc();
+    do {
+      Status = gBS->CheckEvent(Event1);
+      if (!EFI_ERROR(Status)) {
+        break;
+      }
+      if (Event2) {
+        Status = gBS->CheckEvent(Event2);
+        if (!EFI_ERROR(Status)) {
+          break;
+        }        
+      }
+      Status = EFI_TIMEOUT;
+      t1 = AsmReadTsc();
+    } while ((t1 - t0) < Delta);
+	} 
+	else 
+	{
+    WaitList[0] = Event1;
+    WaitList[1] = Event2;
+    Status = gBS->WaitForEvent (2, WaitList, &Index);
+	}
+	return Status; 
+}  
+
+EFI_STATUS
+WaitForSingleEvent2 (
+                     IN  EFI_EVENT        Event1,
+                     IN  EFI_EVENT        Event2,
+                     IN  UINT64           Timeout OPTIONAL
+                     )
+{
+  EFI_STATUS					Status;
+  UINTN						Index;
+  
+  EFI_EVENT					WaitList[3];
+  EFI_EVENT					TimerEvent;
+  
+  if (Timeout != 0)
+  {
+    //
+    // Create a timer event
+    //
+    Status = gBS->CreateEvent(EVT_TIMER, 0, NULL, NULL, &TimerEvent);
+    if (!EFI_ERROR (Status))
+    {
+      //
+      // Set the timer event
+      //
+      gBS->SetTimer(TimerEvent, TimerRelative, Timeout);
+      
+      //
+      // Wait for the original event or the timer
+      //
+      WaitList[0] = TimerEvent;
+      WaitList[1] = Event1;
+      WaitList[2] = Event2;
+      
+      Status = gBS->WaitForEvent(3, WaitList, &Index);
+      gBS->CloseEvent (TimerEvent);
+      if (!EFI_ERROR (Status) && Index == 0)
+      {
+        Status = EFI_TIMEOUT;
+      }
+    }
+  }
+  else
+  {
+    WaitList[0] = Event1;
+    WaitList[1] = Event2;
+    Status = gBS->WaitForEvent (2, WaitList, &Index);
+  }
+  return Status;
+}
+
+
 
 BOOLEAN
 SetPageBreak (

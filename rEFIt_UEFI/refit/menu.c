@@ -931,8 +931,8 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
     //no default - no timeout!
     if ((*DefaultEntryIndex != -1) && (Screen->TimeoutSeconds > 0)) {
 //      DBG("have timeout\n");
-        HaveTimeout = TRUE;
-        TimeoutCountdown = Screen->TimeoutSeconds * 10;
+      HaveTimeout = TRUE;
+      TimeoutCountdown = Screen->TimeoutSeconds; // * 10;
     }
     MenuExit = 0;
     
@@ -971,7 +971,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
       break;
     }
     
-    Status = WaitForInputEvent(Screen, 1); //wait for 0.1 seconds
+    Status = WaitForInputEvent(Screen, 1); //wait for 1 seconds
     if (Status == EFI_TIMEOUT) {
       if (HaveTimeout) {
         if (TimeoutCountdown == 0) {
