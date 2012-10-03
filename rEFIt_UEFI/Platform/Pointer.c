@@ -170,9 +170,10 @@ VOID PrintPointerVars(
   gST->ConOut->SetCursorPosition (gST->ConOut, 0, 0);
   Print(L"%ld                           \n", Now);
   Print(L"Resolution X, Y: %ld, %ld           \n", CurrentMode->ResolutionX, CurrentMode->ResolutionY);
-  Print(L"Relative X, Y: %ld, %ld (%d, %d milimeters)           \n",
-        RelX, RelX, DivU64x64Remainder(RelX, CurrentMode->ResolutionX, NULL),
-        DivU64x64Remainder(RelY, CurrentMode->ResolutionY, NULL)
+  Print(L"Relative X, Y: %d, %d (%ld, %ld milimeters)           \n",
+        RelX, RelY,
+        DivS64x64Remainder((INT64)RelX, (INT64)CurrentMode->ResolutionX, NULL),
+        DivS64x64Remainder((INT64)RelY, (INT64)CurrentMode->ResolutionY, NULL)
         );
   Print(L"X: %d + %d = %d -> %d               \n", XPosPrev, ScreenRelX, (XPosPrev + ScreenRelX), XPos);
   Print(L"Y: %d + %d = %d -> %d               \n", YPosPrev, ScreenRelY, (YPosPrev + ScreenRelY), YPos);
@@ -310,11 +311,11 @@ EFI_STATUS WaitForInputEvent(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault)
   EFI_STATUS  Status        = EFI_SUCCESS;
   EFI_STATUS  MouseStatus   = EFI_SUCCESS;
 //  UINTN       TimeoutRemain = TimeoutDefault * 10; // 10 times 100 milisecs
-  UINTN       TimeoutRemain = TimeoutDefault * 200; // 200 * 5ms = 1sec
+  UINTN       TimeoutRemain = TimeoutDefault * 1; // 200 * 5ms = 1sec
   //
   // Note: using 100 milisec timout because less then that does not work on some UEFIs
   //
-  if (!gPointer.SimplePointerProtocol) {
+  if (!(gPointer.SimplePointerProtocol != NULL && gPointer.SimplePointerProtocol->WaitForInput != NULL)) {
     TimeoutRemain = TimeoutDefault * 10;  //temporary
   }
   
@@ -342,7 +343,7 @@ EFI_STATUS WaitForInputEvent(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault)
       Status = WaitFor2EventWithTsc (
                                     gST->ConIn->WaitForKey,
                                     gPointer.SimplePointerProtocol->WaitForInput,
-                                    ONE_MSECOND * 5
+                                    1000
                                     );
       
     } else {
