@@ -932,7 +932,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
     if ((*DefaultEntryIndex != -1) && (Screen->TimeoutSeconds > 0)) {
 //      DBG("have timeout\n");
       HaveTimeout = TRUE;
-      TimeoutCountdown = Screen->TimeoutSeconds; // * 10;
+      TimeoutCountdown = Screen->TimeoutSeconds * 10;
     }
     MenuExit = 0;
     
@@ -971,7 +971,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
       break;
     }
     
-    Status = WaitForInputEvent(Screen, 1); //wait for 1 seconds
+    Status = WaitForInputEventOld(Screen, 1); //wait for 0.1 seconds. Why? To refresh.
     if (Status == EFI_TIMEOUT) {
       if (HaveTimeout) {
         if (TimeoutCountdown == 0) {
@@ -1402,6 +1402,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       break;
       
     case MENU_FUNCTION_PAINT_SELECTION:
+      HidePointer();
       // redraw selection cursor
       //usr-sse2
       if (Screen->Entries[State->LastSelection]->Tag == TAG_INPUT) {
@@ -1435,7 +1436,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         DrawMenuText(Screen->Entries[State->CurrentSelection]->Title, MenuWidth,
                      EntriesPosX, EntriesPosY + MultU64x64(State->CurrentSelection, TextHeight), 0xFFFF);
       }
-      
+      MouseBirth();
       break;
       
     case MENU_FUNCTION_PAINT_TIMEOUT:

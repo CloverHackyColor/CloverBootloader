@@ -29,7 +29,7 @@
 #endif
 
 
-//TODO - make them theme dependent?
+// make them theme dependent? No, 32 is good value for all.
 UINTN  PointerWidth = 32;
 UINTN  PointerHeight = 32;
 ACTION gAction;
@@ -116,11 +116,6 @@ EFI_STATUS MouseBirth()
   gPointer.newImage = egCreateFilledImage(PointerWidth, PointerHeight, FALSE, &MenuBackgroundPixel);
   egTakeImage(gPointer.oldImage, gPointer.oldPlace.XPos, gPointer.oldPlace.YPos,
               PointerWidth, PointerHeight);
-/*
-  pi = gPointer.oldImage->PixelData[0];
-  DBG("Pixel data at start\n");
-  DBG(" Blue=%x Green=%x Red=%x Alfa=%x\n\n", pi.b, pi.g, pi.r, pi.a);
- */
   DrawPointer();
   gPointer.MouseEvent = NoEvents;
   return Status;
@@ -168,16 +163,18 @@ VOID PrintPointerVars(
   CurrentMode = gPointer.SimplePointerProtocol->Mode;
   Now = AsmReadTsc();
   gST->ConOut->SetCursorPosition (gST->ConOut, 0, 0);
-  Print(L"%ld                           \n", Now);
-  Print(L"Resolution X, Y: %ld, %ld           \n", CurrentMode->ResolutionX, CurrentMode->ResolutionY);
-  Print(L"Relative X, Y: %d, %d (%ld, %ld milimeters)           \n",
+  DBG("%ld                           \n", Now);
+  DBG("Resolution X, Y: %ld, %ld           \n", CurrentMode->ResolutionX, CurrentMode->ResolutionY);
+  DBG("Relative X, Y: %d, %d (%ld, %ld milimeters)           \n",
         RelX, RelY,
         DivS64x64Remainder((INT64)RelX, (INT64)CurrentMode->ResolutionX, NULL),
         DivS64x64Remainder((INT64)RelY, (INT64)CurrentMode->ResolutionY, NULL)
         );
-  Print(L"X: %d + %d = %d -> %d               \n", XPosPrev, ScreenRelX, (XPosPrev + ScreenRelX), XPos);
-  Print(L"Y: %d + %d = %d -> %d               \n", YPosPrev, ScreenRelY, (YPosPrev + ScreenRelY), YPos);
+  DBG("X: %d + %d = %d -> %d               \n", XPosPrev, ScreenRelX, (XPosPrev + ScreenRelX), XPos);
+  DBG("Y: %d + %d = %d -> %d               \n", YPosPrev, ScreenRelY, (YPosPrev + ScreenRelY), YPos);
 }
+
+static INTN PrintCount = 0;
 
 VOID UpdatePointer()
 {
@@ -201,7 +198,7 @@ VOID UpdatePointer()
   Status = gPointer.SimplePointerProtocol->GetState(gPointer.SimplePointerProtocol, &tmpState);
   if (!EFI_ERROR(Status)) {
     if (gPointer.State.LeftButton && !tmpState.LeftButton) { //release left
-      //TODO - time for double click 500ms into menu
+      // time for double click 500ms into menu
       if (TimeDiff(gPointer.LastClickTime, Now) < gSettings.DoubleClickTime) {
         gPointer.MouseEvent = DoubleClick;
       } else {
@@ -236,17 +233,20 @@ VOID UpdatePointer()
    gPointer.newPlace.YPos += ScreenRelY;
    if (gPointer.newPlace.YPos < 0) gPointer.newPlace.YPos = 0;
    if (gPointer.newPlace.YPos > UGAHeight - 32) gPointer.newPlace.YPos = UGAHeight - 32;
-   
-   PrintPointerVars(gPointer.State.RelativeMovementX,
-                    gPointer.State.RelativeMovementY,
-                    ScreenRelX,
-                    ScreenRelY,
-                    XPosPrev,
-                    YPosPrev,
-                    gPointer.newPlace.XPos,
-                    gPointer.newPlace.YPos
-                    );
-   
+
+    if (PrintCount < 10) {
+      PrintPointerVars(gPointer.State.RelativeMovementX,
+                       gPointer.State.RelativeMovementY,
+                       ScreenRelX,
+                       ScreenRelY,
+                       XPosPrev,
+                       YPosPrev,
+                       gPointer.newPlace.XPos,
+                       gPointer.newPlace.YPos
+                       );
+      
+      PrintCount++;
+    }
     
     RedrawPointer();
   }
@@ -311,7 +311,7 @@ EFI_STATUS WaitForInputEvent(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault)
   EFI_STATUS  Status        = EFI_SUCCESS;
   EFI_STATUS  MouseStatus   = EFI_SUCCESS;
 //  UINTN       TimeoutRemain = TimeoutDefault * 10; // 10 times 100 milisecs
-  UINTN       TimeoutRemain = TimeoutDefault * 1; // 200 * 5ms = 1sec
+  UINTN       TimeoutRemain = TimeoutDefault * 1; //  1sec
   //
   // Note: using 100 milisec timout because less then that does not work on some UEFIs
   //
@@ -385,3 +385,30 @@ EFI_STATUS WaitForInputEvent(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault)
   }
   return Status;
 }
+
+// TimeoutDefault for a wait in 0.1 seconds
+// return EFI_TIMEOUT if no inputs
+EFI_STATUS WaitForInputEventOld(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault)
+{
+  EFI_STATUS Status = EFI_SUCCESS;
+  UINTN TimeoutRemain = TimeoutDefault * 10;
+  while (TimeoutRemain != 0) {
+    
+//    Status = WaitForSingleEvent (gST->ConIn->WaitForKey, ONE_MSECOND * 10);
+    Status = WaitFor2EventWithTsc (gST->ConIn->WaitForKey, NULL, 10);
+    
+    if (Status != EFI_TIMEOUT) {
+      break;
+    }
+    TimeoutRemain--;
+    if (gPointer.SimplePointerProtocol) {
+      UpdatePointer();
+      Status = CheckMouseEvent(Screen); //out: gItemID, gAction
+      if (Status != EFI_TIMEOUT) { //this check should return timeout if no mouse events occured
+        break;
+      }
+    }
+  }
+  return Status;
+}
+
