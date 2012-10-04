@@ -223,18 +223,18 @@ VOID UpdatePointer()
    CurrentMode = gPointer.SimplePointerProtocol->Mode;
    
    XPosPrev = gPointer.newPlace.XPos;
-   ScreenRelX = (INTN)UGAWidth * (INTN)gPointer.State.RelativeMovementX / (INTN)CurrentMode->ResolutionX / 100;
+   ScreenRelX = ((UGAWidth * gPointer.State.RelativeMovementX / (INTN)CurrentMode->ResolutionX) * gSettings.PointerSpeed) / 1000;
    gPointer.newPlace.XPos += ScreenRelX;
    if (gPointer.newPlace.XPos < 0) gPointer.newPlace.XPos = 0;
    if (gPointer.newPlace.XPos > UGAWidth - 32) gPointer.newPlace.XPos = UGAWidth - 32;
    
    YPosPrev = gPointer.newPlace.YPos;
-   ScreenRelY = (INTN)UGAHeight * (INTN)gPointer.State.RelativeMovementY / (INTN)CurrentMode->ResolutionY / 100;
+   ScreenRelY = ((UGAHeight * gPointer.State.RelativeMovementY / (INTN)CurrentMode->ResolutionY) * gSettings.PointerSpeed) / 1000;
    gPointer.newPlace.YPos += ScreenRelY;
    if (gPointer.newPlace.YPos < 0) gPointer.newPlace.YPos = 0;
    if (gPointer.newPlace.YPos > UGAHeight - 32) gPointer.newPlace.YPos = UGAHeight - 32;
 
-    if (PrintCount < 10) {
+    if (PrintCount < 2) {
       PrintPointerVars(gPointer.State.RelativeMovementX,
                        gPointer.State.RelativeMovementY,
                        ScreenRelX,
@@ -388,7 +388,7 @@ EFI_STATUS WaitForInputEvent(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault)
 
 // TimeoutDefault for a wait in seconds
 // return EFI_TIMEOUT if no inputs
-EFI_STATUS WaitForInputEventOld(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault)
+EFI_STATUS WaitForInputEventPoll(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault)
 {
   EFI_STATUS Status = EFI_SUCCESS;
   UINTN TimeoutRemain = TimeoutDefault * 100;

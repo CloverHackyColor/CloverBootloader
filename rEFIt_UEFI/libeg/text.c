@@ -62,7 +62,7 @@ UINT64 TextHeight;
 // Text rendering
 //
 
-VOID egMeasureText(IN CHAR16 *Text, OUT UINT64 *Width, OUT UINT64 *Height)
+VOID egMeasureText(IN CHAR16 *Text, OUT INT64 *Width, OUT INT64 *Height)
 {
     if (Width != NULL)
         *Width = StrLen(Text) * GlobalConfig.CharWidth;
@@ -76,8 +76,8 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN WantAlpha)
   EG_IMAGE            *NewFontImage;
 //  UINTN     FontWidth;  //using global variables
 //  UINTN     FontHeight;
-  UINT64     ImageWidth, ImageHeight;
-  UINT64     x, y, Ypos, j;
+  INT64     ImageWidth, ImageHeight;
+  INT64     x, y, Ypos, j;
   EG_PIXEL    *PixelPtr;
   EG_PIXEL    FirstPixel;
     
@@ -154,12 +154,12 @@ VOID PrepareFont(VOID)
 }
 
 VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
-                  IN UINT64 PosX, IN UINT64 PosY, IN UINT64 Cursor)
+                  IN INT64 PosX, IN INT64 PosY, IN INT64 Cursor)
 {
   EG_PIXEL        *BufferPtr;
   EG_PIXEL        *FontPixelData;
-  UINT64           BufferLineOffset, FontLineOffset;
-  UINT64           TextLength;
+  INT64           BufferLineOffset, FontLineOffset;
+  INT64           TextLength;
   UINTN            i, c, c1;
   UINT64           Shift = 0;
   
@@ -167,15 +167,15 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
   TextLength = StrLen(Text);
   if ((MultU64x64(TextLength, GlobalConfig.CharWidth) + PosX) > CompImage->Width){
     if (GlobalConfig.CharWidth) {
-      TextLength = DivU64x64Remainder((CompImage->Width - PosX), GlobalConfig.CharWidth, 0);
+      TextLength = DivU64x32(CompImage->Width - PosX, GlobalConfig.CharWidth);
     } else
-      TextLength = DivU64x64Remainder((CompImage->Width - PosX), FontWidth, 0);
+      TextLength = DivU64x32(CompImage->Width - PosX, FontWidth);
   }
 //  DBG("TextLength =%d PosX=%d PosY=%d\n", TextLength, PosX, PosY);
   // render it
   BufferPtr = CompImage->PixelData;
   BufferLineOffset = CompImage->Width;
-  BufferPtr += PosX + MultU64x64(PosY, BufferLineOffset);
+  BufferPtr += PosX + PosY * BufferLineOffset;
   FontPixelData = FontImage->PixelData;
   FontLineOffset = FontImage->Width;
   if (GlobalConfig.CharWidth < FontWidth) {

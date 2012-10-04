@@ -158,8 +158,8 @@ typedef union {
 
 
 typedef struct {
-    UINT64      Width;
-    UINT64      Height;
+    INT64      Width;
+    INT64      Height;
     BOOLEAN     HasAlpha;
     EG_PIXEL    *PixelData;
 } EG_IMAGE;
@@ -167,8 +167,8 @@ typedef struct {
 typedef struct {
   INTN     XPos;
   INTN     YPos;
-  UINTN     Width;
-  UINTN     Height;
+  INTN     Width;
+  INTN     Height;
 } EG_RECT;
 
 
@@ -187,8 +187,8 @@ typedef struct {
 #define EG_EICOMPMODE_EFICOMPRESS   (2)
 
 typedef struct {
-    UINTN       Width;
-    UINTN       Height;
+    INTN       Width;
+    INTN       Height;
     UINTN       PixelMode;
     UINTN       CompressMode;
     const UINT8 *Data;
@@ -201,7 +201,7 @@ VOID    egInitScreen(VOID);
 CHAR8*  egDumpGOPVideoModes(VOID);
 EFI_STATUS egSetScreenResolution(IN CHAR16 *WidthHeight); 
 EFI_STATUS egSetMaxResolution(VOID);
-VOID    egGetScreenSize(OUT UINT64 *ScreenWidth, OUT UINT64 *ScreenHeight);
+VOID    egGetScreenSize(OUT INTN *ScreenWidth, OUT INTN *ScreenHeight);
 CHAR16* egScreenDescription(VOID);
 BOOLEAN egHasGraphicsMode(VOID);
 BOOLEAN egIsGraphicsModeEnabled(VOID);
@@ -211,10 +211,10 @@ VOID    egSetGraphicsModeEnabled(IN BOOLEAN Enable);
 //  is running in text mode. egHasGraphicsMode() only determines
 //  if libeg can draw to the screen in graphics mode.
 
-EG_IMAGE * egCreateImage(IN UINT64 Width, IN UINT64 Height, IN BOOLEAN HasAlpha);
-EG_IMAGE * egCreateFilledImage(IN UINT64 Width, IN UINT64 Height, IN BOOLEAN HasAlpha, IN EG_PIXEL *Color);
+EG_IMAGE * egCreateImage(IN INT64 Width, IN INT64 Height, IN BOOLEAN HasAlpha);
+EG_IMAGE * egCreateFilledImage(IN INT64 Width, IN INT64 Height, IN BOOLEAN HasAlpha, IN EG_PIXEL *Color);
 EG_IMAGE * egCopyImage(IN EG_IMAGE *Image);
-EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *Image, IN UINT64 Ratio);
+EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *Image, IN INT64 Ratio);
 VOID       egFreeImage(IN EG_IMAGE *Image);
 
 EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN BOOLEAN WantAlpha);
@@ -222,7 +222,7 @@ EG_IMAGE * egLoadIcon(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN 
 EG_IMAGE * egDecodeImage(IN UINT8 *FileData, IN UINTN FileDataLength, IN CHAR16 *Format, IN BOOLEAN WantAlpha);
 EG_IMAGE * egPrepareEmbeddedImage(IN EG_EMBEDDED_IMAGE *EmbeddedImage, IN BOOLEAN WantAlpha);
 
-EG_IMAGE * egEnsureImageSize(IN EG_IMAGE *Image, IN UINTN Width, IN UINTN Height, IN EG_PIXEL *Color);
+EG_IMAGE * egEnsureImageSize(IN EG_IMAGE *Image, IN INTN Width, IN INTN Height, IN EG_PIXEL *Color);
 
 EFI_STATUS egLoadFile(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName,
                       OUT UINT8 **FileData, OUT UINTN *FileDataLength);
@@ -231,22 +231,22 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName,
 
 VOID egFillImage(IN OUT EG_IMAGE *CompImage, IN EG_PIXEL *Color);
 VOID egFillImageArea(IN OUT EG_IMAGE *CompImage,
-                     IN UINT64 AreaPosX, IN UINT64 AreaPosY,
-                     IN UINT64 AreaWidth, IN UINT64 AreaHeight,
+                     IN INT64 AreaPosX, IN INT64 AreaPosY,
+                     IN INT64 AreaWidth, IN INT64 AreaHeight,
                      IN EG_PIXEL *Color);
-VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN UINT64 PosX, IN UINT64 PosY);
+VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INT64 PosX, IN INT64 PosY);
 VOID PrepareFont(VOID);
-VOID egMeasureText(IN CHAR16 *Text, OUT UINT64 *Width, OUT UINT64 *Height);
-VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage, IN UINT64 PosX, IN UINT64 PosY, IN UINT64 Cursor);
+VOID egMeasureText(IN CHAR16 *Text, OUT INT64 *Width, OUT INT64 *Height);
+VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage, IN INT64 PosX, IN INT64 PosY, IN INT64 Cursor);
 
 VOID egClearScreen(IN EG_PIXEL *Color);
-VOID egDrawImage(IN EG_IMAGE *Image, IN UINT64 ScreenPosX, IN UINT64 ScreenPosY);
+VOID egDrawImage(IN EG_IMAGE *Image, IN INT64 ScreenPosX, IN INT64 ScreenPosY);
 VOID egDrawImageArea(IN EG_IMAGE *Image,
-                     IN UINT64 AreaPosX, IN UINT64 AreaPosY,
-                     IN UINT64 AreaWidth, IN UINT64 AreaHeight,
-                     IN UINT64 ScreenPosX, IN UINT64 ScreenPosY);
+                     IN INT64 AreaPosX, IN INT64 AreaPosY,
+                     IN INT64 AreaWidth, IN INT64 AreaHeight,
+                     IN INT64 ScreenPosX, IN INT64 ScreenPosY);
 VOID egTakeImage(IN EG_IMAGE *Image, INTN ScreenPosX, INTN ScreenPosY,
-                 IN UINTN AreaWidth, IN UINTN AreaHeight);
+                 IN INTN AreaWidth, IN INTN AreaHeight);
 
 EFI_STATUS egScreenShot(VOID);
 

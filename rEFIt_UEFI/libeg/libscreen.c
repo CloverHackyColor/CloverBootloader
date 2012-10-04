@@ -254,7 +254,7 @@ VOID egInitScreen(VOID)
     }
 }
 
-VOID egGetScreenSize(OUT UINT64 *ScreenWidth, OUT UINT64 *ScreenHeight)
+VOID egGetScreenSize(OUT INTN *ScreenWidth, OUT INTN *ScreenHeight)
 {
     if (ScreenWidth != NULL)
         *ScreenWidth = egScreenWidth;
@@ -339,7 +339,7 @@ VOID egClearScreen(IN EG_PIXEL *Color)
     }
 }
 
-VOID egDrawImage(IN EG_IMAGE *Image, IN UINT64 ScreenPosX, IN UINT64 ScreenPosY)
+VOID egDrawImage(IN EG_IMAGE *Image, IN INT64 ScreenPosX, IN INT64 ScreenPosY)
 {
     if (!egHasGraphics)
         return;
@@ -359,9 +359,9 @@ VOID egDrawImage(IN EG_IMAGE *Image, IN UINT64 ScreenPosX, IN UINT64 ScreenPosY)
 }
 
 VOID egDrawImageArea(IN EG_IMAGE *Image,
-                     IN UINT64 AreaPosX, IN UINT64 AreaPosY,
-                     IN UINT64 AreaWidth, IN UINT64 AreaHeight,
-                     IN UINT64 ScreenPosX, IN UINT64 ScreenPosY)
+                     IN INT64 AreaPosX, IN INT64 AreaPosY,
+                     IN INT64 AreaWidth, IN INT64 AreaHeight,
+                     IN INT64 ScreenPosX, IN INT64 ScreenPosY)
 {
     if (!egHasGraphics)
         return;
@@ -387,7 +387,7 @@ VOID egDrawImageArea(IN EG_IMAGE *Image,
 }
 
 VOID egTakeImage(IN EG_IMAGE *Image, INTN ScreenPosX, INTN ScreenPosY,
-                 IN UINTN AreaWidth, IN UINTN AreaHeight)
+                 IN INTN AreaWidth, IN INTN AreaHeight)
 {
   if (GraphicsOutput != NULL) {
     GraphicsOutput->Blt(GraphicsOutput,

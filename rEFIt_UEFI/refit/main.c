@@ -1299,8 +1299,8 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
     BootLogoImage = LoadOSIcon(Entry->Volume->OSIconName, L"legacy", TRUE);
     if (BootLogoImage != NULL)
         BltImageAlpha(BootLogoImage,
-                      RShiftU64(UGAWidth  - BootLogoImage->Width, 1),
-                      RShiftU64(UGAHeight - BootLogoImage->Height, 1),
+                      (UGAWidth  - BootLogoImage->Width) >> 1,
+                      (UGAHeight - BootLogoImage->Height) >> 1,
                       &StdBackgroundPixel, 16);
   
 /*    Status = ExtractLegacyLoaderPaths(DiscoveredPathList, MAX_DISCOVERED_PATHS, LegacyLoaderList);
