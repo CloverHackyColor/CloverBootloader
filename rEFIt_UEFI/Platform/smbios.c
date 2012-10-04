@@ -1054,6 +1054,8 @@ VOID PatchTableType16()
 	if (!TotalCount) {
 		TotalCount = MAX_SLOT_COUNT;
 	} */
+	//MemoryErrorInformationHandle
+	newSmbiosTable.Type16->MemoryErrorInformationHandle = 0xFFFF;
 	mHandle16 = LogSmbiosTable(newSmbiosTable);
 	return;
 }
@@ -1215,7 +1217,7 @@ VOID PatchTableType17()
 		AsciiSPrint(bankLocator, 10, "BANK %d", Index & 1);
 		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
 		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, (CHAR8*)&bankLocator[0]);
-		
+		newSmbiosTable.Type17->MemoryErrorInformationHandle = 0xFFFF;
 		mHandle17[Index] = LogSmbiosTable(newSmbiosTable);
 	}
 	return;

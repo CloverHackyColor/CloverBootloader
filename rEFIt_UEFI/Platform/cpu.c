@@ -635,6 +635,11 @@ UINT16 GetAdvancedCpuType ()
 							return 0x901; // Core i3 //why not 902? Ask Apple
 						if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
 							return 0x602; // Core i5
+            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i7"))
+              return 0x702; // Core i7
+            if (gCPUStructure.Cores <= 2) {
+              return 0x602;
+            }
 						return 0x702; // Core i7
 						
 					//case CPU_MODEL_ARRANDALE:
@@ -644,6 +649,11 @@ UINT16 GetAdvancedCpuType ()
 							return 0x901; // Core i3
 						if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
 							return 0x601; // Core i5 - (M540 -> 0x0602)
+            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i7"))
+              return 0x701; // Core i7
+            if (gCPUStructure.Cores <= 2) {
+              return 0x601;
+            }
 						return 0x701; // Core i7
 						
 					case CPU_MODEL_WESTMERE: // Intel Core i7 LGA1366 (32nm) 6 Core (Gulftown, Westmere-EP, Westmere-WS)
@@ -654,12 +664,22 @@ UINT16 GetAdvancedCpuType ()
 							return 0x903; // Core i3
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
               return 0x603; // Core i5
+            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i7"))
+              return 0x703; // Core i7
+            if (gCPUStructure.Cores <= 2) {
+              return 0x603;
+            }
 						return 0x703;
           case CPU_MODEL_IVY_BRIDGE:  
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
 							return 0x903; // Core i3 - Apple doesn't use it
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
               return 0x604; // Core i5
+            if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i7"))
+              return 0x704; // Core i7
+            if (gCPUStructure.Cores <= 2) {
+              return 0x604;
+            }
 						return 0x704;
 				}
 			}
