@@ -1037,6 +1037,9 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
       } */
       continue;
     }
+    if (gAction == ActionNone) {
+      ReadAllKeyStrokes(); //clean to avoid doubles
+    }
     if (HaveTimeout) {
       // the user pressed a key, cancel the timeout
       StyleFunc(Screen, &State, MENU_FUNCTION_PAINT_TIMEOUT, L"");
