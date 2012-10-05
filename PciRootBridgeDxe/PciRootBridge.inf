@@ -48,10 +48,12 @@
   DeviceIo.c
 
 [Sources.ia32]
-  Ia32/PcatIo.c
+#  Ia32/PcatIo.c
+	PcatIo.c
   
 [Sources.x64]
-  X64/PcatIo.c
+#  X64/PcatIo.c
+	PcatIo.c
 
 [Protocols]
   gEfiPciRootBridgeIoProtocolGuid

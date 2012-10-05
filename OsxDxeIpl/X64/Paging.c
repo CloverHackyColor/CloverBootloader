@@ -194,6 +194,11 @@ Description:
 --*/
 {
   VOID  *PageNumberBase;
+  
+  // patch by nms42
+  // For AMD hardware with 48 bit wide space the table is rather HUGE
+  if (SizeOfMemorySpace > 40)
+    SizeOfMemorySpace = 40;
 
   SizeOfMemorySpace -= EFI_2M_PAGE_BITS_NUM;
   gPDEBitsNum        = (UINT8) MIN (SizeOfMemorySpace, EFI_MAX_ENTRY_BITS_NUM);

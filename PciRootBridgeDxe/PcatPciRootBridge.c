@@ -536,12 +536,12 @@ Returns:
                  (UINT16)PrivateData->SubordinateBus
                  );
       ASSERT_EFI_ERROR (Status);
-
+#if 0 //patch by nms42
       //
       // Scan this PCI Root Bridge for PCI Option ROMs and add them to the PCI Option ROM Table
       //
       Status = ScanPciRootBridgeForRoms(&PrivateData->Io);
-
+#endif
       //
       // Increment the index for the next PCI Root Bridge
       //

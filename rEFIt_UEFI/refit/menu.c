@@ -1618,11 +1618,11 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION)){
 #ifdef FIRMWARE_REVISION
         DrawMainMenuText(FIRMWARE_REVISION,
-                         (UGAWidth - GlobalConfig.CharWidth * 8 - 2),
+                         (UGAWidth - LAYOUT_TEXT_WIDTH - 2),
                          UGAHeight - 5 - TextHeight, AlignRight);
 #else
         DrawMainMenuText(gST->FirmwareRevision,
-                         (UGAWidth - GlobalConfig.CharWidth * 8 - 2),
+                         (UGAWidth - LAYOUT_TEXT_WIDTH - 2),
                          UGAHeight - 5 - TextHeight, AlignRight);
 #endif
       }
@@ -1638,11 +1638,11 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION)){
 #ifdef FIRMWARE_REVISION
         DrawMainMenuText(FIRMWARE_REVISION,
-                         (UGAWidth - GlobalConfig.CharWidth * 8 - 2),
+                         (UGAWidth - LAYOUT_TEXT_WIDTH - 2),
                          UGAHeight - 5 - TextHeight, AlignRight);
 #else
         DrawMainMenuText(gST->FirmwareRevision,
-                         (UGAWidth - GlobalConfig.CharWidth * 8 - 2),
+                         (UGAWidth - LAYOUT_TEXT_WIDTH - 2),
                          UGAHeight - 5 - TextHeight, AlignRight);
 #endif
       }
