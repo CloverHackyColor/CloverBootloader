@@ -141,6 +141,16 @@ typedef struct {
   UINT32              DriveCRC32;
 } REFIT_VOLUME;
 
+typedef enum {
+  AlignNo,
+  AlignLeft,
+  AlignRight,
+  AlignCenter,
+  AlignUp,
+  AlignDown
+
+} ALIGNMENT;
+
 //mouse types
 typedef enum {
   NoEvents,
@@ -289,7 +299,7 @@ typedef struct {
   BOOLEAN     NoLogging;
 //  BOOLEAN     DriveImage;
   FONT_TYPE   Font;
-  UINTN       CharWidth;
+  INTN        CharWidth;
   UINTN       SelectionColor;
   CHAR16      *FontFileName;
   CHAR16      *Theme;
@@ -387,9 +397,9 @@ EFI_STATUS InitializeUnicodeCollationProtocol (VOID);
 //#define FONT_CELL_WIDTH (7)
 //#define FONT_CELL_HEIGHT (12)
 
-extern UINT64 FontWidth;
-extern UINT64 FontHeight;
-extern UINT64 TextHeight;
+extern INTN FontWidth;
+extern INTN FontHeight;
+extern INTN TextHeight;
 
 
 extern UINTN ConWidth;

@@ -158,8 +158,8 @@ typedef union {
 
 
 typedef struct {
-    INT64      Width;
-    INT64      Height;
+    INTN      Width;
+    INTN      Height;
     BOOLEAN     HasAlpha;
     EG_PIXEL    *PixelData;
 } EG_IMAGE;
@@ -211,10 +211,10 @@ VOID    egSetGraphicsModeEnabled(IN BOOLEAN Enable);
 //  is running in text mode. egHasGraphicsMode() only determines
 //  if libeg can draw to the screen in graphics mode.
 
-EG_IMAGE * egCreateImage(IN INT64 Width, IN INT64 Height, IN BOOLEAN HasAlpha);
-EG_IMAGE * egCreateFilledImage(IN INT64 Width, IN INT64 Height, IN BOOLEAN HasAlpha, IN EG_PIXEL *Color);
+EG_IMAGE * egCreateImage(IN INTN Width, IN INTN Height, IN BOOLEAN HasAlpha);
+EG_IMAGE * egCreateFilledImage(IN INTN Width, IN INTN Height, IN BOOLEAN HasAlpha, IN EG_PIXEL *Color);
 EG_IMAGE * egCopyImage(IN EG_IMAGE *Image);
-EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *Image, IN INT64 Ratio);
+EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *Image, IN INTN Ratio);
 VOID       egFreeImage(IN EG_IMAGE *Image);
 
 EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN BOOLEAN WantAlpha);
@@ -231,20 +231,20 @@ EFI_STATUS egSaveFile(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName,
 
 VOID egFillImage(IN OUT EG_IMAGE *CompImage, IN EG_PIXEL *Color);
 VOID egFillImageArea(IN OUT EG_IMAGE *CompImage,
-                     IN INT64 AreaPosX, IN INT64 AreaPosY,
-                     IN INT64 AreaWidth, IN INT64 AreaHeight,
+                     IN INTN AreaPosX, IN INTN AreaPosY,
+                     IN INTN AreaWidth, IN INTN AreaHeight,
                      IN EG_PIXEL *Color);
-VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INT64 PosX, IN INT64 PosY);
+VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN PosX, IN INTN PosY);
 VOID PrepareFont(VOID);
-VOID egMeasureText(IN CHAR16 *Text, OUT INT64 *Width, OUT INT64 *Height);
-VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage, IN INT64 PosX, IN INT64 PosY, IN INT64 Cursor);
+VOID egMeasureText(IN CHAR16 *Text, OUT INTN *Width, OUT INTN *Height);
+VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage, IN INTN PosX, IN INTN PosY, IN INTN Cursor);
 
 VOID egClearScreen(IN EG_PIXEL *Color);
-VOID egDrawImage(IN EG_IMAGE *Image, IN INT64 ScreenPosX, IN INT64 ScreenPosY);
+//VOID egDrawImage(IN EG_IMAGE *Image, IN INTN ScreenPosX, IN INTN ScreenPosY);
 VOID egDrawImageArea(IN EG_IMAGE *Image,
-                     IN INT64 AreaPosX, IN INT64 AreaPosY,
-                     IN INT64 AreaWidth, IN INT64 AreaHeight,
-                     IN INT64 ScreenPosX, IN INT64 ScreenPosY);
+                     IN INTN AreaPosX, IN INTN AreaPosY,
+                     IN INTN AreaWidth, IN INTN AreaHeight,
+                     IN INTN ScreenPosX, IN INTN ScreenPosY);
 VOID egTakeImage(IN EG_IMAGE *Image, INTN ScreenPosX, INTN ScreenPosY,
                  IN INTN AreaWidth, IN INTN AreaHeight);
 

@@ -30,31 +30,62 @@
 
 
 // make them theme dependent? No, 32 is good value for all.
-UINTN  PointerWidth = 32;
-UINTN  PointerHeight = 32;
+#define POINTER_WIDTH  32
+#define POINTER_HEIGHT 32
+
 ACTION gAction;
 UINTN  gItemID;
 
-POINTERS gPointer = {NULL, NULL, NULL, NULL, {0, 0, 32, 32}, {0, 0, 32, 32}, 0,
-  {0, 0, 0, FALSE, FALSE}, NoEvents};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+POINTERS gPointer = {NULL, NULL, NULL, NULL,
+                     {0, 0, POINTER_WIDTH, POINTER_HEIGHT},
+                     {0, 0, POINTER_WIDTH, POINTER_HEIGHT}, 0,
+                     {0, 0, 0, FALSE, FALSE}, NoEvents};
 
 VOID HidePointer()
 {
-  egDrawImage(gPointer.oldImage, gPointer.oldPlace.XPos, gPointer.oldPlace.YPos);
+  egDrawImageArea(gPointer.oldImage, 0, 0, 0, 0, gPointer.oldPlace.XPos, gPointer.oldPlace.YPos);
 }
 
 VOID DrawPointer()
 {
+  // thanks lllevelll for the patch, I move it to egTakeImage and egDrawImageArea
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*  UINTN  PointerHCrop = POINTER_HEIGHT;
+  UINTN  PointerWCrop = POINTER_WIDTH;  
+  UINTN  Var = 0;
+  
+  PointerHCrop = POINTER_HEIGHT;
+  PointerWCrop = POINTER_WIDTH;
+  
+  Var = UGAWidth - gPointer.newPlace.XPos;      
+  
+  If (Var < POINTER_WIDTH) {
+    PointerWCrop = Var;
+  }
+  
+  Var = UGAHeight - gPointer.newPlace.YPos;     
+  
+  If Var < (POINTER_HEIGHT) {
+    PointerHCrop = Var;
+  }
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////
+*/  
   // take background image
   egTakeImage(gPointer.oldImage, gPointer.newPlace.XPos, gPointer.newPlace.YPos,
-              PointerWidth, PointerHeight);
+              POINTER_WIDTH, POINTER_HEIGHT);
   CopyMem(&gPointer.oldPlace, &gPointer.newPlace, sizeof(EG_RECT));
   egRawCopy(gPointer.newImage->PixelData, gPointer.oldImage->PixelData,
-            PointerWidth, PointerHeight,
+            POINTER_WIDTH, POINTER_HEIGHT,
             gPointer.newImage->Width,
             gPointer.oldImage->Width);
   egComposeImage(gPointer.newImage, gPointer.Pointer, 0, 0);
-  egDrawImage(gPointer.newImage, gPointer.oldPlace.XPos, gPointer.oldPlace.YPos);
+  egDrawImageArea(gPointer.newImage, 0, 0,
+                  POINTER_WIDTH, POINTER_HEIGHT,
+                  gPointer.oldPlace.XPos, gPointer.oldPlace.YPos);
   
 }
 
@@ -97,7 +128,7 @@ EFI_STATUS MouseBirth()
   //there may be also trackpad protocol but afaik it is not properly work and
   // trackpad is usually controlled by simple mouse driver
   
-//  gPointer.Pointer = egLoadIcon(ThemeDir, L"icons\\pointer.icns", PointerWidth);
+//  gPointer.Pointer = egLoadIcon(ThemeDir, L"icons\\pointer.icns", POINTER_WIDTH);
   gPointer.Pointer = BuiltinIcon(BUILTIN_ICON_POINTER);
 	if(!gPointer.Pointer) {
     
@@ -108,14 +139,14 @@ EFI_STATUS MouseBirth()
   gPointer.LastClickTime = AsmReadTsc();
   gPointer.oldPlace.XPos = UGAWidth >> 2;
   gPointer.oldPlace.YPos = UGAHeight >> 2;
-  gPointer.oldPlace.Width = PointerWidth;
-  gPointer.oldPlace.Height = PointerHeight;
+  gPointer.oldPlace.Width = POINTER_WIDTH;
+  gPointer.oldPlace.Height = POINTER_HEIGHT;
   CopyMem(&gPointer.newPlace, &gPointer.oldPlace, sizeof(EG_RECT));
   
-  gPointer.oldImage = egCreateImage(PointerWidth, PointerHeight, FALSE);
-  gPointer.newImage = egCreateFilledImage(PointerWidth, PointerHeight, FALSE, &MenuBackgroundPixel);
+  gPointer.oldImage = egCreateImage(POINTER_WIDTH, POINTER_HEIGHT, FALSE);
+  gPointer.newImage = egCreateFilledImage(POINTER_WIDTH, POINTER_HEIGHT, FALSE, &MenuBackgroundPixel);
   egTakeImage(gPointer.oldImage, gPointer.oldPlace.XPos, gPointer.oldPlace.YPos,
-              PointerWidth, PointerHeight);
+              POINTER_WIDTH, POINTER_HEIGHT);
   DrawPointer();
   gPointer.MouseEvent = NoEvents;
   return Status;
@@ -226,13 +257,13 @@ VOID UpdatePointer()
    ScreenRelX = ((UGAWidth * gPointer.State.RelativeMovementX / (INTN)CurrentMode->ResolutionX) * gSettings.PointerSpeed) / 1000;
    gPointer.newPlace.XPos += ScreenRelX;
    if (gPointer.newPlace.XPos < 0) gPointer.newPlace.XPos = 0;
-   if (gPointer.newPlace.XPos > UGAWidth - 32) gPointer.newPlace.XPos = UGAWidth - 32;
+   if (gPointer.newPlace.XPos > UGAWidth - 1) gPointer.newPlace.XPos = UGAWidth - 1;
    
    YPosPrev = gPointer.newPlace.YPos;
    ScreenRelY = ((UGAHeight * gPointer.State.RelativeMovementY / (INTN)CurrentMode->ResolutionY) * gSettings.PointerSpeed) / 1000;
    gPointer.newPlace.YPos += ScreenRelY;
    if (gPointer.newPlace.YPos < 0) gPointer.newPlace.YPos = 0;
-   if (gPointer.newPlace.YPos > UGAHeight - 32) gPointer.newPlace.YPos = UGAHeight - 32;
+   if (gPointer.newPlace.YPos > UGAHeight - 1) gPointer.newPlace.YPos = UGAHeight - 1;
 
     if (PrintCount < 2) {
       PrintPointerVars(gPointer.State.RelativeMovementX,

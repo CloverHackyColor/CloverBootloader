@@ -404,7 +404,7 @@ VOID BltImage(IN EG_IMAGE *Image, IN INT64 XPos, IN INT64 YPos)
   if (!Image) {
     return;
   }  
-  egDrawImage(Image, XPos, YPos);
+  egDrawImageArea(Image, 0, 0, 0, 0, XPos, YPos);
   GraphicsScreenDirty = TRUE;
 }
 
@@ -425,7 +425,7 @@ VOID BltImageAlpha(IN EG_IMAGE *Image, IN INT64 XPos, IN INT64 YPos, IN EG_PIXEL
   egComposeImage(CompImage, NewImage, 0, 0);
   
   // blit to screen and clean up
-  egDrawImage(CompImage, XPos, YPos);
+  egDrawImageArea(CompImage, 0, 0, 0, 0, XPos, YPos);
   egFreeImage(CompImage);
   if (NewImage) {
     egFreeImage(NewImage);
@@ -459,7 +459,7 @@ VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INT64 X
     egComposeImage(CompImage, TopImage, OffsetX, OffsetY);
     
     // blit to screen and clean up
-    egDrawImage(CompImage, XPos, YPos);
+    egDrawImageArea(CompImage, 0, 0, CompWidth, CompHeight, XPos, YPos);
     egFreeImage(CompImage);
     GraphicsScreenDirty = TRUE;
 }
@@ -498,7 +498,7 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
     }
     
     // blit to screen and clean up
-    egDrawImage(CompImage, XPos, YPos);
+    egDrawImageArea(CompImage, 0, 0, CompWidth, CompHeight, XPos, YPos);
     egFreeImage(CompImage);
     GraphicsScreenDirty = TRUE;
 }

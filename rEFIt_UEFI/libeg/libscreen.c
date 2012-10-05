@@ -338,15 +338,15 @@ VOID egClearScreen(IN EG_PIXEL *Color)
                      0, 0, 0, 0, egScreenWidth, egScreenHeight, 0);
     }
 }
-
-VOID egDrawImage(IN EG_IMAGE *Image, IN INT64 ScreenPosX, IN INT64 ScreenPosY)
+/*
+VOID egDrawImage(IN EG_IMAGE *Image, IN INTN ScreenPosX, IN INTN ScreenPosY)
 {
-    if (!egHasGraphics)
+    if (!egHasGraphics || !Image)
         return;
     
     if (Image->HasAlpha) {
         Image->HasAlpha = FALSE;
-        egSetPlane(PLPTR(Image, a), 0, MultU64x64(Image->Width, Image->Height)); //fill image->alfa by 0
+        egSetPlane(PLPTR(Image, a), 0, Image->Width * Image->Height); //fill image->alfa by 0
     }
     
     if (GraphicsOutput != NULL) {
@@ -357,39 +357,67 @@ VOID egDrawImage(IN EG_IMAGE *Image, IN INT64 ScreenPosX, IN INT64 ScreenPosY)
                      0, 0, (UINTN)ScreenPosX, (UINTN)ScreenPosY, (UINTN)Image->Width, (UINTN)Image->Height, 0);
     }
 }
-
+*/
 VOID egDrawImageArea(IN EG_IMAGE *Image,
-                     IN INT64 AreaPosX, IN INT64 AreaPosY,
-                     IN INT64 AreaWidth, IN INT64 AreaHeight,
-                     IN INT64 ScreenPosX, IN INT64 ScreenPosY)
+                     IN INTN AreaPosX, IN INTN AreaPosY,
+                     IN INTN AreaWidth, IN INTN AreaHeight,
+                     IN INTN ScreenPosX, IN INTN ScreenPosY)
 {
-    if (!egHasGraphics)
-        return;
-    
+  if (!egHasGraphics || !Image)
+    return;
+  
+  if (AreaWidth == 0) {
+    AreaWidth = Image->Width;
+  }
+  
+  if (AreaHeight == 0) {
+    AreaHeight = Image->Height;
+  }
+  
+  if ((AreaPosX != 0) || (AreaPosY != 0)) {
     egRestrictImageArea(Image, AreaPosX, AreaPosY, &AreaWidth, &AreaHeight);
     if (AreaWidth == 0)
-        return;
-    
-    if (Image->HasAlpha) {
-        Image->HasAlpha = FALSE;
-        egSetPlane(PLPTR(Image, a), 0, Image->Width * Image->Height);
-    }
-    
-    if (GraphicsOutput != NULL) {
-        GraphicsOutput->Blt(GraphicsOutput, (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)Image->PixelData, EfiBltBufferToVideo,
-                            (UINTN)AreaPosX, (UINTN)AreaPosY, (UINTN)ScreenPosX, (UINTN)ScreenPosY,
-                            (UINTN)AreaWidth, (UINTN)AreaHeight, (UINTN)Image->Width * 4);
-    } else if (UgaDraw != NULL) {
-        UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)Image->PixelData, EfiUgaBltBufferToVideo,
-                     (UINTN)AreaPosX, (UINTN)AreaPosY, (UINTN)ScreenPosX, (UINTN)ScreenPosY,
-                     (UINTN)AreaWidth, (UINTN)AreaHeight, (UINTN)Image->Width * 4);
-    }
+      return;
+  }
+  
+  if (Image->HasAlpha) {
+    Image->HasAlpha = FALSE;
+    egSetPlane(PLPTR(Image, a), 0, Image->Width * Image->Height);
+  }
+  
+  if (ScreenPosX + AreaWidth > UGAWidth)
+  {
+    AreaWidth = UGAWidth - ScreenPosX;
+  }
+  if (ScreenPosY + AreaHeight > UGAHeight)
+  {
+    AreaHeight = UGAHeight - ScreenPosY;
+  }
+  
+  if (GraphicsOutput != NULL) {
+    GraphicsOutput->Blt(GraphicsOutput, (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)Image->PixelData, EfiBltBufferToVideo,
+                        (UINTN)AreaPosX, (UINTN)AreaPosY, (UINTN)ScreenPosX, (UINTN)ScreenPosY,
+                        (UINTN)AreaWidth, (UINTN)AreaHeight, (UINTN)Image->Width * 4);
+  } else if (UgaDraw != NULL) {
+    UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)Image->PixelData, EfiUgaBltBufferToVideo,
+                 (UINTN)AreaPosX, (UINTN)AreaPosY, (UINTN)ScreenPosX, (UINTN)ScreenPosY,
+                 (UINTN)AreaWidth, (UINTN)AreaHeight, (UINTN)Image->Width * 4);
+  }
 }
 
 VOID egTakeImage(IN EG_IMAGE *Image, INTN ScreenPosX, INTN ScreenPosY,
                  IN INTN AreaWidth, IN INTN AreaHeight)
 {
   if (GraphicsOutput != NULL) {
+    if (ScreenPosX + AreaWidth > UGAWidth)
+    {
+      AreaWidth = UGAWidth - ScreenPosX;
+    }
+    if (ScreenPosY + AreaHeight > UGAHeight)
+    {
+      AreaHeight = UGAHeight - ScreenPosY;
+    }
+    
     GraphicsOutput->Blt(GraphicsOutput,
                         (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)Image->PixelData,
                         EfiBltVideoToBltBuffer,

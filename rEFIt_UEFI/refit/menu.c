@@ -1295,8 +1295,8 @@ static UINT64 MenuWidth, EntriesPosX, EntriesPosY, TimeoutPosY;
 static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
   INTN i;
-  INT64 ItemWidth = 0;
-  INT64 X;
+  INTN ItemWidth = 0;
+  INTN X;
   INTN VisibleHeight = 0; //assume vertical layout
   
   switch (Function) {
@@ -1464,19 +1464,30 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
   Entry->Place.Height = MainImage->Height;
 }
 
-static VOID DrawMainMenuText(IN CHAR16 *Text, IN INT64 XPos, IN INT64 YPos)
+static VOID DrawMainMenuText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, ALIGNMENT Align)
 {
-    INT64 TextWidth;
-    
-    if (TextBuffer == NULL)
-        TextBuffer = egCreateImage(LAYOUT_TEXT_WIDTH, TextHeight, FALSE);
-    
-    egFillImage(TextBuffer, &MenuBackgroundPixel);
-    
-    // render the text
-    egMeasureText(Text, &TextWidth, NULL);
-    egRenderText(Text, TextBuffer, (TextBuffer->Width - TextWidth) >> 1, 0, 0xFFFF);
-    BltImage(TextBuffer, XPos, YPos);
+  INTN TextWidth = LAYOUT_TEXT_WIDTH;
+  
+  if (TextBuffer == NULL)
+    TextBuffer = egCreateImage(LAYOUT_TEXT_WIDTH, TextHeight, FALSE);
+  
+  egFillImage(TextBuffer, &MenuBackgroundPixel);
+  
+  // render the text
+  egMeasureText(Text, &TextWidth, NULL);
+  switch (Align) {
+    case AlignRight:
+      egRenderText(Text, TextBuffer, TextBuffer->Width - TextWidth, 0, 0xFFFF);
+      break;
+    case AlignCenter:
+      egRenderText(Text, TextBuffer, (TextBuffer->Width - TextWidth) >> 1, 0, 0xFFFF);
+      break;
+    case AlignLeft:
+    default:
+      egRenderText(Text, TextBuffer, 0, 0, 0xFFFF);
+      break;
+  }
+  BltImage(TextBuffer, XPos, YPos);
 }
 
 
@@ -1566,7 +1577,7 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       }
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
         DrawMainMenuText(Screen->Entries[State->CurrentSelection]->Title,
-                         (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY);
+                         (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY, AlignCenter);
       }
       MouseBirth();
       break;
@@ -1590,7 +1601,7 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
         i = StrLen(Screen->Entries[State->CurrentSelection]->Title);
         DrawMainMenuText(Screen->Entries[State->CurrentSelection]->Title,
-                         (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY);
+                         (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY, AlignCenter);
           if (OldY) {
             BltImageAlpha(NULL, OldX, OldY, &MenuBackgroundPixel, 8);
           }
@@ -1607,12 +1618,12 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION)){
 #ifdef FIRMWARE_REVISION
         DrawMainMenuText(FIRMWARE_REVISION,
-                         (UGAWidth - LAYOUT_TEXT_WIDTH - 2),
-                         UGAHeight - 5 - TextHeight);
+                         (UGAWidth - GlobalConfig.CharWidth * 8 - 2),
+                         UGAHeight - 5 - TextHeight, AlignRight);
 #else
         DrawMainMenuText(gST->FirmwareRevision,
-                         (UGAWidth - LAYOUT_TEXT_WIDTH - 2),
-                         UGAHeight - 5 - TextHeight);
+                         (UGAWidth - GlobalConfig.CharWidth * 8 - 2),
+                         UGAHeight - 5 - TextHeight, AlignRight);
 #endif
       }
      break;
@@ -1621,18 +1632,18 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
         //screen centering
  //       X = (UGAWidth - StrLen(ParamText) * GlobalConfig.CharWidth) >> 1;
-        DrawMainMenuText(ParamText, (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY + TextHeight);
+        DrawMainMenuText(ParamText, (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY + TextHeight, AlignCenter);
         
       }
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION)){
 #ifdef FIRMWARE_REVISION
         DrawMainMenuText(FIRMWARE_REVISION,
-                         (UGAWidth - LAYOUT_TEXT_WIDTH - 1),
-                         UGAHeight - TextHeight - 5);
+                         (UGAWidth - GlobalConfig.CharWidth * 8 - 2),
+                         UGAHeight - 5 - TextHeight, AlignRight);
 #else
         DrawMainMenuText(gST->FirmwareRevision,
-                         (UGAWidth - LAYOUT_TEXT_WIDTH - 1),
-                         UGAHeight - TextHeight - 5);
+                         (UGAWidth - GlobalConfig.CharWidth * 8 - 2),
+                         UGAHeight - 5 - TextHeight, AlignRight);
 #endif
       }
       break;

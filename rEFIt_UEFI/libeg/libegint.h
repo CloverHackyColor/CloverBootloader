@@ -50,14 +50,14 @@ typedef EG_IMAGE * (*EG_DECODE_FUNC)(IN UINT8 *FileData, IN UINTN FileDataLength
 /* functions */
 
 VOID egRestrictImageArea(IN EG_IMAGE *Image,
-                         IN INT64 AreaPosX, IN INT64 AreaPosY,
-                         IN OUT INT64 *AreaWidth, IN OUT INT64 *AreaHeight);
+                         IN INTN AreaPosX, IN INTN AreaPosY,
+                         IN OUT INTN *AreaWidth, IN OUT INTN *AreaHeight);
 VOID egRawCopy(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
-               IN INT64 Width, IN INT64 Height,
-               IN INT64 CompLineOffset, IN INT64 TopLineOffset);
+               IN INTN Width, IN INTN Height,
+               IN INTN CompLineOffset, IN INTN TopLineOffset);
 VOID egRawCompose(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
-                  IN INT64 Width, IN INT64 Height,
-                  IN INT64 CompLineOffset, IN INT64 TopLineOffset);
+                  IN INTN Width, IN INTN Height,
+                  IN INTN CompLineOffset, IN INTN TopLineOffset);
 
 #define PLPTR(imagevar, colorname) ((UINT8 *) &((imagevar)->PixelData->colorname))
 

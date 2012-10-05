@@ -260,7 +260,7 @@ static VOID FreeTokenLine(IN OUT CHAR16 ***TokenList, IN OUT UINTN *TokenCount)
 // handle a parameter with a single integer argument
 //
 
-static VOID HandleInt(IN CHAR16 **TokenList, IN UINTN TokenCount, OUT UINTN *Value)
+static VOID HandleInt(IN CHAR16 **TokenList, IN UINTN TokenCount, OUT INTN *Value)
 {
     if (TokenCount < 2) {
         return;
@@ -268,7 +268,7 @@ static VOID HandleInt(IN CHAR16 **TokenList, IN UINTN TokenCount, OUT UINTN *Val
     if (TokenCount > 2) {
         return;
     }
-    *Value = StrDecimalToUintn(TokenList[1]);
+    *Value = (INTN)StrDecimalToUintn(TokenList[1]);
 }
 
 static VOID HandleHex(IN CHAR16 **TokenList, IN UINTN TokenCount, OUT UINTN *Value)
@@ -279,7 +279,7 @@ static VOID HandleHex(IN CHAR16 **TokenList, IN UINTN TokenCount, OUT UINTN *Val
   if (TokenCount > 2) {
     return;
   }
-  *Value = (UINTN)StrHexToUint64(TokenList[1]);
+  *Value = StrHexToUintn(TokenList[1]);
 }
 
 //
@@ -351,7 +351,7 @@ VOID ReadConfig(VOID)
         if (StriCmp(TokenList[0], L"timeout") == 0) {
             // default is -1
             if (TokenCount == 2 && TokenList[1][0] != L'-') {
-                HandleInt(TokenList, TokenCount, (UINTN*)&(GlobalConfig.Timeout));
+                HandleInt(TokenList, TokenCount, &(GlobalConfig.Timeout));
             }
         
         } else if (StriCmp(TokenList[0], L"char_width") == 0) {  

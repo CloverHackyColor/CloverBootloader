@@ -55,7 +55,7 @@
 // Basic image handling
 //
 
-EG_IMAGE * egCreateImage(IN INT64 Width, IN INT64 Height, IN BOOLEAN HasAlpha)
+EG_IMAGE * egCreateImage(IN INTN Width, IN INTN Height, IN BOOLEAN HasAlpha)
 {
     EG_IMAGE        *NewImage;
     
@@ -74,7 +74,7 @@ EG_IMAGE * egCreateImage(IN INT64 Width, IN INT64 Height, IN BOOLEAN HasAlpha)
     return NewImage;
 }
 
-EG_IMAGE * egCreateFilledImage(IN INT64 Width, IN INT64 Height, IN BOOLEAN HasAlpha, IN EG_PIXEL *Color)
+EG_IMAGE * egCreateFilledImage(IN INTN Width, IN INTN Height, IN BOOLEAN HasAlpha, IN EG_PIXEL *Color)
 {
     EG_IMAGE        *NewImage;
     
@@ -98,11 +98,11 @@ EG_IMAGE * egCopyImage(IN EG_IMAGE *Image)
     return NewImage;
 }
 
-EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *Image, IN INT64 Ratio) //will be N/16
+EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *Image, IN INTN Ratio) //will be N/16
 {
   EG_IMAGE    *NewImage;
-  INT64      x, x0, x1, x2, y, y0, y1, y2;
-  INT64      NewH, NewW;
+  INTN      x, x0, x1, x2, y, y0, y1, y2;
+  INTN      NewH, NewW;
   EG_PIXEL    *Dest;
 //  UINT64      b, g, r, a;
   
@@ -116,7 +116,7 @@ EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *Image, IN INT64 Ratio) //will be N/16
     return NULL;
   
   Dest = NewImage->PixelData;
-  for (y = 0; y < NewH; y++) {
+/*  for (y = 0; y < NewH; y++) {
     y1 = DivU64x64Remainder(LShiftU64(y, 4), Ratio, 0);
     y0 = MultU64x64(((y1 > 0)?(y1-1):y1), Image->Width);
     y2 = MultU64x64(((y1 < Image->Height)?(y1+1):y1), Image->Width);
@@ -141,7 +141,29 @@ EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *Image, IN INT64 Ratio) //will be N/16
       Dest++;
     }
   }
-  
+*/
+  for (y = 0; y < NewH; y++) {
+    y1 = (y << 4) / Ratio;
+    y0 = ((y1 > 0)?(y1-1):y1) * Image->Width;
+    y2 = ((y1 < Image->Height)?(y1+1):y1) * Image->Width;
+    y1 *= Image->Width;
+    for (x = 0; x < NewW; x++) {
+      x1 = (x << 4) / Ratio;
+      x0 = (x1 > 0)?(x1-1):x1;
+      x2 = (x1 < Image->Width)?(x1+1):x1;
+      Dest->b = (UINT8)(Image->PixelData[x1+y1].b * 2 +
+                        Image->PixelData[x0+y1].b + Image->PixelData[x2+y1].b +
+                        Image->PixelData[x1+y0].b + Image->PixelData[x1+y2].b) / 6;
+      Dest->g = (UINT8)(Image->PixelData[x1+y1].g * 2 +
+                        Image->PixelData[x0+y1].g + Image->PixelData[x2+y1].g +
+                        Image->PixelData[x1+y0].g + Image->PixelData[x1+y2].g) / 6;
+      Dest->r = (UINT8)(Image->PixelData[x1+y1].r * 2 +
+                        Image->PixelData[x0+y1].r + Image->PixelData[x2+y1].r +
+                        Image->PixelData[x1+y0].r + Image->PixelData[x1+y2].r) / 6;
+      Dest->a = Image->PixelData[x1+y1].a;
+      Dest++;
+    }
+  }
   
   return NewImage;
 }
@@ -428,8 +450,8 @@ EG_IMAGE * egPrepareEmbeddedImage(IN EG_EMBEDDED_IMAGE *EmbeddedImage, IN BOOLEA
 //
 
 VOID egRestrictImageArea(IN EG_IMAGE *Image,
-                         IN INT64 AreaPosX, IN INT64 AreaPosY,
-                         IN OUT INT64 *AreaWidth, IN OUT INT64 *AreaHeight)
+                         IN INTN AreaPosX, IN INTN AreaPosY,
+                         IN OUT INTN *AreaWidth, IN OUT INTN *AreaHeight)
 {
   if (!Image || !AreaWidth || !AreaHeight) {
     return;
@@ -467,11 +489,11 @@ VOID egFillImage(IN OUT EG_IMAGE *CompImage, IN EG_PIXEL *Color)
 }
 
 VOID egFillImageArea(IN OUT EG_IMAGE *CompImage,
-                     IN INT64 AreaPosX, IN INT64 AreaPosY,
-                     IN INT64 AreaWidth, IN INT64 AreaHeight,
+                     IN INTN AreaPosX, IN INTN AreaPosY,
+                     IN INTN AreaWidth, IN INTN AreaHeight,
                      IN EG_PIXEL *Color)
 {
-  INTN       x, y;
+  INTN        x, y;
   EG_PIXEL    FillColor;
   EG_PIXEL    *PixelPtr;
   EG_PIXEL    *PixelBasePtr;
@@ -497,8 +519,8 @@ VOID egFillImageArea(IN OUT EG_IMAGE *CompImage,
 }
 
 VOID egRawCopy(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
-               IN INT64 Width, IN INT64 Height,
-               IN INT64 CompLineOffset, IN INT64 TopLineOffset)
+               IN INTN Width, IN INTN Height,
+               IN INTN CompLineOffset, IN INTN TopLineOffset)
 {
   INTN       x, y;
   EG_PIXEL    *TopPtr, *CompPtr;
@@ -519,8 +541,8 @@ VOID egRawCopy(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
 }
 
 VOID egRawCompose(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
-                  IN INT64 Width, IN INT64 Height,
-                  IN INT64 CompLineOffset, IN INT64 TopLineOffset)
+                  IN INTN Width, IN INTN Height,
+                  IN INTN CompLineOffset, IN INTN TopLineOffset)
 {
   INT64       x, y;
   EG_PIXEL    *TopPtr, *CompPtr;
@@ -555,9 +577,9 @@ VOID egRawCompose(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
   }
 }
 
-VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INT64 PosX, IN INT64 PosY)
+VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN PosX, IN INTN PosY)
 {
-  INT64       CompWidth, CompHeight;
+  INTN       CompWidth, CompHeight;
   if (!TopImage || !CompImage) {
     return;
   }
@@ -570,7 +592,7 @@ VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INT64 
   if (CompWidth > 0) {
     if (CompImage->HasAlpha) {
       CompImage->HasAlpha = FALSE;
-      egSetPlane(PLPTR(CompImage, a), 0, MultU64x64(CompImage->Width, CompImage->Height));
+      egSetPlane(PLPTR(CompImage, a), 0, CompImage->Width * CompImage->Height);
     }
     
     if (TopImage->HasAlpha)
