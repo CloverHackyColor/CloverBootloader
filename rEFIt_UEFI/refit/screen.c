@@ -399,7 +399,7 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
    GraphicsScreenDirty = FALSE;
 }
 
-VOID BltImage(IN EG_IMAGE *Image, IN INT64 XPos, IN INT64 YPos)
+VOID BltImage(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos)
 {
   if (!Image) {
     return;
@@ -408,7 +408,7 @@ VOID BltImage(IN EG_IMAGE *Image, IN INT64 XPos, IN INT64 YPos)
   GraphicsScreenDirty = TRUE;
 }
 
-VOID BltImageAlpha(IN EG_IMAGE *Image, IN INT64 XPos, IN INT64 YPos, IN EG_PIXEL *BackgroundPixel, INTN Scale)
+VOID BltImageAlpha(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos, IN EG_PIXEL *BackgroundPixel, INTN Scale)
 {
   EG_IMAGE *CompImage;
   EG_IMAGE *NewImage = NULL;
@@ -417,8 +417,8 @@ VOID BltImageAlpha(IN EG_IMAGE *Image, IN INT64 XPos, IN INT64 YPos, IN EG_PIXEL
   
   if (Image) {
     NewImage = egCopyScaledImage(Image, Scale); //will be Scale/16
-    Width = (UINTN)NewImage->Width;
-    Height = (UINTN)NewImage->Height;
+    Width = NewImage->Width;
+    Height = NewImage->Height;
   }
   // compose on background
   CompImage = egCreateFilledImage(Width, Height, FALSE, BackgroundPixel);
@@ -433,7 +433,7 @@ VOID BltImageAlpha(IN EG_IMAGE *Image, IN INT64 XPos, IN INT64 YPos, IN EG_PIXEL
   GraphicsScreenDirty = TRUE;
 }
 
-VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INT64 XPos, IN INT64 YPos)
+VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XPos, IN INTN YPos)
 {
     INT64 TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY;
     EG_IMAGE *CompImage;
@@ -459,12 +459,12 @@ VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INT64 X
     egComposeImage(CompImage, TopImage, OffsetX, OffsetY);
     
     // blit to screen and clean up
-    egDrawImageArea(CompImage, 0, 0, CompWidth, CompHeight, XPos, YPos);
+    egDrawImageArea(CompImage, 0, 0, TotalWidth, TotalHeight, XPos, YPos);
     egFreeImage(CompImage);
     GraphicsScreenDirty = TRUE;
 }
 
-VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG_IMAGE *BadgeImage, IN INT64 XPos, IN INT64 YPos)
+VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG_IMAGE *BadgeImage, IN INTN XPos, IN INTN YPos)
 {
     INT64 TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY;
     EG_IMAGE *CompImage;
@@ -498,7 +498,7 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
     }
     
     // blit to screen and clean up
-    egDrawImageArea(CompImage, 0, 0, CompWidth, CompHeight, XPos, YPos);
+    egDrawImageArea(CompImage, 0, 0, TotalWidth, TotalHeight, XPos, YPos);
     egFreeImage(CompImage);
     GraphicsScreenDirty = TRUE;
 }

@@ -254,13 +254,13 @@ VOID UpdatePointer()
    CurrentMode = gPointer.SimplePointerProtocol->Mode;
    
    XPosPrev = gPointer.newPlace.XPos;
-   ScreenRelX = ((UGAWidth * gPointer.State.RelativeMovementX / (INTN)CurrentMode->ResolutionX) * gSettings.PointerSpeed) / 1000;
+   ScreenRelX = ((UGAWidth * gPointer.State.RelativeMovementX / (INTN)CurrentMode->ResolutionX) * gSettings.PointerSpeed) >> 10;
    gPointer.newPlace.XPos += ScreenRelX;
    if (gPointer.newPlace.XPos < 0) gPointer.newPlace.XPos = 0;
    if (gPointer.newPlace.XPos > UGAWidth - 1) gPointer.newPlace.XPos = UGAWidth - 1;
    
    YPosPrev = gPointer.newPlace.YPos;
-   ScreenRelY = ((UGAHeight * gPointer.State.RelativeMovementY / (INTN)CurrentMode->ResolutionY) * gSettings.PointerSpeed) / 1000;
+   ScreenRelY = ((UGAHeight * gPointer.State.RelativeMovementY / (INTN)CurrentMode->ResolutionY) * gSettings.PointerSpeed) >> 10;
    gPointer.newPlace.YPos += ScreenRelY;
    if (gPointer.newPlace.YPos < 0) gPointer.newPlace.YPos = 0;
    if (gPointer.newPlace.YPos > UGAHeight - 1) gPointer.newPlace.YPos = UGAHeight - 1;

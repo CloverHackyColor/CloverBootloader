@@ -47,6 +47,12 @@
 		126C264B1510C3C9005AB30D /* AmlGenerator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AmlGenerator.c; sourceTree = "<group>"; };
 		126C264C1510C3C9005AB30D /* AmlGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AmlGenerator.h; sourceTree = "<group>"; };
 		12961B4215FCEC91008D77FB /* AcpiPatcher.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AcpiPatcher.c; sourceTree = "<group>"; };
+		12A80742161EE88A00120AD4 /* CommPs2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CommPs2.c; sourceTree = "<group>"; };
+		12A80743161EE88A00120AD4 /* CommPs2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommPs2.h; sourceTree = "<group>"; };
+		12A80744161EE88A00120AD4 /* ComponentName.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
+		12A80745161EE88A00120AD4 /* Ps2Mouse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Ps2Mouse.c; sourceTree = "<group>"; };
+		12A80746161EE88A00120AD4 /* Ps2Mouse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ps2Mouse.h; sourceTree = "<group>"; };
+		12A80747161EE88A00120AD4 /* Ps2MouseDxe.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Ps2MouseDxe.inf; sourceTree = "<group>"; };
 		12AE5F221618A975003BAF51 /* HelloWorld.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HelloWorld.c; sourceTree = "<group>"; };
 		12AE5F231618A975003BAF51 /* HelloWorld.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = HelloWorld.inf; sourceTree = "<group>"; };
 		12AE5F251618A975003BAF51 /* VariableInfo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = VariableInfo.c; sourceTree = "<group>"; };
@@ -2784,6 +2790,20 @@
 			);
 			name = refit;
 			path = ../refit;
+			sourceTree = SOURCE_ROOT;
+		};
+		12A80741161EE88A00120AD4 /* Ps2MouseDxe */ = {
+			isa = PBXGroup;
+			children = (
+				12A80742161EE88A00120AD4 /* CommPs2.c */,
+				12A80743161EE88A00120AD4 /* CommPs2.h */,
+				12A80744161EE88A00120AD4 /* ComponentName.c */,
+				12A80745161EE88A00120AD4 /* Ps2Mouse.c */,
+				12A80746161EE88A00120AD4 /* Ps2Mouse.h */,
+				12A80747161EE88A00120AD4 /* Ps2MouseDxe.inf */,
+			);
+			name = Ps2MouseDxe;
+			path = ../../Ps2MouseDxe;
 			sourceTree = SOURCE_ROOT;
 		};
 		12AE5F1F1618A975003BAF51 /* MdeModulePkg */ = {
@@ -7956,6 +7976,7 @@
 				12B7002D15F921BC00177D35 /* OsxSmbiosDxe */,
 				12B7003115F921BC00177D35 /* PartitionDxe */,
 				12B7003A15F921D400177D35 /* PciRootBridgeDxe */,
+				12A80741161EE88A00120AD4 /* Ps2MouseDxe */,
 				12B7004715F9220000177D35 /* SataControllerDxe */,
 				12B7005315F9222C00177D35 /* VBoxFsDxe */,
 				12B7004C15F9221400177D35 /* VBoxPeCoffLib */,

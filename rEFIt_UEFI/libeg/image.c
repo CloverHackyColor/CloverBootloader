@@ -145,21 +145,21 @@ EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *Image, IN INTN Ratio) //will be N/16
   for (y = 0; y < NewH; y++) {
     y1 = (y << 4) / Ratio;
     y0 = ((y1 > 0)?(y1-1):y1) * Image->Width;
-    y2 = ((y1 < Image->Height)?(y1+1):y1) * Image->Width;
+    y2 = ((y1 < (Image->Height - 1))?(y1+1):y1) * Image->Width;
     y1 *= Image->Width;
     for (x = 0; x < NewW; x++) {
       x1 = (x << 4) / Ratio;
       x0 = (x1 > 0)?(x1-1):x1;
-      x2 = (x1 < Image->Width)?(x1+1):x1;
-      Dest->b = (UINT8)(Image->PixelData[x1+y1].b * 2 +
+      x2 = (x1 < (Image->Width - 1))?(x1+1):x1;
+      Dest->b = (UINT8)(((INTN)Image->PixelData[x1+y1].b * 2 +
                         Image->PixelData[x0+y1].b + Image->PixelData[x2+y1].b +
-                        Image->PixelData[x1+y0].b + Image->PixelData[x1+y2].b) / 6;
-      Dest->g = (UINT8)(Image->PixelData[x1+y1].g * 2 +
+                        Image->PixelData[x1+y0].b + Image->PixelData[x1+y2].b) / 6);
+      Dest->g = (UINT8)(((INTN)Image->PixelData[x1+y1].g * 2 +
                         Image->PixelData[x0+y1].g + Image->PixelData[x2+y1].g +
-                        Image->PixelData[x1+y0].g + Image->PixelData[x1+y2].g) / 6;
-      Dest->r = (UINT8)(Image->PixelData[x1+y1].r * 2 +
+                        Image->PixelData[x1+y0].g + Image->PixelData[x1+y2].g) / 6);
+      Dest->r = (UINT8)(((INTN)Image->PixelData[x1+y1].r * 2 +
                         Image->PixelData[x0+y1].r + Image->PixelData[x2+y1].r +
-                        Image->PixelData[x1+y0].r + Image->PixelData[x1+y2].r) / 6;
+                        Image->PixelData[x1+y0].r + Image->PixelData[x1+y2].r) / 6);
       Dest->a = Image->PixelData[x1+y1].a;
       Dest++;
     }
