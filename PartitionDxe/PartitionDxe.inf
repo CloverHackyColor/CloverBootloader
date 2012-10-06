@@ -45,6 +45,9 @@
   Partition.c
   Partition.h
 
+[Sources.IA32]
+  IA32/ulldiv.asm | MSFT
+
 
 [Packages]
   Clover/CloverPkg.dec
