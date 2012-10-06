@@ -198,8 +198,8 @@ VOID PrintPointerVars(
   DBG("Resolution X, Y: %ld, %ld           \n", CurrentMode->ResolutionX, CurrentMode->ResolutionY);
   DBG("Relative X, Y: %d, %d (%ld, %ld milimeters)           \n",
         RelX, RelY,
-        DivS64x64Remainder((INT64)RelX, (INT64)CurrentMode->ResolutionX, NULL),
-        DivS64x64Remainder((INT64)RelY, (INT64)CurrentMode->ResolutionY, NULL)
+        (INTN)RelX / (INTN)CurrentMode->ResolutionX,
+        (INTN)RelY / (INTN)CurrentMode->ResolutionY
         );
   DBG("X: %d + %d = %d -> %d               \n", XPosPrev, ScreenRelX, (XPosPrev + ScreenRelX), XPos);
   DBG("Y: %d + %d = %d -> %d               \n", YPosPrev, ScreenRelY, (YPosPrev + ScreenRelY), YPos);
@@ -265,7 +265,7 @@ VOID UpdatePointer()
    if (gPointer.newPlace.YPos < 0) gPointer.newPlace.YPos = 0;
    if (gPointer.newPlace.YPos > UGAHeight - 1) gPointer.newPlace.YPos = UGAHeight - 1;
 
-    if (PrintCount < 2) {
+    if (PrintCount < 4) {
       PrintPointerVars(gPointer.State.RelativeMovementX,
                        gPointer.State.RelativeMovementY,
                        ScreenRelX,
@@ -321,6 +321,18 @@ EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
         }
         gItemID = EntryId;
         break;
+      } else {
+        switch (gPointer.MouseEvent) {
+          case LeftClick:
+            gAction = ActionDeselect;
+            break;
+          case RightClick:
+            gAction = ActionFinish;
+            break;
+          default:
+            gAction = ActionNone;
+            break;
+        }
       }
     }
   }

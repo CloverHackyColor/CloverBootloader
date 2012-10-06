@@ -53,7 +53,7 @@
 #endif
 
 #ifndef DEBUG_ALL
-#define DEBUG_TIME 0
+#define DEBUG_TIME 1
 #else
 #define DEBUG_TIME DEBUG_ALL
 #endif
@@ -2016,22 +2016,21 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     PauseForKey(L"Error reinit refit\n");
     return Status;
   }
-  //      DBG("reinit OK\n");
+        DBG("reinit OK\n");
   ZeroMem((VOID*)&gSettings, sizeof(SETTINGS_DATA));
   ZeroMem((VOID*)&gGraphics[0], sizeof(GFX_PROPERTIES) * 4);
-  //    ScanVolumes();
-  //      DBG("ScanVolumes OK\n");
   GuiEventsInitialize();
-  
+  DBG("GuiEventsInitialize OK\n");  
   GetCPUProperties();
+  DBG("GetCPUProperties OK\n");
   GetDevices();
-  //    DBG("GetDevices OK\n");
+      DBG("GetDevices OK\n");
   DBGT("ScanSPD() start\n");
   ScanSPD();
   DBGT("ScanSPD() end\n");
-  //      DBG("ScanSPD OK\n");
+        DBG("ScanSPD OK\n");
   SetPrivateVarProto();
-  //      DBG("SetPrivateVarProto OK\n");
+        DBG("SetPrivateVarProto OK\n");
   GetDefaultSettings();
   DBG("Calibrated TSC frequency =%ld =%ldMHz\n", gCPUStructure.TSCCalibr, DivU64x32(gCPUStructure.TSCCalibr, Mega));
   DBG("CPU calculated TSC frequency =%ld\n", gCPUStructure.TSCFrequency);
@@ -2044,11 +2043,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   //Second step. Load config.plist into gSettings	
 	Status = GetUserSettings(SelfRootDir);  
-  //      DBG("GetUserSettings OK\n");
+        DBG("GetUserSettings OK\n");
   
   //test font
-  //     DBG("PrepareFont OK\n");
   PrepareFont();
+      DBG("PrepareFont OK\n");
   FillInputs();
   
   if (!gFirmwareClover && GlobalConfig.Timeout == 0 && !ReadAllKeyStrokes()) {
@@ -2075,13 +2074,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
     ScanLoader();
     DBGT("ScanLoader()\n");
-    //      DBG("ScanLoader OK\n");
+          DBG("ScanLoader OK\n");
     if (!GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst && !gSettings.HVHideAllLegacy){
 //      DBG("scan legacy second\n");
       ScanLegacy();
       DBGT("ScanLegacy()\n");
     }
-    //     DBG("ScanLegacy OK\n");
+         DBG("ScanLegacy OK\n");
     if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
       //            DBG("scan tools\n");
       ScanTool();
@@ -2089,7 +2088,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
     //      DBG("ScanTool OK\n");
     // fixed other menu entries
-    //           DBG("FillInputs OK\n"); 
+               DBG("FillInputs OK\n"); 
     if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
       MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
       AddMenuEntry(&MainMenu, &MenuEntryAbout);

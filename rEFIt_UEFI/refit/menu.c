@@ -1016,6 +1016,12 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         }
       //  State.CurrentSelection = Index;
         break;
+      case ActionDeselect:
+        State.PaintAll = TRUE;
+        break;
+      case ActionFinish:
+        MenuExit = MENU_EXIT_ESCAPE;
+        break;
  
       default:
         break;
@@ -1290,7 +1296,7 @@ VOID DrawMenuText(IN CHAR16 *Text, IN UINT64 SelectedWidth, IN INT64 XPos, IN IN
   BltImage(TextBuffer, XPos, YPos);
 }
 
-static UINT64 MenuWidth, EntriesPosX, EntriesPosY, TimeoutPosY;
+static INTN MenuWidth, EntriesPosX, EntriesPosY, TimeoutPosY;
 
 static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {

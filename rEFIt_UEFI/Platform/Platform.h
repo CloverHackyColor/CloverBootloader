@@ -689,7 +689,7 @@ typedef struct {
   UINT32  SubDivider;
 	UINT32	MinRatio;
   UINT32  DynFSB;
-	UINT64  ProcessorInterconnectSpeed;
+	UINT64  ProcessorInterconnectSpeed; //MHz
 	UINT64	FSBFrequency; //Hz
 	UINT64	CPUFrequency;
 	UINT64	TSCFrequency;

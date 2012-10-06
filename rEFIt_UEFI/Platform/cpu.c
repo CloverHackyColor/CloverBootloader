@@ -432,11 +432,11 @@ VOID GetCPUProperties (VOID)
 	}
   
 #endif
-//  DBG("take FSB\n");
+  DBG("take FSB\n");
   tmpU = gCPUStructure.FSBFrequency;
-//  DBG("divide by 1000\n");
+  DBG("divide by 1000\n");
   BusSpeed = (UINT32)DivU64x32(tmpU, kilo); //Hz -> kHz
-//  DBG("FSBFrequency=%dMHz\n", DivU64x32(tmpU, Mega));
+  DBG("FSBFrequency=%dMHz\n", DivU64x32(tmpU, Mega));
      //now check if SMBIOS has ExternalClock = 4xBusSpeed
   if ((BusSpeed > 50*kilo) && (gCPUStructure.ExternalClock > BusSpeed * 3)) { //khz
     gCPUStructure.ExternalClock = BusSpeed;
@@ -524,7 +524,7 @@ VOID GetCPUProperties (VOID)
 		gCPUStructure.ProcessorInterconnectSpeed = DivU64x32(qpibusspeed, kilo); //kHz->MHz
 
 	} else {
-		gCPUStructure.ProcessorInterconnectSpeed = DivU64x32(gCPUStructure.ExternalClock << 2, kilo); //kHz->MHz
+		gCPUStructure.ProcessorInterconnectSpeed = DivU64x32((UINT64)gCPUStructure.ExternalClock << 2, kilo); //kHz->MHz
 	}
 	
 	DBG("Vendor/Model/Stepping: 0x%x/0x%x/0x%x\n", gCPUStructure.Vendor, gCPUStructure.Model, gCPUStructure.Stepping);
@@ -534,16 +534,16 @@ VOID GetCPUProperties (VOID)
 	DBG("Features: 0x%08x\n",gCPUStructure.Features);
 	DBG("Threads: %d\n",gCPUStructure.Threads);
 	DBG("Cores: %d\n",gCPUStructure.Cores);
-	DBG("FSB: %d MHz\n", DivU64x32(gCPUStructure.ExternalClock, kilo));
-	DBG("CPU: %d MHz\n", DivU64x32(gCPUStructure.CPUFrequency, Mega));
-	DBG("TSC: %d MHz\n",gCPUStructure.CurrentSpeed);
-	DBG("PIS: %d MHz\n",gCPUStructure.ProcessorInterconnectSpeed);
+	DBG("FSB: %d MHz\n", (DivU64x32(gCPUStructure.ExternalClock, kilo)));
+	DBG("CPU: %d MHz\n", (DivU64x32(gCPUStructure.CPUFrequency, Mega)));
+	DBG("TSC: %d MHz\n", (INTN)gCPUStructure.CurrentSpeed);
+	DBG("PIS: %d MHz\n", (INTN)gCPUStructure.ProcessorInterconnectSpeed);
 //#if DEBUG_PCI
 	
 //	WaitForKeyPress("waiting for key press...\n");
 //#endif	
 
-	return;
+//	return;
 }
 //PCI info
 /*
