@@ -367,43 +367,43 @@ VOID SwitchToGraphicsAndClear(VOID)
 
 VOID BltClearScreen(IN BOOLEAN ShowBanner)
 {
-    static EG_IMAGE *Banner = NULL;
-  UINT BanHeight = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_HEIGHT;
-    
-    if (ShowBanner && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER)) {
-        // load banner on first call
-        if (Banner == NULL) {
-            if (GlobalConfig.BannerFileName == NULL)
-                Banner = egPrepareEmbeddedImage(&egemb_refit_banner, FALSE);
-            else
-                Banner = egLoadImage(ThemeDir, GlobalConfig.BannerFileName, FALSE);
-            if (Banner != NULL)
-                MenuBackgroundPixel = Banner->PixelData[0];
-        }
-        
-        // clear and draw banner
-        egClearScreen(&MenuBackgroundPixel);
-      if (Banner != NULL){
-        
-        BltImage(Banner, (UGAWidth - Banner->Width) >> 1,
-                     (BanHeight >= Banner->Height) ? (BanHeight - Banner->Height) : 0);
-      } 
-    } else {
-        // clear to standard background color
-        egClearScreen(&StdBackgroundPixel);
-    }
-   InputBackgroundPixel.r = (MenuBackgroundPixel.r + 0) & 0xFF;
-   InputBackgroundPixel.g = (MenuBackgroundPixel.g + 0) & 0xFF;
-   InputBackgroundPixel.b = (MenuBackgroundPixel.b + 0) & 0xFF;
+  static EG_IMAGE *Banner = NULL;
+  INTN BanHeight = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_HEIGHT;
   
-   GraphicsScreenDirty = FALSE;
+  if (ShowBanner && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER)) {
+    // load banner on first call
+    if (Banner == NULL) {
+      if (GlobalConfig.BannerFileName == NULL)
+        Banner = egPrepareEmbeddedImage(&egemb_refit_banner, FALSE);
+      else
+        Banner = egLoadImage(ThemeDir, GlobalConfig.BannerFileName, FALSE);
+      if (Banner != NULL)
+        MenuBackgroundPixel = Banner->PixelData[0];
+    }
+    
+    // clear and draw banner
+    egClearScreen(&MenuBackgroundPixel);
+    if (Banner != NULL){
+      
+      BltImage(Banner, (UGAWidth - Banner->Width) >> 1,
+               (BanHeight >= Banner->Height) ? (BanHeight - Banner->Height) : 0);
+    }
+  } else {
+    // clear to standard background color
+    egClearScreen(&StdBackgroundPixel);
+  }
+  InputBackgroundPixel.r = (MenuBackgroundPixel.r + 0) & 0xFF;
+  InputBackgroundPixel.g = (MenuBackgroundPixel.g + 0) & 0xFF;
+  InputBackgroundPixel.b = (MenuBackgroundPixel.b + 0) & 0xFF;
+  
+  GraphicsScreenDirty = FALSE;
 }
 
 VOID BltImage(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos)
 {
   if (!Image) {
     return;
-  }  
+  }
   egDrawImageArea(Image, 0, 0, 0, 0, XPos, YPos);
   GraphicsScreenDirty = TRUE;
 }
