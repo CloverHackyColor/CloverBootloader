@@ -219,11 +219,6 @@ VOID UpdatePointer()
   INTN                      ScreenRelX;
   INTN                      ScreenRelY;
   
-  //always assumed
-/*  if (!gPointer.SimplePointerProtocol) {
-    return;
-  }*/
-
 //  Now = gRS->GetTime(&Now, NULL);
   Now = AsmReadTsc();
   Status = gPointer.SimplePointerProtocol->GetState(gPointer.SimplePointerProtocol, &tmpState);
@@ -235,7 +230,7 @@ VOID UpdatePointer()
       } else {
         gPointer.MouseEvent = LeftClick;
       }
- //     CopyMem(&gPointer.LastClickTime, &Now, sizeof(EFI_TIME));
+      //     CopyMem(&gPointer.LastClickTime, &Now, sizeof(EFI_TIME));
       gPointer.LastClickTime = Now;
     } else if (gPointer.State.RightButton && !tmpState.RightButton) { //release right
       gPointer.MouseEvent = RightClick;
@@ -243,28 +238,20 @@ VOID UpdatePointer()
       gPointer.MouseEvent = NoEvents;
     
     CopyMem(&gPointer.State, &tmpState, sizeof(EFI_SIMPLE_POINTER_STATE));
-/*    gPointer.newPlace.XPos += gPointer.State.RelativeMovementX;
-    if (gPointer.newPlace.XPos < 0) gPointer.newPlace.XPos = 0;
-    if (gPointer.newPlace.XPos > UGAWidth) gPointer.newPlace.XPos = UGAWidth;
+    CurrentMode = gPointer.SimplePointerProtocol->Mode;
     
-    gPointer.newPlace.YPos += gPointer.State.RelativeMovementY;
+    XPosPrev = gPointer.newPlace.XPos;
+    ScreenRelX = ((UGAWidth * gPointer.State.RelativeMovementX / (INTN)CurrentMode->ResolutionX) * gSettings.PointerSpeed) >> 10;
+    gPointer.newPlace.XPos += ScreenRelX;
+    if (gPointer.newPlace.XPos < 0) gPointer.newPlace.XPos = 0;
+    if (gPointer.newPlace.XPos > UGAWidth - 1) gPointer.newPlace.XPos = UGAWidth - 1;
+    
+    YPosPrev = gPointer.newPlace.YPos;
+    ScreenRelY = ((UGAHeight * gPointer.State.RelativeMovementY / (INTN)CurrentMode->ResolutionY) * gSettings.PointerSpeed) >> 10;
+    gPointer.newPlace.YPos += ScreenRelY;
     if (gPointer.newPlace.YPos < 0) gPointer.newPlace.YPos = 0;
-    if (gPointer.newPlace.YPos > UGAHeight) gPointer.newPlace.YPos = UGAHeight;
-*/
-   CurrentMode = gPointer.SimplePointerProtocol->Mode;
-   
-   XPosPrev = gPointer.newPlace.XPos;
-   ScreenRelX = ((UGAWidth * gPointer.State.RelativeMovementX / (INTN)CurrentMode->ResolutionX) * gSettings.PointerSpeed) >> 10;
-   gPointer.newPlace.XPos += ScreenRelX;
-   if (gPointer.newPlace.XPos < 0) gPointer.newPlace.XPos = 0;
-   if (gPointer.newPlace.XPos > UGAWidth - 1) gPointer.newPlace.XPos = UGAWidth - 1;
-   
-   YPosPrev = gPointer.newPlace.YPos;
-   ScreenRelY = ((UGAHeight * gPointer.State.RelativeMovementY / (INTN)CurrentMode->ResolutionY) * gSettings.PointerSpeed) >> 10;
-   gPointer.newPlace.YPos += ScreenRelY;
-   if (gPointer.newPlace.YPos < 0) gPointer.newPlace.YPos = 0;
-   if (gPointer.newPlace.YPos > UGAHeight - 1) gPointer.newPlace.YPos = UGAHeight - 1;
-
+    if (gPointer.newPlace.YPos > UGAHeight - 1) gPointer.newPlace.YPos = UGAHeight - 1;
+    
     if (PrintCount < 4) {
       PrintPointerVars(gPointer.State.RelativeMovementX,
                        gPointer.State.RelativeMovementY,

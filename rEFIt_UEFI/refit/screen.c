@@ -368,7 +368,7 @@ VOID SwitchToGraphicsAndClear(VOID)
 VOID BltClearScreen(IN BOOLEAN ShowBanner)
 {
     static EG_IMAGE *Banner = NULL;
-  UINT64 BanHeight = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_HEIGHT;
+  UINT BanHeight = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_HEIGHT;
     
     if (ShowBanner && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER)) {
         // load banner on first call
@@ -435,7 +435,7 @@ VOID BltImageAlpha(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos, IN EG_PIXEL *
 
 VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XPos, IN INTN YPos)
 {
-    INT64 TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY;
+    INTN TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY;
     EG_IMAGE *CompImage;
   
   if (!BaseImage || !TopImage) {
@@ -466,7 +466,7 @@ VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XP
 
 VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG_IMAGE *BadgeImage, IN INTN XPos, IN INTN YPos)
 {
-    INT64 TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY;
+    INTN TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY;
     EG_IMAGE *CompImage;
     
   if (!BaseImage || !TopImage) {

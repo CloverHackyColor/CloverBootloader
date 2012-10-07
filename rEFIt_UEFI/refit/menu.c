@@ -51,6 +51,11 @@
 #define DBG(...) DebugLog(DEBUG_MENU, __VA_ARGS__)	
 #endif
 
+#define X_IS_LEFT    64
+#define X_IS_RIGHT   0
+#define X_IS_CENTER  1
+#define BADGE_DIMENSION 64
+
 //#define PREBOOT_LOG L"EFI\\misc\\preboot.log"
 #define VBIOS_BIN L"EFI\\misc\\c0000.bin"
 
@@ -963,7 +968,8 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
       State.PaintAll = TRUE;
       break;
     }
-    
+    key.UnicodeChar = 0;
+    key.ScanCode = 0;
     Status = WaitForInputEventPoll(Screen, 1); //wait for 1 seconds. 
     if (Status == EFI_TIMEOUT) {
       if (HaveTimeout) {
@@ -1307,7 +1313,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       //
          
       EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET + (TextHeight << 1);
-      VisibleHeight = (INTN)DivU64x32(LAYOUT_TOTAL_HEIGHT - LAYOUT_BANNER_YOFFSET - (TextHeight << 1), TextHeight);
+      VisibleHeight = ((LAYOUT_TOTAL_HEIGHT - LAYOUT_BANNER_YOFFSET - (TextHeight << 1)) / TextHeight;
 //        DBG("MENU_FUNCTION_INIT 1 EntriesPosY=%d VisibleHeight=%d\n", EntriesPosY, VisibleHeight);
       InitScroll(State, Screen->EntryCount, Screen->EntryCount, VisibleHeight);              
       // determine width of the menu
@@ -1466,7 +1472,7 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
   Entry->Place.Height = MainImage->Height;
 }
 
-static VOID DrawMainMenuText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, ALIGNMENT Align)
+/*static VOID DrawMainMenuText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, ALIGNMENT Align)
 {
   INTN TextWidth = LAYOUT_TEXT_WIDTH;
   
@@ -1490,11 +1496,74 @@ static VOID DrawMainMenuText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, ALIGNM
       break;
   }
   BltImage(TextBuffer, XPos, YPos);
+}*/
+
+
+//static   INTN OldX = 0, OldY = 0;
+static INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
+{
+    INTN TextWidth;
+    EG_IMAGE *TextBufferXY = NULL;
+    
+    if (!Text) return 0;
+    egMeasureText(Text, &TextWidth, NULL);
+    TextBufferXY = egCreateImage(TextWidth, TextHeight, FALSE);
+    
+    egFillImage(TextBufferXY, &MenuBackgroundPixel);
+    
+    // render the text
+    egRenderText(Text, TextBufferXY, 0, 0, 0xFFFF);
+    BltImage(TextBufferXY, (XPos - (TextWidth >> XAlign)), YPos);
+    egFreeImage(TextBufferXY);
+    return TextWidth;
 }
 
+static VOID FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Height, IN EG_PIXEL *Color, IN UINT8 XAlign)
+{
+    EG_IMAGE *TmpBuffer = NULL;
+    
+    if (!Width || !Height) return;
+    TmpBuffer = egCreateImage(Width, Height, FALSE);
+    egFillImage(TmpBuffer, Color);
+    BltImage(TmpBuffer, (XPos - (Width >> XAlign)), YPos);
+    egFreeImage(TmpBuffer);
+}
 
 static   INTN OldX = 0, OldY = 0;
+static   INTN OldTextWidth = 0;
+static   UINTN OldRow = 0;
+static VOID DrawMainMenuLabel(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State)
+{
+    INTN TextWidth;
+    
+    egMeasureText(Text, &TextWidth, NULL);
+    if (OldTextWidth > TextWidth) {
+        //Clear old text
+        FillRectAreaOfScreen(OldX, OldY,
+                             OldTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
+    }
+    if ((GlobalConfig.HideBadges == HDBADGES_ALL) && (!OldRow) && (OldTextWidth) && (OldTextWidth != TextWidth)) {
+        //Clear badge
+        BltImageAlpha(NULL, (OldX - (OldTextWidth >> 1) - (BADGE_DIMENSION + 16)),
+                      (OldY - ((BADGE_DIMENSION - TextHeight) >> 1)), &MenuBackgroundPixel, BADGE_DIMENSION >> 3);
+    }
+    DrawTextXY(Text, XPos, YPos, X_IS_CENTER);
 
+        //show badge
+    if ((GlobalConfig.HideBadges == HDBADGES_ALL) &&
+          (Screen->Entries[State->CurrentSelection]->Row == 0))
+        {
+            BltImageAlpha(((LOADER_ENTRY*)Screen->Entries[State->CurrentSelection])->Volume->OSImage,
+                          (XPos - (TextWidth >> 1) - (BADGE_DIMENSION + 16)),
+                          (YPos - ((BADGE_DIMENSION - TextHeight) >> 1)), &MenuBackgroundPixel, BADGE_DIMENSION >> 3);
+        }
+    OldX = XPos;
+    OldY = YPos;
+    OldTextWidth = TextWidth;
+    OldRow = Screen->Entries[State->CurrentSelection]->Row;
+}
+
+static   INTN OldTimeoutTextWidth = 0;
 static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
   INTN i; 
@@ -1578,8 +1647,8 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
         }
       }
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
-        DrawMainMenuText(Screen->Entries[State->CurrentSelection]->Title,
-                         (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY, AlignCenter);
+          DrawMainMenuLabel(Screen->Entries[State->CurrentSelection]->Title,
+                            (UGAWidth >> 1), textPosY, Screen, State);
       }
       MouseBirth();
       break;
@@ -1601,51 +1670,29 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
                           itemPosX[State->CurrentSelection], row1PosY);
       }
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)) {
-        i = StrLen(Screen->Entries[State->CurrentSelection]->Title);
-        DrawMainMenuText(Screen->Entries[State->CurrentSelection]->Title,
-                         (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY, AlignCenter);
-          if (OldY) {
-            BltImageAlpha(NULL, OldX, OldY, &MenuBackgroundPixel, 8);
-          }
-       
-        //show badge
-        if ((Screen->Entries[State->CurrentSelection]->Row == 0) &&
-            (GlobalConfig.HideBadges == HDBADGES_ALL)) {
-          OldX = ((UGAWidth - i * GlobalConfig.CharWidth) >> 1) - 80;
-          OldY = (textPosY - TextHeight);
-          BltImageAlpha(((LOADER_ENTRY*)Screen->Entries[State->CurrentSelection])->Volume->OSImage,
-                        OldX, OldY, &MenuBackgroundPixel, 8);
-        } 
+          DrawMainMenuLabel(Screen->Entries[State->CurrentSelection]->Title,
+                            (UGAWidth >> 1), textPosY, Screen, State);
       }
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION)){
 #ifdef FIRMWARE_REVISION
-        DrawMainMenuText(FIRMWARE_REVISION,
-                         (UGAWidth - LAYOUT_TEXT_WIDTH - 2),
-                         UGAHeight - 5 - TextHeight, AlignRight);
+          DrawTextXY(FIRMWARE_REVISION, (UGAWidth - 2), UGAHeight - 5 - TextHeight, X_IS_RIGHT);
 #else
-        DrawMainMenuText(gST->FirmwareRevision,
-                         (UGAWidth - LAYOUT_TEXT_WIDTH - 2),
-                         UGAHeight - 5 - TextHeight, AlignRight);
+          DrawTextXY(gST->FirmwareRevision, (UGAWidth - 2), UGAHeight - 5 - TextHeight, X_IS_RIGHT);
 #endif
       }
      break;
       
     case MENU_FUNCTION_PAINT_TIMEOUT:
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
-        //screen centering
- //       X = (UGAWidth - StrLen(ParamText) * GlobalConfig.CharWidth) >> 1;
-        DrawMainMenuText(ParamText, (UGAWidth - LAYOUT_TEXT_WIDTH) >> 1, textPosY + TextHeight, AlignCenter);
-        
+        FillRectAreaOfScreen((UGAWidth >> 1), textPosY + TextHeight,
+                                   OldTimeoutTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
+        OldTimeoutTextWidth = DrawTextXY(ParamText, (UGAWidth >> 1), textPosY + TextHeight, X_IS_CENTER);
       }
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION)){
 #ifdef FIRMWARE_REVISION
-        DrawMainMenuText(FIRMWARE_REVISION,
-                         (UGAWidth - LAYOUT_TEXT_WIDTH - 2),
-                         UGAHeight - 5 - TextHeight, AlignRight);
+          DrawTextXY(FIRMWARE_REVISION, (UGAWidth - 2), UGAHeight - 5 - TextHeight, X_IS_RIGHT);
 #else
-        DrawMainMenuText(gST->FirmwareRevision,
-                         (UGAWidth - LAYOUT_TEXT_WIDTH - 2),
-                         UGAHeight - 5 - TextHeight, AlignRight);
+          DrawTextXY(gST->FirmwareRevision, (UGAWidth - 2), UGAHeight - 5 - TextHeight, X_IS_RIGHT);
 #endif
       }
       break;
