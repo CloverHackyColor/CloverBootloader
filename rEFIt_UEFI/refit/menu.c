@@ -983,6 +983,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
       case ActionSelect:
         State.CurrentSelection = gItemID;
         State.PaintAll = TRUE;
+        HidePointer();
         break;
       case ActionEnter:
         State.CurrentSelection = gItemID;
@@ -1011,6 +1012,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         break;
       case ActionDeselect:
         State.PaintAll = TRUE;
+        HidePointer();
         break;
       case ActionFinish:
         MenuExit = MENU_EXIT_ESCAPE;
