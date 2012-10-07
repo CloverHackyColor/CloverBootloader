@@ -211,6 +211,13 @@ typedef enum {
   ActionFinish
 } ACTION;
 
+typedef struct {
+  INTN    CurrentSelection, LastSelection;
+  INTN    MaxScroll, MaxIndex;
+  INTN    FirstVisible, LastVisible, MaxVisible, MaxFirstVisible;
+  BOOLEAN IsScrolling, PaintAll, PaintSelection;
+} SCROLL_STATE;
+
 #define SCREEN_UNKNOWN    0
 #define SCREEN_MAIN       1
 #define SCREEN_ABOUT      2

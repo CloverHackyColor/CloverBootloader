@@ -1552,9 +1552,9 @@ VOID SetDevices(VOID)
       StringDirty = FALSE;
       //-------
       mPropSize = (UINT32)AsciiStrLen(gDeviceProperties) / 2;
-      DBG("Preliminary size of mProperties=%d\n", mPropSize);
+ //     DBG("Preliminary size of mProperties=%d\n", mPropSize);
       mPropSize = hex2bin(gDeviceProperties, mProperties, mPropSize);
-      DBG("Final size of mProperties=%d\n", mPropSize);
+ //     DBG("Final size of mProperties=%d\n", mPropSize);
       //---------      
     }
 	}

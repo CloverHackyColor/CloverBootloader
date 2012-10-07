@@ -61,13 +61,6 @@ static INTN MaxItemOnScreen = -1;
 REFIT_MENU_SCREEN OptionMenu  = {4, L"Options", NULL, 0, NULL, 0, NULL, 0, NULL };
 extern REFIT_MENU_ENTRY MenuEntryReturn;
 
-typedef struct {
-  INTN    CurrentSelection, LastSelection;
-  INTN    MaxScroll, MaxIndex;
-  INTN    FirstVisible, LastVisible, MaxVisible, MaxFirstVisible;
-  BOOLEAN IsScrolling, PaintAll, PaintSelection;
-} SCROLL_STATE;
-
 #define SCROLL_LINE_UP    (0)
 #define SCROLL_LINE_DOWN  (1)
 #define SCROLL_PAGE_UP    (2)
@@ -104,8 +97,8 @@ static EG_IMAGE *TextBuffer = NULL;
 
 static INTN row0Count, row0PosX, row0PosXRunning;
 static INTN row1Count, row1PosX, row1PosXRunning;
-static UINTN *itemPosX = NULL;
-static UINTN row0PosY, row1PosY, textPosY;
+static INTN *itemPosX = NULL;
+static INTN row0PosY, row1PosY, textPosY;
 
 INPUT_ITEM *InputItems = NULL;
 UINTN  InputItemsCount = 0;
@@ -1370,12 +1363,12 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       
     case MENU_FUNCTION_PAINT_ALL:
       for (i = 0; i <= State->MaxIndex; i++) {
-        UINTN  TitleLen;
+        INTN  TitleLen;
         CHAR16 ResultString[255];
 
         TitleLen = StrLen(Screen->Entries[i]->Title);
-        Screen->Entries[i]->Place.XPos = (INTN)EntriesPosX;
-        Screen->Entries[i]->Place.YPos = (INTN)(EntriesPosY + MultU64x64(i, TextHeight));
+        Screen->Entries[i]->Place.XPos = EntriesPosX;
+        Screen->Entries[i]->Place.YPos = EntriesPosY + i * TextHeight;
         Screen->Entries[i]->Place.Width = TitleLen * GlobalConfig.CharWidth;
         Screen->Entries[i]->Place.Height = (UINTN)TextHeight;
         
@@ -1411,12 +1404,12 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->SValue + ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->LineShift);
         StrCat(ResultString, L" ");
         DrawMenuText(ResultString, 0,
-                     EntriesPosX, EntriesPosY + MultU64x64(State->LastSelection, TextHeight),
+                     EntriesPosX, EntriesPosY + State->LastSelection * TextHeight,
                      TitleLen + Screen->Entries[State->LastSelection]->Row);
       }
       else {
         DrawMenuText(Screen->Entries[State->LastSelection]->Title, 0,
-                     EntriesPosX, EntriesPosY + MultU64x64(State->LastSelection, TextHeight), 0xFFFF);
+                     EntriesPosX, EntriesPosY + State->LastSelection * TextHeight, 0xFFFF);
       }
             //Current selection
       if (Screen->Entries[State->CurrentSelection]->Tag == TAG_INPUT) {
@@ -1426,12 +1419,12 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->SValue + ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->LineShift);
         StrCat(ResultString, L" ");
         DrawMenuText(ResultString, StrLen(ResultString) * GlobalConfig.CharWidth,
-                     EntriesPosX, EntriesPosY + MultU64x64(State->CurrentSelection, TextHeight),
+                     EntriesPosX, EntriesPosY + State->CurrentSelection * TextHeight,
                      TitleLen + Screen->Entries[State->CurrentSelection]->Row);
       }
       else {
         DrawMenuText(Screen->Entries[State->CurrentSelection]->Title, MenuWidth,
-                     EntriesPosX, EntriesPosY + MultU64x64(State->CurrentSelection, TextHeight), 0xFFFF);
+                     EntriesPosX, EntriesPosY + State->CurrentSelection * TextHeight, 0xFFFF);
       }
       MouseBirth();
       break;

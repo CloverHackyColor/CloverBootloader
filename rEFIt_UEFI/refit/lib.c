@@ -1334,17 +1334,17 @@ EFI_STATUS DirNextEntry(IN EFI_FILE *Directory, IN OUT EFI_FILE_INFO **DirEntry,
         
         // entry is ready to be returned
         *DirEntry = (EFI_FILE_INFO *)Buffer;
-        
+      if (*DirEntry) {
         // filter results
         if (FilterMode == 1) {   // only return directories
-            if (((*DirEntry)->Attribute & EFI_FILE_DIRECTORY))
-                break;
-        } else if (FilterMode == 2) {   // only return files
-            if (((*DirEntry)->Attribute & EFI_FILE_DIRECTORY) == 0)
-                break;
-        } else                   // no filter or unknown filter -> return everything
+          if (((*DirEntry)->Attribute & EFI_FILE_DIRECTORY))
             break;
-        
+        } else if (FilterMode == 2) {   // only return files
+          if (((*DirEntry)->Attribute & EFI_FILE_DIRECTORY) == 0)
+            break;
+        } else                   // no filter or unknown filter -> return everything
+          break;
+      }
     }
     return Status;
 }
