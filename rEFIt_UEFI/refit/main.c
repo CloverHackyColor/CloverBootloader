@@ -1677,7 +1677,7 @@ UINT64 GetEfiTimeInMs(IN EFI_TIME *T)
 INTN FindDefaultEntryNVRAM(VOID)
 {
   EFI_STATUS          Status;
-  UINTN               Index;
+  INTN               Index;
   REFIT_VOLUME        *Volume;
   LOADER_ENTRY        *Entry;
   EFI_GUID            *Guid;
@@ -1722,7 +1722,7 @@ INTN FindDefaultEntryNVRAM(VOID)
 INTN FindDefaultEntryNVRAMPlist(VOID)
 {
   EFI_STATUS          Status;
-  UINTN               Index;
+  INTN               Index;
   REFIT_VOLUME        *Volume;
   LOADER_ENTRY        *Entry;
   EFI_GUID            *Guid;
