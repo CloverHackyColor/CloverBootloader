@@ -2177,8 +2177,10 @@ ConSplitterGrowMapTable (
     //
     while (Index < Private->TextOutMode.MaxMode) {
       CopyMem (TextOutModeMap, SrcAddress, Size);
-      TextOutModeMap += NewSize;
-      SrcAddress += Size;
+//      TextOutModeMap += NewSize;
+//      SrcAddress += Size;
+      TextOutModeMap += NewSize / sizeof(INT32);
+      SrcAddress += Size / sizeof(INT32);
       Index++;
     }
     //

@@ -247,11 +247,11 @@ typedef struct _refit_menu_screen {
   UINTN       ID;
   CHAR16      *Title;
   EG_IMAGE    *TitleImage;
-  UINTN       InfoLineCount;
+  INTN       InfoLineCount;
   CHAR16      **InfoLines;
-  UINTN       EntryCount;
+  INTN       EntryCount;
   REFIT_MENU_ENTRY **Entries;
-  UINTN       TimeoutSeconds;
+  INTN       TimeoutSeconds;
   CHAR16      *TimeoutText;
 } REFIT_MENU_SCREEN;
 
@@ -488,7 +488,7 @@ VOID AddMenuEntry(IN REFIT_MENU_SCREEN *Screen, IN REFIT_MENU_ENTRY *Entry);
 VOID FreeMenu(IN REFIT_MENU_SCREEN *Screen);
 UINTN RunMenu(IN REFIT_MENU_SCREEN *Screen, OUT REFIT_MENU_ENTRY **ChosenEntry);
 UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT REFIT_MENU_ENTRY **ChosenEntry);
-VOID DrawMenuText(IN CHAR16 *Text, IN UINT64 SelectedWidth, IN INT64 XPos, IN INT64 YPos, IN INT64 Cursor);
+VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor);
 VOID ReinitVolumes(VOID);
 BOOLEAN ReadAllKeyStrokes(VOID);
 VOID  OptionsMenu(OUT REFIT_MENU_ENTRY  **ChosenEntry);

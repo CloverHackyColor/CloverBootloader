@@ -160,10 +160,11 @@ PartitionInstallAppleChildHandles (
           StartLba = SwapBytes32(Entry->pblock_start);
           SizeLbs  = SwapBytes32(Entry->pblocks);
 
-          if (0 && CompareMem("Apple_HFS", Entry->type, 10) == 0)
+   /*       if (0 && CompareMem("Apple_HFS", Entry->type, 10) == 0)
               Print(L"HFS partition (%d of %d) at LBA 0x%x size=%dM\n",
                     Partition, PartitionEntries, StartLba,
                     (UINT32)(MultU64x32(SizeLbs, SubBlockSize) / (1024 * 1024)));
+    */
       //
       // Create child device handle
       //

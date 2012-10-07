@@ -134,7 +134,9 @@ SetAcpiTable (
   // Check for invalid input parameters
   //
   ASSERT (Handle);
-
+  if (!Handle) {
+    return EFI_INVALID_PARAMETER;
+  }
   //
   // Initialize locals
   //

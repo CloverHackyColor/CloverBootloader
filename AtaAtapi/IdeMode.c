@@ -28,9 +28,9 @@
 
 BOOLEAN ChannelDeviceDetected = FALSE;
 BOOLEAN SlaveDeviceExist      = FALSE;
-UINT8   SlaveDeviceType       = EfiIdeUnknown;
+//UINT8   SlaveDeviceType       = EfiIdeUnknown;
 BOOLEAN MasterDeviceExist     = FALSE;
-UINT8   MasterDeviceType      = EfiIdeUnknown;
+//UINT8   MasterDeviceType      = EfiIdeUnknown;
 
 /**
   read a one-byte data from a IDE port.

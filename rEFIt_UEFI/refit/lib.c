@@ -445,7 +445,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
           tmp[i] = *p;
         }
         tmp[i] = 0;
-        while (tmp[--i] == 0x20) {}
+        while ((i>0) && (tmp[--i] == 0x20)) {}
         tmp[i+1] = 0;
 			//	if (*p != 0) {
 					AsciiStrToUnicodeStr((CHAR8*)&tmp[0], volumeName);

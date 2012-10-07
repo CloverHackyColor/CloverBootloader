@@ -723,12 +723,12 @@ static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
 
 VOID AddMenuInfoLine(IN REFIT_MENU_SCREEN *Screen, IN CHAR16 *InfoLine)
 {
-    AddListElement((VOID ***) &(Screen->InfoLines), &(Screen->InfoLineCount), InfoLine);
+    AddListElement((VOID ***) &(Screen->InfoLines), (UINTN*)&(Screen->InfoLineCount), InfoLine);
 }
 
 VOID AddMenuEntry(IN REFIT_MENU_SCREEN *Screen, IN REFIT_MENU_ENTRY *Entry)
 {
-    AddListElement((VOID ***) &(Screen->Entries), &(Screen->EntryCount), Entry);
+    AddListElement((VOID ***) &(Screen->Entries), (UINTN*)&(Screen->EntryCount), Entry);
 }
 
 VOID FreeMenu(IN REFIT_MENU_SCREEN *Screen)
@@ -1273,7 +1273,7 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 // graphical generic style
 //
 
-VOID DrawMenuText(IN CHAR16 *Text, IN UINT64 SelectedWidth, IN INT64 XPos, IN INT64 YPos, IN INT64 Cursor)
+VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor)
 {
   if (TextBuffer == NULL)
     TextBuffer = egCreateImage(LAYOUT_TEXT_WIDTH, TextHeight, FALSE);
@@ -1344,7 +1344,8 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       else {
         EntriesPosX = (UGAWidth - MenuWidth) >> 1;
       }
-      TimeoutPosY = EntriesPosY + MultU64x64((Screen->EntryCount + 1), TextHeight);
+ //     TimeoutPosY = EntriesPosY + MultU64x64((Screen->EntryCount + 1), TextHeight);
+      TimeoutPosY = EntriesPosY + (Screen->EntryCount + 1) * TextHeight;
          
       // initial painting
       SwitchToGraphicsAndClear();

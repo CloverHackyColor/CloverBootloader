@@ -50,7 +50,10 @@ InitializeAcpiTableDxe (
   // Initialize our protocol
   //
   PrivateData = AllocateZeroPool (sizeof (EFI_ACPI_TABLE_INSTANCE));
-  ASSERT (PrivateData);
+ // ASSERT (PrivateData);
+  if (!PrivateData) {
+    return EFI_OUT_OF_RESOURCES;
+  }
   PrivateData->Signature = EFI_ACPI_TABLE_SIGNATURE;
 
   //
@@ -84,7 +87,7 @@ InitializeAcpiTableDxe (
                     NULL
                     );
 //  }
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
 
 	//
 	// Register the event to install ACPI Table into EFI System Table
