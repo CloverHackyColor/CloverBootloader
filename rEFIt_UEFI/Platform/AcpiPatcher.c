@@ -41,11 +41,11 @@ RSDT_TABLE										*Rsdt = NULL;
 XSDT_TABLE										*Xsdt = NULL;	
 
 //CHAR8*   orgBiosDsdt;
-UINT64   BiosDsdt;
-UINT32   BiosDsdtLen;
-UINT8	 acpi_cpu_count;
-CHAR8*   acpi_cpu_name[32];
-CHAR8*   OSVersion;
+UINT64    BiosDsdt;
+UINT32    BiosDsdtLen;
+UINT8     acpi_cpu_count;
+CHAR8*    acpi_cpu_name[32];
+CHAR8*    OSVersion;
 
 //-----------------------------------
 
@@ -558,8 +558,8 @@ EFI_STATUS DumpFadtTables(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt, CHAR1
 VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 {
 	EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER	*RsdPtr;
-	RSDT_TABLE																		*Rsdt;
-	XSDT_TABLE																		*Xsdt;
+//	RSDT_TABLE																		*Rsdt;
+//	XSDT_TABLE																		*Xsdt;
 	EFI_ACPI_DESCRIPTION_HEADER										*TableEntry;
 	EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE			*Fadt;
 
@@ -948,7 +948,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 	UINT32*      	 			  rf = NULL;
 	UINT64*       				xf = NULL;
   UINT64        				XDsdt; //save values if present
- 	UINT64        				BiosDsdt = 0;
+ //	UINT64        				BiosDsdt = 0;
   UINT64        				XFirmwareCtrl;
   EFI_FILE      				*RootDir;
   UINT32                eCntR; //, eCntX;

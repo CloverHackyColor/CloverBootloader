@@ -282,7 +282,7 @@ BOOLEAN MouseInRect(EG_RECT Place)
 EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
 {
   EFI_STATUS Status = EFI_TIMEOUT;
-  UINTN EntryId;
+  INTN EntryId;
   
   gAction = ActionNone;
   

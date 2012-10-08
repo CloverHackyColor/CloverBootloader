@@ -117,6 +117,13 @@
 	Platform/kext_inject.c
 	Platform/DbgTime.c
 
+[Sources.IA32]
+    IA32/llmul.asm
+    IA32/llshl.asm
+    IA32/ulldiv.asm
+    IA32/ullrem.asm
+    IA32/ullshr.asm
+
 
 [Packages]
 	Clover/CloverPkg.dec

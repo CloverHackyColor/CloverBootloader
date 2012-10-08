@@ -154,42 +154,42 @@ GetSmbiosTablesFromConfigTables (VOID)
 
 // Internal functions for flat SMBIOS
 
-UINT16 SmbiosTableLength (SMBIOS_STRUCTURE_POINTER SmbiosTable)
+UINT16 SmbiosTableLength (SMBIOS_STRUCTURE_POINTER SmbiosTableN)
 {
 	CHAR8  *AChar;
 	UINT16  Length;
 
-	AChar = (CHAR8 *)(SmbiosTable.Raw + SmbiosTable.Hdr->Length);
+	AChar = (CHAR8 *)(SmbiosTableN.Raw + SmbiosTableN.Hdr->Length);
 	while ((*AChar != 0) || (*(AChar + 1) != 0)) {
 		AChar ++; //stop at 00 - first 0
 	}
-	Length = (UINT16)((UINTN)AChar - (UINTN)SmbiosTable.Raw + 2); //length includes 00
+	Length = (UINT16)((UINTN)AChar - (UINTN)SmbiosTableN.Raw + 2); //length includes 00
 	return Length;
 }
 
 
-EFI_SMBIOS_HANDLE LogSmbiosTable (SMBIOS_STRUCTURE_POINTER SmbiosTable)
+EFI_SMBIOS_HANDLE LogSmbiosTable (SMBIOS_STRUCTURE_POINTER SmbiosTableN)
 {
-	UINT16  Length = SmbiosTableLength(SmbiosTable);
+	UINT16  Length = SmbiosTableLength(SmbiosTableN);
 	if (Length > MaxStructureSize) {
 		MaxStructureSize = Length;
 	}
-	CopyMem(Current, SmbiosTable.Raw, Length);
+	CopyMem(Current, SmbiosTableN.Raw, Length);
 	Current += Length;
 	NumberOfRecords++;
-	return SmbiosTable.Hdr->Handle;
+	return SmbiosTableN.Hdr->Handle;
 }
 
-EFI_STATUS UpdateSmbiosString (SMBIOS_STRUCTURE_POINTER SmbiosTable, SMBIOS_TABLE_STRING* Field, CHAR8* Buffer)
+EFI_STATUS UpdateSmbiosString (SMBIOS_STRUCTURE_POINTER SmbiosTableN, SMBIOS_TABLE_STRING* Field, CHAR8* Buffer)
 {
 	CHAR8*	AString;
 	CHAR8*	C1; //pointers for copy
 	CHAR8*	C2;
-	UINTN	Length = SmbiosTableLength(SmbiosTable);
+	UINTN	Length = SmbiosTableLength(SmbiosTableN);
 	UINTN	ALength, BLength;
 	UINT8	Index = 1;
 
-	if ((SmbiosTable.Raw == NULL) || !Buffer || !Field) {
+	if ((SmbiosTableN.Raw == NULL) || !Buffer || !Field) {
 		return EFI_NOT_FOUND;
 	}
 /*
@@ -203,7 +203,7 @@ EFI_STATUS UpdateSmbiosString (SMBIOS_STRUCTURE_POINTER SmbiosTable, SMBIOS_TABL
 		Once = FALSE;
 	}
 */
-	AString = (CHAR8*)(SmbiosTable.Raw + SmbiosTable.Hdr->Length); //first string
+	AString = (CHAR8*)(SmbiosTableN.Raw + SmbiosTableN.Hdr->Length); //first string
 	while (Index != *Field) {
 		if (*AString) {
 			Index++;
@@ -229,7 +229,7 @@ EFI_STATUS UpdateSmbiosString (SMBIOS_STRUCTURE_POINTER SmbiosTable, SMBIOS_TABL
 //	DBG("Old string length=%d new length=%d\n", ALength, BLength);
 	if (BLength > ALength) {
 		//Shift right
-		C1 = (CHAR8*)SmbiosTable.Raw + Length; //old end
+		C1 = (CHAR8*)SmbiosTableN.Raw + Length; //old end
 		C2 = C1  + BLength - ALength; //new end
 		*C2 = 0;
 		while (C1 != AString) *(--C2) = *(--C1);
@@ -238,7 +238,7 @@ EFI_STATUS UpdateSmbiosString (SMBIOS_STRUCTURE_POINTER SmbiosTable, SMBIOS_TABL
 		//Shift left
 		C1 = AString + ALength; //old start
 		C2 = AString + BLength; //new start
-		while (C1 != ((CHAR8*)SmbiosTable.Raw + Length)) {
+		while (C1 != ((CHAR8*)SmbiosTableN.Raw + Length)) {
 			*C2++ = *C1++;
 		}
 		*C2 = 0;
@@ -249,9 +249,9 @@ EFI_STATUS UpdateSmbiosString (SMBIOS_STRUCTURE_POINTER SmbiosTable, SMBIOS_TABL
 
 #if 0 // DEBUG_SMBIOS != 0
 	DBG("Old table length=%d, calculated new=%d\n", Length, Length+BLength-ALength);
-	Length = SmbiosTableLength(SmbiosTable);
+	Length = SmbiosTableLength(SmbiosTableN);
 	DBG("New table length=%d\n", Length);
-	C1 = (CHAR8*)(SmbiosTable.Raw + SmbiosTable.Hdr->Length);
+	C1 = (CHAR8*)(SmbiosTableN.Raw + SmbiosTableN.Hdr->Length);
 	while (*C1 != 0) {
 		while (*C1 != 0) {
 			DBG("%c", *C1++); 
@@ -271,36 +271,36 @@ EFI_STATUS UpdateSmbiosString (SMBIOS_STRUCTURE_POINTER SmbiosTable, SMBIOS_TABL
 SMBIOS_STRUCTURE_POINTER GetSmbiosTableFromType (
 	SMBIOS_TABLE_ENTRY_POINT *Smbios, UINT8 Type, UINTN Index)
 {
-	SMBIOS_STRUCTURE_POINTER SmbiosTable;
+	SMBIOS_STRUCTURE_POINTER SmbiosTableN;
 	UINTN                    SmbiosTypeIndex;
 
 	SmbiosTypeIndex = 0;
-	SmbiosTable.Raw = (UINT8 *)(UINTN)Smbios->TableAddress;
-	if (SmbiosTable.Raw == NULL) {
-		return SmbiosTable;
+	SmbiosTableN.Raw = (UINT8 *)(UINTN)Smbios->TableAddress;
+	if (SmbiosTableN.Raw == NULL) {
+		return SmbiosTableN;
 	}
-	while ((SmbiosTypeIndex != Index) || (SmbiosTable.Hdr->Type != Type)) {
-		if (SmbiosTable.Hdr->Type == SMBIOS_TYPE_END_OF_TABLE) {
-			SmbiosTable.Raw = NULL;
-			return SmbiosTable;
+	while ((SmbiosTypeIndex != Index) || (SmbiosTableN.Hdr->Type != Type)) {
+		if (SmbiosTableN.Hdr->Type == SMBIOS_TYPE_END_OF_TABLE) {
+			SmbiosTableN.Raw = NULL;
+			return SmbiosTableN;
 		}
-		if (SmbiosTable.Hdr->Type == Type) {
+		if (SmbiosTableN.Hdr->Type == Type) {
 			SmbiosTypeIndex++;
 		}
-		SmbiosTable.Raw = (UINT8 *)(SmbiosTable.Raw + SmbiosTableLength (SmbiosTable));
+		SmbiosTableN.Raw = (UINT8 *)(SmbiosTableN.Raw + SmbiosTableLength (SmbiosTableN));
 	}
-	return SmbiosTable;
+	return SmbiosTableN;
 }
 
 CHAR8* GetSmbiosString (
-	SMBIOS_STRUCTURE_POINTER SmbiosTable, SMBIOS_TABLE_STRING String)
+	SMBIOS_STRUCTURE_POINTER SmbiosTableN, SMBIOS_TABLE_STRING String)
 {
 	CHAR8      *AString;
-	UINT8      Index;
+	UINT8      Ind;
 
-	Index = 1;
-	AString = (CHAR8 *)(SmbiosTable.Raw + SmbiosTable.Hdr->Length); //first string
-	while (Index != String) {
+	Ind = 1;
+	AString = (CHAR8 *)(SmbiosTableN.Raw + SmbiosTableN.Hdr->Length); //first string
+	while (Ind != String) {
 		while (*AString != 0) {
 			AString ++;
 		}
@@ -308,7 +308,7 @@ CHAR8* GetSmbiosString (
 		if (*AString == 0) {
 			return AString; //this is end of the table
 		}
-		Index ++;
+		Ind++;
 	}
 
 	return AString; //return pointer to Ascii string
@@ -1260,7 +1260,7 @@ PatchTableType19 ()
 	if (TotalEnd == 0) {
 		TotalEnd = (mTotalSystemMemory << 10) - 1;
 	}
-	gTotalMemory = mTotalSystemMemory << 20;
+	gTotalMemory = ((UINT64)mTotalSystemMemory) << 20;
 	ZeroMem((VOID*)newSmbiosTable.Type19, MAX_TABLE_SIZE);
 	newSmbiosTable.Type19->Hdr.Type = EFI_SMBIOS_TYPE_MEMORY_ARRAY_MAPPED_ADDRESS;
 	newSmbiosTable.Type19->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE19); 
@@ -1293,7 +1293,7 @@ VOID PatchTableType20 ()
 			if ((UINT32)(mMemory17[j] << 10) > newSmbiosTable.Type20->EndingAddress) {	
 				newSmbiosTable.Type20->MemoryDeviceHandle = mHandle17[j];
 				k = newSmbiosTable.Type20->EndingAddress;
-				m = mMemory17[j]  << 10;
+				m = ((UINTN)mMemory17[j]) << 10;
 				DBG("Type20[%d]->End = 0x%x, mMemory17[%d] = 0x%x\n",
 						Index, k, j, m);
 //				DBG(" MemoryDeviceHandle = 0x%x\n", newSmbiosTable.Type20->MemoryDeviceHandle);

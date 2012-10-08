@@ -445,7 +445,7 @@ EFI_STATUS ParseTagKey( char * buffer, TagPtr * tag,UINT32* lenPtr)
 	EFI_STATUS	Status;
 	UINT32		length;
 	UINT32		length2;
-	CHAR8*		string;
+	CHAR8*		tmpString;
 	TagPtr		tmpTag;
 	TagPtr		subTag;
 
@@ -464,8 +464,8 @@ EFI_STATUS ParseTagKey( char * buffer, TagPtr * tag,UINT32* lenPtr)
 		return EFI_UNSUPPORTED;
 	}
 
-	string = NewSymbol(buffer);
-	if (string == NULL)
+	tmpString = NewSymbol(buffer);
+	if (tmpString == NULL)
 	{
 		FreeTag(subTag);
 		FreeTag(tmpTag);
@@ -473,7 +473,7 @@ EFI_STATUS ParseTagKey( char * buffer, TagPtr * tag,UINT32* lenPtr)
 	}
 
 	tmpTag->type = kTagTypeKey;
-	tmpTag->string = string;
+	tmpTag->string = tmpString;
 	tmpTag->tag = subTag;
 	tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
 	tmpTag->tagNext = 0;
@@ -491,7 +491,7 @@ EFI_STATUS ParseTagString(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 {
 	EFI_STATUS	Status;
 	UINT32		length;
-	CHAR8*		string;
+	CHAR8*		tmpString;
 	TagPtr		tmpTag;
 
 	Status = FixDataMatchingTag(buffer, kXMLTagString,&length);
@@ -502,15 +502,15 @@ EFI_STATUS ParseTagString(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 	if (tmpTag == NULL) 
 		return EFI_UNSUPPORTED;
 
-	string = NewSymbol(buffer);
-	if (string == NULL)
+	tmpString = NewSymbol(buffer);
+	if (tmpString == NULL)
 	{
 		FreeTag(tmpTag);
 		return EFI_UNSUPPORTED;
 	}
 
 	tmpTag->type = kTagTypeString;
-	tmpTag->string = string;
+	tmpTag->string = tmpString;
 	tmpTag->tag = NULL;
 	tmpTag->tagNext = NULL;
 	tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
@@ -628,7 +628,7 @@ EFI_STATUS ParseTagData(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 	UINT32		length = 0;
    UINTN       len = 0;
 	TagPtr		tmpTag;
-	CHAR8*		string;
+	CHAR8*		tmpString;
 
 	Status = FixDataMatchingTag(buffer, kXMLTagData,&length);
 	if (EFI_ERROR(Status))
@@ -638,9 +638,9 @@ EFI_STATUS ParseTagData(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 	if (tmpTag == 0) 
 		return EFI_UNSUPPORTED;
 //Slice - correction as Apple 2003
-	string = NewSymbol(buffer);
+	tmpString = NewSymbol(buffer);
 	tmpTag->type = kTagTypeData;
-	tmpTag->string = string;
+	tmpTag->string = tmpString;
 	// dmazar: base64 decode data
 	tmpTag->data = (UINT8 *)Base64Decode(tmpTag->string, &len);
    tmpTag->dataLen = len;
@@ -839,26 +839,26 @@ void FreeTag( TagPtr tag )
 }
 
 
-CHAR8* NewSymbol(CHAR8* string)
+CHAR8* NewSymbol(CHAR8* tmpString)
 {
 	SymbolPtr	lastGuy = 0;
 	SymbolPtr	symbol;
 
 	// Look for string in the list of symbols.
-	symbol = FindSymbol(string, 0);
+	symbol = FindSymbol(tmpString, 0);
 
 	// Add the new symbol.
 	if (symbol == NULL)
 	{
 		
-		symbol = (SymbolPtr)AllocateZeroPool(sizeof(Symbol) + 1 + AsciiStrLen(string));
+		symbol = (SymbolPtr)AllocateZeroPool(sizeof(Symbol) + 1 + AsciiStrLen(tmpString));
 		if (symbol == NULL) 
 			return NULL;
 
 		// Set the symbol's data.
 		symbol->refCount = 0;
 		
-		AsciiStrCpy(symbol->string, string);
+		AsciiStrCpy(symbol->string, tmpString);
 
 		// Add the symbol to the list.
 		symbol->next = gSymbolsHead;
@@ -877,12 +877,12 @@ CHAR8* NewSymbol(CHAR8* string)
 //==========================================================================
 // FreeSymbol
 
-void FreeSymbol(CHAR8* string)
+void FreeSymbol(CHAR8* tmpString)
 { 
 	SymbolPtr symbol, prev;
 
 	// Look for string in the list of symbols.
-	symbol = FindSymbol(string, &prev);
+	symbol = FindSymbol(tmpString, &prev);
 	if (symbol == NULL) 
 		return;
 
@@ -902,7 +902,7 @@ void FreeSymbol(CHAR8* string)
 //==========================================================================
 // FindSymbol
 
-SymbolPtr FindSymbol( char * string, SymbolPtr * prevSymbol )
+SymbolPtr FindSymbol(CHAR8 *tmpString, SymbolPtr *prevSymbol )
 {
 	SymbolPtr symbol, prev;
 
@@ -910,7 +910,7 @@ SymbolPtr FindSymbol( char * string, SymbolPtr * prevSymbol )
 	prev = 0;
 
 	while (symbol != 0) {
-		if (!AsciiStrCmp(symbol->string, string)) break;
+		if (!AsciiStrCmp(symbol->string, tmpString)) break;
 
 		prev = symbol;
 		symbol = symbol->next;

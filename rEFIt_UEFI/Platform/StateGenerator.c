@@ -50,8 +50,9 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
   CHAR8 name2[13];
   P_STATE initial, maximum, minimum, p_states[64];
   UINT8 p_states_count = 0;
-  BOOLEAN cpu_dynamic_fsb = FALSE;
-  UINT8	acpi_cpu_count = (UINT8)Number; //gCPUStructure.Cores;
+  UINT8 cpu_dynamic_fsb = 0;
+  
+//  acpi_cpu_count = (UINT8)Number; //gCPUStructure.Cores;
   
 	if (gCPUStructure.Vendor != CPU_VENDOR_INTEL) {
 		MsgLog ("Not an Intel platform: P-States will not be generated !!!\n");
@@ -65,7 +66,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
   
 	if (acpi_cpu_count > 0)
 	{
-    BOOLEAN cpu_noninteger_bus_ratio = FALSE;
+    UINT8 cpu_noninteger_bus_ratio = 0;
 		// Retrieving P-States, ported from code by superhai (c)
 		switch (gCPUStructure.Family) {
 			case 0x06:
@@ -87,7 +88,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
               DBG("DynamicFSB=%x\n", cpu_dynamic_fsb);
 						}
 						
-						cpu_noninteger_bus_ratio = ((AsmReadMsr64(MSR_IA32_PERF_STATUS) & (1ULL << 46)) != 0);
+						cpu_noninteger_bus_ratio = ((AsmReadMsr64(MSR_IA32_PERF_STATUS) & (1ULL << 46)) != 0)?1:0;
 						
 						initial.Control.Control = (UINT16)AsmReadMsr64(MSR_IA32_PERF_STATUS);
             DBG("Initial control=%x\n", initial.Control);
@@ -345,7 +346,7 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
   BOOLEAN c4_enabled = gSettings.EnableC4;
   BOOLEAN cst_using_systemio = gSettings.EnableISS;
   UINT8   p_blk_lo, p_blk_hi;
-  UINT8   acpi_cpu_count = (UINT8)Number; //gCPUStructure.Cores;
+//  UINT8   acpi_cpu_count = (UINT8)Number; //gCPUStructure.Cores;
   UINT8   cstates_count;
   UINT32  acpi_cpu_p_blk;
   CHAR8 name2[9];

@@ -523,19 +523,19 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       prop = GetProperty(dictPointer, "DeviceProperties");
       if(prop) {
         EFI_PHYSICAL_ADDRESS  BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
-        UINTN stringlength = AsciiStrLen(prop->string);
-        cDeviceProperties = AllocateZeroPool(stringlength + 1);
+        UINTN strlength = AsciiStrLen(prop->string);
+        cDeviceProperties = AllocateZeroPool(strlength + 1);
         AsciiStrCpy(cDeviceProperties, prop->string);
         //-------
         Status = gBS->AllocatePages (
                                      AllocateMaxAddress,
                                      EfiACPIReclaimMemory,
-                                     EFI_SIZE_TO_PAGES(stringlength) + 1,
+                                     EFI_SIZE_TO_PAGES(strlength) + 1,
                                      &BufferPtr
                                      );
         if (!EFI_ERROR(Status)) {
           cProperties = (UINT8*)(UINTN)BufferPtr; 
-          cPropSize = (UINT32)(stringlength >> 1);
+          cPropSize = (UINT32)(strlength >> 1);
           cPropSize = hex2bin(cDeviceProperties, cProperties, cPropSize);
           DBG("Injected EFIString of length %d\n", cPropSize);
         }

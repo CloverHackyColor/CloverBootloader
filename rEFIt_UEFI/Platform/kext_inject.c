@@ -406,7 +406,7 @@ UINT8   KBEMLReplace[] = { 0xE8, 0x30, 0x00, 0x00, 0x00, 0x90, 0x90, 0x48, 0x89,
 //
 
 #define KERNEL_MAX_SIZE 40000000
-VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *KernelData)
+VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel)
 {
 
   UINTN   Num = 0;
@@ -417,10 +417,10 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *KernelData)
   DBG_RT(L"\nPatching kernel for injected kexts\n");
   
   if (is64BitKernel) {
-	NumLion_X64 = SearchAndCount(KernelData, KERNEL_MAX_SIZE, KBELionSearch_X64, sizeof(KBELionSearch_X64));
-	NumML = SearchAndCount(KernelData, KERNEL_MAX_SIZE, KBEMLSearch, sizeof(KBEMLSearch));
+	NumLion_X64 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBELionSearch_X64, sizeof(KBELionSearch_X64));
+	NumML = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMLSearch, sizeof(KBEMLSearch));
   } else {
-	NumLion_i386 = SearchAndCount(KernelData, KERNEL_MAX_SIZE, KBELionSearch_i386, sizeof(KBELionSearch_i386));
+	NumLion_i386 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBELionSearch_i386, sizeof(KBELionSearch_i386));
   }
   
   if (NumLion_X64 + NumLion_i386 + NumML > 1) {
@@ -433,15 +433,15 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *KernelData)
   }
   
   if (NumLion_X64 == 1) {
-	Num = SearchAndReplace(KernelData, KERNEL_MAX_SIZE, KBELionSearch_X64, sizeof(KBELionSearch_X64), KBELionReplace_X64, 1);
+	Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearch_X64, sizeof(KBELionSearch_X64), KBELionReplace_X64, 1);
 	DBG_RT(L"==> Lion X64: %d replaces done.\n", Num);
   }
   else if (NumLion_i386 == 1) {
-	Num = SearchAndReplace(KernelData, KERNEL_MAX_SIZE, KBELionSearch_i386, sizeof(KBELionSearch_i386), KBELionReplace_i386, 1);
+	Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearch_i386, sizeof(KBELionSearch_i386), KBELionReplace_i386, 1);
 	DBG_RT(L"==> Lion i386: %d replaces done.\n", Num);
   }
   else if (NumML == 1) {
-	Num = SearchAndReplace(KernelData, KERNEL_MAX_SIZE, KBEMLSearch, sizeof(KBEMLSearch), KBEMLReplace, 1);
+	Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMLSearch, sizeof(KBEMLSearch), KBEMLReplace, 1);
 	DBG_RT(L"==> MountainLion X64: %d replaces done.\n", Num);
   }
   else {
