@@ -188,25 +188,25 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
 //    gBS->Stall(2000000);
 	//PauseForKey(L"press any key to MemoryFix");
 	if (gSettings.MemoryFix) {
-    BootArgs1*				bootArgs1;
-    BootArgs2*				bootArgs2;
+    BootArgs1*				bootArgs1v;
+    BootArgs2*				bootArgs2v;
     UINT8*						ptr=(UINT8*)(UINTN)0x100000;
     //	DTEntry						efiPlatform;
-    CHAR8*						dtRoot;
+    CHAR8*						dtreeRoot;
     UINTN						archMode = sizeof(UINTN) * 8;
     UINTN						Version = 0;
     
     while(TRUE)
     {
-      bootArgs2 = (BootArgs2*)ptr;
-      bootArgs1 = (BootArgs1*)ptr;
+      bootArgs2v = (BootArgs2*)ptr;
+      bootArgs1v = (BootArgs1*)ptr;
       
       /* search bootargs for 10.7 */
-      if(((bootArgs2->Revision == 0) || (bootArgs2->Revision == 1)) && bootArgs2->Version==2)
+      if(((bootArgs2v->Revision == 0) || (bootArgs2v->Revision == 1)) && bootArgs2v->Version==2)
       {
-        if (((UINTN)bootArgs2->efiMode == 32) || ((UINTN)bootArgs2->efiMode == 64)){
-          dtRoot = (CHAR8*)(UINTN)bootArgs2->deviceTreeP;
-          bootArgs2->efiMode = (UINT8)archMode; //correct to EFI arch
+        if (((UINTN)bootArgs2v->efiMode == 32) || ((UINTN)bootArgs2v->efiMode == 64)){
+          dtreeRoot = (CHAR8*)(UINTN)bootArgs2v->deviceTreeP;
+          bootArgs2v->efiMode = (UINT8)archMode; //correct to EFI arch
           Version = 2;
      //     DBG(L"found bootarg v2");
           gST->ConOut->OutputString (gST->ConOut, L"found bootarg v2");
@@ -214,15 +214,15 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
         } 
         
         /* search bootargs for 10.4 - 10.6.x */
-      } else if(((bootArgs1->Revision==6) ||
-                 (bootArgs1->Revision==5) || 
-                 (bootArgs1->Revision==4)) &&
-                (bootArgs1->Version ==1)){
+      } else if(((bootArgs1v->Revision==6) ||
+                 (bootArgs1v->Revision==5) || 
+                 (bootArgs1v->Revision==4)) &&
+                (bootArgs1v->Version ==1)){
         
-        if (((UINTN)bootArgs1->efiMode == 32) ||
-            ((UINTN)bootArgs1->efiMode == 64)){
-          dtRoot = (CHAR8*)(UINTN)bootArgs1->deviceTreeP;
-          bootArgs1->efiMode = (UINT8)archMode;
+        if (((UINTN)bootArgs1v->efiMode == 32) ||
+            ((UINTN)bootArgs1v->efiMode == 64)){
+          dtreeRoot = (CHAR8*)(UINTN)bootArgs1v->deviceTreeP;
+          bootArgs1v->efiMode = (UINT8)archMode;
           Version = 1;
    //       DBG(L"found bootarg v1");
           gST->ConOut->OutputString (gST->ConOut, L"found bootarg v1");
@@ -241,16 +241,16 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
       }
     }
     if(Version==2) {
-      CorrectMemoryMap(bootArgs2->MemoryMap,
-                       bootArgs2->MemoryMapDescriptorSize,
-                       &bootArgs2->MemoryMapSize);
- //     bootArgs2->efiSystemTable = (UINT32)(UINTN)gST;
+      CorrectMemoryMap(bootArgs2v->MemoryMap,
+                       bootArgs2v->MemoryMapDescriptorSize,
+                       &bootArgs2v->MemoryMapSize);
+ //     bootArgs2v->efiSystemTable = (UINT32)(UINTN)gST;
       
     }else if(Version==1) {
-      CorrectMemoryMap(bootArgs1->MemoryMap,
-                       bootArgs1->MemoryMapDescriptorSize,
-                       &bootArgs1->MemoryMapSize);
-//      bootArgs1->efiSystemTable = (UINT32)(UINTN)gST;
+      CorrectMemoryMap(bootArgs1v->MemoryMap,
+                       bootArgs1v->MemoryMapDescriptorSize,
+                       &bootArgs1v->MemoryMapSize);
+//      bootArgs1v->efiSystemTable = (UINT32)(UINTN)gST;
     }
 	}
 	if (gFirmwareClover) {

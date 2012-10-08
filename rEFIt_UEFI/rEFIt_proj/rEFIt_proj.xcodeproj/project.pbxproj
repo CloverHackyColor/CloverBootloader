@@ -9,6 +9,52 @@
 /* Begin PBXFileReference section */
 		12021208142663F0004B7B93 /* rEFIt.dsc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = rEFIt.dsc; path = ../rEFIt.dsc; sourceTree = SOURCE_ROOT; };
 		1202122E142667C4004B7B93 /* BmLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BmLib.c; sourceTree = "<group>"; };
+		120DE0591622C47800BA4C14 /* 8254Timer.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 8254Timer.inf; sourceTree = "<group>"; };
+		120DE05A1622C47800BA4C14 /* Timer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Timer.c; sourceTree = "<group>"; };
+		120DE05B1622C47800BA4C14 /* Timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Timer.h; sourceTree = "<group>"; };
+		120DE05D1622C47800BA4C14 /* 8259.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 8259.c; sourceTree = "<group>"; };
+		120DE05E1622C47800BA4C14 /* 8259.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 8259.h; sourceTree = "<group>"; };
+		120DE05F1622C47800BA4C14 /* 8259.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 8259.inf; sourceTree = "<group>"; };
+		120DE0631622C47800BA4C14 /* ComponentName.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
+		120DE0641622C47800BA4C14 /* IdeController.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IdeController.c; sourceTree = "<group>"; };
+		120DE0651622C47800BA4C14 /* IdeController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IdeController.h; sourceTree = "<group>"; };
+		120DE0661622C47800BA4C14 /* IdeControllerDxe.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IdeControllerDxe.inf; sourceTree = "<group>"; };
+		120DE0671622C47800BA4C14 /* Contributions.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Contributions.txt; sourceTree = "<group>"; };
+		120DE0691622C47800BA4C14 /* HpetTimer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = HpetTimer.c; sourceTree = "<group>"; };
+		120DE06A1622C47800BA4C14 /* HpetTimerDxe.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HpetTimerDxe.inf; sourceTree = "<group>"; };
+		120DE06D1622C47800BA4C14 /* PcAtChipsetTokenSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PcAtChipsetTokenSpace.h; sourceTree = "<group>"; };
+		120DE06F1622C47800BA4C14 /* IoApicLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IoApicLib.h; sourceTree = "<group>"; };
+		120DE0711622C47800BA4C14 /* Hpet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Hpet.h; sourceTree = "<group>"; };
+		120DE0721622C47800BA4C14 /* IoApic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IoApic.h; sourceTree = "<group>"; };
+		120DE0741622C47800BA4C14 /* ComponentName.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
+		120DE0751622C47800BA4C14 /* IsaAcpi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IsaAcpi.c; sourceTree = "<group>"; };
+		120DE0761622C47800BA4C14 /* IsaAcpi.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IsaAcpi.inf; sourceTree = "<group>"; };
+		120DE0771622C47800BA4C14 /* PcatIsaAcpi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PcatIsaAcpi.c; sourceTree = "<group>"; };
+		120DE0781622C47800BA4C14 /* PcatIsaAcpi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PcatIsaAcpi.h; sourceTree = "<group>"; };
+		120DE07A1622C47800BA4C14 /* Reset.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Reset.inf; sourceTree = "<group>"; };
+		120DE07B1622C47800BA4C14 /* ResetEntry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ResetEntry.c; sourceTree = "<group>"; };
+		120DE07E1622C47800BA4C14 /* BaseIoApicLib.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BaseIoApicLib.inf; sourceTree = "<group>"; };
+		120DE07F1622C47800BA4C14 /* IoApicLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IoApicLib.c; sourceTree = "<group>"; };
+		120DE0811622C47800BA4C14 /* ResetSystemLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ResetSystemLib.c; sourceTree = "<group>"; };
+		120DE0821622C47800BA4C14 /* ResetSystemLib.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ResetSystemLib.inf; sourceTree = "<group>"; };
+		120DE0841622C47800BA4C14 /* SerialIoLib.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SerialIoLib.inf; sourceTree = "<group>"; };
+		120DE0851622C47800BA4C14 /* SerialPortLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SerialPortLib.c; sourceTree = "<group>"; };
+		120DE0861622C47800BA4C14 /* License.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = License.txt; sourceTree = "<group>"; };
+		120DE0871622C47800BA4C14 /* PcAtChipsetPkg.dec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PcAtChipsetPkg.dec; sourceTree = "<group>"; };
+		120DE0881622C47800BA4C14 /* PcAtChipsetPkg.dsc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PcAtChipsetPkg.dsc; sourceTree = "<group>"; };
+		120DE08A1622C47800BA4C14 /* PcatRealTimeClockRuntimeDxe.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PcatRealTimeClockRuntimeDxe.inf; sourceTree = "<group>"; };
+		120DE08B1622C47800BA4C14 /* PcRtc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PcRtc.c; sourceTree = "<group>"; };
+		120DE08C1622C47800BA4C14 /* PcRtc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PcRtc.h; sourceTree = "<group>"; };
+		120DE08D1622C47800BA4C14 /* PcRtcEntry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PcRtcEntry.c; sourceTree = "<group>"; };
+		120DE0901622C47800BA4C14 /* IoFifo.asm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm.asm; path = IoFifo.asm; sourceTree = "<group>"; };
+		120DE0911622C47800BA4C14 /* IoFifo.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = IoFifo.S; sourceTree = "<group>"; };
+		120DE0921622C47800BA4C14 /* IoFifo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IoFifo.h; sourceTree = "<group>"; };
+		120DE0931622C47800BA4C14 /* PciHostBridge.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PciHostBridge.c; sourceTree = "<group>"; };
+		120DE0941622C47800BA4C14 /* PciHostBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PciHostBridge.h; sourceTree = "<group>"; };
+		120DE0951622C47800BA4C14 /* PciHostBridgeDxe.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PciHostBridgeDxe.inf; sourceTree = "<group>"; };
+		120DE0961622C47800BA4C14 /* PciRootBridgeIo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PciRootBridgeIo.c; sourceTree = "<group>"; };
+		120DE0981622C47800BA4C14 /* IoFifo.asm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm.asm; path = IoFifo.asm; sourceTree = "<group>"; };
+		120DE0991622C47800BA4C14 /* IoFifo.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = IoFifo.S; sourceTree = "<group>"; };
 		122336B213377E050033F008 /* efiConsoleControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efiConsoleControl.h; sourceTree = "<group>"; };
 		122336B313377E050033F008 /* efiGraphicsOutput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efiGraphicsOutput.h; sourceTree = "<group>"; };
 		122336B413377E050033F008 /* efiUgaDraw.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efiUgaDraw.h; sourceTree = "<group>"; };
@@ -2731,6 +2777,7 @@
 				12021208142663F0004B7B93 /* rEFIt.dsc */,
 				12B7007315F9224F00177D35 /* MdePkg */,
 				12AE5F1F1618A975003BAF51 /* MdeModulePkg */,
+				120DE0571622C47800BA4C14 /* PcAtChipsetPkg */,
 				123D85D714D94B1F000AF00B /* rEFIt64.dsc */,
 				122336CD13377E260033F008 /* refit.inf */,
 				123D85D814D94B29000AF00B /* refit64.inf */,
@@ -2755,6 +2802,220 @@
 			name = EfiLib;
 			path = ../EfiLib;
 			sourceTree = SOURCE_ROOT;
+		};
+		120DE0571622C47800BA4C14 /* PcAtChipsetPkg */ = {
+			isa = PBXGroup;
+			children = (
+				120DE0581622C47800BA4C14 /* 8254TimerDxe */,
+				120DE05C1622C47800BA4C14 /* 8259InterruptControllerDxe */,
+				120DE0601622C47800BA4C14 /* Bus */,
+				120DE0671622C47800BA4C14 /* Contributions.txt */,
+				120DE0681622C47800BA4C14 /* HpetTimerDxe */,
+				120DE06B1622C47800BA4C14 /* Include */,
+				120DE0731622C47800BA4C14 /* IsaAcpiDxe */,
+				120DE0791622C47800BA4C14 /* KbcResetDxe */,
+				120DE07C1622C47800BA4C14 /* Library */,
+				120DE0861622C47800BA4C14 /* License.txt */,
+				120DE0871622C47800BA4C14 /* PcAtChipsetPkg.dec */,
+				120DE0881622C47800BA4C14 /* PcAtChipsetPkg.dsc */,
+				120DE0891622C47800BA4C14 /* PcatRealTimeClockRuntimeDxe */,
+				120DE08E1622C47800BA4C14 /* PciHostBridgeDxe */,
+			);
+			name = PcAtChipsetPkg;
+			path = ../../../PcAtChipsetPkg;
+			sourceTree = SOURCE_ROOT;
+		};
+		120DE0581622C47800BA4C14 /* 8254TimerDxe */ = {
+			isa = PBXGroup;
+			children = (
+				120DE0591622C47800BA4C14 /* 8254Timer.inf */,
+				120DE05A1622C47800BA4C14 /* Timer.c */,
+				120DE05B1622C47800BA4C14 /* Timer.h */,
+			);
+			path = 8254TimerDxe;
+			sourceTree = "<group>";
+		};
+		120DE05C1622C47800BA4C14 /* 8259InterruptControllerDxe */ = {
+			isa = PBXGroup;
+			children = (
+				120DE05D1622C47800BA4C14 /* 8259.c */,
+				120DE05E1622C47800BA4C14 /* 8259.h */,
+				120DE05F1622C47800BA4C14 /* 8259.inf */,
+			);
+			path = 8259InterruptControllerDxe;
+			sourceTree = "<group>";
+		};
+		120DE0601622C47800BA4C14 /* Bus */ = {
+			isa = PBXGroup;
+			children = (
+				120DE0611622C47800BA4C14 /* Pci */,
+			);
+			path = Bus;
+			sourceTree = "<group>";
+		};
+		120DE0611622C47800BA4C14 /* Pci */ = {
+			isa = PBXGroup;
+			children = (
+				120DE0621622C47800BA4C14 /* IdeControllerDxe */,
+			);
+			path = Pci;
+			sourceTree = "<group>";
+		};
+		120DE0621622C47800BA4C14 /* IdeControllerDxe */ = {
+			isa = PBXGroup;
+			children = (
+				120DE0631622C47800BA4C14 /* ComponentName.c */,
+				120DE0641622C47800BA4C14 /* IdeController.c */,
+				120DE0651622C47800BA4C14 /* IdeController.h */,
+				120DE0661622C47800BA4C14 /* IdeControllerDxe.inf */,
+			);
+			path = IdeControllerDxe;
+			sourceTree = "<group>";
+		};
+		120DE0681622C47800BA4C14 /* HpetTimerDxe */ = {
+			isa = PBXGroup;
+			children = (
+				120DE0691622C47800BA4C14 /* HpetTimer.c */,
+				120DE06A1622C47800BA4C14 /* HpetTimerDxe.inf */,
+			);
+			path = HpetTimerDxe;
+			sourceTree = "<group>";
+		};
+		120DE06B1622C47800BA4C14 /* Include */ = {
+			isa = PBXGroup;
+			children = (
+				120DE06C1622C47800BA4C14 /* Guid */,
+				120DE06E1622C47800BA4C14 /* Library */,
+				120DE0701622C47800BA4C14 /* Register */,
+			);
+			path = Include;
+			sourceTree = "<group>";
+		};
+		120DE06C1622C47800BA4C14 /* Guid */ = {
+			isa = PBXGroup;
+			children = (
+				120DE06D1622C47800BA4C14 /* PcAtChipsetTokenSpace.h */,
+			);
+			path = Guid;
+			sourceTree = "<group>";
+		};
+		120DE06E1622C47800BA4C14 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				120DE06F1622C47800BA4C14 /* IoApicLib.h */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
+		120DE0701622C47800BA4C14 /* Register */ = {
+			isa = PBXGroup;
+			children = (
+				120DE0711622C47800BA4C14 /* Hpet.h */,
+				120DE0721622C47800BA4C14 /* IoApic.h */,
+			);
+			path = Register;
+			sourceTree = "<group>";
+		};
+		120DE0731622C47800BA4C14 /* IsaAcpiDxe */ = {
+			isa = PBXGroup;
+			children = (
+				120DE0741622C47800BA4C14 /* ComponentName.c */,
+				120DE0751622C47800BA4C14 /* IsaAcpi.c */,
+				120DE0761622C47800BA4C14 /* IsaAcpi.inf */,
+				120DE0771622C47800BA4C14 /* PcatIsaAcpi.c */,
+				120DE0781622C47800BA4C14 /* PcatIsaAcpi.h */,
+			);
+			path = IsaAcpiDxe;
+			sourceTree = "<group>";
+		};
+		120DE0791622C47800BA4C14 /* KbcResetDxe */ = {
+			isa = PBXGroup;
+			children = (
+				120DE07A1622C47800BA4C14 /* Reset.inf */,
+				120DE07B1622C47800BA4C14 /* ResetEntry.c */,
+			);
+			path = KbcResetDxe;
+			sourceTree = "<group>";
+		};
+		120DE07C1622C47800BA4C14 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				120DE07D1622C47800BA4C14 /* BaseIoApicLib */,
+				120DE0801622C47800BA4C14 /* ResetSystemLib */,
+				120DE0831622C47800BA4C14 /* SerialIoLib */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
+		120DE07D1622C47800BA4C14 /* BaseIoApicLib */ = {
+			isa = PBXGroup;
+			children = (
+				120DE07E1622C47800BA4C14 /* BaseIoApicLib.inf */,
+				120DE07F1622C47800BA4C14 /* IoApicLib.c */,
+			);
+			path = BaseIoApicLib;
+			sourceTree = "<group>";
+		};
+		120DE0801622C47800BA4C14 /* ResetSystemLib */ = {
+			isa = PBXGroup;
+			children = (
+				120DE0811622C47800BA4C14 /* ResetSystemLib.c */,
+				120DE0821622C47800BA4C14 /* ResetSystemLib.inf */,
+			);
+			path = ResetSystemLib;
+			sourceTree = "<group>";
+		};
+		120DE0831622C47800BA4C14 /* SerialIoLib */ = {
+			isa = PBXGroup;
+			children = (
+				120DE0841622C47800BA4C14 /* SerialIoLib.inf */,
+				120DE0851622C47800BA4C14 /* SerialPortLib.c */,
+			);
+			path = SerialIoLib;
+			sourceTree = "<group>";
+		};
+		120DE0891622C47800BA4C14 /* PcatRealTimeClockRuntimeDxe */ = {
+			isa = PBXGroup;
+			children = (
+				120DE08A1622C47800BA4C14 /* PcatRealTimeClockRuntimeDxe.inf */,
+				120DE08B1622C47800BA4C14 /* PcRtc.c */,
+				120DE08C1622C47800BA4C14 /* PcRtc.h */,
+				120DE08D1622C47800BA4C14 /* PcRtcEntry.c */,
+			);
+			path = PcatRealTimeClockRuntimeDxe;
+			sourceTree = "<group>";
+		};
+		120DE08E1622C47800BA4C14 /* PciHostBridgeDxe */ = {
+			isa = PBXGroup;
+			children = (
+				120DE08F1622C47800BA4C14 /* Ia32 */,
+				120DE0921622C47800BA4C14 /* IoFifo.h */,
+				120DE0931622C47800BA4C14 /* PciHostBridge.c */,
+				120DE0941622C47800BA4C14 /* PciHostBridge.h */,
+				120DE0951622C47800BA4C14 /* PciHostBridgeDxe.inf */,
+				120DE0961622C47800BA4C14 /* PciRootBridgeIo.c */,
+				120DE0971622C47800BA4C14 /* X64 */,
+			);
+			path = PciHostBridgeDxe;
+			sourceTree = "<group>";
+		};
+		120DE08F1622C47800BA4C14 /* Ia32 */ = {
+			isa = PBXGroup;
+			children = (
+				120DE0901622C47800BA4C14 /* IoFifo.asm */,
+				120DE0911622C47800BA4C14 /* IoFifo.S */,
+			);
+			path = Ia32;
+			sourceTree = "<group>";
+		};
+		120DE0971622C47800BA4C14 /* X64 */ = {
+			isa = PBXGroup;
+			children = (
+				120DE0981622C47800BA4C14 /* IoFifo.asm */,
+				120DE0991622C47800BA4C14 /* IoFifo.S */,
+			);
+			path = X64;
+			sourceTree = "<group>";
 		};
 		122336B113377E050033F008 /* libeg */ = {
 			isa = PBXGroup;

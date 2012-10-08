@@ -674,9 +674,9 @@ AllocatePagesFromTop(
 		)
 		{
 			// free block found
-			if (Desc->PhysicalStart + EFI_PAGES_TO_SIZE(Desc->NumberOfPages) <= *Memory) {
+			if (Desc->PhysicalStart + EFI_PAGES_TO_SIZE((UINTN)Desc->NumberOfPages) <= *Memory) {
 				// the whole block is unded Memory - allocate from the top of the block
-				*Memory = Desc->PhysicalStart + EFI_PAGES_TO_SIZE(Desc->NumberOfPages - Pages);
+				*Memory = Desc->PhysicalStart + EFI_PAGES_TO_SIZE((UINTN)Desc->NumberOfPages - Pages);
 				//PRINT("found the whole block under top mem, allocating at %lx\n", *Memory);
 			} else {
 				// the block contains enough pages under Memory, but spans above it - allocate below Memory.

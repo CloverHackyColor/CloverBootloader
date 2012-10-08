@@ -664,13 +664,13 @@ AllocatePagesFromTop(
 		*/
 		if (   (Desc->Type == EfiConventionalMemory)						// free mem
 			&& (Pages <= Desc->NumberOfPages)								// contains enough space
-			&& (Desc->PhysicalStart + EFI_PAGES_TO_SIZE(Pages) <= *Memory)	// contains space below specified Memory
+			&& (Desc->PhysicalStart + EFI_PAGES_TO_SIZE((UINTN)Pages) <= *Memory)	// contains space below specified Memory
 		)
 		{
 			// free block found
-			if (Desc->PhysicalStart + EFI_PAGES_TO_SIZE(Desc->NumberOfPages) <= *Memory) {
+			if (Desc->PhysicalStart + EFI_PAGES_TO_SIZE((UINTN)Desc->NumberOfPages) <= *Memory) {
 				// the whole block is unded Memory - allocate from the top of the block
-				*Memory = Desc->PhysicalStart + EFI_PAGES_TO_SIZE(Desc->NumberOfPages - Pages);
+				*Memory = Desc->PhysicalStart + EFI_PAGES_TO_SIZE((UINTN)Desc->NumberOfPages - Pages);
 				//DBG("found the whole block under top mem, allocating at %lx\n", *Memory);
 			} else {
 				// the block contains enough pages under Memory, but spans above it - allocate below Memory.

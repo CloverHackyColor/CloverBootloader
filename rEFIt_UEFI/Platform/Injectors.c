@@ -121,24 +121,24 @@ typedef struct {
 EFI_STATUS EFIAPI GetScreenInfo(VOID* This, UINT64* baseAddress, UINT64* frameBufferSize,
                          UINT32* bpr, UINT32* w, UINT32* h, UINT32* colorDepth)
 {
-	EFI_GRAPHICS_OUTPUT_PROTOCOL	*GraphicsOutput=NULL;
+	EFI_GRAPHICS_OUTPUT_PROTOCOL	*mGraphicsOutput=NULL;
 	EFI_STATUS						Status;
 	
 	Status = gBS->HandleProtocol (
                               gST->ConsoleOutHandle,
                               &gEfiGraphicsOutputProtocolGuid,
-                              (VOID **) &GraphicsOutput);
+                              (VOID **) &mGraphicsOutput);
 	if(EFI_ERROR(Status))
 		return EFI_UNSUPPORTED;
   //this print never occured so this procedure is redundant
 //	Print(L"GetScreenInfo called with args: %lx %lx %lx %lx %lx %lx\n",
 //        baseAddress, frameBufferSize, bpr, w, h, colorDepth);
-	*frameBufferSize = (UINT64)GraphicsOutput->Mode->FrameBufferSize;
-	*baseAddress = (UINT64)GraphicsOutput->Mode->FrameBufferBase;
-	*w = (UINT32)GraphicsOutput->Mode->Info->HorizontalResolution;
-	*h = (UINT32)GraphicsOutput->Mode->Info->VerticalResolution;
+	*frameBufferSize = (UINT64)mGraphicsOutput->Mode->FrameBufferSize;
+	*baseAddress = (UINT64)mGraphicsOutput->Mode->FrameBufferBase;
+	*w = (UINT32)mGraphicsOutput->Mode->Info->HorizontalResolution;
+	*h = (UINT32)mGraphicsOutput->Mode->Info->VerticalResolution;
 	*colorDepth = 32;
-	*bpr = (UINT32)(GraphicsOutput->Mode->Info->PixelsPerScanLine*32) >> 3;
+	*bpr = (UINT32)(mGraphicsOutput->Mode->Info->PixelsPerScanLine*32) >> 3;
 //	Print(L"  Screen info: FBsize=%lx FBaddr=%lx w=%d h=%d\n",
 //      *frameBufferSize, *baseAddress, *w, *h);
 //  PauseForKey(L"--- press any key ---\n");

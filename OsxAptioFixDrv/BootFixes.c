@@ -365,7 +365,7 @@ AssignVirtualAddressesToMemMap(VOID *pBootArgs)
 		
 		// assign virtual addresses to all EFI_MEMORY_RUNTIME marked pages (including MMIO)
 		if ((Desc->Attribute & EFI_MEMORY_RUNTIME) != 0) {
-			BlockSize = EFI_PAGES_TO_SIZE(Desc->NumberOfPages);
+			BlockSize = EFI_PAGES_TO_SIZE((UINTN)Desc->NumberOfPages);
 			if (Desc->Type == EfiRuntimeServicesCode || Desc->Type == EfiRuntimeServicesData) {
 				// for RT block - assign from kernel block
 				Desc->VirtualStart = KernelRTBlock + 0xffffff8000000000;
@@ -436,7 +436,7 @@ DefragmentRuntimeServices(VOID *pBootArgs)
 			// phisycal addr from virtual
 			KernelRTBlock = (UINT8*)(UINTN)(Desc->VirtualStart & 0x7FFFFFFFFF);
 
-			BlockSize = EFI_PAGES_TO_SIZE(Desc->NumberOfPages);
+			BlockSize = EFI_PAGES_TO_SIZE((UINTN)Desc->NumberOfPages);
 			
 			DBG("-Copy %p <- %p, size=0x%lx\n", KernelRTBlock + gRelocBase, (VOID*)(UINTN)Desc->PhysicalStart, BlockSize);
 			CopyMem(KernelRTBlock + gRelocBase, (VOID*)(UINTN)Desc->PhysicalStart, BlockSize);

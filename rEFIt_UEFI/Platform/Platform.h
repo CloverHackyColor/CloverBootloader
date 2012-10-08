@@ -356,11 +356,11 @@ Headers collection for procedures
 
 #define GEN_PMCON_1                 0xA0
 
-#define PCIADDR(bus, dev, func) ((1 << 31) | (bus << 16) | (dev << 11) | (func << 8))
-#define REG8(base, reg)  ((volatile UINT8 *)(UINTN)base)[(reg)]
-#define REG16(base, reg)  ((volatile UINT16 *)(UINTN)base)[(reg) >> 1]
-#define REG32(base, reg)  ((volatile UINT32 *)(UINTN)base)[(reg) >> 2]
-#define WRITEREG32(base, reg, value) REG32(base, reg) = value
+#define PCIADDR(bus, dev, func) ((1 << 31) | ((bus) << 16) | ((dev) << 11) | ((func) << 8))
+#define REG8(base, reg)  ((volatile UINT8 *)(UINTN)(base))[(reg)]
+#define REG16(base, reg)  ((volatile UINT16 *)(UINTN)(base))[(reg) >> 1]
+#define REG32(base, reg)  ((volatile UINT32 *)(UINTN)(base))[(reg) >> 2]
+#define WRITEREG32(base, reg, value) REG32((base), (reg)) = value
 
 #define EFI_HANDLE_TYPE_UNKNOWN                     0x000
 #define EFI_HANDLE_TYPE_IMAGE_HANDLE                0x001

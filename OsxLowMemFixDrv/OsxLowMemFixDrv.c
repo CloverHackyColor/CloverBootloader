@@ -81,7 +81,7 @@ DoFixes(VOID)
 		);
 		*/
 		if (Desc->Type == EfiConventionalMemory												// free mem
-			|| Desc->PhysicalStart + EFI_PAGES_TO_SIZE(Desc->NumberOfPages) <= 0x100000		// below critical space
+			|| Desc->PhysicalStart + EFI_PAGES_TO_SIZE((UINTN)Desc->NumberOfPages) <= 0x100000		// below critical space
 			|| Desc->PhysicalStart >= KERNEL_TOP_ADDRESS									// above critical space
 			)
 		{

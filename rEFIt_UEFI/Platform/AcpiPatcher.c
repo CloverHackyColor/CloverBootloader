@@ -73,7 +73,7 @@ CHAR16* ACPInames[NUM_TABLES] = {
   L"UEFI.aml"
 };
 
-EFI_PHYSICAL_ADDRESS        *Table;
+//EFI_PHYSICAL_ADDRESS        *Table;
 
 UINT8 pmBlock[] = {
 	
@@ -155,7 +155,7 @@ Returns:
   Other       - Failed
 
 ##########################################################################################*/
-EFI_STATUS ConvertAcpiTable (IN UINTN TableLen,IN OUT VOID **Table)
+EFI_STATUS ConvertAcpiTable (IN UINTN TableLen,IN OUT VOID **TheTable)
 {
 	VOID                  *AcpiTableOri;
 	VOID                  *AcpiTableNew;
@@ -163,7 +163,7 @@ EFI_STATUS ConvertAcpiTable (IN UINTN TableLen,IN OUT VOID **Table)
 	EFI_PHYSICAL_ADDRESS  BufferPtr;
 
 
-	AcpiTableOri    =  (VOID *)(UINTN)(*(UINT64*)(*Table));
+	AcpiTableOri    =  (VOID *)(UINTN)(*(UINT64*)(*TheTable));
 	if (((UINTN)AcpiTableOri < 0x100000) && ((UINTN)AcpiTableOri > 0xE0000)) {
 		BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
 		Status = gBS->AllocatePages (
@@ -180,7 +180,7 @@ EFI_STATUS ConvertAcpiTable (IN UINTN TableLen,IN OUT VOID **Table)
 	}
 
 	// Change configuration table Pointer
-	*Table = AcpiTableNew;
+	*TheTable = AcpiTableNew;
   
 	return EFI_SUCCESS;
 }
@@ -198,7 +198,7 @@ UINT8 Checksum8(VOID * startPtr, UINT32 len)
 
 UINT32* ScanRSDT (UINT32 Signature) 
 {
-	EFI_ACPI_DESCRIPTION_HEADER     *Table;
+	EFI_ACPI_DESCRIPTION_HEADER     *TableEntry;
 	UINTN							Index;
 	UINT32							EntryCount;
 	UINT32							*EntryPtr;
@@ -207,9 +207,9 @@ UINT32* ScanRSDT (UINT32 Signature)
 
 	EntryPtr = &Rsdt->Entry;
 	for (Index = 0; Index < EntryCount; Index++, EntryPtr++) {
-		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
-		if (Table->Signature == Signature) {
-			return EntryPtr; //point to table entry
+		TableEntry = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
+		if (TableEntry->Signature == Signature) {
+			return EntryPtr; //point to TableEntry entry
 		}
 	}
 	return NULL;
@@ -217,7 +217,7 @@ UINT32* ScanRSDT (UINT32 Signature)
 
 UINT64* ScanXSDT (UINT32 Signature)
 {
-	EFI_ACPI_DESCRIPTION_HEADER		*Table;
+	EFI_ACPI_DESCRIPTION_HEADER		*TableEntry;
 	UINTN							Index;
 	UINT32							EntryCount;
 	CHAR8							*BasePtr;
@@ -228,10 +228,10 @@ UINT64* ScanXSDT (UINT32 Signature)
 	for (Index = 0; Index < EntryCount; Index ++, BasePtr+=sizeof(UINT64)) 
 	{
 		CopyMem (&Entry64, (VOID*)BasePtr, sizeof(UINT64)); //value from BasePtr->
-		Table = (EFI_ACPI_DESCRIPTION_HEADER *)((UINTN)(Entry64));
-		if (Table->Signature==Signature) 
+		TableEntry = (EFI_ACPI_DESCRIPTION_HEADER *)((UINTN)(Entry64));
+		if (TableEntry->Signature==Signature) 
 		{
-			return (UINT64 *)BasePtr; //pointer to the table entry
+			return (UINT64 *)BasePtr; //pointer to the TableEntry entry
 		}
 	}
 	return NULL;
@@ -239,7 +239,7 @@ UINT64* ScanXSDT (UINT32 Signature)
 
 VOID DropTableFromRSDT (UINT32 Signature) 
 {
-	EFI_ACPI_DESCRIPTION_HEADER     *Table;
+	EFI_ACPI_DESCRIPTION_HEADER     *TableEntry;
 	UINTN               Index, Index2;
 	UINT32							EntryCount;
 	UINT32							*EntryPtr, *Ptr, *Ptr2;
@@ -270,13 +270,13 @@ VOID DropTableFromRSDT (UINT32 Signature)
       continue; //avoid zero field
     }
     DoubleZero = FALSE;
-	  Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
-    CopyMem((CHAR8*)&sign, (CHAR8*)&Table->Signature, 4);
+	  TableEntry = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
+    CopyMem((CHAR8*)&sign, (CHAR8*)&TableEntry->Signature, 4);
     sign[4] = 0;
-    CopyMem((CHAR8*)&OTID, (CHAR8*)&Table->OemTableId, 8);
+    CopyMem((CHAR8*)&OTID, (CHAR8*)&TableEntry->OemTableId, 8);
     OTID[8] = 0;
     DBG(" Found table: %a  %a\n", sign, OTID);
-	  if (Table->Signature != Signature) {
+	  if (TableEntry->Signature != Signature) {
 			continue;
     }
     DBG(" ... dropped\n");
@@ -294,7 +294,7 @@ VOID DropTableFromRSDT (UINT32 Signature)
 
 VOID DropTableFromXSDT (UINT32 Signature) 
 {
-	EFI_ACPI_DESCRIPTION_HEADER     *Table;
+	EFI_ACPI_DESCRIPTION_HEADER     *TableEntry;
 	UINTN               Index, Index2;
 	UINT32							EntryCount;
 	CHAR8							*BasePtr, *Ptr, *Ptr2;
@@ -329,13 +329,13 @@ VOID DropTableFromXSDT (UINT32 Signature)
     }
     DoubleZero = FALSE;
     CopyMem (&Entry64, (VOID*)BasePtr, sizeof(UINT64)); //value from BasePtr->
-	  Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Entry64));
-    CopyMem((CHAR8*)&sign, (CHAR8*)&Table->Signature, 4);
+	  TableEntry = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Entry64));
+    CopyMem((CHAR8*)&sign, (CHAR8*)&TableEntry->Signature, 4);
     sign[4] = 0;
-    CopyMem((CHAR8*)&OTID, (CHAR8*)&Table->OemTableId, 8);
+    CopyMem((CHAR8*)&OTID, (CHAR8*)&TableEntry->OemTableId, 8);
     OTID[8] = 0;
     DBG(" Found table: %a  %a\n", sign, OTID);
-	  if (Table->Signature != Signature) {
+	  if (TableEntry->Signature != Signature) {
       continue;
 	  }
     DBG(" ... dropped\n");
@@ -355,7 +355,7 @@ VOID DropTableFromXSDT (UINT32 Signature)
   DBG("corrected XSDT length=%d\n", Xsdt->Header.Length);
 }
 
-EFI_STATUS InsertTable(VOID* Table, UINTN Length)
+EFI_STATUS InsertTable(VOID* TableEntry, UINTN Length)
 {
   EFI_STATUS		Status = EFI_SUCCESS;
   EFI_PHYSICAL_ADDRESS		BufferPtr  = EFI_SYSTEM_TABLE_MAX_ADDRESS;
@@ -363,7 +363,7 @@ EFI_STATUS InsertTable(VOID* Table, UINTN Length)
   UINT32*       Ptr;
   UINT64*       XPtr;
   
-  if (!Table) {
+  if (!TableEntry) {
     return EFI_NOT_FOUND;
   }
 
@@ -377,7 +377,7 @@ EFI_STATUS InsertTable(VOID* Table, UINTN Length)
   if(!EFI_ERROR(Status))
   {
     //      DBG("page is allocated, write SSDT into\n");      
-    CopyMem((VOID*)(UINTN)BufferPtr, (VOID*)Table, Length);
+    CopyMem((VOID*)(UINTN)BufferPtr, (VOID*)TableEntry, Length);
     
     //insert into RSDT
     if (Rsdt) {
@@ -426,7 +426,7 @@ EFI_STATUS SaveBufferToDisk(VOID *Buffer, UINTN Length, CHAR16 *DirName, CHAR16 
 /** Saves Table to disk as DirName\\FileName (DirName != NULL)
  *  or just prints basic table data to log (DirName == NULL).
  */
-EFI_STATUS DumpTable(EFI_ACPI_DESCRIPTION_HEADER *Table, CHAR16 *DirName, CHAR16 *FileName, UINTN *SsdtCount)
+EFI_STATUS DumpTable(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, CHAR16 *FileName, UINTN *SsdtCount)
 {
 	EFI_STATUS		Status;
 	CHAR8					Signature[5];
@@ -434,12 +434,12 @@ EFI_STATUS DumpTable(EFI_ACPI_DESCRIPTION_HEADER *Table, CHAR16 *DirName, CHAR16
 	BOOLEAN				ReleaseFileName = FALSE;
 	
 	// Take Signature and OemId for printing
-	CopyMem((CHAR8*)&Signature, (CHAR8*)&Table->Signature, 4);
+	CopyMem((CHAR8*)&Signature, (CHAR8*)&TableEntry->Signature, 4);
 	Signature[4] = 0;
-	CopyMem((CHAR8*)&OemTableId, (CHAR8*)&Table->OemTableId, 8);
+	CopyMem((CHAR8*)&OemTableId, (CHAR8*)&TableEntry->OemTableId, 8);
 	OemTableId[8] = 0;
 	
-	DBG(" %p: '%a', '%a', Rev: %d, Len: %d", Table, Signature, OemTableId, Table->Revision, Table->Length);
+	DBG(" %p: '%a', '%a', Rev: %d, Len: %d", TableEntry, Signature, OemTableId, TableEntry->Revision, TableEntry->Length);
 	
 	if (DirName == NULL) {
 		// just debug log dump
@@ -448,7 +448,7 @@ EFI_STATUS DumpTable(EFI_ACPI_DESCRIPTION_HEADER *Table, CHAR16 *DirName, CHAR16
 	
 	if (FileName == NULL) {
 		// take the name from the signature
-		if (Table->Signature == EFI_ACPI_1_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE && SsdtCount != NULL) {
+		if (TableEntry->Signature == EFI_ACPI_1_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE && SsdtCount != NULL) {
 			// Ssdt counter
 			if (*SsdtCount == 0) {
 				FileName = PoolPrint(L"%a.aml", Signature);
@@ -469,7 +469,7 @@ EFI_STATUS DumpTable(EFI_ACPI_DESCRIPTION_HEADER *Table, CHAR16 *DirName, CHAR16
 	DBG(" -> %s", FileName);
 	
 	// Save it
-	Status = SaveBufferToDisk((VOID*)Table, Table->Length, DirName, FileName);
+	Status = SaveBufferToDisk((VOID*)TableEntry, TableEntry->Length, DirName, FileName);
 	
 	if (ReleaseFileName) {
 		FreePool(FileName);
@@ -481,7 +481,7 @@ EFI_STATUS DumpTable(EFI_ACPI_DESCRIPTION_HEADER *Table, CHAR16 *DirName, CHAR16
 /** Saves to disk (DirName != NULL) or prints to log (DirName == NULL) Fadt tables: Dsdt and Facs. */
 EFI_STATUS DumpFadtTables(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt, CHAR16 *DirName)
 {
-	EFI_ACPI_DESCRIPTION_HEADER										*Table;
+	EFI_ACPI_DESCRIPTION_HEADER										*TableEntry;
 	EFI_ACPI_2_0_FIRMWARE_ACPI_CONTROL_STRUCTURE	*Facs;
 	EFI_STATUS		Status  = EFI_SUCCESS;
 	UINT64				DsdtAdr;
@@ -517,8 +517,8 @@ EFI_STATUS DumpFadtTables(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt, CHAR1
 	//
 	if (DsdtAdr != 0) {
 		DBG("     ");
-		Table = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)DsdtAdr;
-		Status = DumpTable(Table, DirName,  NULL, NULL);
+		TableEntry = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)DsdtAdr;
+		Status = DumpTable(TableEntry, DirName,  NULL, NULL);
 		if (EFI_ERROR(Status)) {
 			DBG(" - %r\n", Status);
 			return Status;
@@ -560,7 +560,7 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 	EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER	*RsdPtr;
 	RSDT_TABLE																		*Rsdt;
 	XSDT_TABLE																		*Xsdt;
-	EFI_ACPI_DESCRIPTION_HEADER										*Table;
+	EFI_ACPI_DESCRIPTION_HEADER										*TableEntry;
 	EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE			*Fadt;
 
 	EFI_STATUS		Status;
@@ -692,20 +692,20 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 			}
 			
 			// Save table with the name from signature
-			Table = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)(ReadUnaligned64((CONST UINT64*)EntryPtr));
+			TableEntry = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)(ReadUnaligned64((CONST UINT64*)EntryPtr));
 			
-			Status = DumpTable(Table, DirName,  NULL /* take the name from the signature*/, &SsdtCount);
+			Status = DumpTable(TableEntry, DirName,  NULL /* take the name from the signature*/, &SsdtCount);
 			if (EFI_ERROR(Status)) {
 				DBG(" - %r\n", Status);
 				return;
 			}
 			DBG("\n");
 			
-			if (Table->Signature == EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE) {
+			if (TableEntry->Signature == EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE) {
 				//
 				// Fadt - save Dsdt and Facs
 				//
-				Fadt = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)Table;
+				Fadt = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)TableEntry;
 				Status = DumpFadtTables(Fadt, DirName);
 				if (EFI_ERROR(Status)) {
 					return;
@@ -743,19 +743,19 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 			}
 			
 			// Save table with the name from signature
-			Table = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)(*EntryPtr32);
-			Status = DumpTable(Table, DirName,  NULL /* take the name from the signature*/, &SsdtCount);
+			TableEntry = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)(*EntryPtr32);
+			Status = DumpTable(TableEntry, DirName,  NULL /* take the name from the signature*/, &SsdtCount);
 			if (EFI_ERROR(Status)) {
 				DBG(" - %r\n", Status);
 				return;
 			}
 			DBG("\n");
 			
-			if (Table->Signature == EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE) {
+			if (TableEntry->Signature == EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE) {
 				//
 				// Fadt - save Dsdt and Facs
 				//
-				Fadt = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)Table;
+				Fadt = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)TableEntry;
 				Status = DumpFadtTables(Fadt, DirName);
 				if (EFI_ERROR(Status)) {
 					return;

@@ -2010,7 +2010,7 @@ CoreInitializeMemoryServices (
   	// cache the Top address for loading modules at Fixed Address 
   	//
     gLoadModuleAtFixAddressConfigurationTable.DxeCodeTopAddress = PhitHob->EfiMemoryTop 
-                                                                   + EFI_PAGES_TO_SIZE(ReservedCodePageNumber);
+                                                                   + EFI_PAGES_TO_SIZE((UINTN)ReservedCodePageNumber);
   }
   //
   // See if a Memory Type Information HOB is available

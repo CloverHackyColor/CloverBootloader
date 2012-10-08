@@ -394,37 +394,37 @@ AML_CHUNK* aml_add_byte_buffer(AML_CHUNK* parent, CONST CHAR8* data, UINT32 size
 	return node;
 }
 
-AML_CHUNK* aml_add_string_buffer(AML_CHUNK* parent, CONST CHAR8* string)
+AML_CHUNK* aml_add_string_buffer(AML_CHUNK* parent, CONST CHAR8* StringBuf)
 {
 	AML_CHUNK* node = aml_create_node(parent);
 	
 	if (node)
 	{
 	    UINTN offset=0;
-	    UINTN len = AsciiStrLen(string);
+	    UINTN len = AsciiStrLen(StringBuf);
 		node->Type = AML_CHUNK_BUFFER;
 		node->Length = (UINT8)(len + 3);
 		node->Buffer = AllocateZeroPool (node->Length);
 		node->Buffer[offset++] = AML_CHUNK_BYTE;
 		node->Buffer[offset++] = (CHAR8)len;
-		CopyMem(node->Buffer+offset,string, len);
+		CopyMem(node->Buffer+offset, StringBuf, len);
 		node->Buffer[offset+len] = '\0';
 	}
 	
 	return node;
 }
 
-AML_CHUNK* aml_add_string(AML_CHUNK* parent, CONST CHAR8* string)
+AML_CHUNK* aml_add_string(AML_CHUNK* parent, CONST CHAR8* StringBuf)
 {
 	AML_CHUNK* node = aml_create_node(parent);
 	
 	if (node)
 	{
-	    INTN len = AsciiStrLen(string);
+	    INTN len = AsciiStrLen(StringBuf);
 		node->Type = AML_CHUNK_STRING;
 		node->Length = (UINT8)(len + 1);
 		node->Buffer = AllocateZeroPool (len);
-		CopyMem(node->Buffer,string, len);
+		CopyMem(node->Buffer,StringBuf, len);
 		node->Buffer[len] = '\0';
 	}
 	

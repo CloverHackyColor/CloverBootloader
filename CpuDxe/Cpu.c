@@ -1140,7 +1140,7 @@ InitializeBiosIntCaller (
   ASSERT_EFI_ERROR (Status);
   
   mThunkContext.RealModeBuffer     = (VOID*)(UINTN)LegacyRegionBase;
-  mThunkContext.RealModeBufferSize = EFI_PAGES_TO_SIZE (RealModeBufferSize);
+  mThunkContext.RealModeBufferSize = EFI_PAGES_TO_SIZE ((UINTN)RealModeBufferSize);
   mThunkContext.ThunkAttributes    = 3;
   AsmPrepareThunk16(&mThunkContext);
   

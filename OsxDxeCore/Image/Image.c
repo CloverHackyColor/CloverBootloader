@@ -285,7 +285,7 @@ CheckAndMarkFixLoadingMemoryUsageBitMap (
    //  
    DxeCodePageNumber = PcdGet32(PcdLoadFixAddressRuntimeCodePageNumber);
    DxeCodePageNumber += PcdGet32(PcdLoadFixAddressBootTimeCodePageNumber);
-   DxeCodeSize       = EFI_PAGES_TO_SIZE(DxeCodePageNumber);
+   DxeCodeSize       = EFI_PAGES_TO_SIZE((UINTN)DxeCodePageNumber);
    DxeCodeBase       =  gLoadModuleAtFixAddressConfigurationTable.DxeCodeTopAddress - DxeCodeSize;
    
    //

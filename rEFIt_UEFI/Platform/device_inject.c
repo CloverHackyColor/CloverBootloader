@@ -112,14 +112,14 @@ UINT32 pci_config_read32(pci_dt_t *PciDt, UINT8 reg)
 
 //dmazar: replaced by devprop_add_device_pci
 
-DevPropDevice *devprop_add_device_pci(DevPropString *string, pci_dt_t *PciDt)
+DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt)
 {
 	EFI_DEVICE_PATH_PROTOCOL		*DevicePath;
 	DevPropDevice               *device;
 	UINT32                        NumPaths;
   
 	
-	if (string == NULL || PciDt == NULL) {
+	if (StringBuf == NULL || PciDt == NULL) {
 		return NULL;
 	}
 	
@@ -177,16 +177,16 @@ DevPropDevice *devprop_add_device_pci(DevPropString *string, pci_dt_t *PciDt)
 	device->path_end.type = 0x7f;
 	device->path_end.subtype = 0xff;
 	
-	device->string = string;
+	device->string = StringBuf;
 	device->data = NULL;
-	string->length += device->length;
+	StringBuf->length += device->length;
 	
-	if(!string->entries)
-		if((string->entries = (DevPropDevice**)AllocatePool(sizeof(device)))== NULL)
+	if(!StringBuf->entries)
+		if((StringBuf->entries = (DevPropDevice**)AllocatePool(sizeof(device)))== NULL)
 			return 0;
 	
-	string->entries[string->numentries++] = (DevPropDevice*)AllocatePool(sizeof(device));
-	string->entries[string->numentries-1] = device;
+	StringBuf->entries[StringBuf->numentries++] = (DevPropDevice*)AllocatePool(sizeof(device));
+	StringBuf->entries[StringBuf->numentries-1] = device;
 	
 	return device;
 }
@@ -258,9 +258,9 @@ BOOLEAN devprop_add_value(DevPropDevice *device, CHAR8 *nm, UINT8 *vl, UINT32 le
 	return TRUE;
 }
 
-CHAR8 *devprop_generate_string(DevPropString *string)
+CHAR8 *devprop_generate_string(DevPropString *StringBuf)
 {
-  UINTN len = string->length * 2;
+  UINTN len = StringBuf->length * 2;
 	INT32 i = 0;
    UINT32 x = 0;
 	CHAR8 *buffer = (CHAR8*)AllocatePool(len + 1);
@@ -270,40 +270,40 @@ CHAR8 *devprop_generate_string(DevPropString *string)
 	if(!buffer)
 		return NULL;
 
-	AsciiSPrint(buffer, len, "%08x%08x%04x%04x", dp_swap32(string->length), string->WHAT2,
-			dp_swap16(string->numentries), string->WHAT3);
+	AsciiSPrint(buffer, len, "%08x%08x%04x%04x", dp_swap32(StringBuf->length), StringBuf->WHAT2,
+			dp_swap16(StringBuf->numentries), StringBuf->WHAT3);
 	buffer += 24;
 	
-	while(i < string->numentries)
+	while(i < StringBuf->numentries)
 	{
-      UINT8 *dataptr = string->entries[i]->data;
-		AsciiSPrint(buffer, len, "%08x%04x%04x", dp_swap32(string->entries[i]->length),
-				dp_swap16(string->entries[i]->numentries), string->entries[i]->WHAT2); //FIXME: wrong buffer sizes!
+      UINT8 *dataptr = StringBuf->entries[i]->data;
+		AsciiSPrint(buffer, len, "%08x%04x%04x", dp_swap32(StringBuf->entries[i]->length),
+				dp_swap16(StringBuf->entries[i]->numentries), StringBuf->entries[i]->WHAT2); //FIXME: wrong buffer sizes!
 		
 		buffer += 16;
-		AsciiSPrint(buffer, len, "%02x%02x%04x%08x%08x", string->entries[i]->acpi_dev_path.type,
-				string->entries[i]->acpi_dev_path.subtype,
-				dp_swap16(string->entries[i]->acpi_dev_path.length),
-				dp_swap32(string->entries[i]->acpi_dev_path._HID),
-				dp_swap32(string->entries[i]->acpi_dev_path._UID));
+		AsciiSPrint(buffer, len, "%02x%02x%04x%08x%08x", StringBuf->entries[i]->acpi_dev_path.type,
+				StringBuf->entries[i]->acpi_dev_path.subtype,
+				dp_swap16(StringBuf->entries[i]->acpi_dev_path.length),
+				dp_swap32(StringBuf->entries[i]->acpi_dev_path._HID),
+				dp_swap32(StringBuf->entries[i]->acpi_dev_path._UID));
 
 		buffer += 24;
-		for(x = 0; x < string->entries[i]->num_pci_devpaths; x++)
+		for(x = 0; x < StringBuf->entries[i]->num_pci_devpaths; x++)
 		{
-			AsciiSPrint(buffer, len, "%02x%02x%04x%02x%02x", string->entries[i]->pci_dev_path[x].type,
-					string->entries[i]->pci_dev_path[x].subtype,
-					dp_swap16(string->entries[i]->pci_dev_path[x].length),
-					string->entries[i]->pci_dev_path[x].function,
-					string->entries[i]->pci_dev_path[x].device);
+			AsciiSPrint(buffer, len, "%02x%02x%04x%02x%02x", StringBuf->entries[i]->pci_dev_path[x].type,
+					StringBuf->entries[i]->pci_dev_path[x].subtype,
+					dp_swap16(StringBuf->entries[i]->pci_dev_path[x].length),
+					StringBuf->entries[i]->pci_dev_path[x].function,
+					StringBuf->entries[i]->pci_dev_path[x].device);
 			buffer += 12;
 		}
 		
-		AsciiSPrint(buffer, len, "%02x%02x%04x", string->entries[i]->path_end.type,
-				string->entries[i]->path_end.subtype,
-				dp_swap16(string->entries[i]->path_end.length));
+		AsciiSPrint(buffer, len, "%02x%02x%04x", StringBuf->entries[i]->path_end.type,
+				StringBuf->entries[i]->path_end.subtype,
+				dp_swap16(StringBuf->entries[i]->path_end.length));
 		
 		buffer += 8;
-		for(x = 0; x < (string->entries[i]->length) - (24 + (6 * string->entries[i]->num_pci_devpaths)); x++)
+		for(x = 0; x < (StringBuf->entries[i]->length) - (24 + (6 * StringBuf->entries[i]->num_pci_devpaths)); x++)
 		{
 			AsciiSPrint(buffer, len, "%02x", *dataptr++);
 			buffer += 2;
@@ -313,29 +313,29 @@ CHAR8 *devprop_generate_string(DevPropString *string)
 	return ptr;
 }
 
-VOID devprop_free_string(DevPropString *string)
+VOID devprop_free_string(DevPropString *StringBuf)
 {
    INT32 i;
 	//DBG("devprop_free_string\n");
-	if(!string)
+	if(!StringBuf)
 		return;
 	
-	for(i = 0; i < string->numentries; i++)
+	for(i = 0; i < StringBuf->numentries; i++)
 	{
-		if(string->entries[i])
+		if(StringBuf->entries[i])
 		{
-			if(string->entries[i]->data)
+			if(StringBuf->entries[i]->data)
 			{
-				FreePool(string->entries[i]->data);
-				string->entries[i]->data = NULL;
+				FreePool(StringBuf->entries[i]->data);
+				StringBuf->entries[i]->data = NULL;
 			}
-			FreePool(string->entries[i]);
-			string->entries[i] = NULL;
+			FreePool(StringBuf->entries[i]);
+			StringBuf->entries[i] = NULL;
 		}
 	}
 	
-	FreePool(string);
-	string = NULL;
+	FreePool(StringBuf);
+	StringBuf = NULL;
 }
 
 // Ethernet built-in device injection

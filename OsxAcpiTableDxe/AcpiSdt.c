@@ -75,7 +75,7 @@ FindTableByBuffer (
   while (CurrentLink != StartLink) {
     CurrentTableList = EFI_ACPI_TABLE_LIST_FROM_LINK (CurrentLink);
     if (((UINTN)CurrentTableList->PageAddress <= (UINTN)Buffer) &&
-        ((UINTN)CurrentTableList->PageAddress + EFI_PAGES_TO_SIZE(CurrentTableList->NumberOfPages) > (UINTN)Buffer)) {
+        ((UINTN)CurrentTableList->PageAddress + EFI_PAGES_TO_SIZE((UINTN)CurrentTableList->NumberOfPages) > (UINTN)Buffer)) {
       //
       // Good! Found Table.
       //

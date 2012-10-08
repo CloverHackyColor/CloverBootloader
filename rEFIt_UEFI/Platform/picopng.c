@@ -1244,7 +1244,7 @@ EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ico
   PNG_INFO            *info;
   UINT8               AlphaValue;
   EG_PIXEL            *Pixel;
-  UINTN                x, y;
+  INTN                x, y;
   
   // read and check header
   if (FileDataLength < sizeof(BMP_IMAGE_HEADER) || FileData == NULL)
@@ -1254,7 +1254,7 @@ EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ico
 	info = PNG_decode(FileData, (UINT32)FileDataLength);
 	if(!PNG_error)
 	{
-		NewImage = egCreateImage(info->width, info->height, WantAlpha);
+		NewImage = egCreateImage((INTN)info->width, (INTN)info->height, WantAlpha);
     if (NewImage == NULL)
       return NULL;
     AlphaValue = WantAlpha ? 255 : 0;

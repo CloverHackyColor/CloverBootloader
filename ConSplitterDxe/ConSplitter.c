@@ -1303,7 +1303,7 @@ ConSplitterConOutDriverBindingStart (
 
       FreePool (Info);
 
-    } else if (UgaDraw != NULL  && FeaturePcdGet (PcdUgaConsumeSupport)) {
+    } else if (UgaDraw != NULL) {
       Status = UgaDraw->GetMode (
                  UgaDraw,
                  &mConOut.UgaHorizontalResolution,
@@ -2788,7 +2788,7 @@ ConSplitterAddGraphicsOutputMode (
         }
       }
     }
-  } else if (UgaDraw != NULL && FeaturePcdGet (PcdUgaConsumeSupport)) {
+  } else if (UgaDraw != NULL) {
     //
     // Graphics console driver can ensure the same mode for all GOP devices
     // so we can get the current mode from this video device
@@ -2828,7 +2828,7 @@ Done:
   if (GraphicsOutput != NULL) {
     Private->CurrentNumberOfGraphicsOutput++;
   }
-  if (UgaDraw != NULL && FeaturePcdGet (PcdUgaConsumeSupport)) {
+  if (UgaDraw != NULL) {
     Private->CurrentNumberOfUgaDraw++;
   }
 
@@ -3055,7 +3055,7 @@ ConSplitterTextOutAddDevice (
     //
     // If GOP is produced by Consplitter, this device display mode will be added into Graphics Ouput modes.
     //
-    if ((GraphicsOutput != NULL) || (UgaDraw != NULL && FeaturePcdGet (PcdUgaConsumeSupport))) {
+  if ((GraphicsOutput != NULL) || (UgaDraw != NULL)) {
       DeviceStatus = ConSplitterAddGraphicsOutputMode (Private, GraphicsOutput, UgaDraw);
     }
   }
@@ -3076,7 +3076,7 @@ ConSplitterTextOutAddDevice (
 
       FreePool (Info);
 
-    } else if (UgaDraw != NULL && FeaturePcdGet (PcdUgaConsumeSupport)) {
+    } else if (UgaDraw != NULL) {
       Status = UgaDraw->GetMode (
                     UgaDraw,
                     &UgaHorizontalResolution,
@@ -3151,7 +3151,7 @@ ConSplitterTextOutDeleteDevice (
   TextOutList           = Private->TextOutList;
   while (Index >= 0) {
     if (TextOutList->TextOut == TextOut) {
-      if (TextOutList->UgaDraw != NULL && FeaturePcdGet (PcdUgaConsumeSupport)) {
+      if (TextOutList->UgaDraw != NULL) {
         Private->CurrentNumberOfUgaDraw--;
       }
       if (TextOutList->GraphicsOutput != NULL) {
