@@ -213,7 +213,7 @@ VOID egEncodeBMP(IN EG_IMAGE *Image, OUT UINT8 **FileDataReturn, OUT UINTN *File
     UINT8               *ImagePtrBase;
     UINT64               ImageLineOffset;
     EG_PIXEL            *PixelPtr;
-    UINT64               x, y;
+    INT64               x, y;
     
     ImageLineOffset = MultU64x32(Image->Width, 3);
     if ((ImageLineOffset % 4) != 0)
