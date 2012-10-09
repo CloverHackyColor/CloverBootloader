@@ -1517,6 +1517,16 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       ApicCPUNum = gCPUStructure.Cores;
     }
 //  }
+    /*
+     At this moment we have CPU numbers from DSDT - acpi_cpu_num
+     and from CPU characteristics gCPUStructure
+     Also we had the number from APIC table ApicCPUNum
+     What to choose? 
+     Since rev745 I will return to acpi_cpu_count global variable
+    */
+  if (acpi_cpu_count) {
+    ApicCPUNum = acpi_cpu_count;
+  }
     
   if (gSettings.GeneratePStates) {
     Status = EFI_NOT_FOUND;

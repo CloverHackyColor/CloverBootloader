@@ -51,8 +51,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
   P_STATE initial, maximum, minimum, p_states[64];
   UINT8 p_states_count = 0;
   UINT8 cpu_dynamic_fsb = 0;
-  
-//  acpi_cpu_count = (UINT8)Number; //gCPUStructure.Cores;
+  UINT8 cpu_noninteger_bus_ratio = 0;
   
 	if (gCPUStructure.Vendor != CPU_VENDOR_INTEL) {
 		MsgLog ("Not an Intel platform: P-States will not be generated !!!\n");
@@ -64,9 +63,8 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
 		return NULL;
 	}
   
-	if (acpi_cpu_count > 0)
+	if (Number > 0)
 	{
-    UINT8 cpu_noninteger_bus_ratio = 0;
 		// Retrieving P-States, ported from code by superhai (c)
 		switch (gCPUStructure.Family) {
 			case 0x06:
@@ -78,8 +76,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
 					case CPU_MODEL_MEROM:	// Intel Mobile Core 2 Solo, Duo, Xeon 30xx, Xeon 51xx, Xeon X53xx, Xeon E53xx, Xeon X32xx
 					case CPU_MODEL_PENRYN:	// Intel Core 2 Solo, Duo, Quad, Extreme, Xeon X54xx, Xeon X33xx
 					case CPU_MODEL_ATOM:	// Intel Atom (45nm)
-					{
-						
+					{						
 						if (AsmReadMsr64(MSR_IA32_EXT_CONFIG) & (1 << 27))
 						{
 							AsmWriteMsr64(MSR_IA32_EXT_CONFIG, (AsmReadMsr64(MSR_IA32_EXT_CONFIG) | (1 << 28)));
@@ -163,9 +160,9 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
                   UINT32 multiplier = p_states[i].Control.VID_FID.FID & 0x1f;		// = 0x08
                   UINT8 half = (p_states[i].Control.VID_FID.FID & 0x40)?1:0;					// = 0x00
                   UINT8 dfsb = (p_states[i].Control.VID_FID.FID & 0x80)?1:0;					// = 0x01
-                  UINT64 fsb = DivU64x32(gCPUStructure.FSBFrequency, Mega); // = 200
-                  UINT64 halffsb = (fsb + 1) >> 1;					// = 100
-                  UINT64 frequency = (multiplier * fsb);			// = 1600
+                  UINT32 fsb = (UINT32)DivU64x32(gCPUStructure.FSBFrequency, Mega); // = 200
+                  UINT32 halffsb = (fsb + 1) >> 1;					// = 100
+                  UINT32 frequency = (multiplier * fsb);			// = 1600
                   
                   p_states[i].Frequency = (UINT32)(frequency + (half * halffsb)) >> dfsb;	// = 1600/2=800
                 }
@@ -297,7 +294,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
       
       
 			// Add CPUs
-			for (i = 1; i < acpi_cpu_count; i++)
+			for (i = 1; i < Number; i++)
 			{
         
 				AsciiSPrint(name, 9, "_PR_%4a", acpi_cpu_name[i]);
@@ -346,7 +343,6 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
   BOOLEAN c4_enabled = gSettings.EnableC4;
   BOOLEAN cst_using_systemio = gSettings.EnableISS;
   UINT8   p_blk_lo, p_blk_hi;
-//  UINT8   acpi_cpu_count = (UINT8)Number; //gCPUStructure.Cores;
   UINT8   cstates_count;
   UINT32  acpi_cpu_p_blk;
   CHAR8 name2[9];
@@ -482,7 +478,7 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
   ret = aml_add_return_name(met, "CST_");
   
   // Aliases
-  for (i = 1; i < acpi_cpu_count; i++)
+  for (i = 1; i < Number; i++)
   {
     AsciiSPrint(name2, 9, "_PR_%4a", acpi_cpu_name[i]);
     

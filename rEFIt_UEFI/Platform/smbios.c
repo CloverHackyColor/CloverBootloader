@@ -187,7 +187,7 @@ EFI_STATUS UpdateSmbiosString (SMBIOS_STRUCTURE_POINTER SmbiosTableN, SMBIOS_TAB
 	CHAR8*	C2;
 	UINTN	Length = SmbiosTableLength(SmbiosTableN);
 	UINTN	ALength, BLength;
-	UINT8	Index = 1;
+	UINT8	IndexStr = 1;
 
 	if ((SmbiosTableN.Raw == NULL) || !Buffer || !Field) {
 		return EFI_NOT_FOUND;
@@ -204,9 +204,9 @@ EFI_STATUS UpdateSmbiosString (SMBIOS_STRUCTURE_POINTER SmbiosTableN, SMBIOS_TAB
 	}
 */
 	AString = (CHAR8*)(SmbiosTableN.Raw + SmbiosTableN.Hdr->Length); //first string
-	while (Index != *Field) {
+	while (IndexStr != *Field) {
 		if (*AString) {
-			Index++;
+			IndexStr++;
 		}
 		while (*AString != 0) AString++; //skip string at index
 		AString++; //next string
@@ -215,8 +215,8 @@ EFI_STATUS UpdateSmbiosString (SMBIOS_STRUCTURE_POINTER SmbiosTableN, SMBIOS_TAB
 			if (*Field == 0) {
 				AString[1] = 0; //one more zero
 			}
-			*Field = Index; //index of the next string that  is empty
-			if (Index == 1) {
+			*Field = IndexStr; //index of the next string that  is empty
+			if (IndexStr == 1) {
 				AString--; //first string has no leading zero
 			}
 			break;
@@ -269,22 +269,22 @@ EFI_STATUS UpdateSmbiosString (SMBIOS_STRUCTURE_POINTER SmbiosTableN, SMBIOS_TAB
 }
 
 SMBIOS_STRUCTURE_POINTER GetSmbiosTableFromType (
-	SMBIOS_TABLE_ENTRY_POINT *Smbios, UINT8 Type, UINTN Index)
+	SMBIOS_TABLE_ENTRY_POINT *SmbiosPoint, UINT8 SmbiosType, UINTN IndexTable)
 {
 	SMBIOS_STRUCTURE_POINTER SmbiosTableN;
 	UINTN                    SmbiosTypeIndex;
 
 	SmbiosTypeIndex = 0;
-	SmbiosTableN.Raw = (UINT8 *)(UINTN)Smbios->TableAddress;
+	SmbiosTableN.Raw = (UINT8 *)((UINTN)SmbiosPoint->TableAddress);
 	if (SmbiosTableN.Raw == NULL) {
 		return SmbiosTableN;
 	}
-	while ((SmbiosTypeIndex != Index) || (SmbiosTableN.Hdr->Type != Type)) {
+	while ((SmbiosTypeIndex != IndexTable) || (SmbiosTableN.Hdr->Type != SmbiosType)) {
 		if (SmbiosTableN.Hdr->Type == SMBIOS_TYPE_END_OF_TABLE) {
 			SmbiosTableN.Raw = NULL;
 			return SmbiosTableN;
 		}
-		if (SmbiosTableN.Hdr->Type == Type) {
+		if (SmbiosTableN.Hdr->Type == SmbiosType) {
 			SmbiosTypeIndex++;
 		}
 		SmbiosTableN.Raw = (UINT8 *)(SmbiosTableN.Raw + SmbiosTableLength (SmbiosTableN));
@@ -293,14 +293,14 @@ SMBIOS_STRUCTURE_POINTER GetSmbiosTableFromType (
 }
 
 CHAR8* GetSmbiosString (
-	SMBIOS_STRUCTURE_POINTER SmbiosTableN, SMBIOS_TABLE_STRING String)
+	SMBIOS_STRUCTURE_POINTER SmbiosTableN, SMBIOS_TABLE_STRING StringN)
 {
 	CHAR8      *AString;
 	UINT8      Ind;
 
 	Ind = 1;
 	AString = (CHAR8 *)(SmbiosTableN.Raw + SmbiosTableN.Hdr->Length); //first string
-	while (Ind != String) {
+	while (Ind != StringN) {
 		while (*AString != 0) {
 			AString ++;
 		}

@@ -118,11 +118,11 @@
 	Platform/DbgTime.c
 
 [Sources.IA32]
-    IA32/llmul.asm
-    IA32/llshl.asm
-    IA32/ulldiv.asm
-    IA32/ullrem.asm
-    IA32/ullshr.asm
+    IA32/llmul.asm   | MSFT
+    IA32/llshl.asm   | MSFT
+    IA32/ulldiv.asm  | MSFT
+    IA32/ullrem.asm  | MSFT
+    IA32/ullshr.asm  | MSFT
 
 
 [Packages]
