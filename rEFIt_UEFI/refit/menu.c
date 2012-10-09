@@ -987,11 +987,13 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
     
     switch (gAction) {
       case ActionSelect:
+        State.LastSelection = State.CurrentSelection;
         State.CurrentSelection = gItemID;
         State.PaintAll = TRUE;
         HidePointer();
         break;
       case ActionEnter:
+        State.LastSelection = State.CurrentSelection;
         State.CurrentSelection = gItemID;
         if ((Screen->Entries[gItemID])->Tag == TAG_INPUT){
           MenuExit = InputDialog(Screen, StyleFunc, &State);
@@ -1003,10 +1005,12 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         MenuExit = MENU_EXIT_HELP;
         break;
       case ActionOptions:
+        State.LastSelection = State.CurrentSelection;
         State.CurrentSelection = gItemID;
         MenuExit = MENU_EXIT_OPTIONS;
         break;        
       case ActionDetails:
+        State.LastSelection = State.CurrentSelection;
        // Index = State.CurrentSelection;
         State.CurrentSelection = gItemID;
         if ((Screen->Entries[gItemID])->Tag == TAG_INPUT){
@@ -1017,6 +1021,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
       //  State.CurrentSelection = Index;
         break;
       case ActionDeselect:
+        State.LastSelection = State.CurrentSelection;
         State.PaintAll = TRUE;
         HidePointer();
         break;
