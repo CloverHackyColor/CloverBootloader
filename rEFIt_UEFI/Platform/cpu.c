@@ -75,7 +75,7 @@ VOID GetCPUProperties (VOID)
 	UINTN         HandleIndex;
 	UINTN         ProtocolIndex;
 	UINT32				qpibusspeed; //units=kHz
-	UINT16				qpimult = 2;
+	UINT32				qpimult = 2;
   UINT32        BusSpeed = 0; //units kHz
   UINT64        tmpU;
 	UINT16				did, vid;
@@ -534,10 +534,10 @@ VOID GetCPUProperties (VOID)
 	DBG("Features: 0x%08x\n",gCPUStructure.Features);
 	DBG("Threads: %d\n",gCPUStructure.Threads);
 	DBG("Cores: %d\n",gCPUStructure.Cores);
-	DBG("FSB: %d MHz\n", (DivU64x32(gCPUStructure.ExternalClock, kilo)));
-	DBG("CPU: %d MHz\n", (DivU64x32(gCPUStructure.CPUFrequency, Mega)));
-	DBG("TSC: %d MHz\n", (INTN)gCPUStructure.CurrentSpeed);
-	DBG("PIS: %d MHz\n", (INTN)gCPUStructure.ProcessorInterconnectSpeed);
+	DBG("FSB: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.ExternalClock, kilo)));
+	DBG("CPU: %d MHz\n", (INT32)(DivU64x32(gCPUStructure.CPUFrequency, Mega)));
+	DBG("TSC: %d MHz\n", (INT32)gCPUStructure.CurrentSpeed);
+	DBG("PIS: %d MHz\n", (INT32)gCPUStructure.ProcessorInterconnectSpeed);
 //#if DEBUG_PCI
 	
 //	WaitForKeyPress("waiting for key press...\n");
