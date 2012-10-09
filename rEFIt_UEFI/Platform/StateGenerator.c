@@ -52,6 +52,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
   UINT8 p_states_count = 0;
   UINT8 cpu_dynamic_fsb = 0;
   UINT8 cpu_noninteger_bus_ratio = 0;
+  UINT32 i, j;
   
 	if (gCPUStructure.Vendor != CPU_VENDOR_INTEL) {
 		MsgLog ("Not an Intel platform: P-States will not be generated !!!\n");
@@ -120,7 +121,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
 						else
 						{
               UINT8 vidstep;
-							UINT8 i = 0, u, invalid = 0;
+							UINT8 u, invalid = 0;
 							// Finalize P-States
 							// Find how many P-States machine supports
 							p_states_count = (UINT8)(maximum.CID - minimum.CID + 1);
@@ -210,7 +211,6 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
 						}
 						else
 						{
-							UINT32 i, j;
 							p_states_count = 0;
 							
 							for (i = maximum.Control.Control; i >= minimum.Control.Control; i--)
@@ -355,7 +355,7 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
   AML_CHUNK* tmpl;
   AML_CHUNK* met;
   AML_CHUNK* ret;
-  INTN i;
+  UINTN i;
   SSDT_TABLE *ssdt;
   
   if (!fadt) {
