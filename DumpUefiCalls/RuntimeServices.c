@@ -352,14 +352,25 @@ OvrRuntimeServices(EFI_RUNTIME_SERVICES	*RS)
 	//
 	// Register callback for EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE
 	//
-	gBS->CreateEventEx (
-					EVT_NOTIFY_SIGNAL,
-					TPL_NOTIFY,
-					VirtualAddressChangeEvent,
-					NULL,
-					&gEfiEventVirtualAddressChangeGuid,
-					&gVirtualAddressChangeEvent
-					);
+	/* new style - does not work on Phoenix UEFI
+	 Status = gBS->CreateEventEx (
+	 EVT_NOTIFY_SIGNAL,
+	 TPL_NOTIFY,
+	 VirtualAddressChangeEvent,
+	 NULL,
+	 &gEfiEventVirtualAddressChangeGuid,
+	 &gVirtualAddressChangeEvent
+	 );
+	 */
+	// old style
+	Status = gBS->CreateEvent (
+							   EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE,
+							   TPL_NOTIFY,
+							   VirtualAddressChangeEvent,
+							   NULL,
+							   &gVirtualAddressChangeEvent
+							   );
+	PRINT("Runtime services: setting VirtualAddressChangeEvent = %r\n", Status);
 	#endif
 
 	PRINT("Runtime services overriden!\n");

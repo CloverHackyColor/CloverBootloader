@@ -525,6 +525,39 @@ PrintSystemTable(IN EFI_SYSTEM_TABLE  *ST)
 	for(Index = 0; Index < ST->NumberOfTableEntries; Index++) {
 		PRINT("  %p - %s\n", ST->ConfigurationTable[Index].VendorTable, GuidStr(&ST->ConfigurationTable[Index].VendorGuid));
 	}
+	
+	// print RT services table
+	PRINT("- RuntimeServices: %p\n", ST->RuntimeServices);
+	PRINT("    GetTime: %p\n", ST->RuntimeServices->GetTime);
+	PRINT("    SetTime: %p\n", ST->RuntimeServices->SetTime);
+	PRINT("    GetWakeupTime: %p\n", ST->RuntimeServices->GetWakeupTime);
+	PRINT("    SetWakeupTime: %p\n", ST->RuntimeServices->SetWakeupTime);
+	PRINT("    SetVirtualAddressMap: %p\n", ST->RuntimeServices->SetVirtualAddressMap);
+	PRINT("    ConvertPointer: %p\n", ST->RuntimeServices->ConvertPointer);
+	PRINT("    GetVariable: %p\n", ST->RuntimeServices->GetVariable);
+	PRINT("    GetNextVariableName: %p\n", ST->RuntimeServices->GetNextVariableName);
+	PRINT("    SetVariable: %p\n", ST->RuntimeServices->SetVariable);
+	PRINT("    GetNextHighMonotonicCount: %p\n", ST->RuntimeServices->GetNextHighMonotonicCount);
+	PRINT("    ResetSystem: %p\n", ST->RuntimeServices->ResetSystem);
+	PRINT("    UpdateCapsule: %p\n", ST->RuntimeServices->UpdateCapsule);
+	PRINT("    QueryCapsuleCapabilities: %p\n", ST->RuntimeServices->QueryCapsuleCapabilities);
+	PRINT("    QueryVariableInfo: %p\n", ST->RuntimeServices->QueryVariableInfo);
+
+	PRINT("- RuntimeServices Oiginals:\n");
+	PRINT("    GetTime: %p\n", gOrgRS.GetTime);
+	PRINT("    SetTime: %p\n", gOrgRS.SetTime);
+	PRINT("    GetWakeupTime: %p\n", gOrgRS.GetWakeupTime);
+	PRINT("    SetWakeupTime: %p\n", gOrgRS.SetWakeupTime);
+	PRINT("    SetVirtualAddressMap: %p\n", gOrgRS.SetVirtualAddressMap);
+	PRINT("    ConvertPointer: %p\n", gOrgRS.ConvertPointer);
+	PRINT("    GetVariable: %p\n", gOrgRS.GetVariable);
+	PRINT("    GetNextVariableName: %p\n", gOrgRS.GetNextVariableName);
+	PRINT("    SetVariable: %p\n", gOrgRS.SetVariable);
+	PRINT("    GetNextHighMonotonicCount: %p\n", gOrgRS.GetNextHighMonotonicCount);
+	PRINT("    ResetSystem: %p\n", gOrgRS.ResetSystem);
+	PRINT("    UpdateCapsule: %p\n", gOrgRS.UpdateCapsule);
+	PRINT("    QueryCapsuleCapabilities: %p\n", gOrgRS.QueryCapsuleCapabilities);
+	PRINT("    QueryVariableInfo: %p\n", gOrgRS.QueryVariableInfo);
 }
 
 VOID
