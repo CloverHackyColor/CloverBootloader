@@ -47,15 +47,18 @@ title="title>Clover ${version} r${revision} x32 x64 EFI bootloader"
 perl -i -p -e "s/title>Clover_title/${title}/g" `find "package/Distribution" -type f`
 
 echo " "
-echo "Modify CloverV2/EFI or package/Resources if necessary."
-echo " "
-read -p "Press Enter to start to build the installer."
-echo " "
+#echo "Modify CloverV2/EFI or package/Resources if necessary."
+#echo " "
+#read -p "Press Enter to start to build the installer."
+#echo " "
 
 # Workspace = edk2/Clover/CloverPackage
 # Start to build installer.
 
 sudo make pkg
+make cdboot
+make cdboot32
+make image
 
 cd sym
 zip Clover_${version}_r${revision}.zip Clover_${version}_r${revision}.pkg
