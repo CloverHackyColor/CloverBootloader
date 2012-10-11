@@ -754,7 +754,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     if (Volume->BlockIO->Media->BlockSize == 2048){
       DBG("found optical drive\n");
       Volume->DiskKind = DISK_KIND_OPTICAL;
-      Volume->BlockIOOffset = 0x10; // offset already applyed for FS but not for blockio      
+      Volume->BlockIOOffset = 0x10; // offset already applied for FS but not for blockio      
       ScanVolumeBootcode(Volume, &Bootable);
     } else {
       //        DBG("found HD drive\n");

@@ -2016,38 +2016,38 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     PauseForKey(L"Error reinit refit\n");
     return Status;
   }
-        DBG("reinit OK\n");
+//        DBG("reinit OK\n");
   ZeroMem((VOID*)&gSettings, sizeof(SETTINGS_DATA));
   ZeroMem((VOID*)&gGraphics[0], sizeof(GFX_PROPERTIES) * 4);
   GuiEventsInitialize();
-  DBG("GuiEventsInitialize OK\n");  
+//  DBG("GuiEventsInitialize OK\n");
   GetCPUProperties();
-  DBG("GetCPUProperties OK\n");
+//  DBG("GetCPUProperties OK\n");
   GetDevices();
-      DBG("GetDevices OK\n");
-  DBGT("ScanSPD() start\n");
+ //     DBG("GetDevices OK\n");
+//  DBGT("ScanSPD() start\n");
   ScanSPD();
-  DBGT("ScanSPD() end\n");
-        DBG("ScanSPD OK\n");
+//  DBGT("ScanSPD() end\n");
+ //       DBG("ScanSPD OK\n");
   SetPrivateVarProto();
-        DBG("SetPrivateVarProto OK\n");
+//        DBG("SetPrivateVarProto OK\n");
   GetDefaultSettings();
   DBG("Calibrated TSC frequency =%ld =%ldMHz\n", gCPUStructure.TSCCalibr, DivU64x32(gCPUStructure.TSCCalibr, Mega));
   DBG("CPU calculated TSC frequency =%ld\n", gCPUStructure.TSCFrequency);
-  TscDiv = DivU64x64Remainder(gCPUStructure.TSCCalibr, gCPUStructure.TSCFrequency, &TscRemainder);
+  TscDiv = DivU64x64Remainder(gCPUStructure.TSCFrequency, gCPUStructure.TSCCalibr, &TscRemainder);
   if ((TscRemainder > 400 * Mega) || (TscDiv > 1))
   {
-    Print(L"There is a problem with TSC detection and calibration! Assume calibrated one\n");
+    DBG("There is a problem with TSC detection and calibration! Assume calibrated one\n");
     gCPUStructure.TSCFrequency = gCPUStructure.TSCCalibr;
   }
   
   //Second step. Load config.plist into gSettings	
 	Status = GetUserSettings(SelfRootDir);  
-        DBG("GetUserSettings OK\n");
+ //       DBG("GetUserSettings OK\n");
   
   //test font
   PrepareFont();
-      DBG("PrepareFont OK\n");
+ //     DBG("PrepareFont OK\n");
   FillInputs();
   
   if (!gFirmwareClover && GlobalConfig.Timeout == 0 && !ReadAllKeyStrokes()) {
@@ -2056,31 +2056,31 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     // in the first run.
     // this speeds up loading of default OSX volume.
     Status = GetNVRAMSettings();
-    DBGT("GetNVRAMSettings()\n");
+//    DBGT("GetNVRAMSettings()\n");
   }
   
   do {
 //     PauseForKey(L"Enter main cycle");
-    DBGT("Enter main cycle\n");
+//    DBGT("Enter main cycle\n");
     AfterTool = FALSE;
     MainMenu.EntryCount = 0;
     ScanVolumes();
-    DBGT("ScanVolumes()\n");
+ //   DBGT("ScanVolumes()\n");
     // scan for loaders and tools, add then to the menu
     if (!GlobalConfig.NoLegacy && GlobalConfig.LegacyFirst && !gSettings.HVHideAllLegacy){
       DBG("scan legacy first\n");
       ScanLegacy();
-      DBGT("ScanLegacy()\n");
+//      DBGT("ScanLegacy()\n");
     }
     ScanLoader();
-    DBGT("ScanLoader()\n");
-          DBG("ScanLoader OK\n");
+//    DBGT("ScanLoader()\n");
+//          DBG("ScanLoader OK\n");
     if (!GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst && !gSettings.HVHideAllLegacy){
 //      DBG("scan legacy second\n");
       ScanLegacy();
       DBGT("ScanLegacy()\n");
     }
-         DBG("ScanLegacy OK\n");
+//         DBG("ScanLegacy OK\n");
     if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
       //            DBG("scan tools\n");
       ScanTool();
@@ -2088,7 +2088,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
     //      DBG("ScanTool OK\n");
     // fixed other menu entries
-               DBG("FillInputs OK\n"); 
+//               DBG("FillInputs OK\n");
     if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
       MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
       AddMenuEntry(&MainMenu, &MenuEntryAbout);
@@ -2129,9 +2129,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         MenuExit = MENU_EXIT_TIMEOUT;
       } else {
         //    DBG("Enter main loop\n");
-        DBGT("RunMainMenu() start\n");
+ //       DBGT("RunMainMenu() start\n");
         MenuExit = RunMainMenu(&MainMenu, DefaultIndex, &ChosenEntry);
-        DBGT("RunMainMenu() end\n");
+ //       DBGT("RunMainMenu() end\n");
       }
       // disable default boot - have sense only in the first run
       GlobalConfig.Timeout = -1;

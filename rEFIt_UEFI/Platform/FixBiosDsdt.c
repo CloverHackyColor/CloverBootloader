@@ -1621,7 +1621,7 @@ UINT32 FixHPET (UINT8* dsdt, UINT32 len)
     }  // End LPCB find
   }
   if (!LPCBSIZE) {
-    DBG("No LPCB device! Patch HPET will not be applyed\n");
+    DBG("No LPCB device! Patch HPET will not be applied\n");
     return len;
   }
   for (j=20; j<len; j++) {
@@ -3035,7 +3035,7 @@ UINT32 FIXSBUS (UINT8 *dsdt, UINT32 len)
     PCISIZE = get_size(dsdt, PCIADR);
   }
   if (!PCISIZE) {
-    DBG("wrong PCI0 address, patch SBUS will not be applyed\n");
+    DBG("wrong PCI0 address, patch SBUS will not be applied\n");
     return len;
   }
   DBG("Start SBUS Fix PCI=%x len=%x\n", PCIADR, len);
@@ -3109,7 +3109,7 @@ UINT32 AddMCHC (UINT8 *dsdt, UINT32 len)
     PCISIZE = get_size(dsdt, PCIADR);
   }
   if (!PCISIZE) {
-    DBG("wrong PCI0 address, patch MCHC will not be applyed\n");
+    DBG("wrong PCI0 address, patch MCHC will not be applied\n");
     return len;
   }
   
@@ -3170,7 +3170,7 @@ UINT32 FIXFirewire (UINT8 *dsdt, UINT32 len)
     PCISIZE = get_size(dsdt, PCIADR);
   }
   if (!PCISIZE) {
-    DBG("wrong PCI0 address, patch FRWR will not be applyed\n");
+    DBG("wrong PCI0 address, patch FRWR will not be applied\n");
     return len;
   }
 
