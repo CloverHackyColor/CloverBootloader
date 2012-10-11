@@ -2716,7 +2716,6 @@
 		12D6307A14CEA05E00E5898F /* mkext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mkext.h; sourceTree = "<group>"; };
 		12D6307B14CEA05E00E5898F /* nvidia.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nvidia.c; sourceTree = "<group>"; };
 		12D6307C14CEA05E00E5898F /* nvidia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nvidia.h; sourceTree = "<group>"; };
-		12D6307D14CEA05E00E5898F /* pci.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = pci.c; sourceTree = "<group>"; };
 		12D6307E14CEA05E00E5898F /* picopng.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = picopng.c; sourceTree = "<group>"; usesTabs = 1; };
 		12D6307F14CEA05E00E5898F /* picopng.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = picopng.h; sourceTree = "<group>"; };
 		12D6308014CEA05E00E5898F /* Platform.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
@@ -9004,7 +9003,6 @@
 				122B621F157E815D00D06F37 /* nlist.h */,
 				12D6307B14CEA05E00E5898F /* nvidia.c */,
 				12D6307C14CEA05E00E5898F /* nvidia.h */,
-				12D6307D14CEA05E00E5898F /* pci.c */,
 				12D6307E14CEA05E00E5898F /* picopng.c */,
 				12D6307F14CEA05E00E5898F /* picopng.h */,
 				12D6308014CEA05E00E5898F /* Platform.h */,

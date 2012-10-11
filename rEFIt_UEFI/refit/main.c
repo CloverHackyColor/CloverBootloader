@@ -41,7 +41,7 @@
 #include "Version.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_MAIN 1
+#define DEBUG_MAIN 2
 #else
 #define DEBUG_MAIN DEBUG_ALL
 #endif

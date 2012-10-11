@@ -1310,6 +1310,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
   INTN ItemWidth = 0;
   INTN X;
   INTN VisibleHeight = 0; //assume vertical layout
+  CHAR16 ResultString[255];
   
   switch (Function) {
       
@@ -1377,7 +1378,6 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
     case MENU_FUNCTION_PAINT_ALL:
       for (i = 0; i <= State->MaxIndex; i++) {
         INTN  TitleLen;
-        CHAR16 ResultString[255];
 
         TitleLen = StrLen(Screen->Entries[i]->Title);
         Screen->Entries[i]->Place.XPos = EntriesPosX;
@@ -1411,7 +1411,6 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       // redraw selection cursor
       //usr-sse2
       if (Screen->Entries[State->LastSelection]->Tag == TAG_INPUT) {
-        CHAR16 ResultString[255];
         UINTN  TitleLen = StrLen(Screen->Entries[State->LastSelection]->Title);
         StrCpy(ResultString, Screen->Entries[State->LastSelection]->Title);
         StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->SValue + ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->LineShift);
@@ -1426,7 +1425,6 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       }
             //Current selection
       if (Screen->Entries[State->CurrentSelection]->Tag == TAG_INPUT) {
-        CHAR16 ResultString[255];
         UINTN  TitleLen = StrLen(Screen->Entries[State->CurrentSelection]->Title);
         StrCpy(ResultString, Screen->Entries[State->CurrentSelection]->Title);
         StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->SValue + ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->LineShift);
@@ -1659,6 +1657,7 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       break;
       
     case MENU_FUNCTION_PAINT_SELECTION:
+      HidePointer();
       if (Screen->Entries[State->LastSelection]->Row == 0) {
         DrawMainMenuEntry(Screen->Entries[State->LastSelection], FALSE,
                       itemPosX[State->LastSelection - State->FirstVisible], row0PosY);
@@ -1685,9 +1684,11 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
           DrawTextXY(gST->FirmwareRevision, (UGAWidth - 2), UGAHeight - 5 - TextHeight, X_IS_RIGHT);
 #endif
       }
-     break;
+      MouseBirth();
+      break;
       
     case MENU_FUNCTION_PAINT_TIMEOUT:
+      HidePointer();
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
         FillRectAreaOfScreen((UGAWidth >> 1), textPosY + TextHeight,
                                    OldTimeoutTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
@@ -1700,6 +1701,7 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
           DrawTextXY(gST->FirmwareRevision, (UGAWidth - 2), UGAHeight - 5 - TextHeight, X_IS_RIGHT);
 #endif
       }
+      MouseBirth();
       break;
       
   }

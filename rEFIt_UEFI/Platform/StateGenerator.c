@@ -241,7 +241,6 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
 		// Generating SSDT
 		if (p_states_count > 0)
 		{
-			INTN i;
       SSDT_TABLE *ssdt;
 			AML_CHUNK* scop;
 			AML_CHUNK* method;

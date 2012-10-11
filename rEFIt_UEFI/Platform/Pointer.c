@@ -36,10 +36,6 @@
 ACTION gAction;
 UINTN  gItemID;
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 POINTERS gPointer = {NULL, NULL, NULL, NULL,
                      {0, 0, POINTER_WIDTH, POINTER_HEIGHT},
                      {0, 0, POINTER_WIDTH, POINTER_HEIGHT}, 0,
@@ -47,7 +43,9 @@ POINTERS gPointer = {NULL, NULL, NULL, NULL,
 
 VOID HidePointer()
 {
-  egDrawImageArea(gPointer.oldImage, 0, 0, 0, 0, gPointer.oldPlace.XPos, gPointer.oldPlace.YPos);
+  if (gPointer.SimplePointerProtocol) {
+    egDrawImageArea(gPointer.oldImage, 0, 0, 0, 0, gPointer.oldPlace.XPos, gPointer.oldPlace.YPos);
+  }  
 }
 
 VOID DrawPointer()
