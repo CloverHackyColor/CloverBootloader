@@ -7,7 +7,7 @@
 #include "ati.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SET 2
+#define DEBUG_SET 1
 #else
 #define DEBUG_SET DEBUG_ALL
 #endif
