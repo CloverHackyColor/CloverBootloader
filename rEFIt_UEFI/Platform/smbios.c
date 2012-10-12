@@ -660,7 +660,7 @@ VOID PatchTableType4()
 		CopyMem((CHAR8*)newSmbiosTable.Type4+NewSize, (CHAR8*)SmbiosTable.Type4+Size, TableSize - Size); //copy strings
 		newSmbiosTable.Type4->Hdr.Length = (UINT8)NewSize;
 
-		newSmbiosTable.Type4->MaxSpeed = (UINT16)gCPUStructure.CurrentSpeed;	
+		newSmbiosTable.Type4->MaxSpeed = (UINT16)gCPUStructure.MaxSpeed;	
 		//old version has no such fields. Fill now
 		if (Size <= 0x20){
 			//sanity check and clear

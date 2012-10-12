@@ -195,7 +195,8 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
             }
             DBG("Maximum control=%x\n", maximum.Control.Control);
             if (gSettings.Turbo) {
-              maximum.Control.Control++;
+              maximum.Control.Control = (gCPUStructure.Turbo4 > gCPUStructure.Turbo1) ?
+                                             (gCPUStructure.Turbo4 / 10) : (gCPUStructure.Turbo1 / 10);
               MsgLog("Turbo control=%x\n", maximum.Control.Control);
             }
 						

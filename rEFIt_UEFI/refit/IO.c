@@ -1288,7 +1288,7 @@ WaitFor2EventWithTsc (
 	UINTN             Index;
 	EFI_EVENT					WaitList[2];
   UINT64            t0, t1;
-  UINT64            Delta = DivU64x64Remainder(Timeout * gCPUStructure.TSCFrequency, 1000, NULL);
+  UINT64            Delta = DivU64x64Remainder(MultU64x64(Timeout, gCPUStructure.TSCFrequency), 1000, NULL);
 
   if (Timeout != 0)
   {

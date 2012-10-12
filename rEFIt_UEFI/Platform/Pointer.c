@@ -135,8 +135,8 @@ EFI_STATUS MouseBirth()
     return EFI_NOT_FOUND;
 	}
   gPointer.LastClickTime = AsmReadTsc();
-  gPointer.oldPlace.XPos = UGAWidth >> 2;
-  gPointer.oldPlace.YPos = UGAHeight >> 2;
+  gPointer.oldPlace.XPos = (INTN)(UGAWidth >> 2);
+  gPointer.oldPlace.YPos = (INTN)(UGAHeight >> 2);
   gPointer.oldPlace.Width = POINTER_WIDTH;
   gPointer.oldPlace.Height = POINTER_HEIGHT;
   CopyMem(&gPointer.newPlace, &gPointer.oldPlace, sizeof(EG_RECT));
@@ -272,9 +272,9 @@ VOID UpdatePointer()
 BOOLEAN MouseInRect(EG_RECT Place)
 {
   return  ((gPointer.newPlace.XPos > Place.XPos) &&
-           (gPointer.newPlace.XPos < Place.XPos + Place.Width) &&
+           (gPointer.newPlace.XPos < Place.XPos + (INTN)Place.Width) &&
            (gPointer.newPlace.YPos > Place.YPos) &&
-           (gPointer.newPlace.YPos < Place.YPos + Place.Height));
+           (gPointer.newPlace.YPos < Place.YPos + (INTN)Place.Height));
 }
 
 EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen)

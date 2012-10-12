@@ -264,6 +264,7 @@ VOID GetDefaultSettings(VOID)
 {
   MACHINE_TYPES   Model;
   UINT64 t0, t1;
+  UINT64 msr = 0;
   
   gLanguage         = english;
   Model             = GetDefaultModel();
@@ -293,6 +294,9 @@ VOID GetDefaultSettings(VOID)
   t0 = AsmReadTsc();
   gBS->Stall(100000); //100ms
   t1 = AsmReadTsc();
-  gCPUStructure.TSCCalibr = (t1 - t0) * 10; //ticks for 1second
+  gCPUStructure.TSCCalibr = MultU64x32((t1 - t0), 10); //ticks for 1second
 
+  msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
+  gSettings.Turbo = ((msr & (1ULL<<38)) == 0);
+  gSettings.EnableISS = ((msr & (1ULL<<16)) != 0);
 }

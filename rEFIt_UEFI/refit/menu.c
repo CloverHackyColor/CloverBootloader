@@ -1293,13 +1293,13 @@ VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN 
   
   if (SelectedWidth > 0) {
     // draw selection bar background
-    egFillImageArea(TextBuffer, 0, 0, SelectedWidth, TextBuffer->Height,
+    egFillImageArea(TextBuffer, 0, 0, (INTN)SelectedWidth, TextBuffer->Height,
                     &SelectionBackgroundPixel);
   }
   
   // render the text
-  egRenderText(Text, TextBuffer, TEXT_XMARGIN, TEXT_YMARGIN, Cursor);
-  BltImage(TextBuffer, XPos, YPos);
+  egRenderText(Text, TextBuffer, TEXT_XMARGIN, TEXT_YMARGIN, (INTN)Cursor);
+  BltImage(TextBuffer, (INTN)XPos, (INTN)YPos);
 }
 
 static INTN MenuWidth, EntriesPosX, EntriesPosY, TimeoutPosY;
@@ -1338,12 +1338,12 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
        } */
       
 //      DBG("MENU_FUNCTION_INIT 3\n");
-      MenuWidth = TEXT_XMARGIN * 2 + MenuWidth * GlobalConfig.CharWidth; // FontWidth;
+      MenuWidth = TEXT_XMARGIN * 2 + (MenuWidth * GlobalConfig.CharWidth); // FontWidth;
       if (MenuWidth > LAYOUT_TEXT_WIDTH)
         MenuWidth = LAYOUT_TEXT_WIDTH;
       
       if (Screen->TitleImage) {
-        if (MenuWidth > (UGAWidth - TITLEICON_SPACING - Screen->TitleImage->Width)) {
+        if (MenuWidth > (INTN)(UGAWidth - TITLEICON_SPACING - Screen->TitleImage->Width)) {
           MenuWidth = UGAWidth - TITLEICON_SPACING - Screen->TitleImage->Width - 2;
         }        
         EntriesPosX = (UGAWidth - (Screen->TitleImage->Width + TITLEICON_SPACING + MenuWidth)) >> 1;
@@ -1360,7 +1360,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       DrawMenuText(Screen->Title, 0, ((UGAWidth - ItemWidth) >> 1) - TEXT_XMARGIN, EntriesPosY - TextHeight * 2, 0xFFFF);
       if (Screen->TitleImage)
         BltImageAlpha(Screen->TitleImage,
-                      EntriesPosX - (Screen->TitleImage->Width + TITLEICON_SPACING), EntriesPosY,
+                      (INTN)(EntriesPosX - (Screen->TitleImage->Width + TITLEICON_SPACING)), (INTN)EntriesPosY,
                       &MenuBackgroundPixel, 16);
       if (Screen->InfoLineCount > 0) {
         for (i = 0; i < (INTN)Screen->InfoLineCount; i++) {
@@ -1831,8 +1831,9 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
                   DivU64x32(gCPUStructure.FSBFrequency, Mega)));
   AddMenuInfoLine(SubScreen, PoolPrint(L"CPU speed MHz: %d",
                   DivU64x32(gCPUStructure.CPUFrequency, Mega)));
-  AddMenuInfoLine(SubScreen, PoolPrint(L"Ratio x10: Min=%d Max=%d Turbo=%d",
-     gCPUStructure.MinRatio, gCPUStructure.MaxRatio, gCPUStructure.Turbo4));
+  AddMenuInfoLine(SubScreen, PoolPrint(L"Ratio x10: Min=%d Max=%d Turbo=%d/%d/%d/%d",
+     gCPUStructure.MinRatio, gCPUStructure.MaxRatio,
+     gCPUStructure.Turbo4, gCPUStructure.Turbo3, gCPUStructure.Turbo2, gCPUStructure.Turbo1));
   
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"GeneratePStates:");
@@ -1915,7 +1916,7 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
   
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"EnableISS:");
+  InputBootArgs->Entry.Title = PoolPrint(L"Enable SpeedStep:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF; //cursor
   InputBootArgs->Entry.ShortcutLetter = '2';
