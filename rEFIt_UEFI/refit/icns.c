@@ -51,7 +51,7 @@ BUILTIN_ICON BuiltinIconTable[BUILTIN_ICON_COUNT] = {
   { NULL, L"icons\\func_options.png",        48 },
   { NULL, L"icons\\func_reset.png",          48 },
   { NULL, L"icons\\func_shutdown.png",       48 },
-  { NULL, L"icons\\func_help.png",          128 }, //5
+  { NULL, L"icons\\func_help.png",          128 }, //4
   { NULL, L"icons\\tool_shell.png",          48 },
   { NULL, L"icons\\tool_part.png",           48 },
   { NULL, L"icons\\tool_rescue.png",         48 },
@@ -75,6 +75,9 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
   
   if (BuiltinIconTable[Id].Image == NULL) {
     BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, BuiltinIconTable[Id].Path, BuiltinIconTable[Id].PixelSize);
+    if (!BuiltinIconTable[Id].Image){
+      DebugLog(1, "Icon %d not found at\n", Id);
+    }
     if (!BuiltinIconTable[Id].Image && (Id >= 9)) {
       BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, BuiltinIconTable[BUILTIN_ICON_VOL_INTERNAL].Path, BuiltinIconTable[Id].PixelSize);
     }

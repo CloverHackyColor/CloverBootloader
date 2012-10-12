@@ -1270,8 +1270,10 @@ Returns:
   //
   // Memory test and Logo show
   //
+  
+//  
+  PlatformBdsDiagnostics (IGNORE, (TIMEOUTFP != 0), BaseMemoryTest); //Slice - I want silent boot but with Memory test
 //  PlatformBdsDiagnostics (IGNORE, TRUE, BaseMemoryTest);
-  PlatformBdsDiagnostics (IGNORE, FALSE, BaseMemoryTest); //Slice - I want silent boot but with Memory test
   //
   // Perform some platform specific connect sequence
   //
@@ -1282,7 +1284,7 @@ Returns:
   // have the time out
   //
   // BUGBUG: hard code timeout to 5 second to show logo in graphic mode.
-  Timeout = 0;  
+  Timeout = TIMEOUTFP;  
   if (Timeout != 0) {
     PlatformBdsEnterFrontPage (Timeout, FALSE);
   }

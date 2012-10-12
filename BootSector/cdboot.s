@@ -19,7 +19,7 @@
 ; under the License.
 ; 
 ; @APPLE_LICENSE_HEADER_END@
-
+; nasm cdboot.s -o cdboot
 ;
 ; This version of cdboot loads 256k of data.
 ;
@@ -82,7 +82,7 @@ LF					EQU		0x0A
 %endmacro
 
 %macro PrintHexMacro 1
-	call	print_hex
+;	call	print_hex
 %endmacro
 
 %macro PrintString 1
@@ -100,7 +100,7 @@ LF					EQU		0x0A
   %define DebugPause(x)  DebugPauseMacro
   %define PrintChar(x) PrintCharMacro x
   %define PutChar(x) PutCharMacro
-  %define PrintHex(x) PrintHexMacro x
+  %define PrintHex(x) ;PrintHexMacro x
 %else
   %define DebugChar(x)
   %define DebugPause(x)
@@ -174,7 +174,7 @@ start1:
 	DebugChar('!')
 	DebugPause()
 
-%if DEBUG
+%if 0 ;DEBUG
 	mov		eax, [kBoot2LoadAddr]
 	call	print_hex
 	call	getc
@@ -194,7 +194,7 @@ start1:
 	
 	mov		ecx, [kReadBuffer + kVolSectorOffset]
 
-%if DEBUG
+%if 0 ;DEBUG
 	mov		eax, ecx
 	call	print_hex
 	DebugPause()
@@ -202,7 +202,7 @@ start1:
 
 	mov		al, 1
 	call	readLBA
-	jc		error        
+	jc		NEAR error        
 	
 	;; Now we have the boot catalog in the buffer.
 	;; Really we should look at the validation entry, but oh well.
@@ -215,7 +215,7 @@ start1:
 
 	inc		ecx							; skip the first sector which is what we are in
 
-%if DEBUG
+%if 0 ;DEBUG
 	mov		eax, ecx
 	call	print_hex
 	DebugPause()
@@ -245,7 +245,7 @@ start1:
 
 %if VERBOSE
     LogString(size_str)
-	call	print_hex
+;	call	print_hex
 %endif
 
 	add		eax, kSectorBytes - 1				; adjust size before unit conversion
@@ -253,7 +253,7 @@ start1:
 
 %if VERBOSE
     LogString(read_str)
-	call	print_hex
+;	call	print_hex
 %endif
 
 %if VERBOSE
@@ -266,7 +266,7 @@ start1:
         
 	DebugChar('C')
 
-%if DEBUG
+%if 0 ;DEBUG
 	mov		eax, [es:kBoot2Address]
 	call	print_hex
 	DebugPause()
@@ -431,7 +431,7 @@ readLBA:
 %if VERBOSE
     LogString(readerror_str)
 	mov		eax, ecx
-	call	print_hex
+;	call	print_hex
 %endif
 
 	xor     ax, ax                  		; Func 0
@@ -498,6 +498,7 @@ print_string:
 ; Arguments:
 ;   EAX = Value to be displayed in hex.
 ;
+%if 0
 print_hex:
     pushad
     mov     cx, WORD 4
@@ -530,7 +531,7 @@ print_nibble:
 .print_ascii:
     call    print_char
     ret
-
+%endif 
 ;--------------------------------------------------------------------------
 ; getc - wait for a key press
 ;
@@ -567,7 +568,7 @@ size_str			db		'file size: ', NULL
 read_str			db		'reading sectors: ', NULL
 loading_str			db		'loading', NULL
 done_str			db		'done', NULL
-readerror_str		db		'BIOS disk read error at sector: ', NULL
+readerror_str		db		'BIOS error at: ', NULL
 error_str			db		'error', NULL
 %endif
 

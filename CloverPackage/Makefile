@@ -3,10 +3,10 @@ SRCROOT = $(CURDIR)
 SYMROOT = $(SRCROOT)/sym
 CLOVERROOT = $(SRCROOT)/CloverV2
 PKG_BUILD_DIR = $(SYMROOT)/package
-IMGROOT = $(SYMROOT)/cache
+IMGROOT = $(SYMROOT)/CloverCD
 IMGSKELROOT = $(SRCROOT)/imgskel
 CDBOOT = ${IMGROOT}/usr/standalone/i386/cdboot
-CDBOOT32 = ${SYMROOT}/i386/cdboot32
+CDBOOT32 = ${IMGROOT}/usr/standalone/i386/cdboot32
 EFIROOT = $(SRCROOT)/CloverV2/EFI
 
 REVISION = `cat $(SRCROOT)/revision`
@@ -28,6 +28,7 @@ $(SRCROOT)/revision:
 
 cdboot:
 	@echo "making cdboot"
+	@cp -f $(CLOVERROOT)/BootSectors/cdboot $(SYMROOT)/i386/
 	@dd if=$(CLOVERROOT)/Bootloaders/x64/boot of=$(SYMROOT)/i386/cdboot conv=sync bs=2k seek=1 &> /dev/null
 
 	@echo Update cdboot with boot file size info
@@ -37,6 +38,7 @@ cdboot:
 
 cdboot32:
 	@echo "making cdboot-32"
+	@cp -f $(CLOVERROOT)/BootSectors/cdboot $(SYMROOT)/i386/cdboot32
 	@dd if=$(CLOVERROOT)/Bootloaders/ia32/boot of=$(SYMROOT)/i386/cdboot32 conv=sync bs=2k seek=1 &> /dev/null
 
 	@echo Update cdboot with boot file size info
@@ -50,6 +52,8 @@ image:
 	@rm -rf ${IMGROOT}	
 	@echo "\t[MKDIR] ${IMGROOT}/usr/standalone/i386"			  	  
 	@mkdir -p ${IMGROOT}/usr/standalone/i386
+	@mkdir -p ${IMGROOT}/usr/standalone/i386/x64
+	@mkdir -p ${IMGROOT}/usr/standalone/i386/ia32
 	@echo "\t[MKDIR] ${IMGROOT}/EFI"
 	@mkdir -p ${IMGROOT}/EFI				
 	@echo "\t[MKDIR] ${IMGROOT}/EFI/BOOT/themes/"
@@ -60,38 +64,38 @@ image:
 		@echo "\t[CP] ${IMGROOTSKEL} ${IMGROOT}"		\
 		@cp -R -f "${IMGSKELROOT}"/* "${IMGROOT}";		\
 	fi;	
-	@echo "CP cdboot"						  
+	@echo "\t[CP] cdboot"						  
 	@cp -f ${SYMROOT}/i386/cdboot ${CDBOOT}
-	@cp -f ${SYMROOT}/i386/cdboot32 ${CDBOOT}
-	@echo "CP metal"
+	@cp -f ${SYMROOT}/i386/cdboot32 ${CDBOOT32}
+	@echo "\t[CP] metal"
 	@cp -r -f $(CLOVERROOT)/themespkg/metal ${IMGROOT}/EFI/BOOT/themes/
-	@echo "CP CLOVERX64"
+	@echo "\t[CP] CLOVERX64"
 	@cp -f $(CLOVERROOT)/EFI/BOOT/CLOVERX64.efi ${IMGROOT}/EFI/BOOT/
-	@echo "CP CLOVERIA32"
+	@echo "\t[CP] CLOVERIA32"
 	@cp -f $(CLOVERROOT)/EFI/BOOT/CLOVERIA32.efi ${IMGROOT}/EFI/BOOT/
-	@echo "CP BOOTX64"
+#	@echo "CP BOOTX64"
 	@cp -f $(CLOVERROOT)/EFI/BOOT/BOOTX64.efi ${IMGROOT}/EFI/BOOT/
-	@echo "CP font"
+#	@echo "CP font"
 	@cp -r -f $(CLOVERROOT)/EFI/BOOT/font ${IMGROOT}/EFI/BOOT/
-	@echo "CP refit.conf"
+#	@echo "CP refit.conf"
 	@cp -f $(CLOVERROOT)/EFI/BOOT/refit.conf ${IMGROOT}/EFI/BOOT/
-	@echo "CP config.plist"
+#	@echo "CP config.plist"
 	@cp -f $(CLOVERROOT)/EFI/config-org.plist ${IMGROOT}/EFI/config.plist
-	@echo "CP drivers64"
+	@echo "\t[CP] drivers64"
 	@cp -r -f $(CLOVERROOT)/EFI/drivers64 ${IMGROOT}/EFI/
 	@cp -r -f $(CLOVERROOT)/EFI/tools ${IMGROOT}/EFI/
-	@echo "ADD drivers64"
+#	@echo "ADD drivers64"
 	@cp -f $(CLOVERROOT)/drivers-Off/drivers64/UsbMouseDxe-64.efi ${IMGROOT}/EFI/drivers64/
 	@cp -f $(CLOVERROOT)/drivers-Off/drivers64/PS2MouseDxe-64.efi ${IMGROOT}/EFI/drivers64/
-	@echo "CP drivers32"
+	@echo "\t[CP] drivers32"
 	@cp -r -f $(CLOVERROOT)/EFI/drivers32 ${IMGROOT}/EFI/
-	@echo "ADD drivers32"
+#	@echo "ADD drivers32"
 	@cp -f $(CLOVERROOT)/drivers-Off/drivers32/UsbMouseDxe-32.efi ${IMGROOT}/EFI/drivers32/
 	@cp -f $(CLOVERROOT)/drivers-Off/drivers32/PS2MouseDxe-32.efi ${IMGROOT}/EFI/drivers32/
 
-	@echo "CP boot"
-	@cp -f $(CLOVERROOT)/Bootloaders/x64/boot ${IMGROOT}/usr/standalone/i386/x64
-	@cp -f $(CLOVERROOT)/Bootloaders/ia32/boot ${IMGROOT}/usr/standalone/i386/ia32
+	@echo "\t[CP] boot"
+	@cp -f $(CLOVERROOT)/Bootloaders/x64/boot ${IMGROOT}/usr/standalone/i386/x64/
+	@cp -f $(CLOVERROOT)/Bootloaders/ia32/boot ${IMGROOT}/usr/standalone/i386/ia32/
 	@cp -f ${SYMROOT}/i386/boot0 ${IMGROOT}/usr/standalone/i386
 	@cp -f ${SYMROOT}/i386/boot0hfs ${IMGROOT}/usr/standalone/i386
 	@cp -f ${SYMROOT}/i386/boot0md ${IMGROOT}/usr/standalone/i386
@@ -105,9 +109,15 @@ image:
 	@hdiutil makehybrid -iso -joliet -hfs -hfs-volume-name \
 		${CDLABEL} -eltorito-boot ${CDBOOT} -no-emul-boot -ov -o   \
 		"${ISOIMAGE}" ${IMGROOT} -quiet 
+	@echo "\t[LZMA] ${ISOIMAGE}"
+	@lzma e ${ISOIMAGE} ${ISOIMAGE}.lzma
+	@echo "\t[HDIUTIL] ${ISOIMAGE32}"
 	@hdiutil makehybrid -iso -joliet -hfs -hfs-volume-name \
 		${CDLABEL32} -eltorito-boot ${CDBOOT32} -no-emul-boot -ov -o   \
 		"${ISOIMAGE32}" ${IMGROOT} -quiet 
+	@echo "\t[LZMA] ${ISOIMAGE32}"
+	@lzma e ${ISOIMAGE32} ${ISOIMAGE32}.lzma
+
 		  	  
 #	@echo "\t[GZ] ${DISTFILE}.tgz"
 #	@rm -f ${DISTFILE}.tar.gz

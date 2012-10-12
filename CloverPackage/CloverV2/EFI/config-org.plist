@@ -7,7 +7,16 @@
 		<key>boot-args</key>
 		<string>-v npci=0x2000</string>
 		<key>prev-lang:kbd</key>
-		<string>ru:0</string>
+		<string>en:0</string>
+		<key>InjectSystemID</key>
+		<string>Yes</string>
+		<key>LegacyBoot</key>
+		<string>PBR</string>
+	</dict>
+	<key>Pointer</key>
+	<dict>
+		<key>Speed</key>
+		<string>8</string>
 	</dict>
 </dict>
 </plist>
