@@ -402,6 +402,8 @@ VOID GetCPUProperties (VOID)
 #if 1 //NOTNOW
   else if(gCPUStructure.Vendor == CPU_VENDOR_AMD /* AMD */) 
 	{
+      gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
+      gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
     TurboMsr = 0;
 		if(gCPUStructure.Extfamily == 0x00 /* K8 */)
 		{
