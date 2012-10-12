@@ -1591,8 +1591,8 @@ EFI_STATUS SaveSettings()
   gCPUStructure.CPUFrequency = gCPUStructure.MaxSpeed * Mega;
   
   // Read in msr for turbo and test whether it needs disabled/enabled
-  msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
-  if (gSettings.Turbo != ((msr & (1ULL<<38)) == 0)){
+//  msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
+  if (gSettings.Turbo){ // != ((msr & (1ULL<<38)) == 0)){
     /* Don't change cpu speed because we aren't changing control state
     if (gCPUStructure.Turbo4) {
       gCPUStructure.CPUFrequency = DivU64x32(MultU64x64(gCPUStructure.Turbo4, gCPUStructure.FSBFrequency), 10);
@@ -1602,7 +1602,7 @@ EFI_STATUS SaveSettings()
     msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
     DBG("MSR_IA32_MISC_ENABLE = %lx\n", msr);
     msr &= ~(1ULL<<38);
-    if (!gSettings.Turbo) msr |= (1ULL<<38);
+    if (!gSettings.Turbo) msr |= (1ULL<<38); //0x4000000000
     AsmWriteMsr64(MSR_IA32_MISC_ENABLE, msr);
     gBS->Stall(100);
     msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
@@ -1623,7 +1623,7 @@ EFI_STATUS SaveSettings()
     AlreadyDone = TRUE;
     // */
   }
-  if (gSettings.EnableISS != ((msr & (1ULL<<16)) != 0)){
+/*  if (gSettings.EnableISS != ((msr & (1ULL<<16)) != 0)){
     //attempt to speedstep
     msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
     DBG("MSR_IA32_MISC_ENABLE = %lx\n", msr);
@@ -1634,7 +1634,7 @@ EFI_STATUS SaveSettings()
     msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
     DBG("Set speedstep: MSR_IA32_MISC_ENABLE = %lx\n", msr);
   } 
-  
+ */ 
   tmpU = DivU64x32(gCPUStructure.CPUFrequency, Mega);
   MsgLog("Finally: Bus=%ldMHz CPU=%ldMHz\n",
          DivU64x32(gCPUStructure.FSBFrequency, Mega),

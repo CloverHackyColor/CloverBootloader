@@ -110,13 +110,13 @@ image:
 		${CDLABEL} -eltorito-boot ${CDBOOT} -no-emul-boot -ov -o   \
 		"${ISOIMAGE}" ${IMGROOT} -quiet 
 	@echo "\t[LZMA] ${ISOIMAGE}"
-	@lzma e ${ISOIMAGE} ${ISOIMAGE}.lzma
+#	@lzma e ${ISOIMAGE} ${ISOIMAGE}.lzma
 	@echo "\t[HDIUTIL] ${ISOIMAGE32}"
 	@hdiutil makehybrid -iso -joliet -hfs -hfs-volume-name \
 		${CDLABEL32} -eltorito-boot ${CDBOOT32} -no-emul-boot -ov -o   \
 		"${ISOIMAGE32}" ${IMGROOT} -quiet 
 	@echo "\t[LZMA] ${ISOIMAGE32}"
-	@lzma e ${ISOIMAGE32} ${ISOIMAGE32}.lzma
+#	@lzma e ${ISOIMAGE32} ${ISOIMAGE32}.lzma
 
 		  	  
 #	@echo "\t[GZ] ${DISTFILE}.tgz"
