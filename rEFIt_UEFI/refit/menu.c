@@ -1131,6 +1131,8 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
       case CHAR_CARRIAGE_RETURN:
         if ((Screen->Entries[State.CurrentSelection])->Tag == TAG_INPUT){
           MenuExit = InputDialog(Screen, StyleFunc, &State);          
+        } else if ((Screen->Entries[State.CurrentSelection])->Tag == TAG_CLOVER){
+            MenuExit = MENU_EXIT_DETAILS;
         } else {
           MenuExit = MENU_EXIT_ENTER;
         }

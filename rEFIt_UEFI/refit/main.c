@@ -650,7 +650,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   
   // Aptio UEFI ML boot requires slide=0
   // if user have it in BootArgs, then propagate it to submenu entries
-  UsesSlideArg = AsciiStrStr(gSettings.BootArgs, "slide=0") != 0; 
+  UsesSlideArg = AsciiStrStr(gSettings.BootArgs, "slide=0") != 0;
   
   // default entry
   SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
@@ -888,6 +888,112 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
   return Entry;
 }
+
+static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume)
+{
+  CHAR16            *FileName, *OSIconName;
+  CHAR16            IconFileName[256];
+  CHAR16            ShortcutLetter;
+  UINTN             LoaderKind;
+  LOADER_ENTRY      *Entry, *SubEntry;
+  REFIT_MENU_SCREEN *SubScreen;
+  EFI_STATUS        Status;
+  
+  FileName = Basename(LoaderPath);
+  
+  // prepare the menu entry
+  Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+  Entry->me.Title        = LoaderTitle;
+  Entry->me.Tag          = TAG_CLOVER;
+  
+  Entry->me.Row          = 0;
+  Entry->Volume = Volume;
+  //  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
+  if ((GlobalConfig.HideBadges == HDBADGES_NONE) ||
+      (GlobalConfig.HideBadges == HDBADGES_INT && Volume->DiskKind != DISK_KIND_INTERNAL)){
+    Entry->me.BadgeImage   = egCopyScaledImage(Volume->OSImage, 8);
+  } else if (GlobalConfig.HideBadges == HDBADGES_SWAP) {
+    Entry->me.BadgeImage   =  egCopyScaledImage(Volume->DriveImage, 4);
+  }
+  Entry->LoaderPath      = EfiStrDuplicate(LoaderPath);
+  Entry->VolName         = Volume->VolName;
+  Entry->DevicePath      = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
+  Entry->UseGraphicsMode = FALSE;
+  Entry->LoadOptions     = NULL;
+  
+  // locate a custom icon for the loader
+  StrCpy(IconFileName, Volume->OSIconName);
+  
+  //actions
+  Entry->me.AtClick = ActionSelect;
+  Entry->me.AtDoubleClick = ActionDetails;
+  Entry->me.AtRightClick = ActionDetails;
+  
+  OSIconName = L"clover";
+  LoaderKind = 5;
+  ShortcutLetter = 'C';
+  Entry->me.Tag     = TAG_CLOVER;
+  Entry->me.ShortcutLetter = ShortcutLetter;
+  //  if (Entry->me.Image == NULL)
+  Entry->me.Image = LoadOSIcon(OSIconName, L"unknown", FALSE);
+  
+  // create the submenu
+  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+  SubScreen->Title = EfiStrDuplicate(LoaderTitle);
+  SubScreen->TitleImage = Entry->me.Image;
+  AddMenuInfoLine(SubScreen, DevicePathToStr(Volume->DevicePath));
+  
+  Status = FindBootOptionForFile (Entry->Volume->DeviceHandle,
+                                  Entry->LoaderPath,
+                                  NULL,
+                                  NULL
+                                  );
+  if (Status == EFI_SUCCESS) {
+    SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+    SubEntry->me.Title        = L"Remove as UEFI boot option";
+    SubEntry->me.Tag          = TAG_CLOVER;
+    SubEntry->LoaderPath      = Entry->LoaderPath;
+    SubEntry->Volume          = Entry->Volume;
+    SubEntry->VolName         = Entry->VolName;
+    SubEntry->DevicePath      = Entry->DevicePath;
+    SubEntry->UseGraphicsMode = FALSE;
+    SubEntry->LoadOptions     = L"BO-REMOVE";
+    SubEntry->LoaderType      = OSTYPE_VAR;
+    SubEntry->me.AtClick      = ActionEnter;
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+  } else {
+    SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+    SubEntry->me.Title        = L"Add as UEFI boot option";
+    SubEntry->me.Tag          = TAG_CLOVER;
+    SubEntry->LoaderPath      = Entry->LoaderPath;
+    SubEntry->Volume          = Entry->Volume;
+    SubEntry->VolName         = Entry->VolName;
+    SubEntry->DevicePath      = Entry->DevicePath;
+    SubEntry->UseGraphicsMode = FALSE;
+    SubEntry->LoadOptions     = L"BO-ADD";
+    SubEntry->LoaderType      = OSTYPE_VAR;
+    SubEntry->me.AtClick      = ActionEnter;
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+  }
+  
+  SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+  SubEntry->me.Title        = L"Print all UEFI boot options to log";
+  SubEntry->me.Tag          = TAG_CLOVER;
+  SubEntry->LoaderPath      = Entry->LoaderPath;
+  SubEntry->Volume          = Entry->Volume;
+  SubEntry->VolName         = Entry->VolName;
+  SubEntry->DevicePath      = Entry->DevicePath;
+  SubEntry->UseGraphicsMode = FALSE;
+  SubEntry->LoadOptions     = L"BO-PRINT";
+  SubEntry->LoaderType      = OSTYPE_VAR;
+  SubEntry->me.AtClick      = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  Entry->me.SubScreen = SubScreen;
+  AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
+  return Entry;
+}
+
 /*
 static VOID ScanLoaderDir(IN REFIT_VOLUME *Volume, IN CHAR16 *Path)
 {
@@ -930,6 +1036,8 @@ static VOID ScanLoader(VOID)
   CHAR16                  VolumeString[256];
   INT32                   HVi;
   CHAR16                  *HV;
+  EFI_STATUS              Status;
+  VOID                    *Interface;
   
   //    Print(L"Scanning for boot loaders...\n");
   
@@ -959,10 +1067,10 @@ static VOID ScanLoader(VOID)
       //     Print(L"  - Mac OS X boot file found\n");
       Volume->BootType = BOOTING_BY_EFI;
       if (!gSettings.HVHideAllOSX)
-      Entry = AddLoaderEntry(FileName, L"Mac OS X", Volume, Volume->OSType);
- //     continue; //boot MacOSX only
+        Entry = AddLoaderEntry(FileName, L"Mac OS X", Volume, Volume->OSType);
+      //     continue; //boot MacOSX only
     }
-//crazybirdy 
+//crazybirdy
     //============ add in begin ============
     // check for Mac OS X Install Data
     StrCpy(FileName, L"\\OS X Install Data\\boot.efi");
@@ -995,7 +1103,7 @@ static VOID ScanLoader(VOID)
       Volume->OSIconName = L"cougar";
       if (!gSettings.HVHideAllOSXInstall)
       Entry = AddLoaderEntry(FileName, L"OS X Install", Volume, Volume->OSType);
-      continue; //boot MacOSX only
+      //continue; //boot MacOSX only
     }
     //============ add in end ============
     
@@ -1111,7 +1219,21 @@ static VOID ScanLoader(VOID)
 //      continue;
     }
     
-    //UEFI bootloader XXX 
+    // check for Clover on EFI partition
+    Status = gBS->HandleProtocol (Volume->DeviceHandle, &gEfiPartTypeSystemPartGuid, &Interface);
+    if (Status == EFI_SUCCESS && !gSettings.HVHideAllUEFI) {
+#if defined(MDE_CPU_X64)
+      StrCpy(FileName, L"\\EFI\\BOOT\\CLOVERX64.EFI");
+#else
+      StrCpy(FileName, L"\\EFI\\BOOT\\CLOVERIA32.EFI");
+#endif
+      if (FileExists(Volume->RootDir, FileName)) {
+        Volume->BootType = BOOTING_BY_EFI;
+        AddCloverEntry(FileName, L"Clover Boot Options", Volume);
+      }
+    }
+    
+    //UEFI bootloader XXX
 #if defined(MDE_CPU_X64)
     StrCpy(FileName, L"\\EFI\\BOOT\\BOOTX64.efi");
 #else      
@@ -1912,6 +2034,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   CHAR8             *MsgBuffer = NULL;
   UINT64            TscDiv;
   UINT64            TscRemainder = 0;
+  LOADER_ENTRY      *LoaderEntry;
   
   // CHAR16            *InputBuffer; //, *Y;
   //  EFI_INPUT_KEY Key;
@@ -2211,11 +2334,37 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         case TAG_TOOL:     // Start a EFI tool
           StartTool((LOADER_ENTRY *)ChosenEntry);
           TerminateScreen(); //does not happen
-       //   return EFI_SUCCESS;
+          //   return EFI_SUCCESS;
           //  BdsLibConnectAllDriversToAllControllers();
-      //    PauseForKey(L"Returned from StartTool\n");
+          //    PauseForKey(L"Returned from StartTool\n");
           MainLoopRunning = FALSE;
           AfterTool = TRUE;
+          break;
+          
+        case TAG_CLOVER:     // Clover options
+          LoaderEntry = (LOADER_ENTRY *)ChosenEntry;
+          if (LoaderEntry->LoadOptions != NULL) {
+            if (StrStr(LoaderEntry->LoadOptions, L"BO-ADD") != NULL) {
+              PrintBootOptions(FALSE);
+              Status = AddBootOptionForFile (LoaderEntry->Volume->DeviceHandle,
+                                             LoaderEntry->LoaderPath,
+                                             L"Clover OS X Boot",
+                                             0,
+                                             NULL
+                                             );
+              PrintBootOptions(FALSE);
+            } else if (StrStr(LoaderEntry->LoadOptions, L"BO-REMOVE") != NULL) {
+              PrintBootOptions(FALSE);
+              Status = DeleteBootOptionForFile (LoaderEntry->Volume->DeviceHandle,
+                                                LoaderEntry->LoaderPath
+                                                );
+              PrintBootOptions(FALSE);
+            } else if (StrStr(LoaderEntry->LoadOptions, L"BO-PRINT") != NULL) {
+              PrintBootOptions(TRUE);
+            }
+          }
+          MainLoopRunning = FALSE;
+          AfterTool = FALSE;
           break;
           
       } //switch

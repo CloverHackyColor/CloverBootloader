@@ -90,6 +90,7 @@
 		122B6224157E819B00D06F37 /* vm_prot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vm_prot.h; sourceTree = "<group>"; };
 		123D85D714D94B1F000AF00B /* rEFIt64.dsc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = rEFIt64.dsc; path = ../rEFIt64.dsc; sourceTree = SOURCE_ROOT; };
 		123D85D814D94B29000AF00B /* refit64.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = refit64.inf; path = ../refit64.inf; sourceTree = SOURCE_ROOT; };
+		125108C31627F4CE0004D9C9 /* BootOptions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BootOptions.c; sourceTree = "<group>"; };
 		126C264B1510C3C9005AB30D /* AmlGenerator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AmlGenerator.c; sourceTree = "<group>"; };
 		126C264C1510C3C9005AB30D /* AmlGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AmlGenerator.h; sourceTree = "<group>"; };
 		12961B4215FCEC91008D77FB /* AcpiPatcher.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AcpiPatcher.c; sourceTree = "<group>"; };
@@ -8965,6 +8966,7 @@
 				12D6306114CEA05E00E5898F /* Bmp.h */,
 				12D6306214CEA05E00E5898F /* boot.h */,
 				12D6306314CEA05E00E5898F /* BootLog.c */,
+				125108C31627F4CE0004D9C9 /* BootOptions.c */,
 				261A9E681599E1290006F036 /* cdefs.h */,
 				12D6306414CEA05E00E5898F /* Console.c */,
 				12D6306514CEA05E00E5898F /* cpu.c */,

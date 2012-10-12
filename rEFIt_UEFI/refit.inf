@@ -56,6 +56,7 @@
 #	Platform/Bmp.h
 #	Platform/boot.h
 	Platform/BootLog.c
+	Platform/BootOptions.c
 	Platform/Console.c
 	Platform/cpu.c
 	Platform/DataHubCpu.c

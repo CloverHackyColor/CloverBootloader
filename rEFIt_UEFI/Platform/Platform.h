@@ -928,6 +928,7 @@ MACHINE_TYPES   GetDefaultModel(VOID);
 UINT16          GetAdvancedCpuType(VOID);
 EFI_STATUS      GetOSVersion(IN REFIT_VOLUME *Volume);
 EFI_STATUS      GetUserSettings(IN EFI_FILE *RootDir);
+VOID           *GetNVRAMVariable(IN CHAR16 *VariableName, IN EFI_GUID *VendorGuid, OUT UINTN *DataSize OPTIONAL);
 EFI_STATUS      GetNVRAMSettings(VOID);
 EFI_STATUS      GetNVRAMPlistSettings(IN EFI_FILE *RootDir, IN CHAR16* NVRAMPlistPath);
 EFI_STATUS      GetEdid(VOID);
@@ -997,6 +998,48 @@ VOID		    DbgTimeInit(VOID);
 // Returns debug time as string for print: secs:milis - sec:milis (from start - from last call)
 // Returned buffer should not be released.
 CHAR8       *DbgTime(VOID);
+
+
+//
+// BootOptions.c
+//
+
+/** Prints BootXXXX vars found listed in BootOrder, plus print others if AllBootOptions == TRUE. */
+VOID
+PrintBootOptions (
+    IN  BOOLEAN         AllBootOptions
+    );
+
+/** Searches BootXXXX vars for entry that points to given FileDeviceHandle/FileName
+ *  and returns BootNum (XXXX in BootXXXX variable name) and BootIndex (index in BootOrder)
+ *  if found.
+ */
+EFI_STATUS
+FindBootOptionForFile (
+    IN  EFI_HANDLE      FileDeviceHandle,
+    IN  CHAR16          *FileName,
+    OUT UINT16          *BootNum,
+    OUT UINTN           *BootIndex
+    );
+
+/** Adds new boot option for given file system device handle FileDeviceHandle, file path FileName
+ *  and Description, to be BootIndex in the list of options (0 based).
+ */
+EFI_STATUS
+AddBootOptionForFile (
+    IN  EFI_HANDLE      FileDeviceHandle,
+    IN  CHAR16          *FileName,
+    IN  CHAR16          *Description,
+    IN  UINTN           BootIndex,
+    OUT UINT16          *BootNum
+    );
+
+/** Deletes boot option for file specified with FileDeviceHandle and FileName. */
+EFI_STATUS
+DeleteBootOptionForFile (
+    IN  EFI_HANDLE      FileDeviceHandle,
+    IN  CHAR16          *FileName
+    );
 
 
 #endif

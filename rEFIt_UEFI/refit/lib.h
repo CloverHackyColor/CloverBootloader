@@ -64,6 +64,7 @@ extern EFI_RUNTIME_SERVICES*	gRS;
 #define TAG_INPUT    (9)
 #define TAG_HELP     (10)
 #define TAG_RETURN   (99)
+#define TAG_CLOVER   (100)
 
 
 //

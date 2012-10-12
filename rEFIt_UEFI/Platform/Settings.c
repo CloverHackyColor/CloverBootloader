@@ -140,21 +140,25 @@ EFI_STATUS GetUUIDFromEfiBootDeviceString(CHAR8 *efiBootDevice)
  */
 
 /** Reads and returns value of NVRAM variable. */
-VOID *GetNVRAMVariable(IN CHAR16 *VariableName, IN EFI_GUID *VendorGuid, OUT UINTN *DataSize)
+VOID *GetNVRAMVariable(IN CHAR16 *VariableName, IN EFI_GUID *VendorGuid, OUT UINTN *DataSize OPTIONAL)
 {
 	EFI_STATUS	Status;
 	VOID		*Data = NULL;
+	UINTN   IntDataSize = 0;
 	
-	*DataSize = 0;
-	Status = gRT->GetVariable(VariableName, VendorGuid, NULL, DataSize, NULL);
+	Status = gRT->GetVariable(VariableName, VendorGuid, NULL, &IntDataSize, NULL);
 	if (Status == EFI_BUFFER_TOO_SMALL) {
-		Data = AllocateZeroPool(*DataSize);
+		Data = AllocateZeroPool(IntDataSize);
 		if (Data) {
-			Status = gRT->GetVariable(VariableName, VendorGuid, NULL, DataSize, Data);
+			Status = gRT->GetVariable(VariableName, VendorGuid, NULL, &IntDataSize, Data);
 			if (EFI_ERROR(Status)) {
 				FreePool(Data);
 				Data = NULL;
-			}
+			} else {
+        if (DataSize != NULL) {
+          *DataSize = IntDataSize;
+        }
+      }
 		}
 	}
 	return Data;

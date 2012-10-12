@@ -423,7 +423,7 @@ VOID egTakeImage(IN EG_IMAGE *Image, INTN ScreenPosX, INTN ScreenPosY,
                         EfiBltVideoToBltBuffer,
                         ScreenPosX,
                         ScreenPosY,
-                        0, 0, AreaWidth, AreaHeight,  0);
+                        0, 0, AreaWidth, AreaHeight, (UINTN)Image->Width * 4);
   }
 }
 
