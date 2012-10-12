@@ -89,7 +89,7 @@ VOID GetCPUProperties (VOID)
 	gCPUStructure.MaxRatio = 10; //keep it as K*10
 	gCPUStructure.MinRatio = 10; //same
   gCPUStructure.SubDivider = 0;
-	gCPUStructure.MaxSpeed = 0;
+	//gCPUStructure.MaxSpeed = 0;
 	gSettings.CpuFreqMHz = 0;
 	gCPUStructure.FSBFrequency = MultU64x32(gCPUStructure.ExternalClock, kilo); //kHz -> Hz
 //	gCPUStructure.CPUFrequency = 0;
