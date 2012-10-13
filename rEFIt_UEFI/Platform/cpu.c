@@ -158,6 +158,10 @@ VOID GetCPUProperties (VOID)
 		SSSE3 = TRUE;
 	}
   
+  // Determine turbo boost support
+  DoCpuid(6, reg);
+  gCPUStructure.Turbo = ((reg[EAX] & 1) != 0);
+
   if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
     switch (gCPUStructure.Model)
     {

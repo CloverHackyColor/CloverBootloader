@@ -976,7 +976,7 @@ AddBootOptionForFile (
     // Prepare BootOption variable
     //
     BootOption.Attributes = LOAD_OPTION_ACTIVE;
-    BootOption.FilePathListLength = GetDevicePathSize (BootOption.FilePathList);
+    BootOption.FilePathListLength = (UINT16)GetDevicePathSize (BootOption.FilePathList);
     BootOption.Description = Description;
     BootOption.OptionalData = NULL;
     BootOption.OptionalDataSize = 0;

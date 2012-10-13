@@ -1621,7 +1621,7 @@ EFI_STATUS ApplySettings()
 //static BOOLEAN AlreadyDone = FALSE;
 EFI_STATUS SaveSettings()
 {
-//  UINT64  tmpU;
+  UINT64  tmpU, msr = 0;
   //TODO - SetVariable()..
   //here we can apply user settings instead of default one
   gMobile = gSettings.Mobile;
@@ -1641,7 +1641,52 @@ EFI_STATUS SaveSettings()
   
   gCPUStructure.CPUFrequency = MultU64x64(gCPUStructure.MaxSpeed, Mega);
   
-//  tmpU = DivU64x32(gCPUStructure.CPUFrequency, Mega);
+  // Read in msr for turbo and test whether it needs disabled/enabled
+  msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
+  if (gSettings.Turbo != ((msr & (1ULL<<38)) == 0)){
+    /* Don't change cpu speed because we aren't changing control state
+    if (gCPUStructure.Turbo4) {
+      gCPUStructure.CPUFrequency = DivU64x32(MultU64x64(gCPUStructure.Turbo4, gCPUStructure.FSBFrequency), 10);
+    }
+    //*/
+    //attempt to make turbo
+    msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
+    DBG("MSR_IA32_MISC_ENABLE = %lx\n", msr);
+    msr &= ~(1ULL<<38);
+    if (!gSettings.Turbo) msr |= (1ULL<<38); //0x4000000000
+    AsmWriteMsr64(MSR_IA32_MISC_ENABLE, msr);
+    gBS->Stall(100);
+    msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
+    DBG("Set turbo: MSR_IA32_MISC_ENABLE = %lx\n", msr);
+    /* Don't set performance control state, let OS handle it - apianti
+    if (TurboMsr != 0) {
+      AsmWriteMsr64(MSR_IA32_PERF_CONTROL, TurboMsr);
+      gBS->Stall(100);
+      WaitForSts();
+    }
+    msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);
+    DBG("set turbo state msr=%x \n", msr);
+    tmpU = gCPUStructure.CPUFrequency; //
+    DBG("set CPU to %ld\n", tmpU);
+    tmpU = DivU64x32(gCPUStructure.CPUFrequency, Mega);
+    DBG("... CPU to %ldMHz\n", tmpU);
+//    DBG("set turbo state msr=%x CPU=%dMHz\n", msr, (INT32)DivU64x32(gCPUStructure.CPUFrequency, Mega));
+    AlreadyDone = TRUE;
+    // */
+  }
+  if (gSettings.EnableISS != ((msr & (1ULL<<16)) != 0)){
+    //attempt to speedstep
+    msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
+    DBG("MSR_IA32_MISC_ENABLE = %lx\n", msr);
+    msr &= ~(1ULL<<16);
+    if (gSettings.EnableISS) msr |= (1ULL<<16);
+    AsmWriteMsr64(MSR_IA32_MISC_ENABLE, msr);
+    gBS->Stall(100);
+    msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
+    DBG("Set speedstep: MSR_IA32_MISC_ENABLE = %lx\n", msr);
+  } 
+ //*/ 
+  tmpU = DivU64x32(gCPUStructure.CPUFrequency, Mega);
   MsgLog("Finally: Bus=%ldMHz CPU=%ldMHz\n",
          DivU64x32(gCPUStructure.FSBFrequency, Mega),
          gCPUStructure.MaxSpeed);

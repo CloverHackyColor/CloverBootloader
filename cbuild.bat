@@ -93,7 +93,7 @@ rem have edk2 prepare to build
       set CLEANING=
       set errorlevel=0
       call:parseArguments %*
-      if not x"%errorlevel%" == x"0" goto:eof
+      if errorlevel 1 goto failscript
 
       rem fix any parameters not set
       set CONFIG_FILE=%WORKSPACE%\Conf\target.txt
@@ -113,18 +113,18 @@ rem have edk2 prepare to build
       rem build specific dsc
       echo Building selected ...
       build %*
-      if not x"%errorlevel%" == x"0" goto:eof
+      if errorlevel 1 goto failscript
       if not x"%CLEANING%" == x"" goto:eof
       goto postbuild
 
       :buildall
          echo Building CloverEFI IA32 (boot) ...
          build -p %WORKSPACE%\Clover\CloverIa32.dsc -a IA32 %*
-         if not x"%errorlevel%" == x"0" goto:eof
+         if errorlevel 1 goto failscript
 		 
          echo Building CloverIA32.efi ...
          build -p %WORKSPACE%\Clover\rEFIt_UEFI\rEFIt.dsc -a IA32 %*
-         if not x"%errorlevel%" == x"0" goto:eof
+         if errorlevel 1 goto failscript
 
          if x"%BUILD_ARCH%" == x"IA32" (
             if not x"%CLEANING%" == x"" goto:eof
@@ -134,11 +134,11 @@ rem have edk2 prepare to build
       :build64
          echo Building CloverEFI X64 (boot) ...
          build -p %WORKSPACE%\Clover\CloverX64.dsc -a X64 %*
-         if not x"%errorlevel%" == x"0" goto:eof
+         if errorlevel 1 goto failscript
 
          echo Building CloverX64.efi ...
          build -p %WORKSPACE%\Clover\rEFIt_UEFI\rEFIt64.dsc -a X64 %*
-         if not x"%errorlevel%" == x"0" goto:eof
+         if errorlevel 1 goto failscript
          if not x"%CLEANING%" == x"" goto:eof
          goto postbuild
    

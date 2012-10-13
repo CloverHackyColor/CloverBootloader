@@ -296,6 +296,8 @@ VOID GetDefaultSettings(VOID)
   t1 = AsmReadTsc();
   gCPUStructure.TSCCalibr = MultU64x32((t1 - t0), 10); //ticks for 1second
 
+  gSettings.EnableISS = ((gCPUStructure.CPUID[CPUID_1][ECX] & (1<<7)) != 0);
+  gSettings.Turbo = gCPUStructure.Turbo;
 //  msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
 //  gSettings.Turbo = ((msr & (1ULL<<38)) == 0);
 //  gSettings.EnableISS = ((msr & (1ULL<<16)) != 0);
