@@ -282,7 +282,7 @@ VOID ApplyInputs(VOID)
   UINTN j;
   UINT16 k;
   CHAR8  AString[256];
-  DBG("ApplyInputs\n");
+//  DBG("ApplyInputs\n");
   if (InputItems[i].Valid) {
     AsciiSPrint(gSettings.BootArgs, 255, "%s", InputItems[i].SValue);
   }
@@ -945,7 +945,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
 //      State.CurrentSelection, MenuExit);
   
   // exhaust key buffer and be sure no key is pressed to prevent option selection
-  // when comming with a key press from timeout=0, for example
+  // when coming with a key press from timeout=0, for example
   while (ReadAllKeyStrokes()) gBS->Stall(500 * 1000);
   while (!MenuExit) {
     // update the screen

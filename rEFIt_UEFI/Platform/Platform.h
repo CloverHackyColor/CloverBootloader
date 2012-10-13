@@ -902,6 +902,7 @@ EFI_STATUS  WaitForInputEvent(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault);
 EFI_STATUS  WaitForInputEventPoll(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault);
 
 VOID        WaitForSts(VOID);
+EFI_STATUS  ApplySettings();
 
 VOID        InitBooterLog(VOID);
 EFI_STATUS  SetupBooterLog(VOID);

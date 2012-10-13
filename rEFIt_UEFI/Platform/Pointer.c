@@ -126,15 +126,14 @@ EFI_STATUS MouseBirth()
   //there may be also trackpad protocol but afaik it is not properly work and
   // trackpad is usually controlled by simple mouse driver
   
-//  gPointer.Pointer = egLoadIcon(ThemeDir, L"icons\\pointer.icns", POINTER_WIDTH);
   gPointer.Pointer = BuiltinIcon(BUILTIN_ICON_POINTER);
 	if(!gPointer.Pointer) {
-    
-		DBG("No pointer image!\n");
+    //this is impossible after BuiltinIcon
+	//	DBG("No pointer image!\n");
     gPointer.SimplePointerProtocol = NULL;
     return EFI_NOT_FOUND;
 	}
-  gPointer.LastClickTime = AsmReadTsc();
+  gPointer.LastClickTime = 0; //AsmReadTsc();
   gPointer.oldPlace.XPos = (INTN)(UGAWidth >> 2);
   gPointer.oldPlace.YPos = (INTN)(UGAHeight >> 2);
   gPointer.oldPlace.Width = POINTER_WIDTH;
@@ -194,7 +193,7 @@ VOID PrintPointerVars(
   gST->ConOut->SetCursorPosition (gST->ConOut, 0, 0);
   DBG("%ld                           \n", Now);
   DBG("Resolution X, Y: %ld, %ld           \n", CurrentMode->ResolutionX, CurrentMode->ResolutionY);
-  DBG("Relative X, Y: %d, %d (%ld, %ld milimeters)           \n",
+  DBG("Relative X, Y: %d, %d (%ld, %ld millimeters)           \n",
         RelX, RelY,
         (INTN)RelX / (INTN)CurrentMode->ResolutionX,
         (INTN)RelY / (INTN)CurrentMode->ResolutionY
@@ -306,7 +305,7 @@ EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
         }
         gItemID = EntryId;
         break;
-      } else {
+      } else { //click in milk
         switch (gPointer.MouseEvent) {
           case LeftClick:
             gAction = ActionDeselect;
