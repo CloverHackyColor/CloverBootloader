@@ -644,6 +644,7 @@ typedef struct {
   BOOLEAN HVHideAllGentoo;
   BOOLEAN HVHideAllRedHat;
   BOOLEAN HVHideAllUbuntu;
+  BOOLEAN HVHideAllLinuxMint;
   BOOLEAN HVHideAllSuSe;
   BOOLEAN HVHideAllUEFI;
   BOOLEAN HVHideAllLegacy;

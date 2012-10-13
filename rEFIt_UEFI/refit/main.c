@@ -1211,6 +1211,20 @@ static VOID ScanLoader(VOID)
 //      continue;
     }
     
+    // check for Linux Mint boot loader/menu
+#if defined(MDE_CPU_X64)
+    StrCpy(FileName, L"\\EFI\\Linuxmint\\grubx64.efi");
+#else
+    StrCpy(FileName, L"\\EFI\\Linuxmint\\grub.efi");
+#endif
+    if (FileExists(Volume->RootDir, FileName)) {
+      //      Volume->OSType = OSTYPE_LIN;
+      Volume->BootType = BOOTING_BY_EFI;
+      if (!gSettings.HVHideAllLinuxMint)
+        Entry = AddLoaderEntry(FileName, L"Linux Mint EFI boot menu", Volume, OSTYPE_LIN);
+      //      continue;
+    }
+    
     // check for OpenSuse boot loader/menu
     StrCpy(FileName, L"\\EFI\\SuSe\\elilo.efi");
     if (FileExists(Volume->RootDir, FileName)) {

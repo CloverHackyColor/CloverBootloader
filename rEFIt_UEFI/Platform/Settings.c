@@ -1058,6 +1058,14 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.HVHideAllUbuntu = TRUE;
         }
       }
+      gSettings.HVHideAllLinuxMint = FALSE;
+      prop = GetProperty(dictPointer,"HideAllLinuxMint");
+      if(prop)
+      {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+          gSettings.HVHideAllLinuxMint = TRUE;
+        }
+      }
       gSettings.HVHideAllSuSe = FALSE;
       prop = GetProperty(dictPointer,"HideAllSuSe");
       if(prop)
