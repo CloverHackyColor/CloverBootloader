@@ -248,7 +248,7 @@ radeon_card_info_t radeon_cards[] = {
   //9488, 9490 - Gliff
 	{ 0x9480,	0x00000000, CHIP_FAMILY_RV730,	"ATI Radeon HD 4650 Series",		kGliff	},
 	{ 0x9488,	0x00000000, CHIP_FAMILY_RV730,	"ATI Radeon HD 4650 Series",		kGliff	},
-	{ 0x9490,	0x00000000, CHIP_FAMILY_RV730,	"ATI Radeon HD 4710 Series",		kGliff	},
+	{ 0x9490,	0x00000000, CHIP_FAMILY_RV730,	"ATI Radeon HD 4670 Series",		kGliff	},
 	{ 0x9491,	0x00000000, CHIP_FAMILY_RV730,	"ATI Radeon HD 4600 Series",		kGliff	},
 	{ 0x9495,	0x00000000, CHIP_FAMILY_RV730,	"ATI Radeon HD 4650 Series",		kGliff	},
 	{ 0x9498,	0x00000000, CHIP_FAMILY_RV730,	"ATI Radeon HD 4710 Series",		kGliff	},
