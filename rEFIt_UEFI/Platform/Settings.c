@@ -1580,7 +1580,7 @@ EFI_STATUS ApplySettings()
 
   // Read in msr for turbo and test whether it needs disabled/enabled
   msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
-  if (gSettings.Turbo){ // != ((msr & (1ULL<<38)) == 0)){
+  if (gCPUStructure.Turbo && (gSettings.Turbo != ((msr & (1ULL<<38)) == 0))) {
     /* Don't change cpu speed because we aren't changing control state
      if (gCPUStructure.Turbo4) {
      gCPUStructure.CPUFrequency = DivU64x32(MultU64x64(gCPUStructure.Turbo4, gCPUStructure.FSBFrequency), 10);
@@ -1590,7 +1590,7 @@ EFI_STATUS ApplySettings()
 //    msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
     DBG("MSR_IA32_MISC_ENABLE = %lx\n", msr);
     msr &= ~(1ULL<<38);
-//    if (!gSettings.Turbo) msr |= (1ULL<<38); //0x4000000000 == 0 if Turbo enabled
+    if (!gSettings.Turbo) msr |= (1ULL<<38); //0x4000000000 == 0 if Turbo enabled
     AsmWriteMsr64(MSR_IA32_MISC_ENABLE, msr);
     gBS->Stall(100);
     msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);

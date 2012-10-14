@@ -1234,6 +1234,18 @@ static VOID ScanLoader(VOID)
       Entry = AddLoaderEntry(FileName, L"OpenSuse EFI boot menu", Volume, OSTYPE_LIN);
 //      continue;
     }
+#if defined(MDE_CPU_X64)
+    StrCpy(FileName, L"\\EFI\\opensuse\\grubx64.efi");
+#else
+    StrCpy(FileName, L"\\EFI\\opensuse\\grub.efi");
+#endif
+    if (FileExists(Volume->RootDir, FileName)) {
+//      Volume->OSType = OSTYPE_LIN;
+      Volume->BootType = BOOTING_BY_EFI;
+      if (!gSettings.HVHideAllSuSe)
+      Entry = AddLoaderEntry(FileName, L"OpenSuse EFI boot menu", Volume, OSTYPE_LIN);
+//      continue;
+    }
     
     // check for Clover on EFI partition
     Status = gBS->HandleProtocol (Volume->DeviceHandle, &gEfiPartTypeSystemPartGuid, &Interface);
