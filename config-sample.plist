@@ -103,6 +103,8 @@
 		<string>Mac-F4208CC8</string>
 		<key>BoardVersion</key>
 		<string>Proto1</string>
+		<key>BoardType</key>
+		<string>10</string>
 		<key>Mobile</key>
 		<string>Yes</string>
 		<key>LocationInChassis</key>

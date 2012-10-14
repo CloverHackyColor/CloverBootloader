@@ -245,6 +245,60 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model)
   AsciiStrCpy(gSettings.LocationInChassis,      AppleBoardLocation);
   AsciiStrCpy(gSettings.ChassisManufacturer,    BiosVendor);
   AsciiStrCpy(gSettings.ChassisAssetTag,        AppleChassisAsset[Model]);
+  if (Model >= MacPro31) {
+    gSettings.BoardType = BaseBoardTypeProcessorMemoryModule; //11;
+  } else {
+    gSettings.BoardType = BaseBoardTypeMotherBoard; //10; 
+  }
+  switch (Model) {
+    case MacBook11:
+    case MacBook21:
+    case MacBook41:
+    case MacBook52:
+    case MacBookAir31:
+    case MacBookAir52:
+      gSettings.ChassisType = MiscChassisTypeNotebook; //10; 
+      gSettings.Mobile = TRUE;
+      break;
+    case MacBookPro51:
+    case MacBookPro81:
+    case MacBookPro83:
+    case MacBookPro92:
+      gSettings.ChassisType = MiscChassisTypePortable; //08;
+      gSettings.Mobile = TRUE;
+      break;
+    case iMac81:
+    case iMac101:
+    case iMac111:
+    case iMac112:
+    case iMac113:
+    case iMac121:
+    case iMac122:
+      gSettings.ChassisType = MiscChassisTypeAllInOne; //13; 
+      gSettings.Mobile = FALSE;
+      break;
+    case MacMini21:
+    case MacMini51:
+      gSettings.ChassisType = MiscChassisTypeLunchBox; //16; 
+      gSettings.Mobile = FALSE;
+      break;
+    case MacPro31:
+    case MacPro41:
+    case MacPro51:
+      gSettings.ChassisType = MiscChassisTypeMiniTower; //06; 
+      gSettings.Mobile = FALSE;
+      break;
+      
+    default: //unknown - use oem SMBIOS value to be default
+      gSettings.Mobile = gMobile;
+      gSettings.ChassisType = 0; //let SMBIOS value to be
+/*      if (gMobile) {
+        gSettings.ChassisType = 10; //notebook
+      } else {
+        gSettings.ChassisType = MiscChassisTypeDeskTop; //03; 
+      } */
+      break;
+  }
 }
 
 MACHINE_TYPES GetModelFromString(CHAR8 *ProductName)
@@ -284,8 +338,8 @@ VOID GetDefaultSettings(VOID)
   gSettings.HDAInjection = TRUE;
   gSettings.HDALayoutId = 0;
   gSettings.USBInjection = TRUE; // enabled by default to have the same behavior as before
-  gSettings.Mobile = gMobile;  //default
-  gSettings.ChassisType = 0;
+//  gSettings.Mobile = gMobile;  //default
+//  gSettings.ChassisType = 0;
   StrCpy(gSettings.DsdtName, L"DSDT.aml");
   gSettings.BacklightLevel = 0xFFFF; //0x0503; -- the value from MBA52
   gSettings.PointerSpeed = 2;
@@ -297,7 +351,7 @@ VOID GetDefaultSettings(VOID)
   gCPUStructure.TSCCalibr = MultU64x32((t1 - t0), 10); //ticks for 1second
 
   gSettings.EnableISS = ((gCPUStructure.CPUID[CPUID_1][ECX] & (1<<7)) != 0);
-  gSettings.Turbo = gCPUStructure.Turbo;
+//  gSettings.Turbo = gCPUStructure.Turbo;
 //  msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
 //  gSettings.Turbo = ((msr & (1ULL<<38)) == 0);
 //  gSettings.EnableISS = ((msr & (1ULL<<16)) != 0);

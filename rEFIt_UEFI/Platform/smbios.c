@@ -494,10 +494,13 @@ VOID PatchTableType2()
 
 	newSmbiosTable.Type2->Hdr.Length = (UINT8)NewSize;
 	newSmbiosTable.Type2->ChassisHandle = mHandle3;	//from GetTableType3
-	newSmbiosTable.Type2->BoardType = BaseBoardTypeMotherBoard;
+	newSmbiosTable.Type2->BoardType = gSettings.BoardType;
 	ZeroMem((VOID*)&newSmbiosTable.Type2->FeatureFlag, sizeof(BASE_BOARD_FEATURE_FLAGS));
 	newSmbiosTable.Type2->FeatureFlag.Motherboard = 1;
 	newSmbiosTable.Type2->FeatureFlag.Replaceable = 1;
+	if (gSettings.BoardType == 11) {
+		newSmbiosTable.Type2->FeatureFlag.Removable = 1;
+	}
 	Once = TRUE;
 	
 	if(iStrLen(gSettings.BoardManufactureName, 64)>0){

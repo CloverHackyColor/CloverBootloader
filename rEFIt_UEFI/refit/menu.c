@@ -710,9 +710,10 @@ static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
   if (!State->PaintAll && State->CurrentSelection != State->LastSelection)
     State->PaintSelection = TRUE;
   State->LastVisible = State->FirstVisible + State->MaxVisible;
-//  DBG("Scroll to: CurrentSelection=%d, FirstVisible=%d, LastVisible=%d, LastSelection=%d\n",
-//      State->CurrentSelection, State->FirstVisible, State->LastVisible, State->LastSelection);  
-  //result 0 0 4 0
+
+  //ycr.ru
+  if ((State->PaintAll) && (Movement != SCROLL_NONE))
+    HidePointer();
 }
 
 //
@@ -1655,6 +1656,13 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
           DrawMainMenuLabel(Screen->Entries[State->CurrentSelection]->Title,
                             (UGAWidth >> 1), textPosY, Screen, State);
       }
+      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION)){
+#ifdef FIRMWARE_REVISION
+        DrawTextXY(FIRMWARE_REVISION, (UGAWidth - 2), UGAHeight - 5 - TextHeight, X_IS_RIGHT);
+#else
+        DrawTextXY(gST->FirmwareRevision, (UGAWidth - 2), UGAHeight - 5 - TextHeight, X_IS_RIGHT);
+#endif
+      }      
       MouseBirth();
       break;
       

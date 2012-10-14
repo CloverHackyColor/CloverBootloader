@@ -538,16 +538,18 @@ typedef struct {
 	CHAR8	LocationInChassis[64];
   CHAR8 BoardVersion[64];
   CHAR8 OEMBoard[64];
+  UINT8 BoardType;
+  UINT8 Pad1;
 	// SMBIOS TYPE3
   BOOLEAN Mobile;
   UINT8 ChassisType;
 	CHAR8	ChassisManufacturer[64];
 	CHAR8	ChassisAssetTag[64]; 
 	// SMBIOS TYPE4
-	UINT16	CpuFreqMHz;
+	UINT32	CpuFreqMHz;
 	UINT32	BusSpeed; //in kHz
   BOOLEAN Turbo;
-  
+  UINT8   Pad2[3];
 	// SMBIOS TYPE17
 	CHAR8	MemoryManufacturer[64];
 	CHAR8	MemorySerialNumber[64];

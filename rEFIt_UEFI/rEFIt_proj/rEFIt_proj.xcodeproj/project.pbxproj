@@ -966,6 +966,7 @@
 		12AE63441618A976003BAF51 /* WatchdogTimer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WatchdogTimer.h; sourceTree = "<group>"; };
 		12AE63451618A976003BAF51 /* WatchdogTimer.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = WatchdogTimer.inf; sourceTree = "<group>"; };
 		12B3BB4216102570006734DD /* Pointer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Pointer.c; sourceTree = "<group>"; };
+		12B3FB41162AF0B6007A169B /* config-sample.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "config-sample.plist"; path = "../../config-sample.plist"; sourceTree = "<group>"; };
 		12B7000015F921AB00177D35 /* efildr.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = efildr.c; sourceTree = "<group>"; };
 		12B7000115F921AB00177D35 /* EfiLdr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EfiLdr.h; sourceTree = "<group>"; };
 		12B7000215F921AB00177D35 /* EfiLdr.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = EfiLdr.inf; sourceTree = "<group>"; };
@@ -2775,6 +2776,7 @@
 			children = (
 				12B7FECE15F9212500177D35 /* CloverEFI */,
 				12021208142663F0004B7B93 /* rEFIt.dsc */,
+				12B3FB41162AF0B6007A169B /* config-sample.plist */,
 				12B7007315F9224F00177D35 /* MdePkg */,
 				12AE5F1F1618A975003BAF51 /* MdeModulePkg */,
 				120DE0571622C47800BA4C14 /* PcAtChipsetPkg */,
