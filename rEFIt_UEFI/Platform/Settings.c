@@ -1617,7 +1617,7 @@ EFI_STATUS ApplySettings()
      AlreadyDone = TRUE;
      // */
   }
-  if (gSettings.EnableISS != ((msr & (1ULL<<16)) != 0)){
+/*  if (gSettings.EnableISS != ((msr & (1ULL<<16)) != 0)){
    //attempt to speedstep
    msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
    DBG("MSR_IA32_MISC_ENABLE = %lx\n", msr);
@@ -1628,7 +1628,7 @@ EFI_STATUS ApplySettings()
    msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
    DBG("Set speedstep: MSR_IA32_MISC_ENABLE = %lx\n", msr);
    }
- 
+*/ 
   return EFI_SUCCESS;
 }
 

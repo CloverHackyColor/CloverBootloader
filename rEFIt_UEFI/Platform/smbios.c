@@ -1190,9 +1190,9 @@ VOID PatchTableType17()
 		} else if (gRAM->DIMM[map0].InUse){
       map = map0;
 			DBG("old map InUse\n");
-    } else {
+    } /*else {
 			DBG("both map not In Use. TODO?\n");
-		}
+		}*/
 
 		spdType = gRAM->DIMM[map].Type;
 		if ((spdType == MemoryTypeDdr2) ||
