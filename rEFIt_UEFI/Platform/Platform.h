@@ -1029,11 +1029,18 @@ FindBootOptionForFile (
 
 /** Adds new boot option for given file system device handle FileDeviceHandle, file path FileName
  *  and Description, to be BootIndex in the list of options (0 based).
+ *  If UseShortForm == TRUE, then only the hard drive media dev path will be used instead
+ *  of full device path.
+ *  Long (full) form:
+ *   PciRoot(0x0)/Pci(0x1f,0x2)/Sata(0x1,0x0)/HD(1,GPT,96004846-a018-49ad-bc9f-4e5a340adc4b,0x800,0x64000)/\EFI\BOOT\File.efi
+ *  Short form:
+ *   HD(1,GPT,96004846-a018-49ad-bc9f-4e5a340adc4b,0x800,0x64000)/\EFI\BOOT\File.efi
  */
 EFI_STATUS
 AddBootOptionForFile (
     IN  EFI_HANDLE      FileDeviceHandle,
     IN  CHAR16          *FileName,
+    IN  BOOLEAN         UseShortForm,
     IN  CHAR16          *Description,
     IN  UINTN           BootIndex,
     OUT UINT16          *BootNum

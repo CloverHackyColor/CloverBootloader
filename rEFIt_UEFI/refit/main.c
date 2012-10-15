@@ -2376,6 +2376,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
               PrintBootOptions(FALSE);
               Status = AddBootOptionForFile (LoaderEntry->Volume->DeviceHandle,
                                              LoaderEntry->LoaderPath,
+                                             TRUE,
                                              L"Clover OS X Boot",
                                              0,
                                              NULL
