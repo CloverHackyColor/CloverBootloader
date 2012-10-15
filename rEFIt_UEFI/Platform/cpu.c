@@ -446,9 +446,9 @@ VOID GetCPUProperties (VOID)
 	}
   
 #endif
-  DBG("take FSB\n");
+//  DBG("take FSB\n");
   tmpU = gCPUStructure.FSBFrequency;
-  DBG("divide by 1000\n");
+//  DBG("divide by 1000\n");
   BusSpeed = (UINT32)DivU64x32(tmpU, kilo); //Hz -> kHz
   DBG("FSBFrequency=%dMHz\n", DivU64x32(tmpU, Mega));
      //now check if SMBIOS has ExternalClock = 4xBusSpeed

@@ -146,18 +146,49 @@ StrCmpiBasic(
 }
 
 
+/** Finds and returns pointer to specified DevPath node in DevicePath or NULL. */
+EFI_DEVICE_PATH_PROTOCOL *
+FindDevicePathNodeWithType (
+    IN  EFI_DEVICE_PATH_PROTOCOL    *DevicePath,
+    IN  UINT8           Type,
+    IN  UINT8           SubType
+)
+{
+    
+    while ( !IsDevicePathEnd (DevicePath) ) {
+        if (DevicePathType (DevicePath) == Type && DevicePathSubType (DevicePath) == SubType) {
+            return DevicePath;
+        }
+        DevicePath = NextDevicePathNode (DevicePath);
+    }
+    
+    //
+    // Not found
+    //
+    return NULL;
+}
+
+
 /** Creates device path for boot option: device path for file system volume + file name.
+ *  If UseShortForm == TRUE, then only the hard drive media dev path will be used instead
+ *  of full device path.
+ *  Long (full) form:
+ *   PciRoot(0x0)/Pci(0x1f,0x2)/Sata(0x1,0x0)/HD(1,GPT,96004846-a018-49ad-bc9f-4e5a340adc4b,0x800,0x64000)/\EFI\BOOT\File.efi
+ *  Short form:
+ *   HD(1,GPT,96004846-a018-49ad-bc9f-4e5a340adc4b,0x800,0x64000)/\EFI\BOOT\File.efi
  *  Caller is responsible for releasing DevicePath with FreePool().
  */
 EFI_STATUS
 CreateBootOptionDevicePath (
     IN  EFI_HANDLE      FileDeviceHandle,
     IN  CHAR16          *FileName,
+    IN  BOOLEAN         UseShortForm,
     OUT EFI_DEVICE_PATH_PROTOCOL    **DevicePath
     )
 {
     EFI_STATUS          Status;
-    EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *Volume;    
+    EFI_SIMPLE_FILE_SYSTEM_PROTOCOL *Volume;
+    EFI_DEVICE_PATH_PROTOCOL        *TmpDevPath;
     
     //
     // Check that FileDeviceHandle is file system volume
@@ -174,6 +205,20 @@ CreateBootOptionDevicePath (
     *DevicePath = FileDevicePath(FileDeviceHandle, FileName);
     if (*DevicePath == NULL) {
         return EFI_OUT_OF_RESOURCES;
+    }
+    
+    //
+    // Extract only short form if specified
+    //
+    if (UseShortForm) {
+        //
+        // Find HD Media dev path node and extract only that portion of dev path
+        //
+        TmpDevPath = DuplicateDevicePath (FindDevicePathNodeWithType (*DevicePath, MEDIA_DEVICE_PATH, MEDIA_HARDDRIVE_DP));
+        if (TmpDevPath != NULL) {
+            FreePool (*DevicePath);
+            *DevicePath = TmpDevPath;
+        }
     }
     
     return EFI_SUCCESS;
@@ -717,8 +762,8 @@ FindBootOptionForFile (
     UINTN               BootOrderLen;
     UINTN               Index;
     BO_BOOT_OPTION      BootOption;
-    EFI_DEVICE_PATH_PROTOCOL    *SearchedDevicePath;
-    UINTN               SearchedDevicePathSize;
+    EFI_DEVICE_PATH_PROTOCOL    *SearchedDevicePath[2];
+    UINTN               SearchedDevicePathSize[2];
     
     
     DBG("\nFindBootOptionForFile: %p, %s\n", FileDeviceHandle, FileName);
@@ -732,14 +777,21 @@ FindBootOptionForFile (
     }
     
     //
-    // Create FileDeviceHandle/FileName device path - we will search boot options for that.
+    // Create FileDeviceHandle/FileName device paths (long and short form) - we will search boot options for that.
     //
-    Status = CreateBootOptionDevicePath (FileDeviceHandle, FileName, &SearchedDevicePath);
+    Status = CreateBootOptionDevicePath (FileDeviceHandle, FileName, FALSE, &SearchedDevicePath[0]);
     if (EFI_ERROR(Status)) {
         return Status;
     }
-    SearchedDevicePathSize = GetDevicePathSize (SearchedDevicePath);
-    DBG(" Searching for: %d, %s\n", SearchedDevicePathSize, DevicePathToStr(SearchedDevicePath));
+    SearchedDevicePathSize[0] = GetDevicePathSize (SearchedDevicePath[0]);
+    DBG(" Searching for: %s (Len: %d)\n", DevicePathToStr(SearchedDevicePath[0]), SearchedDevicePathSize[0]);
+    
+    Status = CreateBootOptionDevicePath (FileDeviceHandle, FileName, TRUE, &SearchedDevicePath[1]);
+    if (EFI_ERROR(Status)) {
+        return Status;
+    }
+    SearchedDevicePathSize[1] = GetDevicePathSize (SearchedDevicePath[1]);
+    DBG(" and for: %s (Len: %d)\n", DevicePathToStr(SearchedDevicePath[1]), SearchedDevicePathSize[1]);
     
     //
     // Iterate over all BootXXXX vars (actually, only ones that are in BootOrder list)
@@ -762,7 +814,10 @@ FindBootOptionForFile (
         
         //PrintBootOption (&BootOption, Index);
         
-        if (DevicePathEqual (SearchedDevicePath, BootOption.FilePathList)) {
+        if (DevicePathEqual (SearchedDevicePath[0], BootOption.FilePathList)
+            || DevicePathEqual (SearchedDevicePath[1], BootOption.FilePathList)
+            )
+        {
             DBG("FindBootOptionForFile: Found Boot%04X, at index %d\n", BootOrder[Index], Index);
             if (BootNum != NULL) {
                 *BootNum = BootOrder[Index];
@@ -967,7 +1022,7 @@ AddBootOptionForFile (
     //
     // Prepare BootOption FilePath from FileDeviceHandle and FileName
     //
-    Status = CreateBootOptionDevicePath (FileDeviceHandle, FileName, &BootOption.FilePathList);
+    Status = CreateBootOptionDevicePath (FileDeviceHandle, FileName, TRUE, &BootOption.FilePathList);
     if (EFI_ERROR(Status)) {
         return Status;
     }
