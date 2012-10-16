@@ -444,6 +444,8 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     // first patchACPI and find PCIROOT and RTC
     // but before ACPI patch we need smbios patch
 //    DBG("PatchSmbios\n");
+    
+    ApplySettings();
     PatchSmbios();
 //    DBG("PatchACPI\n");
     PatchACPI(Entry->Volume);
@@ -466,8 +468,6 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     SetupDataForOSX();
 //    DBG("LoadKexts\n");
     LoadKexts(Entry);
-    
-    ApplySettings();
 //    DBG("SetupBooterLog\n");
     DBGT("Closing log\n");
     Status = SetupBooterLog();
@@ -908,15 +908,16 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   Entry->me.Title        = LoaderTitle;
   Entry->me.Tag          = TAG_CLOVER;
   
-  Entry->me.Row          = 0;
+  Entry->me.Row          = 1;
   Entry->Volume = Volume;
   //  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
-  if ((GlobalConfig.HideBadges == HDBADGES_NONE) ||
+/*  if ((GlobalConfig.HideBadges == HDBADGES_NONE) ||
       (GlobalConfig.HideBadges == HDBADGES_INT && Volume->DiskKind != DISK_KIND_INTERNAL)){
     Entry->me.BadgeImage   = egCopyScaledImage(Volume->OSImage, 8);
   } else if (GlobalConfig.HideBadges == HDBADGES_SWAP) {
     Entry->me.BadgeImage   =  egCopyScaledImage(Volume->DriveImage, 4);
-  }
+  }*/
+  Entry->me.Image   = egCopyScaledImage(Volume->OSImage, 4);
   Entry->LoaderPath      = EfiStrDuplicate(LoaderPath);
   Entry->VolName         = Volume->VolName;
   Entry->DevicePath      = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
@@ -928,7 +929,7 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   
   //actions
   Entry->me.AtClick = ActionSelect;
-  Entry->me.AtDoubleClick = ActionDetails;
+  Entry->me.AtDoubleClick = ActionEnter; //ActionDetails;
   Entry->me.AtRightClick = ActionDetails;
   
   OSIconName = L"clover";
@@ -937,7 +938,7 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   Entry->me.Tag     = TAG_CLOVER;
   Entry->me.ShortcutLetter = ShortcutLetter;
   //  if (Entry->me.Image == NULL)
-  Entry->me.Image = LoadOSIcon(OSIconName, L"unknown", FALSE);
+//  Entry->me.Image = LoadOSIcon(OSIconName, L"unknown", FALSE);
   
   // create the submenu
   SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
@@ -1038,8 +1039,7 @@ static VOID ScanLoader(VOID)
   CHAR16                  VolumeString[256];
   INT32                   HVi;
   CHAR16                  *HV;
-  EFI_STATUS              Status;
-  VOID                    *Interface;
+//  EFI_STATUS              Status;
   
   //    Print(L"Scanning for boot loaders...\n");
   
@@ -1248,7 +1248,8 @@ static VOID ScanLoader(VOID)
     }
     
     // check for Clover on EFI partition
-    Status = gBS->HandleProtocol (Volume->DeviceHandle, &gEfiPartTypeSystemPartGuid, &Interface);
+//move to ScanTools    
+/*    Status = gBS->HandleProtocol (Volume->DeviceHandle, &gEfiPartTypeSystemPartGuid, &Interface);
     if (Status == EFI_SUCCESS && !gSettings.HVHideAllUEFI) {
 #if defined(MDE_CPU_X64)
       StrCpy(FileName, L"\\EFI\\BOOT\\CLOVERX64.EFI");
@@ -1260,7 +1261,7 @@ static VOID ScanLoader(VOID)
         AddCloverEntry(FileName, L"Clover Boot Options", Volume);
       }
     }
-    
+*/    
     //UEFI bootloader XXX
 #if defined(MDE_CPU_X64)
     StrCpy(FileName, L"\\EFI\\BOOT\\BOOTX64.efi");
@@ -1670,57 +1671,79 @@ static LOADER_ENTRY * AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle
 
 static VOID ScanTool(VOID)
 {
-    //EFI_STATUS              Status;
-    CHAR16                  FileName[256];
-    LOADER_ENTRY            *Entry;
+  EFI_STATUS              Status;
+  CHAR16                  FileName[256];
+  LOADER_ENTRY            *Entry;
+  UINTN                   VolumeIndex;
+  REFIT_VOLUME            *Volume;
+  VOID                    *Interface;
+  
+  if (GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)
+    return;
+  
+  for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
+    Volume = Volumes[VolumeIndex];
     
-    if (GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)
-        return;
-    
-//    Print(L"Scanning for tools...\n");
-    
-    // look for the EFI shell
-    if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_SHELL)) {
-#if defined(MDE_CPU_IA32)
-      StrCpy(FileName, L"\\EFI\\tools\\Shell32.efi");
-      if (FileExists(SelfRootDir, FileName)) {
-        Entry = AddToolEntry(FileName, L"EFI Shell 32", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
-        DBG("found tools\\Shell32.efi\n");
-      }
-#elif defined(MDE_CPU_X64)
-      StrCpy(FileName, L"\\EFI\\tools\\Shell64.efi");
-      if (FileExists(SelfRootDir, FileName)) {
-        Entry = AddToolEntry(FileName, L"EFI Shell 64", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
-        DBG("found tools\\Shell64.efi\n");
-      }
+    Status = gBS->HandleProtocol (Volume->DeviceHandle, &gEfiPartTypeSystemPartGuid, &Interface);
+    if (Status == EFI_SUCCESS && !gSettings.HVHideAllUEFI) {
+#if defined(MDE_CPU_X64)
+      StrCpy(FileName, L"\\EFI\\BOOT\\CLOVERX64.EFI");
 #else
-      UnicodeSPrint(FileName, 512, L"\\EFI\\BOOT\\apps\\shell.efi");
-      if (FileExists(SelfRootDir, FileName)) {
-        Entry = AddToolEntry(FileName, L"EFI Shell", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
-        DBG("found apps\\shell.efi\n");
-      }
+      StrCpy(FileName, L"\\EFI\\BOOT\\CLOVERIA32.EFI");
 #endif
+      if (FileExists(Volume->RootDir, FileName)) {
+        Volume->BootType = BOOTING_BY_EFI;
+        AddCloverEntry(FileName, L"Clover Boot Options", Volume);
+      }
     }
-    
-    // look for the GPT/MBR sync tool
-/*    StrCpy(FileName, L"\\efi\\tools\\gptsync.efi");
+  }
+  
+  //    Print(L"Scanning for tools...\n");
+  
+  // look for the EFI shell
+  if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_SHELL)) {
+#if defined(MDE_CPU_IA32)
+    StrCpy(FileName, L"\\EFI\\tools\\Shell32.efi");
     if (FileExists(SelfRootDir, FileName)) {
-        Entry = AddToolEntry(FileName, L"Partitioning Tool", BuiltinIcon(BUILTIN_ICON_TOOL_PART), 'P', FALSE);
-    }*/
-/*    
-    // look for rescue Linux
-    StrCpy(FileName, L"\\efi\\rescue\\elilo.efi");
-    if (SelfVolume != NULL && FileExists(SelfRootDir, FileName)) {
-        Entry = AddToolEntry(FileName, L"Rescue Linux", BuiltinIcon(BUILTIN_ICON_TOOL_RESCUE), 0, FALSE);
-        
-        if (UGAWidth == 1440 && UGAHeight == 900)
-            Entry->LoadOptions = L"-d 0 i17";
-        else if (UGAWidth == 1680 && UGAHeight == 1050)
-            Entry->LoadOptions = L"-d 0 i20";
-        else
-            Entry->LoadOptions = L"-d 0 mini";
+      Entry = AddToolEntry(FileName, L"EFI Shell 32", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
+      DBG("found tools\\Shell32.efi\n");
     }
- */
+#elif defined(MDE_CPU_X64)
+    StrCpy(FileName, L"\\EFI\\tools\\Shell64.efi");
+    if (FileExists(SelfRootDir, FileName)) {
+      Entry = AddToolEntry(FileName, L"EFI Shell 64", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
+      DBG("found tools\\Shell64.efi\n");
+    }
+#else //what else? ARM?
+    UnicodeSPrint(FileName, 512, L"\\EFI\\BOOT\\apps\\shell.efi");
+    if (FileExists(SelfRootDir, FileName)) {
+      Entry = AddToolEntry(FileName, L"EFI Shell", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
+      DBG("found apps\\shell.efi\n");
+    }
+#endif
+  }
+  
+  
+  
+  // look for the GPT/MBR sync tool
+  /*    StrCpy(FileName, L"\\efi\\tools\\gptsync.efi");
+   if (FileExists(SelfRootDir, FileName)) {
+   Entry = AddToolEntry(FileName, L"Partitioning Tool", BuiltinIcon(BUILTIN_ICON_TOOL_PART), 'P', FALSE);
+   }*/
+  /*    
+   // look for rescue Linux
+   StrCpy(FileName, L"\\efi\\rescue\\elilo.efi");
+   if (SelfVolume != NULL && FileExists(SelfRootDir, FileName)) {
+   Entry = AddToolEntry(FileName, L"Rescue Linux", BuiltinIcon(BUILTIN_ICON_TOOL_RESCUE), 0, FALSE);
+   
+   if (UGAWidth == 1440 && UGAHeight == 900)
+   Entry->LoadOptions = L"-d 0 i17";
+   else if (UGAWidth == 1680 && UGAHeight == 1050)
+   Entry->LoadOptions = L"-d 0 i20";
+   else
+   Entry->LoadOptions = L"-d 0 mini";
+   }
+   */
 }
 
 //

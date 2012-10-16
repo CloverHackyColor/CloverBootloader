@@ -1587,11 +1587,12 @@ EFI_STATUS ApplySettings()
   // Read in msr for turbo and test whether it needs disabled/enabled
   msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
   if (gCPUStructure.Turbo && gSettings.Turbo) {
-    /* Don't change cpu speed because we aren't changing control state
+    // Don't change cpu speed because we aren't changing control state
      if (gCPUStructure.Turbo4) {
-     gCPUStructure.CPUFrequency = DivU64x32(MultU64x64(gCPUStructure.Turbo4, gCPUStructure.FSBFrequency), 10);
+       gCPUStructure.MaxSpeed = (UINT32)(DivU64x32(MultU64x64(gCPUStructure.FSBFrequency, gCPUStructure.Turbo4), Mega * 10)); 
+     //gCPUStructure.CPUFrequency = DivU64x32(MultU64x64(gCPUStructure.Turbo4, gCPUStructure.FSBFrequency), 10);
      }
-     //*/
+     //
     //attempt to make turbo
 //    msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
     DBG("MSR_IA32_MISC_ENABLE = %lx\n", msr);
@@ -1617,6 +1618,8 @@ EFI_STATUS ApplySettings()
      AlreadyDone = TRUE;
      // */
   }
+  //Slice: I disable this until to be clear why it should be disabled any way
+  // moreover ISS is not EIST, I may enable or not ISS but I always want EIST.
 /*  if (gSettings.EnableISS != ((msr & (1ULL<<16)) != 0)){
    //attempt to speedstep
    msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
