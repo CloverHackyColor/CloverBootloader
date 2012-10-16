@@ -18,7 +18,7 @@
 #define DBG(...) DebugLog(DEBUG_SET, __VA_ARGS__)
 #endif
 
-#define SHORT_LOCATE 1
+//#define SHORT_LOCATE 1
 
 //#define kXMLTagArray   		"array"
 
@@ -413,11 +413,11 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       }
       
       // iCloudFix
-      gSettings.iCloudFix = FALSE;
+      gSettings.iCloudFix = TRUE;
       prop = GetProperty(dictPointer, "iCloudFix");
       if(prop) {
-        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
-          gSettings.iCloudFix = TRUE;
+        if ((prop->string[0] == 'n') || (prop->string[0] == 'N'))
+          gSettings.iCloudFix = FALSE;
       }      
     }
 
@@ -1589,8 +1589,9 @@ EFI_STATUS ApplySettings()
   if (gCPUStructure.Turbo && gSettings.Turbo) {
     // Don't change cpu speed because we aren't changing control state
      if (gCPUStructure.Turbo4) {
-       gCPUStructure.MaxSpeed = (UINT32)(DivU64x32(MultU64x64(gCPUStructure.FSBFrequency, gCPUStructure.Turbo4), Mega * 10)); 
-     //gCPUStructure.CPUFrequency = DivU64x32(MultU64x64(gCPUStructure.Turbo4, gCPUStructure.FSBFrequency), 10);
+       //gCPUStructure.MaxSpeed = (UINT32)(DivU64x32(MultU64x64(gCPUStructure.FSBFrequency, gCPUStructure.Turbo4), Mega * 10));
+       //gCPUStructure.CPUFrequency = DivU64x32(MultU64x64(gCPUStructure.Turbo4, gCPUStructure.FSBFrequency), 10);
+       gCPUStructure.MaxSpeed = DivU64x32(gCPUStructure.CPUFrequency, Mega);
      }
      //
     //attempt to make turbo
