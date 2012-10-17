@@ -1871,16 +1871,17 @@ INTN FindDefaultEntry(VOID)
   // try to get efi-boot-device
   //
   
-  if (gFirmwareClover || gFirmwarePhoenix) {
-    
-    // CloverEFI boot: from latest nvram.plist
-    // same for Phoenix as it has no own NVRAM
-    Index = FindDefaultEntryNVRAMPlist();
-    
-  } else {
+  if (!gFirmwareClover) {
         // UEFI boot: from NVRAM
     Index = FindDefaultEntryNVRAM();
+    if (Index > -1) {
+      return Index;
+    }
   }
+   
+    // CloverEFI boot: from latest nvram.plist
+    // same for Phoenix as it has no own NVRAM
+  Index = FindDefaultEntryNVRAMPlist();
   
   if (Index > -1) {
     return Index;
