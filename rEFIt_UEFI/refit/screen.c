@@ -515,7 +515,7 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen)
   Screen->LastDraw = Now;
 }
 
-static CHAR16*  AnimeName[16]       = {{NULL}};
+static CHAR16*  AnimeName[16]       = {NULL};
 static INTN     AnimeFrames[16]     = {0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 static INTN     AnimeFrameTime[16]  = {0, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
@@ -532,7 +532,7 @@ BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
   if (!Path) return FALSE;
   N = AnimeFrames[Screen->ID];
   
-  Screen->Film = (EG_IMAGE**)AllocateZeroPool(N * sizeof(VOI*));
+  Screen->Film = (EG_IMAGE**)AllocateZeroPool(N * sizeof(VOID*));
   for (i=0; i<N; i++){
   
     UnicodeSPrint(FileName, 512, L"%s\\%s_%03d.png", Path, Path, i);

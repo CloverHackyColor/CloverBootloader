@@ -855,6 +855,7 @@ extern EFI_BOOT_SERVICES*       gBS;
 extern SETTINGS_DATA            gSettings;
 extern LANGUAGES                gLanguage;
 extern BOOLEAN                  gFirmwareClover;
+extern BOOLEAN                  gFirmwarePhoenix;
 extern UINT32                   gFwFeatures;
 extern CPU_STRUCTURE            gCPUStructure;
 extern EFI_GUID                 gUuid;
@@ -885,6 +886,8 @@ extern EFI_EVENT  OnReadyToBootEvent;
 extern EFI_EVENT  ExitBootServiceEvent;
 extern EFI_EVENT  mSimpleFileSystemChangeEvent;
 extern UINTN      gEvent;
+
+extern UINT16     gBacklightLevel;
 //mouse
 extern ACTION gAction;
 extern UINTN  gItemID;

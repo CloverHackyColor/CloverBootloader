@@ -1871,16 +1871,15 @@ INTN FindDefaultEntry(VOID)
   // try to get efi-boot-device
   //
   
-  if (!gFirmwareClover) {
-    
-    // UEFI boot: from NVRAM
-    Index = FindDefaultEntryNVRAM();
-    
-  } else {
+  if (gFirmwareClover || gFirmwarePhoenix) {
     
     // CloverEFI boot: from latest nvram.plist
+    // same for Phoenix as it has no own NVRAM
     Index = FindDefaultEntryNVRAMPlist();
     
+  } else {
+        // UEFI boot: from NVRAM
+    Index = FindDefaultEntryNVRAM();
   }
   
   if (Index > -1) {
@@ -1951,6 +1950,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	
   // firmware detection
   gFirmwareClover = StrCmp(gST->FirmwareVendor, L"CLOVER") == 0;
+  gFirmwarePhoenix = StrStr(gST->FirmwareVendor, L"Phoenix") != NULL;
   //	DBG("Running on Firmware %s, it is Clover?%a\n", gST->FirmwareVendor, gFirmwareClover?"Yes":"No");
   
   InitializeConsoleSim();
@@ -2074,7 +2074,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
  //     DBG("PrepareFont OK\n");
   FillInputs();
   
-  if (!gFirmwareClover && GlobalConfig.Timeout == 0 && !ReadAllKeyStrokes()) {
+  if (!gFirmwareClover && !gFirmwarePhoenix &&
+      GlobalConfig.Timeout == 0 && !ReadAllKeyStrokes()) {
     // UEFI boot: get gEfiBootDeviceGuid, gEfiBootDevice, gEfiBootDeviceData
     // from NVRAM - and if present, ScanVolumes() will skip scanning other volumes
     // in the first run.

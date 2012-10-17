@@ -262,7 +262,7 @@ typedef struct _refit_menu_screen {
   REFIT_MENU_ENTRY  **Entries;
   INTN              TimeoutSeconds;
   CHAR16            *TimeoutText;
-  BOOLEAN           AnimeRun
+  BOOLEAN           AnimeRun;
   UINT64            LastDraw;
   INTN              CurrentFrame;
   INTN              Frames;

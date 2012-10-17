@@ -208,12 +208,12 @@ EFI_STATUS SetVariablesForOSX()
                             /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                 LangLen ,&gSettings.Language);
   
-	if (gFirmwareClover && gEfiBootDeviceData != NULL) {
+	if ((gFirmwareClover || gFirmwarePhoenix) && gEfiBootDeviceData != NULL) {
 		Status = gRS->SetVariable(L"efi-boot-device-data",  &gEfiAppleBootGuid,
 						 /*	EFI_VARIABLE_NON_VOLATILE | */EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
 						 GetDevicePathSize(gEfiBootDeviceData) , gEfiBootDeviceData);    
 	}
-	if (gFirmwareClover && gEfiBootDevice != NULL) {
+	if ((gFirmwareClover || gFirmwarePhoenix) && gEfiBootDevice != NULL) {
 		Status = gRS->SetVariable(L"efi-boot-device",  &gEfiAppleBootGuid,
 						 /*	EFI_VARIABLE_NON_VOLATILE | */EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
 						 AsciiStrLen(gEfiBootDevice) + 1, gEfiBootDevice);

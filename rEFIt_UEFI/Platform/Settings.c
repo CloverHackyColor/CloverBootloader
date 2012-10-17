@@ -40,7 +40,9 @@ UINTN                           NGFX = 0; // number of GFX
 
 // firmware
 BOOLEAN                         gFirmwareClover = FALSE;
+BOOLEAN                         gFirmwarePhoenix = FALSE;
 UINTN                           gEvent;
+UINT16                          gBacklightLevel;
 
 VOID WaitForSts(VOID) {
 	UINT32 inline_timeout = 100000;
@@ -227,6 +229,16 @@ EFI_STATUS GetNVRAMPlistSettings(IN EFI_FILE *RootDir, IN CHAR16* NVRAMPlistPath
 	}
 	
 	Status = EFI_UNSUPPORTED;
+
+  //restore property backlight-level saved in nvram.plist
+	prop = GetProperty(dict, "backlight-level");
+	if (prop && prop->type == kTagTypeData && prop->data) {
+    gBacklightLevel = *(UINT16*)prop->data;
+    Status = gRS->SetVariable(L"backlight-level", &gEfiAppleBootGuid,
+                              /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                              2 ,&gBacklightLevel);
+    
+  }
 	
 	prop = GetProperty(dict, "efi-boot-device-data");
 	if (prop && prop->type == kTagTypeData && prop->data) {
@@ -257,6 +269,7 @@ EFI_STATUS GetNVRAMPlistSettings(IN EFI_FILE *RootDir, IN CHAR16* NVRAMPlistPath
 			gEfiBootDevice = AllocatePool(size);
 			CopyMem(gEfiBootDevice, efiBootDevice, size);
 			DBG(" efi-boot-device = %a\n", gEfiBootDevice);
+      Status = EFI_SUCCESS;
 		}
 	}
 
