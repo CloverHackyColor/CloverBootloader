@@ -1778,8 +1778,9 @@ INTN FindDefaultEntryNVRAMPlist(VOID)
     DBG("%d. Volume '%s', GUID = %g", Index, Volume->VolName, Guid);
     if (Guid == NULL) {
       // not a GUID partition
-      DBG(" - not GPT - skipping!\n");
-      continue;
+      DBG(" - not GPT");
+      //DBG(" - not GPT - skipping!\n");
+      //continue;
     }
     
     // check if nvram.plist exists
