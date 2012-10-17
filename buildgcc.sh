@@ -21,9 +21,9 @@
 # here we can change source versions of tools
 #
 export BINUTILS_VERSION=binutils-2.22
-export GCC_VERSION=4.6.3
+export GCC_VERSION=4.7.2
 export GMP_VERSION=gmp-5.0.5
-export MPFR_VERSION=mpfr-3.1.0
+export MPFR_VERSION=mpfr-3.1.1
 export MPC_VERSION=mpc-0.9
 
 # Change PREFIX if you want gcc and binutils 
@@ -119,23 +119,25 @@ fnDownloadBinutils ()
 # Function: Download Binutils source
 {
     cd $DIR_DOWNLOADS
-    [ ! -f ${DIR_DOWNLOADS}/${BINUTILS_VERSION}.tar.bz2 ] && echo "Status: binutils not found." && curl --remote-name ftp://ftp.gnu.org/gnu/binutils/${BINUTILS_VERSION}.tar.bz2
+    [ ! -f ${DIR_DOWNLOADS}/${BINUTILS_VERSION}.tar.bz2 ] && echo "Status: ${BINUTILS_VERSION} not found." && curl --remote-name http://mirror.aarnet.edu.au/pub/gnu/binutils/${BINUTILS_VERSION}.tar.bz2
 }
 
 fnDownloadGCC ()
 # Function: Download GCC source
 {
     cd $DIR_DOWNLOADS
-    [ ! -f ${DIR_DOWNLOADS}/gcc-core-${GCC_VERSION}.tar.bz2 ] && echo "Status: gcc-core not found." && curl --remote-name ftp://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-core-${GCC_VERSION}.tar.bz2
-    [ ! -f ${DIR_DOWNLOADS}/gcc-g++-${GCC_VERSION}.tar.bz2 ] && echo "Status: gcc-g++ not found." && curl --remote-name ftp://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-g++-${GCC_VERSION}.tar.bz2
+#    [ ! -f ${DIR_DOWNLOADS}/gcc-core-${GCC_VERSION}.tar.bz2 ] && echo "Status: gcc-core not found." && curl --remote-name ftp://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-core-${GCC_VERSION}.tar.bz2
+#    [ ! -f ${DIR_DOWNLOADS}/gcc-g++-${GCC_VERSION}.tar.bz2 ] && echo "Status: gcc-g++ not found." && curl --remote-name ftp://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-g++-${GCC_VERSION}.tar.bz2
+    [ ! -f ${DIR_DOWNLOADS}/gcc-${GCC_VERSION}.tar.bz2 ] && echo "Status: gcc-${GCC_VERSION} not found." && curl --remote-name http://mirrors.kernel.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.bz2
+
 }
 
 fnDownloadSource ()
 {
     cd $DIR_DOWNLOADS
-    [ ! -f ${DIR_DOWNLOADS}/${GMP_VERSION}.tar.bz2 ] && echo "Status: gmp not found." && curl --remote-name ftp://ftp.gnu.org/gnu/gmp/${GMP_VERSION}.tar.bz2
-    [ ! -f ${DIR_DOWNLOADS}/${MPFR_VERSION}.tar.bz2 ] && echo "Status: mpfr not found." && curl --remote-name ftp://ftp.gnu.org/gnu/mpfr/${MPFR_VERSION}.tar.bz2
-    [ ! -f ${DIR_DOWNLOADS}/${MPC_VERSION}.tar.gz ] && echo "Status: mpc not found." && curl --remote-name http://www.multiprecision.org/mpc/download/${MPC_VERSION}.tar.gz
+    [ ! -f ${DIR_DOWNLOADS}/${GMP_VERSION}.tar.bz2 ] && echo "Status: ${GMP_VERSION} not found." && curl --remote-name http://mirror.aarnet.edu.au/pub/gnu/gmp//${GMP_VERSION}.tar.bz2
+    [ ! -f ${DIR_DOWNLOADS}/${MPFR_VERSION}.tar.bz2 ] && echo "Status: ${MPFR_VERSION} not found." && curl --remote-name http://mirror.aarnet.edu.au/pub/gnu/mpfr/${MPFR_VERSION}.tar.bz2
+    [ ! -f ${DIR_DOWNLOADS}/${MPC_VERSION}.tar.gz ] && echo "Status: ${MPC_VERSION} not found." && curl --remote-name http://www.multiprecision.org/mpc/download/${MPC_VERSION}.tar.gz
     fnDownloadBinutils
     fnDownloadGCC
 }
@@ -149,44 +151,50 @@ fnCompileLibs ()
 # Compile GMP
     cd $DIR_DOWNLOADS
     echo
-    [ ! -f $DIR_DOWNLOADS/$GMP_VERSION.tar.bz2.extracted ] && echo "-  $GMP_VERSION extract..." && tar -xf $GMP_VERSION.tar.bz2 > $GMP_VERSION.tar.bz2.extracted
-    echo "-  $GMP_VERSION extracted"
+    [ ! -f $DIR_DOWNLOADS/${GMP_VERSION}.tar.bz2.extracted ] && echo "-  ${GMP_VERSION} extract..." && tar -xf ${GMP_VERSION}.tar.bz2 > ${GMP_VERSION}.tar.bz2.extracted
+    echo "-  ${GMP_VERSION} extracted"
+#    wait
     [ ! -d ${DIR_GCC}/$ARCH-gmp ] && mkdir ${DIR_GCC}/$ARCH-gmp 
     [ -d ${DIR_GCC}/$ARCH-gmp ] && cd ${DIR_GCC}/$ARCH-gmp && rm -rf * 
-    echo "-  $GMP_VERSION configure..."
-    ../download/$GMP_VERSION/configure --prefix=$PREFIX > $DIR_LOGS/gmp.$ARCH.config.log.txt 2> /dev/null
-    echo "-  $GMP_VERSION make..."
+    echo "-  ${GMP_VERSION} configure..."
+    ../download/${GMP_VERSION}/configure --prefix=$PREFIX > $DIR_LOGS/gmp.$ARCH.config.log.txt 2> /dev/null
+    echo "-  ${GMP_VERSION} make..."
     make 1> /dev/null 2> $DIR_LOGS/gmp.$ARCH.make.log.txt
     make install 1> $DIR_LOGS/gmp.$ARCH.install.log.txt 2> /dev/null
-    echo "-  $GMP_VERSION installed in $PREFIX  -"
+#    wait
+    echo "-  ${GMP_VERSION} installed in $PREFIX  -"
 
 # Compile MPFR
     cd $DIR_DOWNLOADS
     echo
-    [ ! -f $DIR_DOWNLOADS/$MPFR_VERSION.tar.bz2.extracted ] && echo "-  $MPFR_VERSION extract..." && tar -xf $MPFR_VERSION.tar.bz2 > $MPFR_VERSION.tar.bz2.extracted
-    echo "-  $MPFR_VERSION extracted"
+    [ ! -f $DIR_DOWNLOADS/${MPFR_VERSION}.tar.bz2.extracted ] && echo "-  ${MPFR_VERSION} extract..." && tar -xf ${MPFR_VERSION}.tar.bz2 > ${MPFR_VERSION}.tar.bz2.extracted
+    echo "-  ${MPFR_VERSION} extracted"
+#    wait
     [ ! -d ${DIR_GCC}/$ARCH-mpfr ] && mkdir ${DIR_GCC}/$ARCH-mpfr 
     [ -d ${DIR_GCC}/$ARCH-mpfr ] && cd ${DIR_GCC}/$ARCH-mpfr && rm -rf * 
-    echo "-  $MPFR_VERSION configure..."
-    ../download/$MPFR_VERSION/configure --prefix=$PREFIX --with-gmp=$PREFIX > $DIR_LOGS/mpfr.$ARCH.config.log.txt 2> /dev/null
-    echo "-  $MPFR_VERSION make..."
+    echo "-  ${MPFR_VERSION} configure..."
+    ../download/${MPFR_VERSION}/configure --prefix=$PREFIX --with-gmp=$PREFIX > $DIR_LOGS/mpfr.$ARCH.config.log.txt 2> /dev/null
+    echo "-  ${MPFR_VERSION} make..."
     make 1> /dev/null 2> $DIR_LOGS/mpfr.$ARCH.make.log.txt
     make install 1> $DIR_LOGS/mpfr.$ARCH.install.log.txt 2> /dev/null
-    echo "-  $MPFR_VERSION installed in $PREFIX  -"
+#    wait
+    echo "-  ${MPFR_VERSION} installed in $PREFIX  -"
 
 # Compile MPC
     cd $DIR_DOWNLOADS
     echo
-    [ ! -f $DIR_DOWNLOADS/$MPC_VERSION.tar.gz.extracted ] && echo "-  $MPC_VERSION extract..." && tar -xf $MPC_VERSION.tar.gz > $MPC_VERSION.tar.gz.extracted
-    echo "-  $MPC_VERSION extracted"
+    [ ! -f $DIR_DOWNLOADS/${MPC_VERSION}.tar.gz.extracted ] && echo "-  ${MPC_VERSION} extract..." && tar -xf ${MPC_VERSION}.tar.gz > ${MPC_VERSION}.tar.gz.extracted
+#    wait
+    echo "-  ${MPC_VERSION} extracted"
     [ ! -d ${DIR_GCC}/$ARCH-mpc ] && mkdir ${DIR_GCC}/$ARCH-mpc 
     [ -d ${DIR_GCC}/$ARCH-mpc ] && cd ${DIR_GCC}/$ARCH-mpc && rm -rf * 
-    echo "-  $MPC_VERSION configure..."
-    ../download/$MPC_VERSION/configure --prefix=$PREFIX --with-gmp=$PREFIX --with-mpfr=$PREFIX  > $DIR_LOGS/mpc.$ARCH.config.log.txt 2> /dev/null
-    echo "-  $MPC_VERSION make..."
+    echo "-  ${MPC_VERSION} configure..."
+    ../download/${MPC_VERSION}/configure --prefix=$PREFIX --with-gmp=$PREFIX --with-mpfr=$PREFIX  > $DIR_LOGS/mpc.$ARCH.config.log.txt 2> /dev/null
+    echo "-  ${MPC_VERSION} make..."
     make 1> /dev/null 2> $DIR_LOGS/mpc.$ARCH.make.log.txt
     make install 1> $DIR_LOGS/mpc.$ARCH.install.log.txt 2> /dev/null
-    echo "-  $MPC_VERSION installed in $PREFIX  -"
+#    wait
+    echo "-  ${MPC_VERSION} installed in $PREFIX  -"
 }
 
 fnCompileBinutils ()
@@ -195,24 +203,27 @@ fnCompileBinutils ()
     export BUILD_BINUTILS_DIR=$DIR_GCC/$ARCH-binutils
     cd $DIR_DOWNLOADS
     echo
-    [ ! -f $DIR_DOWNLOADS/$BINUTILS_VERSION.tar.bz2.extracted ] && echo "-  $BINUTILS_VERSION extract" && tar -xf $BINUTILS_VERSION.tar.bz2 > $BINUTILS_VERSION.tar.bz2.extracted
-    echo "-  $BINUTILS_VERSION extracted"
+    [ ! -f $DIR_DOWNLOADS/${BINUTILS_VERSION}.tar.bz2.extracted ] && echo "-  ${BINUTILS_VERSION} extract" && tar -xf ${BINUTILS_VERSION}.tar.bz2 > ${BINUTILS_VERSION}.tar.bz2.extracted
+ #   wait
+    echo "-  ${BINUTILS_VERSION} extracted"
     
     # Check GMP/MPFR/MPC
-    [ ! -f $PREFIX/include/gmp.h ] && echo "Error: $GMP_VERSION not installed, check logs" && exit
-    [ ! -f $PREFIX/include/mpfr.h ] && echo "Error: $MPFR_VERSION not installed, check logs" && exit
-    [ ! -f $PREFIX/include/mpc.h ] && echo "Error: $MPC_VERSION not installed, check logs" && exit
+    [ ! -f $PREFIX/include/gmp.h ] && echo "Error: ${GMP_VERSION} not installed, check logs" && exit
+    [ ! -f $PREFIX/include/mpfr.h ] && echo "Error: ${MPFR_VERSION} not installed, check logs" && exit
+    [ ! -f $PREFIX/include/mpc.h ] && echo "Error: ${MPC_VERSION} not installed, check logs" && exit
 
     # Binutils build
     [ ! -d ${DIR_GCC}/$ARCH-binutils ] && mkdir ${DIR_GCC}/$ARCH-binutils 
     [ -d ${DIR_GCC}/$ARCH-binutils ] && cd ${DIR_GCC}/$ARCH-binutils && rm -rf * 
-    echo "-  $BINUTILS_VERSION configure..."
-    ../download/$BINUTILS_VERSION/configure --target=$TARGET $BINUTILS_CONFIG 1> $DIR_LOGS/binutils.$ARCH.config.log.txt 2> /dev/null
-    echo "-  $BINUTILS_VERSION make..."
+    echo "-  ${BINUTILS_VERSION} configure..."
+    ../download/${BINUTILS_VERSION}/configure --target=$TARGET $BINUTILS_CONFIG 1> $DIR_LOGS/binutils.$ARCH.config.log.txt 2> /dev/null
+#    wait
+    echo "-  ${BINUTILS_VERSION} make..."
     make all 1> /dev/null 2> $DIR_LOGS/binutils.$ARCH.make.log.txt
     make install 1> $DIR_LOGS/binutils.$ARCH.install.log.txt 2> /dev/null
-    [ ! -f $PREFIX/bin/$TARGET-ld ] && echo "Error: $BINUTILS_VERSION not installed, check logs" && exit
-    echo "-  $BINUTILS_VERSION installed in $PREFIX  -"
+#    wait
+    [ ! -f $PREFIX/bin/$TARGET-ld ] && echo "Error: binutils-${BINUTILS_VERSION} not installed, check logs" && exit
+    echo "-  ${BINUTILS_VERSION} installed in $PREFIX  -"
 }
 
 fnCompileGCC ()
@@ -221,18 +232,20 @@ fnCompileGCC ()
     export PATH=$PATH:$PREFIX/bin
     cd $DIR_DOWNLOADS
     echo
-    [ ! -f $DIR_DOWNLOADS/gcc-core-${GCC_VERSION}.tar.bz2.extracted ] && echo "-  gcc-core-$GCC_VERSION extract..." && tar -xf gcc-core-${GCC_VERSION}.tar.bz2 > gcc-core-${GCC_VERSION}.tar.bz2.extracted
-    [ ! -f $DIR_DOWNLOADS/gcc-g++-${GCC_VERSION}.tar.bz2.extracted ] && echo "-  gcc-g++-$GCC_VERSION extract..." && tar -xf gcc-g++-${GCC_VERSION}.tar.bz2 > gcc-g++-${GCC_VERSION}.tar.bz2.extracted 
-    echo "-  gcc-$GCC_VERSION extracted"
+   [ ! -f $DIR_DOWNLOADS/gcc-${GCC_VERSION}.tar.bz2.extracted ] && echo "-  gcc-${GCC_VERSION} extract..." && tar -xf gcc-${GCC_VERSION}.tar.bz2 > gcc-${GCC_VERSION}.tar.bz2.extracted 
+    echo "-  gcc-${GCC_VERSION} extracted"
+#    wait
     [ ! -d ${DIR_GCC}/$ARCH-gcc ] && mkdir ${DIR_GCC}/$ARCH-gcc 
     [ -d ${DIR_GCC}/$ARCH-gcc ] && cd ${DIR_GCC}/$ARCH-gcc && rm -rf * 
-    echo "-  gcc-$GCC_VERSION configure..."
-    ../download/gcc-$GCC_VERSION/configure --target=$TARGET $GCC_CONFIG > $DIR_LOGS/gcc.$ARCH.config.log.txt 2> /dev/null
-    echo "-  gcc-$GCC_VERSION make..."
+    echo "-  gcc-${GCC_VERSION} configure..."
+    ../download/gcc-${GCC_VERSION}/configure --target=$TARGET $GCC_CONFIG > $DIR_LOGS/gcc.$ARCH.config.log.txt 2> /dev/null
+#    wait
+    echo "-  gcc-${GCC_VERSION} make..."
     make all-gcc 1> /dev/null 2> $DIR_LOGS/gcc.$ARCH.make.log.txt
     make install-gcc 1> $DIR_LOGS/gcc.$ARCH.install.log.txt 2> /dev/null
-    [ ! -f $PREFIX/bin/$TARGET-gcc ] && echo "Error: gcc-$GCC_VERSION not installed, check logs" && exit
-    echo "-  gcc-$GCC_VERSION installed in $PREFIX  -"  
+#    wait
+    [ ! -f $PREFIX/bin/$TARGET-gcc ] && echo "Error: gcc-${GCC_VERSION} not installed, check logs" && exit
+    echo "-  gcc-${GCC_VERSION} installed in $PREFIX  -"  
     echo
 }
 
@@ -277,7 +290,7 @@ fnALL ()
 fnArchIA32 ()
 # Function: setting arch type ia32
 {
-    export TARGET=$TARGET_IA32
+    export TARGET="$TARGET_IA32"
     echo "-  Building GCC chainload for $TARGET_IA32  -"
     export ARCH="ia32"
     export ABI_VER="32"
@@ -286,7 +299,7 @@ fnArchIA32 ()
 fnArchX64 ()
 # Function: setting arch type x64
 {
-    export TARGET=$TARGET_X64
+    export TARGET="$TARGET_X64"
     echo "-  Building GCC chainload for $TARGET_X64  -"
     export ARCH="x64"
     export ABI_VER="64"

@@ -228,6 +228,7 @@ typedef struct {
 #define SCREEN_CPU        6
 #define SCREEN_BINARIES   7
 #define SCREEN_DSDT       8
+#define SCREEN_BOOT       9
 
 struct _refit_menu_screen;
 
@@ -252,15 +253,22 @@ typedef struct _refit_input_dialog {
 } REFIT_INPUT_DIALOG;
 
 typedef struct _refit_menu_screen {
-  UINTN       ID;
-  CHAR16      *Title;
-  EG_IMAGE    *TitleImage;
-  INTN       InfoLineCount;
-  CHAR16      **InfoLines;
-  INTN       EntryCount;
-  REFIT_MENU_ENTRY **Entries;
-  INTN       TimeoutSeconds;
-  CHAR16      *TimeoutText;
+  UINTN             ID;
+  CHAR16            *Title;
+  EG_IMAGE          *TitleImage;
+  INTN              InfoLineCount;
+  CHAR16            **InfoLines;
+  INTN              EntryCount;
+  REFIT_MENU_ENTRY  **Entries;
+  INTN              TimeoutSeconds;
+  CHAR16            *TimeoutText;
+  BOOLEAN           AnimeRun
+  UINT64            LastDraw;
+  INTN              CurrentFrame;
+  INTN              Frames;
+  INTN              FrameTime; //ms
+  INTN              FilmX, FilmY;
+  EG_IMAGE          **Film;
 } REFIT_MENU_SCREEN;
 
 //this structure is used for refit.config
@@ -447,6 +455,7 @@ VOID BltImageAlpha(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos, IN EG_PIXEL *
 VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XPos, IN INTN YPos);
 VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG_IMAGE *BadgeImage, IN INTN XPos, IN INTN YPos);
 
+VOID UpdateAnime(REFIT_MENU_SCREEN *Screen);
 //
 // icns loader module
 //

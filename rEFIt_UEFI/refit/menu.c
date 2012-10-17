@@ -63,7 +63,7 @@
 
 // scrolling definitions
 static INTN MaxItemOnScreen = -1;
-REFIT_MENU_SCREEN OptionMenu  = {4, L"Options", NULL, 0, NULL, 0, NULL, 0, NULL };
+REFIT_MENU_SCREEN OptionMenu  = {4, L"Options", NULL, 0, NULL, 0, NULL, 0, NULL, FALSE, 0, 0, 0, 0, 0, 0, NULL };
 extern REFIT_MENU_ENTRY MenuEntryReturn;
 
 #define SCROLL_LINE_UP    (0)
@@ -1735,6 +1735,7 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
   SubScreen->Title = Entry->Title;
   SubScreen->TitleImage = Entry->Image;
   SubScreen->ID = SCREEN_GRAPHICS;
+  SubScreen->AnimeRun = FALSE;
   AddMenuInfoLine(SubScreen, PoolPrint(L"Number of VideoCards=%d", NGFX));
   
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
@@ -1832,6 +1833,7 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
   SubScreen->Title = Entry->Title;
   SubScreen->TitleImage = Entry->Image;
   SubScreen->ID = SCREEN_CPU;
+  SubScreen->AnimeRun = FALSE;
   AddMenuInfoLine(SubScreen, PoolPrint(L"%a", gCPUStructure.BrandString));
   AddMenuInfoLine(SubScreen, PoolPrint(L"Model: %2x/%2x/%2x",
       gCPUStructure.Family, gCPUStructure.Model, gCPUStructure.Stepping));
@@ -1976,6 +1978,7 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   SubScreen->Title = Entry->Title;
   SubScreen->TitleImage = Entry->Image;
   SubScreen->ID = SCREEN_BINARIES;
+  SubScreen->AnimeRun = FALSE;
   AddMenuInfoLine(SubScreen, PoolPrint(L"%a", gCPUStructure.BrandString));
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
@@ -2039,6 +2042,7 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   SubScreen->Title = Entry->Title;
   SubScreen->TitleImage = Entry->Image;
   SubScreen->ID = SCREEN_DSDT;
+  SubScreen->AnimeRun = FALSE;
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   UnicodeSPrint(Flags, 255, L"DSDT name:");
@@ -2226,6 +2230,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   // FillInputs and ApplyInputs
   if (OptionMenu.EntryCount == 0) {
     OptionMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
+    OptionMenu.AnimeRun = FALSE;
     Flags = AllocateZeroPool(255);
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     *ChosenEntry = (REFIT_MENU_ENTRY*)InputBootArgs;   

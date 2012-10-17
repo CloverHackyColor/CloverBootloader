@@ -502,3 +502,46 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
     egFreeImage(CompImage);
     GraphicsScreenDirty = TRUE;
 }
+
+VOID UpdateAnime(REFIT_MENU_SCREEN *Screen)
+{
+  UINT64 Now;
+  if (!Screen || !Screen->AnimeRun) return;
+  Now = AsmReadTsc();
+  if (TimeDiff(Screen->LastDraw, Now) < Screen->FrameTime) return;
+  BltImage(Screen->Film[Screen->CurrentFrame], Screen->FilmX, Screen->FilmY);
+  Screen->CurrentFrame++;
+  if (Screen->CurrentFrame > Screen->Frames) Screen->CurrentFrame = 0;
+  Screen->LastDraw = Now;
+}
+
+static CHAR16*  AnimeName[16]       = {{NULL}};
+static INTN     AnimeFrames[16]     = {0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static INTN     AnimeFrameTime[16]  = {0, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
+{
+  CHAR16      FileName[256];
+  CHAR16      *Path;
+  INTN        i, N;
+  
+  if (!Screen) return FALSE;
+  
+  // look through contents of the directory
+  Path = AnimeName[Screen->ID];
+  if (!Path) return FALSE;
+  N = AnimeFrames[Screen->ID];
+  
+  Screen->Film = (EG_IMAGE**)AllocateZeroPool(N * sizeof(VOI*));
+  for (i=0; i<N; i++){
+  
+    UnicodeSPrint(FileName, 512, L"%s\\%s_%03d.png", Path, Path, i);
+    Screen->Film[i] = egLoadImage(ThemeDir, FileName, FALSE);
+    if (!Screen->Film[i]) break;
+  }
+  Screen->Frames = i;
+  Screen->FrameTime = AnimeFrameTime[Screen->ID];
+  Screen->CurrentFrame = 0;
+  return TRUE;
+}
+

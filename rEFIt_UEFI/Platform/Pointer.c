@@ -249,7 +249,7 @@ VOID UpdatePointer()
     if (gPointer.newPlace.YPos < 0) gPointer.newPlace.YPos = 0;
     if (gPointer.newPlace.YPos > UGAHeight - 1) gPointer.newPlace.YPos = UGAHeight - 1;
     
-    if (PrintCount < 4) {
+    if (PrintCount < 1) {
       PrintPointerVars(gPointer.State.RelativeMovementX,
                        gPointer.State.RelativeMovementY,
                        ScreenRelX,
@@ -427,6 +427,7 @@ EFI_STATUS WaitForInputEventPoll(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault
     if (Status != EFI_TIMEOUT) {
       break;
     }
+    UpdateAnime(Screen);
     TimeoutRemain--;
     if (gPointer.SimplePointerProtocol) {
       UpdatePointer();

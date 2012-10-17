@@ -1004,6 +1004,8 @@ VOID		    DbgTimeInit(VOID);
 // Returned buffer should not be released.
 CHAR8       *DbgTime(VOID);
 
+UINT64      TimeDiff(UINT64 t0, UINT64 t1);
+
 
 //
 // BootOptions.c

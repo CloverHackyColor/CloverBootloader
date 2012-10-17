@@ -82,9 +82,10 @@ static REFIT_MENU_ENTRY MenuEntryReset    = { L"Restart Computer", TAG_RESET, 1,
 static REFIT_MENU_ENTRY MenuEntryShutdown = { L"Shut Down Computer", TAG_SHUTDOWN, 1, 0, 'U', NULL, NULL, {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone,  NULL };
 REFIT_MENU_ENTRY MenuEntryReturn   = { L"Return to Main Menu", TAG_RETURN, 0, 0, 0, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone,  NULL };
 
-static REFIT_MENU_SCREEN MainMenu    = {1, L"Main Menu", NULL, 0, NULL, 0, NULL, 0, L"Automatic boot" };
-static REFIT_MENU_SCREEN AboutMenu   = {2, L"About", NULL, 0, NULL, 0, NULL, 0, NULL };
-static REFIT_MENU_SCREEN HelpMenu    = {3, L"Help",  NULL, 0, NULL, 0, NULL, 0, NULL };
+static REFIT_MENU_SCREEN MainMenu    = {1, L"Main Menu", NULL, 0, NULL, 0, NULL, 0, L"Automatic boot", FALSE, 0, 0, 0,
+        0, 0, 0, NULL};
+static REFIT_MENU_SCREEN AboutMenu   = {2, L"About", NULL, 0, NULL, 0, NULL, 0, NULL, FALSE, 0, 0, 0, 0, 0, 0, NULL };
+static REFIT_MENU_SCREEN HelpMenu    = {3, L"Help",  NULL, 0, NULL, 0, NULL, 0, NULL, FALSE, 0, 0, 0, 0, 0, 0, NULL };
 
 static VOID AboutRefit(VOID)
 {
@@ -647,6 +648,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (LoaderTitle != NULL) ? LoaderTitle : FileName, Volume->VolName);
   SubScreen->TitleImage = Entry->me.Image;
+  SubScreen->AnimeRun = FALSE;
   VolumeSize = MultU64x32 (Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize) >> 20;
   AddMenuInfoLine(SubScreen, PoolPrint(L"Volume size: %dMb", VolumeSize));
   
@@ -944,6 +946,8 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen->Title = EfiStrDuplicate(LoaderTitle);
   SubScreen->TitleImage = Entry->me.Image;
+  SubScreen->ID = SCREEN_BOOT;
+  SubScreen->AnimeRun = FALSE;
   AddMenuInfoLine(SubScreen, DevicePathToStr(Volume->DevicePath));
   
   Status = FindBootOptionForFile (Entry->Volume->DeviceHandle,
@@ -1390,6 +1394,7 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Vo
   SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", LoaderTitle, VolDesc);
   SubScreen->TitleImage = Entry->me.Image;
+  SubScreen->AnimeRun = FALSE;
   
   // default entry
   SubEntry = AllocateZeroPool(sizeof(LEGACY_ENTRY));
