@@ -118,6 +118,7 @@ static VOID AboutRefit(VOID)
       AddMenuInfoLine(&AboutMenu, PoolPrint(L" Firmware: %s rev %d", gST->FirmwareVendor, gST->FirmwareRevision));
 #endif
         AddMenuInfoLine(&AboutMenu, PoolPrint(L" Screen Output: %s", egScreenDescription()));
+      AboutMenu.AnimeRun = GetAnime(&AboutMenu);
         AddMenuEntry(&AboutMenu, &MenuEntryReturn);
     }
     
@@ -290,7 +291,8 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"R - Soft Reset");
         AddMenuInfoLine(&HelpMenu, L"U - Shutdown");
         break;
-    }        
+    }
+    HelpMenu.AnimeRun = GetAnime(&HelpMenu);
     AddMenuEntry(&HelpMenu, &MenuEntryReturn);
   }
   
@@ -650,6 +652,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   SubScreen->TitleImage = Entry->me.Image;
 //  SubScreen->AnimeRun = FALSE;
   SubScreen->ID = OSType + 20;
+  DBG("get anime for os=%d\n", SubScreen->ID);
   SubScreen->AnimeRun = GetAnime(SubScreen);
   VolumeSize = MultU64x32 (Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize) >> 20;
   AddMenuInfoLine(SubScreen, PoolPrint(L"Volume size: %dMb", VolumeSize));
@@ -2151,6 +2154,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     } else {
       DefaultEntry = NULL;
     }
+    
+    MainMenu.AnimeRun = GetAnime(&MainMenu);
     // PauseForKey(L"Enter main loop");
     MainLoopRunning = TRUE;
     gEvent = 0; //clear to cancel loop

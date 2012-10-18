@@ -807,7 +807,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       prop = GetProperty(dictPointer,"BoardType");
       if(prop) {
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-        gSettings.BoardType = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
+        gSettings.BoardType = (UINT8)StrDecimalToUintn((CHAR16*)&UStr[0]);
       }
       
       prop = GetProperty(dictPointer,"Mobile");
@@ -1564,7 +1564,7 @@ EFI_STATUS ApplySettings()
   if (gCPUStructure.Turbo && gSettings.Turbo) {
     // Don't change cpu speed because we aren't changing control state
      if (gCPUStructure.Turbo4) {
-       gCPUStructure.MaxSpeed = DivU64x32(gCPUStructure.CPUFrequency, Mega);
+       gCPUStructure.MaxSpeed = (UINT32)DivU64x32(gCPUStructure.CPUFrequency, Mega);
 //       gCPUStructure.MaxSpeed = (UINT32)(DivU64x32(MultU64x64(gCPUStructure.FSBFrequency, gCPUStructure.Turbo4), Mega * 10)); 
      //gCPUStructure.CPUFrequency = DivU64x32(MultU64x64(gCPUStructure.Turbo4, gCPUStructure.FSBFrequency), 10);
      }

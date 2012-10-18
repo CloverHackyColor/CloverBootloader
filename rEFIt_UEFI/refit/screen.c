@@ -514,6 +514,16 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
     GraphicsScreenDirty = TRUE;
 }
 
+VOID BltImageTop(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos)
+{
+//  EG_IMAGE *CompImage;
+  if (!Image) {
+    return;
+  }
+  egDrawImageArea(Image, 0, 0, 0, 0, XPos, YPos);
+  GraphicsScreenDirty = TRUE;
+}
+
 VOID InitAnime()
 {
   INTN i;
@@ -530,7 +540,9 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen)
   if (!Screen || !Screen->AnimeRun) return;
   Now = AsmReadTsc();
   if (TimeDiff(Screen->LastDraw, Now) < Screen->FrameTime) return;
-  BltImage(Screen->Film[Screen->CurrentFrame], Screen->FilmX, Screen->FilmY);
+  if (Screen->Film[Screen->CurrentFrame]) {
+    BltImage(Screen->Film[Screen->CurrentFrame], Screen->FilmX, Screen->FilmY);
+  }
   Screen->CurrentFrame++;
   if (Screen->CurrentFrame > Screen->Frames) Screen->CurrentFrame = 0;
   Screen->LastDraw = Now;
@@ -554,13 +566,13 @@ BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
   for (i=0; i<N; i++){
   
     UnicodeSPrint(FileName, 512, L"%s\\%s_%03d.png", Path, Path, i);
-    DBG("Try to load file %s\n", FileName);
+//    DBG("Try to load file %s\n", FileName);
     p = egLoadImage(ThemeDir, FileName, TRUE);
     Screen->Film[i] = p;
     if (!p) break;
   }
   if (Screen->Film[0] != NULL) { 
-    Screen->Frames = i+1;
+    Screen->Frames = i;
   }
   Screen->FrameTime = AnimeFrameTime[Screen->ID];
   DBG(" found %d frames of the anime\n", i);
