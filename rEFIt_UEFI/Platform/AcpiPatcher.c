@@ -1148,7 +1148,11 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       newFadt->CstCnt = 0x85; //as in Mac
     }
     if (gSettings.EnableC2) newFadt->PLvl2Lat = 0x65;
-    if (gSettings.EnableC4) newFadt->PLvl3Lat = 0x3E9;
+    if (gSettings.C3Latency > 0) {
+      newFadt->PLvl3Lat = gSettings.C3Latency;
+    } else if (gSettings.EnableC4) {
+      newFadt->PLvl3Lat = 0x3E9;
+    }
     newFadt->IaPcBootArch = 0x3;
     newFadt->Flags |= 0x400; //Reset Register Supported
     XDsdt = newFadt->XDsdt; //save values if present

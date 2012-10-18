@@ -273,6 +273,11 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.PointerSpeed);
   InputItems[InputItemsCount].ItemType = Decimal;  //71
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.DoubleClickTime);
+  //reserve for mouse and continue
+  
+  InputItemsCount = 75;
+  InputItems[InputItemsCount].ItemType = Hex;  //75
+  InputItems[InputItemsCount++].SValue = PoolPrint(L"0x%04x", gSettings.C3Latency);
 
 }
 
@@ -465,6 +470,11 @@ VOID ApplyInputs(VOID)
     gSettings.DoubleClickTime = StrDecimalToUintn(InputItems[i].SValue);
     DBG("DoubleClickTime=%d ms\n", gSettings.DoubleClickTime);
   }
+
+  i = 75; 
+  if (InputItems[i].Valid) {
+    gSettings.C3Latency = (UINT16)StrHexToUint64(InputItems[i].SValue);
+  }  
   
   SaveSettings(); 
 }
@@ -1931,12 +1941,22 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
   InputBootArgs->Entry.Title = PoolPrint(L"Enable SpeedStep:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF; //cursor
-  InputBootArgs->Entry.ShortcutLetter = '2';
+  InputBootArgs->Entry.ShortcutLetter = 'S';
   InputBootArgs->Item = &InputItems[13];    
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-  
+    
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"C3Latency:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[75].SValue); //cursor
+  InputBootArgs->Entry.ShortcutLetter = 'L';
+  InputBootArgs->Item = &InputItems[75];    
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+    
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"BusSpeed [kHz]:");
   InputBootArgs->Entry.Tag = TAG_INPUT;

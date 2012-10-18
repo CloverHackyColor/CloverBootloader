@@ -674,6 +674,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           DBG(" C2 enabled\n");
         }
       }
+      gSettings.C3Latency = 0; //Usually it is 0x03e9, but if you want Turbo, you may set 0x00FA
+      prop = GetProperty(dictPointer, "C3Latency");
+      if(prop) {
+        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+        gSettings.C3Latency  = (UINT16)StrHexToUint64(UStr); 
+      }
+      
       
       prop = GetProperty(dictPointer, "EnableISS");
       gSettings.EnableISS = FALSE;
@@ -736,123 +743,101 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
     dictPointer = GetProperty(dict,"SMBIOS");
     if (dictPointer) {
       prop = GetProperty(dictPointer,"ProductName");
-      if(prop)
-      {
+      if(prop) {
+        MACHINE_TYPES Model;
         AsciiStrCpy(gSettings.ProductName, prop->string);
         // let's fill all other fields based on this ProductName
         // to serve as default
-        {
-          MACHINE_TYPES Model;
-          Model = GetModelFromString(gSettings.ProductName);
-          if (Model != MaxMachineType) {
-            SetDMISettingsForModel(Model);
-          }
+        Model = GetModelFromString(gSettings.ProductName);
+        if (Model != MaxMachineType) {
+          SetDMISettingsForModel(Model);
         }
       }
       prop = GetProperty(dictPointer,"BiosVendor");
-      if(prop)
-      {
+      if(prop) {
         AsciiStrCpy(gSettings.VendorName, prop->string);
       }
       prop = GetProperty(dictPointer,"BiosVersion");
-      if(prop)
-      {
+      if(prop) {
         AsciiStrCpy(gSettings.RomVersion, prop->string);
       }
       prop = GetProperty(dictPointer,"BiosReleaseDate");
-      if(prop)
-      {
+      if(prop) {
         AsciiStrCpy(gSettings.ReleaseDate, prop->string);
       }
       prop = GetProperty(dictPointer,"Manufacturer");
-      if(prop)
-      {
+      if(prop) {
         AsciiStrCpy(gSettings.ManufactureName, prop->string);
       }
       prop = GetProperty(dictPointer,"Version");
-      if(prop)
-      {
+      if(prop) {
         AsciiStrCpy(gSettings.VersionNr, prop->string);
       }
       prop = GetProperty(dictPointer,"Family");
-      if(prop)
-      {
+      if(prop) {
         AsciiStrCpy(gSettings.FamilyName, prop->string);
       }
       prop = GetProperty(dictPointer,"SerialNumber");
-      if(prop)
-      {
+      if(prop) {
         ZeroMem(gSettings.SerialNr, 64);
         AsciiStrCpy(gSettings.SerialNr, prop->string);
       }
       prop = GetProperty(dictPointer,"SmUUID");
-      if(prop)
-      {
+      if(prop) {
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
         Status = StrToGuidLE((CHAR16*)&UStr[0], &gSettings.SmUUID);
       }  
       
       prop = GetProperty(dictPointer,"BoardManufacturer");
-      if(prop)
-      {
+      if(prop) {
         AsciiStrCpy(gSettings.BoardManufactureName, prop->string);
       }
       prop = GetProperty(dictPointer,"BoardSerialNumber");
-      if(prop)
-      {
+      if(prop) {
         AsciiStrCpy(gSettings.BoardSerialNumber, prop->string);
       }
       prop = GetProperty(dictPointer,"Board-ID");
-      if(prop)
-      {
+      if(prop) {
         AsciiStrCpy(gSettings.BoardNumber, prop->string);
       }
       prop = GetProperty(dictPointer,"BoardVersion");
-      if(prop)
-      {
+      if(prop) {
         AsciiStrCpy(gSettings.BoardVersion, prop->string);
       }
       prop = GetProperty(dictPointer,"BoardType");
-      if(prop)
-      {
+      if(prop) {
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
         gSettings.BoardType = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
       }
       
       prop = GetProperty(dictPointer,"Mobile");
-      if(prop)
-      {
+      if(prop) {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
           gSettings.Mobile = TRUE;
       }
       
       prop = GetProperty(dictPointer,"LocationInChassis");
-      if(prop)
-      {
+      if(prop) {
         AsciiStrCpy(gSettings.LocationInChassis, prop->string);
       }
       
       prop = GetProperty(dictPointer,"ChassisManufacturer");
-      if(prop)
-      {
+      if(prop) {
         AsciiStrCpy(gSettings.ChassisManufacturer, prop->string);
       }
       prop = GetProperty(dictPointer,"ChassisAssetTag");
-      if(prop)
-      {
+      if(prop) {
         AsciiStrCpy(gSettings.ChassisAssetTag, prop->string);
       }
       prop = GetProperty(dictPointer,"ChassisType");
-      if(prop)
-      {
+      if(prop) {
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
         gSettings.ChassisType = (UINT8)StrHexToUint64((CHAR16*)&UStr[0]);
         DBG("Config set ChassisType=0x%x\n", gSettings.ChassisType);
       }
      //gFwFeatures = 0xC0001403 - by default
       prop = GetProperty(dictPointer, "FirmwareFeatures");
-      if(prop)
-      {
+      if(prop) {
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
         gFwFeatures = (UINT32)StrHexToUint64((CHAR16*)&UStr[0]);
       }
@@ -863,8 +848,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
     if (dictPointer) {
       prop = GetProperty(dictPointer,"Turbo");
       gSettings.Turbo = FALSE;
-      if(prop)
-      {
+      if(prop) {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
           gSettings.Turbo = TRUE;
           DBG("Config set Turbo\n");
@@ -872,31 +856,27 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       }
       prop = GetProperty(dictPointer,"QPI");
       gSettings.QPI = (UINT16)gCPUStructure.ProcessorInterconnectSpeed; //MHz
-      if(prop)
-      {
+      if(prop) {
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
         gSettings.QPI = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
         DBG("Config set QPI=%dMHz\n", gSettings.QPI);
       }
       prop = GetProperty(dictPointer,"CpuFrequencyMHz");
-      if(prop)
-      {
+      if(prop) {
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
         gSettings.CpuFreqMHz = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
         DBG("Config set CpuFreq=%dMHz\n", gSettings.CpuFreqMHz);
       }
       prop = GetProperty(dictPointer,"ProcessorType");
       gSettings.CpuType = GetAdvancedCpuType();
-      if(prop)
-      {
+      if(prop) {
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
         gSettings.CpuType = (UINT16)StrHexToUint64((CHAR16*)&UStr[0]);
         DBG("Config set CpuType=%x\n", gSettings.CpuType);
       }
       
       prop = GetProperty(dictPointer,"BusSpeedkHz");
-      if(prop)
-      {
+      if(prop) {
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
         gSettings.BusSpeed = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);
         DBG("Config set BusSpeed=%dkHz\n", gSettings.BusSpeed);
@@ -910,23 +890,20 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
     if (dictPointer) {
       gSettings.KPDebug = FALSE;
       prop = GetProperty(dictPointer,"Debug");
-      if(prop)
-      {
+      if(prop) {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
           gSettings.KPDebug = TRUE;
         }
       }
       prop = GetProperty(dictPointer,"KernelCpu");
-      if(prop)
-      {
+      if(prop) {
         gSettings.KPKernelCpu = FALSE;
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
           gSettings.KPKernelCpu = TRUE;
         }
       }
       prop = GetProperty(dictPointer,"ATIConnectorsController");
-      if(prop)
-      {
+      if(prop) {
         UINTN len = 0;
         // ATIConnectors patch
         gSettings.KPATIConnectorsController = AllocateZeroPool((AsciiStrLen(prop->string) + 1) * sizeof(CHAR16));
@@ -939,8 +916,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         if (gSettings.KPATIConnectorsData == NULL
             || gSettings.KPATIConnectorsPatch == NULL
             || gSettings.KPATIConnectorsDataLen == 0
-            || gSettings.KPATIConnectorsDataLen != i)
-        {
+            || gSettings.KPATIConnectorsDataLen != i) {
           // invalid params - no patching
           DBG("ATIConnectors patch: invalid parameters!\n");
           if (gSettings.KPATIConnectorsController != NULL) FreePool(gSettings.KPATIConnectorsController);
@@ -956,16 +932,14 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         }
       }
       prop = GetProperty(dictPointer,"AsusAICPUPM");
-      if(prop)
-      {
+      if(prop) {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
           gSettings.KPAsusAICPUPM = TRUE;
           gSettings.KPKextPatchesNeeded = TRUE;
         }
       }
       prop = GetProperty(dictPointer,"AppleRTC");
-      if(prop)
-      {
+      if(prop) {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
           gSettings.KPAppleRTC = TRUE;
           gSettings.KPKextPatchesNeeded = TRUE;
@@ -1015,96 +989,84 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
     if (dictPointer) {
       gSettings.HVHideAllOSX = FALSE;
       prop = GetProperty(dictPointer,"HideAllOSX");
-      if(prop)
-      {
+      if(prop) {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
           gSettings.HVHideAllOSX = TRUE;
         }
       }
       gSettings.HVHideAllOSXInstall = FALSE;
       prop = GetProperty(dictPointer,"HideAllOSXInstall");
-      if(prop)
-      {
+      if(prop) {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
           gSettings.HVHideAllOSXInstall = TRUE;
         }
       }
       gSettings.HVHideAllRecovery = FALSE;
       prop = GetProperty(dictPointer,"HideAllRecovery");
-      if(prop)
-      {
+      if(prop) {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
           gSettings.HVHideAllRecovery = TRUE;
         }
       }
       gSettings.HVHideAllWindowsEFI = FALSE;
       prop = GetProperty(dictPointer,"HideAllWindowsEFI");
-      if(prop)
-      {
+      if(prop) {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
           gSettings.HVHideAllWindowsEFI = TRUE;
         }
       }
       gSettings.HVHideAllGrub = FALSE;
       prop = GetProperty(dictPointer,"HideAllGrub");
-      if(prop)
-      {
+      if(prop) {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
           gSettings.HVHideAllGrub = TRUE;
         }
       }
       gSettings.HVHideAllGentoo = FALSE;
       prop = GetProperty(dictPointer,"HideAllGentoo");
-      if(prop)
-      {
+      if(prop) {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
           gSettings.HVHideAllGentoo = TRUE;
         }
       }
       gSettings.HVHideAllRedHat = FALSE;
       prop = GetProperty(dictPointer,"HideAllRedHat");
-      if(prop)
-      {
+      if(prop) {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
           gSettings.HVHideAllRedHat = TRUE;
         }
       }
       gSettings.HVHideAllUbuntu = FALSE;
       prop = GetProperty(dictPointer,"HideAllUbuntu");
-      if(prop)
-      {
+      if(prop) {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
           gSettings.HVHideAllUbuntu = TRUE;
         }
       }
       gSettings.HVHideAllLinuxMint = FALSE;
       prop = GetProperty(dictPointer,"HideAllLinuxMint");
-      if(prop)
-      {
+      if(prop) {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
           gSettings.HVHideAllLinuxMint = TRUE;
         }
       }
       gSettings.HVHideAllSuSe = FALSE;
       prop = GetProperty(dictPointer,"HideAllSuSe");
-      if(prop)
-      {
+      if(prop) {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
           gSettings.HVHideAllSuSe = TRUE;
         }
       }
       gSettings.HVHideAllUEFI = FALSE;
       prop = GetProperty(dictPointer,"HideAllUEFI");
-      if(prop)
-      {
+      if(prop) {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
           gSettings.HVHideAllUEFI = TRUE;
         }
       }
       gSettings.HVHideAllLegacy = FALSE;
       prop = GetProperty(dictPointer,"HideAllLegacy");
-      if(prop)
-      {
+      if(prop) {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
           gSettings.HVHideAllLegacy = TRUE;
         }
