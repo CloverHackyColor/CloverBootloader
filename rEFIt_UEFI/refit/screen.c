@@ -39,7 +39,7 @@
 #include "egemb_refit_banner.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_SCR 0
+#define DEBUG_SCR 1
 #else
 #define DEBUG_SCR DEBUG_ALL
 #endif
@@ -66,6 +66,8 @@ static VOID DrawScreenHeader(IN CHAR16 *Title);
 INTN   UGAWidth;
 INTN   UGAHeight;
 BOOLEAN AllowGraphicsMode;
+
+EG_RECT  BannerPlace = {0, 0, 0, 0};
 
 EG_PIXEL StdBackgroundPixel  = { 0xbf, 0xbf, 0xbf, 0 };
 EG_PIXEL MenuBackgroundPixel = { 0xbf, 0xbf, 0xbf, 0 };
@@ -364,7 +366,14 @@ VOID SwitchToGraphicsAndClear(VOID)
     if (GraphicsScreenDirty)
         BltClearScreen(TRUE);
 }
-
+/*
+typedef struct {
+  INTN     XPos;
+  INTN     YPos;
+  INTN     Width;
+  INTN     Height;
+} EG_RECT;
+*/
 VOID BltClearScreen(IN BOOLEAN ShowBanner)
 {
   static EG_IMAGE *Banner = NULL;
@@ -384,9 +393,11 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
     // clear and draw banner
     egClearScreen(&MenuBackgroundPixel);
     if (Banner != NULL){
-      
-      BltImage(Banner, (UGAWidth - Banner->Width) >> 1,
-               (BanHeight >= Banner->Height) ? (BanHeight - Banner->Height) : 0);
+      BannerPlace.XPos = (UGAWidth - Banner->Width) >> 1;
+      BannerPlace.YPos = (BanHeight >= Banner->Height) ? (BanHeight - Banner->Height) : 0;
+      BannerPlace.Width = Banner->Width;
+      BannerPlace.Height = (BanHeight >= Banner->Height) ? Banner->Height : BanHeight;
+      BltImage(Banner, BannerPlace.XPos, BannerPlace.YPos);
     }
   } else {
     // clear to standard background color
@@ -503,6 +514,16 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
     GraphicsScreenDirty = TRUE;
 }
 
+VOID InitAnime()
+{
+  INTN i;
+  for (i=0; i<MAX_ANIME; i++){
+    AnimeName[i] = NULL;
+    AnimeFrames[i] = 0;
+    AnimeFrameTime[i] = 100;
+  }
+}
+
 VOID UpdateAnime(REFIT_MENU_SCREEN *Screen)
 {
   UINT64 Now;
@@ -515,15 +536,12 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen)
   Screen->LastDraw = Now;
 }
 
-static CHAR16*  AnimeName[16]       = {NULL};
-static INTN     AnimeFrames[16]     = {0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-static INTN     AnimeFrameTime[16]  = {0, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
 BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
 {
   CHAR16      FileName[256];
   CHAR16      *Path;
   INTN        i, N;
+  EG_IMAGE    *p = NULL;
   
   if (!Screen) return FALSE;
   
@@ -531,16 +549,21 @@ BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
   Path = AnimeName[Screen->ID];
   if (!Path) return FALSE;
   N = AnimeFrames[Screen->ID];
-  
+  DBG("Use anime=%s frames=%d\n", Path, N);
   Screen->Film = (EG_IMAGE**)AllocateZeroPool(N * sizeof(VOID*));
   for (i=0; i<N; i++){
   
     UnicodeSPrint(FileName, 512, L"%s\\%s_%03d.png", Path, Path, i);
-    Screen->Film[i] = egLoadImage(ThemeDir, FileName, FALSE);
-    if (!Screen->Film[i]) break;
+    DBG("Try to load file %s\n", FileName);
+    p = egLoadImage(ThemeDir, FileName, TRUE);
+    Screen->Film[i] = p;
+    if (!p) break;
   }
-  Screen->Frames = i;
+  if (Screen->Film[0] != NULL) { 
+    Screen->Frames = i+1;
+  }
   Screen->FrameTime = AnimeFrameTime[Screen->ID];
+  DBG(" found %d frames of the anime\n", i);
   Screen->CurrentFrame = 0;
   return TRUE;
 }

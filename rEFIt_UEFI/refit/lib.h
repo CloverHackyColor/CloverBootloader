@@ -230,6 +230,8 @@ typedef struct {
 #define SCREEN_DSDT       8
 #define SCREEN_BOOT       9
 
+#define MAX_ANIME  40
+
 struct _refit_menu_screen;
 
 typedef struct _refit_menu_entry {
@@ -358,9 +360,16 @@ extern CHAR16           *ThemePath;
 extern EFI_FILE         *OEMDir;
 extern CHAR16           *OEMPath;
 
+extern CHAR16*  AnimeName[];     
+extern INTN     AnimeFrames[];   
+extern INTN     AnimeFrameTime[];
+
+
 extern REFIT_VOLUME     *SelfVolume;
 extern REFIT_VOLUME     **Volumes;
 extern UINTN            VolumesCount;
+
+
 
 EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle);
 EFI_STATUS GetRootFromPath(IN EFI_DEVICE_PATH_PROTOCOL* DevicePath, OUT EFI_FILE **Root);
@@ -430,6 +439,8 @@ extern EG_PIXEL StdBackgroundPixel;
 extern EG_PIXEL MenuBackgroundPixel;
 extern EG_PIXEL InputBackgroundPixel;
 
+extern EG_RECT  BannerPlace;
+
 
 VOID InitScreen(VOID);
 VOID SetupScreen(VOID);
@@ -455,7 +466,9 @@ VOID BltImageAlpha(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos, IN EG_PIXEL *
 VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XPos, IN INTN YPos);
 VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG_IMAGE *BadgeImage, IN INTN XPos, IN INTN YPos);
 
-VOID UpdateAnime(REFIT_MENU_SCREEN *Screen);
+VOID    InitAnime(VOID);
+VOID    UpdateAnime(REFIT_MENU_SCREEN *Screen);
+BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen);
 //
 // icns loader module
 //

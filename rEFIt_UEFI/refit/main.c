@@ -642,13 +642,15 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   }
   Entry->me.ShortcutLetter = ShortcutLetter;
 //  if (Entry->me.Image == NULL)
-    Entry->me.Image = LoadOSIcon(OSIconName, L"unknown", FALSE);
+  Entry->me.Image = LoadOSIcon(OSIconName, L"unknown", FALSE);
   
   // create the submenu
   SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (LoaderTitle != NULL) ? LoaderTitle : FileName, Volume->VolName);
   SubScreen->TitleImage = Entry->me.Image;
-  SubScreen->AnimeRun = FALSE;
+//  SubScreen->AnimeRun = FALSE;
+  SubScreen->ID = OSType + 20;
+  SubScreen->AnimeRun = GetAnime(SubScreen);
   VolumeSize = MultU64x32 (Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize) >> 20;
   AddMenuInfoLine(SubScreen, PoolPrint(L"Volume size: %dMb", VolumeSize));
   
@@ -947,7 +949,7 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   SubScreen->Title = EfiStrDuplicate(LoaderTitle);
   SubScreen->TitleImage = Entry->me.Image;
   SubScreen->ID = SCREEN_BOOT;
-  SubScreen->AnimeRun = FALSE;
+  SubScreen->AnimeRun = GetAnime(SubScreen);
   AddMenuInfoLine(SubScreen, DevicePathToStr(Volume->DevicePath));
   
   Status = FindBootOptionForFile (Entry->Volume->DeviceHandle,
@@ -1973,6 +1975,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (EFI_ERROR(Status))
     return Status;
   
+  InitAnime();
   InitializeUnicodeCollationProtocol();
   
   // read GUI configuration
@@ -2045,6 +2048,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //        DBG("reinit OK\n");
   ZeroMem((VOID*)&gSettings, sizeof(SETTINGS_DATA));
   ZeroMem((VOID*)&gGraphics[0], sizeof(GFX_PROPERTIES) * 4);
+
   GuiEventsInitialize();
 //  DBG("GuiEventsInitialize OK\n");
   GetCPUProperties();
@@ -2197,8 +2201,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         }      
         continue;
       }
-      
-      
+            
       // We don't allow exiting the main menu with the Escape key.
       if (MenuExit == MENU_EXIT_ESCAPE)
         break;   //refresh main menu
@@ -2214,8 +2217,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
           
         case TAG_SHUTDOWN: // Shut Down
           TerminateScreen();
-          gRS->ResetSystem(EfiResetShutdown, EFI_SUCCESS, 0, NULL);
+ //         gRS->ResetSystem(EfiResetShutdown, EFI_SUCCESS, 0, NULL);
           MainLoopRunning = FALSE;   // just in case we get this far
+          ReinitDesktop = FALSE;
+          AfterTool = TRUE;
           break;
           
         case TAG_OPTIONS:    // Options like KernelFlags, DSDTname etc.

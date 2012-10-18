@@ -40,7 +40,7 @@
 #define MAX_FILE_SIZE (1024*1024*1024)
 
 #ifndef DEBUG_ALL
-#define DEBUG_IMG 0
+#define DEBUG_IMG 1
 #else
 #define DEBUG_IMG DEBUG_ALL
 #endif
@@ -325,13 +325,16 @@ EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN BOOLE
     
     // load file
     Status = egLoadFile(BaseDir, FileName, &FileData, &FileDataLength);
-//  DBG("File=%s loaded with status=%r\n", FileName, Status);
+  DBG("File=%s loaded with status=%r length=%d\n", FileName, Status, FileDataLength);
     if (EFI_ERROR(Status))
         return NULL;
-    
+  DBG("   extension = %s\n", egFindExtension(FileName));  
     // decode it
     NewImage = egDecodeAny(FileData, FileDataLength, egFindExtension(FileName), 128, WantAlpha);
 //  DBG("decoded\n");
+  if (!NewImage) {
+    DBG("not decoded\n");
+  }
     FreePool(FileData);
 //   DBG("FreePool OK\n"); 
     return NewImage;

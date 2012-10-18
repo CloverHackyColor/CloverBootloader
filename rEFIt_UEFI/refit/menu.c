@@ -1371,10 +1371,11 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       SwitchToGraphicsAndClear();
       egMeasureText(Screen->Title, &ItemWidth, NULL);
       DrawMenuText(Screen->Title, 0, ((UGAWidth - ItemWidth) >> 1) - TEXT_XMARGIN, EntriesPosY - TextHeight * 2, 0xFFFF);
-      if (Screen->TitleImage)
-        BltImageAlpha(Screen->TitleImage,
-                      (INTN)(EntriesPosX - (Screen->TitleImage->Width + TITLEICON_SPACING)), (INTN)EntriesPosY,
-                      &MenuBackgroundPixel, 16);
+      Screen->FilmX = (INTN)(EntriesPosX - (Screen->TitleImage->Width + TITLEICON_SPACING));
+      Screen->FilmY = (INTN)EntriesPosY;
+      if (Screen->TitleImage) {
+        BltImageAlpha(Screen->TitleImage, Screen->FilmX, Screen->FilmY, &MenuBackgroundPixel, 16);
+      }
       if (Screen->InfoLineCount > 0) {
         for (i = 0; i < (INTN)Screen->InfoLineCount; i++) {
           DrawMenuText(Screen->InfoLines[i], 0, EntriesPosX, EntriesPosY, 0xFFFF);
@@ -1641,6 +1642,9 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       //InitSelection(); //Slice - I changed order because of background pixel
       SwitchToGraphicsAndClear();
       InitSelection();
+      Screen->FilmX = BannerPlace.XPos;
+      Screen->FilmY = BannerPlace.YPos;
+      
  //     DBG("main menu inited\n");
       break;
       
@@ -1745,7 +1749,7 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
   SubScreen->Title = Entry->Title;
   SubScreen->TitleImage = Entry->Image;
   SubScreen->ID = SCREEN_GRAPHICS;
-  SubScreen->AnimeRun = FALSE;
+  SubScreen->AnimeRun = GetAnime(SubScreen);
   AddMenuInfoLine(SubScreen, PoolPrint(L"Number of VideoCards=%d", NGFX));
   
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
@@ -1843,7 +1847,7 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
   SubScreen->Title = Entry->Title;
   SubScreen->TitleImage = Entry->Image;
   SubScreen->ID = SCREEN_CPU;
-  SubScreen->AnimeRun = FALSE;
+  SubScreen->AnimeRun = GetAnime(SubScreen);
   AddMenuInfoLine(SubScreen, PoolPrint(L"%a", gCPUStructure.BrandString));
   AddMenuInfoLine(SubScreen, PoolPrint(L"Model: %2x/%2x/%2x",
       gCPUStructure.Family, gCPUStructure.Model, gCPUStructure.Stepping));
@@ -1998,7 +2002,7 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   SubScreen->Title = Entry->Title;
   SubScreen->TitleImage = Entry->Image;
   SubScreen->ID = SCREEN_BINARIES;
-  SubScreen->AnimeRun = FALSE;
+  SubScreen->AnimeRun = GetAnime(SubScreen);
   AddMenuInfoLine(SubScreen, PoolPrint(L"%a", gCPUStructure.BrandString));
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
@@ -2062,7 +2066,7 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   SubScreen->Title = Entry->Title;
   SubScreen->TitleImage = Entry->Image;
   SubScreen->ID = SCREEN_DSDT;
-  SubScreen->AnimeRun = FALSE;
+  SubScreen->AnimeRun = GetAnime(SubScreen);
 
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   UnicodeSPrint(Flags, 255, L"DSDT name:");

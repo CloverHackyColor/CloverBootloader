@@ -229,7 +229,9 @@
 		<key>EnableC2</key>
 		<string>Yes</string>
 		<key>EnableISS</key>
-		<string>Yes</string>
+		<string>Yes</string> 
+		<key>C3Latency</key>
+		<string>0x03E9</string>
 		<key>ResetAddress</key>
 		<string>0x64</string>
 		<key>ResetValue</key>
