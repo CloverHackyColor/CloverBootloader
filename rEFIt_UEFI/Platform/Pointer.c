@@ -169,6 +169,7 @@ VOID KillMouse()
 
 // input - tsc
 // output - milliseconds
+// the caller is responsible for t1 > t0
 UINT64 TimeDiff(UINT64 t0, UINT64 t1) 
 {
   return DivU64x64Remainder((t1 - t0), DivU64x32(gCPUStructure.TSCFrequency, 1000), 0);

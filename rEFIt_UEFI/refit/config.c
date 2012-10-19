@@ -59,13 +59,13 @@
 #define ENCODING_UTF16_LE   (2)
 
 
-CHAR16*  AnimeName[MAX_ANIME];     // = {NULL};
-INTN     AnimeFrames[MAX_ANIME];   //  = {0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-INTN     AnimeFrameTime[MAX_ANIME];//  = {0, 100, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+CHAR16*  AnimeName[MAX_ANIME];     
+INTN     AnimeFrames[MAX_ANIME];   
+UINTN    AnimeFrameTime[MAX_ANIME];
 
 // global configuration with default values
 
-REFIT_CONFIG        GlobalConfig = { FALSE, -1, 0, 0, 0, FALSE, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF00, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, FALSE, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF00, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
 
 //
 // read a file into a buffer
@@ -148,8 +148,8 @@ static CHAR16 *ReadLine(REFIT_FILE *File)
   
   if (File->Encoding == ENCODING_ISO8859_1 || File->Encoding == ENCODING_UTF8) {
     
-    CHAR8 *p, *LineStart, *LineEnd;
-    
+    CHAR8   *p, *LineStart, *LineEnd;
+        
     p = File->Current8Ptr;
     if (p >= File->End8Ptr)
       return NULL;
@@ -448,7 +448,9 @@ VOID ReadConfig(VOID)
       
     } else if (StriCmp(TokenList[0], L"anime") == 0) {
       ID = (INTN)StrDecimalToUintn(TokenList[1]);   //AnimationID
+      DBG("read anime ID=%d\n", ID);
       AnimeName[ID] = EfiStrDuplicate(TokenList[2]);
+      DBG("read anime name=%s\n", AnimeName[ID]);
       if (TokenCount <= 3) {
         AnimeFrames[ID] = 100; //as we have name we propose many frames here
       } else {
@@ -456,9 +458,10 @@ VOID ReadConfig(VOID)
         if (TokenCount <= 4) {
           AnimeFrameTime[ID] = 100; //ms
         } else {
-          AnimeFrameTime[ID] = (INTN)StrDecimalToUintn(TokenList[4]);
+          AnimeFrameTime[ID] = StrDecimalToUintn(TokenList[4]);
         }
       }
+      DBG("read anime frames=%d\n", AnimeFrames[ID]);
       
     } else if (StriCmp(TokenList[0], L"font_file_name") == 0) {
       HandleString(TokenList, TokenCount, &(GlobalConfig.FontFileName));

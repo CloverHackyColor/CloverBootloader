@@ -268,7 +268,7 @@ typedef struct _refit_menu_screen {
   UINT64            LastDraw;
   INTN              CurrentFrame;
   INTN              Frames;
-  INTN              FrameTime; //ms
+  UINTN             FrameTime; //ms
   INTN              FilmX, FilmY;
   EG_IMAGE          **Film;
 } REFIT_MENU_SCREEN;
@@ -360,9 +360,9 @@ extern CHAR16           *ThemePath;
 extern EFI_FILE         *OEMDir;
 extern CHAR16           *OEMPath;
 
-extern CHAR16*  AnimeName[];     
-extern INTN     AnimeFrames[];   
-extern INTN     AnimeFrameTime[];
+extern CHAR16*          AnimeName[];     
+extern INTN             AnimeFrames[];   
+extern UINTN            AnimeFrameTime[];
 
 
 extern REFIT_VOLUME     *SelfVolume;

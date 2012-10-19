@@ -34,7 +34,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Platform.h"
+//#include "Platform.h"
+#include "libegint.h"
 
 #include "egemb_refit_banner.h"
 
@@ -514,16 +515,6 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
     GraphicsScreenDirty = TRUE;
 }
 
-VOID BltImageTop(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos)
-{
-//  EG_IMAGE *CompImage;
-  if (!Image) {
-    return;
-  }
-  egDrawImageArea(Image, 0, 0, 0, 0, XPos, YPos);
-  GraphicsScreenDirty = TRUE;
-}
-
 VOID InitAnime()
 {
   INTN i;
@@ -534,17 +525,36 @@ VOID InitAnime()
   }
 }
 
+static EG_IMAGE    *CompImage = NULL;
+
 VOID UpdateAnime(REFIT_MENU_SCREEN *Screen)
 {
-  UINT64 Now;
+  UINT64      Now;
+  if (!CompImage){
+    CompImage = egCreateImage(Screen->Film[0]->Width, Screen->Film[0]->Height, TRUE);
+  }
+  
   if (!Screen || !Screen->AnimeRun) return;
   Now = AsmReadTsc();
+  if (Screen->LastDraw == 0) {
+    //first start, we should save background into last frame
+    egTakeImage(Screen->Film[Screen->Frames],
+                Screen->FilmX, Screen->FilmY,
+                Screen->Film[Screen->Frames]->Width,
+                Screen->Film[Screen->Frames]->Height);
+  }
   if (TimeDiff(Screen->LastDraw, Now) < Screen->FrameTime) return;
   if (Screen->Film[Screen->CurrentFrame]) {
-    BltImage(Screen->Film[Screen->CurrentFrame], Screen->FilmX, Screen->FilmY);
+    egRawCopy(CompImage->PixelData, Screen->Film[Screen->Frames]->PixelData,
+              Screen->Film[Screen->Frames]->Width, 
+              Screen->Film[Screen->Frames]->Height,
+              CompImage->Width,
+              Screen->Film[Screen->Frames]->Width);
+    egComposeImage(CompImage, Screen->Film[Screen->CurrentFrame], 0, 0);
+    BltImage(CompImage, Screen->FilmX, Screen->FilmY);
   }
   Screen->CurrentFrame++;
-  if (Screen->CurrentFrame > Screen->Frames) Screen->CurrentFrame = 0;
+  if (Screen->CurrentFrame >= Screen->Frames) Screen->CurrentFrame = 0;
   Screen->LastDraw = Now;
 }
 
@@ -573,10 +583,13 @@ BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
   }
   if (Screen->Film[0] != NULL) { 
     Screen->Frames = i;
+    //Create background frame
+    Screen->Film[i] = egCreateImage(Screen->Film[0]->Width, Screen->Film[0]->Height, FALSE);
   }
   Screen->FrameTime = AnimeFrameTime[Screen->ID];
   DBG(" found %d frames of the anime\n", i);
   Screen->CurrentFrame = 0;
+  Screen->LastDraw = 0;
   return TRUE;
 }
 
