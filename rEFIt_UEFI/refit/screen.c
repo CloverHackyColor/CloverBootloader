@@ -538,6 +538,7 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen)
   Now = AsmReadTsc();
   if (Screen->LastDraw == 0) {
     //first start, we should save background into last frame
+    egFillImageArea(CompImage, 0, 0, CompImage->Width, CompImage->Height, &MenuBackgroundPixel);
     egTakeImage(Screen->Film[Screen->Frames],
                 Screen->FilmX, Screen->FilmY,
                 Screen->Film[Screen->Frames]->Width,
