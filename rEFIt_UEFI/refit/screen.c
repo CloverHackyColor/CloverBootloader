@@ -526,14 +526,19 @@ VOID InitAnime()
 }
 
 static EG_IMAGE    *CompImage = NULL;
+#define MAX_SIZE_ANIME 256
 
 VOID UpdateAnime(REFIT_MENU_SCREEN *Screen)
 {
   UINT64      Now;
-  if (!CompImage){
+  if (!CompImage ||
+      (CompImage->Width != Screen->Film[0]->Width) ||
+      (CompImage->Height != Screen->Film[0]->Height)){
+    if (CompImage) {
+      egFreeImage(CompImage);
+    }
     CompImage = egCreateImage(Screen->Film[0]->Width, Screen->Film[0]->Height, TRUE);
-  }
-  
+  }   
   if (!Screen || !Screen->AnimeRun) return;
   Now = AsmReadTsc();
   if (Screen->LastDraw == 0) {
@@ -555,7 +560,10 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen)
     BltImage(CompImage, Screen->FilmX, Screen->FilmY);
   }
   Screen->CurrentFrame++;
-  if (Screen->CurrentFrame >= Screen->Frames) Screen->CurrentFrame = 0;
+  if (Screen->CurrentFrame >= Screen->Frames) {
+    Screen->AnimeRun = !Screen->Once;
+    Screen->CurrentFrame = 0;
+  }
   Screen->LastDraw = Now;
 }
 
@@ -582,15 +590,17 @@ BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
     Screen->Film[i] = p;
     if (!p) break;
   }
-  if (Screen->Film[0] != NULL) { 
-    Screen->Frames = i;
+  if (Screen->Film[0] == NULL)  return FALSE;
+
+  Screen->Frames = i;
     //Create background frame
-    Screen->Film[i] = egCreateImage(Screen->Film[0]->Width, Screen->Film[0]->Height, FALSE);
-  }
+  Screen->Film[i] = egCreateImage(Screen->Film[0]->Width, Screen->Film[0]->Height, FALSE);
+
   Screen->FrameTime = AnimeFrameTime[Screen->ID];
   DBG(" found %d frames of the anime\n", i);
   Screen->CurrentFrame = 0;
   Screen->LastDraw = 0;
+  Screen->Once = AnimeOnce[Screen->ID];
   return TRUE;
 }
 

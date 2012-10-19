@@ -63,7 +63,7 @@
 
 // scrolling definitions
 static INTN MaxItemOnScreen = -1;
-REFIT_MENU_SCREEN OptionMenu  = {4, L"Options", NULL, 0, NULL, 0, NULL, 0, NULL, FALSE, 0, 0, 0, 0, 0, 0, NULL };
+REFIT_MENU_SCREEN OptionMenu  = {4, L"Options", NULL, 0, NULL, 0, NULL, 0, NULL, FALSE, FALSE, 0, 0, 0, 0, 0, 0, NULL };
 extern REFIT_MENU_ENTRY MenuEntryReturn;
 
 #define SCROLL_LINE_UP    (0)

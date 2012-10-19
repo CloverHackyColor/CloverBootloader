@@ -265,6 +265,7 @@ typedef struct _refit_menu_screen {
   INTN              TimeoutSeconds;
   CHAR16            *TimeoutText;
   BOOLEAN           AnimeRun;
+  BOOLEAN           Once;
   UINT64            LastDraw;
   INTN              CurrentFrame;
   INTN              Frames;
@@ -363,6 +364,7 @@ extern CHAR16           *OEMPath;
 extern CHAR16*          AnimeName[];     
 extern INTN             AnimeFrames[];   
 extern UINTN            AnimeFrameTime[];
+extern BOOLEAN          AnimeOnce[];
 
 
 extern REFIT_VOLUME     *SelfVolume;

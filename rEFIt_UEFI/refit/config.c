@@ -62,6 +62,7 @@
 CHAR16*  AnimeName[MAX_ANIME];     
 INTN     AnimeFrames[MAX_ANIME];   
 UINTN    AnimeFrameTime[MAX_ANIME];
+BOOLEAN  AnimeOnce[MAX_ANIME];
 
 // global configuration with default values
 
@@ -450,7 +451,7 @@ VOID ReadConfig(VOID)
       ID = (INTN)StrDecimalToUintn(TokenList[1]);   //AnimationID
       DBG("read anime ID=%d\n", ID);
       AnimeName[ID] = EfiStrDuplicate(TokenList[2]);
-      DBG("read anime name=%s\n", AnimeName[ID]);
+      DBG("           name=%s\n", AnimeName[ID]);
       if (TokenCount <= 3) {
         AnimeFrames[ID] = 100; //as we have name we propose many frames here
       } else {
@@ -459,9 +460,15 @@ VOID ReadConfig(VOID)
           AnimeFrameTime[ID] = 100; //ms
         } else {
           AnimeFrameTime[ID] = StrDecimalToUintn(TokenList[4]);
+          if (TokenCount <= 5) {
+            AnimeOnce[ID] = FALSE; //ms
+          } else {
+            AnimeOnce[ID] = (StriCmp(TokenList[5], L"once") == 0);
+          }
         }
       }
-      DBG("read anime frames=%d\n", AnimeFrames[ID]);
+      DBG("           frames=%d\n", AnimeFrames[ID]);
+      DBG("           play %s", AnimeOnce[ID]?L"once":L"infinite");
       
     } else if (StriCmp(TokenList[0], L"font_file_name") == 0) {
       HandleString(TokenList, TokenCount, &(GlobalConfig.FontFileName));
