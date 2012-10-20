@@ -531,6 +531,7 @@ static EG_IMAGE    *CompImage = NULL;
 VOID UpdateAnime(REFIT_MENU_SCREEN *Screen)
 {
   UINT64      Now;
+  if (!Screen || !Screen->AnimeRun) return;
   if (!CompImage ||
       (CompImage->Width != Screen->Film[0]->Width) ||
       (CompImage->Height != Screen->Film[0]->Height)){
@@ -539,7 +540,7 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen)
     }
     CompImage = egCreateImage(Screen->Film[0]->Width, Screen->Film[0]->Height, TRUE);
   }   
-  if (!Screen || !Screen->AnimeRun) return;
+  
   Now = AsmReadTsc();
   if (Screen->LastDraw == 0) {
     //first start, we should save background into last frame
