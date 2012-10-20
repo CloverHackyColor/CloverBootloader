@@ -836,8 +836,6 @@ extern BOOLEAN                  gMobile;
 //extern UINT16                   gCPUtype;
 extern UINT64                   TurboMsr;
 extern CHAR8*                   BiosVendor;
-extern CHAR8                    *gEfiBootDevice;
-extern EFI_DEVICE_PATH_PROTOCOL *gEfiBootDeviceData;
 extern EFI_GUID                 *gEfiBootDeviceGuid;
 extern CHAR8*                   AppleSystemVersion[];
 extern CHAR8*	                  AppleFirmwareVersion[];
@@ -937,13 +935,19 @@ MACHINE_TYPES   GetDefaultModel(VOID);
 UINT16          GetAdvancedCpuType(VOID);
 EFI_STATUS      GetOSVersion(IN REFIT_VOLUME *Volume);
 EFI_STATUS      GetUserSettings(IN EFI_FILE *RootDir);
-VOID           *GetNVRAMVariable(IN CHAR16 *VariableName, IN EFI_GUID *VendorGuid, OUT UINTN *DataSize OPTIONAL);
-EFI_STATUS      GetNVRAMSettings(VOID);
-EFI_STATUS      GetNVRAMPlistSettings(IN EFI_FILE *RootDir, IN CHAR16* NVRAMPlistPath);
 EFI_STATUS      GetEdid(VOID);
 EFI_STATUS      SetFSInjection(IN LOADER_ENTRY *Entry);
 CHAR16*         GetExtraKextsDir(REFIT_VOLUME *Volume);
 EFI_STATUS      LoadKexts(IN LOADER_ENTRY *Entry);
+
+//
+// Nvram.c
+//
+VOID           *GetNvramVariable(IN CHAR16 *VariableName, IN EFI_GUID *VendorGuid, OUT UINTN *DataSize OPTIONAL);
+EFI_STATUS      GetEfiBootDeviceFromNvram(VOID);
+EFI_GUID       *FindGPTPartitionGuidInDevicePath(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath);
+REFIT_VOLUME*   FindStartupDiskVolume(VOID);
+VOID            PutNvramPlistToRtVars(VOID);
 
 
 EFI_STATUS
@@ -983,7 +987,7 @@ EFI_STATUS  bootPBR(IN REFIT_VOLUME* volume);
 EFI_STATUS  bootPBRtest(IN REFIT_VOLUME* volume);
 EFI_STATUS  bootLegacyBiosDefault(IN REFIT_VOLUME* volume);
 
-CHAR8*      XMLDecode(const CHAR8* src);
+CHAR8*      XMLDecode(CHAR8* src);
 EFI_STATUS  ParseXML(const CHAR8* buffer, TagPtr * dict);
 TagPtr      GetProperty( TagPtr dict, const CHAR8* key );
 EFI_STATUS  XMLParseNextTag(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr);
@@ -1000,7 +1004,6 @@ VOID        FinalizeSmbios(VOID);
 EFI_STATUS  DisableUsbLegacySupport(VOID);
 
 UINT8		    *Base64Decode(IN CHAR8 *EncodedData, OUT UINTN *DecodedSize);
-EFI_GUID	  *FindGPTPartitionGuidInDevicePath(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath);
 
 // Inits debug time. Must be called after PrepatchSmbios().
 VOID		    DbgTimeInit(VOID);

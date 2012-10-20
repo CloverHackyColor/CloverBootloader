@@ -116,8 +116,6 @@ EFI_STATUS SetVariablesForOSX()
 {
   EFI_STATUS  Status;
   
-	UINT16		 *BootNext = NULL;	//it already presents in EFI FW. First GetVariable ?
-  
 	UINT32      BackgroundClear = 0x00000000;
 	UINT32      FwFeatures      = gFwFeatures; //0x80001417; //Slice - get it from SMBIOS
 	UINT32      FwFeaturesMask  = 0xC003ffff;
@@ -142,10 +140,10 @@ EFI_STATUS SetVariablesForOSX()
 		BA--; SNLen--;
 	}
   
-//some NVRAM variables	
-	Status = gRS->SetVariable(L"BootNext",  &gEfiAppleNvramGuid, //&gEfiGlobalVarGuid,
-                                         /*	EFI_VARIABLE_NON_VOLATILE | */EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                                         sizeof(BootNext) ,&BootNext);
+  //
+  // some NVRAM variables
+  //
+  
   //  gIOHibernateBoot0082Key = OSSymbol::withCString("8BE4DF61-93CA-11D2-AA0D-00E098032B8C:Boot0082");
   //			uint16_t bits = 0x0082;
   //  gIOHibernateBootNextData = OSData::withBytes(&bits, sizeof(bits));
@@ -188,42 +186,35 @@ EFI_STATUS SetVariablesForOSX()
                               6, &gSettings.SmUUID.Data4);
   }
 
-// options variables
-//#if ICLOUD
-	Status = gRS->SetVariable(L"boot-args", &gEfiAppleBootGuid, 
+  // options variables
+  // note: some gEfiAppleBootGuid vars present in nvram.plist are already set by PutNvramPlistToRtVars()
+  // we should think how to handle those vars from nvram.plist and ones set here from gSettings
+	Status = gRS->SetVariable(L"boot-args", &gEfiAppleBootGuid,
                                          /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          bootArgsLen ,&gSettings.BootArgs);
-//#endif
-	Status = gRS->SetVariable(L"security-mode", &gEfiAppleBootGuid, 
+	Status = gRS->SetVariable(L"security-mode", &gEfiAppleBootGuid,
                                          /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          5 , (VOID*)None);
+  
   // we should have two UUID: platform and system
   // NO! Only Platform is the best solution
-      if (!gSettings.InjectSystemID) {
-	Status = gRS->SetVariable(L"platform-uuid", &gEfiAppleBootGuid, 
-                                         /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                                         16 ,&gUuid);
-      }
+  if (!gSettings.InjectSystemID) {
+    Status = gRS->SetVariable(L"platform-uuid", &gEfiAppleBootGuid,
+                              /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                              16 ,&gUuid);
+  }
+  
   Status = gRS->SetVariable(L"prev-lang:kbd", &gEfiAppleBootGuid, 
                             /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                 LangLen ,&gSettings.Language);
   
-	if ((gFirmwareClover || gFirmwarePhoenix) && gEfiBootDeviceData != NULL) {
-		Status = gRS->SetVariable(L"efi-boot-device-data",  &gEfiAppleBootGuid,
-						 /*	EFI_VARIABLE_NON_VOLATILE | */EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-						 GetDevicePathSize(gEfiBootDeviceData) , gEfiBootDeviceData);    
-	}
-	if ((gFirmwareClover || gFirmwarePhoenix) && gEfiBootDevice != NULL) {
-		Status = gRS->SetVariable(L"efi-boot-device",  &gEfiAppleBootGuid,
-						 /*	EFI_VARIABLE_NON_VOLATILE | */EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-						 AsciiStrLen(gEfiBootDevice) + 1, gEfiBootDevice);
-	}
-/*
+  /*
   Status = gRS->SetVariable(L"fmm-computer-name", &gEfiAppleBootGuid, 
                       //        EFI_VARIABLE_NON_VOLATILE 
               EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                             FmmLen , (VOID*)FmmName);
-*/  
+  */
+  
   if (gMobile && (gSettings.BacklightLevel != 0xFFFF)) {
     Status = gRS->SetVariable(L"backlight-level", &gEfiAppleBootGuid, 
                               /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,

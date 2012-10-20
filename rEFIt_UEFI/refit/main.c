@@ -1653,218 +1653,6 @@ static VOID LoadDrivers(VOID)
 //	DBG("Drivers connected\n");
 }
 
-/** Searches for GPT HDD dev path node and return pointer to partition GUID or NULL. */
-EFI_GUID *FindGPTPartitionGuidInDevicePath(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath)
-{
-  HARDDRIVE_DEVICE_PATH   *HDDDevPath;
-  EFI_GUID                *Guid = NULL;
-  
-  if (DevicePath == NULL) {
-    return NULL;
-  }
-  
-  while (!IsDevicePathEndType(DevicePath)
-         &&
-         !(DevicePathType(DevicePath) == MEDIA_DEVICE_PATH && DevicePathSubType(DevicePath) == MEDIA_HARDDRIVE_DP)
-         )
-  {
-    DevicePath = NextDevicePathNode(DevicePath);
-  }
-  
-  if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH
-      && DevicePathSubType(DevicePath) == MEDIA_HARDDRIVE_DP)
-  {
-    HDDDevPath = (HARDDRIVE_DEVICE_PATH*)DevicePath;
-    if (HDDDevPath->SignatureType == SIGNATURE_TYPE_GUID) {
-      Guid = (EFI_GUID*)HDDDevPath->Signature;
-    }
-  }
-  return Guid;
-}
-
-/** returns given time as miliseconds.
- *  assumes 31 days per month, so it's not correct,
- *  but is enough for basic checks.
- */
-UINT64 GetEfiTimeInMs(IN EFI_TIME *T)
-{
-  UINT64              TimeMs;
-  
-  TimeMs = T->Year - 1900;
-  // is 64bit multiply workign in 32 bit?
-  TimeMs = MultU64x32(TimeMs, 12) + T->Month;
-  TimeMs = MultU64x32(TimeMs, 31) + T->Day; // counting with 31 day
-  TimeMs = MultU64x32(TimeMs, 24) + T->Hour;
-  TimeMs = MultU64x32(TimeMs, 60) + T->Minute;
-  TimeMs = MultU64x32(TimeMs, 60) + T->Second;
-  TimeMs = MultU64x32(TimeMs, 1000) + DivU64x32(T->Nanosecond, 1000000);
-  
-  return TimeMs;
-}
-
-INTN FindDefaultEntryNVRAM(VOID)
-{
-  EFI_STATUS          Status;
-  INTN               Index;
-  REFIT_VOLUME        *Volume;
-  LOADER_ENTRY        *Entry;
-  EFI_GUID            *Guid;
-  
-  
-  DBG("Checking NVRAM for efi-boot-device ...\n");
-  
-  // this will fill gEfiBootDeviceGuid, gEfiBootDevice, gEfiBootDeviceData
-  Status = EFI_SUCCESS;
-  if (gEfiBootDeviceGuid == NULL) {
-    Status = GetNVRAMSettings();
-  }
-  
-  if (Status == EFI_SUCCESS && gEfiBootDeviceGuid != NULL) {
-    
-    DBG(" found efi-boot-device Guid = %g\n searching for that volume", gEfiBootDeviceGuid);
-    
-    // find GPT volume with gEfiBootDeviceGuid
-    for (Index = 0; Index < MainMenu.EntryCount && MainMenu.Entries[Index]->Row == 0; Index++) {
-      
-      Entry = (LOADER_ENTRY*)MainMenu.Entries[Index];
-      if (!Entry->Volume || !Entry->Volume->RootDir) {
-        continue;
-      }
-      
-      Volume = Entry->Volume;
-      Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
-      
-      if (Guid && CompareGuid(Guid, gEfiBootDeviceGuid)) {
-        // that's the one
-        DBG(" -  found\nBoot redirected to Volume %d. '%s', GUID = %g\n", Index, Volume->VolName, Guid);
-        return Index;
-      }
-    }
-    
-    DBG(" - not found\n");
-  }
-  
-  return -1;
-}
-
-INTN FindDefaultEntryNVRAMPlist(VOID)
-{
-  EFI_STATUS          Status;
-  INTN               Index;
-  REFIT_VOLUME        *Volume;
-  LOADER_ENTRY        *Entry;
-  EFI_GUID            *Guid;
-  EFI_FILE_HANDLE     FileHandle;
-  EFI_FILE_INFO       *FileInfo;
-  UINT64              LastModifTimeMs;
-  UINT64              ModifTimeMs;
-  REFIT_VOLUME        *VolumeWithLatestNvramPlist;
-
-
-  //
-  // find latest nvram.plist
-  //
-  
-  DBG("Searching volumes for latest nvram.plist ...\n");
-  
-  LastModifTimeMs = 0;
-  VolumeWithLatestNvramPlist = NULL;
-  
-  for (Index = 0; Index < MainMenu.EntryCount && MainMenu.Entries[Index]->Row == 0; Index++) {
-    
-    Entry = (LOADER_ENTRY*)MainMenu.Entries[Index];
-    if (!Entry->Volume || !Entry->Volume->RootDir) {
-      continue;
-    }
-    
-    Volume = Entry->Volume;
-    Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
-    
-    DBG("%d. Volume '%s', GUID = %g", Index, Volume->VolName, Guid);
-    if (Guid == NULL) {
-      // not a GUID partition
-      DBG(" - not GPT");
-      //DBG(" - not GPT - skipping!\n");
-      //continue;
-    }
-    
-    // check if nvram.plist exists
-    Status = Volume->RootDir->Open(Volume->RootDir, &FileHandle, L"nvram.plist", EFI_FILE_MODE_READ, 0);
-    if (EFI_ERROR(Status)) {
-      DBG(" - no nvram.plist - skipping!\n");
-      continue;
-    }
-    
-    // get nvram.plist modification date
-    FileInfo = EfiLibFileInfo(FileHandle);
-    if (FileInfo == NULL) {
-      DBG(" - no nvram.plist file info - skipping!\n");
-      FileHandle->Close(FileHandle);
-      continue;
-    }
-    
-    DBG(" Modified = ");
-    ModifTimeMs = GetEfiTimeInMs(&FileInfo->ModificationTime);
-    DBG("%d-%d-%d %d:%d:%d (%ld ms)",
-        FileInfo->ModificationTime.Year, FileInfo->ModificationTime.Month, FileInfo->ModificationTime.Day,
-        FileInfo->ModificationTime.Hour, FileInfo->ModificationTime.Minute, FileInfo->ModificationTime.Second,
-        ModifTimeMs);
-    FreePool(FileInfo);
-    FileHandle->Close(FileHandle);
-    
-    // check if newer
-    if (LastModifTimeMs < ModifTimeMs) {
-      
-      DBG(" - newer - will use this one\n");
-      VolumeWithLatestNvramPlist = Volume;
-      LastModifTimeMs = ModifTimeMs;
-      
-    } else {
-      DBG(" - older - skipping!\n");
-    }
-  }
-  
-  //
-  // if we have nvram.plist - load it and get efi-boot-device partition Guid
-  //
-  
-  if (VolumeWithLatestNvramPlist != NULL) {
-    
-    DBG("Loading nvram.plist from Vol '%s' -", VolumeWithLatestNvramPlist->VolName);
-    
-    // this will fill gEfiBootDeviceGuid, gEfiBootDevice, gEfiBootDeviceData
-    Status = GetNVRAMPlistSettings(VolumeWithLatestNvramPlist->RootDir, L"nvram.plist");
-    
-    if (gEfiBootDeviceGuid == NULL || EFI_ERROR(Status)) {
-      DBG(" efi-boot-device not found: %r\n", Status);
-    } else {
-      
-      DBG(" found efi-boot-device Guid = %g\n searching for that volume", gEfiBootDeviceGuid);
-      
-      // find GPT volume with gEfiBootDeviceGuid
-      for (Index = 0; Index < MainMenu.EntryCount && MainMenu.Entries[Index]->Row == 0; Index++) {
-        
-        Entry = (LOADER_ENTRY*)MainMenu.Entries[Index];
-        if (!Entry->Volume || !Entry->Volume->RootDir) {
-          continue;
-        }
-        
-        Volume = Entry->Volume;
-        Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
-        
-        if (Guid && CompareGuid(Guid, gEfiBootDeviceGuid)) {
-          // that's the one
-          DBG(" -  found\nBoot redirected to Volume %d. '%s', GUID = %g\n", Index, Volume->VolName, Guid);
-          return Index;
-        }
-      }
-      
-      DBG(" - not found\n");
-    }
-  }
-  
-  return -1;
-}
 
 INTN FindDefaultEntry(VOID)
 {
@@ -1873,49 +1661,51 @@ INTN FindDefaultEntry(VOID)
   LOADER_ENTRY        *Entry;
 
   
-  //
-  // try to get efi-boot-device
-  //
+  DBG("FindDefaultEntry ...\n");
   
-  if (!gFirmwareClover) {
-        // UEFI boot: from NVRAM
-    Index = FindDefaultEntryNVRAM();
-    if (Index > -1) {
+  //
+  // try to detect volume set by Startup Disk
+  //
+  Volume = FindStartupDiskVolume();
+  if (Volume != NULL) {
+    
+    // find first menu entry with that volume
+    for (Index = 0; ((Index < (INTN)MainMenu.EntryCount) && (MainMenu.Entries[Index]->Row == 0)); Index++) {
+      Entry = (LOADER_ENTRY*)MainMenu.Entries[Index];
+      if (Entry->Volume == Volume) {
+        DBG("Boot redirected to Entry %d. '%s', Volume '%s'\n", Index, Entry->me.Title, Volume->VolName);
+        return Index;
+      }
+    }
+    
+  }
+  
+  //
+  // if not found so far, then try DefaultBoot from config.plist
+  // search volume with name == gSettings.DefaultBoot
+  //
+  if (gSettings.DefaultBoot != NULL && gSettings.DefaultBoot[0] != L'\0') {
+    
+    DBG("Searching config.plist DefaultBoot ...");
+    for (Index = 0; ((Index < (INTN)MainMenu.EntryCount) && (MainMenu.Entries[Index]->Row == 0)); Index++) {
+      
+      Entry = (LOADER_ENTRY*)MainMenu.Entries[Index];
+      if (!Entry->Volume) {
+        continue;
+      }
+      
+      Volume = Entry->Volume;
+      if (StrCmp(Volume->VolName, gSettings.DefaultBoot) != 0) {
+        continue;
+      }
+      
+      DBG(" found\nBoot redirected to Entry %d. '%s', Volume '%s'\n", Index, Entry->me.Title, Volume->VolName);
       return Index;
     }
-  }
-   
-    // CloverEFI boot: from latest nvram.plist
-    // same for Phoenix as it has no own NVRAM
-  Index = FindDefaultEntryNVRAMPlist();
-  
-  if (Index > -1) {
-    return Index;
+    
   }
   
-  
-  //
-  // if not found so far, then try DefaultBoot
-  //
-  
-  //   search volume with name in gSettings.DefaultBoot
-  for (Index = 0; ((Index < (INTN)MainMenu.EntryCount) && (MainMenu.Entries[Index]->Row == 0)); Index++) {
-    
-    Entry = (LOADER_ENTRY*)MainMenu.Entries[Index];
-    if (!Entry->Volume) {
-      continue;
-    }
-    
-    Volume = Entry->Volume;
-    if (StrCmp(Volume->VolName, gSettings.DefaultBoot) != 0) {
-      continue;
-    }
-    
-    DBG("Default volume %s found\n", Volume->VolName);
-    return Index;
-  }
-  
-  DBG("No efi-boot-device or default volume found\n");
+  DBG("Default boot entry not found\n");
   return -1;
 }
 
@@ -2085,12 +1875,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   if (!gFirmwareClover && !gFirmwarePhoenix &&
       GlobalConfig.Timeout == 0 && !ReadAllKeyStrokes()) {
-    // UEFI boot: get gEfiBootDeviceGuid, gEfiBootDevice, gEfiBootDeviceData
-    // from NVRAM - and if present, ScanVolumes() will skip scanning other volumes
+    // UEFI boot: get gEfiBootDeviceGuid from NVRAM.
+    // if present, ScanVolumes() will skip scanning other volumes
     // in the first run.
     // this speeds up loading of default OSX volume.
-    Status = GetNVRAMSettings();
-//    DBGT("GetNVRAMSettings()\n");
+    Status = GetEfiBootDeviceFromNvram();
+//    DBGT("GetEfiBootDeviceFromNvram()\n");
   }
   
   do {
@@ -2100,6 +1890,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     MainMenu.EntryCount = 0;
     ScanVolumes();
  //   DBGT("ScanVolumes()\n");
+    
+    // as soon as we have Volumes, find lates nvram.plist and copy it to RT vars
+    if (gFirmwareClover || gFirmwarePhoenix) {
+      PutNvramPlistToRtVars();
+    }
+    
     // scan for loaders and tools, add then to the menu
     if (!GlobalConfig.NoLegacy && GlobalConfig.LegacyFirst && !gSettings.HVHideAllLegacy){
       DBG("scan legacy first\n");

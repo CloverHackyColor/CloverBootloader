@@ -83,7 +83,7 @@ SymbolPtr   FindSymbol( char * string, SymbolPtr * prevSymbol );
 /* Function for basic XML character entities parsing */
 
 CHAR8*
-XMLDecode(const CHAR8* src)
+XMLDecode(CHAR8* src)
 {
     typedef const struct XMLEntity {
         const CHAR8* name;
@@ -108,9 +108,14 @@ XMLDecode(const CHAR8* src)
     len = AsciiStrLen(src);
     if (!len)
        return 0;
+    
+    // out is always <= src, let's overwrite src
+    /*
     out = AllocateZeroPool(len+1);
     if (!out)
         return 0;
+    */
+    out = src;
     
     o = out;
     s = src;
@@ -502,7 +507,8 @@ EFI_STATUS ParseTagString(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 	if (tmpTag == NULL) 
 		return EFI_UNSUPPORTED;
 
-	tmpString = NewSymbol(buffer);
+	tmpString = XMLDecode(buffer);
+    tmpString = NewSymbol(tmpString);
 	if (tmpString == NULL)
 	{
 		FreeTag(tmpTag);

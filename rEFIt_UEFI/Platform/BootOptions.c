@@ -361,7 +361,7 @@ GetBootOrder (
     //
     // Get gEfiGlobalVariableGuid:BootOrder and it's length
     //
-    *BootOrder = GetNVRAMVariable (BOOT_ORDER_VAR, &gEfiGlobalVariableGuid, &BootOrderSize);
+    *BootOrder = GetNvramVariable (BOOT_ORDER_VAR, &gEfiGlobalVariableGuid, &BootOrderSize);
     if (*BootOrder == NULL) {
         DBG(" EFI_NOT_FOUND\n");
         return EFI_NOT_FOUND;
@@ -707,7 +707,7 @@ GetBootOption (
     BootOption->BootNum = BootNum;
     UnicodeSPrint (VarName, sizeof(VarName), L"Boot%04X", BootNum);
     
-    BootOption->Variable = GetNVRAMVariable (VarName, &gEfiGlobalVariableGuid, &BootOption->VariableSize);
+    BootOption->Variable = GetNvramVariable (VarName, &gEfiGlobalVariableGuid, &BootOption->VariableSize);
     if (BootOption->Variable == NULL) {
         return EFI_NOT_FOUND;
     }
