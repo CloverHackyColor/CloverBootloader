@@ -183,7 +183,7 @@ EFI_STATUS LoadNvramPlist(IN EFI_FILE *RootDir, IN CHAR16* NVRAMPlistPath)
 EFI_STATUS LoadLatestNvramPlist(VOID)
 {
     EFI_STATUS          Status;
-    INTN               Index;
+    UINTN               Index;
     REFIT_VOLUME        *Volume;
     EFI_GUID            *Guid;
     EFI_FILE_HANDLE     FileHandle;
@@ -362,7 +362,7 @@ VOID PutNvramPlistToRtVars(VOID)
 REFIT_VOLUME* FindStartupDiskVolume(VOID)
 {
     EFI_STATUS          Status;
-    INTN                Index;
+    UINTN                Index;
     REFIT_VOLUME        *Volume;
     EFI_GUID            *Guid;
     
