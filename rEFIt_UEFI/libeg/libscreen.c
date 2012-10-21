@@ -363,8 +363,7 @@ VOID egDrawImageArea(IN EG_IMAGE *Image,
                      IN INTN AreaWidth, IN INTN AreaHeight,
                      IN INTN ScreenPosX, IN INTN ScreenPosY)
 {
-  if (!egHasGraphics || !Image)
-    return;
+  if (!egHasGraphics || !Image) return;
   
   if (AreaWidth == 0) {
     AreaWidth = Image->Width;
@@ -395,16 +394,17 @@ VOID egDrawImageArea(IN EG_IMAGE *Image,
   }
   
   if (GraphicsOutput != NULL) {
-    GraphicsOutput->Blt(GraphicsOutput, (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)Image->PixelData, EfiBltBufferToVideo,
+    GraphicsOutput->Blt(GraphicsOutput, (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)Image->PixelData,
+                        EfiBltBufferToVideo,
                         (UINTN)AreaPosX, (UINTN)AreaPosY, (UINTN)ScreenPosX, (UINTN)ScreenPosY,
                         (UINTN)AreaWidth, (UINTN)AreaHeight, (UINTN)Image->Width * 4);
-  } else if (UgaDraw != NULL) {
+  } /* else if (UgaDraw != NULL) {
     UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)Image->PixelData, EfiUgaBltBufferToVideo,
                  (UINTN)AreaPosX, (UINTN)AreaPosY, (UINTN)ScreenPosX, (UINTN)ScreenPosY,
                  (UINTN)AreaWidth, (UINTN)AreaHeight, (UINTN)Image->Width * 4);
-  }
+  } */
 }
-
+// Blt(this, Buffer, mode, srcX, srcY, destX, destY, w, h, deltaSrc);
 VOID egTakeImage(IN EG_IMAGE *Image, INTN ScreenPosX, INTN ScreenPosY,
                  IN INTN AreaWidth, IN INTN AreaHeight)
 {

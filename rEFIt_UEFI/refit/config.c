@@ -66,7 +66,7 @@ BOOLEAN  AnimeOnce[MAX_ANIME];
 
 // global configuration with default values
 
-REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, FALSE, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF00, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, FALSE, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, None };
 
 //
 // read a file into a buffer
@@ -468,13 +468,29 @@ VOID ReadConfig(VOID)
         }
       }
       DBG("           frames=%d\n", AnimeFrames[ID]);
-      DBG("           play %s", AnimeOnce[ID]?L"once":L"infinite");
+      DBG("           play %s\n", AnimeOnce[ID]?L"once":L"infinite");
       
     } else if (StriCmp(TokenList[0], L"font_file_name") == 0) {
       HandleString(TokenList, TokenCount, &(GlobalConfig.FontFileName));
       
     } else if (StriCmp(TokenList[0], L"banner") == 0) {
       HandleString(TokenList, TokenCount, &(GlobalConfig.BannerFileName));
+      DBG("banner %s\n", GlobalConfig.BannerFileName);
+      
+    } else if (StriCmp(TokenList[0], L"background") == 0) {
+      GlobalConfig.BackgroundName = EfiStrDuplicate(TokenList[1]);
+      if (TokenCount > 1) {
+        if (StriCmp(TokenList[2], L"scale") == 0){
+          GlobalConfig.BackgroundScale = Scale;
+        } else if (StriCmp(TokenList[2], L"crop") == 0){
+          GlobalConfig.BackgroundScale = Crop;
+        } else if (StriCmp(TokenList[2], L"tile") == 0){
+          GlobalConfig.BackgroundScale = Tile;
+        }
+      } else {
+        GlobalConfig.BackgroundScale = Crop; //default
+      }
+      DBG("background image %s\n", GlobalConfig.BackgroundName);
       
     } else if (StriCmp(TokenList[0], L"selection_small") == 0) {
       HandleString(TokenList, TokenCount, &(GlobalConfig.SelectionSmallFileName));

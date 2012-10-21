@@ -78,5 +78,5 @@
 [BuildOptions]
 # TIMEOUTFP=0 -- silent boot
   XCODE:*_*_*_CC_FLAGS = -Os
-  GCC:*_*_*_CC_FLAGS = -Os -DTIMEOUTFP=3
+  GCC:*_*_*_CC_FLAGS = -Os -DTIMEOUTFP=0
   MSFT:*_*_*_CC_FLAGS = -Os -DTIMEOUTFP=3

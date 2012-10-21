@@ -34,7 +34,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Platform.h"
+//#include "Platform.h"
+#include "libegint.h"   //this includes platform.h 
 #include "Version.h"
 
 #include "egemb_back_selected_small.h"
@@ -63,8 +64,11 @@
 
 // scrolling definitions
 static INTN MaxItemOnScreen = -1;
-REFIT_MENU_SCREEN OptionMenu  = {4, L"Options", NULL, 0, NULL, 0, NULL, 0, NULL, FALSE, FALSE, 0, 0, 0, 0, 0, 0, NULL };
+REFIT_MENU_SCREEN OptionMenu  = {4, L"Options", NULL, 0, NULL, 0, NULL, 0, NULL, FALSE, FALSE, 0, 0, 0, 0,
+  {0, 0, 0, 0}, NULL };
 extern REFIT_MENU_ENTRY MenuEntryReturn;
+
+EG_PIXEL TransBackgroundPixel = {0, 0, 0, 0};
 
 #define SCROLL_LINE_UP    (0)
 #define SCROLL_LINE_DOWN  (1)
@@ -558,8 +562,9 @@ static VOID InitSelection(VOID)
     }
   }
   // non-selected background images
-  SelectionImages[1] = egCreateFilledImage(ROW0_TILESIZE, ROW0_TILESIZE, FALSE, &MenuBackgroundPixel);
-  SelectionImages[3] = egCreateFilledImage(ROW1_TILESIZE, ROW1_TILESIZE, FALSE, &MenuBackgroundPixel);  
+  //TODO FALSE -> TRUE
+  SelectionImages[1] = egCreateFilledImage(ROW0_TILESIZE, ROW0_TILESIZE, TRUE, &TransBackgroundPixel);
+  SelectionImages[3] = egCreateFilledImage(ROW1_TILESIZE, ROW1_TILESIZE, TRUE, &TransBackgroundPixel);
 }
 
 //
@@ -1066,6 +1071,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
     if (HaveTimeout) {
       // the user pressed a key, cancel the timeout
       StyleFunc(Screen, &State, MENU_FUNCTION_PAINT_TIMEOUT, L"");
+      HidePointer(); //ycr.ru
       HaveTimeout = FALSE;
     }
     
@@ -1371,10 +1377,12 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       SwitchToGraphicsAndClear();
       egMeasureText(Screen->Title, &ItemWidth, NULL);
       DrawMenuText(Screen->Title, 0, ((UGAWidth - ItemWidth) >> 1) - TEXT_XMARGIN, EntriesPosY - TextHeight * 2, 0xFFFF);
-      Screen->FilmX = (INTN)(EntriesPosX - (Screen->TitleImage->Width + TITLEICON_SPACING));
-      Screen->FilmY = (INTN)EntriesPosY;
+      Screen->FilmPlace.XPos = (INTN)(EntriesPosX - (Screen->TitleImage->Width + TITLEICON_SPACING));
+      Screen->FilmPlace.YPos = (INTN)EntriesPosY;
       if (Screen->TitleImage) {
-        BltImageAlpha(Screen->TitleImage, Screen->FilmX, Screen->FilmY, &MenuBackgroundPixel, 16);
+        Screen->FilmPlace.Width = Screen->TitleImage->Width;
+        Screen->FilmPlace.Height = Screen->TitleImage->Height;
+        BltImageAlpha(Screen->TitleImage, Screen->FilmPlace.XPos, Screen->FilmPlace.YPos, &MenuBackgroundPixel, 16);
       }
       if (Screen->InfoLineCount > 0) {
         for (i = 0; i < (INTN)Screen->InfoLineCount; i++) {
@@ -1489,40 +1497,14 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
   Entry->Place.Height = MainImage->Height;
 }
 
-/*static VOID DrawMainMenuText(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, ALIGNMENT Align)
-{
-  INTN TextWidth = LAYOUT_TEXT_WIDTH;
-  
-  if (TextBuffer == NULL)
-    TextBuffer = egCreateImage(LAYOUT_TEXT_WIDTH, TextHeight, FALSE);
-  
-  egFillImage(TextBuffer, &MenuBackgroundPixel);
-  
-  // render the text
-  egMeasureText(Text, &TextWidth, NULL);
-  switch (Align) {
-    case AlignRight:
-      egRenderText(Text, TextBuffer, TextBuffer->Width - TextWidth, 0, 0xFFFF);
-      break;
-    case AlignCenter:
-      egRenderText(Text, TextBuffer, (TextBuffer->Width - TextWidth) >> 1, 0, 0xFFFF);
-      break;
-    case AlignLeft:
-    default:
-      egRenderText(Text, TextBuffer, 0, 0, 0xFFFF);
-      break;
-  }
-  BltImage(TextBuffer, XPos, YPos);
-}*/
 
-
-//static   INTN OldX = 0, OldY = 0;
 static INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 {
     INTN TextWidth;
     EG_IMAGE *TextBufferXY = NULL;
     
     if (!Text) return 0;
+  
     egMeasureText(Text, &TextWidth, NULL);
     TextBufferXY = egCreateImage(TextWidth, TextHeight, FALSE);
     
@@ -1537,13 +1519,23 @@ static INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAl
 
 static VOID FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Height, IN EG_PIXEL *Color, IN UINT8 XAlign)
 {
-    EG_IMAGE *TmpBuffer = NULL;
-    
-    if (!Width || !Height) return;
-    TmpBuffer = egCreateImage(Width, Height, FALSE);
+  EG_IMAGE *TmpBuffer = NULL;
+  INTN X = XPos - (Width >> XAlign);
+  
+  if (!Width || !Height) return;
+  
+  TmpBuffer = egCreateImage(Width, Height, FALSE);
+  if (!BackgroundImage) {
     egFillImage(TmpBuffer, Color);
-    BltImage(TmpBuffer, (XPos - (Width >> XAlign)), YPos);
-    egFreeImage(TmpBuffer);
+  } else {
+    egRawCopy(TmpBuffer->PixelData,
+              BackgroundImage->PixelData + YPos * BackgroundImage->Width + X,
+              Width, Height,
+              TmpBuffer->Width,
+              BackgroundImage->Width);    
+  }
+  BltImage(TmpBuffer, X, YPos);
+  egFreeImage(TmpBuffer);
 }
 
 static   INTN OldX = 0, OldY = 0;
@@ -1642,8 +1634,9 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       //InitSelection(); //Slice - I changed order because of background pixel
       SwitchToGraphicsAndClear();
       InitSelection();
-      Screen->FilmX = BannerPlace.XPos;
-      Screen->FilmY = BannerPlace.YPos;
+      Screen->FilmPlace = BannerPlace;
+  //    Screen->FilmPlace.XPos = BannerPlace.XPos;
+  //    Screen->FilmPlace.YPos = BannerPlace.YPos;
       
  //     DBG("main menu inited\n");
       break;

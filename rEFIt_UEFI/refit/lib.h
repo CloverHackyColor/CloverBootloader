@@ -270,7 +270,8 @@ typedef struct _refit_menu_screen {
   INTN              CurrentFrame;
   INTN              Frames;
   UINTN             FrameTime; //ms
-  INTN              FilmX, FilmY;
+//  INTN              FilmX, FilmY;
+  EG_RECT           FilmPlace;
   EG_IMAGE          **Film;
 } REFIT_MENU_SCREEN;
 
@@ -306,6 +307,14 @@ typedef struct {
 #define HDBADGES_SWAP   3
 #define HDBADGES_DRIVE  4
 
+typedef enum {
+  None,
+  Scale,
+  Crop,
+  Tile
+  
+} SCALING;
+
 typedef struct {
   BOOLEAN     TextOnly;
   INTN        Timeout;
@@ -327,6 +336,8 @@ typedef struct {
   CHAR16      *SelectionBigFileName;
   CHAR16      *DefaultSelection;
   CHAR16      *ScreenResolution;
+  CHAR16      *BackgroundName;
+  SCALING     BackgroundScale;
 } REFIT_CONFIG;
 
 // types
@@ -440,8 +451,10 @@ extern BOOLEAN AllowGraphicsMode;
 extern EG_PIXEL StdBackgroundPixel;
 extern EG_PIXEL MenuBackgroundPixel;
 extern EG_PIXEL InputBackgroundPixel;
+extern EG_PIXEL TransBackgroundPixel;
 
 extern EG_RECT  BannerPlace;
+extern EG_IMAGE *BackgroundImage;
 
 
 VOID InitScreen(VOID);
@@ -469,7 +482,7 @@ VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XP
 VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG_IMAGE *BadgeImage, IN INTN XPos, IN INTN YPos);
 
 VOID    InitAnime(VOID);
-VOID    UpdateAnime(REFIT_MENU_SCREEN *Screen);
+VOID    UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place);
 BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen);
 //
 // icns loader module

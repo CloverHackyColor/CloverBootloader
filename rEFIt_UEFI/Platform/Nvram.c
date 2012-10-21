@@ -2,6 +2,7 @@
  *  Module for work with runtime (RT, NVRAM) vars,
  *  determining default boot volume (Startup disk)
  *  and (kid of) persistent RT support with nvram.plist on CloverEFI.
+ *  dmazar, 2012
  */
 
 #include "Platform.h"

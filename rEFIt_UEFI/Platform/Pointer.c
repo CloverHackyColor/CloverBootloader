@@ -318,6 +318,7 @@ EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
             gAction = ActionNone;
             break;
         }
+        gItemID = 0xFFFF;
       }
     }
   }
@@ -428,7 +429,10 @@ EFI_STATUS WaitForInputEventPoll(REFIT_MENU_SCREEN *Screen, UINTN TimeoutDefault
     if (Status != EFI_TIMEOUT) {
       break;
     }
-    UpdateAnime(Screen);
+    UpdateAnime(Screen, &(Screen->FilmPlace));
+    if (gItemID < Screen->EntryCount) {
+      UpdateAnime(Screen->Entries[gItemID]->SubScreen, &(Screen->Entries[gItemID]->Place));
+    }
     TimeoutRemain--;
     if (gPointer.SimplePointerProtocol) {
       UpdatePointer();

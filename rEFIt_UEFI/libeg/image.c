@@ -101,13 +101,14 @@ EG_IMAGE * egCopyImage(IN EG_IMAGE *Image)
 EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *Image, IN INTN Ratio) //will be N/16
 {
   EG_IMAGE    *NewImage;
-  INTN      x, x0, x1, x2, y, y0, y1, y2;
-  INTN      NewH, NewW;
+  INTN        x, x0, x1, x2, y, y0, y1, y2;
+  INTN        NewH, NewW;
   EG_PIXEL    *Dest;
-//  UINT64      b, g, r, a;
   
-//  NewW = RShiftU64(MultU64x64(Image->Width, Ratio), 4);
-//  NewH = RShiftU64(MultU64x64(Image->Height, Ratio), 4);
+  if (Ratio == 16) {    
+    return egCopyImage(Image);
+  }
+
   NewW = (Image->Width * Ratio) >> 4;
   NewH = (Image->Height * Ratio) >> 4;
   
@@ -116,32 +117,6 @@ EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *Image, IN INTN Ratio) //will be N/16
     return NULL;
   
   Dest = NewImage->PixelData;
-/*  for (y = 0; y < NewH; y++) {
-    y1 = DivU64x64Remainder(LShiftU64(y, 4), Ratio, 0);
-    y0 = MultU64x64(((y1 > 0)?(y1-1):y1), Image->Width);
-    y2 = MultU64x64(((y1 < Image->Height)?(y1+1):y1), Image->Width);
-    y1 = MultU64x64(y1, Image->Width);
-    for (x = 0; x < NewW; x++) {
-      x1 = DivU64x64Remainder(LShiftU64(x, 4), Ratio, 0);
-      x0 = (x1 > 0)?(x1-1):x1;
-      x2 = (x1 < Image->Width)?(x1+1):x1;
-      //TODO - make sum of 5 points
-     // *Dest++ = Image->PixelData[x1+y1];
-      
-      Dest->b = (UINT8)DivU64x64Remainder(Image->PixelData[x1+y1].b * 2 +
-                                   Image->PixelData[x0+y1].b + Image->PixelData[x2+y1].b +
-                                   Image->PixelData[x1+y0].b + Image->PixelData[x1+y2].b, 6, 0);
-      Dest->g = (UINT8)DivU64x64Remainder(Image->PixelData[x1+y1].g * 2 +
-                                   Image->PixelData[x0+y1].g + Image->PixelData[x2+y1].g +
-                                   Image->PixelData[x1+y0].g + Image->PixelData[x1+y2].g, 6, 0);
-      Dest->r = (UINT8)DivU64x64Remainder(Image->PixelData[x1+y1].r * 2 +
-                                   Image->PixelData[x0+y1].r + Image->PixelData[x2+y1].r +
-                                   Image->PixelData[x1+y0].r + Image->PixelData[x1+y2].r, 6, 0);
-      Dest->a = Image->PixelData[x1+y1].a;
-      Dest++;
-    }
-  }
-*/
   for (y = 0; y < NewH; y++) {
     y1 = (y << 4) / Ratio;
     y0 = ((y1 > 0)?(y1-1):y1) * Image->Width;
@@ -555,7 +530,9 @@ VOID egRawCompose(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
   if (!CompBasePtr || !TopBasePtr) {
     return;
   }
-    
+  //if TopAlpha=255 then draw Top
+  //else if TopAlpha=0 then draw Comp
+  //else draw mixture (don't used)
   for (y = 0; y < Height; y++) {
     TopPtr = TopBasePtr;
     CompPtr = CompBasePtr;
@@ -568,11 +545,7 @@ VOID egRawCompose(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
       CompPtr->g = (UINT8)((Temp + (Temp >> 8)) >> 8);
       Temp = (UINTN)CompPtr->r * RevAlpha + (UINTN)TopPtr->r * Alpha + 0x80;
       CompPtr->r = (UINT8)((Temp + (Temp >> 8)) >> 8);
-      /*
-       CompPtr->b = ((UINTN)CompPtr->b * RevAlpha + (UINTN)TopPtr->b * Alpha) / 255;
-       CompPtr->g = ((UINTN)CompPtr->g * RevAlpha + (UINTN)TopPtr->g * Alpha) / 255;
-       CompPtr->r = ((UINTN)CompPtr->r * RevAlpha + (UINTN)TopPtr->r * Alpha) / 255;
-       */
+      CompPtr->a = (CompPtr->a > Alpha)?CompPtr->a:Alpha;
       TopPtr++, CompPtr++;
     }
     TopBasePtr += TopLineOffset;
@@ -593,7 +566,7 @@ VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN P
   
   // compose
   if (CompWidth > 0) {
-    if (CompImage->HasAlpha) {
+    if (CompImage->HasAlpha && !BackgroundImage) {
       CompImage->HasAlpha = FALSE;
       egSetPlane(PLPTR(CompImage, a), 0, CompImage->Width * CompImage->Height);
     }

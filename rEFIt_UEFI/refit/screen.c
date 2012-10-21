@@ -74,6 +74,8 @@ EG_PIXEL StdBackgroundPixel  = { 0xbf, 0xbf, 0xbf, 0 };
 EG_PIXEL MenuBackgroundPixel = { 0xbf, 0xbf, 0xbf, 0 };
 EG_PIXEL InputBackgroundPixel = { 0xcf, 0xcf, 0xcf, 0 };
 
+EG_IMAGE *BackgroundImage = NULL;
+
 
 static BOOLEAN GraphicsScreenDirty;
 
@@ -375,34 +377,99 @@ typedef struct {
   INTN     Height;
 } EG_RECT;
 */
+
+static EG_IMAGE *Banner = NULL;
+
+
 VOID BltClearScreen(IN BOOLEAN ShowBanner)
 {
-  static EG_IMAGE *Banner = NULL;
+  EG_IMAGE *BigBack = NULL;
   INTN BanHeight = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_HEIGHT;
+  INTN i, j, x, x1, x2, y, y1, y2;
+  EG_PIXEL    *p1;
   
-  if (ShowBanner && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER)) {
-    // load banner on first call
-    if (Banner == NULL) {
-      if (GlobalConfig.BannerFileName == NULL)
-        Banner = egPrepareEmbeddedImage(&egemb_refit_banner, FALSE);
-      else
-        Banner = egLoadImage(ThemeDir, GlobalConfig.BannerFileName, FALSE);
-      if (Banner != NULL)
-        MenuBackgroundPixel = Banner->PixelData[0];
+  // load banner on first call
+  if (!Banner) {
+    if (!GlobalConfig.BannerFileName)
+      Banner = egPrepareEmbeddedImage(&egemb_refit_banner, FALSE);
+    else
+      Banner = egLoadImage(ThemeDir, GlobalConfig.BannerFileName, FALSE);
+    if (Banner != NULL)
+      MenuBackgroundPixel = Banner->PixelData[0];
+  }
+  if (!Banner) {
+    DBG("banner file not read\n");
+  }
+  
+  //load Background and scale
+  if (!BackgroundImage && (GlobalConfig.BackgroundName != NULL)) {
+    BigBack = egLoadImage(ThemeDir, GlobalConfig.BackgroundName, FALSE);
+    if (BigBack != NULL) {
+      BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, FALSE, &MenuBackgroundPixel);
+      switch (GlobalConfig.BackgroundScale) {
+          //TODO - make scale
+        case Scale: //not for now
+        case None:
+        case Crop:
+          x = UGAWidth - BigBack->Width;
+          if (x >= 0) {
+            x1 = x >> 1;
+            x2 = 0;
+            x = BigBack->Width;
+          } else {
+            x1 = 0;
+            x2 = (-x) >> 1;
+            x = UGAWidth;
+          }
+          y = UGAHeight - BigBack->Height;
+          if (y >= 0) {
+            y1 = y >> 1;
+            y2 = 0;
+            y = BigBack->Height;
+          } else {
+            y1 = 0;
+            y2 = (-y) >> 1;
+            y = UGAHeight;
+          }
+          egRawCopy(BackgroundImage->PixelData + y1 * UGAWidth + x1,
+                    BigBack->PixelData + y2 * BigBack->Width + x2,
+                    x, y, UGAWidth, BigBack->Width);
+          break;
+        case Tile:
+          x = (BigBack->Width * ((UGAWidth - 1) / BigBack->Width + 1) - UGAWidth) >> 1;
+          y = (BigBack->Height * ((UGAHeight - 1) / BigBack->Height + 1) - UGAHeight) >> 1;
+          p1 = BackgroundImage->PixelData;
+          for (j = 0; j < UGAHeight; j++) {
+            y2 = ((j + y) % BigBack->Height) * BigBack->Width;
+            for (i = 0; i < UGAWidth; i++) {
+              *p1++ = BigBack->PixelData[y2 + ((i + x) % BigBack->Width)];
+            }
+          }
+          break;
+        default:
+          break;
+      }
     }
+  }
     
+  if (ShowBanner && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER)) {
     // clear and draw banner
     egClearScreen(&MenuBackgroundPixel);
+    BltImage(BackgroundImage, 0, 0); //if NULL then do nothing
     if (Banner != NULL){
       BannerPlace.XPos = (UGAWidth - Banner->Width) >> 1;
       BannerPlace.YPos = (BanHeight >= Banner->Height) ? (BanHeight - Banner->Height) : 0;
       BannerPlace.Width = Banner->Width;
       BannerPlace.Height = (BanHeight >= Banner->Height) ? Banner->Height : BanHeight;
-      BltImage(Banner, BannerPlace.XPos, BannerPlace.YPos);
+      BltImageAlpha(Banner, BannerPlace.XPos, BannerPlace.YPos, &MenuBackgroundPixel, 16);
     }
   } else {
     // clear to standard background color
     egClearScreen(&StdBackgroundPixel);
+    BannerPlace.XPos = 0;
+    BannerPlace.YPos = 0;
+    BannerPlace.Width = UGAWidth;
+    BannerPlace.Height = BanHeight;
   }
   InputBackgroundPixel.r = (MenuBackgroundPixel.r + 0) & 0xFF;
   InputBackgroundPixel.g = (MenuBackgroundPixel.g + 0) & 0xFF;
@@ -426,23 +493,39 @@ VOID BltImageAlpha(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos, IN EG_PIXEL *
   EG_IMAGE *NewImage = NULL;
   INTN Width = Scale << 3;
   INTN Height = Width;
-  
+  GraphicsScreenDirty = TRUE;
   if (Image) {
     NewImage = egCopyScaledImage(Image, Scale); //will be Scale/16
     Width = NewImage->Width;
     Height = NewImage->Height;
   }
   // compose on background
-  CompImage = egCreateFilledImage(Width, Height, FALSE, BackgroundPixel);
+  CompImage = egCreateFilledImage(Width, Height, (BackgroundImage != NULL), BackgroundPixel);
   egComposeImage(CompImage, NewImage, 0, 0);
-  
-  // blit to screen and clean up
-  egDrawImageArea(CompImage, 0, 0, 0, 0, XPos, YPos);
-  egFreeImage(CompImage);
   if (NewImage) {
     egFreeImage(NewImage);
-  }  
-  GraphicsScreenDirty = TRUE;
+  }
+  if (!BackgroundImage) {
+    egDrawImageArea(CompImage, 0, 0, 0, 0, XPos, YPos);
+    egFreeImage(CompImage);
+    return;
+  }
+  NewImage = egCreateImage(Width, Height, FALSE);
+  if (!NewImage) return;
+  
+  egRawCopy(NewImage->PixelData,
+            BackgroundImage->PixelData + YPos * BackgroundImage->Width + XPos,
+            Width, Height,
+            Width,
+            BackgroundImage->Width);
+  egComposeImage(NewImage, CompImage, 0, 0);
+  egFreeImage(CompImage);
+
+  // blit to screen and clean up
+  egDrawImageArea(NewImage, 0, 0, 0, 0, XPos, YPos);
+  if (NewImage) {
+    egFreeImage(NewImage);
+  }
 }
 
 VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XPos, IN INTN YPos)
@@ -471,7 +554,8 @@ VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XP
     egComposeImage(CompImage, TopImage, OffsetX, OffsetY);
     
     // blit to screen and clean up
-    egDrawImageArea(CompImage, 0, 0, TotalWidth, TotalHeight, XPos, YPos);
+//    egDrawImageArea(CompImage, 0, 0, TotalWidth, TotalHeight, XPos, YPos);
+  BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, 16);
     egFreeImage(CompImage);
     GraphicsScreenDirty = TRUE;
 }
@@ -489,7 +573,7 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
     CompImage = egCopyImage(BaseImage);
     TotalWidth  = BaseImage->Width;
     TotalHeight = BaseImage->Height;
-//  DBG("BaseImage: Width=%d Height=%d\n", TotalWidth, TotalHeight);
+  DBG("BaseImage: Width=%d Height=%d Alfa=%d\n", TotalWidth, TotalHeight, CompImage->HasAlpha);
     // place the top image
     CompWidth = TopImage->Width;
     if (CompWidth > TotalWidth)
@@ -510,7 +594,8 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
     }
     
     // blit to screen and clean up
-    egDrawImageArea(CompImage, 0, 0, TotalWidth, TotalHeight, XPos, YPos);
+//    egDrawImageArea(CompImage, 0, 0, TotalWidth, TotalHeight, XPos, YPos);
+  BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, 16);
     egFreeImage(CompImage);
     GraphicsScreenDirty = TRUE;
 }
@@ -528,9 +613,10 @@ VOID InitAnime()
 static EG_IMAGE    *CompImage = NULL;
 #define MAX_SIZE_ANIME 256
 
-VOID UpdateAnime(REFIT_MENU_SCREEN *Screen)
+VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
 {
   UINT64      Now;
+  INTN   x, y;
   if (!Screen || !Screen->AnimeRun) return;
   if (!CompImage ||
       (CompImage->Width != Screen->Film[0]->Width) ||
@@ -540,13 +626,14 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen)
     }
     CompImage = egCreateImage(Screen->Film[0]->Width, Screen->Film[0]->Height, TRUE);
   }   
-  
+  x = Place->XPos + (Place->Width - CompImage->Width) / 2;
+  y = Place->YPos + (Place->Height - CompImage->Height) / 2;
   Now = AsmReadTsc();
   if (Screen->LastDraw == 0) {
     //first start, we should save background into last frame
     egFillImageArea(CompImage, 0, 0, CompImage->Width, CompImage->Height, &MenuBackgroundPixel);
     egTakeImage(Screen->Film[Screen->Frames],
-                Screen->FilmX, Screen->FilmY,
+                x, y,
                 Screen->Film[Screen->Frames]->Width,
                 Screen->Film[Screen->Frames]->Height);
   }
@@ -558,7 +645,7 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen)
               CompImage->Width,
               Screen->Film[Screen->Frames]->Width);
     egComposeImage(CompImage, Screen->Film[Screen->CurrentFrame], 0, 0);
-    BltImage(CompImage, Screen->FilmX, Screen->FilmY);
+    BltImage(CompImage, x, y);
   }
   Screen->CurrentFrame++;
   if (Screen->CurrentFrame >= Screen->Frames) {
@@ -574,6 +661,7 @@ BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
   CHAR16      *Path;
   INTN        i, N;
   EG_IMAGE    *p = NULL;
+  EG_IMAGE    *Last = NULL;
   
   if (!Screen) return FALSE;
   
@@ -588,8 +676,13 @@ BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
     UnicodeSPrint(FileName, 512, L"%s\\%s_%03d.png", Path, Path, i);
 //    DBG("Try to load file %s\n", FileName);
     p = egLoadImage(ThemeDir, FileName, TRUE);
-    Screen->Film[i] = p;
-    if (!p) break;
+    if (!p) {
+      p = Last;
+      if (!p) break;
+    } else {
+      Last = p;
+    }
+    Screen->Film[i] = p;    
   }
   if (Screen->Film[0] == NULL)  return FALSE;
 

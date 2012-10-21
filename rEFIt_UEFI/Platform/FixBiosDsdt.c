@@ -13,7 +13,7 @@
 
 #ifndef DEBUG_FIX
 #ifndef DEBUG_ALL
-#define DEBUG_FIX 1
+#define DEBUG_FIX 0
 #else
 #define DEBUG_FIX DEBUG_ALL
 #endif
