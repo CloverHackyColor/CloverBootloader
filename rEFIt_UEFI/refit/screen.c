@@ -573,7 +573,7 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
     CompImage = egCopyImage(BaseImage);
     TotalWidth  = BaseImage->Width;
     TotalHeight = BaseImage->Height;
-  DBG("BaseImage: Width=%d Height=%d Alfa=%d\n", TotalWidth, TotalHeight, CompImage->HasAlpha);
+//  DBG("BaseImage: Width=%d Height=%d Alfa=%d\n", TotalWidth, TotalHeight, CompImage->HasAlpha);
     // place the top image
     CompWidth = TopImage->Width;
     if (CompWidth > TotalWidth)

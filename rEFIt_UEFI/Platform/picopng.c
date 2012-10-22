@@ -33,6 +33,20 @@
 #define TEST 0
 #include "picopng.h"
 
+#ifndef DEBUG_ALL
+#define DEBUG_PNG 1
+#else
+#define DEBUG_PNG DEBUG_ALL
+#endif
+
+#if DEBUG_PNG == 0
+#define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_PNG, __VA_ARGS__)
+#endif
+
+
+
 CONST 
 UINT32 pattern[28] = {0, 4, 0, 2, 0, 1, 0,
                       0, 0, 4, 0, 2, 0, 1,
@@ -671,24 +685,29 @@ void Inflator_inflate(VECTOR_8 *out, const VECTOR_8 *in, UINT32 inpos)
 INT32 Zlib_decompress(VECTOR_8 *out, const VECTOR_8 *in) // returns error value
 {
 	UINT32 CM,CINFO,FDICT;
-	if (in->size < 2)
+	if (in->size < 2) {
 		return 53; // error, size of zlib data too small
-	if ((in->data[0] * 256 + in->data[1]) % 31 != 0)
+	}
+	if ((in->data[0] * 256 + in->data[1]) % 31 != 0) {
 		// error: 256 * in->data[0] + in->data[1] must be a multiple of 31, the FCHECK value is
 		// supposed to be made that way
 		return 24;
+	}
 	CM = in->data[0] & 15;
 	CINFO = (in->data[0] >> 4) & 15;
 	FDICT = (in->data[1] >> 5) & 1;
-
-	if (CM != 8 || CINFO > 7)
+	DBG("compression method %d and CINFO=%d FDICT=%d\n", CM, CINFO, FDICT);
+	if (CM != 8 || CINFO > 7){
 		// error: only compression method 8: inflate with sliding window of 32k is supported by
 		// the PNG spec
+		
 		return 25;
-	if (FDICT != 0)
+	}
+	if (FDICT != 0){
 		// error: the specification of PNG says about the zlib stream: "The additional flags shall
 		// not specify a preset dictionary."
 		return 26;
+	}
 	Inflator_inflate(out, in, 2);
 	return Inflator_error; // note: adler32 checksum was skipped and ignored
 }
@@ -736,7 +755,7 @@ UINT32 PNG_read32bitLE(const UINT8 *buffer)
 	return (buffer[3] << 24) | (buffer[2] << 16) | (buffer[1] << 8) | buffer[0];
 }
 
-int PNG_checkColorValidity(UINT32 colorType, UINT32 bd) // return type is a LodePNG error code
+INTN PNG_checkColorValidity(UINT32 colorType, UINT32 bd) // return type is a LodePNG error code
 {
 	if ((colorType == 2 || colorType == 4 || colorType == 6)) {
 		if (!(bd == 8 || bd == 16))
@@ -791,19 +810,25 @@ void PNG_readPngHeader(PNG_INFO *info, const UINT8 *in, UINT32 inlength)
 	info->compressionMethod = in[26];
 	if (in[26] != 0) {
 		PNG_error = 32; // error: only compression method 0 is allowed in the specification
+		DBG("error: only compression method 0 is allowed in the specification\n");
 		return;
 	}
 	info->filterMethod = in[27];
 	if (in[27] != 0) {
 		PNG_error = 33; // error: only filter method 0 is allowed in the specification
+		DBG("error: only filter method 0 is allowed in the specification\n");
 		return;
 	}
 	info->interlaceMethod = in[28];
 	if (in[28] > 1) {
 		PNG_error = 34; // error: only interlace methods 0 and 1 exist in the specification
+		DBG("error: only interlace method 0 and 1 exist in the specification\n");
 		return;
 	}
 	PNG_error = PNG_checkColorValidity(info->colorType, info->bitDepth);
+	if (PNG_error) {
+		DBG("error: checkColorValidity =%d\n", PNG_error);
+	}
 }
 
 INT32 PNG_paethPredictor(INT32 a, INT32 b, INT32 c) // Paeth predicter, used by PNG filter type 4
@@ -868,6 +893,7 @@ void PNG_unFilterScanline(UINT8 *recon, const UINT8 *scanline, const UINT8 *prec
 		break;
 	default:
 		PNG_error = 36; // error: nonexistent filter type given
+			DBG("error: nonexistent filter type given\n");
 		return;
 	}
 }
@@ -1026,12 +1052,15 @@ PNG_INFO *PNG_decode(/* const*/ UINT8 *in, UINT32 size)
 	if (size == 0 || in == 0) 
 	{
 		PNG_error = 48; // the given data is empty
+		DBG("the given data is empty\n");
 		return NULL;
 	}
 	info = PNG_info_new();
 	PNG_readPngHeader(info, in, size);
-	if (PNG_error)
+	if (PNG_error){
+		DBG("readPngHeader PNG_error=%d\n", PNG_error);
 		return NULL;
+	}
 	pos = 33; // first byte of the first chunk after the header
 	idat = NULL; // the data from idat chunks
 	IEND = FALSE;
@@ -1048,6 +1077,7 @@ PNG_INFO *PNG_decode(/* const*/ UINT8 *in, UINT32 size)
 		if (pos + 8 >= size) 
 		{
 			PNG_error = 30; // error: size of the in buffer too small to contain next chunk
+			DBG("error: size of the in buffer too small to contain next chunk size=%d\n", size);
 			return NULL;
 		}
 		chunkLength = PNG_read32bitInt(&in[pos]); //big endian? Yes!
@@ -1252,6 +1282,7 @@ EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ico
 
   PNG_error = -1;
 	info = PNG_decode(FileData, (UINT32)FileDataLength);
+	
 	if(!PNG_error)
 	{
 		NewImage = egCreateImage((INTN)info->width, (INTN)info->height, WantAlpha);
@@ -1274,7 +1305,10 @@ EG_IMAGE * egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN Ico
 //    MsgLog("png decoded %dx%d datalenght=%d iconsize=%d\n",
 //           NewImage->Height, NewImage->Width, FileDataLength, IconSize);
 		return NewImage;
+	} else {
+		DBG("decode PNG_error=%d\n", PNG_error);
 	}
+
   
 	return NULL;  
 }

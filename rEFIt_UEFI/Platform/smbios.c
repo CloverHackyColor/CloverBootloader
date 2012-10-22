@@ -1059,6 +1059,7 @@ VOID PatchTableType16()
 	} */
 	//MemoryErrorInformationHandle
 	newSmbiosTable.Type16->MemoryErrorInformationHandle = 0xFFFF;
+	newSmbiosTable.Type16->NumberOfMemoryDevices = gDMI->MemoryModules;
 	mHandle16 = LogSmbiosTable(newSmbiosTable);
 	return;
 }
@@ -1113,6 +1114,9 @@ VOID PatchTableType17()
 		//DBG("SMBIOS Type 17 Index = %d:\n", Index);
 		if (SmbiosTable.Raw == NULL) {
 //		//	DBG("SmbiosTable: Type 17 (Memory Device number %d) not found!\n", Index);
+			continue;
+		}
+		if ((SmbiosTable.Type17->Size == 0) || (SmbiosTable.Type17->Speed == 0)) {
 			continue;
 		}
 		TableSize = SmbiosTableLength(SmbiosTable);
