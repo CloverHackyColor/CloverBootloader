@@ -70,9 +70,9 @@ BOOLEAN AllowGraphicsMode;
 
 EG_RECT  BannerPlace = {0, 0, 0, 0};
 
-EG_PIXEL StdBackgroundPixel  = { 0xbf, 0xbf, 0xbf, 0 };
-EG_PIXEL MenuBackgroundPixel = { 0xbf, 0xbf, 0xbf, 0 };
-EG_PIXEL InputBackgroundPixel = { 0xcf, 0xcf, 0xcf, 0 };
+EG_PIXEL StdBackgroundPixel   = { 0xbf, 0xbf, 0xbf, 0x80};
+EG_PIXEL MenuBackgroundPixel  = { 0xbf, 0xbf, 0xbf, 0x80};
+EG_PIXEL InputBackgroundPixel = { 0xcf, 0xcf, 0xcf, 0x80};
 
 EG_IMAGE *BackgroundImage = NULL;
 

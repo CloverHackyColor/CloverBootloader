@@ -68,8 +68,6 @@ REFIT_MENU_SCREEN OptionMenu  = {4, L"Options", NULL, 0, NULL, 0, NULL, 0, NULL,
   {0, 0, 0, 0}, NULL };
 extern REFIT_MENU_ENTRY MenuEntryReturn;
 
-EG_PIXEL TransBackgroundPixel = {0, 0, 0, 0};
-
 #define SCROLL_LINE_UP    (0)
 #define SCROLL_LINE_DOWN  (1)
 #define SCROLL_PAGE_UP    (2)
@@ -101,8 +99,10 @@ static CHAR16 ArrowDown[2] = { ARROW_DOWN, 0 };
 #define ROW0_SCROLLSIZE (100)
 
 static EG_IMAGE *SelectionImages[4] = { NULL, NULL, NULL, NULL };
-static EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0 };
 static EG_IMAGE *TextBuffer = NULL;
+
+EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0 };
+EG_PIXEL TransBackgroundPixel = {0, 0, 0, 0};
 
 static INTN row0Count, row0PosX, row0PosXRunning;
 static INTN row1Count, row1PosX, row1PosXRunning;
@@ -1301,7 +1301,7 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor)
 {
   if (TextBuffer == NULL)
-    TextBuffer = egCreateImage(LAYOUT_TEXT_WIDTH, TextHeight, FALSE);
+    TextBuffer = egCreateImage(LAYOUT_TEXT_WIDTH, TextHeight, TRUE);
   
   if (Cursor != 0xFFFF) {
     egFillImage(TextBuffer, &MenuBackgroundPixel);
@@ -1318,7 +1318,7 @@ VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN 
   
   // render the text
   egRenderText(Text, TextBuffer, TEXT_XMARGIN, TEXT_YMARGIN, (INTN)Cursor);
-  BltImage(TextBuffer, (INTN)XPos, (INTN)YPos);
+  BltImageAlpha(TextBuffer, (INTN)XPos, (INTN)YPos, &SelectionBackgroundPixel, 16);
 }
 
 static INTN MenuWidth, EntriesPosX, EntriesPosY, TimeoutPosY;
@@ -1506,13 +1506,13 @@ static INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAl
     if (!Text) return 0;
   
     egMeasureText(Text, &TextWidth, NULL);
-    TextBufferXY = egCreateImage(TextWidth, TextHeight, FALSE);
+    TextBufferXY = egCreateImage(TextWidth, TextHeight, TRUE);
     
     egFillImage(TextBufferXY, &MenuBackgroundPixel);
     
     // render the text
     egRenderText(Text, TextBufferXY, 0, 0, 0xFFFF);
-    BltImage(TextBufferXY, (XPos - (TextWidth >> XAlign)), YPos);
+    BltImageAlpha(TextBufferXY, (XPos - (TextWidth >> XAlign)), YPos,  &MenuBackgroundPixel, 16);
     egFreeImage(TextBufferXY);
     return TextWidth;
 }
