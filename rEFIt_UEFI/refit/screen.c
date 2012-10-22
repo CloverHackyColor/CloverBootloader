@@ -602,12 +602,21 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
 
 VOID InitAnime()
 {
+  /*
+  // dmazar: original init code is here:
   INTN i;
   for (i=0; i<MAX_ANIME; i++){
     AnimeName[i] = NULL;
     AnimeFrames[i] = 0;
     AnimeFrameTime[i] = 100;
   }
+  // but MS compiler optimizes this with memset() RTL function and causes linker error.
+  // note: setting AnimeFrameTime elements to 100 depends on them
+  // being UINTN or INTN with following code
+  */
+  ZeroMem (AnimeName, MAX_ANIME * sizeof(AnimeName[0]));  
+  ZeroMem (AnimeFrames, MAX_ANIME * sizeof(AnimeFrames[0]));  
+  SetMemN(AnimeFrameTime, MAX_ANIME, 100);  
 }
 
 static EG_IMAGE    *CompImage = NULL;

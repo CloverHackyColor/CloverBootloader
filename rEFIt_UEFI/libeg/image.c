@@ -545,7 +545,7 @@ VOID egRawCompose(IN OUT EG_PIXEL *CompBasePtr, IN EG_PIXEL *TopBasePtr,
       CompPtr->g = (UINT8)((Temp + (Temp >> 8)) >> 8);
       Temp = (UINTN)CompPtr->r * RevAlpha + (UINTN)TopPtr->r * Alpha + 0x80;
       CompPtr->r = (UINT8)((Temp + (Temp >> 8)) >> 8);
-      CompPtr->a = (CompPtr->a > Alpha)?CompPtr->a:Alpha;
+      CompPtr->a = (CompPtr->a > Alpha)?CompPtr->a:(UINT8)Alpha;
       TopPtr++, CompPtr++;
     }
     TopBasePtr += TopLineOffset;

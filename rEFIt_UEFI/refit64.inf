@@ -229,3 +229,6 @@
 [BuildOptions]
   XCODE:*_*_*_CC_FLAGS = -Os 
   GCC:*_*_*_CC_FLAGS = -Os
+# regarding unresolved external symbol memcpy, memset with MS tools: 
+# http://feishare.com/efimail/messages/20090320-0913-Re__EDK_DEV__Building_module_for_X64_generates_unresolved_references_to_memset_and_memcpy-_Gao__Liming_.html
+#  MSFT:*_*_*_CC_FLAGS = /FAcs

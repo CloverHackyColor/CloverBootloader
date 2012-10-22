@@ -1634,9 +1634,10 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       //InitSelection(); //Slice - I changed order because of background pixel
       SwitchToGraphicsAndClear();
       InitSelection();
-      Screen->FilmPlace = BannerPlace;
-  //    Screen->FilmPlace.XPos = BannerPlace.XPos;
-  //    Screen->FilmPlace.YPos = BannerPlace.YPos;
+	  
+	  // structV1 = structV2 causes MS compiler to insert memcpy() RTL call -> replaced with CopyMem()
+      //Screen->FilmPlace = BannerPlace;
+	  CopyMem(&Screen->FilmPlace, &BannerPlace, sizeof(Screen->FilmPlace)); 
       
  //     DBG("main menu inited\n");
       break;
