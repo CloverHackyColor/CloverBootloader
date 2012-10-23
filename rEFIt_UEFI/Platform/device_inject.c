@@ -437,9 +437,9 @@ UINT32 HDA_IC_sendVerb(EFI_PCI_IO_PROTOCOL *PciIo, UINT32 codecAdr, UINT32 nodeI
   // about that polling below ...
   // spec says that delay is in 100ns units. value 1.000.000.0
   // should then be 1 second, but users of newer Aptio boards were reporting
-  // delays of 10-20 secs wen this value was used. maybe this polling timeout
+  // delays of 10-20 secs when this value was used. maybe this polling timeout
   // value does not mean the same on all implementations?
-  // anyway, delay is lowered now to 10.000.0 (10 milis).
+  // anyway, delay is lowered now to 10.000.0 (10 millis).
   
 	// poll ICS[0] to become 0
 	Status = PciIo->PollMem(PciIo, EfiPciIoWidthUint16, 0/*bar*/, HDA_ICS/*offset*/, 0x1/*mask*/, 0/*value*/, 100000/*delay in 100ns*/, &data64);

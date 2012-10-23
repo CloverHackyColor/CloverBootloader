@@ -51,6 +51,8 @@ UINT8 GMAX3100_vals[25][4] = {
     { 0x09,0x00,0x66,0x01 }     //24 "AAPL,ig-platform-id" HD4000
 };
 
+UINT8 FakeID_126[] = {0x26, 0x01, 0x00, 0x00 };
+
 UINT8 reg_TRUE[]	= { 0x01, 0x00, 0x00, 0x00 };
 UINT8 reg_FALSE[] = { 0x00, 0x00, 0x00, 0x00 };
 
@@ -79,6 +81,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x0102, "Intel HD Graphics 3000"  },
   { 0x0112, "Intel HD Graphics 3000"  },
   { 0x0116, "Intel HD Graphics 3000"  },
+  { 0x0122, "Intel HD Graphics 3000"  },
   { 0x0126, "Intel HD Graphics 3000"  },
   { 0x0166, "Intel HD Graphics 4000"  }, //
   { 0x0162, "Intel HD Graphics 4000"  }  //Desktop??
@@ -150,8 +153,11 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   switch (gma_dev->device_id) {
     case 0x0102: 
       devprop_add_value(device, "class-code",						ClassFix, 4);
-    case 0x0116:  
-    case 0x0126:  
+    case 0x0116:
+    case 0x0122:
+    case 0x0126:
+      if (gma_dev->device_id == 0x122)
+        devprop_add_value(device, "device-id", FakeID_126, 4);
     case 0x0162:
     case 0x0166:
       if (gma_dev->device_id == 0x162)
