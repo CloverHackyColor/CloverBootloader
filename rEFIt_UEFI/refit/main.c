@@ -923,7 +923,7 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   } else if (GlobalConfig.HideBadges == HDBADGES_SWAP) {
     Entry->me.BadgeImage   =  egCopyScaledImage(Volume->DriveImage, 4);
   }*/
-  Entry->me.Image   = egCopyScaledImage(Volume->OSImage, 4);
+//  Entry->me.Image   = egCopyScaledImage(Volume->OSImage, 4);
   Entry->LoaderPath      = EfiStrDuplicate(LoaderPath);
   Entry->VolName         = Volume->VolName;
   Entry->DevicePath      = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
@@ -944,7 +944,8 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   Entry->me.Tag     = TAG_CLOVER;
   Entry->me.ShortcutLetter = ShortcutLetter;
   //  if (Entry->me.Image == NULL)
-//  Entry->me.Image = LoadOSIcon(OSIconName, L"unknown", FALSE);
+  Entry->me.BadgeImage = LoadOSIcon(OSIconName, L"unknown", FALSE);
+  Entry->me.Image   = egCopyScaledImage(Entry->me.BadgeImage, 6);
   
   // create the submenu
   SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
@@ -1076,6 +1077,7 @@ static VOID ScanLoader(VOID)
     if (FileExists(Volume->RootDir, FileName)) {
       //     Print(L"  - Mac OS X boot file found\n");
       Volume->BootType = BOOTING_BY_EFI;
+      Volume->DriveImage = ScanVolumeDefaultIcon(Volume);
       if (!gSettings.HVHideAllOSX)
         Entry = AddLoaderEntry(FileName, L"Mac OS X", Volume, Volume->OSType);
       //     continue; //boot MacOSX only
@@ -1098,9 +1100,10 @@ static VOID ScanLoader(VOID)
       Volume->BootType = BOOTING_BY_EFI;
       Volume->OSType = OSTYPE_LION;
       Volume->OSIconName = L"lion";      
-      if (!gSettings.HVHideAllOSXInstall)
-      Entry = AddLoaderEntry(FileName, L"Mac OS X Install", Volume, Volume->OSType);
-      continue; //boot MacOSX only
+      if (!gSettings.HVHideAllOSXInstall) {
+        Entry = AddLoaderEntry(FileName, L"Mac OS X Install", Volume, Volume->OSType);
+        continue; //boot MacOSX only
+      }
     }
     // dmazar: ML install from Lion to empty partition
     // starting (Lion) partition: /.IABootFiles with boot.efi and kernelcache,
@@ -1111,9 +1114,10 @@ static VOID ScanLoader(VOID)
       Volume->BootType = BOOTING_BY_EFI;
       Volume->OSType = OSTYPE_COUGAR;
       Volume->OSIconName = L"cougar";
-      if (!gSettings.HVHideAllOSXInstall)
-      Entry = AddLoaderEntry(FileName, L"OS X Install", Volume, Volume->OSType);
-      //continue; //boot MacOSX only
+      if (!gSettings.HVHideAllOSXInstall) {
+        Entry = AddLoaderEntry(FileName, L"OS X Install", Volume, Volume->OSType);
+        //continue; //boot MacOSX only
+      }
     }
     //============ add in end ============
     
@@ -1123,9 +1127,11 @@ static VOID ScanLoader(VOID)
       Volume->BootType = BOOTING_BY_EFI;
       Volume->OSType = OSTYPE_RECOVERY; 
       Volume->OSIconName = L"mac";
-      if (!gSettings.HVHideAllRecovery)
+      Volume->DriveImage = ScanVolumeDefaultIcon(Volume);
+      if (!gSettings.HVHideAllRecovery) {
         Entry = AddLoaderEntry(FileName, L"Recovery", Volume, Volume->OSType);
-      continue; //boot recovery only
+        continue; //boot recovery only
+      }
     }
     
     // check for XOM - and what?
@@ -1140,11 +1146,13 @@ static VOID ScanLoader(VOID)
     StrCpy(FileName, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi");
     if (FileExists(Volume->RootDir, FileName)) {
       //     Print(L"  - Microsoft boot menu found\n");
-      //    Volume->OSType = OSTYPE_WIN;
+      Volume->OSType = OSTYPE_WINEFI;
       Volume->BootType = BOOTING_BY_EFI;
-      if (!gSettings.HVHideAllWindowsEFI)
-      Entry = AddLoaderEntry(FileName, L"Microsoft EFI boot menu", Volume, OSTYPE_WINEFI);
+      Volume->DriveImage = ScanVolumeDefaultIcon(Volume);
+      if (!gSettings.HVHideAllWindowsEFI){
+        Entry = AddLoaderEntry(FileName, L"Microsoft EFI boot menu", Volume, OSTYPE_WINEFI);
  //     continue;
+      }
     }
 
     // check for grub boot loader/menu
@@ -1155,11 +1163,13 @@ static VOID ScanLoader(VOID)
 #endif
       
       if (FileExists(Volume->RootDir, FileName)) {
-  //    Volume->OSType = OSTYPE_LIN;
-      Volume->BootType = BOOTING_BY_EFI;
-      if (!gSettings.HVHideAllGrub)
-        Entry = AddLoaderEntry(FileName, L"Grub EFI boot menu", Volume, OSTYPE_LIN);
+        Volume->OSType = OSTYPE_LIN;
+        Volume->BootType = BOOTING_BY_EFI;
+        Volume->DriveImage = ScanVolumeDefaultIcon(Volume);  
+        if (!gSettings.HVHideAllGrub) {
+          Entry = AddLoaderEntry(FileName, L"Grub EFI boot menu", Volume, OSTYPE_LIN);
  //     continue;
+        }
     }
       // check for Gentoo boot loader/menu
 #if defined(MDE_CPU_X64)

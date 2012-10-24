@@ -755,7 +755,7 @@ UINT32 PNG_read32bitLE(const UINT8 *buffer)
 	return (buffer[3] << 24) | (buffer[2] << 16) | (buffer[1] << 8) | buffer[0];
 }
 
-INTN PNG_checkColorValidity(UINT32 colorType, UINT32 bd) // return type is a LodePNG error code
+INT32 PNG_checkColorValidity(UINT32 colorType, UINT32 bd) // return type is a LodePNG error code
 {
 	if ((colorType == 2 || colorType == 4 || colorType == 6)) {
 		if (!(bd == 8 || bd == 16))

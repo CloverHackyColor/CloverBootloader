@@ -495,6 +495,7 @@ EG_IMAGE * LoadIcnsFallback(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN 
 EG_IMAGE * DummyImage(IN UINTN PixelSize);
 
 EG_IMAGE * BuiltinIcon(IN UINTN Id);
+EG_IMAGE * ScanVolumeDefaultIcon(REFIT_VOLUME *Volume);
 
 #define BUILTIN_ICON_FUNC_ABOUT     (0)
 #define BUILTIN_ICON_FUNC_OPTIONS   (1)

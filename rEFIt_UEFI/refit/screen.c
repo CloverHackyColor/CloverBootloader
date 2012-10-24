@@ -70,7 +70,7 @@ BOOLEAN AllowGraphicsMode;
 
 EG_RECT  BannerPlace = {0, 0, 0, 0};
 
-EG_PIXEL StdBackgroundPixel   = { 0xbf, 0xbf, 0xbf, 0x80};
+EG_PIXEL StdBackgroundPixel   = { 0xbf, 0xbf, 0xbf, 0x00};
 EG_PIXEL MenuBackgroundPixel  = { 0xbf, 0xbf, 0xbf, 0x80};
 EG_PIXEL InputBackgroundPixel = { 0xcf, 0xcf, 0xcf, 0x80};
 
@@ -474,7 +474,7 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
   InputBackgroundPixel.r = (MenuBackgroundPixel.r + 0) & 0xFF;
   InputBackgroundPixel.g = (MenuBackgroundPixel.g + 0) & 0xFF;
   InputBackgroundPixel.b = (MenuBackgroundPixel.b + 0) & 0xFF;
-  
+  InputBackgroundPixel.a = (MenuBackgroundPixel.a + 0) & 0xFF;
   GraphicsScreenDirty = FALSE;
 }
 

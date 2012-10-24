@@ -101,7 +101,7 @@ static CHAR16 ArrowDown[2] = { ARROW_DOWN, 0 };
 static EG_IMAGE *SelectionImages[4] = { NULL, NULL, NULL, NULL };
 static EG_IMAGE *TextBuffer = NULL;
 
-EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0 };
+EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //non-trasparent
 EG_PIXEL TransBackgroundPixel = {0, 0, 0, 0};
 
 static INTN row0Count, row0PosX, row0PosXRunning;
@@ -1298,6 +1298,25 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 // graphical generic style
 //
 
+static INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
+{
+  INTN TextWidth;
+  EG_IMAGE *TextBufferXY = NULL;
+  
+  if (!Text) return 0;
+  
+  egMeasureText(Text, &TextWidth, NULL);
+  TextBufferXY = egCreateImage(TextWidth, TextHeight, TRUE);
+  
+  egFillImage(TextBufferXY, &MenuBackgroundPixel);
+  
+  // render the text
+  egRenderText(Text, TextBufferXY, 0, 0, 0xFFFF); //input only
+  BltImageAlpha(TextBufferXY, (XPos - (TextWidth >> XAlign)), YPos,  &MenuBackgroundPixel, 16);
+  egFreeImage(TextBufferXY);
+  return TextWidth;
+}
+
 VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN YPos, IN INTN Cursor)
 {
   if (TextBuffer == NULL)
@@ -1318,7 +1337,7 @@ VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN 
   
   // render the text
   egRenderText(Text, TextBuffer, TEXT_XMARGIN, TEXT_YMARGIN, (INTN)Cursor);
-  BltImageAlpha(TextBuffer, (INTN)XPos, (INTN)YPos, &SelectionBackgroundPixel, 16);
+  BltImageAlpha(TextBuffer, (INTN)XPos, (INTN)YPos, &MenuBackgroundPixel, 16);
 }
 
 static INTN MenuWidth, EntriesPosX, EntriesPosY, TimeoutPosY;
@@ -1495,26 +1514,6 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
   Entry->Place.YPos = YPos;
   Entry->Place.Width = MainImage->Width;
   Entry->Place.Height = MainImage->Height;
-}
-
-
-static INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
-{
-    INTN TextWidth;
-    EG_IMAGE *TextBufferXY = NULL;
-    
-    if (!Text) return 0;
-  
-    egMeasureText(Text, &TextWidth, NULL);
-    TextBufferXY = egCreateImage(TextWidth, TextHeight, TRUE);
-    
-    egFillImage(TextBufferXY, &MenuBackgroundPixel);
-    
-    // render the text
-    egRenderText(Text, TextBufferXY, 0, 0, 0xFFFF);
-    BltImageAlpha(TextBufferXY, (XPos - (TextWidth >> XAlign)), YPos,  &MenuBackgroundPixel, 16);
-    egFreeImage(TextBufferXY);
-    return TextWidth;
 }
 
 static VOID FillRectAreaOfScreen(IN INTN XPos, IN INTN YPos, IN INTN Width, IN INTN Height, IN EG_PIXEL *Color, IN UINT8 XAlign)
