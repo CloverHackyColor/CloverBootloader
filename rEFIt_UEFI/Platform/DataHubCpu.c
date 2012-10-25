@@ -178,11 +178,11 @@ EFI_STATUS SetVariablesForOSX()
 
   if (gSettings.iCloudFix) {
     Status = gRS->SetVariable(L"MLB", &gEfiAppleNvramGuid,
-                              EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                              /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                               SNLen, &gSettings.SerialNr);
  
     Status = gRS->SetVariable(L"ROM", &gEfiAppleNvramGuid,
-                              EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                              /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                               6, &gSettings.SmUUID.Data4);
   }
 

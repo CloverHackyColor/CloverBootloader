@@ -837,6 +837,7 @@ extern BOOLEAN                  gMobile;
 extern UINT64                   TurboMsr;
 extern CHAR8*                   BiosVendor;
 extern EFI_GUID                 *gEfiBootDeviceGuid;
+extern EFI_DEVICE_PATH_PROTOCOL *gEfiBootDeviceData;
 extern CHAR8*                   AppleSystemVersion[];
 extern CHAR8*	                  AppleFirmwareVersion[];
 extern CHAR8*	                  AppleReleaseDate[];
@@ -943,11 +944,13 @@ EFI_STATUS      LoadKexts(IN LOADER_ENTRY *Entry);
 //
 // Nvram.c
 //
-VOID           *GetNvramVariable(IN CHAR16 *VariableName, IN EFI_GUID *VendorGuid, OUT UINTN *DataSize OPTIONAL);
+VOID           *GetNvramVariable(IN CHAR16 *VariableName, IN EFI_GUID *VendorGuid, OUT UINT32 *Attributes OPTIONAL, OUT UINTN *DataSize OPTIONAL);
+EFI_STATUS      SetNvramVariable(IN CHAR16 *VariableName, IN EFI_GUID *VendorGuid, IN UINT32 Attributes, IN UINTN DataSize, IN VOID *Data);
 EFI_STATUS      GetEfiBootDeviceFromNvram(VOID);
 EFI_GUID       *FindGPTPartitionGuidInDevicePath(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath);
-REFIT_VOLUME*   FindStartupDiskVolume(VOID);
 VOID            PutNvramPlistToRtVars(VOID);
+INTN            FindStartupDiskVolume(REFIT_MENU_SCREEN *MainMenu);
+EFI_STATUS      SetStartupDiskVolume(IN REFIT_VOLUME *Volume, IN CHAR16 *LoaderPath);
 
 
 EFI_STATUS
@@ -1018,6 +1021,20 @@ UINT64      TimeDiff(UINT64 t0, UINT64 t1);
 // BootOptions.c
 //
 
+/** Returns 0 if two strings are equal, !=0 otherwise. Compares just first 8 bits of chars (valid for ASCII), case insensitive. */
+UINTN
+EFIAPI
+StrCmpiBasic(
+    IN  CHAR16          *String1,
+    IN  CHAR16          *String2
+    );
+/** Finds and returns pointer to specified DevPath node in DevicePath or NULL. */
+EFI_DEVICE_PATH_PROTOCOL *
+FindDevicePathNodeWithType (
+    IN  EFI_DEVICE_PATH_PROTOCOL    *DevicePath,
+    IN  UINT8           Type,
+    IN  UINT8           SubType OPTIONAL
+    );
 /** Prints BootXXXX vars found listed in BootOrder, plus print others if AllBootOptions == TRUE. */
 VOID
 PrintBootOptions (

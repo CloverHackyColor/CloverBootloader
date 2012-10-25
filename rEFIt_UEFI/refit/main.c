@@ -463,7 +463,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     //PauseForKey(L"SetFSInjection");
 //    DBG("SetVariablesForOSX\n");
     SetVariablesForOSX();
-//    DBG("EventsInitialize\n");
+//    DBG("SetVariablesForOSX\n");
     EventsInitialize();
 //    DBG("FinalizeSmbios\n");
     FinalizeSmbios();
@@ -495,6 +495,8 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       //PauseForKey(L"continue");
       Entry->LoadOptions     = NULL;
   }
+  
+  SetStartupDiskVolume(Entry->Volume, Entry->LoaderType == OSTYPE_OSX ? NULL : Entry->LoaderPath);
   
   if (BlockConOut) {
     // save orig OutputString and replace it with
@@ -1307,6 +1309,8 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
 //    UINTN               ErrorInStep = 0;
 //    EFI_DEVICE_PATH     *DiscoveredPathList[MAX_DISCOVERED_PATHS];
 
+    SetStartupDiskVolume(Entry->Volume, NULL);
+  
     egClearScreen(&DarkBackgroundPixel);
     BeginExternalScreen(TRUE, L"Booting Legacy OS");
     
@@ -1673,24 +1677,16 @@ INTN FindDefaultEntry(VOID)
   DBG("FindDefaultEntry ...\n");
   
   //
-  // try to detect volume set by Startup Disk
+  // try to detect volume set by Startup Disk or previous Clover selection
   //
-  Volume = FindStartupDiskVolume();
-  if (Volume != NULL) {
-    
-    // find first menu entry with that volume
-    for (Index = 0; ((Index < (INTN)MainMenu.EntryCount) && (MainMenu.Entries[Index]->Row == 0)); Index++) {
-      Entry = (LOADER_ENTRY*)MainMenu.Entries[Index];
-      if (Entry->Volume == Volume) {
-        DBG("Boot redirected to Entry %d. '%s', Volume '%s'\n", Index, Entry->me.Title, Volume->VolName);
-        return Index;
-      }
-    }
-    
+  Index = FindStartupDiskVolume(&MainMenu);
+  if (Index >= 0) {
+    DBG("Boot redirected to Entry %d. '%s'\n", Index, MainMenu.Entries[Index]->Title);
+    return Index;
   }
   
   //
-  // if not found so far, then try DefaultBoot from config.plist
+  // if not found, then try DefaultBoot from config.plist
   // search volume with name == gSettings.DefaultBoot
   //
   if (gSettings.DefaultBoot != NULL && gSettings.DefaultBoot[0] != L'\0') {
@@ -1888,7 +1884,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     // if present, ScanVolumes() will skip scanning other volumes
     // in the first run.
     // this speeds up loading of default OSX volume.
-    Status = GetEfiBootDeviceFromNvram();
+    GetEfiBootDeviceFromNvram();
 //    DBGT("GetEfiBootDeviceFromNvram()\n");
   }
   

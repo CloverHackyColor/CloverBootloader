@@ -146,17 +146,19 @@ StrCmpiBasic(
 }
 
 
-/** Finds and returns pointer to specified DevPath node in DevicePath or NULL. */
+/** Finds and returns pointer to specified DevPath node in DevicePath or NULL.
+ *  If SubType == 0 then it is ignored.
+ */
 EFI_DEVICE_PATH_PROTOCOL *
 FindDevicePathNodeWithType (
     IN  EFI_DEVICE_PATH_PROTOCOL    *DevicePath,
     IN  UINT8           Type,
-    IN  UINT8           SubType
+    IN  UINT8           SubType OPTIONAL
 )
 {
     
     while ( !IsDevicePathEnd (DevicePath) ) {
-        if (DevicePathType (DevicePath) == Type && DevicePathSubType (DevicePath) == SubType) {
+        if (DevicePathType (DevicePath) == Type && (SubType == 0 || DevicePathSubType (DevicePath) == SubType)) {
             return DevicePath;
         }
         DevicePath = NextDevicePathNode (DevicePath);
@@ -361,7 +363,7 @@ GetBootOrder (
     //
     // Get gEfiGlobalVariableGuid:BootOrder and it's length
     //
-    *BootOrder = GetNvramVariable (BOOT_ORDER_VAR, &gEfiGlobalVariableGuid, &BootOrderSize);
+    *BootOrder = GetNvramVariable (BOOT_ORDER_VAR, &gEfiGlobalVariableGuid, NULL, &BootOrderSize);
     if (*BootOrder == NULL) {
         DBG(" EFI_NOT_FOUND\n");
         return EFI_NOT_FOUND;
@@ -707,7 +709,7 @@ GetBootOption (
     BootOption->BootNum = BootNum;
     UnicodeSPrint (VarName, sizeof(VarName), L"Boot%04X", BootNum);
     
-    BootOption->Variable = GetNvramVariable (VarName, &gEfiGlobalVariableGuid, &BootOption->VariableSize);
+    BootOption->Variable = GetNvramVariable (VarName, &gEfiGlobalVariableGuid, NULL, &BootOption->VariableSize);
     if (BootOption->Variable == NULL) {
         return EFI_NOT_FOUND;
     }
