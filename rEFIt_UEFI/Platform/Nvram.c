@@ -754,7 +754,7 @@ INTN FindStartupDiskVolume(REFIT_MENU_SCREEN *MainMenu)
     //
     DiskVolume = NULL;
     DBG(" searching for that disk\n");
-    for (Index = 0; Index < VolumesCount; Index++) {
+    for (Index = 0; Index < (INTN)VolumesCount; Index++) {
         Volume = Volumes[Index];
         if (BootVolumeDevicePathEqual(gEfiBootVolume, Volume->DevicePath)) {
             // that's the one
