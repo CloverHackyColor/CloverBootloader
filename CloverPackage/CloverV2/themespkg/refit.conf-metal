@@ -3,8 +3,13 @@
 # Configuration file for the rEFIt boot menu
 #
 
-# Timeout in seconds for the main menu screen. Setting the timeout to 0
+# Timeout in seconds for the main menu screen.
+# Commenting the timeout option or setting it to -1
 # disables automatic booting (i.e., no timeout).
+# Setting it to 0 enables direct boot to default volume.
+# timeout 5 - enter menu and wait for 5 sec to boot default Volume
+# timeout 0 - boot into default volume without GUI
+# timeout -1 - enter GUI without default booting 
 #
 timeout 5
 
@@ -26,7 +31,7 @@ timeout 5
 #
 #disable external optical shell singleuser
 #disable all
-disable hwtest
+#disable hwtest
 
 # Note: The 'disableopticalboot' and 'disableexternalboot' options from
 # Charles Ahn's patch are also supported for compatibility. They are
@@ -57,7 +62,7 @@ font_file_name 	dark-wide.png
 
 # pixel size of letters in text. depends on font and wanted design
 # may differ from letter width allowing overriding
-# default value 7 corresponding embedded font
+# default value 7 corresponding embedded font alfa
 #
 char_width 8
 
@@ -69,7 +74,17 @@ char_width 8
 # V2 - PNG image supported 
 # The location of the file theme dependent 
 #
-banner logo_metal4.png
+#banner logo_metal4.png
+
+# now there is a sense to use transparent image
+banner logo-trans.png
+
+# Background image may differ in size with Screen size
+# scale - stretch file to screen size 
+# crop - place file to center or crop them to screen size
+# tile - fill all screen with repeated image
+background MetalBack.png crop
+#background metal-2.png crop
 
 # Custom images for the selection background. There is a big one (144 x 144)
 # for the OS icons, and a small one (64 x 64) for the function icons in the
@@ -80,15 +95,45 @@ banner logo_metal4.png
 # Like the banner option above, these options take a filename of
 # an uncompressed BMP image file.
 # V2 - PNG image supported 
-# theme dependent
+# location is theme independent
 #
-selection_big   Selection_big.png
-selection_small Selection_small.png
+selection_big   Select_trans_big.png
+selection_small Select_trans_small.png
 
 #Selection bar in menu may have different colors
 # default white RGBA={0xFF, 0xFF, 0xFF, 0x00}
 #
-selection_color 0xFFFFFF00
+selection_color 0xF3F3F380
+
+#Animation ID
+
+#Logo       		(1)
+#About      		(2)
+#Help       		(3)
+#Options   			(4)
+#Graphics			(5)
+#CPU      			(6)
+#Binaries   		(7)
+#DSDT       		(8)
+#BOOT Sequence     	(9)
+
+#Apple				(21)
+#WinXP				(22)
+#Clover				(23)
+#Linux				(24)
+#BootX64.efi		(25)
+#Vista				(26)
+
+#Recovery			(30)
+#Tiger				(34)
+#Leopard			(35)
+#Snow Leopard		(36)
+#Lion				(37)
+#Mountain Lion	 	(38)
+
+anime 1  logo_3D 15 100
+anime 35 ML_Anim 15 100
+
 
 
 # Hide the volume badge icons in the graphical main menu. There are three
@@ -112,6 +157,7 @@ hidebadges none
 #  funcs     - built-in functions (about, restart)
 #    ('tools' and 'funcs' together hide the complete second row of icons.)
 #  label     - text label in the menu
+#  revision  - text revision on right down corner of the screen
 #  hdbadges  - volume badges for internal disk volumes (same as
 #               'hidebadges internal')
 #  badges    - all volume badges (same as 'hidebadges all'); this setting
@@ -134,7 +180,7 @@ hidebadges none
 # PCs tend to display text-mode messages relating to boot loader probing
 # over the GUI display.
 #
-#quiet
+quiet
 
 # List legacy options first. When enabled, legacy BIOS based boot options
 # (e.g. Windows, Linux via LILO or GRUB) will be listed first. This is
@@ -142,7 +188,7 @@ hidebadges none
 # configurability arrives.
 #
 #legacyfirst
-#nolegacy
+nolegacy
 nolog
 
 # EOF

@@ -104,7 +104,11 @@ image:
 #ifdef CONFIG_FDISK440
 	@cp -f ${SYMROOT}/i386/fdisk440 ${IMGROOT}/usr/bin
 #endif
-
+	@rm -rf ${IMGROOT}/.s*
+	@rm -rf ${IMGROOT}/*/.s*
+	@rm -rf ${IMGROOT}/*/*/.s*
+	@rm -rf ${IMGROOT}/*/*/*/.s*
+	@rm -rf ${IMGROOT}/*/*/*/*/.s*
 	@echo "\t[HDIUTIL] ${ISOIMAGE}"
 	@hdiutil makehybrid -iso -joliet -hfs -hfs-volume-name \
 		${CDLABEL} -eltorito-boot ${CDBOOT} -no-emul-boot -ov -o   \
