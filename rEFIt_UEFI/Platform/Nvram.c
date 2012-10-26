@@ -576,6 +576,13 @@ VOID PutNvramPlistToRtVars(VOID)
             continue;
         }
         
+        // skip OsxAptioFixDrv-RelocBase - appears and causes trouble
+        // in kernel and kext patcher when mixing UEFI and CloverEFI boot
+        if (AsciiStrCmp(Tag->string, "OsxAptioFixDrv-RelocBase") == 0) {
+            DBG(" Skipping OsxAptioFixDrv-RelocBase\n");
+            continue;
+        }
+        
         // key to unicode; check if key buffer is large enough
         if (AsciiStrLen(Tag->string) > (sizeof(KeyBuf) / 2 - 1)) {
             DBG(" ERROR: Skipping too large key %s\n", Tag->string);
