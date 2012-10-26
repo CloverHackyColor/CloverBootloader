@@ -1102,6 +1102,7 @@ VOID PatchTableType17()
 {
 	CHAR8	deviceLocator[10];
 	CHAR8	bankLocator[10];
+	CHAR8 *EmptySlot = "[empty]";
    INTN map = gDMI->DIMM[Index];
    INTN map0 = map;
    MEMORY_DEVICE_TYPE spdType;
@@ -1116,9 +1117,9 @@ VOID PatchTableType17()
 //		//	DBG("SmbiosTable: Type 17 (Memory Device number %d) not found!\n", Index);
 			continue;
 		}
-		if ((SmbiosTable.Type17->Size == 0) || (SmbiosTable.Type17->Speed == 0)) {
+/*		if ((SmbiosTable.Type17->Size == 0) || (SmbiosTable.Type17->Speed == 0)) {
 			continue;
-		}
+		} */
 		TableSize = SmbiosTableLength(SmbiosTable);
 		ZeroMem((VOID*)newSmbiosTable.Type17, MAX_TABLE_SIZE);
 		CopyMem((VOID*)newSmbiosTable.Type17, (VOID*)SmbiosTable.Type17, TableSize);
@@ -1206,17 +1207,30 @@ VOID PatchTableType17()
 				
 		if(iStrLen(gRAM->DIMM[map].Vendor, 64)>0 && gRAM->DIMM[map].InUse){
 			UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM->DIMM[map].Vendor);			
+		} else {
+			UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, EmptySlot);
 		}
+
 		if(iStrLen(gRAM->DIMM[map].SerialNo, 64)>0 && gRAM->DIMM[map].InUse){
 			UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, gRAM->DIMM[map].SerialNo);			
+		} else {
+			UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, EmptySlot);
 		}
+
 		if(iStrLen(gRAM->DIMM[map].PartNo, 64)>0 && gRAM->DIMM[map].InUse){
 			UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gRAM->DIMM[map].PartNo);		
+		} else {
+			UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, EmptySlot);
 		}
+
+		
 		if(gRAM->DIMM[map].Frequency>0 && gRAM->DIMM[map].InUse){
 			newSmbiosTable.Type17->Speed = (UINT16)gRAM->DIMM[map].Frequency;			
 		}
 #endif
+		if ((newSmbiosTable.Type17->Speed < 20) || (SmbiosTable.Type17->Speed > 20000)) {
+			newSmbiosTable.Type17->Speed = 800;
+		}
 		
 		//now I want to update deviceLocator and bankLocator		
 	
