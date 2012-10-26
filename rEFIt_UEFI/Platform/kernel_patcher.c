@@ -4,7 +4,7 @@
  */
 
 #include "Platform.h"
-#include "loader.h"
+#include "LoaderUefi.h"
 #include "device_tree.h"
 
 #include "kernel_patcher.h"
@@ -782,7 +782,7 @@ FindBootArgs(VOID)
       //DBG(L"bootArgs2->kaddr = 0x%08x and bootArgs2->ksize =  0x%08x\n", bootArgs2->kaddr, bootArgs2->ksize);
       //DBG(L"bootArgs2->efiMode = 0x%02x\n", bootArgs2->efiMode);
       DBG(L"bootArgs2->CommandLine = %a\n", bootArgs2->CommandLine);
-      DBG(L"bootArgs2->__reserved1[] = %x %x\n", bootArgs2->__reserved1[0], bootArgs2->__reserved1[1]);
+      DBG(L"bootArgs2->flags = %x %x\n", bootArgs2->flags);
       DBG(L"bootArgs2->kslide = %x\n", bootArgs2->kslide);
       //gBS->Stall(5000000);
       

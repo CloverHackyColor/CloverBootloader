@@ -48,8 +48,7 @@
   libeg/libscreen.c
   libeg/text.c
   Platform/AcpiPatcher.c
-#	Platform/AppleEfi.h
-#	Platform/ati_reg.h
+	Platform/ati_reg.h
 	Platform/AmlGenerator.c
 	Platform/ati.c
 #	Platform/BiosVideo.h
@@ -65,10 +64,6 @@
 #	Platform/device_inject.h
 	Platform/device_tree.c
 #	Platform/device_tree.h
-#	Platform/DriverVar.txt
-#	Platform/DT_Add.c
-#	Platform/DT_Add.h
-#	Platform/DT_pseudo-C.h
 	Platform/Events.c
 	Platform/gma.c
 #	Platform/gma.h
@@ -78,8 +73,6 @@
 #	Platform/LegacyBiosThunk.h
 	Platform/LegacyBoot.c
 #	Platform/memvendors.h
-#	Platform/mkext.c
-#	Platform/mkext.h
 	Platform/nvidia.c
 #	Platform/nvidia.h
 #	Platform/pci.c
@@ -105,13 +98,8 @@
 	Platform/b64cdecode.h
 	Platform/b64cdecode.c
     Platform/FixBiosDsdt.c
-	Platform/_types.h
-	Platform/cdefs.h
-	Platform/types.h
-	Platform/stdint.h
-	Platform/vm_prot.h
-	Platform/nlist.h
 	Platform/loader.h
+	Platform/LoaderUefi.h
 	Platform/kernel_patcher.h
 	Platform/kernel_patcher.c
 	Platform/kext_patcher.c

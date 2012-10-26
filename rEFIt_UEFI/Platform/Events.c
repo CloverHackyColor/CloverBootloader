@@ -13,7 +13,6 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include "Platform.h"
 #include "device_tree.h"
 #include "kernel_patcher.h"
-#include "mkext.h"
 
 #define PATCH_DEBUG 0
 #define MEM_DEB 0
