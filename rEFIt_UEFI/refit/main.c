@@ -1850,6 +1850,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   GuiEventsInitialize();
 //  DBG("GuiEventsInitialize OK\n");
   GetCPUProperties();
+  if (!gSettings.EnabledCores) {
+    gSettings.EnabledCores = gCPUStructure.Cores;
+  }
 //  DBG("GetCPUProperties OK\n");
   GetDevices();
  //     DBG("GetDevices OK\n");

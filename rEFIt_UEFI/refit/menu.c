@@ -282,6 +282,8 @@ VOID FillInputs(VOID)
   InputItemsCount = 75;
   InputItems[InputItemsCount].ItemType = Hex;  //75
   InputItems[InputItemsCount++].SValue = PoolPrint(L"0x%04x", gSettings.C3Latency);
+  InputItems[InputItemsCount].ItemType = Decimal;  //77
+  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.EnabledCores);
 
 }
 
@@ -478,7 +480,12 @@ VOID ApplyInputs(VOID)
   i = 75; 
   if (InputItems[i].Valid) {
     gSettings.C3Latency = (UINT16)StrHexToUint64(InputItems[i].SValue);
-  }  
+  }
+  
+  i++;
+  if (InputItems[i].Valid) {
+    gSettings.EnabledCores = (UINT8)StrDecimalToUintn(InputItems[i].SValue);
+  }
   
   SaveSettings(); 
 }
@@ -1853,6 +1860,16 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
   AddMenuInfoLine(SubScreen, PoolPrint(L"Ratio x10: Min=%d Max=%d Turbo=%d/%d/%d/%d",
      gCPUStructure.MinRatio, gCPUStructure.MaxRatio,
      gCPUStructure.Turbo4, gCPUStructure.Turbo3, gCPUStructure.Turbo2, gCPUStructure.Turbo1));
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Cores enabled:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[76].SValue); //cursor
+  InputBootArgs->Entry.ShortcutLetter = 'E';
+  InputBootArgs->Item = &InputItems[76];
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtRightClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
   
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"GeneratePStates:");

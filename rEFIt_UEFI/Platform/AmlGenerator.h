@@ -12,12 +12,12 @@
 
 #include "Platform.h"
 
-
+/*
 static inline BOOLEAN aml_isvalidchar(char c)
 {
 	return IS_UPPER(c) || IS_DIGIT(c) || c == '_';
 };
-
+*/
 BOOLEAN aml_add_to_parent(AML_CHUNK* parent, AML_CHUNK* node);
 AML_CHUNK* aml_create_node(AML_CHUNK* parent);
 VOID aml_destroy_node(AML_CHUNK* node);

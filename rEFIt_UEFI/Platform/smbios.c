@@ -625,6 +625,12 @@ VOID GetTableType4()
 //  gSettings.BusSpeed = gCPUStructure.ExternalClock; //why duplicate??
 	gCPUStructure.CurrentSpeed = SmbiosTable.Type4->CurrentSpeed;
   gCPUStructure.MaxSpeed = SmbiosTable.Type4->MaxSpeed;
+	if (Size > 0x23) {  //Smbios <=2.3
+		gSettings.EnabledCores = SmbiosTable.Type4->EnabledCoreCount;
+	} else {
+		gSettings.EnabledCores = 0; //to change later
+	}
+	
 //	UnicodeSPrint(gSettings.CpuFreqMHz, 10, L"%d", gCPUStructure.CurrentSpeed);
 //	gSettings.CpuFreqMHz = gCPUStructure.CurrentSpeed; 
 	return;
@@ -676,9 +682,10 @@ VOID PatchTableType4()
 			newSmbiosTable.Type4->ThreadCount = gCPUStructure.Threads;
 			newSmbiosTable.Type4->ProcessorCharacteristics = (UINT16)gCPUStructure.Features;
 		} //else we propose DMI data is better then cpuid().
-		if (newSmbiosTable.Type4->CoreCount < newSmbiosTable.Type4->EnabledCoreCount) {
-			newSmbiosTable.Type4->EnabledCoreCount = gCPUStructure.Cores;
-		}
+//		if (newSmbiosTable.Type4->CoreCount < newSmbiosTable.Type4->EnabledCoreCount) {
+//			newSmbiosTable.Type4->EnabledCoreCount = gCPUStructure.Cores;
+//		}
+		newSmbiosTable.Type4->EnabledCoreCount = gSettings.EnabledCores;
     //some verifications
     if ((newSmbiosTable.Type4->ThreadCount < newSmbiosTable.Type4->CoreCount) ||
         newSmbiosTable.Type4->ThreadCount > newSmbiosTable.Type4->CoreCount * 2) {

@@ -810,8 +810,8 @@ VOID findCPU(UINT8* dsdt, UINT32 length)
 				    offset = i + 8 + (dsdt[i+7] >> 6);
 				    c = dsdt[offset+j];
 				}
-				
-				if (!aml_isvalidchar(c)) 
+		
+				if (!(IS_UPPER(c) || IS_DIGIT(c) || c == '_'))
 				{
 					add_name = FALSE;
 					DBG("Invalid character found in ProcessorOP 0x%x!\n", c);

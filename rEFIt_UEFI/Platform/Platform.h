@@ -549,7 +549,8 @@ typedef struct {
 	UINT32	CpuFreqMHz;
 	UINT32	BusSpeed; //in kHz
   BOOLEAN Turbo;
-  UINT8   Pad2[3];
+  UINT8   EnabledCores;
+  UINT8   Pad2[2];
 	// SMBIOS TYPE17
 	CHAR8	MemoryManufacturer[64];
 	CHAR8	MemorySerialNumber[64];
