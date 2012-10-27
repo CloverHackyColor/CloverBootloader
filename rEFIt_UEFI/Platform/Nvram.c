@@ -362,6 +362,10 @@ EFI_STATUS GetEfiBootDeviceFromNvram(VOID)
     if (DevicePathType(gEfiBootDeviceData) == HARDWARE_DEVICE_PATH && DevicePathSubType(gEfiBootDeviceData) == HW_MEMMAP_DP) {
         gBootCampHD = GetNvramVariable(L"BootCampHD", &gEfiAppleBootGuid, NULL, &Size);
         gEfiBootVolume = gBootCampHD;
+        if (gBootCampHD == NULL) {
+            DBG(" Error: BootCampHD not found\n");
+            return EFI_NOT_FOUND;
+        }
         DBG(" BootCampHD: %s\n", DevicePathToStr(gBootCampHD));
     }
     
