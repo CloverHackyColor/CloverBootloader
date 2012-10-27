@@ -85,7 +85,7 @@ SymbolPtr   FindSymbol( char * string, SymbolPtr * prevSymbol );
 CHAR8*
 XMLDecode(CHAR8* src)
 {
-    typedef const struct XMLEntity {
+    typedef struct XMLEntity {
         const CHAR8* name;
         UINTN nameLen;
         CHAR8 value;
