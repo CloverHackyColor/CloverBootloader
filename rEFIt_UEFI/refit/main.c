@@ -1918,13 +1918,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       ScanLegacy();
       DBGT("ScanLegacy()\n");
     }
-//         DBG("ScanLegacy OK\n");
+    DBG("ScanLegacy OK\n");
     if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
       //            DBG("scan tools\n");
       ScanTool();
       DBGT("ScanTool()\n");
     }
-    //      DBG("ScanTool OK\n");
+    DBG("ScanTool OK\n");
     // fixed other menu entries
 //               DBG("FillInputs OK\n");
     if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {

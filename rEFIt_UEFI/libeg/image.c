@@ -88,14 +88,17 @@ EG_IMAGE * egCreateFilledImage(IN INTN Width, IN INTN Height, IN BOOLEAN HasAlph
 
 EG_IMAGE * egCopyImage(IN EG_IMAGE *Image)
 {
-    EG_IMAGE        *NewImage;
-    
-    NewImage = egCreateImage(Image->Width, Image->Height, Image->HasAlpha);
-    if (NewImage == NULL)
-        return NULL;
-    
-    CopyMem(NewImage->PixelData, Image->PixelData, (UINTN)(Image->Width * Image->Height * sizeof(EG_PIXEL)));
-    return NewImage;
+  EG_IMAGE        *NewImage;
+  if (!Image) {
+    return NULL;
+  }
+  
+  NewImage = egCreateImage(Image->Width, Image->Height, Image->HasAlpha);
+  if (NewImage == NULL)
+    return NULL;
+  
+  CopyMem(NewImage->PixelData, Image->PixelData, (UINTN)(Image->Width * Image->Height * sizeof(EG_PIXEL)));
+  return NewImage;
 }
 
 EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *Image, IN INTN Ratio) //will be N/16
@@ -104,6 +107,10 @@ EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *Image, IN INTN Ratio) //will be N/16
   INTN        x, x0, x1, x2, y, y0, y1, y2;
   INTN        NewH, NewW;
   EG_PIXEL    *Dest;
+  if (!Image) {
+    return NULL;
+  }
+  
   
   if (Ratio == 16) {    
     return egCopyImage(Image);

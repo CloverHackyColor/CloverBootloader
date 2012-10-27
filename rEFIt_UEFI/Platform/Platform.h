@@ -703,6 +703,7 @@ typedef struct {
 	UINT8   Threads;
 	UINT8   Mobile;  //not for i3-i7
   UINT8   Turbo;
+  UINT8   Pad2[3];
 
 	/* Core i7,5,3 */
 	UINT16  Turbo1; //1 Core

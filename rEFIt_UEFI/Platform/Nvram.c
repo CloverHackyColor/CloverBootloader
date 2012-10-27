@@ -76,13 +76,13 @@ VOID *GetNvramVariable(IN CHAR16 *VariableName, IN EFI_GUID *VendorGuid, OUT UIN
         if (Data) {
             Status = gRT->GetVariable(VariableName, VendorGuid, Attributes, &IntDataSize, Data);
             if (EFI_ERROR(Status)) {
-                FreePool(Data);
-                Data = NULL;
+              FreePool(Data);
+              Data = NULL;
             } else {
-        if (DataSize != NULL) {
-          *DataSize = IntDataSize;
-        }
-      }
+              if (DataSize != NULL) {
+                *DataSize = IntDataSize;
+              }
+            }
         }
     }
     return Data;
