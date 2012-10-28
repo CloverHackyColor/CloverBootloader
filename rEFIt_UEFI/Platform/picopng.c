@@ -34,7 +34,7 @@
 #include "picopng.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_PNG 1
+#define DEBUG_PNG 0
 #else
 #define DEBUG_PNG DEBUG_ALL
 #endif

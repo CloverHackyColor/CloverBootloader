@@ -307,15 +307,15 @@ EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN BOOLE
     
     // load file
     Status = egLoadFile(BaseDir, FileName, &FileData, &FileDataLength);
-  DBG("File=%s loaded with status=%r length=%d\n", FileName, Status, FileDataLength);
+//  DBG("File=%s loaded with status=%r length=%d\n", FileName, Status, FileDataLength);
     if (EFI_ERROR(Status))
         return NULL;
-  DBG("   extension = %s\n", egFindExtension(FileName));  
+//  DBG("   extension = %s\n", egFindExtension(FileName));
     // decode it
     NewImage = egDecodeAny(FileData, FileDataLength, egFindExtension(FileName), 128, WantAlpha);
 //  DBG("decoded\n");
   if (!NewImage) {
-    DBG("not decoded\n");
+    DBG("%s not decoded\n", FileName);
   }
     FreePool(FileData);
 //   DBG("FreePool OK\n"); 

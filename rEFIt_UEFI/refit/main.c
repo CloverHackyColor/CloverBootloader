@@ -53,7 +53,7 @@
 #endif
 
 #ifndef DEBUG_ALL
-#define DEBUG_TIME 1
+#define DEBUG_TIME 0
 #else
 #define DEBUG_TIME DEBUG_ALL
 #endif
@@ -653,7 +653,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (LoaderTitle != NULL) ? LoaderTitle : FileName, Volume->VolName);
   SubScreen->TitleImage = Entry->me.Image;
   SubScreen->ID = OSType + 20;
-  DBG("get anime for os=%d\n", SubScreen->ID);
+//  DBG("get anime for os=%d\n", SubScreen->ID);
   SubScreen->AnimeRun = GetAnime(SubScreen);
   VolumeSize = MultU64x32 (Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize) >> 20;
   AddMenuInfoLine(SubScreen, PoolPrint(L"Volume size: %dMb", VolumeSize));
@@ -1921,13 +1921,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       ScanLegacy();
       DBGT("ScanLegacy()\n");
     }
-    DBG("ScanLegacy OK\n");
+//    DBG("ScanLegacy OK\n");
     if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
       //            DBG("scan tools\n");
       ScanTool();
       DBGT("ScanTool()\n");
     }
-    DBG("ScanTool OK\n");
+//    DBG("ScanTool OK\n");
     // fixed other menu entries
 //               DBG("FillInputs OK\n");
     if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
