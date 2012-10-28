@@ -1551,6 +1551,9 @@ static VOID ScanTool(VOID)
   
   for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
     Volume = Volumes[VolumeIndex];
+    if (!Volume->RootDir || !Volume->DeviceHandle) {
+      continue;
+    }
     
     Status = gBS->HandleProtocol (Volume->DeviceHandle, &gEfiPartTypeSystemPartGuid, &Interface);
     if (Status == EFI_SUCCESS && !gSettings.HVHideAllUEFI) {
@@ -1583,7 +1586,7 @@ static VOID ScanTool(VOID)
       DBG("found tools\\Shell64.efi\n");
     }
 #else //what else? ARM?
-    UnicodeSPrint(FileName, 512, L"\\EFI\\BOOT\\apps\\shell.efi");
+    UnicodeSPrint(FileName, 512, L"\\EFI\\tools\\shell.efi");
     if (FileExists(SelfRootDir, FileName)) {
       Entry = AddToolEntry(FileName, L"EFI Shell", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
       DBG("found apps\\shell.efi\n");
