@@ -317,7 +317,7 @@ MACHINE_TYPES GetModelFromString(CHAR8 *ProductName)
 VOID GetDefaultSettings(VOID)
 {
   MACHINE_TYPES   Model;
-  UINT64 t0, t1;
+//  UINT64 t0, t1;
  // UINT64 msr = 0;
   
   gLanguage         = english;
@@ -344,12 +344,12 @@ VOID GetDefaultSettings(VOID)
   gSettings.BacklightLevel = 0xFFFF; //0x0503; -- the value from MBA52
   gSettings.PointerSpeed = 2;
   gSettings.DoubleClickTime = 500;
-  
+/*  
   t0 = AsmReadTsc();
   gBS->Stall(100000); //100ms
   t1 = AsmReadTsc();
   gCPUStructure.TSCCalibr = MultU64x32((t1 - t0), 10); //ticks for 1second
-
+*/
   gSettings.EnableISS = ((gCPUStructure.CPUID[CPUID_1][ECX] & (1<<7)) != 0);
 //  gSettings.Turbo = gCPUStructure.Turbo;
 //  msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);

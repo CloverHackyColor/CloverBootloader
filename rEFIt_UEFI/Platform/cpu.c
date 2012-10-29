@@ -50,6 +50,12 @@
 #define DBG(...) DebugLog(DEBUG_CPU, __VA_ARGS__)	
 #endif
 
+#define VIRTUAL 0
+#if VIRTUAL == 1
+#define AsmReadMsr64(x) 0ULL
+#define AsmWriteMsr64(m, x)
+#endif
+
 UINT8							gDefaultType; 
 CPU_STRUCTURE			gCPUStructure;
 UINT64            TurboMsr;
@@ -98,19 +104,34 @@ VOID GetCPUProperties (VOID)
 	gCPUStructure.ProcessorInterconnectSpeed = 0;
 	gCPUStructure.Mobile = FALSE; //not same as gMobile
 
+  if (!gCPUStructure.CurrentSpeed) {
+    gCPUStructure.CurrentSpeed = DivU64x32(gCPUStructure.TSCCalibr + (Mega >> 1), Mega);
+  }
+  if (!gCPUStructure.MaxSpeed) {
+    gCPUStructure.MaxSpeed = gCPUStructure.CurrentSpeed;
+  }
+  
 	/* get CPUID Values */
   DoCpuid(0, gCPUStructure.CPUID[CPUID_0]);
+  gCPUStructure.Vendor	= gCPUStructure.CPUID[CPUID_0][EBX];
+  DoCpuid(1, gCPUStructure.CPUID[CPUID_1]);
+  gCPUStructure.Signature = gCPUStructure.CPUID[CPUID_1][EAX];
+  DBG("CPU Vendor = %x Model=%x\n", gCPUStructure.Vendor, gCPUStructure.Signature);
   /*
 	 * Get processor signature and decode
 	 * and bracket this with the approved procedure for reading the
 	 * the microcode version number a.k.a. signature a.k.a. BIOS ID
 	 */  
-  AsmWriteMsr64(MSR_IA32_BIOS_SIGN_ID, 0);
+  if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
+    AsmWriteMsr64(MSR_IA32_BIOS_SIGN_ID, 0);
+  }
   DoCpuid(1, gCPUStructure.CPUID[CPUID_1]);
-  msr = AsmReadMsr64(MSR_IA32_BIOS_SIGN_ID);
-  gCPUStructure.MicroCode = msr >> 32;
-  /* Get "processor flag"; necessary for microcode update matching */
-  gCPUStructure.ProcessorFlag = (AsmReadMsr64(MSR_IA32_PLATFORM_ID) >> 50) & 3;
+  if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
+    msr = AsmReadMsr64(MSR_IA32_BIOS_SIGN_ID);
+    gCPUStructure.MicroCode = msr >> 32;
+    /* Get "processor flag"; necessary for microcode update matching */
+    gCPUStructure.ProcessorFlag = (AsmReadMsr64(MSR_IA32_PLATFORM_ID) >> 50) & 3;   
+  }
   
 //  DoCpuid(2, gCPUStructure.CPUID[2]);
 
@@ -119,7 +140,7 @@ VOID GetCPUProperties (VOID)
 		DoCpuid(0x80000001, gCPUStructure.CPUID[CPUID_81]); 
 	}
 	
-	gCPUStructure.Vendor	= gCPUStructure.CPUID[CPUID_0][EBX];
+//	gCPUStructure.Vendor	= gCPUStructure.CPUID[CPUID_0][EBX];
 	gCPUStructure.Signature = gCPUStructure.CPUID[CPUID_1][EAX];
 	gCPUStructure.Stepping	= (UINT8) bitfield(gCPUStructure.CPUID[CPUID_1][EAX], 3, 0);
 	gCPUStructure.Model		= (UINT8) bitfield(gCPUStructure.CPUID[CPUID_1][EAX], 7, 4);
@@ -150,7 +171,7 @@ VOID GetCPUProperties (VOID)
   /* Fold in the Invariant TSC feature bit, if present */
 	if((gCPUStructure.CPUID[CPUID_80][EAX] & 0x0000000f) >= 7){
 		DoCpuid(0x80000007, gCPUStructure.CPUID[CPUID_87]); 
-  gCPUStructure.ExtFeatures |=
+    gCPUStructure.ExtFeatures |=
     gCPUStructure.CPUID[CPUID_87][EDX] & (UINT32)CPUID_EXTFEATURE_TSCI;
 	}
   
@@ -158,11 +179,11 @@ VOID GetCPUProperties (VOID)
 		SSSE3 = TRUE;
 	}
   
-  // Determine turbo boost support
-  DoCpuid(6, reg);
-  gCPUStructure.Turbo = ((reg[EAX] & 1) != 0);
-
   if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
+    // Determine turbo boost support
+    DoCpuid(6, reg);
+    gCPUStructure.Turbo = ((reg[EAX] & 1) != 0);
+    
     switch (gCPUStructure.Model)
     {
 /*      case CPU_MODEL_ATOM:
@@ -231,13 +252,10 @@ VOID GetCPUProperties (VOID)
 	//get Min and Max Ratio Cpu/Bus
 	if(gCPUStructure.Vendor == CPU_VENDOR_INTEL && 
      ((gCPUStructure.Family == 0x06 && gCPUStructure.Model >= 0x0c) ||
-			(gCPUStructure.Family == 0x0f && gCPUStructure.Model >= 0x03)))
-	{
-			if (gCPUStructure.Family == 0x06)
-			{
+			(gCPUStructure.Family == 0x0f && gCPUStructure.Model >= 0x03))) {
+       if (gCPUStructure.Family == 0x06) {
 //        DBG("Get min and max ratio\n");
-				switch (gCPUStructure.Model)
-				{            
+				switch (gCPUStructure.Model) {            
           case CPU_MODEL_NEHALEM:// Core i7 LGA1366, Xeon 5500, "Bloomfield", "Gainstown", 45nm
           case CPU_MODEL_FIELDS:// Core i7, i5 LGA1156, "Clarksfield", "Lynnfield", "Jasper", 45nm
           case CPU_MODEL_DALES:// Core i7, i5, Nehalem
@@ -404,19 +422,16 @@ VOID GetCPUProperties (VOID)
 			}
 	}
 #if 1 //NOTNOW
-  else if(gCPUStructure.Vendor == CPU_VENDOR_AMD /* AMD */) 
-	{
+  else if(gCPUStructure.Vendor == CPU_VENDOR_AMD /* AMD */) {
       gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
       gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
     TurboMsr = 0;
-		if(gCPUStructure.Extfamily == 0x00 /* K8 */)
-		{
+		if(gCPUStructure.Extfamily == 0x00 /* K8 */) {
 			msr = AsmReadMsr64(K8_FIDVID_STATUS);
 			gCPUStructure.MaxRatio = (msr & 0x3f) / 2 + 4;
 			gCPUStructure.SubDivider = (msr & 0x01) * 2;
 		}
-		else if(gCPUStructure.Extfamily >= 0x01 /* K10+ */)
-		{
+		else if(gCPUStructure.Extfamily >= 0x01 /* K10+ */) {
 			msr = AsmReadMsr64(K10_COFVID_STATUS);
 			if(gCPUStructure.Extfamily == 0x01 /* K10 */)
 				gCPUStructure.MaxRatio = (msr & 0x3f) + 0x10;
@@ -425,18 +440,14 @@ VOID GetCPUProperties (VOID)
 			gCPUStructure.SubDivider = (2 << ((msr >> 6) & 0x07));
 		}
     
-		if (gCPUStructure.MaxRatio)
-		{
-			if (gCPUStructure.SubDivider)
-			{
+		if (gCPUStructure.MaxRatio) {
+			if (gCPUStructure.SubDivider) {
 				gCPUStructure.FSBFrequency = DivU64x32(
                                                MultU64x32(gCPUStructure.TSCFrequency,
                                                          gCPUStructure.SubDivider),
                                                gCPUStructure.MaxRatio);
 		//		DBG("%d.%d\n", (currcoef / currdiv), (((currcoef % currdiv) * 100) / currdiv));
-			}
-			else
-			{
+			} else {
 				gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.TSCFrequency, gCPUStructure.MaxRatio);
 			}
       DBG("AMD divider: %d\n", gCPUStructure.MaxRatio);
@@ -446,7 +457,7 @@ VOID GetCPUProperties (VOID)
 	}
   
 #endif
-//  DBG("take FSB\n");
+  DBG("take FSB\n");
   tmpU = gCPUStructure.FSBFrequency;
 //  DBG("divide by 1000\n");
   BusSpeed = (UINT32)DivU64x32(tmpU, kilo); //Hz -> kHz
@@ -461,7 +472,7 @@ VOID GetCPUProperties (VOID)
   tmpU = gCPUStructure.FSBFrequency;
   DBG("Corrected FSBFrequency=%dMHz\n", DivU64x32(tmpU, Mega));
 	
-	if (gCPUStructure.Model >= CPU_MODEL_NEHALEM) {
+	if ((gCPUStructure.Vendor == CPU_VENDOR_INTEL) && (gCPUStructure.Model >= CPU_MODEL_NEHALEM)) {
 		//Slice - for Nehalem we can do more calculation as in Cham
     // but this algo almost always wrong
     //
@@ -469,20 +480,14 @@ VOID GetCPUProperties (VOID)
 		qpimult = 2; //init
 		/* Scan PCI BUS For QPI Frequency */
 		Status = gBS->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
-		if (!EFI_ERROR(Status))
-		{	
-			for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++)
-			{
+		if (!EFI_ERROR(Status)) {	
+			for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
 				Status = gBS->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
-				if (!EFI_ERROR(Status))
-				{			
-					for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++)
-					{
-						if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex]))
-						{
+				if (!EFI_ERROR(Status)) {			
+					for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
+						if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex])) {
 							Status = gBS->OpenProtocol(HandleBuffer[HandleIndex],&gEfiPciIoProtocolGuid,(VOID **)&PciIo,gImageHandle,NULL,EFI_OPEN_PROTOCOL_GET_PROTOCOL);
-							if (!EFI_ERROR(Status))
-							{
+							if (!EFI_ERROR(Status)) {
 								/* Read PCI BUS */
 								Status = PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
 								if ((Bus & 0x3F) != 0x3F) {
@@ -606,26 +611,22 @@ typedef struct {
 
 UINT16 GetStandardCpuType()
 {
-	if (gCPUStructure.Threads >= 4) 
-	{	
+	if (gCPUStructure.Threads >= 4) {	
 		return 0x402;   // Quad-Core Xeon
 	}
-	else if (gCPUStructure.Threads == 1) 
-	{	
+	else if (gCPUStructure.Threads == 1) {	
 		return 0x201;   // Core Solo
-	};
+	}
 	return 0x301;   // Core 2 Duo
 }
 
 UINT16 GetAdvancedCpuType ()
 {	
-	if (gCPUStructure.Vendor == 0x756E6547)
-	{	
+	if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {	
 		switch (gCPUStructure.Family) {	
 			case 0x06:	
 			{			
-				switch (gCPUStructure.Model)
-				{
+				switch (gCPUStructure.Model) {
 					case CPU_MODEL_DOTHAN:// Dothan
 					case CPU_MODEL_YONAH: // Yonah
 						return 0x201;
@@ -707,9 +708,11 @@ UINT16 GetAdvancedCpuType ()
 MACHINE_TYPES GetDefaultModel()
 {
   MACHINE_TYPES DefaultType = MacPro31;
+  if (gCPUStructure.Vendor != CPU_VENDOR_INTEL) {
+    return DefaultType;
+  }
 	// TODO: Add more CPU models and configure the correct machines per CPU/GFX model
-	if(gMobile)
-	{
+	if(gMobile) {
 		switch (gCPUStructure.Model)
 		{
 			case CPU_MODEL_ATOM:
@@ -751,11 +754,8 @@ MACHINE_TYPES GetDefaultModel()
 					DefaultType = MacBook52;
 				break;
 		}
-	}
-	else // if(gMobile==FALSE)
-	{
-		switch (gCPUStructure.Model)
-		{
+	} else {
+		switch (gCPUStructure.Model) {
 			case CPU_MODEL_CELERON:
 
 				DefaultType = MacMini21;
@@ -801,13 +801,11 @@ MACHINE_TYPES GetDefaultModel()
 					break;
         }
 				if((AsciiStrStr(gCPUStructure.BrandString, "i3")) || 
-				   (AsciiStrStr(gCPUStructure.BrandString, "i5")))
-				{
+				   (AsciiStrStr(gCPUStructure.BrandString, "i5"))) {
 					DefaultType = iMac121;
 					break;
 				}
-				if(AsciiStrStr(gCPUStructure.BrandString, "i7"))
-				{ 
+				if(AsciiStrStr(gCPUStructure.BrandString, "i7")) { 
 					DefaultType = iMac122;
 					break;
 				}

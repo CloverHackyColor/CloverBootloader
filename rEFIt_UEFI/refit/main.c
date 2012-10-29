@@ -53,7 +53,7 @@
 #endif
 
 #ifndef DEBUG_ALL
-#define DEBUG_TIME 0
+#define DEBUG_TIME 1
 #else
 #define DEBUG_TIME DEBUG_ALL
 #endif
@@ -1056,8 +1056,14 @@ static VOID ScanLoader(VOID)
   
   for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
     Volume = Volumes[VolumeIndex];
-    if (Volume->RootDir == NULL || Volume->VolName == NULL)
+    if (Volume->RootDir == NULL) { // || Volume->VolName == NULL)
+      DBG("Volume %d has no root\n", VolumeIndex);
       continue;
+    }
+    if (Volume->VolName == NULL) {
+      DBG("Volume %d has no name\n", VolumeIndex);
+      Volume->VolName = L"EFI volume";
+    }
     
     // skip volume if its kind is configured as disabled
     if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_OPTICAL)) ||
@@ -1288,6 +1294,7 @@ static VOID ScanLoader(VOID)
 #else      
     StrCpy(FileName, L"\\EFI\\BOOT\\BOOTIA32.efi");
 #endif
+    DBG("search for UEFI\n");
     if (FileExists(Volume->RootDir, FileName)) {
 //      Volume->OSType = OSTYPE_VAR;
       Volume->BootType = BOOTING_BY_EFI;
@@ -1740,6 +1747,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   UINT64            TscDiv;
   UINT64            TscRemainder = 0;
   LOADER_ENTRY      *LoaderEntry;
+  UINT64            t0, t1;
   
   // CHAR16            *InputBuffer; //, *Y;
   //  EFI_INPUT_KEY Key;
@@ -1851,17 +1859,23 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   ZeroMem((VOID*)&gGraphics[0], sizeof(GFX_PROPERTIES) * 4);
 
   GuiEventsInitialize();
-//  DBG("GuiEventsInitialize OK\n");
+  DBG("GuiEventsInitialize OK\n");
+  t0 = AsmReadTsc();
+  gBS->Stall(100000); //100ms
+  t1 = AsmReadTsc();
+  gCPUStructure.TSCCalibr = MultU64x32((t1 - t0), 10); //ticks for 1second
+  
+  
   GetCPUProperties();
   if (!gSettings.EnabledCores) {
     gSettings.EnabledCores = gCPUStructure.Cores;
   }
-//  DBG("GetCPUProperties OK\n");
+  DBG("GetCPUProperties OK\n");
   GetDevices();
  //     DBG("GetDevices OK\n");
-//  DBGT("ScanSPD() start\n");
+  DBGT("ScanSPD() start\n");
   ScanSPD();
-//  DBGT("ScanSPD() end\n");
+  DBGT("ScanSPD() end\n");
  //       DBG("ScanSPD OK\n");
   SetPrivateVarProto();
 //        DBG("SetPrivateVarProto OK\n");
