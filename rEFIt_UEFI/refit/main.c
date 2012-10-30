@@ -37,7 +37,6 @@
 #include "Platform.h"
 //#include "../include/Handle.h"
 
-//#include "syslinux_mbr.h"
 #include "Version.h"
 
 #ifndef DEBUG_ALL
@@ -901,22 +900,23 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
 
 static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume)
 {
-  CHAR16            *FileName, *OSIconName;
-  CHAR16            IconFileName[256];
-  CHAR16            ShortcutLetter;
-  UINTN             LoaderKind;
+  // CHAR16            *FileName, *OSIconName;
+  // CHAR16            IconFileName[256];
+  // CHAR16            ShortcutLetter;
+  // UINTN             LoaderKind;
   LOADER_ENTRY      *Entry, *SubEntry;
   REFIT_MENU_SCREEN *SubScreen;
   EFI_STATUS        Status;
   
-  FileName = Basename(LoaderPath);
+  // FileName = Basename(LoaderPath);
   
   // prepare the menu entry
   Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-  Entry->me.Title        = LoaderTitle;
-  Entry->me.Tag          = TAG_CLOVER;
-  
-  Entry->me.Row          = 1;
+  Entry->me.Title          = LoaderTitle;
+  Entry->me.Tag            = TAG_CLOVER;
+  Entry->me.Row            = 1;
+  Entry->me.ShortcutLetter = 'C';
+  Entry->me.Image          = BuiltinIcon(BUILTIN_ICON_FUNC_CLOVER);
   Entry->Volume = Volume;
   //  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
 /*  if ((GlobalConfig.HideBadges == HDBADGES_NONE) ||
@@ -933,21 +933,21 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   Entry->LoadOptions     = NULL;
   
   // locate a custom icon for the loader
-  StrCpy(IconFileName, Volume->OSIconName);
+  // StrCpy(IconFileName, Volume->OSIconName);
   
   //actions
   Entry->me.AtClick = ActionSelect;
   Entry->me.AtDoubleClick = ActionDetails;
   Entry->me.AtRightClick = ActionDetails;
   
-  OSIconName = L"clover";
-  LoaderKind = 5;
-  ShortcutLetter = 'C';
-  Entry->me.Tag     = TAG_CLOVER;
-  Entry->me.ShortcutLetter = ShortcutLetter;
+  // OSIconName = L"clover";
+  // LoaderKind = 5;
+  // ShortcutLetter = 'C';
+  // Entry->me.Tag     = TAG_CLOVER;
+  // Entry->me.ShortcutLetter = ShortcutLetter;
   //  if (Entry->me.Image == NULL)
-  Entry->me.BadgeImage = LoadOSIcon(OSIconName, L"unknown", FALSE);
-  Entry->me.Image   = egCopyScaledImage(Entry->me.BadgeImage, 6);
+  // Entry->me.BadgeImage = LoadOSIcon(OSIconName, L"unknown", FALSE);
+  // Entry->me.Image   = egCopyScaledImage(Entry->me.BadgeImage, 6);
   
   // create the submenu
   SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
@@ -1936,12 +1936,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       DBGT("ScanLegacy()\n");
     }
 //    DBG("ScanLegacy OK\n");
-    if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
-      //            DBG("scan tools\n");
-      ScanTool();
-      DBGT("ScanTool()\n");
-    }
-//    DBG("ScanTool OK\n");
     // fixed other menu entries
 //               DBG("FillInputs OK\n");
     if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
@@ -1953,14 +1947,21 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       MenuEntryOptions.Image = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
       AddMenuEntry(&MainMenu, &MenuEntryOptions);
     }  
+
+    if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
+      //            DBG("scan tools\n");
+      ScanTool();
+      DBGT("ScanTool()\n");
+    }
+//    DBG("ScanTool OK\n");
     
     if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.EntryCount == 0) {
-      MenuEntryShutdown.Image = BuiltinIcon(BUILTIN_ICON_FUNC_SHUTDOWN);
-      //    DBG("Shutdown.Image->Width=%d\n", MenuEntryShutdown.Image->Width);
-      AddMenuEntry(&MainMenu, &MenuEntryShutdown);
       MenuEntryReset.Image = BuiltinIcon(BUILTIN_ICON_FUNC_RESET);
       //    DBG("Reset.Image->Width=%d\n", MenuEntryReset.Image->Width);
       AddMenuEntry(&MainMenu, &MenuEntryReset);
+      MenuEntryShutdown.Image = BuiltinIcon(BUILTIN_ICON_FUNC_SHUTDOWN);
+      //    DBG("Shutdown.Image->Width=%d\n", MenuEntryShutdown.Image->Width);
+      AddMenuEntry(&MainMenu, &MenuEntryShutdown);
     }
         
     // wait for user ACK when there were errors

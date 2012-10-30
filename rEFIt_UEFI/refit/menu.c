@@ -1512,7 +1512,7 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
     MainImage = Entry->Image;
   }
   if (!MainImage) {
-    MainImage = LoadIcns(ThemeDir, L"icons\\osx.icns", 128);
+    MainImage = egLoadIcon(ThemeDir, L"icons\\osx.icns", 128);
   }
   //  DBG("Entry title=%s; Width=%d\n", Entry->Title, MainImage->Width);
   BltImageCompositeBadge(SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],

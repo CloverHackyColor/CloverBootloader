@@ -76,6 +76,24 @@ BdsInitialize (
   return Status;
 }
 
+
+/**
+  An empty function to pass error checking of CreateEventEx ().
+
+  @param  Event                 Event whose notification function is being invoked.
+  @param  Context               Pointer to the notification function's context,
+                                which is implementation-dependent.
+
+**/
+VOID
+EFIAPI
+BdsEmptyCallbackFunction (
+  IN EFI_EVENT                Event,
+  IN VOID                     *Context
+  )
+{
+}
+
 /**
 
   This function attempts to boot for the boot order specified
@@ -97,18 +115,37 @@ BdsBootDeviceSelect (
   CHAR16            Buffer[20];
   BOOLEAN           BootNextExist;
   LIST_ENTRY        *LinkBootNext;
+  EFI_EVENT         ConnectConInEvent;
 
   //
   // Got the latest boot option
   //
   BootNextExist = FALSE;
   LinkBootNext  = NULL;
+  ConnectConInEvent = NULL;
   InitializeListHead (&BootLists);
 
   //
   // First check the boot next option
   //
   ZeroMem (Buffer, sizeof (Buffer));
+
+  //
+  // Create Event to signal ConIn connection request
+  //
+  if (PcdGetBool (PcdConInConnectOnDemand)) {
+    Status = gBS->CreateEventEx (
+                    EVT_NOTIFY_SIGNAL,
+                    TPL_CALLBACK,
+                    BdsEmptyCallbackFunction,
+                    NULL,
+                    &gConnectConInEventGuid,
+                    &ConnectConInEvent
+                    );
+    if (EFI_ERROR(Status)) {
+      ConnectConInEvent = NULL;
+    }
+  }
 
   if (mBootNext != NULL) {
     //
@@ -175,6 +212,13 @@ BdsBootDeviceSelect (
     // Check the boot option list first
     //
     if (Link == &BootLists) {
+      //
+      // When LazyConIn enabled, signal connect ConIn event before enter UI
+      //
+      if (PcdGetBool (PcdConInConnectOnDemand) && ConnectConInEvent != NULL) {
+        gBS->SignalEvent (ConnectConInEvent);
+      }
+
       //
       // There are two ways to enter here:
       // 1. There is no active boot option, give user chance to
@@ -252,6 +296,14 @@ BdsBootDeviceSelect (
       // Boot success, then stop process the boot order, and
       // present the boot manager menu, front page
       //
+
+      //
+      // When LazyConIn enabled, signal connect ConIn Event before enter UI
+      //
+      if (PcdGetBool (PcdConInConnectOnDemand) && ConnectConInEvent != NULL) {
+        gBS->SignalEvent (ConnectConInEvent);
+      }
+
       Timeout = 0xffff;
       PlatformBdsEnterFrontPage (Timeout, FALSE);
 
@@ -368,7 +420,10 @@ BdsFormalizeConsoleVariable (
 
   Validate variables. 
 
-  If found the device path is not a valid device path, remove the variable.
+ 1. For ConIn/ConOut/ConErr, if found the device path is not a valid device path, remove the variable.
+ 2. For OsIndicationsSupported, Create a BS/RT/UINT64 variable to report caps 
+ 3. Delete OsIndications variable if it is not NV/BS/RT UINT64
+ Item 3 is used to solve case when OS corrupts OsIndications. Here simply delete this NV variable.
 
 **/
 VOID 
@@ -376,12 +431,67 @@ BdsFormalizeEfiGlobalVariable (
   VOID
   )
 {
+  EFI_STATUS Status;
+  UINT64     OsIndicationSupport;
+  UINT64     OsIndication;
+  UINTN      DataSize;
+  UINT32     Attributes;
+  
   //
   // Validate Console variable.
   //
   BdsFormalizeConsoleVariable (L"ConIn");
   BdsFormalizeConsoleVariable (L"ConOut");
   BdsFormalizeConsoleVariable (L"ErrOut");
+
+  //
+  // OS indicater support variable
+  //
+  OsIndicationSupport = EFI_OS_INDICATIONS_BOOT_TO_FW_UI;
+  Status = gRT->SetVariable (
+                  L"OsIndicationsSupported",
+                  &gEfiGlobalVariableGuid,
+                  EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                  sizeof(UINT64),
+                  &OsIndicationSupport
+                  );
+  ASSERT_EFI_ERROR (Status);
+
+  //
+  // If OsIndications is invalid, remove it.
+  // Invalid case
+  //   1. Data size != UINT64
+  //   2. OsIndication value inconsistence
+  //   3. OsIndication attribute inconsistence
+  //
+  OsIndication = 0;
+  Attributes = 0;
+  DataSize = sizeof(UINT64);
+  Status = gRT->GetVariable (
+                  L"OsIndications",
+                  &gEfiGlobalVariableGuid,
+                  &Attributes,
+                  &DataSize,
+                  &OsIndication
+                  );
+
+  if (!EFI_ERROR(Status)) {
+    if (DataSize != sizeof(UINT64) ||
+        (OsIndication & ~OsIndicationSupport) != 0 ||
+        Attributes != (EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE)){
+
+      DEBUG ((EFI_D_ERROR, "Unformalized OsIndications variable exists. Delete it\n"));
+      Status = gRT->SetVariable (
+                      L"OsIndications",
+                      &gEfiGlobalVariableGuid,
+                      Attributes,
+                      0,
+                      &OsIndication
+                      );
+      ASSERT_EFI_ERROR (Status);
+    }
+  }
+
 }
 
 /**
@@ -441,6 +551,14 @@ BdsEntry (
   // Validate Variable.
   //
   BdsFormalizeEfiGlobalVariable();
+
+  //
+  // Report Status Code to indicate connecting drivers will happen
+  //
+  REPORT_STATUS_CODE (
+    EFI_PROGRESS_CODE,
+    (EFI_SOFTWARE_DXE_BS_DRIVER | EFI_SW_DXE_BS_PC_BEGIN_CONNECTING_DRIVERS)
+    );
 
   //
   // Do the platform init, can be customized by OEM/IBV

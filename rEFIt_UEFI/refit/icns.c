@@ -49,23 +49,24 @@ typedef struct {
 BUILTIN_ICON BuiltinIconTable[BUILTIN_ICON_COUNT] = {
   { NULL, L"icons\\func_about.png",          48 },
   { NULL, L"icons\\func_options.png",        48 },
+  { NULL, L"icons\\func_clover.png",         48 },
   { NULL, L"icons\\func_reset.png",          48 },
   { NULL, L"icons\\func_shutdown.png",       48 },
-  { NULL, L"icons\\func_help.png",          128 }, //4
+  { NULL, L"icons\\func_help.png",          128 }, //5
   { NULL, L"icons\\tool_shell.png",          48 },
   { NULL, L"icons\\tool_part.png",           48 },
   { NULL, L"icons\\tool_rescue.png",         48 },
   { NULL, L"icons\\pointer.png",             32 },
   
-  { NULL, L"icons\\vol_internal.icns",      128 }, //7+2
+  { NULL, L"icons\\vol_internal.icns",      128 }, //8+2
   { NULL, L"icons\\vol_external.icns",      128 },
   { NULL, L"icons\\vol_optical.icns",       128 },
-  { NULL, L"icons\\vol_firewire.icns",      128 }, //12
+  { NULL, L"icons\\vol_firewire.icns",      128 }, //13
   { NULL, L"icons\\vol_clover.icns",        128 },
   { NULL, L"icons\\vol_internal_hfs.icns",  128 },
   { NULL, L"icons\\vol_internal_ntfs.icns", 128 },
   { NULL, L"icons\\vol_internal_ext3.icns", 128 },
-  { NULL, L"icons\\vol_recovery.icns",      128 }, //17
+  { NULL, L"icons\\vol_recovery.icns",      128 }, //18
 };
 
 EG_IMAGE * BuiltinIcon(IN UINTN Id)
@@ -78,7 +79,7 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
     if (!BuiltinIconTable[Id].Image){
       DebugLog(1, "Icon %d not found at\n", Id);
     }
-    if (!BuiltinIconTable[Id].Image && (Id >= 9)) {
+    if (!BuiltinIconTable[Id].Image && (Id >= BUILTIN_ICON_VOL_INTERNAL)) {
       BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, BuiltinIconTable[BUILTIN_ICON_VOL_INTERNAL].Path, BuiltinIconTable[Id].PixelSize);
     }
     if (!BuiltinIconTable[Id].Image)
@@ -195,7 +196,7 @@ EG_IMAGE * LoadIcnsFallback(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN 
     if (GlobalConfig.TextOnly)      // skip loading if it's not used anyway
         return NULL;
     
-    Image = LoadIcns(BaseDir, FileName, PixelSize);
+    Image = egLoadIcon(BaseDir, FileName, PixelSize);
 //    if (Image == NULL)
 //        Image = DummyImage(PixelSize);
     return Image;

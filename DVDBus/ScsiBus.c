@@ -2,7 +2,7 @@
   SCSI Bus driver that layers on every SCSI Pass Thru and
   Extended SCSI Pass Thru protocol in the system.
 
-Copyright (c) 2006 - 2011, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2006 - 2012, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -1154,6 +1154,7 @@ ScsiScanCreateDevice (
   }
 
   ScsiIoDevice->Signature                 = SCSI_IO_DEV_SIGNATURE;
+  ScsiIoDevice->ScsiBusDeviceData         = ScsiBusDev;
   CopyMem(&ScsiIoDevice->Pun, TargetId, TARGET_MAX_BYTES);
   ScsiIoDevice->Lun                       = Lun;
 
@@ -1349,14 +1350,6 @@ Done:
 	FreeAlignedBuffer (InquiryData, sizeof (EFI_SCSI_INQUIRY_DATA));
 	FreeAlignedBuffer (SenseData, sizeof (EFI_SCSI_SENSE_DATA));
   return ScsiDeviceFound;
-/*	
-	FreePool(InquiryData);
-	FreePool(SenseData);
-  return TRUE;
-Exit:
-	FreePool(InquiryData);
-	FreePool(SenseData);
-	return FALSE;*/
 }
 
 
