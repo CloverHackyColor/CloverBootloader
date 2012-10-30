@@ -181,17 +181,17 @@ rem have edk2 prepare to build
    rem copy /b %BOOTSECTOR_BIN_DIR%\Start32.com+%BOOTSECTOR_BIN_DIR%\Efi32.com3+%BUILD_DIR%\FV\Efildr32 %BUILD_DIR%\FV\Efildr20
    copy /b %BOOTSECTOR_BIN_DIR%\start32H.com2+%BOOTSECTOR_BIN_DIR%\efi32.com3+%BUILD_DIR%\FV\Efildr32 %BUILD_DIR%\FV\boot32
 
-   xcopy /d /y %BUILD_DIR%\FV\boot32 %DEST_DIR%\Bootloaders\ia32\boot
-   xcopy /d /y %BUILD_DIR%\IA32\FSInject.efi %DEST_DIR%\EFI\drivers32\FSInject-32.efi
-   xcopy /d /y %BUILD_DIR%\IA32\VBoxIso9600.efi %DEST_DIR%\drivers-Off\drivers32\VBoxIso9600-32.efi
-   xcopy /d /y %BUILD_DIR%\IA32\VBoxExt2.efi %DEST_DIR%\drivers-Off\drivers32\VBoxExt2-32.efi
-   xcopy /d /y %BUILD_DIR%\IA32\Ps2KeyboardDxe.efi %DEST_DIR%\drivers-Off\drivers32\Ps2KeyboardDxe-32.efi
-   xcopy /d /y %BUILD_DIR%\IA32\Ps2MouseAbsolutePointerDxe.efi %DEST_DIR%\drivers-Off\drivers32\Ps2MouseAbsolutePointerDxe-32.efi
-   xcopy /d /y %BUILD_DIR%\IA32\Ps2MouseDxe.efi %DEST_DIR%\drivers-Off\drivers32\Ps2MouseDxe-32.efi
-   xcopy /d /y %BUILD_DIR%\IA32\UsbMouseDxe.efi %DEST_DIR%\drivers-Off\drivers32\UsbMouseDxe-32.efi
-   xcopy /d /y %BUILD_DIR%\IA32\XhciDxe.efi %DEST_DIR%\drivers-Off\drivers32\XhciDxe-32.efi
-   xcopy /d /y %BUILD_DIR%\IA32\OsxFatBinaryDrv.efi %DEST_DIR%\drivers-Off\drivers32UEFI\OsxFatBinaryDrv-32.efi
-   xcopy /d /y %WORKSPACE%\Build\rEFIt\%TARGET%_%TOOL_CHAIN_TAG%\IA32\CLOVERIA32.efi %DEST_DIR%\EFI\BOOT\CLOVERIA32.efi
+   copy /b /y %BUILD_DIR%\FV\boot32 %DEST_DIR%\Bootloaders\ia32\boot
+   copy /b /y %BUILD_DIR%\IA32\FSInject.efi %DEST_DIR%\EFI\drivers32\FSInject-32.efi
+   copy /b /y %BUILD_DIR%\IA32\VBoxIso9600.efi %DEST_DIR%\drivers-Off\drivers32\VBoxIso9600-32.efi
+   copy /b /y %BUILD_DIR%\IA32\VBoxExt2.efi %DEST_DIR%\drivers-Off\drivers32\VBoxExt2-32.efi
+   copy /b /y %BUILD_DIR%\IA32\Ps2KeyboardDxe.efi %DEST_DIR%\drivers-Off\drivers32\Ps2KeyboardDxe-32.efi
+   copy /b /y %BUILD_DIR%\IA32\Ps2MouseAbsolutePointerDxe.efi %DEST_DIR%\drivers-Off\drivers32\Ps2MouseAbsolutePointerDxe-32.efi
+   copy /b /y %BUILD_DIR%\IA32\Ps2MouseDxe.efi %DEST_DIR%\drivers-Off\drivers32\Ps2MouseDxe-32.efi
+   copy /b /y %BUILD_DIR%\IA32\UsbMouseDxe.efi %DEST_DIR%\drivers-Off\drivers32\UsbMouseDxe-32.efi
+   copy /b /y %BUILD_DIR%\IA32\XhciDxe.efi %DEST_DIR%\drivers-Off\drivers32\XhciDxe-32.efi
+   copy /b /y %BUILD_DIR%\IA32\OsxFatBinaryDrv.efi %DEST_DIR%\drivers-Off\drivers32UEFI\OsxFatBinaryDrv-32.efi
+   copy /b /y %WORKSPACE%\Build\rEFIt\%TARGET%_%TOOL_CHAIN_TAG%\IA32\CLOVERIA32.efi %DEST_DIR%\EFI\BOOT\CLOVERIA32.efi
 
    if x"%BUILD_ARCH%" == x"IA32" goto:eof
 
@@ -216,23 +216,23 @@ rem have edk2 prepare to build
    %BASETOOLS_DIR%\Split.exe -f %BUILD_DIR%\FV\Efildr20 -p %BUILD_DIR%\FV\ -o Efildr20.1 -t boot64 -s 512
    del %BUILD_DIR%\FV\Efildr20.1
 
-   xcopy /d /y %BUILD_DIR%\FV\boot64 %DEST_DIR%\Bootloaders\x64\boot
-   xcopy /d /y %BUILD_DIR%\X64\FSInject.efi %DEST_DIR%\EFI\drivers64\FSInject-64.efi
-   xcopy /d /y %BUILD_DIR%\X64\FSInject.efi %DEST_DIR%\EFI\drivers64UEFI\FSInject-64.efi
-   rem xcopy /d /y %BUILD_DIR%\X64\VBoxIso9600.efi %DEST_DIR%\drivers-Off\drivers64\VBoxIso9600-64.efi
-   xcopy /d /y %BUILD_DIR%\X64\VBoxExt2.efi %DEST_DIR%\drivers-Off\drivers64\VBoxExt2-64.efi
-   xcopy /d /y %BUILD_DIR%\X64\PartitionDxe.efi %DEST_DIR%\drivers-Off\drivers64UEFI\PartitionDxe-64.efi
-   xcopy /d /y %BUILD_DIR%\X64\DataHubDxe.efi %DEST_DIR%\drivers-Off\drivers64UEFI\DataHubDxe-64.efi
+   copy /b /y %BUILD_DIR%\FV\boot64 %DEST_DIR%\Bootloaders\x64\boot
+   copy /b /y %BUILD_DIR%\X64\FSInject.efi %DEST_DIR%\EFI\drivers64\FSInject-64.efi
+   copy /b /y %BUILD_DIR%\X64\FSInject.efi %DEST_DIR%\EFI\drivers64UEFI\FSInject-64.efi
+   rem copy /b /y %BUILD_DIR%\X64\VBoxIso9600.efi %DEST_DIR%\drivers-Off\drivers64\VBoxIso9600-64.efi
+   copy /b /y %BUILD_DIR%\X64\VBoxExt2.efi %DEST_DIR%\drivers-Off\drivers64\VBoxExt2-64.efi
+   copy /b /y %BUILD_DIR%\X64\PartitionDxe.efi %DEST_DIR%\drivers-Off\drivers64UEFI\PartitionDxe-64.efi
+   copy /b /y %BUILD_DIR%\X64\DataHubDxe.efi %DEST_DIR%\drivers-Off\drivers64UEFI\DataHubDxe-64.efi
 
-   rem xcopy /d /y %BUILD_DIR%\X64\Ps2KeyboardDxe.efi %DEST_DIR%\drivers-Off\drivers64\Ps2KeyboardDxe-64.efi
-   rem xcopy /d /y %BUILD_DIR%\X64\Ps2MouseAbsolutePointerDxe.efi %DEST_DIR%\drivers-Off\drivers64\Ps2MouseAbsolutePointerDxe-64.efi
-   xcopy /d /y %BUILD_DIR%\X64\Ps2MouseDxe.efi %DEST_DIR%\drivers-Off\drivers64\Ps2MouseDxe-64.efi
-   xcopy /d /y %BUILD_DIR%\X64\UsbMouseDxe.efi %DEST_DIR%\drivers-Off\drivers64\UsbMouseDxe-64.efi
-   xcopy /d /y %BUILD_DIR%\X64\XhciDxe.efi %DEST_DIR%\drivers-Off\drivers64\XhciDxe-64.efi
-   xcopy /d /y %BUILD_DIR%\X64\OsxFatBinaryDrv.efi %DEST_DIR%\drivers-Off\drivers64UEFI\OsxFatBinaryDrv-64.efi
-   xcopy /d /y %BUILD_DIR%\X64\OsxAptioFixDrv.efi %DEST_DIR%\drivers-Off\drivers64UEFI\OsxAptioFixDrv-64.efi
-   xcopy /d /y %BUILD_DIR%\X64\OsxLowMemFixDrv.efi %DEST_DIR%\drivers-Off\drivers64UEFI\OsxLowMemFixDrv-64.efi
-   xcopy /d /y %WORKSPACE%\Build\rEFIt\%TARGET%_%TOOL_CHAIN_TAG%\X64\CLOVERX64.efi %DEST_DIR%\EFI\BOOT\CLOVERX64.efi
+   rem copy /b /y %BUILD_DIR%\X64\Ps2KeyboardDxe.efi %DEST_DIR%\drivers-Off\drivers64\Ps2KeyboardDxe-64.efi
+   rem copy /b /y %BUILD_DIR%\X64\Ps2MouseAbsolutePointerDxe.efi %DEST_DIR%\drivers-Off\drivers64\Ps2MouseAbsolutePointerDxe-64.efi
+   copy /b /y %BUILD_DIR%\X64\Ps2MouseDxe.efi %DEST_DIR%\drivers-Off\drivers64\Ps2MouseDxe-64.efi
+   copy /b /y %BUILD_DIR%\X64\UsbMouseDxe.efi %DEST_DIR%\drivers-Off\drivers64\UsbMouseDxe-64.efi
+   copy /b /y %BUILD_DIR%\X64\XhciDxe.efi %DEST_DIR%\drivers-Off\drivers64\XhciDxe-64.efi
+   copy /b /y %BUILD_DIR%\X64\OsxFatBinaryDrv.efi %DEST_DIR%\drivers-Off\drivers64UEFI\OsxFatBinaryDrv-64.efi
+   copy /b /y %BUILD_DIR%\X64\OsxAptioFixDrv.efi %DEST_DIR%\drivers-Off\drivers64UEFI\OsxAptioFixDrv-64.efi
+   copy /b /y %BUILD_DIR%\X64\OsxLowMemFixDrv.efi %DEST_DIR%\drivers-Off\drivers64UEFI\OsxLowMemFixDrv-64.efi
+   copy /b /y %WORKSPACE%\Build\rEFIt\%TARGET%_%TOOL_CHAIN_TAG%\X64\CLOVERX64.efi %DEST_DIR%\EFI\BOOT\CLOVERX64.efi
    goto:eof
 
 :parseArguments

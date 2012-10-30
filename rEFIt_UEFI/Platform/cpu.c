@@ -105,7 +105,7 @@ VOID GetCPUProperties (VOID)
 	gCPUStructure.Mobile = FALSE; //not same as gMobile
 
   if (!gCPUStructure.CurrentSpeed) {
-    gCPUStructure.CurrentSpeed = DivU64x32(gCPUStructure.TSCCalibr + (Mega >> 1), Mega);
+    gCPUStructure.CurrentSpeed = (UINT32)DivU64x32(gCPUStructure.TSCCalibr + (Mega >> 1), Mega);
   }
   if (!gCPUStructure.MaxSpeed) {
     gCPUStructure.MaxSpeed = gCPUStructure.CurrentSpeed;
@@ -425,35 +425,28 @@ VOID GetCPUProperties (VOID)
   else if(gCPUStructure.Vendor == CPU_VENDOR_AMD /* AMD */) {
       gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
       gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
-    TurboMsr = 0;
 		if(gCPUStructure.Extfamily == 0x00 /* K8 */) {
 			msr = AsmReadMsr64(K8_FIDVID_STATUS);
-			gCPUStructure.MaxRatio = (msr & 0x3f) / 2 + 4;
-			gCPUStructure.SubDivider = (msr & 0x01) * 2;
+			gCPUStructure.MaxRatio = (UINT32)((((msr >> 16) & 0x3f) >> 2) + 4);
+         gCPUStructure.MinRatio = (UINT32)((((msr >> 8) & 0x3f) >> 2) + 4);
 		}
 		else if(gCPUStructure.Extfamily >= 0x01 /* K10+ */) {
 			msr = AsmReadMsr64(K10_COFVID_STATUS);
 			if(gCPUStructure.Extfamily == 0x01 /* K10 */)
-				gCPUStructure.MaxRatio = (msr & 0x3f) + 0x10;
+				gCPUStructure.MaxRatio = (UINT32)DivU64x32(((msr & 0x3f) + 0x10), (1 << ((msr >> 6) & 0x7)));
 			else /* K11+ */
-				gCPUStructure.MaxRatio = (msr & 0x3f) + 0x08;
-			gCPUStructure.SubDivider = (2 << ((msr >> 6) & 0x07));
+				gCPUStructure.MaxRatio = (UINT32)DivU64x32(((msr & 0x3f) + 0x08), (1 << ((msr >> 6) & 0x7)));
+         // Get min ratio
+         msr = AsmReadMsr64(K10_COFVID_LIMIT);
+         msr = AsmReadMsr64(K10_PSTATE_STATUS + ((msr >> 4) & 0x07));
+         if(gCPUStructure.Extfamily == 0x01 /* K10 */)
+				gCPUStructure.MinRatio = 5 * (UINT32)DivU64x32(((msr & 0x3f) + 0x10), (1 << ((msr >> 6) & 0x7)));
+			else /* K11+ */
+				gCPUStructure.MinRatio = 5 * (UINT32)DivU64x32(((msr & 0x3f) + 0x08), (1 << ((msr >> 6) & 0x7)));
 		}
-    
-		if (gCPUStructure.MaxRatio) {
-			if (gCPUStructure.SubDivider) {
-				gCPUStructure.FSBFrequency = DivU64x32(
-                                               MultU64x32(gCPUStructure.TSCFrequency,
-                                                         gCPUStructure.SubDivider),
-                                               gCPUStructure.MaxRatio);
-		//		DBG("%d.%d\n", (currcoef / currdiv), (((currcoef % currdiv) * 100) / currdiv));
-			} else {
-				gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.TSCFrequency, gCPUStructure.MaxRatio);
-			}
-      DBG("AMD divider: %d\n", gCPUStructure.MaxRatio);
-			gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
-		}
-    gCPUStructure.MaxRatio *= 10;
+      gCPUStructure.MaxRatio >>= 1;
+      gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.TSCFrequency, gCPUStructure.MaxRatio);
+      gCPUStructure.MaxRatio *= 10;
 	}
   
 #endif

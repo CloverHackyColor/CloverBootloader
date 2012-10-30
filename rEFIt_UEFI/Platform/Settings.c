@@ -1348,55 +1348,59 @@ EFI_STATUS ApplySettings()
 {
   UINT64  msr;
 
-  // Read in msr for turbo and test whether it needs disabled/enabled
-  msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
-  if (gCPUStructure.Turbo && gSettings.Turbo) {
-    // Don't change cpu speed because we aren't changing control state
-     if (gCPUStructure.Turbo4) {
-       gCPUStructure.MaxSpeed = (UINT32)DivU64x32(gCPUStructure.CPUFrequency, Mega);
-//       gCPUStructure.MaxSpeed = (UINT32)(DivU64x32(MultU64x64(gCPUStructure.FSBFrequency, gCPUStructure.Turbo4), Mega * 10)); 
-     //gCPUStructure.CPUFrequency = DivU64x32(MultU64x64(gCPUStructure.Turbo4, gCPUStructure.FSBFrequency), 10);
+  if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
+     if (gCPUStructure.Turbo) {
+        // Read in msr for turbo and test whether it needs disabled/enabled
+        msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
+        if (gSettings.Turbo) { // != ((msr & (1ULL<<38)) == 0)) {
+          // Don't change cpu speed because we aren't changing control state
+           if (gCPUStructure.Turbo4) {
+             gCPUStructure.MaxSpeed = (UINT32)DivU64x32(gCPUStructure.CPUFrequency, Mega);
+      //       gCPUStructure.MaxSpeed = (UINT32)(DivU64x32(MultU64x64(gCPUStructure.FSBFrequency, gCPUStructure.Turbo4), Mega * 10)); 
+           //gCPUStructure.CPUFrequency = DivU64x32(MultU64x64(gCPUStructure.Turbo4, gCPUStructure.FSBFrequency), 10);
+           }
+           //
+          //attempt to make turbo
+      //    msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
+          DBG("MSR_IA32_MISC_ENABLE = %lx\n", msr);
+          msr &= ~(1ULL<<38);
+       //   if (!gSettings.Turbo) msr |= (1ULL<<38); //0x4000000000 == 0 if Turbo enabled
+          AsmWriteMsr64(MSR_IA32_MISC_ENABLE, msr);
+          gBS->Stall(100);
+          msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
+          DBG("Set turbo: MSR_IA32_MISC_ENABLE = %lx\n", msr);
+          /* Don't set performance control state, let OS handle it - apianti
+           if (TurboMsr != 0) {
+           AsmWriteMsr64(MSR_IA32_PERF_CONTROL, TurboMsr);
+           gBS->Stall(100);
+           WaitForSts();
+           }
+           msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);
+           DBG("set turbo state msr=%x \n", msr);
+           tmpU = gCPUStructure.CPUFrequency; //
+           DBG("set CPU to %ld\n", tmpU);
+           tmpU = DivU64x32(gCPUStructure.CPUFrequency, Mega);
+           DBG("... CPU to %ldMHz\n", tmpU);
+           //    DBG("set turbo state msr=%x CPU=%dMHz\n", msr, (INT32)DivU64x32(gCPUStructure.CPUFrequency, Mega));
+           AlreadyDone = TRUE;
+           // */
+        }
      }
-     //
-    //attempt to make turbo
-//    msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
-    DBG("MSR_IA32_MISC_ENABLE = %lx\n", msr);
-    msr &= ~(1ULL<<38);
- //   if (!gSettings.Turbo) msr |= (1ULL<<38); //0x4000000000 == 0 if Turbo enabled
-    AsmWriteMsr64(MSR_IA32_MISC_ENABLE, msr);
-    gBS->Stall(100);
-    msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
-    DBG("Set turbo: MSR_IA32_MISC_ENABLE = %lx\n", msr);
-    /* Don't set performance control state, let OS handle it - apianti
-     if (TurboMsr != 0) {
-     AsmWriteMsr64(MSR_IA32_PERF_CONTROL, TurboMsr);
-     gBS->Stall(100);
-     WaitForSts();
-     }
-     msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);
-     DBG("set turbo state msr=%x \n", msr);
-     tmpU = gCPUStructure.CPUFrequency; //
-     DBG("set CPU to %ld\n", tmpU);
-     tmpU = DivU64x32(gCPUStructure.CPUFrequency, Mega);
-     DBG("... CPU to %ldMHz\n", tmpU);
-     //    DBG("set turbo state msr=%x CPU=%dMHz\n", msr, (INT32)DivU64x32(gCPUStructure.CPUFrequency, Mega));
-     AlreadyDone = TRUE;
-     // */
+     //Slice: I disable this until to be clear why it should be disabled any way
+     // moreover ISS is not EIST, I may enable or not ISS but I always want EIST.
+   /*  if (gSettings.EnableISS != ((msr & (1ULL<<16)) != 0)){
+      //attempt to speedstep
+      msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
+      DBG("MSR_IA32_MISC_ENABLE = %lx\n", msr);
+      msr &= ~(1ULL<<16);
+      if (gSettings.EnableISS) msr |= (1ULL<<16);
+      AsmWriteMsr64(MSR_IA32_MISC_ENABLE, msr);
+      gBS->Stall(100);
+      msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
+      DBG("Set speedstep: MSR_IA32_MISC_ENABLE = %lx\n", msr);
+      }
+   */
   }
-  //Slice: I disable this until to be clear why it should be disabled any way
-  // moreover ISS is not EIST, I may enable or not ISS but I always want EIST.
-/*  if (gSettings.EnableISS != ((msr & (1ULL<<16)) != 0)){
-   //attempt to speedstep
-   msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
-   DBG("MSR_IA32_MISC_ENABLE = %lx\n", msr);
-   msr &= ~(1ULL<<16);
-   if (gSettings.EnableISS) msr |= (1ULL<<16);
-   AsmWriteMsr64(MSR_IA32_MISC_ENABLE, msr);
-   gBS->Stall(100);
-   msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
-   DBG("Set speedstep: MSR_IA32_MISC_ENABLE = %lx\n", msr);
-   }
-*/ 
   return EFI_SUCCESS;
 }
 

@@ -320,6 +320,8 @@ Headers collection for procedures
 
 //AMD
 #define K8_FIDVID_STATUS        0xC0010042
+#define K10_COFVID_LIMIT        0xC0010061
+#define K10_PSTATE_STATUS       0xC0010064
 #define K10_COFVID_STATUS       0xC0010071
 #define DEFAULT_FSB             100000          /* for now, hardcoding 100MHz for old CPUs */
 
