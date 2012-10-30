@@ -551,24 +551,24 @@ BOOLEAN NativeUSB(UINT16 DID)
 
 VOID CheckHardware()
 {
-  EFI_STATUS			Status;
-	EFI_HANDLE			*HandleBuffer = NULL;
-  EFI_HANDLE      Handle;
+  EFI_STATUS          Status;
+	EFI_HANDLE          *HandleBuffer = NULL;
+  EFI_HANDLE          Handle;
 	EFI_PCI_IO_PROTOCOL *PciIo;
 	PCI_TYPE00          Pci;
-	UINTN         HandleCount = 0;
-	UINTN         HandleIndex;
+	UINTN               HandleCount = 0;
+	UINTN               HandleIndex;
   
   //	UINT16		  did, vid;
-	UINTN         Segment;
-	UINTN         Bus;
-	UINTN         Device;
-	UINTN         Function;
+	UINTN               Segment;
+	UINTN               Bus;
+	UINTN               Device;
+	UINTN               Function;
+	UINTN               display=0;
+	UINTN               gfxid=0;
   
-	pci_dt_t      PCIdevice;
+	pci_dt_t            PCIdevice;
 	EFI_DEVICE_PATH_PROTOCOL *DevicePath = NULL;
-	UINTN display=0;
-	UINTN gfxid=0;
 	
    usb=0;
   // Scan PCI handles 
@@ -726,6 +726,11 @@ VOID CheckHardware()
               if (layoutId == 0) {
                 layoutId = 12;
               }
+            }
+            if (gSettings.HDALayoutId > 0) {
+              // layoutId is specified - use it
+              layoutId = (UINT32)gSettings.HDALayoutId;
+              DBG(" setting specified layout-id=%d (0x%x)\n", layoutId, layoutId);
             }
             if (layoutId > 0)
             {

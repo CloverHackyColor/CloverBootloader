@@ -448,7 +448,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     // but before ACPI patch we need smbios patch
 //    DBG("PatchSmbios\n");
     
-    ApplySettings();
+    if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) ApplySettings();
     PatchSmbios();
 //    DBG("PatchACPI\n");
     PatchACPI(Entry->Volume);
