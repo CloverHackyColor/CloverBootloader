@@ -59,7 +59,7 @@ EFI_DRIVER_BINDING_PROTOCOL gPartitionDriverBinding = {
 PARTITION_DETECT_ROUTINE mPartitionDetectRoutineTable[] = {
   PartitionInstallGptChildHandles,
   PartitionInstallAppleChildHandles,
-//  PartitionInstallElToritoChildHandles,
+  PartitionInstallElToritoChildHandles,
   PartitionInstallMbrChildHandles,
   NULL
 };

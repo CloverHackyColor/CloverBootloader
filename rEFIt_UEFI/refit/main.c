@@ -1162,6 +1162,33 @@ static VOID ScanLoader(VOID)
  //     continue;
       }
     }
+    
+    // check for Microsoft boot loader/menu
+    StrCpy(FileName, L"\\bootmgr.efi");
+    if (FileExists(Volume->RootDir, FileName)) {
+      //     Print(L"  - Microsoft boot menu found\n");
+      Volume->OSType = OSTYPE_WINEFI;
+      Volume->BootType = BOOTING_BY_EFI;
+      Volume->DriveImage = ScanVolumeDefaultIcon(Volume);
+      if (!gSettings.HVHideAllWindowsEFI){
+        Entry = AddLoaderEntry(FileName, L"Microsoft EFI boot menu", Volume, OSTYPE_WINEFI);
+        continue;
+      }
+    }
+ 
+    // check for Microsoft boot loader/menu on CDROM
+    StrCpy(FileName, L"\\EFI\\MICROSOFT\\BOOT\\cdboot.efi");
+    if (FileExists(Volume->RootDir, FileName)) {
+      //     Print(L"  - Microsoft boot menu found\n");
+      Volume->OSType = OSTYPE_WINEFI;
+      Volume->BootType = BOOTING_BY_EFI;
+      Volume->DriveImage = ScanVolumeDefaultIcon(Volume);
+      if (!gSettings.HVHideAllWindowsEFI){
+        Entry = AddLoaderEntry(FileName, L"Microsoft EFI boot menu", Volume, OSTYPE_WINEFI);
+        continue;
+      }
+    }
+    
 
     // check for grub boot loader/menu
 #if defined(MDE_CPU_X64)
