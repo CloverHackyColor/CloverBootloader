@@ -1952,7 +1952,7 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
   
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-  InputBootArgs->Entry.Title = PoolPrint(L"Enable SpeedStep:");
+  InputBootArgs->Entry.Title = PoolPrint(L"EnableISS:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF; //cursor
   InputBootArgs->Entry.ShortcutLetter = 'S';

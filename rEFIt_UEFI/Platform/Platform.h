@@ -704,7 +704,7 @@ typedef struct {
   UINT8   EnabledCores;
 	UINT8   Threads;
 	UINT8   Mobile;  //not for i3-i7
-  UINT8   Turbo;
+  BOOLEAN Turbo;
   UINT8   Pad2[3];
 
 	/* Core i7,5,3 */

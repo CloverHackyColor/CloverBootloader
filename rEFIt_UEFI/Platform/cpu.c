@@ -178,19 +178,14 @@ VOID GetCPUProperties (VOID)
   if ((bit(9) & gCPUStructure.CPUID[CPUID_1][2]) != 0) {
 		SSSE3 = TRUE;
 	}
-  
+  gCPUStructure.Turbo = FALSE;
   if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
     // Determine turbo boost support
     DoCpuid(6, reg);
     gCPUStructure.Turbo = ((reg[EAX] & 1) != 0);
-    
+    DBG("The CPU%a supported turbo\n", gCPUStructure.Turbo?"":" not"); 
     switch (gCPUStructure.Model)
     {
-/*      case CPU_MODEL_ATOM:
-        gCPUStructure.Cores   = (UINT8)(gCPUStructure.CoresPerPackage & 0xff);
-        gCPUStructure.Threads = (UINT8)(gCPUStructure.LogicalPerPackage & 0xff);
-        break;
- */
       case CPU_MODEL_NEHALEM: // Intel Core i7 LGA1366 (45nm)
       case CPU_MODEL_FIELDS: // Intel Core i5, i7 LGA1156 (45nm)
       case CPU_MODEL_CLARKDALE: // Intel Core i3, i5, i7 LGA1156 (32nm) 
@@ -217,6 +212,7 @@ VOID GetCPUProperties (VOID)
         break;
     }    
   }
+  
 	if (gCPUStructure.Cores == 0) {
       gCPUStructure.Cores   = (UINT8)(gCPUStructure.CoresPerPackage & 0xff);
       gCPUStructure.Threads = (UINT8)(gCPUStructure.LogicalPerPackage & 0xff);
@@ -421,8 +417,8 @@ VOID GetCPUProperties (VOID)
         gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
 			}
 	}
-#if 1 //NOTNOW
-  else if(gCPUStructure.Vendor == CPU_VENDOR_AMD /* AMD */) {
+
+  else if(gCPUStructure.Vendor == CPU_VENDOR_AMD ) {
       gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
       gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
 		if(gCPUStructure.Extfamily == 0x00 /* K8 */) {
@@ -445,12 +441,14 @@ VOID GetCPUProperties (VOID)
 				gCPUStructure.MinRatio = 5 * (UINT32)DivU64x32(((msr & 0x3f) + 0x08), (1 << ((msr >> 6) & 0x7)));
 		}
       gCPUStructure.MaxRatio >>= 1;
+    if (!gCPUStructure.MaxRatio) {
+      gCPUStructure.MaxRatio = 1; //??? to avoid zero division
+    }
       gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.TSCFrequency, gCPUStructure.MaxRatio);
       gCPUStructure.MaxRatio *= 10;
 	}
   
-#endif
-  DBG("take FSB\n");
+ // DBG("take FSB\n");
   tmpU = gCPUStructure.FSBFrequency;
 //  DBG("divide by 1000\n");
   BusSpeed = (UINT32)DivU64x32(tmpU, kilo); //Hz -> kHz

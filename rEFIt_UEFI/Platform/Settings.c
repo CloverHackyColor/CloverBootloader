@@ -472,10 +472,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       
       
       prop = GetProperty(dictPointer, "EnableISS");
-      gSettings.EnableISS = FALSE;
+//      gSettings.EnableISS = FALSE; //we set default value in GetDefaultSettings()
       if(prop) {
-        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')) {
           gSettings.EnableISS = TRUE;
+        } else if ((prop->string[0] == 'n') || (prop->string[0] == 'N')) {
+          gSettings.EnableISS = FALSE;  //force disable
+        }
       }      
       prop = GetProperty(dictPointer, "smartUPS");
       gSettings.smartUPS = FALSE;
@@ -636,11 +639,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
     dictPointer = GetProperty(dict,"CPU");
     if (dictPointer) {
       prop = GetProperty(dictPointer,"Turbo");
-      gSettings.Turbo = FALSE;
+ //     gSettings.Turbo = FALSE;
       if(prop) {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
           gSettings.Turbo = TRUE;
           DBG("Config set Turbo\n");
+        } else if ((prop->string[0] == 'n') || (prop->string[0] == 'N')) {
+          gSettings.Turbo = FALSE; //force disable
         }
       }
       prop = GetProperty(dictPointer,"QPI");
