@@ -19,7 +19,7 @@
 #include "AtaBus.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_ATABUS 0
+#define DEBUG_ATABUS 1
 #else
 #define DEBUG_ATABUS DEBUG_ALL
 #endif
@@ -27,7 +27,8 @@
 #if DEBUG_ATABUS==0
 #define DBG(...)
 #else
-#define DBG(...) DebugLog(DEBUG_ATABUS, __VA_ARGS__)
+//#define DBG(...) DebugLog(DEBUG_ATABUS, __VA_ARGS__)
+#define DBG(...) Print(__VA_ARGS__)
 #endif
 
 UINT8   mMorControl;

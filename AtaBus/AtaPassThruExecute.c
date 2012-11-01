@@ -33,7 +33,8 @@
 #if DEBUG_EXEC==0
 #define DBG(...)
 #else
-#define DBG(...) DebugLog(DEBUG_EXEC, __VA_ARGS__)
+//#define DBG(...) DebugLog(DEBUG_EXEC, __VA_ARGS__)
+#define DBG(...) Print(__VA_ARGS__)
 #endif
 
 
@@ -438,9 +439,10 @@ DiscoverAtaDevice (
       // The command is issued successfully
       //
       Status = IdentifyAtaDevice (AtaDevice);
-      if (!EFI_ERROR (Status)) {
+ //Slice - this change is appeared in rev 13908     
+//      if (!EFI_ERROR (Status)) {
         return Status;
-      }
+//      }
     }
   } while (Retry-- > 0);
 

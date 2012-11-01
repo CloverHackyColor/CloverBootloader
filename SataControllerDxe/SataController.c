@@ -472,6 +472,8 @@ SataControllerStart (
     Data32 = AhciReadReg (PciIo, R_AHCI_CAP);
     SataPrivateData->IdeInit.ChannelCount = (UINT8) ((Data32 & B_AHCI_CAP_NPS) + 1);
     SataPrivateData->DeviceCount = AHCI_MAX_DEVICES;
+    DBG(L"ChannelCount=%d DeviceCount=%d CAP_SPM=%x\n", SataPrivateData->IdeInit.ChannelCount,
+        SataPrivateData->DeviceCount, (Data32 & B_AHCI_CAP_SPM));    //3, 1, 0    
     if ((Data32 & B_AHCI_CAP_SPM) == B_AHCI_CAP_SPM) {
       SataPrivateData->DeviceCount = AHCI_MULTI_MAX_DEVICES;
     }
@@ -530,7 +532,7 @@ Done:
   }
 
 //  DEBUG ((EFI_D_INFO, "SataControllerStart END status = %r\n", Status));
-//	DBG(L"SataControllerStart END status = %r\n", Status);
+	DBG(L"SataControllerStart END status = %r\n", Status);
   return Status;
 }
 
@@ -663,13 +665,20 @@ IdeInitGetChannelInfo (
   )
 {
   EFI_SATA_CONTROLLER_PRIVATE_DATA  *SataPrivateData;
+  if (!Enabled || !MaxDevices) {
+    return EFI_INVALID_PARAMETER;
+  }
   SataPrivateData = SATA_CONTROLLER_PRIVATE_DATA_FROM_THIS (This);
-  ASSERT (SataPrivateData != NULL);
+//  ASSERT (SataPrivateData != NULL);
+  if (!SataPrivateData) {
+    *Enabled = FALSE;
+    return EFI_NOT_FOUND;
+  }
+	  DBG(L"Channel %d DeviceCount=%d\n", (INTN)Channel, SataPrivateData->DeviceCount); //0,2
 
   if (Channel < This->ChannelCount) {
     *Enabled = TRUE;
     *MaxDevices = SataPrivateData->DeviceCount;
-//	  DBG(L"Channel %d enabled  Count=%d\n", (INTN)Channel, *MaxDevices);
     return EFI_SUCCESS;
   }
 
@@ -762,8 +771,11 @@ IdeInitSubmitData (
 {
   EFI_SATA_CONTROLLER_PRIVATE_DATA  *SataPrivateData;
   SataPrivateData = SATA_CONTROLLER_PRIVATE_DATA_FROM_THIS (This);
-  ASSERT (SataPrivateData != NULL);
-
+//  ASSERT (SataPrivateData != NULL);
+  if (!SataPrivateData) {
+    return EFI_NOT_FOUND;
+  }
+  
   if ((Channel >= This->ChannelCount) || (Device >= SataPrivateData->DeviceCount)) {
     return EFI_INVALID_PARAMETER;
   }
@@ -837,8 +849,12 @@ IdeInitDisqualifyMode (
 {
   EFI_SATA_CONTROLLER_PRIVATE_DATA  *SataPrivateData;
   SataPrivateData = SATA_CONTROLLER_PRIVATE_DATA_FROM_THIS (This);
-  ASSERT (SataPrivateData != NULL);
-
+  //  ASSERT (SataPrivateData != NULL);
+  if (!SataPrivateData) {
+    return EFI_NOT_FOUND;
+  }
+  
+  
   if ((Channel >= This->ChannelCount) || (BadModes == NULL) || (Device >= SataPrivateData->DeviceCount)) {
     return EFI_INVALID_PARAMETER;
   }
@@ -927,8 +943,12 @@ IdeInitCalculateMode (
   EFI_STATUS                        Status;
 
   SataPrivateData = SATA_CONTROLLER_PRIVATE_DATA_FROM_THIS (This);
-  ASSERT (SataPrivateData != NULL);
-
+  //  ASSERT (SataPrivateData != NULL);
+  if (!SataPrivateData) {
+    return EFI_NOT_FOUND;
+  }
+  
+  
   if ((Channel >= This->ChannelCount) || (SupportedModes == NULL) || (Device >= SataPrivateData->DeviceCount)) {
     return EFI_INVALID_PARAMETER;
   }
