@@ -39,7 +39,7 @@ AhciReadReg (
   PciIo->Mem.Read (
                PciIo,
                EfiPciIoWidthUint32,
-               EFI_AHCI_BAR_INDEX,
+               EFI_AHCI_BAR_INDEX,   //=5
                (UINT64) Offset,
                1,
                &Data

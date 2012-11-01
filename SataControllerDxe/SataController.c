@@ -469,14 +469,20 @@ SataControllerStart (
     //   NPS is 0's based value indicating the maximum number of ports supported by the HBA silicon.
     //   A maximum of 32 ports can be supported. A value of '0h', indicating one port, is the minimum requirement.
     //
-    Data32 = AhciReadReg (PciIo, R_AHCI_CAP);
-    SataPrivateData->IdeInit.ChannelCount = (UINT8) ((Data32 & B_AHCI_CAP_NPS) + 1);
+    Data32 = AhciReadReg (PciIo, R_AHCI_CAP); //R_AHCI_CAP=0x0
+    //Slice - I read Intel spec and found that number of possible ports = 6
+    // while NPS is a number of implemented ports. We must create a space for all
+    // because of if (Channel < ChannelCount) {} :)
+    SataPrivateData->IdeInit.ChannelCount = 6; //(UINT8) ((Data32 & B_AHCI_CAP_NPS) + 1);
     SataPrivateData->DeviceCount = AHCI_MAX_DEVICES;
     DBG(L"ChannelCount=%d DeviceCount=%d CAP_SPM=%x\n", SataPrivateData->IdeInit.ChannelCount,
-        SataPrivateData->DeviceCount, (Data32 & B_AHCI_CAP_SPM));    //3, 1, 0    
+        SataPrivateData->DeviceCount, (Data32 & B_AHCI_CAP_SPM));    //3,1,0 - 1525 //4,1,0 - H61M   
     if ((Data32 & B_AHCI_CAP_SPM) == B_AHCI_CAP_SPM) {
       SataPrivateData->DeviceCount = AHCI_MULTI_MAX_DEVICES;
     }
+    //Slice - read PI and store into EFI_SATA_CONTROLLER_PRIVATE_DATA
+    Data32 = AhciReadReg (PciIo, R_AHCI_PI);
+    SataPrivateData->IPorts = (UINT8)(Data32 & 0x3F);
   }
 
   ChannelDeviceCount = (UINTN) (SataPrivateData->IdeInit.ChannelCount) * (UINTN) (SataPrivateData->DeviceCount);
@@ -677,7 +683,7 @@ IdeInitGetChannelInfo (
 	  DBG(L"Channel %d DeviceCount=%d\n", (INTN)Channel, SataPrivateData->DeviceCount); //0,2
 
   if (Channel < This->ChannelCount) {
-    *Enabled = TRUE;
+    *Enabled = (SataPrivateData->IPorts & (1<<Channel)) != 0;
     *MaxDevices = SataPrivateData->DeviceCount;
     return EFI_SUCCESS;
   }

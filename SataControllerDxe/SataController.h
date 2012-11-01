@@ -41,6 +41,8 @@ extern EFI_COMPONENT_NAME2_PROTOCOL gSataControllerComponentName2;
 #define R_AHCI_CAP 0x0
 #define   B_AHCI_CAP_NPS (BIT4 | BIT3 | BIT2 | BIT1 | BIT0) // Number of Ports
 #define   B_AHCI_CAP_SPM BIT17 // Supports Port Multiplier
+//Slice
+#define R_AHCI_PI 0xC
 
 ///
 /// AHCI each channel can have up to 1 device
@@ -90,7 +92,7 @@ typedef struct _EFI_SATA_CONTROLLER_PRIVATE_DATA {
   // The number of devices that are supported by this channel
   //
   UINT8                             DeviceCount;
-
+  UINT8                             IPorts;
   //
   // The highest disqulified mode for each attached device,
   // From ATA/ATAPI spec, if a mode is not supported,

@@ -16,7 +16,7 @@
 #include "AtaAtapiPassThru.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_ATAATAPI 0
+#define DEBUG_ATAATAPI 1
 #else
 #define DEBUG_ATAATAPI DEBUG_ALL
 #endif
@@ -24,7 +24,8 @@
 #if DEBUG_ATAATAPI==0
 #define DBG(...)
 #else
-#define DBG(...) DebugLog(DEBUG_ATAATAPI, __VA_ARGS__)
+//#define DBG(...) DebugLog(DEBUG_ATAATAPI, __VA_ARGS__)
+#define DBG(...) Print(__VA_ARGS__)
 #endif
 
 //
@@ -1967,10 +1968,11 @@ ExtScsiPassThruPassThru (
       }
 
       Status = AtaPacketCommandExecute (Instance->PciIo, &Instance->IdeRegisters[Port], Port, PortMultiplier, Packet);
- //	   DBG(L"AtaPacketCommandExecute Multiplier=%d Status=%r\n", PortMultiplier, Status);
+ 	   DBG(L"AtaPacketCommandExecute Multiplier=%d Status=%r\n", PortMultiplier, Status);
       break;
     case EfiAtaAhciMode:
       Status = AhciPacketCommandExecute (Instance->PciIo, &Instance->AhciRegisters, Port, PortMultiplier, Packet);
+      DBG(L"EfiAtaAhciMode on port %d\n", Port);
       break;
     default :
       Status = EFI_DEVICE_ERROR;

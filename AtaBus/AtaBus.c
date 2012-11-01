@@ -19,7 +19,7 @@
 #include "AtaBus.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_ATABUS 1
+#define DEBUG_ATABUS 0
 #else
 #define DEBUG_ATABUS DEBUG_ALL
 #endif
