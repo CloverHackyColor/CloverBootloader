@@ -1288,6 +1288,44 @@ BOOLEAN FileExists(IN EFI_FILE *Root, IN CHAR16 *RelativePath)
     return FALSE;
 }
 
+BOOLEAN DeleteFile(IN EFI_FILE *Root, IN CHAR16 *RelativePath)
+{
+  EFI_STATUS  Status;
+  EFI_FILE    *File;
+  EFI_FILE_INFO   *FileInfo;
+  
+  //DBG("DeleteFile: %s\n", RelativePath);
+  // open file for read/write to see if it exists, need write for delete
+  Status = Root->Open(Root, &File, RelativePath, EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
+  //DBG(" Open: %r\n", Status);
+  if (Status == EFI_SUCCESS) {
+    // exists - check if it is a file
+    FileInfo = EfiLibFileInfo(File);
+    if (FileInfo == NULL) {
+      // error
+      //DBG(" FileInfo is NULL\n");
+      File->Close(File);
+      return FALSE;
+    }
+    //DBG(" FileInfo attr: %x\n", FileInfo->Attribute);
+    if ((FileInfo->Attribute & EFI_FILE_DIRECTORY) == EFI_FILE_DIRECTORY) {
+      // it's directory - return error
+      //DBG(" File is DIR\n");
+      FreePool(FileInfo);
+      File->Close(File);
+      return FALSE;
+    }
+    FreePool(FileInfo);
+    // it's a file - delete it
+    //DBG(" File is file\n");
+    Status = File->Delete(File);
+    //DBG(" Delete: %r\n", Status);
+    
+    return Status == EFI_SUCCESS;
+  }
+  return FALSE;
+}
+
 EFI_STATUS DirNextEntry(IN EFI_FILE *Directory, IN OUT EFI_FILE_INFO **DirEntry, IN UINTN FilterMode)
 {
     EFI_STATUS Status;

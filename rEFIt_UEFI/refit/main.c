@@ -1583,22 +1583,35 @@ static VOID ScanTool(VOID)
   if (GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)
     return;
   
-  for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
-    Volume = Volumes[VolumeIndex];
-    if (!Volume->RootDir || !Volume->DeviceHandle) {
-      continue;
-    }
-    
-    Status = gBS->HandleProtocol (Volume->DeviceHandle, &gEfiPartTypeSystemPartGuid, &Interface);
-    if (Status == EFI_SUCCESS && !gSettings.HVHideAllUEFI) {
+  if (!gFirmwareClover && !gFirmwarePhoenix) {
+    for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
+      Volume = Volumes[VolumeIndex];
+      if (!Volume->RootDir || !Volume->DeviceHandle) {
+        continue;
+      }
+      
+      Status = gBS->HandleProtocol (Volume->DeviceHandle, &gEfiPartTypeSystemPartGuid, &Interface);
+      if (Status == EFI_SUCCESS && !gSettings.HVHideAllUEFI) {
+        DBG("Checking EFI partition Volume %d for Clover\n", VolumeIndex);
+        
 #if defined(MDE_CPU_X64)
-      StrCpy(FileName, L"\\EFI\\BOOT\\CLOVERX64.EFI");
+        StrCpy(FileName, L"\\EFI\\BOOT\\CLOVERX64.EFI");
 #else
-      StrCpy(FileName, L"\\EFI\\BOOT\\CLOVERIA32.EFI");
+        StrCpy(FileName, L"\\EFI\\BOOT\\CLOVERIA32.EFI");
 #endif
-      if (FileExists(Volume->RootDir, FileName)) {
-        Volume->BootType = BOOTING_BY_EFI;
-        AddCloverEntry(FileName, L"Clover Boot Options", Volume);
+        
+        // OSX adds label "EFI" to EFI volumes and some UEFIs see that
+        // as a file. This file then blocks access to the /EFI directory.
+        // We will delete /EFI file here and leave only /EFI directory.
+        if (DeleteFile(Volume->RootDir, L"EFI")) {
+          DBG(" Deleted /EFI label\n");
+        }
+        
+        if (FileExists(Volume->RootDir, FileName)) {
+          DBG(" Found Clover\n");
+          Volume->BootType = BOOTING_BY_EFI;
+          AddCloverEntry(FileName, L"Clover Boot Options", Volume);
+        }
       }
     }
   }
