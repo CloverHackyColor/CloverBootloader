@@ -133,7 +133,7 @@ SetAcpiTable (
   //
   // Check for invalid input parameters
   //
-  ASSERT (Handle);
+//  ASSERT (Handle);
   if (!Handle) {
     return EFI_INVALID_PARAMETER;
   }
@@ -587,7 +587,9 @@ AddTableToList (
   ASSERT (AcpiTableInstance);
   ASSERT (Table);
   ASSERT (Handle);
-
+  if (!AcpiTableInstance || !Table || !Handle) {
+    return EFI_INVALID_PARAMETER;
+  }
   //
   // Init locals
   //
@@ -597,8 +599,9 @@ AddTableToList (
   // Create a new list entry
   //
   CurrentTableList = AllocatePool (sizeof (EFI_ACPI_TABLE_LIST));
-  ASSERT (CurrentTableList);
-
+//  ASSERT (CurrentTableList);
+  if (!CurrentTableList)
+    return EFI_OUT_OF_RESOURCES;
   //
   // Determine table type and size
   //
@@ -632,7 +635,7 @@ AddTableToList (
     // could be updated by OS present agent. For example, BufferPtrAddress in
     // SMM communication ACPI table.
     //
-    ASSERT ((EFI_PAGE_SIZE % 64) == 0);
+ //   ASSERT ((EFI_PAGE_SIZE % 64) == 0); //bred
     Status = gBS->AllocatePages (
                     AllocateMaxAddress,
                     EfiACPIMemoryNVS,
@@ -1012,7 +1015,10 @@ AddTableToList (
       //
       if (AcpiTableInstance->NumberOfTableEntries1 >= mEfiAcpiMaxNumTables) {
         Status = ReallocateAcpiTableBuffer (AcpiTableInstance);
-        ASSERT_EFI_ERROR (Status);
+       // ASSERT_EFI_ERROR (Status);
+        if (EFI_ERROR (Status)) {
+          return Status;
+        }
       }
       CurrentRsdtEntry = (UINT32 *)
         (
@@ -1046,7 +1052,10 @@ AddTableToList (
        //
        if (AcpiTableInstance->NumberOfTableEntries3 >= mEfiAcpiMaxNumTables) {
          Status = ReallocateAcpiTableBuffer (AcpiTableInstance);
-         ASSERT_EFI_ERROR (Status);
+//         ASSERT_EFI_ERROR (Status);
+         if (EFI_ERROR (Status)) {
+           return Status;
+         }
        }
        //
        // At this time, it is assumed that RSDT and XSDT maintain parallel lists of tables.
@@ -1133,7 +1142,10 @@ FindTableByHandle (
   //
   // Check for invalid input parameters
   //
-  ASSERT (Table);
+//  ASSERT (Table);
+  if (!Table) {
+    return EFI_INVALID_PARAMETER;
+  }
 
   //
   // Find the table
@@ -1189,9 +1201,12 @@ RemoveTableFromRsdt (
   //
   // Check for invalid input parameters
   //
-  ASSERT (Table);
-  ASSERT (NumberOfTableEntries);
-  ASSERT (Rsdt);
+//  ASSERT (Table);
+//  ASSERT (NumberOfTableEntries);
+//  ASSERT (Rsdt);
+  if (!Table || !NumberOfTableEntries || !Rsdt) {
+    return EFI_INVALID_PARAMETER;
+  }
 
   //
   // Find the table entry in the RSDT and XSDT
@@ -1295,8 +1310,11 @@ DeleteTable (
   //
   // Check for invalid input parameters
   //
-  ASSERT (AcpiTableInstance);
-  ASSERT (Table);
+//  ASSERT (AcpiTableInstance);
+//  ASSERT (Table);
+  if (!Table || !AcpiTableInstance) {
+    return EFI_INVALID_PARAMETER;
+  }
 
   //
   // Init locals
@@ -1305,7 +1323,11 @@ DeleteTable (
   //
   // Check for Table->Table
   //
-  ASSERT (Table->Table != NULL);
+ // ASSERT (Table->Table != NULL);
+  if (!Table->Table) {
+    return EFI_INVALID_PARAMETER;
+  }
+
   CurrentTableSignature = ((EFI_ACPI_COMMON_HEADER *) Table->Table)->Signature;
 
   //
@@ -1558,7 +1580,10 @@ RemoveTableFromList (
   //
   // Check for invalid input parameters
   //
-  ASSERT (AcpiTableInstance);
+//  ASSERT (AcpiTableInstance);
+  if (!AcpiTableInstance) {
+    return EFI_INVALID_PARAMETER;
+  }
 
   //
   // Find the table
@@ -1734,8 +1759,11 @@ AcpiTableAcpiTableConstructor (
 	//
 	// Check for invalid input parameters
 	//
-	ASSERT (AcpiTableInstance);
-	
+//	ASSERT (AcpiTableInstance);
+  if (!AcpiTableInstance) {
+    return EFI_INVALID_PARAMETER;
+  }
+
 	InitializeListHead (&AcpiTableInstance->TableList);
 	AcpiTableInstance->CurrentHandle              = 1;
 	

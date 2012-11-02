@@ -1682,6 +1682,9 @@ static VOID ScanDriverDir(IN CHAR16 *Path) //path to folder
             continue;   // skip this
         
         UnicodeSPrint(FileName, 512, L"%s\\%s", Path, DirEntry->FileName);
+      if (StrStr(FileName, L"EmuVariable")) {
+        gFirmwarePhoenix = TRUE;
+      }
         Status = StartEFIImage(FileDevicePath(SelfLoadedImage->DeviceHandle, FileName),
                                L"", DirEntry->FileName, DirEntry->FileName, NULL);
     }

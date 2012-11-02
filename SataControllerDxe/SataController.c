@@ -727,7 +727,7 @@ IdeInitNotifyPhase (
   //EfiIdeBeforeChannelEnumeration
   //EfiIdeBusBeforeDevicePresenceDetection
   
-  DBG("NotifyPhase=%d Channel=%d\n", Phase, Channel);
+  DBG(L"NotifyPhase=%d Channel=%d\n", Phase, Channel);
   return EFI_SUCCESS;
 }
 

@@ -36,7 +36,7 @@ extern THUNK_CONTEXT                   *mThunkContext;
   
   @param ThunkContext   the instance pointer of THUNK_CONTEXT
 **/
-VOID
+EFI_STATUS
 InitializeBiosIntCaller (
 //  THUNK_CONTEXT     *ThunkContext
   )
@@ -58,13 +58,17 @@ InitializeBiosIntCaller (
                   EFI_SIZE_TO_PAGES(LegacyRegionSize),
                   &LegacyRegionBase
                   );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
   
   mThunkContext->RealModeBuffer     = (VOID*)(UINTN)LegacyRegionBase;
   mThunkContext->RealModeBufferSize = LegacyRegionSize;
   mThunkContext->ThunkAttributes    = THUNK_ATTRIBUTE_DISABLE_A20_MASK_INT_15;
   DBG("mThunkContext->RealModeBuffer: %p, mThunkContext->RealModeBufferSize: %d\n", mThunkContext->RealModeBuffer, mThunkContext->RealModeBufferSize);
   AsmPrepareThunk16(mThunkContext);
+  return Status;
 }
 
 /**
@@ -89,7 +93,7 @@ CONST   UINT32   InterruptRedirectionCode[8] = {
 };
 
 
-VOID
+EFI_STATUS
 InitializeInterruptRedirection (
 //  IN  EFI_LEGACY_8259_PROTOCOL  *Legacy8259
   )
@@ -112,7 +116,10 @@ InitializeInterruptRedirection (
                   EFI_SIZE_TO_PAGES(LegacyRegionLength),
                   &LegacyRegionBase
                   );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
 
   //
   // Copy code to legacy region
@@ -123,7 +130,10 @@ InitializeInterruptRedirection (
   // Get VectorBase, it should be 0x68
   //
   Status = gLegacy8259->GetVector (gLegacy8259, Efi8259Irq0, &ProtectedModeBaseVector);
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
 
   //
   // Patch IVT 0x68 ~ 0x6f
@@ -133,7 +143,7 @@ InitializeInterruptRedirection (
     IdtArray[ProtectedModeBaseVector + Index] = ((EFI_SEGMENT (LegacyRegionBase + Index * 4)) << 16) | (EFI_OFFSET (LegacyRegionBase + Index * 4));
   }
 
-  return ;
+  return Status;
 }
 
 /**
@@ -196,7 +206,10 @@ LegacyBiosInt86 (
   // Set Legacy16 state. 0x08, 0x70 is legacy 8259 vector bases.
   //
   Status = gLegacy8259->SetMode (gLegacy8259, Efi8259LegacyMode, NULL, NULL);
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return FALSE;
+  }
   
   Stack16 = (UINT16 *)((UINT8 *) mThunkContext->RealModeBuffer + mThunkContext->RealModeBufferSize - sizeof (UINT16));
 
@@ -212,7 +225,10 @@ LegacyBiosInt86 (
   // Restore protected mode interrupt state
   //
   Status = gLegacy8259->SetMode (gLegacy8259, Efi8259ProtectedMode, NULL, NULL);
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return FALSE;
+  }
 
   //
   // End critical section
@@ -312,14 +328,20 @@ LegacyBiosFarCall86 (
   // Set Legacy16 state. 0x08, 0x70 is legacy 8259 vector bases.
   //
   Status = gLegacy8259->SetMode (gLegacy8259, Efi8259LegacyMode, NULL, NULL);
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return FALSE;
+  }
   
 	AsmThunk16 (mThunkContext);
 	//
   // Restore protected mode interrupt state
   //
   Status = gLegacy8259->SetMode (gLegacy8259, Efi8259ProtectedMode, NULL, NULL);
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return FALSE;
+  }
 
   //
   // End critical section

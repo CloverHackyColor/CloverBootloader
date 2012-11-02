@@ -219,8 +219,11 @@ Returns:
   INTN        len;
   POOL_PRINT  *spc;
   
-  ASSERT (Context != NULL);
-  ASSERT (Buffer != NULL);
+//  ASSERT (Context != NULL);
+//  ASSERT (Buffer != NULL);
+  if (!Context || !Buffer) {
+    return 0;
+  }
 
   spc = Context;
   len = StrLen (Buffer);
@@ -616,13 +619,19 @@ Returns:
   PRINT_STATE ps;
   UINTN       back;
 
-  ASSERT (NULL != Out);
+//  ASSERT (NULL != Out);
+  if (!Out) {
+    return 0;
+  }
 
   SetMem (&ps, sizeof (ps), 0);
   ps.Context  = Out;
   ps.Output   = (INTN (*) (VOID *, CHAR16 *)) Out->OutputString;
   ps.SetAttr  = (INTN (*) (VOID *, UINTN)) Out->SetAttribute;
-  ASSERT (NULL != Out->Mode);
+//  ASSERT (NULL != Out->Mode);
+  if (!Out->Mode) {
+    return 0;
+  }
   ps.Attr           = Out->Mode->Attribute;
 
   back              = (ps.Attr >> 4) & 0xF;
@@ -783,7 +792,10 @@ PSETATTR (
   IN UINTN              Attr
   )
 {
-  ASSERT (ps != NULL);
+//  ASSERT (ps != NULL);
+  if (!ps) {
+    return;
+  }
   PFLUSH (ps);
 
   ps->RestoreAttr = ps->Attr;
@@ -800,7 +812,10 @@ PPUTC (
   IN CHAR16              c
   )
 {
-  ASSERT (ps != NULL);
+ // ASSERT (ps != NULL);
+  if (!ps) {
+    return;
+  }
   //
   // If Omit print to ConOut, then return.
   //
@@ -835,6 +850,9 @@ PGETC (
   CHAR16  c;
 
   ASSERT (p != NULL);
+  if (!p) {
+    return 0;
+  }
 
   c = (CHAR16) (p->Ascii ? p->u.pc[p->Index] : p->u.pw[p->Index]);
   p->Index += 1;
@@ -853,7 +871,10 @@ PITEM (
   PRINT_ITEM  *Item;
   CHAR16      c;
 
-  ASSERT (ps != NULL);
+//  ASSERT (ps != NULL);
+  if (!ps) {
+    return;
+  }
 
   //
   // Get the length of the item
@@ -972,7 +993,10 @@ Returns:
   CHAR16      *Buffer;
 //  EFI_GUID    *TmpGUID;
 
-  ASSERT (ps != NULL);
+//  ASSERT (ps != NULL);
+  if (!ps) {
+    return 0;
+  }
   //
   // If Omit print to ConOut, then return 0.
   //
@@ -1377,7 +1401,10 @@ SetPageBreak (
   EFI_INPUT_KEY Key;
   CHAR16        Str[3];
 
-  ASSERT (ps != NULL);
+//  ASSERT (ps != NULL);
+  if (!ps) {
+    return FALSE;
+  }
 
   ps->Output (ps->Context, L"Press ENTER to continue, 'q' to exit:");
 
@@ -1440,7 +1467,10 @@ IFlushWithPageBreak (
   CHAR16  *LineStart;
   CHAR16  LineEndChar;
 
-  ASSERT (ps != NULL);
+//  ASSERT (ps != NULL);
+  if (!ps) {
+    return;
+  }
 
   Pos       = ps->Buffer;
   LineStart = Pos;
@@ -1539,7 +1569,10 @@ Returns:
   UINTN       newlen;
   POOL_PRINT  *spc;
 
-  ASSERT (Context != NULL);
+//  ASSERT (Context != NULL);
+  if (!Context) {
+    return 0;
+  }
   
   spc     = Context;
   newlen  = spc->Len + StrLen (Buffer) + 1;
@@ -1644,8 +1677,12 @@ Returns:
 
 --*/
 {
-  ASSERT (Column != NULL);
-  ASSERT (Row != NULL);
+//  ASSERT (Column != NULL);
+//  ASSERT (Row != NULL);
+  if (!Column || !Row) {
+    return;
+  }
+  
   //
   // If current column is 0, move to the last column of the previous line,
   // otherwise, just decrement column.
@@ -1686,8 +1723,11 @@ Returns:
 
 --*/
 {
-  ASSERT (Column != NULL);
-  ASSERT (Row != NULL);
+//  ASSERT (Column != NULL);
+//  ASSERT (Row != NULL);
+  if (!Column || !Row) {
+    return;
+  }
   //
   // If current column is at line end, move to the first column of the nest
   // line, otherwise, just increment column.
@@ -1743,9 +1783,12 @@ Returns:
   EFI_INPUT_KEY Key;
   BOOLEAN       InsertMode;
   
-  ASSERT (ConOut != NULL);
-  ASSERT (ConIn != NULL);
-  ASSERT (InStr != NULL);
+//  ASSERT (ConOut != NULL);
+//  ASSERT (ConIn != NULL);
+//  ASSERT (InStr != NULL);
+  if (!ConOut || !ConIn || !InStr) {
+    return;
+  }
 
   if (Prompt) {
     ConOut->OutputString (ConOut, Prompt);
@@ -2010,8 +2053,11 @@ SetCursorPosition (
 {
   CHAR16  Backup;
 
-  ASSERT (ConOut != NULL);
-  ASSERT (Str != NULL);
+//  ASSERT (ConOut != NULL);
+//  ASSERT (Str != NULL);
+  if (!ConOut || !Str) {
+    return;
+  }
 
   Backup = 0;
   if (Row >= 0) {

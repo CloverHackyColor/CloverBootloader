@@ -106,7 +106,7 @@ LogDataHub(
                               PlatformData,
                               RecordSize
                               );
-  ASSERT_EFI_ERROR (Status);
+ // ASSERT_EFI_ERROR (Status);
 	
   FreePool (PlatformData);
   return Status;

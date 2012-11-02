@@ -172,7 +172,10 @@ EFI_STATUS ConvertAcpiTable (IN UINTN TableLen,IN OUT VOID **TheTable)
 						EFI_SIZE_TO_PAGES(TableLen),
 						&BufferPtr
 						);
-		ASSERT_EFI_ERROR (Status);
+//		ASSERT_EFI_ERROR (Status);
+    if (EFI_ERROR(Status)) {
+      return Status;
+    }
 		AcpiTableNew = (VOID *)(UINTN)BufferPtr;
 		CopyMem (AcpiTableNew, AcpiTableOri, TableLen);
 	} else {
