@@ -1583,7 +1583,7 @@ static VOID ScanTool(VOID)
   if (GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)
     return;
   
-  if (!gFirmwareClover && !gFirmwarePhoenix) {
+  if (!gFirmwareClover) {
     for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
       Volume = Volumes[VolumeIndex];
       if (!Volume->RootDir || !Volume->DeviceHandle) {
