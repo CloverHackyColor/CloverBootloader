@@ -51,6 +51,7 @@ APRIORI PEI {
 APRIORI DXE {
   INF  MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
   INF  PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
+  INF  Clover/MsgLog/MsgLog.inf
 }
 
 INF  MdeModulePkg/Universal/PCD/Dxe/Pcd.inf

@@ -51,6 +51,7 @@ APRIORI PEI {
 APRIORI DXE {
   INF  MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
   INF  PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
+  INF  Clover/MsgLog/MsgLog.inf
 }
 
 INF  MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
@@ -79,10 +80,10 @@ INF  Clover/OsxBdsDxe/BdsDxe.inf
 INF  MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
 INF  MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
 INF  Clover/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
-INF  Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
+#INF  Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
 #INF  UefiCpuPkg/CpuDxe/CpuDxe.inf
 #INF  IntelFrameworkModulePkg/Universal/CpuIoDxe/CpuIoDxe.inf
-#INF  Clover/CpuDxe/Cpu.inf
+INF  Clover/CpuDxe/Cpu.inf
 
 	#DataHub
 #INF  Clover/VBoxAppleSim/VBoxAppleSim.inf

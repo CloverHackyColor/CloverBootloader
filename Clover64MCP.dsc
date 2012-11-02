@@ -291,7 +291,7 @@
   Clover/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
   Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
   #UefiCpuPkg/CpuDxe/CpuDxe.inf
-  #Clover/CpuDxe/Cpu.inf
+  Clover/CpuDxe/Cpu.inf
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
   #DuetPkg/AcpiResetDxe/Reset.inf
   Clover/AcpiReset/Reset.inf

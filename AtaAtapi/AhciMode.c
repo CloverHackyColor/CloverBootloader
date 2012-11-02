@@ -32,7 +32,8 @@ AhciReadReg (
 {
   UINT32                  Data;
 
-  ASSERT (PciIo != NULL);
+//  ASSERT (PciIo != NULL);
+  if (!PciIo) return 0;
   
   Data = 0;
 
@@ -64,7 +65,8 @@ AhciWriteReg (
   IN UINT32               Data
   )
 {
-  ASSERT (PciIo != NULL);
+//  ASSERT (PciIo != NULL);
+  if (!PciIo) return;
 
   PciIo->Mem.Write (
                PciIo,
@@ -96,7 +98,8 @@ AhciAndReg (
 {
   UINT32 Data;
   
-  ASSERT (PciIo != NULL);
+//  ASSERT (PciIo != NULL);
+  if (!PciIo) return;
 
   Data  = AhciReadReg (PciIo, Offset);
 
@@ -123,7 +126,8 @@ AhciOrReg (
 {
   UINT32 Data;
 
-  ASSERT (PciIo != NULL);
+//  ASSERT (PciIo != NULL);
+  if (!PciIo) return;
 
   Data  = AhciReadReg (PciIo, Offset);
 
@@ -210,7 +214,7 @@ AhciWaitMemSet (
 
   do {
     //
-    // Access sytem memory to see if the value is the tested one.
+    // Access system memory to see if the value is the tested one.
     //
     // The system memory pointed by Address will be updated by the
     // SATA Host Controller, "volatile" is introduced to prevent
@@ -370,7 +374,8 @@ AhciDumpPortStatus (
   UINT32               Offset;
   UINT32               Data;
 
-  ASSERT (PciIo != NULL);
+ // ASSERT (PciIo != NULL);
+  if (!PciIo) return;
 
   Offset = EFI_AHCI_PORT_START + Port * EFI_AHCI_PORT_REG_WIDTH + EFI_AHCI_PORT_TFD;
   Data   = AhciReadReg (PciIo, Offset);
@@ -407,6 +412,7 @@ AhciEnableFisReceive (
   )
 {
   UINT32 Offset;
+  if (!PciIo) return EFI_DEVICE_ERROR;
 
   Offset = EFI_AHCI_PORT_START + Port * EFI_AHCI_PORT_REG_WIDTH + EFI_AHCI_PORT_CMD;
   AhciOrReg (PciIo, Offset, EFI_AHCI_PORT_CMD_FRE);
@@ -443,6 +449,7 @@ AhciDisableFisReceive (
 {
   UINT32 Offset;
   UINT32 Data;
+  if (!PciIo) return EFI_DEVICE_ERROR;
 
   Offset = EFI_AHCI_PORT_START + Port * EFI_AHCI_PORT_REG_WIDTH + EFI_AHCI_PORT_CMD;
   Data   = AhciReadReg (PciIo, Offset);
@@ -514,6 +521,7 @@ AhciBuildCommand (
   DATA_64    Data64;
   UINT32     Offset;
 
+  if (!PciIo) return;
   //
   // Filling the PRDT
   //  
@@ -524,7 +532,8 @@ AhciBuildCommand (
   // It also limits that the maximum amount of the PRDT entry in the command table
   // is 65535.
   //
-  ASSERT (PrdtNumber <= 65535);
+ // ASSERT (PrdtNumber <= 65535);
+  if (PrdtNumber > 65535) PrdtNumber = 65535;
 
   Data64.Uint64 = (UINTN) (AhciRegisters->AhciRFis) + sizeof (EFI_AHCI_RECEIVED_FIS) * Port;
 
@@ -607,6 +616,7 @@ AhciBuildCommandFis (
   IN     EFI_ATA_COMMAND_BLOCK   *AtaCommandBlock
   )
 {
+  if (!CmdFis || !AtaCommandBlock) return;
   ZeroMem (CmdFis, sizeof (EFI_AHCI_COMMAND_FIS));
 
   CmdFis->AhciCFisType = EFI_AHCI_FIS_REGISTER_H2D;
@@ -696,6 +706,7 @@ AhciPioTransfer (
     Flag = EfiPciIoOperationBusMasterRead;
   }
 
+  if (!PciIo) return EFI_DEVICE_ERROR;
   //
   // construct command list and command table with pci bus address
   //
@@ -2194,6 +2205,7 @@ AhciModeInitialization (
   // Get the number of command slots per port supported by this HBA.
   //
   MaxPortNumber        = (UINT8) ((Capability & 0x1F) + 1);
+  if (MaxPortNumber < 6) MaxPortNumber = 6; //Slice - Intel chipset always has 6 ports
 
   //
   // Get the bit map of those ports exposed by this HBA.

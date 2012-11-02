@@ -724,6 +724,10 @@ IdeInitNotifyPhase (
   IN UINT8                              Channel
   )
 {
+  //EfiIdeBeforeChannelEnumeration
+  //EfiIdeBusBeforeDevicePresenceDetection
+  
+  DBG("NotifyPhase=%d Channel=%d\n", Phase, Channel);
   return EFI_SUCCESS;
 }
 

@@ -16,7 +16,7 @@
 #include "AtaAtapiPassThru.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_ATAATAPI 1
+#define DEBUG_ATAATAPI 0
 #else
 #define DEBUG_ATAATAPI DEBUG_ALL
 #endif
