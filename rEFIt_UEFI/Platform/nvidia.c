@@ -477,9 +477,10 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE0603,	0x1B0A9044,	"Pegatron GeForce GT 230" },
 
 	{ 0x10DE0604,	0x10DE0504,	"nVidia GeForce 9800 GX2" },
-  { 0x10DE0605,	0x145834A2,	"Gigabyte GV-N98TOC-512H" },
+
 	{ 0x10DE0605,	0x10DE0612,	"nVidia GeForce 9800 GT" },
 	{ 0x10DE0605,	0x10DE062D,	"nVidia GeForce 9800 GT" },
+	{ 0x10DE0605,	0x145834A2,	"Gigabyte GV-N98TOC-512H" },
 	{ 0x10DE0605,	0x14621460,	"MSi GeForce 9800 GT" },
 
 	{ 0x10DE0607,	0x10DE0736,	"nVidia GeForce GTS 240" },
@@ -1420,10 +1421,28 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE1055,	0x104D908A,	"Sony GeForce 410M" },
 	{ 0x10DE1055,	0x104D908B,	"Sony GeForce 410M" },
 
+	{ 0x10DE1058,	0x10432AED,	"Asus GeForce GT 610M" },
+	{ 0x10DE1058,	0x10432AF1,	"Asus GeForce GT 610M" },
+	{ 0x10DE1058,	0x104310AC,	"Asus GeForce GT 610M" },
+	{ 0x10DE1058,	0x104310BC,	"Asus GeForce GT 610M" },
+	{ 0x10DE1058,	0x1043112D,	"Asus GeForce GT 610M" },
 	{ 0x10DE1058,	0x10431457,	"Asus GeForce GT 610M" },
 	{ 0x10DE1058,	0x10431652,	"Asus GeForce GT 610M" },
+	{ 0x10DE1058,	0x10432130,	"Asus GeForce GT 610M" },
+	{ 0x10DE1058,	0x10432133,	"Asus GeForce GT 610M" },
+	{ 0x10DE1058,	0x10438536,	"Asus GeForce GT 610M" },
+	{ 0x10DE1058,	0x144DC652,	"Samsung GeForce GT 610M" },
+	{ 0x10DE1058,	0x17AA3901,	"Lenovo GeForce GT 610M" },
+	{ 0x10DE1058,	0x17AA3902,	"Lenovo GeForce GT 610M" },
+	{ 0x10DE1058,	0x17AA3977,	"Lenovo GeForce GT 610M" },
 	{ 0x10DE1058,	0x17AA397D,	"Lenovo GeForce GT 610M" },
+	{ 0x10DE1058,	0x17AA3983,	"Lenovo GeForce GT 610M" },
 	{ 0x10DE1058,	0x17AA5001,	"Lenovo GeForce GT 610M" },
+	{ 0x10DE1058,	0x17AA5003,	"Lenovo GeForce GT 610M" },
+	{ 0x10DE1058,	0x17AA5005,	"Lenovo GeForce GT 610M" },
+	{ 0x10DE1058,	0x17AA5007,	"Lenovo GeForce GT 610M" },
+	{ 0x10DE1058,	0x17AA500F,	"Lenovo GeForce GT 610M" },
+	{ 0x10DE1058,	0x17AA5012,	"Lenovo GeForce GT 610M" },
 
 	{ 0x10DE105A,	0x10250505,	"Acer GeForce 610M" },
 	{ 0x10DE105A,	0x10250507,	"Acer GeForce 610M" },
@@ -1665,11 +1684,20 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE1211,	0x15587101,	"Clevo GeForce GTX 580M" },
 	{ 0x10DE1211,	0x15587200,	"Clevo GeForce GTX 580M" },
 
+	{ 0x10DE1212,	0x10280550,	"Dell GeForce GTX 675M" },
+	{ 0x10DE1212,	0x10280551,	"Dell GeForce GTX 675M" },
 	{ 0x10DE1212,	0x1028057B,	"Dell GeForce GTX 675M" },
+	{ 0x10DE1212,	0x10280580,	"Dell GeForce GTX 675M" },
 	{ 0x10DE1212,	0x10DE095D,	"nVidia GeForce GTX 675M" },
 	{ 0x10DE1212,	0x144DC0D0,	"Samsung GeForce GTX 675M" },
 	{ 0x10DE1212,	0x146210CB,	"MSi GeForce GTX 675M" },
+	{ 0x10DE1212,	0x15580270,	"Clevo GeForce GTX 675M" },
+	{ 0x10DE1212,	0x15580271,	"Clevo GeForce GTX 675M" },
+	{ 0x10DE1212,	0x15585105,	"Clevo GeForce GTX 675M" },
+	{ 0x10DE1212,	0x15587102,	"Clevo GeForce GTX 675M" },
 
+	{ 0x10DE1213,	0x10432119,	"Asus GeForce GTX 670M" },
+	{ 0x10DE1213,	0x10432120,	"Asus GeForce GTX 670M" },
 	{ 0x10DE1213,	0x102804BA,	"Dell GeForce GTX 670M" },
 	{ 0x10DE1213,	0x10432119,	"Dell GeForce GTX 670M" },
 	{ 0x10DE1213,	0x10432120,	"Dell GeForce GTX 670M" },
@@ -1678,7 +1706,10 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE1213,	0x1179FB18,	"Toshiba GeForce GTX 670M" },
 	{ 0x10DE1213,	0x1179FB1A,	"Toshiba GeForce GTX 670M" },
 	{ 0x10DE1213,	0x146210CB,	"MSi GeForce GTX 670M" },
+	{ 0x10DE1213,	0x15580371,	"Clevo GeForce GTX 670M" },
 	{ 0x10DE1213,	0x15585105,	"Clevo GeForce GTX 670M" },
+	{ 0x10DE1213,	0x15587102,	"Clevo GeForce GTX 670M" },
+	{ 0x10DE1213,	0x15588000,	"Clevo GeForce GTX 670M" },
 
 	{ 0x10DE1241,	0x10DE091D,	"nVidia GeForce GT 545" },
 
@@ -2707,6 +2738,7 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE11BC,	NV_SUB_IDS,	"Quadro K5000M" },
 	{ 0x10DE11BD,	NV_SUB_IDS,	"Quadro K4000M" },
 	{ 0x10DE11BE,	NV_SUB_IDS,	"Quadro K3000M" },
+	// 11C0 - 11CF
   { 0x10DE11C0,	NV_SUB_IDS,	"GeForce GTX 660" },
 	// 11C1 - 11CF
 	// 11D0 - 11DF
