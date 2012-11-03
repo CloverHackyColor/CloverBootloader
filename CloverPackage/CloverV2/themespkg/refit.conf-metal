@@ -41,6 +41,7 @@ timeout 5
 theme metal
 #theme black_green
 #theme buttons
+#theme hellfire
 
 #Use custom font or embedded
 # alfa - transparent embedded font
@@ -53,18 +54,22 @@ theme metal
 font load
 
 # this font is default for theme metal and buttons, width=8
-font_file_name 	dark-wide.png
-#font_file_name 	BoG_LucidaConsole_10W.png
+#font_file_name 	dark-wide.png
+#char_width 8
+
+#font_file_name 	BoG_DejaVuSans_9W.png
+font_file_name BoG_LucidaConsole_10W_NA
+char_width 10
 
 # this font is used for theme black_green, width=10
-#font_file_name  WoB_PTMono_10W.png
+#font_file_name  WoB_PTMono_10W_NA.png
 #char_width 10
 
 # pixel size of letters in text. depends on font and wanted design
 # may differ from letter width allowing overriding
 # default value 7 corresponding embedded font alfa
 #
-char_width 8
+#char_width 7
 
 # Use a custom title banner instead of the rEFIt icon and name. The file
 # path is relative to the directory where refit.efi is located. The color
@@ -84,26 +89,6 @@ banner logo-trans.png
 # crop - place file to center or crop them to screen size
 # tile - fill all screen with repeated image
 background MetalBack.png crop
-#background metal-2.png crop
-
-# Custom images for the selection background. There is a big one (144 x 144)
-# for the OS icons, and a small one (64 x 64) for the function icons in the
-# second row. If only a small image is given, that one is also used for
-# the big icons by stretching it in the middle. If only a big one is given,
-# the built-in default will be used for the small icons.
-#
-# Like the banner option above, these options take a filename of
-# an uncompressed BMP image file.
-# V2 - PNG image supported 
-# location is theme independent
-#
-selection_big   Select_trans_big.png
-selection_small Select_trans_small.png
-
-#Selection bar in menu may have different colors
-# default white RGBA={0xFF, 0xFF, 0xFF, 0x00}
-#
-selection_color 0xF3F3F380
 
 #Animation ID
 
@@ -131,9 +116,33 @@ selection_color 0xF3F3F380
 #Lion				(37)
 #Mountain Lion	 	(38)
 
-anime 1  logo_3D 15 100
-anime 35 ML_Anim 15 100
+# in this example 
+#animation 38 (Mountain Lion)
+#folder name "ML_Anim" (thanks to iDark_Soul)
+#number of files 15
+#time between frames 100ms
+#play once (default infinite loop)
+#anime 38 ML_Anim 15 100 once
+anime 1  logo_3D 15 200
 
+# Custom images for the selection background. There is a big one (144 x 144)
+# for the OS icons, and a small one (64 x 64) for the function icons in the
+# second row. If only a small image is given, that one is also used for
+# the big icons by stretching it in the middle. If only a big one is given,
+# the built-in default will be used for the small icons.
+#
+# Like the banner option above, these options take a filename of
+# an uncompressed BMP image file.
+# V2 - PNG image supported 
+# location is theme dependent
+#
+selection_big   Select_trans_big.png
+selection_small Select_trans_small.png
+
+#Selection bar in menu may have different colors
+# default white RGBA={0xFF, 0xFF, 0xFF, 0x00}
+#
+selection_color 0xF3F3F350
 
 
 # Hide the volume badge icons in the graphical main menu. There are three
@@ -147,6 +156,7 @@ anime 35 ML_Anim 15 100
 #		- default:  Drive for Volume and OS for Badge
 #  drive  - show OSIcon as Volume and no badges
 #
+#hidebadges drive
 hidebadges none
 
 # Hide various user interface elements. Here you can list the names of
@@ -181,6 +191,8 @@ hidebadges none
 # over the GUI display.
 #
 quiet
+nolog
+
 
 # List legacy options first. When enabled, legacy BIOS based boot options
 # (e.g. Windows, Linux via LILO or GRUB) will be listed first. This is
@@ -189,6 +201,5 @@ quiet
 #
 #legacyfirst
 nolegacy
-nolog
 
 # EOF

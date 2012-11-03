@@ -417,7 +417,10 @@ EFI_STATUS bootElTorito(REFIT_VOLUME*	volume)
 	if (EFI_ERROR (Status)) {
 		return Status;
 	}
-	InitializeBiosIntCaller(); //mThunkContext);
+	Status = InitializeBiosIntCaller(); //mThunkContext);
+	if (EFI_ERROR (Status)) {
+		return Status;
+	}
   //	InitializeInterruptRedirection(); //gLegacy8259);
   // Status = mCpu->EnableInterrupt(mCpu);  
   
@@ -470,7 +473,10 @@ EFI_STATUS bootMBR(REFIT_VOLUME* volume)
     
     DBG("boot from partition %s\n", DevicePathToStr(volume->DevicePath));
     
-	InitializeBiosIntCaller(); //mThunkContext);
+	Status = InitializeBiosIntCaller(); //mThunkContext);
+	if (EFI_ERROR (Status)) {
+		return Status;
+	}
 	//InitializeInterruptRedirection(); //gLegacy8259);
   //Status = mCpu->EnableInterrupt(mCpu);
 	
@@ -635,7 +641,10 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
 		return Status;
 	}
   DBG("Thunk allocated\n");
-	InitializeBiosIntCaller(); //mThunkContext);
+	Status = InitializeBiosIntCaller(); //mThunkContext);
+	if (EFI_ERROR (Status)) {
+		return Status;
+	}
 	//InitializeInterruptRedirection(); //gLegacy8259);
   mBootSector = AllocateAlignedPages(1, 16);  
 	Status = pDisk->ReadBlocks(pDisk, pDisk->Media->MediaId, 0, 2*512, mBootSector);
@@ -891,7 +900,10 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
 			return Status;
 		}
 		DBG("Thunk allocated\n");
-		InitializeBiosIntCaller(); //mThunkContext);
+		Status = InitializeBiosIntCaller(); //mThunkContext);
+    if (EFI_ERROR (Status)) {
+      return Status;
+    }
 	}
 	
 	//

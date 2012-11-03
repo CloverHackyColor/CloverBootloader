@@ -59,12 +59,12 @@ InitializeLegacyBiosThunk (
   IN EFI_SYSTEM_TABLE                 *SystemTable
   );*/
 
-VOID
+EFI_STATUS
 InitializeBiosIntCaller (
 //  THUNK_CONTEXT     *ThunkContext
   );
 
-VOID
+EFI_STATUS
 InitializeInterruptRedirection (
 //  IN  EFI_LEGACY_8259_PROTOCOL  *Legacy8259
   );
