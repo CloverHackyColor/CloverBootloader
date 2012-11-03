@@ -92,7 +92,8 @@ typedef struct _EFI_SATA_CONTROLLER_PRIVATE_DATA {
   // The number of devices that are supported by this channel
   //
   UINT8                             DeviceCount;
-  UINT8                             IPorts;
+  UINT8                             Pad[3];
+  UINT32                            IPorts;
   //
   // The highest disqulified mode for each attached device,
   // From ATA/ATAPI spec, if a mode is not supported,

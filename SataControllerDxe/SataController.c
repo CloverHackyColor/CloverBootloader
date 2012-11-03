@@ -52,7 +52,10 @@ AhciReadReg (
 {
   UINT32    Data;
 
-  ASSERT (PciIo != NULL);
+//  ASSERT (PciIo != NULL);
+  if (!PciIo) {
+    return 0;
+  }
   
   Data = 0;
 
@@ -84,16 +87,17 @@ AhciWriteReg (
   IN UINT32                 Data
   )
 {
-  ASSERT (PciIo != NULL);
-
-  PciIo->Mem.Write (
-               PciIo,
-               EfiPciIoWidthUint32,
-               AHCI_BAR_INDEX,
-               (UINT64) Offset,
-               1,
-               &Data
-               );
+//  ASSERT (PciIo != NULL);
+  if (PciIo != NULL) {    
+    PciIo->Mem.Write (
+                      PciIo,
+                      EfiPciIoWidthUint32,
+                      AHCI_BAR_INDEX,
+                      (UINT64) Offset,
+                      1,
+                      &Data
+                      );
+  }
 
   return;
 }
@@ -407,6 +411,7 @@ SataControllerStart (
   EFI_SATA_CONTROLLER_PRIVATE_DATA  *SataPrivateData;
   UINT32                            Data32;
   UINTN                             ChannelDeviceCount;
+  UINT8                             Port;
 
 //  DEBUG ((EFI_D_INFO, "SataControllerStart START\n"));
 	DBG(L"SataControllerStart START\n");
@@ -457,7 +462,10 @@ SataControllerStart (
                         sizeof (PciData.Hdr.ClassCode),
                         PciData.Hdr.ClassCode
                         );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    goto Done;
+  }
 
   if (IS_PCI_IDE (&PciData)) {
     SataPrivateData->IdeInit.ChannelCount = IDE_MAX_CHANNEL;
@@ -473,16 +481,22 @@ SataControllerStart (
     //Slice - I read Intel spec and found that number of possible ports = 6
     // while NPS is a number of implemented ports. We must create a space for all
     // because of if (Channel < ChannelCount) {} :)
-    SataPrivateData->IdeInit.ChannelCount = 6; //(UINT8) ((Data32 & B_AHCI_CAP_NPS) + 1);
+ //   SataPrivateData->IdeInit.ChannelCount = 6; //(UINT8) ((Data32 & B_AHCI_CAP_NPS) + 1);
     SataPrivateData->DeviceCount = AHCI_MAX_DEVICES;
-    DBG(L"ChannelCount=%d DeviceCount=%d CAP_SPM=%x\n", SataPrivateData->IdeInit.ChannelCount,
-        SataPrivateData->DeviceCount, (Data32 & B_AHCI_CAP_SPM));    //3,1,0 - 1525 //4,1,0 - H61M   
     if ((Data32 & B_AHCI_CAP_SPM) == B_AHCI_CAP_SPM) {
       SataPrivateData->DeviceCount = AHCI_MULTI_MAX_DEVICES;
     }
     //Slice - read PI and store into EFI_SATA_CONTROLLER_PRIVATE_DATA
     Data32 = AhciReadReg (PciIo, R_AHCI_PI);
-    SataPrivateData->IPorts = (UINT8)(Data32 & 0x3F);
+    SataPrivateData->IPorts = Data32;
+
+    for (Port = 0; Data32 != 0; Data32 >>= 1) {
+      Port++;
+    }
+    SataPrivateData->IdeInit.ChannelCount = Port;
+    DBG(L"ChannelCount=%d DeviceCount=%d\n", SataPrivateData->IdeInit.ChannelCount,
+        SataPrivateData->DeviceCount);    //3,1,0 - 1525 //4,1,0 - H61M   
+   
   }
 
   ChannelDeviceCount = (UINTN) (SataPrivateData->IdeInit.ChannelCount) * (UINTN) (SataPrivateData->DeviceCount);
@@ -583,22 +597,20 @@ SataControllerStop (
   }
 
   SataPrivateData = SATA_CONTROLLER_PRIVATE_DATA_FROM_THIS (IdeInit);
-  ASSERT (SataPrivateData != NULL);
-
-  //
-  // Uninstall the IDE Controller Init Protocol from this instance
-  //
-  Status = gBS->UninstallMultipleProtocolInterfaces (
-                  Controller,
-                  &gEfiIdeControllerInitProtocolGuid,
-                  &(SataPrivateData->IdeInit),
-                  NULL
-                  );
-  if (EFI_ERROR (Status)) {
-    return Status;
-  }
-
+//  ASSERT (SataPrivateData != NULL);
   if (SataPrivateData != NULL) {
+    //
+    // Uninstall the IDE Controller Init Protocol from this instance
+    //
+    Status = gBS->UninstallMultipleProtocolInterfaces (
+                                                       Controller,
+                                                       &gEfiIdeControllerInitProtocolGuid,
+                                                       &(SataPrivateData->IdeInit),
+                                                       NULL
+                                                       );
+    if (EFI_ERROR (Status)) {
+      return Status;
+    }
     if (SataPrivateData->DisqulifiedModes != NULL) {
       FreePool (SataPrivateData->DisqulifiedModes);
     }
@@ -608,7 +620,7 @@ SataControllerStop (
     if (SataPrivateData->IdentifyValid != NULL) {
       FreePool (SataPrivateData->IdentifyValid);
     }
-    FreePool (SataPrivateData);
+    FreePool (SataPrivateData);    
   }
 
   //
@@ -724,8 +736,8 @@ IdeInitNotifyPhase (
   IN UINT8                              Channel
   )
 {
-  //EfiIdeBeforeChannelEnumeration
-  //EfiIdeBusBeforeDevicePresenceDetection
+  //EfiIdeBeforeChannelEnumeration = 0
+  //EfiIdeBusBeforeDevicePresenceDetection = 4
   
   DBG(L"NotifyPhase=%d Channel=%d\n", Phase, Channel);
   return EFI_SUCCESS;

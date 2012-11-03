@@ -166,7 +166,7 @@ echo "Example: ./ebuild.sh -gcc46 -x64 -release"
         ;;
         '-32')
 #         fnXcode
-		 fnGCC47
+		 fnGCC46
          fnArchIA32
         ;;
         '-34')
@@ -174,7 +174,7 @@ echo "Example: ./ebuild.sh -gcc46 -x64 -release"
          fnArchIA32
         ;;
         '-64')
-         fnGCC47
+         fnGCC46
          fnArchX64
         ;;
         '-mc')

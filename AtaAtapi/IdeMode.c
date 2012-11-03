@@ -3148,7 +3148,11 @@ IdeModeInitialization (
       continue;
     }
 
-    ASSERT (MaxDevices <= 2);
+ //   ASSERT (MaxDevices <= 2);
+    if (MaxDevices > 2) {
+      DBG(L"What is the device with %d channels???\n", MaxDevices);
+      continue;
+    }
     //
     // Now inform the IDE Controller Init Module.
     //

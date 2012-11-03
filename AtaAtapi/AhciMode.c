@@ -1925,6 +1925,8 @@ AhciCreateTransferDescriptor (
   VOID                  *Buffer;
 
   UINT32                Capability;
+  UINT32                PortImplementBitMap;
+  UINT8                 Port;
   UINT8                 MaxPortNumber;
   UINT8                 MaxCommandSlotNumber;
   BOOLEAN               Support64Bit;
@@ -1940,7 +1942,12 @@ AhciCreateTransferDescriptor (
   // Collect AHCI controller information
   //
   Capability           = AhciReadReg(PciIo, EFI_AHCI_CAPABILITY_OFFSET);
-  MaxPortNumber        = (UINT8) ((Capability & 0x1F) + 1);
+ // MaxPortNumber        = (UINT8) ((Capability & 0x1F) + 1);
+  PortImplementBitMap  = AhciReadReg(PciIo, EFI_AHCI_PI_OFFSET);
+  for (Port = 0; PortImplementBitMap != 0; PortImplementBitMap >>= 1) {
+    Port++;
+  }
+  MaxPortNumber = Port;
   //
   // Get the number of command slots per port supported by this HBA.
   //
@@ -2204,14 +2211,19 @@ AhciModeInitialization (
   //
   // Get the number of command slots per port supported by this HBA.
   //
-  MaxPortNumber        = (UINT8) ((Capability & 0x1F) + 1);
-  if (MaxPortNumber < 6) MaxPortNumber = 6; //Slice - Intel chipset always has 6 ports
+//  MaxPortNumber        = (UINT8) ((Capability & 0x1F) + 1);
+//  if (MaxPortNumber < 6) MaxPortNumber = 6; //Slice - Intel chipset always has 6 ports
+  PortImplementBitMap  = AhciReadReg(PciIo, EFI_AHCI_PI_OFFSET);
+  Data = PortImplementBitMap;
+  for (Port = 0; PortImplementBitMap != 0; PortImplementBitMap >>= 1) {
+    MaxPortNumber = ++Port;
+  }
 
   //
   // Get the bit map of those ports exposed by this HBA.
   // It indicates which ports that the HBA supports are available for software to use. 
   //
-  PortImplementBitMap  = AhciReadReg(PciIo, EFI_AHCI_PI_OFFSET);
+  PortImplementBitMap  = Data; //AhciReadReg(PciIo, EFI_AHCI_PI_OFFSET);
   
   AhciRegisters = &Instance->AhciRegisters;
   Status = AhciCreateTransferDescriptor (PciIo, AhciRegisters);
@@ -2220,8 +2232,11 @@ AhciModeInitialization (
     return EFI_OUT_OF_RESOURCES;
   }
 //  DEBUG ((EFI_D_ERROR, "MaxPortNumber = %d\n", MaxPortNumber));
-  for (Port = 0; Port < MaxPortNumber; Port ++) {  
-    if ((PortImplementBitMap & (BIT0 << Port)) != 0) {
+//  for (Port = 0; Port < MaxPortNumber; Port ++) {
+//    if ((PortImplementBitMap & (BIT0 << Port)) != 0) {
+  for (Port = 0; PortImplementBitMap != 0; Port++, PortImplementBitMap >>= 1) {
+    if((PortImplementBitMap & BIT0) == BIT0) {
+ 
       IdeInit->NotifyPhase (IdeInit, EfiIdeBeforeChannelEnumeration, Port);
 
       //
