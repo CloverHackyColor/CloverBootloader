@@ -470,6 +470,7 @@ SataControllerStart (
   if (IS_PCI_IDE (&PciData)) {
     SataPrivateData->IdeInit.ChannelCount = IDE_MAX_CHANNEL;
     SataPrivateData->DeviceCount = IDE_MAX_DEVICES;
+    SataPrivateData->IPorts = (1 << IDE_MAX_CHANNEL) - 1; //mask for N channels
 	  DBG(L"IDE controller found\n");
   } else if (IS_PCI_SATADPA (&PciData)) {
     //
