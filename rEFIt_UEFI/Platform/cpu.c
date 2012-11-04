@@ -277,26 +277,29 @@ VOID GetCPUProperties (VOID)
      //       
             msr = AsmReadMsr64(MSR_PLATFORM_INFO);            
             gCPUStructure.MinRatio = (UINT8)(msr >> 40) & 0xff;
-            msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);
-            gCPUStructure.MaxRatio = (UINT8)(msr & 0xff);
+            // msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);
+            gCPUStructure.MaxRatio = (UINT8)((msr >> 8) & 0xff);
             TurboMsr = msr + 1;
             
             if(gCPUStructure.MaxRatio) {
               gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.TSCFrequency, gCPUStructure.MaxRatio);
             } else {
-              gCPUStructure.FSBFrequency = 100ULL * Mega;
+              gCPUStructure.FSBFrequency = 133333333ULL; // 133 MHz
             }
 
+            /* This makes no sense and seems arbitrary - apianti
             if ((gCPUStructure.Model != CPU_MODEL_NEHALEM_EX) &&
                 (gCPUStructure.Model != CPU_MODEL_WESTMERE_EX) &&
                 (gCPUStructure.Model != CPU_MODEL_FIELDS))
             {
+               */
               msr = AsmReadMsr64(MSR_TURBO_RATIO_LIMIT);
               
               gCPUStructure.Turbo1 = (UINT8)((msr >> 0) & 0xff);
               gCPUStructure.Turbo2 = (UINT8)((msr >> 8) & 0xff) * 10;
               gCPUStructure.Turbo3 = (UINT8)((msr >> 16) & 0xff) * 10;
               gCPUStructure.Turbo4 = (UINT8)(msr >> 24) & 0xff; //later
+            /* Not sure what this is here for - apianti
             } else {
               gCPUStructure.Turbo4 = (UINT16)(gCPUStructure.MaxRatio + 1);
             }
@@ -304,7 +307,7 @@ VOID GetCPUProperties (VOID)
             
             if (gCPUStructure.Cores < 4) {
               gCPUStructure.Turbo4 = gCPUStructure.Turbo1;
-            } 
+            } */
 
             gCPUStructure.MaxRatio *= 10;
             gCPUStructure.MinRatio *= 10;
@@ -344,9 +347,11 @@ VOID GetCPUProperties (VOID)
               gCPUStructure.FSBFrequency = 100ULL * Mega;
             }
 
+            /* Unneccessary - apianti
             msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);  //0x198
             gCPUStructure.MaxRatio = (UINT8)((msr >> 8) & 0xff);
             TurboMsr = msr + (1 << 8);
+            */
             
             msr = AsmReadMsr64(MSR_TURBO_RATIO_LIMIT);   //0x1AD           
             gCPUStructure.Turbo1 = (UINT8)(msr >> 0) & 0xff;
