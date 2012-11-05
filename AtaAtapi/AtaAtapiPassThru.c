@@ -1194,10 +1194,11 @@ EnumerateAttachedDevice (
 		  
 		  Status = IdeModeInitialization (Instance);
 //		  DBG(L"IdeModeInitialization Status=%r\n", Status);
+      //anyway goto Done
 		  if (EFI_ERROR (Status)) {
 			  Status = EFI_DEVICE_ERROR;
-			  goto Done;
-		  }
+//			  goto Done;
+		  } 
 		  break;
 	  case PCI_CLASS_MASS_STORAGE_SATADPA :
       //
@@ -1209,7 +1210,7 @@ EnumerateAttachedDevice (
 
       if (EFI_ERROR (Status)) {
         Status = EFI_DEVICE_ERROR;
-        goto Done;
+//        goto Done;
       }
 
       break;
@@ -1217,7 +1218,7 @@ EnumerateAttachedDevice (
       Status = EFI_UNSUPPORTED;
   }
 
-Done:
+//Done:
   return Status;
 }
 

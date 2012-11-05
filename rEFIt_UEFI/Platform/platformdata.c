@@ -333,7 +333,14 @@ VOID GetDefaultSettings(VOID)
   gSettings.ResetAddr  = 0x64; //I wish it will be default
   gSettings.ResetVal = 0xFE;
   gSettings.FixDsdt  = 0x00; //No fixes as we apply patches even for patched DSDT
-  gSettings.GraphicsInjector = TRUE;
+  if (((gGraphics[0].Vendor == Ati) && (gGraphics[0].DeviceID & 0xF000 == 0x6000)) ||
+      ((gGraphics[0].Vendor == Nvidia) && (gGraphics[0].DeviceID > 0x1080))) {
+  }
+  
+  gSettings.GraphicsInjector = !(((gGraphics[0].Vendor == Ati) &&
+                                  (gGraphics[0].DeviceID & 0xF000 == 0x6000)) ||
+                                 ((gGraphics[0].Vendor == Nvidia) &&
+                                  (gGraphics[0].DeviceID > 0x1080)));
   gSettings.CustomEDID = NULL;
   gSettings.HDAInjection = TRUE;
   gSettings.HDALayoutId = 0;
@@ -350,7 +357,7 @@ VOID GetDefaultSettings(VOID)
   t1 = AsmReadTsc();
   gCPUStructure.TSCCalibr = MultU64x32((t1 - t0), 10); //ticks for 1second
 */
-  gSettings.EnableISS = ((gCPUStructure.CPUID[CPUID_1][ECX] & (1<<7)) != 0);
+  gSettings.EnableISS = FALSE; //((gCPUStructure.CPUID[CPUID_1][ECX] & (1<<7)) != 0);
   gSettings.Turbo = gCPUStructure.Turbo;
 //  msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
 //  gSettings.Turbo = ((msr & (1ULL<<38)) == 0);

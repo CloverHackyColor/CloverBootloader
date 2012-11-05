@@ -246,6 +246,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       if(prop) {
         if ((prop->string[0] == 'n') || (prop->string[0] == 'N'))
           gSettings.GraphicsInjector = FALSE;
+        else if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+          gSettings.GraphicsInjector = TRUE;
       }      
       prop = GetProperty(dictPointer, "VRAM");
       if(prop) {
@@ -276,10 +278,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         if (j != 128) {
           DBG("CustomEDID has wrong length=%d\n", j);
         }
-//        gSettings.CustomEDID = AllocateZeroPool(256);
-//        hex2bin(prop->string, gSettings.CustomEDID, 128);
-      } 
-      
+      }      
       
       prop = GetProperty(dictPointer, "PatchVBios");
       gSettings.PatchVBios = FALSE;
@@ -729,16 +728,21 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       if(prop) {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
           gSettings.KPAsusAICPUPM = TRUE;
-          gSettings.KPKextPatchesNeeded = TRUE;
         }
       }
+      gSettings.KPKextPatchesNeeded |= gSettings.KPAsusAICPUPM;
+      
       prop = GetProperty(dictPointer,"AppleRTC");
+      gSettings.KPAppleRTC = TRUE;
       if(prop) {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
           gSettings.KPAppleRTC = TRUE;
           gSettings.KPKextPatchesNeeded = TRUE;
+        } else if ((prop->string[0] == 'n') || (prop->string[0] == 'N')){
+          gSettings.KPAppleRTC = FALSE;
         }
       }
+      gSettings.KPKextPatchesNeeded |= gSettings.KPAppleRTC;
       
       prop = GetProperty(dictPointer,"KextsToPatch");
       if(prop) {
