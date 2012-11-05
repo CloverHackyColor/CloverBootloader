@@ -66,6 +66,64 @@ UINTN SearchAndReplace(UINT8 *Source, UINT32 SourceSize, UINT8 *Search, UINTN Se
   return NumReplaces;
 }
 
+/** Global for storing KextBoundleIdentifier */
+CHAR8 gKextBoundleIdentifier[256];
+
+/** Extracts kext BoundleIdentifier from given Plist into gKextBoundleIdentifier */
+VOID ExtractKextBoundleIdentifier(CHAR8 *Plist)
+{
+  CHAR8     *Tag;
+  CHAR8     *BIStart;
+  CHAR8     *BIEnd;
+  INTN      DictLevel = 0;
+  
+  
+  gKextBoundleIdentifier[0] = '\0';
+  
+  // start with first <dict>
+  Tag = AsciiStrStr(Plist, "<dict>");
+  if (Tag == NULL) {
+    return;
+  }
+  Tag += 6;
+  DictLevel++;
+  
+  while (Tag != '\0') {
+    
+    if (AsciiStrnCmp(Tag, "<dict>", 6) == 0) {
+      // opening dict
+      DictLevel++;
+      Tag += 6;
+      
+    } else if (AsciiStrnCmp(Tag, "</dict>", 7) == 0) {
+      // closing dict
+      DictLevel--;
+      Tag += 7;
+      
+    } else if (DictLevel == 1 && AsciiStrnCmp(Tag, "<key>CFBundleIdentifier</key>", 29) == 0) {
+      // BundleIdentifier is next <string>...</string>
+      BIStart = AsciiStrStr(Tag + 29, "<string>");
+      if (BIStart != NULL) {
+        BIStart += 8; // skip "<string>"
+        BIEnd = AsciiStrStr(BIStart, "</string>");
+        if (BIEnd != NULL && (BIEnd - BIStart + 1) < sizeof(gKextBoundleIdentifier)) {
+          CopyMem(gKextBoundleIdentifier, BIStart, BIEnd - BIStart);
+          gKextBoundleIdentifier[BIEnd - BIStart] = '\0';
+          return;
+        }
+      }
+      Tag++;
+    } else {
+      Tag++;
+    }
+    
+    // advance to next tag
+    while (*Tag != '<' && *Tag != '\0') {
+      Tag++;
+    }
+  }
+}
+
 
 
 ////////////////////////////////////
@@ -141,26 +199,17 @@ VOID ATIConnectorsPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT
 {
   
   UINTN   Num = 0;
-  CHAR8   *BoundleId = NULL;
   
   DBG_RT(L"\nATIConnectorsPatch: driverAddr = %x, driverSize = %x\nController = %s\n",
-      Driver, DriverSize, gSettings.KPATIConnectorsController);
-  
-  if (AsciiStrStr(InfoPlist, ATIKextBoundleId[0]) != NULL) {
-    BoundleId = ATIKextBoundleId[0];
-  } else if (AsciiStrStr(InfoPlist, ATIKextBoundleId[1]) != NULL) {
-    BoundleId = ATIKextBoundleId[1];
-  } else if (AsciiStrStr(InfoPlist, "com.apple.kext.ATIFramebuffer") != NULL) {
-    BoundleId = "com.apple.kext.ATIFramebuffer";
-  }
-  DBG_RT(L"Kext BoundleId = %a\n", BoundleId);
-  
+         Driver, DriverSize, gSettings.KPATIConnectorsController);
+  ExtractKextBoundleIdentifier(InfoPlist);
+  DBG_RT(L"Kext: %a\n", gKextBoundleIdentifier);
   
   // number of occurences od Data should be 1
   Num = SearchAndCount(Driver, DriverSize, gSettings.KPATIConnectorsData, gSettings.KPATIConnectorsDataLen);
   if (Num > 1) {
     // error message - shoud always be printed
-    Print(L"==> KPATIConnectorsData found %d times in %a - skipping patching!\n", Num, BoundleId);
+    Print(L"==> KPATIConnectorsData found %d times in %a - skipping patching!\n", Num, gKextBoundleIdentifier);
     gBS->Stall(5*1000000);
     return;
   }
@@ -195,13 +244,17 @@ VOID ATIConnectorsPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT
 UINT8   MovlE2ToEcx[] = { 0xB9, 0xE2, 0x00, 0x00, 0x00 };
 UINT8   Wrmsr[]       = { 0x0F, 0x30 };
 
-VOID AsusAICPUPMPatch(UINT8 *Driver, UINT32 DriverSize)
+VOID AsusAICPUPMPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
 {
   UINTN   Index1;
   UINTN   Index2;
   UINTN   Count = 0;
   
   DBG_RT(L"\nAsusAICPUPMPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
+  if (gSettings.KPDebug) {
+    ExtractKextBoundleIdentifier(InfoPlist);
+  }
+  DBG_RT(L"Kext: %a\n", gKextBoundleIdentifier);
   
   // todo: we should scan only __text __TEXT
   for (Index1 = 0; Index1 < DriverSize; Index1++) {
@@ -252,7 +305,7 @@ UINT8   MLReplace[] = { 0xeb, 0x30, 0x89, 0xd8 };
 // we are planning to patch.
 //
 
-VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize)
+VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize)
 {
 
   UINTN   Num = 0;
@@ -261,6 +314,10 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize)
   UINTN   NumML = 0;
   
   DBG_RT(L"\nAppleRTCPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
+  if (gSettings.KPDebug) {
+    ExtractKextBoundleIdentifier(InfoPlist);
+  }
+  DBG_RT(L"Kext: %a\n", gKextBoundleIdentifier);
   
   if (is64BitKernel) {
     NumLion_X64 = SearchAndCount(Driver, DriverSize, LionSearch_X64, sizeof(LionSearch_X64));
@@ -314,14 +371,18 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize)
 // Generic kext patch functions
 //
 //
-VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, INT32 N) //CHAR8 *InfoPlist, UINT32 InfoPlistSize)
+VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPlistSize, INT32 N)
 {
   
   UINTN   Num = 0;
   
-  DBG_RT(L"\nAnyKextPatch: driverAddr = %x, driverSize = %x\nAnyKext = %s\n",
+  DBG_RT(L"\nAnyKextPatch: driverAddr = %x, driverSize = %x\nAnyKext = %a\n",
       Driver, DriverSize, gSettings.AnyKext[N]);
-    
+  if (gSettings.KPDebug) {
+    ExtractKextBoundleIdentifier(InfoPlist);
+  }
+  DBG_RT(L"Kext: %a\n", gKextBoundleIdentifier);
+  
   // patch
   Num = SearchAndReplace(Driver,
                          DriverSize,
@@ -390,7 +451,7 @@ VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPl
     //
     // AsusAICPUPM
     //
-    AsusAICPUPMPatch(Driver, DriverSize);
+    AsusAICPUPMPatch(Driver, DriverSize, InfoPlist, InfoPlistSize);
   }
   else
     if (gSettings.KPAppleRTC
@@ -399,7 +460,7 @@ VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPl
     //
     // AppleRTC
     //
-    AppleRTCPatch(Driver, DriverSize);
+    AppleRTCPatch(Driver, DriverSize, InfoPlist, InfoPlistSize);
   }
   else {
     //
@@ -407,7 +468,7 @@ VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPl
     //
     for (i = 0; i < gSettings.NrKexts; i++) {
       if ((gSettings.AnyKextDataLen[i] > 0) && (AsciiStrStr(InfoPlist, gSettings.AnyKext[i]) != NULL)) {
-        AnyKextPatch(Driver, DriverSize, i);
+        AnyKextPatch(Driver, DriverSize, InfoPlist, InfoPlistSize, i);
       }
     }    
   }
