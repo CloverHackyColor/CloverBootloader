@@ -333,12 +333,9 @@ VOID GetDefaultSettings(VOID)
   gSettings.ResetAddr  = 0x64; //I wish it will be default
   gSettings.ResetVal = 0xFE;
   gSettings.FixDsdt  = 0x00; //No fixes as we apply patches even for patched DSDT
-  if (((gGraphics[0].Vendor == Ati) && (gGraphics[0].DeviceID & 0xF000 == 0x6000)) ||
-      ((gGraphics[0].Vendor == Nvidia) && (gGraphics[0].DeviceID > 0x1080))) {
-  }
   
   gSettings.GraphicsInjector = !(((gGraphics[0].Vendor == Ati) &&
-                                  (gGraphics[0].DeviceID & 0xF000 == 0x6000)) ||
+                                  ((gGraphics[0].DeviceID & 0xF000) == 0x6000)) ||
                                  ((gGraphics[0].Vendor == Nvidia) &&
                                   (gGraphics[0].DeviceID > 0x1080)));
   gSettings.CustomEDID = NULL;
