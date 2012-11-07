@@ -1709,13 +1709,13 @@ static VOID LoadDrivers(VOID)
   ScanDriverDir(L"\\EFI\\drivers32");
 #endif
 
-  if (!gFirmwareClover) {
+/*  if (!gFirmwareClover) {
     BdsLibConnectAllEfi();
   }
-   else {
+   else { */
  //   DBG("ConnectAll\n");
     BdsLibConnectAllDriversToAllControllers();
-   }
+//   }
 //	DBG("Drivers connected\n");
 }
 
