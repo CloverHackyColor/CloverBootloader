@@ -184,7 +184,7 @@ EFI_STATUS egSetScreenResolution(IN CHAR16 *WidthHeight)
     if (*HeightP == L'\0') {
         return EFI_INVALID_PARAMETER;
     }
-    *HeightP = L'\0';
+   // *HeightP = L'\0';
     HeightP++;
     Width = (UINT32)StrDecimalToUintn(WidthHeight);
     Height = (UINT32)StrDecimalToUintn(HeightP);

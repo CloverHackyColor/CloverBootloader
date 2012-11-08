@@ -423,7 +423,7 @@ MOExitBootServices (
 		Print(L"MapKey = %lx, LastMapKey = %lx\n", MapKey, LastMapKey);
 		Print(L"This is an error and should be resolved.\nFor now, we will force ExitBootServices() once again in 10 secs with new GetMemoryMap ...\n");
 
-		gBS->Stall(10*1000000);
+		gBS->Stall(1000000); //1 sec is enough
 		//CpuDeadLoop();
 		
 		Status = GetMemoryMapKey(&NewMapKey);
