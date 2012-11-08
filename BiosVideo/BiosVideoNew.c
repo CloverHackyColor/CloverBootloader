@@ -1018,44 +1018,28 @@ VOID GetStandardTiming(
 **/
 BOOLEAN
 ParseEdidData (
-  UINT8                                      *EdidBuffer,
-  VESA_BIOS_EXTENSIONS_VALID_EDID_TIMING *ValidEdidTiming
+  UINT8                                     *EdidBuffer,
+  VESA_BIOS_EXTENSIONS_VALID_EDID_TIMING    *ValidEdidTiming
   )
 {
-//  UINT8  CheckSum;
   UINT32 Index;
 	UINT32 Index2;
   UINT32 ValidNumber;
   UINT32 TimingBits;
   UINT8  *BufferIndex;
-//  UINT16 HorizontalResolution;
-//  UINT16 VerticalResolution;
-//  UINT8  AspectRatio;
-//  UINT8  RefreshRate;
   VESA_BIOS_EXTENSIONS_EDID_TIMING     TempTiming;
   VESA_BIOS_EXTENSIONS_EDID_DATA_BLOCK *EdidDataBlock;
-
-  EdidDataBlock = (VESA_BIOS_EXTENSIONS_EDID_DATA_BLOCK *) EdidBuffer;
-
+  
+  EdidDataBlock = (VESA_BIOS_EXTENSIONS_EDID_DATA_BLOCK *) EdidBuffer;  
   //
   // Check the checksum of EDID data
   //
 	if (!edid_checksum(EdidBuffer)) {
-		
 		return FALSE;
 	}
-/*	
-  CheckSum = 0;
-  for (Index = 0; Index < VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE; Index ++) {
-    CheckSum = (UINT8)(CheckSum + EdidBuffer[Index]);
-  }
-  if (CheckSum != 0) {
-    return FALSE;
-  }
-*/
+  
   ValidNumber = ValidEdidTiming->ValidNumber;
-//  gBS->SetMem (ValidEdidTiming, sizeof (VESA_BIOS_EXTENSIONS_VALID_EDID_TIMING), 0);
-
+  
   if ((EdidDataBlock->EstablishedTimings[0] != 0) ||
       (EdidDataBlock->EstablishedTimings[1] != 0) ||
       (EdidDataBlock->EstablishedTimings[2] != 0)
@@ -1065,66 +1049,38 @@ ParseEdidData (
     // Established timing data
     //
     TimingBits = EdidDataBlock->EstablishedTimings[0] |
-                 (EdidDataBlock->EstablishedTimings[1] << 8) |
-                 ((EdidDataBlock->EstablishedTimings[2] & 0x80) << 9) ;
+    (EdidDataBlock->EstablishedTimings[1] << 8) |
+    ((EdidDataBlock->EstablishedTimings[2] & 0x80) << 9) ;
     for (Index = 0; Index < VESA_BIOS_EXTENSIONS_EDID_ESTABLISHED_TIMING_MAX_NUMBER; Index ++) {
-		if ((TimingBits & 0x1)) {
-			if (!SearchEdidTiming(ValidEdidTiming, &mEstablishedEdidTiming[Index])){
-				ValidEdidTiming->Key[ValidNumber] = CalculateEdidKey (&mEstablishedEdidTiming[Index]);
-				ValidNumber ++;
-			}
-		}
-		TimingBits = TimingBits >> 1;
-    }
-  } else {
-    //
-    // If no Established timing data, read the standard timing data
-    //
-    BufferIndex = &EdidDataBlock->StandardTimingIdentification[0];
-    for (Index = 0; Index < 8; Index ++) {
-      if ((BufferIndex[0] != 0x1) && (BufferIndex[1] != 0x1)){
-		  GetStandardTiming(BufferIndex, &TempTiming);
-		  /*
-        //
-        // A valid Standard Timing
-        //
-        HorizontalResolution = (UINT16) (BufferIndex[0] * 8 + 248);
-        AspectRatio = (UINT8) (BufferIndex[1] >> 6);
-        switch (AspectRatio) {
-          case 0:
-            VerticalResolution = (UINT16) (HorizontalResolution / 16 * 10);
-            break;
-          case 1:
-            VerticalResolution = (UINT16) (HorizontalResolution / 4 * 3);
-            break;
-          case 2:
-            VerticalResolution = (UINT16) (HorizontalResolution / 5 * 4);
-            break;
-          case 3:
-            VerticalResolution = (UINT16) (HorizontalResolution / 16 * 9);
-            break;
-          default:
-            VerticalResolution = (UINT16) (HorizontalResolution / 4 * 3);
-            break;
+      if ((TimingBits & 0x1)) {
+        if (!SearchEdidTiming(ValidEdidTiming, &mEstablishedEdidTiming[Index])){
+          ValidEdidTiming->Key[ValidNumber] = CalculateEdidKey (&mEstablishedEdidTiming[Index]);
+          ValidNumber ++;
         }
-        RefreshRate = (UINT8) ((BufferIndex[1] & 0x1f) + 60);
-        TempTiming.HorizontalResolution = HorizontalResolution;
-        TempTiming.VerticalResolution = VerticalResolution;
-        TempTiming.RefreshRate = RefreshRate;
-		   */
+      }
+      TimingBits = TimingBits >> 1;
+    }
+  } //else {
+  //
+  // If no Established timing data, read the standard timing data
+  //
+  BufferIndex = &EdidDataBlock->StandardTimingIdentification[0];
+  for (Index = 0; Index < 8; Index ++) {
+    if ((BufferIndex[0] != 0x1) && (BufferIndex[1] != 0x1)){
+		  GetStandardTiming(BufferIndex, &TempTiming);
 		  if (!SearchEdidTiming(ValidEdidTiming, &TempTiming)){
 			  ValidEdidTiming->Key[ValidNumber] = CalculateEdidKey (&TempTiming);
 			  ValidNumber ++;
 		  }
-      }
-      BufferIndex += 2;
     }
+    BufferIndex += 2;
   }
-//Slice - DetailedTiming here
+  //  }
+  //Slice - DetailedTiming here
 	BufferIndex = &EdidDataBlock->DetailedTimingDescriptions[0];
 	for (Index = 0; Index < 4; Index ++, BufferIndex += DETAILED_TIMING_DESCRIPTION_SIZE) {
 		if ((BufferIndex[0] != 0x00) || (BufferIndex[1] != 0x00) ||
-			(BufferIndex[2] != 0x00) || (BufferIndex[4] != 0x00)) {
+        (BufferIndex[2] != 0x00) || (BufferIndex[4] != 0x00)) {
 			TempTiming.HorizontalResolution = ((UINT16)(BufferIndex[4] & 0xF0) << 4) | (BufferIndex[2]);
 			TempTiming.VerticalResolution = ((UINT16)(BufferIndex[7] & 0xF0) << 4) | (BufferIndex[5]);
 			TempTiming.RefreshRate = 60; //doesn't matter, it's temporary
@@ -1141,7 +1097,7 @@ ParseEdidData (
 				}				
 			}
 		} else if (BufferIndex[3] == 0xFE) { //Ascii string
-//			MsgLog("timing string:%a\n", &BufferIndex[5]);
+      //			MsgLog("timing string:%a\n", &BufferIndex[5]);
 		}
 	}
 	

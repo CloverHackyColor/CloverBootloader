@@ -1925,7 +1925,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   GetDefaultSettings();
   DBG("Calibrated TSC frequency =%ld =%ldMHz\n", gCPUStructure.TSCCalibr, DivU64x32(gCPUStructure.TSCCalibr, Mega));
   DBG("CPU calculated TSC frequency =%ld\n", gCPUStructure.TSCFrequency);
-  TscDiv = DivU64x64Remainder(gCPUStructure.TSCFrequency, gCPUStructure.TSCCalibr, &TscRemainder);
+  if (gCPUStructure.TSCFrequency > gCPUStructure.TSCCalibr) {
+    TscDiv = DivU64x64Remainder(gCPUStructure.TSCFrequency, gCPUStructure.TSCCalibr, &TscRemainder);
+  } else {
+    TscDiv = DivU64x64Remainder(gCPUStructure.TSCCalibr, gCPUStructure.TSCFrequency, &TscRemainder);
+  }
+
   if ((TscRemainder > 400 * Mega) || (TscDiv > 1))
   {
     DBG("There is a problem with TSC detection and calibration! Assume calibrated one\n");

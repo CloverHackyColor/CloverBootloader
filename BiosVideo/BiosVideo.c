@@ -965,7 +965,7 @@ ParseEdidData (
             break;
         }
         RefreshRate = (UINT8) ((BufferIndex[1] & 0x1f) + 60);
-        TempTiming.HorizontalResolution = HorizontalResolution;
+        TempTiming.HorizontalResolution = HorizontalResolutio
         TempTiming.VerticalResolution = VerticalResolution;
         TempTiming.RefreshRate = RefreshRate;
         ValidEdidTiming->Key[ValidNumber] = CalculateEdidKey (&TempTiming);

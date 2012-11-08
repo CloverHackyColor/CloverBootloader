@@ -167,6 +167,11 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 //
 #define VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE                    128
 #define VESA_BIOS_EXTENSIONS_EDID_ESTABLISHED_TIMING_MAX_NUMBER 17
+#define VESA_BIOS_EXTENSIONS_EDID_STANDARD_TIMING_MAX_NUMBER 8
+#define VESA_BIOS_EXTENSIONS_EDID_ADDITIONAL_TIMING_MAX_NUMBER 24
+#define DETAILED_TIMING_DESCRIPTIONS_START	0x36
+#define DETAILED_TIMING_DESCRIPTION_SIZE	18
+#define NO_DETAILED_TIMING_DESCRIPTIONS		4
 
 typedef struct {
   UINT16  HorizontalResolution;
@@ -176,7 +181,9 @@ typedef struct {
 
 typedef struct {
   UINT32  ValidNumber;
-  UINT32  Key[VESA_BIOS_EXTENSIONS_EDID_ESTABLISHED_TIMING_MAX_NUMBER];
+  UINT32  Key[VESA_BIOS_EXTENSIONS_EDID_ESTABLISHED_TIMING_MAX_NUMBER + NO_DETAILED_TIMING_DESCRIPTIONS + 
+              VESA_BIOS_EXTENSIONS_EDID_STANDARD_TIMING_MAX_NUMBER +
+              VESA_BIOS_EXTENSIONS_EDID_ADDITIONAL_TIMING_MAX_NUMBER];
 } VESA_BIOS_EXTENSIONS_VALID_EDID_TIMING;
 
 typedef struct {
@@ -219,11 +226,11 @@ typedef struct {
   UINT32  OEMStringPtr;      // Pointer to OEM string
   UINT32  Capabilities;       // Capabilities of video card
   UINT32  VideoModePtr;      // Pointer to an array of 16-bit supported modes values terminated by 0xFFFF
-  UINT16  TotalMemory;        // Number of 64kb memory blocks
-  UINT16  OemSoftwareRev;     // VBE implementation Software revision
-  UINT32  OemVendorNamePtr;  // VbeFarPtr to Vendor Name String
-  UINT32  OemProductNamePtr; // VbeFarPtr to Product Name String
-  UINT32  OemProductRevPtr;  // VbeFarPtr to Product Revision String
+  UINT16  TotalMemory;        // Number of 64kb memory blocks = 0x7b=7872kb
+  UINT16  OemSoftwareRev;     // VBE implementation Software revision = 0x0100
+  UINT32  OemVendorNamePtr;   // VbeFarPtr to Vendor Name String=9c143->Intel Corporation
+  UINT32  OemProductNamePtr;  // VbeFarPtr to Product Name String=9c155->
+  UINT32  OemProductRevPtr;   // VbeFarPtr to Product Revision String=9c189->0.0
   UINT8   Reserved[222];      // Reserved for VBE implementation scratch area
   UINT8   OemData[256];       // Data area for OEM strings.  Pad to 512 byte block size
 } VESA_BIOS_EXTENSIONS_INFORMATION_BLOCK;

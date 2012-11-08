@@ -332,6 +332,7 @@
   #DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
   Clover/BiosVideo/BiosVideo.inf
   #Clover/BiosVideoAuto/BiosVideo.inf
+  Clover/LegacyBios/VideoDxe/VideoDxe.inf
 
 
   # IDE/AHCI Support
