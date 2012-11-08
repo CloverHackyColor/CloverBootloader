@@ -193,6 +193,7 @@ rem have edk2 prepare to build
    copy /b /y %BUILD_DIR%\IA32\UsbMouseDxe.efi %DEST_DIR%\drivers-Off\drivers32\UsbMouseDxe-32.efi
    copy /b /y %BUILD_DIR%\IA32\XhciDxe.efi %DEST_DIR%\drivers-Off\drivers32\XhciDxe-32.efi
    copy /b /y %BUILD_DIR%\IA32\OsxFatBinaryDrv.efi %DEST_DIR%\drivers-Off\drivers32UEFI\OsxFatBinaryDrv-32.efi
+   copy /b /y %BUILD_DIR%\IA32\CsmVideoDxe.efi %DEST_DIR%\drivers-Off\drivers32UEFI\CsmVideoDxe-32.efi
    copy /b /y %WORKSPACE%\Build\rEFIt\%TARGET%_%TOOL_CHAIN_TAG%\IA32\CLOVERIA32.efi %DEST_DIR%\EFI\BOOT\CLOVERIA32.efi
 
    if x"%BUILD_ARCH%" == x"IA32" goto:eof
@@ -234,6 +235,7 @@ rem have edk2 prepare to build
    copy /b /y %BUILD_DIR%\X64\OsxFatBinaryDrv.efi %DEST_DIR%\drivers-Off\drivers64UEFI\OsxFatBinaryDrv-64.efi
    copy /b /y %BUILD_DIR%\X64\OsxAptioFixDrv.efi %DEST_DIR%\drivers-Off\drivers64UEFI\OsxAptioFixDrv-64.efi
    copy /b /y %BUILD_DIR%\X64\OsxLowMemFixDrv.efi %DEST_DIR%\drivers-Off\drivers64UEFI\OsxLowMemFixDrv-64.efi
+   copy /b /y %BUILD_DIR%\X64\CsmVideoDxe.efi %DEST_DIR%\drivers-Off\drivers64UEFI\CsmVideoDxe-64.efi
    copy /b /y %WORKSPACE%\Build\rEFIt\%TARGET%_%TOOL_CHAIN_TAG%\X64\CLOVERX64.efi %DEST_DIR%\EFI\BOOT\CLOVERX64.efi
    goto:eof
 
