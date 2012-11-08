@@ -118,6 +118,8 @@ rem have edk2 prepare to build
       goto postbuild
 
       :buildall
+         if x"%BUILD_ARCH%" == x"X64" goto build64
+
          echo Building CloverEFI IA32 (boot) ...
          build -p %WORKSPACE%\Clover\CloverIa32.dsc -a IA32 %*
          if errorlevel 1 goto failscript
