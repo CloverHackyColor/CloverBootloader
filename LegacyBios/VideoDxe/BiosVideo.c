@@ -1,5 +1,5 @@
 /** @file
-  ConsoleOut Routines that speak VGA.
+  ConsoleOut Routines that speak VGA? using Csm module 
 
 Copyright (c) 2007 - 2011, Intel Corporation. All rights reserved.<BR>
 
@@ -15,6 +15,19 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 **/
 
 #include "BiosVideo.h"
+#ifndef DEBUG_ALL
+#define DEBUG_CSM 1
+#else
+#define DEBUG_CSM DEBUG_ALL
+#endif
+
+#if DEBUG_ATABUS==0
+#define DBG(...)
+#else
+//#define DBG(...) DebugLog(DEBUG_ATABUS, __VA_ARGS__)
+#define DBG(...) Print(__VA_ARGS__)
+#endif
+
 
 //
 // EFI Driver Binding Protocol Instance
@@ -120,6 +133,7 @@ BiosVideoDriverBindingSupported (
   //
   Status = gBS->LocateProtocol (&gEfiLegacyBiosProtocolGuid, NULL, (VOID **) &LegacyBios);
   if (EFI_ERROR (Status)) {
+    DBG(L"LegacyBios not found\n");
     return Status;
   }
 
@@ -135,10 +149,12 @@ BiosVideoDriverBindingSupported (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
   if (EFI_ERROR (Status) && (Status != EFI_ALREADY_STARTED)) {
+    DBG(L"PciIo not found\n");
     return Status;
   }
 
   if (Status == EFI_ALREADY_STARTED) {
+    DBG(L"EFI_ALREADY_STARTED\n");
     //
     // If VgaMiniPort protocol is installed, EFI_ALREADY_STARTED indicates failure,
     // because VgaMiniPort protocol is installed on controller handle directly.
@@ -202,6 +218,7 @@ BiosVideoDriverBindingSupported (
   }
 
 Done:
+  DBG(L"Supported status:%r\n", Status);
   gBS->CloseProtocol (
          Controller,
          &gEfiPciIoProtocolGuid,
@@ -308,6 +325,7 @@ BiosVideoDriverBindingStart (
                     0,
                     &Supports
                     );
+  DBG("PCI attribute=%x\n", Supports);
   if (EFI_ERROR (Status)) {
     goto Done;
   }
@@ -350,6 +368,7 @@ BiosVideoDriverBindingStart (
                          NULL,
                          &Flags
                          );
+  DBG("Check PCI ROM status=%r\n", Status);
   if (EFI_ERROR (Status)) {
     goto Done;
   }
@@ -427,6 +446,7 @@ Done:
                       OriginalPciAttributes,
                       NULL
                       );
+      DBG(L"Restored original PCI attributes\n");
     }
     //
     // Release PCI I/O Protocols on the controller handle.
@@ -693,7 +713,8 @@ BiosVideoChildHandleInstall (
   //
   if (FeaturePcdGet (PcdBiosVideoCheckVbeEnable)) {
     Status = BiosVideoCheckForVbe (BiosVideoPrivate);
-    DEBUG ((EFI_D_INFO, "BiosVideoCheckForVbe - %r\n", Status));
+ //   DEBUG ((EFI_D_INFO, "BiosVideoCheckForVbe - %r\n", Status));
+    DBG(L"BiosVideoCheckForVbe - %r\n", Status);
   } else {
     Status = EFI_UNSUPPORTED;
   }
@@ -702,11 +723,13 @@ BiosVideoChildHandleInstall (
     // The VESA BIOS Extensions are not compatible with Graphics Output, so check for support
     // for the standard 640x480 16 color VGA mode
     //
-    DEBUG ((EFI_D_INFO, "VgaCompatible - %x\n", BiosVideoPrivate->VgaCompatible));
+ //   DEBUG ((EFI_D_INFO, "VgaCompatible - %x\n", BiosVideoPrivate->VgaCompatible));
+    DBG(L"VgaCompatible - %x\n", BiosVideoPrivate->VgaCompatible);
     if (BiosVideoPrivate->VgaCompatible) {
       if (FeaturePcdGet (PcdBiosVideoCheckVgaEnable)) {
         Status = BiosVideoCheckForVga (BiosVideoPrivate);
-        DEBUG ((EFI_D_INFO, "BiosVideoCheckForVga - %r\n", Status));
+ //       DEBUG ((EFI_D_INFO, "BiosVideoCheckForVga - %r\n", Status));
+        DBG(L"BiosVideoCheckForVga - %r\n", Status);
       } else {
         Status = EFI_UNSUPPORTED;
       }
@@ -1231,7 +1254,7 @@ ParseEdidData (
       }
       TimingBits = TimingBits >> 1;
     }
-  } // else {
+  }  else {
     //
     // If no Established timing data, read the standard timing data
     //
@@ -1246,7 +1269,7 @@ ParseEdidData (
       }
       BufferIndex += 2;
     }
-//  }
+  }
   //Slice - DetailedTiming here
 	BufferIndex = &EdidDataBlock->DetailedTimingDescriptions[0];
 	for (Index = 0; Index < 4; Index ++, BufferIndex += DETAILED_TIMING_DESCRIPTION_SIZE) {
