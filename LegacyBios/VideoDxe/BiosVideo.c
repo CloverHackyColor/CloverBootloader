@@ -1536,7 +1536,7 @@ BiosVideoCheckForVbe (
         ((UINTN) BiosVideoPrivate->VbeInformationBlock->VideoModePtr & 0x0000ffff)
     );
 
-  PreferMode = -1;
+  PreferMode = (UINTN)-1;
   ModeNumber = 0;
 
   for (; *ModeNumberPtr != VESA_BIOS_EXTENSIONS_END_OF_MODE_LIST; ModeNumberPtr++) {
@@ -1640,7 +1640,7 @@ BiosVideoCheckForVbe (
         BiosVideoPrivate->VbeModeInformationBlock->YResolution == 768
         ) {
       ModeFound = TRUE;
-      if (PreferMode == -1) {
+      if (PreferMode == (UINTN)-1) {
 		PreferMode = ModeNumber; 
 	  }		
 
@@ -1649,7 +1649,7 @@ BiosVideoCheckForVbe (
         BiosVideoPrivate->VbeModeInformationBlock->YResolution == 600
         ) {
       ModeFound = TRUE;
-      if (PreferMode == -1) {
+      if (PreferMode == (UINTN)-1) {
 		PreferMode = ModeNumber; 
 	  }		
     }
@@ -1657,7 +1657,7 @@ BiosVideoCheckForVbe (
         BiosVideoPrivate->VbeModeInformationBlock->YResolution == 480
         ) {
       ModeFound = TRUE;
-      if (PreferMode == -1) {
+      if (PreferMode == (UINTN)-1) {
 		PreferMode = ModeNumber; 
 	  }		
     }
