@@ -27,6 +27,7 @@ Re-Work by Slice 2011.
 #define APIC_SIGN        SIGNATURE_32('A','P','I','C')
 #define MCFG_SIGN        SIGNATURE_32('M','C','F','G')
 #define ECDT_SIGN        SIGNATURE_32('E','C','D','T')
+#define DMAR_SIGN        SIGNATURE_32('D','M','A','R')
 #define APPLE_OEM_ID        { 'A', 'P', 'P', 'L', 'E', ' ' }
 #define APPLE_OEM_TABLE_ID  { 'A', 'p', 'p', 'l', 'e', '0', '0', ' ' }
 #define APPLE_CREATOR_ID    { 'L', 'o', 'k', 'i' }
@@ -1371,6 +1372,12 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 		rf = ScanRSDT(ECDT_SIGN);
 		if(rf) { DropTableFromRSDT(ECDT_SIGN); }
 		}
+  if (gSettings.bDropDMAR) {
+		xf = ScanXSDT(DMAR_SIGN);
+		if(xf) { DropTableFromXSDT(DMAR_SIGN); }
+		rf = ScanRSDT(DMAR_SIGN);
+		if(rf) { DropTableFromRSDT(DMAR_SIGN); }
+  }
   
   if (gSettings.DropSSDT) {
     DropTableFromXSDT(EFI_ACPI_4_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE);

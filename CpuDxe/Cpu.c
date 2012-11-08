@@ -54,12 +54,12 @@ LegacyBiosInt86 (
 //
 EFI_HANDLE              mHandle = NULL;
 EFI_CPU_ARCH_PROTOCOL   mCpu = {
-  CpuFlushCpuDataCache,
-  CpuEnableInterrupt,
+  CpuFlushCpuDataCache,  //used in LightMemoryTest
+  CpuEnableInterrupt,   //not-used in LegacyBoot
   CpuDisableInterrupt,
   CpuGetInterruptState,
   CpuInit,
-  CpuRegisterInterruptHandler,
+  CpuRegisterInterruptHandler, //used in 8254Timer, HPETTimer, 
   CpuGetTimerValue,
   CpuSetMemoryAttributes,
   1,          // NumberOfTimers

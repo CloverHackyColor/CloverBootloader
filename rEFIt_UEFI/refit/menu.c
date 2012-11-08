@@ -282,9 +282,12 @@ VOID FillInputs(VOID)
   InputItemsCount = 75;
   InputItems[InputItemsCount].ItemType = Hex;  //75
   InputItems[InputItemsCount++].SValue = PoolPrint(L"0x%04x", gSettings.C3Latency);
-  InputItems[InputItemsCount].ItemType = Decimal;  //77
+  InputItems[InputItemsCount].ItemType = Decimal;  //76
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.EnabledCores);
-
+  InputItems[InputItemsCount].ItemType = BoolValue; //77
+  InputItems[InputItemsCount].BValue   = gSettings.bDropDMAR;
+  InputItems[InputItemsCount++].SValue = gSettings.bDropDMAR?L"[+]":L"[ ]"; 
+  
 }
 
 VOID ApplyInputs(VOID)
@@ -482,10 +485,15 @@ VOID ApplyInputs(VOID)
     gSettings.C3Latency = (UINT16)StrHexToUint64(InputItems[i].SValue);
   }
   
-  i++;
+  i++; //76
   if (InputItems[i].Valid) {
     gSettings.EnabledCores = (UINT8)StrDecimalToUintn(InputItems[i].SValue);
   }
+  i++; //77
+  if (InputItems[i].Valid) {
+    gSettings.bDropDMAR = InputItems[i].BValue;
+  }
+  
   
   SaveSettings(); 
 }
@@ -2456,6 +2464,19 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.BadgeImage = NULL;
     InputBootArgs->Entry.SubScreen = NULL;
     InputBootArgs->Item = &InputItems[51];
+    InputBootArgs->Entry.AtClick = ActionEnter;
+    InputBootArgs->Entry.AtRightClick = ActionDetails;
+    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+    
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    UnicodeSPrint(Flags, 255, L"Drop OEM DMAR:");
+    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = 0xFFFF;
+    InputBootArgs->Entry.Image = NULL;
+    InputBootArgs->Entry.BadgeImage = NULL;
+    InputBootArgs->Entry.SubScreen = NULL;
+    InputBootArgs->Item = &InputItems[77];
     InputBootArgs->Entry.AtClick = ActionEnter;
     InputBootArgs->Entry.AtRightClick = ActionDetails;
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);

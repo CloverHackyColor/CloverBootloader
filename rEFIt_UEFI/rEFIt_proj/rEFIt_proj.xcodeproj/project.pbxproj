@@ -86,6 +86,72 @@
 		125108C31627F4CE0004D9C9 /* BootOptions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BootOptions.c; sourceTree = "<group>"; };
 		126C264B1510C3C9005AB30D /* AmlGenerator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AmlGenerator.c; sourceTree = "<group>"; };
 		126C264C1510C3C9005AB30D /* AmlGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AmlGenerator.h; sourceTree = "<group>"; };
+		1292F14B164A837F008FAEEC /* build.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = "<group>"; };
+		1292F14D164A837F008FAEEC /* CpuDxe.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CpuDxe.c; sourceTree = "<group>"; };
+		1292F14E164A837F008FAEEC /* CpuDxe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CpuDxe.h; sourceTree = "<group>"; };
+		1292F14F164A837F008FAEEC /* CpuDxe.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CpuDxe.inf; sourceTree = "<group>"; };
+		1292F150164A837F008FAEEC /* CpuGdt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CpuGdt.c; sourceTree = "<group>"; };
+		1292F152164A837F008FAEEC /* CpuAsm.asm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm.asm; path = CpuAsm.asm; sourceTree = "<group>"; };
+		1292F153164A837F008FAEEC /* CpuAsm.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = CpuAsm.S; sourceTree = "<group>"; };
+		1292F154164A837F008FAEEC /* IvtAsm.asm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm.asm; path = IvtAsm.asm; sourceTree = "<group>"; };
+		1292F155164A837F008FAEEC /* IvtAsm.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = IvtAsm.S; sourceTree = "<group>"; };
+		1292F157164A837F008FAEEC /* CpuAsm.asm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm.asm; path = CpuAsm.asm; sourceTree = "<group>"; };
+		1292F158164A837F008FAEEC /* CpuAsm.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = CpuAsm.S; sourceTree = "<group>"; };
+		1292F15A164A837F008FAEEC /* CpuIo2Dxe.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CpuIo2Dxe.c; sourceTree = "<group>"; };
+		1292F15B164A837F008FAEEC /* CpuIo2Dxe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CpuIo2Dxe.h; sourceTree = "<group>"; };
+		1292F15C164A837F008FAEEC /* CpuIo2Dxe.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CpuIo2Dxe.inf; sourceTree = "<group>"; };
+		1292F15E164A837F008FAEEC /* CpuIo2Smm.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CpuIo2Smm.c; sourceTree = "<group>"; };
+		1292F15F164A837F008FAEEC /* CpuIo2Smm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CpuIo2Smm.h; sourceTree = "<group>"; };
+		1292F160164A837F008FAEEC /* CpuIo2Smm.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CpuIo2Smm.inf; sourceTree = "<group>"; };
+		1292F162164A837F008FAEEC /* CpuIoPei.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CpuIoPei.c; sourceTree = "<group>"; };
+		1292F163164A837F008FAEEC /* CpuIoPei.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CpuIoPei.h; sourceTree = "<group>"; };
+		1292F164164A837F008FAEEC /* CpuIoPei.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CpuIoPei.inf; sourceTree = "<group>"; };
+		1292F165164A837F008FAEEC /* edk2.patch-idtgdt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "edk2.patch-idtgdt"; sourceTree = "<group>"; };
+		1292F168164A837F008FAEEC /* LocalApicLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalApicLib.h; sourceTree = "<group>"; };
+		1292F169164A837F008FAEEC /* MtrrLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MtrrLib.h; sourceTree = "<group>"; };
+		1292F16A164A837F008FAEEC /* UefiCpuLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UefiCpuLib.h; sourceTree = "<group>"; };
+		1292F16C164A837F008FAEEC /* LocalApic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalApic.h; sourceTree = "<group>"; };
+		1292F16F164A837F008FAEEC /* BaseUefiCpuLib.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BaseUefiCpuLib.inf; sourceTree = "<group>"; };
+		1292F171164A837F008FAEEC /* InitializeFpu.asm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm.asm; path = InitializeFpu.asm; sourceTree = "<group>"; };
+		1292F172164A837F008FAEEC /* InitializeFpu.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = InitializeFpu.S; sourceTree = "<group>"; };
+		1292F174164A837F008FAEEC /* InitializeFpu.asm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm.asm; path = InitializeFpu.asm; sourceTree = "<group>"; };
+		1292F175164A837F008FAEEC /* InitializeFpu.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = InitializeFpu.S; sourceTree = "<group>"; };
+		1292F177164A837F008FAEEC /* BaseXApicLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BaseXApicLib.c; sourceTree = "<group>"; };
+		1292F178164A837F008FAEEC /* BaseXApicLib.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BaseXApicLib.inf; sourceTree = "<group>"; };
+		1292F17A164A837F008FAEEC /* BaseXApicX2ApicLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BaseXApicX2ApicLib.c; sourceTree = "<group>"; };
+		1292F17B164A8380008FAEEC /* BaseXApicX2ApicLib.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BaseXApicX2ApicLib.inf; sourceTree = "<group>"; };
+		1292F17D164A8380008FAEEC /* MtrrLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MtrrLib.c; sourceTree = "<group>"; };
+		1292F17E164A8380008FAEEC /* MtrrLib.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MtrrLib.inf; sourceTree = "<group>"; };
+		1292F180164A8380008FAEEC /* IpfTimerLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IpfTimerLib.c; sourceTree = "<group>"; };
+		1292F181164A8380008FAEEC /* SecPeiDxeTimerLibUefiCpu.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SecPeiDxeTimerLibUefiCpu.inf; sourceTree = "<group>"; };
+		1292F182164A8380008FAEEC /* X86TimerLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = X86TimerLib.c; sourceTree = "<group>"; };
+		1292F186164A8380008FAEEC /* ResetVector.ia32.port80.raw */ = {isa = PBXFileReference; lastKnownFileType = file; path = ResetVector.ia32.port80.raw; sourceTree = "<group>"; };
+		1292F187164A8380008FAEEC /* ResetVector.ia32.raw */ = {isa = PBXFileReference; lastKnownFileType = file; path = ResetVector.ia32.raw; sourceTree = "<group>"; };
+		1292F188164A8380008FAEEC /* ResetVector.ia32.serial.raw */ = {isa = PBXFileReference; lastKnownFileType = file; path = ResetVector.ia32.serial.raw; sourceTree = "<group>"; };
+		1292F189164A8380008FAEEC /* ResetVector.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ResetVector.inf; sourceTree = "<group>"; };
+		1292F18A164A8380008FAEEC /* ResetVector.x64.port80.raw */ = {isa = PBXFileReference; lastKnownFileType = file; path = ResetVector.x64.port80.raw; sourceTree = "<group>"; };
+		1292F18B164A8380008FAEEC /* ResetVector.x64.raw */ = {isa = PBXFileReference; lastKnownFileType = file; path = ResetVector.x64.raw; sourceTree = "<group>"; };
+		1292F18C164A8380008FAEEC /* ResetVector.x64.serial.raw */ = {isa = PBXFileReference; lastKnownFileType = file; path = ResetVector.x64.serial.raw; sourceTree = "<group>"; };
+		1292F18D164A8380008FAEEC /* Build.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = Build.py; sourceTree = "<group>"; };
+		1292F18E164A8380008FAEEC /* CommonMacros.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = CommonMacros.inc; sourceTree = "<group>"; };
+		1292F18F164A8380008FAEEC /* DebugDisabled.asm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm.asm; path = DebugDisabled.asm; sourceTree = "<group>"; };
+		1292F191164A8380008FAEEC /* Init16.asm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm.asm; path = Init16.asm; sourceTree = "<group>"; };
+		1292F192164A8380008FAEEC /* Real16ToFlat32.asm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm.asm; path = Real16ToFlat32.asm; sourceTree = "<group>"; };
+		1292F193164A8380008FAEEC /* ResetVectorVtf0.asm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm.asm; path = ResetVectorVtf0.asm; sourceTree = "<group>"; };
+		1292F195164A8380008FAEEC /* Flat32ToFlat64.asm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm.asm; path = Flat32ToFlat64.asm; sourceTree = "<group>"; };
+		1292F196164A8380008FAEEC /* SearchForBfvBase.asm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm.asm; path = SearchForBfvBase.asm; sourceTree = "<group>"; };
+		1292F197164A8380008FAEEC /* SearchForSecEntry.asm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm.asm; path = SearchForSecEntry.asm; sourceTree = "<group>"; };
+		1292F198164A8380008FAEEC /* Main.asm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm.asm; path = Main.asm; sourceTree = "<group>"; };
+		1292F199164A8380008FAEEC /* Port80Debug.asm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm.asm; path = Port80Debug.asm; sourceTree = "<group>"; };
+		1292F19A164A8380008FAEEC /* PostCodes.inc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.pascal; path = PostCodes.inc; sourceTree = "<group>"; };
+		1292F19B164A8380008FAEEC /* ReadMe.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReadMe.txt; sourceTree = "<group>"; };
+		1292F19C164A8380008FAEEC /* ResetVectorCode.asm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm.asm; path = ResetVectorCode.asm; sourceTree = "<group>"; };
+		1292F19D164A8380008FAEEC /* SerialDebug.asm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm.asm; path = SerialDebug.asm; sourceTree = "<group>"; };
+		1292F19F164A8380008FAEEC /* FixupForRawSection.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = FixupForRawSection.py; sourceTree = "<group>"; };
+		1292F1A0164A8380008FAEEC /* UefiCpuPkg.dec */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UefiCpuPkg.dec; sourceTree = "<group>"; };
+		1292F1A1164A8380008FAEEC /* UefiCpuPkg.dsc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UefiCpuPkg.dsc; sourceTree = "<group>"; };
+		1292F1A5164A8380008FAEEC /* S3Resume.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = S3Resume.c; sourceTree = "<group>"; };
+		1292F1A6164A8380008FAEEC /* S3Resume2Pei.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = S3Resume2Pei.inf; sourceTree = "<group>"; };
 		12961B4215FCEC91008D77FB /* AcpiPatcher.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AcpiPatcher.c; sourceTree = "<group>"; };
 		12A80742161EE88A00120AD4 /* CommPs2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CommPs2.c; sourceTree = "<group>"; };
 		12A80743161EE88A00120AD4 /* CommPs2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommPs2.h; sourceTree = "<group>"; };
@@ -3038,6 +3104,288 @@
 			name = refit;
 			path = ../refit;
 			sourceTree = SOURCE_ROOT;
+		};
+		1292F14A164A837F008FAEEC /* UefiCpuPkg */ = {
+			isa = PBXGroup;
+			children = (
+				1292F14B164A837F008FAEEC /* build.sh */,
+				1292F14C164A837F008FAEEC /* CpuDxe */,
+				1292F159164A837F008FAEEC /* CpuIo2Dxe */,
+				1292F15D164A837F008FAEEC /* CpuIo2Smm */,
+				1292F161164A837F008FAEEC /* CpuIoPei */,
+				1292F165164A837F008FAEEC /* edk2.patch-idtgdt */,
+				1292F166164A837F008FAEEC /* Include */,
+				1292F16D164A837F008FAEEC /* Library */,
+				1292F183164A8380008FAEEC /* ResetVector */,
+				1292F1A0164A8380008FAEEC /* UefiCpuPkg.dec */,
+				1292F1A1164A8380008FAEEC /* UefiCpuPkg.dsc */,
+				1292F1A2164A8380008FAEEC /* Universal */,
+			);
+			name = UefiCpuPkg;
+			path = ../../UefiCpuPkg;
+			sourceTree = SOURCE_ROOT;
+		};
+		1292F14C164A837F008FAEEC /* CpuDxe */ = {
+			isa = PBXGroup;
+			children = (
+				1292F14D164A837F008FAEEC /* CpuDxe.c */,
+				1292F14E164A837F008FAEEC /* CpuDxe.h */,
+				1292F14F164A837F008FAEEC /* CpuDxe.inf */,
+				1292F150164A837F008FAEEC /* CpuGdt.c */,
+				1292F151164A837F008FAEEC /* Ia32 */,
+				1292F156164A837F008FAEEC /* X64 */,
+			);
+			path = CpuDxe;
+			sourceTree = "<group>";
+		};
+		1292F151164A837F008FAEEC /* Ia32 */ = {
+			isa = PBXGroup;
+			children = (
+				1292F152164A837F008FAEEC /* CpuAsm.asm */,
+				1292F153164A837F008FAEEC /* CpuAsm.S */,
+				1292F154164A837F008FAEEC /* IvtAsm.asm */,
+				1292F155164A837F008FAEEC /* IvtAsm.S */,
+			);
+			path = Ia32;
+			sourceTree = "<group>";
+		};
+		1292F156164A837F008FAEEC /* X64 */ = {
+			isa = PBXGroup;
+			children = (
+				1292F157164A837F008FAEEC /* CpuAsm.asm */,
+				1292F158164A837F008FAEEC /* CpuAsm.S */,
+			);
+			path = X64;
+			sourceTree = "<group>";
+		};
+		1292F159164A837F008FAEEC /* CpuIo2Dxe */ = {
+			isa = PBXGroup;
+			children = (
+				1292F15A164A837F008FAEEC /* CpuIo2Dxe.c */,
+				1292F15B164A837F008FAEEC /* CpuIo2Dxe.h */,
+				1292F15C164A837F008FAEEC /* CpuIo2Dxe.inf */,
+			);
+			path = CpuIo2Dxe;
+			sourceTree = "<group>";
+		};
+		1292F15D164A837F008FAEEC /* CpuIo2Smm */ = {
+			isa = PBXGroup;
+			children = (
+				1292F15E164A837F008FAEEC /* CpuIo2Smm.c */,
+				1292F15F164A837F008FAEEC /* CpuIo2Smm.h */,
+				1292F160164A837F008FAEEC /* CpuIo2Smm.inf */,
+			);
+			path = CpuIo2Smm;
+			sourceTree = "<group>";
+		};
+		1292F161164A837F008FAEEC /* CpuIoPei */ = {
+			isa = PBXGroup;
+			children = (
+				1292F162164A837F008FAEEC /* CpuIoPei.c */,
+				1292F163164A837F008FAEEC /* CpuIoPei.h */,
+				1292F164164A837F008FAEEC /* CpuIoPei.inf */,
+			);
+			path = CpuIoPei;
+			sourceTree = "<group>";
+		};
+		1292F166164A837F008FAEEC /* Include */ = {
+			isa = PBXGroup;
+			children = (
+				1292F167164A837F008FAEEC /* Library */,
+				1292F16B164A837F008FAEEC /* Register */,
+			);
+			path = Include;
+			sourceTree = "<group>";
+		};
+		1292F167164A837F008FAEEC /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				1292F168164A837F008FAEEC /* LocalApicLib.h */,
+				1292F169164A837F008FAEEC /* MtrrLib.h */,
+				1292F16A164A837F008FAEEC /* UefiCpuLib.h */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
+		1292F16B164A837F008FAEEC /* Register */ = {
+			isa = PBXGroup;
+			children = (
+				1292F16C164A837F008FAEEC /* LocalApic.h */,
+			);
+			path = Register;
+			sourceTree = "<group>";
+		};
+		1292F16D164A837F008FAEEC /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				1292F16E164A837F008FAEEC /* BaseUefiCpuLib */,
+				1292F176164A837F008FAEEC /* BaseXApicLib */,
+				1292F179164A837F008FAEEC /* BaseXApicX2ApicLib */,
+				1292F17C164A8380008FAEEC /* MtrrLib */,
+				1292F17F164A8380008FAEEC /* SecPeiDxeTimerLibUefiCpu */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
+		1292F16E164A837F008FAEEC /* BaseUefiCpuLib */ = {
+			isa = PBXGroup;
+			children = (
+				1292F16F164A837F008FAEEC /* BaseUefiCpuLib.inf */,
+				1292F170164A837F008FAEEC /* Ia32 */,
+				1292F173164A837F008FAEEC /* X64 */,
+			);
+			path = BaseUefiCpuLib;
+			sourceTree = "<group>";
+		};
+		1292F170164A837F008FAEEC /* Ia32 */ = {
+			isa = PBXGroup;
+			children = (
+				1292F171164A837F008FAEEC /* InitializeFpu.asm */,
+				1292F172164A837F008FAEEC /* InitializeFpu.S */,
+			);
+			path = Ia32;
+			sourceTree = "<group>";
+		};
+		1292F173164A837F008FAEEC /* X64 */ = {
+			isa = PBXGroup;
+			children = (
+				1292F174164A837F008FAEEC /* InitializeFpu.asm */,
+				1292F175164A837F008FAEEC /* InitializeFpu.S */,
+			);
+			path = X64;
+			sourceTree = "<group>";
+		};
+		1292F176164A837F008FAEEC /* BaseXApicLib */ = {
+			isa = PBXGroup;
+			children = (
+				1292F177164A837F008FAEEC /* BaseXApicLib.c */,
+				1292F178164A837F008FAEEC /* BaseXApicLib.inf */,
+			);
+			path = BaseXApicLib;
+			sourceTree = "<group>";
+		};
+		1292F179164A837F008FAEEC /* BaseXApicX2ApicLib */ = {
+			isa = PBXGroup;
+			children = (
+				1292F17A164A837F008FAEEC /* BaseXApicX2ApicLib.c */,
+				1292F17B164A8380008FAEEC /* BaseXApicX2ApicLib.inf */,
+			);
+			path = BaseXApicX2ApicLib;
+			sourceTree = "<group>";
+		};
+		1292F17C164A8380008FAEEC /* MtrrLib */ = {
+			isa = PBXGroup;
+			children = (
+				1292F17D164A8380008FAEEC /* MtrrLib.c */,
+				1292F17E164A8380008FAEEC /* MtrrLib.inf */,
+			);
+			path = MtrrLib;
+			sourceTree = "<group>";
+		};
+		1292F17F164A8380008FAEEC /* SecPeiDxeTimerLibUefiCpu */ = {
+			isa = PBXGroup;
+			children = (
+				1292F180164A8380008FAEEC /* IpfTimerLib.c */,
+				1292F181164A8380008FAEEC /* SecPeiDxeTimerLibUefiCpu.inf */,
+				1292F182164A8380008FAEEC /* X86TimerLib.c */,
+			);
+			path = SecPeiDxeTimerLibUefiCpu;
+			sourceTree = "<group>";
+		};
+		1292F183164A8380008FAEEC /* ResetVector */ = {
+			isa = PBXGroup;
+			children = (
+				1292F184164A8380008FAEEC /* Vtf0 */,
+			);
+			path = ResetVector;
+			sourceTree = "<group>";
+		};
+		1292F184164A8380008FAEEC /* Vtf0 */ = {
+			isa = PBXGroup;
+			children = (
+				1292F185164A8380008FAEEC /* Bin */,
+				1292F18D164A8380008FAEEC /* Build.py */,
+				1292F18E164A8380008FAEEC /* CommonMacros.inc */,
+				1292F18F164A8380008FAEEC /* DebugDisabled.asm */,
+				1292F190164A8380008FAEEC /* Ia16 */,
+				1292F194164A8380008FAEEC /* Ia32 */,
+				1292F198164A8380008FAEEC /* Main.asm */,
+				1292F199164A8380008FAEEC /* Port80Debug.asm */,
+				1292F19A164A8380008FAEEC /* PostCodes.inc */,
+				1292F19B164A8380008FAEEC /* ReadMe.txt */,
+				1292F19C164A8380008FAEEC /* ResetVectorCode.asm */,
+				1292F19D164A8380008FAEEC /* SerialDebug.asm */,
+				1292F19E164A8380008FAEEC /* Tools */,
+			);
+			path = Vtf0;
+			sourceTree = "<group>";
+		};
+		1292F185164A8380008FAEEC /* Bin */ = {
+			isa = PBXGroup;
+			children = (
+				1292F186164A8380008FAEEC /* ResetVector.ia32.port80.raw */,
+				1292F187164A8380008FAEEC /* ResetVector.ia32.raw */,
+				1292F188164A8380008FAEEC /* ResetVector.ia32.serial.raw */,
+				1292F189164A8380008FAEEC /* ResetVector.inf */,
+				1292F18A164A8380008FAEEC /* ResetVector.x64.port80.raw */,
+				1292F18B164A8380008FAEEC /* ResetVector.x64.raw */,
+				1292F18C164A8380008FAEEC /* ResetVector.x64.serial.raw */,
+			);
+			path = Bin;
+			sourceTree = "<group>";
+		};
+		1292F190164A8380008FAEEC /* Ia16 */ = {
+			isa = PBXGroup;
+			children = (
+				1292F191164A8380008FAEEC /* Init16.asm */,
+				1292F192164A8380008FAEEC /* Real16ToFlat32.asm */,
+				1292F193164A8380008FAEEC /* ResetVectorVtf0.asm */,
+			);
+			path = Ia16;
+			sourceTree = "<group>";
+		};
+		1292F194164A8380008FAEEC /* Ia32 */ = {
+			isa = PBXGroup;
+			children = (
+				1292F195164A8380008FAEEC /* Flat32ToFlat64.asm */,
+				1292F196164A8380008FAEEC /* SearchForBfvBase.asm */,
+				1292F197164A8380008FAEEC /* SearchForSecEntry.asm */,
+			);
+			path = Ia32;
+			sourceTree = "<group>";
+		};
+		1292F19E164A8380008FAEEC /* Tools */ = {
+			isa = PBXGroup;
+			children = (
+				1292F19F164A8380008FAEEC /* FixupForRawSection.py */,
+			);
+			path = Tools;
+			sourceTree = "<group>";
+		};
+		1292F1A2164A8380008FAEEC /* Universal */ = {
+			isa = PBXGroup;
+			children = (
+				1292F1A3164A8380008FAEEC /* Acpi */,
+			);
+			path = Universal;
+			sourceTree = "<group>";
+		};
+		1292F1A3164A8380008FAEEC /* Acpi */ = {
+			isa = PBXGroup;
+			children = (
+				1292F1A4164A8380008FAEEC /* S3Resume2Pei */,
+			);
+			path = Acpi;
+			sourceTree = "<group>";
+		};
+		1292F1A4164A8380008FAEEC /* S3Resume2Pei */ = {
+			isa = PBXGroup;
+			children = (
+				1292F1A5164A8380008FAEEC /* S3Resume.c */,
+				1292F1A6164A8380008FAEEC /* S3Resume2Pei.inf */,
+			);
+			path = S3Resume2Pei;
+			sourceTree = "<group>";
 		};
 		12A80741161EE88A00120AD4 /* Ps2MouseDxe */ = {
 			isa = PBXGroup;
@@ -8225,6 +8573,7 @@
 				12B7003A15F921D400177D35 /* PciRootBridgeDxe */,
 				12A80741161EE88A00120AD4 /* Ps2MouseDxe */,
 				12B7004715F9220000177D35 /* SataControllerDxe */,
+				1292F14A164A837F008FAEEC /* UefiCpuPkg */,
 				12B7005315F9222C00177D35 /* VBoxFsDxe */,
 				12B7004C15F9221400177D35 /* VBoxPeCoffLib */,
 			);
