@@ -55,11 +55,12 @@ static BOOLEAN egHasGraphics = FALSE;
 static UINTN egScreenWidth  = 1024;
 static UINTN egScreenHeight = 768;
 
+
 //
 // Screen handling
 //
 
-CHAR8* egDumpGOPVideoModes(VOID)
+VOID egDumpGOPVideoModes(VOID)
 {
     EFI_STATUS  Status;
     UINT32      MaxMode;
@@ -67,28 +68,16 @@ CHAR8* egDumpGOPVideoModes(VOID)
     UINTN       SizeOfInfo;
     EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *Info;
     CHAR16      *PixelFormatDesc;
-    CHAR8       *OutputBase;
-    CHAR8       *Output;
-    UINTN       OutputSize;
-    UINTN       Len;
     
     if (GraphicsOutput == NULL) {
-        return NULL;
+        return;
     }
-    
-    // alloc mem, caller should release
-    OutputSize = 1024;
-    OutputBase = AllocateZeroPool(OutputSize);
-    Output = OutputBase;
     
     // get dump
     MaxMode = GraphicsOutput->Mode->MaxMode;
     Mode = GraphicsOutput->Mode->Mode;
-    AsciiSPrint(Output, OutputSize, "Available graphics modes for refit.conf screen_resolution:\nCurr. Mode = %d, MaxMode = %d, FB = %lx, FB size=0x%x\n",
+    MsgLog("Available graphics modes for refit.conf screen_resolution:\nCurr. Mode = %d, MaxMode = %d, FB = %lx, FB size=0x%x\n",
           Mode, MaxMode, GraphicsOutput->Mode->FrameBufferBase, GraphicsOutput->Mode->FrameBufferSize);
-    Len = AsciiStrLen(OutputBase);
-    OutputSize = 1024 - Len;
-    Output = OutputBase + Len;
     
     for (Mode = 0; Mode < MaxMode; Mode++) {
         Status = GraphicsOutput->QueryMode(GraphicsOutput, Mode, &SizeOfInfo, &Info);
@@ -116,16 +105,12 @@ CHAR8* egDumpGOPVideoModes(VOID)
                     break;
             }
             
-            AsciiSPrint(Output, OutputSize, "- Mode %d: %dx%d PixFmt = %s, PixPerScanLine = %d\n",
+            MsgLog("- Mode %d: %dx%d PixFmt = %s, PixPerScanLine = %d\n",
                   Mode, Info->HorizontalResolution, Info->VerticalResolution, PixelFormatDesc, Info->PixelsPerScanLine);
         } else {
-            AsciiSPrint(Output, OutputSize, "- Mode %d: %r\n", Mode, Status);
+            MsgLog("- Mode %d: %r\n", Mode, Status);
         }
-        Len = AsciiStrLen(OutputBase);
-        OutputSize = 1024 - Len;
-        Output = OutputBase + Len;
     }
-    return OutputBase;
 }
 
 EFI_STATUS egSetMaxResolution()
@@ -139,6 +124,7 @@ EFI_STATUS egSetMaxResolution()
   UINTN       SizeOfInfo;
   EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *Info;
   
+  MsgLog("SetMaxResolution: ");
   MaxMode = GraphicsOutput->Mode->MaxMode;
   for (Mode = 0; Mode < MaxMode; Mode++) {
     Status = GraphicsOutput->QueryMode(GraphicsOutput, Mode, &SizeOfInfo, &Info);
@@ -154,7 +140,7 @@ EFI_STATUS egSetMaxResolution()
       BestMode = Mode;
     }
   }
-  MsgLog("Found best mode %d: %dx%d\n", BestMode, Width, Height);
+  MsgLog("found best mode %d: %dx%d\n", BestMode, Width, Height);
   GraphicsOutput->SetMode(GraphicsOutput, BestMode);
   egScreenWidth = Width;
   egScreenHeight = Height;
@@ -175,6 +161,7 @@ EFI_STATUS egSetScreenResolution(IN CHAR16 *WidthHeight)
     if (WidthHeight == NULL) {
         return EFI_INVALID_PARAMETER;
     }
+    MsgLog("SetScreenResolution: %s", WidthHeight);
     // we are expecting WidthHeight=L"1024x768"
     // parse Width and Height
     HeightP = WidthHeight;
@@ -184,7 +171,6 @@ EFI_STATUS egSetScreenResolution(IN CHAR16 *WidthHeight)
     if (*HeightP == L'\0') {
         return EFI_INVALID_PARAMETER;
     }
-   // *HeightP = L'\0';
     HeightP++;
     Width = (UINT32)StrDecimalToUintn(WidthHeight);
     Height = (UINT32)StrDecimalToUintn(HeightP);
@@ -195,19 +181,19 @@ EFI_STATUS egSetScreenResolution(IN CHAR16 *WidthHeight)
         Status = GraphicsOutput->QueryMode(GraphicsOutput, Mode, &SizeOfInfo, &Info);
         if (Status == EFI_SUCCESS) {
             if (Width == Info->HorizontalResolution && Height == Info->VerticalResolution) {
+                MsgLog(" - done, set Mode %d\n", Mode);
                 GraphicsOutput->SetMode(GraphicsOutput, Mode);
                 egScreenWidth = Width;
                 egScreenHeight = Height;
-                break;
+                return EFI_SUCCESS;
             }
-        } else {
-            Status = EFI_UNSUPPORTED;
         }
     }
-    return Status;
+    MsgLog(" - not found!\n");
+    return EFI_UNSUPPORTED;
 }
 
-VOID egInitScreen(VOID)
+VOID egInitScreen(IN BOOLEAN SetMaxResolution)
 {
     EFI_STATUS Status;
     UINT32 Width, Height, Depth, RefreshRate;
@@ -228,9 +214,12 @@ VOID egInitScreen(VOID)
     // get screen size
     egHasGraphics = FALSE;
     if (GraphicsOutput != NULL) {
+        egDumpGOPVideoModes();
         if (GlobalConfig.ScreenResolution != NULL) {
             if (EFI_ERROR(egSetScreenResolution(GlobalConfig.ScreenResolution))) {
-               egSetMaxResolution();
+                if (SetMaxResolution) {
+                    egSetMaxResolution();
+                }
             }
             /*else {
               egScreenWidth = GraphicsOutput->Mode->Info->HorizontalResolution;
@@ -238,7 +227,9 @@ VOID egInitScreen(VOID)
             }*/
 
         } else {
-            egSetMaxResolution();
+            if (SetMaxResolution) {
+                egSetMaxResolution();
+            }
         }
 
         egHasGraphics = TRUE;

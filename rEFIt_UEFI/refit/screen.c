@@ -87,12 +87,12 @@ static BOOLEAN haveError = FALSE;
 // Screen initialization and switching
 //
 
-VOID InitScreen(VOID)
+VOID InitScreen(IN BOOLEAN SetMaxResolution)
 {
     UINTN i;
     
     // initialize libeg
-    egInitScreen();
+    egInitScreen(SetMaxResolution);
     
     if (egHasGraphicsMode()) {
         egGetScreenSize(&UGAWidth, &UGAHeight);

@@ -106,6 +106,7 @@
 	Platform/kext_inject.c
 	Platform/DbgTime.c
 	Platform/Nvram.c
+    Platform/PlatformDriverOverride.c
 
 [Sources.IA32]
     IA32/llmul.asm | MSFT
@@ -215,6 +216,7 @@
   
   gFSInjectProtocolGuid
   gMsgLogProtocolGuid
+  gEfiPlatformDriverOverrideProtocolGuid
   
 [FeaturePcd]
   gEfiMdePkgTokenSpaceGuid.PcdUgaConsumeSupport

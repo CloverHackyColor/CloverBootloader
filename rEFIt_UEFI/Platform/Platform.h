@@ -480,6 +480,12 @@ typedef enum {
 	kTagTypeArray
 } TAG_TYPE;
 
+typedef struct _DRIVERS_FLAGS {
+  BOOLEAN   EmuVariableLoaded;
+  BOOLEAN   VideoLoaded;
+  BOOLEAN   PartitionLoaded;
+} DRIVERS_FLAGS;
+
 #pragma pack(push)
 #pragma pack(1)
 
@@ -1084,5 +1090,13 @@ DeleteBootOptionForFile (
     IN  CHAR16          *FileName
     );
 
+//
+// PlatformDriverOverride.c
+//
+/** Registers given PriorityDrivers (NULL terminated) to highest priority during connecting controllers.
+ *  Does this by installing our EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL
+ *  or by overriding existing EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL.GetDriver.
+ */
+VOID RegisterDriversToHighestPriority(IN EFI_HANDLE *PriorityDrivers);
 
 #endif

@@ -197,8 +197,8 @@ typedef struct {
 
 /* functions */
 
-VOID    egInitScreen(VOID);
-CHAR8*  egDumpGOPVideoModes(VOID);
+VOID    egInitScreen(IN BOOLEAN SetMaxResolution);
+VOID    egDumpGOPVideoModes(VOID);
 EFI_STATUS egSetScreenResolution(IN CHAR16 *WidthHeight); 
 EFI_STATUS egSetMaxResolution(VOID);
 VOID    egGetScreenSize(OUT INTN *ScreenWidth, OUT INTN *ScreenHeight);

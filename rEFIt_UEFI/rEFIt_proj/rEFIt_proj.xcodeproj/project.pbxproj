@@ -2836,6 +2836,7 @@
 		2C0DB54216145D3400CA37F9 /* CloverPkg.dec */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverPkg.dec; path = ../../CloverPkg.dec; sourceTree = "<group>"; };
 		2C0DB54316145D3400CA37F9 /* CloverX64.dsc */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverX64.dsc; path = ../../CloverX64.dsc; sourceTree = "<group>"; };
 		2C0DB54416145D3400CA37F9 /* CloverX64.fdf */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverX64.fdf; path = ../../CloverX64.fdf; sourceTree = "<group>"; };
+		2C202D9E164CFD1A00D3EFC7 /* PlatformDriverOverride.c */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = PlatformDriverOverride.c; sourceTree = "<group>"; tabWidth = 2; };
 		2C91841F161439DD0018BDC3 /* BootServices.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootServices.c; sourceTree = "<group>"; usesTabs = 1; };
 		2C918420161439DD0018BDC3 /* BootServices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BootServices.h; sourceTree = "<group>"; usesTabs = 1; };
 		2C918421161439DD0018BDC3 /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; usesTabs = 1; };
@@ -9477,6 +9478,7 @@
 				12D6307F14CEA05E00E5898F /* picopng.h */,
 				12D6308014CEA05E00E5898F /* Platform.h */,
 				12D6308114CEA05E00E5898F /* platformdata.c */,
+				2C202D9E164CFD1A00D3EFC7 /* PlatformDriverOverride.c */,
 				12D6308214CEA05E00E5898F /* plist.c */,
 				12B3BB4216102570006734DD /* Pointer.c */,
 				12D6308314CEA05E00E5898F /* Settings.c */,
@@ -9488,14 +9490,14 @@
 				122B6221157E817C00D06F37 /* sse3_patcher.h */,
 				12D6308814CEA05E00E5898F /* StateGenerator.c */,
 				12D6308914CEA05E00E5898F /* StateGenerator.h */,
-				122B621C157E814100D06F37 /* kernel_patcher.h */,
 				12D6308A14CEA05E00E5898F /* stringTable.c */,
-				122B621D157E814100D06F37 /* kext_patcher.c */,
 				12D6308B14CEA05E00E5898F /* usbfix.c */,
 				12D6308C14CEA05E00E5898F /* UsbMass.h */,
 				12D6308D14CEA05E00E5898F /* UsbMassBoot.h */,
 				12D6308E14CEA05E00E5898F /* UsbMassImpl.h */,
 				12D6308F14CEA05E00E5898F /* VesaBiosExtensions.h */,
+				122B621C157E814100D06F37 /* kernel_patcher.h */,
+				122B621D157E814100D06F37 /* kext_patcher.c */,
 				122B621E157E815100D06F37 /* loader.h */,
 			);
 			name = Platform;

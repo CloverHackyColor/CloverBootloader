@@ -459,7 +459,7 @@ extern EG_RECT  BannerPlace;
 extern EG_IMAGE *BackgroundImage;
 
 
-VOID InitScreen(VOID);
+VOID InitScreen(IN BOOLEAN SetMaxResolution);
 VOID SetupScreen(VOID);
 VOID BeginTextScreen(IN CHAR16 *Title);
 VOID FinishTextScreen(IN BOOLEAN WaitAlways);

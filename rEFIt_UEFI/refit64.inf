@@ -106,7 +106,7 @@
 	Platform/kext_inject.c
 	Platform/DbgTime.c
 	Platform/Nvram.c
-
+    Platform/PlatformDriverOverride.c
 
 [Packages]
 	Clover/CloverPkg.dec
@@ -208,6 +208,7 @@
   
   gFSInjectProtocolGuid
   gMsgLogProtocolGuid
+  gEfiPlatformDriverOverrideProtocolGuid
 
 [FeaturePcd]
   gEfiMdePkgTokenSpaceGuid.PcdUgaConsumeSupport

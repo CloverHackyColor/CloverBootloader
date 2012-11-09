@@ -86,6 +86,8 @@ static REFIT_MENU_SCREEN MainMenu    = {1, L"Main Menu", NULL, 0, NULL, 0, NULL,
 static REFIT_MENU_SCREEN AboutMenu   = {2, L"About", NULL, 0, NULL, 0, NULL, 0, NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL };
 static REFIT_MENU_SCREEN HelpMenu    = {3, L"Help",  NULL, 0, NULL, 0, NULL, 0, NULL, FALSE, FALSE, 0, 0, 0, 0, {0, 0, 0, 0}, NULL };
 
+DRIVERS_FLAGS gDriversFlags = {FALSE, FALSE, FALSE};
+
 static VOID AboutRefit(VOID)
 {
 //  CHAR8* Revision = NULL;
@@ -302,7 +304,8 @@ static VOID HelpRefit(VOID)
 static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
                                     IN CHAR16 *LoadOptions, IN CHAR16 *LoadOptionsPrefix,
                                     IN CHAR16 *ImageTitle,
-                                    OUT UINTN *ErrorInStep)
+                                    OUT UINTN *ErrorInStep,
+                                    OUT EFI_HANDLE *NewImageHandle)
 {
   EFI_STATUS              Status, ReturnStatus;
   EFI_HANDLE              ChildImageHandle = 0;
@@ -312,8 +315,12 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   CHAR16                  *FullLoadOptions = NULL;
   
   DBG("Starting %s\n", ImageTitle);
-  if (ErrorInStep != NULL)
+  if (ErrorInStep != NULL) {
     *ErrorInStep = 0;
+  }
+  if (NewImageHandle != NULL) {
+    *NewImageHandle = NULL;
+  }
   
   // load the image into memory
   ReturnStatus = Status = EFI_NOT_FOUND;  // in case the list is empty
@@ -364,11 +371,12 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   gBS->SetWatchdogTimer (180, 0x0000, 0x00, NULL);
   
   ReturnStatus = Status = gBS->StartImage(ChildImageHandle, NULL, NULL);
-//  PauseForKey(L"Returned from StartImage\n");
   //
   // Clear the Watchdog Timer after the image returns
   //
   gBS->SetWatchdogTimer (0x0000, 0x0000, 0x0000, NULL);
+  
+  //PauseForKey(L"Returned from StartImage\n");
   
   // control returns here when the child image calls Exit()
   if (ImageTitle) {
@@ -389,6 +397,9 @@ static EFI_STATUS StartEFIImageList(IN EFI_DEVICE_PATH **DevicePaths,
   }
  */
   if (!EFI_ERROR(ReturnStatus)) { //why unload driver?!
+    if (NewImageHandle != NULL) {
+      *NewImageHandle = ChildImageHandle;
+    }
     goto bailout;
   }
   
@@ -404,13 +415,14 @@ bailout:
 static EFI_STATUS StartEFIImage(IN EFI_DEVICE_PATH *DevicePath,
                                 IN CHAR16 *LoadOptions, IN CHAR16 *LoadOptionsPrefix,
                                 IN CHAR16 *ImageTitle,
-                                OUT UINTN *ErrorInStep)
+                                OUT UINTN *ErrorInStep,
+                                OUT EFI_HANDLE *NewImageHandle)
 {
   EFI_DEVICE_PATH *DevicePaths[2];
   
   DevicePaths[0] = DevicePath;
   DevicePaths[1] = NULL;
-  return StartEFIImageList(DevicePaths, LoadOptions, LoadOptionsPrefix, ImageTitle, ErrorInStep);
+  return StartEFIImageList(DevicePaths, LoadOptions, LoadOptionsPrefix, ImageTitle, ErrorInStep, NewImageHandle);
 }
 
 //
@@ -505,7 +517,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   }
 //  DBG("StartEFIImage\n");
   StartEFIImage(Entry->DevicePath, Entry->LoadOptions,
-                Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL);
+                Basename(Entry->LoaderPath), Basename(Entry->LoaderPath), NULL, NULL);
   
   if (BlockConOut) {
     // return back orig OutputString
@@ -1357,7 +1369,7 @@ static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
   
 /*    Status = ExtractLegacyLoaderPaths(DiscoveredPathList, MAX_DISCOVERED_PATHS, LegacyLoaderList);
     if (!EFI_ERROR(Status)) {
-      Status = StartEFIImageList(DiscoveredPathList, Entry->LoadOptions, NULL, L"legacy loader", &ErrorInStep);
+      Status = StartEFIImageList(DiscoveredPathList, Entry->LoadOptions, NULL, L"legacy loader", &ErrorInStep, NULL);
     } */
  //   if (EFI_ERROR(Status)) {
       //try my LegacyBoot
@@ -1541,7 +1553,7 @@ static VOID StartTool(IN LOADER_ENTRY *Entry)
   egClearScreen(&DarkBackgroundPixel);
     BeginExternalScreen(Entry->UseGraphicsMode, Entry->me.Title + 6);  // assumes "Start <title>" as assigned below
     StartEFIImage(Entry->DevicePath, Entry->LoadOptions, Basename(Entry->LoaderPath),
-                  Basename(Entry->LoaderPath), NULL);
+                  Basename(Entry->LoaderPath), NULL, NULL);
     FinishExternalScreen();
 //  ReinitSelfLib();
 }
@@ -1668,55 +1680,160 @@ static VOID ScanTool(VOID)
 // pre-boot driver functions
 //
 
-static VOID ScanDriverDir(IN CHAR16 *Path) //path to folder 
+static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OUT UINTN *DriversToConnectNum)
 {
-    EFI_STATUS              Status;
-    REFIT_DIR_ITER          DirIter;
-    EFI_FILE_INFO           *DirEntry;
-    CHAR16                  FileName[256];
+  EFI_STATUS              Status;
+  REFIT_DIR_ITER          DirIter;
+  EFI_FILE_INFO           *DirEntry;
+  CHAR16                  FileName[256];
+  EFI_HANDLE              DriverHandle;
+  EFI_DRIVER_BINDING_PROTOCOL  *DriverBinding;
+  UINTN                   DriversArrSize;
+  UINTN                   DriversArrNum;
+  EFI_HANDLE              *DriversArr;
+  
+  
+  DriversArrSize = 0;
+  DriversArrNum = 0;
+  DriversArr = NULL;
+  
+  // look through contents of the directory
+  DirIterOpen(SelfRootDir, Path, &DirIter);
+  while (DirIterNext(&DirIter, 2, L"*.EFI", &DirEntry)) {
+    if (DirEntry->FileName[0] == '.')
+      continue;   // skip this
     
-    // look through contents of the directory
-    DirIterOpen(SelfRootDir, Path, &DirIter);
-    while (DirIterNext(&DirIter, 2, L"*.EFI", &DirEntry)) {
-        if (DirEntry->FileName[0] == '.')
-            continue;   // skip this
-        
-        UnicodeSPrint(FileName, 512, L"%s\\%s", Path, DirEntry->FileName);
-      if (StrStr(FileName, L"EmuVariable")) {
-        gFirmwarePhoenix = TRUE;
+    UnicodeSPrint(FileName, 512, L"%s\\%s", Path, DirEntry->FileName);
+    Status = StartEFIImage(FileDevicePath(SelfLoadedImage->DeviceHandle, FileName),
+                           L"", DirEntry->FileName, DirEntry->FileName, NULL, &DriverHandle);
+    if (EFI_ERROR(Status)) {
+      continue;
+    }
+    if (StrStr(FileName, L"EmuVariable") != NULL) {
+      gDriversFlags.EmuVariableLoaded = TRUE;
+      gFirmwarePhoenix = TRUE;
+    } else if (StrStr(FileName, L"Video") != NULL) {
+      gDriversFlags.VideoLoaded = TRUE;
+    } else if (StrStr(FileName, L"Partition") != NULL) {
+      gDriversFlags.PartitionLoaded = TRUE;
+    }
+    if (DriverHandle != NULL && DriversToConnectNum != NULL && DriversToConnect != NULL) {
+      // driver loaded - check for EFI_DRIVER_BINDING_PROTOCOL
+      Status = gBS->HandleProtocol(DriverHandle, &gEfiDriverBindingProtocolGuid, (VOID **) &DriverBinding);
+      if (!EFI_ERROR(Status) && DriverBinding != NULL) {
+        DBG(" - driver needs connecting\n");
+        // standard UEFI driver - we would reconnect after loading - add to array
+        if (DriversArrSize == 0) {
+          // new array
+          DriversArrSize = 16;
+          DriversArr = AllocateZeroPool(sizeof(EFI_HANDLE) * DriversArrSize);
+        } else if (DriversArrNum + 1 == DriversArrSize) {
+          // extend array
+          DriversArr = ReallocatePool(DriversArrSize, DriversArrSize + 16, DriversArr);
+          DriversArrSize += 16;
+        }
+        DriversArr[DriversArrNum] = DriverHandle;
+        DriversArrNum++;
+        // we'll make array terminated
+        DriversArr[DriversArrNum] = NULL;
       }
-        Status = StartEFIImage(FileDevicePath(SelfLoadedImage->DeviceHandle, FileName),
-                               L"", DirEntry->FileName, DirEntry->FileName, NULL);
     }
-    Status = DirIterClose(&DirIter);
-    if (Status != EFI_NOT_FOUND) {
-        UnicodeSPrint(FileName, 512, L"while scanning the %s directory", Path);
-        CheckError(Status, FileName);
+  }
+  Status = DirIterClose(&DirIter);
+  if (Status != EFI_NOT_FOUND) {
+    UnicodeSPrint(FileName, 512, L"while scanning the %s directory", Path);
+    CheckError(Status, FileName);
+  }
+  
+  if (DriversToConnectNum != NULL && DriversToConnect != NULL) {
+    *DriversToConnectNum = DriversArrNum;
+    *DriversToConnect = DriversArr;
+  }
+}
+
+
+VOID DisconnectSomeDevices(VOID)
+{
+  EFI_STATUS              Status;
+  UINTN                   HandleCount = 0;
+  UINTN                   Index;
+  EFI_HANDLE              *Handles = NULL;
+	EFI_BLOCK_IO_PROTOCOL   *BlockIo	= NULL;
+	EFI_PCI_IO_PROTOCOL     *PciIo	= NULL;
+	PCI_TYPE00              Pci;
+  
+  if (gDriversFlags.PartitionLoaded) {
+    DBG("Partition driver loaded: ");
+    // get all BlockIo handles
+    Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiBlockIoProtocolGuid, NULL, &HandleCount, &Handles);
+    if (Status == EFI_SUCCESS) {
+      for (Index = 0; Index < HandleCount; Index++) {
+        Status = gBS->HandleProtocol(Handles[Index], &gEfiBlockIoProtocolGuid, (VOID **) &BlockIo);
+        if (EFI_ERROR(Status)) {
+          continue;
+        }
+        if (BlockIo->Media->BlockSize == 2048) {
+          // disconnect CD driver
+          Status = gBS->DisconnectController(Handles[Index], NULL, NULL);
+          DBG("CD disconnect %r", Status);
+        }
+      }
+      FreePool(Handles);
     }
+    DBG("\n");
+  }
+  
+  if (gDriversFlags.VideoLoaded) {
+    DBG("Video driver loaded: ");
+    // get all PciIo handles
+    Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiPciIoProtocolGuid, NULL, &HandleCount, &Handles);
+    if (Status == EFI_SUCCESS) {
+      for (Index = 0; Index < HandleCount; Index++) {
+        Status = gBS->HandleProtocol(Handles[Index], &gEfiPciIoProtocolGuid, (VOID **) &PciIo);
+        if (EFI_ERROR(Status)) {
+          continue;
+        }
+        Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, 0, sizeof (Pci) / sizeof (UINT32), &Pci);
+        if (!EFI_ERROR (Status))
+        {
+          if(IS_PCI_VGA(&Pci) == TRUE)
+          {
+            // disconnect VGA
+            Status = gBS->DisconnectController(Handles[Index], NULL, NULL);
+            DBG("disconnect %r", Status);
+          }
+        }
+      }
+      FreePool(Handles);
+    }
+    DBG("\n");
+  }
 }
 
 
 static VOID LoadDrivers(VOID)
 {
-    
+  EFI_HANDLE  *DriversToConnect = NULL;
+  UINTN       DriversToConnectNum = 0;
+  
     // load drivers from /efi/drivers
 #if defined(MDE_CPU_X64)
   if (gFirmwareClover) {
-    ScanDriverDir(L"\\EFI\\drivers64");
+    ScanDriverDir(L"\\EFI\\drivers64", &DriversToConnect, &DriversToConnectNum);
   } else
-    ScanDriverDir(L"\\EFI\\drivers64UEFI");
+    ScanDriverDir(L"\\EFI\\drivers64UEFI", &DriversToConnect, &DriversToConnectNum);
 #else
-  ScanDriverDir(L"\\EFI\\drivers32");
+  ScanDriverDir(L"\\EFI\\drivers32", &DriversToConnect, &DriversToConnectNum);
 #endif
-
-/*  if (!gFirmwareClover) {
-    BdsLibConnectAllEfi();
-  }
-   else { */
- //   DBG("ConnectAll\n");
+  
+  if (DriversToConnectNum > 0) {
+    DBGT("%d drivers needs connecting ...\n", DriversToConnectNum);
+    // note: our platform driver protocol
+    // will use DriversToConnect - do not release it
+    RegisterDriversToHighestPriority(DriversToConnect);
+    DisconnectSomeDevices();
     BdsLibConnectAllDriversToAllControllers();
-//   }
-//	DBG("Drivers connected\n");
+  }
 }
 
 
@@ -1786,7 +1903,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   INTN              DefaultIndex;
   UINTN             MenuExit;
   UINTN             Size, i;
-  CHAR8             *MsgBuffer = NULL;
   UINT64            TscDiv;
   UINT64            TscRemainder = 0;
   LOADER_ENTRY      *LoaderEntry;
@@ -1834,16 +1950,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   ReadConfig();
   
   // init screen and dump video modes to log
-  InitScreen();
+  InitScreen(TRUE);
   
   // disable EFI watchdog timer
   gBS->SetWatchdogTimer(0x0000, 0x0000, 0x0000, NULL);
-  
-  MsgBuffer = egDumpGOPVideoModes();
-  if (MsgBuffer != NULL) {
-    DBG("%a", MsgBuffer);
-    FreePool(MsgBuffer);
-  }
   
   ThemePath = PoolPrint(L"EFI\\BOOT\\themes\\%s", GlobalConfig.Theme);
   Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
@@ -1889,6 +1999,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   DBGT("LoadDrivers() start\n");
   LoadDrivers();
   DBGT("LoadDrivers() end\n");
+  
+  if (gDriversFlags.VideoLoaded) {
+    // reinit screen and dump video modes to log
+    InitScreen(FALSE);
+  }
   
   //Now we have to reinit handles
   Status = ReinitSelfLib();
