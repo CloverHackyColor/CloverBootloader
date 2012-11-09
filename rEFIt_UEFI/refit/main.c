@@ -1926,6 +1926,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   //	DBG("Running on Firmware %s, it is Clover?%a\n", gST->FirmwareVendor, gFirmwareClover?"Yes":"No");
   
   InitializeConsoleSim();
+  GlobalConfig.NoLogging = TRUE; //to prevent of creating system.log before ReadConfig()
 	InitBooterLog();
   DBG(" \nStarting rEFIt rev %s on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
   //  InitScreen();

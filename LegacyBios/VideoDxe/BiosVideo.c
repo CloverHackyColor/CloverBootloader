@@ -1254,7 +1254,7 @@ ParseEdidData (
       }
       TimingBits = TimingBits >> 1;
     }
-  }  else {
+  } // else {
     //
     // If no Established timing data, read the standard timing data
     //
@@ -1269,7 +1269,7 @@ ParseEdidData (
       }
       BufferIndex += 2;
     }
-  }
+//  }
   //Slice - DetailedTiming here
 	BufferIndex = &EdidDataBlock->DetailedTimingDescriptions[0];
 	for (Index = 0; Index < 4; Index ++, BufferIndex += DETAILED_TIMING_DESCRIPTION_SIZE) {

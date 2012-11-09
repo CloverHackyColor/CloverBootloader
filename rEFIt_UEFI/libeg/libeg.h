@@ -201,6 +201,8 @@ VOID    egInitScreen(IN BOOLEAN SetMaxResolution);
 VOID    egDumpGOPVideoModes(VOID);
 EFI_STATUS egSetScreenResolution(IN CHAR16 *WidthHeight); 
 EFI_STATUS egSetMaxResolution(VOID);
+EFI_STATUS egSetMode(INTN Next);
+
 VOID    egGetScreenSize(OUT INTN *ScreenWidth, OUT INTN *ScreenHeight);
 CHAR16* egScreenDescription(VOID);
 BOOLEAN egHasGraphicsMode(VOID);

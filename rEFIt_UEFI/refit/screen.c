@@ -147,6 +147,7 @@ static VOID SwitchToText(IN BOOLEAN CursorEnabled)
 static VOID SwitchToGraphics(VOID)
 {
     if (AllowGraphicsMode && !egIsGraphicsModeEnabled()) {
+      InitScreen(FALSE);
         egSetGraphicsModeEnabled(TRUE);
         GraphicsScreenDirty = TRUE;
     }

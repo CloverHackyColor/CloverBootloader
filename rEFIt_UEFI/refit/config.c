@@ -37,7 +37,7 @@
 #include "Platform.h"
 
 #ifndef DEBUG_ALL
-#define DEBUG_CFG 1
+#define DEBUG_CFG 0
 #else
 #define DEBUG_CFG DEBUG_ALL
 #endif

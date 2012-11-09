@@ -55,6 +55,8 @@ static BOOLEAN egHasGraphics = FALSE;
 static UINTN egScreenWidth  = 1024;
 static UINTN egScreenHeight = 768;
 
+static INT32  gMode;
+
 
 //
 // Screen handling
@@ -142,8 +144,32 @@ EFI_STATUS egSetMaxResolution()
   }
   MsgLog("found best mode %d: %dx%d\n", BestMode, Width, Height);
   GraphicsOutput->SetMode(GraphicsOutput, BestMode);
+  gMode = BestMode;
   egScreenWidth = Width;
   egScreenHeight = Height;
+  return Status;
+}
+
+EFI_STATUS egSetMode(INTN Next)
+{
+  EFI_STATUS  Status = EFI_UNSUPPORTED;
+//  UINT32      Width = 0;
+//  UINT32      Height = 0;
+  UINT32      MaxMode = GraphicsOutput->Mode->MaxMode;;
+  INT32      Mode = gMode + Next;
+  UINTN       SizeOfInfo;
+  EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *Info;
+
+  Mode = (Mode >= (INT32)MaxMode)?0:Mode;
+  Mode = (Mode < 0)?((INT32)MaxMode - 1):Mode;
+  Status = GraphicsOutput->QueryMode(GraphicsOutput, (UINT32)Mode, &SizeOfInfo, &Info);
+  MsgLog("SetMode %d Status=%r\n", Mode, Status);
+  if (Status == EFI_SUCCESS) {
+    GraphicsOutput->SetMode(GraphicsOutput, (UINT32)Mode);
+    gMode = Mode;
+    egScreenWidth  = Info->HorizontalResolution;
+    egScreenHeight = Info->VerticalResolution;
+  }
   return Status;
 }
 

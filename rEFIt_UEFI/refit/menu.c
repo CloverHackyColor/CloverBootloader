@@ -1068,16 +1068,6 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
     // read key press (and wait for it if applicable)
     Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &key);
     if ((Status == EFI_NOT_READY) && (gAction == ActionNone)) {
- /*     if (HaveTimeout && TimeoutCountdown == 0) {
-        // timeout expired
-        MenuExit = MENU_EXIT_TIMEOUT;
-        break;
-      } else if (HaveTimeout) {
-        gBS->Stall(100000);
-        TimeoutCountdown--;
-      } else {
-        gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &index);
-      } */
       continue;
     }
     if (gAction == ActionNone) {
@@ -1108,10 +1098,14 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         UpdateScroll(&State, SCROLL_LAST);
         break;
       case SCAN_PAGE_UP:
-        UpdateScroll(&State, SCROLL_PAGE_UP);
+  //      UpdateScroll(&State, SCROLL_PAGE_UP);
+        while (EFI_ERROR(egSetMode(1))) {}
+        StyleFunc(Screen, &State, MENU_FUNCTION_INIT, NULL);
         break;
       case SCAN_PAGE_DOWN:
-        UpdateScroll(&State, SCROLL_PAGE_DOWN);
+//        UpdateScroll(&State, SCROLL_PAGE_DOWN);
+        while (EFI_ERROR(egSetMode(-1))) {}
+        StyleFunc(Screen, &State, MENU_FUNCTION_INIT, NULL);
         break;
       case SCAN_ESC:
         MenuExit = MENU_EXIT_ESCAPE;
@@ -1370,7 +1364,8 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
     case MENU_FUNCTION_INIT:
       // TODO: calculate available screen space
       //
-         
+      SwitchToGraphicsAndClear();
+      
       EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET + (TextHeight << 1);
       VisibleHeight = (LAYOUT_TOTAL_HEIGHT - LAYOUT_BANNER_YOFFSET - (TextHeight << 1)) / TextHeight;
 //        DBG("MENU_FUNCTION_INIT 1 EntriesPosY=%d VisibleHeight=%d\n", EntriesPosY, VisibleHeight);
@@ -1408,7 +1403,6 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       TimeoutPosY = EntriesPosY + (Screen->EntryCount + 1) * TextHeight;
          
       // initial painting
-      SwitchToGraphicsAndClear();
       egMeasureText(Screen->Title, &ItemWidth, NULL);
       DrawMenuText(Screen->Title, 0, ((UGAWidth - ItemWidth) >> 1) - TEXT_XMARGIN, EntriesPosY - TextHeight * 2, 0xFFFF);
       Screen->FilmPlace.XPos = (INTN)(EntriesPosX - (Screen->TitleImage->Width + TITLEICON_SPACING));
@@ -1597,6 +1591,7 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
   switch (Function) {
       
     case MENU_FUNCTION_INIT:
+      SwitchToGraphicsAndClear();
       MaxItemOnScreen = (UGAWidth - ROW0_SCROLLSIZE * 2) / (ROW0_TILESIZE + TILE_XSPACING); //8
       row0PosX = 0;
       row1PosX = Screen->EntryCount;
@@ -1646,7 +1641,6 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       
       // initial painting
       //InitSelection(); //Slice - I changed order because of background pixel
-      SwitchToGraphicsAndClear();
       InitSelection();
 	  
 	  // structV1 = structV2 causes MS compiler to insert memcpy() RTL call -> replaced with CopyMem()
