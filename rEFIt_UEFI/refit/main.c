@@ -2000,6 +2000,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   DBGT("LoadDrivers() start\n");
   LoadDrivers();
   DBGT("LoadDrivers() end\n");
+  // DEBUG TEST - remove
+	InitBooterLog();
+  DBG(" \nContinue rEFIt rev %s on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
   
   if (gDriversFlags.VideoLoaded) {
     // reinit screen and dump video modes to log

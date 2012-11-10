@@ -643,6 +643,7 @@ VOID PatchTableType4()
 	UINTN               AddBrand = 0;
 	CHAR8               BrandStr[48];
 	UINT16							ProcChar = 0;
+  CHAR8               *SocketDesignationMac = "U2E1";
 
 	//Note. iMac11,2 has four tables for CPU i3
 	UINTN		CpuNumber;
@@ -801,6 +802,8 @@ VOID PatchTableType4()
 			ProcChar |= (gCPUStructure.Features & CPUID_FEATURE_EST)?0x80:0;
 			newSmbiosTable.Type4->ProcessorCharacteristics = ProcChar;
 		}
+    
+    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type4->Socket, SocketDesignationMac);
 		
 		if (AddBrand) {
 			UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type4->ProcessorVersion, BrandStr);

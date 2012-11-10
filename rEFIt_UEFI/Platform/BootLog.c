@@ -17,15 +17,18 @@ CHAR8 *msgLast = 0;
 
 VOID InitBooterLog(VOID)
 {
+  /*
   EFI_STATUS		Status	= EFI_SUCCESS;
   MESSAGE_LOG_PROTOCOL*         Msg;
   INTN  N;
-   
+*/   
    // Allocate MsgLog
 	msgbuf = AllocateZeroPool(MSG_LOG_SIZE);
 	msgLast = msgCursor = msgbuf;
   
    // Search for Clover log and copy to MsgLog
+  //move to end
+  /*
   Status = gBS->LocateProtocol (&gMsgLogProtocolGuid, NULL, (VOID **)&Msg);
    
    if (!EFI_ERROR (Status)) 
@@ -46,13 +49,38 @@ VOID InitBooterLog(VOID)
        }
      }
    }
+   */
 }
 
 EFI_STATUS SetupBooterLog(VOID)
 {
-	EFI_STATUS		Status	= EFI_SUCCESS;
-	UINTN			LogSize;
+	EFI_STATUS              Status	= EFI_SUCCESS;
+	UINTN                   LogSize;
+  MESSAGE_LOG_PROTOCOL*   Msg;
+  INTN                    N;
+
   //CHAR16*    BootLogName = L"EFI\\misc\\boot.log";
+  Status = gBS->LocateProtocol (&gMsgLogProtocolGuid, NULL, (VOID **)&Msg);
+  
+  if (Msg && !EFI_ERROR (Status))
+  {
+    if (Msg->Log && Msg->Cursor) {
+      
+      N =(INTN)Msg->Cursor - (INTN)Msg->Log;
+      MsgLog("Log from firmware size=%d:\n", N);
+      N &= 0xFFF;
+      if ((N > 0) && (N < MSG_LOG_SIZE)) {
+        CopyMem(msgCursor, Msg->Log, N);
+        msgCursor += N;
+        *msgCursor = 0;
+        FreePool(Msg->Log);
+      }
+      else {
+        MsgLog("no BootLog from firmware\n");
+      }
+    }
+  }
+
 	if (!msgbuf || !msgCursor ||
        (msgCursor < msgbuf) ||
        (msgCursor >= (msgbuf + MSG_LOG_SIZE)))
@@ -66,16 +94,8 @@ EFI_STATUS SetupBooterLog(VOID)
       Status = SaveBooterLog(NULL, BOOT_LOG);
     }
   }
-   /*
-  Status = egSaveFile(SelfRootDir, BootLogName, (UINT8*)msgbuf, LogSize);
-  if (EFI_ERROR(Status)) {
-    Status = egSaveFile(NULL, BootLogName, (UINT8*)msgbuf, LogSize);
-  }
-  */
-   
 	return Status;
 }
-/* Kabyl: !BooterLog */
 
 // Made msgbuf and msgCursor private to this source
 // so we need a different way of saving the msg log - apianti

@@ -26,6 +26,7 @@
   IntelFrameworkPkg/IntelFrameworkPkg.dec
   IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
 #  DuetPkg/DuetPkg.dec
+  Clover/CloverPkg.dec
 
 [LibraryClasses]
   UefiLib
@@ -51,6 +52,7 @@
   gEfiLegacy8259ProtocolGuid
   gEfiEdidDiscoveredProtocolGuid
   gEfiEdidActiveProtocolGuid
+  gMsgLogProtocolGuid
 
 [BuildOptions]
 #  XCODE:*_*_*_CC_FLAGS = -Os

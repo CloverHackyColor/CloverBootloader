@@ -302,7 +302,7 @@ radeon_card_info_t radeon_cards[] = {
 	
 	/* IGP */
 	{ 0x9610,	0x00000000, CHIP_FAMILY_RS780,	"ATI Radeon HD 3200 Graphics",	kNull       },
-	{ 0x9611,	0x00000000, CHIP_FAMILY_RS780,	"ATI Radeon 3100 Graphics",     kNull       },
+	{ 0x9611,	0x00000000, CHIP_FAMILY_RS780,	"ATI Radeon HD 3100 Graphics",  kNull       },
 	{ 0x9614,	0x00000000, CHIP_FAMILY_RS780,	"ATI Radeon HD 3300 Graphics",	kNull       },
 	{ 0x9616,	0x00000000, CHIP_FAMILY_RS780,	"AMD 760G",                     kNull       },
 	

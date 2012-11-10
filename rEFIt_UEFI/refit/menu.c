@@ -1122,16 +1122,8 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         if (EFI_ERROR(Status)) {
           Status = SaveBooterLog(NULL, PREBOOT_LOG);
         }
-        /*
-        LogSize = msgCursor - msgbuf;
-        Status = egSaveFile(SelfRootDir, PREBOOT_LOG, (UINT8*)msgbuf, LogSize);
-        if (EFI_ERROR(Status)) {
-          Status = egSaveFile(NULL, PREBOOT_LOG, (UINT8*)msgbuf, LogSize);
-        }
-        */
         break;
       case SCAN_F4:
-        //SaveOemDsdt(FALSE); //no patches
         SaveOemTables();
         break;
       case SCAN_F5:
@@ -1364,6 +1356,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
     case MENU_FUNCTION_INIT:
       // TODO: calculate available screen space
       //
+      egGetScreenSize(&UGAWidth, &UGAHeight);
       SwitchToGraphicsAndClear();
       
       EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET + (TextHeight << 1);
@@ -1591,6 +1584,7 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
   switch (Function) {
       
     case MENU_FUNCTION_INIT:
+      egGetScreenSize(&UGAWidth, &UGAHeight);
       SwitchToGraphicsAndClear();
       MaxItemOnScreen = (UGAWidth - ROW0_SCROLLSIZE * 2) / (ROW0_TILESIZE + TILE_XSPACING); //8
       row0PosX = 0;
@@ -1640,7 +1634,6 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       }
       
       // initial painting
-      //InitSelection(); //Slice - I changed order because of background pixel
       InitSelection();
 	  
 	  // structV1 = structV2 causes MS compiler to insert memcpy() RTL call -> replaced with CopyMem()

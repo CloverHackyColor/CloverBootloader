@@ -42,6 +42,7 @@
   VesaBiosExtensions.h
 
 [Packages]
+  Clover/CloverPkg.dec
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
@@ -74,6 +75,7 @@
   gEfiPciIoProtocolGuid                         # PROTOCOL TO_START
   gEfiDevicePathProtocolGuid                    # PROTOCOL TO_START
   gEfiEdidOverrideProtocolGuid                  # PROTOCOL TO_START
+  gMsgLogProtocolGuid
 
 [Pcd]
   gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdBiosVideoSetTextVgaModeEnable

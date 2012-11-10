@@ -15,19 +15,25 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 **/
 
 #include "BiosVideo.h"
+#include <Protocol/MsgLog.h>
+#include <Library/PrintLib.h>
+
 #ifndef DEBUG_ALL
 #define DEBUG_CSM 1
 #else
 #define DEBUG_CSM DEBUG_ALL
 #endif
 
-#if DEBUG_ATABUS==0
+#if DEBUG_CSM==0
 #define DBG(...)
+#elif DEBUG_CSM == 1
+#define DBG(...) BootLog(__VA_ARGS__)
 #else
-//#define DBG(...) DebugLog(DEBUG_ATABUS, __VA_ARGS__)
-#define DBG(...) Print(__VA_ARGS__)
+#define DBG(...) AsciiPrint(__VA_ARGS__)
 #endif
 
+CHAR8 *msgCursor;
+MESSAGE_LOG_PROTOCOL *Msg;
 
 //
 // EFI Driver Binding Protocol Instance
@@ -133,7 +139,7 @@ BiosVideoDriverBindingSupported (
   //
   Status = gBS->LocateProtocol (&gEfiLegacyBiosProtocolGuid, NULL, (VOID **) &LegacyBios);
   if (EFI_ERROR (Status)) {
-    DBG(L"LegacyBios not found\n");
+    DBG("LegacyBios not found\n");
     return Status;
   }
 
@@ -149,12 +155,12 @@ BiosVideoDriverBindingSupported (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
   if (EFI_ERROR (Status) && (Status != EFI_ALREADY_STARTED)) {
-    DBG(L"PciIo not found\n");
+//    DBG("PciIo not found\n");
     return Status;
   }
 
   if (Status == EFI_ALREADY_STARTED) {
-    DBG(L"EFI_ALREADY_STARTED\n");
+    DBG("EFI_ALREADY_STARTED\n");
     //
     // If VgaMiniPort protocol is installed, EFI_ALREADY_STARTED indicates failure,
     // because VgaMiniPort protocol is installed on controller handle directly.
@@ -183,6 +189,7 @@ BiosVideoDriverBindingSupported (
                         &Pci
                         );
   if (EFI_ERROR (Status)) {
+    DBG("PciIo->Pci.Read status=%r\n", Status);
     Status = EFI_UNSUPPORTED;
     goto Done;
   }
@@ -212,13 +219,14 @@ BiosVideoDriverBindingSupported (
             DevicePathNodeLength(&Node->DevPath) < sizeof(ACPI_ADR_DEVICE_PATH)) {  
           //Mars Lin suggested that "<" instead of "!="
           Status = EFI_UNSUPPORTED;
+          DBG("Mars Lin suggested status=%r\n", Status);
         }
       }
     }
   }
 
 Done:
-  DBG(L"Supported status:%r\n", Status);
+  DBG("Supported status:%r\n", Status);
   gBS->CloseProtocol (
          Controller,
          &gEfiPciIoProtocolGuid,
@@ -258,6 +266,13 @@ BiosVideoDriverBindingStart (
   UINT64                    Supports;
   BOOLEAN                   PciAttributesSaved;
 
+    Msg = NULL;
+    Status = gBS->LocateProtocol(&gMsgLogProtocolGuid, NULL, (VOID **) &Msg);
+    if (!EFI_ERROR(Status) && (Msg != NULL)) {
+        msgCursor = Msg->Cursor;
+        DBG("BiosVideoDriverBindingStart\n");
+    }
+
   //
   // Initialize local variables
   //
@@ -270,6 +285,7 @@ BiosVideoDriverBindingStart (
   //
   Status = gBS->LocateProtocol (&gEfiLegacyBiosProtocolGuid, NULL, (VOID **) &LegacyBios);
   if (EFI_ERROR (Status)) {
+    DBG("Legacy BIOS Protocol  status=%r\n", Status);
     return Status;
   }
 
@@ -282,6 +298,7 @@ BiosVideoDriverBindingStart (
                   (VOID **) &ParentDevicePath
                   );
   if (EFI_ERROR (Status)) {
+    DBG("ParentDevicePath status=%r\n", Status);
     return Status;
   }
 
@@ -296,6 +313,7 @@ BiosVideoDriverBindingStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
+  DBG("OpenProtocol PCI status=%r\n", Status);
   if (EFI_ERROR (Status) && (Status != EFI_ALREADY_STARTED)) {
     return Status;
   }
@@ -310,7 +328,7 @@ BiosVideoDriverBindingStart (
                     0,
                     &OriginalPciAttributes
                     );
-
+  DBG("Save original PCI attributes status=%r\n", Status);
   if (EFI_ERROR (Status)) {
     goto Done;
   }
@@ -325,7 +343,7 @@ BiosVideoDriverBindingStart (
                     0,
                     &Supports
                     );
-  DBG("PCI attribute=%x\n", Supports);
+  DBG("PCI attribute=%x Status=%r\n", Supports, Status);
   if (EFI_ERROR (Status)) {
     goto Done;
   }
@@ -336,11 +354,11 @@ BiosVideoDriverBindingStart (
 //    goto Done;
   }  
 
-  REPORT_STATUS_CODE_WITH_DEVICE_PATH (
+/*  REPORT_STATUS_CODE_WITH_DEVICE_PATH (
     EFI_PROGRESS_CODE,
     EFI_PERIPHERAL_LOCAL_CONSOLE | EFI_P_PC_ENABLE,
     ParentDevicePath
-    );
+    ); */
   //
   // Enable the device and make sure VGA cycles are being forwarded to this VGA device
   //
@@ -350,12 +368,14 @@ BiosVideoDriverBindingStart (
              EFI_PCI_DEVICE_ENABLE | EFI_PCI_IO_ATTRIBUTE_VGA_MEMORY | Supports,
              NULL
              );
+  
   if (EFI_ERROR (Status)) {
-    REPORT_STATUS_CODE_WITH_DEVICE_PATH (
+    DBG("Enable the device status=%r\n", Status);
+ /*   REPORT_STATUS_CODE_WITH_DEVICE_PATH (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_PERIPHERAL_LOCAL_CONSOLE | EFI_P_EC_RESOURCE_CONFLICT,
       ParentDevicePath
-      );
+      ); */
     goto Done;
   }
   //
@@ -368,18 +388,19 @@ BiosVideoDriverBindingStart (
                          NULL,
                          &Flags
                          );
-  DBG("Check PCI ROM status=%r\n", Status);
+  
   if (EFI_ERROR (Status)) {
+    DBG("Check PCI ROM status=%r\n", Status);
     goto Done;
   }
   //
   // Post the legacy option ROM if it is available.
   //
-  REPORT_STATUS_CODE_WITH_DEVICE_PATH (
+/*  REPORT_STATUS_CODE_WITH_DEVICE_PATH (
     EFI_PROGRESS_CODE,
     EFI_P_PC_RESET,
     ParentDevicePath
-    );
+    ); */
   Status = LegacyBios->InstallPciRom (
                          LegacyBios,
                          Controller,
@@ -390,12 +411,14 @@ BiosVideoDriverBindingStart (
                          NULL,
                          NULL
                          );
+  
   if (EFI_ERROR (Status)) {
-    REPORT_STATUS_CODE_WITH_DEVICE_PATH (
+    DBG("InstallPciRom status=%r\n", Status);
+/*    REPORT_STATUS_CODE_WITH_DEVICE_PATH (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_PERIPHERAL_LOCAL_CONSOLE | EFI_P_EC_CONTROLLER_ERROR,
       ParentDevicePath
-      );
+      ); */
     goto Done;
   }
 
@@ -405,6 +428,7 @@ BiosVideoDriverBindingStart (
       //
       // If RemainingDevicePath is the End of Device Path Node,
       // don't create any child device and return EFI_SUCESS
+      DBG("RemainingDevicePath is the End of Device Path Node\n");
       Status = EFI_SUCCESS;
       goto Done;
     }
@@ -425,7 +449,7 @@ BiosVideoDriverBindingStart (
 
 Done:
   if ((EFI_ERROR (Status)) && (Status != EFI_ALREADY_STARTED)) {
-    REPORT_STATUS_CODE_WITH_DEVICE_PATH (
+/*    REPORT_STATUS_CODE_WITH_DEVICE_PATH (
       EFI_PROGRESS_CODE,
       EFI_PERIPHERAL_LOCAL_CONSOLE | EFI_P_PC_DISABLE,
       ParentDevicePath
@@ -435,7 +459,7 @@ Done:
       EFI_PROGRESS_CODE,
       EFI_PERIPHERAL_LOCAL_CONSOLE | EFI_P_EC_NOT_DETECTED,
       ParentDevicePath
-      );
+      ); */
     if (PciAttributesSaved) {
       //
       // Restore original PCI attributes
@@ -446,7 +470,7 @@ Done:
                       OriginalPciAttributes,
                       NULL
                       );
-      DBG(L"Restored original PCI attributes\n");
+      DBG("Restored original PCI attributes\n");
     }
     //
     // Release PCI I/O Protocols on the controller handle.
@@ -488,8 +512,6 @@ BiosVideoDriverBindingStop (
   BOOLEAN                      AllChildrenStopped;
   UINTN                        Index;
 
-  AllChildrenStopped = TRUE;
-
   if (NumberOfChildren == 0) {
     //
     // Close PCI I/O protocol on the controller handle
@@ -504,6 +526,7 @@ BiosVideoDriverBindingStop (
     return EFI_SUCCESS;
   }
 
+  AllChildrenStopped = TRUE;
   for (Index = 0; Index < NumberOfChildren; Index++) {
     Status = BiosVideoChildHandleUninstall (This, Controller, ChildHandleBuffer[Index]);
 
@@ -519,9 +542,9 @@ BiosVideoDriverBindingStop (
   return EFI_SUCCESS;
 }
 
-
 /**
-  Install child handles if the Handle supports MBR format.
+  Install child hanlde for a detect BiosVideo device and install related protocol
+  into this handle, such as EFI_GRAPHIC_OUTPUT_PROTOCOL.
 
   @param  This                   Calling context.
   @param  ParentHandle           Parent Handle
@@ -555,14 +578,15 @@ BiosVideoChildHandleInstall (
   //
   // Allocate the private device structure for video device
   //
-  BiosVideoPrivate = (BIOS_VIDEO_DEV *) AllocateZeroPool (
-																					sizeof (BIOS_VIDEO_DEV)
-																					);
-  if (NULL == BiosVideoPrivate) {
-		Status = EFI_OUT_OF_RESOURCES;
+  Status = gBS->AllocatePool (
+                  EfiBootServicesData,
+                  sizeof (BIOS_VIDEO_DEV),
+                  (VOID**) &BiosVideoPrivate
+                  );
+  if (EFI_ERROR (Status)) {
     goto Done;
   }
-
+  ZeroMem(BiosVideoPrivate, sizeof (BIOS_VIDEO_DEV));
   //
   // See if this is a VGA compatible controller or not
   //
@@ -574,11 +598,6 @@ BiosVideoChildHandleInstall (
                           &Pci
                           );
   if (EFI_ERROR (Status)) {
-    REPORT_STATUS_CODE_WITH_DEVICE_PATH (
-      EFI_ERROR_CODE | EFI_ERROR_MINOR,
-      EFI_PERIPHERAL_LOCAL_CONSOLE | EFI_P_EC_CONTROLLER_ERROR,
-      ParentDevicePath
-      );
     goto Done;
   }
   BiosVideoPrivate->VgaCompatible = FALSE;
@@ -590,7 +609,7 @@ BiosVideoChildHandleInstall (
     BiosVideoPrivate->VgaCompatible = TRUE;
   }
 
- if (PcdGetBool (PcdBiosVideoSetTextVgaModeEnable)) {
+ if (0 && PcdGetBool (PcdBiosVideoSetTextVgaModeEnable)) {
     //
     // Create EXIT_BOOT_SERIVES Event
     //
@@ -711,10 +730,10 @@ BiosVideoChildHandleInstall (
   //
   // Check for VESA BIOS Extensions for modes that are compatible with Graphics Output
   //
-  if (FeaturePcdGet (PcdBiosVideoCheckVbeEnable)) {
+  if (1) { // FeaturePcdGet (PcdBiosVideoCheckVbeEnable)) {
     Status = BiosVideoCheckForVbe (BiosVideoPrivate);
  //   DEBUG ((EFI_D_INFO, "BiosVideoCheckForVbe - %r\n", Status));
-    DBG(L"BiosVideoCheckForVbe - %r\n", Status);
+    DBG("BiosVideoCheckForVbe - %r\n", Status);
   } else {
     Status = EFI_UNSUPPORTED;
   }
@@ -724,12 +743,12 @@ BiosVideoChildHandleInstall (
     // for the standard 640x480 16 color VGA mode
     //
  //   DEBUG ((EFI_D_INFO, "VgaCompatible - %x\n", BiosVideoPrivate->VgaCompatible));
-    DBG(L"VgaCompatible - %x\n", BiosVideoPrivate->VgaCompatible);
+    DBG("VgaCompatible - %x\n", BiosVideoPrivate->VgaCompatible);
     if (BiosVideoPrivate->VgaCompatible) {
       if (FeaturePcdGet (PcdBiosVideoCheckVgaEnable)) {
         Status = BiosVideoCheckForVga (BiosVideoPrivate);
  //       DEBUG ((EFI_D_INFO, "BiosVideoCheckForVga - %r\n", Status));
-        DBG(L"BiosVideoCheckForVga - %r\n", Status);
+        DBG("BiosVideoCheckForVga - %r\n", Status);
       } else {
         Status = EFI_UNSUPPORTED;
       }
@@ -823,7 +842,6 @@ Done:
 
   return Status;
 }
-
 
 /**
   Deregister an video child handle and free resources.
@@ -955,12 +973,12 @@ BiosVideoChildHandleUninstall (
     return Status;
   }
 
-  if (PcdGetBool (PcdBiosVideoSetTextVgaModeEnable)) {
+/*  if (PcdGetBool (PcdBiosVideoSetTextVgaModeEnable)) {
     //
     // Close EXIT_BOOT_SERIVES Event
     //
     gBS->CloseEvent (BiosVideoPrivate->ExitBootServicesEvent);
-  }
+  } */
 
   //
   // Release all allocated resources
@@ -1291,7 +1309,7 @@ ParseEdidData (
 				}				
 			}
 		} else if (BufferIndex[3] == 0xFE) { //Ascii string
-      //			MsgLog("timing string:%a\n", &BufferIndex[5]);
+      DBG("timing string after 0xFE:%a\n", &BufferIndex[5]);
 		}
 	}
   
@@ -1442,7 +1460,8 @@ BiosVideoCheckForVbe (
     //
     // Allocate double size of VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE to avoid overflow
     //
-    EdidOverrideDataBlock = AllocatePool (sizeof (VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE) * 2);
+    
+    EdidOverrideDataBlock = AllocatePool (VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE * 2);
     if (NULL == EdidOverrideDataBlock) {
   		Status = EFI_OUT_OF_RESOURCES;
       goto Done;
@@ -1461,6 +1480,7 @@ BiosVideoCheckForVbe (
       //
       // Succeeded to get EDID Override Data
       //
+      DBG("EdidOverrideFound!\n");
       EdidOverrideFound = TRUE;
     }
   }
@@ -1764,9 +1784,9 @@ BiosVideoCheckForVbe (
     CurrentModeData->PixelBitMask.GreenMask = ((UINT32) CurrentModeData->Green.Mask) << CurrentModeData->Green.Position;
     CurrentModeData->PixelBitMask.BlueMask = ((UINT32) CurrentModeData->Blue.Mask) << CurrentModeData->Blue.Position;
     CurrentModeData->PixelBitMask.ReservedMask = ((UINT32) CurrentModeData->Reserved.Mask) << CurrentModeData->Reserved.Position;
-    CurrentModeData->FrameBufferSize = BiosVideoPrivate->VbeInformationBlock->TotalMemory * 64 * 1024;
 
     CurrentModeData->LinearFrameBuffer = (VOID *) (UINTN)BiosVideoPrivate->VbeModeInformationBlock->PhysBasePtr;
+	CurrentModeData->FrameBufferSize = BiosVideoPrivate->VbeInformationBlock->TotalMemory * 64 * 1024;
     CurrentModeData->HorizontalResolution = BiosVideoPrivate->VbeModeInformationBlock->XResolution;
     CurrentModeData->VerticalResolution = BiosVideoPrivate->VbeModeInformationBlock->YResolution;
 
@@ -1807,12 +1827,14 @@ BiosVideoCheckForVbe (
   } */
   PreferMode = HighestResolutionMode;
   Status = BiosVideoGraphicsOutputSetMode (&BiosVideoPrivate->GraphicsOutput, (UINT32) PreferMode);
+    DBG(" - SetMode pref %d (%d) = %r\n", PreferMode, (UINT32) PreferMode, Status);
   if (EFI_ERROR (Status)) {
     for (PreferMode = 0; PreferMode < ModeNumber; PreferMode ++) {
       Status = BiosVideoGraphicsOutputSetMode (
                 &BiosVideoPrivate->GraphicsOutput,
                 (UINT32) PreferMode
                 );
+            DBG(" - SetMode pref %d (%d) = %r\n", PreferMode, (UINT32) PreferMode, Status);
       if (!EFI_ERROR (Status)) {
         break;
       }
@@ -1843,7 +1865,6 @@ Done:
   return Status;
 }
 
-
 /**
   Check for VGA device.
 
@@ -1871,7 +1892,10 @@ BiosVideoCheckForVga (
   // Add mode to the list of available modes
   // caller should guarantee that Mode has been allocated.
   //
-  ASSERT (BiosVideoPrivate->GraphicsOutput.Mode != NULL);
+//  ASSERT (BiosVideoPrivate->GraphicsOutput.Mode != NULL);
+  if (!BiosVideoPrivate->GraphicsOutput.Mode) {
+    goto Done;
+  }
   BiosVideoPrivate->GraphicsOutput.Mode->MaxMode = 1;
 
   ModeBuffer = (BIOS_VIDEO_MODE_DATA *) AllocatePool (
@@ -2076,11 +2100,6 @@ BiosVideoSetModeWorker (
     // Check to see if the call succeeded
     //
     if (Regs.X.AX != VESA_BIOS_EXTENSIONS_STATUS_SUCCESS) {
-      REPORT_STATUS_CODE_WITH_DEVICE_PATH (
-        EFI_ERROR_CODE | EFI_ERROR_MINOR,
-        EFI_PERIPHERAL_LOCAL_CONSOLE | EFI_P_EC_OUTPUT_ERROR,
-        DevicePath
-        );
       return EFI_DEVICE_ERROR;
     }
     //
@@ -2133,6 +2152,7 @@ BiosVideoGraphicsOutputSetMode (
   BiosVideoPrivate = BIOS_VIDEO_DEV_FROM_GRAPHICS_OUTPUT_THIS (This);
 
   ModeData = &BiosVideoPrivate->ModeData[ModeNumber];
+    DBG("New mode: %d %dx%d\n", ModeNumber, ModeData->HorizontalResolution, ModeData->VerticalResolution);
 
   if (ModeNumber >= This->Mode->MaxMode) {
     return EFI_UNSUPPORTED;

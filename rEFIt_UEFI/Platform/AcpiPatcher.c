@@ -51,7 +51,7 @@ CHAR8*    OSVersion;
 //-----------------------------------
 
 
-#define NUM_TABLES 19
+#define NUM_TABLES 21
 CHAR16* ACPInames[NUM_TABLES] = {
 	L"SSDT.aml",
 	L"SSDT-0.aml",
@@ -66,6 +66,8 @@ CHAR16* ACPInames[NUM_TABLES] = {
 	L"SSDT-9.aml",
 	L"APIC.aml",
 	L"BOOT.aml",
+  L"DMAR.aml",
+  L"ECDT.aml",
 	L"HPET.aml",
 	L"MCFG.aml",
 	L"SLIC.aml",
