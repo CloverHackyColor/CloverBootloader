@@ -182,7 +182,7 @@ VOID GetCPUProperties (VOID)
   if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
     // Determine turbo boost support
     DoCpuid(6, reg);
-    gCPUStructure.Turbo = ((reg[EAX] & 1) != 0);
+    gCPUStructure.Turbo = ((reg[EAX] & (1 << 1)) != 0);
     DBG("The CPU%a supported turbo\n", gCPUStructure.Turbo?"":" not"); 
     switch (gCPUStructure.Model)
     {
