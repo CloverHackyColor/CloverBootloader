@@ -37,6 +37,7 @@
   MemoryAllocationLib
   UefiDriverEntryPoint
   DevicePathLib
+  MemLogLib
   
 [Sources]
 #  Debug.c
@@ -52,7 +53,6 @@
   gEfiLegacy8259ProtocolGuid
   gEfiEdidDiscoveredProtocolGuid
   gEfiEdidActiveProtocolGuid
-  gMsgLogProtocolGuid
 
 [BuildOptions]
 #  XCODE:*_*_*_CC_FLAGS = -Os

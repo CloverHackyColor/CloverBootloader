@@ -2545,7 +2545,7 @@
 		12B7FEEA15F9215700177D35 /* BiosVideo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BiosVideo.c; sourceTree = "<group>"; };
 		12B7FEEB15F9215700177D35 /* BiosVideo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BiosVideo.h; sourceTree = "<group>"; };
 		12B7FEEC15F9215700177D35 /* BiosVideo.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = BiosVideo.inf; sourceTree = "<group>"; };
-		12B7FEED15F9215700177D35 /* BiosVideoNew.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BiosVideoNew.c; sourceTree = "<group>"; };
+		12B7FEED15F9215700177D35 /* BiosVideoNew.c */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.c.c; path = BiosVideoNew.c; sourceTree = "<group>"; tabWidth = 4; };
 		12B7FEEE15F9215700177D35 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
 		12B7FEEF15F9215700177D35 /* LegacyBiosThunk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LegacyBiosThunk.c; sourceTree = "<group>"; };
 		12B7FEF015F9215700177D35 /* VesaBiosExtensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VesaBiosExtensions.h; sourceTree = "<group>"; };
@@ -2785,7 +2785,7 @@
 		12D6306014CEA05E00E5898F /* BiosVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BiosVideo.h; sourceTree = "<group>"; };
 		12D6306114CEA05E00E5898F /* Bmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bmp.h; sourceTree = "<group>"; };
 		12D6306214CEA05E00E5898F /* boot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boot.h; sourceTree = "<group>"; };
-		12D6306314CEA05E00E5898F /* BootLog.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BootLog.c; sourceTree = "<group>"; };
+		12D6306314CEA05E00E5898F /* BootLog.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = BootLog.c; sourceTree = "<group>"; tabWidth = 2; };
 		12D6306414CEA05E00E5898F /* Console.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = Console.c; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
 		12D6306514CEA05E00E5898F /* cpu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cpu.c; sourceTree = "<group>"; };
 		12D6306614CEA05E00E5898F /* DataHubCpu.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = DataHubCpu.c; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
@@ -2837,6 +2837,9 @@
 		2C0DB54316145D3400CA37F9 /* CloverX64.dsc */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverX64.dsc; path = ../../CloverX64.dsc; sourceTree = "<group>"; };
 		2C0DB54416145D3400CA37F9 /* CloverX64.fdf */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverX64.fdf; path = ../../CloverX64.fdf; sourceTree = "<group>"; };
 		2C202D9E164CFD1A00D3EFC7 /* PlatformDriverOverride.c */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = PlatformDriverOverride.c; sourceTree = "<group>"; tabWidth = 2; };
+		2C751C06164EA4DA00B24F6B /* MemLogLibDefault.inf */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = text; path = MemLogLibDefault.inf; sourceTree = "<group>"; tabWidth = 2; };
+		2C751C07164EA4FE00B24F6B /* MemLogLib.h */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.h; path = MemLogLib.h; sourceTree = "<group>"; tabWidth = 2; };
+		2C751C08164ED7CD00B24F6B /* MemLogLib.c */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = MemLogLib.c; sourceTree = "<group>"; tabWidth = 2; };
 		2C91841F161439DD0018BDC3 /* BootServices.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootServices.c; sourceTree = "<group>"; usesTabs = 1; };
 		2C918420161439DD0018BDC3 /* BootServices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BootServices.h; sourceTree = "<group>"; usesTabs = 1; };
 		2C918421161439DD0018BDC3 /* Common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Common.h; sourceTree = "<group>"; usesTabs = 1; };
@@ -8684,9 +8687,9 @@
 				2C0DB53E16145CFD00CA37F9 /* cbuild.sh */,
 				2C0DB54016145D3400CA37F9 /* Clover.fdf */,
 				2C0DB54116145D3400CA37F9 /* CloverIa32.dsc */,
+				2C0DB54216145D3400CA37F9 /* CloverPkg.dec */,
 				2C0DB54316145D3400CA37F9 /* CloverX64.dsc */,
 				2C0DB54416145D3400CA37F9 /* CloverX64.fdf */,
-				2C0DB54216145D3400CA37F9 /* CloverPkg.dec */,
 				12B7FEF115F9217300177D35 /* ConSplitterDxe */,
 				12B7FEF715F9217300177D35 /* CpuDxe */,
 				12B7FF0115F9217300177D35 /* DuetTimerLib */,
@@ -8698,6 +8701,7 @@
 				12B7FF1915F9217300177D35 /* GenericBdsLib */,
 				12B7FF2515F9217F00177D35 /* Include */,
 				1292F250164BC7A7008FAEEC /* LegacyBios */,
+				2C751BFE164E9FEC00B24F6B /* Library */,
 				12B7FF3915F9219800177D35 /* LzmaCustomDecompressLib */,
 				12B7FF4C15F921AB00177D35 /* MsgLog */,
 				12B7FF4F15F921AB00177D35 /* OemSmbiosGenDxe */,
@@ -8961,6 +8965,7 @@
 		12B7FF3415F9217F00177D35 /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				2C751C07164EA4FE00B24F6B /* MemLogLib.h */,
 				12B7FF3515F9217F00177D35 /* PeCoffLib.h */,
 			);
 			path = Library;
@@ -9503,6 +9508,24 @@
 			name = Platform;
 			path = ../Platform;
 			sourceTree = SOURCE_ROOT;
+		};
+		2C751BFE164E9FEC00B24F6B /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				2C751C04164EA4DA00B24F6B /* MemLogLibDefault */,
+			);
+			name = Library;
+			path = ../../Library;
+			sourceTree = "<group>";
+		};
+		2C751C04164EA4DA00B24F6B /* MemLogLibDefault */ = {
+			isa = PBXGroup;
+			children = (
+				2C751C08164ED7CD00B24F6B /* MemLogLib.c */,
+				2C751C06164EA4DA00B24F6B /* MemLogLibDefault.inf */,
+			);
+			path = MemLogLibDefault;
+			sourceTree = "<group>";
 		};
 		2C91841E161439DD0018BDC3 /* DumpUefiCalls */ = {
 			isa = PBXGroup;

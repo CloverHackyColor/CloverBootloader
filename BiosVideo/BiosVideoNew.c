@@ -15,7 +15,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include "BiosVideo.h"
 
-#include <Protocol/MsgLog.h>
+#include <Library/MemLogLib.h>
 #include <Library/PrintLib.h>
 
 #ifndef DEBUG_ALL
@@ -27,13 +27,11 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #if DEBUG_BV==0
 #define DBG(...)
 #elif DEBUG_BV == 1
-#define DBG(...) BootLog(__VA_ARGS__)
+#define DBG(...) MemLog(__VA_ARGS__)
 #else
 #define DBG(...) AsciiPrint(__VA_ARGS__)
 #endif
 
-CHAR8 *msgCursor;
-MESSAGE_LOG_PROTOCOL *Msg;
 
 //
 // EFI Driver Binding Protocol Instance
@@ -188,6 +186,7 @@ BiosVideoDriverEntryPoint (
 {
   EFI_STATUS  Status;
 
+  MemLog("BiosVideoDriverEntryPoint !!!!!\n");
   Status = EfiLibInstallDriverBindingComponentName2 (
             ImageHandle,
             SystemTable,
@@ -282,16 +281,8 @@ BiosVideoDriverBindingStart (
   EFI_DEVICE_PATH_PROTOCOL        *ParentDevicePath;
   EFI_PCI_IO_PROTOCOL             *PciIo;
 
-    Msg = NULL;
-    Status = gBS->LocateProtocol(&gMsgLogProtocolGuid, NULL, (VOID **) &Msg);
-    if (!EFI_ERROR(Status) && (Msg != NULL)) {
-        msgCursor = Msg->Cursor;
-        BootLog("BiosVideoDriverBindingStart\n");
-    }
-//    else {
-//        CpuDeadLoop();
-//    }
-    
+  MemLog("BiosVideoDriverBindingStart!\n");
+  
   PciIo = NULL;
   //
   // Prepare for status code
@@ -361,6 +352,7 @@ Done:
     }
   }
 
+  MemLog("BiosVideoDriverBindingStart - END: %r!\n", Status);
   return Status;
 }
 
@@ -609,6 +601,7 @@ BiosVideoChildHandleInstall (
 			if (EFI_ERROR (Status)) {
 				goto Done;
 			}
+      MemLog("BiosVideoChildHandleInstall SetMode(0)\n");
 			BiosVideoPrivate->GraphicsOutput.SetMode(&BiosVideoPrivate->GraphicsOutput, 0);
 		}
 	} else {
@@ -1435,11 +1428,12 @@ BiosVideoCheckForVbe (
 		if (Regs.X.AX != VESA_BIOS_EXTENSIONS_STATUS_SUCCESS) {
 			continue;
 		}
-        BootLog("%3d %dx%d attr=%x\n", ModeNumber,
-                BiosVideoPrivate->VbeModeInformationBlock->XResolution,
-                BiosVideoPrivate->VbeModeInformationBlock->YResolution,
-                BiosVideoPrivate->VbeModeInformationBlock->ModeAttributes
-                );
+    DBG("%3d %dx%d attr=%x\n",
+        ModeNumber,
+        BiosVideoPrivate->VbeModeInformationBlock->XResolution,
+        BiosVideoPrivate->VbeModeInformationBlock->YResolution,
+        BiosVideoPrivate->VbeModeInformationBlock->ModeAttributes
+        );
 		//
 		// See if the mode supports color.  If it doesn't then try the next mode.
 		//
@@ -1631,7 +1625,7 @@ BiosVideoCheckForVbe (
 		CurrentModeData->BitsPerPixel  = BiosVideoPrivate->VbeModeInformationBlock->BitsPerPixel;
 		
 		BiosVideoPrivate->ModeData = ModeBuffer;
-        BootLog("\n");
+        DBG("\n");
 	}
 	//
 	// Check to see if we found any modes that are compatible with GRAPHICS OUTPUT
@@ -1909,7 +1903,6 @@ BiosVideoGraphicsOutputSetMode (
   }
 
   ModeData = &BiosVideoPrivate->ModeData[ModeNumber];
-  BootLog("%d %dx%d\n", ModeNumber, ModeData->HorizontalResolution, ModeData->VerticalResolution);
 
   if (BiosVideoPrivate->LineBuffer) {
     FreePool (BiosVideoPrivate->LineBuffer);
@@ -1960,7 +1953,7 @@ BiosVideoGraphicsOutputSetMode (
     // Set VBE mode
     //
     Regs.X.AX = VESA_BIOS_EXTENSIONS_SET_MODE;
-	Regs.X.BX = (UINT16) (ModeData->VbeModeNumber | VESA_BIOS_EXTENSIONS_MODE_NUMBER_LINEAR_FRAME_BUFFER);
+	  Regs.X.BX = (UINT16) (ModeData->VbeModeNumber | VESA_BIOS_EXTENSIONS_MODE_NUMBER_LINEAR_FRAME_BUFFER);
     ZeroMem (BiosVideoPrivate->VbeCrtcInformationBlock, sizeof (VESA_BIOS_EXTENSIONS_CRTC_INFORMATION_BLOCK));
     Regs.E.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeCrtcInformationBlock);
     Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeCrtcInformationBlock);
@@ -2006,6 +1999,7 @@ BiosVideoGraphicsOutputSetMode (
 
   BiosVideoPrivate->HardwareNeedsStarting = FALSE;
 
+  MemLog(" = EFI_SUCCESS\n");
   return EFI_SUCCESS;
 }
 #else
@@ -2144,7 +2138,7 @@ BiosVideoGraphicsOutputSetMode (
 	BiosVideoPrivate = BIOS_VIDEO_DEV_FROM_GRAPHICS_OUTPUT_THIS (This);
 	
 	ModeData = &BiosVideoPrivate->ModeData[ModeNumber];
-    BootLog("New mode: %d %dx%d\n", ModeNumber, ModeData->HorizontalResolution, ModeData->VerticalResolution);
+  MemLog("New mode: %d %dx%d\n", ModeNumber, ModeData->HorizontalResolution, ModeData->VerticalResolution);
 	
 	if (ModeNumber >= This->Mode->MaxMode) {
 		return EFI_UNSUPPORTED;
@@ -2172,7 +2166,7 @@ BiosVideoGraphicsOutputSetMode (
 	
 	Status = BiosVideoSetModeWorker (BiosVideoPrivate, ModeData, BiosVideoPrivate->DevicePath);
 	if (EFI_ERROR (Status)) {
-        BootLog(" - ERROR\n");
+        MemLog(" - ERROR\n");
 		return Status;
 	}
 	

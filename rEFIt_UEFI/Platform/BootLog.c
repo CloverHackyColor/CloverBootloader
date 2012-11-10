@@ -9,84 +9,26 @@
 
 
 #include "Platform.h"
+#include <Library/MemLogLib.h>
+
 extern  EFI_GUID  gEfiMiscSubClassGuid;
 
-CHAR8 *msgbuf = 0;
-CHAR8 *msgCursor = 0;
-CHAR8 *msgLast = 0;
-
-VOID InitBooterLog(VOID)
-{
-  /*
-  EFI_STATUS		Status	= EFI_SUCCESS;
-  MESSAGE_LOG_PROTOCOL*         Msg;
-  INTN  N;
-*/   
-   // Allocate MsgLog
-	msgbuf = AllocateZeroPool(MSG_LOG_SIZE);
-	msgLast = msgCursor = msgbuf;
-  
-   // Search for Clover log and copy to MsgLog
-  //move to end
-  /*
-  Status = gBS->LocateProtocol (&gMsgLogProtocolGuid, NULL, (VOID **)&Msg);
-   
-   if (!EFI_ERROR (Status)) 
-   {
-     if (Msg->Log && Msg->Cursor) {
-       
-       N =(INTN)((INTN)Msg->Cursor - (INTN)Msg->Log);
-       MsgLog("Log from Clover size=%d:\n", N);
-       N &= 0xFFF;
-       if ((N > 0) && (N < MSG_LOG_SIZE)) {
-         CopyMem(msgCursor, Msg->Log, N);
-         msgCursor += N;
-         *msgCursor = 0;
-         FreePool(Msg->Log);         
-       }
-       else {
-         MsgLog("no BootLog from CloverEFI\n");
-       }
-     }
-   }
-   */
-}
 
 EFI_STATUS SetupBooterLog(VOID)
 {
 	EFI_STATUS              Status	= EFI_SUCCESS;
-	UINTN                   LogSize;
-  MESSAGE_LOG_PROTOCOL*   Msg;
-  INTN                    N;
-
-  //CHAR16*    BootLogName = L"EFI\\misc\\boot.log";
-  Status = gBS->LocateProtocol (&gMsgLogProtocolGuid, NULL, (VOID **)&Msg);
+  CHAR8                   *MemLogBuffer;
+  UINTN                   MemLogLen;
+    
+  MemLogBuffer = GetMemLogBuffer();
+  MemLogLen = GetMemLogLen();
   
-  if (Msg && !EFI_ERROR (Status))
-  {
-    if (Msg->Log && Msg->Cursor) {
-      
-      N =(INTN)Msg->Cursor - (INTN)Msg->Log;
-      MsgLog("Log from firmware size=%d:\n", N);
-      N &= 0xFFF;
-      if ((N > 0) && (N < MSG_LOG_SIZE)) {
-        CopyMem(msgCursor, Msg->Log, N);
-        msgCursor += N;
-        *msgCursor = 0;
-        FreePool(Msg->Log);
-      }
-      else {
-        MsgLog("no BootLog from firmware\n");
-      }
-    }
+  if (MemLogBuffer == NULL || MemLogLen == 0) {
+		return EFI_NOT_FOUND;
   }
 
-	if (!msgbuf || !msgCursor ||
-       (msgCursor < msgbuf) ||
-       (msgCursor >= (msgbuf + MSG_LOG_SIZE)))
-		return EFI_NOT_FOUND;
-	LogSize  = msgCursor - msgbuf;
-	Status =  LogDataHub(&gEfiMiscSubClassGuid, L"boot-log", msgbuf, (UINT32)LogSize);
+	Status =  LogDataHub(&gEfiMiscSubClassGuid, L"boot-log", MemLogBuffer, (UINT32)MemLogLen);
+  
    // Save BOOT_LOG only once on successful boot
   if (!GlobalConfig.NoLogging){
     Status = SaveBooterLog(SelfRootDir, BOOT_LOG);
@@ -101,10 +43,17 @@ EFI_STATUS SetupBooterLog(VOID)
 // so we need a different way of saving the msg log - apianti
 EFI_STATUS SaveBooterLog(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileName)
 {
-   UINTN LogSize = 0;
-   if ((msgCursor > msgbuf) && (msgCursor <= msgbuf + (MSG_LOG_SIZE)))
-      LogSize = (UINTN)(msgCursor - msgbuf);
-   return egSaveFile(BaseDir, FileName, (UINT8*)msgbuf, LogSize);
+  CHAR8                   *MemLogBuffer;
+  UINTN                   MemLogLen;
+  
+  MemLogBuffer = GetMemLogBuffer();
+  MemLogLen = GetMemLogLen();
+  
+  if (MemLogBuffer == NULL || MemLogLen == 0) {
+		return EFI_NOT_FOUND;
+  }
+  
+   return egSaveFile(BaseDir, FileName, (UINT8*)MemLogBuffer, MemLogLen);
 }
 
 // Changed MsgLog(...) it now calls this function
@@ -115,17 +64,20 @@ EFI_STATUS SaveBooterLog(IN EFI_FILE_HANDLE BaseDir OPTIONAL, IN CHAR16 *FileNam
 VOID DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...)
 {
    VA_LIST Marker;
-   UINTN offset = 0;
+   //UINTN offset = 0;
    
    // Make sure the buffer is intact for writing
    if (/*GlobalConfig.NoLogging || */
-       !FormatString || !msgbuf || !msgCursor ||
-       (msgCursor < msgbuf) ||
-       (msgCursor >= (msgbuf + MSG_LOG_SIZE)) ||
-       (DebugMode < 0))
-      return;
+       FormatString == NULL || DebugMode < 0)
+   {
+     return;
+   }
 
    // Print message to log buffer
+   VA_START(Marker, FormatString);
+   MemLogVA(FormatString, Marker);
+   VA_END(Marker);
+  /*
    VA_START(Marker, FormatString);
    offset = AsciiVSPrint(msgCursor, (MSG_LOG_SIZE-(msgCursor-msgbuf)), FormatString, Marker);
    VA_END(Marker);
@@ -189,4 +141,5 @@ VOID DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...)
    {
       msgLast = msgCursor;
    }
+   */
 }

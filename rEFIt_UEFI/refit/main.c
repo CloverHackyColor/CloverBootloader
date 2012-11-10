@@ -1927,7 +1927,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   InitializeConsoleSim();
   GlobalConfig.NoLogging = TRUE; //to prevent of creating system.log before ReadConfig()
-	InitBooterLog();
+	//InitBooterLog();
   DBG(" \nStarting rEFIt rev %s on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
   //  InitScreen();
   /*    
@@ -2001,8 +2001,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   LoadDrivers();
   DBGT("LoadDrivers() end\n");
   // DEBUG TEST - remove
-	InitBooterLog();
-  DBG(" \nContinue rEFIt rev %s on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
+	//InitBooterLog();
   
   if (gDriversFlags.VideoLoaded) {
     // reinit screen and dump video modes to log

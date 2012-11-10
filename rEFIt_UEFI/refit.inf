@@ -143,6 +143,7 @@
   EfiFileLib
   PeCoffLib
 #  GenericBdsLib
+  MemLogLib
 
 [Guids]
   gEfiAcpiTableGuid

@@ -66,6 +66,10 @@
   ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
   PeCoffExtraActionLib|MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
 
+  #
+  # Our libs
+  #
+  MemLogLib|Clover/Library/MemLogLibDefault/MemLogLibDefault.inf
 
 [Components]
 	Clover/rEFIt_UEFI/refit64.inf
