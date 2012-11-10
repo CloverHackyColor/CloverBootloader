@@ -150,15 +150,15 @@ EFI_STATUS egSetMaxResolution()
   return Status;
 }
 
-EFI_STATUS egSetMode(INTN Next)
+EFI_STATUS egSetMode(INT32 Next)
 {
   EFI_STATUS  Status = EFI_UNSUPPORTED;
 //  UINT32      Width = 0;
 //  UINT32      Height = 0;
-  UINT32      MaxMode = GraphicsOutput->Mode->MaxMode;;
-  INT32      Mode = gMode + Next;
+  UINT32      MaxMode = GraphicsOutput->Mode->MaxMode;
   UINTN       SizeOfInfo;
   EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *Info;
+  INT32      Mode = gMode + Next;
 
   Mode = (Mode >= (INT32)MaxMode)?0:Mode;
   Mode = (Mode < 0)?((INT32)MaxMode - 1):Mode;
