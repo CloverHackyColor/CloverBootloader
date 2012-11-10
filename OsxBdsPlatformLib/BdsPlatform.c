@@ -1272,7 +1272,7 @@ Returns:
   //
   
 //  
-  PlatformBdsDiagnostics (IGNORE, (TIMEOUTFP != 0), BaseMemoryTest); //Slice - I want silent boot but with Memory test
+  PlatformBdsDiagnostics (IGNORE, TIMEOUTFP, BaseMemoryTest); //Slice - I want silent boot but with Memory test
 //  PlatformBdsDiagnostics (IGNORE, TRUE, BaseMemoryTest);
   //
   // Perform some platform specific connect sequence

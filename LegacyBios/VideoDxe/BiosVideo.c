@@ -1442,7 +1442,7 @@ BiosVideoCheckForVbe (
     //
     // Allocate double size of VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE to avoid overflow
     //
-    EdidOverrideDataBlock = AllocatePool (sizeof (VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE * 2));
+    EdidOverrideDataBlock = AllocatePool (sizeof (VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE) * 2);
     if (NULL == EdidOverrideDataBlock) {
   		Status = EFI_OUT_OF_RESOURCES;
       goto Done;
