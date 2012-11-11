@@ -2545,7 +2545,7 @@
 		12B7FEEA15F9215700177D35 /* BiosVideo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BiosVideo.c; sourceTree = "<group>"; };
 		12B7FEEB15F9215700177D35 /* BiosVideo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BiosVideo.h; sourceTree = "<group>"; };
 		12B7FEEC15F9215700177D35 /* BiosVideo.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = BiosVideo.inf; sourceTree = "<group>"; };
-		12B7FEED15F9215700177D35 /* BiosVideoNew.c */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.c.c; path = BiosVideoNew.c; sourceTree = "<group>"; tabWidth = 4; };
+		12B7FEED15F9215700177D35 /* BiosVideoNew.c */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.c.c; path = BiosVideoNew.c; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		12B7FEEE15F9215700177D35 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
 		12B7FEEF15F9215700177D35 /* LegacyBiosThunk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LegacyBiosThunk.c; sourceTree = "<group>"; };
 		12B7FEF015F9215700177D35 /* VesaBiosExtensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VesaBiosExtensions.h; sourceTree = "<group>"; };
@@ -2836,6 +2836,11 @@
 		2C0DB54216145D3400CA37F9 /* CloverPkg.dec */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverPkg.dec; path = ../../CloverPkg.dec; sourceTree = "<group>"; };
 		2C0DB54316145D3400CA37F9 /* CloverX64.dsc */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverX64.dsc; path = ../../CloverX64.dsc; sourceTree = "<group>"; };
 		2C0DB54416145D3400CA37F9 /* CloverX64.fdf */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverX64.fdf; path = ../../CloverX64.fdf; sourceTree = "<group>"; };
+		2C116F06164FDE980061F326 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
+		2C116F07164FDE980061F326 /* GraphicsConsole.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = GraphicsConsole.c; sourceTree = "<group>"; };
+		2C116F08164FDE980061F326 /* GraphicsConsole.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphicsConsole.h; sourceTree = "<group>"; };
+		2C116F09164FDE980061F326 /* GraphicsConsoleDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = GraphicsConsoleDxe.inf; sourceTree = "<group>"; };
+		2C116F0A164FDE980061F326 /* LaffStd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LaffStd.c; sourceTree = "<group>"; };
 		2C202D9E164CFD1A00D3EFC7 /* PlatformDriverOverride.c */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = PlatformDriverOverride.c; sourceTree = "<group>"; tabWidth = 2; };
 		2C751C06164EA4DA00B24F6B /* MemLogLibDefault.inf */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = text; path = MemLogLibDefault.inf; sourceTree = "<group>"; tabWidth = 2; };
 		2C751C07164EA4FE00B24F6B /* MemLogLib.h */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.h; path = MemLogLib.h; sourceTree = "<group>"; tabWidth = 2; };
@@ -8699,6 +8704,7 @@
 				12B7FF0E15F9217300177D35 /* ebuild.sh */,
 				12B7FF0F15F9217300177D35 /* FSInject */,
 				12B7FF1915F9217300177D35 /* GenericBdsLib */,
+				2C116F05164FDE980061F326 /* GraphicsConsoleDxe */,
 				12B7FF2515F9217F00177D35 /* Include */,
 				1292F250164BC7A7008FAEEC /* LegacyBios */,
 				2C751BFE164E9FEC00B24F6B /* Library */,
@@ -9508,6 +9514,19 @@
 			name = Platform;
 			path = ../Platform;
 			sourceTree = SOURCE_ROOT;
+		};
+		2C116F05164FDE980061F326 /* GraphicsConsoleDxe */ = {
+			isa = PBXGroup;
+			children = (
+				2C116F06164FDE980061F326 /* ComponentName.c */,
+				2C116F07164FDE980061F326 /* GraphicsConsole.c */,
+				2C116F08164FDE980061F326 /* GraphicsConsole.h */,
+				2C116F09164FDE980061F326 /* GraphicsConsoleDxe.inf */,
+				2C116F0A164FDE980061F326 /* LaffStd.c */,
+			);
+			name = GraphicsConsoleDxe;
+			path = ../../GraphicsConsoleDxe;
+			sourceTree = "<group>";
 		};
 		2C751BFE164E9FEC00B24F6B /* Library */ = {
 			isa = PBXGroup;

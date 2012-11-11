@@ -601,8 +601,11 @@ BiosVideoChildHandleInstall (
 			if (EFI_ERROR (Status)) {
 				goto Done;
 			}
-      MemLog("BiosVideoChildHandleInstall SetMode(0)\n");
-			BiosVideoPrivate->GraphicsOutput.SetMode(&BiosVideoPrivate->GraphicsOutput, 0);
+			//
+			// dmazar: I do not know why setting to mode 0, but I need it to stay
+			// as already set in BiosVideo (max edid matched resolution)
+			//
+			//BiosVideoPrivate->GraphicsOutput.SetMode(&BiosVideoPrivate->GraphicsOutput, 0);
 		}
 	} else {
 		//
@@ -1428,12 +1431,6 @@ BiosVideoCheckForVbe (
 		if (Regs.X.AX != VESA_BIOS_EXTENSIONS_STATUS_SUCCESS) {
 			continue;
 		}
-    DBG("%3d %dx%d attr=%x\n",
-        ModeNumber,
-        BiosVideoPrivate->VbeModeInformationBlock->XResolution,
-        BiosVideoPrivate->VbeModeInformationBlock->YResolution,
-        BiosVideoPrivate->VbeModeInformationBlock->ModeAttributes
-        );
 		//
 		// See if the mode supports color.  If it doesn't then try the next mode.
 		//
@@ -1480,7 +1477,19 @@ BiosVideoCheckForVbe (
 		if (BiosVideoPrivate->VbeModeInformationBlock->PhysBasePtr == 0) {
 			continue;
 		}
-		DBG(" - ok");
+		//
+		// dmazar: skip resolutions lower then 640x480.
+		//
+		if (BiosVideoPrivate->VbeModeInformationBlock->XResolution < 640 ||
+			BiosVideoPrivate->VbeModeInformationBlock->YResolution < 480) {
+			continue;
+		}
+		DBG("%3d %dx%d attr=%x - ok",
+			ModeNumber,
+			BiosVideoPrivate->VbeModeInformationBlock->XResolution,
+			BiosVideoPrivate->VbeModeInformationBlock->YResolution,
+			BiosVideoPrivate->VbeModeInformationBlock->ModeAttributes
+			);
         ModeFound = TRUE;
         ModeConsideredWorking = FALSE;
 		if (EdidFound && (ValidEdidTiming.ValidNumber > 0)) {
@@ -1549,9 +1558,9 @@ BiosVideoCheckForVbe (
 			HighestResolutionMode = (UINT16)ModeNumber;
             DBG(", highest");
 //			MsgLog("best mode: %d\n", ModeNumber);
+			PreferMode = HighestResolutionMode;
+			DBG(", pref=%d", PreferMode);
 		}
-		PreferMode = HighestResolutionMode;
-        DBG(", pref=%d", PreferMode);
 		
 		//
 		// Add mode to the list of available modes

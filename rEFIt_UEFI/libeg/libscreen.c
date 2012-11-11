@@ -209,6 +209,7 @@ EFI_STATUS egSetScreenResolution(IN CHAR16 *WidthHeight)
             if (Width == Info->HorizontalResolution && Height == Info->VerticalResolution) {
                 MsgLog(" - done, set Mode %d\n", Mode);
                 GraphicsOutput->SetMode(GraphicsOutput, Mode);
+                gMode = Mode;
                 egScreenWidth = Width;
                 egScreenHeight = Height;
                 return EFI_SUCCESS;
@@ -247,17 +248,14 @@ VOID egInitScreen(IN BOOLEAN SetMaxResolution)
                     egSetMaxResolution();
                 }
             }
-            /*else {
-              egScreenWidth = GraphicsOutput->Mode->Info->HorizontalResolution;
-              egScreenHeight = GraphicsOutput->Mode->Info->VerticalResolution;
-            }*/
-
         } else {
             if (SetMaxResolution) {
                 egSetMaxResolution();
             }
         }
-
+        gMode = GraphicsOutput->Mode->Mode;
+        egScreenWidth = GraphicsOutput->Mode->Info->HorizontalResolution;
+        egScreenHeight = GraphicsOutput->Mode->Info->VerticalResolution;
         egHasGraphics = TRUE;
     } else if (UgaDraw != NULL) {
         Status = UgaDraw->GetMode(UgaDraw, &Width, &Height, &Depth, &RefreshRate);
