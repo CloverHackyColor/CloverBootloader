@@ -119,7 +119,7 @@ MemLogVA (
   // Check if buffer can accept MEM_LOG_MAX_LINE_SIZE chars.
   // Increase buffer if not.
   //
-  if ((mMemLog->Cursor - mMemLog->Buffer) + MEM_LOG_MAX_LINE_SIZE > mMemLog->BufferSize) {
+  if ((UINTN)(mMemLog->Cursor - mMemLog->Buffer) + MEM_LOG_MAX_LINE_SIZE > mMemLog->BufferSize) {
 		// not enough place for max line - make buffer bigger
 		// but not too big (if something gets out of controll)
 		if (mMemLog->BufferSize + MEM_LOG_INITIAL_SIZE > MEM_LOG_MAX_SIZE) {
