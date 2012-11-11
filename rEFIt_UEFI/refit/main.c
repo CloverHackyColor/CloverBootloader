@@ -1951,7 +1951,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   ReadConfig();
   
   // init screen and dump video modes to log
-  InitScreen(gFirmwareClover ? FALSE : TRUE);
+  InitScreen(!gFirmwareClover); // ? FALSE : TRUE);
   
   // disable EFI watchdog timer
   gBS->SetWatchdogTimer(0x0000, 0x0000, 0x0000, NULL);

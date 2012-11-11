@@ -60,6 +60,9 @@
   DebugLib
     PrintLib
   PcdLib
+    MemLogLib
+#    GenericBdsLib
+
 
 
 [Guids]
@@ -75,7 +78,7 @@
   gEfiPciIoProtocolGuid                         # PROTOCOL TO_START
   gEfiDevicePathProtocolGuid                    # PROTOCOL TO_START
   gEfiEdidOverrideProtocolGuid                  # PROTOCOL TO_START
-  gMsgLogProtocolGuid
+#  gMsgLogProtocolGuid
 
 [Pcd]
   gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdBiosVideoSetTextVgaModeEnable

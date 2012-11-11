@@ -122,7 +122,7 @@ INF  Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
 INF  Clover/BiosVideo/BiosVideo.inf
 #INF  Clover/BiosVideoAuto/BiosVideo.inf
 #INF  Clover/IntelGmaDxe/Gop.inf
-INF  Clover/LegacyBios/VideoDxe/VideoDxe.inf
+#INF  Clover/LegacyBios/VideoDxe/VideoDxe.inf
 
 # BIOS CSM
 #INF  IntelFrameworkModulePkg/Csm/LegacyBiosDxe/LegacyBiosDxe.inf

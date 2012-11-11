@@ -227,6 +227,7 @@ BiosVideoDriverBindingSupported (
   //
   Status = gBS->LocateProtocol (&gEfiLegacy8259ProtocolGuid, NULL, (VOID **) &LegacyBios);
   if (EFI_ERROR (Status)) {
+    DBG("no Legacy8259 %r\n", Status);
     return Status;
   }
   
@@ -242,11 +243,13 @@ BiosVideoDriverBindingSupported (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
   if (EFI_ERROR (Status)) {
+ //   DBG("no PciIoProtocol %r\n", Status);
     return Status;
   }
 
   if (!BiosVideoIsVga (PciIo)) {
     Status = EFI_UNSUPPORTED;
+    DBG("not BiosVideoIsVga\n");
   }
 
   gBS->CloseProtocol (
@@ -255,7 +258,7 @@ BiosVideoDriverBindingSupported (
          This->DriverBindingHandle,
          Controller
          );
-
+ // DBG("BiosVideoDriverBindingSupported %r\n", Status);
   return Status;
 }
 
@@ -381,7 +384,7 @@ BiosVideoDriverBindingStop (
   EFI_STATUS                   Status;
   BOOLEAN                      AllChildrenStopped;
   UINTN                        Index;
-
+  MemLog("BiosVideoDriverBindingStop!\n");
   if (NumberOfChildren == 0) {
     //
     // Close PCI I/O protocol on the controller handle
@@ -1140,8 +1143,10 @@ BiosVideoIsVga (
       //
       VgaCompatible = TRUE;
     }
+  } else {
+    DBG("Pci.Hdr.Command=%x - not enabled\n", Pci.Hdr.Command);
   }
-
+  DBG("device [%02x%02x%02x]\n", Pci.Hdr.ClassCode[2], Pci.Hdr.ClassCode[1], Pci.Hdr.ClassCode[0]);
   return VgaCompatible;
 }
 

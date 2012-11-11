@@ -21,6 +21,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Protocol/PciIo.h>
 #include <Protocol/EdidActive.h>
 #include <Protocol/DevicePath.h>
+#include <Protocol/DevicePathToText.h>
 #include <Protocol/EdidDiscovered.h>
 #include <Protocol/LegacyBios.h>
 #include <Protocol/VgaMiniPort.h>
@@ -40,6 +41,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Library/UefiLib.h>
 #include <Library/DevicePathLib.h>
 #include <Library/MemoryAllocationLib.h>
+//#include <Library/GenericBdsLib.h>
 
 #include <IndustryStandard/Pci.h>
 #include "VesaBiosExtensions.h"
