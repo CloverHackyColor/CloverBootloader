@@ -6,9 +6,15 @@
 #define __MEMLOG_LIB_H__
 
 
+
+/** Callback that can be installed to be called when some message is printed with MemLog() or MemLogVA(). **/
+typedef VOID (EFIAPI *MEM_LOG_CALLBACK) (IN INTN DebugMode, IN CHAR8 *LastMessage);
+
+
 /**
   Prints a log message to memory buffer.
  
+  @param  DebugMode   DebugMode will be passed to Callback function if it is set.
   @param  Format      The format string for the debug message to print.
   @param  Marker      VA_LIST with variable arguments for Format.
  
@@ -16,6 +22,7 @@
 VOID
 EFIAPI
 MemLogVA (
+  IN  CONST INTN    DebugMode,
   IN  CONST CHAR8   *Format,
   IN  VA_LIST       Marker
   );
@@ -25,6 +32,7 @@ MemLogVA (
 
   If Format is NULL, then does nothing.
 
+  @param  DebugMode   DebugMode will be passed to Callback function if it is set.
   @param  Format      The format string for the debug message to print.
   @param  ...         The variable argument list whose contents are accessed 
                       based on the format string specified by Format.
@@ -33,6 +41,7 @@ MemLogVA (
 VOID
 EFIAPI
 MemLog (
+  IN  CONST INTN    DebugMode,
   IN  CONST CHAR8   *Format,
   ...
   );
@@ -55,6 +64,16 @@ UINTN
 EFIAPI
 GetMemLogLen (
   VOID
+  );
+
+
+/**
+  Sets callback that will be called when message is added to mem log.
+ **/
+VOID
+EFIAPI
+SetMemLogCallback (
+  MEM_LOG_CALLBACK  Callback
   );
 
 

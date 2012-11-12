@@ -219,8 +219,8 @@ quiet
 
 
 # ==========================================================================
-# Disable the use of the log file
-nolog
+# Enable the use of the log file (/efi/misc/system.log)
+#systemlog
 # --------------------------------------------------------------------------
 
 

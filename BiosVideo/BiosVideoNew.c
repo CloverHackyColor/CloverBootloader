@@ -27,7 +27,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #if DEBUG_BV==0
 #define DBG(...)
 #elif DEBUG_BV == 1
-#define DBG(...) MemLog(__VA_ARGS__)
+#define DBG(...) MemLog(1, __VA_ARGS__)
 #else
 #define DBG(...) AsciiPrint(__VA_ARGS__)
 #endif
@@ -186,7 +186,7 @@ BiosVideoDriverEntryPoint (
 {
   EFI_STATUS  Status;
 
-  MemLog("BiosVideoDriverEntryPoint !!!!!\n");
+  DBG("BiosVideoDriverEntryPoint!\n");
   Status = EfiLibInstallDriverBindingComponentName2 (
             ImageHandle,
             SystemTable,
@@ -284,7 +284,7 @@ BiosVideoDriverBindingStart (
   EFI_DEVICE_PATH_PROTOCOL        *ParentDevicePath;
   EFI_PCI_IO_PROTOCOL             *PciIo;
 
-  MemLog("BiosVideoDriverBindingStart!\n");
+  DBG("BiosVideoDriverBindingStart!\n");
   
   PciIo = NULL;
   //
@@ -355,7 +355,7 @@ Done:
     }
   }
 
-  MemLog("BiosVideoDriverBindingStart - END: %r!\n", Status);
+  DBG("BiosVideoDriverBindingStart - END: %r!\n", Status);
   return Status;
 }
 
@@ -384,7 +384,8 @@ BiosVideoDriverBindingStop (
   EFI_STATUS                   Status;
   BOOLEAN                      AllChildrenStopped;
   UINTN                        Index;
-  MemLog("BiosVideoDriverBindingStop!\n");
+  
+  DBG("BiosVideoDriverBindingStop!\n");
   if (NumberOfChildren == 0) {
     //
     // Close PCI I/O protocol on the controller handle
@@ -2013,7 +2014,7 @@ BiosVideoGraphicsOutputSetMode (
 
   BiosVideoPrivate->HardwareNeedsStarting = FALSE;
 
-  MemLog(" = EFI_SUCCESS\n");
+  DBG(" = EFI_SUCCESS\n");
   return EFI_SUCCESS;
 }
 #else
@@ -2152,7 +2153,7 @@ BiosVideoGraphicsOutputSetMode (
 	BiosVideoPrivate = BIOS_VIDEO_DEV_FROM_GRAPHICS_OUTPUT_THIS (This);
 	
 	ModeData = &BiosVideoPrivate->ModeData[ModeNumber];
-  MemLog("New mode: %d %dx%d\n", ModeNumber, ModeData->HorizontalResolution, ModeData->VerticalResolution);
+	DBG("New mode: %d %dx%d\n", ModeNumber, ModeData->HorizontalResolution, ModeData->VerticalResolution);
 	
 	if (ModeNumber >= This->Mode->MaxMode) {
 		return EFI_UNSUPPORTED;
@@ -2180,7 +2181,7 @@ BiosVideoGraphicsOutputSetMode (
 	
 	Status = BiosVideoSetModeWorker (BiosVideoPrivate, ModeData, BiosVideoPrivate->DevicePath);
 	if (EFI_ERROR (Status)) {
-        MemLog(" - ERROR\n");
+        DBG(" - ERROR\n");
 		return Status;
 	}
 	

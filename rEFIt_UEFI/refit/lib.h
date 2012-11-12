@@ -324,7 +324,7 @@ typedef struct {
   BOOLEAN     Quiet;
   BOOLEAN     LegacyFirst;
   BOOLEAN     NoLegacy;
-  BOOLEAN     NoLogging;
+  BOOLEAN     SystemLog;
 //  BOOLEAN     DriveImage;
   FONT_TYPE   Font;
   INTN        CharWidth;

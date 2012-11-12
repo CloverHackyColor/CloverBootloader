@@ -1926,8 +1926,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   //	DBG("Running on Firmware %s, it is Clover?%a\n", gST->FirmwareVendor, gFirmwareClover?"Yes":"No");
   
   InitializeConsoleSim();
-  GlobalConfig.NoLogging = TRUE; //to prevent of creating system.log before ReadConfig()
-	//InitBooterLog();
+	InitBooterLog();
   DBG(" \nStarting rEFIt rev %s on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
   //  InitScreen();
   /*    
@@ -2000,8 +1999,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   DBGT("LoadDrivers() start\n");
   LoadDrivers();
   DBGT("LoadDrivers() end\n");
-  // DEBUG TEST - remove
-	//InitBooterLog();
   
   if (gDriversFlags.VideoLoaded) {
     // reinit screen and dump video modes to log

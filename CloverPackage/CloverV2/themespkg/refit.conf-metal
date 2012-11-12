@@ -191,8 +191,6 @@ hidebadges none
 # over the GUI display.
 #
 quiet
-nolog
-
 
 # List legacy options first. When enabled, legacy BIOS based boot options
 # (e.g. Windows, Linux via LILO or GRUB) will be listed first. This is
@@ -201,5 +199,10 @@ nolog
 #
 #legacyfirst
 nolegacy
+
+# ==========================================================================
+# Enable the use of the log file (/efi/misc/system.log)
+#systemlog
+# --------------------------------------------------------------------------
 
 # EOF

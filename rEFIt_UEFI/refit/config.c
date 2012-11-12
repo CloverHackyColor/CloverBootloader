@@ -516,8 +516,8 @@ VOID ReadConfig(VOID)
     } else if (StriCmp(TokenList[0], L"screen_resolution") == 0) {
       HandleString(TokenList, TokenCount, &(GlobalConfig.ScreenResolution));
       
-    } else if (StriCmp(TokenList[0], L"nolog") == 0) {
-      GlobalConfig.NoLogging = TRUE;
+    } else if (StriCmp(TokenList[0], L"systemlog") == 0) {
+      GlobalConfig.SystemLog = TRUE;
     } else {
       DBG(" unknown configuration command: %s\n", TokenList[0]);
     }

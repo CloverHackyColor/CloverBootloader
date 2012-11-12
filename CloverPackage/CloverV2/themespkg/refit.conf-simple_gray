@@ -3,10 +3,16 @@
 # Configuration file for the rEFIt boot menu
 #
 
-# Timeout in seconds for the main menu screen. Setting the timeout to 0
+# Timeout in seconds for the main menu screen.
+# Commenting the timeout option or setting it to -1
 # disables automatic booting (i.e., no timeout).
+# Setting it to 0 enables direct boot to default volume.
+# timeout 5 - enter menu and wait for 5 sec to boot default Volume
+# timeout 0 - boot into default volume without GUI
+# timeout -1 - enter GUI without default booting 
 #
-timeout 10
+timeout 30
+# --------------------------------------------------------------------------
 
 # Disable menu options for increased security. These are intended for a lab
 # environment where the administrator doesn't want users to mess with the
@@ -141,6 +147,10 @@ hidebadges drive
 #
 #legacyfirst
 #nolegacy
-nolog
+
+# ==========================================================================
+# Enable the use of the log file (/efi/misc/system.log)
+#systemlog
+# --------------------------------------------------------------------------
 
 # EOF

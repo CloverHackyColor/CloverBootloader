@@ -13,17 +13,18 @@
 //
 // Mem log sizes
 //
-#define MEM_LOG_INITIAL_SIZE	(256 * 1024)
-#define MEM_LOG_MAX_SIZE		(2 * 1024 * 1024)
-#define MEM_LOG_MAX_LINE_SIZE	1024
+#define MEM_LOG_INITIAL_SIZE    (256 * 1024)
+#define MEM_LOG_MAX_SIZE        (2 * 1024 * 1024)
+#define MEM_LOG_MAX_LINE_SIZE   1024
 
 //
 // Struct for holding mem buffer.
 //
 typedef struct {
-  CHAR8     *Buffer;
-  CHAR8     *Cursor;
-	UINTN     BufferSize;
+  CHAR8             *Buffer;
+  CHAR8             *Cursor;
+  UINTN             BufferSize;
+  MEM_LOG_CALLBACK  Callback;
 } MEM_LOG;
 
 
@@ -77,6 +78,7 @@ MemLogInit (
   mMemLog->BufferSize = MEM_LOG_INITIAL_SIZE;
   mMemLog->Buffer = AllocateZeroPool (MEM_LOG_INITIAL_SIZE);
   mMemLog->Cursor = mMemLog->Buffer;
+  mMemLog->Callback = NULL;
   
   Status = gBS->InstallMultipleProtocolInterfaces (
                                                    &gImageHandle,
@@ -90,6 +92,7 @@ MemLogInit (
 /**
   Prints a log message to memory buffer.
  
+  @param  DebugMode   DebugMode will be passed to Callback function if it is set.
   @param  Format      The format string for the debug message to print.
   @param  Marker      VA_LIST with variable arguments for Format.
  
@@ -97,12 +100,14 @@ MemLogInit (
 VOID
 EFIAPI
 MemLogVA (
+  IN  CONST INTN    DebugMode,
   IN  CONST CHAR8   *Format,
   IN  VA_LIST       Marker
   )
 {
-	EFI_STATUS      Status;
-	UINTN           DataWritten;
+  EFI_STATUS      Status;
+  UINTN           DataWritten;
+  CHAR8           *LastMessage;
   
   if (Format == NULL) {
     return;
@@ -115,46 +120,55 @@ MemLogVA (
     }
   }
   
-	//
+  //
   // Check if buffer can accept MEM_LOG_MAX_LINE_SIZE chars.
   // Increase buffer if not.
   //
   if ((UINTN)(mMemLog->Cursor - mMemLog->Buffer) + MEM_LOG_MAX_LINE_SIZE > mMemLog->BufferSize) {
-		// not enough place for max line - make buffer bigger
-		// but not too big (if something gets out of controll)
-		if (mMemLog->BufferSize + MEM_LOG_INITIAL_SIZE > MEM_LOG_MAX_SIZE) {
+      // not enough place for max line - make buffer bigger
+      // but not too big (if something gets out of controll)
+      if (mMemLog->BufferSize + MEM_LOG_INITIAL_SIZE > MEM_LOG_MAX_SIZE) {
       // Out of resources!
-			return;
-		}
-		mMemLog->Buffer = ReallocatePool(mMemLog->BufferSize, mMemLog->BufferSize + MEM_LOG_INITIAL_SIZE, mMemLog->Buffer);
-		mMemLog->BufferSize += MEM_LOG_INITIAL_SIZE;
-	}
+        return;
+      }
+      mMemLog->Buffer = ReallocatePool(mMemLog->BufferSize, mMemLog->BufferSize + MEM_LOG_INITIAL_SIZE, mMemLog->Buffer);
+      mMemLog->BufferSize += MEM_LOG_INITIAL_SIZE;
+    }
   
   //
   // Add log to buffer
   //
-	DataWritten = AsciiVSPrint(
+  LastMessage = mMemLog->Cursor;
+  DataWritten = AsciiVSPrint(
                              mMemLog->Cursor,
                              mMemLog->BufferSize - (mMemLog->Cursor - mMemLog->Buffer),
                              Format,
                              Marker);
-	mMemLog->Cursor += DataWritten;
+  mMemLog->Cursor += DataWritten;
   
+  //
+  // Pass this last message to callback if defined
+  //
+  if (mMemLog->Callback != NULL) {
+    mMemLog->Callback(DebugMode, LastMessage);
+  }
 }
 
 /**
- Prints a log to message memory buffer.
+  Prints a log to message memory buffer.
  
- If Format is NULL, then does nothing.
+  If Format is NULL, then does nothing.
  
- @param  Format      The format string for the debug message to print.
- @param  ...         The variable argument list whose contents are accessed
- based on the format string specified by Format.
+  @param  DebugMode   DebugMode will be passed to Callback function if it is set.
+  @param  Format      The format string for the debug message to print.
+  @param  ...         The variable argument list whose contents are accessed
+  based on the format string specified by Format.
  
  **/
 VOID
 EFIAPI
 MemLog (
+  IN  CONST INTN    DebugMode,
   IN  CONST CHAR8   *Format,
   ...
   )
@@ -165,9 +179,9 @@ MemLog (
     return;
   }
   
-	VA_START (Marker, Format);
-	MemLogVA (Format, Marker);
-	VA_END (Marker);
+  VA_START (Marker, Format);
+  MemLogVA (DebugMode, Format, Marker);
+  VA_END (Marker);
 }
 
 
@@ -180,7 +194,7 @@ GetMemLogBuffer (
   VOID
   )
 {
-	EFI_STATUS        Status;
+  EFI_STATUS        Status;
   
   if (mMemLog == NULL) {
     Status = MemLogInit ();
@@ -202,7 +216,7 @@ GetMemLogLen (
   VOID
   )
 {
-	EFI_STATUS        Status;
+  EFI_STATUS        Status;
   
   if (mMemLog == NULL) {
     Status = MemLogInit ();
@@ -212,4 +226,24 @@ GetMemLogLen (
   }
   
   return mMemLog != NULL ? mMemLog->Cursor - mMemLog->Buffer : 0;
+}
+
+/**
+  Sets callback that will be called when message is added to mem log.
+ **/
+VOID
+EFIAPI
+SetMemLogCallback (
+  MEM_LOG_CALLBACK  Callback
+  )
+{
+  EFI_STATUS        Status;
+  
+  if (mMemLog == NULL) {
+    Status = MemLogInit ();
+    if (EFI_ERROR (Status)) {
+      return;
+    }
+  }
+  mMemLog->Callback = Callback;
 }
