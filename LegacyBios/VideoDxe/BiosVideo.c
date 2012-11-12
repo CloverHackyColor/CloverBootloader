@@ -30,9 +30,9 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #define DBG(...)
 #elif DEBUG_CSM == 1
 //#define DBG(...) BootLog(__VA_ARGS__)
-#define DBG(...) MemLog(0, __VA_ARGS__)
+#define DBG(...) MemLog(1, __VA_ARGS__)
 #else
-#define DBG(...) AsciiPrint(__VA_ARGS__)
+#define DBG(...) MemLog(0, __VA_ARGS__)
 #endif
 
 //CHAR8 *msgCursor;
@@ -454,7 +454,7 @@ BiosVideoDriverBindingStart (
              ParentDevicePath,
              RemainingDevicePath
              );
-
+  DBG("Child installed\n");
 Done:
 //    Status = EFI_UNSUPPORTED; //temporary - remove it
   if ((EFI_ERROR (Status)) && (Status != EFI_ALREADY_STARTED)) {
@@ -480,6 +480,7 @@ Done:
                         mOriginalPciAttributes,
                       NULL
                       );
+        DBG("attributes Restored\n");
       }
     }
     //
@@ -630,6 +631,7 @@ BiosVideoChildHandleInstall (
                           &Pci
                           );
   if (EFI_ERROR (Status)) {
+    DBG("ParentPciIo->Pci.Read=%r\n", Status);
     goto Done;
   }
   BiosVideoPrivate->VgaCompatible = FALSE;
@@ -751,7 +753,7 @@ BiosVideoChildHandleInstall (
                     NULL
                     );
     DBG("Creat child handle %r\n", Status);
-    Status = EFI_UNSUPPORTED;
+ //   Status = EFI_UNSUPPORTED;
 
     if (EFI_ERROR (Status)) {
       goto Done;
@@ -874,6 +876,7 @@ BiosVideoChildHandleInstall (
     //
     // Install VGA Mini Port Protocol
     //
+    DBG("Install VGA Mini Port\n");
     Status = gBS->InstallMultipleProtocolInterfaces (
                     &ParentHandle,
                     &gEfiVgaMiniPortProtocolGuid,

@@ -249,7 +249,7 @@ BiosVideoDriverBindingSupported (
 
   if (!BiosVideoIsVga (PciIo)) {
     Status = EFI_UNSUPPORTED;
-    DBG("not BiosVideoIsVga\n");
+ //   DBG("not BiosVideoIsVga\n");
   }
 
   gBS->CloseProtocol (
@@ -1144,10 +1144,12 @@ BiosVideoIsVga (
       //
       VgaCompatible = TRUE;
     }
-  } else {
-    DBG("Pci.Hdr.Command=%x - not enabled\n", Pci.Hdr.Command);
   }
-  DBG("device [%02x%02x%02x]\n", Pci.Hdr.ClassCode[2], Pci.Hdr.ClassCode[1], Pci.Hdr.ClassCode[0]);
+  else  if (Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) {
+       DBG("VGA Pci.Hdr.Command=%x - not enabled\n", Pci.Hdr.Command);
+  }
+//  DBG("device [%02x%02x%02x]\n", Pci.Hdr.ClassCode[2], Pci.Hdr.ClassCode[1], Pci.Hdr.ClassCode[0]);
+   
   return VgaCompatible;
 }
 

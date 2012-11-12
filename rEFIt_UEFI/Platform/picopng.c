@@ -696,7 +696,7 @@ INT32 Zlib_decompress(VECTOR_8 *out, const VECTOR_8 *in) // returns error value
 	CM = in->data[0] & 15;
 	CINFO = (in->data[0] >> 4) & 15;
 	FDICT = (in->data[1] >> 5) & 1;
-	DBG("compression method %d and CINFO=%d FDICT=%d\n", CM, CINFO, FDICT);
+//	DBG("compression method %d and CINFO=%d FDICT=%d\n", CM, CINFO, FDICT);
 	if (CM != 8 || CINFO > 7){
 		// error: only compression method 8: inflate with sliding window of 32k is supported by
 		// the PNG spec
