@@ -142,6 +142,7 @@ Headers collection for procedures
 #define CPU_MODEL_JAKETOWN      0x2D  /* Sandy Bridge Xeon LGA2011 */
 #define CPU_MODEL_NEHALEM_EX    0x2E
 #define CPU_MODEL_WESTMERE_EX   0x2F
+#define CPU_MODEL_ATOM_2000     0x36
 #define CPU_MODEL_IVY_BRIDGE    0x3A
 
 #define CPU_VENDOR_INTEL  0x756E6547
@@ -266,6 +267,7 @@ Headers collection for procedures
 #define MSR_FSB_FREQ                0x00CD	 /* limited use - not for i7						*/
 #define	MSR_PLATFORM_INFO           0x00CE   /* limited use - MinRatio for i7 but Max for Yonah	*/
                                              /* turbo for penryn */
+#define MSR_PKG_CST_CONFIG_CONTROL  0x00E2   /* sandy and ivy */
 #define MSR_IA32_EXT_CONFIG         0x00EE	 /* limited use - not for i7						*/
 #define MSR_FLEX_RATIO              0x0194	 /* limited use - not for Penryn or older			*/
                                              //see no value on most CPUs
