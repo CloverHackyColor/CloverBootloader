@@ -499,8 +499,7 @@ BiosVideoChildHandleInstall (
   IN  EFI_PCI_IO_PROTOCOL          *ParentPciIo,
   IN  EFI_LEGACY_BIOS_PROTOCOL     *ParentLegacyBios,
   IN  EFI_DEVICE_PATH_PROTOCOL     *ParentDevicePath,
-  IN  EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath,
-  IN  UINT64                       OriginalPciAttributes
+  IN  EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath
   );
 
 /**
@@ -530,5 +529,19 @@ VOID
 BiosVideoDeviceReleaseResource (
   BIOS_VIDEO_DEV  *BiosVideoPrivate
   );
+
+/**
+ Check if all video child handles have been uninstalled.
+ 
+ @param  Controller             Video controller handle
+ 
+ @return TRUE                   Child handles exist.
+ @return FALSE                  All video child handles have been uninstalled.
+ 
+ **/
+BOOLEAN
+HasChildHandle (
+                IN EFI_HANDLE  Controller
+                );
 
 #endif

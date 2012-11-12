@@ -1,7 +1,7 @@
 /** @file
   ConsoleOut Routines that speak VGA? using Csm module 
 
-Copyright (c) 2007 - 2011, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2007 - 2012, Intel Corporation. All rights reserved.<BR>
 
 This program and the accompanying materials
 are licensed and made available under the terms and conditions
@@ -58,6 +58,12 @@ UINT8                          mVgaLeftMaskTable[]   = { 0xff, 0x7f, 0x3f, 0x1f,
 UINT8                          mVgaRightMaskTable[]  = { 0x80, 0xc0, 0xe0, 0xf0, 0xf8, 0xfc, 0xfe, 0xff };
 
 UINT8                          mVgaBitMaskTable[]    = { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 };
+
+//
+// Save controller attributes during first start
+//
+UINT64                         mOriginalPciAttributes;
+BOOLEAN                        mPciAttributesSaved = FALSE;
 
 EFI_GRAPHICS_OUTPUT_BLT_PIXEL  mVgaColorToGraphicsOutputColor[] = {
   { 0x00, 0x00, 0x00, 0x00 },
@@ -198,9 +204,8 @@ BiosVideoDriverBindingSupported (
   }
 
   Status = EFI_UNSUPPORTED;
-  if ((Pci.Hdr.ClassCode[2] == 0x03 && Pci.Hdr.ClassCode[1] == 0x00)||
-       (Pci.Hdr.ClassCode[2] == 0x00 && Pci.Hdr.ClassCode[1] == 0x01)) {
-    DBG("found VGA device\n");
+  if (Pci.Hdr.ClassCode[2] == 0x03 || (Pci.Hdr.ClassCode[2] == 0x00 && Pci.Hdr.ClassCode[1] == 0x01)) {
+
     Status = EFI_SUCCESS;
     //
     // If this is a graphics controller,
@@ -264,18 +269,9 @@ BiosVideoDriverBindingStart (
   EFI_DEVICE_PATH_PROTOCOL  *ParentDevicePath;
   EFI_PCI_IO_PROTOCOL       *PciIo;
   EFI_LEGACY_BIOS_PROTOCOL  *LegacyBios;
- // UINTN                     Flags;
-  UINT64                    OriginalPciAttributes;
+//  UINTN                     Flags;
   UINT64                    Supports;
-  BOOLEAN                   PciAttributesSaved;
-/*
-    Msg = NULL;
-    Status = gBS->LocateProtocol(&gMsgLogProtocolGuid, NULL, (VOID **) &Msg);
-    if (!EFI_ERROR(Status) && (Msg != NULL)) {
-        msgCursor = Msg->Cursor;
-        DBG("BiosVideoDriverBindingStart\n");
-    }
- */
+
   DBG("CsmVideoDriverBindingStart\n");
 
   //
@@ -323,21 +319,22 @@ BiosVideoDriverBindingStart (
     return Status;
   }
 
-  PciAttributesSaved = FALSE;
   //
   // Save original PCI attributes
   //
+  if (!mPciAttributesSaved) {
   Status = PciIo->Attributes (
                     PciIo,
                     EfiPciIoAttributeOperationGet,
                     0,
-                    &OriginalPciAttributes
+                      &mOriginalPciAttributes
                     );
   DBG("Save original PCI attributes status=%r\n", Status);
   if (EFI_ERROR (Status)) {
     goto Done;
   }
-  PciAttributesSaved = TRUE;
+    mPciAttributesSaved = TRUE;
+  }
 
   //
   // Get supported PCI attributes
@@ -356,8 +353,8 @@ BiosVideoDriverBindingStart (
 
   Supports &= (EFI_PCI_IO_ATTRIBUTE_VGA_IO | EFI_PCI_IO_ATTRIBUTE_VGA_IO_16);
   if (Supports == 0 || Supports == (EFI_PCI_IO_ATTRIBUTE_VGA_IO | EFI_PCI_IO_ATTRIBUTE_VGA_IO_16)) {
-//    Status = EFI_UNSUPPORTED;
-//    goto Done;
+    Status = EFI_UNSUPPORTED;
+    goto Done;
   }  
 
 /*  REPORT_STATUS_CODE_WITH_DEVICE_PATH (
@@ -368,7 +365,7 @@ BiosVideoDriverBindingStart (
   //
   // Enable the device and make sure VGA cycles are being forwarded to this VGA device
   //
-/*  Status = PciIo->Attributes (
+  Status = PciIo->Attributes (
              PciIo,
              EfiPciIoAttributeOperationEnable,
              EFI_PCI_DEVICE_ENABLE | EFI_PCI_IO_ATTRIBUTE_VGA_MEMORY | Supports,
@@ -383,7 +380,7 @@ BiosVideoDriverBindingStart (
       ParentDevicePath
       ); 
     goto Done;
-  } */
+  }
   //
   // Check to see if there is a legacy option ROM image associated with this PCI device
   //
@@ -449,8 +446,7 @@ BiosVideoDriverBindingStart (
              PciIo,
              LegacyBios,
              ParentDevicePath,
-             RemainingDevicePath,
-             OriginalPciAttributes
+             RemainingDevicePath
              );
 
 Done:
@@ -467,18 +463,19 @@ Done:
       EFI_PERIPHERAL_LOCAL_CONSOLE | EFI_P_EC_NOT_DETECTED,
       ParentDevicePath
       ); */
-/*    if (PciAttributesSaved) {
+    if (!HasChildHandle (Controller)) {
+      if (mPciAttributesSaved) {
       //
       // Restore original PCI attributes
       //
       PciIo->Attributes (
                       PciIo,
                       EfiPciIoAttributeOperationSet,
-                      OriginalPciAttributes,
+                        mOriginalPciAttributes,
                       NULL
                       );
-      DBG("Restored original PCI attributes\n");
-    }*/
+      }
+    }
     //
     // Release PCI I/O Protocols on the controller handle.
     //
@@ -518,6 +515,9 @@ BiosVideoDriverBindingStop (
   EFI_STATUS                   Status;
   BOOLEAN                      AllChildrenStopped;
   UINTN                        Index;
+  EFI_PCI_IO_PROTOCOL          *PciIo;
+
+  AllChildrenStopped = TRUE;
 
   if (NumberOfChildren == 0) {
     //
@@ -533,7 +533,6 @@ BiosVideoDriverBindingStop (
     return EFI_SUCCESS;
   }
 
-  AllChildrenStopped = TRUE;
   for (Index = 0; Index < NumberOfChildren; Index++) {
     Status = BiosVideoChildHandleUninstall (This, Controller, ChildHandleBuffer[Index]);
 
@@ -545,6 +544,29 @@ BiosVideoDriverBindingStop (
   if (!AllChildrenStopped) {
     return EFI_DEVICE_ERROR;
   }
+
+  if (!HasChildHandle (Controller)) {
+    if (mPciAttributesSaved) {
+      Status = gBS->HandleProtocol (
+                      Controller,
+                      &gEfiPciIoProtocolGuid,
+                      (VOID **) &PciIo
+                      );
+      ASSERT_EFI_ERROR (Status);
+      
+      //
+      // Restore original PCI attributes
+      //
+      Status = PciIo->Attributes (
+                        PciIo,
+                        EfiPciIoAttributeOperationSet,
+                        mOriginalPciAttributes,
+                        NULL
+                        );
+      ASSERT_EFI_ERROR (Status);
+    }
+  }
+
 
   return EFI_SUCCESS;
 }
@@ -559,7 +581,6 @@ BiosVideoDriverBindingStop (
   @param  ParentLegacyBios       Parent LegacyBios interface
   @param  ParentDevicePath       Parent Device Path
   @param  RemainingDevicePath    Remaining Device Path
-  @param  OriginalPciAttributes  Original PCI Attributes
 
   @retval EFI_SUCCESS            If a child handle was added
   @retval other                  A child handle was not added
@@ -572,8 +593,7 @@ BiosVideoChildHandleInstall (
   IN  EFI_PCI_IO_PROTOCOL          *ParentPciIo,
   IN  EFI_LEGACY_BIOS_PROTOCOL     *ParentLegacyBios,
   IN  EFI_DEVICE_PATH_PROTOCOL     *ParentDevicePath,
-  IN  EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath,
-  IN  UINT64                       OriginalPciAttributes
+  IN  EFI_DEVICE_PATH_PROTOCOL     *RemainingDevicePath
   )
 {
   EFI_STATUS               Status;
@@ -585,15 +605,14 @@ BiosVideoChildHandleInstall (
   //
   // Allocate the private device structure for video device
   //
-  Status = gBS->AllocatePool (
-                  EfiBootServicesData,
-                  sizeof (BIOS_VIDEO_DEV),
-                  (VOID**) &BiosVideoPrivate
+  BiosVideoPrivate = (BIOS_VIDEO_DEV *) AllocateZeroPool (
+																					sizeof (BIOS_VIDEO_DEV)
                   );
-  if (EFI_ERROR (Status)) {
+  if (NULL == BiosVideoPrivate) {
+		Status = EFI_OUT_OF_RESOURCES;
     goto Done;
   }
-  ZeroMem(BiosVideoPrivate, sizeof (BIOS_VIDEO_DEV));
+
   //
   // See if this is a VGA compatible controller or not
   //
@@ -753,7 +772,7 @@ BiosVideoChildHandleInstall (
   // When check for VBE, PCI I/O protocol is needed, so use parent's protocol interface temporally
   //
   BiosVideoPrivate->PciIo                 = ParentPciIo;
-  BiosVideoPrivate->OriginalPciAttributes = OriginalPciAttributes;
+
   //
   // Check for VESA BIOS Extensions for modes that are compatible with Graphics Output
   //
@@ -941,17 +960,6 @@ BiosVideoChildHandleUninstall (
   Regs.H.AL = 0x14;
   Regs.H.BL = 0;
   BiosVideoPrivate->LegacyBios->Int86 (BiosVideoPrivate->LegacyBios, 0x10, &Regs);
-
-  //
-  // Restore original PCI attributes
-  //
-  Status = BiosVideoPrivate->PciIo->Attributes (
-                    BiosVideoPrivate->PciIo,
-                    EfiPciIoAttributeOperationSet,
-                    BiosVideoPrivate->OriginalPciAttributes,
-                    NULL
-                    );
-  ASSERT_EFI_ERROR (Status);
 
   //
   // Close PCI I/O protocol that opened by child handle
@@ -1345,6 +1353,42 @@ ParseEdidData (
   return TRUE;
 }
 
+/**
+  Check if all video child handles have been uninstalled.
+
+  @param  Controller             Video controller handle
+
+  @return TRUE                   Child handles exist.
+  @return FALSE                  All video child handles have been uninstalled.
+
+**/
+BOOLEAN
+HasChildHandle (
+  IN EFI_HANDLE  Controller
+  )
+{
+  UINTN                                Index;
+  EFI_OPEN_PROTOCOL_INFORMATION_ENTRY  *OpenInfoBuffer;
+  UINTN                                EntryCount;
+  BOOLEAN                              HasChild;
+  EFI_STATUS                           Status;
+
+  EntryCount = 0;
+  HasChild   = FALSE;
+  Status = gBS->OpenProtocolInformation (
+                  Controller,
+                  &gEfiPciIoProtocolGuid,
+                  &OpenInfoBuffer,
+                  &EntryCount
+                  );
+  for (Index = 0; Index < EntryCount; Index++) {
+    if ((OpenInfoBuffer[Index].Attributes & EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER) != 0) {
+      HasChild = TRUE;
+    }
+  }
+  
+  return HasChild;
+}
 
 /**
   Check for VBE device.
@@ -1362,6 +1406,7 @@ BiosVideoCheckForVbe (
   EFI_STATUS                             Status;
   EFI_IA32_REGISTER_SET                  Regs;
   UINT16                                 *ModeNumberPtr;
+  UINT16                                 VbeModeNumber;
   BOOLEAN                                ModeFound;
   BOOLEAN                                EdidFound;
   BIOS_VIDEO_MODE_DATA                   *ModeBuffer;
@@ -1611,11 +1656,16 @@ BiosVideoCheckForVbe (
   PreferMode = (UINTN)-1;
   ModeNumber = 0;
 
-  for (; *ModeNumberPtr != VESA_BIOS_EXTENSIONS_END_OF_MODE_LIST; ModeNumberPtr++) {
+  //
+  // ModeNumberPtr may be not 16-byte aligned, so ReadUnaligned16 is used to access the buffer pointed by ModeNumberPtr.
+  //
+  for (VbeModeNumber = ReadUnaligned16 (ModeNumberPtr);
+       VbeModeNumber != VESA_BIOS_EXTENSIONS_END_OF_MODE_LIST;
+       VbeModeNumber = ReadUnaligned16 (++ModeNumberPtr)) {
     //
     // Make sure this is a mode number defined by the VESA VBE specification.  If it isn'tm then skip this mode number.
     //
-    if ((*ModeNumberPtr & VESA_BIOS_EXTENSIONS_MODE_NUMBER_VESA) == 0) {
+    if ((VbeModeNumber & VESA_BIOS_EXTENSIONS_MODE_NUMBER_VESA) == 0) {
       continue;
     }
     //
@@ -1634,7 +1684,7 @@ BiosVideoCheckForVbe (
     //
     gBS->SetMem (&Regs, sizeof (Regs), 0);
     Regs.X.AX = VESA_BIOS_EXTENSIONS_RETURN_MODE_INFORMATION;
-    Regs.X.CX = *ModeNumberPtr;
+    Regs.X.CX = VbeModeNumber;
     gBS->SetMem (BiosVideoPrivate->VbeModeInformationBlock, sizeof (VESA_BIOS_EXTENSIONS_MODE_INFORMATION_BLOCK), 0);
     Regs.X.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeModeInformationBlock);
     Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeModeInformationBlock);
@@ -1776,7 +1826,7 @@ BiosVideoCheckForVbe (
     }
 
     CurrentModeData = &ModeBuffer[ModeNumber - 1];
-    CurrentModeData->VbeModeNumber = *ModeNumberPtr;
+    CurrentModeData->VbeModeNumber = VbeModeNumber;
     if (BiosVideoPrivate->VbeInformationBlock->VESAVersion >= VESA_BIOS_EXTENSIONS_VERSION_3_0) {
       CurrentModeData->BytesPerScanLine = BiosVideoPrivate->VbeModeInformationBlock->LinBytesPerScanLine;
       CurrentModeData->Red.Position = BiosVideoPrivate->VbeModeInformationBlock->LinRedFieldPosition;
