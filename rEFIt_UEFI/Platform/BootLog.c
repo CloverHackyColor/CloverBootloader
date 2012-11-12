@@ -35,10 +35,12 @@ EFI_FILE_PROTOCOL* GetSystemLogFile(BOOLEAN FirstTimeSave)
   // Open log file from current root
   Status = RootDir->Open(RootDir, &LogFile, SYSTEM_LOG,
                          EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
+  /*
   if (FirstTimeSave && Status == EFI_SUCCESS) {
     LogFile->Delete(LogFile);
     Status = EFI_NOT_FOUND;
   }
+   */
   // If the log file is not found try to create it
   if (Status == EFI_NOT_FOUND) {
     Status = RootDir->Open(RootDir, &LogFile, SYSTEM_LOG,
@@ -53,10 +55,12 @@ EFI_FILE_PROTOCOL* GetSystemLogFile(BOOLEAN FirstTimeSave)
     if (!EFI_ERROR(Status)) {
       Status = RootDir->Open(RootDir, &LogFile, SYSTEM_LOG,
                              EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
+      /*
       if (FirstTimeSave && Status == EFI_SUCCESS) {
         LogFile->Delete(LogFile);
         Status = EFI_NOT_FOUND;
       }
+       */
       // If the log file is not found try to create it
       if (Status == EFI_NOT_FOUND) {
         Status = RootDir->Open(RootDir, &LogFile, SYSTEM_LOG,
