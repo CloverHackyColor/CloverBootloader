@@ -148,6 +148,22 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"R - Теплый перезапуск");
         AddMenuInfoLine(&HelpMenu, L"U - Выключить");
         break;
+      case ukrainian:
+        AddMenuInfoLine(&HelpMenu, L"ESC - Вийти з меню, оновити головне меню");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Ця довідка");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Зберегти preboot.log (т≥льки FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Зберегти OEM DSDT в EFI/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Зберегти патчений DSDT в EFI/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Зберегти VideoBios в EFI/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Зберегти знімок екрану в EFI/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Відкрити обраний диск (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Пробіл - докладніше про обраний пункт меню");
+        AddMenuInfoLine(&HelpMenu, L"Клавіші 1-9 -  клавіші пунктів меню");
+        AddMenuInfoLine(&HelpMenu, L"A - Про систему");
+        AddMenuInfoLine(&HelpMenu, L"O - Опції меню");
+        AddMenuInfoLine(&HelpMenu, L"R - Перезавантаження");
+        AddMenuInfoLine(&HelpMenu, L"U - Відключити ПК");
+        break;
       case spanish:
         AddMenuInfoLine(&HelpMenu, L"ESC - Salir de submenu o actualizar el menu principal");
         AddMenuInfoLine(&HelpMenu, L"F1  - Esta Ayuda");

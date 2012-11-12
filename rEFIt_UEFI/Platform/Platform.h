@@ -803,6 +803,7 @@ typedef enum {
   spanish,  //es
   polish,   //pl
   portuguese, //pt
+  ukrainian,
   chinese   //cn
   //something else? add, please
 } LANGUAGES;

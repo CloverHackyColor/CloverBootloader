@@ -269,7 +269,7 @@ BiosVideoDriverBindingStart (
   EFI_DEVICE_PATH_PROTOCOL  *ParentDevicePath;
   EFI_PCI_IO_PROTOCOL       *PciIo;
   EFI_LEGACY_BIOS_PROTOCOL  *LegacyBios;
-//  UINTN                     Flags;
+  UINTN                     Flags;
   UINT64                    Supports;
 
   DBG("CsmVideoDriverBindingStart\n");
@@ -350,11 +350,13 @@ BiosVideoDriverBindingStart (
   if (EFI_ERROR (Status)) {
     goto Done;
   }
-
+  // Check VGA and VGA16, they can not be set at the same time
   Supports &= (EFI_PCI_IO_ATTRIBUTE_VGA_IO | EFI_PCI_IO_ATTRIBUTE_VGA_IO_16);
   if (Supports == 0 || Supports == (EFI_PCI_IO_ATTRIBUTE_VGA_IO | EFI_PCI_IO_ATTRIBUTE_VGA_IO_16)) {
-    Status = EFI_UNSUPPORTED;
-    goto Done;
+//    Status = EFI_UNSUPPORTED;
+    DBG("mixed support=%x\n", Supports);
+    Supports = EFI_PCI_IO_ATTRIBUTE_VGA_IO; //we choose this as in CloverEFI
+//    goto Done;
   }  
 
 /*  REPORT_STATUS_CODE_WITH_DEVICE_PATH (
@@ -374,17 +376,17 @@ BiosVideoDriverBindingStart (
   
   if (EFI_ERROR (Status)) { 
     DBG("Enable the device status=%r\n", Status);
-    REPORT_STATUS_CODE_WITH_DEVICE_PATH (
+/*    REPORT_STATUS_CODE_WITH_DEVICE_PATH (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_PERIPHERAL_LOCAL_CONSOLE | EFI_P_EC_RESOURCE_CONFLICT,
       ParentDevicePath
-      ); 
+      ); */
     goto Done;
   }
   //
   // Check to see if there is a legacy option ROM image associated with this PCI device
   //
-/*  Status = LegacyBios->CheckPciRom (
+  Status = LegacyBios->CheckPciRom (
                          LegacyBios,
                          Controller,
                          NULL,
@@ -392,10 +394,10 @@ BiosVideoDriverBindingStart (
                          &Flags
                          );
   
-  if (EFI_ERROR (Status)) {
     DBG("Check PCI ROM status=%r\n", Status);
+  if (EFI_ERROR (Status)) {
     goto Done;
-  } */
+  } 
   //
   // Post the legacy option ROM if it is available.
   //
@@ -404,7 +406,7 @@ BiosVideoDriverBindingStart (
     EFI_P_PC_RESET,
     ParentDevicePath
     ); */
-/*  Status = LegacyBios->InstallPciRom (
+  Status = LegacyBios->InstallPciRom (
                          LegacyBios,
                          Controller,
                          NULL,
@@ -414,27 +416,31 @@ BiosVideoDriverBindingStart (
                          NULL,
                          NULL
                          );
+    DBG("InstallPciRom status=%r\n", Status);
   
   if (EFI_ERROR (Status)) {
-    DBG("InstallPciRom status=%r\n", Status);
-      REPORT_STATUS_CODE_WITH_DEVICE_PATH (
+/*      REPORT_STATUS_CODE_WITH_DEVICE_PATH (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_PERIPHERAL_LOCAL_CONSOLE | EFI_P_EC_CONTROLLER_ERROR,
       ParentDevicePath
-      ); 
+      ); */
     goto Done;
-  } */
+  } 
 
   if (RemainingDevicePath != NULL) {
     if (IsDevicePathEnd (RemainingDevicePath) && 
         (FeaturePcdGet (PcdBiosVideoCheckVbeEnable) || FeaturePcdGet (PcdBiosVideoCheckVgaEnable))) {
       //
       // If RemainingDevicePath is the End of Device Path Node,
-      // don't create any child device and return EFI_SUCESS
+      // don't create any child device and return EFI_SUCCESS
       DBG("RemainingDevicePath is the End of Device Path Node\n");
       Status = EFI_SUCCESS;
       goto Done;
     }
+  }
+//  Status = EFI_UNSUPPORTED; //temporary - remove it
+  if (EFI_ERROR (Status)) {
+    goto Done;
   }
 
   //
