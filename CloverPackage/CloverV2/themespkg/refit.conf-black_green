@@ -4,6 +4,7 @@
 # Customized for black_green theme by blackosx
 #
 
+# ==========================================================================
 # Timeout in seconds for the main menu screen.
 # Commenting the timeout option or setting it to -1
 # disables automatic booting (i.e., no timeout).
@@ -33,15 +34,15 @@ timeout 30
 #  hwtest      - remove the submenu option to run Apple Hardware Test
 #  all         - all of the above, except for 'internal'
 #
-#disable external optical shell singleuser
-#disable all
-#disable hwtest
+#disable tools optical external hwtest
+disable hwtest
 
 # Note: The 'disableopticalboot' and 'disableexternalboot' options from
 # Charles Ahn's patch are also supported for compatibility. They are
 # equivalent to 'disable optical' and 'disable external', respectively.
 # --------------------------------------------------------------------------
 
+# ==========================================================================
 # THEME SET
 #theme metal
 #theme buttons

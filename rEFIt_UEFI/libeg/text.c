@@ -206,10 +206,10 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
                  GlobalConfig.CharWidth, FontHeight,
                  BufferLineOffset, FontLineOffset);
     if (i == Cursor) {
-      egRawCompose(BufferPtr, FontPixelData + 0x5F * FontWidth + Shift,
+      c = (GlobalConfig.Font == FONT_LOAD)?0x5F:0x3F;
+      egRawCompose(BufferPtr, FontPixelData + c * FontWidth + Shift,
                    GlobalConfig.CharWidth, FontHeight,
-                   BufferLineOffset, FontLineOffset);
-      
+                   BufferLineOffset, FontLineOffset);      
     }
     BufferPtr += GlobalConfig.CharWidth;
   }

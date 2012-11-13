@@ -1,0 +1,53 @@
+# mrenglesTheme by Mrengles	Version 1.3	Nov 11th, 2012
+# --------------------------------------------------------------------------
+#
+# --------------------------------------------------------------------------
+# Configuration file for the rEFIt boot menu
+# Customized for mrenglesTheme by Mrengles.
+# --------------------------------------------------------------------------
+# Timeout in seconds for the main menu screen.
+# Commenting the timeout option or setting it to -1
+# disables automatic booting (i.e., no timeout).
+# Setting it to 0 enables direct boot to default volume.
+#
+# timeout 5   - Enter menu and wait for 5 sec to boot default Volume
+# timeout 0   - Boot into default volume without GUI
+# timeout -1  - Enter GUI without default booting 
+# --------------------------------------------------------------------------
+timeout 15
+# --------------------------------------------------------------------------
+theme mrenglesTheme
+font load
+font_file_name mrenglesTheme.png
+char_width 10
+# --------------------------------------------------------------------------
+# You can change the rEFIT main menu logo here.
+#
+# Clover_Logo.png
+# No_Logo.png
+# --------------------------------------------------------------------------
+banner Clover_Logo.png
+# --------------------------------------------------------------------------
+background Background.png tile
+selection_small Selection_64px.png
+selection_big Selection_144px.png
+selection_color 0x0a0a0a99
+hidebadges all
+hideui badges
+quiet
+
+# ==========================================================================
+# Enable the use of the log file (/efi/misc/system.log)
+#systemlog
+# --------------------------------------------------------------------------
+
+# --------------------------------------------------------------------------
+# List legacy options first. When enabled, legacy BIOS based boot options
+# (e.g. Windows, Linux via LILO or GRUB) will be listed first. This is
+# intended as a quick fix to change the default boot choice until full
+# configurability arrives.
+# --------------------------------------------------------------------------
+# legacyfirst
+# nolegacy
+# --------------------------------------------------------------------------
+# EOF

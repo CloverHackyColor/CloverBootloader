@@ -35,8 +35,6 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #define DBG(...) MemLog(0, __VA_ARGS__)
 #endif
 
-//CHAR8 *msgCursor;
-//MESSAGE_LOG_PROTOCOL *Msg;
 
 //
 // EFI Driver Binding Protocol Instance
@@ -245,7 +243,6 @@ Done:
   return Status;
 }
 
-
 /**
   Install Graphics Output Protocol onto VGA device handles.
 
@@ -285,9 +282,10 @@ BiosVideoDriverBindingStart (
   // See if the Legacy BIOS Protocol is available
   //
   Status = gBS->LocateProtocol (&gEfiLegacyBiosProtocolGuid, NULL, (VOID **) &LegacyBios);
-    DBG("Legacy BIOS Protocol  status=%r\n", Status);
+
   if (EFI_ERROR (Status)) {
-    return Status;
+     DBG("Legacy BIOS Protocol  status=%r\n", Status); 
+     return Status;
   }
 
   //
@@ -298,8 +296,8 @@ BiosVideoDriverBindingStart (
                   &gEfiDevicePathProtocolGuid,
                   (VOID **) &ParentDevicePath
                   );
-    DBG("ParentDevicePath status=%r\n", Status);
   if (EFI_ERROR (Status)) {
+    DBG("ParentDevicePath status=%r\n", Status);
     return Status;
   }
 
@@ -314,8 +312,8 @@ BiosVideoDriverBindingStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  DBG("OpenProtocol PCI status=%r\n", Status);
   if (EFI_ERROR (Status) && (Status != EFI_ALREADY_STARTED)) {
+ 	DBG("OpenProtocol PCI status=%r\n", Status);
     return Status;
   }
 
@@ -329,8 +327,8 @@ BiosVideoDriverBindingStart (
                     0,
                       &mOriginalPciAttributes
                     );
-  DBG("Save original PCI attributes status=%r\n", Status);
   if (EFI_ERROR (Status)) {
+	DBG("Save original PCI attributes status=%r\n", Status);
     goto Done;
   }
     mPciAttributesSaved = TRUE;
@@ -345,9 +343,9 @@ BiosVideoDriverBindingStart (
                     0,
                     &Supports
                     );
-  DBG("PCI attribute=%x Status=%r\n", Supports, Status);
  // Status = EFI_UNSUPPORTED; //temporary - remove it
   if (EFI_ERROR (Status)) {
+	DBG("PCI attribute=%x Status=%r\n", Supports, Status);
     goto Done;
   }
   // Check VGA and VGA16, they can not be set at the same time
@@ -394,8 +392,8 @@ BiosVideoDriverBindingStart (
                          &Flags
                          );
   
-    DBG("Check PCI ROM status=%r\n", Status);
   if (EFI_ERROR (Status)) {
+    DBG("Check PCI ROM status=%r\n", Status);
     goto Done;
   } 
   //
@@ -416,9 +414,9 @@ BiosVideoDriverBindingStart (
                          NULL,
                          NULL
                          );
-    DBG("InstallPciRom status=%r\n", Status);
   
   if (EFI_ERROR (Status)) {
+    DBG("InstallPciRom status=%r\n", Status);
 /*      REPORT_STATUS_CODE_WITH_DEVICE_PATH (
       EFI_ERROR_CODE | EFI_ERROR_MINOR,
       EFI_PERIPHERAL_LOCAL_CONSOLE | EFI_P_EC_CONTROLLER_ERROR,
@@ -454,7 +452,7 @@ BiosVideoDriverBindingStart (
              ParentDevicePath,
              RemainingDevicePath
              );
-  DBG("Child installed\n");
+//  DBG("Child installed\n");
 Done:
 //    Status = EFI_UNSUPPORTED; //temporary - remove it
   if ((EFI_ERROR (Status)) && (Status != EFI_ALREADY_STARTED)) {
@@ -499,7 +497,7 @@ Done:
 
 
 /**
-  Stop.
+  Stop this driver on Controller 
 
   @param  This                   Pointer to driver binding protocol
   @param  Controller             Controller handle to connect
@@ -559,8 +557,8 @@ BiosVideoDriverBindingStop (
                       &gEfiPciIoProtocolGuid,
                       (VOID **) &PciIo
                       );
-      ASSERT_EFI_ERROR (Status);
-      
+//      ASSERT_EFI_ERROR (Status);  //Slice - I hate ASSERT
+      if (!EFI_ERROR (Status)){
       //
       // Restore original PCI attributes
       //
@@ -570,7 +568,7 @@ BiosVideoDriverBindingStop (
                         mOriginalPciAttributes,
                         NULL
                         );
-      ASSERT_EFI_ERROR (Status);
+      }
     }
   }
 
@@ -1434,6 +1432,7 @@ BiosVideoCheckForVbe (
   UINT32                                 HighestHorizontalResolution;
   UINT32                                 HighestVerticalResolution;
   UINTN                                  HighestResolutionMode;
+  BOOLEAN                                 ModeConsideredWorking;
 
   EdidFound             = TRUE;
   EdidOverrideFound     = FALSE;
@@ -1746,8 +1745,21 @@ BiosVideoCheckForVbe (
     if (BiosVideoPrivate->VbeModeInformationBlock->PhysBasePtr == 0) {
       continue;
     }
-
-	ModeFound = FALSE;
+		//
+		// dmazar: skip resolutions lower then 640x480.
+		//
+		if (BiosVideoPrivate->VbeModeInformationBlock->XResolution < 640 ||
+			BiosVideoPrivate->VbeModeInformationBlock->YResolution < 480) {
+			continue;
+		}
+		DBG("%3d %dx%d attr=%x - ok",
+			ModeNumber,
+			BiosVideoPrivate->VbeModeInformationBlock->XResolution,
+			BiosVideoPrivate->VbeModeInformationBlock->YResolution,
+			BiosVideoPrivate->VbeModeInformationBlock->ModeAttributes
+			);
+        ModeFound = TRUE;
+        ModeConsideredWorking = FALSE;
     if (EdidFound && (ValidEdidTiming.ValidNumber > 0)) {
       //
       // EDID exist, check whether this mode match with any mode in EDID
@@ -1755,10 +1767,14 @@ BiosVideoCheckForVbe (
       Timing.HorizontalResolution = BiosVideoPrivate->VbeModeInformationBlock->XResolution;
       Timing.VerticalResolution = BiosVideoPrivate->VbeModeInformationBlock->YResolution;
       if (!SearchEdidTiming (&ValidEdidTiming, &Timing)) {
-        ModeFound = FALSE;
+//				MsgLog("Timing-\n");
+				//ModeFound = FALSE;
+                DBG(", edid-");
       } else {
-		ModeFound = TRUE;
-		PreferMode = ModeNumber;
+//				MsgLog("Timing+\n");
+				//ModeFound = TRUE;
+                DBG(", edid+");
+                ModeConsideredWorking = TRUE;
 	  }
     }
 
@@ -1771,43 +1787,48 @@ BiosVideoCheckForVbe (
         BiosVideoPrivate->VbeModeInformationBlock->YResolution == 768
         ) {
       ModeFound = TRUE;
-      if (PreferMode == (UINTN)-1) {
-		PreferMode = ModeNumber; 
-	  }		
-
+            ModeConsideredWorking = TRUE;
+            DBG(", 1024x768");
     }
     if (BiosVideoPrivate->VbeModeInformationBlock->XResolution == 800 &&
         BiosVideoPrivate->VbeModeInformationBlock->YResolution == 600
         ) {
       ModeFound = TRUE;
-      if (PreferMode == (UINTN)-1) {
-		PreferMode = ModeNumber; 
-	  }		
+            ModeConsideredWorking = TRUE;
+            DBG(", 800x600");
     }
     if (BiosVideoPrivate->VbeModeInformationBlock->XResolution == 640 &&
         BiosVideoPrivate->VbeModeInformationBlock->YResolution == 480
         ) {
       ModeFound = TRUE;
-      if (PreferMode == (UINTN)-1) {
-		PreferMode = ModeNumber; 
-	  }		
+            ModeConsideredWorking = TRUE;
+            DBG(", 640x480");
     }
-
-    if ((!EdidFound) && (!ModeFound)) {
+		if ((!ModeFound)) {
       //
       // When no EDID exist, only select three possible resolutions, i.e. 1024x768, 800x600, 640x480
       //
+            DBG(", not found???\n");
       continue;
     }
 
     //
     // Record the highest resolution mode to set later
     //
-    if ((BiosVideoPrivate->VbeModeInformationBlock->XResolution >= HighestHorizontalResolution) &&
-        (BiosVideoPrivate->VbeModeInformationBlock->YResolution >= HighestVerticalResolution)) {
+        if (ModeConsideredWorking) {
+            DBG(", working");
+        }
+		if (ModeConsideredWorking &&
+            (BiosVideoPrivate->VbeModeInformationBlock->XResolution >= HighestHorizontalResolution) &&
+			(BiosVideoPrivate->VbeModeInformationBlock->YResolution >= HighestVerticalResolution))
+        {
       HighestHorizontalResolution = BiosVideoPrivate->VbeModeInformationBlock->XResolution;
       HighestVerticalResolution = BiosVideoPrivate->VbeModeInformationBlock->YResolution;
-      HighestResolutionMode = ModeNumber;
+			HighestResolutionMode = (UINT16)ModeNumber;
+            DBG(", highest");
+//			MsgLog("best mode: %d\n", ModeNumber);
+			PreferMode = HighestResolutionMode;
+			DBG(", pref=%d", PreferMode);
     }
     //
     // Add mode to the list of available modes
@@ -1881,6 +1902,7 @@ BiosVideoCheckForVbe (
     CurrentModeData->BitsPerPixel  = BiosVideoPrivate->VbeModeInformationBlock->BitsPerPixel;
 
     BiosVideoPrivate->ModeData = ModeBuffer;
+        DBG("\n");
   }
   //
   // Check to see if we found any modes that are compatible with GRAPHICS OUTPUT
@@ -1913,7 +1935,7 @@ BiosVideoCheckForVbe (
     );
     PreferMode = HighestResolutionMode;
   } */
-  PreferMode = HighestResolutionMode;
+//  PreferMode = HighestResolutionMode;
   Status = BiosVideoGraphicsOutputSetMode (&BiosVideoPrivate->GraphicsOutput, (UINT32) PreferMode);
     DBG(" - SetMode pref %d (%d) = %r\n", PreferMode, (UINT32) PreferMode, Status);
   if (EFI_ERROR (Status)) {
@@ -1931,7 +1953,7 @@ BiosVideoCheckForVbe (
       //
       // None mode is set successfully.
       //
-      goto Done;
+		    PreferMode = HighestResolutionMode;
     }
   }
 

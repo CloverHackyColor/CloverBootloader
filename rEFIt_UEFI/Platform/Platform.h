@@ -123,6 +123,7 @@ Headers collection for procedures
 #define MsgLog(...) DebugLog(DEBUG_ALL, __VA_ARGS__)
 #endif
 
+#define CPU_MODEL_PENTIUM_M     0x09
 #define CPU_MODEL_DOTHAN        0x0D
 #define CPU_MODEL_YONAH         0x0E
 #define CPU_MODEL_MEROM         0x0F  /* same as CONROE but mobile */
@@ -132,10 +133,11 @@ Headers collection for procedures
 #define CPU_MODEL_WOLFDALE      0x17  /* kind of penryn */
 #define CPU_MODEL_NEHALEM       0x1A
 #define CPU_MODEL_ATOM          0x1C
-#define CPU_MODEL_XEON_MP       0x1D  /* ever see? */
+#define CPU_MODEL_XEON_MP       0x1D  /* MP 7400 */
 #define CPU_MODEL_FIELDS        0x1E
 #define CPU_MODEL_DALES         0x1F
 #define CPU_MODEL_CLARKDALE     0x25
+#define CPU_MODEL_ATOM_SAN      0x26
 #define CPU_MODEL_LINCROFT      0x27
 #define CPU_MODEL_SANDY_BRIDGE	0x2A
 #define CPU_MODEL_WESTMERE      0x2C
@@ -144,6 +146,8 @@ Headers collection for procedures
 #define CPU_MODEL_WESTMERE_EX   0x2F
 #define CPU_MODEL_ATOM_2000     0x36
 #define CPU_MODEL_IVY_BRIDGE    0x3A
+#define CPU_MODEL_HASWELL       0x3C
+#define CPU_MODEL_IVY_BRIDGE_E5 0x3E
 
 #define CPU_VENDOR_INTEL  0x756E6547
 #define CPU_VENDOR_AMD    0x68747541
@@ -263,11 +267,14 @@ Headers collection for procedures
 /* Known MSR registers */
 #define MSR_IA32_PLATFORM_ID        0x0017	 
 #define MSR_CORE_THREAD_COUNT       0x0035	 /* limited use - not for Penryn or older	*/
+#define IA32_TSC_ADJUST             0x003B   
 #define MSR_IA32_BIOS_SIGN_ID       0x008B   /* microcode version */
 #define MSR_FSB_FREQ                0x00CD	 /* limited use - not for i7						*/
 #define	MSR_PLATFORM_INFO           0x00CE   /* limited use - MinRatio for i7 but Max for Yonah	*/
                                              /* turbo for penryn */
 #define MSR_PKG_CST_CONFIG_CONTROL  0x00E2   /* sandy and ivy */
+#define IA32_MPERF                  0x00E7   /* TSC in C0 only */
+#define IA32_APERF                  0x00E8   /* actual clocks in C0 */
 #define MSR_IA32_EXT_CONFIG         0x00EE	 /* limited use - not for i7						*/
 #define MSR_FLEX_RATIO              0x0194	 /* limited use - not for Penryn or older			*/
                                              //see no value on most CPUs
@@ -280,7 +287,6 @@ Headers collection for procedures
 #define MSR_TURBO_RATIO_LIMIT       0x01AD	 /* limited use - not for Penryn or older			*/
 
 
-//Copied from revogirl
 #define IA32_ENERGY_PERF_BIAS		0x01B0
 //MSR 000001B0                                      0000-0000-0000-0005
 //MSR 000001B1                                      0000-0000-8838-0000
@@ -289,16 +295,21 @@ Headers collection for procedures
 
 
 // Sandy Bridge & JakeTown specific 'Running Average Power Limit' MSR's.
-#define MSR_RAPL_POWER_UNIT			0x606
+#define MSR_RAPL_POWER_UNIT			0x606     /* R/O */
 //MSR 00000606                                      0000-0000-000A-1003
+#define MSR_PKGC3_IRTL          0x60A    /* RW time limit to go C3 */
+          // bit 15 = 1 -- the value valid for C-state PM     
+#define MSR_PKGC6_IRTL          0x60B    /* RW time limit to go C6 */
 //MSR 0000060B                                      0000-0000-0000-8854
+  //Valid + 010=1024ns + 0x54=84mks
+#define MSR_PKGC7_IRTL          0x60C    /* RW time limit to go C7 */
 //MSR 0000060C                                      0000-0000-0000-8854
+#define MSR_PKG_C2_RESIDENCY    0x60D   /* same as TSC but in C2 only */
 
 #define MSR_PKG_RAPL_POWER_LIMIT	0x610
 //MSR 00000610                                      0000-A580-0000-8960
 #define MSR_PKG_ENERGY_STATUS		0x611
 //MSR 00000611                                      0000-0000-3212-A857
-#define MSR_PKG_PERF_STATUS			0x613
 #define MSR_PKG_POWER_INFO			0x614
 //MSR 00000614                                      0000-0000-01E0-02F8
 // Sandy Bridge IA (Core) domain MSR's.
@@ -314,10 +325,18 @@ Headers collection for procedures
 #define MSR_PP1_POLICY          0x642
 
 // JakeTown only Memory MSR's.
+#define MSR_PKG_PERF_STATUS			0x613 
 #define MSR_DRAM_POWER_LIMIT		0x618
 #define MSR_DRAM_ENERGY_STATUS	0x619
 #define MSR_DRAM_PERF_STATUS		0x61B
 #define MSR_DRAM_POWER_INFO			0x61C
+
+//IVY_BRIDGE
+#define MSR_CONFIG_TDP_NOMINAL  0x648
+#define MSR_CONFIG_TDP_LEVEL1   0x649
+#define MSR_CONFIG_TDP_LEVEL2   0x64A
+#define MSR_CONFIG_TDP_CONTROL  0x64B  /* write once to lock */
+#define MSR_TURBO_ACTIVATION_RATIO 0x64C
 
 
 //AMD

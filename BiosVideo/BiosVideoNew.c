@@ -29,7 +29,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #elif DEBUG_BV == 1
 #define DBG(...) MemLog(1, __VA_ARGS__)
 #else
-#define DBG(...) AsciiPrint(__VA_ARGS__)
+#define DBG(...) MemLog(0, __VA_ARGS__)
 #endif
 
 
@@ -227,7 +227,7 @@ BiosVideoDriverBindingSupported (
   //
   Status = gBS->LocateProtocol (&gEfiLegacy8259ProtocolGuid, NULL, (VOID **) &LegacyBios);
   if (EFI_ERROR (Status)) {
-    DBG("no Legacy8259 %r\n", Status);
+//    DBG("no Legacy8259 %r\n", Status);
     return Status;
   }
   

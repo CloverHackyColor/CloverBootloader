@@ -380,11 +380,12 @@ typedef struct {
 */
 
 static EG_IMAGE *Banner = NULL;
+static EG_IMAGE *BigBack = NULL;
 
 
 VOID BltClearScreen(IN BOOLEAN ShowBanner)
 {
-  EG_IMAGE *BigBack = NULL;
+  
   INTN BanHeight = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_HEIGHT;
   INTN i, j, x, x1, x2, y, y1, y2;
   EG_PIXEL    *p1;
@@ -403,10 +404,13 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
   }
   
   //load Background and scale
-  if (!BackgroundImage && (GlobalConfig.BackgroundName != NULL)) {
+  //TODO - rescale image if UGAWidth changed
+  if (!BigBack && (GlobalConfig.BackgroundName != NULL)) {
     BigBack = egLoadImage(ThemeDir, GlobalConfig.BackgroundName, FALSE);
+  }
+  BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, FALSE, &MenuBackgroundPixel);
+
     if (BigBack != NULL) {
-      BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, FALSE, &MenuBackgroundPixel);
       switch (GlobalConfig.BackgroundScale) {
           //TODO - make scale
         case Scale: //not for now
@@ -451,7 +455,7 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
           break;
       }
     }
-  }
+  
     
   if (ShowBanner && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER)) {
     // clear and draw banner
