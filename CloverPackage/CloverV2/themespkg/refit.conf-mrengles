@@ -16,7 +16,7 @@
 # --------------------------------------------------------------------------
 timeout 15
 # --------------------------------------------------------------------------
-theme mrenglesTheme
+theme mrengles
 font load
 font_file_name mrenglesTheme.png
 char_width 10

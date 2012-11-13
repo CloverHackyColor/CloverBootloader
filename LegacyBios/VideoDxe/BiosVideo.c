@@ -232,7 +232,7 @@ BiosVideoDriverBindingSupported (
   }
 
 Done:
-  DBG("Supported status:%r\n", Status);
+//  DBG("Supported status:%r\n", Status);
   gBS->CloseProtocol (
          Controller,
          &gEfiPciIoProtocolGuid,
@@ -707,7 +707,7 @@ BiosVideoChildHandleInstall (
   //
   if ((RemainingDevicePath == NULL) || (!IsDevicePathEnd (RemainingDevicePath))) {
     if (RemainingDevicePath == NULL) {
-      DBG("null RemainingDevicePath\n");
+//      DBG("null RemainingDevicePath\n");
       ZeroMem (&AcpiDeviceNode, sizeof (ACPI_ADR_DEVICE_PATH));
       AcpiDeviceNode.Header.Type = ACPI_DEVICE_PATH;
       AcpiDeviceNode.Header.SubType = ACPI_ADR_DP;
@@ -719,12 +719,12 @@ BiosVideoChildHandleInstall (
                                           (EFI_DEVICE_PATH_PROTOCOL *) &AcpiDeviceNode
                                           );
 //      DBG("GopDevicePath =%a\n", DevicePathToStr(BiosVideoPrivate->GopDevicePath));
-      DBG("GopDevicePath OK\n");
+//      DBG("GopDevicePath OK\n");
  //     Status = EFI_UNSUPPORTED;
-      
+/*
       if (EFI_ERROR (Status)) {
         goto Done;
-      }
+      } */
       
     } else {
       BiosVideoPrivate->GopDevicePath = AppendDevicePathNode (ParentDevicePath, RemainingDevicePath);
@@ -750,12 +750,12 @@ BiosVideoChildHandleInstall (
                     BiosVideoPrivate->GopDevicePath,
                     NULL
                     );
-    DBG("Creat child handle %r\n", Status);
+//    DBG("Creat child handle %r\n", Status);
  //   Status = EFI_UNSUPPORTED;
 
-    if (EFI_ERROR (Status)) {
+ /*   if (EFI_ERROR (Status)) {
       goto Done;
-    }
+    }*/
   }
 
   //
@@ -783,10 +783,10 @@ BiosVideoChildHandleInstall (
   // Check for VESA BIOS Extensions for modes that are compatible with Graphics Output
   //
   if (1) { // FeaturePcdGet (PcdBiosVideoCheckVbeEnable)) {
-    DBG("BiosVideoCheckForVbe start\n");
+//   DBG("BiosVideoCheckForVbe start\n");
     Status = BiosVideoCheckForVbe (BiosVideoPrivate);
  //   DEBUG ((EFI_D_INFO, "BiosVideoCheckForVbe - %r\n", Status));
-    DBG("BiosVideoCheckForVbe - %r\n", Status);
+    DBG("CsmVideoCheckForVbe - %r\n", Status);
   } else {
     Status = EFI_UNSUPPORTED;
   }
@@ -801,7 +801,7 @@ BiosVideoChildHandleInstall (
       if (FeaturePcdGet (PcdBiosVideoCheckVgaEnable)) {
         Status = BiosVideoCheckForVga (BiosVideoPrivate);
  //       DEBUG ((EFI_D_INFO, "BiosVideoCheckForVga - %r\n", Status));
-        DBG("BiosVideoCheckForVga - %r\n", Status);
+        DBG("CsmVideoCheckForVga - %r\n", Status);
       } else {
         Status = EFI_UNSUPPORTED;
       }
