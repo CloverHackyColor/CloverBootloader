@@ -49,7 +49,7 @@ Headers collection for procedures
 
 #include "lib.h"
 #include "boot.h"
-#include "BiosVideo.h"
+//#include "BiosVideo.h"
 #include "Bmp.h"
 #include "efiConsoleControl.h"
 #include "SmBios.h"

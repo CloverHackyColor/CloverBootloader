@@ -39,7 +39,7 @@
   BiosVideo.c
   BiosVideo.h
   ComponentName.c
-  VesaBiosExtensions.h
+#  VesaBiosExtensions.h
 
 [Packages]
   Clover/CloverPkg.dec

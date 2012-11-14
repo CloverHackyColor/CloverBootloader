@@ -44,7 +44,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 //#include <Library/GenericBdsLib.h>
 
 #include <IndustryStandard/Pci.h>
-#include "VesaBiosExtensions.h"
+#include <IndustryStandard/VesaBiosExtensions.h>
 
 //
 // Packed format support: The number of bits reserved for each of the colors and the actual
