@@ -45,11 +45,9 @@
 		123F0973164F9C00008C1C1C /* BiosVideoNew.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BiosVideoNew.c; sourceTree = "<group>"; };
 		123F0974164F9C00008C1C1C /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
 		123F0975164F9C00008C1C1C /* LegacyBiosThunk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LegacyBiosThunk.c; sourceTree = "<group>"; };
-		123F0976164F9C00008C1C1C /* VesaBiosExtensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VesaBiosExtensions.h; sourceTree = "<group>"; };
 		123F0979164FA3AF008C1C1C /* BiosVideo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BiosVideo.c; sourceTree = "<group>"; };
 		123F097A164FA3AF008C1C1C /* BiosVideo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BiosVideo.h; sourceTree = "<group>"; };
 		123F097B164FA3AF008C1C1C /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
-		123F097C164FA3AF008C1C1C /* VesaBiosExtensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VesaBiosExtensions.h; sourceTree = "<group>"; };
 		123F097D164FA3AF008C1C1C /* VideoDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VideoDxe.inf; sourceTree = "<group>"; };
 		12B816781644675800A433E7 /* build.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = "<group>"; };
 		12B816791644675800A433E7 /* build32.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build32.sh; sourceTree = "<group>"; };
@@ -178,6 +176,7 @@
 		12B816FE1644675800A433E7 /* vers.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = vers.txt; sourceTree = "<group>"; };
 		12B816FF1644675800A433E7 /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
 		12DB2D8616522B2A00A8066D /* CloverX */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CloverX; sourceTree = BUILT_PRODUCTS_DIR; };
+		12E727F916541E76005DDE3E /* VesaBiosExtensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VesaBiosExtensions.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -216,7 +215,7 @@
 				123F0959164F96DB008C1C1C /* EfiLdrHandoff.h */,
 				123F095A164F96DB008C1C1C /* FlashLayout.h */,
 				123F095B164F96DB008C1C1C /* Guid */,
-				123F0963164F96DB008C1C1C /* IndustryStandards */,
+				123F0963164F96DB008C1C1C /* IndustryStandard */,
 				123F0966164F96DB008C1C1C /* Library */,
 				123F0969164F96DB008C1C1C /* Protocol */,
 			);
@@ -238,13 +237,14 @@
 			path = Guid;
 			sourceTree = "<group>";
 		};
-		123F0963164F96DB008C1C1C /* IndustryStandards */ = {
+		123F0963164F96DB008C1C1C /* IndustryStandard */ = {
 			isa = PBXGroup;
 			children = (
 				123F0964164F96DB008C1C1C /* PeImage.h */,
 				123F0965164F96DB008C1C1C /* Smbios.h */,
+				12E727F916541E76005DDE3E /* VesaBiosExtensions.h */,
 			);
-			path = IndustryStandards;
+			path = IndustryStandard;
 			sourceTree = "<group>";
 		};
 		123F0966164F96DB008C1C1C /* Library */ = {
@@ -284,7 +284,6 @@
 				123F0973164F9C00008C1C1C /* BiosVideoNew.c */,
 				123F0974164F9C00008C1C1C /* ComponentName.c */,
 				123F0975164F9C00008C1C1C /* LegacyBiosThunk.c */,
-				123F0976164F9C00008C1C1C /* VesaBiosExtensions.h */,
 			);
 			name = BiosVideo;
 			path = ../BiosVideo;
@@ -296,7 +295,6 @@
 				123F0979164FA3AF008C1C1C /* BiosVideo.c */,
 				123F097A164FA3AF008C1C1C /* BiosVideo.h */,
 				123F097B164FA3AF008C1C1C /* ComponentName.c */,
-				123F097C164FA3AF008C1C1C /* VesaBiosExtensions.h */,
 				123F097D164FA3AF008C1C1C /* VideoDxe.inf */,
 			);
 			name = VideoDxe;

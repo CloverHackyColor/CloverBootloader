@@ -263,7 +263,7 @@ InitializeGraphicsConsoleTextMode (
   //
   // According to UEFI spec, all output devices support at least 80x25 text mode.
   //
-  ASSERT ((MaxColumns >= 80) && (MaxRows >= 25));
+ // ASSERT ((MaxColumns >= 80) && (MaxRows >= 25));
 
   //
   // Add full screen mode to the last entry.
@@ -282,7 +282,10 @@ InitializeGraphicsConsoleTextMode (
   // Reserve 2 modes for 80x25, 80x50 of graphics console.
   //
   NewModeBuffer = AllocateZeroPool (sizeof (GRAPHICS_CONSOLE_MODE_DATA) * (Count + 2));
-  ASSERT (NewModeBuffer != NULL);
+  if (!NewModeBuffer) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+//  ASSERT (NewModeBuffer != NULL);
 
   //
   // Mode 0 and mode 1 is for 80x25, 80x50 according to UEFI spec.
@@ -340,14 +343,14 @@ InitializeGraphicsConsoleTextMode (
       ValidCount++;
     }
   }
- 
+/*
   DEBUG_CODE (
     for (Index = 0; Index < ValidCount; Index++) {
       DEBUG ((EFI_D_INFO, "Graphics - Mode %d, Column = %d, Row = %d\n", 
                            Index, NewModeBuffer[Index].Columns, NewModeBuffer[Index].Rows));  
     }
   );
-  
+*/  
   //
   // Return valid mode count and mode information buffer.
   //
@@ -430,8 +433,8 @@ GraphicsConsoleControllerDriverStart (
     goto Error;
   }
 
-  HorizontalResolution  = PcdGet32 (PcdVideoHorizontalResolution);
-  VerticalResolution    = PcdGet32 (PcdVideoVerticalResolution);
+  HorizontalResolution  = 0; //PcdGet32 (PcdVideoHorizontalResolution);
+  VerticalResolution    = 0; //PcdGet32 (PcdVideoVerticalResolution);
 
   if (Private->GraphicsOutput != NULL) {
     //
@@ -564,7 +567,7 @@ GraphicsConsoleControllerDriverStart (
   // Update the maximum number of modes
   //
   Private->SimpleTextOutputMode.MaxMode = (INT32) MaxMode;
-
+/*
   DEBUG_CODE_BEGIN ();
     Status = GraphicsConsoleConOutSetMode (&Private->SimpleTextOutput, 0);
     if (EFI_ERROR (Status)) {
@@ -575,7 +578,7 @@ GraphicsConsoleControllerDriverStart (
       goto Error;
     }  
   DEBUG_CODE_END ();
-
+*/
   //
   // Install protocol interfaces for the Graphics Console device.
   //
@@ -716,7 +719,7 @@ GraphicsConsoleControllerDriverStop (
   Check if the current specific mode supported the user defined resolution
   for the Graphics Console device based on Graphics Output Protocol.
 
-  If yes, set the graphic devcice's current mode to this specific mode.
+  If yes, set the graphic device's current mode to this specific mode.
 
   @param  GraphicsOutput        Graphics Output Protocol instance pointer.
   @param  HorizontalResolution  User defined horizontal resolution
@@ -2072,7 +2075,10 @@ RegisterFontPackage (
 
   PackageLength   = sizeof (EFI_HII_SIMPLE_FONT_PACKAGE_HDR) + mNarrowFontSize + 4;
   Package = AllocateZeroPool (PackageLength);
-  ASSERT (Package != NULL);
+//  ASSERT (Package != NULL);
+  if (!Package) {
+    return;
+  }
 
   WriteUnaligned32((UINT32 *) Package,PackageLength);
   SimplifiedFont = (EFI_HII_SIMPLE_FONT_PACKAGE_HDR *) (Package + 4);
@@ -2092,7 +2098,6 @@ RegisterFontPackage (
                  Package,
                  NULL
                  );
-  ASSERT (mHiiHandle != NULL);
   FreePool (Package);
 }
 
@@ -2137,7 +2142,7 @@ InitializeGraphicsConsole (
              &gGraphicsConsoleComponentName,
              &gGraphicsConsoleComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
 
   return Status;
 }
