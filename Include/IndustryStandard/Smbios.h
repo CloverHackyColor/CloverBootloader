@@ -61,7 +61,7 @@ typedef struct {
   UINT16                MaxStructureSize;
   UINT8                 EntryPointRevision;
   UINT8                 FormattedArea[5];
-  UINT8                 IntermediateAnchorString[5];
+  UINT8  				IntermediateAnchorString[5]; //DMIEntryPoint
   UINT8                 IntermediateChecksum;
   UINT16                TableLength;
   UINT32                TableAddress;
