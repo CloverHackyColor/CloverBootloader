@@ -315,7 +315,7 @@
   #DuetPkg/PciBusNoEnumerationDxe/PciBusNoEnumeration.inf
   Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
   #MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
-  Clover/PciBusDxe/PciBusDxe.inf
+  #Clover/PciBusDxe/PciBusDxe.inf
   
   	#DataHub
 	#Clover/VBoxAppleSim/VBoxAppleSim.inf
