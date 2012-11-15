@@ -6,6 +6,10 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		12DD321A16557F2E00108DFC /* BmLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 12DD321916557F2E00108DFC /* BmLib.c */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		12B816681644674A00A433E7 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -55,39 +59,23 @@
 		12B816781644675800A433E7 /* build.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = "<group>"; };
 		12B816791644675800A433E7 /* build32.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build32.sh; sourceTree = "<group>"; };
 		12B8167A1644675800A433E7 /* build64.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build64.sh; sourceTree = "<group>"; };
-		12B8167E1644675800A433E7 /* BdsConnect.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BdsConnect.c; sourceTree = "<group>"; };
-		12B8167F1644675800A433E7 /* BmLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BmLib.c; sourceTree = "<group>"; };
-		12B816801644675800A433E7 /* DevicePath.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DevicePath.c; sourceTree = "<group>"; };
-		12B816811644675800A433E7 /* GenericBdsLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GenericBdsLib.h; sourceTree = "<group>"; };
-		12B816821644675800A433E7 /* InternalBdsLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InternalBdsLib.h; sourceTree = "<group>"; };
-		12B816831644675800A433E7 /* PiBootMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PiBootMode.h; sourceTree = "<group>"; };
 		12B816851644675800A433E7 /* llmul.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = llmul.asm; sourceTree = "<group>"; };
 		12B816861644675800A433E7 /* llshl.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = llshl.asm; sourceTree = "<group>"; };
 		12B816871644675800A433E7 /* ulldiv.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = ulldiv.asm; sourceTree = "<group>"; };
 		12B816881644675800A433E7 /* ullrem.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = ullrem.asm; sourceTree = "<group>"; };
 		12B816891644675800A433E7 /* ullshr.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = ullshr.asm; sourceTree = "<group>"; };
-		12B8168B1644675800A433E7 /* efiConsoleControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = efiConsoleControl.h; sourceTree = "<group>"; };
 		12B8168C1644675800A433E7 /* egemb_back_selected_small.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = egemb_back_selected_small.h; sourceTree = "<group>"; };
 		12B8168D1644675800A433E7 /* egemb_refit_banner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = egemb_refit_banner.h; sourceTree = "<group>"; };
 		12B8168E1644675800A433E7 /* Handle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Handle.h; sourceTree = "<group>"; };
 		12B8168F1644675800A433E7 /* syslinux_mbr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = syslinux_mbr.h; sourceTree = "<group>"; };
-		12B816901644675800A433E7 /* UsbMass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsbMass.h; sourceTree = "<group>"; };
-		12B816911644675800A433E7 /* UsbMassBoot.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsbMassBoot.h; sourceTree = "<group>"; };
-		12B816921644675800A433E7 /* UsbMassImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsbMassImpl.h; sourceTree = "<group>"; };
-		12B816941644675800A433E7 /* efiConsoleControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = efiConsoleControl.h; sourceTree = "<group>"; };
 		12B816951644675800A433E7 /* EfiFileLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EfiFileLib.h; sourceTree = "<group>"; };
-		12B816961644675800A433E7 /* efiGraphicsOutput.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = efiGraphicsOutput.h; sourceTree = "<group>"; };
-		12B816971644675800A433E7 /* efiUgaDraw.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = efiUgaDraw.h; sourceTree = "<group>"; };
 		12B816981644675800A433E7 /* egemb_font.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = egemb_font.h; sourceTree = "<group>"; };
 		12B816991644675800A433E7 /* image.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = image.c; sourceTree = "<group>"; };
 		12B8169A1644675800A433E7 /* libeg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libeg.h; sourceTree = "<group>"; };
-		12B8169B1644675800A433E7 /* libeg.mak */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = libeg.mak; sourceTree = "<group>"; };
-		12B8169C1644675800A433E7 /* libeg.mkefi */ = {isa = PBXFileReference; lastKnownFileType = text; path = libeg.mkefi; sourceTree = "<group>"; };
 		12B8169D1644675800A433E7 /* libegint.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = libegint.h; sourceTree = "<group>"; };
 		12B8169E1644675800A433E7 /* libscreen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = libscreen.c; sourceTree = "<group>"; };
 		12B8169F1644675800A433E7 /* load_bmp.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = load_bmp.c; sourceTree = "<group>"; };
 		12B816A01644675800A433E7 /* load_icns.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = load_icns.c; sourceTree = "<group>"; };
-		12B816A11644675800A433E7 /* mkegemb.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = mkegemb.py; sourceTree = "<group>"; };
 		12B816A21644675800A433E7 /* text.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = text.c; sourceTree = "<group>"; };
 		12B816A51644675800A433E7 /* AcpiPatcher.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AcpiPatcher.c; sourceTree = "<group>"; };
 		12B816A61644675800A433E7 /* AmlGenerator.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AmlGenerator.c; sourceTree = "<group>"; };
@@ -167,6 +155,50 @@
 		12B816FE1644675800A433E7 /* vers.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = vers.txt; sourceTree = "<group>"; };
 		12B816FF1644675800A433E7 /* Version.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Version.h; sourceTree = "<group>"; };
 		12DB2D8616522B2A00A8066D /* CloverX */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CloverX; sourceTree = BUILT_PRODUCTS_DIR; };
+		12DD321916557F2E00108DFC /* BmLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BmLib.c; sourceTree = "<group>"; };
+		12DD321C16557F6F00108DFC /* DuetTimerLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = DuetTimerLib.inf; sourceTree = "<group>"; };
+		12DD321D16557F6F00108DFC /* X86TimerLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = X86TimerLib.c; sourceTree = "<group>"; };
+		12DD321F16557F6F00108DFC /* BdsBoot.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BdsBoot.c; sourceTree = "<group>"; };
+		12DD322016557F6F00108DFC /* BdsConnect.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BdsConnect.c; sourceTree = "<group>"; };
+		12DD322116557F6F00108DFC /* BdsConsole.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BdsConsole.c; sourceTree = "<group>"; };
+		12DD322216557F6F00108DFC /* BdsMisc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BdsMisc.c; sourceTree = "<group>"; };
+		12DD322316557F6F00108DFC /* DevicePath.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DevicePath.c; sourceTree = "<group>"; };
+		12DD322416557F6F00108DFC /* GenericBdsLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = GenericBdsLib.inf; sourceTree = "<group>"; };
+		12DD322516557F6F00108DFC /* GenericBdsStrings.uni */ = {isa = PBXFileReference; lastKnownFileType = text; path = GenericBdsStrings.uni; sourceTree = "<group>"; };
+		12DD322616557F6F00108DFC /* InternalBdsLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InternalBdsLib.h; sourceTree = "<group>"; };
+		12DD322716557F6F00108DFC /* Performance.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Performance.c; sourceTree = "<group>"; };
+		12DD322816557F6F00108DFC /* String.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = String.c; sourceTree = "<group>"; };
+		12DD322916557F6F00108DFC /* String.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = String.h; sourceTree = "<group>"; };
+		12DD322B16557F6F00108DFC /* GuidedSectionExtraction.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = GuidedSectionExtraction.c; sourceTree = "<group>"; };
+		12DD322C16557F6F00108DFC /* LZMA-SDK-README.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "LZMA-SDK-README.txt"; sourceTree = "<group>"; };
+		12DD322D16557F6F00108DFC /* LzmaCustomDecompressLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = LzmaCustomDecompressLib.inf; sourceTree = "<group>"; };
+		12DD322E16557F6F00108DFC /* LzmaDecompress.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LzmaDecompress.c; sourceTree = "<group>"; };
+		12DD322F16557F6F00108DFC /* LzmaDecompressLibInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LzmaDecompressLibInternal.h; sourceTree = "<group>"; };
+		12DD323216557F6F00108DFC /* 7zVersion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = 7zVersion.h; sourceTree = "<group>"; };
+		12DD323316557F6F00108DFC /* CpuArch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CpuArch.h; sourceTree = "<group>"; };
+		12DD323416557F6F00108DFC /* LzFind.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LzFind.c; sourceTree = "<group>"; };
+		12DD323516557F6F00108DFC /* LzFind.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LzFind.h; sourceTree = "<group>"; };
+		12DD323616557F6F00108DFC /* LzHash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LzHash.h; sourceTree = "<group>"; };
+		12DD323716557F6F00108DFC /* LzmaDec.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LzmaDec.c; sourceTree = "<group>"; };
+		12DD323816557F6F00108DFC /* LzmaDec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LzmaDec.h; sourceTree = "<group>"; };
+		12DD323916557F6F00108DFC /* Types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Types.h; sourceTree = "<group>"; };
+		12DD323A16557F6F00108DFC /* history.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = history.txt; sourceTree = "<group>"; };
+		12DD323B16557F6F00108DFC /* lzma.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = lzma.txt; sourceTree = "<group>"; };
+		12DD323C16557F6F00108DFC /* UefiLzma.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UefiLzma.h; sourceTree = "<group>"; };
+		12DD323E16557F7B00108DFC /* AcpiTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AcpiTable.h; sourceTree = "<group>"; };
+		12DD323F16557F7B00108DFC /* BdsPlatform.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BdsPlatform.c; sourceTree = "<group>"; };
+		12DD324016557F7B00108DFC /* BdsPlatform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BdsPlatform.h; sourceTree = "<group>"; };
+		12DD324116557F7B00108DFC /* PlatformBds.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = PlatformBds.inf; sourceTree = "<group>"; };
+		12DD324216557F7B00108DFC /* PlatformData.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = PlatformData.c; sourceTree = "<group>"; };
+		12DD324416557F7B00108DFC /* BasePeCoff.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BasePeCoff.c; sourceTree = "<group>"; };
+		12DD324516557F7B00108DFC /* BasePeCoffLibInternals.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BasePeCoffLibInternals.h; sourceTree = "<group>"; };
+		12DD324616557F7B00108DFC /* PeCoffLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PeCoffLib.h; sourceTree = "<group>"; };
+		12DD324716557F7B00108DFC /* PeCoffLoaderEx.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = PeCoffLoaderEx.c; sourceTree = "<group>"; };
+		12DD324816557F7B00108DFC /* PeImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PeImage.h; sourceTree = "<group>"; };
+		12DD324916557F7B00108DFC /* VBoxPeCoffLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VBoxPeCoffLib.inf; sourceTree = "<group>"; };
+		12DD324A16557FC200108DFC /* efiConsoleControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = efiConsoleControl.h; sourceTree = "<group>"; };
+		12DD324B16557FCC00108DFC /* GenericBdsLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GenericBdsLib.h; sourceTree = "<group>"; };
+		12DD324C16557FD600108DFC /* PiBootMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PiBootMode.h; sourceTree = "<group>"; };
 		12E727F916541E76005DDE3E /* VesaBiosExtensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VesaBiosExtensions.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -184,7 +216,12 @@
 		123F0952164F96D0008C1C1C /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				12DD321B16557F6F00108DFC /* DuetTimerLib */,
+				12DD321E16557F6F00108DFC /* GenericBdsLib */,
+				12DD322A16557F6F00108DFC /* LzmaCustomDecompressLib */,
 				123F0953164F96D0008C1C1C /* MemLogLibDefault */,
+				12DD323D16557F7B00108DFC /* OsxBdsPlatformLib */,
+				12DD324316557F7B00108DFC /* VBoxPeCoffLib */,
 			);
 			name = Library;
 			path = ../Library;
@@ -241,8 +278,10 @@
 		123F0966164F96DB008C1C1C /* Library */ = {
 			isa = PBXGroup;
 			children = (
+				12DD324B16557FCC00108DFC /* GenericBdsLib.h */,
 				123F0967164F96DB008C1C1C /* MemLogLib.h */,
 				123F0968164F96DB008C1C1C /* PeCoffLib.h */,
+				12DD324C16557FD600108DFC /* PiBootMode.h */,
 				121E49741654F525000C2392 /* UsbMass.h */,
 				121E49751654F528000C2392 /* UsbMassBoot.h */,
 			);
@@ -252,6 +291,7 @@
 		123F0969164F96DB008C1C1C /* Protocol */ = {
 			isa = PBXGroup;
 			children = (
+				12DD324A16557FC200108DFC /* efiConsoleControl.h */,
 				123F096A164F96DB008C1C1C /* FSInjectProtocol.h */,
 				123F096B164F96DB008C1C1C /* MsgLog.h */,
 				121E49761654F52D000C2392 /* UsbMassImpl.h */,
@@ -322,7 +362,6 @@
 				12B816781644675800A433E7 /* build.sh */,
 				12B816791644675800A433E7 /* build32.sh */,
 				12B8167A1644675800A433E7 /* build64.sh */,
-				12B8167D1644675800A433E7 /* EfiLib */,
 				12B816841644675800A433E7 /* IA32 */,
 				12B8168A1644675800A433E7 /* include */,
 				12B816931644675800A433E7 /* libeg */,
@@ -337,19 +376,6 @@
 			);
 			name = rEFIt_UEFI;
 			path = ../../rEFIt_UEFI;
-			sourceTree = "<group>";
-		};
-		12B8167D1644675800A433E7 /* EfiLib */ = {
-			isa = PBXGroup;
-			children = (
-				12B8167E1644675800A433E7 /* BdsConnect.c */,
-				12B8167F1644675800A433E7 /* BmLib.c */,
-				12B816801644675800A433E7 /* DevicePath.c */,
-				12B816811644675800A433E7 /* GenericBdsLib.h */,
-				12B816821644675800A433E7 /* InternalBdsLib.h */,
-				12B816831644675800A433E7 /* PiBootMode.h */,
-			);
-			path = EfiLib;
 			sourceTree = "<group>";
 		};
 		12B816841644675800A433E7 /* IA32 */ = {
@@ -367,14 +393,10 @@
 		12B8168A1644675800A433E7 /* include */ = {
 			isa = PBXGroup;
 			children = (
-				12B8168B1644675800A433E7 /* efiConsoleControl.h */,
 				12B8168C1644675800A433E7 /* egemb_back_selected_small.h */,
 				12B8168D1644675800A433E7 /* egemb_refit_banner.h */,
 				12B8168E1644675800A433E7 /* Handle.h */,
 				12B8168F1644675800A433E7 /* syslinux_mbr.h */,
-				12B816901644675800A433E7 /* UsbMass.h */,
-				12B816911644675800A433E7 /* UsbMassBoot.h */,
-				12B816921644675800A433E7 /* UsbMassImpl.h */,
 			);
 			path = include;
 			sourceTree = "<group>";
@@ -382,20 +404,15 @@
 		12B816931644675800A433E7 /* libeg */ = {
 			isa = PBXGroup;
 			children = (
-				12B816941644675800A433E7 /* efiConsoleControl.h */,
+				12DD321916557F2E00108DFC /* BmLib.c */,
 				12B816951644675800A433E7 /* EfiFileLib.h */,
-				12B816961644675800A433E7 /* efiGraphicsOutput.h */,
-				12B816971644675800A433E7 /* efiUgaDraw.h */,
 				12B816981644675800A433E7 /* egemb_font.h */,
 				12B816991644675800A433E7 /* image.c */,
 				12B8169A1644675800A433E7 /* libeg.h */,
-				12B8169B1644675800A433E7 /* libeg.mak */,
-				12B8169C1644675800A433E7 /* libeg.mkefi */,
 				12B8169D1644675800A433E7 /* libegint.h */,
 				12B8169E1644675800A433E7 /* libscreen.c */,
 				12B8169F1644675800A433E7 /* load_bmp.c */,
 				12B816A01644675800A433E7 /* load_icns.c */,
-				12B816A11644675800A433E7 /* mkegemb.py */,
 				12B816A21644675800A433E7 /* text.c */,
 			);
 			path = libeg;
@@ -486,6 +503,97 @@
 			path = refit;
 			sourceTree = "<group>";
 		};
+		12DD321B16557F6F00108DFC /* DuetTimerLib */ = {
+			isa = PBXGroup;
+			children = (
+				12DD321C16557F6F00108DFC /* DuetTimerLib.inf */,
+				12DD321D16557F6F00108DFC /* X86TimerLib.c */,
+			);
+			path = DuetTimerLib;
+			sourceTree = "<group>";
+		};
+		12DD321E16557F6F00108DFC /* GenericBdsLib */ = {
+			isa = PBXGroup;
+			children = (
+				12DD321F16557F6F00108DFC /* BdsBoot.c */,
+				12DD322016557F6F00108DFC /* BdsConnect.c */,
+				12DD322116557F6F00108DFC /* BdsConsole.c */,
+				12DD322216557F6F00108DFC /* BdsMisc.c */,
+				12DD322316557F6F00108DFC /* DevicePath.c */,
+				12DD322416557F6F00108DFC /* GenericBdsLib.inf */,
+				12DD322516557F6F00108DFC /* GenericBdsStrings.uni */,
+				12DD322616557F6F00108DFC /* InternalBdsLib.h */,
+				12DD322716557F6F00108DFC /* Performance.c */,
+				12DD322816557F6F00108DFC /* String.c */,
+				12DD322916557F6F00108DFC /* String.h */,
+			);
+			path = GenericBdsLib;
+			sourceTree = "<group>";
+		};
+		12DD322A16557F6F00108DFC /* LzmaCustomDecompressLib */ = {
+			isa = PBXGroup;
+			children = (
+				12DD322B16557F6F00108DFC /* GuidedSectionExtraction.c */,
+				12DD322C16557F6F00108DFC /* LZMA-SDK-README.txt */,
+				12DD322D16557F6F00108DFC /* LzmaCustomDecompressLib.inf */,
+				12DD322E16557F6F00108DFC /* LzmaDecompress.c */,
+				12DD322F16557F6F00108DFC /* LzmaDecompressLibInternal.h */,
+				12DD323016557F6F00108DFC /* Sdk */,
+				12DD323C16557F6F00108DFC /* UefiLzma.h */,
+			);
+			path = LzmaCustomDecompressLib;
+			sourceTree = "<group>";
+		};
+		12DD323016557F6F00108DFC /* Sdk */ = {
+			isa = PBXGroup;
+			children = (
+				12DD323116557F6F00108DFC /* C */,
+				12DD323A16557F6F00108DFC /* history.txt */,
+				12DD323B16557F6F00108DFC /* lzma.txt */,
+			);
+			path = Sdk;
+			sourceTree = "<group>";
+		};
+		12DD323116557F6F00108DFC /* C */ = {
+			isa = PBXGroup;
+			children = (
+				12DD323216557F6F00108DFC /* 7zVersion.h */,
+				12DD323316557F6F00108DFC /* CpuArch.h */,
+				12DD323416557F6F00108DFC /* LzFind.c */,
+				12DD323516557F6F00108DFC /* LzFind.h */,
+				12DD323616557F6F00108DFC /* LzHash.h */,
+				12DD323716557F6F00108DFC /* LzmaDec.c */,
+				12DD323816557F6F00108DFC /* LzmaDec.h */,
+				12DD323916557F6F00108DFC /* Types.h */,
+			);
+			path = C;
+			sourceTree = "<group>";
+		};
+		12DD323D16557F7B00108DFC /* OsxBdsPlatformLib */ = {
+			isa = PBXGroup;
+			children = (
+				12DD323E16557F7B00108DFC /* AcpiTable.h */,
+				12DD323F16557F7B00108DFC /* BdsPlatform.c */,
+				12DD324016557F7B00108DFC /* BdsPlatform.h */,
+				12DD324116557F7B00108DFC /* PlatformBds.inf */,
+				12DD324216557F7B00108DFC /* PlatformData.c */,
+			);
+			path = OsxBdsPlatformLib;
+			sourceTree = "<group>";
+		};
+		12DD324316557F7B00108DFC /* VBoxPeCoffLib */ = {
+			isa = PBXGroup;
+			children = (
+				12DD324416557F7B00108DFC /* BasePeCoff.c */,
+				12DD324516557F7B00108DFC /* BasePeCoffLibInternals.h */,
+				12DD324616557F7B00108DFC /* PeCoffLib.h */,
+				12DD324716557F7B00108DFC /* PeCoffLoaderEx.c */,
+				12DD324816557F7B00108DFC /* PeImage.h */,
+				12DD324916557F7B00108DFC /* VBoxPeCoffLib.inf */,
+			);
+			path = VBoxPeCoffLib;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -537,6 +645,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				12DD321A16557F2E00108DFC /* BmLib.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

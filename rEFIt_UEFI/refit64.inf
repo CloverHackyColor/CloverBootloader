@@ -32,7 +32,7 @@
 
 [Sources]
 #  EfiLib/GenericBdsLib.h
-  EfiLib/BmLib.c
+#  EfiLib/BmLib.c
 #  EfiLib/DevicePath.c #included into GenericBdsLib
 #  EfiLib/BdsConnect.c #included into GenericBdsLib
   refit/main.c
@@ -42,6 +42,7 @@
   refit/menu.c
   refit/screen.c
   refit/IO.c
+  libeg/BmLib.c
   libeg/image.c
   libeg/load_bmp.c
   libeg/load_icns.c
