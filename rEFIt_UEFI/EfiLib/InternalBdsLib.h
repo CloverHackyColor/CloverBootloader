@@ -63,7 +63,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Library/PerformanceLib.h>
 #include <Library/PcdLib.h>
 #include <Library/PeCoffGetEntryPointLib.h>
-//#include <Library/GenericBdsLib.h>
+#include <Library/GenericBdsLib.h>
 //#include "GenericBdsLib.h"
 #include <Library/TimerLib.h>
 #include <Library/PcdLib.h>

@@ -65,8 +65,6 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Library/PcdLib.h>
 #include <Library/CapsuleLib.h>
 #include <Library/HiiLib.h>
-#include <Library/DevicePathLib.h>
-#include <Library/PcdLib.h>
 #include <Library/UefiHiiServicesLib.h>
 
 #include <Library/GenericBdsLib.h>

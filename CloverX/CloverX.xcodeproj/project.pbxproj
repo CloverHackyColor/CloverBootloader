@@ -94,20 +94,16 @@
 		12B816A71644675800A433E7 /* AmlGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AmlGenerator.h; sourceTree = "<group>"; };
 		12B816A81644675800A433E7 /* ati.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ati.c; sourceTree = "<group>"; };
 		12B816A91644675800A433E7 /* ati.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ati.h; sourceTree = "<group>"; };
-		12B816AA1644675800A433E7 /* ati_old.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ati_old.c; sourceTree = "<group>"; };
 		12B816AB1644675800A433E7 /* ati_reg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ati_reg.h; sourceTree = "<group>"; };
 		12B816AC1644675800A433E7 /* AtomBios.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AtomBios.h; sourceTree = "<group>"; };
 		12B816AD1644675800A433E7 /* b64cdecode.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = b64cdecode.c; sourceTree = "<group>"; };
 		12B816AE1644675800A433E7 /* b64cdecode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = b64cdecode.h; sourceTree = "<group>"; };
-		12B816AF1644675800A433E7 /* BiosVideo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BiosVideo.h; sourceTree = "<group>"; };
-		12B816B01644675800A433E7 /* Bmp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bmp.h; sourceTree = "<group>"; };
 		12B816B11644675800A433E7 /* boot.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = boot.h; sourceTree = "<group>"; };
 		12B816B21644675800A433E7 /* BootLog.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootLog.c; sourceTree = "<group>"; };
 		12B816B31644675800A433E7 /* BootOptions.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootOptions.c; sourceTree = "<group>"; };
 		12B816B41644675800A433E7 /* Console.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Console.c; sourceTree = "<group>"; };
 		12B816B51644675800A433E7 /* cpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cpu.c; sourceTree = "<group>"; };
 		12B816B61644675800A433E7 /* DataHubCpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DataHubCpu.c; sourceTree = "<group>"; };
-		12B816B71644675800A433E7 /* DataHubRecords.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataHubRecords.h; sourceTree = "<group>"; };
 		12B816B81644675800A433E7 /* DbgTime.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DbgTime.c; sourceTree = "<group>"; };
 		12B816B91644675800A433E7 /* device_inject.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = device_inject.c; sourceTree = "<group>"; };
 		12B816BA1644675800A433E7 /* device_inject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = device_inject.h; sourceTree = "<group>"; };
@@ -145,7 +141,6 @@
 		12B816DA1644675800A433E7 /* Resolutions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Resolutions.h; sourceTree = "<group>"; };
 		12B816DB1644675800A433E7 /* Settings.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Settings.c; sourceTree = "<group>"; };
 		12B816DC1644675800A433E7 /* smbios.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = smbios.c; sourceTree = "<group>"; };
-		12B816DD1644675800A433E7 /* SmBios.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SmBios.h; sourceTree = "<group>"; };
 		12B816DE1644675800A433E7 /* spd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = spd.c; sourceTree = "<group>"; };
 		12B816DF1644675800A433E7 /* spd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = spd.h; sourceTree = "<group>"; };
 		12B816E01644675800A433E7 /* sse3_5_patcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sse3_5_patcher.h; sourceTree = "<group>"; };
@@ -154,10 +149,6 @@
 		12B816E31644675800A433E7 /* StateGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StateGenerator.h; sourceTree = "<group>"; };
 		12B816E41644675800A433E7 /* stringTable.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = stringTable.c; sourceTree = "<group>"; };
 		12B816E51644675800A433E7 /* usbfix.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = usbfix.c; sourceTree = "<group>"; };
-		12B816E61644675800A433E7 /* UsbMass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsbMass.h; sourceTree = "<group>"; };
-		12B816E71644675800A433E7 /* UsbMassBoot.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsbMassBoot.h; sourceTree = "<group>"; };
-		12B816E81644675800A433E7 /* UsbMassImpl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsbMassImpl.h; sourceTree = "<group>"; };
-		12B816E91644675800A433E7 /* VesaBiosExtensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VesaBiosExtensions.h; sourceTree = "<group>"; };
 		12B816EB1644675800A433E7 /* config.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = config.c; sourceTree = "<group>"; };
 		12B816EC1644675800A433E7 /* egemb_back_selected_small.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = egemb_back_selected_small.h; sourceTree = "<group>"; };
 		12B816ED1644675800A433E7 /* egemb_refit_banner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = egemb_refit_banner.h; sourceTree = "<group>"; };
@@ -418,20 +409,16 @@
 				12B816A71644675800A433E7 /* AmlGenerator.h */,
 				12B816A81644675800A433E7 /* ati.c */,
 				12B816A91644675800A433E7 /* ati.h */,
-				12B816AA1644675800A433E7 /* ati_old.c */,
 				12B816AB1644675800A433E7 /* ati_reg.h */,
 				12B816AC1644675800A433E7 /* AtomBios.h */,
 				12B816AD1644675800A433E7 /* b64cdecode.c */,
 				12B816AE1644675800A433E7 /* b64cdecode.h */,
-				12B816AF1644675800A433E7 /* BiosVideo.h */,
-				12B816B01644675800A433E7 /* Bmp.h */,
 				12B816B11644675800A433E7 /* boot.h */,
 				12B816B21644675800A433E7 /* BootLog.c */,
 				12B816B31644675800A433E7 /* BootOptions.c */,
 				12B816B41644675800A433E7 /* Console.c */,
 				12B816B51644675800A433E7 /* cpu.c */,
 				12B816B61644675800A433E7 /* DataHubCpu.c */,
-				12B816B71644675800A433E7 /* DataHubRecords.h */,
 				12B816B81644675800A433E7 /* DbgTime.c */,
 				12B816B91644675800A433E7 /* device_inject.c */,
 				12B816BA1644675800A433E7 /* device_inject.h */,
@@ -469,7 +456,6 @@
 				12B816DA1644675800A433E7 /* Resolutions.h */,
 				12B816DB1644675800A433E7 /* Settings.c */,
 				12B816DC1644675800A433E7 /* smbios.c */,
-				12B816DD1644675800A433E7 /* SmBios.h */,
 				12B816DE1644675800A433E7 /* spd.c */,
 				12B816DF1644675800A433E7 /* spd.h */,
 				12B816E01644675800A433E7 /* sse3_5_patcher.h */,
@@ -478,10 +464,6 @@
 				12B816E31644675800A433E7 /* StateGenerator.h */,
 				12B816E41644675800A433E7 /* stringTable.c */,
 				12B816E51644675800A433E7 /* usbfix.c */,
-				12B816E61644675800A433E7 /* UsbMass.h */,
-				12B816E71644675800A433E7 /* UsbMassBoot.h */,
-				12B816E81644675800A433E7 /* UsbMassImpl.h */,
-				12B816E91644675800A433E7 /* VesaBiosExtensions.h */,
 			);
 			path = Platform;
 			sourceTree = "<group>";

@@ -30,7 +30,6 @@
 #include <Include/Guid/HobList.h>
 #include <Include/Guid/Mps.h>
 #include <Include/Guid/SmBios.h>
-#include <Include/Guid/SmBios.h>
 
 #include "Common.h"
 

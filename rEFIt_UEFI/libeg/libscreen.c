@@ -38,7 +38,7 @@
 
 //#include <efiUgaDraw.h>
 #include <Protocol/GraphicsOutput.h>
-#include <Protocol/efiConsoleControl.h>
+//#include <Protocol/efiConsoleControl.h>
 
 // Console defines and variables
 

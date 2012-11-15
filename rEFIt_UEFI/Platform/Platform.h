@@ -16,6 +16,8 @@ Headers collection for procedures
 #include <Library/BaseLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/DebugLib.h>
+#include <Library/DevicePathLib.h>
+#include <Library/GenericBdsLib.h>
 #include <Library/HiiLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/PcdLib.h>
@@ -53,10 +55,13 @@ Headers collection for procedures
 
 #include "lib.h"
 #include "boot.h"
+//#include "PiBootMode.h"
+#include "IO.h"
+
 //#include "BiosVideo.h"
 //#include "Bmp.h"
 //#include "SmBios.h"
-#include "EfiLib/GenericBdsLib.h"
+//#include "EfiLib/GenericBdsLib.h"
 
 #include "device_inject.h"
 #include "kext_inject.h"

@@ -19,8 +19,6 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #define _GENERIC_BDS_LIB_H_
 
 #include <Protocol/UserManager.h>
-#include "PiBootMode.h"
-#include "IO.h"
 
 ///
 /// Constants which are variable names used to access variables.

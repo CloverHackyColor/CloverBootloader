@@ -24,6 +24,7 @@ Revision History
 #ifndef _SHELL_I_O_H
 #define _SHELL_I_O_H
 
+#include <Library/GenericBdsLib.h>
 
 #define EFI_TPL_APPLICATION 4
 #define EFI_TPL_CALLBACK    8
