@@ -8,7 +8,6 @@
 
 /* Begin PBXFileReference section */
 		12021208142663F0004B7B93 /* rEFIt.dsc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = rEFIt.dsc; path = ../rEFIt.dsc; sourceTree = SOURCE_ROOT; };
-		1202122E142667C4004B7B93 /* BmLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BmLib.c; sourceTree = "<group>"; };
 		120DE0591622C47800BA4C14 /* 8254Timer.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 8254Timer.inf; sourceTree = "<group>"; };
 		120DE05A1622C47800BA4C14 /* Timer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Timer.c; sourceTree = "<group>"; };
 		120DE05B1622C47800BA4C14 /* Timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Timer.h; sourceTree = "<group>"; };
@@ -2774,11 +2773,9 @@
 		12B7FFFC15F921AB00177D35 /* VirtualMemory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VirtualMemory.h; sourceTree = "<group>"; };
 		12B7FFFE15F921AB00177D35 /* Debug.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Debug.c; sourceTree = "<group>"; };
 		12B7FFFF15F921AB00177D35 /* Debug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Debug.h; sourceTree = "<group>"; };
-		12CB8FAB14274AE1009EDAF2 /* efiConsoleControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efiConsoleControl.h; sourceTree = "<group>"; };
 		12CB8FAE14274AE1009EDAF2 /* Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Handle.h; sourceTree = "<group>"; };
 		12CB917114276985009EDAF2 /* IO.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IO.c; sourceTree = "<group>"; };
 		12CB91AB14276D8E009EDAF2 /* IO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IO.h; sourceTree = "<group>"; };
-		12CB922014277F71009EDAF2 /* BdsConnect.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = BdsConnect.c; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
 		12D5B1C914F0F35E0043569D /* ati.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ati.h; sourceTree = "<group>"; };
 		12D6305E14CEA05E00E5898F /* ati.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ati.c; sourceTree = "<group>"; };
 		12D6305F14CEA05E00E5898F /* ati_reg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ati_reg.h; sourceTree = "<group>"; };
@@ -2815,6 +2812,8 @@
 		12D6308914CEA05E00E5898F /* StateGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StateGenerator.h; sourceTree = "<group>"; };
 		12D6308A14CEA05E00E5898F /* stringTable.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stringTable.c; sourceTree = "<group>"; };
 		12D6308B14CEA05E00E5898F /* usbfix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = usbfix.c; sourceTree = "<group>"; };
+		12DD321216557C8400108DFC /* BmLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BmLib.c; sourceTree = "<group>"; };
+		12DD321316557CE400108DFC /* PiBootMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PiBootMode.h; sourceTree = "<group>"; };
 		12E06DFA15CBC24D0069E011 /* kext_inject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kext_inject.c; sourceTree = "<group>"; usesTabs = 1; };
 		12E06DFB15CBC24D0069E011 /* kext_inject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kext_inject.h; sourceTree = "<group>"; };
 		260720AF15907388009CC463 /* DbgTime.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DbgTime.c; sourceTree = "<group>"; };
@@ -2868,7 +2867,6 @@
 				123D85D714D94B1F000AF00B /* rEFIt64.dsc */,
 				122336CD13377E260033F008 /* refit.inf */,
 				123D85D814D94B29000AF00B /* refit64.inf */,
-				1202122D142667C4004B7B93 /* EfiLib */,
 				12CB8FAA14274AE1009EDAF2 /* include */,
 				12D6305B14CEA05E00E5898F /* Platform */,
 				122336C113377E150033F008 /* refit */,
@@ -2876,16 +2874,6 @@
 			);
 			name = rEFIt_proj;
 			sourceTree = "<group>";
-		};
-		1202122D142667C4004B7B93 /* EfiLib */ = {
-			isa = PBXGroup;
-			children = (
-				12CB922014277F71009EDAF2 /* BdsConnect.c */,
-				1202122E142667C4004B7B93 /* BmLib.c */,
-			);
-			name = EfiLib;
-			path = ../EfiLib;
-			sourceTree = SOURCE_ROOT;
 		};
 		120DE0571622C47800BA4C14 /* PcAtChipsetPkg */ = {
 			isa = PBXGroup;
@@ -3205,6 +3193,7 @@
 		122336B113377E050033F008 /* libeg */ = {
 			isa = PBXGroup;
 			children = (
+				12DD321216557C8400108DFC /* BmLib.c */,
 				122336B513377E050033F008 /* egemb_font.h */,
 				122336B613377E050033F008 /* image.c */,
 				122336B713377E050033F008 /* libeg.h */,
@@ -9003,6 +8992,7 @@
 				121E4A6316551A90000C2392 /* GenericBdsLib.h */,
 				2C751C07164EA4FE00B24F6B /* MemLogLib.h */,
 				12B7FF3515F9217F00177D35 /* PeCoffLib.h */,
+				12DD321316557CE400108DFC /* PiBootMode.h */,
 				121E4A6416551A9A000C2392 /* UsbMass.h */,
 				121E4A6516551A9A000C2392 /* UsbMassBoot.h */,
 			);
@@ -9412,7 +9402,6 @@
 		12CB8FAA14274AE1009EDAF2 /* include */ = {
 			isa = PBXGroup;
 			children = (
-				12CB8FAB14274AE1009EDAF2 /* efiConsoleControl.h */,
 				12CB8FAE14274AE1009EDAF2 /* Handle.h */,
 			);
 			name = include;
