@@ -383,7 +383,6 @@
   MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
   MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
   #MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
-  #Clover/OsxPartitionDxe/PartitionDxe.inf
   Clover/PartitionDxe/PartitionDxe.inf
 
   #FD
@@ -402,7 +401,8 @@
   #IntelFrameworkModulePkg/Csm/BiosThunk/KeyboardDxe/KeyboardDxe.inf
   Clover/BiosKeyboard/KeyboardDxe.inf
   #IntelFrameworkModulePkg/Universal/LegacyRegionDxe/LegacyRegionDxe.inf
-  MdeModulePkg/Universal/LegacyRegion2Dxe/LegacyRegion2Dxe.inf
+  #MdeModulePkg/Universal/LegacyRegion2Dxe/LegacyRegion2Dxe.inf
+  Clover/LegacyBios/RegionDxe/LegacyRegion2Dxe.inf
 
   # Misc
   Clover/FSInject/FSInject.inf

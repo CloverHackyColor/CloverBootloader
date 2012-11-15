@@ -34,7 +34,7 @@
 #  EfiLib/GenericBdsLib.h
   EfiLib/BmLib.c
 #  EfiLib/DevicePath.c #included into GenericBdsLib
-  EfiLib/BdsConnect.c #included into GenericBdsLib
+#  EfiLib/BdsConnect.c #included into GenericBdsLib
   refit/main.c
   refit/config.c
   refit/icns.c
@@ -112,10 +112,8 @@
 	Clover/CloverPkg.dec
     MdePkg/MdePkg.dec
     MdeModulePkg/MdeModulePkg.dec
-#    ShellPkg/ShellPkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
   IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
-#  Clover/FSInject/FSInject.dec
 
 [LibraryClasses]
   UefiApplicationEntryPoint
@@ -131,10 +129,10 @@
   HobLib
   MemoryAllocationLib
   IoLib
-#  HiiLib
+  HiiLib
   EfiFileLib
   PeCoffLib
-#  GenericBdsLib
+  GenericBdsLib
   MemLogLib
 
 [Guids]

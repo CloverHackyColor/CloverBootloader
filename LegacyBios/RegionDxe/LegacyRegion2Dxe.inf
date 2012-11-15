@@ -1,13 +1,17 @@
 ## @file
-#  Produces the Legacy Region Protocol.
+#  Produces the Legacy Region 2 Protocol.
 #
-#  This generic implementation of the Legacy Region Protocol does not actually 
+#  This generic implementation of the Legacy Region 2 Protocol does not actually 
 #  perform any lock/unlock operations.  This module may be used on platforms 
 #  that do not provide HW locking of the legacy memory regions.  It can also 
-#  be used as a template driver for implementing the Legacy Region Protocol on
+#  be used as a template driver for implementing the Legacy Region 2 Protocol on
 #  a platform that does support HW locking of the legacy memory regions.
 #
-# Copyright (c) 2009 - 2010, Intel Corporation. All rights reserved.<BR>
+#  Note: This module does not fully comply with PI Specification of Legacy Region 2
+#  Protocol. For Lock/UnLock/Decode, EFI_SUCCESS is returned although the region's
+#  attributes were not actually modified.
+#
+# Copyright (c) 2009 - 2011, Intel Corporation. All rights reserved.<BR>
 # This program and the accompanying materials
 # are licensed and made available under the terms and conditions of the BSD License
 # which accompanies this distribution.  The full text of the license may be found at
@@ -20,11 +24,11 @@
 
 [Defines]
   INF_VERSION                    = 0x00010005
-  BASE_NAME                      = LegacyRegionDxe
-  FILE_GUID                      = 8C439043-85CA-467a-96F1-CB14F4D0DCDA
+  BASE_NAME                      = LegacyRegion2Dxe
+  FILE_GUID                      = EC2BEECA-E84A-445B-869B-F7A73C96F58A
   MODULE_TYPE                    = DXE_DRIVER
-  VERSION_STRING                 = 1.0
-  ENTRY_POINT                    = LegacyRegionInstall
+  VERSION_STRING                 = 1.0  
+  ENTRY_POINT                    = LegacyRegion2Install
 
 #
 # The following information is for reference only and not required by the build tools.
@@ -33,19 +37,25 @@
 #
 
 [Sources]
-  LegacyRegion.c
+  LegacyRegion2.c
+  LegacyRegion2.h
 
 [Packages]
   MdePkg/MdePkg.dec
-  IntelFrameworkPkg/IntelFrameworkPkg.dec
+  MdeModulePkg/MdeModulePkg.dec
 
 [LibraryClasses]
-  UefiDriverEntryPoint
+  BaseLib
+  BaseMemoryLib
+  MemoryAllocationLib
   DebugLib
+  PciLib
+  UefiLib
   UefiBootServicesTableLib
+  UefiDriverEntryPoint
 
 [Protocols]
-  gEfiLegacyRegionProtocolGuid                 ## PRODUCES
+  gEfiLegacyRegion2ProtocolGuid                 ## PRODUCES
 
 [Depex]
   TRUE

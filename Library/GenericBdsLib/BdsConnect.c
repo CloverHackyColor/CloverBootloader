@@ -520,8 +520,8 @@ BdsLibConnectAllDriversToAllControllers (
     //
     // Connect All EFI 1.10 drivers following EFI 1.10 algorithm
     //
-    BdsLibConnectAllEfi ();
-
+    //BdsLibConnectAllEfi ();
+    BdsLibConnectMostlyAllEfi ();
     //
     // Check to see if it's possible to dispatch an more DXE drivers.
     // The BdsLibConnectAllEfi () may have made new DXE drivers show up.

@@ -62,7 +62,7 @@
   #PciExpressLib|MdePkg/Library/DxeRuntimePciExpressLib/DxeRuntimePciExpressLib.inf
   CacheMaintenanceLib|MdePkg/Library/BaseCacheMaintenanceLib/BaseCacheMaintenanceLib.inf
   #PeCoffLib|MdePkg/Library/BasePeCoffLib/BasePeCoffLib.inf
-  PeCoffLib|Clover/VBoxPeCoffLib/VBoxPeCoffLib.inf
+  PeCoffLib|Clover/Library/VBoxPeCoffLib/VBoxPeCoffLib.inf
   PeCoffExtraActionLib|MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
   PeCoffGetEntryPointLib|MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
   #
@@ -90,7 +90,7 @@
   UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
   OemHookStatusCodeLib|MdeModulePkg/Library/OemHookStatusCodeLibNull/OemHookStatusCodeLibNull.inf
   #GenericBdsLib|IntelFrameworkModulePkg/Library/GenericBdsLib/GenericBdsLib.inf
-  GenericBdsLib|Clover/GenericBdsLib/GenericBdsLib.inf
+  GenericBdsLib|Clover/Library/GenericBdsLib/GenericBdsLib.inf
   SecurityManagementLib|MdeModulePkg/Library/DxeSecurityManagementLib/DxeSecurityManagementLib.inf
   CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibNull/DxeCapsuleLibNull.inf
   #PeCoffExtraActionLib|MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
@@ -98,9 +98,9 @@
   # Platform
   #
   #PlatformBdsLib|DuetPkg/Library/DuetBdsLib/PlatformBds.inf
-  PlatformBdsLib|Clover/OsxBdsPlatformLib/PlatformBds.inf
+  PlatformBdsLib|Clover/Library/OsxBdsPlatformLib/PlatformBds.inf
   #TimerLib|DuetPkg/Library/DuetTimerLib/DuetTimerLib.inf
-  TimerLib|Clover/DuetTimerLib/DuetTimerLib.inf
+  TimerLib|Clover/Library/DuetTimerLib/DuetTimerLib.inf
   #
   # Misc
   #
@@ -131,6 +131,11 @@
   DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
   DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf  
   ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
+
+  #
+  # Our libs
+  #
+  MemLogLib|Clover/Library/MemLogLibDefault/MemLogLibDefault.inf
 
 [LibraryClasses.common.DXE_CORE]
   HobLib|MdePkg/Library/DxeCoreHobLib/DxeCoreHobLib.inf
@@ -268,7 +273,8 @@
   }
   MdeModulePkg/Universal/HiiDatabaseDxe/HiiDatabaseDxe.inf
   MdeModulePkg/Universal/SetupBrowserDxe/SetupBrowserDxe.inf
-  MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
+  #MdeModulePkg/Universal/Console/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
+  Clover/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
   #MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
   MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
   #MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
@@ -280,7 +286,7 @@
     <LibraryClasses>
       DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
       #NULL|IntelFrameworkModulePkg/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
-      NULL|Clover/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
+      NULL|Clover/Library/LzmaCustomDecompressLib/LzmaCustomDecompressLib.inf
   }
   #IntelFrameworkModulePkg/Universal/BdsDxe/BdsDxe.inf {
   Clover/OsxBdsDxe/BdsDxe.inf {
@@ -395,7 +401,8 @@
   #IntelFrameworkModulePkg/Csm/BiosThunk/KeyboardDxe/KeyboardDxe.inf
   Clover/BiosKeyboard/KeyboardDxe.inf
   #IntelFrameworkModulePkg/Universal/LegacyRegionDxe/LegacyRegionDxe.inf
-  MdeModulePkg/Universal/LegacyRegion2Dxe/LegacyRegion2Dxe.inf
+  #MdeModulePkg/Universal/LegacyRegion2Dxe/LegacyRegion2Dxe.inf
+  Clover/LegacyBios/RegionDxe/LegacyRegion2Dxe.inf
 
   # Misc
   Clover/FSInject/FSInject.inf

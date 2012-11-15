@@ -126,6 +126,9 @@
 		122B621E157E815100D06F37 /* loader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = loader.h; sourceTree = "<group>"; };
 		122B6220157E817C00D06F37 /* sse3_5_patcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sse3_5_patcher.h; sourceTree = "<group>"; };
 		122B6221157E817C00D06F37 /* sse3_patcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sse3_patcher.h; sourceTree = "<group>"; };
+		123040B316556B760018CD5F /* LegacyRegion2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LegacyRegion2.c; sourceTree = "<group>"; };
+		123040B416556B760018CD5F /* LegacyRegion2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LegacyRegion2.h; sourceTree = "<group>"; };
+		123040B516556B760018CD5F /* LegacyRegion2Dxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = LegacyRegion2Dxe.inf; sourceTree = "<group>"; };
 		123D85D714D94B1F000AF00B /* rEFIt64.dsc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = rEFIt64.dsc; path = ../rEFIt64.dsc; sourceTree = SOURCE_ROOT; };
 		123D85D814D94B29000AF00B /* refit64.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = refit64.inf; path = ../refit64.inf; sourceTree = SOURCE_ROOT; };
 		125108C31627F4CE0004D9C9 /* BootOptions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BootOptions.c; sourceTree = "<group>"; };
@@ -222,13 +225,10 @@
 		1292F26B164BC7A8008FAEEC /* LegacyPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyPlatform.h; sourceTree = "<group>"; };
 		1292F26C164BC7A8008FAEEC /* LegacyRegion.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = LegacyRegion.c; sourceTree = "<group>"; };
 		1292F26D164BC7A8008FAEEC /* LegacyRegion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LegacyRegion.h; sourceTree = "<group>"; };
-		1292F26F164BC7A8008FAEEC /* LegacyRegion.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = LegacyRegion.c; sourceTree = "<group>"; };
-		1292F270164BC7A8008FAEEC /* LegacyRegionDxe.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LegacyRegionDxe.inf; sourceTree = "<group>"; };
 		1292F272164BC7A8008FAEEC /* Thunk.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Thunk.c; sourceTree = "<group>"; };
 		1292F274164BC7A8008FAEEC /* BiosVideo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BiosVideo.c; sourceTree = "<group>"; };
 		1292F275164BC7A8008FAEEC /* BiosVideo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BiosVideo.h; sourceTree = "<group>"; };
 		1292F276164BC7A8008FAEEC /* ComponentName.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
-		1292F277164BC7A8008FAEEC /* VesaBiosExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VesaBiosExtensions.h; sourceTree = "<group>"; };
 		1292F278164BC7A8008FAEEC /* VideoDxe.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VideoDxe.inf; sourceTree = "<group>"; };
 		1292F27A164BC7A8008FAEEC /* InterruptTable.asm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm.asm; path = InterruptTable.asm; sourceTree = "<group>"; };
 		1292F27B164BC7A8008FAEEC /* InterruptTable.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = InterruptTable.S; sourceTree = "<group>"; };
@@ -2774,14 +2774,11 @@
 		12B7FFFC15F921AB00177D35 /* VirtualMemory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VirtualMemory.h; sourceTree = "<group>"; };
 		12B7FFFE15F921AB00177D35 /* Debug.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Debug.c; sourceTree = "<group>"; };
 		12B7FFFF15F921AB00177D35 /* Debug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Debug.h; sourceTree = "<group>"; };
-		12CB8F581427390E009EDAF2 /* DevicePath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DevicePath.c; sourceTree = "<group>"; tabWidth = 4; };
-		12CB8F6014273A38009EDAF2 /* GenericBdsLib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericBdsLib.h; sourceTree = "<group>"; };
 		12CB8FAB14274AE1009EDAF2 /* efiConsoleControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = efiConsoleControl.h; sourceTree = "<group>"; };
 		12CB8FAE14274AE1009EDAF2 /* Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Handle.h; sourceTree = "<group>"; };
 		12CB917114276985009EDAF2 /* IO.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = IO.c; sourceTree = "<group>"; };
 		12CB91AB14276D8E009EDAF2 /* IO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IO.h; sourceTree = "<group>"; };
 		12CB922014277F71009EDAF2 /* BdsConnect.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = BdsConnect.c; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
-		12CB922114277F7D009EDAF2 /* PiBootMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PiBootMode.h; sourceTree = "<group>"; };
 		12D5B1C914F0F35E0043569D /* ati.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ati.h; sourceTree = "<group>"; };
 		12D6305E14CEA05E00E5898F /* ati.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ati.c; sourceTree = "<group>"; };
 		12D6305F14CEA05E00E5898F /* ati_reg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ati_reg.h; sourceTree = "<group>"; };
@@ -2885,9 +2882,6 @@
 			children = (
 				12CB922014277F71009EDAF2 /* BdsConnect.c */,
 				1202122E142667C4004B7B93 /* BmLib.c */,
-				12CB8F6014273A38009EDAF2 /* GenericBdsLib.h */,
-				12CB8F581427390E009EDAF2 /* DevicePath.c */,
-				12CB922114277F7D009EDAF2 /* PiBootMode.h */,
 			);
 			name = EfiLib;
 			path = ../EfiLib;
@@ -3595,8 +3589,9 @@
 		1292F26E164BC7A8008FAEEC /* RegionDxe */ = {
 			isa = PBXGroup;
 			children = (
-				1292F26F164BC7A8008FAEEC /* LegacyRegion.c */,
-				1292F270164BC7A8008FAEEC /* LegacyRegionDxe.inf */,
+				123040B316556B760018CD5F /* LegacyRegion2.c */,
+				123040B416556B760018CD5F /* LegacyRegion2.h */,
+				123040B516556B760018CD5F /* LegacyRegion2Dxe.inf */,
 			);
 			path = RegionDxe;
 			sourceTree = "<group>";
@@ -3615,7 +3610,6 @@
 				1292F274164BC7A8008FAEEC /* BiosVideo.c */,
 				1292F275164BC7A8008FAEEC /* BiosVideo.h */,
 				1292F276164BC7A8008FAEEC /* ComponentName.c */,
-				1292F277164BC7A8008FAEEC /* VesaBiosExtensions.h */,
 				1292F278164BC7A8008FAEEC /* VideoDxe.inf */,
 			);
 			path = VideoDxe;

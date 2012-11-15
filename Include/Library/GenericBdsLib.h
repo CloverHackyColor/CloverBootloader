@@ -19,6 +19,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #define _GENERIC_BDS_LIB_H_
 
 #include <Protocol/UserManager.h>
+#include <Library/PiBootMode.h>
+//#include "IO.h"
 
 ///
 /// Constants which are variable names used to access variables.
@@ -379,12 +381,12 @@ BdsLibConnectAllDriversToAllControllers (
   This function connects all system drivers to controllers.
 
 **/
-/*VOID
+VOID
 EFIAPI
 BdsLibConnectAll (
   VOID
   );
-*/
+
 /**
   This function creates all handles associated with the given device
   path node. If the handle associated with one device path node cannot
@@ -459,12 +461,12 @@ BdsLibConnectAllConsoles (
   @retval EFI_STATUS               Return the status of BdsLibConnectConsoleVariable ().
 
 **/
-/*EFI_STATUS
+EFI_STATUS
 EFIAPI
 BdsLibConnectAllDefaultConsoles (
   VOID
   );
-*/
+
 /**
   This function updates the console variable based on ConVarName. It can
   add or remove one specific console device path from the variable
