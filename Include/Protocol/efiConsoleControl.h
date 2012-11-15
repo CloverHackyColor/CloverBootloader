@@ -116,6 +116,6 @@ typedef struct _EFI_CONSOLE_CONTROL_PROTOCOL {
   EFI_CONSOLE_CONTROL_PROTOCOL_LOCK_STD_IN        LockStdIn;
 } EFI_CONSOLE_CONTROL_PROTOCOL;
 
-//extern EFI_GUID gEfiConsoleControlProtocolGuid;
+extern EFI_GUID gEfiConsoleControlProtocolGuid;
 
 #endif

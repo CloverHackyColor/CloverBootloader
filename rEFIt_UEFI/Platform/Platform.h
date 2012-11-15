@@ -27,6 +27,7 @@ Headers collection for procedures
 #include <Library/UefiLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
 #include <Library/UefiRuntimeLib.h>
+#include <Library/UsbMass.h>
 
 #include <Framework/FrameworkInternalFormRepresentation.h>
 
@@ -48,15 +49,14 @@ Headers collection for procedures
 
 #include <Protocol/FSInjectProtocol.h>
 #include <Protocol/MsgLog.h>
+#include <Protocol/efiConsoleControl.h>
 
 #include "lib.h"
 #include "boot.h"
 //#include "BiosVideo.h"
 //#include "Bmp.h"
-#include "efiConsoleControl.h"
 //#include "SmBios.h"
 #include "EfiLib/GenericBdsLib.h"
-#include "UsbMass.h"
 
 #include "device_inject.h"
 #include "kext_inject.h"

@@ -19,6 +19,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		121E49741654F525000C2392 /* UsbMass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbMass.h; sourceTree = "<group>"; };
+		121E49751654F528000C2392 /* UsbMassBoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbMassBoot.h; sourceTree = "<group>"; };
+		121E49761654F52D000C2392 /* UsbMassImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbMassImpl.h; sourceTree = "<group>"; };
 		123F0954164F96D0008C1C1C /* MemLogLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MemLogLib.c; sourceTree = "<group>"; };
 		123F0955164F96D0008C1C1C /* MemLogLibDefault.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = MemLogLibDefault.inf; sourceTree = "<group>"; };
 		123F0958164F96DB008C1C1C /* EfiFlashMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EfiFlashMap.h; sourceTree = "<group>"; };
@@ -52,8 +55,6 @@
 		12B816781644675800A433E7 /* build.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = "<group>"; };
 		12B816791644675800A433E7 /* build32.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build32.sh; sourceTree = "<group>"; };
 		12B8167A1644675800A433E7 /* build64.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build64.sh; sourceTree = "<group>"; };
-		12B8167B1644675800A433E7 /* buildc32.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = buildc32.sh; sourceTree = "<group>"; };
-		12B8167C1644675800A433E7 /* buildc64.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = buildc64.sh; sourceTree = "<group>"; };
 		12B8167E1644675800A433E7 /* BdsConnect.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BdsConnect.c; sourceTree = "<group>"; };
 		12B8167F1644675800A433E7 /* BmLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BmLib.c; sourceTree = "<group>"; };
 		12B816801644675800A433E7 /* DevicePath.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DevicePath.c; sourceTree = "<group>"; };
@@ -88,7 +89,6 @@
 		12B816A01644675800A433E7 /* load_icns.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = load_icns.c; sourceTree = "<group>"; };
 		12B816A11644675800A433E7 /* mkegemb.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = mkegemb.py; sourceTree = "<group>"; };
 		12B816A21644675800A433E7 /* text.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = text.c; sourceTree = "<group>"; };
-		12B816A41644675800A433E7 /* AcpiAml.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AcpiAml.h; sourceTree = "<group>"; };
 		12B816A51644675800A433E7 /* AcpiPatcher.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AcpiPatcher.c; sourceTree = "<group>"; };
 		12B816A61644675800A433E7 /* AmlGenerator.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AmlGenerator.c; sourceTree = "<group>"; };
 		12B816A71644675800A433E7 /* AmlGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AmlGenerator.h; sourceTree = "<group>"; };
@@ -252,6 +252,8 @@
 			children = (
 				123F0967164F96DB008C1C1C /* MemLogLib.h */,
 				123F0968164F96DB008C1C1C /* PeCoffLib.h */,
+				121E49741654F525000C2392 /* UsbMass.h */,
+				121E49751654F528000C2392 /* UsbMassBoot.h */,
 			);
 			path = Library;
 			sourceTree = "<group>";
@@ -261,6 +263,7 @@
 			children = (
 				123F096A164F96DB008C1C1C /* FSInjectProtocol.h */,
 				123F096B164F96DB008C1C1C /* MsgLog.h */,
+				121E49761654F52D000C2392 /* UsbMassImpl.h */,
 			);
 			path = Protocol;
 			sourceTree = "<group>";
@@ -328,8 +331,6 @@
 				12B816781644675800A433E7 /* build.sh */,
 				12B816791644675800A433E7 /* build32.sh */,
 				12B8167A1644675800A433E7 /* build64.sh */,
-				12B8167B1644675800A433E7 /* buildc32.sh */,
-				12B8167C1644675800A433E7 /* buildc64.sh */,
 				12B8167D1644675800A433E7 /* EfiLib */,
 				12B816841644675800A433E7 /* IA32 */,
 				12B8168A1644675800A433E7 /* include */,
@@ -412,7 +413,6 @@
 		12B816A31644675800A433E7 /* Platform */ = {
 			isa = PBXGroup;
 			children = (
-				12B816A41644675800A433E7 /* AcpiAml.h */,
 				12B816A51644675800A433E7 /* AcpiPatcher.c */,
 				12B816A61644675800A433E7 /* AmlGenerator.c */,
 				12B816A71644675800A433E7 /* AmlGenerator.h */,

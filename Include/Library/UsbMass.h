@@ -23,6 +23,9 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Protocol/UsbIo.h>
 #include <Protocol/DevicePath.h>
 #include <Protocol/DiskInfo.h>
+#include <Protocol/UsbMassImpl.h>
+//#include <Protocol/UsbMassDiskInfo.h>
+
 #include <Library/BaseLib.h>
 #include <Library/DebugLib.h>
 #include <Library/BaseMemoryLib.h>
@@ -34,12 +37,13 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 typedef struct _USB_MASS_TRANSPORT USB_MASS_TRANSPORT;
 typedef struct _USB_MASS_DEVICE    USB_MASS_DEVICE;
+#include <Library/UsbMassBoot.h>
 
 //#include "UsbMassBot.h"
 //#include "UsbMassCbi.h"
-#include "UsbMassBoot.h"
-//#include "UsbMassDiskInfo.h"
-#include "UsbMassImpl.h"
+
+
+
 
 #define USB_IS_IN_ENDPOINT(EndPointAddr)      (((EndPointAddr) & BIT7) == BIT7)
 #define USB_IS_OUT_ENDPOINT(EndPointAddr)     (((EndPointAddr) & BIT7) == 0)

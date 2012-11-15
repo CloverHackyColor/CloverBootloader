@@ -34,8 +34,8 @@
 //#include <Framework/FrameworkInternalFormRepresentation.h>
 #include "Platform.h"
 
-#include "DataHubRecords.h"
-//#include <Guid/DataHubRecords.h>
+//#include "DataHubRecords.h"
+#include <Guid/DataHubRecords.h>
 
 #define EFI_CPU_DATA_MAXIMUM_LENGTH 0x100
 

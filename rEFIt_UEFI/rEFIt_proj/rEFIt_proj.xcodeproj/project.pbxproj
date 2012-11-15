@@ -2787,7 +2787,6 @@
 		12D6306414CEA05E00E5898F /* Console.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = Console.c; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
 		12D6306514CEA05E00E5898F /* cpu.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = cpu.c; sourceTree = "<group>"; };
 		12D6306614CEA05E00E5898F /* DataHubCpu.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = DataHubCpu.c; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
-		12D6306714CEA05E00E5898F /* DataHubRecords.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataHubRecords.h; sourceTree = "<group>"; };
 		12D6306814CEA05E00E5898F /* device_inject.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = device_inject.c; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
 		12D6306914CEA05E00E5898F /* device_inject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = device_inject.h; sourceTree = "<group>"; };
 		12D6306A14CEA05E00E5898F /* device_tree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = device_tree.c; sourceTree = "<group>"; };
@@ -9452,7 +9451,6 @@
 				12D6306414CEA05E00E5898F /* Console.c */,
 				12D6306514CEA05E00E5898F /* cpu.c */,
 				12D6306614CEA05E00E5898F /* DataHubCpu.c */,
-				12D6306714CEA05E00E5898F /* DataHubRecords.h */,
 				260720AF15907388009CC463 /* DbgTime.c */,
 				12D6306814CEA05E00E5898F /* device_inject.c */,
 				12D6306914CEA05E00E5898F /* device_inject.h */,
