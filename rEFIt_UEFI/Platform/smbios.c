@@ -316,11 +316,11 @@ CHAR8* GetSmbiosString (
 
 VOID AddSmbiosEndOfTable()
 {	
-	SMBIOS_STRUCTURE* StructurePtr = (SMBIOS_STRUCTURE*)Current;
+	SMBIOS_TABLE_HEADER* StructurePtr = (SMBIOS_TABLE_HEADER*)Current;
 	StructurePtr->Type		= SMBIOS_TYPE_END_OF_TABLE; 
-	StructurePtr->Length	= sizeof(SMBIOS_STRUCTURE);
+	StructurePtr->Length	= sizeof(SMBIOS_TABLE_HEADER);
 	StructurePtr->Handle	= SMBIOS_TYPE_INACTIVE; //spec 2.7 p.120
-	Current += sizeof(SMBIOS_STRUCTURE);
+	Current += sizeof(SMBIOS_TABLE_HEADER);
 	*Current++ = 0;
 	*Current++ = 0; //double 0 at the end
 	NumberOfRecords++;
@@ -984,7 +984,7 @@ VOID PatchTableType11()
 	ZeroMem((VOID*)newSmbiosTable.Type11, MAX_TABLE_SIZE);
 //	CopyMem((VOID*)newSmbiosTable.Type11, (VOID*)SmbiosTable.Type11, 5); //minimum, other bytes = 0
 	newSmbiosTable.Type11->Hdr.Type = EFI_SMBIOS_TYPE_OEM_STRINGS;
-	newSmbiosTable.Type11->Hdr.Length = sizeof(SMBIOS_STRUCTURE)+2; 
+	newSmbiosTable.Type11->Hdr.Length = sizeof(SMBIOS_TABLE_HEADER)+2; 
 	newSmbiosTable.Type11->Hdr.Handle = 0x0B00; //common rule
 	
 	newSmbiosTable.Type11->StringCount = 1;
@@ -1265,7 +1265,7 @@ PatchTableType19 ()
 	 /// One structure is present for each contiguous address range described.
 	 ///
 	 typedef struct {
-		SMBIOS_STRUCTURE      Hdr;
+		SMBIOS_TABLE_HEADER      Hdr;
 		UINT32                StartingAddress;
 		UINT32                EndingAddress;
 		UINT16                MemoryArrayHandle;
@@ -1430,7 +1430,7 @@ VOID PatchTableType131()
   
 		ZeroMem((VOID*)newSmbiosTable.Type131, MAX_TABLE_SIZE);
 		newSmbiosTable.Type131->Hdr.Type = 131;
-		newSmbiosTable.Type131->Hdr.Length = sizeof(SMBIOS_STRUCTURE)+2; 
+		newSmbiosTable.Type131->Hdr.Length = sizeof(SMBIOS_TABLE_HEADER)+2; 
 		newSmbiosTable.Type131->Hdr.Handle = 0x8300; //common rule
 		// Patch ProcessorType
 			newSmbiosTable.Type131->ProcessorType = gSettings.CpuType;
@@ -1449,7 +1449,7 @@ VOID PatchTableType132()
 	
 		ZeroMem((VOID*)newSmbiosTable.Type132, MAX_TABLE_SIZE);
 		newSmbiosTable.Type132->Hdr.Type = 132;
-		newSmbiosTable.Type132->Hdr.Length = sizeof(SMBIOS_STRUCTURE)+2; 
+		newSmbiosTable.Type132->Hdr.Length = sizeof(SMBIOS_TABLE_HEADER)+2; 
 		newSmbiosTable.Type132->Hdr.Handle = 0x8400; //ugly
 	// Patch ProcessorBusSpeed
 		if(gSettings.QPI){

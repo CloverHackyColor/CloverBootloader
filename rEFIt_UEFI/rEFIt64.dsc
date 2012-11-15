@@ -49,10 +49,10 @@
 #  HiiLib|MdeModulePkg/Library/UefiHiiLib/UefiHiiLib.inf
   NetLib|MdeModulePkg/Library/DxeNetLib/DxeNetLib.inf
   
-  PeCoffLib|Clover/VBoxPeCoffLib/VBoxPeCoffLib.inf
+  PeCoffLib|Clover/Library/VBoxPeCoffLib/VBoxPeCoffLib.inf
   PeCoffGetEntryPointLib|MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
-#  GenericBdsLib|Clover/GenericBdsLib/GenericBdsLib.inf
-  TimerLib|Clover/DuetTimerLib/DuetTimerLib.inf
+#  GenericBdsLib|Clover/Library/GenericBdsLib/GenericBdsLib.inf
+  TimerLib|Clover/Library/DuetTimerLib/DuetTimerLib.inf
   UefiUsbLib|MdePkg/Library/UefiUsbLib/UefiUsbLib.inf
   UefiScsiLib|MdePkg/Library/UefiScsiLib/UefiScsiLib.inf
   EfiFileLib|EmbeddedPkg/Library/EfiFileLib/EfiFileLib.inf

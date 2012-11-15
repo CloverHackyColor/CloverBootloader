@@ -21,8 +21,8 @@ Abstract:
 #define _SMBIOS_GEN_H_
 
 #include <FrameworkDxe.h>
-//#include <IndustryStandard/SmBios.h>
-#include "SmBios.h"
+#include <IndustryStandard/Smbios.h>
+//#include "SmBios.h"
 
 #include <Guid/HobList.h>
 #include <Guid/SmBios.h>

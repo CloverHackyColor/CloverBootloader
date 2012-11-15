@@ -2782,7 +2782,6 @@
 		12D5B1C914F0F35E0043569D /* ati.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ati.h; sourceTree = "<group>"; };
 		12D6305E14CEA05E00E5898F /* ati.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ati.c; sourceTree = "<group>"; };
 		12D6305F14CEA05E00E5898F /* ati_reg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ati_reg.h; sourceTree = "<group>"; };
-		12D6306114CEA05E00E5898F /* Bmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Bmp.h; sourceTree = "<group>"; };
 		12D6306214CEA05E00E5898F /* boot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = boot.h; sourceTree = "<group>"; };
 		12D6306314CEA05E00E5898F /* BootLog.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = BootLog.c; sourceTree = "<group>"; tabWidth = 2; };
 		12D6306414CEA05E00E5898F /* Console.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = Console.c; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
@@ -2822,7 +2821,6 @@
 		12D6308D14CEA05E00E5898F /* UsbMassBoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbMassBoot.h; sourceTree = "<group>"; };
 		12D6308E14CEA05E00E5898F /* UsbMassImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbMassImpl.h; sourceTree = "<group>"; };
 		12D6308F14CEA05E00E5898F /* VesaBiosExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VesaBiosExtensions.h; sourceTree = "<group>"; };
-		12DE470B1581D0B6008187A7 /* AcpiAml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AcpiAml.h; sourceTree = "<group>"; };
 		12E06DFA15CBC24D0069E011 /* kext_inject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kext_inject.c; sourceTree = "<group>"; usesTabs = 1; };
 		12E06DFB15CBC24D0069E011 /* kext_inject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kext_inject.h; sourceTree = "<group>"; };
 		260720AF15907388009CC463 /* DbgTime.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DbgTime.c; sourceTree = "<group>"; };
@@ -9440,7 +9438,6 @@
 		12D6305B14CEA05E00E5898F /* Platform */ = {
 			isa = PBXGroup;
 			children = (
-				12DE470B1581D0B6008187A7 /* AcpiAml.h */,
 				12961B4215FCEC91008D77FB /* AcpiPatcher.c */,
 				126C264B1510C3C9005AB30D /* AmlGenerator.c */,
 				126C264C1510C3C9005AB30D /* AmlGenerator.h */,
@@ -9449,7 +9446,6 @@
 				12D6305F14CEA05E00E5898F /* ati_reg.h */,
 				26440C83157AADDF0077A476 /* b64cdecode.c */,
 				26440C84157AADDF0077A476 /* b64cdecode.h */,
-				12D6306114CEA05E00E5898F /* Bmp.h */,
 				12D6306214CEA05E00E5898F /* boot.h */,
 				12D6306314CEA05E00E5898F /* BootLog.c */,
 				125108C31627F4CE0004D9C9 /* BootOptions.c */,

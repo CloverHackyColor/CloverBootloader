@@ -33,6 +33,8 @@ Headers collection for procedures
 #include <IndustryStandard/Acpi10.h>
 #include <IndustryStandard/Acpi20.h>
 #include <IndustryStandard/Atapi.h>
+#include <IndustryStandard/Smbios.h>
+#include <IndustryStandard/Bmp.h>
 
 #include <Protocol/Cpu.h>
 #include <Protocol/CpuIo.h>
@@ -50,9 +52,9 @@ Headers collection for procedures
 #include "lib.h"
 #include "boot.h"
 //#include "BiosVideo.h"
-#include "Bmp.h"
+//#include "Bmp.h"
 #include "efiConsoleControl.h"
-#include "SmBios.h"
+//#include "SmBios.h"
 #include "EfiLib/GenericBdsLib.h"
 #include "UsbMass.h"
 
