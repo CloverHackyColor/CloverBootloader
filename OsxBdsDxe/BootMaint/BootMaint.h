@@ -1564,6 +1564,7 @@ extern COM_ATTR                   DataBitsList[4];
 extern COM_ATTR                   ParityList[5];
 extern COM_ATTR                   StopBitsList[3];
 extern EFI_GUID                   TerminalTypeGuid[4];
+extern EFI_GUID                   gEfiLegacyDevOrderVariableGuid;
 extern STRING_DEPOSITORY          *FileOptionStrDepository;
 extern STRING_DEPOSITORY          *ConsoleOptionStrDepository;
 extern STRING_DEPOSITORY          *BootOptionStrDepository;

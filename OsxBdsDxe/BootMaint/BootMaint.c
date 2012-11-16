@@ -208,7 +208,10 @@ BootMaintExtractConfig (
     ConfigRequestHdr = HiiConstructConfigHdr (&gBootMaintFormSetGuid, mBootMaintStorageName, Private->BmmDriverHandle);
     Size = (StrLen (ConfigRequestHdr) + 32 + 1) * sizeof (CHAR16);
     ConfigRequest = AllocateZeroPool (Size);
-    ASSERT (ConfigRequest != NULL);
+  //  ASSERT (ConfigRequest != NULL);
+    if (!ConfigRequest) {
+      return EFI_OUT_OF_RESOURCES;
+    }
     AllocatedRequest = TRUE;
     UnicodeSPrint (ConfigRequest, Size, L"%s&OFFSET=0&WIDTH=%016LX", ConfigRequestHdr, (UINT64)BufferSize);
     FreePool (ConfigRequestHdr);

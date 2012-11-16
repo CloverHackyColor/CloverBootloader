@@ -2358,7 +2358,7 @@ CopyVideoBuffer (
                      TotalBytes,
                      VbeBuffer
                      );
-    ASSERT_EFI_ERROR (Status);
+ //   ASSERT_EFI_ERROR (Status);
     return;
   }
 
@@ -2376,7 +2376,10 @@ CopyVideoBuffer (
                      UnalignedBytes,
                      VbeBuffer
                      );
-    ASSERT_EFI_ERROR (Status);
+ //   ASSERT_EFI_ERROR (Status);
+    if (EFI_ERROR (Status)) {
+      return;
+    }
     FrameBufferAddr += UnalignedBytes;
     VbeBuffer       += UnalignedBytes;
   }
@@ -2399,7 +2402,10 @@ CopyVideoBuffer (
                     CopyBlockNum,
                     VbeBuffer
                     );
-    ASSERT_EFI_ERROR (Status);
+//    ASSERT_EFI_ERROR (Status);
+    if (EFI_ERROR (Status)) {
+      return;
+    }
   }
 
   if (RemainingBytes != 0) {
@@ -2413,7 +2419,10 @@ CopyVideoBuffer (
                     RemainingBytes,
                     VbeBuffer
                     );
-    ASSERT_EFI_ERROR (Status);
+//    ASSERT_EFI_ERROR (Status);
+    if (EFI_ERROR (Status)) {
+      return;
+    }
   }
 }
 
@@ -3473,7 +3482,10 @@ BiosVideoEntryPoint(
              &gBiosVideoComponentName,
              &gBiosVideoComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
 
   //
   // Install Legacy BIOS GUID to mark this driver as a BIOS Thunk Driver

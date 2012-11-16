@@ -2590,7 +2590,6 @@
 		12B7FEED15F9215700177D35 /* BiosVideoNew.c */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.c.c; path = BiosVideoNew.c; sourceTree = "<group>"; tabWidth = 4; usesTabs = 1; };
 		12B7FEEE15F9215700177D35 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
 		12B7FEEF15F9215700177D35 /* LegacyBiosThunk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LegacyBiosThunk.c; sourceTree = "<group>"; };
-		12B7FEF015F9215700177D35 /* VesaBiosExtensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VesaBiosExtensions.h; sourceTree = "<group>"; };
 		12B7FEF215F9217300177D35 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
 		12B7FEF315F9217300177D35 /* ConSplitter.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ConSplitter.c; sourceTree = "<group>"; };
 		12B7FEF415F9217300177D35 /* ConSplitter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConSplitter.h; sourceTree = "<group>"; };
@@ -8865,7 +8864,6 @@
 				12B7FEED15F9215700177D35 /* BiosVideoNew.c */,
 				12B7FEEE15F9215700177D35 /* ComponentName.c */,
 				12B7FEEF15F9215700177D35 /* LegacyBiosThunk.c */,
-				12B7FEF015F9215700177D35 /* VesaBiosExtensions.h */,
 			);
 			name = BiosVideo;
 			path = ../../BiosVideo;

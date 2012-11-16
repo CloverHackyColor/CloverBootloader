@@ -320,7 +320,7 @@ COM_ATTR            StopBitsList[3] = {
     STRING_TOKEN(STR_COM_STOP_BITS_2)
   }
 };
-
+*/
 ///
 /// Guid for messaging path, used in Serial port setting.
 ///
@@ -330,4 +330,3 @@ EFI_GUID            TerminalTypeGuid[4] = {
   DEVICE_PATH_MESSAGING_VT_100_PLUS,
   DEVICE_PATH_MESSAGING_VT_UTF8
 };
-*/

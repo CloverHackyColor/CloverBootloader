@@ -1804,7 +1804,10 @@ InitializeAtaBus(
              &gAtaBusComponentName,
              &gAtaBusComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
 
   //
   // Get the MorControl bit.
@@ -1819,12 +1822,12 @@ InitializeAtaBus(
                   );
 
   if (EFI_ERROR (Status)) {
-    DEBUG ((EFI_D_INFO, "AtaBus:gEfiMemoryOverwriteControlDataGuid doesn't exist!!***\n"));
+//    DEBUG ((EFI_D_INFO, "AtaBus:gEfiMemoryOverwriteControlDataGuid doesn't exist!!***\n"));
     mHasMor     = FALSE;
     mMorControl = 0;
     Status      = EFI_SUCCESS;
   } else {
-    DEBUG ((EFI_D_INFO, "AtaBus:Get the gEfiMemoryOverwriteControlDataGuid = %x!!***\n", mMorControl));
+//    DEBUG ((EFI_D_INFO, "AtaBus:Get the gEfiMemoryOverwriteControlDataGuid = %x!!***\n", mMorControl));
     mHasMor     = TRUE;
   }
 

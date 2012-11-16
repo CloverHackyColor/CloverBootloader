@@ -27,7 +27,7 @@
 [LibraryClasses]
   ##  @libraryclass  Provides MsgLog service
   ##
-  MemgLogLib|Include/Library/MemLogLib.h
+  MemLogLib|Include/Library/MemLogLib.h
 
 [Guids]
   gEfiPciExpressBaseAddressGuid = {0x3677d529, 0x326f, 0x4603, {0xa9, 0x26, 0xea, 0xac, 0xe0, 0x1d, 0xcb, 0xb0 }}

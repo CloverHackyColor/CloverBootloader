@@ -333,7 +333,10 @@ BiosBlockIoDriverBindingStart (
     // Should only be here if there are no active instances
     //
     ASSERT (mActiveInstances == 0);
-
+    if (mActiveInstances) {
+      Status = EFI_OUT_OF_RESOURCES;
+      goto Error;
+    }
     //
     // Acquire the lock
     //
@@ -357,7 +360,7 @@ BiosBlockIoDriverBindingStart (
       //
       // In checked builds we want to assert if the allocate failed.
       //
-      ASSERT_EFI_ERROR (Status);
+   //   ASSERT_EFI_ERROR (Status);
       Status          = EFI_OUT_OF_RESOURCES;
       mBufferUnder1Mb = 0;
       goto Error;
@@ -539,8 +542,10 @@ BiosBlockIoDriverBindingStop (
     // Free our global buffer
     //
     Status = gBS->FreePages (mBufferUnder1Mb, BLOCK_IO_BUFFER_PAGE_SIZE);
-    ASSERT_EFI_ERROR (Status);
-
+//    ASSERT_EFI_ERROR (Status);
+    if (EFI_ERROR (Status)) {
+      return Status;
+    }
     EfiAcquireLock (&mGlobalDataLock);
     mBufferUnder1Mb = 0;
     EfiReleaseLock (&mGlobalDataLock);

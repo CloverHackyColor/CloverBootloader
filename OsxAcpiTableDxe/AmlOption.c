@@ -114,7 +114,7 @@ AmlParseOptionTerm (
     //
   case AML_OPCODE:
   default:
-    ASSERT (FALSE);
+ //   ASSERT (FALSE);
     return EFI_INVALID_PARAMETER;
   }
   if (*DataSize > MaxBufferSize) {
@@ -157,18 +157,20 @@ AmlParseOptionCommon (
   AML_OP_PARSE_INDEX  TermIndex;
   EFI_STATUS          Status;
 
-  ASSERT ((Index <= AmlByteEncoding->MaxIndex) || (Index == AML_OP_PARSE_INDEX_GET_SIZE));
-
+//  ASSERT ((Index <= AmlByteEncoding->MaxIndex) || (Index == AML_OP_PARSE_INDEX_GET_SIZE));
+  if (!((Index <= AmlByteEncoding->MaxIndex) || (Index == AML_OP_PARSE_INDEX_GET_SIZE))) {
+    return EFI_INVALID_PARAMETER;
+  }
   //
   // 0. Check if this is NAME string.
   //
   if ((AmlByteEncoding->Attribute & AML_IS_NAME_CHAR) != 0) {
     //
     // Only allow GET_SIZE
-    //
-    if (Index != AML_OP_PARSE_INDEX_GET_SIZE) {
+    //already checked
+ /*   if (Index != AML_OP_PARSE_INDEX_GET_SIZE) {
       return EFI_INVALID_PARAMETER;
-    }
+    } */
     //
     // return NameString size
     //
@@ -274,7 +276,7 @@ AmlParseOptionCommon (
   //
   // 4. Finish parsing all node, return size
   //
-  ASSERT (Index == AML_OP_PARSE_INDEX_GET_SIZE);
+//  ASSERT (Index == AML_OP_PARSE_INDEX_GET_SIZE);
   if ((AmlByteEncoding->Attribute & AML_HAS_PKG_LENGTH) != 0) {
     *DataSize = OpLength + PkgLength;
   } else {
@@ -340,8 +342,10 @@ AmlGetObjectName (
 
   AmlByteEncoding = AmlHandle->AmlByteEncoding;
 
-  ASSERT ((AmlByteEncoding->Attribute & AML_IN_NAMESPACE) != 0);
-
+//  ASSERT ((AmlByteEncoding->Attribute & AML_IN_NAMESPACE) != 0);
+  if ((AmlByteEncoding->Attribute & AML_IN_NAMESPACE) == 0) {
+    return NULL;
+  }
   //
   // Find out Last Name index, accroding to OpCode table.
   // The last name will be the node name by design.
@@ -352,8 +356,10 @@ AmlGetObjectName (
       break;
     }
   }
-  ASSERT (TermIndex != 0);
-
+//  ASSERT (TermIndex != 0);
+  if (TermIndex == 0) {
+    eturn NULL;
+  }
   //
   // Get Name for this node.
   //
@@ -367,7 +373,7 @@ AmlGetObjectName (
   if (EFI_ERROR (Status)) {
     return NULL;
   }
-  ASSERT (DataType == EFI_ACPI_DATA_TYPE_NAME_STRING);
+//  ASSERT (DataType == EFI_ACPI_DATA_TYPE_NAME_STRING);
 
   return NameString;
 }

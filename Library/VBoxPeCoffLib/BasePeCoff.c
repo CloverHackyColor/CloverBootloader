@@ -108,7 +108,7 @@ PeCoffLoaderGetPeHeader (
     UINT32 i;
 //    DEBUG((DEBUG_LOAD, "%a:%d - %x narches:%d\n", __FILE__, __LINE__, Fat.Signature, Fat.NFatArch));
     /* Can't find the way to allocate here because library used in all phases */
-    ASSERT((Fat.NFatArch < 5));
+//    ASSERT((Fat.NFatArch < 5));
     Size = sizeof(EFI_FAT_IMAGE_HEADER_NLIST) * Fat.NFatArch;
     Status = ImageContext->ImageRead (
                              ImageContext->Handle,
@@ -609,7 +609,10 @@ PeCoffLoaderRelocateImage (
   UINT32                                NumberOfRvaAndSizes;
   UINT16                                Magic;
 
-  ASSERT (ImageContext != NULL);
+ // ASSERT (ImageContext != NULL);
+  if (!ImageContext) {
+    return RETURN_LOAD_ERROR;
+  }
 
   //
   // Assume success
@@ -892,7 +895,10 @@ PeCoffLoaderLoadImage (
   UINT32                                Offset = 0;
 
 
-  ASSERT (ImageContext != NULL);
+//  ASSERT (ImageContext != NULL);
+  if (!ImageContext) {
+    return RETURN_LOAD_ERROR;
+  }
 
   //
   // Assume success
@@ -1449,15 +1455,18 @@ PeCoffLoaderRelocateImageForRuntime (
     //
     // Cannot find relocations, cannot continue to relocate the image, ASSERT for this invalid image.
     //
-    ASSERT (FALSE);
+ //   ASSERT (FALSE);
     return ;
   }
 
   //
   // ASSERT for the invalid image when RelocBase and RelocBaseEnd are both NULL.
   //
-  ASSERT (RelocBase != NULL && RelocBaseEnd != NULL);
+//  ASSERT (RelocBase != NULL && RelocBaseEnd != NULL);
 
+  if (!RelocBase || !RelocBaseEnd) {
+    return ;
+  }
   //
   // Run the whole relocation block. And re-fixup data that has not been
   // modified. The FixupData is used to see if the image has been modified
@@ -1525,7 +1534,7 @@ PeCoffLoaderRelocateImageForRuntime (
         //
         // Not valid Relocation type for UEFI image, ASSERT
         //
-        ASSERT (FALSE);
+  //      ASSERT (FALSE);
         break;
 
       default:
@@ -1582,9 +1591,12 @@ PeCoffLoaderImageReadFromMemory (
   OUT    VOID    *Buffer
   )
 {
-  ASSERT (ReadSize != NULL);
-  ASSERT (FileHandle != NULL);
-  ASSERT (Buffer != NULL);
+//  ASSERT (ReadSize != NULL);
+//  ASSERT (FileHandle != NULL);
+//  ASSERT (Buffer != NULL);
+  if (!ReadSize || !FileHandle || !Buffer) {
+    return RETURN_INVALID_PARAMETER;
+  }
 
   CopyMem (Buffer, ((UINT8 *)FileHandle) + FileOffset, *ReadSize);
   return RETURN_SUCCESS;

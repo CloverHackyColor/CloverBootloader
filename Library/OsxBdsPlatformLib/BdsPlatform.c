@@ -120,15 +120,15 @@ PrintMemoryMap (
   MemMapSize = 0;
   MemMap     = NULL;
   Status = gBS->GetMemoryMap (&MemMapSize, MemMap, &MapKey, &DescriptorSize, &DescriptorVersion);
-  ASSERT (Status == EFI_BUFFER_TOO_SMALL);
+//  ASSERT (Status == EFI_BUFFER_TOO_SMALL);
   MemMapSize += EFI_PAGE_SIZE;
   Status = gBS->AllocatePool (EfiBootServicesData, MemMapSize, &MemMap);
-  ASSERT (Status == EFI_SUCCESS);
+//  ASSERT (Status == EFI_SUCCESS);
   Status = gBS->GetMemoryMap (&MemMapSize, MemMap, &MapKey, &DescriptorSize, &DescriptorVersion);
-  ASSERT (Status == EFI_SUCCESS);
+//  ASSERT (Status == EFI_SUCCESS);
   MemMapPtr = MemMap;
 
-  ASSERT (DescriptorVersion == EFI_MEMORY_DESCRIPTOR_VERSION);
+//  ASSERT (DescriptorVersion == EFI_MEMORY_DESCRIPTOR_VERSION);
 
   for (Index = 0; Index < MemMapSize / DescriptorSize; Index ++) {
     Bytes = LShiftU64 (MemMap->NumberOfPages, 12);
@@ -1264,9 +1264,9 @@ Returns:
                   NULL,
                   &UserInputDurationTime
                   );
-  ASSERT (Status == EFI_SUCCESS);
+//  ASSERT (Status == EFI_SUCCESS);
   Status = gBS->SetTimer (UserInputDurationTime, TimerRelative, 3000000);
-  ASSERT (Status == EFI_SUCCESS);
+//  ASSERT (Status == EFI_SUCCESS);
   //
   // Memory test and Logo show
   //
@@ -1556,7 +1556,10 @@ Returns:
 									 EFI_SIZE_TO_PAGES(TableLen),
 									 &BufferPtr
 									 );
-		ASSERT_EFI_ERROR (Status);
+//		ASSERT_EFI_ERROR (Status);
+    if (EFI_ERROR (Status)) {
+      return EFI_OUT_OF_RESOURCES;
+    }
 		AcpiTableNew = (VOID *)(UINTN)BufferPtr;
 		CopyMem (AcpiTableNew, AcpiTableOri, TableLen);
 	} else {
@@ -1631,7 +1634,11 @@ Returns:
                   EFI_SIZE_TO_PAGES(BufferLen),
                   &BufferPtr
                   );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+
   SmbiosTableNew = (SMBIOS_TABLE_ENTRY_POINT *)(UINTN)BufferPtr;
   CopyMem (
     SmbiosTableNew, 
@@ -1727,7 +1734,10 @@ Returns:
                   EFI_SIZE_TO_PAGES(Data32),
                   &BufferPtr
                   );
-  ASSERT_EFI_ERROR (Status); 
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return EFI_OUT_OF_RESOURCES;
+  }
   MpsFloatingPointerNew = (EFI_LEGACY_MP_TABLE_FLOATING_POINTER *)(UINTN)BufferPtr;
   CopyMem (MpsFloatingPointerNew, MpsFloatingPointerOri, FPLength);
   //

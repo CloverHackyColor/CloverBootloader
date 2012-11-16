@@ -241,7 +241,10 @@ BdsLibRegisterNewOption (
     //
     // TempOptionPtr must not be NULL if we have non-zero TempOptionSize.
     //
-    ASSERT (TempOptionPtr != NULL);
+//    ASSERT (TempOptionPtr != NULL);
+    if (!TempOptionPtr) {
+      return EFI_NOT_FOUND;
+    }
 
     if (*VariableName == 'B') {
       UnicodeSPrint (OptionName, sizeof (OptionName), L"Boot%04x", TempOptionPtr[Index]);
@@ -298,7 +301,10 @@ BdsLibRegisterNewOption (
   OptionSize          = sizeof (UINT32) + sizeof (UINT16) + StrSize (String);
   OptionSize          += GetDevicePathSize (DevicePath);
   OptionPtr           = AllocateZeroPool (OptionSize);
-  ASSERT (OptionPtr != NULL);
+//  ASSERT (OptionPtr != NULL);
+  if (!OptionPtr) {
+    return EFI_OUT_OF_RESOURCES;
+  }
   
   TempPtr             = OptionPtr;
   *(UINT32 *) TempPtr = LOAD_OPTION_ACTIVE;
@@ -314,7 +320,10 @@ BdsLibRegisterNewOption (
     // The number in option#### to be updated. 
     // In this case, we must have non-NULL TempOptionPtr.
     //
-    ASSERT (TempOptionPtr != NULL);
+ //   ASSERT (TempOptionPtr != NULL);
+    if (!TempOptionPtr) {
+      return EFI_NOT_FOUND;
+    }
     RegisterOptionNumber = TempOptionPtr[Index];
   } else {
     //
@@ -374,13 +383,19 @@ BdsLibRegisterNewOption (
   //
   // TempOptionPtr must not be NULL if TempOptionSize is not zero.
   //
-  ASSERT (TempOptionPtr != NULL);
+//  ASSERT (TempOptionPtr != NULL);
+  if (!TempOptionPtr) {
+    return EFI_NOT_FOUND;
+  }
   //
   // Append the new option number to the original option order
   //
   OrderItemNum = (TempOptionSize / sizeof (UINT16)) + 1 ;
   OptionOrderPtr = AllocateZeroPool ( OrderItemNum * sizeof (UINT16));
-  ASSERT (OptionOrderPtr!= NULL);
+//  ASSERT (OptionOrderPtr!= NULL);
+  if (!OptionOrderPtr) {
+    return EFI_NOT_FOUND;
+  }
   CopyMem (OptionOrderPtr, TempOptionPtr, (OrderItemNum - 1) * sizeof (UINT16));
 
   OptionOrderPtr[Index] = RegisterOptionNumber;
@@ -476,8 +491,11 @@ StrSizeEx (
 {
   UINTN                             Length;
 
-  ASSERT (String != NULL && MaxStringLen != 0);
-  ASSERT (((UINTN) String & BIT0) == 0);
+//  ASSERT (String != NULL && MaxStringLen != 0);
+//  ASSERT (((UINTN) String & BIT0) == 0);  //why we affaid non-aligned strings?
+  if (!String || !MaxStringLen) {
+    return 0;
+  }
 
   for (Length = 0; *String != L'\0' && MaxStringLen != Length; String++, Length+=2);
 
@@ -571,7 +589,7 @@ CharToUint (
     return (UINTN) (Char - L'A' + 0xA);
   }
 
-  ASSERT (FALSE);
+//  ASSERT (FALSE);
   return 0;
 }
 
@@ -676,16 +694,25 @@ BdsLibVariableToOption (
 
   Option->Signature   = BDS_LOAD_OPTION_SIGNATURE;
   Option->DevicePath  = AllocateZeroPool (GetDevicePathSize (DevicePath));
-  ASSERT(Option->DevicePath != NULL);
+//  ASSERT(Option->DevicePath != NULL);
+  if (!Option->DevicePath) {
+    return NULL;
+  }
   CopyMem (Option->DevicePath, DevicePath, GetDevicePathSize (DevicePath));
 
   Option->Attribute   = Attribute;
   Option->Description = AllocateZeroPool (StrSize (Description));
-  ASSERT(Option->Description != NULL);
+//  ASSERT(Option->Description != NULL);
+  if (!Option->Description) {
+    return NULL;
+  }
   CopyMem (Option->Description, Description, StrSize (Description));
 
   Option->LoadOptions = AllocateZeroPool (LoadOptionsSize);
-  ASSERT(Option->LoadOptions != NULL);
+//  ASSERT(Option->LoadOptions != NULL);
+  if (!Option->LoadOptions) {
+    return NULL;
+  }
   CopyMem (Option->LoadOptions, LoadOptions, LoadOptionsSize);
   Option->LoadOptionsSize = LoadOptionsSize;
 
@@ -839,9 +866,9 @@ BdsLibGetVariableAndSize (
     }
   }
 
-  ASSERT (((Buffer == NULL) && (BufferSize == 0)) ||
-          ((Buffer != NULL) && (BufferSize != 0))
-          );
+//  ASSERT (((Buffer == NULL) && (BufferSize == 0)) ||
+//          ((Buffer != NULL) && (BufferSize != 0))
+//          );
   *VariableSize = BufferSize;
   return Buffer;
 }
@@ -1121,9 +1148,15 @@ SetupResetReminder (
     if (IsResetRequired ()) {
 
       StringBuffer1 = AllocateZeroPool (MAX_STRING_LEN * sizeof (CHAR16));
-      ASSERT (StringBuffer1 != NULL);
+ //     ASSERT (StringBuffer1 != NULL);
+      if (!StringBuffer1) {
+        return;
+      }
       StringBuffer2 = AllocateZeroPool (MAX_STRING_LEN * sizeof (CHAR16));
-      ASSERT (StringBuffer2 != NULL);
+ //     ASSERT (StringBuffer2 != NULL);
+      if (!StringBuffer2) {
+        return;
+      }
       StrCpy (StringBuffer1, L"Configuration changed. Reset to apply it Now.");
       StrCpy (StringBuffer2, L"Press ENTER to reset");
       //
@@ -1193,12 +1226,12 @@ BdsLibGetImageHeader (
     Root = NULL;
     goto Done;
   }
-  ASSERT (Root != NULL);
+//  ASSERT (Root != NULL);
   Status = Root->Open (Root, &ThisFile, FileName, EFI_FILE_MODE_READ, 0);
   if (EFI_ERROR (Status)) {
     goto Done;
   }
-  ASSERT (ThisFile != NULL);
+ // ASSERT (ThisFile != NULL);
 
   //
   // Get file size

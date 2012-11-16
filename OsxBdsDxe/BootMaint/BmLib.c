@@ -178,7 +178,7 @@ EfiLibDeleteVariable (
                     0,
                     NULL
                     );
-    ASSERT (!EFI_ERROR (Status));
+//    ASSERT (!EFI_ERROR (Status));
     FreePool (VarBuf);
   }
 

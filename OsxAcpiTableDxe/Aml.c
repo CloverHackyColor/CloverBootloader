@@ -226,7 +226,7 @@ AmlTypeToAcpiType (
   )
 {
   if (AmlType >= sizeof(mAmlTypeToAcpiType)/sizeof(mAmlTypeToAcpiType[0])) {
-    ASSERT(FALSE);
+ //   ASSERT(FALSE);
     return EFI_ACPI_DATA_TYPE_NONE;
   }
   return mAmlTypeToAcpiType [AmlType];
@@ -292,7 +292,7 @@ AmlGetPkgLength (
     RealLength = (RealLength << 4) | (LeadByte & 0xF);
     break;
   default:
-    ASSERT (0);
+//    ASSERT (0);
     break;
   }
   

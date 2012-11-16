@@ -2009,11 +2009,14 @@ IsKeyRegistered (
   IN EFI_KEY_DATA  *InputData
   )
 {
-  ASSERT (RegsiteredData != NULL && InputData != NULL);
+//  ASSERT (RegsiteredData != NULL && InputData != NULL);
+  if (!RegsiteredData || !InputData) {
+    return FALSE;
+  }
   
   if ((RegsiteredData->Key.ScanCode    != InputData->Key.ScanCode) ||
       (RegsiteredData->Key.UnicodeChar != InputData->Key.UnicodeChar)) {
-    return FALSE;  
+    return FALSE;
   }      
   
   //
@@ -2177,7 +2180,10 @@ BiosKeyboardSetState (
                   (VOID **) &LegacyBios
                   );
 
-  ASSERT_EFI_ERROR (Status);
+ // ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return EFI_UNSUPPORTED;
+  }
   //
   // Enter critical section
   //
@@ -2413,7 +2419,7 @@ InitializeBiosKeyboard(
              &gBiosKeyboardComponentName,
              &gBiosKeyboardComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
 
   return Status;
 }

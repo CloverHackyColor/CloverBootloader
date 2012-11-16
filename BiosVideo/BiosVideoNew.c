@@ -2257,7 +2257,7 @@ CopyVideoBuffer (
                      TotalBytes,
                      VbeBuffer
                      );
-    ASSERT_EFI_ERROR (Status);
+//    ASSERT_EFI_ERROR (Status);
     return;
   }
 
@@ -2275,7 +2275,10 @@ CopyVideoBuffer (
                      UnalignedBytes,
                      VbeBuffer
                      );
-    ASSERT_EFI_ERROR (Status);
+//    ASSERT_EFI_ERROR (Status);
+	  if (EFI_ERROR (Status)) {
+		  return;
+	  }
     FrameBufferAddr += UnalignedBytes;
     VbeBuffer       += UnalignedBytes;
   }
@@ -2298,7 +2301,10 @@ CopyVideoBuffer (
                     CopyBlockNum,
                     VbeBuffer
                     );
-    ASSERT_EFI_ERROR (Status);
+//    ASSERT_EFI_ERROR (Status);
+	  if (EFI_ERROR (Status)) {
+		  return;
+	  }
   }
 
   if (RemainingBytes != 0) {
@@ -2312,7 +2318,10 @@ CopyVideoBuffer (
                     RemainingBytes,
                     VbeBuffer
                     );
-    ASSERT_EFI_ERROR (Status);
+ //   ASSERT_EFI_ERROR (Status);
+	  if (EFI_ERROR (Status)) {
+		  return;
+	  }
   }
 }
 

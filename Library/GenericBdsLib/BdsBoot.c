@@ -67,7 +67,7 @@ GenericBdsLibConstructor (
                               NULL
                               );
 
-  ASSERT (gBdsLibStringPackHandle != NULL);
+//  ASSERT (gBdsLibStringPackHandle != NULL);
 
   return EFI_SUCCESS;
 }
@@ -886,7 +886,7 @@ BdsAddNonExistingLegacyBootOptions (
       OptionNumber = BootOrder[BootOrderSize / sizeof (UINT16) - 1];
     }
 
-    ASSERT (BbsIndex == Index);
+//    ASSERT (BbsIndex == Index);
   }
 
   Status = gRT->SetVariable (
@@ -1050,7 +1050,7 @@ BdsCreateDevOrder (
   DevOrderPtr->Length  = (UINT16) (sizeof (UINT16) + BEVCount * sizeof (UINT16));
   DevOrderPtr          = (LEGACY_DEV_ORDER_ENTRY *) BdsFillDevOrderBuf (BbsTable, BBS_BEV_DEVICE, BbsCount, DevOrderPtr->Data);
 
-  ASSERT (TotalSize == (UINTN) ((UINT8 *) DevOrderPtr - (UINT8 *) DevOrder));
+//  ASSERT (TotalSize == (UINTN) ((UINT8 *) DevOrderPtr - (UINT8 *) DevOrder));
 
   //
   // Save device order for legacy boot device to variable.
@@ -1601,8 +1601,11 @@ BdsRefreshBbsTableForBoot (
                 &BootOrderSize
                 );
   DeviceType = AllocatePool (BootOrderSize + sizeof (UINT16));
-  ASSERT (DeviceType != NULL);
-
+//  ASSERT (DeviceType != NULL);
+  if (!DeviceType) {
+    return EFI_OUT_OF_RESOURCES;
+  }
+  
   DeviceType[0]   = DevType;
   DeviceTypeCount = 1;
   for (Index = 0; ((BootOrder != NULL) && (Index < BootOrderSize / sizeof (UINT16))); Index++) {
@@ -1713,10 +1716,10 @@ BdsLibDoLegacyBoot (
                NULL, 
                &LegacyBootEvent
                );
-    ASSERT_EFI_ERROR (Status);
+//    ASSERT_EFI_ERROR (Status);
   );
 
-  DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Legacy Boot: %S\n", Option->Description));
+//  DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Legacy Boot: %S\n", Option->Description));
   return LegacyBios->LegacyBoot (
                       LegacyBios,
                       (BBS_BBS_DEVICE_PATH *) Option->DevicePath,
@@ -2200,7 +2203,10 @@ BdsExpandUsbShortFormDevicePath (
     // Prepare the parent device path for search.
     //
     TempDevicePath = DuplicateDevicePath (DevicePath);
-    ASSERT (TempDevicePath != NULL);
+//    ASSERT (TempDevicePath != NULL);
+    if (!TempDevicePath) {
+      return NULL;
+    }
     SetDevicePathEndNode (((UINT8 *) TempDevicePath) + ((UINTN) ShortFormDevicePath - (UINTN) DevicePath));
 
     //
@@ -2323,7 +2329,10 @@ BdsLibBootViaBootOption (
   // Here get the ImageHandle for the non USB class or WWID device path.
   //
   if (ImageHandle == NULL) {
-    ASSERT (Option->DevicePath != NULL);
+ //   ASSERT (Option->DevicePath != NULL);
+    if (!Option->DevicePath) {
+      return EFI_NOT_FOUND;
+    }
     if ((DevicePathType (Option->DevicePath) == BBS_DEVICE_PATH) &&
         (DevicePathSubType (Option->DevicePath) == BBS_BBS_DP)
        ) {
@@ -2342,7 +2351,11 @@ BdsLibBootViaBootOption (
         FreePool(Option->DevicePath);
       }
       Option->DevicePath  = AllocateZeroPool (GetDevicePathSize (DevicePath));
-      ASSERT(Option->DevicePath != NULL);
+//      ASSERT(Option->DevicePath != NULL);
+      if (!Option->DevicePath) {
+        return EFI_OUT_OF_RESOURCES;
+      }
+
       CopyMem (Option->DevicePath, DevicePath, GetDevicePathSize (DevicePath));
       //
       // Update the shell boot option
@@ -2425,7 +2438,10 @@ BdsLibBootViaBootOption (
   }
 
   Status = gBS->HandleProtocol (ImageHandle, &gEfiLoadedImageProtocolGuid, (VOID **) &ImageInfo);
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return EFI_NOT_FOUND;
+  }
 
   if (Option->LoadOptionsSize != 0) {
     ImageInfo->LoadOptionsSize  = Option->LoadOptionsSize;
@@ -2456,7 +2472,7 @@ BdsLibBootViaBootOption (
   REPORT_STATUS_CODE (EFI_PROGRESS_CODE, PcdGet32 (PcdProgressCodeOsLoaderStart));
 
   Status = gBS->StartImage (ImageHandle, ExitDataSize, ExitData);
-  DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Image Return Status = %r\n", Status));
+//  DEBUG ((DEBUG_INFO | DEBUG_LOAD, "Image Return Status = %r\n", Status));
   if (EFI_ERROR (Status)) {
     //
     // Report Status Code to indicate that boot failure
@@ -2675,7 +2691,10 @@ BdsExpandPartitionPartialDevicePathToFull (
         // the HD_BOOT_DEVICE_PATH_VARIABLE_NAME variable maybe become larger and larger.
         //
         InstanceNum = 0;
-        ASSERT (CachedDevicePath != NULL);
+  //      ASSERT (CachedDevicePath != NULL);
+        if (!CachedDevicePath) {
+          return NULL;
+        }
         TempNewDevicePath = CachedDevicePath;
         while (!IsDevicePathEnd (TempNewDevicePath)) {
           TempNewDevicePath = NextDevicePathNode (TempNewDevicePath);
@@ -3143,7 +3162,10 @@ BdsLibEnumerateAllBootOption (
   if (mEnumBootDevice) {
     GetVariable2 (LAST_ENUM_LANGUAGE_VARIABLE_NAME, &gLastEnumLangGuid, (VOID**)&LastLang, NULL);
     GetEfiGlobalVariable2 (L"PlatformLang", (VOID**)&PlatLang, NULL);
-    ASSERT (PlatLang != NULL);
+ //   ASSERT (PlatLang != NULL);
+    if (!PlatLang) {
+      return EFI_NOT_FOUND;
+    }
     if ((LastLang != NULL) && (AsciiStrCmp (LastLang, PlatLang) == 0)) {
       Status = BdsLibBuildOptionFromVar (BdsBootOptionList, L"BootOrder");
       FreePool (LastLang);
@@ -3157,7 +3179,7 @@ BdsLibEnumerateAllBootOption (
         AsciiStrSize (PlatLang),
         PlatLang
         );
-      ASSERT_EFI_ERROR (Status);
+    //  ASSERT_EFI_ERROR (Status);
 
       if (LastLang != NULL) {
         FreePool (LastLang);
@@ -3537,7 +3559,10 @@ BdsLibBootNext (
     //
     UnicodeSPrint (Buffer, sizeof (Buffer), L"Boot%04x", *BootNext);
     BootOption = BdsLibVariableToOption (&TempList, Buffer);
-    ASSERT (BootOption != NULL);
+ //   ASSERT (BootOption != NULL);
+    if (!BootOption) {
+      return;
+    }
     BdsLibConnectDevicePath (BootOption->DevicePath);
     BdsLibBootViaBootOption (BootOption, BootOption->DevicePath, &ExitDataSize, &ExitData);
   }
@@ -3615,8 +3640,10 @@ BdsLibGetBootableHandle (
     // Get BlockIo protocol and check removable attribute
     //
     Status = gBS->HandleProtocol (Handle, &gEfiBlockIoProtocolGuid, (VOID **)&BlockIo);
-    ASSERT_EFI_ERROR (Status);
-
+ //   ASSERT_EFI_ERROR (Status);
+    if (EFI_ERROR (Status)) {
+      return NULL;
+    }
     //
     // Issue a dummy read to the device to check for media change.
     // When the removable media is changed, any Block IO read/write will
@@ -3646,7 +3673,11 @@ BdsLibGetBootableHandle (
   // Try to locate the USB node device path first, if fail then use its previous PCI node to search
   //
   DupDevicePath = DuplicateDevicePath (DevicePath);
-  ASSERT (DupDevicePath != NULL);
+//  ASSERT (DupDevicePath != NULL);
+  if (!DupDevicePath) {
+    return NULL;
+  }
+        
 
   UpdatedDevicePath = DupDevicePath;
   Status = gBS->LocateDevicePath (&gEfiDevicePathProtocolGuid, &UpdatedDevicePath, &Handle);

@@ -50,7 +50,7 @@ AmlCreateNode (
   EFI_AML_NODE_LIST      *AmlNodeList;
 
   AmlNodeList = AllocatePool (sizeof(*AmlNodeList));
-  ASSERT (AmlNodeList != NULL);
+//  ASSERT (AmlNodeList != NULL);
 
   AmlNodeList->Signature = EFI_AML_NODE_LIST_SIGNATURE;
   CopyMem (AmlNodeList->Name, NameSeg, AML_NAME_SEG_SIZE);
@@ -159,7 +159,7 @@ AmlFindNodeInTheTree (
         //
         // Only root has no parent
         //
-        ASSERT (AmlCurrentNodeList == AmlRootNodeList);
+  //      ASSERT (AmlCurrentNodeList == AmlRootNodeList);
       }
       Buffer += 1;
     } while (*Buffer == AML_PARENT_PREFIX_CHAR);
@@ -181,7 +181,7 @@ AmlFindNodeInTheTree (
     //
     // NULL name, only for Root
     //
-    ASSERT (AmlCurrentNodeList == AmlRootNodeList);
+//    ASSERT (AmlCurrentNodeList == AmlRootNodeList);
     return AmlCurrentNodeList;
   } else {
     SegCount = 1;
@@ -232,7 +232,7 @@ AmlInsertNodeToTree (
                   AmlParentNodeList,
                   TRUE  // Find and Create
                   );
-  ASSERT (AmlNodeList != NULL);
+//  ASSERT (AmlNodeList != NULL);
   if (AmlNodeList == NULL) {
     return NULL;
   }
@@ -408,7 +408,7 @@ AmlConstructNodeList (
   // NOTE: The name here could be AML NameString. So the callee need parse it.
   //
   AmlNodeList = AmlInsertNodeToTree (NameString, AmlHandle->Buffer, AmlHandle->Size, AmlRootNodeList, AmlParentNodeList);
-  ASSERT (AmlNodeList != NULL);
+//  ASSERT (AmlNodeList != NULL);
 
   //
   // 3. Ok, we need to parse the object list to see if there are more node to be added.

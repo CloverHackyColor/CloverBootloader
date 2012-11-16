@@ -33,7 +33,10 @@ IsNvNeed (
 {
   CHAR16 *Ptr;
 
-  ASSERT (ConVarName != NULL);
+//  ASSERT (ConVarName != NULL);
+  if (!ConVarName) {
+    return FALSE;
+  }
   
   Ptr = ConVarName;
 
@@ -89,10 +92,13 @@ UpdateSystemTableConsole (
   VOID                      *Interface;
   EFI_HANDLE                NewHandle;
 
-  ASSERT (VarName != NULL);
-  ASSERT (ConsoleHandle != NULL);
-  ASSERT (ConsoleGuid != NULL);
-  ASSERT (ProtocolInterface != NULL);
+//  ASSERT (VarName != NULL);
+//  ASSERT (ConsoleHandle != NULL);
+//  ASSERT (ConsoleGuid != NULL);
+//  ASSERT (ProtocolInterface != NULL);
+  if (!VarName || !ConsoleHandle || !ConsoleGuid || !ProtocolInterface) {
+    return FALSE;
+  }
 
   if (*ConsoleHandle != NULL) {
     Status = gBS->HandleProtocol (
@@ -133,7 +139,8 @@ UpdateSystemTableConsole (
     Instance  = GetNextDevicePathInstance (&VarConsole, &DevicePathSize);
     if (Instance == NULL) {
       FreePool (FullDevicePath);
-      ASSERT (FALSE);
+//      ASSERT (FALSE);
+      return FALSE;
     }
     
     //
@@ -285,7 +292,10 @@ BdsLibUpdateConsoleVariable (
   if ((DevicePathSize == 0) && (Status == EFI_NOT_FOUND)) {
     Status = EFI_SUCCESS;
   }
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
 
   if (VarConsole == NewDevicePath) {
     if (VarConsole != NULL) {

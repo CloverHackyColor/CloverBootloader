@@ -479,7 +479,7 @@ InitializeAtaAtapiPassThru (
              &gAtaAtapiPassThruComponentName,
              &gAtaAtapiPassThruComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
 
   return Status;
 }
@@ -798,7 +798,7 @@ AtaAtapiPassThruStart (
                   &gEfiExtScsiPassThruProtocolGuid, &(Instance->ExtScsiPassThru),
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
 //	DBG(L"AtaPassThru success\n");
   return Status;
 
@@ -924,7 +924,7 @@ AtaAtapiPassThruStop (
                     Instance->OriginalPciAttributes,
                     NULL
                     );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
 
   gBS->UninstallMultipleProtocolInterfaces (
          Controller,
@@ -1172,7 +1172,10 @@ EnumerateAttachedDevice (
   PCI_TYPE00                   PciData;
   UINT8                        ClassCode;
 
-  Status = EFI_SUCCESS;
+//  Status = EFI_SUCCESS;
+  if (!Instance) {
+    return EFI_INVALID_PARAMETER;
+  }
 
   Status = Instance->PciIo->Pci.Read (
                                   Instance->PciIo,
@@ -1181,10 +1184,12 @@ EnumerateAttachedDevice (
                                   sizeof (PciData.Hdr.ClassCode),
                                   PciData.Hdr.ClassCode
                                   );
-  ASSERT_EFI_ERROR (Status);
-
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return Status;
+  }
   ClassCode = PciData.Hdr.ClassCode[1];
-
+  
   switch (ClassCode) {
     case PCI_CLASS_MASS_STORAGE_IDE :
 		  //

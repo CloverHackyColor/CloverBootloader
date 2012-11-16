@@ -584,9 +584,9 @@ AddTableToList (
   //
   // Check for invalid input parameters
   //
-  ASSERT (AcpiTableInstance);
-  ASSERT (Table);
-  ASSERT (Handle);
+ // ASSERT (AcpiTableInstance);
+ // ASSERT (Table);
+ // ASSERT (Handle);
   if (!AcpiTableInstance || !Table || !Handle) {
     return EFI_INVALID_PARAMETER;
   }

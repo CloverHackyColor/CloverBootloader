@@ -173,8 +173,8 @@ AtaDevicePassThru (
   // Ensure ATA pass through caller and callee have the same
   // interpretation of ATA pass through protocol. 
   //
-  ASSERT (Status != EFI_INVALID_PARAMETER);
-  ASSERT (Status != EFI_BAD_BUFFER_SIZE);
+//  ASSERT (Status != EFI_INVALID_PARAMETER);
+//  ASSERT (Status != EFI_BAD_BUFFER_SIZE);
 
   return Status;
 }
@@ -492,9 +492,12 @@ TransferAtaDevice (
   //
   // Ensure AtaDevice->UdmaValid, AtaDevice->Lba48Bit and IsWrite are valid boolean values 
   //
-  ASSERT ((UINTN) AtaDevice->UdmaValid < 2);
-  ASSERT ((UINTN) AtaDevice->Lba48Bit < 2);
-  ASSERT ((UINTN) IsWrite < 2);
+//  ASSERT ((UINTN) AtaDevice->UdmaValid < 2);
+  AtaDevice->UdmaValid = (BOOLEAN)((AtaDevice->UdmaValid)?1:0);
+//  ASSERT ((UINTN) AtaDevice->Lba48Bit < 2);
+  AtaDevice->Lba48Bit = (BOOLEAN)((AtaDevice->Lba48Bit)?1:0);
+//  ASSERT ((UINTN) IsWrite < 2);
+  IsWrite = (BOOLEAN)(IsWrite?1:0);
   DBG(L"Udma=%d Lba48bit=%d IsWrite=%d\n", (INTN) AtaDevice->UdmaValid,
       (INTN) AtaDevice->Lba48Bit, (INTN) IsWrite);
   //
@@ -721,7 +724,8 @@ AccessAtaDevice(
   //
   // Ensure AtaDevice->Lba48Bit is a valid boolean value 
   //
-  ASSERT ((UINTN) AtaDevice->Lba48Bit < 2);
+//  ASSERT ((UINTN) AtaDevice->Lba48Bit < 2);
+  AtaDevice->Lba48Bit = (BOOLEAN)(AtaDevice->Lba48Bit?1:0);
   MaxTransferBlockNumber = mMaxTransferBlockNumber[AtaDevice->Lba48Bit];
   BlockSize              = AtaDevice->BlockMedia.BlockSize;
 
@@ -922,8 +926,12 @@ TrustTransferAtaDevice (
   //
   // Ensure AtaDevice->UdmaValid and IsTrustSend are valid boolean values 
   //
-  ASSERT ((UINTN) AtaDevice->UdmaValid < 2);
-  ASSERT ((UINTN) IsTrustSend < 2);
+ // ASSERT ((UINTN) AtaDevice->UdmaValid < 2);
+  AtaDevice->UdmaValid = (BOOLEAN)((AtaDevice->UdmaValid)?1:0);
+
+//  ASSERT ((UINTN) IsTrustSend < 2);
+  IsTrustSend = (BOOLEAN)(IsTrustSend?1:0);
+
   //
   // Prepare for ATA command block.
   //

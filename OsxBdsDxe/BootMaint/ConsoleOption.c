@@ -249,7 +249,10 @@ ChangeVariableDevicePath (
                       &TerminalMenu,
                       Com
                       );
-      ASSERT (NewMenuEntry != NULL);
+      if (!NewMenuEntry) {
+        return;
+      }
+//      ASSERT (NewMenuEntry != NULL);
       NewTerminalContext  = (BM_TERMINAL_CONTEXT *) NewMenuEntry->VariableContext;
       Uart                = (UART_DEVICE_PATH *) Node;
       CopyMem (
@@ -854,7 +857,10 @@ GetConsoleMenu (
     NewMenuEntry->OptionNumber    = Index2;
 
     NewConsoleContext->DevicePath = DuplicateDevicePath (DevicePathInst);
-    ASSERT (NewConsoleContext->DevicePath != NULL);
+//    ASSERT (NewConsoleContext->DevicePath != NULL);
+    if (!NewConsoleContext->DevicePath) {
+      break;
+    }
     NewMenuEntry->DisplayString   = EfiLibStrFromDatahub (NewConsoleContext->DevicePath);
     if (NULL == NewMenuEntry->DisplayString) {
       NewMenuEntry->DisplayString = DevicePathToStr (NewConsoleContext->DevicePath);

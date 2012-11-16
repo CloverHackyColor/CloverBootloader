@@ -71,7 +71,7 @@ BdsInitialize (
                   &gEfiBdsArchProtocolGuid, &gBds,
                   NULL
                   );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
 
   return Status;
 }
@@ -412,7 +412,7 @@ BdsFormalizeConsoleVariable (
                     0,
                     NULL
                     );
-    ASSERT_EFI_ERROR (Status);
+//    ASSERT_EFI_ERROR (Status);
   }
 }
 
@@ -455,7 +455,10 @@ BdsFormalizeEfiGlobalVariable (
                   sizeof(UINT64),
                   &OsIndicationSupport
                   );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR (Status)) {
+    return;
+  }
 
   //
   // If OsIndications is invalid, remove it.
@@ -480,7 +483,7 @@ BdsFormalizeEfiGlobalVariable (
         (OsIndication & ~OsIndicationSupport) != 0 ||
         Attributes != (EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS | EFI_VARIABLE_NON_VOLATILE)){
 
-      DEBUG ((EFI_D_ERROR, "Unformalized OsIndications variable exists. Delete it\n"));
+ //     DEBUG ((EFI_D_ERROR, "Unformalized OsIndications variable exists. Delete it\n"));
       Status = gRT->SetVariable (
                       L"OsIndications",
                       &gEfiGlobalVariableGuid,
@@ -488,7 +491,7 @@ BdsFormalizeEfiGlobalVariable (
                       0,
                       &OsIndication
                       );
-      ASSERT_EFI_ERROR (Status);
+ //     ASSERT_EFI_ERROR (Status);
     }
   }
 
@@ -535,7 +538,7 @@ BdsEntry (
   //
   FirmwareVendor = (CHAR16 *)PcdGetPtr (PcdFirmwareVendor);
   gST->FirmwareVendor = AllocateRuntimeCopyPool (StrSize (FirmwareVendor), FirmwareVendor);
-  ASSERT (gST->FirmwareVendor != NULL);
+//  ASSERT (gST->FirmwareVendor != NULL);
 #ifdef FIRMWARE_REVISION
   gST->FirmwareRevision = (1<<16) + (UINT32)StrDecimalToUintn(FIRMWARE_REVISION);
 #else  
@@ -609,7 +612,7 @@ BdsEntry (
   // Only assert here since this is the right behavior, we should never
   // return back to DxeCore.
   //
-  ASSERT (FALSE);
+//  ASSERT (FALSE);
 
   return ;
 }
