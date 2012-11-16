@@ -4,7 +4,7 @@
     2) BDS boot device connect interface.
     3) BDS Misc interfaces for mainting boot variable, ouput string.
 
-Copyright (c) 2004 - 2010, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2004 - 2012, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials are licensed and made available under 
 the terms and conditions of the BSD License that accompanies this distribution.  
 The full text of the license may be found at
@@ -19,8 +19,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #define _GENERIC_BDS_LIB_H_
 
 #include <Protocol/UserManager.h>
-#include <Library/PiBootMode.h>
-//#include "IO.h"
+#include <IndustryStandard/PiBootMode.h>
+
 
 ///
 /// Constants which are variable names used to access variables.
@@ -445,12 +445,12 @@ BdsLibDisconnectAllEfi (
   and make every simpletxt device a potential console device.
 
 **/
-/*VOID
+VOID
 EFIAPI
 BdsLibConnectAllConsoles (
   VOID
   );
-*/
+
 
 /**
   This function will connect console device based on the console
@@ -496,6 +496,9 @@ BdsLibUpdateConsoleVariable (
   ConVarName is a multi-instance device path, and at least one
   instance connects successfully, then this function
   will return success.
+  If the handle associate with one device path node can not
+  be created successfully, then still give chance to do the dispatch,
+  which load the missing drivers if possible.
 
   @param  ConVarName               The console related variable name: ConIn, ConOut,
                                    ErrOut.
