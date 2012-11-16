@@ -8,6 +8,9 @@
 
 /* Begin PBXFileReference section */
 		12021208142663F0004B7B93 /* rEFIt.dsc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = rEFIt.dsc; path = ../rEFIt.dsc; sourceTree = SOURCE_ROOT; };
+		120670521656A81D00B94D40 /* UefiHiiServicesLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UefiHiiServicesLib.h; sourceTree = "<group>"; };
+		120670551656A82F00B94D40 /* UefiHiiServicesLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UefiHiiServicesLib.c; sourceTree = "<group>"; };
+		120670561656A82F00B94D40 /* UefiHiiServicesLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = UefiHiiServicesLib.inf; sourceTree = "<group>"; };
 		120DE0591622C47800BA4C14 /* 8254Timer.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 8254Timer.inf; sourceTree = "<group>"; };
 		120DE05A1622C47800BA4C14 /* Timer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Timer.c; sourceTree = "<group>"; };
 		120DE05B1622C47800BA4C14 /* Timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Timer.h; sourceTree = "<group>"; };
@@ -2873,6 +2876,15 @@
 				122336B113377E050033F008 /* libeg */,
 			);
 			name = rEFIt_proj;
+			sourceTree = "<group>";
+		};
+		120670541656A82F00B94D40 /* UefiHiiServicesLib */ = {
+			isa = PBXGroup;
+			children = (
+				120670551656A82F00B94D40 /* UefiHiiServicesLib.c */,
+				120670561656A82F00B94D40 /* UefiHiiServicesLib.inf */,
+			);
+			path = UefiHiiServicesLib;
 			sourceTree = "<group>";
 		};
 		120DE0571622C47800BA4C14 /* PcAtChipsetPkg */ = {
@@ -8993,6 +9005,7 @@
 				121E4A6316551A90000C2392 /* GenericBdsLib.h */,
 				2C751C07164EA4FE00B24F6B /* MemLogLib.h */,
 				12B7FF3515F9217F00177D35 /* PeCoffLib.h */,
+				120670521656A81D00B94D40 /* UefiHiiServicesLib.h */,
 				121E4A6416551A9A000C2392 /* UsbMass.h */,
 				121E4A6516551A9A000C2392 /* UsbMassBoot.h */,
 			);
@@ -9497,6 +9510,7 @@
 				121E4A3716551930000C2392 /* LzmaCustomDecompressLib */,
 				2C751C04164EA4DA00B24F6B /* MemLogLibDefault */,
 				121E4A4A16551942000C2392 /* OsxBdsPlatformLib */,
+				120670541656A82F00B94D40 /* UefiHiiServicesLib */,
 				121E4A571655195A000C2392 /* VBoxPeCoffLib */,
 			);
 			name = Library;

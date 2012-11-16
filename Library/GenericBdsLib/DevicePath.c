@@ -52,7 +52,7 @@ CatPrint (
   if (NULL == Str->Str) {
     StringSize   = StrSize (AppendStr);
     Str->Str  = AllocateZeroPool (StringSize);
-    ASSERT (Str->Str != NULL);
+//    ASSERT (Str->Str != NULL);
   } else {
     StringSize = StrSize (AppendStr);
     StringSize += (StrSize (Str->Str) - sizeof (UINT16));
@@ -62,7 +62,7 @@ CatPrint (
                 StringSize,
                 Str->Str
                 );
-    ASSERT (Str->Str != NULL);
+//    ASSERT (Str->Str != NULL);
   }
 
   Str->Maxlen = MAX_CHAR * sizeof (UINT16);
@@ -1520,7 +1520,7 @@ DevicePathToStr (
                               FALSE,
                               TRUE
                               );
-    ASSERT (ToText != NULL);
+//    ASSERT (ToText != NULL);
     return ToText;
   }
 
@@ -1568,7 +1568,11 @@ DevicePathToStr (
 Done:
   NewSize = (Str.Len + 1) * sizeof (CHAR16);
   Str.Str = ReallocatePool (NewSize, NewSize, Str.Str);
-  ASSERT (Str.Str != NULL);
+//  ASSERT (Str.Str != NULL);
+  if (!Str.Str) {
+    return NULL;
+  }
+
   Str.Str[Str.Len] = 0;
   return Str.Str;
 }
