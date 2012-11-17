@@ -2828,6 +2828,8 @@
 		2C0DB54216145D3400CA37F9 /* CloverPkg.dec */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverPkg.dec; path = ../../CloverPkg.dec; sourceTree = "<group>"; };
 		2C0DB54316145D3400CA37F9 /* CloverX64.dsc */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverX64.dsc; path = ../../CloverX64.dsc; sourceTree = "<group>"; };
 		2C0DB54416145D3400CA37F9 /* CloverX64.fdf */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverX64.fdf; path = ../../CloverX64.fdf; sourceTree = "<group>"; };
+		2C105B811657080800BABF61 /* BdsConnect.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BdsConnect.c; sourceTree = "<group>"; };
+		2C105B831657084C00BABF61 /* DevicePath.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DevicePath.c; sourceTree = "<group>"; };
 		2C116F06164FDE980061F326 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
 		2C116F07164FDE980061F326 /* GraphicsConsole.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = GraphicsConsole.c; sourceTree = "<group>"; };
 		2C116F08164FDE980061F326 /* GraphicsConsole.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphicsConsole.h; sourceTree = "<group>"; };
@@ -9430,6 +9432,7 @@
 				12D6305F14CEA05E00E5898F /* ati_reg.h */,
 				26440C83157AADDF0077A476 /* b64cdecode.c */,
 				26440C84157AADDF0077A476 /* b64cdecode.h */,
+				2C105B811657080800BABF61 /* BdsConnect.c */,
 				12D6306214CEA05E00E5898F /* boot.h */,
 				12D6306314CEA05E00E5898F /* BootLog.c */,
 				125108C31627F4CE0004D9C9 /* BootOptions.c */,
@@ -9441,6 +9444,7 @@
 				12D6306914CEA05E00E5898F /* device_inject.h */,
 				12D6306A14CEA05E00E5898F /* device_tree.c */,
 				12D6306B14CEA05E00E5898F /* device_tree.h */,
+				2C105B831657084C00BABF61 /* DevicePath.c */,
 				122B6218157E811000D06F37 /* Display.h */,
 				12D6307014CEA05E00E5898F /* Events.c */,
 				122B621A157E813100D06F37 /* FixBiosDsdt.c */,
