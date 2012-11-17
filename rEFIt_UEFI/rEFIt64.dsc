@@ -71,6 +71,7 @@
   # Our libs
   #
   MemLogLib|Clover/Library/MemLogLibDefault/MemLogLibDefault.inf
+  VideoBiosPatchLib|Clover/Library/VideoBiosPatchLib/VideoBiosPatchLib.inf
 
 [Components]
 	Clover/rEFIt_UEFI/refit64.inf

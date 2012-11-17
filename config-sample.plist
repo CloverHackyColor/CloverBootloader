@@ -151,6 +151,13 @@
 		<string>04000000000003000C0000000000000A00000000</string>
 		<key>display-cfg</key>
 		<string>03010300FFFF0001</string>
+		<key>PatchVBiosBytes</key>
+		<dict>
+			<key>Find</key>
+			<data>gAeoAqAF</data>
+			<key>Replace</key>
+			<data>gAeoAjgE</data>
+		</dict>
 	</dict>
 	<key>PCI</key>
 	<dict>
@@ -229,7 +236,7 @@
 		<key>EnableC2</key>
 		<string>Yes</string>
 		<key>EnableISS</key>
-		<string>Yes</string> 
+		<string>Yes</string>
 		<key>C3Latency</key>
 		<string>0x03E9</string>
 		<key>ResetAddress</key>

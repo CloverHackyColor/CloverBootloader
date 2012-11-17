@@ -1826,6 +1826,17 @@ VOID DisconnectSomeDevices(VOID)
   }
 }
 
+VOID PatchVideoBios(VOID)
+{
+  
+  if (gSettings.PatchVBiosBytesSize > 0
+      && gSettings.PatchVBiosBytesFind != NULL
+      && gSettings.PatchVBiosBytesReplace != NULL)
+  {
+    VideoBiosPatchBytes(gSettings.PatchVBiosBytesFind, gSettings.PatchVBiosBytesReplace, gSettings.PatchVBiosBytesSize);
+  }
+}
+
 
 static VOID LoadDrivers(VOID)
 {
@@ -1842,12 +1853,20 @@ static VOID LoadDrivers(VOID)
   ScanDriverDir(L"\\EFI\\drivers32", &DriversToConnect, &DriversToConnectNum);
 #endif
   
+  if (gSettings.PatchVBiosBytesSize > 0 && !gDriversFlags.VideoLoaded) {
+    // we have video bios patch - force video driver reconnect
+    DBG("Video bios patch requested - forcing video reconnect\n");
+    gDriversFlags.VideoLoaded = TRUE;
+    DriversToConnectNum++;
+  }
+  
   if (DriversToConnectNum > 0) {
     DBGT("%d drivers needs connecting ...\n", DriversToConnectNum);
     // note: our platform driver protocol
     // will use DriversToConnect - do not release it
     RegisterDriversToHighestPriority(DriversToConnect);
     DisconnectSomeDevices();
+    PatchVideoBios();
     BdsLibConnectAllDriversToAllControllers();
   }
 }
@@ -2008,6 +2027,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   } else {
     OEMPath = L"EFI";
   }
+  
+	Status = GetEarlyUserSettings(SelfRootDir);
   
   // further bootstrap (now with config available)
   //  SetupScreen();

@@ -403,7 +403,8 @@
   Clover/BiosKeyboard/KeyboardDxe.inf
   #IntelFrameworkModulePkg/Universal/LegacyRegionDxe/LegacyRegionDxe.inf
   #MdeModulePkg/Universal/LegacyRegion2Dxe/LegacyRegion2Dxe.inf
-  Clover/LegacyBios/RegionDxe/LegacyRegion2Dxe.inf
+  #Clover/LegacyBios/RegionDxe/LegacyRegion2Dxe.inf
+  Clover/LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
 
   # Misc
   Clover/FSInject/FSInject.inf

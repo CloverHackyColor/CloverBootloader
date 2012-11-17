@@ -38,7 +38,7 @@
   UefiDriverEntryPoint
   DevicePathLib
   MemLogLib
-  
+
 [Sources]
 #  Debug.c
   BiosVideo.h

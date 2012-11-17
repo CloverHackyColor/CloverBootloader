@@ -1,0 +1,36 @@
+## @file
+#  Default instance of MemLogLib library for simple log services to memory buffer.
+##
+
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = VideoBiosPatchLib
+  FILE_GUID                      = 8F1AEE20-2F0C-11E2-A566-6CCD6188709B
+  MODULE_TYPE                    = BASE
+  VERSION_STRING                 = 1.0
+  LIBRARY_CLASS                  = VideoBiosPatchLib 
+
+#
+#  VALID_ARCHITECTURES           = IA32 X64
+#
+
+[Sources]
+  VideoBiosPatchLib.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  Clover/CloverPkg.dec
+  IntelFrameworkPkg/IntelFrameworkPkg.dec
+  IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec
+
+[LibraryClasses]
+  BaseLib
+  BaseMemoryLib
+  PrintLib
+  MemoryAllocationLib
+  UefiBootServicesTableLib
+  MemLogLib
+
+[Protocols]
+  gEfiLegacyRegionProtocolGuid
+  gEfiLegacyRegion2ProtocolGuid

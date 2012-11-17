@@ -24,6 +24,7 @@
 
 //EFI_GUID gRandomUUID = {0x0A0B0C0D, 0x0000, 0x1010, {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07}};
 
+TagPtr                          gConfigDict = NULL;
 SETTINGS_DATA                   gSettings;
 LANGUAGES                       gLanguage;
 GFX_PROPERTIES                  gGraphics[4]; //no more then 4 graphics cards
@@ -109,19 +110,11 @@ VOID *GetDataSetting(IN TagPtr dict, IN CHAR8 *propName, OUT UINTN *dataLen)
     return data;
 }
 
-EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
+EFI_STATUS LoadUserSettings(IN EFI_FILE *RootDir)
 {
   EFI_STATUS	Status = EFI_NOT_FOUND;
   UINTN       size;
-  TagPtr      dict, dict2;
-  TagPtr      prop;
-  TagPtr      dictPointer;
   CHAR8*      gConfigPtr = NULL;
-  UINTN       i;
-  CHAR8       ANum[4];
-
-  
-  CHAR16      UStr[64];
   CHAR16*     ConfigPlistPath = L"EFI\\config.plist";
   CHAR16*     ConfigOemPath = PoolPrint(L"%s\\config.plist", OEMPath);
   
@@ -135,7 +128,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
   if (EFI_ERROR(Status)) {
     if ((RootDir != NULL) && FileExists(RootDir, ConfigPlistPath)) {
       Status = egLoadFile(RootDir, ConfigPlistPath, (UINT8**)&gConfigPtr, &size);
-    } 
+    }
     if (EFI_ERROR(Status)) {
       Status = egLoadFile(SelfRootDir, ConfigPlistPath, (UINT8**)&gConfigPtr, &size);
     }
@@ -144,15 +137,111 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
   }
   
   
-  if(EFI_ERROR(Status)) {
+  if(EFI_ERROR(Status) || gConfigPtr == NULL) {
     DBG("Error loading config.plist! Status=%r\n", Status);
     return Status;
   }
-  if(gConfigPtr) {
-    if(ParseXML((const CHAR8*)gConfigPtr, &dict) != EFI_SUCCESS) {
-      DBG(" config error\n");
-      return EFI_UNSUPPORTED;
+  
+  if(ParseXML((const CHAR8*)gConfigPtr, &gConfigDict) != EFI_SUCCESS) {
+    gConfigDict = NULL;
+    DBG(" config parse error\n");
+    return EFI_UNSUPPORTED;
+  }
+  
+  return EFI_SUCCESS;
+}
+
+EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
+{
+  EFI_STATUS	Status = EFI_NOT_FOUND;
+  TagPtr      dict;
+  TagPtr      dict2;
+  TagPtr      dictPointer;
+  TagPtr      prop;
+  
+  if (gConfigDict == NULL) {
+    Status = LoadUserSettings(RootDir);
+    if (EFI_ERROR(Status)) {
+      return Status;
     }
+  }
+  DBG("Loading early settings\n");
+  //Graphics
+  
+  dict = gConfigDict;
+  dictPointer = GetProperty(dict, "Graphics");
+  if (dictPointer) {
+    
+    prop = GetProperty(dictPointer, "PatchVBios");
+    gSettings.PatchVBios = FALSE;
+    if(prop) {
+      if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+        gSettings.PatchVBios = TRUE;
+    }
+    
+    gSettings.PatchVBiosBytesSize = 0;
+    dict2 = GetProperty(dictPointer,"PatchVBiosBytes");
+    if (dict2) {
+      UINTN     FindSize = 0;
+      UINTN     ReplaceSize = 0;
+      BOOLEAN   Valid = TRUE;
+      
+      gSettings.PatchVBiosBytesFind = GetDataSetting(dict2, "Find", &FindSize);
+      gSettings.PatchVBiosBytesReplace = GetDataSetting(dict2, "Replace", &ReplaceSize);
+      if (gSettings.PatchVBiosBytesFind == NULL || FindSize == 0) {
+        Valid = FALSE;
+        DBG("PatchVBiosBytes: missing Find data\n");
+      }
+      if (gSettings.PatchVBiosBytesReplace == NULL || ReplaceSize == 0) {
+        Valid = FALSE;
+        DBG("PatchVBiosBytes: missing Replace data\n");
+      }
+      if (FindSize != ReplaceSize) {
+        Valid = FALSE;
+        DBG("PatchVBiosBytes: Find and Replace data are not the same size\n");
+      }
+      if (Valid) {
+        gSettings.PatchVBiosBytesSize = FindSize;
+      } else {
+        gSettings.PatchVBiosBytesSize = 0;
+        if (gSettings.PatchVBiosBytesFind != NULL) {
+          FreePool(gSettings.PatchVBiosBytesFind);
+          gSettings.PatchVBiosBytesFind = NULL;
+        }
+        if (gSettings.PatchVBiosBytesReplace != NULL) {
+          FreePool(gSettings.PatchVBiosBytesReplace);
+          gSettings.PatchVBiosBytesReplace = NULL;
+        }
+      }
+    }
+    
+  }
+  
+  return Status;
+}
+
+EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
+{
+  EFI_STATUS	Status = EFI_NOT_FOUND;
+  TagPtr      dict, dict2;
+  TagPtr      prop;
+  TagPtr      dictPointer;
+  UINTN       i;
+  CHAR8       ANum[4];
+  CHAR16      UStr[64];
+  
+  if (gConfigDict == NULL) {
+    Status = LoadUserSettings(RootDir);
+    if (EFI_ERROR(Status)) {
+      return Status;
+    }
+  }
+  
+  dict = gConfigDict;
+  if(dict != NULL) {
+    
+    DBG("Loading main settings\n");
+    
     //*** SYSTEM ***
     dictPointer = GetProperty(dict, "SystemParameters");
     if (dictPointer) {
@@ -282,12 +371,6 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         }
       }      
       
-      prop = GetProperty(dictPointer, "PatchVBios");
-      gSettings.PatchVBios = FALSE;
-      if(prop) {
-        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
-          gSettings.PatchVBios = TRUE;
-      }
       prop = GetProperty(dictPointer, "VideoPorts");
       if(prop) {
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);

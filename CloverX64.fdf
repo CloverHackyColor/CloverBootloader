@@ -132,7 +132,8 @@ INF  Clover/BiosVideo/BiosVideo.inf
 INF  Clover/BiosKeyboard/KeyboardDxe.inf
 #INF  IntelFrameworkModulePkg/Universal/LegacyRegionDxe/LegacyRegionDxe.inf
 #INF  MdeModulePkg/Universal/LegacyRegion2Dxe/LegacyRegion2Dxe.inf
-INF  Clover/LegacyBios/RegionDxe/LegacyRegion2Dxe.inf
+#INF  Clover/LegacyBios/RegionDxe/LegacyRegion2Dxe.inf
+INF   Clover/LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
 #INF  IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf
 
 

@@ -30,6 +30,7 @@ Headers collection for procedures
 #include <Library/UefiRuntimeServicesTableLib.h>
 #include <Library/UefiRuntimeLib.h>
 #include <Library/UsbMass.h>
+#include <Library/VideoBiosPatchLib.h>
 
 #include <Framework/FrameworkInternalFormRepresentation.h>
 
@@ -642,6 +643,9 @@ typedef struct {
   BOOLEAN GraphicsInjector;
   BOOLEAN LoadVBios;
   BOOLEAN PatchVBios;
+  UINT8   *PatchVBiosBytesFind;
+  UINT8   *PatchVBiosBytesReplace;
+  UINTN   PatchVBiosBytesSize;
   BOOLEAN InjectEDID;
   UINT8   *CustomEDID;
   CHAR16  FBName[16];
@@ -975,6 +979,7 @@ VOID            GetDevices(VOID);
 MACHINE_TYPES   GetDefaultModel(VOID);
 UINT16          GetAdvancedCpuType(VOID);
 EFI_STATUS      GetOSVersion(IN REFIT_VOLUME *Volume);
+EFI_STATUS      GetEarlyUserSettings(IN EFI_FILE *RootDir);
 EFI_STATUS      GetUserSettings(IN EFI_FILE *RootDir);
 EFI_STATUS      GetEdid(VOID);
 EFI_STATUS      SetFSInjection(IN LOADER_ENTRY *Entry);

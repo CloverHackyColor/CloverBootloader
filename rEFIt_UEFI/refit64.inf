@@ -135,6 +135,7 @@
   PeCoffLib
 #  GenericBdsLib
   MemLogLib
+  VideoBiosPatchLib
 
 [Guids]
   gEfiAcpiTableGuid

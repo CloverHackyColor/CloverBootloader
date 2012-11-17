@@ -423,7 +423,7 @@ BiosVideoDriverBindingStart (
       ParentDevicePath
       ); */
     goto Done;
-  } 
+  }
 
   if (RemainingDevicePath != NULL) {
     if (IsDevicePathEnd (RemainingDevicePath) && 
