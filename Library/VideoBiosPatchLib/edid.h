@@ -12,18 +12,6 @@
 
 
 //#include "libsaio.h"
-#include <Uefi.h>
-
-#include <Library/UefiLib.h>
-#include <Library/DebugLib.h>
-#include <Library/PrintLib.h>
-#include <Library/BaseLib.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/MemoryAllocationLib.h>
-#include <Library/DevicePathLib.h>
-
-#include <IndustryStandard/Pci.h>
 
 #define EDID_BLOCK_SIZE	128
 #define EDID_V1_BLOCKS_TO_GO_OFFSET 126
@@ -74,39 +62,39 @@
 ((1|2|4|8) & (x))
 
 #define COMBINE_HI_8LO( hi, lo ) \
-( (((unsigned)hi) << 8) | (unsigned)lo )
+( (((UINT32)hi) << 8) | (UINT32)lo )
 
 #define COMBINE_HI_4LO( hi, lo ) \
-( (((unsigned)hi) << 4) | (unsigned)lo )
+( (((UINT32)hi) << 4) | (UINT32)lo )
 
-#define PIXEL_CLOCK_LO     (unsigned)block[ 0 ]
-#define PIXEL_CLOCK_HI     (unsigned)block[ 1 ]
+#define PIXEL_CLOCK_LO     (UINT32)block[ 0 ]
+#define PIXEL_CLOCK_HI     (UINT32)block[ 1 ]
 #define PIXEL_CLOCK	   (COMBINE_HI_8LO( PIXEL_CLOCK_HI,PIXEL_CLOCK_LO )*10000)
-#define H_ACTIVE_LO        (unsigned)block[ 2 ]
-#define H_BLANKING_LO      (unsigned)block[ 3 ]
-#define H_ACTIVE_HI        UPPER_NIBBLE( (unsigned)block[ 4 ] )
+#define H_ACTIVE_LO        (UINT32)block[ 2 ]
+#define H_BLANKING_LO      (UINT32)block[ 3 ]
+#define H_ACTIVE_HI        UPPER_NIBBLE( (UINT32)block[ 4 ] )
 #define H_ACTIVE           COMBINE_HI_8LO( H_ACTIVE_HI, H_ACTIVE_LO )
-#define H_BLANKING_HI      LOWER_NIBBLE( (unsigned)block[ 4 ] )
+#define H_BLANKING_HI      LOWER_NIBBLE( (UINT32)block[ 4 ] )
 #define H_BLANKING         COMBINE_HI_8LO( H_BLANKING_HI, H_BLANKING_LO )
 
-#define V_ACTIVE_LO        (unsigned)block[ 5 ]
-#define V_BLANKING_LO      (unsigned)block[ 6 ]
-#define V_ACTIVE_HI        UPPER_NIBBLE( (unsigned)block[ 7 ] )
+#define V_ACTIVE_LO        (UINT32)block[ 5 ]
+#define V_BLANKING_LO      (UINT32)block[ 6 ]
+#define V_ACTIVE_HI        UPPER_NIBBLE( (UINT32)block[ 7 ] )
 #define V_ACTIVE           COMBINE_HI_8LO( V_ACTIVE_HI, V_ACTIVE_LO )
-#define V_BLANKING_HI      LOWER_NIBBLE( (unsigned)block[ 7 ] )
+#define V_BLANKING_HI      LOWER_NIBBLE( (UINT32)block[ 7 ] )
 #define V_BLANKING         COMBINE_HI_8LO( V_BLANKING_HI, V_BLANKING_LO )
 
-#define H_SYNC_OFFSET_LO   (unsigned)block[ 8 ]
-#define H_SYNC_WIDTH_LO    (unsigned)block[ 9 ]
+#define H_SYNC_OFFSET_LO   (UINT32)block[ 8 ]
+#define H_SYNC_WIDTH_LO    (UINT32)block[ 9 ]
 
-#define V_SYNC_OFFSET_LO   UPPER_NIBBLE( (unsigned)block[ 10 ] )
-#define V_SYNC_WIDTH_LO    LOWER_NIBBLE( (unsigned)block[ 10 ] )
+#define V_SYNC_OFFSET_LO   UPPER_NIBBLE( (UINT32)block[ 10 ] )
+#define V_SYNC_WIDTH_LO    LOWER_NIBBLE( (UINT32)block[ 10 ] )
 
-#define V_SYNC_WIDTH_HI    ((unsigned)block[ 11 ] & (1|2))
-#define V_SYNC_OFFSET_HI   (((unsigned)block[ 11 ] & (4|8)) >> 2)
+#define V_SYNC_WIDTH_HI    ((UINT32)block[ 11 ] & (1|2))
+#define V_SYNC_OFFSET_HI   (((UINT32)block[ 11 ] & (4|8)) >> 2)
 
-#define H_SYNC_WIDTH_HI    (((unsigned)block[ 11 ] & (16|32)) >> 4)
-#define H_SYNC_OFFSET_HI   (((unsigned)block[ 11 ] & (64|128)) >> 6)
+#define H_SYNC_WIDTH_HI    (((UINT32)block[ 11 ] & (16|32)) >> 4)
+#define H_SYNC_OFFSET_HI   (((UINT32)block[ 11 ] & (64|128)) >> 6)
 
 #define V_SYNC_WIDTH       COMBINE_HI_4LO( V_SYNC_WIDTH_HI, V_SYNC_WIDTH_LO )
 #define V_SYNC_OFFSET      COMBINE_HI_4LO( V_SYNC_OFFSET_HI, V_SYNC_OFFSET_LO )
@@ -114,19 +102,19 @@
 #define H_SYNC_WIDTH       COMBINE_HI_4LO( H_SYNC_WIDTH_HI, H_SYNC_WIDTH_LO )
 #define H_SYNC_OFFSET      COMBINE_HI_4LO( H_SYNC_OFFSET_HI, H_SYNC_OFFSET_LO )
 
-#define H_SIZE_LO          (unsigned)block[ 12 ]
-#define V_SIZE_LO          (unsigned)block[ 13 ]
+#define H_SIZE_LO          (UINT32)block[ 12 ]
+#define V_SIZE_LO          (UINT32)block[ 13 ]
 
-#define H_SIZE_HI          UPPER_NIBBLE( (unsigned)block[ 14 ] )
-#define V_SIZE_HI          LOWER_NIBBLE( (unsigned)block[ 14 ] )
+#define H_SIZE_HI          UPPER_NIBBLE( (UINT32)block[ 14 ] )
+#define V_SIZE_HI          LOWER_NIBBLE( (UINT32)block[ 14 ] )
 
 #define H_SIZE             COMBINE_HI_8LO( H_SIZE_HI, H_SIZE_LO )
 #define V_SIZE             COMBINE_HI_8LO( V_SIZE_HI, V_SIZE_LO )
 
-#define H_BORDER           (unsigned)block[ 15 ]
-#define V_BORDER           (unsigned)block[ 16 ]
+#define H_BORDER           (UINT32)block[ 15 ]
+#define V_BORDER           (UINT32)block[ 16 ]
 
-#define FLAGS              (unsigned)block[ 17 ]
+#define FLAGS              (UINT32)block[ 17 ]
 
 #define INTERLACED         (FLAGS&128)
 #define SYNC_TYPE          (FLAGS&3<<3)	/* bits 4,3 */

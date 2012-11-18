@@ -13,8 +13,8 @@
 
 
 
-#include "shortatombios.h"
-#include "edid.h"
+//#include "shortatombios.h"
+//#include "edid.h"
 
 //Slice - moved to edid.h
 /*
@@ -73,9 +73,9 @@ VOID patchVideoBios();
 #define OFFSET_TO_VESA_TABLE_INDEX 2
 
 typedef struct {
-	CHAR8	ucTable_Major;
-	CHAR8	ucTable_Minor;
-	CHAR8	ucTable_Rev;
+	UINT8	ucTable_Major;
+	UINT8	ucTable_Minor;
+	UINT8	ucTable_Rev;
 	UINT16	usTable_Size;
 } __attribute__((packed)) NV_COMMON_TABLE_HEADER;
 
@@ -165,8 +165,8 @@ typedef struct {
 } __attribute__((packed)) vbios_modeline_type2;
 
 typedef struct {
-	UINT8 xCHAR8s;
-	UINT8 yCHAR8s;
+	UINT8 xchars;
+	UINT8 ychars;
 	UINT8 unknown[4];
 	
 	vbios_modeline_type2 modelines[];
@@ -196,7 +196,7 @@ typedef struct {
 } __attribute__((packed)) vbios_modeline_type3;
 
 typedef struct {
-	CHAR8 unknown[6];
+	UINT8 unknown[6];
 	
     vbios_modeline_type3 modelines[];
 } __attribute__((packed)) vbios_resolution_type3;

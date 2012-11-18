@@ -129,9 +129,6 @@
 		122B621E157E815100D06F37 /* loader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = loader.h; sourceTree = "<group>"; };
 		122B6220157E817C00D06F37 /* sse3_5_patcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sse3_5_patcher.h; sourceTree = "<group>"; };
 		122B6221157E817C00D06F37 /* sse3_patcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sse3_patcher.h; sourceTree = "<group>"; };
-		123040B316556B760018CD5F /* LegacyRegion2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LegacyRegion2.c; sourceTree = "<group>"; };
-		123040B416556B760018CD5F /* LegacyRegion2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LegacyRegion2.h; sourceTree = "<group>"; };
-		123040B516556B760018CD5F /* LegacyRegion2Dxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = LegacyRegion2Dxe.inf; sourceTree = "<group>"; };
 		123D85D714D94B1F000AF00B /* rEFIt64.dsc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = rEFIt64.dsc; path = ../rEFIt64.dsc; sourceTree = SOURCE_ROOT; };
 		123D85D814D94B29000AF00B /* refit64.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = refit64.inf; path = ../refit64.inf; sourceTree = SOURCE_ROOT; };
 		125108C31627F4CE0004D9C9 /* BootOptions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BootOptions.c; sourceTree = "<group>"; };
@@ -2828,24 +2825,26 @@
 		2C0DB54216145D3400CA37F9 /* CloverPkg.dec */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverPkg.dec; path = ../../CloverPkg.dec; sourceTree = "<group>"; };
 		2C0DB54316145D3400CA37F9 /* CloverX64.dsc */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverX64.dsc; path = ../../CloverX64.dsc; sourceTree = "<group>"; };
 		2C0DB54416145D3400CA37F9 /* CloverX64.fdf */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverX64.fdf; path = ../../CloverX64.fdf; sourceTree = "<group>"; };
-		2C105B811657080800BABF61 /* BdsConnect.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BdsConnect.c; sourceTree = "<group>"; };
-		2C105B831657084C00BABF61 /* DevicePath.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DevicePath.c; sourceTree = "<group>"; };
-		2C0F6D301654F54E00EA194E /* VideoBiosPatchLib.c */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = VideoBiosPatchLib.c; sourceTree = "<group>"; tabWidth = 2; };
-		2C0F6D311654F54E00EA194E /* VideoBiosPatchLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VideoBiosPatchLib.inf; sourceTree = "<group>"; };
-		2C0F6D321654F56400EA194E /* VideoBiosPatchLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoBiosPatchLib.h; sourceTree = "<group>"; };
+		2C0EFDCA165927AA001B2872 /* 915resolution.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = 915resolution.c; sourceTree = "<group>"; usesTabs = 1; };
+		2C0EFDCB165927AA001B2872 /* 915resolution.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = 915resolution.h; sourceTree = "<group>"; };
+		2C0EFDCC165927AA001B2872 /* edid.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = edid.c; sourceTree = "<group>"; usesTabs = 1; };
+		2C0EFDCD165927AA001B2872 /* edid.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = edid.h; sourceTree = "<group>"; };
+		2C0EFDCF165927AA001B2872 /* shortatombios.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = shortatombios.h; sourceTree = "<group>"; };
 		2C0FB48D1653DA6D003B65DE /* LegacyRegion2.c */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = LegacyRegion2.c; sourceTree = "<group>"; tabWidth = 2; };
 		2C0FB48E1653DA6D003B65DE /* LegacyRegion2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LegacyRegion2.h; sourceTree = "<group>"; };
 		2C0FB48F1653DA6D003B65DE /* LegacyRegion2Dxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = LegacyRegion2Dxe.inf; sourceTree = "<group>"; };
 		2C0FB4911653DAB7003B65DE /* LegacyRegion.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LegacyRegion.c; sourceTree = "<group>"; };
 		2C0FB4921653DAB7003B65DE /* LegacyRegionDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = LegacyRegionDxe.inf; sourceTree = "<group>"; };
+		2C105B811657080800BABF61 /* BdsConnect.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BdsConnect.c; sourceTree = "<group>"; };
+		2C105B831657084C00BABF61 /* DevicePath.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DevicePath.c; sourceTree = "<group>"; };
 		2C116F06164FDE980061F326 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
 		2C116F07164FDE980061F326 /* GraphicsConsole.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = GraphicsConsole.c; sourceTree = "<group>"; };
 		2C116F08164FDE980061F326 /* GraphicsConsole.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphicsConsole.h; sourceTree = "<group>"; };
 		2C116F09164FDE980061F326 /* GraphicsConsoleDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = GraphicsConsoleDxe.inf; sourceTree = "<group>"; };
 		2C116F0A164FDE980061F326 /* LaffStd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LaffStd.c; sourceTree = "<group>"; };
 		2C202D9E164CFD1A00D3EFC7 /* PlatformDriverOverride.c */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = PlatformDriverOverride.c; sourceTree = "<group>"; tabWidth = 2; };
-		2C663D57165536DB00BEE731 /* VideoBiosPatchLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoBiosPatchLib.h; sourceTree = "<group>"; };
-		2C663D5A165536F600BEE731 /* VideoBiosPatchLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = VideoBiosPatchLib.c; sourceTree = "<group>"; };
+		2C663D57165536DB00BEE731 /* VideoBiosPatchLib.h */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.h; path = VideoBiosPatchLib.h; sourceTree = "<group>"; tabWidth = 2; };
+		2C663D5A165536F600BEE731 /* VideoBiosPatchLib.c */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = VideoBiosPatchLib.c; sourceTree = "<group>"; tabWidth = 2; };
 		2C663D5B165536F600BEE731 /* VideoBiosPatchLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VideoBiosPatchLib.inf; sourceTree = "<group>"; };
 		2C751C06164EA4DA00B24F6B /* MemLogLibDefault.inf */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = text; path = MemLogLibDefault.inf; sourceTree = "<group>"; tabWidth = 2; };
 		2C751C07164EA4FE00B24F6B /* MemLogLib.h */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.h; path = MemLogLib.h; sourceTree = "<group>"; tabWidth = 2; };
@@ -2865,6 +2864,7 @@
 		2C91842B161439DD0018BDC3 /* MemLog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MemLog.h; sourceTree = "<group>"; usesTabs = 1; };
 		2C91842C161439DD0018BDC3 /* RuntimeServices.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = RuntimeServices.c; sourceTree = "<group>"; usesTabs = 1; };
 		2C91842D161439DD0018BDC3 /* RuntimeServices.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RuntimeServices.h; sourceTree = "<group>"; usesTabs = 1; };
+		2C942F7A165938920064B554 /* VideoBiosPatchLibInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VideoBiosPatchLibInternal.h; sourceTree = "<group>"; };
 		2CD1E1931631BC1F00EE0BD2 /* Nvram.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Nvram.c; sourceTree = "<group>"; };
 		2CE5F615163A86BC00AB5A3A /* LoaderUefi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoaderUefi.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -3599,16 +3599,6 @@
 				1292F26D164BC7A8008FAEEC /* LegacyRegion.h */,
 			);
 			path = Platform;
-			sourceTree = "<group>";
-		};
-		1292F26E164BC7A8008FAEEC /* RegionDxe */ = {
-			isa = PBXGroup;
-			children = (
-				123040B316556B760018CD5F /* LegacyRegion2.c */,
-				123040B416556B760018CD5F /* LegacyRegion2.h */,
-				123040B516556B760018CD5F /* LegacyRegion2Dxe.inf */,
-			);
-			path = RegionDxe;
 			sourceTree = "<group>";
 		};
 		1292F271164BC7A8008FAEEC /* Thunk */ = {
@@ -9539,8 +9529,14 @@
 		2C663D59165536F600BEE731 /* VideoBiosPatchLib */ = {
 			isa = PBXGroup;
 			children = (
+				2C0EFDCA165927AA001B2872 /* 915resolution.c */,
+				2C0EFDCB165927AA001B2872 /* 915resolution.h */,
+				2C0EFDCC165927AA001B2872 /* edid.c */,
+				2C0EFDCD165927AA001B2872 /* edid.h */,
+				2C0EFDCF165927AA001B2872 /* shortatombios.h */,
 				2C663D5A165536F600BEE731 /* VideoBiosPatchLib.c */,
 				2C663D5B165536F600BEE731 /* VideoBiosPatchLib.inf */,
+				2C942F7A165938920064B554 /* VideoBiosPatchLibInternal.h */,
 			);
 			path = VideoBiosPatchLib;
 			sourceTree = "<group>";

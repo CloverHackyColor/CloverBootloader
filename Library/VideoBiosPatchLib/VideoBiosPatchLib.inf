@@ -1,5 +1,10 @@
 ## @file
-#  Default instance of MemLogLib library for simple log services to memory buffer.
+#  Default instance of VideoBiosPatchLib library for video bios patches.
+#
+#  Ported from Chameleon's Resolution module (created by Evan Lojewski)
+#  which is a version of 915resolution (created by steve tomljenovic).
+#
+#  Ported to UEFI by usr-sse2, tweaked and added as VideoBiosPatchLib by dmazar.
 ##
 
 [Defines]
@@ -15,7 +20,13 @@
 #
 
 [Sources]
+  VideoBiosPatchLibInternal.h
   VideoBiosPatchLib.c
+  915resolution.h
+  915resolution.c
+  edid.h
+  edid.c
+  shortatombios.h
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -34,3 +45,4 @@
 [Protocols]
   gEfiLegacyRegionProtocolGuid
   gEfiLegacyRegion2ProtocolGuid
+  gEfiEdidActiveProtocolGuid

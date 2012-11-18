@@ -1826,7 +1826,30 @@ VOID DisconnectSomeDevices(VOID)
   }
 }
 
-VOID PatchVideoBios(VOID)
+UINT8 *mCurrentEdid;
+
+UINT8* getCurrentEdid (VOID)
+{
+  EFI_STATUS                      Status;
+  EFI_EDID_ACTIVE_PROTOCOL        *EdidProtocol;
+  UINT8                           *Edid;
+  
+  DBG ("Edid:");
+  Edid = NULL;
+  Status = gBS->LocateProtocol (&gEfiEdidActiveProtocolGuid, NULL, (VOID**)&EdidProtocol);
+  if (!EFI_ERROR (Status)) {
+    DBG(" size=%d\n", EdidProtocol->SizeOfEdid);
+    if (EdidProtocol->SizeOfEdid > 0) {
+      Edid = AllocateCopyPool (EdidProtocol->SizeOfEdid, EdidProtocol->Edid);
+    }
+  }
+  DBG(" %a", Edid != NULL ? "found" : "not found");
+  
+  return Edid;
+}
+
+
+VOID PatchVideoBios(UINT8 *Edid)
 {
   
   if (gSettings.PatchVBiosBytesSize > 0
@@ -1835,6 +1858,10 @@ VOID PatchVideoBios(VOID)
   {
     VideoBiosPatchBytes(gSettings.PatchVBiosBytesFind, gSettings.PatchVBiosBytesReplace, gSettings.PatchVBiosBytesSize);
   }
+  
+  if (gSettings.PatchVBios) {
+    VideoBiosPatchNativeFromEdid(Edid);
+  }
 }
 
 
@@ -1842,6 +1869,7 @@ static VOID LoadDrivers(VOID)
 {
   EFI_HANDLE  *DriversToConnect = NULL;
   UINTN       DriversToConnectNum = 0;
+  UINT8       *Edid;
   
     // load drivers from /efi/drivers
 #if defined(MDE_CPU_X64)
@@ -1853,7 +1881,7 @@ static VOID LoadDrivers(VOID)
   ScanDriverDir(L"\\EFI\\drivers32", &DriversToConnect, &DriversToConnectNum);
 #endif
   
-  if (gSettings.PatchVBiosBytesSize > 0 && !gDriversFlags.VideoLoaded) {
+  if ((gSettings.PatchVBiosBytesSize > 0 || gSettings.PatchVBios) && !gDriversFlags.VideoLoaded) {
     // we have video bios patch - force video driver reconnect
     DBG("Video bios patch requested - forcing video reconnect\n");
     gDriversFlags.VideoLoaded = TRUE;
@@ -1865,8 +1893,16 @@ static VOID LoadDrivers(VOID)
     // note: our platform driver protocol
     // will use DriversToConnect - do not release it
     RegisterDriversToHighestPriority(DriversToConnect);
+    if (gSettings.CustomEDID != NULL) {
+      Edid = gSettings.CustomEDID;
+    } else {
+      Edid = getCurrentEdid();
+    }
     DisconnectSomeDevices();
-    PatchVideoBios();
+    PatchVideoBios(Edid);
+    if (gSettings.CustomEDID == NULL) {
+      FreePool(Edid);
+    }
     BdsLibConnectAllDriversToAllControllers();
   }
 }

@@ -215,6 +215,24 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
       }
     }
     
+    //InjectEDID
+    prop = GetProperty(dictPointer, "InjectEDID");
+    gSettings.InjectEDID = FALSE;
+    if(prop) {
+      if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+        gSettings.InjectEDID = TRUE;
+    }
+    prop = GetProperty(dictPointer, "CustomEDID");
+    if(prop) {
+      UINTN j = 128;
+      gSettings.CustomEDID = GetDataSetting(dictPointer, "CustomEDID", &j);
+      if (j != 128) {
+        DBG("CustomEDID has wrong length=%d\n", j);
+      } else {
+        DBG("CustomEDID ok\n");
+      }
+    }
+    
   }
   
   return Status;
@@ -355,22 +373,6 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       for (i=0; i<NGFX; i++) {
         gGraphics[i].LoadVBios = gSettings.LoadVBios; //default
       }
-      //InjectEDID
-      prop = GetProperty(dictPointer, "InjectEDID");
-      gSettings.InjectEDID = FALSE;
-      if(prop) {
-        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
-          gSettings.InjectEDID = TRUE;
-      }
-      prop = GetProperty(dictPointer, "CustomEDID");
-      if(prop) {  
-        UINTN j = 128;
-        gSettings.CustomEDID = GetDataSetting(dictPointer, "CustomEDID", &j);
-        if (j != 128) {
-          DBG("CustomEDID has wrong length=%d\n", j);
-        }
-      }      
-      
       prop = GetProperty(dictPointer, "VideoPorts");
       if(prop) {
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);

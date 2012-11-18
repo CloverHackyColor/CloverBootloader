@@ -1,33 +1,14 @@
 /** @file
-  Default instance of VideoBiosOatchLib - functions for video bios patches.            
+  Default instance of VideoBiosPatchLib library for video bios patches.
+ 
+  Ported from Chameleon's Resolution module (created by Evan Lojewski)
+  which is a version of 915resolution (created by steve tomljenovic).
+
+  Ported to UEFI by usr-sse2, tweaked and added as VideoBiosPatchLib by dmazar.
+
 **/
 
-#include <Uefi.h>
-#include <Library/BaseLib.h>
-#include <Library/PrintLib.h>
-#include <Library/BaseMemoryLib.h>
-#include <Library/MemoryAllocationLib.h>
-#include <Library/UefiBootServicesTableLib.h>
-#include <Library/MemLogLib.h>
-#include <Library/VideoBiosPatchLib.h>
-#include <Protocol/LegacyRegion.h>
-#include <Protocol/LegacyRegion2.h>
-
-
-#define DEBUG_VBP 1
-
-#if DEBUG_VBP == 1
-#define DBG(...) MemLog(1, __VA_ARGS__)
-#else
-#define DBG(...)
-#endif
-
-
-//
-// Video bios start addr and size
-//
-#define VBIOS_START         0xc0000
-#define VBIOS_SIZE          0x10000
+#include "VideoBiosPatchLibInternal.h"
 
 
 //
@@ -36,6 +17,10 @@
 EFI_LEGACY_REGION_PROTOCOL    *mLegacyRegion = NULL;
 EFI_LEGACY_REGION2_PROTOCOL   *mLegacyRegion2 = NULL;
 
+//
+// Temp var for passing Edid to readEDID() in edid.c
+//
+UINT8     *mEdid = NULL;
 
 
 /**
@@ -230,5 +215,92 @@ VideoBiosPatchBytes (
   VideoBiosLock ();
   
   return EFI_SUCCESS;
+}
+
+
+/**
+  Reads and returns Edid from EFI_EDID_ACTIVE_PROTOCOL.
+ 
+  @retval Edid          If Edid found.
+  @retval NULL          If Edid not found.
+ 
+**/
+UINT8* VideoBiosPatchGetEdid (VOID)
+{
+  EFI_STATUS                      Status;
+  EFI_EDID_ACTIVE_PROTOCOL        *EdidProtocol;
+  UINT8                           *Edid;
+  
+  DBG (" Edid:");
+  Edid = NULL;
+  Status = gBS->LocateProtocol (&gEfiEdidActiveProtocolGuid, NULL, (VOID**)&EdidProtocol);
+  if (!EFI_ERROR (Status)) {
+    DBG(" size=%d", EdidProtocol->SizeOfEdid);
+    if (EdidProtocol->SizeOfEdid > 0) {
+      Edid = AllocateCopyPool (EdidProtocol->SizeOfEdid, EdidProtocol->Edid);
+    }
+  }
+  DBG(" %a", Edid != NULL ? "found" : "not found");
+
+  return Edid;
+}
+
+
+/**
+  Determines "native" resolution from Edid detail timing descriptor
+  and patches first video mode with that timing/resolution info.
+ 
+  @param  Edid          Edid to use. If NULL, then Edid will be read from EFI_EDID_ACTIVE_PROTOCOL
+ 
+  @retval EFI_SUCCESS   If no error occured.
+  @retval other         In case of error.
+ 
+**/
+EFI_STATUS
+EFIAPI
+VideoBiosPatchNativeFromEdid (
+  IN  UINT8         *Edid  OPTIONAL
+  )
+{
+  EFI_STATUS          Status;
+  BOOLEAN             ReleaseEdid;
+  vbios_map           *map;
+  
+  DBG ("VideoBiosPatchNativeFromEdid:\n");
+  
+  ReleaseEdid = FALSE;
+  if (Edid == NULL) {
+    Edid = VideoBiosPatchGetEdid ();
+    if (Edid == NULL) {
+      return EFI_UNSUPPORTED;
+    }
+    ReleaseEdid = TRUE;
+  }
+  
+  map = open_vbios(CT_UNKNOWN);
+  if (map == NULL) {
+    DBG (" = unknown video bios.\n");
+    return EFI_UNSUPPORTED;
+  }
+  
+  Status = VideoBiosUnlock ();
+  if (EFI_ERROR (Status)) {
+    DBG (" = not done.\n");
+    return Status;
+  }
+  
+  mEdid = Edid;
+  set_mode (map, 0, 0, 0, 0, 0);
+  mEdid = NULL;
+  if (ReleaseEdid) {
+    FreePool (Edid);
+  }
+  
+  VideoBiosLock ();
+  
+  close_vbios (map);
+  
+  return EFI_SUCCESS;
+  
 }
 

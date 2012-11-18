@@ -11,273 +11,24 @@
 #ifndef _RESOLUTION_H_
 #define _RESOLUTION_H_
 
+#include "VideoBiosPatchLibInternal.h"
 //#include "libsaio.h"
 //#include "edid.h"  //included
-#include "915resolution.h"
-
-//#define void VOID
-#define uint8_t UINT8
-#define uint16_t UINT16
-#define uint32_t UINT32
-#define uintptr_t UINTN
-
-#define RT_INLINE_ASM_GNU_STYLE 1
-#define RTIOPORT UINT32
-#define RT_INLINE_ASM_EXTERNAL 0
-#define DECLINLINE(type) type
-
-/** @file
- * IPRT - AMD64 and x86 Specific Assembly Functions.
- */
-
-/*
- * Copyright (C) 2006-2010 Oracle Corporation
- *
- * This file is part of VirtualBox Open Source Edition (OSE), as
- * available from http://www.virtualbox.org. This file is free software;
- * you can redistribute it and/or modify it under the terms of the GNU
- * General Public License (GPL) as published by the Free Software
- * Foundation, in version 2 as it comes in the "COPYING" file of the
- * VirtualBox OSE distribution. VirtualBox OSE is distributed in the
- * hope that it will be useful, but WITHOUT ANY WARRANTY of any kind.
- *
- * The contents of this file may alternatively be used under the terms
- * of the Common Development and Distribution License Version 1.0
- * (CDDL) only, as it comes in the "COPYING.CDDL" file of the
- * VirtualBox OSE distribution, in which case the provisions of the
- * CDDL are applicable instead of those of the GPL.
- *
- * You may elect to license modified versions of this file under the
- * terms and conditions of either the GPL or the CDDL or both.
- */
-
-
-/**
- * Writes a 8-bit unsigned integer to an I/O port, ordered.
- *
- * @param   Port    I/O port to write to.
- * @param   u8      8-bit integer to write.
- */
-#if RT_INLINE_ASM_EXTERNAL && !RT_INLINE_ASM_USES_INTRIN
-DECLASM(void) ASMOutU8(RTIOPORT Port, uint8_t u8);
-#else
-DECLINLINE(void) ASMOutU8(RTIOPORT Port, uint8_t u8)
-{
-# if RT_INLINE_ASM_GNU_STYLE
-  __asm__ __volatile__("outb %b1, %w0\n\t"
-                       :: "Nd" (Port),
-                       "a" (u8));
-  
-# elif RT_INLINE_ASM_USES_INTRIN
-  __outbyte(Port, u8);
-  
-# else
-  __asm
-  {
-    mov     dx, [Port]
-    mov     al, [u8]
-    out     dx, al
-  }
-# endif
-}
-#endif
-
-
-/**
- * Reads a 8-bit unsigned integer from an I/O port, ordered.
- *
- * @returns 8-bit integer.
- * @param   Port    I/O port to read from.
- */
-#if RT_INLINE_ASM_EXTERNAL && !RT_INLINE_ASM_USES_INTRIN
-DECLASM(uint8_t) ASMInU8(RTIOPORT Port);
-#else
-DECLINLINE(uint8_t) ASMInU8(RTIOPORT Port)
-{
-  uint8_t u8;
-# if RT_INLINE_ASM_GNU_STYLE
-  __asm__ __volatile__("inb %w1, %b0\n\t"
-                       : "=a" (u8)
-                       : "Nd" (Port));
-  
-# elif RT_INLINE_ASM_USES_INTRIN
-  u8 = __inbyte(Port);
-  
-# else
-  __asm
-  {
-    mov     dx, [Port]
-    in      al, dx
-    mov     [u8], al
-  }
-# endif
-  return u8;
-}
-#endif
-
-
-/**
- * Writes a 16-bit unsigned integer to an I/O port, ordered.
- *
- * @param   Port    I/O port to write to.
- * @param   u16     16-bit integer to write.
- */
-#if RT_INLINE_ASM_EXTERNAL && !RT_INLINE_ASM_USES_INTRIN
-DECLASM(void) ASMOutU16(RTIOPORT Port, uint16_t u16);
-#else
-DECLINLINE(void) ASMOutU16(RTIOPORT Port, uint16_t u16)
-{
-# if RT_INLINE_ASM_GNU_STYLE
-  __asm__ __volatile__("outw %w1, %w0\n\t"
-                       :: "Nd" (Port),
-                       "a" (u16));
-  
-# elif RT_INLINE_ASM_USES_INTRIN
-  __outword(Port, u16);
-  
-# else
-  __asm
-  {
-    mov     dx, [Port]
-    mov     ax, [u16]
-    out     dx, ax
-  }
-# endif
-}
-#endif
-
-
-/**
- * Reads a 16-bit unsigned integer from an I/O port, ordered.
- *
- * @returns 16-bit integer.
- * @param   Port    I/O port to read from.
- */
-#if RT_INLINE_ASM_EXTERNAL && !RT_INLINE_ASM_USES_INTRIN
-DECLASM(uint16_t) ASMInU16(RTIOPORT Port);
-#else
-DECLINLINE(uint16_t) ASMInU16(RTIOPORT Port)
-{
-  uint16_t u16;
-# if RT_INLINE_ASM_GNU_STYLE
-  __asm__ __volatile__("inw %w1, %w0\n\t"
-                       : "=a" (u16)
-                       : "Nd" (Port));
-  
-# elif RT_INLINE_ASM_USES_INTRIN
-  u16 = __inword(Port);
-  
-# else
-  __asm
-  {
-    mov     dx, [Port]
-    in      ax, dx
-    mov     [u16], ax
-  }
-# endif
-  return u16;
-}
-#endif
-
-
-/**
- * Writes a 32-bit unsigned integer to an I/O port, ordered.
- *
- * @param   Port    I/O port to write to.
- * @param   u32     32-bit integer to write.
- */
-#if RT_INLINE_ASM_EXTERNAL && !RT_INLINE_ASM_USES_INTRIN
-DECLASM(void) ASMOutU32(RTIOPORT Port, uint32_t u32);
-#else
-DECLINLINE(void) ASMOutU32(RTIOPORT Port, uint32_t u32)
-{
-# if RT_INLINE_ASM_GNU_STYLE
-  __asm__ __volatile__("outl %1, %w0\n\t"
-                       :: "Nd" (Port),
-                       "a" (u32));
-  
-# elif RT_INLINE_ASM_USES_INTRIN
-  __outdword(Port, u32);
-  
-# else
-  __asm
-  {
-    mov     dx, [Port]
-    mov     eax, [u32]
-    out     dx, eax
-  }
-# endif
-}
-#endif
-
-
-/**
- * Reads a 32-bit unsigned integer from an I/O port, ordered.
- *
- * @returns 32-bit integer.
- * @param   Port    I/O port to read from.
- */
-#if RT_INLINE_ASM_EXTERNAL && !RT_INLINE_ASM_USES_INTRIN
-DECLASM(uint32_t) ASMInU32(RTIOPORT Port);
-#else
-DECLINLINE(uint32_t) ASMInU32(RTIOPORT Port)
-{
-  uint32_t u32;
-# if RT_INLINE_ASM_GNU_STYLE
-  __asm__ __volatile__("inl %w1, %0\n\t"
-                       : "=a" (u32)
-                       : "Nd" (Port));
-  
-# elif RT_INLINE_ASM_USES_INTRIN
-  u32 = __indword(Port);
-  
-# else
-  __asm
-  {
-    mov     dx, [Port]
-    in      eax, dx
-    mov     [u32], eax
-  }
-# endif
-  return u32;
-}
-#endif
-
-#define inb(port) ASMInU8((port))
-#define inw(port) ASMInU16((port))
-#define inl(port) ASMInU32((port))
-#define outb(port, val) ASMOutU8((port), (val))
-#define outw(port, val) ASMOutU16((port), (val))
-#define outl(port, val) ASMOutU32((port), (val))
-
-
+//#include "915resolution.h"
 
 
 VOID patchVideoBios()
 {
-  //test to ensure that outb and inb work
-  /*UINT8 first, second;
-  UINT32 cfgAPort=0x2e;
-  UINT32 cfgDPort=0x2f;
-  outb (cfgAPort, 0x87);
-	outb (cfgAPort, 0x01);
-	outb (cfgAPort, 0x55);
-	outb (cfgAPort, 0x55);
-  first=inb(cfgDPort);
-	outb (cfgAPort, 0x21);
-	second=inb (cfgDPort);
-  AsciiPrint("DeviceID: 0x%x%x\n", first, second);*/
-  
 	UINT32 x = 0, y = 0, bp = 0;
 	
 	getResolution(&x, &y, &bp);
-	AsciiPrint("getResolution: %dx%dx%d\n", x, y, bp);
+	DBG("getResolution: %dx%dx%d\n", x, y, bp);
 	
 	if (x != 0 &&
 		y != 0 && 
 		bp != 0)
 	{
-    AsciiPrint("Opening BIOS\n");
+		DBG("Opening BIOS\n");
 		vbios_map * map;
 		
 		map = open_vbios(CT_UNKNOWN);
@@ -307,14 +58,14 @@ static const CHAR8 nvda_string[] = "NVID";
  * This code is based on the techniques used in :
  *
  *   - 855patch.  Many thanks to Christian Zietz (czietz gmx net)
- *     for demonstrating how to shadow the VBIOS INTo system RAM
+ *     for demonstrating how to shadow the VBIOS into system RAM
  *     and then modify it.
  *
  *   - 1280patch by Andrew Tipton (andrewtipton null li).
  *
  *   - 855resolution by Alain Poirier
  *
- * This source code is INTo the public domain.
+ * This source code is into the public domain.
  */
 
 /**
@@ -439,9 +190,9 @@ chipset_type get_chipset(UINT32 id)
 			
 			
 		default:
-			if((id & 0x0000FFFF) == 0x00008086) // INTel chipset
+			if((id & 0x0000FFFF) == 0x00008086) // Intel chipset
 			{
-				//AsciiPrint("Unknown chipset 0x%llX, please post id to projectosx.com or applelife.ru", id);
+				//DBG("Unknown chipset 0x%llX, please post id to projectosx.com or applelife.ru", id);
 				//getc();
 				type = CT_UNKNOWN_INTEL;
 				//type = CT_UNKNOWN;
@@ -496,7 +247,7 @@ CHAR8 detect_bios_type(vbios_map * map, CHAR8 modeline, INT32 entry_size)
 			}
 		}
 		
-		/*AsciiPrint("r1 = %d  r2 = %d\n", r1, r2);*/
+		/*DBG("r1 = %d  r2 = %d\n", r1, r2);*/
 	}
 	
 	return (r2-r1-6) % entry_size == 0;
@@ -512,12 +263,18 @@ CHAR8 detect_ati_bios_type(vbios_map * map)
 
 vbios_map * open_vbios(chipset_type forced_chipset)
 {
-	vbios_map * map = AllocatePool(sizeof(vbios_map));
-  SetMem((VOID*)map, sizeof(vbios_map), 0);
+	UINTN i;
+	UINTN j;
+	
+	DBG(" Bios:");
+	vbios_map * map = AllocateZeroPool(sizeof(vbios_map));
 	/*
 	 * Determine chipset
 	 */
 	
+	/*
+	 * dmazar: no need to mess with chipsets - we'll use LegacyRegion protocols to unlock vbios
+	 *
 	if (forced_chipset == CT_UNKNOWN)
 	{
 		map->chipset_id = get_chipset_id();
@@ -531,19 +288,19 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 	
 	if (map->chipset == CT_UNKNOWN)
 	{
-		//AsciiPrint("Unknown chipset type.\n");
-		//AsciiPrint("915resolution only works with INTel 800/900 series graphic chipsets.\n");
-		//AsciiPrint("Chipset Id: %x\n", map->chipset_id);
+		//DBG("Unknown chipset type.\n");
+		//DBG("915resolution only works with Intel 800/900 series graphic chipsets.\n");
+		//DBG("Chipset Id: %x\n", map->chipset_id);
 		close_vbios(map);
 		return 0;
 	}
+	*/
 	
 	
 	/*
 	 *  Map the video bios to memory
 	 */
-	map->bios_ptr=(CHAR8*)VBIOS_START; //this is 0xc0000
-  AsciiPrint("bios_ptr: 0x%x\n", (UINTN)(VOID*)map->bios_ptr);
+	map->bios_ptr=(CHAR8*)VBIOS_START;
 	
 	/*
 	 * check if we have ATI Radeon
@@ -553,86 +310,100 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 	if (AsciiStrCmp ((CHAR8 *) map->ati_tables.AtomRomHeader->uaFirmWareSignature, "ATOM") == 0)
 	{
 		// ATI Radeon Card
+		DBG(" ATI");
 		map->bios = BT_ATI_1;
 		
 		map->ati_tables.MasterDataTables = (UINT16 *) &((ATOM_MASTER_DATA_TABLE *) (map->bios_ptr + map->ati_tables.AtomRomHeader->usMasterDataTableOffset))->ListOfDataTables;
+		DBG(", MasterDataTables: 0x%p", map->ati_tables.MasterDataTables);
 		UINT16 std_vesa_offset = (UINT16) ((ATOM_MASTER_LIST_OF_DATA_TABLES *)map->ati_tables.MasterDataTables)->StandardVESA_Timing;
 		ATOM_STANDARD_VESA_TIMING * std_vesa = (ATOM_STANDARD_VESA_TIMING *) (map->bios_ptr + std_vesa_offset);
+		DBG(", std_vesa: 0x%p", std_vesa);
 		
 		map->ati_mode_table = (CHAR8 *) &std_vesa->aModeTimings;
+		DBG(", ati_mode_table: 0x%p", map->ati_mode_table);
 		if (map->ati_mode_table == 0)
 		{
-			AsciiPrint("Unable to locate the mode table.\n");
-			AsciiPrint("Please run the program 'dump_bios' as root and\n");
-			AsciiPrint("email the file 'vbios.dmp' to stomljen@yahoo.com.\n");
-			AsciiPrint("Chipset: %d\n", map->chipset);
+			DBG("\n Unable to locate the mode table.\n");
+			DBG(" Please run the program 'dump_bios' as root and\n");
+			DBG(" email the file 'vbios.dmp' to stomljen@yahoo.com.\n");
+			//DBG("Chipset: %d\n", map->chipset);
 			close_vbios(map);
 			return 0;
 		}
 		map->mode_table_size = std_vesa->sHeader.usStructureSize - sizeof(ATOM_COMMON_TABLE_HEADER);
+		DBG(", mode_table_size: 0x%x", map->mode_table_size);
 		
 		if (!detect_ati_bios_type(map)) map->bios = BT_ATI_2;
-		
+		DBG(" %a\n", map->bios == BT_ATI_1 ? "BT_ATI_1" : "BT_ATI_2");
 	}
 	else {
 		
 		/*
 		 * check if we have NVIDIA
 		 */
-    UINTN i;
-		for (i = 0; i < 512; i++) // we don't need to look through the whole bios, just the first 512 bytes
-      if (CompareMem(map->bios_ptr+i, nvda_string, 4)==0)
+
+		for (i = 0; i < 512; i++)
+		{ // we don't need to look through the whole bios, just the first 512 bytes
+			if (CompareMem(map->bios_ptr+i, nvda_string, 4) == 0)
 			{
-        AsciiPrint("nVidia BIOS found\n");
+				DBG(" nVidia");
 				map->bios = BT_NVDA;
 				UINT16 nv_data_table_offset = 0;
 				UINT16 * nv_data_table;
 				NV_VESA_TABLE * std_vesa;
 				
-				
-				UINTN j;
 				for (j = 0; j < 0x300; j++)
-          if (CompareMem(map->bios_ptr+j, nvda_pattern, 4)==0)
-          {
-            nv_data_table_offset = *((UINT16*)(map->bios_ptr+j+4));
-            AsciiPrint("nv_data_table_offset: 0x%x\n", (UINTN)nv_data_table_offset);
-            break;
-          }
-				
-        nv_data_table = (UINT16 *) (map->bios_ptr + (nv_data_table_offset + OFFSET_TO_VESA_TABLE_INDEX));
-        AsciiPrint("nv_data_table: 0x%x\n", (UINTN)(VOID*)(nv_data_table));
-        std_vesa = (NV_VESA_TABLE *) (map->bios_ptr + *nv_data_table);
-        AsciiPrint("std_vesa: 0x%x\n", (UINTN)(VOID*)std_vesa);
-        map->nv_mode_table = (CHAR8*)std_vesa+sizeof(NV_COMMON_TABLE_HEADER);
-        AsciiPrint("nv_mode_table: 0x%x\n", (UINTN)(VOID*)map->nv_mode_table);
+				{ //We don't need to look for the table in the whole bios, the 768 first bytes only
+					if (CompareMem(map->bios_ptr+j, nvda_pattern, 4)==0)
+					{
+						nv_data_table_offset = *((UINT16*)(map->bios_ptr+j+4));
+						DBG(", nv_data_table_offset: 0x%x", (UINTN)nv_data_table_offset);
+						// hm, orginal was:
+						//nv_data_table_offset = (unsigned short) (map->bios_ptr[i+4] | (map->bios_ptr[i+5] << 8));
 
-				  
+						break;
+					}
+				}
+				
+				nv_data_table = (UINT16 *) (map->bios_ptr + (nv_data_table_offset + OFFSET_TO_VESA_TABLE_INDEX));
+				DBG(", nv_data_table: 0x%p", nv_data_table);
+				std_vesa = (NV_VESA_TABLE *) (map->bios_ptr + *nv_data_table);
+				DBG(", std_vesa: 0x%p", std_vesa);
+				
+				map->nv_mode_table = (CHAR8*)std_vesa+sizeof(NV_COMMON_TABLE_HEADER);
+				DBG(", nv_mode_table: 0x%p", map->nv_mode_table);
+				// hm, original was:
+				//map->nv_mode_table = (char *) std_vesa->sModelines;
+
+				
 				if (map->nv_mode_table == 0)
 				{
-					AsciiPrint("Unable to locate the mode table.\n");
-					AsciiPrint("Please run the program 'dump_bios' as root and\n");
-					AsciiPrint("email the file 'vbios.dmp' to stomljen@yahoo.com.\n");
-					AsciiPrint("Chipset: %s\n", map->chipset);
+					DBG("\n Unable to locate the mode table.\n");
+					DBG(" Please run the program 'dump_bios' as root and\n");
+					DBG(" email the file 'vbios.dmp' to stomljen@yahoo.com.\n");
+					//DBG("Chipset: %s\n", map->chipset);
 					close_vbios(map);
 					return 0;
 				}
 				map->mode_table_size = std_vesa->sHeader.usTable_Size;
+				DBG(", mode_table_size: 0x%x\n", map->mode_table_size);
 				
 				break;
 			}
+		}
 	}
 	
 	
 	/*
-	 * check if we have INTel
+	 * check if we have Intel
 	 */
 	
 	/*if (map->chipset == CT_UNKNOWN && memmem(map->bios_ptr, VBIOS_SIZE, INTEL_SIGNATURE, strlen(INTEL_SIGNATURE))) {
-	 AsciiPrint( "INTel chipset detected.  However, 915resolution was unable to determine the chipset type.\n");
+	 DBG( "Intel chipset detected.  However, 915resolution was unable to determine the chipset type.\n");
 	 
-	 AsciiPrint("Chipset Id: %x\n", map->chipset_id);
+	 DBG("Chipset Id: %x\n", map->chipset_id);
 	 
-	 AsciiPrint("Please report this problem to stomljen@yahoo.com\n");
+	 DBG("Please report this problem to stomljen@yahoo.com\n");
 	 
 	 close_vbios(map);
 	 return 0;
@@ -647,11 +418,12 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 	/*
 	 * Figure out where the mode table is 
 	 */
-	if ((map->bios != BT_ATI_1) && (map->bios != BT_NVDA)) 
+	if ((map->bios != BT_ATI_1) && (map->bios != BT_ATI_2) && (map->bios != BT_NVDA))
 	{
 		CHAR8* p = map->bios_ptr + 16;
 		CHAR8* limit = map->bios_ptr + VBIOS_SIZE - (3 * sizeof(vbios_mode));
 		
+		DBG(" Other");
 		while (p < limit && map->mode_table == 0)
 		{
 			vbios_mode * mode_ptr = (vbios_mode *) p;
@@ -667,8 +439,11 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 		
 		if (map->mode_table == 0) 
 		{
+			DBG(", mode table not found");
 			close_vbios(map);
 			return 0;
+		} else {
+			DBG(", mode_table: 0x%p", map->mode_table);
 		}
 	}
 	
@@ -685,6 +460,7 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 			map->mode_table_size++;
 			mode_ptr++;
 		}
+		DBG(", mode_table_size: 0x%x", map->mode_table_size);
 	}
 	
 	/*
@@ -696,16 +472,20 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 		if (detect_bios_type(map, TRUE, sizeof(vbios_modeline_type3)))
 		{
 			map->bios = BT_3;
+			DBG(", bios: BT_3\n");
 		}
 		else if (detect_bios_type(map, TRUE, sizeof(vbios_modeline_type2)))
 		{
 			map->bios = BT_2;
+			DBG(", bios: BT_2\n");
 		}
 		else if (detect_bios_type(map, FALSE, sizeof(vbios_resolution_type1)))
 		{
 			map->bios = BT_1;
+			DBG(", bios: BT_1\n");
 		}
 		else {
+			DBG(", bios: unknown\n");
 			return 0;
 		}
 	}
@@ -715,7 +495,7 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 
 VOID close_vbios(vbios_map * map)
 {
-	//FreePool(map);
+	FreePool(map);
 }
 
 VOID unlock_vbios(vbios_map * map)
@@ -758,7 +538,7 @@ VOID unlock_vbios(vbios_map * map)
 		case CT_G31:
 		case CT_500:
 		case CT_3150:
-		case CT_UNKNOWN_INTEL:	// Assume newer INTel chipset is the same as before
+		case CT_UNKNOWN_INTEL:	// Assume newer intel chipset is the same as before
 			outl(CONFIG_MECH_ONE_ADDR, 0x80000090);
 			map->b1 = inb(CONFIG_MECH_ONE_DATA + 1);
 			map->b2 = inb(CONFIG_MECH_ONE_DATA + 2);
@@ -771,7 +551,7 @@ VOID unlock_vbios(vbios_map * map)
 #if DEBUG
 	{
 		UINT32 t = inl(CONFIG_MECH_ONE_DATA);
-		AsciiPrint("unlock PAM: (0x%08x)\n", t);
+		DBG("unlock PAM: (0x%08x)\n", t);
 	}
 #endif
 }
@@ -824,7 +604,7 @@ VOID relock_vbios(vbios_map * map)
 #if DEBUG
 	{
         UINT32 t = inl(CONFIG_MECH_ONE_DATA);
-		AsciiPrint("relock PAM: (0x%08x)\n", t);
+		DBG("relock PAM: (0x%08x)\n", t);
 	}
 #endif
 }
@@ -861,7 +641,7 @@ INT32 getMode(edid_mode *mode)
 }
 
 
-static VOID gtf_timings(UINT32 x, UINT32 y, UINT32 freq,
+VOID gtf_timings(UINT32 x, UINT32 y, UINT32 freq,
 						UINT32 *clock,
 						UINT16 *hsyncstart, UINT16 *hsyncend, UINT16 *hblank,
 						UINT16 *vsyncstart, UINT16 *vsyncend, UINT16 *vblank)
@@ -886,10 +666,10 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
 	UINT32 xprev, yprev;
 	UINT32 i = 0, j;
 	// patch first available mode
-  AsciiPrint("Setting mode %dx%dx%d\n", x, y, bp);
 	
 	//	for (i=0; i < map->mode_table_size; i++) {
 	//		if (map->mode_table[0].mode == mode) {
+	DBG(" Patching: ");
 	switch(map->bios) {
 		case BT_INTEL:
 			return;
@@ -913,14 +693,16 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
 			if (vtotal)
 				res->y_total = ((vtotal-y) & 0xff);
 			
+			DBG("BT_1 patched\n");
 			break;
 		}
 		case BT_2:
 		{
 			vbios_resolution_type2 * res = map_type2_resolution(map, map->mode_table[i].resolution);
+			DBG("BT_2");
 			
-			res->xCHAR8s = x / 8;
-			res->yCHAR8s = y / 16 - 1;
+			res->xchars = x / 8;
+			res->ychars = y / 16 - 1;
 			xprev = res->modelines[0].x1;
 			yprev = res->modelines[0].y1;
 			
@@ -945,13 +727,16 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
 						modeline->vtotal = vtotal;
 					else
 						modeline->vtotal = modeline->vblank;
+					DBG(", modeline %d patched", j);
 				}
 			}
+			DBG("\n");
 			break;
 		}
 		case BT_3:
 		{
 			vbios_resolution_type3 * res = map_type3_resolution(map, map->mode_table[i].resolution);
+			DBG("BT_3");
 			
 			xprev = res->modelines[0].x1;
 			yprev = res->modelines[0].y1;
@@ -978,8 +763,10 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
 					
 					modeline->timing_h   = y-1;
 					modeline->timing_v   = x-1;
+					DBG(", modeline %d patched", j);
 				}
 			}
+			DBG("\n");
 			break;
 		}
 		case BT_ATI_1:
@@ -988,8 +775,13 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
 				
 			ATOM_MODE_TIMING *mode_timing = (ATOM_MODE_TIMING *) map->ati_mode_table;
 
+			DBG("BT_ATI_1\n");
 			//if (mode.pixel_clock && (mode.h_active == x) && (mode.v_active == y) && !force) {
 			if (!getMode(&mode)) {
+				DBG(" mode 0 (%dx%d) patched to %dx%d\n",
+					mode_timing->usCRTC_H_Disp, mode_timing->usCRTC_V_Disp,
+					mode.h_active, mode.v_active
+					);
 				mode_timing->usCRTC_H_Total = mode.h_active + mode.h_blanking;
 				mode_timing->usCRTC_H_Disp = mode.h_active;
 				mode_timing->usCRTC_H_SyncStart = mode.h_active + mode.h_sync_offset;
@@ -1032,8 +824,13 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
 						
 			ATOM_DTD_FORMAT *mode_timing = (ATOM_DTD_FORMAT *) map->ati_mode_table;
 			
+			DBG("BT_ATI_2\n");
 			/*if (mode.pixel_clock && (mode.h_active == x) && (mode.v_active == y) && !force) {*/
 			if (!getMode(&mode)) {
+				DBG(" mode 0 (%dx%d) patched to %dx%d\n",
+					mode_timing->usHActive, mode_timing->usVActive,
+					mode.h_active, mode.v_active
+					);
 				mode_timing->usHBlanking_Time = mode.h_blanking;
 				mode_timing->usHActive = mode.h_active;
 				mode_timing->usHSyncOffset = mode.h_sync_offset;
@@ -1076,11 +873,15 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
 			edid_mode mode;
 			
 			NV_MODELINE *mode_timing = (NV_MODELINE *) map->nv_mode_table;
-      AsciiPrint("nVidia mode table at 0x%x\n", (UINTN)(VOID*)(map->nv_mode_table));
+			DBG("BT_NVDA\n");
 			
 			/*if (mode.pixel_clock && (mode.h_active == x) && (mode.v_active == y) && !force) {*/
 			if (!getMode(&mode)) {
-        AsciiPrint("Setting mode %dx%d\n", mode.h_active, mode.v_active);
+				DBG(" mode %d (%dx%d) patched to %dx%d\n",
+					i,
+					mode_timing[i].usH_Active, mode_timing[i].usV_Active,
+					mode.h_active, mode.v_active
+					);
 				mode_timing[i].usH_Total = mode.h_active + mode.h_blanking;
 				mode_timing[i].usH_Active = mode.h_active;
 				mode_timing[i].usH_SyncStart = mode.h_active + mode.h_sync_offset;
@@ -1118,6 +919,7 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
 		}
 		case BT_UNKNOWN:
 		{
+			DBG("unknown - not patching\n");
 			break;
 		}
 	}

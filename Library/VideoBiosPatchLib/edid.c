@@ -9,8 +9,9 @@
  */
 
 
+#include "VideoBiosPatchLibInternal.h"
 //#include "libsaio.h"
-#include "edid.h"
+//#include "edid.h"
 //#include "vbe.h"
 //#include "graphics.h"
 //#include "boot.h"
@@ -25,22 +26,6 @@
 
 //#include <Protocol/EdidActive.h>
 #include <Protocol/EdidDiscovered.h>
-
-/*UINTN CompareMem (
-                  IN VOID* Buffer1,
-                  IN VOID* Buffer2,
-                  IN UINTN Size
-                  )
-{
-  UINT8* p1 = (UINT8*)Buffer1;
-  UINT8* p2 = (UINT8*)Buffer2;
-  for (UINTN i=0; i<Size; i++)
-  {
-    if (*p1++!=*p2++)
-      return 1;
-  }
-  return 0;
-}*/
 
 //----------------------------------------------------------------------------------
 /*
@@ -139,11 +124,11 @@ static VOID fix_edid(UINT8 *edid, INT32 fix)
 	
 	switch (fix) {
 		case FBMON_FIX_HEADER:
-			AsciiPrint("EDID: trying a header reconstruct\n");
+			DBG(" EDID: trying a header reconstruct\n");
 			CopyMem(edid, edid_v1_header, 8);
 			break;
 		case FBMON_FIX_INPUT:
-			AsciiPrint("EDID: trying to fix input type\n");
+			DBG(" EDID: trying to fix input type\n");
 			b = edid + EDID_STRUCT_DISPLAY;
 			b[0] &= ~0x80;
 			edid[127] += 0x80;
@@ -168,6 +153,8 @@ INT32 edid_checksum(UINT8 *edid)
 	if (csum == 0x00 && all_null) {
 		/* checksum passed, everything's good */
 		err = 1;
+	} else {
+		DBG(" edid_checksum error ");
 	}
 	
 	return err;
@@ -185,6 +172,10 @@ static INT32 edid_check_header(UINT8 *edid)
 	for (i = 0; i < 8; i++) {
 		if (edid[i] != edid_v1_header[i])
 			err = 0;
+	}
+	
+	if (err == 0) {
+		DBG(" edid_check_header error ");
 	}
 	
 	return err;
@@ -214,12 +205,17 @@ INT32 fb_parse_edid(struct EDID *edid, edid_mode* var)  //(struct EDID *edid, UI
 	INT32 i;
 	UINT8 *block;
 	
-	if(!verifyEDID((UINT8 *)edid)) return 1;
+	DBG(" Parse Edid:");
+	if(!verifyEDID((UINT8 *)edid)) {
+		DBG(" error\n");
+		return 0;
+	}
 	
 	block = (UINT8 *)edid + DETAILED_TIMING_DESCRIPTIONS_START; //54
 	
 	for (i = 0; i < 4; i++, block += DETAILED_TIMING_DESCRIPTION_SIZE) {
 		if (edid_is_timing_block(block)) {
+			DBG(" descriptor block %d is timing descriptor ", i);
 			var->h_active = H_ACTIVE;
 			var->v_active = V_ACTIVE;
 			var->h_sync_offset = H_SYNC_OFFSET;
@@ -227,8 +223,12 @@ INT32 fb_parse_edid(struct EDID *edid, edid_mode* var)  //(struct EDID *edid, UI
 			var->h_blanking = H_BLANKING;
 			var->v_blanking = V_BLANKING;
 			var->pixel_clock = PIXEL_CLOCK;
-			var->h_sync_width = H_SYNC_WIDTH;
+			var->v_sync_offset = V_SYNC_OFFSET;
 			var->v_sync_width = V_SYNC_WIDTH;
+			DBG("(h_active: %d, v_active: %d, h_sync_offset: %d, h_sync_width: %d",
+				var->h_active, var->v_active, var->h_sync_offset, var->h_sync_width);
+			DBG(", h_blanking: %d, v_blanking: %d, pixel_clock: %d, v_sync_offset: %d, v_sync_width: %d)\n",
+				var->h_blanking, var->v_blanking, var->pixel_clock, var->v_sync_offset, var->v_sync_width);
 			/*
 			var->xres = var->xres_virtual = H_ACTIVE;
 			var->yres = var->yres_virtual = V_ACTIVE;
@@ -259,11 +259,6 @@ INT32 fb_parse_edid(struct EDID *edid, edid_mode* var)  //(struct EDID *edid, UI
 VOID getResolution(UINT32* x, UINT32* y, UINT32* bp)
 {
 //	INT32 val;
-  /**x = 1600;
-  *y = 900;
-  *bp = 32;
-  return;*/
-  
 	static UINT32 xResolution, yResolution, bpResolution;
 /*
 	if(getIntForKey(kScreenWidth, &val, &bootInfo->chameleonConfig))
@@ -316,36 +311,24 @@ VOID getResolution(UINT32* x, UINT32* y, UINT32* bp)
 
 		 */
 		
-		//AsciiPrint("H Active = %d ", edidInfo[56] | ((edidInfo[58] & 0xF0) << 4) );
-		//AsciiPrint("V Active = %d \n", edidInfo[59] | ((edidInfo[61] & 0xF0) << 4) );
+		//DBG("H Active = %d ", edidInfo[56] | ((edidInfo[58] & 0xF0) << 4) );
+		//DBG("V Active = %d \n", edidInfo[59] | ((edidInfo[61] & 0xF0) << 4) );
 		
 		FreePool( edidInfo );
 		
 		//if(!xResolution) xResolution = DEFAULT_SCREEN_WIDTH;
 		//if(!yResolution) yResolution = DEFAULT_SCREEN_HEIGHT;
 
-	
+
 
 	*x  = xResolution;
 	*y  = yResolution;
 	*bp = bpResolution;
   
-  AsciiPrint("Best mode: %dx%dx%d\n", *x, *y, *bp);
+  DBG("Best mode: %dx%dx%d\n", *x, *y, *bp);
 }
 
-/*CHAR8* readEDID()
+CHAR8* readEDID(VOID)
 {
-  EFI_STATUS    Status;
-  EFI_EDID_DISCOVERED_PROTOCOL    *EdidDiscovered;
-  Status = gBS->LocateProtocol (&gEfiEdidDiscoveredProtocolGuid, NULL, (VOID**)&EdidDiscovered);
-  if (!EFI_ERROR(Status))
-  {
-    AsciiPrint("EdidDiscovered size=%d\n", EdidDiscovered->SizeOfEdid);
-    if (EdidDiscovered->SizeOfEdid==0)
-      return NULL;
-    CHAR8* ret = AllocatePool(BiosVideoPrivate->EdidDiscovered.SizeOfEdid);
-    CopyMem(ret, BiosVideoPrivate->EdidDiscovered.Edid, BiosVideoPrivate->EdidDiscovered.SizeOfEdid);
-    return ret;
-  }
-  return NULL;
-}*/
+	return (CHAR8*) mEdid;
+}

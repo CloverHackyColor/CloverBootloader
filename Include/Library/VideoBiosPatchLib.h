@@ -55,5 +55,21 @@ VideoBiosPatchBytes (
   );
 
 
+/**
+  Determines "native" resolution from Edid detail timing descriptor
+  and patches first video mode with that timing/resolution info.
+ 
+  @param  Edid          Edid to use. If NULL, then Edid will be read from EFI_EDID_ACTIVE_PROTOCOL
+ 
+  @retval EFI_SUCCESS   If no error occured.
+  @retval other         In case of error.
+ 
+**/
+EFI_STATUS
+EFIAPI
+VideoBiosPatchNativeFromEdid (
+  IN  UINT8         *Edid  OPTIONAL
+  );
+
 
 #endif // __VIDEO_BIOS_PATCH_LIB_H__
