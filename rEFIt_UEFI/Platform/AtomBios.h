@@ -141,22 +141,22 @@ typedef struct _ATOM_MODE_TIMING
 
 typedef struct _ATOM_DTD_FORMAT
 {
-	USHORT  usPixClk;
-	USHORT  usHActive;
-	USHORT  usHBlanking_Time;
-	USHORT  usVActive;
-	USHORT  usVBlanking_Time;			
-	USHORT  usHSyncOffset;
-	USHORT  usHSyncWidth;
-	USHORT  usVSyncOffset;
-	USHORT  usVSyncWidth;
-	USHORT  usImageHSize;
-	USHORT  usImageVSize;
-	UCHAR   ucHBorder;
-	UCHAR   ucVBorder;
-	ATOM_MODE_MISC_INFO_ACCESS susModeMiscInfo;
-	UCHAR   ucInternalModeNumber;
-	UCHAR   ucRefreshRate;
+	USHORT  usPixClk;           //23400
+	USHORT  usHActive;          //1920
+	USHORT  usHBlanking_Time;   //680
+	USHORT  usVActive;          //1440
+	USHORT  usVBlanking_Time;		//60
+	USHORT  usHSyncOffset;      //128
+	USHORT  usHSyncWidth;       //208
+	USHORT  usVSyncOffset;      //1
+	USHORT  usVSyncWidth;       //3
+	USHORT  usImageHSize;       //0
+	USHORT  usImageVSize;       //0
+	UCHAR   ucHBorder;          //0
+	UCHAR   ucVBorder;          //02
+	ATOM_MODE_MISC_INFO_ACCESS susModeMiscInfo; //3cFE
+	UCHAR   ucInternalModeNumber; //5c = 92
+	UCHAR   ucRefreshRate;      //258
 } ATOM_DTD_FORMAT;
 
 typedef struct _ATOM_LVDS_INFO_V12
@@ -169,7 +169,7 @@ typedef struct _ATOM_LVDS_INFO_V12
 	UCHAR               ucPowerSequenceDigOntoDEin10Ms;
 	UCHAR               ucPowerSequenceDEtoBLOnin10Ms;
 	UCHAR               ucLVDS_Misc;            // Bit0:{=0:single, =1:dual},Bit1 {=0:666RGB, =1:888RGB},Bit2:3:{Grey level}
-												// Bit4:{=0:LDI format for RGB888, =1 FPDI format for RGB888}
+                                              // Bit4:{=0:LDI format for RGB888, =1 FPDI format for RGB888}
 	                                            // Bit5:{=0:Spatial Dithering disabled;1 Spatial Dithering enabled}
 	                                            // Bit6:{=0:Temporal Dithering disabled;1 Temporal Dithering enabled}
 	UCHAR               ucPanelDefaultRefreshRate;

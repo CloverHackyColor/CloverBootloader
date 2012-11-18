@@ -371,6 +371,7 @@ extern EFI_FILE         *ThemeDir;
 extern CHAR16           *ThemePath;
 extern EFI_FILE         *OEMDir;
 extern CHAR16           *OEMPath;
+extern EFI_FILE         *OemThemeDir;
 
 extern CHAR16*          AnimeName[];     
 extern INTN             AnimeFrames[];   
@@ -548,7 +549,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY  **ChosenEntry);
 
 extern REFIT_CONFIG GlobalConfig;
 
-VOID ReadConfig(VOID);
+VOID ReadConfig(INTN What);
 //
 // BmLib
 //

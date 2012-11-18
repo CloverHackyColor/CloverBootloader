@@ -18,5 +18,17 @@
 		<key>Speed</key>
 		<string>8</string>
 	</dict>
+	<key>Graphics</key>
+	<dict>
+		<key>GraphicsInjector</key>
+		<string>Yes</string>
+		<key>PatchVBiosBytes</key>
+		<dict>
+			<key>Find</key>
+			<data>gAeoAqAF</data>
+			<key>Replace</key>
+			<data>gAeoAjgE</data>
+		</dict>
+	</dict>
 </dict>
 </plist>

@@ -51,7 +51,8 @@
 
 // constants
 
-#define CONFIG_FILE_NAME    L"refit.conf"
+//#define CONFIG_FILE_NAME    L"refit.conf"
+//#define THEME_CONFIG        L"settings.conf"
 #define MAXCONFIGFILESIZE   (256*1024)
 
 #define ENCODING_ISO8859_1  (0)
@@ -63,10 +64,12 @@ CHAR16*  AnimeName[MAX_ANIME];
 INTN     AnimeFrames[MAX_ANIME];   
 UINTN    AnimeFrameTime[MAX_ANIME];
 BOOLEAN  AnimeOnce[MAX_ANIME];
+CHAR16*  CONFIG_FILE_NAME =   L"refit.conf";
+CHAR16*  THEME_CONFIG    =    L"settings.conf";
 
 // global configuration with default values
 
-REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, FALSE, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF00, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, None };
+REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, FALSE, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, None };
 
 //
 // read a file into a buffer
@@ -333,7 +336,7 @@ static VOID HandleEnum(IN CHAR16 **TokenList, IN UINTN TokenCount, IN CHAR16 **E
 
 static CHAR16 *HideBadgesEnum[] = { L"none", L"internal", L"all", L"swap", L"drive"};
 
-VOID ReadConfig(VOID)
+VOID ReadConfig(INTN What)
 {
   EFI_STATUS      Status;
   REFIT_FILE      File;
@@ -342,11 +345,27 @@ VOID ReadConfig(VOID)
   UINTN           TokenCount, i;
   INTN            ID;
   
-  if (!FileExists(SelfDir, CONFIG_FILE_NAME))
-    return;
   
   //    DBG("Reading configuration file...\n");
-  Status = ReadFile(SelfDir, CONFIG_FILE_NAME, &File);
+  switch (What) {
+    case 0:
+      if (!FileExists(SelfDir, CONFIG_FILE_NAME))
+        return;      
+      Status = ReadFile(SelfDir, CONFIG_FILE_NAME, &File);
+      break;
+    case 1:
+      if (!FileExists(ThemeDir, THEME_CONFIG))
+        return;
+      Status = ReadFile(ThemeDir, THEME_CONFIG, &File);
+      break;
+    case 2:
+      if (!FileExists(OemThemeDir, THEME_CONFIG))
+        return;
+      Status = ReadFile(OemThemeDir, THEME_CONFIG, &File);
+      break;
+    default:
+      return;
+  }
   if (EFI_ERROR(Status))
     return;
   //    DBG("Reading refit.conf file OK!\n");

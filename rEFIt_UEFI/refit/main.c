@@ -1978,23 +1978,24 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (EFI_ERROR(Status))
     return Status;
   
+  // disable EFI watchdog timer
+  gBS->SetWatchdogTimer(0x0000, 0x0000, 0x0000, NULL);
+  
   InitAnime();
   InitializeUnicodeCollationProtocol();
   
   // read GUI configuration
-  ReadConfig();
+  ReadConfig(0);
   
   // init screen and dump video modes to log
   InitScreen(!gFirmwareClover); // ? FALSE : TRUE);
-  
-  // disable EFI watchdog timer
-  gBS->SetWatchdogTimer(0x0000, 0x0000, 0x0000, NULL);
   
   ThemePath = PoolPrint(L"EFI\\BOOT\\themes\\%s", GlobalConfig.Theme);
   Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
   // if (EFI_ERROR (Status)) { return Status; }
   DBG("Theme: %s Path: %s\n", GlobalConfig.Theme, ThemePath);
   MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
+  ReadConfig(1);
   
   PrepatchSmbios();
 
@@ -2003,8 +2004,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 #ifdef REVISION_STR
   MsgLog(REVISION_STR); 
 #endif
-  DBG("  running on %a\n", gSettings.OEMProduct);
-  DBG("... with board %a\n", gSettings.OEMBoard);
   //replace / with _
   Size = iStrLen(gSettings.OEMProduct, 64);
   for (i=0; i<Size; i++) {
@@ -2018,6 +2017,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       gSettings.OEMBoard[i] = 0x5F;
     }
   }
+  DBG("  running on %a\n", gSettings.OEMProduct);
+  DBG("... with board %a\n", gSettings.OEMBoard);
   
   
   if (FileExists(SelfRootDir, PoolPrint(L"EFI\\OEM\\%a\\config.plist", gSettings.OEMProduct))) {
@@ -2049,12 +2050,22 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     PauseForKey(L"Error reinit refit\n");
     return Status;
   }
+  Status = SelfRootDir->Open(SelfRootDir,
+                             &OemThemeDir,
+                             PoolPrint(L"%s\\themes\\%s", OEMPath, GlobalConfig.Theme),
+                             EFI_FILE_MODE_READ, 0);
+  if (OemThemeDir && !EFI_ERROR(Status)) {
+    ReadConfig(2);
+  }
+  
 //        DBG("reinit OK\n");
   ZeroMem((VOID*)&gSettings, sizeof(SETTINGS_DATA));
   ZeroMem((VOID*)&gGraphics[0], sizeof(GFX_PROPERTIES) * 4);
+  
+  
 
   GuiEventsInitialize();
-  DBG("GuiEventsInitialize OK\n");
+//  DBG("GuiEventsInitialize OK\n");
   t0 = AsmReadTsc();
   gBS->Stall(100000); //100ms
   t1 = AsmReadTsc();
@@ -2065,7 +2076,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (!gSettings.EnabledCores) {
     gSettings.EnabledCores = gCPUStructure.Cores;
   }
-  DBG("GetCPUProperties OK\n");
+//  DBG("GetCPUProperties OK\n");
   GetDevices();
  //     DBG("GetDevices OK\n");
   DBGT("ScanSPD() start\n");

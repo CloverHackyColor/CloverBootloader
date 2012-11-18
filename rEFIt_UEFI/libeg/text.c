@@ -41,7 +41,7 @@
 //#define FONT_CELL_HEIGHT (12)
 
 #ifndef DEBUG_ALL
-#define DEBUG_TEXT 0
+#define DEBUG_TEXT 1
 #else
 #define DEBUG_TEXT DEBUG_ALL
 #endif
@@ -80,17 +80,24 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN WantAlpha)
   INTN        x, y, Ypos, j;
   EG_PIXEL    *PixelPtr;
   EG_PIXEL    FirstPixel;
-    
-  NewImage = egLoadImage(SelfDir, PoolPrint(L"font\\%s", GlobalConfig.FontFileName), WantAlpha);
-  DBG("font loaded\n");
-  if (!NewImage) {
-    DBG("Font %s is not loaded, using default \n", PoolPrint(L"font\\%s", GlobalConfig.FontFileName));
-    return NULL;
+  
+  NewImage = egLoadImage(ThemeDir, GlobalConfig.FontFileName, WantAlpha);
+  if (NewImage) {
+      DBG("font loaded from themedir\n");
+  } else {
+    NewImage = egLoadImage(SelfDir, PoolPrint(L"font\\%s", GlobalConfig.FontFileName), WantAlpha);
+    DBG("font loaded from common font dir\n");
+    if (!NewImage) {
+      DBG("Font %s is not loaded, using default \n", PoolPrint(L"font\\%s", GlobalConfig.FontFileName));
+      return NULL;
+    }
   }
+
+
   ImageWidth = NewImage->Width;
-  DBG("ImageWidth=%d\n", ImageWidth);
+//  DBG("ImageWidth=%d\n", ImageWidth);
   ImageHeight = NewImage->Height;
-  DBG("ImageHeight=%d\n", ImageHeight);
+//  DBG("ImageHeight=%d\n", ImageHeight);
   PixelPtr = NewImage->PixelData;
   DBG("Font loaded: ImageWidth=%d ImageHeight=%d Ptr=%x\n", ImageWidth, ImageHeight, PixelPtr);
   NewFontImage = egCreateImage(ImageWidth << 4, ImageHeight >> 4, WantAlpha);
