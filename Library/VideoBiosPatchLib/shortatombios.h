@@ -11,18 +11,7 @@
 
 #define ATOM_HEADER_VERSION (ATOM_VERSION_MAJOR | ATOM_VERSION_MINOR)
 
-typedef unsigned char		BOOLEAN;
-typedef signed char			INT8;
-typedef unsigned char		UINT8;
-typedef signed short		INT16;
-typedef unsigned short		UINT16;
-typedef signed long			INT32;
-typedef unsigned long		UINT32;
-typedef unsigned char		CHAR8;
-typedef unsigned short		CHAR16;
-typedef unsigned short		USHORT;
-typedef unsigned char		UCHAR;
-typedef	unsigned long		ULONG;
+
 
 #pragma pack(1)                                       /* BIOS data must use byte aligment */
 
@@ -33,32 +22,32 @@ typedef	unsigned long		ULONG;
 
 typedef struct _ATOM_COMMON_TABLE_HEADER
 {
-	USHORT usStructureSize;
-	UCHAR  ucTableFormatRevision;   /*Change it when the Parser is not backward compatible */
-	UCHAR  ucTableContentRevision;  /*Change it only when the table needs to change but the firmware */
+	UINT16 usStructureSize;
+	UINT8  ucTableFormatRevision;   /*Change it when the Parser is not backward compatible */
+	UINT8  ucTableContentRevision;  /*Change it only when the table needs to change but the firmware */
                                   /*Image can't be updated, while Driver needs to carry the new table! */
 } ATOM_COMMON_TABLE_HEADER;
 
 typedef struct _ATOM_ROM_HEADER
 {
 	ATOM_COMMON_TABLE_HEADER		sHeader;
-	UCHAR	 uaFirmWareSignature[4];    /*Signature to distinguish between Atombios and non-atombios, 
+	UINT8	 uaFirmWareSignature[4];    /*Signature to distinguish between Atombios and non-atombios, 
 											 +                                      atombios should init it as "ATOM", don't change the position */
-	USHORT usBiosRuntimeSegmentAddress;
-	USHORT usProtectedModeInfoOffset;
-	USHORT usConfigFilenameOffset;
-	USHORT usCRC_BlockOffset;
-	USHORT usBIOS_BootupMessageOffset;
-	USHORT usInt10Offset;
-	USHORT usPciBusDevInitCode;
-	USHORT usIoBaseAddress;
-	USHORT usSubsystemVendorID;
-	USHORT usSubsystemID;
-	USHORT usPCI_InfoOffset; 
-	USHORT usMasterCommandTableOffset; /*Offset for SW to get all command table offsets, Don't change the position */
-	USHORT usMasterDataTableOffset;   /*Offset for SW to get all data table offsets, Don't change the position */
-	UCHAR  ucExtendedFunctionCode;
-	UCHAR  ucReserved;
+	UINT16 usBiosRuntimeSegmentAddress;
+	UINT16 usProtectedModeInfoOffset;
+	UINT16 usConfigFilenameOffset;
+	UINT16 usCRC_BlockOffset;
+	UINT16 usBIOS_BootupMessageOffset;
+	UINT16 usInt10Offset;
+	UINT16 usPciBusDevInitCode;
+	UINT16 usIoBaseAddress;
+	UINT16 usSubsystemVendorID;
+	UINT16 usSubsystemID;
+	UINT16 usPCI_InfoOffset; 
+	UINT16 usMasterCommandTableOffset; /*Offset for SW to get all command table offsets, Don't change the position */
+	UINT16 usMasterDataTableOffset;   /*Offset for SW to get all data table offsets, Don't change the position */
+	UINT8  ucExtendedFunctionCode;
+	UINT8  ucReserved;
 } ATOM_ROM_HEADER;
 
 /****************************************************************************/	
@@ -66,40 +55,40 @@ typedef struct _ATOM_ROM_HEADER
 /****************************************************************************/	
 typedef struct _ATOM_MASTER_LIST_OF_DATA_TABLES
 {
-	USHORT        UtilityPipeLine;	        // Offest for the utility to get parser info,Don't change this position!
-	USHORT        MultimediaCapabilityInfo; // Only used by MM Lib,latest version 1.1, not configuable from Bios, need to include the table to build Bios 
-	USHORT        MultimediaConfigInfo;     // Only used by MM Lib,latest version 2.1, not configuable from Bios, need to include the table to build Bios
-	USHORT        StandardVESA_Timing;      // Only used by Bios
-	USHORT        FirmwareInfo;             // Shared by various SW components,latest version 1.4
-	USHORT        DAC_Info;                 // Will be obsolete from R600
-	USHORT        LVDS_Info;                // Shared by various SW components,latest version 1.1 
-	USHORT        TMDS_Info;                // Will be obsolete from R600
-	USHORT        AnalogTV_Info;            // Shared by various SW components,latest version 1.1 
-	USHORT        SupportedDevicesInfo;     // Will be obsolete from R600
-	USHORT        GPIO_I2C_Info;            // Shared by various SW components,latest version 1.2 will be used from R600           
-	USHORT        VRAM_UsageByFirmware;     // Shared by various SW components,latest version 1.3 will be used from R600
-	USHORT        GPIO_Pin_LUT;             // Shared by various SW components,latest version 1.1
-	USHORT        VESA_ToInternalModeLUT;   // Only used by Bios
-	USHORT        ComponentVideoInfo;       // Shared by various SW components,latest version 2.1 will be used from R600
-	USHORT        PowerPlayInfo;            // Shared by various SW components,latest version 2.1,new design from R600
-	USHORT        CompassionateData;        // Will be obsolete from R600
-	USHORT        SaveRestoreInfo;          // Only used by Bios
-	USHORT        PPLL_SS_Info;             // Shared by various SW components,latest version 1.2, used to call SS_Info, change to new name because of int ASIC SS info
-	USHORT        OemInfo;                  // Defined and used by external SW, should be obsolete soon
-	USHORT        XTMDS_Info;               // Will be obsolete from R600
-	USHORT        MclkSS_Info;              // Shared by various SW components,latest version 1.1, only enabled when ext SS chip is used
-	USHORT        Object_Header;            // Shared by various SW components,latest version 1.1
-	USHORT        IndirectIOAccess;         // Only used by Bios,this table position can't change at all!!
-	USHORT        MC_InitParameter;         // Only used by command table
-	USHORT        ASIC_VDDC_Info;						// Will be obsolete from R600
-	USHORT        ASIC_InternalSS_Info;			// New tabel name from R600, used to be called "ASIC_MVDDC_Info"
-	USHORT        TV_VideoMode;							// Only used by command table
-	USHORT        VRAM_Info;								// Only used by command table, latest version 1.3
-	USHORT        MemoryTrainingInfo;				// Used for VBIOS and Diag utility for memory training purpose since R600. the new table rev start from 2.1
-	USHORT        IntegratedSystemInfo;			// Shared by various SW components
-	USHORT        ASIC_ProfilingInfo;				// New table name from R600, used to be called "ASIC_VDDCI_Info" for pre-R600
-	USHORT        VoltageObjectInfo;				// Shared by various SW components, latest version 1.1
-	USHORT				PowerSourceInfo;					// Shared by various SW components, latest versoin 1.1
+	UINT16        UtilityPipeLine;	        // Offest for the utility to get parser info,Don't change this position!
+	UINT16        MultimediaCapabilityInfo; // Only used by MM Lib,latest version 1.1, not configuable from Bios, need to include the table to build Bios 
+	UINT16        MultimediaConfigInfo;     // Only used by MM Lib,latest version 2.1, not configuable from Bios, need to include the table to build Bios
+	UINT16        StandardVESA_Timing;      // Only used by Bios
+	UINT16        FirmwareInfo;             // Shared by various SW components,latest version 1.4
+	UINT16        DAC_Info;                 // Will be obsolete from R600
+	UINT16        LVDS_Info;                // Shared by various SW components,latest version 1.1 
+	UINT16        TMDS_Info;                // Will be obsolete from R600
+	UINT16        AnalogTV_Info;            // Shared by various SW components,latest version 1.1 
+	UINT16        SupportedDevicesInfo;     // Will be obsolete from R600
+	UINT16        GPIO_I2C_Info;            // Shared by various SW components,latest version 1.2 will be used from R600           
+	UINT16        VRAM_UsageByFirmware;     // Shared by various SW components,latest version 1.3 will be used from R600
+	UINT16        GPIO_Pin_LUT;             // Shared by various SW components,latest version 1.1
+	UINT16        VESA_ToInternalModeLUT;   // Only used by Bios
+	UINT16        ComponentVideoInfo;       // Shared by various SW components,latest version 2.1 will be used from R600
+	UINT16        PowerPlayInfo;            // Shared by various SW components,latest version 2.1,new design from R600
+	UINT16        CompassionateData;        // Will be obsolete from R600
+	UINT16        SaveRestoreInfo;          // Only used by Bios
+	UINT16        PPLL_SS_Info;             // Shared by various SW components,latest version 1.2, used to call SS_Info, change to new name because of int ASIC SS info
+	UINT16        OemInfo;                  // Defined and used by external SW, should be obsolete soon
+	UINT16        XTMDS_Info;               // Will be obsolete from R600
+	UINT16        MclkSS_Info;              // Shared by various SW components,latest version 1.1, only enabled when ext SS chip is used
+	UINT16        Object_Header;            // Shared by various SW components,latest version 1.1
+	UINT16        IndirectIOAccess;         // Only used by Bios,this table position can't change at all!!
+	UINT16        MC_InitParameter;         // Only used by command table
+	UINT16        ASIC_VDDC_Info;						// Will be obsolete from R600
+	UINT16        ASIC_InternalSS_Info;			// New tabel name from R600, used to be called "ASIC_MVDDC_Info"
+	UINT16        TV_VideoMode;							// Only used by command table
+	UINT16        VRAM_Info;								// Only used by command table, latest version 1.3
+	UINT16        MemoryTrainingInfo;				// Used for VBIOS and Diag utility for memory training purpose since R600. the new table rev start from 2.1
+	UINT16        IntegratedSystemInfo;			// Shared by various SW components
+	UINT16        ASIC_ProfilingInfo;				// New table name from R600, used to be called "ASIC_VDDCI_Info" for pre-R600
+	UINT16        VoltageObjectInfo;				// Shared by various SW components, latest version 1.1
+	UINT16				PowerSourceInfo;					// Shared by various SW components, latest versoin 1.1
 } ATOM_MASTER_LIST_OF_DATA_TABLES;
 
 typedef struct _ATOM_MASTER_DATA_TABLE
@@ -110,7 +99,7 @@ typedef struct _ATOM_MASTER_DATA_TABLE
 
 typedef union _ATOM_MODE_MISC_INFO_ACCESS
 { 
-	USHORT              usAccess;
+	UINT16              usAccess;
 } ATOM_MODE_MISC_INFO_ACCESS;
 
 /****************************************************************************/	
@@ -120,66 +109,66 @@ typedef union _ATOM_MODE_MISC_INFO_ACCESS
 /****************************************************************************/	
 typedef struct _ATOM_MODE_TIMING
 {
-	USHORT  usCRTC_H_Total;
-	USHORT  usCRTC_H_Disp;
-	USHORT  usCRTC_H_SyncStart;
-	USHORT  usCRTC_H_SyncWidth;
-	USHORT  usCRTC_V_Total;
-	USHORT  usCRTC_V_Disp;
-	USHORT  usCRTC_V_SyncStart;
-	USHORT  usCRTC_V_SyncWidth;
-	USHORT  usPixelClock;					                 //in 10Khz unit
+	UINT16  usCRTC_H_Total;
+	UINT16  usCRTC_H_Disp;
+	UINT16  usCRTC_H_SyncStart;
+	UINT16  usCRTC_H_SyncWidth;
+	UINT16  usCRTC_V_Total;
+	UINT16  usCRTC_V_Disp;
+	UINT16  usCRTC_V_SyncStart;
+	UINT16  usCRTC_V_SyncWidth;
+	UINT16  usPixelClock;					                 //in 10Khz unit
 	ATOM_MODE_MISC_INFO_ACCESS  susModeMiscInfo;
-	USHORT  usCRTC_OverscanRight;
-	USHORT  usCRTC_OverscanLeft;
-	USHORT  usCRTC_OverscanBottom;
-	USHORT  usCRTC_OverscanTop;
-	USHORT  usReserve;
-	UCHAR   ucInternalModeNumber;
-	UCHAR   ucRefreshRate;
+	UINT16  usCRTC_OverscanRight;
+	UINT16  usCRTC_OverscanLeft;
+	UINT16  usCRTC_OverscanBottom;
+	UINT16  usCRTC_OverscanTop;
+	UINT16  usReserve;
+	UINT8   ucInternalModeNumber;
+	UINT8   ucRefreshRate;
 } ATOM_MODE_TIMING;
 
 typedef struct _ATOM_DTD_FORMAT
 {
-	USHORT  usPixClk;
-	USHORT  usHActive;
-	USHORT  usHBlanking_Time;
-	USHORT  usVActive;
-	USHORT  usVBlanking_Time;			
-	USHORT  usHSyncOffset;
-	USHORT  usHSyncWidth;
-	USHORT  usVSyncOffset;
-	USHORT  usVSyncWidth;
-	USHORT  usImageHSize;
-	USHORT  usImageVSize;
-	UCHAR   ucHBorder;
-	UCHAR   ucVBorder;
+	UINT16  usPixClk;
+	UINT16  usHActive;
+	UINT16  usHBlanking_Time;
+	UINT16  usVActive;
+	UINT16  usVBlanking_Time;			
+	UINT16  usHSyncOffset;
+	UINT16  usHSyncWidth;
+	UINT16  usVSyncOffset;
+	UINT16  usVSyncWidth;
+	UINT16  usImageHSize;
+	UINT16  usImageVSize;
+	UINT8   ucHBorder;
+	UINT8   ucVBorder;
 	ATOM_MODE_MISC_INFO_ACCESS susModeMiscInfo;
-	UCHAR   ucInternalModeNumber;
-	UCHAR   ucRefreshRate;
+	UINT8   ucInternalModeNumber;
+	UINT8   ucRefreshRate;
 } ATOM_DTD_FORMAT;
 
 typedef struct _ATOM_LVDS_INFO_V12
 {
 	ATOM_COMMON_TABLE_HEADER sHeader;  
 	ATOM_DTD_FORMAT     sLCDTiming;
-	USHORT              usExtInfoTableOffset;
-	USHORT              usSupportedRefreshRate;     //Refer to panel info table in ATOMBIOS extension Spec.
-	USHORT              usOffDelayInMs;
-	UCHAR               ucPowerSequenceDigOntoDEin10Ms;
-	UCHAR               ucPowerSequenceDEtoBLOnin10Ms;
-	UCHAR               ucLVDS_Misc;            // Bit0:{=0:single, =1:dual},Bit1 {=0:666RGB, =1:888RGB},Bit2:3:{Grey level}
+	UINT16              usExtInfoTableOffset;
+	UINT16              usSupportedRefreshRate;     //Refer to panel info table in ATOMBIOS extension Spec.
+	UINT16              usOffDelayInMs;
+	UINT8               ucPowerSequenceDigOntoDEin10Ms;
+	UINT8               ucPowerSequenceDEtoBLOnin10Ms;
+	UINT8               ucLVDS_Misc;            // Bit0:{=0:single, =1:dual},Bit1 {=0:666RGB, =1:888RGB},Bit2:3:{Grey level}
 												// Bit4:{=0:LDI format for RGB888, =1 FPDI format for RGB888}
 	                                            // Bit5:{=0:Spatial Dithering disabled;1 Spatial Dithering enabled}
 	                                            // Bit6:{=0:Temporal Dithering disabled;1 Temporal Dithering enabled}
-	UCHAR               ucPanelDefaultRefreshRate;
-	UCHAR               ucPanelIdentification;
-	UCHAR               ucSS_Id;
-	USHORT              usLCDVenderID;
-	USHORT              usLCDProductID;
-	UCHAR               ucLCDPanel_SpecialHandlingCap; 
-	UCHAR								ucPanelInfoSize;					//  start from ATOM_DTD_FORMAT to end of panel info, include ExtInfoTable
-	UCHAR               ucReserved[2];
+	UINT8               ucPanelDefaultRefreshRate;
+	UINT8               ucPanelIdentification;
+	UINT8               ucSS_Id;
+	UINT16              usLCDVenderID;
+	UINT16              usLCDProductID;
+	UINT8               ucLCDPanel_SpecialHandlingCap; 
+	UINT8								ucPanelInfoSize;					//  start from ATOM_DTD_FORMAT to end of panel info, include ExtInfoTable
+	UINT8               ucReserved[2];
 } ATOM_LVDS_INFO_V12;
 	
 	

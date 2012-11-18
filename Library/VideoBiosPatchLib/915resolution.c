@@ -15,23 +15,275 @@
 //#include "edid.h"  //included
 #include "915resolution.h"
 
+//#define void VOID
+#define uint8_t UINT8
+#define uint16_t UINT16
+#define uint32_t UINT32
+#define uintptr_t UINTN
 
-void patchVideoBios()
-{		
-	UInt32 x = 0, y = 0, bp = 0;
+#define RT_INLINE_ASM_GNU_STYLE 1
+#define RTIOPORT UINT32
+#define RT_INLINE_ASM_EXTERNAL 0
+#define DECLINLINE(type) type
+
+/** @file
+ * IPRT - AMD64 and x86 Specific Assembly Functions.
+ */
+
+/*
+ * Copyright (C) 2006-2010 Oracle Corporation
+ *
+ * This file is part of VirtualBox Open Source Edition (OSE), as
+ * available from http://www.virtualbox.org. This file is free software;
+ * you can redistribute it and/or modify it under the terms of the GNU
+ * General Public License (GPL) as published by the Free Software
+ * Foundation, in version 2 as it comes in the "COPYING" file of the
+ * VirtualBox OSE distribution. VirtualBox OSE is distributed in the
+ * hope that it will be useful, but WITHOUT ANY WARRANTY of any kind.
+ *
+ * The contents of this file may alternatively be used under the terms
+ * of the Common Development and Distribution License Version 1.0
+ * (CDDL) only, as it comes in the "COPYING.CDDL" file of the
+ * VirtualBox OSE distribution, in which case the provisions of the
+ * CDDL are applicable instead of those of the GPL.
+ *
+ * You may elect to license modified versions of this file under the
+ * terms and conditions of either the GPL or the CDDL or both.
+ */
+
+
+/**
+ * Writes a 8-bit unsigned integer to an I/O port, ordered.
+ *
+ * @param   Port    I/O port to write to.
+ * @param   u8      8-bit integer to write.
+ */
+#if RT_INLINE_ASM_EXTERNAL && !RT_INLINE_ASM_USES_INTRIN
+DECLASM(void) ASMOutU8(RTIOPORT Port, uint8_t u8);
+#else
+DECLINLINE(void) ASMOutU8(RTIOPORT Port, uint8_t u8)
+{
+# if RT_INLINE_ASM_GNU_STYLE
+  __asm__ __volatile__("outb %b1, %w0\n\t"
+                       :: "Nd" (Port),
+                       "a" (u8));
+  
+# elif RT_INLINE_ASM_USES_INTRIN
+  __outbyte(Port, u8);
+  
+# else
+  __asm
+  {
+    mov     dx, [Port]
+    mov     al, [u8]
+    out     dx, al
+  }
+# endif
+}
+#endif
+
+
+/**
+ * Reads a 8-bit unsigned integer from an I/O port, ordered.
+ *
+ * @returns 8-bit integer.
+ * @param   Port    I/O port to read from.
+ */
+#if RT_INLINE_ASM_EXTERNAL && !RT_INLINE_ASM_USES_INTRIN
+DECLASM(uint8_t) ASMInU8(RTIOPORT Port);
+#else
+DECLINLINE(uint8_t) ASMInU8(RTIOPORT Port)
+{
+  uint8_t u8;
+# if RT_INLINE_ASM_GNU_STYLE
+  __asm__ __volatile__("inb %w1, %b0\n\t"
+                       : "=a" (u8)
+                       : "Nd" (Port));
+  
+# elif RT_INLINE_ASM_USES_INTRIN
+  u8 = __inbyte(Port);
+  
+# else
+  __asm
+  {
+    mov     dx, [Port]
+    in      al, dx
+    mov     [u8], al
+  }
+# endif
+  return u8;
+}
+#endif
+
+
+/**
+ * Writes a 16-bit unsigned integer to an I/O port, ordered.
+ *
+ * @param   Port    I/O port to write to.
+ * @param   u16     16-bit integer to write.
+ */
+#if RT_INLINE_ASM_EXTERNAL && !RT_INLINE_ASM_USES_INTRIN
+DECLASM(void) ASMOutU16(RTIOPORT Port, uint16_t u16);
+#else
+DECLINLINE(void) ASMOutU16(RTIOPORT Port, uint16_t u16)
+{
+# if RT_INLINE_ASM_GNU_STYLE
+  __asm__ __volatile__("outw %w1, %w0\n\t"
+                       :: "Nd" (Port),
+                       "a" (u16));
+  
+# elif RT_INLINE_ASM_USES_INTRIN
+  __outword(Port, u16);
+  
+# else
+  __asm
+  {
+    mov     dx, [Port]
+    mov     ax, [u16]
+    out     dx, ax
+  }
+# endif
+}
+#endif
+
+
+/**
+ * Reads a 16-bit unsigned integer from an I/O port, ordered.
+ *
+ * @returns 16-bit integer.
+ * @param   Port    I/O port to read from.
+ */
+#if RT_INLINE_ASM_EXTERNAL && !RT_INLINE_ASM_USES_INTRIN
+DECLASM(uint16_t) ASMInU16(RTIOPORT Port);
+#else
+DECLINLINE(uint16_t) ASMInU16(RTIOPORT Port)
+{
+  uint16_t u16;
+# if RT_INLINE_ASM_GNU_STYLE
+  __asm__ __volatile__("inw %w1, %w0\n\t"
+                       : "=a" (u16)
+                       : "Nd" (Port));
+  
+# elif RT_INLINE_ASM_USES_INTRIN
+  u16 = __inword(Port);
+  
+# else
+  __asm
+  {
+    mov     dx, [Port]
+    in      ax, dx
+    mov     [u16], ax
+  }
+# endif
+  return u16;
+}
+#endif
+
+
+/**
+ * Writes a 32-bit unsigned integer to an I/O port, ordered.
+ *
+ * @param   Port    I/O port to write to.
+ * @param   u32     32-bit integer to write.
+ */
+#if RT_INLINE_ASM_EXTERNAL && !RT_INLINE_ASM_USES_INTRIN
+DECLASM(void) ASMOutU32(RTIOPORT Port, uint32_t u32);
+#else
+DECLINLINE(void) ASMOutU32(RTIOPORT Port, uint32_t u32)
+{
+# if RT_INLINE_ASM_GNU_STYLE
+  __asm__ __volatile__("outl %1, %w0\n\t"
+                       :: "Nd" (Port),
+                       "a" (u32));
+  
+# elif RT_INLINE_ASM_USES_INTRIN
+  __outdword(Port, u32);
+  
+# else
+  __asm
+  {
+    mov     dx, [Port]
+    mov     eax, [u32]
+    out     dx, eax
+  }
+# endif
+}
+#endif
+
+
+/**
+ * Reads a 32-bit unsigned integer from an I/O port, ordered.
+ *
+ * @returns 32-bit integer.
+ * @param   Port    I/O port to read from.
+ */
+#if RT_INLINE_ASM_EXTERNAL && !RT_INLINE_ASM_USES_INTRIN
+DECLASM(uint32_t) ASMInU32(RTIOPORT Port);
+#else
+DECLINLINE(uint32_t) ASMInU32(RTIOPORT Port)
+{
+  uint32_t u32;
+# if RT_INLINE_ASM_GNU_STYLE
+  __asm__ __volatile__("inl %w1, %0\n\t"
+                       : "=a" (u32)
+                       : "Nd" (Port));
+  
+# elif RT_INLINE_ASM_USES_INTRIN
+  u32 = __indword(Port);
+  
+# else
+  __asm
+  {
+    mov     dx, [Port]
+    in      eax, dx
+    mov     [u32], eax
+  }
+# endif
+  return u32;
+}
+#endif
+
+#define inb(port) ASMInU8((port))
+#define inw(port) ASMInU16((port))
+#define inl(port) ASMInU32((port))
+#define outb(port, val) ASMOutU8((port), (val))
+#define outw(port, val) ASMOutU16((port), (val))
+#define outl(port, val) ASMOutU32((port), (val))
+
+
+
+
+VOID patchVideoBios()
+{
+  //test to ensure that outb and inb work
+  /*UINT8 first, second;
+  UINT32 cfgAPort=0x2e;
+  UINT32 cfgDPort=0x2f;
+  outb (cfgAPort, 0x87);
+	outb (cfgAPort, 0x01);
+	outb (cfgAPort, 0x55);
+	outb (cfgAPort, 0x55);
+  first=inb(cfgDPort);
+	outb (cfgAPort, 0x21);
+	second=inb (cfgDPort);
+  AsciiPrint("DeviceID: 0x%x%x\n", first, second);*/
+  
+	UINT32 x = 0, y = 0, bp = 0;
 	
 	getResolution(&x, &y, &bp);
-	verbose("getResolution: %dx%dx%d\n", (int)x, (int)y, (int)bp);
+	AsciiPrint("getResolution: %dx%dx%d\n", x, y, bp);
 	
 	if (x != 0 &&
 		y != 0 && 
 		bp != 0)
 	{
+    AsciiPrint("Opening BIOS\n");
 		vbios_map * map;
 		
 		map = open_vbios(CT_UNKNOWN);
 		if(map)
 		{
+      
 			unlock_vbios(map);
 			
 			set_mode(map, x, y, bp, 0, 0);
@@ -44,19 +296,25 @@ void patchVideoBios()
 }
 
 
+static const UINT8 nvda_pattern[] = {
+  0x44, 0x01, 0x04, 0x00
+};
+
+static const CHAR8 nvda_string[] = "NVID";
+
 /* Copied from 915 resolution created by steve tomljenovic
  *
  * This code is based on the techniques used in :
  *
  *   - 855patch.  Many thanks to Christian Zietz (czietz gmx net)
- *     for demonstrating how to shadow the VBIOS into system RAM
+ *     for demonstrating how to shadow the VBIOS INTo system RAM
  *     and then modify it.
  *
  *   - 1280patch by Andrew Tipton (andrewtipton null li).
  *
  *   - 855resolution by Alain Poirier
  *
- * This source code is into the public domain.
+ * This source code is INTo the public domain.
  */
 
 /**
@@ -66,15 +324,17 @@ void patchVideoBios()
 #define CONFIG_MECH_ONE_ADDR	0xCF8
 #define CONFIG_MECH_ONE_DATA	0xCFC
 
-int freqs[] = { 60, 75, 85 };
+INT32 freqs[] = { 60, 75, 85 };
 
-UInt32 get_chipset_id(void)
+UINT32 get_chipset_id(VOID)
 {
+  /*FIXME: assembler port I/O*/
+  
 	outl(CONFIG_MECH_ONE_ADDR, 0x80000000);
 	return inl(CONFIG_MECH_ONE_DATA);
 }
 
-chipset_type get_chipset(UInt32 id)
+chipset_type get_chipset(UINT32 id)
 {
 	chipset_type type;
 		
@@ -179,9 +439,9 @@ chipset_type get_chipset(UInt32 id)
 			
 			
 		default:
-			if((id & 0x0000FFFF) == 0x00008086) // Intel chipset
+			if((id & 0x0000FFFF) == 0x00008086) // INTel chipset
 			{
-				//printf("Unknown chipset 0x%llX, please email id to meklort@gmail.com", id);
+				//AsciiPrint("Unknown chipset 0x%llX, please post id to projectosx.com or applelife.ru", id);
 				//getc();
 				type = CT_UNKNOWN_INTEL;
 				//type = CT_UNKNOWN;
@@ -196,28 +456,29 @@ chipset_type get_chipset(UInt32 id)
 	return type;
 }
 
-vbios_resolution_type1 * map_type1_resolution(vbios_map * map, UInt16 res)
+vbios_resolution_type1 * map_type1_resolution(vbios_map * map, UINT16 res)
 {
 	vbios_resolution_type1 * ptr = ((vbios_resolution_type1*)(map->bios_ptr + res)); 
 	return ptr;
 }
 
-vbios_resolution_type2 * map_type2_resolution(vbios_map * map, UInt16 res)
+vbios_resolution_type2 * map_type2_resolution(vbios_map * map, UINT16 res)
 {
 	vbios_resolution_type2 * ptr = ((vbios_resolution_type2*)(map->bios_ptr + res)); 
 	return ptr;
 }
 
-vbios_resolution_type3 * map_type3_resolution(vbios_map * map, UInt16 res)
+vbios_resolution_type3 * map_type3_resolution(vbios_map * map, UINT16 res)
 {
 	vbios_resolution_type3 * ptr = ((vbios_resolution_type3*)(map->bios_ptr + res)); 
 	return ptr;
 }
 
-char detect_bios_type(vbios_map * map, char modeline, int entry_size)
+CHAR8 detect_bios_type(vbios_map * map, CHAR8 modeline, INT32 entry_size);
+CHAR8 detect_bios_type(vbios_map * map, CHAR8 modeline, INT32 entry_size)
 {
-	UInt32 i;
-	UInt16 r1, r2;
+	UINT32 i;
+	UINT16 r1, r2;
 	
 	r1 = r2 = 32000;
 	
@@ -235,15 +496,15 @@ char detect_bios_type(vbios_map * map, char modeline, int entry_size)
 			}
 		}
 		
-		/*printf("r1 = %d  r2 = %d\n", r1, r2);*/
+		/*AsciiPrint("r1 = %d  r2 = %d\n", r1, r2);*/
 	}
 	
 	return (r2-r1-6) % entry_size == 0;
 }
 
-void close_vbios(vbios_map * map);
+VOID close_vbios(vbios_map * map);
 
-char detect_ati_bios_type(vbios_map * map)
+CHAR8 detect_ati_bios_type(vbios_map * map)
 {	
 	return map->mode_table_size % sizeof(ATOM_MODE_TIMING) == 0;
 }
@@ -251,9 +512,8 @@ char detect_ati_bios_type(vbios_map * map)
 
 vbios_map * open_vbios(chipset_type forced_chipset)
 {
-	UInt32 z;
-	vbios_map * map = malloc(sizeof(vbios_map));
-	for(z=0; z<sizeof(vbios_map); z++) ((char*)map)[z]=0;
+	vbios_map * map = AllocatePool(sizeof(vbios_map));
+  SetMem((VOID*)map, sizeof(vbios_map), 0);
 	/*
 	 * Determine chipset
 	 */
@@ -271,9 +531,9 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 	
 	if (map->chipset == CT_UNKNOWN)
 	{
-		//verbose("Unknown chipset type.\n");
-		//verbose("915resolution only works with Intel 800/900 series graphic chipsets.\n");
-		//verbose("Chipset Id: %x\n", map->chipset_id);
+		//AsciiPrint("Unknown chipset type.\n");
+		//AsciiPrint("915resolution only works with INTel 800/900 series graphic chipsets.\n");
+		//AsciiPrint("Chipset Id: %x\n", map->chipset_id);
 		close_vbios(map);
 		return 0;
 	}
@@ -282,29 +542,30 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 	/*
 	 *  Map the video bios to memory
 	 */
-	map->bios_ptr=(char*)VBIOS_START;
+	map->bios_ptr=(CHAR8*)VBIOS_START; //this is 0xc0000
+  AsciiPrint("bios_ptr: 0x%x\n", (UINTN)(VOID*)map->bios_ptr);
 	
 	/*
 	 * check if we have ATI Radeon
 	 */
 	map->ati_tables.base = map->bios_ptr;
-	map->ati_tables.AtomRomHeader = (ATOM_ROM_HEADER *) (map->bios_ptr + *(unsigned short *) (map->bios_ptr + OFFSET_TO_POINTER_TO_ATOM_ROM_HEADER)); 
-	if (strcmp ((char *) map->ati_tables.AtomRomHeader->uaFirmWareSignature, "ATOM") == 0)
+	map->ati_tables.AtomRomHeader = (ATOM_ROM_HEADER *) (map->bios_ptr + *(UINT16 *) (map->bios_ptr + OFFSET_TO_POINTER_TO_ATOM_ROM_HEADER)); 
+	if (AsciiStrCmp ((CHAR8 *) map->ati_tables.AtomRomHeader->uaFirmWareSignature, "ATOM") == 0)
 	{
 		// ATI Radeon Card
 		map->bios = BT_ATI_1;
 		
-		map->ati_tables.MasterDataTables = (unsigned short *) &((ATOM_MASTER_DATA_TABLE *) (map->bios_ptr + map->ati_tables.AtomRomHeader->usMasterDataTableOffset))->ListOfDataTables;
-		unsigned short std_vesa_offset = (unsigned short) ((ATOM_MASTER_LIST_OF_DATA_TABLES *)map->ati_tables.MasterDataTables)->StandardVESA_Timing;
+		map->ati_tables.MasterDataTables = (UINT16 *) &((ATOM_MASTER_DATA_TABLE *) (map->bios_ptr + map->ati_tables.AtomRomHeader->usMasterDataTableOffset))->ListOfDataTables;
+		UINT16 std_vesa_offset = (UINT16) ((ATOM_MASTER_LIST_OF_DATA_TABLES *)map->ati_tables.MasterDataTables)->StandardVESA_Timing;
 		ATOM_STANDARD_VESA_TIMING * std_vesa = (ATOM_STANDARD_VESA_TIMING *) (map->bios_ptr + std_vesa_offset);
 		
-		map->ati_mode_table = (char *) &std_vesa->aModeTimings;
+		map->ati_mode_table = (CHAR8 *) &std_vesa->aModeTimings;
 		if (map->ati_mode_table == 0)
 		{
-			printf("Unable to locate the mode table.\n");
-			printf("Please run the program 'dump_bios' as root and\n");
-			printf("email the file 'vbios.dmp' to stomljen@yahoo.com.\n");
-			printf("Chipset: %d\n", map->chipset);
+			AsciiPrint("Unable to locate the mode table.\n");
+			AsciiPrint("Please run the program 'dump_bios' as root and\n");
+			AsciiPrint("email the file 'vbios.dmp' to stomljen@yahoo.com.\n");
+			AsciiPrint("Chipset: %d\n", map->chipset);
 			close_vbios(map);
 			return 0;
 		}
@@ -318,45 +579,40 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 		/*
 		 * check if we have NVIDIA
 		 */
-
-		int i = 0;
-		while (i < 512)
-		{ // we don't need to look through the whole bios, just the first 512 bytes
-			if ((	map->bios_ptr[i]   == 'N') 
-				&& (map->bios_ptr[i+1] == 'V') 
-				&& (map->bios_ptr[i+2] == 'I') 
-				&& (map->bios_ptr[i+3] == 'D')) 
+    UINTN i;
+		for (i = 0; i < 512; i++) // we don't need to look through the whole bios, just the first 512 bytes
+      if (CompareMem(map->bios_ptr+i, nvda_string, 4)==0)
 			{
+        AsciiPrint("nVidia BIOS found\n");
 				map->bios = BT_NVDA;
-				unsigned short nv_data_table_offset = 0;
-				unsigned short * nv_data_table;
+				UINT16 nv_data_table_offset = 0;
+				UINT16 * nv_data_table;
 				NV_VESA_TABLE * std_vesa;
 				
-				int i = 0;
 				
-				while (i < 0x300)
-				{ //We don't need to look for the table in the whole bios, the 768 first bytes only
-					if ((	map->bios_ptr[i] == 0x44) 
-						&& (map->bios_ptr[i+1] == 0x01) 
-						&& (map->bios_ptr[i+2] == 0x04) 
-						&& (map->bios_ptr[i+3] == 0x00))
-					{
-						nv_data_table_offset = (unsigned short) (map->bios_ptr[i+4] | (map->bios_ptr[i+5] << 8));
-						break;
-					}
-					i++;
-				}
+				UINTN j;
+				for (j = 0; j < 0x300; j++)
+          if (CompareMem(map->bios_ptr+j, nvda_pattern, 4)==0)
+          {
+            nv_data_table_offset = *((UINT16*)(map->bios_ptr+j+4));
+            AsciiPrint("nv_data_table_offset: 0x%x\n", (UINTN)nv_data_table_offset);
+            break;
+          }
 				
-				nv_data_table = (unsigned short *) (map->bios_ptr + (nv_data_table_offset + OFFSET_TO_VESA_TABLE_INDEX));
-				std_vesa = (NV_VESA_TABLE *) (map->bios_ptr + *nv_data_table);
-				
-				map->nv_mode_table = (char *) std_vesa->sModelines;
+        nv_data_table = (UINT16 *) (map->bios_ptr + (nv_data_table_offset + OFFSET_TO_VESA_TABLE_INDEX));
+        AsciiPrint("nv_data_table: 0x%x\n", (UINTN)(VOID*)(nv_data_table));
+        std_vesa = (NV_VESA_TABLE *) (map->bios_ptr + *nv_data_table);
+        AsciiPrint("std_vesa: 0x%x\n", (UINTN)(VOID*)std_vesa);
+        map->nv_mode_table = (CHAR8*)std_vesa+sizeof(NV_COMMON_TABLE_HEADER);
+        AsciiPrint("nv_mode_table: 0x%x\n", (UINTN)(VOID*)map->nv_mode_table);
+
+				  
 				if (map->nv_mode_table == 0)
 				{
-					printf("Unable to locate the mode table.\n");
-					printf("Please run the program 'dump_bios' as root and\n");
-					printf("email the file 'vbios.dmp' to stomljen@yahoo.com.\n");
-					printf("Chipset: %s\n", map->chipset);
+					AsciiPrint("Unable to locate the mode table.\n");
+					AsciiPrint("Please run the program 'dump_bios' as root and\n");
+					AsciiPrint("email the file 'vbios.dmp' to stomljen@yahoo.com.\n");
+					AsciiPrint("Chipset: %s\n", map->chipset);
 					close_vbios(map);
 					return 0;
 				}
@@ -364,21 +620,19 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 				
 				break;
 			}
-			i++;
-		}
 	}
 	
 	
 	/*
-	 * check if we have Intel
+	 * check if we have INTel
 	 */
 	
 	/*if (map->chipset == CT_UNKNOWN && memmem(map->bios_ptr, VBIOS_SIZE, INTEL_SIGNATURE, strlen(INTEL_SIGNATURE))) {
-	 printf( "Intel chipset detected.  However, 915resolution was unable to determine the chipset type.\n");
+	 AsciiPrint( "INTel chipset detected.  However, 915resolution was unable to determine the chipset type.\n");
 	 
-	 printf("Chipset Id: %x\n", map->chipset_id);
+	 AsciiPrint("Chipset Id: %x\n", map->chipset_id);
 	 
-	 printf("Please report this problem to stomljen@yahoo.com\n");
+	 AsciiPrint("Please report this problem to stomljen@yahoo.com\n");
 	 
 	 close_vbios(map);
 	 return 0;
@@ -395,8 +649,8 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 	 */
 	if ((map->bios != BT_ATI_1) && (map->bios != BT_NVDA)) 
 	{
-		char* p = map->bios_ptr + 16;
-		char* limit = map->bios_ptr + VBIOS_SIZE - (3 * sizeof(vbios_mode));
+		CHAR8* p = map->bios_ptr + 16;
+		CHAR8* limit = map->bios_ptr + VBIOS_SIZE - (3 * sizeof(vbios_mode));
 		
 		while (p < limit && map->mode_table == 0)
 		{
@@ -459,12 +713,12 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 	return map;
 }
 
-void close_vbios(vbios_map * map)
+VOID close_vbios(vbios_map * map)
 {
-	free(map);
+	//FreePool(map);
 }
 
-void unlock_vbios(vbios_map * map)
+VOID unlock_vbios(vbios_map * map)
 {
 	
 	map->unlocked = TRUE;
@@ -474,7 +728,7 @@ void unlock_vbios(vbios_map * map)
 			break;
 		case CT_830:
 		case CT_855GM:
-			outl(CONFIG_MECH_ONE_ADDR, 0x8000005a);
+			outl(CONFIG_MECH_ONE_ADDR, 0x8000005a); /*FIXME: assembler port I/O*/
 			map->b1 = inb(CONFIG_MECH_ONE_DATA + 2);
 			
 			outl(CONFIG_MECH_ONE_ADDR, 0x8000005a);
@@ -504,7 +758,7 @@ void unlock_vbios(vbios_map * map)
 		case CT_G31:
 		case CT_500:
 		case CT_3150:
-		case CT_UNKNOWN_INTEL:	// Assume newer intel chipset is the same as before
+		case CT_UNKNOWN_INTEL:	// Assume newer INTel chipset is the same as before
 			outl(CONFIG_MECH_ONE_ADDR, 0x80000090);
 			map->b1 = inb(CONFIG_MECH_ONE_DATA + 1);
 			map->b2 = inb(CONFIG_MECH_ONE_DATA + 2);
@@ -516,13 +770,13 @@ void unlock_vbios(vbios_map * map)
 	
 #if DEBUG
 	{
-		UInt32 t = inl(CONFIG_MECH_ONE_DATA);
-		verbose("unlock PAM: (0x%08x)\n", t);
+		UINT32 t = inl(CONFIG_MECH_ONE_DATA);
+		AsciiPrint("unlock PAM: (0x%08x)\n", t);
 	}
 #endif
 }
 
-void relock_vbios(vbios_map * map)
+VOID relock_vbios(vbios_map * map)
 {
 	
 	map->unlocked = FALSE;
@@ -533,7 +787,7 @@ void relock_vbios(vbios_map * map)
 			break;
 		case CT_830:
 		case CT_855GM:
-			outl(CONFIG_MECH_ONE_ADDR, 0x8000005a);
+			outl(CONFIG_MECH_ONE_ADDR, 0x8000005a); /*FIXME: assembler port I/O*/
 			outb(CONFIG_MECH_ONE_DATA + 2, map->b1);
 			break;
 		case CT_845G:
@@ -569,22 +823,22 @@ void relock_vbios(vbios_map * map)
 	
 #if DEBUG
 	{
-        UInt32 t = inl(CONFIG_MECH_ONE_DATA);
-		verbose("relock PAM: (0x%08x)\n", t);
+        UINT32 t = inl(CONFIG_MECH_ONE_DATA);
+		AsciiPrint("relock PAM: (0x%08x)\n", t);
 	}
 #endif
 }
 
 
-int getMode(edid_mode *mode)
+INT32 getMode(edid_mode *mode)
 {
-	char* edidInfo = readEDID();
+	CHAR8* edidInfo = readEDID();
 			
 	if(!edidInfo) return 1;
 //Slice
 	if(!fb_parse_edid((struct EDID *)edidInfo, mode)) 
 	{
-		free( edidInfo );
+		FreePool( edidInfo );
 		return 1;
 	}
 /*	mode->pixel_clock = (edidInfo[55] << 8) | edidInfo[54];
@@ -598,7 +852,7 @@ int getMode(edid_mode *mode)
 	mode->v_sync_width = ((edidInfo[65] & 0x3) << 2) | (edidInfo[64] & 0x03);
 */		
 		
-	free( edidInfo );
+	FreePool( edidInfo );
 		
 	if(!mode->h_active) return 1;
 	
@@ -607,16 +861,16 @@ int getMode(edid_mode *mode)
 }
 
 
-static void gtf_timings(UInt32 x, UInt32 y, UInt32 freq,
-						unsigned long *clock,
-						UInt16 *hsyncstart, UInt16 *hsyncend, UInt16 *hblank,
-						UInt16 *vsyncstart, UInt16 *vsyncend, UInt16 *vblank)
+static VOID gtf_timings(UINT32 x, UINT32 y, UINT32 freq,
+						UINT32 *clock,
+						UINT16 *hsyncstart, UINT16 *hsyncend, UINT16 *hblank,
+						UINT16 *vsyncstart, UINT16 *vsyncend, UINT16 *vblank)
 {
-	UInt32 hbl, vbl, vfreq;
+	UINT32 hbl, vbl, vfreq;
 	
 	vbl = y + (y+1)/(20000.0/(11*freq) - 1) + 1.5;
 	vfreq = vbl * freq;
-	hbl = 16 * (int)(x * (30.0 - 300000.0 / vfreq) /
+	hbl = 16 * (INT32)(x * (30.0 - 300000.0 / vfreq) /
 					 +            (70.0 + 300000.0 / vfreq) / 16.0 + 0.5);
 	
 	*vsyncstart = y;
@@ -628,10 +882,11 @@ static void gtf_timings(UInt32 x, UInt32 y, UInt32 freq,
 	*clock = (x + hbl) * vfreq / 1000;
 }
 
-void set_mode(vbios_map * map, /*UInt32 mode,*/ UInt32 x, UInt32 y, UInt32 bp, UInt32 htotal, UInt32 vtotal) {
-	UInt32 xprev, yprev;
-	UInt32 i = 0, j;
+VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, UINT32 htotal, UINT32 vtotal) {
+	UINT32 xprev, yprev;
+	UINT32 i = 0, j;
 	// patch first available mode
+  AsciiPrint("Setting mode %dx%dx%d\n", x, y, bp);
 	
 	//	for (i=0; i < map->mode_table_size; i++) {
 	//		if (map->mode_table[0].mode == mode) {
@@ -664,8 +919,8 @@ void set_mode(vbios_map * map, /*UInt32 mode,*/ UInt32 x, UInt32 y, UInt32 bp, U
 		{
 			vbios_resolution_type2 * res = map_type2_resolution(map, map->mode_table[i].resolution);
 			
-			res->xchars = x / 8;
-			res->ychars = y / 16 - 1;
+			res->xCHAR8s = x / 8;
+			res->yCHAR8s = y / 16 - 1;
 			xprev = res->modelines[0].x1;
 			yprev = res->modelines[0].y1;
 			
@@ -821,9 +1076,11 @@ void set_mode(vbios_map * map, /*UInt32 mode,*/ UInt32 x, UInt32 y, UInt32 bp, U
 			edid_mode mode;
 			
 			NV_MODELINE *mode_timing = (NV_MODELINE *) map->nv_mode_table;
+      AsciiPrint("nVidia mode table at 0x%x\n", (UINTN)(VOID*)(map->nv_mode_table));
 			
 			/*if (mode.pixel_clock && (mode.h_active == x) && (mode.v_active == y) && !force) {*/
 			if (!getMode(&mode)) {
+        AsciiPrint("Setting mode %dx%d\n", mode.h_active, mode.v_active);
 				mode_timing[i].usH_Total = mode.h_active + mode.h_blanking;
 				mode_timing[i].usH_Active = mode.h_active;
 				mode_timing[i].usH_SyncStart = mode.h_active + mode.h_sync_offset;

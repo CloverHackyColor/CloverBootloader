@@ -11,21 +11,43 @@
 
 //#include "libsaio.h"
 #include "edid.h"
-#include "vbe.h"
-#include "graphics.h"
-#include "boot.h"
+//#include "vbe.h"
+//#include "graphics.h"
+//#include "boot.h"
 //----------------------------------------------------------------------------------
 
 #define FBMON_FIX_HEADER 1
 #define FBMON_FIX_INPUT  2
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 
+#define DEFAULT_SCREEN_WIDTH 1024
+#define DEFAULT_SCREEN_HEIGHT 600
+
+//#include <Protocol/EdidActive.h>
+#include <Protocol/EdidDiscovered.h>
+
+/*UINTN CompareMem (
+                  IN VOID* Buffer1,
+                  IN VOID* Buffer2,
+                  IN UINTN Size
+                  )
+{
+  UINT8* p1 = (UINT8*)Buffer1;
+  UINT8* p2 = (UINT8*)Buffer2;
+  for (UINTN i=0; i<Size; i++)
+  {
+    if (*p1++!=*p2++)
+      return 1;
+  }
+  return 0;
+}*/
+
 //----------------------------------------------------------------------------------
 /*
 struct broken_edid {
-	const char manufacturer[4];
-	UInt32 model;
-	UInt32 fix;
+	const CHAR8 manufacturer[4];
+	UINT32 model;
+	UINT32 fix;
 };
 
 //----------------------------------------------------------------------------------
@@ -38,13 +60,13 @@ broken_edid brokendb[] = {
 };
 //----------------------------------------------------------------------------------
 */
-const unsigned char edid_v1_header[] = { 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00	};
+const UINT8 edid_v1_header[] = { 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00	};
 
 //----------------------------------------------------------------------------------
-int edid_compare(unsigned char *edid1, unsigned char *edid2)
+INT32 edid_compare(UINT8 *edid1, UINT8 *edid2)
 {
-	int result = 0;
-	unsigned char *block = edid1 + ID_MANUFACTURER_NAME, manufacturer1[4], manufacturer2[4];;
+	INT32 result = 0;
+	UINT8 *block = edid1 + ID_MANUFACTURER_NAME, manufacturer1[4], manufacturer2[4];;
 	manufacturer1[0] = ((block[0] & 0x7c) >> 2) + '@';
 	manufacturer1[1] = ((block[0] & 0x03) << 3) + ((block[1] & 0xe0) >> 5) + '@';
 	manufacturer1[2] = (block[1] & 0x1f) + '@';
@@ -55,7 +77,7 @@ int edid_compare(unsigned char *edid1, unsigned char *edid2)
 	manufacturer2[1] = ((block[0] & 0x03) << 3) + ((block[1] & 0xe0) >> 5) + '@';
 	manufacturer2[2] = (block[1] & 0x1f) + '@';
 	manufacturer2[3] = 0;
-	int x;
+	INT32 x;
 	for(x = 0; x < 4; x++)
 	{
 		if(manufacturer1[x] == manufacturer2[x])
@@ -65,12 +87,12 @@ int edid_compare(unsigned char *edid1, unsigned char *edid2)
 	return result;
 }
 
-int check_edid(unsigned char *edid)
+INT32 check_edid(UINT8 *edid)
 {
-	unsigned char *block = edid + ID_MANUFACTURER_NAME, manufacturer[4];
-	//unsigned char *b;
-	UInt32 model;
-	//int i, fix = 0, ret = 0;
+	UINT8 *block = edid + ID_MANUFACTURER_NAME, manufacturer[4];
+	//UINT8 *b;
+	UINT32 model;
+	//INT32 i, fix = 0, ret = 0;
 	
 	manufacturer[0] = ((block[0] & 0x7c) >> 2) + '@';
 	manufacturer[1] = ((block[0] & 0x03) << 3) +
@@ -80,7 +102,7 @@ int check_edid(unsigned char *edid)
 	model = block[2] + (block[3] << 8);
 /*	
 	for (i = 0; i < (int)ARRAY_SIZE(brokendb); i++) {
-		if (!strncmp((const char *)manufacturer, brokendb[i].manufacturer, 4) &&
+		if (!strncmp((const CHAR8 *)manufacturer, brokendb[i].manufacturer, 4) &&
 			brokendb[i].model == model) {
 			DEBG("ATIFB: The EDID Block of "
 				 "Manufacturer: %s Model: 0x%08lx is known to "
@@ -111,17 +133,17 @@ int check_edid(unsigned char *edid)
 
 //----------------------------------------------------------------------------------
 
-static void fix_edid(unsigned char *edid, int fix)
+static VOID fix_edid(UINT8 *edid, INT32 fix)
 {
-	unsigned char *b;
+	UINT8 *b;
 	
 	switch (fix) {
 		case FBMON_FIX_HEADER:
-			msglog("EDID: trying a header reconstruct\n");
-			memcpy(edid, edid_v1_header, 8);
+			AsciiPrint("EDID: trying a header reconstruct\n");
+			CopyMem(edid, edid_v1_header, 8);
 			break;
 		case FBMON_FIX_INPUT:
-			msglog("EDID: trying to fix input type\n");
+			AsciiPrint("EDID: trying to fix input type\n");
 			b = edid + EDID_STRUCT_DISPLAY;
 			b[0] &= ~0x80;
 			edid[127] += 0x80;
@@ -130,10 +152,10 @@ static void fix_edid(unsigned char *edid, int fix)
 
 //----------------------------------------------------------------------------------
 
-int edid_checksum(unsigned char *edid)
+INT32 edid_checksum(UINT8 *edid)
 {
-	unsigned char i, csum = 0, all_null = 0;
-	int err = 0, fix = check_edid(edid);
+	UINT8 i, csum = 0, all_null = 0;
+	INT32 err = 0, fix = check_edid(edid);
 	
 	if (fix)
 		fix_edid(edid, fix);
@@ -153,9 +175,9 @@ int edid_checksum(unsigned char *edid)
 
 //----------------------------------------------------------------------------------
 
-static int edid_check_header(unsigned char *edid)
+static INT32 edid_check_header(UINT8 *edid)
 {
-	int i, err = 1, fix = check_edid(edid);
+	INT32 i, err = 1, fix = check_edid(edid);
 	
 	if (fix)
 		fix_edid(edid, fix);
@@ -168,16 +190,16 @@ static int edid_check_header(unsigned char *edid)
 	return err;
 }
 //------------------------------------------------------------------------
-bool verifyEDID(unsigned char *edid)
+BOOLEAN verifyEDID(UINT8 *edid)
 {
 	if (edid == NULL || !edid_checksum(edid) ||	!edid_check_header(edid)) 
 	{
-		return false;
+		return FALSE;
 	}
-	return true;
+	return TRUE;
 }
 
-int edid_is_timing_block(unsigned char *block)
+INT32 edid_is_timing_block(UINT8 *block)
 {
 	if ((block[0] != 0x00) || (block[1] != 0x00) ||
 		(block[2] != 0x00) || (block[4] != 0x00))
@@ -187,14 +209,14 @@ int edid_is_timing_block(unsigned char *block)
 }
 //----------------------------------------------------------------------------------
 
-int fb_parse_edid(struct EDID *edid, edid_mode* var)  //(struct EDID *edid, UInt32* x, UInt32* y)
+INT32 fb_parse_edid(struct EDID *edid, edid_mode* var)  //(struct EDID *edid, UINT32* x, UINT32* y)
 {
-	int i;
-	unsigned char *block;
+	INT32 i;
+	UINT8 *block;
 	
-	if(!verifyEDID((unsigned char *)edid)) return 1;
+	if(!verifyEDID((UINT8 *)edid)) return 1;
 	
-	block = (unsigned char *)edid + DETAILED_TIMING_DESCRIPTIONS_START; //54
+	block = (UINT8 *)edid + DETAILED_TIMING_DESCRIPTIONS_START; //54
 	
 	for (i = 0; i < 4; i++, block += DETAILED_TIMING_DESCRIPTION_SIZE) {
 		if (edid_is_timing_block(block)) {
@@ -234,10 +256,15 @@ int fb_parse_edid(struct EDID *edid, edid_mode* var)  //(struct EDID *edid, UInt
 	return 0;
 }
 
-void getResolution(UInt32* x, UInt32* y, UInt32* bp)
+VOID getResolution(UINT32* x, UINT32* y, UINT32* bp)
 {
-//	int val;
-	static UInt32 xResolution, yResolution, bpResolution;
+//	INT32 val;
+  /**x = 1600;
+  *y = 900;
+  *bp = 32;
+  return;*/
+  
+	static UINT32 xResolution, yResolution, bpResolution;
 /*
 	if(getIntForKey(kScreenWidth, &val, &bootInfo->chameleonConfig))
 	{
@@ -252,10 +279,8 @@ void getResolution(UInt32* x, UInt32* y, UInt32* bp)
 	bpResolution = 32;	// assume 32bits
 
 	
-	if(!xResolution || !yResolution || !bpResolution)
-	{
-		
-		char* edidInfo = readEDID();
+			
+		CHAR8* edidInfo = readEDID();
 		
 		if(!edidInfo) return;
 		edid_mode mode;
@@ -291,118 +316,36 @@ void getResolution(UInt32* x, UInt32* y, UInt32* bp)
 
 		 */
 		
-		//msglog("H Active = %d ", edidInfo[56] | ((edidInfo[58] & 0xF0) << 4) );
-		//msglog("V Active = %d \n", edidInfo[59] | ((edidInfo[61] & 0xF0) << 4) );
+		//AsciiPrint("H Active = %d ", edidInfo[56] | ((edidInfo[58] & 0xF0) << 4) );
+		//AsciiPrint("V Active = %d \n", edidInfo[59] | ((edidInfo[61] & 0xF0) << 4) );
 		
-		free( edidInfo );
+		FreePool( edidInfo );
 		
 		//if(!xResolution) xResolution = DEFAULT_SCREEN_WIDTH;
 		//if(!yResolution) yResolution = DEFAULT_SCREEN_HEIGHT;
 
-	}
+	
 
 	*x  = xResolution;
 	*y  = yResolution;
 	*bp = bpResolution;
-
+  
+  AsciiPrint("Best mode: %dx%dx%d\n", *x, *y, *bp);
 }
 
-char* readEDID()
+/*CHAR8* readEDID()
 {
-	SInt16 last_reported = -1;
-	UInt8 edidInfo[EDID_BLOCK_SIZE];
-
-	UInt8 header1[] = {0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00};
-	UInt8 header2[] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
-	
-	SInt16 status;
-	UInt16 blocks_left = 1;
-//	msglog("readEDID\n");
-	do
-	{
-		// TODO: This currently only retrieves the *last* block, make the block buffer expand as needed / calculated from the first block
-
-		bzero( edidInfo, EDID_BLOCK_SIZE);
-
-		status = getEDID(edidInfo, blocks_left);
-		
-		
-		msglog("Buffer location: 0x%X status: %d\n", SEG(edidInfo) << 16 | OFF(edidInfo), status);
-		
-		int j, i;
-		for (j = 0; j < 8; j++) {
-			for(i = 0; i < 16; i++) msglog("0x%02X ", edidInfo[((i+1) * (j + 1)) - 1]);
-			msglog("\n");
-		}
-		
-		
-		
-		if(status == 0)
-		{
-			//if( edidInfo[0] == 0x00 || edidInfo[0] == 0xFF)
-			if((memcmp(edidInfo, header1, sizeof(header1)) != 0) ||
-			   (memcmp(edidInfo, header2, sizeof(header2)) != 0) )
-			{
-				blocks_left--;
-				int reported = edidInfo[ EDID_V1_BLOCKS_TO_GO_OFFSET ];
-				
-				if ( reported > blocks_left )
-				{
-					
-					msglog("EDID claims %d more blocks left\n", reported);
-				}
-				
-				if ( (last_reported <= reported && last_reported != -1)
-					|| reported == 0xff
-					/* 0xff frequently comes up in corrupt edids */
-					//|| reported == MAGIC
-					)
-				{
-					msglog("Last reported %d\n", last_reported);
-					msglog( "EDID blocks left is wrong.\n"
-						   "Your EDID is probably invalid.\n");
-					return 0;
-				}
-				else
-				{
-					//printf("Reading EDID block\n");
-					//printf("H Active = %d", ebiosInfo[56] | ((ebiosInfo[58] & 0xF0) << 4) );
-					//printf("V Active = %d", ebiosInfo[59] | ((ebiosInfo[61] & 0xF0) << 4) );
-
-					last_reported = reported;
-					blocks_left = reported;
-				}
-			} 
-			else
-			{
-				msglog("Invalid block %d\n", blocks_left);
-				msglog("Header1 = %d", memcmp(edidInfo, header1, sizeof(header1)) );
-				msglog("Header2 = %d", memcmp(edidInfo, header2, sizeof(header2)) );
-				return 0;
-			}
-		}
-		blocks_left = 0;	
-	} while(blocks_left);
-
-	char* ret = malloc(sizeof(edidInfo));
-	memcpy(ret, edidInfo, sizeof(edidInfo));
-	return ret;
-}
-
-
-int getEDID( void * edidBlock, UInt8 block)
-{
-	biosBuf_t bb;
-	
-	bzero(&bb, sizeof(bb));
-    bb.intno  = 0x10;
-    bb.eax.rr = 0x4F15;
-	bb.ebx.r.l= 0x01;
-	bb.edx.rr = block;
-	
-    bb.es     = SEG( edidBlock );
-    bb.edi.rr = OFF( edidBlock );
-	
-    bios( &bb );
-    return(bb.eax.r.h);
-}
+  EFI_STATUS    Status;
+  EFI_EDID_DISCOVERED_PROTOCOL    *EdidDiscovered;
+  Status = gBS->LocateProtocol (&gEfiEdidDiscoveredProtocolGuid, NULL, (VOID**)&EdidDiscovered);
+  if (!EFI_ERROR(Status))
+  {
+    AsciiPrint("EdidDiscovered size=%d\n", EdidDiscovered->SizeOfEdid);
+    if (EdidDiscovered->SizeOfEdid==0)
+      return NULL;
+    CHAR8* ret = AllocatePool(BiosVideoPrivate->EdidDiscovered.SizeOfEdid);
+    CopyMem(ret, BiosVideoPrivate->EdidDiscovered.Edid, BiosVideoPrivate->EdidDiscovered.SizeOfEdid);
+    return ret;
+  }
+  return NULL;
+}*/

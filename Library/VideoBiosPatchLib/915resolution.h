@@ -11,26 +11,28 @@
 #ifndef __RESOLUTION_H
 #define __RESOLUTION_H
 
+
+
 #include "shortatombios.h"
 #include "edid.h"
 
 //Slice - moved to edid.h
 /*
 typedef struct _edid_mode {
-	unsigned short pixel_clock;
-	unsigned short h_active;
-	unsigned short h_blanking;
-	unsigned short v_active;
-	unsigned short v_blanking;
-	unsigned short h_sync_offset;
-	unsigned short h_sync_width;
-	unsigned short v_sync_offset;
-	unsigned short v_sync_width;
+	UINT16 pixel_clock;
+	UINT16 h_active;
+	UINT16 h_blanking;
+	UINT16 v_active;
+	UINT16 v_blanking;
+	UINT16 h_sync_offset;
+	UINT16 h_sync_width;
+	UINT16 v_sync_offset;
+	UINT16 v_sync_width;
 } edid_mode;
 */
 
 
-void patchVideoBios();
+VOID patchVideoBios();
 
 
 
@@ -52,8 +54,7 @@ void patchVideoBios();
 #define VBIOS_START         0xc0000
 #define VBIOS_SIZE          0x10000
 
-#define FALSE 0
-#define TRUE 1
+
 
 #define MODE_TABLE_OFFSET_845G 617
 
@@ -72,37 +73,37 @@ void patchVideoBios();
 #define OFFSET_TO_VESA_TABLE_INDEX 2
 
 typedef struct {
-	unsigned char	ucTable_Major;
-	unsigned char	ucTable_Minor;
-	unsigned char	ucTable_Rev;
-	unsigned short	usTable_Size;
-} NV_COMMON_TABLE_HEADER;
+	CHAR8	ucTable_Major;
+	CHAR8	ucTable_Minor;
+	CHAR8	ucTable_Rev;
+	UINT16	usTable_Size;
+} __attribute__((packed)) NV_COMMON_TABLE_HEADER;
 
 typedef struct {
-	short reserved1;
-	short reserved2;
-	short reserved3;
-} NV_RESERVED;
+	INT16 reserved1;
+	INT16 reserved2;
+	INT16 reserved3;
+} __attribute__((packed)) NV_RESERVED;
 
 typedef struct {
-	unsigned short	usPixel_Clock;
-	unsigned short	usH_Active;
+	UINT16	usPixel_Clock;
+	UINT16	usH_Active;
 	NV_RESERVED		reserved1;
-	unsigned short	usH_SyncStart;
-	unsigned short	usH_SyncEnd;
-	unsigned short	usH_Total;
-	unsigned short	usV_Active;
+	UINT16	usH_SyncStart;
+	UINT16	usH_SyncEnd;
+	UINT16	usH_Total;
+	UINT16	usV_Active;
 	NV_RESERVED		reserved2;
-	unsigned short	usV_SyncStart;
-	unsigned short	usV_SyncEnd;
-	unsigned short	usV_Total;
-	unsigned short	reserved3;
-} NV_MODELINE;
+	UINT16	usV_SyncStart;
+	UINT16	usV_SyncEnd;
+	UINT16	usV_Total;
+	UINT16	reserved3;
+} __attribute__((packed)) NV_MODELINE;
 
 typedef struct {
 	NV_COMMON_TABLE_HEADER	sHeader;
 	NV_MODELINE	*			sModelines;
-} NV_VESA_TABLE;
+} __attribute__((packed)) NV_VESA_TABLE;
 
 /*---*/
 
@@ -123,110 +124,110 @@ typedef enum {
 
 
 typedef struct {
-	char         *base;
+	CHAR8         *base;
 	ATOM_ROM_HEADER  *AtomRomHeader;
-	unsigned short         *MasterCommandTables;
-	unsigned short         *MasterDataTables;
+	UINT16         *MasterCommandTables;
+	UINT16         *MasterDataTables;
 } bios_tables_t;
 
 typedef struct {
-	UInt8 mode;
-	UInt8 bits_per_pixel;
-	UInt16 resolution;
-	UInt8 unknown;
+	UINT8 mode;
+	UINT8 bits_per_pixel;
+	UINT16 resolution;
+	UINT8 unknown;
 } __attribute__((packed)) vbios_mode;
 
 typedef struct {
-	UInt8 unknow1[2];
-	UInt8 x1;
-	UInt8 x_total;
-	UInt8 x2;
-	UInt8 y1;
-	UInt8 y_total;
-	UInt8 y2;
+	UINT8 unknow1[2];
+	UINT8 x1;
+	UINT8 x_total;
+	UINT8 x2;
+	UINT8 y1;
+	UINT8 y_total;
+	UINT8 y2;
 } __attribute__((packed)) vbios_resolution_type1;
 
 typedef struct {
-	unsigned long clock;
+	UINT32 clock;
 	
-	UInt16 x1;
-	UInt16 htotal;
-	UInt16 x2;
-	UInt16 hblank;
-	UInt16 hsyncstart;
-	UInt16 hsyncend;
-	UInt16 y1;
-    UInt16 vtotal;
-    UInt16 y2;
-	UInt16 vblank;
-	UInt16 vsyncstart;
-	UInt16 vsyncend;
+	UINT16 x1;
+	UINT16 htotal;
+	UINT16 x2;
+	UINT16 hblank;
+	UINT16 hsyncstart;
+	UINT16 hsyncend;
+	UINT16 y1;
+    UINT16 vtotal;
+    UINT16 y2;
+	UINT16 vblank;
+	UINT16 vsyncstart;
+	UINT16 vsyncend;
 } __attribute__((packed)) vbios_modeline_type2;
 
 typedef struct {
-	UInt8 xchars;
-	UInt8 ychars;
-	UInt8 unknown[4];
+	UINT8 xCHAR8s;
+	UINT8 yCHAR8s;
+	UINT8 unknown[4];
 	
 	vbios_modeline_type2 modelines[];
 } __attribute__((packed)) vbios_resolution_type2;
 
 typedef struct {
-	unsigned long clock;
+	UINT32 clock;
 	
-	UInt16 x1;
-	UInt16 htotal;
-	UInt16 x2;
-	UInt16 hblank;
-	UInt16 hsyncstart;
-	UInt16 hsyncend;
+	UINT16 x1;
+	UINT16 htotal;
+	UINT16 x2;
+	UINT16 hblank;
+	UINT16 hsyncstart;
+	UINT16 hsyncend;
 	
-	UInt16 y1;
-	UInt16 vtotal;
-	UInt16 y2;
-	UInt16 vblank;
-	UInt16 vsyncstart;
-	UInt16 vsyncend;
+	UINT16 y1;
+	UINT16 vtotal;
+	UINT16 y2;
+	UINT16 vblank;
+	UINT16 vsyncstart;
+	UINT16 vsyncend;
 	
-	UInt16 timing_h;
-	UInt16 timing_v;
+	UINT16 timing_h;
+	UINT16 timing_v;
 	
-	UInt8 unknown[6];
+	UINT8 unknown[6];
 } __attribute__((packed)) vbios_modeline_type3;
 
 typedef struct {
-	unsigned char unknown[6];
+	CHAR8 unknown[6];
 	
     vbios_modeline_type3 modelines[];
 } __attribute__((packed)) vbios_resolution_type3;
 
 typedef struct {
-	UInt32 chipset_id;
+	UINT32 chipset_id;
 	chipset_type chipset;
 	bios_type bios;
 	
 	bios_tables_t ati_tables;
 
 	
-	UInt32 bios_fd;
-	char* bios_ptr;
+	UINT32 bios_fd;
+	CHAR8* bios_ptr;
 	
 	vbios_mode * mode_table;
-	char * ati_mode_table;
-	char * nv_mode_table;
+	CHAR8 * ati_mode_table;
+	CHAR8 * nv_mode_table;
 
-	UInt32 mode_table_size;
-	UInt8 b1, b2;
+	UINT32 mode_table_size;
+	UINT8 b1, b2;
 	
-	UInt8 unlocked;
+	UINT8 unlocked;
 } vbios_map;
 
 
 
 vbios_map * open_vbios(chipset_type);
-void close_vbios (vbios_map*);
-void unlock_vbios(vbios_map*);
-void relock_vbios(vbios_map*);
-void set_mode(vbios_map*, UInt32, UInt32, UInt32, UInt32, UInt32);
+VOID close_vbios (vbios_map*);
+VOID unlock_vbios(vbios_map*);
+VOID relock_vbios(vbios_map*);
+VOID set_mode(vbios_map*, UINT32, UINT32, UINT32, UINT32, UINT32);
 
 #endif //__RESOLUTION_H

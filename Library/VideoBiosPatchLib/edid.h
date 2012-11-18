@@ -11,7 +11,19 @@
 //#define __EDID_H__
 
 
-#include "libsaio.h"
+//#include "libsaio.h"
+#include <Uefi.h>
+
+#include <Library/UefiLib.h>
+#include <Library/DebugLib.h>
+#include <Library/PrintLib.h>
+#include <Library/BaseLib.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/BaseMemoryLib.h>
+#include <Library/MemoryAllocationLib.h>
+#include <Library/DevicePathLib.h>
+
+#include <IndustryStandard/Pci.h>
 
 #define EDID_BLOCK_SIZE	128
 #define EDID_V1_BLOCKS_TO_GO_OFFSET 126
@@ -126,7 +138,7 @@
 #define V_MAX_RATE              block[ 6 ]
 #define H_MIN_RATE              block[ 7 ]
 #define H_MAX_RATE              block[ 8 ]
-#define MAX_PIXEL_CLOCK         (((int)block[ 9 ]) * 10)
+#define MAX_PIXEL_CLOCK         (((INT)block[ 9 ]) * 10)
 #define GTF_SUPPORT		block[10]
 
 #define DPMS_ACTIVE_OFF		(1 << 5)
@@ -135,38 +147,38 @@
 
 struct EDID
 {
-    UInt8	header[8];			//0
-    UInt8	vendorProduct[4];	//8
-    UInt8	serialNumber[4];	//12
-    UInt8	weekOfManufacture;	//16
-    UInt8	yearOfManufacture;	//17
-    UInt8	version;			//18
-    UInt8	revision;			//19
-    UInt8	displayParams[5];	//20
-    UInt8	colorCharacteristics[10];	//25
-    UInt8	establishedTimings[3];		//35
-    UInt16	standardTimings[8];			//38
-    UInt8	detailedTimings[72];		//54
-    UInt8	extension;					//126
-    UInt8	checksum;					//127
+    UINT8	header[8];			//0
+    UINT8	vendorProduct[4];	//8
+    UINT8	serialNumber[4];	//12
+    UINT8	weekOfManufacture;	//16
+    UINT8	yearOfManufacture;	//17
+    UINT8	version;			//18
+    UINT8	revision;			//19
+    UINT8	displayParams[5];	//20
+    UINT8	colorCHAR8acteristics[10];	//25
+    UINT8	establishedTimings[3];		//35
+    UINT16	standardTimings[8];			//38
+    UINT8	detailedTimings[72];		//54
+    UINT8	extension;					//126
+    UINT8	checksum;					//127
 };
 
 
 typedef struct _edid_mode {
-	unsigned short pixel_clock;
-	unsigned short h_active;
-	unsigned short h_blanking;
-	unsigned short v_active;
-	unsigned short v_blanking;
-	unsigned short h_sync_offset;
-	unsigned short h_sync_width;
-	unsigned short v_sync_offset;
-	unsigned short v_sync_width;
+	UINT16 pixel_clock;
+	UINT16 h_active;
+	UINT16 h_blanking;
+	UINT16 v_active;
+	UINT16 v_blanking;
+	UINT16 h_sync_offset;
+	UINT16 h_sync_width;
+	UINT16 v_sync_offset;
+	UINT16 v_sync_width;
 } edid_mode;
 
 
-char* readEDID();
-void getResolution(UInt32* x, UInt32* y, UInt32* bp);
-int fb_parse_edid(struct EDID *edid, edid_mode* var);
-int getEDID( void * edidBlock, UInt8 block);
+CHAR8* readEDID();
+VOID getResolution(UINT32* x, UINT32* y, UINT32* bp);
+INT32 fb_parse_edid(struct EDID *edid, edid_mode* var);
+INT32 getEDID( VOID * edidBlock, UINT8 block);
 //#endif

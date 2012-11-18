@@ -4,15 +4,20 @@
  */
 
 #include "915resolution.h"
-#include "gui.h"
+//#include "gui.h"
 
-void Resolution_start()
+EFI_STATUS
+EFIAPI
+Resolution_start (
+  IN EFI_HANDLE     ImageHandle,
+  IN EFI_SYSTEM_TABLE *SystemTable
+  )
 {
-    UInt32 bp = 0;
-    UInt32 x, y;
-	patchVideoBios();
-    getResolution(&x, &y, &bp);
-    gui.screen.width = x;
-    gui.screen.height = y;
+  //UINT32 bp = 0;
+  //UINT32 x, y;
+  AsciiPrint("Video BIOS patcher\n");
+  patchVideoBios();
+  //getResolution(&x, &y, &bp);
+  return EFI_SUCCESS;
 }
 
