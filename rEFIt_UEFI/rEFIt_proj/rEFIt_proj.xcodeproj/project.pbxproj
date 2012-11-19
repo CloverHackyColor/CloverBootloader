@@ -57,6 +57,7 @@
 		120DE0961622C47800BA4C14 /* PciRootBridgeIo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PciRootBridgeIo.c; sourceTree = "<group>"; };
 		120DE0981622C47800BA4C14 /* IoFifo.asm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm.asm; path = IoFifo.asm; sourceTree = "<group>"; };
 		120DE0991622C47800BA4C14 /* IoFifo.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = IoFifo.S; sourceTree = "<group>"; };
+		121394EC165A15A100BA0708 /* AtomBios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AtomBios.h; sourceTree = "<group>"; };
 		121E4A2916551908000C2392 /* DuetTimerLib.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DuetTimerLib.inf; sourceTree = "<group>"; };
 		121E4A2A16551908000C2392 /* X86TimerLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = X86TimerLib.c; sourceTree = "<group>"; };
 		121E4A2C16551926000C2392 /* BdsBoot.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BdsBoot.c; sourceTree = "<group>"; };
@@ -3207,6 +3208,7 @@
 		121E4A5F16551A7A000C2392 /* IndustryStandard */ = {
 			isa = PBXGroup;
 			children = (
+				121394EC165A15A100BA0708 /* AtomBios.h */,
 				121E4A6016551A7A000C2392 /* PeImage.h */,
 				121E4AF916561E93000C2392 /* PiBootMode.h */,
 				121E4A6116551A7A000C2392 /* Smbios.h */,

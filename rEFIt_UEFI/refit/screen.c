@@ -396,8 +396,12 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
       Banner = egPrepareEmbeddedImage(&egemb_refit_banner, FALSE);
     else
       Banner = egLoadImage(ThemeDir, GlobalConfig.BannerFileName, FALSE);
-    if (Banner != NULL)
+    if (Banner != NULL) {
       MenuBackgroundPixel = Banner->PixelData[0];
+ /*     if (MenuBackgroundPixel.a == 0) {
+        MenuBackgroundPixel = DarkBackgroundPixel;
+      } */
+    }
   }
   if (!Banner) {
     DBG("banner file not read\n");
@@ -458,9 +462,13 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
   
     
   if (ShowBanner && !(GlobalConfig.HideUIFlags & HIDEUI_FLAG_BANNER)) {
-    // clear and draw banner
-    egClearScreen(&MenuBackgroundPixel);
-    BltImage(BackgroundImage, 0, 0); //if NULL then do nothing
+    // clear and draw banner    
+    if (BackgroundImage) {
+      BltImage(BackgroundImage, 0, 0); //if NULL then do nothing
+    } else {
+      egClearScreen(&MenuBackgroundPixel);
+    }
+
     if (Banner != NULL){
       BannerPlace.XPos = (UGAWidth - Banner->Width) >> 1;
       BannerPlace.YPos = (BanHeight >= Banner->Height) ? (BanHeight - Banner->Height) : 0;

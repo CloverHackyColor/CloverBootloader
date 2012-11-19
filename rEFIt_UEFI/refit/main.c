@@ -453,7 +453,7 @@ NullConOutOutputString(IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This, IN CHAR16 *Stri
 //
 // EFI OS loader functions
 //
-EG_PIXEL DarkBackgroundPixel  = { 0x0, 0x0, 0x0, 0x0 };
+EG_PIXEL DarkBackgroundPixel  = { 0x0, 0x0, 0x0, 0xFF };
 
 static VOID StartLoader(IN LOADER_ENTRY *Entry)
 {

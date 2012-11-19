@@ -12,7 +12,6 @@
 #define ATOM_HEADER_VERSION (ATOM_VERSION_MAJOR | ATOM_VERSION_MINOR)
 
 
-
 #pragma pack(1)                                       /* BIOS data must use byte aligment */
 
 /*  Define offset to location of ROM header. */

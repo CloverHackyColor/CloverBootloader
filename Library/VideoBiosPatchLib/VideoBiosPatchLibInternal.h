@@ -20,7 +20,9 @@
 #include <Protocol/LegacyRegion2.h>
 #include <Protocol/EdidActive.h>
 
-#include "shortatombios.h"
+#include <IndustryStandard/AtomBios.h>
+
+//#include "shortatombios.h"
 #include "915resolution.h"
 #include "edid.h"
 

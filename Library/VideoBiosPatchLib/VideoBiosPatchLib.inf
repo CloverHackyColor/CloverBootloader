@@ -26,7 +26,6 @@
   915resolution.c
   edid.h
   edid.c
-  shortatombios.h
 
 [Packages]
   MdePkg/MdePkg.dec

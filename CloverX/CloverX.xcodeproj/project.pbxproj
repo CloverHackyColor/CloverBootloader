@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		121E4B57165A0F1A000C2392 /* 915resolution.c in Sources */ = {isa = PBXBuildFile; fileRef = 121E4B4F165A0F1A000C2392 /* 915resolution.c */; };
+		121E4B58165A0F1A000C2392 /* edid.c in Sources */ = {isa = PBXBuildFile; fileRef = 121E4B51165A0F1A000C2392 /* edid.c */; };
+		121E4B59165A0F1A000C2392 /* VideoBiosPatchLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 121E4B54165A0F1A000C2392 /* VideoBiosPatchLib.c */; };
 		12D7546E1657CDD700376797 /* BdsConnect.c in Sources */ = {isa = PBXBuildFile; fileRef = 12D7546D1657CDD700376797 /* BdsConnect.c */; };
 		12D754711657CDE800376797 /* DevicePath.c in Sources */ = {isa = PBXBuildFile; fileRef = 12D754701657CDE800376797 /* DevicePath.c */; };
 		12DD321A16557F2E00108DFC /* BmLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 12DD321916557F2E00108DFC /* BmLib.c */; };
@@ -28,6 +31,15 @@
 		121E49741654F525000C2392 /* UsbMass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbMass.h; sourceTree = "<group>"; };
 		121E49751654F528000C2392 /* UsbMassBoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbMassBoot.h; sourceTree = "<group>"; };
 		121E49761654F52D000C2392 /* UsbMassImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbMassImpl.h; sourceTree = "<group>"; };
+		121E4B4F165A0F1A000C2392 /* 915resolution.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = 915resolution.c; sourceTree = "<group>"; };
+		121E4B50165A0F1A000C2392 /* 915resolution.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = 915resolution.h; sourceTree = "<group>"; };
+		121E4B51165A0F1A000C2392 /* edid.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = edid.c; sourceTree = "<group>"; };
+		121E4B52165A0F1A000C2392 /* edid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = edid.h; sourceTree = "<group>"; };
+		121E4B53165A0F1A000C2392 /* shortatombios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = shortatombios.h; sourceTree = "<group>"; };
+		121E4B54165A0F1A000C2392 /* VideoBiosPatchLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = VideoBiosPatchLib.c; sourceTree = "<group>"; };
+		121E4B55165A0F1A000C2392 /* VideoBiosPatchLib.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VideoBiosPatchLib.inf; sourceTree = "<group>"; };
+		121E4B56165A0F1A000C2392 /* VideoBiosPatchLibInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoBiosPatchLibInternal.h; sourceTree = "<group>"; };
+		121E4B66165A1012000C2392 /* AtomBios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AtomBios.h; sourceTree = "<group>"; };
 		123F0954164F96D0008C1C1C /* MemLogLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MemLogLib.c; sourceTree = "<group>"; };
 		123F0955164F96D0008C1C1C /* MemLogLibDefault.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = MemLogLibDefault.inf; sourceTree = "<group>"; };
 		123F0958164F96DB008C1C1C /* EfiFlashMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EfiFlashMap.h; sourceTree = "<group>"; };
@@ -439,6 +451,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		121E4B4E165A0F1A000C2392 /* VideoBiosPatchLib */ = {
+			isa = PBXGroup;
+			children = (
+				121E4B4F165A0F1A000C2392 /* 915resolution.c */,
+				121E4B50165A0F1A000C2392 /* 915resolution.h */,
+				121E4B51165A0F1A000C2392 /* edid.c */,
+				121E4B52165A0F1A000C2392 /* edid.h */,
+				121E4B53165A0F1A000C2392 /* shortatombios.h */,
+				121E4B54165A0F1A000C2392 /* VideoBiosPatchLib.c */,
+				121E4B55165A0F1A000C2392 /* VideoBiosPatchLib.inf */,
+				121E4B56165A0F1A000C2392 /* VideoBiosPatchLibInternal.h */,
+			);
+			path = VideoBiosPatchLib;
+			sourceTree = "<group>";
+		};
 		123F0952164F96D0008C1C1C /* Library */ = {
 			isa = PBXGroup;
 			children = (
@@ -448,6 +475,7 @@
 				123F0953164F96D0008C1C1C /* MemLogLibDefault */,
 				12DD323D16557F7B00108DFC /* OsxBdsPlatformLib */,
 				12DD324316557F7B00108DFC /* VBoxPeCoffLib */,
+				121E4B4E165A0F1A000C2392 /* VideoBiosPatchLib */,
 			);
 			name = Library;
 			path = ../Library;
@@ -494,6 +522,7 @@
 		123F0963164F96DB008C1C1C /* IndustryStandard */ = {
 			isa = PBXGroup;
 			children = (
+				121E4B66165A1012000C2392 /* AtomBios.h */,
 				123F0964164F96DB008C1C1C /* PeImage.h */,
 				124D76D51657A3E6008B5407 /* PiBootMode.h */,
 				123F0965164F96DB008C1C1C /* Smbios.h */,
@@ -1455,6 +1484,9 @@
 				12DD321A16557F2E00108DFC /* BmLib.c in Sources */,
 				12D7546E1657CDD700376797 /* BdsConnect.c in Sources */,
 				12D754711657CDE800376797 /* DevicePath.c in Sources */,
+				121E4B57165A0F1A000C2392 /* 915resolution.c in Sources */,
+				121E4B58165A0F1A000C2392 /* edid.c in Sources */,
+				121E4B59165A0F1A000C2392 /* VideoBiosPatchLib.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

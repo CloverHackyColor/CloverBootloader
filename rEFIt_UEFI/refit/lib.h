@@ -455,6 +455,7 @@ extern EG_PIXEL StdBackgroundPixel;
 extern EG_PIXEL MenuBackgroundPixel;
 extern EG_PIXEL InputBackgroundPixel;
 extern EG_PIXEL TransBackgroundPixel;
+extern EG_PIXEL DarkBackgroundPixel;
 
 extern EG_RECT  BannerPlace;
 extern EG_IMAGE *BackgroundImage;

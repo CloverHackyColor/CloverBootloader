@@ -14,6 +14,7 @@
 
 
 //#include "shortatombios.h"
+//#include <IndustryStandard/AtomBios.h>
 //#include "edid.h"
 
 //Slice - moved to edid.h
