@@ -2827,10 +2827,9 @@
 		2C0DB54316145D3400CA37F9 /* CloverX64.dsc */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverX64.dsc; path = ../../CloverX64.dsc; sourceTree = "<group>"; };
 		2C0DB54416145D3400CA37F9 /* CloverX64.fdf */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverX64.fdf; path = ../../CloverX64.fdf; sourceTree = "<group>"; };
 		2C0EFDCA165927AA001B2872 /* 915resolution.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = 915resolution.c; sourceTree = "<group>"; usesTabs = 1; };
-		2C0EFDCB165927AA001B2872 /* 915resolution.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = 915resolution.h; sourceTree = "<group>"; };
+		2C0EFDCB165927AA001B2872 /* 915resolution.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = 915resolution.h; sourceTree = "<group>"; usesTabs = 1; };
 		2C0EFDCC165927AA001B2872 /* edid.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = edid.c; sourceTree = "<group>"; usesTabs = 1; };
 		2C0EFDCD165927AA001B2872 /* edid.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = edid.h; sourceTree = "<group>"; };
-		2C0EFDCF165927AA001B2872 /* shortatombios.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = shortatombios.h; sourceTree = "<group>"; };
 		2C0FB48D1653DA6D003B65DE /* LegacyRegion2.c */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = LegacyRegion2.c; sourceTree = "<group>"; tabWidth = 2; };
 		2C0FB48E1653DA6D003B65DE /* LegacyRegion2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LegacyRegion2.h; sourceTree = "<group>"; };
 		2C0FB48F1653DA6D003B65DE /* LegacyRegion2Dxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = LegacyRegion2Dxe.inf; sourceTree = "<group>"; };
@@ -9535,7 +9534,6 @@
 				2C0EFDCB165927AA001B2872 /* 915resolution.h */,
 				2C0EFDCC165927AA001B2872 /* edid.c */,
 				2C0EFDCD165927AA001B2872 /* edid.h */,
-				2C0EFDCF165927AA001B2872 /* shortatombios.h */,
 				2C663D5A165536F600BEE731 /* VideoBiosPatchLib.c */,
 				2C663D5B165536F600BEE731 /* VideoBiosPatchLib.inf */,
 				2C942F7A165938920064B554 /* VideoBiosPatchLibInternal.h */,

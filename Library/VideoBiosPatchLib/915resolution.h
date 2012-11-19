@@ -159,8 +159,8 @@ typedef struct {
 	UINT16 hsyncstart;
 	UINT16 hsyncend;
 	UINT16 y1;
-    UINT16 vtotal;
-    UINT16 y2;
+	UINT16 vtotal;
+	UINT16 y2;
 	UINT16 vblank;
 	UINT16 vsyncstart;
 	UINT16 vsyncend;
@@ -195,13 +195,15 @@ typedef struct {
 	UINT16 timing_v;
 	
 	UINT8 unknown[6];
-}  vbios_modeline_type3;
+} vbios_modeline_type3;
 
 typedef struct {
 	UINT8 unknown[6];
 	
-  vbios_modeline_type3 modelines[1];
+	vbios_modeline_type3 modelines[1];
 } vbios_resolution_type3;
+
+#pragma pack()
 
 typedef struct {
 	UINT32 chipset_id;
@@ -223,8 +225,6 @@ typedef struct {
 	
 	UINT8 unlocked;
 } vbios_map;
-
-#pragma pack()
 
 vbios_map * open_vbios(chipset_type);
 VOID close_vbios (vbios_map*);
