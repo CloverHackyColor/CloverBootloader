@@ -65,6 +65,7 @@ VOID patchVideoBios();
 #define NVIDIA_SIGNATURE "NVIDIA Corp"
 #define INTEL_SIGNATURE "Intel Corp"
 
+#pragma pack(1)
 
 
 /*
@@ -78,13 +79,13 @@ typedef struct {
 	UINT8	ucTable_Minor;
 	UINT8	ucTable_Rev;
 	UINT16	usTable_Size;
-} __attribute__((packed)) NV_COMMON_TABLE_HEADER;
+} NV_COMMON_TABLE_HEADER;
 
 typedef struct {
 	INT16 reserved1;
 	INT16 reserved2;
 	INT16 reserved3;
-} __attribute__((packed)) NV_RESERVED;
+} NV_RESERVED;
 
 typedef struct {
 	UINT16	usPixel_Clock;
@@ -99,12 +100,12 @@ typedef struct {
 	UINT16	usV_SyncEnd;
 	UINT16	usV_Total;
 	UINT16	reserved3;
-} __attribute__((packed)) NV_MODELINE;
+} NV_MODELINE;
 
 typedef struct {
 	NV_COMMON_TABLE_HEADER	sHeader;
 	NV_MODELINE	*			sModelines;
-} __attribute__((packed)) NV_VESA_TABLE;
+} NV_VESA_TABLE;
 
 /*---*/
 
@@ -136,7 +137,7 @@ typedef struct {
 	UINT8 bits_per_pixel;
 	UINT16 resolution;
 	UINT8 unknown;
-} __attribute__((packed)) vbios_mode;
+} vbios_mode;
 
 typedef struct {
 	UINT8 unknow1[2];
@@ -146,7 +147,7 @@ typedef struct {
 	UINT8 y1;
 	UINT8 y_total;
 	UINT8 y2;
-} __attribute__((packed)) vbios_resolution_type1;
+} vbios_resolution_type1;
 
 typedef struct {
 	UINT32 clock;
@@ -163,7 +164,7 @@ typedef struct {
 	UINT16 vblank;
 	UINT16 vsyncstart;
 	UINT16 vsyncend;
-} __attribute__((packed)) vbios_modeline_type2;
+} vbios_modeline_type2;
 
 typedef struct {
 	UINT8 xchars;
@@ -171,7 +172,7 @@ typedef struct {
 	UINT8 unknown[4];
 	
 	vbios_modeline_type2 modelines[];
-} __attribute__((packed)) vbios_resolution_type2;
+} vbios_resolution_type2;
 
 typedef struct {
 	UINT32 clock;
@@ -194,13 +195,13 @@ typedef struct {
 	UINT16 timing_v;
 	
 	UINT8 unknown[6];
-} __attribute__((packed)) vbios_modeline_type3;
+}  vbios_modeline_type3;
 
 typedef struct {
 	UINT8 unknown[6];
 	
-    vbios_modeline_type3 modelines[];
-} __attribute__((packed)) vbios_resolution_type3;
+  vbios_modeline_type3 modelines[1];
+} vbios_resolution_type3;
 
 typedef struct {
 	UINT32 chipset_id;
@@ -223,7 +224,7 @@ typedef struct {
 	UINT8 unlocked;
 } vbios_map;
 
-
+#pragma pack()
 
 vbios_map * open_vbios(chipset_type);
 VOID close_vbios (vbios_map*);

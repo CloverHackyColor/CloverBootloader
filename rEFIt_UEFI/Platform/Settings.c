@@ -336,8 +336,15 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
     if (dictPointer) {
       prop = GetProperty(dictPointer, "Speed");
       if(prop) {
+        INTN Minus = 0;
+        if (prop->string[0] == '-') {
+          Minus = 1;
+        }
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-        gSettings.PointerSpeed = StrDecimalToUintn((CHAR16*)&UStr[0]);
+        gSettings.PointerSpeed = StrDecimalToUintn((CHAR16*)&UStr[Minus]);
+        if (Minus) {
+          gSettings.PointerSpeed = -gSettings.PointerSpeed;
+        }
       }
       prop = GetProperty(dictPointer, "DoubleClickTime");
       if(prop) {

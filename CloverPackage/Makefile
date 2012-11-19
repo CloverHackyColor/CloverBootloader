@@ -76,13 +76,14 @@ image:
 #	@echo "CP BOOTX64"
 	@cp -f $(CLOVERROOT)/EFI/BOOT/BOOTX64.efi ${IMGROOT}/EFI/BOOT/
 #	@echo "CP font"
-	@cp -r -f $(CLOVERROOT)/EFI/BOOT/font ${IMGROOT}/EFI/BOOT/
+#	@cp -r -f $(CLOVERROOT)/EFI/BOOT/font ${IMGROOT}/EFI/BOOT/
 #	@echo "CP refit.conf"
 	@cp -f $(CLOVERROOT)/EFI/BOOT/refit.conf ${IMGROOT}/EFI/BOOT/
 #	@echo "CP config.plist"
 	@cp -f $(CLOVERROOT)/EFI/config-org.plist ${IMGROOT}/EFI/config.plist
 	@echo "\t[CP] drivers64"
 	@cp -r -f $(CLOVERROOT)/EFI/drivers64 ${IMGROOT}/EFI/
+	@cp -r -f $(CLOVERROOT)/EFI/drivers64UEFI ${IMGROOT}/EFI/
 	@cp -r -f $(CLOVERROOT)/EFI/tools ${IMGROOT}/EFI/
 #	@echo "ADD drivers64"
 	@cp -f $(CLOVERROOT)/drivers-Off/drivers64/UsbMouseDxe-64.efi ${IMGROOT}/EFI/drivers64/
@@ -95,7 +96,9 @@ image:
 
 	@echo "\t[CP] boot"
 	@cp -f $(CLOVERROOT)/Bootloaders/x64/boot ${IMGROOT}/usr/standalone/i386/x64/
+#	@cp -f $(CLOVERROOT)/Bootloaders/x64/boot6 ${IMGROOT}/usr/standalone/i386/x64/
 	@cp -f $(CLOVERROOT)/Bootloaders/ia32/boot ${IMGROOT}/usr/standalone/i386/ia32/
+#	@cp -f $(CLOVERROOT)/Bootloaders/ia32/boot3 ${IMGROOT}/usr/standalone/i386/ia32/
 	@cp -f ${SYMROOT}/i386/boot0 ${IMGROOT}/usr/standalone/i386
 	@cp -f ${SYMROOT}/i386/boot0hfs ${IMGROOT}/usr/standalone/i386
 	@cp -f ${SYMROOT}/i386/boot0md ${IMGROOT}/usr/standalone/i386
@@ -110,18 +113,20 @@ image:
 	@rm -rf ${IMGROOT}/*/*/*/.s*
 	@rm -rf ${IMGROOT}/*/*/*/*/.s*
 	@echo "\t[HDIUTIL] ${ISOIMAGE}"
+	@mkdir -p ${SYMROOT}/CloverISO
 	@hdiutil makehybrid -iso -joliet -hfs -hfs-volume-name \
 		${CDLABEL} -eltorito-boot ${CDBOOT} -no-emul-boot -ov -o   \
 		"${ISOIMAGE}" ${IMGROOT} -quiet 
 	@echo "\t[LZMA] ${ISOIMAGE}"
 #	@lzma e ${ISOIMAGE} ${ISOIMAGE}.lzma
+	@mv -f ${ISOIMAGE} ${SYMROOT}/CloverISO/
 	@echo "\t[HDIUTIL] ${ISOIMAGE32}"
 	@hdiutil makehybrid -iso -joliet -hfs -hfs-volume-name \
 		${CDLABEL32} -eltorito-boot ${CDBOOT32} -no-emul-boot -ov -o   \
 		"${ISOIMAGE32}" ${IMGROOT} -quiet 
 	@echo "\t[LZMA] ${ISOIMAGE32}"
 #	@lzma e ${ISOIMAGE32} ${ISOIMAGE32}.lzma
-
+	@mv -f ${ISOIMAGE32} ${SYMROOT}/CloverISO/
 		  	  
 #	@echo "\t[GZ] ${DISTFILE}.tgz"
 #	@rm -f ${DISTFILE}.tar.gz
