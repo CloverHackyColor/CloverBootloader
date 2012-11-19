@@ -28,8 +28,8 @@ VOID patchVideoBios()
 		y != 0 && 
 		bp != 0)
 	{
-		DBG("Opening BIOS\n");
 		vbios_map * map;
+      DBG("Opening BIOS\n");
 		
 		map = open_vbios(CT_UNKNOWN);
 		if(map)
@@ -266,8 +266,8 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 	UINTN i;
 	UINTN j;
 	
-	DBG(" Bios:");
 	vbios_map * map = AllocateZeroPool(sizeof(vbios_map));
+   DBG(" Bios:");
 	/*
 	 * Determine chipset
 	 */
@@ -300,7 +300,7 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 	/*
 	 *  Map the video bios to memory
 	 */
-	map->bios_ptr=(CHAR8*)VBIOS_START;
+	map->bios_ptr=(CHAR8*)(UINTN)VBIOS_START;
 	
 	/*
 	 * check if we have ATI Radeon
@@ -309,14 +309,17 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 	map->ati_tables.AtomRomHeader = (ATOM_ROM_HEADER *) (map->bios_ptr + *(UINT16 *) (map->bios_ptr + OFFSET_TO_POINTER_TO_ATOM_ROM_HEADER)); 
 	if (AsciiStrCmp ((CHAR8 *) map->ati_tables.AtomRomHeader->uaFirmWareSignature, "ATOM") == 0)
 	{
+      UINT16 std_vesa_offset;
+      ATOM_STANDARD_VESA_TIMING * std_vesa;
+
 		// ATI Radeon Card
 		DBG(" ATI");
 		map->bios = BT_ATI_1;
 		
 		map->ati_tables.MasterDataTables = (UINT16 *) &((ATOM_MASTER_DATA_TABLE *) (map->bios_ptr + map->ati_tables.AtomRomHeader->usMasterDataTableOffset))->ListOfDataTables;
 		DBG(", MasterDataTables: 0x%p", map->ati_tables.MasterDataTables);
-		UINT16 std_vesa_offset = (UINT16) ((ATOM_MASTER_LIST_OF_DATA_TABLES *)map->ati_tables.MasterDataTables)->StandardVESA_Timing;
-		ATOM_STANDARD_VESA_TIMING * std_vesa = (ATOM_STANDARD_VESA_TIMING *) (map->bios_ptr + std_vesa_offset);
+		std_vesa_offset = (UINT16) ((ATOM_MASTER_LIST_OF_DATA_TABLES *)map->ati_tables.MasterDataTables)->StandardVESA_Timing;
+		std_vesa = (ATOM_STANDARD_VESA_TIMING *) (map->bios_ptr + std_vesa_offset);
 		DBG(", std_vesa: 0x%p", std_vesa);
 		
 		map->ati_mode_table = (CHAR8 *) &std_vesa->aModeTimings;
@@ -346,11 +349,11 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 		{ // we don't need to look through the whole bios, just the first 512 bytes
 			if (CompareMem(map->bios_ptr+i, nvda_string, 4) == 0)
 			{
-				DBG(" nVidia");
-				map->bios = BT_NVDA;
 				UINT16 nv_data_table_offset = 0;
 				UINT16 * nv_data_table;
 				NV_VESA_TABLE * std_vesa;
+            DBG(" nVidia");
+            map->bios = BT_NVDA;
 				
 				for (j = 0; j < 0x300; j++)
 				{ //We don't need to look for the table in the whole bios, the 768 first bytes only
@@ -647,19 +650,26 @@ VOID gtf_timings(UINT32 x, UINT32 y, UINT32 freq,
 						UINT16 *vsyncstart, UINT16 *vsyncend, UINT16 *vblank)
 {
 	UINT32 hbl, vbl, vfreq;
-	
-	vbl = y + (y+1)/(20000.0/(11*freq) - 1) + 1.5;
+
+	vbl = (UINT32)((2 * y) + ((2 * y)+2)/(20000/(11*freq) - 1) + 3) / 2;
 	vfreq = vbl * freq;
-	hbl = 16 * (INT32)(x * (30.0 - 300000.0 / vfreq) /
-					 +            (70.0 + 300000.0 / vfreq) / 16.0 + 0.5);
-	
-	*vsyncstart = y;
-	*vsyncend = y + 3;
-	*vblank = vbl - 1;
-	*hsyncstart = x + hbl / 2 - (x + hbl + 50) / 100 * 8 - 1;
-	*hsyncend = x + hbl / 2 - 1;
-	*hblank = x + hbl - 1;
-	*clock = (x + hbl) * vfreq / 1000;
+	hbl = 16 * (INT32)((x * (30 - 300000 / vfreq) /
+					 +            (70 + 300000 / vfreq) / 8 + 1) / 2);
+
+	/*
+   vbl = (UINT32)(y + (y+1)/(20000.0/(11*freq) - 1) + 1.5);
+   vfreq = vbl * freq;
+   hbl = 16 * (INT32)(x * (30.0 - 300000.0 / vfreq) /
+      +            (70.0 + 300000.0 / vfreq) / 16.0 + 0.5);
+   */
+
+	*vsyncstart = (UINT16)y;
+	*vsyncend = (UINT16)(y + 3);
+	*vblank = (UINT16)(vbl - 1);
+	*hsyncstart = (UINT16)(x + hbl / 2 - (x + hbl + 50) / 100 * 8 - 1);
+	*hsyncend = (UINT16)(x + hbl / 2 - 1);
+	*hblank = (UINT16)(x + hbl - 1);
+	*clock = (UINT32)((x + hbl) * vfreq / 1000);
 }
 
 VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, UINT32 htotal, UINT32 vtotal) {
@@ -679,7 +689,7 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
 			vbios_resolution_type1 * res = map_type1_resolution(map, map->mode_table[i].resolution);
 			
 			if (bp) {
-				map->mode_table[i].bits_per_pixel = bp;
+				map->mode_table[i].bits_per_pixel = (UINT8)bp;
 			}
 			
 			res->x2 = (htotal?(((htotal-x) >> 8) & 0x0f) : (res->x2 & 0x0f)) | ((x >> 4) & 0xf0);
@@ -701,8 +711,8 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
 			vbios_resolution_type2 * res = map_type2_resolution(map, map->mode_table[i].resolution);
 			DBG("BT_2");
 			
-			res->xchars = x / 8;
-			res->ychars = y / 16 - 1;
+			res->xchars = (UINT8)(x / 8);
+			res->ychars = (UINT8)(y / 16 - 1);
 			xprev = res->modelines[0].x1;
 			yprev = res->modelines[0].y1;
 			
@@ -710,8 +720,8 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
 				vbios_modeline_type2 * modeline = &res->modelines[j];
 				
 				if (modeline->x1 == xprev && modeline->y1 == yprev) {
-					modeline->x1 = modeline->x2 = x-1;
-					modeline->y1 = modeline->y2 = y-1;
+					modeline->x1 = modeline->x2 = (UINT16)(x-1);
+					modeline->y1 = modeline->y2 = (UINT16)(y-1);
 					
 					gtf_timings(x, y, freqs[j], &modeline->clock,
 								&modeline->hsyncstart, &modeline->hsyncend,
@@ -719,12 +729,12 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
 								&modeline->vsyncend, &modeline->vblank);
 					
 					if (htotal)
-						modeline->htotal = htotal;
+						modeline->htotal = (UINT16)htotal;
 					else
 						modeline->htotal = modeline->hblank;
 					
 					if (vtotal)
-						modeline->vtotal = vtotal;
+						modeline->vtotal = (UINT16)vtotal;
 					else
 						modeline->vtotal = modeline->vblank;
 					DBG(", modeline %d patched", j);
@@ -745,24 +755,24 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
 				vbios_modeline_type3 * modeline = &res->modelines[j];
 				
 				if (modeline->x1 == xprev && modeline->y1 == yprev) {
-					modeline->x1 = modeline->x2 = x-1;
-					modeline->y1 = modeline->y2 = y-1;
+					modeline->x1 = modeline->x2 = (UINT16)(x-1);
+					modeline->y1 = modeline->y2 = (UINT16)(y-1);
 					
 					gtf_timings(x, y, freqs[j], &modeline->clock,
 								&modeline->hsyncstart, &modeline->hsyncend,
 								&modeline->hblank, &modeline->vsyncstart,
 								&modeline->vsyncend, &modeline->vblank);
 					if (htotal)
-						modeline->htotal = htotal;
+						modeline->htotal = (UINT16)htotal;
 					else
 						modeline->htotal = modeline->hblank;
 					if (vtotal)
-						modeline->vtotal = vtotal;
+						modeline->vtotal = (UINT16)vtotal;
 					else
 						modeline->vtotal = modeline->vblank;
 					
-					modeline->timing_h   = y-1;
-					modeline->timing_v   = x-1;
+					modeline->timing_h   = (UINT16)(y-1);
+					modeline->timing_v   = (UINT16)(x-1);
 					DBG(", modeline %d patched", j);
 				}
 			}

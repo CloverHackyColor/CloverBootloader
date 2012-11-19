@@ -171,7 +171,7 @@ typedef struct {
 	UINT8 ychars;
 	UINT8 unknown[4];
 	
-	vbios_modeline_type2 modelines[];
+	vbios_modeline_type2 modelines[1];
 } vbios_resolution_type2;
 
 typedef struct {

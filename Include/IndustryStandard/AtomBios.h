@@ -177,4 +177,6 @@ typedef struct _ATOM_STANDARD_VESA_TIMING
 	char * 				 aModeTimings;      // 16 is not the real array number, just for initial allocation
 } ATOM_STANDARD_VESA_TIMING;
 
+#pragma pack()
+
 #endif

@@ -50,7 +50,7 @@ const UINT8 edid_v1_header[] = { 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00	
 //----------------------------------------------------------------------------------
 INT32 edid_compare(UINT8 *edid1, UINT8 *edid2)
 {
-	INT32 result = 0;
+	INT32 x, result = 0;
 	UINT8 *block = edid1 + ID_MANUFACTURER_NAME, manufacturer1[4], manufacturer2[4];;
 	manufacturer1[0] = ((block[0] & 0x7c) >> 2) + '@';
 	manufacturer1[1] = ((block[0] & 0x03) << 3) + ((block[1] & 0xe0) >> 5) + '@';
@@ -62,7 +62,6 @@ INT32 edid_compare(UINT8 *edid1, UINT8 *edid2)
 	manufacturer2[1] = ((block[0] & 0x03) << 3) + ((block[1] & 0xe0) >> 5) + '@';
 	manufacturer2[2] = (block[1] & 0x1f) + '@';
 	manufacturer2[3] = 0;
-	INT32 x;
 	for(x = 0; x < 4; x++)
 	{
 		if(manufacturer1[x] == manufacturer2[x])
@@ -259,7 +258,7 @@ INT32 fb_parse_edid(struct EDID *edid, edid_mode* var)  //(struct EDID *edid, UI
 VOID getResolution(UINT32* x, UINT32* y, UINT32* bp)
 {
 //	INT32 val;
-	static UINT32 xResolution, yResolution, bpResolution;
+	static UINT32 xResolution, yResolution, bpResolution = 32;	// assume 32bits
 /*
 	if(getIntForKey(kScreenWidth, &val, &bootInfo->chameleonConfig))
 	{
@@ -271,14 +270,11 @@ VOID getResolution(UINT32* x, UINT32* y, UINT32* bp)
 		yResolution = val;
 	}
 */
-	bpResolution = 32;	// assume 32bits
-
 	
-			
+			edid_mode mode;
 		CHAR8* edidInfo = readEDID();
 		
 		if(!edidInfo) return;
-		edid_mode mode;
 		// TODO: check *all* resolutions reported and either use the highest, or the native resolution (if there is a flag for that)
 		//xResolution =  edidInfo[56] | ((edidInfo[58] & 0xF0) << 4);  
 		//yResolution = edidInfo[59] | ((edidInfo[61] & 0xF0) << 4); 
