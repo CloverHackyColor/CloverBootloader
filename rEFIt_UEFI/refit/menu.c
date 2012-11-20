@@ -471,7 +471,14 @@ VOID ApplyInputs(VOID)
   
   i = 70;
   if (InputItems[i].Valid) {
-    gSettings.PointerSpeed = StrDecimalToUintn(InputItems[i].SValue);
+    INTN Minus = 0;
+    if (InputItems[i].SValue[0] == '-') {
+      Minus = 1;
+    }
+    gSettings.PointerSpeed = StrDecimalToUintn(&InputItems[i].SValue[Minus]);
+    if (Minus) {
+      gSettings.PointerSpeed = -gSettings.PointerSpeed;
+    }
     DBG("Pointer Speed=%d\n", gSettings.PointerSpeed);
   }
   i++;
@@ -2278,19 +2285,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.AtDoubleClick = ActionEnter;
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     //1
-/*    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 255, L"DSDT name:");
-    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = StrLen(InputItems[1].SValue);
-    InputBootArgs->Entry.ShortcutDigit = 0;
-    InputBootArgs->Entry.ShortcutLetter = 'D';
-    InputBootArgs->Entry.Image = NULL;
-    InputBootArgs->Entry.BadgeImage = NULL;
-    InputBootArgs->Entry.SubScreen = NULL;
-    InputBootArgs->Item = &InputItems[1];    //1
-    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-*/   
+
     //2    
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     UnicodeSPrint(Flags, 255, L"iCloudFix:");
@@ -2352,20 +2347,6 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.AtClick = ActionEnter;
     InputBootArgs->Entry.AtRightClick = ActionDetails;
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-    //17   
-/*    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 255, L"Fix DSDT mask:");
-    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = StrLen(InputItems[17].SValue);
-    InputBootArgs->Entry.ShortcutDigit = 0;
-    InputBootArgs->Entry.ShortcutLetter = 'F';
-    InputBootArgs->Entry.Image = NULL;
-    InputBootArgs->Entry.BadgeImage = NULL;
-    InputBootArgs->Entry.SubScreen = NULL;
-    InputBootArgs->Item = &InputItems[17];    
-    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
- */
     
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs->Entry.Title = PoolPrint(L"Pointer speed:");
@@ -2386,6 +2367,20 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.AtClick = ActionSelect;
     InputBootArgs->Entry.AtDoubleClick = ActionEnter;
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    UnicodeSPrint(Flags, 255, L"Mirror move:");
+    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = 0xFFFF;
+    InputBootArgs->Entry.Image = NULL;
+    InputBootArgs->Entry.BadgeImage = NULL;
+    InputBootArgs->Entry.SubScreen = NULL;
+    InputBootArgs->Item = &InputItems[72];
+    InputBootArgs->Entry.AtClick = ActionEnter;
+    InputBootArgs->Entry.AtRightClick = ActionDetails;
+    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+    
     
     //18
  /*   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));

@@ -644,7 +644,7 @@ INT32 getMode(edid_mode *mode)
 }
 
 
-VOID gtf_timings(UINT32 x, UINT32 y, UINT32 freq,
+VOID gtf_timings(UINT32 x, UINT32 y, UINT32 freq, /* 60, 75, 85 */
 						UINT32 *clock,
 						UINT16 *hsyncstart, UINT16 *hsyncend, UINT16 *hblank,
 						UINT16 *vsyncstart, UINT16 *vsyncend, UINT16 *vblank)
@@ -863,17 +863,17 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
 							&modeline.vsyncend, &modeline.vblank, 0);
 											
 				mode_timing->usHBlanking_Time = modeline.hblank;
-									 +						mode_timing->usHActive = x;
-									 +						mode_timing->usHSyncOffset = modeline.hsyncstart - x;
-									 +						mode_timing->usHSyncWidth = modeline.hsyncend - modeline.hsyncstart;
-									 +						
-									 +						mode_timing->usVBlanking_Time = modeline.vblank;
-									 +						mode_timing->usVActive = y;
-									 +						mode_timing->usVSyncOffset = modeline.vsyncstart - y;
-									 +						mode_timing->usVSyncWidth = modeline.hsyncend - modeline.hsyncstart;
-									 +						
-									 +						mode_timing->usPixClk = modeline.clock;
-									 +					}*/
+											mode_timing->usHActive = x;
+											mode_timing->usHSyncOffset = modeline.hsyncstart - x;
+											mode_timing->usHSyncWidth = modeline.hsyncend - modeline.hsyncstart;
+											
+											mode_timing->usVBlanking_Time = modeline.vblank;
+											mode_timing->usVActive = y;
+											mode_timing->usVSyncOffset = modeline.vsyncstart - y;
+											mode_timing->usVSyncWidth = modeline.hsyncend - modeline.hsyncstart;
+											
+											mode_timing->usPixClk = modeline.clock;
+										}*/
 				
 			
 			break;
