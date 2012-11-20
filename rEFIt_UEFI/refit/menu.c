@@ -277,7 +277,10 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.PointerSpeed);
   InputItems[InputItemsCount].ItemType = Decimal;  //71
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.DoubleClickTime);
-  //reserve for mouse and continue
+  InputItems[InputItemsCount].ItemType = BoolValue; //72
+  InputItems[InputItemsCount].BValue   = gSettings.PointerMirror;
+  InputItems[InputItemsCount++].SValue = gSettings.PointerMirror?L"[+]":L"[ ]";
+  //reserve for mouse and continue 
   
   InputItemsCount = 75;
   InputItems[InputItemsCount].ItemType = Hex;  //75
@@ -486,6 +489,11 @@ VOID ApplyInputs(VOID)
     gSettings.DoubleClickTime = StrDecimalToUintn(InputItems[i].SValue);
     DBG("DoubleClickTime=%d ms\n", gSettings.DoubleClickTime);
   }
+  i++; //72
+  if (InputItems[i].Valid) {
+    gSettings.PointerMirror = InputItems[i].BValue;
+  }
+  
 
   i = 75; 
   if (InputItems[i].Valid) {

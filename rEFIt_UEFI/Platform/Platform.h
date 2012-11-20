@@ -702,6 +702,7 @@ typedef struct {
   //Pointer
   INTN    PointerSpeed;
   UINT64  DoubleClickTime;
+  BOOLEAN PointerMirror;
   
 } SETTINGS_DATA;
 

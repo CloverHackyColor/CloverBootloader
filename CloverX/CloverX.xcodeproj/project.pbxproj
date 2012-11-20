@@ -297,6 +297,41 @@
 		124D77E01657A5E1008B5407 /* SataController.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = SataController.c; sourceTree = "<group>"; };
 		124D77E11657A5E1008B5407 /* SataController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SataController.h; sourceTree = "<group>"; };
 		124D77E21657A5E2008B5407 /* SataControllerDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = SataControllerDxe.inf; sourceTree = "<group>"; };
+		1294B5C3165BF86600183BFD /* BiosBlkIo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BiosBlkIo.c; sourceTree = "<group>"; };
+		1294B5C4165BF86600183BFD /* BiosBlkIo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BiosBlkIo.h; sourceTree = "<group>"; };
+		1294B5C5165BF86600183BFD /* BiosInt13.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BiosInt13.c; sourceTree = "<group>"; };
+		1294B5C6165BF86700183BFD /* BlockIoDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = BlockIoDxe.inf; sourceTree = "<group>"; };
+		1294B5C7165BF86700183BFD /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
+		1294B5C8165BF86700183BFD /* Edd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Edd.h; sourceTree = "<group>"; };
+		1294B5CA165BF86700183BFD /* InterruptTable.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = InterruptTable.asm; sourceTree = "<group>"; };
+		1294B5CB165BF86700183BFD /* InterruptTable.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = InterruptTable.S; sourceTree = "<group>"; };
+		1294B5CD165BF86700183BFD /* BiosKeyboard.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BiosKeyboard.c; sourceTree = "<group>"; };
+		1294B5CE165BF86700183BFD /* BiosKeyboard.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BiosKeyboard.h; sourceTree = "<group>"; };
+		1294B5CF165BF86700183BFD /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
+		1294B5D0165BF86700183BFD /* ComponentName.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ComponentName.h; sourceTree = "<group>"; };
+		1294B5D1165BF86700183BFD /* KeyboardDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = KeyboardDxe.inf; sourceTree = "<group>"; };
+		1294B5D2165BF86700183BFD /* LegacyBios.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LegacyBios.c; sourceTree = "<group>"; };
+		1294B5D3165BF86700183BFD /* LegacyBiosDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = LegacyBiosDxe.inf; sourceTree = "<group>"; };
+		1294B5D4165BF86700183BFD /* LegacyBiosInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LegacyBiosInterface.h; sourceTree = "<group>"; };
+		1294B5D6165BF86700183BFD /* BiosSupportLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BiosSupportLib.c; sourceTree = "<group>"; };
+		1294B5D7165BF86700183BFD /* BiosSupportLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BiosSupportLib.h; sourceTree = "<group>"; };
+		1294B5D8165BF86700183BFD /* BiosSupportLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = BiosSupportLib.inf; sourceTree = "<group>"; };
+		1294B5D9165BF86700183BFD /* LegacyInterrupt.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LegacyInterrupt.c; sourceTree = "<group>"; };
+		1294B5DA165BF86700183BFD /* LegacyInterrupt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LegacyInterrupt.h; sourceTree = "<group>"; };
+		1294B5DB165BF86700183BFD /* LegacyPlatform.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LegacyPlatform.c; sourceTree = "<group>"; };
+		1294B5DC165BF86700183BFD /* LegacyPlatform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LegacyPlatform.h; sourceTree = "<group>"; };
+		1294B5DD165BF86700183BFD /* LegacyRegion.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LegacyRegion.c; sourceTree = "<group>"; };
+		1294B5DE165BF86700183BFD /* LegacyRegion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LegacyRegion.h; sourceTree = "<group>"; };
+		1294B5E0165BF86700183BFD /* LegacyRegion2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LegacyRegion2.c; sourceTree = "<group>"; };
+		1294B5E1165BF86700183BFD /* LegacyRegion2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LegacyRegion2.h; sourceTree = "<group>"; };
+		1294B5E2165BF86700183BFD /* LegacyRegion2Dxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = LegacyRegion2Dxe.inf; sourceTree = "<group>"; };
+		1294B5E4165BF86700183BFD /* Thunk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Thunk.c; sourceTree = "<group>"; };
+		1294B5E6165BF86700183BFD /* BiosVideo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BiosVideo.c; sourceTree = "<group>"; };
+		1294B5E7165BF86700183BFD /* BiosVideo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BiosVideo.h; sourceTree = "<group>"; };
+		1294B5E8165BF86700183BFD /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
+		1294B5E9165BF86700183BFD /* VideoDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VideoDxe.inf; sourceTree = "<group>"; };
+		1294B5EB165BF86700183BFD /* InterruptTable.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = InterruptTable.asm; sourceTree = "<group>"; };
+		1294B5EC165BF86700183BFD /* InterruptTable.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = InterruptTable.S; sourceTree = "<group>"; };
 		12B816791644675800A433E7 /* build32.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build32.sh; sourceTree = "<group>"; };
 		12B8167A1644675800A433E7 /* build64.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build64.sh; sourceTree = "<group>"; };
 		12B816851644675800A433E7 /* llmul.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = llmul.asm; sourceTree = "<group>"; };
@@ -1165,6 +1200,113 @@
 			path = ../SataControllerDxe;
 			sourceTree = "<group>";
 		};
+		1294B5C1165BF86600183BFD /* LegacyBios */ = {
+			isa = PBXGroup;
+			children = (
+				1294B5C2165BF86600183BFD /* BlockIoDxe */,
+				1294B5C9165BF86700183BFD /* IA32 */,
+				1294B5CC165BF86700183BFD /* KeyboardDxe */,
+				1294B5D2165BF86700183BFD /* LegacyBios.c */,
+				1294B5D3165BF86700183BFD /* LegacyBiosDxe.inf */,
+				1294B5D4165BF86700183BFD /* LegacyBiosInterface.h */,
+				1294B5D5165BF86700183BFD /* Platform */,
+				1294B5DF165BF86700183BFD /* Region2Dxe */,
+				1294B5E3165BF86700183BFD /* Thunk */,
+				1294B5E5165BF86700183BFD /* VideoDxe */,
+				1294B5EA165BF86700183BFD /* X64 */,
+			);
+			name = LegacyBios;
+			path = ../LegacyBios;
+			sourceTree = "<group>";
+		};
+		1294B5C2165BF86600183BFD /* BlockIoDxe */ = {
+			isa = PBXGroup;
+			children = (
+				1294B5C3165BF86600183BFD /* BiosBlkIo.c */,
+				1294B5C4165BF86600183BFD /* BiosBlkIo.h */,
+				1294B5C5165BF86600183BFD /* BiosInt13.c */,
+				1294B5C6165BF86700183BFD /* BlockIoDxe.inf */,
+				1294B5C7165BF86700183BFD /* ComponentName.c */,
+				1294B5C8165BF86700183BFD /* Edd.h */,
+			);
+			path = BlockIoDxe;
+			sourceTree = "<group>";
+		};
+		1294B5C9165BF86700183BFD /* IA32 */ = {
+			isa = PBXGroup;
+			children = (
+				1294B5CA165BF86700183BFD /* InterruptTable.asm */,
+				1294B5CB165BF86700183BFD /* InterruptTable.S */,
+			);
+			path = IA32;
+			sourceTree = "<group>";
+		};
+		1294B5CC165BF86700183BFD /* KeyboardDxe */ = {
+			isa = PBXGroup;
+			children = (
+				1294B5CD165BF86700183BFD /* BiosKeyboard.c */,
+				1294B5CE165BF86700183BFD /* BiosKeyboard.h */,
+				1294B5CF165BF86700183BFD /* ComponentName.c */,
+				1294B5D0165BF86700183BFD /* ComponentName.h */,
+				1294B5D1165BF86700183BFD /* KeyboardDxe.inf */,
+			);
+			path = KeyboardDxe;
+			sourceTree = "<group>";
+		};
+		1294B5D5165BF86700183BFD /* Platform */ = {
+			isa = PBXGroup;
+			children = (
+				1294B5D6165BF86700183BFD /* BiosSupportLib.c */,
+				1294B5D7165BF86700183BFD /* BiosSupportLib.h */,
+				1294B5D8165BF86700183BFD /* BiosSupportLib.inf */,
+				1294B5D9165BF86700183BFD /* LegacyInterrupt.c */,
+				1294B5DA165BF86700183BFD /* LegacyInterrupt.h */,
+				1294B5DB165BF86700183BFD /* LegacyPlatform.c */,
+				1294B5DC165BF86700183BFD /* LegacyPlatform.h */,
+				1294B5DD165BF86700183BFD /* LegacyRegion.c */,
+				1294B5DE165BF86700183BFD /* LegacyRegion.h */,
+			);
+			path = Platform;
+			sourceTree = "<group>";
+		};
+		1294B5DF165BF86700183BFD /* Region2Dxe */ = {
+			isa = PBXGroup;
+			children = (
+				1294B5E0165BF86700183BFD /* LegacyRegion2.c */,
+				1294B5E1165BF86700183BFD /* LegacyRegion2.h */,
+				1294B5E2165BF86700183BFD /* LegacyRegion2Dxe.inf */,
+			);
+			path = Region2Dxe;
+			sourceTree = "<group>";
+		};
+		1294B5E3165BF86700183BFD /* Thunk */ = {
+			isa = PBXGroup;
+			children = (
+				1294B5E4165BF86700183BFD /* Thunk.c */,
+			);
+			path = Thunk;
+			sourceTree = "<group>";
+		};
+		1294B5E5165BF86700183BFD /* VideoDxe */ = {
+			isa = PBXGroup;
+			children = (
+				1294B5E6165BF86700183BFD /* BiosVideo.c */,
+				1294B5E7165BF86700183BFD /* BiosVideo.h */,
+				1294B5E8165BF86700183BFD /* ComponentName.c */,
+				1294B5E9165BF86700183BFD /* VideoDxe.inf */,
+			);
+			path = VideoDxe;
+			sourceTree = "<group>";
+		};
+		1294B5EA165BF86700183BFD /* X64 */ = {
+			isa = PBXGroup;
+			children = (
+				1294B5EB165BF86700183BFD /* InterruptTable.asm */,
+				1294B5EC165BF86700183BFD /* InterruptTable.S */,
+			);
+			path = X64;
+			sourceTree = "<group>";
+		};
 		12B8165F1644674A00A433E7 = {
 			isa = PBXGroup;
 			children = (
@@ -1173,6 +1315,7 @@
 				123F096F164F9C00008C1C1C /* BiosVideo */,
 				124D76DA1657A47E008B5407 /* BiosKeyboard */,
 				124D76F71657A4FD008B5407 /* CpuDxe */,
+				1294B5C1165BF86600183BFD /* LegacyBios */,
 				123F0952164F96D0008C1C1C /* Library */,
 				123F0957164F96DB008C1C1C /* Include */,
 				123F096C164F96F4008C1C1C /* MsgLog */,

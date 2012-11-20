@@ -623,6 +623,11 @@ DetectChipset (
     case 0x00488086: // Core Processor DRAM Controller
     case 0x00698086: // Core Processor DRAM Controller
       
+      //This is wrong but we need to test
+    case 0xD1308086: // Core Processor DRAM Controller
+    case 0xD1328086: // Core Processor DRAM Controller  
+    case 0xD1388086: // Core Processor DRAM Controller   
+      
     case 0x01008086: // 2nd Generation Core Processor Family DRAM Controller
     case 0x01048086: // 2nd Generation Core Processor Family DRAM Controller
     case 0x01088086: // Xeon E3-1200 2nd Generation Core Processor Family DRAM Controller

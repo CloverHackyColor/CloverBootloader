@@ -6,6 +6,8 @@
 	<dict>
 		<key>Speed</key>
 		<string>8</string>
+		<key>Mirror</key>
+		<string>No</string>
 		<key>DoubleClickTime</key>
 		<string>500</string>
 	</dict>
@@ -54,6 +56,15 @@
 				<key>Replace</key>
 				<data>TA==</data>
 			</dict>
+			<key>3</key>
+            <dict>
+                <key>Name</key>
+                <string>AppleAHCIPort</string>
+                <key>Find</key>
+                <data>RXh0ZXJuYWw=</data>
+                <key>Replace</key>
+                <data>SW50ZXJuYWw=</data>
+            </dict>
 		</dict>
 	</dict>
 	<key>SystemParameters</key>

@@ -352,6 +352,12 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         gSettings.DoubleClickTime = StrDecimalToUintn((CHAR16*)&UStr[0]);
       }
       
+      prop = GetProperty(dictPointer, "Mirror");
+      if(prop) {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+          gSettings.PointerMirror = TRUE;
+      }
+      
     }
     
     //Graphics

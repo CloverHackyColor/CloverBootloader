@@ -240,7 +240,11 @@ VOID UpdatePointer()
     
     XPosPrev = gPointer.newPlace.XPos;
     ScreenRelX = ((UGAWidth * gPointer.State.RelativeMovementX / (INTN)CurrentMode->ResolutionX) * gSettings.PointerSpeed) >> 10;
-    gPointer.newPlace.XPos += ScreenRelX;
+    if (gSettings.PointerMirror) {
+      gPointer.newPlace.XPos -= ScreenRelX;
+    } else {
+      gPointer.newPlace.XPos += ScreenRelX;
+    }
     if (gPointer.newPlace.XPos < 0) gPointer.newPlace.XPos = 0;
     if (gPointer.newPlace.XPos > UGAWidth - 1) gPointer.newPlace.XPos = UGAWidth - 1;
     

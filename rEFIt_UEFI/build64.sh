@@ -51,7 +51,7 @@ case `uname` in
         echo UnixPkg requires Snow Leopard or later OS
         exit 1
       else
-        TARGET_TOOLS=GCC46
+        TARGET_TOOLS=GCC47
       fi
       NETWORK_SUPPORT="-D NETWORK_SUPPORT"
       ;;
@@ -76,7 +76,7 @@ echo $PATH
 echo `which build`
 #build -p $WORKSPACE/UnixPkg/UnixPkg.dsc         -a IA32 -t $TARGET_TOOLS $NETWORK_SUPPORT -n 3 $1 $2 $3 $4 $5 $6 $7 $8
 build -p $WORKSPACE/Clover/rEFIt_UEFI/rEFIt64.dsc -a X64  -b RELEASE -t $TARGET_TOOLS -n 3 $*
-cp $WORKSPACE/Build/rEFIt/RELEASE_GCC46/X64/CLOVERX64.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/BOOT
-cp $WORKSPACE/Build/rEFIt/RELEASE_GCC46/X64/CLOVERX64.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/BOOT/BOOTX64.efi
+cp $WORKSPACE/Build/rEFIt/RELEASE_GCC47/X64/CLOVERX64.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/BOOT
+cp $WORKSPACE/Build/rEFIt/RELEASE_GCC47/X64/CLOVERX64.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/BOOT/BOOTX64.efi
 exit $?
 

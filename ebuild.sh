@@ -29,13 +29,13 @@ echo "CHAINLOAD: XCODE"
 export TARGET_TOOLS=XCODE41
 }
 
-fnGCC46 ()
+fnGCC47 ()
 # Function: Xcode chainload
 {
 [ ! -f /usr/bin/xcodebuild ] && \
 echo "ERROR: Install Xcode Tools from Apple before using this script." && exit
-echo "CHAINLOAD: GCC46"
-export TARGET_TOOLS=GCC46
+echo "CHAINLOAD: GCC47"
+export TARGET_TOOLS=GCC47
 }
 
 fnClang ()
@@ -112,18 +112,17 @@ echo "[COMPILER]   [ARCH]     [TYPE]"
 echo "-xcode       -ia32      -debug"
 echo "-clang       -x64       -release"
 echo "-unixgcc"
-echo "-gcc46"
+echo "-gcc47"
 echo "-llvm"
 echo
 echo "Example: ./ebuild.sh -xcode -ia32 -release"
-echo "Example: ./ebuild.sh -gcc46 -x64 -release"
-echo "Example: ./ebuild.sh -gcc46 -ia32 -release"
-echo "example: ./ebuild.sh -32"
+echo "Example: ./ebuild.sh -gcc47 -x64 -release"
+echo "Example: ./ebuild.sh -gcc47 -ia32 -release"
 echo "example: ./ebuild.sh -64"
-echo "example: ./ebuild.sh -34"
+echo "example: ./ebuild.sh -32"
 echo
 echo "If you want to clean a build:"
-echo "Example: ./ebuild.sh -gcc46 -x64 -release -clean"
+echo "Example: ./ebuild.sh -gcc47 -x64 -release -clean"
 echo "Example: ./ebuild.sh -xcode -ia32 -release -cleanall"
 echo
 }
@@ -133,7 +132,7 @@ fnHelpArgument ()
 {
 echo "ERROR!"
 echo "Example: ./ebuild.sh -xcode -ia32 -release"
-echo "Example: ./ebuild.sh -gcc46 -x64 -release"
+echo "Example: ./ebuild.sh -gcc47 -x64 -release"
 }
 
 ## MAIN ARGUMENT PART##
@@ -161,30 +160,30 @@ echo "Example: ./ebuild.sh -gcc46 -x64 -release"
         '-unixgcc')
          fnUnixgcc
         ;;
-        '-gcc46')
-         fnGCC46
+        '-gcc47')
+         fnGCC47
         ;;
         '-32')
 #         fnXcode
-		 fnGCC46
+		 fnGCC47
          fnArchIA32
         ;;
         '-34')
-         fnGCC46
+         fnGCC47
          fnArchIA32
         ;;
         '-64')
-         fnGCC46
+         fnGCC47
          fnArchX64
         ;;
         '-mc')
-         fnGCC46
+         fnGCC47
          fnArch64MCP
         ;;
         *)
          echo $"ERROR!"
-         echo $"COMPILER: {-xcode|-xcode4|-clang|-unixgcc|-gcc46}"
-		echo $"or default {-32|-64|-34|-MC}"
+         echo $"COMPILER: {-xcode|-xcode4|-clang|-unixgcc|-gcc47}"
+		echo $"or default {-64|-34|-MC}"
         exit 1		
     esac
 

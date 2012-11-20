@@ -11,5 +11,7 @@ echo $modified3 > ./boot-log.txt
 xxd -r -p ./boot-log.txt >> boot.lo1
 rm log.txt
 rm boot-log.txt
-tail -n 1000 boot.lo1 >boot.log
+tail -n 3000 boot.lo1 >boot.log
 rm boot.lo1
+mkdir /Volumes/EFI
+mount_msdos /dev/disk0s1 /Volumes/EFI
