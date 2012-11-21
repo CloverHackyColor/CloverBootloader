@@ -78,7 +78,7 @@ VOID egDumpGOPVideoModes(VOID)
     // get dump
     MaxMode = GraphicsOutput->Mode->MaxMode;
     Mode = GraphicsOutput->Mode->Mode;
-    MsgLog("Available graphics modes for refit.conf screen_resolution:\nCurr. Mode = %d, MaxMode = %d, FB = %lx, FB size=0x%x\n",
+    MsgLog("Available graphics modes for refit.conf screen_resolution:\nCurr. Mode = %d, Modes = %d, FB = %lx, FB size=0x%x\n",
           Mode, MaxMode, GraphicsOutput->Mode->FrameBufferBase, GraphicsOutput->Mode->FrameBufferSize);
     
     for (Mode = 0; Mode < MaxMode; Mode++) {
