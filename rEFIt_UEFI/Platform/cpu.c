@@ -509,8 +509,10 @@ VOID GetCPUProperties (VOID)
 										nhm_bus = possible_nhm_bus[i]; 
 								}*/
 								if ((vid == 0x8086) && (did >= 0x2C00)
-									&& (Device == 2) && (Function == 1)) {
-                  DBG("Found CPU at bus 0x%02x dev=%x funs=%x\n", Bus, Device, Function);                 
+                    //Slice - why 2:1? Intel spec said 3:4 - QCLK_RATIO at offset 0x50
+								//	&& (Device == 2) && (Function == 1)) {
+                    && (Device == 3) && (Function == 4)) {
+                  DBG("Found QCLK_RATIO at bus 0x%02x dev=%x funs=%x\n", Bus, Device, Function);                 
 									Status = PciIo->Mem.Read (
 															  PciIo,
 															  EfiPciIoWidthUint32,
@@ -519,9 +521,9 @@ VOID GetCPUProperties (VOID)
 															  1,
 															  &qpimult
 															  );
-									DBG("qpi read from PCI %d\n", qpimult);
+									DBG("qpi read from PCI %x\n", qpimult);
 									if (EFI_ERROR(Status)) continue;
-									qpimult &= 0xF;
+									qpimult &= 0x1F; //bits 0:4
 									break;
 								}
 								//qpimult = (UINT16) MmioRead32(PCIADDR(nhm_bus, 2, 1) + 0x50);
