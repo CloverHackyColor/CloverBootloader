@@ -93,7 +93,7 @@ static VOID AboutRefit(VOID)
 //  CHAR8* Revision = NULL;
     if (AboutMenu.EntryCount == 0) {
         AboutMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
-        AddMenuInfoLine(&AboutMenu, L"rEFIt Version 2.01 UEFI by Slice");
+        AddMenuInfoLine(&AboutMenu, L"rEFIt Version 2.08 UEFI by Slice");
 #ifdef FIRMWARE_BUILDDATE
         AddMenuInfoLine(&AboutMenu, PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
 #else
@@ -102,6 +102,9 @@ static VOID AboutRefit(VOID)
         AddMenuInfoLine(&AboutMenu, L"");
         AddMenuInfoLine(&AboutMenu, L"Copyright (c) 2006-2010 Christoph Pfisterer");
         AddMenuInfoLine(&AboutMenu, L"Portions Copyright (c) Intel Corporation and others");
+      if (!gFirmwareClover){
+        AddMenuInfoLine(&AboutMenu, L"UEFI boot by dmazar 2012");
+      }
         AddMenuInfoLine(&AboutMenu, L"");
         AddMenuInfoLine(&AboutMenu, L"Running on:");
         AddMenuInfoLine(&AboutMenu, PoolPrint(L" EFI Revision %d.%02d",
