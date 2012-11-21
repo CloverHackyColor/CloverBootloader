@@ -579,7 +579,7 @@ DetectChipset (
     //
     case 0x35758086: // 830
     case 0x35808086: // 855GM
-      DBG(" Intel 830 and similar");
+      DBG(" Intel 830 and similar (PAM 0x59-0x5f)");
       mRegisterValues = mRegisterValues830;
       break;
       
@@ -610,7 +610,7 @@ DetectChipset (
     case 0x29c08086: // G31
     case 0x29208086: // G45
     case 0x81008086: // 500
-      DBG(" Intel Series 4 and similar");
+      DBG(" Intel Series 4 and similar (PAM 0x90-0x96)");
       mRegisterValues = mRegisterValuesS4;
       break;
           
@@ -638,13 +638,26 @@ DetectChipset (
     case 0x01588086: // 3rd Generation Core Processor Family DRAM Controller
     case 0x015c8086: // 3rd Generation Core Processor Family DRAM Controller
       
-      DBG(" Core processors");
+      DBG(" Core processors (PAM 0x80-0x86)");
       mRegisterValues = mRegisterValuesCP;
       break;
       
     default:
       DBG(" Unknown");
       break;
+  }
+  
+  {
+    //
+    // Test known PAM addresses.
+    // Correct PAM1 value should be 0x11 for locked 0xC0000-0xC7FFF
+    //
+    UINT8   Pam59 = PciRead8 (PCI_LIB_ADDRESS(PAM_PCI_BUS, PAM_PCI_DEV, PAM_PCI_FUNC, 0x5a));
+    UINT8   Pam80= PciRead8 (PCI_LIB_ADDRESS(PAM_PCI_BUS, PAM_PCI_DEV, PAM_PCI_FUNC, 0x81));
+    UINT8   Pam90 = PciRead8 (PCI_LIB_ADDRESS(PAM_PCI_BUS, PAM_PCI_DEV, PAM_PCI_FUNC, 0x91));
+    
+    DBG(" Test PAM1=(0x5a=%02x, 0x81=%02x, 0x91=%02x)", Pam59, Pam80, Pam90);
+    
   }
   
   return mRegisterValues != NULL ? EFI_SUCCESS : EFI_NOT_FOUND;

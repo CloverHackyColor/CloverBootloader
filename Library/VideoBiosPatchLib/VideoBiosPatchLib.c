@@ -118,6 +118,8 @@ VideoBiosUnlock (
 {
   EFI_STATUS        Status;
   UINT32            Granularity;
+  UINT8             *TstPtr;
+  UINT8             TstVar;
   
   Status = VideoBiosPatchInit ();
   if (EFI_ERROR (Status)) {
@@ -132,7 +134,21 @@ VideoBiosUnlock (
   } else if (mLegacyRegion2 != NULL) {
     Status = mLegacyRegion2->UnLock (mLegacyRegion2, VBIOS_START, VBIOS_SIZE, &Granularity);
   }
-  DBG("%r\n", Status);
+  //DBG("%r\n", Status);
+  
+  //
+  // Test some vbios address for writing
+  //
+  TstPtr = (UINT8*)(UINTN)(VBIOS_START + 0xA110);
+  TstVar = *TstPtr;
+  *TstPtr = *TstPtr + 1;
+  if (TstVar == *TstPtr) {
+    DBG(" Test unlock: Error, not unlocked!\n");
+    Status = EFI_DEVICE_ERROR;
+  } else {
+    DBG(" unlocked\n");
+  }
+  *TstPtr = TstVar;
   
   return Status;
 }

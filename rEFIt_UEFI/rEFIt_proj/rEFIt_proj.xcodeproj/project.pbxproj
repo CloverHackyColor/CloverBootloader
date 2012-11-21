@@ -2833,8 +2833,6 @@
 		2C0FB48D1653DA6D003B65DE /* LegacyRegion2.c */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = LegacyRegion2.c; sourceTree = "<group>"; tabWidth = 2; };
 		2C0FB48E1653DA6D003B65DE /* LegacyRegion2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LegacyRegion2.h; sourceTree = "<group>"; };
 		2C0FB48F1653DA6D003B65DE /* LegacyRegion2Dxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = LegacyRegion2Dxe.inf; sourceTree = "<group>"; };
-		2C0FB4911653DAB7003B65DE /* LegacyRegion.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LegacyRegion.c; sourceTree = "<group>"; };
-		2C0FB4921653DAB7003B65DE /* LegacyRegionDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = LegacyRegionDxe.inf; sourceTree = "<group>"; };
 		2C105B811657080800BABF61 /* BdsConnect.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BdsConnect.c; sourceTree = "<group>"; };
 		2C105B831657084C00BABF61 /* DevicePath.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DevicePath.c; sourceTree = "<group>"; };
 		2C116F06164FDE980061F326 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
@@ -3543,7 +3541,6 @@
 				1292F263164BC7A7008FAEEC /* LegacyBiosInterface.h */,
 				1292F264164BC7A7008FAEEC /* Platform */,
 				2C0FB48C1653DA6D003B65DE /* Region2Dxe */,
-				2C0FB4901653DAB7003B65DE /* RegionDxe */,
 				1292F271164BC7A8008FAEEC /* Thunk */,
 				1292F273164BC7A8008FAEEC /* VideoDxe */,
 				1292F279164BC7A8008FAEEC /* X64 */,
@@ -9503,15 +9500,6 @@
 				2C0FB48F1653DA6D003B65DE /* LegacyRegion2Dxe.inf */,
 			);
 			path = Region2Dxe;
-			sourceTree = "<group>";
-		};
-		2C0FB4901653DAB7003B65DE /* RegionDxe */ = {
-			isa = PBXGroup;
-			children = (
-				2C0FB4911653DAB7003B65DE /* LegacyRegion.c */,
-				2C0FB4921653DAB7003B65DE /* LegacyRegionDxe.inf */,
-			);
-			path = RegionDxe;
 			sourceTree = "<group>";
 		};
 		2C116F05164FDE980061F326 /* GraphicsConsoleDxe */ = {
