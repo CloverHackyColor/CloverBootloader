@@ -33,6 +33,15 @@
 #define PAM_PCI_DEV        0
 #define PAM_PCI_FUNC       0
 
+#define REG_PAM0_OFFSET_NH     0x40    // Programmable Attribute Map 0
+#define REG_PAM1_OFFSET_NH     0x41    // Programmable Attribute Map 1
+#define REG_PAM2_OFFSET_NH     0x42    // Programmable Attribute Map 2
+#define REG_PAM3_OFFSET_NH     0x43    // Programmable Attribute Map 3
+#define REG_PAM4_OFFSET_NH     0x44    // Programmable Attribute Map 4
+#define REG_PAM5_OFFSET_NH     0x45    // Programmable Attribute Map 5
+#define REG_PAM6_OFFSET_NH     0x46    // Programmable Attribute Map 6
+
+
 #define REG_PAM0_OFFSET_830    0x59    // Programmable Attribute Map 0
 #define REG_PAM1_OFFSET_830    0x5a    // Programmable Attribute Map 1
 #define REG_PAM2_OFFSET_830    0x5b    // Programmable Attribute Map 2

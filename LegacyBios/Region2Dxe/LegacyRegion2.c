@@ -14,6 +14,18 @@
   Modified by dmazar with support for different chipsets and added newer ones.
 
 **/
+/* Part of codes comes from
+ *
+ * memtest86
+ *
+ * Released under version 2 of the Gnu Public License.
+ * By Chris Brady, cbrady@sgi.com
+ * ----------------------------------------------------
+ * MemTest86+ V4.00 Specific code (GPL V2.0)
+ * By Samuel DEMEULEMEESTER, sdemeule@memtest.org
+ * http://www.canardpc.com - http://www.memtest.org
+ */
+
 
 #include "LegacyRegion2.h"
 
@@ -30,7 +42,9 @@
 //
 UINT32                              mVendorDeviceId = 0;
 STATIC PAM_REGISTER_VALUE           *mRegisterValues = NULL;
-
+UINT8                               mPamPciBus = 0;
+UINT8                               mPamPciDev = 0;
+UINT8                               mPamPciFunc = 0;
 
 //
 // Intel 830 Chipset and similar
@@ -168,6 +182,21 @@ STATIC PAM_REGISTER_VALUE  mRegisterValuesCP[] = {
   {REG_PAM0_OFFSET_CP, 0x10, 0x20}
 };
 
+STATIC PAM_REGISTER_VALUE  mRegisterValuesNH[] = {
+  {REG_PAM1_OFFSET_NH, 0x01, 0x02},
+  {REG_PAM1_OFFSET_NH, 0x10, 0x20},
+  {REG_PAM2_OFFSET_NH, 0x01, 0x02},
+  {REG_PAM2_OFFSET_NH, 0x10, 0x20},
+  {REG_PAM3_OFFSET_NH, 0x01, 0x02},
+  {REG_PAM3_OFFSET_NH, 0x10, 0x20},
+  {REG_PAM4_OFFSET_NH, 0x01, 0x02},
+  {REG_PAM4_OFFSET_NH, 0x10, 0x20},
+  {REG_PAM5_OFFSET_NH, 0x01, 0x02},
+  {REG_PAM5_OFFSET_NH, 0x10, 0x20},
+  {REG_PAM6_OFFSET_NH, 0x01, 0x02},
+  {REG_PAM6_OFFSET_NH, 0x10, 0x20},
+  {REG_PAM0_OFFSET_NH, 0x10, 0x20}
+};
 
 //
 // Handle used to install the Legacy Region Protocol
@@ -228,19 +257,19 @@ LegacyRegionManipulationInternal (
   for (Index = StartIndex; Index < (sizeof(mSectionArray) / sizeof(mSectionArray[0])); Index++) {
     //DBG(", Set %x = %x",
     //    mRegisterValues[Index].PAMRegOffset,
-    //    PciRead8 (PCI_LIB_ADDRESS(PAM_PCI_BUS, PAM_PCI_DEV, PAM_PCI_FUNC, mRegisterValues[Index].PAMRegOffset))
+    //    PciRead8 (PCI_LIB_ADDRESS(mPamPciBus, mPamPciDev, mPamPciFunc, mRegisterValues[Index].PAMRegOffset))
     //    );
     if (ReadEnable != NULL) {
       if (*ReadEnable) {
         //DBG(" R-");
         PciOr8 (
-          PCI_LIB_ADDRESS(PAM_PCI_BUS, PAM_PCI_DEV, PAM_PCI_FUNC, mRegisterValues[Index].PAMRegOffset),
+          PCI_LIB_ADDRESS(mPamPciBus, mPamPciDev, mPamPciFunc, mRegisterValues[Index].PAMRegOffset),
           mRegisterValues[Index].ReadEnableData
           );
       } else {
         //DBG(" R+");
         PciAnd8 (
-          PCI_LIB_ADDRESS(PAM_PCI_BUS, PAM_PCI_DEV, PAM_PCI_FUNC, mRegisterValues[Index].PAMRegOffset),
+          PCI_LIB_ADDRESS(mPamPciBus, mPamPciDev, mPamPciFunc, mRegisterValues[Index].PAMRegOffset),
           (UINT8) (~mRegisterValues[Index].ReadEnableData)
           );
       }
@@ -249,19 +278,19 @@ LegacyRegionManipulationInternal (
       if (*WriteEnable) {
         //DBG(" W+");
         PciOr8 (
-          PCI_LIB_ADDRESS(PAM_PCI_BUS, PAM_PCI_DEV, PAM_PCI_FUNC, mRegisterValues[Index].PAMRegOffset),
+          PCI_LIB_ADDRESS(mPamPciBus, mPamPciDev, mPamPciFunc, mRegisterValues[Index].PAMRegOffset),
           mRegisterValues[Index].WriteEnableData
           );
       } else {
         //DBG(" W-");
         PciAnd8 (
-          PCI_LIB_ADDRESS(PAM_PCI_BUS, PAM_PCI_DEV, PAM_PCI_FUNC, mRegisterValues[Index].PAMRegOffset),
+          PCI_LIB_ADDRESS(mPamPciBus, mPamPciDev, mPamPciFunc, mRegisterValues[Index].PAMRegOffset),
           (UINT8) (~mRegisterValues[Index].WriteEnableData)
           );
       }
     }
     //DBG(" => %x",
-    //    PciRead8 (PCI_LIB_ADDRESS(PAM_PCI_BUS, PAM_PCI_DEV, PAM_PCI_FUNC, mRegisterValues[Index].PAMRegOffset))
+    //    PciRead8 (PCI_LIB_ADDRESS(mPamPciBus, mPamPciDev, mPamPciFunc, mRegisterValues[Index].PAMRegOffset))
     //    );
 
     //
@@ -299,7 +328,7 @@ LegacyRegionGetInfoInternal (
   //
   *DescriptorCount = (sizeof(mSectionArray) / sizeof(mSectionArray[0]));
   for (Index = 0; Index < *DescriptorCount; Index++) {
-    PamValue = PciRead8 (PCI_LIB_ADDRESS(PAM_PCI_BUS, PAM_PCI_DEV, PAM_PCI_FUNC, mRegisterValues[Index].PAMRegOffset));
+    PamValue = PciRead8 (PCI_LIB_ADDRESS(mPamPciBus, mPamPciDev, mPamPciFunc, mRegisterValues[Index].PAMRegOffset));
     mSectionArray[Index].ReadEnabled = FALSE;
     if ((PamValue & mRegisterValues[Index].ReadEnableData) != 0) {
       mSectionArray[Index].ReadEnabled = TRUE;
@@ -564,6 +593,8 @@ DetectChipset (
   VOID
   )
 {
+  UINT16  VID;
+  UINT16  DID;
   
   mRegisterValues = NULL;
   
@@ -593,22 +624,25 @@ DetectChipset (
     case 0x25808086: // 915G
     case 0x25908086: // 915GM
     case 0x27708086: // 945G
+    case 0x27748086: // 955X
+    case 0x277c8086: // 975X
     case 0x27a08086: // 945GM
     case 0x27ac8086: // 945GME
-    case 0x29708086: // 946GZ
-    case 0x27748086: // 955X
-    case 0x29a08086: // G965
-    case 0x29908086: // Q965
-    case 0x2a008086: // 965GM
-    case 0x277c8086: // 975X
-    case 0x29e08086: // X48
-    case 0x2e108086: // B43
-    case 0x2e908086: // B43
-    case 0x2e208086: // P45
-    case 0x2a408086: // GM45
-    case 0x2e308086: // G41
-    case 0x29c08086: // G31
     case 0x29208086: // G45
+    case 0x29708086: // 946GZ
+    case 0x29908086: // Q965
+    case 0x29a08086: // G965
+    case 0x29c08086: // G31
+    case 0x29d08086: // Q33
+    case 0x29e08086: // X38/X48
+    case 0x2a008086: // 965GM
+    case 0x2a108086: // GME965/GLE960
+    case 0x2a408086: // PM/GM45/47
+    case 0x2e008086: // Eaglelake
+    case 0x2e108086: // B43
+    case 0x2e208086: // P45
+    case 0x2e308086: // G41
+    case 0x2e908086: // B43
     case 0x81008086: // 500
       DBG(" Intel Series 4 and similar (PAM 0x90-0x96)");
       mRegisterValues = mRegisterValuesS4;
@@ -622,12 +656,7 @@ DetectChipset (
     case 0x00448086: // Core Processor DRAM Controller
     case 0x00488086: // Core Processor DRAM Controller
     case 0x00698086: // Core Processor DRAM Controller
-      
-      //This is wrong but we need to test
-    case 0xD1308086: // Core Processor DRAM Controller
-    case 0xD1328086: // Core Processor DRAM Controller  
-    case 0xD1388086: // Core Processor DRAM Controller   
-      
+            
     case 0x01008086: // 2nd Generation Core Processor Family DRAM Controller
     case 0x01048086: // 2nd Generation Core Processor Family DRAM Controller
     case 0x01088086: // Xeon E3-1200 2nd Generation Core Processor Family DRAM Controller
@@ -641,22 +670,72 @@ DetectChipset (
       DBG(" Core processors (PAM 0x80-0x86)");
       mRegisterValues = mRegisterValuesCP;
       break;
+
+      //1st gen i7 - Nehalem
+    case 0xD1318086: // Core-i Processor DRAM Controller
+    case 0xD1328086: // Core-i Processor DRAM Controller  
+    case 0x34008086: // Core-i Processor DRAM Controller   
+    case 0x34018086: // Core-i Processor DRAM Controller   
+    case 0x34028086: // Core-i Processor DRAM Controller   
+    case 0x34038086: // Core-i Processor DRAM Controller   
+    case 0x34048086: // Core-i Processor DRAM Controller   
+    case 0x34058086: // Core-i Processor DRAM Controller   
+    case 0x34068086: // Core-i Processor DRAM Controller   
+    case 0x34078086: // Core-i Processor DRAM Controller   
+      DBG(" Core i7 processors (PAM 0x40-0x47)");
+      mRegisterValues = mRegisterValuesNH;
+      mPamPciBus = 0xFF;
+      for (mPamPciBus = 0xFF; mPamPciBus > 0x1F; mPamPciBus >>= 1) {
+        VID = PciRead16 (PCI_LIB_ADDRESS(mPamPciBus, 3, 4, 0x00));
+        if (VID != 0x8086) {
+          continue;
+        }
+        DID = PciRead16 (PCI_LIB_ADDRESS(mPamPciBus, 3, 4, 0x02));
+        if (DID > 0x2c00) {
+          break;
+        }
+      } 
+      if ((VID != 0x8086) || (DID < 0x2c00)) {
+        mPamPciBus = 0;
+      } else {
+        mPamPciFunc = 1;
+      }
+      break;
+      
       
     default:
-      DBG(" Unknown");
+      DBG(" Unknown chipset");
       break;
   }
+  
+  // and what about Socket2011 with dev=12 func=6 DID=3CF4 ?
+  
+  /*
+  // Linux codes have this procedure. We need not it?
+   // Setup P35 Memory Controller
+   static void setup_p35(pci_dt_t *dram_dev)
+   {
+     uint32_t dev0;
+   
+     // Activate MMR I/O
+     dev0 = pci_config_read32(dram_dev->dev.addr, 0x48);
+     if (!(dev0 & 0x1))
+     pci_config_write8(dram_dev->dev.addr, 0x48, (dev0 | 1));
+  }   
+   */
   
   {
     //
     // Test known PAM addresses.
     // Correct PAM1 value should be 0x11 for locked 0xC0000-0xC7FFF
     //
-    UINT8   Pam59 = PciRead8 (PCI_LIB_ADDRESS(PAM_PCI_BUS, PAM_PCI_DEV, PAM_PCI_FUNC, 0x5a));
-    UINT8   Pam80= PciRead8 (PCI_LIB_ADDRESS(PAM_PCI_BUS, PAM_PCI_DEV, PAM_PCI_FUNC, 0x81));
-    UINT8   Pam90 = PciRead8 (PCI_LIB_ADDRESS(PAM_PCI_BUS, PAM_PCI_DEV, PAM_PCI_FUNC, 0x91));
+    UINT8   Pam40 = PciRead8 (PCI_LIB_ADDRESS(mPamPciBus, mPamPciDev, mPamPciFunc, 0x41));
+    UINT8   Pam59 = PciRead8 (PCI_LIB_ADDRESS(mPamPciBus, mPamPciDev, mPamPciFunc, 0x5a));
+    UINT8   Pam80 = PciRead8 (PCI_LIB_ADDRESS(mPamPciBus, mPamPciDev, mPamPciFunc, 0x81));
+    UINT8   Pam90 = PciRead8 (PCI_LIB_ADDRESS(mPamPciBus, mPamPciDev, mPamPciFunc, 0x91));
     
-    DBG(" Test PAM1=(0x5a=%02x, 0x81=%02x, 0x91=%02x)", Pam59, Pam80, Pam90);
+    DBG(" Test PAM1=(0x41=%02x, 0x5a=%02x, 0x81=%02x, 0x91=%02x)", Pam40, Pam59, Pam80, Pam90);
+    DBG(" at chipset %08x\n", mVendorDeviceId);
     
   }
   
