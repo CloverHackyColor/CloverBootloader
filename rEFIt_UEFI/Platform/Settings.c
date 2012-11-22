@@ -409,6 +409,30 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       if(prop) {      
         hex2bin(prop->string, (UINT8*)&gSettings.Dcfg[0], 8);
       } 
+      //
+      prop = GetProperty(dictPointer, "DualLink");
+      if(prop) {
+        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+        gSettings.DualLink = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);
+      }
+      //InjectEDID
+      prop = GetProperty(dictPointer, "InjectEDID");
+      gSettings.InjectEDID = FALSE;
+      if(prop) {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+          gSettings.InjectEDID = TRUE;
+      }
+      prop = GetProperty(dictPointer, "CustomEDID");
+      if(prop) {
+        UINTN j = 128;
+        gSettings.CustomEDID = GetDataSetting(dictPointer, "CustomEDID", &j);
+        if (j != 128) {
+          DBG("CustomEDID has wrong length=%d\n", j);
+        } else {
+          DBG("CustomEDID ok\n");
+        }
+      }
+      
     }    
     
     dictPointer = GetProperty(dict, "PCI");

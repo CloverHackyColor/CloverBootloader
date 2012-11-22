@@ -196,6 +196,7 @@ BOOLEAN get_sclk_val(value_t *val);
 BOOLEAN get_refclk_val(value_t *val);
 BOOLEAN get_platforminfo_val(value_t *val);
 BOOLEAN get_vramtotalsize_val(value_t *val);
+BOOLEAN get_dual_link_val(value_t *val);
 
 extern card_config_t card_configs[];
 extern radeon_card_info_t radeon_cards[];

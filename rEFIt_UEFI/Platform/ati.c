@@ -441,7 +441,8 @@ const CHAR8 *chip_family_name[] = {
 	"Caicos",
 	"Cayman",
 	"Turks",
-	""
+	"Tahiti",
+  ""
 };
 //TODO - check and implement
 /*"@0,display-link-component-bits",
@@ -492,7 +493,7 @@ AtiDevProp ati_devprop_list[] = {
   {FLAGTRUE,	TRUE,	"@0,ATY,memsize",			get_vrammemsize_val,	NULVAL          },
 	
   {FLAGTRUE,	FALSE,	"AAPL,aux-power-connected", NULL,					DWRVAL(1)		},
-  {FLAGTRUE,	FALSE,	"AAPL00,DualLink",          NULL,					DWRVAL(1)		},
+  {FLAGTRUE,	FALSE,	"AAPL00,DualLink",          get_dual_link_val,			NULVAL 	},
   {FLAGMOBILE,	FALSE,	"AAPL,HasPanel",          NULL,					DWRVAL(1)   },
   {FLAGMOBILE,	FALSE,	"AAPL,HasLid",            NULL,					DWRVAL(1)   },
   {FLAGMOBILE,	FALSE,	"AAPL,backlight-control", NULL,					DWRVAL(0)   },
@@ -536,6 +537,22 @@ BOOLEAN get_bootdisplay_val(value_t *val)
 	return TRUE;
 }
 
+BOOLEAN get_dual_link_val(value_t *val)
+{
+  static UINT32 v = 0;
+	
+	if (v)
+		return FALSE;
+
+  v = gSettings.DualLink;
+	val->type = kCst;
+	val->size = 4;
+	val->data = (UINT8 *)&v;
+  
+  return TRUE;
+}
+
+
 BOOLEAN get_vrammemory_val(value_t *val)
 {
 	return FALSE;
@@ -551,7 +568,7 @@ BOOLEAN get_edid_val(value_t *val)
 	if (v)
 		return FALSE;
 	  
-  if (!gEDID) {
+  if (!gSettings.CustomEDID) {
     return FALSE;
   }
   v = 1;
@@ -1028,8 +1045,9 @@ BOOLEAN read_disabled_vbios(VOID)
 			
 			WRITEREG32(card->mmio, R600_ROM_CNTL, (rom_cntl & ~R600_SCK_OVERWRITE));
 		}
-		else
+		else {
 			WRITEREG32(card->mmio, R600_ROM_CNTL, (rom_cntl | R600_SCK_OVERWRITE));
+    }
 		
 		ret = read_vbios(TRUE);
 		

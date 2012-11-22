@@ -653,6 +653,7 @@ typedef struct {
   UINT64  VRAM;
   UINT8   Dcfg[8];
   UINT8   NVCAP[20];
+  UINT32   DualLink;
  	
   // HDA
   BOOLEAN HDAInjection;

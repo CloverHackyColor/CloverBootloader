@@ -593,8 +593,8 @@ DetectChipset (
   VOID
   )
 {
-  UINT16  VID;
-  UINT16  DID;
+  UINT16  VID = 0;
+  UINT16  DID = 0;
   
   mRegisterValues = NULL;
   

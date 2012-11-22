@@ -1857,7 +1857,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "AAPL01,Dither");
         aml_add_byte_buffer(pack, GMAX3100_vals_bad[8], 4);
         aml_add_string(pack, "AAPL01,DualLink");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[9], 4);
+        aml_add_byte_buffer(pack, (CHAR8*)&gSettings.DualLink , 4);
         aml_add_string(pack, "AAPL01,Height");
         aml_add_byte_buffer(pack, GMAX3100_vals_bad[10], 4);
         aml_add_string(pack, "AAPL01,Interlace");
@@ -1912,7 +1912,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "AAPL00,LinkFormat");
         aml_add_byte_buffer(pack, HD2000_vals[9], 4);
         aml_add_string(pack, "AAPL00,DualLink");
-        aml_add_byte_buffer(pack, HD2000_vals[10], 4);
+        aml_add_byte_buffer(pack, (CHAR8*)&gSettings.DualLink , 4);
         aml_add_string(pack, "AAPL00,Dither");
         aml_add_byte_buffer(pack, HD2000_vals[11], 4);
         aml_add_string(pack, "AAPL00,DataJustify");
@@ -1956,7 +1956,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "AAPL00,LinkFormat");
         aml_add_byte_buffer(pack, HD3000_vals[9], 4);
         aml_add_string(pack, "AAPL00,DualLink");
-        aml_add_byte_buffer(pack, HD3000_vals[10], 4);
+        aml_add_byte_buffer(pack, (CHAR8*)&gSettings.DualLink, 4);
         aml_add_string(pack, "AAPL00,Dither");
         aml_add_byte_buffer(pack, HD3000_vals[11], 4);
         aml_add_string(pack, "AAPL00,DataJustify");
@@ -2107,7 +2107,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       aml_add_string(pack, "AAPL,aux-power-connected");
       aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       aml_add_string(pack, "AAPL00,DualLink");
-      aml_add_byte_buffer(pack, Yes, sizeof(Yes));
+      aml_add_byte_buffer(pack, (CHAR8*)&gSettings.DualLink, 4);
       aml_add_string(pack, "@0,AAPL,boot-display");
       aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       ports = ati_port(DisplayID[0], DisplaySubID[0]);
@@ -2392,7 +2392,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "AAPL01,Dither");
         aml_add_byte_buffer(pack, GMAX3100_vals_bad[8], 4);
         aml_add_string(pack, "AAPL01,DualLink");
-        aml_add_byte_buffer(pack, GMAX3100_vals_bad[9], 4);
+        aml_add_byte_buffer(pack, (CHAR8*)&gSettings.DualLink , 4);
         aml_add_string(pack, "AAPL01,Height");
         aml_add_byte_buffer(pack, GMAX3100_vals_bad[10], 4);
         aml_add_string(pack, "AAPL01,Interlace");
@@ -2447,7 +2447,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "AAPL00,LinkFormat");
         aml_add_byte_buffer(pack, HD2000_vals[9], 4);
         aml_add_string(pack, "AAPL00,DualLink");
-        aml_add_byte_buffer(pack, HD2000_vals[10], 4);
+        aml_add_byte_buffer(pack, (CHAR8*)&gSettings.DualLink , 4);
         aml_add_string(pack, "AAPL00,Dither");
         aml_add_byte_buffer(pack, HD2000_vals[11], 4);
         aml_add_string(pack, "AAPL00,DataJustify");
@@ -2490,7 +2490,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "AAPL00,LinkFormat");
         aml_add_byte_buffer(pack, HD3000_vals[9], 4);
         aml_add_string(pack, "AAPL00,DualLink");
-        aml_add_byte_buffer(pack, HD3000_vals[10], 4);
+        aml_add_byte_buffer(pack, (CHAR8*)&gSettings.DualLink , 4);
         aml_add_string(pack, "AAPL00,Dither");
         aml_add_byte_buffer(pack, HD3000_vals[11], 4);
         aml_add_string(pack, "AAPL00,DataJustify");
@@ -2567,7 +2567,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       aml_add_string(pack, "AAPL,aux-power-connected");
       aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       aml_add_string(pack, "AAPL00,DualLink");
-      aml_add_byte_buffer(pack, Yes, sizeof(Yes));
+      aml_add_byte_buffer(pack, (CHAR8*)&gSettings.DualLink, 4);
       aml_add_string(pack, "@0,AAPL,boot-display");
       aml_add_byte_buffer(pack, Yes, sizeof(Yes));  
       aml_add_string(pack, "@0,name");
@@ -2634,7 +2634,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       aml_add_string(pack, "AAPL,aux-power-connected");
       aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       aml_add_string(pack, "AAPL00,DualLink");
-      aml_add_byte_buffer(pack, Yes, sizeof(Yes));
+      aml_add_byte_buffer(pack, (CHAR8*)&gSettings.DualLink, 4);
       aml_add_string(pack, "@0,AAPL,boot-display");
       aml_add_byte_buffer(pack, Yes, sizeof(Yes));  
       ports = ati_port(DisplayID[1], DisplaySubID[1]);

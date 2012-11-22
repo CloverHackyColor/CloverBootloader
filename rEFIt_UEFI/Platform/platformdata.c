@@ -339,6 +339,7 @@ VOID GetDefaultSettings(VOID)
                                  ((gGraphics[0].Vendor == Nvidia) &&
                                   (gGraphics[0].DeviceID > 0x1080)));
   gSettings.CustomEDID = NULL;
+  gSettings.DualLink = 1;
   gSettings.HDAInjection = TRUE;
   gSettings.HDALayoutId = 0;
   gSettings.USBInjection = TRUE; // enabled by default to have the same behavior as before
