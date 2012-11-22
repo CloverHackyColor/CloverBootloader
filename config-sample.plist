@@ -57,14 +57,14 @@
 				<data>TA==</data>
 			</dict>
 			<key>3</key>
-            <dict>
-                <key>Name</key>
-                <string>AppleAHCIPort</string>
-                <key>Find</key>
-                <data>RXh0ZXJuYWw=</data>
-                <key>Replace</key>
-                <data>SW50ZXJuYWw=</data>
-            </dict>
+			<dict>
+				<key>Name</key>
+				<string>AppleAHCIPort</string>
+				<key>Find</key>
+				<data>RXh0ZXJuYWw=</data>
+				<key>Replace</key>
+				<data>SW50ZXJuYWw=</data>
+			</dict>
 		</dict>
 	</dict>
 	<key>SystemParameters</key>
@@ -150,6 +150,8 @@
 		<data>AP///////wAyDADfAAAAAAASAQOAIRV4CunVmVlTjigmUFQAAAABAQEBAQEBAQEBAQEBAQEB3iGgcFCEHzAgIFYAS88QAAAY3iGgcFCEHzAgIFYAS88QAAAAAAAA/gBXNjU3RwAxNTRXUDEKAAAA/gAjMz1IZYSq/wIBCiAgAJo=</data>
 		<key>VRAM</key>
 		<string>1024</string>
+		<key>DualLink</key>
+		<string>0</string>
 		<key>LoadVBios</key>
 		<string>No</string>
 		<key>PatchVBios</key>

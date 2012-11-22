@@ -632,7 +632,7 @@ DetectChipset (
     case 0x29708086: // 946GZ
     case 0x29908086: // Q965
     case 0x29a08086: // G965
-    case 0x29c08086: // G31
+    case 0x29c08086: // G31/P35
     case 0x29d08086: // Q33
     case 0x29e08086: // X38/X48
     case 0x2a008086: // 965GM
@@ -673,13 +673,13 @@ DetectChipset (
 
       //1st gen i7 - Nehalem
     case 0xD1318086: // Core-i Processor DRAM Controller
-    case 0xD1328086: // Core-i Processor DRAM Controller  
+    case 0xD1328086: //PM55 i7-720QM  DRAM Controller  
     case 0x34008086: // Core-i Processor DRAM Controller   
     case 0x34018086: // Core-i Processor DRAM Controller   
     case 0x34028086: // Core-i Processor DRAM Controller   
     case 0x34038086: // Core-i Processor DRAM Controller   
     case 0x34048086: // Core-i Processor DRAM Controller   
-    case 0x34058086: // Core-i Processor DRAM Controller   
+    case 0x34058086: //X58 Core-i Processor DRAM Controller   
     case 0x34068086: // Core-i Processor DRAM Controller   
     case 0x34078086: // Core-i Processor DRAM Controller   
       DBG(" Core i7 processors (PAM 0x40-0x47)");
@@ -696,19 +696,27 @@ DetectChipset (
         }
       } 
       if ((VID != 0x8086) || (DID < 0x2c00)) {
+        DBG("Nehalem bus is not found, assume 0\n");
         mPamPciBus = 0;
       } else {
         mPamPciFunc = 1;
       }
       break;
-      
+
+    case 0x3C008086: // Xeon E5 Processor 
+      //DID = 3CF4 Check?
+      DBG(" Xeon E5 processors (PAM 0x40-0x47)");
+      mRegisterValues = mRegisterValuesNH;
+      mPamPciBus = PciRead8 (PCI_LIB_ADDRESS(0, 5, 0, 0x109));
+      mPamPciDev = 12;
+      mPamPciFunc = 6;
+      break;
+
       
     default:
       DBG(" Unknown chipset");
       break;
   }
-  
-  // and what about Socket2011 with dev=12 func=6 DID=3CF4 ?
   
   /*
   // Linux codes have this procedure. We need not it?
