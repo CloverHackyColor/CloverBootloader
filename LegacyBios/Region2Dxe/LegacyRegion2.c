@@ -626,12 +626,13 @@ DetectChipset (
     case 0x27708086: // 945G
     case 0x27748086: // 955X
     case 0x277c8086: // 975X
-    case 0x27a08086: // 945GM
+    case 0x27a08086: // 945GM - Dell D430 	 Offset 090:  	10 11 11 00 00
     case 0x27ac8086: // 945GME
     case 0x29208086: // G45
     case 0x29708086: // 946GZ
+    case 0x29808086: // G965
     case 0x29908086: // Q965
-    case 0x29a08086: // G965
+    case 0x29a08086: // P965
     case 0x29c08086: // G31/P35
     case 0x29d08086: // Q33
     case 0x29e08086: // X38/X48
@@ -642,7 +643,8 @@ DetectChipset (
     case 0x2e108086: // B43
     case 0x2e208086: // P45
     case 0x2e308086: // G41
-    case 0x2e908086: // B43
+    case 0x2e408086: // B43 Base
+    case 0x2e908086: // B43 Soft Sku
     case 0x81008086: // 500
       DBG(" Intel Series 4 and similar (PAM 0x90-0x96)");
       mRegisterValues = mRegisterValuesS4;
@@ -652,11 +654,6 @@ DetectChipset (
     // Core processors
     // http://pci-ids.ucw.cz/read/PC/8086
     //
-    case 0x00408086: // Core Processor DRAM Controller
-    case 0x00448086: // Core Processor DRAM Controller
-    case 0x00488086: // Core Processor DRAM Controller
-    case 0x00698086: // Core Processor DRAM Controller
-            
     case 0x01008086: // 2nd Generation Core Processor Family DRAM Controller
     case 0x01048086: // 2nd Generation Core Processor Family DRAM Controller
     case 0x01088086: // Xeon E3-1200 2nd Generation Core Processor Family DRAM Controller
@@ -672,6 +669,11 @@ DetectChipset (
       break;
 
       //1st gen i7 - Nehalem
+    case 0x00408086: // Core Processor DRAM Controller
+    case 0x00448086: // Core Processor DRAM Controller - Clarkdale
+    case 0x00488086: // Core Processor DRAM Controller
+    case 0x00698086: // Core Processor DRAM Controller
+      
     case 0xD1318086: // Core-i Processor DRAM Controller
     case 0xD1328086: //PM55 i7-720QM  DRAM Controller  
     case 0x34008086: // Core-i Processor DRAM Controller   
@@ -686,11 +688,11 @@ DetectChipset (
       mRegisterValues = mRegisterValuesNH;
       mPamPciBus = 0xFF;
       for (mPamPciBus = 0xFF; mPamPciBus > 0x1F; mPamPciBus >>= 1) {
-        VID = PciRead16 (PCI_LIB_ADDRESS(mPamPciBus, 3, 4, 0x00));
+        VID = PciRead16 (PCI_LIB_ADDRESS(mPamPciBus, 0, 1, 0x00));
         if (VID != 0x8086) {
           continue;
         }
-        DID = PciRead16 (PCI_LIB_ADDRESS(mPamPciBus, 3, 4, 0x02));
+        DID = PciRead16 (PCI_LIB_ADDRESS(mPamPciBus, 0, 1, 0x02));
         if (DID > 0x2c00) {
           break;
         }

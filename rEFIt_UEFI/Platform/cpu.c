@@ -193,6 +193,7 @@ VOID GetCPUProperties (VOID)
       case CPU_MODEL_JAKETOWN:
       case CPU_MODEL_SANDY_BRIDGE:	
 			case CPU_MODEL_IVY_BRIDGE:	
+      case CPU_MODEL_IVY_BRIDGE_E5:  
         msr = AsmReadMsr64(MSR_CORE_THREAD_COUNT);  //0x35
         gCPUStructure.Cores   = (UINT8)bitfield((UINT32)msr, 31, 16);  
         gCPUStructure.Threads = (UINT8)bitfield((UINT32)msr, 15,  0);
@@ -317,6 +318,7 @@ VOID GetCPUProperties (VOID)
             break;
           case CPU_MODEL_SANDY_BRIDGE:// Sandy Bridge, 32nm
           case CPU_MODEL_IVY_BRIDGE:  
+          case CPU_MODEL_IVY_BRIDGE_E5:  
           case CPU_MODEL_JAKETOWN:
             gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
             gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
@@ -685,6 +687,7 @@ UINT16 GetAdvancedCpuType ()
             }
 						return 0x703;
           case CPU_MODEL_IVY_BRIDGE:  
+          case CPU_MODEL_IVY_BRIDGE_E5:  
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
 							return 0x903; // Core i3 - Apple doesn't use it
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i5"))
@@ -741,7 +744,8 @@ MACHINE_TYPES GetDefaultModel()
 				}
         DefaultType = MacBookPro83;
 				break;
-      case CPU_MODEL_IVY_BRIDGE:   
+      case CPU_MODEL_IVY_BRIDGE:  
+      case CPU_MODEL_IVY_BRIDGE_E5:  
         DefaultType = MacBookAir52;
 				break;
 			default:
@@ -794,6 +798,7 @@ MACHINE_TYPES GetDefaultModel()
 				break;
 			case CPU_MODEL_SANDY_BRIDGE:
       case CPU_MODEL_IVY_BRIDGE:   //should be new iMac  13,2
+      case CPU_MODEL_IVY_BRIDGE_E5:  
         if (gGraphics[0].Vendor == Intel) {
           DefaultType = MacMini51;
 					break;
