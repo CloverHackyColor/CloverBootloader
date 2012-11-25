@@ -80,9 +80,10 @@
   DxeServicesLib|MdePkg/Library/DxeServicesLib/DxeServicesLib.inf
   DxeServicesTableLib|MdePkg/Library/DxeServicesTableLib/DxeServicesTableLib.inf
   EfiFileLib|EmbeddedPkg/Library/EfiFileLib/EfiFileLib.inf
+  EblNetworkLib|EmbeddedPkg/Library/EblNetworkLib/EblNetworkLib.inf
+  EblCmdLib|EmbeddedPkg/Library/EblCmdLibNull/EblCmdLibNull.inf  
   #FileHandleLib|ShellPkg/Library/BaseFileHandleLib/BaseFileHandleLib.inf
   UefiCpuLib|UefiCpuPkg/Library/BaseUefiCpuLib/BaseUefiCpuLib.inf
-  SecurityManagementLib|MdeModulePkg/Library/DxeSecurityManagementLib/DxeSecurityManagementLib.inf
   
   #
   # Generic Modules
@@ -137,6 +138,7 @@
   # Our libs
   #
   MemLogLib|Clover/Library/MemLogLibDefault/MemLogLibDefault.inf
+  VideoBiosPatchLib|Clover/Library/VideoBiosPatchLib/VideoBiosPatchLib.inf
 
 [LibraryClasses.common.DXE_CORE]
   HobLib|MdePkg/Library/DxeCoreHobLib/DxeCoreHobLib.inf
@@ -296,7 +298,7 @@
   }
   MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
   Clover/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
-  #Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
+  Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
   #UefiCpuPkg/CpuDxe/CpuDxe.inf
   Clover/CpuDxe/Cpu.inf
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
@@ -403,7 +405,6 @@
   Clover/BiosKeyboard/KeyboardDxe.inf
   #IntelFrameworkModulePkg/Universal/LegacyRegionDxe/LegacyRegionDxe.inf
   #MdeModulePkg/Universal/LegacyRegion2Dxe/LegacyRegion2Dxe.inf
-  #Clover/LegacyBios/RegionDxe/LegacyRegion2Dxe.inf
   Clover/LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
 
   # Misc
@@ -421,7 +422,7 @@
   #
   #MdeModulePkg/Application/HelloWorld/HelloWorld.inf
   #MdeModulePkg/Application/VariableInfo/VariableInfo.inf
-  #rEFIt_UEFI/refit.inf
+  Clover/rEFIt_UEFI/refit64.inf
 
 ###################################################################################################
 #

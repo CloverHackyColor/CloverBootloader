@@ -25,7 +25,7 @@
   PLATFORM_NAME                  = Clover
   PLATFORM_GUID                  = 199E24E0-0989-42aa-87F2-611A8C397E72
   PLATFORM_VERSION               = 0.92
-  DSC_SPECIFICATION              = 0x00010005
+  DSC_SPECIFICATION              = 0x00010006
   OUTPUT_DIRECTORY               = Build/Clover
   SUPPORTED_ARCHITECTURES        = IA32
   BUILD_TARGETS                  = RELEASE|DEBUG
@@ -80,9 +80,10 @@
   DxeServicesLib|MdePkg/Library/DxeServicesLib/DxeServicesLib.inf
   DxeServicesTableLib|MdePkg/Library/DxeServicesTableLib/DxeServicesTableLib.inf
   EfiFileLib|EmbeddedPkg/Library/EfiFileLib/EfiFileLib.inf
+  EblNetworkLib|EmbeddedPkg/Library/EblNetworkLib/EblNetworkLib.inf
+  EblCmdLib|EmbeddedPkg/Library/EblCmdLibNull/EblCmdLibNull.inf  
   #FileHandleLib|ShellPkg/Library/BaseFileHandleLib/BaseFileHandleLib.inf
   UefiCpuLib|UefiCpuPkg/Library/BaseUefiCpuLib/BaseUefiCpuLib.inf
-  SecurityManagementLib|MdeModulePkg/Library/DxeSecurityManagementLib/DxeSecurityManagementLib.inf
   
   #
   # Generic Modules
@@ -137,6 +138,7 @@
   # Our libs
   #
   MemLogLib|Clover/Library/MemLogLibDefault/MemLogLibDefault.inf
+  VideoBiosPatchLib|Clover/Library/VideoBiosPatchLib/VideoBiosPatchLib.inf
 
 [LibraryClasses.common.DXE_CORE]
   HobLib|MdePkg/Library/DxeCoreHobLib/DxeCoreHobLib.inf
@@ -296,7 +298,7 @@
   }
   MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
   Clover/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
-  #Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
+  Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
   #UefiCpuPkg/CpuDxe/CpuDxe.inf
   Clover/CpuDxe/Cpu.inf
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
@@ -384,7 +386,6 @@
   MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
   MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
   #MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
-  #Clover/OsxPartitionDxe/PartitionDxe.inf
   Clover/PartitionDxe/PartitionDxe.inf
 
   #FD
@@ -404,7 +405,6 @@
   Clover/BiosKeyboard/KeyboardDxe.inf
   #IntelFrameworkModulePkg/Universal/LegacyRegionDxe/LegacyRegionDxe.inf
   #MdeModulePkg/Universal/LegacyRegion2Dxe/LegacyRegion2Dxe.inf
-  #Clover/LegacyBios/RegionDxe/LegacyRegion2Dxe.inf
   Clover/LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
 
   # Misc
@@ -421,7 +421,7 @@
   #
   #MdeModulePkg/Application/HelloWorld/HelloWorld.inf
   #MdeModulePkg/Application/VariableInfo/VariableInfo.inf
-  #rEFIt_UEFI/refit.inf
+  Clover/rEFIt_UEFI/refit.inf
 
 ###################################################################################################
 #

@@ -25,7 +25,7 @@
   PLATFORM_NAME                  = Clover64MCP
   PLATFORM_GUID                  = 199E24E0-0989-42aa-87F2-611A8C397E72
   PLATFORM_VERSION               = 0.92
-  DSC_SPECIFICATION              = 0x00010005
+  DSC_SPECIFICATION              = 0x00010006
   OUTPUT_DIRECTORY               = Build/Clover
   SUPPORTED_ARCHITECTURES        = X64
   BUILD_TARGETS                  = RELEASE|DEBUG
@@ -72,16 +72,18 @@
   UefiRuntimeServicesTableLib|MdePkg/Library/UefiRuntimeServicesTableLib/UefiRuntimeServicesTableLib.inf
   UefiRuntimeLib|MdePkg/Library/UefiRuntimeLib/UefiRuntimeLib.inf
   UefiLib|MdePkg/Library/UefiLib/UefiLib.inf
-  UefiHiiServicesLib|MdeModulePkg/Library/UefiHiiServicesLib/UefiHiiServicesLib.inf
+  #UefiHiiServicesLib|MdeModulePkg/Library/UefiHiiServicesLib/UefiHiiServicesLib.inf
+  UefiHiiServicesLib|Clover/Library/UefiHiiServicesLib/UefiHiiServicesLib.inf
   HiiLib|MdeModulePkg/Library/UefiHiiLib/UefiHiiLib.inf
   DevicePathLib|MdePkg/Library/UefiDevicePathLib/UefiDevicePathLib.inf
   UefiDecompressLib|MdePkg/Library/BaseUefiDecompressLib/BaseUefiDecompressLib.inf
   DxeServicesLib|MdePkg/Library/DxeServicesLib/DxeServicesLib.inf
   DxeServicesTableLib|MdePkg/Library/DxeServicesTableLib/DxeServicesTableLib.inf
   EfiFileLib|EmbeddedPkg/Library/EfiFileLib/EfiFileLib.inf
+  EblNetworkLib|EmbeddedPkg/Library/EblNetworkLib/EblNetworkLib.inf
+  EblCmdLib|EmbeddedPkg/Library/EblCmdLibNull/EblCmdLibNull.inf  
   #FileHandleLib|ShellPkg/Library/BaseFileHandleLib/BaseFileHandleLib.inf
   UefiCpuLib|UefiCpuPkg/Library/BaseUefiCpuLib/BaseUefiCpuLib.inf
-  SecurityManagementLib|MdeModulePkg/Library/DxeSecurityManagementLib/DxeSecurityManagementLib.inf
   
   #
   # Generic Modules
@@ -136,6 +138,7 @@
   # Our libs
   #
   MemLogLib|Clover/Library/MemLogLibDefault/MemLogLibDefault.inf
+  VideoBiosPatchLib|Clover/Library/VideoBiosPatchLib/VideoBiosPatchLib.inf
 
 [LibraryClasses.common.DXE_CORE]
   HobLib|MdePkg/Library/DxeCoreHobLib/DxeCoreHobLib.inf
@@ -402,7 +405,7 @@
   Clover/BiosKeyboard/KeyboardDxe.inf
   #IntelFrameworkModulePkg/Universal/LegacyRegionDxe/LegacyRegionDxe.inf
   #MdeModulePkg/Universal/LegacyRegion2Dxe/LegacyRegion2Dxe.inf
-  Clover/LegacyBios/RegionDxe/LegacyRegion2Dxe.inf
+  Clover/LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
 
   # Misc
   Clover/FSInject/FSInject.inf
@@ -419,7 +422,7 @@
   #
   MdeModulePkg/Application/HelloWorld/HelloWorld.inf
   #MdeModulePkg/Application/VariableInfo/VariableInfo.inf
-  #rEFIt_UEFI/refit.inf
+  Clover/rEFIt_UEFI/refit64.inf
 
 ###################################################################################################
 #
