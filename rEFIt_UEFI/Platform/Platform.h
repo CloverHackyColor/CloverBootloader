@@ -142,9 +142,9 @@ Headers collection for procedures
 #define CPU_MODEL_NEHALEM       0x1A
 #define CPU_MODEL_ATOM          0x1C
 #define CPU_MODEL_XEON_MP       0x1D  /* MP 7400 */
-#define CPU_MODEL_FIELDS        0x1E
-#define CPU_MODEL_DALES         0x1F
-#define CPU_MODEL_CLARKDALE     0x25
+#define CPU_MODEL_FIELDS        0x1E  /* Lynnfield, Clarksfield, Jasper */
+#define CPU_MODEL_DALES         0x1F  /* Havendale, Auburndale */
+#define CPU_MODEL_CLARKDALE     0x25  /* Clarkdale, Arrandale */
 #define CPU_MODEL_ATOM_SAN      0x26
 #define CPU_MODEL_LINCROFT      0x27
 #define CPU_MODEL_SANDY_BRIDGE	0x2A

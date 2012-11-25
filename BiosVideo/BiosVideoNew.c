@@ -1068,10 +1068,13 @@ ParseEdidData (
         (BufferIndex[2] != 0x00) || (BufferIndex[4] != 0x00)) {
 			TempTiming.HorizontalResolution = ((UINT16)(BufferIndex[4] & 0xF0) << 4) | (BufferIndex[2]);
 			TempTiming.VerticalResolution = ((UINT16)(BufferIndex[7] & 0xF0) << 4) | (BufferIndex[5]);
+			DBG(" found Detail Timing %dx%d\n", TempTiming.HorizontalResolution, TempTiming.VerticalResolution);
 			TempTiming.RefreshRate = 60; //doesn't matter, it's temporary
 			if (!SearchEdidTiming(ValidEdidTiming, &TempTiming)){
 				ValidEdidTiming->Key[ValidNumber] = CalculateEdidKey (&TempTiming);
 				ValidNumber ++;	
+			} else {
+				DBG("... already present\n");
 			}
 		} else if (BufferIndex[3] == 0xFA) {
 			for (Index2 = 0; Index2 < 6; Index2 ++) {

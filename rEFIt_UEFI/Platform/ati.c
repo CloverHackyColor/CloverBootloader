@@ -246,7 +246,7 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x9460,	0x00000000, CHIP_FAMILY_RV770,	"ATI Radeon HD 4800 Series",      kMotmot		},
 	{ 0x9462,	0x00000000, CHIP_FAMILY_RV770,	"ATI Radeon HD 4800 Series",      kMotmot		},
   //9488, 9490 - Gliff
-	{ 0x9480,	0x00000000, CHIP_FAMILY_RV730,	"ATI Radeon HD 4650 Series",		kGliff	},
+	{ 0x9480,	0x00000000, CHIP_FAMILY_RV730,	"ATI Mobility Radeon HD 550v",		kGliff	},
 	{ 0x9488,	0x00000000, CHIP_FAMILY_RV730,	"ATI Radeon HD 4650 Series",		kGliff	},
 	{ 0x9490,	0x00000000, CHIP_FAMILY_RV730,	"ATI Radeon HD 4670 Series",		kGliff	},
 	{ 0x9491,	0x00000000, CHIP_FAMILY_RV730,	"ATI Radeon HD 4600 Series",		kGliff	},
@@ -394,7 +394,7 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x6770,	0x00000000, CHIP_FAMILY_CAICOS,		"AMD Radeon HD 6400 Series",		kBulrushes	},
   { 0x6772,	0x00000000, CHIP_FAMILY_CAICOS,		"AMD Radeon HD 7400A Series",		kBulrushes	},
   { 0x6778,	0x00000000, CHIP_FAMILY_CAICOS,		"AMD Radeon HD 7000 Series",		kBulrushes	},
-	{ 0x6779,	0x00000000, CHIP_FAMILY_CAICOS,		"AMD Radeon HD 6470 Series",		kBulrushes	},
+	{ 0x6779,	0x00000000, CHIP_FAMILY_CAICOS,		"AMD Radeon HD 6450 Series",		kBulrushes	},
   { 0x677B,	0x00000000, CHIP_FAMILY_CAICOS,		"AMD Radeon HD 7400 Series",		kBulrushes	},
   
   { 0x6798,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7900 Series",		kBulrushes	},

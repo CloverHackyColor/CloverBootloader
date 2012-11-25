@@ -664,13 +664,16 @@ DetectChipset (
     case 0x01588086: // 3rd Generation Core Processor Family DRAM Controller
     case 0x015c8086: // 3rd Generation Core Processor Family DRAM Controller
       
-      DBG(" Core processors (PAM 0x80-0x86)");
+    case 0x01608086: // 3rd Generation Core Processor Family DRAM Controller
+    case 0x01648086: // 3rd Generation Core Processor Family DRAM Controller
+  
+      DBG(" 3rd Generation Core processors (PAM 0x80-0x86)");
       mRegisterValues = mRegisterValuesCP;
       break;
 
       //1st gen i7 - Nehalem
     case 0x00408086: // Core Processor DRAM Controller
-    case 0x00448086: // Core Processor DRAM Controller - Clarkdale
+    case 0x00448086: // Core Processor DRAM Controller - Arrandale
     case 0x00488086: // Core Processor DRAM Controller
     case 0x00698086: // Core Processor DRAM Controller
       
