@@ -73,7 +73,7 @@ struct bios {
 	UINT8		size;			/* Size in multiples of 512 */
 };
 
-#define NVIDIA_ROM_SIZE				0x10000
+#define NVIDIA_ROM_SIZE				0x20000
 #define PATCH_ROM_SUCCESS			1
 #define PATCH_ROM_SUCCESS_HAS_LVDS	2
 #define PATCH_ROM_FAILED			0
