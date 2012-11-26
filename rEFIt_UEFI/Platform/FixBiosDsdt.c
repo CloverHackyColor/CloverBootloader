@@ -2019,7 +2019,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
     if (DisplayVendor[0] == 0x10DE)
     {
       AML_CHUNK* pack;
-      UINT64 vedioram;
+      UINT64 VideoRam;
       CHAR8 *modelname = nv_name((UINT16)DisplayVendor[0], DisplayID[0]);
       // add Method(_DSM,4,NotSerialized) for GFX0
       if (!DISPLAYFIX)
@@ -2054,18 +2054,18 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       aml_add_string(pack, "device_type");
       aml_add_string_buffer(pack, "NVDA,Parent");   //+
       aml_add_string(pack, "NVCAP");
-      aml_add_byte_buffer(pack, NVCAP, sizeof(NVCAP));  //+
+      aml_add_byte_buffer(pack, (CHAR8*)&gSettings.NVCAP[0], 20);  //+
       aml_add_string(pack, "NVPM");
-      aml_add_byte_buffer(pack, NVPM, sizeof(NVPM));  //+
+      aml_add_byte_buffer(pack, (CHAR8*)&default_NVPM[0], 28);  //+
       aml_add_string(pack, "model");
       aml_add_string_buffer(pack, modelname);       //+
       aml_add_string(pack, "rom-revision");
       aml_add_string_buffer(pack, "Clover auto patch DSDT ver1.1");  //+
       aml_add_string(pack, "hda-gfx");
       aml_add_string_buffer(pack, "onboard-1");         //-
-      vedioram = nv_mem_detect(&Displaydevice[0]); 
+      VideoRam = nv_mem_detect(&Displaydevice[0]); 
       aml_add_string(pack, "VRAM,totalsize");         //+
-      aml_add_dword(pack, (UINT32)vedioram); 
+      aml_add_dword(pack, (UINT32)VideoRam); 
 //      aml_add_string(pack, "device-id");              //-
 //      aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[0], 4);
 //      aml_add_string(pack, "name");
@@ -2088,7 +2088,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
     if (DisplayVendor[0] == 0x1002)
     {
       AML_CHUNK* pack;
-      UINT32 vedioram;
+      UINT32 VideoRam;
       UINT8 ports;
       CHAR8 *cfgname;
       CHAR8 *cardver;
@@ -2146,9 +2146,9 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
       aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[0], 4); 
       aml_add_string(pack, "hda-gfx");
       aml_add_string_buffer(pack, "onboard-1");
-      vedioram = ATI_vram_size(&Displaydevice[0]); 
+      VideoRam = ATI_vram_size(&Displaydevice[0]); 
       aml_add_string(pack, "VRAM,totalsize");
-      aml_add_dword(pack, vedioram); 
+      aml_add_dword(pack, VideoRam); 
       if (!Display1PCIE)
       {
         aml_add_string(pack, "IOPCIExpressLinkCapabilities");
@@ -2551,7 +2551,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
     if (DisplayVendor[1] == 0x10DE)
     {
       AML_CHUNK* pack;
-      UINT64 vedioram;
+      UINT64 VideoRam;
       CHAR8 *modelname = nv_name((UINT16)DisplayVendor[1], DisplayID[1]);
       // add Method(_DSM,4,NotSerialized) for GFX0
       if (!DISPLAYFIX)
@@ -2585,18 +2585,18 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       aml_add_string(pack, "device_type");
       aml_add_string_buffer(pack, "NVDA,Parent"); 
       aml_add_string(pack, "NVCAP");
-      aml_add_byte_buffer(pack, NVCAP, sizeof(NVCAP)); 
+      aml_add_byte_buffer(pack, (CHAR8*)&gSettings.NVCAP[0], 20); 
       aml_add_string(pack, "NVPM");
-      aml_add_byte_buffer(pack, NVPM, sizeof(NVPM)); 
+      aml_add_byte_buffer(pack, (CHAR8*)&default_NVPM[0], 28); 
       aml_add_string(pack, "model");
       aml_add_string_buffer(pack, modelname); 
       aml_add_string(pack, "rom-revision");
       aml_add_string_buffer(pack, "pcj auto patch DSDT ver1.0");
       aml_add_string(pack, "hda-gfx");
       aml_add_string_buffer(pack, "onboard-1"); 
-      vedioram = nv_mem_detect(&Displaydevice[1]); 
+      VideoRam = nv_mem_detect(&Displaydevice[1]); 
       aml_add_string(pack, "VRAM,totalsize");
-      aml_add_dword(pack, (UINT32)vedioram); 
+      aml_add_dword(pack, (UINT32)VideoRam); 
       aml_add_string(pack, "device-id");
       aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[1], 4);
       if (!Display2PCIE)
@@ -2616,7 +2616,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
     {
       AML_CHUNK* pack;
       UINT8 ports;
-      UINT64 vedioram;
+      UINT64 VideoRam;
       CHAR8 *cardver;
       CHAR8 *cfgname;
       CHAR8 *modelname = ati_name(DisplayID[1], DisplaySubID[1]);
@@ -2672,9 +2672,9 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
       aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[1], 4); 
       aml_add_string(pack, "hda-gfx");
       aml_add_string_buffer(pack, "onboard-1");
-      vedioram = ATI_vram_size(&Displaydevice[1]); 
+      VideoRam = ATI_vram_size(&Displaydevice[1]); 
       aml_add_string(pack, "VRAM,totalsize");
-      aml_add_dword(pack, (UINT32)vedioram); 
+      aml_add_dword(pack, (UINT32)VideoRam); 
       if (!Display1PCIE)
       {
         aml_add_string(pack, "IOPCIExpressLinkCapabilities");

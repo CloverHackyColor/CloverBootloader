@@ -3,6 +3,7 @@
  **/
 
 #include "Platform.h"
+#include "nvidia.h"
 
 /* Machine Default Data */
 
@@ -350,6 +351,7 @@ VOID GetDefaultSettings(VOID)
   gSettings.PointerSpeed = 2;
   gSettings.DoubleClickTime = 500;
   gSettings.PointerMirror = FALSE;
+  CopyMem(gSettings.NVCAP, default_NVCAP, 20);
 /*  
   t0 = AsmReadTsc();
   gBS->Stall(100000); //100ms

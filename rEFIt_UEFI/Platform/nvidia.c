@@ -78,7 +78,7 @@ const CHAR8 *nvidia_name_0[]			=	{ "@0,name",		"NVDA,Display-A" };
 const CHAR8 *nvidia_name_1[]			=	{ "@1,name",		"NVDA,Display-B" };
 const CHAR8 *nvidia_slot_name[]		=	{ "AAPL,slot-name", "Slot-1"		 };
 
-static UINT8 default_NVCAP[]= {
+UINT8 default_NVCAP[]= {
 	0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x00,
 	0x0C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x07,
 	0x00, 0x00, 0x00, 0x00
@@ -86,13 +86,13 @@ static UINT8 default_NVCAP[]= {
 
 #define NVCAP_LEN ( sizeof(default_NVCAP) / sizeof(UINT8) )
 
-static UINT8 default_dcfg_0[]= {0x03, 0x01, 0x03, 0x00};
-static UINT8 default_dcfg_1[]= {0xff, 0xff, 0x00, 0x01};
+UINT8 default_dcfg_0[]= {0x03, 0x01, 0x03, 0x00};
+UINT8 default_dcfg_1[]= {0xff, 0xff, 0x00, 0x01};
 
 #define DCFG0_LEN ( sizeof(default_dcfg_0) / sizeof(UINT8) )
 #define DCFG1_LEN ( sizeof(default_dcfg_1) / sizeof(UINT8) )
 
-static UINT8 default_NVPM[]= {
+UINT8 default_NVPM[]= {
 	0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -3575,23 +3575,25 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 		devprop_add_value(device, "@0,built-in", &built_in, 1);
 	}
 
-
 	//AsciiSPrint(biosVersion, 32, "%a", version_str);
 	//AsciiSPrint(kNVCAP, 12, "NVCAP_%04x", nvda_dev->device_id);
 
-
-//#ifdef DEBUG_NVCAP
-	DBG("NVCAP: %02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x\n",
-	default_NVCAP[0], default_NVCAP[1], default_NVCAP[2], default_NVCAP[3],
-	default_NVCAP[4], default_NVCAP[5], default_NVCAP[6], default_NVCAP[7],
-	default_NVCAP[8], default_NVCAP[9], default_NVCAP[10], default_NVCAP[11],
-	default_NVCAP[12], default_NVCAP[13], default_NVCAP[14], default_NVCAP[15],
-	default_NVCAP[16], default_NVCAP[17], default_NVCAP[18], default_NVCAP[19]);
-//#endif
 	if ((gSettings.NVCAP[0] != 0)) {
 		devprop_add_value(device, "NVCAP", &gSettings.NVCAP[0], NVCAP_LEN);
+    DBG("default_NVCAP: %02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x\n",
+        gSettings.NVCAP[0], gSettings.NVCAP[1], gSettings.NVCAP[2], gSettings.NVCAP[3],
+        gSettings.NVCAP[4], gSettings.NVCAP[5], gSettings.NVCAP[6], gSettings.NVCAP[7],
+        gSettings.NVCAP[8], gSettings.NVCAP[9], gSettings.NVCAP[10], gSettings.NVCAP[11],
+        gSettings.NVCAP[12], gSettings.NVCAP[13], gSettings.NVCAP[14], gSettings.NVCAP[15],
+        gSettings.NVCAP[16], gSettings.NVCAP[17], gSettings.NVCAP[18], gSettings.NVCAP[19]);    
 	} else {
 		devprop_add_value(device, "NVCAP", default_NVCAP, NVCAP_LEN);
+    DBG("default_NVCAP: %02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x-%02x%02x%02x%02x\n",
+        default_NVCAP[0], default_NVCAP[1], default_NVCAP[2], default_NVCAP[3],
+        default_NVCAP[4], default_NVCAP[5], default_NVCAP[6], default_NVCAP[7],
+        default_NVCAP[8], default_NVCAP[9], default_NVCAP[10], default_NVCAP[11],
+        default_NVCAP[12], default_NVCAP[13], default_NVCAP[14], default_NVCAP[15],
+        default_NVCAP[16], default_NVCAP[17], default_NVCAP[18], default_NVCAP[19]);    
 	}
 	devprop_add_value(device, "NVPM", default_NVPM, NVPM_LEN);
 	if ((gSettings.VRAM != 0)) {

@@ -277,8 +277,7 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 		 */
     
 		int i = 0;
-		while (i < 512)
-		{ // we don't need to look through the whole bios, just the first 512 bytes
+		while (i < 512) { // we don't need to look through the whole bios, just the first 512 bytes
 			if ((	map->bios_ptr[i]   == 'N') 
           && (map->bios_ptr[i+1] == 'V') 
           && (map->bios_ptr[i+2] == 'I') 

@@ -153,4 +153,9 @@ struct bios {
 #define CHIPSET_C512     0x03D0
 #define CHIPSET_G73_BRIDGED 0x02E0
 
+extern UINT8 default_NVCAP[];
+extern UINT8 default_NVPM[];
+extern UINT8 default_dcfg_0[];
+extern UINT8 default_dcfg_1[];
+
 #endif /* !__LIBSAIO_NVIDIA_H */
