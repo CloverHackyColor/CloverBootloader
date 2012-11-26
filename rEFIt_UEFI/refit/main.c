@@ -1855,11 +1855,8 @@ UINT8* getCurrentEdid (VOID)
 VOID PatchVideoBios(UINT8 *Edid)
 {
   
-  if (gSettings.PatchVBiosBytesSize > 0
-      && gSettings.PatchVBiosBytesFind != NULL
-      && gSettings.PatchVBiosBytesReplace != NULL)
-  {
-    VideoBiosPatchBytes(gSettings.PatchVBiosBytesFind, gSettings.PatchVBiosBytesReplace, gSettings.PatchVBiosBytesSize);
+  if (gSettings.PatchVBiosBytesCount > 0 && gSettings.PatchVBiosBytes != NULL) {
+    VideoBiosPatchBytes(gSettings.PatchVBiosBytes, gSettings.PatchVBiosBytesCount);
   }
   
   if (gSettings.PatchVBios) {
@@ -1884,7 +1881,7 @@ static VOID LoadDrivers(VOID)
   ScanDriverDir(L"\\EFI\\drivers32", &DriversToConnect, &DriversToConnectNum);
 #endif
   
-  if ((gSettings.PatchVBiosBytesSize > 0 || gSettings.PatchVBios) && !gDriversFlags.VideoLoaded) {
+  if ((gSettings.PatchVBiosBytesCount > 0 || gSettings.PatchVBios) && !gDriversFlags.VideoLoaded) {
     // we have video bios patch - force video driver reconnect
     DBG("Video bios patch requested - forcing video reconnect\n");
     gDriversFlags.VideoLoaded = TRUE;

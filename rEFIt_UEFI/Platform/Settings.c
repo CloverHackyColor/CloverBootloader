@@ -179,39 +179,66 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
         gSettings.PatchVBios = TRUE;
     }
     
-    gSettings.PatchVBiosBytesSize = 0;
+    gSettings.PatchVBiosBytesCount = 0;
     dict2 = GetProperty(dictPointer,"PatchVBiosBytes");
     if (dict2) {
+      UINTN     Index = 0;
+      CHAR8     IndexBuf[4];
+      VBIOS_PATCH_BYTES *VBiosPatch;
       UINTN     FindSize = 0;
       UINTN     ReplaceSize = 0;
-      BOOLEAN   Valid = TRUE;
+      BOOLEAN   Valid;
       
-      gSettings.PatchVBiosBytesFind = GetDataSetting(dict2, "Find", &FindSize);
-      gSettings.PatchVBiosBytesReplace = GetDataSetting(dict2, "Replace", &ReplaceSize);
-      if (gSettings.PatchVBiosBytesFind == NULL || FindSize == 0) {
-        Valid = FALSE;
-        DBG("PatchVBiosBytes: missing Find data\n");
-      }
-      if (gSettings.PatchVBiosBytesReplace == NULL || ReplaceSize == 0) {
-        Valid = FALSE;
-        DBG("PatchVBiosBytes: missing Replace data\n");
-      }
-      if (FindSize != ReplaceSize) {
-        Valid = FALSE;
-        DBG("PatchVBiosBytes: Find and Replace data are not the same size\n");
-      }
-      if (Valid) {
-        gSettings.PatchVBiosBytesSize = FindSize;
-      } else {
-        gSettings.PatchVBiosBytesSize = 0;
-        if (gSettings.PatchVBiosBytesFind != NULL) {
-          FreePool(gSettings.PatchVBiosBytesFind);
-          gSettings.PatchVBiosBytesFind = NULL;
+      // alloc space for up to 16 entries
+      gSettings.PatchVBiosBytes = AllocateZeroPool(16 * sizeof(VBIOS_PATCH_BYTES));
+      
+      // get all entries
+      Index = 0;
+      for (Index = 0; Index < 16 + 1; Index++) {
+        AsciiSPrint(IndexBuf, 4, "%d", Index);
+        prop = GetProperty(dict2, IndexBuf);
+        if (prop == NULL) {
+          break;
         }
-        if (gSettings.PatchVBiosBytesReplace != NULL) {
-          FreePool(gSettings.PatchVBiosBytesReplace);
-          gSettings.PatchVBiosBytesReplace = NULL;
+        if (Index >= 16) {
+          DBG("PatchVBiosBytes - too many entries, max is 16\n");
         }
+        Valid = TRUE;
+        // read entry
+        VBiosPatch = &gSettings.PatchVBiosBytes[gSettings.PatchVBiosBytesCount];
+        VBiosPatch->Find = GetDataSetting(prop, "Find", &FindSize);
+        VBiosPatch->Replace = GetDataSetting(prop, "Replace", &ReplaceSize);
+        if (VBiosPatch->Find == NULL || FindSize == 0) {
+          Valid = FALSE;
+          DBG("PatchVBiosBytes[%d]: missing Find data\n", Index);
+        }
+        if (VBiosPatch->Replace == NULL || ReplaceSize == 0) {
+          Valid = FALSE;
+          DBG("PatchVBiosBytes[%d]: missing Replace data\n", Index);
+        }
+        if (FindSize != ReplaceSize) {
+          Valid = FALSE;
+          DBG("PatchVBiosBytes[%d]: Find and Replace data are not the same size\n", Index);
+        }
+        if (Valid) {
+          VBiosPatch->NumberOfBytes = FindSize;
+          // go to next entry
+          gSettings.PatchVBiosBytesCount += 1;
+        } else {
+          // error - release mem
+          if (VBiosPatch->Find != NULL) {
+            FreePool(VBiosPatch->Find);
+            VBiosPatch->Find = NULL;
+          }
+          if (VBiosPatch->Replace != NULL) {
+            FreePool(VBiosPatch->Replace);
+            VBiosPatch->Replace = NULL;
+          }
+        }
+      }
+      if (gSettings.PatchVBiosBytesCount == 0) {
+        FreePool(gSettings.PatchVBiosBytes);
+        gSettings.PatchVBiosBytes = NULL;
       }
     }
     

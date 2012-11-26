@@ -190,43 +190,54 @@ VideoBiosLock (
 
 
 /**
-  Searches video bios for SearchBytes (Size bytes) and replaces them with ReplaceBytes (Size bytes).
- 
-  @param  SearchBytes   Bytes to search for.
-  @param  ReplaceBytes  Bytes that should replace SearchBytes.
-  @param  Size          Number of SearchBytes and ReplaceBytes.
- 
+  Performs mutltiple Search&Replace operations on the video bios memory.
+
+  @param  FindAndReplace      Pointer to array of VBIOS_PATCH_BYTES.
+  @param  FindAndReplaceCount Number of VBIOS_PATCH_BYTES elements in a FindAndReplace array.
+
   @retval EFI_SUCCESS   If no error occured.
   @retval other         In case of error.
- 
-**/
+
+ **/
 EFI_STATUS
 EFIAPI
 VideoBiosPatchBytes (
-  IN  UINT8         *SearchBytes,
-  IN  UINT8         *ReplaceBytes,
-  IN  UINTN         Size
+  IN  VBIOS_PATCH_BYTES   *FindAndReplace,
+  IN  UINTN               FindAndReplaceCount
   )
 {
   EFI_STATUS        Status;
+  UINTN             Index;
   UINTN             NumReplaces;
+  UINTN             NumReplacesTotal;
   
-  DBG ("VideoBiosPatchBytes:\n");
+  if (FindAndReplace == NULL || FindAndReplaceCount == 0) {
+    return EFI_INVALID_PARAMETER;
+  }
+  
+  DBG ("VideoBiosPatchBytes(%d patches):\n", FindAndReplaceCount);
   Status = VideoBiosUnlock ();
   if (EFI_ERROR (Status)) {
     DBG (" = not done.\n");
     return Status;
   }
   
-  NumReplaces = VideoBiosPatchSearchAndReplace (
-                                                (UINT8*)(UINTN)VBIOS_START,
-                                                VBIOS_SIZE,
-                                                SearchBytes,
-                                                Size,
-                                                ReplaceBytes,
-                                                -1
-                                                );
-  DBG (" patched %d time(s)\n", NumReplaces);
+  NumReplaces = 0;
+  NumReplacesTotal = 0;
+  for (Index = 0; Index < FindAndReplaceCount; Index++) {
+    NumReplaces = VideoBiosPatchSearchAndReplace (
+                                                  (UINT8*)(UINTN)VBIOS_START,
+                                                  VBIOS_SIZE,
+                                                  FindAndReplace[Index].Find,
+                                                  FindAndReplace[Index].NumberOfBytes,
+                                                  FindAndReplace[Index].Replace,
+                                                  -1
+                                                  );
+    NumReplacesTotal += NumReplaces;
+    DBG (" patch %d: patched %d time(s)\n", Index, NumReplaces);
+  }
+  
+  DBG (" patched %d time(s)\n", NumReplacesTotal);
   
   VideoBiosLock ();
   

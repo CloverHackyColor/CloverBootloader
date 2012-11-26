@@ -166,10 +166,13 @@
 		<string>03010300FFFF0001</string>
 		<key>PatchVBiosBytes</key>
 		<dict>
-			<key>Find</key>
-			<data>gAeoAqAF</data>
-			<key>Replace</key>
-			<data>gAeoAjgE</data>
+			<key>0</key>
+			<dict>
+				<key>Find</key>
+				<data>gAeoAqAF</data>
+				<key>Replace</key>
+				<data>gAeoAjgE</data>
+			</dict>
 		</dict>
 	</dict>
 	<key>PCI</key>

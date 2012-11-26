@@ -8,6 +8,16 @@
 
 
 /**
+  Set of Search & replace bytes for VideoBiosPatchBytes().
+**/
+typedef struct _VBIOS_PATCH_BYTES {
+  VOID    *Find;
+  VOID    *Replace;
+  UINTN   NumberOfBytes;
+} VBIOS_PATCH_BYTES;
+
+
+/**
   Unlocks video bios area for writing.
  
   @retval EFI_SUCCESS   If area is unlocked.
@@ -36,11 +46,10 @@ VideoBiosLock (
 
 
 /**
-  Searches video bios for SearchBytes (Size bytes) and replaces them with ReplaceBytes (Size bytes).
+  Performs mutltiple Find&Replace operations on the video bios memory.
  
-  @param  SearchBytes   Bytes to search for.
-  @param  ReplaceBytes  Bytes that should replace SearchBytes.
-  @param  Size          Number of SearchBytes and ReplaceBytes.
+  @param  FindAndReplace      Pointer to array of VBIOS_PATCH_BYTES.
+  @param  FindAndReplaceCount Number of VBIOS_PATCH_BYTES elements in a FindAndReplace array.
  
   @retval EFI_SUCCESS   If no error occured.
   @retval other         In case of error.
@@ -49,9 +58,8 @@ VideoBiosLock (
 EFI_STATUS
 EFIAPI
 VideoBiosPatchBytes (
-  IN  UINT8         *SearchBytes,
-  IN  UINT8         *ReplaceBytes,
-  IN  UINTN         Size
+  IN  VBIOS_PATCH_BYTES   *FindAndReplace,
+  IN  UINTN               FindAndReplaceCount
   );
 
 

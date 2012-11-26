@@ -643,9 +643,8 @@ typedef struct {
   BOOLEAN GraphicsInjector;
   BOOLEAN LoadVBios;
   BOOLEAN PatchVBios;
-  UINT8   *PatchVBiosBytesFind;
-  UINT8   *PatchVBiosBytesReplace;
-  UINTN   PatchVBiosBytesSize;
+  VBIOS_PATCH_BYTES   *PatchVBiosBytes;
+  UINTN   PatchVBiosBytesCount;
   BOOLEAN InjectEDID;
   UINT8   *CustomEDID;
   CHAR16  FBName[16];
