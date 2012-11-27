@@ -61,26 +61,29 @@ typedef struct pci_dt_t {
 	struct pci_dt_t			*children;
 	struct pci_dt_t			*next;
 } pci_dt_t;
+
+#pragma pack(1)
 /* Option ROM header */
 typedef struct {
 	UINT16		signature;		// 0xAA55
-	UINT16			rom_size;
-	UINT32		entry_point;
+	UINT8			rom_size;  //in 512 bytes blocks
+  UINT8     revision;  //0xE9 for ATI and Intel, 0xEB for NVidia
+	UINT32		entry_point;  //???
 	UINT8			reserved[16];
-	UINT16		pci_header_offset;
+	UINT16		pci_header_offset;  //@0x18
 	UINT16		expansion_header_offset;
 } option_rom_header_t;
 
 /* Option ROM PCI Data Structure */
 typedef struct {
-	UINT32		signature;		// ati - 0x52494350, nvidia - 0x50434952, 'PCIR'
+	UINT32		signature;		// 0x52494350 'PCIR'
 	UINT16		vendor_id;
 	UINT16		device_id;
 	UINT16		vital_product_data_offset;
 	UINT16		structure_length;
 	UINT8			structure_revision;
 	UINT8			class_code[3];
-	UINT16		image_length;
+	UINT16		image_length;  //same as rom_size for NVidia and ATI, 0x80 for Intel 
 	UINT16		image_revision;
 	UINT8			code_type;
 	UINT8			indicator;
@@ -143,6 +146,8 @@ struct DevPropString {
 	UINT16 WHAT3;			// 0x0000     ?
 	DevPropDevice **entries;
 };
+
+#pragma pack()
 
 typedef struct DevPropString  DevPropString;
 

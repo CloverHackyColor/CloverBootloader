@@ -130,6 +130,9 @@
 		122B621E157E815100D06F37 /* loader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = loader.h; sourceTree = "<group>"; };
 		122B6220157E817C00D06F37 /* sse3_5_patcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sse3_5_patcher.h; sourceTree = "<group>"; };
 		122B6221157E817C00D06F37 /* sse3_patcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sse3_patcher.h; sourceTree = "<group>"; };
+		12337E3716648DED009CDC10 /* DebugPort2Table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugPort2Table.h; sourceTree = "<group>"; };
+		12337E3816648DED009CDC10 /* DebugPortTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugPortTable.h; sourceTree = "<group>"; };
+		12337E3916648DFD009CDC10 /* PciCodeId.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PciCodeId.h; sourceTree = "<group>"; };
 		123D85D714D94B1F000AF00B /* rEFIt64.dsc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = rEFIt64.dsc; path = ../rEFIt64.dsc; sourceTree = SOURCE_ROOT; };
 		123D85D814D94B29000AF00B /* refit64.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = refit64.inf; path = ../refit64.inf; sourceTree = SOURCE_ROOT; };
 		125108C31627F4CE0004D9C9 /* BootOptions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BootOptions.c; sourceTree = "<group>"; };
@@ -6375,6 +6378,8 @@
 				12B700A415F9224F00177D35 /* AlertStandardFormatTable.h */,
 				12B700A515F9224F00177D35 /* Atapi.h */,
 				12B700A615F9224F00177D35 /* Bmp.h */,
+				12337E3716648DED009CDC10 /* DebugPort2Table.h */,
+				12337E3816648DED009CDC10 /* DebugPortTable.h */,
 				12B700A715F9224F00177D35 /* ElTorito.h */,
 				12B700A815F9224F00177D35 /* HighPrecisionEventTimerTable.h */,
 				12B700A915F9224F00177D35 /* IScsiBootFirmwareTable.h */,
@@ -6386,6 +6391,7 @@
 				12B700AF15F9224F00177D35 /* Pci22.h */,
 				12B700B015F9224F00177D35 /* Pci23.h */,
 				12B700B115F9224F00177D35 /* Pci30.h */,
+				12337E3916648DFD009CDC10 /* PciCodeId.h */,
 				12B700B215F9224F00177D35 /* PciExpress21.h */,
 				12B700B315F9224F00177D35 /* PeImage.h */,
 				12B700B415F9224F00177D35 /* Sal.h */,

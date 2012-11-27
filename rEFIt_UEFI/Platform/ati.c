@@ -679,7 +679,7 @@ BOOLEAN get_binimage_val(value_t *val)
 		return FALSE;
 	
 	val->type = kPtr;
-	val->size = card->rom_size;
+	val->size = ((UINT32)card->rom_size) << 9;
 	val->data = card->rom;
 	
 	return TRUE;
@@ -932,7 +932,7 @@ BOOLEAN load_vbios_file(UINT16 vendor_id, UINT16 device_id)
 		return FALSE;
 	}
 	
-	card->rom_size = ((option_rom_header_t *)card->rom)->rom_size; // * 512; -- why???
+	card->rom_size = (UINT32)(((option_rom_header_t *)card->rom)->rom_size) << 9;
 	DBG("Calculated ROM len=%d\n", card->rom_size);
 //	close(fd);
   FreePool(buffer);
@@ -989,7 +989,7 @@ BOOLEAN read_vbios(BOOLEAN from_pci)
 		return FALSE;
   }
 	
-	card->rom_size = rom_addr->rom_size; // * 512; -- no! the size alredy in bytes.
+	card->rom_size = (UINT32)(rom_addr->rom_size) << 9;
 	if (!card->rom_size){
     DBG("invalid ROM size =0\n");
 		return FALSE;
