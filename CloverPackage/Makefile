@@ -4,7 +4,7 @@ SYMROOT = $(SRCROOT)/sym
 CLOVERROOT = $(SRCROOT)/CloverV2
 PKG_BUILD_DIR = $(SYMROOT)/package
 IMGROOT = $(SYMROOT)/CloverCD
-IMGSKELROOT = $(SYMROOT)/imgskel
+IMGSKELROOT = $(SRCROOT)/imgskel
 CDBOOT = ${IMGROOT}/usr/standalone/i386/cdboot
 CDBOOT32 = ${IMGROOT}/usr/standalone/i386/cdboot32
 EFIROOT = $(SRCROOT)/CloverV2/EFI
@@ -60,10 +60,11 @@ image:
 	@mkdir -p ${IMGROOT}/EFI/BOOT/themes/				
 	@echo "\t[MKDIR] ${IMGROOT}/usr/bin"
 	@mkdir -p ${IMGROOT}/usr/bin
-	@if [ -e "$(IMGSKELROOT)" ]; then				\
-		@echo "\t[CP] ${IMGROOTSKEL} ${IMGROOT}"		\
-		@cp -R -f "${IMGSKELROOT}"/* "${IMGROOT}";		\
-	fi;	
+#	@if [ -e "$(IMGSKELROOT)" ] \
+#	 then; \				
+#		echo "\t[CP] ${IMGROOTSKEL} ${IMGROOT}"; \
+#		cp -R -f "${IMGSKELROOT}"/* "${IMGROOT}"; \
+#	fi;	
 	@echo "\t[CP] cdboot"						  
 	@cp -f ${SYMROOT}/i386/cdboot ${CDBOOT}
 	@cp -f ${SYMROOT}/i386/cdboot32 ${CDBOOT32}
