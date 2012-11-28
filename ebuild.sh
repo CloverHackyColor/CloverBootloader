@@ -302,9 +302,9 @@ echo Running edk2 build for Clover$Processor
 #rm $WORKSPACE/Clover/Version.h
 echo "#define FIRMWARE_VERSION \"2.31\"" > $WORKSPACE/Clover/Version.h
 echo "#define FIRMWARE_BUILDDATE \"`date \"+%Y-%m-%d %H:%M:%S\"`\"" >> $WORKSPACE/Clover/Version.h
-#echo "#define FIRMWARE_REVISION L\"`svnversion -n | tr -d [:alpha:]`\"" >> $WORKSPACE/Clover/Version.h
 echo "#define FIRMWARE_REVISION L\"`cat Clover/vers.txt`\"" >> $WORKSPACE/Clover/Version.h
 echo "#define REVISION_STR \"Clover revision: `cat Clover/vers.txt`\"" >> $WORKSPACE/Clover/Version.h
+cp $WORKSPACE/Clover/Version.h $WORKSPACE/Clover/CloverPackage/
 
 build -p $WORKSPACE/Clover/Clover$Processor.dsc -a $PROCESSOR -b $VTARGET -t $TARGET_TOOLS -n 3 $*
 

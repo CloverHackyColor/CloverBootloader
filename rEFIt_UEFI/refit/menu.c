@@ -296,11 +296,42 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue; //77
   InputItems[InputItemsCount].BValue   = gSettings.bDropDMAR;
   InputItems[InputItemsCount++].SValue = gSettings.bDropDMAR?L"[+]":L"[ ]"; 
+  InputItems[InputItemsCount].ItemType = ASString;  //78
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.ProductName);
+  InputItems[InputItemsCount].ItemType = ASString;  //79
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.VersionNr);
+  InputItems[InputItemsCount].ItemType = ASString;  //80
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.SerialNr);
+  InputItems[InputItemsCount].ItemType = ASString;  //81
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.BoardNumber);
+  InputItems[InputItemsCount].ItemType = ASString;  //82
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.BoardSerialNumber);
+  InputItems[InputItemsCount].ItemType = Decimal;  //83
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%d", gSettings.BoardType);
+  InputItems[InputItemsCount].ItemType = ASString;  //84
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.BoardVersion);
+  InputItems[InputItemsCount].ItemType = Decimal;  //85
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%d", gSettings.ChassisType);
+  InputItems[InputItemsCount].ItemType = ASString;  //86
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.RomVersion);
+  InputItems[InputItemsCount].ItemType = ASString;  //87
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.ReleaseDate);
   
 }
 
 VOID ApplyInputs(VOID)
 {
+  MACHINE_TYPES Model;
   INTN i = 0;
   UINTN j;
   UINT16 k;
@@ -516,6 +547,53 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gSettings.bDropDMAR = InputItems[i].BValue;
   }
+  i++; //78
+  if (InputItems[i].Valid) {
+    AsciiSPrint(gSettings.ProductName, 64, "%s", InputItems[i].SValue);
+    // let's fill all other fields based on this ProductName
+    // to serve as default
+    Model = GetModelFromString(gSettings.ProductName);
+    if (Model != MaxMachineType) {
+      SetDMISettingsForModel(Model);
+    }  
+  }
+  
+  i++; //79
+  if (InputItems[i].Valid) {
+    AsciiSPrint(gSettings.VersionNr, 64, "%s", InputItems[i].SValue);
+  }
+  i++; //80
+  if (InputItems[i].Valid) {
+    AsciiSPrint(gSettings.SerialNr, 64, "%s", InputItems[i].SValue);
+  }
+  i++; //81
+  if (InputItems[i].Valid) {
+    AsciiSPrint(gSettings.BoardNumber, 64, "%s", InputItems[i].SValue);
+  }
+  i++; //82
+  if (InputItems[i].Valid) {
+    AsciiSPrint(gSettings.BoardSerialNumber, 64, "%s", InputItems[i].SValue);
+  }  
+  i++; //83
+  if (InputItems[i].Valid) {
+    gSettings.BoardType = (UINT8)(StrDecimalToUintn(InputItems[i].SValue) & 0x0F);
+  }    
+  i++; //84
+  if (InputItems[i].Valid) {
+    AsciiSPrint(gSettings.BoardVersion, 64, "%s", InputItems[i].SValue);
+  }  
+  i++; //85
+  if (InputItems[i].Valid) {
+    gSettings.ChassisType = (UINT8)(StrDecimalToUintn(InputItems[i].SValue) & 0x0F);
+  }    
+  i++; //86
+  if (InputItems[i].Valid) {
+    AsciiSPrint(gSettings.RomVersion, 64, "%s", InputItems[i].SValue);
+  }  
+  i++; //87
+  if (InputItems[i].Valid) {
+    AsciiSPrint(gSettings.ReleaseDate, 64, "%s", InputItems[i].SValue);
+  }  
   
   
   SaveSettings(); 
@@ -2074,6 +2152,134 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   return Entry;
 } 
 
+REFIT_MENU_ENTRY  *SubMenuSmbios()
+{
+  REFIT_MENU_ENTRY   *Entry; 
+  REFIT_MENU_SCREEN  *SubScreen;
+  REFIT_INPUT_DIALOG *InputBootArgs;
+  CHAR16*           Flags;
+  Flags = AllocateZeroPool(255);
+    
+  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
+  Entry->Title = PoolPrint(L"SMBIOS ->");
+  Entry->Image =  OptionMenu.TitleImage;
+  Entry->Tag = TAG_OPTIONS;
+  Entry->AtClick = ActionEnter;
+  // create the submenu
+  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+  SubScreen->Title = Entry->Title;
+  SubScreen->TitleImage = Entry->Image;
+  SubScreen->ID = SCREEN_SMBIOS;
+  SubScreen->AnimeRun = GetAnime(SubScreen);
+  AddMenuInfoLine(SubScreen, PoolPrint(L"%a", gCPUStructure.BrandString));
+  AddMenuInfoLine(SubScreen, PoolPrint(L"%a", gSettings.OEMProduct));
+  AddMenuInfoLine(SubScreen, PoolPrint(L"with board %a", gSettings.OEMBoard));
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  UnicodeSPrint(Flags, 255, L"Product name:");
+  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[78].SValue);
+  InputBootArgs->Item = &InputItems[78];    
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  UnicodeSPrint(Flags, 255, L"Product version:");
+  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[79].SValue);
+  InputBootArgs->Item = &InputItems[79];    
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  UnicodeSPrint(Flags, 255, L"Product sn:");
+  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[80].SValue);
+  InputBootArgs->Item = &InputItems[80];    
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  UnicodeSPrint(Flags, 255, L"Board ID:");
+  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[81].SValue);
+  InputBootArgs->Item = &InputItems[81];    
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  UnicodeSPrint(Flags, 255, L"Board sn:");
+  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[82].SValue);
+  InputBootArgs->Item = &InputItems[82];    
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  UnicodeSPrint(Flags, 255, L"Board type:");
+  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[83].SValue);
+  InputBootArgs->Item = &InputItems[83];    
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  UnicodeSPrint(Flags, 255, L"Board version:");
+  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[84].SValue);
+  InputBootArgs->Item = &InputItems[84];    
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  UnicodeSPrint(Flags, 255, L"Chassis type:");
+  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[85].SValue);
+  InputBootArgs->Item = &InputItems[85];    
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  UnicodeSPrint(Flags, 255, L"ROM version:");
+  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[86].SValue);
+  InputBootArgs->Item = &InputItems[86];    
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  UnicodeSPrint(Flags, 255, L"ROM release date:");
+  InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[87].SValue);
+  InputBootArgs->Item = &InputItems[87];    
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+    
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  Entry->SubScreen = SubScreen;                
+  return Entry;  
+}
+
 REFIT_MENU_ENTRY  *SubMenuDsdtFix()
 {
   REFIT_MENU_ENTRY   *Entry; //, *SubEntry;
@@ -2109,7 +2315,7 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   InputBootArgs->Item = &InputItems[1];    //1
   InputBootArgs->Entry.AtClick = ActionSelect;
   InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-  AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
   
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"Add DTGP    :");
@@ -2481,6 +2687,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     
     DFIndex = OptionMenu.EntryCount;
     AddMenuEntry(&OptionMenu, SubMenuDsdtFix());
+    AddMenuEntry(&OptionMenu, SubMenuSmbios());
     AddMenuEntry(&OptionMenu, SubMenuSpeedStep());
     AddMenuEntry(&OptionMenu, SubMenuGraphics());
     AddMenuEntry(&OptionMenu, SubMenuBinaries());

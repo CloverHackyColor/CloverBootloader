@@ -2016,6 +2016,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   // disable EFI watchdog timer
   gBS->SetWatchdogTimer(0x0000, 0x0000, 0x0000, NULL);
+  ZeroMem((VOID*)&gSettings, sizeof(SETTINGS_DATA));
   
   InitAnime();
   InitializeUnicodeCollationProtocol();
@@ -2095,7 +2096,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
   
 //        DBG("reinit OK\n");
-  ZeroMem((VOID*)&gSettings, sizeof(SETTINGS_DATA));
+//  ZeroMem((VOID*)&gSettings, sizeof(SETTINGS_DATA));
   ZeroMem((VOID*)&gGraphics[0], sizeof(GFX_PROPERTIES) * 4);
   
   

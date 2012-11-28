@@ -326,6 +326,8 @@ radeon_card_info_t radeon_cards[] = {
   //0x68981002 0x68991002 0x68E01002 0x68E11002 0x68D81002 0x68C01002 0x68C11002
   //0x68D91002 0x68B81002 0x68B01002 0x68B11002 0x68A01002 0x68A11002 
   //Hoolock, Langur, Orangutan, Zonalis  
+  
+  
 	{ 0x688D,	0x00000000, CHIP_FAMILY_CYPRESS,	"AMD FireStream 9350",			  	kZonalis	},
 	
 	{ 0x6898,	0x00000000, CHIP_FAMILY_CYPRESS,	"ATI Radeon HD 5870 Series",		kUakari   },
@@ -396,9 +398,25 @@ radeon_card_info_t radeon_cards[] = {
   { 0x6778,	0x00000000, CHIP_FAMILY_CAICOS,		"AMD Radeon HD 7000 Series",		kBulrushes	},
 	{ 0x6779,	0x00000000, CHIP_FAMILY_CAICOS,		"AMD Radeon HD 6450 Series",		kBulrushes	},
   { 0x677B,	0x00000000, CHIP_FAMILY_CAICOS,		"AMD Radeon HD 7400 Series",		kBulrushes	},
-  
+//Tahiti  
+  { 0x6780,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7900 Series",		kBulrushes	},
+  { 0x6790,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7900 Series",		kBulrushes	},
   { 0x6798,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7900 Series",		kBulrushes	},
-	
+  { 0x679A,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7900 Series",		kBulrushes	},
+	{ 0x6800,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7600 Series",		kBulrushes	},
+	{ 0x6806,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7600 Series",		kBulrushes	},
+	{ 0x6808,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7600 Series",		kBulrushes	},
+	{ 0x6818,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7600 Series",		kBulrushes	},
+	{ 0x6820,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7800 Series",		kBulrushes	},
+	{ 0x6821,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7800 Series",		kBulrushes	},
+	{ 0x6825,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7800 Series",		kBulrushes	},
+	{ 0x6827,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7800 Series",		kBulrushes	},
+	{ 0x682D,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7800 Series",		kBulrushes	},
+	{ 0x682F,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7800 Series",		kBulrushes	},
+	{ 0x6839,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7700 Series",		kBulrushes	},
+	{ 0x683B,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7700 Series",		kBulrushes	},
+	{ 0x683D,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7770 Series",		kBulrushes	},
+	{ 0x683F,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7700 Series",		kBulrushes	},
 	{ 0x0000,	0x00000000, CHIP_FAMILY_UNKNOW,		NULL,								kNull		}
 };
 

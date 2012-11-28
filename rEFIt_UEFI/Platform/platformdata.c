@@ -55,7 +55,7 @@ CHAR8* AppleBoardID[] = //Lion DR1 compatible
   "Mac-6F01561E16C75D06",  //MBP92 - i5-3210M IvyBridge HD4000
 	"Mac-942452F5819B1C1B",  //MBA31
   "Mac-2E6FAB96566FE58C",  //MBA52 - i5-3427U IVY BRIDGE IntelHD4000 did=166
-	"Mac-F4208EAA",  //MM21 - merom GMA950 07/07
+	"Mac-F4208EAA",          //MM21 - merom GMA950 07/07
   "Mac-8ED6AF5B48C039E1",  //MM51 - Sandy + Intel 30000
 	"Mac-F227BEC8",  //IM81 - merom 01/09
 	"Mac-F2268CC8",  //IM101 - wolfdale? E7600 01/
@@ -318,14 +318,10 @@ MACHINE_TYPES GetModelFromString(CHAR8 *ProductName)
 VOID GetDefaultSettings(VOID)
 {
   MACHINE_TYPES   Model;
-//  UINT64 t0, t1;
- // UINT64 msr = 0;
   
   gLanguage         = english;
   Model             = GetDefaultModel();
   gSettings.CpuType	= GetAdvancedCpuType();
-//  gSettings.BusSpeed = DivU64x32(gCPUStructure.FSBFrequency, kilo); //Hz -> kHz
-//  gSettings.CpuFreqMHz = DivU64x32(gCPUStructure.CPUFrequency, Mega); //Hz ->MHz
   
   SetDMISettingsForModel(Model);
  
@@ -339,25 +335,23 @@ VOID GetDefaultSettings(VOID)
                                   ((gGraphics[0].DeviceID & 0xF000) == 0x6000)) ||
                                  ((gGraphics[0].Vendor == Nvidia) &&
                                   (gGraphics[0].DeviceID > 0x1080)));
-  gSettings.CustomEDID = NULL;
+//  gSettings.CustomEDID = NULL; //no sense to assign 0 as the structure is zeroed
   gSettings.DualLink = 1;
   gSettings.HDAInjection = TRUE;
-  gSettings.HDALayoutId = 0;
+//  gSettings.HDALayoutId = 0;
   gSettings.USBInjection = TRUE; // enabled by default to have the same behavior as before
-//  gSettings.Mobile = gMobile;  //default
-//  gSettings.ChassisType = 0;
   StrCpy(gSettings.DsdtName, L"DSDT.aml");
   gSettings.BacklightLevel = 0xFFFF; //0x0503; -- the value from MBA52
   gSettings.PointerSpeed = 2;
   gSettings.DoubleClickTime = 500;
   gSettings.PointerMirror = FALSE;
-  CopyMem(gSettings.NVCAP, default_NVCAP, 20);
-/*  
-  t0 = AsmReadTsc();
-  gBS->Stall(100000); //100ms
-  t1 = AsmReadTsc();
-  gCPUStructure.TSCCalibr = MultU64x32((t1 - t0), 10); //ticks for 1second
-*/
+  if (gGraphics[0].Vendor == Nvidia) {
+    CopyMem(gSettings.NVCAP, default_NVCAP, 20);
+  } 
+/*  else {
+    ZeroMem(gSettings.NVCAP,20);
+  } */
+
   gSettings.EnableISS = FALSE; //((gCPUStructure.CPUID[CPUID_1][ECX] & (1<<7)) != 0);
   gSettings.Turbo = gCPUStructure.Turbo;
 //  msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
