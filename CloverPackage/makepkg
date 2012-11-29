@@ -78,10 +78,10 @@ rm -rf CloverV2/EFI/doc/config.plist-FullSample
 
 # Workspace = edk2/Clover/CloverPackage
 # Open the final folder.
-
-ls -la sym
-open sym
-
+if [ "$1" == "" ]; then
+	ls -la sym
+	open sym
+fi
 # Finish building installer.
 
 exit 0
