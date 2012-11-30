@@ -61,7 +61,7 @@ image:
 	@echo "\t[MKDIR] ${IMGROOT}/usr/bin"
 	@mkdir -p ${IMGROOT}/usr/bin
 	@if [ -e "$(IMGSKELROOT)"/* ];then \
-		echo "\t[CP] ${IMGSKELROOT} ${IMGROOT}"; \
+		echo "\t[CP] ${IMGROOTSKEL} ${IMGROOT}"; \
 		cp -R -f "${IMGSKELROOT}"/* "${IMGROOT}"; \
 	fi	
 	@echo "\t[CP] cdboot"						  
