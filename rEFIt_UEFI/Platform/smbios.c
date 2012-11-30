@@ -1164,6 +1164,8 @@ VOID PatchTableType17()
 					case CPU_MODEL_LINCROFT:						
 					case CPU_MODEL_SANDY_BRIDGE:	
 					case CPU_MODEL_IVY_BRIDGE:
+          case CPU_MODEL_ATOM_2000:
+          case CPU_MODEL_HASWELL:
           case CPU_MODEL_IVY_BRIDGE_E5:  
 					case CPU_MODEL_JAKETOWN:
 						

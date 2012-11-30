@@ -184,10 +184,12 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
           case CPU_MODEL_SANDY_BRIDGE:		// Intel Core i3, i5, i7 LGA1155 (32nm)
           case CPU_MODEL_JAKETOWN:	// Intel Xeon E3
           case CPU_MODEL_IVY_BRIDGE:
+          case CPU_MODEL_HASWELL:
           case CPU_MODEL_IVY_BRIDGE_E5:  
 					{
             if ((gCPUStructure.Model == CPU_MODEL_SANDY_BRIDGE) ||
                 (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE) ||
+                (gCPUStructure.Model == CPU_MODEL_HASWELL) ||
                 (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE_E5) ||
                 (gCPUStructure.Model == CPU_MODEL_JAKETOWN))
             {
@@ -221,6 +223,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
                 j = i;
                 if ((gCPUStructure.Model == CPU_MODEL_SANDY_BRIDGE) ||
                     (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE) ||
+                    (gCPUStructure.Model == CPU_MODEL_HASWELL) ||
                     (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE_E5) ||
                     (gCPUStructure.Model == CPU_MODEL_JAKETOWN))
                 {

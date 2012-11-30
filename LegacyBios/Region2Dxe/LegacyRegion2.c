@@ -599,7 +599,7 @@ DetectChipset (
   mRegisterValues = NULL;
   
   mVendorDeviceId = PciRead32 (PCI_LIB_ADDRESS(PAM_PCI_BUS, PAM_PCI_DEV, PAM_PCI_FUNC, 0));
-  DBG(" Chipset/proc: 0x%08X", mVendorDeviceId);
+  DBG(" Chipset/proc: 0x%08X\n", mVendorDeviceId);
   
   switch (mVendorDeviceId) {
     
@@ -610,7 +610,7 @@ DetectChipset (
     //
     case 0x35758086: // 830
     case 0x35808086: // 855GM
-      DBG(" Intel 830 and similar (PAM 0x59-0x5f)");
+      DBG(" Intel 830 and similar (PAM 0x59-0x5f)\n");
       mRegisterValues = mRegisterValues830;
       break;
       
@@ -646,7 +646,7 @@ DetectChipset (
     case 0x2e408086: // B43 Base
     case 0x2e908086: // B43 Soft Sku
     case 0x81008086: // 500
-      DBG(" Intel Series 4 and similar (PAM 0x90-0x96)");
+      DBG(" Intel Series 4 and similar (PAM 0x90-0x96)\n");
       mRegisterValues = mRegisterValuesS4;
       break;
           
@@ -667,7 +667,7 @@ DetectChipset (
     case 0x01608086: // 3rd Generation Core Processor Family DRAM Controller
     case 0x01648086: // 3rd Generation Core Processor Family DRAM Controller
   
-      DBG(" 3rd Generation Core processors (PAM 0x80-0x86)");
+      DBG(" 3rd Generation Core processors (PAM 0x80-0x86)\n");
       mRegisterValues = mRegisterValuesCP;
       break;
 
@@ -687,7 +687,7 @@ DetectChipset (
     case 0x34058086: //X58 Core-i Processor DRAM Controller   
     case 0x34068086: // Core-i Processor DRAM Controller   
     case 0x34078086: // Core-i Processor DRAM Controller   
-      DBG(" Core i7 processors (PAM 0x40-0x47)");
+      DBG(" Core i7 processors (PAM 0x40-0x47)\n");
       mRegisterValues = mRegisterValuesNH;
       mPamPciBus = 0xFF;
       for (mPamPciBus = 0xFF; mPamPciBus > 0x1F; mPamPciBus >>= 1) {
@@ -710,7 +710,7 @@ DetectChipset (
 
     case 0x3C008086: // Xeon E5 Processor 
       //DID = 3CF4 Check?
-      DBG(" Xeon E5 processors (PAM 0x40-0x47)");
+      DBG(" Xeon E5 processors (PAM 0x40-0x47)\n");
       mRegisterValues = mRegisterValuesNH;
       mPamPciBus = PciRead8 (PCI_LIB_ADDRESS(0, 5, 0, 0x109));
       mPamPciDev = 12;
@@ -719,7 +719,7 @@ DetectChipset (
 
       
     default:
-      DBG(" Unknown chipset");
+      DBG(" Unknown chipset\n");
       break;
   }
   
