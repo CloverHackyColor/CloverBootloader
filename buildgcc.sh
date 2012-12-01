@@ -20,7 +20,7 @@
 # GCC chainload source version 
 # here we can change source versions of tools
 #
-export BINUTILS_VERSION=binutils-2.22
+export BINUTILS_VERSION=binutils-2.23.1
 export GCC_VERSION=4.7.2
 export GMP_VERSION=gmp-5.0.5
 export MPFR_VERSION=mpfr-3.1.1

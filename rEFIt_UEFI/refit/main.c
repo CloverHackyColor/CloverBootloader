@@ -93,7 +93,7 @@ static VOID AboutRefit(VOID)
 //  CHAR8* Revision = NULL;
     if (AboutMenu.EntryCount == 0) {
         AboutMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
-        AddMenuInfoLine(&AboutMenu, L"rEFIt Version 2.08 UEFI by Slice");
+        AddMenuInfoLine(&AboutMenu, L"rEFIt Version 2.09 UEFI by Slice");
 #ifdef FIRMWARE_BUILDDATE
         AddMenuInfoLine(&AboutMenu, PoolPrint(L" Build: %a", FIRMWARE_BUILDDATE));
 #else
@@ -124,6 +124,9 @@ static VOID AboutRefit(VOID)
         AddMenuInfoLine(&AboutMenu, PoolPrint(L" Screen Output: %s", egScreenDescription()));
       AboutMenu.AnimeRun = GetAnime(&AboutMenu);
         AddMenuEntry(&AboutMenu, &MenuEntryReturn);
+    }  else {
+      FreePool(AboutMenu.InfoLines[AboutMenu.InfoLineCount-1]);
+      AboutMenu.InfoLines[AboutMenu.InfoLineCount-1]=PoolPrint(L" Screen Output: %s", egScreenDescription());
     }
     
     RunMenu(&AboutMenu, NULL);
