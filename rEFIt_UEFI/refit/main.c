@@ -1907,6 +1907,10 @@ static VOID LoadDrivers(VOID)
       FreePool(Edid);
     }
     BdsLibConnectAllDriversToAllControllers();
+    
+    // Boot speedup: remove temporary "BiosVideoBlockSwitchMode" RT var
+    // to unlock mode switching in CsmVideo
+    gRT->SetVariable(L"BiosVideoBlockSwitchMode", &gEfiGlobalVariableGuid, EFI_VARIABLE_BOOTSERVICE_ACCESS, 0, NULL);
   }
 }
 

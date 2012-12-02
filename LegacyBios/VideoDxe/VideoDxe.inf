@@ -54,6 +54,7 @@
   DevicePathLib
   UefiLib
   UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
   UefiDriverEntryPoint
   BaseMemoryLib
   ReportStatusCodeLib
@@ -68,6 +69,7 @@
 [Guids]
   gEfiLegacyBiosGuid                            # ALWAYS_PRODUCED
   gEfiEventExitBootServicesGuid
+  gEfiGlobalVariableGuid
 
 [Protocols]
   gEfiVgaMiniPortProtocolGuid                   # PROTOCOL BY_START

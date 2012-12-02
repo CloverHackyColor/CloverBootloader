@@ -491,6 +491,16 @@ Done:
            Controller
            );
   }
+  
+  //
+  // Boot speedup: set temporary "BiosVideoBlockSwitchMode" RT var
+  // to block mode switching from Console driver.
+  // "BiosVideoBlockSwitchMode" must be deleted from Clover
+  // to enable mode swithing again
+  if (Status == EFI_SUCCESS) {
+    gRT->SetVariable(L"BiosVideoBlockSwitchMode", &gEfiGlobalVariableGuid, EFI_VARIABLE_BOOTSERVICE_ACCESS, 1, &Status);
+  }
+  
   DBG("CsmVideoDriverBindingStart end %r\n", Status);
   return Status;
 }
@@ -2253,7 +2263,8 @@ BiosVideoGraphicsOutputSetMode (
   EFI_STATUS              Status;
   BIOS_VIDEO_DEV          *BiosVideoPrivate;
   BIOS_VIDEO_MODE_DATA    *ModeData;
-  EFI_GRAPHICS_OUTPUT_BLT_PIXEL Background;
+  //EFI_GRAPHICS_OUTPUT_BLT_PIXEL Background;
+  UINTN                   DataSize;
 
   if (This == NULL) {
     return EFI_INVALID_PARAMETER;
@@ -2262,16 +2273,30 @@ BiosVideoGraphicsOutputSetMode (
   BiosVideoPrivate = BIOS_VIDEO_DEV_FROM_GRAPHICS_OUTPUT_THIS (This);
 
   ModeData = &BiosVideoPrivate->ModeData[ModeNumber];
-    DBG("New mode: %d %dx%d\n", ModeNumber, ModeData->HorizontalResolution, ModeData->VerticalResolution);
+  DBG("New mode: %d %dx%d\n", ModeNumber, ModeData->HorizontalResolution, ModeData->VerticalResolution);
 
   if (ModeNumber >= This->Mode->MaxMode) {
     return EFI_UNSUPPORTED;
+  }
+  
+  //
+  // Boot speedup: Check if RT var "BiosVideoBlockSwitchMode" is set.
+  // If yes, then do not swicth mode.
+  //
+  DataSize = 0;
+  Status = gRT->GetVariable (L"BiosVideoBlockSwitchMode", &gEfiGlobalVariableGuid, NULL, &DataSize, NULL);
+  //DBG("BiosVideoGraphicsOutputSetMode: GetVariable BiosVideoBlockSwitchMode: %r\n", Status);
+  if (Status == EFI_BUFFER_TOO_SMALL) {
+    // var exists - just exit
+    DBG(" blocking that switch\n");
+    return EFI_SUCCESS;
   }
   
   if (ModeNumber == This->Mode->Mode) {
     //
     // Clear screen to black
     //    
+    /*
     ZeroMem (&Background, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
     BiosVideoGraphicsOutputVbeBlt (
                         This,
@@ -2285,6 +2310,7 @@ BiosVideoGraphicsOutputSetMode (
                         ModeData->VerticalResolution,
                         0
     );
+    */
     return EFI_SUCCESS;
   }
 
