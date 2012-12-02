@@ -200,11 +200,12 @@ EFI_STATUS egSetScreenResolution(IN CHAR16 *WidthHeight)
     HeightP++;
     Width = (UINT32)StrDecimalToUintn(WidthHeight);
     Height = (UINT32)StrDecimalToUintn(HeightP);
-  //already done
-  if ((egScreenWidth == Width) && (egScreenHeight == Height)) {
-    return EFI_SUCCESS;
-  }
-  
+    
+    //already done
+    if ((egScreenWidth == Width) && (egScreenHeight == Height)) {
+        MsgLog(" - already set\n");
+        return EFI_SUCCESS;
+    }
     
     // iterate through modes and set it if found
     MaxMode = GraphicsOutput->Mode->MaxMode;

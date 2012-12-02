@@ -2263,7 +2263,7 @@ BiosVideoGraphicsOutputSetMode (
   EFI_STATUS              Status;
   BIOS_VIDEO_DEV          *BiosVideoPrivate;
   BIOS_VIDEO_MODE_DATA    *ModeData;
-  //EFI_GRAPHICS_OUTPUT_BLT_PIXEL Background;
+  EFI_GRAPHICS_OUTPUT_BLT_PIXEL Background;
   UINTN                   DataSize;
 
   if (This == NULL) {
@@ -2296,7 +2296,6 @@ BiosVideoGraphicsOutputSetMode (
     //
     // Clear screen to black
     //    
-    /*
     ZeroMem (&Background, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
     BiosVideoGraphicsOutputVbeBlt (
                         This,
@@ -2310,7 +2309,6 @@ BiosVideoGraphicsOutputSetMode (
                         ModeData->VerticalResolution,
                         0
     );
-    */
     return EFI_SUCCESS;
   }
 
