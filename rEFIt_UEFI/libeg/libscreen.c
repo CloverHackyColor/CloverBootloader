@@ -200,6 +200,11 @@ EFI_STATUS egSetScreenResolution(IN CHAR16 *WidthHeight)
     HeightP++;
     Width = (UINT32)StrDecimalToUintn(WidthHeight);
     Height = (UINT32)StrDecimalToUintn(HeightP);
+  //already done
+  if ((egScreenWidth == Width) && (egScreenHeight == Height)) {
+    return EFI_SUCCESS;
+  }
+  
     
     // iterate through modes and set it if found
     MaxMode = GraphicsOutput->Mode->MaxMode;
@@ -257,7 +262,10 @@ VOID egInitScreen(IN BOOLEAN SetMaxResolution)
         egScreenWidth = GraphicsOutput->Mode->Info->HorizontalResolution;
         egScreenHeight = GraphicsOutput->Mode->Info->VerticalResolution;
         egHasGraphics = TRUE;
-    } else if (UgaDraw != NULL) {
+    } 
+    //is there anybody ever see UGA protocol???
+    else if (UgaDraw != NULL) {
+      MsgLog("you are lucky guy having UGA, inform please projectosx!\n");
         Status = UgaDraw->GetMode(UgaDraw, &Width, &Height, &Depth, &RefreshRate);
         if (EFI_ERROR(Status)) {
             UgaDraw = NULL;   // graphics not available

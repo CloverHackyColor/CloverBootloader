@@ -332,6 +332,10 @@
 		1294B5E9165BF86700183BFD /* VideoDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VideoDxe.inf; sourceTree = "<group>"; };
 		1294B5EB165BF86700183BFD /* InterruptTable.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = InterruptTable.asm; sourceTree = "<group>"; };
 		1294B5EC165BF86700183BFD /* InterruptTable.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = InterruptTable.S; sourceTree = "<group>"; };
+		12A1790F166BCC15005B0D63 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
+		12A17910166BCC15005B0D63 /* SataController.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = SataController.c; sourceTree = "<group>"; };
+		12A17911166BCC15005B0D63 /* SataController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SataController.h; sourceTree = "<group>"; };
+		12A17912166BCC15005B0D63 /* SataControllerDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = SataControllerDxe.inf; sourceTree = "<group>"; };
 		12B816791644675800A433E7 /* build32.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build32.sh; sourceTree = "<group>"; };
 		12B8167A1644675800A433E7 /* build64.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build64.sh; sourceTree = "<group>"; };
 		12B816851644675800A433E7 /* llmul.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = llmul.asm; sourceTree = "<group>"; };
@@ -1307,6 +1311,18 @@
 			path = X64;
 			sourceTree = "<group>";
 		};
+		12A1790E166BCC15005B0D63 /* SataControllerDxe */ = {
+			isa = PBXGroup;
+			children = (
+				12A1790F166BCC15005B0D63 /* ComponentName.c */,
+				12A17910166BCC15005B0D63 /* SataController.c */,
+				12A17911166BCC15005B0D63 /* SataController.h */,
+				12A17912166BCC15005B0D63 /* SataControllerDxe.inf */,
+			);
+			name = SataControllerDxe;
+			path = ../SataControllerDxe;
+			sourceTree = "<group>";
+		};
 		12B8165F1644674A00A433E7 = {
 			isa = PBXGroup;
 			children = (
@@ -1323,6 +1339,7 @@
 				124D77161657A551008B5407 /* OsxAcpiPlatformDxe */,
 				12B816771644675800A433E7 /* rEFIt_UEFI */,
 				123F0978164FA3AF008C1C1C /* VideoDxe */,
+				12A1790E166BCC15005B0D63 /* SataControllerDxe */,
 				12DB2D8616522B2A00A8066D /* CloverX */,
 			);
 			sourceTree = "<group>";

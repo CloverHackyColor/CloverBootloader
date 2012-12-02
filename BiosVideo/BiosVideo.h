@@ -20,6 +20,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 //
 // Driver Consumed Protocol Prototypes
 //
+#include <Guid/GlobalVariable.h>
+
 #include <Protocol/DevicePath.h>
 #include <Protocol/PciIo.h>
 #include <Protocol/DriverBinding.h>
@@ -37,6 +39,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Library/PrintLib.h>
 #include <Library/BaseLib.h>
 #include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiRuntimeServicesTableLib.h>
 #include <Library/BaseMemoryLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Library/DevicePathLib.h>

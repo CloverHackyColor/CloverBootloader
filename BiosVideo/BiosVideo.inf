@@ -33,6 +33,7 @@
   DebugLib
   PrintLib
   UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
   BaseMemoryLib
   MemoryAllocationLib
   UefiDriverEntryPoint
@@ -53,6 +54,11 @@
   gEfiLegacy8259ProtocolGuid
   gEfiEdidDiscoveredProtocolGuid
   gEfiEdidActiveProtocolGuid
+
+ [Guids]
+#   gEfiLegacyBiosGuid                            # ALWAYS_PRODUCED
+#   gEfiEventExitBootServicesGuid
+  gEfiGlobalVariableGuid
 
 [BuildOptions]
 #  XCODE:*_*_*_CC_FLAGS = -Os

@@ -623,7 +623,7 @@ AtaAtapiPassThruSupported (
     return EFI_UNSUPPORTED;
   }
 
-  if (IS_PCI_IDE (&PciData) || IS_PCI_SATADPA (&PciData)) {
+  if (IS_PCI_IDE (&PciData) || IS_PCI_SATADPA (&PciData) || IS_PCI_RAID(&PciData) ) {
     return EFI_SUCCESS;
   }
 
@@ -1206,6 +1206,7 @@ EnumerateAttachedDevice (
 		  } 
 		  break;
 	  case PCI_CLASS_MASS_STORAGE_SATADPA :
+    case PCI_CLASS_MASS_STORAGE_RAID:
       //
       // The ATA controller is working at AHCI mode
       //
