@@ -884,8 +884,9 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
 			
 			NV_MODELINE *mode_timing = (NV_MODELINE *) map->nv_mode_table;
 			DBG("BT_NVDA\n");
+			//must be totally revised on work by pene
+      // http://www.projectosx.com/forum/index.php?showtopic=2304&view=findpost&p=22683
 			
-			/*if (mode.pixel_clock && (mode.h_active == x) && (mode.v_active == y) && !force) {*/
 			if (!getMode(&mode)) {
 				DBG(" mode %d (%dx%d) patched to %dx%d\n",
 					i,

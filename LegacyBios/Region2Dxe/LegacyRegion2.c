@@ -616,7 +616,7 @@ DetectChipset (
 
     case 0x25C08086: // 5000
     case 0x65C08086: // 5100
-      DBG(" Intel 830 and similar (PAM 0x59-0x5f)\n");
+      DBG(" Intel 5000 and similar (PAM 0x59-0x5f)\n");
       mRegisterValues = mRegisterValues830;
       mPamPciDev = 16;
       break;
