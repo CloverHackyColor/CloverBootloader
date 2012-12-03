@@ -1200,12 +1200,12 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         break;
       case SCAN_PAGE_UP:
   //      UpdateScroll(&State, SCROLL_PAGE_UP);
-        while (EFI_ERROR(egSetMode(1))) {}
+        egSetMode(1);
         StyleFunc(Screen, &State, MENU_FUNCTION_INIT, NULL);
         break;
       case SCAN_PAGE_DOWN:
 //        UpdateScroll(&State, SCROLL_PAGE_DOWN);
-        while (EFI_ERROR(egSetMode(-1))) {}
+        egSetMode(-1);
         StyleFunc(Screen, &State, MENU_FUNCTION_INIT, NULL);
         break;
       case SCAN_ESC:

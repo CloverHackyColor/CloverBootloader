@@ -31,8 +31,8 @@ UINT64     DbgTStartTsc = 0;
 // Last debug ticks.
 UINT64     DbgTLastTsc = 0;
 
-// Last debug ticks.
-UINT64     DbgTFreqDivMs = 0;
+// TSC ticks per second.
+UINT64     DbgTscFreqSec = 0;
 
 // Buffer for debug time.
 CHAR8    DbgTTxt[32];
@@ -43,12 +43,11 @@ CHAR8    DbgTTxt[32];
 //
 
 // Inits debug time. Must be called after PrepatchSmbios().
-VOID DbgTimeInit(VOID)
+VOID DbgTimeInit(UINT64 TscTicksPerSecond, UINTN StartTsc)
 {
-	DbgTStartTsc = AsmReadTsc();
-	DbgTLastTsc = DbgTStartTsc;
-	// note: depending on a CurrentSpeed obtained from PrepatchSmbios()
-	DbgTFreqDivMs = MultU64x32(gCPUStructure.CurrentSpeed, kilo);
+	DbgTStartTsc = StartTsc;
+	DbgTLastTsc = StartTsc;
+	DbgTscFreqSec = TscTicksPerSecond;
 }
 
 // Returns debug time as string for print:
@@ -57,21 +56,25 @@ VOID DbgTimeInit(VOID)
 // Returned buffer should not be released.
 CHAR8* DbgTime(VOID)
 {
-	UINT64    dTStart;
-	UINT64    dTLast;
+	UINT64    dTStartSec;
+	UINT64    dTStartMs;
+	UINT64    dTLastSec;
+	UINT64    dTLastMs;
 	UINT64    CurrentTsc;
-   UINT64    start, start2, last, last2;
 	
 	DbgTTxt[0] = '\0';
 	
-	if (DbgTFreqDivMs) {
+	if (DbgTscFreqSec) {
 		CurrentTsc = AsmReadTsc();
-		dTStart = DivU64x64Remainder((CurrentTsc - DbgTStartTsc), DbgTFreqDivMs, 0);
-		dTLast = DivU64x64Remainder((CurrentTsc - DbgTLastTsc), DbgTFreqDivMs, 0);
-      start = DivU64x64Remainder(dTStart, 1000, &start2);
-      last = DivU64x64Remainder(dTLast, 1000, &last2);
+        
+		dTStartMs = DivU64x64Remainder(MultU64x32(CurrentTsc - DbgTStartTsc, 1000), DbgTscFreqSec, NULL);
+		dTStartSec = DivU64x64Remainder(dTStartMs, 1000, &dTStartMs);
+        
+		dTLastMs = DivU64x64Remainder(MultU64x32(CurrentTsc - DbgTLastTsc, 1000), DbgTscFreqSec, NULL);
+		dTLastSec = DivU64x64Remainder(dTLastMs, 1000, &dTLastMs);
+        
 		AsciiSPrint(DbgTTxt, sizeof(DbgTTxt),
-					"%ld:%03ld - %ld:%03ld", start, start2, last, last2);
+					"%ld:%03ld - %ld:%03ld", dTStartSec, dTStartMs, dTLastSec, dTLastMs);
 		DbgTLastTsc = CurrentTsc;
 	}
 	

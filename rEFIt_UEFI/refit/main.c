@@ -1989,13 +1989,19 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   // CHAR16            *InputBuffer; //, *Y;
   //  EFI_INPUT_KEY Key;
   
+  // init debug time
+  t0 = AsmReadTsc();
+  gBS->Stall(100000); //100ms
+  t1 = AsmReadTsc();
+  gCPUStructure.TSCCalibr = MultU64x32((t1 - t0), 10); //ticks for 1second
+  DbgTimeInit(gCPUStructure.TSCCalibr, t0);
+  
   // bootstrap
   //    InitializeLib(ImageHandle, SystemTable);
 	gST				= SystemTable;
 	gImageHandle	= ImageHandle;
 	gBS				= SystemTable->BootServices;
 	gRS				= SystemTable->RuntimeServices;
-  
 	Status = EfiGetSystemConfigurationTable (&gEfiDxeServicesTableGuid, (VOID **) &gDS);
 	
   // firmware detection
@@ -2006,20 +2012,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   InitializeConsoleSim();
 	InitBooterLog();
   DBG(" \nStarting rEFIt rev %s on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
-  //  InitScreen();
-  /*    
-   DBG("Test arithmetics\n");
-   UINT64 X = 123000123;
-   UINT32 Y = 453000;
-   UINT32 Z = DivU64x32(X, Y);
-   DBG("X=%ld Y=%d Z=%d again=%d\n", X, Y, Z, DivU64x32(X, Y));
-   X = MultU64x32(Z, Y);
-   DBG("Z*Y=%ld again=%ld\n", X, MultU64x32(Z, Y));
-   PauseForKey(L"Test complete");
-   */    
   Status = InitRefitLib(gImageHandle);
   if (EFI_ERROR(Status))
     return Status;
+  
+  DBGT("TSC calibration\n");
   
   // disable EFI watchdog timer
   gBS->SetWatchdogTimer(0x0000, 0x0000, 0x0000, NULL);
@@ -2031,9 +2028,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   // read GUI configuration
   ReadConfig(0);
   
-  // init screen and dump video modes to log
-  InitScreen(!gFirmwareClover); // ? FALSE : TRUE);
-  
   ThemePath = PoolPrint(L"EFI\\BOOT\\themes\\%s", GlobalConfig.Theme);
   Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
   // if (EFI_ERROR (Status)) { return Status; }
@@ -2043,8 +2037,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   PrepatchSmbios();
 
-  // init debug time - must be after PrepatchSmbios()
-  DbgTimeInit();
 #ifdef REVISION_STR
   MsgLog(REVISION_STR); 
 #endif
@@ -2082,10 +2074,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   LoadDrivers();
   DBGT("LoadDrivers() end\n");
   
+  // init screen and dump video modes to log
   if (gDriversFlags.VideoLoaded) {
-    // reinit screen and dump video modes to log
     InitScreen(FALSE);
+  } else {
+    InitScreen(!gFirmwareClover); // ? FALSE : TRUE);
   }
+  DBGT("InitScreen\n");
   
   //Now we have to reinit handles
   Status = ReinitSelfLib();
@@ -2110,10 +2105,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   GuiEventsInitialize();
 //  DBG("GuiEventsInitialize OK\n");
-  t0 = AsmReadTsc();
-  gBS->Stall(100000); //100ms
-  t1 = AsmReadTsc();
-  gCPUStructure.TSCCalibr = MultU64x32((t1 - t0), 10); //ticks for 1second
   
   
   GetCPUProperties();

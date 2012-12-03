@@ -2273,9 +2273,10 @@ BiosVideoGraphicsOutputSetMode (
   BiosVideoPrivate = BIOS_VIDEO_DEV_FROM_GRAPHICS_OUTPUT_THIS (This);
 
   ModeData = &BiosVideoPrivate->ModeData[ModeNumber];
-  DBG("New mode: %d %dx%d\n", ModeNumber, ModeData->HorizontalResolution, ModeData->VerticalResolution);
+  DBG("CsmVideo: New mode: %d %dx%d", ModeNumber, ModeData->HorizontalResolution, ModeData->VerticalResolution);
 
   if (ModeNumber >= This->Mode->MaxMode) {
+    DBG("- EFI_UNSUPPORTED\n");
     return EFI_UNSUPPORTED;
   }
   
@@ -2288,7 +2289,7 @@ BiosVideoGraphicsOutputSetMode (
   //DBG("BiosVideoGraphicsOutputSetMode: GetVariable BiosVideoBlockSwitchMode: %r\n", Status);
   if (Status == EFI_BUFFER_TOO_SMALL) {
     // var exists - just exit
-    DBG(" blocking that switch\n");
+    DBG(" - blocking that switch\n");
     return EFI_SUCCESS;
   }
   
@@ -2309,11 +2310,13 @@ BiosVideoGraphicsOutputSetMode (
                         ModeData->VerticalResolution,
                         0
     );
+    DBG(" - already set\n");
     return EFI_SUCCESS;
   }
 
   Status = BiosVideoSetModeWorker (BiosVideoPrivate, ModeData, BiosVideoPrivate->GopDevicePath);
   if (EFI_ERROR (Status)) {
+    DBG(" - %r\n", Status);
     return Status;
   }
 
@@ -2334,6 +2337,7 @@ BiosVideoGraphicsOutputSetMode (
 
   BiosVideoPrivate->HardwareNeedsStarting = FALSE;
 
+  DBG(" - set\n");
   return EFI_SUCCESS;
 }
 

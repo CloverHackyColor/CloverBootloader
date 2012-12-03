@@ -113,7 +113,7 @@
 		122336BA13377E050033F008 /* libegint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = libegint.h; sourceTree = "<group>"; };
 		122336BB13377E050033F008 /* load_bmp.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = load_bmp.c; sourceTree = "<group>"; };
 		122336BC13377E050033F008 /* load_icns.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = load_icns.c; sourceTree = "<group>"; };
-		122336BF13377E050033F008 /* libscreen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = libscreen.c; sourceTree = "<group>"; };
+		122336BF13377E050033F008 /* libscreen.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.c; path = libscreen.c; sourceTree = "<group>"; tabWidth = 4; };
 		122336C013377E050033F008 /* text.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = text.c; sourceTree = "<group>"; };
 		122336C213377E150033F008 /* config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = config.c; sourceTree = "<group>"; };
 		122336C413377E150033F008 /* icns.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = icns.c; sourceTree = "<group>"; };

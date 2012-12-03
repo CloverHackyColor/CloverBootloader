@@ -55,8 +55,6 @@ static BOOLEAN egHasGraphics = FALSE;
 static UINTN egScreenWidth  = 1024;
 static UINTN egScreenHeight = 768;
 
-static INT32  gMode;
-
 
 //
 // Screen handling
@@ -142,34 +140,53 @@ EFI_STATUS egSetMaxResolution()
       BestMode = Mode;
     }
   }
-  MsgLog("found best mode %d: %dx%d\n", BestMode, Width, Height);
-  GraphicsOutput->SetMode(GraphicsOutput, BestMode);
-  gMode = BestMode;
-  egScreenWidth = Width;
-  egScreenHeight = Height;
+  MsgLog("found best mode %d: %dx%d", BestMode, Width, Height);
+  // check if requested mode is equal to current mode
+  if (BestMode == GraphicsOutput->Mode->Mode) {
+    MsgLog(" - already set\n");
+    egScreenWidth = GraphicsOutput->Mode->Info->HorizontalResolution;
+    egScreenHeight = GraphicsOutput->Mode->Info->VerticalResolution;
+    Status = EFI_SUCCESS;
+  } else {
+    Status = GraphicsOutput->SetMode(GraphicsOutput, BestMode);
+    if (Status == EFI_SUCCESS) {
+      egScreenWidth = Width;
+      egScreenHeight = Height;
+      MsgLog(" - set\n", Status);
+    } else {
+      // we can not set BestMode - search for firts one that we can
+      MsgLog(" - %r\n", Status);
+      Status = egSetMode(1);
+    }
+  }
+
   return Status;
 }
 
 EFI_STATUS egSetMode(INT32 Next)
 {
   EFI_STATUS  Status = EFI_UNSUPPORTED;
-//  UINT32      Width = 0;
-//  UINT32      Height = 0;
   UINT32      MaxMode = GraphicsOutput->Mode->MaxMode;
   UINTN       SizeOfInfo;
   EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *Info;
-  INT32      Mode = gMode + Next;
-
-  Mode = (Mode >= (INT32)MaxMode)?0:Mode;
-  Mode = (Mode < 0)?((INT32)MaxMode - 1):Mode;
-  Status = GraphicsOutput->QueryMode(GraphicsOutput, (UINT32)Mode, &SizeOfInfo, &Info);
-  MsgLog("SetMode %d Status=%r\n", Mode, Status);
-  if (Status == EFI_SUCCESS) {
-    GraphicsOutput->SetMode(GraphicsOutput, (UINT32)Mode);
-    gMode = Mode;
-    egScreenWidth  = Info->HorizontalResolution;
-    egScreenHeight = Info->VerticalResolution;
+  INT32      Mode = GraphicsOutput->Mode->Mode;
+  UINT32     Index = 0;
+  
+  while (EFI_ERROR(Status) && Index <= MaxMode) {
+    Mode = Mode + Next;
+    Mode = (Mode >= (INT32)MaxMode)?0:Mode;
+    Mode = (Mode < 0)?((INT32)MaxMode - 1):Mode;
+    Status = GraphicsOutput->QueryMode(GraphicsOutput, (UINT32)Mode, &SizeOfInfo, &Info);
+    MsgLog("QueryMode %d Status=%r\n", Mode, Status);
+    if (Status == EFI_SUCCESS) {
+      Status = GraphicsOutput->SetMode(GraphicsOutput, (UINT32)Mode);
+      //MsgLog("SetMode %d Status=%r\n", Mode, Status);
+      egScreenWidth = GraphicsOutput->Mode->Info->HorizontalResolution;
+      egScreenHeight = GraphicsOutput->Mode->Info->VerticalResolution;
+    }
+    Index++;
   }
+
   return Status;
 }
 
@@ -201,9 +218,11 @@ EFI_STATUS egSetScreenResolution(IN CHAR16 *WidthHeight)
     Width = (UINT32)StrDecimalToUintn(WidthHeight);
     Height = (UINT32)StrDecimalToUintn(HeightP);
     
-    //already done
-    if ((egScreenWidth == Width) && (egScreenHeight == Height)) {
+    // check if requested mode is equal to current mode
+    if ((GraphicsOutput->Mode->Info->HorizontalResolution == Width) && (GraphicsOutput->Mode->Info->VerticalResolution == Height)) {
         MsgLog(" - already set\n");
+        egScreenWidth = GraphicsOutput->Mode->Info->HorizontalResolution;
+        egScreenHeight = GraphicsOutput->Mode->Info->VerticalResolution;
         return EFI_SUCCESS;
     }
     
@@ -213,12 +232,13 @@ EFI_STATUS egSetScreenResolution(IN CHAR16 *WidthHeight)
         Status = GraphicsOutput->QueryMode(GraphicsOutput, Mode, &SizeOfInfo, &Info);
         if (Status == EFI_SUCCESS) {
             if (Width == Info->HorizontalResolution && Height == Info->VerticalResolution) {
-                MsgLog(" - done, set Mode %d\n", Mode);
-                GraphicsOutput->SetMode(GraphicsOutput, Mode);
-                gMode = Mode;
-                egScreenWidth = Width;
-                egScreenHeight = Height;
-                return EFI_SUCCESS;
+                MsgLog(" - setting Mode %d\n", Mode);
+                Status = GraphicsOutput->SetMode(GraphicsOutput, Mode);
+                if (Status == EFI_SUCCESS) {
+                    egScreenWidth = Width;
+                    egScreenHeight = Height;
+                    return EFI_SUCCESS;
+                }
             }
         }
     }
@@ -259,7 +279,6 @@ VOID egInitScreen(IN BOOLEAN SetMaxResolution)
                 egSetMaxResolution();
             }
         }
-        gMode = GraphicsOutput->Mode->Mode;
         egScreenWidth = GraphicsOutput->Mode->Info->HorizontalResolution;
         egScreenHeight = GraphicsOutput->Mode->Info->VerticalResolution;
         egHasGraphics = TRUE;
