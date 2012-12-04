@@ -2767,11 +2767,22 @@ BiosVideoGraphicsOutputVbeBlt (
 {
   BIOS_VIDEO_DEV                 *BiosVideoPrivate;
   BIOS_VIDEO_MODE_DATA           *Mode;
+  EFI_STATUS                      Status;
+  UINTN                           DataSize;
 
   if (This == NULL) {
     return EFI_INVALID_PARAMETER;
   }
 
+  DataSize = 0;
+  Status = gRT->GetVariable (L"BiosVideoBlockSwitchMode", &gEfiGlobalVariableGuid, NULL, &DataSize, NULL);
+  //DBG("BiosVideoGraphicsOutputSetMode: GetVariable BiosVideoBlockSwitchMode: %r\n", Status);
+  if (Status == EFI_BUFFER_TOO_SMALL) {
+    // var exists - just exit
+    //DBG("VbeBlt - block\n");
+    return EFI_SUCCESS;
+  }
+  
   BiosVideoPrivate  = BIOS_VIDEO_DEV_FROM_GRAPHICS_OUTPUT_THIS (This);
   Mode              = &BiosVideoPrivate->ModeData[This->Mode->Mode];
 
