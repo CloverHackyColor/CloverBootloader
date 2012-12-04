@@ -107,6 +107,31 @@ typedef struct {
 	NV_MODELINE	*			sModelines;
 } NV_VESA_TABLE;
 
+typedef struct {
+  UINT16 HRes;
+  UINT16 VRes;
+} TABLE_0;
+
+typedef struct {
+  UINT8  Ratio; //0->16:10, 1->4:3, 2->5:4, 3->16:9
+  UINT8  Matrix[17];
+} TABLE_A;
+
+typedef struct {
+  UINT8  Ratio; //0->16:10, 1->4:3, 2->5:4, 3->16:9
+  UINT8  Matrix[9];
+} TABLE_B;
+
+typedef struct {
+  UINT8  Ratio; //0->16:10, 1->4:3, 2->5:4, 3->16:9
+  UINT8  Matrix[13];
+} TABLE_D;
+
+typedef struct {
+  UINT8  Ratio; //0->16:10, 1->4:3, 2->5:4, 3->16:9
+  UINT8  Matrix[5];
+} TABLE_LIMIT;
+
 /*---*/
 
 

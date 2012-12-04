@@ -407,6 +407,7 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x6806,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7600 Series",		kBulrushes	},
 	{ 0x6808,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7600 Series",		kBulrushes	},
 	{ 0x6818,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7600 Series",		kBulrushes	},
+  { 0x6819,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7800 Series",		kBulrushes	},
 	{ 0x6820,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7800 Series",		kBulrushes	},
 	{ 0x6821,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7800 Series",		kBulrushes	},
 	{ 0x6825,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7800 Series",		kBulrushes	},
