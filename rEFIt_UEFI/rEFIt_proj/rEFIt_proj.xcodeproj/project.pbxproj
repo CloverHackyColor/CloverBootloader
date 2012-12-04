@@ -2669,7 +2669,7 @@
 		12B7FF7515F921AB00177D35 /* UefiLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UefiLoader.h; sourceTree = "<group>"; };
 		12B7FF7615F921AB00177D35 /* NVRAMDebug.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = NVRAMDebug.c; sourceTree = "<group>"; };
 		12B7FF7715F921AB00177D35 /* NVRAMDebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVRAMDebug.h; sourceTree = "<group>"; };
-		12B7FF7815F921AB00177D35 /* OsxAptioFixDrv.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OsxAptioFixDrv.c; sourceTree = "<group>"; };
+		12B7FF7815F921AB00177D35 /* OsxAptioFixDrv.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OsxAptioFixDrv.c; sourceTree = "<group>"; usesTabs = 1; };
 		12B7FF7915F921AB00177D35 /* OsxAptioFixDrv.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OsxAptioFixDrv.inf; sourceTree = "<group>"; };
 		12B7FF7A15F921AB00177D35 /* VMem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = VMem.c; sourceTree = "<group>"; };
 		12B7FF7B15F921AB00177D35 /* VMem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VMem.h; sourceTree = "<group>"; };

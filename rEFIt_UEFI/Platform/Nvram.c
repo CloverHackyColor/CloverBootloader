@@ -586,6 +586,10 @@ VOID PutNvramPlistToRtVars(VOID)
             DBG(" Skipping OsxAptioFixDrv-RelocBase\n");
             continue;
         }
+        if (AsciiStrCmp(Tag->string, "OsxAptioFixDrv-ErrorExitingBootServices") == 0) {
+            DBG(" Skipping OsxAptioFixDrv-ErrorExitingBootServices\n");
+            continue;
+        }
         
         // key to unicode; check if key buffer is large enough
         if (AsciiStrLen(Tag->string) > (sizeof(KeyBuf) / 2 - 1)) {

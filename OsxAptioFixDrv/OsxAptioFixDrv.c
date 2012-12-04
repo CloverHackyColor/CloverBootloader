@@ -419,12 +419,22 @@ MOExitBootServices (
 	Status = gStoredExitBootServices(ImageHandle, MapKey);
 	DBGnvr("ExitBootServices:  = %r\n", Status);
 	if (EFI_ERROR (Status)) {
+		/*
 		Print(L"OsxAptioFixDrv: Error ExitBootServices() = Status: %r\n", Status);
 		Print(L"MapKey = %lx, LastMapKey = %lx\n", MapKey, LastMapKey);
 		Print(L"This is an error and should be resolved.\nFor now, we will force ExitBootServices() once again in 10 secs with new GetMemoryMap ...\n");
 
 		gBS->Stall(1000000); //1 sec is enough
 		//CpuDeadLoop();
+		*/
+		
+		// just report error as var in nvram to be visible from OSX with "nvrap -p"
+		gRT->SetVariable(L"OsxAptioFixDrv-ErrorExitingBootServices",
+						 &gEfiAppleBootGuid,
+						 EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+						 3,
+						 "Yes"
+						 );
 		
 		Status = GetMemoryMapKey(&NewMapKey);
 		DBGnvr("ExitBootServices: GetMemoryMapKey = %r\n", Status);
