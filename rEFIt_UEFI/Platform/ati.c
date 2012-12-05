@@ -399,9 +399,11 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x6779,	0x00000000, CHIP_FAMILY_CAICOS,		"AMD Radeon HD 6450 Series",		kBulrushes	},
   { 0x677B,	0x00000000, CHIP_FAMILY_CAICOS,		"AMD Radeon HD 7400 Series",		kBulrushes	},
 //Tahiti  
+//Framebuffers: Aji - 4 Desktop, Buri - 4 Mobile, Chutoro - 5 Mobile,  Dashimaki - 4, IkuraS - HMDI
+// Ebi - 5 Mobile, Gari - 5 M, Futomaki - 4 D, Hamachi - 4 D, OPM - 6 Server, Ikura - 6,   
   { 0x6780,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7900 Series",		kBulrushes	},
   { 0x6790,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7900 Series",		kBulrushes	},
-  { 0x6798,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7900 Series",		kBulrushes	},
+  { 0x6798,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7970 Series",		kBulrushes	},
   { 0x679A,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7900 Series",		kBulrushes	},
 	{ 0x6800,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7600 Series",		kBulrushes	},
 	{ 0x6806,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7600 Series",		kBulrushes	},
@@ -418,6 +420,8 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x683B,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7700 Series",		kBulrushes	},
 	{ 0x683D,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7770 Series",		kBulrushes	},
 	{ 0x683F,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7700 Series",		kBulrushes	},
+  
+  { 0x6840,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7670m ",		kBuri	},
 	{ 0x0000,	0x00000000, CHIP_FAMILY_UNKNOW,		NULL,								kNull		}
 };
 
