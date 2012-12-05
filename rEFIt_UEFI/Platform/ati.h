@@ -128,6 +128,14 @@ typedef enum {
 	kMuskgrass,
 	kJuncus,
 //  kOsmunda,
+  kAji,  //4 
+  kBuri, //4 M
+  kChutoro, //5 M
+  kDashimaki, //4
+  kEbi, //5 M
+  kFutomaki, //5
+  kHamachi, //4
+  kGari, //5 M
 	kCfgEnd
 } config_name_t;
 
