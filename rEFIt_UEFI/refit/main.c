@@ -567,7 +567,6 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   
   // prepare the menu entry
   Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-  Entry->me.Title        = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : LoaderPath + 1, Volume->VolName);
   if (Volume->BootType == BOOTING_BY_EFI) {
     Entry->me.Tag          = TAG_LOADER;
   } else {
@@ -646,6 +645,42 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       LoaderKind = 1;
       ShortcutLetter = 'M';    
       Entry->LoaderType = OSTYPE_OSX;
+      {//start of patch
+          EFI_STATUS	Status = EFI_NOT_FOUND;
+          CHAR16*   targetNameFile = L"System\\Library\\CoreServices\\.disk_label.contentDetails";
+          CHAR8* 	fileBuffer;
+          CHAR8*    targetString;
+          UINTN     fileLen = 0;
+          if(FileExists(Volume->RootDir, targetNameFile)) {
+              Status = egLoadFile(Volume->RootDir, targetNameFile, (UINT8 **)&fileBuffer, &fileLen);
+              if(!EFI_ERROR(Status)) {
+                  CHAR16  *tmpName;
+                  int i;
+                  //Create null terminated string
+                  targetString = (CHAR8*) AllocateZeroPool(fileLen+1);
+                  CopyMem( (VOID*)targetString, (VOID*)fileBuffer, fileLen);
+                  
+                  //remove occurence number. eg: "vol_name 2" --> "vol_name"
+                  i=fileLen-1;
+                  while ((i>0) && (targetString[i]>='0') && (targetString[i]<='9')) {
+                      i--;
+                  }
+                  if (targetString[i] == ' ') {
+                          targetString[i] = 0;
+                  }
+                  
+                  //Convert to Unicode
+                  tmpName = (CHAR16*)AllocateZeroPool((fileLen+1)*2);
+                  tmpName = AsciiStrToUnicodeStr(targetString, tmpName);
+                  
+                  Entry->VolName = EfiStrDuplicate(tmpName);
+              
+                  FreePool(tmpName);
+                  FreePool(fileBuffer);
+                  FreePool(targetString);
+              }
+          }
+      }//end of patch
       break;
     case OSTYPE_WIN:
       OSIconName = L"win";
@@ -677,13 +712,15 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       Entry->LoaderType = OSTYPE_VAR;
       break;
   }
+
+  Entry->me.Title        = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : LoaderPath + 1, Entry->VolName);
   Entry->me.ShortcutLetter = ShortcutLetter;
 //  if (Entry->me.Image == NULL)
   Entry->me.Image = LoadOSIcon(OSIconName, L"unknown", FALSE);
   
   // create the submenu
   SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
-  SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (LoaderTitle != NULL) ? LoaderTitle : FileName, Volume->VolName);
+  SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (LoaderTitle != NULL) ? LoaderTitle : FileName, Entry->VolName);
   SubScreen->TitleImage = Entry->me.Image;
   SubScreen->ID = OSType + 20;
 //  DBG("get anime for os=%d\n", SubScreen->ID);

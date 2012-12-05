@@ -55,7 +55,8 @@ static const CHAR8 nvda_string[] = "NVID";
 
 
 //more advanced tables from pene
-static TABLE_0 nvda_res[] = {
+#define RESOLUTIONS_NUMBER 11
+static TABLE_0 nvda_res[RESOLUTIONS_NUMBER] = {
   {1280,  720},
   {1280,  800},
   {1360,  768},
@@ -964,10 +965,13 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
 		case BT_NVDA:
 		{
 			edid_mode mode;
-			
+      UINTN             NumReplaces;
+      UINTN             NumReplacesTotal;
+      UINTN             Index = 0;
+      
 			NV_MODELINE *mode_timing = (NV_MODELINE *) map->nv_mode_table;
 			DBG("BT_NVDA\n");
-			//must be totally revised on work by pene
+			// totally revised on work by pene
       // http://www.projectosx.com/forum/index.php?showtopic=2304&view=findpost&p=22683
 			
 			if (!getMode(&mode)) {
@@ -1000,6 +1004,57 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
             Sample3[0],
             nvda_key3[i].Matrix[0]);
 			}
+      //Search for desired mode in our matrix
+      for (Index = 0; Index < RESOLUTIONS_NUMBER; Index++) {
+        if ((nvda_res[Index].HRes == mode.h_active) && (nvda_res[Index].VRes == mode.v_active)) {
+          break;
+        }
+      }
+      if (Index == RESOLUTIONS_NUMBER) {
+        DBG("the patch if not ready for the desired resolution\n");
+        break; // not found
+      }
+      
+      NumReplaces = 0;
+      NumReplacesTotal = 0;
+        NumReplaces = VideoBiosPatchSearchAndReplace (
+                                                      (UINT8*)(UINTN)VBIOS_START,
+                                                      VBIOS_SIZE,
+                                                      (UINT8*)&Sample0[0], 17,
+                                                      (UINT8*)&nvda_key0[Index].Matrix[0],
+                                                      -1
+                                                      );
+        NumReplacesTotal += NumReplaces;
+        DBG (" patch 0: patched %d time(s)\n", NumReplaces);
+      NumReplaces = VideoBiosPatchSearchAndReplace (
+                                                    (UINT8*)(UINTN)VBIOS_START,
+                                                    VBIOS_SIZE,
+                                                    (UINT8*)&Sample1[0], 9,
+                                                    (UINT8*)&nvda_key1[Index].Matrix[0],
+                                                    -1
+                                                    );
+      NumReplacesTotal += NumReplaces;
+      DBG (" patch 1: patched %d time(s)\n", NumReplaces);
+      NumReplaces = VideoBiosPatchSearchAndReplace (
+                                                    (UINT8*)(UINTN)VBIOS_START,
+                                                    VBIOS_SIZE,
+                                                    (UINT8*)&Sample2[0], 13,
+                                                    (UINT8*)&nvda_key2[Index].Matrix[0],
+                                                    -1
+                                                    );
+      NumReplacesTotal += NumReplaces;
+      DBG (" patch 2: patched %d time(s)\n", NumReplaces);
+      NumReplaces = VideoBiosPatchSearchAndReplace (
+                                                    (UINT8*)(UINTN)VBIOS_START,
+                                                    VBIOS_SIZE,
+                                                    (UINT8*)&Sample3[0], 5,
+                                                    (UINT8*)&nvda_key3[Index].Matrix[0],
+                                                    -1
+                                                    );
+      NumReplacesTotal += NumReplaces;
+      DBG (" patch 3: patched %d time(s)\n", NumReplaces);
+      
+      
 			/*else
 			 {
 			 vbios_modeline_type2 modeline;

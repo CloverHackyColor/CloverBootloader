@@ -256,5 +256,13 @@ VOID close_vbios (vbios_map*);
 VOID unlock_vbios(vbios_map*);
 VOID relock_vbios(vbios_map*);
 VOID set_mode(vbios_map*, UINT32, UINT32, UINT32, UINT32, UINT32);
+UINTN VideoBiosPatchSearchAndReplace (
+                                IN  UINT8       *Source,
+                                IN  UINTN       SourceSize,
+                                IN  UINT8       *Search,
+                                IN  UINTN       SearchSize,
+                                IN  UINT8       *Replace,
+                                IN  INTN        MaxReplaces
+                                );
 
 #endif //__RESOLUTION_H
