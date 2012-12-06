@@ -410,7 +410,7 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
 				DBG("RAM speed %dMHz \n", freq);
 			}
       
-			MsgLog("Slot: %d Type %d %dMB (%a) %dMHz Vendor=%a \n PartNo=%a SerialNo=%a \n", 
+			MsgLog("Slot: %d Type %d %dMB (%a) %dMHz Vendor=%a PartNo=%a SerialNo=%a \n", 
              i, 
              (int)slot->Type,
              slot->ModuleSize, 

@@ -768,7 +768,7 @@ FindBootOptionForFile (
     UINTN               SearchedDevicePathSize[2];
     
     
-    DBG("\nFindBootOptionForFile: %p, %s\n", FileDeviceHandle, FileName);
+    DBG("FindBootOptionForFile: %p, %s\n", FileDeviceHandle, FileName);
     
     //
     // Get BootOrder - we will search only options listed in BootOrder.

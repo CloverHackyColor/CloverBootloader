@@ -25,6 +25,13 @@ typedef struct {
   CHAR8             *Cursor;
   UINTN             BufferSize;
   MEM_LOG_CALLBACK  Callback;
+  
+  /// Start debug ticks.
+  UINT64            TscStart;
+  /// Last debug ticks.
+  UINT64            TscLast;
+  /// TSC ticks per second.
+  UINT64            TscFreqSec;
 } MEM_LOG;
 
 
@@ -37,6 +44,48 @@ EFI_GUID  mMemLogProtocolGuid = { 0x74B91DA4, 0x2B4C, 0x11E2, {0x99, 0x03, 0x22,
 // Pointer to mem log buffer.
 //
 MEM_LOG   *mMemLog = NULL;
+
+//
+// Buffer for debug time.
+//
+CHAR8     mTimingTxt[32];
+
+
+
+/**
+  Inits mem log.
+
+  @retval EFI_SUCCESS   The constructor always returns EFI_SUCCESS.
+
+**/
+CHAR8*
+GetTiming(VOID)
+{
+	UINT64    dTStartSec;
+	UINT64    dTStartMs;
+	UINT64    dTLastSec;
+	UINT64    dTLastMs;
+	UINT64    CurrentTsc;
+	
+	mTimingTxt[0] = '\0';
+	
+	if (mMemLog != NULL && mMemLog->TscFreqSec != 0) {
+		CurrentTsc = AsmReadTsc();
+    
+		dTStartMs = DivU64x64Remainder(MultU64x32(CurrentTsc - mMemLog->TscStart, 1000), mMemLog->TscFreqSec, NULL);
+		dTStartSec = DivU64x64Remainder(dTStartMs, 1000, &dTStartMs);
+    
+		dTLastMs = DivU64x64Remainder(MultU64x32(CurrentTsc - mMemLog->TscLast, 1000), mMemLog->TscFreqSec, NULL);
+		dTLastSec = DivU64x64Remainder(dTLastMs, 1000, &dTLastMs);
+    
+		AsciiSPrint(mTimingTxt, sizeof(mTimingTxt),
+                "%ld:%03ld  %ld:%03ld", dTStartSec, dTStartMs, dTLastSec, dTLastMs);
+		mMemLog->TscLast = CurrentTsc;
+	}
+	
+	return mTimingTxt;
+}
+
 
 
 /**
@@ -52,6 +101,8 @@ MemLogInit (
   )
 {
   EFI_STATUS      Status;
+  UINT64          T0;
+  UINT64          T1;
   
   if (mMemLog != NULL) {
     return  EFI_SUCCESS;
@@ -80,18 +131,33 @@ MemLogInit (
   mMemLog->Cursor = mMemLog->Buffer;
   mMemLog->Callback = NULL;
   
+  //
+  // Calibrate TSC for timings
+  //
+  T0 = AsmReadTsc();
+  gBS->Stall(100000); //100ms
+  T1 = AsmReadTsc();
+  mMemLog->TscFreqSec = MultU64x32((T1 - T0), 10);
+  mMemLog->TscStart = T0;
+  mMemLog->TscLast = T0;
+
+  //
+  // Install (publish) MEM_LOG
+  //
   Status = gBS->InstallMultipleProtocolInterfaces (
                                                    &gImageHandle,
                                                    &mMemLogProtocolGuid,
                                                    mMemLog,
                                                    NULL
                                                    );
+  MemLog(TRUE, 1, "MemLog inited, TSC freq: %ld\n", mMemLog->TscFreqSec);
   return Status;
 }
 
 /**
   Prints a log message to memory buffer.
  
+  @param  Timing      TRUE to prepend timing to log.
   @param  DebugMode   DebugMode will be passed to Callback function if it is set.
   @param  Format      The format string for the debug message to print.
   @param  Marker      VA_LIST with variable arguments for Format.
@@ -100,6 +166,7 @@ MemLogInit (
 VOID
 EFIAPI
 MemLogVA (
+  IN  CONST BOOLEAN Timing,
   IN  CONST INTN    DebugMode,
   IN  CONST CHAR8   *Format,
   IN  VA_LIST       Marker
@@ -139,6 +206,20 @@ MemLogVA (
   // Add log to buffer
   //
   LastMessage = mMemLog->Cursor;
+  if (Timing) {
+    //
+    // Write timing only at the beginnign of a new line
+    //
+    if ((mMemLog->Buffer[0] == '\0') || (mMemLog->Cursor[-1] == '\n')) {
+      DataWritten = AsciiSPrint(
+                                mMemLog->Cursor,
+                                mMemLog->BufferSize - (mMemLog->Cursor - mMemLog->Buffer),
+                                "%a  ",
+                                GetTiming ());
+      mMemLog->Cursor += DataWritten;
+    }
+    
+  }
   DataWritten = AsciiVSPrint(
                              mMemLog->Cursor,
                              mMemLog->BufferSize - (mMemLog->Cursor - mMemLog->Buffer),
@@ -159,6 +240,7 @@ MemLogVA (
  
   If Format is NULL, then does nothing.
  
+  @param  Timing      TRUE to prepend timing to log.
   @param  DebugMode   DebugMode will be passed to Callback function if it is set.
   @param  Format      The format string for the debug message to print.
   @param  ...         The variable argument list whose contents are accessed
@@ -168,6 +250,7 @@ MemLogVA (
 VOID
 EFIAPI
 MemLog (
+  IN  CONST BOOLEAN Timing,
   IN  CONST INTN    DebugMode,
   IN  CONST CHAR8   *Format,
   ...
@@ -180,7 +263,7 @@ MemLog (
   }
   
   VA_START (Marker, Format);
-  MemLogVA (DebugMode, Format, Marker);
+  MemLogVA (Timing, DebugMode, Format, Marker);
   VA_END (Marker);
 }
 
@@ -246,4 +329,22 @@ SetMemLogCallback (
     }
   }
   mMemLog->Callback = Callback;
+}
+
+/**
+  Returns TSC ticks per second.
+ **/
+UINT64
+EFIAPI
+GetMemLogTscTicksPerSecond (VOID)
+{
+  EFI_STATUS        Status;
+  
+  if (mMemLog == NULL) {
+    Status = MemLogInit ();
+    if (EFI_ERROR (Status)) {
+      return 0;
+    }
+  }
+  return mMemLog->TscFreqSec;
 }

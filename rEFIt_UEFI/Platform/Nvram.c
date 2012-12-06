@@ -351,7 +351,8 @@ EFI_STATUS GetEfiBootDeviceFromNvram(VOID)
         return EFI_NOT_FOUND;
     }
     
-    DBG("\n efi-boot-device-data: %s\n", DevicePathToStr(gEfiBootDeviceData));
+    DBG("\n");
+    DBG(" efi-boot-device-data: %s\n", DevicePathToStr(gEfiBootDeviceData));
     
     gEfiBootVolume = gEfiBootDeviceData;
     

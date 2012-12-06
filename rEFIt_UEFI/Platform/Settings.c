@@ -1629,7 +1629,7 @@ CHAR16* GetExtraKextsDir(REFIT_VOLUME *Volume)
       OSTypeStr = L"Other";
       break;
   }
-  MsgLog("OS=%s ", OSTypeStr);
+  //MsgLog("OS=%s\n", OSTypeStr);
   
   // find source injection folder with kexts
   // note: we are just checking for existance of particular folder, not checking if it is empty or not

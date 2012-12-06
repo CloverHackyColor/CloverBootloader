@@ -27,9 +27,9 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #if DEBUG_BV==0
 #define DBG(...)
 #elif DEBUG_BV == 1
-#define DBG(...) MemLog(1, __VA_ARGS__)
+#define DBG(...) MemLog(TRUE, 1, __VA_ARGS__)
 #else
-#define DBG(...) MemLog(0, __VA_ARGS__)
+#define DBG(...) MemLog(TRUE, 0, __VA_ARGS__)
 #endif
 
 
@@ -1199,6 +1199,8 @@ BiosVideoCheckForVbe (
 	UINT16									HighestResolutionMode = 0;
 //	INTN	i;
 	
+	DBG("BiosVideoCheckForVbe\n");
+	
 	//
 	// Allocate buffer under 1MB for VBE data structures
 	//
@@ -1326,8 +1328,10 @@ BiosVideoCheckForVbe (
 	if (Regs.X.AX == VESA_BIOS_EXTENSIONS_STATUS_SUCCESS)
 	{
 		EdidFound = TRUE;
-		DBG(" Edid1+ ");
+		DBG(" Edid1+\n");
 		ParseEdidData ((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock, &ValidEdidTiming);
+	} else {
+		DBG(" Edid1-\n");
 	}
 	
 	//Slice - attempt Nr2
@@ -1343,7 +1347,6 @@ BiosVideoCheckForVbe (
 	EdidFound = (Regs.X.AX == VESA_BIOS_EXTENSIONS_STATUS_SUCCESS);
 	//&& verifyEDID((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock);
 	
-	
 	if (!verifyEDID((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock)) {
 //		MsgLog(" Edid broken\n");
 	}
@@ -1353,8 +1356,10 @@ BiosVideoCheckForVbe (
 	if (Regs.X.AX == VESA_BIOS_EXTENSIONS_STATUS_SUCCESS)
 	{
 		EdidFound = TRUE;
-		DBG(" Edid0+ ");
+		DBG(" Edid0+\n");
 		ParseEdidData ((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock, &ValidEdidTiming);
+	} else {
+		DBG(" Edid0-\n");
 	}
 	
     if (EdidFound ) {
@@ -1503,7 +1508,7 @@ BiosVideoCheckForVbe (
 			BiosVideoPrivate->VbeModeInformationBlock->YResolution < 480) {
 			continue;
 		}
-		DBG("%3d %dx%d attr=%x - ok",
+		DBG(" %3d %dx%d attr=%x - ok",
 			ModeNumber,
 			BiosVideoPrivate->VbeModeInformationBlock->XResolution,
 			BiosVideoPrivate->VbeModeInformationBlock->YResolution,
@@ -1694,7 +1699,7 @@ BiosVideoCheckForVbe (
 	// Find the best mode to initialize
 	//
 	Status = BiosVideoGraphicsOutputSetMode (&BiosVideoPrivate->GraphicsOutput, (UINT32) PreferMode);
-    DBG(" - SetMode pref %d (%d) = %r\n", PreferMode, (UINT32) PreferMode, Status);
+    DBG(" SetMode pref %d (%d) = %r\n", PreferMode, (UINT32) PreferMode, Status);
 //	MsgLog("setPreferMode %d status=%r\n", PreferMode, Status);
 	if (EFI_ERROR (Status)) {
 		for (PreferMode = 0; PreferMode < ModeNumber; PreferMode ++) {
@@ -1703,7 +1708,7 @@ BiosVideoCheckForVbe (
 													 &BiosVideoPrivate->GraphicsOutput,
 													 (UINT32) PreferMode
 													 );
-            DBG(" - SetMode pref %d (%d) = %r\n", PreferMode, (UINT32) PreferMode, Status);
+            DBG(" SetMode pref %d (%d) = %r\n", PreferMode, (UINT32) PreferMode, Status);
 			if (!EFI_ERROR (Status)) {
 //				DBG("success\n");
 				break;

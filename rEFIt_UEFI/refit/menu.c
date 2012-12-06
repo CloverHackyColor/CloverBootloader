@@ -112,6 +112,8 @@ static INTN row0PosY, row1PosY, textPosY;
 INPUT_ITEM *InputItems = NULL;
 UINTN  InputItemsCount = 0;
 
+BOOLEAN mGuiReady = FALSE;
+
 UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_MENU_ENTRY **ChosenEntry);
 
 VOID FillInputs(VOID)
@@ -1102,7 +1104,11 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
     }
     key.UnicodeChar = 0;
     key.ScanCode = 0;
-    Status = WaitForInputEventPoll(Screen, 1); //wait for 1 seconds. 
+    if (!mGuiReady) {
+      mGuiReady = TRUE;
+      DBG("GUI ready\n");
+    }
+    Status = WaitForInputEventPoll(Screen, 1); //wait for 1 seconds.
     if (Status == EFI_TIMEOUT) {
       if (HaveTimeout) {
         if (TimeoutCountdown == 0) {

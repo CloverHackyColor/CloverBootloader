@@ -117,7 +117,7 @@ EFI_STATUS MouseBirth()
   DBG(" - ResolutionY=%ld\n", CurrentMode->ResolutionY);
   DBG(" - ResolutionZ=%ld\n", CurrentMode->ResolutionZ);
   DBG(" - Left button %a present\n", CurrentMode->LeftButton?" ":"not");
-  DBG(" - Right button %a present\n\n", CurrentMode->RightButton?" ":"not");
+  DBG(" - Right button %a present\n", CurrentMode->RightButton?" ":"not");
   //TODO - config and menu?
   //CurrentMode->ResolutionX = gSettings.PointerSpeed;
   //CurrentMode->ResolutionY = gSettings.PointerSpeed;

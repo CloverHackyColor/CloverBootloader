@@ -147,7 +147,7 @@ VOID DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...)
 
    // Print message to log buffer
    VA_START(Marker, FormatString);
-   MemLogVA(DebugMode, FormatString, Marker);
+   MemLogVA(TRUE, DebugMode, FormatString, Marker);
    VA_END(Marker);
 }
 

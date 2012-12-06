@@ -30,7 +30,7 @@
 #define DEBUG_VBP 1
 
 #if DEBUG_VBP == 1
-#define DBG(...) MemLog(1, __VA_ARGS__)
+#define DBG(...)  MemLog(TRUE, 1, __VA_ARGS__)
 #else
 #define DBG(...)
 #endif

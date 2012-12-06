@@ -51,17 +51,6 @@
 #define DBG(...) DebugLog(DEBUG_MAIN, __VA_ARGS__)
 #endif
 
-#ifndef DEBUG_ALL
-#define DEBUG_TIME 1
-#else
-#define DEBUG_TIME DEBUG_ALL
-#endif
-
-#if DEBUG_TIME == 0
-  #define DBGT(...)
-#else
-  #define DBGT(...) { DBG("[%a] ", DbgTime()); DBG(__VA_ARGS__); }
-#endif
 
 // variables
 
@@ -467,7 +456,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   BOOLEAN                 BlockConOut = FALSE;
   EFI_TEXT_STRING         ConOutOutputString = 0;
   
-  DBGT("StartLoader() start\n");
+  DBG("StartLoader() start\n");
   egClearScreen(&DarkBackgroundPixel);
   MsgLog("Turbo=%c\n", gSettings.Turbo?'Y':'N');
 //  MsgLog("PatchAPIC=%c\n", gSettings.PatchNMI?'Y':'N');
@@ -505,7 +494,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //    DBG("LoadKexts\n");
     LoadKexts(Entry);
 //    DBG("SetupBooterLog\n");
-    DBGT("Closing log\n");
+    DBG("Closing log\n");
     Status = SetupBooterLog();
     
     // blocking boot.efi output if -v is not specified
@@ -1929,7 +1918,7 @@ static VOID LoadDrivers(VOID)
   }
   
   if (DriversToConnectNum > 0) {
-    DBGT("%d drivers needs connecting ...\n", DriversToConnectNum);
+    DBG("%d drivers needs connecting ...\n", DriversToConnectNum);
     // note: our platform driver protocol
     // will use DriversToConnect - do not release it
     RegisterDriversToHighestPriority(DriversToConnect);
@@ -2021,17 +2010,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   UINT64            TscDiv;
   UINT64            TscRemainder = 0;
   LOADER_ENTRY      *LoaderEntry;
-  UINT64            t0, t1;
+  //UINT64            t0, t1;
   
   // CHAR16            *InputBuffer; //, *Y;
   //  EFI_INPUT_KEY Key;
   
-  // init debug time
-  t0 = AsmReadTsc();
-  gBS->Stall(100000); //100ms
-  t1 = AsmReadTsc();
-  gCPUStructure.TSCCalibr = MultU64x32((t1 - t0), 10); //ticks for 1second
-  DbgTimeInit(gCPUStructure.TSCCalibr, t0);
+  // get TSC freq and init MemLog if needed
+  gCPUStructure.TSCCalibr = GetMemLogTscTicksPerSecond(); //ticks for 1second
   
   // bootstrap
   //    InitializeLib(ImageHandle, SystemTable);
@@ -2048,12 +2033,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   InitializeConsoleSim();
 	InitBooterLog();
-  DBG(" \nStarting rEFIt rev %s on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
+  DBG("\n");
+  DBG("Starting rEFIt rev %s on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
   Status = InitRefitLib(gImageHandle);
   if (EFI_ERROR(Status))
     return Status;
-  
-  DBGT("TSC calibration\n");
   
   // disable EFI watchdog timer
   gBS->SetWatchdogTimer(0x0000, 0x0000, 0x0000, NULL);
@@ -2107,9 +2091,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   // further bootstrap (now with config available)
   //  SetupScreen();
   
-  DBGT("LoadDrivers() start\n");
+  DBG("LoadDrivers() start\n");
   LoadDrivers();
-  DBGT("LoadDrivers() end\n");
+  DBG("LoadDrivers() end\n");
   
   // init screen and dump video modes to log
   if (gDriversFlags.VideoLoaded) {
@@ -2117,7 +2101,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   } else {
     InitScreen(!gFirmwareClover); // ? FALSE : TRUE);
   }
-  DBGT("InitScreen\n");
+  DBG("InitScreen\n");
   
   //Now we have to reinit handles
   Status = ReinitSelfLib();
@@ -2151,9 +2135,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //  DBG("GetCPUProperties OK\n");
   GetDevices();
  //     DBG("GetDevices OK\n");
-  DBGT("ScanSPD() start\n");
+  DBG("ScanSPD() start\n");
   ScanSPD();
-  DBGT("ScanSPD() end\n");
+  DBG("ScanSPD() end\n");
  //       DBG("ScanSPD OK\n");
   SetPrivateVarProto();
 //        DBG("SetPrivateVarProto OK\n");
@@ -2188,16 +2172,16 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     // in the first run.
     // this speeds up loading of default OSX volume.
     GetEfiBootDeviceFromNvram();
-//    DBGT("GetEfiBootDeviceFromNvram()\n");
+//    DBG("GetEfiBootDeviceFromNvram()\n");
   }
   
   do {
 //     PauseForKey(L"Enter main cycle");
-//    DBGT("Enter main cycle\n");
+//    DBG("Enter main cycle\n");
     AfterTool = FALSE;
     MainMenu.EntryCount = 0;
     ScanVolumes();
- //   DBGT("ScanVolumes()\n");
+ //   DBG("ScanVolumes()\n");
     
     // as soon as we have Volumes, find lates nvram.plist and copy it to RT vars
     if (gFirmwareClover || gFirmwarePhoenix) {
@@ -2208,15 +2192,15 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     if (!GlobalConfig.NoLegacy && GlobalConfig.LegacyFirst && !gSettings.HVHideAllLegacy){
       DBG("scan legacy first\n");
       ScanLegacy();
-//      DBGT("ScanLegacy()\n");
+//      DBG("ScanLegacy()\n");
     }
     ScanLoader();
-//    DBGT("ScanLoader()\n");
+//    DBG("ScanLoader()\n");
 //          DBG("ScanLoader OK\n");
     if (!GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst && !gSettings.HVHideAllLegacy){
 //      DBG("scan legacy second\n");
       ScanLegacy();
-      DBGT("ScanLegacy()\n");
+      DBG("ScanLegacy()\n");
     }
 //    DBG("ScanLegacy OK\n");
     // fixed other menu entries
@@ -2234,7 +2218,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
       //            DBG("scan tools\n");
       ScanTool();
-      DBGT("ScanTool()\n");
+      DBG("ScanTool()\n");
     }
 //    DBG("ScanTool OK\n");
     
@@ -2249,10 +2233,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         
     // wait for user ACK when there were errors
     FinishTextScreen(FALSE);
-    DBGT("FinishTextScreen()\n");
+    DBG("FinishTextScreen()\n");
     
     DefaultIndex = FindDefaultEntry();
-    DBGT("FindDefaultEntry()\n");
+    DBG("FindDefaultEntry()\n");
     //  DBG("DefaultIndex=%d and MainMenu.EntryCount=%d\n", DefaultIndex, MainMenu.EntryCount);
     if ((DefaultIndex >= 0) && (DefaultIndex < (INTN)MainMenu.EntryCount)) {
       DefaultEntry = MainMenu.Entries[DefaultIndex];
@@ -2270,9 +2254,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         MenuExit = MENU_EXIT_TIMEOUT;
       } else {
         //    DBG("Enter main loop\n");
- //       DBGT("RunMainMenu() start\n");
+ //       DBG("RunMainMenu() start\n");
         MenuExit = RunMainMenu(&MainMenu, DefaultIndex, &ChosenEntry);
- //       DBGT("RunMainMenu() end\n");
+ //       DBG("RunMainMenu() end\n");
       }
       // disable default boot - have sense only in the first run
       GlobalConfig.Timeout = -1;

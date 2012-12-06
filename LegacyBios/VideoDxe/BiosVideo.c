@@ -30,9 +30,9 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #define DBG(...)
 #elif DEBUG_CSM == 1
 //#define DBG(...) BootLog(__VA_ARGS__)
-#define DBG(...) MemLog(1, __VA_ARGS__)
+#define DBG(...) MemLog(TRUE, 1, __VA_ARGS__)
 #else
-#define DBG(...) MemLog(0, __VA_ARGS__)
+#define DBG(...) MemLog(TRUE, 0, __VA_ARGS__)
 #endif
 
 

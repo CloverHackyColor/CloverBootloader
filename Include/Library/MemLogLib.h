@@ -14,6 +14,7 @@ typedef VOID (EFIAPI *MEM_LOG_CALLBACK) (IN INTN DebugMode, IN CHAR8 *LastMessag
 /**
   Prints a log message to memory buffer.
  
+  @param  Timing      TRUE to prepend timing to log.
   @param  DebugMode   DebugMode will be passed to Callback function if it is set.
   @param  Format      The format string for the debug message to print.
   @param  Marker      VA_LIST with variable arguments for Format.
@@ -22,6 +23,7 @@ typedef VOID (EFIAPI *MEM_LOG_CALLBACK) (IN INTN DebugMode, IN CHAR8 *LastMessag
 VOID
 EFIAPI
 MemLogVA (
+  IN  CONST BOOLEAN Timing,
   IN  CONST INTN    DebugMode,
   IN  CONST CHAR8   *Format,
   IN  VA_LIST       Marker
@@ -32,6 +34,7 @@ MemLogVA (
 
   If Format is NULL, then does nothing.
 
+  @param  Timing      TRUE to prepend timing to log.
   @param  DebugMode   DebugMode will be passed to Callback function if it is set.
   @param  Format      The format string for the debug message to print.
   @param  ...         The variable argument list whose contents are accessed 
@@ -41,6 +44,7 @@ MemLogVA (
 VOID
 EFIAPI
 MemLog (
+  IN  CONST BOOLEAN Timing,
   IN  CONST INTN    DebugMode,
   IN  CONST CHAR8   *Format,
   ...
@@ -75,6 +79,14 @@ EFIAPI
 SetMemLogCallback (
   MEM_LOG_CALLBACK  Callback
   );
+
+
+/**
+  Returns TSC ticks per second.
+ **/
+UINT64
+EFIAPI
+GetMemLogTscTicksPerSecond (VOID);
 
 
 #endif // __MEMLOG_LIB_H__

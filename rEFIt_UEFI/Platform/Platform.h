@@ -31,6 +31,7 @@ Headers collection for procedures
 #include <Library/UefiRuntimeLib.h>
 #include <Library/UsbMass.h>
 #include <Library/VideoBiosPatchLib.h>
+#include <Library/MemLogLib.h>
 
 #include <Framework/FrameworkInternalFormRepresentation.h>
 
@@ -1053,12 +1054,6 @@ VOID        FinalizeSmbios(VOID);
 EFI_STATUS  DisableUsbLegacySupport(VOID);
 
 UINT8		    *Base64Decode(IN CHAR8 *EncodedData, OUT UINTN *DecodedSize);
-
-// Inits debug time. Must be called after PrepatchSmbios().
-VOID        DbgTimeInit(UINT64 TscTicksPerSecond, UINTN StartTsc);
-// Returns debug time as string for print: secs:milis - sec:milis (from start - from last call)
-// Returned buffer should not be released.
-CHAR8       *DbgTime(VOID);
 
 UINT64      TimeDiff(UINT64 t0, UINT64 t1);
 
