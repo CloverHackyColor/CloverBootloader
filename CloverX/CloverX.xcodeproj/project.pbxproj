@@ -370,7 +370,6 @@
 		12B816B41644675800A433E7 /* Console.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Console.c; sourceTree = "<group>"; };
 		12B816B51644675800A433E7 /* cpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cpu.c; sourceTree = "<group>"; };
 		12B816B61644675800A433E7 /* DataHubCpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DataHubCpu.c; sourceTree = "<group>"; };
-		12B816B81644675800A433E7 /* DbgTime.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DbgTime.c; sourceTree = "<group>"; };
 		12B816B91644675800A433E7 /* device_inject.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = device_inject.c; sourceTree = "<group>"; };
 		12B816BA1644675800A433E7 /* device_inject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = device_inject.h; sourceTree = "<group>"; };
 		12B816BB1644675800A433E7 /* device_tree.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = device_tree.c; sourceTree = "<group>"; };
@@ -1421,7 +1420,6 @@
 				12B816B41644675800A433E7 /* Console.c */,
 				12B816B51644675800A433E7 /* cpu.c */,
 				12B816B61644675800A433E7 /* DataHubCpu.c */,
-				12B816B81644675800A433E7 /* DbgTime.c */,
 				12B816B91644675800A433E7 /* device_inject.c */,
 				12B816BA1644675800A433E7 /* device_inject.h */,
 				12B816BB1644675800A433E7 /* device_tree.c */,

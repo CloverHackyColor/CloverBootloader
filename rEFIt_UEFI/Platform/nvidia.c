@@ -1303,6 +1303,8 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE0FD4,	0x10280551,	"Dell GeForce GTX 660M" },
 	{ 0x10DE0FD4,	0x1028057B,	"Dell GeForce GTX 660M" },
 	{ 0x10DE0FD4,	0x146210D7,	"MSi GeForce GTX 660M" },
+  
+  { 0x10DE0FD5,	0x106b0010,	"Apple GeForce GTX 650M" },
 
 	{ 0x10DE0FDB,	0x104310AC,	"Asus GK107-ESP-A1" },
 	{ 0x10DE0FDB,	0x10431447,	"Asus GK107-ESP-A1" },
@@ -2681,7 +2683,7 @@ static nvidia_card_info_t nvidia_cards[] = {
 	{ 0x10DE0FD2,	NV_SUB_IDS,	"GeForce GT 640M" },
 	{ 0x10DE0FD3,	NV_SUB_IDS,	"GeForce GT 640M LE" },
 	{ 0x10DE0FD4,	NV_SUB_IDS,	"GeForce GTX 660M" },
-	{ 0x10DE0FD5,	NV_SUB_IDS,	"GeForce GT 650M" },
+	{ 0x10DE0FD5,	NV_SUB_IDS,	"GeForce GT 650M" },  //GK100
 	{ 0x10DE0FDB,	NV_SUB_IDS,	"GK107-ESP-A1" },
 	// 0FE0 - 0FEF
 	{ 0x10DE0FE0,	NV_SUB_IDS,	"GeForce GTX 660M" },

@@ -178,31 +178,31 @@ static struct net_chipsets_t NetChipsets[] = {
 	{ 0x10EC8169, "Realtek 8169/8110 Gigabit Ethernet" },
 	{ 0x10EC8168, "Realtek 8168/8101E Gigabit Ethernet" },
 	{ 0x10EC8167, "Realtek 8169/8110 Gigabit Ethernet" },
-    { 0x10EC8136, "Realtek 8168/8101E Gigabit Ethernet" },
-    // 8139
-    { 0x10EC8139, "Realtek RTL8139/810x Family Fast Ethernet" },
-    { 0x11861300, "Realtek RTL8139/810x Family Fast Ethernet" },
-    { 0x11131211, "Realtek RTL8139/810x Family Fast Ethernet" },
-    // Broadcom 57XX 
+  { 0x10EC8136, "Realtek 8168/8101E Gigabit Ethernet" },
+  // 8139
+  { 0x10EC8139, "Realtek RTL8139/810x Family Fast Ethernet" },
+  { 0x11861300, "Realtek RTL8139/810x Family Fast Ethernet" },
+  { 0x11131211, "Realtek RTL8139/810x Family Fast Ethernet" },
+  // Broadcom 57XX 
   { 0x14e41600, "Broadcom 5751 Ethernet" },
-    { 0x14e41659, "Broadcom 57XX Ethernet" },
-    { 0x14e4166A, "Broadcom 57XX Ethernet" },
-    { 0x14e41684, "Broadcom 57XX Ethernet" },
-    { 0x14e416B4, "Broadcom 57XX Ethernet" },
-    // Intel 8255x Ethernet
-    { 0x80861051, "Intel 8255x Ethernet" },
-    { 0x80861050, "Intel 8255x Ethernet" },
-    { 0x80861029, "Intel 8255x Ethernet" },
-    { 0x80861030, "Intel 8255x Ethernet" },    
-    { 0x80861209, "Intel 8255x Ethernet" },
-    { 0x80861227, "Intel 8255x Ethernet" },
-    { 0x80861228, "Intel 8255x Ethernet" },
-    { 0x80861229, "Intel 8255x Ethernet" },   
-    { 0x80862449, "Intel 8255x Ethernet" },
-    { 0x80862459, "Intel 8255x Ethernet" },
-    { 0x8086245D, "Intel 8255x Ethernet" },
-    { 0x80861091, "Intel 8255x Ethernet" }, 
-    { 0x80861060, "Intel 8255x Ethernet" },
+  { 0x14e41659, "Broadcom 57XX Ethernet" },
+  { 0x14e4166A, "Broadcom 57XX Ethernet" },
+  { 0x14e41684, "Broadcom 57XX Ethernet" },
+  { 0x14e416B4, "Broadcom 57XX Ethernet" },
+  // Intel 8255x Ethernet
+  { 0x80861051, "Intel 8255x Ethernet" },
+  { 0x80861050, "Intel 8255x Ethernet" },
+  { 0x80861029, "Intel 8255x Ethernet" },
+  { 0x80861030, "Intel 8255x Ethernet" },    
+  { 0x80861209, "Intel 8255x Ethernet" },
+  { 0x80861227, "Intel 8255x Ethernet" },
+  { 0x80861228, "Intel 8255x Ethernet" },
+  { 0x80861229, "Intel 8255x Ethernet" },   
+  { 0x80862449, "Intel 8255x Ethernet" },
+  { 0x80862459, "Intel 8255x Ethernet" },
+  { 0x8086245D, "Intel 8255x Ethernet" },
+  { 0x80861091, "Intel 8255x Ethernet" }, 
+  { 0x80861060, "Intel 8255x Ethernet" },
 };
 
 struct ide_chipsets_t {
@@ -3375,8 +3375,8 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   aml_add_byte_buffer(pack, dataBuiltin, sizeof(dataBuiltin));
   aml_add_string(pack, "device_type");
   aml_add_string_buffer(pack, "UHCI");
-  aml_add_string(pack, "AAPL,clock-id");
-  aml_add_byte_buffer(pack, dataBuiltin, 1);
+//  aml_add_string(pack, "AAPL,clock-id");
+//  aml_add_byte_buffer(pack, dataBuiltin, 1);
   
   aml_add_local0(met);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
@@ -3399,8 +3399,8 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
   aml_add_string(pack1, "device_type");
   aml_add_string_buffer(pack1, "EHCI");
-  aml_add_string(pack1, "AAPL,clock-id");
-  aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
+//  aml_add_string(pack1, "AAPL,clock-id");
+//  aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
   aml_add_string(pack1, "AAPL,current-available");
   aml_add_word(pack1, 0x05DC);
   aml_add_string(pack1, "AAPL,current-extra");

@@ -797,8 +797,6 @@ MACHINE_TYPES GetDefaultModel()
 				DefaultType = MacPro51;
 				break;
 			case CPU_MODEL_SANDY_BRIDGE:
-      case CPU_MODEL_IVY_BRIDGE:   //should be new iMac  13,2
-      case CPU_MODEL_IVY_BRIDGE_E5:  
         if (gGraphics[0].Vendor == Intel) {
           DefaultType = MacMini51;
 					break;
@@ -814,6 +812,10 @@ MACHINE_TYPES GetDefaultModel()
 				}
 				DefaultType = MacPro51;
 				break;
+      case CPU_MODEL_IVY_BRIDGE:
+      case CPU_MODEL_IVY_BRIDGE_E5:  
+        DefaultType = iMac131;
+        break;
 			case CPU_MODEL_JAKETOWN:
 				DefaultType = MacPro41;
 				break;

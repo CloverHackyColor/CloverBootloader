@@ -15,7 +15,7 @@ CHAR8* BiosVendor = "Apple Inc.";
 
 CHAR8* AppleManufacturer = "Apple Computer, Inc."; //Old name, before 2007
 
-UINT32 gFwFeatures = 0xC001f537; //default valuse
+UINT32 gFwFeatures = 0xE001f537; //default values for iMac13,1
 
 CHAR8* AppleFirmwareVersion[] = 
 {
@@ -38,6 +38,7 @@ CHAR8* AppleFirmwareVersion[] =
   "IM113.88Z.0057.B00.1005031455",
 	"IM121.88Z.0047.B1F.1201241648",
   "IM122.88Z.0047.B1F.1223021110",
+  "IM131.88Z.010A.B00.1209042338",
 	"MP31.88Z.006C.B05.0802291410",
 	"MP41.88Z.0081.B04.0903051113",
 	"MP51.88Z.007F.B00.1008031144"
@@ -64,6 +65,7 @@ CHAR8* AppleBoardID[] = //Lion DR1 compatible
   "Mac-F2238BAE",  //IM113 - lynnfield
   "Mac-942B5BF58194151B",  //IM121 - i5-2500 - sandy
   "Mac-942B59F58194171B",  //IM122 - i7-2600
+  "Mac-00BE6ED71E35EB86",  //IM131 - -i5-3470S -IVY
 	"Mac-F2268DC8",  //MP31 - xeon quad 02/09
 	"Mac-F4238CC8",  //MP41
 	"Mac-F222BEC8"   //MP51
@@ -90,6 +92,7 @@ CHAR8* AppleReleaseDate[] =
 	"05/03/10",
   "01/24/12",  //121 120124
   "02/23/12",  //122
+  "09/04/2012",  //131
 	"02/29/08",
 	"03/05/09",
 	"08/03/10"
@@ -116,6 +119,7 @@ CHAR8* AppleProductName[] =
   "iMac11,3",
 	"iMac12,1",
   "iMac12,2",
+  "iMac13,1",
 	"MacPro3,1",
 	"MacPro4,1",
 	"MacPro5,1"
@@ -141,6 +145,7 @@ CHAR8* AppleFamilies[] =
 	"iMac",
 	"iMac",
 	"iMac",
+  "iMac",
   "iMac",
 	"MacPro",
 	"MacPro",
@@ -169,6 +174,7 @@ CHAR8* AppleSystemVersion[] =
   "1.0",
 	"1.9",
   "1.9",
+  "1.0",
 	"1.3",
 	"1.4",
 	"1.2"
@@ -195,6 +201,7 @@ CHAR8* AppleSerialNumber[] = //random generated
   "QP0312PBDNR", //IM113 - lynnfield
 	"W80CF65ADHJF", //IM121 - i5-2500 - sandy
   "W88GG136DHJQ", //IM122 -i7-2600
+  "C02JK0CWDNCT", //IM131 -i5-3470S -IVY
 	"W88A77AA5J4", //MP31 - xeon quad 02/09
 	"CT93051DK9Y", //MP41
 	"CG154TB9WU3"  //MP51
@@ -220,6 +227,7 @@ CHAR8* AppleChassisAsset[] =
 	"iMac-Aluminum",
 	"iMac-Aluminum",
 	"iMac-Aluminum",
+  "iMac-Aluminum",
   "iMac-Aluminum",
 	"Pro-Enclosure",
 	"Pro-Enclosure",
@@ -275,6 +283,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model)
     case iMac113:
     case iMac121:
     case iMac122:
+    case iMac131:  
       gSettings.ChassisType = MiscChassisTypeAllInOne; //13; 
       gSettings.Mobile = FALSE;
       break;

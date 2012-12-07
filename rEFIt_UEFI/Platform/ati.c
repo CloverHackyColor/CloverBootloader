@@ -413,11 +413,11 @@ radeon_card_info_t radeon_cards[] = {
   { 0x6780,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7900 Series",		kDashimaki	},
   { 0x6790,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7900 Series",		kDashimaki	},
   { 0x6798,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7970 X-Edition",	kDashimaki	},
-  { 0x679A,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7900 Series",		kDashimaki	},
+  { 0x679A,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7950 Series",		kDashimaki	},
 	{ 0x6800,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7600 Series",		kDashimaki	},
 	{ 0x6806,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7600 Series",		kDashimaki	},
 	{ 0x6808,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7600 Series",		kDashimaki	},
-	{ 0x6818,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7600 Series",		kDashimaki	},
+	{ 0x6818,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7870 Series",		kDashimaki	},
   { 0x6819,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7800 Series",		kDashimaki	},
 	{ 0x6820,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7800 Series",		kDashimaki	},
 	{ 0x6821,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7800 Series",		kDashimaki	},
@@ -428,7 +428,7 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x6839,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7700 Series",		kDashimaki	},
 	{ 0x683B,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7700 Series",		kDashimaki	},
 	{ 0x683D,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7770 Series",		kDashimaki	},
-	{ 0x683F,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7700 Series",		kDashimaki	},
+	{ 0x683F,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7750 Series",		kDashimaki	},
   
   { 0x6840,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7670m ",         kBuri	},
 	{ 0x0000,	0x00000000, CHIP_FAMILY_UNKNOW,		NULL,								kNull		}

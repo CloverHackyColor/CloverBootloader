@@ -23,7 +23,7 @@
 extern CHAR8*						gDeviceProperties;
 
 //Slice - corrected all values, still not sure
-UINT8 GMAX3100_vals[25][4] = {
+UINT8 GMAX3100_vals[26][4] = {
 	{ 0x01,0x00,0x00,0x00 },	//0 "AAPL,HasPanel"
 	{ 0x01,0x00,0x00,0x00 },	//1 "AAPL,SelfRefreshSupported"
 	{ 0x01,0x00,0x00,0x00 },	//2 "AAPL,aux-power-connected"
@@ -47,8 +47,9 @@ UINT8 GMAX3100_vals[25][4] = {
 	{ 0xc8,0x95,0x00,0x00 },	//20 "AAPL01,InverterFrequency"
 	{ 0x6B,0x10,0x00,0x00 },	//21 "subsystem-vendor-id"
 	{ 0xA2,0x00,0x00,0x00 },	//22 "subsystem-id"
-    { 0x05,0x00,0x62,0x01 },    //23 "AAPL,ig-platform-id" HD4000 //STLVNUB
-    { 0x09,0x00,0x66,0x01 }     //24 "AAPL,ig-platform-id" HD4000
+  { 0x05,0x00,0x62,0x01 },    //23 "AAPL,ig-platform-id" HD4000 //STLVNUB
+  { 0x06,0x00,0x62,0x01 },    //24 "AAPL,ig-platform-id" HD4000 iMac
+  { 0x09,0x00,0x66,0x01 }     //25 "AAPL,ig-platform-id" HD4000
 };
 
 UINT8 FakeID_126[] = {0x26, 0x01, 0x00, 0x00 };
@@ -76,16 +77,16 @@ static struct gma_gpu_t KnownGPUS[] = {
 //	{ 0x2A13, "GMAX3100"		},
 	{ 0x2A42, "GMAX3100"		},
 //	{ 0x2A43, "GMAX3100"		},
-//  { 0x0044, "HD2000"  }, //host bridge
-  { 0x0046, "Intel HD Graphics 2000"  }, 
+  { 0x0046, "Intel HD Graphics"  }, 
   { 0x0102, "Intel HD Graphics 3000"  },
-  { 0x0112, "Intel HD Graphics 3000"  },
-  { 0x0116, "Intel HD Graphics 3000"  },
+  { 0x0112, "Intel HD Graphics 2000"  },
+  { 0x0116, "Intel HD Graphics 2000M"  },
   { 0x0122, "Intel HD Graphics 3000"  },
-  { 0x0126, "Intel HD Graphics 3000"  },
-  { 0x0166, "Intel HD Graphics 4000"  }, //
-  { 0x0162, "Intel HD Graphics 4000"  }  //Desktop??
- 
+  { 0x0126, "Intel HD Graphics 3000M"  },
+  { 0x0166, "Intel HD Graphics 4000M"  }, //
+  { 0x0162, "Intel HD Graphics 4000"  },  //Desktop??
+  { 0x0152, "Intel HD Graphics 4000"  },  //iMac
+  { 0x0156, "Intel HD Graphics 4000M"  },  //MacBook
 };
 
 CHAR8 *get_gma_model(UINT16 id) {
@@ -160,12 +161,18 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x0126:
       if (gma_dev->device_id == 0x122)
         devprop_add_value(device, "device-id", FakeID_126, 4);
+    case 0x0152:
+    case 0x0156:
     case 0x0162:
     case 0x0166:
       if (gma_dev->device_id == 0x162)
           devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[23], 4);
-      else if (gma_dev->device_id == 0x166)
-          devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[24], 4);
+      else if (gma_dev->device_id == 0x166) 
+          devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[25], 4);
+      else if (gma_dev->device_id == 0x152)
+        devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[24], 4);
+      else if (gma_dev->device_id == 0x156) 
+        devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[25], 4);
     case 0xA011:
     case 0xA012:  
       devprop_add_value(device, "AAPL01,DualLink", (UINT8 *)&DualLink, 1);

@@ -638,13 +638,13 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
           EFI_STATUS	Status = EFI_NOT_FOUND;
           CHAR16*   targetNameFile = L"System\\Library\\CoreServices\\.disk_label.contentDetails";
           CHAR8* 	fileBuffer;
-          CHAR8*    targetString;
-          UINTN     fileLen = 0;
+          CHAR8*  targetString;
+          UINTN    fileLen = 0;
           if(FileExists(Volume->RootDir, targetNameFile)) {
               Status = egLoadFile(Volume->RootDir, targetNameFile, (UINT8 **)&fileBuffer, &fileLen);
               if(!EFI_ERROR(Status)) {
                   CHAR16  *tmpName;
-                  int i;
+                  INTN    i;
                   //Create null terminated string
                   targetString = (CHAR8*) AllocateZeroPool(fileLen+1);
                   CopyMem( (VOID*)targetString, (VOID*)fileBuffer, fileLen);
