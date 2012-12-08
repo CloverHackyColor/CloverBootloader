@@ -154,7 +154,7 @@ radeon_card_info_t radeon_cards[] = {
   { 0x7183, 0x00000000, CHIP_FAMILY_RV515, "ATI Radeon HD Desktop ",		kCaretta		 },
   { 0x7186, 0x00000000, CHIP_FAMILY_RV515, "ATI Radeon HD Mobile ",			kCaretta		 },
   { 0x7187, 0x00000000, CHIP_FAMILY_RV515, "ATI Radeon HD Desktop ",		kCaretta		 },
-  { 0x7188, 0x00000000, CHIP_FAMILY_RV515, "ATI Radeon HD2300 Mobile ",			kCaretta		 },
+  { 0x7188, 0x00000000, CHIP_FAMILY_RV515, "ATI Radeon HD2300 Mobile ",	kCaretta		 },
   { 0x718A, 0x00000000, CHIP_FAMILY_RV515, "ATI Radeon HD Mobile ",			kCaretta		 },
   { 0x718B, 0x00000000, CHIP_FAMILY_RV515, "ATI Radeon HD Mobile ",			kCaretta		 },
   { 0x718C, 0x00000000, CHIP_FAMILY_RV515, "ATI Radeon HD Mobile ",			kCaretta		 },
@@ -180,7 +180,7 @@ radeon_card_info_t radeon_cards[] = {
   { 0x71D5, 0x00000000, CHIP_FAMILY_RV530, "ATI Radeon HD Mobile ",			kWormy		 },
   { 0x71D6, 0x00000000, CHIP_FAMILY_RV530, "ATI Radeon HD Mobile ",			kWormy		 },
   { 0x71DA, 0x00000000, CHIP_FAMILY_RV530, "ATI Radeon HD Desktop ",		kWormy		 },
-  { 0x71DE, 0x00000000, CHIP_FAMILY_RV530, "ATI Radeon HD Mobile ",			kWormy		 },
+  { 0x71DE, 0x00000000, CHIP_FAMILY_RV530, "ASUS M66 ATI Radeon Mobile ",			kWormy		 },
   { 0x7200, 0x00000000, CHIP_FAMILY_RV530, "ATI Radeon HD Desktop ",		kWormy		 },
   { 0x7210, 0x00000000, CHIP_FAMILY_RV530, "ATI Radeon HD Mobile ",			kWormy		 },
   { 0x7211, 0x00000000, CHIP_FAMILY_RV530, "ATI Radeon HD Mobile ",			kWormy		 },
@@ -711,7 +711,7 @@ BOOLEAN get_binimage_val(value_t *val)
 		return FALSE;
 	
 	val->type = kPtr;
-	val->size = ((UINT32)card->rom_size) << 9;
+	val->size = card->rom_size;
 	val->data = card->rom;
 	
 	return TRUE;
@@ -963,8 +963,8 @@ BOOLEAN load_vbios_file(UINT16 vendor_id, UINT16 device_id)
 		card->rom = 0;
 		return FALSE;
 	}
-	
-	card->rom_size = (UINT32)(((option_rom_header_t *)card->rom)->rom_size) << 9;
+	bufferLen = ((option_rom_header_t *)card->rom)->rom_size;
+	card->rom_size = bufferLen << 9;
 	DBG("Calculated ROM len=%d\n", card->rom_size);
 //	close(fd);
   FreePool(buffer);

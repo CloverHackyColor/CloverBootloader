@@ -67,8 +67,8 @@ typedef struct pci_dt_t {
 typedef struct {
 	UINT16		signature;		// 0xAA55
 	UINT8			rom_size;  //in 512 bytes blocks
-  UINT8     revision;  //0xE9 for ATI and Intel, 0xEB for NVidia
-	UINT32		entry_point;  //???
+  UINT8     jump;  //0xE9 for ATI and Intel, 0xEB for NVidia
+	UINT8 		entry_point[4];  //offset to
 	UINT8			reserved[16];
 	UINT16		pci_header_offset;  //@0x18
 	UINT16		expansion_header_offset;
