@@ -87,33 +87,34 @@ typedef struct {
     UINT32 Size;
 } MBR_PARTITION_INFO;
 
-#define DISK_KIND_INTERNAL  (0)
-#define DISK_KIND_EXTERNAL  (1)
-#define DISK_KIND_OPTICAL   (2)
-#define DISK_KIND_FIREWIRE	(3)
+#define DISK_KIND_INTERNAL      (0)
+#define DISK_KIND_EXTERNAL      (1)
+#define DISK_KIND_OPTICAL       (2)
+#define DISK_KIND_FIREWIRE      (3)
 #define DISK_KIND_NODISK 		(4)
 #define DISK_KIND_BOOTER 		(5)
 
 #define BOOTING_BY_BOOTLOADER	(1)
-#define BOOTING_BY_EFI        (2)
+#define BOOTING_BY_EFI          (2)
 #define BOOTING_BY_BOOTEFI		(3)
-#define BOOTING_BY_MBR        (4)
-#define BOOTING_BY_PBR        (5)
-#define BOOTING_BY_CD         (6)
+#define BOOTING_BY_MBR          (4)
+#define BOOTING_BY_PBR          (5)
+#define BOOTING_BY_CD           (6)
 
 #define OSTYPE_OSX				(1)
 #define OSTYPE_WIN				(2)
 #define OSTYPE_VAR				(3)
 #define OSTYPE_LIN				(4)
-#define OSTYPE_EFI        (5)
-#define OSTYPE_WINEFI     (6)
-#define OSTYPE_RECOVERY		(10)
+#define OSTYPE_EFI              (5)
+#define OSTYPE_WINEFI           (6)
+#define OSTYPE_BOOT_OSX         (9)
+#define OSTYPE_RECOVERY         (10)
 #define OSTYPE_TIGER			(14)
 #define OSTYPE_LEO				(15)
 #define OSTYPE_SNOW				(16)
 #define OSTYPE_LION				(17)
-#define OSTYPE_COUGAR  		(18)
-#define OSTYPE_HIDE       (100)
+#define OSTYPE_COUGAR           (18)
+#define OSTYPE_HIDE             (100)
 
 
 #define IS_EXTENDED_PART_TYPE(type) ((type) == 0x05 || (type) == 0x0f || (type) == 0x85)
@@ -140,6 +141,7 @@ typedef struct {
   EFI_DEVICE_PATH     *WholeDiskDevicePath;
   MBR_PARTITION_INFO  *MbrPartitionTable;
   UINT32              DriveCRC32;
+  EFI_GUID            RootUUID;
 } REFIT_VOLUME;
 
 typedef enum {

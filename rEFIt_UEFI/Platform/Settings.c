@@ -963,6 +963,14 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.HVHideAllRecovery = TRUE;
         }
       }
+        gSettings.HVHideDuplicatedBootTarget = FALSE;
+        prop = GetProperty(dictPointer,"HideDuplicatedBootTarget");
+        if(prop) {
+            if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+                gSettings.HVHideDuplicatedBootTarget = TRUE;
+            }
+        }
+
       gSettings.HVHideAllWindowsEFI = FALSE;
       prop = GetProperty(dictPointer,"HideAllWindowsEFI");
       if(prop) {
@@ -1157,6 +1165,57 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
       }
       MsgLog("Booting OS %a\n", prop->string);
     } 
+	}
+	
+	return Status;
+}
+
+//Get the UUID of the AppleRaid or CoreStorage volume from the boot helper partition
+EFI_STATUS GetRootUUID(IN REFIT_VOLUME *Volume)
+{
+	EFI_STATUS				Status = EFI_NOT_FOUND;
+	CHAR8*					plistBuffer = 0;
+	UINTN                   plistLen;
+	TagPtr					dict  = NULL;
+	TagPtr					prop  = NULL;
+    CHAR16	                Uuid[40];
+    
+    CHAR16*     SystemPlistP = L"\\com.apple.boot.P\\Library\\Preferences\\SystemConfiguration\\com.apple.Boot.plist";
+    CHAR16*     SystemPlistR = L"\\com.apple.boot.R\\Library\\Preferences\\SystemConfiguration\\com.apple.Boot.plist"; //untested, found in chameleon
+    CHAR16*     SystemPlistS = L"\\com.apple.boot.S\\Library\\Preferences\\SystemConfiguration\\com.apple.Boot.plist"; //untested, found in chameleon
+    
+    if (!Volume) {
+        return EFI_NOT_FOUND;
+    }
+    
+	if(FileExists(Volume->RootDir, SystemPlistP))
+	{
+		Status = egLoadFile(Volume->RootDir, SystemPlistP, (UINT8 **)&plistBuffer, &plistLen);
+	}
+	else if(FileExists(Volume->RootDir, SystemPlistR))
+	{
+		Status = egLoadFile(Volume->RootDir, SystemPlistR, (UINT8 **)&plistBuffer, &plistLen);
+	}
+	else if(FileExists(Volume->RootDir, SystemPlistS))
+	{
+		Status = egLoadFile(Volume->RootDir, SystemPlistS, (UINT8 **)&plistBuffer, &plistLen);
+	}
+   
+	if(!EFI_ERROR(Status))
+	{
+		if(ParseXML(plistBuffer, &dict) != EFI_SUCCESS)
+		{
+			FreePool(plistBuffer);
+			return EFI_NOT_FOUND;
+		}
+        
+		prop = GetProperty(dict, "Root UUID");
+		if(prop != NULL)
+		{
+            AsciiStrToUnicodeStr(prop->string, Uuid);
+            Status = StrToGuidLE(Uuid, &Volume->RootUUID);            
+        }
+        FreePool(plistBuffer);
 	}
 	
 	return Status;

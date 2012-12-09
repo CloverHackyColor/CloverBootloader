@@ -540,6 +540,50 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //  PauseForKey(L"System started?!");
 }
 
+
+//Set Entry->VolName to .disk_label.contentDetails if it exists
+static EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
+{
+    EFI_STATUS	Status = EFI_NOT_FOUND;
+    CHAR16* targetNameFile = L"System\\Library\\CoreServices\\.disk_label.contentDetails";
+    CHAR8* 	fileBuffer;
+    CHAR8*  targetString;
+    UINTN   fileLen = 0;
+    if(FileExists(Entry->Volume->RootDir, targetNameFile)) {
+        Status = egLoadFile(Entry->Volume->RootDir, targetNameFile, (UINT8 **)&fileBuffer, &fileLen);
+        if(!EFI_ERROR(Status)) {
+            CHAR16  *tmpName;
+            INTN i;
+            //Create null terminated string
+            targetString = (CHAR8*) AllocateZeroPool(fileLen+1);
+            CopyMem( (VOID*)targetString, (VOID*)fileBuffer, fileLen);
+            
+            if (Entry->Volume->OSType == OSTYPE_BOOT_OSX) {
+                //remove occurence number. eg: "vol_name 2" --> "vol_name"
+                i=fileLen-1;
+                while ((i>0) && (targetString[i]>='0') && (targetString[i]<='9')) {
+                    i--;
+                }
+                if (targetString[i] == ' ') {
+                    targetString[i] = 0;
+                }
+            }
+            
+            //Convert to Unicode
+            tmpName = (CHAR16*)AllocateZeroPool((fileLen+1)*2);
+            tmpName = AsciiStrToUnicodeStr(targetString, tmpName);
+            
+            Entry->VolName = EfiStrDuplicate(tmpName);
+            
+            FreePool(tmpName);
+            FreePool(fileBuffer);
+            FreePool(targetString);
+        }
+    }
+    return Status;
+}
+
+
 static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume, UINT8 OSType)
 {
   CHAR16            *FileName, *OSIconName;
@@ -629,47 +673,13 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     case OSTYPE_LION:
     case OSTYPE_COUGAR:
     case OSTYPE_RECOVERY:
+    case OSTYPE_BOOT_OSX:
       OSIconName = Volume->OSIconName;
       Entry->UseGraphicsMode = TRUE;
       LoaderKind = 1;
       ShortcutLetter = 'M';    
       Entry->LoaderType = OSTYPE_OSX;
-      {//start of patch
-          EFI_STATUS	Status = EFI_NOT_FOUND;
-          CHAR16*   targetNameFile = L"System\\Library\\CoreServices\\.disk_label.contentDetails";
-          CHAR8* 	fileBuffer;
-          CHAR8*  targetString;
-          UINTN    fileLen = 0;
-          if(FileExists(Volume->RootDir, targetNameFile)) {
-              Status = egLoadFile(Volume->RootDir, targetNameFile, (UINT8 **)&fileBuffer, &fileLen);
-              if(!EFI_ERROR(Status)) {
-                  CHAR16  *tmpName;
-                  INTN    i;
-                  //Create null terminated string
-                  targetString = (CHAR8*) AllocateZeroPool(fileLen+1);
-                  CopyMem( (VOID*)targetString, (VOID*)fileBuffer, fileLen);
-                  
-                  //remove occurence number. eg: "vol_name 2" --> "vol_name"
-                  i=fileLen-1;
-                  while ((i>0) && (targetString[i]>='0') && (targetString[i]<='9')) {
-                      i--;
-                  }
-                  if (targetString[i] == ' ') {
-                          targetString[i] = 0;
-                  }
-                  
-                  //Convert to Unicode
-                  tmpName = (CHAR16*)AllocateZeroPool((fileLen+1)*2);
-                  tmpName = AsciiStrToUnicodeStr(targetString, tmpName);
-                  
-                  Entry->VolName = EfiStrDuplicate(tmpName);
-              
-                  FreePool(tmpName);
-                  FreePool(fileBuffer);
-                  FreePool(targetString);
-              }
-          }
-      }//end of patch
+      GetOSXVolumeName(Entry);
       break;
     case OSTYPE_WIN:
       OSIconName = L"win";
@@ -1068,6 +1078,24 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   return Entry;
 }
 
+BOOLEAN isFirstRootUUID(REFIT_VOLUME *Volume)
+{
+    UINTN                   VolumeIndex;
+    REFIT_VOLUME            *scanedVolume;
+
+    for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
+        scanedVolume = Volumes[VolumeIndex];
+        
+        if ( scanedVolume == Volume)
+            return TRUE;
+        
+        if (CompareGuid(&scanedVolume->RootUUID, &Volume->RootUUID))
+            return FALSE;
+
+    }
+    return TRUE;
+}
+
 /*
 static VOID ScanLoaderDir(IN REFIT_VOLUME *Volume, IN CHAR16 *Path)
 {
@@ -1110,7 +1138,7 @@ static VOID ScanLoader(VOID)
   CHAR16                  VolumeString[256];
   INT32                   HVi;
   CHAR16                  *HV;
-//  EFI_STATUS              Status;
+  EFI_STATUS              Status;
   
   //    Print(L"Scanning for boot loaders...\n");
   
@@ -1146,8 +1174,17 @@ static VOID ScanLoader(VOID)
       //     Print(L"  - Mac OS X boot file found\n");
       Volume->BootType = BOOTING_BY_EFI;
       Volume->DriveImage = ScanVolumeDefaultIcon(Volume);
-      if (!gSettings.HVHideAllOSX)
-        Entry = AddLoaderEntry(FileName, L"Mac OS X", Volume, Volume->OSType);
+        // check for Mac OS X Boot target
+        Status = GetRootUUID(Volume);
+        if(!EFI_ERROR(Status)) {
+            Volume->OSType = OSTYPE_BOOT_OSX;
+            if (isFirstRootUUID(Volume) || !gSettings.HVHideDuplicatedBootTarget)
+            Entry = AddLoaderEntry(FileName, L"Mac OS X", Volume, Volume->OSType);
+        }
+        else {
+            if (!gSettings.HVHideAllOSX)
+                Entry = AddLoaderEntry(FileName, L"Mac OS X", Volume, Volume->OSType);
+        }
       //     continue; //boot MacOSX only
     }
 //crazybirdy
@@ -1193,7 +1230,7 @@ static VOID ScanLoader(VOID)
     StrCpy(FileName,  L"\\com.apple.recovery.boot\\boot.efi");
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->BootType = BOOTING_BY_EFI;
-      Volume->OSType = OSTYPE_RECOVERY; 
+      Volume->OSType = OSTYPE_RECOVERY;
       Volume->OSIconName = L"mac";
       Volume->DriveImage = ScanVolumeDefaultIcon(Volume);
       if (!gSettings.HVHideAllRecovery) {
@@ -1201,6 +1238,7 @@ static VOID ScanLoader(VOID)
         continue; //boot recovery only
       }
     }
+      
     
     // check for XOM - and what?
     //    StrCpy(FileName, L"\\System\\Library\\CoreServices\\xom.efi");

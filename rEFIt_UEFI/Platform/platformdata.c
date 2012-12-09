@@ -46,9 +46,9 @@ CHAR8* AppleFirmwareVersion[] =
 
 CHAR8* AppleBoardID[] = //Lion DR1 compatible
 {
-	"Mac-F4208CC8", //MB11
+	"Mac-F4208CC8", //MB11 - yonah
 	"Mac-F4208CA9",  //MB21 - merom 05/07
-	"Mac-F22788A9",  //MB41
+	"Mac-F22788A9",  //MB41 - penryn
 	"Mac-F22788AA",  //MB52
 	"Mac-F42D86C8",  //MBP51
   "Mac-94245B3640C91C81",  //MBP81 - i5 SB IntelHD3000
@@ -66,9 +66,9 @@ CHAR8* AppleBoardID[] = //Lion DR1 compatible
   "Mac-942B5BF58194151B",  //IM121 - i5-2500 - sandy
   "Mac-942B59F58194171B",  //IM122 - i7-2600
   "Mac-00BE6ED71E35EB86",  //IM131 - -i5-3470S -IVY
-	"Mac-F2268DC8",  //MP31 - xeon quad 02/09
-	"Mac-F4238CC8",  //MP41
-	"Mac-F222BEC8"   //MP51
+	"Mac-F2268DC8",  //MP31 - xeon quad 02/09 conroe
+	"Mac-F4238CC8",  //MP41 - xeon wolfdale
+	"Mac-F222BEC8"   //MP51 - Xeon Nehalem 4 cores
 };
 
 CHAR8* AppleReleaseDate[] = 
@@ -204,7 +204,7 @@ CHAR8* AppleSerialNumber[] = //random generated
   "C02JK0CWDNCT", //IM131 -i5-3470S -IVY
 	"W88A77AA5J4", //MP31 - xeon quad 02/09
 	"CT93051DK9Y", //MP41
-	"CG154TB9WU3"  //MP51
+	"CG154TB9WU3"  //MP51 C07J50F7F4MC
 };
 //no! ChassisVersion == BoardID
 CHAR8* AppleChassisAsset[] = 

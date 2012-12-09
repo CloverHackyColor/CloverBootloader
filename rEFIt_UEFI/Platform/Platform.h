@@ -685,6 +685,7 @@ typedef struct {
   BOOLEAN HVHideAllOSX;
   BOOLEAN HVHideAllOSXInstall;
   BOOLEAN HVHideAllRecovery;
+  BOOLEAN HVHideDuplicatedBootTarget;
   BOOLEAN HVHideAllWindowsEFI;
   BOOLEAN HVHideAllGrub;
   BOOLEAN HVHideAllGentoo;
@@ -982,6 +983,7 @@ VOID            GetDevices(VOID);
 MACHINE_TYPES   GetDefaultModel(VOID);
 UINT16          GetAdvancedCpuType(VOID);
 EFI_STATUS      GetOSVersion(IN REFIT_VOLUME *Volume);
+EFI_STATUS      GetRootUUID(IN REFIT_VOLUME *Volume);
 EFI_STATUS      GetEarlyUserSettings(IN EFI_FILE *RootDir);
 EFI_STATUS      GetUserSettings(IN EFI_FILE *RootDir);
 EFI_STATUS      GetEdid(VOID);
