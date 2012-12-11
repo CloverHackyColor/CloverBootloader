@@ -58,6 +58,7 @@ CHAR8* AppleBoardID[] = //Lion DR1 compatible
   "Mac-2E6FAB96566FE58C",  //MBA52 - i5-3427U IVY BRIDGE IntelHD4000 did=166
 	"Mac-F4208EAA",          //MM21 - merom GMA950 07/07
   "Mac-8ED6AF5B48C039E1",  //MM51 - Sandy + Intel 30000
+  "Mac-F65AE981FFA204ED",  //MM62 - Ivy
 	"Mac-F227BEC8",  //IM81 - merom 01/09
 	"Mac-F2268CC8",  //IM101 - wolfdale? E7600 01/
   "Mac-F2268DAE",  //IM111 - Nehalem
@@ -85,6 +86,7 @@ CHAR8* AppleReleaseDate[] =
   "05/22/2012", //mba52
 	"08/07/07",  //mm21
   "02/29/11",  //MM51
+  "08/09/2012", //MM62
 	"03/05/08",
 	"09/03/09",  //im101
 	"03/17/10",
@@ -112,6 +114,7 @@ CHAR8* AppleProductName[] =
   "MacBookAir5,2",
 	"Macmini2,1",
   "Macmini5,1",
+  "Macmini6,2",
 	"iMac8,1",
 	"iMac10,1",
   "iMac11,1",
@@ -139,6 +142,7 @@ CHAR8* AppleFamilies[] =
   "MacBook Air",
 	"Macmini",
   "Mac mini",
+  "Macmini",
 	"iMac",
 	"iMac",
 	"iMac",
@@ -166,6 +170,7 @@ CHAR8* AppleSystemVersion[] =
 	"1.0",
   "1.0",
   "1.1",
+  "1.0", //MM51
   "1.0",
 	"1.3",
 	"1.0",
@@ -189,11 +194,12 @@ CHAR8* AppleSerialNumber[] = //random generated
 	"W88439FE1G0", //MBP51
   "W89F9196DH2G", //MBP81 - i5 SB IntelHD3000
   "W88F9CDEDF93", //MBP83 -i7 SB  ATI
-  "C02HMAX6DTY3", //MBP92 - i5 IvyBridge HD4000
+  "C02HA041DTY3", //MBP92 - i5 IvyBridge HD4000
 	"W8649476DQX",  //MBA31
-  "C02HRJXWDRVC", //MBA52 - IvyBridge
+  "C02HA041DRVC", //MBA52 - IvyBridge
 	"W88A56BYYL2",  //MM21 - merom GMA950 07/07
-  "C07G3VUFDJD0", //MM51 - sandy
+  "C07GA041DJD0", //MM51 - sandy
+  "C07JD041DWYN", //MM62 - IVY
 	"W89A00AAX88", //IM81 - merom 01/09
 	"W80AA98A5PE", //IM101 - wolfdale? E7600 01/09
   "G8942B1V5PJ", //IM111 - Nehalem
@@ -201,7 +207,7 @@ CHAR8* AppleSerialNumber[] = //random generated
   "QP0312PBDNR", //IM113 - lynnfield
 	"W80CF65ADHJF", //IM121 - i5-2500 - sandy
   "W88GG136DHJQ", //IM122 -i7-2600
-  "C02JK0CWDNCT", //IM131 -i5-3470S -IVY
+  "C02JA041DNCT", //IM131 -i5-3470S -IVY
 	"W88A77AA5J4", //MP31 - xeon quad 02/09
 	"CT93051DK9Y", //MP41
 	"CG154TB9WU3"  //MP51 C07J50F7F4MC
@@ -220,6 +226,7 @@ CHAR8* AppleChassisAsset[] =
 	"Air-Enclosure",
   "Air-Enclosure",
 	"Mini-Aluminum",
+  "Mini-Aluminum",
   "Mini-Aluminum",
 	"iMac-Aluminum",
 	"iMac-Aluminum",
@@ -289,6 +296,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model)
       break;
     case MacMini21:
     case MacMini51:
+    case MacMini62:  
       gSettings.ChassisType = MiscChassisTypeLunchBox; //16; 
       gSettings.Mobile = FALSE;
       break;

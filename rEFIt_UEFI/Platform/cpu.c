@@ -814,7 +814,7 @@ MACHINE_TYPES GetDefaultModel()
 				break;
       case CPU_MODEL_IVY_BRIDGE:
       case CPU_MODEL_IVY_BRIDGE_E5:  
-        DefaultType = iMac131;
+        DefaultType = iMac122;  //do not make 13,1 by default because of OS 10.8.2 doesn't know it
         break;
 			case CPU_MODEL_JAKETOWN:
 				DefaultType = MacPro41;

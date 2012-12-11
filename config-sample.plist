@@ -194,6 +194,8 @@
 	<dict>
 		<key>HideAllOSX</key>
 		<string>No</string>
+		<key>HideDuplicatedBootTarget</key>
+		<string>Yes</string>
 		<key>HideAllOSXInstall</key>
 		<string>No</string>
 		<key>HideAllRecovery</key>

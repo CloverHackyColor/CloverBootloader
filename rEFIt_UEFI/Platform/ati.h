@@ -70,6 +70,7 @@ typedef enum {
 	CHIP_FAMILY_CAYMAN,
 	CHIP_FAMILY_TURKS,
   CHIP_FAMILY_TAHITI,
+  CHIP_FAMILY_LOMBOK,
 	CHIP_FAMILY_LAST
 } ati_chip_family_t;
 
@@ -127,6 +128,7 @@ typedef enum {
 	kMangabey,
 	kMuskgrass,
 	kJuncus,
+  kPondweed,
 //  kOsmunda,
   kAji,  //4 
   kBuri, //4 M

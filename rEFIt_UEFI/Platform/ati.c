@@ -75,6 +75,7 @@ card_config_t card_configs[] = {
 	{"Mangabey",	2},
 	{"Muskgrass",	4},
 	{"Juncus",		4},
+  {"Pondweed",	3},
   {"Aji",       4},
   {"Buri",      4},
   {"Chutoro",   5},
@@ -430,7 +431,8 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x683D,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7770 Series",		kDashimaki	},
 	{ 0x683F,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7750 Series",		kDashimaki	},
   
-  { 0x6840,	0x00000000, CHIP_FAMILY_TAHITI,		"AMD Radeon HD 7670m ",         kBuri	},
+  { 0x6840,	0x00000000, CHIP_FAMILY_LOMBOK,		"AMD Radeon HD 7670m ",         kPondweed	},
+  { 0x6840,	0x00000000, CHIP_FAMILY_LOMBOK,		"AMD Radeon HD 7600m Series",   kPondweed	},
 	{ 0x0000,	0x00000000, CHIP_FAMILY_UNKNOW,		NULL,								kNull		}
 };
 
