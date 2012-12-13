@@ -483,7 +483,21 @@ EFI_STATUS DumpTable(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, C
 	
 	return Status;
 }
+/*
+ Special case for SSDT table whose addresses contains inside first SSDT table
+ CHAR8 NameSSDT[] = {0x08, 0x53, 0x53, 0x44, 0x54};
 
+ i = FindBin(ssdt, len, NameSSDT, 5);
+ INTN pacLen = (INTN)ssdt[i+8] / 3;
+ if (ssdt[i+9] == 0x0d){
+   for (j = 0; j < pacLen; j++) {
+     adr = ReadUnaligned32((UINT32*)(ssdt + i + 20 + j*14);
+     len = ReadUnaligned32((UINT32*)(ssdt + i + 25 + j*14);
+     Status = SaveBufferToDisk((VOID*)adr, len, DirName, FileName);
+     *SsdtCount++;
+   }
+ }
+*/
 /** Saves to disk (DirName != NULL) or prints to log (DirName == NULL) Fadt tables: Dsdt and Facs. */
 EFI_STATUS DumpFadtTables(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt, CHAR16 *DirName)
 {
@@ -706,6 +720,7 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 				return;
 			}
 			DBG("\n");
+      
 			
 			if (TableEntry->Signature == EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE) {
 				//

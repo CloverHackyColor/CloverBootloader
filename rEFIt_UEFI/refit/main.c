@@ -286,6 +286,22 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"R - Restart komputera");
         AddMenuInfoLine(&HelpMenu, L"U - Wylaczenie komputera");
         break;
+      case korean:
+        AddMenuInfoLine(&HelpMenu, L"ESC - 하위메뉴에서 나감, 메인메뉴 새로 고침");
+        AddMenuInfoLine(&HelpMenu, L"F1  - 이 도움말");
+        AddMenuInfoLine(&HelpMenu, L"F2  - preboot.log를 저장합니다. (FAT32방식에만 해당됨)");
+        AddMenuInfoLine(&HelpMenu, L"F4  - oem DSDT를 EFI/ACPI/origin/에 저장합니다. (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - 패치된 DSDT를 EFI/ACPI/origin/에 저장합니다. (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - VideoBios를 EFI/misc/에 저장합니다. (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - 스크린샷을 EFI/misc/에 저장합니다. (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - 선택한 볼륨을 제거합니다. (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Space - 선택한 메뉴의 상세 설명");
+        AddMenuInfoLine(&HelpMenu, L"Digits 1-9 - 메뉴 단축 번호");
+        AddMenuInfoLine(&HelpMenu, L"A - 단축키 - 이 부트로더에 관하여");
+        AddMenuInfoLine(&HelpMenu, L"O - 단축키 - 부트 옵션");
+        AddMenuInfoLine(&HelpMenu, L"R - 단축키 - 리셋");
+        AddMenuInfoLine(&HelpMenu, L"U - 단축키 - 시스템 종료");
+        break;
       case english:
       default:
         AddMenuInfoLine(&HelpMenu, L"ESC - Escape from submenu, Refresh main menu");

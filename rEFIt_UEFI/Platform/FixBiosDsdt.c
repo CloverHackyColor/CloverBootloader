@@ -48,32 +48,6 @@ BOOLEAN Display1PCIE;
 BOOLEAN Display2PCIE;
 BOOLEAN FirewireName;
 
-// for Fix DSDT, we need record Scope(\_SB), Device(PCI), Device(LPCB) address and size
-//Slice - no more globals! There are potencial bugs. We have to calculates addresses each time 
-//  they will be used
-/*
-UINT32   SBADR;
-UINT32   SBSIZE;
-UINT32   PCIADR;
-UINT32   PCISIZE;
-UINT32   LPCBADR;
-UINT32   LPCBADR1;
-UINT32   LPCBSIZE;
-UINT32   IDEADR;
-UINT32   SATAADR;
-UINT32   SATAAHCIADR;
-
-UINT32  RTCADR;
-UINT32  TMRADR;
-UINT32  PICADR;
-UINT32  HPETADR;
-UINT32  DisplayADR[2];
-UINT32  FirewireADR;
-UINT32  NetworkADR;
-UINT32  ArptADR;
-UINT32  SBUSADR;
-INT32   sizeoffset;
-*/
 // for read computer data
 UINT32 DisplayADR1[2];
 UINT32 DisplayADR2[2];
@@ -186,9 +160,20 @@ static struct net_chipsets_t NetChipsets[] = {
   // Broadcom 57XX 
   { 0x14e41600, "Broadcom 5751 Ethernet" },
   { 0x14e41659, "Broadcom 57XX Ethernet" },
+  { 0x14e4165A, "BCM5722 NetXtreme Server Gigabit Ethernet" },
   { 0x14e4166A, "Broadcom 57XX Ethernet" },
+  { 0x14e41672, "BCM5754M NetXtreme Gigabit Ethernet" },
+  { 0x14e41673, "BCM5755M NetXtreme Gigabit Ethernet" },
+  { 0x14e4167A, "BCM5754 NetXtreme Gigabit Ethernet" },
+  { 0x14e4167B, "BCM5755 NetXtreme Gigabit Ethernet" },
   { 0x14e41684, "Broadcom 57XX Ethernet" },
+  { 0x14e41691, "BCM57788 NetLink (TM) Gigabit Ethernet" },
+  { 0x14e41693, "BCM5787M NetLink (TM) Gigabit Ethernet" },
+  { 0x14e4169B, "BCM5787 NetLink (TM) Gigabit Ethernet" },
   { 0x14e416B4, "Broadcom 57XX Ethernet" },
+  { 0x14e416B5, "BCM57785 Gigabit Ethernet PCIe" },
+  { 0x14e41712, "BCM5906 NetLink (TM) Fast Ethernet" },
+  { 0x14e41713, "BCM5906M NetLink (TM) Fast Ethernet" },
   // Intel 8255x Ethernet
   { 0x80861051, "Intel 8255x Ethernet" },
   { 0x80861050, "Intel 8255x Ethernet" },

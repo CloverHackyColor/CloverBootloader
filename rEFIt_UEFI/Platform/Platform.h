@@ -835,6 +835,7 @@ typedef enum {
   french,   //fr
   italian,  //it
   indonesian, //id
+  korean,   //kr
   spanish,  //es
   polish,   //pl
   portuguese, //pt
