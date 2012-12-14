@@ -429,6 +429,56 @@ EFI_STATUS SaveBufferToDisk(VOID *Buffer, UINTN Length, CHAR16 *DirName, CHAR16 
 	return Status;
 }
 
+STATIC CHAR8 NameSSDT[] = {0x08, 0x53, 0x53, 0x44, 0x54};
+
+VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, UINTN *SsdtCount)
+{
+  EFI_STATUS		Status = EFI_SUCCESS;
+  INTN    i, j, k, pacLen;
+  CHAR16  *FileName;
+	CHAR8		Signature[5];
+	CHAR8		OemTableId[9];
+  UINTN   adr, len;
+	  
+  i = FindBin((UINT8*)TableEntry, TableEntry->Length, NameSSDT, 5);
+  if (i<5) {
+    return;
+  }
+  pacLen = ((UINT8*)TableEntry)[i+8];
+  if (pacLen % 3 != 0) {
+    return;  //fool proof
+  }
+  DBG("\n Found hidden SSDT %d pcs\n", pacLen/3);
+  for (j = 0; j < pacLen/3; j++) {  
+
+    FileName = PoolPrint(L"SSDT-%d.aml", *SsdtCount - 1);
+    adr = ReadUnaligned32((UINT32*)((UINT8*)TableEntry + i + 20 + j*20));
+    len = ReadUnaligned32((UINT32*)((UINT8*)TableEntry + i + 25 + j*20));
+    
+    // Take Signature and OemId for printing
+    CopyMem((CHAR8*)&Signature, (CHAR8*)&((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Signature, 4);
+    Signature[4] = 0;
+    CopyMem((CHAR8*)&OemTableId, (CHAR8*)&((EFI_ACPI_DESCRIPTION_HEADER *)adr)->OemTableId, 8);
+    OemTableId[8] = 0;
+    DBG(" %p: '%a', '%a', Rev: %d, Len: %d\n", adr, Signature, OemTableId,
+        ((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Revision, ((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Length);
+    for(k=0; k<16; k++){
+      DBG("%02x ", ((UINT8*)adr)[k]);
+    }
+    DBG("\n");
+    if ((AsciiStrCmp(Signature, "SSDT") == 0) && (len < 0x20000)) {
+      Status = SaveBufferToDisk((VOID*)adr, len, DirName, FileName);
+      *SsdtCount += 1;  
+    }
+    if (FileName) {
+      FreePool(FileName);
+    }
+    if (EFI_ERROR(Status)) {
+      break;
+    }
+  }
+}
+
 /** Saves Table to disk as DirName\\FileName (DirName != NULL)
  *  or just prints basic table data to log (DirName == NULL).
  */
@@ -454,7 +504,8 @@ EFI_STATUS DumpTable(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, C
 	
 	if (FileName == NULL) {
 		// take the name from the signature
-		if (TableEntry->Signature == EFI_ACPI_1_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE && SsdtCount != NULL) {
+		if (TableEntry->Signature == EFI_ACPI_1_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE &&
+        SsdtCount != NULL) {      
 			// Ssdt counter
 			if (*SsdtCount == 0) {
 				FileName = PoolPrint(L"%a.aml", Signature);
@@ -463,6 +514,7 @@ EFI_STATUS DumpTable(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, C
 				FileName = PoolPrint(L"%a-%d.aml", Signature, *SsdtCount - 1);
 			}
 			*SsdtCount = *SsdtCount + 1;
+      DumpChildSsdt(TableEntry, DirName, SsdtCount);
 		} else {
 			FileName = PoolPrint(L"%a.aml", Signature);
 		}
