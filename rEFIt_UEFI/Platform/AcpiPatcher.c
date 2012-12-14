@@ -430,51 +430,106 @@ EFI_STATUS SaveBufferToDisk(VOID *Buffer, UINTN Length, CHAR16 *DirName, CHAR16 
 }
 
 STATIC CHAR8 NameSSDT[] = {0x08, 0x53, 0x53, 0x44, 0x54};
+// OperationRegion (SSDT, SystemMemory, 0xDF5DAC18, 0x038C)
+STATIC UINT8 NameSSDT2[] = {0x80, 0x53, 0x53, 0x44, 0x54};
+// OperationRegion (CSDT, SystemMemory, 0xDF5DBE18, 0x84)
+STATIC UINT8 NameCSDT[] = {0x80, 0x43, 0x53, 0x44, 0x54};
 
 VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, UINTN *SsdtCount)
 {
   EFI_STATUS		Status = EFI_SUCCESS;
-  INTN    i, j, k, pacLen;
+  INTN    j, k, pacLen;
   CHAR16  *FileName;
 	CHAR8		Signature[5];
 	CHAR8		OemTableId[9];
   UINTN   adr, len;
-	  
-  i = FindBin((UINT8*)TableEntry, TableEntry->Length, NameSSDT, 5);
-  if (i<5) {
-    return;
-  }
-  pacLen = ((UINT8*)TableEntry)[i+8];
-  if (pacLen % 3 != 0) {
-    return;  //fool proof
-  }
-  DBG("\n Found hidden SSDT %d pcs\n", pacLen/3);
-  for (j = 0; j < pacLen/3; j++) {  
-
-    FileName = PoolPrint(L"SSDT-%d.aml", *SsdtCount - 1);
-    adr = ReadUnaligned32((UINT32*)((UINT8*)TableEntry + i + 20 + j*20));
-    len = ReadUnaligned32((UINT32*)((UINT8*)TableEntry + i + 25 + j*20));
+  UINT8   *Entry;
+  UINT8   *End;
+	 
+  Entry = (UINT8*)TableEntry;
+  End = Entry + TableEntry->Length;
+  while (Entry < End) {
     
-    // Take Signature and OemId for printing
-    CopyMem((CHAR8*)&Signature, (CHAR8*)&((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Signature, 4);
-    Signature[4] = 0;
-    CopyMem((CHAR8*)&OemTableId, (CHAR8*)&((EFI_ACPI_DESCRIPTION_HEADER *)adr)->OemTableId, 8);
-    OemTableId[8] = 0;
-    DBG(" %p: '%a', '%a', Rev: %d, Len: %d\n", adr, Signature, OemTableId,
-        ((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Revision, ((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Length);
-    for(k=0; k<16; k++){
-      DBG("%02x ", ((UINT8*)adr)[k]);
-    }
-    DBG("\n");
-    if ((AsciiStrCmp(Signature, "SSDT") == 0) && (len < 0x20000)) {
-      Status = SaveBufferToDisk((VOID*)adr, len, DirName, FileName);
-      *SsdtCount += 1;  
-    }
-    if (FileName) {
-      FreePool(FileName);
-    }
-    if (EFI_ERROR(Status)) {
-      break;
+    if (CompareMem(Entry, NameSSDT, 5) == 0) {
+      pacLen = Entry[8];
+      if (pacLen % 3 == 0) {
+        DBG("\n Found hidden SSDT %d pcs\n", pacLen/3);
+        for (j = 0; j < pacLen/3; j++) {
+          
+          FileName = PoolPrint(L"SSDT-%d.aml", *SsdtCount - 1);
+          adr = ReadUnaligned32((UINT32*)(Entry + 20 + j*20));
+          len = ReadUnaligned32((UINT32*)(Entry + 25 + j*20));
+          
+          // Take Signature and OemId for printing
+          CopyMem((CHAR8*)&Signature, (CHAR8*)&((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Signature, 4);
+          Signature[4] = 0;
+          CopyMem((CHAR8*)&OemTableId, (CHAR8*)&((EFI_ACPI_DESCRIPTION_HEADER *)adr)->OemTableId, 8);
+          OemTableId[8] = 0;
+          DBG(" %p: '%a', '%a', Rev: %d, Len: %d\n", adr, Signature, OemTableId,
+              ((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Revision, ((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Length);
+          for(k=0; k<16; k++){
+            DBG("%02x ", ((UINT8*)adr)[k]);
+          }
+          DBG("\n");
+          if ((AsciiStrCmp(Signature, "SSDT") == 0) && (len < 0x20000)) {
+            Status = SaveBufferToDisk((VOID*)adr, len, DirName, FileName);
+            *SsdtCount += 1;
+          }
+          if (FileName) {
+            FreePool(FileName);
+          }
+          //if (EFI_ERROR(Status)) {
+          //  break;
+          //}
+        }
+      }
+      Entry += 5;
+    } else if (CompareMem(Entry, NameSSDT2, 5) == 0
+               || CompareMem(Entry, NameCSDT, 5) == 0)
+    {
+      
+      adr = ReadUnaligned32((UINT32*)(Entry + 7));
+      len = 0;
+      j = *(Entry + 11);
+      if (j == 0x0b) {
+        len = ReadUnaligned16((UINT16*)(Entry + 12));
+      } else if (j == 0x0a) {
+        len = *(Entry + 12);
+      }
+      if (len > 0) {
+        // Take Signature and OemId for printing
+        CopyMem((CHAR8*)&Signature, (CHAR8*)&((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Signature, 4);
+        Signature[4] = 0;
+        CopyMem((CHAR8*)&OemTableId, (CHAR8*)&((EFI_ACPI_DESCRIPTION_HEADER *)adr)->OemTableId, 8);
+        OemTableId[8] = 0;
+        DBG("      * %p: '%a', '%a', Rev: %d, Len: %d  ", adr, Signature, OemTableId,
+            ((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Revision, ((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Length);
+        for(k=0; k<16; k++){
+          DBG("%02x ", ((UINT8*)adr)[k]);
+        }
+        if ((AsciiStrCmp(Signature, "SSDT") == 0) && (len < 0x20000) && DirName != NULL) {
+          if (*SsdtCount == 0) {
+            FileName = PoolPrint(L"%s", L"SSDT.aml");
+          } else {
+            // *SsdtCount == 1 -> SSDT-0.aml
+            FileName = PoolPrint(L"SSDT-%d.aml", *SsdtCount - 1);
+          }
+          Status = SaveBufferToDisk((VOID*)adr, len, DirName, FileName);
+          if (!EFI_ERROR(Status)) {
+            DBG(" -> %s", FileName);
+          } else {
+            DBG(" -> %r", Status);
+          }
+          *SsdtCount += 1;
+          if (FileName) {
+            FreePool(FileName);
+          }
+        }
+        DBG("\n");
+      }
+      Entry += 5;
+    } else {
+      Entry++;
     }
   }
 }
@@ -551,7 +606,7 @@ EFI_STATUS DumpTable(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, C
  }
 */
 /** Saves to disk (DirName != NULL) or prints to log (DirName == NULL) Fadt tables: Dsdt and Facs. */
-EFI_STATUS DumpFadtTables(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt, CHAR16 *DirName)
+EFI_STATUS DumpFadtTables(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt, CHAR16 *DirName, UINTN *SsdtCount)
 {
 	EFI_ACPI_DESCRIPTION_HEADER										*TableEntry;
 	EFI_ACPI_2_0_FIRMWARE_ACPI_CONTROL_STRUCTURE	*Facs;
@@ -596,6 +651,7 @@ EFI_STATUS DumpFadtTables(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt, CHAR1
 			return Status;
 		}
 		DBG("\n");
+    DumpChildSsdt(TableEntry, DirName, SsdtCount);
 	}
 	//
 	// Save Facs
@@ -779,7 +835,7 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 				// Fadt - save Dsdt and Facs
 				//
 				Fadt = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)TableEntry;
-				Status = DumpFadtTables(Fadt, DirName);
+				Status = DumpFadtTables(Fadt, DirName, &SsdtCount);
 				if (EFI_ERROR(Status)) {
 					return;
 				}
@@ -829,7 +885,7 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 				// Fadt - save Dsdt and Facs
 				//
 				Fadt = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)TableEntry;
-				Status = DumpFadtTables(Fadt, DirName);
+				Status = DumpFadtTables(Fadt, DirName, &SsdtCount);
 				if (EFI_ERROR(Status)) {
 					return;
 				}

@@ -236,7 +236,7 @@
 		1292F278164BC7A8008FAEEC /* VideoDxe.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VideoDxe.inf; sourceTree = "<group>"; };
 		1292F27A164BC7A8008FAEEC /* InterruptTable.asm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm.asm; path = InterruptTable.asm; sourceTree = "<group>"; };
 		1292F27B164BC7A8008FAEEC /* InterruptTable.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = InterruptTable.S; sourceTree = "<group>"; };
-		12961B4215FCEC91008D77FB /* AcpiPatcher.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AcpiPatcher.c; sourceTree = "<group>"; };
+		12961B4215FCEC91008D77FB /* AcpiPatcher.c */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = AcpiPatcher.c; sourceTree = "<group>"; tabWidth = 2; };
 		12A80742161EE88A00120AD4 /* CommPs2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CommPs2.c; sourceTree = "<group>"; };
 		12A80743161EE88A00120AD4 /* CommPs2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommPs2.h; sourceTree = "<group>"; };
 		12A80744161EE88A00120AD4 /* ComponentName.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
