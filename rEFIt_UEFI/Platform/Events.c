@@ -252,7 +252,7 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
 //      bootArgs1v->efiSystemTable = (UINT32)(UINTN)gST;
     }
 	}
-	if (gFirmwareClover) {
+	if (gSettings.USBFixOwnership) {
 		// Note: blocks on Aptio
 		DisableUsbLegacySupport();
 	}

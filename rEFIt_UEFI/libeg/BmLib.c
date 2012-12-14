@@ -112,6 +112,8 @@ EfiLibFileSystemVolumeLabelInfo (
   
   Status = FHand->GetInfo (FHand, &gEfiFileSystemVolumeLabelInfoIdGuid, &Size, VolumeInfo);
   if (Status == EFI_BUFFER_TOO_SMALL) {
+    // inc size by 2 because some drivers (HFSPlus.efi) do not count 0 at the end of file name
+    Size += 2;
     VolumeInfo = AllocateZeroPool (Size);
     Status = FHand->GetInfo (FHand, &gEfiFileSystemVolumeLabelInfoIdGuid, &Size, VolumeInfo);
   }
@@ -182,6 +184,8 @@ EfiLibFileInfo (
   
   Status = FHand->GetInfo (FHand, &gEfiFileInfoGuid, &Size, FileInfo);
   if (Status == EFI_BUFFER_TOO_SMALL) {
+    // inc size by 2 because some drivers (HFSPlus.efi) do not count 0 at the end of file name
+    Size += 2;
     FileInfo = AllocateZeroPool (Size);
     Status = FHand->GetInfo (FHand, &gEfiFileInfoGuid, &Size, FileInfo);
   }
@@ -200,6 +204,8 @@ EfiLibFileSystemInfo (
   
   Status = FHand->GetInfo (FHand, &gEfiFileSystemInfoGuid, &Size, FileSystemInfo);
   if (Status == EFI_BUFFER_TOO_SMALL) {
+    // inc size by 2 because some drivers (HFSPlus.efi) do not count 0 at the end of file name
+    Size += 2;
     FileSystemInfo = AllocateZeroPool (Size);
     Status = FHand->GetInfo (FHand, &gEfiFileSystemInfoGuid, &Size, FileSystemInfo);
   }

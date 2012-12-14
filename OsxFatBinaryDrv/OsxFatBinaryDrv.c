@@ -218,7 +218,9 @@ EFI_STATUS EFIAPI ovrLoadImage(
 						if (Status == EFI_BUFFER_TOO_SMALL)
 						{
 							/*FileInfo = EfiLibAllocatePool(FileInfoSize);*/
-							gBS->AllocatePool (EfiBootServicesData, FileInfoSize, (VOID **)&FileInfo);   
+                            // inc size by 2 because some drivers (HFSPlus.efi) do not count 0 at the end of file name
+                            FileInfoSize += 2;
+							gBS->AllocatePool (EfiBootServicesData, FileInfoSize, (VOID **)&FileInfo);
 							if (FileInfo != NULL)
 								Status = FileHandle->GetInfo(FileHandle, &gEfiFileInfoGuid, &FileInfoSize, FileInfo);
 							else

@@ -1813,7 +1813,6 @@ static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OU
     }
     if (StrStr(FileName, L"EmuVariable") != NULL) {
       gDriversFlags.EmuVariableLoaded = TRUE;
-      gFirmwarePhoenix = TRUE;
     } else if (StrStr(FileName, L"Video") != NULL) {
       gDriversFlags.VideoLoaded = TRUE;
     } else if (StrStr(FileName, L"Partition") != NULL) {
@@ -2082,7 +2081,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	
   // firmware detection
   gFirmwareClover = StrCmp(gST->FirmwareVendor, L"CLOVER") == 0;
-  gFirmwarePhoenix = StrStr(gST->FirmwareVendor, L"Phoenix") != NULL;
   //	DBG("Running on Firmware %s, it is Clover?%a\n", gST->FirmwareVendor, gFirmwareClover?"Yes":"No");
   
   InitializeConsoleSim();
@@ -2148,6 +2146,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   DBG("LoadDrivers() start\n");
   LoadDrivers();
   DBG("LoadDrivers() end\n");
+  
+  // for DUET
+  if (StrCmp(gST->FirmwareVendor, L"EDK II") == 0) {
+    gDriversFlags.EmuVariableLoaded = TRUE;
+  }
   
   // init screen and dump video modes to log
   if (gDriversFlags.VideoLoaded) {
@@ -2219,7 +2222,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
  //     DBG("PrepareFont OK\n");
   FillInputs();
   
-  if (!gFirmwareClover && !gFirmwarePhoenix &&
+  if (!gFirmwareClover && !gDriversFlags.EmuVariableLoaded &&
       GlobalConfig.Timeout == 0 && !ReadAllKeyStrokes()) {
     // UEFI boot: get gEfiBootDeviceGuid from NVRAM.
     // if present, ScanVolumes() will skip scanning other volumes
@@ -2238,7 +2241,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
  //   DBG("ScanVolumes()\n");
     
     // as soon as we have Volumes, find lates nvram.plist and copy it to RT vars
-    if (gFirmwareClover || gFirmwarePhoenix) {
+    if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {
       PutNvramPlistToRtVars();
     }
     

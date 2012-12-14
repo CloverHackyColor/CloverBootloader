@@ -37,7 +37,6 @@ UINTN                           NGFX = 0; // number of GFX
 
 // firmware
 BOOLEAN                         gFirmwareClover = FALSE;
-BOOLEAN                         gFirmwarePhoenix = FALSE;
 UINTN                           gEvent;
 UINT16                          gBacklightLevel;
 
@@ -538,6 +537,18 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.USBInjection = FALSE;
         }
       }
+      // enabled by default for CloverEFI or Duet
+      // disabled for others
+      gSettings.USBFixOwnership = gFirmwareClover || (StrCmp(gST->FirmwareVendor, L"EDK II") == 0);
+      prop = GetProperty(dictPointer, "USBFixOwnership");
+      if(prop) {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')) {
+          gSettings.USBFixOwnership = TRUE;
+        } else {
+          gSettings.USBFixOwnership = FALSE;
+        }
+      }
+      //DBG("USBFixOwnership: %s\n", gSettings.USBFixOwnership ? L"Yes" : L"No");
     }
     
     //*** ACPI ***//

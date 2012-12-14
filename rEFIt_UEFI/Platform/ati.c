@@ -608,8 +608,8 @@ BOOLEAN get_edid_val(value_t *val)
   v = 1;
   val->type = kPtr;
   val->size = 128;
-  val->data = (UINT8 *)gSettings.CustomEDID;
-	return TRUE;
+  val->data = AllocateCopyPool(val->size, gSettings.CustomEDID);
+  return TRUE;
 }
 
 static CONST CHAR8* dtyp[] = {"LCD", "CRT", "DVI", "NONE"};

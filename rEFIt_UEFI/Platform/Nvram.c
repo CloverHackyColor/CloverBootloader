@@ -886,7 +886,7 @@ EFI_STATUS SetStartupDiskVolume(IN REFIT_VOLUME *Volume, IN CHAR16 *LoaderPath)
     // let's save it without EFI_VARIABLE_NON_VOLATILE in CloverEFI like other vars so far
     //
     Attributes = EFI_VARIABLE_NON_VOLATILE | EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS;
-    if (gFirmwareClover || gFirmwarePhoenix) {
+    if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {
         Attributes = EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS;
     }
     

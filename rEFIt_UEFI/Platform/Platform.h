@@ -661,6 +661,8 @@ typedef struct {
   
   // USB DeviceTree injection
   BOOLEAN USBInjection;
+  // USB ownership fix
+  BOOLEAN USBFixOwnership;
   
   // LegacyBoot
   CHAR16  LegacyBoot[32];
@@ -905,7 +907,7 @@ extern EFI_BOOT_SERVICES*       gBS;
 extern SETTINGS_DATA            gSettings;
 extern LANGUAGES                gLanguage;
 extern BOOLEAN                  gFirmwareClover;
-extern BOOLEAN                  gFirmwarePhoenix;
+extern DRIVERS_FLAGS            gDriversFlags;
 extern UINT32                   gFwFeatures;
 extern CPU_STRUCTURE            gCPUStructure;
 extern EFI_GUID                 gUuid;
