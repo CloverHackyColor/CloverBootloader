@@ -309,7 +309,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gLanguage = german;
         } else if (AsciiStrStr(prop->string, "id")) {
           gLanguage = indonesian; 
-        } else if (AsciiStrStr(prop->string, "kr")) {
+        } else if (AsciiStrStr(prop->string, "ko")) {
           gLanguage = korean;
         } else if (AsciiStrStr(prop->string, "fr")) {
           gLanguage = french;

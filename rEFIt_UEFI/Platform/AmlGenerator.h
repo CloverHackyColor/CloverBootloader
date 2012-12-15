@@ -47,5 +47,6 @@ AML_CHUNK* aml_add_store(AML_CHUNK* parent);
 AML_CHUNK* aml_add_return(AML_CHUNK* parent);
 
 UINT32 FindBin (UINT8 *dsdt, UINT32 len, CHAR8* bin, UINTN N);
+UINT32 get_size(UINT8* Buffer, UINT32 adr);
 
 #endif /* !_AML_GENERATOR_H */

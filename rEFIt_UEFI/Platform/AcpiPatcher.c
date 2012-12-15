@@ -495,7 +495,12 @@ VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, UIN
         len = ReadUnaligned16((UINT16*)(Entry + 12));
       } else if (j == 0x0a) {
         len = *(Entry + 12);
+      } else {
+        //not a number so skip for security
+        Entry += 5;
+        continue;
       }
+      
       if (len > 0) {
         // Take Signature and OemId for printing
         CopyMem((CHAR8*)&Signature, (CHAR8*)&((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Signature, 4);
@@ -509,10 +514,10 @@ VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, UIN
         }
         if ((AsciiStrCmp(Signature, "SSDT") == 0) && (len < 0x20000) && DirName != NULL) {
           if (*SsdtCount == 0) {
-            FileName = PoolPrint(L"%s", L"SSDT.aml");
+            FileName = PoolPrint(L"%s", L"SSDTx.aml");
           } else {
             // *SsdtCount == 1 -> SSDT-0.aml
-            FileName = PoolPrint(L"SSDT-%d.aml", *SsdtCount - 1);
+            FileName = PoolPrint(L"SSDTx-%d.aml", *SsdtCount - 1);
           }
           Status = SaveBufferToDisk((VOID*)adr, len, DirName, FileName);
           if (!EFI_ERROR(Status)) {
@@ -590,21 +595,7 @@ EFI_STATUS DumpTable(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, C
 	
 	return Status;
 }
-/*
- Special case for SSDT table whose addresses contains inside first SSDT table
- CHAR8 NameSSDT[] = {0x08, 0x53, 0x53, 0x44, 0x54};
 
- i = FindBin(ssdt, len, NameSSDT, 5);
- INTN pacLen = (INTN)ssdt[i+8] / 3;
- if (ssdt[i+9] == 0x0d){
-   for (j = 0; j < pacLen; j++) {
-     adr = ReadUnaligned32((UINT32*)(ssdt + i + 20 + j*14);
-     len = ReadUnaligned32((UINT32*)(ssdt + i + 25 + j*14);
-     Status = SaveBufferToDisk((VOID*)adr, len, DirName, FileName);
-     *SsdtCount++;
-   }
- }
-*/
 /** Saves to disk (DirName != NULL) or prints to log (DirName == NULL) Fadt tables: Dsdt and Facs. */
 EFI_STATUS DumpFadtTables(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt, CHAR16 *DirName, UINTN *SsdtCount)
 {
