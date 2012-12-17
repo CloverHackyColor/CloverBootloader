@@ -345,8 +345,8 @@ VOID GetDefaultSettings(VOID)
  
   gSettings.KextPatchesAllowed = TRUE;
   gSettings.NrKexts = 0;
-  gSettings.ResetAddr  = 0x64; //I wish it will be default
-  gSettings.ResetVal = 0xFE;
+  gSettings.ResetAddr  = 0;  //0x64; //I wish it will be default
+  gSettings.ResetVal = 0;  //0xFE;
   gSettings.FixDsdt  = 0x00; //No fixes as we apply patches even for patched DSDT
   
   gSettings.GraphicsInjector = !(((gGraphics[0].Vendor == Ati) &&

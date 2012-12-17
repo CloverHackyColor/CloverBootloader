@@ -596,6 +596,11 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       if(prop) {
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
         gSettings.ResetAddr  = StrHexToUint64(UStr); 
+        if (gSettings.ResetAddr  == 0x64) {
+          gSettings.ResetVal = 0xFE;
+        } else if  (gSettings.ResetAddr  == 0xCF9) {
+          gSettings.ResetVal = 0x06;
+        }
       }
       prop = GetProperty(dictPointer, "ResetValue");
       if(prop) {

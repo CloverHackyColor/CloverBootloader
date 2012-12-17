@@ -1299,8 +1299,13 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     //patch for FACS included here
     Facs->Version = EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_VERSION;
     //
-    newFadt->ResetReg.Address    = gSettings.ResetAddr; 
-    newFadt->ResetValue          = gSettings.ResetVal; 
+    if ((gSettings.ResetAddr == 0) && ((oldLength < 0x80) || (newFadt->ResetReg.Address == 0))) {
+      newFadt->ResetReg.Address    = 0x64; 
+      newFadt->ResetValue          = 0xFE;       
+    } else if (gSettings.ResetAddr != 0) {
+      newFadt->ResetReg.Address    = gSettings.ResetAddr; 
+      newFadt->ResetValue          = gSettings.ResetVal; 
+    }
     newFadt->XPm1aEvtBlk.Address = (UINT64)(newFadt->Pm1aEvtBlk);
     newFadt->XPm1bEvtBlk.Address = (UINT64)(newFadt->Pm1bEvtBlk);
     newFadt->XPm1aCntBlk.Address = (UINT64)(newFadt->Pm1aCntBlk);

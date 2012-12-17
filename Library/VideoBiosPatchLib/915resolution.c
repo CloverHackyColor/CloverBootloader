@@ -639,6 +639,10 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
       NumReplacesTotal += NumReplaces;
       DBG (" patch 3: patched %d time(s)\n", NumReplaces);
       
+      if ((*((UINT8*)(UINTN)(VBIOS_START + 0x34)) & 0x8F) == 0x80 ) {
+        *((UINT8*)(UINTN)(VBIOS_START + 0x34)) |= 0x01; 
+      }
+      
 			break;
 		}
 		case BT_UNKNOWN:
