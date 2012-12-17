@@ -119,24 +119,30 @@ EFI_STATUS SetVariablesForOSX()
 	UINT32      BackgroundClear = 0x00000000;
 	UINT32      FwFeatures      = gFwFeatures; //0x80001417; //Slice - get it from SMBIOS
 	UINT32      FwFeaturesMask  = 0xC003ffff;
-	UINTN       bootArgsLen = 256; 
+	UINTN       bootArgsLen;
 	CHAR8*      None	= "none";
-	CHAR8*      BA = &gSettings.BootArgs[255];
-  UINTN       LangLen = 16;
-  UINTN       SNLen = 20;
+	CHAR8*      BA;
+  UINTN       LangLen;
+  UINTN       SNLen;
 //  CHAR8*      FmmName = &gSettings.FamilyName[0];
 //  UINTN       FmmLen  = AsciiStrLen(FmmName);
   UINT16      BacklightLevel = 0x0503;
   
-	while ((*BA == ' ') || (*BA == 0)) {
+	bootArgsLen = MIN(256, AsciiStrLen(gSettings.BootArgs));
+  BA = gSettings.BootArgs + bootArgsLen - 1;
+  while ( bootArgsLen > 0 && ((*BA == ' ') || (*BA == 0)) ) {
 		BA--; bootArgsLen--;
 	}
-  BA = &gSettings.Language[15];
-  while ((*BA == ' ') || (*BA == 0)) {
+  
+  LangLen = MIN(16, AsciiStrLen(gSettings.Language));
+  BA = gSettings.Language + LangLen - 1;
+  while ( LangLen > 0 && ((*BA == ' ') || (*BA == 0)) ) {
 		BA--; LangLen--;
 	}
-  BA = &gSettings.SerialNr[19];
-  while ((*BA == ' ') || (*BA == 0)) {
+  
+  SNLen = MIN(20, AsciiStrLen(gSettings.SerialNr));
+  BA = gSettings.SerialNr + SNLen - 1;
+  while ( SNLen > 0 && ((*BA == ' ') || (*BA == 0)) ) {
 		BA--; SNLen--;
 	}
   
