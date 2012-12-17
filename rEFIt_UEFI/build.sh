@@ -15,7 +15,13 @@
 set -e
 shopt -s nocasematch
 
-svnversion -n | tr -d [:alpha:] >vers.txt
+if [ -d ../.git ]
+then
+  git svn info | grep Revision | tr -cd [:digit:] >vers.txt
+else
+  svnversion -n | tr -d [:alpha:] >vers.txt
+fi
+
 #
 # Setup workspace if it is not set
 #
