@@ -640,6 +640,7 @@ typedef struct {
   //Injections
   BOOLEAN StringInjector;
   BOOLEAN InjectSystemID;
+  
   //Graphics
   UINT16  PCIRootUID;
   BOOLEAN GraphicsInjector;
@@ -664,6 +665,7 @@ typedef struct {
   BOOLEAN USBInjection;
   // USB ownership fix
   BOOLEAN USBFixOwnership;
+  BOOLEAN InjectClockID;
   
   // LegacyBoot
   CHAR16  LegacyBoot[32];

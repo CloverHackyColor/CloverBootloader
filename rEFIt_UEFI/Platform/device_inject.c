@@ -389,8 +389,11 @@ BOOLEAN set_usb_props(pci_dt_t *usb_dev)
 	// -------------------------------------------------
 	DBG("USB Controller [%04x:%04x] :: %a\n", usb_dev->vendor_id, usb_dev->device_id, devicepath);
   //  DBG("Setting dev.prop built-in=0x%x\n", builtin);
-//  devprop_add_value(device, "AAPL,clock-id", (UINT8*)&clock_id, 1); //remove for test
-  clock_id++;
+  if (gSettings.InjectClockID) {
+    devprop_add_value(device, "AAPL,clock-id", (UINT8*)&clock_id, 1);
+    clock_id++;
+  }
+  
   fake_devid = usb_dev->device_id & 0xFFFF;
   if ((fake_devid & 0xFF00) == 0x2900) {
     fake_devid &= 0xFEFF;

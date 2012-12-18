@@ -3360,8 +3360,10 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   aml_add_byte_buffer(pack, dataBuiltin, sizeof(dataBuiltin));
   aml_add_string(pack, "device_type");
   aml_add_string_buffer(pack, "UHCI");
-//  aml_add_string(pack, "AAPL,clock-id");
-//  aml_add_byte_buffer(pack, dataBuiltin, 1);
+  if (gSettings.InjectClockID) {
+    aml_add_string(pack, "AAPL,clock-id");
+    aml_add_byte_buffer(pack, dataBuiltin, 1);
+  }
   
   aml_add_local0(met);
   aml_add_buffer(met, dtgp_1, sizeof(dtgp_1));
@@ -3384,8 +3386,10 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
   aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
   aml_add_string(pack1, "device_type");
   aml_add_string_buffer(pack1, "EHCI");
-//  aml_add_string(pack1, "AAPL,clock-id");
-//  aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
+  if (gSettings.InjectClockID) {
+    aml_add_string(pack1, "AAPL,clock-id");
+    aml_add_byte_buffer(pack1, dataBuiltin, sizeof(dataBuiltin));
+  }
   aml_add_string(pack1, "AAPL,current-available");
   aml_add_word(pack1, 0x05DC);
   aml_add_string(pack1, "AAPL,current-extra");
