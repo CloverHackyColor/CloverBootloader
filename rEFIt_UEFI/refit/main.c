@@ -77,6 +77,8 @@ static REFIT_MENU_SCREEN HelpMenu    = {3, L"Help",  NULL, 0, NULL, 0, NULL, 0, 
 
 DRIVERS_FLAGS gDriversFlags = {FALSE, FALSE, FALSE};
 
+EMU_VARIABLE_CONTROL_PROTOCOL *gEmuVariableControl = NULL;
+
 static VOID AboutRefit(VOID)
 {
 //  CHAR8* Revision = NULL;
@@ -521,17 +523,24 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       BlockConOut = TRUE;
     }
   }
-  else if ((Entry->LoaderType == OSTYPE_WIN) ||  (Entry->LoaderType == OSTYPE_WINEFI)){
+  else if ((Entry->LoaderType == OSTYPE_WIN) ||  (Entry->LoaderType == OSTYPE_WINEFI)) {
+    
+    if (gEmuVariableControl != NULL) {
+      gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
+    }
       
     PatchACPI_OtherOS(L"Windows", FALSE);
     //PauseForKey(L"continue");
       
   }
   else if (Entry->LoaderType == OSTYPE_LIN) {
-      FinalizeSmbios();
-      PatchACPI_OtherOS(L"Linux", FALSE);
-      //PauseForKey(L"continue");
-      Entry->LoadOptions     = NULL;
+    if (gEmuVariableControl != NULL) {
+      gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
+    }
+    FinalizeSmbios();
+    PatchACPI_OtherOS(L"Linux", FALSE);
+    //PauseForKey(L"continue");
+    Entry->LoadOptions     = NULL;
   }
   
   SetStartupDiskVolume(Entry->Volume, Entry->LoaderType == OSTYPE_OSX ? NULL : Entry->LoaderPath);
@@ -1043,11 +1052,19 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   SubScreen->AnimeRun = GetAnime(SubScreen);
   AddMenuInfoLine(SubScreen, DevicePathToStr(Volume->DevicePath));
   
+  
+  if (gEmuVariableControl != NULL) {
+    gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
+  }
   Status = FindBootOptionForFile (Entry->Volume->DeviceHandle,
                                   Entry->LoaderPath,
                                   NULL,
                                   NULL
                                   );
+  if (gEmuVariableControl != NULL) {
+    gEmuVariableControl->InstallEmulation(gEmuVariableControl);
+  }
+  
   if (Status == EFI_SUCCESS) {
     SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
     SubEntry->me.Title        = L"Remove as UEFI boot option";
@@ -2152,6 +2169,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     gDriversFlags.EmuVariableLoaded = TRUE;
   }
   
+  Status = gBS->LocateProtocol (&gEmuVariableControlProtocolGuid, NULL, (VOID**)&gEmuVariableControl);
+  if (EFI_ERROR(Status)) {
+    gEmuVariableControl = NULL;
+  }
+  
+  
   // init screen and dump video modes to log
   if (gDriversFlags.VideoLoaded) {
     InitScreen(FALSE);
@@ -2404,6 +2427,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         case TAG_CLOVER:     // Clover options
           LoaderEntry = (LOADER_ENTRY *)ChosenEntry;
           if (LoaderEntry->LoadOptions != NULL) {
+            
+            if (gEmuVariableControl != NULL) {
+              gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
+            }
+            
             if (StrStr(LoaderEntry->LoadOptions, L"BO-ADD") != NULL) {
               PrintBootOptions(FALSE);
               Status = AddBootOptionForFile (LoaderEntry->Volume->DeviceHandle,
@@ -2423,15 +2451,19 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
             } else if (StrStr(LoaderEntry->LoadOptions, L"BO-PRINT") != NULL) {
               PrintBootOptions(TRUE);
             }
+            
+            if (gEmuVariableControl != NULL) {
+              gEmuVariableControl->InstallEmulation(gEmuVariableControl);
+            }
           }
           MainLoopRunning = FALSE;
-          AfterTool = FALSE;
+          AfterTool = TRUE;
           break;
           
       } //switch
     } //MainLoopRunning
+    UninitRefitLib();
     if (!AfterTool) {
-      UninitRefitLib();
       //   PauseForKey(L"After uninit");
       //reconnectAll
       if (!gFirmwareClover) {

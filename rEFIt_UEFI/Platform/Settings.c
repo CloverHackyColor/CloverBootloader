@@ -362,6 +362,12 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 
     dictPointer = GetProperty(dict, "Pointer");
     if (dictPointer) {
+      gSettings.PointerEnabled = TRUE;
+      prop = GetProperty(dictPointer, "Enable");
+      if(prop) {
+        if ((prop->string[0] == 'n') || (prop->string[0] == 'N'))
+          gSettings.PointerEnabled = FALSE;
+      }
       prop = GetProperty(dictPointer, "Speed");
       if(prop) {
         INTN Minus = 0;

@@ -264,7 +264,6 @@
 
   #DuetPkg/FSVariable/FSVariable.inf
   MdeModulePkg/Universal/Variable/EmuRuntimeDxe/EmuVariableRuntimeDxe.inf
-  #Clover/EmuVariableDxe/EmuVariableRuntimeDxe.inf
   MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
   MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
   MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
@@ -417,6 +416,17 @@
   Clover/OsxAptioFixDrv/OsxAptioFixDrv.inf
   Clover/OsxLowMemFixDrv/OsxLowMemFixDrv.inf
 
+  # Drivers for Phoenix UEFI loading - should go to Clover's /EFI/drivers64UEFI dir
+  Clover/EmuVariableUefi/EmuVariableRuntimeDxe.inf {
+    <PcdsFixedAtBuild>
+      gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvStoreReserved|0
+      gEfiMdeModulePkgTokenSpaceGuid.PcdMaxVariableSize|0x400
+      gEfiMdeModulePkgTokenSpaceGuid.PcdMaxHardwareErrorVariableSize|0x8000
+      gEfiMdeModulePkgTokenSpaceGuid.PcdVariableStoreSize|0x10000
+      gEfiMdeModulePkgTokenSpaceGuid.PcdVariableCollectStatistics|FALSE
+      gEfiMdeModulePkgTokenSpaceGuid.PcdHwErrStorageSize|0x0000
+  }
+  
   #
   # Sample Application
   #

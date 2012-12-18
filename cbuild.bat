@@ -236,6 +236,7 @@ rem have edk2 prepare to build
    copy /b /y %BUILD_DIR%\X64\OsxAptioFixDrv.efi %DEST_DIR%\drivers-Off\drivers64UEFI\OsxAptioFixDrv-64.efi
    copy /b /y %BUILD_DIR%\X64\OsxLowMemFixDrv.efi %DEST_DIR%\drivers-Off\drivers64UEFI\OsxLowMemFixDrv-64.efi
    copy /b /y %BUILD_DIR%\X64\CsmVideoDxe.efi %DEST_DIR%\drivers-Off\drivers64UEFI\CsmVideoDxe-64.efi
+   copy /b /y %BUILD_DIR%\X64\EmuVariableUefi.efi %DEST_DIR%\drivers-Off\drivers64UEFI\EmuVariableUefi-64.efi
    copy /b /y %WORKSPACE%\Build\rEFIt\%TARGET%_%TOOL_CHAIN_TAG%\X64\CLOVERX64.efi %DEST_DIR%\EFI\BOOT\CLOVERX64.efi
    goto:eof
 

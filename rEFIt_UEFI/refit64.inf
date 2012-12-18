@@ -209,6 +209,7 @@
   gFSInjectProtocolGuid
   gMsgLogProtocolGuid
   gEfiPlatformDriverOverrideProtocolGuid
+  gEmuVariableControlProtocolGuid
 
 [FeaturePcd]
   gEfiMdePkgTokenSpaceGuid.PcdUgaConsumeSupport

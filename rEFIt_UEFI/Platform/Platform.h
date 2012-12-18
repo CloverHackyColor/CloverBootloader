@@ -54,6 +54,7 @@ Headers collection for procedures
 #include <Protocol/FSInjectProtocol.h>
 #include <Protocol/MsgLog.h>
 #include <Protocol/efiConsoleControl.h>
+#include <Protocol/EmuVariableControl.h>
 
 #include "lib.h"
 #include "boot.h"
@@ -704,6 +705,7 @@ typedef struct {
   BOOLEAN iCloudFix;
   
   //Pointer
+  BOOLEAN PointerEnabled;
   INTN    PointerSpeed;
   UINT64  DoubleClickTime;
   BOOLEAN PointerMirror;

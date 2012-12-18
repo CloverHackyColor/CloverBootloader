@@ -161,7 +161,7 @@ BiosVideoDriverBindingSupported (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status) && (Status != EFI_ALREADY_STARTED)) {
+  if (EFI_ERROR (Status) /* && (Status != EFI_ALREADY_STARTED) */) {
 //    DBG("PciIo not found\n");
     return Status;
   }
@@ -312,7 +312,7 @@ BiosVideoDriverBindingStart (
                   Controller,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
-  if (EFI_ERROR (Status) && (Status != EFI_ALREADY_STARTED)) {
+  if (EFI_ERROR (Status) /* && (Status != EFI_ALREADY_STARTED) */) {
  	DBG("OpenProtocol PCI status=%r\n", Status);
     return Status;
   }

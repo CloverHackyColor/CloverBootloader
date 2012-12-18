@@ -2843,6 +2843,11 @@
 		2C116F09164FDE980061F326 /* GraphicsConsoleDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = GraphicsConsoleDxe.inf; sourceTree = "<group>"; };
 		2C116F0A164FDE980061F326 /* LaffStd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LaffStd.c; sourceTree = "<group>"; };
 		2C202D9E164CFD1A00D3EFC7 /* PlatformDriverOverride.c */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = PlatformDriverOverride.c; sourceTree = "<group>"; tabWidth = 2; };
+		2C25B53D1680ADB500BA6CB1 /* EmuVariable.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = EmuVariable.c; sourceTree = "<group>"; };
+		2C25B53E1680ADB500BA6CB1 /* EmuVariableRuntimeDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = EmuVariableRuntimeDxe.inf; sourceTree = "<group>"; };
+		2C25B53F1680ADB500BA6CB1 /* InitVariable.c */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = InitVariable.c; sourceTree = "<group>"; tabWidth = 2; };
+		2C25B5401680ADB500BA6CB1 /* Variable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Variable.h; sourceTree = "<group>"; };
+		2C25B5421680AE2A00BA6CB1 /* EmuVariableControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EmuVariableControl.h; sourceTree = "<group>"; };
 		2C663D57165536DB00BEE731 /* VideoBiosPatchLib.h */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.h; path = VideoBiosPatchLib.h; sourceTree = "<group>"; tabWidth = 2; };
 		2C663D5A165536F600BEE731 /* VideoBiosPatchLib.c */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = VideoBiosPatchLib.c; sourceTree = "<group>"; tabWidth = 2; };
 		2C663D5B165536F600BEE731 /* VideoBiosPatchLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VideoBiosPatchLib.inf; sourceTree = "<group>"; };
@@ -8781,6 +8786,7 @@
 				12B7FF0415F9217300177D35 /* DVDBus */,
 				12B7FF0915F9217300177D35 /* DVDDisk */,
 				12B7FF0E15F9217300177D35 /* ebuild.sh */,
+				2C25B53C1680ADB500BA6CB1 /* EmuVariableUefi */,
 				12B7FF0F15F9217300177D35 /* FSInject */,
 				2C116F05164FDE980061F326 /* GraphicsConsoleDxe */,
 				12B7FF2515F9217F00177D35 /* Include */,
@@ -9022,6 +9028,7 @@
 			isa = PBXGroup;
 			children = (
 				121E4AC6165521FF000C2392 /* efiConsoleControl.h */,
+				2C25B5421680AE2A00BA6CB1 /* EmuVariableControl.h */,
 				12B7FF3715F9217F00177D35 /* FSInjectProtocol.h */,
 				12B7FF3815F9217F00177D35 /* MsgLog.h */,
 				121E4A6616551AD4000C2392 /* UsbMassImpl.h */,
@@ -9517,6 +9524,18 @@
 			);
 			name = GraphicsConsoleDxe;
 			path = ../../GraphicsConsoleDxe;
+			sourceTree = "<group>";
+		};
+		2C25B53C1680ADB500BA6CB1 /* EmuVariableUefi */ = {
+			isa = PBXGroup;
+			children = (
+				2C25B53D1680ADB500BA6CB1 /* EmuVariable.c */,
+				2C25B53E1680ADB500BA6CB1 /* EmuVariableRuntimeDxe.inf */,
+				2C25B53F1680ADB500BA6CB1 /* InitVariable.c */,
+				2C25B5401680ADB500BA6CB1 /* Variable.h */,
+			);
+			name = EmuVariableUefi;
+			path = ../../EmuVariableUefi;
 			sourceTree = "<group>";
 		};
 		2C663D59165536F600BEE731 /* VideoBiosPatchLib */ = {

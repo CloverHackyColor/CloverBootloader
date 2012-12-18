@@ -102,15 +102,21 @@ EFI_STATUS MouseBirth()
   EFI_STATUS Status = EFI_UNSUPPORTED;
   EFI_SIMPLE_POINTER_MODE  *CurrentMode;
 //  EG_PIXEL pi;
+  
+  if (!gSettings.PointerEnabled) {
+    return EFI_UNSUPPORTED;
+  }
+  
   if (gPointer.SimplePointerProtocol) { //do not double
     DrawPointer();
     return EFI_SUCCESS;
   }
   Status = gBS->LocateProtocol (&gEfiSimplePointerProtocolGuid, NULL, (VOID**)&gPointer.SimplePointerProtocol);
-	if(EFI_ERROR(Status)) {
-		MsgLog("No mouse!\n");
+  if(EFI_ERROR(Status)) {
+    gPointer.SimplePointerProtocol = NULL;
+    MsgLog("No mouse!\n");
     return Status;
-	}
+  }
   CurrentMode = gPointer.SimplePointerProtocol->Mode;
   DBG("Found Mouse device:\n");
   DBG(" - ResolutionX=%ld\n", CurrentMode->ResolutionX);

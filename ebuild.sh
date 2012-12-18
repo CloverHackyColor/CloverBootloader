@@ -400,6 +400,7 @@ cp -v $BUILD_DIR/X64/OsxFatBinaryDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV
 cp -v $BUILD_DIR/X64/OsxAptioFixDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/OsxAptioFixDrv-64.efi
 cp -v $BUILD_DIR/X64/OsxLowMemFixDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/OsxLowMemFixDrv-64.efi
 cp -v $BUILD_DIR/X64/CsmVideoDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/CsmVideoDxe-64.efi
+cp -v $BUILD_DIR/X64/EmuVariableUefi.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/EmuVariableUefi-64.efi
 cp -v $BUILD_DIR/X64/CLOVERX64.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/BOOT/
 cp -v $BUILD_DIR/X64/CLOVERX64.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/BOOT/BOOTX64.efi
 echo Done!
@@ -427,6 +428,7 @@ cp -v $BUILD_DIR/X64/OsxFatBinaryDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV
 cp -v $BUILD_DIR/X64/OsxAptioFixDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/OsxAptioFixDrv-64.efi
 cp -v $BUILD_DIR/X64/OsxLowMemFixDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/OsxLowMemFixDrv-64.efi
 cp -v $BUILD_DIR/X64/CsmVideoDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/CsmVideoDxe-64.efi
+cp -v $BUILD_DIR/X64/EmuVariableUefi.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/EmuVariableUefi-64.efi
 cp -v $BUILD_DIR/X64/CLOVERX64.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/BOOT/
 cp -v $BUILD_DIR/X64/CLOVERX64.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/BOOT/BOOTX64.efi
 echo Done!
