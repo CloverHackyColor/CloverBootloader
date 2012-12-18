@@ -4,6 +4,8 @@
 <dict>
 	<key>Pointer</key>
 	<dict>
+		<key>Enable</key>
+		<string>Yes</string>
 		<key>Speed</key>
 		<string>8</string>
 		<key>Mirror</key>
