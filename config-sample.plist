@@ -67,6 +67,15 @@
 				<key>Replace</key>
 				<data>SW50ZXJuYWw=</data>
 			</dict>
+			<key>4</key>
+			<dict>
+				<key>Name</key>
+				<string>AppleTyMCEDriver</string>
+				<key>Find</key>
+				<data>cgoATWFjUHJvNCwxAE1hY1BybzUsMQBY</data>
+				<key>Replace</key>
+				<data>cgoAAAAAAAAAAAAAAAAAAAAAAAAAAABY</data>			
+			</dict>
 		</dict>
 	</dict>
 	<key>SystemParameters</key>
@@ -126,6 +135,8 @@
 		<string>Apple Inc.</string>
 		<key>ChassisAssetTag</key>
 		<string>LatitudeD420</string>
+		<key>ChassisType</key>
+		<string>10</string>		
 		<key>FirmwareFeatures</key>
 		<string>0xC0001403</string>
 	</dict>
@@ -189,6 +200,10 @@
 		<string>Detect</string>
 		<key>USBInjection</key>
 		<string>Yes</string>
+		<key>USBFixOwnership</key>
+		<string>Yes</string>
+		<key>InjectClockID</key>
+		<string>Yes</string>
 		<key>LpcTune</key>
 		<string>Yes</string>
 	</dict>
@@ -241,6 +256,8 @@
 		<string>No</string>
 		<key>DropECDT</key>
 		<string>No</string>
+		<key>DropDMAR</key>
+		<string>Yes</string>
 		<key>GenerateCStates</key>
 		<string>Yes</string>
 		<key>GeneratePStates</key>
@@ -267,6 +284,8 @@
 		<string>No</string>
 		<key>PatchAPIC</key>
 		<string>No</string>
+		<key>RememberBIOS</key>
+		<string>Yes</string>
 		<key>FixDsdtMask</key>
 		<string>0xFFFF</string>
 	</dict>

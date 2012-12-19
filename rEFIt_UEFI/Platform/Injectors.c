@@ -64,6 +64,7 @@ GetDeviceProps(IN     APPLE_GETVAR_PROTOCOL   *This,
   EFI_STATUS    Status;
 
   if (gSettings.iCloudFix) {
+    //optionally delete
     Status = gRT->SetVariable(L"ROM", &gEfiAppleNvramGuid, 0, 0, NULL);
 //    Print(L"Deleting ROM: %r\n", Status);
 //    Status = gRT->SetVariable(L"MLB", &gEfiAppleNvramGuid, 0, 0, NULL);

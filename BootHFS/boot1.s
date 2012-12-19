@@ -395,6 +395,8 @@ start:
 	; using absolute address instead of relative displacement?
 	;
 	jmpabs	startReloc
+  ; push e01f
+  ; ret
 
 ;--------------------------------------------------------------------------
 ; Start execution from the relocated location.

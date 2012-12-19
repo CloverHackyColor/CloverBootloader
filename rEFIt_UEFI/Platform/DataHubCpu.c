@@ -182,15 +182,18 @@ EFI_STATUS SetVariablesForOSX()
                                          /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          sizeof(FwFeaturesMask), &FwFeaturesMask);
 
-  if (gSettings.iCloudFix) {
+// should set anyway  
+//  if (gSettings.iCloudFix) {
     Status = gRS->SetVariable(L"MLB", &gEfiAppleNvramGuid,
                               /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                               SNLen, &gSettings.SerialNr);
+ // }
  
+ // if (!gSettings.iCloudFix) {
     Status = gRS->SetVariable(L"ROM", &gEfiAppleNvramGuid,
                               /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                               6, &gSettings.SmUUID.Data4);
-  }
+//  }
 
   // options variables
   // note: some gEfiAppleBootGuid vars present in nvram.plist are already set by PutNvramPlistToRtVars()
