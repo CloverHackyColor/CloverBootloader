@@ -67,6 +67,7 @@ static struct gma_gpu_t KnownGPUS[] = {
 	{ 0xA011, "Mobile GMA3150"	},
 	{ 0xA012, "Mobile GMA3150"	},
 	{ 0x2772, "Desktop GMA950"	},
+  { 0x29C2, "Desktop GMA3100"	},
 //	{ 0x2776, "Desktop GMA950"	}, //not a GPU
 //	{ 0xA001, "Desktop GMA3150" },
 	{ 0xA001, "Mobile GMA3150"	},
@@ -184,6 +185,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
       devprop_add_value(device, "built-in", &BuiltIn, 1);      
       break;
     case 0x2772:
+    case 0x29C2:  
     case 0x0044:  
     case 0x0046: 
     case 0x0112:  
