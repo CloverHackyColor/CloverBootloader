@@ -66,6 +66,14 @@
 #define REG_PAM5_OFFSET_CP     0x85    // Programmable Attribute Map 5
 #define REG_PAM6_OFFSET_CP     0x86    // Programmable Attribute Map 6
 
+#define REG_PAM0_OFFSET_NV     0xC0    // Programmable Attribute Map 0
+#define REG_PAM1_OFFSET_NV     0xC1    // Programmable Attribute Map 1
+#define REG_PAM2_OFFSET_NV     0xC2    // Programmable Attribute Map 2
+#define REG_PAM3_OFFSET_NV     0xC3    // Programmable Attribute Map 3
+#define REG_PAM4_OFFSET_NV     0xC4    // Programmable Attribute Map 4
+#define REG_PAM5_OFFSET_NV     0xC5    // Programmable Attribute Map 5
+#define REG_PAM6_OFFSET_NV     0xC6    // Programmable Attribute Map 6
+
 #define PAM_BASE_ADDRESS   0xc0000
 #define PAM_LIMIT_ADDRESS  BASE_1MB
 

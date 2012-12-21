@@ -198,6 +198,24 @@ STATIC PAM_REGISTER_VALUE  mRegisterValuesNH[] = {
   {REG_PAM0_OFFSET_NH, 0x10, 0x20}
 };
 
+//NForce chipset
+
+STATIC PAM_REGISTER_VALUE  mRegisterValuesNV[] = {
+  {REG_PAM1_OFFSET_NV, 0x01, 0x02},
+  {REG_PAM1_OFFSET_NV, 0x10, 0x20},
+  {REG_PAM2_OFFSET_NV, 0x01, 0x02},
+  {REG_PAM2_OFFSET_NV, 0x10, 0x20},
+  {REG_PAM3_OFFSET_NV, 0x01, 0x02},
+  {REG_PAM3_OFFSET_NV, 0x10, 0x20},
+  {REG_PAM4_OFFSET_NV, 0x01, 0x02},
+  {REG_PAM4_OFFSET_NV, 0x10, 0x20},
+  {REG_PAM5_OFFSET_NV, 0x01, 0x02},
+  {REG_PAM5_OFFSET_NV, 0x10, 0x20},
+  {REG_PAM6_OFFSET_NV, 0x01, 0x02},
+  {REG_PAM6_OFFSET_NV, 0x10, 0x20},
+  {REG_PAM0_OFFSET_NV, 0x10, 0x20}
+};
+
 //
 // Handle used to install the Legacy Region Protocol
 //
@@ -621,7 +639,6 @@ DetectChipset (
       mPamPciDev = 16;
       break;
       
-
     //
     // Intel Series 4 and similar
     // Copied from 915 resolution created by steve tomljenovic,
@@ -725,6 +742,10 @@ DetectChipset (
       mPamPciFunc = 6;
       break;
 
+    case 0x0a8610de: 
+      DBG(" NForce MCP79 and similar (PAM 0xC0-0xC7)\n");
+      mRegisterValues = mRegisterValuesNV;
+      break;      
       
     default:
       DBG(" Unknown chipset\n");
