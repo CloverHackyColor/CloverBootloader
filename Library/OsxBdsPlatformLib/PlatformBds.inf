@@ -68,6 +68,8 @@
 
 [Depex]
   gEfiLegacy8259ProtocolGuid
+#  [Depex]
+#gEfiAcpiTableProtocolGuid AND gEfiSimpleFileSystemProtocolGuid AND gMsgLogProtocolGuid
   
   
 [Pcd]

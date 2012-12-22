@@ -1088,7 +1088,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   INTN              ApicCPUBase = 0;
   CHAR16*     AcpiOemPath = PoolPrint(L"%s\\ACPI\\patched", OEMPath);
   PathDsdt = PoolPrint(L"\\%s", gSettings.DsdtName);
-	
+/*	
   if (gFirmwareClover || gSettings.RememberBIOS) {
     // although it work on Aptio, no need for the following on other UEFis
     
@@ -1117,7 +1117,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       }
     }
   }
-  
+*/  
 #if 0	  //Slice - this codes reserved for a future
 	if (0) { //RsdPointer) {
 		if (((EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER *)RsdPointer)->Reserved == 0x00){

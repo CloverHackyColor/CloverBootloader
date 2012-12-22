@@ -79,13 +79,14 @@ static struct gma_gpu_t KnownGPUS[] = {
 	{ 0x2A42, "GMAX3100"		},
 //	{ 0x2A43, "GMAX3100"		},
   { 0x0046, "Intel HD Graphics"  }, 
-  { 0x0102, "Intel HD Graphics 3000"  },
+  { 0x0102, "Intel HD Graphics 2000"  },
+  { 0x0106, "Intel HD Graphics 3000"  },
   { 0x0112, "Intel HD Graphics 2000"  },
-  { 0x0116, "Intel HD Graphics 2000M"  },
-  { 0x0122, "Intel HD Graphics 3000"  },
-  { 0x0126, "Intel HD Graphics 3000M"  },
-  { 0x0166, "Intel HD Graphics 4000M"  }, //
+  { 0x0116, "Intel HD Graphics 3000"  },
+  { 0x0122, "Intel HD Graphics 2000"  },
+  { 0x0126, "Intel HD Graphics 3000"  },
   { 0x0162, "Intel HD Graphics 4000"  },  //Desktop??
+  { 0x0166, "Intel HD Graphics 4000M"  }, //
   { 0x0152, "Intel HD Graphics 4000"  },  //iMac
   { 0x0156, "Intel HD Graphics 4000M"  },  //MacBook
 };

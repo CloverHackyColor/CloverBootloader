@@ -136,7 +136,7 @@
 		<key>ChassisAssetTag</key>
 		<string>LatitudeD420</string>
 		<key>ChassisType</key>
-		<string>10</string>		
+		<string>0x10</string>		
 		<key>FirmwareFeatures</key>
 		<string>0xC0001403</string>
 	</dict>
@@ -238,7 +238,7 @@
 			<key>0</key>
 			<dict>
 				<key>VolumeString</key>
-				<string>HD(1,GPT,E223FF7F-F2DA-4DBB-B765-756F2D95B0FE</string>
+				<string>HD(1,GPT,E223FF7F-F2DA-4DBB-B765-756F2D95B0FE)</string>
 			</dict>
 		</dict>
 	</dict>

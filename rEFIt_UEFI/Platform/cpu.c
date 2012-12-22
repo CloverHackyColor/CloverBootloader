@@ -470,7 +470,7 @@ VOID GetCPUProperties (VOID)
   tmpU = gCPUStructure.FSBFrequency;
   DBG("Corrected FSBFrequency=%dMHz\n", DivU64x32(tmpU, Mega));
 	
-	if ((gCPUStructure.Vendor == CPU_VENDOR_INTEL) && (gCPUStructure.Model >= CPU_MODEL_NEHALEM)) {
+	if ((gCPUStructure.Vendor == CPU_VENDOR_INTEL) && (gCPUStructure.Model == CPU_MODEL_NEHALEM)) {
 		//Slice - for Nehalem we can do more calculation as in Cham
     // but this algo almost always wrong
     //
