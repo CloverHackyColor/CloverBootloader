@@ -537,7 +537,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     if (gEmuVariableControl != NULL) {
       gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
     }
-    FinalizeSmbios();
+    //FinalizeSmbios();
     PatchACPI_OtherOS(L"Linux", FALSE);
     //PauseForKey(L"continue");
     Entry->LoadOptions     = NULL;
