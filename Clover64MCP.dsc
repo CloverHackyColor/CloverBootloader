@@ -379,9 +379,9 @@
  
   # ACPI Support
   #MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
-  Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
+  #Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
   #MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
-  Clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
+  #Clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
 
   MdeModulePkg/Universal/Disk/DiskIoDxe/DiskIoDxe.inf
   MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
