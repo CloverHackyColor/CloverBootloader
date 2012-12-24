@@ -193,8 +193,14 @@ EFI_STATUS BiosReadSectorsFromDrive(UINT8 DriveNum, UINT64 Lba, UINTN NumSectors
 	Status = EFI_SUCCESS;
 	if (LegacyBiosInt86(0x13, &Regs)) {
 		// TRUE = error
-		Status = EFI_NOT_FOUND;
-		return Status;
+    DBG("Reset 0 disk controller: %x\n", DriveNum);
+    Regs.H.AH = 0x0D;		// INT 13h AH=00h: Reset disk controller
+    Regs.H.DL = DriveNum;
+    if (LegacyBiosInt86(0x13, &Regs)) {
+      Status = EFI_NOT_FOUND;
+      DBG("reset controller error\n");
+		  return Status;
+    }
 	}
 	
 	// next, read sector
@@ -203,16 +209,18 @@ EFI_STATUS BiosReadSectorsFromDrive(UINT8 DriveNum, UINT64 Lba, UINTN NumSectors
 	Regs.E.DS = (UINT16) (((UINTN) Dap >> 16) << 12);
 	Regs.X.SI = (UINT16) (UINTN) Dap;
 	
-	DBG("Drive: %x, Dap=%p, Buffer=%p, d.size=%X, d.nsect=%d, d.buff=[%X:%X]\n",
-		DriveNum, Dap, Buffer, Dap->size, Dap->numSectors, Dap->buffSegment, Dap->buffOffset);
-	DBG("Dap: Reg.DS:SI = [%X:%X]\n", Regs.E.DS, Regs.X.SI);
+//	DBG("Drive: %x, Dap=%p, Buffer=%p, d.size=%X, d.nsect=%d, d.buff=[%X:%X]\n",
+//		DriveNum, Dap, Buffer, Dap->size, Dap->numSectors, Dap->buffSegment, Dap->buffOffset);
+//	DBG("Dap: Reg.DS:SI = [%X:%X]\n", Regs.E.DS, Regs.X.SI);
 	
 	Status = EFI_SUCCESS;
 	if (LegacyBiosInt86(0x13, &Regs)) {
 		// TRUE = error
+    Regs.H.AH = 0x01;		// INT 13h AH=01h: Get Status of Last Drive Operation
+    LegacyBiosInt86(0x13, &Regs);
 		Status = EFI_NOT_FOUND;
 	}
-	DBG("LegacyBiosInt86=%r, AH=%x\n", Status, Regs.H.AH);
+	DBG("LegacyBiosInt86 status=%r, AH=%x\n", Status, Regs.H.AH);
 	return Status;
 }
 
@@ -273,6 +281,7 @@ UINT8 GetBiosDriveNumForVolume(REFIT_VOLUME *Volume)
 		if (EFI_ERROR(Status)) {
 			// error or no more disks
 			//DriveNum = 0;
+      DBG("Can't get drive 0x%x CRC32\n", DriveNum);
 			continue;
 		}
     BestNum = DriveNum;
@@ -589,11 +598,11 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
 	HARDDRIVE_DEVICE_PATH       *HdPath     = NULL; 
 	EFI_DEVICE_PATH_PROTOCOL    *DevicePath = volume->DevicePath;
     UINT8                       BiosDriveNum;
-  UINT16                      OldMask;
-  UINT16                      NewMask;
-  UINTN                       i, i2, j;  //for debug dump
+//  UINT16                      OldMask;
+//  UINT16                      NewMask;
+  UINTN                       i, j;  //for debug dump
   UINT8                       *ptr;
-  UINT32                      MBRCRC32;
+ // UINT32                      MBRCRC32;
   //UINTN         LogSize;
 	
 	IA32_REGISTER_SET   Regs;
@@ -625,117 +634,65 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
 		return Status;
 	}
   DBG("gEfiLegacy8259ProtocolGuid found\n");
-	/*
-  mCpu = NULL;
-  Status = gBS->LocateProtocol (&gEfiCpuArchProtocolGuid, NULL, (VOID **) &mCpu);
-	if (EFI_ERROR(Status)) {
-		return Status;
-	}
-  Status = mCpu->EnableInterrupt(mCpu);
-  DBG("gEfiCpuArchProtocolGuid found\n");
-	 */
-  Status = gLegacy8259->GetMask(gLegacy8259, &OldMask, NULL, NULL, NULL);
 	
 	Status = gBS->AllocatePool (EfiBootServicesData,sizeof(THUNK_CONTEXT),(VOID **)&mThunkContext);
 	if (EFI_ERROR (Status)) {
 		return Status;
 	}
-  DBG("Thunk allocated\n");
 	Status = InitializeBiosIntCaller(); //mThunkContext);
 	if (EFI_ERROR (Status)) {
 		return Status;
 	}
-	//InitializeInterruptRedirection(); //gLegacy8259);
+
   mBootSector = AllocateAlignedPages(1, 16);  
 	Status = pDisk->ReadBlocks(pDisk, pDisk->Media->MediaId, 0, 2*512, mBootSector);
-  DBG("PBR:\n");
-    for (i=0; i<4; i++) {
-        DBG("%04x: ", i*16);
-        for (j=0; j<16; j++) {
-            DBG("%02x ", pBootSector[i*16+j]);
-        }
-        DBG("\n");
-    }
   CopyMem(pBootSector, mBootSector, 1024);
-//  mBootSector = AllocateAlignedPages(1, 16);
-    // find parent disk volume and it's bios drive num
-    DBG("Looking for parent disk of %s\n", DevicePathToStr(volume->DevicePath));
-    BiosDriveNum = 0;
-    for (i = 0; i < VolumesCount; i++) {
-        if (Volumes[i] != volume && Volumes[i]->BlockIO == volume->WholeDiskBlockIO)
-        {
-        	MBRCRC32 = 0;
-            DBG("Found parent volume: %s\n", DevicePathToStr(Volumes[i]->DevicePath));
-          Status = volume->WholeDiskBlockIO->ReadBlocks(volume->WholeDiskBlockIO, 
-                              volume->WholeDiskBlockIO->Media->MediaId, 0, 2*512, 
-                              mBootSector);
-          DBG("MBR:\n");
-          for (i2=0; i<4; i2++) {
-            DBG("%04x: ", i2*16);
-            for (j=0; j<16; j++) {
-              DBG("%02x ", mBootSector[i2*16+j]);
-            }
-            DBG("\n");
-          }
-          //gBS->CalculateCrc32(mBootSector, 2 * 512, &MBRCRC32);
-          MBRCRC32 = GetCrc32(mBootSector, 2 * 512);
-          DBG("MBR drive CRC32 = 0x%x\n", MBRCRC32);
-            BiosDriveNum = GetBiosDriveNumForVolume(Volumes[i]);
-          break;
-        }
+  DBG("PBR after readDisk:\n");
+  for (i=0; i<4; i++) {
+    DBG("%04x: ", i*16);
+    for (j=0; j<16; j++) {
+      DBG("%02x ", pBootSector[i*16+j]);
     }
-  gBS->FreePages((EFI_PHYSICAL_ADDRESS)(UINTN)mBootSector, 1);
-    if (BiosDriveNum == 0) {
-        // not found
-      DBG("HDBoot: BIOS drive number not found, using default 0x80\n");
-      BiosDriveNum = 0x80;
-//        return EFI_NOT_FOUND;
-    }
-/*
+    DBG("\n");
+  }
+  DBG("Reset disk controller 0x80\n"); 
   Status = SaveBooterLog(SelfRootDir, LEGBOOT_LOG);
   if (EFI_ERROR(Status)) {
     DBG("can't save legacy-boot.log\n");
     Status = SaveBooterLog(NULL, LEGBOOT_LOG);
   }
- */
-  /*
-  LogSize = msgCursor - msgbuf;
-  Status = egSaveFile(SelfRootDir, LEGBOOT_LOG, (UINT8*)msgbuf, LogSize);
-  if (EFI_ERROR(Status)) {
-    DBG("can't save legacy-boot.log\n");
-    Status = egSaveFile(NULL, LEGBOOT_LOG, (UINT8*)msgbuf, LogSize);
-  }
-  */
-    
-  NewMask = 0x0;
-  Status = gLegacy8259->SetMask(gLegacy8259, &NewMask, NULL, NULL, NULL);
-	//Status = mCpu->EnableInterrupt(mCpu);
+  //after reset we can't save boot log
+	Regs.H.AH = 0x0D;		// INT 13h AH=00h: Reset floppy disk controller; 0x0D - reset hard disk controller
+	Regs.H.DL = 0x80;
+	Status = EFI_SUCCESS;
+	if (LegacyBiosInt86(0x13, &Regs)) {
+		// TRUE = error
+		Status = EFI_NOT_FOUND;
+    DBG("reset controller 0x80 error\n");
+    //		return Status;
+	}
+  
+  BiosDriveNum = GetBiosDriveNumForVolume(volume);
+	if (BiosDriveNum == 0) {
+		// not found
+		DBG("HDBoot: BIOS drive number not found\n");
+    BiosDriveNum = 0x80;
+//		return EFI_NOT_FOUND;
+	}
+  
   //Now I want to start from VideoTest
   ptr = (UINT8*)(UINTN)0x7F00;
   CopyMem(ptr, &VideoTest[0], 30);
-  
-  
+    
 	CopyMem(pMBR, &tMBR, 16);
 	pMBR->StartLBA = LbaOffset;
 	pMBR->Size = LbaSize;
-  DBG("Ready to start from LBA=%x\n", LbaOffset); //log is closed
-//  Status = gLegacy8259->SetMask(gLegacy8259, &OldMask, NULL, NULL, NULL);
-//  return EFI_NOT_FOUND;
   
 	Regs.X.DX = BiosDriveNum;
 	Regs.X.SI = 0x07BE;
 	//Regs.X.ES = EFI_SEGMENT((UINT32) pBootSector);
 	//Regs.X.BX = EFI_OFFSET ((UINT32) pBootSector);
 	LegacyBiosFarCall86(0, 0x7F00, &Regs); //0x7c00
-	//LegacyBiosFarCall86(
-	//					EFI_SEGMENT((UINT32)(UINTN) pBootSector),
-	//					EFI_OFFSET ((UINT32)(UINTN) pBootSector),
-//						&Regs
-//						);
-	
-	// Success - Should never get here 
-  //else
-  Status = gLegacy8259->SetMask(gLegacy8259, &OldMask, NULL, NULL, NULL);
   //if not success then save legacyboot.log
   Status = SaveBooterLog(SelfRootDir, LEGBOOT_LOG);
   if (EFI_ERROR(Status)) {

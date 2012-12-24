@@ -117,24 +117,6 @@
 		124D770E1657A516008B5407 /* GraphicsConsole.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GraphicsConsole.h; sourceTree = "<group>"; };
 		124D770F1657A516008B5407 /* GraphicsConsoleDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = GraphicsConsoleDxe.inf; sourceTree = "<group>"; };
 		124D77101657A516008B5407 /* LaffStd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LaffStd.c; sourceTree = "<group>"; };
-		124D77121657A546008B5407 /* SmBios.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SmBios.h; sourceTree = "<group>"; };
-		124D77131657A546008B5407 /* SmbiosGen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = SmbiosGen.c; sourceTree = "<group>"; };
-		124D77141657A546008B5407 /* SmbiosGen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SmbiosGen.h; sourceTree = "<group>"; };
-		124D77151657A546008B5407 /* SmbiosGen.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = SmbiosGen.inf; sourceTree = "<group>"; };
-		124D77171657A551008B5407 /* AcpiPlatform.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AcpiPlatform.c; sourceTree = "<group>"; };
-		124D77181657A551008B5407 /* AcpiPlatformDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = AcpiPlatformDxe.inf; sourceTree = "<group>"; };
-		124D77191657A551008B5407 /* AcpiTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AcpiTable.h; sourceTree = "<group>"; };
-		124D771B1657A557008B5407 /* AcpiSdt.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AcpiSdt.c; sourceTree = "<group>"; };
-		124D771C1657A557008B5407 /* AcpiSdt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AcpiSdt.h; sourceTree = "<group>"; };
-		124D771D1657A557008B5407 /* AcpiTable.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AcpiTable.c; sourceTree = "<group>"; };
-		124D771E1657A557008B5407 /* AcpiTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AcpiTable.h; sourceTree = "<group>"; };
-		124D771F1657A557008B5407 /* AcpiTableDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = AcpiTableDxe.inf; sourceTree = "<group>"; };
-		124D77201657A557008B5407 /* AcpiTableProtocol.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AcpiTableProtocol.c; sourceTree = "<group>"; };
-		124D77211657A557008B5407 /* Aml.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Aml.c; sourceTree = "<group>"; };
-		124D77221657A557008B5407 /* AmlChild.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AmlChild.c; sourceTree = "<group>"; };
-		124D77231657A557008B5407 /* AmlNamespace.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AmlNamespace.c; sourceTree = "<group>"; };
-		124D77241657A557008B5407 /* AmlOption.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AmlOption.c; sourceTree = "<group>"; };
-		124D77251657A557008B5407 /* AmlString.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AmlString.c; sourceTree = "<group>"; };
 		124D77271657A563008B5407 /* Bds.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bds.h; sourceTree = "<group>"; };
 		124D77281657A563008B5407 /* BdsDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = BdsDxe.inf; sourceTree = "<group>"; };
 		124D77291657A563008B5407 /* BdsEntry.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BdsEntry.c; sourceTree = "<group>"; };
@@ -659,7 +641,6 @@
 				124D77011657A506008B5407 /* DVDBus */,
 				124D77061657A50D008B5407 /* DVDDisk */,
 				124D770B1657A516008B5407 /* GraphicsConsoleDxe */,
-				124D771A1657A557008B5407 /* OsxAcpiTableDxe */,
 				124D77261657A563008B5407 /* OsxBdsDxe */,
 				124D77551657A581008B5407 /* OsxDxeCore */,
 				124D77871657A592008B5407 /* OsxDxeIpl */,
@@ -781,48 +762,6 @@
 			);
 			name = GraphicsConsoleDxe;
 			path = ../GraphicsConsoleDxe;
-			sourceTree = "<group>";
-		};
-		124D77111657A546008B5407 /* OemSmbiosGenDxe */ = {
-			isa = PBXGroup;
-			children = (
-				124D77121657A546008B5407 /* SmBios.h */,
-				124D77131657A546008B5407 /* SmbiosGen.c */,
-				124D77141657A546008B5407 /* SmbiosGen.h */,
-				124D77151657A546008B5407 /* SmbiosGen.inf */,
-			);
-			name = OemSmbiosGenDxe;
-			path = ../OemSmbiosGenDxe;
-			sourceTree = "<group>";
-		};
-		124D77161657A551008B5407 /* OsxAcpiPlatformDxe */ = {
-			isa = PBXGroup;
-			children = (
-				124D77171657A551008B5407 /* AcpiPlatform.c */,
-				124D77181657A551008B5407 /* AcpiPlatformDxe.inf */,
-				124D77191657A551008B5407 /* AcpiTable.h */,
-			);
-			name = OsxAcpiPlatformDxe;
-			path = ../OsxAcpiPlatformDxe;
-			sourceTree = "<group>";
-		};
-		124D771A1657A557008B5407 /* OsxAcpiTableDxe */ = {
-			isa = PBXGroup;
-			children = (
-				124D771B1657A557008B5407 /* AcpiSdt.c */,
-				124D771C1657A557008B5407 /* AcpiSdt.h */,
-				124D771D1657A557008B5407 /* AcpiTable.c */,
-				124D771E1657A557008B5407 /* AcpiTable.h */,
-				124D771F1657A557008B5407 /* AcpiTableDxe.inf */,
-				124D77201657A557008B5407 /* AcpiTableProtocol.c */,
-				124D77211657A557008B5407 /* Aml.c */,
-				124D77221657A557008B5407 /* AmlChild.c */,
-				124D77231657A557008B5407 /* AmlNamespace.c */,
-				124D77241657A557008B5407 /* AmlOption.c */,
-				124D77251657A557008B5407 /* AmlString.c */,
-			);
-			name = OsxAcpiTableDxe;
-			path = ../OsxAcpiTableDxe;
 			sourceTree = "<group>";
 		};
 		124D77261657A563008B5407 /* OsxBdsDxe */ = {
@@ -1334,8 +1273,6 @@
 				123F0952164F96D0008C1C1C /* Library */,
 				123F0957164F96DB008C1C1C /* Include */,
 				123F096C164F96F4008C1C1C /* MsgLog */,
-				124D77111657A546008B5407 /* OemSmbiosGenDxe */,
-				124D77161657A551008B5407 /* OsxAcpiPlatformDxe */,
 				12B816771644675800A433E7 /* rEFIt_UEFI */,
 				123F0978164FA3AF008C1C1C /* VideoDxe */,
 				12A1790E166BCC15005B0D63 /* SataControllerDxe */,
