@@ -158,6 +158,13 @@ InstallLegacyTables (
 			TableSize = Table->Length;
 			if (Index == 0) {
 				Fadt = (EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE*)Table;
+        if (Fadt->FirmwareCtrl) {
+          AcpiInstance->Facs1 = (EFI_ACPI_1_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)Fadt->FirmwareCtrl;
+          AcpiInstance->Facs3 = (EFI_ACPI_3_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)Fadt->FirmwareCtrl;
+        }
+        if (Fadt->XFirmwareCtrl) {
+           AcpiInstance->Facs3 = (EFI_ACPI_3_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)Fadt->XFirmwareCtrl;
+        }
 			}
 			Signature.Sign = Table->Signature;
 			DBG(L"Install table from %x: %c%c%c%c\n", (UINTN)Table,
@@ -173,7 +180,7 @@ InstallLegacyTables (
 			}
 		}
 		//Now find Fadt and install dsdt and facs
-		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Fadt->FirmwareCtrl));
+/*		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Fadt->FirmwareCtrl));
 		TableSize = Table->Length;
 		Signature.Sign = Table->Signature;
 		DBG(L"Install table: %c%c%c%c\n", 
@@ -184,7 +191,7 @@ InstallLegacyTables (
 											  TableSize,
 											  &TableHandle
 											  );
-		
+*/		
 // do not install legacy DSDT yet	
 /*		Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(Fadt->Dsdt));
 		TableSize = Table->Length;
@@ -229,6 +236,13 @@ InstallLegacyTables (
 		EntryPtr = &Rsdt->Entry;
 		Fadt = (EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE*)((UINTN)(*EntryPtr));
 		DBG(L"Fadt from Rsdt @ %x\n", (UINTN)Fadt);
+    if (Fadt->FirmwareCtrl) {
+      AcpiInstance->Facs1 = (EFI_ACPI_1_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)Fadt->FirmwareCtrl;
+      AcpiInstance->Facs3 = (EFI_ACPI_3_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)Fadt->FirmwareCtrl;
+    }
+    if (Fadt->XFirmwareCtrl) {
+      AcpiInstance->Facs3 = (EFI_ACPI_3_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)Fadt->XFirmwareCtrl;
+    }
 		for (Index = 0; Index < EntryCount; Index ++, EntryPtr ++) {
 			Table = (EFI_ACPI_DESCRIPTION_HEADER*)((UINTN)(*EntryPtr));
 			TableSize = Table->Length;
@@ -293,19 +307,6 @@ CHAR16* ACPInames[NUM_TABLES] = {
 	L"MCFG.aml"
 };
 
-// Slice: New signature compare function
-/*
-BOOLEAN tableSign(CHAR8 *table, CONST CHAR8 *sgn)
-{
-	int i;
-	for (i=0; i<4; i++) {
-		if ((table[i] &~0x20) != (sgn[i] &~0x20)) {
-			return FALSE;
-		}
-	}
-	return TRUE;
-}
-*/
 /**
   This function calculates and updates an UINT8 checksum.
 

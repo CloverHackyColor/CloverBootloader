@@ -334,7 +334,10 @@ ConSplitterDriverEntry(
              &gConSplitterConInComponentName,
              &gConSplitterConInComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+//  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return EFI_UNSUPPORTED;
+  }
 
   Status = EfiLibInstallDriverBindingComponentName2 (
              ImageHandle,
@@ -344,7 +347,10 @@ ConSplitterDriverEntry(
              &gConSplitterSimplePointerComponentName,
              &gConSplitterSimplePointerComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  //  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return EFI_UNSUPPORTED;
+  }
 
   Status = EfiLibInstallDriverBindingComponentName2 (
              ImageHandle,
@@ -354,7 +360,10 @@ ConSplitterDriverEntry(
              &gConSplitterAbsolutePointerComponentName,
              &gConSplitterAbsolutePointerComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  //  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return EFI_UNSUPPORTED;
+  }
 
   Status = EfiLibInstallDriverBindingComponentName2 (
              ImageHandle,
@@ -364,7 +373,10 @@ ConSplitterDriverEntry(
              &gConSplitterConOutComponentName,
              &gConSplitterConOutComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  //  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return EFI_UNSUPPORTED;
+  }
 
   Status = EfiLibInstallDriverBindingComponentName2 (
              ImageHandle,
@@ -374,13 +386,16 @@ ConSplitterDriverEntry(
              &gConSplitterStdErrComponentName,
              &gConSplitterStdErrComponentName2
              );
-  ASSERT_EFI_ERROR (Status);
+  //  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return EFI_UNSUPPORTED;
+  }
 
   //
   // Either Graphics Output protocol or UGA Draw protocol must be supported.
   //
-  ASSERT (FeaturePcdGet (PcdConOutGopSupport) ||
-          FeaturePcdGet (PcdConOutUgaSupport));
+//  ASSERT (FeaturePcdGet (PcdConOutGopSupport) ||
+//          FeaturePcdGet (PcdConOutUgaSupport));
 
   //
   // The driver creates virtual handles for ConIn, ConOut, StdErr.
@@ -547,7 +562,10 @@ ConSplitterTextInConstructor (
                   ConInPrivate,
                   &ConInPrivate->TextIn.WaitForKey
                   );
-  ASSERT_EFI_ERROR (Status);
+  //  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return EFI_UNSUPPORTED;
+  }
 
   //
   // Allocate buffer for Simple Text Input Ex device
@@ -570,7 +588,10 @@ ConSplitterTextInConstructor (
                   ConInPrivate,
                   &ConInPrivate->TextInEx.WaitForKeyEx
                   );
-  ASSERT_EFI_ERROR (Status);
+  //  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return EFI_UNSUPPORTED;
+  }
 
   InitializeListHead (&ConInPrivate->NotifyList);
 
@@ -596,7 +617,10 @@ ConSplitterTextInConstructor (
             ConInPrivate,
             &ConInPrivate->AbsolutePointer.WaitForInput
         );
-  ASSERT_EFI_ERROR (Status);
+  //  ASSERT_EFI_ERROR (Status);
+  if (EFI_ERROR(Status)) {
+    return EFI_UNSUPPORTED;
+  }
 
   ConInPrivate->SimplePointer.Mode = &ConInPrivate->SimplePointerMode;
   //

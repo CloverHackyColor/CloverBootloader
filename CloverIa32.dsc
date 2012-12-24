@@ -264,7 +264,6 @@
 
   #DuetPkg/FSVariable/FSVariable.inf
   MdeModulePkg/Universal/Variable/EmuRuntimeDxe/EmuVariableRuntimeDxe.inf
-  #Clover/EmuVariableDxe/EmuVariableRuntimeDxe.inf
   MdeModulePkg/Universal/CapsuleRuntimeDxe/CapsuleRuntimeDxe.inf
   MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
   MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
@@ -280,9 +279,10 @@
   Clover/GraphicsConsoleDxe/GraphicsConsoleDxe.inf
   #MdeModulePkg/Universal/Console/TerminalDxe/TerminalDxe.inf
   MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
-  #MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
-  Clover/OsxSmbiosDxe/SmbiosDxe.inf
-  Clover/OemSmbiosGenDxe/SmbiosGen.inf
+  MdeModulePkg/Universal/SmbiosDxe/SmbiosDxe.inf
+  DuetPkg/SmbiosGenDxe/SmbiosGen.inf
+  #Clover/OsxSmbiosDxe/SmbiosDxe.inf
+  #Clover/OemSmbiosGenDxe/SmbiosGen.inf
 
   #DuetPkg/EfiLdr/EfiLdr.inf {
   Clover/OsxEfiLdr/EfiLdr.inf {
