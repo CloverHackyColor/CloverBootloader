@@ -1214,6 +1214,26 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     Status = gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);		
     if(!EFI_ERROR(Status))
     {
+      if (RsdPointer->Revision == 0) {
+        // ACpi 1.0 RsdPtr, but we need Acpi 2.0
+        DBG("RsdPointer is Acpi 1.0 - creating new one Acpi 2.0\n");
+        EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER  *NewRsdPointer;
+        
+        // add new pointer to the beginning of a new buffer
+        NewRsdPointer = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)(UINTN)BufferPtr;
+        
+        // and Xsdt will come after it
+        BufferPtr += 0x30;
+        
+        // Signature, Checksum, OemId, Reserved/Revision, RsdtAddress
+        CopyMem((VOID*)NewRsdPointer, (VOID*)NewRsdPointer, sizeof(EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER));
+        NewRsdPointer->Revision = 2;
+        NewRsdPointer->Length = sizeof(EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER);
+        RsdPointer = NewRsdPointer;
+        gBS->InstallConfigurationTable (&gEfiAcpiTableGuid, (VOID*)RsdPointer);
+        gBS->InstallConfigurationTable (&gEfiAcpi10TableGuid, (VOID*)RsdPointer);
+        DBG("RsdPointer Acpi 2.0 installed\n");
+      }
       Xsdt = (XSDT_TABLE*)(UINTN)BufferPtr;
       //      Print(L"XSDT = 0x%x\n\r", Xsdt);
       Xsdt->Header.Signature = 0x54445358; //EFI_ACPI_2_0_EXTENDED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE
@@ -1242,11 +1262,13 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
           pEntryR++;
         }
       }
+      DBG("Finishing RsdPointer\n");
       RsdPointer->XsdtAddress = (UINT64)(UINTN)Xsdt;
       RsdPointer->Checksum = 0;
       RsdPointer->Checksum = (UINT8)(256-Checksum8((CHAR8*)RsdPointer, 20));
       RsdPointer->ExtendedChecksum = 0;
       RsdPointer->ExtendedChecksum = (UINT8)(256-Checksum8((CHAR8*)RsdPointer, RsdPointer->Length));
+      DBG("Xsdt creation done\n");
     }
   }
   
