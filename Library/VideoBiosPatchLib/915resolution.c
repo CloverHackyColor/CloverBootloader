@@ -443,11 +443,11 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
         DBG("have no mode, check your EDID\n");
         break;
 			}
-      if ((edidInfo[54] != 0) && (edidInfo[55] != 0) &&
-          (edidInfo[56] != 0) && (edidInfo[58] != 0)) {
+      if ((edidInfo[54] != 0) || (edidInfo[55] != 0) ||
+          (edidInfo[56] != 0) || (edidInfo[58] != 0)) {
         DTD_string = (UINT8*)&edidInfo[54];
-      } else if ((edidInfo[72] != 0) && (edidInfo[73] != 0) &&
-                 (edidInfo[74] != 0) && (edidInfo[76] != 0)) {
+      } else if ((edidInfo[72] != 0) || (edidInfo[73] != 0) ||
+                 (edidInfo[74] != 0) || (edidInfo[76] != 0)) {
         DTD_string = (UINT8*)&edidInfo[72];
       } else {
         break;
