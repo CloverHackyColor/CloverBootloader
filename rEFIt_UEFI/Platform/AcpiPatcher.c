@@ -1216,8 +1216,8 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     {
       if (RsdPointer->Revision == 0) {
         // ACpi 1.0 RsdPtr, but we need Acpi 2.0
-        DBG("RsdPointer is Acpi 1.0 - creating new one Acpi 2.0\n");
         EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER  *NewRsdPointer;
+        DBG("RsdPointer is Acpi 1.0 - creating new one Acpi 2.0\n");
         
         // add new pointer to the beginning of a new buffer
         NewRsdPointer = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)(UINTN)BufferPtr;
@@ -1226,7 +1226,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
         BufferPtr += 0x30;
         
         // Signature, Checksum, OemId, Reserved/Revision, RsdtAddress
-        CopyMem((VOID*)NewRsdPointer, (VOID*)NewRsdPointer, sizeof(EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER));
+        CopyMem((VOID*)NewRsdPointer, (VOID*)RsdPointer, sizeof(EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_POINTER));
         NewRsdPointer->Revision = 2;
         NewRsdPointer->Length = sizeof(EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER);
         RsdPointer = NewRsdPointer;
