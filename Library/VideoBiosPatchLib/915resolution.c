@@ -4,7 +4,7 @@
  *  Created by Evan Lojewski on 3/4/10.
  *  Copyright 2009. All rights reserved.
  *
- *  remake for Clover by dmazar and slice
+ *  remake for Clover by dmazar and slice 2012
  */
 #ifndef _RESOLUTION_H_
 #define _RESOLUTION_H_
@@ -101,6 +101,11 @@ static TABLE_LIMIT nvda_key3[] = {
   {1, {0x00, 0x08, 0xBA, 0x00, 0x06}}  
   
 };
+
+//DTD string to replace in Intel BIOSes
+static UINT8 DTD_1024[] = {0x64, 0x19, 0x00, 0x40, 0x41, 0x00, 0x26, 0x30, 0x18, 
+                           0x88, 0x36, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x18};
+
 /* Copied from 915 resolution created by steve tomljenovic
  *
  * This code is based on the techniques used in :
@@ -136,7 +141,7 @@ vbios_resolution_type3 * map_type3_resolution(vbios_map * map, UINT16 res)
 	vbios_resolution_type3 * ptr = ((vbios_resolution_type3*)(map->bios_ptr + res)); 
 	return ptr;
 }
-
+/*
 CHAR8 detect_bios_type(vbios_map * map, CHAR8 modeline, INT32 entry_size);
 CHAR8 detect_bios_type(vbios_map * map, CHAR8 modeline, INT32 entry_size)
 {
@@ -162,7 +167,7 @@ CHAR8 detect_bios_type(vbios_map * map, CHAR8 modeline, INT32 entry_size)
 	
 	return (r2-r1-6) % entry_size == 0;
 }
-
+*/
 VOID close_vbios(vbios_map * map);
 
 CHAR8 detect_ati_bios_type(vbios_map * map)
@@ -275,15 +280,18 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 		}
 	}
 	
-	
 	/*
 	 * check if we have Intel
 	 */
+  
+	if (*(UINT16*)(map->bios_ptr + 0x44) == 0x8086) {
+    map->bios = BT_INTEL;
+  }
 	
 	/*
 	 * Figure out where the mode table is 
 	 */
-	if ((map->bios != BT_ATI_1) && (map->bios != BT_ATI_2) && (map->bios != BT_NVDA))
+/*	if ((map->bios != BT_ATI_1) && (map->bios != BT_ATI_2) && (map->bios != BT_NVDA))
 	{
 		CHAR8* p = map->bios_ptr + 16;
 		CHAR8* limit = map->bios_ptr + VBIOS_SIZE - (3 * sizeof(vbios_mode));
@@ -311,12 +319,12 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 			DBG(", mode_table: 0x%p", map->mode_table);
 		}
 	}
-	
+*/	
 	
 	/*
 	 * Determine size of mode table
 	 */
-	if ((map->bios != BT_ATI_1) && (map->bios != BT_ATI_2) && (map->bios != BT_NVDA))
+/*	if ((map->bios != BT_ATI_1) && (map->bios != BT_ATI_2) && (map->bios != BT_NVDA))
 	{
 		vbios_mode * mode_ptr = map->mode_table;
 		
@@ -327,11 +335,12 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 		}
 		DBG(", mode_table_size: 0x%x", map->mode_table_size);
 	}
-	
+*/	
 	/*
 	 * Figure out what type of bios we have
 	 *  order of detection is important
 	 */
+  /*
 	if ((map->bios != BT_ATI_1) && (map->bios != BT_ATI_2) && (map->bios != BT_NVDA))
 	{
 		if (detect_bios_type(map, TRUE, sizeof(vbios_modeline_type3)))
@@ -354,7 +363,7 @@ vbios_map * open_vbios(chipset_type forced_chipset)
 			return 0;
 		}
 	}
-	
+	*/
 	return map;
 }
 
@@ -423,7 +432,39 @@ VOID set_mode(vbios_map * map, /*UINT32 mode,*/ UINT32 x, UINT32 y, UINT32 bp, U
 	DBG(" Patching: ");
 	switch(map->bios) {
 		case BT_INTEL:
+    {
+      edid_mode mode;
+      UINTN     NumReplaces;
+      UINT8*    DTD_string = NULL; 
+      CHAR8*    edidInfo = readEDID();
+      
+      DBG("Patch BT_INTEL: ");
+			if (getMode(&mode)) {
+        DBG("have no mode, check your EDID\n");
+        break;
+			}
+      if ((edidInfo[54] != 0) && (edidInfo[55] != 0) &&
+          (edidInfo[56] != 0) && (edidInfo[58] != 0)) {
+        DTD_string = (UINT8*)&edidInfo[54];
+      } else if ((edidInfo[72] != 0) && (edidInfo[73] != 0) &&
+                 (edidInfo[74] != 0) && (edidInfo[76] != 0)) {
+        DTD_string = (UINT8*)&edidInfo[72];
+      } else {
+        break;
+      }
+
+      NumReplaces = 0;
+      NumReplaces = VideoBiosPatchSearchAndReplace (
+                                                    (UINT8*)(UINTN)VBIOS_START,
+                                                    VBIOS_SIZE,
+                                                    (UINT8*)&DTD_1024[0], 18,
+                                                    DTD_string,
+                                                    -1
+                                                    );
+      DBG (" patched %d time(s)\n", NumReplaces);
+      
 			return;
+    }
 
 		case BT_1:
 		{
