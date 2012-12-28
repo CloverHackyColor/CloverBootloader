@@ -328,6 +328,10 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = ASString;  //87
   InputItems[InputItemsCount].SValue = AllocateZeroPool(64);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.ReleaseDate);
+
+  InputItems[InputItemsCount].ItemType = BoolValue; //88
+  InputItems[InputItemsCount].BValue   = gSettings.DoubleFirstState;
+  InputItems[InputItemsCount++].SValue = gSettings.DoubleFirstState?L"[+]":L"[ ]"; 
   
 }
 
@@ -596,6 +600,11 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     AsciiSPrint(gSettings.ReleaseDate, 64, "%s", InputItems[i].SValue);
   }  
+
+  i++; //88
+  if (InputItems[i].Valid) {
+    gSettings.DoubleFirstState = InputItems[i].BValue;
+  }
   
   
   SaveSettings(); 
@@ -2011,6 +2020,16 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
   InputBootArgs->Item = &InputItems[8];    
   InputBootArgs->Entry.AtClick = ActionSelect;
   InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"DoubleFirstState:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Entry.ShortcutLetter = 'D';
+  InputBootArgs->Item = &InputItems[88];    
+  InputBootArgs->Entry.AtClick = ActionEnter;
+  InputBootArgs->Entry.AtDoubleClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
   
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));

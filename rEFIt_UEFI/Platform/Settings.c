@@ -608,6 +608,14 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         gSettings.UnderVoltStep = (UINT8)StrDecimalToUintn((CHAR16*)&UStr[0]);	
       }
       
+      prop = GetProperty(dictPointer, "DoubleFirstState");
+      gSettings.DoubleFirstState = FALSE;
+      if(prop) {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+          gSettings.DoubleFirstState = TRUE;
+      }
+      
+      
       prop = GetProperty(dictPointer, "ResetAddress");
       if(prop) {
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);

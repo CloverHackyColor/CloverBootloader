@@ -620,6 +620,7 @@ typedef struct {
   BOOLEAN	GenerateCStates;
   UINT8   PLimitDict;
   UINT8   UnderVoltStep;
+  BOOLEAN DoubleFirstState;
   BOOLEAN LpcTune;
   BOOLEAN EnableC2;
   BOOLEAN EnableC4;
@@ -655,7 +656,7 @@ typedef struct {
   UINT64  VRAM;
   UINT8   Dcfg[8];
   UINT8   NVCAP[20];
-  UINT32   DualLink;
+  UINT32  DualLink;
  	
   // HDA
   BOOLEAN HDAInjection;
