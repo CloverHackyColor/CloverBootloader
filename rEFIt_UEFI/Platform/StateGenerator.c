@@ -237,7 +237,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
                   p_states_count++;
                   p_states[p_states_count].Control.Control = (UINT16)j;
                   p_states[p_states_count].CID = j;
-                  p_states[p_states_count].Frequency = (UINT32)(DivU64x32(gCPUStructure.FSBFrequency * i, Mega)) + 1;
+                  p_states[p_states_count].Frequency = (UINT32)(DivU64x32(gCPUStructure.FSBFrequency * i, Mega)) - 1;
                   
                 }
 								p_states_count++;
