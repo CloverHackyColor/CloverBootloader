@@ -3425,14 +3425,30 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
           adr1 = devFind(dsdt, j);
           adr = get_size(dsdt, adr1);
           //UINT32 k = (adr > 0x3F)?1:0; 
+          /*
+          14 45 06 5F 44 53 4D 04 70 12 4F 04 08 0D 64 65
+          76 69 63 65 2D 69 64 00 11 07 0A 04 31 1E 00 00
+          0D 62 75 69 6C 74 2D 69 6E 00 11 04 0A 01 00 0D
+          64 65 76 69 63 65 5F 74 79 70 65 00 11 08 0A 04
+          55 48 43 49 00 0D 41 41 50 4C 2C 63 6C 6F 63 6B
+          2D 69 64 00 11 04 0A 01 00 60 44 54 47 50 68 69
+          6A 6B 71 60 A4 60 
+           */
+          if ((USBDATA2[25] == 0x0A) && (USBDATA2[26] == 0x04)) {
+            k = 27;
+          } else if ((USBDATA2[26] == 0x0A) && (USBDATA2[27] == 0x04)) {
+            k = 28;
+          } else {
+            continue;
+          }
           if (USB20[i])
           {
-            CopyMem(USBDATA2+28, (VOID*)&USBID[i], 4);
+            CopyMem(USBDATA2+k, (VOID*)&USBID[i], 4);
             sizeoffset = size2;
           }
           else
           {
-            CopyMem(USBDATA1+28, (VOID*)&USBID[i], 4);
+            CopyMem(USBDATA1+k, (VOID*)&USBID[i], 4);
             sizeoffset = size1;
           }
           

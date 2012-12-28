@@ -386,7 +386,7 @@ AML_CHUNK* aml_add_byte_buffer(AML_CHUNK* parent, CONST CHAR8* data, UINT32 size
 		node->Type = AML_CHUNK_BUFFER;
 		node->Length = (UINT8)(size + 2);
 		node->Buffer = AllocateZeroPool (node->Length);
-		node->Buffer[offset++] = AML_CHUNK_BYTE;
+		node->Buffer[offset++] = AML_CHUNK_BYTE;  //0x0A
 		node->Buffer[offset++] = (CHAR8)size;
 		CopyMem(node->Buffer+offset,data, node->Length);
 	}

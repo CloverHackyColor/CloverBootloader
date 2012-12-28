@@ -263,6 +263,9 @@ VOID DropTableFromRSDT (UINT32 Signature)
   CHAR8 OTID[9];
   BOOLEAN 			DoubleZero = FALSE;
   
+  if (!Rsdt) {
+    return;
+  }
   // Если адрес RSDT < адреса XSDT и хвост RSDT наползает на XSDT, то подрезаем хвост RSDT до начала XSDT
   if (((UINTN)Rsdt < (UINTN)Xsdt) && (((UINTN)Rsdt + Rsdt->Header.Length) > (UINTN)Xsdt)) {
     Rsdt->Header.Length = ((UINTN)Xsdt - (UINTN)Rsdt) & ~3;
@@ -1178,10 +1181,15 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       }
       if (Rsdt) {
         FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Rsdt->Entry);
+        DBG("Take FADT from RSDT: %p\n", FadtPointer);
       } else if (Xsdt) {
         FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Xsdt->Entry);
+        DBG("Take FADT from XSDT: %p\n", FadtPointer);
+      } else {
+        DBG("No RSDT or XSDT, exiting\n");
+        return EFI_NOT_FOUND;
       }
-      DBG("Found FADT in System table: %p\n", FadtPointer);
+
       Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)(FadtPointer->FirmwareCtrl);
       DBG("Found FACS in System table: %p\n", Facs);
     }
@@ -1262,14 +1270,28 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
           pEntryR++;
         }
       }
-      DBG("Finishing RsdPointer\n");
-      RsdPointer->XsdtAddress = (UINT64)(UINTN)Xsdt;
-      RsdPointer->Checksum = 0;
-      RsdPointer->Checksum = (UINT8)(256-Checksum8((CHAR8*)RsdPointer, 20));
-      RsdPointer->ExtendedChecksum = 0;
-      RsdPointer->ExtendedChecksum = (UINT8)(256-Checksum8((CHAR8*)RsdPointer, RsdPointer->Length));
-      DBG("Xsdt creation done\n");
     }
+  }
+  if (Xsdt) {
+    //Now we need no more Rsdt
+    Rsdt =  NULL;
+    RsdPointer->RsdtAddress = 0;
+    //and we want to reallocate Xsdt
+    BufferPtr = EFI_SYSTEM_TABLE_MAX_ADDRESS;
+    Status = gBS->AllocatePages(AllocateMaxAddress, EfiACPIReclaimMemory, 1, &BufferPtr);		
+    if(!EFI_ERROR(Status))
+    {
+      CopyMem((UINT8*)(UINTN)BufferPtr, (UINT8*)(UINTN)Xsdt, Xsdt->Header.Length);
+      Xsdt = (XSDT_TABLE*)(UINTN)BufferPtr;      
+    }      
+    
+    DBG("Finishing RsdPointer\n");
+    RsdPointer->XsdtAddress = (UINT64)(UINTN)Xsdt;
+    RsdPointer->Checksum = 0;
+    RsdPointer->Checksum = (UINT8)(256-Checksum8((CHAR8*)RsdPointer, 20));
+    RsdPointer->ExtendedChecksum = 0;
+    RsdPointer->ExtendedChecksum = (UINT8)(256-Checksum8((CHAR8*)RsdPointer, RsdPointer->Length));
+    DBG("Xsdt reallocation done\n");    
   }
   
   //  DBG("FADT pointer = %x\n", (UINTN)FadtPointer);
