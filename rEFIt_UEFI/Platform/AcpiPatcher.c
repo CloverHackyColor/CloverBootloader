@@ -215,9 +215,12 @@ UINT8 Checksum8(VOID * startPtr, UINT32 len)
 UINT32* ScanRSDT (UINT32 Signature) 
 {
 	EFI_ACPI_DESCRIPTION_HEADER     *TableEntry;
-	UINTN							Index;
-	UINT32							EntryCount;
-	UINT32							*EntryPtr;
+	UINTN                           Index;
+	UINT32                          EntryCount;
+	UINT32                          *EntryPtr;
+  if (!Rsdt) {
+    return NULL;
+  }
 
 	EntryCount = (Rsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT32);
 
@@ -322,10 +325,11 @@ VOID DropTableFromXSDT (UINT32 Signature)
   CHAR8 OTID[9];
   BOOLEAN 			DoubleZero = FALSE;
   // Если адрес XSDT < адреса RSDT и хвост XSDT наползает на RSDT, то подрезаем хвост XSDT до начала RSDT
-  if (((UINTN)Xsdt < (UINTN)Rsdt) && (((UINTN)Xsdt + Xsdt->Header.Length) > (UINTN)Rsdt)) {
+  //never be happen since now
+/*  if (((UINTN)Xsdt < (UINTN)Rsdt) && (((UINTN)Xsdt + Xsdt->Header.Length) > (UINTN)Rsdt)) {
     Xsdt->Header.Length = ((UINTN)Rsdt - (UINTN)Xsdt) & ~3; //align to 4 bytes
     DBG("Cropped Xsdt->Header.Length=%d\n", Xsdt->Header.Length);
-  }
+  } */
   
 	EntryCount = (Xsdt->Header.Length - sizeof (EFI_ACPI_DESCRIPTION_HEADER)) / sizeof(UINT64);
   DBG("Drop tables from Xsdt, count=%d\n", EntryCount); 
@@ -485,6 +489,8 @@ VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, UIN
           }
           DBG("\n");
           if ((AsciiStrCmp(Signature, "SSDT") == 0) && (len < 0x20000)) {
+            len = ((UINT16*)adr)[2];
+            DBG("Internal length = %d\n", len);
             Status = SaveBufferToDisk((VOID*)adr, len, DirName, FileName);
             *SsdtCount += 1;
           }
@@ -999,7 +1005,8 @@ VOID        SaveOemDsdt(BOOLEAN FullPatch)
 	
   if (Rsdt) {
     FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Rsdt->Entry);
-  } else if (Xsdt) {
+  }
+  if (Xsdt && !FadtPointer) {
     FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Xsdt->Entry);
   }
 	if (FadtPointer == NULL) {
@@ -1070,23 +1077,21 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   //	EFI_HANDLE					FileSystemHandle;
 	EFI_PHYSICAL_ADDRESS		dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS; //0xFE000000;
 	EFI_PHYSICAL_ADDRESS		BufferPtr;
-  SSDT_TABLE    				*Ssdt = NULL;
-	UINT8                 *buffer = NULL;
-	UINTN        				  bufferLen = 0;
-	CHAR16*               PathPatched   = L"\\EFI\\ACPI\\patched";
-	CHAR16*               PathDsdt;    //  = L"\\DSDT.aml";
-  CHAR16*               PathDsdtMini  = L"\\EFI\\ACPI\\mini\\DSDT.aml";
-  CHAR16*               PatchedAPIC = L"\\EFI\\ACPI\\origin\\APIC-p.aml";
-  //	CHAR16*						path = NULL;
-	UINT32*      	 			  rf = NULL;
-	UINT64*       				xf = NULL;
-  UINT64        				XDsdt; //save values if present
- //	UINT64        				BiosDsdt = 0;
-  UINT64        				XFirmwareCtrl;
-  EFI_FILE      				*RootDir;
-  UINT32                eCntR; //, eCntX;
-  UINT32                *pEntryR;
-  CHAR8                 *pEntry;
+  SSDT_TABLE              *Ssdt = NULL;
+	UINT8                   *buffer = NULL;
+	UINTN                   bufferLen = 0;
+	CHAR16*                 PathPatched   = L"\\EFI\\ACPI\\patched";
+	CHAR16*                 PathDsdt;    //  = L"\\DSDT.aml";
+  CHAR16*                 PathDsdtMini  = L"\\EFI\\ACPI\\mini\\DSDT.aml";
+  CHAR16*                 PatchedAPIC = L"\\EFI\\ACPI\\origin\\APIC-p.aml";
+	UINT32*                 rf = NULL;
+	UINT64*                 xf = NULL;
+  UINT64                  XDsdt; //save values if present
+  UINT64                  XFirmwareCtrl;
+  EFI_FILE                *RootDir;
+  UINT32                  eCntR; //, eCntX;
+  UINT32                  *pEntryR;
+  CHAR8                   *pEntry;
   EFI_ACPI_DESCRIPTION_HEADER *TableHeader;
   // -===== APIC =====-
   EFI_ACPI_DESCRIPTION_HEADER                           *ApicTable;
@@ -1223,7 +1228,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     if(!EFI_ERROR(Status))
     {
       if (RsdPointer->Revision == 0) {
-        // ACpi 1.0 RsdPtr, but we need Acpi 2.0
+        // Acpi 1.0 RsdPtr, but we need Acpi 2.0
         EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER  *NewRsdPointer;
         DBG("RsdPointer is Acpi 1.0 - creating new one Acpi 2.0\n");
         
