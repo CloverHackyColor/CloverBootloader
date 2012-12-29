@@ -3434,20 +3434,29 @@ UINT32 FIXUSB (UINT8 *dsdt, UINT32 len)
           2D 69 64 00 11 04 0A 01 00 60 44 54 47 50 68 69
           6A 6B 71 60 A4 60 
            */
-          if ((USBDATA2[25] == 0x0A) && (USBDATA2[26] == 0x04)) {
-            k = 27;
-          } else if ((USBDATA2[26] == 0x0A) && (USBDATA2[27] == 0x04)) {
-            k = 28;
-          } else {
-            continue;
-          }
           if (USB20[i])
           {
+            if ((USBDATA2[25] == 0x0A) && (USBDATA2[26] == 0x04)) {
+              k = 27;
+            } else if ((USBDATA2[26] == 0x0A) && (USBDATA2[27] == 0x04)) {
+              k = 28;
+            } else {
+              continue;
+            }
+            
             CopyMem(USBDATA2+k, (VOID*)&USBID[i], 4);
             sizeoffset = size2;
           }
           else
           {
+            if ((USBDATA1[25] == 0x0A) && (USBDATA1[26] == 0x04)) {
+              k = 27;
+            } else if ((USBDATA1[26] == 0x0A) && (USBDATA1[27] == 0x04)) {
+              k = 28;
+            } else {
+              continue;
+            }
+            
             CopyMem(USBDATA1+k, (VOID*)&USBID[i], 4);
             sizeoffset = size1;
           }

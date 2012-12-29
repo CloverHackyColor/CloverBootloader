@@ -5,6 +5,11 @@ Headers collection for procedures
 #ifndef __REFIT_PLATFORM_H__
 #define __REFIT_PLATFORM_H__
 
+// Set all debug options - apianti
+// Uncomment to set all debug options
+// Comment to use source debug options
+#define DEBUG_ALL 2
+
 
 #include <Uefi.h>
 
@@ -69,10 +74,6 @@ Headers collection for procedures
 #include "device_inject.h"
 #include "kext_inject.h"
 
-// Set all debug options - apianti
-// Uncomment to set all debug options
-// Comment to use source debug options
-//#define DEBUG_ALL 1
 
 /* Decimal powers: */
 #define kilo (1000ULL)
