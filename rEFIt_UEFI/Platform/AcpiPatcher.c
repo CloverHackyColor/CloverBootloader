@@ -1380,7 +1380,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 //    else DBG("No FACS table ?!\n");
     if (newFadt->FirmwareCtrl) {
       Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)newFadt->FirmwareCtrl;
-      newFadt->XFirmwareCtrl = (UINT64)(Facs);
+      newFadt->XFirmwareCtrl = (UINT64)(UINTN)(Facs);
     } else if (newFadt->XFirmwareCtrl) {
       newFadt->FirmwareCtrl = (UINT32)XFirmwareCtrl;
       Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)XFirmwareCtrl;
