@@ -232,6 +232,7 @@ typedef struct {
 #define SCREEN_DSDT       8
 #define SCREEN_BOOT       9
 #define SCREEN_SMBIOS     10
+#define SCREEN_TABLES     11
 
 #define MAX_ANIME  40
 

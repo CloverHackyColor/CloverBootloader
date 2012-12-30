@@ -74,7 +74,7 @@
 				<key>Find</key>
 				<data>cgoATWFjUHJvNCwxAE1hY1BybzUsMQBY</data>
 				<key>Replace</key>
-				<data>cgoAAAAAAAAAAAAAAAAAAAAAAAAAAABY</data>			
+				<data>cgoAAAAAAAAAAAAAAAAAAAAAAAAAAABY</data>
 			</dict>
 		</dict>
 	</dict>
@@ -136,7 +136,7 @@
 		<key>ChassisAssetTag</key>
 		<string>LatitudeD420</string>
 		<key>ChassisType</key>
-		<string>0x10</string>		
+		<string>0x10</string>
 		<key>FirmwareFeatures</key>
 		<string>0xC0001403</string>
 	</dict>
@@ -257,6 +257,8 @@
 		<key>DropECDT</key>
 		<string>No</string>
 		<key>DropDMAR</key>
+		<string>Yes</string>
+		<key>DropBGRT</key>
 		<string>Yes</string>
 		<key>GenerateCStates</key>
 		<string>Yes</string>

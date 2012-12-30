@@ -332,7 +332,10 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue; //88
   InputItems[InputItemsCount].BValue   = gSettings.DoubleFirstState;
   InputItems[InputItemsCount++].SValue = gSettings.DoubleFirstState?L"[+]":L"[ ]"; 
-  
+  InputItems[InputItemsCount].ItemType = BoolValue; //89
+  InputItems[InputItemsCount].BValue   = gSettings.bDropBGRT;
+  InputItems[InputItemsCount++].SValue = gSettings.bDropBGRT?L"[+]":L"[ ]"; 
+
 }
 
 VOID ApplyInputs(VOID)
@@ -605,6 +608,11 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gSettings.DoubleFirstState = InputItems[i].BValue;
   }
+  i++; //89
+  if (InputItems[i].Valid) {
+    gSettings.bDropBGRT = InputItems[i].BValue;
+  }
+  
   
   
   SaveSettings(); 
@@ -2177,6 +2185,96 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   return Entry;
 } 
 
+REFIT_MENU_ENTRY  *SubMenuDropTables()
+{
+    REFIT_MENU_ENTRY   *Entry; //, *SubEntry;
+    REFIT_MENU_SCREEN  *SubScreen;
+    REFIT_INPUT_DIALOG *InputBootArgs;
+
+    Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
+    Entry->Title = PoolPrint(L"Tables dropping menu ->");
+    Entry->Image =  OptionMenu.TitleImage;
+    Entry->Tag = TAG_OPTIONS;
+    Entry->AtClick = ActionEnter;
+    // create the submenu
+    SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+    SubScreen->Title = Entry->Title;
+    SubScreen->TitleImage = Entry->Image;
+    SubScreen->ID = SCREEN_TABLES;
+    SubScreen->AnimeRun = GetAnime(SubScreen);
+
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM SSDT:");
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = 0xFFFF; //cursor
+    InputBootArgs->Entry.ShortcutDigit = 0;
+    InputBootArgs->Entry.ShortcutLetter = 'S';
+    InputBootArgs->Item = &InputItems[4];
+    InputBootArgs->Entry.AtClick = ActionEnter;
+    InputBootArgs->Entry.AtRightClick = ActionDetails;
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM APIC:");
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = 0xFFFF; //cursor
+    InputBootArgs->Item = &InputItems[48];
+    InputBootArgs->Entry.AtClick = ActionEnter;
+    InputBootArgs->Entry.AtRightClick = ActionDetails;
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM MCFG:");
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = 0xFFFF; //cursor
+    InputBootArgs->Item = &InputItems[49];
+    InputBootArgs->Entry.AtClick = ActionEnter;
+    InputBootArgs->Entry.AtRightClick = ActionDetails;
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM HPET:");
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = 0xFFFF; //cursor
+    InputBootArgs->Item = &InputItems[50];
+    InputBootArgs->Entry.AtClick = ActionEnter;
+    InputBootArgs->Entry.AtRightClick = ActionDetails;
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM ECDT:");
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = 0xFFFF; //cursor
+    InputBootArgs->Item = &InputItems[51];
+    InputBootArgs->Entry.AtClick = ActionEnter;
+    InputBootArgs->Entry.AtRightClick = ActionDetails;
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM DMAR:");
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = 0xFFFF; //cursor
+    InputBootArgs->Item = &InputItems[77];
+    InputBootArgs->Entry.AtClick = ActionEnter;
+    InputBootArgs->Entry.AtRightClick = ActionDetails;
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  //bDropBGRT
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM BGRT:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[89];
+  InputBootArgs->Entry.AtClick = ActionEnter;
+  InputBootArgs->Entry.AtRightClick = ActionDetails;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+    
+    AddMenuEntry(SubScreen, &MenuEntryReturn);
+    Entry->SubScreen = SubScreen;                
+    return Entry;
+} 
+
+
 REFIT_MENU_ENTRY  *SubMenuSmbios()
 {
   REFIT_MENU_ENTRY   *Entry; 
@@ -2509,7 +2607,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   if (AllowGraphicsMode)
     Style = GraphicsMenuStyle;
   
-  //remember, is you extended this menu then change procedures
+  //remember, if you extended this menu then change procedures
   // FillInputs and ApplyInputs
   if (OptionMenu.EntryCount == 0) {
     OptionMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
@@ -2564,21 +2662,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.AtClick = ActionEnter;
     InputBootArgs->Entry.AtRightClick = ActionDetails;
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-    //4 
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 255, L"Drop OEM SSDT:");
-    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = 0xFFFF;
-    InputBootArgs->Entry.ShortcutDigit = 0;
-    InputBootArgs->Entry.ShortcutLetter = 'S';
-    InputBootArgs->Entry.Image = NULL;
-    InputBootArgs->Entry.BadgeImage = NULL;
-    InputBootArgs->Entry.SubScreen = NULL;
-    InputBootArgs->Item = &InputItems[4];   //4
-    InputBootArgs->Entry.AtClick = ActionEnter;
-    InputBootArgs->Entry.AtRightClick = ActionDetails;
-    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+    
     //15   
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     UnicodeSPrint(Flags, 255, L"PatchAPIC:");
@@ -2645,72 +2729,9 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.AtDoubleClick = ActionEnter;
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
 */    
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 255, L"Drop OEM APIC:");
-    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = 0xFFFF;
-    InputBootArgs->Entry.Image = NULL;
-    InputBootArgs->Entry.BadgeImage = NULL;
-    InputBootArgs->Entry.SubScreen = NULL;
-    InputBootArgs->Item = &InputItems[48];
-    InputBootArgs->Entry.AtClick = ActionEnter;
-    InputBootArgs->Entry.AtRightClick = ActionDetails;
-    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-    
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 255, L"Drop OEM MCFG:");
-    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = 0xFFFF;
-    InputBootArgs->Entry.Image = NULL;
-    InputBootArgs->Entry.BadgeImage = NULL;
-    InputBootArgs->Entry.SubScreen = NULL;
-    InputBootArgs->Item = &InputItems[49];
-    InputBootArgs->Entry.AtClick = ActionEnter;
-    InputBootArgs->Entry.AtRightClick = ActionDetails;
-    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-    
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 255, L"Drop OEM HPET:");
-    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = 0xFFFF;
-    InputBootArgs->Entry.Image = NULL;
-    InputBootArgs->Entry.BadgeImage = NULL;
-    InputBootArgs->Entry.SubScreen = NULL;
-    InputBootArgs->Item = &InputItems[50];
-    InputBootArgs->Entry.AtClick = ActionEnter;
-    InputBootArgs->Entry.AtRightClick = ActionDetails;
-    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-    
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 255, L"Drop OEM ECDT:");
-    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = 0xFFFF;
-    InputBootArgs->Entry.Image = NULL;
-    InputBootArgs->Entry.BadgeImage = NULL;
-    InputBootArgs->Entry.SubScreen = NULL;
-    InputBootArgs->Item = &InputItems[51];
-    InputBootArgs->Entry.AtClick = ActionEnter;
-    InputBootArgs->Entry.AtRightClick = ActionDetails;
-    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-    
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 255, L"Drop OEM DMAR:");
-    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = 0xFFFF;
-    InputBootArgs->Entry.Image = NULL;
-    InputBootArgs->Entry.BadgeImage = NULL;
-    InputBootArgs->Entry.SubScreen = NULL;
-    InputBootArgs->Item = &InputItems[77];
-    InputBootArgs->Entry.AtClick = ActionEnter;
-    InputBootArgs->Entry.AtRightClick = ActionDetails;
-    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     
     DFIndex = OptionMenu.EntryCount;
+    AddMenuEntry(&OptionMenu, SubMenuDropTables());
     AddMenuEntry(&OptionMenu, SubMenuDsdtFix());
     AddMenuEntry(&OptionMenu, SubMenuSmbios());
     AddMenuEntry(&OptionMenu, SubMenuSpeedStep());
@@ -2754,7 +2775,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
               while (*TmpTitle) {
                 *(*ChosenEntry)->Title++ = *TmpTitle++;
               }
-              MsgLog("@ENTER: choosen=%s\n", (*ChosenEntry)->Title);
+              MsgLog("@ENTER: chosen=%s\n", (*ChosenEntry)->Title);
             }
           }
         } //while(!SubMenuExit)

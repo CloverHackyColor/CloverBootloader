@@ -721,6 +721,12 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
           gSettings.bDropDMAR = TRUE;
       }
+      prop = GetProperty(dictPointer, "DropBGRT");
+      gSettings.bDropBGRT = TRUE;
+      if(prop) {
+        if ((prop->string[0] == 'n') || (prop->string[0] == 'N'))
+          gSettings.bDropBGRT = FALSE;
+      }
       prop = GetProperty(dictPointer, "RememberBIOS");
       gSettings.RememberBIOS = FALSE;
       if(prop) {

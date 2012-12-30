@@ -700,6 +700,7 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 //	XSDT_TABLE																		*Xsdt;
 	EFI_ACPI_DESCRIPTION_HEADER										*TableEntry;
 	EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE			*Fadt;
+  EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE			*XFadt;
 
 	EFI_STATUS		Status;
 	UINTN					Length;
@@ -832,24 +833,30 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 			// Save table with the name from signature
 			TableEntry = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)(ReadUnaligned64((CONST UINT64*)EntryPtr));
 			
-			Status = DumpTable(TableEntry, DirName,  NULL /* take the name from the signature*/, &SsdtCount);
-			if (EFI_ERROR(Status)) {
-				DBG(" - %r\n", Status);
-				return;
-			}
-			DBG("\n");
-      
-			
 			if (TableEntry->Signature == EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE) {
 				//
 				// Fadt - save Dsdt and Facs
 				//
-				Fadt = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)TableEntry;
-				Status = DumpFadtTables(Fadt, DirName, &SsdtCount);
+        Status = DumpTable(TableEntry, DirName,  L"FADTx.aml", &SsdtCount);
+        if (EFI_ERROR(Status)) {
+          DBG(" - %r\n", Status);
+          return;
+        }
+        DBG("\n");
+        
+				XFadt = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)TableEntry;        
+				Status = DumpFadtTables(XFadt, DirName, &SsdtCount);
 				if (EFI_ERROR(Status)) {
 					return;
 				}
-			}
+			} else {
+        Status = DumpTable(TableEntry, DirName,  NULL /* take the name from the signature*/, &SsdtCount);
+        if (EFI_ERROR(Status)) {
+          DBG(" - %r\n", Status);
+          return;
+        }
+        DBG("\n");
+      }
 		}
 		
 		// block saving of Rsdt tables
@@ -883,23 +890,31 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 			
 			// Save table with the name from signature
 			TableEntry = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)(*EntryPtr32);
-			Status = DumpTable(TableEntry, DirName,  NULL /* take the name from the signature*/, &SsdtCount);
-			if (EFI_ERROR(Status)) {
-				DBG(" - %r\n", Status);
-				return;
-			}
-			DBG("\n");
-			
 			if (TableEntry->Signature == EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE) {
 				//
 				// Fadt - save Dsdt and Facs
 				//
+        Status = DumpTable(TableEntry, DirName,  L"FADTr.aml", &SsdtCount);
+        if (EFI_ERROR(Status)) {
+          DBG(" - %r\n", Status);
+          return;
+        }
+        DBG("\n");
+        
+
 				Fadt = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)TableEntry;
 				Status = DumpFadtTables(Fadt, DirName, &SsdtCount);
 				if (EFI_ERROR(Status)) {
 					return;
 				}
-			}
+			} else {
+        Status = DumpTable(TableEntry, DirName,  NULL /* take the name from the signature*/, &SsdtCount);
+        if (EFI_ERROR(Status)) {
+          DBG(" - %r\n", Status);
+          return;
+        }
+        DBG("\n");
+      }
 		}
 	} // if Rsdt
 	
@@ -971,6 +986,7 @@ VOID        SaveOemDsdt(BOOLEAN FullPatch)
   EFI_STATUS						Status = EFI_SUCCESS;
   EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER	*RsdPointer = NULL;
   EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE		*FadtPointer = NULL;	
+  EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE		*XFadtPointer = NULL;	
   EFI_PHYSICAL_ADDRESS	dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS; 
 //  UINT64        				BiosDsdt = 0;
 	UINT8                 *buffer = NULL;
@@ -1006,8 +1022,11 @@ VOID        SaveOemDsdt(BOOLEAN FullPatch)
   if (Rsdt) {
     FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Rsdt->Entry);
   }
-  if (Xsdt && !FadtPointer) {
-    FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Xsdt->Entry);
+  if (Xsdt) {
+    XFadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Xsdt->Entry);
+  }
+  if (!FadtPointer) {
+    FadtPointer = XFadtPointer;
   }
 	if (FadtPointer == NULL) {
 		return;
@@ -1179,7 +1198,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 				continue;
 			}
 		}
-    if (!Facs && RsdPointer) {
+ /*   if (!Facs && RsdPointer) {
       Rsdt = (RSDT_TABLE*)(UINTN)(RsdPointer->RsdtAddress);
       if (Rsdt == NULL || Rsdt->Header.Signature != EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
         Xsdt = (XSDT_TABLE *)(UINTN)(RsdPointer->XsdtAddress);
@@ -1197,7 +1216,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 
       Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)(FadtPointer->FirmwareCtrl);
       DBG("Found FACS in System table: %p\n", Facs);
-    }
+    } */
 	}
 #endif	
   
@@ -1205,19 +1224,28 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 		return EFI_UNSUPPORTED;
 	}
 	Rsdt = (RSDT_TABLE*)(UINTN)RsdPointer->RsdtAddress;
-  //	DBG("RSDT 0x%p\n", Rsdt);
+  DBG("RSDT 0x%p\n", Rsdt);
 	rf = ScanRSDT(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE);
-	if(rf)
+	if(rf) {
 		FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(*rf);
+    DBG("FADT from RSDT: 0x%p\n", FadtPointer);
+  }
   
   Xsdt = NULL;			
   if (RsdPointer->Revision >=2 && (RsdPointer->XsdtAddress < (UINT64)(UINTN)-1))
   {
     Xsdt = (XSDT_TABLE*)(UINTN)RsdPointer->XsdtAddress;
-    //      DBG("XSDT 0x%p\n", Xsdt);
+    DBG("XSDT 0x%p\n", Xsdt);
     xf = ScanXSDT(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE);
-    if(xf)
-      FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(*xf);
+    if(xf) {
+      if (!FadtPointer) {
+        FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(*xf);
+        DBG("FADT from XSDT: 0x%p\n", FadtPointer);
+      } else {
+        *xf =  (UINT64)(UINTN)FadtPointer;
+        DBG("reuse FADT\n");
+      }
+    }
   }
 	
 	if(!xf && Rsdt){
@@ -1348,12 +1376,14 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       } else if (XDsdt) {
         newFadt->Dsdt = (UINT32)XDsdt;
       }
-    if (Facs) newFadt->FirmwareCtrl = (UINT32)(UINTN)Facs;
-    else DBG("No FACS table ?!\n");
+//    if (Facs) newFadt->FirmwareCtrl = (UINT32)(UINTN)Facs;
+//    else DBG("No FACS table ?!\n");
     if (newFadt->FirmwareCtrl) {
-      newFadt->XFirmwareCtrl = (UINT64)(newFadt->FirmwareCtrl);
+      Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)newFadt->FirmwareCtrl;
+      newFadt->XFirmwareCtrl = (UINT64)(Facs);
     } else if (newFadt->XFirmwareCtrl) {
       newFadt->FirmwareCtrl = (UINT32)XFirmwareCtrl;
+      Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)XFirmwareCtrl;
     }
     //patch for FACS included here
     Facs->Version = EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_VERSION;

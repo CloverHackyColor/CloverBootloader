@@ -8,7 +8,7 @@ Headers collection for procedures
 // Set all debug options - apianti
 // Uncomment to set all debug options
 // Comment to use source debug options
-#define DEBUG_ALL 2
+// #define DEBUG_ALL 2
 
 
 #include <Uefi.h>
@@ -637,6 +637,7 @@ typedef struct {
   BOOLEAN bDropHPET;
   BOOLEAN bDropECDT;
   BOOLEAN bDropDMAR;
+  BOOLEAN bDropBGRT;
   BOOLEAN RememberBIOS;
   
   //Injections
