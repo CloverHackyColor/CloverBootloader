@@ -144,7 +144,7 @@ FindAcpiRsdPtr (VOID)
 
 /*########################################################################################
 Copyright (c) 2004 - 2006, Intel Corporation                                                         
-All rights reserved. This program and the accompanying materials                          
+All rights reserved. This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License         
 which accompanies this distribution.  The full text of the license may be found at        
 http://opensource.org/licenses/bsd-license.php                                            
@@ -446,13 +446,90 @@ EFI_STATUS SaveBufferToDisk(VOID *Buffer, UINTN Length, CHAR16 *DirName, CHAR16 
 	return Status;
 }
 
+
+
+//
+// Remembering saved tables
+//
+#define SAVED_TABLES_ALLOC_ENTRIES  64
+VOID   **mSavedTables = NULL;
+UINTN   mSavedTablesEntries = 0;
+UINTN   mSavedTablesNum = 0;
+
+/** Returns TRUE is TableEntry is already saved. */
+BOOLEAN IsTableSaved(VOID *TableEntry)
+{
+  UINTN   Index;
+  
+  if (mSavedTables != NULL) {
+    for (Index = 0; Index < mSavedTablesNum; Index++) {
+      if (mSavedTables[Index] == TableEntry) {
+        return TRUE;
+      }
+    }
+  }
+  return FALSE;
+}
+
+/** Adds TableEntry to mSavedTables if not already there. */
+VOID MarkTableAsSaved(VOID *TableEntry)
+{
+  //
+  // If mSavedTables does not exists yet - allocate it
+  //
+  if (mSavedTables == NULL) {
+    //DBG(" Allocaing mSavedTables");
+    mSavedTablesEntries = SAVED_TABLES_ALLOC_ENTRIES;
+    mSavedTablesNum = 0;
+    mSavedTables = AllocateZeroPool(sizeof(*mSavedTables) * mSavedTablesEntries);
+    if (mSavedTables == NULL) {
+      return;
+    }
+  }
+  
+  //
+  // If TableEntry is not in mSavedTables - add it
+  //
+  //DBG(" MarkTableAsSaved %p", TableEntry);
+  if (IsTableSaved(TableEntry)) {
+    // already saved
+    //DBG(" - already saved\n");
+    return;
+  }
+  
+  //
+  // If mSavedTables is full - extend it
+  //
+  if (mSavedTablesNum + 1 >= mSavedTablesEntries) {
+    // not enough space
+    //DBG(" - extending mSavedTables from %d", mSavedTablesEntries);
+    mSavedTables = ReallocatePool(
+                                  sizeof(*mSavedTables) * mSavedTablesEntries,
+                                  sizeof(*mSavedTables) * (mSavedTablesEntries + SAVED_TABLES_ALLOC_ENTRIES),
+                                  mSavedTables
+                                  );
+    if (mSavedTables == NULL) {
+      return;
+    }
+    mSavedTablesEntries = mSavedTablesEntries + SAVED_TABLES_ALLOC_ENTRIES;
+    //DBG(" to %d", mSavedTablesEntries);
+  }
+  
+  //
+  // Add TableEntry to mSavedTables
+  //
+  mSavedTables[mSavedTablesNum] = (VOID*)TableEntry;
+  //DBG(" - added to index %d\n", mSavedTablesNum);
+  mSavedTablesNum++;
+}
+
 STATIC CHAR8 NameSSDT[] = {0x08, 0x53, 0x53, 0x44, 0x54};
 // OperationRegion (SSDT, SystemMemory, 0xDF5DAC18, 0x038C)
 STATIC UINT8 NameSSDT2[] = {0x80, 0x53, 0x53, 0x44, 0x54};
 // OperationRegion (CSDT, SystemMemory, 0xDF5DBE18, 0x84)
 STATIC UINT8 NameCSDT[] = {0x80, 0x43, 0x53, 0x44, 0x54};
 
-VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, UINTN *SsdtCount)
+VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, CHAR16 *FileNamePrefix, UINTN *SsdtCount)
 {
   EFI_STATUS		Status = EFI_SUCCESS;
   INTN    j, k, pacLen;
@@ -473,7 +550,6 @@ VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, UIN
         DBG("\n Found hidden SSDT %d pcs\n", pacLen/3);
         for (j = 0; j < pacLen/3; j++) {
           
-          FileName = PoolPrint(L"SSDT-%d.aml", *SsdtCount - 1);
           adr = ReadUnaligned32((UINT32*)(Entry + 20 + j*20));
           len = ReadUnaligned32((UINT32*)(Entry + 25 + j*20));
           
@@ -482,24 +558,25 @@ VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, UIN
           Signature[4] = 0;
           CopyMem((CHAR8*)&OemTableId, (CHAR8*)&((EFI_ACPI_DESCRIPTION_HEADER *)adr)->OemTableId, 8);
           OemTableId[8] = 0;
-          DBG(" %p: '%a', '%a', Rev: %d, Len: %d\n", adr, Signature, OemTableId,
+          DBG("      * %p: '%a', '%a', Rev: %d, Len: %d  ", adr, Signature, OemTableId,
               ((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Revision, ((EFI_ACPI_DESCRIPTION_HEADER *)adr)->Length);
           for(k=0; k<16; k++){
             DBG("%02x ", ((UINT8*)adr)[k]);
           }
-          DBG("\n");
-          if ((AsciiStrCmp(Signature, "SSDT") == 0) && (len < 0x20000)) {
+          if ((AsciiStrCmp(Signature, "SSDT") == 0) && (len < 0x20000) && DirName != NULL && !IsTableSaved((VOID*)adr)) {
+            FileName = PoolPrint(L"%sSSDT-%dx.aml", FileNamePrefix, *SsdtCount);
             len = ((UINT16*)adr)[2];
-            DBG("Internal length = %d\n", len);
+            DBG("Internal length = %d", len);
             Status = SaveBufferToDisk((VOID*)adr, len, DirName, FileName);
-            *SsdtCount += 1;
-          }
-          if (FileName) {
+            if (!EFI_ERROR(Status)) {
+              DBG(" -> %s", FileName);
+              MarkTableAsSaved((VOID*)adr);
+              *SsdtCount += 1;
+            } else {
+              DBG(" -> %r", Status);
+            }
             FreePool(FileName);
           }
-          //if (EFI_ERROR(Status)) {
-          //  break;
-          //}
         }
       }
       Entry += 5;
@@ -531,23 +608,17 @@ VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, UIN
         for(k=0; k<16; k++){
           DBG("%02x ", ((UINT8*)adr)[k]);
         }
-        if ((AsciiStrCmp(Signature, "SSDT") == 0) && (len < 0x20000) && DirName != NULL) {
-          if (*SsdtCount == 0) {
-            FileName = PoolPrint(L"%s", L"SSDTx.aml");
-          } else {
-            // *SsdtCount == 1 -> SSDT-0.aml
-            FileName = PoolPrint(L"SSDTx-%d.aml", *SsdtCount - 1);
-          }
+        if ((AsciiStrCmp(Signature, "SSDT") == 0) && (len < 0x20000) && DirName != NULL && !IsTableSaved((VOID*)adr)) {
+          FileName = PoolPrint(L"%sSSDT-%dx.aml", FileNamePrefix, *SsdtCount);
           Status = SaveBufferToDisk((VOID*)adr, len, DirName, FileName);
           if (!EFI_ERROR(Status)) {
             DBG(" -> %s", FileName);
+            MarkTableAsSaved((VOID*)adr);
+            *SsdtCount += 1;
           } else {
             DBG(" -> %r", Status);
           }
-          *SsdtCount += 1;
-          if (FileName) {
-            FreePool(FileName);
-          }
+          FreePool(FileName);
         }
         DBG("\n");
       }
@@ -561,12 +632,12 @@ VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, UIN
 /** Saves Table to disk as DirName\\FileName (DirName != NULL)
  *  or just prints basic table data to log (DirName == NULL).
  */
-EFI_STATUS DumpTable(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, CHAR16 *FileName, UINTN *SsdtCount)
+EFI_STATUS DumpTable(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, CHAR16 *FileName, CHAR16 *FileNamePrefix, UINTN *SsdtCount)
 {
-	EFI_STATUS		Status;
-	CHAR8					Signature[5];
-	CHAR8					OemTableId[9];
-	BOOLEAN				ReleaseFileName = FALSE;
+	EFI_STATUS    Status;
+	CHAR8         Signature[5];
+	CHAR8         OemTableId[9];
+	BOOLEAN       ReleaseFileName = FALSE;
 	
 	// Take Signature and OemId for printing
 	CopyMem((CHAR8*)&Signature, (CHAR8*)&TableEntry->Signature, 4);
@@ -575,27 +646,25 @@ EFI_STATUS DumpTable(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, C
 	OemTableId[8] = 0;
 	
 	DBG(" %p: '%a', '%a', Rev: %d, Len: %d", TableEntry, Signature, OemTableId, TableEntry->Revision, TableEntry->Length);
-	
-	if (DirName == NULL) {
+
+	if (DirName == NULL || IsTableSaved(TableEntry)) {
 		// just debug log dump
 		return EFI_SUCCESS;
 	}
 	
+	if (FileNamePrefix == NULL) {
+		FileNamePrefix = L"";
+	}
+	
 	if (FileName == NULL) {
 		// take the name from the signature
-		if (TableEntry->Signature == EFI_ACPI_1_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE &&
-        SsdtCount != NULL) {      
+		if (TableEntry->Signature == EFI_ACPI_1_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE && SsdtCount != NULL) {
 			// Ssdt counter
-			if (*SsdtCount == 0) {
-				FileName = PoolPrint(L"%a.aml", Signature);
-			} else {
-				// *SsdtCount == 1 -> SSDT-0.aml
-				FileName = PoolPrint(L"%a-%d.aml", Signature, *SsdtCount - 1);
-			}
+			FileName = PoolPrint(L"%sSSDT-%d.aml", FileNamePrefix, *SsdtCount);
 			*SsdtCount = *SsdtCount + 1;
-      DumpChildSsdt(TableEntry, DirName, SsdtCount);
+			DumpChildSsdt(TableEntry, DirName, FileNamePrefix, SsdtCount);
 		} else {
-			FileName = PoolPrint(L"%a.aml", Signature);
+			FileName = PoolPrint(L"%s%a.aml", FileNamePrefix, Signature);
 		}
 		
 		if (FileName == NULL) {
@@ -607,6 +676,7 @@ EFI_STATUS DumpTable(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, C
 	
 	// Save it
 	Status = SaveBufferToDisk((VOID*)TableEntry, TableEntry->Length, DirName, FileName);
+	MarkTableAsSaved(TableEntry);
 	
 	if (ReleaseFileName) {
 		FreePool(FileName);
@@ -616,14 +686,15 @@ EFI_STATUS DumpTable(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, C
 }
 
 /** Saves to disk (DirName != NULL) or prints to log (DirName == NULL) Fadt tables: Dsdt and Facs. */
-EFI_STATUS DumpFadtTables(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt, CHAR16 *DirName, UINTN *SsdtCount)
+EFI_STATUS DumpFadtTables(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt, CHAR16 *DirName, CHAR16 *FileNamePrefix, UINTN *SsdtCount)
 {
-	EFI_ACPI_DESCRIPTION_HEADER										*TableEntry;
-	EFI_ACPI_2_0_FIRMWARE_ACPI_CONTROL_STRUCTURE	*Facs;
-	EFI_STATUS		Status  = EFI_SUCCESS;
-	UINT64				DsdtAdr;
-	UINT64				FacsAdr;
-	CHAR8					Signature[5];
+	EFI_ACPI_DESCRIPTION_HEADER                   *TableEntry;
+	EFI_ACPI_2_0_FIRMWARE_ACPI_CONTROL_STRUCTURE  *Facs;
+	EFI_STATUS    Status  = EFI_SUCCESS;
+	UINT64        DsdtAdr;
+	UINT64        FacsAdr;
+	CHAR8         Signature[5];
+	CHAR16        *FileName;
 	
 	//
 	// if Fadt->Revision < 3 (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION), then it is Acpi 1.0
@@ -655,13 +726,13 @@ EFI_STATUS DumpFadtTables(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt, CHAR1
 	if (DsdtAdr != 0) {
 		DBG("     ");
 		TableEntry = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)DsdtAdr;
-		Status = DumpTable(TableEntry, DirName,  NULL, NULL);
+		Status = DumpTable(TableEntry, DirName,  NULL, FileNamePrefix, NULL);
 		if (EFI_ERROR(Status)) {
 			DBG(" - %r\n", Status);
 			return Status;
 		}
 		DBG("\n");
-    DumpChildSsdt(TableEntry, DirName, SsdtCount);
+		DumpChildSsdt(TableEntry, DirName, FileNamePrefix, SsdtCount);
 	}
 	//
 	// Save Facs
@@ -673,9 +744,12 @@ EFI_STATUS DumpFadtTables(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt, CHAR1
 		CopyMem((CHAR8*)&Signature, (CHAR8*)&Facs->Signature, 4);
 		Signature[4] = 0;
 		DBG("      %p: '%a', Ver: %d, Len: %d", Facs, Signature, Facs->Version, Facs->Length);
-		if (DirName != NULL) {
-			DBG(" -> FACS.aml");
-			Status = SaveBufferToDisk((VOID*)Facs, Facs->Length, DirName, L"FACS.aml");
+		if (DirName != NULL && !IsTableSaved((VOID*)Facs)) {
+			FileName = PoolPrint(L"%sFACS.aml", FileNamePrefix);
+			DBG(" -> %s", FileName);
+			Status = SaveBufferToDisk((VOID*)Facs, Facs->Length, DirName, FileName);
+			MarkTableAsSaved(Facs);
+			FreePool(FileName);
 			if (EFI_ERROR(Status)) {
 				DBG(" - %r\n", Status);
 				return Status;
@@ -695,28 +769,25 @@ EFI_STATUS DumpFadtTables(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt, CHAR1
  */
 VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 {
-	EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER	*RsdPtr;
-//	RSDT_TABLE																		*Rsdt;
-//	XSDT_TABLE																		*Xsdt;
-	EFI_ACPI_DESCRIPTION_HEADER										*TableEntry;
-	EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE			*Fadt;
-  EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE			*XFadt;
+	EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER    *RsdPtr;
+	EFI_ACPI_DESCRIPTION_HEADER                     *TableEntry;
+	EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE       *Fadt;
 
-	EFI_STATUS		Status;
-	UINTN					Length;
-	CHAR8					Signature[9];
-	UINT32				*EntryPtr32;
-	CHAR8 				*EntryPtr;
-	UINTN					EntryCount;
-	UINTN					Index;
-	UINTN					SsdtCount;
-	
-	
+	EFI_STATUS      Status;
+	UINTN           Length;
+	CHAR8           Signature[9];
+	UINT32          *EntryPtr32;
+	CHAR8           *EntryPtr;
+	UINTN           EntryCount;
+	UINTN           Index;
+	UINTN           SsdtCount;
+	CHAR16            *FileNamePrefix;
+
 	//
 	// RSDP
 	// Take it as Acpi 2.0, but take care that if RsdPtr->Revision == 0
 	// then it is actually Acpi 1.0 and fields after RsdtAddress (like XsdtAddress)
-	// are not available 
+	// are not available
 	//
 	
 	RsdPtr = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER *) RsdPtrVoid;
@@ -754,9 +825,10 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 	//
 	// Save RsdPtr
 	//
-	if (DirName != NULL) {
+	if (DirName != NULL && !IsTableSaved((VOID*)RsdPtr)) {
 		DBG(" -> RSDP.aml");
 		Status = SaveBufferToDisk((VOID*)RsdPtr, Length, DirName, L"RSDP.aml");
+		MarkTableAsSaved(RsdPtr);
 		if (EFI_ERROR(Status)) {
 			DBG(" - %r\n", Status);
 			return;
@@ -780,12 +852,14 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 		return;
 	}
 	
+	FileNamePrefix = L"";
+  
 	//
 	// Save Xsdt
 	//
 	if (Xsdt != NULL) {
 		DBG(" ");
-		Status = DumpTable((EFI_ACPI_DESCRIPTION_HEADER *)Xsdt, DirName,  L"XSDT.aml", NULL);
+		Status = DumpTable((EFI_ACPI_DESCRIPTION_HEADER *)Xsdt, DirName,  L"XSDT.aml", FileNamePrefix, NULL);
 		if (EFI_ERROR(Status)) {
 			DBG(" - %r\n", Status);
 			return;
@@ -798,7 +872,7 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 	//
 	if (Rsdt != NULL) {
 		DBG(" ");
-		Status = DumpTable((EFI_ACPI_DESCRIPTION_HEADER *)Rsdt, DirName,  L"RSDT.aml", NULL);
+		Status = DumpTable((EFI_ACPI_DESCRIPTION_HEADER *)Rsdt, DirName,  L"RSDT.aml", FileNamePrefix, NULL);
 		if (EFI_ERROR(Status)) {
 			DBG(" - %r\n", Status);
 			return;
@@ -825,8 +899,8 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 			
 			// skip NULL entries
 			//if (*EntryPtr64 == 0) {
-      if (ReadUnaligned64((CONST UINT64*)EntryPtr) == 0) {
-        DBG(" = 0\n", Index);
+			if (ReadUnaligned64((CONST UINT64*)EntryPtr) == 0) {
+				DBG(" = 0\n", Index);
 				continue;
 			}
 			
@@ -837,30 +911,30 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 				//
 				// Fadt - save Dsdt and Facs
 				//
-        Status = DumpTable(TableEntry, DirName,  L"FADTx.aml", &SsdtCount);
-        if (EFI_ERROR(Status)) {
-          DBG(" - %r\n", Status);
-          return;
-        }
-        DBG("\n");
-        
-				XFadt = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)TableEntry;        
-				Status = DumpFadtTables(XFadt, DirName, &SsdtCount);
+				Status = DumpTable(TableEntry, DirName,  NULL, FileNamePrefix, &SsdtCount);
+				if (EFI_ERROR(Status)) {
+					DBG(" - %r\n", Status);
+					return;
+				}
+				DBG("\n");
+				
+				Fadt = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)TableEntry;        
+				Status = DumpFadtTables(Fadt, DirName, FileNamePrefix, &SsdtCount);
 				if (EFI_ERROR(Status)) {
 					return;
 				}
 			} else {
-        Status = DumpTable(TableEntry, DirName,  NULL /* take the name from the signature*/, &SsdtCount);
-        if (EFI_ERROR(Status)) {
-          DBG(" - %r\n", Status);
-          return;
-        }
-        DBG("\n");
-      }
+				Status = DumpTable(TableEntry, DirName,  NULL /* take the name from the signature*/, FileNamePrefix, &SsdtCount);
+				if (EFI_ERROR(Status)) {
+					DBG(" - %r\n", Status);
+					return;
+				}
+				DBG("\n");
+			}
 		}
 		
-		// block saving of Rsdt tables
-		DirName = NULL;
+		// additional Rsdt tables whih are not present in Xsdt will have "RSDT-" prefix, like RSDT-FACS.aml
+		FileNamePrefix = L"RSDT-";
 		
 	} // if Xsdt
 	
@@ -894,30 +968,28 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 				//
 				// Fadt - save Dsdt and Facs
 				//
-        Status = DumpTable(TableEntry, DirName,  L"FADTr.aml", &SsdtCount);
-        if (EFI_ERROR(Status)) {
-          DBG(" - %r\n", Status);
-          return;
-        }
-        DBG("\n");
-        
-
+				Status = DumpTable(TableEntry, DirName,  NULL, FileNamePrefix, &SsdtCount);
+				if (EFI_ERROR(Status)) {
+					DBG(" - %r\n", Status);
+					return;
+				}
+				DBG("\n");
+				
 				Fadt = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)TableEntry;
-				Status = DumpFadtTables(Fadt, DirName, &SsdtCount);
+				Status = DumpFadtTables(Fadt, DirName, FileNamePrefix, &SsdtCount);
 				if (EFI_ERROR(Status)) {
 					return;
 				}
 			} else {
-        Status = DumpTable(TableEntry, DirName,  NULL /* take the name from the signature*/, &SsdtCount);
-        if (EFI_ERROR(Status)) {
-          DBG(" - %r\n", Status);
-          return;
-        }
-        DBG("\n");
-      }
+				Status = DumpTable(TableEntry, DirName,  NULL /* take the name from the signature*/, FileNamePrefix, &SsdtCount);
+				if (EFI_ERROR(Status)) {
+						DBG(" - %r\n", Status);
+					return;
+				}
+				DBG("\n");
+			}
 		}
 	} // if Rsdt
-	
 }
 
 /** Saves OEM ACPI tables to disk.
@@ -931,10 +1003,15 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
  */
 VOID SaveOemTables()
 {
-	EFI_STATUS			Status;
-	VOID						*RsdPtr;
-  CHAR16					*AcpiOriginPath = PoolPrint(L"%s\\ACPI\\origin", OEMPath);
-	BOOLEAN					Saved = FALSE;
+	EFI_STATUS              Status;
+	VOID                    *RsdPtr;
+	CHAR16                  *AcpiOriginPath = PoolPrint(L"%s\\ACPI\\origin", OEMPath);
+	BOOLEAN                 Saved = FALSE;
+	CHAR8                   *MemLogStart;
+	UINTN                   MemLogStartLen;
+	
+	MemLogStartLen = GetMemLogLen();
+	MemLogStart = GetMemLogBuffer() + MemLogStartLen;
 	
 	
 	//
@@ -979,6 +1056,10 @@ VOID SaveOemTables()
 		DumpTables(RsdPtr, Saved ? NULL : AcpiOriginPath);
 		Saved = TRUE;
 	}
+	
+	SaveBufferToDisk(MemLogStart, GetMemLogLen() - MemLogStartLen, AcpiOriginPath, L"DumpLog.txt");
+	
+	FreePool(mSavedTables);
 }
 
 VOID        SaveOemDsdt(BOOLEAN FullPatch)
