@@ -1238,7 +1238,8 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     DBG("XSDT 0x%p\n", Xsdt);
     xf = ScanXSDT(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE);
     if(xf) {
-      if (!FadtPointer) {
+      //Slice - change priority. First Xsdt, second Rsdt
+      if (*xf) {
         FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(*xf);
         DBG("FADT from XSDT: 0x%p\n", FadtPointer);
       } else {
@@ -1318,7 +1319,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       Xsdt = (XSDT_TABLE*)(UINTN)BufferPtr;      
     }      
     
-    DBG("Finishing RsdPointer\n");
+ //   DBG("Finishing RsdPointer\n");
     RsdPointer->XsdtAddress = (UINT64)(UINTN)Xsdt;
     RsdPointer->Checksum = 0;
     RsdPointer->Checksum = (UINT8)(256-Checksum8((CHAR8*)RsdPointer, 20));

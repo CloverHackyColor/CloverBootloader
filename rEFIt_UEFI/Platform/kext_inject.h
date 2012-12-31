@@ -54,6 +54,9 @@ kext injection
 #define FAT_MAGIC	0xcafebabe
 #define FAT_CIGAM	0xbebafeca	/* NXSwapLong(FAT_MAGIC) */
 
+#define THIN_IA32 0xfeedface
+#define THIN_X64  0xfeedfacf
+
 
 ////////////////////
 // types

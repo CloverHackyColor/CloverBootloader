@@ -30,15 +30,27 @@ EFI_STATUS EFIAPI ThinFatFile(IN OUT UINT8 **binary, IN OUT UINTN *length, IN cp
 	UINT32 fapoffset;
 	UINT32 fapsize;	
 
+  swapped = 0;
 	if (fhp->magic == FAT_MAGIC) {
 		nfat = fhp->nfat_arch;
-		swapped = 0;
 	} else if (fhp->magic == FAT_CIGAM) {
 		nfat = SwapBytes32(fhp->nfat_arch);
 		swapped = 1;
-	} else {
-		return EFI_NOT_FOUND;
-	}
+    //already thin    
+	} else if (fhp->magic == THIN_X64){
+    if (archCpuType == CPU_TYPE_X86_64) {
+      return EFI_SUCCESS;
+    }
+    return EFI_NOT_FOUND;
+	} else if (fhp->magic == THIN_IA32){
+    if (archCpuType == CPU_TYPE_I386) {
+      return EFI_SUCCESS;
+    }
+    return EFI_NOT_FOUND;
+  } else {
+    MsgLog("Thinning fails\n");
+    return EFI_NOT_FOUND;
+  }
 
 	for (; nfat > 0; nfat--, fap++) {
 		if (swapped) {
@@ -56,7 +68,6 @@ EFI_STATUS EFIAPI ThinFatFile(IN OUT UINT8 **binary, IN OUT UINTN *length, IN cp
 			break;
 		}
 	}
-
 	if (length != 0) *length = size;
 
 	return EFI_SUCCESS;
@@ -65,24 +76,31 @@ EFI_STATUS EFIAPI ThinFatFile(IN OUT UINT8 **binary, IN OUT UINTN *length, IN cp
 EFI_STATUS EFIAPI LoadKext(IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OUT _DeviceTreeBuffer *kext)
 {
 	EFI_STATUS	Status;
-	UINT8*		infoDictBuffer = 0;
-	UINTN		infoDictBufferLength = 0;
-	UINT8*		executableBuffer = 0;
-	UINTN		executableBufferLength = 0;
-	CHAR8*		bundlePathBuffer = 0;
-	UINTN		bundlePathBufferLength = 0;
-	CHAR16		TempName[256];
-	CHAR16		Executable[256];
-	TagPtr		dict = NULL;
-	TagPtr		prop = NULL;
+	UINT8*      infoDictBuffer = NULL;
+	UINTN       infoDictBufferLength = 0;
+	UINT8*      executableBuffer = NULL;
+	UINTN       executableBufferLength = 0;
+	CHAR8*      bundlePathBuffer = NULL;
+	UINTN       bundlePathBufferLength = 0;
+	CHAR16      TempName[256];
+	CHAR16      Executable[256];
+	TagPtr      dict = NULL;
+	TagPtr      prop = NULL;
+  BOOLEAN     NoContents = FALSE;
    _BooterKextFileInfo *infoAddr = NULL;
 
 	UnicodeSPrint(TempName, 512, L"%s\\%s", FileName, L"Contents\\Info.plist");
 	Status = egLoadFile(SelfVolume->RootDir, TempName, &infoDictBuffer, &infoDictBufferLength);
 	if (EFI_ERROR(Status)) {
-		MsgLog("Failed to load extra kext: %s\n", FileName);
-		return EFI_NOT_FOUND;
-	} else {
+    //try to find a planar kext, without Contents
+    UnicodeSPrint(TempName, 512, L"%s\\%s", FileName, L"Info.plist");
+    Status = egLoadFile(SelfVolume->RootDir, TempName, &infoDictBuffer, &infoDictBufferLength);
+    if (EFI_ERROR(Status)) {
+      MsgLog("Failed to load extra kext: %s\n", FileName);
+      return EFI_NOT_FOUND;
+    }
+    NoContents = TRUE;
+	}
 		if(ParseXML((CHAR8*)infoDictBuffer,&dict)!=0) {
 			FreePool(infoDictBuffer);
 			MsgLog("Failed to load extra kext: %s\n", FileName);
@@ -91,7 +109,11 @@ EFI_STATUS EFIAPI LoadKext(IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OU
 		prop=GetProperty(dict,"CFBundleExecutable");
 		if(prop!=0) {
 			AsciiStrToUnicodeStr(prop->string,Executable);
-			UnicodeSPrint(TempName, 512, L"%s\\%s\\%s", FileName, L"Contents\\MacOS",Executable);
+      if (NoContents) {
+        UnicodeSPrint(TempName, 512, L"%s\\%s", FileName, Executable);
+      } else {
+        UnicodeSPrint(TempName, 512, L"%s\\%s\\%s", FileName, L"Contents\\MacOS",Executable);
+      }
 			Status = egLoadFile(SelfVolume->RootDir, TempName, &executableBuffer, &executableBufferLength);
 			if (EFI_ERROR(Status)) {
 				FreePool(infoDictBuffer);
@@ -124,7 +146,7 @@ EFI_STATUS EFIAPI LoadKext(IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OU
 		FreePool(infoDictBuffer);
 		FreePool(executableBuffer);
 		FreePool(bundlePathBuffer);
-	}
+	
 	return EFI_SUCCESS;
 }
 
