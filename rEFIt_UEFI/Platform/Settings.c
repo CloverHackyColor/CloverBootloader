@@ -1061,6 +1061,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.HVHideAllLinuxMint = TRUE;
         }
       }
+      gSettings.HVHideAllFedora = FALSE;
+      prop = GetProperty(dictPointer,"HideAllFedora");
+      if(prop) {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+          gSettings.HVHideAllFedora = TRUE;
+        }
+      }
       gSettings.HVHideAllSuSe = FALSE;
       prop = GetProperty(dictPointer,"HideAllSuSe");
       if(prop) {

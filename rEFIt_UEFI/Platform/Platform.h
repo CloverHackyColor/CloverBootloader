@@ -700,6 +700,7 @@ typedef struct {
   BOOLEAN HVHideAllRedHat;
   BOOLEAN HVHideAllUbuntu;
   BOOLEAN HVHideAllLinuxMint;
+  BOOLEAN HVHideAllFedora;
   BOOLEAN HVHideAllSuSe;
   BOOLEAN HVHideAllUEFI;
   BOOLEAN HVHideAllLegacy;

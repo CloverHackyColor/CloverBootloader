@@ -1409,6 +1409,20 @@ static VOID ScanLoader(VOID)
       //      continue;
     }
     
+      // check for Fedora boot loader/menu
+#if defined(MDE_CPU_X64)
+      StrCpy(FileName, L"\\EFI\\Fedora\\grubx64.efi");
+#else
+      StrCpy(FileName, L"\\EFI\\Fedora\\grub.efi");
+#endif
+      if (FileExists(Volume->RootDir, FileName)) {
+          //      Volume->OSType = OSTYPE_LIN;
+          Volume->BootType = BOOTING_BY_EFI;
+          if (!gSettings.HVHideAllFedora)
+              Entry = AddLoaderEntry(FileName, L"Fedora EFI boot menu", Volume, OSTYPE_LIN);
+          //      continue;
+      }
+    
     // check for OpenSuse boot loader/menu
     StrCpy(FileName, L"\\EFI\\SuSe\\elilo.efi");
     if (FileExists(Volume->RootDir, FileName)) {
