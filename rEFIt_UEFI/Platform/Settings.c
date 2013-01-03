@@ -1075,11 +1075,32 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.HVHideAllSuSe = TRUE;
         }
       }
-      gSettings.HVHideAllUEFI = FALSE;
+      /*gSettings.HVHideAllUEFI = FALSE;
       prop = GetProperty(dictPointer,"HideAllUEFI");
       if(prop) {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
           gSettings.HVHideAllUEFI = TRUE;
+        }
+      }*/
+      gSettings.HVHideOpticalUEFI = FALSE;
+      prop = GetProperty(dictPointer,"HideOpticalUEFI");
+      if(prop) {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+          gSettings.HVHideOpticalUEFI = TRUE;
+        }
+      }
+      gSettings.HVHideInternalUEFI = FALSE;
+      prop = GetProperty(dictPointer,"HideInternalUEFI");
+      if(prop) {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+          gSettings.HVHideInternalUEFI = TRUE;
+        }
+      }
+      gSettings.HVHideExternalUEFI = FALSE;
+      prop = GetProperty(dictPointer,"HideExternalUEFI");
+      if(prop) {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
+          gSettings.HVHideExternalUEFI = TRUE;
         }
       }
       gSettings.HVHideAllLegacy = FALSE;

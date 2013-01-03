@@ -702,7 +702,10 @@ typedef struct {
   BOOLEAN HVHideAllLinuxMint;
   BOOLEAN HVHideAllFedora;
   BOOLEAN HVHideAllSuSe;
-  BOOLEAN HVHideAllUEFI;
+  //BOOLEAN HVHideAllUEFI;
+  BOOLEAN HVHideOpticalUEFI;
+  BOOLEAN HVHideInternalUEFI;
+  BOOLEAN HVHideExternalUEFI;
   BOOLEAN HVHideAllLegacy;
   CHAR16  *HVHideStrings[100];
   INT32   HVCount;

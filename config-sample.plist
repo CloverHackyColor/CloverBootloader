@@ -231,6 +231,12 @@
 		<string>No</string>
 		<key>HideAllUEFI</key>
 		<string>No</string>
+        <key>HideOpticalUEFI</key> 
+        <string>No</string> 
+        <key>HideInternalUEFI</key> 
+        <string>Yes</string> 
+        <key>HideExternalUEFI</key> 
+        <string>Yes</string> 
 		<key>HideAllLegacy</key>
 		<string>No</string>
 		<key>HideVolumes</key>

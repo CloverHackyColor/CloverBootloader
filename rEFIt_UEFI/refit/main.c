@@ -648,14 +648,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
 //  Entry->LoadOptions     = InputItems[0].SValue;
 
   // locate a custom icon for the loader
-//  StrCpy(IconFileName, LoaderPath);
   StrCpy(IconFileName, Volume->OSIconName);
-//  ReplaceExtension(IconFileName, L".icns");
-/*  if (FileExists(Volume->RootDir, IconFileName)){
-    Entry->me.Image = LoadIcns(Volume->RootDir, IconFileName, 128);
-  } else if (FileExists(SelfRootDir, IconFileName)) {
-    Entry->me.Image = LoadIcns(SelfRootDir, IconFileName, 128);
-  } */
   //actions
   Entry->me.AtClick = ActionSelect;
   Entry->me.AtDoubleClick = ActionEnter;
@@ -665,31 +658,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   OSIconName = NULL;
   LoaderKind = 0;
   ShortcutLetter = 0;
-  /*
-  if (StriCmp(LoaderPath, MACOSX_LOADER_PATH) == 0) {
-    OSIconName = Volume->OSIconName;
-    Entry->UseGraphicsMode = TRUE;
-    LoaderKind = 1;
-    ShortcutLetter = 'M';
-  } else if (StriCmp(FileName, L"diags.efi") == 0) {
-    OSIconName = L"hwtest";
-  } else if (StriCmp(FileName, L"e.efi") == 0 ||
-             StriCmp(FileName, L"elilo.efi") == 0) {
-    OSIconName = L"elilo,linux";
-    LoaderKind = 2;
-    ShortcutLetter = 'L';
-  } else if (StriCmp(FileName, L"cdboot.efi") == 0 ||
-             StriCmp(FileName, L"bootmgr.efi") == 0 ||
-             StriCmp(FileName, L"Bootmgfw.efi") == 0) {
-    OSIconName = L"win";
-    ShortcutLetter = 'W';
-  } else if (StriCmp(FileName, L"xom.efi") == 0) {
-    OSIconName = L"xom,win";
-    Entry->UseGraphicsMode = TRUE;
-    LoaderKind = 3;
-    ShortcutLetter = 'W';
-  }
-   */
+
   switch (OSType) {
     case OSTYPE_OSX:
     case OSTYPE_TIGER:
@@ -1013,36 +982,16 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   Entry->me.ShortcutLetter = 'C';
   Entry->me.Image          = BuiltinIcon(BUILTIN_ICON_FUNC_CLOVER);
   Entry->Volume = Volume;
-  //  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
-/*  if ((GlobalConfig.HideBadges == HDBADGES_NONE) ||
-      (GlobalConfig.HideBadges == HDBADGES_INT && Volume->DiskKind != DISK_KIND_INTERNAL)){
-    Entry->me.BadgeImage   = egCopyScaledImage(Volume->OSImage, 8);
-  } else if (GlobalConfig.HideBadges == HDBADGES_SWAP) {
-    Entry->me.BadgeImage   =  egCopyScaledImage(Volume->DriveImage, 4);
-  }*/
-//  Entry->me.Image   = egCopyScaledImage(Volume->OSImage, 4);
   Entry->LoaderPath      = EfiStrDuplicate(LoaderPath);
   Entry->VolName         = Volume->VolName;
   Entry->DevicePath      = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
   Entry->UseGraphicsMode = FALSE;
   Entry->LoadOptions     = NULL;
   
-  // locate a custom icon for the loader
-  // StrCpy(IconFileName, Volume->OSIconName);
-  
   //actions
   Entry->me.AtClick = ActionSelect;
   Entry->me.AtDoubleClick = ActionDetails;
   Entry->me.AtRightClick = ActionDetails;
-  
-  // OSIconName = L"clover";
-  // LoaderKind = 5;
-  // ShortcutLetter = 'C';
-  // Entry->me.Tag     = TAG_CLOVER;
-  // Entry->me.ShortcutLetter = ShortcutLetter;
-  //  if (Entry->me.Image == NULL)
-  // Entry->me.BadgeImage = LoadOSIcon(OSIconName, L"unknown", FALSE);
-  // Entry->me.Image   = egCopyScaledImage(Entry->me.BadgeImage, 6);
   
   // create the submenu
   SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
@@ -1051,7 +1000,6 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   SubScreen->ID = SCREEN_BOOT;
   SubScreen->AnimeRun = GetAnime(SubScreen);
   AddMenuInfoLine(SubScreen, DevicePathToStr(Volume->DevicePath));
-  
   
   if (gEmuVariableControl != NULL) {
     gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
@@ -1129,39 +1077,6 @@ BOOLEAN isFirstRootUUID(REFIT_VOLUME *Volume)
     return TRUE;
 }
 
-/*
-static VOID ScanLoaderDir(IN REFIT_VOLUME *Volume, IN CHAR16 *Path)
-{
-  EFI_STATUS              Status;
-  REFIT_DIR_ITER          DirIter;
-  EFI_FILE_INFO           *DirEntry;
-  CHAR16                  FileName[256];
-  
-  // look through contents of the directory
-  DirIterOpen(Volume->RootDir, Path, &DirIter);
-  while (DirIterNext(&DirIter, 2, L"*.efi", &DirEntry)) {
-    if (DirEntry->FileName[0] == '.' ||
-        StriCmp(DirEntry->FileName, L"TextMode.efi") == 0 ||
-        StriCmp(DirEntry->FileName, L"ebounce.efi") == 0 ||
-        StriCmp(DirEntry->FileName, L"GraphicsConsole.efi") == 0)
-      continue;   // skip this
-    
-    if (Path)
-      UnicodeSPrint(FileName, 512, L"\\%s\\%s", Path, DirEntry->FileName);
-    else
-      UnicodeSPrint(FileName, 512, L"\\%s", DirEntry->FileName);
-//    AddLoaderEntry(FileName, NULL, Volume);
-  }
-  Status = DirIterClose(&DirIter);
-  if (Status != EFI_NOT_FOUND) {
-    if (Path)
-      UnicodeSPrint(FileName, 512, L"while scanning the %s directory", Path);
-    else
-      StrCpy(FileName, L"while scanning the root directory");
-    CheckError(Status, FileName);
-  }
-}
-*/
 static VOID ScanLoader(VOID)
 {
   UINTN                   VolumeIndex;
@@ -1271,16 +1186,7 @@ static VOID ScanLoader(VOID)
         continue; //boot recovery only
       }
     }
-      
-    
-    // check for XOM - and what?
-    //    StrCpy(FileName, L"\\System\\Library\\CoreServices\\xom.efi");
-    /*        StrCpy(FileName, L"\\EFI\\tools\\xom.efi");
-     if (FileExists(Volume->RootDir, FileName)) {
-     Volume->BootType = BOOTING_BY_EFI;
-     AddLoaderEntry(L"Xom.efi", L"Windows XP ", Volume, OSTYPE_WIN);
-     }*/
-    
+          
     // check for Microsoft boot loader/menu
     StrCpy(FileName, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi");
     if (FileExists(Volume->RootDir, FileName)) {
@@ -1445,34 +1351,36 @@ static VOID ScanLoader(VOID)
 //      continue;
     }
     
-    // check for Clover on EFI partition
-//move to ScanTools    
-/*    Status = gBS->HandleProtocol (Volume->DeviceHandle, &gEfiPartTypeSystemPartGuid, &Interface);
-    if (Status == EFI_SUCCESS && !gSettings.HVHideAllUEFI) {
 #if defined(MDE_CPU_X64)
-      StrCpy(FileName, L"\\EFI\\BOOT\\CLOVERX64.EFI");
-#else
-      StrCpy(FileName, L"\\EFI\\BOOT\\CLOVERIA32.EFI");
-#endif
-      if (FileExists(Volume->RootDir, FileName)) {
-        Volume->BootType = BOOTING_BY_EFI;
-        AddCloverEntry(FileName, L"Clover Boot Options", Volume);
-      }
-    }
-*/    
-    //UEFI bootloader XXX
-#if defined(MDE_CPU_X64)
-    StrCpy(FileName, L"\\EFI\\BOOT\\BOOTX64.efi");
+      StrCpy(FileName, L"\\EFI\\BOOT\\BOOTX64.efi");
 #else      
-    StrCpy(FileName, L"\\EFI\\BOOT\\BOOTIA32.efi");
+      StrCpy(FileName, L"\\EFI\\BOOT\\BOOTIA32.efi");
 #endif
-    DBG("search for UEFI\n");
-    if (FileExists(Volume->RootDir, FileName)) {
-//      Volume->OSType = OSTYPE_VAR;
-      Volume->BootType = BOOTING_BY_EFI;
-      if (!gSettings.HVHideAllUEFI)
-      AddLoaderEntry(FileName, L"UEFI boot menu", Volume, OSTYPE_VAR);
-//      continue;
+      DBG("search for  optical UEFI\n");
+      if (FileExists(Volume->RootDir, FileName) && Volume->DiskKind == DISK_KIND_OPTICAL) {
+          //      Volume->OSType = OSTYPE_VAR;
+          Volume->BootType = BOOTING_BY_EFI;
+          if (!gSettings.HVHideOpticalUEFI)
+              AddLoaderEntry(FileName, L"UEFI boot menu", Volume, OSTYPE_VAR);
+          //      continue;
+      }
+      
+      DBG("search for internal UEFI\n");
+      if (FileExists(Volume->RootDir, FileName) && Volume->DiskKind == DISK_KIND_INTERNAL) {
+          //      Volume->OSType = OSTYPE_VAR;
+          Volume->BootType = BOOTING_BY_EFI;
+          if (!gSettings.HVHideInternalUEFI)
+              AddLoaderEntry(FileName, L"UEFI boot menu", Volume, OSTYPE_VAR);
+          //      continue;
+      }
+
+      DBG("search for external UEFI\n");
+      if (FileExists(Volume->RootDir, FileName) && Volume->DiskKind == DISK_KIND_EXTERNAL) {
+          //      Volume->OSType = OSTYPE_VAR;
+          Volume->BootType = BOOTING_BY_EFI;
+          if (!gSettings.HVHideExternalUEFI)
+              AddLoaderEntry(FileName, L"UEFI boot menu", Volume, OSTYPE_VAR);
+          //      continue;
     }
   }
 }
@@ -1736,7 +1644,10 @@ static VOID ScanTool(VOID)
       }
       
       Status = gBS->HandleProtocol (Volume->DeviceHandle, &gEfiPartTypeSystemPartGuid, &Interface);
-      if (Status == EFI_SUCCESS && !gSettings.HVHideAllUEFI) {
+      if (Status == EFI_SUCCESS && 
+          (!gSettings.HVHideOpticalUEFI ||
+          !gSettings.HVHideInternalUEFI ||
+          !gSettings.HVHideExternalUEFI)) {
         DBG("Checking EFI partition Volume %d for Clover\n", VolumeIndex);
         
 #if defined(MDE_CPU_X64)
