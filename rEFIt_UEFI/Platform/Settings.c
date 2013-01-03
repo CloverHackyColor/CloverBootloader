@@ -327,18 +327,6 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       if(prop) {
         AsciiStrToUnicodeStr(prop->string, gSettings.DefaultBoot);
       }
-      prop = GetProperty(dictPointer, "CustomUUID");
-      if(prop) {
-        AsciiStrToUnicodeStr(prop->string, gSettings.CustomUuid);
-        Status = StrToGuidLE(gSettings.CustomUuid, &gUuid);
-        //else value from SMBIOS
-      }  
-      prop = GetProperty(dictPointer, "InjectSystemID");
-      gSettings.InjectSystemID = FALSE;
-      if(prop) {
-        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
-          gSettings.InjectSystemID = TRUE;
-      }
       
       prop = GetProperty(dictPointer, "LegacyBoot");
       if(prop)  {
@@ -782,7 +770,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       if(prop) {
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
         Status = StrToGuidLE((CHAR16*)&UStr[0], &gSettings.SmUUID);
-      }  
+      }
       
       prop = GetProperty(dictPointer,"BoardManufacturer");
       if(prop) {
@@ -1135,6 +1123,53 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       }
     
     }
+    
+    // if CustomUUID and InjectSystemID are not specified
+    // then use InjectSystemID=TRUE and SMBIOS UUID
+    // to get Chameleon's default behaviour (to make user's life easier)
+    CopyMem((VOID*)&gUuid, (VOID*)&gSettings.SmUUID, sizeof(EFI_GUID));
+    gSettings.InjectSystemID = TRUE;
+    
+    // SystemParameters again - values that can depend on previous params
+    dictPointer = GetProperty(dict, "SystemParameters");
+    if (dictPointer) {
+
+      prop = GetProperty(dictPointer, "CustomUUID");
+      if(prop) {
+        if (AsciiStrLen(prop->string) == 36) {
+          AsciiStrToUnicodeStr(prop->string, gSettings.CustomUuid);
+          Status = StrToGuidLE(gSettings.CustomUuid, &gUuid);
+          // if CustomUUID specified, then default for InjectSystemID=FALSE
+          // to stay compatibile with previous Clover behaviour
+          gSettings.InjectSystemID = FALSE;
+        } else {
+          DBG("Error: invalid CustomUUID '%a' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", prop->string);
+        }
+      }
+      //else gUuid value from SMBIOS
+      
+      prop = GetProperty(dictPointer, "InjectSystemID");
+      if(prop) {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')) {
+          gSettings.InjectSystemID = TRUE;
+        } else {
+          gSettings.InjectSystemID = FALSE;
+        }
+      }
+      
+    }
+    
+    /*
+    {
+      EFI_GUID AppleGuid;
+      
+      CopyMem((VOID*)&AppleGuid, (VOID*)&gUuid, sizeof(EFI_GUID));
+      AppleGuid.Data1 = SwapBytes32(AppleGuid.Data1);
+      AppleGuid.Data2 = SwapBytes16(AppleGuid.Data2);
+      AppleGuid.Data3 = SwapBytes16(AppleGuid.Data3);
+      DBG("Platform Uuid: %g, InjectSystemID: %a\n", &AppleGuid, gSettings.InjectSystemID ? "Yes" : "No");
+    }
+     */
     
     SaveSettings();
   }	
