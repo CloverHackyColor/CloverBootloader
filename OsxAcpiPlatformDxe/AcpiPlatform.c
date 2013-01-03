@@ -96,6 +96,7 @@ typedef union {
 EFI_ACPI_3_0_FIXED_ACPI_DESCRIPTION_TABLE   *Fadt;
 //extern EFI_ACPI_TABLE_INSTANCE   *mPrivateData;
 
+
 VOID
 InstallLegacyTables (
 	EFI_ACPI_TABLE_PROTOCOL         *AcpiTable,
@@ -130,9 +131,12 @@ InstallLegacyTables (
 	//Begin patching from Xsdt
 	//Install Xsdt if any	
 	if (Xsdt) {
-		TableSize = Xsdt->Header.Length;
+		TableSize = sizeof(EFI_ACPI_DESCRIPTION_HEADER) + sizeof(UINT64);
 		//Now copy legacy table into new protocol
 		CopyMem(AcpiInstance->Xsdt, Xsdt, TableSize);
+      AcpiInstance->Xsdt->Length = (UINT32)TableSize;
+      AcpiInstance->Xsdt->Checksum = 0;
+      AcpiInstance->Xsdt->Checksum = CalculateCheckSum8((UINT8 *)AcpiInstance->Xsdt, TableSize);
 		
 		Signature.Sign = Xsdt->Header.Signature;
 		DBG(L"Install table: %c%c%c%c\n",
