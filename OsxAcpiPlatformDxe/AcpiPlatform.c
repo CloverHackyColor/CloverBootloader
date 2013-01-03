@@ -131,6 +131,7 @@ InstallLegacyTables (
 	//Begin patching from Xsdt
 	//Install Xsdt if any	
 	if (Xsdt) {
+        /*
 		TableSize = sizeof(EFI_ACPI_DESCRIPTION_HEADER) + sizeof(UINT64);
 		//Now copy legacy table into new protocol
 		CopyMem(AcpiInstance->Xsdt, Xsdt, TableSize);
@@ -141,6 +142,7 @@ InstallLegacyTables (
 		Signature.Sign = Xsdt->Header.Signature;
 		DBG(L"Install table: %c%c%c%c\n",
 			  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
+         */
 		
 /*		Status = AcpiTable->InstallAcpiTable (
 											  AcpiTable,
@@ -216,6 +218,7 @@ InstallLegacyTables (
 	}
 	if (!Xsdt && Rsdt) {
 		//Install Rsdt
+        /*
 		DBG(L"Xsdt not found, patch Rsdt\n");
 		
 		TableSize = Rsdt->Header.Length;
@@ -224,6 +227,7 @@ InstallLegacyTables (
 			  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
 		CopyMem(AcpiInstance->Rsdt1, Rsdt, TableSize);
 		CopyMem(AcpiInstance->Rsdt3, Rsdt, TableSize);
+         */
 /*		Status = AcpiTable->InstallAcpiTable (
 											  AcpiTable,
 											  Rsdt,
