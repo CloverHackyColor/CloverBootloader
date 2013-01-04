@@ -768,8 +768,12 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       }
       prop = GetProperty(dictPointer,"SmUUID");
       if(prop) {
-        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-        Status = StrToGuidLE((CHAR16*)&UStr[0], &gSettings.SmUUID);
+        if (IsValidGuidAsciiString(prop->string)) {
+          AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+          Status = StrToGuidLE((CHAR16*)&UStr[0], &gSettings.SmUUID);
+        } else {
+          DBG("Error: invalid SmUUID '%a' - should be in the format XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX\n", prop->string);
+        }
       }
       
       prop = GetProperty(dictPointer,"BoardManufacturer");
@@ -1136,7 +1140,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 
       prop = GetProperty(dictPointer, "CustomUUID");
       if(prop) {
-        if (AsciiStrLen(prop->string) == 36) {
+        if (IsValidGuidAsciiString(prop->string)) {
           AsciiStrToUnicodeStr(prop->string, gSettings.CustomUuid);
           Status = StrToGuidLE(gSettings.CustomUuid, &gUuid);
           // if CustomUUID specified, then default for InjectSystemID=FALSE

@@ -93,6 +93,37 @@ string_to_uuid(
 	}
 }
 #endif
+
+/** Returns TRUE is Str is ascii Guid in format xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx */
+BOOLEAN IsValidGuidAsciiString(IN CHAR8 *Str)
+{
+  UINTN   Index;
+  
+  if (Str == NULL || AsciiStrLen(Str) != 36) {
+    return FALSE;
+  }
+  
+  for (Index = 0; Index < 36; Index++, Str++) {
+    if (Index == 8 || Index == 13 || Index == 18 || Index == 23) {
+      if (*Str != '-') {
+        return FALSE;
+      }
+    } else {
+      if (!(
+            (*Str >= '0' && *Str <= '9')
+            || (*Str >= 'a' && *Str <= 'f')
+            || (*Str >= 'A' && *Str <= 'F')
+            )
+          )
+      {
+        return FALSE;
+      }
+    }
+  }
+  
+  return TRUE;
+}
+
 /**
  Copyed from DevicePathFromText.c 
  Copyright (c) 2006 - 2011, Intel Corporation. All rights reserved.<BR>

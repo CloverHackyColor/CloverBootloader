@@ -984,6 +984,7 @@ VOID        GetDefaultSettings(VOID);
 VOID        FillInputs(VOID);
 VOID        ApplyInputs(VOID);
 
+BOOLEAN     IsValidGuidAsciiString(IN CHAR8 *Str);
 EFI_STATUS  StrToGuid (IN  CHAR16   *Str, OUT EFI_GUID *Guid);
 EFI_STATUS  StrToGuidLE (IN  CHAR16   *Str, OUT EFI_GUID *Guid);
 UINT32      hex2bin(IN CHAR8 *hex, OUT UINT8 *bin, UINT32 len);
