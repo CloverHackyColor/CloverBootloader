@@ -3077,6 +3077,20 @@
 		12DD321216557C8400108DFC /* BmLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BmLib.c; sourceTree = "<group>"; };
 		12E06DFA15CBC24D0069E011 /* kext_inject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kext_inject.c; sourceTree = "<group>"; usesTabs = 1; };
 		12E06DFB15CBC24D0069E011 /* kext_inject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kext_inject.h; sourceTree = "<group>"; };
+		12F6F83B169AD06100E6977E /* AcpiPlatform.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AcpiPlatform.c; sourceTree = "<group>"; };
+		12F6F83C169AD06100E6977E /* AcpiPlatformDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = AcpiPlatformDxe.inf; sourceTree = "<group>"; };
+		12F6F83D169AD06100E6977E /* AcpiTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AcpiTable.h; sourceTree = "<group>"; };
+		12F6F83F169AD06100E6977E /* AcpiSdt.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AcpiSdt.c; sourceTree = "<group>"; };
+		12F6F840169AD06100E6977E /* AcpiSdt.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AcpiSdt.h; sourceTree = "<group>"; };
+		12F6F841169AD06100E6977E /* AcpiTable.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AcpiTable.c; sourceTree = "<group>"; };
+		12F6F842169AD06100E6977E /* AcpiTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AcpiTable.h; sourceTree = "<group>"; };
+		12F6F843169AD06100E6977E /* AcpiTableDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = AcpiTableDxe.inf; sourceTree = "<group>"; };
+		12F6F844169AD06100E6977E /* AcpiTableProtocol.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AcpiTableProtocol.c; sourceTree = "<group>"; };
+		12F6F845169AD06100E6977E /* Aml.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Aml.c; sourceTree = "<group>"; };
+		12F6F846169AD06100E6977E /* AmlChild.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AmlChild.c; sourceTree = "<group>"; };
+		12F6F847169AD06100E6977E /* AmlNamespace.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AmlNamespace.c; sourceTree = "<group>"; };
+		12F6F848169AD06100E6977E /* AmlOption.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AmlOption.c; sourceTree = "<group>"; };
+		12F6F849169AD06100E6977E /* AmlString.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AmlString.c; sourceTree = "<group>"; };
 		261A9E611599E0340006F036 /* kernel_patcher.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = kernel_patcher.c; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		26440C83157AADDF0077A476 /* b64cdecode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = b64cdecode.c; sourceTree = "<group>"; };
 		26440C84157AADDF0077A476 /* b64cdecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = b64cdecode.h; sourceTree = "<group>"; };
@@ -9822,6 +9836,8 @@
 				1292F250164BC7A7008FAEEC /* LegacyBios */,
 				2C751BFE164E9FEC00B24F6B /* Library */,
 				12B7FF4C15F921AB00177D35 /* MsgLog */,
+				12F6F83A169AD06100E6977E /* OsxAcpiPlatformDxe */,
+				12F6F83E169AD06100E6977E /* OsxAcpiTableDxe */,
 				12B7FF6415F921AB00177D35 /* OsxAptioFixDrv */,
 				12B7FF8015F921AB00177D35 /* OsxBdsDxe */,
 				12B7FFB515F921AB00177D35 /* OsxDxeCore */,
@@ -10485,6 +10501,36 @@
 			name = Platform;
 			path = ../Platform;
 			sourceTree = SOURCE_ROOT;
+		};
+		12F6F83A169AD06100E6977E /* OsxAcpiPlatformDxe */ = {
+			isa = PBXGroup;
+			children = (
+				12F6F83B169AD06100E6977E /* AcpiPlatform.c */,
+				12F6F83C169AD06100E6977E /* AcpiPlatformDxe.inf */,
+				12F6F83D169AD06100E6977E /* AcpiTable.h */,
+			);
+			name = OsxAcpiPlatformDxe;
+			path = ../../OsxAcpiPlatformDxe;
+			sourceTree = "<group>";
+		};
+		12F6F83E169AD06100E6977E /* OsxAcpiTableDxe */ = {
+			isa = PBXGroup;
+			children = (
+				12F6F83F169AD06100E6977E /* AcpiSdt.c */,
+				12F6F840169AD06100E6977E /* AcpiSdt.h */,
+				12F6F841169AD06100E6977E /* AcpiTable.c */,
+				12F6F842169AD06100E6977E /* AcpiTable.h */,
+				12F6F843169AD06100E6977E /* AcpiTableDxe.inf */,
+				12F6F844169AD06100E6977E /* AcpiTableProtocol.c */,
+				12F6F845169AD06100E6977E /* Aml.c */,
+				12F6F846169AD06100E6977E /* AmlChild.c */,
+				12F6F847169AD06100E6977E /* AmlNamespace.c */,
+				12F6F848169AD06100E6977E /* AmlOption.c */,
+				12F6F849169AD06100E6977E /* AmlString.c */,
+			);
+			name = OsxAcpiTableDxe;
+			path = ../../OsxAcpiTableDxe;
+			sourceTree = "<group>";
 		};
 		2C0FB48C1653DA6D003B65DE /* Region2Dxe */ = {
 			isa = PBXGroup;

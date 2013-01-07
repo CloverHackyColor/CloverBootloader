@@ -168,19 +168,20 @@ InstallLegacyTables (
           AcpiInstance->Facs1 = (EFI_ACPI_1_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)Fadt->FirmwareCtrl;
           AcpiInstance->Facs3 = (EFI_ACPI_3_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)Fadt->FirmwareCtrl;
         }
-        if (Fadt->XFirmwareCtrl) {
-           AcpiInstance->Facs3 = (EFI_ACPI_3_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)Fadt->XFirmwareCtrl;
+        else if (Fadt->Header.Revision >= EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION && Fadt->XFirmwareCtrl) {
+          AcpiInstance->Facs1 = (EFI_ACPI_1_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)Fadt->XFirmwareCtrl;
+          AcpiInstance->Facs3 = (EFI_ACPI_3_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)Fadt->XFirmwareCtrl;
         }
 			}
 			Signature.Sign = Table->Signature;
 			DBG(L"Install table from %x: %c%c%c%c\n", (UINTN)Table,
 				  Signature.ASign[0], Signature.ASign[1], Signature.ASign[2], Signature.ASign[3]);
 			Status = AcpiTable->InstallAcpiTable (
-												  AcpiTable,
-												  Table,
-												  TableSize,
-												  &TableHandle
-												  );
+                                            AcpiTable,
+                                            Table,
+                                            TableSize,
+                                            &TableHandle
+                                            );
 			if (EFI_ERROR(Status)) {
 				continue;
 			}
@@ -247,8 +248,9 @@ InstallLegacyTables (
     if (Fadt->FirmwareCtrl) {
       AcpiInstance->Facs1 = (EFI_ACPI_1_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)Fadt->FirmwareCtrl;
       AcpiInstance->Facs3 = (EFI_ACPI_3_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)Fadt->FirmwareCtrl;
-    }
-    if (Fadt->XFirmwareCtrl) {
+    } else if (Fadt->Header.Revision >= EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION &&
+               Fadt->XFirmwareCtrl) {
+      AcpiInstance->Facs1 = (EFI_ACPI_1_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)Fadt->XFirmwareCtrl;
       AcpiInstance->Facs3 = (EFI_ACPI_3_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)Fadt->XFirmwareCtrl;
     }
 		for (Index = 0; Index < EntryCount; Index ++, EntryPtr ++) {
