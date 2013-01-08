@@ -43,7 +43,7 @@ Headers collection for procedures
 #include <IndustryStandard/Acpi10.h>
 #include <IndustryStandard/Acpi20.h>
 #include <IndustryStandard/Atapi.h>
-#include <IndustryStandard/Smbios.h>
+#include <IndustryStandard/SmbiosA.h>
 #include <IndustryStandard/Bmp.h>
 
 #include <Protocol/Cpu.h>

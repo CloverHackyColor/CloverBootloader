@@ -21,7 +21,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include <Guid/FileSystemVolumeLabelInfo.h>
 #include <Guid/HiiPlatformSetupFormset.h>
 #include <Protocol/DevicePath.h>
-#include <IndustryStandard/Smbios.h>
+#include <IndustryStandard/SmbiosA.h>
 #include <Protocol/LoadFile.h>
 #include <Guid/FileInfo.h>
 #include <Guid/FileSystemInfo.h>

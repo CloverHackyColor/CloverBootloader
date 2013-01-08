@@ -129,7 +129,7 @@
 #include <IndustryStandard/HighPrecisionEventTimerTable.h>
 #include <IndustryStandard/Scsi.h>
 #include <IndustryStandard/Atapi.h>
-#include <IndustryStandard/Smbios.h>
+#include <IndustryStandard/SmbiosA.h>
 
 /* types */
 
