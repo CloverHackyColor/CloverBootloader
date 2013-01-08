@@ -30,10 +30,20 @@ Abstract:
 ///
 #define SMBIOS_HANDLE_RESERVED_BEGIN 0xFF00
 
-//
-// Reference SMBIOS 2.6, chapter 3.1.3
-// Each text string is limited to 64 significant characters due to system MIF limitations
-//
+///
+/// Reference SMBIOS 2.7, chapter 6.1.2.
+/// The UEFI Platform Initialization Specification reserves handle number FFFEh for its
+/// EFI_SMBIOS_PROTOCOL.Add() function to mean "assign an unused handle number automatically."
+/// This number is not used for any other purpose by the SMBIOS specification.
+///
+#define SMBIOS_HANDLE_PI_RESERVED 0xFFFE
+
+///
+/// Reference SMBIOS 2.6, chapter 3.1.3.
+/// Each text string is limited to 64 significant characters due to system MIF limitations.
+/// Reference SMBIOS 2.7, chapter 6.1.3.
+/// It will have no limit on the length of each individual text string.
+///
 #define SMBIOS_STRING_MAX_LENGTH     64
 
 //
@@ -133,7 +143,7 @@ typedef struct {
   UINT8  AcpiIsSupported                   :1;
   UINT8  UsbLegacyIsSupported              :1; 
   UINT8  AgpIsSupported                    :1; 
-  UINT8  I20BootIsSupported                :1;
+  UINT8  I2OBootIsSupported                :1;
   UINT8  Ls120BootIsSupported              :1;
   UINT8  AtapiZipDriveBootIsSupported      :1;
   UINT8  Boot1394IsSupported               :1;
@@ -160,7 +170,6 @@ typedef struct {
 typedef struct {
   MBCE_BIOS_RESERVED    BiosReserved;
   MBCE_SYSTEM_RESERVED  SystemReserved;
-  UINT8                 Reserved;
 } MISC_BIOS_CHARACTERISTICS_EXTENSION;
 
 ///
@@ -399,8 +408,8 @@ typedef enum {
   ProcessorFamilyPentiumIII             = 0x11, 
   ProcessorFamilyM1                     = 0x12,
   ProcessorFamilyM2                     = 0x13,
-  ProcessorFamilyM1Reserved2            = 0x14,
-  ProcessorFamilyM1Reserved3            = 0x15,
+  ProcessorFamilyIntelCeleronM          = 0x14,
+  ProcessorFamilyIntelPentium4Ht        = 0x15,
   ProcessorFamilyM1Reserved4            = 0x16,
   ProcessorFamilyM1Reserved5            = 0x17,
   ProcessorFamilyAmdDuron               = 0x18,
@@ -857,8 +866,8 @@ typedef struct {
   UINT16  NonBurst      :1;
   UINT16  Burst         :1;
   UINT16  PipelineBurst :1;
-  UINT16  Asynchronous  :1;
   UINT16  Synchronous   :1;
+  UINT16  Asynchronous  :1;
   UINT16  Reserved      :9;
 } CACHE_SRAM_TYPE_DATA;
 
@@ -945,7 +954,7 @@ typedef enum {
   PortConnectorTypeRJ45                   = 0x0B,
   PortConnectorType50PinMiniScsi          = 0x0C,
   PortConnectorTypeMiniDin                = 0x0D,
-  PortConnectorTypeMicriDin               = 0x0E,
+  PortConnectorTypeMicroDin               = 0x0E,
   PortConnectorTypePS2                    = 0x0F,
   PortConnectorTypeInfrared               = 0x10,
   PortConnectorTypeHpHil                  = 0x11,
@@ -965,6 +974,7 @@ typedef enum {
   PortConnectorTypeHeadPhoneMiniJack      = 0x1F,
   PortConnectorTypeBNC                    = 0x20,
   PortConnectorType1394                   = 0x21,
+  PortConnectorTypeSasSata                = 0x22,
   PortConnectorTypePC98                   = 0xA0,
   PortConnectorTypePC98Hireso             = 0xA1,
   PortConnectorTypePCH98                  = 0xA2,
@@ -1176,7 +1186,10 @@ typedef enum {
   OnBoardDeviceTypeScsiController = 0x04,
   OnBoardDeviceTypeEthernet       = 0x05,
   OnBoardDeviceTypeTokenRing      = 0x06,
-  OnBoardDeviceTypeSound          = 0x07
+  OnBoardDeviceTypeSound          = 0x07,
+  OnBoardDeviceTypePATAController = 0x08,
+  OnBoardDeviceTypeSATAController = 0x09,
+  OnBoardDeviceTypeSASController  = 0x0A
 } MISC_ONBOARD_DEVICE_TYPE;
 
 ///
@@ -1238,6 +1251,27 @@ typedef struct {
 } SMBIOS_TABLE_TYPE13;
 
 ///
+/// Group Item Entry
+///
+typedef struct {
+  UINT8                 ItemType;
+  UINT16                ItemHandle;
+} GROUP_STRUCT;
+
+///
+/// Group Associations (Type 14).
+///
+/// The Group Associations structure is provided for OEMs who want to specify 
+/// the arrangement or hierarchy of certain components (including other Group Associations) 
+/// within the system. 
+///
+typedef struct {
+  SMBIOS_TABLE_HEADER   Hdr;
+  SMBIOS_TABLE_STRING   GroupName;
+  GROUP_STRUCT          Group[1];
+} SMBIOS_TABLE_TYPE14;
+
+///
 /// System Event Log - Event Log Types.
 /// 
 typedef enum {
@@ -1285,25 +1319,12 @@ typedef enum {
 } EVENT_LOG_VARIABLE_DATA;
 
 ///
-/// Group Item Entry
+/// Event Log Type Descriptors
 ///
 typedef struct {
-  UINT8                 ItemType;
-  UINT16                ItemHandle;
-} GROUP_STRUCT;
-
-///
-/// Group Associations (Type 14).
-///
-/// The Group Associations structure is provided for OEMs who want to specify 
-/// the arrangement or hierarchy of certain components (including other Group Associations) 
-/// within the system. 
-///
-typedef struct {
-  SMBIOS_TABLE_HEADER   Hdr;
-  SMBIOS_TABLE_STRING   GroupName;
-  GROUP_STRUCT          Group[1];
-} SMBIOS_TABLE_TYPE14;
+  UINT8                 LogType;                    ///< The enumeration value from EVENT_LOG_TYPE_DATA.
+  UINT8                 DataFormatType;
+} EVENT_LOG_TYPE;
 
 ///
 /// System Event Log (Type 15).
@@ -1313,13 +1334,6 @@ typedef struct {
 /// non-volatile storage element, starting with a fixed-length (and vendor-specific) header 
 /// record, followed by one or more variable-length log records. 
 ///
-/// Event Log Type Descriptors
-///
-typedef struct {
-  UINT8                 LogType;                    ///< The enumeration value from EVENT_LOG_TYPE_DATA.
-  UINT8                 DataFormatType;
-} EVENT_LOG_TYPE;
-
 typedef struct {
   SMBIOS_TABLE_HEADER   Hdr;
   UINT16                LogAreaLength;

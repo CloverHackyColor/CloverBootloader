@@ -17,6 +17,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include "Language.h"
 #include "Hotkey.h"
 
+#define SMBIOS_HANDLE_PI_RESERVED 0xFFFE
+
 BOOLEAN   mModeInitialized = FALSE;
 
 BOOLEAN   gConnectAllHappened = FALSE;
