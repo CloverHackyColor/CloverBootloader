@@ -33,7 +33,7 @@ typedef EFI_STATUS (EFIAPI * EMU_VARIABLE_CONTROL_UNINSTALL_EMULATION) (
 /**
  * EMU_VARIABLE_CONTROL_PROTOCOL
  */
-typedef struct _EMU_VARIABLE_CONTROL_PROTOCOL {
+struct _EMU_VARIABLE_CONTROL_PROTOCOL {
     ///
     /// Installs RT var services emulation, replaces original RT var services.
     ///
@@ -42,7 +42,7 @@ typedef struct _EMU_VARIABLE_CONTROL_PROTOCOL {
     /// Uninstalls RT var services emulation, returns original RT var services back.
     ///
 	EMU_VARIABLE_CONTROL_INSTALL_EMULATION		UninstallEmulation;
-} EMU_VARIABLE_CONTROL_PROTOCOL;
+};
 
 
 #define EMU_VARIABLE_CONTROL_PROTOCOL_GUID \
