@@ -1137,7 +1137,9 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       // ROM: <data>bin data</data> or <string>base 64 encoded bin data</string>
       prop = GetProperty(dictPointer, "ROM");
       if(prop) {
-        gSettings.RtROM = GetDataSetting(dictPointer, "ROM", &gSettings.RtROMLen);
+        UINTN ROMLength = 0;
+        gSettings.RtROM = GetDataSetting(dictPointer, "ROM", &ROMLength);
+        gSettings.RtROMLen = ROMLength;
         if (gSettings.RtROM == NULL || gSettings.RtROMLen == 0) {
           gSettings.RtROM = NULL;
           gSettings.RtROMLen = 0;
