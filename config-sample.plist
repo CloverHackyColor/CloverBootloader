@@ -296,10 +296,11 @@
 		<string>0xFFFF</string>
 	</dict>
 	<key>RtVariables</key>
-	<dict/>
-	<key>ROM</key>
-	<data>AAAAAAAA</data>
-	<key>MLB</key>
-	<string>XXXXXXXXXX</string>
+	<dict>
+		<key>MLB</key>
+		<string>XXXXXXXXXX</string>
+		<key>ROM</key>
+		<data>AAAAAAAA</data>
+	</dict>
 </dict>
 </plist>
