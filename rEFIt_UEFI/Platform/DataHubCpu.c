@@ -194,6 +194,13 @@ EFI_STATUS SetVariablesForOSX()
                               /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                               6, ((UINT8*)&gSettings.SmUUID+10));
 //  }
+  
+  if (gSettings.iCloudFix) {
+    Status = gRS->SetVariable(L"system-id", &gEfiAppleNvramGuid,
+                            /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                            SNLen, &gSettings.SmUUID);
+  }
+  
 
   // options variables
   // note: some gEfiAppleBootGuid vars present in nvram.plist are already set by PutNvramPlistToRtVars()
