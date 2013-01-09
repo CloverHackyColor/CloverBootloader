@@ -340,12 +340,14 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       }
       
       // iCloudFix
+      /* not needed any more - does not fix iMessage any more
       gSettings.iCloudFix = TRUE;
       prop = GetProperty(dictPointer, "iCloudFix");
       if(prop) {
         if ((prop->string[0] == 'n') || (prop->string[0] == 'N'))
           gSettings.iCloudFix = FALSE;
-      }      
+      }
+       */
     }
 
     dictPointer = GetProperty(dict, "Pointer");
@@ -896,7 +898,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       if(prop) {
         UINTN len = 0;
         // ATIConnectors patch
-        gSettings.KPATIConnectorsController = AllocateZeroPool((AsciiStrLen(prop->string) + 1) * sizeof(CHAR16));
+        gSettings.KPATIConnectorsController = AllocateZeroPool(AsciiStrSize(prop->string) * sizeof(CHAR16));
         AsciiStrToUnicodeStr(prop->string, gSettings.KPATIConnectorsController);
         
         gSettings.KPATIConnectorsData = GetDataSetting(dictPointer, "ATIConnectorsData", &len);
@@ -1128,6 +1130,29 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
     
     }
     
+    // RtVariables
+    dictPointer = GetProperty(dict, "RtVariables");
+    if (dictPointer) {
+      
+      // ROM: <data>bin data</data> or <string>base 64 encoded bin data</string>
+      prop = GetProperty(dictPointer, "ROM");
+      if(prop) {
+        gSettings.RtROM = GetDataSetting(dictPointer, "ROM", &gSettings.RtROMLen);
+        if (gSettings.RtROM == NULL || gSettings.RtROMLen == 0) {
+          gSettings.RtROM = NULL;
+          gSettings.RtROMLen = 0;
+        }
+      }
+      
+      // MLB: <string>some value</string>
+      prop = GetProperty(dictPointer, "MLB");
+      if(prop && AsciiStrLen(prop->string) > 0) {
+		    gSettings.RtMLB = AllocateCopyPool(AsciiStrSize(prop->string), prop->string);
+      }
+      
+    }
+
+    
     // if CustomUUID and InjectSystemID are not specified
     // then use InjectSystemID=TRUE and SMBIOS UUID
     // to get Chameleon's default behaviour (to make user's life easier)
@@ -1240,8 +1265,7 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 		prop = GetProperty(dict, "ProductVersion");
 		if(prop != NULL)
 		{
-		    OSVersion = AllocateZeroPool(AsciiStrLen(prop->string));
-    		AsciiStrCpy(OSVersion, prop->string);
+		    OSVersion = AllocateCopyPool(AsciiStrSize(prop->string), prop->string);
 
 			// Tiger
 			if(AsciiStrStr(prop->string, "10.4") != 0){

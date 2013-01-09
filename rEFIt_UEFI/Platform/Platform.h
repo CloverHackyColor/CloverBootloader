@@ -719,6 +719,11 @@ typedef struct {
   UINT64  DoubleClickTime;
   BOOLEAN PointerMirror;
   
+  // RtVariables
+  CHAR8   *RtMLB;
+  UINT8   *RtROM;
+  UINTN   RtROMLen;
+  
 } SETTINGS_DATA;
 
 typedef struct {

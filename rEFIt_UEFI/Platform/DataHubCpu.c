@@ -143,8 +143,17 @@ EFI_STATUS SetVariablesForOSX()
   SNLen = MIN(20, AsciiStrLen(gSettings.SerialNr));
   BA = gSettings.SerialNr + SNLen - 1;
   while ( SNLen > 0 && ((*BA == ' ') || (*BA == 0)) ) {
-		BA--; SNLen--;
-	}
+    BA--; SNLen--;
+  }
+  if (gSettings.RtMLB == NULL && SNLen > 0) {
+    gSettings.RtMLB = AllocateCopyPool(SNLen + 1, gSettings.SerialNr);
+  }
+  
+  if (gSettings.RtROM == NULL) {
+    // we can try to set it to MAC address from SMBIOS UUID - some boards have it there
+    gSettings.RtROMLen = 6;
+    gSettings.RtROM = AllocateCopyPool(gSettings.RtROMLen, ((UINT8*)&gSettings.SmUUID) + 10);
+  }
   
   //
   // some NVRAM variables
@@ -183,23 +192,17 @@ EFI_STATUS SetVariablesForOSX()
                                          sizeof(FwFeaturesMask), &FwFeaturesMask);
 
 // should set anyway  
-//  if (gSettings.iCloudFix) {
     Status = gRS->SetVariable(L"MLB", &gEfiAppleNvramGuid,
                               /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                              SNLen, &gSettings.SerialNr);
- // }
+                              AsciiStrLen(gSettings.RtMLB), gSettings.RtMLB);
  
- // if (!gSettings.iCloudFix) {
     Status = gRS->SetVariable(L"ROM", &gEfiAppleNvramGuid,
                               /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                              6, ((UINT8*)&gSettings.SmUUID+10));
-//  }
+                              gSettings.RtROMLen, gSettings.RtROM);
   
-  if (gSettings.iCloudFix) {
     Status = gRS->SetVariable(L"system-id", &gEfiAppleNvramGuid,
                             /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                             SNLen, &gSettings.SmUUID);
-  }
   
 
   // options variables

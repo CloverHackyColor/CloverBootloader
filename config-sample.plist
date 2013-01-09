@@ -80,8 +80,6 @@
 	</dict>
 	<key>SystemParameters</key>
 	<dict>
-		<key>iCloudFix</key>
-		<string>Yes</string>
 		<key>boot-args</key>
 		<string>-v arch=i386</string>
 		<key>prev-lang:kbd</key>
@@ -231,12 +229,12 @@
 		<string>No</string>
 		<key>HideAllUEFI</key>
 		<string>No</string>
-        <key>HideOpticalUEFI</key> 
-        <string>No</string> 
-        <key>HideInternalUEFI</key> 
-        <string>Yes</string> 
-        <key>HideExternalUEFI</key> 
-        <string>Yes</string> 
+		<key>HideOpticalUEFI</key>
+		<string>No</string>
+		<key>HideInternalUEFI</key>
+		<string>Yes</string>
+		<key>HideExternalUEFI</key>
+		<string>Yes</string>
 		<key>HideAllLegacy</key>
 		<string>No</string>
 		<key>HideVolumes</key>
@@ -297,5 +295,11 @@
 		<key>FixDsdtMask</key>
 		<string>0xFFFF</string>
 	</dict>
+	<key>RtVariables</key>
+	<dict/>
+	<key>ROM</key>
+	<data>AAAAAAAA</data>
+	<key>MLB</key>
+	<string>XXXXXXXXXX</string>
 </dict>
 </plist>
