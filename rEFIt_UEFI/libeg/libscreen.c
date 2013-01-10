@@ -286,7 +286,7 @@ VOID egInitScreen(IN BOOLEAN SetMaxResolution)
     } 
     //is there anybody ever see UGA protocol???
     else if (UgaDraw != NULL) {
-      MsgLog("you are lucky guy having UGA, inform please projectosx!\n");
+      //MsgLog("you are lucky guy having UGA, inform please projectosx!\n");
         Status = UgaDraw->GetMode(UgaDraw, &Width, &Height, &Depth, &RefreshRate);
         if (EFI_ERROR(Status)) {
             UgaDraw = NULL;   // graphics not available
@@ -442,11 +442,11 @@ VOID egDrawImageArea(IN EG_IMAGE *Image,
                         EfiBltBufferToVideo,
                         (UINTN)AreaPosX, (UINTN)AreaPosY, (UINTN)ScreenPosX, (UINTN)ScreenPosY,
                         (UINTN)AreaWidth, (UINTN)AreaHeight, (UINTN)Image->Width * 4);
-  } /* else if (UgaDraw != NULL) {
+  } else if (UgaDraw != NULL) {
     UgaDraw->Blt(UgaDraw, (EFI_UGA_PIXEL *)Image->PixelData, EfiUgaBltBufferToVideo,
                  (UINTN)AreaPosX, (UINTN)AreaPosY, (UINTN)ScreenPosX, (UINTN)ScreenPosY,
                  (UINTN)AreaWidth, (UINTN)AreaHeight, (UINTN)Image->Width * 4);
-  } */
+  }
 }
 // Blt(this, Buffer, mode, srcX, srcY, destX, destY, w, h, deltaSrc);
 VOID egTakeImage(IN EG_IMAGE *Image, INTN ScreenPosX, INTN ScreenPosY,
