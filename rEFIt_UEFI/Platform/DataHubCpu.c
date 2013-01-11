@@ -202,7 +202,7 @@ EFI_STATUS SetVariablesForOSX()
   
     Status = gRS->SetVariable(L"system-id", &gEfiAppleNvramGuid,
                             /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                            SNLen, &gSettings.SmUUID);
+                            sizeof(EFI_GUID), &gSettings.SmUUID);
   
 
   // options variables
