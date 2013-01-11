@@ -525,7 +525,7 @@ CoreAddMemoryDescriptor (
     return;
   }
 
-  if (Type >= EfiMaxMemoryType && Type <= 0x7fffffff) {
+  if (Type >= EfiMaxMemoryType) {
     return;
   }
   CoreAcquireMemoryLock ();
@@ -1098,7 +1098,7 @@ CoreAllocatePages (
     return EFI_INVALID_PARAMETER;
   }
 
-  if ((MemoryType >= EfiMaxMemoryType && MemoryType <= 0x7fffffff) ||
+  if ((MemoryType >= EfiMaxMemoryType) ||
        MemoryType == EfiConventionalMemory) {
     return EFI_INVALID_PARAMETER;
   }
