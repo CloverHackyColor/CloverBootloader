@@ -2202,15 +2202,18 @@ BiosKeyboardSetState (
 
   Status = KeyboardWrite (BiosKeyboardPrivate, 0xed);
   if (EFI_ERROR (Status)) {
-    return EFI_DEVICE_ERROR;
+     Status = EFI_DEVICE_ERROR;
+     goto Done;
   }  
   Status = KeyboardWaitForValue (BiosKeyboardPrivate, 0xfa, KEYBOARD_WAITFORVALUE_TIMEOUT);
   if (EFI_ERROR (Status)) {
-    return EFI_DEVICE_ERROR;
+     Status = EFI_DEVICE_ERROR;
+     goto Done;
   }
   Status = KeyboardWrite (BiosKeyboardPrivate, Command);
   if (EFI_ERROR (Status)) {
-    return EFI_DEVICE_ERROR;
+     Status = EFI_DEVICE_ERROR;
+     goto Done;
   }  
   //
   // Call Legacy BIOS Protocol to set whatever is necessary
@@ -2219,6 +2222,7 @@ BiosKeyboardSetState (
 
   Status = EFI_SUCCESS;
 
+Done:
   //
   // Leave critical section and return
   //

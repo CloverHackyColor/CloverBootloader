@@ -3642,6 +3642,7 @@ BdsLibGetBootableHandle (
     Status = gBS->HandleProtocol (Handle, &gEfiBlockIoProtocolGuid, (VOID **)&BlockIo);
  //   ASSERT_EFI_ERROR (Status);
     if (EFI_ERROR (Status)) {
+      gBS->RestoreTPL (OldTpl);
       return NULL;
     }
     //
@@ -3675,6 +3676,7 @@ BdsLibGetBootableHandle (
   DupDevicePath = DuplicateDevicePath (DevicePath);
 //  ASSERT (DupDevicePath != NULL);
   if (!DupDevicePath) {
+    gBS->RestoreTPL (OldTpl);
     return NULL;
   }
         
