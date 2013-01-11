@@ -185,8 +185,7 @@ CoreAllocatePool (
   //
   // If it's not a valid type, fail it
   //
-  if (((PoolType >= EfiMaxMemoryType) && (PoolType <= 0x7fffffff)) ||
-      (PoolType == EfiConventionalMemory)) {
+  if ((PoolType >= EfiMaxMemoryType) || (PoolType == EfiConventionalMemory)) {
     return EFI_INVALID_PARAMETER;
   }
 
