@@ -70,7 +70,7 @@ CHAR8* AppleBoardID[] = //Lion DR1 compatible
   "Mac-00BE6ED71E35EB86",  //IM131 - -i5-3470S -IVY
 	"Mac-F2268DC8",  //MP31 - xeon quad 02/09 conroe
 	"Mac-F4238CC8",  //MP41 - xeon wolfdale
-	"Mac-F222BEC8"   //MP51 - Xeon Nehalem 4 cores
+	"Mac-F221BEC8"   //MP51 - Xeon Nehalem 4 cores
 };
 
 CHAR8* AppleReleaseDate[] = 
