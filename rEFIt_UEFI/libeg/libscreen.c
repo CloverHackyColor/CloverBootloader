@@ -452,23 +452,30 @@ VOID egDrawImageArea(IN EG_IMAGE *Image,
 VOID egTakeImage(IN EG_IMAGE *Image, INTN ScreenPosX, INTN ScreenPosY,
                  IN INTN AreaWidth, IN INTN AreaHeight)
 {
-  if (GraphicsOutput != NULL) {
-    if (ScreenPosX + AreaWidth > UGAWidth)
-    {
+   if (ScreenPosX + AreaWidth > UGAWidth)
+   {
       AreaWidth = UGAWidth - ScreenPosX;
-    }
-    if (ScreenPosY + AreaHeight > UGAHeight)
-    {
+   }
+   if (ScreenPosY + AreaHeight > UGAHeight)
+   {
       AreaHeight = UGAHeight - ScreenPosY;
-    }
-    
-    GraphicsOutput->Blt(GraphicsOutput,
-                        (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)Image->PixelData,
-                        EfiBltVideoToBltBuffer,
-                        ScreenPosX,
-                        ScreenPosY,
-                        0, 0, AreaWidth, AreaHeight, (UINTN)Image->Width * 4);
-  }
+   }
+
+   if (GraphicsOutput != NULL) {
+      GraphicsOutput->Blt(GraphicsOutput,
+         (EFI_GRAPHICS_OUTPUT_BLT_PIXEL *)Image->PixelData,
+         EfiBltVideoToBltBuffer,
+         ScreenPosX,
+         ScreenPosY,
+         0, 0, AreaWidth, AreaHeight, (UINTN)Image->Width * 4);
+   } else if (UgaDraw != NULL) {
+      UgaDraw->Blt(UgaDraw,
+         (EFI_UGA_PIXEL *)Image->PixelData,
+         EfiUgaVideoToBltBuffer,
+         ScreenPosX,
+         ScreenPosY,
+         0, 0, AreaWidth, AreaHeight, (UINTN)Image->Width * 4);
+   }
 }
 
 //
