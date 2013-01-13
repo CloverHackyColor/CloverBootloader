@@ -163,7 +163,7 @@ Int13GetDeviceParameters (
   Regs.H.DL = Drive->Number;
 //  CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
   CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
-  DBG("Int13GetDeviceParameters: INT 13 08 DL=%02x : CF=%d AH=%02x\n", Drive->Number, CarryFlag, Regs.H.AH);
+//  DBG("Int13GetDeviceParameters: INT 13 08 DL=%02x : CF=%d AH=%02x\n", Drive->Number, CarryFlag, Regs.H.AH);
   if (CarryFlag != 0 || Regs.H.AH != 0x00) {
     Drive->ErrorCode = Regs.H.AH;
     return FALSE;
@@ -219,7 +219,8 @@ Int13Extensions (
   Regs.H.DL = Drive->Number;
 //  CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
   CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
-  DBG( "Int13Extensions: INT 13 41 DL=%02x : CF=%d BX=%04x\n", Drive->Number, CarryFlag, Regs.X.BX);
+  DBG( "Int13Extensions: INT 13 41 DL=%02x : CF=%d BX=%04x CX=%04x\n",
+      Drive->Number, CarryFlag, Regs.X.BX, Regs.X.CX);
   if (CarryFlag != 0 || Regs.X.BX != 0xaa55) {
     Drive->ExtendedInt13            = FALSE;
     Drive->DriveLockingAndEjecting  = FALSE;
@@ -511,8 +512,8 @@ Edd30BiosReadBlocks (
 
 //    CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
     CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
-    DBG( "Edd30BiosReadBlocks: INT 13 42 DL=%02x : CF=%d AH=%02x\n",
-        BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH);
+//    DBG( "Edd30BiosReadBlocks: INT 13 42 DL=%02x : CF=%d AH=%02x\n",
+//        BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH);
 
     Media->MediaPresent = TRUE;
     if (CarryFlag != 0) {
@@ -527,9 +528,10 @@ Edd30BiosReadBlocks (
           if (Int13Extensions (BiosBlockIoDev, Bios) != 0) {
             Media->LastBlock  = (EFI_LBA) Bios->Parameters.PhysicalSectors - 1;
             Media->BlockSize  = (UINT32) Bios->Parameters.BytesPerSector;
-          } else {
-            ASSERT (FALSE);
           }
+          /*else {
+            ASSERT (FALSE);
+          } */
 
           Media->ReadOnly = FALSE;
           gBS->HandleProtocol (BiosBlockIoDev->Handle, &gEfiBlockIoProtocolGuid, (VOID **) &BlockIo);
@@ -660,8 +662,8 @@ Edd30BiosWriteBlocks (
 
 //    CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
     CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
-    DBG( "Edd30BiosWriteBlocks: INT 13 43 DL=%02x : CF=%d AH=%02x\n",
-        BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH);
+//    DBG( "Edd30BiosWriteBlocks: INT 13 43 DL=%02x : CF=%d AH=%02x\n",
+//        BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH);
 
     Media->MediaPresent = TRUE;
     if (CarryFlag != 0) {
@@ -676,9 +678,9 @@ Edd30BiosWriteBlocks (
           if (Int13Extensions (BiosBlockIoDev, Bios) != 0) {
             Media->LastBlock  = (EFI_LBA) Bios->Parameters.PhysicalSectors - 1;
             Media->BlockSize  = (UINT32) Bios->Parameters.BytesPerSector;
-          } else {
+          } /* else {
             ASSERT (FALSE);
-          }
+          } */
 
           Media->ReadOnly = FALSE;
           gBS->HandleProtocol (BiosBlockIoDev->Handle, &gEfiBlockIoProtocolGuid, (VOID **) &BlockIo);
@@ -756,15 +758,15 @@ BiosBlockIoReset (
   Regs.H.DL       = BiosBlockIoDev->Bios.Number;
 //  CarryFlag       = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
   CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
-  DBG("BiosBlockIoReset: INT 13 00 DL=%02x : CF=%d AH=%02x\n",
-      BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH );
+//  DBG("BiosBlockIoReset: INT 13 00 DL=%02x : CF=%d AH=%02x\n",
+//      BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH );
   if (CarryFlag != 0) {
     if (Regs.H.AL == BIOS_RESET_FAILED) {
       Regs.H.AH = 0x00;
       Regs.H.DL = BiosBlockIoDev->Bios.Number;
  //     CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
       CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
-      DBG("BiosBlockIoReset: INT 13 00 DL=%02x : CF=%d AH=%02x\n", BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH );
+ //     DBG("BiosBlockIoReset: INT 13 00 DL=%02x : CF=%d AH=%02x\n", BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH );
       if (CarryFlag != 0) {
         BiosBlockIoDev->Bios.ErrorCode = Regs.H.AH;
         return EFI_DEVICE_ERROR;
@@ -886,8 +888,8 @@ Edd11BiosReadBlocks (
 
  //   CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
     CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
-    DBG("Edd11BiosReadBlocks: INT 13 42 DL=%02x : CF=%d AH=%02x : LBA 0x%lx  Block(s) %0d \n",
-      BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH, Lba, NumberOfBlocks);
+ //   DBG("Edd11BiosReadBlocks: INT 13 42 DL=%02x : CF=%d AH=%02x : LBA 0x%lx  Block(s) %0d \n",
+ //     BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH, Lba, NumberOfBlocks);
     Media->MediaPresent = TRUE;
     if (CarryFlag != 0) {
       //
@@ -901,9 +903,10 @@ Edd11BiosReadBlocks (
           if (Int13Extensions (BiosBlockIoDev, Bios) != 0) {
             Media->LastBlock  = (EFI_LBA) Bios->Parameters.PhysicalSectors - 1;
             Media->BlockSize  = (UINT32) Bios->Parameters.BytesPerSector;
-          } else {
-            ASSERT (FALSE);
           }
+          /*else {
+            ASSERT (FALSE);
+          }*/
 
           Media->ReadOnly = FALSE;
           gBS->HandleProtocol (BiosBlockIoDev->Handle, &gEfiBlockIoProtocolGuid, (VOID **) &BlockIo);
@@ -1043,8 +1046,8 @@ Edd11BiosWriteBlocks (
 
 //    CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
     CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
-    DBG("Edd11BiosWriteBlocks: INT 13 43 DL=%02x : CF=%d AH=%02x\n: LBA 0x%lx  Block(s) %0d \n",
-      BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH, Lba, NumberOfBlocks);
+ //   DBG("Edd11BiosWriteBlocks: INT 13 43 DL=%02x : CF=%d AH=%02x\n: LBA 0x%lx  Block(s) %0d \n",
+ //     BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH, Lba, NumberOfBlocks);
     Media->MediaPresent = TRUE;
     if (CarryFlag != 0) {
       //
@@ -1058,9 +1061,10 @@ Edd11BiosWriteBlocks (
           if (Int13Extensions (BiosBlockIoDev, Bios) != 0) {
             Media->LastBlock  = (EFI_LBA) Bios->Parameters.PhysicalSectors - 1;
             Media->BlockSize  = (UINT32) Bios->Parameters.BytesPerSector;
-          } else {
-            ASSERT (FALSE);
           }
+          /*else {
+            ASSERT (FALSE);
+          }*/
 
           Media->ReadOnly = FALSE;
           gBS->HandleProtocol (BiosBlockIoDev->Handle, &gEfiBlockIoProtocolGuid, (VOID **) &BlockIo);
@@ -1197,7 +1201,7 @@ BiosReadLegacyDrive (
       CheckLba      = Cylinder * (BiosBlockIoDev->Bios.MaxHead + 1) + Head;
       CheckLba      = CheckLba * BiosBlockIoDev->Bios.MaxSector + Sector - 1;
 
-      DBG("RLD: LBA %x (%x), Sector %x (%x), Head %x (%x), Cyl %x, UCyl %x\n",
+   /*   DBG("RLD: LBA %x (%x), Sector %x (%x), Head %x (%x), Cyl %x, UCyl %x\n",
         ShortLba,
         CheckLba,
         Sector,
@@ -1206,7 +1210,7 @@ BiosReadLegacyDrive (
         BiosBlockIoDev->Bios.MaxHead,
         Cylinder,
         UpperCylinder
-        );
+        ); */
      // ASSERT (CheckLba == ShortLba);
       if (CheckLba != ShortLba) {
         DBG("CheckLba != ShortLba");
@@ -1220,7 +1224,7 @@ BiosReadLegacyDrive (
       Regs.X.BX = EFI_OFFSET (mEdd11Buffer);
       Regs.E.ES = EFI_SEGMENT (mEdd11Buffer);
 
-      DBG("INT 13h: AX:(02%02x) DX:(%02x%02x) CX:(%02x%02x) BX:(%04x) ES:(%04x)\n",
+ /*     DBG("INT 13h: AX:(02%02x) DX:(%02x%02x) CX:(%02x%02x) BX:(%04x) ES:(%04x)\n",
         Regs.H.AL,
         (UINT8) (Head & 0x3f),
         Regs.H.DL,
@@ -1229,11 +1233,11 @@ BiosReadLegacyDrive (
         EFI_OFFSET (mEdd11Buffer),
         EFI_SEGMENT (mEdd11Buffer)
         );
-
+*/
 //      CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
       CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
-      DBG("BiosReadLegacyDrive: INT 13 02 DL=%02x : CF=%d AH=%02x\n",
-          BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH);
+//      DBG("BiosReadLegacyDrive: INT 13 02 DL=%02x : CF=%d AH=%02x\n",
+ //         BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH);
       Retry--;
     } while (CarryFlag != 0 && Retry != 0 && Regs.H.AH != BIOS_DISK_CHANGED);
 
@@ -1396,7 +1400,7 @@ BiosWriteLegacyDrive (
       CheckLba      = Cylinder * (BiosBlockIoDev->Bios.MaxHead + 1) + Head;
       CheckLba      = CheckLba * BiosBlockIoDev->Bios.MaxSector + Sector - 1;
 
-      DBG("RLD: LBA %x (%x), Sector %x (%x), Head %x (%x), Cyl %x, UCyl %x\n",
+ /*     DBG("RLD: LBA %x (%x), Sector %x (%x), Head %x (%x), Cyl %x, UCyl %x\n",
         ShortLba,
         CheckLba,
         Sector,
@@ -1406,6 +1410,7 @@ BiosWriteLegacyDrive (
         Cylinder,
         UpperCylinder
         );
+  */
  //     ASSERT (CheckLba == ShortLba);
       if (CheckLba != ShortLba) {
         DBG("CheckLba != ShortLba");
@@ -1422,7 +1427,7 @@ BiosWriteLegacyDrive (
       TransferByteSize  = NumberOfBlocks * BlockSize;
       CopyMem (mEdd11Buffer, Buffer, TransferByteSize);
 
-      DBG("INT 13h: AX:(03%02x) DX:(%02x%02x) CX:(%02x%02x) BX:(%04x) ES:(%04x)\n",
+/*      DBG("INT 13h: AX:(03%02x) DX:(%02x%02x) CX:(%02x%02x) BX:(%04x) ES:(%04x)\n",
         Regs.H.AL,
         (UINT8) (Head & 0x3f),
         Regs.H.DL,
@@ -1431,11 +1436,11 @@ BiosWriteLegacyDrive (
         EFI_OFFSET (mEdd11Buffer),
         EFI_SEGMENT (mEdd11Buffer)
         );
-
+*/
 //      CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
       CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
-      DBG("BiosWriteLegacyDrive: INT 13 03 DL=%02x : CF=%d AH=%02x\n",
-          BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH);
+//      DBG("BiosWriteLegacyDrive: INT 13 03 DL=%02x : CF=%d AH=%02x\n",
+//          BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH);
       Retry--;
     } while (CarryFlag != 0 && Retry != 0 && Regs.H.AH != BIOS_DISK_CHANGED);
 

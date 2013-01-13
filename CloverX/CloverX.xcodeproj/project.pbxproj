@@ -265,8 +265,6 @@
 		124D77CD1657A5B5008B5407 /* Partition.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Partition.c; sourceTree = "<group>"; };
 		124D77CE1657A5B5008B5407 /* Partition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Partition.h; sourceTree = "<group>"; };
 		124D77CF1657A5B5008B5407 /* PartitionDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = PartitionDxe.inf; sourceTree = "<group>"; };
-		124D77D01657A5B5008B5407 /* PartitionDxe.inf.orig */ = {isa = PBXFileReference; lastKnownFileType = text; path = PartitionDxe.inf.orig; sourceTree = "<group>"; };
-		124D77D11657A5B5008B5407 /* PartitionDxe.inf.rej */ = {isa = PBXFileReference; lastKnownFileType = text; path = PartitionDxe.inf.rej; sourceTree = "<group>"; };
 		124D77D31657A5D0008B5407 /* PcatRealTimeClockRuntimeDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = PcatRealTimeClockRuntimeDxe.inf; sourceTree = "<group>"; };
 		124D77D41657A5D0008B5407 /* PcRtc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = PcRtc.c; sourceTree = "<group>"; };
 		124D77D51657A5D0008B5407 /* PcRtc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PcRtc.h; sourceTree = "<group>"; };
@@ -1089,8 +1087,6 @@
 				124D77CD1657A5B5008B5407 /* Partition.c */,
 				124D77CE1657A5B5008B5407 /* Partition.h */,
 				124D77CF1657A5B5008B5407 /* PartitionDxe.inf */,
-				124D77D01657A5B5008B5407 /* PartitionDxe.inf.orig */,
-				124D77D11657A5B5008B5407 /* PartitionDxe.inf.rej */,
 			);
 			name = PartitionDxe;
 			path = ../PartitionDxe;

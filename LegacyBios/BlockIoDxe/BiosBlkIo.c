@@ -218,6 +218,8 @@ BiosBlockIoDriverBindingSupported (
   if (Pci.Hdr.ClassCode[2] == PCI_CLASS_MASS_STORAGE ||
       (Pci.Hdr.ClassCode[2] == PCI_BASE_CLASS_INTELLIGENT && Pci.Hdr.ClassCode[1] == PCI_SUB_CLASS_INTELLIGENT)
       ) {
+    DBG("Found supported controller for BiosBlockIO class=%02x%02x%02x\n",
+        Pci.Hdr.ClassCode[2], Pci.Hdr.ClassCode[1], Pci.Hdr.ClassCode[0]);
     Status = EFI_SUCCESS;
   }
 
@@ -255,8 +257,8 @@ BiosBlockIoDriverBindingStart (
   EFI_STATUS                Status;
 //  EFI_LEGACY_BIOS_PROTOCOL  *LegacyBios;
   EFI_PCI_IO_PROTOCOL       *PciIo;
-  UINT8                     DiskStart = 0;
-  UINT8                     DiskEnd = 3;
+  UINT8                     DiskStart = 0x80;
+  UINT8                     DiskEnd = 0x88;
   BIOS_BLOCK_IO_DEV         *BiosBlockIoPrivate;
   EFI_DEVICE_PATH_PROTOCOL  *PciDevPath;
   UINTN                     Index;

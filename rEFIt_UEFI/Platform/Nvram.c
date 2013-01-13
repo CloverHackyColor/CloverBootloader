@@ -214,7 +214,7 @@ BootVolumeDevicePathEqual (
         //
         if (Type1 == MESSAGING_DEVICE_PATH && SubType1 == MSG_SATA_DP) {
             if (   (Type2 == HARDWARE_DEVICE_PATH && SubType2 == HW_VENDOR_DP)
-                || (Type2 == MESSAGING_DEVICE_PATH && SubType2 == MSG_VENDOR_DP)
+                || (Type2 == MESSAGING_DEVICE_PATH && SubType2 == MSG_VENDOR_DP) //no it is UART?
                )
             {
                 ForceEqualNodes = TRUE;

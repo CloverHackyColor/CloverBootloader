@@ -108,10 +108,15 @@ PartitionDriverBindingSupported (
       if (Node->DevPath.Type != MEDIA_DEVICE_PATH ||
         Node->DevPath.SubType != MEDIA_HARDDRIVE_DP ||
         DevicePathNodeLength (&Node->DevPath) != sizeof (HARDDRIVE_DEVICE_PATH)) {
-      return EFI_UNSUPPORTED;
+        if (Node->DevPath.Type != HARDWARE_DEVICE_PATH ||
+            Node->DevPath.SubType != HW_VENDOR_DP) {
+          return EFI_UNSUPPORTED;
+        }      
       }
     }
   }
+
+  
 
   //
   // Open the IO Abstraction(s) needed to perform the supported test
