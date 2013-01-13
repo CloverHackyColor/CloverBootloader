@@ -18,7 +18,7 @@ tail -n 3000 boot.lo1 >boot-logs.old
 rm boot.lo1
 if [ "x$theBootFlag" != "x" ]; then
     [ ! -d /Volumes/efi ] && mkdir /Volumes/efi 
-    sudo mount -t msdos /dev/"${theRoot}"s1 /Volumes/efi
+    mount -t msdos /dev/"${theRoot}"s1 /Volumes/efi
 else
     echo "Not AutoMounting ${theRoot}s1"     
 fi
