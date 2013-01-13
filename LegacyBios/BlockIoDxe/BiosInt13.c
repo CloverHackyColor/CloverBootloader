@@ -155,14 +155,14 @@ Int13GetDeviceParameters (
 {
   UINTN                 CarryFlag;
   UINT16                Cylinder;
-  EFI_IA32_REGISTER_SET Regs;
+  IA32_REGISTER_SET Regs;
 
-  ZeroMem (&Regs, sizeof (EFI_IA32_REGISTER_SET));
+  ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
 
   Regs.H.AH = 0x08;
   Regs.H.DL = Drive->Number;
 //  CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
-  CarryFlag = LegacyBiosInt86 (BiosKeyboardPrivate, 0x13, &Regs);
+  CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
   DBG("Int13GetDeviceParameters: INT 13 08 DL=%02x : CF=%d AH=%02x\n", Drive->Number, CarryFlag, Regs.H.AH);
   if (CarryFlag != 0 || Regs.H.AH != 0x00) {
     Drive->ErrorCode = Regs.H.AH;
@@ -210,16 +210,16 @@ Int13Extensions (
   )
 {
   INTN                  CarryFlag;
-  EFI_IA32_REGISTER_SET Regs;
+  IA32_REGISTER_SET Regs;
 
-  ZeroMem (&Regs, sizeof (EFI_IA32_REGISTER_SET));
+  ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
 
   Regs.H.AH = 0x41;
   Regs.X.BX = 0x55aa;
   Regs.H.DL = Drive->Number;
 //  CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
-  CarryFlag = LegacyBiosInt86 (BiosKeyboardPrivate, 0x13, &Regs);
-  DBG "Int13Extensions: INT 13 41 DL=%02x : CF=%d BX=%04x\n", Drive->Number, CarryFlag, Regs.X.BX);
+  CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
+  DBG( "Int13Extensions: INT 13 41 DL=%02x : CF=%d BX=%04x\n", Drive->Number, CarryFlag, Regs.X.BX);
   if (CarryFlag != 0 || Regs.X.BX != 0xaa55) {
     Drive->ExtendedInt13            = FALSE;
     Drive->DriveLockingAndEjecting  = FALSE;
@@ -253,10 +253,10 @@ GetDriveParameters (
   )
 {
   INTN                  CarryFlag;
-  EFI_IA32_REGISTER_SET Regs;
+  IA32_REGISTER_SET Regs;
   UINTN                 PointerMath;
 
-  ZeroMem (&Regs, sizeof (EFI_IA32_REGISTER_SET));
+  ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
 
   Regs.H.AH = 0x48;
   Regs.H.DL = Drive->Number;
@@ -265,10 +265,10 @@ GetDriveParameters (
   // EDD Buffer must be passed in with max buffer size as first entry in the buffer
   //
   mLegacyDriverUnder1Mb->Parameters.StructureSize = (UINT16) sizeof (EDD_DRIVE_PARAMETERS);
-  Regs.X.DS = EFI_SEGMENT ((UINTN)(&mLegacyDriverUnder1Mb->Parameters));
+  Regs.E.DS = EFI_SEGMENT ((UINTN)(&mLegacyDriverUnder1Mb->Parameters));
   Regs.X.SI = EFI_OFFSET ((UINTN)(&mLegacyDriverUnder1Mb->Parameters));
 //  CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
-  CarryFlag = LegacyBiosInt86 (BiosKeyboardPrivate, 0x13, &Regs);
+  CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
   DBG( "GetDriveParameters: INT 13 48 DL=%02x : CF=%d AH=%02x\n", Drive->Number, CarryFlag, Regs.H.AH);
   if (CarryFlag != 0 || Regs.H.AH != 0x00) {
     Drive->ErrorCode = Regs.H.AH;
@@ -291,7 +291,7 @@ GetDriveParameters (
     Regs.H.AH = 0x20;
     Regs.H.DL = Drive->Number;
 //    CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
-    CarryFlag = LegacyBiosInt86 (BiosKeyboardPrivate, 0x13, &Regs);
+    CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
     DBG( "GetDriveParameters: INT 13 20 DL=%02x : CF=%d AL=%02x\n", Drive->Number, CarryFlag, Regs.H.AL);
     if (CarryFlag != 0) {
       //
@@ -445,7 +445,7 @@ Edd30BiosReadBlocks (
   //
   // I exist only for readability
   //
-  EFI_IA32_REGISTER_SET     Regs;
+  IA32_REGISTER_SET     Regs;
   UINT64                    TransferBuffer;
   UINTN                     NumberOfBlocks;
   UINTN                     TransferByteSize;
@@ -458,7 +458,7 @@ Edd30BiosReadBlocks (
   Media     = This->Media;
   BlockSize = Media->BlockSize;
 
-  ZeroMem (&Regs, sizeof (EFI_IA32_REGISTER_SET));
+  ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
 
   if (MediaId != Media->MediaId) {
     return EFI_MEDIA_CHANGED;
@@ -507,10 +507,10 @@ Edd30BiosReadBlocks (
     Regs.H.AH                         = 0x42;
     Regs.H.DL                         = BiosBlockIoDev->Bios.Number;
     Regs.X.SI                         = EFI_OFFSET (AddressPacket);
-    Regs.X.DS                         = EFI_SEGMENT (AddressPacket);
+    Regs.E.DS                         = EFI_SEGMENT (AddressPacket);
 
 //    CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
-    CarryFlag = LegacyBiosInt86 (BiosKeyboardPrivate, 0x13, &Regs);
+    CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
     DBG( "Edd30BiosReadBlocks: INT 13 42 DL=%02x : CF=%d AH=%02x\n",
         BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH);
 
@@ -590,7 +590,7 @@ Edd30BiosWriteBlocks (
   //
   // I exist only for readability
   //
-  EFI_IA32_REGISTER_SET     Regs;
+  IA32_REGISTER_SET     Regs;
   UINT64                    TransferBuffer;
   UINTN                     NumberOfBlocks;
   UINTN                     TransferByteSize;
@@ -603,7 +603,7 @@ Edd30BiosWriteBlocks (
   Media     = This->Media;
   BlockSize = Media->BlockSize;
 
-  ZeroMem (&Regs, sizeof (EFI_IA32_REGISTER_SET));
+  ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
 
   if (MediaId != Media->MediaId) {
     return EFI_MEDIA_CHANGED;
@@ -656,10 +656,10 @@ Edd30BiosWriteBlocks (
     //
     Regs.H.DL = (UINT8) (BiosBlockIoDev->Bios.Number);
     Regs.X.SI = EFI_OFFSET (AddressPacket);
-    Regs.X.DS = EFI_SEGMENT (AddressPacket);
+    Regs.E.DS = EFI_SEGMENT (AddressPacket);
 
 //    CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
-    CarryFlag = LegacyBiosInt86 (BiosKeyboardPrivate, 0x13, &Regs);
+    CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
     DBG( "Edd30BiosWriteBlocks: INT 13 43 DL=%02x : CF=%d AH=%02x\n",
         BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH);
 
@@ -745,17 +745,17 @@ BiosBlockIoReset (
   )
 {
   BIOS_BLOCK_IO_DEV     *BiosBlockIoDev;
-  EFI_IA32_REGISTER_SET Regs;
+  IA32_REGISTER_SET Regs;
   UINTN                 CarryFlag;
 
   BiosBlockIoDev  = BIOS_BLOCK_IO_FROM_THIS (This);
 
-  ZeroMem (&Regs, sizeof (EFI_IA32_REGISTER_SET));
+  ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
 
   Regs.H.AH       = 0x00;
   Regs.H.DL       = BiosBlockIoDev->Bios.Number;
 //  CarryFlag       = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
-  CarryFlag = LegacyBiosInt86 (BiosKeyboardPrivate, 0x13, &Regs);
+  CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
   DBG("BiosBlockIoReset: INT 13 00 DL=%02x : CF=%d AH=%02x\n",
       BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH );
   if (CarryFlag != 0) {
@@ -763,7 +763,7 @@ BiosBlockIoReset (
       Regs.H.AH = 0x00;
       Regs.H.DL = BiosBlockIoDev->Bios.Number;
  //     CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
-      CarryFlag = LegacyBiosInt86 (BiosKeyboardPrivate, 0x13, &Regs);
+      CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
       DBG("BiosBlockIoReset: INT 13 00 DL=%02x : CF=%d AH=%02x\n", BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH );
       if (CarryFlag != 0) {
         BiosBlockIoDev->Bios.ErrorCode = Regs.H.AH;
@@ -815,7 +815,7 @@ Edd11BiosReadBlocks (
   //
   // I exist only for readability
   //
-  EFI_IA32_REGISTER_SET     Regs;
+  IA32_REGISTER_SET     Regs;
   UINT64                    TransferBuffer;
   UINTN                     NumberOfBlocks;
   UINTN                     TransferByteSize;
@@ -828,7 +828,7 @@ Edd11BiosReadBlocks (
   Media     = This->Media;
   BlockSize = Media->BlockSize;
 
-  ZeroMem (&Regs, sizeof (EFI_IA32_REGISTER_SET));
+  ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
 
   if (MediaId != Media->MediaId) {
     return EFI_MEDIA_CHANGED;
@@ -882,10 +882,10 @@ Edd11BiosReadBlocks (
     Regs.H.AH           = 0x42;
     Regs.H.DL           = BiosBlockIoDev->Bios.Number;
     Regs.X.SI           = EFI_OFFSET (AddressPacket);
-    Regs.X.DS           = EFI_SEGMENT (AddressPacket);
+    Regs.E.DS           = EFI_SEGMENT (AddressPacket);
 
  //   CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
-    CarryFlag = LegacyBiosInt86 (BiosKeyboardPrivate, 0x13, &Regs);
+    CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
     DBG("Edd11BiosReadBlocks: INT 13 42 DL=%02x : CF=%d AH=%02x : LBA 0x%lx  Block(s) %0d \n",
       BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH, Lba, NumberOfBlocks);
     Media->MediaPresent = TRUE;
@@ -965,7 +965,7 @@ Edd11BiosWriteBlocks (
   //
   // I exist only for readability
   //
-  EFI_IA32_REGISTER_SET     Regs;
+  IA32_REGISTER_SET     Regs;
   UINT64                    TransferBuffer;
   UINTN                     NumberOfBlocks;
   UINTN                     TransferByteSize;
@@ -978,7 +978,7 @@ Edd11BiosWriteBlocks (
   Media     = This->Media;
   BlockSize = Media->BlockSize;
 
-  ZeroMem (&Regs, sizeof (EFI_IA32_REGISTER_SET));
+  ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
 
   if (MediaId != Media->MediaId) {
     return EFI_MEDIA_CHANGED;
@@ -1036,13 +1036,13 @@ Edd11BiosWriteBlocks (
     //
     Regs.H.DL         = BiosBlockIoDev->Bios.Number;
     Regs.X.SI         = EFI_OFFSET (AddressPacket);
-    Regs.X.DS         = EFI_SEGMENT (AddressPacket);
+    Regs.E.DS         = EFI_SEGMENT (AddressPacket);
 
     TransferByteSize  = NumberOfBlocks * BlockSize;
     CopyMem ((VOID *) (UINTN) TransferBuffer, Buffer, TransferByteSize);
 
 //    CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
-    CarryFlag = LegacyBiosInt86 (BiosKeyboardPrivate, 0x13, &Regs);
+    CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
     DBG("Edd11BiosWriteBlocks: INT 13 43 DL=%02x : CF=%d AH=%02x\n: LBA 0x%lx  Block(s) %0d \n",
       BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH, Lba, NumberOfBlocks);
     Media->MediaPresent = TRUE;
@@ -1119,7 +1119,7 @@ BiosReadLegacyDrive (
 {
   EFI_BLOCK_IO_MEDIA    *Media;
   BIOS_BLOCK_IO_DEV     *BiosBlockIoDev;
-  EFI_IA32_REGISTER_SET Regs;
+  IA32_REGISTER_SET Regs;
   UINTN                 UpperCylinder;
   UINTN                 Temp;
   UINTN                 Cylinder;
@@ -1138,7 +1138,7 @@ BiosReadLegacyDrive (
   Media     = This->Media;
   BlockSize = Media->BlockSize;
 
-  ZeroMem (&Regs, sizeof (EFI_IA32_REGISTER_SET));
+  ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
 
   if (MediaId != Media->MediaId) {
     return EFI_MEDIA_CHANGED;
@@ -1218,7 +1218,7 @@ BiosReadLegacyDrive (
       Regs.H.CH = (UINT8) (Cylinder & 0xff);
 
       Regs.X.BX = EFI_OFFSET (mEdd11Buffer);
-      Regs.X.ES = EFI_SEGMENT (mEdd11Buffer);
+      Regs.E.ES = EFI_SEGMENT (mEdd11Buffer);
 
       DBG("INT 13h: AX:(02%02x) DX:(%02x%02x) CX:(%02x%02x) BX:(%04x) ES:(%04x)\n",
         Regs.H.AL,
@@ -1231,7 +1231,7 @@ BiosReadLegacyDrive (
         );
 
 //      CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
-      CarryFlag = LegacyBiosInt86 (BiosKeyboardPrivate, 0x13, &Regs);
+      CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
       DBG("BiosReadLegacyDrive: INT 13 02 DL=%02x : CF=%d AH=%02x\n",
           BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH);
       Retry--;
@@ -1318,7 +1318,7 @@ BiosWriteLegacyDrive (
 {
   EFI_BLOCK_IO_MEDIA    *Media;
   BIOS_BLOCK_IO_DEV     *BiosBlockIoDev;
-  EFI_IA32_REGISTER_SET Regs;
+  IA32_REGISTER_SET Regs;
   UINTN                 UpperCylinder;
   UINTN                 Temp;
   UINTN                 Cylinder;
@@ -1337,7 +1337,7 @@ BiosWriteLegacyDrive (
   Media     = This->Media;
   BlockSize = Media->BlockSize;
 
-  ZeroMem (&Regs, sizeof (EFI_IA32_REGISTER_SET));
+  ZeroMem (&Regs, sizeof (IA32_REGISTER_SET));
 
   if (MediaId != Media->MediaId) {
     return EFI_MEDIA_CHANGED;
@@ -1417,7 +1417,7 @@ BiosWriteLegacyDrive (
       Regs.H.CH         = (UINT8) (Cylinder & 0xff);
 
       Regs.X.BX         = EFI_OFFSET (mEdd11Buffer);
-      Regs.X.ES         = EFI_SEGMENT (mEdd11Buffer);
+      Regs.E.ES         = EFI_SEGMENT (mEdd11Buffer);
 
       TransferByteSize  = NumberOfBlocks * BlockSize;
       CopyMem (mEdd11Buffer, Buffer, TransferByteSize);
@@ -1433,7 +1433,7 @@ BiosWriteLegacyDrive (
         );
 
 //      CarryFlag = BiosBlockIoDev->LegacyBios->Int86 (BiosBlockIoDev->LegacyBios, 0x13, &Regs);
-      CarryFlag = LegacyBiosInt86 (BiosKeyboardPrivate, 0x13, &Regs);
+      CarryFlag = LegacyBiosInt86 (BiosBlockIoDev, 0x13, &Regs);
       DBG("BiosWriteLegacyDrive: INT 13 03 DL=%02x : CF=%d AH=%02x\n",
           BiosBlockIoDev->Bios.Number, CarryFlag, Regs.H.AH);
       Retry--;

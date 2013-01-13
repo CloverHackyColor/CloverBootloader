@@ -347,16 +347,18 @@
   # IDE/AHCI Support
   #Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
   #Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
-  Clover/SataControllerDxe/SataControllerDxe.inf
-  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
+  #Clover/SataControllerDxe/SataControllerDxe.inf
+  #MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
   #Clover/AtaAtapi/AtaAtapiPassThru.inf
-  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
+  #MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
   #Clover/AtaBus/AtaBusDxe.inf
-  MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
+  #MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
   #Clover/DVDBus/ScsiBusDxe.inf
-  MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
+  #MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
   #Clover/DVDDisk/ScsiDiskDxe.inf
   #IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
+  Clover/LegacyBios/BlockIoDxe/BlockIoDxe.inf
+  
 
   # Usb Support
   MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
@@ -431,7 +433,7 @@
   #
   # Sample Application
   #
-  MdeModulePkg/Application/HelloWorld/HelloWorld.inf
+  #MdeModulePkg/Application/HelloWorld/HelloWorld.inf
   #MdeModulePkg/Application/VariableInfo/VariableInfo.inf
   Clover/rEFIt_UEFI/refit64.inf
 

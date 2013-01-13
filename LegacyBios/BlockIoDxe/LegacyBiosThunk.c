@@ -12,7 +12,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 **/
 
-#include "BiosKeyboard.h"
+#include "BiosBlkIo.h"
 
 #define EFI_CPU_EFLAGS_IF 0x200
 
@@ -136,9 +136,9 @@ InitializeInterruptRedirection (
 BOOLEAN
 EFIAPI
 LegacyBiosInt86 (
-  IN  BIOS_KEYBOARD_DEV               *BiosDev,
+  IN  BIOS_BLOCK_IO_DEV               *BiosDev,
   IN  UINT8                           BiosInt,
-  IN  IA32_REGISTER_SET              *Regs
+  IN  IA32_REGISTER_SET               *Regs
   )
 {
   UINTN                 Status;

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		120D825E16A2DE46000EDD83 /* LegacyBiosThunk.c in Sources */ = {isa = PBXBuildFile; fileRef = 120D825D16A2DE46000EDD83 /* LegacyBiosThunk.c */; };
 		121E4B57165A0F1A000C2392 /* 915resolution.c in Sources */ = {isa = PBXBuildFile; fileRef = 121E4B4F165A0F1A000C2392 /* 915resolution.c */; };
 		121E4B58165A0F1A000C2392 /* edid.c in Sources */ = {isa = PBXBuildFile; fileRef = 121E4B51165A0F1A000C2392 /* edid.c */; };
 		121E4B59165A0F1A000C2392 /* VideoBiosPatchLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 121E4B54165A0F1A000C2392 /* VideoBiosPatchLib.c */; };
@@ -28,6 +29,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		120D825D16A2DE46000EDD83 /* LegacyBiosThunk.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = LegacyBiosThunk.c; sourceTree = "<group>"; };
 		121E49741654F525000C2392 /* UsbMass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbMass.h; sourceTree = "<group>"; };
 		121E49751654F528000C2392 /* UsbMassBoot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbMassBoot.h; sourceTree = "<group>"; };
 		121E49761654F52D000C2392 /* UsbMassImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbMassImpl.h; sourceTree = "<group>"; };
@@ -1169,6 +1171,7 @@
 				1294B5C5165BF86600183BFD /* BiosInt13.c */,
 				1294B5C6165BF86700183BFD /* BlockIoDxe.inf */,
 				1294B5C7165BF86700183BFD /* ComponentName.c */,
+				120D825D16A2DE46000EDD83 /* LegacyBiosThunk.c */,
 				1294B5C8165BF86700183BFD /* Edd.h */,
 			);
 			path = BlockIoDxe;
@@ -1570,6 +1573,7 @@
 				121E4B57165A0F1A000C2392 /* 915resolution.c in Sources */,
 				121E4B58165A0F1A000C2392 /* edid.c in Sources */,
 				121E4B59165A0F1A000C2392 /* VideoBiosPatchLib.c in Sources */,
+				120D825E16A2DE46000EDD83 /* LegacyBiosThunk.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

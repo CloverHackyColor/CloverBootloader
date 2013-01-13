@@ -260,7 +260,7 @@ BiosBlockIoDriverBindingStart (
   BIOS_BLOCK_IO_DEV         *BiosBlockIoPrivate;
   EFI_DEVICE_PATH_PROTOCOL  *PciDevPath;
   UINTN                     Index;
-  UINTN                     Flags;
+//  UINTN                     Flags;
   UINTN                     TmpAddress;
   BOOLEAN                   DeviceEnable;
 
@@ -282,7 +282,7 @@ BiosBlockIoDriverBindingStart (
   if (mLegacy8259 == NULL) {
 		Status = gBS->LocateProtocol (&gEfiLegacy8259ProtocolGuid, NULL, (VOID **) &mLegacy8259);
 		if (EFI_ERROR (Status)) {
-			goto Done;
+			goto Error;
 		}
 		
 		InitializeBiosIntCaller(&mThunkContext);

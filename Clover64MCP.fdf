@@ -138,20 +138,20 @@ INF   Clover/LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
 #INF  IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf
 
 
-
   # IDE/AHCI Support
 #INF  Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
 #INF  Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
-INF  Clover/SataControllerDxe/SataControllerDxe.inf
-INF  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
+#INF  Clover/SataControllerDxe/SataControllerDxe.inf
+#INF  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
 #INF  Clover/AtaAtapi/AtaAtapiPassThru.inf
-INF  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
+#INF  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
 #INF  Clover/AtaBus/AtaBusDxe.inf
-INF  MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
+#INF  MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
 #INF  Clover/DVDBus/ScsiBusDxe.inf
-INF  MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
+#INF  MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
 #INF  Clover/DVDDisk/ScsiDiskDxe.inf
 #INF  IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
+INF  Clover/LegacyBios/BlockIoDxe/BlockIoDxe.inf
 
   # Usb Support
 INF  MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf

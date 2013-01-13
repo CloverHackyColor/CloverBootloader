@@ -452,7 +452,7 @@ VOID egDrawImageArea(IN EG_IMAGE *Image,
 VOID egTakeImage(IN EG_IMAGE *Image, INTN ScreenPosX, INTN ScreenPosY,
                  IN INTN AreaWidth, IN INTN AreaHeight)
 {
-  if (GraphicsOutput != NULL) {
+//  if (GraphicsOutput != NULL) {
     if (ScreenPosX + AreaWidth > UGAWidth)
     {
       AreaWidth = UGAWidth - ScreenPosX;
@@ -478,7 +478,7 @@ VOID egTakeImage(IN EG_IMAGE *Image, INTN ScreenPosX, INTN ScreenPosY,
                    0, 0, AreaWidth, AreaHeight, (UINTN)Image->Width * 4);
     }
 
-  }
+//  }
 }
 
 //
