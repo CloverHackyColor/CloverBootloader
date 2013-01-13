@@ -29,6 +29,7 @@
   BiosBlkIo.c
   BiosInt13.c
   ComponentName.c
+      LegacyBiosThunk.c
 
 [LibraryClasses]
   UefiDriverEntryPoint
@@ -44,14 +45,16 @@
   gEfiBlockIoProtocolGuid
   gEfiDevicePathProtocolGuid
   gEfiPciIoProtocolGuid
-  gEfiLegacyBiosProtocolGuid
+//  gEfiLegacyBiosProtocolGuid
+     gEfiLegacy8259ProtocolGuid					 # PROTOCOL TO_START
 
 
 [Guids]
-  gEfiLegacyBiosGuid
+//  gEfiLegacyBiosGuid
   gBlockIoVendorGuid
 
 [Packages]
+  Clover/CloverPkg.dec
   MdePkg/MdePkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec
   IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec

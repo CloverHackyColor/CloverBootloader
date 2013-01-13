@@ -20,6 +20,21 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 #include "BiosBlkIo.h"
 
+#ifndef DEBUG_ALL
+#define DEBUG_BB 1
+#else
+#define DEBUG_BB DEBUG_ALL
+#endif
+
+#if DEBUG_BB==0
+#define DBG(...)
+#elif DEBUG_BB == 1
+#define DBG(...) MemLog(TRUE, 1, __VA_ARGS__)
+#else
+#define DBG(...) MemLog(TRUE, 0, __VA_ARGS__)
+#endif
+
+
 //
 // Global data declaration
 //
@@ -68,6 +83,10 @@ BIOS_LEGACY_DRIVE           *mLegacyDriverUnder1Mb;
 //
 VOID                        *mEdd11Buffer;
 
+EFI_LEGACY_8259_PROTOCOL   *mLegacy8259 = NULL;
+THUNK_CONTEXT              mThunkContext;
+
+
 /**
   Driver entry point.
 
@@ -98,18 +117,19 @@ BiosBlockIoDriverEntryPoint (
              &gBiosBlockIoComponentName,
              &gBiosBlockIoComponentName2
              );
-  if (EFI_ERROR (Status)) {
+ // if (EFI_ERROR (Status)) {
     return Status;
-  }
+//  }
   //
   // Install Legacy BIOS GUID to mark this driver as a BIOS Thunk Driver
   //
-  return gBS->InstallMultipleProtocolInterfaces (
+/*  return gBS->InstallMultipleProtocolInterfaces (
                 &ImageHandle,
                 &gEfiLegacyBiosGuid,
                 NULL,
                 NULL
                 );
+ */
 }
 
 /**
@@ -132,7 +152,8 @@ BiosBlockIoDriverBindingSupported (
   )
 {
   EFI_STATUS                Status;
-  EFI_LEGACY_BIOS_PROTOCOL  *LegacyBios;
+//  EFI_LEGACY_BIOS_PROTOCOL  *LegacyBios;
+  EFI_LEGACY_8259_PROTOCOL                  *Legacy8259; //temporary
   EFI_PCI_IO_PROTOCOL       *PciIo;
   EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
   PCI_TYPE00                Pci;
@@ -140,10 +161,15 @@ BiosBlockIoDriverBindingSupported (
   //
   // See if the Legacy BIOS Protocol is available
   //
-  Status = gBS->LocateProtocol (&gEfiLegacyBiosProtocolGuid, NULL, (VOID **) &LegacyBios);
+/*  Status = gBS->LocateProtocol (&gEfiLegacyBiosProtocolGuid, NULL, (VOID **) &LegacyBios);
   if (EFI_ERROR (Status)) {
     return Status;
-  }
+  } */
+ 	Status = gBS->LocateProtocol (&gEfiLegacy8259ProtocolGuid, NULL, (VOID **) &Legacy8259);
+	if (EFI_ERROR (Status)) {
+		return Status;
+	}
+ 
 
   Status = gBS->OpenProtocol (
                   Controller,
@@ -179,7 +205,7 @@ BiosBlockIoDriverBindingSupported (
     return Status;
   }
   //
-  // See if this is a PCI VGA Controller by looking at the Command register and
+  // See if this is a PCI ATA Controller by looking at the Command register and
   // Class Code Register
   //
   Status = PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, 0, sizeof (Pci) / sizeof (UINT32), &Pci);
@@ -227,10 +253,10 @@ BiosBlockIoDriverBindingStart (
   )
 {
   EFI_STATUS                Status;
-  EFI_LEGACY_BIOS_PROTOCOL  *LegacyBios;
+//  EFI_LEGACY_BIOS_PROTOCOL  *LegacyBios;
   EFI_PCI_IO_PROTOCOL       *PciIo;
-  UINT8                     DiskStart;
-  UINT8                     DiskEnd;
+  UINT8                     DiskStart = 0;
+  UINT8                     DiskEnd = 3;
   BIOS_BLOCK_IO_DEV         *BiosBlockIoPrivate;
   EFI_DEVICE_PATH_PROTOCOL  *PciDevPath;
   UINTN                     Index;
@@ -249,10 +275,20 @@ BiosBlockIoDriverBindingStart (
   //
   // See if the Legacy BIOS Protocol is available
   //
-  Status = gBS->LocateProtocol (&gEfiLegacyBiosProtocolGuid, NULL, (VOID **) &LegacyBios);
+/*  Status = gBS->LocateProtocol (&gEfiLegacyBiosProtocolGuid, NULL, (VOID **) &LegacyBios);
   if (EFI_ERROR (Status)) {
     goto Error;
-  }
+  } */
+  if (mLegacy8259 == NULL) {
+		Status = gBS->LocateProtocol (&gEfiLegacy8259ProtocolGuid, NULL, (VOID **) &mLegacy8259);
+		if (EFI_ERROR (Status)) {
+			goto Done;
+		}
+		
+		InitializeBiosIntCaller(&mThunkContext);
+		InitializeInterruptRedirection(mLegacy8259);
+	}
+
   //
   // Open the IO Abstraction(s) needed
   //
@@ -298,7 +334,8 @@ BiosBlockIoDriverBindingStart (
   //
   // Check to see if there is a legacy option ROM image associated with this PCI device
   //
-  Status = LegacyBios->CheckPciRom (
+  //Slice - something for replacement?
+/*  Status = LegacyBios->CheckPciRom (
                         LegacyBios,
                         Controller,
                         NULL,
@@ -324,6 +361,8 @@ BiosBlockIoDriverBindingStart (
   if (EFI_ERROR (Status)) {
     goto Error;
   }
+ */
+  
   //
   // All instances share a buffer under 1MB to put real mode thunk code in
   // If it has not been allocated, then we allocate it.
@@ -407,7 +446,11 @@ BiosBlockIoDriverBindingStart (
     //
     BiosBlockIoPrivate->Signature                 = BIOS_CONSOLE_BLOCK_IO_DEV_SIGNATURE;
     BiosBlockIoPrivate->ControllerHandle          = Controller;
-    BiosBlockIoPrivate->LegacyBios                = LegacyBios;
+ //   BiosBlockIoPrivate->LegacyBios                = LegacyBios;
+    BiosBlockIoPrivate->Legacy8259   = mLegacy8259;
+    BiosBlockIoPrivate->ThunkContext = &mThunkContext;
+    
+
     BiosBlockIoPrivate->PciIo                     = PciIo;
 
     BiosBlockIoPrivate->Bios.Floppy               = FALSE;

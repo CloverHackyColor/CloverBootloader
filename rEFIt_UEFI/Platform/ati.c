@@ -1289,7 +1289,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
   }
   
 	NameLen = StrLen(gSettings.FBName);
-  if (NameLen > 3) {  //fool proof: cfg_name is 4 character or more.
+  if (NameLen > 2) {  //fool proof: cfg_name is 4 character or more.
     CfgName = AllocateZeroPool(NameLen);
     UnicodeStrToAsciiStr((CHAR16*)&gSettings.FBName[0], CfgName);
     DBG("Users config name %a\n", CfgName);
@@ -1297,18 +1297,23 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
   } else {
     // use cfg_name on radeon_cards, to retrive the default name from card_configs,
 		card->cfg_name = card_configs[card->info->cfg_name].name;
-		
+		n_ports = card_configs[card->info->cfg_name].ports;
 		// which means one of the fb's or kNull
-		DBG("Framebuffer set to device's default: %a\n", card->cfg_name);    
+		DBG("Framebuffer set to device's default: %a\n", card->cfg_name);
+    DBG(" N ports defaults to %d\n", n_ports);
   }	
 
-	if (n_ports > 0)
-	{
+  if (gSettings.VideoPorts != 0) {    
+    n_ports = gSettings.VideoPorts;
+    DBG(" use N ports setting from config.plist: %d\n", n_ports);
+  }
+  
+	if (n_ports > 0) {
 		card->ports = (UINT8)n_ports; // use it.
 		DBG("(AtiPorts) Nr of ports set to: %d\n", card->ports);
-  }
-	else// if (card->cfg_name > 0) // do we want 0 ports if fb is kNull or mistyped ?
-	{
+  } else {
+    // if (card->cfg_name > 0) // do we want 0 ports if fb is kNull or mistyped ?
+	
 		// else, match cfg_name with card_configs list and retrive default nr of ports.
 		for (i = 0; i < kCfgEnd; i++)
 			if (AsciiStrCmp(card->cfg_name, card_configs[i].name) == 0)

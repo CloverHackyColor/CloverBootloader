@@ -37,6 +37,7 @@
   ReportStatusCodeLib
   DevicePathLib
   PeCoffLib
+  MemLogLib
 
 [Sources]
   PciBus.h

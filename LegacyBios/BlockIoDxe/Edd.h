@@ -1,5 +1,5 @@
 /** @file
-  Include file to suport EDD 3.0.
+  Include file to support EDD 3.0.
   This file is coded to T13 D1386 Revision 3
   Availible on http://www.t13.org/#Project drafts
   Currently at ftp://fission.dt.wdc.com/pub/standards/x3t13/project/d1386r3.pdf
@@ -198,10 +198,11 @@ typedef struct {
   EFI_BLOCK_IO_MEDIA        BlockMedia;
   EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
   EFI_PCI_IO_PROTOCOL       *PciIo;
-  EFI_LEGACY_BIOS_PROTOCOL  *LegacyBios;
-
+//  EFI_LEGACY_BIOS_PROTOCOL  *LegacyBios;
+  EFI_LEGACY_8259_PROTOCOL  *Legacy8259;
   BIOS_LEGACY_DRIVE         Bios;
-
+  THUNK_CONTEXT             *ThunkContext;
+  
 } BIOS_BLOCK_IO_DEV;
 
 #define BIOS_BLOCK_IO_FROM_THIS(a)  CR (a, BIOS_BLOCK_IO_DEV, BlockIo, BIOS_CONSOLE_BLOCK_IO_DEV_SIGNATURE)

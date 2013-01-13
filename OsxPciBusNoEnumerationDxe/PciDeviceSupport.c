@@ -23,10 +23,28 @@ Revision History
 
 #include "PciBus.h"
 
+#include <Library/MemLogLib.h>
+#include <Library/PrintLib.h>
+
 //
 // This device structure is serviced as a header.
 // Its Next field points to the first root bridge device node
 //
+#ifndef DEBUG_ALL
+#define DEBUG_PCI 0
+#else
+#define DEBUG_PCI DEBUG_ALL
+#endif
+
+#if DEBUG_PCI==0
+#define DBG(...)
+#elif DEBUG_PCI == 1
+#define DBG(...) MemLog(TRUE, 1, __VA_ARGS__)
+#else
+#define DBG(...) MemLog(TRUE, 0, __VA_ARGS__)
+#endif
+
+
 LIST_ENTRY  gPciDevicePool;
 
 EFI_STATUS
@@ -100,7 +118,7 @@ Returns:
 --*/
 
 {
-
+  DBG("Insert node %p in %p\n", PciDeviceNode, Bridge);
   InsertTailList (&Bridge->ChildList, &(PciDeviceNode->Link));
   PciDeviceNode->Parent = Bridge;
 
@@ -221,7 +239,7 @@ Returns:
 
     CurrentLink = CurrentLink->ForwardLink;
   }
-
+  DBG("RootBridge destroyed\n");
   return EFI_NOT_FOUND;
 }
 
@@ -283,6 +301,7 @@ Returns:
   }
 
   if (EFI_ERROR (Status)) {
+    DBG("PciIo protocol not installed Status=%r\n", Status);
     return Status;
   } else {
     Status = gBS->OpenProtocol (
@@ -315,6 +334,7 @@ Returns:
   if (!EFI_ERROR (Status)) {
     PciIoDevice->IsPciExp = TRUE;
 //    DEBUG ((EFI_D_ERROR, "PciExp - %x (B-%x, D-%x, F-%x)\n", PciIoDevice->IsPciExp, PciIoDevice->BusNumber, PciIoDevice->DeviceNumber, PciIoDevice->FunctionNumber));
+    DBG("PciExp - %x (B-%x, D-%x, F-%x)\n", PciIoDevice->IsPciExp, PciIoDevice->BusNumber, PciIoDevice->DeviceNumber, PciIoDevice->FunctionNumber);
   }
   
   //
@@ -600,6 +620,7 @@ Returns:
       //
       CurrentDevicePath = NextDevicePathNode (RemainingDevicePath);
       if (IsDevicePathEnd (CurrentDevicePath)) {
+        DBG("PCIdevice [%04x,%04x] started\n", Node.Pci->Device, Node.Pci->Function);
         return EFI_SUCCESS;
       }
   
