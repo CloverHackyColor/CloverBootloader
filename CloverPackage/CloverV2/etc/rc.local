@@ -38,8 +38,7 @@ echo "-------------------------------" >> $theBootLog
 logdump=$(ioreg -lw0 -pIODeviceTree | grep boot-log)
 modified1=${logdump#*'boot-log'}
 modified2=${modified1#*'<'}
-modified3=${modified2%%'>'*}
-echo "$modified3" > ${theTempPath}
+echo "${modified2%%'>'*}" > ${theTempPath}
 xxd -r -p ${theTempPath} >> ${theBootLog}
 rm ${theTempPath}
 cat ${theBootLog} >> ${theLogPath}
@@ -50,27 +49,46 @@ cat ${theBootLog} >> ${theLogPath}
 theBootFlags=$(nvram -p  | grep "MountEFI=Yes")
 theRoot=
 
-for theBootFlag in $theBootFlags; do
-   theBootFlag=$(echo $theBootFlag | tr '[:upper:]' '[:lower:]')
+for theBootFlag in $theBootFlags ; do
+   #
+   # Split the flag and value
+   #  theBootFlag will be the lowercase flag name
+   #  theBootFlagValue will be the flag value as is
+   #  theBootFlagIValue will be the lowercase flag value
+   #
+   theBootFlagValue=
+   theBootFlagIValue=
+   if [ "x$(echo $theBootFlag | grep =)" != "x" ]; then
+      theBootFlagValue=${theBootFlag#*'='}
+      theBootFlagIValue=$(echo $theBootFlagValue | tr '[:upper:]' '[:lower:]')
+   fi
+   theBootFlag=$(echo ${theBootFlag%%'='*} | tr '[:upper:]' '[:lower:]')
    #
    # Parse the MountEFI= parameter
    #
-   if [ "x${theBootFlag:0:9}" == "xmountefi=" ]; then
-      if [ "x${theBootFlag:9}" == x"yes" ]; then
+   if [ "x$theBootFlag" == "xmountefi" ]; then
+      if [ "x$(echo $theBootFlagIValue)" == "xyes" ]; then
          #
          # Set the EFI partition of the root volume
          #
          theRoot=$(diskutil info / | grep 'Part of Whole:' | awk '{print $4}')
-      else
+      elif [ "x$theBootFlagValue" != "x" ]; then
          #
          # Set EFI partition disk manually
          #
-         theRootTest=$(diskutil list | grep ${theBootFlag:9})
-         if [ "x$theRootTest" != "x" ]; then
-            theRoot=${theBootFlag:9}
+         if [ "x$(diskutil list | grep ${theBootFlagValue})" != "x" ]; then
+            theRoot=$theBootFlagValue
          fi
       fi   
    fi
+   #
+   # Add additional flags here
+   #
+   # if [ "x$theBootFlag" == "xflagname" ]; then
+   #    if [ "x$theBootFlagValue" == "xsomevalue" ]; then
+   #       # Do something
+   #    fi
+   # fi
 done
 
 #
