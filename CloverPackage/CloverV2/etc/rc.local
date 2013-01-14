@@ -35,7 +35,7 @@ echo "-------------------------------" >> $theBootLog
 #
 # Get the current boot log
 #
-logdump=`ioreg -lw0 -pIODeviceTree | grep boot-log`
+logdump=$(ioreg -lw0 -pIODeviceTree | grep boot-log)
 modified1=${logdump#*'boot-log'}
 modified2=${modified1#*'<'}
 modified3=${modified2%%'>'*}
@@ -45,20 +45,39 @@ rm ${theTempPath}
 cat ${theBootLog} >> ${theLogPath}
 
 #
-# Check a root volume exists
+# Parse boot flags
 #
-theRoot=`diskutil info / | grep 'Part of Whole:' | awk '{print $4}'`
-if [ "x$theRoot" == "x" ]; then
-   echo "No root volume found"
-   exit
-fi
+theBootFlags=$(nvram -p  | grep "MountEFI=Yes")
+theRoot=
+
+for theBootFlag in $theBootFlags; do
+   theBootFlag=$(echo $theBootFlag | tr '[:upper:]' '[:lower:]')
+   #
+   # Parse the MountEFI= parameter
+   #
+   if [ "x${theBootFlag:0:9}" == "xmountefi=" ]; then
+      if [ "x${theBootFlag:9}" == x"yes" ]; then
+         #
+         # Set the EFI partition of the root volume
+         #
+         theRoot=$(diskutil info / | grep 'Part of Whole:' | awk '{print $4}')
+      else
+         #
+         # Set EFI partition disk manually
+         #
+         theRootTest=$(diskutil list | grep ${theBootFlag:9})
+         if [ "x$theRootTest" != "x" ]; then
+            theRoot=${theBootFlag:9}
+         fi
+      fi   
+   fi
+done
 
 #
-# Check if the EFI mount flag is present
+# Check for EFI mounting
 #
-theBootFlag=`nvram -p  | grep "MountEFI=Yes"`
-if [ "x$theBootFlag" == "x" ]; then
-   echo "Not AutoMounting ${theRoot}s1"
+if [ "x$theRoot" == "x" ]; then
+   echo "Not auto mounting EFI partition"
    exit
 fi
 
