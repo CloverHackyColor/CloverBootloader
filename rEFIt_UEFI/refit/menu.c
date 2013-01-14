@@ -719,6 +719,9 @@ static VOID InitScroll(OUT SCROLL_STATE *State, IN UINTN ItemCount, IN UINTN Max
     State->MaxVisible = State->MaxScroll;
   else
     State->MaxVisible = (INTN)VisibleSpace - 1;
+
+  if (State->MaxVisible >= ItemCount)
+      State->MaxVisible = ItemCount - 1;
   
   State->MaxFirstVisible = State->MaxScroll - State->MaxVisible;
   CONSTRAIN_MIN(State->MaxFirstVisible, 0);
@@ -728,9 +731,9 @@ static VOID InitScroll(OUT SCROLL_STATE *State, IN UINTN ItemCount, IN UINTN Max
   State->PaintSelection = FALSE;
   
   State->LastVisible = State->FirstVisible + State->MaxVisible;
-//  DBG("InitScroll: MaxIndex=%d, FirstVisible=%d, MaxVisible=%d, MaxFirstVisible=%d\n",
-//      State->MaxIndex, State->FirstVisible, State->MaxVisible, State->MaxFirstVisible);
-  // 14 0 7 2 => MaxScroll = 9 ItemCount=10 MaxCount=15
+ // DBG("InitScroll: MaxIndex=%d, FirstVisible=%d, MaxVisible=%d, MaxFirstVisible=%d\n",
+  //    State->MaxIndex, State->FirstVisible, State->MaxVisible, State->MaxFirstVisible);
+     //4 0 11 0
 }
 
 static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
@@ -1470,6 +1473,7 @@ static INTN MenuWidth, EntriesPosX, EntriesPosY, TimeoutPosY;
 static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
   INTN i;
+  INTN j;
   INTN ItemWidth = 0;
   INTN X;
   INTN VisibleHeight = 0; //assume vertical layout
@@ -1478,15 +1482,14 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
   switch (Function) {
       
     case MENU_FUNCTION_INIT:
-      // TODO: calculate available screen space
-      //
+      
       egGetScreenSize(&UGAWidth, &UGAHeight);
       SwitchToGraphicsAndClear();
       
       EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET + (TextHeight << 1);
-      VisibleHeight = (LAYOUT_TOTAL_HEIGHT - LAYOUT_BANNER_YOFFSET - (TextHeight << 1)) / TextHeight;
-//        DBG("MENU_FUNCTION_INIT 1 EntriesPosY=%d VisibleHeight=%d\n", EntriesPosY, VisibleHeight);
-      InitScroll(State, Screen->EntryCount, Screen->EntryCount, VisibleHeight);              
+      VisibleHeight = (LAYOUT_TOTAL_HEIGHT - LAYOUT_BANNER_YOFFSET) / TextHeight - Screen->InfoLineCount - 1;
+      DBG("MENU_FUNCTION_INIT 1 EntriesPosY=%d VisibleHeight=%d\n", EntriesPosY, VisibleHeight);
+      InitScroll(State, Screen->EntryCount, Screen->EntryCount, VisibleHeight);
       // determine width of the menu
       MenuWidth = 50;  // minimum
       /* for (i = 0; i < (INTN)Screen->InfoLineCount; i++) {
@@ -1543,12 +1546,13 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       break;
       
     case MENU_FUNCTION_PAINT_ALL:
-      for (i = 0; i <= State->MaxIndex; i++) {
+          
+      for (i = State->FirstVisible, j = 0; i <= State->LastVisible; i++, j++) {
         INTN  TitleLen;
 
         TitleLen = StrLen(Screen->Entries[i]->Title);
         Screen->Entries[i]->Place.XPos = EntriesPosX;
-        Screen->Entries[i]->Place.YPos = EntriesPosY + i * TextHeight;
+        Screen->Entries[i]->Place.YPos = EntriesPosY + j * TextHeight;
         Screen->Entries[i]->Place.Width = TitleLen * GlobalConfig.CharWidth;
         Screen->Entries[i]->Place.Height = (UINTN)TextHeight;
         
@@ -1583,12 +1587,12 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->SValue + ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->LineShift);
         StrCat(ResultString, L" ");
         DrawMenuText(ResultString, 0,
-                     EntriesPosX, EntriesPosY + State->LastSelection * TextHeight,
+                     EntriesPosX, EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight,
                      TitleLen + Screen->Entries[State->LastSelection]->Row);
       }
       else {
         DrawMenuText(Screen->Entries[State->LastSelection]->Title, 0,
-                     EntriesPosX, EntriesPosY + State->LastSelection * TextHeight, 0xFFFF);
+                     EntriesPosX, EntriesPosY + (State->LastSelection - State->FirstVisible) * TextHeight, 0xFFFF);
       }
             //Current selection
       if (Screen->Entries[State->CurrentSelection]->Tag == TAG_INPUT) {
@@ -1597,12 +1601,12 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->SValue + ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->LineShift);
         StrCat(ResultString, L" ");
         DrawMenuText(ResultString, StrLen(ResultString) * GlobalConfig.CharWidth,
-                     EntriesPosX, EntriesPosY + State->CurrentSelection * TextHeight,
+                     EntriesPosX, EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight,
                      TitleLen + Screen->Entries[State->CurrentSelection]->Row);
       }
       else {
         DrawMenuText(Screen->Entries[State->CurrentSelection]->Title, MenuWidth,
-                     EntriesPosX, EntriesPosY + State->CurrentSelection * TextHeight, 0xFFFF);
+                     EntriesPosX, EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight, 0xFFFF);
       }
       MouseBirth();
       break;
