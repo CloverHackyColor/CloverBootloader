@@ -220,7 +220,13 @@ CreateBootOptionDevicePath (
         if (TmpDevPath != NULL) {
             FreePool (*DevicePath);
             *DevicePath = TmpDevPath;
-        }
+        } /* else {
+          TmpDevPath = DuplicateDevicePath (FindDevicePathNodeWithType (*DevicePath, HARDWARE_DEVICE_PATH, HW_VENDOR_DP));
+          if (TmpDevPath != NULL) {
+            FreePool (*DevicePath);
+            *DevicePath = TmpDevPath;
+          }
+        }*/
     }
     
     return EFI_SUCCESS;

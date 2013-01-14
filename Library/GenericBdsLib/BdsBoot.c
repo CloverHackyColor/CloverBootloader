@@ -2286,7 +2286,15 @@ BdsLibBootViaBootOption (
     if (WorkingDevicePath != NULL) {
       DevicePath = WorkingDevicePath;
     }
-  }
+  } /* else if ((DevicePathType (DevicePath) == HARDWARE_DEVICE_PATH) &&
+               (DevicePathSubType (DevicePath) == HW_VENDOR_DP)) {
+    WorkingDevicePath = BdsExpandPartitionPartialDevicePathToFull (
+                                                                   (HARDDRIVE_DEVICE_PATH *)DevicePath
+                                                                   );
+    if (WorkingDevicePath != NULL) {
+      DevicePath = WorkingDevicePath;
+    }
+  } */
 
   //
   // Set Boot Current
@@ -2779,8 +2787,10 @@ MatchPartitionDevicePathNode (
   // find the partition device path node
   //
   while (!IsDevicePathEnd (DevicePath)) {
-    if ((DevicePathType (DevicePath) == MEDIA_DEVICE_PATH) &&
-        (DevicePathSubType (DevicePath) == MEDIA_HARDDRIVE_DP)
+    if (((DevicePathType (DevicePath) == MEDIA_DEVICE_PATH) &&
+        (DevicePathSubType (DevicePath) == MEDIA_HARDDRIVE_DP)) ||
+        ((DevicePathType (DevicePath) == HARDWARE_DEVICE_PATH) &&
+         (DevicePathSubType (DevicePath) == HW_VENDOR_DP))
         ) {
       BlockIoHdDevicePathNode = DevicePath;
       break;
@@ -3889,6 +3899,27 @@ BdsGetBootTypeFromDevicePath (
 
   while (!IsDevicePathEndType (TempDevicePath)) {
     switch (DevicePathType (TempDevicePath)) {
+      case HARDWARE_DEVICE_PATH:
+        LastDeviceNode = NextDevicePathNode (TempDevicePath);
+        if (DevicePathSubType(LastDeviceNode) == MSG_DEVICE_LOGICAL_UNIT_DP) {
+          //
+          // if the next node type is Device Logical Unit, which specify the Logical Unit Number (LUN),
+          // skip it
+          //
+          LastDeviceNode = NextDevicePathNode (LastDeviceNode);
+        }
+        //
+        // if the device path not only point to driver device, it is not a messaging device path,
+        //
+        if (!IsDevicePathEndType (LastDeviceNode)) {
+          break;
+        }
+        
+        if (DevicePathSubType (TempDevicePath) == HW_VENDOR_DP) {          
+            return BDS_EFI_MESSAGE_ATAPI_BOOT;
+        }
+        break;
+        
       case BBS_DEVICE_PATH:
          return BDS_LEGACY_BBS_BOOT;
       case MEDIA_DEVICE_PATH:
