@@ -85,6 +85,7 @@ VOID                        *mEdd11Buffer;
 
 EFI_LEGACY_8259_PROTOCOL   *mLegacy8259 = NULL;
 THUNK_CONTEXT              mThunkContext;
+BOOLEAN                   mBiosDrivesEnumerated = FALSE;
 
 
 /**
@@ -158,6 +159,12 @@ BiosBlockIoDriverBindingSupported (
   EFI_DEVICE_PATH_PROTOCOL  *DevicePath;
   PCI_TYPE00                Pci;
 
+  //
+  //Check if BIOS drives are already enumerated
+  //
+  if (mBiosDrivesEnumerated) {
+    return EFI_UNSUPPORTED;
+  }
   //
   // See if the Legacy BIOS Protocol is available
   //
@@ -493,6 +500,8 @@ BiosBlockIoDriverBindingStart (
       gBS->FreePool (BiosBlockIoPrivate);
     }
   }
+  
+  mBiosDrivesEnumerated = TRUE;
 
 Error:
   if (EFI_ERROR (Status)) {

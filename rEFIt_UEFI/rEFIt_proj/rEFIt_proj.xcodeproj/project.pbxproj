@@ -483,7 +483,7 @@
 		1292F1A1164A8380008FAEEC /* UefiCpuPkg.dsc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UefiCpuPkg.dsc; sourceTree = "<group>"; };
 		1292F1A5164A8380008FAEEC /* S3Resume.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = S3Resume.c; sourceTree = "<group>"; };
 		1292F1A6164A8380008FAEEC /* S3Resume2Pei.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = S3Resume2Pei.inf; sourceTree = "<group>"; };
-		1292F252164BC7A7008FAEEC /* BiosBlkIo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BiosBlkIo.c; sourceTree = "<group>"; };
+		1292F252164BC7A7008FAEEC /* BiosBlkIo.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; path = BiosBlkIo.c; sourceTree = "<group>"; tabWidth = 2; };
 		1292F253164BC7A7008FAEEC /* BiosBlkIo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BiosBlkIo.h; sourceTree = "<group>"; };
 		1292F254164BC7A7008FAEEC /* BiosInt13.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BiosInt13.c; sourceTree = "<group>"; };
 		1292F255164BC7A7008FAEEC /* BlockIoDxe.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BlockIoDxe.inf; sourceTree = "<group>"; };
