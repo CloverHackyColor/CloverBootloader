@@ -241,7 +241,7 @@ VOID UpdatePointer()
     } else if (gPointer.State.RelativeMovementZ > 0) 
       gPointer.MouseEvent = ScrollDown;
     else if (gPointer.State.RelativeMovementZ < 0)
-      gPointer.MouseEvent = ScrollDown;
+      gPointer.MouseEvent = ScrollUp;
     else
       gPointer.MouseEvent = NoEvents;
     
