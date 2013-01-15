@@ -46,7 +46,7 @@ cat ${theBootLog} >> ${theLogPath}
 #
 # Parse boot flags
 #
-theBootFlags=$(nvram -p  | grep "MountEFI=Yes")
+theBootFlags=$(nvram -p  | grep "boot-args")
 theRoot=
 
 for theBootFlag in $theBootFlags ; do
@@ -79,7 +79,7 @@ for theBootFlag in $theBootFlags ; do
          if [ "x$(diskutil list | grep ${theBootFlagValue})" != "x" ]; then
             theRoot=$theBootFlagValue
          fi
-      fi   
+      fi
    fi
    #
    # Add additional flags here
