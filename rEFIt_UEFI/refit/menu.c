@@ -720,8 +720,8 @@ static VOID InitScroll(OUT SCROLL_STATE *State, IN INTN ItemCount, IN UINTN MaxC
   else
     State->MaxVisible = (INTN)VisibleSpace - 1;
 
-  if (State->MaxVisible >= ItemCount)
-      State->MaxVisible = ItemCount - 1;
+  if (State->MaxVisible >= (INTN)ItemCount)
+      State->MaxVisible = (INTN)ItemCount - 1;
   
   State->MaxFirstVisible = State->MaxScroll - State->MaxVisible;
   CONSTRAIN_MIN(State->MaxFirstVisible, 0);
@@ -1186,7 +1186,12 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
       case ActionFinish:
         MenuExit = MENU_EXIT_ESCAPE;
         break;
- 
+      case ActionScrollDown:
+        UpdateScroll(&State, SCROLL_LINE_DOWN);
+        break;
+      case ActionScrollUp:
+        UpdateScroll(&State, SCROLL_LINE_UP);
+        break;
       default:
         break;
     }

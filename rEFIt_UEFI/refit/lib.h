@@ -211,7 +211,9 @@ typedef enum {
   ActionDestroy,
   ActionOptions,
   ActionDetails,
-  ActionFinish
+  ActionFinish,
+  ActionScrollDown,
+  ActionScrollUp
 } ACTION;
 
 typedef struct {
