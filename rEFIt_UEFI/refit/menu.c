@@ -708,7 +708,7 @@ static VOID InitSelection(VOID)
 #define CONSTRAIN_MIN(Variable, MinValue) if (Variable < MinValue) Variable = MinValue
 #define CONSTRAIN_MAX(Variable, MaxValue) if (Variable > MaxValue) Variable = MaxValue
 
-static VOID InitScroll(OUT SCROLL_STATE *State, IN UINTN ItemCount, IN UINTN MaxCount, IN UINTN VisibleSpace)
+static VOID InitScroll(OUT SCROLL_STATE *State, IN INTN ItemCount, IN UINTN MaxCount, IN UINTN VisibleSpace)
 {
   State->LastSelection = State->CurrentSelection = 0;
   State->MaxIndex = (INTN)MaxCount - 1;
