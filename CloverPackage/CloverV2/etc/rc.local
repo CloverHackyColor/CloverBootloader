@@ -86,10 +86,19 @@ for theBootFlag in ${theBootFlags} ; do
    #
    elif [ "x$theBootFlag" == "xnvramdisk" ]; then
       #
-      # Set NVRAM partition manually
+      # Don't set NVRAM
       #
-      if [ "x$(diskutil list | grep ${theBootFlagValue})" != "x" ]; then
-         theNVRAMRoot=${theBootFlagValue}
+      if [ "x${theBootFlagIValue}" == "xno" ]; then
+         theNVRAMRoot=
+         rm -f ${theNVRAMHelper}
+      elif [ "x${theBootFlagValue}" != "x" ]; then
+         #
+         # Set NVRAM partition manually
+         #
+         touch ${theNVRAMHelper}
+         if [ "x$(diskutil list | grep ${theBootFlagValue})" != "x" ]; then
+            theNVRAMRoot=${theBootFlagValue}
+         fi
       fi
    #
    # Add additional flags here

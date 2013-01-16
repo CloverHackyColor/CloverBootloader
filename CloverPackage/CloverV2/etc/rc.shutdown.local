@@ -22,11 +22,12 @@ theUnmountCmd=
 #
 # Get the mount command from the helper
 #
-if [ -f ${theMountFile} ]; then
-   theUnmountCmd=$(head -n 1 ${theMountFile})
-   theMountCmd=$(tail -n 1 ${theMountFile})
-   rm -f ${theMountFile}
+if [ !-f ${theMountFile} ]; then
+   exit;
 fi
+theUnmountCmd=$(head -n 1 ${theMountFile})
+theMountCmd=$(tail -n 1 ${theMountFile})
+rm -f ${theMountFile}
 
 #
 # Save NVRAM to boot helper partition for RAID
