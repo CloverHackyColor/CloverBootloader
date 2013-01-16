@@ -1,5 +1,17 @@
 #!/bin/sh
 # (c) Slice 2010
-nvram -x -p >nvram.plist
-echo Hello! NVRAM is saved!
+# (c) kozlek 2013
+
+device_name=$(cat /.helper_name)
+ 
+if [ ${device_name} ]; then
+    mkdir /Volumes/Boot\ OS\ X
+    mount -t hfs /dev/${device_name} /Volumes/Boot\ OS\ X
+    nvram -x -p >/Volumes/Boot\ OS\ X/nvram.plist
+    umount /dev/${device_name}
+    echo CoreStorage device found. NVRAM saved to /Volumes/Boot\ OS\ X/nvram.plist!
+else
+    nvram -x -p >/nvram.plist
+    echo CoreStorage device not found. NVRAM saved to /nvram.plist!
+fiecho Hello! NVRAM is saved!
 

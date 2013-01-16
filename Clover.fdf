@@ -151,6 +151,7 @@ INF  Clover/DVDBus/ScsiBusDxe.inf
 #INF  MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
 INF  Clover/DVDDisk/ScsiDiskDxe.inf
 #INF  IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
+#INF  Clover/LegacyBios/BlockIoDxe/BlockIoDxe.inf
 
   # Usb Support
 INF  MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf

@@ -77,6 +77,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 	mkdir -p ${3}/Core/Root/usr/standalone/i386/x64
 	ditto --noextattr --noqtn ${3%/*}/i386/ia32/boot ${3}/Core/Root/usr/standalone/i386/ia32
 	ditto --noextattr --noqtn ${3%/*}/i386/x64/boot ${3}/Core/Root/usr/standalone/i386/x64
+	ditto --noextattr --noqtn ${3%/*}/i386/x64/boot7 ${3}/Core/Root/usr/standalone/i386/x64
 	ditto --noextattr --noqtn ${3%/*}/i386/boot0 ${3}/Core/Root/usr/standalone/i386
 	ditto --noextattr --noqtn ${3%/*}/i386/boot0md ${3}/Core/Root/usr/standalone/i386
 	ditto --noextattr --noqtn ${3%/*}/i386/boot0hfs ${3}/Core/Root/usr/standalone/i386

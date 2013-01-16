@@ -3,7 +3,7 @@
 #
 # rc.local startup script
 #
-# Initial - ?
+# Initial - fassl, slice, STLVNUB
 # Edited - apianti 2013-01-13
 #
 
@@ -42,6 +42,9 @@ echo "${modified2%%'>'*}" > ${theTempPath}
 xxd -r -p ${theTempPath} >> ${theBootLog}
 rm ${theTempPath}
 cat ${theBootLog} >> ${theLogPath}
+
+# Search helper partition (c)kozlek
+diskutil list | grep -m 1 'Boot OS X' | awk '{print $8}' >/.helper_name
 
 #
 # Parse boot flags
