@@ -51,6 +51,7 @@ if [ "x${theMountCmd}" != "x" ]; then
       #
       nvram -x -p > ${theMountPoint}/nvram.plist
       if [ -f ${theMountPoint}/nvram.plist ]; then
+         chflags hidden ${theNVRAM}
          ${theUnmountCmd}
          echo "CoreStorage device found. NVRAM saved to ${theMountPoint}${theNVRAM}!"
          exit
@@ -63,4 +64,5 @@ fi
 # Save NVRAM to root by default
 #
 nvram -x -p > ${theNVRAM}
+chflags hidden ${theNVRAM}
 echo "CoreStorage device not found. NVRAM saved to ${theNVRAM}!"
