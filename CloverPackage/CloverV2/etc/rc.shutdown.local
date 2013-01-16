@@ -16,8 +16,8 @@
 theNVRAM=/nvram.plist
 theMountFile=/.nvram.plist
 theMountPoint=/Volumes/NVRAM
-theMountCmd=
-theUnmountCmd=
+theMountRoot=
+theMountType=
 
 #
 # Get the mount command from the helper
@@ -25,40 +25,42 @@ theUnmountCmd=
 if [ !-f ${theMountFile} ]; then
    exit;
 fi
-theUnmountCmd=$(head -n 1 ${theMountFile})
-theMountCmd=$(tail -n 1 ${theMountFile})
+theMountRoot=$(head -n 1 ${theMountFile})
+theMountType=$(tail -n 1 ${theMountFile})
 rm -f ${theMountFile}
 
 #
 # Save NVRAM to boot helper partition for RAID
 #
-if [ "x${theMountCmd}" != "x" ]; then
-   #
-   # Make sure mount point exists
-   #
-   if [ ! -d ${theMountPoint} ]; then
-      mkdir ${theMountPoint}
-   fi
-   if [ -d ${theMountPoint} ]; then
+if [ "x${theMountRoot}" != "x" ]; then
+   if [ "x${theMountType}" != "x" ]; then
       #
-      # Unmount the mount point and device first just in case
+      # Make sure mount point exists
       #
-      umount ${theMountPoint}
-      ${theUnmountCmd}
-      ${theMountCmd} ${theMountPoint}
-      #
-      # Write NVRAM and make sure it exists
-      #
-      nvram -x -p > ${theMountPoint}/nvram.plist
-      if [ -f ${theMountPoint}/nvram.plist ]; then
-         chflags hidden ${theNVRAM}
-         ${theUnmountCmd}
-         echo "CoreStorage device found. NVRAM saved to ${theMountPoint}${theNVRAM}!"
-         exit
+      if [ ! -d ${theMountPoint} ]; then
+         mkdir ${theMountPoint}
       fi
-      ${theUnmountCmd}
+      if [ -d ${theMountPoint} ]; then
+         #
+         # Unmount the mount point and device first just in case
+         #
+         umount ${theMountPoint}
+         umount /dev/${theMountRoot}
+         mount -t ${theMountType} /dev/${theMountRoot} ${theMountPoint}
+         #
+         # Write NVRAM and make sure it exists
+         #
+         nvram -x -p > ${theMountPoint}${theNVRAM}
+         if [ -f ${theMountPoint}${theNVRAM} ]; then
+            chflags hidden ${theMountPoint}${theNVRAM}
+            umount /dev/${theMountRoot}
+            echo "CoreStorage device found. NVRAM saved to ${theMountPoint}${theNVRAM}!"
+            exit
+         fi
+         umount /dev/${theMountRoot}
+      fi
+      echo "CoreStorage device found. But NVRAM couldn't be saved to ${theMountPoint}${theNVRAM}!"
    fi
-   echo "CoreStorage device found. But NVRAM couldn't be saved to ${theMountPoint}${theNVRAM}!"
 fi
 #
 # Save NVRAM to root by default
