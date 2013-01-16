@@ -117,6 +117,8 @@ if [ "x${theNVRAMRoot}" != "x" ]; then
    theNVRAMRootType=$(diskutil info /dev/${theNVRAMRoot} | grep 'Partition Type:' | awk '{print $3}' | tr '[:upper:]' '[:lower:]')
    if [ "x${theNVRAMRootType}" == "xapple_hfs" ]; then
       theNVRAMRootType=hfs
+   elif [ "x${theNVRAMRootType}" == "xapple_boot" ]; then
+      theNVRAMRootType=hfs
    elif [ "x${theNVRAMRootType}" == "xefi" ]; then
       theNVRAMRootType=msdos
    else
