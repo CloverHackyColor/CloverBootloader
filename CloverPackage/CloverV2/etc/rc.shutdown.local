@@ -1,17 +1,65 @@
 #!/bin/sh
+
+#
+# rc.shutdown.local shutdown script
+#
+# Initial - Slice
+# Edited - kozlek 2013-01-15
+# Edited - apianti 2013-01-16
+#
 # (c) Slice 2010
-# (c) kozlek 2013
+# (c) kozlek,apianti 2013
 
-device_name=$(cat /.helper_name)
- 
-if [ ${device_name} ]; then
-    mkdir /Volumes/Boot\ OS\ X
-    mount -t hfs /dev/${device_name} /Volumes/Boot\ OS\ X
-    nvram -x -p >/Volumes/Boot\ OS\ X/nvram.plist
-    umount /dev/${device_name}
-    echo CoreStorage device found. NVRAM saved to /Volumes/Boot\ OS\ X/nvram.plist!
-else
-    nvram -x -p >/nvram.plist
-    echo CoreStorage device not found. NVRAM saved to /nvram.plist!
-fiecho Hello! NVRAM is saved!
+#
+# Manage nvram.plist
+#
+theNVRAM=/nvram.plist
+theMountFile=/.nvram.plist
+theMountPoint=/Volumes/NVRAM
+theMountCmd=
+theUnmountCmd=
 
+#
+# Get the mount command from the helper
+#
+if [ -f ${theMountFile} ]; then
+   theUnmountCmd=$(head -n 1 ${theMountFile})
+   theMountCmd=$(tail -n 1 ${theMountFile})
+   rm -f ${theMountFile}
+fi
+
+#
+# Save NVRAM to boot helper partition for RAID
+#
+if [ "x${theMountCmd}" != "x" ]; then
+   #
+   # Make sure mount point exists
+   #
+   if [ ! -d ${theMountPoint} ]; then
+      mkdir ${theMountPoint}
+   fi
+   if [ -d ${theMountPoint} ]; then
+      #
+      # Unmount the mount point and device first just in case
+      #
+      umount ${theMountPoint}
+      ${theUnmountCmd}
+      ${theMountCmd} ${theMountPoint}
+      #
+      # Write NVRAM and make sure it exists
+      #
+      nvram -x -p > ${theMountPoint}/nvram.plist
+      if [ -f ${theMountPoint}/nvram.plist ]; then
+         ${theUnmountCmd}
+         echo "CoreStorage device found. NVRAM saved to ${theMountPoint}${theNVRAM}!"
+         exit
+      fi
+      ${theUnmountCmd}
+   fi
+   echo "CoreStorage device found. But NVRAM couldn't be saved to ${theMountPoint}${theNVRAM}!"
+fi
+#
+# Save NVRAM to root by default
+#
+nvram -x -p > ${theNVRAM}
+echo "CoreStorage device not found. NVRAM saved to ${theNVRAM}!"

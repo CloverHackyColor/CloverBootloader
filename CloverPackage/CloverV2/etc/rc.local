@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 #
 # rc.local startup script
@@ -10,49 +10,21 @@
 #
 # Manage boot log
 #
-theBootLog=boot.log
-theLogPath=system.log
+theLogLocation=/Library/Logs/CloverEFI
+theLogPath=/boot.log
+theLogsPath=/system.log
 theLineCount=3000
-theTempPath=temp.log
-
-#
-# If the line count > 0 trim the previous log to line count
-#
-if test $theLineCount -gt 0 ; then
-   if [ -f $theLogPath ]; then
-      tail -n $theLineCount $theLogPath > $theTempPath
-      cat ${theTempPath} > ${theLogPath}
-   fi
-fi
-
-#
-# Print the current timestamp
-#
-echo "-------------------------------" > $theBootLog
-date "+DATE: %Y-%m-%d TIME: %H:%M:%S" >> $theBootLog
-echo "-------------------------------" >> $theBootLog
-
-#
-# Get the current boot log
-#
-logdump=$(ioreg -lw0 -pIODeviceTree | grep boot-log)
-modified1=${logdump#*'boot-log'}
-modified2=${modified1#*'<'}
-echo "${modified2%%'>'*}" > ${theTempPath}
-xxd -r -p ${theTempPath} >> ${theBootLog}
-rm ${theTempPath}
-cat ${theBootLog} >> ${theLogPath}
-
-# Search helper partition (c)kozlek
-diskutil list | grep -m 1 'Boot OS X' | awk '{print $8}' >/.helper_name
+theLogUsesTimestamps=
+theEFIMountPoint=/Volumes/EFI
+theEFIRoot=
+theNVRAMHelper=/.nvram.plist
+theNVRAMRoot=$(diskutil list | grep -m 1 'Boot OS X' | awk '{print $8}')
+theBootFlags=$(nvram -p  | grep "boot-args")
 
 #
 # Parse boot flags
 #
-theBootFlags=$(nvram -p  | grep "boot-args")
-theRoot=
-
-for theBootFlag in $theBootFlags ; do
+for theBootFlag in ${theBootFlags} ; do
    #
    # Split the flag and value
    #  theBootFlag will be the lowercase flag name
@@ -61,43 +33,141 @@ for theBootFlag in $theBootFlags ; do
    #
    theBootFlagValue=
    theBootFlagIValue=
-   if [ "x$(echo $theBootFlag | grep =)" != "x" ]; then
+   if [ "x$(echo ${theBootFlag} | grep =)" != "x" ]; then
       theBootFlagValue=${theBootFlag#*'='}
-      theBootFlagIValue=$(echo $theBootFlagValue | tr '[:upper:]' '[:lower:]')
+      theBootFlagIValue=$(echo ${theBootFlagValue} | tr '[:upper:]' '[:lower:]')
    fi
    theBootFlag=$(echo ${theBootFlag%%'='*} | tr '[:upper:]' '[:lower:]')
    #
    # Parse the MountEFI= parameter
    #
-   if [ "x$theBootFlag" == "xmountefi" ]; then
-      if [ "x$(echo $theBootFlagIValue)" == "xyes" ]; then
+   if [ "x${theBootFlag}" == "xmountefi" ]; then
+      if [ "x${theBootFlagIValue}" == "xyes" ]; then
          #
          # Set the EFI partition of the root volume
          #
-         theRoot=$(diskutil info / | grep 'Part of Whole:' | awk '{print $4}')
-      elif [ "x$theBootFlagValue" != "x" ]; then
+         theEFIRoot=$(diskutil info / | grep 'Part of Whole:' | awk '{print $4}')
+      elif [ "x${theBootFlagValue}" != "x" ]; then
          #
          # Set EFI partition disk manually
          #
          if [ "x$(diskutil list | grep ${theBootFlagValue})" != "x" ]; then
-            theRoot=$theBootFlagValue
+            theEFIRoot=${theBootFlagValue}
          fi
       fi
-   fi
+   #
+   # LogLineCount=0/N parameter
+   #
+   elif [ "x${theBootFlag}" == "xloglinecount" ]; then
+      #
+      # Make sure that non-integers and no value are zero
+      #
+      if [ "x${theBootFlagValue}" == "x" ]; then
+         theLineCount=0
+      elif [[ "${theBootFlagValue}" =~ ^[0-9]+$ ]]; then
+         theLineCount=${theBootFlagValue}
+      else
+         theLineCount=0
+      fi
+   #
+   # LogLocation=Path parameter
+   #
+   elif [ "x${theBootFlag}" == "xloglocation" ]; then
+      theLogLocation=${theBootFlagValue}
+   #
+   # LogEveryBoot=Yes parameter
+   #
+   elif [ "x${theBootFlag}" == "xlogeveryboot" ]; then
+      if [ "x${theBootFlagIValue}" == "xyes" ]; then
+         theLogUsesTimestamps=yes
+      fi
+   #
+   # Parse the NVRAMDisk= parameter
+   #
+   elif [ "x$theBootFlag" == "xnvramdisk" ]; then
+      #
+      # Set NVRAM partition manually
+      #
+      if [ "x$(diskutil list | grep ${theBootFlagValue})" != "x" ]; then
+         theNVRAMRoot=${theBootFlagValue}
+      fi
    #
    # Add additional flags here
    #
-   # if [ "x$theBootFlag" == "xflagname" ]; then
-   #    if [ "x$theBootFlagValue" == "xsomevalue" ]; then
+   # elif [ "x${theBootFlag}" == "xflagname" ]; then
+   #    if [ "x${theBootFlagValue}" == "xsomevalue" ]; then
    #       # Do something
    #    fi
-   # fi
+   fi
 done
+
+#
+# Write NVRAM helper if theNVRAMRoot is valid
+#
+if [ "x${theNVRAMRoot}" != "x" ]; then
+   theNVRAMRootType=$(diskutil info /dev/${theNVRAMRoot} | grep 'Partition Type:' | awk '{print $3}' | tr '[:upper:]' '[:lower:]')
+   if [ "x${theNVRAMRootType}" == "xapple_hfs" ]; then
+      theNVRAMRootType=hfs
+   elif [ "x${theNVRAMRootType}" == "xefi" ]; then
+      theNVRAMRootType=msdos
+   else
+      theNVRAMRootType=
+   fi
+   if [ "x${theNVRAMRootType}" != "x" ]; then
+      echo "umount /dev/${theNVRAMRoot}" > ${theNVRAMHelper}
+      echo "mount -t ${theNVRAMRootType} /dev/${theNVRAMRoot}" >> ${theNVRAMHelper}
+   fi
+fi
+
+#
+# Ensure log directory exists
+#
+if [ ! -d ${theLogLocation} ]; then
+   mkdir -p ${theLogLocation}
+   if [ ! -d ${theLogLocation} ]; then
+      echo "Failed to create directory ${theLogLocation}, using to /"
+      theLogLocation=
+   fi
+fi
+
+#
+# Change log path if timestamp is needed
+#
+if [ "x${theLogUsesTimestamps}" == "xyes" ]; then
+   theLogPath=/boot-${theCurrentDate}-$(echo ${theCurrentTime} | tr ':' '.').log
+fi
+
+#
+# Print the current timestamp
+#
+echo "-------------------------------" > ${theLogLocation}${theLogPath}
+echo "DATE: ${theCurrentDate} TIME: ${theCurrentTime}" >> ${theLogLocation}${theLogPath}
+echo "-------------------------------" >> ${theLogLocation}${theLogPath}
+
+#
+# Get the current boot log
+#
+logdump=$(ioreg -lw0 -pIODeviceTree | grep boot-log)
+modified1=${logdump#*'boot-log'}
+modified2=${modified1#*'<'}
+echo "${modified2%%'>'*}" | xxd -r -p >> ${theLogLocation}${theLogPath}
+
+#
+# If the line count > 0 trim the previous log to line count
+#
+if [ "x${theLogUsesTimestamps}" != "xyes" ]; then
+   if test ${theLineCount} -gt 0 ; then
+      if [ -f ${theLogLocation}${theLogsPath} ]; then
+         tail -n ${theLineCount} ${theLogLocation}${theLogsPath} > ${theLogLocation}${theLogsPath}
+      fi
+   fi
+   cat ${theLogLocation}${theLogPath} >> ${theLogLocation}${theLogsPath}
+fi
 
 #
 # Check for EFI mounting
 #
-if [ "x$theRoot" == "x" ]; then
+if [ "x${theEFIRoot}" == "x" ]; then
    echo "Not auto mounting EFI partition"
    exit
 fi
@@ -105,10 +175,10 @@ fi
 #
 # Check the EFI mount point exists or create it
 #
-if [ ! -d /Volumes/EFI ]; then
-   mkdir /Volumes/EFI
-   if [ ! -d /Volumes/EFI ]; then
-      echo "Could not create /Volumes/EFI to mount ${theRoot}s1"
+if [ ! -d ${theEFIMountPoint} ]; then
+   mkdir ${theEFIMountPoint}
+   if [ ! -d ${theEFIMountPoint} ]; then
+      echo "Could not create ${theEFIMountPoint} to mount ${theEFIRoot}s1"
       exit
    fi
 fi
@@ -116,5 +186,7 @@ fi
 #
 # Mount the EFI volume
 #
-mount -t msdos /dev/"${theRoot}"s1 /Volumes/EFI && exit
-echo "Failed to mount ${theRoot}s1 at /Volumes/EFI"
+umount ${theEFIMountPoint}
+umount /dev/${theEFIRoot}s1
+mount -t msdos /dev/${theEFIRoot}s1 ${theEFIMountPoint} && exit
+echo "Failed to mount ${theEFIRoot}s1 at ${theEFIMountPoint}"
