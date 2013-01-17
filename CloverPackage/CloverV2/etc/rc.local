@@ -20,6 +20,8 @@ theEFIRoot=
 theNVRAMHelper=/.nvram.plist
 theNVRAMRoot=$(diskutil list | grep -m 1 'Boot OS X' | awk '{print $8}')
 theBootFlags=$(nvram -p  | grep "boot-args")
+theCurrentDate=$(date "+%Y-%m-%d")
+theCurrentTime=$(date "+%H:%M:%S")
 
 #
 # Parse boot flags
