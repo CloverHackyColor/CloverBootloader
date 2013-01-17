@@ -239,6 +239,10 @@ VOID ATIConnectorsPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT
 //
 // fLaked's SpeedStepper patch for Asus (and some other) boards:
 // http://www.insanelymac.com/forum/index.php?showtopic=258611
+//
+// Credits: Samantha/RevoGirl/DHP
+// http://www.insanelymac.com/forum/topic/253642-dsdt-for-asus-p8p67-m-pro/page__st__200#entry1681099
+//
 // 
 
 UINT8   MovlE2ToEcx[] = { 0xB9, 0xE2, 0x00, 0x00, 0x00 };
