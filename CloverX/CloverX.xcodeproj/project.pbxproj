@@ -11,6 +11,15 @@
 		121E4B57165A0F1A000C2392 /* 915resolution.c in Sources */ = {isa = PBXBuildFile; fileRef = 121E4B4F165A0F1A000C2392 /* 915resolution.c */; };
 		121E4B58165A0F1A000C2392 /* edid.c in Sources */ = {isa = PBXBuildFile; fileRef = 121E4B51165A0F1A000C2392 /* edid.c */; };
 		121E4B59165A0F1A000C2392 /* VideoBiosPatchLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 121E4B54165A0F1A000C2392 /* VideoBiosPatchLib.c */; };
+		122489C116A93FC400A0DB6B /* ComponentName.c in Sources */ = {isa = PBXBuildFile; fileRef = 122489B516A93FC400A0DB6B /* ComponentName.c */; };
+		122489C216A93FC400A0DB6B /* UsbBus.c in Sources */ = {isa = PBXBuildFile; fileRef = 122489B616A93FC400A0DB6B /* UsbBus.c */; };
+		122489C316A93FC400A0DB6B /* UsbDesc.c in Sources */ = {isa = PBXBuildFile; fileRef = 122489B916A93FC400A0DB6B /* UsbDesc.c */; };
+		122489C416A93FC400A0DB6B /* UsbEnumer.c in Sources */ = {isa = PBXBuildFile; fileRef = 122489BB16A93FC400A0DB6B /* UsbEnumer.c */; };
+		122489C516A93FC400A0DB6B /* UsbHub.c in Sources */ = {isa = PBXBuildFile; fileRef = 122489BD16A93FC400A0DB6B /* UsbHub.c */; };
+		122489C616A93FC400A0DB6B /* UsbUtility.c in Sources */ = {isa = PBXBuildFile; fileRef = 122489BF16A93FC400A0DB6B /* UsbUtility.c */; };
+		122489CD16A93FD300A0DB6B /* ComponentName.c in Sources */ = {isa = PBXBuildFile; fileRef = 122489C816A93FD300A0DB6B /* ComponentName.c */; };
+		122489CE16A93FD300A0DB6B /* MouseHid.c in Sources */ = {isa = PBXBuildFile; fileRef = 122489C916A93FD300A0DB6B /* MouseHid.c */; };
+		122489CF16A93FD300A0DB6B /* UsbMouse.c in Sources */ = {isa = PBXBuildFile; fileRef = 122489CA16A93FD300A0DB6B /* UsbMouse.c */; };
 		12D7546E1657CDD700376797 /* BdsConnect.c in Sources */ = {isa = PBXBuildFile; fileRef = 12D7546D1657CDD700376797 /* BdsConnect.c */; };
 		12D754711657CDE800376797 /* DevicePath.c in Sources */ = {isa = PBXBuildFile; fileRef = 12D754701657CDE800376797 /* DevicePath.c */; };
 		12DD321A16557F2E00108DFC /* BmLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 12DD321916557F2E00108DFC /* BmLib.c */; };
@@ -41,6 +50,23 @@
 		121E4B55165A0F1A000C2392 /* VideoBiosPatchLib.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = VideoBiosPatchLib.inf; sourceTree = "<group>"; };
 		121E4B56165A0F1A000C2392 /* VideoBiosPatchLibInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoBiosPatchLibInternal.h; sourceTree = "<group>"; };
 		121E4B66165A1012000C2392 /* AtomBios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AtomBios.h; sourceTree = "<group>"; };
+		122489B516A93FC400A0DB6B /* ComponentName.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
+		122489B616A93FC400A0DB6B /* UsbBus.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = UsbBus.c; sourceTree = "<group>"; };
+		122489B716A93FC400A0DB6B /* UsbBus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbBus.h; sourceTree = "<group>"; };
+		122489B816A93FC400A0DB6B /* UsbBusDxe.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UsbBusDxe.inf; sourceTree = "<group>"; };
+		122489B916A93FC400A0DB6B /* UsbDesc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = UsbDesc.c; sourceTree = "<group>"; };
+		122489BA16A93FC400A0DB6B /* UsbDesc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbDesc.h; sourceTree = "<group>"; };
+		122489BB16A93FC400A0DB6B /* UsbEnumer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = UsbEnumer.c; sourceTree = "<group>"; };
+		122489BC16A93FC400A0DB6B /* UsbEnumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbEnumer.h; sourceTree = "<group>"; };
+		122489BD16A93FC400A0DB6B /* UsbHub.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = UsbHub.c; sourceTree = "<group>"; };
+		122489BE16A93FC400A0DB6B /* UsbHub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbHub.h; sourceTree = "<group>"; };
+		122489BF16A93FC400A0DB6B /* UsbUtility.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = UsbUtility.c; sourceTree = "<group>"; };
+		122489C016A93FC400A0DB6B /* UsbUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbUtility.h; sourceTree = "<group>"; };
+		122489C816A93FD300A0DB6B /* ComponentName.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
+		122489C916A93FD300A0DB6B /* MouseHid.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = MouseHid.c; sourceTree = "<group>"; };
+		122489CA16A93FD300A0DB6B /* UsbMouse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = UsbMouse.c; sourceTree = "<group>"; };
+		122489CB16A93FD300A0DB6B /* UsbMouse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbMouse.h; sourceTree = "<group>"; };
+		122489CC16A93FD300A0DB6B /* UsbMouseDxe.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UsbMouseDxe.inf; sourceTree = "<group>"; };
 		123F0954164F96D0008C1C1C /* MemLogLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MemLogLib.c; sourceTree = "<group>"; };
 		123F0955164F96D0008C1C1C /* MemLogLibDefault.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = MemLogLibDefault.inf; sourceTree = "<group>"; };
 		123F0958164F96DB008C1C1C /* EfiFlashMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EfiFlashMap.h; sourceTree = "<group>"; };
@@ -54,7 +80,7 @@
 		123F0961164F96DB008C1C1C /* PciExpressBaseAddress.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PciExpressBaseAddress.h; sourceTree = "<group>"; };
 		123F0962164F96DB008C1C1C /* PciOptionRomTable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PciOptionRomTable.h; sourceTree = "<group>"; };
 		123F0964164F96DB008C1C1C /* PeImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PeImage.h; sourceTree = "<group>"; };
-		123F0965164F96DB008C1C1C /* Smbios.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Smbios.h; sourceTree = "<group>"; };
+		123F0965164F96DB008C1C1C /* SmbiosA.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SmbiosA.h; sourceTree = "<group>"; };
 		123F0967164F96DB008C1C1C /* MemLogLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MemLogLib.h; sourceTree = "<group>"; };
 		123F0968164F96DB008C1C1C /* PeCoffLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PeCoffLib.h; sourceTree = "<group>"; };
 		123F096A164F96DB008C1C1C /* FSInjectProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FSInjectProtocol.h; sourceTree = "<group>"; };
@@ -483,6 +509,39 @@
 			path = VideoBiosPatchLib;
 			sourceTree = "<group>";
 		};
+		122489B416A93FC400A0DB6B /* UsbBusDxe */ = {
+			isa = PBXGroup;
+			children = (
+				122489B516A93FC400A0DB6B /* ComponentName.c */,
+				122489B616A93FC400A0DB6B /* UsbBus.c */,
+				122489B716A93FC400A0DB6B /* UsbBus.h */,
+				122489B816A93FC400A0DB6B /* UsbBusDxe.inf */,
+				122489B916A93FC400A0DB6B /* UsbDesc.c */,
+				122489BA16A93FC400A0DB6B /* UsbDesc.h */,
+				122489BB16A93FC400A0DB6B /* UsbEnumer.c */,
+				122489BC16A93FC400A0DB6B /* UsbEnumer.h */,
+				122489BD16A93FC400A0DB6B /* UsbHub.c */,
+				122489BE16A93FC400A0DB6B /* UsbHub.h */,
+				122489BF16A93FC400A0DB6B /* UsbUtility.c */,
+				122489C016A93FC400A0DB6B /* UsbUtility.h */,
+			);
+			name = UsbBusDxe;
+			path = ../Patches_for_EDK2/UsbBusDxe;
+			sourceTree = SOURCE_ROOT;
+		};
+		122489C716A93FD300A0DB6B /* UsbMouseDxe */ = {
+			isa = PBXGroup;
+			children = (
+				122489C816A93FD300A0DB6B /* ComponentName.c */,
+				122489C916A93FD300A0DB6B /* MouseHid.c */,
+				122489CA16A93FD300A0DB6B /* UsbMouse.c */,
+				122489CB16A93FD300A0DB6B /* UsbMouse.h */,
+				122489CC16A93FD300A0DB6B /* UsbMouseDxe.inf */,
+			);
+			name = UsbMouseDxe;
+			path = ../Patches_for_EDK2/UsbMouseDxe;
+			sourceTree = SOURCE_ROOT;
+		};
 		123F0952164F96D0008C1C1C /* Library */ = {
 			isa = PBXGroup;
 			children = (
@@ -542,7 +601,7 @@
 				121E4B66165A1012000C2392 /* AtomBios.h */,
 				123F0964164F96DB008C1C1C /* PeImage.h */,
 				124D76D51657A3E6008B5407 /* PiBootMode.h */,
-				123F0965164F96DB008C1C1C /* Smbios.h */,
+				123F0965164F96DB008C1C1C /* SmbiosA.h */,
 				12E727F916541E76005DDE3E /* VesaBiosExtensions.h */,
 			);
 			path = IndustryStandard;
@@ -650,6 +709,8 @@
 				124D77D21657A5D0008B5407 /* PcatRealTimeClockRuntimeDxe */,
 				124D77D71657A5D9008B5407 /* Ps2MouseDxe */,
 				124D77DE1657A5E1008B5407 /* SataControllerDxe */,
+				122489B416A93FC400A0DB6B /* UsbBusDxe */,
+				122489C716A93FD300A0DB6B /* UsbMouseDxe */,
 			);
 			name = CopiedFromEDK;
 			sourceTree = "<group>";
@@ -1570,6 +1631,15 @@
 				121E4B58165A0F1A000C2392 /* edid.c in Sources */,
 				121E4B59165A0F1A000C2392 /* VideoBiosPatchLib.c in Sources */,
 				120D825E16A2DE46000EDD83 /* LegacyBiosThunk.c in Sources */,
+				122489C116A93FC400A0DB6B /* ComponentName.c in Sources */,
+				122489C216A93FC400A0DB6B /* UsbBus.c in Sources */,
+				122489C316A93FC400A0DB6B /* UsbDesc.c in Sources */,
+				122489C416A93FC400A0DB6B /* UsbEnumer.c in Sources */,
+				122489C516A93FC400A0DB6B /* UsbHub.c in Sources */,
+				122489C616A93FC400A0DB6B /* UsbUtility.c in Sources */,
+				122489CD16A93FD300A0DB6B /* ComponentName.c in Sources */,
+				122489CE16A93FD300A0DB6B /* MouseHid.c in Sources */,
+				122489CF16A93FD300A0DB6B /* UsbMouse.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -187,7 +187,8 @@ InitGlobalDescriptorTable (
   //
   // Write GDT register
   //
-  gdtPtr.Base = (UINT32)(UINTN)(VOID*) gdt;
+  //gdtPtr.Base = (UINT32)(UINTN)(VOID*) gdt;
+  gdtPtr.Base = (UINTN)(VOID*) gdt;
   gdtPtr.Limit = (UINT16) (sizeof (GdtTemplate) - 1);
   AsmWriteGdtr (&gdtPtr);
 

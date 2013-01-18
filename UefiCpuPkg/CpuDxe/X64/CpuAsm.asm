@@ -37,13 +37,19 @@ InitializeExternalVectorTablePtr ENDP
 ;   );
 ;------------------------------------------------------------------------------
 SetCodeSelector PROC PUBLIC
-    sub     rsp, 0x10
+    sub     rsp, 0x14
     lea     rax, setCodeSelectorLongJump
     mov     [rsp], rax
-    mov     [rsp+4], cx
+    mov     [rsp+8], cx
+;* I'm not sure how to encode this. We need to jmp [esp], where in esp there is
+;* w16(selector):q64(address).
+;* in gcc version this is encoded as 48 ff 2c 24 [ rex.W ljmpq (%esp) ]
+;* but in VC jmp qword ptr [rsp] generates code ff 24 24 [ jmpq(%esp) ]
+;* so I've just inserted db 0x48 to emit REX.W and get original 48 ff 2c 24
+    .db 0x48
     jmp     fword ptr [rsp]
 setCodeSelectorLongJump:
-    add     rsp, 0x10
+    add     rsp, 0x14
     ret
 SetCodeSelector ENDP
 

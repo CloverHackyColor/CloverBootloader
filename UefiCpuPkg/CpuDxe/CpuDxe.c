@@ -1105,10 +1105,14 @@ RestoreInterruptDescriptorTableHandlerAddress (
   if (Index < mOrigIdtEntryCount) {
     gIdtTable[Index].Bits.OffsetLow   = mOrigIdtEntry[Index].Bits.OffsetLow;
     gIdtTable[Index].Bits.OffsetHigh  = mOrigIdtEntry[Index].Bits.OffsetHigh;
-#if defined (MDE_CPU_X64)
+//#if defined (MDE_CPU_X64)
     gIdtTable[Index].Bits.OffsetUpper = mOrigIdtEntry[Index].Bits.OffsetUpper;
-#endif
+//#endif
   }
+    if (Index >= mOrigIdtEntryCount)
+        return;
+    CopyMem(gIdtTable + Index, mOrigIdtEntry + Index, 
+               sizeof(gIdtTable[Index]));
 }
 
 /**
@@ -1189,9 +1193,9 @@ InitInterruptDescriptorTable (
   //
   IdtPtrAlignmentBuffer = AllocatePool (sizeof (*IdtPtr) + 16);
   IdtPtr = ALIGN_POINTER (IdtPtrAlignmentBuffer, 16);
-  IdtPtr->Base = (UINT32)(((UINTN)(VOID*) gIdtTable) & (BASE_4GB-1));
+//  IdtPtr->Base = (UINT32)(((UINTN)(VOID*) gIdtTable) & (BASE_4GB-1));
+  IdtPtr->Base = (UINTN)(VOID*) gIdtTable;
   IdtPtr->Limit = (UINT16) (sizeof (gIdtTable) - 1);
-
   AsmWriteIdtr (IdtPtr);
 
   FreePool (IdtPtrAlignmentBuffer);

@@ -32,8 +32,8 @@ ExternalVectorTablePtr:
 
 ASM_GLOBAL ASM_PFX(InitializeExternalVectorTablePtr)
 ASM_PFX(InitializeExternalVectorTablePtr):
-    lea     ExternalVectorTablePtr(%rip), %rax # save vector number
-    mov     %rcx, (%rax) 
+    leaq     ExternalVectorTablePtr(%rip), %rax # save vector number
+    movq     %rcx, (%rax) 
     ret
 
 
@@ -45,13 +45,13 @@ ASM_PFX(InitializeExternalVectorTablePtr):
 #------------------------------------------------------------------------------
 ASM_GLOBAL ASM_PFX(SetCodeSelector)
 ASM_PFX(SetCodeSelector):
-    subq    $0x10, %rsp 
+    subq    $0x14, %rsp 
     leaq    L_setCodeSelectorLongJump(%rip), %rax 
     movq    %rax, (%rsp) 
     movw    %cx, 4(%rsp)
-    .byte   0xFF, 0x2C, 0x24     # jmp (%rsp) note:fword jmp
+    .byte   0x48, 0xFF, 0x2C, 0x24     # jmp (%rsp) note:fword jmp
 L_setCodeSelectorLongJump:
-    addq    $0x10, %rsp
+    addq    $0x14, %rsp
     ret
 
 #------------------------------------------------------------------------------
@@ -243,7 +243,8 @@ CommonInterruptEntry_al_0000:
 #; call into exception handler
     movq    8(%rbp), %rcx
     leaq    ExternalVectorTablePtr(%rip), %rax
-    movl    (%eax), %eax
+#    movl    (%eax), %eax
+    movq    (%rax), %rax
     movq    (%rax,%rcx,8), %rax
     orq     %rax, %rax                        # NULL?
 
