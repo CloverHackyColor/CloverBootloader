@@ -522,6 +522,7 @@
 		12A80745161EE88A00120AD4 /* Ps2Mouse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Ps2Mouse.c; sourceTree = "<group>"; };
 		12A80746161EE88A00120AD4 /* Ps2Mouse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ps2Mouse.h; sourceTree = "<group>"; };
 		12A80747161EE88A00120AD4 /* Ps2MouseDxe.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Ps2MouseDxe.inf; sourceTree = "<group>"; };
+		12A9575F16AA797F00707052 /* LegacyBiosThunk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = LegacyBiosThunk.c; sourceTree = "<group>"; };
 		12AE5F221618A975003BAF51 /* HelloWorld.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = HelloWorld.c; sourceTree = "<group>"; };
 		12AE5F231618A975003BAF51 /* HelloWorld.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = HelloWorld.inf; sourceTree = "<group>"; };
 		12AE5F251618A975003BAF51 /* VariableInfo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = VariableInfo.c; sourceTree = "<group>"; };
@@ -4620,6 +4621,7 @@
 				1292F255164BC7A7008FAEEC /* BlockIoDxe.inf */,
 				1292F256164BC7A7008FAEEC /* ComponentName.c */,
 				1292F257164BC7A7008FAEEC /* Edd.h */,
+				12A9575F16AA797F00707052 /* LegacyBiosThunk.c */,
 			);
 			path = BlockIoDxe;
 			sourceTree = "<group>";

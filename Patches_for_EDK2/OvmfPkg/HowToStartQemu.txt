@@ -1,0 +1,1 @@
+qemu-system-x86_64 -L ~/src/edk2/Build/OvmfX64/RELEASE_GCC47/QEMU -hda QEMU-Clover.img

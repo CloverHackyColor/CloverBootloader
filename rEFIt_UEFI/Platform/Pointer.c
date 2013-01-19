@@ -163,7 +163,7 @@ VOID KillMouse()
     return;
   }
 //  pi = gPointer.oldImage->PixelData[0];
-  DBG("Mouse death\n");
+//  DBG("Mouse death\n");
 //  DBG(" Blue=%x Green=%x Red=%x Alfa=%x\n\n", pi.b, pi.g, pi.r, pi.a);
 
   egFreeImage(gPointer.newImage);
@@ -308,6 +308,7 @@ EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
         switch (gPointer.MouseEvent) {
           case LeftClick:
             gAction = Screen->Entries[EntryId]->AtClick;
+  //          DBG("Click\n");
             break;
           case RightClick:
             gAction = Screen->Entries[EntryId]->AtRightClick;
@@ -348,6 +349,32 @@ EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
         gItemID = 0xFFFF;
       }
     }
+
+    if (gItemID == 0xFFFF && gAction == ActionNone) { //click in milk
+      // usr-sse2: why it was inside the FOR loop?
+      // "click in milk" is processed many times - for each entry that the pointer didn't get in.
+      switch (gPointer.MouseEvent) {
+        case LeftClick:
+          gAction = ActionDeselect;
+//          DBG("Click\n");
+          break;
+        case RightClick:
+          gAction = ActionFinish;
+          break;
+        case ScrollDown:
+          gAction = ActionScrollDown;
+          DBG("ScrollDown\n");
+          break;
+        case ScrollUp:
+          gAction = ActionScrollUp;
+          DBG("ScrollUp\n");
+          break;
+        default:
+          gAction = ActionNone;
+          break;
+      }
+    }
+
   }
   if (gAction != ActionNone) {
     Status = EFI_SUCCESS;

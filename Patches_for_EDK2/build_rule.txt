@@ -105,10 +105,6 @@
 #   Unicode-Text-File
 #
 
-## Build Rule Version Number
-#  build_rule_version=0.1
-#
-
 [C-Code-File]
     <InputFile>
         ?.c
@@ -134,7 +130,7 @@
         @"echo" [CC] ${s_base}
         #@"$(SYMRENAME)" $(SYMRENAME_FLAGS) ${dst}
 
-    <Command.ARMGCC, Command.ARMLINUXGCC>
+    <Command.ARMGCC>
         "$(CC)" $(CC_FLAGS) -o ${dst} $(INC) ${src}
 
 
@@ -170,8 +166,7 @@
         @Trim --source-code -o ${d_path}(+)${s_base}.iii ${d_path}(+)${s_base}.i
         # For RVCTCYGWIN ASM_FLAGS must be first to work around pathing issues
         @"$(ASM)" $(ASM_FLAGS) -o ${dst} $(INC) ${d_path}(+)${s_base}.iii
-
-        @"echo" [ASM] ${s_base}
+	@"echo" [ASM] ${s_base}
 
 [Assembly-Code-File.COMMON.IPF]
     <InputFile>
@@ -202,13 +197,11 @@
         $(DEBUG_DIR)(+)${s_dir}(+)${s_base}.c
 
     <Command>
-#        @-$(MD) $(OUTPUT_DIR)(+)${s_dir} > NUL 2>&1
-#        @"$(VFRPP)" $(VFRPP_FLAGS) $(INC) ${src} > $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.i
-#        @-$(MD) ${d_path} > NUL 2>&1
-#        @"$(VFR)" $(VFR_FLAGS) --string-db $(OUTPUT_DIR)(+)$(MODULE_NAME)StrDefs.hpk --output-directory ${d_path} $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.i
-        @"$(VFRPP)" $(VFRPP_FLAGS) $(INC) ${src} > $(OUTPUT_DIR)(+)${s_base}.i
-        @"$(VFR)" $(VFR_FLAGS) --string-db $(OUTPUT_DIR)(+)$(MODULE_NAME)StrDefs.hpk --output-directory ${d_path} $(OUTPUT_DIR)(+)${s_base}.i
-    	@"echo" [VFR] $(MODULE_NAME)
+        @-$(MD) $(OUTPUT_DIR)(+)${s_dir} > NUL 2>&1
+        @"$(VFRPP)" $(VFRPP_FLAGS) $(INC) ${src} > $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.i
+        @-$(MD) ${d_path} > NUL 2>&1
+        @"$(VFR)" $(VFR_FLAGS) --string-db $(OUTPUT_DIR)(+)$(MODULE_NAME)StrDefs.hpk --output-directory ${d_path} $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.i
+	@"echo" [VFR] $(MODULE_NAME)
 [Object-File]
     <InputFile>
         *.obj
@@ -227,7 +220,7 @@
     <Command.RVCT>
         "$(SLINK)" $(SLINK_FLAGS) ${dst} --via $(OBJECT_FILES_LIST)
     
-    <Command.RVCTCYGWIN, Command.ARMGCC, Command.ARMLINUXGCC>
+    <Command.RVCTCYGWIN, Command.ARMGCC>
         # $(OBJECT_FILES_LIST) has wrong paths for cygwin
         "$(SLINK)" $(SLINK_FLAGS) ${dst} $(OBJECT_FILES)
 
@@ -254,7 +247,7 @@
         @"$(OBJCOPY)" $(OBJCOPY_FLAGS) ${dst}
         @"echo" [DLINK1] $(MODULE_NAME)
 
-    <Command.ARMGCC, Command.ARMLINUXGCC>
+    <Command.ARMGCC>
         "$(DLINK)" -o ${dst} $(DLINK_FLAGS) -\( $(DLINK_SPATH) $(STATIC_LIBRARY_FILES) -\) $(DLINK2_FLAGS)
 
     <Command.RVCT>
@@ -287,7 +280,7 @@
         @"$(DLINK)" $(DLINK_FLAGS) -\( $(DLINK_SPATH) @$(STATIC_LIBRARY_FILES_LIST) -\) $(DLINK2_FLAGS)
         @"echo" [DLINK2] $(MODULE_NAME)
 
-    <Command.ARMGCC, Command.ARMLINUXGCC>
+    <Command.ARMGCC>
         "$(DLINK)" $(DLINK_FLAGS) -\( $(DLINK_SPATH) $(STATIC_LIBRARY_FILES) -\) $(DLINK2_FLAGS)
 
     <Command.RVCT>
@@ -310,7 +303,7 @@
     <OutputFile>
         $(DEBUG_DIR)(+)$(MODULE_NAME).efi
 
-    <Command.MSFT, Command.INTEL, Command.RVCT, Command.ARMGCC, Command.ARMLINUXGCC>  
+    <Command.MSFT, Command.INTEL, Command.RVCT, Command.ARMGCC>  
         "$(GENFW)" -e $(MODULE_TYPE) -o ${dst} ${src} $(GENFW_FLAGS)
         $(CP) ${dst} $(OUTPUT_DIR)
         $(CP) ${dst} $(BIN_DIR)
@@ -318,8 +311,7 @@
 
     <Command.GCC>
         #$(OBJCOPY) --only-keep-debug ${src} $(DEBUG_DIR)(+)$(MODULE_NAME).debug
-
-        @$(OBJCOPY) --strip-debug ${src} $(DEBUG_DIR)(+)$(MODULE_NAME).debug
+	@$(OBJCOPY) --strip-debug ${src} $(DEBUG_DIR)(+)$(MODULE_NAME).debug
         @$(OBJCOPY) --strip-unneeded ${src}
 
         #
@@ -387,6 +379,13 @@
         Trim --asl-file -o $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.i -i $(INC_LIST) ${src}
         "$(ASLPP)" $(ASLPP_FLAGS) $(INC) -I${s_path} $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.i > $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.iii
         "$(ASL)" $(ASL_FLAGS) $(ASL_OUTFLAGS)${dst} $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.iii
+
+    <Command.XCODE>
+        #Trim --asl-file -o $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.i -i $(INC_LIST) ${src}
+        #"$(ASLPP)" $(ASLPP_FLAGS) $(INC) -I${s_path} $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.i > $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.iii
+	cp ${src} $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.iii
+        "$(ASL)" $(ASL_FLAGS) $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.iii
+
 
 [C-Code-File.AcpiTable]
     <InputFile>
@@ -547,14 +546,11 @@
         $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.hpk
 
     <Command>
-#        @-$(MD) $(OUTPUT_DIR)(+)${s_dir} > NUL 2>&1
-#        @"$(VFRPP)" $(VFRPP_FLAGS) $(INC) ${src} > $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.i
-#        @-$(MD) $(OUTPUT_DIR)(+)${s_dir} > NUL 2>&1
-#        @"$(VFR)" $(VFR_FLAGS) --create-ifr-package --string-db $(OUTPUT_DIR)(+)$(MODULE_NAME)StrDefs.hpk --output-directory $(OUTPUT_DIR)(+)${s_dir} $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.i
-	
+        @-$(MD) $(OUTPUT_DIR)(+)${s_dir} > NUL 2>&1
         @"$(VFRPP)" $(VFRPP_FLAGS) $(INC) ${src} > $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.i
+        @-$(MD) $(OUTPUT_DIR)(+)${s_dir} > NUL 2>&1
         @"$(VFR)" $(VFR_FLAGS) --create-ifr-package --string-db $(OUTPUT_DIR)(+)$(MODULE_NAME)StrDefs.hpk --output-directory $(OUTPUT_DIR)(+)${s_dir} $(OUTPUT_DIR)(+)${s_dir}(+)${s_base}.i
-
+	
         @"echo" [VFR] $(s_base)
 
 [Hii-Binary-Package.UEFI_HII]
@@ -576,7 +572,7 @@
         @"$(RC)" $(RC_FLAGS) $(OUTPUT_DIR)(+)$(MODULE_NAME)hii.rc ${dst}
         @"echo" [GENFW-HII] $(MODULE_NAME)
         
-    <Command.XCODE, Command.RVCT, Command.ARMGCC, Command.ARMLINUXGCC>  
+    <Command.XCODE, Command.RVCT, Command.ARMGCC>  
         @GenFw -o $(OUTPUT_DIR)(+)$(MODULE_NAME)hii.rc -g $(MODULE_GUID) --hiibinpackage $(HII_BINARY_PACKAGES)
 	
         @"echo" [GENFW-HII] $(MODULE_NAME)
