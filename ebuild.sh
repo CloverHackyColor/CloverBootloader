@@ -177,7 +177,7 @@ echo "Example: ./ebuild.sh -gcc47 -x64 -release"
          fnArchX64
         ;;
         '-mc')
-         fnClang
+         fnGCC47
          fnArch64MCP
         ;;
         *)

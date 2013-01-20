@@ -525,8 +525,8 @@ ExceptionDone:
 
   .data
 
-#gdtr: .short GDT_END - GDT_BASE - 1   # GDT limit
-gdtr: .short GDT_LEN
+gdtr: .short GDT_END - GDT_BASE - 1   # GDT limit
+#gdtr: .short GDT_LEN
       .quad GDT_BASE                  # (GDT base gets set above)
 ##############################################################################
 #   global descriptor table (GDT)
@@ -618,7 +618,7 @@ SPARE4_SEL    = .-GDT_BASE            # Selector [0x40]
         .byte 0
 
 GDT_END:
-GDT_LEN = . - GDT_BASE - 1
+#GDT_LEN = . - GDT_BASE - 1
 #idtr: .short IDT_END - IDT_BASE - 1   # IDT limit
 idtr: .short IDT_LEN
       .quad IDT_BASE                  # (IDT base gets set above)
