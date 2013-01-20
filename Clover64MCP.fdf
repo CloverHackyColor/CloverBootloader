@@ -83,9 +83,9 @@ INF  MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
 INF  MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
 INF  Clover/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
 #INF  Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
-#INF  UefiCpuPkg/CpuDxe/CpuDxe.inf
+INF  UefiCpuPkg/CpuDxe/CpuDxe.inf
 #INF  IntelFrameworkModulePkg/Universal/CpuIoDxe/CpuIoDxe.inf
-INF  Clover/CpuDxe/Cpu.inf
+#INF  Clover/CpuDxe/Cpu.inf
 
 	#DataHub
 #INF  Clover/VBoxAppleSim/VBoxAppleSim.inf

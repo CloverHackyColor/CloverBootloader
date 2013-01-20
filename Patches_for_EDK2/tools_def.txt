@@ -151,7 +151,7 @@ DEFINE GCC46_X64_PREFIX        = ENV(HOME)/src/opt/local/x64/
 #DEFINE GCC46_IA32_PREFIX = ENV(WORKSPACE)/BaseTools/gcc/symlinks/Ia32/
 #DEFINE GCC46_X64_PREFIX  = ENV(WORKSPACE)/BaseTools/gcc/symlinks/X64/
 
-DEFINE GCC47_IA32_PREFIX       = ENV(HOME)/src/opt/local/ia32/
+DEFINE GCC47_IA32_PREFIX       = ENV(HOME)/src/opt/local/x64/
 DEFINE GCC47_X64_PREFIX        = ENV(HOME)/src/opt/local/x64/
 #DEFINE GCC47_IA32_PREFIX = ENV(WORKSPACE)/BaseTools/gcc/symlinks/Ia32/
 #DEFINE GCC47_X64_PREFIX  = ENV(WORKSPACE)/BaseTools/gcc/symlinks/X64/
@@ -194,6 +194,8 @@ DEFINE SOURCERY_CYGWIN_TOOLS = /cygdrive/c/Program Files/CodeSourcery/Sourcery G
 # Change to the location clang was built
 #
 DEFINE CLANG_BIN = /usr/bin/
+
+#DEFINE CLANG_BIN = ENV(HOME)/src/llvm/Release/bin/
 
 ####################################################################################
 #
@@ -4718,7 +4720,9 @@ RELEASE_XCLANG_X64_ASM_FLAGS  = -arch x86_64
 
 
   DEBUG_XCLANG_X64_CC_FLAGS   = -ccc-host-triple x86_64-pc-win32-macho -c -g -O0  -Wall -Werror -include AutoGen.h -fno-stack-protector -fno-builtin -fshort-wchar -mdynamic-no-pic -mno-sse -mno-mmx -Wno-empty-body -Wno-pointer-sign -Wno-unused-function -Wno-unused-value -Wno-missing-braces -Wno-tautological-compare -Wreturn-type -Wno-unused-variable -Wno-deprecated-declarations  -DNO_BUILTIN_VA_FUNCS
-RELEASE_XCLANG_X64_CC_FLAGS   = -ccc-host-triple x86_64-pc-win32-macho -c    -Os  -Wall -Werror -include AutoGen.h -fno-stack-protector -fno-builtin -fshort-wchar -mdynamic-no-pic -mno-sse -mno-mmx -Wno-empty-body -Wno-pointer-sign -Wno-unused-function -Wno-unused-value -Wno-missing-braces -Wno-tautological-compare -Wreturn-type -Wno-unused-variable  -Wno-deprecated-declarations -DNO_BUILTIN_VA_FUNCS
+RELEASE_XCLANG_X64_CC_FLAGS   = -ccc-host-triple x86_64-pc-win32-macho -c    -Os  -Wall -Werror -include AutoGen.h -fno-stack-protector -fno-builtin -fshort-wchar -mdynamic-no-pic -mno-sse -mno-mmx -DNO_BUILTIN_VA_FUNCS
+
+#-Wno-empty-body -Wno-pointer-sign -Wno-unused-function -Wno-unused-value -Wno-missing-braces -Wno-tautological-compare -Wreturn-type -Wno-unused-variable  -Wno-deprecated-declarations 
 *_XCLANG_*_ASLCC_FLAGS      = -x c -save-temps -g -O0 -fshort-wchar -fno-strict-aliasing -Wall -Werror -Wno-missing-braces -c -include AutoGen.h -mdynamic-no-pic
 #*_XCLANG_*_ASLDLINK_FLAGS   = -e _main -preload -segalign 0x20  -pie -seg1addr 0x240 -read_only_relocs suppress -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map
 *_XCLANG_*_ASLDLINK_FLAGS   =  -e _ReferenceAcpiTable -u _ReferenceAcpiTable  -preload -segalign 0x20  -pie -seg1addr 0x240 -read_only_relocs suppress -map $(DEST_DIR_DEBUG)/$(BASE_NAME).map

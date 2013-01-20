@@ -119,7 +119,7 @@ USBMouseDriverBindingSupported (
   Status = EFI_SUCCESS;
   if (!IsUsbMouse (UsbIo)) {
     Status = EFI_UNSUPPORTED;
-    DBG("no UsbIo\n");
+//    DBG("no UsbIo\n");
   }
 
   gBS->CloseProtocol (
@@ -185,6 +185,7 @@ USBMouseDriverBindingStart (
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
   if (EFI_ERROR (Status)) {
+    DBG("no UsbIo to start mouse\n");
     goto ErrorExit1;
   }
   
@@ -209,6 +210,7 @@ USBMouseDriverBindingStart (
                   );
 
   if (EFI_ERROR (Status)) {
+    DBG("no DevicePath to start mouse\n");
     goto ErrorExit;
   }
 
@@ -337,7 +339,7 @@ USBMouseDriverBindingStart (
   EndpointAddr    = UsbMouseDevice->IntEndpointDescriptor.EndpointAddress;
   PollingInterval = UsbMouseDevice->IntEndpointDescriptor.Interval;
   PacketSize      = (UINT8) (UsbMouseDevice->IntEndpointDescriptor.MaxPacketSize);
-
+  DBG("packet size=%d\n", PacketSize);
   Status = UsbIo->UsbAsyncInterruptTransfer (
                     UsbIo,
                     EndpointAddr,
@@ -546,7 +548,10 @@ IsUsbMouse (
       ) {
     return TRUE;
   }
-
+/*  DBG("this is not USB interface class=%x subclass=%x prot=%x\n",
+      InterfaceDescriptor.InterfaceClass,
+      InterfaceDescriptor.InterfaceSubClass,
+      InterfaceDescriptor.InterfaceProtocol); */
   return FALSE;
 }
 
@@ -615,6 +620,7 @@ InitializeUsbMouseDevice (
              );
   if (EFI_ERROR (Status)) {
     FreePool (Buf);
+    DBG("error getting descriptor\n");
     return Status;
   }
 
@@ -675,7 +681,7 @@ InitializeUsbMouseDevice (
     FreePool (ReportDesc);
     return Status;
   }
-
+  DBG("report descriptor of length %d\n", MouseHidDesc->HidClassDesc[0].DescriptorLength);
   //
   // Parse report descriptor
   //
@@ -690,7 +696,7 @@ InitializeUsbMouseDevice (
     FreePool (ReportDesc);
     return Status;
   }
-
+  DBG("number of buttons=%d\n", UsbMouseDev->NumberOfButtons);
   //
   // Check the presence of left and right buttons,
   // and initialize fields of EFI_SIMPLE_POINTER_MODE.
@@ -703,7 +709,7 @@ InitializeUsbMouseDevice (
   }
   UsbMouseDev->Mode.ResolutionX = 8;
   UsbMouseDev->Mode.ResolutionY = 8;
-  UsbMouseDev->Mode.ResolutionZ = 0;
+  UsbMouseDev->Mode.ResolutionZ = 8;
 
   //
   // Set boot protocol for the USB mouse.
@@ -854,6 +860,13 @@ OnMouseInterruptComplete (
   UsbMouseDevice->State.RightButton = (BOOLEAN) ((*(UINT8 *) Data & BIT1) != 0);
   UsbMouseDevice->State.RelativeMovementX += *((INT8 *) Data + 1);
   UsbMouseDevice->State.RelativeMovementY += *((INT8 *) Data + 2);
+  DBG("mouse data: %02x %02x %02x %02x %02x %02x\n",
+      *((INT8 *) Data + 0),
+      *((INT8 *) Data + 1),
+      *((INT8 *) Data + 2),
+      *((INT8 *) Data + 3),
+      *((INT8 *) Data + 4),
+      *((INT8 *) Data + 5));
 
   if (DataLength > 3) {
     UsbMouseDevice->State.RelativeMovementZ += *((INT8 *) Data + 3);

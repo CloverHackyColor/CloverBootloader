@@ -368,7 +368,7 @@ DataBaseAdr:	.long 0
 _RETF64:
 	.byte	0x48
 _RETF32:
-	retf
+	lret
 
 
 	

@@ -228,24 +228,29 @@ GenMemoryMap (
   //Slice - Add two more descriptors?
   /* dmazar: does not have effect, so removed */
   //Slice - or no! This is only thing that resolve memory KP in SnowLeopard
-  //гык-sse2 http://www.projectosx.com/forum/index.php?showtopic=2008&view=findpost&p=13284
+  //usr-sse2 http://www.projectosx.com/forum/index.php?showtopic=2008&view=findpost&p=13284
   //slice http://www.projectosx.com/forum/index.php?showtopic=2008&view=findpost&p=14702
   //dmazar http://www.projectosx.com/forum/index.php?showtopic=2008&view=findpost&p=16046
   //solution half a year later http://www.projectosx.com/forum/index.php?showtopic=2008&view=findpost&p=16405
-  /* but it should be more exact
-   ebda = (UINT16*)0x040E;
-   ebda_adr = *ebda << 4;
-   size =  0xA0000 - ebda_adr;
-   pages = size >> 12;
-   // what about fool proof?
-   for now I am proposing 9F000 and 1 page  = 4kb. It is not common case.
+  /* 
+   before I am proposing 9E000 and 2 page  = 8kb. It is not common case.
   */
+  // EBDA memory protection
+  
+  EBDAaddr = ((UINT64)(*(UINT16 *)(UINTN)(0x40E))) << 4;
+  //fool proof
+  if (EBDAaddr < 0x9A000 || EBDAaddr > 0x9F800) {
+    EBDAaddr = 0x9E000;
+  }
+  
+  EBDAsize = 0xA0000 - EBDAaddr;
+    
   EfiAddMemoryDescriptor (
                           NumberOfMemoryMapEntries,
                           EfiMemoryDescriptor,
                           EfiReservedMemoryType,
                           (EFI_PHYSICAL_ADDRESS)EBDAaddr,
-                          EBDAsize,
+                          RShiftU64 (EBDAsize, EFI_PAGE_SHIFT),
                           EFI_MEMORY_UC
                           );
  // this is just BIOS rom protection. Seems to be not needed. 

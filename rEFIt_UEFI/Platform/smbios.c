@@ -1204,10 +1204,11 @@ VOID PatchTableType17()
       DBG("...new map=%d\n", map);
 		}		
 		if (gRAM->DIMM[map].InUse) {
-      DBG("new map InUse\n");
-		} else if (gRAM->DIMM[map0].InUse){
+ //     DBG("new map InUse\n");
+		} else
+			if (gRAM->DIMM[map0].InUse){
       map = map0;
-			DBG("old map InUse\n");
+//			DBG("old map InUse\n");
     } /*else {
 			DBG("both map not In Use. TODO?\n");
 		}*/

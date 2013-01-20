@@ -656,7 +656,7 @@ UsbOnHubInterrupt (
                       EpDesc->EndpointAddress,
                       TRUE,
                       USB_HUB_POLL_INTERVAL,
-                      HubIf->NumOfPort / 8 + 1,
+                      HubIf->NumOfPort / 8 + 2,
                       UsbOnHubInterrupt,
                       HubIf
                       );
@@ -823,7 +823,7 @@ UsbHubInit (
                     EpDesc->Desc.EndpointAddress,
                     TRUE,
                     USB_HUB_POLL_INTERVAL,
-                    HubIf->NumOfPort / 8 + 1,
+                    HubIf->NumOfPort / 8 + 2,
                     UsbOnHubInterrupt,
                     HubIf
                     );
@@ -1092,7 +1092,8 @@ UsbRootHubInit (
 
   DEBUG (( EFI_D_INFO, "UsbRootHubInit: root hub %p - max speed %d, %d ports\n",
               HubIf, MaxSpeed, NumOfPort));
-
+  DBG("UsbRootHubInit: root hub %p - max speed %d, %d ports\n",
+      HubIf, MaxSpeed, NumOfPort);
   HubIf->IsHub      = TRUE;
   HubIf->HubApi     = &mUsbRootHubApi;
   HubIf->HubEp      = NULL;

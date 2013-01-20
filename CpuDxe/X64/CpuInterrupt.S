@@ -525,7 +525,8 @@ ExceptionDone:
 
   .data
 
-gdtr: .short GDT_END - GDT_BASE - 1   # GDT limit
+#gdtr: .short GDT_END - GDT_BASE - 1   # GDT limit
+gdtr: .short GDT_LEN
       .quad GDT_BASE                  # (GDT base gets set above)
 ##############################################################################
 #   global descriptor table (GDT)
@@ -534,6 +535,7 @@ gdtr: .short GDT_END - GDT_BASE - 1   # GDT limit
         .p2align 4                      # make GDT 16-byte align
 
 GDT_BASE:
+
 # null descriptor
 NULL_SEL          = .-GDT_BASE          # Selector [0x0]
         .short 0             # limit 15:0
@@ -616,8 +618,9 @@ SPARE4_SEL    = .-GDT_BASE            # Selector [0x40]
         .byte 0
 
 GDT_END:
-
-idtr: .short IDT_END - IDT_BASE - 1   # IDT limit
+GDT_LEN = . - GDT_BASE - 1
+#idtr: .short IDT_END - IDT_BASE - 1   # IDT limit
+idtr: .short IDT_LEN
       .quad IDT_BASE                  # (IDT base gets set above)
 ##############################################################################
 #   interrupt descriptor table (IDT)
@@ -1097,4 +1100,4 @@ IRQ15_SEL            = .-IDT_BASE
   .fill 16, 1, 0
 
 IDT_END:
-
+  .set IDT_LEN, .-IDT_BASE - 1

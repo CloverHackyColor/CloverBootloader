@@ -1356,7 +1356,7 @@ static VOID ScanLoader(VOID)
 #else      
       StrCpy(FileName, L"\\EFI\\BOOT\\BOOTIA32.efi");
 #endif
-      DBG("search for  optical UEFI\n");
+ //     DBG("search for  optical UEFI\n");
       if (FileExists(Volume->RootDir, FileName) && Volume->DiskKind == DISK_KIND_OPTICAL) {
           //      Volume->OSType = OSTYPE_VAR;
           Volume->BootType = BOOTING_BY_EFI;
@@ -1365,7 +1365,7 @@ static VOID ScanLoader(VOID)
           //      continue;
       }
       
-      DBG("search for internal UEFI\n");
+ //     DBG("search for internal UEFI\n");
       if (FileExists(Volume->RootDir, FileName) && Volume->DiskKind == DISK_KIND_INTERNAL) {
           //      Volume->OSType = OSTYPE_VAR;
           Volume->BootType = BOOTING_BY_EFI;
@@ -1374,7 +1374,7 @@ static VOID ScanLoader(VOID)
           //      continue;
       }
 
-      DBG("search for external UEFI\n");
+  //    DBG("search for external UEFI\n");
       if (FileExists(Volume->RootDir, FileName) && Volume->DiskKind == DISK_KIND_EXTERNAL) {
           //      Volume->OSType = OSTYPE_VAR;
           Volume->BootType = BOOTING_BY_EFI;
