@@ -29,7 +29,12 @@
   BiosBlkIo.c
   BiosInt13.c
   ComponentName.c
-      LegacyBiosThunk.c
+  LegacyBiosThunk.c
+
+[Sources.IA32]
+   IA32/llshl.asm  | MSFT
+   IA32/ullshr.asm | MSFT
+      
 
 [LibraryClasses]
   UefiDriverEntryPoint
