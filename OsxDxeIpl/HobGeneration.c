@@ -612,12 +612,24 @@ Return:
 --*/
 {
   UINTN                Index;
+  UINT64               EbdaAddress;
 
   //
   // Prepare Low Memory
   // 0x18 pages is 72 KB.
   //
-  gHob->MemoryFreeUnder1MB.ResourceLength = EFI_MEMORY_BELOW_1MB_END - EFI_MEMORY_BELOW_1MB_START;
+
+  // Allocate memory only up to EBDA (EBDA boundry speicifed at EFI_MEMORY_BELOW_1MB_END is not universal!)
+  // Bottom of EBDA is usually available by examining 0x40E, which should contain EBDA base address >> 4
+  // If value is not sane, we use default value at EFI_MEMORY_BELOW_1MB_END (0x9F800)
+
+  EbdaAddress = (*(UINT16 *)(UINTN)(0x40E)) << 4;
+  if (EbdaAddress < 0x9A000 || EbdaAddress > EFI_MEMORY_BELOW_1MB_END) {
+    EbdaAddress = EFI_MEMORY_BELOW_1MB_END;
+  }
+
+  gHob->MemoryFreeUnder1MB.ResourceLength = EbdaAddress - EFI_MEMORY_BELOW_1MB_START;
+  //gHob->MemoryFreeUnder1MB.ResourceLength = EFI_MEMORY_BELOW_1MB_END - EFI_MEMORY_BELOW_1MB_START;
   gHob->MemoryFreeUnder1MB.PhysicalStart  = EFI_MEMORY_BELOW_1MB_START;
 
   //
