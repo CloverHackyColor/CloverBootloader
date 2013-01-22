@@ -303,13 +303,13 @@ EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
   }
 
   if (gPointer.MouseEvent != NoEvents){
-    if (ScrollEnabled && MouseInRect(UpButton))
+    if (ScrollEnabled && MouseInRect(&UpButton))
       gAction = ActionScrollUp;
-    else if (ScrollEnabled && MouseInRect(DownButton))
+    else if (ScrollEnabled && MouseInRect(&DownButton))
       gAction = ActionScrollDown;
     else
       for (EntryId = 0; EntryId < Screen->EntryCount; EntryId++) {
-        if (MouseInRect(Screen->Entries[EntryId]->Place)) {
+        if (MouseInRect(&(Screen->Entries[EntryId]->Place))) {
           switch (gPointer.MouseEvent) {
             case LeftClick:
               gAction = Screen->Entries[EntryId]->AtClick;
