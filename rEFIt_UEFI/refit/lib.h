@@ -223,6 +223,11 @@ typedef struct {
   BOOLEAN IsScrolling, PaintAll, PaintSelection;
 } SCROLL_STATE;
 
+extern EG_RECT UpButton;
+extern EG_RECT DownButton;
+
+extern BOOLEAN ScrollEnabled;
+
 #define SCREEN_UNKNOWN    0
 #define SCREEN_MAIN       1
 #define SCREEN_ABOUT      2

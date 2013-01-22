@@ -303,78 +303,57 @@ EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
   }
 
   if (gPointer.MouseEvent != NoEvents){
-    for (EntryId = 0; EntryId < Screen->EntryCount; EntryId++) {
-      if (MouseInRect(&(Screen->Entries[EntryId]->Place))) {
-        switch (gPointer.MouseEvent) {
-          case LeftClick:
-            gAction = Screen->Entries[EntryId]->AtClick;
-  //          DBG("Click\n");
-            break;
-          case RightClick:
-            gAction = Screen->Entries[EntryId]->AtRightClick;
-            break;
-          case DoubleClick:
-            gAction = Screen->Entries[EntryId]->AtDoubleClick;
-            break;
-          case ScrollDown:
-            gAction = ActionScrollDown;
-            break;
-          case ScrollUp:
-            gAction = ActionScrollUp;
-            break;
-          default:
-            gAction = ActionNone;
-            break;
+    if (ScrollEnabled && MouseInRect(UpButton))
+      gAction = ActionScrollUp;
+    else if (ScrollEnabled && MouseInRect(DownButton))
+      gAction = ActionScrollDown;
+    else
+      for (EntryId = 0; EntryId < Screen->EntryCount; EntryId++) {
+        if (MouseInRect(Screen->Entries[EntryId]->Place)) {
+          switch (gPointer.MouseEvent) {
+            case LeftClick:
+              gAction = Screen->Entries[EntryId]->AtClick;
+              //          DBG("Click\n");
+              break;
+            case RightClick:
+              gAction = Screen->Entries[EntryId]->AtRightClick;
+              break;
+            case DoubleClick:
+              gAction = Screen->Entries[EntryId]->AtDoubleClick;
+              break;
+            case ScrollDown:
+              gAction = ActionScrollDown;
+              break;
+            case ScrollUp:
+              gAction = ActionScrollUp;
+              break;
+            default:
+              gAction = ActionNone;
+              break;
+          }
+          gItemID = EntryId;
+          break;
+        } else { //click in milk
+          switch (gPointer.MouseEvent) {
+            case LeftClick:
+              gAction = ActionDeselect;
+              break;
+            case RightClick:
+              gAction = ActionFinish;
+              break;
+            default:
+              gAction = ActionNone;
+              break;
+            case ScrollDown:
+              gAction = ActionScrollDown;
+              break;
+            case ScrollUp:
+              gAction = ActionScrollUp;
+              break;
+          }
+          gItemID = 0xFFFF;
         }
-        gItemID = EntryId;
-        break;
-      } else { //click in milk
-        switch (gPointer.MouseEvent) {
-          case LeftClick:
-            gAction = ActionDeselect;
-            break;
-          case RightClick:
-            gAction = ActionFinish;
-            break;
-          default:
-            gAction = ActionNone;
-            break;
-          case ScrollDown:
-            gAction = ActionScrollDown;
-            break;
-          case ScrollUp:
-            gAction = ActionScrollUp;
-            break;
-        }
-        gItemID = 0xFFFF;
-      }
     }
-
-    if (gItemID == 0xFFFF && gAction == ActionNone) { //click in milk
-      // usr-sse2: why it was inside the FOR loop?
-      // "click in milk" is processed many times - for each entry that the pointer didn't get in.
-      switch (gPointer.MouseEvent) {
-        case LeftClick:
-          gAction = ActionDeselect;
-//          DBG("Click\n");
-          break;
-        case RightClick:
-          gAction = ActionFinish;
-          break;
-        case ScrollDown:
-          gAction = ActionScrollDown;
-          DBG("ScrollDown\n");
-          break;
-        case ScrollUp:
-          gAction = ActionScrollUp;
-          DBG("ScrollUp\n");
-          break;
-        default:
-          gAction = ActionNone;
-          break;
-      }
-    }
-
   }
   if (gAction != ActionNone) {
     Status = EFI_SUCCESS;

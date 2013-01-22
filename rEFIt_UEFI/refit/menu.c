@@ -68,13 +68,15 @@ REFIT_MENU_SCREEN OptionMenu  = {4, L"Options", NULL, 0, NULL, 0, NULL, 0, NULL,
   {0, 0, 0, 0}, NULL };
 extern REFIT_MENU_ENTRY MenuEntryReturn;
 
-#define SCROLL_LINE_UP    (0)
-#define SCROLL_LINE_DOWN  (1)
-#define SCROLL_PAGE_UP    (2)
-#define SCROLL_PAGE_DOWN  (3)
-#define SCROLL_FIRST      (4)
-#define SCROLL_LAST       (5)
-#define SCROLL_NONE       (6)
+#define SCROLL_LINE_UP      (0)
+#define SCROLL_LINE_DOWN    (1)
+#define SCROLL_PAGE_UP      (2)
+#define SCROLL_PAGE_DOWN    (3)
+#define SCROLL_FIRST        (4)
+#define SCROLL_LAST         (5)
+#define SCROLL_NONE         (6)
+#define SCROLL_SCROLL_DOWN  (7)
+#define SCROLL_SCROLL_UP    (8)
 
 // other menu definitions
 
@@ -88,6 +90,11 @@ typedef VOID (*MENU_STYLE_FUNC)(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *S
 
 static CHAR16 ArrowUp[2]   = { ARROW_UP, 0 };
 static CHAR16 ArrowDown[2] = { ARROW_DOWN, 0 };
+
+BOOLEAN ScrollEnabled = FALSE;
+
+EG_RECT UpButton;
+EG_RECT DownButton;
 
 //#define TextHeight (FONT_CELL_HEIGHT + TEXT_YMARGIN * 2)
 #define TITLEICON_SPACING (16)
@@ -776,6 +783,26 @@ static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
       }
       break;
       
+    case SCROLL_SCROLL_DOWN:
+      if (State->FirstVisible < State->MaxFirstVisible) {
+        if (State->CurrentSelection == State->FirstVisible)
+          State->CurrentSelection++;
+        State->FirstVisible++;
+        State->LastVisible++;
+        State->PaintAll = TRUE;
+      }
+      break;
+      
+    case SCROLL_SCROLL_UP:
+      if (State->FirstVisible > 0) {
+        if (State->CurrentSelection == State->LastVisible)
+          State->CurrentSelection--;
+        State->FirstVisible--;
+        State->LastVisible--;
+        State->PaintAll = TRUE;
+      }
+      break;
+      
     case SCROLL_PAGE_UP:
       if (State->CurrentSelection > 0) {
         if (State->CurrentSelection == State->MaxIndex) {   // currently at last entry, special treatment
@@ -1187,10 +1214,10 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         MenuExit = MENU_EXIT_ESCAPE;
         break;
       case ActionScrollDown:
-        UpdateScroll(&State, SCROLL_LINE_DOWN);
+        UpdateScroll(&State, SCROLL_SCROLL_DOWN);
         break;
       case ActionScrollUp:
-        UpdateScroll(&State, SCROLL_LINE_UP);
+        UpdateScroll(&State, SCROLL_SCROLL_UP);
         break;
       default:
         break;
@@ -1482,6 +1509,16 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
   INTN ItemWidth = 0;
   INTN X;
   INTN VisibleHeight = 0; //assume vertical layout
+  static EG_RECT ScrollbarBackground;
+  static EG_RECT Scrollbar;
+  EG_IMAGE* ScrollbarImage;
+  EG_IMAGE* ScrollbarBackgroundImage;
+  static EG_IMAGE* UpButtonImage;
+  static EG_IMAGE* DownButtonImage;
+
+  EG_PIXEL Color = {127, 0, 0, 255};
+  EG_PIXEL Color2 = {0, 127, 0, 255};
+  EG_PIXEL Color3 = {0, 0, 127, 255};
   CHAR16 ResultString[255];
   
   switch (Function) {
@@ -1551,7 +1588,52 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       break;
       
     case MENU_FUNCTION_PAINT_ALL:
-          
+      
+      // FIXME: деление на ноль, если элементов нет
+      // FIXME: полоса отображается, даже если все элементы умещаются на экране
+      if (State->MaxIndex != 0) {
+        ScrollbarBackground.XPos = EntriesPosX - 16;
+        ScrollbarBackground.YPos = EntriesPosY + 8;
+        ScrollbarBackground.Width = 8;
+        ScrollbarBackground.Height = State->MaxVisible * TextHeight - 16;
+        Scrollbar.XPos = EntriesPosX - 16 + 1;
+        Scrollbar.YPos = EntriesPosY + 8 + 1;
+        if (State->MaxFirstVisible)
+          Scrollbar.YPos += (State->MaxVisible * TextHeight - 16 - 1) * (State->FirstVisible) / (State->MaxIndex);
+        Scrollbar.Width = 6;
+        Scrollbar.Height = (State->MaxVisible * TextHeight - 16 - 2) * (State->MaxVisible) / (State->MaxIndex);
+        UpButton.XPos = EntriesPosX - 16;
+        UpButton.YPos = EntriesPosY;
+        UpButton.Width = 8;
+        UpButton.Height = 8;
+        DownButton.XPos = EntriesPosX - 16;
+        DownButton.YPos = EntriesPosY + State->MaxVisible * TextHeight - 8;
+        DownButton.Width = 8;
+        DownButton.Height = 8;
+      }
+      
+      if (State->MaxFirstVisible == 0)
+        ScrollEnabled = FALSE;
+      else
+        ScrollEnabled = TRUE;
+      if (ScrollEnabled) {
+        ScrollbarBackgroundImage = egCreateFilledImage(ScrollbarBackground.Width, ScrollbarBackground.Height, FALSE, &Color);
+        egDrawImageArea(ScrollbarBackgroundImage, 0, 0, 0, 0, ScrollbarBackground.XPos, ScrollbarBackground.YPos);
+        egFreeImage(ScrollbarBackgroundImage);
+        
+        ScrollbarImage = egCreateFilledImage(Scrollbar.Width, Scrollbar.Height, FALSE, &Color3);
+        egDrawImageArea(ScrollbarImage, 0, 0, 0, 0, Scrollbar.XPos, Scrollbar.YPos);
+        egFreeImage(ScrollbarImage);
+        
+        if (!UpButtonImage)
+          UpButtonImage = egCreateFilledImage(UpButton.Width, UpButton.Height, FALSE, &Color2);
+        egDrawImageArea(UpButtonImage, 0, 0, 0, 0, UpButton.XPos, UpButton.YPos);
+        
+        if (!DownButtonImage)
+          DownButtonImage = egCreateFilledImage(DownButton.Width, DownButton.Height, FALSE, &Color2);
+        egDrawImageArea(DownButtonImage, 0, 0, 0, 0, DownButton.XPos, DownButton.YPos);
+      }
+        
       for (i = State->FirstVisible, j = 0; i <= State->LastVisible; i++, j++) {
         INTN  TitleLen;
 
@@ -1584,6 +1666,21 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       
     case MENU_FUNCTION_PAINT_SELECTION:
       HidePointer();
+      if (State->MaxIndex != 0) {
+        Scrollbar.YPos = EntriesPosY + 8 + 1;
+        Scrollbar.YPos += (State->MaxVisible * TextHeight - 16 - 1) * (State->FirstVisible) / (State->MaxIndex);
+      }
+      
+      if (ScrollEnabled) {
+        ScrollbarBackgroundImage = egCreateFilledImage(ScrollbarBackground.Width, ScrollbarBackground.Height, FALSE, &Color);
+        egDrawImageArea(ScrollbarBackgroundImage, 0, 0, 0, 0, ScrollbarBackground.XPos, ScrollbarBackground.YPos);
+        egFreeImage(ScrollbarBackgroundImage);
+        
+        ScrollbarImage = egCreateFilledImage(Scrollbar.Width, Scrollbar.Height, FALSE, &Color3);
+        egDrawImageArea(ScrollbarImage, 0, 0, 0, 0, Scrollbar.XPos, Scrollbar.YPos);
+        egFreeImage(ScrollbarImage);
+      }
+
       // redraw selection cursor
       //usr-sse2
       if (Screen->Entries[State->LastSelection]->Tag == TAG_INPUT) {
@@ -2128,6 +2225,15 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
   InputBootArgs->Entry.AtClick = ActionSelect;
   InputBootArgs->Entry.AtDoubleClick = ActionEnter;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  /*AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);*/
   
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;                
