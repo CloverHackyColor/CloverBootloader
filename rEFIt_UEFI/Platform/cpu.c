@@ -639,6 +639,8 @@ UINT16 GetAdvancedCpuType ()
 						return 0x402;
 						
 					case CPU_MODEL_NEHALEM: // Intel Core i7 LGA1366 (45nm)
+                  if (AsciiStrStr(gCPUStructure.BrandString, "Xeon"))
+                     return 0x501; // Xeon
 						return 0x701; // Core i7
 						
 					case CPU_MODEL_FIELDS: // Lynnfield, Clarksfield, Jasper
