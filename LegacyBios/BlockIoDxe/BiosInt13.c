@@ -486,6 +486,10 @@ Edd30BiosReadBlocks (
   }
 
   BiosBlockIoDev    = BIOS_BLOCK_IO_FROM_THIS (This);
+  if (BiosBlockIoDev->Bios.ErrorCode == BIOS_SECTOR_NOT_FOUND || BiosBlockIoDev->Bios.ErrorCode == BIOS_DRIVE_DOES_NOT_EXIST) {
+    return EFI_DEVICE_ERROR;
+  }
+
   AddressPacket     = mEddBufferUnder1Mb;
 
   MaxTransferBlocks = MAX_EDD11_XFER / BlockSize;
@@ -632,6 +636,10 @@ Edd30BiosWriteBlocks (
   }
 
   BiosBlockIoDev    = BIOS_BLOCK_IO_FROM_THIS (This);
+  if (BiosBlockIoDev->Bios.ErrorCode == BIOS_SECTOR_NOT_FOUND || BiosBlockIoDev->Bios.ErrorCode == BIOS_DRIVE_DOES_NOT_EXIST) {
+    return EFI_DEVICE_ERROR;
+  }
+
   AddressPacket     = mEddBufferUnder1Mb;
 
   MaxTransferBlocks = MAX_EDD11_XFER / BlockSize;
@@ -857,6 +865,10 @@ Edd11BiosReadBlocks (
   }
 
   BiosBlockIoDev    = BIOS_BLOCK_IO_FROM_THIS (This);
+  if (BiosBlockIoDev->Bios.ErrorCode == BIOS_SECTOR_NOT_FOUND || BiosBlockIoDev->Bios.ErrorCode == BIOS_DRIVE_DOES_NOT_EXIST) {
+    return EFI_DEVICE_ERROR;
+  }
+
   AddressPacket     = mEddBufferUnder1Mb;
 
   MaxTransferBlocks = MAX_EDD11_XFER / BlockSize;
@@ -1008,6 +1020,10 @@ Edd11BiosWriteBlocks (
   }
 
   BiosBlockIoDev    = BIOS_BLOCK_IO_FROM_THIS (This);
+  if (BiosBlockIoDev->Bios.ErrorCode == BIOS_SECTOR_NOT_FOUND || BiosBlockIoDev->Bios.ErrorCode == BIOS_DRIVE_DOES_NOT_EXIST) {
+    return EFI_DEVICE_ERROR;
+  }
+
   AddressPacket     = mEddBufferUnder1Mb;
 
   MaxTransferBlocks = MAX_EDD11_XFER / BlockSize;
@@ -1169,6 +1185,10 @@ BiosReadLegacyDrive (
   }
 
   BiosBlockIoDev  = BIOS_BLOCK_IO_FROM_THIS (This);
+  if (BiosBlockIoDev->Bios.ErrorCode == BIOS_SECTOR_NOT_FOUND || BiosBlockIoDev->Bios.ErrorCode == BIOS_DRIVE_DOES_NOT_EXIST) {
+    return EFI_DEVICE_ERROR;
+  }
+
   ShortLba        = (UINTN) Lba;
 
   while (BufferSize != 0) {
@@ -1368,6 +1388,10 @@ BiosWriteLegacyDrive (
   }
 
   BiosBlockIoDev  = BIOS_BLOCK_IO_FROM_THIS (This);
+  if (BiosBlockIoDev->Bios.ErrorCode == BIOS_SECTOR_NOT_FOUND || BiosBlockIoDev->Bios.ErrorCode == BIOS_DRIVE_DOES_NOT_EXIST) {
+    return EFI_DEVICE_ERROR;
+  }
+
   ShortLba        = (UINTN) Lba;
 
   while (BufferSize != 0) {
