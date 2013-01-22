@@ -283,12 +283,12 @@ VOID UpdatePointer()
 //  return Status;
 }
 
-BOOLEAN MouseInRect(EG_RECT Place)
+BOOLEAN MouseInRect(EG_RECT *Place)
 {
-  return  ((gPointer.newPlace.XPos > Place.XPos) &&
-           (gPointer.newPlace.XPos < Place.XPos + (INTN)Place.Width) &&
-           (gPointer.newPlace.YPos > Place.YPos) &&
-           (gPointer.newPlace.YPos < Place.YPos + (INTN)Place.Height));
+  return  ((gPointer.newPlace.XPos >= Place->XPos) &&
+           (gPointer.newPlace.XPos < (Place->XPos + (INTN)Place->Width)) &&
+           (gPointer.newPlace.YPos >= Place->YPos) &&
+           (gPointer.newPlace.YPos < (Place->YPos + (INTN)Place->Height)));
 }
 
 EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
@@ -304,7 +304,7 @@ EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
 
   if (gPointer.MouseEvent != NoEvents){
     for (EntryId = 0; EntryId < Screen->EntryCount; EntryId++) {
-      if (MouseInRect(Screen->Entries[EntryId]->Place)) {
+      if (MouseInRect(&(Screen->Entries[EntryId]->Place))) {
         switch (gPointer.MouseEvent) {
           case LeftClick:
             gAction = Screen->Entries[EntryId]->AtClick;
