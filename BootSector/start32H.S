@@ -347,7 +347,7 @@ A20GateEnabled:
 		int		$0x10
 		#put char 6
 		movl	$0x000F, %ebx
-		movl	$0x0E36, %eax
+		movl	$0x0E33, %eax
 		movl	$0x0010, %ecx
 		int		$0x10
            movw    $0x0008, %bx                # Flat data descriptor
