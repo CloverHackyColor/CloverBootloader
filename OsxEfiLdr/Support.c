@@ -244,7 +244,7 @@ GenMemoryMap (
   }
   
   EBDAsize = 0xA0000 - EBDAaddr;
-    
+/*    
   EfiAddMemoryDescriptor (
                           NumberOfMemoryMapEntries,
                           EfiMemoryDescriptor,
@@ -263,7 +263,7 @@ GenMemoryMap (
                           EFI_MEMORY_UC
                           );
    
-  
+*/  
   //
   // Update MemoryMap according to Ceiling
   //

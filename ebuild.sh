@@ -67,6 +67,15 @@ export PROCESSOR=IA32
 export Processor=Ia32
 }
 
+fnArchB32 ()
+# Function: IA32 Arch function
+{
+echo "ARCH: B32"
+export PROCESSOR=IA32
+export Processor=B32
+}
+
+
 fnArchX64 ()
 # Function: X64 Arch function
 {
@@ -168,9 +177,9 @@ echo "Example: ./ebuild.sh -gcc47 -x64 -release"
 		 fnGCC47
          fnArchIA32
         ;;
-        '-34')
+        '-b3')
          fnGCC47
-         fnArchIA32
+         fnArchB32
         ;;
         '-64')
          fnGCC47
@@ -368,6 +377,11 @@ cp -v $BUILD_DIR/IA32/XhciDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drive
 cp -v $BUILD_DIR/IA32/OsxFatBinaryDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32UEFI/OsxFatBinaryDrv-32.efi
 cp -v $BUILD_DIR/IA32/CLOVERIA32.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/BOOT/
 echo Done!
+fi
+
+if [ $Processor = B32 ]
+then
+cp cp -v $BUILD_DIR/FV/boot $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/ia32/boot5
 fi
 
 if [ $Processor = X64 ]
