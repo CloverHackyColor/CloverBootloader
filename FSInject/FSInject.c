@@ -171,7 +171,7 @@ StrCmpiBasic(IN CHAR16 *String1, IN CHAR16 *String2)
 		Chr1 = ToUpperChar(*String1);
 		Chr2 = ToUpperChar(*String2);
 	}
-    
+	
 	DBG("=%s ", (Chr1 - Chr2) ? L"NEQ" : L"EQ");
 	return Chr1 - Chr2;
 }
@@ -183,7 +183,7 @@ StriStartsWithBasic(IN CHAR16 *String1, IN CHAR16 *String2)
 {
 	CHAR16	Chr1;
 	CHAR16	Chr2;
-    BOOLEAN Result;
+	BOOLEAN Result;
 	
 	DBG("StriStarts('%s', '%s') ", String1, String2);
 	
@@ -205,10 +205,10 @@ StriStartsWithBasic(IN CHAR16 *String1, IN CHAR16 *String2)
 		Chr1 = ToUpperChar(*String1);
 		Chr2 = ToUpperChar(*String2);
 	}
-    
-    Result = ((Chr1 == L'\0') && (Chr2 == L'\0'))
-    || ((Chr1 != L'\0') && (Chr2 == L'\0'));
-    
+	
+	Result = ((Chr1 == L'\0') && (Chr2 == L'\0'))
+		|| ((Chr1 != L'\0') && (Chr2 == L'\0'));
+	
 	DBG("=%s \n", Result ? L"TRUE" : L"FALSE");
 	return Result;
 }
@@ -377,7 +377,7 @@ FSI_FP_Open(
 	DBG("FSI_FP %p.Open('%s', %x, %x) ", This, FileName, OpenMode, Attributes);
 	FSIThis = FSI_FROM_FILE_PROTOCOL(This);
 	NewFName = GetNormalizedFName(FSIThis->FName, FileName);
-    
+	
 	StringList = FSIThis->FSI_FS->Blacklist;
 	if (StringList != NULL && !IsListEmpty(&StringList->List)) {
 		// blocking files in Blacklist
@@ -405,6 +405,25 @@ FSI_FP_Open(
 	FSINew->TgtFP = NULL;
 	FSINew->SrcFP = NULL;
 	
+	// mach_kernel - if exists in SrcDir, then inject this one
+	if (StrCmpiBasic(NewFName, L"\\mach_kernel") == 0) {
+		DBG("mach_kernel ");
+		if (FSIThis->FSI_FS->SrcDir != NULL && FSIThis->FSI_FS->SrcFS != NULL) {
+			InjFName = GetInjectionFName(L"\0", FSIThis->FSI_FS->SrcDir, NewFName);
+			if (InjFName != NULL) {
+				// if this one exists inside injection dir - should be opened with SrcFP
+				FSINew->SrcFP = OpenFileProtocol(FSIThis->FSI_FS->SrcFS, InjFName, OpenMode, Attributes);
+				if (FSINew->SrcFP != NULL) {
+					FSINew->FromTgt = FALSE;
+					DBG("Opened with SrcFP ");
+					goto SuccessExit;
+				} else {
+					DBG(" no injection, SrcFP->Open=%r ", Status);
+				}
+			}
+		}
+	}
+	
 	// try with target
 	if (FSIThis->TgtFP != NULL) {
 		// call original target implementation to get NewHandle
@@ -429,32 +448,32 @@ FSI_FP_Open(
 		// if not found and injection requested: try injection dir
 		InjFName = GetInjectionFName(FSIThis->FSI_FS->TgtDir, FSIThis->FSI_FS->SrcDir, NewFName);
 		if (InjFName != NULL) {
-		// this one exists inside injection dir - should be opened with SrcFP
-		FSINew->FromTgt = FALSE;
-		FSINew->SrcFP = OpenFileProtocol(FSIThis->FSI_FS->SrcFS, InjFName, OpenMode, Attributes);
-		if (FSINew->SrcFP == NULL) {
-			Status = EFI_DEVICE_ERROR;
-			DBG("SrcFP->Open=%r ", Status);
-		} else {
-			Status = EFI_SUCCESS;
-			DBG("Opened with SrcFP ");
+			// this one exists inside injection dir - should be opened with SrcFP
+			FSINew->FromTgt = FALSE;
+			FSINew->SrcFP = OpenFileProtocol(FSIThis->FSI_FS->SrcFS, InjFName, OpenMode, Attributes);
+			if (FSINew->SrcFP == NULL) {
+				Status = EFI_DEVICE_ERROR;
+				DBG("SrcFP->Open=%r ", Status);
+			} else {
+				Status = EFI_SUCCESS;
+				DBG("Opened with SrcFP ");
+			}
 		}
-	}
 
 		if (EFI_ERROR(Status) && FSIThis->TgtFP == NULL) {
-		// this happens when we are called on FP that is opened with SrcFP (we do not have TgtFP)
-		// and then with FName ".." (in shell), and when resulting dir in actually on TgtFP.
-		// need to open it with TgtFP
-		FSINew->TgtFP = OpenFileProtocol(FSIThis->FSI_FS->TgtFS, NewFName, OpenMode, Attributes);
-		if (FSINew->TgtFP != NULL) {
-			Status = EFI_SUCCESS;
-			DBG("Opened with TgtFP ");
-			FSINew->FromTgt = TRUE;
-		} else {
-			Status = EFI_DEVICE_ERROR;
-			DBG("TgtFS->OpenVolume Status=%r\n", Status);
+			// this happens when we are called on FP that is opened with SrcFP (we do not have TgtFP)
+			// and then with FName ".." (in shell), and when resulting dir in actually on TgtFP.
+			// need to open it with TgtFP
+			FSINew->TgtFP = OpenFileProtocol(FSIThis->FSI_FS->TgtFS, NewFName, OpenMode, Attributes);
+			if (FSINew->TgtFP != NULL) {
+				Status = EFI_SUCCESS;
+				DBG("Opened with TgtFP ");
+				FSINew->FromTgt = TRUE;
+			} else {
+				Status = EFI_DEVICE_ERROR;
+				DBG("TgtFS->OpenVolume Status=%r\n", Status);
+			}
 		}
-	}
 	}
 	
 	
@@ -481,6 +500,7 @@ FSI_FP_Open(
 	}
 		
 	
+SuccessExit:
 	// set our implementation as a result
 	*NewHandle = &(FSINew->FP);
 	
@@ -591,7 +611,7 @@ FSI_FP_Read(
 		// do it with target FP
 		Status = FSIThis->TgtFP->Read(FSIThis->TgtFP, BufferSize, Buffer);
 		StringList = FSIThis->FSI_FS->ForceLoadKexts;
-        if (Status == EFI_SUCCESS && StringList != NULL && FSIThis->FName != NULL) {
+		if (Status == EFI_SUCCESS && StringList != NULL && FSIThis->FName != NULL) {
 			// check ForceLoadKexts
 			for (StringEntry = (FSI_STRING_LIST_ENTRY *)GetFirstNode(&StringList->List);
 				 !IsNull (&StringList->List, &StringEntry->List);
@@ -609,7 +629,7 @@ FSI_FP_Read(
 					}
 				}
 			}
-        }
+		}
 	} else if (FSIThis->SrcFP != NULL) {
 		// do it with source FP
 		Status = FSIThis->SrcFP->Read(FSIThis->SrcFP, BufferSize, Buffer);

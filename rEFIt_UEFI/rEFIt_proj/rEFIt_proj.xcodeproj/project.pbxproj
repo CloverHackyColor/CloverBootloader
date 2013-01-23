@@ -2906,7 +2906,7 @@
 		12B7FF0C15F9217300177D35 /* ScsiDisk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ScsiDisk.h; sourceTree = "<group>"; };
 		12B7FF0D15F9217300177D35 /* ScsiDiskDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = ScsiDiskDxe.inf; sourceTree = "<group>"; };
 		12B7FF0E15F9217300177D35 /* ebuild.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; name = ebuild.sh; path = ../../ebuild.sh; sourceTree = "<group>"; };
-		12B7FF1015F9217300177D35 /* FSInject.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = FSInject.c; sourceTree = "<group>"; };
+		12B7FF1015F9217300177D35 /* FSInject.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = FSInject.c; sourceTree = "<group>"; usesTabs = 1; };
 		12B7FF1115F9217300177D35 /* FSInject.dec */ = {isa = PBXFileReference; lastKnownFileType = text; path = FSInject.dec; sourceTree = "<group>"; };
 		12B7FF1215F9217300177D35 /* FSInject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FSInject.h; sourceTree = "<group>"; };
 		12B7FF1315F9217300177D35 /* FSInject.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = FSInject.inf; sourceTree = "<group>"; };
