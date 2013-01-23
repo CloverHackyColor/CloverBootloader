@@ -78,6 +78,7 @@ EFI_STATUS EFIAPI LoadKext(IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OU
 	EFI_STATUS	Status;
 	UINT8*      infoDictBuffer = NULL;
 	UINTN       infoDictBufferLength = 0;
+	UINT8*      executableFatBuffer = NULL;
 	UINT8*      executableBuffer = NULL;
 	UINTN       executableBufferLength = 0;
 	CHAR8*      bundlePathBuffer = NULL;
@@ -114,12 +115,13 @@ EFI_STATUS EFIAPI LoadKext(IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OU
       } else {
         UnicodeSPrint(TempName, 512, L"%s\\%s\\%s", FileName, L"Contents\\MacOS",Executable);
       }
-			Status = egLoadFile(SelfVolume->RootDir, TempName, &executableBuffer, &executableBufferLength);
+			Status = egLoadFile(SelfVolume->RootDir, TempName, &executableFatBuffer, &executableBufferLength);
 			if (EFI_ERROR(Status)) {
 				FreePool(infoDictBuffer);
 				MsgLog("Failed to load extra kext: %s\n", FileName);
 				return EFI_NOT_FOUND;
 			}
+			executableBuffer = executableFatBuffer;
 			if (ThinFatFile(&executableBuffer, &executableBufferLength, archCpuType)) {
 				FreePool(infoDictBuffer);
 				FreePool(executableBuffer);
@@ -144,7 +146,7 @@ EFI_STATUS EFIAPI LoadKext(IN CHAR16 *FileName, IN cpu_type_t archCpuType, IN OU
 		CopyMem((CHAR8 *)infoAddr + sizeof(_BooterKextFileInfo) + infoDictBufferLength, executableBuffer, executableBufferLength);
 		CopyMem((CHAR8 *)infoAddr + sizeof(_BooterKextFileInfo) + infoDictBufferLength + executableBufferLength, bundlePathBuffer, bundlePathBufferLength);
 		FreePool(infoDictBuffer);
-		FreePool(executableBuffer);
+		FreePool(executableFatBuffer);
 		FreePool(bundlePathBuffer);
 	
 	return EFI_SUCCESS;
