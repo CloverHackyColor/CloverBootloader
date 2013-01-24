@@ -237,14 +237,14 @@ GenMemoryMap (
   */
   // EBDA memory protection
   
-  EBDAaddr = ((UINT64)(*(UINT16 *)(UINTN)(0x40E))) << 4;
+  EBDAaddr = LShiftU64((UINT64)(*(UINT16 *)(UINTN)(0x40E)), 4);
   //fool proof
   if (EBDAaddr < 0x9A000 || EBDAaddr > 0x9F800) {
     EBDAaddr = 0x9E000;
   }
   
   EBDAsize = 0xA0000 - EBDAaddr;
-/*    
+    
   EfiAddMemoryDescriptor (
                           NumberOfMemoryMapEntries,
                           EfiMemoryDescriptor,
@@ -263,7 +263,7 @@ GenMemoryMap (
                           EFI_MEMORY_UC
                           );
    
-*/  
+  
   //
   // Update MemoryMap according to Ceiling
   //
