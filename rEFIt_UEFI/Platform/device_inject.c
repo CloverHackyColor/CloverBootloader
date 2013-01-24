@@ -1,7 +1,7 @@
 /*
  *	Copyright 2009 Jasmin Fazlic All rights reserved.
- */
-/*
+ *
+ *
  *	Cleaned and merged by iNDi
  */
 // UEFI adaptation by usr-sse2, then slice, dmazar
@@ -26,8 +26,8 @@
 
 UINT32 devices_number = 1;
 UINT32 builtin_set    = 0;
-DevPropString *string = 0;
-UINT8  *stringdata    = 0;
+DevPropString *string = NULL;
+UINT8  *stringdata    = NULL;
 UINT32 stringlength   = 0;
 
 //pci_dt_t* nvdevice;
@@ -54,7 +54,6 @@ DevPropString *devprop_create_string(VOID)
 	if(string == NULL)
 		return NULL;
 	
-//	ZeroMem((VOID*)string, sizeof(DevPropString));
 	string->length = 12;
 	string->WHAT2 = 0x01000000;
 	return string;
@@ -181,12 +180,13 @@ DevPropDevice *devprop_add_device_pci(DevPropString *StringBuf, pci_dt_t *PciDt)
 	device->data = NULL;
 	StringBuf->length += device->length;
 	
-	if(!StringBuf->entries)
-		if((StringBuf->entries = (DevPropDevice**)AllocatePool(sizeof(device)))== NULL)
+	if(!StringBuf->entries) {
+    StringBuf->entries = (DevPropDevice**)AllocateZeroPool(MAX_NUM_DEVICES * sizeof(device));
+		if(!StringBuf->entries)
 			return 0;
+  }
 	
-	StringBuf->entries[StringBuf->numentries++] = (DevPropDevice*)AllocatePool(sizeof(device));
-	StringBuf->entries[StringBuf->numentries-1] = device;
+	StringBuf->entries[StringBuf->numentries++] = device;
 	
 	return device;
 }
@@ -327,13 +327,13 @@ VOID devprop_free_string(DevPropString *StringBuf)
 			if(StringBuf->entries[i]->data)
 			{
 				FreePool(StringBuf->entries[i]->data);
-				StringBuf->entries[i]->data = NULL;
+		//		StringBuf->entries[i]->data = NULL;
 			}
-			FreePool(StringBuf->entries[i]);
-			StringBuf->entries[i] = NULL;
+		//	FreePool(StringBuf->entries[i]);
+		//	StringBuf->entries[i] = NULL;
 		}
 	}
-	
+	FreePool(StringBuf->entries);
 	FreePool(StringBuf);
 	StringBuf = NULL;
 }

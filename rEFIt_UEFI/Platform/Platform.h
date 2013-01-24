@@ -74,6 +74,7 @@ Headers collection for procedures
 #include "device_inject.h"
 #include "kext_inject.h"
 
+#define MAX_NUM_DEVICES 64
 
 /* Decimal powers: */
 #define kilo (1000ULL)
