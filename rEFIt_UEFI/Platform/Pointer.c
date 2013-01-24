@@ -227,21 +227,26 @@ VOID UpdatePointer()
   Now = AsmReadTsc();
   Status = gPointer.SimplePointerProtocol->GetState(gPointer.SimplePointerProtocol, &tmpState);
   if (!EFI_ERROR(Status)) {
-    if (gPointer.State.LeftButton && !tmpState.LeftButton) { //release left
+    if (!gPointer.State.LeftButton && tmpState.LeftButton) // press left
+      gPointer.MouseEvent = LeftMouseDown;
+    else if (!gPointer.State.RightButton && tmpState.RightButton) // press right
+      gPointer.MouseEvent = RightMouseDown;
+    else if (gPointer.State.LeftButton && !tmpState.LeftButton) { //release left
       // time for double click 500ms into menu
-      if (TimeDiff(gPointer.LastClickTime, Now) < gSettings.DoubleClickTime) {
+      if (TimeDiff(gPointer.LastClickTime, Now) < gSettings.DoubleClickTime)
         gPointer.MouseEvent = DoubleClick;
-      } else {
+      else
         gPointer.MouseEvent = LeftClick;
-      }
       //     CopyMem(&gPointer.LastClickTime, &Now, sizeof(EFI_TIME));
       gPointer.LastClickTime = Now;
-    } else if (gPointer.State.RightButton && !tmpState.RightButton) { //release right
+    } else if (gPointer.State.RightButton && !tmpState.RightButton) //release right
       gPointer.MouseEvent = RightClick;
-    } else if (gPointer.State.RelativeMovementZ > 0) 
+    else if (gPointer.State.RelativeMovementZ > 0)
       gPointer.MouseEvent = ScrollDown;
     else if (gPointer.State.RelativeMovementZ < 0)
       gPointer.MouseEvent = ScrollUp;
+    else if (gPointer.State.RelativeMovementX || gPointer.State.RelativeMovementY)
+      gPointer.MouseEvent = MouseMove;
     else
       gPointer.MouseEvent = NoEvents;
     
@@ -301,12 +306,30 @@ EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
   if (!Screen) {
     return EFI_TIMEOUT;
   }
+  
+  if (!IsDragging && gPointer.MouseEvent == MouseMove)
+    gPointer.MouseEvent = NoEvents;
 
   if (gPointer.MouseEvent != NoEvents){
-    if (ScrollEnabled && MouseInRect(&UpButton))
+    if (ScrollEnabled && MouseInRect(&UpButton) && gPointer.MouseEvent == LeftClick)
       gAction = ActionScrollUp;
-    else if (ScrollEnabled && MouseInRect(&DownButton))
+    else if (ScrollEnabled && MouseInRect(&DownButton) && gPointer.MouseEvent == LeftClick)
       gAction = ActionScrollDown;
+    else if (ScrollEnabled && MouseInRect(&Scrollbar) && gPointer.MouseEvent == LeftMouseDown) {
+      IsDragging = TRUE;
+      ScrollbarYMovement = 0;
+      ScrollbarOldPointerPlace.XPos = ScrollbarNewPointerPlace.XPos = gPointer.newPlace.XPos;
+      ScrollbarOldPointerPlace.YPos = ScrollbarNewPointerPlace.YPos = gPointer.newPlace.YPos;
+    } else if (ScrollEnabled && IsDragging && gPointer.MouseEvent == LeftClick) {
+      IsDragging = FALSE;
+    } else if (ScrollEnabled && IsDragging && gPointer.MouseEvent == MouseMove) {
+      gAction = ActionMoveScrollbar;
+      ScrollbarNewPointerPlace.XPos = gPointer.newPlace.XPos;
+      ScrollbarNewPointerPlace.YPos = gPointer.newPlace.YPos;
+    }
+    else if (ScrollEnabled && MouseInRect(&ScrollbarBackground) && gPointer.MouseEvent == LeftClick) {
+      // page up/down, like in OS X
+    }
     else
       for (EntryId = 0; EntryId < Screen->EntryCount; EntryId++) {
         if (MouseInRect(&(Screen->Entries[EntryId]->Place))) {

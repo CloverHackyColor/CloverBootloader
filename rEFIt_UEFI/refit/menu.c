@@ -68,15 +68,18 @@ REFIT_MENU_SCREEN OptionMenu  = {4, L"Options", NULL, 0, NULL, 0, NULL, 0, NULL,
   {0, 0, 0, 0}, NULL };
 extern REFIT_MENU_ENTRY MenuEntryReturn;
 
-#define SCROLL_LINE_UP      (0)
-#define SCROLL_LINE_DOWN    (1)
-#define SCROLL_PAGE_UP      (2)
-#define SCROLL_PAGE_DOWN    (3)
-#define SCROLL_FIRST        (4)
-#define SCROLL_LAST         (5)
-#define SCROLL_NONE         (6)
-#define SCROLL_SCROLL_DOWN  (7)
-#define SCROLL_SCROLL_UP    (8)
+#define SCROLL_LINE_UP        (0)
+#define SCROLL_LINE_DOWN      (1)
+#define SCROLL_PAGE_UP        (2)
+#define SCROLL_PAGE_DOWN      (3)
+#define SCROLL_FIRST          (4)
+#define SCROLL_LAST           (5)
+#define SCROLL_NONE           (6)
+#define SCROLL_SCROLL_DOWN    (7)
+#define SCROLL_SCROLL_UP      (8)
+#define SCROLL_SCROLLBAR_MOVE (9)
+
+INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign);
 
 // other menu definitions
 
@@ -92,9 +95,16 @@ static CHAR16 ArrowUp[2]   = { ARROW_UP, 0 };
 static CHAR16 ArrowDown[2] = { ARROW_DOWN, 0 };
 
 BOOLEAN ScrollEnabled = FALSE;
-
 EG_RECT UpButton;
 EG_RECT DownButton;
+EG_RECT ScrollbarBackground;
+EG_RECT Scrollbar;
+BOOLEAN IsDragging = FALSE;
+EG_RECT ScrollbarOldPointerPlace;
+EG_RECT ScrollbarNewPointerPlace;
+
+INTN ScrollbarYMovement;
+
 
 //#define TextHeight (FONT_CELL_HEIGHT + TEXT_YMARGIN * 2)
 #define TITLEICON_SPACING (16)
@@ -747,7 +757,24 @@ static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
 {
   State->LastSelection = State->CurrentSelection;
 //  DBG("UpdateScroll on %d\n", Movement);
+  INTN Lines;
+  UINTN ScrollMovement = SCROLL_SCROLL_DOWN;
+  INTN i;
   switch (Movement) {
+    case SCROLL_SCROLLBAR_MOVE:
+      ScrollbarYMovement += ScrollbarNewPointerPlace.YPos - ScrollbarOldPointerPlace.YPos;
+      ScrollbarOldPointerPlace.XPos = ScrollbarNewPointerPlace.XPos;
+      ScrollbarOldPointerPlace.YPos = ScrollbarNewPointerPlace.YPos;
+      Lines = ScrollbarYMovement * State->MaxIndex / (State->MaxVisible * TextHeight - 16 - 1);
+      if (Lines < 0) {
+        Lines = -Lines;
+        ScrollMovement = SCROLL_SCROLL_UP;
+      }
+      for (i = 0; i < Lines; i++)
+        UpdateScroll(State, ScrollMovement);
+      ScrollbarYMovement = ScrollbarYMovement - Lines * (State->MaxVisible * TextHeight - 16 - 1) / State->MaxIndex;
+      break;
+      
     case SCROLL_LINE_UP: //of left = decrement
       if (State->CurrentSelection > 0) {
         State->CurrentSelection --;
@@ -1219,6 +1246,9 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
       case ActionScrollUp:
         UpdateScroll(&State, SCROLL_SCROLL_UP);
         break;
+      case ActionMoveScrollbar:
+        UpdateScroll(&State, SCROLL_SCROLLBAR_MOVE);
+        break;
       default:
         break;
     }
@@ -1458,7 +1488,7 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 // graphical generic style
 //
 
-static INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
+INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 {
   INTN TextWidth;
   EG_IMAGE *TextBufferXY = NULL;
@@ -1509,12 +1539,10 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
   INTN ItemWidth = 0;
   INTN X;
   INTN VisibleHeight = 0; //assume vertical layout
-  static EG_RECT ScrollbarBackground;
-  static EG_RECT Scrollbar;
   EG_IMAGE* ScrollbarImage;
   EG_IMAGE* ScrollbarBackgroundImage;
-  static EG_IMAGE* UpButtonImage;
-  static EG_IMAGE* DownButtonImage;
+  static EG_IMAGE* UpButtonImage = NULL;
+  static EG_IMAGE* DownButtonImage = NULL;
 
   EG_PIXEL Color = {127, 0, 0, 255};
   EG_PIXEL Color2 = {0, 127, 0, 255};
@@ -1530,7 +1558,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       
       EntriesPosY = ((UGAHeight - LAYOUT_TOTAL_HEIGHT) >> 1) + LAYOUT_BANNER_YOFFSET + (TextHeight << 1);
       VisibleHeight = (UGAHeight - EntriesPosY) / TextHeight - Screen->InfoLineCount - 1;
-      DBG("MENU_FUNCTION_INIT 1 EntriesPosY=%d VisibleHeight=%d\n", EntriesPosY, VisibleHeight);
+      //DBG("MENU_FUNCTION_INIT 1 EntriesPosY=%d VisibleHeight=%d\n", EntriesPosY, VisibleHeight);
       InitScroll(State, Screen->EntryCount, Screen->EntryCount, VisibleHeight);
       // determine width of the menu
       MenuWidth = 50;  // minimum
@@ -1589,8 +1617,6 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       
     case MENU_FUNCTION_PAINT_ALL:
       
-      // FIXME: деление на ноль, если элементов нет
-      // FIXME: полоса отображается, даже если все элементы умещаются на экране
       if (State->MaxIndex != 0) {
         ScrollbarBackground.XPos = EntriesPosX - 16;
         ScrollbarBackground.YPos = EntriesPosY + 8;

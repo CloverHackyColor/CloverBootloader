@@ -163,7 +163,10 @@ typedef enum {
   DoubleClick,
   ScrollClick,
   ScrollDown,
-  ScrollUp
+  ScrollUp,
+  LeftMouseDown,
+  RightMouseDown,
+  MouseMove
 } MOUSE_EVENT;
 
 typedef struct _pointers {
@@ -213,7 +216,8 @@ typedef enum {
   ActionDetails,
   ActionFinish,
   ActionScrollDown,
-  ActionScrollUp
+  ActionScrollUp,
+  ActionMoveScrollbar
 } ACTION;
 
 typedef struct {
@@ -223,10 +227,15 @@ typedef struct {
   BOOLEAN IsScrolling, PaintAll, PaintSelection;
 } SCROLL_STATE;
 
+extern BOOLEAN ScrollEnabled;
 extern EG_RECT UpButton;
 extern EG_RECT DownButton;
-
-extern BOOLEAN ScrollEnabled;
+extern EG_RECT ScrollbarBackground;
+extern EG_RECT Scrollbar;
+extern BOOLEAN IsDragging;
+extern EG_RECT ScrollbarOldPointerPlace;
+extern EG_RECT ScrollbarNewPointerPlace;
+extern INTN ScrollbarYMovement;
 
 #define SCREEN_UNKNOWN    0
 #define SCREEN_MAIN       1
