@@ -240,7 +240,7 @@ GenMemoryMap (
   EBDAaddr = LShiftU64((UINT64)(*(UINT16 *)(UINTN)(0x40E)), 4);
   //fool proof
   if (EBDAaddr < 0x9A000 || EBDAaddr > 0x9F800) {
-    EBDAaddr = 0x9E000;
+    EBDAaddr = 0x9A000;
   }
   
   EBDAsize = 0xA0000 - EBDAaddr;

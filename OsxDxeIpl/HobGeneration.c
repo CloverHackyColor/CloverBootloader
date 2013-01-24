@@ -625,7 +625,7 @@ Return:
 
   EbdaAddress = LShiftU64((UINT64)(*(UINT16 *)(UINTN)(0x40E)), 4);
   if (EbdaAddress < 0x9A000 || EbdaAddress > EFI_MEMORY_BELOW_1MB_END) {
-    EbdaAddress = EFI_MEMORY_BELOW_1MB_END;
+    EbdaAddress = 0x9A000;
   }
 
   gHob->MemoryFreeUnder1MB.ResourceLength = EbdaAddress - EFI_MEMORY_BELOW_1MB_START;
