@@ -33,10 +33,6 @@
         fsw_efi.c
         fsw_lib.c
 
-[Sources.IA32]
-        IA32/llshl.asm  | MSFT
-        IA32/ullshr.asm | MSFT
-
 [Packages]
         MdePkg/MdePkg.dec
         IntelFrameworkModulePkg/IntelFrameworkModulePkg.dec

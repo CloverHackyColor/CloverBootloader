@@ -108,14 +108,6 @@
 	Platform/Nvram.c
     Platform/PlatformDriverOverride.c
 
-[Sources.IA32]
-    IA32/llmul.asm | MSFT
-    IA32/llshl.asm | MSFT
-    IA32/ulldiv.asm | MSFT
-    IA32/ullrem.asm | MSFT
-    IA32/ullshr.asm | MSFT
-
-
 [Packages]
 	Clover/CloverPkg.dec
     MdePkg/MdePkg.dec

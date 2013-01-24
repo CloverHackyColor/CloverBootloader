@@ -134,28 +134,20 @@ struct fsw_hfs_volume
 static inline fsw_u16
 swab16(fsw_u16 x)
 {
-    return (x<<8 | ((x & 0xff00)>>8));
+    return SwapBytes16(x);
 }
 
 static inline fsw_u32
 swab32(fsw_u32 x)
 {
-    return x<<24 | x>>24 |
-            (x & (fsw_u32)0x0000ff00UL)<<8 |
-            (x & (fsw_u32)0x00ff0000UL)>>8;
+    return SwapBytes32(x);
 }
 
 
 static inline fsw_u64
 swab64(fsw_u64 x)
 {
-    return x<<56 | x>>56 |
-            (x & (fsw_u64)0x000000000000ff00ULL)<<40 |
-            (x & (fsw_u64)0x0000000000ff0000ULL)<<24 |
-            (x & (fsw_u64)0x00000000ff000000ULL)<< 8 |
-            (x & (fsw_u64)0x000000ff00000000ULL)>> 8 |
-            (x & (fsw_u64)0x0000ff0000000000ULL)>>24 |
-            (x & (fsw_u64)0x00ff000000000000ULL)>>40;
+    return SwapBytes64(x);
 }
 
 static inline fsw_u16

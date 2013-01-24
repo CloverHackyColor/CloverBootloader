@@ -890,7 +890,7 @@ Edd11BiosReadBlocks (
     // Otherwise when offset adding data size exceeds 0xFFFF, if OpROM does not normalize TransferBuffer,
     // INT13 function 42H will return data boundary error 09H.
     //
-    AddressPacket->SegOffset = (UINT32) ((TransferBuffer >> 4) << 16);
+    AddressPacket->SegOffset = (UINT32) LShiftU64(RShiftU64(TransferBuffer, 4), 16);
     AddressPacket->Lba  = (UINT64) Lba;
 
     Regs.H.AH           = 0x42;
@@ -1045,7 +1045,7 @@ Edd11BiosWriteBlocks (
     // Otherwise when offset adding data size exceeds 0xFFFF, if OpROM does not normalize TransferBuffer,
     // INT13 function 42H will return data boundary error 09H.
     //
-    AddressPacket->SegOffset = (UINT32) ((TransferBuffer >> 4) << 16);
+    AddressPacket->SegOffset = (UINT32) LShiftU64(RShiftU64(TransferBuffer, 4), 16);
     AddressPacket->Lba  = (UINT64) Lba;
 
     Regs.H.AH           = 0x43;
