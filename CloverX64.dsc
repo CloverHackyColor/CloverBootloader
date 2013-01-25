@@ -451,3 +451,6 @@
   XCODE:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
   GCC:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
 
+# Uncomment following line to add video bios patching in CloverEFI
+#  GCC:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG -DCLOVER_VBIOS_PATCH_IN_CLOVEREFI
+

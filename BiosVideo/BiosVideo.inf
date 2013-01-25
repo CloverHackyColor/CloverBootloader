@@ -39,6 +39,7 @@
   UefiDriverEntryPoint
   DevicePathLib
   MemLogLib
+  VideoBiosPatchLib
 
 [Sources]
 #  Debug.c

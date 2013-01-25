@@ -16,6 +16,7 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include "BiosVideo.h"
 
 #include <Library/MemLogLib.h>
+#include <Library/VideoBiosPatchLib.h>
 #include <Library/PrintLib.h>
 
 #ifndef DEBUG_ALL
@@ -858,7 +859,7 @@ BiosVideoDeviceReleaseResource (
 //Subroutines from Joblo's project RadeonFB
 //----------------------------------------------------------------------------------
 
-BOOLEAN edid_checksum(UINT8 *edid)
+BOOLEAN bvideo_edid_checksum(UINT8 *edid)
 {
 	INTN i;
 	UINT8 csum = 0, all_null = 0;
@@ -877,23 +878,23 @@ BOOLEAN edid_checksum(UINT8 *edid)
 }
 
 //----------------------------------------------------------------------------------
-const UINT8 edid_v1_header[] = { 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00	};
+const UINT8 bvideo_edid_v1_header[] = { 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00	};
 
-BOOLEAN edid_check_header(UINT8 *edid)
+BOOLEAN bvideo_edid_check_header(UINT8 *edid)
 {
 	INTN i; 
 	
 	for (i = 0; i < 8; i++) {
-		if (edid[i] != edid_v1_header[i])
+		if (edid[i] != bvideo_edid_v1_header[i])
 			return FALSE;
 	}
 	
 	return TRUE;
 }
 //------------------------------------------------------------------------
-BOOLEAN verifyEDID(UINT8 *edid)
+BOOLEAN bvideo_verifyEDID(UINT8 *edid)
 {
-	if (edid == NULL || !edid_checksum(edid) ||	!edid_check_header(edid)) 
+	if (edid == NULL || !bvideo_edid_checksum(edid) ||	!bvideo_edid_check_header(edid)) 
 	{
 		return FALSE;
 	}
@@ -1027,7 +1028,7 @@ ParseEdidData (
   //
   // Check the checksum of EDID data
   //
-	if (!edid_checksum(EdidBuffer)) {
+	if (!bvideo_edid_checksum(EdidBuffer)) {
 		return FALSE;
 	}
   
@@ -1244,6 +1245,122 @@ BiosVideoCheckForVbe (
 	BiosVideoPrivate->VbeSaveRestoreBuffer  = 0;
 	
 	//
+	// Read EDID information
+	//
+	// INT 10 - VESA VBE/DC (Display Data Channel) - READ EDID
+	//
+	//    AX = 4F15h
+	//    BL = 01h
+	//    CX = 0000h  -- port number? =0 - main display
+	//    DX = 0000h  -- block
+	//    ES:DI -> 128-byte buffer for EDID record (see #00127)
+	// Return: AL = 4Fh if function supported
+	//    AH = status
+	//        00h successful
+	//    ES:DI buffer filled
+	//    01h failed (e.g. non-DDC monitor)
+	//
+	//	ZeroMem (&ValidEdidTiming, sizeof (VESA_BIOS_EXTENSIONS_VALID_EDID_TIMING));
+	/*
+	 block 0 - VESA Structure
+	 block 1 - CEA Ext Structure
+	 */
+	ZeroMem (&Regs, sizeof (Regs));
+	Regs.X.AX = VESA_BIOS_EXTENSIONS_EDID;
+	Regs.X.BX = 1;
+	Regs.X.CX = 0;
+	Regs.X.DX = 1; //block 0
+	Regs.E.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
+	Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
+	
+	LegacyBiosInt86 (BiosVideoPrivate, 0x10, &Regs);
+	
+	//
+	// See if the VESA call succeeded
+	//
+	EdidFound = FALSE;
+	if (Regs.X.AX == VESA_BIOS_EXTENSIONS_STATUS_SUCCESS)
+	{
+		EdidFound = TRUE;
+		DBG(" Edid1+\n");
+		ParseEdidData ((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock, &ValidEdidTiming);
+	} else {
+		DBG(" Edid1-\n");
+	}
+	
+	//Slice - attempt Nr2
+	ZeroMem (&Regs, sizeof (Regs));
+	Regs.X.AX = VESA_BIOS_EXTENSIONS_EDID;
+	Regs.X.BX = 1;
+	Regs.X.CX = 0;
+	Regs.X.DX = 0; //block 1
+	Regs.E.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
+	Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
+	
+	LegacyBiosInt86 (BiosVideoPrivate, 0x10, &Regs);
+	EdidFound = (Regs.X.AX == VESA_BIOS_EXTENSIONS_STATUS_SUCCESS);
+	//&& bvideo_verifyEDID((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock);
+	
+	if (!bvideo_verifyEDID((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock)) {
+		//		MsgLog(" Edid broken\n");
+	}
+    //
+    // Parse EDID data structure to retrieve modes supported by monitor
+    //
+	if (Regs.X.AX == VESA_BIOS_EXTENSIONS_STATUS_SUCCESS)
+	{
+		EdidFound = TRUE;
+		DBG(" Edid0+\n");
+		ParseEdidData ((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock, &ValidEdidTiming);
+	} else {
+		DBG(" Edid0-\n");
+	}
+	
+    if (EdidFound ) {
+		
+#ifdef CLOVER_VBIOS_PATCH_IN_CLOVEREFI
+		VideoBiosPatchNativeFromEdid((UINT8 *)BiosVideoPrivate->VbeEdidDataBlock);
+#endif
+		
+		BiosVideoPrivate->EdidDiscovered.SizeOfEdid = VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE;
+		Status = gBS->AllocatePool (
+									EfiBootServicesData,
+									VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE,
+									(VOID**) &BiosVideoPrivate->EdidDiscovered.Edid
+									);
+		if (EFI_ERROR (Status)) {
+			goto Done;
+		}
+		CopyMem (
+				 BiosVideoPrivate->EdidDiscovered.Edid,
+				 BiosVideoPrivate->VbeEdidDataBlock,
+				 VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE
+				 );
+		
+		BiosVideoPrivate->EdidActive.SizeOfEdid = VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE;
+		Status = gBS->AllocatePool (
+									EfiBootServicesData,
+									VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE,
+									(VOID**)&BiosVideoPrivate->EdidActive.Edid
+									);
+		if (EFI_ERROR (Status)) {
+			goto Done;
+		}
+		CopyMem (
+				 BiosVideoPrivate->EdidActive.Edid,
+				 BiosVideoPrivate->VbeEdidDataBlock,
+				 VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE
+				 );
+    } else {
+		EdidFound = FALSE;
+		BiosVideoPrivate->EdidDiscovered.SizeOfEdid = 0;
+		BiosVideoPrivate->EdidDiscovered.Edid = NULL;
+		
+		BiosVideoPrivate->EdidActive.SizeOfEdid = 0;
+		BiosVideoPrivate->EdidActive.Edid = NULL;
+    }
+	
+	//
 	// Test to see if the Video Adapter is compliant with VBE 3.0
 	//
 	// INT 10 - VESA SuperVGA BIOS (VBE) - GET SuperVGA INFORMATION
@@ -1290,116 +1407,6 @@ BiosVideoCheckForVbe (
 //	if (BiosVideoPrivate->VbeInformationBlock->VESAVersion < VESA_BIOS_EXTENSIONS_VERSION_2_0) {
 //	    MsgLog("VESA v%d\n", BiosVideoPrivate->VbeInformationBlock->VESAVersion);
 //	}
-	//	ZeroMem (&ValidEdidTiming, sizeof (VESA_BIOS_EXTENSIONS_VALID_EDID_TIMING));
-	//
-	// Read EDID information
-	//
-	// INT 10 - VESA VBE/DC (Display Data Channel) - READ EDID
-	//
-	//    AX = 4F15h
-	//    BL = 01h
-	//    CX = 0000h  -- port number? =0 - main display
-	//    DX = 0000h  -- block
-	//    ES:DI -> 128-byte buffer for EDID record (see #00127)
-	// Return: AL = 4Fh if function supported
-	//    AH = status
-	//        00h successful
-	//    ES:DI buffer filled
-	//    01h failed (e.g. non-DDC monitor)
-	//
-	/*
-	 block 0 - VESA Structure
-	 block 1 - CEA Ext Structure
-	 */
-	ZeroMem (&Regs, sizeof (Regs));
-	Regs.X.AX = VESA_BIOS_EXTENSIONS_EDID;
-	Regs.X.BX = 1;
-	Regs.X.CX = 0;
-	Regs.X.DX = 1; //block 0
-	Regs.E.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
-	Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
-	
-	LegacyBiosInt86 (BiosVideoPrivate, 0x10, &Regs);
-	
-	//
-	// See if the VESA call succeeded
-	//
-	EdidFound = FALSE;
-	if (Regs.X.AX == VESA_BIOS_EXTENSIONS_STATUS_SUCCESS)
-	{
-		EdidFound = TRUE;
-		DBG(" Edid1+\n");
-		ParseEdidData ((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock, &ValidEdidTiming);
-	} else {
-		DBG(" Edid1-\n");
-	}
-	
-	//Slice - attempt Nr2
-	ZeroMem (&Regs, sizeof (Regs));
-	Regs.X.AX = VESA_BIOS_EXTENSIONS_EDID;
-	Regs.X.BX = 1;
-	Regs.X.CX = 0;
-	Regs.X.DX = 0; //block 1
-	Regs.E.ES = EFI_SEGMENT ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
-	Regs.X.DI = EFI_OFFSET ((UINTN) BiosVideoPrivate->VbeEdidDataBlock);
-	
-	LegacyBiosInt86 (BiosVideoPrivate, 0x10, &Regs);
-	EdidFound = (Regs.X.AX == VESA_BIOS_EXTENSIONS_STATUS_SUCCESS);
-	//&& verifyEDID((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock);
-	
-	if (!verifyEDID((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock)) {
-//		MsgLog(" Edid broken\n");
-	}
-    //
-    // Parse EDID data structure to retrieve modes supported by monitor
-    //
-	if (Regs.X.AX == VESA_BIOS_EXTENSIONS_STATUS_SUCCESS)
-	{
-		EdidFound = TRUE;
-		DBG(" Edid0+\n");
-		ParseEdidData ((UINT8 *) BiosVideoPrivate->VbeEdidDataBlock, &ValidEdidTiming);
-	} else {
-		DBG(" Edid0-\n");
-	}
-	
-    if (EdidFound ) {
-		BiosVideoPrivate->EdidDiscovered.SizeOfEdid = VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE;
-		Status = gBS->AllocatePool (
-									EfiBootServicesData,
-									VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE,
-									(VOID**) &BiosVideoPrivate->EdidDiscovered.Edid
-									);
-		if (EFI_ERROR (Status)) {
-			goto Done;
-		}
-		CopyMem (
-				 BiosVideoPrivate->EdidDiscovered.Edid,
-				 BiosVideoPrivate->VbeEdidDataBlock,
-				 VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE
-				 );
-		
-		BiosVideoPrivate->EdidActive.SizeOfEdid = VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE;
-		Status = gBS->AllocatePool (
-									EfiBootServicesData,
-									VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE,
-									(VOID**)&BiosVideoPrivate->EdidActive.Edid
-									);
-		if (EFI_ERROR (Status)) {
-			goto Done;
-		}
-		CopyMem (
-				 BiosVideoPrivate->EdidActive.Edid,
-				 BiosVideoPrivate->VbeEdidDataBlock,
-				 VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE
-				 );
-    } else {
-		EdidFound = FALSE;
-		BiosVideoPrivate->EdidDiscovered.SizeOfEdid = 0;
-		BiosVideoPrivate->EdidDiscovered.Edid = NULL;
-		
-		BiosVideoPrivate->EdidActive.SizeOfEdid = 0;
-		BiosVideoPrivate->EdidActive.Edid = NULL;
-    }
 	
 	//
 	// Walk through the mode list to see if there is at least one mode the is compatible with the EDID mode
