@@ -128,9 +128,9 @@ VOID GetCPUProperties (VOID)
   DoCpuid(1, gCPUStructure.CPUID[CPUID_1]);
   if (gCPUStructure.Vendor == CPU_VENDOR_INTEL) {
     msr = AsmReadMsr64(MSR_IA32_BIOS_SIGN_ID);
-    gCPUStructure.MicroCode = msr >> 32;
+    gCPUStructure.MicroCode = RShiftU64(msr, 32);
     /* Get "processor flag"; necessary for microcode update matching */
-    gCPUStructure.ProcessorFlag = (AsmReadMsr64(MSR_IA32_PLATFORM_ID) >> 50) & 3;   
+    gCPUStructure.ProcessorFlag = (RShiftU64(AsmReadMsr64(MSR_IA32_PLATFORM_ID), 50)) & 3;   
   }
   
 //  DoCpuid(2, gCPUStructure.CPUID[2]);
@@ -158,12 +158,12 @@ VOID GetCPUProperties (VOID)
   
   //Calculate Nr or Cores
 	if (gCPUStructure.Features & CPUID_FEATURE_HTT) {
-		gCPUStructure.LogicalPerPackage	= bitfield(gCPUStructure.CPUID[CPUID_1][EBX], 23, 16); //Atom330 = 4
+		gCPUStructure.LogicalPerPackage	= (UINT32)bitfield(gCPUStructure.CPUID[CPUID_1][EBX], 23, 16); //Atom330 = 4
 	} else {
 		gCPUStructure.LogicalPerPackage	= 1;
 	}
   DoCpuid(4, gCPUStructure.CPUID[CPUID_4]);
-	gCPUStructure.CoresPerPackage =  bitfield(gCPUStructure.CPUID[CPUID_4][EAX], 31, 26) + 1; //Atom330 = 2
+	gCPUStructure.CoresPerPackage =  (UINT32)bitfield(gCPUStructure.CPUID[CPUID_4][EAX], 31, 26) + 1; //Atom330 = 2
 	if (gCPUStructure.CoresPerPackage == 0) {
 		gCPUStructure.CoresPerPackage = 1;
 	}
@@ -269,9 +269,8 @@ VOID GetCPUProperties (VOID)
             gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
             gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
             msr = AsmReadMsr64(MSR_FLEX_RATIO);
-            if ((msr >> 16) & 0x01)
-            {
-              UINT8 flex_ratio = (msr >> 8) & 0xff;
+            if ((RShiftU64(msr, 16) & 0x01) != 0) {
+              UINT8 flex_ratio = RShiftU64(msr, 8) & 0xff;
               MsgLog("non-usable FLEX_RATIO = %x\n", msr);
               if (flex_ratio == 0) { 
                 AsmWriteMsr64(MSR_FLEX_RATIO, (msr & 0xFFFFFFFFFFFEFFFFULL)); 
@@ -282,9 +281,9 @@ VOID GetCPUProperties (VOID)
             }
      //       
             msr = AsmReadMsr64(MSR_PLATFORM_INFO);            
-            gCPUStructure.MinRatio = (UINT8)(msr >> 40) & 0xff;
+            gCPUStructure.MinRatio = (UINT8)RShiftU64(msr, 40) & 0xff;
             // msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);
-            gCPUStructure.MaxRatio = (UINT8)((msr >> 8) & 0xff);
+            gCPUStructure.MaxRatio = (UINT8)(RShiftU64(msr, 8) & 0xff);
             TurboMsr = msr + 1;
             
             if(gCPUStructure.MaxRatio) {
@@ -301,10 +300,10 @@ VOID GetCPUProperties (VOID)
                */
               msr = AsmReadMsr64(MSR_TURBO_RATIO_LIMIT);
               
-              gCPUStructure.Turbo1 = (UINT8)((msr >> 0) & 0xff);
-              gCPUStructure.Turbo2 = (UINT8)((msr >> 8) & 0xff) * 10;
-              gCPUStructure.Turbo3 = (UINT8)((msr >> 16) & 0xff) * 10;
-              gCPUStructure.Turbo4 = (UINT8)(msr >> 24) & 0xff; //later
+            gCPUStructure.Turbo1 = (UINT8)(RShiftU64(msr, 0) & 0xff);
+            gCPUStructure.Turbo2 = (UINT8)MultU64x32((RShiftU64(msr, 8) & 0xff), 10);
+            gCPUStructure.Turbo3 = (UINT8)MultU64x32((RShiftU64(msr, 16) & 0xff), 10);
+            gCPUStructure.Turbo4 = (UINT8)RShiftU64(msr, 24) & 0xff; //later
             /* Not sure what this is here for - apianti
             } else {
               gCPUStructure.Turbo4 = (UINT16)(gCPUStructure.MaxRatio + 1);
@@ -328,13 +327,12 @@ VOID GetCPUProperties (VOID)
             gCPUStructure.TSCFrequency = MultU64x32(gCPUStructure.CurrentSpeed, Mega); //MHz -> Hz
             gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
             msr = AsmReadMsr64(MSR_PLATFORM_INFO);       //0xCE     
-            gCPUStructure.MaxRatio = (UINT8)(msr >> 8) & 0xff;
-            gCPUStructure.MinRatio = ((UINT8)(msr >> 40) & 0xff) * 10;
+            gCPUStructure.MaxRatio = (UINT8)RShiftU64(msr, 8) & 0xff;
+            gCPUStructure.MinRatio = (UINT8)MultU64x32(RShiftU64(msr, 40) & 0xff, 10);
             msr = AsmReadMsr64(MSR_FLEX_RATIO);   //0x194
-            if ((msr >> 16) & 0x01)
-            {
+            if ((RShiftU64(msr, 16) & 0x01) != 0) {
               // bcc9 patch
-              UINT8 flex_ratio = (msr >> 8) & 0xff;
+              UINT8 flex_ratio = RShiftU64(msr, 8) & 0xff;
               MsgLog("non-usable FLEX_RATIO = %x\n", msr);
               if (flex_ratio == 0) { 
                 AsmWriteMsr64(MSR_FLEX_RATIO, (msr & 0xFFFFFFFFFFFEFFFFULL)); 
@@ -351,7 +349,7 @@ VOID GetCPUProperties (VOID)
             if(gCPUStructure.MaxRatio) {
               gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.TSCFrequency, gCPUStructure.MaxRatio);
             } else {
-              gCPUStructure.FSBFrequency = 100ULL * Mega;
+              gCPUStructure.FSBFrequency = 100000000ULL; //100*Mega
             }
 
             /* Unneccessary - apianti
@@ -361,11 +359,11 @@ VOID GetCPUProperties (VOID)
             */
             
             msr = AsmReadMsr64(MSR_TURBO_RATIO_LIMIT);   //0x1AD           
-            gCPUStructure.Turbo1 = (UINT8)(msr >> 0) & 0xff;
-            gCPUStructure.Turbo2 = ((UINT8)(msr >> 8) & 0xff) * 10;
-            gCPUStructure.Turbo3 = ((UINT8)(msr >> 16) & 0xff) * 10;
-            gCPUStructure.Turbo4 = (UINT8)(msr >> 24) & 0xff;            
-
+            gCPUStructure.Turbo1 = (UINT8)RShiftU64(msr, 0) & 0xff;
+            gCPUStructure.Turbo2 = (UINT8)MultU64x32(RShiftU64(msr, 8) & 0xff, 10);
+            gCPUStructure.Turbo3 = (UINT8)MultU64x32(RShiftU64(msr, 16) & 0xff, 10);
+            gCPUStructure.Turbo4 = (UINT8)RShiftU64(msr, 24) & 0xff;            
+            
             if (gCPUStructure.Turbo4 == 0) {
               gCPUStructure.Turbo4 = gCPUStructure.Turbo1;
               if (gCPUStructure.Turbo4 == 0) {
@@ -390,12 +388,14 @@ VOID GetCPUProperties (VOID)
             gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
             msr = AsmReadMsr64(MSR_IA32_PERF_STATUS);
             TurboMsr = msr + (1 << 8);
-            gCPUStructure.MaxRatio = (UINT32)(msr >> 8) & 0x1f;
-            gCPUStructure.SubDivider = (UINT32)(msr >> 14) & 0x1;
+            gCPUStructure.MaxRatio = (UINT32)(RShiftU64(msr, 8)) & 0x1f;
+            gCPUStructure.SubDivider = (UINT32)(RShiftU64(msr, 14)) & 0x1;
             gCPUStructure.MinRatio = 60;
             if(!gCPUStructure.MaxRatio) gCPUStructure.MaxRatio = 6; // :(
-            gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.TSCFrequency * 2,
-                                                   gCPUStructure.MaxRatio * 2 + gCPUStructure.SubDivider);
+           // gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.TSCFrequency * 2,
+           //                                     gCPUStructure.MaxRatio * 2 + gCPUStructure.SubDivider);
+            gCPUStructure.FSBFrequency = DivU64x32(LShiftU64(gCPUStructure.TSCFrequency, 1),
+                                gCPUStructure.MaxRatio * 2 + gCPUStructure.SubDivider);
             gCPUStructure.MaxRatio = gCPUStructure.MaxRatio * 10 + gCPUStructure.SubDivider * 5; 
             gCPUStructure.Turbo4 = (UINT16)(gCPUStructure.MaxRatio + 10);
             break;
@@ -404,9 +404,9 @@ VOID GetCPUProperties (VOID)
             gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
             gCPUStructure.MinRatio = 60;
             if (!gCPUStructure.FSBFrequency) {
-              gCPUStructure.FSBFrequency = 100ULL * Mega;
+              gCPUStructure.FSBFrequency = 100000000ULL; //100*Mega
             }
-            gCPUStructure.MaxRatio = (UINT32)(DivU64x64Remainder(gCPUStructure.TSCFrequency, gCPUStructure.FSBFrequency, 0) * 10);
+            gCPUStructure.MaxRatio = (UINT32)(MultU64x32(DivU64x64Remainder(gCPUStructure.TSCFrequency, gCPUStructure.FSBFrequency, NULL), 10));
             gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
             break;
 				}
@@ -418,10 +418,10 @@ VOID GetCPUProperties (VOID)
         msr = AsmReadMsr64(MSR_IA32_PLATFORM_ID);
         TurboMsr = 0;
         if (!gCPUStructure.FSBFrequency) {
-          gCPUStructure.FSBFrequency = 100ULL * Mega;
+          gCPUStructure.FSBFrequency = 100000000ULL; //100*Mega
         }        
-        if (((msr >> 31) & 0x01) != 0) {
-          gCPUStructure.MaxRatio = (UINT8)((msr >> 8) & 0x1f) * 10;
+        if ((RShiftU64(msr, 31) & 0x01) != 0) {
+          gCPUStructure.MaxRatio = (UINT8)MultU64x32((RShiftU64(msr, 8) & 0x1f), 10);
           gCPUStructure.MinRatio = gCPUStructure.MaxRatio; //no speedstep
         } else {
           gCPUStructure.MaxRatio = (UINT32)DivU64x64Remainder(gCPUStructure.TSCFrequency, gCPUStructure.FSBFrequency, 0);
@@ -435,24 +435,27 @@ VOID GetCPUProperties (VOID)
       gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
 		if(gCPUStructure.Extfamily == 0x00 /* K8 */) {
 			msr = AsmReadMsr64(K8_FIDVID_STATUS);
-			gCPUStructure.MaxRatio = (UINT32)((((msr >> 16) & 0x3f) >> 2) + 4);
-         gCPUStructure.MinRatio = (UINT32)((((msr >> 8) & 0x3f) >> 2) + 4);
+      gCPUStructure.MaxRatio = (UINT32)(RShiftU64((RShiftU64(msr, 16) & 0x3f), 2) + 4);
+      gCPUStructure.MinRatio = (UINT32)(RShiftU64((RShiftU64(msr, 8) & 0x3f), 2) + 4);
 		}
 		else if(gCPUStructure.Extfamily >= 0x01 /* K10+ */) {
 			msr = AsmReadMsr64(K10_COFVID_STATUS);
-			if(gCPUStructure.Extfamily == 0x01 /* K10 */)
-				gCPUStructure.MaxRatio = (UINT32)DivU64x32(((msr & 0x3f) + 0x10), (1 << ((msr >> 6) & 0x7)));
-			else /* K11+ */
-				gCPUStructure.MaxRatio = (UINT32)DivU64x32(((msr & 0x3f) + 0x08), (1 << ((msr >> 6) & 0x7)));
+			if(gCPUStructure.Extfamily == 0x01 /* K10 */) {
+				gCPUStructure.MaxRatio = (UINT32)DivU64x32(((msr & 0x3f) + 0x10), (1 << ((RShiftU64(msr, 6) & 0x7))));
+      }
+			else {/* K11+ */
+				gCPUStructure.MaxRatio = (UINT32)DivU64x32(((msr & 0x3f) + 0x08), (1 << ((RShiftU64(msr, 6) & 0x7))));
+      }
          // Get min ratio
-         msr = AsmReadMsr64(K10_COFVID_LIMIT);
-         msr = AsmReadMsr64(K10_PSTATE_STATUS + ((msr >> 4) & 0x07));
-         if(gCPUStructure.Extfamily == 0x01 /* K10 */)
-				gCPUStructure.MinRatio = 5 * (UINT32)DivU64x32(((msr & 0x3f) + 0x10), (1 << ((msr >> 6) & 0x7)));
-			else /* K11+ */
-				gCPUStructure.MinRatio = 5 * (UINT32)DivU64x32(((msr & 0x3f) + 0x08), (1 << ((msr >> 6) & 0x7)));
+      msr = AsmReadMsr64(K10_COFVID_LIMIT);
+      msr = AsmReadMsr64(K10_PSTATE_STATUS + ((RShiftU64(msr, 4) & 0x07)));
+      if(gCPUStructure.Extfamily == 0x01) { /* K10 */
+				gCPUStructure.MinRatio = 5 * (UINT32)DivU64x32(((msr & 0x3f) + 0x10), (1 << ((RShiftU64(msr, 6) & 0x7))));
+      } else  {/* K11+ */
+				gCPUStructure.MinRatio = 5 * (UINT32)DivU64x32(((msr & 0x3f) + 0x08), (1 << ((RShiftU64(msr, 6) & 0x7))));
+      }                                             
 		}
-      gCPUStructure.MaxRatio >>= 1;
+    gCPUStructure.MaxRatio >>= 1;
     if (!gCPUStructure.MaxRatio) {
       gCPUStructure.MaxRatio = 1; //??? to avoid zero division
     }
@@ -548,7 +551,7 @@ VOID GetCPUProperties (VOID)
 		gCPUStructure.ProcessorInterconnectSpeed = DivU64x32(qpibusspeed, kilo); //kHz->MHz
 
 	} else {
-		gCPUStructure.ProcessorInterconnectSpeed = DivU64x32((UINT64)gCPUStructure.ExternalClock << 2, kilo); //kHz->MHz
+    gCPUStructure.ProcessorInterconnectSpeed = DivU64x32(LShiftU64(gCPUStructure.ExternalClock, 2), kilo); //kHz->MHz
 	}
 	gCPUStructure.MaxSpeed = (UINT32)(DivU64x32(MultU64x64(gCPUStructure.FSBFrequency, gCPUStructure.MaxRatio), Mega * 10)); //kHz->MHz
 

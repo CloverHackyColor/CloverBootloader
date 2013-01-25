@@ -33,9 +33,6 @@
 #define DBG(...) DebugLog(DEBUG_SMBIOS, __VA_ARGS__)
 #endif
 
-#define _Bit(n)			(1ULL << n)
-#define _HBit(n)		(1ULL << ((n)+32))
-
 #define CPUID_EXTFEATURE_EM64T		_Bit(29)
 #define CPUID_EXTFEATURE_XD			_Bit(20)
 #define CPUID_FEATURE_VMX			_HBit(5)
@@ -1293,9 +1290,9 @@ PatchTableType19 ()
 		//SomeHandle = SmbiosTable.Type19->Hdr.Handle;
 	}
 	if (TotalEnd == 0) {
-		TotalEnd = (mTotalSystemMemory << 10) - 1;
+		TotalEnd = (UINT32)(LShiftU64(mTotalSystemMemory, 10) - 1);
 	}
-	gTotalMemory = ((UINT64)mTotalSystemMemory) << 20;
+	gTotalMemory = LShiftU64(mTotalSystemMemory, 20);
 	ZeroMem((VOID*)newSmbiosTable.Type19, MAX_TABLE_SIZE);
 	newSmbiosTable.Type19->Hdr.Type = EFI_SMBIOS_TYPE_MEMORY_ARRAY_MAPPED_ADDRESS;
 	newSmbiosTable.Type19->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE19); 
@@ -1459,7 +1456,7 @@ VOID PatchTableType132()
 		if(gSettings.QPI){
 			newSmbiosTable.Type132->ProcessorBusSpeed = gSettings.QPI;
 		} else {
-			newSmbiosTable.Type132->ProcessorBusSpeed = (UINT16)(DivU64x32(gSettings.BusSpeed, kilo) << 2);
+			newSmbiosTable.Type132->ProcessorBusSpeed = (UINT16)(LShiftU64(DivU64x32(gSettings.BusSpeed, kilo), 2));
 		}
 		Handle = LogSmbiosTable(newSmbiosTable);
 		return;

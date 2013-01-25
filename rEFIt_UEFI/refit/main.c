@@ -718,7 +718,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   SubScreen->ID = OSType + 20;
 //  DBG("get anime for os=%d\n", SubScreen->ID);
   SubScreen->AnimeRun = GetAnime(SubScreen);
-  VolumeSize = MultU64x32 (Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize) >> 20;
+  VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize), 20);
   AddMenuInfoLine(SubScreen, PoolPrint(L"Volume size: %dMb", VolumeSize));
   
   // Aptio UEFI ML boot requires slide=0

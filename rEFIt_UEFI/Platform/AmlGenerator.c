@@ -158,13 +158,13 @@ AML_CHUNK* aml_add_qword(AML_CHUNK* parent, UINT64 value)
 		node->Length = 8;
 		node->Buffer = AllocateZeroPool (node->Length);
 		node->Buffer[0] = value & 0xff;
-		node->Buffer[1] = (value >> 8) & 0xff;
-		node->Buffer[2] = (value >> 16) & 0xff;
-		node->Buffer[3] = (value >> 24) & 0xff;
-		node->Buffer[4] = (value >> 32) & 0xff;
-		node->Buffer[5] = (value >> 40) & 0xff;
-		node->Buffer[6] = (value >> 48) & 0xff;
-		node->Buffer[7] = (value >> 56) & 0xff;
+    node->Buffer[1] = RShiftU64(value, 8) & 0xff;
+    node->Buffer[2] = RShiftU64(value, 16) & 0xff;
+    node->Buffer[3] = RShiftU64(value, 24) & 0xff;
+    node->Buffer[4] = RShiftU64(value, 32) & 0xff;
+    node->Buffer[5] = RShiftU64(value, 40) & 0xff;
+    node->Buffer[6] = RShiftU64(value, 48) & 0xff;
+    node->Buffer[7] = RShiftU64(value, 56) & 0xff;
 	}
 	
 	return node;
@@ -558,13 +558,13 @@ UINT32 aml_write_dword(UINT32 value, CHAR8* buffer, UINT32 offset)
 UINT32 aml_write_qword(UINT64 value, CHAR8* buffer, UINT32 offset)
 {
 	buffer[offset++] = value & 0xff;
-	buffer[offset++] = (value >> 8) & 0xff;
-	buffer[offset++] = (value >> 16) & 0xff;
-	buffer[offset++] = (value >> 24) & 0xff;
-	buffer[offset++] = (value >> 32) & 0xff;
-	buffer[offset++] = (value >> 40) & 0xff;
-	buffer[offset++] = (value >> 48) & 0xff;
-	buffer[offset++] = (value >> 56) & 0xff;
+  buffer[offset++] = RShiftU64(value, 8) & 0xff;
+  buffer[offset++] = RShiftU64(value, 16) & 0xff;
+  buffer[offset++] = RShiftU64(value, 24) & 0xff;
+  buffer[offset++] = RShiftU64(value, 32) & 0xff;
+  buffer[offset++] = RShiftU64(value, 40) & 0xff;
+  buffer[offset++] = RShiftU64(value, 48) & 0xff;
+  buffer[offset++] = RShiftU64(value, 56) & 0xff;
 	
 	return offset;
 }

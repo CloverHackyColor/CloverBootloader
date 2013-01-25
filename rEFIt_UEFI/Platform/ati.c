@@ -990,14 +990,14 @@ void get_vram_size(void)
 	card->vram_size = 128 << 20; //default 128Mb, this is minimum for OS
   if (gSettings.VRAM != 0) {
     card->vram_size = gSettings.VRAM;
-    DBG("Set VRAM from config=%dMb\n", card->vram_size >> 20);
+    DBG("Set VRAM from config=%dMb\n", (INTN)RShiftU64(card->vram_size, 20));
 //    WRITEREG32(card->mmio, RADEON_CONFIG_MEMSIZE, card->vram_size);
   } else {
     if (chip_family >= CHIP_FAMILY_CEDAR) {
       // size in MB on evergreen
       // XXX watch for overflow!!!
       card->vram_size = ((UINT64)REG32(card->mmio, R600_CONFIG_MEMSIZE)) << 20;
-      DBG("Set VRAM for Cedar=%d\n", card->vram_size);
+      DBG("Set VRAM for Cedar=%dMb\n", (INTN)RShiftU64(card->vram_size, 20));
     } else if (chip_family >= CHIP_FAMILY_R600) {
 			card->vram_size = REG32(card->mmio, R600_CONFIG_MEMSIZE);
     } else {
@@ -1385,7 +1385,7 @@ BOOLEAN setup_ati_devprop(pci_dt_t *ati_dev)
 	
 	DBG("ATI %a %a %dMB (%a) [%04x:%04x] (subsys [%04x:%04x]):: %a\n",
 			chip_family_name[card->info->chip_family], card->info->model_name,
-			(UINT32)(card->vram_size / (1024 * 1024)), card->cfg_name,
+			(INTN)RShiftU64(card->vram_size, 20), card->cfg_name,
 			ati_dev->vendor_id, ati_dev->device_id,
 			ati_dev->subsys_id.subsys.vendor_id, ati_dev->subsys_id.subsys.device_id,
 			devicepath);

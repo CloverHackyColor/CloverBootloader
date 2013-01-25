@@ -91,7 +91,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
 						initial.Control.Control = (UINT16)AsmReadMsr64(MSR_IA32_PERF_STATUS);
             DBG("Initial control=%x\n", initial.Control);
 						
-						maximum.Control.Control = ((AsmReadMsr64(MSR_IA32_PERF_STATUS) >> 32) & 0x1F3F) | (0x4000 * cpu_noninteger_bus_ratio);
+						maximum.Control.Control = (RShiftU64(AsmReadMsr64(MSR_IA32_PERF_STATUS), 32) & 0x1F3F) | (0x4000 * cpu_noninteger_bus_ratio);
             DBG("Maximum control=%x\n", maximum.Control.Control);
             if (gSettings.Turbo) {
               maximum.Control.VID_FID.FID++;
@@ -101,8 +101,8 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
             MsgLog("PLimitDict=%d\n", gSettings.PLimitDict);
 						maximum.CID = ((maximum.Control.VID_FID.FID & 0x1F) << 1) | cpu_noninteger_bus_ratio;
 						
-						minimum.Control.VID_FID.FID = ((AsmReadMsr64(MSR_IA32_PERF_STATUS) >> 24) & 0x1F) | (0x80 * cpu_dynamic_fsb);
-						minimum.Control.VID_FID.VID = ((AsmReadMsr64(MSR_IA32_PERF_STATUS) >> 48) & 0x3F);
+            minimum.Control.VID_FID.FID = (RShiftU64(AsmReadMsr64(MSR_IA32_PERF_STATUS), 24) & 0x1F) | (0x80 * cpu_dynamic_fsb);
+            minimum.Control.VID_FID.VID = (RShiftU64(AsmReadMsr64(MSR_IA32_PERF_STATUS), 48) & 0x3F);
 						
 						if (minimum.Control.VID_FID.FID == 0)
 						{
@@ -193,7 +193,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
                 (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE_E5) ||
                 (gCPUStructure.Model == CPU_MODEL_JAKETOWN))
             {
-              maximum.Control.Control = (AsmReadMsr64(MSR_IA32_PERF_STATUS) >> 8) & 0xff;
+              maximum.Control.Control = RShiftU64(AsmReadMsr64(MSR_IA32_PERF_STATUS), 8) & 0xff;
             } else {
               maximum.Control.Control = AsmReadMsr64(MSR_IA32_PERF_STATUS) & 0xff;
             }
@@ -204,7 +204,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
               MsgLog("Turbo control=%x\n", maximum.Control.Control);
             }
 						
-						minimum.Control.Control = (AsmReadMsr64(MSR_PLATFORM_INFO) >> 40) & 0xff;
+						minimum.Control.Control = RShiftU64(AsmReadMsr64(MSR_PLATFORM_INFO), 40) & 0xff;
 						
 						MsgLog("P-States: min 0x%x, max 0x%x\n", minimum.Control.Control, maximum.Control.Control);
 						
@@ -231,13 +231,13 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
                 }
 								p_states[p_states_count].Control.Control = (UINT16)j;
 								p_states[p_states_count].CID = j;
-								p_states[p_states_count].Frequency = (UINT32)(DivU64x32(gCPUStructure.FSBFrequency * i, Mega));
+								p_states[p_states_count].Frequency = (UINT32)(DivU64x32(MultU64x32(gCPUStructure.FSBFrequency, i), Mega));
                 if (!p_states_count && gSettings.DoubleFirstState) {
                   //double first state
                   p_states_count++;
                   p_states[p_states_count].Control.Control = (UINT16)j;
                   p_states[p_states_count].CID = j;
-                  p_states[p_states_count].Frequency = (UINT32)(DivU64x32(gCPUStructure.FSBFrequency * i, Mega)) - 1;
+                  p_states[p_states_count].Frequency = (UINT32)(DivU64x32(MultU64x32(gCPUStructure.FSBFrequency, i), Mega)) - 1;
                   
                 }
 								p_states_count++;

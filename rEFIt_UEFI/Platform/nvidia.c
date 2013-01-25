@@ -2832,10 +2832,10 @@ static nvidia_card_info_t nvidia_cards[] = {
 	// 12F0 - 12FF
 };
 
-static UINT16 swap16(UINT16 x)
+/*static UINT16 swap16(UINT16 x)
 {
 	return (((x & 0x00FF) << 8) | ((x & 0xFF00) >> 8));
-}
+}*/
 
 static UINT16 read16(UINT8 *ptr, UINT16 offset)
 {
@@ -3030,7 +3030,7 @@ static INT32 patch_nvidia_rom(UINT8 *rom)
 		return PATCH_ROM_FAILED;
 	}
 
-	dcbptr = swap16(read16(rom, 0x36));
+	dcbptr = SwapBytes16(read16(rom, 0x36));
 	if(!dcbptr) {
 		DBG("no dcb table found\n");
 		return PATCH_ROM_FAILED;
@@ -3395,12 +3395,12 @@ UINT64 mem_detect(UINT16 nvCardType, pci_dt_t *nvda_dev)
 	else if (nvCardType < NV_ARCH_C0)
 	{
 		vram_size = (UINT64)(REG32(nvda_dev->regs, NV04_PFB_FIFO_DATA));
-		vram_size |= (vram_size & 0xff) << 32;
+		vram_size |= LShiftU64(vram_size & 0xff, 32);
 		vram_size &= 0xffffffff00ll;
 	}
 	else // >= NV_ARCH_C0
 	{
-		vram_size = (UINT64)(REG32(nvda_dev->regs, NVC0_MEM_CTRLR_RAM_AMOUNT)) << 20;
+		vram_size = LShiftU64(REG32(nvda_dev->regs, NVC0_MEM_CTRLR_RAM_AMOUNT), 20);
 //		vram_size *= REG32(nvda_dev->regs, NVC0_MEM_CTRLR_COUNT);
     vram_size = MultU64x32(vram_size, REG32(nvda_dev->regs, NVC0_MEM_CTRLR_COUNT));
 	}
@@ -3492,8 +3492,8 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	}
 
 	DBG("nVidia %a ", model);
-	DBG(" %dMB NV%02x [%04x:%04x] :: ", (UINT32)(videoRam >> 20),
-			   nvCardType, nvda_dev->vendor_id, nvda_dev->device_id);
+	DBG(" %dMB NV%02x [%04x:%04x] :: ", (UINT32)(RShiftU64(videoRam, 20)),
+      nvCardType, nvda_dev->vendor_id, nvda_dev->device_id);
 
 	if (load_vbios){
 		UnicodeSPrint(FileName, 48, L"ROM\\10de_%04x.rom", nvda_dev->device_id);

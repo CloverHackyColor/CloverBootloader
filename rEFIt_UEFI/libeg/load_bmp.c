@@ -216,8 +216,12 @@ VOID egEncodeBMP(IN EG_IMAGE *Image, OUT UINT8 **FileDataReturn, OUT UINTN *File
     INT64                x, y;
     
     ImageLineOffset = MultU64x32(Image->Width, 3);
-    if ((ImageLineOffset % 4) != 0)
-        ImageLineOffset = ImageLineOffset + (4 - (ImageLineOffset % 4));
+//    if ((ImageLineOffset % 4) != 0)
+//        ImageLineOffset = ImageLineOffset + (4 - (ImageLineOffset % 4));
+  if ((ImageLineOffset & 3) != 0) {
+            ImageLineOffset = ImageLineOffset + (4 - (ImageLineOffset & 3));
+  }
+
     
     // allocate buffer for file data
     FileDataLength = sizeof(BMP_IMAGE_HEADER) + MultU64x64(Image->Height, ImageLineOffset);
@@ -249,7 +253,8 @@ VOID egEncodeBMP(IN EG_IMAGE *Image, OUT UINT8 **FileDataReturn, OUT UINTN *File
     for (y = 0; y < Image->Height; y++) {
         ImagePtr = ImagePtrBase;
         ImagePtrBase += ImageLineOffset;
-        PixelPtr = Image->PixelData + (Image->Height - 1 - y) * Image->Width;
+//        PixelPtr = Image->PixelData + (Image->Height - 1 - y) * Image->Width;
+      PixelPtr = Image->PixelData + (INT32)(Image->Height - 1 - y) * (INT32)Image->Width;
         
         for (x = 0; x < Image->Width; x++) {
             *ImagePtr++ = PixelPtr->b;

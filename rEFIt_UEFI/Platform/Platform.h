@@ -170,12 +170,12 @@ Headers collection for procedures
 
 /* CPU defines */
 #define bit(n)			(1UL << (n))
-#define _Bit(n)			(1ULL << n)
+#define _Bit(n)			(1ULL << (n))
 #define _HBit(n)		(1ULL << ((n)+32))
 
 #define bitmask(h,l)	((bit(h)|(bit(h)-1)) & ~(bit(l)-1))
-#define bitfield(x,h,l)	(((x) & bitmask(h,l)) >> l)
-#define quad(hi,lo)     (((UINT64)(hi)) << 32 | (lo))
+#define bitfield(x,h,l)	RShiftU64(((x) & bitmask((h),(l))), (l))
+#define quad(hi,lo)     ((LShiftU64((hi), 32) | (lo)))
 
 /*
  * The CPUID_FEATURE_XXX values define 64-bit values

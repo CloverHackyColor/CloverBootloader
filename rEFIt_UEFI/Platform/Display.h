@@ -1119,13 +1119,13 @@ UINT64 nv_mem_detect(pci_dt_t *nvda_dev)
 	else if (nvCardType < 0xC0)
 	{
 		vram_size = REG32(nvda_dev->regs, 0x0010020c);
-		vram_size |= ((UINT64)(vram_size & 0xff)) << 32;
+		vram_size |= LShiftU64((vram_size & 0xff), 32);
 		vram_size &= 0xffffffff00ll;
 	}
 	else // >= NV_ARCH_C0
 	{
-		vram_size = ((UINT64)REG32(nvda_dev->regs, 0x0010f20c)) << 20;
-		vram_size *= REG32(nvda_dev->regs, 0x00121c74);
+    vram_size = LShiftU64(REG32(nvda_dev->regs, 0x0010f20c), 20);
+    vram_size = MultU64x32(vram_size, REG32(nvda_dev->regs, 0x00121c74));
 	}
 	
 	//DBG("mem_detected %ld\n", vram_size);
