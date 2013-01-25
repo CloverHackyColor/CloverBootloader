@@ -210,6 +210,11 @@ VOID GetCPUProperties (VOID)
       default:		
         gCPUStructure.Cores   = (UINT8)(bitfield(gCPUStructure.CPUID[CPUID_1][EBX], 23, 16));
         gCPUStructure.Threads = (UINT8)(gCPUStructure.LogicalPerPackage & 0xff);
+        //workaround for N270. I don't know why it detected wrong
+        if ((gCPUStructure.Model == CPU_MODEL_ATOM) && 
+            (gCPUStructure.Stepping == 2)) {
+          gCPUStructure.Cores = 1;
+        }
         break;
     }    
   }

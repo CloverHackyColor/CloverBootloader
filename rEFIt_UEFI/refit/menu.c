@@ -755,11 +755,11 @@ static VOID InitScroll(OUT SCROLL_STATE *State, IN INTN ItemCount, IN UINTN MaxC
 
 static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
 {
-  State->LastSelection = State->CurrentSelection;
-//  DBG("UpdateScroll on %d\n", Movement);
   INTN Lines;
   UINTN ScrollMovement = SCROLL_SCROLL_DOWN;
   INTN i;
+  State->LastSelection = State->CurrentSelection;
+//  DBG("UpdateScroll on %d\n", Movement);
   switch (Movement) {
     case SCROLL_SCROLLBAR_MOVE:
       ScrollbarYMovement += ScrollbarNewPointerPlace.YPos - ScrollbarOldPointerPlace.YPos;
