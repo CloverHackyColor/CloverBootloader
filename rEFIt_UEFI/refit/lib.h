@@ -217,7 +217,9 @@ typedef enum {
   ActionFinish,
   ActionScrollDown,
   ActionScrollUp,
-  ActionMoveScrollbar
+  ActionMoveScrollbar,
+  ActionPageDown,
+  ActionPageUp
 } ACTION;
 
 typedef struct {

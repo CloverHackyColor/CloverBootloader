@@ -328,6 +328,10 @@ EFI_STATUS CheckMouseEvent(REFIT_MENU_SCREEN *Screen)
       ScrollbarNewPointerPlace.YPos = gPointer.newPlace.YPos;
     }
     else if (ScrollEnabled && MouseInRect(&ScrollbarBackground) && gPointer.MouseEvent == LeftClick) {
+      if (gPointer.newPlace.YPos < Scrollbar.YPos) // up
+        gAction = ActionPageUp;
+      else // down
+        gAction = ActionPageDown;
       // page up/down, like in OS X
     }
     else

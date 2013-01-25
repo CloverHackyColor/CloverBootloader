@@ -765,14 +765,14 @@ static VOID UpdateScroll(IN OUT SCROLL_STATE *State, IN UINTN Movement)
       ScrollbarYMovement += ScrollbarNewPointerPlace.YPos - ScrollbarOldPointerPlace.YPos;
       ScrollbarOldPointerPlace.XPos = ScrollbarNewPointerPlace.XPos;
       ScrollbarOldPointerPlace.YPos = ScrollbarNewPointerPlace.YPos;
-      Lines = ScrollbarYMovement * State->MaxIndex / (State->MaxVisible * TextHeight - 16 - 1);
+      Lines = ScrollbarYMovement * State->MaxIndex / ScrollbarBackground.Height;
+      ScrollbarYMovement = ScrollbarYMovement - Lines * (State->MaxVisible * TextHeight - 16 - 1) / State->MaxIndex;
       if (Lines < 0) {
         Lines = -Lines;
         ScrollMovement = SCROLL_SCROLL_UP;
       }
       for (i = 0; i < Lines; i++)
         UpdateScroll(State, ScrollMovement);
-      ScrollbarYMovement = ScrollbarYMovement - Lines * (State->MaxVisible * TextHeight - 16 - 1) / State->MaxIndex;
       break;
       
     case SCROLL_LINE_UP: //of left = decrement
@@ -1618,24 +1618,26 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
     case MENU_FUNCTION_PAINT_ALL:
       
       if (State->MaxIndex != 0) {
-        ScrollbarBackground.XPos = EntriesPosX - 16;
-        ScrollbarBackground.YPos = EntriesPosY + 8;
-        ScrollbarBackground.Width = 8;
-        ScrollbarBackground.Height = State->MaxVisible * TextHeight - 16;
-        Scrollbar.XPos = EntriesPosX - 16 + 1;
-        Scrollbar.YPos = EntriesPosY + 8 + 1;
-        if (State->MaxFirstVisible)
-          Scrollbar.YPos += (State->MaxVisible * TextHeight - 16 - 1) * (State->FirstVisible) / (State->MaxIndex);
-        Scrollbar.Width = 6;
-        Scrollbar.Height = (State->MaxVisible * TextHeight - 16 - 2) * (State->MaxVisible) / (State->MaxIndex);
         UpButton.XPos = EntriesPosX - 16;
         UpButton.YPos = EntriesPosY;
-        UpButton.Width = 8;
-        UpButton.Height = 8;
-        DownButton.XPos = EntriesPosX - 16;
-        DownButton.YPos = EntriesPosY + State->MaxVisible * TextHeight - 8;
-        DownButton.Width = 8;
-        DownButton.Height = 8;
+        UpButton.Width = 16;
+        UpButton.Height = 20;
+        
+        DownButton.XPos = UpButton.XPos;
+        DownButton.YPos = EntriesPosY + (State->MaxVisible + 1) * TextHeight - 20;
+        DownButton.Width = 16;
+        DownButton.Height = 20;
+        
+        
+        ScrollbarBackground.XPos = UpButton.XPos;
+        ScrollbarBackground.YPos = UpButton.YPos + UpButton.Height;
+        ScrollbarBackground.Width = UpButton.Width;
+        ScrollbarBackground.Height = DownButton.YPos - (UpButton.YPos + UpButton.Height);
+        
+        Scrollbar.XPos = ScrollbarBackground.XPos;
+        Scrollbar.YPos = ScrollbarBackground.YPos + ScrollbarBackground.Height * State->FirstVisible / State->MaxIndex;
+        Scrollbar.Width = ScrollbarBackground.Width;
+        Scrollbar.Height = ScrollbarBackground.Height * State->MaxVisible / State->MaxIndex;
       }
       
       if (State->MaxFirstVisible == 0)
@@ -1692,9 +1694,8 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       
     case MENU_FUNCTION_PAINT_SELECTION:
       HidePointer();
-      if (State->MaxIndex != 0) {
-        Scrollbar.YPos = EntriesPosY + 8 + 1;
-        Scrollbar.YPos += (State->MaxVisible * TextHeight - 16 - 1) * (State->FirstVisible) / (State->MaxIndex);
+      if (State->MaxIndex) {
+        Scrollbar.YPos = ScrollbarBackground.YPos + ScrollbarBackground.Height * State->FirstVisible / State->MaxIndex;
       }
       
       if (ScrollEnabled) {
