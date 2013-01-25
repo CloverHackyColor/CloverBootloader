@@ -1563,7 +1563,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   }
   
   if (EFI_ERROR(Status) && FileExists(SelfRootDir, PoolPrint(L"%s%s", AcpiOemPath, PathDsdt))) {
-    DBG("DSDT found in Clover volume OEM folder\n");
+    DBG("DSDT found in Clover volume OEM folder: %s%s\n", AcpiOemPath, PathDsdt);
     Status = egLoadFile(SelfRootDir, PoolPrint(L"%s%s", AcpiOemPath, PathDsdt), &buffer, &bufferLen);
   }
   
@@ -1573,7 +1573,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   }
   
   if (EFI_ERROR(Status) && FileExists(SelfRootDir, PoolPrint(L"%s%s", PathPatched, PathDsdt))) {
-    DBG("DSDT found in Clover volume\n");
+    DBG("DSDT found in Clover volume: %s%s\n", PathPatched, PathDsdt);
     Status = egLoadFile(SelfRootDir, PoolPrint(L"%s%s", PathPatched, PathDsdt), &buffer, &bufferLen);
   }
   //
