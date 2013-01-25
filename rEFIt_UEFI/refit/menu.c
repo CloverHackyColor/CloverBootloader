@@ -1532,6 +1532,16 @@ VOID DrawMenuText(IN CHAR16 *Text, IN INTN SelectedWidth, IN INTN XPos, IN INTN 
 
 static INTN MenuWidth, EntriesPosX, EntriesPosY, TimeoutPosY;
 
+/*static EG_IMAGE* ImageByRepeatingLine (IN EG_IMAGE* Source, IN UINTN Height, IN BOOLEAN HasAlpha) {
+  UINTN i;
+  EG_IMAGE* NewImage = egCreateImage(Source->Width, Height, HasAlpha);
+  
+  for (i = 0; i < Height; i++) 
+    CopyMem(NewImage->PixelData + Source->Width * i, Source->PixelData, (UINTN)(Source->Width * 1 * sizeof(EG_PIXEL)));
+  
+  return NewImage;
+}*/
+
 static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
   INTN i;
@@ -1539,14 +1549,26 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
   INTN ItemWidth = 0;
   INTN X;
   INTN VisibleHeight = 0; //assume vertical layout
-  EG_IMAGE* ScrollbarImage;
-  EG_IMAGE* ScrollbarBackgroundImage;
+  static EG_IMAGE* ScrollbarImage = NULL;
+  static EG_IMAGE* ScrollbarBackgroundImage = NULL;
   static EG_IMAGE* UpButtonImage = NULL;
   static EG_IMAGE* DownButtonImage = NULL;
+  static EG_IMAGE* BarStartImage = NULL;
+  static EG_IMAGE* BarEndImage = NULL;
+  static EG_IMAGE* ScrollStartImage = NULL;
+  static EG_IMAGE* ScrollEndImage = NULL;
+ // EG_IMAGE* tmp;
+  EG_IMAGE* Total;
+  
+  static EG_RECT BarStart;
+  static EG_RECT BarEnd;
+  static EG_RECT ScrollStart;
+  static EG_RECT ScrollEnd;
+  static EG_RECT ScrollTotal;
+  
+  EG_PIXEL EmptyPixel = { 0, 0, 0, 0 };
 
-  EG_PIXEL Color = {127, 0, 0, 255};
-  EG_PIXEL Color2 = {0, 127, 0, 255};
-  EG_PIXEL Color3 = {0, 0, 127, 255};
+
   CHAR16 ResultString[255];
   
   switch (Function) {
@@ -1609,6 +1631,24 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         }
         EntriesPosY += TextHeight;  // also add a blank line
       }
+      
+      if (!ScrollbarBackgroundImage)
+        ScrollbarBackgroundImage = egLoadImage(ThemeDir, L"scrollbar\\bar_fill.png", FALSE);
+      if (!BarStartImage)
+        BarStartImage = egLoadImage(ThemeDir, L"scrollbar\\bar_start.png", TRUE);
+      if (!BarEndImage)
+        BarEndImage = egLoadImage(ThemeDir, L"scrollbar\\bar_end.png", TRUE);
+      if (!ScrollbarImage)
+        ScrollbarImage = egLoadImage(ThemeDir, L"scrollbar\\scroll_fill.png", FALSE);
+      if (!ScrollStartImage)
+        ScrollStartImage = egLoadImage(ThemeDir, L"scrollbar\\scroll_start.png", TRUE);
+      if (!ScrollEndImage)
+        ScrollEndImage = egLoadImage(ThemeDir, L"scrollbar\\scroll_end.png", TRUE);
+      if (!UpButtonImage)
+        UpButtonImage = egLoadImage(ThemeDir, L"scrollbar\\up_button.png", TRUE);
+      if (!DownButtonImage)
+        DownButtonImage = egLoadImage(ThemeDir, L"scrollbar\\down_button.png", TRUE);
+      
       break;
       
     case MENU_FUNCTION_CLEANUP:
@@ -1628,16 +1668,42 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         DownButton.Width = 16;
         DownButton.Height = 20;
         
-        
         ScrollbarBackground.XPos = UpButton.XPos;
         ScrollbarBackground.YPos = UpButton.YPos + UpButton.Height;
         ScrollbarBackground.Width = UpButton.Width;
         ScrollbarBackground.Height = DownButton.YPos - (UpButton.YPos + UpButton.Height);
         
+        BarStart.XPos = ScrollbarBackground.XPos;
+        BarStart.YPos = ScrollbarBackground.YPos;
+        BarStart.Width = ScrollbarBackground.Width;
+        BarStart.Height = 5;
+        
+        BarEnd.Width = ScrollbarBackground.Width;
+        BarEnd.Height = 5;
+        BarEnd.XPos = ScrollbarBackground.XPos;
+        BarEnd.YPos = DownButton.YPos - BarEnd.Height;
+        
+        ScrollStart.XPos = ScrollbarBackground.XPos;
+        ScrollStart.YPos = ScrollbarBackground.YPos + ScrollbarBackground.Height * State->FirstVisible / State->MaxIndex;
+        ScrollStart.Width = ScrollbarBackground.Width;
+        ScrollStart.Height = 7;
+        
         Scrollbar.XPos = ScrollbarBackground.XPos;
-        Scrollbar.YPos = ScrollbarBackground.YPos + ScrollbarBackground.Height * State->FirstVisible / State->MaxIndex;
+        Scrollbar.YPos = ScrollbarBackground.YPos + ScrollbarBackground.Height * State->FirstVisible / State->MaxIndex + ScrollStart.Height;
         Scrollbar.Width = ScrollbarBackground.Width;
         Scrollbar.Height = ScrollbarBackground.Height * State->MaxVisible / State->MaxIndex;
+        
+        ScrollEnd.Width = ScrollbarBackground.Width;
+        ScrollEnd.Height = 7;
+        ScrollEnd.XPos = ScrollbarBackground.XPos;
+        ScrollEnd.YPos = Scrollbar.YPos+Scrollbar.Height - ScrollEnd.Height;
+        
+        Scrollbar.Height -= ScrollEnd.Height;
+        
+        ScrollTotal.XPos = UpButton.XPos;
+        ScrollTotal.YPos = UpButton.YPos;
+        ScrollTotal.Width = UpButton.Width;
+        ScrollTotal.Height = DownButton.YPos + DownButton.Height - UpButton.YPos;
       }
       
       if (State->MaxFirstVisible == 0)
@@ -1645,21 +1711,40 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       else
         ScrollEnabled = TRUE;
       if (ScrollEnabled) {
-        ScrollbarBackgroundImage = egCreateFilledImage(ScrollbarBackground.Width, ScrollbarBackground.Height, FALSE, &Color);
-        egDrawImageArea(ScrollbarBackgroundImage, 0, 0, 0, 0, ScrollbarBackground.XPos, ScrollbarBackground.YPos);
-        egFreeImage(ScrollbarBackgroundImage);
+        //VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN PosX, IN INTN PosY)
+        Total = egCreateFilledImage(ScrollTotal.Width, ScrollTotal.Height, TRUE, &EmptyPixel);
+        for (i = 0; i < ScrollbarBackground.Height; i++)
+          egComposeImage(Total, ScrollbarBackgroundImage, ScrollbarBackground.XPos - ScrollTotal.XPos, ScrollbarBackground.YPos + i - ScrollTotal.YPos);
         
-        ScrollbarImage = egCreateFilledImage(Scrollbar.Width, Scrollbar.Height, FALSE, &Color3);
-        egDrawImageArea(ScrollbarImage, 0, 0, 0, 0, Scrollbar.XPos, Scrollbar.YPos);
-        egFreeImage(ScrollbarImage);
+        egComposeImage(Total, BarStartImage, BarStart.XPos - ScrollTotal.XPos, BarStart.YPos - ScrollTotal.YPos);
+        egComposeImage(Total, BarEndImage, BarEnd.XPos - ScrollTotal.XPos, BarEnd.YPos - ScrollTotal.YPos);
         
-        if (!UpButtonImage)
-          UpButtonImage = egCreateFilledImage(UpButton.Width, UpButton.Height, FALSE, &Color2);
-        egDrawImageArea(UpButtonImage, 0, 0, 0, 0, UpButton.XPos, UpButton.YPos);
+        for (i = 0; i < Scrollbar.Height; i++)
+          egComposeImage(Total, ScrollbarImage, Scrollbar.XPos - ScrollTotal.XPos, Scrollbar.YPos + i - ScrollTotal.YPos);
         
-        if (!DownButtonImage)
-          DownButtonImage = egCreateFilledImage(DownButton.Width, DownButton.Height, FALSE, &Color2);
-        egDrawImageArea(DownButtonImage, 0, 0, 0, 0, DownButton.XPos, DownButton.YPos);
+        egComposeImage(Total, ScrollStartImage, ScrollStart.XPos - ScrollTotal.XPos, ScrollStart.YPos - ScrollTotal.YPos);
+        egComposeImage(Total, ScrollEndImage, ScrollEnd.XPos - ScrollTotal.XPos, ScrollEnd.YPos - ScrollTotal.YPos);
+        egComposeImage(Total, UpButtonImage, UpButton.XPos - ScrollTotal.XPos, UpButton.YPos - ScrollTotal.YPos);
+        egComposeImage(Total, DownButtonImage, DownButton.XPos - ScrollTotal.XPos, DownButton.YPos - ScrollTotal.YPos);
+        
+        BltImageAlpha(Total, ScrollTotal.XPos, ScrollTotal.YPos, &MenuBackgroundPixel, 16);
+        egFreeImage(Total);
+        
+        /*tmp = ImageByRepeatingLine(ScrollbarBackgroundImage, ScrollbarBackground.Height, TRUE);
+        BltImageAlpha(tmp, ScrollbarBackground.XPos, ScrollbarBackground.YPos, &MenuBackgroundPixel, 16);
+        egFreeImage(tmp);
+        
+        BltImageAlpha(BarStartImage, BarStart.XPos, BarStart.YPos, &MenuBackgroundPixel, 16);
+        BltImageAlpha(BarEndImage, BarEnd.XPos, BarEnd.YPos, &MenuBackgroundPixel, 16);
+        
+        tmp = ImageByRepeatingLine(ScrollbarImage, Scrollbar.Height, TRUE);
+        BltImageAlpha(tmp, Scrollbar.XPos, Scrollbar.YPos, &MenuBackgroundPixel, 16);
+        egFreeImage(tmp);
+        
+        BltImageAlpha(ScrollStartImage, ScrollStart.XPos, ScrollStart.YPos, &MenuBackgroundPixel, 16);
+        BltImageAlpha(ScrollEndImage, ScrollEnd.XPos, ScrollEnd.YPos, &MenuBackgroundPixel, 16);
+        BltImageAlpha(UpButtonImage, UpButton.XPos, UpButton.YPos, &MenuBackgroundPixel, 16);
+        BltImageAlpha(DownButtonImage, DownButton.XPos, DownButton.YPos, &MenuBackgroundPixel, 16);*/
       }
         
       for (i = State->FirstVisible, j = 0; i <= State->LastVisible; i++, j++) {
@@ -1699,13 +1784,38 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       }
       
       if (ScrollEnabled) {
-        ScrollbarBackgroundImage = egCreateFilledImage(ScrollbarBackground.Width, ScrollbarBackground.Height, FALSE, &Color);
-        egDrawImageArea(ScrollbarBackgroundImage, 0, 0, 0, 0, ScrollbarBackground.XPos, ScrollbarBackground.YPos);
-        egFreeImage(ScrollbarBackgroundImage);
+        Total = egCreateFilledImage(ScrollTotal.Width, ScrollTotal.Height, TRUE, &EmptyPixel);
+        for (i = 0; i < ScrollbarBackground.Height; i++)
+          egComposeImage(Total, ScrollbarBackgroundImage, ScrollbarBackground.XPos - ScrollTotal.XPos, ScrollbarBackground.YPos + i - ScrollTotal.YPos);
         
-        ScrollbarImage = egCreateFilledImage(Scrollbar.Width, Scrollbar.Height, FALSE, &Color3);
-        egDrawImageArea(ScrollbarImage, 0, 0, 0, 0, Scrollbar.XPos, Scrollbar.YPos);
-        egFreeImage(ScrollbarImage);
+        egComposeImage(Total, BarStartImage, BarStart.XPos - ScrollTotal.XPos, BarStart.YPos - ScrollTotal.YPos);
+        egComposeImage(Total, BarEndImage, BarEnd.XPos - ScrollTotal.XPos, BarEnd.YPos - ScrollTotal.YPos);
+        
+        for (i = 0; i < ScrollbarBackground.Height; i++)
+          egComposeImage(Total, ScrollbarImage, Scrollbar.XPos - ScrollTotal.XPos, Scrollbar.YPos + i - ScrollTotal.YPos);
+        
+        egComposeImage(Total, ScrollStartImage, ScrollStart.XPos - ScrollTotal.XPos, ScrollStart.YPos - ScrollTotal.YPos);
+        egComposeImage(Total, ScrollEndImage, ScrollEnd.XPos - ScrollTotal.XPos, ScrollEnd.YPos - ScrollTotal.YPos);
+        egComposeImage(Total, UpButtonImage, UpButton.XPos - ScrollTotal.XPos, UpButton.YPos - ScrollTotal.YPos);
+        egComposeImage(Total, DownButtonImage, DownButton.XPos - ScrollTotal.XPos, DownButton.YPos - ScrollTotal.YPos);
+        
+        BltImageAlpha(Total, ScrollTotal.XPos, ScrollTotal.YPos, &MenuBackgroundPixel, 16);
+        egFreeImage(Total);
+        /*tmp = ImageByRepeatingLine(ScrollbarBackgroundImage, ScrollbarBackground.Height, TRUE);
+        BltImageAlpha(tmp, ScrollbarBackground.XPos, ScrollbarBackground.YPos, &MenuBackgroundPixel, 16);
+        egFreeImage(tmp);
+        
+        BltImageAlpha(BarStartImage, BarStart.XPos, BarStart.YPos, &MenuBackgroundPixel, 16);
+        BltImageAlpha(BarEndImage, BarEnd.XPos, BarEnd.YPos, &MenuBackgroundPixel, 16);
+        
+        tmp = ImageByRepeatingLine(ScrollbarImage, Scrollbar.Height, TRUE);
+        BltImageAlpha(tmp, Scrollbar.XPos, Scrollbar.YPos, &MenuBackgroundPixel, 16);
+        egFreeImage(tmp);
+        
+        BltImageAlpha(ScrollStartImage, ScrollStart.XPos, ScrollStart.YPos, &MenuBackgroundPixel, 16);
+        BltImageAlpha(ScrollEndImage, ScrollEnd.XPos, ScrollEnd.YPos, &MenuBackgroundPixel, 16);
+        BltImageAlpha(UpButtonImage, UpButton.XPos, UpButton.YPos, &MenuBackgroundPixel, 16);
+        BltImageAlpha(DownButtonImage, DownButton.XPos, DownButton.YPos, &MenuBackgroundPixel, 16);*/
       }
 
       // redraw selection cursor
