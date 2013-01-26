@@ -305,11 +305,13 @@ fi
 if [[ $ARG == cleanall ]]; then
 make -C $WORKSPACE/BaseTools clean
 build -p $WORKSPACE/Clover/Clover$Processor.dsc -a $PROCESSOR -b $VTARGET -t $TARGET_TOOLS -n 3 clean
+make -C $WORKSPACE/Clover/BootHFS clean
 exit $?
 fi
 
 if [[ $ARG == clean ]]; then
 build -p $WORKSPACE/Clover/Clover$Processor.dsc -a $PROCESSOR -b $VTARGET -t $TARGET_TOOLS -n 3 clean
+make -C $WORKSPACE/Clover/BootHFS clean
 exit $?
 fi
 
@@ -382,7 +384,7 @@ fi
 
 if [ $Processor = B32 ]
 then
-cp cp -v $BUILD_DIR/FV/boot $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/ia32/boot5
+cp -v $BUILD_DIR/FV/boot $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/ia32/boot5
 fi
 
 if [ $Processor = X64 ]
@@ -451,6 +453,12 @@ cp -v $BUILD_DIR/X64/CLOVERX64.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/
 echo Done!
 fi
 
+# Build and install Bootsectors
+echo
+echo "Generating BootSectors"
+local BOOTHFS=$WORKSPACE/Clover/BootHFS
+DESTDIR=$WORKSPACE/Clover/CloverPackage/CloverV2/BootSectors make -C $BOOTHFS install
+echo Done!
 } 
 
 # BUILD START #

@@ -978,7 +978,7 @@ free:
 ;
 
 %if VERBOSE
-root_str			db		'/boot', 10, NULL
+root_str			db		'/boot', 10, 13, NULL
 %endif
 
 ;--------------------------------------------------------------------------
