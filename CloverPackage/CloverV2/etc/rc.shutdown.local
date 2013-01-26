@@ -22,7 +22,7 @@ theMountType=
 #
 # Get the mount command from the helper
 #
-if [ !-f ${theMountFile} ]; then
+if [ ! -f ${theMountFile} ]; then
    exit;
 fi
 theMountRoot=$(head -n 1 ${theMountFile})
