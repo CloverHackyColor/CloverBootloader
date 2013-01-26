@@ -52,7 +52,7 @@ UNUSED				EQU		0
 ;
 ; Set to 1 to enable verbose mode.
 ;
-VERBOSE				EQU		0
+VERBOSE				EQU		1
 
 ;
 ; Various constants.
@@ -978,7 +978,7 @@ free:
 ;
 
 %if VERBOSE
-root_str			db		'/boot', NULL
+root_str			db		'/boot', 10, NULL
 %endif
 
 ;--------------------------------------------------------------------------
