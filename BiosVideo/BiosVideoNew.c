@@ -1319,7 +1319,22 @@ BiosVideoCheckForVbe (
     if (EdidFound ) {
 		
 #ifdef CLOVER_VBIOS_PATCH_IN_CLOVEREFI
-		VideoBiosPatchNativeFromEdid((UINT8 *)BiosVideoPrivate->VbeEdidDataBlock);
+		{
+			UINT8		CloverVBiosPatchDone = 1;
+			
+			//
+			// Do video bios patch here and signal to Clover.efi
+			// that we have done (or at least tried) it
+			//
+			VideoBiosPatchNativeFromEdid((UINT8 *)BiosVideoPrivate->VbeEdidDataBlock);
+			gRT->SetVariable (
+							  L"CloverVBiosPatchDone",
+							  &gEfiGlobalVariableGuid,
+							  EFI_VARIABLE_BOOTSERVICE_ACCESS,
+							  sizeof(CloverVBiosPatchDone),
+							  &CloverVBiosPatchDone
+							  );
+		}
 #endif
 		
 		BiosVideoPrivate->EdidDiscovered.SizeOfEdid = VESA_BIOS_EXTENSIONS_EDID_BLOCK_SIZE;
