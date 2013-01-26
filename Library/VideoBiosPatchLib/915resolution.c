@@ -381,11 +381,8 @@ INT32 getMode(edid_mode *mode)
 //Slice
 	if(!fb_parse_edid((struct EDID *)edidInfo, mode)) 
 	{
-		FreePool( edidInfo );
 		return 1;
 	}
-		
-	FreePool( edidInfo );
 		
 	if(!mode->h_active) return 1;
 	
