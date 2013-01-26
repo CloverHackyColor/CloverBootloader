@@ -44,6 +44,7 @@
   GenericBdsStrings.uni
   
 [Packages]
+  Clover/CloverPkg.dec
   MdePkg/MdePkg.dec
   MdeModulePkg/MdeModulePkg.dec
   IntelFrameworkPkg/IntelFrameworkPkg.dec

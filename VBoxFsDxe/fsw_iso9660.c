@@ -279,7 +279,8 @@ static fsw_status_t fsw_iso9660_volume_mount(struct fsw_iso9660_volume *vol)
     fsw_u32         voldesc_type;
     int             i;
     struct fsw_string s;
-    struct iso9660_dirrec rootdir;
+ //   struct iso9660_dirrec rootdir;
+    struct iso9660_dirrec *rootdir_p;
     int sua_pos;
     char *sig;
     int skip;
@@ -356,13 +357,14 @@ static fsw_status_t fsw_iso9660_volume_mount(struct fsw_iso9660_volume *vol)
 
 
     //rootdir = pvoldesc->root_directory;
-  fsw_memcpy(&rootdir, &pvoldesc->root_directory, sizeof(struct iso9660_dirrec));
-    sua_pos = (sizeof(struct iso9660_dirrec)) + rootdir.file_identifier_length + (rootdir.file_identifier_length % 2) - 2;
+    rootdir_p = &pvoldesc->root_directory;
+//  fsw_memcpy(&rootdir, &pvoldesc->root_directory, sizeof(struct iso9660_dirrec));
+    sua_pos = (sizeof(struct iso9660_dirrec)) + rootdir_p->file_identifier_length + (rootdir_p->file_identifier_length % 2) - 2;
     //int sua_size = rootdir.dirrec_length - rootdir.file_identifier_length;
     //FSW_MSG_DEBUG((FSW_MSGSTR("fsw_iso9660_volume_mount: success (SUA(pos:%x, sz:%d)!!!)\n"), sua_pos, sua_size));
 
 #if 1
-    status = fsw_block_get(vol, ISOINT(rootdir.extent_location), 0, &buffer);
+    status = fsw_block_get(vol, ISOINT(rootdir_p->extent_location), 0, &buffer);
     sig = (char *)buffer + sua_pos;
     skip = 0;
     entry = (struct fsw_rock_ridge_susp_entry *)sig;

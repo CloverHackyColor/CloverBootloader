@@ -3125,6 +3125,7 @@ BdsLibEnumerateAllBootOption (
   UINT16                        HarddriveNumber;
   UINT16                        CdromNumber;
   UINT16                        UsbNumber;
+  UINT16                        VirtioNumber;
   UINT16                        MiscNumber;
   UINT16                        ScsiNumber;
   UINT16                        NonBlockNumber;
@@ -3161,6 +3162,7 @@ BdsLibEnumerateAllBootOption (
   UsbNumber       = 0;
   MiscNumber      = 0;
   ScsiNumber      = 0;
+  VirtioNumber    = 0;
   PlatLang        = NULL;
   LastLang        = NULL;
   ZeroMem (Buffer, sizeof (Buffer));
@@ -3296,6 +3298,16 @@ BdsLibEnumerateAllBootOption (
         BdsLibBuildOptionFromHandle (BlockIoHandles[Index], BdsBootOptionList, Buffer);
         ScsiNumber++;
         break;
+       case BDS_EFI_MESSAGE_VIRTIO_BOOT:
+          if (VirtioNumber != 0) {
+              UnicodeSPrint (Buffer, sizeof (Buffer), L"%s %d", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_VIRTIO)), VirtioNumber);
+            } else {
+              UnicodeSPrint (Buffer, sizeof (Buffer), L"%s", BdsLibGetStringById (STRING_TOKEN (STR_DESCRIPTION_VIRTIO)));
+            }
+          BdsLibBuildOptionFromHandle (BlockIoHandles[Index], BdsBootOptionList, Buffer);
+          VirtioNumber++;
+          break;
+          
 
       case BDS_EFI_MESSAGE_MISC_BOOT:
         if (MiscNumber != 0) {
@@ -3874,7 +3886,9 @@ BdsLibNetworkBootWithMediaPresent (
                                           and its last device path node's subtype is MSG_SCSI_DP.
   @retval BDS_EFI_MESSAGE_USB_DEVICE_BOOT If given device path contains MESSAGING_DEVICE_PATH type device path node
                                           and its last device path node's subtype is MSG_USB_DP.
-  @retval BDS_EFI_MESSAGE_MISC_BOOT       If the device path not contains any media device path node,  and
+ @retval BDS_EFI_MESSAGE_VIRTIO_BOOT     If the device path not contains any media device path node,  and
+                                          its last device path node point to a PCI device path node.
+ @retval BDS_EFI_MESSAGE_MISC_BOOT       If the device path not contains any media device path node,  and
                                           its last device path node point to a message device path node.
   @retval BDS_LEGACY_BBS_BOOT             If given device path contains BBS_DEVICE_PATH type device path node.
   @retval BDS_EFI_UNSUPPORT               An EFI Removable BlockIO device path not point to a media and message device,
@@ -3900,6 +3914,11 @@ BdsGetBootTypeFromDevicePath (
   while (!IsDevicePathEndType (TempDevicePath)) {
     switch (DevicePathType (TempDevicePath)) {
       case HARDWARE_DEVICE_PATH:
+        // Virtio disks will be a plain PCI device
+        if (DevicePathSubType (TempDevicePath) == HW_PCI_DP &&
+            IsDevicePathEndType (NextDevicePathNode (TempDevicePath)))
+          return BDS_EFI_MESSAGE_VIRTIO_BOOT;
+
         LastDeviceNode = NextDevicePathNode (TempDevicePath);
         if (DevicePathSubType(LastDeviceNode) == MSG_DEVICE_LOGICAL_UNIT_DP) {
           //

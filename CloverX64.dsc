@@ -330,6 +330,7 @@
 	Clover/VBoxFsDxe/VBoxIso9660.inf
 	#Clover/VBoxFsDxe/VBoxFsDxe.inf
 	Clover/VBoxFsDxe/VBoxExt2.inf
+	Clover/VBoxFsDxe/VBoxExt4.inf
 	#EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
 	#Clover/OsxMmcDxe/MmcDxe.inf
 #Video
@@ -433,7 +434,7 @@
   #
   # Sample Application
   #
-  #MdeModulePkg/Application/HelloWorld/HelloWorld.inf
+  MdeModulePkg/Application/HelloWorld/HelloWorld.inf
   #MdeModulePkg/Application/VariableInfo/VariableInfo.inf
   Clover/rEFIt_UEFI/refit64.inf
 

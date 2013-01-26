@@ -313,17 +313,19 @@ static fsw_status_t fsw_hfs_volume_mount(struct fsw_hfs_volume *vol)
         /* Setup catalog dnode */
         status = fsw_dnode_create_root(vol, kHFSCatalogFileID, &vol->catalog_tree.file);
         CHECK(status);
+      //Slice - why copy structure?
         fsw_memcpy (vol->catalog_tree.file->extents,
                     vol->primary_voldesc->catalogFile.extents,
-                    sizeof vol->catalog_tree.file->extents);
+                    sizeof vol->catalog_tree.file->extents); 
+
         vol->catalog_tree.file->g.size =
                 be64_to_cpu(vol->primary_voldesc->catalogFile.logicalSize);
 
         /* Setup extents overflow file */
         status = fsw_dnode_create_root(vol, kHFSExtentsFileID, &vol->extents_tree.file);
-        fsw_memcpy (vol->extents_tree.file->extents,
+       fsw_memcpy (vol->extents_tree.file->extents,
                     vol->primary_voldesc->extentsFile.extents,
-                    sizeof vol->extents_tree.file->extents);
+                    sizeof vol->extents_tree.file->extents); 
         vol->extents_tree.file->g.size =
                 be64_to_cpu(vol->primary_voldesc->extentsFile.logicalSize);
 

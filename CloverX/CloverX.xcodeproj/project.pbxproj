@@ -305,6 +305,43 @@
 		124D77E01657A5E1008B5407 /* SataController.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = SataController.c; sourceTree = "<group>"; };
 		124D77E11657A5E1008B5407 /* SataController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SataController.h; sourceTree = "<group>"; };
 		124D77E21657A5E2008B5407 /* SataControllerDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = SataControllerDxe.inf; sourceTree = "<group>"; };
+		12896D8D16B3A10A00A2EC36 /* fsw_base.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_base.h; sourceTree = "<group>"; };
+		12896D8E16B3A10A00A2EC36 /* fsw_core.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fsw_core.c; sourceTree = "<group>"; };
+		12896D8F16B3A10A00A2EC36 /* fsw_core.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_core.h; sourceTree = "<group>"; };
+		12896D9016B3A10A00A2EC36 /* fsw_efi.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fsw_efi.c; sourceTree = "<group>"; };
+		12896D9116B3A10A00A2EC36 /* fsw_efi.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_efi.h; sourceTree = "<group>"; };
+		12896D9216B3A10A00A2EC36 /* fsw_efi_base.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_efi_base.h; sourceTree = "<group>"; };
+		12896D9316B3A10A00A2EC36 /* fsw_efi_lib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fsw_efi_lib.c; sourceTree = "<group>"; };
+		12896D9416B3A10A00A2EC36 /* fsw_ext2.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fsw_ext2.c; sourceTree = "<group>"; };
+		12896D9516B3A10A00A2EC36 /* fsw_ext2.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_ext2.h; sourceTree = "<group>"; };
+		12896D9616B3A10A00A2EC36 /* fsw_ext2_disk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_ext2_disk.h; sourceTree = "<group>"; };
+		12896D9716B3A10A00A2EC36 /* fsw_ext4.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fsw_ext4.c; sourceTree = "<group>"; };
+		12896D9816B3A10A00A2EC36 /* fsw_ext4.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_ext4.h; sourceTree = "<group>"; };
+		12896D9916B3A10A00A2EC36 /* fsw_ext4_disk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_ext4_disk.h; sourceTree = "<group>"; };
+		12896D9A16B3A10A00A2EC36 /* fsw_hfs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fsw_hfs.c; sourceTree = "<group>"; };
+		12896D9B16B3A10A00A2EC36 /* fsw_hfs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_hfs.h; sourceTree = "<group>"; };
+		12896D9C16B3A10A00A2EC36 /* fsw_iso9660.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fsw_iso9660.c; sourceTree = "<group>"; };
+		12896D9D16B3A10A00A2EC36 /* fsw_iso9660.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_iso9660.h; sourceTree = "<group>"; };
+		12896D9E16B3A10A00A2EC36 /* fsw_lib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fsw_lib.c; sourceTree = "<group>"; };
+		12896D9F16B3A10A00A2EC36 /* fsw_reiserfs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fsw_reiserfs.c; sourceTree = "<group>"; };
+		12896DA016B3A10A00A2EC36 /* fsw_reiserfs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_reiserfs.h; sourceTree = "<group>"; };
+		12896DA116B3A10A00A2EC36 /* fsw_reiserfs_disk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_reiserfs_disk.h; sourceTree = "<group>"; };
+		12896DA216B3A10A00A2EC36 /* fsw_strfunc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_strfunc.h; sourceTree = "<group>"; };
+		12896DA316B3A10A00A2EC36 /* hfs_format.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = hfs_format.h; sourceTree = "<group>"; };
+		12896DA516B3A10A00A2EC36 /* OverrideFunctions-kabyl.edk2.c.include */ = {isa = PBXFileReference; lastKnownFileType = text; path = "OverrideFunctions-kabyl.edk2.c.include"; sourceTree = "<group>"; };
+		12896DA716B3A10A00A2EC36 /* fsw_posix.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fsw_posix.c; sourceTree = "<group>"; };
+		12896DA816B3A10A00A2EC36 /* fsw_posix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_posix.h; sourceTree = "<group>"; };
+		12896DA916B3A10A00A2EC36 /* fsw_posix_base.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_posix_base.h; sourceTree = "<group>"; };
+		12896DAA16B3A10A00A2EC36 /* lslr.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = lslr.c; sourceTree = "<group>"; };
+		12896DAB16B3A10A00A2EC36 /* lsroot.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = lsroot.c; sourceTree = "<group>"; };
+		12896DAC16B3A10A00A2EC36 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		12896DAD16B3A10A00A2EC36 /* VBoxExt2.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VBoxExt2.inf; sourceTree = "<group>"; };
+		12896DAE16B3A10A00A2EC36 /* VBoxExt4.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VBoxExt4.inf; sourceTree = "<group>"; };
+		12896DAF16B3A10A00A2EC36 /* VBoxFsDxe.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = VBoxFsDxe.c; sourceTree = "<group>"; };
+		12896DB016B3A10A00A2EC36 /* VBoxFsDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VBoxFsDxe.inf; sourceTree = "<group>"; };
+		12896DB116B3A10A00A2EC36 /* VBoxFswParam.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VBoxFswParam.h; sourceTree = "<group>"; };
+		12896DB216B3A10A00A2EC36 /* VBoxHfs.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VBoxHfs.inf; sourceTree = "<group>"; };
+		12896DB316B3A10A00A2EC36 /* VBoxIso9660.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VBoxIso9660.inf; sourceTree = "<group>"; };
 		1294B5C3165BF86600183BFD /* BiosBlkIo.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BiosBlkIo.c; sourceTree = "<group>"; };
 		1294B5C4165BF86600183BFD /* BiosBlkIo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BiosBlkIo.h; sourceTree = "<group>"; };
 		1294B5C5165BF86600183BFD /* BiosInt13.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BiosInt13.c; sourceTree = "<group>"; };
@@ -1201,6 +1238,67 @@
 			path = ../SataControllerDxe;
 			sourceTree = "<group>";
 		};
+		12896D8C16B3A10A00A2EC36 /* VBoxFsDxe */ = {
+			isa = PBXGroup;
+			children = (
+				12896D8D16B3A10A00A2EC36 /* fsw_base.h */,
+				12896D8E16B3A10A00A2EC36 /* fsw_core.c */,
+				12896D8F16B3A10A00A2EC36 /* fsw_core.h */,
+				12896D9016B3A10A00A2EC36 /* fsw_efi.c */,
+				12896D9116B3A10A00A2EC36 /* fsw_efi.h */,
+				12896D9216B3A10A00A2EC36 /* fsw_efi_base.h */,
+				12896D9316B3A10A00A2EC36 /* fsw_efi_lib.c */,
+				12896D9416B3A10A00A2EC36 /* fsw_ext2.c */,
+				12896D9516B3A10A00A2EC36 /* fsw_ext2.h */,
+				12896D9616B3A10A00A2EC36 /* fsw_ext2_disk.h */,
+				12896D9716B3A10A00A2EC36 /* fsw_ext4.c */,
+				12896D9816B3A10A00A2EC36 /* fsw_ext4.h */,
+				12896D9916B3A10A00A2EC36 /* fsw_ext4_disk.h */,
+				12896D9A16B3A10A00A2EC36 /* fsw_hfs.c */,
+				12896D9B16B3A10A00A2EC36 /* fsw_hfs.h */,
+				12896D9C16B3A10A00A2EC36 /* fsw_iso9660.c */,
+				12896D9D16B3A10A00A2EC36 /* fsw_iso9660.h */,
+				12896D9E16B3A10A00A2EC36 /* fsw_lib.c */,
+				12896D9F16B3A10A00A2EC36 /* fsw_reiserfs.c */,
+				12896DA016B3A10A00A2EC36 /* fsw_reiserfs.h */,
+				12896DA116B3A10A00A2EC36 /* fsw_reiserfs_disk.h */,
+				12896DA216B3A10A00A2EC36 /* fsw_strfunc.h */,
+				12896DA316B3A10A00A2EC36 /* hfs_format.h */,
+				12896DA416B3A10A00A2EC36 /* IA32 */,
+				12896DA516B3A10A00A2EC36 /* OverrideFunctions-kabyl.edk2.c.include */,
+				12896DA616B3A10A00A2EC36 /* test */,
+				12896DAD16B3A10A00A2EC36 /* VBoxExt2.inf */,
+				12896DAE16B3A10A00A2EC36 /* VBoxExt4.inf */,
+				12896DAF16B3A10A00A2EC36 /* VBoxFsDxe.c */,
+				12896DB016B3A10A00A2EC36 /* VBoxFsDxe.inf */,
+				12896DB116B3A10A00A2EC36 /* VBoxFswParam.h */,
+				12896DB216B3A10A00A2EC36 /* VBoxHfs.inf */,
+				12896DB316B3A10A00A2EC36 /* VBoxIso9660.inf */,
+			);
+			name = VBoxFsDxe;
+			path = ../VBoxFsDxe;
+			sourceTree = "<group>";
+		};
+		12896DA416B3A10A00A2EC36 /* IA32 */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = IA32;
+			sourceTree = "<group>";
+		};
+		12896DA616B3A10A00A2EC36 /* test */ = {
+			isa = PBXGroup;
+			children = (
+				12896DA716B3A10A00A2EC36 /* fsw_posix.c */,
+				12896DA816B3A10A00A2EC36 /* fsw_posix.h */,
+				12896DA916B3A10A00A2EC36 /* fsw_posix_base.h */,
+				12896DAA16B3A10A00A2EC36 /* lslr.c */,
+				12896DAB16B3A10A00A2EC36 /* lsroot.c */,
+				12896DAC16B3A10A00A2EC36 /* README */,
+			);
+			path = test;
+			sourceTree = "<group>";
+		};
 		1294B5C1165BF86600183BFD /* LegacyBios */ = {
 			isa = PBXGroup;
 			children = (
@@ -1336,6 +1434,7 @@
 				12B816771644675800A433E7 /* rEFIt_UEFI */,
 				123F0978164FA3AF008C1C1C /* VideoDxe */,
 				12A1790E166BCC15005B0D63 /* SataControllerDxe */,
+				12896D8C16B3A10A00A2EC36 /* VBoxFsDxe */,
 				12DB2D8616522B2A00A8066D /* CloverX */,
 			);
 			sourceTree = "<group>";
