@@ -96,12 +96,13 @@ image:
 
 	@echo "\t[CP] boot"
 	@cp -f $(CLOVERROOT)/Bootloaders/x64/boot ${IMGROOT}/usr/standalone/i386/x64/
-	@cp -f $(CLOVERROOT)/Bootloaders/x64/boot7 ${IMGROOT}/usr/standalone/i386/x64/
+#	@cp -f $(CLOVERROOT)/Bootloaders/x64/boot7 ${IMGROOT}/usr/standalone/i386/x64/
 	@cp -f $(CLOVERROOT)/Bootloaders/ia32/boot ${IMGROOT}/usr/standalone/i386/ia32/
 #	@cp -f $(CLOVERROOT)/Bootloaders/ia32/boot3 ${IMGROOT}/usr/standalone/i386/ia32/
 	@cp -f ${SYMROOT}/i386/boot0 ${IMGROOT}/usr/standalone/i386
 	@cp -f ${SYMROOT}/i386/boot0hfs ${IMGROOT}/usr/standalone/i386
 	@cp -f ${SYMROOT}/i386/boot0md ${IMGROOT}/usr/standalone/i386
+	@cp -f ${SYMROOT}/i386/boot1h  ${IMGROOT}/usr/standalone/i386
 	@cp -f ${SYMROOT}/i386/boot1h2 ${IMGROOT}/usr/standalone/i386
 	@cp -f ${SYMROOT}/i386/boot1f32alt ${IMGROOT}/usr/standalone/i386
 #ifdef CONFIG_FDISK440
