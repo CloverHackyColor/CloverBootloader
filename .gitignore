@@ -1,0 +1,38 @@
+# OS X temporary files that should never be committed
+.DS_Store
+*.swp
+*.lock
+
+# /BootHFS/
+/BootHFS/boot0
+/BootHFS/boot0hfs
+/BootHFS/boot0ab
+/BootHFS/boot1h
+/BootHFS/boot1altV3
+/BootHFS/boot1f32
+/BootHFS/boot1f32alt
+
+# /CloverPackage/CloverV2/BootSectors/
+/CloverPackage/CloverV2/BootSectors/boot1h
+/CloverPackage/CloverV2/BootSectors/boot1f32alt
+/CloverPackage/CloverV2/BootSectors/boot1f32
+/CloverPackage/CloverV2/BootSectors/boot1altV3
+/CloverPackage/CloverV2/BootSectors/boot0hfs
+/CloverPackage/CloverV2/BootSectors/boot0ab
+/CloverPackage/CloverV2/BootSectors/boot0
+
+/CloverPackage/CloverV2/Bootloaders/
+/CloverPackage/CloverV2/EFI/BOOT/
+/CloverPackage/CloverV2/EFI/drivers32/
+/CloverPackage/CloverV2/EFI/drivers64/
+/CloverPackage/CloverV2/EFI/drivers64UEFI/
+/CloverPackage/CloverV2/drivers-Off/
+
+/HFSPlus/Ia32/
+/HFSPlus/X64/
+
+/Lvers.txt
+/Version.h
+/rEFIt_UEFI/Version.h
+/rEFIt_UEFI/vers.txt
+/vers.txt
