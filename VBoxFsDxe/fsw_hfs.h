@@ -131,51 +131,51 @@ struct fsw_hfs_volume
 };
 
 /* Endianess swappers */
-static inline fsw_u16
+static __inline fsw_u16
 swab16(fsw_u16 x)
 {
     return SwapBytes16(x);
 }
 
-static inline fsw_u32
+static __inline fsw_u32
 swab32(fsw_u32 x)
 {
     return SwapBytes32(x);
 }
 
 
-static inline fsw_u64
+static __inline fsw_u64
 swab64(fsw_u64 x)
 {
     return SwapBytes64(x);
 }
 
-static inline fsw_u16
+static __inline fsw_u16
 be16_to_cpu(fsw_u16 x)
 {
     return swab16(x);
 }
 
-static inline fsw_u16
+static __inline fsw_u16
 cpu_to_be16(fsw_u16 x)
 {
     return swab16(x);
 }
 
 
-static inline fsw_u32
+static __inline fsw_u32
 cpu_to_be32(fsw_u32 x)
 {
     return swab32(x);
 }
 
-static inline fsw_u32
+static __inline fsw_u32
 be32_to_cpu(fsw_u32 x)
 {
     return swab32(x);
 }
 
-static inline fsw_u64
+static __inline fsw_u64
 be64_to_cpu(fsw_u64 x)
 {
     return swab64(x);

@@ -287,7 +287,8 @@ Returns:
   ps.Output   = Output;
   ps.Context  = spc;
   ps.fmt.u.pw = fmt;
-  ps.args     = args;
+  //ps.args     = args;
+  VA_COPY(ps.args, args);
   _PPrint (&ps);
 }
 /*
@@ -648,7 +649,8 @@ Returns:
     ps.fmt.u.pc   = fmta;
   }
 
-  ps.args = args;
+  //ps.args = args;
+  VA_COPY(ps.args, args);
 
   if (Column != (UINTN) -1) {
     Out->SetCursorPosition (Out, Column, Row);

@@ -187,6 +187,7 @@ echo "Example: ./ebuild.sh -gcc47 -x64 -release"
         ;;
         '-mc')
          fnGCC47
+  #		fnClang
          fnArch64MCP
         ;;
         *)
@@ -444,7 +445,7 @@ cp -v $BUILD_DIR/X64/Ps2MouseDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/dr
 cp -v $BUILD_DIR/X64/UsbMouseDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/UsbMouseDxe-64.efi
 cp -v $BUILD_DIR/X64/XhciDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/XhciDxe-64.efi
 cp -v $BUILD_DIR/X64/OsxFatBinaryDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/OsxFatBinaryDrv-64.efi
-cp -v $BUILD_DIR/X64/OsxAptioFixDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/OsxAptioFixDrv-64.efi
+#cp -v $BUILD_DIR/X64/OsxAptioFixDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/OsxAptioFixDrv-64.efi
 #cp -v $BUILD_DIR/X64/OsxLowMemFixDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/OsxLowMemFixDrv-64.efi
 cp -v $BUILD_DIR/X64/CsmVideoDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/CsmVideoDxe-64.efi
 cp -v $BUILD_DIR/X64/EmuVariableUefi.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/EmuVariableUefi-64.efi

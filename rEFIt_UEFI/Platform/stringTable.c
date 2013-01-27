@@ -35,7 +35,7 @@ extern char *LoadableFamilies;
 
 static void eatThru(char val, char **table_p);
 
-static inline INTN isspace(char c)
+static __inline INTN isspace(char c)
 {
     return (c == ' ' || c == '\t');
 }
@@ -43,7 +43,7 @@ static inline INTN isspace(char c)
 /*
  * Compare a string to a key with quoted characters
  */
-static inline int
+static __inline int
 keyncmp(char *str, char *key, INTN n)
 {
    INTN c;

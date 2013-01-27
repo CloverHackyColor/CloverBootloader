@@ -2171,7 +2171,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //        DBG("SetPrivateVarProto OK\n");
   GetDefaultSettings();
   DBG("Calibrated TSC frequency =%ld =%ldMHz\n", gCPUStructure.TSCCalibr, DivU64x32(gCPUStructure.TSCCalibr, Mega));
-  DBG("CPU calculated TSC frequency =%ld\n", gCPUStructure.TSCFrequency);
+/*  DBG("CPU calculated TSC frequency =%ld\n", gCPUStructure.TSCFrequency);
   if (gCPUStructure.TSCFrequency > gCPUStructure.TSCCalibr) {
     TscDiv = DivU64x64Remainder(gCPUStructure.TSCFrequency, gCPUStructure.TSCCalibr, &TscRemainder);
   } else {
@@ -2180,9 +2180,15 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
   if ((TscRemainder > 400 * Mega) || (TscDiv > 1))
   {
-    DBG("There is a problem with TSC detection and calibration! Assume calibrated one\n");
+    DBG("There is a problem with TSC detection and calibration! Assume calibrated one\n"); */
     gCPUStructure.TSCFrequency = gCPUStructure.TSCCalibr;
-  }
+//  }
+  
+  gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
+  gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.CPUFrequency,
+                                         gCPUStructure.MaxRatio);
+  gCPUStructure.ExternalClock = DivU64x32(gCPUStructure.FSBFrequency, kilo);
+  gCPUStructure.MaxSpeed = DivU64x32(gCPUStructure.TSCFrequency, Mega);
   
   //Second step. Load config.plist into gSettings	
 	Status = GetUserSettings(SelfRootDir);  

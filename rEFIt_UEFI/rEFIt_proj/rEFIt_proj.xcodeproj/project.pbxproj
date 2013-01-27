@@ -533,6 +533,42 @@
 		129F031C16ABC1A400EC5CC5 /* UsbMouse.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UsbMouse.c; sourceTree = "<group>"; };
 		129F031D16ABC1A400EC5CC5 /* UsbMouse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsbMouse.h; sourceTree = "<group>"; };
 		129F031E16ABC1A400EC5CC5 /* UsbMouseDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = UsbMouseDxe.inf; sourceTree = "<group>"; };
+		12A55F0E16B5A7E100E89768 /* Thunk16-best.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = "Thunk16-best.S"; sourceTree = "<group>"; };
+		12A55F0F16B5A7E100E89768 /* Thunk16-orig.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = "Thunk16-orig.S"; sourceTree = "<group>"; };
+		12A55F1016B5A7E100E89768 /* Readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Readme.txt; sourceTree = "<group>"; };
+		12A55F1216B5A7E100E89768 /* Thunk16-best.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = "Thunk16-best.S"; sourceTree = "<group>"; };
+		12A55F1316B5A7E100E89768 /* Thunk16-orig.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = "Thunk16-orig.S"; sourceTree = "<group>"; };
+		12A55F1416B5A7E100E89768 /* X86FxSave.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = X86FxSave.c; sourceTree = "<group>"; };
+		12A55F1516B5A7E100E89768 /* build_rule.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = build_rule.txt; sourceTree = "<group>"; };
+		12A55F1616B5A7E100E89768 /* clover.log */ = {isa = PBXFileReference; lastKnownFileType = text; path = clover.log; sourceTree = "<group>"; };
+		12A55F1716B5A7E100E89768 /* EmuVariable.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = EmuVariable.c; sourceTree = "<group>"; };
+		12A55F1816B5A7E100E89768 /* IsaAcpi.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = IsaAcpi.c; sourceTree = "<group>"; };
+		12A55F1916B5A7E100E89768 /* MdeModulePkgSample.dec */ = {isa = PBXFileReference; lastKnownFileType = text; path = MdeModulePkgSample.dec; sourceTree = "<group>"; };
+		12A55F1B16B5A7E100E89768 /* ebuild.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ebuild.sh; sourceTree = "<group>"; };
+		12A55F1C16B5A7E100E89768 /* HowToStartQemu.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = HowToStartQemu.txt; sourceTree = "<group>"; };
+		12A55F1D16B5A7E100E89768 /* OvmfCloverX64.dsc */ = {isa = PBXFileReference; lastKnownFileType = text; path = OvmfCloverX64.dsc; sourceTree = "<group>"; };
+		12A55F1E16B5A7E100E89768 /* OvmfCloverX64.fdf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OvmfCloverX64.fdf; sourceTree = "<group>"; };
+		12A55F1F16B5A7E100E89768 /* tools_def.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = tools_def.txt; sourceTree = "<group>"; };
+		12A55F2016B5A7E100E89768 /* UefiBaseType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UefiBaseType.h; sourceTree = "<group>"; };
+		12A55F2116B5A7E100E89768 /* UefiHiiServicesLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UefiHiiServicesLib.c; sourceTree = "<group>"; };
+		12A55F2316B5A7E100E89768 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
+		12A55F2416B5A7E100E89768 /* UsbBus.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UsbBus.c; sourceTree = "<group>"; };
+		12A55F2516B5A7E100E89768 /* UsbBus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsbBus.h; sourceTree = "<group>"; };
+		12A55F2616B5A7E100E89768 /* UsbBusDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = UsbBusDxe.inf; sourceTree = "<group>"; };
+		12A55F2716B5A7E100E89768 /* UsbDesc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UsbDesc.c; sourceTree = "<group>"; };
+		12A55F2816B5A7E100E89768 /* UsbDesc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsbDesc.h; sourceTree = "<group>"; };
+		12A55F2916B5A7E100E89768 /* UsbEnumer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UsbEnumer.c; sourceTree = "<group>"; };
+		12A55F2A16B5A7E100E89768 /* UsbEnumer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsbEnumer.h; sourceTree = "<group>"; };
+		12A55F2B16B5A7E100E89768 /* UsbHub.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UsbHub.c; sourceTree = "<group>"; };
+		12A55F2C16B5A7E100E89768 /* UsbHub.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsbHub.h; sourceTree = "<group>"; };
+		12A55F2D16B5A7E100E89768 /* UsbUtility.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UsbUtility.c; sourceTree = "<group>"; };
+		12A55F2E16B5A7E100E89768 /* UsbUtility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsbUtility.h; sourceTree = "<group>"; };
+		12A55F2F16B5A7E100E89768 /* UsbHcMem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UsbHcMem.c; sourceTree = "<group>"; };
+		12A55F3116B5A7E100E89768 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
+		12A55F3216B5A7E100E89768 /* MouseHid.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MouseHid.c; sourceTree = "<group>"; };
+		12A55F3316B5A7E100E89768 /* UsbMouse.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UsbMouse.c; sourceTree = "<group>"; };
+		12A55F3416B5A7E100E89768 /* UsbMouse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UsbMouse.h; sourceTree = "<group>"; };
+		12A55F3516B5A7E100E89768 /* UsbMouseDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = UsbMouseDxe.inf; sourceTree = "<group>"; };
 		12A80742161EE88A00120AD4 /* CommPs2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = CommPs2.c; sourceTree = "<group>"; };
 		12A80743161EE88A00120AD4 /* CommPs2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommPs2.h; sourceTree = "<group>"; };
 		12A80744161EE88A00120AD4 /* ComponentName.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
@@ -4739,6 +4775,98 @@
 			);
 			name = UsbMouseDxe;
 			path = ../../Patches_for_EDK2/UsbMouseDxe;
+			sourceTree = "<group>";
+		};
+		12A55F0B16B5A7E100E89768 /* Patches_for_EDK2 */ = {
+			isa = PBXGroup;
+			children = (
+				12A55F0C16B5A7E100E89768 /* BaseLib */,
+				12A55F1516B5A7E100E89768 /* build_rule.txt */,
+				12A55F1616B5A7E100E89768 /* clover.log */,
+				12A55F1716B5A7E100E89768 /* EmuVariable.c */,
+				12A55F1816B5A7E100E89768 /* IsaAcpi.c */,
+				12A55F1916B5A7E100E89768 /* MdeModulePkgSample.dec */,
+				12A55F1A16B5A7E100E89768 /* OvmfPkg */,
+				12A55F1F16B5A7E100E89768 /* tools_def.txt */,
+				12A55F2016B5A7E100E89768 /* UefiBaseType.h */,
+				12A55F2116B5A7E100E89768 /* UefiHiiServicesLib.c */,
+				12A55F2216B5A7E100E89768 /* UsbBusDxe */,
+				12A55F2F16B5A7E100E89768 /* UsbHcMem.c */,
+				12A55F3016B5A7E100E89768 /* UsbMouseDxe */,
+			);
+			name = Patches_for_EDK2;
+			path = ../../Patches_for_EDK2;
+			sourceTree = "<group>";
+		};
+		12A55F0C16B5A7E100E89768 /* BaseLib */ = {
+			isa = PBXGroup;
+			children = (
+				12A55F0D16B5A7E100E89768 /* IA32 */,
+				12A55F1016B5A7E100E89768 /* Readme.txt */,
+				12A55F1116B5A7E100E89768 /* X64 */,
+				12A55F1416B5A7E100E89768 /* X86FxSave.c */,
+			);
+			path = BaseLib;
+			sourceTree = "<group>";
+		};
+		12A55F0D16B5A7E100E89768 /* IA32 */ = {
+			isa = PBXGroup;
+			children = (
+				12A55F0E16B5A7E100E89768 /* Thunk16-best.S */,
+				12A55F0F16B5A7E100E89768 /* Thunk16-orig.S */,
+			);
+			path = IA32;
+			sourceTree = "<group>";
+		};
+		12A55F1116B5A7E100E89768 /* X64 */ = {
+			isa = PBXGroup;
+			children = (
+				12A55F1216B5A7E100E89768 /* Thunk16-best.S */,
+				12A55F1316B5A7E100E89768 /* Thunk16-orig.S */,
+			);
+			path = X64;
+			sourceTree = "<group>";
+		};
+		12A55F1A16B5A7E100E89768 /* OvmfPkg */ = {
+			isa = PBXGroup;
+			children = (
+				12A55F1B16B5A7E100E89768 /* ebuild.sh */,
+				12A55F1C16B5A7E100E89768 /* HowToStartQemu.txt */,
+				12A55F1D16B5A7E100E89768 /* OvmfCloverX64.dsc */,
+				12A55F1E16B5A7E100E89768 /* OvmfCloverX64.fdf */,
+			);
+			path = OvmfPkg;
+			sourceTree = "<group>";
+		};
+		12A55F2216B5A7E100E89768 /* UsbBusDxe */ = {
+			isa = PBXGroup;
+			children = (
+				12A55F2316B5A7E100E89768 /* ComponentName.c */,
+				12A55F2416B5A7E100E89768 /* UsbBus.c */,
+				12A55F2516B5A7E100E89768 /* UsbBus.h */,
+				12A55F2616B5A7E100E89768 /* UsbBusDxe.inf */,
+				12A55F2716B5A7E100E89768 /* UsbDesc.c */,
+				12A55F2816B5A7E100E89768 /* UsbDesc.h */,
+				12A55F2916B5A7E100E89768 /* UsbEnumer.c */,
+				12A55F2A16B5A7E100E89768 /* UsbEnumer.h */,
+				12A55F2B16B5A7E100E89768 /* UsbHub.c */,
+				12A55F2C16B5A7E100E89768 /* UsbHub.h */,
+				12A55F2D16B5A7E100E89768 /* UsbUtility.c */,
+				12A55F2E16B5A7E100E89768 /* UsbUtility.h */,
+			);
+			path = UsbBusDxe;
+			sourceTree = "<group>";
+		};
+		12A55F3016B5A7E100E89768 /* UsbMouseDxe */ = {
+			isa = PBXGroup;
+			children = (
+				12A55F3116B5A7E100E89768 /* ComponentName.c */,
+				12A55F3216B5A7E100E89768 /* MouseHid.c */,
+				12A55F3316B5A7E100E89768 /* UsbMouse.c */,
+				12A55F3416B5A7E100E89768 /* UsbMouse.h */,
+				12A55F3516B5A7E100E89768 /* UsbMouseDxe.inf */,
+			);
+			path = UsbMouseDxe;
 			sourceTree = "<group>";
 		};
 		12A80741161EE88A00120AD4 /* Ps2MouseDxe */ = {
@@ -9898,6 +10026,7 @@
 				12B7000C15F921AB00177D35 /* OsxFatBinaryDrv */,
 				12B7000F15F921AB00177D35 /* OsxLowMemFixDrv */,
 				12B7001615F921BC00177D35 /* OsxPciBusNoEnumerationDxe */,
+				12A55F0B16B5A7E100E89768 /* Patches_for_EDK2 */,
 				12B7003115F921BC00177D35 /* PartitionDxe */,
 				12B7003A15F921D400177D35 /* PciRootBridgeDxe */,
 				12A80741161EE88A00120AD4 /* Ps2MouseDxe */,

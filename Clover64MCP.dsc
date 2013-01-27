@@ -300,7 +300,7 @@
   Clover/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
   #Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
   UefiCpuPkg/CpuDxe/CpuDxe.inf
-  Clover/CpuDxe/Cpu.inf
+  #Clover/CpuDxe/Cpu.inf
   PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
   #DuetPkg/AcpiResetDxe/Reset.inf
   Clover/AcpiReset/Reset.inf
@@ -325,11 +325,12 @@
 	IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 	#IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
   
-  	# foreign file system support
+  # foreign file system support
 	Clover/VBoxFsDxe/VBoxHfs.inf
 	Clover/VBoxFsDxe/VBoxIso9660.inf
 	#Clover/VBoxFsDxe/VBoxFsDxe.inf
 	Clover/VBoxFsDxe/VBoxExt2.inf
+	Clover/VBoxFsDxe/VBoxExt4.inf
 	#EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
 	#Clover/OsxMmcDxe/MmcDxe.inf
 #Video
@@ -416,7 +417,7 @@
   
   # Drivers for Aptio loading - should go to Clover's /EFI/drivers64UEFI dir
   Clover/OsxFatBinaryDrv/OsxFatBinaryDrv.inf
- # Clover/OsxAptioFixDrv/OsxAptioFixDrv.inf
+  #Clover/OsxAptioFixDrv/OsxAptioFixDrv.inf
   Clover/OsxLowMemFixDrv/OsxLowMemFixDrv.inf
 
   # Drivers for Phoenix UEFI loading - should go to Clover's /EFI/drivers64UEFI dir
@@ -449,5 +450,8 @@
 [BuildOptions]
   MSFT:*_*_*_CC_FLAGS = /FAsc /FR$(@R).SBR -DMDEPKG_NDEBUG
   XCODE:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
-  GCC:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
+#  GCC:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
+
+# Uncomment following line to add video bios patching in CloverEFI
+  GCC:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG -DCLOVER_VBIOS_PATCH_IN_CLOVEREFI
 

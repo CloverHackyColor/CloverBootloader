@@ -83,15 +83,16 @@ INF  MdeModulePkg/Universal/EbcDxe/EbcDxe.inf
 INF  MdeModulePkg/Universal/DevicePathDxe/DevicePathDxe.inf
 INF  Clover/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
 #INF  Clover/UefiCpuPkg/CpuDxe/CpuDxe.inf
-#INF  UefiCpuPkg/CpuDxe/CpuDxe.inf
+INF  UefiCpuPkg/CpuDxe/CpuDxe.inf
 #INF  IntelFrameworkModulePkg/Universal/CpuIoDxe/CpuIoDxe.inf
-INF  Clover/CpuDxe/Cpu.inf
+#INF  Clover/CpuDxe/Cpu.inf
 
 	#DataHub
 #INF  Clover/VBoxAppleSim/VBoxAppleSim.inf
 INF IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 #INF IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
 #INF EdkCompatibilityPkg/Compatibility/PiSmbiosRecordOnDataHubSmbiosRecordThunk/PiSmbiosRecordOnDataHubSmbiosRecordThunk.inf
+
 	# foreign file system support
 #INF  Clover/VBoxFsDxe/VBoxHfs.inf
 #INF  Clover/VBoxFsDxe/VBoxFsDxe.inf

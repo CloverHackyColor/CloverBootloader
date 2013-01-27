@@ -93,7 +93,7 @@ static int fsw_ext4_group_sparse(fsw_u32 group)
 }
 
 /* calculate the first block number of the group */
-static inline fsw_u32
+static __inline fsw_u32
 fsw_ext4_group_first_block_no(struct ext4_super_block *sb, fsw_u32 group_no)
 {
         return group_no * (fsw_u32)EXT4_BLOCKS_PER_GROUP(sb) +

@@ -42,7 +42,7 @@ UINT16                          gBacklightLevel;
 
 
 
-VOID WaitForSts(VOID) {
+VOID __inline WaitForSts(VOID) {
 	UINT32 inline_timeout = 100000;
 	while (AsmReadMsr64(MSR_IA32_PERF_STATUS) & (1 << 21)) { if (!inline_timeout--) break; }
 }
