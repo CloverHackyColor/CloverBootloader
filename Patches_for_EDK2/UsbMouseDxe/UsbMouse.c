@@ -119,7 +119,7 @@ USBMouseDriverBindingSupported (
   Status = EFI_SUCCESS;
   if (!IsUsbMouse (UsbIo)) {
     Status = EFI_UNSUPPORTED;
-//    DBG("no UsbIo\n");
+    DBG("not UsbMouse\n");
   }
 
   gBS->CloseProtocol (
@@ -232,7 +232,7 @@ USBMouseDriverBindingStart (
            );
 
   EndpointNumber = UsbMouseDevice->InterfaceDescriptor.NumEndpoints;
-  DBG("UsbMouse EndpointNumber=%d\n", EndpointNumber);
+  DBG("UsbMouse NumEndpoints=%d\n", EndpointNumber);
   //
   // Traverse endpoints to find interrupt endpoint
   //
@@ -339,7 +339,18 @@ USBMouseDriverBindingStart (
   EndpointAddr    = UsbMouseDevice->IntEndpointDescriptor.EndpointAddress;
   PollingInterval = UsbMouseDevice->IntEndpointDescriptor.Interval;
   PacketSize      = (UINT8) (UsbMouseDevice->IntEndpointDescriptor.MaxPacketSize);
-  DBG("packet size=%d\n", PacketSize);
+/*  
+  UINT8           Length;
+  UINT8           DescriptorType;
+  UINT8           Attributes; */
+
+  DBG("mouse endpoint\n");
+  DBG("          Length: %d\n", UsbMouseDevice->IntEndpointDescriptor.Length);
+  DBG("  DescriptorType: %d\n", UsbMouseDevice->IntEndpointDescriptor.DescriptorType);
+  DBG("      Attributes: 0x%x\n", UsbMouseDevice->IntEndpointDescriptor.Attributes);
+  DBG("         address: 0x%x\n", EndpointAddr);
+  DBG(" PollingInterval: %d\n", PollingInterval);
+  DBG("     packet size: %d\n", PacketSize);
   Status = UsbIo->UsbAsyncInterruptTransfer (
                     UsbIo,
                     EndpointAddr,
@@ -539,8 +550,13 @@ IsUsbMouse (
                     );
 
   if (EFI_ERROR (Status)) {
+    DBG("UsbGetInterfaceDescriptor status=%r\n", Status);
     return FALSE;
   }
+  DBG("this is interface class=%x subclass=%x protocol=%x\n",
+      InterfaceDescriptor.InterfaceClass,
+      InterfaceDescriptor.InterfaceSubClass,
+      InterfaceDescriptor.InterfaceProtocol);
 
   if ((InterfaceDescriptor.InterfaceClass == CLASS_HID) &&
       (InterfaceDescriptor.InterfaceSubClass == SUBCLASS_BOOT) &&
@@ -548,10 +564,6 @@ IsUsbMouse (
       ) {
     return TRUE;
   }
-/*  DBG("this is not USB interface class=%x subclass=%x prot=%x\n",
-      InterfaceDescriptor.InterfaceClass,
-      InterfaceDescriptor.InterfaceSubClass,
-      InterfaceDescriptor.InterfaceProtocol); */
   return FALSE;
 }
 
@@ -598,6 +610,7 @@ InitializeUsbMouseDevice (
                     &ConfigDesc
                     );
   if (EFI_ERROR (Status)) {
+    DBG("UsbGetConfigDescriptor status=%r\n", Status);
     return Status;
   }
 
@@ -620,7 +633,7 @@ InitializeUsbMouseDevice (
              );
   if (EFI_ERROR (Status)) {
     FreePool (Buf);
-    DBG("error getting descriptor\n");
+    DBG("error getting mouse descriptor\n");
     return Status;
   }
 

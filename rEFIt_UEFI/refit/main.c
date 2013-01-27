@@ -1870,7 +1870,7 @@ UINT8* getCurrentEdid (VOID)
       Edid = AllocateCopyPool (EdidProtocol->SizeOfEdid, EdidProtocol->Edid);
     }
   }
-  DBG(" %a", Edid != NULL ? "found" : "not found");
+  DBG(" %a\n", Edid != NULL ? "found" : "not found");
   
   return Edid;
 }

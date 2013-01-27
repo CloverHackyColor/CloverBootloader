@@ -51,6 +51,7 @@ UINT8 GMAX3100_vals[26][4] = {
   { 0x06,0x00,0x62,0x01 },    //24 "AAPL,ig-platform-id" HD4000 iMac
   { 0x09,0x00,0x66,0x01 }     //25 "AAPL,ig-platform-id" HD4000
 };
+// 5 - 32Mb 6 - 48Mb 9 - 64Mb, 0 - 96Mb
 
 UINT8 FakeID_126[] = {0x26, 0x01, 0x00, 0x00 };
 
@@ -78,17 +79,17 @@ static struct gma_gpu_t KnownGPUS[] = {
 //	{ 0x2A13, "GMAX3100"		},
 	{ 0x2A42, "GMAX3100"		},
 //	{ 0x2A43, "GMAX3100"		},
-  { 0x0046, "Intel HD Graphics"  }, 
-  { 0x0102, "Intel HD Graphics 2000"  },
-  { 0x0106, "Intel HD Graphics 3000"  },
-  { 0x0112, "Intel HD Graphics 2000"  },
-  { 0x0116, "Intel HD Graphics 3000"  },
-  { 0x0122, "Intel HD Graphics 2000"  },
-  { 0x0126, "Intel HD Graphics 3000"  },
-  { 0x0162, "Intel HD Graphics 4000"  },  //Desktop??
-  { 0x0166, "Intel HD Graphics 4000M"  }, //
-  { 0x0152, "Intel HD Graphics 4000"  },  //iMac
-  { 0x0156, "Intel HD Graphics 4000M"  },  //MacBook
+  { 0x0046, "HD Graphics"  },
+  { 0x0102, "HD Graphics 2000"  },
+  { 0x0106, "HD Graphics 3000 Mobile"  },
+  { 0x0112, "HD Graphics 2000"  },
+  { 0x0116, "HD Graphics 3000 Mobile"  },
+  { 0x0122, "HD Graphics 3000"  },
+  { 0x0126, "HD Graphics 3000 Mobile"  },
+  { 0x0162, "HD Graphics 4000"  },  //Desktop??
+  { 0x0166, "HD Graphics 4000 Mobile"  }, //
+  { 0x0152, "HD Graphics 2500"  },  //iMac
+  { 0x0156, "HD Graphics 2500 Mobile"  },  //MacBook
 };
 
 CHAR8 *get_gma_model(UINT16 id) {

@@ -73,9 +73,9 @@ struct fsw_fstype_table   FSW_FSTYPE_TABLE_NAME(ext4) = {
 };
 
 
-static inline int test_root(fsw_u32 a, int b)
+static __inline int test_root(fsw_u32 a, int b)
 {
-        int num = b;
+        fsw_u32 num = b;
 
         while (a > num)
                 num *= b;
@@ -219,7 +219,7 @@ static fsw_status_t fsw_ext4_volume_mount(struct fsw_ext4_volume *vol)
             return status;
 
         // Get group descriptor table and block number of inode table...
-        gdesc = (struct ext4_group_desc *)(buffer + gdesc_index * vol->sb->s_desc_size);
+        gdesc = (struct ext4_group_desc *)((char *)buffer + gdesc_index * vol->sb->s_desc_size);
         vol->inotab_bno[groupno] = gdesc->bg_inode_table_lo;
 
         fsw_block_release(vol, gdesc_bno, buffer);
@@ -403,7 +403,7 @@ static fsw_status_t fsw_ext4_get_by_extent(struct fsw_ext4_volume *vol, struct f
   buffer = (void *)dno->raw->i_block;
   buf_offset = 0;
   while(1) {
-    ext4_extent_header = (struct ext4_extent_header *)buffer + buf_offset;
+    ext4_extent_header = (struct ext4_extent_header *)((char *)buffer + buf_offset);
     buf_offset += sizeof(struct ext4_extent_header);
  //   FSW_MSG_DEBUG((FSW_MSGSTR("fsw_ext4_get_by_extent: extent header with %d entries\n"),
  //                  ext4_extent_header->eh_entries));
@@ -415,7 +415,7 @@ static fsw_status_t fsw_ext4_get_by_extent(struct fsw_ext4_volume *vol, struct f
       if(ext4_extent_header->eh_depth == 0)
       {
         // Leaf node, the header follows actual extents
-        ext4_extent = (struct ext4_extent *)(buffer + buf_offset);
+        ext4_extent = (struct ext4_extent *)((char *)buffer + buf_offset);
         buf_offset += sizeof(struct ext4_extent);
  //       FSW_MSG_DEBUG((FSW_MSGSTR("fsw_ext4_get_by_extent: extent node cover %d...\n"), ext4_extent->ee_block));
         
@@ -431,7 +431,7 @@ static fsw_status_t fsw_ext4_get_by_extent(struct fsw_ext4_volume *vol, struct f
       {
   //      FSW_MSG_DEBUG((FSW_MSGSTR("fsw_ext4_get_by_extent: index extents, depth %d\n"),
   //                     ext4_extent_header->eh_depth));
-        ext4_extent_idx = (struct ext4_extent_idx *)(buffer + buf_offset);
+        ext4_extent_idx = (struct ext4_extent_idx *)((char *)buffer + buf_offset);
         buf_offset += sizeof(struct ext4_extent_idx);
         
  //       FSW_MSG_DEBUG((FSW_MSGSTR("fsw_ext4_get_by_extent: index node covers block %d...\n"),

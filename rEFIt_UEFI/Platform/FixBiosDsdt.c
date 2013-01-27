@@ -1959,7 +1959,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "AAPL00,boot-display");
         aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       }
-      else if (AsciiStrnCmp(modelname, "Intel HD Graphics 2000", 22) == 0)
+      else if (AsciiStrStr(modelname, "HD Graphics 2000"))
       {
         aml_add_string(pack, "built-in");
         aml_add_byte_buffer(pack, dataBuiltin1, 1);
@@ -1978,7 +1978,7 @@ UINT32 FIXDisplay1 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "AAPL00,boot-display");
         aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       }
-      else if (AsciiStrnCmp(modelname, "Intel HD Graphics 3000", 22) == 0)
+      else if (AsciiStrStr(modelname, "HD Graphics 3000"))
       {
         aml_add_string(pack, "built-in");
         aml_add_byte_buffer(pack, dataBuiltin1, 1);
@@ -2407,93 +2407,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "AAPL01,boot-display");
         aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       }
-      else if (AsciiStrnCmp(modelname, "HD2000", 29) == 0)
-      {
-              aml_add_string(pack, "class-code");
-              aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
-        aml_add_string(pack, "hda-gfx");
-        aml_add_string_buffer(pack, "onboard-1");
-        aml_add_string(pack, "AAPL00,PixelFormat");
-        aml_add_byte_buffer(pack, HD2000_vals[0], 4); 
-        aml_add_string(pack, "AAPL00,T1");
-        aml_add_byte_buffer(pack, HD2000_vals[1], 4);
-        aml_add_string(pack, "AAPL00,T2");
-        aml_add_byte_buffer(pack, HD2000_vals[2], 4);
-        aml_add_string(pack, "AAPL00,T3");
-        aml_add_byte_buffer(pack, HD2000_vals[3], 4);
-        aml_add_string(pack, "AAPL00,T4");
-        aml_add_byte_buffer(pack, HD2000_vals[4], 4);
-        aml_add_string(pack, "AAPL00,T5");
-        aml_add_byte_buffer(pack, HD2000_vals[5], 4);
-        aml_add_string(pack, "AAPL00,T6");
-        aml_add_byte_buffer(pack, HD2000_vals[6], 4);
-        aml_add_string(pack, "AAPL00,T7");
-        aml_add_byte_buffer(pack, HD2000_vals[7], 4);
-        aml_add_string(pack, "AAPL00,LinkType");
-        aml_add_byte_buffer(pack, HD2000_vals[8], 4);
-        aml_add_string(pack, "AAPL00,LinkFormat");
-        aml_add_byte_buffer(pack, HD2000_vals[9], 4);
-        aml_add_string(pack, "AAPL00,DualLink");
-        aml_add_byte_buffer(pack, (CHAR8*)&gSettings.DualLink , 4);
-        aml_add_string(pack, "AAPL00,Dither");
-        aml_add_byte_buffer(pack, HD2000_vals[11], 4);
-        aml_add_string(pack, "AAPL00,DataJustify");
-        aml_add_byte_buffer(pack, HD2000_vals[12], 4);
-        aml_add_string(pack, "graphic-options");
-        aml_add_byte_buffer(pack, HD2000_vals[13], 4);
-        aml_add_string(pack, "AAPL,tbl-info");
-        aml_add_byte_buffer(pack, HD2000_tbl_info, 18);
-        aml_add_string(pack, "AAPL,os-info");
-        aml_add_byte_buffer(pack, HD2000_os_info, 20);
-        aml_add_string(pack, "AAPL00,boot-display");
-        aml_add_byte_buffer(pack, Yes, sizeof(Yes));
-      }
-      else if (AsciiStrnCmp(modelname, "HD3000", 29) == 0)
-      {
-             aml_add_string(pack, "class-code");
-             aml_add_byte_buffer(pack, ClassFix, sizeof(ClassFix));
- //       aml_add_string(pack, "device-id");
- //       aml_add_byte_buffer(pack, (CHAR8*)&DisplayID[1], 4); // inject 0x0116
-        aml_add_string(pack, "hda-gfx");
-        aml_add_string_buffer(pack, "onboard-1");
-        aml_add_string(pack, "AAPL00,PixelFormat");
-        aml_add_byte_buffer(pack, HD3000_vals[0], 4); 
-        aml_add_string(pack, "AAPL00,T1");
-        aml_add_byte_buffer(pack, HD3000_vals[1], 4);
-        aml_add_string(pack, "AAPL00,T2");
-        aml_add_byte_buffer(pack, HD3000_vals[2], 4);
-        aml_add_string(pack, "AAPL00,T3");
-        aml_add_byte_buffer(pack, HD3000_vals[3], 4);
-        aml_add_string(pack, "AAPL00,T4");
-        aml_add_byte_buffer(pack, HD3000_vals[4], 4);
-        aml_add_string(pack, "AAPL00,T5");
-        aml_add_byte_buffer(pack, HD3000_vals[5], 4);
-        aml_add_string(pack, "AAPL00,T6");
-        aml_add_byte_buffer(pack, HD3000_vals[6], 4);
-        aml_add_string(pack, "AAPL00,T7");
-        aml_add_byte_buffer(pack, HD3000_vals[7], 4);
-        aml_add_string(pack, "AAPL00,LinkType");
-        aml_add_byte_buffer(pack, HD3000_vals[8], 4);
-        aml_add_string(pack, "AAPL00,LinkFormat");
-        aml_add_byte_buffer(pack, HD3000_vals[9], 4);
-        aml_add_string(pack, "AAPL00,DualLink");
-        aml_add_byte_buffer(pack, (CHAR8*)&gSettings.DualLink , 4);
-        aml_add_string(pack, "AAPL00,Dither");
-        aml_add_byte_buffer(pack, HD3000_vals[11], 4);
-        aml_add_string(pack, "AAPL00,DataJustify");
-        aml_add_byte_buffer(pack, HD3000_vals[12], 4);
-        aml_add_string(pack, "graphic-options");
-        aml_add_byte_buffer(pack, HD3000_vals[13], 4);
-        aml_add_string(pack, "AAPL,tbl-info");
-        aml_add_byte_buffer(pack, HD3000_tbl_info, 18);
-        aml_add_string(pack, "AAPL,os-info");
-        aml_add_byte_buffer(pack, HD3000_os_info, 20);
-        aml_add_string(pack, "AAPL,snb-platform-id");
-        aml_add_byte_buffer(pack, HD3000_vals[16], 4);
-        aml_add_string(pack, "AAPL00,boot-display");
-        aml_add_byte_buffer(pack, Yes, sizeof(Yes));
-      }
-      else if (AsciiStrnCmp(modelname, "Intel HD Graphics 2000", 22) == 0)
+      else if (AsciiStrStr(modelname, "HD Graphics 2000"))
       {
         aml_add_string(pack, "built-in");
         aml_add_byte_buffer(pack, dataBuiltin1, 1);
@@ -2510,7 +2424,7 @@ UINT32 FIXDisplay2 (UINT8 *dsdt, UINT32 len)
         aml_add_string(pack, "AAPL00,boot-display");
         aml_add_byte_buffer(pack, Yes, sizeof(Yes));
       }
-      else if (AsciiStrnCmp(modelname, "Intel HD Graphics 3000", 22) == 0)
+      else if (AsciiStrStr(modelname, "HD Graphics 3000"))
       {
         aml_add_string(pack, "built-in");
         aml_add_byte_buffer(pack, dataBuiltin1, 1);

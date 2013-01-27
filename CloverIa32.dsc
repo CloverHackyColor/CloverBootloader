@@ -334,7 +334,7 @@
 	#EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
 	#Clover/OsxMmcDxe/MmcDxe.inf
 #Video
-  IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
+  #IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
   #Clover/VBoxVgaMiniPort/VgaMiniPortDxe.inf
   #IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
   #Clover/VgaClassDxe/VgaClassDxe.inf
@@ -342,7 +342,7 @@
   #DuetPkg/BiosVideoThunkDxe/BiosVideo.inf
   Clover/BiosVideo/BiosVideo.inf
   #Clover/BiosVideoAuto/BiosVideo.inf
-  Clover/LegacyBios/VideoDxe/VideoDxe.inf
+  #Clover/LegacyBios/VideoDxe/VideoDxe.inf
 
 
   # IDE/AHCI Support
@@ -439,5 +439,7 @@
 [BuildOptions]
   MSFT:*_*_*_CC_FLAGS = /FAsc /FR$(@R).SBR -DMDEPKG_NDEBUG
   XCODE:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
-  GCC:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
+#  GCC:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
 
+# Uncomment following line to add video bios patching in CloverEFI
+  GCC:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG -DCLOVER_VBIOS_PATCH_IN_CLOVEREFI

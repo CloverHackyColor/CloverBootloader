@@ -41,6 +41,16 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #define REPORT_PROTOCOL         1
 
 #define USB_MOUSE_DEV_SIGNATURE SIGNATURE_32 ('u', 'm', 'o', 'u')
+/*
+typedef struct {
+  UINT8           Length;
+  UINT8           DescriptorType;
+  UINT8           EndpointAddress;
+  UINT8           Attributes;
+  UINT16          MaxPacketSize;
+  UINT8           Interval;
+} USB_ENDPOINT_DESCRIPTOR;
+*/
 
 //
 // A common header for usb standard descriptor.

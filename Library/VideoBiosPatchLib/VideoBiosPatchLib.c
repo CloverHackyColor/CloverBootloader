@@ -267,7 +267,7 @@ UINT8* VideoBiosPatchGetEdid (VOID)
       Edid = AllocateCopyPool (EdidProtocol->SizeOfEdid, EdidProtocol->Edid);
     }
   }
-  DBG(" %a", Edid != NULL ? "found" : "not found");
+  DBG(" %a\n", Edid != NULL ? "found" : "not found");
 
   return Edid;
 }
