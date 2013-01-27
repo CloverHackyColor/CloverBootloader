@@ -12,7 +12,8 @@
 /BootHFS/boot1f32
 /BootHFS/boot1f32alt
 
-# /CloverPackage/CloverV2/BootSectors/
+# /CloverPackage/
+/CloverPackage/Version.h
 /CloverPackage/CloverV2/BootSectors/boot1h
 /CloverPackage/CloverV2/BootSectors/boot1f32alt
 /CloverPackage/CloverV2/BootSectors/boot1f32
@@ -31,7 +32,6 @@
 /HFSPlus/Ia32/
 /HFSPlus/X64/
 
-/Lvers.txt
 /Version.h
 /rEFIt_UEFI/Version.h
 /rEFIt_UEFI/vers.txt
