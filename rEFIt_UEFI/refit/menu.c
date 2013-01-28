@@ -103,6 +103,11 @@ BOOLEAN IsDragging = FALSE;
 EG_RECT ScrollbarOldPointerPlace;
 EG_RECT ScrollbarNewPointerPlace;
 
+INTN ScrollWidth = 16;
+INTN ScrollButtonsHeight = 20;
+INTN ScrollBarDecorationsHeight = 5;
+INTN ScrollScrollDecorationsHeight = 7;
+
 INTN ScrollbarYMovement;
 
 
@@ -1659,13 +1664,13 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       
       UpButton.XPos = EntriesPosX + MenuWidth + 48; // what?
       UpButton.YPos = EntriesPosY;
-      UpButton.Width = 16;
-      UpButton.Height = 20;
+      UpButton.Width = ScrollWidth; // 16
+      UpButton.Height = ScrollButtonsHeight; // 20
       
+      DownButton.Width = UpButton.Width;
+      DownButton.Height = ScrollButtonsHeight;
       DownButton.XPos = UpButton.XPos;
-      DownButton.YPos = EntriesPosY + (State->MaxVisible + 1) * TextHeight - 20;
-      DownButton.Width = 16;
-      DownButton.Height = 20;
+      DownButton.YPos = EntriesPosY + (State->MaxVisible + 1) * TextHeight - DownButton.Height;
       
       ScrollbarBackground.XPos = UpButton.XPos;
       ScrollbarBackground.YPos = UpButton.YPos + UpButton.Height;
@@ -1675,17 +1680,17 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       BarStart.XPos = ScrollbarBackground.XPos;
       BarStart.YPos = ScrollbarBackground.YPos;
       BarStart.Width = ScrollbarBackground.Width;
-      BarStart.Height = 5;
+      BarStart.Height = ScrollBarDecorationsHeight; // 5
       
       BarEnd.Width = ScrollbarBackground.Width;
-      BarEnd.Height = 5;
+      BarEnd.Height = ScrollBarDecorationsHeight;
       BarEnd.XPos = ScrollbarBackground.XPos;
       BarEnd.YPos = DownButton.YPos - BarEnd.Height;
       
       ScrollStart.XPos = ScrollbarBackground.XPos;
       ScrollStart.YPos = ScrollbarBackground.YPos + ScrollbarBackground.Height * State->FirstVisible / (State->MaxIndex + 1);
       ScrollStart.Width = ScrollbarBackground.Width;
-      ScrollStart.Height = 7;
+      ScrollStart.Height = ScrollScrollDecorationsHeight; // 7
       
             
       Scrollbar.XPos = ScrollbarBackground.XPos;
@@ -1694,7 +1699,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       Scrollbar.Height = ScrollbarBackground.Height * (State->MaxVisible + 1) / (State->MaxIndex + 1) - ScrollStart.Height;
       
       ScrollEnd.Width = ScrollbarBackground.Width;
-      ScrollEnd.Height = 7;
+      ScrollEnd.Height = ScrollScrollDecorationsHeight;
       ScrollEnd.XPos = ScrollbarBackground.XPos;
       ScrollEnd.YPos = Scrollbar.YPos + Scrollbar.Height - ScrollEnd.Height;
       

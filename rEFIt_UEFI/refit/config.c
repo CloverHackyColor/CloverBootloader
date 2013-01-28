@@ -67,6 +67,11 @@ BOOLEAN  AnimeOnce[MAX_ANIME];
 CHAR16*  CONFIG_FILE_NAME =   L"refit.conf";
 CHAR16*  THEME_CONFIG    =    L"settings.conf";
 
+extern INTN ScrollWidth;
+extern INTN ScrollButtonsHeight;
+extern INTN ScrollBarDecorationsHeight;
+extern INTN ScrollScrollDecorationsHeight;
+
 // global configuration with default values
 
 REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, FALSE, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, None };
@@ -450,7 +455,13 @@ VOID ReadConfig(INTN What)
           DBG(" unknown hideui flag: %s\n", FlagName);
         }
       }
-      
+    } else if ((StriCmp(TokenList[0], L"scroll") == 0) && (TokenCount == 5)) {
+      ScrollWidth = (INTN)StrDecimalToUintn(TokenList[1]);
+      ScrollButtonsHeight = (INTN)StrDecimalToUintn(TokenList[2]);
+      ScrollBarDecorationsHeight = (INTN)StrDecimalToUintn(TokenList[3]);
+      ScrollScrollDecorationsHeight = (INTN)StrDecimalToUintn(TokenList[4]);
+      //DBG("SCROLL PARAMS READ %d %d %d %d %d\n", TokenCount, ScrollWidth, ScrollButtonsHeight, ScrollBarDecorationsHeight, ScrollScrollDecorationsHeight);
+    
     } else if (StriCmp(TokenList[0], L"theme") == 0) {
       HandleString(TokenList, TokenCount, &(GlobalConfig.Theme));
       
