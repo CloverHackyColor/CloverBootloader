@@ -2158,6 +2158,8 @@ ConSplitterGrowMapTable (
   INT32 *OldTextOutModeMap;
   INT32 *SrcAddress;
   INT32 Index;
+  UINTN OldStepSize;
+  UINTN NewStepSize;
 
   NewSize           = Private->TextOutListCount * sizeof (INT32);
   OldTextOutModeMap = Private->TextOutModeMap;
@@ -2195,6 +2197,12 @@ ConSplitterGrowMapTable (
     Size        = Private->CurrentNumberOfConsoles * sizeof (INT32);
     Index       = 0;
     SrcAddress  = OldTextOutModeMap;
+    NewStepSize = NewSize / sizeof(INT32);    
+    // If Private->CurrentNumberOfConsoles is not zero and OldTextOutModeMap
+    // is not NULL, it indicates that the original TextOutModeMap is not enough
+    // for the new console devices and has been enlarged by CONSOLE_SPLITTER_ALLOC_UNIT columns.
+    //
+    OldStepSize = NewStepSize - CONSOLE_SPLITTER_ALLOC_UNIT;
 
     //
     // Copy the old data to the new one
@@ -2203,8 +2211,8 @@ ConSplitterGrowMapTable (
       CopyMem (TextOutModeMap, SrcAddress, Size);
 //      TextOutModeMap += NewSize;
 //      SrcAddress += Size;
-      TextOutModeMap += NewSize / sizeof(INT32);
-      SrcAddress += Size / sizeof(INT32);
+      TextOutModeMap += NewStepSize; // / sizeof(INT32);
+      SrcAddress += OldStepSize; // / sizeof(INT32);
       Index++;
     }
     //

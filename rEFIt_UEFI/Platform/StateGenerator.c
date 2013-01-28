@@ -448,7 +448,8 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
     // C1
     resource_template_register_fixedhw[8] = 0x01;
     resource_template_register_fixedhw[9] = 0x02;
-    resource_template_register_fixedhw[18] = 0x01;
+//    resource_template_register_fixedhw[18] = 0x01;
+    resource_template_register_fixedhw[10] = 0x01;
     
     resource_template_register_fixedhw[11] = 0x00; // C1
     
@@ -457,7 +458,8 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
     aml_add_word(tmpl, 0x0001);			// Latency
     aml_add_dword(tmpl, 0x000003e8);	// Power
     
-    resource_template_register_fixedhw[18] = 0x03;
+//    resource_template_register_fixedhw[18] = 0x03;
+    resource_template_register_fixedhw[10] = 0x03;
     
     if (c2_enabled) // C2
     {

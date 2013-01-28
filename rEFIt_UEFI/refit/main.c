@@ -2025,10 +2025,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   INTN              DefaultIndex;
   UINTN             MenuExit;
   UINTN             Size, i;
-  //UINT64            TscDiv;
-  //UINT64            TscRemainder = 0;
+//  UINT64            TscDiv;
+//  UINT64            TscRemainder = 0;
   LOADER_ENTRY      *LoaderEntry;
-  //UINT64            t0, t1;
   
   // CHAR16            *InputBuffer; //, *Y;
   //  EFI_INPUT_KEY Key;
@@ -2037,7 +2036,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   gCPUStructure.TSCCalibr = GetMemLogTscTicksPerSecond(); //ticks for 1second
   
   // bootstrap
-  //    InitializeLib(ImageHandle, SystemTable);
 	gST				= SystemTable;
 	gImageHandle	= ImageHandle;
 	gBS				= SystemTable->BootServices;
@@ -2046,7 +2044,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	
   // firmware detection
   gFirmwareClover = StrCmp(gST->FirmwareVendor, L"CLOVER") == 0;
-  //	DBG("Running on Firmware %s, it is Clover?%a\n", gST->FirmwareVendor, gFirmwareClover?"Yes":"No");
   
   InitializeConsoleSim();
 	InitBooterLog();
@@ -2185,7 +2182,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //  }
   
   gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
-  gCPUStructure.FSBFrequency = DivU64x32(gCPUStructure.CPUFrequency,
+  gCPUStructure.FSBFrequency = DivU64x32(MultU64x32(gCPUStructure.CPUFrequency, 10),
                                          gCPUStructure.MaxRatio);
   gCPUStructure.ExternalClock = DivU64x32(gCPUStructure.FSBFrequency, kilo);
   gCPUStructure.MaxSpeed = DivU64x32(gCPUStructure.TSCFrequency, Mega);
