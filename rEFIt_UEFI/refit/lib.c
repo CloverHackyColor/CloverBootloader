@@ -155,31 +155,29 @@ EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
 
 VOID UninitRefitLib(VOID)
 {
-    // called before running external programs to close open file handles
-    
-    UninitVolumes();
-    
-    if (SelfDir != NULL) {
-        SelfDir->Close(SelfDir);
-        SelfDir = NULL;
-    }
-    
-    if (SelfRootDir != NULL) {
-        SelfRootDir->Close(SelfRootDir);
-        SelfRootDir = NULL;
-    }
-  
-  if (ThemeDir != NULL) {
-    ThemeDir->Close(ThemeDir);
-    ThemeDir = NULL;
+  // called before running external programs to close open file handles
+
+  if (SelfDir != NULL) {
+    SelfDir->Close(SelfDir);
+    SelfDir = NULL;
   }
 
   if (OEMDir != NULL) {
     OEMDir->Close(OEMDir);
     OEMDir = NULL;
   }
-  
-  
+
+  if (ThemeDir != NULL) {
+    ThemeDir->Close(ThemeDir);
+    ThemeDir = NULL;
+  }
+
+  if (SelfRootDir != NULL) {
+    SelfRootDir->Close(SelfRootDir);
+    SelfRootDir = NULL;
+  }
+
+  UninitVolumes();
 }
 
 EFI_STATUS ReinitRefitLib(VOID)
@@ -1214,6 +1212,12 @@ static VOID UninitVolumes(VOID)
     Volume->BlockIO = NULL;
     Volume->WholeDiskBlockIO = NULL;
     FreePool(Volume);
+  }
+
+  if (Volumes != NULL)
+  {
+    FreePool(Volumes);
+    Volumes = NULL;
   }
   VolumesCount = 0; 
   
