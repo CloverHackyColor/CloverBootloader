@@ -320,6 +320,8 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x9715,	0x00000000, CHIP_FAMILY_RS880,	"ATI Radeon HD 4250",           kNull       },
 	{ 0x9714,	0x00000000, CHIP_FAMILY_RS880,	"ATI Radeon HD 4290",           kNull       },
   
+ // 0x9804 - AMD HD6250
+  
   //what about ATI6320 devID=0x9806? same as 4330 but IGP
   
   //X3000 - 0x68881002 0x68891002 0x68981002 0x68991002 0x689C1002 0x689D1002 0x68801002 0x68901002 0x68A81002
