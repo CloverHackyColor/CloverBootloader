@@ -2025,8 +2025,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   INTN              DefaultIndex;
   UINTN             MenuExit;
   UINTN             Size, i;
-  UINT64            TscDiv;
-  UINT64            TscRemainder = 0;
+  //UINT64            TscDiv;
+  //UINT64            TscRemainder = 0;
   LOADER_ENTRY      *LoaderEntry;
   //UINT64            t0, t1;
   
