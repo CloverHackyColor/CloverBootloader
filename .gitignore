@@ -33,6 +33,9 @@
 /HFSPlus/X64/
 
 /Version.h
+/vers.txt
+
 /rEFIt_UEFI/Version.h
 /rEFIt_UEFI/vers.txt
-/vers.txt
+rEFIt_UEFI/rEFIt_proj/rEFIt_proj.xcodeproj/project.xcworkspace/
+rEFIt_UEFI/rEFIt_proj/rEFIt_proj.xcodeproj/xcuserdata/
