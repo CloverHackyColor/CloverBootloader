@@ -2172,6 +2172,8 @@ REFIT_MENU_ENTRY  *SubMenuGraphics()
   return Entry;  
 }  
 
+#define nya(x) x/10,x%10
+
 REFIT_MENU_ENTRY  *SubMenuSpeedStep()
 {
   REFIT_MENU_ENTRY   *Entry; //, *SubEntry;
@@ -2198,9 +2200,9 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
                   DivU64x32(gCPUStructure.FSBFrequency, Mega)));
   AddMenuInfoLine(SubScreen, PoolPrint(L"CPU speed MHz: %d",
                   DivU64x32(gCPUStructure.CPUFrequency, Mega)));
-  AddMenuInfoLine(SubScreen, PoolPrint(L"Ratio x10: Min=%d Max=%d Turbo=%d/%d/%d/%d",
-     gCPUStructure.MinRatio, gCPUStructure.MaxRatio,
-     gCPUStructure.Turbo4, gCPUStructure.Turbo3, gCPUStructure.Turbo2, gCPUStructure.Turbo1));
+  AddMenuInfoLine(SubScreen, PoolPrint(L"Ratio: Min=%d.%d Max=%d.%d Turbo=%d.%d/%d.%d/%d.%d/%d.%d",
+     nya(gCPUStructure.MinRatio), nya(gCPUStructure.MaxRatio),
+     nya(gCPUStructure.Turbo4), nya(gCPUStructure.Turbo3), nya(gCPUStructure.Turbo2), nya(gCPUStructure.Turbo1)));
   
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"Cores enabled:");
