@@ -712,7 +712,7 @@ typedef struct {
   INT32   HVCount;
   
   // iCloudFix
-  BOOLEAN iCloudFix;
+//  BOOLEAN iCloudFix;
   
   //Pointer
   BOOLEAN PointerEnabled;

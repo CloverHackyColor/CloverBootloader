@@ -156,7 +156,7 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].SValue = AllocateZeroPool(63);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.DsdtName);
   InputItems[InputItemsCount].ItemType = BoolValue; //2
-  InputItems[InputItemsCount].BValue = gSettings.iCloudFix;
+  InputItems[InputItemsCount].BValue = gSettings.DropSSDT; //iCloudFix;
   InputItems[InputItemsCount++].SValue = gSettings.iCloudFix?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //3 
   InputItems[InputItemsCount].BValue = gSettings.StringInjector;
@@ -377,7 +377,7 @@ VOID ApplyInputs(VOID)
   }
   i++; //2
   if (InputItems[i].Valid) {
-    gSettings.iCloudFix = InputItems[i].BValue;
+//    gSettings.iCloudFix = InputItems[i].BValue;
   }
   i++; //3
   if (InputItems[i].Valid) {
@@ -2865,7 +2865,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     //1
 
     //2    
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+/*    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     UnicodeSPrint(Flags, 255, L"iCloudFix:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
@@ -2879,7 +2879,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.AtClick = ActionEnter;
     InputBootArgs->Entry.AtRightClick = ActionDetails;
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-
+*/
     //3  
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     UnicodeSPrint(Flags, 255, L"String Injection:");
