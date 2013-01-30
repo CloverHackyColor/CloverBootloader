@@ -157,7 +157,7 @@ VOID FillInputs(VOID)
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.DsdtName);
   InputItems[InputItemsCount].ItemType = BoolValue; //2
   InputItems[InputItemsCount].BValue = gSettings.DropSSDT; //iCloudFix;
-  InputItems[InputItemsCount++].SValue = gSettings.iCloudFix?L"[+]":L"[ ]";
+  InputItems[InputItemsCount++].SValue = gSettings.DropSSDT?L"[+]":L"[ ]"; //iCloudFix?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //3 
   InputItems[InputItemsCount].BValue = gSettings.StringInjector;
   InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[+]":L"[ ]";

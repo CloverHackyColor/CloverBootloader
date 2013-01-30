@@ -79,17 +79,17 @@ static struct gma_gpu_t KnownGPUS[] = {
 //	{ 0x2A13, "GMAX3100"		},
 	{ 0x2A42, "GMAX3100"		},
 //	{ 0x2A43, "GMAX3100"		},
-  { 0x0046, "HD Graphics"  },
-  { 0x0102, "HD Graphics 2000"  },
-  { 0x0106, "HD Graphics 3000 Mobile"  },
-  { 0x0112, "HD Graphics 2000"  },
-  { 0x0116, "HD Graphics 3000 Mobile"  },
-  { 0x0122, "HD Graphics 3000"  },
-  { 0x0126, "HD Graphics 3000 Mobile"  },
-  { 0x0162, "HD Graphics 4000"  },  //Desktop??
-  { 0x0166, "HD Graphics 4000 Mobile"  }, //
-  { 0x0152, "HD Graphics 2500"  },  //iMac
-  { 0x0156, "HD Graphics 2500 Mobile"  },  //MacBook
+  { 0x0046, "Intel HD Graphics"  },
+  { 0x0102, "Intel HD Graphics 2000"  },
+  { 0x0106, "Intel HD Graphics 3000"  },
+  { 0x0112, "Intel HD Graphics 2000"  },
+  { 0x0116, "Intel HD Graphics 3000"  },
+  { 0x0122, "Intel HD Graphics 3000"  },
+  { 0x0126, "Intel HD Graphics 3000"  },
+  { 0x0162, "Intel HD Graphics 4000"  },  //Desktop??
+  { 0x0166, "Intel HD Graphics 4000"  }, // MacBookPro10,1 have this string as model name whatever chameleon team may say
+  { 0x0152, "Intel HD Graphics 4000"  },  //iMac
+  { 0x0156, "Intel HD Graphics 4000"  },  //MacBook
 };
 
 CHAR8 *get_gma_model(UINT16 id) {
@@ -169,7 +169,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x0162:
     case 0x0166:
       if (gma_dev->device_id == 0x162)
-          devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[23], 4);
+          devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[24], 4);
       else if (gma_dev->device_id == 0x166) 
           devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[25], 4);
       else if (gma_dev->device_id == 0x152)
