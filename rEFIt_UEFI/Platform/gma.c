@@ -178,7 +178,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[25], 4);
     case 0xA011:
     case 0xA012:  
-      devprop_add_value(device, "AAPL01,DualLink", (UINT8 *)&DualLink, 1);
+      devprop_add_value(device, "AAPL00,DualLink", (UINT8 *)&DualLink, 1);
     case 0x2582:
     case 0x2592:
     case 0x27A2:
@@ -193,7 +193,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x0112:  
     case 0xA002:  
       devprop_add_value(device, "built-in", &BuiltIn, 1);
-      devprop_add_value(device, "AAPL01,DualLink", (UINT8 *)&DualLink, 1);
+      devprop_add_value(device, "AAPL00,DualLink", (UINT8 *)&DualLink, 1);
       break;
     case 0x2A02:
     case 0x2A12:
