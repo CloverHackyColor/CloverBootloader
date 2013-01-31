@@ -2087,7 +2087,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       gSettings.OEMBoard[i] = 0x5F;
     }
   }
-  DBG("  running on %a\n", gSettings.OEMProduct);
+  DBG("  running on %a\n",   gSettings.OEMProduct);
   DBG("... with board %a\n", gSettings.OEMBoard);
   
   UnicodeSPrint(gSettings.ConfigName, 64, L"config");
@@ -2126,7 +2126,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   } else {
     InitScreen(!gFirmwareClover); // ? FALSE : TRUE);
   }
-  DBG("InitScreen\n");
+//  DBG("InitScreen\n");
   
   //Now we have to reinit handles
   Status = ReinitSelfLib();
@@ -2147,7 +2147,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //  ZeroMem((VOID*)&gSettings, sizeof(SETTINGS_DATA));
   ZeroMem((VOID*)&gGraphics[0], sizeof(GFX_PROPERTIES) * 4);
   
-  
+  DumpBiosMemoryMap();
 
   GuiEventsInitialize();
 //  DBG("GuiEventsInitialize OK\n");

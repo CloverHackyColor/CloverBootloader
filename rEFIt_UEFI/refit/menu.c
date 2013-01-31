@@ -365,9 +365,9 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = UNIString; //1
   InputItems[InputItemsCount].SValue = AllocateZeroPool(63);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.DsdtName);
-  InputItems[InputItemsCount].ItemType = BoolValue; //2
-  InputItems[InputItemsCount].BValue = gSettings.iCloudFix;
-  InputItems[InputItemsCount++].SValue = gSettings.iCloudFix?L"[+]":L"[ ]";
+  InputItems[InputItemsCount++].ItemType = BoolValue; //2
+//  InputItems[InputItemsCount].BValue = gSettings.iCloudFix;
+//  InputItems[InputItemsCount++].SValue = gSettings.iCloudFix?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = BoolValue; //3
   InputItems[InputItemsCount].BValue = gSettings.StringInjector;
   InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[+]":L"[ ]";

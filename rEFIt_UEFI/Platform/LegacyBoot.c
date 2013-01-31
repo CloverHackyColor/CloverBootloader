@@ -897,29 +897,7 @@ EFI_STATUS bootPBR(REFIT_VOLUME* volume)
 		DBG("HDBoot: BIOS drive number not found, using default 0x80\n");
 		BiosDriveNum = 0x80;
     }
-	
-	//
-	// dump log to legacy_boot.log
-	//
-/*   Status = SaveBooterLog(SelfRootDir, LEGBOOT_LOG);
-   if (EFI_ERROR(Status)) {
-     DBG("can't save legacy-boot.log\n");
-     Status = SaveBooterLog(NULL, LEGBOOT_LOG);
-   }
- */
-   /*
-	LogSize = msgCursor - msgbuf;
-	Status = egSaveFile(SelfRootDir, LEGBOOT_LOG, (UINT8*)msgbuf, LogSize);
-	if (EFI_ERROR(Status)) {
-		DBG("can't save legacy-boot.log\n");
-		Status = egSaveFile(NULL, LEGBOOT_LOG, (UINT8*)msgbuf, LogSize);
-	}
-   */
-    
-	//Status = gLegacy8259->GetMask(gLegacy8259, &OldMask, NULL, NULL, NULL);
-	//NewMask = 0x0;
-	//Status = gLegacy8259->SetMask(gLegacy8259, &NewMask, NULL, NULL, NULL);
-	
+		
 	//
 	// prepare 16bit regs:
 	// DX = BIOS drive num
@@ -1004,4 +982,52 @@ EFI_STATUS bootLegacyBiosDefault(IN REFIT_VOLUME* volume)
 	DBG("LegacyBios->LegacyBoot(): %r\n", Status);
 	
 	return Status;
+}
+
+VOID DumpBiosMemoryMap()
+{
+  EFI_STATUS                  Status		= EFI_NOT_FOUND;
+  INT32                       i, Length;  //for debug dump
+  UINT64                      Start, Size;
+  IA32_REGISTER_SET           Regs;
+  UINT8*                      BiosMap = (UINT8*)(UINTN)0x7C00;
+  
+	gBS->SetMem (&Regs, sizeof (Regs), 0);
+	addrEnablePaging(0);
+  
+  Status = gBS->LocateProtocol(&gEfiLegacy8259ProtocolGuid, NULL, (VOID**)&gLegacy8259);
+	if (EFI_ERROR(Status)) {
+		return;
+	}
+  DBG("gEfiLegacy8259ProtocolGuid found\n");
+	
+	Status = gBS->AllocatePool (EfiBootServicesData,sizeof(THUNK_CONTEXT),(VOID **)&mThunkContext);
+	if (EFI_ERROR (Status)) {
+		return;
+	}
+	Status = InitializeBiosIntCaller(); //mThunkContext);
+	if (EFI_ERROR (Status)) {
+		return;
+	}
+  
+  Regs.X.AX   = 0xE820;
+  Regs.E.EBX  =  0x534d4150;
+  Regs.X.CX   = 24;
+  Regs.E.EDI   = 0x7C00;
+  do {
+    if (LegacyBiosInt86(0x15, &Regs)) {
+      break;
+    }
+  } while (  Regs.E.EBX != 0);
+  
+  Length =  ((INT32)(Regs.E.EDI - 0x7c00)) / 24;
+  DBG("BiosMemoryMap length=%d:\n   Start - End   Type  Ext\n", Length);
+  
+  for (i = 0; i < Length; i++) {
+    Start = *(UINT64*)BiosMap;
+    Size = *((UINT64*)BiosMap + 1);
+    DBG(" %lx %lx %x\n", Start, Start + Size - 1, *(UINT32*)(BiosMap + 16), *(UINT32*)(BiosMap + 20));
+    BiosMap += 24;
+  }
+  
 }

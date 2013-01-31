@@ -23,7 +23,7 @@
 extern CHAR8*						gDeviceProperties;
 
 //Slice - corrected all values, still not sure
-UINT8 GMAX3100_vals[26][4] = {
+UINT8 GMAX3100_vals[27][4] = {
 	{ 0x01,0x00,0x00,0x00 },	//0 "AAPL,HasPanel"
 	{ 0x01,0x00,0x00,0x00 },	//1 "AAPL,SelfRefreshSupported"
 	{ 0x01,0x00,0x00,0x00 },	//2 "AAPL,aux-power-connected"
@@ -49,7 +49,8 @@ UINT8 GMAX3100_vals[26][4] = {
 	{ 0xA2,0x00,0x00,0x00 },	//22 "subsystem-id"
   { 0x05,0x00,0x62,0x01 },    //23 "AAPL,ig-platform-id" HD4000 //STLVNUB
   { 0x06,0x00,0x62,0x01 },    //24 "AAPL,ig-platform-id" HD4000 iMac
-  { 0x09,0x00,0x66,0x01 }     //25 "AAPL,ig-platform-id" HD4000
+  { 0x09,0x00,0x66,0x01 },    //25 "AAPL,ig-platform-id" HD4000
+  { 0x00,0x00,0x62,0x01 }   //26 - automatic solution
 };
 // 5 - 32Mb 6 - 48Mb 9 - 64Mb, 0 - 96Mb
 
@@ -114,6 +115,9 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 	UINT8 BuiltIn =		0x00;
   UINTN j;
 	UINT8 ClassFix[4] =	{ 0x00, 0x00, 0x03, 0x00 };
+  UINT8 IG_ID[4] = { 0x00, 0x00, 0x62, 0x01 };
+  
+  
 	
 	devicepath = get_pci_dev_path(gma_dev);
 	
@@ -158,7 +162,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   devprop_add_value(device, "subsystem-vendor-id", GMAX3100_vals[21], 4);
   switch (gma_dev->device_id) {
     case 0x0102: 
-      devprop_add_value(device, "class-code",						ClassFix, 4);
+      devprop_add_value(device, "class-code",	ClassFix, 4);
     case 0x0116:
     case 0x0122:
     case 0x0126:
@@ -168,6 +172,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x0156:
     case 0x0162:
     case 0x0166:
+      /*
       if (gma_dev->device_id == 0x162)
           devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[24], 4);
       else if (gma_dev->device_id == 0x166) 
@@ -176,6 +181,10 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[24], 4);
       else if (gma_dev->device_id == 0x156) 
         devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[25], 4);
+       */
+      IG_ID[0] = gma_dev->revision;
+      IG_ID[2] |= gma_dev->device_id & 0x0f;
+      devprop_add_value(device, "AAPL,ig-platform-id", IG_ID, 4);
     case 0xA011:
     case 0xA012:  
       devprop_add_value(device, "AAPL00,DualLink", (UINT8 *)&DualLink, 1);

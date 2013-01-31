@@ -60,6 +60,12 @@ UINT8							gDefaultType;
 CPU_STRUCTURE			gCPUStructure;
 UINT64            TurboMsr;
 
+//this must not be defined at LegacyBios calls
+#define EAX 0
+#define EBX 1
+#define ECX 2
+#define EDX 3
+
 
 VOID DoCpuid(UINT32 selector, UINT32 *data)
 {

@@ -370,11 +370,6 @@ Headers collection for procedures
 #define CPUID_87  7
 #define CPUID_MAX	8
 
-#define EAX 0
-#define EBX 1
-#define ECX 2
-#define EDX 3
-
 /* CPU Cache */
 #define MAX_CACHE_COUNT  4
 #define CPU_CACHE_LEVEL  3
@@ -1064,6 +1059,8 @@ EFI_STATUS  bootMBR(IN REFIT_VOLUME* volume);
 EFI_STATUS  bootPBR(IN REFIT_VOLUME* volume);
 EFI_STATUS  bootPBRtest(IN REFIT_VOLUME* volume);
 EFI_STATUS  bootLegacyBiosDefault(IN REFIT_VOLUME* volume);
+
+VOID        DumpBiosMemoryMap();
 
 CHAR8*      XMLDecode(CHAR8* src);
 EFI_STATUS  ParseXML(const CHAR8* buffer, TagPtr * dict);
