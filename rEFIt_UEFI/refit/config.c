@@ -347,9 +347,9 @@ VOID ReadConfig(INTN What)
   REFIT_FILE      File;
   CHAR16          **TokenList;
   CHAR16          *FlagName;
-  UINTN           TokenCount, i;
+  UINTN           TokenCount, i, Minus = 0, j = 0;
   INTN            ID;
-  
+  //CHAR8       ANum[4];
   
   //    DBG("Reading configuration file...\n");
   switch (What) {
@@ -455,12 +455,82 @@ VOID ReadConfig(INTN What)
           DBG(" unknown hideui flag: %s\n", FlagName);
         }
       }
+    } else if (StriCmp(TokenList[0], L"hidevolumes") == 0) {
+      gSettings.HVHideAllOSX = FALSE;
+      gSettings.HVHideAllOSXInstall = FALSE;
+      gSettings.HVHideAllRecovery = FALSE;
+      gSettings.HVHideDuplicatedBootTarget = FALSE;
+      gSettings.HVHideAllWindowsEFI = FALSE;
+      gSettings.HVHideAllGrub = FALSE;
+      gSettings.HVHideAllGentoo = FALSE;
+      gSettings.HVHideAllRedHat = FALSE;
+      gSettings.HVHideAllUbuntu = FALSE;
+      gSettings.HVHideAllLinuxMint = FALSE;
+      gSettings.HVHideAllFedora = FALSE;
+      gSettings.HVHideAllSuSe = FALSE;
+      gSettings.HVHideOpticalUEFI = FALSE;
+      gSettings.HVHideInternalUEFI = FALSE;
+      gSettings.HVHideExternalUEFI = FALSE;
+      gSettings.HVHideAllLegacy = FALSE;
+      
+      for (i = 1; i < TokenCount; i++) {
+        if (StriCmp(TokenList[i], L"osx") == 0)
+          gSettings.HVHideAllOSX = TRUE;
+        else if (StriCmp(TokenList[i], L"osxinstall") == 0)
+          gSettings.HVHideAllOSXInstall = TRUE;
+        else if (StriCmp(TokenList[i], L"recovery") == 0)
+          gSettings.HVHideAllRecovery = TRUE;
+        else if (StriCmp(TokenList[i], L"duplicate") == 0)
+          gSettings.HVHideDuplicatedBootTarget = TRUE;
+        else if (StriCmp(TokenList[i], L"windowsefi") == 0)
+          gSettings.HVHideAllWindowsEFI = TRUE;
+        else if (StriCmp(TokenList[i], L"grub") == 0)
+          gSettings.HVHideAllGrub = TRUE;
+        else if (StriCmp(TokenList[i], L"gentoo") == 0)
+          gSettings.HVHideAllGentoo = TRUE;
+        else if (StriCmp(TokenList[i], L"redhat") == 0)
+          gSettings.HVHideAllRedHat = TRUE;
+        else if (StriCmp(TokenList[i], L"ubuntu") == 0)
+          gSettings.HVHideAllUbuntu = TRUE;
+        else if (StriCmp(TokenList[i], L"mint") == 0)
+          gSettings.HVHideAllLinuxMint = TRUE;
+        else if (StriCmp(TokenList[i], L"fedora") == 0)
+          gSettings.HVHideAllFedora = TRUE;
+        else if (StriCmp(TokenList[i], L"suse") == 0)
+          gSettings.HVHideAllSuSe = TRUE;
+        else if (StriCmp(TokenList[i], L"opticaluefi") == 0)
+          gSettings.HVHideOpticalUEFI = TRUE;
+        else if (StriCmp(TokenList[i], L"internaluefi") == 0)
+          gSettings.HVHideInternalUEFI = TRUE;
+        else if (StriCmp(TokenList[i], L"externaluefi") == 0)
+          gSettings.HVHideExternalUEFI = TRUE;
+        else if (StriCmp(TokenList[i], L"legacy") == 0)
+          gSettings.HVHideAllLegacy = TRUE;
+        else {
+          gSettings.HVHideStrings[j++] = EfiStrDuplicate(TokenList[i]);
+          DBG("Hiding volume with string %s\n", gSettings.HVHideStrings[j-1]);
+        }
+      }
+      
     } else if ((StriCmp(TokenList[0], L"scroll") == 0) && (TokenCount == 5)) {
       ScrollWidth = (INTN)StrDecimalToUintn(TokenList[1]);
       ScrollButtonsHeight = (INTN)StrDecimalToUintn(TokenList[2]);
       ScrollBarDecorationsHeight = (INTN)StrDecimalToUintn(TokenList[3]);
       ScrollScrollDecorationsHeight = (INTN)StrDecimalToUintn(TokenList[4]);
       //DBG("SCROLL PARAMS READ %d %d %d %d %d\n", TokenCount, ScrollWidth, ScrollButtonsHeight, ScrollBarDecorationsHeight, ScrollScrollDecorationsHeight);
+      
+    } else if (StriCmp(TokenList[0], L"mousespeed") == 0) {
+      if (TokenList[1][0] == '-')
+        Minus = 1;
+      gSettings.PointerSpeed = StrDecimalToUintn(TokenList[1] + Minus);
+      if (Minus)
+        gSettings.PointerSpeed = -gSettings.PointerSpeed;
+      if (gSettings.PointerSpeed == 0)
+        gSettings.PointerEnabled = FALSE;
+    } else if (StriCmp(TokenList[0], L"mousemirror") == 0) {
+      gSettings.PointerMirror = TRUE;
+    } else if (StriCmp(TokenList[0], L"dblclick") == 0) {
+      gSettings.DoubleClickTime = StrDecimalToUintn(TokenList[1]);
     
     } else if (StriCmp(TokenList[0], L"theme") == 0) {
       HandleString(TokenList, TokenCount, &(GlobalConfig.Theme));

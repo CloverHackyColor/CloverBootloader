@@ -725,6 +725,9 @@ typedef struct {
   UINT8   *RtROM;
   UINTN   RtROMLen;
   
+  // Multi-config
+  CHAR16  ConfigName[64];
+  
 } SETTINGS_DATA;
 
 typedef struct {
@@ -1153,5 +1156,7 @@ DeleteBootOptionForFile (
  *  or by overriding existing EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL.GetDriver.
  */
 VOID RegisterDriversToHighestPriority(IN EFI_HANDLE *PriorityDrivers);
+
+EFI_STATUS LoadUserSettings(IN EFI_FILE *RootDir);
 
 #endif

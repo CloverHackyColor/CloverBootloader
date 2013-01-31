@@ -2009,7 +2009,6 @@ INTN FindDefaultEntry(VOID)
 //
 // main entry point
 //
-
 EFI_STATUS
 EFIAPI
 RefitMain (IN EFI_HANDLE           ImageHandle,
@@ -2057,7 +2056,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   gBS->SetWatchdogTimer(0x0000, 0x0000, 0x0000, NULL);
   ZeroMem((VOID*)&gSettings, sizeof(SETTINGS_DATA));
   
-  InitAnime();
+  InitAnime(); // why here? not in graphics mode yet
   InitializeUnicodeCollationProtocol();
   
   // read GUI configuration
@@ -2091,10 +2090,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   DBG("  running on %a\n", gSettings.OEMProduct);
   DBG("... with board %a\n", gSettings.OEMBoard);
   
+  UnicodeSPrint(gSettings.ConfigName, 64, L"config");
   
-  if (FileExists(SelfRootDir, PoolPrint(L"EFI\\OEM\\%a\\config.plist", gSettings.OEMProduct))) {
+  if (FileExists(SelfRootDir, PoolPrint(L"EFI\\OEM\\%a\\%s.plist", gSettings.OEMProduct, gSettings.ConfigName))) {
     OEMPath = PoolPrint(L"EFI\\OEM\\%a", gSettings.OEMProduct);
-  } else if (FileExists(SelfRootDir, PoolPrint(L"EFI\\OEM\\%a\\config.plist", gSettings.OEMBoard))) {
+  } else if (FileExists(SelfRootDir, PoolPrint(L"EFI\\OEM\\%a\\%s.plist", gSettings.OEMBoard, gSettings.ConfigName))) {
     OEMPath = PoolPrint(L"EFI\\OEM\\%a", gSettings.OEMBoard);
   } else {
     OEMPath = L"EFI";

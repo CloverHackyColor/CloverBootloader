@@ -12,11 +12,11 @@
 #define DEBUG_SET DEBUG_ALL
 #endif
 
-#if DEBUG_SET == 0
-#define DBG(...)
-#else
+//#if DEBUG_SET == 0
+//#define DBG(...)
+//#else
 #define DBG(...) DebugLog(DEBUG_SET, __VA_ARGS__)
-#endif
+//#endif
 
 //#define SHORT_LOCATE 1
 
@@ -114,14 +114,16 @@ EFI_STATUS LoadUserSettings(IN EFI_FILE *RootDir)
   EFI_STATUS	Status = EFI_NOT_FOUND;
   UINTN       size;
   CHAR8*      gConfigPtr = NULL;
-  CHAR16*     ConfigPlistPath = L"EFI\\config.plist";
-  CHAR16*     ConfigOemPath = PoolPrint(L"%s\\config.plist", OEMPath);
+  CHAR16*     ConfigPlistPath = PoolPrint(L"EFI\\%s.plist", gSettings.ConfigName);
+  CHAR16*     ConfigOemPath = PoolPrint(L"%s\\%s.plist", OEMPath, gSettings.ConfigName);
+  
+  DBG("ConfigPlistPath: %s\n", ConfigPlistPath);
   
   // load config
   if (FileExists(SelfRootDir, ConfigOemPath)) {
     Status = egLoadFile(SelfRootDir, ConfigOemPath, (UINT8**)&gConfigPtr, &size);
   } else {
-    DBG("Oem config.plist not found at path: %s\n", ConfigOemPath);
+    DBG("Oem config.plist not found at path: %s\\n", ConfigOemPath);
   }
   
   if (EFI_ERROR(Status)) {
@@ -157,7 +159,8 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
   TagPtr      dict2;
   TagPtr      dictPointer;
   TagPtr      prop;
-  
+ // CHAR8       ANum[4];
+ // UINTN       i = 0;
   if (gConfigDict == NULL) {
     Status = LoadUserSettings(RootDir);
     if (EFI_ERROR(Status)) {
@@ -166,6 +169,7 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
   }
   DBG("Loading early settings\n");
   //Graphics
+  // это не переносится в refit.conf, потому что оно загружается только один раз
   
   dict = gConfigDict;
   dictPointer = GetProperty(dict, "Graphics");
@@ -260,7 +264,6 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
     }
     
   }
-  
   return Status;
 }
 
@@ -350,40 +353,6 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
        */
     }
 
-    dictPointer = GetProperty(dict, "Pointer");
-    if (dictPointer) {
-      gSettings.PointerEnabled = TRUE;
-      prop = GetProperty(dictPointer, "Enable");
-      if(prop) {
-        if ((prop->string[0] == 'n') || (prop->string[0] == 'N'))
-          gSettings.PointerEnabled = FALSE;
-      }
-      prop = GetProperty(dictPointer, "Speed");
-      if(prop) {
-        INTN Minus = 0;
-        if (prop->string[0] == '-') {
-          Minus = 1;
-        }
-        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-        gSettings.PointerSpeed = StrDecimalToUintn((CHAR16*)&UStr[Minus]);
-        if (Minus) {
-          gSettings.PointerSpeed = -gSettings.PointerSpeed;
-        }
-      }
-      prop = GetProperty(dictPointer, "DoubleClickTime");
-      if(prop) {
-        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-        gSettings.DoubleClickTime = StrDecimalToUintn((CHAR16*)&UStr[0]);
-      }
-      
-      prop = GetProperty(dictPointer, "Mirror");
-      if(prop) {
-        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
-          gSettings.PointerMirror = TRUE;
-      }
-      
-    }
-    
     //Graphics
     
     dictPointer = GetProperty(dict, "Graphics");
@@ -981,154 +950,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         // but I am not sure
       }
     }
- //Volumes hiding   
-    dictPointer = GetProperty(dict,"Volumes");
-    if (dictPointer) {
-      gSettings.HVHideAllOSX = FALSE;
-      prop = GetProperty(dictPointer,"HideAllOSX");
-      if(prop) {
-        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
-          gSettings.HVHideAllOSX = TRUE;
-        }
-      }
-      gSettings.HVHideAllOSXInstall = FALSE;
-      prop = GetProperty(dictPointer,"HideAllOSXInstall");
-      if(prop) {
-        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
-          gSettings.HVHideAllOSXInstall = TRUE;
-        }
-      }
-      gSettings.HVHideAllRecovery = FALSE;
-      prop = GetProperty(dictPointer,"HideAllRecovery");
-      if(prop) {
-        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
-          gSettings.HVHideAllRecovery = TRUE;
-        }
-      }
-        gSettings.HVHideDuplicatedBootTarget = FALSE;
-        prop = GetProperty(dictPointer,"HideDuplicatedBootTarget");
-        if(prop) {
-            if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
-                gSettings.HVHideDuplicatedBootTarget = TRUE;
-            }
-        }
-
-      gSettings.HVHideAllWindowsEFI = FALSE;
-      prop = GetProperty(dictPointer,"HideAllWindowsEFI");
-      if(prop) {
-        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
-          gSettings.HVHideAllWindowsEFI = TRUE;
-        }
-      }
-      gSettings.HVHideAllGrub = FALSE;
-      prop = GetProperty(dictPointer,"HideAllGrub");
-      if(prop) {
-        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
-          gSettings.HVHideAllGrub = TRUE;
-        }
-      }
-      gSettings.HVHideAllGentoo = FALSE;
-      prop = GetProperty(dictPointer,"HideAllGentoo");
-      if(prop) {
-        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
-          gSettings.HVHideAllGentoo = TRUE;
-        }
-      }
-      gSettings.HVHideAllRedHat = FALSE;
-      prop = GetProperty(dictPointer,"HideAllRedHat");
-      if(prop) {
-        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
-          gSettings.HVHideAllRedHat = TRUE;
-        }
-      }
-      gSettings.HVHideAllUbuntu = FALSE;
-      prop = GetProperty(dictPointer,"HideAllUbuntu");
-      if(prop) {
-        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
-          gSettings.HVHideAllUbuntu = TRUE;
-        }
-      }
-      gSettings.HVHideAllLinuxMint = FALSE;
-      prop = GetProperty(dictPointer,"HideAllLinuxMint");
-      if(prop) {
-        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
-          gSettings.HVHideAllLinuxMint = TRUE;
-        }
-      }
-      gSettings.HVHideAllFedora = FALSE;
-      prop = GetProperty(dictPointer,"HideAllFedora");
-      if(prop) {
-        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
-          gSettings.HVHideAllFedora = TRUE;
-        }
-      }
-      gSettings.HVHideAllSuSe = FALSE;
-      prop = GetProperty(dictPointer,"HideAllSuSe");
-      if(prop) {
-        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
-          gSettings.HVHideAllSuSe = TRUE;
-        }
-      }
-      /*gSettings.HVHideAllUEFI = FALSE;
-      prop = GetProperty(dictPointer,"HideAllUEFI");
-      if(prop) {
-        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
-          gSettings.HVHideAllUEFI = TRUE;
-        }
-      }*/
-      gSettings.HVHideOpticalUEFI = FALSE;
-      prop = GetProperty(dictPointer,"HideOpticalUEFI");
-      if(prop) {
-        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
-          gSettings.HVHideOpticalUEFI = TRUE;
-        }
-      }
-      gSettings.HVHideInternalUEFI = FALSE;
-      prop = GetProperty(dictPointer,"HideInternalUEFI");
-      if(prop) {
-        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
-          gSettings.HVHideInternalUEFI = TRUE;
-        }
-      }
-      gSettings.HVHideExternalUEFI = FALSE;
-      prop = GetProperty(dictPointer,"HideExternalUEFI");
-      if(prop) {
-        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
-          gSettings.HVHideExternalUEFI = TRUE;
-        }
-      }
-      gSettings.HVHideAllLegacy = FALSE;
-      prop = GetProperty(dictPointer,"HideAllLegacy");
-      if(prop) {
-        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')){
-          gSettings.HVHideAllLegacy = TRUE;
-        }
-      }
-      
-      prop = GetProperty(dictPointer,"HideVolumes");
-      if(prop) {
-        i = 0;
-        do {
-          AsciiSPrint(ANum, 4, "%d", i);
-          dictPointer = GetProperty(prop, ANum);
-          if (!dictPointer) {
-            break;
-          }
-          dict2 = GetProperty(dictPointer,"VolumeString");
-          if (dict2) {
-            gSettings.HVHideStrings[i] = AllocateZeroPool(256);
-            UnicodeSPrint(gSettings.HVHideStrings[i], 256, L"%a", dict2->string);
-            DBG("Hiding Volume with string: %s\n", gSettings.HVHideStrings[i]);
-          }
-          i++;
-          if (i>99) {
-            break;
-          }
-        } while (TRUE); // What is this for?
-        gSettings.HVCount = (INT32)i;
-      }
-    
-    }
+ 
     
     // RtVariables
     dictPointer = GetProperty(dict, "RtVariables");
@@ -1772,7 +1594,7 @@ EFI_STATUS ApplySettings()
 
 EFI_STATUS SaveSettings()
 {
-  //TODO - SetVariable()..
+  // TODO: SetVariable()..
   //here we can apply user settings instead of default one
   gMobile = gSettings.Mobile;
   
