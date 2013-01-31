@@ -23,6 +23,8 @@ theBootFlags=$(nvram -p  | grep "boot-args")
 theCurrentDate=$(date "+%Y-%m-%d")
 theCurrentTime=$(date "+%H:%M:%S")
 
+touch ${theNVRAMHelper}
+
 #
 # Parse boot flags
 #
