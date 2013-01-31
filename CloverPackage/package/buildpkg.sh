@@ -49,6 +49,8 @@ indent[1]="\t\t"
 indent[2]="\t\t\t"
 indent[3]="\t\t\t\t"
 
+add_ia32=0
+
 main ()
 {
 
@@ -73,9 +75,11 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 	((xmlindent++))
 	packagesidentity="org.Clover"
 	mkdir -p ${3}/Core/Root/usr/local/bin
-	mkdir -p ${3}/Core/Root/usr/standalone/i386/ia32
+	if [[ "$add_ia32" -eq 1 ]]; then
+		mkdir -p ${3}/Core/Root/usr/standalone/i386/ia32
+		ditto --noextattr --noqtn ${3%/*}/i386/ia32/boot ${3}/Core/Root/usr/standalone/i386/ia32
+	fi
 	mkdir -p ${3}/Core/Root/usr/standalone/i386/x64
-	ditto --noextattr --noqtn ${3%/*}/i386/ia32/boot ${3}/Core/Root/usr/standalone/i386/ia32
 	ditto --noextattr --noqtn ${3%/*}/i386/x64/boot ${3}/Core/Root/usr/standalone/i386/x64
 #	ditto --noextattr --noqtn ${3%/*}/i386/x64/boot7 ${3}/Core/Root/usr/standalone/i386/x64
 	ditto --noextattr --noqtn ${3%/*}/i386/boot0 ${3}/Core/Root/usr/standalone/i386
@@ -156,10 +160,12 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 
 	# build boot1UEFI package
 		mkdir -p ${3}/boot1UEFI/Scripts/Tools
-		mkdir -p ${3}/boot1UEFI/Root/EFI/drivers32
+		if [[ "$add_ia32" -eq 1 ]]; then
+			mkdir -p ${3}/boot1UEFI/Root/EFI/drivers32
+			cp -Rf ${3%/*/*}/CloverV2/drivers-Off/drivers32UEFI/* ${3}/boot1UEFI/Root/EFI/drivers32
+		fi
 		mkdir -p ${3}/boot1UEFI/Root/EFI/drivers64
 		mkdir -p ${3}/boot1UEFI/Root/EFI/drivers64UEFI
-		cp -Rf ${3%/*/*}/CloverV2/drivers-Off/drivers32UEFI/* ${3}/boot1UEFI/Root/EFI/drivers32
 		cp -Rf ${3%/*/*}/CloverV2/drivers-Off/drivers64/* ${3}/boot1UEFI/Root/EFI/drivers64
 		cp -Rf ${3%/*/*}/CloverV2/drivers-Off/drivers64UEFI/* ${3}/boot1UEFI/Root/EFI/drivers64UEFI
 		fixperms "${3}/boot1UEFI/Root/"
@@ -220,7 +226,8 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 
 # End build Themes package
 
-# build drivers-x32 packages 
+# build drivers-x32 packages
+if [[ "$add_ia32" -eq 1 ]]; then
 	echo "===================== drivers32 ========================"
 	outline[$((outlinecount++))]="${indent[$xmlindent]}\t<line choice=\"Drivers32\">"
 	choices[$((choicescount++))]="<choice\n\tid=\"Drivers32\"\n\ttitle=\"Drivers32\"\n\tdescription=\"Drivers32\"\n>\n</choice>\n"
@@ -229,7 +236,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 	drivers=($( find "${3%/*/*}/CloverV2/drivers-Off/drivers32" -type f -name '*.efi' -depth 1 ))
 	for (( i = 0 ; i < ${#drivers[@]} ; i++ )) 
 	do
-		filename="${drivers[$i]##*/}"	
+		filename="${drivers[$i]##*/}"
 		mkdir -p "${3}/${filename%.efi}/Root/"
 		ditto --noextattr --noqtn --arch i386 "${drivers[$i]}" "${3}/${filename%.efi}/Root/"
 		find "${3}/${filename%.efi}" -name '.DS_Store' -exec rm -R -f {} \; 2>/dev/null
@@ -241,7 +248,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 	
 	((xmlindent--))
 	outline[$((outlinecount++))]="${indent[$xmlindent]}\t</line>"
-
+fi
 # End build drivers-x32 packages
 
 # build drivers-x64 packages 

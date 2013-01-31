@@ -20,6 +20,8 @@ THEME = metal
 EXCLUDE = --exclude=.svn --exclude=.DS_Store --exclude=sym --exclude=obj \
 		--exclude=package --exclude=archive --exclude=User_Guide_src --exclude=*.sh
 
+IMAGE_WITH_IA32 = 0
+
 $(SRCROOT)/revision:
 	@svnversion -n | tr -d [:alpha:] > $(SRCROOT)/revision
 
@@ -28,6 +30,7 @@ $(SRCROOT)/revision:
 
 cdboot:
 	@echo "making cdboot"
+	@mkdir -p $(SYMROOT)/i386
 	@cp -f $(CLOVERROOT)/BootSectors/cdboot $(SYMROOT)/i386/
 	@dd if=$(CLOVERROOT)/Bootloaders/x64/boot of=$(SYMROOT)/i386/cdboot conv=sync bs=2k seek=1 &> /dev/null
 
@@ -38,6 +41,7 @@ cdboot:
 
 cdboot32:
 	@echo "making cdboot-32"
+	@mkdir -p $(SYMROOT)/i386
 	@cp -f $(CLOVERROOT)/BootSectors/cdboot $(SYMROOT)/i386/cdboot32
 	@dd if=$(CLOVERROOT)/Bootloaders/ia32/boot of=$(SYMROOT)/i386/cdboot32 conv=sync bs=2k seek=1 &> /dev/null
 
@@ -66,14 +70,16 @@ image:
 	fi	
 	@echo "\t[CP] cdboot"						  
 	@cp -f ${SYMROOT}/i386/cdboot ${CDBOOT}
-	@cp -f ${SYMROOT}/i386/cdboot32 ${CDBOOT32}
+	@[ ${IMAGE_WITH_IA32} -eq 0 ] || cp -f ${SYMROOT}/i386/cdboot32 ${CDBOOT32}
 	@echo "\t[CP] metal"
 	@cp -r -f $(CLOVERROOT)/themespkg/metal ${IMGROOT}/EFI/BOOT/themes/
 	@echo "\t[CP] CLOVERX64"
 	@cp -f $(CLOVERROOT)/EFI/BOOT/CLOVERX64.efi ${IMGROOT}/EFI/BOOT/
-	@echo "\t[CP] CLOVERIA32"
-	@cp -f $(CLOVERROOT)/EFI/BOOT/CLOVERIA32.efi ${IMGROOT}/EFI/BOOT/
-#	@echo "CP BOOTX64"
+	@if [ ${IMAGE_WITH_IA32} -eq 1 ]; then \
+		echo "\t[CP] CLOVERIA32"; \
+		cp -f $(CLOVERROOT)/EFI/BOOT/CLOVERIA32.efi ${IMGROOT}/EFI/BOOT/; \
+	fi
+	@echo "\t[CP] BOOTX64"
 	@cp -f $(CLOVERROOT)/EFI/BOOT/BOOTX64.efi ${IMGROOT}/EFI/BOOT/
 #	@echo "CP font"
 #	@cp -r -f $(CLOVERROOT)/EFI/BOOT/font ${IMGROOT}/EFI/BOOT/
@@ -88,16 +94,17 @@ image:
 #	@echo "ADD drivers64"
 	@cp -f $(CLOVERROOT)/drivers-Off/drivers64/UsbMouseDxe-64.efi ${IMGROOT}/EFI/drivers64/
 	@cp -f $(CLOVERROOT)/drivers-Off/drivers64/PS2MouseDxe-64.efi ${IMGROOT}/EFI/drivers64/
-	@echo "\t[CP] drivers32"
-	@cp -r -f $(CLOVERROOT)/EFI/drivers32 ${IMGROOT}/EFI/
-#	@echo "ADD drivers32"
-	@cp -f $(CLOVERROOT)/drivers-Off/drivers32/UsbMouseDxe-32.efi ${IMGROOT}/EFI/drivers32/
-	@cp -f $(CLOVERROOT)/drivers-Off/drivers32/PS2MouseDxe-32.efi ${IMGROOT}/EFI/drivers32/
-
+	@if [ ${IMAGE_WITH_IA32} -eq 1 ]; then \
+		echo "\t[CP] drivers32"; \
+		cp -r -f $(CLOVERROOT)/EFI/drivers32 ${IMGROOT}/EFI/; \
+		echo "ADD drivers32"; \
+		cp -f $(CLOVERROOT)/drivers-Off/drivers32/UsbMouseDxe-32.efi ${IMGROOT}/EFI/drivers32/ ; \
+		cp -f $(CLOVERROOT)/drivers-Off/drivers32/PS2MouseDxe-32.efi ${IMGROOT}/EFI/drivers32/ ; \
+	fi
 	@echo "\t[CP] boot"
 	@cp -f $(CLOVERROOT)/Bootloaders/x64/boot ${IMGROOT}/usr/standalone/i386/x64/
 #	@cp -f $(CLOVERROOT)/Bootloaders/x64/boot7 ${IMGROOT}/usr/standalone/i386/x64/
-	@cp -f $(CLOVERROOT)/Bootloaders/ia32/boot ${IMGROOT}/usr/standalone/i386/ia32/
+	@[ ${IMAGE_WITH_IA32} -eq 0 ] || cp -f $(CLOVERROOT)/Bootloaders/ia32/boot ${IMGROOT}/usr/standalone/i386/ia32/
 #	@cp -f $(CLOVERROOT)/Bootloaders/ia32/boot3 ${IMGROOT}/usr/standalone/i386/ia32/
 	@cp -f ${SYMROOT}/i386/boot0 ${IMGROOT}/usr/standalone/i386
 	@cp -f ${SYMROOT}/i386/boot0hfs ${IMGROOT}/usr/standalone/i386
@@ -118,17 +125,17 @@ image:
 	@hdiutil makehybrid -iso -joliet -hfs -hfs-volume-name \
 		${CDLABEL} -eltorito-boot ${CDBOOT} -no-emul-boot -ov -o   \
 		"${ISOIMAGE}" ${IMGROOT} -quiet 
-	@echo "\t[LZMA] ${ISOIMAGE}"
+#	@echo "\t[LZMA] ${ISOIMAGE}"
 #	@lzma e ${ISOIMAGE} ${ISOIMAGE}.lzma
 	@mv -f ${ISOIMAGE} ${SYMROOT}/CloverISO/
-	@echo "\t[HDIUTIL] ${ISOIMAGE32}"
-	@hdiutil makehybrid -iso -joliet -hfs -hfs-volume-name \
+	@if [ ${IMAGE_WITH_IA32} -eq 1 ]; then \
+		echo "\t[HDIUTIL] ${ISOIMAGE32}"; \
+		hdiutil makehybrid -iso -joliet -hfs -hfs-volume-name \
 		${CDLABEL32} -eltorito-boot ${CDBOOT32} -no-emul-boot -ov -o   \
-		"${ISOIMAGE32}" ${IMGROOT} -quiet 
-	@echo "\t[LZMA] ${ISOIMAGE32}"
-#	@lzma e ${ISOIMAGE32} ${ISOIMAGE32}.lzma
-	@mv -f ${ISOIMAGE32} ${SYMROOT}/CloverISO/
-		  	  
+			"${ISOIMAGE32}" ${IMGROOT} -quiet ; \
+		@mv -f ${ISOIMAGE32} ${SYMROOT}/CloverISO/ ; \
+	fi
+
 #	@echo "\t[GZ] ${DISTFILE}.tgz"
 #	@rm -f ${DISTFILE}.tar.gz
 #	@cd ${SYMROOT} && tar -cf ${DISTFILE}.tar ${DISTROOT}
