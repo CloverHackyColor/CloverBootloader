@@ -458,7 +458,7 @@ fi
 echo
 echo "Generating BootSectors"
 local BOOTHFS=$WORKSPACE/Clover/BootHFS
-DESTDIR=$WORKSPACE/Clover/CloverPackage/CloverV2/BootSectors make -C $BOOTHFS install
+DESTDIR=$WORKSPACE/Clover/CloverPackage/CloverV2/BootSectors make -C $BOOTHFS
 echo Done!
 } 
 
