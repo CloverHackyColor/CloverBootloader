@@ -30,7 +30,7 @@ set -u # Check that all variable are bound
 trap 'rmdir "${NVRAMMountPoint}" &>/dev/null' EXIT
 
 function findFirstAppleBootDevice {
-    local devices=$(LC_ALL=C diskutil list | sed -n '/^\/dev\/disk/p')
+    local devices=$(LC_ALL=C ls /dev/disk* | sed -n '/\/dev\/disk[0-9]*$/p')
     # Iterate over all devices
     for device in $devices; do
         # Find first partition with Apple Boot partition signature
@@ -57,6 +57,29 @@ function setNVRAMDevice {
     fi
 }
 
+function mountNVRAMDisk {
+    local device="$1"
+    local mntpt="$2"
+
+    #
+    # Make sure mount point exists
+    #
+    [[ ! -d "$mntpt" ]] && mkdir -p "$mntpt"
+    [[ ! -d "$mntpt" ]] && return 1
+
+    #
+    # Unmount the mount point and device first just in case
+    #
+    umount "$mntpt"       2>/dev/null
+    umount "/dev/$device" 2>/dev/null
+    for fstype in hfs msdos; do
+        mount -t $fstype /dev/$device "$mntpt" &>/dev/null
+        [[ $? -eq 0 ]] && return 0
+    done
+
+    return 1
+}
+
 # By default try to save nvram.plist on first Apple Boot partition
 NVRAMDevice=$(findFirstAppleBootDevice)
 
@@ -76,7 +99,7 @@ for bootFlag in ${bootFlags} ; do
    # All match are case insensitive
    case "$bootFlagKey" in
        NVRamDisk) # NVRamDisk=No|diskXsY
-				  setNVRAMDevice "$bootFlagValue" ;;
+                  setNVRAMDevice "$bootFlagValue" ;;
    esac
 done
 
@@ -93,37 +116,29 @@ if [[ -n "$NVRAMDevice" ]]; then
     esac
 fi
 
+
 #
 # Try to save NVRAM to boot helper partition for RAID first
 #
-if [[ -n "$NVRAMPartType" ]]; then
-    #
-    # Make sure mount point exists
-    #
-    [[ ! -d "$NVRAMMountPoint" ]] && mkdir -p "$NVRAMMountPoint"
+if [[ -n "$NVRAMDevice" ]]; then
 
-    if [[ -d "$NVRAMMountPoint" ]]; then
-         #
-         # Unmount the mount point and device first just in case
-         #
-         umount "$NVRAMMountPoint"  2>/dev/null
-         umount "/dev/$NVRAMDevice" 2>/dev/null
-         mount -t $NVRAMPartType /dev/$NVRAMDevice "$NVRAMMountPoint"
-         if [[ $? -eq 0 ]]; then
-             #
-             # Write NVRAM and make sure it exists
-             #
-             nvram -x -p > "${NVRAMMountPoint}/${NVRAMFilename}"
-             if [[ -f "${NVRAMMountPoint}/${NVRAMFilename}" ]]; then
-                 chflags hidden "${NVRAMMountPoint}/${NVRAMFilename}"
-                 umount /dev/${NVRAMDevice}
-                 echo "NVRAM saved to /${NVRAMFilename} on $NVRAMDevice"
-                 exit
-             fi
-             umount /dev/${NVRAMDevice}
-         fi
-         echo "NVRAM couldn't be saved to /${NVRAMFilename} on $NVRAMDevice !"
+    # Mount the NVRamDisk device
+    mountNVRAMDisk "$NVRAMDevice" "$NVRAMMountPoint"
+
+    if [[ $? -eq 0 ]]; then
+        #
+        # Write NVRAM and make sure it exists
+        #
+        nvram -x -p > "${NVRAMMountPoint}/${NVRAMFilename}"
+        if [[ -f "${NVRAMMountPoint}/${NVRAMFilename}" ]]; then
+            chflags hidden "${NVRAMMountPoint}/${NVRAMFilename}"
+            umount /dev/${NVRAMDevice}
+            echo "NVRAM saved to /${NVRAMFilename} on $NVRAMDevice"
+            exit
+        fi
+        umount /dev/${NVRAMDevice}
     fi
+    echo "NVRAM couldn't be saved to /${NVRAMFilename} on $NVRAMDevice !"
 fi
 
 #
