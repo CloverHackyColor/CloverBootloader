@@ -50,16 +50,21 @@
 ;
 
 ;
+; boot0 and boot0hfs share the same code except this HFSFIRST definition
+; boot0 - do not define HFSFIRST
+; boot0hfs - define HFSFIRST
+;
+%define HFSFIRST
+
+;
 ; Set to 1 to enable obscure debug messages.
 ;
 DEBUG				EQU  0
-;CONFIG_BOOT0_DEBUG
 
 ;
 ; Set to 1 to enable verbose mode
 ;
 VERBOSE				EQU  0
-;CONFIG_BOOT0_VERBOSE
 
 ;
 ; Various constants.
@@ -99,9 +104,9 @@ kPartTypePMBR		EQU  0xee			; On all GUID Partition Table disks a Protective MBR 
 										; reserving the entire space used on the disk by the GPT partitions,
 										; including all headers.
 
-kPartActive	        EQU  0x80			; active flag enabled
-kPartInactive	    EQU  0x00			; active flag disabled
-kHFSGUID	        EQU  0x48465300		; first 4 bytes of Apple HFS Partition Type GUID.
+kPartActive			EQU  0x80			; active flag enabled
+kPartInactive		EQU  0x00			; active flag disabled
+kHFSGUID			EQU  0x48465300		; first 4 bytes of Apple HFS Partition Type GUID.
 kAppleGUID			EQU  0xACEC4365		; last 4 bytes of Apple type GUIDs. 
 kEFISystemGUID		EQU  0x3BC93EC9		; last 4 bytes of EFI System Partition Type GUID:
 										; C12A7328-F81F-11D2-BA4B-00A0C93EC93B
@@ -317,20 +322,37 @@ find_boot:
     jne	    .Pass2
 
 .Pass1:
+%ifdef HFSFIRST
     cmp	    BYTE [si + part.type], kPartTypeHFS		; In pass 1 we're going to find a HFS+ partition
-                                                    ; equipped with boot1h in its boot record
-                                                    ; regardless if it's active or not.
+                                                  ; equipped with boot1h in its boot record
+                                                  ; regardless if it's active or not.
     jne     .continue
-  	mov		dh, 1                					; Argument for loadBootSector to check HFS+ partition signature.
+  	mov		  dh, 1                									; Argument for loadBootSector to check HFS+ partition signature.
+%else
+    cmp     BYTE [si + part.bootid], kPartActive	; In pass 1 we are walking on the standard path
+                                                  ; by trying to hop on the active partition.
+    jne     .continue
+    xor	  	dh, dh               									; Argument for loadBootSector to skip HFS+ partition
+											                        		; signature check.
+%endif
 
-    jmp     .tryToBoot
+    jmp    .tryToBoot
 
 .Pass2:    
+%ifdef HFSFIRST
     cmp     BYTE [si + part.bootid], kPartActive	; In pass 2 we are walking on the standard path
-                                                    ; by trying to hop on the active partition.
+                                                  ; by trying to hop on the active partition.
     jne     .continue
-    xor		dh, dh               					; Argument for loadBootSector to skip HFS+ partition
-											        ; signature check.
+    xor		  dh, dh               									; Argument for loadBootSector to skip HFS+ partition
+											                        		; signature check.
+%else
+    cmp	    BYTE [si + part.type], kPartTypeHFS		; In pass 2 we're going to find a HFS+ partition
+                                                  ; equipped with boot1h in its boot record
+                                                  ; regardless if it's active or not.
+    jne     .continue
+  	mov 		dh, 1                									; Argument for loadBootSector to check HFS+ partition signature.
+%endif
+
     DebugChar('*')
 
     ;
@@ -344,7 +366,7 @@ find_boot:
     jmp	    SHORT initBootLoader
 
 .continue:
-    add     si, BYTE part_size     			; advance SI to next partition entry
+    add     si, BYTE part_size				; advance SI to next partition entry
     loop    .loop                 		 	; loop through all partition entries
 
     ;
@@ -354,7 +376,7 @@ find_boot:
     ;    
     dec	    bl
     jnz     .switchPass2					; didn't find Protective MBR before
-    call    checkGPT
+    call    checkGPT						
 
 .switchPass2:
     ;
@@ -391,7 +413,7 @@ DebugChar('J')
     ;
 checkGPT:
     push    bx
-
+	
     mov	    di, kLBA1Buffer						; address of GUID Partition Table Header
     cmp	    DWORD [di], kGPTSignatureLow		; looking for 'EFI '
     jne	    .exit								; not found. Giving up.
@@ -481,7 +503,7 @@ checkGPT:
 .exit:
     pop     bx
     ret												; no more GUID partitions. Giving up.
-
+    
 
 ;--------------------------------------------------------------------------
 ; loadBootSector - Load boot sector
@@ -784,11 +806,6 @@ done_str		db  'done', 0
 ; According to EFI specification, maximum boot code size is 440 bytes 
 ;
 
-;
-; XXX - compilation errors with debug enabled (see comment above about nasm)
-; Azi: boot0.s:808: error: TIMES value -111 is negative
-;      boot0.s:811: error: TIMES value -41 is negative
-;
 pad_boot:
     times 440-($-$$) db 0
 

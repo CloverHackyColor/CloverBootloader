@@ -395,8 +395,6 @@ start:
 	; using absolute address instead of relative displacement?
 	;
 	jmpabs	startReloc
-  ; push e01f
-  ; ret
 
 ;--------------------------------------------------------------------------
 ; Start execution from the relocated location.
@@ -978,7 +976,7 @@ free:
 ;
 
 %if VERBOSE
-root_str			db		'/boot', 10, 13, NULL
+root_str			db		'/boot', NULL
 %endif
 
 ;--------------------------------------------------------------------------

@@ -75,7 +75,7 @@ kBoot1StackAddress	EQU		0xFFF0								; boot1 stack pointer
 kBoot1LoadAddr		EQU		0x7C00								; boot1 load address
 kBoot1RelocAddr		EQU		0xE000								; boot1 relocated address
 
-kBoot2Sectors		EQU		(448 * 1024 - 512) / kSectorBytes	; max size of 'boot' file in sectors
+kBoot2Sectors		EQU		(480 * 1024 - 512) / kSectorBytes	; max size of 'boot' file in sectors
 kBoot2Segment		EQU		0x2000								; boot2 load segment
 kBoot2Address		EQU		kSectorBytes						; boot2 load address
 

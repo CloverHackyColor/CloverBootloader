@@ -234,7 +234,6 @@ start:
 findRootBoot:
 
 setBootFile:
-;    mov		WORD [gMallocPtr], mallocStart	; set free space pointer
 	mov		cx, 2000						; loop counter = max 2000 miliseconds in total
 .loop
 	mov		ah, 0x01						; int 0x16, Func 0x01 - get keyboard status/preview key
@@ -257,9 +256,9 @@ setBootFile:
 
 	loop	.loop
 	; no keypress so far
-	; change filename to /boot by changing size in searchCatalogKey to 4 chars
+	; change filename to /boot by putting space as 5th char
 	; and try to load
-;	mov		WORD [searchCatalogKeyNL], 4
+	; mov		BYTE [gFileName + 4], ' '
 .bootFileSet:
 
 

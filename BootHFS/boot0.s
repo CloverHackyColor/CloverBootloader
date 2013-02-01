@@ -50,6 +50,13 @@
 ;
 
 ;
+; boot0 and boot0hfs share the same code except this HFSFIRST definition
+; boot0 - do not define HFSFIRST
+; boot0hfs - define HFSFIRST
+;
+;%define HFSFIRST
+
+;
 ; Set to 1 to enable obscure debug messages.
 ;
 DEBUG				EQU  0
@@ -62,33 +69,33 @@ VERBOSE				EQU  0
 ;
 ; Various constants.
 ;
-kBoot0Segment		  EQU  0x0000
-kBoot0Stack			  EQU  0xFFF0			; boot0 stack pointer
+kBoot0Segment		EQU  0x0000
+kBoot0Stack			EQU  0xFFF0			; boot0 stack pointer
 kBoot0LoadAddr		EQU  0x7C00			; boot0 load address
 kBoot0RelocAddr		EQU  0xE000			; boot0 relocated address
 
-kMBRBuffer			  EQU  0x1000			; MBR buffer address
-kLBA1Buffer			  EQU  0x1200			; LBA1 - GPT Partition Table Header buffer address
-kGPTABuffer			  EQU  0x1400			; GUID Partition Entry Array buffer address
+kMBRBuffer			EQU  0x1000			; MBR buffer address
+kLBA1Buffer			EQU  0x1200			; LBA1 - GPT Partition Table Header buffer address
+kGPTABuffer			EQU  0x1400			; GUID Partition Entry Array buffer address
 
 kPartTableOffset	EQU  0x1be
-kMBRPartTable		  EQU  kMBRBuffer + kPartTableOffset
+kMBRPartTable		EQU  kMBRBuffer + kPartTableOffset
 
-kSectorBytes		  EQU  512			; sector size in bytes
+kSectorBytes		EQU  512			; sector size in bytes
 kBootSignature		EQU  0xAA55			; boot sector signature
 kHFSPSignature		EQU  'H+'			; HFS+ volume signature
 kHFSPCaseSignature	EQU  'HX'			; HFS+ volume case-sensitive signature
 kFAT32BootCodeOffset EQU  0x5a			; offset of boot code in FAT32 boot sector
-kBoot1FAT32Magic	EQU  'CL'			; Magic string to detect our boot1f32 code 
+kBoot1FAT32Magic	EQU  'DM'			; Magic string to detect our boot1f32 code 
 
 
 kGPTSignatureLow	EQU  'EFI '			; GUID Partition Table Header Signature
 kGPTSignatureHigh	EQU  'PART'
 kGUIDLastDwordOffs	EQU  12				; last 4 byte offset of a GUID
 
-kPartCount			  EQU  4				; number of paritions per table
-kPartTypeHFS		  EQU  0xaf			; HFS+ Filesystem type
-kPartTypePMBR		  EQU  0xee			; On all GUID Partition Table disks a Protective MBR (PMBR)
+kPartCount			EQU  4				; number of paritions per table
+kPartTypeHFS		EQU  0xaf			; HFS+ Filesystem type
+kPartTypePMBR		EQU  0xee			; On all GUID Partition Table disks a Protective MBR (PMBR)
 										; in LBA 0 (that is, the first block) precedes the
 										; GUID Partition Table Header to maintain compatibility
 										; with existing tools that do not understand GPT partition structures.
@@ -97,10 +104,10 @@ kPartTypePMBR		  EQU  0xee			; On all GUID Partition Table disks a Protective MB
 										; reserving the entire space used on the disk by the GPT partitions,
 										; including all headers.
 
-kPartActive	      EQU  0x80			; active flag enabled
-kPartInactive	    EQU  0x00			; active flag disabled
-kHFSGUID	        EQU  0x48465300		; first 4 bytes of Apple HFS Partition Type GUID.
-kAppleGUID			  EQU  0xACEC4365		; last 4 bytes of Apple type GUIDs. 
+kPartActive			EQU  0x80			; active flag enabled
+kPartInactive		EQU  0x00			; active flag disabled
+kHFSGUID			EQU  0x48465300		; first 4 bytes of Apple HFS Partition Type GUID.
+kAppleGUID			EQU  0xACEC4365		; last 4 bytes of Apple type GUIDs. 
 kEFISystemGUID		EQU  0x3BC93EC9		; last 4 bytes of EFI System Partition Type GUID:
 										; C12A7328-F81F-11D2-BA4B-00A0C93EC93B
 
@@ -137,15 +144,15 @@ kDriveNumber		EQU  0x80
 .Revision  					resb	4
 .HeaderSize					resb	4
 .HeaderCRC32				resb	4
-.Reserved					  resb	4
-.MyLBA						  resb	8
+.Reserved					resb	4
+.MyLBA						resb	8
 .AlternateLBA				resb	8
-.FirstUsableLBA			resb	8
-.LastUsableLBA			resb	8
-.DiskGUID					        resb	16
-.PartitionEntryLBA			  resb	8
+.FirstUsableLBA				resb	8
+.LastUsableLBA				resb	8
+.DiskGUID					resb	16
+.PartitionEntryLBA			resb	8
 .NumberOfPartitionEntries	resb	4
-.SizeOfPartitionEntry		  resb	4
+.SizeOfPartitionEntry		resb	4
 .PartitionEntryArrayCRC32	resb	4
 							endstruc
 
@@ -155,10 +162,10 @@ kDriveNumber		EQU  0x80
 						  	struc	gpta
 .PartitionTypeGUID			resb	16
 .UniquePartitionGUID		resb	16
-.StartingLBA				    resb	8
-.EndingLBA					    resb	8
-.Attributes					    resb	8
-.PartitionName				  resb	72
+.StartingLBA				resb	8
+.EndingLBA					resb	8
+.Attributes					resb	8
+.PartitionName				resb	72
 							endstruc
 
 ;
@@ -371,7 +378,7 @@ find_boot:
     jnz     .switchPass2					; didn't find Protective MBR before
     call    checkGPT						
 
-.switchPass2
+.switchPass2:
     ;
     ; Switching to Pass 2 
     ; try to find a boot1h aware HFS+ MBR partition
