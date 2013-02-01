@@ -12,11 +12,11 @@
 #define DEBUG_SET DEBUG_ALL
 #endif
 
-//#if DEBUG_SET == 0
-//#define DBG(...)
-//#else
+#if DEBUG_SET == 0
+#define DBG(...)
+#else
 #define DBG(...) DebugLog(DEBUG_SET, __VA_ARGS__)
-//#endif
+#endif
 
 //#define SHORT_LOCATE 1
 
@@ -123,7 +123,7 @@ EFI_STATUS LoadUserSettings(IN EFI_FILE *RootDir)
   if (FileExists(SelfRootDir, ConfigOemPath)) {
     Status = egLoadFile(SelfRootDir, ConfigOemPath, (UINT8**)&gConfigPtr, &size);
   } else {
-    DBG("Oem config.plist not found at path: %s\\n", ConfigOemPath);
+    DBG("Oem %s.plist not found at path: %s\n", gSettings.ConfigName, ConfigOemPath);
   }
   
   if (EFI_ERROR(Status)) {
@@ -686,12 +686,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         if ((prop->string[0] == 'n') || (prop->string[0] == 'N'))
           gSettings.bDropBGRT = FALSE;
       }
-      prop = GetProperty(dictPointer, "RememberBIOS");
+/*      prop = GetProperty(dictPointer, "RememberBIOS");
       gSettings.RememberBIOS = FALSE;
       if(prop) {
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
           gSettings.RememberBIOS = TRUE;
       }
+ */
     }
     
     //*** SMBIOS ***//

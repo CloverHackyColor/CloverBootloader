@@ -855,6 +855,7 @@ VOID ApplyInputs(VOID)
     LoadUserSettings(SelfRootDir);
     GetUserSettings(SelfRootDir);
     RefillInputs();
+    return; //do not double SaveSettings() as it done by GetUserSettings()
   }
   
   
@@ -2662,7 +2663,7 @@ REFIT_MENU_ENTRY  *SubMenuDropTables()
     InputBootArgs->Entry.Title = PoolPrint(L"Drop OEM SSDT:");
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = 0xFFFF; //cursor
-    InputBootArgs->Entry.ShortcutDigit = 0;
+//    InputBootArgs->Entry.ShortcutDigit = 0;
     InputBootArgs->Entry.ShortcutLetter = 'S';
     InputBootArgs->Item = &InputItems[4];
     InputBootArgs->Entry.AtClick = ActionEnter;
@@ -2758,6 +2759,7 @@ REFIT_MENU_ENTRY  *SubMenuSmbios()
   InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[78].SValue);
+  InputBootArgs->Entry.ShortcutDigit = 0xF1;
   InputBootArgs->Item = &InputItems[78];    
   InputBootArgs->Entry.AtClick = ActionSelect;
   InputBootArgs->Entry.AtDoubleClick = ActionEnter;
@@ -2885,7 +2887,7 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
   InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = StrLen(InputItems[1].SValue);
-  InputBootArgs->Entry.ShortcutDigit = 0;
+//  InputBootArgs->Entry.ShortcutDigit = 0;
   InputBootArgs->Entry.ShortcutLetter = 'D';
   InputBootArgs->Entry.Image = NULL;
   InputBootArgs->Entry.BadgeImage = NULL;
@@ -3079,6 +3081,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.Image = NULL;
     InputBootArgs->Entry.BadgeImage = NULL;
     InputBootArgs->Entry.SubScreen = NULL;
+    InputBootArgs->Entry.ShortcutDigit = 0xF1;
     InputBootArgs->Item = &InputItems[90];    //0
     InputBootArgs->Entry.AtClick = ActionSelect;
     InputBootArgs->Entry.AtDoubleClick = ActionEnter;
@@ -3089,7 +3092,6 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[0].SValue);
-    InputBootArgs->Entry.ShortcutDigit = 0;
     InputBootArgs->Entry.ShortcutLetter = 'B';
     InputBootArgs->Entry.Image = NULL;
     InputBootArgs->Entry.BadgeImage = NULL;
@@ -3122,7 +3124,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = 0xFFFF;
-    InputBootArgs->Entry.ShortcutDigit = 0;
+//    InputBootArgs->Entry.ShortcutDigit = 0;
     InputBootArgs->Entry.ShortcutLetter = 'G';
     InputBootArgs->Entry.Image = NULL;
     InputBootArgs->Entry.BadgeImage = NULL;
@@ -3138,7 +3140,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = 0xFFFF;
-    InputBootArgs->Entry.ShortcutDigit = 0;
+//    InputBootArgs->Entry.ShortcutDigit = 0;
     InputBootArgs->Entry.ShortcutLetter = 'N';
     InputBootArgs->Entry.Image = NULL;
     InputBootArgs->Entry.BadgeImage = NULL;
@@ -3246,11 +3248,22 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
               }
               MsgLog("@ENTER: chosen=%s\n", (*ChosenEntry)->Title);
             }
+            if (TmpChosenEntry->ShortcutDigit == 0xF1) {
+              MenuExit = MENU_EXIT_ENTER;
+              DBG("Escape menu from input dialog\n");
+              ApplyInputs();
+              return;
+            } //if F1                  
           }
         } //while(!SubMenuExit)
       }
       MenuExit = 0;
-    }
+      if ((*ChosenEntry)->ShortcutDigit == 0xF1) {
+        MenuExit = MENU_EXIT_ENTER;
+        DBG("Escape options menu\n"); 
+        break;
+      } //if F1      
+    } // if MENU_EXIT_ENTER
   }
   ApplyInputs();
 }

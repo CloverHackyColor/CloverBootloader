@@ -634,7 +634,7 @@ typedef struct {
   BOOLEAN bDropECDT;
   BOOLEAN bDropDMAR;
   BOOLEAN bDropBGRT;
-  BOOLEAN RememberBIOS;
+//  BOOLEAN RememberBIOS;
   
   //Injections
   BOOLEAN StringInjector;

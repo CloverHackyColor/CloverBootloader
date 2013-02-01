@@ -1010,23 +1010,31 @@ VOID DumpBiosMemoryMap()
 		return;
 	}
   
-  Regs.X.AX   = 0xE820;
-  Regs.E.EBX  =  0x534d4150;
-  Regs.X.CX   = 24;
+  Regs.E.EBX  =  0;
   Regs.E.EDI   = 0x7C00;
   do {
+    Regs.X.AX   = 0xE820;
+    Regs.E.EDX  = 0x534d4150;
+    Regs.X.CX   = 24;
     if (LegacyBiosInt86(0x15, &Regs)) {
+      DBG("finished by bit C\n");
       break;
     }
-  } while (  Regs.E.EBX != 0);
+    if (Regs.E.EBX == 0) {
+      DBG("finished by ebx=0\n");
+      break;
+    }
+    
+    Regs.E.EDI += 24;
+  } while (Regs.E.EDI < 0x8000);
   
   Length =  ((INT32)(Regs.E.EDI - 0x7c00)) / 24;
-  DBG("BiosMemoryMap length=%d:\n   Start - End   Type  Ext\n", Length);
+  DBG("BiosMemoryMap length=%d:\n               Start     End     Type  Ext\n", Length);
   
   for (i = 0; i < Length; i++) {
     Start = *(UINT64*)BiosMap;
     Size = *((UINT64*)BiosMap + 1);
-    DBG(" %lx %lx %x\n", Start, Start + Size - 1, *(UINT32*)(BiosMap + 16), *(UINT32*)(BiosMap + 20));
+    DBG(" %08lx %08lx %x    %08x\n", Start, Start + Size - 1, *(UINT32*)(BiosMap + 16), *(UINT32*)(BiosMap + 20));
     BiosMap += 24;
   }
   

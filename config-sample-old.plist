@@ -2,6 +2,17 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>Pointer</key>
+	<dict>
+		<key>Enable</key>
+		<string>Yes</string>
+		<key>Speed</key>
+		<string>8</string>
+		<key>Mirror</key>
+		<string>No</string>
+		<key>DoubleClickTime</key>
+		<string>500</string>
+	</dict>
 	<key>KernelAndKextPatches</key>
 	<dict>
 		<key>Debug</key>
@@ -70,7 +81,7 @@
 	<key>SystemParameters</key>
 	<dict>
 		<key>boot-args</key>
-		<string>-v arch=i386 slide=0</string>
+		<string>-v arch=i386</string>
 		<key>prev-lang:kbd</key>
 		<string>ru:0</string>
 		<key>DefaultBootVolume</key>
@@ -155,11 +166,11 @@
 		<key>LoadVBios</key>
 		<string>No</string>
 		<key>PatchVBios</key>
-		<string>Yes</string>
+		<string>No</string>
 		<key>VideoPorts</key>
 		<string>2</string>
 		<key>FBName</key>
-		<string>Makakakakala</string>
+		<string>Makaka</string>
 		<key>NVCAP</key>
 		<string>04000000000003000C0000000000000A00000000</string>
 		<key>display-cfg</key>
@@ -181,6 +192,8 @@
 		<string>No</string>
 		<key>DeviceProperties</key>
 		<string>7a00000001000000010000006e0000000200000002010c00d041030a0000000001010600001b7fff040028000000500069006e0043006f006e00660069006700750072006100740069006f006e00730000000800000001080100180000006c00610079006f00750074002d00690064000000080000000c000000</string>
+		<key>PCIRootUID</key>
+		<string>0</string>
 		<key>HDAInjection</key>
 		<string>Detect</string>
 		<key>USBInjection</key>
@@ -191,6 +204,47 @@
 		<string>Yes</string>
 		<key>LpcTune</key>
 		<string>Yes</string>
+	</dict>
+	<key>Volumes</key>
+	<dict>
+		<key>HideAllOSX</key>
+		<string>No</string>
+		<key>HideDuplicatedBootTarget</key>
+		<string>Yes</string>
+		<key>HideAllOSXInstall</key>
+		<string>No</string>
+		<key>HideAllRecovery</key>
+		<string>No</string>
+		<key>HideAllWindowsEFI</key>
+		<string>No</string>
+		<key>HideAllGrub</key>
+		<string>No</string>
+		<key>HideAllGentoo</key>
+		<string>No</string>
+		<key>HideAllRedHat</key>
+		<string>No</string>
+		<key>HideAllUbuntu</key>
+		<string>No</string>
+		<key>HideAllSuSe</key>
+		<string>No</string>
+		<key>HideAllUEFI</key>
+		<string>No</string>
+		<key>HideOpticalUEFI</key>
+		<string>No</string>
+		<key>HideInternalUEFI</key>
+		<string>Yes</string>
+		<key>HideExternalUEFI</key>
+		<string>Yes</string>
+		<key>HideAllLegacy</key>
+		<string>No</string>
+		<key>HideVolumes</key>
+		<dict>
+			<key>0</key>
+			<dict>
+				<key>VolumeString</key>
+				<string>HD(1,GPT,E223FF7F-F2DA-4DBB-B765-756F2D95B0FE)</string>
+			</dict>
+		</dict>
 	</dict>
 	<key>ACPI</key>
 	<dict>
@@ -236,6 +290,8 @@
 		<string>No</string>
 		<key>PatchAPIC</key>
 		<string>No</string>
+		<key>RememberBIOS</key>
+		<string>Yes</string>
 		<key>FixDsdtMask</key>
 		<string>0xFFFF</string>
 	</dict>

@@ -5,7 +5,7 @@
 	<key>SystemParameters</key>
 	<dict>
 		<key>boot-args</key>
-		<string>-v npci=0x2000</string>
+		<string>-v npci=0x2000 slide=0</string>
 		<key>prev-lang:kbd</key>
 		<string>en:0</string>
 		<key>InjectSystemID</key>
@@ -13,22 +13,10 @@
 		<key>LegacyBoot</key>
 		<string>PBR</string>
 	</dict>
-	<key>Pointer</key>
-	<dict>
-		<key>Speed</key>
-		<string>8</string>
-	</dict>
 	<key>Graphics</key>
 	<dict>
-		<key>GraphicsInjector</key>
+		<key>PatchVBios</key>
 		<string>Yes</string>
-		<key>PatchVBiosBytes</key>
-		<dict>
-			<key>Find</key>
-			<data>gAeoAqAF</data>
-			<key>Replace</key>
-			<data>gAeoAjgE</data>
-		</dict>
 	</dict>
 </dict>
 </plist>
