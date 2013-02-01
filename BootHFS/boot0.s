@@ -86,7 +86,7 @@ kBootSignature		EQU  0xAA55			; boot sector signature
 kHFSPSignature		EQU  'H+'			; HFS+ volume signature
 kHFSPCaseSignature	EQU  'HX'			; HFS+ volume case-sensitive signature
 kFAT32BootCodeOffset EQU  0x5a			; offset of boot code in FAT32 boot sector
-kBoot1FAT32Magic	EQU  'DM'			; Magic string to detect our boot1f32 code 
+kBoot1FAT32Magic	EQU  'BO'			; Magic string to detect our boot1f32 code 
 
 
 kGPTSignatureLow	EQU  'EFI '			; GUID Partition Table Header Signature
