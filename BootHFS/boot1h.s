@@ -473,7 +473,7 @@ findRootBoot:
 	call	readExtent
 
 %if VERBOSE
-	LogString(root_str)
+	LogString(bootfile_msg)
 %endif
 
 boot2:
@@ -976,7 +976,7 @@ free:
 ;
 
 %if VERBOSE
-root_str			db		'/boot', NULL
+bootfile_msg        db		'/boot', CR, LF, NULL
 %endif
 
 ;--------------------------------------------------------------------------
@@ -1426,7 +1426,7 @@ nodeToSector:
 ;
 
 %if VERBOSE
-log_title_str		db		CR, LF, 'boot1: ', NULL
+log_title_str		db		'boot1: ', NULL
 error_str			db		'error', NULL
 %endif
 
