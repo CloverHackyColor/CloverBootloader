@@ -16,10 +16,18 @@
 # Manage nvram.plist: try to store it in the first boot helper partition
 # or in the root directory
 #
+
+DEBUG=0
+
 NVRAMFilename=nvram.plist
 NVRAMMountPoint=/tmp/NVRAM
 NVRAMPartType=
 bootFlags=$(nvram -p | sed -n 's/^boot-args *//p')
+
+if [[ "$DEBUG" -ne 0 ]]; then
+  exec &>/Library/Logs/CloverEFI/rc.shutdown.log
+  set -xv
+fi
 
 # Turn on a case-insensitive matching
 shopt -s nocasematch
@@ -105,17 +113,6 @@ done
 
 # Normalize NVRAMDevice (keep only the device name (remove /dev/)
 NVRAMDevice=${NVRAMDevice##*/}
-
-# Check NVRAMDevice type partition
-if [[ -n "$NVRAMDevice" ]]; then
-    NVRAMPartType=$(LC_ALL=C diskutil info /dev/${NVRAMDevice} | sed -n 's/^ *Partition Type: *//p')
-    case "$NVRAMPartType" in
-        apple_hfs|apple_boot) NVRAMPartType=hfs ;;
-                         efi) NVRAMPartType=msdos ;;
-                           *) NVRAMPartType= ;;
-    esac
-fi
-
 
 #
 # Try to save NVRAM to boot helper partition for RAID first
