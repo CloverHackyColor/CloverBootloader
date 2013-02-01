@@ -1,70 +1,134 @@
-#!/bin/sh
+#!/bin/bash
 
 #
 # rc.shutdown.local shutdown script
 #
 # Initial - Slice
 # Edited - kozlek 2013-01-15
-# Edited - apianti 2013-01-16
+# Edited  - apianti 2013-01-16
+#         - JrCs    2013-02-01
 #
 # (c) Slice 2010
 # (c) kozlek,apianti 2013
+# (c) JrCs 2013
 
 #
-# Manage nvram.plist
+# Manage nvram.plist: try to store it in the first boot helper partition
+# or in the root directory
 #
-theNVRAM=/nvram.plist
-theMountFile=/.nvram.plist
-theMountPoint=/Volumes/NVRAM
-theMountRoot=
-theMountType=
+NVRAMFilename=nvram.plist
+NVRAMMountPoint=/tmp/NVRAM
+NVRAMPartType=
+bootFlags=$(nvram -p | sed -n 's/^boot-args *//p')
+
+# Turn on a case-insensitive matching
+shopt -s nocasematch
+
+set -u # Check that all variable are bound
+
+# Catch signal to clean up
+trap 'rmdir "${NVRAMMountPoint}" &>/dev/null' EXIT
+
+function findFirstAppleBootDevice {
+    local devices=$(LC_ALL=C diskutil list | sed -n '/^\/dev\/disk/p')
+    # Iterate over all devices
+    for device in $devices; do
+        # Find first partition with Apple Boot partition signature
+        index=$(LC_ALL=C /usr/sbin/gpt -r show "$device" 2>/dev/null | \
+         awk 'toupper($7) == "426F6F74-0000-11AA-AA11-00306543ECAC" {print $3; exit}')
+        if [[ $index =~ ^[0-9]+$ ]];then
+            break
+        else
+            index=
+        fi
+    done
+    # If index found return the device and partition (like /dev/diskXsY)
+    [[ -n "$index" ]] && echo "${device}s$index"
+}
+
+function setNVRAMDevice {
+    local arg="$1"
+    [[ -z "$arg" ]] && return
+    if [[ "$arg" == No ]]; then
+        NVRAMDevice=
+    else
+        # keep only the device and partition (remove /dev/)
+        NVRAMDevice="$arg"
+    fi
+}
+
+# By default try to save nvram.plist on first Apple Boot partition
+NVRAMDevice=$(findFirstAppleBootDevice)
 
 #
-# Get the mount command from the helper
+# Parse boot flags
 #
-if [ ! -f ${theMountFile} ]; then
-   exit;
+for bootFlag in ${bootFlags} ; do
+   #
+   # Split the key and value
+   #  bootFlagKey will be the key of the boot flag
+   #  bootFlagValue will be the flag value
+   #
+   bootFlagKey=${bootFlag%%=*}
+   bootFlagValue=
+   [[ $bootFlag == *=* ]] && bootFlagValue=${bootFlag#*=}
+
+   # All match are case insensitive
+   case "$bootFlagKey" in
+       NVRamDisk) # NVRamDisk=No|diskXsY
+				  setNVRAMDevice "$bootFlagValue" ;;
+   esac
+done
+
+# Normalize NVRAMDevice (keep only the device name (remove /dev/)
+NVRAMDevice=${NVRAMDevice##*/}
+
+# Check NVRAMDevice type partition
+if [[ -n "$NVRAMDevice" ]]; then
+    NVRAMPartType=$(LC_ALL=C diskutil info /dev/${NVRAMDevice} | sed -n 's/^ *Partition Type: *//p')
+    case "$NVRAMPartType" in
+        apple_hfs|apple_boot) NVRAMPartType=hfs ;;
+                         efi) NVRAMPartType=msdos ;;
+                           *) NVRAMPartType= ;;
+    esac
 fi
-theMountRoot=$(head -n 1 ${theMountFile})
-theMountType=$(tail -n 1 ${theMountFile})
-rm -f ${theMountFile}
 
 #
-# Save NVRAM to boot helper partition for RAID
+# Try to save NVRAM to boot helper partition for RAID first
 #
-if [ "x${theMountRoot}" != "x" ]; then
-   if [ "x${theMountType}" != "x" ]; then
-      #
-      # Make sure mount point exists
-      #
-      if [ ! -d ${theMountPoint} ]; then
-         mkdir ${theMountPoint}
-      fi
-      if [ -d ${theMountPoint} ]; then
+if [[ -n "$NVRAMPartType" ]]; then
+    #
+    # Make sure mount point exists
+    #
+    [[ ! -d "$NVRAMMountPoint" ]] && mkdir -p "$NVRAMMountPoint"
+
+    if [[ -d "$NVRAMMountPoint" ]]; then
          #
          # Unmount the mount point and device first just in case
          #
-         umount ${theMountPoint}
-         umount /dev/${theMountRoot}
-         mount -t ${theMountType} /dev/${theMountRoot} ${theMountPoint}
-         #
-         # Write NVRAM and make sure it exists
-         #
-         nvram -x -p > ${theMountPoint}${theNVRAM}
-         if [ -f ${theMountPoint}${theNVRAM} ]; then
-            chflags hidden ${theMountPoint}${theNVRAM}
-            umount /dev/${theMountRoot}
-            echo "CoreStorage device found. NVRAM saved to ${theMountPoint}${theNVRAM}!"
-            exit
+         umount "$NVRAMMountPoint"  2>/dev/null
+         umount "/dev/$NVRAMDevice" 2>/dev/null
+         mount -t $NVRAMPartType /dev/$NVRAMDevice "$NVRAMMountPoint"
+         if [[ $? -eq 0 ]]; then
+             #
+             # Write NVRAM and make sure it exists
+             #
+             nvram -x -p > "${NVRAMMountPoint}/${NVRAMFilename}"
+             if [[ -f "${NVRAMMountPoint}/${NVRAMFilename}" ]]; then
+                 chflags hidden "${NVRAMMountPoint}/${NVRAMFilename}"
+                 umount /dev/${NVRAMDevice}
+                 echo "NVRAM saved to /${NVRAMFilename} on $NVRAMDevice"
+                 exit
+             fi
+             umount /dev/${NVRAMDevice}
          fi
-         umount /dev/${theMountRoot}
-      fi
-      echo "CoreStorage device found. But NVRAM couldn't be saved to ${theMountPoint}${theNVRAM}!"
-   fi
+         echo "NVRAM couldn't be saved to /${NVRAMFilename} on $NVRAMDevice !"
+    fi
 fi
+
 #
-# Save NVRAM to root by default
+# Try to save NVRAM to root by default
 #
-nvram -x -p > ${theNVRAM}
-chflags hidden ${theNVRAM}
-echo "CoreStorage device not found. NVRAM saved to ${theNVRAM}!"
+nvram -x -p >  "/${NVRAMFilename}"
+chflags hidden "/${NVRAMFilename}"
+echo "NVRAM saved to /${NVRAMFilename}"
