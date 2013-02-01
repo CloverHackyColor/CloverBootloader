@@ -1214,8 +1214,7 @@ static VOID UninitVolumes(VOID)
     FreePool(Volume);
   }
 
-  if (Volumes != NULL)
-  {
+  if (Volumes != NULL) {
     FreePool(Volumes);
     Volumes = NULL;
   }

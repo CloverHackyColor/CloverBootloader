@@ -55,6 +55,7 @@ static BOOLEAN egHasGraphics = FALSE;
 static UINTN egScreenWidth  = 1024;
 static UINTN egScreenHeight = 768;
 
+static EFI_STATUS GopSetModeAndReconnectTextOut();
 
 //
 // Screen handling
@@ -149,7 +150,8 @@ EFI_STATUS egSetMaxResolution()
     egScreenHeight = GraphicsOutput->Mode->Info->VerticalResolution;
     Status = EFI_SUCCESS;
   } else {
-    Status = GraphicsOutput->SetMode(GraphicsOutput, BestMode);
+    //Status = GraphicsOutput->SetMode(GraphicsOutput, BestMode);
+    Status = GopSetModeAndReconnectTextOut(BestMode);
     if (Status == EFI_SUCCESS) {
       egScreenWidth = Width;
       egScreenHeight = Height;
@@ -180,7 +182,8 @@ EFI_STATUS egSetMode(INT32 Next)
     Status = GraphicsOutput->QueryMode(GraphicsOutput, (UINT32)Mode, &SizeOfInfo, &Info);
     MsgLog("QueryMode %d Status=%r\n", Mode, Status);
     if (Status == EFI_SUCCESS) {
-      Status = GraphicsOutput->SetMode(GraphicsOutput, (UINT32)Mode);
+      //Status = GraphicsOutput->SetMode(GraphicsOutput, (UINT32)Mode);
+      Status = GopSetModeAndReconnectTextOut((UINT32)Mode);
       //MsgLog("SetMode %d Status=%r\n", Mode, Status);
       egScreenWidth = GraphicsOutput->Mode->Info->HorizontalResolution;
       egScreenHeight = GraphicsOutput->Mode->Info->VerticalResolution;
@@ -234,7 +237,8 @@ EFI_STATUS egSetScreenResolution(IN CHAR16 *WidthHeight)
         if (Status == EFI_SUCCESS) {
             if (Width == Info->HorizontalResolution && Height == Info->VerticalResolution) {
                 MsgLog(" - setting Mode %d\n", Mode);
-                Status = GraphicsOutput->SetMode(GraphicsOutput, Mode);
+                //Status = GraphicsOutput->SetMode(GraphicsOutput, Mode);
+                Status = GopSetModeAndReconnectTextOut(Mode);
                 if (Status == EFI_SUCCESS) {
                     egScreenWidth = Width;
                     egScreenHeight = Height;
@@ -331,7 +335,7 @@ BOOLEAN egHasGraphicsMode(VOID)
 BOOLEAN egIsGraphicsModeEnabled(VOID)
 {
     EFI_CONSOLE_CONTROL_SCREEN_MODE CurrentMode;
-    
+
     if (ConsoleControl != NULL) {
         ConsoleControl->GetMode(ConsoleControl, &CurrentMode, NULL, NULL);
         return (CurrentMode == EfiConsoleControlScreenGraphics) ? TRUE : FALSE;
@@ -546,6 +550,46 @@ EFI_STATUS egScreenShot(VOID)
   }
   FreePool(FileData);    
   return Status;
+}
+
+//
+// Sets mode via GOP protocol, and reconnects simple text out drivers
+//
+
+static EFI_STATUS GopSetModeAndReconnectTextOut(IN UINT32 ModeNumber)
+{
+    UINTN       HandleCount;
+    UINTN       Index;
+    EFI_HANDLE  *HandleBuffer;
+    EFI_STATUS  Status;
+
+    Status = GraphicsOutput->SetMode(GraphicsOutput, ModeNumber);
+
+    if (!EFI_ERROR (Status)) { 
+        // When we change mode on GOP, we need to reconnect the drivers which produce simple text out
+        // Otherwise, they won't produce text based on the new resolution
+        Status = gBS->LocateHandleBuffer (
+            ByProtocol,
+            &gEfiSimpleTextOutProtocolGuid,
+            NULL,
+            &HandleCount,
+            &HandleBuffer
+            );
+        if (!EFI_ERROR (Status)) {
+            for (Index = 0; Index < HandleCount; Index++) {
+                gBS->DisconnectController (HandleBuffer[Index], NULL, NULL);
+            }
+            for (Index = 0; Index < HandleCount; Index++) {
+                gBS->ConnectController (HandleBuffer[Index], NULL, NULL, TRUE);
+            }
+            if (HandleBuffer != NULL) {
+                FreePool (HandleBuffer);
+            }
+        }
+        // return value is according to whether SetMode succeeded
+        return EFI_SUCCESS;
+    } 
+    return Status;
 }
 
 /* EOF */

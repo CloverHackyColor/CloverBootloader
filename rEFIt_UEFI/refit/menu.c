@@ -1342,6 +1342,7 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
 			break;
 	}
   FreePool(TempString);
+  FreePool(Backup);
 //  FreePool(Buffer);  //do not free memory that you did not allocate
 	MsgLog("EDITED: %s\n", Item->SValue);
   return 0;
@@ -1514,12 +1515,12 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         break;
       case SCAN_PAGE_UP:
   //      UpdateScroll(&State, SCROLL_PAGE_UP);
-        egSetMode(1);
+        SetNextScreenMode(1);
         StyleFunc(Screen, &State, MENU_FUNCTION_INIT, NULL);
         break;
       case SCAN_PAGE_DOWN:
 //        UpdateScroll(&State, SCROLL_PAGE_DOWN);
-        egSetMode(-1);
+        SetNextScreenMode(-1);
         StyleFunc(Screen, &State, MENU_FUNCTION_INIT, NULL);
         break;
       case SCAN_ESC:

@@ -490,6 +490,8 @@ VOID FinishTextScreen(IN BOOLEAN WaitAlways);
 VOID BeginExternalScreen(IN BOOLEAN UseGraphicsMode, IN CHAR16 *Title);
 VOID FinishExternalScreen(VOID);
 VOID TerminateScreen(VOID);
+VOID SetNextScreenMode(INT32);
+
 #if REFIT_DEBUG > 0
 VOID DebugPause(VOID);
 #else

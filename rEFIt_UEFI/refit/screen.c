@@ -55,12 +55,12 @@
 
 UINTN ConWidth;
 UINTN ConHeight;
-CHAR16 *BlankLine;
+CHAR16 *BlankLine = NULL;
 
 static VOID SwitchToText(IN BOOLEAN CursorEnabled);
 static VOID SwitchToGraphics(VOID);
 static VOID DrawScreenHeader(IN CHAR16 *Title);
-
+static VOID UpdateConsoleVars(VOID);
 
 // UGA defines and variables
 
@@ -89,8 +89,6 @@ static BOOLEAN haveError = FALSE;
 
 VOID InitScreen(IN BOOLEAN SetMaxResolution)
 {
-    UINTN i;
-    
     // initialize libeg
     egInitScreen(SetMaxResolution);
     
@@ -106,19 +104,8 @@ VOID InitScreen(IN BOOLEAN SetMaxResolution)
     // disable cursor
     gST->ConOut->EnableCursor (gST->ConOut, FALSE);
     
-    // get size of text console
-    if  (gST->ConOut->QueryMode (gST->ConOut, gST->ConOut->Mode->Mode, &ConWidth, &ConHeight) != EFI_SUCCESS) {
-        // use default values on error
-        ConWidth = 80;
-        ConHeight = 25;
-    }
-    
-    // make a buffer for a whole text line
-    BlankLine = AllocatePool((ConWidth + 1) * sizeof(CHAR16));
-    for (i = 0; i < ConWidth; i++)
-        BlankLine[i] = ' ';
-    BlankLine[i] = 0;
-    
+    UpdateConsoleVars();
+
     // show the banner (even when in graphics mode)
 //    DrawScreenHeader(L"Initializing...");
 }
@@ -720,3 +707,44 @@ BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
   return TRUE;
 }
 
+//
+// Sets next/previous available screen resolution, according to specified offset
+//
+
+VOID SetNextScreenMode(INT32 Next)
+{
+    EFI_STATUS Status;
+
+    Status = egSetMode(Next);
+    if (!EFI_ERROR(Status)) {
+        UpdateConsoleVars();
+    }
+}
+
+//
+// Updates console variables, according to ConOut resolution 
+// This should be called when initializing screen, or when resolution changes
+//
+
+static VOID UpdateConsoleVars()
+{
+    UINTN i;
+
+    // get size of text console
+    if  (gST->ConOut->QueryMode (gST->ConOut, gST->ConOut->Mode->Mode, &ConWidth, &ConHeight) != EFI_SUCCESS) {
+        // use default values on error
+        ConWidth = 80;
+        ConHeight = 25;
+    }
+
+    // free old BlankLine when it exists
+    if (BlankLine != NULL) {
+        FreePool(BlankLine);
+    }
+
+    // make a buffer for a whole text line
+    BlankLine = AllocatePool((ConWidth + 1) * sizeof(CHAR16));
+    for (i = 0; i < ConWidth; i++)
+        BlankLine[i] = ' ';
+    BlankLine[i] = 0;
+}
