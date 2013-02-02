@@ -347,7 +347,7 @@ VOID ReadConfig(INTN What)
   REFIT_FILE      File;
   CHAR16          **TokenList;
   CHAR16          *FlagName;
-  UINTN           TokenCount, i, Minus = 0, HVCount;
+  UINTN           TokenCount, i, Minus = 0, HVCount = 0;
   INTN            ID;
   //CHAR8       ANum[4];
   
@@ -512,7 +512,6 @@ VOID ReadConfig(INTN What)
           DBG("Hiding volume with string %s\n", gSettings.HVHideStrings[HVCount-1]);
         }
       }
-      gSettings.HVCount = (INT32)HVCount;
       
     } else if ((StriCmp(TokenList[0], L"scroll") == 0) && (TokenCount == 5)) {
       ScrollWidth = (INTN)StrDecimalToUintn(TokenList[1]);
@@ -626,6 +625,8 @@ VOID ReadConfig(INTN What)
     
     FreeTokenLine(&TokenList, &TokenCount);
   }
+
+  gSettings.HVCount = (INT32)HVCount;
   
   FreePool(File.Buffer);
 }
