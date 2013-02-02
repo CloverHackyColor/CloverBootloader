@@ -77,7 +77,7 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
   if (BuiltinIconTable[Id].Image == NULL) {
     BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, BuiltinIconTable[Id].Path, BuiltinIconTable[Id].PixelSize);
     if (!BuiltinIconTable[Id].Image){
-      DebugLog(1, "Icon %d not found at\n", Id);
+      DebugLog(1, "  Icon %d (%s) not found\n", Id, BuiltinIconTable[Id].Path);
     }
     if (!BuiltinIconTable[Id].Image && (Id >= BUILTIN_ICON_VOL_INTERNAL)) {
       BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, BuiltinIconTable[BUILTIN_ICON_VOL_INTERNAL].Path, BuiltinIconTable[Id].PixelSize);

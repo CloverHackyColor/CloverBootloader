@@ -1127,7 +1127,7 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
         Volume->BootType = BOOTING_BY_EFI;
         Status = EFI_SUCCESS;
       }
-      MsgLog("Booting OS %a\n", prop->string);
+      MsgLog("  Booting OS %a\n", prop->string);
     } 
 	}
 	

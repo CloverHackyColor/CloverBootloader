@@ -751,7 +751,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   
     Bootable = FALSE;
     if (Volume->BlockIO->Media->BlockSize == 2048){
-      DBG("found optical drive\n");
+      DBG("  found optical drive\n");
       Volume->DiskKind = DISK_KIND_OPTICAL;
       Volume->BlockIOOffset = 0x10; // offset already applied for FS but not for blockio      
       ScanVolumeBootcode(Volume, &Bootable);
@@ -775,7 +775,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
         }
         if (DevicePathType(DevicePath) == MESSAGING_DEVICE_PATH && 
             (DevicePathSubType(DevicePath) == MSG_USB_DP || DevicePathSubType(DevicePath) == MSG_USB_CLASS_DP)) {
-          DBG("USB volume\n");
+          DBG("  USB volume\n");
           Volume->DiskKind = DISK_KIND_EXTERNAL; 
           //     break;
         }
@@ -1084,13 +1084,13 @@ VOID ScanVolumes(VOID)
     Volume = AllocateZeroPool(sizeof(REFIT_VOLUME));
     Volume->DeviceHandle = Handles[HandleIndex];
     if (Volume->DeviceHandle == SelfDeviceHandle){
-      DBG("this is SelfVolume at index %d\n", HandleIndex);
       SelfVolume = Volume;  
     }
-    
+
     Status = ScanVolume(Volume);
+
     if (!EFI_ERROR(Status)) {
-      //     DBG("Found Volume %s at index=%d\n", Volume->VolName, HandleIndex);
+
       AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
       StrCpy(VolumeString, DevicePathToStr(Volume->DevicePath));
       HV = NULL;
@@ -1099,6 +1099,11 @@ VOID ScanVolumes(VOID)
         if (HV != NULL) break;
       }
       if (HV != NULL) Volume->OSType = OSTYPE_HIDE;
+
+      Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
+      DBG("  %2d. Volume '%s', OS '%s', GUID = %g\n",
+          HandleIndex, Volume->VolName, Volume->OSName ? Volume->OSName : L"", Guid);
+      if (SelfVolume == Volume)  DBG("  This is SelfVolume !!\n");
       
     } else {
       DBG("wrong volume Nr%d?!\n", HandleIndex);
