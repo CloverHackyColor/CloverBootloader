@@ -268,8 +268,7 @@
   MdeModulePkg/Universal/MemoryTest/NullMemoryTestDxe/NullMemoryTestDxe.inf
   MdeModulePkg/Universal/SecurityStubDxe/SecurityStubDxe.inf
   MdeModulePkg/Universal/Console/ConPlatformDxe/ConPlatformDxe.inf
-  #MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf {
-  Clover/ConSplitterDxe/ConSplitterDxe.inf {
+  MdeModulePkg/Universal/Console/ConSplitterDxe/ConSplitterDxe.inf {
     <LibraryClasses>
       PcdLib|MdePkg/Library/DxePcdLib/DxePcdLib.inf
   }
@@ -417,8 +416,8 @@
   
   # Drivers for Aptio loading - should go to Clover's /EFI/drivers64UEFI dir
   Clover/OsxFatBinaryDrv/OsxFatBinaryDrv.inf
-  #Clover/OsxAptioFixDrv/OsxAptioFixDrv.inf
-  Clover/OsxLowMemFixDrv/OsxLowMemFixDrv.inf
+  Clover/OsxAptioFixDrv/OsxAptioFixDrv.inf
+  #Clover/OsxLowMemFixDrv/OsxLowMemFixDrv.inf
 
   # Drivers for Phoenix UEFI loading - should go to Clover's /EFI/drivers64UEFI dir
   Clover/EmuVariableUefi/EmuVariableRuntimeDxe.inf {
@@ -450,8 +449,8 @@
 [BuildOptions]
   MSFT:*_*_*_CC_FLAGS = /FAsc /FR$(@R).SBR -DMDEPKG_NDEBUG
   XCODE:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
-#  GCC:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
+  GCC:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
 
 # Uncomment following line to add video bios patching in CloverEFI
-  GCC:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG -DCLOVER_VBIOS_PATCH_IN_CLOVEREFI
+#  GCC:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG -DCLOVER_VBIOS_PATCH_IN_CLOVEREFI
 
