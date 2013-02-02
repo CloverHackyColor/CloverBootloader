@@ -512,6 +512,7 @@ VOID ReadConfig(INTN What)
           DBG("Hiding volume with string %s\n", gSettings.HVHideStrings[HVCount-1]);
         }
       }
+      gSettings.HVCount = (INT32)HVCount;
       
     } else if ((StriCmp(TokenList[0], L"scroll") == 0) && (TokenCount == 5)) {
       ScrollWidth = (INTN)StrDecimalToUintn(TokenList[1]);
@@ -626,7 +627,5 @@ VOID ReadConfig(INTN What)
     FreeTokenLine(&TokenList, &TokenCount);
   }
 
-  gSettings.HVCount = (INT32)HVCount;
-  
   FreePool(File.Buffer);
 }
