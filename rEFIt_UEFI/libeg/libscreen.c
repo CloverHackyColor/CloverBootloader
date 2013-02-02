@@ -55,7 +55,22 @@ static BOOLEAN egHasGraphics = FALSE;
 static UINTN egScreenWidth  = 1024;
 static UINTN egScreenHeight = 768;
 
+static EFI_CONSOLE_CONTROL_PROTOCOL_GET_MODE ConsoleControlGetMode = NULL;
+
 static EFI_STATUS GopSetModeAndReconnectTextOut();
+
+//
+// Null ConsoleControl GetMode() implementation - for blocking resolution switch when using text mode
+//
+EFI_STATUS EFIAPI
+NullConsoleControlGetModeText(IN EFI_CONSOLE_CONTROL_PROTOCOL *This, OUT EFI_CONSOLE_CONTROL_SCREEN_MODE *Mode, OUT BOOLEAN *GopUgaExists, OPTIONAL OUT BOOLEAN *StdInLocked OPTIONAL) {
+        *Mode = EfiConsoleControlScreenText;
+        if (GopUgaExists)
+                *GopUgaExists = TRUE;
+        if (StdInLocked)
+                *StdInLocked = FALSE;
+        return EFI_SUCCESS;
+}
 
 //
 // Screen handling
@@ -268,6 +283,11 @@ VOID egInitScreen(IN BOOLEAN SetMaxResolution)
     Status = EfiLibLocateProtocol(&GraphicsOutputProtocolGuid, (VOID **) &GraphicsOutput);
     if (EFI_ERROR(Status))
         GraphicsOutput = NULL;
+
+    // store original GetMode
+    if (ConsoleControl != NULL && ConsoleControlGetMode == NULL) {
+        ConsoleControlGetMode = ConsoleControl->GetMode;
+    }
     
     // get screen size
     egHasGraphics = FALSE;
@@ -350,6 +370,19 @@ VOID egSetGraphicsModeEnabled(IN BOOLEAN Enable)
     EFI_CONSOLE_CONTROL_SCREEN_MODE NewMode;
     
     if (ConsoleControl != NULL) {
+
+        if (GraphicsOutput != NULL) {
+            if (!Enable) {
+                // Don't allow switching to text mode when GOP exists, as it may cause resolution switch
+                // But report that we are in text mode when queried, to avoid another set command
+                ConsoleControl->GetMode = NullConsoleControlGetModeText;
+                return;
+            } else {
+                // Allow switching to graphics mode, and use original GetMode function
+                ConsoleControl->GetMode = ConsoleControlGetMode;
+            }
+        }
+
         ConsoleControl->GetMode(ConsoleControl, &CurrentMode, NULL, NULL);
         
         NewMode = Enable ? EfiConsoleControlScreenGraphics

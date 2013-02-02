@@ -521,6 +521,9 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     // which is wrong
     if (Entry->LoadOptions == NULL || StrStr(Entry->LoadOptions, L"-v") == NULL) {
       BlockConOut = TRUE;
+    } else {
+      // we are booting verbose OSX, so console should be in text mode
+      Entry->UseGraphicsMode = FALSE;
     }
   }
   else if ((Entry->LoaderType == OSTYPE_WIN) ||  (Entry->LoaderType == OSTYPE_WINEFI)) {
@@ -2328,9 +2331,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
             
       // We don't allow exiting the main menu with the Escape key.
-      if (MenuExit == MENU_EXIT_ESCAPE)
+      if (MenuExit == MENU_EXIT_ESCAPE){
         break;   //refresh main menu
       //           continue;
+      }
       
       switch (ChosenEntry->Tag) {
           
