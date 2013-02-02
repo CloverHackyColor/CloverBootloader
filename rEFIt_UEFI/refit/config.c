@@ -347,13 +347,37 @@ VOID ReadConfig(INTN What)
   REFIT_FILE      File;
   CHAR16          **TokenList;
   CHAR16          *FlagName;
-  UINTN           TokenCount, i, Minus = 0, HVCount = 0;
+  UINTN           TokenCount, i, Minus = 0;
   INTN            ID;
   //CHAR8       ANum[4];
   
   //    DBG("Reading configuration file...\n");
   switch (What) {
     case 0:
+      // Set default values for gSetting items we are setting
+      gSettings.HVHideAllOSX = FALSE;
+      gSettings.HVHideAllOSXInstall = FALSE;
+      gSettings.HVHideAllRecovery = FALSE;
+      gSettings.HVHideDuplicatedBootTarget = FALSE;
+      gSettings.HVHideAllWindowsEFI = FALSE;
+      gSettings.HVHideAllGrub = FALSE;
+      gSettings.HVHideAllGentoo = FALSE;
+      gSettings.HVHideAllRedHat = FALSE;
+      gSettings.HVHideAllUbuntu = FALSE;
+      gSettings.HVHideAllLinuxMint = FALSE;
+      gSettings.HVHideAllFedora = FALSE;
+      gSettings.HVHideAllSuSe = FALSE;
+      gSettings.HVHideOpticalUEFI = FALSE;
+      gSettings.HVHideInternalUEFI = FALSE;
+      gSettings.HVHideExternalUEFI = FALSE;
+      gSettings.HVHideAllLegacy = FALSE;
+      gSettings.HVCount = 0;
+
+      gSettings.PointerEnabled = TRUE;
+      gSettings.PointerSpeed = 2;
+      gSettings.DoubleClickTime = 500;
+      gSettings.PointerMirror = FALSE;
+
       if (!FileExists(SelfDir, CONFIG_FILE_NAME))
         return;      
       Status = ReadFile(SelfDir, CONFIG_FILE_NAME, &File);
@@ -456,24 +480,6 @@ VOID ReadConfig(INTN What)
         }
       }
     } else if (StriCmp(TokenList[0], L"hidevolumes") == 0) {
-      gSettings.HVHideAllOSX = FALSE;
-      gSettings.HVHideAllOSXInstall = FALSE;
-      gSettings.HVHideAllRecovery = FALSE;
-      gSettings.HVHideDuplicatedBootTarget = FALSE;
-      gSettings.HVHideAllWindowsEFI = FALSE;
-      gSettings.HVHideAllGrub = FALSE;
-      gSettings.HVHideAllGentoo = FALSE;
-      gSettings.HVHideAllRedHat = FALSE;
-      gSettings.HVHideAllUbuntu = FALSE;
-      gSettings.HVHideAllLinuxMint = FALSE;
-      gSettings.HVHideAllFedora = FALSE;
-      gSettings.HVHideAllSuSe = FALSE;
-      gSettings.HVHideOpticalUEFI = FALSE;
-      gSettings.HVHideInternalUEFI = FALSE;
-      gSettings.HVHideExternalUEFI = FALSE;
-      gSettings.HVHideAllLegacy = FALSE;
-      HVCount = 0;
-      
       for (i = 1; i < TokenCount; i++) {
         if (StriCmp(TokenList[i], L"osx") == 0)
           gSettings.HVHideAllOSX = TRUE;
@@ -507,12 +513,11 @@ VOID ReadConfig(INTN What)
           gSettings.HVHideExternalUEFI = TRUE;
         else if (StriCmp(TokenList[i], L"legacy") == 0)
           gSettings.HVHideAllLegacy = TRUE;
-        else if (HVCount<100) {
-          gSettings.HVHideStrings[HVCount++] = EfiStrDuplicate(TokenList[i]);
-          DBG("Hiding volume with string %s\n", gSettings.HVHideStrings[HVCount-1]);
+        else if (gSettings.HVCount<100) {
+          gSettings.HVHideStrings[(gSettings.HVCount)++] = EfiStrDuplicate(TokenList[i]);
+          DBG("Hiding volume with string %s\n", gSettings.HVHideStrings[gSettings.HVCount-1]);
         }
       }
-      gSettings.HVCount = (INT32)HVCount;
       
     } else if ((StriCmp(TokenList[0], L"scroll") == 0) && (TokenCount == 5)) {
       ScrollWidth = (INTN)StrDecimalToUintn(TokenList[1]);
