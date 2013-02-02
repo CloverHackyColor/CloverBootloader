@@ -347,7 +347,7 @@ VOID ReadConfig(INTN What)
   REFIT_FILE      File;
   CHAR16          **TokenList;
   CHAR16          *FlagName;
-  UINTN           TokenCount, i, Minus = 0, j = 0;
+  UINTN           TokenCount, i, Minus = 0, HVCount;
   INTN            ID;
   //CHAR8       ANum[4];
   
@@ -472,6 +472,7 @@ VOID ReadConfig(INTN What)
       gSettings.HVHideInternalUEFI = FALSE;
       gSettings.HVHideExternalUEFI = FALSE;
       gSettings.HVHideAllLegacy = FALSE;
+      HVCount = 0;
       
       for (i = 1; i < TokenCount; i++) {
         if (StriCmp(TokenList[i], L"osx") == 0)
@@ -506,11 +507,12 @@ VOID ReadConfig(INTN What)
           gSettings.HVHideExternalUEFI = TRUE;
         else if (StriCmp(TokenList[i], L"legacy") == 0)
           gSettings.HVHideAllLegacy = TRUE;
-        else {
-          gSettings.HVHideStrings[j++] = EfiStrDuplicate(TokenList[i]);
-          DBG("Hiding volume with string %s\n", gSettings.HVHideStrings[j-1]);
+        else if (HVCount<100) {
+          gSettings.HVHideStrings[HVCount++] = EfiStrDuplicate(TokenList[i]);
+          DBG("Hiding volume with string %s\n", gSettings.HVHideStrings[HVCount-1]);
         }
       }
+      gSettings.HVCount = (INT32)HVCount;
       
     } else if ((StriCmp(TokenList[0], L"scroll") == 0) && (TokenCount == 5)) {
       ScrollWidth = (INTN)StrDecimalToUintn(TokenList[1]);
