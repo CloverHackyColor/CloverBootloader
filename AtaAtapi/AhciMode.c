@@ -420,8 +420,10 @@ AhciEnableFisReceive (
   return AhciWaitMmioSet (
            PciIo, 
            Offset,
-           EFI_AHCI_PORT_CMD_FR,
-           EFI_AHCI_PORT_CMD_FR,
+           EFI_AHCI_PORT_CMD_FRE,
+           EFI_AHCI_PORT_CMD_FRE,
+//                          EFI_AHCI_PORT_CMD_FR,
+//                          EFI_AHCI_PORT_CMD_FR,
            Timeout
            );
 }
@@ -2284,14 +2286,15 @@ AhciModeInitialization (
       // Enable FIS Receive DMA engine for the first D2H FIS.
       //
       Offset = EFI_AHCI_PORT_START + Port * EFI_AHCI_PORT_REG_WIDTH + EFI_AHCI_PORT_CMD;
-      AhciOrReg (PciIo, Offset, EFI_AHCI_PORT_CMD_FRE);
+/*      AhciOrReg (PciIo, Offset, EFI_AHCI_PORT_CMD_FRE);
       Status = AhciWaitMmioSet (
                  PciIo, 
                  Offset,
                  EFI_AHCI_PORT_CMD_FR,
                  EFI_AHCI_PORT_CMD_FR,
                  EFI_AHCI_PORT_CMD_FR_CLEAR_TIMEOUT
-                 );
+                 ); */
+      Status = AhciEnableFisReceive( PciIo, Port, EFI_AHCI_PORT_CMD_FR_CLEAR_TIMEOUT );
       if (EFI_ERROR (Status)) {
         continue;
       }

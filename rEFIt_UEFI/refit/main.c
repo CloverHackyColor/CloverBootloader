@@ -2177,12 +2177,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   } else {
     TscDiv = DivU64x64Remainder(gCPUStructure.TSCCalibr, gCPUStructure.TSCFrequency, &TscRemainder);
   }
-
-  if ((TscRemainder > 400 * Mega) || (TscDiv > 1))
-  {
-    DBG("There is a problem with TSC detection and calibration! Assume calibrated one\n"); */
+*/
+  if (gCPUStructure.TSCCalibr > 200000000ULL) {  //200MHz
     gCPUStructure.TSCFrequency = gCPUStructure.TSCCalibr;
-//  }
+  }
   
   gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
   gCPUStructure.FSBFrequency = DivU64x32(MultU64x32(gCPUStructure.CPUFrequency, 10),

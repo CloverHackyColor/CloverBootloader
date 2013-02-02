@@ -25,7 +25,7 @@ Active partition installation
   Suppose that your partition is on /dev/disk0s2 HFS+
   
    - Install boot0 to the MBR:
-   		sudo fdisk440 -f boot0 -u -y /dev/rdisk0
+   		sudo ./fdisk440 -f boot0 -u -y /dev/rdisk0
   
    - Install boot1h2 to the partition's bootsector:
   		sudo dd if=boot1h2 of=/dev/rdisk0s2
