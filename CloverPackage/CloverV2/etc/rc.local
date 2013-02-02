@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# rc.local startup script
+# rc.local startup script for CLOVER
 #
 # this script store the Clover logs of the last boot
 # and can mount the EFI partition
@@ -13,6 +13,9 @@
 #
 # Manage boot log
 #
+
+DEBUG=0
+
 logLocation=/Library/Logs/CloverEFI
 logFilename=boot.log
 systemLogFilename=system.log
@@ -22,6 +25,11 @@ EFIMountPoint=/Volumes/EFI
 bootFlags=$(nvram -p | sed -n 's/^boot-args *//p')
 currentDate=$(date "+%Y-%m-%d")
 currentTime=$(date "+%H:%M:%S")
+
+if [[ "$DEBUG" -ne 0 ]]; then
+  exec &>"${logLocation}"/rc.local.log
+  set -x
+fi
 
 # Turn on a case-insensitive matching
 shopt -s nocasematch
