@@ -2150,7 +2150,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //  ZeroMem((VOID*)&gSettings, sizeof(SETTINGS_DATA));
   ZeroMem((VOID*)&gGraphics[0], sizeof(GFX_PROPERTIES) * 4);
   
-  DumpBiosMemoryMap();
+//  DumpBiosMemoryMap();
 
   GuiEventsInitialize();
 //  DBG("GuiEventsInitialize OK\n");
