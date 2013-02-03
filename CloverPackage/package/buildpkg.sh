@@ -9,11 +9,14 @@
 
 # $3 Path to store built package
 
+# Prevent the script from doing bad things
+set -u	# Abort with unset variables
+
 packagesidentity="org.Clover"
 
 packagename="Clover"
 
-pkgroot="${0%/*}"
+declare -r PKGROOT="${0%/*}"
 
 COL_BLACK="\x1b[30;01m"
 COL_RED="\x1b[31;01m"
@@ -25,19 +28,23 @@ COL_WHITE="\x1b[37;01m"
 COL_BLUE="\x1b[34;01m"
 COL_RESET="\x1b[39;49;00m"
 
-#version=$( grep FIRMWARE_VERSION Version.h | awk '{ print $3 }' | tr -d '\"' )
-version=$( cat version )
-stage=${version##*-}
-revision=$( grep "FIRMWARE_REVISION " Version.h | awk '{ print $3 }' | tr -d '\"' | tr ":" "_" )
-builddate=$( grep FIRMWARE_BUILDDATE Version.h | awk '{ print $3,$4 }' | tr -d '\"' )
+# ====== REVISION/VERSION ======
+declare -r CLOVER_VERSION=$( cat version )
+stage=${CLOVER_VERSION##*-}
+declare -r CLOVER_REVISION=$( cat revision )
+builddate=$( sed -n 's/.*FIRMWARE_BUILDDATE *\"\(.*\)\".*/\1/p' "${PKGROOT}/../../Version.h" )
 timestamp=$( date -j -f "%Y-%m-%d %H:%M:%S" "${builddate}" "+%s" )
 
 # =================
 
-develop=$(awk "NR==6{print;exit}" ${pkgroot}/../CREDITS)
-credits=$(awk "NR==10{print;exit}" ${pkgroot}/../CREDITS)
-pkgdev=$(awk "NR==14{print;exit}" ${pkgroot}/../CREDITS)
-year=$(awk "NR==18{print;exit}" ${pkgroot}/../CREDITS)
+develop=$(awk "NR==6{print;exit}" ${PKGROOT}/../CREDITS)
+credits=$(awk "NR==10{print;exit}" ${PKGROOT}/../CREDITS)
+pkgdev=$(awk "NR==14{print;exit}" ${PKGROOT}/../CREDITS)
+year=$(awk "NR==18{print;exit}" ${PKGROOT}/../CREDITS)
+
+# ====== GLOBAL VARIABLES ======
+declare -a outline
+declare -a choices
 
 # =================
 
@@ -63,12 +70,12 @@ echo -e $COL_CYAN"	Building $packagename Install Package"$COL_RESET
 echo -e $COL_CYAN"	----------------------------------"$COL_RESET
 echo ""
 
-outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
+outline[${#outline[*]}]="${indent[$xmlindent]}<choices-outline>"
 
 # build Clover package
 	echo "===================== Clover ==========================="
-	outline[$((outlinecount++))]="${indent[$xmlindent]}\t<line choice=\"Clover\">"
-	choices[$((choicescount++))]="<choice\n\tid=\"Clover\"\n\ttitle=\"Clover_title\"\n\tdescription=\"Clover_description\"\n>\n</choice>\n"
+	outline[${#outline[*]}]="${indent[$xmlindent]}\t<line choice=\"Clover\">"
+	choices[${#choices[*]}]="<choice\n\tid=\"Clover\"\n\ttitle=\"Clover_title\"\n\tdescription=\"Clover_description\"\n>\n</choice>\n"
 
 # build core package
 	echo "===================== Core ============================="
@@ -106,14 +113,15 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 	mkdir -p ${3}/EFIfolder/Root/EFI
 	mkdir -p ${3}/EFIfolder/Root/etc
 	mkdir -p ${3}/EFIfolder/Scripts
-	cp -f ${pkgroot}/Scripts/preinstall/preinstall ${3}/EFIfolder/Scripts/preinstall
-	cp -Rf ${3%/*/*}/CloverV2/EFI/* ${3}/EFIfolder/Root/EFI
-	cp -Rf ${3%/*/*}/CloverV2/etc/* ${3}/EFIfolder/Root/etc
+	cp -f ${PKGROOT}/Scripts/preinstall/preinstall ${3}/EFIfolder/Scripts/preinstall
+	rsync -r --exclude=.svn --exclude="*~" ${3%/*/*}/CloverV2/EFI/ ${3}/EFIfolder/Root/EFI/
+	rsync -r --exclude=.svn --exclude="*~" ${3%/*/*}/CloverV2/etc/ ${3}/EFIfolder/Root/etc/
+	[[ "$add_ia32" -ne 1 ]] && rm -rf ${3}/EFIfolder/Root/EFI/drivers32
 	rm -f ${3}/EFIfolder/Root/EFI/config.plist >/dev/null 2>&1
 	cp ${3}/EFIfolder/Root/EFI/BOOT/refit.conf ${3}/EFIfolder/Root/EFI/BOOT/refit.conf-default
 	rm -f ${3}/EFIfolder/Root/EFI/BOOT/refit.conf
-	perl -i -p -e "s/%CLOVERVERSION%/${version}/g" `find "${3}/EFIfolder/Scripts/preinstall" -type f`
-	perl -i -p -e "s/%CLOVERREVISION%/${revision}/g" `find "${3}/EFIfolder/Scripts/preinstall" -type f`
+	perl -i -p -e "s/%CLOVERVERSION%/${CLOVER_VERSION}/g"	$(find "${3}/EFIfolder/Scripts/preinstall" -type f)
+	perl -i -p -e "s/%CLOVERREVISION%/${CLOVER_REVISION}/g" $(find "${3}/EFIfolder/Scripts/preinstall" -type f)
 	local coresize=$( du -hkc "${3}/EFIfolder/Root" | tail -n1 | awk {'print $1'} )
 	fixperms "${3}/EFIfolder/Root/"
 	chmod 755 "${3}/EFIfolder/Scripts/preinstall"
@@ -125,7 +133,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 	# build boot0 package 
 		mkdir -p ${3}/boot0/Root
 		mkdir -p ${3}/boot0/Scripts/Tools
-		cp -f ${pkgroot}/Scripts/boot0/postinstall ${3}/boot0/Scripts
+		cp -f ${PKGROOT}/Scripts/boot0/postinstall ${3}/boot0/Scripts
 		chmod 755 "${3}/boot0/Scripts/postinstall"
 		echo "	[BUILD] boot0 "
 		buildpackage "${3}/boot0" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot0EFI']) &amp;&amp; exclusive(choices['boot1no']) &amp;&amp; exclusive(choices['boot1UEFI'])\"" >/dev/null 2>&1
@@ -134,7 +142,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 	# build boot0hfs package 
 		mkdir -p ${3}/boot0hfs/Root
 		mkdir -p ${3}/boot0hfs/Scripts/Tools
-		cp -f ${pkgroot}/Scripts/boot0hfs/postinstall ${3}/boot0hfs/Scripts
+		cp -f ${PKGROOT}/Scripts/boot0hfs/postinstall ${3}/boot0hfs/Scripts
 		chmod 755 "${3}/boot0hfs/Scripts/postinstall"
 		echo "	[BUILD] boot0hfs "
 		buildpackage "${3}/boot0hfs" "/" "" "start_visible=\"true\" start_selected=\"true\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0EFI']) &amp;&amp; exclusive(choices['boot1no']) &amp;&amp; exclusive(choices['boot1UEFI'])\"" >/dev/null 2>&1
@@ -143,7 +151,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 	# build boot0EFI package 
 		mkdir -p ${3}/boot0EFI/Root
 		mkdir -p ${3}/boot0EFI/Scripts/Tools
-		cp -f ${pkgroot}/Scripts/boot0EFI/postinstall ${3}/boot0EFI/Scripts
+		cp -f ${PKGROOT}/Scripts/boot0EFI/postinstall ${3}/boot0EFI/Scripts
 		chmod 755 "${3}/boot0EFI/Scripts/postinstall"
 		echo "	[BUILD] boot0EFI "
 		buildpackage "${3}/boot0EFI" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot1no']) &amp;&amp; exclusive(choices['boot1UEFI'])\"" >/dev/null 2>&1
@@ -152,7 +160,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 	# build boot1no package
 		mkdir -p ${3}/boot1no/Root
 		mkdir -p ${3}/boot1no/Scripts/Tools
-		cp -f ${pkgroot}/Scripts/boot1no/postinstall ${3}/boot1no/Scripts
+		cp -f ${PKGROOT}/Scripts/boot1no/postinstall ${3}/boot1no/Scripts
 		chmod 755 "${3}/boot1no/Scripts/postinstall"
 		echo "	[BUILD] boot1no "
 		buildpackage "${3}/boot1no" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot0EFI']) &amp;&amp; exclusive(choices['boot1UEFI'])\"" >/dev/null 2>&1
@@ -169,7 +177,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 		cp -Rf ${3%/*/*}/CloverV2/drivers-Off/drivers64/* ${3}/boot1UEFI/Root/EFI/drivers64
 		cp -Rf ${3%/*/*}/CloverV2/drivers-Off/drivers64UEFI/* ${3}/boot1UEFI/Root/EFI/drivers64UEFI
 		fixperms "${3}/boot1UEFI/Root/"
-		cp -f ${pkgroot}/Scripts/boot1UEFI/postinstall ${3}/boot1UEFI/Scripts
+		cp -f ${PKGROOT}/Scripts/boot1UEFI/postinstall ${3}/boot1UEFI/Scripts
 		chmod 755 "${3}/boot1UEFI/Scripts/postinstall"
 		echo "	[BUILD] boot1UEFI "
 		buildpackage "${3}/boot1UEFI" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot0']) &amp;&amp; exclusive(choices['boot0hfs']) &amp;&amp; exclusive(choices['boot0EFI']) &amp;&amp; exclusive(choices['boot1no'])\"" >/dev/null 2>&1
@@ -178,7 +186,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 	# build boot32 package 
 		mkdir -p ${3}/boot32/Root
 		mkdir -p ${3}/boot32/Scripts/Tools
-		cp -f ${pkgroot}/Scripts/boot32/postinstall ${3}/boot32/Scripts
+		cp -f ${PKGROOT}/Scripts/boot32/postinstall ${3}/boot32/Scripts
 		chmod 755 "${3}/boot32/Scripts/postinstall"
 		echo "	[BUILD] boot32 "
 		buildpackage "${3}/boot32" "/" "" "start_visible=\"true\" start_selected=\"false\" selected=\"exclusive(choices['boot64'])\"" >/dev/null 2>&1
@@ -187,20 +195,20 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 	# build boot64 package 
 		mkdir -p ${3}/boot64/Root
 		mkdir -p ${3}/boot64/Scripts/Tools
-		cp -f ${pkgroot}/Scripts/boot64/postinstall ${3}/boot64/Scripts
+		cp -f ${PKGROOT}/Scripts/boot64/postinstall ${3}/boot64/Scripts
 		chmod 755 "${3}/boot64/Scripts/postinstall"
 		echo "	[BUILD] boot64 "
 		buildpackage "${3}/boot64" "/" "" "start_visible=\"true\" start_selected=\"true\" selected=\"exclusive(choices['boot32'])\"" >/dev/null 2>&1
 	# End build boot64 package 
 
-    ((xmlindent--))
-    outline[$((outlinecount++))]="${indent[$xmlindent]}\t</line>"
+	((xmlindent--))
+	outline[${#outline[*]}]="${indent[$xmlindent]}\t</line>"
 # End build Clover package
 
 # build Themes package
 	echo "===================== Themes ==========================="
-	outline[$((outlinecount++))]="${indent[$xmlindent]}\t<line choice=\"Themes\">"
-	choices[$((choicescount++))]="<choice\n\tid=\"Themes\"\n\ttitle=\"Themes_title\"\n\tdescription=\"Themes_description\"\n>\n</choice>\n"
+	outline[${#outline[*]}]="${indent[$xmlindent]}\t<line choice=\"Themes\">"
+	choices[${#choices[*]}]="<choice\n\tid=\"Themes\"\n\ttitle=\"Themes_title\"\n\tdescription=\"Themes_description\"\n>\n</choice>\n"
 	((xmlindent++))
 	packagesidentity="org.Clover.Themes"
 
@@ -210,7 +218,7 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 		theme="${themes[$i]##*/}"
 		mkdir -p "${3}/${themes[$i]##*/}/Root/EFI/BOOT/themes"
 		mkdir -p "${3}/${themes[$i]##*/}/Scripts"
-		rsync -r --exclude=.svn "${themes[$i]}/" "${3}/${themes[$i]##*/}/Root/EFI/BOOT/themes/${theme}"
+		rsync -r --exclude=.svn  --exclude="*~" "${themes[$i]}/" "${3}/${themes[$i]##*/}/Root/EFI/BOOT/themes/${theme}"
 		ditto --noextattr --noqtn "${themes[$i]%/*}preinstall-${theme}" "${3}/${themes[$i]##*/}/Scripts/preinstall"
 #		ditto --noextattr --noqtn "${themes[$i]%/*}refit.conf-${theme}" "${3}/${themes[$i]##*/}/Root/EFI/BOOT/refit.conf-default"
 #		ditto --noextattr --noqtn "${themes[$i]%/*}refit.conf-${theme}" "${3}/${themes[$i]##*/}/Root/EFI/BOOT/refit.conf-${theme}"
@@ -221,16 +229,16 @@ outline[$((outlinecount++))]="${indent[$xmlindent]}<choices-outline>"
 		rm -R -f "${3}/${i##*/}"
 	done
 
-    ((xmlindent--))
-    outline[$((outlinecount++))]="${indent[$xmlindent]}\t</line>"
+	((xmlindent--))
+	outline[${#outline[*]}]="${indent[$xmlindent]}\t</line>"
 
 # End build Themes package
 
 # build drivers-x32 packages
 if [[ "$add_ia32" -eq 1 ]]; then
 	echo "===================== drivers32 ========================"
-	outline[$((outlinecount++))]="${indent[$xmlindent]}\t<line choice=\"Drivers32\">"
-	choices[$((choicescount++))]="<choice\n\tid=\"Drivers32\"\n\ttitle=\"Drivers32\"\n\tdescription=\"Drivers32\"\n>\n</choice>\n"
+	outline[${#outline[*]}]="${indent[$xmlindent]}\t<line choice=\"Drivers32\">"
+	choices[${#choices[*]}]="<choice\n\tid=\"Drivers32\"\n\ttitle=\"Drivers32\"\n\tdescription=\"Drivers32\"\n>\n</choice>\n"
 	((xmlindent++))
 	packagesidentity="org.Clover.drivers32"
 	drivers=($( find "${3%/*/*}/CloverV2/drivers-Off/drivers32" -type f -name '*.efi' -depth 1 ))
@@ -247,14 +255,14 @@ if [[ "$add_ia32" -eq 1 ]]; then
 	done
 	
 	((xmlindent--))
-	outline[$((outlinecount++))]="${indent[$xmlindent]}\t</line>"
+	outline[${#outline[*]}]="${indent[$xmlindent]}\t</line>"
 fi
 # End build drivers-x32 packages
 
 # build drivers-x64 packages 
 	echo "===================== drivers64 ========================"
-	outline[$((outlinecount++))]="${indent[$xmlindent]}\t<line choice=\"Drivers64\">"
-	choices[$((choicescount++))]="<choice\n\tid=\"Drivers64\"\n\ttitle=\"Drivers64\"\n\tdescription=\"Drivers64\"\n>\n</choice>\n"
+	outline[${#outline[*]}]="${indent[$xmlindent]}\t<line choice=\"Drivers64\">"
+	choices[${#choices[*]}]="<choice\n\tid=\"Drivers64\"\n\ttitle=\"Drivers64\"\n\tdescription=\"Drivers64\"\n>\n</choice>\n"
 	((xmlindent++))
 	packagesidentity="org.Clover.drivers64"
 	drivers=($( find "${3%/*/*}/CloverV2/drivers-Off/drivers64" -type f -name '*.efi' -depth 1 ))
@@ -271,14 +279,14 @@ fi
 	done
 	
 	((xmlindent--))
-	outline[$((outlinecount++))]="${indent[$xmlindent]}\t</line>"
+	outline[${#outline[*]}]="${indent[$xmlindent]}\t</line>"
 
 # End build drivers-x64 packages
 
 # build drivers-x64UEFI packages 
 	echo "===================== drivers64UEFI ========================"
-	outline[$((outlinecount++))]="${indent[$xmlindent]}\t<line choice=\"Drivers64UEFI\">"
-	choices[$((choicescount++))]="<choice\n\tid=\"Drivers64UEFI\"\n\ttitle=\"Drivers64UEFI\"\n\tdescription=\"Drivers64UEFI\"\n>\n</choice>\n"
+	outline[${#outline[*]}]="${indent[$xmlindent]}\t<line choice=\"Drivers64UEFI\">"
+	choices[${#choices[*]}]="<choice\n\tid=\"Drivers64UEFI\"\n\ttitle=\"Drivers64UEFI\"\n\tdescription=\"Drivers64UEFI\"\n>\n</choice>\n"
 	((xmlindent++))
 	packagesidentity="org.Clover.drivers64UEFI"
 	drivers=($( find "${3%/*/*}/CloverV2/drivers-Off/drivers64UEFI" -type f -name '*.efi' -depth 1 ))
@@ -295,7 +303,7 @@ fi
 	done
 	
 	((xmlindent--))
-	outline[$((outlinecount++))]="${indent[$xmlindent]}\t</line>"
+	outline[${#outline[*]}]="${indent[$xmlindent]}\t</line>"
 
 # End build drivers-x64UEFI packages
 
@@ -304,15 +312,28 @@ fi
 	packagesidentity="org.Clover"
 	mkdir -p ${3}/post/Root
 	mkdir -p ${3}/post/Scripts
-	cp -f ${pkgroot}/Scripts/post/* ${3}/post/Scripts
+	cp -f ${PKGROOT}/Scripts/post/* ${3}/post/Scripts
 	chmod 755 "${3}/post/Scripts/postinstall"
 	echo "	[BUILD] Post "
 	buildpackage "${3}/Post" "/" "" "start_visible=\"false\" start_selected=\"true\"" >/dev/null 2>&1
-	outline[$((outlinecount++))]="${indent[$xmlindent]}</choices-outline>"
+	outline[${#outline[*]}]="${indent[$xmlindent]}</choices-outline>"
+
+# #	  Make the translation
+#	  echo ""
+#	  echo "========= Translating Resources ========"
+#	  (cd "${PKGROOT}" &&  PERLLIB=${PKGROOT}/bin/po4a/lib					\
+#		  bin/po4a/po4a														\
+#		  --package-name 'Clover'											\
+#		  --package-version "${CLOVER_VERSION}-r${CLOVER_REVISION}"			\
+#		  --msgmerge-opt '--lang=$lang'										\
+#		  --variable PODIR="po"												\
+#		  --variable TEMPLATES_DIR="Resources/templates"					\
+#		  --variable OUTPUT_DIR="${PKG_BUILD_DIR}/${packagename}/Resources" \
+#		  ${PKGROOT}/po4a-clover.cfg)
 
 # build meta package
 
-	makedistribution "${3}" "${2}" "${3}" "${4}" "${5}"
+	makedistribution "${3}" "${2}" "${3}"
 
 # clean up 
 
@@ -438,7 +459,7 @@ if [ -d "${1}/Root" ] && [ "${1}/Scripts" ]; then
 	#[ "${3}" == "relocatable" ] && header+="relocatable=\"true\" "		
 
 	header+="identifier=\"${identifier}\" "
-	header+="version=\"${version}\" "
+	header+="version=\"${CLOVER_VERSION}\" "
 
 	[ "${2}" != "relocatable" ] && header+="install-location=\"${2}\" "
 
@@ -473,12 +494,12 @@ if [ -d "${1}/Root" ] && [ "${1}/Scripts" ]; then
 
 	popd >/dev/null
 
-	outline[$((outlinecount++))]="${indent[$xmlindent]}\t<line choice=\"${packagename// /}\"/>"
+	outline[${#outline[*]}]="${indent[$xmlindent]}\t<line choice=\"${packagename// /}\"/>"
 
 	if [ "${4}" ]; then
 		local choiceoptions="${indent[$xmlindent]}${4}\n"	
 	fi
-	choices[$((choicescount++))]="<choice\n\tid=\"${packagename// /}\"\n\ttitle=\"${packagename}_title\"\n\tdescription=\"${packagename}_description\" ${choiceoptions}>\n\t<pkg-ref id=\"${identifier}\" installKBytes='${installedsize}' version='${version}.0.0.${timestamp}' auth='root'>#${packagename// /}.pkg</pkg-ref>\n</choice>\n"
+	choices[${#choices[*]}]="<choice\n\tid=\"${packagename// /}\"\n\ttitle=\"${packagename}_title\"\n\tdescription=\"${packagename}_description\" ${choiceoptions}>\n\t<pkg-ref id=\"${identifier}\" installKBytes='${installedsize}' version='${CLOVER_VERSION}.0.0.${timestamp}' auth='root'>#${packagename// /}.pkg</pkg-ref>\n</choice>\n"
 
 	rm -R -f "${1}"
 fi
@@ -507,7 +528,7 @@ if [ -d "${1}/Root" ] && [ "${1}/Scripts" ]; then
 	#[ "${3}" == "relocatable" ] && header+="relocatable=\"true\" "		
 
 	header+="identifier=\"${identifier}\" "
-	header+="version=\"${version}\" "
+	header+="version=\"${CLOVER_VERSION}\" "
 
 	[ "${2}" != "relocatable" ] && header+="install-location=\"${2}\" "
 
@@ -542,12 +563,12 @@ if [ -d "${1}/Root" ] && [ "${1}/Scripts" ]; then
 
 	popd >/dev/null
 
-	outline[$((outlinecount++))]="${indent[$xmlindent]}\t<line choice=\"${packagename// /}\"/>"
+	outline[${#outline[*]}]="${indent[$xmlindent]}\t<line choice=\"${packagename// /}\"/>"
 
 	if [ "${4}" ]; then
 		local choiceoptions="${indent[$xmlindent]}${4}\n"	
 	fi
-	choices[$((choicescount++))]="<choice\n\tid=\"${packagename// /}\"\n\ttitle=\"${packagename}\"\n\tdescription=\"Install to /EFI/drivers32/${packagename}.efi\"\n${choiceoptions}>\n\t<pkg-ref id=\"${identifier}\" installKBytes='${installedsize}' version='${version}.0.0.${timestamp}' auth='root'>#${packagename// /}.pkg</pkg-ref>\n</choice>\n"
+	choices[${#choices[*]}]="<choice\n\tid=\"${packagename// /}\"\n\ttitle=\"${packagename}\"\n\tdescription=\"Install to /EFI/drivers32/${packagename}.efi\"\n${choiceoptions}>\n\t<pkg-ref id=\"${identifier}\" installKBytes='${installedsize}' version='${CLOVER_VERSION}.0.0.${timestamp}' auth='root'>#${packagename// /}.pkg</pkg-ref>\n</choice>\n"
 
 	rm -R -f "${1}"
 fi
@@ -576,7 +597,7 @@ if [ -d "${1}/Root" ] && [ "${1}/Scripts" ]; then
 	#[ "${3}" == "relocatable" ] && header+="relocatable=\"true\" "		
 
 	header+="identifier=\"${identifier}\" "
-	header+="version=\"${version}\" "
+	header+="version=\"${CLOVER_VERSION}\" "
 
 	[ "${2}" != "relocatable" ] && header+="install-location=\"${2}\" "
 
@@ -611,12 +632,12 @@ if [ -d "${1}/Root" ] && [ "${1}/Scripts" ]; then
 
 	popd >/dev/null
 
-	outline[$((outlinecount++))]="${indent[$xmlindent]}\t<line choice=\"${packagename// /}\"/>"
+	outline[${#outline[*]}]="${indent[$xmlindent]}\t<line choice=\"${packagename// /}\"/>"
 
 	if [ "${4}" ]; then
 		local choiceoptions="${indent[$xmlindent]}${4}\n"	
 	fi
-	choices[$((choicescount++))]="<choice\n\tid=\"${packagename// /}\"\n\ttitle=\"${packagename}\"\n\tdescription=\"Install to /EFI/drivers64/${packagename}.efi\"\n${choiceoptions}>\n\t<pkg-ref id=\"${identifier}\" installKBytes='${installedsize}' version='${version}.0.0.${timestamp}' auth='root'>#${packagename// /}.pkg</pkg-ref>\n</choice>\n"
+	choices[${#choices[*]}]="<choice\n\tid=\"${packagename// /}\"\n\ttitle=\"${packagename}\"\n\tdescription=\"Install to /EFI/drivers64/${packagename}.efi\"\n${choiceoptions}>\n\t<pkg-ref id=\"${identifier}\" installKBytes='${installedsize}' version='${CLOVER_VERSION}.0.0.${timestamp}' auth='root'>#${packagename// /}.pkg</pkg-ref>\n</choice>\n"
 
 	rm -R -f "${1}"
 fi
@@ -634,8 +655,8 @@ makedistribution ()
 		popd >/dev/null
 	done
 
-	ditto --noextattr --noqtn "${pkgroot}/Distribution" "${1}/${packagename}/Distribution"
-	ditto --noextattr --noqtn "${pkgroot}/Resources" "${1}/${packagename}/Resources"
+	ditto --noextattr --noqtn "${PKGROOT}/Distribution" "${1}/${packagename}/Distribution"
+	ditto --noextattr --noqtn "${PKGROOT}/Resources" "${1}/${packagename}/Resources"
 
 	find "${1}/${packagename}/Resources" -type d -name '.svn' -exec rm -R -f {} \; 2>/dev/null
 
@@ -649,10 +670,10 @@ makedistribution ()
 			echo -e "${choices[$i]}" >> "${1}/${packagename}/Distribution"
 		done
 
-	echo "</installer-gui-script>"  >> "${1}/${packagename}/Distribution"
+	echo "</installer-gui-script>"	>> "${1}/${packagename}/Distribution"
 
-	perl -i -p -e "s/%CLOVERVERSION%/${version%%-*}/g" `find "${1}/${packagename}/Resources" -type f`
-	perl -i -p -e "s/%CLOVERREVISION%/${revision}/g" `find "${1}/${packagename}/Resources" -type f`
+	perl -i -p -e "s/%CLOVERVERSION%/${CLOVER_VERSION%%-*}/g" `find "${1}/${packagename}/Resources" -type f`
+	perl -i -p -e "s/%CLOVERREVISION%/${CLOVER_REVISION}/g" `find "${1}/${packagename}/Resources" -type f`
 
 #  Adding Developer and credits
 	perl -i -p -e "s/%DEVELOP%/${develop}/g" `find "${1}/${packagename}/Resources" -type f`
@@ -660,8 +681,8 @@ makedistribution ()
 	perl -i -p -e "s/%PKGDEV%/${pkgdev}/g" `find "${1}/${packagename}/Resources" -type f`
 	perl -i -p -e "s/%YEAR%/${year}/g" `find "${1}/${packagename}/Resources" -type f`
 
-	old="description=\"black_green_description\" 			start_selected=\"false\""
-	new="description=\"black_green_description\" 			start_enabled=\"false\" start_selected=\"true\""
+	old="description=\"black_green_description\"			start_selected=\"false\""
+	new="description=\"black_green_description\"			start_enabled=\"false\" start_selected=\"true\""
 	perl -i -p -e "s/${old}/${new}/g" `find "${1}/${packagename}/Distribution" -type f`
 	perl -i -p -e "s/description=\"Themes_description\"/description=\"Themes_description\" start_enabled=\"false\" /g" `find "${1}/${packagename}/Distribution" -type f`
 
@@ -672,20 +693,20 @@ makedistribution ()
 
 	find "${1}/${packagename}" -name '.DS_Store' -delete
 	pushd "${1}/${packagename}" >/dev/null
-	xar -c -f "${1%/*}/${packagename// /}_${version}_r${revision}.pkg" --compression none .
+	xar -c -f "${1%/*}/${packagename// /}_${CLOVER_VERSION}_r${CLOVER_REVISION}.pkg" --compression none .
 	popd >/dev/null
 
 	# Icon pkg reworked by ErmaC
-	ditto -xk "${pkgroot}/Icon.zip" "${1%/*}/${packagename}"
+	ditto -xk "${PKGROOT}/Icon.zip" "${1%/*}/${packagename}"
 	DeRez -only icns "${1%/*}/${packagename}/Icon.icns" > tempicns.rsrc
-	Rez -append tempicns.rsrc -o "${1%/*}/${packagename// /}_${version}_r${revision}.pkg"
-	SetFile -a C "${1%/*}/${packagename// /}_${version}_r${revision}.pkg"
+	Rez -append tempicns.rsrc -o "${1%/*}/${packagename// /}_${CLOVER_VERSION}_r${CLOVER_REVISION}.pkg"
+	SetFile -a C "${1%/*}/${packagename// /}_${CLOVER_VERSION}_r${CLOVER_REVISION}.pkg"
 	rm -R "${1%/*}/${packagename}"
 	rm -rf tempicns.rsrc
 # End
 
-	md5=$( md5 "${1%/*}/${packagename// /}_${version}_r${revision}.pkg" | awk {'print $4'} )
-	echo "MD5 (${packagename// /}_${version}_r${revision}.pkg) = ${md5}" > "${1%/*}/${packagename// /}_${version}_r${revision}.pkg.md5"
+	md5=$( md5 "${1%/*}/${packagename// /}_${CLOVER_VERSION}_r${CLOVER_REVISION}.pkg" | awk {'print $4'} )
+	echo "MD5 (${packagename// /}_${CLOVER_VERSION}_r${CLOVER_REVISION}.pkg) = ${md5}" > "${1%/*}/${packagename// /}_${CLOVER_VERSION}_r${CLOVER_REVISION}.pkg.md5"
 	echo ""	
 
 	echo -e $COL_GREEN"	--------------------------"$COL_RESET
@@ -694,9 +715,9 @@ makedistribution ()
 	echo ""	
 	echo -e $COL_GREEN"	Build info."
 	echo -e $COL_GREEN"	==========="
-	echo -e $COL_BLUE"	Package name:	"$COL_RESET"${packagename// /}_${version}_r${revision}.pkg"
+	echo -e $COL_BLUE"	Package name:	"$COL_RESET"${packagename// /}_${CLOVER_VERSION}_r${CLOVER_REVISION}.pkg"
 	echo -e $COL_BLUE"	MD5:		"$COL_RESET"$md5"
-	echo -e $COL_BLUE"	Version:	"$COL_RESET"$version"
+	echo -e $COL_BLUE"	Version:	"$COL_RESET"$CLOVER_VERSION"
 #	echo -e $COL_BLUE"	Stage:		"$COL_RESET"$stage"
 	echo -e $COL_BLUE"	Date/Time:	"$COL_RESET"$builddate"
 	echo ""
@@ -704,5 +725,4 @@ makedistribution ()
 	echo ""
 }
 
-main "${1}" "${2}" "${3}" "${4}" "${5}"
-
+main $@

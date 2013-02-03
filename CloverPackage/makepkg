@@ -1,17 +1,12 @@
 #!/bin/bash
 
 # Workspace = edk2/Clover/CloverPackage
-# Copy the Version.h to workspace.
-
-cp -f ../rEFIt_UEFI/Version.h Version.h
 
 version=v2
-#version=$( grep "FIRMWARE_VERSION" Version.h | awk '{ print $3 }' | tr -d '\"' )
-revision=$( grep "FIRMWARE_REVISION" Version.h | awk '{ print $3 }' | tr -d '\"' | tr ":" "_" )
+revision=$(cat ../vers.txt)
 
-echo "${version}" > version
+echo "${version}"  > version
 echo "${revision}" > revision
-
 
 # Workspace = edk2/Clover/CloverPackage
 # Copy doc to CloverV2/doc.
@@ -68,7 +63,6 @@ cd ..
 
 rm -rf package/Resources
 rm -f package/Distribution
-rm -f Version.h
 rm -f version
 rm -f revision
 rm -rf CloverV2/EFI/doc

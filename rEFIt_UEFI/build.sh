@@ -73,7 +73,7 @@ echo "#define FIRMWARE_BUILDDATE \"`date \"+%Y-%m-%d %H:%M:%S\"`\"" >> $WORKSPAC
 #echo "#define FIRMWARE_REVISION \"`svnversion -n | tr -d [:alpha:]`\"" >> $WORKSPACE/Clover/rEFIt_UEFI/Version.h
 echo "#define FIRMWARE_REVISION L\"`cat Clover/rEFIt_UEFI/vers.txt`\"" >> $WORKSPACE/Clover/rEFIt_UEFI/Version.h
 #rm -f $WORKSPACE/Clover/rEFIt_UEFI/vers.txt
-cp $WORKSPACE/Clover/rEFIt_UEFI/Version.h $WORKSPACE/Clover/CloverPackage/
+
 #
 # Build the edk2 
 #

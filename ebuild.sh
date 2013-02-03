@@ -319,11 +319,12 @@ fi
 # Build the CloverPkg
 echo Running edk2 build for Clover$Processor
 #rm $WORKSPACE/Clover/Version.h
+local clover_revision=$(cat Clover/vers.txt)
+local clover_build_date=$(date '+%Y-%m-%d %H:%M:%S')
 echo "#define FIRMWARE_VERSION \"2.31\"" > $WORKSPACE/Clover/Version.h
-echo "#define FIRMWARE_BUILDDATE \"`date \"+%Y-%m-%d %H:%M:%S\"`\"" >> $WORKSPACE/Clover/Version.h
-echo "#define FIRMWARE_REVISION L\"`cat Clover/vers.txt`\"" >> $WORKSPACE/Clover/Version.h
-echo "#define REVISION_STR \"Clover revision: `cat Clover/vers.txt`\"" >> $WORKSPACE/Clover/Version.h
-cp $WORKSPACE/Clover/Version.h $WORKSPACE/Clover/CloverPackage/
+echo "#define FIRMWARE_BUILDDATE \"${clover_build_date}\"" >> $WORKSPACE/Clover/Version.h
+echo "#define FIRMWARE_REVISION L\"${clover_revision}\""   >> $WORKSPACE/Clover/Version.h
+echo "#define REVISION_STR \"Clover revision: ${clover_revision}\"" >> $WORKSPACE/Clover/Version.h
 cp $WORKSPACE/Clover/Version.h $WORKSPACE/Clover/rEFIt_UEFI/
 build -p $WORKSPACE/Clover/Clover$Processor.dsc -a $PROCESSOR -b $VTARGET -t $TARGET_TOOLS -n 3 $*
 
