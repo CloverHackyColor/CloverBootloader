@@ -95,6 +95,11 @@ image:
 	@cp -f $(CLOVERROOT)/drivers-Off/drivers64/UsbMouseDxe-64.efi ${IMGROOT}/EFI/drivers64/
 	@cp -f $(CLOVERROOT)/drivers-Off/drivers64/PS2MouseDxe-64.efi ${IMGROOT}/EFI/drivers64/
 	@if [ ${IMAGE_WITH_IA32} -eq 1 ]; then \
+		rsync -r $(CLOVERROOT)/drivers-Off ${IMGROOT}/EFI/ ; \
+	else \
+		rsync -r $(CLOVERROOT)/drivers-Off --exclude='drivers32*' ${IMGROOT}/EFI/ ; \
+	fi
+	@if [ ${IMAGE_WITH_IA32} -eq 1 ]; then \
 		echo "\t[CP] drivers32"; \
 		cp -r -f $(CLOVERROOT)/EFI/drivers32 ${IMGROOT}/EFI/; \
 		echo "ADD drivers32"; \
