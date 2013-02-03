@@ -25,7 +25,7 @@ NVRAMPartType=
 bootFlags=$(nvram -p | sed -n 's/^boot-args *//p')
 
 if [[ "$DEBUG" -ne 0 ]]; then
-  exec &>exec &>"${logLocation}"/rc.shutdown.log
+  exec &>"${logLocation}"/rc.shutdown.log
   set -x
 fi
 
