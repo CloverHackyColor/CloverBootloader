@@ -19,6 +19,7 @@
 
 DEBUG=0
 
+logLocation=/Library/Logs/CloverEFI
 NVRAMFilename=nvram.plist
 NVRAMMountPoint=/tmp/NVRAM
 NVRAMDevice=
