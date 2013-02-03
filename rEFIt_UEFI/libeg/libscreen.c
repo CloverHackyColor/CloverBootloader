@@ -377,7 +377,7 @@ VOID egSetGraphicsModeEnabled(IN BOOLEAN Enable)
                 // But report that we are in text mode when queried, to avoid another set command
                 ConsoleControl->GetMode = NullConsoleControlGetModeText;
                 return;
-            } else {
+            } else if (ConsoleControl->GetMode != ConsoleControlGetMode) {
                 // Allow switching to graphics mode, and use original GetMode function
                 ConsoleControl->GetMode = ConsoleControlGetMode;
             }
