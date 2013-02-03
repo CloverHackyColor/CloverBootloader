@@ -28,7 +28,7 @@ then
 	dest_vol="/Volumes/"$( ls -1F /Volumes | sed -n 's:@$::p' )
 else
     dest_vol="$3"
-fi    
+fi
 
 
 # ---------------------------------------------
@@ -46,7 +46,7 @@ mkdir -p "$backupDir"
 
 echo " " > "${dest_vol}/Clover_Install_Log.txt"
 echo "Clover EFI installer log - $( date )" >> "${dest_vol}/Clover_Install_Log.txt"
-echo "Installer version: %CLOVERVERSION% r%CLOVERREVISION% x32 x64 EFI bootloader" >> "${dest_vol}/Clover_Install_Log.txt"
+echo "Installer version: %CLOVERVERSION% r%CLOVERREVISION% EFI bootloader" >> "${dest_vol}/Clover_Install_Log.txt"
 echo "======================================================" >> "${dest_vol}/Clover_Install_Log.txt"
 diskutil list >> "${dest_vol}/Clover_Install_Log.txt"
 echo "======================================================" >> "${dest_vol}/Clover_Install_Log.txt"

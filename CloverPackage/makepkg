@@ -36,7 +36,7 @@ mkdir -p package/Resources
 cp -Rf package/Resources-original/* package/Resources
 
 cp -f package/Distribution-original package/Distribution
-title="title>Clover ${version} r${revision} x32 x64 EFI bootloader"
+title="title>Clover ${version} r${revision} EFI bootloader"
 perl -i -p -e "s/title>Clover_title/${title}/g" `find "package/Distribution" -type f`
 
 echo " "
