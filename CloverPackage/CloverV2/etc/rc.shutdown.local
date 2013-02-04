@@ -22,9 +22,7 @@ DEBUG=0
 logLocation=/Library/Logs/CloverEFI
 NVRAMFilename=nvram.plist
 NVRAMMountPoint=/tmp/NVRAM
-NVRAMDevice=
 NVRAMPartType=
-
 bootFlags=$(nvram -p | sed -n 's/^boot-args *//p')
 
 if [[ "$DEBUG" -ne 0 ]]; then
@@ -53,21 +51,23 @@ function findFirstAppleBootDevice {
             index=
         fi
     done
-    # If index found return the device and partition (like diskXsY)
-    [[ -n "$index" ]] && echo "${device##*/}s$index"
+    # If index found return the device and partition (like /dev/diskXsY)
+    [[ -n "$index" ]] && echo "${device}s$index"
+}
+
+function setNVRAMDevice {
+    local arg="$1"
+    [[ -z "$arg" ]] && return
+    if [[ "$arg" == No ]]; then
+        NVRAMDevice=
+    else
+        NVRAMDevice="$arg"
+    fi
 }
 
 function mountNVRAMDisk {
     local device="$1"
     local mntpt="$2"
-
-    # Check if the device is not already mount
-    while read -r dev mnt; do
-        if [[ "$dev" == "$device" ]]; then
-            echo "$mnt" # Return the mount point
-            return 0
-        fi
-    done < <(df -l | sed -n 's/^\/dev\/\(disk[^ ]*\)[^/]*\(\/.*$\)/\1 \2/p')
 
     #
     # Make sure mount point exists
@@ -82,61 +82,50 @@ function mountNVRAMDisk {
     umount "/dev/$device" 2>/dev/null
     for fstype in hfs msdos; do
         mount -t $fstype /dev/$device "$mntpt" &>/dev/null
-        [[ $? -eq 0 ]] && echo "$mntpt" && return 0
+        [[ $? -eq 0 ]] && return 0
     done
 
     return 1
 }
 
-function mountAndSaveNVRAM {
-    local device="$1"
-
-    # Mount the NVRamDisk device
-    local mntpt=$(mountNVRAMDisk "$device" "$NVRAMMountPoint")
-
-    if [[ -n "$mntpt" ]]; then
-        #
-        # Write NVRAM and make sure it exists
-        #
-        nvram -x -p > "${mntpt}/${NVRAMFilename}"
-        if [[ -f "${mntpt}/${NVRAMFilename}" ]]; then
-            chflags hidden "${mntpt}/${NVRAMFilename}"
-            umount "$NVRAMMountPoint" &>/dev/null
-            echo "NVRAM saved to /${NVRAMFilename} on $device"
-            return 0
-        fi
-        umount "$NVRAMMountPoint" &>/dev/null
-    fi
-    echo "NVRAM couldn't be saved to /${NVRAMFilename} on $device !"
-    return 1
-}
-
 function saveNVRAM {
-    local rootDevice=$(df -l / | sed -n 's/^\/dev\/\([^ ]*\).*/\1/p')
-
-    # If NVRAMDevice is not specify use rootDevice
-    NVRAMDevice=${NVRAMDevice:-$rootDevice}
-
     # Normalize NVRAMDevice (keep only the device name (remove /dev/)
-    NVRAMDevice=${NVRAMDevice##*/}
+	NVRAMDevice=${NVRAMDevice##*/}
 
-    if [[ ! "$NVRAMDevice" =~ ^disk[0-9]*s[0-9]*$ ]]; then
-        # NVRAMDevice is a whole disk certainly a RAID device
-        # try to save nvram.plist on the first Apple Boot Partition
+	#
+	# Try to save NVRAM to boot helper partition for RAID first
+	#
+	if [[ -n "$NVRAMDevice" ]]; then
 
-        local AppleBootDevice=$(findFirstAppleBootDevice)
+		# Mount the NVRamDisk device
+		mountNVRAMDisk "$NVRAMDevice" "$NVRAMMountPoint"
 
-        if [[ -n "$AppleBootDevice" ]]; then
-            # Try to save nvram.plist on the Apple Boot device
-            mountAndSaveNVRAM "$AppleBootDevice"
-            [[ $? -eq 0 ]] && return
-        fi
-    fi
+		if [[ $? -eq 0 ]]; then
+			#
+			# Write NVRAM and make sure it exists
+			#
+			nvram -x -p > "${NVRAMMountPoint}/${NVRAMFilename}"
+			if [[ -f "${NVRAMMountPoint}/${NVRAMFilename}" ]]; then
+				chflags hidden "${NVRAMMountPoint}/${NVRAMFilename}"
+				umount /dev/${NVRAMDevice}
+				echo "NVRAM saved to /${NVRAMFilename} on $NVRAMDevice"
+				exit
+			fi
+			umount /dev/${NVRAMDevice}
+		fi
+		echo "NVRAM couldn't be saved to /${NVRAMFilename} on $NVRAMDevice !"
+	fi
 
-    # Save NVRAM to specific device or root
-    mountAndSaveNVRAM "$NVRAMDevice"
-    [[ $? -ne 0 ]] && mountAndSaveNVRAM "$rootDevice"
+	#
+	# Try to save NVRAM to root by default
+	#
+	nvram -x -p >  "/${NVRAMFilename}"
+	chflags hidden "/${NVRAMFilename}"
+	echo "NVRAM saved to /${NVRAMFilename}"
 }
+
+# By default try to save nvram.plist on first Apple Boot partition
+NVRAMDevice=$(findFirstAppleBootDevice)
 
 #
 # Parse boot flags
@@ -154,7 +143,7 @@ for bootFlag in ${bootFlags} ; do
    # All match are case insensitive
    case "$bootFlagKey" in
        NVRamDisk) # NVRamDisk=No|diskXsY
-                  NVRAMDevice="$bootFlagValue" ;;
+                  setNVRAMDevice "$bootFlagValue" ;;
    esac
 done
 
@@ -162,4 +151,4 @@ EFIFirmwareVendor=$(LC_ALL=C ioreg -l -pIODeviceTree | \
  sed -n 's/.*firmware-vendor.*<\([0-9a-fA-F]*\)>.*/\1/p' | xxd -r -p)
 
 # Only save nvram to disk if boot from CloverEFI
-[[ "$NVRAMDevice" != No && "$EFIFirmwareVendor" == CLOVER ]] && saveNVRAM
+[[ "$EFIFirmwareVendor" == CLOVER ]] && saveNVRAM
