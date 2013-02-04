@@ -71,7 +71,7 @@ BOOLEAN AllowGraphicsMode;
 EG_RECT  BannerPlace = {0, 0, 0, 0};
 
 EG_PIXEL StdBackgroundPixel   = { 0xbf, 0xbf, 0xbf, 0x00};
-EG_PIXEL MenuBackgroundPixel  = { 0xbf, 0xbf, 0xbf, 0x80};
+EG_PIXEL MenuBackgroundPixel  = { 0x00, 0x00, 0x00, 0x00};
 EG_PIXEL InputBackgroundPixel = { 0xcf, 0xcf, 0xcf, 0x80};
 
 EG_IMAGE *BackgroundImage = NULL;
@@ -383,12 +383,6 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
       Banner = egPrepareEmbeddedImage(&egemb_refit_banner, FALSE);
     else
       Banner = egLoadImage(ThemeDir, GlobalConfig.BannerFileName, FALSE);
-    if (Banner != NULL) {
-      MenuBackgroundPixel = Banner->PixelData[0];
- /*     if (MenuBackgroundPixel.a == 0) {
-        MenuBackgroundPixel = DarkBackgroundPixel;
-      } */
-    }
   }
   if (!Banner) {
     DBG("banner file not read\n");

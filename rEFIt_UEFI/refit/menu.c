@@ -1976,7 +1976,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
           Screen->Entries[i]->Place.Width = StrLen(ResultString) * GlobalConfig.CharWidth;
           //Slice - suppose to use Row as Cursor in text
           DrawMenuText(ResultString,
-                       (i == State->CurrentSelection)?(Screen->Entries[i]->Place.Width):0,
+                       (i == State->CurrentSelection)?(MenuWidth /* Screen->Entries[i]->Place.Width */):0,
                        EntriesPosX, Screen->Entries[i]->Place.YPos,
                        TitleLen + Screen->Entries[i]->Row);
         }
@@ -2042,7 +2042,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         StrCpy(ResultString, Screen->Entries[State->CurrentSelection]->Title);
         StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->SValue + ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->LineShift);
         StrCat(ResultString, L" ");
-        DrawMenuText(ResultString, StrLen(ResultString) * GlobalConfig.CharWidth,
+        DrawMenuText(ResultString, MenuWidth /* StrLen(ResultString) * GlobalConfig.CharWidth */,
                      EntriesPosX, EntriesPosY + (State->CurrentSelection - State->FirstVisible) * TextHeight,
                      TitleLen + Screen->Entries[State->CurrentSelection]->Row);
       }
