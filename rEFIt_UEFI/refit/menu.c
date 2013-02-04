@@ -1332,7 +1332,8 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
 	} while (!MenuExit);
 	switch (MenuExit) {
 		case MENU_EXIT_ENTER:
-      Item->Valid = TRUE;   
+      Item->Valid = TRUE;
+      ApplyInputs();
 //      Item->SValue = EfiStrDuplicate(Buffer);
 			break;
 		case MENU_EXIT_ESCAPE:
