@@ -115,7 +115,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
 	UINT8 BuiltIn =		0x00;
   UINTN j;
 	UINT8 ClassFix[4] =	{ 0x00, 0x00, 0x03, 0x00 };
-  UINT8 IG_ID[4] = { 0x00, 0x00, 0x62, 0x01 };
+//  UINT8 IG_ID[4] = { 0x00, 0x00, 0x62, 0x01 };
   
   
 	
@@ -178,21 +178,23 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
         devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[23], 4);
         devprop_add_value(device, "class-code",	ClassFix, 4);
       }
-      else {/*if (gma_dev->device_id == 0x166) 
+      else if (gma_dev->device_id == 0x166) 
           devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[25], 4);
       else if (gma_dev->device_id == 0x152)
         devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[24], 4);
       else if (gma_dev->device_id == 0x156) 
         devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[25], 4);
-       */
-        IG_ID[0] = gma_dev->revision;
+       
+    /*    IG_ID[0] = gma_dev->revision;
         IG_ID[2] |= gma_dev->device_id & 0x0f;
       
-        devprop_add_value(device, "AAPL,ig-platform-id", IG_ID, 4);
-      }
+        devprop_add_value(device, "AAPL,ig-platform-id", IG_ID, 4); */
+      
     case 0xA011:
     case 0xA012:  
-      devprop_add_value(device, "AAPL00,DualLink", (UINT8 *)&DualLink, 1);
+      if (DualLink != 0) {
+        devprop_add_value(device, "AAPL00,DualLink", (UINT8 *)&DualLink, 1);
+      }
     case 0x2582:
     case 0x2592:
     case 0x27A2:
