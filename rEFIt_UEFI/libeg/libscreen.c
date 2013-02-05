@@ -52,8 +52,8 @@ static EFI_GUID GraphicsOutputProtocolGuid = EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID;
 EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphicsOutput = NULL;
 
 static BOOLEAN egHasGraphics = FALSE;
-static UINTN egScreenWidth  = 1024;
-static UINTN egScreenHeight = 768;
+static UINTN egScreenWidth  = 0; //1024;
+static UINTN egScreenHeight = 0; //768;
 
 static EFI_CONSOLE_CONTROL_PROTOCOL_GET_MODE ConsoleControlGetMode = NULL;
 
@@ -270,7 +270,8 @@ VOID egInitScreen(IN BOOLEAN SetMaxResolution)
 {
     EFI_STATUS Status;
     UINT32 Width, Height, Depth, RefreshRate;
-    
+    CHAR16 *Resolution;
+
     // get protocols
     Status = EfiLibLocateProtocol(&ConsoleControlProtocolGuid, (VOID **) &ConsoleControl);
     if (EFI_ERROR(Status))
@@ -288,7 +289,19 @@ VOID egInitScreen(IN BOOLEAN SetMaxResolution)
     if (ConsoleControl != NULL && ConsoleControlGetMode == NULL) {
         ConsoleControlGetMode = ConsoleControl->GetMode;
     }
-    
+ 
+    // if it not the first run, just restore resolution   
+    if (egScreenWidth  != 0 && egScreenHeight != 0) {
+        Resolution = PoolPrint(L"%dx%d",egScreenWidth,egScreenHeight);
+        if (Resolution) {
+            Status = egSetScreenResolution(Resolution);
+            FreePool(Resolution);
+            if (!EFI_ERROR(Status)) {
+                return;
+            }
+        }
+    }
+
     // get screen size
     egHasGraphics = FALSE;
     if (GraphicsOutput != NULL) {
