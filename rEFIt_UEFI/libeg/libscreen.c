@@ -611,7 +611,7 @@ static EFI_STATUS GopSetModeAndReconnectTextOut(IN UINT32 ModeNumber)
 
     Status = GraphicsOutput->SetMode(GraphicsOutput, ModeNumber);
 
-    if (!EFI_ERROR (Status)) { 
+    if (gFirmwareClover && !EFI_ERROR (Status)) { 
         // When we change mode on GOP, we need to reconnect the drivers which produce simple text out
         // Otherwise, they won't produce text based on the new resolution
         Status = gBS->LocateHandleBuffer (
