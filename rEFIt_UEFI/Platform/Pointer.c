@@ -111,7 +111,18 @@ EFI_STATUS MouseBirth()
     DrawPointer();
     return EFI_SUCCESS;
   }
-  Status = gBS->LocateProtocol (&gEfiSimplePointerProtocolGuid, NULL, (VOID**)&gPointer.SimplePointerProtocol);
+  //Status = gBS->LocateProtocol (&gEfiSimplePointerProtocolGuid, NULL, (VOID**)&gPointer.SimplePointerProtocol);
+
+  // Try first to use mouse from System Table
+  Status = gBS->HandleProtocol (gST->ConsoleInHandle, &gEfiSimplePointerProtocolGuid, (VOID**)&gPointer.SimplePointerProtocol);
+  if (EFI_ERROR (Status)) {
+      // not found, so use the first found device
+      DBG("MouseBirth: No mouse at ConIn, checking if any other device exists\n");
+      Status = gBS->LocateProtocol (&gEfiSimplePointerProtocolGuid, NULL, (VOID**)&gPointer.SimplePointerProtocol);
+  } else {
+      DBG("MouseBirth: Mouse located at ConIn\n");
+  }
+
   if(EFI_ERROR(Status)) {
     gPointer.SimplePointerProtocol = NULL;
     MsgLog("No mouse!\n");
@@ -124,6 +135,7 @@ EFI_STATUS MouseBirth()
   DBG(" - ResolutionZ=%ld\n", CurrentMode->ResolutionZ);
   DBG(" - Left button %a present\n", CurrentMode->LeftButton?" ":"not");
   DBG(" - Right button %a present\n", CurrentMode->RightButton?" ":"not");
+  DBG(" - WaitForInput %a present\n", gPointer.SimplePointerProtocol->WaitForInput?" ":"not");
   //TODO - config and menu?
   //CurrentMode->ResolutionX = gSettings.PointerSpeed;
   //CurrentMode->ResolutionY = gSettings.PointerSpeed;
