@@ -26,10 +26,16 @@ bootFlags=$(nvram -p | sed -n 's/^boot-args *//p')
 currentDate=$(date "+%Y-%m-%d")
 currentTime=$(date "+%H:%M:%S")
 
-if [[ "$DEBUG" -ne 0 ]]; then
-  exec &>"${logLocation}"/rc.local.log
-  set -x
-fi
+exec &>"${logLocation}"/rc.local.log
+
+#
+# Print the current timestamp
+#
+echo "-------------------------------"
+echo "DATE: ${currentDate} TIME: ${currentTime}"
+echo "-------------------------------"
+
+[[ "$DEBUG" -ne 0 ]] && set -x
 
 # Turn on a case-insensitive matching
 shopt -s nocasematch
@@ -45,11 +51,16 @@ function mountEFI {
     else
         # keep only the device name (remove /dev/ and partition (aka s1))
         theEFIRoot=$(echo $theEFIRoot | sed 's@^.*/@@;s/\(disk[0-9]*\).*/\1/')
+        local EFIPartition="${theEFIRoot}s1"
         [[ ! -d ${EFIMountPoint} ]] && mkdir -p "${EFIMountPoint}"
         umount ${EFIMountPoint}     2>/dev/null
-        umount /dev/${theEFIRoot}s1 2>/dev/null
-        mount -t msdos /dev/${theEFIRoot}s1 ${EFIMountPoint} || \
-         echo "Failed to mount ${theEFIRoot}s1 at ${EFIMountPoint}"
+        umount /dev/${EFIPartition} 2>/dev/null
+        mount -t msdos /dev/${EFIPartition} ${EFIMountPoint}
+        if [[ $? -ne 0 ]]; then
+            echo "Failed to mount $EFIPartition at $EFIMountPoint"
+        else
+            echo "EFI partition ($EFIPartition) mount at $EFIMountPoint"
+        fi
     fi
 }
 
@@ -121,6 +132,7 @@ logdump=$(ioreg -lw0 -pIODeviceTree | grep boot-log)
 modified1=${logdump#*boot-log}
 modified2=${modified1#*<}
 echo "${modified2%%>*}" | xxd -r -p >> ${theLogPath}
+echo "Clover boot messages saved in $theLogPath"
 
 # If the line count > 0 trim the system log to line count
 if [[ "$logLineCount" -gt 0 ]]; then
