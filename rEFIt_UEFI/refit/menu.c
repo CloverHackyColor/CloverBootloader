@@ -773,7 +773,7 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gSettings.DoubleClickTime = StrDecimalToUintn(InputItems[i].SValue);
     DBG("DoubleClickTime=%d ms\n", gSettings.DoubleClickTime);
-  }
+  } 
   i++; //72
   if (InputItems[i].Valid) {
     gSettings.PointerMirror = InputItems[i].BValue;

@@ -241,6 +241,93 @@ CHAR8* AppleChassisAsset[] =
 	"Pro-Enclosure",
 	"Pro-Enclosure"
 };
+//TODO - find more information and correct all SMC arrays
+CHAR8* SmcPlatform[] =
+{
+	"m70",  //"MacBook1,1",
+	"m75",  //"MacBook2,1",
+	"m82",  //"MacBook4,1",
+	"m97",  //"MacBook5,2",
+	"NA",   //"MacBookPro5,1",
+  "k90i", //"MacBookPro8,1",
+  "k92i", //"MacBookPro8,3",
+  "j30",  //"MacBookPro9,2",
+	"NA",  //"MacBookAir3,1",
+  "NA",  //"MacBookAir5,2",
+	"NA",  //"Macmini2,1",  //31 -> m88
+  "NA",  //"Macmini5,1",
+  "NA",  //"Macmini6,2",
+	"NA",  //"iMac8,1",
+	"NA",  //"iMac10,1",
+  "NA",  //"iMac11,1",
+	"NA",  //"iMac11,2",
+  "NA",  //"iMac11,3",
+	"k60", //"iMac12,1",
+  "k62", //"iMac12,2",
+  "NA",  //"iMac13,1",
+	"NA",  //"MacPro3,1",
+	"NA",  //"MacPro4,1",
+	"NA",  //"MacPro5,1"
+};
+
+
+UINT8 SmcRevision[][6] = {
+  {0x01, 0x30, 0x0F, 0, 0, 0x03},  //"MacBook1,1",
+	{0x01, 0x30, 0x0F, 0, 0, 0x03},  //"MacBook2,1",
+	{0x01, 0x30, 0x0F, 0, 0, 0x03},  //"MacBook4,1",
+	{0x01, 0x32, 0x0F, 0, 0, 0x08},  //"MacBook5,2",
+	{0x01, 0x30, 0x0F, 0, 0, 0x03},  //"MacBookPro5,1",
+  {0x01, 0x68, 0x0F, 0, 0, 0x96},  //"MacBookPro8,1",
+  {0x01, 0x30, 0x0F, 0, 0, 0x03},  //"MacBookPro8,3",
+  {0x02, 0x02, 0x0F, 0, 0, 0x41},  //"MacBookPro9,2",
+	{0x01, 0x30, 0x0F, 0, 0, 0x03},  //"MacBookAir3,1",
+  {0x01, 0x30, 0x0F, 0, 0, 0x03},  //"MacBookAir5,2",
+	{0x01, 0x35, 0x0F, 0, 0, 0x01},  //"Macmini2,1", //this number from mm31
+  {0x01, 0x30, 0x0F, 0, 0, 0x03},  //"Macmini5,1",
+  {0x01, 0x30, 0x0F, 0, 0, 0x03},  //"Macmini6,2",
+	{0x01, 0x30, 0x0F, 0, 0, 0x03},  //"iMac8,1",
+	{0x01, 0x30, 0x0F, 0, 0, 0x03},  //"iMac10,1",
+  {0x01, 0x54, 0x0F, 0, 0, 0x33},  //"iMac11,1",
+	{0x01, 0x30, 0x0F, 0, 0, 0x03},  //"iMac11,2",
+  {0x01, 0x30, 0x0F, 0, 0, 0x03},  //"iMac11,3",
+	{0x01, 0x71, 0x0F, 0, 0, 0x22},  //"iMac12,1",
+  {0x01, 0x72, 0x0F, 0, 0, 0x02},  //"iMac12,2",
+  {0x01, 0x30, 0x0F, 0, 0, 0x03},  //"iMac13,1",
+	{0x01, 0x30, 0x0F, 0, 0, 0x03},  //"MacPro3,1",
+	{0x01, 0x30, 0x0F, 0, 0, 0x03},  //"MacPro4,1",
+	{0x01, 0x30, 0x0F, 0, 0, 0x03},  //"MacPro5,1"
+
+};
+
+
+UINT32 SmcConfig[] =
+{
+	0x71001,  //"MacBook1,1",
+	0x72001,  //"MacBook2,1",
+	0x74001,  //"MacBook4,1",
+	0x7a002,  //"MacBook5,2",
+	0x7b002,  //"MacBookPro5,1",
+  0x7b005,  //"MacBookPro8,1",
+  0x7c005,  //"MacBookPro8,3",
+  0x76006,  //"MacBookPro9,2",
+	0x7a004,  //"MacBookAir3,1",
+  0x7b006,  //"MacBookAir5,2",
+	0x78002,  //"Macmini2,1",  //31 -> m88
+  0x7d005,  //"Macmini5,1",
+  0x7d006,  //"Macmini6,2",
+	0x7b001,  //"iMac8,1",
+	0x7b002,  //"iMac10,1",
+  0x7b004,  //"iMac11,1",
+	0x7c004,  //"iMac11,2",
+  0x7d004,  //"iMac11,3",
+	0x73004,  //"iMac12,1",
+  0x75005,  //"iMac12,2",
+  0x78006,  //"iMac13,1",
+	0x7b002,  //"MacPro3,1",
+	0x7c002,  //"MacPro4,1",
+	0x7c002,  //"MacPro5,1"
+};
+
 
 CHAR8* AppleBoardSN = "C02140302D5DMT31M";
 CHAR8* AppleBoardLocation = "Part Component";
@@ -262,6 +349,7 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model)
   AsciiStrCpy(gSettings.LocationInChassis,      AppleBoardLocation);
   AsciiStrCpy(gSettings.ChassisManufacturer,    BiosVendor);
   AsciiStrCpy(gSettings.ChassisAssetTag,        AppleChassisAsset[Model]);
+  
   if (Model >= MacPro31) {
     gSettings.BoardType = BaseBoardTypeProcessorMemoryModule; //11;
   } else {
@@ -318,6 +406,47 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model)
       } */
       break;
   }
+ //smc helper
+  if (SmcPlatform[Model][0] != 'N') {
+    AsciiStrCpy(gSettings.RPlt, SmcPlatform[Model]);
+  } else {
+    switch (gCPUStructure.Model) {
+      case CPU_MODEL_PENTIUM_M:
+        AsciiStrCpy(gSettings.RPlt, "M70");
+        break;
+      case CPU_MODEL_YONAH:
+        AsciiStrCpy(gSettings.RPlt, "k22");
+        break;
+      case CPU_MODEL_MEROM: //TODO check for mobile
+        AsciiStrCpy(gSettings.RPlt, "M75");
+        break;
+      case CPU_MODEL_PENRYN:
+        if (gSettings.Mobile) {
+          AsciiStrCpy(gSettings.RPlt, "M82");
+        } else {
+          AsciiStrCpy(gSettings.RPlt, "k36");
+        }
+        break;
+      case CPU_MODEL_SANDY_BRIDGE:
+        if (gSettings.Mobile) {
+          AsciiStrCpy(gSettings.RPlt, "k90i");
+        } else {
+          AsciiStrCpy(gSettings.RPlt, "k60");
+        }
+        break;
+      case CPU_MODEL_IVY_BRIDGE:
+        AsciiStrCpy(gSettings.RPlt, "j30");
+        break;
+
+      default:
+        AsciiStrCpy(gSettings.RPlt, "T9");
+        break;
+    }
+  }
+
+  CopyMem(gSettings.REV,  SmcRevision[Model], 6);
+  AsciiStrCpy(gSettings.RBr,  gSettings.RPlt); //SmcBranch[Model]); // as no other ideas
+  CopyMem(gSettings.EPCI, &SmcConfig[Model], 4);
 }
 
 MACHINE_TYPES GetModelFromString(CHAR8 *ProductName)
@@ -360,17 +489,15 @@ VOID GetDefaultSettings(VOID)
   gSettings.USBInjection = TRUE; // enabled by default to have the same behavior as before
   StrCpy(gSettings.DsdtName, L"DSDT.aml");
   gSettings.BacklightLevel = 0xFFFF; //0x0503; -- the value from MBA52
-  //gSettings.PointerEnabled = TRUE;
-  //gSettings.PointerSpeed = 2;
-  //gSettings.DoubleClickTime = 500;
-  //gSettings.PointerMirror = FALSE;
-  if (gGraphics[0].Vendor == Nvidia) {
-    CopyMem(gSettings.NVCAP, default_NVCAP, 20);
-  } 
-/*  else {
-    ZeroMem(gSettings.NVCAP,20);
-  } */
-
+  gSettings.PointerSpeed = 2;
+  gSettings.DoubleClickTime = 500;
+  gSettings.PointerMirror = FALSE;
+/*  
+  t0 = AsmReadTsc();
+  gBS->Stall(100000); //100ms
+  t1 = AsmReadTsc();
+  gCPUStructure.TSCCalibr = MultU64x32((t1 - t0), 10); //ticks for 1second
+*/
   gSettings.EnableISS = FALSE; //((gCPUStructure.CPUID[CPUID_1][ECX] & (1<<7)) != 0);
   gSettings.Turbo = gCPUStructure.Turbo;
 //  msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);

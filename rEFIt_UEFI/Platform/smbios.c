@@ -389,13 +389,9 @@ VOID GetTableType1()
 	//AsciiStrToUnicodeStr(GetSmbiosString(SmbiosTable, SmbiosTable.Type1->ProductName), gSettings.OEMProduct);
 	s = GetSmbiosString(SmbiosTable, SmbiosTable.Type1->ProductName);
 	CopyMem(gSettings.OEMProduct, s, iStrLen(s, 64));
-	//Check the validity
-/*	if ((gUuid.Data3 & 0xF000) == 0) {
-		CopyMem(&gUuid, (VOID*)&gEfiSmbiosTableGuid, 16); //gPlatformUuid
-		gUuid.Data1 ^= 0x1234; //random 
-		gUuid.Data2 ^= 0x2341;
-		gUuid.Data3 ^= 0x3412;
-	} */
+	s = GetSmbiosString(SmbiosTable, SmbiosTable.Type1->Manufacturer);
+	CopyMem(gSettings.OEMVendor, s, iStrLen(s, 64));
+
 	return;
 }
 

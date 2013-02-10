@@ -83,10 +83,10 @@ CopyRecord(PLATFORM_DATA* Rec, const CHAR16* Name, VOID* Val, UINT32 ValLen)
 
 EFI_STATUS
 LogDataHub(
-           EFI_GUID					*TypeGuid,
-           CHAR16                      *Name,
-           VOID                        *Data,
-           UINT32                       DataSize)
+           EFI_GUID					  *TypeGuid,
+           CHAR16             *Name,
+           VOID               *Data,
+           UINT32             DataSize)
 {
   UINT32                      RecordSize;
   EFI_STATUS                  Status;
@@ -246,15 +246,15 @@ EFI_STATUS SetVariablesForOSX()
 VOID SetupDataForOSX()
 {
 	EFI_STATUS			Status;	
-//	CHAR16*				CloverVersion = L"2.0";
+//	CHAR16*				CloverVersion = L"2.1";
   
-//	UINT32				KextListSize;
 	UINT32				devPathSupportedVal = 1;
 	UINT64				FrontSideBus		= gCPUStructure.FSBFrequency;
 	UINT64				CpuSpeed        = gCPUStructure.CPUFrequency;
 	UINT64				TSCFrequency		= gCPUStructure.TSCFrequency;
 	CHAR16*				productName			= AllocateZeroPool(64);
 	CHAR16*				serialNumber		= AllocateZeroPool(64);
+//  UINT32        Size;
 	
   //fool proof
   if ((FrontSideBus < (50 * Mega)) ||  (FrontSideBus > (500 * Mega))){
@@ -266,24 +266,34 @@ VOID SetupDataForOSX()
 	Status = gBS->LocateProtocol(&gEfiDataHubProtocolGuid, NULL, (VOID**)&gDataHub);
 	if (!EFI_ERROR (Status)) 
 	{
-//		productName = EfiStrDuplicate(gSettings.ProductName);
-//		serialNumber = EfiStrDuplicate(gSettings.SerialNr);
     AsciiStrToUnicodeStr(gSettings.ProductName, productName);
 		AsciiStrToUnicodeStr(gSettings.SerialNr, serialNumber);
     
 		
-		Status =  LogDataHub(&gEfiProcessorSubClassGuid, L"FSBFrequency", &FrontSideBus, sizeof(UINT64));
-		Status =  LogDataHub(&gEfiProcessorSubClassGuid, L"TSCFrequency", &TSCFrequency, sizeof(UINT64));
-		Status =  LogDataHub(&gEfiProcessorSubClassGuid, L"CPUFrequency", &CpuSpeed, sizeof(UINT64));
+		Status = LogDataHub(&gEfiProcessorSubClassGuid, L"FSBFrequency", &FrontSideBus, sizeof(UINT64));
+		Status = LogDataHub(&gEfiProcessorSubClassGuid, L"TSCFrequency", &TSCFrequency, sizeof(UINT64));
+		Status = LogDataHub(&gEfiProcessorSubClassGuid, L"CPUFrequency", &CpuSpeed, sizeof(UINT64));
 		
-		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"DevicePathsSupported", &devPathSupportedVal, sizeof(UINT32));
-		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"Model", productName, (UINT32)StrSize(productName));
-		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"SystemSerialNumber", serialNumber, (UINT32)StrSize(serialNumber));
+		Status = LogDataHub(&gEfiMiscSubClassGuid, L"DevicePathsSupported", &devPathSupportedVal, sizeof(UINT32));
+		Status = LogDataHub(&gEfiMiscSubClassGuid, L"Model", productName, (UINT32)StrSize(productName));
+		Status = LogDataHub(&gEfiMiscSubClassGuid, L"SystemSerialNumber", serialNumber, (UINT32)StrSize(serialNumber));
 //    DBG("Custom UUID=%g\n", gUuid);
     if (gSettings.InjectSystemID) {
-      Status =  LogDataHub(&gEfiMiscSubClassGuid, L"system-id", &gUuid, sizeof(EFI_GUID));
+      Status = LogDataHub(&gEfiMiscSubClassGuid, L"system-id", &gUuid, sizeof(EFI_GUID));
     }    		
-//		Status =  LogDataHub(&gEfiMiscSubClassGuid, L"Clover", CloverVersion, StrSize(CloverVersion));
+//		Status = LogDataHub(&gEfiMiscSubClassGuid, L"Clover", CloverVersion, StrSize(CloverVersion));
+
+    //collect info about real hardware
+    Status = LogDataHub(&gEfiMiscSubClassGuid, L"OEMVendor",  &gSettings.OEMVendor,  iStrLen(gSettings.OEMVendor, 64));
+    Status = LogDataHub(&gEfiMiscSubClassGuid, L"OEMProduct", &gSettings.OEMProduct, iStrLen(gSettings.OEMProduct, 64));
+    Status = LogDataHub(&gEfiMiscSubClassGuid, L"OEMBoard",   &gSettings.OEMBoard,   iStrLen(gSettings.OEMBoard, 64));
+    //smc helper
+    Status = LogDataHub(&gEfiMiscSubClassGuid, L"RPlt", &gSettings.RPlt, 8);
+    Status = LogDataHub(&gEfiMiscSubClassGuid, L"RBr",  &gSettings.RBr,  8);
+    Status = LogDataHub(&gEfiMiscSubClassGuid, L"EPCI", &gSettings.EPCI, 4);
+    Status = LogDataHub(&gEfiMiscSubClassGuid, L"REV",  &gSettings.REV,  6);
+    Status = LogDataHub(&gEfiMiscSubClassGuid, L"BEMB", &gSettings.Mobile, 1);
+
 	}
   else {
     // this is the error message that we want user to see on the screen!

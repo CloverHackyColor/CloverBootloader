@@ -567,6 +567,7 @@ typedef struct {
 //	CHAR8	SKUNumber[64];
 	CHAR8	FamilyName[64];
   CHAR8 OEMProduct[64];
+  CHAR8 OEMVendor[64];
 	// SMBIOS TYPE2
 	CHAR8	BoardManufactureName[64];
 	CHAR8	BoardSerialNumber[64];
@@ -706,9 +707,6 @@ typedef struct {
   CHAR16  *HVHideStrings[100];
   INT32   HVCount;
   
-  // iCloudFix
-//  BOOLEAN iCloudFix;
-  
   //Pointer
   BOOLEAN PointerEnabled;
   INTN    PointerSpeed;
@@ -722,6 +720,12 @@ typedef struct {
   
   // Multi-config
   CHAR16  ConfigName[64];
+
+  //SMC keys
+  CHAR8  RPlt[8];
+  CHAR8  RBr[8];
+  UINT8  EPCI[4];
+  UINT8  REV[6];  
   
 } SETTINGS_DATA;
 

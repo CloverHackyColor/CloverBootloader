@@ -353,6 +353,34 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
        */
     }
 
+    dictPointer = GetProperty(dict, "Pointer");
+    if (dictPointer) {
+      prop = GetProperty(dictPointer, "Speed");
+      if(prop) {
+        INTN Minus = 0;
+        if (prop->string[0] == '-') {
+          Minus = 1;
+        }
+        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+        gSettings.PointerSpeed = StrDecimalToUintn((CHAR16*)&UStr[Minus]);
+        if (Minus) {
+          gSettings.PointerSpeed = -gSettings.PointerSpeed;
+        }
+      }
+      prop = GetProperty(dictPointer, "DoubleClickTime");
+      if(prop) {
+        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+        gSettings.DoubleClickTime = StrDecimalToUintn((CHAR16*)&UStr[0]);
+      }
+
+      prop = GetProperty(dictPointer, "Mirror");
+      if(prop) {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+          gSettings.PointerMirror = TRUE;
+      }
+      
+    }
+    
     //Graphics
     
     dictPointer = GetProperty(dict, "Graphics");

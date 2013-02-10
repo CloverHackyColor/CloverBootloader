@@ -2,6 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>Pointer</key>
+	<dict>
+		<key>Speed</key>
+		<string>8</string>
+		<key>Mirror</key>
+		<string>No</string>
+		<key>DoubleClickTime</key>
+		<string>500</string>
+	</dict>
 	<key>KernelAndKextPatches</key>
 	<dict>
 		<key>Debug</key>
@@ -48,23 +57,14 @@
 				<data>TA==</data>
 			</dict>
 			<key>3</key>
-			<dict>
-				<key>Name</key>
-				<string>AppleAHCIPort</string>
-				<key>Find</key>
-				<data>RXh0ZXJuYWw=</data>
-				<key>Replace</key>
-				<data>SW50ZXJuYWw=</data>
-			</dict>
-			<key>4</key>
-			<dict>
-				<key>Name</key>
-				<string>AppleTyMCEDriver</string>
-				<key>Find</key>
-				<data>cgoATWFjUHJvNCwxAE1hY1BybzUsMQBY</data>
-				<key>Replace</key>
-				<data>cgoAAAAAAAAAAAAAAAAAAAAAAAAAAABY</data>
-			</dict>
+            <dict>
+                <key>Name</key>
+                <string>AppleAHCIPort</string>
+                <key>Find</key>
+                <data>RXh0ZXJuYWw=</data>
+                <key>Replace</key>
+                <data>SW50ZXJuYWw=</data>
+            </dict>
 		</dict>
 	</dict>
 	<key>SystemParameters</key>
