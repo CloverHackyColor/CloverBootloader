@@ -124,6 +124,7 @@ outline[${#outline[*]}]="${indent[$xmlindent]}<choices-outline>"
 	perl -i -p -e "s/%CLOVERREVISION%/${CLOVER_REVISION}/g" $(find "${3}/EFIfolder/Scripts/preinstall" -type f)
 	local coresize=$( du -hkc "${3}/EFIfolder/Root" | tail -n1 | awk {'print $1'} )
 	fixperms "${3}/EFIfolder/Root/"
+	chmod 755 "${3}/EFIfolder/Root/etc"/rc*.local
 	chmod 755 "${3}/EFIfolder/Scripts/preinstall"
 	echo "	[BUILD] EFIfolder "
 	buildpackage "${3}/EFIfolder" "/" "" "start_visible=\"false\" start_selected=\"true\" start_enabled=\"false\"" >/dev/null 2>&1
@@ -477,22 +478,22 @@ if [ -d "${1}/Root" ] && [ "${1}/Scripts" ]; then
 			header+="\t\t<${script##*/} file=\"./${script##*/}\"/>\n"
 		done
 		header+="\t</scripts>\n"
-		chown -R 0:0 "${1}/Scripts"
-		pushd "${1}/Scripts" >/dev/null
-		find . -print | cpio -o -z -H cpio > "../Temp/Scripts"
-		popd >/dev/null
+        # Create the Script archive file (cpio format)
+        (cd "${1}/Scripts" && find . -print |                                    \
+         cpio -o -z -R root:wheel --format cpio > "../Temp/Scripts") 2>&1 | \
+         grep -vE '^[0-9]+\s+blocks?$' # to remove cpio stderr messages
 	fi
 
 	header+="</pkg-info>"
 	echo -e "${header}" > "${1}/Temp/PackageInfo"
-	pushd "${1}/Root" >/dev/null
-	find . -print | cpio -o -z -H cpio > "../Temp/Payload"
-	popd >/dev/null
-	pushd "${1}/Temp" >/dev/null
 
-	xar -c -f "${1%/*}/${packagename// /}.pkg" --compression none .
+    # Create the Payload file (cpio format)
+    (cd "${1}/Root" && find . -print |                                  \
+     cpio -o -z -R root:wheel --format cpio > "../Temp/Payload") 2>&1 | \
+     grep -vE '^[0-9]+\s+blocks?$' # to remove cpio stderr messages
 
-	popd >/dev/null
+    # Create the package
+    (cd "${1}/Temp" && xar -c -f "${1%/*}/${packagename// /}.pkg" --compression none .)
 
 	outline[${#outline[*]}]="${indent[$xmlindent]}\t<line choice=\"${packagename// /}\"/>"
 
@@ -546,22 +547,22 @@ if [ -d "${1}/Root" ] && [ "${1}/Scripts" ]; then
 			header+="\t\t<${script##*/} file=\"./${script##*/}\"/>\n"
 		done
 		header+="\t</scripts>\n"
-		chown -R 0:0 "${1}/Scripts"
-		pushd "${1}/Scripts" >/dev/null
-		find . -print | cpio -o -z -H cpio > "../Temp/Scripts"
-		popd >/dev/null
+        # Create the Script archive file (cpio format)
+        (cd "${1}/Scripts" && find . -print |                                    \
+         cpio -o -z -R root:wheel --format cpio > "../Temp/Scripts") 2>&1 | \
+         grep -vE '^[0-9]+\s+blocks?$' # to remove cpio stderr messages
 	fi
 
 	header+="</pkg-info>"
 	echo -e "${header}" > "${1}/Temp/PackageInfo"
-	pushd "${1}/Root" >/dev/null
-	find . -print | cpio -o -z -H cpio > "../Temp/Payload"
-	popd >/dev/null
-	pushd "${1}/Temp" >/dev/null
 
-	xar -c -f "${1%/*}/${packagename// /}.pkg" --compression none .
+    # Create the Payload file (cpio format)
+    (cd "${1}/Root" && find . -print |                                  \
+     cpio -o -z -R root:wheel --format cpio > "../Temp/Payload") 2>&1 | \
+     grep -vE '^[0-9]+\s+blocks?$' # to remove cpio stderr messages
 
-	popd >/dev/null
+    # Create the package
+    (cd "${1}/Temp" && xar -c -f "${1%/*}/${packagename// /}.pkg" --compression none .)
 
 	outline[${#outline[*]}]="${indent[$xmlindent]}\t<line choice=\"${packagename// /}\"/>"
 
@@ -615,22 +616,22 @@ if [ -d "${1}/Root" ] && [ "${1}/Scripts" ]; then
 			header+="\t\t<${script##*/} file=\"./${script##*/}\"/>\n"
 		done
 		header+="\t</scripts>\n"
-		chown -R 0:0 "${1}/Scripts"
-		pushd "${1}/Scripts" >/dev/null
-		find . -print | cpio -o -z -H cpio > "../Temp/Scripts"
-		popd >/dev/null
+        # Create the Script archive file (cpio format)
+        (cd "${1}/Scripts" && find . -print |                                    \
+         cpio -o -z -R root:wheel --format cpio > "../Temp/Scripts") 2>&1 | \
+         grep -vE '^[0-9]+\s+blocks?$' # to remove cpio stderr messages
 	fi
 
 	header+="</pkg-info>"
 	echo -e "${header}" > "${1}/Temp/PackageInfo"
-	pushd "${1}/Root" >/dev/null
-	find . -print | cpio -o -z -H cpio > "../Temp/Payload"
-	popd >/dev/null
-	pushd "${1}/Temp" >/dev/null
 
-	xar -c -f "${1%/*}/${packagename// /}.pkg" --compression none .
+    # Create the Payload file (cpio format)
+    (cd "${1}/Root" && find . -print |                                  \
+     cpio -o -z -R root:wheel --format cpio > "../Temp/Payload") 2>&1 | \
+     grep -vE '^[0-9]+\s+blocks?$' # to remove cpio stderr messages
 
-	popd >/dev/null
+    # Create the package
+    (cd "${1}/Temp" && xar -c -f "${1%/*}/${packagename// /}.pkg" --compression none .)
 
 	outline[${#outline[*]}]="${indent[$xmlindent]}\t<line choice=\"${packagename// /}\"/>"
 
