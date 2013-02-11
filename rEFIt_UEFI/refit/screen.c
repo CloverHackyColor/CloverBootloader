@@ -157,7 +157,7 @@ VOID FinishTextScreen(IN BOOLEAN WaitAlways)
 {
     if (haveError || WaitAlways) {
         SwitchToText(FALSE);
-        PauseForKey(L"FinishTextScreen");
+ //       PauseForKey(L"FinishTextScreen");
     }
     
     // reset error flag

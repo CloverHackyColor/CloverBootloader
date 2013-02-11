@@ -2,15 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Pointer</key>
-	<dict>
-		<key>Speed</key>
-		<string>8</string>
-		<key>Mirror</key>
-		<string>No</string>
-		<key>DoubleClickTime</key>
-		<string>500</string>
-	</dict>
 	<key>KernelAndKextPatches</key>
 	<dict>
 		<key>Debug</key>

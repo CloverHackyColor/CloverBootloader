@@ -2265,7 +2265,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         
     // wait for user ACK when there were errors
     FinishTextScreen(FALSE);
-    DBG("FinishTextScreen()\n");
+ //   DBG("FinishTextScreen()\n");
     
     DefaultIndex = FindDefaultEntry();
     DBG("FindDefaultEntry()\n");
