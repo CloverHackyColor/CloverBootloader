@@ -345,8 +345,8 @@
 
 
   # IDE/AHCI Support
-  #Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
-  #Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
+  #Clover/Trash/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
+  #Clover/Trash/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
   Clover/SataControllerDxe/SataControllerDxe.inf
   #MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
   Clover/AtaAtapi/AtaAtapiPassThru.inf

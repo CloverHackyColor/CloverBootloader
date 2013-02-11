@@ -489,9 +489,9 @@ VOID GetDefaultSettings(VOID)
   gSettings.USBInjection = TRUE; // enabled by default to have the same behavior as before
   StrCpy(gSettings.DsdtName, L"DSDT.aml");
   gSettings.BacklightLevel = 0xFFFF; //0x0503; -- the value from MBA52
-  gSettings.PointerSpeed = 2;
-  gSettings.DoubleClickTime = 500;
-  gSettings.PointerMirror = FALSE;
+//  gSettings.PointerSpeed = 2;
+//  gSettings.DoubleClickTime = 500;
+//  gSettings.PointerMirror = FALSE;
 /*  
   t0 = AsmReadTsc();
   gBS->Stall(100000); //100ms

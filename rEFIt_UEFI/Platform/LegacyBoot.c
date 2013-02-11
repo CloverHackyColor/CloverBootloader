@@ -1028,7 +1028,7 @@ VOID DumpBiosMemoryMap()
     Regs.E.EDI += 24;
   } while (Regs.E.EDI < 0x8000);
   
-  Length =  ((INT32)(Regs.E.EDI - 0x7c00)) / 24;
+  Length =  ((INT32)(Regs.E.EDI - 0x7c00)) / 24 + 1;
   DBG("BiosMemoryMap length=%d:\n               Start     End     Type  Ext\n", Length);
   
   for (i = 0; i < Length; i++) {
