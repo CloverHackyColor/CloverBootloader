@@ -519,7 +519,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     // note: this blocks output even if -v is specified in
     // /Library/Preferences/SystemConfiguration/com.apple.Boot.plist
     // which is wrong
-    if (Entry->LoadOptions == NULL || StrStr(Entry->LoadOptions, L"-v") == NULL) {
+    if (Entry->LoadOptions == NULL || (StrStr(Entry->LoadOptions, L"-v") == NULL && StrStr(Entry->LoadOptions, L"-V") == NULL)) {
       BlockConOut = TRUE;
     }
   }
@@ -669,7 +669,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     case OSTYPE_RECOVERY:
     case OSTYPE_BOOT_OSX:
       OSIconName = Volume->OSIconName;
-      if (Entry->LoadOptions == NULL || StrStr(Entry->LoadOptions, L"-v") == NULL) {
+      if (Entry->LoadOptions == NULL || (StrStr(Entry->LoadOptions, L"-v") == NULL && StrStr(Entry->LoadOptions, L"-V") == NULL)) {
         // OSX is not booting verbose, so we can set console to graphics mode
         Entry->UseGraphicsMode = TRUE;
       }
