@@ -521,9 +521,6 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     // which is wrong
     if (Entry->LoadOptions == NULL || StrStr(Entry->LoadOptions, L"-v") == NULL) {
       BlockConOut = TRUE;
-    } else {
-      // we are booting verbose OSX, so console should be in text mode
-      Entry->UseGraphicsMode = FALSE;
     }
   }
   else if ((Entry->LoaderType == OSTYPE_WIN) ||  (Entry->LoaderType == OSTYPE_WINEFI)) {
@@ -672,7 +669,10 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     case OSTYPE_RECOVERY:
     case OSTYPE_BOOT_OSX:
       OSIconName = Volume->OSIconName;
-      Entry->UseGraphicsMode = TRUE;
+      if (Entry->LoadOptions == NULL || StrStr(Entry->LoadOptions, L"-v") == NULL) {
+        // OSX is not booting verbose, so we can set console to graphics mode
+        Entry->UseGraphicsMode = TRUE;
+      }
       LoaderKind = 1;
       ShortcutLetter = 'M';    
       Entry->LoaderType = OSTYPE_OSX;
