@@ -388,9 +388,9 @@ VOID GetTableType1()
 	CopyMem((VOID*)&gSettings.SmUUID, (VOID*)&SmbiosTable.Type1->Uuid, 16);
 	//AsciiStrToUnicodeStr(GetSmbiosString(SmbiosTable, SmbiosTable.Type1->ProductName), gSettings.OEMProduct);
 	s = GetSmbiosString(SmbiosTable, SmbiosTable.Type1->ProductName);
-	CopyMem(gSettings.OEMProduct, s, iStrLen(s, 64));
+	CopyMem(gSettings.OEMProduct, s, iStrLen(s, 64) + 1); //take ending zero
 	s = GetSmbiosString(SmbiosTable, SmbiosTable.Type1->Manufacturer);
-	CopyMem(gSettings.OEMVendor, s, iStrLen(s, 64));
+	CopyMem(gSettings.OEMVendor, s, iStrLen(s, 64) + 1);
 
 	return;
 }
@@ -455,7 +455,7 @@ VOID GetTableType2()
 	}
   
   s = GetSmbiosString(SmbiosTable, SmbiosTable.Type2->ProductName);
-  CopyMem(gSettings.OEMBoard, s, iStrLen(s, 64));
+  CopyMem(gSettings.OEMBoard, s, iStrLen(s, 64) + 1);
 }
 
 

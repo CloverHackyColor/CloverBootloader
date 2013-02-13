@@ -284,9 +284,9 @@ VOID SetupDataForOSX()
 //		Status = LogDataHub(&gEfiMiscSubClassGuid, L"Clover", CloverVersion, StrSize(CloverVersion));
 
     //collect info about real hardware
-    Status = LogDataHub(&gEfiMiscSubClassGuid, L"OEMVendor",  &gSettings.OEMVendor,  iStrLen(gSettings.OEMVendor, 64));
-    Status = LogDataHub(&gEfiMiscSubClassGuid, L"OEMProduct", &gSettings.OEMProduct, iStrLen(gSettings.OEMProduct, 64));
-    Status = LogDataHub(&gEfiMiscSubClassGuid, L"OEMBoard",   &gSettings.OEMBoard,   iStrLen(gSettings.OEMBoard, 64));
+    Status = LogDataHub(&gEfiMiscSubClassGuid, L"OEMVendor",  &gSettings.OEMVendor,  iStrLen(gSettings.OEMVendor, 64) + 1);
+    Status = LogDataHub(&gEfiMiscSubClassGuid, L"OEMProduct", &gSettings.OEMProduct, iStrLen(gSettings.OEMProduct, 64) + 1);
+    Status = LogDataHub(&gEfiMiscSubClassGuid, L"OEMBoard",   &gSettings.OEMBoard,   iStrLen(gSettings.OEMBoard, 64) + 1);
     //smc helper
     Status = LogDataHub(&gEfiMiscSubClassGuid, L"RPlt", &gSettings.RPlt, 8);
     Status = LogDataHub(&gEfiMiscSubClassGuid, L"RBr",  &gSettings.RBr,  8);
