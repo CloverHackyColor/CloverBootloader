@@ -260,7 +260,7 @@ VOID AsusAICPUPMPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32
   }
   DBG_RT(L"Kext: %a\n", gKextBoundleIdentifier);
   
-  // todo: we should scan only __text __TEXT
+  //TODO: we should scan only __text __TEXT
   for (Index1 = 0; Index1 < DriverSize; Index1++) {
     // search for MovlE2ToEcx
     if (CompareMem(Driver + Index1, MovlE2ToEcx, sizeof(MovlE2ToEcx)) == 0) {

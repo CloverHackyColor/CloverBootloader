@@ -503,6 +503,7 @@ AtiDevProp ati_devprop_list[] = {
   {FLAGMOBILE,	FALSE,	"@0,display-link-component-bits",  NULL,		DWRVAL(6)	},
   {FLAGMOBILE,	FALSE,	"@0,display-pixel-component-bits", NULL,		DWRVAL(6)	},
   {FLAGMOBILE,	FALSE,	"@0,display-dither-support",       NULL,		DWRVAL(0)	},
+  {FLAGMOBILE,	FALSE,	"@0,backlight-control",       NULL,		DWRVAL(1)	},
   {FLAGTRUE,  	FALSE,	"AAPL00,Dither", NULL,		DWRVAL(0)	},
   
   
@@ -515,7 +516,7 @@ AtiDevProp ati_devprop_list[] = {
   {FLAGTRUE,	FALSE,	"AAPL00,DualLink",          get_dual_link_val,			NULVAL 	},
   {FLAGMOBILE,	FALSE,	"AAPL,HasPanel",          NULL,					DWRVAL(1)   },
   {FLAGMOBILE,	FALSE,	"AAPL,HasLid",            NULL,					DWRVAL(1)   },
-  {FLAGMOBILE,	FALSE,	"AAPL,backlight-control", NULL,					DWRVAL(0)   },
+  {FLAGMOBILE,	FALSE,	"AAPL,backlight-control", NULL,					DWRVAL(1)   },
 	{FLAGTRUE,	FALSE,	"AAPL,overwrite_binimage",	get_binimage_owr,		NULVAL				},
 	{FLAGTRUE,	FALSE,	"ATY,bin_image",            get_binimage_val,		NULVAL				},
 	{FLAGTRUE,	FALSE,	"ATY,Copyright",	NULL,	STRVAL("Copyright AMD Inc. All Rights Reserved. 2005-2011") },

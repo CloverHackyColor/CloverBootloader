@@ -569,11 +569,11 @@ VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, CHA
             DBG("Internal length = %d", len);
             Status = SaveBufferToDisk((VOID*)adr, len, DirName, FileName);
             if (!EFI_ERROR(Status)) {
-              DBG(" -> %s", FileName);
+              DBG(" -> %s\n", FileName);
               MarkTableAsSaved((VOID*)adr);
               *SsdtCount += 1;
             } else {
-              DBG(" -> %r", Status);
+              DBG(" -> %r\n", Status);
             }
             FreePool(FileName);
           }

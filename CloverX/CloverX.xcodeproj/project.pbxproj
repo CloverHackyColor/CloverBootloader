@@ -120,11 +120,6 @@
 		124D76EE1657A4E5008B5407 /* AtaBusDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = AtaBusDxe.inf; sourceTree = "<group>"; };
 		124D76EF1657A4E5008B5407 /* AtaPassThruExecute.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = AtaPassThruExecute.c; sourceTree = "<group>"; };
 		124D76F01657A4E5008B5407 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
-		124D76F21657A4F1008B5407 /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
-		124D76F31657A4F1008B5407 /* ConSplitter.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ConSplitter.c; sourceTree = "<group>"; };
-		124D76F41657A4F1008B5407 /* ConSplitter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConSplitter.h; sourceTree = "<group>"; };
-		124D76F51657A4F1008B5407 /* ConSplitterDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = ConSplitterDxe.inf; sourceTree = "<group>"; };
-		124D76F61657A4F1008B5407 /* ConSplitterGraphics.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ConSplitterGraphics.c; sourceTree = "<group>"; };
 		124D76F81657A4FD008B5407 /* Cpu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Cpu.c; sourceTree = "<group>"; };
 		124D76F91657A4FD008B5407 /* Cpu.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cpu.inf; sourceTree = "<group>"; };
 		124D76FA1657A4FD008B5407 /* CpuDxe.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CpuDxe.h; sourceTree = "<group>"; };
@@ -733,7 +728,6 @@
 			children = (
 				124D76E21657A4D7008B5407 /* AtaAtapi */,
 				124D76EB1657A4E5008B5407 /* AtaBus */,
-				124D76F11657A4F1008B5407 /* ConSplitterDxe */,
 				124D77011657A506008B5407 /* DVDBus */,
 				124D77061657A50D008B5407 /* DVDDisk */,
 				124D770B1657A516008B5407 /* GraphicsConsoleDxe */,
@@ -779,19 +773,6 @@
 			);
 			name = AtaBus;
 			path = ../AtaBus;
-			sourceTree = "<group>";
-		};
-		124D76F11657A4F1008B5407 /* ConSplitterDxe */ = {
-			isa = PBXGroup;
-			children = (
-				124D76F21657A4F1008B5407 /* ComponentName.c */,
-				124D76F31657A4F1008B5407 /* ConSplitter.c */,
-				124D76F41657A4F1008B5407 /* ConSplitter.h */,
-				124D76F51657A4F1008B5407 /* ConSplitterDxe.inf */,
-				124D76F61657A4F1008B5407 /* ConSplitterGraphics.c */,
-			);
-			name = ConSplitterDxe;
-			path = ../ConSplitterDxe;
 			sourceTree = "<group>";
 		};
 		124D76F71657A4FD008B5407 /* CpuDxe */ = {

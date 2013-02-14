@@ -47,7 +47,7 @@ CHAR8* AppleFirmwareVersion[] =
 
 CHAR8* AppleBoardID[] = //Lion DR1 compatible
 {
-	"Mac-F4208CC8", //MB11 - yonah
+	"Mac-F4208CC8",  //MB11 - yonah
 	"Mac-F4208CA9",  //MB21 - merom 05/07
 	"Mac-F22788A9",  //MB41 - penryn
 	"Mac-F22788AA",  //MB52
@@ -188,11 +188,11 @@ CHAR8* AppleSystemVersion[] =
 
 CHAR8* AppleSerialNumber[] = //random generated
 {
-	"W80A041AU9B", //MB11
-	"W88A041AWGP", //MB21 - merom 05/07
-	"W88A041A0P0", //MB41
-	"W88AAAAA9GU", //MB52
-	"W88439FE1G0", //MBP51
+	"W80A041AU9B",  //MB11
+	"W88A041AWGP",  //MB21 - merom 05/07
+	"W88A041A0P0",  //MB41
+	"W88AAAAA9GU",  //MB52
+	"W88439FE1G0",  //MBP51
   "W89F9196DH2G", //MBP81 - i5 SB IntelHD3000
   "W88F9CDEDF93", //MBP83 -i7 SB  ATI
   "C02HA041DTY3", //MBP92 - i5 IvyBridge HD4000
@@ -201,17 +201,17 @@ CHAR8* AppleSerialNumber[] = //random generated
 	"W88A56BYYL2",  //MM21 - merom GMA950 07/07
   "C07GA041DJD0", //MM51 - sandy
   "C07JD041DWYN", //MM62 - IVY
-	"W89A00AAX88", //IM81 - merom 01/09
-	"W80AA98A5PE", //IM101 - wolfdale? E7600 01/09
-  "G8942B1V5PJ", //IM111 - Nehalem
-	"W8034342DB7", //IM112 - Clarkdale
-  "QP0312PBDNR", //IM113 - lynnfield
+	"W89A00AAX88",  //IM81 - merom 01/09
+	"W80AA98A5PE",  //IM101 - wolfdale? E7600 01/09
+  "G8942B1V5PJ",  //IM111 - Nehalem
+	"W8034342DB7",  //IM112 - Clarkdale
+  "QP0312PBDNR",  //IM113 - lynnfield
 	"W80CF65ADHJF", //IM121 - i5-2500 - sandy
   "W88GG136DHJQ", //IM122 -i7-2600
   "C02JA041DNCT", //IM131 -i5-3470S -IVY
-	"W88A77AA5J4", //MP31 - xeon quad 02/09
-	"CT93051DK9Y", //MP41
-	"CG154TB9WU3"  //MP51 C07J50F7F4MC
+	"W88A77AA5J4",  //MP31 - xeon quad 02/09
+	"CT93051DK9Y",  //MP41
+	"CG154TB9WU3"   //MP51 C07J50F7F4MC
 };
 //no! ChassisVersion == BoardID
 CHAR8* AppleChassisAsset[] = 
@@ -267,17 +267,17 @@ CHAR8* SmcPlatform[] =
   "NA",  //"iMac13,1",
 	"NA",  //"MacPro3,1",
 	"NA",  //"MacPro4,1",
-	"NA",  //"MacPro5,1"
+	"k5",  //"MacPro5,1"
 };
 
 
 UINT8 SmcRevision[][6] = {
-  {0x01, 0x04, 0x0F, 0, 0, 0x12},  //"MacBook1,1",
-	{0x01, 0x24, 0x0F, 0, 0, 0x03},  //"MacBook2,1",
-	{0x01, 0x31, 0x0F, 0, 0, 0x01},  //"MacBook4,1",
-	{0x01, 0x38, 0x0F, 0, 0, 0x05},  //"MacBook5,2",
-	{0x01, 0x33, 0x0F, 0, 0, 0x08},  //"MacBookPro5,1",
-  {0x01, 0x68, 0x0F, 0, 0, 0x98},  //"MacBookPro8,1",
+  {0x01, 0x30, 0x0F, 0, 0, 0x03},  //"MacBook1,1",
+	{0x01, 0x30, 0x0F, 0, 0, 0x03},  //"MacBook2,1",
+	{0x01, 0x30, 0x0F, 0, 0, 0x03},  //"MacBook4,1",
+	{0x01, 0x32, 0x0F, 0, 0, 0x08},  //"MacBook5,2",
+	{0x01, 0x30, 0x0F, 0, 0, 0x03},  //"MacBookPro5,1",
+  {0x01, 0x68, 0x0F, 0, 0, 0x96},  //"MacBookPro8,1",
   {0x01, 0x70, 0x0F, 0, 0, 0x05},  //"MacBookPro8,3",
   {0x02, 0x02, 0x0F, 0, 0, 0x41},  //"MacBookPro9,2",
 	{0x01, 0x67, 0x0F, 0, 0, 0x09},  //"MacBookAir3,1",
@@ -293,9 +293,9 @@ UINT8 SmcRevision[][6] = {
 	{0x01, 0x71, 0x0F, 0, 0, 0x22},  //"iMac12,1",
   {0x01, 0x72, 0x0F, 0, 0, 0x02},  //"iMac12,2",
   {0x01, 0x30, 0x0F, 0, 0, 0x03},  //"iMac13,1",
-	{0x01, 0x30, 0x0F, 0, 0, 0x03},  //"MacPro3,1",
+	{0x01, 0x24, 0x0F, 0, 0, 0x05},  //"MacPro3,1",
 	{0x01, 0x30, 0x0F, 0, 0, 0x03},  //"MacPro4,1",
-	{0x01, 0x30, 0x0F, 0, 0, 0x03},  //"MacPro5,1"
+	{0x01, 0x39, 0x0F, 0, 0, 0x11},  //"MacPro5,1"
 
 };
 
