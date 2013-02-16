@@ -18,37 +18,22 @@ cp -f ../BootHFS/boot1f32-install.sh  CloverV2/doc/boot1f32-install.sh
 # Workspace = edk2/Clover/CloverPackage
 # Prepare i386 for building package installer.
 
-[[ -d "sym" ]] && sudo rm -rf sym
+if [[ -d "sym/package" && $(stat -f '%u' sym/package) -eq 0 ]]; then
+    sudo rm -rf sym
+fi
+rm -rf sym
+
 mkdir -p sym/i386
 cp -Rf CloverV2/Bootloaders/* sym/i386/
 cp -f CloverV2/BootSectors/* sym/i386/
 
-# Workspace = edk2/Clover/CloverPackage
-# Prepare Resources for package installer.
-
 cp -r -f CloverV2/doc  CloverV2/EFI/doc
 #cp -r -f CloverV2/config.plist-FullSample CloverV2/EFI/doc/
-
-if [ -d "package/Resources" ];then
-rm -rf package/Resources
-fi
-mkdir -p package/Resources
-cp -Rf package/Resources-original/* package/Resources
-
-cp -f package/Distribution-original package/Distribution
-title="title>Clover ${version} r${revision} EFI bootloader"
-perl -i -p -e "s/title>Clover_title/${title}/g" `find "package/Distribution" -type f`
-
-echo " "
-#echo "Modify CloverV2/EFI or package/Resources if necessary."
-#echo " "
-#read -p "Press Enter to start to build the installer."
-#echo " "
 
 # Workspace = edk2/Clover/CloverPackage
 # Start to build installer.
 
-sudo make pkg
+make pkg
 make cdboot
 # make cdboot32
 make image
@@ -61,18 +46,16 @@ cd ..
 # Workspace = edk2/Clover/CloverPackage/
 # Remove temp files.
 
-rm -rf package/Resources
-rm -f package/Distribution
-rm -f version
-rm -f revision
+rm -f  version
+rm -f  revision
 rm -rf CloverV2/EFI/doc
 rm -rf CloverV2/EFI/doc/config.plist-FullSample
 
 # Workspace = edk2/Clover/CloverPackage
 # Open the final folder.
 if [ "$1" == "" ]; then
-	ls -la sym
-	open sym
+    ls -la sym
+    open sym
 fi
 # Finish building installer.
 
