@@ -508,6 +508,7 @@ main ()
     choiceId="boot1no"
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
+
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
     addChoice --group="Clover" --start-selected="false" --pkg-refs="$packageRefId" "${choiceId}"
@@ -516,15 +517,7 @@ main ()
 # build boot1UEFI package
     packagesidentity="$clover_package_identity".boot1UEFI
     choiceId="boot1UEFI"
-    if [[ "$add_ia32" -eq 1 ]]; then
-        mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/drivers32
-        cp -Rf ${PKG_BUILD_DIR%/*/*}/CloverV2/drivers-Off/drivers32UEFI/* ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/drivers32
-    fi
-    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/drivers64
-    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/drivers64UEFI
-    cp -Rf ${PKG_BUILD_DIR%/*/*}/CloverV2/drivers-Off/drivers64/* ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/drivers64
-    cp -Rf ${PKG_BUILD_DIR%/*/*}/CloverV2/drivers-Off/drivers64UEFI/* ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/drivers64UEFI
-    fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
+    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
 
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
