@@ -18,29 +18,19 @@ echo "preinstall: Root of system folder... $4"
 
 osxvolume="${3}"
 
-echo "======================================================" >> "${osxvolume}/Clover_Install_Log.txt"
-echo Installing rc scripts >> "${osxvolume}/Clover_Install_Log.txt"
-echo "" >> "${osxvolume}/Clover_Install_Log.txt"
+echo "Fixing rc scripts permissions:">> "${osxvolume}/Clover_Install_Log.txt"
 
-if [ ! -e "/etc/rc.local" ]; then
-    cp -f "${osxvolume}/etc/rc.local" "/etc/rc.local"
-    cp -f "${osxvolume}/etc/rc.shutdown.local" "/etc/rc.shutdown.local"
-fi
-chmod 644 "/etc/rc.local"
-chown root:wheel "/etc/rc.local"
-chmod 644 "/etc/rc.shutdown.local"
-chown root:wheel "/etc/rc.shutdown.local"
+# Fix permissions
+chmod 755        "${osxvolume}/etc/rc.local"
+chown root:wheel "${osxvolume}/etc/rc.local"
+chmod 755        "${osxvolume}/etc/rc.shutdown.local"
+chown root:wheel "${osxvolume}/etc/rc.shutdown.local"
 
-if [ -e "${osxvolume}/etc/rc.local" ]; then
-    chmod 644 "${osxvolume}/etc/rc.local"
-    chown root:wheel "${osxvolume}/etc/rc.local"
-    chmod 644 "${osxvolume}/etc/rc.shutdown.local"
-    chown root:wheel "${osxvolume}/etc/rc.shutdown.local"
-fi
+cp -pf "${osxvolume}/etc/rc.local" "/etc/rc.local"
+cp -pf "${osxvolume}/etc/rc.shutdown.local" "/etc/rc.shutdown.local"
 
-ls -la "/etc/rc.local" >> "${osxvolume}/Clover_Install_Log.txt"
-ls -la "/etc/rc.shutdown.local" >> "${osxvolume}/Clover_Install_Log.txt"
-echo " " >> "${osxvolume}/Clover_Install_Log.txt"
-ls -la "${osxvolume}/etc/rc.local" >> "${osxvolume}/Clover_Install_Log.txt"
-ls -la "${osxvolume}/etc/rc.shutdown.local" >> "${osxvolume}/Clover_Install_Log.txt"
+ls -lad "${osxvolume}/etc/rc.local" >> "${osxvolume}/Clover_Install_Log.txt"
+ls -lad "${osxvolume}/etc/rc.shutdown.local" >> "${osxvolume}/Clover_Install_Log.txt"
+ls -lad "/etc/rc.local" >> "${osxvolume}/Clover_Install_Log.txt"
+ls -lad "/etc/rc.shutdown.local" >> "${osxvolume}/Clover_Install_Log.txt"
 echo "======================================================" >> "${osxvolume}/Clover_Install_Log.txt"
