@@ -16,68 +16,49 @@ echo "preinstall: Root of system folder... $4"
 
 #############################################################################
 
-fixpermsall ()
-{
-	# $1 path
-	find "${1}" -type f -exec chmod 666 {} \;
-	find "${1}" -type d -exec chmod 777 {} \;
-	chown -R 0:0 "${1}"
-}
-
 osxvolume="${3}"
 bootervolumename="EFI"
 bootvolume="/Volumes/${bootervolumename}"
+install_log="${osxvolume}/Clover_Install_Log.txt"
 
 # ---------------------------------------------
 # 檢查 原來的 boot 類型 並安裝新的 boot
 # 檢查 非 GPT EFI 分區
 # ---------------------------------------------
 
-echo " " >> "${osxvolume}/Clover_Install_Log.txt"
-
 file "${osxvolume}/bootold" > "${osxvolume}/bootoldtype"
 boottypeversion=$( grep "boot" "${osxvolume}/bootoldtype" | awk '{ print $2 }' | tr -d '}' )
 echo "${boottypeversion}" >> "${osxvolume}/bootoldtype"
-#echo "The original boot type = ${boottypeversion}" >> "${osxvolume}/Clover_Install_Log.txt"
-if [ "${boottypeversion}" == "data" ]; then
-	cp -f "${osxvolume}/bootold" "${osxvolume}/boot1"
-	echo "cp -f ${osxvolume}/bootold ${osxvolume}/boot1" >> "${osxvolume}/Clover_Install_Log.txt"
-	chflags hidden "${osxvolume}/boot1"
+#echo "The original boot type = ${boottypeversion}" >> "$install_log"
+if [[ "${boottypeversion}" == "data" ]]; then
+    cp -f "${osxvolume}/bootold" "${osxvolume}/boot1"
+    echo "cp -f ${osxvolume}/bootold ${osxvolume}/boot1" >> "$install_log"
+    chflags hidden "${osxvolume}/boot1"
 fi
-rm "${osxvolume}/bootold"
-rm "${osxvolume}/bootoldtype"
-
+rm -f "${osxvolume}/bootold"
+rm -f "${osxvolume}/bootoldtype"
 
 boottype=$( cat "${osxvolume}/boottype" )
 if [ "${boottype}" == "x32" ]; then
-	cd "${osxvolume}/EFI"
-	perl -i -p -e "s/arch=x86_64/arch=i386/g" `find "config.plist" -type f`
+    cd "${osxvolume}/EFI"
+    perl -i -p -e "s/arch=x86_64/arch=i386/g" `find "config.plist" -type f`
 fi    
 if [ "${boottype}" == "x64" ]; then
-	cd "${osxvolume}/EFI"
-	perl -i -p -e "s/arch=i386/arch=x86_64/g" `find "config.plist" -type f`
+    cd "${osxvolume}/EFI"
+    perl -i -p -e "s/arch=i386/arch=x86_64/g" `find "config.plist" -type f`
 fi
 
 
 if [ -e "${osxvolume}/EFI/config.plist" ]; then
-	rm -f "${osxvolume}/EFI/config-org.plist"
-fi
-if [ ! -e "${osxvolume}/EFI/config.plist" ]; then
-	cp -f "${osxvolume}/EFI/config-org.plist" "${osxvolume}/EFI/config.plist"
-	rm -f "${osxvolume}/EFI/config-org.plist"
-fi
-if [ -e "${osxvolume}/EFI/BOOT/refit.conf" ]; then
-	cp -f "${osxvolume}/EFI/BOOT/refit.conf" "${osxvolume}/EFI/BOOT/refit.conf-old"
-	cp -f "${osxvolume}/EFI/BOOT/refit.conf-default" "${osxvolume}/EFI/BOOT/refit.conf"
-	rm -f "${osxvolume}/EFI/BOOT/refit.conf-default"
+    rm -f "${osxvolume}/EFI/config-org.plist"
+else
+    cp -f "${osxvolume}/EFI/config-org.plist" "${osxvolume}/EFI/config.plist"
+    rm -f "${osxvolume}/EFI/config-org.plist"
 fi
 if [ ! -e "${osxvolume}/EFI/BOOT/refit.conf" ]; then
-	cp -f "${osxvolume}/EFI/BOOT/refit.conf-default" "${osxvolume}/EFI/BOOT/refit.conf"
-	rm -f "${osxvolume}/EFI/BOOT/refit.conf-default"
+    cp -f "${osxvolume}/EFI/BOOT/refit.conf-default" "${osxvolume}/EFI/BOOT/refit.conf"
 fi
 rm -f "${osxvolume}/EFI/BOOT/refit-*.conf"
-
-fixpermsall "${osxvolume}/EFI"
 
 # ---------------------------------------------
 # 檢查 原來的 boot 類型 並安裝新的 boot
@@ -88,119 +69,110 @@ installtype=$( cat "${osxvolume}/boot0type" )
 
 if [ "$( df | grep EFI )" ] && [ "${installtype}" == "boot0hfsEFI" ]; then
 
-	backupRootDir="${bootvolume}/EFI-Backups"
-	backupDir="${backupRootDir}/"$( date -j "+%F-%Hh%M" )
-	# Create the backup dirextory
-	mkdir -p "${backupDir}"
-	# Backup stage2
-	if [[ -f "${bootvolume}/boot" ]];then
-		cp -p "${bootvolume}/boot" "${backupDir}/boot"
-		echo "cp -p ${bootvolume}/boot ${backupDir}/boot" >> "${osxvolume}/Clover_Install_Log.txt"
-	fi
-	if [[ -f "${bootvolume}/boot1" ]];then
-		cp -p "${bootvolume}/boot1" "${backupDir}/boot1"
-		echo "cp -p ${bootvolume}/boot1 ${backupDir}/boot1" >> "${osxvolume}/Clover_Install_Log.txt"
-	fi
-	if [[ -f "${bootvolume}/boot3" ]];then
-		cp -p "${bootvolume}/boot3" "${backupDir}/boot3"
-		echo "cp -p ${bootvolume}/boot3 ${backupDir}/boot3" >> "${osxvolume}/Clover_Install_Log.txt"
-	fi
-	if [[ -f "${bootvolume}/boot6" ]];then
-		cp -p "${bootvolume}/boot6" "${backupDir}/boot6"
-		echo "cp -p ${bootvolume}/boot6 ${backupDir}/boot6" >> "${osxvolume}/Clover_Install_Log.txt"
-	fi
+    backupRootDir="${bootvolume}/EFI-Backups"
+    backupDir="${backupRootDir}/"$( date -j "+%F-%Hh%M" )
+    # Create the backup dirextory
+    mkdir -p "${backupDir}"
+    # Backup stage2
+    if [[ -f "${bootvolume}/boot" ]];then
+        cp -p "${bootvolume}/boot" "${backupDir}/boot"
+        echo "cp -p ${bootvolume}/boot ${backupDir}/boot" >> "$install_log"
+    fi
+    if [[ -f "${bootvolume}/boot1" ]];then
+        cp -p "${bootvolume}/boot1" "${backupDir}/boot1"
+        echo "cp -p ${bootvolume}/boot1 ${backupDir}/boot1" >> "$install_log"
+    fi
+    if [[ -f "${bootvolume}/boot3" ]];then
+        cp -p "${bootvolume}/boot3" "${backupDir}/boot3"
+        echo "cp -p ${bootvolume}/boot3 ${backupDir}/boot3" >> "$install_log"
+    fi
+    if [[ -f "${bootvolume}/boot6" ]];then
+        cp -p "${bootvolume}/boot6" "${backupDir}/boot6"
+        echo "cp -p ${bootvolume}/boot6 ${backupDir}/boot6" >> "$install_log"
+    fi
 
-	# Backup /EFI directory
-	if [[ -d "${bootvolume}/EFI" ]];then
-		sudo cp -pR "${bootvolume}/EFI" "${backupDir}/EFI"
-		echo "cp -pR ${bootvolume}/EFI ${backupDir}/EFI" >> "${osxvolume}/Clover_Install_Log.txt"
-	fi
-	find "${backupRootDir}" -type d -depth 1 -empty -exec rmdir {} \; # Remove empty directories
-	rm -df "${backupRootDir}"
+    # Backup /EFI directory
+    if [[ -d "${bootvolume}/EFI" ]];then
+        sudo cp -pR "${bootvolume}/EFI" "${backupDir}/EFI"
+        echo "cp -pR ${bootvolume}/EFI ${backupDir}/EFI" >> "$install_log"
+    fi
+    find "${backupRootDir}" -type d -depth 1 -empty -exec rmdir {} \; # Remove empty directories
+    rm -df "${backupRootDir}"
 
 
-	cp -f "${bootvolume}/boot" "${bootvolume}/bootold"
-	cp -f "${osxvolume}/boot" "${bootvolume}/boot"
-	cp -f "${osxvolume}/boot3" "${bootvolume}/boot3"
-	cp -f "${osxvolume}/boot6" "${bootvolume}/boot6"
-#	chflags hidden "${bootvolume}/boot"
-#	chflags hidden "${bootvolume}/boot3"
-#	chflags hidden "${bootvolume}/boot6"
-	
-	echo "cp -f ${osxvolume}/boot ${bootvolume}/boot" >> "${osxvolume}/Clover_Install_Log.txt"
-	echo "cp -f ${osxvolume}/boot3 ${bootvolume}/boot3" >> "${osxvolume}/Clover_Install_Log.txt"
-	echo "cp -f ${osxvolume}/boot6 ${bootvolume}/boot6" >> "${osxvolume}/Clover_Install_Log.txt"
+    cp -f "${bootvolume}/boot" "${bootvolume}/bootold"
+    cp -f "${osxvolume}/boot" "${bootvolume}/boot"
+    cp -f "${osxvolume}/boot3" "${bootvolume}/boot3"
+    cp -f "${osxvolume}/boot6" "${bootvolume}/boot6"
+#   chflags hidden "${bootvolume}/boot"
+#   chflags hidden "${bootvolume}/boot3"
+#   chflags hidden "${bootvolume}/boot6"
 
-	file "${bootvolume}/bootold" > "${bootvolume}/bootoldtype"
-	boottypeversion=$( grep "boot" "${bootvolume}/bootoldtype" | awk '{ print $2 }' | tr -d '}' )
-	echo "${boottypeversion}" >> "${bootvolume}/bootoldtype"
-	if [ "${boottypeversion}" == "data" ]; then
-		cp -f "${bootvolume}/bootold" "${bootvolume}/boot1"
-		chflags hidden "${bootvolume}/boot1"
-	fi
-	rm "${bootvolume}/bootold"
-	rm "${bootvolume}/bootoldtype"
+    echo "cp -f ${osxvolume}/boot ${bootvolume}/boot" >> "$install_log"
+    echo "cp -f ${osxvolume}/boot3 ${bootvolume}/boot3" >> "$install_log"
+    echo "cp -f ${osxvolume}/boot6 ${bootvolume}/boot6" >> "$install_log"
 
-	if [ ! -e "${bootvolume}/boot1" ]; then
-		cp -f "${osxvolume}/boot1" "${bootvolume}/boot1"
-		echo "cp -f ${osxvolume}/boot1 ${bootvolume}/boot1" >> "${osxvolume}/Clover_Install_Log.txt"
-	fi
-	
-	if [ -e "${bootvolume}/EFI/config.plist" ]; then
-		cp -f "${bootvolume}/EFI/config.plist" "${bootvolume}/EFI/config-oldEFI.plist"
-	fi
-	cp -Rf "${osxvolume}/EFI/" "${bootvolume}/EFI/"
-	if [ -e "${bootvolume}/EFI/config-oldEFI.plist" ]; then
-		cp -f "${bootvolume}/EFI/config-oldEFI.plist" "${bootvolume}/EFI/config.plist"
-		rm "${bootvolume}/EFI/config-oldEFI.plist"
-	fi
-	
-	boottype=$( cat "${osxvolume}/boottype" )
+    file "${bootvolume}/bootold" > "${bootvolume}/bootoldtype"
+    boottypeversion=$( grep "boot" "${bootvolume}/bootoldtype" | awk '{ print $2 }' | tr -d '}' )
+    echo "${boottypeversion}" >> "${bootvolume}/bootoldtype"
+    if [ "${boottypeversion}" == "data" ]; then
+        cp -f "${bootvolume}/bootold" "${bootvolume}/boot1"
+        chflags hidden "${bootvolume}/boot1"
+    fi
+    rm "${bootvolume}/bootold"
+    rm "${bootvolume}/bootoldtype"
 
-	if [ "${boottype}" == "x32" ]; then
-		cd "${bootvolume}/EFI"
-		perl -i -p -e "s/arch=x86_64/arch=i386/g" `find "config.plist" -type f`
-	fi    
-	if [ "${boottype}" == "x64" ]; then
-		cd "${bootvolume}/EFI"
-		perl -i -p -e "s/arch=i386/arch=x86_64/g" `find "config.plist" -type f`
-	fi
-	if [ -e "${bootvolume}/EFI/EFI_Install_Log.txt" ]; then
-		rm -f "${bootvolume}/EFI/EFI_Install_Log.txt"
-	fi
+    if [ ! -e "${bootvolume}/boot1" ]; then
+        cp -f "${osxvolume}/boot1" "${bootvolume}/boot1"
+        echo "cp -f ${osxvolume}/boot1 ${bootvolume}/boot1" >> "$install_log"
+    fi
 
-	fixpermsall "${bootvolume}/"
-	
-	touch "${bootvolume}/.metadata_never_index"
-	rm -Rf "${bootvolume}/.fseventsd/"
-	mkdir -p "${bootvolume}/.fseventsd"
-	touch "${bootvolume}/.fseventsd/no_log"
+    if [ -e "${bootvolume}/EFI/config.plist" ]; then
+        cp -f "${bootvolume}/EFI/config.plist" "${bootvolume}/EFI/config-oldEFI.plist"
+    fi
+    cp -Rf "${osxvolume}/EFI/" "${bootvolume}/EFI/"
+    if [ -e "${bootvolume}/EFI/config-oldEFI.plist" ]; then
+        cp -f "${bootvolume}/EFI/config-oldEFI.plist" "${bootvolume}/EFI/config.plist"
+        rm "${bootvolume}/EFI/config-oldEFI.plist"
+    fi
+
+    boottype=$( cat "${osxvolume}/boottype" )
+
+    if [ "${boottype}" == "x32" ]; then
+        cd "${bootvolume}/EFI"
+        perl -i -p -e "s/arch=x86_64/arch=i386/g" `find "config.plist" -type f`
+    fi
+    if [ "${boottype}" == "x64" ]; then
+        cd "${bootvolume}/EFI"
+        perl -i -p -e "s/arch=i386/arch=x86_64/g" `find "config.plist" -type f`
+    fi
+    if [ -e "${bootvolume}/EFI/EFI_Install_Log.txt" ]; then
+        rm -f "${bootvolume}/EFI/EFI_Install_Log.txt"
+    fi
+
+    touch "${bootvolume}/.metadata_never_index"
+    rm -Rf "${bootvolume}/.fseventsd/"
+    mkdir -p "${bootvolume}/.fseventsd"
+    touch "${bootvolume}/.fseventsd/no_log"
 fi
 
-echo " " >> "${osxvolume}/Clover_Install_Log.txt"
-echo "======================================================" >> "${osxvolume}/Clover_Install_Log.txt"
-echo "=========== Clover EFI Installation Finish ===========" >> "${osxvolume}/Clover_Install_Log.txt"
-echo "======================================================" >> "${osxvolume}/Clover_Install_Log.txt"
+echo " " >> "${install_log}"
+echo "======================================================" >> "${install_log}"
+echo "=========== Clover EFI Installation Finish ===========" >> "${install_log}"
+echo "======================================================" >> "${install_log}"
 # ---------------------------------------------
 # Cleanup
 # ---------------------------------------------
 
-# remove any temporary boot sector files if they exist
-
-if [ -e "${osxvolume}/tmpcham" ]; then
-	rm -rf "${osxvolume}/tmpcham"
+if [[ -e "${bootvolume}/EFI" ]]; then
+    cp -f "$install_log" "${bootvolume}/EFI/Clover_Install_Log.txt"
 fi
-if [ -e "${bootvolume}/EFI" ]; then
-	cp -f "${osxvolume}/Clover_Install_Log.txt" "${bootvolume}/EFI/Clover_Install_Log.txt"
+if [[ -e "$install_log" ]]; then
+    mv -f "$install_log" "${osxvolume}/EFI/Clover_Install_Log.txt"
 fi
-if [ -e "${osxvolume}/Clover_Install_Log.txt" ]; then
-	cp -f "${osxvolume}/Clover_Install_Log.txt" "${osxvolume}/EFI/Clover_Install_Log.txt"
-	rm -f "${osxvolume}/Clover_Install_Log.txt"
-fi
-if [ -e "${osxvolume}/EFI/EFI_Install_Log.txt" ]; then
-	rm -f "${osxvolume}/EFI/EFI_Install_Log.txt"
+if [[ -e "${osxvolume}/EFI/EFI_Install_Log.txt" ]]; then
+    rm -f "${osxvolume}/EFI/EFI_Install_Log.txt"
 fi
 rm -f "${osxvolume}/boot0type"
 rm -f "${osxvolume}/boottype"
 rm -f "${osxvolume}/formattype"
-
