@@ -471,8 +471,18 @@ main ()
 # Create Clover Node
     addGroupChoices --exclusive_one_choice "Clover"
     echo "===================== BootLoaders ======================="
-# build boot0 package
     packagesidentity="$clover_package_identity".bootloader
+# build boot1no package
+    choiceId="boot1no"
+    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
+
+    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
+    addChoice --group="Clover" --start-selected="false" --pkg-refs="$packageRefId" "${choiceId}"
+# End build boot1no package
+
+# build boot0 package
     choiceId="boot0"
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
@@ -488,7 +498,7 @@ main ()
 
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    addChoice --group="Clover" --start-selected="true" --pkg-refs="$packageRefId" "${choiceId}"
+    addChoice --group="Clover" --start-selected="! checkBootFromUEFI()" --pkg-refs="$packageRefId" "${choiceId}"
 # End build boot0hfs package
 
 # build boot0EFI package
@@ -501,15 +511,6 @@ main ()
     addChoice --group="Clover" --start-selected="false" --pkg-refs="$packageRefId" "${choiceId}"
 # End build boot0EFI package
 
-# build boot1no package
-    choiceId="boot1no"
-    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
-    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
-
-    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
-    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    addChoice --group="Clover" --start-selected="false" --pkg-refs="$packageRefId" "${choiceId}"
-# End build boot1no package
 
 # build boot1UEFI package
     choiceId="boot1UEFI"
@@ -518,7 +519,7 @@ main ()
 
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    addChoice --group="Clover" --start-selected="false" --pkg-refs="$packageRefId" "${choiceId}"
+    addChoice --group="Clover" --start-selected="checkBootFromUEFI()" --pkg-refs="$packageRefId" "${choiceId}"
 # End build boot1UEFI package
 
 if [[ "$add_ia32" -eq 1 ]]; then

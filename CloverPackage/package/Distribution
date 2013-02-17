@@ -60,4 +60,19 @@
 		return false;
 	}
 
+	function checkBootFromUEFI() {
+		var classObjects = system.ioregistry.matchingName('efi','IODeviceTree');
+		if (classObjects) {
+			for(var i = 0; i &lt; classObjects.length; i++) {
+				var obj = classObjects[i];
+				if ( obj.hasOwnProperty("firmware-vendor") != true)
+					continue;
+				if (obj["firmware-vendor"].toString() == 'C,L,O,V,E,R') {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
 	</script>
