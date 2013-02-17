@@ -472,7 +472,7 @@ main ()
     addGroupChoices --exclusive_one_choice "Clover"
     echo "===================== BootLoaders ======================="
 # build boot0 package
-    packagesidentity="$clover_package_identity".boot0
+    packagesidentity="$clover_package_identity".bootloader
     choiceId="boot0"
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
@@ -482,7 +482,6 @@ main ()
 # End build boot0 package
 
 # build boot0hfs package
-    packagesidentity="$clover_package_identity".boot0hfs
     choiceId="boot0hfs"
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
@@ -493,7 +492,6 @@ main ()
 # End build boot0hfs package
 
 # build boot0EFI package
-    packagesidentity="$clover_package_identity".boot0EFI
     choiceId="boot0EFI"
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
@@ -504,7 +502,6 @@ main ()
 # End build boot0EFI package
 
 # build boot1no package
-    packagesidentity="$clover_package_identity".boot1no
     choiceId="boot1no"
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
@@ -515,7 +512,6 @@ main ()
 # End build boot1no package
 
 # build boot1UEFI package
-    packagesidentity="$clover_package_identity".boot1UEFI
     choiceId="boot1UEFI"
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
@@ -530,7 +526,7 @@ if [[ "$add_ia32" -eq 1 ]]; then
     addGroupChoices --parent="Clover" --exclusive_one_choice "BootArch"
 
     # build boot32 package
-    packagesidentity="$clover_package_identity".boot32
+    packagesidentity="$clover_package_identity".bootarch
     choiceId="boot32"
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
@@ -540,7 +536,7 @@ if [[ "$add_ia32" -eq 1 ]]; then
     # End build boot32 package
 fi
 # build boot64 package
-    packagesidentity="$clover_package_identity".boot64
+    packagesidentity="$clover_package_identity".bootarch
     choiceId="boot64"
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
