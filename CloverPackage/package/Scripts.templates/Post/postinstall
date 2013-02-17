@@ -20,6 +20,7 @@ osxvolume="${3}"
 bootervolumename="EFI"
 bootvolume="/Volumes/${bootervolumename}"
 install_log="${osxvolume}/Clover_Install_Log.txt"
+config_plist_file="${osxvolume}"/EFI/config.plist
 
 # ---------------------------------------------
 # 檢查 原來的 boot 類型 並安裝新的 boot
@@ -38,16 +39,6 @@ fi
 rm -f "${osxvolume}/bootold"
 rm -f "${osxvolume}/bootoldtype"
 
-boottype=$( cat "${osxvolume}/boottype" )
-if [ "${boottype}" == "x32" ]; then
-    cd "${osxvolume}/EFI"
-    perl -i -p -e "s/arch=x86_64/arch=i386/g" `find "config.plist" -type f`
-fi    
-if [ "${boottype}" == "x64" ]; then
-    cd "${osxvolume}/EFI"
-    perl -i -p -e "s/arch=i386/arch=x86_64/g" `find "config.plist" -type f`
-fi
-
 # ---------------------------------------------
 # 檢查 原來的 boot 類型 並安裝新的 boot
 # 檢查 GPT EFI 分區
@@ -56,7 +47,7 @@ fi
 installtype=$( cat "${osxvolume}/boot0type" )
 
 if [ "$( df | grep EFI )" ] && [ "${installtype}" == "boot0hfsEFI" ]; then
-
+	config_plist_file="${bootvolume}"/EFI/config.plist
     backupRootDir="${bootvolume}/EFI-Backups"
     backupDir="${backupRootDir}/"$( date -j "+%F-%Hh%M" )
     # Create the backup dirextory
@@ -124,16 +115,6 @@ if [ "$( df | grep EFI )" ] && [ "${installtype}" == "boot0hfsEFI" ]; then
         rm "${bootvolume}/EFI/config-oldEFI.plist"
     fi
 
-    boottype=$( cat "${osxvolume}/boottype" )
-
-    if [ "${boottype}" == "x32" ]; then
-        cd "${bootvolume}/EFI"
-        perl -i -p -e "s/arch=x86_64/arch=i386/g" `find "config.plist" -type f`
-    fi
-    if [ "${boottype}" == "x64" ]; then
-        cd "${bootvolume}/EFI"
-        perl -i -p -e "s/arch=i386/arch=x86_64/g" `find "config.plist" -type f`
-    fi
     if [ -e "${bootvolume}/EFI/EFI_Install_Log.txt" ]; then
         rm -f "${bootvolume}/EFI/EFI_Install_Log.txt"
     fi
@@ -143,6 +124,15 @@ if [ "$( df | grep EFI )" ] && [ "${installtype}" == "boot0hfsEFI" ]; then
     mkdir -p "${bootvolume}/.fseventsd"
     touch "${bootvolume}/.fseventsd/no_log"
 fi
+
+# Change config.plist if needed
+boottype=$( cat "${osxvolume}/boottype" )
+
+case "${boottype}" in
+	ia32) perl -i -p -e "s/arch=x86_64/arch=i386/g" "${config_plist_file}" ;;
+	 x64) perl -i -p -e "s/arch=i386/arch=x86_64/g" "${config_plist_file}" ;;
+esac
+
 
 echo " " >> "${install_log}"
 echo "======================================================" >> "${install_log}"

@@ -146,13 +146,12 @@ echo " " >> "${osxvolume}/Clover_Install_Log.txt"
 
 echo "Stage 0 - Written ${diskloader} to ${bootdisk}" >> "${osxvolume}/Clover_Install_Log.txt"
 echo "/usr/local/bin/fdisk440 -u -f ${osxvolume}/usr/standalone/i386/${diskloader} -y ${bootdisk}" >> "${osxvolume}/Clover_Install_Log.txt"
-echo " " >> "${osxvolume}/Clover_Install_Log.txt"
-
 /usr/local/bin/fdisk440 -u -f "${osxvolume}/usr/standalone/i386/${diskloader}" -y ${bootdisk}
+echo " " >> "${osxvolume}/Clover_Install_Log.txt"
 
 ### Stage 1 ###
 
-if [ ${efiformat} = "msdos" ]; then
+if [[ "${efiformat}" = "msdos" ]]; then
 
 	echo "Stage 1 - Written ${partitionloaderfat} to ${bootrdev}" >> "${osxvolume}/Clover_Install_Log.txt"
 	echo "File system is Fat32." >> "${bootvolume}/Clover_Install_Log.txt"
@@ -206,16 +205,15 @@ echo "-----------------------------------------------"
 echo ""
 
 
-
 echo "==============================================="
 echo "Mount EFI partition:"
 echo "********************"
-if [ ${efiformat} = "hfs" ]; then
-	[ -d "${bootvolume}" ] || mkdir -p "${bootvolume}"
+if [[ "${efiformat}" == "hfs" ]]; then
+	[[ -d "${bootvolume}" ]] || mkdir -p "${bootvolume}"
 	echo "Executing command: mount_hfs -u 0 -g 0 ${bootdev} ${bootvolume}"
 	mount_hfs -u 0 -g 0 "${bootdev}" "${bootvolume}"
 else
-	[ -d "${bootvolume}" ] || mkdir -p "${bootvolume}"
+	[[ -d "${bootvolume}" ]] || mkdir -p "${bootvolume}"
 	echo "Executing command: mount_msdos -u 0 -g 0 ${bootdev} ${bootvolume}"
 	mount_msdos -u 0 -g 0 "${bootdev}" "${bootvolume}"
 fi

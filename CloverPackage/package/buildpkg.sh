@@ -417,15 +417,16 @@ main ()
 # # End pre install choice
 
 # build Core package
-    echo "===================== Core ============================="
+    echo "===================== BiosBoot ============================="
     packagesidentity="$clover_package_identity"
-    choiceId="Core"
+    choiceId="BiosBoot"
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin
     if [[ "$add_ia32" -eq 1 ]]; then
         mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/ia32
         ditto --noextattr --noqtn ${SYMROOT}/i386/ia32/boot ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/ia32
     fi
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/x64
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
     ditto --noextattr --noqtn ${SYMROOT}/i386/x64/boot    ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/x64
 #   ditto --noextattr --noqtn ${SYMROOT}/i386/x64/boot7   ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/x64
     ditto --noextattr --noqtn ${SYMROOT}/i386/boot0       ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386
@@ -442,8 +443,9 @@ main ()
     chmod 755 "${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/fdisk440"
 
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+    packageBiosBootRefId=$packageRefId
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    addChoice --start-visible="false" --start-selected="true" --pkg-refs="$packageRefId" "${choiceId}"
+    addChoice --start-visible="false" --start-selected="false" --pkg-refs="$packageRefId" "${choiceId}"
 # End build core package
 
 # build core EFI folder package
@@ -453,7 +455,9 @@ main ()
     rm -rf   ${PKG_BUILD_DIR}/${choiceId}/Root/EFI
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root/EFI
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Scripts
-    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"               \
+                       --subst="CLOVER_PACKAGE_IDENTITY=$clover_package_identity" \
+                       ${choiceId}
     rsync -r --exclude=.svn --exclude="*~" ${SRCROOT}/CloverV2/EFI/ ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/
     [[ "$add_ia32" -ne 1 ]] && rm -rf ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/drivers32
     # config.plist
@@ -479,7 +483,8 @@ main ()
 
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    addChoice --group="Clover" --start-selected="false" --pkg-refs="$packageRefId" "${choiceId}"
+    addChoice --group="Clover" --start-selected="false" \
+     --pkg-refs="$packageRefId" "${choiceId}"
 # End build boot1no package
 
 # build boot0 package
@@ -488,7 +493,8 @@ main ()
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    addChoice --group="Clover" --start-selected="false" --pkg-refs="$packageRefId" "${choiceId}"
+    addChoice --group="Clover" --start-selected="false" \
+     --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
 # End build boot0 package
 
 # build boot0hfs package
@@ -498,7 +504,8 @@ main ()
 
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    addChoice --group="Clover" --start-selected="! checkBootFromUEFI()" --pkg-refs="$packageRefId" "${choiceId}"
+    addChoice --group="Clover" --start-selected="! checkBootFromUEFI()" \
+     --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
 # End build boot0hfs package
 
 # build boot0EFI package
@@ -508,7 +515,8 @@ main ()
 
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    addChoice --group="Clover" --start-selected="false" --pkg-refs="$packageRefId" "${choiceId}"
+    addChoice --group="Clover" --start-selected="false" \
+     --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
 # End build boot0EFI package
 
 
@@ -519,7 +527,8 @@ main ()
 
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    addChoice --group="Clover" --start-selected="checkBootFromUEFI()" --pkg-refs="$packageRefId" "${choiceId}"
+    addChoice --group="Clover" --start-selected="checkBootFromUEFI()" \
+     --pkg-refs="$packageRefId" "${choiceId}"
 # End build boot1UEFI package
 
 if [[ "$add_ia32" -eq 1 ]]; then
