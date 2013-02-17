@@ -370,11 +370,18 @@ $BASETOOLS_DIR/EfiLdrImage -o $BUILD_DIR/FV/Efildr32 $BUILD_DIR/$PROCESSOR/EfiLo
 cat $BOOTSECTOR_BIN_DIR/start32.com $BOOTSECTOR_BIN_DIR/efi32.com3 $BUILD_DIR/FV/Efildr32 > $BUILD_DIR/FV/Efildr20	
 cat $BOOTSECTOR_BIN_DIR/start32H.com2 $BOOTSECTOR_BIN_DIR/efi32.com3 $BUILD_DIR/FV/Efildr32 > $BUILD_DIR/FV/boot
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/ia32
+rm -rf $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers32
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers32
+rm -rf $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32
+rm -rf $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32UEFI
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32UEFI
+# Bootloader
 cp -v $BUILD_DIR/FV/boot $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/ia32/
+# Mandatory drivers
 cp -v $BUILD_DIR/IA32/FSInject.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers32/FSInject-32.efi
+cp -v $BUILD_DIR/IA32/OsxFatBinaryDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers32UEFI/OsxFatBinaryDrv-32.efi
+# Optional drivers
 #cp -v $BUILD_DIR/IA32/VBoxIso9600.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32/VBoxIso9600-32.efi
 cp -v $BUILD_DIR/IA32/VBoxExt2.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32/VBoxExt2-32.efi
 cp -v $BUILD_DIR/IA32/VBoxExt4.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32/VBoxExt4-32.efi
@@ -383,7 +390,6 @@ cp -v $BUILD_DIR/IA32/Ps2MouseAbsolutePointerDxe.efi $WORKSPACE/Clover/CloverPac
 cp -v $BUILD_DIR/IA32/Ps2MouseDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32/Ps2MouseDxe-32.efi
 cp -v $BUILD_DIR/IA32/UsbMouseDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32/UsbMouseDxe-32.efi
 cp -v $BUILD_DIR/IA32/XhciDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32/XhciDxe-32.efi
-cp -v $BUILD_DIR/IA32/OsxFatBinaryDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32UEFI/OsxFatBinaryDrv-32.efi
 cp -v $BUILD_DIR/IA32/CLOVERIA32.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/BOOT/
 echo Done!
 fi
@@ -407,13 +413,21 @@ $BASETOOLS_DIR/GenPage $BUILD_DIR/FV/Efildr20Pure -o $BUILD_DIR/FV/Efildr20
 #$BASETOOLS_DIR/GenPage $BUILD_DIR/FV/bootPure -o $BUILD_DIR/FV/boot
 dd if=$BUILD_DIR/FV/Efildr20 of=$BUILD_DIR/FV/boot bs=512 skip=1
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/x64
+rm -rf $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64
+rm -rf $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64UEFI
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64UEFI
+rm -rf $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64
+rm -rf $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI
+# Bootloader
 cp -v $BUILD_DIR/FV/boot $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/x64/
+# Mandatory drivers
 cp -v $BUILD_DIR/X64/FSInject.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64/FSInject-64.efi
 cp -v $BUILD_DIR/X64/FSInject.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64UEFI/FSInject-64.efi
+cp -v $BUILD_DIR/X64/OsxFatBinaryDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64UEFI/OsxFatBinaryDrv-64.efi
+# Optional drivers
 #cp -v $BUILD_DIR/X64/VBoxIso9600.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/VBoxIso9600-64.efi
 cp -v $BUILD_DIR/X64/VBoxExt2.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/VBoxExt2-64.efi
 cp -v $BUILD_DIR/X64/VBoxExt4.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/VBoxExt4-64.efi
@@ -425,7 +439,6 @@ cp -v $BUILD_DIR/X64/DataHubDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/dri
 cp -v $BUILD_DIR/X64/Ps2MouseDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/Ps2MouseDxe-64.efi
 cp -v $BUILD_DIR/X64/UsbMouseDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/UsbMouseDxe-64.efi
 cp -v $BUILD_DIR/X64/XhciDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/XhciDxe-64.efi
-cp -v $BUILD_DIR/X64/OsxFatBinaryDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/OsxFatBinaryDrv-64.efi
 cp -v $BUILD_DIR/X64/OsxAptioFixDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/OsxAptioFixDrv-64.efi
 #cp -v $BUILD_DIR/X64/OsxLowMemFixDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/OsxLowMemFixDrv-64.efi
 cp -v $BUILD_DIR/X64/CsmVideoDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/CsmVideoDxe-64.efi
@@ -443,12 +456,20 @@ cat $BOOTSECTOR_BIN_DIR/Start64H.com $BOOTSECTOR_BIN_DIR/efi64.com3 $BUILD_DIR/F
 $BASETOOLS_DIR/GenPage $BUILD_DIR/FV/Efildr20Pure -o $BUILD_DIR/FV/Efildr20
 dd if=$BUILD_DIR/FV/Efildr20 of=$BUILD_DIR/FV/boot7 bs=512 skip=1
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/x64
+rm -rf $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64
+rm -rf $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64UEFI
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64UEFI
+rm -rf $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64
+rm -rf $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI
+# Bootloader
 cp -v $BUILD_DIR/FV/boot7 $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/x64/
+# Mandatory drivers
 cp -v $BUILD_DIR/X64/FSInject.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64/FSInject-64.efi
+cp -v $BUILD_DIR/X64/OsxFatBinaryDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64UEFI/OsxFatBinaryDrv-64.efi
+# Optional drivers
 #cp -v $BUILD_DIR/X64/VBoxIso9600.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/VBoxIso9600-64.efi
 cp -v $BUILD_DIR/X64/VBoxExt2.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/VBoxExt2-64.efi
 cp -v $BUILD_DIR/X64/VBoxExt4.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/VBoxExt4-64.efi
@@ -459,7 +480,6 @@ cp -v $BUILD_DIR/X64/PartitionDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/d
 cp -v $BUILD_DIR/X64/Ps2MouseDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/Ps2MouseDxe-64.efi
 cp -v $BUILD_DIR/X64/UsbMouseDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/UsbMouseDxe-64.efi
 cp -v $BUILD_DIR/X64/XhciDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/XhciDxe-64.efi
-cp -v $BUILD_DIR/X64/OsxFatBinaryDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/OsxFatBinaryDrv-64.efi
 #cp -v $BUILD_DIR/X64/OsxAptioFixDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/OsxAptioFixDrv-64.efi
 #cp -v $BUILD_DIR/X64/OsxLowMemFixDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/OsxLowMemFixDrv-64.efi
 cp -v $BUILD_DIR/X64/CsmVideoDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/CsmVideoDxe-64.efi
