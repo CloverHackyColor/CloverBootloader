@@ -86,7 +86,7 @@ image:
 #	@echo "CP refit.conf"
 	@cp -f $(CLOVERROOT)/EFI/BOOT/refit.conf ${IMGROOT}/EFI/BOOT/
 #	@echo "CP config.plist"
-	@cp -f $(CLOVERROOT)/EFI/config-org.plist ${IMGROOT}/EFI/config.plist
+	@cp -f $(CLOVERROOT)/EFI/config-sample.plist ${IMGROOT}/EFI/config.plist
 	@echo "\t[CP] drivers64"
 	@cp -r -f $(CLOVERROOT)/EFI/drivers64 ${IMGROOT}/EFI/
 	@cp -r -f $(CLOVERROOT)/EFI/drivers64UEFI ${IMGROOT}/EFI/

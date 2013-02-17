@@ -453,14 +453,14 @@ main ()
     rm -rf   ${PKG_BUILD_DIR}/${choiceId}/Root/EFI
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root/EFI
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Scripts
-    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" PreInstall
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
     rsync -r --exclude=.svn --exclude="*~" ${SRCROOT}/CloverV2/EFI/ ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/
     [[ "$add_ia32" -ne 1 ]] && rm -rf ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/drivers32
     # config.plist
-    rm -f ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/config.plist >/dev/null 2>&1
+    rm -f ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/config.plist &>/dev/null
     # refit.conf
-    cp ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/BOOT/refit.conf ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/BOOT/refit.conf-default
-    rm -f ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/BOOT/refit.conf
+    mv -f ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/BOOT/refit.conf \
+     ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/BOOT/refit-default.conf
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
 
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")

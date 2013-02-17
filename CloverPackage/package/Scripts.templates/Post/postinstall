@@ -48,18 +48,6 @@ if [ "${boottype}" == "x64" ]; then
     perl -i -p -e "s/arch=i386/arch=x86_64/g" `find "config.plist" -type f`
 fi
 
-
-if [ -e "${osxvolume}/EFI/config.plist" ]; then
-    rm -f "${osxvolume}/EFI/config-org.plist"
-else
-    cp -f "${osxvolume}/EFI/config-org.plist" "${osxvolume}/EFI/config.plist"
-    rm -f "${osxvolume}/EFI/config-org.plist"
-fi
-if [ ! -e "${osxvolume}/EFI/BOOT/refit.conf" ]; then
-    cp -f "${osxvolume}/EFI/BOOT/refit.conf-default" "${osxvolume}/EFI/BOOT/refit.conf"
-fi
-rm -f "${osxvolume}/EFI/BOOT/refit-*.conf"
-
 # ---------------------------------------------
 # 檢查 原來的 boot 類型 並安裝新的 boot
 # 檢查 GPT EFI 分區
