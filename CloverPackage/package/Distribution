@@ -7,7 +7,7 @@
 
 	<welcome file='Welcome.rtfd'/>
 	<!-- license file="License.rtf" sla="EA0401" -->
-	<readme  file='Description.html'/>
+	<readme file='Description.html'/>
 	<conclusion file="Conclusion.rtfd"/>
 	<background file='background.tiff' alignment='topleft' scaling='proportional'/>
 
@@ -53,9 +53,11 @@
 		return false;
 	}
 
-	function exclusive(toggle){
-		toggle.selected = ( my.choice.selected != "false" ? "false" : "true" );
-		return ( toggle.selected != false ? false : true );
+	function checkFileExists(file){
+		if (my.target) {
+			return system.files.fileExistsAtPath(my.target.mountpoint + file)
+		}
+		return false;
 	}
 
 	</script>

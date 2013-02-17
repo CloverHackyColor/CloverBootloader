@@ -551,7 +551,6 @@ fi
     fi
 # End build boot64 package
 
-
 # build theme packages
     echo "================= Themes ================="
     addGroupChoices "Themes"
@@ -560,11 +559,11 @@ fi
     packagesidentity="${clover_package_identity}".themes
     local artwork="${SRCROOT}/CloverV2/themespkg/"
     local themes=($( find "${artwork}" -type d -depth 1 -not -name '.svn' ))
+    local themeDestDir='/EFI/BOOT/themes'
     local defaultTheme=$(trim $(sed -n 's/^theme *//p' "${SRCROOT}"/CloverV2/EFI/BOOT/refit.conf))
     for (( i = 0 ; i < ${#themes[@]} ; i++ )); do
         local themeName=${themes[$i]##*/}
-        local themeDir="$themeName"
-        local selectTheme='false'
+        local selectTheme="checkFileExists('${themeDestDir}/$themeName/icons/func_clover.png')"
         mkdir -p "${PKG_BUILD_DIR}/${themeName}/Root/"
         rsync -r --exclude=.svn --exclude="*~" "${themes[$i]}/" "${PKG_BUILD_DIR}/${themeName}/Root/${themeName}"
         addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${themeName}" \
@@ -572,7 +571,8 @@ fi
                            InstallTheme
 
         packageRefId=$(getPackageRefId "${packagesidentity}" "${themeName}")
-        buildpackage "$packageRefId" "${themeName}" "${PKG_BUILD_DIR}/${themeName}" "/EFI/BOOT/themes"
+        buildpackage "$packageRefId" "${themeName}" "${PKG_BUILD_DIR}/${themeName}" "${themeDestDir}"
+
         # Select the default theme (get from refit.conf)
         [[ "$themeName" == "$defaultTheme" ]] && selectTheme='true'
         addChoice --group="Themes"  --start-selected="$selectTheme"  --pkg-refs="$packageRefId"  "${themeName}"
@@ -584,19 +584,20 @@ if [[ "$add_ia32" -eq 1 ]]; then
     echo "===================== drivers32 ========================"
     addGroupChoices --title="Drivers32" --description="Drivers32" "Drivers32"
     packagesidentity="${clover_package_identity}".drivers32
-    drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/drivers32" -type f -name '*.efi' -depth 1 ))
+    local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/drivers32" -type f -name '*.efi' -depth 1 ))
+    local driverDestDir='/EFI/drivers32'
     for (( i = 0 ; i < ${#drivers[@]} ; i++ )); do
-        driver="${drivers[$i]##*/}"
-        driverName="${driver%.efi}"
+        local driver="${drivers[$i]##*/}"
+        local driverName="${driver%.efi}"
         mkdir -p "${PKG_BUILD_DIR}/${driverName}/Root/"
         ditto --noextattr --noqtn --arch i386 "${drivers[$i]}" "${PKG_BUILD_DIR}/${driverName}/Root/"
         find "${PKG_BUILD_DIR}/${driverName}" -name '.DS_Store' -exec rm -R -f {} \; 2>/dev/null
         fixperms "${PKG_BUILD_DIR}/${driverName}/Root/"
 
         packageRefId=$(getPackageRefId "${packagesidentity}" "${driverName}")
-        buildpackage "$packageRefId" "${driverName}" "${PKG_BUILD_DIR}/${driverName}" "/EFI/drivers32"
-        addChoice --group="Drivers32"  --title="$driverName"  --description="Install to /EFI/drivers32/$driver" \
-         --start-selected="false"  --pkg-refs="$packageRefId"  "${driverName}"
+        buildpackage "$packageRefId" "${driverName}" "${PKG_BUILD_DIR}/${driverName}" "${driverDestDir}"
+        addChoice --group="Drivers32"  --title="$driverName"  --description="Install to ${driverDestDir}/$driver" \
+         --start-selected="checkFileExists('${driverDestDir}/$driver')"  --pkg-refs="$packageRefId"  "${driverName}"
         rm -R -f "${PKG_BUILD_DIR}/${driverName}"
     done
 fi
@@ -606,19 +607,20 @@ fi
     echo "===================== drivers64 ========================"
     addGroupChoices --title="Drivers64" --description="Drivers64" "Drivers64"
     packagesidentity="${clover_package_identity}".drivers64
-    drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/drivers64" -type f -name '*.efi' -depth 1 ))
+    local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/drivers64" -type f -name '*.efi' -depth 1 ))
+    local driverDestDir='/EFI/drivers64'
     for (( i = 0 ; i < ${#drivers[@]} ; i++ )); do
-        driver="${drivers[$i]##*/}"
-        driverName="${driver%.efi}"
+        local driver="${drivers[$i]##*/}"
+        local driverName="${driver%.efi}"
         mkdir -p "${PKG_BUILD_DIR}/${driverName}/Root/"
         ditto --noextattr --noqtn --arch i386 "${drivers[$i]}" "${PKG_BUILD_DIR}/${driverName}/Root/"
         find "${PKG_BUILD_DIR}/${driverName}" -name '.DS_Store' -exec rm -R -f {} \; 2>/dev/null
         fixperms "${PKG_BUILD_DIR}/${driverName}/Root/"
 
         packageRefId=$(getPackageRefId "${packagesidentity}" "${driverName}")
-        buildpackage "$packageRefId" "${driverName}" "${PKG_BUILD_DIR}/${driverName}" "/EFI/drivers64"
-        addChoice --group="Drivers64"  --title="$driverName"  --description="Install to /EFI/drivers64/$driver" \
-         --start-selected="false"  --pkg-refs="$packageRefId"  "${driverName}"
+        buildpackage "$packageRefId" "${driverName}" "${PKG_BUILD_DIR}/${driverName}" "${driverDestDir}"
+        addChoice --group="Drivers64"  --title="$driverName"  --description="Install to ${driverDestDir}/$driver" \
+         --start-selected="checkFileExists('${driverDestDir}/$driver')"  --pkg-refs="$packageRefId"  "${driverName}"
         rm -R -f "${PKG_BUILD_DIR}/${driverName}"
     done
 # End build drivers-x64 packages
@@ -627,20 +629,21 @@ fi
     echo "===================== drivers64UEFI ========================"
     addGroupChoices --title="Drivers64UEFI" --description="Drivers64UEFI" "Drivers64UEFI"
     packagesidentity="${clover_package_identity}".drivers64UEFI
-    drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/drivers64UEFI" -type f -name '*.efi' -depth 1 ))
+    local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/drivers64UEFI" -type f -name '*.efi' -depth 1 ))
+    local driverDestDir='/EFI/drivers64UEFI'
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
-        driver="${drivers[$i]##*/}"
-        driverName="${driver%.efi}"
+        local driver="${drivers[$i]##*/}"
+        local driverName="${driver%.efi}"
         mkdir -p "${PKG_BUILD_DIR}/${driverName}/Root/"
         ditto --noextattr --noqtn --arch i386 "${drivers[$i]}" "${PKG_BUILD_DIR}/${driverName}/Root/"
         find "${PKG_BUILD_DIR}/${driverName}" -name '.DS_Store' -exec rm -R -f {} \; 2>/dev/null
         fixperms "${PKG_BUILD_DIR}/${driverName}/Root/"
 
         packageRefId=$(getPackageRefId "${packagesidentity}" "${driverName}")
-        buildpackage "$packageRefId" "${driverName}" "${PKG_BUILD_DIR}/${driverName}" "/EFI/drivers64UEFI"
-        addChoice --group="Drivers64UEFI"  --title="$driverName"  --description="Install to /EFI/drivers64UEFI/$driver" \
-         --start-selected="false"  --pkg-refs="$packageRefId"  "${driverName}"
+        buildpackage "$packageRefId" "${driverName}" "${PKG_BUILD_DIR}/${driverName}" "${driverDestDir}"
+        addChoice --group="Drivers64UEFI"  --title="$driverName"  --description="Install to ${driverDestDir}/$driver" \
+         --start-selected="checkFileExists('${driverDestDir}/$driver')"  --pkg-refs="$packageRefId"  "${driverName}"
         rm -R -f "${PKG_BUILD_DIR}/${driverName}"
     done
 # End build drivers-x64UEFI packages
