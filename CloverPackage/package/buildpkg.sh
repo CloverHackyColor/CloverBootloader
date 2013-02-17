@@ -548,7 +548,11 @@ fi
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
     # Only add the choice if we have ia32 arch
-    [[ "$add_ia32" -eq 1 ]] && addChoice --group="BootArch" --start-selected="true" --pkg-refs="$packageRefId" "${choiceId}"
+    if [[ "$add_ia32" -eq 1 ]]; then
+        addChoice --group="BootArch" --start-selected="true" --pkg-refs="$packageRefId" "${choiceId}"
+    else
+        addChoice --start-visible="false" --start-selected="true" --pkg-refs="$packageRefId" "${choiceId}"
+    fi
 # End build boot64 package
 
 
