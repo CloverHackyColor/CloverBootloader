@@ -976,6 +976,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       }
       
     }
+    if (!gSettings.RtMLB) {
+      gSettings.RtMLB = &gSettings.BoardSerialNumber[0];
+    }
+    if(!RtROMLen) {
+      gSettings.RtROM = (UINT8*)&gSettings.SmUUID.Data4[2];
+      RtROMLen = 6;
+    }
 
     
     // if CustomUUID and InjectSystemID are not specified

@@ -550,7 +550,14 @@ typedef struct {
   UINT64						Entry;
   
 } XSDT_TABLE;
-
+/*
+typedef struct {
+  UINT32  Data1;
+  UINT16  Data2;
+  UINT16  Data3;
+  UINT8   Data4[8];
+} GUID;
+*/
 typedef struct {
   
 	// SMBIOS TYPE0

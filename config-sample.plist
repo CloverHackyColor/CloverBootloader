@@ -48,14 +48,14 @@
 				<data>TA==</data>
 			</dict>
 			<key>3</key>
-            <dict>
-                <key>Name</key>
-                <string>AppleAHCIPort</string>
-                <key>Find</key>
-                <data>RXh0ZXJuYWw=</data>
-                <key>Replace</key>
-                <data>SW50ZXJuYWw=</data>
-            </dict>
+			<dict>
+				<key>Name</key>
+				<string>AppleAHCIPort</string>
+				<key>Find</key>
+				<data>RXh0ZXJuYWw=</data>
+				<key>Replace</key>
+				<data>SW50ZXJuYWw=</data>
+			</dict>
 		</dict>
 	</dict>
 	<key>SystemParameters</key>
@@ -229,13 +229,6 @@
 		<string>No</string>
 		<key>FixDsdtMask</key>
 		<string>0xFFFF</string>
-	</dict>
-	<key>RtVariables</key>
-	<dict>
-		<key>MLB</key>
-		<string>XXXXXXXXXX</string>
-		<key>ROM</key>
-		<data>AAAAAAAA</data>
 	</dict>
 </dict>
 </plist>
