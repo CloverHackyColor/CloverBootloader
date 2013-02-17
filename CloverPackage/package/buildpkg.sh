@@ -558,11 +558,13 @@ fi
 
     # Using themes section from Azi's/package branch.
     packagesidentity="${clover_package_identity}".themes
-    artwork="${SRCROOT}/CloverV2/themespkg/"
-    themes=($( find "${artwork}" -type d -depth 1 -not -name '.svn' ))
+    local artwork="${SRCROOT}/CloverV2/themespkg/"
+    local themes=($( find "${artwork}" -type d -depth 1 -not -name '.svn' ))
+    local defaultTheme=$(trim $(sed -n 's/^theme *//p' "${SRCROOT}"/CloverV2/EFI/BOOT/refit.conf))
     for (( i = 0 ; i < ${#themes[@]} ; i++ )); do
-        themeName=${themes[$i]##*/}
-        themeDir="$themeName"
+        local themeName=${themes[$i]##*/}
+        local themeDir="$themeName"
+        local selectTheme='false'
         mkdir -p "${PKG_BUILD_DIR}/${themeName}/Root/"
         rsync -r --exclude=.svn --exclude="*~" "${themes[$i]}/" "${PKG_BUILD_DIR}/${themeName}/Root/${themeName}"
         addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${themeName}" \
@@ -571,7 +573,9 @@ fi
 
         packageRefId=$(getPackageRefId "${packagesidentity}" "${themeName}")
         buildpackage "$packageRefId" "${themeName}" "${PKG_BUILD_DIR}/${themeName}" "/EFI/BOOT/themes"
-        addChoice --group="Themes"  --start-selected="false"  --pkg-refs="$packageRefId"  "${themeName}"
+        # Select the default theme (get from refit.conf)
+        [[ "$themeName" == "$defaultTheme" ]] && selectTheme='true'
+        addChoice --group="Themes"  --start-selected="$selectTheme"  --pkg-refs="$packageRefId"  "${themeName}"
     done
 # End build theme packages
 
