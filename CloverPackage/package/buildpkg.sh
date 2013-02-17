@@ -484,7 +484,7 @@ main ()
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
     addChoice --group="Clover" --start-selected="false" \
-     --pkg-refs="$packageRefId" "${choiceId}"
+     --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
 # End build boot1no package
 
 # build boot0 package
