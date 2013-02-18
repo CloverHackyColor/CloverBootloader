@@ -1078,6 +1078,16 @@ CHAR8 NVPM[]= {
 CHAR8 *nv_name(UINT16 vendor_id, UINT16 device_id)
 {
     INT32	i;
+  
+  // First check in the plist, (for e.g this can override any hardcoded devices)
+	CARDLIST * nvcard = FindCardWithIds(((UINT32)(vendor_id << 16) | (UINT32)(device_id << 0)), 0);
+	if (nvcard) 
+	{
+		if (nvcard->Model) 
+		{
+			return nvcard->Model;
+		}
+	}
 
 	for (i=1; i< (sizeof(NVKnowns) / sizeof(NVKnowns[0])); i++) 
 	{
@@ -1094,6 +1104,18 @@ UINT64 nv_mem_detect(pci_dt_t *nvda_dev)
 	UINT32				bar[7];
    UINT16 nvCardType;
    UINT64 vram_size = 0;
+  
+  // First check if any value exist in the plist
+	CARDLIST * nvcard = FindCardWithIds(((nvda_dev->vendor_id << 16) | nvda_dev->device_id),((nvda_dev->subsys_id.subsys.vendor_id << 16) | nvda_dev->subsys_id.subsys.device_id));
+	if (nvcard) 
+	{
+		if (nvcard->VideoRam > 0) 
+		{
+			vram_size = nvcard->VideoRam * 1024 * 1024;
+			DBG("mem_detected %ld\n", vram_size);
+			return vram_size;
+		}
+	}
 
     bar[0] = pci_config_read32(nvda_dev, PCI_BASE_ADDRESS_0);
     nvda_dev->regs = (UINT8 *)(UINTN)(bar[0] & ~0x0f);

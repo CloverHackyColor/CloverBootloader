@@ -106,6 +106,7 @@
 	Platform/kext_patcher.c
 	Platform/kext_inject.c
 	Platform/Nvram.c
+        Platform/card_vlist.c
     Platform/PlatformDriverOverride.c
 
 [Packages]

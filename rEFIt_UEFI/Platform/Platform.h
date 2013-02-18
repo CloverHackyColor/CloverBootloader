@@ -74,6 +74,21 @@ Headers collection for procedures
 #include "device_inject.h"
 #include "kext_inject.h"
 
+/* XML Tags */
+#define kXMLTagPList  		"plist"
+#define kXMLTagDict    		"dict"
+#define kXMLTagKey     		"key"
+#define kXMLTagString  		"string"
+#define kXMLTagInteger 		"integer"
+#define kXMLTagData    		"data"
+#define kXMLTagDate    		"date"
+#define kXMLTagFalse   		"false/"
+#define kXMLTagTrue    		"true/"
+#define kXMLTagArray   		"array"
+#define kXMLTagReference 	"reference"
+#define kXMLTagID      		"ID="
+#define kXMLTagIDREF   		"IDREF="
+
 #define MAX_NUM_DEVICES 64
 
 /* Decimal powers: */
@@ -903,6 +918,19 @@ typedef struct {
   BOOLEAN           Valid;
 } SLOT_DEVICE;
 
+typedef struct  
+{	
+  UINT32            Signature;
+	LIST_ENTRY        Link;
+	CHAR8             Model[64];
+	UINT32            Id;
+	UINT32            SubId;
+	UINT64            VideoRam;
+} CARDLIST;
+
+#define CARDLIST_SIGNATURE SIGNATURE_32('C','A','R','D')
+
+
 #pragma pack(pop)
 //extern CHAR8                    *msgbuf;
 //extern CHAR8                    *msgCursor;
@@ -977,6 +1005,8 @@ extern UINT8	  acpi_cpu_count;
 extern CHAR8*   acpi_cpu_name[32];
 extern CHAR8*   OSVersion;
 extern BOOLEAN  SSSE3;
+
+extern TagPtr gConfigDict;
 //-----------------------------------
 
 VOID        FixBiosDsdt (UINT8* Dsdt);
@@ -1053,6 +1083,10 @@ BOOLEAN    setup_nvidia_devprop(pci_dt_t *nvda_dev);
 //CHAR8*  get_nvidia_model(IN UINT16 DeviceID);
 CHAR8      *get_nvidia_model(UINT32 device_id, UINT32 subsys_id);
 
+VOID        FillCardList(VOID) ;
+CARDLIST    *FindCardWithIds(UINT32 Id, UINT32 SubId);
+VOID        AddCard(CONST CHAR8* Model, UINT32 Id, UINT32 SubId, UINT64 VideoRam);
+
 EG_IMAGE    *egDecodePNG(IN UINT8 *FileData, IN UINTN FileDataLength, IN UINTN IconSize, IN BOOLEAN WantAlpha);
 
 EFI_STATUS  PatchACPI(IN REFIT_VOLUME *Volume);
@@ -1079,6 +1113,8 @@ TagPtr      GetProperty( TagPtr dict, const CHAR8* key );
 EFI_STATUS  XMLParseNextTag(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr);
 VOID        FreeTag( TagPtr tag );
 EFI_STATUS  GetNextTag( UINT8* buffer, CHAR8** tag, UINT32* start,UINT32* length);
+INTN        GetTagCount( TagPtr dict );
+EFI_STATUS  GetElement( TagPtr dict, INTN id,  TagPtr *dict1);
 
 EFI_STATUS  SaveSettings(VOID);
 
