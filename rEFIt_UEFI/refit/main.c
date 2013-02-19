@@ -2095,7 +2095,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   UnicodeSPrint(gSettings.ConfigName, 64, L"config");
   
-  if (FileExists(SelfRootDir, PoolPrint(L"EFI\\OEM\\%a\\%s.plist", gSettings.OEMProduct, gSettings.ConfigName))) {
+  if (!gFirmwareClover && FileExists(SelfRootDir, PoolPrint(L"EFI\\OEM\\%a\\UEFI\\%s.plist", gSettings.OEMBoard, gSettings.ConfigName))) {
+    OEMPath = PoolPrint(L"EFI\\OEM\\%a\\UEFI", gSettings.OEMBoard);
+  } else if (FileExists(SelfRootDir, PoolPrint(L"EFI\\OEM\\%a\\%s.plist", gSettings.OEMProduct, gSettings.ConfigName))) {
     OEMPath = PoolPrint(L"EFI\\OEM\\%a", gSettings.OEMProduct);
   } else if (FileExists(SelfRootDir, PoolPrint(L"EFI\\OEM\\%a\\%s.plist", gSettings.OEMBoard, gSettings.ConfigName))) {
     OEMPath = PoolPrint(L"EFI\\OEM\\%a", gSettings.OEMBoard);

@@ -97,7 +97,9 @@ VOID* FindOemSMBIOSPtr (VOID)
 	}
 	return NULL;
 }
-
+// this function determine ascii string length ending by space. 
+// search restricted to MaxLen, for example
+// iStrLen("ABC    ", 20) == 3
 UINTN iStrLen(CHAR8* String, UINTN MaxLen)
 {
 	UINTN	Len = 0;
