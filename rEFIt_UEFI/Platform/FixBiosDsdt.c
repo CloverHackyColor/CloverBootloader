@@ -4272,7 +4272,7 @@ VOID FixBiosDsdt (UINT8* temp)
   if ((gSettings.FixDsdt & FIX_WARNING)) {
     DBG("patch warnings \n");
     // Always Fix alias cpu FIX cpus=1
-    DsdtLen = FIXCPU1(temp, DsdtLen);
+  //  DsdtLen = FIXCPU1(temp, DsdtLen);
   //  DsdtLen = FIXPWRB(temp, DsdtLen);
     
     // Always Fix _WAK Return value
