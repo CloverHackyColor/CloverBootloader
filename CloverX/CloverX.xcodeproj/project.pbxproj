@@ -300,6 +300,7 @@
 		124D77E01657A5E1008B5407 /* SataController.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = SataController.c; sourceTree = "<group>"; };
 		124D77E11657A5E1008B5407 /* SataController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SataController.h; sourceTree = "<group>"; };
 		124D77E21657A5E2008B5407 /* SataControllerDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = SataControllerDxe.inf; sourceTree = "<group>"; };
+		128160B916D60E720012840B /* AcpiAml.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AcpiAml.h; path = ../../MdePkg/Include/IndustryStandard/AcpiAml.h; sourceTree = SOURCE_ROOT; };
 		12896D8D16B3A10A00A2EC36 /* fsw_base.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_base.h; sourceTree = "<group>"; };
 		12896D8E16B3A10A00A2EC36 /* fsw_core.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fsw_core.c; sourceTree = "<group>"; };
 		12896D8F16B3A10A00A2EC36 /* fsw_core.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fsw_core.h; sourceTree = "<group>"; };
@@ -630,6 +631,7 @@
 		123F0963164F96DB008C1C1C /* IndustryStandard */ = {
 			isa = PBXGroup;
 			children = (
+				128160B916D60E720012840B /* AcpiAml.h */,
 				121E4B66165A1012000C2392 /* AtomBios.h */,
 				123F0964164F96DB008C1C1C /* PeImage.h */,
 				124D76D51657A3E6008B5407 /* PiBootMode.h */,

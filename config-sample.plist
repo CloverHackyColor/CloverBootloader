@@ -205,10 +205,18 @@
 		<string>Yes</string>
 		<key>GeneratePStates</key>
 		<string>Yes</string>
+		<key>DoubleFirstState</key>
+		<string>Yes</string>
 		<key>PLimitDict</key>
 		<string>1</string>
 		<key>UnderVoltStep</key>
 		<string>1</string>
+		<key>MinMultiplier</key>
+		<string>8</string>
+		<key>MaxMultiplier</key>
+		<string>12</string>
+		<key>PluginType</key>
+		<string>0</string>
 		<key>EnableC6</key>
 		<string>Yes</string>
 		<key>EnableC4</key>

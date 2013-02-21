@@ -573,6 +573,24 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))
           gSettings.DoubleFirstState = TRUE;
       }
+      prop = GetProperty(dictPointer,"MinMultiplier");
+      if(prop) {
+        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+        gSettings.MinMultiplier = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);
+        DBG("Config set MinMultiplier=%d\n", gSettings.MinMultiplier);
+      }      
+      prop = GetProperty(dictPointer,"MaxMultiplier");
+      if(prop) {
+        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+        gSettings.MaxMultiplier = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);
+        DBG("Config set MaxMultiplier=%d\n", gSettings.MaxMultiplier);
+      }      
+      prop = GetProperty(dictPointer,"PluginType");
+      if(prop) {
+        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+        gSettings.PluginType = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);
+        DBG("Config set PluginType=%d\n", gSettings.PluginType);
+      }      
       
       
       prop = GetProperty(dictPointer, "ResetAddress");

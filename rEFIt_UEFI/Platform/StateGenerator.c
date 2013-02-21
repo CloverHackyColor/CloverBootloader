@@ -41,7 +41,14 @@ CHAR8 resource_template_register_systemio[] =
   0x00, 0x00, 0x00, 0x79, 0x00,
 };
 
-
+CHAR8 plugin_type[] =
+{
+  0x14, 0x22, 0x5F, 0x44, 0x53, 0x4D, 0x04, 0xA0, 
+  0x09, 0x93, 0x6A, 0x00, 0xA4, 0x11, 0x03, 0x01,
+  0x03, 0xA4, 0x12, 0x10, 0x02, 0x0D, 0x70, 0x6C, 
+  0x75, 0x67, 0x69, 0x6E, 0x2D, 0x74, 0x79, 0x70,
+  0x65, 0x00,
+};
 
 SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
 {
@@ -203,8 +210,16 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
                                              (gCPUStructure.Turbo4 / 10) : (gCPUStructure.Turbo1 / 10);
               MsgLog("Turbo control=%x\n", maximum.Control.Control);
             }
+            if (gSettings.MaxMultiplier) {
+              maximum.Control.Control = gSettings.MaxMultiplier;
+            }
 						
-						minimum.Control.Control = RShiftU64(AsmReadMsr64(MSR_PLATFORM_INFO), 40) & 0xff;
+            if (gSettings.MinMultiplier) {
+              minimum.Control.Control = gSettings.MinMultiplier;
+            } else {
+              minimum.Control.Control = RShiftU64(AsmReadMsr64(MSR_PLATFORM_INFO), 40) & 0xff;
+            }
+
 						
 						MsgLog("P-States: min 0x%x, max 0x%x\n", minimum.Control.Control, maximum.Control.Control);
 						
@@ -304,6 +319,10 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
       aml_add_buffer(packPCT, resource_template_register_fixedhw, sizeof(resource_template_register_fixedhw));
       metPCT = aml_add_method(scop, "_PCT", 0);
       aml_add_return_name(metPCT, "PCT_");
+      if (gSettings.PluginType) {
+        aml_add_buffer(scop, plugin_type, sizeof(plugin_type));
+        aml_add_byte(scop, gSettings.PluginType);
+      }
       
       
       

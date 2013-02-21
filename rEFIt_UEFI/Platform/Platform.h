@@ -658,6 +658,10 @@ typedef struct {
   BOOLEAN bDropDMAR;
   BOOLEAN bDropBGRT;
 //  BOOLEAN RememberBIOS;
+  UINT8   MinMultiplier;
+  UINT8   MaxMultiplier;
+  UINT8   PluginType;
+  
   
   //Injections
   BOOLEAN StringInjector;
