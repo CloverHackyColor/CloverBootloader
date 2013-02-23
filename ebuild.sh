@@ -362,6 +362,11 @@ $BASETOOLS_DIR/LzmaCompress -e -o $BUILD_DIR/FV/DxeIpl$PROCESSOR.z $BUILD_DIR/$P
 
 echo Generate Loader Image ...
 
+# Make some house cleaning
+find $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/{ia32,x64}/ -mindepth 1 -not -path "**/.svn*" -delete
+find $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers* -mindepth 1 -not -path "**/.svn*" -delete
+find $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers* -mindepth 1 -not -path "**/.svn*" -delete
+
 if [ $PROCESSOR = IA32 ]
 then
 $BASETOOLS_DIR/GenFw --rebase 0x10000 -o $BUILD_DIR/$PROCESSOR/EfiLoader.efi $BUILD_DIR/$PROCESSOR/EfiLoader.efi
@@ -370,11 +375,8 @@ $BASETOOLS_DIR/EfiLdrImage -o $BUILD_DIR/FV/Efildr32 $BUILD_DIR/$PROCESSOR/EfiLo
 cat $BOOTSECTOR_BIN_DIR/start32.com $BOOTSECTOR_BIN_DIR/efi32.com3 $BUILD_DIR/FV/Efildr32 > $BUILD_DIR/FV/Efildr20	
 cat $BOOTSECTOR_BIN_DIR/start32H.com2 $BOOTSECTOR_BIN_DIR/efi32.com3 $BUILD_DIR/FV/Efildr32 > $BUILD_DIR/FV/boot
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/ia32
-rm -rf $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers32
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers32
-rm -rf $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32
-rm -rf $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32UEFI
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32UEFI
 # Bootloader
 cp -v $BUILD_DIR/FV/boot $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/ia32/
@@ -413,13 +415,9 @@ $BASETOOLS_DIR/GenPage $BUILD_DIR/FV/Efildr20Pure -o $BUILD_DIR/FV/Efildr20
 #$BASETOOLS_DIR/GenPage $BUILD_DIR/FV/bootPure -o $BUILD_DIR/FV/boot
 dd if=$BUILD_DIR/FV/Efildr20 of=$BUILD_DIR/FV/boot bs=512 skip=1
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/x64
-rm -rf $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64
-rm -rf $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64UEFI
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64UEFI
-rm -rf $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64
-rm -rf $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI
 # Bootloader
 cp -v $BUILD_DIR/FV/boot $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/x64/
@@ -456,13 +454,9 @@ cat $BOOTSECTOR_BIN_DIR/Start64H.com $BOOTSECTOR_BIN_DIR/efi64.com3 $BUILD_DIR/F
 $BASETOOLS_DIR/GenPage $BUILD_DIR/FV/Efildr20Pure -o $BUILD_DIR/FV/Efildr20
 dd if=$BUILD_DIR/FV/Efildr20 of=$BUILD_DIR/FV/boot7 bs=512 skip=1
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/x64
-rm -rf $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64
-rm -rf $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64UEFI
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64UEFI
-rm -rf $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64
-rm -rf $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI
 # Bootloader
 cp -v $BUILD_DIR/FV/boot7 $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/x64/
