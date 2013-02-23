@@ -1039,7 +1039,7 @@ Returns:
   // ConnectRootBridge() will create all the PciIo protocol, it's safe here now
   //
   //Slice - why disable here? We will do this before system start
-//  Status = DisableUsbLegacySupport();
+  Status = DisableUsbLegacySupport();
   
   //
   // Connect the all the default console with current console variable
