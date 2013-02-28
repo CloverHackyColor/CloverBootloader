@@ -376,6 +376,7 @@ cat $BOOTSECTOR_BIN_DIR/start32.com $BOOTSECTOR_BIN_DIR/efi32.com3 $BUILD_DIR/FV
 cat $BOOTSECTOR_BIN_DIR/start32H.com2 $BOOTSECTOR_BIN_DIR/efi32.com3 $BUILD_DIR/FV/Efildr32 > $BUILD_DIR/FV/boot
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/ia32
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers32
+mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers32UEFI
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32
 mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers32UEFI
 # Bootloader
