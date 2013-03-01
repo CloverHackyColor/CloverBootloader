@@ -229,6 +229,9 @@ VOID GetCPUProperties (VOID)
       gCPUStructure.Cores   = (UINT8)(gCPUStructure.CoresPerPackage & 0xff);
       gCPUStructure.Threads = (UINT8)(gCPUStructure.LogicalPerPackage & 0xff);
 	}
+  if (gCPUStructure.Cores == 5) { //strange situation :)
+    gCPUStructure.Cores   = 4;
+  }
 		
 	/* get BrandString (if supported) */
 	if(gCPUStructure.CPUID[CPUID_80][EAX] >= 0x80000004){
@@ -690,6 +693,8 @@ UINT16 GetAdvancedCpuType ()
 						
 					case CPU_MODEL_WESTMERE: // Intel Core i7 LGA1366 (32nm) 6 Core (Gulftown, Westmere-EP, Westmere-WS)
 					case CPU_MODEL_WESTMERE_EX: // Intel Core i7 LGA1366 (45nm) 6 Core ???
+            if (AsciiStrStr(gCPUStructure.BrandString, "Xeon"))
+              return 0x501; // Xeon
 						return 0x701; // Core i7
 					case CPU_MODEL_SANDY_BRIDGE:  
             if (AsciiStrStr(gCPUStructure.BrandString, "Core(TM) i3"))
