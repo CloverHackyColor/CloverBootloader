@@ -265,7 +265,7 @@ CHAR8* SmcPlatform[] =
 	"k60", //"iMac12,1",
   "k62", //"iMac12,2",
   "NA",  //"iMac13,1",
-	"NA",  //"MacPro3,1",
+	"m86",  //"MacPro3,1",
 	"NA",  //"MacPro4,1",
 	"k5",  //"MacPro5,1"
 };
@@ -277,7 +277,7 @@ UINT8 SmcRevision[][6] = {
 	{0x01, 0x31, 0x0F, 0, 0, 0x01},  //"MacBook4,1",
 	{0x01, 0x38, 0x0F, 0, 0, 0x05},  //"MacBook5,2",
 	{0x01, 0x47, 0x0F, 0, 0, 0x02},  //"MacBookPro5,1",
-  {0x01, 0x68, 0x0F, 0, 0, 0x96},  //"MacBookPro8,1",
+  {0x01, 0x68, 0x0F, 0, 0, 0x99},  //"MacBookPro8,1",
   {0x01, 0x70, 0x0F, 0, 0, 0x05},  //"MacBookPro8,3",
   {0x02, 0x02, 0x0F, 0, 0, 0x41},  //"MacBookPro9,2",
 	{0x01, 0x67, 0x0F, 0, 0, 0x09},  //"MacBookAir3,1",
@@ -320,7 +320,7 @@ UINT32 SmcConfig[] =
   0x7b004,  //"iMac11,1",
 	0x7c004,  //"iMac11,2",
   0x7d004,  //"iMac11,3",
-	0x73004,  //"iMac12,1",
+	0x73005,  //"iMac12,1",
   0x75005,  //"iMac12,2",
   0x78006,  //"iMac13,1",
 	0x7b002,  //"MacPro3,1",
@@ -448,6 +448,12 @@ VOID SetDMISettingsForModel(MACHINE_TYPES Model)
   AsciiStrCpy(gSettings.RBr,  gSettings.RPlt); //SmcBranch[Model]); // as no other ideas
   CopyMem(gSettings.EPCI, &SmcConfig[Model], 4);
 }
+
+//Other info
+/*
+ MacBookPro7,1 - penryn P8800 RPlt=k6 REV=1.62f5
+ MacBookPro6,2 - i5 M520 arrandale
+*/
 
 MACHINE_TYPES GetModelFromString(CHAR8 *ProductName)
 {

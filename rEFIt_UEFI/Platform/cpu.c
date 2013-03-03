@@ -229,9 +229,6 @@ VOID GetCPUProperties (VOID)
       gCPUStructure.Cores   = (UINT8)(gCPUStructure.CoresPerPackage & 0xff);
       gCPUStructure.Threads = (UINT8)(gCPUStructure.LogicalPerPackage & 0xff);
 	}
-  if (gCPUStructure.Cores == 5) { //strange situation :)
-    gCPUStructure.Cores   = 4;
-  }
 		
 	/* get BrandString (if supported) */
 	if(gCPUStructure.CPUID[CPUID_80][EAX] >= 0x80000004){
@@ -649,6 +646,8 @@ UINT16 GetAdvancedCpuType ()
 						return 0x201;
 					case CPU_MODEL_MEROM: // Merom
 					case CPU_MODEL_PENRYN:// Penryn
+            if (AsciiStrStr(gCPUStructure.BrandString, "Xeon"))
+              return 0x402; // Xeon
 					case CPU_MODEL_ATOM:  // Atom (45nm)
 						return GetStandardCpuType();
 						
@@ -656,8 +655,8 @@ UINT16 GetAdvancedCpuType ()
 						return 0x402;
 						
 					case CPU_MODEL_NEHALEM: // Intel Core i7 LGA1366 (45nm)
-                  if (AsciiStrStr(gCPUStructure.BrandString, "Xeon"))
-                     return 0x501; // Xeon
+            if (AsciiStrStr(gCPUStructure.BrandString, "Xeon"))
+               return 0x501; // Xeon
 						return 0x701; // Core i7
 						
 					case CPU_MODEL_FIELDS: // Lynnfield, Clarksfield, Jasper
