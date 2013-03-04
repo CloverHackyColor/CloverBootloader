@@ -79,13 +79,13 @@ VOID GetCPUProperties (VOID)
   
 	EFI_STATUS			Status;
 	EFI_HANDLE			*HandleBuffer;
-	EFI_GUID        **ProtocolGuidArray;
+//	EFI_GUID        **ProtocolGuidArray;
 	EFI_PCI_IO_PROTOCOL *PciIo;
 	PCI_TYPE00          Pci;
 	UINTN         HandleCount;
-	UINTN         ArrayCount;
+//	UINTN         ArrayCount;
 	UINTN         HandleIndex;
-	UINTN         ProtocolIndex;
+//	UINTN         ProtocolIndex;
 	UINT32				qpibusspeed; //units=kHz
 	UINT32				qpimult = 2;
   UINT32        BusSpeed = 0; //units kHz
@@ -498,8 +498,8 @@ VOID GetCPUProperties (VOID)
     // get all PciIo handles
     Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiPciIoProtocolGuid, NULL, &HandleCount, &HandleBuffer);
     if (Status == EFI_SUCCESS) {
-      for (Index = 0; Index < HandleCount; Index++) {
-        Status = gBS->HandleProtocol(HandleBuffer[Index], &gEfiPciIoProtocolGuid, (VOID **) &PciIo);
+      for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
+        Status = gBS->HandleProtocol(HandleBuffer[HandleIndex], &gEfiPciIoProtocolGuid, (VOID **) &PciIo);
         if (!EFI_ERROR(Status)) {
           /* Read PCI BUS */
           Status = PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
