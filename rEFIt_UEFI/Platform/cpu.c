@@ -307,9 +307,9 @@ VOID GetCPUProperties (VOID)
               msr = AsmReadMsr64(MSR_TURBO_RATIO_LIMIT);
               
             gCPUStructure.Turbo1 = (UINT8)(RShiftU64(msr, 0) & 0xff);
-            gCPUStructure.Turbo2 = (UINT8)MultU64x32((RShiftU64(msr, 8) & 0xff), 10);
-            gCPUStructure.Turbo3 = (UINT8)MultU64x32((RShiftU64(msr, 16) & 0xff), 10);
-            gCPUStructure.Turbo4 = (UINT8)RShiftU64(msr, 24) & 0xff; //later
+            gCPUStructure.Turbo2 = (UINT8)(RShiftU64(msr, 8) & 0xff);
+            gCPUStructure.Turbo3 = (UINT8)(RShiftU64(msr, 16) & 0xff);
+            gCPUStructure.Turbo4 = (UINT8)(RShiftU64(msr, 24) & 0xff); //later
             /* Not sure what this is here for - apianti
             } else {
               gCPUStructure.Turbo4 = (UINT16)(gCPUStructure.MaxRatio + 1);
@@ -323,6 +323,8 @@ VOID GetCPUProperties (VOID)
             gCPUStructure.MaxRatio *= 10;
             gCPUStructure.MinRatio *= 10;
             gCPUStructure.Turbo1 *= 10;
+            gCPUStructure.Turbo2 *= 10;
+            gCPUStructure.Turbo3 *= 10;
             gCPUStructure.Turbo4 *= 10;
             
             break;
@@ -365,10 +367,10 @@ VOID GetCPUProperties (VOID)
             */
             
             msr = AsmReadMsr64(MSR_TURBO_RATIO_LIMIT);   //0x1AD           
-            gCPUStructure.Turbo1 = (UINT8)RShiftU64(msr, 0) & 0xff;
-            gCPUStructure.Turbo2 = (UINT8)MultU64x32(RShiftU64(msr, 8) & 0xff, 10);
-            gCPUStructure.Turbo3 = (UINT8)MultU64x32(RShiftU64(msr, 16) & 0xff, 10);
-            gCPUStructure.Turbo4 = (UINT8)RShiftU64(msr, 24) & 0xff;            
+            gCPUStructure.Turbo1 = (UINT8)(RShiftU64(msr, 0) & 0xff);
+            gCPUStructure.Turbo2 = (UINT8)(RShiftU64(msr, 8) & 0xff);
+            gCPUStructure.Turbo3 = (UINT8)(RShiftU64(msr, 16) & 0xff);
+            gCPUStructure.Turbo4 = (UINT8)(RShiftU64(msr, 24) & 0xff);            
             
             if (gCPUStructure.Turbo4 == 0) {
               gCPUStructure.Turbo4 = gCPUStructure.Turbo1;
@@ -378,6 +380,8 @@ VOID GetCPUProperties (VOID)
             }
             gCPUStructure.MaxRatio *= 10;
             gCPUStructure.Turbo1 *= 10;
+            gCPUStructure.Turbo2 *= 10;
+            gCPUStructure.Turbo3 *= 10;
             gCPUStructure.Turbo4 *= 10;
             break;
           case CPU_MODEL_ATOM://  Atom
@@ -491,63 +495,45 @@ VOID GetCPUProperties (VOID)
 		// thanks to dgobe for i3/i5/i7 bus speed detection
 		qpimult = 2; //init
 		/* Scan PCI BUS For QPI Frequency */
-		Status = gBS->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
-		if (!EFI_ERROR(Status)) {	
-			for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
-				Status = gBS->ProtocolsPerHandle(HandleBuffer[HandleIndex],&ProtocolGuidArray,&ArrayCount);
-				if (!EFI_ERROR(Status)) {			
-					for (ProtocolIndex = 0; ProtocolIndex < ArrayCount; ProtocolIndex++) {
-						if (CompareGuid(&gEfiPciIoProtocolGuid, ProtocolGuidArray[ProtocolIndex])) {
-							Status = gBS->OpenProtocol(HandleBuffer[HandleIndex],&gEfiPciIoProtocolGuid,(VOID **)&PciIo,gImageHandle,NULL,EFI_OPEN_PROTOCOL_GET_PROTOCOL);
-							if (!EFI_ERROR(Status)) {
-								/* Read PCI BUS */
-								Status = PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
-								if ((Bus & 0x3F) != 0x3F) {
-									continue;
-								}
-								Status = PciIo->Pci.Read (
-									PciIo,
-									EfiPciIoWidthUint32,
-									0,
-									sizeof (Pci) / sizeof (UINT32),
-									&Pci
-									);
-								vid = Pci.Hdr.VendorId & 0xFFFF;
-								did = Pci.Hdr.DeviceId & 0xFF00;
-								/*for(i = 0; i < sizeof(possible_nhm_bus); i++)
-								{
-									vid = (UINT32) MmioRead16(PCIADDR(possible_nhm_bus[i], 3, 4));
-									did = (UINT32) MmioRead16(PCIADDR(possible_nhm_bus[i], 3, 4) + 0x02);
-									vid &= 0xFFFF;
-									did &= 0xFF00;
-
-									if(vid == 0x8086 && did >= 0x2C00)
-										nhm_bus = possible_nhm_bus[i]; 
-								}*/
-								if ((vid == 0x8086) && (did >= 0x2C00)
-                    //Slice - why 2:1? Intel spec said 3:4 - QCLK_RATIO at offset 0x50
-								//	&& (Device == 2) && (Function == 1)) {
-                    && (Device == 3) && (Function == 4)) {
-                  DBG("Found QCLK_RATIO at bus 0x%02x dev=%x funs=%x\n", Bus, Device, Function);                 
-									Status = PciIo->Mem.Read (
-															  PciIo,
-															  EfiPciIoWidthUint32,
-                                 EFI_PCI_IO_PASS_THROUGH_BAR,           
-															  0x50,
-															  1,
-															  &qpimult
-															  );
-									DBG("qpi read from PCI %x\n", qpimult);
-									if (EFI_ERROR(Status)) continue;
-									qpimult &= 0x1F; //bits 0:4
-									break;
-								}
-								//qpimult = (UINT16) MmioRead32(PCIADDR(nhm_bus, 2, 1) + 0x50);
-								
-							}
-						}
-					}
-				}
+    // get all PciIo handles
+    Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiPciIoProtocolGuid, NULL, &HandleCount, &HandleBuffer);
+    if (Status == EFI_SUCCESS) {
+      for (Index = 0; Index < HandleCount; Index++) {
+        Status = gBS->HandleProtocol(HandleBuffer[Index], &gEfiPciIoProtocolGuid, (VOID **) &PciIo);
+        if (!EFI_ERROR(Status)) {
+          /* Read PCI BUS */
+          Status = PciIo->GetLocation (PciIo, &Segment, &Bus, &Device, &Function);
+          if ((Bus & 0x3F) != 0x3F) {
+            continue;
+          }
+          Status = PciIo->Pci.Read (
+                                    PciIo,
+                                    EfiPciIoWidthUint32,
+                                    0,
+                                    sizeof (Pci) / sizeof (UINT32),
+                                    &Pci
+                                    );
+          vid = Pci.Hdr.VendorId & 0xFFFF;
+          did = Pci.Hdr.DeviceId & 0xFF00;
+          if ((vid == 0x8086) && (did >= 0x2C00)
+              //Slice - why 2:1? Intel spec said 3:4 - QCLK_RATIO at offset 0x50
+              //	&& (Device == 2) && (Function == 1)) {
+              && (Device == 3) && (Function == 4)) {
+            DBG("Found QCLK_RATIO at bus 0x%02x dev=%x funs=%x\n", Bus, Device, Function);                 
+            Status = PciIo->Mem.Read (
+                                      PciIo,
+                                      EfiPciIoWidthUint32,
+                                      EFI_PCI_IO_PASS_THROUGH_BAR,           
+                                      0x50,
+                                      1,
+                                      &qpimult
+                                      );
+            DBG("qpi read from PCI %x\n", qpimult);
+            if (EFI_ERROR(Status)) continue;
+            qpimult &= 0x1F; //bits 0:4
+            break;
+          }
+        }
 			}
 		}
 

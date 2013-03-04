@@ -130,39 +130,39 @@ INTN GetTagCount( TagPtr dict )
 {
 	INTN count = 0;
 	TagPtr tagList, tag;
-
-    if (dict->type != kTagTypeDict && dict->type != kTagTypeArray) {
-        return 0;
-    }
+  
+  if (dict->type != kTagTypeDict && dict->type != kTagTypeArray) {
+    return 0;
+  }
 	tag = 0;
-    tagList = dict->tag;
-    while (tagList)
-    {
+  tagList = dict->tag;
+  while (tagList)
+  {
 		tag = tagList;
-        tagList = tag->tagNext;
+    tagList = tag->tagNext;
 		
 		if (((tag->type != kTagTypeKey) && ((tag->string == 0) || (tag->string[0] == 0)))
-			&& (dict->type != kTagTypeArray)	// If we are an array, any element is valid
-			)
-        {
-            continue;            
-        }
+        && (dict->type != kTagTypeArray)	// If we are an array, any element is valid
+        )
+    {
+      continue;            
+    }
 		
 		//if(tag->type == kTagTypeKey) printf("Located key %s\n", tag->string);
-
+    
 		count++;
-    }
+  }
 	
 	return count;
 }
 
 EFI_STATUS GetElement( TagPtr dict, INTN id,  TagPtr * dict1)
 {    
-   INTN element = 0;
-   
+  INTN element = 0;
+  
 	if(dict->type != kTagTypeArray) {
-        return EFI_UNSUPPORTED;        
-    }
+    return EFI_UNSUPPORTED;        
+  }
 	
 	*dict1 = dict->tag;
 	while(element < id)
@@ -188,16 +188,16 @@ EFI_STATUS ParseXML(const CHAR8* buffer, TagPtr * dict)
 	TagPtr		tag=NULL;
 	CHAR8*		configBuffer=NULL;
 	UINT32		bufferSize=(UINT32)AsciiStrLen(buffer)+1;
-
+  
 	if(dict == NULL) {
-        return EFI_INVALID_PARAMETER;
-    }
-
+    return EFI_INVALID_PARAMETER;
+  }
+  
 	configBuffer=AllocateZeroPool(bufferSize);
 	if(configBuffer == NULL) {
-        return EFI_OUT_OF_RESOURCES;
-    }
-
+    return EFI_OUT_OF_RESOURCES;
+  }
+  
 	CopyMem(configBuffer,buffer,bufferSize);
 	buffer_start = configBuffer;
 	while (TRUE)
@@ -205,26 +205,26 @@ EFI_STATUS ParseXML(const CHAR8* buffer, TagPtr * dict)
 		Status = XMLParseNextTag(configBuffer + pos, &tag, &length);
 		if (EFI_ERROR(Status)) {
 			break;            
-        }
-
+    }
+    
 		pos += length;
-
+    
 		if (tag == NULL) {
 			continue;            
-        }
+    }
 		if (tag->type == kTagTypeDict) {
 			break;
-        }
-
+    }
+    
 		FreeTag(tag);
 	}
-		
+  
 	FreePool(configBuffer);
-
+  
 	if (EFI_ERROR(Status)) {
 		return Status;        
-    }
-
+  }
+  
 	*dict = tag;
 	return EFI_SUCCESS;
 }
@@ -241,28 +241,28 @@ EFI_STATUS ParseXML(const CHAR8* buffer, TagPtr * dict)
 TagPtr GetProperty( TagPtr dict, const CHAR8* key )
 {
 	TagPtr tagList, tag;
-
+  
 	if (dict->type != kTagTypeDict) {
 		return NULL;        
-    }
-
+  }
+  
 	tag = 0;
 	tagList = dict->tag;
 	while (tagList)
 	{
 		tag = tagList;
 		tagList = tag->tagNext;
-
+    
 		if ((tag->type != kTagTypeKey) || (tag->string == 0)) {
 			continue;
-            
-        }
-
+      
+    }
+    
 		if (!AsciiStrCmp(tag->string, key)) {
 			return tag->tag;            
-        }
+    }
 	}
-
+  
 	return NULL;
 }
 
@@ -391,49 +391,47 @@ EFI_STATUS ParseTagList( CHAR8* buffer, TagPtr * tag, UINT32 type, UINT32 empty,
 	TagPtr		tagList;
 	TagPtr		tmpTag;
 	UINT32		length = 0;
-
+  
 	tagList = NULL;
 	pos = 0;
-
+  
 	if (!empty)
 	{
 		while (TRUE)
 		{
-			Status = XMLParseNextTag(buffer + pos, &tmpTag,&length);
+			Status = XMLParseNextTag(buffer + pos, &tmpTag, &length);
 			if (EFI_ERROR(Status)) {
-                break;
-            }
-
+        break;
+      }
+      
 			pos += length;
-
-			if (tmpTag == NULL)  {
-                break;
-            }
-
+      
+			if (tmpTag == NULL) {
+        break;
+      }
+      
 			tmpTag->tagNext = tagList;
 			tagList = tmpTag;
 		}
-
-		if (EFI_ERROR(Status))
-		{
+    
+		if (EFI_ERROR(Status)) {
 			FreeTag(tagList);
 			return Status;
 		}
 	}
-
+  
 	tmpTag = NewTag();
-	if (tmpTag == NULL)
-	{
+	if (tmpTag == NULL) {
 		FreeTag(tagList);
 		return EFI_OUT_OF_RESOURCES;
 	}
-
+  
 	tmpTag->type = type;
 	tmpTag->string = 0;
 	tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start : 0);
 	tmpTag->tag = tagList;
 	tmpTag->tagNext = 0;
-
+  
 	*tag = tmpTag;
 	*lenPtr=pos;
 	return Status;
@@ -442,7 +440,7 @@ EFI_STATUS ParseTagList( CHAR8* buffer, TagPtr * tag, UINT32 type, UINT32 empty,
 //==========================================================================
 // ParseTagKey
 
-EFI_STATUS ParseTagKey( char * buffer, TagPtr * tag,UINT32* lenPtr)
+EFI_STATUS ParseTagKey( char * buffer, TagPtr * tag, UINT32* lenPtr)
 {
 	EFI_STATUS	Status;
 	UINT32		length;
@@ -450,41 +448,39 @@ EFI_STATUS ParseTagKey( char * buffer, TagPtr * tag,UINT32* lenPtr)
 	CHAR8*		tmpString;
 	TagPtr		tmpTag;
 	TagPtr		subTag;
-
-	Status = FixDataMatchingTag(buffer, kXMLTagKey,&length);
+  
+	Status = FixDataMatchingTag(buffer, kXMLTagKey, &length);
 	if (EFI_ERROR(Status)){
-        return Status;
-    }
-
-	Status = XMLParseNextTag(buffer + length, &subTag,&length2);
-    if (EFI_ERROR(Status)) {
-        return Status;
-    }
+    return Status;
+  }
+  
+	Status = XMLParseNextTag(buffer + length, &subTag, &length2);
+  if (EFI_ERROR(Status)) {
+    return Status;
+  }
 	tmpTag = NewTag();
-	if (tmpTag == NULL)
-	{
+	if (tmpTag == NULL) {
 		FreeTag(subTag);
 		return EFI_OUT_OF_RESOURCES;
 	}
-
+  
 	tmpString = NewSymbol(buffer);
-	if (tmpString == NULL)
-	{
+	if (tmpString == NULL) {
 		FreeTag(subTag);
 		FreeTag(tmpTag);
 		return EFI_OUT_OF_RESOURCES;
 	}
-
+  
 	tmpTag->type = kTagTypeKey;
 	tmpTag->string = tmpString;
 	tmpTag->tag = subTag;
 	tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
 	tmpTag->tagNext = 0;
-
+  
 	*tag = tmpTag;
 	*lenPtr=length + length2;
-    
-   	return EFI_SUCCESS;
+  
+  return EFI_SUCCESS;
 }
 
 //==========================================================================
@@ -496,25 +492,25 @@ EFI_STATUS ParseTagString(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 	UINT32		length;
 	CHAR8*		tmpString;
 	TagPtr		tmpTag;
-
+  
 	Status = FixDataMatchingTag(buffer, kXMLTagString,&length);
 	if (EFI_ERROR(Status)) {
-        return Status;
-    }
-
+    return Status;
+  }
+  
 	tmpTag = NewTag();
 	if (tmpTag == NULL) {
-        return EFI_OUT_OF_RESOURCES;
-    }
-
+    return EFI_OUT_OF_RESOURCES;
+  }
+  
 	tmpString = XMLDecode(buffer);
-    tmpString = NewSymbol(tmpString);
+  tmpString = NewSymbol(tmpString);
 	if (tmpString == NULL)
 	{
 		FreeTag(tmpTag);
 		return EFI_OUT_OF_RESOURCES;
 	}
-
+  
 	tmpTag->type = kTagTypeString;
 	tmpTag->string = tmpString;
 	tmpTag->tag = NULL;
@@ -522,7 +518,7 @@ EFI_STATUS ParseTagString(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 	tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
 	*tag = tmpTag;
 	*lenPtr=length;
-
+  
 	return EFI_SUCCESS;
 }
 
@@ -541,18 +537,17 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 	
 	Status = FixDataMatchingTag(buffer, kXMLTagInteger,&length);
 	if (EFI_ERROR(Status)) {
-        return Status;
-    }
-
+    return Status;
+  }
+  
 	tmpTag = NewTag();
 	if (tmpTag == NULL)  {
-        return EFI_OUT_OF_RESOURCES;
-    }
+    return EFI_OUT_OF_RESOURCES;
+  }
 	size = length;
 	
 	integer = 0;
-	if(buffer[0] == '<')
-	{
+	if(buffer[0] == '<') {
 		tmpTag->type = kTagTypeInteger;
 		tmpTag->string = 0;
 		tmpTag->tag = 0;
@@ -563,48 +558,37 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 		length = 0;
 		return EFI_SUCCESS;
 	}
-	if(size > 1 && (val[1] == 'x' || val[1] == 'X'))	// Hex value
-	{
+	if(size > 1 && (val[1] == 'x' || val[1] == 'X')) {	// Hex value
 		val += 2;
-		while(*val)
-		{
-			if ((*val >= '0' && *val <= '9'))	// 0 - 9
-			{
+		while(*val) {
+			if ((*val >= '0' && *val <= '9'))	{ // 0 - 9
 				integer = (integer * 16) + (*val++ - '0');
 			}
-			else if ((*val >= 'a' && *val <= 'f'))	// a - f
-			{
+			else if ((*val >= 'a' && *val <= 'f')) { // a - f
 				integer = (integer * 16) + (*val++ - 'a' + 10);
 			}
-			else if ((*val >= 'A' && *val <= 'F'))	// A - F
-			{
+			else if ((*val >= 'A' && *val <= 'F')) {	// A - F
 				integer = (integer * 16) + (*val++ - 'a' + 10);
 			}
-			else
-			{
+			else {
 				MsgLog("ParseTagInteger hex error (0x%x) in buffer %a\n", *val, buffer);
-//				getchar();
+        //				getchar();
 				return EFI_UNSUPPORTED;
 			}
 		}
 	}
-	else if ( size )	// Decimal value
-	{
-		if (*val == '-')
-		{
+	else if ( size ) {	// Decimal value
+		if (*val == '-') {
 			negative = TRUE;
 			val++;
 			size--;
 		}
 		
-		for (integer = 0; size > 0; size--)
-		{
-			if(*val) // UGLY HACK, fix me.
-			{
-				if (*val < '0' || *val > '9')
-				{
+		for (integer = 0; size > 0; size--) {
+			if(*val) { // UGLY HACK, fix me.
+				if (*val < '0' || *val > '9') {
 					MsgLog("ParseTagInteger decimal error (0x%x) in buffer %a\n", *val, buffer);
-//					getchar();
+          //					getchar();
 					return EFI_UNSUPPORTED;
 				}				
 				integer = (integer * 10) + (*val++ - '0');
@@ -615,14 +599,14 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 			integer = (UINT32)-(INT32)integer;
 		}
 	}
-
+  
 	
 	tmpTag->type = kTagTypeInteger;
 	tmpTag->string = (CHAR8*)(UINTN)integer;
 	tmpTag->tag = NULL;
 	tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
 	tmpTag->tagNext = NULL;
-
+  
 	*tag = tmpTag;
 	*lenPtr=length;
 	return EFI_SUCCESS;
@@ -635,14 +619,14 @@ EFI_STATUS ParseTagData(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 {
 	EFI_STATUS	Status;
 	UINT32		length = 0;
-    UINTN       len = 0;
+  UINTN     len = 0;
 	TagPtr		tmpTag;
 	CHAR8*		tmpString;
 
 	Status = FixDataMatchingTag(buffer, kXMLTagData,&length);
 	if (EFI_ERROR(Status)) {
-        return Status;
-    }
+    return Status;
+  }
 
 	tmpTag = NewTag();
 	if (tmpTag == NULL) {
@@ -654,7 +638,7 @@ EFI_STATUS ParseTagData(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 	tmpTag->string = tmpString;
 	// dmazar: base64 decode data
 	tmpTag->data = (UINT8 *)Base64Decode(tmpTag->string, &len);
-    tmpTag->dataLen = len;
+  tmpTag->dataLen = len;
 	tmpTag->tag = NULL;
 	tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
 	tmpTag->tagNext = NULL;
@@ -676,8 +660,8 @@ EFI_STATUS ParseTagDate(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 	
 	Status = FixDataMatchingTag(buffer, kXMLTagDate,&length);
 	if (EFI_ERROR(Status)) {
-        return Status;
-    }
+    return Status;
+  }
 
 
 	tmpTag = NewTag();
@@ -733,8 +717,7 @@ EFI_STATUS GetNextTag( UINT8* buffer, CHAR8** tag, UINT32* start,UINT32* length)
 
 	// Find the start of the tag.
 	cnt = 0;
-	while ((buffer[cnt] != '\0') && (buffer[cnt] != '<'))
-	{
+	while ((buffer[cnt] != '\0') && (buffer[cnt] != '<')) {
 		cnt++;
 	}
 
@@ -744,8 +727,7 @@ EFI_STATUS GetNextTag( UINT8* buffer, CHAR8** tag, UINT32* start,UINT32* length)
 
 	// Find the end of the tag.
 	cnt2 = cnt + 1;
-	while ((buffer[cnt2] != '\0') && (buffer[cnt2] != '>')) 
-	{
+	while ((buffer[cnt2] != '\0') && (buffer[cnt2] != '>')) {
 		cnt2++;
 	}
 
@@ -762,9 +744,9 @@ EFI_STATUS GetNextTag( UINT8* buffer, CHAR8** tag, UINT32* start,UINT32* length)
 
 	*length = cnt2 + 1;
     
-    if (*length == -1) {
-        return EFI_UNSUPPORTED;
-    }
+  if (*length == -1) {
+    return EFI_UNSUPPORTED;
+  }
 
 	return EFI_SUCCESS;
 }
@@ -784,25 +766,24 @@ EFI_STATUS FixDataMatchingTag( CHAR8* buffer, CHAR8* tag,UINT32* lenPtr)
 	CHAR8*		endTag;
 
 	start = 0;
-	while (1)
-	{
+	while (1) {
 		Status = GetNextTag(((UINT8 *)buffer) + start, &endTag, &stop,&length);
 		if (EFI_ERROR(Status)) {
-            return Status;
-        }
+      return Status;
+    }
 
 		if ((*endTag == '/') && !AsciiStrCmp(endTag + 1, tag)) {
-            break;
-        }
+      break;
+    }
 		start += length;
 	}
 
 	buffer[start + stop] = '\0';
 	*lenPtr = start + length;
     
-    if (*lenPtr == -1) {
-        return EFI_UNSUPPORTED;
-    }
+  if (*lenPtr == -1) {
+    return EFI_UNSUPPORTED;
+  }
     
 	return EFI_SUCCESS;
 }
@@ -816,16 +797,14 @@ TagPtr NewTag( void )
 	UINT32	cnt;
 	TagPtr	tag;
 
-	if (gTagsFree == NULL)
-	{
+	if (gTagsFree == NULL) {
 		tag = (TagPtr)AllocateZeroPool(0x1000 * sizeof(Tag));
 		if (tag == NULL) {
-            return NULL;
-        }
+      return NULL;
+    }
 
 		// Initalize the new tags.
-		for (cnt = 0; cnt < 0x1000; cnt++)
-		{
+		for (cnt = 0; cnt < 0x1000; cnt++) {
 			tag[cnt].type = kTagTypeNone;
 			tag[cnt].string = 0;
 			tag[cnt].data = 0;
@@ -850,15 +829,15 @@ TagPtr NewTag( void )
 void FreeTag( TagPtr tag )
 {
 	if (tag == NULL) {
-        return;
-    }
+    return;
+  }
 
 	if (tag->string)  {
-        FreeSymbol(tag->string);
-    }
+    FreeSymbol(tag->string);
+  }
 	if (tag->data) {
-        FreePool(tag->data);
-    } 
+    FreePool(tag->data);
+  } 
 
 	FreeTag(tag->tag);
 	FreeTag(tag->tagNext);
@@ -886,12 +865,11 @@ CHAR8* NewSymbol(CHAR8* tmpString)
 	symbol = FindSymbol(tmpString, 0);
 
 	// Add the new symbol.
-	if (symbol == NULL)
-	{
+	if (symbol == NULL) {
 		len = AsciiStrLen(tmpString);
 		symbol = (SymbolPtr)AllocateZeroPool(sizeof(Symbol) + len + 1);
 		if (symbol == NULL)  {
-            return NULL;
+      return NULL;
     }
 
 		// Set the symbol's data.
@@ -927,23 +905,23 @@ void FreeSymbol(CHAR8* tmpString)
 	// Look for string in the list of symbols.
 	symbol = FindSymbol(tmpString, &prev);
 	if (symbol == NULL) {
-        return;
-    }
+    return;
+  }
 
 	// Update the refCount.
 	symbol->refCount--;
 
 	if (symbol->refCount != 0) {
-        return;
-    }
+    return;
+  }
 
 	// Remove the symbol from the list.
 	if (prev != NULL) {
-        prev->next = symbol->next;
-    }
+    prev->next = symbol->next;
+  }
 	else {
-        gSymbolsHead = symbol->next;
-    }
+    gSymbolsHead = symbol->next;
+  }
 
 	// Free the symbol's memory.	
     FreePool(symbol);
@@ -961,16 +939,16 @@ SymbolPtr FindSymbol(CHAR8 *tmpString, SymbolPtr *prevSymbol )
 
 	while (symbol != NULL) {
 		if (!AsciiStrCmp(symbol->string, tmpString)) {
-            break;
-        } 
+      break;
+    } 
 
 		prev = symbol;
 		symbol = symbol->next;
 	}
 
 	if ((symbol != NULL) && (prevSymbol != NULL)) {
-        *prevSymbol = prev;
-    }
+    *prevSymbol = prev;
+  }
 
 	return symbol;
 }
