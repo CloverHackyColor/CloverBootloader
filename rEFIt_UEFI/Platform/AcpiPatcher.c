@@ -1169,9 +1169,9 @@ VOID        SaveOemDsdt(BOOLEAN FullPatch)
       DsdtLen = ((EFI_ACPI_DESCRIPTION_HEADER*)buffer)->Length;
 			OriginDsdt = OriginDsdtFixed;
     }
-    Status = egSaveFile(SelfRootDir, OriginDsdt, buffer, BiosDsdtLen);
+    Status = egSaveFile(SelfRootDir, OriginDsdt, buffer, DsdtLen);
     if (EFI_ERROR(Status)) {
-      Status = egSaveFile(NULL, OriginDsdt, buffer, BiosDsdtLen);
+      Status = egSaveFile(NULL, OriginDsdt, buffer, DsdtLen);
     }
 		if (!EFI_ERROR(Status)) {
       MsgLog("DSDT saved to %s\n", OriginDsdt);
