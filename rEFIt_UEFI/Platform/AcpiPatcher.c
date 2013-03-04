@@ -28,6 +28,7 @@ Re-Work by Slice 2011.
 #define MCFG_SIGN        SIGNATURE_32('M','C','F','G')
 #define ECDT_SIGN        SIGNATURE_32('E','C','D','T')
 #define DMAR_SIGN        SIGNATURE_32('D','M','A','R')
+#define BGRT_SIGN        SIGNATURE_32('B','G','R','T')
 #define APPLE_OEM_ID        { 'A', 'P', 'P', 'L', 'E', ' ' }
 #define APPLE_OEM_TABLE_ID  { 'A', 'p', 'p', 'l', 'e', '0', '0', ' ' }
 #define APPLE_CREATOR_ID    { 'L', 'o', 'k', 'i' }
@@ -1064,65 +1065,93 @@ VOID SaveOemTables()
 
 VOID        SaveOemDsdt(BOOLEAN FullPatch)
 {
-  EFI_STATUS						Status = EFI_SUCCESS;
+  EFI_STATUS                                    Status = EFI_NOT_FOUND;
   EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER	*RsdPointer = NULL;
-  EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE		*FadtPointer = NULL;	
-  EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE		*XFadtPointer = NULL;	
-  EFI_PHYSICAL_ADDRESS	dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS; 
-//  UINT64        				BiosDsdt = 0;
-	UINT8                 *buffer = NULL;
-//	UINTN        				  bufferLen = 0;
+  EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE     *FadtPointer = NULL;	
+  EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE     *XFadtPointer = NULL;	
+  EFI_PHYSICAL_ADDRESS                          dsdt = EFI_SYSTEM_TABLE_MAX_ADDRESS; 
+
+	UINTN				Pages;
+	UINT8       *buffer = NULL;
+	UINTN       DsdtLen = 0;
   CHAR16*     OriginDsdt = PoolPrint(L"%s\\ACPI\\origin\\DSDT.aml", OEMPath);
   CHAR16*     OriginDsdtFixed = PoolPrint(L"%s\\ACPI\\origin\\DSDT-%x.aml", OEMPath, gSettings.FixDsdt);
-	UINTN				Pages;
+  CHAR16*     PathPatched   = L"\\EFI\\ACPI\\patched";
+	CHAR16*     PathDsdt;    //  = L"\\DSDT.aml";
+//  CHAR16*     PathDsdtMini  = L"\\EFI\\ACPI\\mini\\DSDT.aml";
+  CHAR16*     AcpiOemPath = PoolPrint(L"%s\\ACPI\\patched", OEMPath);
   
+  PathDsdt = PoolPrint(L"\\%s", gSettings.DsdtName);
+/*  
+  if (gSettings.UseDSDTmini) {
+    DBG("search DSDTmini\n"); 
+    if (FileExists(SelfRootDir, PathDsdtMini)) {
+      DBG(" DSDTmini found\n");
+      Status = egLoadFile(SelfRootDir, PathDsdtMini, &buffer, &bufferLen);
+    }
+  } */
   
-	if (gFirmwareClover) {
-		RsdPointer = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)FindAcpiRsdPtr();
-	} else {
-		Status = EfiGetSystemConfigurationTable (&gEfiAcpi20TableGuid, (VOID**)&RsdPointer);
-		if (EFI_ERROR(Status)) {
-			Status = EfiGetSystemConfigurationTable (&gEfiAcpi10TableGuid, (VOID**)&RsdPointer);
-		}
-	}
-	
-	if (RsdPointer == NULL) {
-		return;
-	}
-	
-  Rsdt = (RSDT_TABLE*)(UINTN)(RsdPointer->RsdtAddress);
-	if (RsdPointer->Revision > 0) {
-		if (Rsdt == NULL || Rsdt->Header.Signature != EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
-			Xsdt = (XSDT_TABLE *)(UINTN)(RsdPointer->XsdtAddress);
-		}
-	}
-	if (Rsdt == NULL && Xsdt == NULL) {
-		return;
-	}
-	
-  if (Rsdt) {
-    FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Rsdt->Entry);
+  if (EFI_ERROR(Status) && FileExists(SelfRootDir, PoolPrint(L"%s%s", AcpiOemPath, PathDsdt))) {
+    DBG("DSDT found in Clover volume OEM folder: %s%s\n", AcpiOemPath, PathDsdt);
+    Status = egLoadFile(SelfRootDir, PoolPrint(L"%s%s", AcpiOemPath, PathDsdt), &buffer, &DsdtLen);
   }
-  if (Xsdt) {
-    XFadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Xsdt->Entry);
+  
+  if (EFI_ERROR(Status) && FileExists(SelfRootDir, PoolPrint(L"%s%s", PathPatched, PathDsdt))) {
+    DBG("DSDT found in Clover volume common folder: %s%s\n", PathPatched, PathDsdt);
+    Status = egLoadFile(SelfRootDir, PoolPrint(L"%s%s", PathPatched, PathDsdt), &buffer, &DsdtLen);
   }
-  if (!FadtPointer) {
-    FadtPointer = XFadtPointer;
+  
+  if (EFI_ERROR(Status)) {
+    if (gFirmwareClover) {
+      RsdPointer = (EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_POINTER*)FindAcpiRsdPtr();
+    } else {
+      Status = EfiGetSystemConfigurationTable (&gEfiAcpi20TableGuid, (VOID**)&RsdPointer);
+      if (EFI_ERROR(Status)) {
+        Status = EfiGetSystemConfigurationTable (&gEfiAcpi10TableGuid, (VOID**)&RsdPointer);
+      }
+    }
+    
+    if (RsdPointer == NULL) {
+      return;
+    }
+    
+    Rsdt = (RSDT_TABLE*)(UINTN)(RsdPointer->RsdtAddress);
+    if (RsdPointer->Revision > 0) {
+      if (Rsdt == NULL || Rsdt->Header.Signature != EFI_ACPI_2_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
+        Xsdt = (XSDT_TABLE *)(UINTN)(RsdPointer->XsdtAddress);
+      }
+    }
+    if (Rsdt == NULL && Xsdt == NULL) {
+      return;
+    }
+    
+    if (Rsdt) {
+      FadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Rsdt->Entry);
+    }
+    if (Xsdt) {
+      XFadtPointer = (EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE*)(UINTN)(Xsdt->Entry);
+    }
+    if (!FadtPointer) {
+      FadtPointer = XFadtPointer;
+    }
+    if (FadtPointer == NULL) {
+      return;
+    }
+    
+    BiosDsdt = FadtPointer->Dsdt;
+    if (FadtPointer->Header.Revision >= EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION && FadtPointer->XDsdt != 0) {
+      BiosDsdt = FadtPointer->XDsdt;
+    }
+    buffer = (UINT8*)(UINTN)BiosDsdt;
+	} 
+  
+  if (!buffer) {
+    DBG("Cannot found DSDT in BIOS or in files!\n");
+    return;
   }
-	if (FadtPointer == NULL) {
-		return;
-	}
-	
-	BiosDsdt = FadtPointer->Dsdt;
-	if (FadtPointer->Header.Revision >= EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE_REVISION && FadtPointer->XDsdt != 0) {
-		BiosDsdt = FadtPointer->XDsdt;
-	}
-	if (BiosDsdt == 0) {
-		DBG("Cannot found DSDT in Bios tables!\n");
-	}
-	
-  BiosDsdtLen = ((EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)BiosDsdt)->Length;
-	Pages = EFI_SIZE_TO_PAGES(BiosDsdtLen + BiosDsdtLen / 8); // take some extra space for patches
+  
+  DsdtLen = ((EFI_ACPI_DESCRIPTION_HEADER*)buffer)->Length;
+	Pages = EFI_SIZE_TO_PAGES(DsdtLen + DsdtLen / 8); // take some extra space for patches
   Status = gBS->AllocatePages (
                                AllocateMaxAddress,
                                EfiBootServicesData,
@@ -1133,14 +1162,11 @@ VOID        SaveOemDsdt(BOOLEAN FullPatch)
   //if success insert dsdt pointer into ACPI tables
   if(!EFI_ERROR(Status))
   {
+    CopyMem((UINT8*)(UINTN)dsdt, buffer, DsdtLen);
     buffer = (UINT8*)(UINTN)dsdt;
-    CopyMem(buffer, (UINT8*)(UINTN)BiosDsdt, BiosDsdtLen);
     if (FullPatch) {
-//      UINT32 OldMask = gSettings.FixDsdt;
-//      gSettings.FixDsdt = 0xFFFF;
       FixBiosDsdt(buffer);
-//      gSettings.FixDsdt = OldMask;
-      BiosDsdtLen = ((EFI_ACPI_DESCRIPTION_HEADER*)buffer)->Length;
+      DsdtLen = ((EFI_ACPI_DESCRIPTION_HEADER*)buffer)->Length;
 			OriginDsdt = OriginDsdtFixed;
     }
     Status = egSaveFile(SelfRootDir, OriginDsdt, buffer, BiosDsdtLen);
@@ -1182,7 +1208,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 	UINTN                   bufferLen = 0;
 	CHAR16*                 PathPatched   = L"\\EFI\\ACPI\\patched";
 	CHAR16*                 PathDsdt;    //  = L"\\DSDT.aml";
-  CHAR16*                 PathDsdtMini  = L"\\EFI\\ACPI\\mini\\DSDT.aml";
+ // CHAR16*                 PathDsdtMini  = L"\\EFI\\ACPI\\mini\\DSDT.aml";
   CHAR16*                 PatchedAPIC = L"\\EFI\\ACPI\\origin\\APIC-p.aml";
 	UINT32*                 rf = NULL;
 	UINT64*                 xf = NULL;
@@ -1554,13 +1580,13 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   
   RootDir = Volume->RootDir;
   Status = EFI_NOT_FOUND;
-  if (gSettings.UseDSDTmini) {
+/*  if (gSettings.UseDSDTmini) {
     DBG("search DSDTmini\n"); 
     if (FileExists(SelfRootDir, PathDsdtMini)) {
       DBG(" DSDTmini found\n");
       Status = egLoadFile(SelfRootDir, PathDsdtMini, &buffer, &bufferLen);
     }
-  }
+  }*/
   
   if (EFI_ERROR(Status) && FileExists(SelfRootDir, PoolPrint(L"%s%s", AcpiOemPath, PathDsdt))) {
     DBG("DSDT found in Clover volume OEM folder: %s%s\n", AcpiOemPath, PathDsdt);
@@ -1669,6 +1695,12 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 		if(xf) { DropTableFromXSDT(DMAR_SIGN); }
 		rf = ScanRSDT(DMAR_SIGN);
 		if(rf) { DropTableFromRSDT(DMAR_SIGN); }
+  }
+  if (gSettings.bDropBGRT) {
+		xf = ScanXSDT(BGRT_SIGN);
+		if(xf) { DropTableFromXSDT(BGRT_SIGN); }
+		rf = ScanRSDT(BGRT_SIGN);
+		if(rf) { DropTableFromRSDT(BGRT_SIGN); }
   }
   
   if (gSettings.DropSSDT) {
