@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #  ebuild.sh ->ebuild.sh  //renamed to be unique file begining from E
 #  Script for building CloverEFI source under OS X
@@ -120,7 +120,7 @@ echo "Script arguments:"
 echo "[COMPILER]   [ARCH]     [TYPE]"
 echo "-xcode       -ia32      -debug"
 echo "-clang       -x64       -release"
-echo "-unixgcc"
+echo "-unixgcc     -mc"
 echo "-gcc47"
 echo "-llvm"
 echo
@@ -191,48 +191,34 @@ echo "Example: ./ebuild.sh -gcc47 -x64 -release"
          fnArch64MCP
         ;;
         *)
-         echo $"ERROR!"
-         echo $"COMPILER: {-xcode|-xcode4|-clang|-unixgcc|-gcc47}"
-		echo $"or default {-64|-32|-MC}"
-        exit 1		
+         echo "ERROR!"
+         echo "COMPILER: {-xcode|-xcode4|-clang|-unixgcc|-gcc47}"
+		 echo "or default {-64|-32|-mc}"
+		 exit 1
     esac
 
 # 2. Argument Case
     case "$2" in
-#        '')
-#        fnHelpArgument && exit
-#        ;;
         '-ia32')
-         fnArchIA32
-        ;;
-        '-x64')
-         fnArchX64
-        ;;
+				 fnArchIA32 ;;
+         '-x64')
+				 fnArchX64  ;;
+         '-mc')
+				 fnArch64MCP ;;
         *)
-#         echo $"ERROR!"
-#         echo $"ARCH: {-ia32|-x64}"
-#        exit 1
-		echo $"using default for compiler"
-		;;
+		   echo "using default for compiler"
+		   ;;
     esac
 
 # 3. Argument Case
     case "$3" in
-#        '')
-#         fnHelpArgument && exit
-#        ;;
         '-debug')
-         fnDebug
-        ;;
+                  fnDebug ;;
         
         '-release')
-         fnRelease
-        ;;
+                  fnRelease ;;
         *)
-#         echo $"ERROR!"
-#         echo $"TYPE: {-debug|-release}"
-#        exit 1
-		 echo $"default -release"
+		 echo "default -release"
 		 fnRelease
 		 ;;
     esac
@@ -240,12 +226,9 @@ echo "Example: ./ebuild.sh -gcc47 -x64 -release"
 # 4. Argument Case
     case "$4" in
         '-clean')
-        export ARG=clean
-        ;;
-
+                  export ARG=clean ;;
         '-cleanall')
-        export ARG=cleanall
-        ;;
+                  export ARG=cleanall ;;
     esac
 
 
@@ -397,91 +380,55 @@ cp -v $BUILD_DIR/IA32/CLOVERIA32.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EF
 echo Done!
 fi
 
-if [ $Processor = B32 ]
-then
-cp -v $BUILD_DIR/FV/boot $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/ia32/boot5
+if [[ "$Processor" = B32 ]]; then
+    cp -v $BUILD_DIR/FV/boot $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/ia32/boot5
 fi
 
-if [ $Processor = X64 ]
-then
-$BASETOOLS_DIR/GenFw --rebase 0x10000 -o $BUILD_DIR/$PROCESSOR/EfiLoader.efi $BUILD_DIR/$PROCESSOR/EfiLoader.efi
-$BASETOOLS_DIR/EfiLdrImage -o $BUILD_DIR/FV/Efildr64 $BUILD_DIR/$PROCESSOR/EfiLoader.efi $BUILD_DIR/FV/DxeIpl$PROCESSOR.z $BUILD_DIR/FV/DxeMain$PROCESSOR.z $BUILD_DIR/FV/DUETEFIMAINFV$PROCESSOR.z
-#cat $BOOTSECTOR_BIN_DIR/Start64.com $BOOTSECTOR_BIN_DIR/efi64.com2 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/EfildrPure
-#$BASETOOLS_DIR/GenPage $BUILD_DIR/FV/EfildrPure -o $BUILD_DIR/FV/Efildr
-#cat $BOOTSECTOR_BIN_DIR/St16_64.com $BOOTSECTOR_BIN_DIR/efi64.com2 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/Efildr16Pure
-#$BASETOOLS_DIR/GenPage $BUILD_DIR/FV/Efildr16Pure -o $BUILD_DIR/FV/Efildr16
-cat $BOOTSECTOR_BIN_DIR/Start64H.com $BOOTSECTOR_BIN_DIR/efi64.com3 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/Efildr20Pure
-$BASETOOLS_DIR/GenPage $BUILD_DIR/FV/Efildr20Pure -o $BUILD_DIR/FV/Efildr20
-#cat $BOOTSECTOR_BIN_DIR/Start64.com2 $BOOTSECTOR_BIN_DIR/efi64.com2 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/bootPure
-#$BASETOOLS_DIR/GenPage $BUILD_DIR/FV/bootPure -o $BUILD_DIR/FV/boot
-dd if=$BUILD_DIR/FV/Efildr20 of=$BUILD_DIR/FV/boot bs=512 skip=1
-mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/x64
-mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64
-mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64UEFI
-mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64
-mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI
-# Bootloader
-cp -v $BUILD_DIR/FV/boot $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/x64/
-# Mandatory drivers
-cp -v $BUILD_DIR/X64/FSInject.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64/FSInject-64.efi
-cp -v $BUILD_DIR/X64/FSInject.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64UEFI/FSInject-64.efi
-cp -v $BUILD_DIR/X64/OsxFatBinaryDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64UEFI/OsxFatBinaryDrv-64.efi
-# Optional drivers
-#cp -v $BUILD_DIR/X64/VBoxIso9600.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/VBoxIso9600-64.efi
-cp -v $BUILD_DIR/X64/VBoxExt2.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/VBoxExt2-64.efi
-cp -v $BUILD_DIR/X64/VBoxExt4.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/VBoxExt4-64.efi
-cp -v $BUILD_DIR/X64/PartitionDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/PartitionDxe-64.efi
-cp -v $BUILD_DIR/X64/DataHubDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/DataHubDxe-64.efi
+if [[ "$Processor" = X64  || "$Processor" = 64MCP ]]; then
+    bootloader_file=boot
+    [[ "$Processor" = 64MCP ]] && bootloader_file=boot7
 
-#cp -v $BUILD_DIR/X64/Ps2KeyboardDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/Ps2KeyboardDxe-64.efi
-#cp -v $BUILD_DIR/X64/Ps2MouseAbsolutePointerDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/Ps2MouseAbsolutePointerDxe-64.efi
-cp -v $BUILD_DIR/X64/Ps2MouseDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/Ps2MouseDxe-64.efi
-cp -v $BUILD_DIR/X64/UsbMouseDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/UsbMouseDxe-64.efi
-cp -v $BUILD_DIR/X64/XhciDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/XhciDxe-64.efi
-cp -v $BUILD_DIR/X64/OsxAptioFixDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/OsxAptioFixDrv-64.efi
-#cp -v $BUILD_DIR/X64/OsxLowMemFixDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/OsxLowMemFixDrv-64.efi
-cp -v $BUILD_DIR/X64/CsmVideoDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/CsmVideoDxe-64.efi
-cp -v $BUILD_DIR/X64/EmuVariableUefi.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/EmuVariableUefi-64.efi
-cp -v $BUILD_DIR/X64/CLOVERX64.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/BOOT/
-cp -v $BUILD_DIR/X64/CLOVERX64.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/BOOT/BOOTX64.efi
-echo Done!
-fi
+    $BASETOOLS_DIR/GenFw --rebase 0x10000 -o $BUILD_DIR/$PROCESSOR/EfiLoader.efi $BUILD_DIR/$PROCESSOR/EfiLoader.efi
+    $BASETOOLS_DIR/EfiLdrImage -o $BUILD_DIR/FV/Efildr64 $BUILD_DIR/$PROCESSOR/EfiLoader.efi \
+     $BUILD_DIR/FV/DxeIpl$PROCESSOR.z $BUILD_DIR/FV/DxeMain$PROCESSOR.z $BUILD_DIR/FV/DUETEFIMAINFV$PROCESSOR.z
 
-if [ $Processor = 64MCP ]
-then
-$BASETOOLS_DIR/GenFw --rebase 0x10000 -o $BUILD_DIR/$PROCESSOR/EfiLoader.efi $BUILD_DIR/$PROCESSOR/EfiLoader.efi
-$BASETOOLS_DIR/EfiLdrImage -o $BUILD_DIR/FV/Efildr64 $BUILD_DIR/$PROCESSOR/EfiLoader.efi $BUILD_DIR/FV/DxeIpl$PROCESSOR.z $BUILD_DIR/FV/DxeMain$PROCESSOR.z $BUILD_DIR/FV/DUETEFIMAINFV$PROCESSOR.z
-cat $BOOTSECTOR_BIN_DIR/Start64H.com $BOOTSECTOR_BIN_DIR/efi64.com3 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/Efildr20Pure
-$BASETOOLS_DIR/GenPage $BUILD_DIR/FV/Efildr20Pure -o $BUILD_DIR/FV/Efildr20
-dd if=$BUILD_DIR/FV/Efildr20 of=$BUILD_DIR/FV/boot7 bs=512 skip=1
-mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/x64
-mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64
-mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64UEFI
-mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64
-mkdir -p $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI
-# Bootloader
-cp -v $BUILD_DIR/FV/boot7 $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/x64/
-# Mandatory drivers
-cp -v $BUILD_DIR/X64/FSInject.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64/FSInject-64.efi
-cp -v $BUILD_DIR/X64/OsxFatBinaryDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64UEFI/OsxFatBinaryDrv-64.efi
-# Optional drivers
-#cp -v $BUILD_DIR/X64/VBoxIso9600.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/VBoxIso9600-64.efi
-cp -v $BUILD_DIR/X64/VBoxExt2.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/VBoxExt2-64.efi
-cp -v $BUILD_DIR/X64/VBoxExt4.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/VBoxExt4-64.efi
-cp -v $BUILD_DIR/X64/PartitionDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/PartitionDxe-64.efi
+    #cat $BOOTSECTOR_BIN_DIR/Start64.com $BOOTSECTOR_BIN_DIR/efi64.com2 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/EfildrPure
+    #$BASETOOLS_DIR/GenPage $BUILD_DIR/FV/EfildrPure -o $BUILD_DIR/FV/Efildr
+    #cat $BOOTSECTOR_BIN_DIR/St16_64.com $BOOTSECTOR_BIN_DIR/efi64.com2 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/Efildr16Pure
+    #$BASETOOLS_DIR/GenPage $BUILD_DIR/FV/Efildr16Pure -o $BUILD_DIR/FV/Efildr16
+    cat $BOOTSECTOR_BIN_DIR/Start64H.com $BOOTSECTOR_BIN_DIR/efi64.com3 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/Efildr20Pure
+    $BASETOOLS_DIR/GenPage $BUILD_DIR/FV/Efildr20Pure -o $BUILD_DIR/FV/Efildr20
+    #cat $BOOTSECTOR_BIN_DIR/Start64.com2 $BOOTSECTOR_BIN_DIR/efi64.com2 $BUILD_DIR/FV/Efildr64 > $BUILD_DIR/FV/bootPure
+    #$BASETOOLS_DIR/GenPage $BUILD_DIR/FV/bootPure -o $BUILD_DIR/FV/boot
 
-#cp -v $BUILD_DIR/X64/Ps2KeyboardDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/Ps2KeyboardDxe-64.efi
-#cp -v $BUILD_DIR/X64/Ps2MouseAbsolutePointerDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/Ps2MouseAbsolutePointerDxe-64.efi
-cp -v $BUILD_DIR/X64/Ps2MouseDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/Ps2MouseDxe-64.efi
-cp -v $BUILD_DIR/X64/UsbMouseDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/UsbMouseDxe-64.efi
-cp -v $BUILD_DIR/X64/XhciDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/XhciDxe-64.efi
-#cp -v $BUILD_DIR/X64/OsxAptioFixDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/OsxAptioFixDrv-64.efi
-#cp -v $BUILD_DIR/X64/OsxLowMemFixDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/OsxLowMemFixDrv-64.efi
-cp -v $BUILD_DIR/X64/CsmVideoDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/CsmVideoDxe-64.efi
-cp -v $BUILD_DIR/X64/EmuVariableUefi.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/EmuVariableUefi-64.efi
-cp -v $BUILD_DIR/X64/CLOVERX64.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/BOOT/
-cp -v $BUILD_DIR/X64/CLOVERX64.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/BOOT/BOOTX64.efi
-echo Done!
+    # Create Bootloader file
+    dd if="$BUILD_DIR"/FV/Efildr20 of="$BUILD_DIR"/FV/$bootloader_file bs=512 skip=1
+
+    # Bootloader
+    cp -v $BUILD_DIR/FV/$bootloader_file $WORKSPACE/Clover/CloverPackage/CloverV2/Bootloaders/x64/
+    # Mandatory drivers
+    cp -v $BUILD_DIR/X64/FSInject.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64/FSInject-64.efi
+    cp -v $BUILD_DIR/X64/FSInject.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64UEFI/FSInject-64.efi
+    cp -v $BUILD_DIR/X64/OsxFatBinaryDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/drivers64UEFI/OsxFatBinaryDrv-64.efi
+    # Optional drivers
+    #cp -v $BUILD_DIR/X64/VBoxIso9600.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/VBoxIso9600-64.efi
+    cp -v $BUILD_DIR/X64/VBoxExt2.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/VBoxExt2-64.efi
+    cp -v $BUILD_DIR/X64/VBoxExt4.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/VBoxExt4-64.efi
+    cp -v $BUILD_DIR/X64/PartitionDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/PartitionDxe-64.efi
+    cp -v $BUILD_DIR/X64/DataHubDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/DataHubDxe-64.efi
+
+    #cp -v $BUILD_DIR/X64/Ps2KeyboardDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/Ps2KeyboardDxe-64.efi
+    #cp -v $BUILD_DIR/X64/Ps2MouseAbsolutePointerDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/Ps2MouseAbsolutePointerDxe-64.efi
+    cp -v $BUILD_DIR/X64/Ps2MouseDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/Ps2MouseDxe-64.efi
+    cp -v $BUILD_DIR/X64/UsbMouseDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/UsbMouseDxe-64.efi
+    cp -v $BUILD_DIR/X64/XhciDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64/XhciDxe-64.efi
+    cp -v $BUILD_DIR/X64/OsxAptioFixDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/OsxAptioFixDrv-64.efi
+    #cp -v $BUILD_DIR/X64/OsxLowMemFixDrv.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/OsxLowMemFixDrv-64.efi
+    cp -v $BUILD_DIR/X64/CsmVideoDxe.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/CsmVideoDxe-64.efi
+    cp -v $BUILD_DIR/X64/EmuVariableUefi.efi $WORKSPACE/Clover/CloverPackage/CloverV2/drivers-Off/drivers64UEFI/EmuVariableUefi-64.efi
+    cp -v $BUILD_DIR/X64/CLOVERX64.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/BOOT/
+    cp -v $BUILD_DIR/X64/CLOVERX64.efi $WORKSPACE/Clover/CloverPackage/CloverV2/EFI/BOOT/BOOTX64.efi
+    echo Done!
 fi
 
 # Build and install Bootsectors
@@ -496,3 +443,10 @@ echo Done!
 fnMainBuildScript
 fnMainPostBuildScript
 
+# Local Variables:      #
+# mode: ksh             #
+# tab-width: 4          #
+# indent-tabs-mode: nil #
+# End:                  #
+#
+# vi: set expandtab ts=4 sw=4 sts=4: #
