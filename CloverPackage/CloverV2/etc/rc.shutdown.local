@@ -179,3 +179,5 @@ EFIFirmwareVendor=$(LC_ALL=C ioreg -l -pIODeviceTree | \
 
 # Only save nvram to disk if boot from CloverEFI
 [[ "$NVRAMDevice" != No && "$EFIFirmwareVendor" == CLOVER ]] && saveNVRAM
+
+[[ -f custom.rc.shutdown.local ]] && ./custom.shutdown.rc.local

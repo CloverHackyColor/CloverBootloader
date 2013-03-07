@@ -2187,8 +2187,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   gCPUStructure.CPUFrequency = gCPUStructure.TSCFrequency;
   gCPUStructure.FSBFrequency = DivU64x32(MultU64x32(gCPUStructure.CPUFrequency, 10),
                                          gCPUStructure.MaxRatio);
-  gCPUStructure.ExternalClock = DivU64x32(gCPUStructure.FSBFrequency, kilo);
-  gCPUStructure.MaxSpeed = DivU64x32(gCPUStructure.TSCFrequency, Mega);
+  gCPUStructure.ExternalClock = (UINT32)DivU64x32(gCPUStructure.FSBFrequency, kilo);
+  gCPUStructure.MaxSpeed = (UINT32)DivU64x32(gCPUStructure.TSCFrequency, Mega);
   
   //Second step. Load config.plist into gSettings	
 	Status = GetUserSettings(SelfRootDir);  

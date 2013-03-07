@@ -140,3 +140,5 @@ if [[ "$logLineCount" -gt 0 ]]; then
 	 tail -n $logLineCount > "$theSystemLogPath".tmp
     mv "$theSystemLogPath".tmp "$theSystemLogPath"
 fi
+
+[[ -f custom.rc.local ]] && ./custom.rc.local
