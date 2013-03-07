@@ -860,7 +860,7 @@ CHAR8* NewSymbol(CHAR8* tmpString)
 	SymbolPtr	lastGuy = 0; // never used
 #endif
 	SymbolPtr	symbol;
-    UINT32      len;
+    UINTN      len;
 	// Look for string in the list of symbols.
 	symbol = FindSymbol(tmpString, 0);
 

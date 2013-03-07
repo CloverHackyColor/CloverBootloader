@@ -576,19 +576,19 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       prop = GetProperty(dictPointer,"MinMultiplier");
       if(prop) {
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-        gSettings.MinMultiplier = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);
+        gSettings.MinMultiplier = (UINT8)StrDecimalToUintn((CHAR16*)&UStr[0]);
         DBG("Config set MinMultiplier=%d\n", gSettings.MinMultiplier);
       }      
       prop = GetProperty(dictPointer,"MaxMultiplier");
       if(prop) {
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-        gSettings.MaxMultiplier = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);
+        gSettings.MaxMultiplier = (UINT8)StrDecimalToUintn((CHAR16*)&UStr[0]);
         DBG("Config set MaxMultiplier=%d\n", gSettings.MaxMultiplier);
       }      
       prop = GetProperty(dictPointer,"PluginType");
       if(prop) {
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-        gSettings.PluginType = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);
+        gSettings.PluginType = (UINT8)StrDecimalToUintn((CHAR16*)&UStr[0]);
         DBG("Config set PluginType=%d\n", gSettings.PluginType);
       }      
       

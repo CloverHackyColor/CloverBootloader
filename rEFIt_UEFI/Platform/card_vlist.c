@@ -71,7 +71,7 @@ VOID AddCard(CONST CHAR8* Model, UINT32 Id, UINT32 SubId, UINT64 VideoRam)
 		new_card->SubId = SubId;
 		new_card->VideoRam = VideoRam;
 		AsciiSPrint(new_card->Model, 64, "%a", Model);    
-    InsertTailList (&gCardList, &new_card->Link);
+    InsertTailList (&gCardList, (LIST_ENTRY *)(((UINT8 *)new_card) + OFFSET_OF(CARDLIST, Link)));
 	}	
 }
 
@@ -113,9 +113,9 @@ VOID FillCardList(VOID)
 					INTN		i;
 					INTN		 count;
 					
-					count = GetTagCount(prop);
 					TagPtr		element		= 0; 
 					TagPtr		prop2		= 0; 
+					count = GetTagCount(prop);
 					
 					for (i=0; i<count; i++) 
 					{		
@@ -137,37 +137,37 @@ VOID FillCardList(VOID)
 								sub_id		= NULL;
 								vram_size	= NULL;
 								
-								if ((prop2 = GetProperty(element, "Chipset Name"))) {
+								if ((prop2 = GetProperty(element, "Chipset Name")) != 0) {
 									model_name = prop2->string;
 								}
 								
-								if ((prop2 = GetProperty(element, "IOPCIPrimaryMatch"))) {
+								if ((prop2 = GetProperty(element, "IOPCIPrimaryMatch")) != 0) {
 									match_id = prop2->string;
 								}
 								
-								if ((prop2 = GetProperty(element, "IOPCISubDevId"))) {
+								if ((prop2 = GetProperty(element, "IOPCISubDevId")) != 0) {
 									sub_id = prop2->string;
 								}
 								
-								if ((prop2 = GetProperty(element, "VRam Size"))) {
+								if ((prop2 = GetProperty(element, "VRam Size")) != 0) {
 									vram_size = prop2->string;
 								}
 								
 								if (match_id) {
 									if ((match_id[0] == '0')  && 
                       (match_id[1] == 'x' || match_id[1] == 'X')) {
-										dev_id = AsciiStrHexToUintn(match_id);
+										dev_id = (UINT32)AsciiStrHexToUintn(match_id);
 									} else {
-										dev_id = AsciiStrDecimalToUintn(match_id);
+										dev_id = (UINT32)AsciiStrDecimalToUintn(match_id);
 									}
 								}
 								
 								if (sub_id) {
 									if ((sub_id[0] == '0')  && 
                       (sub_id[1] == 'x' || sub_id[1] == 'X')) {
-										subdev_id = AsciiStrHexToUintn(sub_id);
+										subdev_id = (UINT32)AsciiStrHexToUintn(sub_id);
 									} else {
-										subdev_id = AsciiStrDecimalToUintn(sub_id);
+										subdev_id = (UINT32)AsciiStrDecimalToUintn(sub_id);
 									}
 								}
 								
