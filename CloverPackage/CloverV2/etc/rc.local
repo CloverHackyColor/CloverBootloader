@@ -141,4 +141,7 @@ if [[ "$logLineCount" -gt 0 ]]; then
     mv "$theSystemLogPath".tmp "$theSystemLogPath"
 fi
 
-[[ -f /etc/custom.rc.local ]] && /etc/custom.rc.local
+if [[ -f /etc/custom.rc.local ]]; then
+   echo "Found /etc/custom.rc.local"
+   /etc/custom.rc.local
+fi

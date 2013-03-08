@@ -177,7 +177,10 @@ done
 EFIFirmwareVendor=$(LC_ALL=C ioreg -l -pIODeviceTree | \
  sed -n 's/.*firmware-vendor.*<\([0-9a-fA-F]*\)>.*/\1/p' | xxd -r -p)
 
-# Only save nvram to disk if boot from CloverEFI
-[[ "$NVRAMDevice" != No && "$EFIFirmwareVendor" == CLOVER ]] && saveNVRAM
+# Only save nvram to disk if boot from CloverEFI or DUET
+[[ "$NVRAMDevice" != No && "$EFIFirmwareVendor" == CLOVER || "$EFIFirmwareVendor" == "EDK II" ]] && saveNVRAM
 
-[[ -f /etc/custom.rc.shutdown.local ]] && /etc/custom.rc.shutdown.local
+if [[ -f /etc/custom.rc.shutdown.local ]]; then
+   echo "Found /etc/custom.rc.shutdown.local"
+   /etc/custom.rc.shutdown.local
+fi
