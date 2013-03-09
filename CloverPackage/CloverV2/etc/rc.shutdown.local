@@ -17,7 +17,7 @@
 # or in the root directory
 #
 
-DEBUG=0
+DEBUG=${DEBUG:-0}
 
 logLocation=/Library/Logs/CloverEFI
 NVRAMFilename=nvram.plist
@@ -72,7 +72,7 @@ function mountNVRAMDisk {
 
     # Check if the device is not already mount
     local current_mntpts=$(/bin/df -l | \
-     sed -n 's/^\/dev\/\(disk[^ ]*\)[^/]*\(\/.*$\)/\1 \2/p')
+     sed -nE 's#^/dev/(disk[^ ]*)[^/]*(/.*$)#\1 \2#p')
     while read -r dev mnt; do
         if [[ "$dev" == "$device" ]]; then
             echo "$mnt" # Return the mount point
@@ -128,7 +128,7 @@ function mountAndSaveNVRAM {
 }
 
 function saveNVRAM {
-    local rootDevice=$(df -l / | sed -n 's/^\/dev\/\([^ ]*\).*/\1/p')
+    local rootDevice=$(df -l / | sed -nE 's#^/dev/([^ ]*).*#\1#p')
 
     # If NVRAMDevice is not specify use rootDevice
     NVRAMDevice=${NVRAMDevice:-$rootDevice}
@@ -174,13 +174,28 @@ for bootFlag in ${bootFlags} ; do
    esac
 done
 
-EFIFirmwareVendor=$(LC_ALL=C ioreg -l -pIODeviceTree | \
- sed -n 's/.*firmware-vendor.*<\([0-9a-fA-F]*\)>.*/\1/p' | xxd -r -p)
+# Only save nvram to disk if boot from CloverEFI or EDK II
+if [[ "$NVRAMDevice" != No ]]; then
 
-# Only save nvram to disk if boot from CloverEFI or DUET
-[[ "$NVRAMDevice" != No && "$EFIFirmwareVendor" == CLOVER || "$EFIFirmwareVendor" == "EDK II" ]] && saveNVRAM
+    EFIFirmwareVendor=$(LC_ALL=C ioreg -l -pIODeviceTree | \
+     sed -nE 's@.*firmware-vendor.*<([0-9a-fA-F]*)>.*@\1@p' | xxd -r -p)
 
-if [[ -f /etc/custom.rc.shutdown.local ]]; then
-   echo "Found /etc/custom.rc.shutdown.local"
-   /etc/custom.rc.shutdown.local
+    case "$EFIFirmwareVendor" in
+        "CLOVER"|"EDK II") saveNVRAM ;;
+    esac
 fi
+
+customScript='custom.rc.shutdown.local'
+if [[ -f "/etc/$customScript" ]]; then
+   echo "Found and starting /etc/$customScript"
+   source "/etc/$customScript" &>"${logLocation}/$customScript.log"
+fi
+
+
+# Local Variables:      #
+# mode: ksh             #
+# tab-width: 4          #
+# indent-tabs-mode: nil #
+# End:                  #
+#
+# vi: set expandtab ts=4 sw=4 sts=4: #

@@ -14,7 +14,7 @@
 # Manage boot log
 #
 
-DEBUG=0
+DEBUG=${DEBUG:-0}
 
 logLocation=/Library/Logs/CloverEFI
 logFilename=boot.log
@@ -50,7 +50,7 @@ function mountEFI {
         echo "Not auto mounting EFI partition"
     else
         # keep only the device name (remove /dev/ and partition (aka s1))
-        theEFIRoot=$(echo $theEFIRoot | sed 's@^.*/@@;s/\(disk[0-9]*\).*/\1/')
+        theEFIRoot=$(echo $theEFIRoot | sed -E 's@^.*/?(disk[0-9]*).*@\1@')
         local EFIPartition="${theEFIRoot}s1"
         [[ ! -d ${EFIMountPoint} ]] && mkdir -p "${EFIMountPoint}"
         umount ${EFIMountPoint}     2>/dev/null
@@ -136,12 +136,21 @@ echo "Clover boot messages saved in $theLogPath"
 
 # If the line count > 0 trim the system log to line count
 if [[ "$logLineCount" -gt 0 ]]; then
-	(cat "$theSystemLogPath" 2>/dev/null; cat "$theLogPath") | \
-	 tail -n $logLineCount > "$theSystemLogPath".tmp
+    (cat "$theSystemLogPath" 2>/dev/null; cat "$theLogPath") | \
+     tail -n $logLineCount > "$theSystemLogPath".tmp
     mv "$theSystemLogPath".tmp "$theSystemLogPath"
 fi
 
-if [[ -f /etc/custom.rc.local ]]; then
-   echo "Found /etc/custom.rc.local"
-   /etc/custom.rc.local
+customScript='custom.rc.local'
+if [[ -f "/etc/$customScript" ]]; then
+   echo "Found and starting /etc/$customScript"
+   source "/etc/$customScript" &>"${logLocation}/$customScript.log"
 fi
+
+# Local Variables:      #
+# mode: ksh             #
+# tab-width: 4          #
+# indent-tabs-mode: nil #
+# End:                  #
+#
+# vi: set expandtab ts=4 sw=4 sts=4: #
