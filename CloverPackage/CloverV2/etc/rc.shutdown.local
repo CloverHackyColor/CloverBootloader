@@ -188,7 +188,7 @@ fi
 customScript='custom.rc.shutdown.local'
 if [[ -f "/etc/$customScript" ]]; then
    echo "Found and starting /etc/$customScript"
-   source "/etc/$customScript" &>"${logLocation}/$customScript.log"
+   source "/etc/$customScript"
 fi
 
 
