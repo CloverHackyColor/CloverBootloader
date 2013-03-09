@@ -13,6 +13,7 @@ declare -r SELF="${0##*/}"
 declare -r NUMBER_OF_CPU=$(sysctl -n hw.ncpu)
 print_option_help_wc=
 have_fmt=
+VBIOSPATCHCLOVEREFI=0
 
 # Default values
 export TOOLCHAIN=GCC47
@@ -106,6 +107,9 @@ usage() {
     print_option_help "--ia32"      "build Clover in 32-bit [boot3]"
     print_option_help "--x64"       "build Clover in 64-bit [boot6]"
     print_option_help "--x64-mcp"   "build Clover in 64-bit [boot7] using BiosBlockIO (compatible with MCP chipset)"
+    echo
+    echo "Options:"
+    print_option_help "--vbios-patch-cloverefi" "activate vbios patch in CloverEFI"
 
     echo
     echo "Report bugs to http://www.projectosx.com/forum/index.php?showtopic=2490"
@@ -145,6 +149,8 @@ checkCmdlineArguments() {
                       BUILDTARGET=DEBUG ;;
             -r | -release | --release)
                       BUILDTARGET=RELEASE ;;
+            --vbios-patch-cloverefi)
+                      VBIOSPATCHCLOVEREFI=1 ;;
             -h | -\? | -help | --help)
                       usage && exit 0 ;;
             -v | --version)
@@ -218,7 +224,13 @@ MainBuildScript() {
     echo "#define FIRMWARE_REVISION L\"${clover_revision}\""   >> $WORKSPACE/Clover/Version.h
     echo "#define REVISION_STR \"Clover revision: ${clover_revision}\"" >> $WORKSPACE/Clover/Version.h
     cp $WORKSPACE/Clover/Version.h $WORKSPACE/Clover/rEFIt_UEFI/
-    build -p "$WORKSPACE/Clover/Clover${PLATFORM}.dsc" -a $TARGETARCH -b $BUILDTARGET -t $TOOLCHAIN -n $NUMBER_OF_CPU
+
+    local build_options=
+    [[ "$VBIOSPATCHCLOVEREFI" -ne 0 ]] && \
+     build_options="$build_options -D ENABLE_VBIOS_PATCH_CLOVEREFI"
+
+    build $build_options -p "$WORKSPACE/Clover/Clover${PLATFORM}.dsc" \
+     -a $TARGETARCH -b $BUILDTARGET -t $TOOLCHAIN -n $NUMBER_OF_CPU
 }
 
 # Deploy Clover files for packaging

@@ -81,10 +81,9 @@
   DxeServicesTableLib|MdePkg/Library/DxeServicesTableLib/DxeServicesTableLib.inf
   EfiFileLib|EmbeddedPkg/Library/EfiFileLib/EfiFileLib.inf
   EblNetworkLib|EmbeddedPkg/Library/EblNetworkLib/EblNetworkLib.inf
-  EblCmdLib|EmbeddedPkg/Library/EblCmdLibNull/EblCmdLibNull.inf  
+  EblCmdLib|EmbeddedPkg/Library/EblCmdLibNull/EblCmdLibNull.inf
   #FileHandleLib|ShellPkg/Library/BaseFileHandleLib/BaseFileHandleLib.inf
   UefiCpuLib|UefiCpuPkg/Library/BaseUefiCpuLib/BaseUefiCpuLib.inf
-  
   #
   # Generic Modules
   #
@@ -125,15 +124,15 @@
   IoApicLib|PcAtChipsetPkg/Library/BaseIoApicLib/BaseIoApicLib.inf
   LocalApicLib|UefiCpuPkg/Library/BaseXApicLib/BaseXApicLib.inf
   #LocalApicLib|UefiCpuPkg/Library/BaseXApicX2ApicLib/BaseXApicX2ApicLib.inf
-  
+
   #
   # To save size, use NULL library for DebugLib and ReportStatusCodeLib.
   # If need status code output, do library instance overriden as below DxeMain.inf does
   #
   DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
-  DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf  
+  DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
   ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
-  
+
   #
   # Our libs
   #
@@ -158,9 +157,9 @@
 [LibraryClasses.common.DXE_SMM_DRIVER]
   SmmServicesTableLib|MdePkg/Library/SmmServicesTableLib/SmmServicesTableLib.inf
   MemoryAllocationLib|MdePkg/Library/SmmMemoryAllocationLib/SmmMemoryAllocationLib.inf
-  
- 
-  
+
+
+
 ################################################################################
 #
 # Pcd Section - list of all EDK II PCD Entries defined by this Platform
@@ -181,13 +180,13 @@
   gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiCom2Enable|FALSE
   gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress|0xF0000000
   gPcAtChipsetPkgTokenSpaceGuid.Pcd8259LegacyModeMask|0xFFFC
-  
+
 [PcdsPatchableInModule]
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow|0
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn|0
   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution|0
   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution|0
-  
+
 [PcdsDynamicDefault.common]
   #gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress|0xF0000000
   #gPcAtChipsetPkgTokenSpaceGuid.Pcd8259LegacyModeMask|0xFFFC
@@ -223,7 +222,7 @@
 #
 ###################################################################################################
 [Components]
-	#DuetPkg/BootSector/BootSector.inf
+  #DuetPkg/BootSector/BootSector.inf
 
   #DuetPkg/DxeIpl/DxeIpl.inf {
   Clover/OsxDxeIpl/DxeIpl.inf {
@@ -253,7 +252,7 @@
      # DebugLib|IntelFrameworkModulePkg/Library/PeiDxeDebugLibReportStatusCode/PeiDxeDebugLibReportStatusCode.inf
      # ReportStatusCodeLib|DuetPkg/Library/DxeCoreReportStatusCodeLibFromHob/DxeCoreReportStatusCodeLibFromHob.inf
      DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
- 	 ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
+     ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
 
   }
 
@@ -318,20 +317,20 @@
   Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
   #MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
   #Clover/PciBusDxe/PciBusDxe.inf
-  
-  	#DataHub
-	#Clover/VBoxAppleSim/VBoxAppleSim.inf
-	IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
-	#IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
-  
-  	# foreign file system support
-	Clover/VBoxFsDxe/VBoxHfs.inf
-	Clover/VBoxFsDxe/VBoxIso9660.inf
-	#Clover/VBoxFsDxe/VBoxFsDxe.inf
-	Clover/VBoxFsDxe/VBoxExt2.inf
-	Clover/VBoxFsDxe/VBoxExt4.inf
-	#EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
-	#Clover/OsxMmcDxe/MmcDxe.inf
+
+#DataHub
+  #Clover/VBoxAppleSim/VBoxAppleSim.inf
+  IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
+  #IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
+
+  # foreign file system support
+  Clover/VBoxFsDxe/VBoxHfs.inf
+  Clover/VBoxFsDxe/VBoxIso9660.inf
+  #Clover/VBoxFsDxe/VBoxFsDxe.inf
+  Clover/VBoxFsDxe/VBoxExt2.inf
+  Clover/VBoxFsDxe/VBoxExt4.inf
+  #EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
+  #Clover/OsxMmcDxe/MmcDxe.inf
 #Video
   #IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
   #Clover/VBoxVgaMiniPort/VgaMiniPortDxe.inf
@@ -379,7 +378,7 @@
   IntelFrameworkModulePkg/Bus/Isa/Ps2MouseAbsolutePointerDxe/Ps2MouseAbsolutePointerDxe.inf
   #IntelFrameworkModulePkg/Bus/Isa/Ps2MouseDxe/Ps2MouseDxe.inf
   Clover/Ps2MouseDxe/Ps2MouseDxe.inf
- 
+
   # ACPI Support
   #MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
   Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
@@ -414,7 +413,7 @@
   Clover/FSInject/FSInject.inf
   Clover/MsgLog/MsgLog.inf
   Clover/DumpUefiCalls/DumpUefiCalls.inf
-  
+
   # Drivers for Aptio loading - should go to Clover's /EFI/drivers64UEFI dir
   Clover/OsxFatBinaryDrv/OsxFatBinaryDrv.inf
 
@@ -429,9 +428,9 @@
 ###################################################################################################
 #
 # BuildOptions Section - Define the module specific tool chain flags that should be used as
-#                        the default flags for a module. These flags are appended to any 
-#                        standard flags that are defined by the build process. They can be 
-#                        applied for any modules or only those modules with the specific 
+#                        the default flags for a module. These flags are appended to any
+#                        standard flags that are defined by the build process. They can be
+#                        applied for any modules or only those modules with the specific
 #                        module style (EDK or EDKII) specified in [Components] section.
 #
 ###################################################################################################
@@ -440,5 +439,6 @@
   XCODE:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
 #  GCC:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
 
-# Uncomment following line to add video bios patching in CloverEFI
+!ifdef ENABLE_VBIOS_PATCH_CLOVEREFI
   GCC:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG -DCLOVER_VBIOS_PATCH_IN_CLOVEREFI
+!endif

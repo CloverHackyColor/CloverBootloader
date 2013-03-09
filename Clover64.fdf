@@ -51,7 +51,7 @@ APRIORI PEI {
 APRIORI DXE {
   INF  MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
   INF  PcAtChipsetPkg/8259InterruptControllerDxe/8259.inf
-  INF  Clover/MsgLog/MsgLog.inf 
+  INF  Clover/MsgLog/MsgLog.inf
 }
 
 INF  MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
@@ -136,6 +136,24 @@ INF  Clover/BiosKeyboard/KeyboardDxe.inf
 INF   Clover/LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
 #INF  IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf
 
+# IDE/AHCI Support
+!ifdef USE_BIOS_BLOCKIO
+  INF  Clover/LegacyBios/BlockIoDxe/BlockIoDxe.inf
+!else
+  #INF  Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
+  #INF  Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
+  INF  Clover/SataControllerDxe/SataControllerDxe.inf
+  #INF  MdeModulePkg/Bus/Ata/AtaAtapiPassThru/AtaAtapiPassThru.inf
+  INF  Clover/AtaAtapi/AtaAtapiPassThru.inf
+  #INF  MdeModulePkg/Bus/Ata/AtaBusDxe/AtaBusDxe.inf
+  INF  Clover/AtaBus/AtaBusDxe.inf
+  #INF  MdeModulePkg/Bus/Scsi/ScsiBusDxe/ScsiBusDxe.inf
+  INF  Clover/DVDBus/ScsiBusDxe.inf
+  #INF  MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
+  INF  Clover/DVDDisk/ScsiDiskDxe.inf
+  #INF  IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
+!endif
+
 # Usb Support
 INF  MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
 INF  MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
@@ -165,7 +183,7 @@ INF  Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
 #INF  Clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
 
   #FD
-#INF  IntelFrameworkModulePkg/Universal/Acpi/AcpiS3SaveDxe/AcpiS3SaveDxe.inf 
+#INF  IntelFrameworkModulePkg/Universal/Acpi/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
 #INF  Clover/SaveResume/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
 #INF  MdeModulePkg/Universal/Acpi/S3SaveStateDxe/S3SaveStateDxe.inf
 #INF  MdeModulePkg/Universal/Acpi/SmmS3SaveState/SmmS3SaveState.inf
@@ -174,7 +192,7 @@ INF  Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
 #INF  UefiCpuPkg/Universal/Acpi/S3Resume2Pei/S3Resume2Pei.inf
 
   #Misc
-INF  Clover/MsgLog/MsgLog.inf  
+INF  Clover/MsgLog/MsgLog.inf
 
   # Binary INF file to support toggle among different CPU architectures.
 INF  RuleOverride=BINARY FatBinPkg/EnhancedFatDxe/Fat.inf

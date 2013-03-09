@@ -291,7 +291,7 @@
   MdeModulePkg/Universal/Metronome/Metronome.inf
 # EdkCompatibilityPkg/Compatibility/MpServicesOnFrameworkMpServicesThunk/MpServicesOnFrameworkMpServicesThunk.inf
 
-#Chipset
+  #Chipset
   PcAtChipsetPkg/PcatRealTimeClockRuntimeDxe/PcatRealTimeClockRuntimeDxe.inf
   PcAtChipsetPkg/8254TimerDxe/8254Timer.inf
   PcAtChipsetPkg/HpetTimerDxe/HpetTimerDxe.inf
@@ -303,20 +303,21 @@
   #MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
   #Clover/PciBusDxe/PciBusDxe.inf
   
-  	#DataHub
-	#Clover/VBoxAppleSim/VBoxAppleSim.inf
-	IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
-	#IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
+  #DataHub
+  #Clover/VBoxAppleSim/VBoxAppleSim.inf
+  IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
+  #IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
   
-  	# foreign file system support
-	Clover/VBoxFsDxe/VBoxHfs.inf
-	Clover/VBoxFsDxe/VBoxIso9660.inf
-	#Clover/VBoxFsDxe/VBoxFsDxe.inf
-	Clover/VBoxFsDxe/VBoxExt2.inf
-	Clover/VBoxFsDxe/VBoxExt4.inf
-	#EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
-	#Clover/OsxMmcDxe/MmcDxe.inf
-#Video
+  # foreign file system support
+  Clover/VBoxFsDxe/VBoxHfs.inf
+  Clover/VBoxFsDxe/VBoxIso9660.inf
+  #Clover/VBoxFsDxe/VBoxFsDxe.inf
+  Clover/VBoxFsDxe/VBoxExt2.inf
+  Clover/VBoxFsDxe/VBoxExt4.inf
+  #EmbeddedPkg/Universal/MmcDxe/MmcDxe.inf
+  #Clover/OsxMmcDxe/MmcDxe.inf
+
+  #Video
   IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
   #Clover/VBoxVgaMiniPort/VgaMiniPortDxe.inf
   #IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
@@ -329,6 +330,9 @@
 
 
   # IDE/AHCI Support
+!ifdef USE_BIOS_BLOCKIO
+  Clover/LegacyBios/BlockIoDxe/BlockIoDxe.inf
+!else
   #Clover/Trash/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
   #Clover/Trash/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
   Clover/SataControllerDxe/SataControllerDxe.inf
@@ -341,8 +345,7 @@
   #MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
   Clover/DVDDisk/ScsiDiskDxe.inf
   #IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
-  Clover/LegacyBios/BlockIoDxe/BlockIoDxe.inf
-
+!endif
 
   # Usb Support
   MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
@@ -437,6 +440,6 @@
   XCODE:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
   GCC:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG
 
-# Uncomment following line to add video bios patching in CloverEFI
-#  GCC:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG -DCLOVER_VBIOS_PATCH_IN_CLOVEREFI
-
+!ifdef ENABLE_VBIOS_PATCH_CLOVEREFI
+  GCC:*_*_*_CC_FLAGS = -DMDEPKG_NDEBUG -DCLOVER_VBIOS_PATCH_IN_CLOVEREFI
+!endif
