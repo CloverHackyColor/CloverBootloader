@@ -420,27 +420,23 @@ main ()
     echo "===================== BiosBoot ============================="
     packagesidentity="$clover_package_identity"
     choiceId="BiosBoot"
-    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin
     if [[ "$add_ia32" -eq 1 ]]; then
-        mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/ia32
-        ditto --noextattr --noqtn ${SYMROOT}/i386/ia32/boot ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/ia32
+        ditto --noextattr --noqtn ${SYMROOT}/i386/ia32/boot? ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/ia32/
     fi
-    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/x64
-    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
-    ditto --noextattr --noqtn ${SYMROOT}/i386/x64/boot    ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/x64
-#   ditto --noextattr --noqtn ${SYMROOT}/i386/x64/boot7   ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/x64
-    ditto --noextattr --noqtn ${SYMROOT}/i386/boot0       ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386
-    ditto --noextattr --noqtn ${SYMROOT}/i386/boot0md     ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386
-    ditto --noextattr --noqtn ${SYMROOT}/i386/boot0hfs    ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386
-    ditto --noextattr --noqtn ${SYMROOT}/i386/boot1f32    ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386
-    ditto --noextattr --noqtn ${SYMROOT}/i386/boot1f32alt ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386
-    ditto --noextattr --noqtn ${SYMROOT}/i386/boot1h      ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386
-    ditto --noextattr --noqtn ${SYMROOT}/i386/boot1h2     ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386
-#   ditto --noextattr --noqtn ${SYMROOT}/i386/bootc       ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386
-    ditto --noextattr --noqtn ${SYMROOT}/i386/fdisk440    ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin
+    ditto --noextattr --noqtn ${SYMROOT}/i386/x64/boot?   ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/x64/
+    ditto --noextattr --noqtn ${SYMROOT}/i386/boot0       ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
+    ditto --noextattr --noqtn ${SYMROOT}/i386/boot0md     ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
+    ditto --noextattr --noqtn ${SYMROOT}/i386/boot0hfs    ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
+    ditto --noextattr --noqtn ${SYMROOT}/i386/boot1f32    ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
+    ditto --noextattr --noqtn ${SYMROOT}/i386/boot1f32alt ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
+    ditto --noextattr --noqtn ${SYMROOT}/i386/boot1h      ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
+    ditto --noextattr --noqtn ${SYMROOT}/i386/boot1h2     ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
+    ditto --noextattr --noqtn ${SYMROOT}/i386/fdisk440    ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
 
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
     chmod 755 "${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/fdisk440"
+
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
 
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     packageBiosBootRefId=$packageRefId
@@ -599,7 +595,6 @@ if [[ "$add_ia32" -eq 1 ]]; then
     for (( i = 0 ; i < ${#drivers[@]} ; i++ )); do
         local driver="${drivers[$i]##*/}"
         local driverName="${driver%.efi}"
-        mkdir -p "${PKG_BUILD_DIR}/${driverName}/Root/"
         ditto --noextattr --noqtn --arch i386 "${drivers[$i]}" "${PKG_BUILD_DIR}/${driverName}/Root/"
         find "${PKG_BUILD_DIR}/${driverName}" -name '.DS_Store' -exec rm -R -f {} \; 2>/dev/null
         fixperms "${PKG_BUILD_DIR}/${driverName}/Root/"
@@ -622,7 +617,6 @@ fi
     for (( i = 0 ; i < ${#drivers[@]} ; i++ )); do
         local driver="${drivers[$i]##*/}"
         local driverName="${driver%.efi}"
-        mkdir -p "${PKG_BUILD_DIR}/${driverName}/Root/"
         ditto --noextattr --noqtn --arch i386 "${drivers[$i]}" "${PKG_BUILD_DIR}/${driverName}/Root/"
         find "${PKG_BUILD_DIR}/${driverName}" -name '.DS_Store' -exec rm -R -f {} \; 2>/dev/null
         fixperms "${PKG_BUILD_DIR}/${driverName}/Root/"
@@ -645,7 +639,6 @@ fi
     do
         local driver="${drivers[$i]##*/}"
         local driverName="${driver%.efi}"
-        mkdir -p "${PKG_BUILD_DIR}/${driverName}/Root/"
         ditto --noextattr --noqtn --arch i386 "${drivers[$i]}" "${PKG_BUILD_DIR}/${driverName}/Root/"
         find "${PKG_BUILD_DIR}/${driverName}" -name '.DS_Store' -exec rm -R -f {} \; 2>/dev/null
         fixperms "${PKG_BUILD_DIR}/${driverName}/Root/"

@@ -20,6 +20,7 @@ osxvolume="${3}"
 installtype=$( cat "${osxvolume}/boot0type" )
 
 boottype='x64'
+cloverEFIFile='boot6'
 
 echo "$boottype" > "${osxvolume}/boottype"
 
@@ -27,12 +28,10 @@ if [[ -f "${osxvolume}/boot" ]]; then
     cp "${osxvolume}/boot" "${osxvolume}/bootold"
 fi
 
-if [[ -f "${osxvolume}/usr/standalone/i386/$boottype/boot" ]]; then
-    cp -v "${osxvolume}/usr/standalone/i386/$boottype/boot" "${osxvolume}/boot"
+if [[ -f "${osxvolume}/usr/standalone/i386/$boottype/$cloverEFIFile" ]]; then
+    cp -v "${osxvolume}/usr/standalone/i386/$boottype/$cloverEFIFile" "${osxvolume}/boot"
     chflags hidden "${osxvolume}/boot"
-    echo "Stage 2 - Written boot ($boottype) to ${osxvolume}/" >> "${osxvolume}/Clover_Install_Log.txt"
+    echo "Stage 2 - Written $cloverEFIFile ($boottype) to ${osxvolume}/boot" >> "${osxvolume}/Clover_Install_Log.txt"
 fi
 
-echo "Boot Start type = $boottype" >> "${osxvolume}/Clover_Install_Log.txt"
-echo "Install type = ${installtype}" >> "${osxvolume}/Clover_Install_Log.txt"
 echo "======================================================" >> "${osxvolume}/Clover_Install_Log.txt"

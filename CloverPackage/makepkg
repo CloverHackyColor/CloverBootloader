@@ -38,10 +38,9 @@ make cdboot
 # make cdboot32
 make image
 
-cd sym
-zip Clover_${version}_r${revision}.zip Clover_${version}_r${revision}.pkg
-zip Clover_${version}_r${revision}.zip Clover_${version}_r${revision}.pkg.md5
-cd ..
+(cd sym ; zip Clover_${version}_r${revision}.zip \
+ Clover_${version}_r${revision}.pkg              \
+ Clover_${version}_r${revision}.pkg.md5 )
 
 # Workspace = edk2/Clover/CloverPackage/
 # Remove temp files.

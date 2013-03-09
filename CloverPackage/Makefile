@@ -32,10 +32,10 @@ cdboot:
 	@echo "making cdboot"
 	@mkdir -p $(SYMROOT)/i386
 	@cp -f $(CLOVERROOT)/BootSectors/cdboot $(SYMROOT)/i386/
-	@dd if=$(CLOVERROOT)/Bootloaders/x64/boot of=$(SYMROOT)/i386/cdboot conv=sync bs=2k seek=1 &> /dev/null
+	@dd if=$(CLOVERROOT)/Bootloaders/x64/boot6 of=$(SYMROOT)/i386/cdboot conv=sync bs=2k seek=1 &> /dev/null
 
 	@echo Update cdboot with boot file size info
-	@stat -f%z $(CLOVERROOT)/Bootloaders/x64/boot \
+	@stat -f%z $(CLOVERROOT)/Bootloaders/x64/boot6 \
 		| perl -ane "print pack('V',@F[0]);" \
 		| dd of=$(SYMROOT)/i386/cdboot bs=1 count=4 seek=2044 conv=notrunc &> /dev/null
 
@@ -43,32 +43,32 @@ cdboot32:
 	@echo "making cdboot-32"
 	@mkdir -p $(SYMROOT)/i386
 	@cp -f $(CLOVERROOT)/BootSectors/cdboot $(SYMROOT)/i386/cdboot32
-	@dd if=$(CLOVERROOT)/Bootloaders/ia32/boot of=$(SYMROOT)/i386/cdboot32 conv=sync bs=2k seek=1 &> /dev/null
+	@dd if=$(CLOVERROOT)/Bootloaders/ia32/boot3 of=$(SYMROOT)/i386/cdboot32 conv=sync bs=2k seek=1 &> /dev/null
 
 	@echo Update cdboot with boot file size info
-	@stat -f%z $(CLOVERROOT)/Bootloaders/ia32/boot \
+	@stat -f%z $(CLOVERROOT)/Bootloaders/ia32/boot3 \
 		| perl -ane "print pack('V',@F[0]);" \
 		| dd of=$(SYMROOT)/i386/cdboot32 bs=1 count=4 seek=2044 conv=notrunc &> /dev/null
 
 image: 
 	@echo "================= Distrib ================="
 	@echo "\t[RM] ${IMGROOT}"
-	@rm -rf ${IMGROOT}	
-	@echo "\t[MKDIR] ${IMGROOT}/usr/standalone/i386"			  	  
+	@rm -rf ${IMGROOT}
+	@echo "\t[MKDIR] ${IMGROOT}/usr/standalone/i386"
 	@mkdir -p ${IMGROOT}/usr/standalone/i386
 	@mkdir -p ${IMGROOT}/usr/standalone/i386/x64
 	@mkdir -p ${IMGROOT}/usr/standalone/i386/ia32
 	@echo "\t[MKDIR] ${IMGROOT}/EFI"
-	@mkdir -p ${IMGROOT}/EFI				
+	@mkdir -p ${IMGROOT}/EFI
 	@echo "\t[MKDIR] ${IMGROOT}/EFI/BOOT/themes/"
-	@mkdir -p ${IMGROOT}/EFI/BOOT/themes/				
+	@mkdir -p ${IMGROOT}/EFI/BOOT/themes/
 	@echo "\t[MKDIR] ${IMGROOT}/usr/bin"
 	@mkdir -p ${IMGROOT}/usr/bin
 	@if [ -e "$(IMGSKELROOT)"/* ];then \
 		echo "\t[CP] ${IMGSKELROOT} ${IMGROOT}"; \
 		cp -R -f "${IMGSKELROOT}"/* "${IMGROOT}"; \
 	fi	
-	@echo "\t[CP] cdboot"						  
+	@echo "\t[CP] cdboot"
 	@cp -f ${SYMROOT}/i386/cdboot ${CDBOOT}
 	@[ ${IMAGE_WITH_IA32} -eq 0 ] || cp -f ${SYMROOT}/i386/cdboot32 ${CDBOOT32}
 	@echo "\t[CP] metal"
@@ -107,10 +107,8 @@ image:
 		cp -f $(CLOVERROOT)/drivers-Off/drivers32/PS2MouseDxe-32.efi ${IMGROOT}/EFI/drivers32/ ; \
 	fi
 	@echo "\t[CP] boot"
-	@cp -f $(CLOVERROOT)/Bootloaders/x64/boot ${IMGROOT}/usr/standalone/i386/x64/
-#	@cp -f $(CLOVERROOT)/Bootloaders/x64/boot7 ${IMGROOT}/usr/standalone/i386/x64/
-	@[ ${IMAGE_WITH_IA32} -eq 0 ] || cp -f $(CLOVERROOT)/Bootloaders/ia32/boot ${IMGROOT}/usr/standalone/i386/ia32/
-#	@cp -f $(CLOVERROOT)/Bootloaders/ia32/boot3 ${IMGROOT}/usr/standalone/i386/ia32/
+	@cp -f $(CLOVERROOT)/Bootloaders/x64/boot? ${IMGROOT}/usr/standalone/i386/x64/
+	@[ ${IMAGE_WITH_IA32} -eq 0 ] || cp -f $(CLOVERROOT)/Bootloaders/ia32/boot? ${IMGROOT}/usr/standalone/i386/ia32/
 	@cp -f ${SYMROOT}/i386/boot0 ${IMGROOT}/usr/standalone/i386
 	@cp -f ${SYMROOT}/i386/boot0hfs ${IMGROOT}/usr/standalone/i386
 	@cp -f ${SYMROOT}/i386/boot0md ${IMGROOT}/usr/standalone/i386
