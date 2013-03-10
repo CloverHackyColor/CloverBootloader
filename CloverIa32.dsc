@@ -30,7 +30,7 @@
   SUPPORTED_ARCHITECTURES        = IA32
   BUILD_TARGETS                  = RELEASE|DEBUG
   SKUID_IDENTIFIER               = DEFAULT
-  FLASH_DEFINITION               = Clover/Clover.fdf
+  FLASH_DEFINITION               = Clover/Clover32.fdf
 
 ################################################################################
 #
