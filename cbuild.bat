@@ -120,30 +120,35 @@ rem have edk2 prepare to build
       :buildall
          if x"%BUILD_ARCH%" == x"X64" goto build64
 
+         set "ARCH_ARGUMENT="
+         if x"%BUILD_ARCH%" == x"" set "ARCH_ARGUMENT=-a IA32"
+
          echo Building CloverEFI IA32 (boot) ...
-         build -p %WORKSPACE%\Clover\CloverIa32.dsc -a IA32 %*
-         if errorlevel 1 goto failscript
-		 
-         echo Building CloverIA32.efi ...
-         build -p %WORKSPACE%\Clover\rEFIt_UEFI\rEFIt.dsc -a IA32 %*
+         build -p %WORKSPACE%\Clover\Clover.dsc %ARCH_ARGUMENT% %*
          if errorlevel 1 goto failscript
 
+         echo Building CloverIA32.efi ...
+         build -p %WORKSPACE%\Clover\rEFIt_UEFI\rEFIt.dsc %ARCH_ARGUMENT% %*
+         if errorlevel 1 goto failscript
          if x"%BUILD_ARCH%" == x"IA32" (
             if not x"%CLEANING%" == x"" goto:eof
             goto postbuild
          )
 
       :build64
+         set "ARCH_ARGUMENT="
+         if x"%BUILD_ARCH%" == x"" set "ARCH_ARGUMENT=-a X64"
+
          echo Building CloverEFI X64 (boot) ...
-         build -p %WORKSPACE%\Clover\CloverX64.dsc -a X64 %*
+         build -p %WORKSPACE%\Clover\Clover.dsc %ARCH_ARGUMENT% %*
          if errorlevel 1 goto failscript
 
          echo Building CloverX64.efi ...
-         build -p %WORKSPACE%\Clover\rEFIt_UEFI\rEFIt64.dsc -a X64 %*
+         build -p %WORKSPACE%\Clover\rEFIt_UEFI\rEFIt.dsc %ARCH_ARGUMENT% %*
          if errorlevel 1 goto failscript
          if not x"%CLEANING%" == x"" goto:eof
          goto postbuild
-   
+
 :searchforedk
    if exist edksetup.bat (
       call edksetup.bat
@@ -219,7 +224,7 @@ rem have edk2 prepare to build
    %BASETOOLS_DIR%\Split.exe -f %BUILD_DIR%\FV\Efildr20 -p %BUILD_DIR%\FV\ -o Efildr20.1 -t boot64 -s 512
    del %BUILD_DIR%\FV\Efildr20.1
 
-   copy /b /y %BUILD_DIR%\FV\boot64 %DEST_DIR%\Bootloaders\x64\boot
+   copy /b /y %BUILD_DIR%\FV\boot64 %DEST_DIR%\Bootloaders\X64\boot
    copy /b /y %BUILD_DIR%\X64\FSInject.efi %DEST_DIR%\EFI\drivers64\FSInject-64.efi
    copy /b /y %BUILD_DIR%\X64\FSInject.efi %DEST_DIR%\EFI\drivers64UEFI\FSInject-64.efi
    rem copy /b /y %BUILD_DIR%\X64\VBoxIso9600.efi %DEST_DIR%\drivers-Off\drivers64\VBoxIso9600-64.efi

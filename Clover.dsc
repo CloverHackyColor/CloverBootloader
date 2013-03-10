@@ -15,23 +15,16 @@
 #  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #
 ##
-
-################################################################################
-#
-# Defines Section - statements that will be processed to create a Makefile.
-#
-################################################################################
 [Defines]
-  PLATFORM_NAME                  = Clover64
+  PLATFORM_NAME                  = Clover
   PLATFORM_GUID                  = 199E24E0-0989-42aa-87F2-611A8C397E72
   PLATFORM_VERSION               = 0.92
   DSC_SPECIFICATION              = 0x00010006
   OUTPUT_DIRECTORY               = Build/Clover
-  SUPPORTED_ARCHITECTURES        = X64
+  SUPPORTED_ARCHITECTURES        = X64|IA32
   BUILD_TARGETS                  = RELEASE|DEBUG
   SKUID_IDENTIFIER               = DEFAULT
-  FLASH_DEFINITION               = Clover/Clover64.fdf
-
+  FLASH_DEFINITION               = Clover/Clover.fdf
 
 ################################################################################
 #
@@ -46,7 +39,6 @@
   DxeCoreEntryPoint|MdePkg/Library/DxeCoreEntryPoint/DxeCoreEntryPoint.inf
   UefiDriverEntryPoint|MdePkg/Library/UefiDriverEntryPoint/UefiDriverEntryPoint.inf
   UefiApplicationEntryPoint|MdePkg/Library/UefiApplicationEntryPoint/UefiApplicationEntryPoint.inf
-
   #
   # Basic
   #
@@ -67,7 +59,6 @@
   PeCoffLib|Clover/Library/VBoxPeCoffLib/VBoxPeCoffLib.inf
   PeCoffExtraActionLib|MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
   PeCoffGetEntryPointLib|MdePkg/Library/BasePeCoffGetEntryPointLib/BasePeCoffGetEntryPointLib.inf
-
   #
   # UEFI & PI
   #
@@ -84,10 +75,10 @@
   DxeServicesTableLib|MdePkg/Library/DxeServicesTableLib/DxeServicesTableLib.inf
   EfiFileLib|EmbeddedPkg/Library/EfiFileLib/EfiFileLib.inf
   EblNetworkLib|EmbeddedPkg/Library/EblNetworkLib/EblNetworkLib.inf
-  EblCmdLib|EmbeddedPkg/Library/EblCmdLibNull/EblCmdLibNull.inf
+  EblCmdLib|EmbeddedPkg/Library/EblCmdLibNull/EblCmdLibNull.inf  
   #FileHandleLib|ShellPkg/Library/BaseFileHandleLib/BaseFileHandleLib.inf
   UefiCpuLib|UefiCpuPkg/Library/BaseUefiCpuLib/BaseUefiCpuLib.inf
-
+  
   #
   # Generic Modules
   #
@@ -99,7 +90,6 @@
   SecurityManagementLib|MdeModulePkg/Library/DxeSecurityManagementLib/DxeSecurityManagementLib.inf
   CapsuleLib|MdeModulePkg/Library/DxeCapsuleLibNull/DxeCapsuleLibNull.inf
   #PeCoffExtraActionLib|MdePkg/Library/BasePeCoffExtraActionLibNull/BasePeCoffExtraActionLibNull.inf
-
   #
   # Platform
   #
@@ -107,7 +97,6 @@
   PlatformBdsLib|Clover/Library/OsxBdsPlatformLib/PlatformBds.inf
   #TimerLib|DuetPkg/Library/DuetTimerLib/DuetTimerLib.inf
   TimerLib|Clover/Library/DuetTimerLib/DuetTimerLib.inf
-
   #
   # Misc
   #
@@ -122,7 +111,7 @@
   SmbusLib|MdePkg/Library/DxeSmbusLib/DxeSmbusLib.inf
   S3BootScriptLib|MdeModulePkg/Library/PiDxeS3BootScriptLib/DxeS3BootScriptLib.inf
   ExtractGuidedSectionLib|MdePkg/Library/DxeExtractGuidedSectionLib/DxeExtractGuidedSectionLib.inf
-  PlatformHookLib|MdeModulePkg/Library/BasePlatformHookLibNull/BasePlatformHookLibNull.inf
+    PlatformHookLib|MdeModulePkg/Library/BasePlatformHookLibNull/BasePlatformHookLibNull.inf
 
   #SerialPortLib|PcAtChipsetPkg/Library/SerialIoLib/SerialIoLib.inf
   SerialPortLib|MdePkg/Library/BaseSerialPortLibNull/BaseSerialPortLibNull.inf
@@ -130,15 +119,15 @@
   IoApicLib|PcAtChipsetPkg/Library/BaseIoApicLib/BaseIoApicLib.inf
   LocalApicLib|UefiCpuPkg/Library/BaseXApicLib/BaseXApicLib.inf
   #LocalApicLib|UefiCpuPkg/Library/BaseXApicX2ApicLib/BaseXApicX2ApicLib.inf
-
+  
   #
   # To save size, use NULL library for DebugLib and ReportStatusCodeLib.
   # If need status code output, do library instance overriden as below DxeMain.inf does
   #
   DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
-  DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
+  DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf  
   ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
-
+  
   #
   # Our libs
   #
@@ -163,8 +152,9 @@
 [LibraryClasses.common.DXE_SMM_DRIVER]
   SmmServicesTableLib|MdePkg/Library/SmmServicesTableLib/SmmServicesTableLib.inf
   MemoryAllocationLib|MdePkg/Library/SmmMemoryAllocationLib/SmmMemoryAllocationLib.inf
-
-
+  
+ 
+  
 ################################################################################
 #
 # Pcd Section - list of all EDK II PCD Entries defined by this Platform
@@ -185,13 +175,13 @@
   gPcAtChipsetPkgTokenSpaceGuid.PcdIsaAcpiCom2Enable|FALSE
   gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress|0xF0000000
   gPcAtChipsetPkgTokenSpaceGuid.Pcd8259LegacyModeMask|0xFFFC
-
+  
 [PcdsPatchableInModule]
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutRow|0
   gEfiMdeModulePkgTokenSpaceGuid.PcdConOutColumn|0
   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoHorizontalResolution|0
   gEfiMdeModulePkgTokenSpaceGuid.PcdVideoVerticalResolution|0
-
+  
 [PcdsDynamicDefault.common]
   #gEfiMdePkgTokenSpaceGuid.PcdPciExpressBaseAddress|0xF0000000
   #gPcAtChipsetPkgTokenSpaceGuid.Pcd8259LegacyModeMask|0xFFFC
@@ -207,7 +197,6 @@
   gEfiMdeModulePkgTokenSpaceGuid.PcdDxeIplSwitchToLongMode|FALSE
   gPcAtChipsetPkgTokenSpaceGuid.PcdHpetMsiEnable|FALSE
   gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdBootlogoOnlyEnable|TRUE
-
 
 ###################################################################################################
 #
@@ -228,7 +217,7 @@
 #
 ###################################################################################################
 [Components]
-  #DuetPkg/BootSector/BootSector.inf
+	#DuetPkg/BootSector/BootSector.inf
 
   #DuetPkg/DxeIpl/DxeIpl.inf {
   Clover/OsxDxeIpl/DxeIpl.inf {
@@ -258,7 +247,8 @@
      # DebugLib|IntelFrameworkModulePkg/Library/PeiDxeDebugLibReportStatusCode/PeiDxeDebugLibReportStatusCode.inf
      # ReportStatusCodeLib|DuetPkg/Library/DxeCoreReportStatusCodeLibFromHob/DxeCoreReportStatusCodeLibFromHob.inf
      DebugLib|MdePkg/Library/BaseDebugLibNull/BaseDebugLibNull.inf
-     ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
+ 	 ReportStatusCodeLib|MdePkg/Library/BaseReportStatusCodeLibNull/BaseReportStatusCodeLibNull.inf
+
   }
 
   MdeModulePkg/Universal/PCD/Dxe/Pcd.inf
@@ -322,12 +312,12 @@
   Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
   #MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
   #Clover/PciBusDxe/PciBusDxe.inf
-
+  
   #DataHub
   #Clover/VBoxAppleSim/VBoxAppleSim.inf
   IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
   #IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
-
+  
   # foreign file system support
   Clover/VBoxFsDxe/VBoxHfs.inf
   Clover/VBoxFsDxe/VBoxIso9660.inf
@@ -347,6 +337,7 @@
   Clover/BiosVideo/BiosVideo.inf
   #Clover/BiosVideoAuto/BiosVideo.inf
   Clover/LegacyBios/VideoDxe/VideoDxe.inf
+
 
   # IDE/AHCI Support
 !ifdef USE_BIOS_BLOCKIO
@@ -386,7 +377,7 @@
   IntelFrameworkModulePkg/Bus/Isa/Ps2MouseAbsolutePointerDxe/Ps2MouseAbsolutePointerDxe.inf
   #IntelFrameworkModulePkg/Bus/Isa/Ps2MouseDxe/Ps2MouseDxe.inf
   Clover/Ps2MouseDxe/Ps2MouseDxe.inf
-
+ 
   # ACPI Support
   #MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
   Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
@@ -421,11 +412,9 @@
   Clover/FSInject/FSInject.inf
   Clover/MsgLog/MsgLog.inf
   Clover/DumpUefiCalls/DumpUefiCalls.inf
-
+  
   # Drivers for Aptio loading - should go to Clover's /EFI/drivers64UEFI dir
   Clover/OsxFatBinaryDrv/OsxFatBinaryDrv.inf
-  Clover/OsxAptioFixDrv/OsxAptioFixDrv.inf
-  Clover/OsxLowMemFixDrv/OsxLowMemFixDrv.inf
 
   # Drivers for Phoenix UEFI loading - should go to Clover's /EFI/drivers64UEFI dir
   Clover/EmuVariableUefi/EmuVariableRuntimeDxe.inf {
@@ -437,20 +426,24 @@
       gEfiMdeModulePkgTokenSpaceGuid.PcdVariableCollectStatistics|FALSE
       gEfiMdeModulePkgTokenSpaceGuid.PcdHwErrStorageSize|0x0000
   }
-
+  
   #
   # Sample Application
   #
   MdeModulePkg/Application/HelloWorld/HelloWorld.inf
   #MdeModulePkg/Application/VariableInfo/VariableInfo.inf
-  Clover/rEFIt_UEFI/refit64.inf
+  Clover/rEFIt_UEFI/refit.inf
+
+[Components.X64]
+  Clover/OsxAptioFixDrv/OsxAptioFixDrv.inf
+  Clover/OsxLowMemFixDrv/OsxLowMemFixDrv.inf
 
 ###################################################################################################
 #
 # BuildOptions Section - Define the module specific tool chain flags that should be used as
-#                        the default flags for a module. These flags are appended to any
-#                        standard flags that are defined by the build process. They can be
-#                        applied for any modules or only those modules with the specific
+#                        the default flags for a module. These flags are appended to any 
+#                        standard flags that are defined by the build process. They can be 
+#                        applied for any modules or only those modules with the specific 
 #                        module style (EDK or EDKII) specified in [Components] section.
 #
 ###################################################################################################

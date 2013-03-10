@@ -213,7 +213,7 @@ checkCmdlineArguments() {
     done
 
     # Update variables
-    PLATFORMFILE="${PLATFORMFILE:-Clover/Clover${PLATFORM}.dsc}"
+    PLATFORMFILE="${PLATFORMFILE:-Clover/Clover.dsc}"
 }
 
 ## Check tools for the toolchain

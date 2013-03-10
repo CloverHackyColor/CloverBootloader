@@ -1105,9 +1105,9 @@ RestoreInterruptDescriptorTableHandlerAddress (
   if (Index < mOrigIdtEntryCount) {
     gIdtTable[Index].Bits.OffsetLow   = mOrigIdtEntry[Index].Bits.OffsetLow;
     gIdtTable[Index].Bits.OffsetHigh  = mOrigIdtEntry[Index].Bits.OffsetHigh;
-//#if defined (MDE_CPU_X64)
+#if defined (MDE_CPU_X64)
     gIdtTable[Index].Bits.OffsetUpper = mOrigIdtEntry[Index].Bits.OffsetUpper;
-//#endif
+#endif
   }
     if (Index >= mOrigIdtEntryCount)
         return;
