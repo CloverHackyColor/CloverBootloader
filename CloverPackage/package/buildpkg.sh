@@ -421,8 +421,10 @@ main ()
     packagesidentity="$clover_package_identity"
     choiceId="BiosBoot"
     if [[ "$add_ia32" -eq 1 ]]; then
+        ditto --noextattr --noqtn ${SYMROOT}/i386/ia32/boot? ${PKG_BUILD_DIR}/${choiceId}/Root/
         ditto --noextattr --noqtn ${SYMROOT}/i386/ia32/boot? ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/ia32/
     fi
+    ditto --noextattr --noqtn ${SYMROOT}/i386/x64/boot?   ${PKG_BUILD_DIR}/${choiceId}/Root/
     ditto --noextattr --noqtn ${SYMROOT}/i386/x64/boot?   ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/x64/
     ditto --noextattr --noqtn ${SYMROOT}/i386/boot0       ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
     ditto --noextattr --noqtn ${SYMROOT}/i386/boot0md     ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/

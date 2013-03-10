@@ -105,7 +105,7 @@ checkXcode () {
 usage() {
     echo "Script for building CloverEFI sources on Darwin OS X"
     echo
-    printf "Usage: %s [OPTIONS] [all|fds|genc|genmake|clean|cleanall|cleanlib|modules|libraries|run]\n" "$SELF"
+    printf "Usage: %s [OPTIONS] [all|fds|genc|genmake|clean|cleanpkg|cleanall|cleanlib|modules|libraries]\n" "$SELF"
     echo
     echo "Configuration:"
     print_option_help "-n THREADNUMBER" "Build the platform using multi-threaded compiler [default is number of CPUs + 1]"
@@ -254,8 +254,18 @@ MainBuildScript() {
         echo "Building from: $WORKSPACE"
     fi
 
+    export CLOVER_PKG_DIR="$WORKSPACE"/Clover/CloverPackage/CloverV2
+
     # Cleaning part of the script if we have told to do it
-    if [[ "$TARGETRULE" == clean || "$TARGETRULE" == cleanall ]]; then
+    if [[ "$TARGETRULE" == cleanpkg ]]; then
+        # Make some house cleaning
+        echo "Cleaning packaging files..."
+        find "$CLOVER_PKG_DIR"/Bootloaders/{ia32,x64}/ -mindepth 1 -not -path "**/.svn*" -delete
+        find "$CLOVER_PKG_DIR"/EFI/drivers* -mindepth 1 -not -path "**/.svn*" -delete
+        find "$CLOVER_PKG_DIR"/drivers-Off/drivers* -mindepth 1 -not -path "**/.svn*" -delete
+        echo "Done!"
+        exit $?
+    elif [[ "$TARGETRULE" == clean || "$TARGETRULE" == cleanall ]]; then
         build -p $PLATFORMFILE -a $TARGETARCH -b $BUILDTARGET \
          -t $TOOLCHAIN -n $BUILDTHREADS $TARGETRULE
         [[ "$TARGETRULE" == cleanall ]] && make -C $WORKSPACE/BaseTools clean
@@ -304,7 +314,6 @@ MainPostBuildScript() {
     export BOOTSECTOR_BIN_DIR="$WORKSPACE"/Clover/BootSector/bin
     export BUILD_DIR="${WORKSPACE}/Build/Clover/${BUILDTARGET}_${TOOLCHAIN}"
     export BUILD_DIR_ARCH="${BUILD_DIR}/$TARGETARCH"
-    export CLOVER_PKG_DIR="$WORKSPACE"/Clover/CloverPackage/CloverV2
 
     #[ ! -f $BUILD_DIR/FV/DUETEFIMAINFV.z ] && \
     #echo "ERROR: Build not finished exiting PostBuild Part..." && exit
@@ -323,11 +332,6 @@ MainPostBuildScript() {
     "$BASETOOLS_DIR"/LzmaCompress -e -o "${BUILD_DIR}/FV/DxeIpl${TARGETARCH}.z" "$BUILD_DIR_ARCH/DxeIpl.efi"
 
     echo "Generate Loader Image ..."
-
-    # Make some house cleaning
-    find "$CLOVER_PKG_DIR"/Bootloaders/{ia32,x64}/ -mindepth 1 -not -path "**/.svn*" -delete
-    find "$CLOVER_PKG_DIR"/EFI/drivers* -mindepth 1 -not -path "**/.svn*" -delete
-    find "$CLOVER_PKG_DIR"/drivers-Off/drivers* -mindepth 1 -not -path "**/.svn*" -delete
 
     if [[ "${TARGETARCH}" = IA32 ]]; then
         cloverEFIFile=boot3
@@ -421,14 +425,14 @@ MainPostBuildScript() {
 
     fi
 
-    echo Done!
+    echo "Done!"
 
     # Build and install Bootsectors
     echo
     echo "Generating BootSectors"
     local BOOTHFS="$WORKSPACE"/Clover/BootHFS
     DESTDIR="$CLOVER_PKG_DIR"/BootSectors make -C $BOOTHFS
-    echo Done!
+    echo "Done!"
 } 
 
 # BUILD START #
