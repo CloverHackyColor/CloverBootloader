@@ -137,7 +137,10 @@ INF   Clover/LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
 #INF  IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf
 
 
-  # IDE/AHCI Support
+# IDE/AHCI Support
+!ifdef USE_BIOS_BLOCKIO
+INF Clover/LegacyBios/BlockIoDxe/BlockIoDxe.inf
+!else
 #INF  Clover/VBoxIdeControllerDxe/VBoxIdeControllerDxe.inf
 #INF  Clover/VBoxIdeBusDxe/VBoxIdeBusDxe.inf
 INF  Clover/SataControllerDxe/SataControllerDxe.inf
@@ -150,9 +153,9 @@ INF  Clover/DVDBus/ScsiBusDxe.inf
 #INF  MdeModulePkg/Bus/Scsi/ScsiDiskDxe/ScsiDiskDxe.inf
 INF  Clover/DVDDisk/ScsiDiskDxe.inf
 #INF  IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
-#INF  Clover/LegacyBios/BlockIoDxe/BlockIoDxe.inf
+!endif
 
-  # Usb Support
+# Usb Support
 INF  MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
 INF  MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
 #INF  MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
@@ -163,7 +166,7 @@ INF  MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
 INF  MdeModulePkg/Bus/Usb/UsbMouseDxe/UsbMouseDxe.inf
 #INF  Clover/Patches_for_EDK2/UsbMouseDxe/UsbMouseDxe.inf
 
-  # ISA Support
+# ISA Support
 INF  PcAtChipsetPkg/IsaAcpiDxe/IsaAcpi.inf
 INF  IntelFrameworkModulePkg/Bus/Isa/IsaBusDxe/IsaBusDxe.inf
 #INF  IntelFrameworkModulePkg/Bus/Isa/IsaSerialDxe/IsaSerialDxe.inf
@@ -175,13 +178,13 @@ INF  MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
 #INF  MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
 INF  Clover/PartitionDxe/PartitionDxe.inf
 
-  # ACPI Support
+# ACPI Support
 #INF  MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
 INF  Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
 #INF  MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
 #INF  Clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
 
-  #FD
+#FD
 #INF  IntelFrameworkModulePkg/Universal/Acpi/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
 #INF  Clover/SaveResume/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
 #INF  MdeModulePkg/Universal/Acpi/S3SaveStateDxe/S3SaveStateDxe.inf
@@ -190,10 +193,10 @@ INF  Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
 #INF  Clover/SaveResume/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
 #INF  UefiCpuPkg/Universal/Acpi/S3Resume2Pei/S3Resume2Pei.inf
 
-  #Misc
+#Misc
 INF  Clover/MsgLog/MsgLog.inf
 
-  # Binary INF file to support toggle among different CPU architectures.
+# Binary INF file to support toggle among different CPU architectures.
 INF  RuleOverride=BINARY FatBinPkg/EnhancedFatDxe/Fat.inf
 
 FILE FREEFORM = PCD(gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdLogoFile) {

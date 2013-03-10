@@ -14,17 +14,20 @@ declare -r NUMBER_OF_CPUS=$(sysctl -n hw.ncpu)
 declare -a EDK2_BUILD_OPTIONS=
 print_option_help_wc=
 have_fmt=
-VBIOSPATCHCLOVEREFI=0
 PLATFORMFILE=
 TARGETRULE=
+
 
 # Default values
 export TOOLCHAIN=GCC47
 export TARGETARCH=X64
-export PLATFORM=X64
+export PLATFORM=64
 export BUILDTARGET=RELEASE
 export BUILDTHREADS=$(( NUMBER_OF_CPUS + 1 ))
 export WORKSPACE=${WORKSPACE:-}
+
+VBIOSPATCHCLOVEREFI=0
+USE_BIOS_BLOCKIO=0
 
 # Bash options
 set -e # errexit
@@ -100,7 +103,7 @@ checkXcode () {
 
 # Print the usage.
 usage() {
-    echo "Script for building CloverEFI source on Darwin OS X"
+    echo "Script for building CloverEFI sources on Darwin OS X"
     echo
     printf "Usage: %s [OPTIONS] [all|fds|genc|genmake|clean|cleanall|cleanlib|modules|libraries|run]\n" "$SELF"
     echo
@@ -154,9 +157,9 @@ checkCmdlineArguments() {
             -gcc47  | --gcc47)   TOOLCHAIN=GCC47   ;;
             -unixgcc | --gcc)    TOOLCHAIN=UNIXGCC ;;
             -xcode  | --xcode )  TOOLCHAIN=XCODE32 ;;
-            -ia32 | --ia32)      TARGETARCH=IA32 ; PLATFORM=Ia32  ;;
-            -x64 | --x64)        TARGETARCH=X64  ; PLATFORM=X64   ;;
-            -mc | --x64-mcp)     TARGETARCH=X64  ; PLATFORM=64MCP ;;
+            -ia32 | --ia32)      TARGETARCH=IA32 ; PLATFORM=32  ;;
+            -x64 | --x64)        TARGETARCH=X64  ; PLATFORM=64  ;;
+            -mc | --x64-mcp)     TARGETARCH=X64  ; PLATFORM=64 ; USE_BIOS_BLOCKIO=1 ;;
             -clean)    TARGETRULE=clean ;;
             -cleanall) TARGETRULE=cleanall ;;
             -d | -debug | --debug)  BUILDTARGET=DEBUG ;;
@@ -275,6 +278,8 @@ MainBuildScript() {
     echo "#define REVISION_STR \"Clover revision: ${clover_revision}\"" >> $WORKSPACE/Clover/Version.h
     cp $WORKSPACE/Clover/Version.h $WORKSPACE/Clover/rEFIt_UEFI/
 
+    # Apply options
+    [[ "$USE_BIOS_BLOCKIO" -ne 0 ]]    && addEdk2BuildMacro 'USE_BIOS_BLOCKIO'
     [[ "$VBIOSPATCHCLOVEREFI" -ne 0 ]] && addEdk2BuildMacro 'ENABLE_VBIOS_PATCH_CLOVEREFI'
 
     local cmd="build ${EDK2_BUILD_OPTIONS[@]}"
@@ -364,9 +369,9 @@ MainPostBuildScript() {
 
     fi
 
-    if [[ "${TARGETARCH}" = X64 && ( "$PLATFORM" = X64  || "$PLATFORM" = 64MCP ) ]]; then
+    if [[ "$TARGETARCH" = X64 ]]; then
         cloverEFIFile=boot6
-        [[ "$PLATFORM" = 64MCP ]] && cloverEFIFile=boot7
+        [[ "$USE_BIOS_BLOCKIO" -ne 0 ]] && cloverEFIFile=boot7
 
         "$BASETOOLS_DIR"/GenFw --rebase 0x10000 -o "$BUILD_DIR_ARCH/EfiLoader.efi" "$BUILD_DIR_ARCH/EfiLoader.efi"
         "$BASETOOLS_DIR"/EfiLdrImage -o "${BUILD_DIR}"/FV/Efildr64 \
