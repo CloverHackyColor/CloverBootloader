@@ -1203,6 +1203,22 @@ static VOID ScanLoader(VOID)
       }
     }
     
+    // Sometimes, on some systems (HP UEFI, if Win is installed first)
+    // it is needed to get rid of bootmgfw.efi to allow starting of
+    // Clover as /efi/boot/bootx64.efi from HD. We can do that by renaming
+    // bootmgfw.efi to bootmgfw-orig.efi
+    StrCpy(FileName, L"\\EFI\\Microsoft\\Boot\\bootmgfw-orig.efi");
+    if (FileExists(Volume->RootDir, FileName)) {
+      //     Print(L"  - Microsoft boot menu found\n");
+      Volume->OSType = OSTYPE_WINEFI;
+      Volume->BootType = BOOTING_BY_EFI;
+      Volume->DriveImage = ScanVolumeDefaultIcon(Volume);
+      if (!gSettings.HVHideAllWindowsEFI){
+        Entry = AddLoaderEntry(FileName, L"Microsoft EFI boot menu", Volume, OSTYPE_WINEFI);
+        //     continue;
+      }
+    }
+    
     // check for Microsoft boot loader/menu
     StrCpy(FileName, L"\\bootmgr.efi");
     if (FileExists(Volume->RootDir, FileName)) {
@@ -1798,6 +1814,121 @@ static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OU
 }
 
 
+/**
+ * Some UEFI's (like HPQ EFI from HP notebooks) have DiskIo protocols
+ * opened BY_DRIVER (by Partition driver in HP case) even when no file system
+ * is produced from this DiskIo. This then blocks our FS drivers from connecting
+ * and producing file systems.
+ * To fix it: we will disconnect drivers that connected to DiskIo BY_DRIVER
+ * if this is partition volume and if those drivers did not produce file system.
+ */
+VOID DisconnectInvalidDiskIoChildDrivers(VOID)
+{
+  EFI_STATUS                            Status;
+  UINTN                                 HandleCount = 0;
+  UINTN                                 Index;
+  UINTN                                 OpenInfoIndex;
+  EFI_HANDLE                            *Handles = NULL;
+	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL       *Fs;
+  EFI_BLOCK_IO_PROTOCOL                 *BlockIo;
+  EFI_OPEN_PROTOCOL_INFORMATION_ENTRY   *OpenInfo;
+  UINTN                                 OpenInfoCount;
+  BOOLEAN                               Found;
+  
+  DBG("Searching for invalid DiskIo BY_DRIVER connects:");
+  
+  //
+  // Get all DiskIo handles
+  //
+  Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiDiskIoProtocolGuid, NULL, &HandleCount, &Handles);
+  if (EFI_ERROR(Status) || HandleCount == 0) {
+    DBG(" no DiskIo handles\n");
+    return;
+  }
+  
+  //
+  // Check every DiskIo handle
+  //
+  Found = FALSE;
+  for (Index = 0; Index < HandleCount; Index++) {
+    //DBG("\n");
+    //DBG(" - Handle %p:", Handles[Index]);
+    //
+    // If this is not partition - skip it.
+    // This is then whole disk and DiskIo
+    // should be opened here BY_DRIVER by Partition driver
+    // to produce partition volumes.
+    //
+    Status = gBS->HandleProtocol (
+                                  Handles[Index],
+                                  &gEfiBlockIoProtocolGuid,
+                                  (VOID **) &BlockIo
+                                  );
+    if (EFI_ERROR (Status)) {
+      //DBG(" BlockIo: %r - skipping\n", Status);
+      continue;
+    }
+    if (BlockIo->Media == NULL) {
+      //DBG(" BlockIo: no media - skipping\n");
+      continue;
+      
+    }
+    if (!BlockIo->Media->LogicalPartition) {
+      //DBG(" BlockIo: whole disk - skipping\n");
+      continue;
+      
+    }
+    //DBG(" BlockIo: partition");
+    
+    //
+    // If SimpleFileSystem is already produced - skip it, this is ok
+    //
+    Status = gBS->HandleProtocol (
+                                  Handles[Index],
+                                  &gEfiSimpleFileSystemProtocolGuid,
+                                  (VOID **) &Fs
+                                  );
+    if (Status == EFI_SUCCESS) {
+      //DBG(" FS: ok - skipping\n");
+      continue;
+    }
+    //DBG(" FS: no");
+    
+    //
+    // If no SimpleFileSystem on this handle but DiskIo is opened BY_DRIVER
+    // then disconnect this connection
+    //
+    Status = gBS->OpenProtocolInformation (
+                                           Handles[Index],
+                                           &gEfiDiskIoProtocolGuid,
+                                           &OpenInfo,
+                                           &OpenInfoCount
+                                           );
+    if (EFI_ERROR (Status)) {
+      //DBG(" OpenInfo: no - skipping\n");
+      continue;
+    }
+    //DBG(" OpenInfo: %d", OpenInfoCount);
+    for (OpenInfoIndex = 0; OpenInfoIndex < OpenInfoCount; OpenInfoIndex++) {
+      if ((OpenInfo[OpenInfoIndex].Attributes & EFI_OPEN_PROTOCOL_BY_DRIVER) == EFI_OPEN_PROTOCOL_BY_DRIVER) {
+        if (!Found) {
+          DBG("\n");
+        }
+        Found = TRUE;
+        Status = gBS->DisconnectController (Handles[Index], OpenInfo[OpenInfoIndex].AgentHandle, NULL);
+        //DBG(" BY_DRIVER Agent: %p, Disconnect: %r", OpenInfo[OpenInfoIndex].AgentHandle, Status);
+        DBG(" - Handle %p with DiskIo, is Partition, no Fs, BY_DRIVER Agent: %p, Disconnect: %r\n", Handles[Index], OpenInfo[OpenInfoIndex].AgentHandle, Status);
+      }
+    }
+    FreePool (OpenInfo);
+  }
+  FreePool(Handles);
+  
+  if (!Found) {
+    DBG(" not found, all ok\n");
+  }
+}
+
 VOID DisconnectSomeDevices(VOID)
 {
   EFI_STATUS              Status;
@@ -1853,6 +1984,10 @@ VOID DisconnectSomeDevices(VOID)
       FreePool(Handles);
     }
     DBG("\n");
+  }
+  
+  if (!gFirmwareClover) {
+    DisconnectInvalidDiskIoChildDrivers();
   }
 }
 
