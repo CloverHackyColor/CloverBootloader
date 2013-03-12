@@ -21,7 +21,6 @@ TARGETRULE=
 # Default values
 export TOOLCHAIN=GCC47
 export TARGETARCH=X64
-export PLATFORM=64
 export BUILDTARGET=RELEASE
 export BUILDTHREADS=$(( NUMBER_OF_CPUS + 1 ))
 export WORKSPACE=${WORKSPACE:-}
@@ -157,9 +156,9 @@ checkCmdlineArguments() {
             -gcc47  | --gcc47)   TOOLCHAIN=GCC47   ;;
             -unixgcc | --gcc)    TOOLCHAIN=UNIXGCC ;;
             -xcode  | --xcode )  TOOLCHAIN=XCODE32 ;;
-            -ia32 | --ia32)      TARGETARCH=IA32 ; PLATFORM=32  ;;
-            -x64 | --x64)        TARGETARCH=X64  ; PLATFORM=64  ;;
-            -mc | --x64-mcp)     TARGETARCH=X64  ; PLATFORM=64 ; USE_BIOS_BLOCKIO=1 ;;
+            -ia32 | --ia32)      TARGETARCH=IA32   ;;
+            -x64 | --x64)        TARGETARCH=X64    ;;
+            -mc | --x64-mcp)     TARGETARCH=X64 ; USE_BIOS_BLOCKIO=1 ;;
             -clean)    TARGETRULE=clean ;;
             -cleanall) TARGETRULE=cleanall ;;
             -d | -debug | --debug)  BUILDTARGET=DEBUG ;;
@@ -297,7 +296,7 @@ MainBuildScript() {
     cmd="$cmd -t $TOOLCHAIN -n $BUILDTHREADS $TARGETRULE"
 
     echo
-    echo "Running edk2 build for Clover$PLATFORM using the command:"
+    echo "Running edk2 build for Clover$TARGETARCH using the command:"
     echo "$cmd"
     echo
     eval "$cmd"
