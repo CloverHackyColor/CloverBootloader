@@ -417,7 +417,7 @@ main ()
 # # End pre install choice
 
 # build Core package
-    echo "===================== BiosBoot ============================="
+    echo "=================== BiosBoot ==========================="
     packagesidentity="$clover_package_identity"
     choiceId="BiosBoot"
     if [[ "$add_ia32" -eq 1 ]]; then
@@ -472,7 +472,7 @@ main ()
 
 # Create Clover Node
     addGroupChoices --exclusive_one_choice "Clover"
-    echo "===================== BootLoaders ======================="
+    echo "===================== BootLoaders ======================"
     packagesidentity="$clover_package_identity".bootloader
 # build boot1no package
     choiceId="boot1no"
@@ -560,7 +560,7 @@ fi
 # End build boot64 package
 
 # build theme packages
-    echo "================= Themes ================="
+    echo "======================== Themes ========================"
     addGroupChoices "Themes"
 
     # Using themes section from Azi's/package branch.
@@ -631,8 +631,28 @@ fi
     done
 # End build drivers-x64 packages
 
+# build mandatory drivers-x64UEFI packages
+    echo "=============== drivers64 UEFI mandatory ==============="
+    packagesidentity="${clover_package_identity}".drivers64UEFI.mandatory
+    local drivers=($( find "${SRCROOT}/CloverV2/EFI/drivers64UEFI" -type f -name '*.efi' -depth 1 ))
+    local driverDestDir='/EFI/drivers64UEFI'
+    for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
+    do
+        local driver="${drivers[$i]##*/}"
+        local driverName="${driver%.efi}"
+        ditto --noextattr --noqtn --arch i386 "${drivers[$i]}" "${PKG_BUILD_DIR}/${driverName}/Root/"
+        find "${PKG_BUILD_DIR}/${driverName}" -name '.DS_Store' -exec rm -R -f {} \; 2>/dev/null
+        fixperms "${PKG_BUILD_DIR}/${driverName}/Root/"
+
+        packageRefId=$(getPackageRefId "${packagesidentity}" "${driverName}")
+        buildpackage "$packageRefId" "${driverName}" "${PKG_BUILD_DIR}/${driverName}" "${driverDestDir}"
+        addChoice --start-visible="false" --start-selected="true" --pkg-refs="$packageRefId"  "${driverName}"
+        rm -R -f "${PKG_BUILD_DIR}/${driverName}"
+    done
+# End build drivers-x64UEFI packages
+
 # build drivers-x64UEFI packages 
-    echo "===================== drivers64UEFI ========================"
+    echo "=================== drivers64 UEFI ====================="
     addGroupChoices --title="Drivers64UEFI" --description="Drivers64UEFI" "Drivers64UEFI"
     packagesidentity="${clover_package_identity}".drivers64UEFI
     local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/drivers64UEFI" -type f -name '*.efi' -depth 1 ))
