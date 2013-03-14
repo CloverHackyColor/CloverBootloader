@@ -174,15 +174,27 @@ for bootFlag in ${bootFlags} ; do
    esac
 done
 
-# Only save nvram to disk if boot from CloverEFI or EDK II
+#
+# Check if user requested to not save nvram
+#
 if [[ "$NVRAMDevice" != No ]]; then
+    #
+    # Check if runtime variables emulation is being used
+    #  and if so, always save nvram
+    #
+    if [[ $(nvram -p | grep 'EmuVariableUefiPresent') != "" ]]; then
+        saveNVRAM
+    else
+        #
+        # Otherwise only save nvram to disk if boot from CloverEFI or EDK II
+        #
+        EFIFirmwareVendor=$(LC_ALL=C ioreg -l -pIODeviceTree | \
+         sed -nE 's@.*firmware-vendor.*<([0-9a-fA-F]*)>.*@\1@p' | xxd -r -p)
 
-    EFIFirmwareVendor=$(LC_ALL=C ioreg -l -pIODeviceTree | \
-     sed -nE 's@.*firmware-vendor.*<([0-9a-fA-F]*)>.*@\1@p' | xxd -r -p)
-
-    case "$EFIFirmwareVendor" in
-        "CLOVER"|"EDK II") saveNVRAM ;;
-    esac
+        case "$EFIFirmwareVendor" in
+            "CLOVER"|"EDK II") saveNVRAM ;;
+        esac
+    fi
 fi
 
 customScript='custom.rc.shutdown.local'
