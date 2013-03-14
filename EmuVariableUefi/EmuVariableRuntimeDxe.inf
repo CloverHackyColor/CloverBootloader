@@ -65,6 +65,7 @@
   gEfiEventVirtualAddressChangeGuid             ## PRODUCES ## Event
   gEfiGlobalVariableGuid                        ## PRODUCES ## Variable Guid
   gEfiVariableGuid
+  gEfiAppleBootGuid
 
 [Pcd]
   gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvStoreReserved

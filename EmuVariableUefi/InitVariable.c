@@ -24,6 +24,10 @@ EFI_RUNTIME_SERVICES gOrgRT;
 /** Pointer to runtime services. */
 EFI_RUNTIME_SERVICES *gRT;
 
+/** Apple Boot Guid - cars with this GUID are visible in OSX with nvram */
+extern EFI_GUID gEfiAppleBootGuid;
+
+
 
 
 /**
@@ -348,6 +352,17 @@ VariableServiceInitialize (
                                                    NULL
                                                    );
   DBG(" InstallMultipleProtocolInterfaces gEmuVariableControlProtocolGuid = %r\n", Status);
+  
+  //
+  // Add EmuVariableUefiPresent variable to allow /ect/rc* scripts to detect
+  // that this driver is used.
+  //
+  Status = gRT->SetVariable(L"EmuVariableUefiPresent",
+                            &gEfiAppleBootGuid,
+                            EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                            3,
+                            "Yes"
+                            );
   
   return EFI_SUCCESS;
 }

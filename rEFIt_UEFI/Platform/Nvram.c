@@ -591,6 +591,10 @@ VOID PutNvramPlistToRtVars(VOID)
             DBG(" Skipping OsxAptioFixDrv-ErrorExitingBootServices\n");
             continue;
         }
+        if (AsciiStrCmp(Tag->string, "EmuVariableUefiPresent") == 0) {
+            DBG(" Skipping EmuVariableUefiPresent\n");
+            continue;
+        }
         
         // key to unicode; check if key buffer is large enough
         if (AsciiStrLen(Tag->string) > (sizeof(KeyBuf) / 2 - 1)) {

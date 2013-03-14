@@ -133,8 +133,6 @@
 		12337E3716648DED009CDC10 /* DebugPort2Table.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugPort2Table.h; sourceTree = "<group>"; };
 		12337E3816648DED009CDC10 /* DebugPortTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DebugPortTable.h; sourceTree = "<group>"; };
 		12337E3916648DFD009CDC10 /* PciCodeId.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PciCodeId.h; sourceTree = "<group>"; };
-		123D85D714D94B1F000AF00B /* rEFIt64.dsc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = rEFIt64.dsc; path = ../rEFIt64.dsc; sourceTree = SOURCE_ROOT; };
-		123D85D814D94B29000AF00B /* refit64.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = refit64.inf; path = ../refit64.inf; sourceTree = SOURCE_ROOT; };
 		125108C31627F4CE0004D9C9 /* BootOptions.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BootOptions.c; sourceTree = "<group>"; };
 		125CF54D1689C29F00EFACA8 /* ComponentName.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
 		125CF54E1689C29F00EFACA8 /* ComponentName.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComponentName.h; sourceTree = "<group>"; };
@@ -3149,10 +3147,7 @@
 		26440C83157AADDF0077A476 /* b64cdecode.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = b64cdecode.c; sourceTree = "<group>"; };
 		26440C84157AADDF0077A476 /* b64cdecode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = b64cdecode.h; sourceTree = "<group>"; };
 		2C0DB54016145D3400CA37F9 /* Clover.fdf */ = {isa = PBXFileReference; lastKnownFileType = text; name = Clover.fdf; path = ../../Clover.fdf; sourceTree = "<group>"; };
-		2C0DB54116145D3400CA37F9 /* CloverIa32.dsc */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverIa32.dsc; path = ../../CloverIa32.dsc; sourceTree = "<group>"; };
 		2C0DB54216145D3400CA37F9 /* CloverPkg.dec */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverPkg.dec; path = ../../CloverPkg.dec; sourceTree = "<group>"; };
-		2C0DB54316145D3400CA37F9 /* CloverX64.dsc */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverX64.dsc; path = ../../CloverX64.dsc; sourceTree = "<group>"; };
-		2C0DB54416145D3400CA37F9 /* CloverX64.fdf */ = {isa = PBXFileReference; lastKnownFileType = text; name = CloverX64.fdf; path = ../../CloverX64.fdf; sourceTree = "<group>"; };
 		2C0EFDCA165927AA001B2872 /* 915resolution.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = 915resolution.c; sourceTree = "<group>"; usesTabs = 1; };
 		2C0EFDCB165927AA001B2872 /* 915resolution.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = 915resolution.h; sourceTree = "<group>"; usesTabs = 1; };
 		2C0EFDCC165927AA001B2872 /* edid.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = edid.c; sourceTree = "<group>"; usesTabs = 1; };
@@ -3210,9 +3205,7 @@
 				12B7007315F9224F00177D35 /* MdePkg */,
 				12AE5F1F1618A975003BAF51 /* MdeModulePkg */,
 				120DE0571622C47800BA4C14 /* PcAtChipsetPkg */,
-				123D85D714D94B1F000AF00B /* rEFIt64.dsc */,
 				122336CD13377E260033F008 /* refit.inf */,
-				123D85D814D94B29000AF00B /* refit64.inf */,
 				12CB8FAA14274AE1009EDAF2 /* include */,
 				12D6305B14CEA05E00E5898F /* Platform */,
 				122336C113377E150033F008 /* refit */,
@@ -9999,10 +9992,7 @@
 				12B7FEE215F9215700177D35 /* BiosKeyboard */,
 				12B7FEE915F9215700177D35 /* BiosVideo */,
 				2C0DB54016145D3400CA37F9 /* Clover.fdf */,
-				2C0DB54116145D3400CA37F9 /* CloverIa32.dsc */,
 				2C0DB54216145D3400CA37F9 /* CloverPkg.dec */,
-				2C0DB54316145D3400CA37F9 /* CloverX64.dsc */,
-				2C0DB54416145D3400CA37F9 /* CloverX64.fdf */,
 				12B7FEF115F9217300177D35 /* ConSplitterDxe */,
 				12B7FEF715F9217300177D35 /* CpuDxe */,
 				2C91841E161439DD0018BDC3 /* DumpUefiCalls */,
