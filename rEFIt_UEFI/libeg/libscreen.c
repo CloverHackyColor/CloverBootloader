@@ -388,7 +388,10 @@ VOID egSetGraphicsModeEnabled(IN BOOLEAN Enable)
             if (!Enable) {
                 // Don't allow switching to text mode when GOP exists, as it may cause resolution switch
                 // But report that we are in text mode when queried, to avoid another set command
-                ConsoleControl->GetMode = NullConsoleControlGetModeText;
+                // dmazar: skip it on HPQ UEFI (HP ProBook for example) since it blocks any text out
+                if (!StrCmp(gST->FirmwareVendor, L"HPQ") == 0) {
+                  ConsoleControl->GetMode = NullConsoleControlGetModeText;
+                }
                 return;
             } else if (ConsoleControl->GetMode != ConsoleControlGetMode) {
                 // Allow switching to graphics mode, and use original GetMode function

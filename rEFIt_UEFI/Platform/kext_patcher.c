@@ -18,7 +18,7 @@
 #endif
 
 // runtime debug
-#define DBG_RT(...)    if (gSettings.KPDebug) { Print(__VA_ARGS__); }
+#define DBG_RT(...)    if (gSettings.KPDebug) { AsciiPrint(__VA_ARGS__); }
 
 //
 // Searches Source for Search pattern of size SearchSize
@@ -200,10 +200,10 @@ VOID ATIConnectorsPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT
   
   UINTN   Num = 0;
   
-  DBG_RT(L"\nATIConnectorsPatch: driverAddr = %x, driverSize = %x\nController = %s\n",
+  DBG_RT("\nATIConnectorsPatch: driverAddr = %x, driverSize = %x\nController = %s\n",
          Driver, DriverSize, gSettings.KPATIConnectorsController);
   ExtractKextBoundleIdentifier(InfoPlist);
-  DBG_RT(L"Kext: %a\n", gKextBoundleIdentifier);
+  DBG_RT("Kext: %a\n", gKextBoundleIdentifier);
   
   // number of occurences od Data should be 1
   Num = SearchAndCount(Driver, DriverSize, gSettings.KPATIConnectorsData, gSettings.KPATIConnectorsDataLen);
@@ -223,9 +223,9 @@ VOID ATIConnectorsPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT
                          1);
   if (gSettings.KPDebug) {
     if (Num > 0) {
-      DBG_RT(L"==> patched %d times!\n", Num);
+      DBG_RT("==> patched %d times!\n", Num);
     } else {
-      DBG_RT(L"==> NOT patched!\n");
+      DBG_RT("==> NOT patched!\n");
     }
     gBS->Stall(5000000);
   }
@@ -254,11 +254,11 @@ VOID AsusAICPUPMPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32
   UINTN   Index2;
   UINTN   Count = 0;
   
-  DBG_RT(L"\nAsusAICPUPMPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
+  DBG_RT("\nAsusAICPUPMPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
   if (gSettings.KPDebug) {
     ExtractKextBoundleIdentifier(InfoPlist);
   }
-  DBG_RT(L"Kext: %a\n", gKextBoundleIdentifier);
+  DBG_RT("Kext: %a\n", gKextBoundleIdentifier);
   
   //TODO: we should scan only __text __TEXT
   for (Index1 = 0; Index1 < DriverSize; Index1++) {
@@ -271,12 +271,12 @@ VOID AsusAICPUPMPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32
           Count++;
           Driver[Index2] = 0x90;
           Driver[Index2 + 1] = 0x90;
-          DBG_RT(L" %d. patched at 0x%x\n", Count, Index2);
+          DBG_RT(" %d. patched at 0x%x\n", Count, Index2);
         }
       }
     }
   }
-  DBG_RT(L"= %d patches\n", Count);
+  DBG_RT("= %d patches\n", Count);
   if (gSettings.KPDebug) {
     gBS->Stall(5000000);
   }
@@ -317,11 +317,11 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 In
   UINTN   NumLion_i386 = 0;
   UINTN   NumML = 0;
   
-  DBG_RT(L"\nAppleRTCPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
+  DBG_RT("\nAppleRTCPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
   if (gSettings.KPDebug) {
     ExtractKextBoundleIdentifier(InfoPlist);
   }
-  DBG_RT(L"Kext: %a\n", gKextBoundleIdentifier);
+  DBG_RT("Kext: %a\n", gKextBoundleIdentifier);
   
   if (is64BitKernel) {
     NumLion_X64 = SearchAndCount(Driver, DriverSize, LionSearch_X64, sizeof(LionSearch_X64));
@@ -341,18 +341,18 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 In
   
   if (NumLion_X64 == 1) {
     Num = SearchAndReplace(Driver, DriverSize, LionSearch_X64, sizeof(LionSearch_X64), LionReplace_X64, 1);
-    DBG_RT(L"==> Lion X64: %d replaces done.\n", Num);
+    DBG_RT("==> Lion X64: %d replaces done.\n", Num);
   }
   else if (NumLion_i386 == 1) {
     Num = SearchAndReplace(Driver, DriverSize, LionSearch_i386, sizeof(LionSearch_i386), LionReplace_i386, 1);
-    DBG_RT(L"==> Lion i386: %d replaces done.\n", Num);
+    DBG_RT("==> Lion i386: %d replaces done.\n", Num);
   }
   else if (NumML == 1) {
     Num = SearchAndReplace(Driver, DriverSize, MLSearch, sizeof(MLSearch), MLReplace, 1);
-    DBG_RT(L"==> MountainLion X64: %d replaces done.\n", Num);
+    DBG_RT("==> MountainLion X64: %d replaces done.\n", Num);
   }
   else {
-    DBG_RT(L"==> Patterns not found - patching NOT done.\n");
+    DBG_RT("==> Patterns not found - patching NOT done.\n");
   }
   if (gSettings.KPDebug) {
     gBS->Stall(5000000);
@@ -380,25 +380,38 @@ VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 Inf
   
   UINTN   Num = 0;
   
-  DBG_RT(L"\nAnyKextPatch: driverAddr = %x, driverSize = %x\nAnyKext = %a\n",
-      Driver, DriverSize, gSettings.AnyKext[N]);
+  DBG_RT("\nAnyKextPatch %d: driverAddr = %x, driverSize = %x\nAnyKext = %a\n",
+      N, Driver, DriverSize, gSettings.AnyKext[N]);
   if (gSettings.KPDebug) {
     ExtractKextBoundleIdentifier(InfoPlist);
   }
-  DBG_RT(L"Kext: %a\n", gKextBoundleIdentifier);
+  DBG_RT("Kext: %a\n", gKextBoundleIdentifier);
   
-  // patch
-  Num = SearchAndReplace(Driver,
-                         DriverSize,
-                         gSettings.AnyKextData[N],
-                         gSettings.AnyKextDataLen[N],
-                         gSettings.AnyKextPatch[N],
-                         -1);
+  if (!gSettings.AnyKextInfoPlistPatch[N]) {
+    // kext binary patch
+    DBG_RT("Binary patch\n");
+    Num = SearchAndReplace(Driver,
+                           DriverSize,
+                           gSettings.AnyKextData[N],
+                           gSettings.AnyKextDataLen[N],
+                           gSettings.AnyKextPatch[N],
+                           -1);
+  } else {
+    // Info plist patch
+    DBG_RT("Info.plist patch: '%a' -> '%a'\n", gSettings.AnyKextData[N], gSettings.AnyKextPatch[N]);
+    Num = SearchAndReplace((UINT8*)InfoPlist,
+                           InfoPlistSize,
+                           gSettings.AnyKextData[N],
+                           gSettings.AnyKextDataLen[N],
+                           gSettings.AnyKextPatch[N],
+                           -1);
+  }
+  
   if (gSettings.KPDebug) {
     if (Num > 0) {
-      DBG_RT(L"==> patched %d times!\n", Num);
+      DBG_RT("==> patched %d times!\n", Num);
     } else {
-      DBG_RT(L"==> NOT patched!\n");
+      DBG_RT("==> NOT patched!\n");
     }
     gBS->Stall(5000000);
   }
@@ -785,7 +798,7 @@ VOID PatchLoadedKexts(VOID)
 VOID KextPatcherStart(VOID)
 {
   if (isKernelcache) {
-    DBG_RT(L"Patching kernelcache ...\n");
+    DBG_RT("Patching kernelcache ...\n");
     if (gSettings.KPDebug) {
       gBS->Stall(5000000);
     }
@@ -793,7 +806,7 @@ VOID KextPatcherStart(VOID)
     
   } else {
     
-    DBG_RT(L"Patching loaded kexts ...\n");
+    DBG_RT("Patching loaded kexts ...\n");
     if (gSettings.KPDebug) {
       gBS->Stall(5000000);
     }

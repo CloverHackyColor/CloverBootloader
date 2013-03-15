@@ -709,6 +709,7 @@ typedef struct {
   UINT8   *KPATIConnectorsPatch;
   INT32   NrKexts;
   CHAR8*  AnyKext[100];
+  BOOLEAN AnyKextInfoPlistPatch[100];
   UINTN   AnyKextDataLen[100];
   UINT8   *AnyKextData[100];
   UINT8   *AnyKextPatch[100];

@@ -941,22 +941,53 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           if (!dictPointer) {
             break;
           }
+          DBG("KextsToPatch %d:", i);
           dict2 = GetProperty(dictPointer,"Name");
           if (dict2) {
-            gSettings.AnyKext[i] = AllocateZeroPool(256); //dunno about size of kext name
-            AsciiSPrint(gSettings.AnyKext[i], 256, "%a", dict2->string);
-            DBG("Prepare to patch of %a\n", gSettings.AnyKext[i]);
+            gSettings.AnyKext[i] = AllocateCopyPool(AsciiStrSize(dict2->string), dict2->string);
+            DBG(" %a", gSettings.AnyKext[i]);
           }
           gSettings.KPKextPatchesNeeded = TRUE;
-          gSettings.AnyKextData[i] = GetDataSetting(dictPointer,"Find",
-                                                    &gSettings.AnyKextDataLen[i]);
-          gSettings.AnyKextPatch[i] = GetDataSetting(dictPointer,"Replace", &j);
-          if (gSettings.AnyKextDataLen[i] != j) {
-            DBG("wrong data to patch kext %a\n", gSettings.AnyKext[i]);
+          
+          // check if this is Info.plist patch or kext binary patch
+          gSettings.AnyKextInfoPlistPatch[i] = FALSE;
+          dict2 = GetProperty(dictPointer, "InfoPlistPatch");
+          if(dict2) {
+            if ((dict2->string[0] == 'y') || (dict2->string[0] == 'Y'))
+              gSettings.AnyKextInfoPlistPatch[i] = TRUE;
+          }
+          
+          if (gSettings.AnyKextInfoPlistPatch[i]) {
+            // Info.plist
+            // Find and Replace should be in <string>...</string>
+            DBG(" Info.plist patch");
+            dict2 = GetProperty(dictPointer, "Find");
+            gSettings.AnyKextDataLen[i] = 0;
+            if(dict2 && dict2->string) {
+              gSettings.AnyKextDataLen[i] = AsciiStrLen(dict2->string);
+              gSettings.AnyKextData[i] = (UINT8*) AllocateCopyPool(gSettings.AnyKextDataLen[i] + 1, dict2->string);
+            }
+            dict2 = GetProperty(dictPointer, "Replace");
+            j = 0;
+            if(dict2 && dict2->string) {
+              j = AsciiStrLen(dict2->string);
+              gSettings.AnyKextPatch[i] = (UINT8*) AllocateCopyPool(j + 1, dict2->string);
+            }
+          } else {
+            // kext binary patch
+            // Find and Replace should be in <data>...</data> or <string>...</string>
+            DBG(" Kext bin patch");
+            gSettings.AnyKextData[i] = GetDataSetting(dictPointer,"Find", &gSettings.AnyKextDataLen[i]);
+            gSettings.AnyKextPatch[i] = GetDataSetting(dictPointer,"Replace", &j);
+          }
+          
+          if (gSettings.AnyKextDataLen[i] != j || j == 0) {
+            DBG(" - invalid Find/Replace data - skipping!\n");
             gSettings.AnyKext[i][0] = 0; //just erase name
             continue; //same i
           }
-          DBG("... data length=%d\n", gSettings.AnyKextDataLen[i]);
+
+          DBG(", data len: %d\n", gSettings.AnyKextDataLen[i]);
           i++;
           if (i>99) {
             DBG("too many kexts to patch\n");
@@ -1718,7 +1749,7 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
     FSI_STRING_LIST             *Blacklist = 0;
     FSI_STRING_LIST             *ForceLoadKexts;
     
-    MsgLog("FSInjection: ");
+    MsgLog("FSInjection:");
     
     Volume = Entry->Volume;
     
@@ -1730,7 +1761,7 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
     
     if (Entry->LoadOptions == NULL || StrStr(Entry->LoadOptions, L"WithKexts") == NULL) {
         // FS injection not requested
-        MsgLog("not requested\n");
+        MsgLog(" not requested\n");
         return EFI_NOT_STARTED;
     }
     
@@ -1738,34 +1769,27 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
     Status = gBS->LocateProtocol(&gFSInjectProtocolGuid, NULL, (void **)&FSInject);
     if (EFI_ERROR(Status)) {
         //Print(L"- No FSINJECTION_PROTOCOL, Status = %r\n", Status);
-        MsgLog("not started - gFSInjectProtocolGuid not found\n");
+        MsgLog(" not started - gFSInjectProtocolGuid not found\n");
         return EFI_NOT_STARTED;
     }
     
-    if (StrStr(Entry->LoadOptions, L"WithKexts") != NULL) {
-        
-        SrcDir = GetExtraKextsDir(Volume);
-        if (SrcDir != NULL) {
-            // we have found it - injection will be done
-            MsgLog("Injecting kexts from: '%s' ", SrcDir);
-            BlockCaches = TRUE;
-            InjectionNeeded = TRUE;
-            
-        } else {
-            MsgLog("Skipping kext injection (kexts folder not found) ");
-        }
-    }
+    MsgLog(" blocking caches");
+    BlockCaches = TRUE;
     
-    if (!InjectionNeeded) {
-        MsgLog("- not done!\n");
-        return EFI_NOT_STARTED;
+    SrcDir = GetExtraKextsDir(Volume);
+    if (SrcDir != NULL) {
+        // we have found it - injection will be done
+        MsgLog(", injecting kexts from: '%s'", SrcDir);
+        InjectionNeeded = TRUE;
+    } else {
+        MsgLog(", skipping kext injection (kexts folder not found)");
     }
     
     if (BlockCaches) {
         // add caches to blacklist
         Blacklist = FSInject->CreateStringList();
         if (Blacklist == NULL) {
-            MsgLog("- not enough memory!\n");
+            MsgLog(" - not enough memory!\n");
             return EFI_NOT_STARTED;
         }
         FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Caches\\com.apple.kext.caches\\Startup\\kernelcache");
@@ -1779,7 +1803,7 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
     // prepare list of kext that will be forced to load
     ForceLoadKexts = FSInject->CreateStringList();
     if (ForceLoadKexts == NULL) {
-        MsgLog("- not enough memory!\n");
+        MsgLog(" - not enough memory!\n");
         return EFI_NOT_STARTED;
     }
     KextPatcherRegisterKexts(FSInject, ForceLoadKexts);
@@ -1791,12 +1815,12 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
     if (SrcDir != NULL) FreePool(SrcDir);
     
     if (EFI_ERROR(Status)) {
-        MsgLog("not done - could not install injection!\n");
+        MsgLog(" - not done - could not install injection!\n");
         return EFI_NOT_STARTED;
     }
     
     // reinit Volume->RootDir? it seems it's not needed.
     
-    MsgLog("done!\n");
+    MsgLog(" - done!\n");
 	return Status;
 }

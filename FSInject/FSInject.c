@@ -620,12 +620,18 @@ FSI_FP_Read(
 			{
 				if (StrStr(FSIThis->FName, StringEntry->String) != NULL) {
 					//Print(L"\nGot: %s\n", FSIThis->FName);
-					String = (CHAR8*)Buffer;
-					String = AsciiStrStr(String, "<string>Safe Boot</string>");
+					String = AsciiStrStr((CHAR8*)Buffer, "<string>Safe Boot</string>");
 					if (String != NULL) {
 						CopyMem (String, "<string>Root</string>     ", 26);
-						//Print(L"Forced to load: %s\n", FSIThis->FName);
+						Print(L"\nForced load: %s\n", FSIThis->FName);
 						//gBS->Stall(5000000);
+					} else {
+						String = AsciiStrStr((CHAR8*)Buffer, "<string>Network-Root</string>");
+						if (String != NULL) {
+							CopyMem (String, "<string>Root</string>        ", 29);
+							Print(L"\nForced load: %s\n", FSIThis->FName);
+							//gBS->Stall(5000000);
+						}
 					}
 				}
 			}
@@ -955,14 +961,21 @@ FSInjectionInstall (
 	OurFS->TgtHandle = TgtHandle;
 	OurFS->TgtFS = TgtFS;
 	OurFS->TgtDir = AllocateCopyPool(StrSize(TgtDir), TgtDir);
+	if (OurFS->TgtDir == NULL) {
+		Status = EFI_OUT_OF_RESOURCES;
+		DBG("- AllocateCopyPool for TgtDir: %r\n", Status);
+		goto ErrorExit;
+	}
 	OurFS->SrcHandle = SrcHandle;
 	OurFS->SrcFS = SrcFS;
-	OurFS->SrcDir = AllocateCopyPool(StrSize(SrcDir), SrcDir);
-	
-	if (OurFS->TgtDir == NULL || OurFS->SrcDir == NULL) {
-		Status = EFI_OUT_OF_RESOURCES;
-		DBG("- AllocateCopyPool for TgtDir or SrcDir: %r\n", Status);
-		goto ErrorExit;
+	// we can run without SrcDir - no injection, but blocking caches for example
+	if (SrcDir != NULL) {
+		OurFS->SrcDir = AllocateCopyPool(StrSize(SrcDir), SrcDir);
+		if (OurFS->SrcDir == NULL) {
+			Status = EFI_OUT_OF_RESOURCES;
+			DBG("- AllocateCopyPool for TgtDir or SrcDir: %r\n", Status);
+			goto ErrorExit;
+		}
 	}
 	
 	if (Blacklist != NULL && !IsListEmpty(&Blacklist->List)) {
