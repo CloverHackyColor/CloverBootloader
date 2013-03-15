@@ -22,10 +22,20 @@ systemLogFilename=system.log
 logLineCount=3000
 logUsesTimestamps=No
 EFIMountPoint=/Volumes/EFI
+
 bootFlags=$(nvram -p | sed -n 's/^boot-args *//p')
+
 currentDate=$(date "+%Y-%m-%d")
 currentTime=$(date "+%H:%M:%S")
 
+#
+# Ensure log directory exists
+#
+[[ ! -d "${logLocation}" ]] && mkdir -p "${logLocation}"
+
+#
+# Redirect all outputs to log file
+#
 exec &>"${logLocation}"/rc.local.log
 
 #
@@ -97,15 +107,6 @@ for bootFlag in ${bootFlags} ; do
    esac
 
 done
-
-#
-# Ensure log directory exists
-#
-[[ ! -d ${logLocation} ]] && mkdir -p ${logLocation}
-if [ ! -d ${logLocation} ]; then
-    echo "Failed to create directory ${logLocation}, using to /"
-    logLocation=
-fi
 
 #
 # Change log path if timestamp is needed

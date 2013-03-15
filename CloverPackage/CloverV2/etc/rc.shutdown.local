@@ -30,6 +30,14 @@ bootFlags=$(nvram -p | sed -n 's/^boot-args *//p')
 currentDate=$(date "+%Y-%m-%d")
 currentTime=$(date "+%H:%M:%S")
 
+#
+# Ensure log directory exists
+#
+[[ ! -d "${logLocation}" ]] && mkdir -p "${logLocation}"
+
+#
+# Redirect all outputs to log file
+#
 exec &>"${logLocation}"/rc.shutdown.log
 
 #
