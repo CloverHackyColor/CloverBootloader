@@ -256,7 +256,7 @@ CHAR8* SmcPlatform[] =
   "NA",  //"MacBookAir5,2",
 	"NA",  //"Macmini2,1",  //31 -> m88
   "NA",  //"Macmini5,1",
-  "NA",  //"Macmini6,2",
+  "j50s", //"Macmini6,2",
 	"NA",  //"iMac8,1",
 	"NA",  //"iMac10,1",
   "NA",  //"iMac11,1",
@@ -264,7 +264,7 @@ CHAR8* SmcPlatform[] =
   "NA",  //"iMac11,3",
 	"k60", //"iMac12,1",
   "k62", //"iMac12,2",
-  "NA",  //"iMac13,1",
+  "d8",  //"iMac13,1",  <- iMac13,2
 	"m86",  //"MacPro3,1",
 	"NA",  //"MacPro4,1",
 	"k5",  //"MacPro5,1"
@@ -284,7 +284,7 @@ UINT8 SmcRevision[][6] = {
   {0x02, 0x05, 0x0F, 0, 0, 0x07},  //"MacBookAir5,2",
 	{0x01, 0x19, 0x0F, 0, 0, 0x02},  //"Macmini2,1", 
   {0x01, 0x30, 0x0F, 0, 0, 0x03},  //"Macmini5,1",
-  {0x01, 0x30, 0x0F, 0, 0, 0x03},  //"Macmini6,2",
+  {0x02, 0x08, 0x0F, 0, 0, 0x00},  //"Macmini6,2",
 	{0x01, 0x29, 0x0F, 0, 0, 0x01},  //"iMac8,1",
 	{0x01, 0x53, 0x0F, 0, 0, 0x13},  //"iMac10,1",
   {0x01, 0x54, 0x0F, 0, 0, 0x36},  //"iMac11,1",
@@ -292,8 +292,8 @@ UINT8 SmcRevision[][6] = {
   {0x01, 0x30, 0x0F, 0, 0, 0x03},  //"iMac11,3",
 	{0x01, 0x71, 0x0F, 0, 0, 0x22},  //"iMac12,1",
   {0x01, 0x72, 0x0F, 0, 0, 0x02},  //"iMac12,2",
-  {0x01, 0x30, 0x0F, 0, 0, 0x03},  //"iMac13,1",
-	{0x01, 0x24, 0x0F, 0, 0, 0x05},  //"MacPro3,1",
+  {0x02, 0x11, 0x0F, 0, 0, 0x14},  //"iMac13,1", <- iMac13,2
+	{0x01, 0x25, 0x0F, 0, 0, 0x04},  //"MacPro3,1",
 	{0x01, 0x39, 0x0F, 0, 0, 0x05},  //"MacPro4,1",
 	{0x01, 0x39, 0x0F, 0, 0, 0x11},  //"MacPro5,1"
 
@@ -322,8 +322,8 @@ UINT32 SmcConfig[] =
   0x7d004,  //"iMac11,3",
 	0x73005,  //"iMac12,1",
   0x75005,  //"iMac12,2",
-  0x78006,  //"iMac13,1",
-	0x7b002,  //"MacPro3,1",
+  0x78006,  //"iMac13,1",  //79006 == iMac13,2
+	0x79001,  //"MacPro3,1",
 	0x7c002,  //"MacPro4,1",
 	0x7c002,  //"MacPro5,1"
 };
