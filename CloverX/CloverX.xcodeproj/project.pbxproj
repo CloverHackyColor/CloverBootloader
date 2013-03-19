@@ -1427,30 +1427,15 @@
 			children = (
 				12B816791644675800A433E7 /* build32.sh */,
 				12B8167A1644675800A433E7 /* build64.sh */,
-				12B816841644675800A433E7 /* IA32 */,
 				12B8168A1644675800A433E7 /* include */,
 				12B816931644675800A433E7 /* libeg */,
 				12B816A31644675800A433E7 /* Platform */,
 				12B816EA1644675800A433E7 /* refit */,
 				12B816F61644675800A433E7 /* rEFIt.dsc */,
 				12B816F71644675800A433E7 /* refit.inf */,
-				12B816F81644675800A433E7 /* rEFIt64.dsc */,
-				12B816F91644675800A433E7 /* refit64.inf */,
 			);
 			name = rEFIt_UEFI;
 			path = ../rEFIt_UEFI;
-			sourceTree = "<group>";
-		};
-		12B816841644675800A433E7 /* IA32 */ = {
-			isa = PBXGroup;
-			children = (
-				12B816851644675800A433E7 /* llmul.asm */,
-				12B816861644675800A433E7 /* llshl.asm */,
-				12B816871644675800A433E7 /* ulldiv.asm */,
-				12B816881644675800A433E7 /* ullrem.asm */,
-				12B816891644675800A433E7 /* ullshr.asm */,
-			);
-			path = IA32;
 			sourceTree = "<group>";
 		};
 		12B8168A1644675800A433E7 /* include */ = {

@@ -2,6 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>PCI</key>
+	<dict>
+		<key>USBInjection</key>
+		<string>Yes</string>
+		<key>USBFixOwnership</key>
+		<string>Yes</string>
+		<key>InjectClockID</key>
+		<string>Yes</string>
+	</dict>
 	<key>SystemParameters</key>
 	<dict>
 		<key>boot-args</key>

@@ -211,7 +211,7 @@ CHAR8* AppleSerialNumber[] = //random generated
   "C02JA041DNCT", //IM131 -i5-3470S -IVY
 	"W88A77AA5J4",  //MP31 - xeon quad 02/09
 	"CT93051DK9Y",  //MP41
-	"CG154TB9WU3"   //MP51 C07J50F7F4MC
+	"CG154TB9WU3"   //MP51 C07J50F7F4MC  CK04000AHFC
 };
 //no! ChassisVersion == BoardID
 CHAR8* AppleChassisAsset[] = 
