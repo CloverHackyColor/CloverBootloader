@@ -60,7 +60,7 @@ CHAR8* AppleBoardID[] = //Lion DR1 compatible
 	"Mac-F4208EAA",          //MM21 - merom GMA950 07/07
   "Mac-8ED6AF5B48C039E1",  //MM51 - Sandy + Intel 30000
   "Mac-F65AE981FFA204ED",  //MM62 - Ivy
-	"Mac-F227BEC8",  //IM81 - merom 01/09
+	"Mac-F227BEC8",  //IM81 - merom 01/09, penryn E8435
 	"Mac-F2268CC8",  //IM101 - wolfdale? E7600 01/
   "Mac-F2268DAE",  //IM111 - Nehalem
 	"Mac-F2238AC8",  //IM112 - Clarkdale
@@ -257,7 +257,7 @@ CHAR8* SmcPlatform[] =
 	"NA",  //"Macmini2,1",  //31 -> m88
   "NA",  //"Macmini5,1",
   "j50s", //"Macmini6,2",
-	"NA",  //"iMac8,1",
+	"k3",  //"iMac8,1",
 	"NA",  //"iMac10,1",
   "NA",  //"iMac11,1",
 	"k74",  //"iMac11,2",
@@ -285,7 +285,7 @@ UINT8 SmcRevision[][6] = {
 	{0x01, 0x19, 0x0F, 0, 0, 0x02},  //"Macmini2,1", 
   {0x01, 0x30, 0x0F, 0, 0, 0x03},  //"Macmini5,1",
   {0x02, 0x08, 0x0F, 0, 0, 0x00},  //"Macmini6,2",
-	{0x01, 0x29, 0x0F, 0, 0, 0x01},  //"iMac8,1",
+	{0x01, 0x30, 0x0F, 0, 0, 0x01},  //"iMac8,1",
 	{0x01, 0x53, 0x0F, 0, 0, 0x13},  //"iMac10,1",
   {0x01, 0x54, 0x0F, 0, 0, 0x36},  //"iMac11,1",
 	{0x01, 0x64, 0x0F, 0, 0, 0x05},  //"iMac11,2",
@@ -315,7 +315,7 @@ UINT32 SmcConfig[] =
 	0x78002,  //"Macmini2,1",  //31 -> m88
   0x7d005,  //"Macmini5,1",
   0x7d006,  //"Macmini6,2",
-	0x7b001,  //"iMac8,1",
+	0x73002,  //"iMac8,1",
 	0x7b002,  //"iMac10,1",
   0x7b004,  //"iMac11,1",
 	0x7c004,  //"iMac11,2",
