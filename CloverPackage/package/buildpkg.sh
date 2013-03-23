@@ -683,6 +683,7 @@ fi
     rsync -r --exclude=.svn --exclude="*~" ${SRCROOT}/CloverV2/etc/ ${PKG_BUILD_DIR}/${choiceId}/Root/etc/
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
     chmod 755 "${PKG_BUILD_DIR}/${choiceId}/Root/etc"/rc*.local
+    chmod 755 "${PKG_BUILD_DIR}/${choiceId}/Root/etc"/rc.*.d/*.local
     chmod 755 "${PKG_BUILD_DIR}/${choiceId}/Scripts/postinstall"
 
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")

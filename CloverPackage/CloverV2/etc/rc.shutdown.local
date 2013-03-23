@@ -3,42 +3,35 @@
 #
 # rc.shutdown.local shutdown script for CLOVER
 #
+# this script run executable scripts in rc.shutdown.d folder having .local
+# extension
+#
 # Initial - Slice
 # Edited - kozlek  2013-01-15
 #        - apianti 2013-01-16
 #        - JrCs    2013-02-01
 #
-# (c) Slice 2010
-# (c) kozlek,apianti 2013
-# (c) JrCs 2013
+# © Slice 2010
+# © kozlek,apianti 2013
+# © JrCs 2013
 
-#
-# Manage nvram.plist: try to store it in the first boot helper partition
-# or in the root directory
-#
-
-DEBUG=${DEBUG:-0}
-
-logLocation=/Library/Logs/CloverEFI
-NVRAMFilename=nvram.plist
-NVRAMMountPoint=/tmp/NVRAM
-NVRAMDevice=
-NVRAMPartType=
-
-bootFlags=$(nvram -p | sed -n 's/^boot-args *//p')
-
+# Variables
+selfDir=$(cd $(dirname "$0") && pwd -P)
 currentDate=$(date "+%Y-%m-%d")
 currentTime=$(date "+%H:%M:%S")
 
 #
-# Ensure log directory exists
+# Source clover rc library
 #
-[[ ! -d "${logLocation}" ]] && mkdir -p "${logLocation}"
+source "$selfDir"/rc.clover.lib
+
+# Check that all variables are bound
+set -u
 
 #
 # Redirect all outputs to log file
 #
-exec &>"${logLocation}"/rc.shutdown.log
+exec &>"${CLOVER_LOG_LOCATION}"/rc.shutdown.log
 
 #
 # Print the current timestamp
@@ -49,166 +42,18 @@ echo "-------------------------------"
 
 [[ "$DEBUG" -ne 0 ]] && set -x
 
-# Turn on a case-insensitive matching
-shopt -s nocasematch
-
-set -u # Check that all variable are bound
-
-# Catch signal to clean up
-trap 'rmdir "${NVRAMMountPoint}" &>/dev/null' EXIT
-
-function findFirstAppleBootDevice {
-    local devices=$(LC_ALL=C ls /dev/disk* | sed -n '/\/dev\/disk[0-9]*$/p')
-    # Iterate over all devices
-    for device in $devices; do
-        # Find first partition with Apple Boot partition signature
-        index=$(LC_ALL=C /usr/sbin/gpt -r show "$device" 2>/dev/null | \
-         awk 'toupper($7) == "426F6F74-0000-11AA-AA11-00306543ECAC" {print $3; exit}')
-        if [[ $index =~ ^[0-9]+$ ]];then
-            break
-        else
-            index=
+# Launch some custom scripts if exists
+rc_dir="${selfDir}/rc.shutdown.d"
+if [[ -d "$rc_dir" ]]; then
+    # Remove space from IFS
+    IFS="$(printf '\n\t')"
+    for script in "$rc_dir"/*.local; do
+        if [[ ! -d "$script" && -x "$script" ]]; then
+            echo ">> Executing ${script} ..."
+            $script
+            echo
         fi
     done
-    # If index found return the device and partition (like diskXsY)
-    [[ -n "$index" ]] && echo "${device##*/}s$index"
-}
-
-function mountNVRAMDisk {
-    local device="$1"
-    local mntpt="$2"
-
-    # Check if the device is not already mount
-    local current_mntpts=$(/bin/df -l | \
-     sed -nE 's#^/dev/(disk[^ ]*)[^/]*(/.*$)#\1 \2#p')
-    while read -r dev mnt; do
-        if [[ "$dev" == "$device" ]]; then
-            echo "$mnt" # Return the mount point
-            return 0
-        fi
-    done <<<"$current_mntpts"
-
-    #
-    # Make sure mount point exists
-    #
-    [[ ! -d "$mntpt" ]] && mkdir -p "$mntpt"
-    [[ ! -d "$mntpt" ]] && return 1
-
-    #
-    # Unmount the mount point and device first just in case
-    #
-    umount "$mntpt"       2>/dev/null
-    umount "/dev/$device" 2>/dev/null
-    for fstype in hfs msdos; do
-        mount -t $fstype /dev/$device "$mntpt" &>/dev/null
-        [[ $? -eq 0 ]] && echo "$mntpt" && return 0
-    done
-
-    return 1
-}
-
-function mountAndSaveNVRAM {
-    local device="$1"
-
-    # Mount the NVRamDisk device
-    local mntpt=$(mountNVRAMDisk "$device" "$NVRAMMountPoint")
-
-    if [[ -n "$mntpt" ]]; then
-        mntpt="${mntpt%/}" # Remove last /
-        #
-        # Write NVRAM and make sure it exists
-        #
-        nvram -x -p > "${mntpt}/${NVRAMFilename}"
-        if [[ -f "${mntpt}/${NVRAMFilename}" ]]; then
-            chflags hidden "${mntpt}/${NVRAMFilename}"
-            umount "$NVRAMMountPoint" &>/dev/null
-            if [[ "$mntpt" != "$NVRAMMountPoint" ]]; then
-                echo "NVRAM saved to '${mntpt}/${NVRAMFilename}' [$device]"
-            else
-                echo "NVRAM saved on root of $device"
-            fi
-            return 0
-        fi
-        umount "$NVRAMMountPoint" &>/dev/null
-    fi
-    echo "NVRAM couldn't be saved to ${NVRAMFilename} on root of $device !"
-    return 1
-}
-
-function saveNVRAM {
-    local rootDevice=$(df -l / | sed -nE 's#^/dev/([^ ]*).*#\1#p')
-
-    # If NVRAMDevice is not specify use rootDevice
-    NVRAMDevice=${NVRAMDevice:-$rootDevice}
-
-    # Normalize NVRAMDevice (keep only the device name (remove /dev/)
-    NVRAMDevice=${NVRAMDevice##*/}
-
-    if [[ ! "$NVRAMDevice" =~ ^disk[0-9]*s[0-9]*$ ]]; then
-        # NVRAMDevice is a whole disk certainly a RAID device
-        # try to save nvram.plist on the first Apple Boot Partition
-
-        local AppleBootDevice=$(findFirstAppleBootDevice)
-
-        if [[ -n "$AppleBootDevice" ]]; then
-            # Try to save nvram.plist on the Apple Boot device
-            mountAndSaveNVRAM "$AppleBootDevice"
-            [[ $? -eq 0 ]] && return
-        fi
-    fi
-
-    # Save NVRAM to specific device or root
-    mountAndSaveNVRAM "$NVRAMDevice"
-    [[ $? -ne 0 ]] && mountAndSaveNVRAM "$rootDevice"
-}
-
-#
-# Parse boot flags
-#
-for bootFlag in ${bootFlags} ; do
-   #
-   # Split the key and value
-   #  bootFlagKey will be the key of the boot flag
-   #  bootFlagValue will be the flag value
-   #
-   bootFlagKey=${bootFlag%%=*}
-   bootFlagValue=
-   [[ $bootFlag == *=* ]] && bootFlagValue=${bootFlag#*=}
-
-   # All match are case insensitive
-   case "$bootFlagKey" in
-       NVRamDisk) # NVRamDisk=No|diskXsY
-                  NVRAMDevice="$bootFlagValue" ;;
-   esac
-done
-
-#
-# Check if user requested to not save nvram
-#
-if [[ "$NVRAMDevice" != No ]]; then
-    #
-    # Check if runtime variables emulation is being used
-    #  and if so, always save nvram
-    #
-    if [[ $(nvram -p | grep 'EmuVariableUefiPresent') != "" ]]; then
-        saveNVRAM
-    else
-        #
-        # Otherwise only save nvram to disk if boot from CloverEFI or EDK II
-        #
-        EFIFirmwareVendor=$(LC_ALL=C ioreg -l -pIODeviceTree | \
-         sed -nE 's@.*firmware-vendor.*<([0-9a-fA-F]*)>.*@\1@p' | xxd -r -p)
-
-        case "$EFIFirmwareVendor" in
-            "CLOVER"|"EDK II") saveNVRAM ;;
-        esac
-    fi
-fi
-
-customScript='custom.rc.shutdown.local'
-if [[ -f "/etc/$customScript" ]]; then
-   echo "Found and starting /etc/$customScript"
-   source "/etc/$customScript"
 fi
 
 

@@ -3,40 +3,30 @@
 #
 # rc.local startup script for CLOVER
 #
-# this script store the Clover logs of the last boot
-# and can mount the EFI partition
+# this script run executable scripts in rc.boot.d folder having .local
+# extension
 #
 # Initial - fassl, slice, STLVNUB
 # Edited  - apianti 2013-01-13
 #         - JrCs    2013-02-01
 
-#
-# Manage boot log
-#
-
-DEBUG=${DEBUG:-0}
-
-logLocation=/Library/Logs/CloverEFI
-logFilename=boot.log
-systemLogFilename=system.log
-logLineCount=3000
-logUsesTimestamps=No
-EFIMountPoint=/Volumes/EFI
-
-bootFlags=$(nvram -p | sed -n 's/^boot-args *//p')
-
+# Variables
+selfDir=$(cd $(dirname "$0") && pwd -P)
 currentDate=$(date "+%Y-%m-%d")
 currentTime=$(date "+%H:%M:%S")
 
 #
-# Ensure log directory exists
+# Source clover rc library
 #
-[[ ! -d "${logLocation}" ]] && mkdir -p "${logLocation}"
+source "$selfDir"/rc.clover.lib
+
+# Check that all variables are bound
+set -u
 
 #
 # Redirect all outputs to log file
 #
-exec &>"${logLocation}"/rc.local.log
+exec &>"${CLOVER_LOG_LOCATION}"/rc.local.log
 
 #
 # Print the current timestamp
@@ -47,106 +37,20 @@ echo "-------------------------------"
 
 [[ "$DEBUG" -ne 0 ]] && set -x
 
-# Turn on a case-insensitive matching
-shopt -s nocasematch
-
-set -u # Check that all variable are bound
-
-function mountEFI {
-    local theEFIRoot="$1"
-    [[ "$theEFIRoot" == Yes ]] && \
-     theEFIRoot=$(diskutil info / | sed -n 's/.*Part of Whole: *//p')
-    if [[ -z "$theEFIRoot" ]]; then
-        echo "Not auto mounting EFI partition"
-    else
-        # keep only the device name (remove /dev/ and partition (aka s1))
-        theEFIRoot=$(echo $theEFIRoot | sed -E 's@^.*/?(disk[0-9]*).*@\1@')
-        local EFIPartition="${theEFIRoot}s1"
-        [[ ! -d ${EFIMountPoint} ]] && mkdir -p "${EFIMountPoint}"
-        umount ${EFIMountPoint}     2>/dev/null
-        umount /dev/${EFIPartition} 2>/dev/null
-        mount -t msdos /dev/${EFIPartition} ${EFIMountPoint}
-        if [[ $? -ne 0 ]]; then
-            echo "Failed to mount $EFIPartition at $EFIMountPoint"
-        else
-            echo "EFI partition ($EFIPartition) mount at $EFIMountPoint"
+# Launch some custom scripts if exists
+rc_dir="${selfDir}/rc.boot.d"
+if [[ -d "$rc_dir" ]]; then
+    # Remove space from IFS
+    IFS="$(printf '\n\t')"
+    for script in "$rc_dir"/*.local; do
+        if [[ ! -d "$script" && -x "$script" ]]; then
+            echo ">> Executing ${script} ..."
+            $script
+            echo
         fi
-    fi
-}
-
-function setLogLineCount {
-    local lineCount="$1"
-    logLineCount=0 # default value
-    [[ "$lineCount" =~ ^[0-9]+$ ]] && logLineCount=$lineCount
-}
-
-#
-# Parse boot flags
-#
-for bootFlag in ${bootFlags} ; do
-   #
-   # Split the key and value
-   #  bootFlagKey will be the key of the boot flag
-   #  bootFlagValue will be the flag value
-   #
-   bootFlagKey=${bootFlag%%=*}
-   bootFlagValue=
-   [[ $bootFlag == *=* ]] && bootFlagValue=${bootFlag#*=}
-
-   # All match are case insensitive
-   case "$bootFlagKey" in
-       MountEFI) # MountEFI=yes|diskX
-                 mountEFI "$bootFlagValue" ;;
-       LogLineCount) # LogLineCount=0/N
-                 setLogLineCount "$bootFlagValue" ;;
-       LogLocation) # LogLocation=Path
-                 [[ -n "$bootFlagValue" ]] && \
-                  logLocation="$bootFlagValue" ;;
-       LogEveryBoot) # LogEveryBoot=Yes|No
-                 [[ "$bootFlagValue" == Yes ]] && logUsesTimestamps=yes ;;
-   esac
-
-done
-
-#
-# Change log path if timestamp is needed
-#
-if [[ "${logUsesTimestamps}" == Yes ]]; then
-   logFilename=boot-${currentDate}-$(echo ${currentTime} | tr ':' '.').log
+    done
 fi
 
-# Define the boot and system log path
-theLogPath="${logLocation}/${logFilename}"
-theSystemLogPath="${logLocation}/${systemLogFilename}"
-
-#
-# Print the current timestamp
-#
-echo "-------------------------------" > ${theLogPath}
-echo "DATE: ${currentDate} TIME: ${currentTime}" >> ${theLogPath}
-echo "-------------------------------" >> ${theLogPath}
-
-#
-# Get the current boot log
-#
-logdump=$(ioreg -lw0 -pIODeviceTree | grep boot-log)
-modified1=${logdump#*boot-log}
-modified2=${modified1#*<}
-echo "${modified2%%>*}" | xxd -r -p >> ${theLogPath}
-echo "Clover boot messages saved in $theLogPath"
-
-# If the line count > 0 trim the system log to line count
-if [[ "$logLineCount" -gt 0 ]]; then
-    (cat "$theSystemLogPath" 2>/dev/null; cat "$theLogPath") | \
-     tail -n $logLineCount > "$theSystemLogPath".tmp
-    mv "$theSystemLogPath".tmp "$theSystemLogPath"
-fi
-
-customScript='custom.rc.local'
-if [[ -f "/etc/$customScript" ]]; then
-   echo "Found and starting /etc/$customScript"
-   source "/etc/$customScript"
-fi
 
 # Local Variables:      #
 # mode: ksh             #

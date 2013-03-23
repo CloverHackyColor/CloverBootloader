@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "==============================================="
-echo "Post Post-Install Script"
+echo "Post-Install RC Scripts"
 echo "==============================================="
 
 #echo "DEBUG: $ 1 = Full path to the installation package the installer app is processing: " $1
@@ -18,19 +18,33 @@ echo "preinstall: Root of system folder... $4"
 
 osxvolume="${3}"
 
-echo "Fixing rc scripts permissions:">> "${osxvolume}/Clover_Install_Log.txt"
+echo "Copying RC scripts from ${osxvolume} to /" >> "${osxvolume}/Clover_Install_Log.txt"
+cp -pf  "${osxvolume}/etc/rc.clover.lib" "/etc/"
+cp -pf  "${osxvolume}/etc/rc.local" "/etc/rc.local"
+cp -prf "${osxvolume}/etc/rc.boot.d" "/etc/"
+cp -pf  "${osxvolume}/etc/rc.shutdown.local" "/etc/rc.shutdown.local"
+cp -prf "${osxvolume}/etc/rc.shutdown.d" "/etc/"
 
-# Fix permissions
-chmod 755        "${osxvolume}/etc/rc.local"
-chown root:wheel "${osxvolume}/etc/rc.local"
-chmod 755        "${osxvolume}/etc/rc.shutdown.local"
-chown root:wheel "${osxvolume}/etc/rc.shutdown.local"
+if [[ -x "${osxvolume}/etc/custom.rc.local" ]]; then
+	echo "Moving ${osxvolume}/etc/custom.rc.local to ${osxvolume}/etc/rc.boot.d/50.custom.local" \
+	 >> "${osxvolume}/Clover_Install_Log.txt"
+	cp -pf "${osxvolume}/etc/custom.rc.local" "${osxvolume}/etc/rc.boot.d/50.custom.local"
+fi
+if [[ -x "${osxvolume}/etc/custom.rc.shutdown.local" ]]; then
+	echo "Moving ${osxvolume}/etc/custom.rc.shutdown.local to ${osxvolume}/etc/rc.shutdown.d/50.custom.local" \
+	 >> "${osxvolume}/Clover_Install_Log.txt"
+	cp -pf "${osxvolume}/etc/custom.rc.shutdown.local" "${osxvolume}/etc/rc.shutdown.d/50.custom.local"
+fi
 
-cp -pf "${osxvolume}/etc/rc.local" "/etc/rc.local"
-cp -pf "${osxvolume}/etc/rc.shutdown.local" "/etc/rc.shutdown.local"
+if [[ -x "/etc/custom.rc.local" ]]; then
+	echo "Moving /etc/custom.rc.local to /etc/rc.boot.d/50.custom.local" \
+	 >> "${osxvolume}/Clover_Install_Log.txt"
+	cp -pf "/etc/custom.rc.local" "/etc/rc.boot.d/50.custom.local"
+fi
+if [[ -x "/etc/custom.rc.shutdown.local" ]]; then
+	echo "Moving /etc/custom.rc.shutdown.local to /etc/rc.shutdown.d/50.custom.local" \
+	 >> "${osxvolume}/Clover_Install_Log.txt"
+	cp -pf "/etc/custom.rc.shutdown.local" "/etc/rc.shutdown.d/50.custom.local"
+fi
 
-ls -lad "${osxvolume}/etc/rc.local" >> "${osxvolume}/Clover_Install_Log.txt"
-ls -lad "${osxvolume}/etc/rc.shutdown.local" >> "${osxvolume}/Clover_Install_Log.txt"
-ls -lad "/etc/rc.local" >> "${osxvolume}/Clover_Install_Log.txt"
-ls -lad "/etc/rc.shutdown.local" >> "${osxvolume}/Clover_Install_Log.txt"
 echo "======================================================" >> "${osxvolume}/Clover_Install_Log.txt"

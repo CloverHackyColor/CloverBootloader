@@ -1,0 +1,75 @@
+#!/bin/bash
+
+#
+# save nvram.plist script for CLOVER
+#
+# © JrCs 2013
+
+#
+# Mount ESP (EFI System Partition)
+#
+# NVRam keys used:
+#    Clover.MountEFI: Yes|diskX [default No]
+
+# Check that all variable are bound
+set -u
+
+#
+# Source clover rc library if needed
+#
+if [[ ! "$(type -t GetNVRamKey)" == "function" ]]; then
+    selfDir=$(cd $(dirname "$0") && pwd -P)
+    source "${selfDir}"/../rc.clover.lib
+fi
+
+# Variables
+ESPMountPoint=/Volumes/EFI
+
+# Debug mode ?
+[[ "$DEBUG" -ne 0 ]] && set -x
+
+# Turn on a case-insensitive matching
+shopt -s nocasematch
+
+function mountESP {
+    local ESPDevice="$1"
+
+    [[ "$ESPDevice" == Yes ]] && \
+     ESPDevice=$(diskutil info / | sed -n 's/.*Part of Whole: *//p')
+
+    # keep only the device name (remove /dev/ and partition (aka s1))
+    ESPDevice=$(echo "$ESPDevice" | sed -E 's@^.*/?(disk[0-9]*).*@\1@')
+
+    if [[ "$ESPDevice" =~ ^disk[0-9]+$ ]]; then
+        local ESP="${ESPDevice}s1"
+
+        [[ ! -d ${ESPMountPoint} ]] && mkdir -p "${ESPMountPoint}"
+
+        umount ${ESPMountPoint} 2>/dev/null
+        umount /dev/${ESP}      2>/dev/null
+        mount -t msdos /dev/${ESP} ${ESPMountPoint}
+        if [[ $? -ne 0 ]]; then
+            echo "Failed to mount $ESP at $ESPMountPoint"
+        else
+            echo "EFI partition ($ESP) mount at $ESPMountPoint"
+        fi
+    else
+        echo "Invalid value '$ESPDevice'"
+    fi
+}
+
+# Clover.MountEFI=Yes|diskX [default No]
+mountEFIValue=$(GetNVRamKey 'Clover.MountEFI' || echo 'No')
+if [[ "$mountEFIValue" == "No" ]]; then
+    echo "Not auto mounting EFI partition"
+else
+    mountESP "$mountEFIValue"
+fi
+
+# Local Variables:      #
+# mode: ksh             #
+# tab-width: 4          #
+# indent-tabs-mode: nil #
+# End:                  #
+#
+# vi: set expandtab ts=4 sw=4 sts=4: #
