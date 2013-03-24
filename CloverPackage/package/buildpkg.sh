@@ -91,8 +91,6 @@ choice_group_exclusive[0]=""
 
 # =================
 
-add_ia32=0
-
 # Package identifiers
 declare -r clover_package_identity="org.clover"
 
@@ -416,6 +414,10 @@ main ()
 #     # Package will be built at the end
 # # End pre install choice
 
+    # Check if we have compile IA32 version
+    local add_ia32=0
+    [[ -f "${SRCROOT}/CloverV2/EFI/BOOT/CLOVERIA32.efi" ]] && add_ia32=1
+
 # build Core package
     echo "=================== BiosBoot ==========================="
     packagesidentity="$clover_package_identity"
@@ -470,8 +472,8 @@ main ()
     addChoice --start-visible="false" --start-selected="true" --pkg-refs="$packageRefId" "${choiceId}"
 # End build EFI folder package
 
-# Create Clover Node
-    addGroupChoices --exclusive_one_choice "Clover"
+# Create Bootloader Node
+    addGroupChoices --exclusive_one_choice "Bootloader"
     echo "===================== BootLoaders ======================"
     packagesidentity="$clover_package_identity".bootloader
 # build bootNo package
@@ -482,7 +484,7 @@ main ()
                        --subst="INSTALLER_CHOICE=$packageRefId"      \
                        ${choiceId}
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    addChoice --group="Clover"                                             \
+    addChoice --group="Bootloader"                                         \
               --start-selected="choicePreviouslySelected('$packageRefId')" \
               --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
 # End build bootNo package
@@ -495,7 +497,7 @@ main ()
                        --subst="INSTALLER_CHOICE=$packageRefId"      \
                        ${choiceId}
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    addChoice --group="Clover"                                             \
+    addChoice --group="Bootloader"                                         \
               --start-selected="choicePreviouslySelected('$packageRefId')" \
               --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
 # End build boot0 package
@@ -508,7 +510,7 @@ main ()
                        --subst="INSTALLER_CHOICE=$packageRefId"      \
                        ${choiceId}
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    addChoice --group="Clover"                                             \
+    addChoice --group="Bootloader"                                         \
               --start-selected="choicePreviouslySelected('$packageRefId')" \
               --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
 # End build boot0hfs package
@@ -521,7 +523,7 @@ main ()
                        --subst="INSTALLER_CHOICE=$packageRefId"      \
                        ${choiceId}
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    addChoice --group="Clover"                                             \
+    addChoice --group="Bootloader"                                         \
               --start-selected="choicePreviouslySelected('$packageRefId')" \
               --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
 # End build boot0EFI package
@@ -534,40 +536,83 @@ main ()
                        --subst="INSTALLER_CHOICE=$packageRefId"      \
                        ${choiceId}
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    addChoice --group="Clover"                        \
+    addChoice --group="Bootloader"                    \
               --start-selected="checkBootFromUEFI()"  \
               --pkg-refs="$packageRefId" "${choiceId}"
 # End build bootUEFI package
 
-if [[ "$add_ia32" -eq 1 ]]; then
-    # Create Boot Arch Node
-    addGroupChoices --parent="Clover" --exclusive_one_choice "BootArch"
-
-    # build boot32 package
-    packagesidentity="$clover_package_identity".bootarch
-    choiceId="boot32"
-    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
-    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
-    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
-    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    addChoice --group="BootArch" --start-selected="false" --pkg-refs="$packageRefId" "${choiceId}"
-    # End build boot32 package
-fi
-# build boot64 package
-    packagesidentity="$clover_package_identity".bootarch
-    choiceId="boot64"
-    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
-    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
-
-    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
-    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    # Only add the choice if we have ia32 arch
-    if [[ "$add_ia32" -eq 1 ]]; then
-        addChoice --group="BootArch" --start-selected="true" --pkg-refs="$packageRefId" "${choiceId}"
-    else
-        addChoice --start-visible="false" --start-selected="true" --pkg-refs="$packageRefId" "${choiceId}"
+# Create CloverEFI Node
+    echo "======================= CloverEFI ========================"
+    nb_cloverEFI=$(find "${SRCROOT}"/CloverV2/Bootloaders -type f -name 'boot?' | wc -l)
+    if [[ "$nb_cloverEFI" -ge 2 ]]; then
+        addGroupChoices --exclusive_one_choice "CloverEFI"
     fi
+
+# build cloverEFI.32 package
+if [[ -f "${SYMROOT}/i386/ia32/boot3" ]]; then
+    packagesidentity="$clover_package_identity"
+    choiceId="cloverEFI.32"
+    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
+                       --subst="CLOVER_EFI_ARCH=ia32"                \
+                       --subst="CLOVER_BOOT_FILE=boot3"              \
+                       --subst="INSTALLER_CHOICE=$packageRefId"      \
+                       CloverEFI
+    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
+    local choiceOptions=()
+    if [[ "$nb_cloverEFI" -ge 2 ]]; then
+        choiceOptions=(--group="CloverEFI" --start-selected="choicePreviouslySelected('$packageRefId')")
+    else
+        choiceOptions=(--start-visible="false" --start-selected="true")
+    fi
+    addChoice ${choiceOptions[@]} --pkg-refs="$packageRefId" "${choiceId}"
+fi
+# End build cloverEFI.32 package
+
+# build cloverEFI.64.sata package
+if [[ -f "${SYMROOT}/i386/x64/boot6" ]]; then
+    packagesidentity="$clover_package_identity"
+    choiceId="cloverEFI.64.sata"
+    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
+                       --subst="CLOVER_EFI_ARCH=x64"                 \
+                       --subst="CLOVER_BOOT_FILE=boot6"              \
+                       --subst="INSTALLER_CHOICE=$packageRefId"      \
+                       CloverEFI
+    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
+    local choiceOptions=()
+    if [[ "$nb_cloverEFI" -ge 2 ]]; then
+        choiceOptions=(--group="CloverEFI" --start-selected="true")
+    else
+        choiceOptions=(--start-visible="false" --start-selected="true")
+    fi
+    addChoice ${choiceOptions[@]} --pkg-refs="$packageRefId" "${choiceId}"
+fi
 # End build boot64 package
+
+# build cloverEFI.64.blockio package
+if [[ -f "${SYMROOT}/i386/x64/boot7" ]]; then
+    packagesidentity="$clover_package_identity"
+    choiceId="cloverEFI.64.blockio"
+    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
+                       --subst="CLOVER_EFI_ARCH=x64"                 \
+                       --subst="CLOVER_BOOT_FILE=boot7"              \
+                       --subst="INSTALLER_CHOICE=$packageRefId"      \
+                       CloverEFI
+    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
+    local choiceOptions=()
+    if [[ "$nb_cloverEFI" -ge 2 ]]; then
+        choiceOptions=(--group="CloverEFI" --start-selected="choicePreviouslySelected('$packageRefId')")
+    else
+        choiceOptions=(--start-visible="false" --start-selected="true")
+    fi
+    addChoice ${choiceOptions[@]} --pkg-refs="$packageRefId" "${choiceId}"
+fi
+# End build cloverEFI.64.blockio package
 
 # build theme packages
     echo "======================== Themes ========================"

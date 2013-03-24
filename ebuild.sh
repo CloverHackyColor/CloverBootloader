@@ -260,6 +260,7 @@ MainBuildScript() {
         # Make some house cleaning
         echo "Cleaning packaging files..."
         find "$CLOVER_PKG_DIR"/Bootloaders/{ia32,x64}/ -mindepth 1 -not -path "**/.svn*" -delete
+        find "$CLOVER_PKG_DIR"/EFI/BOOT/ -name '*.efi' -mindepth 1 -not -path "**/.svn*" -delete
         find "$CLOVER_PKG_DIR"/EFI/drivers* -mindepth 1 -not -path "**/.svn*" -delete
         find "$CLOVER_PKG_DIR"/drivers-Off/drivers* -mindepth 1 -not -path "**/.svn*" -delete
         echo "Done!"
