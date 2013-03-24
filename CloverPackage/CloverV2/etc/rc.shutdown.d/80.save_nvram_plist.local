@@ -162,6 +162,8 @@ if [[ "$NVRAMDevice" != No ]]; then
 
         case "$EFIFirmwareVendor" in
             "CLOVER"|"EDK II") saveNVRAM ;;
+            *) echo "Not saving $NVRAMFilename because booting from an UEFI firmware ($EFIFirmwareVendor)"
+               ;;
         esac
     fi
 fi
