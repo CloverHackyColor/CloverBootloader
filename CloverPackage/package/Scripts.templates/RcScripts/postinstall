@@ -16,35 +16,69 @@ echo "preinstall: Root of system folder... $4"
 
 #############################################################################
 
-osxvolume="${3}"
+srcvolume="${3}"
+destroot="${srcvolume}"
+install_log="${srcvolume}/Clover_Install_Log.txt"
 
-echo "Copying RC scripts from ${osxvolume} to /" >> "${osxvolume}/Clover_Install_Log.txt"
-cp -pf  "${osxvolume}/etc/rc.clover.lib" "/etc/"
-cp -pf  "${osxvolume}/etc/rc.local" "/etc/rc.local"
-cp -prf "${osxvolume}/etc/rc.boot.d" "/etc/"
-cp -pf  "${osxvolume}/etc/rc.shutdown.local" "/etc/rc.shutdown.local"
-cp -prf "${osxvolume}/etc/rc.shutdown.d" "/etc/"
+echo "======================================================" >> "$install_log"
+echo "Installing RC Scripts" >> "$install_log"
+echo "" >> "$install_log"
 
-if [[ -x "${osxvolume}/etc/custom.rc.local" ]]; then
-	echo "Moving ${osxvolume}/etc/custom.rc.local to ${osxvolume}/etc/rc.boot.d/50.custom.local" \
-	 >> "${osxvolume}/Clover_Install_Log.txt"
-	cp -pf "${osxvolume}/etc/custom.rc.local" "${osxvolume}/etc/rc.boot.d/50.custom.local"
-fi
-if [[ -x "${osxvolume}/etc/custom.rc.shutdown.local" ]]; then
-	echo "Moving ${osxvolume}/etc/custom.rc.shutdown.local to ${osxvolume}/etc/rc.shutdown.d/50.custom.local" \
-	 >> "${osxvolume}/Clover_Install_Log.txt"
-	cp -pf "${osxvolume}/etc/custom.rc.shutdown.local" "${osxvolume}/etc/rc.shutdown.d/50.custom.local"
+# Check if destination volume is a system volume:
+if [[ ! -f "${destroot}/System/Library/CoreServices/boot.efi" ]]; then
+    # Destination volume is not a system so install rc script into the system
+    # folder
+    destroot="$4"
+
+    echo "$srcvolume is not a system volume. Copying RC scripts to $destroot" >> "$install_log"
+
+    while read -r -u3 file; do
+        case "$file" in
+            *.d/*.local)
+                destfile="$file"
+                [[ -f "$destroot/$destfile.disabled" ]] && destfile="$file.disabled"
+                echo "Copying $srcvolume/$file to $destroot/$destfile" >> "$install_log"
+                rm -f  "$destroot/$file"
+                cp -pf "$srcvolume/$file" "$destroot/$destfile"
+                ;;
+            *.d/*.local.disabled)
+                enabledfile="${file%.disabled}"
+                echo "Copying $srcvolume/$file to $destroot/$file" >> "$install_log"
+                rm -f  "$destroot/$enabledfile"
+                cp -pf "$srcvolume/$file" "$destroot/$file"
+                ;;
+            *)
+                echo "Copying $srcvolume/$file to $destroot/$file" >> "$install_log"
+                cp -pf "$srcvolume/$file" "$destroot/$file"
+                ;;
+        esac
+        rm -f "$srcvolume/$file"
+        rmdir $(dirname "$srcvolume/$file") &>/dev/null
+    done 3< <(cat ./Tools/rc.files)
+else
+    # Destination volume is a system volume
+    while read -r -u3 file; do
+        case "$file" in
+            *.d/*.local)
+                [[ -f "$destroot/$file.disabled" ]] && \
+                 mv -f "$srcvolume/$file" "$destroot/${file}.disabled"
+                ;;
+            *.d/*.local.disabled)
+                enabledfile="${file%.disabled}"
+                rm -fv "$destroot/$enabledfile"
+                ;;
+        esac
+    done 3< <(cat ./Tools/rc.files)
 fi
 
-if [[ -x "/etc/custom.rc.local" ]]; then
-	echo "Moving /etc/custom.rc.local to /etc/rc.boot.d/50.custom.local" \
-	 >> "${osxvolume}/Clover_Install_Log.txt"
-	cp -pf "/etc/custom.rc.local" "/etc/rc.boot.d/50.custom.local"
+# Compatibility with old custom scripts
+if [[ -x "${destroot}/etc/custom.rc.local" ]]; then
+    echo "Moving ${destroot}/etc/custom.rc.local to ${destroot}/etc/rc.boot.d/50.custom.local" \
+     >> "$install_log"
+    cp -pf "${destroot}/etc/custom.rc.local" "${destroot}/etc/rc.boot.d/50.custom.local"
 fi
-if [[ -x "/etc/custom.rc.shutdown.local" ]]; then
-	echo "Moving /etc/custom.rc.shutdown.local to /etc/rc.shutdown.d/50.custom.local" \
-	 >> "${osxvolume}/Clover_Install_Log.txt"
-	cp -pf "/etc/custom.rc.shutdown.local" "/etc/rc.shutdown.d/50.custom.local"
+if [[ -x "${destroot}/etc/custom.rc.shutdown.local" ]]; then
+    echo "Moving ${destroot}/etc/custom.rc.shutdown.local to ${destroot}/etc/rc.shutdown.d/50.custom.local" \
+     >> "$install_log"
+    cp -pf "${destroot}/etc/custom.rc.shutdown.local" "${destroot}/etc/rc.shutdown.d/50.custom.local"
 fi
-
-echo "======================================================" >> "${osxvolume}/Clover_Install_Log.txt"

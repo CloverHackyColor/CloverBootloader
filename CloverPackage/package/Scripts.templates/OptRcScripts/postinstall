@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "==============================================="
-echo "Boot64 Post-Install Script"
+echo "Post-Install Optional RC Scripts"
 echo "==============================================="
 
 #echo "DEBUG: $ 1 = Full path to the installation package the installer app is processing: " $1
@@ -16,20 +16,19 @@ echo "preinstall: Root of system folder... $4"
 
 #############################################################################
 
-osxvolume="${3}"
-installtype=$( cat "${osxvolume}/boot0type" )
+srcvolume="${3}"
+destroot="${srcvolume}"
+install_log="${srcvolume}/Clover_Install_Log.txt"
+rc_script="@RC_SCRIPT@"
+enabled_script="${rc_script%.disabled}"
 
-boottype='x64'
-cloverEFIFile='boot6'
-
-echo "$boottype" > "${osxvolume}/boottype"
-
-if [[ -f "${osxvolume}/boot" ]]; then
-    cp "${osxvolume}/boot" "${osxvolume}/bootold"
+# Check if destination volume is a system volume:
+if [[ ! -f "${destroot}/System/Library/CoreServices/boot.efi" ]]; then
+    # Destination volume is not a system so install rc script into the system
+    # folder
+    destroot="$4"
 fi
 
-if [[ -f "${osxvolume}/usr/standalone/i386/$boottype/$cloverEFIFile" ]]; then
-    cp -v "${osxvolume}/usr/standalone/i386/$boottype/$cloverEFIFile" "${osxvolume}/boot"
-    chflags hidden "${osxvolume}/boot"
-    echo "Stage 2 - Written $cloverEFIFile ($boottype) to ${osxvolume}/boot" >> "${osxvolume}/Clover_Install_Log.txt"
-fi
+# Enable the RC script
+echo "Activating ${destroot}/${enabled_script} rc script" >> "$install_log"
+mv -f "$destroot/$rc_script" "$destroot/$enabled_script"  >> "$install_log"

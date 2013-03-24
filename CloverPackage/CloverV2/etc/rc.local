@@ -44,8 +44,9 @@ if [[ -d "$rc_dir" ]]; then
     IFS="$(printf '\n\t')"
     for script in "$rc_dir"/*.local; do
         if [[ ! -d "$script" && -x "$script" ]]; then
-            echo ">> Executing ${script} ..."
+            echo ">> Begin Script: ${script}"
             $script
+            echo ">> End Script: ${script}"
             echo
         fi
     done

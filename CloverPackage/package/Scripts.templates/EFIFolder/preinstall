@@ -15,24 +15,22 @@ echo "preinstall: Path to dest volume..... $3"
 echo "preinstall: Root of system folder... $4"
 
 # Check target exists
-if [ ! -e "$3" ]
-then
+if [ ! -e "$3" ]; then
     echo "$3 volume does not exist!"
     exit 1
 fi
 
 # If target volume root of current system then replace
 # / with volume name.
-if [ "$3" == "/" ]
-then
+if [ "$3" == "/" ]; then
     dest_vol="/Volumes/"$( ls -1F /Volumes | sed -n 's:@$::p' )
 else
     dest_vol="$3"
 fi
-
+install_log="${dest_vol}/Clover_Install_Log.txt"
 
 # ---------------------------------------------
-# Preparing Backing up of Chameleon files
+# Preparing Backing up of Clover files
 # ---------------------------------------------
 backupRootDir="$dest_vol/EFI-Backups"
 backupDir="${backupRootDir}/"$( date -j "+%F-%Hh%M" )
@@ -41,49 +39,46 @@ backupDir="${backupRootDir}/"$( date -j "+%F-%Hh%M" )
 mkdir -p "$backupDir"
 
 # ---------------------------------------------
-# Backing up Chameleon files
+# Backing up Clover files
 # ---------------------------------------------
 
-echo " " > "${dest_vol}/Clover_Install_Log.txt"
-echo "Clover EFI installer log - $( date )" >> "${dest_vol}/Clover_Install_Log.txt"
-echo "Installer version: %CLOVERVERSION% r%CLOVERREVISION% EFI bootloader" >> "${dest_vol}/Clover_Install_Log.txt"
-echo "======================================================" >> "${dest_vol}/Clover_Install_Log.txt"
-diskutil list >> "${dest_vol}/Clover_Install_Log.txt"
-echo "======================================================" >> "${dest_vol}/Clover_Install_Log.txt"
+echo "" > "$install_log"
+echo "Clover EFI installer log - $( date )" >> "$install_log"
+echo "Installer version: %CLOVERVERSION% r%CLOVERREVISION% EFI bootloader" >> "$install_log"
+echo "======================================================" >> "$install_log"
+diskutil list >> "$install_log"
 
-echo Backing up EFI files >> "${dest_vol}/Clover_Install_Log.txt"
-echo " " >> "${dest_vol}/Clover_Install_Log.txt"
+echo "======================================================" >> "$install_log"
+echo "Backing up EFI files" >> "$install_log"
+echo "" >> "$install_log"
 
 # Backup stage2
 if [ -f "$dest_vol/boot" ];then
-    echo "Backing up stage2 file $dest_vol/boot  to ${backupDir}/boot" >> "${dest_vol}/Clover_Install_Log.txt"
+    echo "Backing up stage2 file $dest_vol/boot  to ${backupDir}/boot" >> "$install_log"
     cp -p "$dest_vol/boot" "${backupDir}/boot"
 fi
 if [ -f "$dest_vol/boot1" ];then
-    echo "Backing up stage2 file $dest_vol/boot1 to ${backupDir}/boot1" >> "${dest_vol}/Clover_Install_Log.txt"
+    echo "Backing up stage2 file $dest_vol/boot1 to ${backupDir}/boot1" >> "$install_log"
     cp -p "$dest_vol/boot1" "${backupDir}/boot1"
 fi
 if [ -f "$dest_vol/boot3" ];then
-    echo "Backing up stage2 file $dest_vol/boot3 to ${backupDir}/boot3" >> "${dest_vol}/Clover_Install_Log.txt"
+    echo "Backing up stage2 file $dest_vol/boot3 to ${backupDir}/boot3" >> "$install_log"
     cp -p "$dest_vol/boot3" "${backupDir}/boot3"
 fi
 if [ -f "$dest_vol/boot6" ];then
-    echo "Backing up stage2 file $dest_vol/boot6 to ${backupDir}/boot6" >> "${dest_vol}/Clover_Install_Log.txt"
+    echo "Backing up stage2 file $dest_vol/boot6 to ${backupDir}/boot6" >> "$install_log"
     cp -p "$dest_vol/boot6" "${backupDir}/boot6"
 fi
 
 # Backup /EFI directory
 if [ -d "$dest_vol/EFI" ];then
-    echo "Backing up $dest_vol/EFI folder to ${backupDir}/EFI"   >> "${dest_vol}/Clover_Install_Log.txt"
+    echo "Backing up $dest_vol/EFI folder to ${backupDir}/EFI"   >> "$install_log"
     cp -pR "$dest_vol/EFI" "${backupDir}/EFI"
 fi
-
-echo "======================================================" >> "${dest_vol}/Clover_Install_Log.txt"
 
 chflags -R nohidden "$backupDir" # Remove the invisible flag of files in the backups
 
 find "$backupRootDir" -type d -depth 1 -empty -exec rmdir {} \; # Remove empty directories
-
 
 # Remove efi files of old revision (currently all in EFI/drivers* and EFI/BOOT/themes).
 pkgs=$(/usr/sbin/pkgutil --volume "$dest_vol" --pkgs | /usr/bin/grep -iE '@CLOVER_PACKAGE_IDENTITY@.')
@@ -95,5 +90,3 @@ for pkg in $pkgs; do
         /usr/bin/grep -iE 'EFI/(BOOT/themes|drivers\w+)/' | \
         xargs rm -rf
 done
-# Remove old directories too
-#rmdir "$dest_vol"/EFI/BOOT/themes/* &>/dev/null

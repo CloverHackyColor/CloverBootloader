@@ -681,15 +681,42 @@ fi
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Scripts
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" RcScripts
     rsync -r --exclude=.svn --exclude="*~" ${SRCROOT}/CloverV2/etc/ ${PKG_BUILD_DIR}/${choiceId}/Root/etc/
+    local toolsdir="${PKG_BUILD_DIR}/${choiceId}"/Scripts/Tools
+    mkdir -p "$toolsdir"
+    (cd "${PKG_BUILD_DIR}/${choiceId}"/Root && find etc -type f > "$toolsdir"/rc.files)
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
     chmod 755 "${PKG_BUILD_DIR}/${choiceId}/Root/etc"/rc*.local
-    chmod 755 "${PKG_BUILD_DIR}/${choiceId}/Root/etc"/rc.*.d/*.local
+    chmod 755 "${PKG_BUILD_DIR}/${choiceId}/Root/etc"/rc.*.d/*.{local,local.disabled}
     chmod 755 "${PKG_BUILD_DIR}/${choiceId}/Scripts/postinstall"
-
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
     addChoice --start-visible="false" --start-selected="true" --pkg-refs="$packageRefId" "${choiceId}"
 # End build rc scripts package
+
+# build optional rc scripts package
+    echo "================= Optional RC Scripts =================="
+    addGroupChoices --title="Optional RC Scripts" --description="Optional RC Scripts" "OptionalRCScripts"
+    packagesidentity="$clover_package_identity".optional.rc.scripts
+    local scripts=($( find "${SRCROOT}/CloverV2/etc" -type f -name '*.disabled' -depth 2 ))
+    for (( i = 0 ; i < ${#scripts[@]} ; i++ ))
+    do
+        local script_rel_path=etc/"${scripts[$i]##*/etc/}" # ie: etc/rc.boot.d/70.xx_yy_zz.local.disabled
+        local script="${script_rel_path##*/}" # ie: 70.xx_yy_zz.local.disabled
+        local name=$(echo "$script" | sed -E 's/^[0-9]*[.]?//;s/\.local\.disabled//') # ie: xx_yy_zz
+        local choiceId=rc.$name  # ie: rc.xx_yy_zz
+        local title=${name//_/ } # ie: rc.xx yy zz
+        mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
+        addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" \
+                           --subst="RC_SCRIPT=$script_rel_path"         \
+                           OptRcScripts
+        fixperms  "${PKG_BUILD_DIR}/${choiceId}/Root/"
+        chmod 755 "${PKG_BUILD_DIR}/${choiceId}/Scripts/postinstall"
+        packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+        buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
+        addChoice --group="OptionalRCScripts" --title="$title" \
+         --start-selected="false" --pkg-refs="$packageRefId" "${choiceId}"
+    done
+# End build optional rc scripts package
 
 # build post install package
     echo "================= Post ================="

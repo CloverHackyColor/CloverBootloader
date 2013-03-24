@@ -13,6 +13,7 @@ echo "preinstall: Root of system folder... $4"
 #############################################################################
 
 osxvolume="${3}"
+install_log="${osxvolume}/Clover_Install_Log.txt"
 
 echo "====================================================="
 echo " "
@@ -21,9 +22,10 @@ echo "used for 4kb harddisk with manual install."
 echo " "
 echo "====================================================="
 
-echo Stage 0 - Don"'"t write any of boot0, boot0hfs, boot0md to ${osxvolume} >> "${osxvolume}/Clover_Install_Log.txt"
-echo "------------------------------------------------------" >> "${osxvolume}/Clover_Install_Log.txt"
-
-echo Stage 1 - Don"'"t write any of boot1h2, boot1f32alt to ${osxvolume} >> "${osxvolume}/Clover_Install_Log.txt"
-echo Don"'"t write boot0, boot1.. > "${osxvolume}/boot0type"
-echo "------------------------------------------------------" >> "${osxvolume}/Clover_Install_Log.txt"
+echo "======================================================" >> "$install_log"
+echo "Installing BootSectors/BootLoader" >> "$install_log"
+echo "" >> "$install_log"
+echo "Stage 0 - Don't write any of boot0, boot0hfs, boot0md to ${osxvolume}" >> "$install_log"
+echo "Stage 1 - Don't write any of boot1h2, boot1f32alt to ${osxvolume}" >> "$install_log"
+echo "Don't write boot0, boot1.." > "${osxvolume}/boot0type"
+echo "" >> "$install_log"

@@ -4,8 +4,7 @@ diskloader="boot0hfs"
 partitionloaderhfs="boot1h2"
 partitionloaderfat="boot1f32alt"
 bootervolumename="EFI"
-
-bootresources="${0%/*}"
+install_log="${3}/Clover_Install_Log.txt"
 
 start ()
 {
@@ -15,13 +14,13 @@ osxvolume="${@}"
 
 if [ -z "${osxvolume}" ]; then
 	echo
-	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
-	echo "Cannot find the volume. Exiting." >> "${osxvolume}/Clover_Install_Log.txt"
-	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
-	echo "Stage 0 - Stop write ${diskloader}." >> "${osxvolume}/Clover_Install_Log.txt"
-	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
-	echo "Stage 1 - Stop write ${partitionloaderhfs}." >> "${osxvolume}/Clover_Install_Log.txt"
-	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
+	echo " " >> "$install_log"
+	echo "Cannot find the volume. Exiting." >> "$install_log"
+	echo " " >> "$install_log"
+	echo "Stage 0 - Stop write ${diskloader}." >> "$install_log"
+	echo " " >> "$install_log"
+	echo "Stage 1 - Stop write ${partitionloaderhfs}." >> "$install_log"
+	echo " " >> "$install_log"
 	exit
 fi
 
@@ -29,14 +28,14 @@ bootdev=$( df "${osxvolume}" | sed -n '2p' | awk '{print $1}' )
 
 if [ "${bootdev}" = "${bootdev#*disk*s}" ]; then
 	echo
-	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
-	echo "ERROR Volume does not use slices." >> "${osxvolume}/Clover_Install_Log.txt"
-	echo "Volume may be stored on a RAID array." >> "${osxvolume}/Clover_Install_Log.txt"
-	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
-	echo "Stage 0 - Stop write ${diskloader}." >> "${osxvolume}/Clover_Install_Log.txt"
-	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
-	echo "Stage 1 - Stop write ${partitionloaderhfs}." >> "${osxvolume}/Clover_Install_Log.txt"
-	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
+	echo " " >> "$install_log"
+	echo "ERROR Volume does not use slices." >> "$install_log"
+	echo "Volume may be stored on a RAID array." >> "$install_log"
+	echo " " >> "$install_log"
+	echo "Stage 0 - Stop write ${diskloader}." >> "$install_log"
+	echo " " >> "$install_log"
+	echo "Stage 1 - Stop write ${partitionloaderhfs}." >> "$install_log"
+	echo " " >> "$install_log"
 	echo
 	exit
 fi
@@ -46,13 +45,13 @@ partitiontable=$( diskutil list ${bootdev%s*} | sed -n '3p' | awk '{print $2}' )
 
 if [ ${partitiontable} != "GUID_partition_scheme" ]; then
 	echo
-	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
-	echo "ERROR Volume is not on a GPT partitioned disc." >> "${osxvolume}/Clover_Install_Log.txt"
-	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
-	echo "Stage 0 - Stop write ${diskloader}." >> "${osxvolume}/Clover_Install_Log.txt"
-	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
-	echo "Stage 1 - Stop write ${partitionloaderhfs}." >> "${osxvolume}/Clover_Install_Log.txt"
-	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
+	echo " " >> "$install_log"
+	echo "ERROR Volume is not on a GPT partitioned disc." >> "$install_log"
+	echo " " >> "$install_log"
+	echo "Stage 0 - Stop write ${diskloader}." >> "$install_log"
+	echo " " >> "$install_log"
+	echo "Stage 1 - Stop write ${partitionloaderhfs}." >> "$install_log"
+	echo " " >> "$install_log"
 	echo
 	exit
 fi
@@ -137,29 +136,29 @@ if [ "$( fstyp ${bootdev} | grep msdos )" ]; then
 fi
 echo "-----------------------------------------------"
 
-echo " " >> "${osxvolume}/Clover_Install_Log.txt"
+echo " " >> "$install_log"
 partitionactive=$( /usr/local/bin/fdisk440 -d ${bootrdisk} | grep -n "*" | awk -F: '{print $1}')
-echo "Current Active Partition: ${partitionactive}" >> "${osxvolume}/Clover_Install_Log.txt"
-echo " " >> "${osxvolume}/Clover_Install_Log.txt"
+echo "Current Active Partition: ${partitionactive}" >> "$install_log"
+echo " " >> "$install_log"
 
 ### Stage 0 ###
 
-echo "Stage 0 - Written ${diskloader} to ${bootdisk}" >> "${osxvolume}/Clover_Install_Log.txt"
-echo "/usr/local/bin/fdisk440 -u -f ${osxvolume}/usr/standalone/i386/${diskloader} -y ${bootdisk}" >> "${osxvolume}/Clover_Install_Log.txt"
+echo "Stage 0 - Written ${diskloader} to ${bootdisk}" >> "$install_log"
+echo "/usr/local/bin/fdisk440 -u -f ${osxvolume}/usr/standalone/i386/${diskloader} -y ${bootdisk}" >> "$install_log"
 /usr/local/bin/fdisk440 -u -f "${osxvolume}/usr/standalone/i386/${diskloader}" -y ${bootdisk}
-echo " " >> "${osxvolume}/Clover_Install_Log.txt"
+echo " " >> "$install_log"
 
 ### Stage 1 ###
 
 if [[ "${efiformat}" = "msdos" ]]; then
 
-	echo "Stage 1 - Written ${partitionloaderfat} to ${bootrdev}" >> "${osxvolume}/Clover_Install_Log.txt"
-	echo "File system is Fat32." >> "${bootvolume}/Clover_Install_Log.txt"
-	echo "dd if=${bootrdev} count=1 bs=512 of=/tmp/origbs" >> "${osxvolume}/Clover_Install_Log.txt"
-	echo "cp ${osxvolume}/usr/standalone/i386/${partitionloaderfat} /tmp/newbs" >> "${osxvolume}/Clover_Install_Log.txt"
-	echo "dd if=/tmp/origbs of=/tmp/newbs skip=3 seek=3 bs=1 count=87 conv=notrunc" >> "${osxvolume}/Clover_Install_Log.txt"
-	echo "dd if=/tmp/newbs of=${bootrdev}" >> "${osxvolume}/Clover_Install_Log.txt"
-	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
+	echo "Stage 1 - Written ${partitionloaderfat} to ${bootrdev}" >> "$install_log"
+	echo "File system is Fat32." >> "$install_log"
+	echo "dd if=${bootrdev} count=1 bs=512 of=/tmp/origbs" >> "$install_log"
+	echo "cp ${osxvolume}/usr/standalone/i386/${partitionloaderfat} /tmp/newbs" >> "$install_log"
+	echo "dd if=/tmp/origbs of=/tmp/newbs skip=3 seek=3 bs=1 count=87 conv=notrunc" >> "$install_log"
+	echo "dd if=/tmp/newbs of=${bootrdev}" >> "$install_log"
+	echo " " >> "$install_log"
 
 	rm -f /tmp/origbs
 	rm -f /tmp/newbs
@@ -192,10 +191,10 @@ else
 	# just write boot1h to the partition boot sector
 	echo "Executing command: dd if="${osxvolume}/usr/standalone/i386/${partitionloaderhfs}" of=${bootrdev}"
 
-	echo "Stage 1 - Written ${partitionloaderhfs} to ${bootrdev}" >> "${osxvolume}/Clover_Install_Log.txt"
-	echo "File system is HFS." >> "${bootvolume}/Clover_Install_Log.txt"
-	echo "dd if=${osxvolume}/usr/standalone/i386/${partitionloaderhfs} of=${bootrdev}" >> "${osxvolume}/Clover_Install_Log.txt"
-	echo " " >> "${osxvolume}/Clover_Install_Log.txt"
+	echo "Stage 1 - Written ${partitionloaderhfs} to ${bootrdev}" >> "$install_log"
+	echo "File system is HFS." >> "$install_log"
+	echo "dd if=${osxvolume}/usr/standalone/i386/${partitionloaderhfs} of=${bootrdev}" >> "$install_log"
+	echo " " >> "$install_log"
 	
 	dd if="${osxvolume}/usr/standalone/i386/${partitionloaderhfs}" of=${bootrdev}
 	echo "${efiformat}" > "${bootvolume}/formattype"

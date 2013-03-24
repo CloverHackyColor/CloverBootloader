@@ -3,6 +3,7 @@
 diskloader="boot0hfs"
 partitionloaderhfs="boot1h2"
 partitionloaderfat="boot1f32alt"
+install_log="${3}/Clover_Install_Log.txt"
 
 start ()
 {
@@ -73,16 +74,18 @@ if [ "$( fstyp ${bootdev} | grep msdos )" ]; then
 fi 
 echo "-----------------------------------------------"
 
-echo " " >> "${bootvolume}/Clover_Install_Log.txt"
+echo "======================================================" >> "$install_log"
+echo "Installing BootSectors/BootLoader" >> "$install_log"
+echo "" >> "$install_log"
 partitionactive=$( /usr/local/bin/fdisk440 -d ${bootrdisk} | grep -n "*" | awk -F: '{print $1}')
-echo "Current Active Partition: ${partitionactive}" >> "${bootvolume}/Clover_Install_Log.txt"
-echo " " >> "${bootvolume}/Clover_Install_Log.txt"
+echo "Current Active Partition: ${partitionactive}" >> "$install_log"
+echo "" >> "$install_log"
 
 ### Stage 0 ###
 
-echo "Stage 0 - Written ${diskloader} to ${bootdisk}" >> "${bootvolume}/Clover_Install_Log.txt"
-echo "/usr/local/bin/fdisk440 -u -f ${bootvolume}/usr/standalone/i386/${diskloader} -y ${bootdisk}" >> "${bootvolume}/Clover_Install_Log.txt"
-echo " " >> "${bootvolume}/Clover_Install_Log.txt"
+echo "Stage 0 - Written ${diskloader} to ${bootdisk}" >> "$install_log"
+echo "/usr/local/bin/fdisk440 -u -f ${bootvolume}/usr/standalone/i386/${diskloader} -y ${bootdisk}" >> "$install_log"
+echo " " >> "$install_log"
 
 "/usr/local/bin/fdisk440" -u -f "${bootvolume}/usr/standalone/i386/${diskloader}" -y ${bootdisk}
 
@@ -91,10 +94,10 @@ echo " " >> "${bootvolume}/Clover_Install_Log.txt"
 if [ ${efiformat} = "hfs" ]; then
 	echo "Executing command: dd if=/usr/standalone/i386/${partitionloaderhfs} of=${bootrdev}"
 
-	echo "Stage 1 - Written ${partitionloaderhfs} to ${bootrdev}" >> "${bootvolume}/Clover_Install_Log.txt"
-	echo "File system is HFS." >> "${bootvolume}/Clover_Install_Log.txt"
-	echo "dd if=${bootvolume}/usr/standalone/i386/${partitionloaderhfs} of=${bootrdev}" >> "${bootvolume}/Clover_Install_Log.txt"
-	echo " " >> "${bootvolume}/Clover_Install_Log.txt"
+	echo "Stage 1 - Written ${partitionloaderhfs} to ${bootrdev}" >> "$install_log"
+	echo "File system is HFS." >> "$install_log"
+	echo "dd if=${bootvolume}/usr/standalone/i386/${partitionloaderhfs} of=${bootrdev}" >> "$install_log"
+	echo " " >> "$install_log"
 
 	dd if="${bootvolume}/usr/standalone/i386/${partitionloaderhfs}" of=${bootrdev}
 
@@ -125,17 +128,17 @@ if [ ${efiformat} = "msdos" ]; then
 	echo "Executing command: dd if=/tmp/newbs of=${bootrdev}"
 	dd if=/tmp/newbs of=${bootrdev}
 
-	echo "Stage 1 - Written ${partitionloaderfat} to ${bootrdev}" >> "${bootvolume}/Clover_Install_Log.txt"
-	echo "File system is Fat32." >> "${bootvolume}/Clover_Install_Log.txt"
-	echo "dd if=${bootrdev} count=1 bs=512 of=/tmp/origbs" >> "${bootvolume}/Clover_Install_Log.txt"
-	echo "cp ${bootvolume}/usr/standalone/i386/${partitionloaderfat} /tmp/newbs" >> "${bootvolume}/Clover_Install_Log.txt"
-	echo "dd if=/tmp/origbs of=/tmp/newbs skip=3 seek=3 bs=1 count=87 conv=notrunc" >> "${bootvolume}/Clover_Install_Log.txt"
-	echo "dd if=/tmp/newbs of=${bootrdev}" >> "${bootvolume}/Clover_Install_Log.txt"
-	echo " " >> "${bootvolume}/Clover_Install_Log.txt"
+	echo "Stage 1 - Written ${partitionloaderfat} to ${bootrdev}" >> "$install_log"
+	echo "File system is Fat32." >> "$install_log"
+	echo "dd if=${bootrdev} count=1 bs=512 of=/tmp/origbs" >> "$install_log"
+	echo "cp ${bootvolume}/usr/standalone/i386/${partitionloaderfat} /tmp/newbs" >> "$install_log"
+	echo "dd if=/tmp/origbs of=/tmp/newbs skip=3 seek=3 bs=1 count=87 conv=notrunc" >> "$install_log"
+	echo "dd if=/tmp/newbs of=${bootrdev}" >> "$install_log"
+	echo " " >> "$install_log"
 
 	echo "${efiformat}" > "${bootvolume}/formattype"
 	
-	echo "Setup Active Partition to be : ${bootslice}" >> "${bootvolume}/Clover_Install_Log.txt"
+	echo "Setup Active Partition to be : ${bootslice}" >> "$install_log"
 	"/usr/local/bin/fdisk440" -e ${bootrdisk} <<-MAKEACTIVE
 	print
 	flag ${bootslice}
@@ -147,8 +150,8 @@ if [ ${efiformat} = "msdos" ]; then
 fi
 
 partitionactive=$( /usr/local/bin/fdisk440 -d ${bootrdisk} | grep -n "*" | awk -F: '{print $1}')
-echo "Current Active Partition: ${partitionactive}" >> "${bootvolume}/Clover_Install_Log.txt"
-echo " " >> "${bootvolume}/Clover_Install_Log.txt"
+echo "New Active Partition: ${partitionactive}" >> "$install_log"
+echo "" >> "$install_log"
 
 echo "${diskloader}" > "${bootvolume}/boot0type"
 

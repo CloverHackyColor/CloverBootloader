@@ -33,5 +33,3 @@ if [[ -f "${osxvolume}/usr/standalone/i386/$boottype/$cloverEFIFile" ]]; then
     chflags hidden "${osxvolume}/boot"
     echo "Stage 2 - Written $cloverEFIFile ($boottype) to ${osxvolume}/boot" >> "${osxvolume}/Clover_Install_Log.txt"
 fi
-
-echo "======================================================" >> "${osxvolume}/Clover_Install_Log.txt"

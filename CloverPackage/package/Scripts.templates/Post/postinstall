@@ -134,7 +134,7 @@ case "${boottype}" in
 esac
 
 
-echo " " >> "${install_log}"
+echo "" >> "${install_log}"
 echo "======================================================" >> "${install_log}"
 echo "=========== Clover EFI Installation Finish ===========" >> "${install_log}"
 echo "======================================================" >> "${install_log}"
