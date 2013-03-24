@@ -726,6 +726,7 @@ typedef struct {
   BOOLEAN HVHideAllLinuxMint;
   BOOLEAN HVHideAllFedora;
   BOOLEAN HVHideAllSuSe;
+  BOOLEAN HVHideAllArch;
   //BOOLEAN HVHideAllUEFI;
   BOOLEAN HVHideOpticalUEFI;
   BOOLEAN HVHideInternalUEFI;

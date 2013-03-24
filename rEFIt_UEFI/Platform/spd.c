@@ -424,7 +424,7 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
     }
     
     // laptops sometimes show slot 0 and 2 with slot 1 empty when only 2 slots are presents so:
-    gDMI->DIMM[i]= (UINT32)((i>0 && gRAM->DIMM[1].InUse==FALSE && fullBanks && gDMI->CntMemorySlots == 2)?mapping[i] : i); // for laptops case, mapping setup would need to be more generic than this
+    gDMI->DIMM[i]= (UINT32)((i>0 && gRAM->DIMM[1].InUse==FALSE && !fullBanks && gDMI->CntMemorySlots == 2)?mapping[i] : i); // for laptops case, mapping setup would need to be more generic than this
     
 		slot->spd = NULL;
     

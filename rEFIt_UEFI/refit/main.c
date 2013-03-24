@@ -1370,6 +1370,28 @@ static VOID ScanLoader(VOID)
 //      continue;
     }
     
+    // check for archlinux boot loader/menu
+#if defined(MDE_CPU_X64)
+    StrCpy(FileName, L"\\EFI\\arch\\grubx64.efi");
+#else
+    StrCpy(FileName, L"\\EFI\\arch\\grub.efi");
+#endif
+    if (FileExists(Volume->RootDir, FileName)) {
+       Volume->BootType = BOOTING_BY_EFI;
+       if (!gSettings.HVHideAllArch)
+          Entry = AddLoaderEntry(FileName, L"ArchLinux EFI boot menu", Volume, OSTYPE_LIN);
+    }
+#if defined(MDE_CPU_X64)
+    StrCpy(FileName, L"\\EFI\\arch_grub\\grubx64.efi");
+#else
+    StrCpy(FileName, L"\\EFI\\arch_grub\\grub.efi");
+#endif
+    if (FileExists(Volume->RootDir, FileName)) {
+       Volume->BootType = BOOTING_BY_EFI;
+       if (!gSettings.HVHideAllArch)
+          Entry = AddLoaderEntry(FileName, L"ArchLinux EFI boot menu", Volume, OSTYPE_LIN);
+    }
+
 #if defined(MDE_CPU_X64)
       StrCpy(FileName, L"\\EFI\\BOOT\\BOOTX64.efi");
 #else      

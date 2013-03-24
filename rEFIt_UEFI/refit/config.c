@@ -367,6 +367,7 @@ VOID ReadConfig(INTN What)
       gSettings.HVHideAllLinuxMint = FALSE;
       gSettings.HVHideAllFedora = FALSE;
       gSettings.HVHideAllSuSe = FALSE;
+      gSettings.HVHideAllArch = FALSE;
       gSettings.HVHideOpticalUEFI = FALSE;
       gSettings.HVHideInternalUEFI = FALSE;
       gSettings.HVHideExternalUEFI = FALSE;
@@ -505,6 +506,8 @@ VOID ReadConfig(INTN What)
           gSettings.HVHideAllFedora = TRUE;
         else if (StriCmp(TokenList[i], L"suse") == 0)
           gSettings.HVHideAllSuSe = TRUE;
+        else if (StriCmp(TokenList[i], L"arch") == 0)
+           gSettings.HVHideAllArch = TRUE;
         else if (StriCmp(TokenList[i], L"opticaluefi") == 0)
           gSettings.HVHideOpticalUEFI = TRUE;
         else if (StriCmp(TokenList[i], L"internaluefi") == 0)

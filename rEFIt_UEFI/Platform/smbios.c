@@ -1067,7 +1067,7 @@ VOID PatchTableType16()
 	} */
 	//MemoryErrorInformationHandle
 	newSmbiosTable.Type16->MemoryErrorInformationHandle = 0xFFFF;
-	newSmbiosTable.Type16->NumberOfMemoryDevices = gDMI->MemoryModules;
+	newSmbiosTable.Type16->NumberOfMemoryDevices = gDMI->CntMemorySlots;//gDMI->MemoryModules;
 	mHandle16 = LogSmbiosTable(newSmbiosTable);
 	return;
 }
