@@ -29,7 +29,7 @@ GetNVRamKey() {
     #    exit code is != 0 if the nvram key wasn't found
     local keyvalue exitCode
     local IFS=$(printf "\t")
-    keyvalue=( $(nvram "$1" 2>/dev/null) )
+    keyvalue=( $(/usr/sbin/nvram -p | /usr/bin/grep -i "^${1}\t*" 2>/dev/null) )
     exitCode=$?
     [[ $exitCode -eq 0 ]] && echo "${keyvalue[1]}"
     return $exitCode
