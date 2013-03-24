@@ -4,6 +4,8 @@ diskloader="boot0hfs"
 partitionloaderhfs="boot1h2"
 partitionloaderfat="boot1f32alt"
 install_log="${3}/Clover_Install_Log.txt"
+installer_plist="${3}/EFI/CloverInstaller.plist"
+installer_choice="@INSTALLER_CHOICE@"
 
 start ()
 {
@@ -154,5 +156,8 @@ echo "New Active Partition: ${partitionactive}" >> "$install_log"
 echo "" >> "$install_log"
 
 echo "${diskloader}" > "${bootvolume}/boot0type"
+
+# Mark that the option was selected
+/usr/libexec/plistbuddy -c "Add $installer_choice bool true" "$installer_plist" >/dev/null
 
 exit

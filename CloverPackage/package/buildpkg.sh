@@ -474,60 +474,70 @@ main ()
     addGroupChoices --exclusive_one_choice "Clover"
     echo "===================== BootLoaders ======================"
     packagesidentity="$clover_package_identity".bootloader
-# build boot1no package
-    choiceId="boot1no"
-    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
-    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
-
+# build bootNo package
+    choiceId="bootNo"
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
+                       --subst="INSTALLER_CHOICE=$packageRefId"      \
+                       ${choiceId}
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    addChoice --group="Clover" --start-selected="false" \
-     --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
-# End build boot1no package
+    addChoice --group="Clover"                                             \
+              --start-selected="choicePreviouslySelected('$packageRefId')" \
+              --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
+# End build bootNo package
 
 # build boot0 package
     choiceId="boot0"
-    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
-    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
+                       --subst="INSTALLER_CHOICE=$packageRefId"      \
+                       ${choiceId}
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    addChoice --group="Clover" --start-selected="false" \
-     --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
+    addChoice --group="Clover"                                             \
+              --start-selected="choicePreviouslySelected('$packageRefId')" \
+              --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
 # End build boot0 package
 
 # build boot0hfs package
     choiceId="boot0hfs"
-    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
-    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
-
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
+                       --subst="INSTALLER_CHOICE=$packageRefId"      \
+                       ${choiceId}
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    addChoice --group="Clover" --start-selected="! checkBootFromUEFI()" \
-     --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
+    addChoice --group="Clover"                                             \
+              --start-selected="choicePreviouslySelected('$packageRefId')" \
+              --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
 # End build boot0hfs package
 
-# build boot0EFI package
+# build boot0EFIboot0EFI package
     choiceId="boot0EFI"
-    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
-    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
-
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
+                       --subst="INSTALLER_CHOICE=$packageRefId"      \
+                       ${choiceId}
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    addChoice --group="Clover" --start-selected="false" \
-     --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
+    addChoice --group="Clover"                                             \
+              --start-selected="choicePreviouslySelected('$packageRefId')" \
+              --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
 # End build boot0EFI package
 
-
-# build boot1UEFI package
-    choiceId="boot1UEFI"
-    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
-    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
-
+# build bootUEFI package
+    choiceId="bootUEFI"
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
+                       --subst="INSTALLER_CHOICE=$packageRefId"      \
+                       ${choiceId}
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    addChoice --group="Clover" --start-selected="checkBootFromUEFI()" \
-     --pkg-refs="$packageRefId" "${choiceId}"
-# End build boot1UEFI package
+    addChoice --group="Clover"                        \
+              --start-selected="checkBootFromUEFI()"  \
+              --pkg-refs="$packageRefId" "${choiceId}"
+# End build bootUEFI package
 
 if [[ "$add_ia32" -eq 1 ]]; then
     # Create Boot Arch Node
@@ -702,19 +712,20 @@ fi
     do
         local script_rel_path=etc/"${scripts[$i]##*/etc/}" # ie: etc/rc.boot.d/70.xx_yy_zz.local.disabled
         local script="${script_rel_path##*/}" # ie: 70.xx_yy_zz.local.disabled
-        local name=$(echo "$script" | sed -E 's/^[0-9]*[.]?//;s/\.local\.disabled//') # ie: xx_yy_zz
-        local choiceId=rc.$name  # ie: rc.xx_yy_zz
-        local title=${name//_/ } # ie: rc.xx yy zz
+        local choiceId=$(echo "$script" | sed -E 's/^[0-9]*[.]?//;s/\.local\.disabled//') # ie: xx_yy_zz
+        local title=${choiceId//_/ } # ie: xx yy zz
+        packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
         mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
         addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" \
-                           --subst="RC_SCRIPT=$script_rel_path"         \
-                           OptRcScripts
+                          --subst="RC_SCRIPT=$script_rel_path"          \
+                          --subst="INSTALLER_CHOICE=$packageRefId"      \
+                          OptRcScripts
         fixperms  "${PKG_BUILD_DIR}/${choiceId}/Root/"
         chmod 755 "${PKG_BUILD_DIR}/${choiceId}/Scripts/postinstall"
-        packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
         buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-        addChoice --group="OptionalRCScripts" --title="$title" \
-         --start-selected="false" --pkg-refs="$packageRefId" "${choiceId}"
+        addChoice --group="OptionalRCScripts" --title="$title"                  \
+                  --start-selected="choicePreviouslySelected('$packageRefId')"  \
+                  --pkg-refs="$packageRefId" "${choiceId}"
     done
 # End build optional rc scripts package
 

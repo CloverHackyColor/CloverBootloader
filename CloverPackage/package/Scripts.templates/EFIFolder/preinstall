@@ -90,3 +90,6 @@ for pkg in $pkgs; do
         /usr/bin/grep -iE 'EFI/(BOOT/themes|drivers\w+)/' | \
         xargs rm -rf
 done
+
+# Remove old Clover Installer plist if exists
+rm -f "${dest_vol}/EFI/CloverInstaller.plist"

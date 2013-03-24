@@ -60,6 +60,14 @@
 		return false;
 	}
 
+    function choicePreviouslySelected(option) {
+        if (checkFileExists('/EFI/CloverInstaller.plist')) {
+            dict = system.files.plistAtPath(my.target.mountpoint + '/EFI/CloverInstaller.plist');
+            return dict[option] == undefined ? false : dict[option];
+        }
+        return false;
+    }
+
 	function checkBootFromUEFI() {
 		var classObjects = system.ioregistry.matchingName('efi','IODeviceTree');
 		if (classObjects) {
