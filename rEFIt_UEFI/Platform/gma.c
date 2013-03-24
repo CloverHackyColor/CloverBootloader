@@ -167,7 +167,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x0116:
     case 0x0122:
     case 0x0126:
-      if (gma_dev->device_id == 0x122)
+      if ((gma_dev->device_id == 0x112) || (gma_dev->device_id == 0x122))
         devprop_add_value(device, "device-id", FakeID_126, 4);
     case 0x0152:
     case 0x0156:
