@@ -350,7 +350,6 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
     if (spd_size && (spd_size != 0xff))
     {
 			slot->spd = spdbuf;
-      slot->InUse = TRUE;
       
       ZeroMem(slot->spd, spd_size);
       
@@ -385,6 +384,8 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
       
       spd_type = (slot->spd[SPD_MEMORY_TYPE] < ((UINT8) 12) ? slot->spd[SPD_MEMORY_TYPE] : 0);
       slot->Type = spd_mem_to_smbios[spd_type];
+      if (slot->Type == UNKNOWN_MEM_TYPE) continue;
+
       slot->PartNo = getDDRPartNum(slot->spd, base, i);
       slot->Vendor = getVendorName(slot, base, i);
       slot->SerialNo = getDDRSerial(slot->spd);
@@ -418,9 +419,9 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
              slot->Frequency,
              slot->Vendor,
              slot->PartNo,
-             slot->SerialNo); 
+             slot->SerialNo);
       
-      
+      slot->InUse = TRUE;
     }
     
     // laptops sometimes show slot 0 and 2 with slot 1 empty when only 2 slots are presents so:
