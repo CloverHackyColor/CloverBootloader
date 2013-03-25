@@ -927,30 +927,30 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   
   // get volume name
   if (!Volume->VolName) {
-    if (Volume->RootDir) {
-      RootInfo = EfiLibFileInfo (Volume->RootDir);
-      if (RootInfo) {
-        //      MsgLog("  Volume name from RootFile\n"); //usually
-        Volume->VolName = EfiStrDuplicate(RootInfo->FileName);
-        FreePool(RootInfo);
-      }
-    }
-  }
-  if (!Volume->VolName) {
     FileSystemInfoPtr = EfiLibFileSystemInfo(Volume->RootDir);
     if (FileSystemInfoPtr) {
       MsgLog("  Volume name from FileSystem\n");
       Volume->VolName = EfiStrDuplicate(FileSystemInfoPtr->VolumeLabel);
       FreePool(FileSystemInfoPtr);
     }
-    if (!Volume->VolName) {
-      VolumeInfo = EfiLibFileSystemVolumeLabelInfo(Volume->RootDir);
-      if (VolumeInfo) {
-        //        MsgLog("  Volume name from VolumeLabel\n");
-        Volume->VolName = EfiStrDuplicate(VolumeInfo->VolumeLabel);
-        FreePool(VolumeInfo); 
-      }  
-    }
+  }
+  if (!Volume->VolName) {
+     VolumeInfo = EfiLibFileSystemVolumeLabelInfo(Volume->RootDir);
+     if (VolumeInfo) {
+       //        MsgLog("  Volume name from VolumeLabel\n");
+       Volume->VolName = EfiStrDuplicate(VolumeInfo->VolumeLabel);
+       FreePool(VolumeInfo); 
+     }
+   }
+  if (!Volume->VolName) {
+     if (Volume->RootDir) {
+        RootInfo = EfiLibFileInfo (Volume->RootDir);
+        if (RootInfo) {
+           //      MsgLog("  Volume name from RootFile\n"); //usually
+           Volume->VolName = EfiStrDuplicate(RootInfo->FileName);
+           FreePool(RootInfo);
+        }
+     }
   }
   if (!Volume->VolName) {
     DBG("Create unknown name\n");
