@@ -116,9 +116,25 @@ EfiLibFileSystemVolumeLabelInfo (
     Size += 2;
     VolumeInfo = AllocateZeroPool (Size);
     Status = FHand->GetInfo (FHand, &gEfiFileSystemVolumeLabelInfoIdGuid, &Size, VolumeInfo);
+    // Check to make sure this isn't actually EFI_FILE_SYSTEM_INFO
+    if (!EFI_ERROR(Status))
+    {
+       EFI_FILE_SYSTEM_INFO *FSInfo = (EFI_FILE_SYSTEM_INFO *)VolumeInfo;
+       if (FSInfo->Size == (UINT64)Size)
+       {
+          // Allocate a new volume label
+          VolumeInfo = (EFI_FILE_SYSTEM_VOLUME_LABEL *)(FSInfo->VolumeLabel);
+          FreePool(FSInfo);
+       }
+    }
+    if (!EFI_ERROR(Status))
+    {
+       return VolumeInfo;
+    }
+    FreePool(VolumeInfo);
   }
-  
-  return EFI_ERROR(Status)?NULL:VolumeInfo;  
+
+  return NULL;
 }
 
 /**
