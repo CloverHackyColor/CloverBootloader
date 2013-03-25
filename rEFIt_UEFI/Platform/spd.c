@@ -224,14 +224,18 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
 CHAR8* getDDRSerial(UINT8* spd)
 {
     CHAR8* asciiSerial; //[16];
-    asciiSerial = AllocatePool(16);
+    asciiSerial = AllocatePool(17);
     if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR3) // DDR3
     {
-	AsciiSPrint(asciiSerial, 16, "%X%X%X%X%X%X%X%X", SMST(122) /*& 0x7*/, SLST(122), SMST(123), SLST(123), SMST(124), SLST(124), SMST(125), SLST(125));
+	AsciiSPrint(asciiSerial, 17, "%2X%2X%2X%2X%2X%2X%2X%2X", SMST(122) /*& 0x7*/, SLST(122), SMST(123), SLST(123), SMST(124), SLST(124), SMST(125), SLST(125));
     }
     else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR2 || spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR) // DDR2 or DDR
     { 
-	AsciiSPrint(asciiSerial, 16, "%X%X%X%X%X%X%X%X", SMST(95) /*& 0x7*/, SLST(95), SMST(96), SLST(96), SMST(97), SLST(97), SMST(98), SLST(98));
+	AsciiSPrint(asciiSerial, 17, "%2X%2X%2X%2X%2X%2X%2X%2X", SMST(95) /*& 0x7*/, SLST(95), SMST(96), SLST(96), SMST(97), SLST(97), SMST(98), SLST(98));
+    }
+    else
+    {
+       AsciiStrCpy(asciiSerial, "0000000000000000");
     }
 
     return asciiSerial;
@@ -384,8 +388,6 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
       
       spd_type = (slot->spd[SPD_MEMORY_TYPE] < ((UINT8) 12) ? slot->spd[SPD_MEMORY_TYPE] : 0);
       slot->Type = spd_mem_to_smbios[spd_type];
-      if (slot->Type == UNKNOWN_MEM_TYPE) continue;
-
       slot->PartNo = getDDRPartNum(slot->spd, base, i);
       slot->Vendor = getVendorName(slot, base, i);
       slot->SerialNo = getDDRSerial(slot->spd);
