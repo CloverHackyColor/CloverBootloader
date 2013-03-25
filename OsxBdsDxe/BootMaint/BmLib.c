@@ -243,7 +243,7 @@ EfiLibFileSystemVolumeLabelInfo (
        if (FSInfo->Size == (UINT64)Size)
        {
           // Allocate a new volume label
-          VolumeInfo = (EFI_FILE_SYSTEM_VOLUME_LABEL *)(FSInfo->VolumeLabel);
+          VolumeInfo = (EFI_FILE_SYSTEM_VOLUME_LABEL *)EfiStrDuplicate(FSInfo->VolumeLabel);
           FreePool(FSInfo);
        }
     }
