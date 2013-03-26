@@ -1112,7 +1112,7 @@ VOID PatchTableType17()
 	CHAR8	bankLocator[10];
 	CHAR8 *EmptySlot = "[empty]";
    INTN map = gDMI->DIMM[Index];
-   INTN map0 = map;
+   //INTN map0 = map;
    MEMORY_DEVICE_TYPE spdType;
 	
   // Memory Device
@@ -1194,6 +1194,7 @@ VOID PatchTableType17()
 */
 #else
 		map = gDMI->DIMM[Index];
+      /*
       map0 = map;
 		if (gDMI->DIMM[2] && Index == 1 &&  TotalCount == 2)
 		{
@@ -1239,6 +1240,7 @@ VOID PatchTableType17()
 		if(gRAM->DIMM[map].Frequency>0 && gRAM->DIMM[map].InUse){
 			newSmbiosTable.Type17->Speed = (UINT16)gRAM->DIMM[map].Frequency;			
 		}
+      newSmbiosTable.Type17->Size = (UINT16)gRAM->DIMM[map].ModuleSize;
 #endif
 		if ((newSmbiosTable.Type17->Speed < 20) || (SmbiosTable.Type17->Speed > 20000)) {
 			newSmbiosTable.Type17->Speed = 800;
