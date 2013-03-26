@@ -1208,7 +1208,7 @@ VOID PatchTableType17()
 			if (gRAM->DIMM[map0].InUse){
       map = map0;
 //			DBG("old map InUse\n");
-    } /*else {
+    } *//*else {
 			DBG("both map not In Use. TODO?\n");
 		}*/
 
