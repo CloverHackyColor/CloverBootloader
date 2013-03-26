@@ -490,7 +490,6 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
 		slot->spd = NULL;
     
   } // for
-  // Adjust wrong memory speed in slot that is wrongly
 }
 /*
 static struct smbus_controllers_t smbus_controllers[] = {
@@ -522,6 +521,7 @@ VOID ScanSPD()
 	UINTN				ArrayCount;
 	UINTN				HandleIndex;
 	UINTN				ProtocolIndex;
+   BOOLEAN        FoundSMBus = FALSE;
 
 	/* Scan PCI BUS For SmBus controller */
 	Status = gBS->LocateHandleBuffer(AllHandles,NULL,NULL,&HandleCount,&HandleBuffer);
@@ -553,12 +553,23 @@ VOID ScanSPD()
 								&& (gPci.Hdr.ClassCode[0] == 0) && (gPci.Hdr.VendorId == 0x8086))
 							{
 								read_smb_intel(PciIo);
-							}							
+                        FoundSMBus = TRUE;
+							}
 						}
 					}
 				}
 			}
 		}
 	}
+   // Use smbios information if smbus not found
+   if (!FoundSMBus)
+   {
+      UINTN i = 0;
+      while (i < gDMI->CntMemorySlots)
+      {
+         // Assume a module is in use if it has size and frequency
+         gRAM->DIMM[i++].InUse = ((gRAM->DIMM[i].Frequency > 0) && (gRAM->DIMM[i].ModuleSize > 0));
+      }
+   }
 }
 
