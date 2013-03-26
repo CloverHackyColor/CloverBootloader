@@ -12,6 +12,7 @@
  * Dynamic mem detection original impl. by Rekursor
  * System profiler fix and other fixes by Mozodojo.
  * Slice 2011  remade for UEFI
+ * XMP detection - apianti
  */
 
 //
@@ -86,6 +87,19 @@ UINT8 spd_mem_to_smbios[] =
 #define SMBHSTDAT 5
 #define SBMBLKDAT 7
 
+// XMP memory profile
+#define SPD_XMP_SIG1 176
+#define SPD_XMP_SIG1_VALUE 0x0C
+#define SPD_XMP_SIG2 177
+#define SPD_XMP_SIG2_VALUE 0x4A
+#define SPD_XMP_PROFILES 178
+#define SPD_XMP_PROF1_DIVISOR 180
+#define SPD_XMP_PROF1_DIVIDEND 181
+#define SPD_XMP_PROF2_DIVISOR 182
+#define SPD_XMP_PROF2_DIVIDEND 183
+#define SPD_XMP_PROF1_RATIO 186
+#define SPD_XMP_PROF2_RATIO 221
+
 UINT8 spd_indexes[] = {
 	SPD_MEMORY_TYPE,
 	SPD_DDR3_MEMORY_BANK,
@@ -94,8 +108,18 @@ UINT8 spd_indexes[] = {
 	SPD_NUM_COLUMNS,
 	SPD_NUM_DIMM_BANKS,
 	SPD_NUM_BANKS_PER_SDRAM,
-	4,7,8,9,12,64, /* TODO: give names to these values */
-	95,96,97,98, 122,123,124,125 /* UIS */
+	4,7,8,9,10,11,12,64, /* TODO: give names to these values */
+	95,96,97,98, 122,123,124,125, /* UIS */
+   /* XMP */
+   SPD_XMP_SIG1,
+   SPD_XMP_SIG2,
+   SPD_XMP_PROFILES,
+   SPD_XMP_PROF1_DIVISOR,
+   SPD_XMP_PROF1_DIVIDEND,
+   SPD_XMP_PROF2_DIVISOR,
+   SPD_XMP_PROF2_DIVIDEND,
+   SPD_XMP_PROF1_RATIO,
+   SPD_XMP_PROF2_RATIO
 };
 #define SPD_INDEXES_SIZE (sizeof(spd_indexes) / sizeof(INT8))
 
@@ -189,6 +213,7 @@ CHAR8* getVendorName(RAM_SLOT_INFO* slot, UINT32 base, UINT8 slot_num)
 UINT16 getDDRspeedMhz(UINT8 * spd)
 {
     if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR3) { 
+       /*
         switch(spd[12])  {
         case 0x0f:
             return 1066;
@@ -200,9 +225,40 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
         default:
             return 800;
         }
+        */
+       // This should be multiples of MTB converted to MHz- apianti
+       UINT16 divisor = spd[10];
+       UINT16 dividend = spd[11];
+       UINT16 ratio = spd[12];
+       // Check if an XMP profile is enabled
+       if ((spd[SPD_XMP_SIG1] == SPD_XMP_SIG1_VALUE) &&
+           (spd[SPD_XMP_SIG2] == SPD_XMP_SIG2_VALUE) &&
+           ((spd[SPD_XMP_PROFILES] & 3) != 0))
+       {
+          if ((spd[SPD_XMP_PROFILES] & 3) == 1)
+          {
+            // Use first profile
+            divisor = spd[SPD_XMP_PROF1_DIVISOR];
+            dividend = spd[SPD_XMP_PROF1_DIVIDEND];
+            ratio = spd[SPD_XMP_PROF1_RATIO];
+          }
+          else
+          {
+            // Use second profile
+            divisor = spd[SPD_XMP_PROF2_DIVISOR];
+            dividend = spd[SPD_XMP_PROF2_DIVIDEND];
+            ratio = spd[SPD_XMP_PROF2_RATIO];
+          }
+       }
+       // Check values are sane
+       if ((dividend != 0) && (divisor != 0) && (ratio != 0))
+       {
+          // Convert to MHz from nanoseconds - 2 * (1000 / nanoseconds)
+          return ((2000 * dividend) / (divisor * ratio));
+       }
     } 
     else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR2 || spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR)  {
-        switch(spd[9]) {
+       switch(spd[9]) {
         case 0x50:
             return 400;
         case 0x3d:
@@ -212,6 +268,8 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
         case 0x25:
         default:
             return 800;
+        case 0x1E:
+            return 1066;
         }
     }
     return  800; // default freq for unknown types //shit! DDR1 = 533
@@ -432,6 +490,7 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
 		slot->spd = NULL;
     
   } // for
+  // Adjust wrong memory speed in slot that is wrongly
 }
 /*
 static struct smbus_controllers_t smbus_controllers[] = {

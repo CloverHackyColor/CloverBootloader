@@ -1248,8 +1248,8 @@ VOID PatchTableType17()
 		
 		//now I want to update deviceLocator and bankLocator		
 	
-		AsciiSPrint(deviceLocator, 10, "DIMM%d",  Index >> 1);
-		AsciiSPrint(bankLocator, 10, "BANK %d", Index & 1);
+		AsciiSPrint(deviceLocator, 10, "DIMM%d",  map >> 1);
+		AsciiSPrint(bankLocator, 10, "BANK %d", map & 1);
 		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
 		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, (CHAR8*)&bankLocator[0]);
 		newSmbiosTable.Type17->MemoryErrorInformationHandle = 0xFFFF;
