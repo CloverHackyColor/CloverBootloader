@@ -568,7 +568,8 @@ VOID ScanSPD()
       while (i < gDMI->CntMemorySlots)
       {
          // Assume a module is in use if it has size and frequency
-         gRAM->DIMM[i++].InUse = ((gRAM->DIMM[i].Frequency > 0) && (gRAM->DIMM[i].ModuleSize > 0));
+         gRAM->DIMM[i].InUse = ((gRAM->DIMM[i].Frequency > 0) && (gRAM->DIMM[i].ModuleSize > 0));
+         ++i;
       }
    }
 }
