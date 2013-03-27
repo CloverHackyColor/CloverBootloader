@@ -327,7 +327,7 @@ CHAR8* getDDRPartNum(UINT8* spd, UINT32 base, UINT8 slot)
 	return asciiPartNo;
 }
 
-INTN mapping []= {0,2,1,3,4,6,5,7,8,10,9,11};
+//INTN mapping []= {0,2,1,3,4,6,5,7,8,10,9,11};
 #define PCI_COMMAND_OFFSET                          0x04
 
 /** Read from smbus the SPD content and interpret it for detecting memory attributes */
@@ -485,7 +485,7 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
     }
     
     // laptops sometimes show slot 0 and 2 with slot 1 empty when only 2 slots are presents so:
-    gDMI->DIMM[i]= (UINT32)((i>0 && gRAM->DIMM[1].InUse==FALSE && !fullBanks && gDMI->CntMemorySlots == 2)?mapping[i] : i); // for laptops case, mapping setup would need to be more generic than this
+    //gDMI->DIMM[i]= (UINT32)((i>0 && gRAM->DIMM[1].InUse==FALSE && !fullBanks && TotalCount == 2)?mapping[i] : i); // for laptops case, mapping setup would need to be more generic than this
     
 		slot->spd = NULL;
     

@@ -1079,13 +1079,13 @@ VOID GetTableType17()
 	// Get Table Type17 and count Size
 	gDMI->CntMemorySlots = 0;
 	gDMI->MemoryModules = 0;
-	for (Index = 0; Index < TotalCount; Index++) {
+	for (Index = 0; Index < MAX_SLOT_COUNT; Index++) {
 		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, Index);
-		DBG("Type 17 Index = %d\n", Index);
 		if (SmbiosTable.Raw == NULL) {
 //			DBG("SmbiosTable: Type 17 (Memory Device number %d) not found!\n", Index);
 			continue;
 		}
+      DBG("Type 17 Index = %d\n", Index);
 		gDMI->CntMemorySlots++;
 		if (SmbiosTable.Type17->Size > 0) {
 			gDMI->MemoryModules++;
@@ -1105,20 +1105,22 @@ VOID GetTableType17()
 	}
 }
 		
-
+INTN mapping []= {0,2,1,3,4,6,5,7,8,10,9,11};
 VOID PatchTableType17()
 {
 	CHAR8	deviceLocator[10];
 	CHAR8	bankLocator[10];
 	CHAR8 *EmptySlot = "[empty]";
-   INTN map = gDMI->DIMM[Index];
+   //INTN map = gDMI->DIMM[Index];
    //INTN map0 = map;
    MEMORY_DEVICE_TYPE spdType;
+   BOOLEAN wrongBanks = ((gDMI->MemoryModules != gDMI->CntMemorySlots) && (gDMI->CntMemorySlots != TotalCount));
 	
   // Memory Device
   //
 	for (Index = 0; Index < TotalCount; Index++) {
-		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, Index);
+      INTN map = wrongBanks ? mapping[Index] : Index;
+		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, map);
 		//}
 		//DBG("SMBIOS Type 17 Index = %d:\n", Index);
 		if (SmbiosTable.Raw == NULL) {
@@ -1128,6 +1130,7 @@ VOID PatchTableType17()
 /*		if ((SmbiosTable.Type17->Size == 0) || (SmbiosTable.Type17->Speed == 0)) {
 			continue;
 		} */
+      DBG("SMBIOS Type 17 Index = %d => %d:\n", Index, map);
 		TableSize = SmbiosTableLength(SmbiosTable);
 		ZeroMem((VOID*)newSmbiosTable.Type17, MAX_TABLE_SIZE);
 		CopyMem((VOID*)newSmbiosTable.Type17, (VOID*)SmbiosTable.Type17, TableSize);
@@ -1193,7 +1196,6 @@ VOID PatchTableType17()
 		}
 */
 #else
-		map = gDMI->DIMM[Index];
       /*
       map0 = map;
 		if (gDMI->DIMM[2] && Index == 1 &&  TotalCount == 2)
@@ -1248,8 +1250,8 @@ VOID PatchTableType17()
 		
 		//now I want to update deviceLocator and bankLocator		
 	
-		AsciiSPrint(deviceLocator, 10, "DIMM%d",  map >> 1);
-		AsciiSPrint(bankLocator, 10, "BANK %d", map & 1);
+		AsciiSPrint(deviceLocator, 10, "DIMM%d",  Index >> 1);
+		AsciiSPrint(bankLocator, 10, "BANK %d", Index & 1);
 		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
 		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, (CHAR8*)&bankLocator[0]);
 		newSmbiosTable.Type17->MemoryErrorInformationHandle = 0xFFFF;
@@ -1281,7 +1283,7 @@ PatchTableType19 ()
 	UINT32	TotalEnd = 0; 
 	UINT8	PartWidth = 1;
 	UINT16  SomeHandle = 0x1300; //as a common rule handle=(type<<8 + index)
-	for (Index=0; Index<=TotalCount; Index++) {
+	for (Index=0; Index<=MAX_SLOT_COUNT; Index++) {
 		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_ARRAY_MAPPED_ADDRESS, Index);
 		if (SmbiosTable.Raw == NULL) {			
 			continue;

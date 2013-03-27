@@ -34,7 +34,7 @@ rem have edk2 prepare to build
 
    :generateversion
       rem check for revision number
-      if x"%SVNREVISION%" == x"" goto noedk
+      if x"%SVNREVISION%" == x"" goto failscript
       rem generate build date and time
       set BUILDDATE=
       echo Dim cdt, output, temp > buildtime.vbs
