@@ -745,6 +745,10 @@ typedef struct {
   CHAR8   *RtMLB;
   UINT8   *RtROM;
   UINTN   RtROMLen;
+  CHAR8   *MountEFI;
+  UINT32  LogLineCount;
+  BOOLEAN LogEveryBoot;
+  
   
   // Multi-config
   CHAR16  ConfigName[64];

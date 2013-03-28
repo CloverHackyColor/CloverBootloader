@@ -379,11 +379,6 @@
 		12A17912166BCC15005B0D63 /* SataControllerDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = SataControllerDxe.inf; sourceTree = "<group>"; };
 		12B816791644675800A433E7 /* build32.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build32.sh; sourceTree = "<group>"; };
 		12B8167A1644675800A433E7 /* build64.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build64.sh; sourceTree = "<group>"; };
-		12B816851644675800A433E7 /* llmul.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = llmul.asm; sourceTree = "<group>"; };
-		12B816861644675800A433E7 /* llshl.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = llshl.asm; sourceTree = "<group>"; };
-		12B816871644675800A433E7 /* ulldiv.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = ulldiv.asm; sourceTree = "<group>"; };
-		12B816881644675800A433E7 /* ullrem.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = ullrem.asm; sourceTree = "<group>"; };
-		12B816891644675800A433E7 /* ullshr.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = ullshr.asm; sourceTree = "<group>"; };
 		12B8168C1644675800A433E7 /* egemb_back_selected_small.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = egemb_back_selected_small.h; sourceTree = "<group>"; };
 		12B8168D1644675800A433E7 /* egemb_refit_banner.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = egemb_refit_banner.h; sourceTree = "<group>"; };
 		12B8168E1644675800A433E7 /* Handle.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Handle.h; sourceTree = "<group>"; };
@@ -466,8 +461,6 @@
 		12B816F51644675800A433E7 /* screen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = screen.c; sourceTree = "<group>"; };
 		12B816F61644675800A433E7 /* rEFIt.dsc */ = {isa = PBXFileReference; lastKnownFileType = text; path = rEFIt.dsc; sourceTree = "<group>"; };
 		12B816F71644675800A433E7 /* refit.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = refit.inf; sourceTree = "<group>"; };
-		12B816F81644675800A433E7 /* rEFIt64.dsc */ = {isa = PBXFileReference; lastKnownFileType = text; path = rEFIt64.dsc; sourceTree = "<group>"; };
-		12B816F91644675800A433E7 /* refit64.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = refit64.inf; sourceTree = "<group>"; };
 		12D7546D1657CDD700376797 /* BdsConnect.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BdsConnect.c; sourceTree = "<group>"; };
 		12D754701657CDE800376797 /* DevicePath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DevicePath.c; sourceTree = "<group>"; };
 		12DB2D8616522B2A00A8066D /* CloverX */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CloverX; sourceTree = BUILT_PRODUCTS_DIR; };

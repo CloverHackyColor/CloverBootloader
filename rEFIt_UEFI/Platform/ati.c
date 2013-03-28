@@ -349,7 +349,7 @@ radeon_card_info_t radeon_cards[] = {
   
   { 0x68A0,	0x00000000, CHIP_FAMILY_JUNIPER,	"ATI Radeon HD 5770 Series",		kHoolock	},
   { 0x68A1,	0x00000000, CHIP_FAMILY_JUNIPER,	"ATI Radeon HD 5850 Series",		kHoolock	},
-  { 0x68A8,	0x00000000, CHIP_FAMILY_JUNIPER,	"ATI Radeon HD 5770 Series",		kHoolock	},
+  { 0x68A8,	0x00000000, CHIP_FAMILY_JUNIPER,	"ATI Radeon HD 6850M ",         kHoolock	},
   { 0x68A9,	0x00000000, CHIP_FAMILY_JUNIPER,	"ATI FirePro V5800 (FireGL)",		kHoolock	},
  //was Vervet but Hoolock is better.
   //doesn't matter if you made connectors patch

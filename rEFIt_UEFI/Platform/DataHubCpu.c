@@ -121,6 +121,7 @@ EFI_STATUS SetVariablesForOSX()
 	UINT32      FwFeaturesMask  = 0xC003ffff;
 	UINTN       bootArgsLen;
 	CHAR8*      None	= "none";
+  CHAR8*      Yes   = "Yes";
 	CHAR8*      BA;
   UINTN       LangLen;
   UINTN       SNLen;
@@ -140,13 +141,13 @@ EFI_STATUS SetVariablesForOSX()
 		BA--; LangLen--;
 	}
   
-  SNLen = MIN(20, AsciiStrLen(gSettings.SerialNr));
-  BA = gSettings.SerialNr + SNLen - 1;
+  SNLen = MIN(20, AsciiStrLen(gSettings.BoardSerialNumber));
+  BA = gSettings.BoardSerialNumber + SNLen - 1;
   while ( SNLen > 0 && ((*BA == ' ') || (*BA == 0)) ) {
     BA--; SNLen--;
   }
   if (gSettings.RtMLB == NULL && SNLen > 0) {
-    gSettings.RtMLB = AllocateCopyPool(SNLen + 1, gSettings.SerialNr);
+    gSettings.RtMLB = AllocateCopyPool(SNLen + 1, gSettings.BoardSerialNumber);
   }
   
   if (gSettings.RtROM == NULL) {
@@ -186,7 +187,7 @@ EFI_STATUS SetVariablesForOSX()
                                          sizeof(BackgroundClear), &BackgroundClear);
 	Status = gRS->SetVariable(L"FirmwareFeatures", &gEfiAppleNvramGuid,
                                          /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                                         sizeof(FwFeatures),&FwFeatures);
+                                         sizeof(FwFeatures), &FwFeatures);
 	Status = gRS->SetVariable(L"FirmwareFeaturesMask", &gEfiAppleNvramGuid,
                                          /*	EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          sizeof(FwFeaturesMask), &FwFeaturesMask);
@@ -210,28 +211,44 @@ EFI_STATUS SetVariablesForOSX()
   // we should think how to handle those vars from nvram.plist and ones set here from gSettings
 	Status = gRS->SetVariable(L"boot-args", &gEfiAppleBootGuid,
                                          /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                                         bootArgsLen ,&gSettings.BootArgs);
+                                         bootArgsLen, &gSettings.BootArgs);
 	Status = gRS->SetVariable(L"security-mode", &gEfiAppleBootGuid,
                                          /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                                         5 , (VOID*)None);
+                                         5, (VOID*)None);
   
   // we should have two UUID: platform and system
   // NO! Only Platform is the best solution
   if (!gSettings.InjectSystemID) {
     Status = gRS->SetVariable(L"platform-uuid", &gEfiAppleBootGuid,
                               /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                              16 ,&gUuid);
+                              16, &gUuid);
   }
   
   Status = gRS->SetVariable(L"prev-lang:kbd", &gEfiAppleBootGuid, 
                             /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                                LangLen ,&gSettings.Language);
+                                LangLen, &gSettings.Language);
   
   
   if (gMobile && (gSettings.BacklightLevel != 0xFFFF)) {
     Status = gRS->SetVariable(L"backlight-level", &gEfiAppleBootGuid, 
                               /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                              sizeof(BacklightLevel) ,&gSettings.BacklightLevel);    
+                              sizeof(BacklightLevel), &gSettings.BacklightLevel);    
+  }
+  
+  //Helper for rc.local script
+  Status = gRS->SetVariable(L"Clover.LogLineCount", &gEfiAppleBootGuid, 
+                            EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                            4, &gSettings.LogLineCount);
+  if (gSettings.LogEveryBoot) {
+    Status = gRS->SetVariable(L"Clover.LogEveryBoot", &gEfiAppleBootGuid, 
+                              EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                              4, (VOID*)Yes);    
+    
+  }
+  if (gSettings.MountEFI) { //not NULL
+    Status = gRS->SetVariable(L"Clover.MountEFI", &gEfiAppleBootGuid, 
+                              EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                              AsciiStrSize(gSettings.MountEFI), &gSettings.MountEFI);        
   }
   
 	return Status;

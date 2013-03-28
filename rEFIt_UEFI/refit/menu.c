@@ -345,7 +345,15 @@ VOID RefillInputs(VOID)
   
   InputItems[InputItemsCount].ItemType = ASString; //90
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%s", gSettings.ConfigName);
-
+  
+  InputItems[InputItemsCount].ItemType = BoolValue; //91
+  InputItems[InputItemsCount].BValue   = gSettings.LogEveryBoot;
+  InputItems[InputItemsCount++].SValue = gSettings.LogEveryBoot?L"[+]":L"[ ]"; 
+  InputItems[InputItemsCount].ItemType = Decimal;  //92
+  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.LogLineCount);
+  InputItems[InputItemsCount].ItemType = ASString;  //93
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.MountEFI);
+  
 }
 
 VOID FillInputs(VOID)
@@ -571,7 +579,14 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = ASString; //90
   InputItems[InputItemsCount].SValue   = AllocateZeroPool(64);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%s", gSettings.ConfigName);
-  
+
+  InputItems[InputItemsCount].ItemType = BoolValue; //91
+  InputItems[InputItemsCount].BValue   = gSettings.LogEveryBoot;
+  InputItems[InputItemsCount++].SValue = gSettings.LogEveryBoot?L"[+]":L"[ ]"; 
+  InputItems[InputItemsCount].ItemType = Decimal;  //92
+  InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.LogLineCount);
+  InputItems[InputItemsCount].ItemType = ASString;  //93
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.MountEFI);
 }
 
 
@@ -857,10 +872,27 @@ VOID ApplyInputs(VOID)
     RefillInputs();
     return; //do not double SaveSettings() as it done by GetUserSettings()
   }
-  
+  i++; //91
+  if (InputItems[i].Valid) {
+    gSettings.LogEveryBoot = InputItems[i].BValue;
+  }
+  i++; //92
+  if (InputItems[i].Valid) {
+    gSettings.LogLineCount = (UINT32)StrDecimalToUintn(InputItems[i].SValue);
+  }    
+  i++; //93
+  if (InputItems[i].Valid) {
+    //we must reallocate MountEFI
+    if (gSettings.MountEFI) {
+      FreePool(gSettings.MountEFI);
+    }
+    gSettings.MountEFI = AllocateZeroPool(64);
+    AsciiSPrint(gSettings.MountEFI, 64, "%s", InputItems[i].SValue);
+  }    
   
   SaveSettings(); 
 }
+
 
 VOID FreeItems(VOID)
 {
@@ -2578,6 +2610,18 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);*/
   
+  //15   
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"PatchAPIC:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF;
+  //    InputBootArgs->Entry.ShortcutDigit = 0;
+  InputBootArgs->Item = &InputItems[15];    
+  InputBootArgs->Entry.AtClick = ActionEnter;
+  InputBootArgs->Entry.AtRightClick = ActionDetails;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+  
+  
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->SubScreen = SubScreen;                
   return Entry;
@@ -3080,9 +3124,6 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[90].SValue);
-    InputBootArgs->Entry.Image = NULL;
-    InputBootArgs->Entry.BadgeImage = NULL;
-    InputBootArgs->Entry.SubScreen = NULL;
     InputBootArgs->Entry.ShortcutDigit = 0xF1;
     InputBootArgs->Item = &InputItems[90];    //0
     InputBootArgs->Entry.AtClick = ActionSelect;
@@ -3094,63 +3135,30 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[0].SValue);
-    InputBootArgs->Entry.ShortcutLetter = 'B';
-    InputBootArgs->Entry.Image = NULL;
-    InputBootArgs->Entry.BadgeImage = NULL;
-    InputBootArgs->Entry.SubScreen = NULL;
-    InputBootArgs->Item = &InputItems[0];    //0
+    InputBootArgs->Item = &InputItems[0];    
     InputBootArgs->Entry.AtClick = ActionSelect;
     InputBootArgs->Entry.AtDoubleClick = ActionEnter;
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-    //1
-
-    //2    
-/*    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 255, L"iCloudFix:");
-    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = 0xFFFF;
-    InputBootArgs->Entry.ShortcutDigit = 0;
-    InputBootArgs->Entry.ShortcutLetter = 'C';
-    InputBootArgs->Entry.Image = NULL;
-    InputBootArgs->Entry.BadgeImage = NULL;
-    InputBootArgs->Entry.SubScreen = NULL;
-    InputBootArgs->Item = &InputItems[2];    //2
-    InputBootArgs->Entry.AtClick = ActionEnter;
-    InputBootArgs->Entry.AtRightClick = ActionDetails;
-    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-*/
     //3  
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+/*    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     UnicodeSPrint(Flags, 255, L"String Injection:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = 0xFFFF;
-//    InputBootArgs->Entry.ShortcutDigit = 0;
-    InputBootArgs->Entry.ShortcutLetter = 'G';
-    InputBootArgs->Entry.Image = NULL;
-    InputBootArgs->Entry.BadgeImage = NULL;
-    InputBootArgs->Entry.SubScreen = NULL;
-    InputBootArgs->Item = &InputItems[3];   //3 
+    InputBootArgs->Item = &InputItems[3];  
     InputBootArgs->Entry.AtClick = ActionEnter;
     InputBootArgs->Entry.AtRightClick = ActionDetails;
+    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+*/
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs->Entry.Title = PoolPrint(L"Mount EFI (Yes|disk0):");
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = StrLen(InputItems[93].SValue);
+    InputBootArgs->Item = &InputItems[93];    
+    InputBootArgs->Entry.AtClick = ActionSelect;
+    InputBootArgs->Entry.AtDoubleClick = ActionEnter;
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     
-    //15   
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 255, L"PatchAPIC:");
-    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = 0xFFFF;
-//    InputBootArgs->Entry.ShortcutDigit = 0;
-    InputBootArgs->Entry.ShortcutLetter = 'N';
-    InputBootArgs->Entry.Image = NULL;
-    InputBootArgs->Entry.BadgeImage = NULL;
-    InputBootArgs->Entry.SubScreen = NULL;
-    InputBootArgs->Item = &InputItems[15];    
-    InputBootArgs->Entry.AtClick = ActionEnter;
-    InputBootArgs->Entry.AtRightClick = ActionDetails;
-    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs->Entry.Title = PoolPrint(L"Pointer speed:");
@@ -3161,7 +3169,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.AtClick = ActionSelect;
     InputBootArgs->Entry.AtDoubleClick = ActionEnter;
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-    
+/*    
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs->Entry.Title = PoolPrint(L"DoubleClick Time [ms]:");
     InputBootArgs->Entry.Tag = TAG_INPUT;
@@ -3171,37 +3179,18 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.AtClick = ActionSelect;
     InputBootArgs->Entry.AtDoubleClick = ActionEnter;
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-
+*/
+    
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     UnicodeSPrint(Flags, 255, L"Mirror move:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = 0xFFFF;
-    InputBootArgs->Entry.Image = NULL;
-    InputBootArgs->Entry.BadgeImage = NULL;
-    InputBootArgs->Entry.SubScreen = NULL;
     InputBootArgs->Item = &InputItems[72];
     InputBootArgs->Entry.AtClick = ActionEnter;
     InputBootArgs->Entry.AtRightClick = ActionDetails;
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-    
-    
-    //18
- /*   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 255, L"Backlight level:");
-    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = StrLen(InputItems[18].SValue);
-    InputBootArgs->Entry.ShortcutDigit = 0;
-    InputBootArgs->Entry.ShortcutLetter = 'L';
-    InputBootArgs->Entry.Image = NULL;
-    InputBootArgs->Entry.BadgeImage = NULL;
-    InputBootArgs->Entry.SubScreen = NULL;
-    InputBootArgs->Item = &InputItems[18];
-    InputBootArgs->Entry.AtClick = ActionSelect;
-    InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-*/    
+        
     
     DFIndex = OptionMenu.EntryCount;
     AddMenuEntry(&OptionMenu, SubMenuDropTables());

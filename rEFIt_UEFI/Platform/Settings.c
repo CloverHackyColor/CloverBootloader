@@ -1024,6 +1024,24 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
 		    gSettings.RtMLB = AllocateCopyPool(AsciiStrSize(prop->string), prop->string);
       }
       
+      //a set of variables needed to rc.local
+      prop = GetProperty(dictPointer, "MountEFI");
+      if(prop && AsciiStrLen(prop->string) > 0) {
+		    gSettings.MountEFI = AllocateCopyPool(AsciiStrSize(prop->string), prop->string);
+      }
+      prop = GetProperty(dictPointer, "LogLineCount");
+      if(prop && AsciiStrLen(prop->string) > 0) {
+        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+        gSettings.LogLineCount = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);
+      }
+      prop = GetProperty(dictPointer, "LogEveryBoot");
+      if(prop) {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')) {
+          gSettings.LogEveryBoot = TRUE;
+        } else {
+          gSettings.LogEveryBoot = FALSE;
+        }
+      }
     }
     if (!gSettings.RtMLB) {
       gSettings.RtMLB = &gSettings.BoardSerialNumber[0];

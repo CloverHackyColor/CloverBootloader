@@ -238,5 +238,14 @@
 		<key>FixDsdtMask</key>
 		<string>0xFFFF</string>
 	</dict>
+	<key>RtVariables</key>
+	<dict>
+		<key>MountEFI</key>
+		<string>No</string>
+		<key>LogLineCount</key>
+		<string>3000</string>
+		<key>LogEveryBoot</key>
+		<string>Yes</string>
+	</dict>
 </dict>
 </plist>

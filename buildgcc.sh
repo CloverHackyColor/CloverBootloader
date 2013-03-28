@@ -23,9 +23,12 @@
 #
 export BINUTILS_VERSION=${BINUTILS_VERSION:-binutils-2.23.1}
 export GCC_VERSION=${GCC_VERSION:-4.7.2}
-export GMP_VERSION=${GMP_VERSION:-gmp-5.1.1}
-export MPFR_VERSION=${MPFR_VERSION:-mpfr-3.1.2}
-export MPC_VERSION=${MPC_VERSION:-mpc-1.0.1}
+#gmp-5.1.1
+export GMP_VERSION=gmp-5.0.5  
+#mpfr-3.1.2
+export MPFR_VERSION=mpfr-3.1.1
+#mpc-1.0.1 
+export MPC_VERSION=mpc-0.9
 
 # Change PREFIX if you want gcc and binutils 
 # installed on different place
@@ -156,6 +159,7 @@ fnDownloadSource ()
     cd $DIR_DOWNLOADS
     [ ! -f ${DIR_DOWNLOADS}/${GMP_VERSION}.tar.bz2 ] && echo "Status: ${GMP_VERSION} not found." && curl --remote-name http://mirror.aarnet.edu.au/pub/gnu/gmp//${GMP_VERSION}.tar.bz2
     [ ! -f ${DIR_DOWNLOADS}/${MPFR_VERSION}.tar.bz2 ] && echo "Status: ${MPFR_VERSION} not found." && curl --remote-name http://mirror.aarnet.edu.au/pub/gnu/mpfr/${MPFR_VERSION}.tar.bz2
+#http://www.multiprecision.org/mpc/download/mpc-1.0.1.tar.gz    
     [ ! -f ${DIR_DOWNLOADS}/${MPC_VERSION}.tar.gz ] && echo "Status: ${MPC_VERSION} not found." && curl --remote-name http://www.multiprecision.org/mpc/download/${MPC_VERSION}.tar.gz
     fnDownloadBinutils
     fnDownloadGCC
