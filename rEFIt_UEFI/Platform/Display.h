@@ -1111,7 +1111,8 @@ UINT64 nv_mem_detect(pci_dt_t *nvda_dev)
 	{
 		if (nvcard->VideoRam > 0) 
 		{
-			vram_size = nvcard->VideoRam * 1024 * 1024;
+         // VideoRam * 1024 * 1024 == VideoRam << 20
+			vram_size = LShiftU64(nvcard->VideoRam, 20);
 			DBG("mem_detected %ld\n", vram_size);
 			return vram_size;
 		}
@@ -1126,10 +1127,10 @@ UINT64 nv_mem_detect(pci_dt_t *nvda_dev)
 	// Workaround for GT 420/430 & 9600M GT
 	switch (nvda_dev->device_id)
 	{
-		case 0x0DE1: vram_size = 1024*1024*1024; return vram_size; // GT 430
-		case 0x0DE2: vram_size = 1024*1024*1024; return vram_size; // GT 420
-		case 0x0649: vram_size = 512*1024*1024; return vram_size;	// 9600M GT
-		case 0x0DF4: vram_size = (UINT32)(2048*1024)*(UINT32)1024; return vram_size;	// GT540M
+		case 0x0DE1: vram_size = LShiftU64(1, 30); return vram_size; // GT 430 - 1GB
+		case 0x0DE2: vram_size = LShiftU64(1, 30); return vram_size; // GT 420 - 1GB
+		case 0x0649: vram_size = LShiftU64(1, 25); return vram_size;	// 9600M GT - 512MB
+		case 0x0DF4: vram_size = LShiftU64(1, 31); return vram_size;	// GT540M - 2GB
 		default: break;
 	}
 	
