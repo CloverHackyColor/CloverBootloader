@@ -119,7 +119,6 @@ EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
 {
     EFI_STATUS  Status;
     CHAR16      *FilePathAsString;
-    CHAR16      BaseDirectory[256];
     UINTN       i;
     UINTN                     DevicePathSize;
     EFI_DEVICE_PATH_PROTOCOL* TmpDevicePath;
@@ -140,15 +139,19 @@ EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle)
   // find the current directory
     FilePathAsString = FileDevicePathToStr(SelfLoadedImage->FilePath);
     if (FilePathAsString != NULL) {
-        StrCpy(BaseDirectory, FilePathAsString);
-        FreePool(FilePathAsString);
-        for (i = StrLen(BaseDirectory); i > 0 && BaseDirectory[i] != '\\'; i--) ;
-        BaseDirectory[i] = 0;
-    } else
-        BaseDirectory[0] = 0;
-    SelfDirPath = EfiStrDuplicate(BaseDirectory);
+        for (i = StrLen(FilePathAsString); i > 0 && FilePathAsString[i] != '\\'; i--) ;
+        if (i > 0) {
+            FilePathAsString[i] = 0;
+        } else {
+            FilePathAsString[0] = L'\\';
+            FilePathAsString[1] = 0;
+        }
+    } else {
+        FilePathAsString = AllocateCopyPool(StrSize(L"\\"), L"\\");
+    }
+    SelfDirPath = FilePathAsString;
 
- //   Print(L"SelfDirPath = %s\n", SelfDirPath);  //result=\EFI\BOOT
+    DBG("SelfDirPath = %s\n", SelfDirPath);
   
     return FinishInitRefitLib();
 }

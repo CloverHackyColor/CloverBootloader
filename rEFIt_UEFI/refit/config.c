@@ -51,8 +51,8 @@
 
 // constants
 
-//#define CONFIG_FILE_NAME    L"refit.conf"
-//#define THEME_CONFIG        L"settings.conf"
+#define CONFIG_FILE_NAME    L"refit.conf"
+#define THEME_CONFIG        L"settings.conf"
 #define MAXCONFIGFILESIZE   (256*1024)
 
 #define ENCODING_ISO8859_1  (0)
@@ -64,8 +64,8 @@ CHAR16*  AnimeName[MAX_ANIME];
 INTN     AnimeFrames[MAX_ANIME];   
 UINTN    AnimeFrameTime[MAX_ANIME];
 BOOLEAN  AnimeOnce[MAX_ANIME];
-CHAR16*  CONFIG_FILE_NAME =   L"refit.conf";
-CHAR16*  THEME_CONFIG    =    L"settings.conf";
+//CHAR16*  CONFIG_FILE_NAME =   L"refit.conf";
+//CHAR16*  THEME_CONFIG    =    L"settings.conf";
 
 extern INTN ScrollWidth;
 extern INTN ScrollButtonsHeight;
@@ -379,25 +379,21 @@ VOID ReadConfig(INTN What)
       gSettings.DoubleClickTime = 500;
       gSettings.PointerMirror = FALSE;
 
-      if (!FileExists(SelfDir, CONFIG_FILE_NAME))
-        return;      
-      Status = ReadFile(SelfDir, CONFIG_FILE_NAME, &File);
+      Status = ReadFile(SelfRootDir, L"EFI\\BOOT\\" CONFIG_FILE_NAME, &File);
       break;
     case 1:
-      if (!FileExists(ThemeDir, THEME_CONFIG))
-        return;
       Status = ReadFile(ThemeDir, THEME_CONFIG, &File);
       break;
     case 2:
-      if (!FileExists(OemThemeDir, THEME_CONFIG))
-        return;
       Status = ReadFile(OemThemeDir, THEME_CONFIG, &File);
       break;
     default:
       return;
   }
-  if (EFI_ERROR(Status))
+  if (EFI_ERROR(Status)) {
+    DBG("Error reading conf file %d: %r\n", What, Status);
     return;
+  }
   //    DBG("Reading refit.conf file OK!\n");
   for (;;) {
     ReadTokenLine(&File, &TokenList, &TokenCount);

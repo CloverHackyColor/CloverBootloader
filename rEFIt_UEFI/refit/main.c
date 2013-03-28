@@ -1190,19 +1190,6 @@ static VOID ScanLoader(VOID)
       }
     }
           
-    // check for Microsoft boot loader/menu
-    StrCpy(FileName, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi");
-    if (FileExists(Volume->RootDir, FileName)) {
-      //     Print(L"  - Microsoft boot menu found\n");
-      Volume->OSType = OSTYPE_WINEFI;
-      Volume->BootType = BOOTING_BY_EFI;
-      Volume->DriveImage = ScanVolumeDefaultIcon(Volume);
-      if (!gSettings.HVHideAllWindowsEFI){
-        Entry = AddLoaderEntry(FileName, L"Microsoft EFI boot menu", Volume, OSTYPE_WINEFI);
- //     continue;
-      }
-    }
-    
     // Sometimes, on some systems (HP UEFI, if Win is installed first)
     // it is needed to get rid of bootmgfw.efi to allow starting of
     // Clover as /efi/boot/bootx64.efi from HD. We can do that by renaming
@@ -1217,6 +1204,24 @@ static VOID ScanLoader(VOID)
         Entry = AddLoaderEntry(FileName, L"Microsoft EFI boot menu", Volume, OSTYPE_WINEFI);
         //     continue;
       }
+      
+    } else {
+      // check for Microsoft boot loader/menu
+      // If there is bootmgfw-orig.efi, then do not check for bootmgfw.efi
+      // since on some systems this will actually be CloverX64.efi
+      // renamed to bootmgfw.efi
+      StrCpy(FileName, L"\\EFI\\Microsoft\\Boot\\bootmgfw.efi");
+      if (FileExists(Volume->RootDir, FileName)) {
+        //     Print(L"  - Microsoft boot menu found\n");
+        Volume->OSType = OSTYPE_WINEFI;
+        Volume->BootType = BOOTING_BY_EFI;
+        Volume->DriveImage = ScanVolumeDefaultIcon(Volume);
+        if (!gSettings.HVHideAllWindowsEFI){
+          Entry = AddLoaderEntry(FileName, L"Microsoft EFI boot menu", Volume, OSTYPE_WINEFI);
+          //     continue;
+        }
+      }
+      
     }
     
     // check for Microsoft boot loader/menu
