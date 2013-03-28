@@ -1089,6 +1089,7 @@ VOID GetTableType17()
 		gDMI->CntMemorySlots++;
 		if (SmbiosTable.Type17->Size > 0) {
 			gDMI->MemoryModules++;
+         gRAM->DIMM[Index].ModuleSize = SmbiosTable.Type17->Size;
 		}
 		if (SmbiosTable.Type17->Speed > 0) {
 			gRAM->DIMM[Index].Frequency = SmbiosTable.Type17->Speed;
