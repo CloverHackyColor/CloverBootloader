@@ -252,7 +252,7 @@ CHAR8* SmcPlatform[] =
   "k90i", //"MacBookPro8,1",
   "k92i", //"MacBookPro8,3",
   "j30",  //"MacBookPro9,2",
-	"NA",  //"MacBookAir3,1",
+	"k99",  //"MacBookAir3,1",
   "NA",  //"MacBookAir5,2",
 	"NA",  //"Macmini2,1",  //31 -> m88
   "NA",  //"Macmini5,1",
@@ -310,7 +310,7 @@ UINT32 SmcConfig[] =
   0x7b005,  //"MacBookPro8,1",
   0x7c005,  //"MacBookPro8,3",
   0x76006,  //"MacBookPro9,2",
-	0x7a004,  //"MacBookAir3,1",
+	0x76005,  //"MacBookAir3,1",
   0x7b006,  //"MacBookAir5,2",
 	0x78002,  //"Macmini2,1",  //31 -> m88
   0x7d005,  //"Macmini5,1",

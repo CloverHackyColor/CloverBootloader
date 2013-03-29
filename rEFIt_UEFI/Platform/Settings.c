@@ -535,7 +535,21 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       if(prop) {
         AsciiStrToUnicodeStr(prop->string, gSettings.DsdtName);
       }
-      
+
+      prop = GetProperty(dictPointer, "GenerateIvyStates");
+      if(prop) {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')) {
+          gSettings.GeneratePStates = TRUE;
+          gSettings.GenerateCStates = TRUE;
+          gSettings.EnableISS = TRUE;
+          gSettings.EnableC2 = TRUE;
+          gSettings.EnableC6 = TRUE;
+          gSettings.PluginType = 1;
+          gSettings.MinMultiplier = 8;
+          gSettings.DoubleFirstState = TRUE;
+        }
+      }
+
       prop = GetProperty(dictPointer, "DropOemSSDT");
       gSettings.DropSSDT = FALSE;
       if(prop) {
@@ -591,8 +605,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         gSettings.PluginType = (UINT8)StrDecimalToUintn((CHAR16*)&UStr[0]);
         DBG("Config set PluginType=%d\n", gSettings.PluginType);
       }      
-      
-      
+
       prop = GetProperty(dictPointer, "ResetAddress");
       if(prop) {
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
@@ -648,21 +661,6 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.EnableISS = FALSE;  //force disable
         }
       }
-      
-      prop = GetProperty(dictPointer, "GenerateIvyStates");
-      if(prop) {
-        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')) {
-          gSettings.GeneratePStates = TRUE;
-          gSettings.GenerateCStates = TRUE;
-          gSettings.EnableISS = TRUE;
-          gSettings.EnableC2 = TRUE;
-          gSettings.EnableC6 = TRUE;
-          gSettings.PluginType = 1;
-          gSettings.MinMultiplier = 8;
-          gSettings.DoubleFirstState = TRUE;
-        }
-      }
-      
       
       prop = GetProperty(dictPointer, "smartUPS");
       gSettings.smartUPS = FALSE;

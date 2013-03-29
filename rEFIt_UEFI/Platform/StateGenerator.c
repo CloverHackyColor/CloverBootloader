@@ -60,7 +60,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
   UINT8 cpu_dynamic_fsb = 0;
   UINT8 cpu_noninteger_bus_ratio = 0;
   UINT32 i, j;
-  UINT16 realMax, realTurbo = 0, Apsn = 0;
+  UINT16 realMax, realTurbo = 0, Apsn = 0, Aplf = 8;
   
 	if (gCPUStructure.Vendor != CPU_VENDOR_INTEL) {
 		MsgLog ("Not an Intel platform: P-States will not be generated !!!\n");
@@ -71,7 +71,17 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
 		MsgLog ("Unsupported CPU: P-States will not be generated !!!\n");
 		return NULL;
 	}
-  
+
+  if (gMobile) Aplf = 4;
+  for (i = 0; i<47; i++) {
+    //ultra-mobile
+    if ((gCPUStructure.BrandString[i] != 'P') &&
+        (gCPUStructure.BrandString[i+1] == 'U')) {
+      Aplf = 0;
+      break;
+    }
+  }
+
 	if (Number > 0)
 	{
 		// Retrieving P-States, ported from code by superhai (c)
@@ -333,7 +343,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
         aml_add_name(scop, "APSN");
         aml_add_byte(scop, Apsn);
         aml_add_name(scop, "APLF");
-        aml_add_byte(scop, 0x00);        
+        aml_add_byte(scop, Aplf);        
       }
       
       
