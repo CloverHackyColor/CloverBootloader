@@ -1330,10 +1330,12 @@ WaitFor2EventWithTsc (
           break;
         }        
       }
+      // Let's try to relax processor a bit
+      CpuPause();
       Status = EFI_TIMEOUT;
       t1 = AsmReadTsc();
     } while ((t1 - t0) < Delta);
-	} 
+	}
 	else 
 	{
     WaitList[0] = Event1;
