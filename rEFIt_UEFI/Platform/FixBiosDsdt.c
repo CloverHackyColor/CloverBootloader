@@ -3911,6 +3911,19 @@ UINT32 FIXSHUTDOWN_ASUS (UINT8 *dsdt, UINT32 len)
     DBG("no _PTS???\n");
     return len;
   }
+  //one more patch possible here
+  /*
+   70 53 4D 49 4D 5C 2E 5F 53 42 5F 50 49 4E 58 5C
+   5C 2E 5F 53 42 5F 49 53 4D 49 0A 90 
+   Store (SMIM, \_SB.PINX)
+   \_SB.ISMI (0x90)
+   */
+/*  size = get_size(dsdt, adr);
+  adr1 = FindBin(dsdt, len, Ismi, 28);
+  if (adr1 < adr + size) {
+    len = move_data(adr1, dsdt, len, -28);
+  } */
+  
   /*
       adr \  _  P  T  S       insert               offset
    14 16 5C 5F 50 54 53 01  < A0 05 93 68 0A 05 A1 08	>

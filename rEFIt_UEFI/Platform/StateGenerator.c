@@ -60,6 +60,7 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
   UINT8 cpu_dynamic_fsb = 0;
   UINT8 cpu_noninteger_bus_ratio = 0;
   UINT32 i, j;
+  UINT16 realMax, realTurbo = 0, Apsn = 0;
   
 	if (gCPUStructure.Vendor != CPU_VENDOR_INTEL) {
 		MsgLog ("Not an Intel platform: P-States will not be generated !!!\n");
@@ -204,12 +205,16 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
             } else {
               maximum.Control.Control = AsmReadMsr64(MSR_IA32_PERF_STATUS) & 0xff;
             }
-            DBG("Maximum control=%x\n", maximum.Control.Control);
+            
+            realMax = maximum.Control.Control;
+            DBG("Maximum control=%x\n", realMax);
             if (gSettings.Turbo) {
-              maximum.Control.Control = (gCPUStructure.Turbo4 > gCPUStructure.Turbo1) ?
-                                             (gCPUStructure.Turbo4 / 10) : (gCPUStructure.Turbo1 / 10);
-              MsgLog("Turbo control=%x\n", maximum.Control.Control);
+              realTurbo = (gCPUStructure.Turbo4 > gCPUStructure.Turbo1) ?
+                          (gCPUStructure.Turbo4 / 10) : (gCPUStructure.Turbo1 / 10);
+              maximum.Control.Control = realTurbo;
+              MsgLog("Turbo control=%x\n", realTurbo);
             }
+            Apsn = (realTurbo > realMax)?(realTurbo - realMax):0;
             if (gSettings.MaxMultiplier) {
               maximum.Control.Control = gSettings.MaxMultiplier;
             }
@@ -324,6 +329,12 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
         aml_add_byte(scop, gSettings.PluginType);
       }
       
+      if (gCPUStructure.Family >= 2) {
+        aml_add_name(scop, "APSN");
+        aml_add_byte(scop, Apsn);
+        aml_add_name(scop, "APLF");
+        aml_add_byte(scop, 0x00);        
+      }
       
       
 			// Add CPUs

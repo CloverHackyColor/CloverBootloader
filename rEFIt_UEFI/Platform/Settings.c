@@ -638,8 +638,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
         gSettings.C3Latency  = (UINT16)StrHexToUint64(UStr); 
       }
-      
-      
+            
       prop = GetProperty(dictPointer, "EnableISS");
 //      gSettings.EnableISS = FALSE; //we set default value in GetDefaultSettings()
       if(prop) {
@@ -648,7 +647,23 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         } else if ((prop->string[0] == 'n') || (prop->string[0] == 'N')) {
           gSettings.EnableISS = FALSE;  //force disable
         }
-      }      
+      }
+      
+      prop = GetProperty(dictPointer, "GenerateIvyStates");
+      if(prop) {
+        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')) {
+          gSettings.GeneratePStates = TRUE;
+          gSettings.GenerateCStates = TRUE;
+          gSettings.EnableISS = TRUE;
+          gSettings.EnableC2 = TRUE;
+          gSettings.EnableC6 = TRUE;
+          gSettings.PluginType = 1;
+          gSettings.MinMultiplier = 8;
+          gSettings.DoubleFirstState = TRUE;
+        }
+      }
+      
+      
       prop = GetProperty(dictPointer, "smartUPS");
       gSettings.smartUPS = FALSE;
       if(prop) {
@@ -711,6 +726,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.RememberBIOS = TRUE;
       }
  */
+      
     }
     
     //*** SMBIOS ***//
