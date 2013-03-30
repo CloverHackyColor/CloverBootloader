@@ -250,9 +250,10 @@ EFI_STATUS SetVariablesForOSX()
   if (gSettings.MountEFI) { //not NULL
     Status = gRS->SetVariable(L"Clover.MountEFI", &gEfiAppleBootGuid, 
                               EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                              AsciiStrSize(gSettings.MountEFI), &gSettings.MountEFI);        
+                              AsciiStrSize(gSettings.MountEFI), gSettings.MountEFI);        
   }
-  
+
+  FreePool(BA);
 	return Status;
 }
 
