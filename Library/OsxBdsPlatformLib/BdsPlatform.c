@@ -343,7 +343,7 @@ Returns:
   UINT16                                Command;
   UINT32                                HcCapParams;
   UINT32                                ExtendCap;
-  UINT32                                Value;
+  UINT32                                Value, mSaveValue;
   UINT32                                TimeOut;
   
   //
@@ -397,8 +397,8 @@ Returns:
               //
               // Disable the SMI in USBLEGCTLSTS firstly
               //
-              PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, ExtendCap + 0x4, 1, &Value);
-              Value &= 0xFFFF0000;
+              PciIo->Pci.Read (PciIo, EfiPciIoWidthUint32, ExtendCap + 0x4, 1, &mSaveValue);
+              Value = mSaveValue & 0xFFFF0000;
               PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, ExtendCap + 0x4, 1, &Value);
               
               //
@@ -418,6 +418,8 @@ Returns:
                   break;
                 }
               }
+                //as Sunki suggested
+              PciIo->Pci.Write (PciIo, EfiPciIoWidthUint32, ExtendCap + 0x4, 1, &mSaveValue);  
             }
           } 
         }
