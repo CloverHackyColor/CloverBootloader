@@ -236,9 +236,11 @@ EFI_STATUS SetVariablesForOSX()
   }
   
   //Helper for rc.local script
+  BA = AllocateZeroPool(6);
+  AsciiSPrint(BA, 6, "%d", gSettings.LogLineCount);
   Status = gRS->SetVariable(L"Clover.LogLineCount", &gEfiAppleBootGuid, 
                             EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                            4, &gSettings.LogLineCount);
+                            AsciiStrSize(BA), BA);
   if (gSettings.LogEveryBoot) {
     Status = gRS->SetVariable(L"Clover.LogEveryBoot", &gEfiAppleBootGuid, 
                               EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
