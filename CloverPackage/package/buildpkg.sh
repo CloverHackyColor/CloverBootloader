@@ -451,7 +451,7 @@ main ()
 # build core EFI folder package
     echo "===================== EFI folder ======================="
     packagesidentity="$clover_package_identity"
-    choiceId="EFIfolder"
+    choiceId="EFIFolder"
     rm -rf   ${PKG_BUILD_DIR}/${choiceId}/Root/EFI
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root/EFI
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Scripts

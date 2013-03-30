@@ -93,7 +93,7 @@ image:
 	@cp -r -f $(CLOVERROOT)/EFI/tools ${IMGROOT}/EFI/
 #	@echo "ADD drivers64"
 	@cp -f $(CLOVERROOT)/drivers-Off/drivers64/UsbMouseDxe-64.efi ${IMGROOT}/EFI/drivers64/
-	@cp -f $(CLOVERROOT)/drivers-Off/drivers64/PS2MouseDxe-64.efi ${IMGROOT}/EFI/drivers64/
+	@cp -f $(CLOVERROOT)/drivers-Off/drivers64/Ps2MouseDxe-64.efi ${IMGROOT}/EFI/drivers64/
 	@if [ ${IMAGE_WITH_IA32} -eq 1 ]; then \
 		rsync -r $(CLOVERROOT)/drivers-Off ${IMGROOT}/EFI/ ; \
 	else \
@@ -104,7 +104,7 @@ image:
 		cp -r -f $(CLOVERROOT)/EFI/drivers32 ${IMGROOT}/EFI/; \
 		echo "ADD drivers32"; \
 		cp -f $(CLOVERROOT)/drivers-Off/drivers32/UsbMouseDxe-32.efi ${IMGROOT}/EFI/drivers32/ ; \
-		cp -f $(CLOVERROOT)/drivers-Off/drivers32/PS2MouseDxe-32.efi ${IMGROOT}/EFI/drivers32/ ; \
+		cp -f $(CLOVERROOT)/drivers-Off/drivers32/Ps2MouseDxe-32.efi ${IMGROOT}/EFI/drivers32/ ; \
 	fi
 	@echo "\t[CP] boot"
 	@cp -f $(CLOVERROOT)/Bootloaders/x64/boot? ${IMGROOT}/usr/standalone/i386/x64/
