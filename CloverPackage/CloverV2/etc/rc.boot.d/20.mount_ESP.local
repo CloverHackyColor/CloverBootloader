@@ -9,7 +9,7 @@
 # Mount ESP (EFI System Partition)
 #
 # NVRam keys used:
-#    Clover.MountEFI: Yes|diskX [default No]
+#    Clover.MountEFI: Yes|diskX|GUID [default No]
 
 # Check that all variable are bound
 set -u
@@ -32,10 +32,22 @@ ESPMountPoint=/Volumes/EFI
 shopt -s nocasematch
 
 function mountESP {
-    local ESPDevice="$1"
+    local arg="$1"
+    local exitcode=1
+    local guidRegExp='[[:xdigit:]]+-[[:xdigit:]]+-[[:xdigit:]]+-[[:xdigit:]]+'
 
-    [[ "$ESPDevice" == Yes ]] && \
-     ESPDevice=$(diskutil info / | sed -n 's/.*Part of Whole: *//p')
+    # Umount previously mount partition
+    /usr/sbin/diskutil umount "${ESPMountPoint}" &>/dev/null
+    [[ ! -d "${ESPMountPoint}" ]] && mkdir -p "${ESPMountPoint}"
+
+    if [[ "$arg" == Yes ]]; then
+        ESPDevice=$(diskutil info / | sed -n 's/.*Part of Whole: *//p')
+    elif [[ "$arg" =~ $guidRegExp ]]; then
+        /usr/sbin/diskutil mount -mountPoint "${ESPMountPoint}" "$arg"
+        return $?
+    else
+        ESPDevice="$arg"
+    fi
 
     # keep only the device name (remove /dev/ and partition (aka s1))
     ESPDevice=$(echo "$ESPDevice" | sed -E 's@^.*/?(disk[0-9]*).*@\1@')
@@ -43,12 +55,14 @@ function mountESP {
     if [[ "$ESPDevice" =~ ^disk[0-9]+$ ]]; then
         local ESP="${ESPDevice}s1"
 
-        [[ ! -d ${ESPMountPoint} ]] && mkdir -p "${ESPMountPoint}"
-
-        umount ${ESPMountPoint} 2>/dev/null
-        umount /dev/${ESP}      2>/dev/null
-        mount -t msdos /dev/${ESP} ${ESPMountPoint}
-        if [[ $? -ne 0 ]]; then
+        umount /dev/${ESP} 2>/dev/null
+        exitcode=1
+        for fstype in msdos hfs; do
+            mount -t $fstype /dev/$ESP "${ESPMountPoint}" &>/dev/null
+            exitcode=$?
+            [[ $exitcode -eq 0 ]] && break
+        done
+        if [[ $exitcode -ne 0 ]]; then
             echo "Failed to mount $ESP at $ESPMountPoint"
         else
             echo "EFI partition ($ESP) mount at $ESPMountPoint"
@@ -56,14 +70,16 @@ function mountESP {
     else
         echo "Invalid value '$ESPDevice'"
     fi
+    return $exitcode
 }
 
-# Clover.MountEFI=Yes|diskX [default No]
+# Clover.MountEFI=Yes|diskX|GUID [default No]
 mountEFIValue=$(GetNVRamKey 'Clover.MountEFI' || echo 'No')
 if [[ "$mountEFIValue" == "No" ]]; then
     echo "Not auto mounting EFI partition"
 else
     mountESP "$mountEFIValue"
+    [[ $? -ne 0 ]] && rmdir "$ESPMountPoint" &>/dev/null
 fi
 
 # Local Variables:      #
