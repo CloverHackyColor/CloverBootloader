@@ -77,7 +77,21 @@ GetBootFlags() {
 }
 export -f GetBootFlags
 
-
+GetDiskGUIDFromDevice() {
+    local arg="$1"
+    # keep only the device name (remove /dev/ and partition (aka s1))
+    local device=$(echo "$arg" | sed -E 's@^.*/?(disk[0-9]*).*@\1@')
+    # get the GPT table
+    gpt_table=$(dd if=/dev/$device iseek=512 count=72 bs=1 2>/dev/null | xxd -u -ps -c 72)
+    # Check if it is a GPT partition table (EFI PART signature)
+    [[ ! "${gpt_table:0:16}" == 4546492050415254 ]] && return 1
+    printf "%s-%s-%s-%s-%s\n" \
+     "${gpt_table:118:2}${gpt_table:116:2}${gpt_table:114:2}${gpt_table:112:2}" \
+     "${gpt_table:122:2}${gpt_table:120:2}"                                     \
+     "${gpt_table:126:2}${gpt_table:124:2}"                                     \
+     "${gpt_table:128:4}" "${gpt_table:132:16}"
+}
+export -f GetDiskGUIDFromDevice
 
 ####################### MAIN #######################
 

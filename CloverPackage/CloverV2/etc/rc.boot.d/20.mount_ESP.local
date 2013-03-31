@@ -36,15 +36,14 @@ function mountESP {
     local exitcode=1
     local guidRegExp='[[:xdigit:]]+-[[:xdigit:]]+-[[:xdigit:]]+-[[:xdigit:]]+'
 
-    # Umount previously mount partition
-    /usr/sbin/diskutil umount "${ESPMountPoint}" &>/dev/null
-    [[ ! -d "${ESPMountPoint}" ]] && mkdir -p "${ESPMountPoint}"
-
     if [[ "$arg" == Yes ]]; then
         ESPDevice=$(diskutil info / | sed -n 's/.*Part of Whole: *//p')
     elif [[ "$arg" =~ $guidRegExp ]]; then
-        /usr/sbin/diskutil mount -mountPoint "${ESPMountPoint}" "$arg"
-        return $?
+        ESPDevice=$(diskutil info "$arg" | sed -n 's/.*Part of Whole: *//p')
+        if [[ -z "$ESPDevice" ]]; then
+            echo "Can't find partition with UUID $arg"
+            return 1
+        fi
     else
         ESPDevice="$arg"
     fi
@@ -55,7 +54,10 @@ function mountESP {
     if [[ "$ESPDevice" =~ ^disk[0-9]+$ ]]; then
         local ESP="${ESPDevice}s1"
 
-        umount /dev/${ESP} 2>/dev/null
+        # Umount previously mount partition
+        /usr/sbin/diskutil umount "${ESPMountPoint}" &>/dev/null
+        umount /dev/${ESP} &>/dev/null
+        [[ ! -d "${ESPMountPoint}" ]] && mkdir -p "${ESPMountPoint}"
         exitcode=1
         for fstype in msdos hfs; do
             mount -t $fstype /dev/$ESP "${ESPMountPoint}" &>/dev/null
@@ -68,7 +70,7 @@ function mountESP {
             echo "EFI partition ($ESP) mount at $ESPMountPoint"
         fi
     else
-        echo "Invalid value '$ESPDevice'"
+        echo "Invalid device '$ESPDevice'"
     fi
     return $exitcode
 }
