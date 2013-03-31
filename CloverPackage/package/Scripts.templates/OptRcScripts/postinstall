@@ -16,26 +16,48 @@ echo "preinstall: Root of system folder... $4"
 
 #############################################################################
 
-srcvolume="${3}"
-destroot="${srcvolume}"
-install_log="${srcvolume}/Clover_Install_Log.txt"
-installer_plist="${srcvolume}/EFI/CloverInstaller.plist"
+destroot="${3}"
+install_log="${destroot}/Clover_Install_Log.txt"
+installer_plist="${destroot}/EFI/CloverInstaller.plist"
+plistbuddy='/usr/libexec/plistbuddy'
+installer_on_target_refid='@INSTALLER_ON_TARGET_REFID@'
+installer_on_all_volumes_refid='@INSTALLER_ON_ALL_VOLUMES_REFID@'
 installer_choice="@INSTALLER_CHOICE@"
 
 rc_script="@RC_SCRIPT@"
 
-enabled_script="${rc_script%.disabled}"
-
 # Mark that the option was selected
-/usr/libexec/plistbuddy -c "Add $installer_choice bool true" "$installer_plist" >/dev/null
+$plistbuddy -c "Add $installer_choice bool true" "$installer_plist" >/dev/null
 
-# Check if destination volume is a system volume:
-if [[ ! -f "${destroot}/System/Library/CoreServices/boot.efi" ]]; then
-    # Destination volume is not a system so install rc script into the system
-    # folder
-    destroot="$4"
+# Get the options
+install_on_target=$($plistbuddy -c "Print $installer_on_target_refid" \
+ "$installer_plist" 2>/dev/null)
+install_on_all_volumes=$($plistbuddy -c "Print $installer_on_all_volumes_refid" \
+ "$installer_plist" 2>/dev/null)
+
+# Source the rc scripts library
+source ./rc_scripts.lib
+
+# Enable the RC script on all internal OSX system Volumes
+if [[ "$install_on_all_volumes" == true ]]; then
+    IFS=$'\n' # ' fix xemacs fontification
+    for mountPoint in $(getInternalOSXSystemVolumes); do
+        [[ "$mountPoint" == "$destroot" ]] && continue
+        disabled_script=$(echo "$mountPoint/$rc_script" | sed -E 's#[/]{2,}#/#g')
+        enabled_script="${disabled_script%.disabled}"
+        if [[ -f "$disabled_script" ]]; then
+            echo "Activating ${enabled_script} rc script" >> "$install_log"
+            mv -f "$disabled_script" "$enabled_script"    >> "$install_log"
+        fi
+    done
 fi
 
-# Enable the RC script
-echo "Activating ${destroot}/${enabled_script} rc script" >> "$install_log"
-mv -f "$destroot/$rc_script" "$destroot/$enabled_script"  >> "$install_log"
+# Enable the RC script on target volume
+if [[ "$install_on_target" == true ]]; then
+    if [[ -f "$destroot/$rc_script" ]]; then
+        disabled_script=$(echo "${destroot}/$rc_script" | sed -E 's#[/]{2,}#/#g')
+        enabled_script="${disabled_script%.disabled}"
+        echo "Activating $enabled_script rc script" >> "$install_log"
+        mv -f "$disabled_script" "$enabled_script"  >> "$install_log"
+    fi
+fi

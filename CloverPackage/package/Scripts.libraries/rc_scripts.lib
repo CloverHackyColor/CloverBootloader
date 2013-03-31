@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Return a list of mount points that are internal OSX system volumes
+function getInternalOSXSystemVolumes {
+    local mounted_devices=
+    mounted_devices=$(mount | sed -nE 's#^(/dev/disk[0-9]+s[0-9]+).*#\1#p')
+
+    # Iterate over all devices to get information
+    for device in $mounted_devices; do
+        local mount_point=
+        while read -r -u3 device_info; do
+            case "$device_info" in
+                *Mount*Point:*) mountPoint=$(echo "$device_info" | sed -n 's/.*Mount Point: *//p') ;;
+                *Internal:*)    internal=$(echo "$device_info" | sed -n 's/.*Internal: *//p') ;;
+            esac
+        done 3< <(diskutil info $device)
+        if [[ -n "$mountPoint" && "$internal" == Yes ]]; then
+            # Check if volume is a system volume
+            if [[ -f "${mountPoint}/System/Library/CoreServices/boot.efi" ]]; then
+                echo "$mountPoint"
+            fi
+        fi
+    done
+}
+
+# Local Variables:      #
+# mode: ksh             #
+# tab-width: 4          #
+# indent-tabs-mode: nil #
+# End:                  #
+#
+# vi: set expandtab ts=4 sw=4 sts=4: #
