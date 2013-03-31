@@ -343,7 +343,6 @@ addGroupChoices() {
     local choiceOptions=
 
     for option in "${@}";do
-        echo "$option -> ${choiceOptions[@]}"
         case "$option" in
             --title=*)
                        shift; title="${option#*=}" ;;
