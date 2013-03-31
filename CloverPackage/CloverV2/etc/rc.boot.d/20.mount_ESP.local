@@ -9,7 +9,7 @@
 # Mount ESP (EFI System Partition)
 #
 # NVRam keys used:
-#    Clover.MountEFI: Yes|diskX|GUID [default No]
+#    Clover.MountEFI: Yes|diskX|GUID|VolName [default No]
 
 # Check that all variable are bound
 set -u
@@ -37,11 +37,20 @@ function mountESP {
     local guidRegExp='[[:xdigit:]]+-[[:xdigit:]]+-[[:xdigit:]]+-[[:xdigit:]]+'
 
     if [[ "$arg" == Yes ]]; then
-        ESPDevice=$(diskutil info / | sed -n 's/.*Part of Whole: *//p')
+        ESPDevice=$(LC_ALL=C diskutil info / 2>/dev/null | \
+         sed -n 's/.*Part of Whole: *//p')
     elif [[ "$arg" =~ $guidRegExp ]]; then
-        ESPDevice=$(diskutil info "$arg" | sed -n 's/.*Part of Whole: *//p')
+        ESPDevice=$(LC_ALL=C diskutil info "$arg" 2>/dev/null | \
+         sed -n 's/.*Part of Whole: *//p')
         if [[ -z "$ESPDevice" ]]; then
             echo "Can't find partition with UUID $arg"
+            return 1
+        fi
+    elif [[ ! "$arg" =~ ^(/dev/)?disk[0-9]+ ]]; then
+        ESPDevice=$(LC_ALL=C diskutil info "$arg" 2>/dev/null | \
+         sed -n 's/.*Part of Whole: *//p')
+        if [[ -z "$ESPDevice" ]]; then
+            echo "Can't find volume with the name $arg"
             return 1
         fi
     else
@@ -75,7 +84,7 @@ function mountESP {
     return $exitcode
 }
 
-# Clover.MountEFI=Yes|diskX|GUID [default No]
+# Clover.MountEFI=Yes|diskX|GUID|VolName [default No]
 mountEFIValue=$(GetNVRamKey 'Clover.MountEFI' || echo 'No')
 if [[ "$mountEFIValue" == "No" ]]; then
     echo "Not auto mounting EFI partition"
