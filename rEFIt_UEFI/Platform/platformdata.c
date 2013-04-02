@@ -497,6 +497,7 @@ VOID GetDefaultSettings(VOID)
   gSettings.BacklightLevel = 0xFFFF; //0x0503; -- the value from MBA52
   gSettings.LogLineCount = 500;
   gSettings.LogEveryBoot = FALSE;
+  gSettings.MountEFI = NULL;
   
 //  gSettings.PointerSpeed = 2;
 //  gSettings.DoubleClickTime = 500;

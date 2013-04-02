@@ -586,6 +586,7 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = Decimal;  //92
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.LogLineCount);
   InputItems[InputItemsCount].ItemType = ASString;  //93
+  InputItems[InputItemsCount].SValue   = AllocateZeroPool(64);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.MountEFI);
 }
 
@@ -3151,7 +3152,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
 */
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"Mount EFI (Yes|disk0):");
+    InputBootArgs->Entry.Title = PoolPrint(L"Mount EFI:");
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = StrLen(InputItems[93].SValue);
     InputBootArgs->Item = &InputItems[93];    
