@@ -962,6 +962,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->me.SubScreen = SubScreen;
   AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
+  DBG("  added '%s'\n", Entry->me.Title);
   return Entry;
 }
 
@@ -1086,38 +1087,35 @@ static VOID ScanLoader(VOID)
   REFIT_VOLUME            *Volume;
   CHAR16                  FileName[256];
   LOADER_ENTRY            *Entry;
-  CHAR16                  VolumeString[256];
-  INT32                   HVi;
-  CHAR16                  *HV;
   EFI_STATUS              Status;
   
-  //    Print(L"Scanning for boot loaders...\n");
+  DBG("Scanning loaders...\n");
   
   for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
     Volume = Volumes[VolumeIndex];
+    DBG("%2d: '%s'", VolumeIndex, Volume->VolName);
     if (Volume->RootDir == NULL) { // || Volume->VolName == NULL)
-      DBG("Volume %d has no root\n", VolumeIndex);
+      DBG(" no file system\n", VolumeIndex);
       continue;
     }
     if (Volume->VolName == NULL) {
-      DBG("Volume %d has no name\n", VolumeIndex);
-      Volume->VolName = L"EFI volume";
+      Volume->VolName = L"Unknown";
     }
     
     // skip volume if its kind is configured as disabled
     if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_OPTICAL)) ||
         (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_EXTERNAL)) ||
         (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_INTERNAL)))
+    {
+      DBG(" hidden\n");
       continue;
+    }
     
-    StrCpy(VolumeString, DevicePathToStr(Volume->DevicePath));
-    HV = NULL;
-	for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
-	  HV = StrStr(VolumeString, gSettings.HVHideStrings[HVi]);
-	  if (HV != NULL) break;
-	}
-	if (HV != NULL)
-	  continue;
+    if (Volume->OSType == OSTYPE_HIDE) {
+      DBG(" hidden\n");
+      continue;
+    }
+    DBG("\n");
     
     // check for Mac OS X boot loader
     StrCpy(FileName, MACOSX_LOADER_PATH);
@@ -1559,6 +1557,7 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Vo
   AddMenuEntry(SubScreen, &MenuEntryReturn);
   Entry->me.SubScreen = SubScreen;
   AddMenuEntry(&MainMenu, (REFIT_MENU_ENTRY *)Entry);
+  DBG(" added '%s' OSType=%d Icon=%s\n", Entry->me.Title, Volume->OSType, Volume->OSIconName);
   return Entry;
 }
 
@@ -1568,10 +1567,12 @@ static VOID ScanLegacy(VOID)
     BOOLEAN                 ShowVolume, HideIfOthersFound;
     REFIT_VOLUME            *Volume;
     
-    // Print(L"Scanning for legacy boot volumes... VolumesCount = %d\n", VolumesCount);
+    DBG("Scanning legacy ...\n");
     
     for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
         Volume = Volumes[VolumeIndex];
+        DBG("%2d: '%s'", VolumeIndex, Volume->VolName);
+
 #if 0 // REFIT_DEBUG > 0
         DBG(" %d %s\n  %d %d %s %d %s\n",
               VolumeIndex, DevicePathToStr(Volume->DevicePath),
@@ -1584,11 +1585,15 @@ static VOID ScanLegacy(VOID)
         if ((Volume->DiskKind == DISK_KIND_OPTICAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_OPTICAL)) ||
             (Volume->DiskKind == DISK_KIND_EXTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_EXTERNAL)) ||
             (Volume->DiskKind == DISK_KIND_INTERNAL && (GlobalConfig.DisableFlags & DISABLE_FLAG_INTERNAL)))
+        {
+          DBG(" hidden\n");
           continue;
-        
+        }
+      
         if ((Volume->BootType == BOOTING_BY_EFI) ||
             (Volume->BootType == BOOTING_BY_BOOTEFI)) {
-          continue; //this is not legacy!!!
+          DBG(" not legacy\n");
+          continue;
         }
       
         ShowVolume = FALSE;
@@ -1618,15 +1623,12 @@ static VOID ScanLegacy(VOID)
                   break;
                 }
             }
-          if (!ShowVolume) {
-            DBG("hide volume %d\n", VolumeIndex);
-          }
         }
         
         if (ShowVolume && (Volume->OSType != OSTYPE_HIDE)){
             AddLegacyEntry(NULL, Volume);
-            DBG("added legacy entry %d OSType=%d Name=%s Icon=%s\n",
-                VolumeIndex, Volume->OSType, Volume->VolName? Volume->VolName: L"<null>", Volume->OSIconName);
+        } else {
+          DBG(" hidden\n");
         }
     }
 }
@@ -2386,7 +2388,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     
     // scan for loaders and tools, add then to the menu
     if (!GlobalConfig.NoLegacy && GlobalConfig.LegacyFirst && !gSettings.HVHideAllLegacy){
-      DBG("scan legacy first\n");
+      //DBG("scan legacy first\n");
       ScanLegacy();
 //      DBG("ScanLegacy()\n");
     }
@@ -2396,7 +2398,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     if (!GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst && !gSettings.HVHideAllLegacy){
 //      DBG("scan legacy second\n");
       ScanLegacy();
-      DBG("ScanLegacy()\n");
+      //DBG("ScanLegacy()\n");
     }
 //    DBG("ScanLegacy OK\n");
     // fixed other menu entries

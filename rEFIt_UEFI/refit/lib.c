@@ -732,7 +732,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   //    Volume->DevicePath = DuplicateDevicePath(DevicePathFromHandle(Volume->DeviceHandle));
 #if REFIT_DEBUG > 0
   if (Volume->DevicePath != NULL) {
-    DBG("* %s\n", DevicePathToStr(Volume->DevicePath));
+    DBG("  %s\n", DevicePathToStr(Volume->DevicePath));
 #if REFIT_DEBUG >= 2
     //       DumpHex(1, 0, GetDevicePathSize(Volume->DevicePath), Volume->DevicePath);
 #endif
@@ -932,7 +932,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   if (!Volume->VolName) {
     FileSystemInfoPtr = EfiLibFileSystemInfo(Volume->RootDir);
     if (FileSystemInfoPtr) {
-      MsgLog("  Volume name from FileSystem\n");
+      //DBG("  Volume name from FileSystem: '%s'\n", FileSystemInfoPtr->VolumeLabel);
       Volume->VolName = EfiStrDuplicate(FileSystemInfoPtr->VolumeLabel);
       FreePool(FileSystemInfoPtr);
     }
@@ -940,20 +940,30 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   if (!Volume->VolName) {
      VolumeInfo = EfiLibFileSystemVolumeLabelInfo(Volume->RootDir);
      if (VolumeInfo) {
-       //        MsgLog("  Volume name from VolumeLabel\n");
+       //DBG("  Volume name from VolumeLabel: '%s'\n", VolumeInfo->VolumeLabel);
        Volume->VolName = EfiStrDuplicate(VolumeInfo->VolumeLabel);
        FreePool(VolumeInfo); 
      }
    }
   if (!Volume->VolName) {
-     if (Volume->RootDir) {
-        RootInfo = EfiLibFileInfo (Volume->RootDir);
-        if (RootInfo) {
-           //      MsgLog("  Volume name from RootFile\n"); //usually
-           Volume->VolName = EfiStrDuplicate(RootInfo->FileName);
-           FreePool(RootInfo);
-        }
-     }
+    RootInfo = EfiLibFileInfo (Volume->RootDir);
+    if (RootInfo) {
+      //DBG("  Volume name from RootFile: '%s'\n", RootInfo->FileName);
+      Volume->VolName = EfiStrDuplicate(RootInfo->FileName);
+      FreePool(RootInfo);
+    }
+  }
+  if (
+      Volume->VolName == NULL
+      || Volume->VolName[0] == 0
+      || (Volume->VolName[0] == L'\\' && Volume->VolName[1] == 0)
+      || (Volume->VolName[0] == L'/' && Volume->VolName[1] == 0)
+      )
+  {
+    VOID *Instance;
+    if (!EFI_ERROR (gBS->HandleProtocol(Volume->DeviceHandle, &gEfiPartTypeSystemPartGuid, &Instance))) {
+      Volume->VolName = L"EFI";                                 \
+    }
   }
   if (!Volume->VolName) {
     DBG("Create unknown name\n");
@@ -1060,9 +1070,8 @@ VOID ScanVolumes(VOID)
   EFI_DEVICE_PATH_PROTOCOL  *VolumeDevicePath;
   EFI_GUID                *Guid;
   //  EFI_INPUT_KEY Key;
-  CHAR16                  VolumeString[256];
+  CHAR16                  *VolumeDevPath;
   INT32                   HVi;
-  CHAR16                  *HV;
   
   //    DBG("Scanning volumes...\n");
   
@@ -1090,22 +1099,29 @@ VOID ScanVolumes(VOID)
       SelfVolume = Volume;  
     }
 
+    DBG("%2d. Volume:\n", HandleIndex);
     Status = ScanVolume(Volume);
 
     if (!EFI_ERROR(Status)) {
 
       AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);
-      StrCpy(VolumeString, DevicePathToStr(Volume->DevicePath));
-      HV = NULL;
+      VolumeDevPath = DevicePathToStr(Volume->DevicePath);
       for (HVi = 0; HVi < gSettings.HVCount; HVi++) {
-        HV = StrStr(VolumeString, gSettings.HVHideStrings[HVi]);
-        if (HV != NULL) break;
+        if (
+            StrStr(VolumeDevPath, gSettings.HVHideStrings[HVi])
+            || (Volume->VolName != NULL && StrStr(Volume->VolName, gSettings.HVHideStrings[HVi]))
+            )
+        {
+          Volume->OSType = OSTYPE_HIDE;
+          DBG("  hiding this volume\n");
+          break;
+        }
       }
-      if (HV != NULL) Volume->OSType = OSTYPE_HIDE;
+      FreePool(VolumeDevPath);
 
       Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
-      DBG("  %2d. Volume '%s', OS '%s', GUID = %g\n",
-          HandleIndex, Volume->VolName, Volume->OSName ? Volume->OSName : L"", Guid);
+      DBG("  Volume '%s', OS '%s', GUID = %g\n",
+          Volume->VolName, Volume->OSName ? Volume->OSName : L"", Guid);
       if (SelfVolume == Volume)  DBG("  This is SelfVolume !!\n");
       
     } else {
