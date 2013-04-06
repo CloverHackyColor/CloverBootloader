@@ -341,9 +341,9 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
       
       if (gCPUStructure.Family >= 2) {
         aml_add_name(scop, "APSN");
-        aml_add_byte(scop, Apsn);
+        aml_add_byte(scop, (UINT8)Apsn);
         aml_add_name(scop, "APLF");
-        aml_add_byte(scop, Aplf);        
+        aml_add_byte(scop, (UINT8)Aplf);        
       }
       
       

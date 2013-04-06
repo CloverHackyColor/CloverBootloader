@@ -951,7 +951,8 @@ KernelAndKextsPatcherStart(VOID)
   //
   // Kext add
   //
-  if (AsciiStrStr(gSettings.BootArgs, "WithKexts") == NULL)
+  if ((AsciiStrStr(gSettings.BootArgs, "NoKexts") == NULL) &&
+      (AsciiStrStr(gSettings.BootArgs, "WithKexts") == NULL))
   {
     UINT32      deviceTreeP;
     UINT32      deviceTreeLength;

@@ -620,6 +620,15 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   REFIT_MENU_SCREEN *SubScreen;
   UINT64            VolumeSize;
   BOOLEAN           UsesSlideArg;
+
+  // Ignore this loader if it's self path
+  CHAR16 *FilePathAsString = FileDevicePathToStr(SelfLoadedImage->FilePath);
+  if (StrCmp(FilePathAsString, LoaderPath) == 0)
+  {
+     FreePool(FilePathAsString);
+     return NULL;
+  }
+  FreePool(FilePathAsString);
   
   FileName = Basename(LoaderPath);
   
