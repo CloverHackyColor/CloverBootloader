@@ -647,7 +647,7 @@ static CHAR16 *RemoveLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption)
    }
    // If last option just duplicate truncated string
    OptionLength = StrLen(LoadOption);
-   if ((Offset + OptionLength + 1) >= Length) return PoolPrint(L"%*s", Offset, LoadOptions);
+   if ((Offset + OptionLength) >= Length) return PoolPrint(L"%*s", Offset - 1, LoadOptions);
    // Otherwise remove the option
    return PoolPrint(L"%*s%s", Offset, LoadOptions, Placement + OptionLength + 1);
 }
