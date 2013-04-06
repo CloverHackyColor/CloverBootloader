@@ -223,6 +223,8 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 	UINTN					extra_size;
 	VOID					*extra;
 
+   if (AsciiStrStr(gSettings.BootArgs, "NoKexts")) return EFI_NOT_STARTED;
+
 	if     (AsciiStrStr(gSettings.BootArgs,"arch=x86_64")!=NULL)	archCpuType = CPU_TYPE_X86_64;
 	else if(AsciiStrStr(gSettings.BootArgs,"arch=i386")!=NULL)		archCpuType = CPU_TYPE_I386;
 	else if(AsciiStrnCmp(OSVersion,"10.8",4)==0)    	         	archCpuType = CPU_TYPE_X86_64;
