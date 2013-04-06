@@ -1791,7 +1791,7 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
         return EFI_UNSUPPORTED;
     }
     
-    if (Entry->LoadOptions == NULL || StrStr(Entry->LoadOptions, L"WithKexts") == NULL) {
+    if (Entry->LoadOptions == NULL || StrStr(Entry->LoadOptions, L"NoCaches") == NULL) {
         // FS injection not requested
         MsgLog(" not requested\n");
         return EFI_NOT_STARTED;
@@ -1808,7 +1808,7 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
     MsgLog(" blocking caches");
     BlockCaches = TRUE;
     
-    SrcDir = GetExtraKextsDir(Volume);
+    SrcDir = (StrStr(Entry->LoadOptions, L"NoKexts") == NULL) ? GetExtraKextsDir(Volume) : NULL;
     if (SrcDir != NULL) {
         // we have found it - injection will be done
         MsgLog(", injecting kexts from: '%s'", SrcDir);

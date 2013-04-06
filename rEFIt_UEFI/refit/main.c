@@ -608,10 +608,53 @@ static EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
     return Status;
 }
 
+static CHAR16 *AddLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption)
+{
+   // If either option strings are null nothing to do
+   if (LoadOptions == NULL)
+   {
+      if (LoadOption == NULL) return NULL;
+      // Duplicate original options as nothing to add
+      return EfiStrDuplicate(LoadOption);
+   }
+   // If there is no option or it is already present duplicate original
+   else if ((LoadOption == NULL) || StrStr(LoadOptions, LoadOption)) return EfiStrDuplicate(LoadOption);
+   // Otherwise add option
+   return PoolPrint(L"%s %s", LoadOptions, LoadOption);
+}
+
+static CHAR16 *RemoveLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption)
+{
+   CHAR16 *Placement;
+   UINTN   Length, Offset, OptionLength;
+   // If there are no options then nothing to do
+   if (LoadOptions == NULL) return NULL;
+   // If there is no option to remove then duplicate original
+   if (LoadOption == NULL) return EfiStrDuplicate(LoadOptions);
+   // If not present duplicate original
+   Placement = StrStr(LoadOptions, LoadOption);
+   if (Placement == NULL) return EfiStrDuplicate(LoadOptions);
+   // Get placement of option in original options
+   Offset = (Placement - LoadOptions);
+   Length = StrLen(LoadOptions);
+   // If option starts original just duplicate that string offset
+   if (Placement == LoadOptions)
+   {
+      // If it's the whole string do nothing
+      if (Offset >= Length) return NULL;
+      // Skip the separating space
+      return EfiStrDuplicate(LoadOptions + Offset + 1);
+   }
+   // If last option just duplicate truncated string
+   OptionLength = StrLen(LoadOption);
+   if ((Offset + OptionLength + 1) >= Length) return PoolPrint(L"%*s", Offset, LoadOptions);
+   // Otherwise remove the option
+   return PoolPrint(L"%*s%s", Offset, LoadOptions, Placement + OptionLength + 1);
+}
 
 static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume, UINT8 OSType)
 {
-  CHAR16            *FileName, *OSIconName;
+  CHAR16            *FileName, *OSIconName, *TempOptions;
   CHAR16            IconFileName[256];
   CHAR16            DiagsFileName[256];
   CHAR16            ShortcutLetter;
@@ -762,7 +805,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
-    SubEntry->LoadOptions     = UsesSlideArg ? L"arch=x86_64 slide=0" : L"arch=x86_64";
+    SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"arch=x86_64"); //UsesSlideArg ? L"arch=x86_64 slide=0" : L"arch=x86_64";
     SubEntry->LoaderType      = OSTYPE_OSX;
     SubEntry->me.AtClick      = ActionEnter;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
@@ -775,7 +818,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
     SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
-    SubEntry->LoadOptions     = L"arch=i386";
+    SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"arch=i386"); //L"arch=i386";
     SubEntry->LoaderType      = OSTYPE_OSX;
     SubEntry->me.AtClick      = ActionEnter;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
@@ -790,7 +833,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->UseGraphicsMode = FALSE;
-      SubEntry->LoadOptions     = UsesSlideArg ? L"-v slide=0" : L"-v";
+      SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v"); //UsesSlideArg ? L"-v slide=0" : L"-v";
       SubEntry->LoaderType      = OSTYPE_OSX;
       SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
@@ -804,7 +847,9 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->UseGraphicsMode = FALSE;
-      SubEntry->LoadOptions     = UsesSlideArg ? L"-v arch=x86_64 slide=0" : L"-v arch=x86_64";
+      TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
+      SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"arch=x86_64"); //UsesSlideArg ? L"-v arch=x86_64 slide=0" : L"-v arch=x86_64";
+      FreePool(TempOptions);
       SubEntry->LoaderType      = OSTYPE_OSX;
       SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
@@ -817,7 +862,9 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->UseGraphicsMode = FALSE;
-      SubEntry->LoadOptions     = L"-v arch=i386";
+      TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
+      SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"arch=i386"); //L"-v arch=i386";
+      FreePool(TempOptions);
       SubEntry->LoaderType      = OSTYPE_OSX;
       SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
@@ -831,23 +878,86 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->UseGraphicsMode = FALSE;
-      SubEntry->LoadOptions     = UsesSlideArg ? L"-v -s slide=0" : L"-v -s";
+      TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
+      SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"-s"); //UsesSlideArg ? L"-v -s slide=0" : L"-v -s";
+      FreePool(TempOptions);
       SubEntry->LoaderType      = OSTYPE_OSX;
       SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
       
       SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-      SubEntry->me.Title        = L"Boot Mac OS X with extra kexts (skips cache)";
+      SubEntry->me.Title        = L"Boot Mac OS X without caches";
       SubEntry->me.Tag          = TAG_LOADER;
       SubEntry->LoaderPath      = Entry->LoaderPath;
       SubEntry->Volume          = Entry->Volume;
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->UseGraphicsMode = FALSE;
-      SubEntry->LoadOptions     = UsesSlideArg ? L"-v slide=0 WithKexts" : L"-v WithKexts"; //default arch 10.6->32bit, 10.7->64bit
+      SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"NoCaches"); //UsesSlideArg ? L"-v slide=0 NoCaches" : L"-v NoCaches"; //default arch 10.6->32bit, 10.7->64bit
       SubEntry->LoaderType      = OSTYPE_OSX;
       SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+
+      if (StrStr(Entry->LoadOptions, L"NoKexts") == NULL)
+      {
+         SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+         SubEntry->me.Title        = L"Boot Mac OS X without extra kexts";
+         SubEntry->me.Tag          = TAG_LOADER;
+         SubEntry->LoaderPath      = Entry->LoaderPath;
+         SubEntry->Volume          = Entry->Volume;
+         SubEntry->VolName         = Entry->VolName;
+         SubEntry->DevicePath      = Entry->DevicePath;
+         SubEntry->UseGraphicsMode = FALSE;
+         SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"NoKexts"); //UsesSlideArg ? L"-v slide=0" : L"-v NoKexts"; //default arch 10.6->32bit, 10.7->64bit
+         SubEntry->LoaderType      = OSTYPE_OSX;
+         SubEntry->me.AtClick      = ActionEnter;
+         AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+
+         SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+         SubEntry->me.Title        = L"Boot Mac OS X without caches or extra kexts";
+         SubEntry->me.Tag          = TAG_LOADER;
+         SubEntry->LoaderPath      = Entry->LoaderPath;
+         SubEntry->Volume          = Entry->Volume;
+         SubEntry->VolName         = Entry->VolName;
+         SubEntry->DevicePath      = Entry->DevicePath;
+         SubEntry->UseGraphicsMode = FALSE;
+         TempOptions = AddLoadOption(Entry->LoadOptions, L"NoCaches");
+         SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"NoKexts"); //UsesSlideArg ? L"-v slide=0" : L"-v NoKexts"; //default arch 10.6->32bit, 10.7->64bit
+         FreePool(TempOptions);
+         SubEntry->LoaderType      = OSTYPE_OSX;
+         SubEntry->me.AtClick      = ActionEnter;
+         AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      }
+      else
+      {
+         SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+         SubEntry->me.Title        = L"Boot Mac OS X with extra kexts";
+         SubEntry->me.Tag          = TAG_LOADER;
+         SubEntry->LoaderPath      = Entry->LoaderPath;
+         SubEntry->Volume          = Entry->Volume;
+         SubEntry->VolName         = Entry->VolName;
+         SubEntry->DevicePath      = Entry->DevicePath;
+         SubEntry->UseGraphicsMode = FALSE;
+         SubEntry->LoadOptions     = RemoveLoadOption(Entry->LoadOptions, L"NoKexts"); //UsesSlideArg ? L"-v slide=0" : L"-v NoKexts"; //default arch 10.6->32bit, 10.7->64bit
+         SubEntry->LoaderType      = OSTYPE_OSX;
+         SubEntry->me.AtClick      = ActionEnter;
+         AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+
+         SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+         SubEntry->me.Title        = L"Boot Mac OS X without caches but with extra kexts";
+         SubEntry->me.Tag          = TAG_LOADER;
+         SubEntry->LoaderPath      = Entry->LoaderPath;
+         SubEntry->Volume          = Entry->Volume;
+         SubEntry->VolName         = Entry->VolName;
+         SubEntry->DevicePath      = Entry->DevicePath;
+         SubEntry->UseGraphicsMode = FALSE;
+         TempOptions = AddLoadOption(Entry->LoadOptions, L"NoCaches");
+         SubEntry->LoadOptions     = RemoveLoadOption(TempOptions, L"NoKexts"); //UsesSlideArg ? L"-v slide=0" : L"-v NoKexts"; //default arch 10.6->32bit, 10.7->64bit
+         FreePool(TempOptions);
+         SubEntry->LoaderType      = OSTYPE_OSX;
+         SubEntry->me.AtClick      = ActionEnter;
+         AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      }
     }
     
     // check for Apple hardware diagnostics
