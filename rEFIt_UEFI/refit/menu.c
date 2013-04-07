@@ -151,7 +151,7 @@ VOID RefillInputs(VOID)
   InputItemsCount = 0; 
   InputItems[InputItemsCount].ItemType = ASString;  //0
   //even though Ascii we will keep value as Unicode to convert later
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 255, L"%a", gSettings.BootArgs);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, SVALUE_MAX_SIZE, L"%a", gSettings.BootArgs);
   InputItems[InputItemsCount].ItemType = UNIString; //1
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.DsdtName);
   InputItems[InputItemsCount].ItemType = BoolValue; //2
@@ -368,8 +368,8 @@ VOID FillInputs(VOID)
   InputItems = AllocateZeroPool(100 * sizeof(INPUT_ITEM)); //XXX
   InputItems[InputItemsCount].ItemType = ASString;  //0
   //even though Ascii we will keep value as Unicode to convert later
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(255);
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 255, L"%a", gSettings.BootArgs);
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(SVALUE_MAX_SIZE);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, SVALUE_MAX_SIZE, L"%a", gSettings.BootArgs);
   InputItems[InputItemsCount].ItemType = UNIString; //1
   InputItems[InputItemsCount].SValue = AllocateZeroPool(63);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.DsdtName);
@@ -1226,35 +1226,41 @@ static INTN FindMenuShortcutEntry(IN REFIT_MENU_SCREEN *Screen, IN CHAR16 Shortc
 //
 static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  StyleFunc, IN SCROLL_STATE *State) 
 {
-	EFI_STATUS    Status;
-	EFI_INPUT_KEY key;
-	UINTN         ind = 0;
-	UINTN         i = 0;
-	UINTN         MenuExit = 0;
-   //UINTN         LogSize;
+
+  EFI_STATUS    Status;
+  EFI_INPUT_KEY key;
+  UINTN         ind = 0;
+  UINTN         i = 0;
+  UINTN         MenuExit = 0;
+  //UINTN         LogSize;
   UINTN         Pos = (Screen->Entries[State->CurrentSelection])->Row;
   INPUT_ITEM    *Item = ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item;
   CHAR16        *Backup = EfiStrDuplicate(Item->SValue);
-  CHAR16        *Buffer = Item->SValue; //AllocateZeroPool(255);
-  CHAR16        *TempString = AllocateZeroPool(255);
+  CHAR16        *Buffer;
   SCROLL_STATE  StateLine;
-  //FiXME: LineSize
-  UINTN         LineSize = 32;
+
+  UINTN         LineSize = 38;
+
+
+  if (Item->ItemType != BoolValue) {
+    // Grow Item->SValue to SVALUE_MAX_SIZE if we want to edit a text field
+    Item->SValue = EfiReallocatePool(Item->SValue, StrSize(Item->SValue), SVALUE_MAX_SIZE);
+  }
   
-  
-//  StrCpy(Buffer, Item->SValue);
-//  DBG("Enter Input Dialog\n");
-  //TODO make scroll for line
+  Buffer = Item->SValue;
+
   InitScroll(&StateLine, 128, 128, StrLen(Item->SValue));
-//  MsgLog("initial SValue: %s\n", Item->SValue);
-	
-	do {
+  //  MsgLog("initial SValue: %s\n", Item->SValue);
+
+  do {
+
     if (Item->ItemType == BoolValue) {
       Item->BValue = !Item->BValue;
       Item->SValue = Item->BValue?L"[+] ":L"[ ] ";
       MenuExit = MENU_EXIT_ENTER;
+
     } else {
-    
+
       Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &key);
       if (Status == EFI_NOT_READY) {
         gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &ind);
@@ -1271,7 +1277,7 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
           }
           break;
         case SCAN_LEFT:
-          if (Pos>0)
+          if (Pos > 0)
             Pos--;
           else if (Item->LineShift > 0)
             Item->LineShift--;
@@ -1281,8 +1287,8 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
           Item->LineShift=0;
           break;
         case SCAN_END:
-          if (StrLen(Buffer)<LineSize)
-          Pos = StrLen(Buffer);
+          if (StrLen(Buffer) < LineSize)
+            Pos = StrLen(Buffer);
           else {
             Pos = LineSize;
             Item->LineShift = StrLen(Buffer) - LineSize;
@@ -1319,15 +1325,10 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
       switch (key.UnicodeChar) {
         case CHAR_BACKSPACE:  
           if (Buffer[0] != CHAR_NULL && Pos != 0) {
-            for (i = 0; i < Pos - 1; i++) {
-              TempString[i] = Buffer[i];
-            }           
-            for (i = Pos - 1; i < StrLen(Buffer); i++) {
-              TempString[i] = Buffer[i+1];
+            for (i = Pos + Item->LineShift; i < StrSize(Buffer); i++) {
+               Buffer[i-1] = Buffer[i];
             }
-            TempString[i] = CHAR_NULL;
-            StrCpy (Buffer, TempString);
-            Pos--;
+            Item->LineShift > 0 ? Item->LineShift-- : Pos--;
           }
           
           break;
@@ -1341,45 +1342,38 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
         default:
           if ((key.UnicodeChar >= 0x20) &&
               (key.UnicodeChar < 0x80)){
-            if (Pos + Item->LineShift < 254) {
-              for (i = 0; i < Pos + Item->LineShift; i++) {
-                TempString[i] = Buffer[i];
-              }           
-              TempString[Pos + Item->LineShift] = key.UnicodeChar;
-              if (Pos < LineSize)
-                Pos++;
-              else
-                Item->LineShift++;
-              for (i = Pos + Item->LineShift; i < StrLen(Buffer)+1; i++) {
-                TempString[i] = Buffer[i-1];
+            if (StrSize(Buffer) < SVALUE_MAX_SIZE - 1) {
+              for (i = StrSize(Buffer); i >  Pos + Item->LineShift; i--) {
+                 Buffer[i] = Buffer[i-1];
               }
-              TempString[i] = CHAR_NULL;
-              StrCpy (Buffer, TempString);
+              Buffer[i] = key.UnicodeChar;
+              Pos < LineSize ? Pos++ : Item->LineShift++;
             }            
           }
           break;
       }
     }
+    // Redraw the field
     (Screen->Entries[State->CurrentSelection])->Row = Pos;
     StyleFunc(Screen, State, MENU_FUNCTION_PAINT_SELECTION, NULL);
-	} while (!MenuExit);
-	switch (MenuExit) {
-		case MENU_EXIT_ENTER:
+  } while (!MenuExit);
+
+  switch (MenuExit) {
+    case MENU_EXIT_ENTER:
       Item->Valid = TRUE;
       ApplyInputs();
-//      Item->SValue = EfiStrDuplicate(Buffer);
-			break;
-		case MENU_EXIT_ESCAPE:
-			Item->Valid = FALSE;
-      UnicodeSPrint(Item->SValue, 255, L"%s", Backup);
-   //   Item->SValue = EfiStrDuplicate(Backup);
+      break;
+
+    case MENU_EXIT_ESCAPE:
+      Item->Valid = FALSE;
+      UnicodeSPrint(Item->SValue, SVALUE_MAX_SIZE, L"%s", Backup);
       StyleFunc(Screen, State, MENU_FUNCTION_PAINT_SELECTION, NULL);
-			break;
-	}
-  FreePool(TempString);
+      break;
+  }
+
   FreePool(Backup);
-//  FreePool(Buffer);  //do not free memory that you did not allocate
-	MsgLog("EDITED: %s\n", Item->SValue);
+  MsgLog("EDITED: %s\n", Item->SValue);
+
   return 0;
 }
 

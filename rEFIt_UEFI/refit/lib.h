@@ -201,9 +201,11 @@ typedef struct {
 //  UINT32  Pad32;
 //  UINT64  UValue;
 //  CHAR8*  AValue;
-  CHAR16* SValue;
+  CHAR16* SValue; // Max Size (see below) so the field can be edit by the GUI
   UINTN   LineShift;
 } INPUT_ITEM;
+
+#define SVALUE_MAX_SIZE 255
 
 typedef enum {
   ActionNone,
