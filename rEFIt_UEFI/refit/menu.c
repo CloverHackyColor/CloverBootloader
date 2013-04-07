@@ -352,8 +352,8 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].ItemType = Decimal;  //92
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.LogLineCount);
   InputItems[InputItemsCount].ItemType = ASString;  //93
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.MountEFI);
-  
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 76, L"%a",
+                gSettings.MountEFI ? gSettings.MountEFI : "");
 }
 
 VOID FillInputs(VOID)
@@ -587,7 +587,8 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.LogLineCount);
   InputItems[InputItemsCount].ItemType = ASString;  //93
   InputItems[InputItemsCount].SValue   = AllocateZeroPool(64);
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a", gSettings.MountEFI);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 76, L"%a",
+                gSettings.MountEFI ? gSettings.MountEFI : "");
 }
 
 
@@ -887,8 +888,8 @@ VOID ApplyInputs(VOID)
     if (gSettings.MountEFI) {
       FreePool(gSettings.MountEFI);
     }
-    gSettings.MountEFI = AllocateZeroPool(64);
-    AsciiSPrint(gSettings.MountEFI, 64, "%s", InputItems[i].SValue);
+    gSettings.MountEFI = AllocateZeroPool(38); // make the room for at least a UUID
+    AsciiSPrint(gSettings.MountEFI, 38, "%s", InputItems[i].SValue);
   }    
   
   SaveSettings(); 
