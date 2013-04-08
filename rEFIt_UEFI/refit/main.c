@@ -1850,11 +1850,25 @@ static VOID ScanTool(VOID)
       DBG("found tools\\Shell32.efi\n");
     }
 #elif defined(MDE_CPU_X64)
-    StrCpy(FileName, L"\\EFI\\tools\\Shell64.efi");
-    if (FileExists(SelfRootDir, FileName)) {
-      Entry = AddToolEntry(FileName, L"EFI Shell 64", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
-      DBG("found tools\\Shell64.efi\n");
-    }
+   if (gFirmwareClover) {
+      StrCpy(FileName, L"\\EFI\\tools\\Shell64.efi");
+      if (FileExists(SelfRootDir, FileName)) {
+         Entry = AddToolEntry(FileName, L"EFI Shell 64", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
+         DBG("found tools\\Shell64.efi\n");
+      }
+   } else {
+     StrCpy(FileName, L"\\EFI\\tools\\Shell64U.efi");
+     if (FileExists(SelfRootDir, FileName)) {
+       Entry = AddToolEntry(FileName, L"UEFI Shell 64", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
+       DBG("found tools\\Shell64U.efi\n");
+     } else {
+       StrCpy(FileName, L"\\EFI\\tools\\Shell64.efi");
+       if (FileExists(SelfRootDir, FileName)) {
+          Entry = AddToolEntry(FileName, L"EFI Shell 64", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
+          DBG("found tools\\Shell64.efi\n");
+       }
+     }
+   }
 #else //what else? ARM?
     UnicodeSPrint(FileName, 512, L"\\EFI\\tools\\shell.efi");
     if (FileExists(SelfRootDir, FileName)) {
