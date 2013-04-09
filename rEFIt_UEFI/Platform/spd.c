@@ -437,7 +437,6 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
                                        spdbuf[SPD_NUM_BANKS_PER_SDRAM]);
           break;
           
-        default:
         case SPD_MEMORY_TYPE_SDRAM_DDR3:
           
           gRAM.SPD[i].ModuleSize = ((spdbuf[4] & 0x0f) + 28 ) + ((spdbuf[8] & 0x7)  + 3 );
@@ -446,7 +445,8 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
           
           break;
       }
-      
+
+      if (gRAM.SPD[i].ModuleSize == 0) continue;
       //spd_type = (slot->spd[SPD_MEMORY_TYPE] < ((UINT8) 12) ? slot->spd[SPD_MEMORY_TYPE] : 0);
       //gRAM Type = spd_mem_to_smbios[spd_type];
       gRAM.SPD[i].PartNo = getDDRPartNum(spdbuf, base, i);
