@@ -1114,8 +1114,6 @@ VOID GetTableType17()
 	}
 }
 		
-INTN mapping []= {0,2,1,3,4,6,5,7,8,10,9,11,12,14,13,15,
-                  16,18,17,19,20,22,21,23,24,26,25,27,28,30,29,31};
 VOID PatchTableType17()
 {
 	CHAR8	deviceLocator[10];
@@ -1124,6 +1122,7 @@ VOID PatchTableType17()
   //INTN map = gDMI->DIMM[Index];
   //INTN map0 = map;
   //MEMORY_DEVICE_TYPE spdType;
+  INTN    dualChannelMap[MAX_RAM_SLOTS];
   UINT8   SPDInUse = 0, SMBIOSInUse = 0;
   BOOLEAN insertingEmpty = TRUE;
   BOOLEAN trustSMBIOS = TRUE;
@@ -1157,12 +1156,16 @@ VOID PatchTableType17()
   if (trustSMBIOS) {
     DBG("Trusting SMBIOS...\n");
   }
+  // Setup dual channel map
+  for (Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
+     dualChannelMap[Index] = ((Index & ~3) | ((Index >> 1) & 1) | ((Index & 1) << 1));
+  }
   // Memory Device
   //
   gRAMCount = 0;
 	for (Index = 0; Index < MAX_RAM_SLOTS; Index++) {
-    UINTN SMBIOSIndex = wrongSMBIOSBanks ? mapping[Index] : Index;
-    UINTN SPDIndex = wrongSPDBanks ? mapping[Index] : Index;
+    UINTN SMBIOSIndex = wrongSMBIOSBanks ? dualChannelMap[Index] : Index;
+    UINTN SPDIndex = wrongSPDBanks ? dualChannelMap[Index] : Index;
     if (!insertingEmpty && !gRAM.SPD[SPDIndex].InUse &&
         (!trustSMBIOS || !gRAM.SMBIOS[SMBIOSIndex].InUse)) {
       continue;
