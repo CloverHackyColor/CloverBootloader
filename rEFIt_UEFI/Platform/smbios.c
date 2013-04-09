@@ -1114,7 +1114,8 @@ VOID GetTableType17()
 	}
 }
 		
-INTN mapping []= {0,2,1,3,4,6,5,7,8,10,9,11};
+INTN mapping []= {0,2,1,3,4,6,5,7,8,10,9,11,12,14,13,15,
+                  16,18,17,19,20,22,21,23,24,26,25,27,28,30,29,31};
 VOID PatchTableType17()
 {
 	CHAR8	deviceLocator[10];
@@ -1166,8 +1167,7 @@ VOID PatchTableType17()
         (!trustSMBIOS || !gRAM.SMBIOS[SMBIOSIndex].InUse)) {
       continue;
     }
-    SmbiosTable.Raw = NULL;
-		if (gRAM.SMBIOS[SMBIOSIndex].InUse) SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, SMBIOSIndex);
+		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, SMBIOSIndex);
 		//}
 		//DBG("SMBIOS Type 17 Index = %d:\n", Index);
 		//if (SmbiosTable.Raw == NULL) {
