@@ -1149,9 +1149,19 @@ VOID PatchTableType17()
     return;
   }
   // Detect whether the SMBIOS is trusted information
-  if ((SPDInUse != 0) &&
-      ((SPDInUse != SMBIOSInUse) || (gRAM.SPD[0].InUse != gRAM.SMBIOS[0].InUse))) {
-    trustSMBIOS = FALSE;
+  if (SPDInUse != SMBIOSInUse) {
+    // Prefer the SPD information
+    if (SPDInUse > SMBIOSInUse) {
+      trustSMBIOS = FALSE;
+    } else if (gRAM.SPD[0].InUse || !gRAM.SMBIOS[0].InUse) {
+      trustSMBIOS = FALSE;
+    } else if ((SMBIOSInUse - SPDInUse) > 1) {
+      // The SMBIOS may contain table for built-in module
+      trustSMBIOS = FALSE;
+    }
+  } else if (gRAM.SPD[0].InUse != gRAM.SMBIOS[0].InUse) {
+     // Never trust a sneaky SMBIOS!
+     trustSMBIOS = FALSE;
   }
   if (trustSMBIOS) {
     DBG("Trusting SMBIOS...\n");
