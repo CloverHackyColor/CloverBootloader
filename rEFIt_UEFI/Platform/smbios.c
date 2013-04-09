@@ -1069,6 +1069,7 @@ VOID PatchTableType16()
 	//MemoryErrorInformationHandle
 	newSmbiosTable.Type16->MemoryErrorInformationHandle = 0xFFFF;
 	newSmbiosTable.Type16->NumberOfMemoryDevices = gRAMCount;//gDMI->CntMemorySlots;//gDMI->MemoryModules;
+  DBG("NumberOfMemoryDevices = %d\n", gRAMCount);
 	mHandle16 = LogSmbiosTable(newSmbiosTable);
 	return;
 }
@@ -1119,112 +1120,107 @@ VOID PatchTableType17()
 	CHAR8	deviceLocator[10];
 	CHAR8	bankLocator[10];
 	//CHAR8 *EmptySlot = "[empty]";
-   //INTN map = gDMI->DIMM[Index];
-   //INTN map0 = map;
-   //MEMORY_DEVICE_TYPE spdType;
-   UINT8   SPDInUse = 0, SMBIOSInUse = 0;
-   BOOLEAN insertingEmpty = TRUE;
-   BOOLEAN trustSMBIOS = TRUE;
-   BOOLEAN wrongSMBIOSBanks = ((gRAM.SMBIOS[0].InUse != gRAM.SMBIOS[1].InUse) ||
-                               (gRAM.SMBIOS[0].Frequency != gRAM.SMBIOS[1].Frequency) ||
-                               (gRAM.SMBIOS[0].ModuleSize != gRAM.SMBIOS[1].ModuleSize));
-   BOOLEAN wrongSPDBanks = ((gRAM.SPD[0].InUse != gRAM.SPD[1].InUse) ||
-                            (gRAM.SPD[0].Frequency != gRAM.SPD[1].Frequency) ||
-                            (gRAM.SPD[0].ModuleSize != gRAM.SPD[1].ModuleSize));
-	if (wrongSMBIOSBanks) DBG("Detected alternating SMBIOS channel banks\n");
-   if (wrongSPDBanks) DBG("Detected alternating SPD channel banks\n");
-   // Check for SMBIOS trust
-   for (Index = 0; Index < MAX_RAM_SLOTS; Index++) {
-      if (gRAM.SPD[Index].InUse) ++SPDInUse;
-      if (gRAM.SMBIOS[Index].InUse) ++SMBIOSInUse;
-   }
-   // Prevent inserting empty tables
-   if ((SPDInUse == 0) && (SMBIOSInUse == 0))
-   {
-      DBG("SMBIOS and SPD contain no modules in use\n");
-      return;
-   }
-   // Detect whether the SMBIOS is trusted information
-   if ((SPDInUse != 0) && (SPDInUse != SMBIOSInUse) &&
-       (gRAM.SPD[0].InUse != gRAM.SMBIOS[0].InUse))
-   {
-      trustSMBIOS = FALSE;
-   }
-   if (trustSMBIOS) DBG("Trusting SMBIOS...\n");
+  //INTN map = gDMI->DIMM[Index];
+  //INTN map0 = map;
+  //MEMORY_DEVICE_TYPE spdType;
+  UINT8   SPDInUse = 0, SMBIOSInUse = 0;
+  BOOLEAN insertingEmpty = TRUE;
+  BOOLEAN trustSMBIOS = TRUE;
+  BOOLEAN wrongSMBIOSBanks = ((gRAM.SMBIOS[0].InUse != gRAM.SMBIOS[1].InUse) ||
+                              (gRAM.SMBIOS[0].Frequency != gRAM.SMBIOS[1].Frequency) ||
+                              (gRAM.SMBIOS[0].ModuleSize != gRAM.SMBIOS[1].ModuleSize));
+  BOOLEAN wrongSPDBanks = ((gRAM.SPD[0].InUse != gRAM.SPD[1].InUse) ||
+                           (gRAM.SPD[0].Frequency != gRAM.SPD[1].Frequency) ||
+                           (gRAM.SPD[0].ModuleSize != gRAM.SPD[1].ModuleSize));
+	if (wrongSMBIOSBanks) {
+    DBG("Detected alternating SMBIOS channel banks\n");
+  }
+  if (wrongSPDBanks) {
+    DBG("Detected alternating SPD channel banks\n");
+  }
+  // Check for SMBIOS trust
+  for (Index = 0; Index < MAX_RAM_SLOTS; Index++) {
+    if (gRAM.SPD[Index].InUse) ++SPDInUse;
+    if (gRAM.SMBIOS[Index].InUse) ++SMBIOSInUse;
+  }
+  // Prevent inserting empty tables
+  if ((SPDInUse == 0) && (SMBIOSInUse == 0)) {
+    DBG("SMBIOS and SPD contain no modules in use\n");
+    return;
+  }
+  // Detect whether the SMBIOS is trusted information
+  if ((SPDInUse != 0) && (SPDInUse != SMBIOSInUse) &&
+      (gRAM.SPD[0].InUse != gRAM.SMBIOS[0].InUse)) {
+    trustSMBIOS = FALSE;
+  }
+  if (trustSMBIOS) {
+    DBG("Trusting SMBIOS...\n");
+  }
   // Memory Device
   //
-   gRAMCount = 0;
-	for (Index = 0; Index < MAX_RAM_SLOTS; Index++) {
-      UINTN SMBIOSIndex = wrongSMBIOSBanks ? mapping[Index] : Index;
-      UINTN SPDIndex = wrongSPDBanks ? mapping[Index] : Index;
-      if (!insertingEmpty && !gRAM.SPD[SPDIndex].InUse &&
-          (!trustSMBIOS || !gRAM.SMBIOS[SMBIOSIndex].InUse))
-      {
-         continue;
-      }
+  gRAMCount = 0;
+	for (Index = 0; Index < TotalCount; Index++) {
+    UINTN SMBIOSIndex = wrongSMBIOSBanks ? mapping[Index] : Index;
+    UINTN SPDIndex = wrongSPDBanks ? mapping[Index] : Index;
+    if (!insertingEmpty && !gRAM.SPD[SPDIndex].InUse &&
+        (!trustSMBIOS || !gRAM.SMBIOS[SMBIOSIndex].InUse)) {
+      continue;
+    }
 		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, SMBIOSIndex);
 		//}
 		//DBG("SMBIOS Type 17 Index = %d:\n", Index);
 		//if (SmbiosTable.Raw == NULL) {
-//		//	DBG("SmbiosTable: Type 17 (Memory Device number %d) not found!\n", Index);
+    //		//	DBG("SmbiosTable: Type 17 (Memory Device number %d) not found!\n", Index);
 		//	continue;
 		//}
-/*		if ((SmbiosTable.Type17->Size == 0) || (SmbiosTable.Type17->Speed == 0)) {
-			continue;
-		} */
-      DBG("SMBIOS Type 17 Index = %d => %d %d:\n", Index, SMBIOSIndex, SPDIndex);
+    /*		if ((SmbiosTable.Type17->Size == 0) || (SmbiosTable.Type17->Speed == 0)) {
+     continue;
+     } */
+    DBG("SMBIOS Type 17 Index = %d => %d %d:\n", Index, SMBIOSIndex, SPDIndex);
 		//
-      if (trustSMBIOS && gRAM.SMBIOS[SMBIOSIndex].InUse && (SmbiosTable.Raw != NULL))
-      {
-         TableSize = SmbiosTableLength(SmbiosTable);
-         CopyMem((VOID*)newSmbiosTable.Type17, (VOID *)SmbiosTable.Type17, TableSize);
+    if (trustSMBIOS && gRAM.SMBIOS[SMBIOSIndex].InUse && (SmbiosTable.Raw != NULL)) {
+      TableSize = SmbiosTableLength(SmbiosTable);
+      CopyMem((VOID*)newSmbiosTable.Type17, (VOID *)SmbiosTable.Type17, TableSize);
+    } else {
+      ZeroMem((VOID*)newSmbiosTable.Type17, MAX_TABLE_SIZE);
+      newSmbiosTable.Type17->Hdr.Type = EFI_SMBIOS_TYPE_MEMORY_DEVICE;
+      newSmbiosTable.Type17->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE17);
+      newSmbiosTable.Type17->Hdr.Handle = (UINT16)(0x1110 + Index);
+      newSmbiosTable.Type17->TotalWidth = 0xFFFF;
+      newSmbiosTable.Type17->DataWidth = 0xFFFF;
+      newSmbiosTable.Type17->FormFactor = MemoryFormFactorSodimm;
+    }
+    if (gRAM.SPD[SPDIndex].InUse) {
+      if (iStrLen(gRAM.SPD[SPDIndex].Vendor, 64) > 0) {
+        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.SPD[SPDIndex].Vendor);
       }
-      else
-      {
-		   ZeroMem((VOID*)newSmbiosTable.Type17, MAX_TABLE_SIZE);
-         newSmbiosTable.Type17->Hdr.Type = EFI_SMBIOS_TYPE_MEMORY_DEVICE;
-         newSmbiosTable.Type17->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE17);
-         newSmbiosTable.Type17->Hdr.Handle = (UINT16)(0x1110 + Index);
-         newSmbiosTable.Type17->TotalWidth = 0xFFFF;
-         newSmbiosTable.Type17->DataWidth = 0xFFFF;
-         newSmbiosTable.Type17->FormFactor = MemoryFormFactorSodimm;
+      if (iStrLen(gRAM.SPD[SPDIndex].SerialNo, 64) > 0) {
+        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, gRAM.SPD[SPDIndex].SerialNo);
       }
-      if (gRAM.SPD[SPDIndex].InUse)
-      {
-         if (iStrLen(gRAM.SPD[SPDIndex].Vendor, 64) > 0)
-         {
-            UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.SPD[SPDIndex].Vendor);
-         }
-         if (iStrLen(gRAM.SPD[SPDIndex].SerialNo, 64) > 0)
-         {
-            UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, gRAM.SPD[SPDIndex].SerialNo);
-         }
-         if (iStrLen(gRAM.SPD[SPDIndex].PartNo, 64) > 0)
-         {
-            UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gRAM.SPD[SPDIndex].PartNo);
-         }
-         newSmbiosTable.Type17->Speed = (UINT16)gRAM.SPD[SPDIndex].Frequency;
-         newSmbiosTable.Type17->Size = (UINT16)gRAM.SPD[SPDIndex].ModuleSize;
+      if (iStrLen(gRAM.SPD[SPDIndex].PartNo, 64) > 0) {
+        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gRAM.SPD[SPDIndex].PartNo);
       }
-      if (trustSMBIOS && gRAM.SMBIOS[SMBIOSIndex].InUse &&
-          (newSmbiosTable.Type17->Speed < (UINT16)gRAM.SMBIOS[SPDIndex].Frequency))
-      {
-         newSmbiosTable.Type17->Speed = (UINT16)gRAM.SMBIOS[SPDIndex].Frequency;
-      }
+      newSmbiosTable.Type17->Speed = (UINT16)gRAM.SPD[SPDIndex].Frequency;
+      newSmbiosTable.Type17->Size = (UINT16)gRAM.SPD[SPDIndex].ModuleSize;
+    }
+    if (trustSMBIOS && gRAM.SMBIOS[SMBIOSIndex].InUse &&
+        (newSmbiosTable.Type17->Speed < (UINT16)gRAM.SMBIOS[SPDIndex].Frequency)) {
+      newSmbiosTable.Type17->Speed = (UINT16)gRAM.SMBIOS[SPDIndex].Frequency;
+    }
 		Once = TRUE;		
 		newSmbiosTable.Type17->MemoryArrayHandle = mHandle16;
-/*		if (gDMI->DIMM[2] && Index == 1 &&  TotalCount == 2)
-		{
-		    newSmbiosTable.Type17->Size =  gRAM->DIMM[2].ModuleSize;
-		    newSmbiosTable.Type17->Speed = gRAM->DIMM[2].Frequency;
-		} 
-		mTotalSystemMemory += newSmbiosTable.Type17->Size;
-		mMemory17[Index] = newSmbiosTable.Type17->Size > 0 ? mTotalSystemMemory : 0;
-		DBG("mMemory17[%d] = %d, mTotalSystemMemory = %d\n", Index, mMemory17[Index], mTotalSystemMemory);
-*/		
+    /*		if (gDMI->DIMM[2] && Index == 1 &&  TotalCount == 2)
+     {
+     newSmbiosTable.Type17->Size =  gRAM->DIMM[2].ModuleSize;
+     newSmbiosTable.Type17->Speed = gRAM->DIMM[2].Frequency;
+     } 
+     mTotalSystemMemory += newSmbiosTable.Type17->Size;
+     mMemory17[Index] = newSmbiosTable.Type17->Size > 0 ? mTotalSystemMemory : 0;
+     DBG("mMemory17[%d] = %d, mTotalSystemMemory = %d\n", Index, mMemory17[Index], mTotalSystemMemory);
+     */		
 		
-	
-	//	SmbiosTable.Type17->FormFactor = MemoryFormFactorProprietaryCard; //why?
+    
+    //	SmbiosTable.Type17->FormFactor = MemoryFormFactorProprietaryCard; //why?
 		switch (gCPUStructure.Family) 		
 		{				
 			case 0x06:				
@@ -1249,7 +1245,7 @@ VOID PatchTableType17()
 						
 						newSmbiosTable.Type17->MemoryType = MemoryTypeDdr3;
 						break;
-												
+            
 					default:
 						newSmbiosTable.Type17->MemoryType = MemoryTypeDdr2;						
 						break;						
@@ -1268,84 +1264,81 @@ VOID PatchTableType17()
 		if(iStrLen(gSettings.MemoryPartNumber, 64)>0){
 			UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gSettings.MemoryPartNumber);		
 		}
-/*		if(iStrLen(gSettings.MemorySpeed)>0){
-			newSmbiosTable.Type17->Speed = (UINT16)StrDecimalToUintn(gSettings.MemorySpeed);			
-		}
-*/
+    /*		if(iStrLen(gSettings.MemorySpeed)>0){
+     newSmbiosTable.Type17->Speed = (UINT16)StrDecimalToUintn(gSettings.MemorySpeed);			
+     }
+     */
 #else
-      /*
-      map0 = map;
-		if (gDMI->DIMM[2] && Index == 1 &&  TotalCount == 2)
-		{
-      DBG(" Index=1 but DIMM[2] present. Redirect map: old=%d\n", map);
-		    map = gDMI->DIMM[2];
-      DBG("...new map=%d\n", map);
-		}		
-		if (gRAM->DIMM[map].InUse) {
- //     DBG("new map InUse\n");
-		} else
-			if (gRAM->DIMM[map0].InUse){
-      map = map0;
-//			DBG("old map InUse\n");
-    } *//*else {
-			DBG("both map not In Use. TODO?\n");
-		}*/
-
-      /*
-		spdType = gRAM.SPD[SPDIndex].InUse ? gRAM.SPD[SPDIndex].Type : gRAM.SMBIOS[SMBIOSIndex];
-		if ((spdType == MemoryTypeDdr2) ||
-				(spdType == MemoryTypeDdr3)) {
-			newSmbiosTable.Type17->MemoryType = spdType;
-		}
-		if(iStrLen(gRAM->DIMM[map].Vendor, 64)>0 && gRAM->DIMM[map].InUse){
-			UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM->DIMM[map].Vendor);			
-		} else {
-			UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, EmptySlot);
-		}
-
-		if(iStrLen(gRAM->DIMM[map].SerialNo, 64)>0 && gRAM->DIMM[map].InUse){
-			UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, gRAM->DIMM[map].SerialNo);			
-		} else {
-			UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, EmptySlot);
-		}
-
-		if(iStrLen(gRAM->DIMM[map].PartNo, 64)>0 && gRAM->DIMM[map].InUse){
-			UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gRAM->DIMM[map].PartNo);		
-		} else {
-			UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, EmptySlot);
-		}
-
-		
-		if(gRAM->DIMM[map].Frequency>0 && gRAM->DIMM[map].InUse){
-			newSmbiosTable.Type17->Speed = (UINT16)gRAM->DIMM[map].Frequency;			
-		}
-      newSmbiosTable.Type17->Size = (UINT16)gRAM->DIMM[map].ModuleSize;
-      */
+    /*
+     map0 = map;
+     if (gDMI->DIMM[2] && Index == 1 &&  TotalCount == 2)
+     {
+     DBG(" Index=1 but DIMM[2] present. Redirect map: old=%d\n", map);
+     map = gDMI->DIMM[2];
+     DBG("...new map=%d\n", map);
+     }		
+     if (gRAM->DIMM[map].InUse) {
+     //     DBG("new map InUse\n");
+     } else
+     if (gRAM->DIMM[map0].InUse){
+     map = map0;
+     //			DBG("old map InUse\n");
+     } *//*else {
+          DBG("both map not In Use. TODO?\n");
+          }*/
+    
+    /*
+     spdType = gRAM.SPD[SPDIndex].InUse ? gRAM.SPD[SPDIndex].Type : gRAM.SMBIOS[SMBIOSIndex];
+     if ((spdType == MemoryTypeDdr2) ||
+     (spdType == MemoryTypeDdr3)) {
+     newSmbiosTable.Type17->MemoryType = spdType;
+     }
+     if(iStrLen(gRAM->DIMM[map].Vendor, 64)>0 && gRAM->DIMM[map].InUse){
+     UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM->DIMM[map].Vendor);			
+     } else {
+     UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, EmptySlot);
+     }
+     
+     if(iStrLen(gRAM->DIMM[map].SerialNo, 64)>0 && gRAM->DIMM[map].InUse){
+     UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, gRAM->DIMM[map].SerialNo);			
+     } else {
+     UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, EmptySlot);
+     }
+     
+     if(iStrLen(gRAM->DIMM[map].PartNo, 64)>0 && gRAM->DIMM[map].InUse){
+     UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gRAM->DIMM[map].PartNo);		
+     } else {
+     UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, EmptySlot);
+     }
+     
+     
+     if(gRAM->DIMM[map].Frequency>0 && gRAM->DIMM[map].InUse){
+     newSmbiosTable.Type17->Speed = (UINT16)gRAM->DIMM[map].Frequency;			
+     }
+     newSmbiosTable.Type17->Size = (UINT16)gRAM->DIMM[map].ModuleSize;
+     */
 #endif
-      /*
-		if ((newSmbiosTable.Type17->Speed < 20) || (SmbiosTable.Type17->Speed > 20000)) {
-			newSmbiosTable.Type17->Speed = 800;
-		}
-      */
+    /*
+     if ((newSmbiosTable.Type17->Speed < 20) || (SmbiosTable.Type17->Speed > 20000)) {
+     newSmbiosTable.Type17->Speed = 800;
+     }
+     */
 		
 		//now I want to update deviceLocator and bankLocator		
-	   newSmbiosTable.Type17->DeviceSet = (gRAMCount >> 1) + 1;
+    newSmbiosTable.Type17->DeviceSet = (gRAMCount >> 1) + 1;
 		AsciiSPrint(deviceLocator, 10, "DIMM%d",  gRAMCount & 1);
-      AsciiSPrint(bankLocator, 10, "BANK%d", (gRAMCount >> 1));
+    AsciiSPrint(bankLocator, 10, "BANK%d", (gRAMCount >> 1));
 		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
 		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, (CHAR8*)&bankLocator[0]);
-      if (newSmbiosTable.Type17->Size == 0)
-      {
-         DBG("EMPTY\n");
-      }
-      else
-      {
-         insertingEmpty = FALSE;
-         DBG("%a %a %dMHz %dMB\n", bankLocator, deviceLocator, newSmbiosTable.Type17->Speed, newSmbiosTable.Type17->Size);
-         mTotalSystemMemory += newSmbiosTable.Type17->Size; //Mb
-         mMemory17[gRAMCount] = (UINT16)mTotalSystemMemory;
-         DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
-      }
+    if (newSmbiosTable.Type17->Size == 0) {
+      DBG("EMPTY\n");
+    } else {
+      insertingEmpty = FALSE;
+      DBG("%a %a %dMHz %dMB\n", bankLocator, deviceLocator, newSmbiosTable.Type17->Speed, newSmbiosTable.Type17->Size);
+      mTotalSystemMemory += newSmbiosTable.Type17->Size; //Mb
+      mMemory17[gRAMCount] = (UINT16)mTotalSystemMemory;
+      DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
+    }
 		newSmbiosTable.Type17->MemoryErrorInformationHandle = 0xFFFF;
 		mHandle17[gRAMCount++] = LogSmbiosTable(newSmbiosTable);
 	}

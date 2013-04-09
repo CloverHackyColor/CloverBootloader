@@ -286,13 +286,10 @@ CHAR8* getDDRSerial(UINT8* spd)
     if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR3) // DDR3
     {
 	AsciiSPrint(asciiSerial, 17, "%2X%2X%2X%2X%2X%2X%2X%2X", SMST(122) /*& 0x7*/, SLST(122), SMST(123), SLST(123), SMST(124), SLST(124), SMST(125), SLST(125));
-    }
-    else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR2 || spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR) // DDR2 or DDR
-    { 
+    } else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR2 || spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR) {// DDR2 or DDR
+
 	AsciiSPrint(asciiSerial, 17, "%2X%2X%2X%2X%2X%2X%2X%2X", SMST(95) /*& 0x7*/, SLST(95), SMST(96), SLST(96), SMST(97), SLST(97), SMST(98), SLST(98));
-    }
-    else
-    {
+    } else {
        AsciiStrCpy(asciiSerial, "0000000000000000");
     }
 
@@ -302,19 +299,19 @@ CHAR8* getDDRSerial(UINT8* spd)
 /** Get DDR3 or DDR2 Part Number, always return a valid ptr */
 CHAR8* getDDRPartNum(UINT8* spd, UINT32 base, UINT8 slot)
 {
-   UINT8 i, start=0, index = 0;
-   CHAR8 c;
+  UINT8 i, start=0, index = 0;
+  CHAR8 c;
 	CHAR8* asciiPartNo = AllocatePool(32); //[32];
-
-    if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR3) {
+  
+  if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR3) {
 		start = 128;
 	}
-    else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR2 || spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR) {
+  else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR2 || spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR) {
 		start = 73;
 	}
 	
-    // Check that the spd part name is zero terminated and that it is ascii:
-    ZeroMem(asciiPartNo, 32);  //sizeof(asciiPartNo));
+  // Check that the spd part name is zero terminated and that it is ascii:
+  ZeroMem(asciiPartNo, 32);  //sizeof(asciiPartNo));
 	for (i=start; i < start + 32; i++) {
 		READ_SPD(spd, base, slot, i); // only read once the corresponding model part (ddr3 or ddr2)
 		c = spd[i];

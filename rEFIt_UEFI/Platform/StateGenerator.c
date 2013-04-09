@@ -431,8 +431,7 @@ SSDT_TABLE *generate_cst_ssdt(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* fadt, U
   aml_add_byte(pack, cstates_count);
   
   tmpl = aml_add_package(pack);
-  if (cst_using_systemio)
-  {
+  if (cst_using_systemio) {
     // C1
     resource_template_register_fixedhw[8] = 0x00;
     resource_template_register_fixedhw[9] = 0x00;
