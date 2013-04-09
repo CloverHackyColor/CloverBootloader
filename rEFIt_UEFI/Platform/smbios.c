@@ -1149,8 +1149,8 @@ VOID PatchTableType17()
     return;
   }
   // Detect whether the SMBIOS is trusted information
-  if ((SPDInUse != 0) && (SPDInUse != SMBIOSInUse) &&
-      (gRAM.SPD[0].InUse != gRAM.SMBIOS[0].InUse)) {
+  if ((SPDInUse != 0) &&
+      ((SPDInUse != SMBIOSInUse) || (gRAM.SPD[0].InUse != gRAM.SMBIOS[0].InUse)) {
     trustSMBIOS = FALSE;
   }
   if (trustSMBIOS) {
@@ -1159,7 +1159,7 @@ VOID PatchTableType17()
   // Memory Device
   //
   gRAMCount = 0;
-	for (Index = 0; Index < TotalCount; Index++) {
+	for (Index = 0; Index < MAX_RAM_SLOTS; Index++) {
     UINTN SMBIOSIndex = wrongSMBIOSBanks ? mapping[Index] : Index;
     UINTN SPDIndex = wrongSPDBanks ? mapping[Index] : Index;
     if (!insertingEmpty && !gRAM.SPD[SPDIndex].InUse &&
