@@ -415,7 +415,7 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
 			slot->spd = spdbuf;
       */
       ZeroMem(spdbuf, MAX_SPD_SIZE);
-      READ_SPD(spdbuf, base, 0x50 + i, SPD_MEMORY_TYPE);
+      READ_SPD(spdbuf, base, i, SPD_MEMORY_TYPE);
       if (spdbuf[SPD_MEMORY_TYPE] == 0xFF) continue;
       // Copy spd data into buffer
       init_spd(spdbuf, base, i);
