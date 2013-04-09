@@ -1122,7 +1122,7 @@ VOID PatchTableType17()
   //INTN map = gDMI->DIMM[Index];
   //INTN map0 = map;
   //MEMORY_DEVICE_TYPE spdType;
-  INTN    dualChannelMap[MAX_RAM_SLOTS];
+  UINT8   dualChannelMap[MAX_RAM_SLOTS];
   UINT8   SPDInUse = 0, SMBIOSInUse = 0;
   BOOLEAN insertingEmpty = TRUE;
   BOOLEAN trustSMBIOS = TRUE;
@@ -1158,7 +1158,7 @@ VOID PatchTableType17()
   }
   // Setup dual channel map
   for (Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
-     dualChannelMap[Index] = ((Index & ~3) | ((Index >> 1) & 1) | ((Index & 1) << 1));
+     dualChannelMap[Index] = (UINT8)((Index & ~3) | ((Index >> 1) & 1) | ((Index & 1) << 1));
   }
   // Memory Device
   //
