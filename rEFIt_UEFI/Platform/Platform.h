@@ -844,19 +844,16 @@ typedef enum {
 } MACHINE_TYPES;
 
 typedef struct {
-	UINT8   Type;
-	UINT8   BankConnections;
-	UINT8   BankConnectionCount;
+   BOOLEAN	InUse;
+	UINT8    Type;
 	UINT32	ModuleSize;
 	UINT32	Frequency;
 	CHAR8*	Vendor;
 	CHAR8*	PartNo;
 	CHAR8*	SerialNo;
-	UINT8   *spd;
-	BOOLEAN	InUse;
 } RAM_SLOT_INFO; 
 
-#define MAX_SLOT_COUNT	64
+//#define MAX_SLOT_COUNT	64
 #define MAX_RAM_SLOTS	16
 
 typedef struct {
@@ -870,16 +867,19 @@ typedef struct {
 	UINT8			Slots;
 	UINT8			Type;
   
-	RAM_SLOT_INFO	DIMM[MAX_RAM_SLOTS];
+   RAM_SLOT_INFO	SPD[MAX_RAM_SLOTS];
+	RAM_SLOT_INFO	SMBIOS[MAX_RAM_SLOTS];
   
 } MEM_STRUCTURE;
 //unused
+/*
 typedef struct {
 	UINT8     MaxMemorySlots;			// number of memory slots polulated by SMBIOS
 	UINT8     CntMemorySlots;			// number of memory slots counted
 	UINT16		MemoryModules;			// number of memory modules installed
-	UINT32		DIMM[MAX_RAM_SLOTS];	// Information and SPD mapping for each slot
+	UINT8		DIMM[MAX_RAM_SLOTS];	// Information and SPD mapping for each slot
 } DMI;
+*/
 
 typedef enum {
   english,  //en
