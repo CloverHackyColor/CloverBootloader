@@ -1103,11 +1103,13 @@ VOID GetTableType17()
 //		DBG("gDMI->MemoryModules = %d\n", gDMI->MemoryModules)
 		DBG("SmbiosTable.Type17->Speed = %d\n", SmbiosTable.Type17->Speed);
 		DBG("SmbiosTable.Type17->Size = %d\n", SmbiosTable.Type17->Size);
+      /*
 		if ((SmbiosTable.Type17->Size & 0x8000) == 0) {
 			mTotalSystemMemory += SmbiosTable.Type17->Size; //Mb
 			mMemory17[Index] = (UINT16)(SmbiosTable.Type17->Size > 0 ? mTotalSystemMemory : 0);
 		}
 		DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
+      */
 	}
 }
 		
@@ -1144,9 +1146,7 @@ VOID PatchTableType17()
    }
    // Detect whether the SMBIOS is trusted information
    if ((SPDInUse != 0) && (SPDInUse != SMBIOSInUse) &&
-       (SPDInUse != 2) && (SMBIOSInUse != 4) &&
-       ((gRAM.SPD[0].InUse != gRAM.SMBIOS[0].InUse) ||
-        (wrongSPDBanks != wrongSMBIOSBanks)))
+       (gRAM.SPD[0].InUse != gRAM.SMBIOS[0].InUse))
    {
       trustSMBIOS = FALSE;
    }
@@ -1342,6 +1342,9 @@ VOID PatchTableType17()
       {
          insertingEmpty = FALSE;
          DBG("%a %a %dMHz %dMB\n", bankLocator, deviceLocator, newSmbiosTable.Type17->Speed, newSmbiosTable.Type17->Size);
+         mTotalSystemMemory += newSmbiosTable.Type17->Size; //Mb
+         mMemory17[gRAMCount] = (UINT16)mTotalSystemMemory;
+         DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
       }
 		newSmbiosTable.Type17->MemoryErrorInformationHandle = 0xFFFF;
 		mHandle17[gRAMCount++] = LogSmbiosTable(newSmbiosTable);
