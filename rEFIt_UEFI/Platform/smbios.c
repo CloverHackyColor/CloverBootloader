@@ -1122,7 +1122,7 @@ VOID PatchTableType17()
    //MEMORY_DEVICE_TYPE spdType;
    UINT8   SPDInUse = 0, SMBIOSInUse = 0;
    BOOLEAN insertingEmpty = TRUE;
-   BOOLEAN trustSMBIOS = FALSE;
+   BOOLEAN trustSMBIOS = TRUE;
    BOOLEAN wrongSMBIOSBanks = ((gRAM.SMBIOS[0].InUse != gRAM.SMBIOS[1].InUse) ||
                                (gRAM.SMBIOS[0].Frequency != gRAM.SMBIOS[1].Frequency) ||
                                (gRAM.SMBIOS[0].ModuleSize != gRAM.SMBIOS[1].ModuleSize));
@@ -1142,7 +1142,14 @@ VOID PatchTableType17()
       DBG("SMBIOS and SPD contain no modules in use\n");
       return;
    }
-   trustSMBIOS = (SPDInUse != 0) ? (SPDInUse == SMBIOSInUse) : TRUE;
+   // Detect whether the SMBIOS is trusted information
+   if ((SPDInUse != 0) && (SPDInUse != SMBIOSInUse) &&
+       (SPDInUse != 2) && (SMBIOSInUse != 4) &&
+       ((gRAM.SPD[0].InUse != gRAM.SMBIOS[0].InUse) ||
+        (wrongSPDBanks != wrongSMBIOSBanks)))
+   {
+      trustSMBIOS = FALSE;
+   }
    if (trustSMBIOS) DBG("Trusting SMBIOS...\n");
   // Memory Device
   //
@@ -1199,7 +1206,8 @@ VOID PatchTableType17()
          newSmbiosTable.Type17->Speed = (UINT16)gRAM.SPD[SPDIndex].Frequency;
          newSmbiosTable.Type17->Size = (UINT16)gRAM.SPD[SPDIndex].ModuleSize;
       }
-      if (trustSMBIOS && gRAM.SMBIOS[SMBIOSIndex].InUse)
+      if (trustSMBIOS && gRAM.SMBIOS[SMBIOSIndex].InUse &&
+          (newSmbiosTable.Type17->Speed < (UINT16)gRAM.SMBIOS[SPDIndex].Frequency))
       {
          newSmbiosTable.Type17->Speed = (UINT16)gRAM.SMBIOS[SPDIndex].Frequency;
       }

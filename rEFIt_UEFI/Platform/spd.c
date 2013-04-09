@@ -416,14 +416,7 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
       */
       ZeroMem(spdbuf, MAX_SPD_SIZE);
       READ_SPD(spdbuf, base, 0x50 + i, SPD_MEMORY_TYPE);
-      switch (spdbuf[SPD_MEMORY_TYPE])  {
-      case SPD_MEMORY_TYPE_SDRAM_DDR:
-      case SPD_MEMORY_TYPE_SDRAM_DDR2:
-      case SPD_MEMORY_TYPE_SDRAM_DDR3:
-         gRAM.SPD[i].InUse = TRUE;
-         break;
-      }
-      if (!gRAM.SPD[i].InUse) continue;
+      if (spdbuf[SPD_MEMORY_TYPE] == 0xFF) continue;
       // Copy spd data into buffer
       init_spd(spdbuf, base, i);
       DBG("SPD[%d]: Type %d @0x%x \n", i, spdbuf[SPD_MEMORY_TYPE], 0x50 + i);
@@ -444,6 +437,7 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
                                        spdbuf[SPD_NUM_BANKS_PER_SDRAM]);
           break;
           
+        default:
         case SPD_MEMORY_TYPE_SDRAM_DDR3:
           
           gRAM.SPD[i].ModuleSize = ((spdbuf[4] & 0x0f) + 28 ) + ((spdbuf[8] & 0x7)  + 3 );
