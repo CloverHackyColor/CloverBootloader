@@ -1150,7 +1150,7 @@ VOID PatchTableType17()
   }
   // Detect whether the SMBIOS is trusted information
   if ((SPDInUse != 0) &&
-      ((SPDInUse != SMBIOSInUse) || (gRAM.SPD[0].InUse != gRAM.SMBIOS[0].InUse)) {
+      ((SPDInUse != SMBIOSInUse) || (gRAM.SPD[0].InUse != gRAM.SMBIOS[0].InUse))) {
     trustSMBIOS = FALSE;
   }
   if (trustSMBIOS) {
@@ -1166,7 +1166,8 @@ VOID PatchTableType17()
         (!trustSMBIOS || !gRAM.SMBIOS[SMBIOSIndex].InUse)) {
       continue;
     }
-		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, SMBIOSIndex);
+    SmbiosTable.Raw = NULL;
+		if (gRAM.SMBIOS[SMBIOSIndex].InUse) SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, SMBIOSIndex);
 		//}
 		//DBG("SMBIOS Type 17 Index = %d:\n", Index);
 		//if (SmbiosTable.Raw == NULL) {
