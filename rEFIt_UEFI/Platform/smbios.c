@@ -1089,8 +1089,8 @@ VOID GetTableType17()
 		//gDMI->CntMemorySlots++;
       if (SmbiosTable.Type17->MemoryErrorInformationHandle < 0xFFFE)
       {
-         DBG("Table has error information\n");
-         //continue;
+         DBG("Table has error information, skipping\n");
+         continue;
       }
 		if (SmbiosTable.Type17->Size > 0) {
          gRAM.SMBIOS[Index].InUse = TRUE;
