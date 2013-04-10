@@ -633,7 +633,7 @@ VOID DumpChildSsdt(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, CHA
 /** Saves Table to disk as DirName\\FileName (DirName != NULL)
  *  or just prints basic table data to log (DirName == NULL).
  */
-EFI_STATUS DumpTable(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, CHAR16 *FileName, CHAR16 *FileNamePrefix, UINTN *SsdtCount)
+EFI_STATUS DumpTable(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR8 *CheckSignature, CHAR16 *DirName, CHAR16 *FileName, CHAR16 *FileNamePrefix, UINTN *SsdtCount)
 {
 	EFI_STATUS    Status;
 	CHAR8         Signature[5];
@@ -647,6 +647,49 @@ EFI_STATUS DumpTable(EFI_ACPI_DESCRIPTION_HEADER *TableEntry, CHAR16 *DirName, C
 	OemTableId[8] = 0;
 	
 	DBG(" %p: '%a', '%a', Rev: %d, Len: %d", TableEntry, Signature, OemTableId, TableEntry->Revision, TableEntry->Length);
+	
+	//
+	// Additional checks
+	//
+	if (CheckSignature != NULL && AsciiStrCmp(Signature, CheckSignature) != 0) {
+		DBG(" -> invalid signature, expecting %a\n", CheckSignature);
+		return EFI_INVALID_PARAMETER;
+	}
+	// XSDT checks
+	if (TableEntry->Signature == EFI_ACPI_2_0_EXTENDED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
+		if (TableEntry->Length < sizeof(XSDT_TABLE)) {
+			DBG(" -> invalid length\n");
+			return EFI_INVALID_PARAMETER;
+		}
+	}
+	// RSDT checks
+	if (TableEntry->Signature == EFI_ACPI_1_0_ROOT_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
+		if (TableEntry->Length < sizeof(RSDT_TABLE)) {
+			DBG(" -> invalid length\n");
+			return EFI_INVALID_PARAMETER;
+		}
+	}
+	// FADT/FACP checks
+	if (TableEntry->Signature == EFI_ACPI_1_0_FIXED_ACPI_DESCRIPTION_TABLE_SIGNATURE) {
+		if (TableEntry->Length < sizeof(EFI_ACPI_1_0_FIXED_ACPI_DESCRIPTION_TABLE)) {
+			DBG(" -> invalid length\n");
+			return EFI_INVALID_PARAMETER;
+		}
+	}
+	// DSDT checks
+	if (TableEntry->Signature == EFI_ACPI_1_0_DIFFERENTIATED_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
+		if (TableEntry->Length < sizeof(EFI_ACPI_DESCRIPTION_HEADER)) {
+			DBG(" -> invalid length\n");
+			return EFI_INVALID_PARAMETER;
+		}
+	}
+	// SSDT checks
+	if (TableEntry->Signature == EFI_ACPI_1_0_SECONDARY_SYSTEM_DESCRIPTION_TABLE_SIGNATURE) {
+		if (TableEntry->Length < sizeof(EFI_ACPI_DESCRIPTION_HEADER)) {
+			DBG(" -> invalid length\n");
+			return EFI_INVALID_PARAMETER;
+		}
+	}
 
 	if (DirName == NULL || IsTableSaved(TableEntry)) {
 		// just debug log dump
@@ -727,7 +770,7 @@ EFI_STATUS DumpFadtTables(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt, CHAR1
 	if (DsdtAdr != 0) {
 		DBG("     ");
 		TableEntry = (EFI_ACPI_DESCRIPTION_HEADER*)(UINTN)DsdtAdr;
-		Status = DumpTable(TableEntry, DirName,  NULL, FileNamePrefix, NULL);
+		Status = DumpTable(TableEntry, "DSDT", DirName,  NULL, FileNamePrefix, NULL);
 		if (EFI_ERROR(Status)) {
 			DBG(" - %r\n", Status);
 			return Status;
@@ -745,6 +788,17 @@ EFI_STATUS DumpFadtTables(EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE *Fadt, CHAR1
 		CopyMem((CHAR8*)&Signature, (CHAR8*)&Facs->Signature, 4);
 		Signature[4] = 0;
 		DBG("      %p: '%a', Ver: %d, Len: %d", Facs, Signature, Facs->Version, Facs->Length);
+		
+		// FACS checks
+		if (Facs->Signature != EFI_ACPI_1_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_SIGNATURE) {
+			DBG(" -> invalid signature, expecting FACS\n");
+			return EFI_INVALID_PARAMETER;
+		}
+		if (Facs->Length < sizeof(EFI_ACPI_1_0_FIRMWARE_ACPI_CONTROL_STRUCTURE)) {
+			DBG(" -> invalid length\n");
+			return EFI_INVALID_PARAMETER;
+		}
+		
 		if (DirName != NULL && !IsTableSaved((VOID*)Facs)) {
 			FileName = PoolPrint(L"%sFACS.aml", FileNamePrefix);
 			DBG(" -> %s", FileName);
@@ -860,10 +914,10 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 	//
 	if (Xsdt != NULL) {
 		DBG(" ");
-		Status = DumpTable((EFI_ACPI_DESCRIPTION_HEADER *)Xsdt, DirName,  L"XSDT.aml", FileNamePrefix, NULL);
+		Status = DumpTable((EFI_ACPI_DESCRIPTION_HEADER *)Xsdt, "XSDT", DirName,  L"XSDT.aml", FileNamePrefix, NULL);
 		if (EFI_ERROR(Status)) {
-			DBG(" - %r\n", Status);
-			return;
+			DBG(" - %r", Status);
+			Xsdt = NULL;
 		}
 		DBG("\n");
 	}
@@ -873,12 +927,20 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 	//
 	if (Rsdt != NULL) {
 		DBG(" ");
-		Status = DumpTable((EFI_ACPI_DESCRIPTION_HEADER *)Rsdt, DirName,  L"RSDT.aml", FileNamePrefix, NULL);
+		Status = DumpTable((EFI_ACPI_DESCRIPTION_HEADER *)Rsdt, "RSDT", DirName,  L"RSDT.aml", FileNamePrefix, NULL);
 		if (EFI_ERROR(Status)) {
-			DBG(" - %r\n", Status);
-			return;
+			DBG(" - %r", Status);
+			Rsdt = NULL;
 		}
 		DBG("\n");
+	}
+	
+	//
+	// Check once more since they might be invalid
+	//
+	if (Rsdt == NULL && Xsdt == NULL) {
+		DBG(" No Rsdt and Xsdt - exiting.\n");
+		return;
 	}
 	
 	if (Xsdt != NULL) {
@@ -912,7 +974,7 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 				//
 				// Fadt - save Dsdt and Facs
 				//
-				Status = DumpTable(TableEntry, DirName,  NULL, FileNamePrefix, &SsdtCount);
+				Status = DumpTable(TableEntry, NULL, DirName,  NULL, FileNamePrefix, &SsdtCount);
 				if (EFI_ERROR(Status)) {
 					DBG(" - %r\n", Status);
 					return;
@@ -925,7 +987,7 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 					return;
 				}
 			} else {
-				Status = DumpTable(TableEntry, DirName,  NULL /* take the name from the signature*/, FileNamePrefix, &SsdtCount);
+				Status = DumpTable(TableEntry, NULL, DirName,  NULL /* take the name from the signature*/, FileNamePrefix, &SsdtCount);
 				if (EFI_ERROR(Status)) {
 					DBG(" - %r\n", Status);
 					return;
@@ -969,7 +1031,7 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 				//
 				// Fadt - save Dsdt and Facs
 				//
-				Status = DumpTable(TableEntry, DirName,  NULL, FileNamePrefix, &SsdtCount);
+				Status = DumpTable(TableEntry, NULL, DirName,  NULL, FileNamePrefix, &SsdtCount);
 				if (EFI_ERROR(Status)) {
 					DBG(" - %r\n", Status);
 					return;
@@ -982,7 +1044,7 @@ VOID DumpTables(VOID *RsdPtrVoid, CHAR16 *DirName)
 					return;
 				}
 			} else {
-				Status = DumpTable(TableEntry, DirName,  NULL /* take the name from the signature*/, FileNamePrefix, &SsdtCount);
+				Status = DumpTable(TableEntry, NULL, DirName,  NULL /* take the name from the signature*/, FileNamePrefix, &SsdtCount);
 				if (EFI_ERROR(Status)) {
 						DBG(" - %r\n", Status);
 					return;
