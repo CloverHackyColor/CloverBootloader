@@ -528,7 +528,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     if (gEmuVariableControl != NULL) {
       gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
     }
-      
+    
     PatchACPI_OtherOS(L"Windows", FALSE);
     //PauseForKey(L"continue");
       
@@ -2420,7 +2420,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (EFI_ERROR(Status)) {
     gEmuVariableControl = NULL;
   }
-  
+  if (gEmuVariableControl != NULL) {
+    gEmuVariableControl->InstallEmulation(gEmuVariableControl);
+  }
   
   // init screen and dump video modes to log
   if (gDriversFlags.VideoLoaded) {

@@ -97,25 +97,25 @@ EFI_STATUS SetNvramVariable(IN CHAR16 *VariableName, IN EFI_GUID *VendorGuid, IN
     UINTN           OldDataSize;
     UINT32          OldAttributes;
     
-    DBG("SetNvramVariable(%s, guid, 0x%x, %d):", VariableName, Attributes, DataSize);
+    //DBG("SetNvramVariable(%s, guid, 0x%x, %d):", VariableName, Attributes, DataSize);
     OldData = GetNvramVariable(VariableName, VendorGuid, &OldAttributes, &OldDataSize);
     if (OldData != NULL) {
         // var already exists - check if it equal to new value
-        DBG(" exists(0x%x, %d)", OldAttributes, OldDataSize);
+        //DBG(" exists(0x%x, %d)", OldAttributes, OldDataSize);
         if (OldAttributes == Attributes && OldDataSize == DataSize && CompareMem(OldData, Data, DataSize) == 0) {
             // it's the same - do nothing
-            DBG(", equal -> not writing again.\n");
+            //DBG(", equal -> not writing again.\n");
             FreePool(OldData);
             return EFI_SUCCESS;
         }
-        DBG(", not equal");
+        //DBG(", not equal");
         
         FreePool(OldData);
         
         // not the same - delete previous one if attributes are different
         if (OldAttributes != Attributes) {
             Status = gRT->SetVariable(VariableName, VendorGuid, 0, 0, NULL);
-            DBG(", diff. attr: deleting old (%r)", Status);
+            //DBG(", diff. attr: deleting old (%r)", Status);
         }
     }
     
@@ -123,7 +123,7 @@ EFI_STATUS SetNvramVariable(IN CHAR16 *VariableName, IN EFI_GUID *VendorGuid, IN
     // set new value
     //
     Status = gRT->SetVariable(VariableName, VendorGuid, Attributes, DataSize, Data);
-    DBG(" -> writing new (%r)\n", Status);
+    //DBG(" -> writing new (%r)\n", Status);
     
     return Status;
 }

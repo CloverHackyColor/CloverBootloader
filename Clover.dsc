@@ -420,9 +420,9 @@
   Clover/EmuVariableUefi/EmuVariableRuntimeDxe.inf {
     <PcdsFixedAtBuild>
       gEfiMdeModulePkgTokenSpaceGuid.PcdEmuVariableNvStoreReserved|0
-      gEfiMdeModulePkgTokenSpaceGuid.PcdMaxVariableSize|0x400
+      gEfiMdeModulePkgTokenSpaceGuid.PcdMaxVariableSize|0x3000
       gEfiMdeModulePkgTokenSpaceGuid.PcdMaxHardwareErrorVariableSize|0x8000
-      gEfiMdeModulePkgTokenSpaceGuid.PcdVariableStoreSize|0x10000
+      gEfiMdeModulePkgTokenSpaceGuid.PcdVariableStoreSize|0x40000
       gEfiMdeModulePkgTokenSpaceGuid.PcdVariableCollectStatistics|FALSE
       gEfiMdeModulePkgTokenSpaceGuid.PcdHwErrStorageSize|0x0000
   }

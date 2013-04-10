@@ -205,6 +205,106 @@ VariableClassAddressChangeEvent (
 }
 
 ////////////////////////////////////////
+// Helper methods
+//
+//BOOLEAN CopyVarsDebugPrint = TRUE;
+//#define DBG_COPY(...) if (CopyVarsDebugPrint) DBG(__VA_ARGS__)
+#define DBG_COPY(...)
+
+/** Copies vars from SrcRT into DestRT. */
+VOID
+EFIAPI
+CopyRTVariables (
+  EFI_RUNTIME_SERVICES    *SrcRT,
+  EFI_RUNTIME_SERVICES    *DestRT
+)
+{
+  EFI_STATUS              Status;
+  CHAR16                  *Name;
+  EFI_GUID                Guid;
+  UINTN                   NameSize;
+  UINTN                   NewNameSize;
+  UINT32                  Attributes;
+  VOID                    *Data;
+  UINTN                   DataSize;
+  UINTN                   NewDataSize;
+  
+  DBG_COPY("\nCopyRTVariables:\n");
+  //
+  // First call to GetNextVariableName is with L"\0"
+  //
+  NameSize    = 512;
+  Name        = AllocateZeroPool (NameSize);
+  
+  //
+  // Initial Data buffer
+  //
+  DataSize    = 512;
+  Data        = AllocateZeroPool (DataSize);
+  
+  while (TRUE) {
+    //
+    // Get next variable name from SrcRT
+    //
+    NewNameSize = NameSize;
+    //DBG("- NS: %d, NNS: %d\n", NameSize, NewNameSize);
+    Status = SrcRT->GetNextVariableName (&NewNameSize, Name, &Guid);
+    if (Status == EFI_BUFFER_TOO_SMALL) {
+      //DBG("- EFI_BUFFER_TOO_SMALL: %d, %d\n", NameSize, NewNameSize);
+      Name = ReallocatePool (NameSize, NewNameSize, Name);
+      NameSize = NewNameSize;
+      Status = SrcRT->GetNextVariableName (&NewNameSize, Name, &Guid);
+    }
+    //DBG("--- NS: %d, NNS: %d\n", NameSize, NewNameSize);
+    
+    if (Status == EFI_NOT_FOUND) {
+      DBG_COPY("- EFI_NOT_FOUND\n");
+      break;
+    }
+    if (EFI_ERROR(Status)) {
+      DBG_COPY("- %r\n", Status);
+      break;
+    }
+    DBG_COPY("- %g:'%s'", &Guid, Name);
+    
+    //
+    // Read variable from SrcRT
+    //
+    NewDataSize = DataSize;
+    Status = SrcRT->GetVariable (Name, &Guid, &Attributes, &NewDataSize, Data);
+    if (Status == EFI_BUFFER_TOO_SMALL) {
+      Data = ReallocatePool (DataSize, NewDataSize, Data);
+      DataSize = NewDataSize;
+      Status = SrcRT->GetVariable (Name, &Guid, &Attributes, &NewDataSize, Data);
+    }
+    if (EFI_ERROR(Status)) {
+      DBG_COPY(" %r\n", Status);
+      break;
+    }
+    DBG_COPY(" a: %04x, l: %d", Attributes, NewDataSize);
+    
+    //
+    // Delete variable if exists in DestRT
+    //
+    Status = DestRT->SetVariable (Name, &Guid, 0, 0, NULL);
+    if (Status == EFI_SUCCESS) {
+      DBG_COPY(" -> del: %r", Status);
+    }
+    //
+    // Write variable to DestRT
+    //
+    Status = DestRT->SetVariable (Name, &Guid, Attributes, NewDataSize, Data);
+    DBG_COPY(" -> write: %r\n", Status);
+  }
+  
+  // print just the first time
+  //CopyVarsDebugPrint = FALSE;
+  
+  FreePool (Name);
+  FreePool (Data);
+}
+
+////////////////////////////////////////
 //
 // EMU_VARIABLE_CONTROL_PROTOCOL
 //
@@ -217,15 +317,73 @@ EmuVariableControlProtocolInstallEmulation (
   IN EMU_VARIABLE_CONTROL_PROTOCOL  *This
   )
 {
+  EFI_STATUS            Status;
+  EFI_RUNTIME_SERVICES  DestRT;
+  
+  DBG("EmuVariable InstallEmulation:");
+  if (gRT->GetVariable == RuntimeServiceGetVariable) {
+    DBG(" EFI_ALREADY_STARTED\n");
+    return EFI_ALREADY_STARTED;
+  }
+  
+  //
+  // Copy rt vars to emulation store
+  // (use temp DestRT structure to pass SetVariable pointer)
+  //
+  DestRT.SetVariable = RuntimeServiceSetVariable;
+  CopyRTVariables (gRT, &DestRT);
+  DBG(" orig vars copied");
+  
+  //
+  // Install emulation services
+  //
   gRT->GetVariable         = RuntimeServiceGetVariable;
   gRT->GetNextVariableName = RuntimeServiceGetNextVariableName;
   gRT->SetVariable         = RuntimeServiceSetVariable;
   gRT->QueryVariableInfo   = RuntimeServiceQueryVariableInfo;
   
-	gRT->Hdr.CRC32 = 0;
-	gBS->CalculateCrc32(gRT, gRT->Hdr.HeaderSize, &gRT->Hdr.CRC32);
+  gRT->Hdr.CRC32 = 0;
+  gBS->CalculateCrc32 (gRT, gRT->Hdr.HeaderSize, &gRT->Hdr.CRC32);
+  DBG(", emu.var.services installed");
   
-  DBG("RT vars: Emulation\n");
+  
+  /* original, new style - fails on Phoenix UEFI
+   Status = gBS->CreateEventEx (
+   EVT_NOTIFY_SIGNAL,
+   TPL_NOTIFY,
+   VariableClassAddressChangeEvent,
+   NULL,
+   &gEfiEventVirtualAddressChangeGuid,
+   &mVirtualAddressChangeEvent
+   );
+   DBG(" CreateEventEx = %r\n", Status);
+   ASSERT_EFI_ERROR (Status);
+   */
+  
+  // old style
+  Status = gBS->CreateEvent (
+                             EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE,
+                             TPL_NOTIFY,
+                             VariableClassAddressChangeEvent,
+                             NULL,
+                             &mVirtualAddressChangeEvent
+                             );
+  
+  DBG(", CreateEvent = %r", Status);
+  ASSERT_EFI_ERROR (Status);
+  
+  //
+  // Add EmuVariableUefiPresent variable to allow /ect/rc* scripts to detect
+  // that this driver is used.
+  //
+  Status = gRT->SetVariable (L"EmuVariableUefiPresent",
+                             &gEfiAppleBootGuid,
+                             EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
+                             3,
+                             "Yes"
+                             );
+  
+  DBG(", done\n");
   
   return EFI_SUCCESS;
 }
@@ -238,15 +396,29 @@ EmuVariableControlProtocolUninstallEmulation (
   IN EMU_VARIABLE_CONTROL_PROTOCOL  *This
   )
 {
+  EFI_STATUS  Status;
+  
+  DBG("EmuVariable UninstallEmulation:");
+  //
+  // Close mVirtualAddressChangeEvent
+  //
+  Status = gBS->CloseEvent (mVirtualAddressChangeEvent);
+  mVirtualAddressChangeEvent = NULL;
+  DBG(" CloseEvent = %r", Status);
+  
+  //
+  // Return back original RT var services
+  //
   gRT->GetVariable         = gOrgRT.GetVariable;
   gRT->GetNextVariableName = gOrgRT.GetNextVariableName;
   gRT->SetVariable         = gOrgRT.SetVariable;
   gRT->QueryVariableInfo   = gOrgRT.QueryVariableInfo;
   
   gRT->Hdr.CRC32 = 0;
-  gBS->CalculateCrc32(gRT, gRT->Hdr.HeaderSize, &gRT->Hdr.CRC32);
+  gBS->CalculateCrc32 (gRT, gRT->Hdr.HeaderSize, &gRT->Hdr.CRC32);
   
-  DBG("RT vars: Original\n");
+  
+  DBG(", original var services restored\n");
   
   return EFI_SUCCESS;
 }
@@ -280,69 +452,21 @@ VariableServiceInitialize (
   EFI_HANDLE  NewHandle;
   EFI_STATUS  Status;
 
-  DBG("EmuVariableUefi:");
+  DBG("EmuVariableUefi Initialize:");
   Status = VariableCommonInitialize (ImageHandle, SystemTable);
-  DBG(" VariableCommonInitialize: %r", Status);
+  DBG(" VariableCommonInitialize = %r", Status);
   ASSERT_EFI_ERROR (Status);
   
   //
   // Store orig RS var services
   //
   gRT = SystemTable->RuntimeServices;
-  CopyMem(&gOrgRT, gRT, sizeof(EFI_RUNTIME_SERVICES));
+  CopyMem (&gOrgRT, gRT, sizeof(EFI_RUNTIME_SERVICES));
+  DBG(", orig services stored");
 
-  gRT->GetVariable         = RuntimeServiceGetVariable;
-  gRT->GetNextVariableName = RuntimeServiceGetNextVariableName;
-  gRT->SetVariable         = RuntimeServiceSetVariable;
-  gRT->QueryVariableInfo   = RuntimeServiceQueryVariableInfo;
-
-	gRT->Hdr.CRC32 = 0;
-	gBS->CalculateCrc32(gRT, gRT->Hdr.HeaderSize, &gRT->Hdr.CRC32);
   
   //
-  // Now install the Variable Runtime Architectural Protocol on a new handle
-  //
-  /* not needed in UEFI boot
-  NewHandle = NULL;
-  Status = gBS->InstallMultipleProtocolInterfaces (
-                  &NewHandle,
-                  &gEfiVariableArchProtocolGuid,
-                  NULL,
-                  &gEfiVariableWriteArchProtocolGuid,
-                  NULL,
-                  NULL
-                  );
-  DBG(" gEfiVariableArchProtocolGuid: %r\n", Status);
-  ASSERT_EFI_ERROR (Status);
-  */
-  
-  /* original, new style - fails on Phoenix UEFI
-  Status = gBS->CreateEventEx (
-                               EVT_NOTIFY_SIGNAL,
-                               TPL_NOTIFY,
-                               VariableClassAddressChangeEvent,
-                               NULL,
-                               &gEfiEventVirtualAddressChangeGuid,
-                               &mVirtualAddressChangeEvent
-                               );
-  DBG(" CreateEventEx = %r\n", Status);
-  ASSERT_EFI_ERROR (Status);
-  */
-  
-  // old style
-  Status = gBS->CreateEvent (
-                             EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE,
-                             TPL_NOTIFY,
-                             VariableClassAddressChangeEvent,
-                             NULL,
-                             &mVirtualAddressChangeEvent
-                             );
-  
-  DBG(" CreateEvent = %r\n", Status);
-  ASSERT_EFI_ERROR (Status);
-
-  //
-  // Now install EMU_VARIABLE_CONTROL_PROTOCOL on a new handle
+  // Install EMU_VARIABLE_CONTROL_PROTOCOL on a new handle
   //
   NewHandle = NULL;
   Status = gBS->InstallMultipleProtocolInterfaces (
@@ -351,18 +475,7 @@ VariableServiceInitialize (
                                                    &mEmuVariableControlProtocol,
                                                    NULL
                                                    );
-  DBG(" InstallMultipleProtocolInterfaces gEmuVariableControlProtocolGuid = %r\n", Status);
-  
-  //
-  // Add EmuVariableUefiPresent variable to allow /ect/rc* scripts to detect
-  // that this driver is used.
-  //
-  Status = gRT->SetVariable(L"EmuVariableUefiPresent",
-                            &gEfiAppleBootGuid,
-                            EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                            3,
-                            "Yes"
-                            );
+  DBG(", install gEmuVariableControlProtocolGuid = %r\n", Status);
   
   return EFI_SUCCESS;
 }
