@@ -383,7 +383,7 @@ VOID GetCPUProperties (VOID)
             //MSR 000001AD  0000-0000-3B3B-3B3B - from AIDA64
             // so there is a workaround
             if (gCPUStructure.Turbo4 == 0x3B) {
-              gCPUStructure.Turbo4 = gCPUStructure.MaxRatio + (gCPUStructure.Turbo?1:0);
+              gCPUStructure.Turbo4 = (UINT16)gCPUStructure.MaxRatio + (gCPUStructure.Turbo?1:0);
               //this correspond to 2nd-gen-core-desktop-specification-update.pdf
             }
             

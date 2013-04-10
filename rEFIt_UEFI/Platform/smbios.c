@@ -1184,7 +1184,8 @@ VOID PatchTableType17()
     UINTN SMBIOSIndex = wrongSMBIOSBanks ? channelMap[Index] : Index;
     UINTN SPDIndex = wrongSPDBanks ? channelMap[Index] : Index;
     if (!insertingEmpty && (dimm == 0) && !gRAM.SPD[SPDIndex].InUse &&
-        (!trustSMBIOS || !gRAM.SMBIOS[SMBIOSIndex].InUse)) {
+        (!trustSMBIOS || (!gRAM.SMBIOS[SMBIOSIndex].InUse &&
+                          (gCPUStructure.Mobile || (gRAMCount >= TotalCount))))) {
       continue;
     }
 		SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, SMBIOSIndex);
