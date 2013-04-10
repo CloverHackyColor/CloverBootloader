@@ -28,4 +28,5 @@
   PrintLib
   MemoryAllocationLib
   UefiBootServicesTableLib
+  DebugLib
 

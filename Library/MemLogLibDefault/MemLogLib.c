@@ -9,6 +9,7 @@
 #include <Library/MemoryAllocationLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/MemLogLib.h>
+#include <Library/DebugLib.h>
 
 //
 // Mem log sizes
@@ -233,6 +234,11 @@ MemLogVA (
   if (mMemLog->Callback != NULL) {
     mMemLog->Callback(DebugMode, LastMessage);
   }
+  
+  //
+  // Write to standard debug device also
+  //
+  DebugPrint(DEBUG_INFO, LastMessage);
 }
 
 /**
