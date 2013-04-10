@@ -1150,25 +1150,29 @@ VOID PatchTableType17()
     return;
   }
   // Detect whether the SMBIOS is trusted information
-  if (SPDInUse != SMBIOSInUse) {
-    // Prefer the SPD information
-    if (SPDInUse > SMBIOSInUse) {
-      trustSMBIOS = FALSE;
-    } else if (gRAM.SPD[0].InUse || !gRAM.SMBIOS[0].InUse) {
-      trustSMBIOS = FALSE;
-    } else if (SPDInUse == 1) {
-      // The SMBIOS may contain table for built-in module
-      if (SMBIOSInUse == 2) {
-        dimmsPerChannel = 1;
+  if (SMBIOSInUse != 0) {
+    if (SPDInUse != SMBIOSInUse) {
+      // Prefer the SPD information
+      if (SPDInUse > SMBIOSInUse) {
+        trustSMBIOS = FALSE;
+      } else if (gRAM.SPD[0].InUse || !gRAM.SMBIOS[0].InUse) {
+        if ((SPDInUse != 1) || (SMBIOSInUse != 0)) {
+          trustSMBIOS = FALSE;
+        }
+      } else if (SPDInUse == 1) {
+        // The SMBIOS may contain table for built-in module
+        if (SMBIOSInUse <= 2) {
+          dimmsPerChannel = 1;
+        } else {
+          trustSMBIOS = FALSE;
+        }
       } else {
         trustSMBIOS = FALSE;
       }
-    } else {
+    } else if (gRAM.SPD[0].InUse != gRAM.SMBIOS[0].InUse) {
+      // Never trust a sneaky SMBIOS!
       trustSMBIOS = FALSE;
     }
-  } else if (gRAM.SPD[0].InUse != gRAM.SMBIOS[0].InUse) {
-     // Never trust a sneaky SMBIOS!
-     trustSMBIOS = FALSE;
   }
   if (trustSMBIOS) {
     DBG("Trusting SMBIOS...\n");
