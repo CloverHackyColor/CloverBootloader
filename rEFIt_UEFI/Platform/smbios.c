@@ -1122,8 +1122,9 @@ VOID PatchTableType17()
   //INTN map = gDMI->DIMM[Index];
   //INTN map0 = map;
   //MEMORY_DEVICE_TYPE spdType;
-  UINT8   dualChannelMap[MAX_RAM_SLOTS];
+  UINT8   channelMap[MAX_RAM_SLOTS];
   UINT8   SPDInUse = 0, SMBIOSInUse = 0;
+  UINT8   dimmsPerChannel = 2, channel = 0, dimm = 0;
   BOOLEAN insertingEmpty = TRUE;
   BOOLEAN trustSMBIOS = TRUE;
   BOOLEAN wrongSMBIOSBanks = ((gRAM.SMBIOS[0].InUse != gRAM.SMBIOS[1].InUse) ||
@@ -1155,8 +1156,14 @@ VOID PatchTableType17()
       trustSMBIOS = FALSE;
     } else if (gRAM.SPD[0].InUse || !gRAM.SMBIOS[0].InUse) {
       trustSMBIOS = FALSE;
-    } else if ((SMBIOSInUse - SPDInUse) > 1) {
+    } else if (SPDInUse == 1) {
       // The SMBIOS may contain table for built-in module
+      if (SMBIOSInUse == 2) {
+        dimmsPerChannel = 1;
+      } else {
+        trustSMBIOS = FALSE;
+      }
+    } else {
       trustSMBIOS = FALSE;
     }
   } else if (gRAM.SPD[0].InUse != gRAM.SMBIOS[0].InUse) {
@@ -1166,17 +1173,17 @@ VOID PatchTableType17()
   if (trustSMBIOS) {
     DBG("Trusting SMBIOS...\n");
   }
-  // Setup dual channel map
+  // Setup interleaved channel map
   for (Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
-     dualChannelMap[Index] = (UINT8)((Index & ~3) | ((Index >> 1) & 1) | ((Index & 1) << 1));
+     channelMap[Index] = (UINT8)((Index & ~3) | ((Index >> 1) & 1) | ((Index & 1) << 1));
   }
   // Memory Device
   //
   gRAMCount = 0;
 	for (Index = 0; Index < MAX_RAM_SLOTS; Index++) {
-    UINTN SMBIOSIndex = wrongSMBIOSBanks ? dualChannelMap[Index] : Index;
-    UINTN SPDIndex = wrongSPDBanks ? dualChannelMap[Index] : Index;
-    if (!insertingEmpty && !gRAM.SPD[SPDIndex].InUse &&
+    UINTN SMBIOSIndex = wrongSMBIOSBanks ? channelMap[Index] : Index;
+    UINTN SPDIndex = wrongSPDBanks ? channelMap[Index] : Index;
+    if (!insertingEmpty && (dimm == 0) && !gRAM.SPD[SPDIndex].InUse &&
         (!trustSMBIOS || !gRAM.SMBIOS[SMBIOSIndex].InUse)) {
       continue;
     }
@@ -1339,9 +1346,14 @@ VOID PatchTableType17()
      */
 		
 		//now I want to update deviceLocator and bankLocator		
-    newSmbiosTable.Type17->DeviceSet = (gRAMCount >> 1) + 1;
-		AsciiSPrint(deviceLocator, 10, "DIMM%d",  gRAMCount & 1);
-    AsciiSPrint(bankLocator, 10, "BANK%d", (gRAMCount >> 1));
+    newSmbiosTable.Type17->DeviceSet = channel + 1;
+		AsciiSPrint(deviceLocator, 10, "DIMM%d",  dimm);
+    AsciiSPrint(bankLocator, 10, "BANK%d", channel);
+    if (++dimm >= dimmsPerChannel)
+    {
+       dimm = 0;
+       ++channel;
+    }
 		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
 		UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, (CHAR8*)&bankLocator[0]);
     if (newSmbiosTable.Type17->Size == 0) {
