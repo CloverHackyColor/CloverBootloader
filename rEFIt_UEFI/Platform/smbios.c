@@ -1125,18 +1125,8 @@ VOID PatchTableType17()
   UINT8   dimmsPerChannel = 2, channel = 0, dimm = 0;
   BOOLEAN insertingEmpty = TRUE;
   BOOLEAN trustSMBIOS = TRUE;
-  BOOLEAN wrongSMBIOSBanks = ((gRAM.SMBIOS[0].InUse != gRAM.SMBIOS[1].InUse) ||
-                              (gRAM.SMBIOS[0].Frequency != gRAM.SMBIOS[1].Frequency) ||
-                              (gRAM.SMBIOS[0].ModuleSize != gRAM.SMBIOS[1].ModuleSize));
-  BOOLEAN wrongSPDBanks = ((gRAM.SPD[0].InUse != gRAM.SPD[1].InUse) ||
-                           (gRAM.SPD[0].Frequency != gRAM.SPD[1].Frequency) ||
-                           (gRAM.SPD[0].ModuleSize != gRAM.SPD[1].ModuleSize));
-	if (wrongSMBIOSBanks) {
-    DBG("Detected alternating SMBIOS channel banks\n");
-  }
-  if (wrongSPDBanks) {
-    DBG("Detected alternating SPD channel banks\n");
-  }
+  BOOLEAN wrongSMBIOSBanks = FALSE;
+  BOOLEAN wrongSPDBanks = FALSE;
   // Check for SMBIOS trust
   for (Index = 0; Index < MAX_RAM_SLOTS; Index++) {
     if (gRAM.SPD[Index].InUse) ++SPDInUse;
@@ -1176,6 +1166,24 @@ VOID PatchTableType17()
   }
   if (trustSMBIOS) {
     DBG("Trusting SMBIOS...\n");
+  }
+  if (dimmsPerChannel >= 2) {
+    if ((gRAM.SMBIOS[0].InUse != gRAM.SMBIOS[1].InUse) ||
+        (gRAM.SMBIOS[0].Frequency != gRAM.SMBIOS[1].Frequency) ||
+        (gRAM.SMBIOS[0].ModuleSize != gRAM.SMBIOS[1].ModuleSize)) {
+      wrongSMBIOSBanks = TRUE;
+    }
+    if ((gRAM.SPD[0].InUse != gRAM.SPD[1].InUse) ||
+        (gRAM.SPD[0].Frequency != gRAM.SPD[1].Frequency) ||
+        (gRAM.SPD[0].ModuleSize != gRAM.SPD[1].ModuleSize)) {
+      wrongSPDBanks = TRUE;
+    }
+  }
+  if (wrongSMBIOSBanks) {
+     DBG("Detected alternating SMBIOS channel banks\n");
+  }
+  if (wrongSPDBanks) {
+     DBG("Detected alternating SPD channel banks\n");
   }
   // Setup interleaved channel map
   for (Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
