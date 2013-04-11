@@ -1154,7 +1154,7 @@ VOID PatchTableType17()
       if (SPDInUse > SMBIOSInUse) {
         trustSMBIOS = FALSE;
       } else if (gRAM.SPD[0].InUse || !gRAM.SMBIOS[0].InUse) {
-        if (SPDInUse != 1) {
+        if (SPDInUse > 1) {
           trustSMBIOS = FALSE;
         }
       } else if (SPDInUse == 1) {
