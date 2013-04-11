@@ -420,6 +420,7 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
       switch (spdbuf[SPD_MEMORY_TYPE])  {
         case SPD_MEMORY_TYPE_SDRAM_DDR:
           
+          gRAM.SPD[i].Type = MemoryTypeDdr;
           gRAM.SPD[i].ModuleSize = (((1 << ((spdbuf[SPD_NUM_ROWS] & 0x0f)
                                       + (spdbuf[SPD_NUM_COLUMNS] & 0x0f) - 17)) * 
                                     ((spdbuf[SPD_NUM_DIMM_BANKS] & 0x7) + 1) *
@@ -427,7 +428,8 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
           break;
           
         case SPD_MEMORY_TYPE_SDRAM_DDR2:
-          
+
+          gRAM.SPD[i].Type = MemoryTypeDdr2;
           gRAM.SPD[i].ModuleSize = ((1 << ((spdbuf[SPD_NUM_ROWS] & 0x0f)
                                      + (spdbuf[SPD_NUM_COLUMNS] & 0x0f) - 17)) * 
                                     ((spdbuf[SPD_NUM_DIMM_BANKS] & 0x7) + 1) *
@@ -435,7 +437,8 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
           break;
           
         case SPD_MEMORY_TYPE_SDRAM_DDR3:
-          
+
+          gRAM.SPD[i].Type = MemoryTypeDdr3;
           gRAM.SPD[i].ModuleSize = ((spdbuf[4] & 0x0f) + 28 ) + ((spdbuf[8] & 0x7)  + 3 );
           gRAM.SPD[i].ModuleSize -= (spdbuf[7] & 0x7) + 25;
           gRAM.SPD[i].ModuleSize = ((1 << gRAM.SPD[i].ModuleSize) * (((spdbuf[7] >> 3) & 0x1f) + 1));
