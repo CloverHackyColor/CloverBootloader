@@ -1093,12 +1093,10 @@ VOID GetTableType17()
          DBG("Table has error information, skipping\n");
          continue;
       }
-		if (SmbiosTable.Type17->Size > 0) {
+		if ((SmbiosTable.Type17->Size > 0) || (SmbiosTable.Type17->Speed > 0)) {
          gRAM.SMBIOS[Index].InUse = TRUE;
          gRAM.SMBIOS[Index].ModuleSize = SmbiosTable.Type17->Size;
-         if (SmbiosTable.Type17->Speed > 0) {
-            gRAM.SMBIOS[Index].Frequency = SmbiosTable.Type17->Speed;
-         }
+         gRAM.SMBIOS[Index].Frequency = SmbiosTable.Type17->Speed;
       }
 //		DBG("CntMemorySlots = %d\n", gDMI->CntMemorySlots)
 //		DBG("gDMI->MemoryModules = %d\n", gDMI->MemoryModules)
