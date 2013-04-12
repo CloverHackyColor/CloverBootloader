@@ -1213,8 +1213,8 @@ VOID PatchTableType17()
   //
   gRAMCount = 0;
 	for (Index = 0; Index < MAX_RAM_SLOTS; Index++) {
-    UINTN SMBIOSIndex = (wrongSMBIOSBanks || (dimmsPerChannel < 2)) ? Index : channelMap[Index];
-    UINTN SPDIndex = (wrongSPDBanks || (dimmsPerChannel < 2)) ? Index : channelMap[Index];
+    UINTN SMBIOSIndex = (isMacPro || wrongSMBIOSBanks || (dimmsPerChannel < 2)) ? Index : channelMap[Index];
+    UINTN SPDIndex = (isMacPro || wrongSPDBanks || (dimmsPerChannel < 2)) ? Index : channelMap[Index];
     if (!insertingEmpty && ((expectedCount < 2) || (gRAMCount > expectedCount)) &&
         !gRAM.SPD[SPDIndex].InUse && (!trustSMBIOS || !gRAM.SMBIOS[SMBIOSIndex].InUse)) {
       continue;
