@@ -1275,7 +1275,7 @@ VOID PatchTableType17()
        dimm = 0;
        ++channel;
     }
-    DBG("SMBIOS Type 17 Index = %d => %d %d:\n", swapOutput ? channelMap[gRAMCount] : gRAMCount, SMBIOSIndex, SPDIndex);
+    DBG("SMBIOS Type 17 Index = %d => %d %d:\n", gRAMCount, SMBIOSIndex, SPDIndex);
     if (newSmbiosTable.Type17->Size == 0) {
       DBG("EMPTY\n");
       if (insertingEmpty && !trustSMBIOS) {
@@ -1289,7 +1289,7 @@ VOID PatchTableType17()
       DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
     }
     newSmbiosTable.Type17->MemoryErrorInformationHandle = 0xFFFF;
-    mHandle17[swapOutput ? channelMap[gRAMCount] : gRAMCount] = LogSmbiosTable(newSmbiosTable);
+    mHandle17[gRAMCount] = LogSmbiosTable(newSmbiosTable);
     swapOutput = ((dimmsPerChannel >= 2) && (gRAMCount < expectedCount) && wrongSPDBanks && !isMacPro);
     ++gRAMCount;
   }
