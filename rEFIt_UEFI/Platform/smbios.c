@@ -1213,7 +1213,7 @@ VOID PatchTableType17()
   //
   gRAMCount = 0;
 	for (Index = 0; Index < MAX_RAM_SLOTS; Index++) {
-    UINTN SMBIOSIndex = wrongSMBIOSBanks ? channelMap[Index] : Index;
+    UINTN SMBIOSIndex = wrongSMBIOSBanks ? Index : channelMap[Index];
     UINTN SPDIndex = wrongSPDBanks ? Index : channelMap[Index];
     if (!insertingEmpty && ((expectedCount < 2) || (gRAMCount > expectedCount)) &&
         !gRAM.SPD[SPDIndex].InUse && (!trustSMBIOS || !gRAM.SMBIOS[SMBIOSIndex].InUse)) {
@@ -1261,7 +1261,7 @@ VOID PatchTableType17()
 
     //now I want to update deviceLocator and bankLocator
     if (isMacPro) {
-       AsciiSPrint(deviceLocator, 10, "DIMM%d",  gRAMCount + 1);
+       AsciiSPrint(deviceLocator, 10, "DIMM%d", gRAMCount + 1);
        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
     } else {
       UINT8 index = (wrongSPDBanks ? channelMap[Index] : (UINT8)Index);
@@ -1274,7 +1274,7 @@ VOID PatchTableType17()
     }
     DBG("SMBIOS Type 17 Index = %d => %d %d:\n", gRAMCount, SMBIOSIndex, SPDIndex);
     if (newSmbiosTable.Type17->Size == 0) {
-      DBG("EMPTY\n");
+      DBG("%a %a EMPTY\n", bankLocator, deviceLocator);
     } else {
       insertingEmpty = FALSE;
       DBG("%a %a %dMHz %dMB\n", bankLocator, deviceLocator, newSmbiosTable.Type17->Speed, newSmbiosTable.Type17->Size);
