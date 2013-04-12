@@ -1215,8 +1215,8 @@ VOID PatchTableType17()
 	for (Index = 0; Index < MAX_RAM_SLOTS; Index++) {
     UINTN SMBIOSIndex = wrongSMBIOSBanks ? channelMap[Index] : Index;
     UINTN SPDIndex = wrongSPDBanks ? Index : channelMap[Index];
-    if (!insertingEmpty && (gRAMCount > expectedCount) && !gRAM.SPD[SPDIndex].InUse &&
-        (!trustSMBIOS || !gRAM.SMBIOS[SMBIOSIndex].InUse)) {
+    if (!insertingEmpty && ((expectedCount < 2) || (gRAMCount > expectedCount)) &&
+        !gRAM.SPD[SPDIndex].InUse && (!trustSMBIOS || !gRAM.SMBIOS[SMBIOSIndex].InUse)) {
       continue;
     }
     SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, SMBIOSIndex);
