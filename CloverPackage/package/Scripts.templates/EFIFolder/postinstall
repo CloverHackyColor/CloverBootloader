@@ -14,16 +14,17 @@ echo "==============================================="
 # echo "preinstall: Path to dest volume..... $3"
 # echo "preinstall: Root of system folder... $4"
 
-osxvolume="${3}"
+DEST_VOL="$3"
+EFI_ROOT_DIR="${DEST_VOL}/EFIROOTDIR"
 
 # config.plist
-if [[ ! -f "${osxvolume}/EFI/config.plist" ]]; then
-    cp -fv "${osxvolume}/EFI/config-sample.plist" "${osxvolume}/EFI/config.plist"
+if [[ ! -f "${EFI_ROOT_DIR}/EFI/config.plist" ]]; then
+    cp -fv "${EFI_ROOT_DIR}/EFI/config-sample.plist" "${EFI_ROOT_DIR}/EFI/config.plist"
 fi
 # Don't keep config-sample.plist
-rm -f "${osxvolume}/EFI/config-sample.plist"
+rm -f "${EFI_ROOT_DIR}/EFI/config-sample.plist"
 
 # refit.conf
-if [[ ! -f "${osxvolume}/EFI/BOOT/refit.conf" ]]; then
-    cp -fv "${osxvolume}/EFI/BOOT/refit-default.conf" "${osxvolume}/EFI/BOOT/refit.conf"
+if [[ ! -f "${EFI_ROOT_DIR}/EFI/BOOT/refit.conf" ]]; then
+    cp -fv "${EFI_ROOT_DIR}/EFI/BOOT/refit-default.conf" "${EFI_ROOT_DIR}/EFI/BOOT/refit.conf"
 fi

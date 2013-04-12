@@ -2,7 +2,7 @@
 
 <installer-gui-script minSpecVersion='1'>
 
-	<options hostArchitectures='i386'/>
+	<options hostArchitectures='i386' allow-external-scripts='no'/>
 	<domains enable_anywhere="true"/>
 
 	<welcome file='Welcome.rtfd'/>
@@ -60,13 +60,14 @@
 		return false;
 	}
 
-    function choicePreviouslySelected(option) {
-        if (checkFileExists('/EFI/CloverInstaller.plist')) {
-            dict = system.files.plistAtPath(my.target.mountpoint + '/EFI/CloverInstaller.plist');
-            return dict[option] == undefined ? false : dict[option];
-        }
-        return false;
-    }
+	function choicePreviouslySelected(option) {
+		var installer_plist = '/Library/Preferences/com.projectosx.clover.installer.plist';
+		if (checkFileExists(installer_plist)) {
+			dict = system.files.plistAtPath(my.target.mountpoint + installer_plist);
+			return dict[option] == undefined ? false : dict[option];
+		}
+		return false;
+	}
 
 	function checkBootFromUEFI() {
 		var classObjects = system.ioregistry.matchingName('efi','IODeviceTree');

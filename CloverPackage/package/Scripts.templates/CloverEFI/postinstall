@@ -16,23 +16,27 @@ echo "preinstall: Root of system folder... $4"
 
 #############################################################################
 
-osxvolume="${3}"
-boottype='@CLOVER_EFI_ARCH@'
-cloverEFIFile='@CLOVER_BOOT_FILE@'
-installer_plist="${osxvolume}/EFI/CloverInstaller.plist"
+DEST_VOL="${3}"
+EFI_ROOT_DIR="${DEST_VOL}/EFIROOTDIR"
+CLOVER_INSTALLER_PLIST_NEW="${DEST_VOL}@CLOVER_INSTALLER_PLIST_NEW@"
+
+install_log="${DEST_VOL}/Clover_Install_Log.txt"
 installer_choice="@INSTALLER_CHOICE@"
 
-echo "$boottype" > "${osxvolume}/boottype"
+boottype='@CLOVER_EFI_ARCH@'
+cloverEFIFile='@CLOVER_BOOT_FILE@'
 
-if [[ -f "${osxvolume}/boot" ]]; then
-    cp "${osxvolume}/boot" "${osxvolume}/bootold"
+echo "$boottype" > "${DEST_VOL}/boottype"
+
+if [[ -f "${EFI_ROOT_DIR}/boot" ]]; then
+    cp "${EFI_ROOT_DIR}/boot" "${EFI_ROOT_DIR}/bootold"
 fi
 
-if [[ -f "${osxvolume}/usr/standalone/i386/$boottype/$cloverEFIFile" ]]; then
-    cp -v "${osxvolume}/usr/standalone/i386/$boottype/$cloverEFIFile" "${osxvolume}/boot"
-    chflags hidden "${osxvolume}/boot"
-    echo "Stage 2 - Written $cloverEFIFile ($boottype) to ${osxvolume}/boot" >> "${osxvolume}/Clover_Install_Log.txt"
+if [[ -f "${DEST_VOL}/usr/standalone/i386/$boottype/$cloverEFIFile" ]]; then
+    cp -v "${DEST_VOL}/usr/standalone/i386/$boottype/$cloverEFIFile" "${EFI_ROOT_DIR}/boot"
+    chflags hidden "${EFI_ROOT_DIR}/boot"
+    echo "Stage 2 - Written $cloverEFIFile ($boottype) to ${EFI_ROOT_DIR}/boot" >> "$install_log"
 fi
 
 # Mark that the option was selected
-/usr/libexec/plistbuddy -c "Add $installer_choice bool true" "$installer_plist" >/dev/null
+/usr/libexec/plistbuddy -c "Add $installer_choice bool true" "$CLOVER_INSTALLER_PLIST_NEW" >/dev/null

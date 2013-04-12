@@ -1,0 +1,30 @@
+#!/bin/bash
+
+DEST_VOL="$1"
+ESPMountPoint="$2"
+
+ESPDevice=$(LC_ALL=C diskutil info "$DEST_VOL" 2>/dev/null | \
+ sed -n 's/.*Part of Whole: *//p')
+if [[ -z "$ESPDevice" ]]; then
+    echo "Can't find volume with the name $DEST_VOL"
+    exit 1
+fi
+
+# Get the name of the ESP device (aka disk3s1)
+ESPDevice=$(echo "$ESPDevice" | sed -E 's@^.*/?(disk[0-9]*).*@\1s1@')
+echo "ESPDevice=$ESPDevice"
+
+[[ ! -d "${ESPMountPoint}" ]] && mkdir -p "${ESPMountPoint}"
+
+# Umount previously mount partition
+/usr/sbin/diskutil umount "${ESPMountPoint}" &>/dev/null
+umount /dev/${ESPDevice}  &>/dev/null
+umount "${ESPMountPoint}" &>/dev/null
+exitcode=1
+fstype=$(fstyp /dev/$ESPDevice)
+if [[ -n "$fstype" ]]; then
+    mount -t $fstype /dev/$ESPDevice "${ESPMountPoint}" &>/dev/null
+    exitcode=$?
+fi
+
+exit $exitcode

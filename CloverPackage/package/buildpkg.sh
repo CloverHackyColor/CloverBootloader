@@ -70,6 +70,7 @@ fi
 
 # ====== GLOBAL VARIABLES ======
 declare -r LOG_FILENAME="Clover_Installer_Log.txt"
+declare -r CLOVER_INSTALLER_PLIST="/Library/Preferences/com.projectosx.clover.installer.plist"
 
 declare -a pkgrefs
 declare -a choice_key
@@ -153,6 +154,8 @@ s&%CPRYEAR%&${CLOVER_CPRYEAR}&g
 s&%WHOBUILD%&${CLOVER_WHOBUILD}&g
 :t
 /@[a-zA-Z_][a-zA-Z_0-9]*@/!b
+s&@CLOVER_INSTALLER_PLIST_NEW@&${CLOVER_INSTALLER_PLIST}.new&g
+s&@CLOVER_INSTALLER_PLIST@&${CLOVER_INSTALLER_PLIST}&g
 s&@LOG_FILENAME@&${LOG_FILENAME}&g;t t"
 
     local allSubst="
@@ -419,30 +422,42 @@ main ()
     echo -e $COL_CYAN"  ----------------------------------"$COL_RESET
     echo ""
 
-# # Add pre install choice
-#     echo "================= Preinstall ================="
-#     packagesidentity="${clover_package_identity}"
-#     choiceId="Pre"
-#
-#     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
-#     addChoice --start-visible="false" --start-selected="true"  --pkg-refs="$packageRefId" "${choiceId}"
-#
-#     # Package will be built at the end
-# # End pre install choice
+# build Pre package
+    echo "================= Preinstall ================="
+    packagesidentity="${clover_package_identity}"
+    choiceId="Pre"
+    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" ${choiceId}
+    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
+    addChoice --start-visible="false"  --start-selected="true"  --pkg-refs="$packageRefId" "${choiceId}"
+# End pre install choice
 
-    # Check if we have compile IA32 version
+# Check if we have compile IA32 version
     local add_ia32=0
     [[ -f "${SRCROOT}/CloverV2/EFI/BOOT/CLOVERIA32.efi" ]] && add_ia32=1
+
+# build EFI target
+    echo "=================== BiosBoot ==========================="
+    packagesidentity="$clover_package_identity"
+    choiceId="Target.ESP"
+    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+    installer_target_esp_refid=$packageRefId
+    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" \
+                       --subst="INSTALLER_CHOICE=$installer_target_esp_refid" MarkChoice
+    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
+    addChoice --start-visible="true" --start-selected="choicePreviouslySelected('$packageRefId')"  \
+              --pkg-refs="$packageRefId" "${choiceId}"
+# End build core package
 
 # build Core package
     echo "=================== BiosBoot ==========================="
     packagesidentity="$clover_package_identity"
     choiceId="BiosBoot"
     if [[ "$add_ia32" -eq 1 ]]; then
-        ditto --noextattr --noqtn ${SYMROOT}/i386/ia32/boot? ${PKG_BUILD_DIR}/${choiceId}/Root/
         ditto --noextattr --noqtn ${SYMROOT}/i386/ia32/boot? ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/ia32/
     fi
-    ditto --noextattr --noqtn ${SYMROOT}/i386/x64/boot?   ${PKG_BUILD_DIR}/${choiceId}/Root/
     ditto --noextattr --noqtn ${SYMROOT}/i386/x64/boot?   ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/x64/
     ditto --noextattr --noqtn ${SYMROOT}/i386/boot0       ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
     ditto --noextattr --noqtn ${SYMROOT}/i386/boot0md     ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
@@ -471,8 +486,9 @@ main ()
     rm -rf   ${PKG_BUILD_DIR}/${choiceId}/Root/EFI
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root/EFI
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Scripts
-    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"               \
-                       --subst="CLOVER_PACKAGE_IDENTITY=$clover_package_identity" \
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"                     \
+                       --subst="CLOVER_PACKAGE_IDENTITY=$clover_package_identity"       \
+                       --subst="INSTALLER_TARGET_ESP_REFID=$installer_target_esp_refid" \
                        ${choiceId}
     rsync -r --exclude=.svn --exclude="*~" ${SRCROOT}/CloverV2/EFI/ ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/
     [[ "$add_ia32" -ne 1 ]] && rm -rf ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/drivers32
@@ -484,7 +500,7 @@ main ()
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
 
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
-    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
+    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
     addChoice --start-visible="false" --start-selected="true" --pkg-refs="$packageRefId" "${choiceId}"
 # End build EFI folder package
 
@@ -499,7 +515,7 @@ main ()
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
                        --subst="INSTALLER_CHOICE=$packageRefId"      \
                        ${choiceId}
-    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
+    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
     addChoice --group="Bootloader"                                         \
               --start-selected="choicePreviouslySelected('$packageRefId')" \
               --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
@@ -512,7 +528,7 @@ main ()
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
                        --subst="INSTALLER_CHOICE=$packageRefId"      \
                        ${choiceId}
-    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
+    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
     addChoice --group="Bootloader"                                         \
               --start-selected="choicePreviouslySelected('$packageRefId')" \
               --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
@@ -525,24 +541,11 @@ main ()
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
                        --subst="INSTALLER_CHOICE=$packageRefId"      \
                        ${choiceId}
-    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
+    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
     addChoice --group="Bootloader"                                         \
               --start-selected="choicePreviouslySelected('$packageRefId')" \
               --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
 # End build boot0hfs package
-
-# build boot0EFIboot0EFI package
-    choiceId="boot0EFI"
-    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
-    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
-    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
-                       --subst="INSTALLER_CHOICE=$packageRefId"      \
-                       ${choiceId}
-    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    addChoice --group="Bootloader"                                         \
-              --start-selected="choicePreviouslySelected('$packageRefId')" \
-              --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
-# End build boot0EFI package
 
 # build bootUEFI package
     choiceId="bootUEFI"
@@ -551,7 +554,7 @@ main ()
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
                        --subst="INSTALLER_CHOICE=$packageRefId"      \
                        ${choiceId}
-    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
+    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
     addChoice --group="Bootloader"                    \
               --start-selected="checkBootFromUEFI()"  \
               --pkg-refs="$packageRefId" "${choiceId}"
@@ -638,33 +641,35 @@ fi
     packagesidentity="${clover_package_identity}".themes
     local artwork="${SRCROOT}/CloverV2/themespkg/"
     local themes=($( find "${artwork}" -type d -depth 1 -not -name '.svn' ))
-    local themeDestDir='/EFI/BOOT/themes'
+    local themeDestDir='/EFIROOTDIR/EFI/BOOT/themes'
     local defaultTheme=$(trim $(sed -n 's/^theme *//p' "${SRCROOT}"/CloverV2/EFI/BOOT/refit.conf))
     for (( i = 0 ; i < ${#themes[@]} ; i++ )); do
         local themeName=${themes[$i]##*/}
-        local selectTheme="checkFileExists('${themeDestDir}/$themeName/icons/func_clover.png')"
         mkdir -p "${PKG_BUILD_DIR}/${themeName}/Root/"
         rsync -r --exclude=.svn --exclude="*~" "${themes[$i]}/" "${PKG_BUILD_DIR}/${themeName}/Root/${themeName}"
+        packageRefId=$(getPackageRefId "${packagesidentity}" "${themeName}")
         addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${themeName}" \
                            --subst="themeName=$themeName"                \
+                           --subst="INSTALLER_CHOICE=$packageRefId"      \
                            InstallTheme
 
-        packageRefId=$(getPackageRefId "${packagesidentity}" "${themeName}")
         buildpackage "$packageRefId" "${themeName}" "${PKG_BUILD_DIR}/${themeName}" "${themeDestDir}"
 
+        # local selectTheme="checkFileExists('${themeDestDir}/$themeName/icons/func_clover.png')"
+        local selectTheme="choicePreviouslySelected('$packageRefId')"
         # Select the default theme (get from refit.conf)
         [[ "$themeName" == "$defaultTheme" ]] && selectTheme='true'
         addChoice --group="Themes"  --start-selected="$selectTheme"  --pkg-refs="$packageRefId"  "${themeName}"
     done
 # End build theme packages
-
+ 
 # build drivers-x32 packages
 if [[ "$add_ia32" -eq 1 ]]; then
     echo "===================== drivers32 ========================"
     addGroupChoices --title="Drivers32" --description="Drivers32" "Drivers32"
     packagesidentity="${clover_package_identity}".drivers32
     local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/drivers32" -type f -name '*.efi' -depth 1 ))
-    local driverDestDir='/EFI/drivers32'
+    local driverDestDir='/EFIROOTDIR/EFI/drivers32'
     for (( i = 0 ; i < ${#drivers[@]} ; i++ )); do
         local driver="${drivers[$i]##*/}"
         local driverName="${driver%.efi}"
@@ -673,9 +678,11 @@ if [[ "$add_ia32" -eq 1 ]]; then
         fixperms "${PKG_BUILD_DIR}/${driverName}/Root/"
 
         packageRefId=$(getPackageRefId "${packagesidentity}" "${driverName}")
+        addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverName}" \
+                           --subst="INSTALLER_CHOICE=$packageRefId" MarkChoice
         buildpackage "$packageRefId" "${driverName}" "${PKG_BUILD_DIR}/${driverName}" "${driverDestDir}"
         addChoice --group="Drivers32"  --title="$driverName"  --description="Install to ${driverDestDir}/$driver" \
-         --start-selected="checkFileExists('${driverDestDir}/$driver')"  --pkg-refs="$packageRefId"  "${driverName}"
+         --start-selected="choicePreviouslySelected('$packageRefId')"  --pkg-refs="$packageRefId"  "${driverName}"
         rm -R -f "${PKG_BUILD_DIR}/${driverName}"
     done
 fi
@@ -686,7 +693,7 @@ fi
     addGroupChoices --title="Drivers64" --description="Drivers64" "Drivers64"
     packagesidentity="${clover_package_identity}".drivers64
     local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/drivers64" -type f -name '*.efi' -depth 1 ))
-    local driverDestDir='/EFI/drivers64'
+    local driverDestDir='/EFIROOTDIR/EFI/drivers64'
     for (( i = 0 ; i < ${#drivers[@]} ; i++ )); do
         local driver="${drivers[$i]##*/}"
         local driverName="${driver%.efi}"
@@ -695,9 +702,11 @@ fi
         fixperms "${PKG_BUILD_DIR}/${driverName}/Root/"
 
         packageRefId=$(getPackageRefId "${packagesidentity}" "${driverName}")
+        addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverName}" \
+                           --subst="INSTALLER_CHOICE=$packageRefId" MarkChoice
         buildpackage "$packageRefId" "${driverName}" "${PKG_BUILD_DIR}/${driverName}" "${driverDestDir}"
         addChoice --group="Drivers64"  --title="$driverName"  --description="Install to ${driverDestDir}/$driver" \
-         --start-selected="checkFileExists('${driverDestDir}/$driver')"  --pkg-refs="$packageRefId"  "${driverName}"
+         --start-selected="choicePreviouslySelected('$packageRefId')"  --pkg-refs="$packageRefId"  "${driverName}"
         rm -R -f "${PKG_BUILD_DIR}/${driverName}"
     done
 # End build drivers-x64 packages
@@ -706,7 +715,7 @@ fi
     echo "=============== drivers64 UEFI mandatory ==============="
     packagesidentity="${clover_package_identity}".drivers64UEFI.mandatory
     local drivers=($( find "${SRCROOT}/CloverV2/EFI/drivers64UEFI" -type f -name '*.efi' -depth 1 ))
-    local driverDestDir='/EFI/drivers64UEFI'
+    local driverDestDir='/EFIROOTDIR/EFI/drivers64UEFI'
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
         local driver="${drivers[$i]##*/}"
@@ -727,7 +736,7 @@ fi
     addGroupChoices --title="Drivers64UEFI" --description="Drivers64UEFI" "Drivers64UEFI"
     packagesidentity="${clover_package_identity}".drivers64UEFI
     local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/drivers64UEFI" -type f -name '*.efi' -depth 1 ))
-    local driverDestDir='/EFI/drivers64UEFI'
+    local driverDestDir='/EFIROOTDIR/EFI/drivers64UEFI'
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
         local driver="${drivers[$i]##*/}"
@@ -737,9 +746,11 @@ fi
         fixperms "${PKG_BUILD_DIR}/${driverName}/Root/"
 
         packageRefId=$(getPackageRefId "${packagesidentity}" "${driverName}")
+        addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverName}" \
+                           --subst="INSTALLER_CHOICE=$packageRefId" MarkChoice
         buildpackage "$packageRefId" "${driverName}" "${PKG_BUILD_DIR}/${driverName}" "${driverDestDir}"
         addChoice --group="Drivers64UEFI"  --title="$driverName"  --description="Install to ${driverDestDir}/$driver" \
-         --start-selected="checkFileExists('${driverDestDir}/$driver')"  --pkg-refs="$packageRefId"  "${driverName}"
+         --start-selected="choicePreviouslySelected('$packageRefId')"  --pkg-refs="$packageRefId"  "${driverName}"
         rm -R -f "${PKG_BUILD_DIR}/${driverName}"
     done
 # End build drivers-x64UEFI packages

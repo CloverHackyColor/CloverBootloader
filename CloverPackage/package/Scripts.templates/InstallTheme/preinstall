@@ -15,27 +15,32 @@ echo "preinstall: Path to dest volume..... $3"
 echo "preinstall: Root of system folder... $4"
 
 # Check target exists
-if [ ! -e "$3" ]
-then
+if [ ! -e "$3" ]; then
     echo "$3 volume does not exist!"
     exit 1
 fi
 
 # If target volume root of current system then replace
 # / with volume name.
-if [ "$3" == "/" ]
-then
-	dest_vol="/Volumes/"$( ls -1F /Volumes | sed -n 's:@$::p' )
+if [ "$3" == "/" ]; then
+    DEST_VOL="/Volumes/"$( ls -1F /Volumes | sed -n 's:@$::p' )
 else
-    dest_vol="$3"
+    DEST_VOL="$3"
 fi
+
+EFI_ROOT_DIR="${DEST_VOL}/EFIROOTDIR"
+CLOVER_INSTALLER_PLIST_NEW="${DEST_VOL}@CLOVER_INSTALLER_PLIST_NEW@"
+install_log="${DEST_VOL}/Clover_Install_Log.txt"
+installer_choice="@INSTALLER_CHOICE@"
 
 # ---------------------------------------------
 # Delete old themes files
 # ---------------------------------------------
 
-if [[ -d "$dest_vol/EFI/BOOT/themes/@themeName@" ]];then
-	rm -rf "$dest_vol/EFI/BOOT/themes/@themeName@"
+if [[ -d "${EFIROOTDIR}/EFI/BOOT/themes/@themeName@" ]];then
+	rm -rf "${EFIROOTDIR}/EFI/BOOT/themes/@themeName@"
 fi
 
 # ---------------------------------------------
+# Mark that the option was selected
+/usr/libexec/plistbuddy -c "Add $installer_choice bool true" "$CLOVER_INSTALLER_PLIST_NEW" >/dev/null

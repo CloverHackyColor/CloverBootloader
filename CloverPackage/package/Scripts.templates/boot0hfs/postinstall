@@ -3,16 +3,15 @@
 diskloader="boot0hfs"
 partitionloaderhfs="boot1h2"
 partitionloaderfat="boot1f32alt"
-install_log="${3}/Clover_Install_Log.txt"
-installer_plist="${3}/EFI/CloverInstaller.plist"
+
+DEST_VOL="${3}"
+EFI_ROOT_DIR="${DEST_VOL}/EFIROOTDIR"
+CLOVER_INSTALLER_PLIST_NEW="${DEST_VOL}@CLOVER_INSTALLER_PLIST_NEW@"
+install_log="${DEST_VOL}/Clover_Install_Log.txt"
 installer_choice="@INSTALLER_CHOICE@"
 
-start ()
-{
-# $1 volume
-
-bootvolume="${@}"
-echo "Volume is $bootvolume"
+bootvolume="$EFI_ROOT_DIR"
+echo "Boot Volume is $bootvolume"
 bootresources="${0%/*}"
 echo "$bootresources"
 
@@ -23,7 +22,8 @@ if [ -z "${bootvolume}" ]; then
 	exit
 fi
 
-bootdev=$( df "${bootvolume}" | sed -n '2p' | awk '{print $1}' )
+bootdev=$(LC_ALL=C diskutil info "$bootvolume" 2>/dev/null | \
+ sed -n 's/.*Device Node: *//p')
 bootrdev=${bootdev/disk/rdisk}
 
 if [ "${bootdev}" = "${bootdev#*disk*s}" ]; then
@@ -53,13 +53,10 @@ echo "bootresources: Boot Resources is ${bootresources}"
 echo "-----------------------------------------------"
 echo ""
 echo ""
-}
-
-start ${3}
 
 if [ ! -e "/usr/local/bin/fdisk440" ]; then
 	mkdir -p /usr/local/bin
-	cp -f "${bootvolume}/usr/local/bin/fdisk440" /usr/local/bin/fdisk440
+	cp -f "${DEST_VOL}/usr/local/bin/fdisk440" /usr/local/bin/fdisk440
 fi
 
 echo "==============================================="
@@ -86,10 +83,10 @@ echo "" >> "$install_log"
 ### Stage 0 ###
 
 echo "Stage 0 - Written ${diskloader} to ${bootdisk}" >> "$install_log"
-echo "/usr/local/bin/fdisk440 -u -f ${bootvolume}/usr/standalone/i386/${diskloader} -y ${bootdisk}" >> "$install_log"
+echo "/usr/local/bin/fdisk440 -u -f ${DEST_VOL}/usr/standalone/i386/${diskloader} -y ${bootdisk}" >> "$install_log"
 echo " " >> "$install_log"
 
-"/usr/local/bin/fdisk440" -u -f "${bootvolume}/usr/standalone/i386/${diskloader}" -y ${bootdisk}
+/usr/local/bin/fdisk440 -u -f "${DEST_VOL}/usr/standalone/i386/${diskloader}" -y ${bootdisk}
 
 ### Stage 1 ###
 
@@ -98,12 +95,12 @@ if [ ${efiformat} = "hfs" ]; then
 
 	echo "Stage 1 - Written ${partitionloaderhfs} to ${bootrdev}" >> "$install_log"
 	echo "File system is HFS." >> "$install_log"
-	echo "dd if=${bootvolume}/usr/standalone/i386/${partitionloaderhfs} of=${bootrdev}" >> "$install_log"
+	echo "dd if=${DEST_VOL}/usr/standalone/i386/${partitionloaderhfs} of=${bootrdev}" >> "$install_log"
 	echo " " >> "$install_log"
 
-	dd if="${bootvolume}/usr/standalone/i386/${partitionloaderhfs}" of=${bootrdev}
+	dd if="${DEST_VOL}/usr/standalone/i386/${partitionloaderhfs}" of=${bootrdev}
 
-	echo "${efiformat}" > "${bootvolume}/formattype"
+	echo "${efiformat}" > "${DEST_VOL}/formattype"
 fi
 
 if [ ${efiformat} = "msdos" ]; then
@@ -117,8 +114,8 @@ if [ ${efiformat} = "msdos" ]; then
 	dd if=${bootrdev} count=1 bs=512 of=/tmp/origbs
 
 	# copy boot1f32 to newbs
-	echo "Executing command: cp "${bootvolume}/usr/standalone/i386/${partitionloaderfat}" /tmp/newbs"
-	cp "${bootvolume}/usr/standalone/i386/${partitionloaderfat}" /tmp/newbs
+	echo "Executing command: cp ${DEST_VOL}/usr/standalone/i386/${partitionloaderfat} /tmp/newbs"
+	cp "${DEST_VOL}/usr/standalone/i386/${partitionloaderfat}" /tmp/newbs
 	
 	# "merge" origbs into newbs
 	echo "Executing command: dd if=/tmp/origbs of=/tmp/newbs skip=3 seek=3 bs=1 count=87 conv=notrunc"
@@ -133,12 +130,12 @@ if [ ${efiformat} = "msdos" ]; then
 	echo "Stage 1 - Written ${partitionloaderfat} to ${bootrdev}" >> "$install_log"
 	echo "File system is Fat32." >> "$install_log"
 	echo "dd if=${bootrdev} count=1 bs=512 of=/tmp/origbs" >> "$install_log"
-	echo "cp ${bootvolume}/usr/standalone/i386/${partitionloaderfat} /tmp/newbs" >> "$install_log"
+	echo "cp ${DEST_VOL}/usr/standalone/i386/${partitionloaderfat} /tmp/newbs" >> "$install_log"
 	echo "dd if=/tmp/origbs of=/tmp/newbs skip=3 seek=3 bs=1 count=87 conv=notrunc" >> "$install_log"
 	echo "dd if=/tmp/newbs of=${bootrdev}" >> "$install_log"
 	echo " " >> "$install_log"
 
-	echo "${efiformat}" > "${bootvolume}/formattype"
+	echo "${efiformat}" > "${DEST_VOL}/formattype"
 	
 	echo "Setup Active Partition to be : ${bootslice}" >> "$install_log"
 	"/usr/local/bin/fdisk440" -e ${bootrdisk} <<-MAKEACTIVE
@@ -155,9 +152,9 @@ partitionactive=$( /usr/local/bin/fdisk440 -d ${bootrdisk} | grep -n "*" | awk -
 echo "New Active Partition: ${partitionactive}" >> "$install_log"
 echo "" >> "$install_log"
 
-echo "${diskloader}" > "${bootvolume}/boot0type"
+echo "${diskloader}" > "${DEST_VOL}/boot0type"
 
 # Mark that the option was selected
-/usr/libexec/plistbuddy -c "Add $installer_choice bool true" "$installer_plist" >/dev/null
+/usr/libexec/plistbuddy -c "Add $installer_choice bool true" "$CLOVER_INSTALLER_PLIST_NEW" >/dev/null
 
 exit

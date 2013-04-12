@@ -1,5 +1,9 @@
 #!/bin/bash
 
+echo "==============================================="
+echo "Pre Pre-Install Script"
+echo "==============================================="
+
 #echo "DEBUG: $ 1 = Full path to the installation package the installer app is processing: " $1
 #echo "DEBUG: $ 2 = Full path to the installation destination: " $2
 #echo "DEBUG: $ 3 = Installation volume (mountpoint) to receive the payload: " $3
@@ -13,17 +17,9 @@ echo "preinstall: Root of system folder... $4"
 #############################################################################
 
 DEST_VOL="${3}"
-EFI_ROOT_DIR="${DEST_VOL}/EFIROOTDIR"
-install_log="${DEST_VOL}/Clover_Install_Log.txt"
+CLOVER_INSTALLER_PLIST_NEW="${DEST_VOL}@CLOVER_INSTALLER_PLIST_NEW@"
+CLOVER_INSTALLER_PLIST_NEW_DIR=$(dirname "$CLOVER_INSTALLER_PLIST_NEW")
+[[ ! -d "$CLOVER_INSTALLER_PLIST_NEW_DIR" ]] && mkdir -p "$CLOVER_INSTALLER_PLIST_NEW_DIR"
+rm -f "$CLOVER_INSTALLER_PLIST_NEW"
 
-echo "====================================================="
-echo " "
-echo "Don't install any of boot1f32alt, boot1h and boot1h2,"
-echo "used for UEFI install."
-echo " "
-echo "====================================================="
-
-echo "Stage 0 - Don't write any of boot0, boot0hfs, boot0md to ${DEST_VOL}" >> "$install_log"
-echo "Stage 1 - Don't write any of boot1h2, boot1f32alt to ${DEST_VOL}" >> "$install_log"
-echo "Boot for UEFI.." > "${DEST_VOL}/boot0type"
-echo "" >> "$install_log"
+exit 0

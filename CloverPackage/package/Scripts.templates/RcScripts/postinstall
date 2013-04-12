@@ -16,10 +16,14 @@ echo "preinstall: Root of system folder... $4"
 
 #############################################################################
 
-srcvolume="${3}"
-destroot="${srcvolume}"
-install_log="${srcvolume}/Clover_Install_Log.txt"
-installer_plist="${destroot}/EFI/CloverInstaller.plist"
+DEST_VOL="${3}"
+EFI_ROOT_DIR="${DEST_VOL}/EFIROOTDIR"
+CLOVER_INSTALLER_PLIST_NEW="${DEST_VOL}@CLOVER_INSTALLER_PLIST_NEW@"
+install_log="${DEST_VOL}/Clover_Install_Log.txt"
+
+srcvolume="$DEST_VOL"
+destroot="$DEST_VOL"
+
 plistbuddy='/usr/libexec/plistbuddy'
 installer_on_target_refid='@INSTALLER_ON_TARGET_REFID@'
 installer_on_all_volumes_refid='@INSTALLER_ON_ALL_VOLUMES_REFID@'
@@ -30,9 +34,9 @@ echo "" >> "$install_log"
 
 # Get the options
 install_on_target=$($plistbuddy -c "Print $installer_on_target_refid" \
- "$installer_plist" 2>/dev/null)
+ "$CLOVER_INSTALLER_PLIST_NEW" 2>/dev/null)
 install_on_all_volumes=$($plistbuddy -c "Print $installer_on_all_volumes_refid" \
- "$installer_plist" 2>/dev/null)
+ "$CLOVER_INSTALLER_PLIST_NEW" 2>/dev/null)
 
 # Source the rc scripts library
 source ./rc_scripts.lib
