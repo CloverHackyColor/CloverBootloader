@@ -1174,9 +1174,16 @@ VOID PatchTableType17()
     if (expectedCount < SMBIOSInUse) {
       expectedCount = SMBIOSInUse;
     }
-    if (!gCPUStructure.Mobile && (expectedCount < TotalCount)) {
+    if ((!gCPUStructure.Mobile || (TotalCount == 2)) &&
+        (expectedCount < TotalCount)) {
       expectedCount = (UINT8)TotalCount;
     }
+  } else if (gCPUStructure.Mobile) {
+    if (expectedCount < 2) {
+      expectedCount = 2;
+    }
+  } else if (expectedCount < 4) {
+    expectedCount = 4;
   }
   if (expectedCount > 0) {
     --expectedCount;
