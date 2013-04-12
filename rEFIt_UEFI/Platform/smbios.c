@@ -1208,7 +1208,7 @@ VOID PatchTableType17()
   gRAMCount = 0;
 	for (Index = 0; Index < MAX_RAM_SLOTS; Index++) {
     UINTN SMBIOSIndex = wrongSMBIOSBanks ? channelMap[Index] : Index;
-    UINTN SPDIndex = wrongSPDBanks ? channelMap[Index] : Index;
+    UINTN SPDIndex = (wrongSPDBanks && swapOutput) ? channelMap[Index] : Index;
     if (!insertingEmpty && (dimm == 0) && (gRAMCount > expectedCount) &&
         !gRAM.SPD[SPDIndex].InUse && (!trustSMBIOS || !gRAM.SMBIOS[SMBIOSIndex].InUse)) {
       continue;
