@@ -1118,12 +1118,11 @@ VOID PatchTableType17()
   CHAR8   bankLocator[10];
   UINT8   channelMap[MAX_RAM_SLOTS];
   UINT8   SPDInUse = 0, SMBIOSInUse = 0, expectedCount = 0;
-  UINT8   dimmsPerChannel = 2, channel = 0, dimm = 0;
+  UINT8   dimmsPerChannel = 2;
   BOOLEAN insertingEmpty = TRUE;
   BOOLEAN trustSMBIOS = TRUE;
   BOOLEAN wrongSMBIOSBanks = FALSE;
   BOOLEAN wrongSPDBanks = FALSE;
-  BOOLEAN swapOutput = FALSE;
   BOOLEAN isMacPro = FALSE;
   MACHINE_TYPES Model = GetModelFromString(gSettings.ProductName);
   if ((Model == MacPro31) || (Model == MacPro41) || (Model == MacPro51)) {
@@ -1215,9 +1214,9 @@ VOID PatchTableType17()
   gRAMCount = 0;
 	for (Index = 0; Index < MAX_RAM_SLOTS; Index++) {
     UINTN SMBIOSIndex = wrongSMBIOSBanks ? channelMap[Index] : Index;
-    UINTN SPDIndex = (wrongSPDBanks && swapOutput) ? channelMap[Index] : Index;
-    if (!insertingEmpty && (dimm == 0) && (gRAMCount > expectedCount) &&
-        !gRAM.SPD[SPDIndex].InUse && (!trustSMBIOS || !gRAM.SMBIOS[SMBIOSIndex].InUse)) {
+    UINTN SPDIndex = wrongSPDBanks ? Index : channelMap[Index];
+    if (!insertingEmpty && (gRAMCount > expectedCount) && !gRAM.SPD[SPDIndex].InUse &&
+        (!trustSMBIOS || !gRAM.SMBIOS[SMBIOSIndex].InUse)) {
       continue;
     }
     SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, SMBIOSIndex);
@@ -1265,22 +1264,17 @@ VOID PatchTableType17()
        AsciiSPrint(deviceLocator, 10, "DIMM%d",  gRAMCount + 1);
        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
     } else {
+      UINT8 index = (wrongSPDBanks ? channelMap[Index] : (UINT8)Index);
+      UINT8 channel = index / dimmsPerChannel;
       newSmbiosTable.Type17->DeviceSet = channel + 1;
-      AsciiSPrint(deviceLocator, 10, "DIMM%d",  dimm);
+      AsciiSPrint(deviceLocator, 10, "DIMM%d", index % dimmsPerChannel);
       AsciiSPrint(bankLocator, 10, "BANK%d", channel);
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, (CHAR8*)&bankLocator[0]);
     }
-    if (++dimm >= dimmsPerChannel) {
-       dimm = 0;
-       ++channel;
-    }
     DBG("SMBIOS Type 17 Index = %d => %d %d:\n", gRAMCount, SMBIOSIndex, SPDIndex);
     if (newSmbiosTable.Type17->Size == 0) {
       DBG("EMPTY\n");
-      if (insertingEmpty && !trustSMBIOS) {
-         ++expectedCount;
-      }
     } else {
       insertingEmpty = FALSE;
       DBG("%a %a %dMHz %dMB\n", bankLocator, deviceLocator, newSmbiosTable.Type17->Speed, newSmbiosTable.Type17->Size);
@@ -1289,9 +1283,7 @@ VOID PatchTableType17()
       DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
     }
     newSmbiosTable.Type17->MemoryErrorInformationHandle = 0xFFFF;
-    mHandle17[gRAMCount] = LogSmbiosTable(newSmbiosTable);
-    swapOutput = ((dimmsPerChannel >= 2) && (gRAMCount < expectedCount) && wrongSPDBanks && !isMacPro);
-    ++gRAMCount;
+    mHandle17[gRAMCount++] = LogSmbiosTable(newSmbiosTable);
   }
 }
 
