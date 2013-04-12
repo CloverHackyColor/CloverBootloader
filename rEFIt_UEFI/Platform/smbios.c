@@ -1139,7 +1139,7 @@ VOID PatchTableType17()
     return;
   }
   // Detect whether the SMBIOS is trusted information
-  if (SMBIOSInUse != 0) {
+  if ((SPDInUse != 0) && (SMBIOSInUse != 0)) {
     if (SPDInUse != SMBIOSInUse) {
       // Prefer the SPD information
       if (SPDInUse > SMBIOSInUse) {
