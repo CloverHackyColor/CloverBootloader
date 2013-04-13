@@ -1524,6 +1524,13 @@ BiosVideoCheckForVbe (
 			continue;
 		}
 		//
+		// Skip modes not supported by the hardware.
+		//
+		if ((BiosVideoPrivate->VbeModeInformationBlock->ModeAttributes & VESA_BIOS_EXTENSIONS_MODE_ATTRIBUTE_HARDWARE) == 0) {
+			//		MsgLog("not supported by hw ");
+			continue;
+		}
+		//
 		// dmazar: skip resolutions lower then 640x480.
 		//
 		if (BiosVideoPrivate->VbeModeInformationBlock->XResolution < 640 ||
