@@ -517,7 +517,7 @@ main ()
                        ${choiceId}
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
     addChoice --group="Bootloader"                                         \
-              --start-selected="choicePreviouslySelected('$packageRefId')" \
+              --start-selected="choicePreviouslySelected('$packageRefId') || !checkBootFromUEFI()" \
               --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
 # End build bootNo package
 
