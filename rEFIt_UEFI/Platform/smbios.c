@@ -1216,8 +1216,8 @@ VOID PatchTableType17()
     UINTN SMBIOSIndex = (isMacPro || wrongSMBIOSBanks || (dimmsPerChannel < 2)) ? Index : channelMap[Index];
     UINTN SPDIndex = (isMacPro || wrongSPDBanks || (dimmsPerChannel < 2)) ? Index : channelMap[Index];
     if (!insertingEmpty && ((expectedCount < 2) || (gRAMCount > expectedCount) ||
-         (isMacPro && (gRAMCount == expectedCount))) && !gRAM.SPD[SPDIndex].InUse &&
-        (!trustSMBIOS || !gRAM.SMBIOS[SMBIOSIndex].InUse)) {
+         (isMacPro && (gRAMCount == expectedCount) && (SPDInUse < gRAMCount))) &&
+        !gRAM.SPD[SPDIndex].InUse && (!trustSMBIOS || !gRAM.SMBIOS[SMBIOSIndex].InUse)) {
       continue;
     }
     SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_MEMORY_DEVICE, SMBIOSIndex);
