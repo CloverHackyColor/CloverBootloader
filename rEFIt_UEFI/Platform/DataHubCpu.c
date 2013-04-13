@@ -119,33 +119,17 @@ EFI_STATUS SetVariablesForOSX()
 	UINT32      BackgroundClear = 0x00000000;
 	UINT32      FwFeatures      = gFwFeatures; //0x80001417; //Slice - get it from SMBIOS
 	UINT32      FwFeaturesMask  = 0xC003ffff;
-	UINTN       bootArgsLen;
 	CHAR8*      None	= "none";
   CHAR8*      Yes   = "Yes";
-	CHAR8*      BA;
-  UINTN       LangLen;
+	CHAR8       Buffer[32];
   UINTN       SNLen;
 //  CHAR8*      FmmName = &gSettings.FamilyName[0];
 //  UINTN       FmmLen  = AsciiStrLen(FmmName);
   UINT16      BacklightLevel = 0x0503;
   
-	bootArgsLen = MIN(256, AsciiStrLen(gSettings.BootArgs));
-  BA = gSettings.BootArgs + bootArgsLen - 1;
-  while ( bootArgsLen > 0 && ((*BA == ' ') || (*BA == 0)) ) {
-		BA--; bootArgsLen--;
-	}
+
+  SNLen = AsciiStrLen(gSettings.BoardSerialNumber);
   
-  LangLen = MIN(16, AsciiStrLen(gSettings.Language));
-  BA = gSettings.Language + LangLen - 1;
-  while ( LangLen > 0 && ((*BA == ' ') || (*BA == 0)) ) {
-		BA--; LangLen--;
-	}
-  
-  SNLen = MIN(20, AsciiStrLen(gSettings.BoardSerialNumber));
-  BA = gSettings.BoardSerialNumber + SNLen - 1;
-  while ( SNLen > 0 && ((*BA == ' ') || (*BA == 0)) ) {
-    BA--; SNLen--;
-  }
   if (gSettings.RtMLB == NULL && SNLen > 0) {
     gSettings.RtMLB = AllocateCopyPool(SNLen + 1, gSettings.BoardSerialNumber);
   }
@@ -164,22 +148,6 @@ EFI_STATUS SetVariablesForOSX()
   //			uint16_t bits = 0x0082;
   //  gIOHibernateBootNextData = OSData::withBytes(&bits, sizeof(bits));
   //  gIOHibernateBoot0082Data <- "boot-device-path"  
-
-  //
-  // Following deletes are just temporary to delete them from NVRAM
-  // for UEFI boot users. We are now setting those vars as volatile
-  // (does not go to NVRAM) since we are adding those
-  // on every boot. This will save some NVRAM writes on UEFI boards.
-  // Remove those lines in a month ot two.
-  // dmazar, 27/09/2012
-  //
-  Status = gRS->SetVariable(L"FirmwareFeatures", &gEfiAppleNvramGuid, 0, 0, NULL);
-  Status = gRS->SetVariable(L"FirmwareFeaturesMask", &gEfiAppleNvramGuid, 0, 0, NULL);
-  Status = gRS->SetVariable(L"MLB", &gEfiAppleNvramGuid, 0, 0, NULL);
-  Status = gRS->SetVariable(L"ROM", &gEfiAppleNvramGuid, 0, 0, NULL);
-  //
-  // end of delete lines
-  //
 
   
 	Status = gRS->SetVariable(L"BackgroundClear", &gEfiAppleNvramGuid,
@@ -211,10 +179,10 @@ EFI_STATUS SetVariablesForOSX()
   // we should think how to handle those vars from nvram.plist and ones set here from gSettings
 	Status = gRS->SetVariable(L"boot-args", &gEfiAppleBootGuid,
                                          /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                                         bootArgsLen, &gSettings.BootArgs);
+                                         AsciiStrLen(gSettings.BootArgs), &gSettings.BootArgs);
 	Status = gRS->SetVariable(L"security-mode", &gEfiAppleBootGuid,
                                          /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                                         5, (VOID*)None);
+                                         AsciiStrLen(None), (VOID*)None);
   
   // we should have two UUID: platform and system
   // NO! Only Platform is the best solution
@@ -224,9 +192,9 @@ EFI_STATUS SetVariablesForOSX()
                               16, &gUuid);
   }
   
-  Status = gRS->SetVariable(L"prev-lang:kbd", &gEfiAppleBootGuid, 
+  Status = gRS->SetVariable(L"prev-lang:kbd", &gEfiAppleBootGuid,
                             /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                                LangLen, &gSettings.Language);
+                                AsciiStrLen(gSettings.Language), &gSettings.Language);
   
   
   if (gMobile && (gSettings.BacklightLevel != 0xFFFF)) {
@@ -236,17 +204,15 @@ EFI_STATUS SetVariablesForOSX()
   }
   
   //Helper for rc.local script
-  BA = AllocateZeroPool(11); // make the room to store the LogLineCount value in ascii
-  AsciiSPrint(BA, 11, "%d", gSettings.LogLineCount);
+  AsciiSPrint(Buffer, sizeof(Buffer), "%d", gSettings.LogLineCount);
   Status = gRS->SetVariable(L"Clover.LogLineCount", &gEfiAppleBootGuid, 
                             EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                            AsciiStrLen(BA), BA);
-  FreePool(BA);
+                            AsciiStrLen(Buffer), Buffer);
 
   if (gSettings.LogEveryBoot) {
     Status = gRS->SetVariable(L"Clover.LogEveryBoot", &gEfiAppleBootGuid, 
                               EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                              3, (VOID*)Yes);
+                              AsciiStrLen(Yes), (VOID*)Yes);
   }
 
   if (gSettings.MountEFI) { //not NULL

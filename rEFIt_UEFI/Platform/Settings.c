@@ -324,7 +324,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       prop = GetProperty(dictPointer, "boot-args");
       if(prop) {
         AsciiStrCpy(gSettings.BootArgs, prop->string);
-      } 
+      }
       
       prop = GetProperty(dictPointer, "DefaultBootVolume");
       if(prop) {

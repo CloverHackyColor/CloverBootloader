@@ -77,22 +77,18 @@ XMLDecode(CHAR8* src)
     if (!src) {
         return 0;
     }
-    
+	
     len = AsciiStrLen(src);
     
-    if (!len) {
-        return 0;
-    }
-        
-#if 1
+#if 0
     out = AllocateZeroPool(len+1);
     if (!out)
         return 0;  
 #else // unsafe
-  // out is always <= src, let's overwrite src 
+	// out is always <= src, let's overwrite src
+	out = src;
 #endif
   
-    out = src;
     
     o = out;
     s = src;
@@ -495,16 +491,16 @@ EFI_STATUS ParseTagString(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
   
 	Status = FixDataMatchingTag(buffer, kXMLTagString,&length);
 	if (EFI_ERROR(Status)) {
-    return Status;
-  }
+		return Status;
+	}
   
 	tmpTag = NewTag();
 	if (tmpTag == NULL) {
-    return EFI_OUT_OF_RESOURCES;
-  }
+		return EFI_OUT_OF_RESOURCES;
+	}
   
 	tmpString = XMLDecode(buffer);
-  tmpString = NewSymbol(tmpString);
+	tmpString = NewSymbol(tmpString);
 	if (tmpString == NULL)
 	{
 		FreeTag(tmpTag);
@@ -933,22 +929,26 @@ void FreeSymbol(CHAR8* tmpString)
 SymbolPtr FindSymbol(CHAR8 *tmpString, SymbolPtr *prevSymbol )
 {
 	SymbolPtr symbol, prev;
+	
+	if (tmpString == NULL) {
+		return NULL;
+	}
 
 	symbol = gSymbolsHead;
 	prev = NULL;
 
 	while (symbol != NULL) {
 		if (!AsciiStrCmp(symbol->string, tmpString)) {
-      break;
-    } 
+			break;
+		}
 
 		prev = symbol;
 		symbol = symbol->next;
 	}
 
 	if ((symbol != NULL) && (prevSymbol != NULL)) {
-    *prevSymbol = prev;
-  }
+		*prevSymbol = prev;
+	}
 
 	return symbol;
 }
