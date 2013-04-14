@@ -260,8 +260,8 @@ MainBuildScript() {
         # Make some house cleaning
         echo "Cleaning packaging files..."
         find "$CLOVER_PKG_DIR"/Bootloaders/{ia32,x64}/ -mindepth 1 -not -path "**/.svn*" -delete
-        find "$CLOVER_PKG_DIR"/EFI/BOOT/ -name '*.efi' -mindepth 1 -not -path "**/.svn*" -delete
-        find "$CLOVER_PKG_DIR"/EFI/drivers* -mindepth 1 -not -path "**/.svn*" -delete
+        find "$CLOVER_PKG_DIR"/EFI/Clover/ -name '*.efi' -mindepth 1 -not -path "**/.svn*" -delete
+        find "$CLOVER_PKG_DIR"/EFI/Clover/drivers* -mindepth 1 -not -path "**/.svn*" -delete
         find "$CLOVER_PKG_DIR"/drivers-Off/drivers* -mindepth 1 -not -path "**/.svn*" -delete
         echo "Done!"
         exit $?
@@ -348,18 +348,17 @@ MainPostBuildScript() {
          "${BUILD_DIR}"/FV/Efildr32 > "${BUILD_DIR}"/FV/boot
 
         mkdir -p "$CLOVER_PKG_DIR"/Bootloaders/ia32
-        mkdir -p "$CLOVER_PKG_DIR"/EFI/drivers32
-        mkdir -p "$CLOVER_PKG_DIR"/EFI/drivers32UEFI
+        mkdir -p "$CLOVER_PKG_DIR"/EFI/Clover/drivers32
+        mkdir -p "$CLOVER_PKG_DIR"/EFI/Clover/drivers32UEFI
         mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/drivers32
         mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/drivers32UEFI
-
         # CloverEFI
         cp -v "${BUILD_DIR}"/FV/boot "$CLOVER_PKG_DIR"/Bootloaders/ia32/$cloverEFIFile
 
         # Mandatory drivers
-        cp -v "$BUILD_DIR_ARCH"/FSInject.efi "$CLOVER_PKG_DIR"/EFI/drivers32/FSInject-32.efi
-        cp -v "$BUILD_DIR_ARCH"/OsxFatBinaryDrv.efi "$CLOVER_PKG_DIR"/EFI/drivers32UEFI/OsxFatBinaryDrv-32.efi
-        cp -v "$BUILD_DIR_ARCH"/VboxHfs.efi "$CLOVER_PKG_DIR"/EFI/drivers32UEFI/VboxHfs-32.efi
+        cp -v "$BUILD_DIR_ARCH"/FSInject.efi "$CLOVER_PKG_DIR"/EFI/Clover/drivers32/FSInject-32.efi
+        cp -v "$BUILD_DIR_ARCH"/OsxFatBinaryDrv.efi "$CLOVER_PKG_DIR"/EFI/Clover/drivers32UEFI/OsxFatBinaryDrv-32.efi
+        cp -v "$BUILD_DIR_ARCH"/VboxHfs.efi "$CLOVER_PKG_DIR"/EFI/Clover/drivers32UEFI/VboxHfs-32.efi
 
         # Optional drivers
         #cp -v "${BUILD_DIR}"/${TARGETARCH}/VBoxIso9600.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers32/VBoxIso9600-32.efi
@@ -370,7 +369,8 @@ MainPostBuildScript() {
         cp -v "$BUILD_DIR_ARCH"/Ps2MouseDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers32/Ps2MouseDxe-32.efi
         cp -v "$BUILD_DIR_ARCH"/UsbMouseDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers32/UsbMouseDxe-32.efi
         cp -v "$BUILD_DIR_ARCH"/XhciDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers32/XhciDxe-32.efi
-        cp -v "$BUILD_DIR_ARCH"/CLOVER${TARGETARCH}.efi "$CLOVER_PKG_DIR"/EFI/BOOT/
+        cp -v "$BUILD_DIR_ARCH"/CLOVER${TARGETARCH}.efi "$CLOVER_PKG_DIR"/EFI/Clover/
+        cp -v "$BUILD_DIR_ARCH"/CLOVER${TARGETARCH}.efi "$CLOVER_PKG_DIR"/EFI/BOOT/BOOTIA32.efi
 
     fi
 
@@ -401,10 +401,10 @@ MainPostBuildScript() {
         cp -v "${BUILD_DIR}"/FV/boot "$CLOVER_PKG_DIR"/Bootloaders/x64/$cloverEFIFile
 
         # Mandatory drivers
-        cp -v "$BUILD_DIR_ARCH"/FSInject.efi "$CLOVER_PKG_DIR"/EFI/drivers64/FSInject-64.efi
-        cp -v "$BUILD_DIR_ARCH"/FSInject.efi "$CLOVER_PKG_DIR"/EFI/drivers64UEFI/FSInject-64.efi
-        cp -v "$BUILD_DIR_ARCH"/OsxFatBinaryDrv.efi "$CLOVER_PKG_DIR"/EFI/drivers64UEFI/OsxFatBinaryDrv-64.efi
-        cp -v "$BUILD_DIR_ARCH"/VboxHfs.efi "$CLOVER_PKG_DIR"/EFI/drivers64UEFI/VboxHfs-64.efi
+        cp -v "$BUILD_DIR_ARCH"/FSInject.efi "$CLOVER_PKG_DIR"/EFI/Clover/drivers64/FSInject-64.efi
+        cp -v "$BUILD_DIR_ARCH"/FSInject.efi "$CLOVER_PKG_DIR"/EFI/Clover/drivers64UEFI/FSInject-64.efi
+        cp -v "$BUILD_DIR_ARCH"/OsxFatBinaryDrv.efi "$CLOVER_PKG_DIR"/EFI/Clover/drivers64UEFI/OsxFatBinaryDrv-64.efi
+        cp -v "$BUILD_DIR_ARCH"/VboxHfs.efi "$CLOVER_PKG_DIR"/EFI/Clover/drivers64UEFI/VboxHfs-64.efi
 
         # Optional drivers
         #cp -v "$BUILD_DIR_ARCH"/VBoxIso9600.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64/VBoxIso9600-64.efi
@@ -422,7 +422,7 @@ MainPostBuildScript() {
         cp -v "$BUILD_DIR_ARCH"/OsxLowMemFixDrv.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/OsxLowMemFixDrv-64.efi
         cp -v "$BUILD_DIR_ARCH"/CsmVideoDxe.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/CsmVideoDxe-64.efi
         cp -v "$BUILD_DIR_ARCH"/EmuVariableUefi.efi "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI/EmuVariableUefi-64.efi
-        cp -v "$BUILD_DIR_ARCH"/CLOVER${TARGETARCH}.efi "$CLOVER_PKG_DIR"/EFI/BOOT/
+        cp -v "$BUILD_DIR_ARCH"/CLOVER${TARGETARCH}.efi "$CLOVER_PKG_DIR"/EFI/Clover/
         cp -v "$BUILD_DIR_ARCH"/CLOVER${TARGETARCH}.efi "$CLOVER_PKG_DIR"/EFI/BOOT/BOOTX64.efi
 
     fi

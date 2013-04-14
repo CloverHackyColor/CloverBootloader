@@ -85,10 +85,10 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN WantAlpha)
   if (NewImage) {
       DBG("font loaded from themedir\n");
   } else {
-    NewImage = egLoadImage(SelfRootDir, PoolPrint(L"efi\\boot\\font\\%s", GlobalConfig.FontFileName), WantAlpha);
+    NewImage = egLoadImage(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\font\\%s", GlobalConfig.FontFileName), WantAlpha);
     DBG("font loaded from common font dir\n");
     if (!NewImage) {
-      DBG("Font %s is not loaded, using default \n", PoolPrint(L"\\efi\\boot\\font\\%s", GlobalConfig.FontFileName));
+      DBG("Font %s is not loaded, using default \n", PoolPrint(L"\\EFI\\CLOVER\\font\\%s", GlobalConfig.FontFileName));
       return NULL;
     }
   }

@@ -379,7 +379,7 @@ VOID ReadConfig(INTN What)
       gSettings.DoubleClickTime = 500;
       gSettings.PointerMirror = FALSE;
 
-      Status = ReadFile(SelfRootDir, L"EFI\\BOOT\\" CONFIG_FILE_NAME, &File);
+      Status = ReadFile(SelfRootDir, L"EFI\\CLOVER\\" CONFIG_FILE_NAME, &File);
       break;
     case 1:
       Status = ReadFile(ThemeDir, THEME_CONFIG, &File);

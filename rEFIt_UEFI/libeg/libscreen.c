@@ -576,7 +576,7 @@ EFI_STATUS egScreenShot(VOID)
     }
   
   for (Index=0; Index < 60; Index++) {
-    UnicodeSPrint(ScreenshotName, 256, L"EFI\\misc\\screenshot%d.bmp", Index);
+    UnicodeSPrint(ScreenshotName, 256, L"EFI\\CLOVER\\misc\\screenshot%d.bmp", Index);
     if(!FileExists(SelfRootDir, ScreenshotName)){
       Status = egSaveFile(SelfRootDir, ScreenshotName, FileData, FileDataLength);
       if (!EFI_ERROR(Status)) {
@@ -587,7 +587,7 @@ EFI_STATUS egScreenShot(VOID)
   // else save to file on the ESP
   if (EFI_ERROR(Status)) {
     for (Index=0; Index < 60; Index++) {
-      UnicodeSPrint(ScreenshotName, 256, L"EFI\\misc\\screenshot%d.bmp", Index);
+      UnicodeSPrint(ScreenshotName, 256, L"EFI\\CLOVER\\misc\\screenshot%d.bmp", Index);
 //     if(!FileExists(NULL, ScreenshotName)){
         Status = egSaveFile(NULL, ScreenshotName, FileData, FileDataLength);
         if (!EFI_ERROR(Status)) {

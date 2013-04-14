@@ -1138,9 +1138,9 @@ VOID        SaveOemDsdt(BOOLEAN FullPatch)
 	UINTN       DsdtLen = 0;
   CHAR16*     OriginDsdt = PoolPrint(L"%s\\ACPI\\origin\\DSDT.aml", OEMPath);
   CHAR16*     OriginDsdtFixed = PoolPrint(L"%s\\ACPI\\origin\\DSDT-%x.aml", OEMPath, gSettings.FixDsdt);
-  CHAR16*     PathPatched   = L"\\EFI\\ACPI\\patched";
+  CHAR16*     PathPatched   = L"\\EFI\\CLOVER\\ACPI\\patched";
 	CHAR16*     PathDsdt;    //  = L"\\DSDT.aml";
-//  CHAR16*     PathDsdtMini  = L"\\EFI\\ACPI\\mini\\DSDT.aml";
+//  CHAR16*     PathDsdtMini  = L"\\EFI\\CLOVER\\ACPI\\mini\\DSDT.aml";
   CHAR16*     AcpiOemPath = PoolPrint(L"%s\\ACPI\\patched", OEMPath);
   
   PathDsdt = PoolPrint(L"\\%s", gSettings.DsdtName);
@@ -1268,10 +1268,10 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   SSDT_TABLE              *Ssdt = NULL;
 	UINT8                   *buffer = NULL;
 	UINTN                   bufferLen = 0;
-	CHAR16*                 PathPatched   = L"\\EFI\\ACPI\\patched";
+	CHAR16*                 PathPatched   = L"\\EFI\\CLOVER\\ACPI\\patched";
 	CHAR16*                 PathDsdt;    //  = L"\\DSDT.aml";
- // CHAR16*                 PathDsdtMini  = L"\\EFI\\ACPI\\mini\\DSDT.aml";
-  CHAR16*                 PatchedAPIC = L"\\EFI\\ACPI\\origin\\APIC-p.aml";
+ // CHAR16*                 PathDsdtMini  = L"\\EFI\\CLOVER\\ACPI\\mini\\DSDT.aml";
+  CHAR16*                 PatchedAPIC = L"\\EFI\\CLOVER\\ACPI\\origin\\APIC-p.aml";
 	UINT32*                 rf = NULL;
 	UINT64*                 xf = NULL;
   UINT64                  XDsdt; //save values if present
@@ -2209,7 +2209,7 @@ EFI_STATUS PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT)
   
   // prepare dirs that will be searched for custom ACPI tables
   AcpiOemPath = PoolPrint(L"%s\\ACPI\\%s", OEMPath, OsSubdir);
-	PathPatched   = PoolPrint(L"\\EFI\\ACPI\\%s", OsSubdir);
+	PathPatched   = PoolPrint(L"\\EFI\\CLOVER\\ACPI\\%s", OsSubdir);
   if (!FileExists(SelfRootDir, AcpiOemPath) && !FileExists(SelfRootDir, PathPatched))
   {
     DBG("Dir %s not found. No patching will be done.\n", OsSubdir);

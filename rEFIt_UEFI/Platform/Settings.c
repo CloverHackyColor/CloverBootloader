@@ -114,7 +114,7 @@ EFI_STATUS LoadUserSettings(IN EFI_FILE *RootDir)
   EFI_STATUS	Status = EFI_NOT_FOUND;
   UINTN       size;
   CHAR8*      gConfigPtr = NULL;
-  CHAR16*     ConfigPlistPath = PoolPrint(L"EFI\\%s.plist", gSettings.ConfigName);
+  CHAR16*     ConfigPlistPath = PoolPrint(L"EFI\\CLOVER\\%s.plist", gSettings.ConfigName);
   CHAR16*     ConfigOemPath = PoolPrint(L"%s\\%s.plist", OEMPath, gSettings.ConfigName);
   
   DBG("ConfigPlistPath: %s\n", ConfigPlistPath);
@@ -1756,10 +1756,10 @@ CHAR16* GetExtraKextsDir(REFIT_VOLUME *Volume)
   }
   if (SrcDir == NULL) {
     // if not found, check EFI\kexts\...
-    SrcDir = PoolPrint(L"\\EFI\\kexts\\%s", OSTypeStr);
+    SrcDir = PoolPrint(L"\\EFI\\CLOVER\\kexts\\%s", OSTypeStr);
     if (!FileExists(SelfVolume->RootDir, SrcDir)) {
       FreePool(SrcDir);
-      SrcDir = PoolPrint(L"\\EFI\\kexts\\Other", gSettings.OEMProduct);
+      SrcDir = PoolPrint(L"\\EFI\\CLOVER\\kexts\\Other", gSettings.OEMProduct);
       if (!FileExists(SelfVolume->RootDir, SrcDir)) {
         FreePool(SrcDir);
         SrcDir = NULL;

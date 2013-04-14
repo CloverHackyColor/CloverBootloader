@@ -138,10 +138,10 @@ Headers collection for procedures
 //#define SAFE_LOG_SIZE	80
 
 #define MSG_LOG_SIZE	(256 * 1024)
-#define PREBOOT_LOG L"EFI\\misc\\preboot.log"
-#define LEGBOOT_LOG L"EFI\\misc\\legacy_boot.log"
-#define BOOT_LOG L"EFI\\misc\\boot.log"
-#define SYSTEM_LOG L"EFI\\misc\\system.log"
+#define PREBOOT_LOG L"EFI\\CLOVER\\misc\\preboot.log"
+#define LEGBOOT_LOG L"EFI\\CLOVER\\misc\\legacy_boot.log"
+#define BOOT_LOG L"EFI\\CLOVER\\misc\\boot.log"
+#define SYSTEM_LOG L"EFI\\CLOVER\\misc\\system.log"
 //#define MsgLog(x...) {AsciiSPrint(msgCursor, MSG_LOG_SIZE, x); while(*msgCursor){msgCursor++;}}
 //#define MsgLog(...) {AsciiSPrint(msgCursor, (MSG_LOG_SIZE-(msgCursor-msgbuf)), __VA_ARGS__); while(*msgCursor){msgCursor++;}}
 #ifndef DEBUG_ALL

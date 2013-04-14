@@ -3526,7 +3526,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 		Status = egLoadFile(OEMDir, FileName, &buffer, &bufferLen);
 	}
 	if (EFI_ERROR(Status)) {
-		UnicodeSPrint(FileName, 48, L"\\EFI\\ROM\\10de_%04x.rom", nvda_dev->device_id);
+		UnicodeSPrint(FileName, 48, L"\\EFI\\CLOVER\\ROM\\10de_%04x.rom", nvda_dev->device_id);
 		if (FileExists(SelfRootDir, FileName)){
 			Status = egLoadFile(SelfRootDir, FileName, &buffer, &bufferLen);
 		}

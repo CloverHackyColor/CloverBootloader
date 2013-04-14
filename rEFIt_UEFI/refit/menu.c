@@ -57,8 +57,8 @@
 #define X_IS_CENTER  1
 #define BADGE_DIMENSION 64
 
-//#define PREBOOT_LOG L"EFI\\misc\\preboot.log"
-#define VBIOS_BIN L"EFI\\misc\\c0000.bin"
+//#define PREBOOT_LOG L"EFI\\CLOVER\\misc\\preboot.log"
+#define VBIOS_BIN L"EFI\\CLOVER\\misc\\c0000.bin"
 
 //#define LSTR(s) L##s
 

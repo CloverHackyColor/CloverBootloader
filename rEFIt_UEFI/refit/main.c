@@ -1550,7 +1550,7 @@ static VOID ScanLoader(VOID)
 
 
 #define MAX_DISCOVERED_PATHS (16)
-//#define PREBOOT_LOG L"EFI\\misc\\preboot.log"
+//#define PREBOOT_LOG L"EFI\\CLOVER\\misc\\preboot.log"
 
 static VOID StartLegacy(IN LEGACY_ENTRY *Entry)
 {
@@ -1818,9 +1818,9 @@ static VOID ScanTool(VOID)
         DBG("Checking EFI partition Volume %d for Clover\n", VolumeIndex);
         
 #if defined(MDE_CPU_X64)
-        StrCpy(FileName, L"\\EFI\\BOOT\\CLOVERX64.EFI");
+        StrCpy(FileName, L"\\EFI\\CLOVER\\CLOVERX64.EFI");
 #else
-        StrCpy(FileName, L"\\EFI\\BOOT\\CLOVERIA32.EFI");
+        StrCpy(FileName, L"\\EFI\\CLOVER\\CLOVERIA32.EFI");
 #endif
         
         // OSX adds label "EFI" to EFI volumes and some UEFIs see that
@@ -1844,25 +1844,25 @@ static VOID ScanTool(VOID)
   // look for the EFI shell
   if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_SHELL)) {
 #if defined(MDE_CPU_IA32)
-    StrCpy(FileName, L"\\EFI\\tools\\Shell32.efi");
+    StrCpy(FileName, L"\\EFI\\CLOVER\\tools\\Shell32.efi");
     if (FileExists(SelfRootDir, FileName)) {
       Entry = AddToolEntry(FileName, L"EFI Shell 32", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
       DBG("found tools\\Shell32.efi\n");
     }
 #elif defined(MDE_CPU_X64)
    if (gFirmwareClover) {
-      StrCpy(FileName, L"\\EFI\\tools\\Shell64.efi");
+      StrCpy(FileName, L"\\EFI\\CLOVER\\tools\\Shell64.efi");
       if (FileExists(SelfRootDir, FileName)) {
          Entry = AddToolEntry(FileName, L"EFI Shell 64", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
          DBG("found tools\\Shell64.efi\n");
       }
    } else {
-     StrCpy(FileName, L"\\EFI\\tools\\Shell64U.efi");
+     StrCpy(FileName, L"\\EFI\\CLOVER\\tools\\Shell64U.efi");
      if (FileExists(SelfRootDir, FileName)) {
        Entry = AddToolEntry(FileName, L"UEFI Shell 64", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
        DBG("found tools\\Shell64U.efi\n");
      } else {
-       StrCpy(FileName, L"\\EFI\\tools\\Shell64.efi");
+       StrCpy(FileName, L"\\EFI\\CLOVER\\tools\\Shell64.efi");
        if (FileExists(SelfRootDir, FileName)) {
           Entry = AddToolEntry(FileName, L"EFI Shell 64", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
           DBG("found tools\\Shell64.efi\n");
@@ -1870,7 +1870,7 @@ static VOID ScanTool(VOID)
      }
    }
 #else //what else? ARM?
-    UnicodeSPrint(FileName, 512, L"\\EFI\\tools\\shell.efi");
+    UnicodeSPrint(FileName, 512, L"\\EFI\\CLOVER\\tools\\shell.efi");
     if (FileExists(SelfRootDir, FileName)) {
       Entry = AddToolEntry(FileName, L"EFI Shell", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
       DBG("found apps\\shell.efi\n");
@@ -1881,7 +1881,7 @@ static VOID ScanTool(VOID)
   
   
   // look for the GPT/MBR sync tool
-  /*    StrCpy(FileName, L"\\efi\\tools\\gptsync.efi");
+  /*    StrCpy(FileName, L"\\efi\\CLOVER\\tools\\gptsync.efi");
    if (FileExists(SelfRootDir, FileName)) {
    Entry = AddToolEntry(FileName, L"Partitioning Tool", BuiltinIcon(BUILTIN_ICON_TOOL_PART), 'P', FALSE);
    }*/
@@ -2201,11 +2201,11 @@ static VOID LoadDrivers(VOID)
     // load drivers from /efi/drivers
 #if defined(MDE_CPU_X64)
   if (gFirmwareClover) {
-    ScanDriverDir(L"\\EFI\\drivers64", &DriversToConnect, &DriversToConnectNum);
+    ScanDriverDir(L"\\EFI\\CLOVER\\drivers64", &DriversToConnect, &DriversToConnectNum);
   } else
-    ScanDriverDir(L"\\EFI\\drivers64UEFI", &DriversToConnect, &DriversToConnectNum);
+    ScanDriverDir(L"\\EFI\\CLOVER\\drivers64UEFI", &DriversToConnect, &DriversToConnectNum);
 #else
-  ScanDriverDir(L"\\EFI\\drivers32", &DriversToConnect, &DriversToConnectNum);
+  ScanDriverDir(L"\\EFI\\CLOVER\\drivers32", &DriversToConnect, &DriversToConnectNum);
 #endif
   
   VBiosPatchNeeded = gSettings.PatchVBios || (gSettings.PatchVBiosBytesCount > 0 && gSettings.PatchVBiosBytes != NULL);
@@ -2362,7 +2362,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   // read GUI configuration
   ReadConfig(0);
   
-  ThemePath = PoolPrint(L"EFI\\BOOT\\themes\\%s", GlobalConfig.Theme);
+  ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", GlobalConfig.Theme);
   Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
   // if (EFI_ERROR (Status)) { return Status; }
   DBG("Theme: %s Path: %s\n", GlobalConfig.Theme, ThemePath);
@@ -2392,12 +2392,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   UnicodeSPrint(gSettings.ConfigName, 64, L"config");
   
-  if (!gFirmwareClover && FileExists(SelfRootDir, PoolPrint(L"EFI\\OEM\\%a\\UEFI\\%s.plist", gSettings.OEMBoard, gSettings.ConfigName))) {
-    OEMPath = PoolPrint(L"EFI\\OEM\\%a\\UEFI", gSettings.OEMBoard);
-  } else if (FileExists(SelfRootDir, PoolPrint(L"EFI\\OEM\\%a\\%s.plist", gSettings.OEMProduct, gSettings.ConfigName))) {
-    OEMPath = PoolPrint(L"EFI\\OEM\\%a", gSettings.OEMProduct);
-  } else if (FileExists(SelfRootDir, PoolPrint(L"EFI\\OEM\\%a\\%s.plist", gSettings.OEMBoard, gSettings.ConfigName))) {
-    OEMPath = PoolPrint(L"EFI\\OEM\\%a", gSettings.OEMBoard);
+  if (!gFirmwareClover && FileExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a\\UEFI\\%s.plist", gSettings.OEMBoard, gSettings.ConfigName))) {
+    OEMPath = PoolPrint(L"EFI\\CLOVER\\OEM\\%a\\UEFI", gSettings.OEMBoard);
+  } else if (FileExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a\\%s.plist", gSettings.OEMProduct, gSettings.ConfigName))) {
+    OEMPath = PoolPrint(L"EFI\\CLOVER\\OEM\\%a", gSettings.OEMProduct);
+  } else if (FileExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a\\%s.plist", gSettings.OEMBoard, gSettings.ConfigName))) {
+    OEMPath = PoolPrint(L"EFI\\CLOVER\\OEM\\%a", gSettings.OEMBoard);
   } else {
     OEMPath = L"EFI";
   }
