@@ -120,7 +120,6 @@ EFI_STATUS SetVariablesForOSX()
 	UINT32      FwFeatures      = gFwFeatures; //0x80001417; //Slice - get it from SMBIOS
 	UINT32      FwFeaturesMask  = 0xC003ffff;
 	CHAR8*      None	= "none";
-  CHAR8*      Yes   = "Yes";
 	CHAR8       Buffer[32];
   UINTN       SNLen;
 //  CHAR8*      FmmName = &gSettings.FamilyName[0];
@@ -209,10 +208,10 @@ EFI_STATUS SetVariablesForOSX()
                             EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                             AsciiStrLen(Buffer), Buffer);
 
-  if (gSettings.LogEveryBoot) {
+  if (gSettings.LogEveryBoot) { //not NULL
     Status = gRS->SetVariable(L"Clover.LogEveryBoot", &gEfiAppleBootGuid, 
                               EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                              AsciiStrLen(Yes), (VOID*)Yes);
+                              AsciiStrLen(gSettings.LogEveryBoot), gSettings.LogEveryBoot);
   }
 
   if (gSettings.MountEFI) { //not NULL
@@ -221,7 +220,7 @@ EFI_STATUS SetVariablesForOSX()
                               AsciiStrLen(gSettings.MountEFI), gSettings.MountEFI);
   }
 
-	return Status;
+  return Status;
 }
 
 VOID SetupDataForOSX()

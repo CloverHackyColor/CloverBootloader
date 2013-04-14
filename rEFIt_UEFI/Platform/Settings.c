@@ -1049,12 +1049,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         gSettings.LogLineCount = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);
       }
       prop = GetProperty(dictPointer, "LogEveryBoot");
-      if(prop) {
-        if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')) {
-          gSettings.LogEveryBoot = TRUE;
-        } else {
-          gSettings.LogEveryBoot = FALSE;
-        }
+      if(prop && AsciiStrLen(prop->string) > 0) {
+        gSettings.LogEveryBoot = AllocateCopyPool(AsciiStrSize(prop->string), prop->string);
       }
     }
     if (!gSettings.RtMLB) {

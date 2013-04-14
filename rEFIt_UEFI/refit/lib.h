@@ -253,6 +253,7 @@ extern INTN ScrollbarYMovement;
 #define SCREEN_BOOT       9
 #define SCREEN_SMBIOS     10
 #define SCREEN_TABLES     11
+#define SCREEN_RC_SCRIPTS 12
 
 #define MAX_ANIME  40
 

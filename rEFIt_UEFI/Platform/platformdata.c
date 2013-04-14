@@ -496,7 +496,7 @@ VOID GetDefaultSettings(VOID)
   StrCpy(gSettings.DsdtName, L"DSDT.aml");
   gSettings.BacklightLevel = 0xFFFF; //0x0503; -- the value from MBA52
   gSettings.LogLineCount = 500;
-  gSettings.LogEveryBoot = FALSE;
+  gSettings.LogEveryBoot = NULL;
   gSettings.MountEFI = NULL;
   
 //  gSettings.PointerSpeed = 2;

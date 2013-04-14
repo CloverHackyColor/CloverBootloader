@@ -346,9 +346,9 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].ItemType = ASString; //90
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%s", gSettings.ConfigName);
   
-  InputItems[InputItemsCount].ItemType = BoolValue; //91
-  InputItems[InputItemsCount].BValue   = gSettings.LogEveryBoot;
-  InputItems[InputItemsCount++].SValue = gSettings.LogEveryBoot?L"[+]":L"[ ]"; 
+  InputItems[InputItemsCount].ItemType = ASString; //91
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a",
+                gSettings.LogEveryBoot ? gSettings.LogEveryBoot : "");
   InputItems[InputItemsCount].ItemType = Decimal;  //92
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.LogLineCount);
   InputItems[InputItemsCount].ItemType = ASString;  //93
@@ -580,9 +580,10 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].SValue   = AllocateZeroPool(64);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%s", gSettings.ConfigName);
 
-  InputItems[InputItemsCount].ItemType = BoolValue; //91
-  InputItems[InputItemsCount].BValue   = gSettings.LogEveryBoot;
-  InputItems[InputItemsCount++].SValue = gSettings.LogEveryBoot?L"[+]":L"[ ]"; 
+  InputItems[InputItemsCount].ItemType = ASString; //91
+  InputItems[InputItemsCount].SValue   = AllocateZeroPool(64);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 64, L"%a",
+                gSettings.LogEveryBoot ? gSettings.LogEveryBoot : "");
   InputItems[InputItemsCount].ItemType = Decimal;  //92
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%d", gSettings.LogLineCount);
   InputItems[InputItemsCount].ItemType = ASString;  //93
@@ -876,7 +877,7 @@ VOID ApplyInputs(VOID)
   }
   i++; //91
   if (InputItems[i].Valid) {
-    gSettings.LogEveryBoot = InputItems[i].BValue;
+    AsciiSPrint(gSettings.LogEveryBoot, 64, "%s", InputItems[i].SValue);
   }
   i++; //92
   if (InputItems[i].Valid) {
@@ -3089,6 +3090,61 @@ REFIT_MENU_ENTRY  *SubMenuDsdtFix()
 } 
 
 
+REFIT_MENU_ENTRY  *SubMenuRcScripts()
+{
+  REFIT_MENU_ENTRY   *Entry;
+  REFIT_MENU_SCREEN  *SubScreen;
+  REFIT_INPUT_DIALOG *InputBootArgs;
+  CHAR16*           Flags;
+  Flags = AllocateZeroPool(255);
+
+  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
+  Entry->Title = PoolPrint(L"RC Scripts Variables ->");
+  Entry->Image =  OptionMenu.TitleImage;
+  Entry->Tag = TAG_OPTIONS;
+  Entry->AtClick = ActionEnter;
+
+  // create the submenu
+  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+  SubScreen->Title = Entry->Title;
+  SubScreen->TitleImage = Entry->Image;
+  SubScreen->ID = SCREEN_RC_SCRIPTS;
+  SubScreen->AnimeRun = GetAnime(SubScreen);
+
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Mount EFI:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[93].SValue);
+  InputBootArgs->Entry.ShortcutLetter = 'E';
+  InputBootArgs->Item = &InputItems[93];
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Log Line Count:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[92].SValue);
+  InputBootArgs->Entry.ShortcutLetter = 'C';
+  InputBootArgs->Item = &InputItems[92];
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtRightClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Log Every Boot:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = StrLen(InputItems[91].SValue);
+  InputBootArgs->Item = &InputItems[91];
+  InputBootArgs->Entry.AtClick = ActionSelect;
+  InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  Entry->SubScreen = SubScreen;
+  return Entry;
+}
+
 VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
 {
   REFIT_MENU_ENTRY  *TmpChosenEntry = NULL;
@@ -3146,15 +3202,6 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.AtRightClick = ActionDetails;
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
 */
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"Mount EFI:");
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = StrLen(InputItems[93].SValue);
-    InputBootArgs->Item = &InputItems[93];    
-    InputBootArgs->Entry.AtClick = ActionSelect;
-    InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-    
     
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs->Entry.Title = PoolPrint(L"Pointer speed:");
@@ -3195,6 +3242,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     AddMenuEntry(&OptionMenu, SubMenuSpeedStep());
     AddMenuEntry(&OptionMenu, SubMenuGraphics());
     AddMenuEntry(&OptionMenu, SubMenuBinaries());
+    AddMenuEntry(&OptionMenu, SubMenuRcScripts());
     AddMenuEntry(&OptionMenu, &MenuEntryReturn);
     FreePool(Flags);
     //    DBG("option menu created entries=%d\n", OptionMenu.EntryCount);
