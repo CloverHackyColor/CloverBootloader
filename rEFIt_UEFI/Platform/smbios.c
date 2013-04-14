@@ -1164,25 +1164,32 @@ VOID PatchTableType17()
   if (trustSMBIOS) {
     DBG("Trusting SMBIOS...\n");
   }
+  // Determine expected slot count
   expectedCount = gRAM.SPDInUse;
   if (trustSMBIOS) {
+    // Use the smbios in use count
     if (expectedCount < gRAM.SMBIOSInUse) {
       expectedCount = gRAM.SMBIOSInUse;
     }
+    // Check if smbios has a good total count
     if ((!gMobile || (TotalCount == 2)) &&
         (expectedCount < TotalCount)) {
       expectedCount = (UINT8)TotalCount;
     }
-  } else if (gMobile) {
-    if (expectedCount < 2) {
-      expectedCount = 2;
+  } else {
+    // Use default value of two for mobile or four for desktop
+    if (gMobile) {
+      if (expectedCount < 2) {
+        expectedCount = 2;
+      }
+    } else if (expectedCount < 4) {
+      expectedCount = 4;
     }
-  } else if (expectedCount < 4) {
-    expectedCount = 4;
   }
   if (expectedCount > 0) {
     --expectedCount;
   }
+  // Check for interleaved channels
   if (channels >= 2) {
     if ((gRAM.SMBIOS[0].InUse != gRAM.SMBIOS[1].InUse) ||
         (gRAM.SMBIOS[0].Frequency != gRAM.SMBIOS[1].Frequency) ||
@@ -1201,9 +1208,75 @@ VOID PatchTableType17()
   if (wrongSPDBanks) {
      DBG("Detected alternating SPD channel banks\n");
   }
+  // Determine if using triple or quadruple channel
+  if (gRAM.SPDInUse == 0) {
+    if (trustSMBIOS) {
+      if ((gRAM.SMBIOSInUse % 4) == 0) {
+        // Quadruple channel
+        if ((wrongSMBIOSBanks &&
+             (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[2].InUse) &&
+             (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[4].InUse) &&
+             (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[6].InUse) &&
+             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[2].ModuleSize) &&
+             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[4].ModuleSize) &&
+             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[6].ModuleSize)) ||
+            ((gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[1].InUse) &&
+             (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[2].InUse) &&
+             (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[3].InUse) &&
+             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[1].ModuleSize) &&
+             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[2].ModuleSize) &&
+             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[3].ModuleSize))) {
+          channels = 4;
+        }
+      } else if ((gRAM.SMBIOSInUse % 3) == 0) {
+        // Triple channel
+        if ((wrongSMBIOSBanks &&
+            (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[2].InUse) &&
+            (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[4].InUse) &&
+            (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[2].ModuleSize) &&
+            (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[4].ModuleSize)) ||
+           ((gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[1].InUse) &&
+            (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[2].InUse) &&
+            (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[1].ModuleSize) &&
+            (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[2].ModuleSize))) {
+          channels = 3;
+        }
+      }
+    }
+  } else if ((gRAM.SPDInUse % 4) == 0) {
+    // Quadruple channel
+    if ((wrongSPDBanks &&
+        (gRAM.SPD[0].InUse == gRAM.SPD[2].InUse) &&
+        (gRAM.SPD[0].InUse == gRAM.SPD[4].InUse) &&
+        (gRAM.SPD[0].InUse == gRAM.SPD[6].InUse) &&
+        (gRAM.SPD[0].ModuleSize == gRAM.SPD[2].ModuleSize) &&
+        (gRAM.SPD[0].ModuleSize == gRAM.SPD[4].ModuleSize) &&
+        (gRAM.SPD[0].ModuleSize == gRAM.SPD[6].ModuleSize)) ||
+       ((gRAM.SPD[0].InUse == gRAM.SPD[1].InUse) &&
+        (gRAM.SPD[0].InUse == gRAM.SPD[2].InUse) &&
+        (gRAM.SPD[0].InUse == gRAM.SPD[3].InUse) &&
+        (gRAM.SPD[0].ModuleSize == gRAM.SPD[1].ModuleSize) &&
+        (gRAM.SPD[0].ModuleSize == gRAM.SPD[2].ModuleSize) &&
+        (gRAM.SPD[0].ModuleSize == gRAM.SPD[3].ModuleSize))) {
+      channels = 4;
+    }
+  } else if ((gRAM.SPDInUse % 3) == 0) {
+    // Triple channel
+    if ((wrongSPDBanks &&
+        (gRAM.SPD[0].InUse == gRAM.SPD[2].InUse) &&
+        (gRAM.SPD[0].InUse == gRAM.SPD[4].InUse) &&
+        (gRAM.SPD[0].ModuleSize == gRAM.SPD[2].ModuleSize) &&
+        (gRAM.SPD[0].ModuleSize == gRAM.SPD[4].ModuleSize)) ||
+       ((gRAM.SPD[0].InUse == gRAM.SPD[1].InUse) &&
+        (gRAM.SPD[0].InUse == gRAM.SPD[2].InUse) &&
+        (gRAM.SPD[0].ModuleSize == gRAM.SPD[1].ModuleSize) &&
+        (gRAM.SPD[0].ModuleSize == gRAM.SPD[2].ModuleSize))) {
+      channels = 3;
+    }
+  }
   // Setup interleaved channel map
   for (Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
-     channelMap[Index] = (UINT8)((Index & ~3) | ((Index >> 1) & 1) | ((Index & 1) << 1));
+     channelMap[Index] = (UINT8)((Index / channels) | ((Index % channels) << 1));//((Index & ~3) | ((Index >> 1) & 1) | ((Index & 1) << 1));
   }
   // Memory Device
   //
