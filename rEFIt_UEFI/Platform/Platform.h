@@ -682,6 +682,7 @@ typedef struct {
   UINT8   Dcfg[8];
   UINT8   NVCAP[20];
   UINT32  DualLink;
+  UINT32  IgPlatform;
  	
   // HDA
   BOOLEAN HDAInjection;

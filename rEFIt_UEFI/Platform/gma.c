@@ -175,24 +175,27 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x0162:
     case 0x0166:
     case 0x016a:
-      
-      if ((gma_dev->device_id == 0x162) ||
-          (gma_dev->device_id == 0x16a)) {
-        devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[23], 4);
-        devprop_add_value(device, "class-code",	ClassFix, 4);
-      }
-      else if (gma_dev->device_id == 0x166) 
+      if (!gSettings.IgPlatform) {
+        if ((gma_dev->device_id == 0x162) ||
+            (gma_dev->device_id == 0x16a)) {
+          devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[23], 4);
+          devprop_add_value(device, "class-code",	ClassFix, 4);
+        }
+        else if (gma_dev->device_id == 0x166)
           devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[25], 4);
-      else if (gma_dev->device_id == 0x152)
-        devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[24], 4);
-      else if (gma_dev->device_id == 0x156) 
-        devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[25], 4);
-       
-    /*    IG_ID[0] = gma_dev->revision;
-        IG_ID[2] |= gma_dev->device_id & 0x0f;
-      
-        devprop_add_value(device, "AAPL,ig-platform-id", IG_ID, 4); */
-      
+        else if (gma_dev->device_id == 0x152)
+          devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[24], 4);
+        else if (gma_dev->device_id == 0x156)
+          devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[25], 4);
+
+        /*    IG_ID[0] = gma_dev->revision;
+         IG_ID[2] |= gma_dev->device_id & 0x0f;
+
+         devprop_add_value(device, "AAPL,ig-platform-id", IG_ID, 4); */
+      } else {
+        devprop_add_value(device, "AAPL,ig-platform-id", gSettings.IgPlatform, 4);
+      }
+
     case 0xA011:
     case 0xA012:  
       if (DualLink != 0) {
