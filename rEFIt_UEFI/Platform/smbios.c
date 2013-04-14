@@ -1119,7 +1119,7 @@ VOID PatchTableType17()
   CHAR8   bankLocator[10];
   UINT8   channelMap[MAX_RAM_SLOTS];
   UINT8   expectedCount = 0;
-  UINT8   dimmsPerChannel = 2;
+  UINT8   channels = 2;
   BOOLEAN insertingEmpty = TRUE;
   BOOLEAN trustSMBIOS = TRUE;
   BOOLEAN wrongSMBIOSBanks = FALSE;
@@ -1144,12 +1144,12 @@ VOID PatchTableType17()
         if (gRAM.SPDInUse > 1) {
           trustSMBIOS = FALSE;
         } else if (gRAM.SMBIOSInUse == 1) {
-          dimmsPerChannel = 1;
+          channels = 1;
         }
       } else if (gRAM.SPDInUse == 1) {
         // The SMBIOS may contain table for built-in module
         if (gRAM.SMBIOSInUse <= 2) {
-          dimmsPerChannel = 1;
+          channels = 1;
         } else {
           trustSMBIOS = FALSE;
         }
@@ -1183,7 +1183,7 @@ VOID PatchTableType17()
   if (expectedCount > 0) {
     --expectedCount;
   }
-  if (dimmsPerChannel >= 2) {
+  if (channels >= 2) {
     if ((gRAM.SMBIOS[0].InUse != gRAM.SMBIOS[1].InUse) ||
         (gRAM.SMBIOS[0].Frequency != gRAM.SMBIOS[1].Frequency) ||
         (gRAM.SMBIOS[0].ModuleSize != gRAM.SMBIOS[1].ModuleSize)) {
@@ -1260,10 +1260,10 @@ VOID PatchTableType17()
        AsciiSPrint(deviceLocator, 10, "DIMM%d", gRAMCount + 1);
        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
     } else {
-      UINT8 channel = (UINT8)Index % dimmsPerChannel;
+      UINT8 channel = (UINT8)Index / channels;
       newSmbiosTable.Type17->DeviceSet = channel + 1;
-      AsciiSPrint(deviceLocator, 10, "DIMM%d", Index / dimmsPerChannel);
-      AsciiSPrint(bankLocator, 10, "BANK%d", channel);
+      AsciiSPrint(deviceLocator, 10, "DIMM%d", channel);
+      AsciiSPrint(bankLocator, 10, "BANK%d", Index % channels);
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, (CHAR8*)&bankLocator[0]);
     }
