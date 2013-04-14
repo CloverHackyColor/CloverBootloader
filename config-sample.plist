@@ -155,6 +155,8 @@
 		<string>04000000000003000C0000000000000A00000000</string>
 		<key>display-cfg</key>
 		<string>03010300FFFF0001</string>
+		<key>ig-platform-id</key>
+		<string>0x01620005</string>
 		<key>PatchVBiosBytes</key>
 		<dict>
 			<key>0</key>

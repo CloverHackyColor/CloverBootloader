@@ -428,7 +428,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       prop = GetProperty(dictPointer, "ig-platform-id");
       if(prop) {
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-        gSettings.IgPlatform = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);
+        gSettings.IgPlatform = (UINT32)StrHexToUint64((CHAR16*)&UStr[0]);
       }
 
 
