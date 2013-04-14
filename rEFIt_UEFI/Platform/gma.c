@@ -91,6 +91,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x0166, "Intel HD Graphics 4000"  }, // MacBookPro10,1 have this string as model name whatever chameleon team may say
   { 0x0152, "Intel HD Graphics 4000"  },  //iMac
   { 0x0156, "Intel HD Graphics 4000"  },  //MacBook
+  { 0x016a, "Intel HD Graphics P4000" },  //Xeon E3-1245
 };
 
 CHAR8 *get_gma_model(UINT16 id) {
@@ -173,8 +174,10 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x0156:
     case 0x0162:
     case 0x0166:
+    case 0x016a:
       
-      if (gma_dev->device_id == 0x162) {
+      if ((gma_dev->device_id == 0x162) ||
+          (gma_dev->device_id == 0x16a)) {
         devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[23], 4);
         devprop_add_value(device, "class-code",	ClassFix, 4);
       }

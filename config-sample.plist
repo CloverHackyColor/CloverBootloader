@@ -201,6 +201,8 @@
 		<string>Yes</string>
 		<key>DropBGRT</key>
 		<string>Yes</string>
+		<key>GenerateIvyStates</key>
+		<string>Yes</string>
 		<key>GenerateCStates</key>
 		<string>Yes</string>
 		<key>GeneratePStates</key>
