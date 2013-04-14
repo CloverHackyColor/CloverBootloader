@@ -1190,31 +1190,31 @@ VOID PatchTableType17()
       if ((gRAM.SMBIOSInUse % 4) == 0) {
         // Quadruple channel
         if ((wrongSMBIOSBanks &&
-             (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[2].InUse) &&
-             (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[4].InUse) &&
-             (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[6].InUse) &&
-             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[2].ModuleSize) &&
-             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[4].ModuleSize) &&
-             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[6].ModuleSize)) ||
-            ((gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[1].InUse) &&
+             (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[1].InUse) &&
              (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[2].InUse) &&
              (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[3].InUse) &&
              (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[1].ModuleSize) &&
              (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[2].ModuleSize) &&
-             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[3].ModuleSize))) {
+             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[3].ModuleSize)) ||
+            ((gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[2].InUse) &&
+             (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[4].InUse) &&
+             (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[6].InUse) &&
+             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[2].ModuleSize) &&
+             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[4].ModuleSize) &&
+             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[6].ModuleSize))) {
           channels = 4;
         }
       } else if ((gRAM.SMBIOSInUse % 3) == 0) {
         // Triple channel
         if ((wrongSMBIOSBanks &&
-            (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[2].InUse) &&
-            (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[4].InUse) &&
-            (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[2].ModuleSize) &&
-            (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[4].ModuleSize)) ||
-           ((gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[1].InUse) &&
+            (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[1].InUse) &&
             (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[2].InUse) &&
             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[1].ModuleSize) &&
-            (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[2].ModuleSize))) {
+            (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[2].ModuleSize)) ||
+           ((gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[2].InUse) &&
+            (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[4].InUse) &&
+            (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[2].ModuleSize) &&
+            (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[4].ModuleSize))) {
           channels = 3;
         }
       }
@@ -1262,7 +1262,7 @@ VOID PatchTableType17()
 	for (Index = 0; Index < MAX_RAM_SLOTS; Index++) {
     UINTN SMBIOSIndex = wrongSMBIOSBanks ? Index : channelMap[Index];
     UINTN SPDIndex = channelMap[Index];
-    UINT8 channel = (UINT8)Index / channels;
+    UINT8 bank = (UINT8)Index / channels;
     if (!insertingEmpty && ((expectedCount < 2) || (gRAMCount > expectedCount)) &&
         !gRAM.SPD[SPDIndex].InUse && (!trustSMBIOS || !gRAM.SMBIOS[SMBIOSIndex].InUse)) {
       continue;
@@ -1281,7 +1281,7 @@ VOID PatchTableType17()
     Once = TRUE;
     newSmbiosTable.Type17->Hdr.Handle = (UINT16)(0x1130 + Index);
     newSmbiosTable.Type17->FormFactor = gMobile ? MemoryFormFactorSodimm : MemoryFormFactorDimm;
-    newSmbiosTable.Type17->DeviceSet = channel + 1;
+    newSmbiosTable.Type17->DeviceSet = bank + 1;
     newSmbiosTable.Type17->MemoryArrayHandle = mHandle16;
 
     if (gRAM.SPD[SPDIndex].InUse) {
@@ -1313,7 +1313,7 @@ VOID PatchTableType17()
        AsciiSPrint(deviceLocator, 10, "DIMM%d", gRAMCount + 1);
        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
     } else {
-      AsciiSPrint(deviceLocator, 10, "DIMM%d", channel);
+      AsciiSPrint(deviceLocator, 10, "DIMM%d", bank);
       AsciiSPrint(bankLocator, 10, "BANK%d", Index % channels);
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, (CHAR8*)&bankLocator[0]);
