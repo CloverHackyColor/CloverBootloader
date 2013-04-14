@@ -35,6 +35,7 @@ function mountESP {
     local arg="$1"
     local exitcode=1
     local guidRegExp='[[:xdigit:]]+-[[:xdigit:]]+-[[:xdigit:]]+-[[:xdigit:]]+'
+    local ESPDevice=
 
     if [[ "$arg" == Yes ]]; then
         ESPDevice=$(LC_ALL=C diskutil info / 2>/dev/null | \
@@ -63,16 +64,17 @@ function mountESP {
     if [[ "$ESPDevice" =~ ^disk[0-9]+$ ]]; then
         local ESP="${ESPDevice}s1"
 
+        [[ ! -d "${ESPMountPoint}" ]] && mkdir -p "${ESPMountPoint}"
+
         # Umount previously mount partition
         /usr/sbin/diskutil umount "${ESPMountPoint}" &>/dev/null
         umount /dev/${ESP} &>/dev/null
-        [[ ! -d "${ESPMountPoint}" ]] && mkdir -p "${ESPMountPoint}"
         exitcode=1
-        for fstype in msdos hfs; do
-            mount -t $fstype /dev/$ESP "${ESPMountPoint}" &>/dev/null
+        fstype=$(/sbin/fstyp /dev/$ESP)
+        if [[ -n "$fstype" ]]; then
+            mount -t "$fstype" /dev/$ESP "${ESPMountPoint}" &>/dev/null
             exitcode=$?
-            [[ $exitcode -eq 0 ]] && break
-        done
+        fi
         if [[ $exitcode -ne 0 ]]; then
             echo "Failed to mount $ESP at $ESPMountPoint"
         else
