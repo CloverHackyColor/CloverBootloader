@@ -1017,21 +1017,20 @@ VOID GetTableType16()
 {
   // Physical Memory Array
   //
-	mTotalSystemMemory = 0; //later we will add to the value, here initialize it
-	TotalCount = 0;
-	// Get Table Type16 and set Device Count
-	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_PHYSICAL_MEMORY_ARRAY, 0);
-	if (SmbiosTable.Raw == NULL) {
-		DBG("SmbiosTable: Type 16 (Physical Memory Array) not found!\n");
-		return;
-	}
-	TotalCount = SmbiosTable.Type16->NumberOfMemoryDevices;
-	if (!TotalCount) {
-		TotalCount = MAX_RAM_SLOTS;
-	}
-	//gDMI->MaxMemorySlots = (UINT8)TotalCount;
-	DBG("Total Memory Slots Count = %d\n", TotalCount);
-	return;
+  mTotalSystemMemory = 0; //later we will add to the value, here initialize it
+  TotalCount = 0;
+  // Get Table Type16 and set Device Count
+  SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_PHYSICAL_MEMORY_ARRAY, 0);
+  if (SmbiosTable.Raw == NULL) {
+    DBG("SmbiosTable: Type 16 (Physical Memory Array) not found!\n");
+    return;
+  }
+  TotalCount = SmbiosTable.Type16->NumberOfMemoryDevices;
+  if (!TotalCount) {
+    TotalCount = MAX_RAM_SLOTS;
+  }
+  //mHandle16 = SmbiosTable.Type16->Hdr.Handle;
+  DBG("Total Memory Slots Count = %d\n", TotalCount);
 }
 
 
@@ -1123,7 +1122,6 @@ VOID PatchTableType17()
   BOOLEAN insertingEmpty = TRUE;
   BOOLEAN trustSMBIOS = TRUE;
   BOOLEAN wrongSMBIOSBanks = FALSE;
-  BOOLEAN wrongSPDBanks = FALSE;
   BOOLEAN isMacPro = FALSE;
   MACHINE_TYPES Model = GetModelFromString(gSettings.ProductName);
   if ((Model == MacPro31) || (Model == MacPro41) || (Model == MacPro51)) {
@@ -1191,22 +1189,14 @@ VOID PatchTableType17()
   }
   // Check for interleaved channels
   if (channels >= 2) {
-    if ((gRAM.SMBIOS[0].InUse != gRAM.SMBIOS[1].InUse) ||
-        (gRAM.SMBIOS[0].Frequency != gRAM.SMBIOS[1].Frequency) ||
-        (gRAM.SMBIOS[0].ModuleSize != gRAM.SMBIOS[1].ModuleSize)) {
+    if ((gRAM.SMBIOS[0].InUse != gRAM.SMBIOS[2].InUse) ||
+        (gRAM.SMBIOS[0].Frequency != gRAM.SMBIOS[2].Frequency) ||
+        (gRAM.SMBIOS[0].ModuleSize != gRAM.SMBIOS[2].ModuleSize)) {
       wrongSMBIOSBanks = TRUE;
-    }
-    if ((gRAM.SPD[0].InUse != gRAM.SPD[1].InUse) ||
-        (gRAM.SPD[0].Frequency != gRAM.SPD[1].Frequency) ||
-        (gRAM.SPD[0].ModuleSize != gRAM.SPD[1].ModuleSize)) {
-      wrongSPDBanks = TRUE;
     }
   }
   if (wrongSMBIOSBanks) {
      DBG("Detected alternating SMBIOS channel banks\n");
-  }
-  if (wrongSPDBanks) {
-     DBG("Detected alternating SPD channel banks\n");
   }
   // Determine if using triple or quadruple channel
   if (gRAM.SPDInUse == 0) {
@@ -1245,45 +1235,48 @@ VOID PatchTableType17()
     }
   } else if ((gRAM.SPDInUse % 4) == 0) {
     // Quadruple channel
-    if ((wrongSPDBanks &&
-        (gRAM.SPD[0].InUse == gRAM.SPD[2].InUse) &&
+    if ((gRAM.SPD[0].InUse == gRAM.SPD[2].InUse) &&
         (gRAM.SPD[0].InUse == gRAM.SPD[4].InUse) &&
         (gRAM.SPD[0].InUse == gRAM.SPD[6].InUse) &&
         (gRAM.SPD[0].ModuleSize == gRAM.SPD[2].ModuleSize) &&
         (gRAM.SPD[0].ModuleSize == gRAM.SPD[4].ModuleSize) &&
-        (gRAM.SPD[0].ModuleSize == gRAM.SPD[6].ModuleSize)) ||
-       ((gRAM.SPD[0].InUse == gRAM.SPD[1].InUse) &&
-        (gRAM.SPD[0].InUse == gRAM.SPD[2].InUse) &&
-        (gRAM.SPD[0].InUse == gRAM.SPD[3].InUse) &&
-        (gRAM.SPD[0].ModuleSize == gRAM.SPD[1].ModuleSize) &&
-        (gRAM.SPD[0].ModuleSize == gRAM.SPD[2].ModuleSize) &&
-        (gRAM.SPD[0].ModuleSize == gRAM.SPD[3].ModuleSize))) {
+        (gRAM.SPD[0].ModuleSize == gRAM.SPD[6].ModuleSize)) {
       channels = 4;
     }
   } else if ((gRAM.SPDInUse % 3) == 0) {
     // Triple channel
-    if ((wrongSPDBanks &&
-        (gRAM.SPD[0].InUse == gRAM.SPD[2].InUse) &&
-        (gRAM.SPD[0].InUse == gRAM.SPD[4].InUse) &&
-        (gRAM.SPD[0].ModuleSize == gRAM.SPD[2].ModuleSize) &&
-        (gRAM.SPD[0].ModuleSize == gRAM.SPD[4].ModuleSize)) ||
-       ((gRAM.SPD[0].InUse == gRAM.SPD[1].InUse) &&
+    if ((gRAM.SPD[0].InUse == gRAM.SPD[1].InUse) &&
         (gRAM.SPD[0].InUse == gRAM.SPD[2].InUse) &&
         (gRAM.SPD[0].ModuleSize == gRAM.SPD[1].ModuleSize) &&
-        (gRAM.SPD[0].ModuleSize == gRAM.SPD[2].ModuleSize))) {
+        (gRAM.SPD[0].ModuleSize == gRAM.SPD[2].ModuleSize)) {
       channels = 3;
     }
   }
+  DBG("Channels: %d\n", channels);
   // Setup interleaved channel map
-  for (Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
-     channelMap[Index] = (UINT8)((Index / channels) | ((Index % channels) << 1));//((Index & ~3) | ((Index >> 1) & 1) | ((Index & 1) << 1));
+  if (channels >= 2) {
+     UINT8 channelsLessOne = (UINT8)channels - 1;
+     for (Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
+       UINT8 n = (UINT8)(Index / channels);
+       // M = ((C - 1) << (N / 2C)) + (N / C) + 2(N % C)
+       channelMap[Index] = (channelsLessOne << (n >> 1)) + n + ((UINT8)(Index % channels) << 1);
+     }
+  } else {
+     for (Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
+        channelMap[Index] = (UINT8)Index;
+     }
   }
+  DBG("Interleave:");
+  for (Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
+    DBG(" %d", channelMap[Index]);
+  }
+  DBG("\n");
   // Memory Device
   //
   gRAMCount = 0;
 	for (Index = 0; Index < MAX_RAM_SLOTS; Index++) {
-    UINTN SMBIOSIndex = wrongSMBIOSBanks ? channelMap[Index] : Index;
-    UINTN SPDIndex = wrongSPDBanks ? channelMap[Index] : Index;
+    UINTN SMBIOSIndex = wrongSMBIOSBanks ? Index : channelMap[Index];
+    UINTN SPDIndex = channelMap[Index];
     if (!insertingEmpty && ((expectedCount < 2) || (gRAMCount > expectedCount)) &&
         !gRAM.SPD[SPDIndex].InUse && (!trustSMBIOS || !gRAM.SMBIOS[SMBIOSIndex].InUse)) {
       continue;
