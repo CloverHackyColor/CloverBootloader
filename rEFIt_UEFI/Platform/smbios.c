@@ -65,7 +65,7 @@ UINT32			MaxMemory = 0;
 UINT32			mTotalSystemMemory;
 UINT64      gTotalMemory;
 UINT16			mHandle3;
-UINT16			mHandle16 = 0x1010;
+UINT16			mHandle16 = 0x1030;
 UINT16			mHandle17[MAX_RAM_SLOTS];
 UINT16			mHandle19;
 UINT16			mMemory17[MAX_RAM_SLOTS];
@@ -1274,12 +1274,12 @@ VOID PatchTableType17()
       ZeroMem((VOID*)newSmbiosTable.Type17, MAX_TABLE_SIZE);
       newSmbiosTable.Type17->Hdr.Type = EFI_SMBIOS_TYPE_MEMORY_DEVICE;
       newSmbiosTable.Type17->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE17);
-      newSmbiosTable.Type17->Hdr.Handle = (UINT16)(0x1110 + Index);
       newSmbiosTable.Type17->TotalWidth = 0xFFFF;
       newSmbiosTable.Type17->DataWidth = 0xFFFF;
       newSmbiosTable.Type17->FormFactor = MemoryFormFactorSodimm;
     }
     Once = TRUE;
+    newSmbiosTable.Type17->Hdr.Handle = (UINT16)(0x1130 + Index);
     newSmbiosTable.Type17->MemoryArrayHandle = mHandle16;
 
     if (gRAM.SPD[SPDIndex].InUse) {
@@ -1308,6 +1308,7 @@ VOID PatchTableType17()
 
     //now I want to update deviceLocator and bankLocator
     if (isMacPro) {
+       newSmbiosTable.Type17->DeviceSet = 0;
        AsciiSPrint(deviceLocator, 10, "DIMM%d", gRAMCount + 1);
        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
     } else {
