@@ -145,6 +145,55 @@ StrCmpiBasic(
     return Chr1 - Chr2;
 }
 
+/**
+ * Returns the first occurrence of a Null-terminated Unicode SearchString
+ * in a Null-terminated Unicode String.
+ * Compares just first 8 bits of chars (valid for ASCII), case insensitive.
+ *
+ * Copied and modified from BaseLib/String.c
+ */
+
+CHAR16 *
+EFIAPI
+StrStriBasic (
+    IN      CONST CHAR16              *String,
+    IN      CONST CHAR16              *SearchString
+    )
+{
+    CONST CHAR16 *FirstMatch;
+    CONST CHAR16 *SearchStringTmp;
+    
+    if (String == NULL || SearchString == NULL) {
+        return NULL;
+    }
+
+    if (*SearchString == L'\0') {
+        return (CHAR16 *) String;
+    }
+    
+    while (*String != L'\0') {
+        SearchStringTmp = SearchString;
+        FirstMatch = String;
+        
+        while ((ToUpperChar(*String) == ToUpperChar(*SearchStringTmp))
+               && (*String != L'\0')) {
+            String++;
+            SearchStringTmp++;
+        }
+        
+        if (*SearchStringTmp == L'\0') {
+            return (CHAR16 *) FirstMatch;
+        }
+        
+        if (*String == L'\0') {
+            return NULL;
+        }
+        
+        String = FirstMatch + 1;
+    }
+    
+    return NULL;
+}
 
 /** Finds and returns pointer to specified DevPath node in DevicePath or NULL.
  *  If SubType == 0 then it is ignored.
@@ -1143,5 +1192,75 @@ DeleteBootOptionForFile (
     DBG("DeleteBootOptionForFile: done.\n");
     //WaitForKeyPress(L"press a key to continue\n\n");
     return Status;
+}
+
+/** Deletes all boot option that points to a file which contains FileName in it's path. */
+EFI_STATUS
+DeleteBootOptionsContainingFile (
+    IN  CHAR16          *FileName
+    )
+{
+    EFI_STATUS          Status;
+    EFI_STATUS          ReturnStatus;
+    UINT16              *BootOrder;
+    UINTN               BootOrderLen;
+    UINTN               Index;
+    BO_BOOT_OPTION      BootOption;
+    FILEPATH_DEVICE_PATH    *FilePathDP;
+    
+    
+    DBG("DeleteBootOptionContainingFile: %s\n", FileName);
+    
+    //
+    // Get BootOrder - we will search only options listed in BootOrder.
+    //
+    Status = GetBootOrder (&BootOrder, &BootOrderLen);
+    if (EFI_ERROR(Status)) {
+        return Status;
+    }
+    
+    ReturnStatus = EFI_NOT_FOUND;
+    
+    //
+    // Iterate over all BootXXXX vars (actually, only ones that are in BootOrder list)
+    //
+    BootOption.Variable = NULL;
+    for (Index = 0; Index < BootOrderLen; Index++) {
+        if (BootOption.Variable != NULL) {
+            FreePool (BootOption.Variable);
+            BootOption.Variable = NULL;
+        }
+        //
+        // Get boot option
+        //
+        Status = GetBootOption (BootOrder[Index], &BootOption);
+        if (EFI_ERROR(Status)) {
+            DBG("DeleteBootOptionContainingFile: Boot%04X: ERROR: %r\n", BootOrder[Index], Status);
+            //WaitForKeyPress(L"press a key to continue\n\n");
+            continue;
+        }
+        
+        //PrintBootOption (&BootOption, Index);
+        
+        FilePathDP = (FILEPATH_DEVICE_PATH*) FindDevicePathNodeWithType (BootOption.FilePathList, MEDIA_DEVICE_PATH, MEDIA_FILEPATH_DP);
+        
+        if (FilePathDP != NULL
+            && StrStriBasic (FilePathDP->PathName, FileName) != NULL
+            )
+        {
+            DBG("DeleteBootOptionContainingFile: Found Boot%04X, at index %d\n", BootOrder[Index], Index);
+            Status = DeleteBootOption (BootOrder[Index]);
+            if (!EFI_ERROR(Status)) {
+                ReturnStatus = EFI_SUCCESS;
+            }
+        }
+    }
+    
+    if (BootOption.Variable != NULL) {
+        FreePool (BootOption.Variable);
+    }
+    
+    DBG("DeleteBootOptionContainingFile: %r\n", ReturnStatus);
+    return ReturnStatus;
 }
 

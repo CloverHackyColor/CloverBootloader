@@ -1204,6 +1204,12 @@ DeleteBootOptionForFile (
     IN  CHAR16          *FileName
     );
 
+/** Deletes all boot option that points to a file which contains FileName in it's path. */
+EFI_STATUS
+DeleteBootOptionsContainingFile (
+    IN  CHAR16          *FileName
+    );
+
 //
 // PlatformDriverOverride.c
 //

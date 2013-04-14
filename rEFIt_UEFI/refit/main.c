@@ -1138,7 +1138,7 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   
   if (Status == EFI_SUCCESS) {
     SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-    SubEntry->me.Title        = L"Remove as UEFI boot option";
+    SubEntry->me.Title        = L"Remove Clover as UEFI boot option";
     SubEntry->me.Tag          = TAG_CLOVER;
     SubEntry->LoaderPath      = Entry->LoaderPath;
     SubEntry->Volume          = Entry->Volume;
@@ -1151,7 +1151,7 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
   } else {
     SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-    SubEntry->me.Title        = L"Add as UEFI boot option";
+    SubEntry->me.Title        = L"Add Clover as UEFI boot option";
     SubEntry->me.Tag          = TAG_CLOVER;
     SubEntry->LoaderPath      = Entry->LoaderPath;
     SubEntry->Volume          = Entry->Volume;
@@ -1163,6 +1163,19 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->me.AtClick      = ActionEnter;
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
   }
+  
+  SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+  SubEntry->me.Title        = L"Remove all Clover boot options";
+  SubEntry->me.Tag          = TAG_CLOVER;
+  SubEntry->LoaderPath      = Entry->LoaderPath;
+  SubEntry->Volume          = Entry->Volume;
+  SubEntry->VolName         = Entry->VolName;
+  SubEntry->DevicePath      = Entry->DevicePath;
+  SubEntry->UseGraphicsMode = FALSE;
+  SubEntry->LoadOptions     = L"BO-REMOVE-ALL";
+  SubEntry->LoaderType      = OSTYPE_VAR;
+  SubEntry->me.AtClick      = ActionEnter;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
   
   SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
   SubEntry->me.Title        = L"Print all UEFI boot options to log";
@@ -1811,7 +1824,7 @@ static VOID ScanTool(VOID)
       }
       
       Status = gBS->HandleProtocol (Volume->DeviceHandle, &gEfiPartTypeSystemPartGuid, &Interface);
-      if (Status == EFI_SUCCESS && 
+      if (Status == EFI_SUCCESS &&
           (!gSettings.HVHideOpticalUEFI ||
           !gSettings.HVHideInternalUEFI ||
           !gSettings.HVHideExternalUEFI)) {
@@ -2695,6 +2708,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
                                              0,
                                              NULL
                                              );
+              PrintBootOptions(FALSE);
+            } else if (StrStr(LoaderEntry->LoadOptions, L"BO-REMOVE-ALL") != NULL) {
+              PrintBootOptions(FALSE);
+              DeleteBootOptionsContainingFile (L"CLOVERX64.efi");
+              DeleteBootOptionsContainingFile (L"CLOVERIA32.efi");
               PrintBootOptions(FALSE);
             } else if (StrStr(LoaderEntry->LoadOptions, L"BO-REMOVE") != NULL) {
               PrintBootOptions(FALSE);
