@@ -65,7 +65,7 @@ UINT32			MaxMemory = 0;
 UINT32			mTotalSystemMemory;
 UINT64      gTotalMemory;
 UINT16			mHandle3;
-UINT16			mHandle16 = 0xFFFE;;
+UINT16			mHandle16 = 0x1010;
 UINT16			mHandle17[MAX_RAM_SLOTS];
 UINT16			mHandle19;
 UINT16			mMemory17[MAX_RAM_SLOTS];
@@ -1029,7 +1029,6 @@ VOID GetTableType16()
   if (!TotalCount) {
     TotalCount = MAX_RAM_SLOTS;
   }
-  //mHandle16 = SmbiosTable.Type16->Hdr.Handle;
   DBG("Total Memory Slots Count = %d\n", TotalCount);
 }
 
@@ -1039,38 +1038,25 @@ VOID PatchTableType16()
   // Physical Memory Array
   //
 
-//	mTotalSystemMemory = 0; //later we will add to the value, here initialize it
-//	TotalCount = 0;
-	mHandle16 = 0xFFFE;
-	
-	// Get Table Type16 and set Device Count
-	SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_PHYSICAL_MEMORY_ARRAY, 0);
-	if (SmbiosTable.Raw == NULL) {
-		DBG("SmbiosTable: Type 16 (Physical Memory Array) not found!\n");
-		return;
-	}
-	TableSize = SmbiosTableLength(SmbiosTable);
-	ZeroMem((VOID*)newSmbiosTable.Type16, MAX_TABLE_SIZE);
-	CopyMem((VOID*)newSmbiosTable.Type16, (VOID*)SmbiosTable.Type16, TableSize);
-//Slice - I am not sure I want these values	
-//	newSmbiosTable.Type16->Location = MemoryArrayLocationProprietaryAddonCard;
-//	newSmbiosTable.Type16->Use = MemoryArrayUseSystemMemory;
-//	newSmbiosTable.Type16->MemoryErrorCorrection = MemoryErrorCorrectionMultiBitEcc;
-/*    if (gDMI->DIMM[2] && Index == 1 &&  newSmbiosTable.Type16->NumberOfMemoryDevices == 2)
-    {
-        gDMI->MaxMemorySlots = gDMI->CntMemorySlots;
-        newSmbiosTable.Type16->NumberOfMemoryDevices = gDMI->CntMemorySlots;
-    }
-	TotalCount = newSmbiosTable.Type16->NumberOfMemoryDevices;
-	if (!TotalCount) {
-		TotalCount = MAX_SLOT_COUNT;
-	} */
-	//MemoryErrorInformationHandle
-	newSmbiosTable.Type16->MemoryErrorInformationHandle = 0xFFFF;
-	newSmbiosTable.Type16->NumberOfMemoryDevices = gRAMCount;//gDMI->CntMemorySlots;//gDMI->MemoryModules;
+  // Get Table Type16 and set Device Count
+  SmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_PHYSICAL_MEMORY_ARRAY, 0);
+  if (SmbiosTable.Raw == NULL) {
+    DBG("SmbiosTable: Type 16 (Physical Memory Array) not found!\n");
+    return;
+  }
+  TableSize = SmbiosTableLength(SmbiosTable);
+  ZeroMem((VOID*)newSmbiosTable.Type16, MAX_TABLE_SIZE);
+  CopyMem((VOID*)newSmbiosTable.Type16, (VOID*)SmbiosTable.Type16, TableSize);
+  newSmbiosTable.Type16->Hdr.Handle = mHandle16;
+  // Slice - I am not sure I want these values	
+  // newSmbiosTable.Type16->Location = MemoryArrayLocationProprietaryAddonCard;
+  // newSmbiosTable.Type16->Use = MemoryArrayUseSystemMemory;
+  // newSmbiosTable.Type16->MemoryErrorCorrection = MemoryErrorCorrectionMultiBitEcc;
+  // MemoryErrorInformationHandle
+  newSmbiosTable.Type16->MemoryErrorInformationHandle = 0xFFFF;
+  newSmbiosTable.Type16->NumberOfMemoryDevices = gRAMCount;
   DBG("NumberOfMemoryDevices = %d\n", gRAMCount);
-	mHandle16 = LogSmbiosTable(newSmbiosTable);
-	return;
+  LogSmbiosTable(newSmbiosTable);
 }
 
 VOID GetTableType17()
