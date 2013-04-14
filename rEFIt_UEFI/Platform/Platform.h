@@ -858,18 +858,20 @@ typedef struct {
 
 typedef struct {
   
-	UINT64		Frequency;
-	UINT32		Divider;
-	UINT8			TRC;
-	UINT8			TRP;
-	UINT8			RAS;
-	UINT8			Channels;
-	UINT8			Slots;
-	UINT8			Type;
-  
-   RAM_SLOT_INFO	SPD[MAX_RAM_SLOTS];
-	RAM_SLOT_INFO	SMBIOS[MAX_RAM_SLOTS];
-  
+  UINT64 Frequency;
+  UINT32 Divider;
+  UINT8  TRC;
+  UINT8  TRP;
+  UINT8  RAS;
+  UINT8  Channels;
+  UINT8  Slots;
+  UINT8  Type;
+  UINT8  SPDInUse;
+  UINT8  SMBIOSInUse;
+
+  RAM_SLOT_INFO SPD[MAX_RAM_SLOTS];
+  RAM_SLOT_INFO SMBIOS[MAX_RAM_SLOTS];
+
 } MEM_STRUCTURE;
 //unused
 /*

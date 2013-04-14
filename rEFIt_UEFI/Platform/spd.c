@@ -484,6 +484,7 @@ VOID read_smb_intel(EFI_PCI_IO_PROTOCOL *PciIo)
              gRAM.SPD[i].SerialNo);
       
       gRAM.SPD[i].InUse = TRUE;
+      ++(gRAM.SPDInUse);
     //}
     
     // laptops sometimes show slot 0 and 2 with slot 1 empty when only 2 slots are presents so:

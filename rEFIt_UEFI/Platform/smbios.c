@@ -1094,6 +1094,7 @@ VOID GetTableType17()
          continue;
       }
 		if ((SmbiosTable.Type17->Size > 0) || (SmbiosTable.Type17->Speed > 0)) {
+         ++(gRAM.SMBIOSInUse);
          gRAM.SMBIOS[Index].InUse = TRUE;
          gRAM.SMBIOS[Index].ModuleSize = SmbiosTable.Type17->Size;
          gRAM.SMBIOS[Index].Frequency = SmbiosTable.Type17->Speed;
@@ -1117,7 +1118,7 @@ VOID PatchTableType17()
   CHAR8   deviceLocator[10];
   CHAR8   bankLocator[10];
   UINT8   channelMap[MAX_RAM_SLOTS];
-  UINT8   SPDInUse = 0, SMBIOSInUse = 0, expectedCount = 0;
+  UINT8   expectedCount = 0;
   UINT8   dimmsPerChannel = 2;
   BOOLEAN insertingEmpty = TRUE;
   BOOLEAN trustSMBIOS = TRUE;
@@ -1128,31 +1129,26 @@ VOID PatchTableType17()
   if ((Model == MacPro31) || (Model == MacPro41) || (Model == MacPro51)) {
     isMacPro = TRUE;
   }
-  // Check for SMBIOS trust
-  for (Index = 0; Index < MAX_RAM_SLOTS; Index++) {
-    if (gRAM.SPD[Index].InUse) ++SPDInUse;
-    if (gRAM.SMBIOS[Index].InUse) ++SMBIOSInUse;
-  }
   // Prevent inserting empty tables
-  if ((SPDInUse == 0) && (SMBIOSInUse == 0)) {
+  if ((gRAM.SPDInUse == 0) && (gRAM.SMBIOSInUse == 0)) {
     DBG("SMBIOS and SPD contain no modules in use\n");
     return;
   }
   // Detect whether the SMBIOS is trusted information
-  if ((SPDInUse != 0) && (SMBIOSInUse != 0)) {
-    if (SPDInUse != SMBIOSInUse) {
+  if ((gRAM.SPDInUse != 0) && (gRAM.SMBIOSInUse != 0)) {
+    if (gRAM.SPDInUse != gRAM.SMBIOSInUse) {
       // Prefer the SPD information
-      if (SPDInUse > SMBIOSInUse) {
+      if (gRAM.SPDInUse > gRAM.SMBIOSInUse) {
         trustSMBIOS = FALSE;
       } else if (gRAM.SPD[0].InUse || !gRAM.SMBIOS[0].InUse) {
-        if (SPDInUse > 1) {
+        if (gRAM.SPDInUse > 1) {
           trustSMBIOS = FALSE;
-        } else if (SMBIOSInUse == 1) {
+        } else if (gRAM.SMBIOSInUse == 1) {
           dimmsPerChannel = 1;
         }
-      } else if (SPDInUse == 1) {
+      } else if (gRAM.SPDInUse == 1) {
         // The SMBIOS may contain table for built-in module
-        if (SMBIOSInUse <= 2) {
+        if (gRAM.SMBIOSInUse <= 2) {
           dimmsPerChannel = 1;
         } else {
           trustSMBIOS = FALSE;
@@ -1168,10 +1164,10 @@ VOID PatchTableType17()
   if (trustSMBIOS) {
     DBG("Trusting SMBIOS...\n");
   }
-  expectedCount = SPDInUse;
+  expectedCount = gRAM.SPDInUse;
   if (trustSMBIOS) {
-    if (expectedCount < SMBIOSInUse) {
-      expectedCount = SMBIOSInUse;
+    if (expectedCount < gRAM.SMBIOSInUse) {
+      expectedCount = gRAM.SMBIOSInUse;
     }
     if ((!gMobile || (TotalCount == 2)) &&
         (expectedCount < TotalCount)) {
@@ -1213,10 +1209,9 @@ VOID PatchTableType17()
   //
   gRAMCount = 0;
 	for (Index = 0; Index < MAX_RAM_SLOTS; Index++) {
-    UINTN SMBIOSIndex = (isMacPro || wrongSMBIOSBanks || (dimmsPerChannel < 2)) ? Index : channelMap[Index];
-    UINTN SPDIndex = (isMacPro || wrongSPDBanks || (dimmsPerChannel < 2)) ? Index : channelMap[Index];
-    if (!insertingEmpty && ((expectedCount < 2) || (gRAMCount > expectedCount) ||
-         (isMacPro && (gRAMCount == expectedCount) && (SPDInUse < gRAMCount))) &&
+    UINTN SMBIOSIndex = wrongSMBIOSBanks ? channelMap[Index] : Index;
+    UINTN SPDIndex = wrongSPDBanks ? channelMap[Index] : Index;
+    if (!insertingEmpty && ((expectedCount < 2) || (gRAMCount > expectedCount)) &&
         !gRAM.SPD[SPDIndex].InUse && (!trustSMBIOS || !gRAM.SMBIOS[SMBIOSIndex].InUse)) {
       continue;
     }
@@ -1265,10 +1260,9 @@ VOID PatchTableType17()
        AsciiSPrint(deviceLocator, 10, "DIMM%d", gRAMCount + 1);
        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
     } else {
-      UINT8 index = (wrongSPDBanks ? channelMap[Index] : (UINT8)Index);
-      UINT8 channel = index / dimmsPerChannel;
+      UINT8 channel = (UINT8)Index % dimmsPerChannel;
       newSmbiosTable.Type17->DeviceSet = channel + 1;
-      AsciiSPrint(deviceLocator, 10, "DIMM%d", index % dimmsPerChannel);
+      AsciiSPrint(deviceLocator, 10, "DIMM%d", Index / dimmsPerChannel);
       AsciiSPrint(bankLocator, 10, "BANK%d", channel);
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, (CHAR8*)&bankLocator[0]);
