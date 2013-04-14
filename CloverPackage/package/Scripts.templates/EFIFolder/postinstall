@@ -18,13 +18,13 @@ DEST_VOL="$3"
 EFI_ROOT_DIR="${DEST_VOL}/EFIROOTDIR"
 
 # config.plist
-if [[ ! -f "${EFI_ROOT_DIR}/EFI/config.plist" ]]; then
-    cp -fv "${EFI_ROOT_DIR}/EFI/config-sample.plist" "${EFI_ROOT_DIR}/EFI/config.plist"
+if [[ ! -f "${EFI_ROOT_DIR}/EFI/Clover/config.plist" ]]; then
+    cp -fv "${EFI_ROOT_DIR}/EFI/Clover/config-sample.plist" "${EFI_ROOT_DIR}/EFI/Clover/config.plist"
 fi
 # Don't keep config-sample.plist
-rm -f "${EFI_ROOT_DIR}/EFI/config-sample.plist"
+rm -f "${EFI_ROOT_DIR}/EFI/Clover/config-sample.plist"
 
 # refit.conf
-if [[ ! -f "${EFI_ROOT_DIR}/EFI/BOOT/refit.conf" ]]; then
-    cp -fv "${EFI_ROOT_DIR}/EFI/BOOT/refit-default.conf" "${EFI_ROOT_DIR}/EFI/BOOT/refit.conf"
+if [[ ! -f "${EFI_ROOT_DIR}/EFI/Clover/refit.conf" ]]; then
+    cp -fv "${EFI_ROOT_DIR}/EFI/Clover/refit-default.conf" "${EFI_ROOT_DIR}/EFI/Clover/refit.conf"
 fi

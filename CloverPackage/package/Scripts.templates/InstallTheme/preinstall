@@ -37,8 +37,8 @@ installer_choice="@INSTALLER_CHOICE@"
 # Delete old themes files
 # ---------------------------------------------
 
-if [[ -d "${EFIROOTDIR}/EFI/BOOT/themes/@themeName@" ]];then
-	rm -rf "${EFIROOTDIR}/EFI/BOOT/themes/@themeName@"
+if [[ -d "${EFIROOTDIR}/EFI/Clover/themes/@themeName@" ]];then
+	rm -rf "${EFIROOTDIR}/EFI/Clover/themes/@themeName@"
 fi
 
 # ---------------------------------------------

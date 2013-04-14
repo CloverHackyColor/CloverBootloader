@@ -493,10 +493,10 @@ main ()
     rsync -r --exclude=.svn --exclude="*~" ${SRCROOT}/CloverV2/EFI/ ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/
     [[ "$add_ia32" -ne 1 ]] && rm -rf ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/drivers32
     # config.plist
-    rm -f ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/config.plist &>/dev/null
+    rm -f ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/Clover/config.plist &>/dev/null
     # refit.conf
-    mv -f ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/BOOT/refit.conf \
-     ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/BOOT/refit-default.conf
+    mv -f ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/Clover/refit.conf \
+     ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/Clover/refit-default.conf
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
 
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
@@ -641,8 +641,8 @@ fi
     packagesidentity="${clover_package_identity}".themes
     local artwork="${SRCROOT}/CloverV2/themespkg/"
     local themes=($( find "${artwork}" -type d -depth 1 -not -name '.svn' ))
-    local themeDestDir='/EFIROOTDIR/EFI/BOOT/themes'
-    local defaultTheme=$(trim $(sed -n 's/^theme *//p' "${SRCROOT}"/CloverV2/EFI/BOOT/refit.conf))
+    local themeDestDir='/EFIROOTDIR/EFI/Clover/themes'
+    local defaultTheme=$(trim $(sed -n 's/^theme *//p' "${SRCROOT}"/CloverV2/EFI/Clover/refit.conf))
     for (( i = 0 ; i < ${#themes[@]} ; i++ )); do
         local themeName=${themes[$i]##*/}
         mkdir -p "${PKG_BUILD_DIR}/${themeName}/Root/"
@@ -669,7 +669,7 @@ if [[ "$add_ia32" -eq 1 ]]; then
     addGroupChoices --title="Drivers32" --description="Drivers32" "Drivers32"
     packagesidentity="${clover_package_identity}".drivers32
     local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/drivers32" -type f -name '*.efi' -depth 1 ))
-    local driverDestDir='/EFIROOTDIR/EFI/drivers32'
+    local driverDestDir='/EFIROOTDIR/EFI/Clover/drivers32'
     for (( i = 0 ; i < ${#drivers[@]} ; i++ )); do
         local driver="${drivers[$i]##*/}"
         local driverName="${driver%.efi}"
@@ -693,7 +693,7 @@ fi
     addGroupChoices --title="Drivers64" --description="Drivers64" "Drivers64"
     packagesidentity="${clover_package_identity}".drivers64
     local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/drivers64" -type f -name '*.efi' -depth 1 ))
-    local driverDestDir='/EFIROOTDIR/EFI/drivers64'
+    local driverDestDir='/EFIROOTDIR/EFI/Clover/drivers64'
     for (( i = 0 ; i < ${#drivers[@]} ; i++ )); do
         local driver="${drivers[$i]##*/}"
         local driverName="${driver%.efi}"
@@ -714,8 +714,8 @@ fi
 # build mandatory drivers-x64UEFI packages
     echo "=============== drivers64 UEFI mandatory ==============="
     packagesidentity="${clover_package_identity}".drivers64UEFI.mandatory
-    local drivers=($( find "${SRCROOT}/CloverV2/EFI/drivers64UEFI" -type f -name '*.efi' -depth 1 ))
-    local driverDestDir='/EFIROOTDIR/EFI/drivers64UEFI'
+    local drivers=($( find "${SRCROOT}/CloverV2/EFI/Clover/drivers64UEFI" -type f -name '*.efi' -depth 1 ))
+    local driverDestDir='/EFIROOTDIR/EFI/Clover/drivers64UEFI'
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
         local driver="${drivers[$i]##*/}"
@@ -736,7 +736,7 @@ fi
     addGroupChoices --title="Drivers64UEFI" --description="Drivers64UEFI" "Drivers64UEFI"
     packagesidentity="${clover_package_identity}".drivers64UEFI
     local drivers=($( find "${SRCROOT}/CloverV2/drivers-Off/drivers64UEFI" -type f -name '*.efi' -depth 1 ))
-    local driverDestDir='/EFIROOTDIR/EFI/drivers64UEFI'
+    local driverDestDir='/EFIROOTDIR/EFI/Clover/drivers64UEFI'
     for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
     do
         local driver="${drivers[$i]##*/}"
