@@ -1245,10 +1245,10 @@ VOID PatchTableType17()
     }
   } else if ((gRAM.SPDInUse % 3) == 0) {
     // Triple channel
-    if ((gRAM.SPD[0].InUse == gRAM.SPD[1].InUse) &&
-        (gRAM.SPD[0].InUse == gRAM.SPD[2].InUse) &&
-        (gRAM.SPD[0].ModuleSize == gRAM.SPD[1].ModuleSize) &&
-        (gRAM.SPD[0].ModuleSize == gRAM.SPD[2].ModuleSize)) {
+    if ((gRAM.SPD[0].InUse == gRAM.SPD[2].InUse) &&
+        (gRAM.SPD[0].InUse == gRAM.SPD[4].InUse) &&
+        (gRAM.SPD[0].ModuleSize == gRAM.SPD[2].ModuleSize) &&
+        (gRAM.SPD[0].ModuleSize == gRAM.SPD[4].ModuleSize)) {
       channels = 3;
     }
   }
