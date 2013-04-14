@@ -1241,11 +1241,10 @@ VOID PatchTableType17()
   DBG("Channels: %d\n", channels);
   // Setup interleaved channel map
   if (channels >= 2) {
-     UINT8 channelsLessOne = (UINT8)channels - 1;
+     UINT8 doubleChannels = (UINT8)channels << 1;
      for (Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
-       UINT8 n = (UINT8)(Index / channels);
-       // M = ((C - 1) << (N / 2C)) + (N / C) + 2(N % C)
-       channelMap[Index] = (channelsLessOne << (n >> 1)) + n + ((UINT8)(Index % channels) << 1);
+       channelMap[Index] = (UINT8)(((Index / doubleChannels) * doubleChannels) +
+                                   ((Index / channels) % 2) + ((Index % channels) << 1));
      }
   } else {
      for (Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
