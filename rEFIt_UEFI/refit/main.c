@@ -2399,7 +2399,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   } else if (FileExists(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\OEM\\%a\\%s.plist", gSettings.OEMBoard, gSettings.ConfigName))) {
     OEMPath = PoolPrint(L"EFI\\CLOVER\\OEM\\%a", gSettings.OEMBoard);
   } else {
-    OEMPath = L"EFI";
+    OEMPath = L"EFI\\CLOVER";
   }
   
 	Status = GetEarlyUserSettings(SelfRootDir);
