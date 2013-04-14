@@ -60,12 +60,19 @@ if [[ "$logLineCount" -gt 0 ]]; then
     mv "${systemLogPath}.tmp" "$systemLogPath"
 fi
 
-# Clover.LogEveryBoot=Yes|No [default No]
+# Clover.LogEveryBoot=No|Yes|Number [default No]
 logEveryBoot=$(GetNVRamKey 'Clover.LogEveryBoot')
 # If logEveryBoot == Yes then save a copy of boot.log with a timestamp boot.log
 # file
-if [[ "$logEveryBoot" == 'Yes' ]];then
-    timeStampBootLogFilename=boot-${currentDate}-$(echo ${currentTime//:/.}).log
+if [[ -n "$logEveryBoot" && "$logEveryBoot" != 'No' ]];then
+    # If logEveryBoot is a number keep this number of boot logs
+    if [[ "$logEveryBoot" =~ [[:xdigit:]]+ ]]; then
+        # Keep only logEveryBoot logs
+        ls -t "${CLOVER_LOG_LOCATION}"/boot-*.log | tail -n +$logEveryBoot | xargs rm -f
+    fi
+    # Extract clover revision from the boot log file
+    cloverRevision=$(sed -nE 's/^.*Clover revision: *([0-9]+).*$/\1/p' "$bootLogPath")
+    timeStampBootLogFilename=boot-r$cloverRevision-${currentDate}-$(echo ${currentTime//:/.}).log
     cp "$bootLogPath" "${CLOVER_LOG_LOCATION}/${timeStampBootLogFilename}"
 fi
 
