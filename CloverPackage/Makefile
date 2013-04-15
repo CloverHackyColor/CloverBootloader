@@ -60,8 +60,8 @@ image:
 	@mkdir -p ${IMGROOT}/usr/standalone/i386/ia32
 	@echo "\t[MKDIR] ${IMGROOT}/EFI/BOOT"
 	@mkdir -p ${IMGROOT}/EFI/BOOT
-	@echo "\t[MKDIR] ${IMGROOT}/EFI/Clover/themes/"
-	@mkdir -p ${IMGROOT}/EFI/Clover/themes/
+	@echo "\t[MKDIR] ${IMGROOT}/EFI/CLOVER/themes/"
+	@mkdir -p ${IMGROOT}/EFI/CLOVER/themes/
 	@echo "\t[MKDIR] ${IMGROOT}/usr/bin"
 	@mkdir -p ${IMGROOT}/usr/bin
 	@if [ -e "$(IMGSKELROOT)"/* ];then \
@@ -72,39 +72,39 @@ image:
 	@cp -f ${SYMROOT}/i386/cdboot ${CDBOOT}
 	@[ ${IMAGE_WITH_IA32} -eq 0 ] || cp -f ${SYMROOT}/i386/cdboot32 ${CDBOOT32}
 	@echo "\t[CP] metal"
-	@cp -r -f $(CLOVERROOT)/themespkg/metal ${IMGROOT}/EFI/Clover/themes/
+	@cp -r -f $(CLOVERROOT)/themespkg/metal ${IMGROOT}/EFI/CLOVER/themes/
 	@echo "\t[CP] CLOVERX64"
-	@cp -f $(CLOVERROOT)/EFI/Clover/CLOVERX64.efi ${IMGROOT}/EFI/Clover/
+	@cp -f $(CLOVERROOT)/EFI/CLOVER/CLOVERX64.efi ${IMGROOT}/EFI/CLOVER/
 	@if [ ${IMAGE_WITH_IA32} -eq 1 ]; then \
 		echo "\t[CP] CLOVERIA32"; \
-		cp -f $(CLOVERROOT)/EFI/Clover/CLOVERIA32.efi ${IMGROOT}/EFI/Clover/; \
+		cp -f $(CLOVERROOT)/EFI/CLOVER/CLOVERIA32.efi ${IMGROOT}/EFI/CLOVER/; \
 	fi
 	@echo "\t[CP] BOOTX64"
 	@cp -f $(CLOVERROOT)/EFI/BOOT/BOOTX64.efi ${IMGROOT}/EFI/BOOT/
 #	@echo "CP font"
 #	@cp -r -f $(CLOVERROOT)/EFI/BOOT/font ${IMGROOT}/EFI/BOOT/
 #	@echo "CP refit.conf"
-	@cp -f $(CLOVERROOT)/EFI/Clover/refit.conf ${IMGROOT}/EFI/Clover/
+	@cp -f $(CLOVERROOT)/EFI/CLOVER/refit.conf ${IMGROOT}/EFI/CLOVER/
 #	@echo "CP config.plist"
-	@cp -f $(CLOVERROOT)/EFI/Clover/config-sample.plist ${IMGROOT}/EFI/Clover/config.plist
+	@cp -f $(CLOVERROOT)/EFI/CLOVER/config-sample.plist ${IMGROOT}/EFI/CLOVER/config.plist
 	@echo "\t[CP] drivers64"
-	@cp -r -f $(CLOVERROOT)/EFI/Clover/drivers64 ${IMGROOT}/EFI/Clover/
-	@cp -r -f $(CLOVERROOT)/EFI/Clover/drivers64UEFI ${IMGROOT}/EFI/Clover/
-	@cp -r -f $(CLOVERROOT)/EFI/Clover/tools ${IMGROOT}/EFI/Clover/
+	@cp -r -f $(CLOVERROOT)/EFI/CLOVER/drivers64 ${IMGROOT}/EFI/CLOVER/
+	@cp -r -f $(CLOVERROOT)/EFI/CLOVER/drivers64UEFI ${IMGROOT}/EFI/CLOVER/
+	@cp -r -f $(CLOVERROOT)/EFI/CLOVER/tools ${IMGROOT}/EFI/CLOVER/
 #	@echo "ADD drivers64"
-	@cp -f $(CLOVERROOT)/drivers-Off/drivers64/UsbMouseDxe-64.efi ${IMGROOT}/EFI/Clover/drivers64/
-	@cp -f $(CLOVERROOT)/drivers-Off/drivers64/Ps2MouseDxe-64.efi ${IMGROOT}/EFI/Clover/drivers64/
+	@cp -f $(CLOVERROOT)/drivers-Off/drivers64/UsbMouseDxe-64.efi ${IMGROOT}/EFI/CLOVER/drivers64/
+	@cp -f $(CLOVERROOT)/drivers-Off/drivers64/Ps2MouseDxe-64.efi ${IMGROOT}/EFI/CLOVER/drivers64/
 	@if [ ${IMAGE_WITH_IA32} -eq 1 ]; then \
-		rsync -r $(CLOVERROOT)/drivers-Off ${IMGROOT}/EFI/Clover/ ; \
+		rsync -r $(CLOVERROOT)/drivers-Off ${IMGROOT}/EFI/CLOVER/ ; \
 	else \
-		rsync -r $(CLOVERROOT)/drivers-Off --exclude='drivers32*' ${IMGROOT}/EFI/Clover/ ; \
+		rsync -r $(CLOVERROOT)/drivers-Off --exclude='drivers32*' ${IMGROOT}/EFI/CLOVER/ ; \
 	fi
 	@if [ ${IMAGE_WITH_IA32} -eq 1 ]; then \
 		echo "\t[CP] drivers32"; \
-		cp -r -f $(CLOVERROOT)/EFI/Clover/drivers32 ${IMGROOT}/EFI/Clover/; \
+		cp -r -f $(CLOVERROOT)/EFI/CLOVER/drivers32 ${IMGROOT}/EFI/CLOVER/; \
 		echo "ADD drivers32"; \
-		cp -f $(CLOVERROOT)/drivers-Off/drivers32/UsbMouseDxe-32.efi ${IMGROOT}/EFI/Clover/drivers32/ ; \
-		cp -f $(CLOVERROOT)/drivers-Off/drivers32/Ps2MouseDxe-32.efi ${IMGROOT}/EFI/Clover/drivers32/ ; \
+		cp -f $(CLOVERROOT)/drivers-Off/drivers32/UsbMouseDxe-32.efi ${IMGROOT}/EFI/CLOVER/drivers32/ ; \
+		cp -f $(CLOVERROOT)/drivers-Off/drivers32/Ps2MouseDxe-32.efi ${IMGROOT}/EFI/CLOVER/drivers32/ ; \
 	fi
 	@echo "\t[CP] boot"
 	@cp -f $(CLOVERROOT)/Bootloaders/x64/boot? ${IMGROOT}/usr/standalone/i386/x64/

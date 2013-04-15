@@ -25,11 +25,12 @@
 
 /CloverPackage/CloverV2/Bootloaders/
 /CloverPackage/CloverV2/EFI/BOOT/
-/CloverPackage/CloverV2/EFI/Clover/CLOVERX64.efi
-/CloverPackage/CloverV2/EFI/Clover/CLOVERIA32.efi
-/CloverPackage/CloverV2/EFI/Clover/drivers32/
-/CloverPackage/CloverV2/EFI/Clover/drivers64/
-/CloverPackage/CloverV2/EFI/Clover/drivers64UEFI/
+/CloverPackage/CloverV2/EFI/CLOVER/CLOVERX64.efi
+/CloverPackage/CloverV2/EFI/CLOVER/CLOVERIA32.efi
+/CloverPackage/CloverV2/EFI/CLOVER/drivers32/
+/CloverPackage/CloverV2/EFI/CLOVER/drivers32UEFI/
+/CloverPackage/CloverV2/EFI/CLOVER/drivers64/
+/CloverPackage/CloverV2/EFI/CLOVER/drivers64UEFI/
 /CloverPackage/CloverV2/drivers-Off/
 
 /HFSPlus/Ia32/

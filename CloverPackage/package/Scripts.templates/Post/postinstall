@@ -23,7 +23,7 @@ CLOVER_INSTALLER_PLIST="${DEST_VOL}@CLOVER_INSTALLER_PLIST@"
 bootervolumename="EFI"
 bootvolume="/Volumes/${bootervolumename}"
 install_log="${DEST_VOL}/Clover_Install_Log.txt"
-config_plist_file="${EFI_ROOT_DIR}"/EFI/Clover/config.plist
+config_plist_file="${EFI_ROOT_DIR}"/EFI/CLOVER/config.plist
 
 file "${DEST_VOL}/bootold" > "${DEST_VOL}/bootoldtype"
 boottypeversion=$( grep "boot" "${DEST_VOL}/bootoldtype" | awk '{ print $2 }' | tr -d '}' )
