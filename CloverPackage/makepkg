@@ -9,10 +9,7 @@ echo "${version}"  > version
 echo "${revision}" > revision
 
 # Workspace = edk2/Clover/CloverPackage
-# Copy doc to CloverV2/doc.
 
-mkdir -p CloverV2/doc/
-#cp -f ../BootHFS/Installation.txt  CloverV2/doc/Installation.txt
 cp -f ../BootHFS/boot1f32-install.sh  CloverV2/doc/boot1f32-install.sh
 
 # Workspace = edk2/Clover/CloverPackage
@@ -26,9 +23,6 @@ rm -rf sym
 mkdir -p sym/i386
 cp -Rf CloverV2/Bootloaders/* sym/i386/
 cp -f CloverV2/BootSectors/* sym/i386/
-
-cp -r -f CloverV2/doc  CloverV2/EFI/doc
-#cp -r -f CloverV2/config.plist-FullSample CloverV2/EFI/doc/
 
 # Workspace = edk2/Clover/CloverPackage
 # Start to build installer.
@@ -47,8 +41,6 @@ make image
 
 rm -f  version
 rm -f  revision
-rm -rf CloverV2/EFI/doc
-rm -rf CloverV2/EFI/doc/config.plist-FullSample
 
 # Workspace = edk2/Clover/CloverPackage
 # Open the final folder.
