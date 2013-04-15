@@ -1178,7 +1178,8 @@ VOID PatchTableType17()
     if ((gRAM.SMBIOS[0].InUse != gRAM.SMBIOS[2].InUse) ||
         (gRAM.SMBIOS[0].Frequency != gRAM.SMBIOS[2].Frequency) ||
         (gRAM.SMBIOS[0].ModuleSize != gRAM.SMBIOS[2].ModuleSize)) {
-      wrongSMBIOSBanks = ((gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[1].InUse) &&
+      wrongSMBIOSBanks = (gRAM.SMBIOS[0].InUse &&
+                          (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[1].InUse) &&
                           (gRAM.SMBIOS[0].Frequency == gRAM.SMBIOS[1].Frequency) &&
                           (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[1].ModuleSize));
     }
