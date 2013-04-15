@@ -1778,8 +1778,8 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   for (Index = 0; Index < NUM_TABLES; Index++) {
     CHAR16* FullName = PoolPrint(L"%s\\%s", AcpiOemPath, ACPInames[Index]);
     Status = EFI_NOT_FOUND;
+    DBG("Inserting %s from %s ... ", ACPInames[Index], AcpiOemPath);
     if (FileExists(SelfRootDir, FullName)) {
-      DBG("Inserting ACPI table %s found in %s ...", ACPInames[Index], AcpiOemPath);
       Status = egLoadFile(SelfRootDir, FullName, &buffer, &bufferLen);
     }
     if(!EFI_ERROR(Status))
@@ -1793,14 +1793,8 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       //
       //       DBG("read success\n");
       Status = InsertTable((VOID*)buffer, bufferLen);
-      if(EFI_ERROR(Status)){
-        DBG("error: Insert return status %r\n", Status);
-      } else {
-        DBG("done\n");
-      }
-    } else {
-      DBG("error loading file\n");
     }
+    DBG("%r\n", Status);
   }
   
   //Slice - this is a time to patch MADT table. 
