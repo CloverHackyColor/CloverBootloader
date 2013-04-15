@@ -39,8 +39,8 @@ CONST CHAR8	oemTableID[8]  = APPLE_OEM_TABLE_ID;
 CONST CHAR8	creatorID[4]   = APPLE_CREATOR_ID;
 
 //Global pointers
-RSDT_TABLE										*Rsdt = NULL;
-XSDT_TABLE										*Xsdt = NULL;	
+RSDT_TABLE    *Rsdt = NULL;
+XSDT_TABLE    *Xsdt = NULL;
 
 //CHAR8*   orgBiosDsdt;
 UINT64    BiosDsdt;
@@ -54,37 +54,37 @@ CHAR8*    OSVersion;
 
 #define NUM_TABLES 31
 CHAR16* ACPInames[NUM_TABLES] = {
-	L"SSDT.aml",
-	L"SSDT-0.aml",
-	L"SSDT-1.aml",
-	L"SSDT-2.aml",
-	L"SSDT-3.aml",
-	L"SSDT-4.aml",
-	L"SSDT-5.aml",
-	L"SSDT-6.aml",
-	L"SSDT-7.aml",
-	L"SSDT-8.aml",
-	L"SSDT-9.aml",
-	L"SSDT-10.aml",
-	L"SSDT-11.aml",
-	L"SSDT-12.aml",
-	L"SSDT-13.aml",
-	L"SSDT-14.aml",
-	L"SSDT-15.aml",
-	L"SSDT-16.aml",
-	L"SSDT-17.aml",
-	L"SSDT-18.aml",
-	L"SSDT-19.aml",
-	L"APIC.aml",
-	L"BOOT.aml",
-  L"DMAR.aml",
-  L"ECDT.aml",
-	L"HPET.aml",
-	L"MCFG.aml",
-	L"SLIC.aml",
-	L"SLIT.aml",
-	L"SRAT.aml",
-  L"UEFI.aml"
+    L"SSDT.aml",
+    L"SSDT-0.aml",
+    L"SSDT-1.aml",
+    L"SSDT-2.aml",
+    L"SSDT-3.aml",
+    L"SSDT-4.aml",
+    L"SSDT-5.aml",
+    L"SSDT-6.aml",
+    L"SSDT-7.aml",
+    L"SSDT-8.aml",
+    L"SSDT-9.aml",
+    L"SSDT-10.aml",
+    L"SSDT-11.aml",
+    L"SSDT-12.aml",
+    L"SSDT-13.aml",
+    L"SSDT-14.aml",
+    L"SSDT-15.aml",
+    L"SSDT-16.aml",
+    L"SSDT-17.aml",
+    L"SSDT-18.aml",
+    L"SSDT-19.aml",
+    L"APIC.aml",
+    L"BOOT.aml",
+    L"DMAR.aml",
+    L"ECDT.aml",
+    L"HPET.aml",
+    L"MCFG.aml",
+    L"SLIC.aml",
+    L"SLIT.aml",
+    L"SRAT.aml",
+    L"UEFI.aml"
 };
 
 //EFI_PHYSICAL_ADDRESS        *Table;
@@ -1779,7 +1779,7 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     CHAR16* FullName = PoolPrint(L"%s\\%s", AcpiOemPath, ACPInames[Index]);
     Status = EFI_NOT_FOUND;
     if (FileExists(SelfRootDir, FullName)) {
-      DBG("OEM table %s found\n", ACPInames[Index]);
+      DBG("Inserting ACPI table %s found in %s ...", ACPInames[Index], AcpiOemPath);
       Status = egLoadFile(SelfRootDir, FullName, &buffer, &bufferLen);
     }
     if(!EFI_ERROR(Status))
@@ -1792,11 +1792,15 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
       }
       //
       //       DBG("read success\n");
-      Status = InsertTable((VOID*)buffer, bufferLen);  
+      Status = InsertTable((VOID*)buffer, bufferLen);
       if(EFI_ERROR(Status)){
-        DBG("...but Insert return status %r\n", Status);
+        DBG("error: Insert return status %r\n", Status);
+      } else {
+        DBG("done\n");
       }
-    }  
+    } else {
+      DBG("error loading file\n");
+    }
   }
   
   //Slice - this is a time to patch MADT table. 
@@ -1976,7 +1980,7 @@ EFI_STATUS LoadAcpiTable
   CHAR16                *PathPatched,
   CHAR16                *TableName,
   UINT8                 **Buffer,
-  UINTN        				  *BufferLen
+  UINTN                 *BufferLen
 )
 {
   EFI_STATUS            Status;
@@ -1999,7 +2003,7 @@ EFI_STATUS LoadAcpiTable
     TmpStr = PoolPrint(L"%s\\%s", PathPatched, TableName);
     if (FileExists(SelfRootDir, TmpStr)) {
       DBG("found %s\n", TmpStr);
-      Status = egLoadFile(SelfRootDir, TmpStr, Buffer, BufferLen);        
+      Status = egLoadFile(SelfRootDir, TmpStr, Buffer, BufferLen);
     }
     FreePool(TmpStr);
   }
@@ -2209,7 +2213,7 @@ EFI_STATUS PatchACPI_OtherOS(CHAR16* OsSubdir, BOOLEAN DropSSDT)
   
   // prepare dirs that will be searched for custom ACPI tables
   AcpiOemPath = PoolPrint(L"%s\\ACPI\\%s", OEMPath, OsSubdir);
-	PathPatched   = PoolPrint(L"\\EFI\\CLOVER\\ACPI\\%s", OsSubdir);
+  PathPatched = PoolPrint(L"\\EFI\\CLOVER\\ACPI\\%s", OsSubdir);
   if (!FileExists(SelfRootDir, AcpiOemPath) && !FileExists(SelfRootDir, PathPatched))
   {
     DBG("Dir %s not found. No patching will be done.\n", OsSubdir);
