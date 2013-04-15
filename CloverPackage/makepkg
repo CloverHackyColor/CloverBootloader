@@ -10,7 +10,7 @@ echo "${revision}" > revision
 
 # Workspace = edk2/Clover/CloverPackage
 
-cp -f ../BootHFS/boot1f32-install.sh  CloverV2/doc/boot1f32-install.sh
+cp -f ../BootHFS/boot1f32-install.sh  CloverV2/EFI/Clover/doc/boot1f32-install.sh
 
 # Workspace = edk2/Clover/CloverPackage
 # Prepare i386 for building package installer.

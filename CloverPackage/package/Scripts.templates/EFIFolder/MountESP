@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DEST_VOL="$1"
-ESPMountPoint="$2"
+ESPMountPoint="${2:-/tmp/ESP}"
 
 ESPDevice=$(LC_ALL=C diskutil info "$DEST_VOL" 2>/dev/null | \
  sed -n 's/.*Part of Whole: *//p')
@@ -12,7 +12,6 @@ fi
 
 # Get the name of the ESP device (aka disk3s1)
 ESPDevice=$(echo "$ESPDevice" | sed -E 's@^.*/?(disk[0-9]*).*@\1s1@')
-echo "ESPDevice=$ESPDevice"
 
 [[ ! -d "${ESPMountPoint}" ]] && mkdir -p "${ESPMountPoint}"
 
@@ -23,8 +22,20 @@ umount "${ESPMountPoint}" &>/dev/null
 exitcode=1
 fstype=$(fstyp /dev/$ESPDevice)
 if [[ -n "$fstype" ]]; then
-    mount -t $fstype /dev/$ESPDevice "${ESPMountPoint}" &>/dev/null
+    mount -t $fstype /dev/$ESPDevice "${ESPMountPoint}" 2>&1
     exitcode=$?
+fi
+
+if [[ $exitcode -ne 0 ]]; then
+    echo
+    echo "ERROR: can't mount ESP partition ($ESPDevice) !"
+    echo "Check that the partition is well formated in HFS or Fat32."
+    echo
+    echo "To format as HFS use command like:"
+    echo "sudo newfs_hfs -v EFI /dev/r$ESPDevice"
+    echo
+    echo "For format as Fat32 use command like:"
+    echo "sudo newfs_msdos -v EFI -F 32 /dev/r$ESPDevice"
 fi
 
 exit $exitcode

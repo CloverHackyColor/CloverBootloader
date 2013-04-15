@@ -517,7 +517,7 @@ main ()
                        ${choiceId}
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
     addChoice --group="Bootloader"                                         \
-              --start-selected="choicePreviouslySelected('$packageRefId') || !checkBootFromUEFI()" \
+              --start-selected="choicePreviouslySelected('$packageRefId') || checkBootFromUEFI()" \
               --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
 # End build bootNo package
 
@@ -546,19 +546,6 @@ main ()
               --start-selected="choicePreviouslySelected('$packageRefId')" \
               --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
 # End build boot0hfs package
-
-# build bootUEFI package
-    choiceId="bootUEFI"
-    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
-    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
-    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
-                       --subst="INSTALLER_CHOICE=$packageRefId"      \
-                       ${choiceId}
-    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
-    addChoice --group="Bootloader"                    \
-              --start-selected="checkBootFromUEFI()"  \
-              --pkg-refs="$packageRefId" "${choiceId}"
-# End build bootUEFI package
 
 # Create CloverEFI Node
     echo "======================= CloverEFI ========================"

@@ -52,8 +52,8 @@ target_esp=$($plistbuddy -c "Print $installer_target_esp_refid" \
  "$CLOVER_INSTALLER_PLIST_NEW" 2>/dev/null)
 rm -f "$EFI_ROOT_DIR"
 if [[ "$target_esp" == true ]]; then
-	./MountESP "$DEST_VOL" "$EFI_MOUNT_POINT"
-	ln -sf "$EFI_MOUNT_POINT" "$EFI_ROOT_DIR"
+    ./MountESP "$DEST_VOL" "$EFI_MOUNT_POINT" >> "$install_log" || exit 1
+    ln -sf "$EFI_MOUNT_POINT" "$EFI_ROOT_DIR"
 else
     ln -sf "$DEST_VOL" "$EFI_ROOT_DIR"
 fi

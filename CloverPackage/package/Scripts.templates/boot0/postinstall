@@ -150,8 +150,6 @@ MAKEACTIVE
 partitionactive=$( /usr/local/bin/fdisk440 -d ${bootrdisk} | grep -n "*" | awk -F: '{print $1}')
 echo "New Active Partition: ${partitionactive}" >> "$install_log"
 
-echo "${diskloader}" > "${DEST_VOL}/boot0type"
-
 # Mark that the option was selected
 /usr/libexec/plistbuddy -c "Add $installer_choice bool true" "$CLOVER_INSTALLER_PLIST_NEW" >/dev/null
 

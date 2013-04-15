@@ -63,7 +63,6 @@ if [[ -f "$CLOVER_INSTALLER_PLIST_NEW" ]]; then
     mv -f "$CLOVER_INSTALLER_PLIST_NEW" "$CLOVER_INSTALLER_PLIST"
 fi
 
-rm -f "${DEST_VOL}/boot0type"
 rm -f "${DEST_VOL}/boottype"
 rm -f "${DEST_VOL}/formattype"
 
