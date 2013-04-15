@@ -435,7 +435,7 @@ main ()
 
 # Check if we have compile IA32 version
     local add_ia32=0
-    [[ -f "${SRCROOT}/CloverV2/EFI/BOOT/CLOVERIA32.efi" ]] && add_ia32=1
+    [[ -f "${SRCROOT}/CloverV2/EFI/Clover/CLOVERIA32.efi" ]] && add_ia32=1
 
 # build EFI target
     echo "=================== BiosBoot ==========================="
