@@ -278,8 +278,10 @@ addChoice () {
                        shift; choiceOptions="$choiceOptions enabled=\"${option#*=}\"" ;;
             --selected=*)
                        shift; choiceOptions="$choiceOptions selected=\"${option#*=}\"" ;;
+            --visible=*)
+                       shift; choiceOptions="$choiceOptions visible=\"${option#*=}\"" ;;
             --pkg-refs=*)
-                          shift; pkgrefs=${option#*=} ;;
+                       shift; pkgrefs=${option#*=} ;;
             -*)
                 echo "Unrecognized addChoice option '$option'" >&2
                 exit 1
@@ -508,12 +510,27 @@ main ()
     addGroupChoices --exclusive_one_choice "Bootloader"
     echo "===================== BootLoaders ======================"
     packagesidentity="$clover_package_identity".bootloader
+# build alternative booting package
+    choiceId="AltBoot"
+    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+    altbootRefId=$packageRefId
+    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" \
+                       --subst="INSTALLER_CHOICE=$packageRefId"     \
+                       MarkChoice
+    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
+    addChoice --start-selected="choicePreviouslySelected('$packageRefId')"           \
+              --visible="choices['boot0'].selected || choices['boot0hfs'].selected"  \
+              --pkg-refs="$packageRefId" "${choiceId}"
+# End alternative booting package
+
 # build bootNo package
     choiceId="bootNo"
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
-    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
-                       --subst="INSTALLER_CHOICE=$packageRefId"      \
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"     \
+                       --subst="INSTALLER_CHOICE=$packageRefId"         \
+                       --subst="INSTALLER_ALTBOOT_REFID=$altbootRefId"  \
                        ${choiceId}
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
     addChoice --group="Bootloader"                                         \
@@ -525,8 +542,9 @@ main ()
     choiceId="boot0"
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
-    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
-                       --subst="INSTALLER_CHOICE=$packageRefId"      \
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"     \
+                       --subst="INSTALLER_CHOICE=$packageRefId"         \
+                       --subst="INSTALLER_ALTBOOT_REFID=$altbootRefId"  \
                        ${choiceId}
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
     addChoice --group="Bootloader"                                         \
@@ -538,14 +556,16 @@ main ()
     choiceId="boot0hfs"
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
-    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
-                       --subst="INSTALLER_CHOICE=$packageRefId"      \
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"     \
+                       --subst="INSTALLER_CHOICE=$packageRefId"         \
+                       --subst="INSTALLER_ALTBOOT_REFID=$altbootRefId"  \
                        ${choiceId}
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
     addChoice --group="Bootloader"                                         \
               --start-selected="choicePreviouslySelected('$packageRefId')" \
               --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
 # End build boot0hfs package
+
 
 # Create CloverEFI Node
     echo "======================= CloverEFI ========================"

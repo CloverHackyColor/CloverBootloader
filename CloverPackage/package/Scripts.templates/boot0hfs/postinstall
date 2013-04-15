@@ -1,14 +1,14 @@
 #!/bin/bash
 
 diskloader="boot0hfs"
-partitionloaderhfs="boot1h2"
-partitionloaderfat="boot1f32alt"
 
 DEST_VOL="${3}"
 EFI_ROOT_DIR="${DEST_VOL}/EFIROOTDIR"
 CLOVER_INSTALLER_PLIST_NEW="${DEST_VOL}@CLOVER_INSTALLER_PLIST_NEW@"
 install_log="${DEST_VOL}/Clover_Install_Log.txt"
+plistbuddy='/usr/libexec/plistbuddy'
 installer_choice="@INSTALLER_CHOICE@"
+installer_altboot_refid='@INSTALLER_ALTBOOT_REFID@'
 
 bootvolume="$EFI_ROOT_DIR"
 echo "Boot Volume is $bootvolume"
@@ -72,6 +72,17 @@ if [ "$( fstyp ${bootdev} | grep msdos )" ]; then
 	efiformat="msdos"
 fi 
 echo "-----------------------------------------------"
+
+# Get the options for alternative booting
+altBoot=$($plistbuddy -c "Print $installer_altboot_refid" \
+ "$CLOVER_INSTALLER_PLIST_NEW" 2>/dev/null)
+if [[ "$altBoot" == true ]]; then
+    partitionloaderhfs="boot1h2"
+    partitionloaderfat="boot1f32alt"
+else
+    partitionloaderhfs="boot1h"
+    partitionloaderfat="boot1f32"
+fi
 
 echo "======================================================" >> "$install_log"
 echo "Installing BootSectors/BootLoader" >> "$install_log"
