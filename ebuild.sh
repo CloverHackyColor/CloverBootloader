@@ -398,6 +398,13 @@ MainPostBuildScript() {
         # Create CloverEFI file
         dd if="${BUILD_DIR}"/FV/Efildr20 of="${BUILD_DIR}"/FV/boot bs=512 skip=1
 
+        # Be sure that all needed directories exists
+        mkdir -p "$CLOVER_PKG_DIR"/Bootloaders/x64
+        mkdir -p "$CLOVER_PKG_DIR"/EFI/Clover/drivers64
+        mkdir -p "$CLOVER_PKG_DIR"/EFI/Clover/drivers64UEFI
+        mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/drivers64
+        mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/drivers64UEFI
+
         # Install CloverEFI file
         cp -v "${BUILD_DIR}"/FV/boot "$CLOVER_PKG_DIR"/Bootloaders/x64/$cloverEFIFile
 
