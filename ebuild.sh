@@ -259,12 +259,18 @@ MainBuildScript() {
     if [[ "$TARGETRULE" == cleanpkg ]]; then
         # Make some house cleaning
         echo "Cleaning packaging files..."
-        find "$CLOVER_PKG_DIR"/Bootloaders/{ia32,x64}/ -mindepth 1 -not -path "**/.svn*" -delete
-        find "$CLOVER_PKG_DIR"/EFI/BOOT/ -name '*.efi' -mindepth 1 -not -path "**/.svn*" -delete
-        find "$CLOVER_PKG_DIR"/EFI/CLOVER/ -name '*.efi' -maxdepth 1 -not -path "**/.svn*" -delete
-        find "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers* -mindepth 1 -not -path "**/.svn*" -delete
-        find "$CLOVER_PKG_DIR"/drivers-Off/drivers* -mindepth 1 -not -path "**/.svn*" -delete
-        echo "Done!"
+        find  "$CLOVER_PKG_DIR"/Bootloaders/{ia32,x64}/ -mindepth 1 -not -path "**/.svn*" -delete
+        if [[ -d "$CLOVER_PKG_DIR"/EFI/BOOT ]]; then
+            find  "$CLOVER_PKG_DIR"/EFI/BOOT/ -name '*.efi' -mindepth 1 -not -path "**/.svn*" -delete
+            rmdir "$CLOVER_PKG_DIR"/EFI/BOOT &>/dev/null
+        fi
+        if [[ -d "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers* ]]; then
+            find  "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers* -mindepth 1 -not -path "**/.svn*" -delete
+            rmdir "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers* &>/dev/null
+        fi
+        find  "$CLOVER_PKG_DIR"/drivers-Off/drivers* -mindepth 1 -not -path "**/.svn*" -delete
+        find  "$CLOVER_PKG_DIR"/EFI/CLOVER/ -name '*.efi' -maxdepth 1 -not -path "**/.svn*" -delete
+        echo  "Done!"
         exit $?
     elif [[ "$TARGETRULE" == clean || "$TARGETRULE" == cleanall ]]; then
         build -p $PLATFORMFILE -a $TARGETARCH -b $BUILDTARGET \
@@ -349,6 +355,7 @@ MainPostBuildScript() {
          "${BUILD_DIR}"/FV/Efildr32 > "${BUILD_DIR}"/FV/boot
 
         mkdir -p "$CLOVER_PKG_DIR"/Bootloaders/ia32
+        mkdir -p "$CLOVER_PKG_DIR"/EFI/BOOT
         mkdir -p "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers32
         mkdir -p "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers32UEFI
         mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/drivers32
@@ -400,6 +407,7 @@ MainPostBuildScript() {
 
         # Be sure that all needed directories exists
         mkdir -p "$CLOVER_PKG_DIR"/Bootloaders/x64
+        mkdir -p "$CLOVER_PKG_DIR"/EFI/BOOT
         mkdir -p "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64
         mkdir -p "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers64UEFI
         mkdir -p "$CLOVER_PKG_DIR"/drivers-Off/drivers64
