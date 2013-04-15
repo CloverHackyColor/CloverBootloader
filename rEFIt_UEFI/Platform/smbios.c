@@ -65,7 +65,7 @@ UINT32			MaxMemory = 0;
 UINT32			mTotalSystemMemory;
 UINT64      gTotalMemory;
 UINT16			mHandle3;
-UINT16			mHandle16 = 0x1030;
+UINT16			mHandle16 = 0x1000;
 UINT16			mHandle17[MAX_RAM_SLOTS];
 UINT16			mHandle19;
 UINT16			mMemory17[MAX_RAM_SLOTS];
@@ -1083,6 +1083,9 @@ VOID GetTableType17()
          gRAM.SMBIOS[Index].InUse = TRUE;
          gRAM.SMBIOS[Index].ModuleSize = SmbiosTable.Type17->Size;
          gRAM.SMBIOS[Index].Frequency = SmbiosTable.Type17->Speed;
+         gRAM.SMBIOS[Index].Vendor = GetSmbiosString(SmbiosTable, SmbiosTable.Type17->Manufacturer);
+         gRAM.SMBIOS[Index].SerialNo = GetSmbiosString(SmbiosTable, SmbiosTable.Type17->SerialNumber);
+         gRAM.SMBIOS[Index].PartNo = GetSmbiosString(SmbiosTable, SmbiosTable.Type17->PartNumber);
       }
 //		DBG("CntMemorySlots = %d\n", gDMI->CntMemorySlots)
 //		DBG("gDMI->MemoryModules = %d\n", gDMI->MemoryModules)
@@ -1262,7 +1265,7 @@ VOID PatchTableType17()
   // Memory Device
   //
   gRAMCount = 0;
-	for (Index = 0; Index < MAX_RAM_SLOTS; Index++) {
+  for (Index = 0; Index < MAX_RAM_SLOTS; Index++) {
     UINTN SMBIOSIndex = wrongSMBIOSBanks ? Index : channelMap[Index];
     UINTN SPDIndex = channelMap[Index];
     UINT8 bank = (UINT8)Index / channels;
@@ -1274,6 +1277,22 @@ VOID PatchTableType17()
     if (trustSMBIOS && gRAM.SMBIOS[SMBIOSIndex].InUse && (SmbiosTable.Raw != NULL)) {
       TableSize = SmbiosTableLength(SmbiosTable);
       CopyMem((VOID*)newSmbiosTable.Type17, (VOID *)SmbiosTable.Type17, TableSize);
+      newSmbiosTable.Type17->AssetTag = 0;
+      if (iStrLen(gRAM.SMBIOS[SMBIOSIndex].Vendor, 64) > 0) {
+        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.SMBIOS[SMBIOSIndex].Vendor);
+      } else {
+        newSmbiosTable.Type17->Manufacturer = 0;
+      }
+      if (iStrLen(gRAM.SMBIOS[SMBIOSIndex].SerialNo, 64) > 0) {
+        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, gRAM.SMBIOS[SMBIOSIndex].SerialNo);
+      } else {
+        newSmbiosTable.Type17->SerialNumber = 0;
+      }
+      if (iStrLen(gRAM.SMBIOS[SMBIOSIndex].PartNo, 64) > 0) {
+        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gRAM.SMBIOS[SMBIOSIndex].PartNo);
+      } else {
+        newSmbiosTable.Type17->PartNumber = 0;
+      }
     } else {
       ZeroMem((VOID*)newSmbiosTable.Type17, MAX_TABLE_SIZE);
       newSmbiosTable.Type17->Hdr.Type = EFI_SMBIOS_TYPE_MEMORY_DEVICE;
@@ -1282,8 +1301,9 @@ VOID PatchTableType17()
       newSmbiosTable.Type17->DataWidth = 0xFFFF;
     }
     Once = TRUE;
-    newSmbiosTable.Type17->Hdr.Handle = (UINT16)(0x1130 + Index);
+    newSmbiosTable.Type17->Hdr.Handle = (UINT16)(0x1100 + Index);
     newSmbiosTable.Type17->FormFactor = gMobile ? MemoryFormFactorSodimm : MemoryFormFactorDimm;
+    newSmbiosTable.Type17->TypeDetail.Synchronous = TRUE;
     newSmbiosTable.Type17->DeviceSet = bank + 1;
     newSmbiosTable.Type17->MemoryArrayHandle = mHandle16;
 
@@ -1313,8 +1333,8 @@ VOID PatchTableType17()
 
     //now I want to update deviceLocator and bankLocator
     if (isMacPro) {
-       AsciiSPrint(deviceLocator, 10, "DIMM%d", gRAMCount + 1);
-       UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
+      AsciiSPrint(deviceLocator, 10, "DIMM%d", gRAMCount + 1);
+      UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
     } else {
       AsciiSPrint(deviceLocator, 10, "DIMM%d", bank);
       AsciiSPrint(bankLocator, 10, "BANK%d", Index % channels);
