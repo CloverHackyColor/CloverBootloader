@@ -433,20 +433,30 @@
   MdeModulePkg/Application/HelloWorld/HelloWorld.inf
   #MdeModulePkg/Application/VariableInfo/VariableInfo.inf
 !ifdef DEBUG_ON_SERIAL_PORT
-  Clover/rEFIt_UEFI/refit.inf {
-     #
+
+	Clover/rEFIt_UEFI/refit.inf {
+  
+	#
      # Enable debug output.
      #
-     <PcdsFixedAtBuild>
-       gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x07
-       gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
-     <LibraryClasses>
-      SerialPortLib|MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550.inf
-      DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
-      DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
-   }
+
+	<PcdsFixedAtBuild>
+ 
+		gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x07
+ 
+		gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0xFFFFFFFF
+
+	<LibraryClasses>
+ 
+		SerialPortLib|MdeModulePkg/Library/BaseSerialPortLib16550/BaseSerialPortLib16550.inf
+
+		DebugLib|MdePkg/Library/BaseDebugLibSerialPort/BaseDebugLibSerialPort.inf
+
+	DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
+	}
 !else
-  Clover/rEFIt_UEFI/refit.inf
+
+	Clover/rEFIt_UEFI/refit.inf
 !endif
 
 [Components.X64]
