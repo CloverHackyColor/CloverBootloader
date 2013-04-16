@@ -1778,23 +1778,21 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
   for (Index = 0; Index < NUM_TABLES; Index++) {
     CHAR16* FullName = PoolPrint(L"%s\\%s", AcpiOemPath, ACPInames[Index]);
     Status = EFI_NOT_FOUND;
-    DBG("Inserting %s from %s ... ", ACPInames[Index], AcpiOemPath);
+    // DBG("Looking for ACPI table %s from %s ... ", ACPInames[Index], AcpiOemPath);
     if (FileExists(SelfRootDir, FullName)) {
+      DBG("Inserting %s from %s ... ", ACPInames[Index], AcpiOemPath);
       Status = egLoadFile(SelfRootDir, FullName, &buffer, &bufferLen);
-    }
-    if(!EFI_ERROR(Status))
-    {
-      //before insert we should checksum it
-      if (buffer) {
-        TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)buffer;
-        TableHeader->Checksum = 0;
-        TableHeader->Checksum = (UINT8)(256-Checksum8((CHAR8*)buffer, TableHeader->Length));
+      if (!EFI_ERROR(Status)) {
+        //before insert we should checksum it
+        if (buffer) {
+          TableHeader = (EFI_ACPI_DESCRIPTION_HEADER*)buffer;
+          TableHeader->Checksum = 0;
+          TableHeader->Checksum = (UINT8)(256-Checksum8((CHAR8*)buffer, TableHeader->Length));
+        }
+        Status = InsertTable((VOID*)buffer, bufferLen);
       }
-      //
-      //       DBG("read success\n");
-      Status = InsertTable((VOID*)buffer, bufferLen);
+      DBG("%r\n", Status);
     }
-    DBG("%r\n", Status);
   }
   
   //Slice - this is a time to patch MADT table. 
