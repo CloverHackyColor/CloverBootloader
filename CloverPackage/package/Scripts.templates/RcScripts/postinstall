@@ -68,7 +68,7 @@ if [[ "$install_on_all_volumes" == true ]]; then
                     ;;
             esac
 
-            # echo "Copying $srcfile to $destfile" >> "$install_log"
+            echo "Copying $srcfile to $destfile"
             cp -pf "$srcfile" "$destfile"
             chown root:wheel "$destfile"; chmod 755 "$destfile"
 
