@@ -670,8 +670,8 @@ fi
     done
 # End build theme packages
  
-# build drivers-x32 packages
 if [[ "$add_ia32" -eq 1 ]]; then
+# build drivers-ia32 packages
     echo "===================== drivers32 ========================"
     addGroupChoices --title="Drivers32" --description="Drivers32" "Drivers32"
     packagesidentity="${clover_package_identity}".drivers32
@@ -692,8 +692,34 @@ if [[ "$add_ia32" -eq 1 ]]; then
          --start-selected="choicePreviouslySelected('$packageRefId')"  --pkg-refs="$packageRefId"  "${driverName}"
         rm -R -f "${PKG_BUILD_DIR}/${driverName}"
     done
+# End build drivers-ia32 packages
+
+# build mandatory drivers-ia32UEFI packages
+    echo "=============== drivers32 UEFI mandatory ==============="
+    packagesidentity="${clover_package_identity}".drivers32UEFI.mandatory
+    local drivers=($( find "${SRCROOT}/CloverV2/EFI/CLOVER/drivers32UEFI" -type f -name '*.efi' -depth 1 ))
+    local driverDestDir='/EFIROOTDIR/EFI/CLOVER/drivers32UEFI'
+    for (( i = 0 ; i < ${#drivers[@]} ; i++ ))
+    do
+        local driver="${drivers[$i]##*/}"
+        local driverName="${driver%.efi}"
+        ditto --noextattr --noqtn --arch i386 "${drivers[$i]}" "${PKG_BUILD_DIR}/${driverName}/Root/"
+        find "${PKG_BUILD_DIR}/${driverName}" -name '.DS_Store' -exec rm -R -f {} \; 2>/dev/null
+        fixperms "${PKG_BUILD_DIR}/${driverName}/Root/"
+
+        packageRefId=$(getPackageRefId "${packagesidentity}" "${driverName}")
+        # Add postinstall script for VboxHfs driver to remove it if HFSPlus driver exists
+        [[ "$driverName" == VboxHfs* ]] && \
+         addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverName}"   \
+                            --subst="DRIVER_NAME=$driver"                    \
+                            --subst="DRIVER_DIR=$(basename $driverDestDir)"  \
+                            "VboxHfs"
+        buildpackage "$packageRefId" "${driverName}" "${PKG_BUILD_DIR}/${driverName}" "${driverDestDir}"
+        addChoice --start-visible="false" --start-selected="true" --pkg-refs="$packageRefId"  "${driverName}"
+        rm -R -f "${PKG_BUILD_DIR}/${driverName}"
+    done
+# End build drivers-ia32UEFI packages
 fi
-# End build drivers-x32 packages
 
 # build drivers-x64 packages
     echo "===================== drivers64 ========================"
@@ -732,6 +758,12 @@ fi
         fixperms "${PKG_BUILD_DIR}/${driverName}/Root/"
 
         packageRefId=$(getPackageRefId "${packagesidentity}" "${driverName}")
+        # Add postinstall script for VboxHfs driver to remove it if HFSPlus driver exists
+        [[ "$driverName" == VboxHfs* ]] && \
+         addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverName}"   \
+                            --subst="DRIVER_NAME=$driver"                    \
+                            --subst="DRIVER_DIR=$(basename $driverDestDir)"  \
+                            "VboxHfs"
         buildpackage "$packageRefId" "${driverName}" "${PKG_BUILD_DIR}/${driverName}" "${driverDestDir}"
         addChoice --start-visible="false" --start-selected="true" --pkg-refs="$packageRefId"  "${driverName}"
         rm -R -f "${PKG_BUILD_DIR}/${driverName}"

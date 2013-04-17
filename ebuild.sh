@@ -365,6 +365,7 @@ MainPostBuildScript() {
 
         # Mandatory drivers
         cp -v "$BUILD_DIR_ARCH"/FSInject.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers32/FSInject-32.efi
+        cp -v "$BUILD_DIR_ARCH"/FSInject.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers32UEFI/FSInject-32.efi
         cp -v "$BUILD_DIR_ARCH"/OsxFatBinaryDrv.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers32UEFI/OsxFatBinaryDrv-32.efi
         cp -v "$BUILD_DIR_ARCH"/VboxHfs.efi "$CLOVER_PKG_DIR"/EFI/CLOVER/drivers32UEFI/VboxHfs-32.efi
 
