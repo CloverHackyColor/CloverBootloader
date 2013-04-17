@@ -91,6 +91,7 @@ image:
 	@cp -r -f $(CLOVERROOT)/EFI/CLOVER/drivers64 ${IMGROOT}/EFI/CLOVER/
 	@cp -r -f $(CLOVERROOT)/EFI/CLOVER/drivers64UEFI ${IMGROOT}/EFI/CLOVER/
 	@cp -r -f $(CLOVERROOT)/EFI/CLOVER/tools ${IMGROOT}/EFI/CLOVER/
+	@cp -r -f $(CLOVERROOT)/EFI/CLOVER/doc ${IMGROOT}/EFI/CLOVER/
 #	@echo "ADD drivers64"
 	@cp -f $(CLOVERROOT)/drivers-Off/drivers64/UsbMouseDxe-64.efi ${IMGROOT}/EFI/CLOVER/drivers64/
 	@cp -f $(CLOVERROOT)/drivers-Off/drivers64/Ps2MouseDxe-64.efi ${IMGROOT}/EFI/CLOVER/drivers64/
