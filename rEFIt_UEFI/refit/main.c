@@ -143,7 +143,7 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"A - О загрузчике");
         AddMenuInfoLine(&HelpMenu, L"O - Дополнительные настройки");
         AddMenuInfoLine(&HelpMenu, L"R - Теплый перезапуск");
-        AddMenuInfoLine(&HelpMenu, L"U - Выключить");
+        AddMenuInfoLine(&HelpMenu, L"U - Завершить работу в Кловере");
         break;
       case ukrainian:
         AddMenuInfoLine(&HelpMenu, L"ESC - Вийти з меню, оновити головне меню");
