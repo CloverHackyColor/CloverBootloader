@@ -67,7 +67,7 @@ EFI_DXE_SERVICES*       gDS;
 static REFIT_MENU_ENTRY MenuEntryOptions  = { L"Options", TAG_OPTIONS, 1, 0, 'O', NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone, NULL };
 static REFIT_MENU_ENTRY MenuEntryAbout    = { L"About rEFIt", TAG_ABOUT, 1, 0, 'A', NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone,  NULL };
 static REFIT_MENU_ENTRY MenuEntryReset    = { L"Restart Computer", TAG_RESET, 1, 0, 'R', NULL, NULL, {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone,  NULL };
-static REFIT_MENU_ENTRY MenuEntryShutdown = { L"Shut Down Computer", TAG_SHUTDOWN, 1, 0, 'U', NULL, NULL, {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone,  NULL };
+static REFIT_MENU_ENTRY MenuEntryShutdown = { L"Exit Clover", TAG_SHUTDOWN, 1, 0, 'U', NULL, NULL, {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone,  NULL };
 REFIT_MENU_ENTRY MenuEntryReturn   = { L"Return to Main Menu", TAG_RETURN, 0, 0, 0, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone,  NULL };
 
 static REFIT_MENU_SCREEN MainMenu    = {1, L"Main Menu", NULL, 0, NULL, 0, NULL, 0, L"Automatic boot", FALSE, FALSE, 0, 0, 0,
@@ -255,7 +255,7 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"A - About menu");
         AddMenuInfoLine(&HelpMenu, L"O - Opsi menu");
         AddMenuInfoLine(&HelpMenu, L"R - Soft Reset");
-        AddMenuInfoLine(&HelpMenu, L"U - Shutdown");
+        AddMenuInfoLine(&HelpMenu, L"U - Exit");
         break;
       case polish:
 /*        AddMenuInfoLine(&HelpMenu, L"ESC - Wyjście z podmenu, Odświeżenie głównego menu");
@@ -288,6 +288,22 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"R - Restart komputera");
         AddMenuInfoLine(&HelpMenu, L"U - Wylaczenie komputera");
         break;
+      case croatian:
+        AddMenuInfoLine(&HelpMenu, L"ESC - Izlaz iz podizbornika, Osvježi glavni izbornik");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Pomoć");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Spremi preboot.log (samo FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Spremi oem DSDT u EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Spremi modificirani DSDT u EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Spremi VideoBios u EFI/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Spremi sliku ekrana u EFI/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Izbaci označeni medij iz uređaja (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Space - Detalji o označenom boot izboru");
+        AddMenuInfoLine(&HelpMenu, L"Brojevi 1-9 - Prečac do boot izbora ");
+        AddMenuInfoLine(&HelpMenu, L"A - Izbornik o meni");
+        AddMenuInfoLine(&HelpMenu, L"O - Izbornik opcije");
+        AddMenuInfoLine(&HelpMenu, L"R - Reset rečunala");
+        AddMenuInfoLine(&HelpMenu, L"U - Isključivanje računala");
+        break;
       case korean:
         AddMenuInfoLine(&HelpMenu, L"ESC - 하위메뉴에서 나감, 메인메뉴 새로 고침");
         AddMenuInfoLine(&HelpMenu, L"F1  - 이 도움말");
@@ -319,7 +335,7 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"A - Menu About");
         AddMenuInfoLine(&HelpMenu, L"O - Menu Options");
         AddMenuInfoLine(&HelpMenu, L"R - Soft Reset");
-        AddMenuInfoLine(&HelpMenu, L"U - Shutdown");
+        AddMenuInfoLine(&HelpMenu, L"U - Exit");
         break;
     }
     HelpMenu.AnimeRun = GetAnime(&HelpMenu);
