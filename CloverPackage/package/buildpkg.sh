@@ -458,17 +458,17 @@ main ()
     packagesidentity="$clover_package_identity"
     choiceId="BiosBoot"
     if [[ "$add_ia32" -eq 1 ]]; then
-        ditto --noextattr --noqtn ${SYMROOT}/i386/ia32/boot? ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/ia32/
+        ditto --noextattr --noqtn ${SRCROOT}/CloverV2/Bootloaders/ia32/boot? ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/ia32/
     fi
-    ditto --noextattr --noqtn ${SYMROOT}/i386/x64/boot?   ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/x64/
-    ditto --noextattr --noqtn ${SYMROOT}/i386/boot0       ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
-    ditto --noextattr --noqtn ${SYMROOT}/i386/boot0md     ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
-    ditto --noextattr --noqtn ${SYMROOT}/i386/boot0hfs    ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
-    ditto --noextattr --noqtn ${SYMROOT}/i386/boot1f32    ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
-    ditto --noextattr --noqtn ${SYMROOT}/i386/boot1f32alt ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
-    ditto --noextattr --noqtn ${SYMROOT}/i386/boot1h      ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
-    ditto --noextattr --noqtn ${SYMROOT}/i386/boot1h2     ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
-    ditto --noextattr --noqtn ${SYMROOT}/i386/fdisk440    ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
+    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/Bootloaders/x64/boot?   ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/x64/
+    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot0       ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
+    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot0md     ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
+    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot0hfs    ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
+    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot1f32    ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
+    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot1f32alt ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
+    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot1h      ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
+    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot1h2     ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
+    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/fdisk440    ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
 
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
     chmod 755 "${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/fdisk440"
@@ -575,7 +575,7 @@ main ()
     fi
 
 # build cloverEFI.32 package
-if [[ -f "${SYMROOT}/i386/ia32/boot3" ]]; then
+if [[ -f "${SRCROOT}/CloverV2/Bootloaders/ia32/boot3" ]]; then
     packagesidentity="$clover_package_identity"
     choiceId="cloverEFI.32"
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
@@ -597,7 +597,7 @@ fi
 # End build cloverEFI.32 package
 
 # build cloverEFI.64.sata package
-if [[ -f "${SYMROOT}/i386/x64/boot6" ]]; then
+if [[ -f "${SRCROOT}/CloverV2/Bootloaders/x64/boot6" ]]; then
     packagesidentity="$clover_package_identity"
     choiceId="cloverEFI.64.sata"
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
@@ -619,7 +619,7 @@ fi
 # End build boot64 package
 
 # build cloverEFI.64.blockio package
-if [[ -f "${SYMROOT}/i386/x64/boot7" ]]; then
+if [[ -f "${SRCROOT}/CloverV2/Bootloaders/x64/boot7" ]]; then
     packagesidentity="$clover_package_identity"
     choiceId="cloverEFI.64.blockio"
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")

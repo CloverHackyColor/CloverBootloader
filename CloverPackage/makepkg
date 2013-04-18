@@ -20,9 +20,8 @@ if [[ -d "sym/package" && $(stat -f '%u' sym/package) -eq 0 ]]; then
 fi
 rm -rf sym
 
-mkdir -p sym/i386
-cp -Rf CloverV2/Bootloaders/* sym/i386/
-cp -f CloverV2/BootSectors/* sym/i386/
+# Create a new sym directory
+mkdir sym
 
 # Workspace = edk2/Clover/CloverPackage
 # Start to build installer.

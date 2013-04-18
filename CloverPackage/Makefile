@@ -69,8 +69,8 @@ image:
 		cp -R -f "${IMGSKELROOT}"/* "${IMGROOT}"; \
 	fi	
 	@echo "\t[CP] cdboot"
-	@cp -f ${SYMROOT}/i386/cdboot ${CDBOOT}
-	@[ ${IMAGE_WITH_IA32} -eq 0 ] || cp -f ${SYMROOT}/i386/cdboot32 ${CDBOOT32}
+	@cp -f $(SYMROOT)/i386/cdboot ${CDBOOT}
+	@[ ${IMAGE_WITH_IA32} -eq 0 ] || cp -f $(SYMROOT)/i386/cdboot32 ${CDBOOT32}
 	@echo "\t[CP] metal"
 	@cp -r -f $(CLOVERROOT)/themespkg/metal ${IMGROOT}/EFI/CLOVER/themes/
 	@echo "\t[CP] CLOVERX64"
@@ -110,14 +110,14 @@ image:
 	@echo "\t[CP] boot"
 	@cp -f $(CLOVERROOT)/Bootloaders/x64/boot? ${IMGROOT}/usr/standalone/i386/x64/
 	@[ ${IMAGE_WITH_IA32} -eq 0 ] || cp -f $(CLOVERROOT)/Bootloaders/ia32/boot? ${IMGROOT}/usr/standalone/i386/ia32/
-	@cp -f ${SYMROOT}/i386/boot0 ${IMGROOT}/usr/standalone/i386
-	@cp -f ${SYMROOT}/i386/boot0hfs ${IMGROOT}/usr/standalone/i386
-	@cp -f ${SYMROOT}/i386/boot0md ${IMGROOT}/usr/standalone/i386
-	@cp -f ${SYMROOT}/i386/boot1h  ${IMGROOT}/usr/standalone/i386
-	@cp -f ${SYMROOT}/i386/boot1h2 ${IMGROOT}/usr/standalone/i386
-	@cp -f ${SYMROOT}/i386/boot1f32alt ${IMGROOT}/usr/standalone/i386
+	@cp -f ${CLOVERROOT}/BootSectors/boot0    ${IMGROOT}/usr/standalone/i386
+	@cp -f ${CLOVERROOT}/BootSectors/boot0hfs ${IMGROOT}/usr/standalone/i386
+	@cp -f ${CLOVERROOT}/BootSectors/boot0md  ${IMGROOT}/usr/standalone/i386
+	@cp -f ${CLOVERROOT}/BootSectors/boot1h   ${IMGROOT}/usr/standalone/i386
+	@cp -f ${CLOVERROOT}/BootSectors/boot1h2  ${IMGROOT}/usr/standalone/i386
+	@cp -f ${CLOVERROOT}/BootSectors/boot1f32alt ${IMGROOT}/usr/standalone/i386
 #ifdef CONFIG_FDISK440
-	@cp -f ${SYMROOT}/i386/fdisk440 ${IMGROOT}/usr/bin
+	@cp -f ${CLOVERROOT}/BootSectors/fdisk440 ${IMGROOT}/usr/bin
 #endif
 	@rm -rf ${IMGROOT}/.s*
 	@rm -rf ${IMGROOT}/*/.s*
