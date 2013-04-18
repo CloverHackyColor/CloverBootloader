@@ -570,9 +570,7 @@ main ()
 # Create CloverEFI Node
     echo "======================= CloverEFI ========================"
     nb_cloverEFI=$(find "${SRCROOT}"/CloverV2/Bootloaders -type f -name 'boot?' | wc -l)
-    if [[ "$nb_cloverEFI" -ge 2 ]]; then
-        addGroupChoices --exclusive_one_choice "CloverEFI"
-    fi
+    addGroupChoices --exclusive_one_choice "CloverEFI"
 
 # build cloverEFI.32 package
 if [[ -f "${SRCROOT}/CloverV2/Bootloaders/ia32/boot3" ]]; then
@@ -586,12 +584,9 @@ if [[ -f "${SRCROOT}/CloverV2/Bootloaders/ia32/boot3" ]]; then
                        --subst="INSTALLER_CHOICE=$packageRefId"      \
                        CloverEFI
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    local choiceOptions=()
-    if [[ "$nb_cloverEFI" -ge 2 ]]; then
-        choiceOptions=(--group="CloverEFI" --start-selected="choicePreviouslySelected('$packageRefId')")
-    else
-        choiceOptions=(--start-visible="false" --start-selected="true")
-    fi
+    local choiceOptions=(--group="CloverEFI")
+    [[ "$nb_cloverEFI" -ge 2 ]] && \
+     choiceOptions+=(--start-selected="choicePreviouslySelected('$packageRefId')")
     addChoice ${choiceOptions[@]} --pkg-refs="$packageRefId" "${choiceId}"
 fi
 # End build cloverEFI.32 package
@@ -608,12 +603,9 @@ if [[ -f "${SRCROOT}/CloverV2/Bootloaders/x64/boot6" ]]; then
                        --subst="INSTALLER_CHOICE=$packageRefId"      \
                        CloverEFI
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    local choiceOptions=()
-    if [[ "$nb_cloverEFI" -ge 2 ]]; then
-        choiceOptions=(--group="CloverEFI" --start-selected="true")
-    else
-        choiceOptions=(--start-visible="false" --start-selected="true")
-    fi
+    local choiceOptions=(--group="CloverEFI")
+    [[ "$nb_cloverEFI" -ge 2 ]] && \
+     choiceOptions+=(--start-selected="choicePreviouslySelected('$packageRefId')")
     addChoice ${choiceOptions[@]} --pkg-refs="$packageRefId" "${choiceId}"
 fi
 # End build boot64 package
@@ -630,12 +622,9 @@ if [[ -f "${SRCROOT}/CloverV2/Bootloaders/x64/boot7" ]]; then
                        --subst="INSTALLER_CHOICE=$packageRefId"      \
                        CloverEFI
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    local choiceOptions=()
-    if [[ "$nb_cloverEFI" -ge 2 ]]; then
-        choiceOptions=(--group="CloverEFI" --start-selected="choicePreviouslySelected('$packageRefId')")
-    else
-        choiceOptions=(--start-visible="false" --start-selected="true")
-    fi
+    local choiceOptions=(--group="CloverEFI")
+    [[ "$nb_cloverEFI" -ge 2 ]] && \
+     choiceOptions+=(--start-selected="choicePreviouslySelected('$packageRefId')")
     addChoice ${choiceOptions[@]} --pkg-refs="$packageRefId" "${choiceId}"
 fi
 # End build cloverEFI.64.blockio package
