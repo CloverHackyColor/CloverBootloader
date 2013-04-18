@@ -75,6 +75,8 @@ declare -r CLOVER_INSTALLER_PLIST="/Library/Preferences/com.projectosx.clover.in
 declare -a pkgrefs
 declare -a choice_key
 declare -a choice_options
+declare -a choice_selected
+declare -a choice_force_selected
 declare -a choice_title
 declare -a choive_description
 declare -a choice_pkgrefs
@@ -257,6 +259,8 @@ addChoice () {
     local description=""
     local groupChoice=""
     local choiceOptions=""
+    local choiceSelected=""
+    local choiceForceSelected=""
     local pkgrefs=""
 
     # Check the arguments.
@@ -277,7 +281,9 @@ addChoice () {
             --enabled=*)
                        shift; choiceOptions="$choiceOptions enabled=\"${option#*=}\"" ;;
             --selected=*)
-                       shift; choiceOptions="$choiceOptions selected=\"${option#*=}\"" ;;
+                       shift; choiceSelected="${option#*=}" ;;
+            --force-selected=*)
+                       shift; choiceForceSelected="${option#*=}" ;;
             --visible=*)
                        shift; choiceOptions="$choiceOptions visible=\"${option#*=}\"" ;;
             --pkg-refs=*)
@@ -323,6 +329,8 @@ addChoice () {
     choice_title[$idx]="${title:-${choiceId}_title}"
     choice_description[$idx]="${description:-${choiceId}_description}"
     choice_options[$idx]=$(trim "${choiceOptions}") # Removing leading and trailing whitespace(s)
+    choice_selected[$idx]=$(trim "${choiceSelected}") # Removing leading and trailing whitespace(s)
+    choice_force_selected[$idx]=$(trim "${choiceForceSelected}") # Removing leading and trailing whitespace(s)
     choice_parent_group_index[$idx]=$idx_group
     choice_pkgrefs[$idx]="$pkgrefs"
 
@@ -1078,6 +1086,8 @@ generateChoices() {
         local choiceOptions=${choice_options[$idx]}
         local choiceParentGroupIndex=${choice_parent_group_index[$idx]}
         set +u; local group_exclusive=${choice_group_exclusive[$choiceParentGroupIndex]}; set -u
+        local selected_option="${choice_selected[$idx]}"
+        local exclusive_option=""
 
         # Create the node and standard attributes
         local choiceNode="\t<choice\n\t\tid=\"${choiceId}\"\n\t\ttitle=\"${choiceTitle}\"\n\t\tdescription=\"${choiceDescription}\""
@@ -1090,15 +1100,36 @@ generateChoices() {
             local group_items="${choice_group_items[$choiceParentGroupIndex]}"
             case $group_exclusive in
                 exclusive_one_choice)
-                    local selected_option=$(exclusive_one_choice "$choiceId" "$group_items") ;;
+                    local exclusive_option=$(exclusive_one_choice "$choiceId" "$group_items")
+                    if [[ -n "$selected_option" ]];then
+                        selected_option="($selected_option) &amp;&amp; $exclusive_option"
+                    else
+                        selected_option="$exclusive_option"
+                    fi
+                    ;;
                 exclusive_zero_or_one_choice)
-                    local selected_option=$(exclusive_zero_or_one_choice "$choiceId" "$group_items") ;;
+                    local exclusive_option=$(exclusive_zero_or_one_choice "$choiceId" "$group_items")
+                    if [[ -n "$selected_option" ]];then
+                        selected_option="($selected_option) &amp;&amp; $exclusive_option"
+                    else
+                        selected_option="$exclusive_option"
+                    fi
+                    ;;
                 *) echo "Error: unknown function to generate exclusive mode '$group_exclusive' for group '${choice_key[$choiceParentGroupIndex]}'" >&2
                    exit 1
                    ;;
             esac
-            choiceNode="${choiceNode}\n\t\tselected=\"$selected_option\""
         fi
+
+        if [[ -n "${choice_force_selected[$idx]}" ]]; then
+            if [[ -n "$selected_option" ]]; then
+                selected_option="(${choice_force_selected[$idx]}) || $selected_option"
+            else
+                selected_option="${choice_force_selected[$idx]}"
+            fi
+        fi
+
+        [[ -n "$selected_option" ]] && choiceNode="${choiceNode}\n\t\tselected=\"$selected_option\""
 
         choiceNode="${choiceNode}>"
 
