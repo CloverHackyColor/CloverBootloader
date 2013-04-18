@@ -32,6 +32,9 @@ USE_BIOS_BLOCKIO=0
 set -e # errexit
 set -u # Blow on unbound variable
 
+# Go to the script directory to build
+cd "$(dirname $0)"
+
 ## FUNCTIONS ##
 
 print_option_help () {

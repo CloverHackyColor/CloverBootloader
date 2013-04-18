@@ -2,6 +2,9 @@
 
 # Workspace = edk2/Clover/CloverPackage
 
+# Go to the script directory to create the package
+cd "$(dirname $0)"
+
 version=v2
 revision=$(cat ../vers.txt)
 
