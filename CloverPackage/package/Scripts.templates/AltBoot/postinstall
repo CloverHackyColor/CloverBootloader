@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "==============================================="
-echo "BiosBoot Post-Install Script"
+echo "AltBoot Post-Install Script"
 echo "==============================================="
 
 #echo "DEBUG: $ 1 = Full path to the installation package the installer app is processing: " $1
@@ -17,18 +17,10 @@ echo "preinstall: Root of system folder... $4"
 DEST_VOL="$3"
 EFI_ROOT_DIR="${DEST_VOL}/EFIROOTDIR"
 
-if [[ -d "${DEST_VOL}/usr/standalone/i386/ia32" ]]; then
-    while read -r -u3 file; do
-        cp -v "${DEST_VOL}/usr/standalone/i386/ia32/$file" "${EFI_ROOT_DIR}/"
+for file in boot3 boot6 boot7; do
+    if [[ -f "${EFI_ROOT_DIR}/$file" ]]; then
         chflags hidden "${EFI_ROOT_DIR}/$file"
-    done 3< <(ls "${DEST_VOL}/usr/standalone/i386/ia32/")
-fi
-
-if [[ -d "${DEST_VOL}/usr/standalone/i386/x64" ]]; then
-    while read -r -u3 file; do
-        cp -v "${DEST_VOL}/usr/standalone/i386/x64/$file" "${EFI_ROOT_DIR}/"
-        chflags hidden "${EFI_ROOT_DIR}/$file"
-    done 3< <(ls "${DEST_VOL}/usr/standalone/i386/x64/")
-fi
+    fi
+done
 
 exit 0
