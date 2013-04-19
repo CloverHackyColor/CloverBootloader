@@ -1092,7 +1092,7 @@ VOID GetTableType17()
         gRAM.SMBIOS[Index].InUse = TRUE;
         gRAM.SMBIOS[Index].Frequency = SmbiosTable.Type17->Speed;
       } else {
-         DBG("Ignore insane frequency value %dMHz", SmbiosTable.Type17->Speed);
+         DBG("Ignoring insane frequency value %dMHz\n", SmbiosTable.Type17->Speed);
       }
       // Fill rest of information if in use
       if (gRAM.SMBIOS[Index].InUse) {
