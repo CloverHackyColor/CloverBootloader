@@ -94,6 +94,7 @@ image:
 	@echo "\t[CP] drivers64"
 	@cp -r -f $(CLOVERROOT)/EFI/CLOVER/drivers64 ${IMGROOT}/EFI/CLOVER/
 	@cp -r -f $(CLOVERROOT)/EFI/CLOVER/drivers64UEFI ${IMGROOT}/EFI/CLOVER/
+	@cp -r -f $(CLOVERROOT)/EFI/CLOVER/kexts ${IMGROOT}/EFI/CLOVER/
 	@cp -r -f $(CLOVERROOT)/EFI/CLOVER/tools ${IMGROOT}/EFI/CLOVER/
 	@cp -r -f $(CLOVERROOT)/EFI/CLOVER/doc ${IMGROOT}/EFI/CLOVER/
 #	@echo "ADD drivers64"
