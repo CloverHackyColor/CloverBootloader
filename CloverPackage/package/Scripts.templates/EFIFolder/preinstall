@@ -29,7 +29,7 @@ else
 fi
 
 EFI_ROOT_DIR="${DEST_VOL}/EFIROOTDIR"
-EFI_MOUNT_POINT="/tmp/ESP"
+EFI_MOUNT_POINT="/Volumes/ESP"
 CLOVER_INSTALLER_PLIST_NEW="${DEST_VOL}@CLOVER_INSTALLER_PLIST_NEW@"
 install_log="${DEST_VOL}/Clover_Install_Log.txt"
 plistbuddy='/usr/libexec/plistbuddy'

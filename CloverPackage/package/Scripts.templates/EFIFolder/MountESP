@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DEST_VOL="$1"
-ESPMountPoint="${2:-/tmp/ESP}"
+ESPMountPoint="${2:-/Volumes/ESP}"
 
 ESPDevice=$(LC_ALL=C diskutil info "$DEST_VOL" 2>/dev/null | \
  sed -n 's/.*Part of Whole: *//p')
