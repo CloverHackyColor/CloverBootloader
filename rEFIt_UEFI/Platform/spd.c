@@ -237,6 +237,9 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
        {
           if ((spd[SPD_XMP_PROFILES] & 3) == 1)
           {
+            DBG("Using XMP Profile1, dropping previous frequency %dMHz\n",
+                ((dividend != 0) && (divisor != 0) && (ratio != 0)) ?
+                 ((2000 * dividend) / (divisor * ratio)) : 0);
             // Use first profile
             divisor = spd[SPD_XMP_PROF1_DIVISOR];
             dividend = spd[SPD_XMP_PROF1_DIVIDEND];
@@ -244,6 +247,9 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
           }
           else
           {
+            DBG("Using XMP Profile2, dropping previous frequency %dMHz\n",
+                ((dividend != 0) && (divisor != 0) && (ratio != 0)) ?
+                 ((2000 * dividend) / (divisor * ratio)) : 0);
             // Use second profile
             divisor = spd[SPD_XMP_PROF2_DIVISOR];
             dividend = spd[SPD_XMP_PROF2_DIVIDEND];
@@ -272,7 +278,7 @@ UINT16 getDDRspeedMhz(UINT8 * spd)
             return 1066;
         }
     }
-    return  800; // default freq for unknown types //shit! DDR1 = 533
+    return 0; // default freq for unknown types //shit! DDR1 = 533
 }
 
 #define SMST(a) ((UINT8)((spd[a] & 0xf0) >> 4))
