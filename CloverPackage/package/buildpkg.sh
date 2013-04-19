@@ -513,7 +513,6 @@ main ()
                        --subst="INSTALLER_TARGET_ESP_REFID=$installer_target_esp_refid" \
                        ${choiceId}
     rsync -r --exclude=.svn --exclude="*~" --exclude='drivers*'   \
-             --exclude='CLOVERX64.efi' --exclude='CLOVERIA32.efi' \
      ${SRCROOT}/CloverV2/EFI/ ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/
     [[ "$add_ia32" -ne 1 ]] && rm -rf ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/drivers32
     # config.plist
@@ -612,16 +611,6 @@ main ()
 
 # build cloverEFI.32 package
 if [[ -f "${SRCROOT}/CloverV2/Bootloaders/ia32/boot3" ]]; then
-    # build cloverIA32 package
-    packagesidentity="$clover_package_identity"
-    choiceId="CLOVERIA32"
-    ditto --noextattr --noqtn "${SRCROOT}"/CloverV2/EFI/CLOVER/CLOVERIA32.efi  "${PKG_BUILD_DIR}/${choiceId}/Root/"
-    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
-    cloveria32PkgRefId=$packageRefId
-    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
-    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" '/EFIROOTDIR/EFI/CLOVER'
-    # End build cloverIA32 package
-
     packagesidentity="$clover_package_identity"
     choiceId="cloverEFI.32"
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
@@ -637,21 +626,9 @@ if [[ -f "${SRCROOT}/CloverV2/Bootloaders/ia32/boot3" ]]; then
     [[ "$nb_cloverEFI" -ge 2 ]] && \
      choiceOptions+=(--start-selected="choicePreviouslySelected('$packageRefId')")
     choiceOptions+=(--selected="!choices['UEFI.only'].selected")
-    addChoice ${choiceOptions[@]} --pkg-refs="$cloveria32PkgRefId $packageRefId" "${choiceId}"
+    addChoice ${choiceOptions[@]} --pkg-refs="$packageRefId" "${choiceId}"
 fi
 # End build cloverEFI.32 package
-
-# build cloverX64 package
-if [[ -f "${SRCROOT}/CloverV2/Bootloaders/x64/boot6" || -f "${SRCROOT}/CloverV2/Bootloaders/x64/boot7" ]]; then
-    packagesidentity="$clover_package_identity"
-    choiceId="CLOVERX64"
-    ditto --noextattr --noqtn "${SRCROOT}"/CloverV2/EFI/CLOVER/CLOVERX64.efi  "${PKG_BUILD_DIR}/${choiceId}/Root/"
-    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
-    cloverx64PkgRefId=$packageRefId
-    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
-    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" '/EFIROOTDIR/EFI/CLOVER'
-fi
-# End build cloverX64 package
 
 # build cloverEFI.64.sata package
 if [[ -f "${SRCROOT}/CloverV2/Bootloaders/x64/boot6" ]]; then
@@ -670,7 +647,7 @@ if [[ -f "${SRCROOT}/CloverV2/Bootloaders/x64/boot6" ]]; then
     [[ "$nb_cloverEFI" -ge 2 ]] && \
      choiceOptions+=(--start-selected="choicePreviouslySelected('$packageRefId')")
     choiceOptions+=(--selected="!choices['UEFI.only'].selected")
-    addChoice ${choiceOptions[@]} --pkg-refs="$cloverx64PkgRefId $packageRefId" "${choiceId}"
+    addChoice ${choiceOptions[@]} --pkg-refs="$packageRefId" "${choiceId}"
 fi
 # End build boot64 package
 
@@ -691,7 +668,7 @@ if [[ -f "${SRCROOT}/CloverV2/Bootloaders/x64/boot7" ]]; then
     [[ "$nb_cloverEFI" -ge 2 ]] && \
      choiceOptions+=(--start-selected="choicePreviouslySelected('$packageRefId')")
     choiceOptions+=(--selected="!choices['UEFI.only'].selected")
-    addChoice ${choiceOptions[@]} --pkg-refs="$cloverx64PkgRefId $packageRefId" "${choiceId}"
+    addChoice ${choiceOptions[@]} --pkg-refs="$packageRefId" "${choiceId}"
 fi
 # End build cloverEFI.64.blockio package
 
