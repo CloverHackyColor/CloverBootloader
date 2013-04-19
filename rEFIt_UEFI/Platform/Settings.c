@@ -549,12 +549,14 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         if ((prop->string[0] == 'y') || (prop->string[0] == 'Y')) {
           gSettings.GeneratePStates = TRUE;
           gSettings.GenerateCStates = TRUE;
-          gSettings.EnableISS = TRUE;
-          gSettings.EnableC2 = TRUE;
-          gSettings.EnableC6 = TRUE;
-          gSettings.PluginType = 1;
-          gSettings.MinMultiplier = 8;
+          gSettings.EnableISS       = FALSE;
+    //      gSettings.EnableC2        = TRUE;
+    //      gSettings.EnableC6        = TRUE;
+          gSettings.PluginType      = 1;
+          gSettings.MinMultiplier   = 7;
           gSettings.DoubleFirstState = TRUE;
+          gSettings.DropSSDT        = TRUE;
+          gSettings.C3Latency       = 0x3E7;
         }
       }
 
@@ -1272,10 +1274,10 @@ EFI_STATUS GetRootUUID(IN REFIT_VOLUME *Volume)
 		prop = GetProperty(dict, "Root UUID");
 		if(prop != NULL)
 		{
-            AsciiStrToUnicodeStr(prop->string, Uuid);
-            Status = StrToGuidLE(Uuid, &Volume->RootUUID);            
-        }
-        FreePool(plistBuffer);
+       AsciiStrToUnicodeStr(prop->string, Uuid);
+       Status = StrToGuidLE(Uuid, &Volume->RootUUID);            
+    }
+    FreePool(plistBuffer);
 	}
 	
 	return Status;

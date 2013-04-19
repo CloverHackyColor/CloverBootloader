@@ -117,6 +117,8 @@
 		<string>0x10</string>
 		<key>FirmwareFeatures</key>
 		<string>0xC0001403</string>
+		<key>Trust</key>
+		<string>Yes</string>
 	</dict>
 	<key>CPU</key>
 	<dict>
