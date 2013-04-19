@@ -841,6 +841,10 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
         gFwFeatures = (UINT32)StrHexToUint64((CHAR16*)&UStr[0]);
       }
+      prop = GetProperty(dictPointer, "Trust");
+      if (prop) {
+        gSettings.TrustSMBIOS = ((prop->string[0] == 'y') || (prop->string[0] == 'Y'));
+      }
     }
     
     //CPU

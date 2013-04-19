@@ -123,13 +123,10 @@ rem have edk2 prepare to build
          set "ARCH_ARGUMENT="
          if x"%BUILD_ARCH%" == x"" set "ARCH_ARGUMENT=-a IA32"
 
-         echo Building CloverEFI IA32 (boot) ...
+         echo Building Clover (IA32) ...
          build -p %WORKSPACE%\Clover\Clover.dsc %ARCH_ARGUMENT% %*
          if errorlevel 1 goto failscript
 
-         echo Building CloverIA32.efi ...
-         build -p %WORKSPACE%\Clover\rEFIt_UEFI\rEFIt.dsc %ARCH_ARGUMENT% %*
-         if errorlevel 1 goto failscript
          if x"%BUILD_ARCH%" == x"IA32" (
             if not x"%CLEANING%" == x"" goto:eof
             goto postbuild
@@ -139,13 +136,10 @@ rem have edk2 prepare to build
          set "ARCH_ARGUMENT="
          if x"%BUILD_ARCH%" == x"" set "ARCH_ARGUMENT=-a X64"
 
-         echo Building CloverEFI X64 (boot) ...
+         echo Building Clover (X64) ...
          build -p %WORKSPACE%\Clover\Clover.dsc %ARCH_ARGUMENT% %*
          if errorlevel 1 goto failscript
 
-         echo Building CloverX64.efi ...
-         build -p %WORKSPACE%\Clover\rEFIt_UEFI\rEFIt.dsc %ARCH_ARGUMENT% %*
-         if errorlevel 1 goto failscript
          if not x"%CLEANING%" == x"" goto:eof
          goto postbuild
 

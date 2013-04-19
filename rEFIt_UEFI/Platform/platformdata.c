@@ -498,6 +498,7 @@ VOID GetDefaultSettings(VOID)
   gSettings.LogLineCount = 500;
   gSettings.LogEveryBoot = NULL;
   gSettings.MountEFI = NULL;
+  gSettings.TrustSMBIOS = TRUE;
   
 //  gSettings.PointerSpeed = 2;
 //  gSettings.DoubleClickTime = 500;

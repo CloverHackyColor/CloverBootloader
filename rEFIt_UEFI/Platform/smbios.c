@@ -1109,7 +1109,7 @@ VOID PatchTableType17()
   UINT8   expectedCount = 0;
   UINT8   channels = 2;
   BOOLEAN insertingEmpty = TRUE;
-  BOOLEAN trustSMBIOS = TRUE;
+  BOOLEAN trustSMBIOS = ((gRAM.SPDInUse == 0) || gSettings.TrustSMBIOS);
   BOOLEAN wrongSMBIOSBanks = FALSE;
   BOOLEAN isMacPro = FALSE;
   MACHINE_TYPES Model = GetModelFromString(gSettings.ProductName);
@@ -1322,8 +1322,7 @@ VOID PatchTableType17()
       newSmbiosTable.Type17->MemoryType = gRAM.SPD[SPDIndex].Type;
     }
     if (trustSMBIOS && gRAM.SMBIOS[SMBIOSIndex].InUse &&
-        ((newSmbiosTable.Type17->Speed < (UINT16)gRAM.SMBIOS[SPDIndex].Frequency) &&
-         (gRAM.SMBIOS[SPDIndex].Frequency < 5000))) { //Slice for now I propose RAM never be faster then 5000MHz - protection for quirky BIOS
+        (newSmbiosTable.Type17->Speed < (UINT16)gRAM.SMBIOS[SPDIndex].Frequency)) {
       newSmbiosTable.Type17->Speed = (UINT16)gRAM.SMBIOS[SPDIndex].Frequency;
     }
     // Assume DDR3 unless explicitly set to DDR2/DDR

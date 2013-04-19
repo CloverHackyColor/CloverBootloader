@@ -619,6 +619,7 @@ typedef struct {
 	UINT16	CpuType;
   // SMBIOS TYPE132
   UINT16	QPI;
+  BOOLEAN TrustSMBIOS;
   
 	// OS parameters
 	CHAR8 	Language[16];
