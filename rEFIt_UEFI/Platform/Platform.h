@@ -856,8 +856,10 @@ typedef struct {
 	CHAR8*	SerialNo;
 } RAM_SLOT_INFO; 
 
-//#define MAX_SLOT_COUNT	64
+// The maximum number of RAM slots to detect
 #define MAX_RAM_SLOTS 24
+// The maximum sane frequency for a RAM module
+#define MAX_RAM_FREQUENCY 5000
 
 typedef struct {
   

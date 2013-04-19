@@ -1075,17 +1075,29 @@ VOID GetTableType17()
 		//gDMI->CntMemorySlots++;
       if (SmbiosTable.Type17->MemoryErrorInformationHandle < 0xFFFE)
       {
-         DBG("Table has error information, skipping\n"); //why skipping?
-         continue;
+        DBG("Table has error information, skipping\n"); //why skipping?
+        // Why trust it if it has an error? I guess we could look
+        //  up the error handle and determine certain errors may
+        //  be skipped where others may not but it seems easier
+        //  to just skip all entries that have an error - apianti
+        continue;
       }
-		if ((SmbiosTable.Type17->Size > 0) || (SmbiosTable.Type17->Speed > 0)) {
-         ++(gRAM.SMBIOSInUse);
-         gRAM.SMBIOS[Index].InUse = TRUE;
-         gRAM.SMBIOS[Index].ModuleSize = SmbiosTable.Type17->Size;
-         gRAM.SMBIOS[Index].Frequency = SmbiosTable.Type17->Speed;
-         gRAM.SMBIOS[Index].Vendor = GetSmbiosString(SmbiosTable, SmbiosTable.Type17->Manufacturer);
-         gRAM.SMBIOS[Index].SerialNo = GetSmbiosString(SmbiosTable, SmbiosTable.Type17->SerialNumber);
-         gRAM.SMBIOS[Index].PartNo = GetSmbiosString(SmbiosTable, SmbiosTable.Type17->PartNumber);
+      // Determine if slot has size
+      if (SmbiosTable.Type17->Size > 0) {
+        gRAM.SMBIOS[Index].InUse = TRUE;
+        gRAM.SMBIOS[Index].ModuleSize = SmbiosTable.Type17->Size;
+      }
+      // Determine if module frequency is sane value
+      if ((SmbiosTable.Type17->Speed > 0) && (SmbiosTable.Type17->Speed <= MAX_RAM_FREQUENCY)) {
+        gRAM.SMBIOS[Index].InUse = TRUE;
+        gRAM.SMBIOS[Index].Frequency = SmbiosTable.Type17->Speed;
+      }
+      // Fill rest of information if in use
+      if (gRAM.SMBIOS[Index].InUse) {
+        ++(gRAM.SMBIOSInUse);
+        gRAM.SMBIOS[Index].Vendor = GetSmbiosString(SmbiosTable, SmbiosTable.Type17->Manufacturer);
+        gRAM.SMBIOS[Index].SerialNo = GetSmbiosString(SmbiosTable, SmbiosTable.Type17->SerialNumber);
+        gRAM.SMBIOS[Index].PartNo = GetSmbiosString(SmbiosTable, SmbiosTable.Type17->PartNumber);
       }
 //		DBG("CntMemorySlots = %d\n", gDMI->CntMemorySlots)
 //		DBG("gDMI->MemoryModules = %d\n", gDMI->MemoryModules)
@@ -1122,7 +1134,7 @@ VOID PatchTableType17()
     return;
   }
   // Detect whether the SMBIOS is trusted information
-  if ((gRAM.SPDInUse != 0) && (gRAM.SMBIOSInUse != 0)) {
+  if (trustSMBIOS && (gRAM.SPDInUse != 0) && (gRAM.SMBIOSInUse != 0)) {
     if (gRAM.SPDInUse != gRAM.SMBIOSInUse) {
       // Prefer the SPD information
       if (gRAM.SPDInUse > gRAM.SMBIOSInUse) {
@@ -1320,14 +1332,11 @@ VOID PatchTableType17()
       newSmbiosTable.Type17->Speed = (UINT16)gRAM.SPD[SPDIndex].Frequency;
       newSmbiosTable.Type17->Size = (UINT16)gRAM.SPD[SPDIndex].ModuleSize;
       newSmbiosTable.Type17->MemoryType = gRAM.SPD[SPDIndex].Type;
-      DBG("SPD speed %dMHz SPDIndex=%d\n", gRAM.SPD[SPDIndex].Frequency, SPDIndex);
     }
     if (trustSMBIOS && gRAM.SMBIOS[SMBIOSIndex].InUse &&
-        (newSmbiosTable.Type17->Speed < (UINT16)gRAM.SMBIOS[SPDIndex].Frequency) &&
-        (gRAM.SMBIOS[SPDIndex].Frequency < 5000)) { //Slice for now I propose RAM never be faster then 5000MHz - protection for quirky BIOS
-      newSmbiosTable.Type17->Speed = (UINT16)gRAM.SMBIOS[SPDIndex].Frequency;
-      DBG(" Type17->Speed corrected by SMBIOS value %dMHz\n",  gRAM.SMBIOS[SPDIndex].Frequency);
-      DBG(" Speed = %d @SMBIOSIndex = %d \n", gRAM.SMBIOS[SMBIOSIndex].Frequency, SMBIOSIndex);
+        (newSmbiosTable.Type17->Speed < (UINT16)gRAM.SMBIOS[SMBIOSIndex].Frequency)) {
+      DBG(" Type17->Speed corrected by SMBIOS from %dMHz to %dMHz\n", newSmbiosTable.Type17->Speed, gRAM.SMBIOS[SMBIOSIndex].Frequency);
+      newSmbiosTable.Type17->Speed = (UINT16)gRAM.SMBIOS[SMBIOSIndex].Frequency;
     }
     // Assume DDR3 unless explicitly set to DDR2/DDR
     if ((newSmbiosTable.Type17->MemoryType != MemoryTypeDdr2) &&
