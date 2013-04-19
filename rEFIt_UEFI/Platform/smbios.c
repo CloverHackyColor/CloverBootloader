@@ -1075,7 +1075,7 @@ VOID GetTableType17()
 		//gDMI->CntMemorySlots++;
       if (SmbiosTable.Type17->MemoryErrorInformationHandle < 0xFFFE)
       {
-         DBG("Table has error information, skipping\n");
+         DBG("Table has error information, skipping\n"); //why skipping?
          continue;
       }
 		if ((SmbiosTable.Type17->Size > 0) || (SmbiosTable.Type17->Speed > 0)) {
@@ -1188,7 +1188,7 @@ VOID PatchTableType17()
     }
   }
   if (wrongSMBIOSBanks) {
-     DBG("Detected alternating SMBIOS channel banks\n");
+    DBG("Detected alternating SMBIOS channel banks\n");
   }
   // Determine if using triple or quadruple channel
   if (gRAM.SPDInUse == 0) {
@@ -1208,21 +1208,21 @@ VOID PatchTableType17()
              (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[2].ModuleSize) &&
              (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[4].ModuleSize) &&
              (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[6].ModuleSize))) {
-          channels = 4;
-        }
+              channels = 4;
+            }
       } else if ((gRAM.SMBIOSInUse % 3) == 0) {
         // Triple channel
         if ((wrongSMBIOSBanks &&
-            (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[1].InUse) &&
-            (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[2].InUse) &&
-            (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[1].ModuleSize) &&
-            (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[2].ModuleSize)) ||
-           ((gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[2].InUse) &&
-            (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[4].InUse) &&
-            (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[2].ModuleSize) &&
-            (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[4].ModuleSize))) {
-          channels = 3;
-        }
+             (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[1].InUse) &&
+             (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[2].InUse) &&
+             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[1].ModuleSize) &&
+             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[2].ModuleSize)) ||
+            ((gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[2].InUse) &&
+             (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[4].InUse) &&
+             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[2].ModuleSize) &&
+             (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[4].ModuleSize))) {
+              channels = 3;
+            }
       }
     }
   } else if ((gRAM.SPDInUse % 4) == 0) {
@@ -1247,15 +1247,15 @@ VOID PatchTableType17()
   DBG("Channels: %d\n", channels);
   // Setup interleaved channel map
   if (channels >= 2) {
-     UINT8 doubleChannels = (UINT8)channels << 1;
-     for (Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
-       channelMap[Index] = (UINT8)(((Index / doubleChannels) * doubleChannels) +
-                                   ((Index / channels) % 2) + ((Index % channels) << 1));
-     }
+    UINT8 doubleChannels = (UINT8)channels << 1;
+    for (Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
+      channelMap[Index] = (UINT8)(((Index / doubleChannels) * doubleChannels) +
+                                  ((Index / channels) % 2) + ((Index % channels) << 1));
+    }
   } else {
-     for (Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
-        channelMap[Index] = (UINT8)Index;
-     }
+    for (Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
+      channelMap[Index] = (UINT8)Index;
+    }
   }
   DBG("Interleave:");
   for (Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
@@ -1306,7 +1306,7 @@ VOID PatchTableType17()
     newSmbiosTable.Type17->TypeDetail.Synchronous = TRUE;
     newSmbiosTable.Type17->DeviceSet = bank + 1;
     newSmbiosTable.Type17->MemoryArrayHandle = mHandle16;
-
+    
     if (gRAM.SPD[SPDIndex].InUse) {
       if (iStrLen(gRAM.SPD[SPDIndex].Vendor, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.SPD[SPDIndex].Vendor);
@@ -1320,17 +1320,21 @@ VOID PatchTableType17()
       newSmbiosTable.Type17->Speed = (UINT16)gRAM.SPD[SPDIndex].Frequency;
       newSmbiosTable.Type17->Size = (UINT16)gRAM.SPD[SPDIndex].ModuleSize;
       newSmbiosTable.Type17->MemoryType = gRAM.SPD[SPDIndex].Type;
+      DBG("SPD speed %dMHz SPDIndex=%d\n", gRAM.SPD[SPDIndex].Frequency, SPDIndex);
     }
     if (trustSMBIOS && gRAM.SMBIOS[SMBIOSIndex].InUse &&
-        (newSmbiosTable.Type17->Speed < (UINT16)gRAM.SMBIOS[SPDIndex].Frequency)) {
+        (newSmbiosTable.Type17->Speed < (UINT16)gRAM.SMBIOS[SPDIndex].Frequency) &&
+        (gRAM.SMBIOS[SPDIndex].Frequency < 5000)) { //Slice for now I propose RAM never be faster then 5000MHz - protection for quirky BIOS
       newSmbiosTable.Type17->Speed = (UINT16)gRAM.SMBIOS[SPDIndex].Frequency;
+      DBG(" Type17->Speed corrected by SMBIOS value %dMHz\n",  gRAM.SMBIOS[SPDIndex].Frequency);
+      DBG(" Speed = %d @SMBIOSIndex = %d \n", gRAM.SMBIOS[SMBIOSIndex].Frequency, SMBIOSIndex);
     }
     // Assume DDR3 unless explicitly set to DDR2/DDR
     if ((newSmbiosTable.Type17->MemoryType != MemoryTypeDdr2) &&
         (newSmbiosTable.Type17->MemoryType != MemoryTypeDdr)) {
-       newSmbiosTable.Type17->MemoryType = MemoryTypeDdr3;
+      newSmbiosTable.Type17->MemoryType = MemoryTypeDdr3;
     }
-
+    
     //now I want to update deviceLocator and bankLocator
     if (isMacPro) {
       AsciiSPrint(deviceLocator, 10, "DIMM%d", gRAMCount + 1);

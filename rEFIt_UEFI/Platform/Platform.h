@@ -845,8 +845,10 @@ typedef enum {
 } MACHINE_TYPES;
 
 typedef struct {
-   BOOLEAN	InUse;
-	UINT8    Type;
+  BOOLEAN	InUse;
+	UINT8   Type;
+  UINT16  pad0;
+  UINT32  pad1;
 	UINT32	ModuleSize;
 	UINT32	Frequency;
 	CHAR8*	Vendor;
