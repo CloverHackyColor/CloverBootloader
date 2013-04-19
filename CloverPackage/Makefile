@@ -20,7 +20,11 @@ THEME = metal
 EXCLUDE = --exclude=.svn --exclude=.DS_Store --exclude=sym --exclude=obj \
 		--exclude=package --exclude=archive --exclude=User_Guide_src --exclude=*.sh
 
-IMAGE_WITH_IA32 = 0
+ifeq ($(wildcard $(CLOVERROOT)/Bootloaders/ia32/boot3),)
+	IMAGE_WITH_IA32 = 0
+else
+	IMAGE_WITH_IA32 = 1
+endif
 
 $(SRCROOT)/revision:
 	@svnversion -n | tr -d [:alpha:] > $(SRCROOT)/revision
@@ -103,7 +107,6 @@ image:
 	@if [ ${IMAGE_WITH_IA32} -eq 1 ]; then \
 		echo "\t[CP] drivers32"; \
 		cp -r -f $(CLOVERROOT)/EFI/CLOVER/drivers32 ${IMGROOT}/EFI/CLOVER/; \
-		echo "ADD drivers32"; \
 		cp -f $(CLOVERROOT)/drivers-Off/drivers32/UsbMouseDxe-32.efi ${IMGROOT}/EFI/CLOVER/drivers32/ ; \
 		cp -f $(CLOVERROOT)/drivers-Off/drivers32/Ps2MouseDxe-32.efi ${IMGROOT}/EFI/CLOVER/drivers32/ ; \
 	fi
@@ -126,18 +129,18 @@ image:
 	@rm -rf ${IMGROOT}/*/*/*/*/.s*
 	@echo "\t[HDIUTIL] ${ISOIMAGE}"
 	@mkdir -p ${SYMROOT}/CloverISO
-	@hdiutil makehybrid -iso -joliet -hfs -hfs-volume-name \
+	@hdiutil makehybrid -iso -joliet -hfs -hfs-volume-name         \
 		${CDLABEL} -eltorito-boot ${CDBOOT} -no-emul-boot -ov -o   \
 		"${ISOIMAGE}" ${IMGROOT} -quiet 
 #	@echo "\t[LZMA] ${ISOIMAGE}"
 #	@lzma e ${ISOIMAGE} ${ISOIMAGE}.lzma
 	@mv -f ${ISOIMAGE} ${SYMROOT}/CloverISO/
-	@if [ ${IMAGE_WITH_IA32} -eq 1 ]; then \
-		echo "\t[HDIUTIL] ${ISOIMAGE32}"; \
-		hdiutil makehybrid -iso -joliet -hfs -hfs-volume-name \
+	@if [ ${IMAGE_WITH_IA32} -eq 1 ]; then                             \
+		echo "\t[HDIUTIL] ${ISOIMAGE32}";                              \
+		hdiutil makehybrid -iso -joliet -hfs -hfs-volume-name          \
 		${CDLABEL32} -eltorito-boot ${CDBOOT32} -no-emul-boot -ov -o   \
-			"${ISOIMAGE32}" ${IMGROOT} -quiet ; \
-		@mv -f ${ISOIMAGE32} ${SYMROOT}/CloverISO/ ; \
+			"${ISOIMAGE32}" ${IMGROOT} -quiet ;                        \
+		mv -f ${ISOIMAGE32} ${SYMROOT}/CloverISO/ ;                    \
 	fi
 
 #	@echo "\t[GZ] ${DISTFILE}.tgz"

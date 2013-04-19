@@ -31,7 +31,7 @@ mkdir sym
 
 make pkg
 make cdboot
-# make cdboot32
+[[ -f "CloverV2/Bootloaders/ia32/boot3" ]] && make cdboot32
 make image
 
 (cd sym ; zip Clover_${version}_r${revision}.zip \
