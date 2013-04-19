@@ -1091,6 +1091,8 @@ VOID GetTableType17()
       if ((SmbiosTable.Type17->Speed > 0) && (SmbiosTable.Type17->Speed <= MAX_RAM_FREQUENCY)) {
         gRAM.SMBIOS[Index].InUse = TRUE;
         gRAM.SMBIOS[Index].Frequency = SmbiosTable.Type17->Speed;
+      } else {
+         DBG("Ignore insane frequency value %dMHz", SmbiosTable.Type17->Speed);
       }
       // Fill rest of information if in use
       if (gRAM.SMBIOS[Index].InUse) {
@@ -1101,8 +1103,8 @@ VOID GetTableType17()
       }
 //		DBG("CntMemorySlots = %d\n", gDMI->CntMemorySlots)
 //		DBG("gDMI->MemoryModules = %d\n", gDMI->MemoryModules)
-		DBG("SmbiosTable.Type17->Speed = %d\n", SmbiosTable.Type17->Speed);
-		DBG("SmbiosTable.Type17->Size = %d\n", SmbiosTable.Type17->Size);
+		DBG("SmbiosTable.Type17->Speed = %d\n", gRAM.SMBIOS[Index].Frequency);
+		DBG("SmbiosTable.Type17->Size = %d\n", gRAM.SMBIOS[Index].ModuleSize);
       /*
 		if ((SmbiosTable.Type17->Size & 0x8000) == 0) {
 			mTotalSystemMemory += SmbiosTable.Type17->Size; //Mb
@@ -1335,7 +1337,7 @@ VOID PatchTableType17()
     }
     if (trustSMBIOS && gRAM.SMBIOS[SMBIOSIndex].InUse &&
         (newSmbiosTable.Type17->Speed < (UINT16)gRAM.SMBIOS[SMBIOSIndex].Frequency)) {
-      DBG(" Type17->Speed corrected by SMBIOS from %dMHz to %dMHz\n", newSmbiosTable.Type17->Speed, gRAM.SMBIOS[SMBIOSIndex].Frequency);
+      DBG("Type17->Speed corrected by SMBIOS from %dMHz to %dMHz\n", newSmbiosTable.Type17->Speed, gRAM.SMBIOS[SMBIOSIndex].Frequency);
       newSmbiosTable.Type17->Speed = (UINT16)gRAM.SMBIOS[SMBIOSIndex].Frequency;
     }
     // Assume DDR3 unless explicitly set to DDR2/DDR
