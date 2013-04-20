@@ -14,7 +14,7 @@
 	<key>SystemParameters</key>
 	<dict>
 		<key>boot-args</key>
-		<string>-v npci=0x2000 slide=0</string>
+		<string>-v npci=0x2000 slide=0 NoKexts</string>
 		<key>prev-lang:kbd</key>
 		<string>en:0</string>
 		<key>InjectSystemID</key>

@@ -42,7 +42,7 @@ CHAR8* AppleFirmwareVersion[] =
   "IM131.88Z.010A.B05.1209042338",
 	"MP31.88Z.006C.B05.0802291410",
 	"MP41.88Z.0081.B04.0903051113",
-	"MP51.88Z.007F.B00.1008031144"
+	"MP51.88Z.007F.B03.1010071432", //007F.B00.1008031144"
 };
 
 CHAR8* AppleBoardID[] = //Lion DR1 compatible
@@ -98,7 +98,7 @@ CHAR8* AppleReleaseDate[] =
   "09/04/2012",  //131
 	"02/29/08",
 	"03/05/09",
-	"08/03/10"
+	"10/07/10"
 };
 
 CHAR8* AppleProductName[] = 
@@ -211,7 +211,7 @@ CHAR8* AppleSerialNumber[] = //random generated
   "C02JA041DNCT", //IM131 -i5-3470S -IVY
 	"W88A77AA5J4",  //MP31 - xeon quad 02/09
 	"CT93051DK9Y",  //MP41
-	"CG154TB9WU3"   //MP51 C07J50F7F4MC  CK04000AHFC
+	"C07J77F7F4MC"   //MP51 C07J50F7F4MC  CK04000AHFC  "CG154TB9WU3"
 };
 //no! ChassisVersion == BoardID
 CHAR8* AppleChassisAsset[] = 
