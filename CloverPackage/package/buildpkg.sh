@@ -448,7 +448,7 @@ main ()
 
 # Check if we have compile IA32 version
     local add_ia32=0
-    [[ -f "${SRCROOT}/CloverV2/EFI/CLOVER/CLOVERIA32.efi" ]] && add_ia32=1
+    ls "${SRCROOT}"/CloverV2/Bootloaders/ia32/boot? &>/dev/null && add_ia32=1
 
 # build UEFI only
     echo "===================== Installation ====================="
@@ -480,9 +480,15 @@ main ()
 # End build core package
 
 # build Core package
-    echo "================== BootSectors ========================="
+    echo "=================== BiosBoot ==========================="
     packagesidentity="$clover_package_identity"
-    choiceId="BootSectors"
+    choiceId="BiosBoot"
+
+    if [[ "$add_ia32" -eq 1 ]]; then
+        ditto --noextattr --noqtn ${SRCROOT}/CloverV2/Bootloaders/ia32/boot? ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/ia32/
+    fi
+    ls "${SRCROOT}"/CloverV2/Bootloaders/x64/boot{6,7} &>/dev/null && \
+     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/Bootloaders/x64/boot?   ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/x64/
     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot0       ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot0md     ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot0hfs    ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
@@ -496,7 +502,7 @@ main ()
     chmod 755 "${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/fdisk440"
 
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
-    packageBootSectorsRefId=$packageRefId
+    packageBiosBootRefId=$packageRefId
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
     addChoice --start-visible="false" --start-selected="false" --pkg-refs="$packageRefId" "${choiceId}"
 # End build core package
@@ -537,12 +543,6 @@ main ()
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     altbootRefId=$packageRefId
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
-    [[ -f "${SRCROOT}/CloverV2/Bootloaders/ia32/boot3" ]] && \
-     ditto --noextattr --noqtn "${SRCROOT}"/CloverV2/Bootloaders/ia32/boot3 "${PKG_BUILD_DIR}/${choiceId}"/Root/
-    [[ -f "${SRCROOT}/CloverV2/Bootloaders/x64/boot6" ]] && \
-     ditto --noextattr --noqtn "${SRCROOT}"/CloverV2/Bootloaders/x64/boot6  "${PKG_BUILD_DIR}/${choiceId}"/Root/
-    [[ -f "${SRCROOT}/CloverV2/Bootloaders/x64/boot7" ]] && \
-     ditto --noextattr --noqtn "${SRCROOT}"/CloverV2/Bootloaders/x64/boot7  "${PKG_BUILD_DIR}/${choiceId}"/Root/
 
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" \
                        --subst="INSTALLER_CHOICE=$packageRefId"     \
@@ -553,7 +553,7 @@ main ()
     addChoice --start-selected="choicePreviouslySelected('$packageRefId')"                          \
               --selected="!choices['UEFI.only'].selected &amp;&amp; choices['$choiceId'].selected"  \
               --visible="choices['boot0'].selected || choices['boot0hfs'].selected"                 \
-              --pkg-refs="$packageRefId" "${choiceId}"
+              --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
 # End alternative booting package
 
 # build bootNo package
@@ -584,7 +584,7 @@ main ()
     addChoice --group="Bootloader"                                         \
               --enabled="!choices['UEFI.only'].selected"                   \
               --start-selected="choicePreviouslySelected('$packageRefId')" \
-              --pkg-refs="$packageBootSectorsRefId $packageRefId" "${choiceId}"
+              --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
 # End build boot0 package
 
 # build boot0hfs package
@@ -599,7 +599,7 @@ main ()
     addChoice --group="Bootloader"                                          \
               --enabled="!choices['UEFI.only'].selected"                    \
               --start-selected="choicePreviouslySelected('$packageRefId')"  \
-              --pkg-refs="$packageBootSectorsRefId $packageRefId" "${choiceId}"
+              --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
 # End build boot0hfs package
 
 # Create CloverEFI Node
@@ -615,7 +615,6 @@ if [[ -f "${SRCROOT}/CloverV2/Bootloaders/ia32/boot3" ]]; then
     choiceId="cloverEFI.32"
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
-    ditto --noextattr --noqtn "${SRCROOT}"/CloverV2/Bootloaders/ia32/boot3 "${PKG_BUILD_DIR}/${choiceId}"/Root/usr/standalone/i386/ia32/
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
                        --subst="CLOVER_EFI_ARCH=ia32"                \
                        --subst="CLOVER_BOOT_FILE=boot3"              \
@@ -626,7 +625,7 @@ if [[ -f "${SRCROOT}/CloverV2/Bootloaders/ia32/boot3" ]]; then
     [[ "$nb_cloverEFI" -ge 2 ]] && \
      choiceOptions+=(--start-selected="choicePreviouslySelected('$packageRefId')")
     choiceOptions+=(--selected="!choices['UEFI.only'].selected")
-    addChoice ${choiceOptions[@]} --pkg-refs="$packageRefId" "${choiceId}"
+    addChoice ${choiceOptions[@]} --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
 fi
 # End build cloverEFI.32 package
 
@@ -636,7 +635,6 @@ if [[ -f "${SRCROOT}/CloverV2/Bootloaders/x64/boot6" ]]; then
     choiceId="cloverEFI.64.sata"
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
-    ditto --noextattr --noqtn "${SRCROOT}"/CloverV2/Bootloaders/x64/boot6 "${PKG_BUILD_DIR}/${choiceId}"/Root/usr/standalone/i386/x64/
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
                        --subst="CLOVER_EFI_ARCH=x64"                 \
                        --subst="CLOVER_BOOT_FILE=boot6"              \
@@ -647,7 +645,7 @@ if [[ -f "${SRCROOT}/CloverV2/Bootloaders/x64/boot6" ]]; then
     [[ "$nb_cloverEFI" -ge 2 ]] && \
      choiceOptions+=(--start-selected="choicePreviouslySelected('$packageRefId')")
     choiceOptions+=(--selected="!choices['UEFI.only'].selected")
-    addChoice ${choiceOptions[@]} --pkg-refs="$packageRefId" "${choiceId}"
+    addChoice ${choiceOptions[@]} --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
 fi
 # End build boot64 package
 
@@ -657,7 +655,6 @@ if [[ -f "${SRCROOT}/CloverV2/Bootloaders/x64/boot7" ]]; then
     choiceId="cloverEFI.64.blockio"
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
-    ditto --noextattr --noqtn "${SRCROOT}"/CloverV2/Bootloaders/x64/boot7 "${PKG_BUILD_DIR}/${choiceId}"/Root/usr/standalone/i386/x64/
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"  \
                        --subst="CLOVER_EFI_ARCH=x64"                 \
                        --subst="CLOVER_BOOT_FILE=boot7"              \
@@ -668,7 +665,7 @@ if [[ -f "${SRCROOT}/CloverV2/Bootloaders/x64/boot7" ]]; then
     [[ "$nb_cloverEFI" -ge 2 ]] && \
      choiceOptions+=(--start-selected="choicePreviouslySelected('$packageRefId')")
     choiceOptions+=(--selected="!choices['UEFI.only'].selected")
-    addChoice ${choiceOptions[@]} --pkg-refs="$packageRefId" "${choiceId}"
+    addChoice ${choiceOptions[@]} --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
 fi
 # End build cloverEFI.64.blockio package
 

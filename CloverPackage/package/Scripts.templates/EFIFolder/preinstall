@@ -126,8 +126,11 @@ pkgs=$(/usr/sbin/pkgutil --volume "$DEST_VOL" --pkgs | /usr/bin/grep -iE '@CLOVE
 for pkg in $pkgs; do
     # Get where the files where installed from volume destination
     location=$(/usr/sbin/pkgutil --volume "$DEST_VOL" --pkg-info $pkg 2>/dev/null |  sed -n 's/^location: *//p')
-    pkgutil --volume "$DEST_VOL" --files $pkg 2>/dev/null            | \
-     xargs -I @@ echo "$DEST_VOL/$location/@@"                       | \
-     /usr/bin/grep -iE 'boot[367]|(EFI/CLOVER/(themes|drivers\w+)/)' | \
+    pkgutil --volume "$DEST_VOL" --files $pkg 2>/dev/null  | \
+     xargs -I @@ echo "$DEST_VOL/$location/@@"             | \
+     /usr/bin/grep -iE 'EFI/CLOVER/(themes|drivers\w+)/'   | \
      xargs rm -rf
 done
+
+# Remove old CloverEFI files
+rm -fv "$EFI_ROOT_DIR"/boot{3,6,7}

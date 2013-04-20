@@ -25,18 +25,6 @@ bootvolume="/Volumes/${bootervolumename}"
 install_log="${DEST_VOL}/Clover_Install_Log.txt"
 config_plist_file="${EFI_ROOT_DIR}"/EFI/CLOVER/config.plist
 
-file "${DEST_VOL}/bootold" > "${DEST_VOL}/bootoldtype"
-boottypeversion=$( grep "boot" "${DEST_VOL}/bootoldtype" | awk '{ print $2 }' | tr -d '}' )
-echo "${boottypeversion}" >> "${DEST_VOL}/bootoldtype"
-#echo "The original boot type = ${boottypeversion}" >> "$install_log"
-if [[ "${boottypeversion}" == "data" ]]; then
-    cp -f "${DEST_VOL}/bootold" "${DEST_VOL}/boot1"
-    echo "cp -f ${DEST_VOL}/bootold ${DEST_VOL}/boot1" >> "$install_log"
-    chflags hidden "${DEST_VOL}/boot1"
-fi
-rm -f "${DEST_VOL}/bootold"
-rm -f "${DEST_VOL}/bootoldtype"
-
 # Change config.plist if needed
 boottype=$( cat "${DEST_VOL}/boottype" )
 
@@ -44,7 +32,6 @@ case "${boottype}" in
 	ia32) perl -i -p -e "s/arch=x86_64/arch=i386/g" "${config_plist_file}" ;;
 	 x64) perl -i -p -e "s/arch=i386/arch=x86_64/g" "${config_plist_file}" ;;
 esac
-
 
 echo "" >> "${install_log}"
 echo "======================================================" >> "${install_log}"
@@ -63,7 +50,9 @@ if [[ -f "$CLOVER_INSTALLER_PLIST_NEW" ]]; then
     mv -f "$CLOVER_INSTALLER_PLIST_NEW" "$CLOVER_INSTALLER_PLIST"
 fi
 
+# Clean up
 rm -f "${DEST_VOL}/boottype"
 rm -f "${DEST_VOL}/formattype"
 
+# Remove link to the partition that contain the EFI folder
 rm -f "$EFI_ROOT_DIR"

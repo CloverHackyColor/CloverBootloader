@@ -28,10 +28,6 @@ cloverEFIFile='@CLOVER_BOOT_FILE@'
 
 echo "$boottype" > "${DEST_VOL}/boottype"
 
-if [[ -f "${EFI_ROOT_DIR}/boot" ]]; then
-    cp "${EFI_ROOT_DIR}/boot" "${EFI_ROOT_DIR}/bootold"
-fi
-
 if [[ -f "${DEST_VOL}/usr/standalone/i386/$boottype/$cloverEFIFile" ]]; then
     cp -v "${DEST_VOL}/usr/standalone/i386/$boottype/$cloverEFIFile" "${EFI_ROOT_DIR}/boot"
     chflags hidden "${EFI_ROOT_DIR}/boot"
