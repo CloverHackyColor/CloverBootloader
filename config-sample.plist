@@ -2,62 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>KernelAndKextPatches</key>
-	<dict>
-		<key>Debug</key>
-		<string>No</string>
-		<key>KernelCpu</key>
-		<string>No</string>
-		<key>ATIConnectorsController</key>
-		<string>6000</string>
-		<key>ATIConnectorsData</key>
-		<string>000400000403000000010000210302040400000014020000000100000000040310000000100000000001000000000001</string>
-		<key>ATIConnectorsPatch</key>
-		<string>040000001402000000010000000004040004000004030000000100001102010500000000000000000000000000000000</string>
-		<key>AsusAICPUPM</key>
-		<string>No</string>
-		<key>AppleRTC</key>
-		<string>Yes</string>
-		<key>KextsToPatch</key>
-		<dict>
-			<key>0</key>
-			<dict>
-				<key>Name</key>
-				<string>VoodooHDA</string>
-				<key>Find</key>
-				<data>SGVhZHBob25lcwA=</data>
-				<key>Replace</key>
-				<data>VGVsZXBob25lcwA=</data>
-			</dict>
-			<key>1</key>
-			<dict>
-				<key>Name</key>
-				<string>AppleHDAController</string>
-				<key>Find</key>
-				<data>TA==</data>
-				<key>Replace</key>
-				<data>TA==</data>
-			</dict>
-			<key>2</key>
-			<dict>
-				<key>Name</key>
-				<string>IOBlockStorage</string>
-				<key>Find</key>
-				<data>TA==</data>
-				<key>Replace</key>
-				<data>TA==</data>
-			</dict>
-			<key>3</key>
-			<dict>
-				<key>Name</key>
-				<string>AppleAHCIPort</string>
-				<key>Find</key>
-				<data>RXh0ZXJuYWw=</data>
-				<key>Replace</key>
-				<data>SW50ZXJuYWw=</data>
-			</dict>
-		</dict>
-	</dict>
 	<key>SystemParameters</key>
 	<dict>
 		<key>boot-args</key>
@@ -137,18 +81,28 @@
 	<dict>
 		<key>GraphicsInjector</key>
 		<string>Yes</string>
+		<key>VRAM</key>
+		<string>1024</string>
+		<key>LoadVBios</key>
+		<string>No</string>
+		<key>DualLink</key>
+		<string>0</string>
+		<key>PatchVBios</key>
+		<string>Yes</string>
+		<key>PatchVBiosBytes</key>
+		<dict>
+			<key>0</key>
+			<dict>
+				<key>Find</key>
+				<data>gAeoAqAF</data>
+				<key>Replace</key>
+				<data>gAeoAjgE</data>
+			</dict>
+		</dict>
 		<key>InjectEDID</key>
 		<string>Yes</string>
 		<key>CustomEDID</key>
 		<data>AP///////wAyDADfAAAAAAASAQOAIRV4CunVmVlTjigmUFQAAAABAQEBAQEBAQEBAQEBAQEB3iGgcFCEHzAgIFYAS88QAAAY3iGgcFCEHzAgIFYAS88QAAAAAAAA/gBXNjU3RwAxNTRXUDEKAAAA/gAjMz1IZYSq/wIBCiAgAJo=</data>
-		<key>VRAM</key>
-		<string>1024</string>
-		<key>DualLink</key>
-		<string>0</string>
-		<key>LoadVBios</key>
-		<string>No</string>
-		<key>PatchVBios</key>
-		<string>Yes</string>
 		<key>VideoPorts</key>
 		<string>2</string>
 		<key>FBName</key>
@@ -159,14 +113,60 @@
 		<string>03010300FFFF0001</string>
 		<key>ig-platform-id</key>
 		<string>0x01620005</string>
-		<key>PatchVBiosBytes</key>
+	</dict>
+	<key>KernelAndKextPatches</key>
+	<dict>
+		<key>Debug</key>
+		<string>No</string>
+		<key>KernelCpu</key>
+		<string>No</string>
+		<key>ATIConnectorsController</key>
+		<string>6000</string>
+		<key>ATIConnectorsData</key>
+		<string>000400000403000000010000210302040400000014020000000100000000040310000000100000000001000000000001</string>
+		<key>ATIConnectorsPatch</key>
+		<string>040000001402000000010000000004040004000004030000000100001102010500000000000000000000000000000000</string>
+		<key>AsusAICPUPM</key>
+		<string>No</string>
+		<key>AppleRTC</key>
+		<string>Yes</string>
+		<key>KextsToPatch</key>
 		<dict>
 			<key>0</key>
 			<dict>
+				<key>Name</key>
+				<string>VoodooHDA</string>
 				<key>Find</key>
-				<data>gAeoAqAF</data>
+				<data>SGVhZHBob25lcwA=</data>
 				<key>Replace</key>
-				<data>gAeoAjgE</data>
+				<data>VGVsZXBob25lcwA=</data>
+			</dict>
+			<key>1</key>
+			<dict>
+				<key>Name</key>
+				<string>AppleHDAController</string>
+				<key>Find</key>
+				<data>TA==</data>
+				<key>Replace</key>
+				<data>TA==</data>
+			</dict>
+			<key>2</key>
+			<dict>
+				<key>Name</key>
+				<string>IOBlockStorage</string>
+				<key>Find</key>
+				<data>TA==</data>
+				<key>Replace</key>
+				<data>TA==</data>
+			</dict>
+			<key>3</key>
+			<dict>
+				<key>Name</key>
+				<string>AppleAHCIPort</string>
+				<key>Find</key>
+				<data>RXh0ZXJuYWw=</data>
+				<key>Replace</key>
+				<data>SW50ZXJuYWw=</data>
 			</dict>
 		</dict>
 	</dict>
@@ -185,6 +185,15 @@
 		<key>InjectClockID</key>
 		<string>Yes</string>
 		<key>LpcTune</key>
+		<string>Yes</string>
+	</dict>
+	<key>RtVariables</key>
+	<dict>
+		<key>MountEFI</key>
+		<string>No</string>
+		<key>LogLineCount</key>
+		<string>3000</string>
+		<key>LogEveryBoot</key>
 		<string>Yes</string>
 	</dict>
 	<key>ACPI</key>
@@ -243,15 +252,6 @@
 		<string>No</string>
 		<key>FixDsdtMask</key>
 		<string>0xFFFF</string>
-	</dict>
-	<key>RtVariables</key>
-	<dict>
-		<key>MountEFI</key>
-		<string>No</string>
-		<key>LogLineCount</key>
-		<string>3000</string>
-		<key>LogEveryBoot</key>
-		<string>Yes</string>
 	</dict>
 </dict>
 </plist>
