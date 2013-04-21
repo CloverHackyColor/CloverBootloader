@@ -3,13 +3,13 @@
 #define KEXT_INJECT_DEBUG 0
 
 #if KEXT_INJECT_DEBUG
-#define DBG(...)	Print(__VA_ARGS__);
+#define DBG(...)	AsciiPrint(__VA_ARGS__);
 #else
 #define DBG(...)
 #endif
 
 // runtime debug
-#define DBG_RT(...)    if (gSettings.KPDebug) { Print(__VA_ARGS__); }
+#define DBG_RT(...)    if (gSettings.KPDebug) { AsciiPrint(__VA_ARGS__); }
 
 
 ////////////////////
@@ -223,7 +223,9 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 	UINTN					extra_size;
 	VOID					*extra;
 
-   if (AsciiStrStr(gSettings.BootArgs, "NoKexts")) return EFI_NOT_STARTED;
+	if (gSettings.BootArgs == NULL || AsciiStrStr(gSettings.BootArgs, "WithKexts") == NULL) {
+		return EFI_NOT_STARTED;
+	}
 
 	if     (AsciiStrStr(gSettings.BootArgs,"arch=x86_64")!=NULL)	archCpuType = CPU_TYPE_X86_64;
 	else if(AsciiStrStr(gSettings.BootArgs,"arch=i386")!=NULL)		archCpuType = CPU_TYPE_I386;
@@ -307,16 +309,16 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
 	UINTN					Index;
 	
 
-	DBG_RT(L"\nInjectKexts: ");
+	DBG_RT("\nInjectKexts: ");
 	KextCount = GetKextCount();
 	if (KextCount == 0) {
-		DBG_RT(L"no kexts to inject.\nPausing 5 secs ...\n");
+		DBG_RT("no kexts to inject.\nPausing 5 secs ...\n");
 		if (gSettings.KPDebug) {
 			gBS->Stall(5000000);
 		}
 		return EFI_NOT_FOUND;
 	}
-	DBG_RT(L"%d kexts ...\n", KextCount);
+	DBG_RT("%d kexts ...\n", KextCount);
 
 	// kextsBase = Desc->PhysicalStart + (((UINTN) Desc->NumberOfPages) * EFI_PAGE_SIZE);
 	// kextsPages = EFI_SIZE_TO_PAGES(kext.length);
@@ -395,13 +397,13 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
 
 			drvPtr += sizeof(DeviceTreeNodeProperty) + sizeof(_DeviceTreeBuffer);
 			KextBase = RoundPage(KextBase + KextEntry->kext.length);
-			DBG_RT(L" %d - %a\n", Index, (CHAR8 *)(UINTN)drvinfo->bundlePathPhysAddr);
+			DBG_RT(" %d - %a\n", Index, (CHAR8 *)(UINTN)drvinfo->bundlePathPhysAddr);
 			Index++;
 		}
 	}
 
 	if (gSettings.KPDebug) {
-		DBG_RT(L"Done.\n");
+		DBG_RT("Done.\n");
 		gBS->Stall(5000000);
 	}
 	return EFI_SUCCESS;
@@ -440,7 +442,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel)
   UINTN   NumLion_i386 = 0;
   UINTN   NumML = 0;
   
-  DBG_RT(L"\nPatching kernel for injected kexts\n");
+  DBG_RT("\nPatching kernel for injected kexts\n");
   
   if (is64BitKernel) {
 	NumLion_X64 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBELionSearch_X64, sizeof(KBELionSearch_X64));
@@ -452,7 +454,7 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel)
   if (NumLion_X64 + NumLion_i386 + NumML > 1) {
 	// more then one pattern found - we do not know what to do with it
 	// and we'll skipp it
-	Print(L"\nERROR patching kernel for injected kexts:\nmultiple patterns found (LionX64: %d, Lioni386: %d, ML: %d) - skipping patching!\n",
+	AsciiPrint("\nERROR patching kernel for injected kexts:\nmultiple patterns found (LionX64: %d, Lioni386: %d, ML: %d) - skipping patching!\n",
 		NumLion_X64, NumLion_i386, NumML);
 	gBS->Stall(10000000);
 	return;
@@ -460,22 +462,22 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel)
   
   if (NumLion_X64 == 1) {
 	Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearch_X64, sizeof(KBELionSearch_X64), KBELionReplace_X64, 1);
-	DBG_RT(L"==> Lion X64: %d replaces done.\n", Num);
+	DBG_RT("==> Lion X64: %d replaces done.\n", Num);
   }
   else if (NumLion_i386 == 1) {
 	Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearch_i386, sizeof(KBELionSearch_i386), KBELionReplace_i386, 1);
-	DBG_RT(L"==> Lion i386: %d replaces done.\n", Num);
+	DBG_RT("==> Lion i386: %d replaces done.\n", Num);
   }
   else if (NumML == 1) {
 	Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMLSearch, sizeof(KBEMLSearch), KBEMLReplace, 1);
-	DBG_RT(L"==> MountainLion X64: %d replaces done.\n", Num);
+	DBG_RT("==> MountainLion X64: %d replaces done.\n", Num);
   }
   else {
-	DBG_RT(L"==> ERROR: NOT patched - unknown kernel.\n");
+	DBG_RT("==> ERROR: NOT patched - unknown kernel.\n");
   }
   
   if (gSettings.KPDebug) {
-    DBG_RT(L"Pausing 5 secs ...\n");
+    DBG_RT("Pausing 5 secs ...\n");
     gBS->Stall(5000000);
   }
 }

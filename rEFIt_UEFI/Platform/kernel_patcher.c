@@ -14,13 +14,13 @@
 #define KERNEL_DEBUG 0
 
 #if KERNEL_DEBUG
-#define DBG(...)    Print(__VA_ARGS__);
+#define DBG(...)    AsciiPrint(__VA_ARGS__);
 #else
 #define DBG(...)	
 #endif
 
 // runtime debug
-#define DBG_RT(...)    if (gSettings.KPDebug) { Print(__VA_ARGS__); }
+#define DBG_RT(...)    if (gSettings.KPDebug) { AsciiPrint(__VA_ARGS__); }
 
 
 EFI_PHYSICAL_ADDRESS    KernelRelocBase = 0;
@@ -155,7 +155,7 @@ VOID KernelPatcher_64(VOID* kernelData)
     
     //if (AsciiStrnCmp(OSVersion,"10.7",4)==0) return;
         
-    DBG(L"Found _cpuid_set_info _panic Start\n");
+    DBG("Found _cpuid_set_info _panic Start\n");
     // _cpuid_set_info _panic address
     for (i=0; i<0x1000000; i++) 
     {   
@@ -164,14 +164,14 @@ VOID KernelPatcher_64(VOID* kernelData)
             bytes[i-5] == 0xE8)
         {
             patchLocation = i-5;
-            DBG(L"Found _cpuid_set_info _panic address at 0x%08x\n",patchLocation);
+            DBG("Found _cpuid_set_info _panic address at 0x%08x\n",patchLocation);
             break;
         }
     }
      
     if (!patchLocation)
     {
-         DBG(L"Can't find _cpuid_set_info _panic address, patch kernel abort.\n",i);
+         DBG("Can't find _cpuid_set_info _panic address, patch kernel abort.\n",i);
          return;
     }
     
@@ -184,7 +184,7 @@ VOID KernelPatcher_64(VOID* kernelData)
             bytes[i+4] == 0x63 && bytes[i+5] == 0x2A && bytes[i+6] == 0x00)
         {
             patchLocation1 = i+9;
-            DBG(L"Found _tsc_init _panic address at 0x%08x\n",patchLocation1);
+            DBG("Found _tsc_init _panic address at 0x%08x\n",patchLocation1);
             break;
         }
     }
@@ -238,7 +238,7 @@ VOID KernelPatcher_64(VOID* kernelData)
     
     if (jumpaddr == patchLocation) 
     {
-        DBG(L"Can't Found jumpaddr address.\n");
+        DBG("Can't Found jumpaddr address.\n");
         return;  //can't find jump location
     }
     
@@ -311,7 +311,7 @@ VOID KernelPatcher_32(VOID* kernelData)
     UINT32 i;
     UINT32 jumpaddr;
         
-    DBG(L"Found _cpuid_set_info _panic Start\n");
+    DBG("Found _cpuid_set_info _panic Start\n");
     // _cpuid_set_info _panic address
     for (i=0; i<0x1000000; i++) 
     {   
@@ -320,14 +320,14 @@ VOID KernelPatcher_32(VOID* kernelData)
             bytes[i-5] == 0xE8)
         {
             patchLocation = i-5;
-            DBG(L"Found _cpuid_set_info _panic address at 0x%08x\n",patchLocation);
+            DBG("Found _cpuid_set_info _panic address at 0x%08x\n",patchLocation);
             break;
         }
     }
      
     if (!patchLocation)
     {
-         DBG(L"Can't find _cpuid_set_info _panic address, patch kernel abort.\n",i);
+         DBG("Can't find _cpuid_set_info _panic address, patch kernel abort.\n",i);
          return;
     }
     
@@ -340,7 +340,7 @@ VOID KernelPatcher_32(VOID* kernelData)
             bytes[i+4] == 0x0E && bytes[i+5] == 0x59 && bytes[i+6] == 0x00)
         {
             patchLocation1 = i+7;
-            DBG(L"Found _tsc_init _panic address at 0x%08x\n",patchLocation1);
+            DBG("Found _tsc_init _panic address at 0x%08x\n",patchLocation1);
             break;
         }
     }
@@ -381,7 +381,7 @@ VOID KernelPatcher_32(VOID* kernelData)
 
     if (jumpaddr == patchLocation) 
     {
-        DBG(L"Can't Found jumpaddr address.\n");
+        DBG("Can't Found jumpaddr address.\n");
         return;  //can't find jump location
     }
     // patch info_p->cpufamily to CPUFAMILY_INTEL_MEROM
@@ -430,7 +430,7 @@ VOID Patcher_SSE3_6(VOID* kernelData)
     UINT32 i; 
     //UINT32 Length = sizeof(kernelData);
      
-    DBG(L"Start find SSE3 address\n");
+    DBG("Start find SSE3 address\n");
     i=0;
     //for (i=0;i<Length;i++) 
     while(TRUE)
@@ -441,7 +441,7 @@ VOID Patcher_SSE3_6(VOID* kernelData)
             )
         {
             patchLocation1 = i-1664-32;
-            DBG(L"Found SSE3 data address at 0x%08x\n",patchLocation1);
+            DBG("Found SSE3 data address at 0x%08x\n",patchLocation1);
         }
 
          // khasSSE2+..... title
@@ -451,7 +451,7 @@ VOID Patcher_SSE3_6(VOID* kernelData)
             bytes[i+9] == 0x01)
         {
            patchLocation2 = i;
-           DBG(L"Found SSE3 Title address at 0x%08x\n",patchLocation2);
+           DBG("Found SSE3 Title address at 0x%08x\n",patchLocation2);
            break;
         }
         i++;
@@ -459,11 +459,11 @@ VOID Patcher_SSE3_6(VOID* kernelData)
     
     if (!patchLocation1 || !patchLocation2) 
     {
-        DBG(L"Can't found SSE3 data addres or Title address at 0x%08x 0x%08x\n", patchLocation1, patchLocation2);
+        DBG("Can't found SSE3 data addres or Title address at 0x%08x 0x%08x\n", patchLocation1, patchLocation2);
         return;
     }
      
-    DBG(L"Found SSE3 last data addres Start\n");
+    DBG("Found SSE3 last data addres Start\n");
     i = patchLocation1 + 1500;
     //for (i=(patchLocation1+1500); i<(patchLocation1+3000); i++)
     while(TRUE)
@@ -471,7 +471,7 @@ VOID Patcher_SSE3_6(VOID* kernelData)
         if (bytes[i] == 0x90 && bytes[i+1] == 0x90 && bytes[i+2] == 0x55 ) 
         {
             patchlast = (i+1) - patchLocation1;
-            DBG(L"Found SSE3 last data addres at 0x%08x\n", patchlast);
+            DBG("Found SSE3 last data addres at 0x%08x\n", patchlast);
             break;
         }
         i++;
@@ -479,7 +479,7 @@ VOID Patcher_SSE3_6(VOID* kernelData)
      
     if (!patchlast)
     {
-        DBG(L"Can't found SSE3 data last addres at 0x%08x\n", patchlast);
+        DBG("Can't found SSE3 data last addres at 0x%08x\n", patchlast);
         return;
     }
     // patch sse3_64 data
@@ -513,7 +513,7 @@ VOID Patcher_SSE3_5(VOID* kernelData)
     UINT32 Length = sizeof(kernelData);
     UINT32 i; 
 
-    DBG(L"Start find SSE3 address\n");
+    DBG("Start find SSE3 address\n");
     
     for (i=256; i<(Length-256); i++) 
     {
@@ -522,7 +522,7 @@ VOID Patcher_SSE3_5(VOID* kernelData)
             bytes[i-1680-32] == 0x55)
         {
             patchLocation1 = i-1680-32;
-            DBG(L"Found SSE3 data address at 0x%08x\n",patchLocation1);
+            DBG("Found SSE3 data address at 0x%08x\n",patchLocation1);
         }
 
         // khasSSE2+..... title
@@ -532,32 +532,32 @@ VOID Patcher_SSE3_5(VOID* kernelData)
             bytes[i+9] == 0x01)
         {
            patchLocation2 = i;
-           DBG(L"Found SSE3 Title address at 0x%08x\n",patchLocation2);
+           DBG("Found SSE3 Title address at 0x%08x\n",patchLocation2);
            break;
         }
     }            
     
     if (!patchLocation1 || !patchLocation2) 
     {
-        DBG(L"Can't found SSE3 data addres or Title address at 0x%08x 0x%08x\n", patchLocation1, patchLocation2);
+        DBG("Can't found SSE3 data addres or Title address at 0x%08x 0x%08x\n", patchLocation1, patchLocation2);
         return;
     }
      
-    DBG(L"Found SSE3 last data addres Start\n");
+    DBG("Found SSE3 last data addres Start\n");
           
     for (i=(patchLocation1+1500);i<Length;i++)
     {
        if (bytes[i] == 0x90 && bytes[i+1] == 0x90 && bytes[i+2] == 0x55) 
        {
            patchlast = (i+1) - patchLocation1;
-            DBG(L"Found SSE3 last data addres at 0x%08x\n", patchlast);
+            DBG("Found SSE3 last data addres at 0x%08x\n", patchlast);
            break;
        }
     }
 
     if (!patchlast)
     {
-        DBG(L"Can't found SSE3 data last addres at 0x%08x\n", patchlast);
+        DBG("Can't found SSE3 data last addres at 0x%08x\n", patchlast);
         return;
     }
 
@@ -616,12 +616,12 @@ VOID Get_PreLink()
     {
       case LC_SEGMENT_64: 
         segCmd64 = (struct segment_command_64 *)loadCommand;
-        //DBG(L"segCmd64->segname = %a\n",segCmd64->segname);
-        //DBG(L"segCmd64->vmaddr = 0x%08x\n",segCmd64->vmaddr)
-        //DBG(L"segCmd64->vmsize = 0x%08x\n",segCmd64->vmsize); 
+        //DBG("segCmd64->segname = %a\n",segCmd64->segname);
+        //DBG("segCmd64->vmaddr = 0x%08x\n",segCmd64->vmaddr)
+        //DBG("segCmd64->vmsize = 0x%08x\n",segCmd64->vmsize); 
         if (AsciiStrCmp(segCmd64->segname, kPrelinkTextSegment) == 0)
         {
-          DBG(L"Found PRELINK_TEXT, 64bit\n");
+          DBG("Found PRELINK_TEXT, 64bit\n");
           if (segCmd64->vmsize > 0) {
             // 64bit segCmd64->vmaddr is 0xffffff80xxxxxxxx
             // PrelinkTextAddr = xxxxxxxx + KernelRelocBase
@@ -629,36 +629,36 @@ VOID Get_PreLink()
             PrelinkTextSize = (UINT32)segCmd64->vmsize;
             PrelinkTextLoadCmdAddr = (UINT32)(UINTN)segCmd64;
           }
-          DBG(L"at %p: vmaddr = 0x%lx, vmsize = 0x%lx\n", segCmd64, segCmd64->vmaddr, segCmd64->vmsize);
-          DBG(L"PrelinkTextLoadCmdAddr = 0x%x, PrelinkTextAddr = 0x%x, PrelinkTextSize = 0x%x\n",
+          DBG("at %p: vmaddr = 0x%lx, vmsize = 0x%lx\n", segCmd64, segCmd64->vmaddr, segCmd64->vmsize);
+          DBG("PrelinkTextLoadCmdAddr = 0x%x, PrelinkTextAddr = 0x%x, PrelinkTextSize = 0x%x\n",
               PrelinkTextLoadCmdAddr, PrelinkTextAddr, PrelinkTextSize);
-          //DBG(L"cmd = 0x%08x\n",segCmd64->cmd);
-          //DBG(L"cmdsize = 0x%08x\n",segCmd64->cmdsize);
-          //DBG(L"vmaddr = 0x%08x\n",segCmd64->vmaddr);
-          //DBG(L"vmsize = 0x%08x\n",segCmd64->vmsize);
-          //DBG(L"fileoff = 0x%08x\n",segCmd64->fileoff);
-          //DBG(L"filesize = 0x%08x\n",segCmd64->filesize);
-          //DBG(L"maxprot = 0x%08x\n",segCmd64->maxprot);
-          //DBG(L"initprot = 0x%08x\n",segCmd64->initprot);
-          //DBG(L"nsects = 0x%08x\n",segCmd64->nsects);
-          //DBG(L"flags = 0x%08x\n",segCmd64->flags);
+          //DBG("cmd = 0x%08x\n",segCmd64->cmd);
+          //DBG("cmdsize = 0x%08x\n",segCmd64->cmdsize);
+          //DBG("vmaddr = 0x%08x\n",segCmd64->vmaddr);
+          //DBG("vmsize = 0x%08x\n",segCmd64->vmsize);
+          //DBG("fileoff = 0x%08x\n",segCmd64->fileoff);
+          //DBG("filesize = 0x%08x\n",segCmd64->filesize);
+          //DBG("maxprot = 0x%08x\n",segCmd64->maxprot);
+          //DBG("initprot = 0x%08x\n",segCmd64->initprot);
+          //DBG("nsects = 0x%08x\n",segCmd64->nsects);
+          //DBG("flags = 0x%08x\n",segCmd64->flags);
         }
         if (AsciiStrCmp(segCmd64->segname, kPrelinkInfoSegment) == 0)
         {
           UINT32 sectionIndex;
           struct section_64 *sect;
 
-          DBG(L"Found PRELINK_INFO, 64bit\n");
-          //DBG(L"cmd = 0x%08x\n",segCmd64->cmd);
-          //DBG(L"cmdsize = 0x%08x\n",segCmd64->cmdsize);
-          DBG(L"vmaddr = 0x%08x\n",segCmd64->vmaddr);
-          DBG(L"vmsize = 0x%08x\n",segCmd64->vmsize);
-          //DBG(L"fileoff = 0x%08x\n",segCmd64->fileoff);
-          //DBG(L"filesize = 0x%08x\n",segCmd64->filesize);
-          //DBG(L"maxprot = 0x%08x\n",segCmd64->maxprot);
-          //DBG(L"initprot = 0x%08x\n",segCmd64->initprot);
-          //DBG(L"nsects = 0x%08x\n",segCmd64->nsects);
-          //DBG(L"flags = 0x%08x\n",segCmd64->flags);
+          DBG("Found PRELINK_INFO, 64bit\n");
+          //DBG("cmd = 0x%08x\n",segCmd64->cmd);
+          //DBG("cmdsize = 0x%08x\n",segCmd64->cmdsize);
+          DBG("vmaddr = 0x%08x\n",segCmd64->vmaddr);
+          DBG("vmsize = 0x%08x\n",segCmd64->vmsize);
+          //DBG("fileoff = 0x%08x\n",segCmd64->fileoff);
+          //DBG("filesize = 0x%08x\n",segCmd64->filesize);
+          //DBG("maxprot = 0x%08x\n",segCmd64->maxprot);
+          //DBG("initprot = 0x%08x\n",segCmd64->initprot);
+          //DBG("nsects = 0x%08x\n",segCmd64->nsects);
+          //DBG("flags = 0x%08x\n",segCmd64->flags);
           sectionIndex = sizeof(struct segment_command_64);
           
           while(sectionIndex < segCmd64->cmdsize)
@@ -675,8 +675,8 @@ VOID Get_PreLink()
                 PrelinkInfoAddr = (UINT32)(sect->addr ? sect->addr + KernelRelocBase : 0);
                 PrelinkInfoSize = (UINT32)sect->size;
               }
-              DBG(L"__info found at %p: addr = 0x%lx, size = 0x%lx\n", sect, sect->addr, sect->size);
-              DBG(L"PrelinkInfoLoadCmdAddr = 0x%x, PrelinkInfoAddr = 0x%x, PrelinkInfoSize = 0x%x\n",
+              DBG("__info found at %p: addr = 0x%lx, size = 0x%lx\n", sect, sect->addr, sect->size);
+              DBG("PrelinkInfoLoadCmdAddr = 0x%x, PrelinkInfoAddr = 0x%x, PrelinkInfoSize = 0x%x\n",
                   PrelinkInfoLoadCmdAddr, PrelinkInfoAddr, PrelinkInfoSize);
             }
           }
@@ -685,20 +685,20 @@ VOID Get_PreLink()
 
       case LC_SEGMENT:
         segCmd = (struct segment_command *)loadCommand;
-        //DBG(L"segCmd->segname = %a\n",segCmd->segname);
-        //DBG(L"segCmd->vmaddr = 0x%08x\n",segCmd->vmaddr)
-        //DBG(L"segCmd->vmsize = 0x%08x\n",segCmd->vmsize);
+        //DBG("segCmd->segname = %a\n",segCmd->segname);
+        //DBG("segCmd->vmaddr = 0x%08x\n",segCmd->vmaddr)
+        //DBG("segCmd->vmsize = 0x%08x\n",segCmd->vmsize);
         if (AsciiStrCmp(segCmd->segname, kPrelinkTextSegment) == 0)
         {
-          DBG(L"Found PRELINK_TEXT, 32bit\n");
+          DBG("Found PRELINK_TEXT, 32bit\n");
           if (segCmd->vmsize > 0) {
             // PrelinkTextAddr = vmaddr + KernelRelocBase
             PrelinkTextAddr = (UINT32)(segCmd->vmaddr ? segCmd->vmaddr + KernelRelocBase : 0);
             PrelinkTextSize = (UINT32)segCmd->vmsize;
             PrelinkTextLoadCmdAddr = (UINT32)(UINTN)segCmd;
           }
-          DBG(L"at %p: vmaddr = 0x%lx, vmsize = 0x%lx\n", segCmd, segCmd->vmaddr, segCmd->vmsize);
-          DBG(L"PrelinkTextLoadCmdAddr = 0x%x, PrelinkTextAddr = 0x%x, PrelinkTextSize = 0x%x\n",
+          DBG("at %p: vmaddr = 0x%lx, vmsize = 0x%lx\n", segCmd, segCmd->vmaddr, segCmd->vmsize);
+          DBG("PrelinkTextLoadCmdAddr = 0x%x, PrelinkTextAddr = 0x%x, PrelinkTextSize = 0x%x\n",
               PrelinkTextLoadCmdAddr, PrelinkTextAddr, PrelinkTextSize);
           //gBS->Stall(30*1000000);
         }
@@ -707,17 +707,17 @@ VOID Get_PreLink()
           UINT32 sectionIndex;
           struct section *sect;
 
-          DBG(L"Found PRELINK_INFO, 32bit\n");
-          //DBG(L"cmd = 0x%08x\n",segCmd->cmd);
-          //DBG(L"cmdsize = 0x%08x\n",segCmd->cmdsize);
-          DBG(L"vmaddr = 0x%08x\n",segCmd->vmaddr);
-          DBG(L"vmsize = 0x%08x\n",segCmd->vmsize);
-          //DBG(L"fileoff = 0x%08x\n",segCmd->fileoff);
-          //DBG(L"filesize = 0x%08x\n",segCmd->filesize);
-          //DBG(L"maxprot = 0x%08x\n",segCmd->maxprot);
-          //DBG(L"initprot = 0x%08x\n",segCmd->initprot);
-          //DBG(L"nsects = 0x%08x\n",segCmd->nsects);
-          //DBG(L"flags = 0x%08x\n",segCmd->flags);
+          DBG("Found PRELINK_INFO, 32bit\n");
+          //DBG("cmd = 0x%08x\n",segCmd->cmd);
+          //DBG("cmdsize = 0x%08x\n",segCmd->cmdsize);
+          DBG("vmaddr = 0x%08x\n",segCmd->vmaddr);
+          DBG("vmsize = 0x%08x\n",segCmd->vmsize);
+          //DBG("fileoff = 0x%08x\n",segCmd->fileoff);
+          //DBG("filesize = 0x%08x\n",segCmd->filesize);
+          //DBG("maxprot = 0x%08x\n",segCmd->maxprot);
+          //DBG("initprot = 0x%08x\n",segCmd->initprot);
+          //DBG("nsects = 0x%08x\n",segCmd->nsects);
+          //DBG("flags = 0x%08x\n",segCmd->flags);
           sectionIndex = sizeof(struct segment_command);
           
           while(sectionIndex < segCmd->cmdsize)
@@ -733,8 +733,8 @@ VOID Get_PreLink()
                 PrelinkInfoAddr = (UINT32)(sect->addr ? sect->addr + KernelRelocBase : 0);
                 PrelinkInfoSize = (UINT32)sect->size;
               }
-              DBG(L"__info found at %p: addr = 0x%lx, size = 0x%lx\n", sect, sect->addr, sect->size);
-              DBG(L"PrelinkInfoLoadCmdAddr = 0x%x, PrelinkInfoAddr = 0x%x, PrelinkInfoSize = 0x%x\n",
+              DBG("__info found at %p: addr = 0x%lx, size = 0x%lx\n", sect, sect->addr, sect->size);
+              DBG("PrelinkInfoLoadCmdAddr = 0x%x, PrelinkInfoAddr = 0x%x, PrelinkInfoSize = 0x%x\n",
                   PrelinkInfoLoadCmdAddr, PrelinkInfoAddr, PrelinkInfoSize);
               //gBS->Stall(30*1000000);
             }
@@ -778,12 +778,12 @@ FindBootArgs(VOID)
       dtRoot = (CHAR8*)(UINTN)bootArgs2->deviceTreeP;
       KernelSlide = bootArgs2->kslide;
       
-      DBG(L"Found bootArgs2 at 0x%08x, DevTree at %p\n", ptr, dtRoot);
-      //DBG(L"bootArgs2->kaddr = 0x%08x and bootArgs2->ksize =  0x%08x\n", bootArgs2->kaddr, bootArgs2->ksize);
-      //DBG(L"bootArgs2->efiMode = 0x%02x\n", bootArgs2->efiMode);
-      DBG(L"bootArgs2->CommandLine = %a\n", bootArgs2->CommandLine);
-      DBG(L"bootArgs2->flags = %x %x\n", bootArgs2->flags);
-      DBG(L"bootArgs2->kslide = %x\n", bootArgs2->kslide);
+      DBG("Found bootArgs2 at 0x%08x, DevTree at %p\n", ptr, dtRoot);
+      //DBG("bootArgs2->kaddr = 0x%08x and bootArgs2->ksize =  0x%08x\n", bootArgs2->kaddr, bootArgs2->ksize);
+      //DBG("bootArgs2->efiMode = 0x%02x\n", bootArgs2->efiMode);
+      DBG("bootArgs2->CommandLine = %a\n", bootArgs2->CommandLine);
+      DBG("bootArgs2->flags = %x %x\n", bootArgs2->flags);
+      DBG("bootArgs2->kslide = %x\n", bootArgs2->kslide);
       //gBS->Stall(5000000);
       
       // disable other pointer
@@ -805,9 +805,9 @@ FindBootArgs(VOID)
       // set vars
       dtRoot = (CHAR8*)(UINTN)bootArgs1->deviceTreeP;
       
-      DBG(L"Found bootArgs1 at 0x%08x, DevTree at %p\n", ptr, dtRoot);
-      //DBG(L"bootArgs1->kaddr = 0x%08x and bootArgs1->ksize =  0x%08x\n", bootArgs1->kaddr, bootArgs1->ksize);
-      //DBG(L"bootArgs1->efiMode = 0x%02x\n", bootArgs1->efiMode);
+      DBG("Found bootArgs1 at 0x%08x, DevTree at %p\n", ptr, dtRoot);
+      //DBG("bootArgs1->kaddr = 0x%08x and bootArgs1->ksize =  0x%08x\n", bootArgs1->kaddr, bootArgs1->ksize);
+      //DBG("bootArgs1->efiMode = 0x%02x\n", bootArgs1->efiMode);
       
       // disable other pointer
       bootArgs2 = NULL;
@@ -830,13 +830,13 @@ KernelAndKextPatcherInit(VOID)
   // KernelRelocBase will normally be 0
   // but if OsxAptioFixDrv is used, then it will be > 0
   SetKernelRelocBase();
-  DBG(L"KernelRelocBase = %lx\n", KernelRelocBase);
+  DBG("KernelRelocBase = %lx\n", KernelRelocBase);
   
   // Find bootArgs - we need then for proper detection
   // of kernel Mach-O header
   FindBootArgs();
   if (bootArgs1 == NULL && bootArgs2 == NULL) {
-    DBG(L"BootArgs not found - skipping patches!\n");
+    DBG("BootArgs not found - skipping patches!\n");
     return;
   }
   
@@ -849,17 +849,17 @@ KernelAndKextPatcherInit(VOID)
   // check that it is Mach-O header and detect architecture
   if(MACH_GET_MAGIC(KernelData) == MH_MAGIC || MACH_GET_MAGIC(KernelData) == MH_CIGAM)
   {
-    DBG(L"Found 32 bit kernel at 0x%p\n", KernelData);
+    DBG("Found 32 bit kernel at 0x%p\n", KernelData);
     is64BitKernel = FALSE;
   }
   else if(MACH_GET_MAGIC(KernelData) == MH_MAGIC_64 || MACH_GET_MAGIC(KernelData) == MH_CIGAM_64)
   {
-    DBG(L"Found 64 bit kernel at 0x%p\n", KernelData);
+    DBG("Found 64 bit kernel at 0x%p\n", KernelData);
     is64BitKernel = TRUE;
   }
   else {
     // not valid Mach-O header - exiting
-    DBG(L"Kernel not found at 0x%p - skipping patches!", KernelData);
+    DBG("Kernel not found at 0x%p - skipping patches!", KernelData);
     KernelData = NULL;
     return;
   }
@@ -869,7 +869,7 @@ KernelAndKextPatcherInit(VOID)
   
   
   isKernelcache = PrelinkTextSize > 0 && PrelinkInfoSize > 0;
-  DBG(L"isKernelcache: %s\n", isKernelcache ? L"Yes" : L"No");
+  DBG("isKernelcache: %s\n", isKernelcache ? L"Yes" : L"No");
 }
 
 VOID
@@ -878,13 +878,13 @@ KernelAndKextsPatcherStart(VOID)
   
   // we will call KernelAndKextPatcherInit() only if needed
   
-  DBG_RT(L"\nKernelCpu patch: ");
+  DBG_RT("\nKernelCpu patch: ");
   if (gSettings.KPKernelCpu) {
     
     //
     // Kernel patches
     //
-    DBG_RT(L"Enabled: ");
+    DBG_RT("Enabled: ");
     if ((gCPUStructure.Family!=0x06 && AsciiStrStr(OSVersion,"10.7")!=0)||
         (gCPUStructure.Model==CPU_MODEL_ATOM &&
          ((AsciiStrStr(OSVersion,"10.7")!=0) || AsciiStrStr(OSVersion,"10.6")!=0)) ||
@@ -895,25 +895,25 @@ KernelAndKextsPatcherStart(VOID)
       KernelAndKextPatcherInit();
       if (KernelData == NULL) {
         if (gSettings.KPDebug) {
-          DBG_RT(L"ERROR: Kernel not found\n");
+          DBG_RT("ERROR: Kernel not found\n");
           gBS->Stall(5000000);
         }
         return;
       }
       
       if(is64BitKernel) {
-        DBG_RT(L"64 bit patch ...");
+        DBG_RT("64 bit patch ...");
         KernelPatcher_64(KernelData);
       } else {
-        DBG_RT(L"32 bit patch ...");
+        DBG_RT("32 bit patch ...");
         KernelPatcher_32(KernelData);
       }
-      DBG_RT(L" OK\n");
+      DBG_RT(" OK\n");
     } else {
-      DBG_RT(L" Not executed!\n");
+      DBG_RT(" Not executed!\n");
     }
   } else {
-    DBG_RT(L"Not done - Disabled.\n");
+    DBG_RT("Not done - Disabled.\n");
   }
   if (gSettings.KPDebug) {
     gBS->Stall(5000000);
@@ -922,7 +922,7 @@ KernelAndKextsPatcherStart(VOID)
   //
   // Kext patches
   //
-  DBG_RT(L"\nKextPatches Needed: %c, Allowed: %c ... ",
+  DBG_RT("\nKextPatches Needed: %c, Allowed: %c ... ",
          (gSettings.KPKextPatchesNeeded ? L'Y' : L'n'),
          (gSettings.KextPatchesAllowed ? L'Y' : L'n')
          );
@@ -930,34 +930,48 @@ KernelAndKextsPatcherStart(VOID)
     KernelAndKextPatcherInit();
     if (KernelData == NULL) {
       if (gSettings.KPDebug) {
-        DBG_RT(L"ERROR: Kernel not found\n");
+        DBG_RT("ERROR: Kernel not found\n");
         gBS->Stall(5000000);
       }
       return;
     }
     
-    DBG_RT(L"\nKext patching STARTED\n");
+    DBG_RT("\nKext patching STARTED\n");
     KextPatcherStart();
-    DBG_RT(L"\nKext patching ENDED\n");
+    DBG_RT("\nKext patching ENDED\n");
     
   } else {
-    DBG_RT(L"Not needed or not allowed\n");
+    DBG_RT("Not needed or not allowed\n");
   }
   if (gSettings.KPDebug) {
-    DBG_RT(L"Pausing 10 secs ...\n\n");
+    DBG_RT("Pausing 10 secs ...\n\n");
     gBS->Stall(10000000);
   }
 
   //
   // Kext add
   //
-  if ((AsciiStrStr(gSettings.BootArgs, "NoKexts") == NULL) &&
-      (AsciiStrStr(gSettings.BootArgs, "NoCaches") == NULL))
+  if (gSettings.BootArgs != NULL
+      && (AsciiStrStr(gSettings.BootArgs, "WithKexts") != NULL)
+      )
   {
     UINT32      deviceTreeP;
     UINT32      deviceTreeLength;
     EFI_STATUS  Status;
+    UINTN       DataSize;
 
+    // check if FSInject already injected kexts
+    DataSize = 0;
+    Status = gRT->GetVariable (L"FSInject.KextsInjected", &gEfiGlobalVariableGuid, NULL, &DataSize, NULL);
+    if (Status == EFI_BUFFER_TOO_SMALL) {
+      // var exists - just exit
+      if (gSettings.KPDebug) {
+        DBG_RT("\nInjectKexts: skipping, FSInject already injected them\n");
+        gBS->Stall(5000000);
+      }
+      return;
+    }
+    
     KernelAndKextPatcherInit();
     if (KernelData == NULL) {
       return;

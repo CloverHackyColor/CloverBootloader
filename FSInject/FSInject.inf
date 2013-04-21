@@ -45,6 +45,7 @@
   Test.c
 
 [Guids]
+  gEfiGlobalVariableGuid						## PRODUCES var FSInject.KextsInjected
   gEfiFileInfoGuid								## CONSUMES
   gEfiFileSystemInfoGuid						## CONSUMES
   gEfiFileSystemVolumeLabelInfoIdGuid			## CONSUMES

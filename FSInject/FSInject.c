@@ -23,9 +23,10 @@ Module Name:
 
 #include <Protocol/SimpleFileSystem.h>
 
-#include <Include/Guid/FileInfo.h>
-#include <Include/Guid/FileSystemInfo.h>
-#include <Include/Guid/FileSystemVolumeLabelInfo.h>
+#include <Guid/GlobalVariable.h>
+#include <Guid/FileInfo.h>
+#include <Guid/FileSystemInfo.h>
+#include <Guid/FileSystemVolumeLabelInfo.h>
 
 #include <Protocol/FSInjectProtocol.h>
 
@@ -457,6 +458,25 @@ FSI_FP_Open(
 			} else {
 				Status = EFI_SUCCESS;
 				DBG("Opened with SrcFP ");
+				// ok - we are injecting kexts with FSInject driver because user requested
+				// it with NoCaches or because boot.efi refused to load kernelcache for some reason.
+				// let's inform Clover's kext injection that it does not have to do
+				// in-memory kext injection.
+				{
+					STATIC	UINT8	KextsInjected = 0;
+					
+					if (KextsInjected == 0) {
+						gRT->SetVariable(L"FSInject.KextsInjected",
+										 &gEfiGlobalVariableGuid,
+										 EFI_VARIABLE_BOOTSERVICE_ACCESS,
+										 sizeof(KextsInjected),
+										 &KextsInjected
+										 );
+						//AsciiPrint("\nFSInject.KextsInjected\n");
+						//gBS->Stall(3000000);
+					}
+					KextsInjected++;
+				}
 			}
 		}
 

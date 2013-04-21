@@ -1801,12 +1801,6 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
         return EFI_UNSUPPORTED;
     }
     
-    if (Entry->LoadOptions == NULL || StrStr(Entry->LoadOptions, L"NoCaches") == NULL) {
-        // FS injection not requested
-        MsgLog(" not requested\n");
-        return EFI_NOT_STARTED;
-    }
-    
     // get FSINJECTION_PROTOCOL
     Status = gBS->LocateProtocol(&gFSInjectProtocolGuid, NULL, (void **)&FSInject);
     if (EFI_ERROR(Status)) {
@@ -1815,19 +1809,10 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
         return EFI_NOT_STARTED;
     }
     
-    MsgLog(" blocking caches");
-    BlockCaches = TRUE;
-    
-    SrcDir = (StrStr(Entry->LoadOptions, L"NoKexts") == NULL) ? GetExtraKextsDir(Volume) : NULL;
-    if (SrcDir != NULL) {
-        // we have found it - injection will be done
-        MsgLog(", injecting kexts from: '%s'", SrcDir);
-        InjectionNeeded = TRUE;
-    } else {
-        MsgLog(", skipping kext injection (kexts folder not found)");
-    }
-    
-    if (BlockCaches) {
+    // check if blocking of caches is needed
+    if (Entry->LoadOptions != NULL && StrStr(Entry->LoadOptions, L"NoCaches") != NULL) {
+        MsgLog(" blocking caches");
+        BlockCaches = TRUE;
         // add caches to blacklist
         Blacklist = FSInject->CreateStringList();
         if (Blacklist == NULL) {
@@ -1839,7 +1824,20 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
         FSInject->AddStringToList(Blacklist, L"\\System\\Library\\Extensions.mkext");
         FSInject->AddStringToList(Blacklist, L"\\com.apple.recovery.boot\\kernelcache");
         FSInject->AddStringToList(Blacklist, L"\\com.apple.recovery.boot\\Extensions.mkext");
-        
+    }
+    
+    // check if kext injection is needed
+    // (will be done only if caches are blocked or if boot.efi refuses to load kernelcache)
+    SrcDir = NULL;
+    if (Entry->LoadOptions != NULL && StrStr(Entry->LoadOptions, L"WithKexts") != NULL) {
+        SrcDir = GetExtraKextsDir(Volume);
+    }
+    if (SrcDir != NULL) {
+        // we have found it - injection will be done
+        MsgLog(", injecting kexts from: '%s'", SrcDir);
+        InjectionNeeded = TRUE;
+    } else {
+        MsgLog(", skipping kext injection (kexts folder not found)");
     }
     
     // prepare list of kext that will be forced to load
