@@ -102,7 +102,7 @@ echo "[CP] drivers64"
 cp -r -f ${CLOVERROOT}/EFI/CLOVER/drivers64 ${IMGROOT}/EFI/CLOVER/
 cp -r -f ${CLOVERROOT}/EFI/CLOVER/drivers64UEFI ${IMGROOT}/EFI/CLOVER/
 echo "[CP] kexts"
-cp -r -f ${CLOVERROOT}/EFI/CLOVER/kexts ${IMGROOT}/EFI/CLOVER/
+cp -r -f ${CLOVERROOT}/ThirdParty/kexts ${IMGROOT}/EFI/CLOVER/
 echo "[CP] tools"
 cp -r -f ${CLOVERROOT}/EFI/CLOVER/tools ${IMGROOT}/EFI/CLOVER/
 echo "[CP] doc"
