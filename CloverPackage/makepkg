@@ -8,6 +8,10 @@ cd "$(dirname $0)"
 version=v2
 revision=$(cat ../vers.txt)
 
+SRCROOT="${PWD}"
+SYMROOT="${SRCROOT}"/sym
+PKG_BUILD_DIR="${SYMROOT}"/package
+
 echo "${version}"  > version
 echo "${revision}" > revision
 
@@ -18,7 +22,7 @@ cp -f ../BootHFS/boot1f32-install.sh  CloverV2/EFI/CLOVER/doc/boot1f32-install.s
 # Workspace = edk2/Clover/CloverPackage
 # Prepare i386 for building package installer.
 
-if [[ -d "sym/package" && $(stat -f '%u' sym/package) -eq 0 ]]; then
+if [[ -d "$PKG_BUILD_DIR" && $(stat -f '%u' "$PKG_BUILD_DIR") -eq 0 ]]; then
     sudo rm -rf sym
 fi
 rm -rf sym
@@ -29,10 +33,7 @@ mkdir sym
 # Workspace = edk2/Clover/CloverPackage
 # Start to build installer.
 
-make pkg
-make cdboot
-[[ -f "CloverV2/Bootloaders/ia32/boot3" ]] && make cdboot32
-make image
+package/buildpkg.sh "$SRCROOT" "sym" "$PKG_BUILD_DIR"
 
 (cd sym ; zip Clover_${version}_r${revision}.zip \
  Clover_${version}_r${revision}.pkg              \
