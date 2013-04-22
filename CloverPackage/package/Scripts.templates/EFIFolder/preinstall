@@ -130,6 +130,7 @@ for pkg in $pkgs; do
      xargs -I @@ echo "$DEST_VOL/$location/@@"             | \
      /usr/bin/grep -iE 'EFI/CLOVER/(themes|drivers\w+)/'   | \
      xargs rm -rf
+    rm -f "$DEST_VOL"/Library/Receipts/"$pkg".{plist,bom}
 done
 
 # Remove old CloverEFI files
