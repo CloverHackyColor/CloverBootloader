@@ -3,7 +3,7 @@
 diskloader="boot0"
 
 DEST_VOL="${3}"
-EFI_ROOT_DIR="${DEST_VOL}/EFIROOTDIR"
+EFI_ROOT_DIR=$(cd "${DEST_VOL}"/EFIROOTDIR; pwd -P)
 CLOVER_INSTALLER_PLIST_NEW="${DEST_VOL}@CLOVER_INSTALLER_PLIST_NEW@"
 install_log="${DEST_VOL}/Clover_Install_Log.txt"
 plistbuddy='/usr/libexec/plistbuddy'
@@ -110,8 +110,6 @@ if [ ${efiformat} = "hfs" ]; then
 	echo " " >> "$install_log"
 
 	dd if="${DEST_VOL}/usr/standalone/i386/${partitionloaderhfs}" of=${bootrdev}
-
-	echo "${efiformat}" > "${DEST_VOL}/formattype"
 fi
 
 if [ ${efiformat} = "msdos" ]; then
@@ -145,8 +143,6 @@ if [ ${efiformat} = "msdos" ]; then
 	echo "dd if=/tmp/origbs of=/tmp/newbs skip=3 seek=3 bs=1 count=87 conv=notrunc" >> "$install_log"
 	echo "dd if=/tmp/newbs of=${bootrdev}" >> "$install_log"
 	echo " " >> "$install_log"
-
-	echo "${efiformat}" > "${DEST_VOL}/formattype"
 fi
 
 echo "Setup Active Partition to be : ${bootslice}" >> "$install_log"

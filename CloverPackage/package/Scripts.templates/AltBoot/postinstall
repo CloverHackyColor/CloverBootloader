@@ -15,7 +15,7 @@ echo "preinstall: Path to dest volume..... $3"
 echo "preinstall: Root of system folder... $4"
 
 DEST_VOL="$3"
-EFI_ROOT_DIR="${DEST_VOL}/EFIROOTDIR"
+EFI_ROOT_DIR=$(cd "${DEST_VOL}"/EFIROOTDIR; pwd -P)
 
 if [[ -d "${DEST_VOL}/usr/standalone/i386/ia32" ]]; then
     while read -r -u3 file; do

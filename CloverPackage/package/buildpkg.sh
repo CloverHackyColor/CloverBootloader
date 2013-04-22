@@ -487,7 +487,7 @@ main ()
     if [[ "$add_ia32" -eq 1 ]]; then
         ditto --noextattr --noqtn ${SRCROOT}/CloverV2/Bootloaders/ia32/boot? ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/ia32/
     fi
-    ls "${SRCROOT}"/CloverV2/Bootloaders/x64/boot{6,7} &>/dev/null && \
+    ls "${SRCROOT}"/CloverV2/Bootloaders/x64/boot? &>/dev/null && \
      ditto --noextattr --noqtn ${SRCROOT}/CloverV2/Bootloaders/x64/boot?   ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/x64/
     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot0       ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot0md     ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/

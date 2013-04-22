@@ -17,7 +17,7 @@ echo "preinstall: Root of system folder... $4"
 #############################################################################
 
 DEST_VOL="${3}"
-EFI_ROOT_DIR="${DEST_VOL}/EFIROOTDIR"
+EFI_ROOT_DIR=$(cd "${DEST_VOL}"/EFIROOTDIR; pwd -P)
 CLOVER_INSTALLER_PLIST_NEW="${DEST_VOL}@CLOVER_INSTALLER_PLIST_NEW@"
 CLOVER_INSTALLER_PLIST="${DEST_VOL}@CLOVER_INSTALLER_PLIST@"
 bootervolumename="EFI"
@@ -52,7 +52,6 @@ fi
 
 # Clean up
 rm -f "${DEST_VOL}/boottype"
-rm -f "${DEST_VOL}/formattype"
 
 # Remove link to the partition that contain the EFI folder
-rm -f "$EFI_ROOT_DIR"
+rm -f "${DEST_VOL}"/EFIROOTDIR

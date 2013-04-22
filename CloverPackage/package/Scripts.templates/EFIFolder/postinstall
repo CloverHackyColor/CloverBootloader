@@ -15,7 +15,7 @@ echo "==============================================="
 # echo "preinstall: Root of system folder... $4"
 
 DEST_VOL="$3"
-EFI_ROOT_DIR="${DEST_VOL}/EFIROOTDIR"
+EFI_ROOT_DIR=$(cd "${DEST_VOL}"/EFIROOTDIR; pwd -P)
 
 # config.plist
 if [[ ! -f "${EFI_ROOT_DIR}/EFI/CLOVER/config.plist" ]]; then

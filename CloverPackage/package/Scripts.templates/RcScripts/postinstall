@@ -17,7 +17,7 @@ echo "preinstall: Root of system folder... $4"
 #############################################################################
 
 DEST_VOL="${3}"
-EFI_ROOT_DIR="${DEST_VOL}/EFIROOTDIR"
+EFI_ROOT_DIR=$(cd "${DEST_VOL}"/EFIROOTDIR; pwd -P)
 CLOVER_INSTALLER_PLIST_NEW="${DEST_VOL}@CLOVER_INSTALLER_PLIST_NEW@"
 install_log="${DEST_VOL}/Clover_Install_Log.txt"
 
@@ -45,6 +45,7 @@ source ./rc_scripts.lib
 if [[ "$install_on_all_volumes" == true ]]; then
     IFS=$'\n' # ' fix xemacs fontification
     for mountPoint in $(getInternalOSXSystemVolumes); do
+		[[ "$mountPoint" == $destroot ]] && continue
         echo "Installing RC scripts in '$mountPoint' volume" >> "$install_log"
         while read -r -u3 file; do
             srcfile=$(echo "${srcvolume}/$file"   | sed -E 's#[/]{2,}#/#g')
@@ -78,7 +79,7 @@ fi
 
 # Installing the RC scripts on target volume
 [[ "$install_on_target" == true ]] && \
- echo "Installing RC scripts in '$destroot' volume" >> "$install_log"
+ echo "Installing RC scripts on target volume '$destroot'" >> "$install_log"
 
 while read -r -u3 file; do
     srcfile=$(echo "${srcvolume}/$file" | sed -E 's#[/]{2,}#/#g')
