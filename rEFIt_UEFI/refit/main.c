@@ -242,20 +242,20 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"U - Eteindre");
         break;
       case indonesian:
-        AddMenuInfoLine(&HelpMenu, L"ESC - Keluar dari sub menu, merefresh main menu");
-        AddMenuInfoLine(&HelpMenu, L"F1  - Tampilan Help ini");
-        AddMenuInfoLine(&HelpMenu, L"F2  - Menimpan preboot.log (hanya untuk FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F4  - Menyimpan oem DSDT di EFI/CLOVER/ACPI/origin/ (hanya untuk FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F5  - Menyimpan patched DSDT di EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F6  - Menyimpan VideoBios di EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F10 - Menyimpan screenshot di EFI/CLOVER/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F12 - Eject Volume yg terpilih (DVD)");
-        AddMenuInfoLine(&HelpMenu, L"Spasi - Detail dari menu yang terpilih");
-        AddMenuInfoLine(&HelpMenu, L"Tombol 1-9 - Shorcut ke menu yang ada");
-        AddMenuInfoLine(&HelpMenu, L"A - About menu");
-        AddMenuInfoLine(&HelpMenu, L"O - Opsi menu");
+        AddMenuInfoLine(&HelpMenu, L"ESC - Keluar submenu, Refresh main menu");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Help");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Simpan preboot.log (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Simpan oem DSDT ke EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Simpan patched DSDT ke EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Simpan VideoBios ke EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Simpan screenshot ke EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Eject volume (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Spasi - Detail dari menu yang dipilih");
+        AddMenuInfoLine(&HelpMenu, L"Tombol 1-9 - Shortcut pilihan menu");
+        AddMenuInfoLine(&HelpMenu, L"A - About");
+        AddMenuInfoLine(&HelpMenu, L"O - Opsi");
         AddMenuInfoLine(&HelpMenu, L"R - Soft Reset");
-        AddMenuInfoLine(&HelpMenu, L"U - Exit");
+        AddMenuInfoLine(&HelpMenu, L"U - Shutdown");
         break;
       case polish:
 /*        AddMenuInfoLine(&HelpMenu, L"ESC - Wyjście z podmenu, Odświeżenie głównego menu");
