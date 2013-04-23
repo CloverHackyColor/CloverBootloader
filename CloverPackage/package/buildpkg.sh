@@ -1103,7 +1103,7 @@ buildpackage ()
 
         echo -e "\t[BUILD] ${packageName}"
 
-        find "${packagePath}" -name '.DS_Store' -delete
+        find "${packagePath}" \( -name '.DS_Store' -o -name '.svn' \) -print0 | xargs -0 rm -rf
         local filecount=$( find "${packagePath}/Root" | wc -l )
         if [ "${packageSize}" ]; then
             local installedsize="${packageSize}"

@@ -45,7 +45,7 @@ source ./rc_scripts.lib
 if [[ "$install_on_all_volumes" == true ]]; then
     IFS=$'\n' # ' fix xemacs fontification
     for mountPoint in $(getInternalOSXSystemVolumes); do
-		[[ "$mountPoint" == $destroot ]] && continue
+        [[ "$mountPoint" == $destroot ]] && continue
         echo "Installing RC scripts in '$mountPoint' volume" >> "$install_log"
         while read -r -u3 file; do
             srcfile=$(echo "${srcvolume}/$file"   | sed -E 's#[/]{2,}#/#g')
@@ -59,18 +59,20 @@ if [[ "$install_on_all_volumes" == true ]]; then
             case "$file" in
                 *.d/*.local)
                     if [[ -f "$destfile.disabled" ]]; then
+                        echo "Removing $destfile"
                         rm -f "$destfile"
                         destfile="$destfile.disabled"
                     fi
                     ;;
                 *.d/*.local.disabled)
                     enabledfile="${file%.disabled}"
+                    echo "Removing $destroot/$enabledfile"
                     rm -f  "$destroot/$enabledfile"
                     ;;
             esac
 
             echo "Copying $srcfile to $destfile"
-            cp -pf "$srcfile" "$destfile"
+            cp -pvf "$srcfile" "$destfile"
             chown root:wheel "$destfile"; chmod 755 "$destfile"
 
         done 3< <(cat ./Tools/rc.files)
@@ -96,6 +98,7 @@ while read -r -u3 file; do
         esac
     else
         # Cleanup: remove file and dir
+        echo "Removing $srcfile"
         rm -f "$srcfile"
         rmdir $(dirname "$srcfile") &>/dev/null
     fi
