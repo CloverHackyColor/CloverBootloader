@@ -1293,7 +1293,7 @@ VOID PatchTableType17()
     UINTN SMBIOSIndex = wrongSMBIOSBanks ? Index : channelMap[Index];
     UINTN SPDIndex = channelMap[Index];
     UINT8 bank = (UINT8)Index / channels;
-    if (!insertingEmpty && ((expectedCount < 2) || (gRAMCount > expectedCount)) &&
+    if (!insertingEmpty && (gRAMCount > expectedCount) &&
         !gRAM.SPD[SPDIndex].InUse && (!trustSMBIOS || !gRAM.SMBIOS[SMBIOSIndex].InUse)) {
       continue;
     }
