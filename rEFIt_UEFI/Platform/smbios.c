@@ -1193,9 +1193,6 @@ VOID PatchTableType17()
       expectedCount = 4;
     }
   }
-  if (expectedCount > 0) {
-    --expectedCount;
-  }
   // Check for interleaved channels
   if (channels >= 2) {
     if ((gRAM.SMBIOS[0].InUse != gRAM.SMBIOS[2].InUse) ||
@@ -1267,6 +1264,9 @@ VOID PatchTableType17()
   // Can't have less than the number of channels
   if (expectedCount < channels) {
     expectedCount = channels;
+  }
+  if (expectedCount > 0) {
+     --expectedCount;
   }
   DBG("Channels: %d\n", channels);
   // Setup interleaved channel map
