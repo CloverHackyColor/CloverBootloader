@@ -1264,6 +1264,10 @@ VOID PatchTableType17()
       channels = 3;
     }
   }
+  // Can't have less than the number of channels
+  if (expectedCount < channels) {
+    expectedCount = channels;
+  }
   DBG("Channels: %d\n", channels);
   // Setup interleaved channel map
   if (channels >= 2) {
