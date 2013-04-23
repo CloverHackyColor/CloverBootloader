@@ -289,19 +289,19 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"U - Wylaczenie komputera");
         break;
       case croatian:
-        AddMenuInfoLine(&HelpMenu, L"ESC - Izlaz iz podizbornika, Osvježi glavni izbornik");
-        AddMenuInfoLine(&HelpMenu, L"F1  - Pomoć");
-        AddMenuInfoLine(&HelpMenu, L"F2  - Spremi preboot.log (samo FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"ESC - izlaz iz podizbornika, Osvježi glavni izbornik");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Ovaj izbornik");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Spremi preboot.log (samo na FAT32)");
         AddMenuInfoLine(&HelpMenu, L"F4  - Spremi oem DSDT u EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F5  - Spremi modificirani DSDT u EFI/CLOVER/ACPI/origin/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F6  - Spremi VideoBios u EFI/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F10 - Spremi sliku ekrana u EFI/misc/ (FAT32)");
-        AddMenuInfoLine(&HelpMenu, L"F12 - Izbaci označeni medij iz uređaja (DVD)");
-        AddMenuInfoLine(&HelpMenu, L"Space - Detalji o označenom boot izboru");
-        AddMenuInfoLine(&HelpMenu, L"Brojevi 1-9 - Prečac do boot izbora ");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Spremi patched DSDT into EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Spremi VideoBios into EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Spremi screenshot into EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Izbaci izabrai (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Space - Detalji o odabranom sistemu");
+        AddMenuInfoLine(&HelpMenu, L"Brojevi 1 do 9 su prečac do izbora");
         AddMenuInfoLine(&HelpMenu, L"A - Izbornik o meni");
         AddMenuInfoLine(&HelpMenu, L"O - Izbornik opcije");
-        AddMenuInfoLine(&HelpMenu, L"R - Reset rečunala");
+        AddMenuInfoLine(&HelpMenu, L"R - Restart računala");
         AddMenuInfoLine(&HelpMenu, L"U - Isključivanje računala");
         break;
       case korean:
