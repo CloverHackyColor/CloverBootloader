@@ -1136,30 +1136,36 @@ VOID PatchTableType17()
     return;
   }
   // Detect whether the SMBIOS is trusted information
-  if (trustSMBIOS && (gRAM.SPDInUse != 0) && (gRAM.SMBIOSInUse != 0)) {
-    if (gRAM.SPDInUse != gRAM.SMBIOSInUse) {
-      // Prefer the SPD information
-      if (gRAM.SPDInUse > gRAM.SMBIOSInUse) {
-        trustSMBIOS = FALSE;
-      } else if (gRAM.SPD[0].InUse || !gRAM.SMBIOS[0].InUse) {
-        if (gRAM.SPDInUse > 1) {
+  if (trustSMBIOS) {
+    if (gRAM.SMBIOSInUse != 0) {
+      if (gRAM.SPDInUse != 0) {
+        if (gRAM.SPDInUse != gRAM.SMBIOSInUse) {
+          // Prefer the SPD information
+          if (gRAM.SPDInUse > gRAM.SMBIOSInUse) {
+            trustSMBIOS = FALSE;
+          } else if (gRAM.SPD[0].InUse || !gRAM.SMBIOS[0].InUse) {
+            if (gRAM.SPDInUse > 1) {
+              trustSMBIOS = FALSE;
+            } else if (gRAM.SMBIOSInUse == 1) {
+              channels = 1;
+            }
+          } else if (gRAM.SPDInUse == 1) {
+            // The SMBIOS may contain table for built-in module
+            if (gRAM.SMBIOSInUse <= 2) {
+              channels = 1;
+            } else {
+              trustSMBIOS = FALSE;
+            }
+          } else {
+            trustSMBIOS = FALSE;
+          }
+        } else if (gRAM.SPD[0].InUse != gRAM.SMBIOS[0].InUse) {
+          // Never trust a sneaky SMBIOS!
           trustSMBIOS = FALSE;
-        } else if (gRAM.SMBIOSInUse == 1) {
-          channels = 1;
         }
-      } else if (gRAM.SPDInUse == 1) {
-        // The SMBIOS may contain table for built-in module
-        if (gRAM.SMBIOSInUse <= 2) {
-          channels = 1;
-        } else {
-          trustSMBIOS = FALSE;
-        }
-      } else {
-        trustSMBIOS = FALSE;
+      } else if (gRAM.SMBIOSInUse == 1) {
+        channels = 1;
       }
-    } else if (gRAM.SPD[0].InUse != gRAM.SMBIOS[0].InUse) {
-      // Never trust a sneaky SMBIOS!
-      trustSMBIOS = FALSE;
     }
   }
   if (trustSMBIOS) {
