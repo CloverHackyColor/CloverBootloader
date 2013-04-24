@@ -1224,7 +1224,14 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
         Volume->OSIconName = L"cougar";
         Volume->BootType = BOOTING_BY_EFI;
         Status = EFI_SUCCESS;
-      }
+      } else
+        // Lynx
+        if(AsciiStrStr(prop->string, "10.9") != 0){
+          Volume->OSType = OSTYPE_LYNX;
+          Volume->OSIconName = L"lynx";
+          Volume->BootType = BOOTING_BY_EFI;
+          Status = EFI_SUCCESS;
+        }
       MsgLog("  Booting OS %a\n", prop->string);
     } 
 	}
@@ -1746,6 +1753,10 @@ CHAR16* GetExtraKextsDir(REFIT_VOLUME *Volume)
       OSTypeStr = L"10.8";
       break;
       
+    case OSTYPE_LYNX:
+      OSTypeStr = L"10.9";
+      break;
+
     default:
       OSTypeStr = L"Other";
       break;

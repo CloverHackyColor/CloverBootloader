@@ -770,6 +770,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     case OSTYPE_SNOW:
     case OSTYPE_LION:
     case OSTYPE_COUGAR:
+    case OSTYPE_LYNX:
     case OSTYPE_RECOVERY:
     case OSTYPE_BOOT_OSX:
       OSIconName = Volume->OSIconName;
