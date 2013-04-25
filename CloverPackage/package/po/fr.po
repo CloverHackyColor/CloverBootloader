@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-04-25 13:32+0300\n"
-"PO-Revision-Date: 2013-04-25 12:57+0200\n"
+"PO-Revision-Date: 2013-04-25 13:45+0200\n"
 "Last-Translator: JrCs <d2t56xxptp@snkmail.com>\n"
 "Language-Team: fr <fr@li.org>\n"
 "Language: fr\n"
@@ -73,8 +73,7 @@ msgstr "Clover v2"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:17
-msgid ""
-"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgid "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
 msgstr ""
 "est un programme open source basé sur différents projets: Clover, rEFIt, "
 "XNU, VirtualBox."
@@ -113,12 +112,7 @@ msgstr ""
 "- Clover détecte automatiquement votre matériel et le configure par défaut."
 
 #. type: Content of: <html><body><p><span>
-#: Resources/templates/Description.html:23
-#: Resources/templates/Description.html:24
-#: Resources/templates/Description.html:29
-#: Resources/templates/Description.html:31
-#: Resources/templates/Description.html:32
-#: Resources/templates/Description.html:33
+#: Resources/templates/Description.html:23 Resources/templates/Description.html:24 Resources/templates/Description.html:29 Resources/templates/Description.html:31 Resources/templates/Description.html:32 Resources/templates/Description.html:33
 msgid " "
 msgstr " "
 
@@ -179,7 +173,9 @@ msgstr "Également paramétrable."
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:33
 msgid "- USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
-msgstr "- USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
+msgstr ""
+"- Corrections USB (LegacyOff, Ownership, Builtin, clock-id) jusqu'à l'USB "
+"3.0"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:34
@@ -276,12 +272,14 @@ msgid ""
 "Clover EFI requires three essential files. (in simple terms)\n"
 "boot0 (On the drive's MBR) responsible for loading boot1.\n"
 "boot1 (On the partition's boot-sector) to finding boot2.\n"
-"boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
+"boot2 (On the partition's root directory) for loading "
+"/EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgstr ""
 "Clover EFI nécessite trois fichiers  essentiels. (en bref)\n"
 "boot0 (Sur disque MBR) responsable du chargement boot1.\n"
 "boot1 (Sur partition boot secteur) recherche boot2.\n"
-"boot2 (Sur partition répertoire racine(root)) charge /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
+"boot2 (Sur partition répertoire racine(root)) charge "
+"/EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 
 #. type: "boot0_title"
 #: Resources/templates/Localizable.strings:29
@@ -294,7 +292,10 @@ msgstr "BIOS MBR boot0 (HFS+Fat32)"
 #, no-wrap
 msgid ""
 "Used for BIOS booting on BIOS motherboards.\n"
-"Use fdisk440 to install boot0 to the first 440 bits of MBR without destroying any existing Windows installation if you have one, then boot0 will search first active HFS partition for boot1h2, or search first active Fat32 partition for boot1f32alt.\n"
+"Use fdisk440 to install boot0 to the first 440 bits of MBR without "
+"destroying any existing Windows installation if you have one, then boot0 "
+"will search first active HFS partition for boot1h2, or search first active "
+"Fat32 partition for boot1f32alt.\n"
 "It will setup selected HFS + Fat32 partitions to be active.\n"
 "Need to format as Fat32 on Win or on Mac as below.\n"
 "  1. Erase as MS-DOS (FAT) with Disk Utility first.\n"
@@ -304,7 +305,8 @@ msgid ""
 "  5. diskutil mount /dev/rdisk9s1"
 msgstr ""
 "Initialisation BIOS carte mère.\n"
-"boot0 va rechercher la première partition HFS active pour boot1h2, ou rechercher la première partition Fat32 active pour boot1f32alt.\n"
+"boot0 va rechercher la première partition HFS active pour boot1h2, ou "
+"rechercher la première partition Fat32 active pour boot1f32alt.\n"
 "Ceci va activer la partition sélectionnée HFS + ou Fat32.\n"
 "Necessite le formatage en Fat32 sous Win ou on Mac comme suit.\n"
 "\n"
@@ -325,8 +327,12 @@ msgstr "BIOS MBR boot0hfs (HFS+Fat32)"
 #, no-wrap
 msgid ""
 "Used for BIOS booting on BIOS motherboards.\n"
-"Use fdisk440 to install boot0hfs to the first 440 bits of MBR without destroying any existing Windows installation if you have one, then boot0hfs will search first HFS partition for boot1h2, or search first active Fat32 partition for boot1f32alt.\n"
-"It will not setup selected HFS partition to be active, but will setup selected Fat32 partition to be active.\n"
+"Use fdisk440 to install boot0hfs to the first 440 bits of MBR without "
+"destroying any existing Windows installation if you have one, then boot0hfs "
+"will search first HFS partition for boot1h2, or search first active Fat32 "
+"partition for boot1f32alt.\n"
+"It will not setup selected HFS partition to be active, but will setup "
+"selected Fat32 partition to be active.\n"
 "Need to format as Fat32 on Win or on Mac as below.\n"
 "  1. Erase as MS-DOS (FAT) with Disk Utility first.\n"
 "  2. diskutil list\n"
@@ -335,9 +341,11 @@ msgid ""
 "  5. diskutil mount /dev/rdisk9s1"
 msgstr ""
 "Initialisation BIOS carte mère.\n"
-"boot0hfs va rechercher la première partition HFS active pour boot1h2, ou rechercher la première partition Fat32 active pour boot1f32alt.\n"
+"boot0hfs va rechercher la première partition HFS active pour boot1h2, ou "
+"rechercher la première partition Fat32 active pour boot1f32alt.\n"
 "\n"
-"Ceci ne rendra pas active la partition HFS mais activera la partition Fat32 choisie.\n"
+"Ceci ne rendra pas active la partition HFS mais activera la partition Fat32 "
+"choisie.\n"
 "Necessite le formatage en Fat32 sous Win ou Mac comme suit.\n"
 "1. Effacer en MS-DOS (FAT) avec Disk Utility en premier.\n"
 "2.(sous Terminal)diskutil list\n"
@@ -361,7 +369,8 @@ msgid ""
 msgstr ""
 "N'installe aucun bootloader (boot0X, boot1X).\n"
 "Utile pour les cartes mères UEFI qui n'ont pas besoin de bootloader.\n"
-"Cette option peut aussi être utilisée pour éviter la mise à jour des secteurs de boot (MBR et PBR)."
+"Cette option peut aussi être utilisée pour éviter la mise à jour des "
+"secteurs de boot (MBR et PBR)."
 
 #. type: "AltBoot_title"
 #: Resources/templates/Localizable.strings:56
@@ -434,11 +443,10 @@ msgstr "CloverEFI"
 #: Resources/templates/Localizable.strings:79
 #, no-wrap
 msgid "Select the version of CloverEFI to install."
-msgstr "Select the version of CloverEFI to install."
+msgstr "Sélectionner la version de CloverEFI à installer."
 
 #. type: "cloverEFI.32_description"
-#: Resources/templates/Localizable.strings:80
-#: Resources/templates/Localizable.strings:81
+#: Resources/templates/Localizable.strings:80 Resources/templates/Localizable.strings:81
 #, no-wrap
 msgid "CloverEFI 32-bits"
 msgstr "CloverEFI 32-bits"
@@ -649,7 +657,9 @@ msgstr "RC scripts sur tous les volumes OSX bootables"
 #: Resources/templates/Localizable.strings:137
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes."
-msgstr "Installation de tous les RC scripts sur tous les volumes internes OSX bootables."
+msgstr ""
+"Installation de tous les RC scripts sur tous les volumes internes OSX "
+"bootables."
 
 #. type: "Optional RC Scripts"
 #: Resources/templates/Localizable.strings:138
@@ -660,8 +670,12 @@ msgstr "RC Scripts Optionnels"
 #. type: "disable_sleep_proxy_client_description"
 #: Resources/templates/Localizable.strings:139
 #, no-wrap
-msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
-msgstr "Script pour désactiver le service Bonjour 'sleep proxy client' afin d'éviter que le système ne se réveille toutes les heures"
+msgid ""
+"Disable the mDNSResponder sleep proxy client service. This will prevent the "
+"system waking from sleep every hours"
+msgstr ""
+"Script pour désactiver le service Bonjour 'sleep proxy client' afin d'éviter "
+"que le système ne se réveille toutes les heures"
 
 #~ msgid "or from EFI folder"
 #~ msgstr "ou du dossier EFI"
