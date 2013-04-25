@@ -1,0 +1,652 @@
+# SOME DESCRIPTIVE TITLE
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Clover 2.0\n"
+"POT-Creation-Date: 2013-04-24 22:51+0300\n"
+"PO-Revision-Date: 2013-04-25 08:48+0100\n"
+"Last-Translator: JrCs\n"
+"Language-Team: ko <ko@li.org>\n"
+"Language: ko\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.5\n"
+
+#. type: Content of: <html><body><div><p>
+#: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
+msgid "Clover EFI"
+msgstr "Clover EFI"
+
+#. type: Content of: <html><body><div><p>
+#: Resources/templates/Welcome.html:22 Resources/templates/Conclusion.html:20
+msgid "%CLOVERVERSION% r%CLOVERREVISION%"
+msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Welcome.html:25
+msgid "Developers:"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Welcome.html:26
+msgid "%DEVELOP%"
+msgstr "%DEVELOP%"
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Welcome.html:28
+msgid "Source code credits to:"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Welcome.html:29
+msgid "%CREDITS%"
+msgstr "%CREDITS%"
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Welcome.html:31
+msgid "Package credits to:"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Welcome.html:32
+msgid "%PKGDEV%"
+msgstr "%PKGDEV%"
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Welcome.html:34
+msgid "Supports Fat32, HFS+, ESP."
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Welcome.html:35 Resources/templates/Conclusion.html:25
+msgid "Copyright © %CPRYEAR%"
+msgstr "Copyright © %CPRYEAR%"
+
+#. type: Content of: <html><body><p><span>
+#: Resources/templates/Description.html:17
+msgid "Clover v2"
+msgstr "Clover v2"
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:17
+msgid ""
+"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgstr ""
+
+#. type: Content of: <html><body><p><span>
+#: Resources/templates/Description.html:18
+msgid "The main is EDK2 latest revision."
+msgstr ""
+
+#. type: Content of: <html><body><p><b>
+#: Resources/templates/Description.html:20
+msgid "Main features:"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:21
+msgid "- boot into 10.4 - 10.8 OSX, Windows EFI and Linux EFI"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:22
+msgid ""
+"- It's EFI bootloader provides RuntimeServices for OS that impossible for "
+"Legacy Bootloaders"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:23
+msgid ""
+"- mostly Clover do automatic detection of hardware and set all properties by "
+"default."
+msgstr ""
+
+#. type: Content of: <html><body><p><span>
+#: Resources/templates/Description.html:23
+#: Resources/templates/Description.html:24
+#: Resources/templates/Description.html:29
+#: Resources/templates/Description.html:31
+#: Resources/templates/Description.html:32
+#: Resources/templates/Description.html:33
+msgid " "
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:24
+msgid "But user can change them by config.plist"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:25
+msgid "- with Clover you may restart into other OS from Startup Disk prefPane"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:26
+msgid "- UUID written into config.plist will be the same as in OS"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:27
+msgid "- SMBIOS will be corrected to standard 2.6"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:28
+msgid "- ACPI will be corrected to standard 4.0."
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:29
+msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:30
+msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:31
+msgid ""
+"- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
+"supported cards."
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:32
+msgid "Also customizable."
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:33
+msgid "- USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:34
+msgid "- HDA injector and Ethernet builtin injector"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:35
+msgid "- CPU turbo and P- and C-states generator"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:36
+msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:37
+msgid "- extra kexts loading and security mode for FireWire"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:38
+msgid ""
+"- default boot after timeout, customizable GUI , and saving screenshots from "
+"GUI typing F10"
+msgstr ""
+
+#. type: Content of: <html><body><p>
+#: Resources/templates/Description.html:39
+msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
+msgstr ""
+
+#. type: Content of: <html><body><div><p>
+#: Resources/templates/Conclusion.html:22
+msgid "Installation Complete!"
+msgstr ""
+
+#. type: "UEFI.only_title"
+#: Resources/templates/Localizable.strings:4
+#, no-wrap
+msgid "Install for UEFI motherboards"
+msgstr "Install for UEFI motherboards"
+
+#. type: "UEFI.only_description"
+#: Resources/templates/Localizable.strings:5
+#, no-wrap
+msgid "Install Clover to be used with UEFI motherboards only."
+msgstr "Install Clover to be used with UEFI motherboards only."
+
+#. type: "Target.ESP_title"
+#: Resources/templates/Localizable.strings:10
+#, no-wrap
+msgid "Install Clover in the ESP"
+msgstr "Install Clover in the ESP"
+
+#. type: "Target.ESP_description"
+#: Resources/templates/Localizable.strings:11
+#, no-wrap
+msgid ""
+"Install Clover in the ESP (EFI System Partition) of the target volume\n"
+"\n"
+"Need to format ESP as Fat32 on Mac first.\n"
+"\n"
+"For Fat32 use commands like:\n"
+"diskutil list\n"
+"newfs_msdos -v EFI -F 32 /dev/rdisk9s1"
+msgstr ""
+"Install Clover in the ESP (EFI System Partition) of the target volume\n"
+"\n"
+"Need to format ESP as Fat32 on Mac first.\n"
+"\n"
+"For Fat32 use commands like:\n"
+"diskutil list\n"
+"newfs_msdos -v EFI -F 32 /dev/rdisk9s1"
+
+#. type: "Bootloader_title"
+#: Resources/templates/Localizable.strings:23
+#, no-wrap
+msgid "Bootloader"
+msgstr "Bootloader"
+
+#. type: "Bootloader_description"
+#: Resources/templates/Localizable.strings:24
+#, no-wrap
+msgid ""
+"Clover EFI requires three essential files. (in simple terms)\n"
+"boot0 (On the drive's MBR) responsible for loading boot1.\n"
+"boot1 (On the partition's boot-sector) to finding boot2.\n"
+"boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
+msgstr ""
+"Clover EFI는 3개의 기본 파일이 필요합니다. (간단한 용어로 설명하였습니다.)\n"
+"boot0 (드라이브의 MBR에 위치)은 boot1을 읽어 들입니다.\n"
+"boot1 (파티션의 boot-sector에 위치)은 boot2를 찾습니다.\n"
+"boot2 (파티션의 root directory에 위치)는 /EFI/BOOT/CLOVERIA32.efi 또는 CLOVERX64.efi, 그리고 kernel 등을 읽어 들입니다."
+
+#. type: "boot0_title"
+#: Resources/templates/Localizable.strings:29
+#, no-wrap
+msgid "BIOS MBR boot0 (HFS+Fat32)"
+msgstr "BIOS방식 MBR boot0 (HFS+Fat32)"
+
+#. type: "boot0_description"
+#: Resources/templates/Localizable.strings:30
+#, no-wrap
+msgid ""
+"Used for BIOS booting on BIOS motherboards.\n"
+"Use fdisk440 to install boot0 to the first 440 bits of MBR without destroying any existing Windows installation if you have one, then boot0 will search first active HFS partition for boot1h2, or search first active Fat32 partition for boot1f32alt.\n"
+"It will setup selected HFS + Fat32 partitions to be active.\n"
+"Need to format as Fat32 on Win or on Mac as below.\n"
+"  1. Erase as MS-DOS (FAT) with Disk Utility first.\n"
+"  2. diskutil list\n"
+"  3. diskutil unmount /dev/rdisk9s1\n"
+"  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
+"  5. diskutil mount /dev/rdisk9s1"
+msgstr ""
+"BIOS방식 마더보드에서 BIOS 부팅을 할 경우 선택하십시오.\n"
+"이 패키지는 fdisk440을 사용하여 MBR의 맨 앞자리에 있는 440비트에 boot0을 설치합니다. Windows가 먼저 설치되어 있어도 지우지 않습니다. boot0가 설치되고 나면 boot0는 첫번째 활성 파티션에서 HFS 파티션이면 boot1h2를, Fat32 파티션이면 boot1f32alt를 각각 검색합니다.\n"
+"\n"
+"이 패키지는 사용자가 선택한 HFS + Fat32 파티션을 활성 상태로 설정합니다.\n"
+"\n"
+"설치를 계속 진행하기 전에, 설치 대상 디스크를 윈도우PC에서는 Fat32로, Mac에서는 다음처럼 포맷해야 합니다.\n"
+"\n"
+"  1. 먼저, 디스크유틸리티에서 MS-DOS (FAT) 포맷으로 지우기 하십시오.\n"
+"  2. 터미널에서 다음 순서대로 입력합니다.(rdisk9s1은 예제입니다. 자신의 상황에 맞는 IDENTIFIER를 입력하십시오.)\n"
+"  3. diskutil list\n"
+"  4. diskutil unmount /dev/rdisk9s1\n"
+"  5. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
+"  6. diskutil mount /dev/rdisk9s1"
+
+#. type: "boot0hfs_title"
+#: Resources/templates/Localizable.strings:40
+#, no-wrap
+msgid "BIOS MBR boot0hfs (HFS+Fat32)"
+msgstr "BIOS방식 MBR boot0hfs (HFS+Fat32)"
+
+#. type: "boot0hfs_description"
+#: Resources/templates/Localizable.strings:41
+#, no-wrap
+msgid ""
+"Used for BIOS booting on BIOS motherboards.\n"
+"Use fdisk440 to install boot0hfs to the first 440 bits of MBR without destroying any existing Windows installation if you have one, then boot0hfs will search first HFS partition for boot1h2, or search first active Fat32 partition for boot1f32alt.\n"
+"It will not setup selected HFS partition to be active, but will setup selected Fat32 partition to be active.\n"
+"Need to format as Fat32 on Win or on Mac as below.\n"
+"  1. Erase as MS-DOS (FAT) with Disk Utility first.\n"
+"  2. diskutil list\n"
+"  3. diskutil unmount /dev/rdisk9s1\n"
+"  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
+"  5. diskutil mount /dev/rdisk9s1"
+msgstr ""
+"BIOS방식 마더보드에서 BIOS 부팅을 할 경우 선택하십시오.\n"
+"이 패키지는 fdisk440을 사용하여 MBR의 맨 앞자리에 있는 440비트에 boot0hfs를 설치합니다. Windows가 먼저 설치되어 있어도 지우지 않습니다. boot0가 설치되고 나면 boot0는 첫번째 활성 파티션에서 HFS 파티션이면 boot1h2를, Fat32 파티션이면 boot1f32alt를 각각 검색합니다.\n"
+"\n"
+"이 패키지는 사용자가 선택한 HFS 파티션은 활성 상태로 설정하지 않으며 Fat32 파티션은 활성 상태로 설정합니다.\n"
+"\n"
+"설치를 계속 진행하기 전에, 설치 대상 디스크를 윈도우PC에서는 Fat32로, Mac에서는 다음처럼 포맷해야 합니다.\n"
+"\n"
+"  1. 먼저, 디스크유틸리티에서 MS-DOS (FAT) 포맷으로 지우기 하십시오.\n"
+"  2. 터미널에서 다음 순서대로 입력합니다.(rdisk9s1은 예제입니다. 자신의 상황에 맞는 IDENTIFIER를 입력하십시오.)\n"
+"  3. diskutil list\n"
+"  4. diskutil unmount /dev/rdisk9s1\n"
+"  5. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
+"  6. diskutil mount /dev/rdisk9s1"
+
+#. type: "bootNo_title"
+#: Resources/templates/Localizable.strings:51
+#, no-wrap
+msgid "Don't update MBR and PBR sectors"
+msgstr "Don't update MBR and PBR sectors"
+
+#. type: "bootNo_description"
+#: Resources/templates/Localizable.strings:52
+#, no-wrap
+msgid ""
+"Don't install any bootloader (boot0X, boot1X).\n"
+"Usefull for UEFI motherboards that don't need bootloader files.\n"
+"Can also be use if you don't want to upgrade MBR or PBR sectors."
+msgstr ""
+"Don't install any bootloader (boot0X, boot1X).\n"
+"Usefull for UEFI motherboards that don't need bootloader files.\n"
+"Can also be use if you don't want to upgrade MBR or PBR sectors."
+
+#. type: "AltBoot_title"
+#: Resources/templates/Localizable.strings:56
+#, no-wrap
+msgid "Use alternative booting PBR"
+msgstr "Use alternative booting PBR"
+
+#. type: "AltBoot_description"
+#: Resources/templates/Localizable.strings:57
+#, no-wrap
+msgid ""
+"Install alternative booting PBR with choice of boot with a key pressed.\n"
+"File to boot = boot{keypressed}"
+msgstr ""
+"Install alternative booting PBR with choice of boot with a key pressed.\n"
+"File to boot = boot{keypressed}"
+
+#. type: "boot32_title"
+#: Resources/templates/Localizable.strings:61
+#, no-wrap
+msgid "Install & Start 32bit boot first"
+msgstr "32비트 부트 설치 및 시작으로 설정"
+
+#. type: "boot32_description"
+#: Resources/templates/Localizable.strings:62
+#, no-wrap
+msgid ""
+"Install boot files and set to start 32bit first.\n"
+"Default boot to boot = Clover EFI 32bit. You can..\n"
+"Press key 1 to boot1 = Chameleon boot,\n"
+"Press key 3 to boot3 = Clover EFI 32bit boot,\n"
+"Press key 6 to boot6 = Clover EFI 64bit boot."
+msgstr ""
+"32비트 부트 파일을 설치하며 먼저 32비트로 부팅하게 설정합니다.\n"
+"기본 설정 부트 = Clover EFI 32bit.\n"
+"다른 부트 순서를 원하면, 다음 숫자 가운데 하나를 누르십시오.\n"
+"숫자 1을 누르면 boot1으로 부팅 = Chameleon 부트,\n"
+"숫자 3을 누르면 boot3으로 부팅 = Clover EFI 32비트 부트,\n"
+"숫자 6을 누르면 boot6으로 부팅 = Clover EFI 64비트 부트."
+
+#. type: "boot64_title"
+#: Resources/templates/Localizable.strings:68
+#, no-wrap
+msgid "Install & Start 64bit boot first"
+msgstr "64비트 부트 설치 및 시작으로 설정"
+
+#. type: "boot64_description"
+#: Resources/templates/Localizable.strings:69
+#, no-wrap
+msgid ""
+"Install boot files and set to start 64bit first.\n"
+"Default boot to boot = Clover EFI 64bit. You can..\n"
+"Press key 1 to boot1 = Chameleon boot,\n"
+"Press key 3 to boot3 = Clover EFI 32bit boot,\n"
+"Press key 6 to boot6 = Clover EFI 64bit boot."
+msgstr ""
+"64비트 부트 파일을 설치하며 먼저 64비트로 부팅하게 설정합니다.\n"
+"기본 설정 부트 = Clover EFI 64비트.\n"
+"다른 부트 순서를 원하면, 다음 숫자 가운데 하나를 누르십시오.\n"
+"숫자 1을 누르면 boot1으로 부팅 = Chameleon 부트,\n"
+"숫자 3을 누르면 boot3으로 부팅 = Clover EFI 32비트 부트,\n"
+"숫자 6을 누르면 boot6으로 부팅 = Clover EFI 64비트 부트."
+
+#. type: "CloverEFI_title"
+#: Resources/templates/Localizable.strings:78
+#, no-wrap
+msgid "CloverEFI"
+msgstr "CloverEFI"
+
+#. type: "CloverEFI_description"
+#: Resources/templates/Localizable.strings:79
+#, no-wrap
+msgid "Select the version of CloverEFI to install."
+msgstr "Select the version of CloverEFI to install."
+
+#. type: "cloverEFI.32_description"
+#: Resources/templates/Localizable.strings:80
+#: Resources/templates/Localizable.strings:81
+#, no-wrap
+msgid "CloverEFI 32-bits"
+msgstr "CloverEFI 32-bits"
+
+#. type: "cloverEFI.64.sata_title"
+#: Resources/templates/Localizable.strings:82
+#, no-wrap
+msgid "CloverEFI 64-bits SATA"
+msgstr "CloverEFI 64-bits SATA"
+
+#. type: "cloverEFI.64.sata_description"
+#: Resources/templates/Localizable.strings:83
+#, no-wrap
+msgid "CloverEFI 64-bits using SATA to access drives"
+msgstr "CloverEFI 64-bits using SATA to access drives"
+
+#. type: "cloverEFI.64.blockio_title"
+#: Resources/templates/Localizable.strings:84
+#, no-wrap
+msgid "CloverEFI 64-bits BiosBlockIO"
+msgstr "CloverEFI 64-bits BiosBlockIO"
+
+#. type: "cloverEFI.64.blockio_description"
+#: Resources/templates/Localizable.strings:85
+#, no-wrap
+msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
+msgstr "CloverEFI 64-bits using Bios Block I/O to access drives"
+
+#. type: "Themes_title"
+#: Resources/templates/Localizable.strings:91
+#, no-wrap
+msgid "Themes"
+msgstr "테마"
+
+#. type: "Themes_description"
+#: Resources/templates/Localizable.strings:92
+#, no-wrap
+msgid "Select to install themes."
+msgstr "사용자가 원하는 테마를 설치합니다."
+
+#. type: "black_green_title"
+#: Resources/templates/Localizable.strings:94
+#, no-wrap
+msgid "black_green"
+msgstr "black_green"
+
+#. type: "black_green_description"
+#: Resources/templates/Localizable.strings:95
+#, no-wrap
+msgid ""
+"Default black_green theme from Blackosx,\n"
+"Install to /EFI/BOOT/themes/black_green."
+msgstr ""
+"기본값. black_green 테마. 만든 사람-Blackosx,\n"
+"테마 폴더를 /EFI/BOOT/themes/black_green에 설치합니다."
+
+#. type: "AppleStyle_title"
+#: Resources/templates/Localizable.strings:98
+#, no-wrap
+msgid "AppleStyle"
+msgstr "AppleStyle"
+
+#. type: "AppleStyle_description"
+#: Resources/templates/Localizable.strings:99
+#, no-wrap
+msgid ""
+"AppleStyle theme from Eps,\n"
+"Install to /EFI/BOOT/themes/AppleStyle."
+msgstr ""
+"AppleStyle theme from Eps,\n"
+"Install to /EFI/BOOT/themes/AppleStyle."
+
+#. type: "mrengles_title"
+#: Resources/templates/Localizable.strings:102
+#, no-wrap
+msgid "mrengles"
+msgstr "mrengles"
+
+#. type: "mrengles_description"
+#: Resources/templates/Localizable.strings:103
+#, no-wrap
+msgid ""
+"mrengles theme from mrengles,\n"
+"Install to /EFI/BOOT/themes/mrengles."
+msgstr ""
+"mrengles theme from mrengles,\n"
+"Install to /EFI/BOOT/themes/mrengles."
+
+#. type: "iBootloader_title"
+#: Resources/templates/Localizable.strings:106
+#, no-wrap
+msgid "iClover"
+msgstr "iClover"
+
+#. type: "iBootloader_description"
+#: Resources/templates/Localizable.strings:107
+#, no-wrap
+msgid ""
+"Grey style theme by winlog,\n"
+"Install to /EFI/BOOT/themes/iClover."
+msgstr ""
+"Grey style theme by winlog,\n"
+"Install to /EFI/BOOT/themes/iClover."
+
+#. type: "buttons_title"
+#: Resources/templates/Localizable.strings:110
+#, no-wrap
+msgid "buttons"
+msgstr "buttons"
+
+#. type: "buttons_description"
+#: Resources/templates/Localizable.strings:111
+#, no-wrap
+msgid ""
+"Buttons theme from Trauma,\n"
+"Install to /EFI/BOOT/themes/buttons."
+msgstr ""
+"Buttons 테마. 만든 사람-Trauma,\n"
+"테마 폴더를 /EFI/BOOT/themes/buttons에 설치합니다."
+
+#. type: "hellfire_title"
+#: Resources/templates/Localizable.strings:114
+#, no-wrap
+msgid "hellfire"
+msgstr "hellfire"
+
+#. type: "hellfire_description"
+#: Resources/templates/Localizable.strings:115
+#, no-wrap
+msgid ""
+"Hellfire theme from lllevelll,\n"
+"Install to /EFI/BOOT/themes/hellfire."
+msgstr ""
+"Hellfire 테마. 만든 사람-illevelll,\n"
+"테마 폴더를 /EFI/BOOT/themes/hellfire에 설치합니다."
+
+#. type: "metal_title"
+#: Resources/templates/Localizable.strings:118
+#, no-wrap
+msgid "metal"
+msgstr "metal"
+
+#. type: "metal_description"
+#: Resources/templates/Localizable.strings:119
+#, no-wrap
+msgid ""
+"The original metal theme from Slice,\n"
+"Install to /EFI/BOOT/themes/metal."
+msgstr ""
+"The original metal 테마. 만든 사람-Slice,\n"
+"테마 폴더를 /EFI/BOOT/themes/metal에 설치합니다."
+
+#. type: "simple_gray_title"
+#: Resources/templates/Localizable.strings:122
+#, no-wrap
+msgid "simple_gray"
+msgstr "simple_gray"
+
+#. type: "simple_gray_description"
+#: Resources/templates/Localizable.strings:123
+#, no-wrap
+msgid ""
+"Simple_gray theme from hijeane,\n"
+"Install to /EFI/BOOT/themes/simple_gray."
+msgstr ""
+"Simple_gray 테마. 만든 사람-hijeane,\n"
+"테마 폴더를 /EFI/BOOT/themes/simple_gray에 설치합니다."
+
+#. type: "wooden_title"
+#: Resources/templates/Localizable.strings:126
+#, no-wrap
+msgid "wooden"
+msgstr "wooden"
+
+#. type: "wooden_description"
+#: Resources/templates/Localizable.strings:127
+#, no-wrap
+msgid ""
+"Wooden theme from iROOTa,\n"
+"Install to /EFI/BOOT/themes/wooden."
+msgstr ""
+"Wooden 테마. 만든 사람-iROOTa,\n"
+"테마 폴더를 /EFI/BOOT/themes/wooden에 설치합니다."
+
+#. type: "rc.scripts.on.target_title"
+#: Resources/templates/Localizable.strings:133
+#, no-wrap
+msgid "Install RC scripts on target volume"
+msgstr "Install RC scripts on target volume"
+
+#. type: "rc.scripts.on.target_description"
+#: Resources/templates/Localizable.strings:134
+#, no-wrap
+msgid ""
+"Install all RC scripts on target volume.\n"
+"The target volume must be a bootable OSX system volume."
+msgstr ""
+"Install all RC scripts on target volume.\n"
+"The target volume must be a bootable OSX system volume."
+
+#. type: "rc.scripts.on.all.volumes_title"
+#: Resources/templates/Localizable.strings:136
+#, no-wrap
+msgid "Install all RC scripts on all bootable OSX volumes"
+msgstr "Install all RC scripts on all bootable OSX volumes"
+
+#. type: "rc.scripts.on.all.volumes_description"
+#: Resources/templates/Localizable.strings:137
+#, no-wrap
+msgid "Install all RC scripts on all internal bootable OSX volumes."
+msgstr "Install all RC scripts on all internal bootable OSX volumes."
+
+#. type: "Optional RC Scripts"
+#: Resources/templates/Localizable.strings:138
+#, no-wrap
+msgid "Optional RC Scripts"
+msgstr "Optional RC Scripts"
+
+#. type: "disable_sleep_proxy_client_description"
+#: Resources/templates/Localizable.strings:139
+#, no-wrap
+msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
+msgstr "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
