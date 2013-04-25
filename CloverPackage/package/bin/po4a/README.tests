@@ -1,0 +1,20 @@
+"Testing can only prove the presence of bugs"
+  -- Dijkstra
+
+I'll try to add a test for each bug found in po4a in order to ensure that
+they won't surface again.
+
+If the test suite reports errors, please join enough details so that I can
+fix them. At least, provide me the detailed result of the test suite. For
+that, run the following command:
+
+  ./Build test
+
+It will produce a file called 'po4a.log', containing most of the details I
+need. Please also report all details you think appropriate.
+
+
+Thanks, Mt.
+
+Debian packages needed to run the testsuite:
+  docbook-xml texlive-binaries libhtml-parser-perl sp docbook
