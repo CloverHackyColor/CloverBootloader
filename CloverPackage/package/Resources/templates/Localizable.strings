@@ -133,8 +133,8 @@ Install to /EFI/CLOVER/themes/wooden.";
 "rc.scripts.on.target_title" = "Install RC scripts on target volume";
 "rc.scripts.on.target_description" = "Install all RC scripts on target volume.
 The target volume must be a bootable OSX system volume.";
-"rc.scripts.on.all.volumes_title" = "Install all RC scripts on all bootable OSX volumes";
-"rc.scripts.on.all.volumes_description" = "Install all RC scripts on all internal bootable OSX volumes.";
+"rc.scripts.on.all.volumes_title" = "Install all RC scripts on all other bootable OSX volumes";
+"rc.scripts.on.all.volumes_description" = "Install all RC scripts on all internal bootable OSX volumes other than the target volume.";
 "Optional RC Scripts" = "Optional RC Scripts";
 "disable_sleep_proxy_client_description" = "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours";
 

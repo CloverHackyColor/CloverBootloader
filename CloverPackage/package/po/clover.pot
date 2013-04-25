@@ -6,8 +6,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Clover v2-r1349\n"
-"POT-Creation-Date: 2013-04-25 13:32+0300\n"
+"Project-Id-Version: Clover v2-r1375\n"
+"POT-Creation-Date: 2013-04-25 13:54+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -556,13 +556,15 @@ msgstr ""
 #. type: "rc.scripts.on.all.volumes_title"
 #: Resources/templates/Localizable.strings:136
 #, no-wrap
-msgid "Install all RC scripts on all bootable OSX volumes"
+msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr ""
 
 #. type: "rc.scripts.on.all.volumes_description"
 #: Resources/templates/Localizable.strings:137
 #, no-wrap
-msgid "Install all RC scripts on all internal bootable OSX volumes."
+msgid ""
+"Install all RC scripts on all internal bootable OSX volumes other than the "
+"target volume."
 msgstr ""
 
 #. type: "Optional RC Scripts"
