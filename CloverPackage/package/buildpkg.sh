@@ -1284,24 +1284,20 @@ makedistribution ()
     echo -e "\n</installer-gui-script>"  >> "${PKG_BUILD_DIR}/${packagename}/Distribution"
 
     # Create the Resources directory
-    ditto --noextattr --noqtn "${PKGROOT}/Resources" "${PKG_BUILD_DIR}/${packagename}/Resources"
-    find "${PKG_BUILD_DIR}/${packagename}/Resources" -type d -name '.svn' -exec rm -R -f {} \; 2>/dev/null
+    ditto --noextattr --noqtn "${PKGROOT}/Resources/background.tiff" "${PKG_BUILD_DIR}/${packagename}"/Resources/
 
-# #   Make the translation
-#     echo ""
-#     echo "========= Translating Resources ========"
-#     (cd "${PKGROOT}" &&  PERLLIB=${PKGROOT}/bin/po4a/lib                  \
-#         bin/po4a/po4a                                                     \
-#         --package-name 'Chameleon'                                        \
-#         --package-version "${CHAMELEON_VERSION}-r${CHAMELEON_REVISION}"   \
-#         --msgmerge-opt '--lang=$lang'                                     \
-#         --variable PODIR="po"                                             \
-#         --variable TEMPLATES_DIR="Resources/templates"                    \
-#         --variable OUTPUT_DIR="${PKG_BUILD_DIR}/${packagename}/Resources" \
-#         ${PKGROOT}/po4a-chameleon.cfg)
-#
-#    # Copy common files in english localisation directory
-#    ditto --noextattr --noqtn "${PKGROOT}/Resources/common" "${PKG_BUILD_DIR}/${packagename}/Resources/en.lproj"
+    #   Make the translation
+    echo ""
+    echo "========= Translating Resources ========"
+    (cd "${PKGROOT}" &&  PERLLIB=bin/po4a/lib                             \
+        bin/po4a/po4a                                                     \
+        --package-name 'Clover'                                           \
+        --package-version "${CLOVER_VERSION}-r${CLOVER_REVISION}"         \
+        --msgmerge-opt '--lang=$lang'                                     \
+        --variable PODIR="po"                                             \
+        --variable TEMPLATES_DIR="Resources/templates"                    \
+        --variable OUTPUT_DIR="${PKG_BUILD_DIR}/${packagename}/Resources" \
+        po4a-clover.cfg)
 
     # CleanUp the directory
     find "${PKG_BUILD_DIR}/${packagename}" \( -type d -name '.svn' \) -o -name '.DS_Store' -depth -exec rm -rf {} \;

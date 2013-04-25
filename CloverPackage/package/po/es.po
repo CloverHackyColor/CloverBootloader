@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
-"POT-Creation-Date: 2013-04-24 22:51+0300\n"
+"POT-Creation-Date: 2013-04-25 13:32+0300\n"
 "PO-Revision-Date: 2013-04-25 08:43+0100\n"
 "Last-Translator: JrCs\n"
 "Language-Team: es <es@li.org>\n"
@@ -503,10 +503,10 @@ msgstr "black_green"
 #, no-wrap
 msgid ""
 "Default black_green theme from Blackosx,\n"
-"Install to /EFI/CLOVER/themes//black_green."
+"Install to /EFI/CLOVER/themes/black_green."
 msgstr ""
 "Tema por defecto black_green de Blackosx,\n"
-"Se instala en /EFI/CLOVER/themes//black_green."
+"Se instala en /EFI/CLOVER/themes/black_green."
 
 #. type: "AppleStyle_title"
 #: Resources/templates/Localizable.strings:98
@@ -519,10 +519,10 @@ msgstr "AppleStyle"
 #, no-wrap
 msgid ""
 "AppleStyle theme from Eps,\n"
-"Install to /EFI/CLOVER/themes//AppleStyle."
+"Install to /EFI/CLOVER/themes/AppleStyle."
 msgstr ""
 "AppleStyle tema de Eps,\n"
-"Se instala en /EFI/CLOVER/themes//AppleStyle."
+"Se instala en /EFI/CLOVER/themes/AppleStyle."
 
 #. type: "mrengles_title"
 #: Resources/templates/Localizable.strings:102
@@ -535,26 +535,26 @@ msgstr "mrengles"
 #, no-wrap
 msgid ""
 "mrengles theme from mrengles,\n"
-"Install to /EFI/CLOVER/themes//mrengles."
+"Install to /EFI/CLOVER/themes/mrengles."
 msgstr ""
 "mrengles tema de mrengles,\n"
-"Se instala en /EFI/CLOVER/themes//mrengles."
+"Se instala en /EFI/CLOVER/themes/mrengles."
 
-#. type: "iBootloader_title"
+#. type: "iClover_title"
 #: Resources/templates/Localizable.strings:106
 #, no-wrap
 msgid "iClover"
 msgstr "iClover"
 
-#. type: "iBootloader_description"
+#. type: "iClover_description"
 #: Resources/templates/Localizable.strings:107
 #, no-wrap
 msgid ""
 "Grey style theme by winlog,\n"
-"Install to /EFI/CLOVER/themes//iClover."
+"Install to /EFI/CLOVER/themes/iClover."
 msgstr ""
 "Grey style theme by winlog,\n"
-"Se instala en /EFI/CLOVER/themes//iClover."
+"Se instala en /EFI/CLOVER/themes/iClover."
 
 #. type: "buttons_title"
 #: Resources/templates/Localizable.strings:110
@@ -567,10 +567,10 @@ msgstr "buttons"
 #, no-wrap
 msgid ""
 "Buttons theme from Trauma,\n"
-"Install to /EFI/CLOVER/themes//buttons."
+"Install to /EFI/CLOVER/themes/buttons."
 msgstr ""
 "Tema Buttons de Trauma,\n"
-"Se instala en /EFI/CLOVER/themes//buttons."
+"Se instala en /EFI/CLOVER/themes/buttons."
 
 #. type: "hellfire_title"
 #: Resources/templates/Localizable.strings:114
@@ -583,10 +583,10 @@ msgstr "hellfire"
 #, no-wrap
 msgid ""
 "Hellfire theme from lllevelll,\n"
-"Install to /EFI/CLOVER/themes//hellfire."
+"Install to /EFI/CLOVER/themes/hellfire."
 msgstr ""
 "Tema Hellfire de illevelll,\n"
-"Se instala en /EFI/CLOVER/themes//hellfire."
+"Se instala en /EFI/CLOVER/themes/hellfire."
 
 #. type: "metal_title"
 #: Resources/templates/Localizable.strings:118
@@ -599,10 +599,10 @@ msgstr "metal"
 #, no-wrap
 msgid ""
 "The original metal theme from Slice,\n"
-"Install to /EFI/CLOVER/themes//metal."
+"Install to /EFI/CLOVER/themes/metal."
 msgstr ""
 "El tema original metal de Slice,\n"
-"Se instala en /EFI/CLOVER/themes//metal."
+"Se instala en /EFI/CLOVER/themes/metal."
 
 #. type: "simple_gray_title"
 #: Resources/templates/Localizable.strings:122
@@ -615,10 +615,10 @@ msgstr "simple_gray"
 #, no-wrap
 msgid ""
 "Simple_gray theme from hijeane,\n"
-"Install to /EFI/CLOVER/themes//simple_gray."
+"Install to /EFI/CLOVER/themes/simple_gray."
 msgstr ""
 "Tema Simple_gray de hijeane,\n"
-"Se instala en /EFI/CLOVER/themes//simple_gray."
+"Se instala en /EFI/CLOVER/themes/simple_gray."
 
 #. type: "wooden_title"
 #: Resources/templates/Localizable.strings:126
@@ -631,10 +631,10 @@ msgstr "wooden"
 #, no-wrap
 msgid ""
 "Wooden theme from iROOTa,\n"
-"Install to /EFI/CLOVER/themes//wooden."
+"Install to /EFI/CLOVER/themes/wooden."
 msgstr ""
 "Tema Wooden de iROOTa,\n"
-"Se instala en /EFI/CLOVER/themes//wooden."
+"Se instala en /EFI/CLOVER/themes/wooden."
 
 #. type: "rc.scripts.on.target_title"
 #: Resources/templates/Localizable.strings:133

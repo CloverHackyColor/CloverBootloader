@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
-"POT-Creation-Date: 2013-04-24 22:51+0300\n"
+"POT-Creation-Date: 2013-04-25 13:32+0300\n"
 "PO-Revision-Date: 2013-04-25 08:50+0100\n"
 "Last-Translator: JrCs\n"
 "Language-Team: zh_CN <zh_CN@li.org>\n"
@@ -467,10 +467,10 @@ msgstr "黑绿主题"
 #, no-wrap
 msgid ""
 "Default black_green theme from Blackosx,\n"
-"Install to /EFI/CLOVER/themes//black_green."
+"Install to /EFI/CLOVER/themes/black_green."
 msgstr ""
 "默认安装来自 Blackosx 的黑绿主题。\n"
-"安装位置 /EFI/CLOVER/themes//black_green。"
+"安装位置 /EFI/CLOVER/themes/black_green。"
 
 #. type: "AppleStyle_title"
 #: Resources/templates/Localizable.strings:98
@@ -483,10 +483,10 @@ msgstr "AppleStyle"
 #, no-wrap
 msgid ""
 "AppleStyle theme from Eps,\n"
-"Install to /EFI/CLOVER/themes//AppleStyle."
+"Install to /EFI/CLOVER/themes/AppleStyle."
 msgstr ""
 "AppleStyle theme from Eps,\n"
-"安装位置 /EFI/CLOVER/themes//AppleStyle."
+"安装位置 /EFI/CLOVER/themes/AppleStyle."
 
 #. type: "mrengles_title"
 #: Resources/templates/Localizable.strings:102
@@ -499,26 +499,26 @@ msgstr "mrengles"
 #, no-wrap
 msgid ""
 "mrengles theme from mrengles,\n"
-"Install to /EFI/CLOVER/themes//mrengles."
+"Install to /EFI/CLOVER/themes/mrengles."
 msgstr ""
 "mrengles theme from mrengles,\n"
-"安装位置 /EFI/CLOVER/themes//mrengles."
+"安装位置 /EFI/CLOVER/themes/mrengles."
 
-#. type: "iBootloader_title"
+#. type: "iClover_title"
 #: Resources/templates/Localizable.strings:106
 #, no-wrap
 msgid "iClover"
 msgstr "iClover"
 
-#. type: "iBootloader_description"
+#. type: "iClover_description"
 #: Resources/templates/Localizable.strings:107
 #, no-wrap
 msgid ""
 "Grey style theme by winlog,\n"
-"Install to /EFI/CLOVER/themes//iClover."
+"Install to /EFI/CLOVER/themes/iClover."
 msgstr ""
 "Grey style theme by winlog,\n"
-"安装位置 /EFI/CLOVER/themes//iClover."
+"安装位置 /EFI/CLOVER/themes/iClover."
 
 #. type: "buttons_title"
 #: Resources/templates/Localizable.strings:110
@@ -531,10 +531,10 @@ msgstr "按钮主题"
 #, no-wrap
 msgid ""
 "Buttons theme from Trauma,\n"
-"Install to /EFI/CLOVER/themes//buttons."
+"Install to /EFI/CLOVER/themes/buttons."
 msgstr ""
 "选择安装来自 Trauma 的按钮主题。\n"
-"安装位置 /EFI/CLOVER/themes//buttons。"
+"安装位置 /EFI/CLOVER/themes/buttons。"
 
 #. type: "hellfire_title"
 #: Resources/templates/Localizable.strings:114
@@ -547,10 +547,10 @@ msgstr "地狱火主题"
 #, no-wrap
 msgid ""
 "Hellfire theme from lllevelll,\n"
-"Install to /EFI/CLOVER/themes//hellfire."
+"Install to /EFI/CLOVER/themes/hellfire."
 msgstr ""
 "选择安装来自 illevelll 的地狱火主题。\n"
-"安装位置 /EFI/CLOVER/themes//hellfire。"
+"安装位置 /EFI/CLOVER/themes/hellfire。"
 
 #. type: "metal_title"
 #: Resources/templates/Localizable.strings:118
@@ -563,10 +563,10 @@ msgstr "金属主题"
 #, no-wrap
 msgid ""
 "The original metal theme from Slice,\n"
-"Install to /EFI/CLOVER/themes//metal."
+"Install to /EFI/CLOVER/themes/metal."
 msgstr ""
 "原始默认安装来自 Slice 的金属主题，现已改由黑绿主题作为默认安装。\n"
-"安装位置 /EFI/CLOVER/themes//metal。"
+"安装位置 /EFI/CLOVER/themes/metal。"
 
 #. type: "simple_gray_title"
 #: Resources/templates/Localizable.strings:122
@@ -579,10 +579,10 @@ msgstr "简灰主题"
 #, no-wrap
 msgid ""
 "Simple_gray theme from hijeane,\n"
-"Install to /EFI/CLOVER/themes//simple_gray."
+"Install to /EFI/CLOVER/themes/simple_gray."
 msgstr ""
 "选择安装来自 hijeane 的简灰主题。\n"
-"安装位置 /EFI/CLOVER/themes//simple_gray."
+"安装位置 /EFI/CLOVER/themes/simple_gray."
 
 #. type: "wooden_title"
 #: Resources/templates/Localizable.strings:126
@@ -595,10 +595,10 @@ msgstr "原木主题"
 #, no-wrap
 msgid ""
 "Wooden theme from iROOTa,\n"
-"Install to /EFI/CLOVER/themes//wooden."
+"Install to /EFI/CLOVER/themes/wooden."
 msgstr ""
 "选择安装来自 iROOTa 的原木主题。\n"
-"安装位置 /EFI/CLOVER/themes//wooden."
+"安装位置 /EFI/CLOVER/themes/wooden."
 
 #. type: "rc.scripts.on.target_title"
 #: Resources/templates/Localizable.strings:133

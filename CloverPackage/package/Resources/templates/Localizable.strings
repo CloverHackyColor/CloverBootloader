@@ -1,0 +1,141 @@
+﻿// ============================================================================
+// Installation
+// ----------------------------------------------------------------------------
+"UEFI.only_title" = "Install for UEFI motherboards";
+"UEFI.only_description" = "Install Clover to be used with UEFI motherboards only.";
+
+// ============================================================================
+// Target
+// ----------------------------------------------------------------------------
+"Target.ESP_title" = "Install Clover in the ESP";
+"Target.ESP_description" = "Install Clover in the ESP (EFI System Partition) of the target volume
+
+Need to format ESP as Fat32 on Mac first.
+
+For Fat32 use commands like:
+diskutil list
+newfs_msdos -v EFI -F 32 /dev/rdisk9s1";
+
+// ============================================================================
+// Bootloader
+// ----------------------------------------------------------------------------
+
+"Bootloader_title" = "Bootloader";
+"Bootloader_description" = "Clover EFI requires three essential files. (in simple terms)
+boot0 (On the drive's MBR) responsible for loading boot1.
+boot1 (On the partition's boot-sector) to finding boot2.
+boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc.";
+
+"boot0_title" = "BIOS MBR boot0 (HFS+Fat32)";
+"boot0_description" = "Used for BIOS booting on BIOS motherboards.
+Use fdisk440 to install boot0 to the first 440 bits of MBR without destroying any existing Windows installation if you have one, then boot0 will search first active HFS partition for boot1h2, or search first active Fat32 partition for boot1f32alt.
+It will setup selected HFS + Fat32 partitions to be active.
+Need to format as Fat32 on Win or on Mac as below.
+  1. Erase as MS-DOS (FAT) with Disk Utility first.
+  2. diskutil list
+  3. diskutil unmount /dev/rdisk9s1
+  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1
+  5. diskutil mount /dev/rdisk9s1";
+
+"boot0hfs_title" = "BIOS MBR boot0hfs (HFS+Fat32)";
+"boot0hfs_description" = "Used for BIOS booting on BIOS motherboards.
+Use fdisk440 to install boot0hfs to the first 440 bits of MBR without destroying any existing Windows installation if you have one, then boot0hfs will search first HFS partition for boot1h2, or search first active Fat32 partition for boot1f32alt.
+It will not setup selected HFS partition to be active, but will setup selected Fat32 partition to be active.
+Need to format as Fat32 on Win or on Mac as below.
+  1. Erase as MS-DOS (FAT) with Disk Utility first.
+  2. diskutil list
+  3. diskutil unmount /dev/rdisk9s1
+  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1
+  5. diskutil mount /dev/rdisk9s1";
+
+"bootNo_title" = "Don't update MBR and PBR sectors";
+"bootNo_description" = "Don't install any bootloader (boot0X, boot1X).
+Usefull for UEFI motherboards that don't need bootloader files.
+Can also be use if you don't want to upgrade MBR or PBR sectors.";
+
+"AltBoot_title" = "Use alternative booting PBR";
+"AltBoot_description" = "Install alternative booting PBR with choice of boot with a key pressed.
+File to boot = boot{keypressed}";
+
+
+"boot32_title" = "Install & Start 32bit boot first";
+"boot32_description" = "Install boot files and set to start 32bit first.
+Default boot to boot = Clover EFI 32bit. You can..
+Press key 1 to boot1 = Chameleon boot,
+Press key 3 to boot3 = Clover EFI 32bit boot,
+Press key 6 to boot6 = Clover EFI 64bit boot.";
+
+"boot64_title" = "Install & Start 64bit boot first";
+"boot64_description" = "Install boot files and set to start 64bit first.
+Default boot to boot = Clover EFI 64bit. You can..
+Press key 1 to boot1 = Chameleon boot,
+Press key 3 to boot3 = Clover EFI 32bit boot,
+Press key 6 to boot6 = Clover EFI 64bit boot.";
+
+// ============================================================================
+// CloverEFI
+// ----------------------------------------------------------------------------
+"CloverEFI_title" = "CloverEFI";
+"CloverEFI_description" = "Select the version of CloverEFI to install.";
+"cloverEFI.32_title" = "CloverEFI 32-bits";
+"cloverEFI.32_description" = "CloverEFI 32-bits";
+"cloverEFI.64.sata_title" = "CloverEFI 64-bits SATA";
+"cloverEFI.64.sata_description" = "CloverEFI 64-bits using SATA to access drives";
+"cloverEFI.64.blockio_title" = "CloverEFI 64-bits BiosBlockIO";
+"cloverEFI.64.blockio_description" = "CloverEFI 64-bits using Bios Block I/O to access drives";
+
+// ============================================================================
+// Themes
+// ----------------------------------------------------------------------------
+
+"Themes_title" = "Themes";
+"Themes_description" = "Select to install themes.";
+
+"black_green_title" = "black_green";
+"black_green_description" = "Default black_green theme from Blackosx,
+Install to /EFI/CLOVER/themes/black_green.";
+
+"AppleStyle_title" = "AppleStyle";
+"AppleStyle_description" = "AppleStyle theme from Eps,
+Install to /EFI/CLOVER/themes/AppleStyle.";
+
+"mrengles_title" = "mrengles";
+"mrengles_description" = "mrengles theme from mrengles,
+Install to /EFI/CLOVER/themes/mrengles.";
+
+"iClover_title" = "iClover";
+"iClover_description" = "Grey style theme by winlog,
+Install to /EFI/CLOVER/themes/iClover.";
+
+"buttons_title" = "buttons";
+"buttons_description" = "Buttons theme from Trauma,
+Install to /EFI/CLOVER/themes/buttons.";
+
+"hellfire_title" = "hellfire";
+"hellfire_description" = "Hellfire theme from lllevelll,
+Install to /EFI/CLOVER/themes/hellfire.";
+
+"metal_title" = "metal";
+"metal_description" = "The original metal theme from Slice,
+Install to /EFI/CLOVER/themes/metal.";
+
+"simple_gray_title" = "simple_gray";
+"simple_gray_description" = "Simple_gray theme from hijeane,
+Install to /EFI/CLOVER/themes/simple_gray.";
+
+"wooden_title" = "wooden";
+"wooden_description" = "Wooden theme from iROOTa,
+Install to /EFI/CLOVER/themes/wooden.";
+
+// ============================================================================
+// RC Scripts
+// ----------------------------------------------------------------------------
+"rc.scripts.on.target_title" = "Install RC scripts on target volume";
+"rc.scripts.on.target_description" = "Install all RC scripts on target volume.
+The target volume must be a bootable OSX system volume.";
+"rc.scripts.on.all.volumes_title" = "Install all RC scripts on all bootable OSX volumes";
+"rc.scripts.on.all.volumes_description" = "Install all RC scripts on all internal bootable OSX volumes.";
+"Optional RC Scripts" = "Optional RC Scripts";
+"disable_sleep_proxy_client_description" = "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours";
+
+// ----------------------------------------------------------------------------

@@ -5,10 +5,10 @@
 	<options hostArchitectures='i386' allow-external-scripts='no'/>
 	<domains enable_anywhere="true"/>
 
-	<welcome file='Welcome.rtfd'/>
+	<welcome file='Welcome.html'/>
 	<!-- license file="License.rtf" sla="EA0401" -->
 	<readme file='Description.html'/>
-	<conclusion file="Conclusion.rtfd"/>
+	<conclusion file="Conclusion.html"/>
 	<background file='background.tiff' alignment='topleft' scaling='proportional'/>
 
 	<title>Clover %CLOVERVERSION% r%CLOVERREVISION% EFI bootloader</title>
