@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-04-24 22:51+0300\n"
-"PO-Revision-Date: 2013-04-24 23:33+0200\n"
+"PO-Revision-Date: 2013-04-25 12:57+0200\n"
 "Last-Translator: JrCs <d2t56xxptp@snkmail.com>\n"
 "Language-Team: fr <fr@li.org>\n"
 "Language: fr\n"
@@ -39,7 +39,7 @@ msgstr "%DEVELOP%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:28
 msgid "Source code credits to:"
-msgstr "Code Source, crédits et remerciement à:"
+msgstr "Code source, crédits et remerciement à:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:29
@@ -86,7 +86,7 @@ msgstr "Le projet principal est EDK2. La dernière révision est disponible ici:
 #. type: Content of: <html><body><p><b>
 #: Resources/templates/Description.html:20
 msgid "Main features:"
-msgstr "Caractéristiques Principales:"
+msgstr "Caractéristiques principales:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:21
@@ -142,7 +142,7 @@ msgstr "- SMBIOS sera mise à jour au standard 2.6"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:28
 msgid "- ACPI will be corrected to standard 4.0."
-msgstr "- ACPI actualisé au standard 4.0"
+msgstr "- ACPI actualisé au standard 4.0."
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:29
@@ -168,7 +168,7 @@ msgstr ""
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:32
 msgid "Also customizable."
-msgstr "Egalement paramétrable:"
+msgstr "Également paramétrable."
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:33
@@ -496,9 +496,9 @@ msgstr "black_green"
 #, no-wrap
 msgid ""
 "Default black_green theme from Blackosx,\n"
-"Install to /EFI/BOOT/themes/black_green."
+"Install to /EFI/CLOVER/themes//black_green."
 msgstr ""
-"Default Theme black_green par Blackosx,\n"
+"Defaut thème black_green par Blackosx,\n"
 "Installer dans /EFI/CLOVER/themes/black_green."
 
 #. type: "AppleStyle_title"
@@ -512,9 +512,9 @@ msgstr "AppleStyle"
 #, no-wrap
 msgid ""
 "AppleStyle theme from Eps,\n"
-"Install to /EFI/BOOT/themes/AppleStyle."
+"Install to /EFI/CLOVER/themes//AppleStyle."
 msgstr ""
-"AppleStyle theme par Eps,\n"
+"AppleStyle thème par Eps,\n"
 "Installer dans /EFI/CLOVER/themes/AppleStyle."
 
 #. type: "mrengles_title"
@@ -528,9 +528,9 @@ msgstr "mrengles"
 #, no-wrap
 msgid ""
 "mrengles theme from mrengles,\n"
-"Install to /EFI/BOOT/themes/mrengles."
+"Install to /EFI/CLOVER/themes//mrengles."
 msgstr ""
-"mrengles theme par mrengles,\n"
+"mrengles thème par mrengles,\n"
 "Installer dans /EFI/CLOVER/themes/mrengles."
 
 #. type: "iBootloader_title"
@@ -544,9 +544,9 @@ msgstr "iClover"
 #, no-wrap
 msgid ""
 "Grey style theme by winlog,\n"
-"Install to /EFI/BOOT/themes/iClover."
+"Install to /EFI/CLOVER/themes//iClover."
 msgstr ""
-"Grey style theme by winlog,\n"
+"Grey style thème by winlog,\n"
 "Installer dans /EFI/CLOVER/themes/iClover."
 
 #. type: "buttons_title"
@@ -560,9 +560,9 @@ msgstr "buttons"
 #, no-wrap
 msgid ""
 "Buttons theme from Trauma,\n"
-"Install to /EFI/BOOT/themes/buttons."
+"Install to /EFI/CLOVER/themes//buttons."
 msgstr ""
-"Theme Boutons par Trauma,\n"
+"Thème Boutons par Trauma,\n"
 "Installer dans /EFI/CLOVER/themes/buttons."
 
 #. type: "hellfire_title"
@@ -576,9 +576,9 @@ msgstr "hellfire"
 #, no-wrap
 msgid ""
 "Hellfire theme from lllevelll,\n"
-"Install to /EFI/BOOT/themes/hellfire."
+"Install to /EFI/CLOVER/themes//hellfire."
 msgstr ""
-"Theme Hellfire par illevelll,\n"
+"Thème Hellfire par illevelll,\n"
 "Installer dans /EFI/CLOVER/themes/hellfire."
 
 #. type: "metal_title"
@@ -592,9 +592,9 @@ msgstr "metal"
 #, no-wrap
 msgid ""
 "The original metal theme from Slice,\n"
-"Install to /EFI/BOOT/themes/metal."
+"Install to /EFI/CLOVER/themes//metal."
 msgstr ""
-"Le theme Original Metal par Slice,\n"
+"Le thème original Metal par Slice,\n"
 "Installer dans /EFI/CLOVER/themes/metal."
 
 #. type: "simple_gray_title"
@@ -608,9 +608,9 @@ msgstr "simple_gray"
 #, no-wrap
 msgid ""
 "Simple_gray theme from hijeane,\n"
-"Install to /EFI/BOOT/themes/simple_gray."
+"Install to /EFI/CLOVER/themes//simple_gray."
 msgstr ""
-"Theme Simple_gray par hijeane,\n"
+"Thème Simple_gray par hijeane,\n"
 "Installer dans /EFI/CLOVER/themes/simple_gray."
 
 #. type: "wooden_title"
@@ -624,7 +624,7 @@ msgstr "wooden"
 #, no-wrap
 msgid ""
 "Wooden theme from iROOTa,\n"
-"Install to /EFI/BOOT/themes/wooden."
+"Install to /EFI/CLOVER/themes//wooden."
 msgstr ""
 "Theme Wooden par iROOTa,\n"
 "Installer dans /EFI/CLOVER/themes/wooden."
