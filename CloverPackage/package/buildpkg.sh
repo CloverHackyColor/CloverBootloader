@@ -1289,15 +1289,19 @@ makedistribution ()
     #   Make the translation
     echo ""
     echo "========= Translating Resources ========"
+    # Copying po and pot files outside the repository
+    local po_tmpdir=$(mktemp -d -t po)
+    ditto --noextattr --noqtn "${PKGROOT}"/po/  "$po_tmpdir"/
     (cd "${PKGROOT}" &&  PERLLIB=bin/po4a/lib                             \
         bin/po4a/po4a                                                     \
         --package-name 'Clover'                                           \
         --package-version "${CLOVER_VERSION}-r${CLOVER_REVISION}"         \
         --msgmerge-opt '--lang=$lang'                                     \
-        --variable PODIR="po"                                             \
+        --variable PODIR="$po_tmpdir"                                     \
         --variable TEMPLATES_DIR="Resources/templates"                    \
         --variable OUTPUT_DIR="${PKG_BUILD_DIR}/${packagename}/Resources" \
         po4a-clover.cfg)
+    rm -rf "$po_tmpdir"
 
     # CleanUp the directory
     find "${PKG_BUILD_DIR}/${packagename}" \( -type d -name '.svn' \) -o -name '.DS_Store' -depth -exec rm -rf {} \;
