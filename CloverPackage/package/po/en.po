@@ -8,14 +8,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "POT-Creation-Date: 2013-04-25 13:54+0300\n"
-"PO-Revision-Date: 2013-04-25 00:44+0100\n"
-"Last-Translator: JrCs\n"
+"PO-Revision-Date: 2013-04-25 14:11+0200\n"
+"Last-Translator: JrCs <d2t56xxptp@snkmail.com>\n"
 "Language-Team: en <en@li.org>\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Pootle 2.1.6\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -650,17 +651,19 @@ msgstr ""
 
 #. type: "rc.scripts.on.all.volumes_title"
 #: Resources/templates/Localizable.strings:136
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install all RC scripts on all bootable OSX volumes"
 msgid "Install all RC scripts on all other bootable OSX volumes"
-msgstr "Install all RC scripts on all bootable OSX volumes"
+msgstr "Install all RC scripts on all other bootable OSX volumes"
 
 #. type: "rc.scripts.on.all.volumes_description"
 #: Resources/templates/Localizable.strings:137
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install all RC scripts on all internal bootable OSX volumes."
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
-msgstr "Install all RC scripts on all internal bootable OSX volumes."
+msgstr ""
+"Install all RC scripts on all internal bootable OSX volumes other than the "
+"target volume."
 
 #. type: "Optional RC Scripts"
 #: Resources/templates/Localizable.strings:138
