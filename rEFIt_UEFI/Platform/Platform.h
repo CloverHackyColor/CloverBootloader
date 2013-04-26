@@ -901,6 +901,7 @@ typedef enum {
   portuguese, //pt
   ukrainian, //ua
   croatian,  //hr
+  czech,     //cz
   chinese   //cn
   //something else? add, please
 } LANGUAGES;

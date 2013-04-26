@@ -304,6 +304,22 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"R - Restart računala");
         AddMenuInfoLine(&HelpMenu, L"U - Isključivanje računala");
         break;
+      case czech:
+        AddMenuInfoLine(&HelpMenu, L"ESC - Vrátit se do hlavní nabídky");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Tato Nápověda");
+        AddMenuInfoLine(&HelpMenu, L"F2  - Uložit preboot.log (FAT32 only)");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Uložit oem DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Uložit patchnuté DSDT do EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Uložit VideoBios do EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Uložit snímek obrazovky do EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Vysunout vybranou mechaniku (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Mezerník - Podrobnosti o vybraném disku");
+        AddMenuInfoLine(&HelpMenu, L"čísla 1-9 - Klávesové zkratky pro disky");
+        AddMenuInfoLine(&HelpMenu, L"A - Menu O Programu");
+        AddMenuInfoLine(&HelpMenu, L"O - Menu Možnosti");
+        AddMenuInfoLine(&HelpMenu, L"R - Částečný restart");
+        AddMenuInfoLine(&HelpMenu, L"U - Odejít");
+        break;
       case korean:
         AddMenuInfoLine(&HelpMenu, L"ESC - 하위메뉴에서 나감, 메인메뉴 새로 고침");
         AddMenuInfoLine(&HelpMenu, L"F1  - 이 도움말");
