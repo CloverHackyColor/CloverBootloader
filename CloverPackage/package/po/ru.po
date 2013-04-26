@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "POT-Creation-Date: 2013-04-25 13:54+0300\n"
-"PO-Revision-Date: 2013-04-25 14:57+0200\n"
+"PO-Revision-Date: 2013-04-26 09:56+0200\n"
 "Last-Translator: Slice <sergey.slice@gmail.com>\n"
 "Language-Team: ru <ru@li.org>\n"
 "Language: ru\n"
@@ -87,7 +87,7 @@ msgstr ""
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:18
 msgid "The main is EDK2 latest revision."
-msgstr "The main is EDK2 latest revision."
+msgstr "В основе лежит EDK2 с учетом последних обновлений.."
 
 #
 #. type: Content of: <html><body><p><b>
@@ -251,19 +251,19 @@ msgstr "Установка завершена!"
 #: Resources/templates/Localizable.strings:4
 #, no-wrap
 msgid "Install for UEFI motherboards"
-msgstr "Install for UEFI motherboards"
+msgstr "Установить для UEFI загрузки"
 
 #. type: "UEFI.only_description"
 #: Resources/templates/Localizable.strings:5
 #, no-wrap
 msgid "Install Clover to be used with UEFI motherboards only."
-msgstr "Install Clover to be used with UEFI motherboards only."
+msgstr "Установить Кловер только для UEFI."
 
 #. type: "Target.ESP_title"
 #: Resources/templates/Localizable.strings:10
 #, no-wrap
 msgid "Install Clover in the ESP"
-msgstr "Install Clover in the ESP"
+msgstr "Установить Clover на EFI раздел (ESP)"
 
 #. type: "Target.ESP_description"
 #: Resources/templates/Localizable.strings:11
@@ -289,7 +289,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:23
 #, no-wrap
 msgid "Bootloader"
-msgstr "Bootloader"
+msgstr "Загрузчик"
 
 #. type: "Bootloader_description"
 #: Resources/templates/Localizable.strings:24
@@ -358,7 +358,7 @@ msgstr "Установить boot0hfs который запускает boot1h �
 #: Resources/templates/Localizable.strings:51
 #, no-wrap
 msgid "Don't update MBR and PBR sectors"
-msgstr "Don't update MBR and PBR sectors"
+msgstr "Не обновлять сектора MBR и PBR"
 
 #. type: "bootNo_description"
 #: Resources/templates/Localizable.strings:52
@@ -376,7 +376,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:56
 #, no-wrap
 msgid "Use alternative booting PBR"
-msgstr "Use alternative booting PBR"
+msgstr "Использовать PBR с выбором загрузки"
 
 #. type: "AltBoot_description"
 #: Resources/templates/Localizable.strings:57
@@ -636,7 +636,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:133
 #, no-wrap
 msgid "Install RC scripts on target volume"
-msgstr "Install RC scripts on target volume"
+msgstr "Установить системные RC скрипты на основной раздел"
 
 #. type: "rc.scripts.on.target_description"
 #: Resources/templates/Localizable.strings:134
@@ -666,7 +666,7 @@ msgstr "Установить RC скрипты на все внутренние 
 #: Resources/templates/Localizable.strings:138
 #, no-wrap
 msgid "Optional RC Scripts"
-msgstr "Optional RC Scripts"
+msgstr "Добавочные RC скрипты"
 
 #. type: "disable_sleep_proxy_client_description"
 #: Resources/templates/Localizable.strings:139
