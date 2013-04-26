@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "POT-Creation-Date: 2013-04-25 13:54+0300\n"
-"PO-Revision-Date: 2013-04-26 15:57+0200\n"
+"PO-Revision-Date: 2013-04-27 01:40+0200\n"
 "Last-Translator: archintosh <ardr_1109@yahoo.com>\n"
 "Language-Team: id <id@li.org>\n"
 "Language: id\n"
@@ -105,8 +105,8 @@ msgid ""
 "- It's EFI bootloader provides RuntimeServices for OS that impossible for "
 "Legacy Bootloaders"
 msgstr ""
-"- Bootloader berbasis EFI yang menyediakan RuntimeServices buat OS dimana "
-"hal itu mustahil"
+"- Bootloader EFI yang menyediakan RuntimeServices yang tidak tersedia pada "
+"Legacy Bootloader"
 
 #
 #. type: Content of: <html><body><p>
@@ -114,9 +114,7 @@ msgstr ""
 msgid ""
 "- mostly Clover do automatic detection of hardware and set all properties by "
 "default."
-msgstr ""
-"- Clover akan mendeteksi perangkat keras yang ada secara otomatis dan "
-"mengatur semua properti"
+msgstr "- Clover mendeteksi hardware secara otomatis dan lmengaturnya langsung."
 
 #
 #. type: Content of: <html><body><p><span>
@@ -133,7 +131,7 @@ msgstr " "
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:24
 msgid "But user can change them by config.plist"
-msgstr "secara default tapi user masih bisa merubahnya melalui config.plist"
+msgstr "Tapi bisa dirubah lewat config.plist"
 
 #
 #. type: Content of: <html><body><p>
@@ -147,8 +145,7 @@ msgstr ""
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:26
 msgid "- UUID written into config.plist will be the same as in OS"
-msgstr ""
-"- UUID yang tertulis didalam config.plist akan sama dengan yang ada dalam OS"
+msgstr "- UUID yang di config.plist akan sama dengan yang di OS"
 
 #
 #. type: Content of: <html><body><p>
@@ -164,15 +161,15 @@ msgstr "- ACPI akan dikoreksi ke standard 4.0."
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:29
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr "DSDT custom akan dijalankan dari partisi yg dipakai boot"
+msgstr "DSDT custom akan dijalankan dari partisi boot atau dari folder EFI"
 
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:30
 msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
 msgstr ""
-"- RestartFix yang bisa diatur dan pembenahan untuk fitur sleep/wake, serta "
-"nilai PCIRootUID"
+"- Pengaturan RestartFix dan pembenahan untuk fitur sleep/wake, serta nilai "
+"PCIRootUID"
 
 #
 #. type: Content of: <html><body><p>
@@ -188,7 +185,7 @@ msgstr ""
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:32
 msgid "Also customizable."
-msgstr "Dan inipun bisa dirubah disesuaikan keinginan kita."
+msgstr "Yang juga bisa diatur."
 
 #
 #. type: Content of: <html><body><p>
@@ -235,7 +232,7 @@ msgstr ""
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:39
 msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
-msgstr "- Simpan boot.log dalam OS dan preboot.log dari GUI melalui tombol F2"
+msgstr "- Simpan boot.log dalam OS dan preboot.log dari GUI lewat tombol F2"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
@@ -506,7 +503,7 @@ msgid ""
 "Default black_green theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/black_green."
 msgstr ""
-"Tema Black_green kreasi Blackosx,\n"
+"Tema black_green kreasi Blackosx,\n"
 "Pasang ke /EFI/CLOVER/themes/black_green."
 
 #. type: "AppleStyle_title"
@@ -538,7 +535,7 @@ msgid ""
 "mrengles theme from mrengles,\n"
 "Install to /EFI/CLOVER/themes/mrengles."
 msgstr ""
-"mrengles kreasi mrengles,\n"
+"tema mrengles kreasi mrengles,\n"
 "Pasang ke /EFI/CLOVER/themes/mrengles."
 
 #. type: "iClover_title"
@@ -602,7 +599,7 @@ msgid ""
 "The original metal theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/metal."
 msgstr ""
-"Tema Original metal kreasi Slice,\n"
+"Tema original metal kreasi Slice,\n"
 "Pasang ke /EFI/CLOVER/themes/metal."
 
 #. type: "simple_gray_title"
