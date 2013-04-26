@@ -1289,7 +1289,7 @@ makedistribution ()
     #   Make the translation
     echo ""
     echo "========= Translating Resources ========"
-    "$PKGROOT"/translate.sh
+    "$PKGROOT"/translate.sh || exit $?
 
     # CleanUp the directory
     find "${PKG_BUILD_DIR}/${packagename}" \( -type d -name '.svn' \) -o -name '.DS_Store' -depth -exec rm -rf {} \;

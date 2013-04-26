@@ -21,6 +21,20 @@ export LC_CTYPE='C'
 declare -r CLOVER_VERSION='v2.0'
 declare -r CLOVER_REVISION=$( cat "$PKGROOT"/../../vers.txt )
 
+# ==== CHECK ENVIRONEMENT ====
+msgmerge_bin="/opt/local/bin/msgmerge"
+[[ ! -x "$msgmerge_bin" ]] && msgmerge_bin="$(type -P msgmerge)"
+if [[ -z "$msgmerge_bin" ]]; then
+    echo "" >&2
+    echo "ERROR: you need the gettext utilities to translate the package !" >&2
+    echo "" >&2
+    echo "You can download the package here: http://dropproxy.com/u/33A/Clover.Dev/gettext-0.18.2.1.mpkg" >&2
+    exit 1
+fi
+
+msgmerge_bindir=$(dirname "$msgmerge_bin")
+export PATH="${PATH}:$msgmerge_bindir"
+
 # ========== OPTIONS ===========
 UPDATE_PO=0
 

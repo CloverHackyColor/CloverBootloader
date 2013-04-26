@@ -33,7 +33,7 @@ mkdir sym
 # Workspace = edk2/Clover/CloverPackage
 # Start to build installer.
 
-package/buildpkg.sh "$SRCROOT" "sym" "$PKG_BUILD_DIR"
+package/buildpkg.sh "$SRCROOT" "sym" "$PKG_BUILD_DIR" || exit $?
 
 (cd sym ; zip Clover_${version}_r${revision}.zip \
  Clover_${version}_r${revision}.pkg              \
