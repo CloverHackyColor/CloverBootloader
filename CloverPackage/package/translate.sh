@@ -77,7 +77,7 @@ PERLLIB=bin/po4a/lib                                               \
  bin/po4a/po4a                                                     \
  --package-name 'Clover'                                           \
  --package-version "${CLOVER_VERSION}-r${CLOVER_REVISION}"         \
- --msgmerge-opt '--lang=$lang'                                     \
+ --msgmerge-opt '--lang=$lang --previous --width=79'               \
  --variable PODIR="$PODIR"                                         \
  --variable TEMPLATES_DIR="$TEMPLATES_DIR"                         \
  --variable OUTPUT_DIR="${PKG_BUILD_DIR}/${packagename}/Resources" \
