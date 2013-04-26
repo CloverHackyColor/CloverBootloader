@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "POT-Creation-Date: 2013-04-25 13:54+0300\n"
-"PO-Revision-Date: 2013-04-25 08:51+0100\n"
-"Last-Translator: JrCs\n"
+"PO-Revision-Date: 2013-04-26 17:08+0200\n"
+"Last-Translator: crazybirdy <>\n"
 "Language-Team: zh_TW <zh_TW@li.org>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.5\n"
+"X-Generator: Pootle 2.1.6\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -30,7 +30,7 @@ msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:25
 msgid "Developers:"
-msgstr ""
+msgstr "開發者 :"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:26
@@ -40,7 +40,7 @@ msgstr "%DEVELOP%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:28
 msgid "Source code credits to:"
-msgstr ""
+msgstr "源碼歸屬於 : "
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:29
@@ -50,7 +50,7 @@ msgstr "%CREDITS%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:31
 msgid "Package credits to:"
-msgstr ""
+msgstr "封裝歸屬於 : "
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:32
@@ -60,7 +60,7 @@ msgstr "%PKGDEV%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:34
 msgid "Supports Fat32, HFS+, ESP."
-msgstr ""
+msgstr "支持 Fat32 , HFS+ , 及 GPT EFI 分割區。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:35 Resources/templates/Conclusion.html:25
@@ -76,36 +76,36 @@ msgstr "Clover v2"
 #: Resources/templates/Description.html:17
 msgid ""
 "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
-msgstr ""
+msgstr "是基於  Clover, rEFIt, XNU, VirtualBox 等不同專案的開放源碼："
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:18
 msgid "The main is EDK2 latest revision."
-msgstr ""
+msgstr "主要基於 EDK2 最新修正版。"
 
 #. type: Content of: <html><body><p><b>
 #: Resources/templates/Description.html:20
 msgid "Main features:"
-msgstr ""
+msgstr "主要功能："
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:21
 msgid "- boot into 10.4 - 10.8 OSX, Windows EFI and Linux EFI"
-msgstr ""
+msgstr "- 支持 引導 10.4 - 10.8 OSX, Windows EFI 及 Linux EFI"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:22
 msgid ""
 "- It's EFI bootloader provides RuntimeServices for OS that impossible for "
 "Legacy Bootloaders"
-msgstr ""
+msgstr "- EFI bootloader 提供 RuntimeServices 予 OS 運行 (傳統引導器無法提供)"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:23
 msgid ""
 "- mostly Clover do automatic detection of hardware and set all properties by "
 "default."
-msgstr ""
+msgstr "- 預設 自動偵測大部份的硬體並設置所有屬性"
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:23
@@ -120,74 +120,74 @@ msgstr ""
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:24
 msgid "But user can change them by config.plist"
-msgstr ""
+msgstr "  但是用戶也可以在 config.plist 中修改"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:25
 msgid "- with Clover you may restart into other OS from Startup Disk prefPane"
-msgstr ""
+msgstr "- 支持 啓動磁碟 面板 設置其他 OS 重新開機"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:26
 msgid "- UUID written into config.plist will be the same as in OS"
-msgstr ""
+msgstr "- 寫入與 OS 相同的 UUID 到 config.plist 設定檔案"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:27
 msgid "- SMBIOS will be corrected to standard 2.6"
-msgstr ""
+msgstr "- 修正 SMBIOS 至 standard 2.6 版本"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:28
 msgid "- ACPI will be corrected to standard 4.0."
-msgstr ""
+msgstr "- 修正 ACPI 至 standard 4.0 版本"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:29
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr ""
+msgstr "支持從 開機分區 或 EFI文件夾 加載 DSDT"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:30
 msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
-msgstr ""
+msgstr "- 支持 睡眠/喚醒 修復 並 支持 PCIRootUID 設置"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:31
 msgid ""
 "- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
 "supported cards."
-msgstr ""
+msgstr "- 支持 ATI, NVidia 及 Intel  顯示卡啓用功能, "
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:32
 msgid "Also customizable."
-msgstr ""
+msgstr "  並支持客制化參數設置"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:33
 msgid "- USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
-msgstr ""
+msgstr "- 支持 USB 及 USB 3.0 的修復 (LegacyOff, Ownership, Builtin, clock-id) "
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:34
 msgid "- HDA injector and Ethernet builtin injector"
-msgstr ""
+msgstr "- 支持 HDA 及 乙太網路 屬性內建功能"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:35
 msgid "- CPU turbo and P- and C-states generator"
-msgstr ""
+msgstr "- 支持 開啓 CPU turbo 及 自動生成 P-State 及 C-State 的功能"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:36
 msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
-msgstr ""
+msgstr "- 支持 ACPI 表單加載 (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:37
 msgid "- extra kexts loading and security mode for FireWire"
-msgstr ""
+msgstr "- 可加載額外 kexts 及 支持 FireWire 安全保密模式"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:38

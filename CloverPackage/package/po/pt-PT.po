@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "POT-Creation-Date: 2013-04-25 13:54+0300\n"
-"PO-Revision-Date: 2013-04-25 08:42+0100\n"
-"Last-Translator: JrCs\n"
+"PO-Revision-Date: 2013-04-26 04:13+0200\n"
+"Last-Translator: kyndder <kyndder@icloud.com>\n"
 "Language-Team: pt <pt@li.org>\n"
 "Language: pt-PT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.5\n"
+"X-Generator: Pootle 2.1.6\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -30,7 +30,7 @@ msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:25
 msgid "Developers:"
-msgstr ""
+msgstr "Desenvolvedores:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:26
@@ -40,7 +40,7 @@ msgstr "%DEVELOP%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:28
 msgid "Source code credits to:"
-msgstr ""
+msgstr "Créditos do código Fonte para:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:29
@@ -50,7 +50,7 @@ msgstr "%CREDITS%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:31
 msgid "Package credits to:"
-msgstr ""
+msgstr "Créditos do Pacote:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:32
@@ -60,7 +60,7 @@ msgstr "%PKGDEV%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:34
 msgid "Supports Fat32, HFS+, ESP."
-msgstr ""
+msgstr "Suporta Fat32, HFS+, ESP."
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:35 Resources/templates/Conclusion.html:25
@@ -86,7 +86,7 @@ msgstr ""
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:18
 msgid "The main is EDK2 latest revision."
-msgstr "Os principais edk2 em última versão."
+msgstr "O EDK2 principal em última versão."
 
 #
 #. type: Content of: <html><body><p><b>
@@ -98,7 +98,7 @@ msgstr "Principais Características:"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:21
 msgid "- boot into 10.4 - 10.8 OSX, Windows EFI and Linux EFI"
-msgstr "- Iniciar OS X 10.4 - 10.8, Windows EFI e Linux EFI"
+msgstr "- Inicia OS X 10.4 - 10.8, Windows EFI e Linux EFI"
 
 #
 #. type: Content of: <html><body><p>
@@ -165,7 +165,7 @@ msgstr "- ACPI será corrigido para o padrão 4.0"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:29
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr "Custom DSDT será carregado da partição iniciada"
+msgstr "Custom DSDT será carregado da partição iniciada ou da pasta EFI"
 
 #
 #. type: Content of: <html><body><p>
@@ -187,7 +187,7 @@ msgstr ""
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:32
 msgid "Also customizable."
-msgstr "também personalizável."
+msgstr "Também personalizável."
 
 #
 #. type: Content of: <html><body><p>
@@ -241,19 +241,19 @@ msgstr ""
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
 msgid "Installation Complete!"
-msgstr ""
+msgstr "Instalação Completa!"
 
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
 #, no-wrap
 msgid "Install for UEFI motherboards"
-msgstr ""
+msgstr "Instalação para Placas Mãe UEFI"
 
 #. type: "UEFI.only_description"
 #: Resources/templates/Localizable.strings:5
 #, no-wrap
 msgid "Install Clover to be used with UEFI motherboards only."
-msgstr ""
+msgstr "Instala o Clover para ser usado somente em Placas Mãe UEFI. "
 
 #. type: "Target.ESP_title"
 #: Resources/templates/Localizable.strings:10
@@ -660,17 +660,19 @@ msgstr ""
 
 #. type: "rc.scripts.on.all.volumes_title"
 #: Resources/templates/Localizable.strings:136
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install all RC scripts on all bootable OSX volumes"
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "Instala todos os RC scripts em todos os Volumes Inicializáveis do OSX"
 
 #. type: "rc.scripts.on.all.volumes_description"
 #: Resources/templates/Localizable.strings:137
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install all RC scripts on all internal bootable OSX volumes."
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
-msgstr "Instala todos os RC scripts em todos os Volumes Internos Inicializáveis do OSX."
+msgstr ""
+"Instala todos os RC scripts em todos os Volumes Internos Inicializáveis do "
+"OSX diferentes do Volume Alvo."
 
 #. type: "Optional RC Scripts"
 #: Resources/templates/Localizable.strings:138
