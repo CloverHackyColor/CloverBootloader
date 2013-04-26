@@ -50,7 +50,19 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+TEMPLATES_DIR="Resources/templates"
 PODIR="po"
+
+# Check if pot and po files need to be updated
+IFS=$'\n' # '
+
+last_resources_update=0
+for file in "$TEMPLATES_DIR"/*.html "$TEMPLATES_DIR"/Localizable.strings; do
+    timestamp=$(stat -f %m "$file")
+    [[ $timestamp -gt $last_resources_update ]] && last_resources_update=$timestamp
+done
+last_pot_update=$(stat -f %m "$PODIR"/clover.pot)
+[[ $last_pot_update -lt $last_resources_update ]] && UPDATE_PO=1
 
 if [[ "$UPDATE_PO" -ne 1 ]]; then
     # Copying po and pot files outside the repository
@@ -67,7 +79,7 @@ PERLLIB=bin/po4a/lib                                               \
  --package-version "${CLOVER_VERSION}-r${CLOVER_REVISION}"         \
  --msgmerge-opt '--lang=$lang'                                     \
  --variable PODIR="$PODIR"                                         \
- --variable TEMPLATES_DIR="Resources/templates"                    \
+ --variable TEMPLATES_DIR="$TEMPLATES_DIR"                         \
  --variable OUTPUT_DIR="${PKG_BUILD_DIR}/${packagename}/Resources" \
  po4a-clover.cfg
 
