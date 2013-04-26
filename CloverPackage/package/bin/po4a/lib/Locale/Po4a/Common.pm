@@ -76,7 +76,6 @@ sub import {
 
         eval ' sub wrapi18n($$$) { Text::WrapI18N::wrap($_[0],$_[1],$_[2]) } '
     } else {
-
         # If we cannot wrap, well, that's too bad. Survive anyway.
         eval ' sub wrapi18n($$$) { $_[0].$_[2] } '
     }
@@ -105,13 +104,13 @@ sub show_version {
     my $name = shift;
 
     print sprintf(gettext(
-	"%s version %s.\n".
-	"written by Martin Quinson and Denis Barbier.\n\n".
-	"Copyright (C) 2002, 2003, 2004 Software in the Public Interest, Inc.\n".
-	"This is free software; see source code for copying\n".
-	"conditions. There is NO warranty; not even for\n".
-	"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
-	), $name, $Locale::Po4a::TransTractor::VERSION)."\n";
+        "%s version %s.\n".
+        "written by Martin Quinson and Denis Barbier.\n\n".
+        "Copyright (C) 2002, 2003, 2004 Software in the Public Interest, Inc.\n".
+        "This is free software; see source code for copying\n".
+        "conditions. There is NO warranty; not even for\n".
+        "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+        ), $name, $Locale::Po4a::TransTractor::VERSION)."\n";
 }
 
 =item
@@ -165,13 +164,13 @@ sub wrap_ref_mod($$$@) {
     my @args = @_;
 
     if (!$mod) {
-	# If we don't get a module name, show the message like wrap_mod does
-	return wrap_mod($ref, $msg, @args);
+        # If we don't get a module name, show the message like wrap_mod does
+        return wrap_mod($ref, $msg, @args);
     } else {
-	$ref .= ": ";
-	my $spaces = " " x min(length($ref), 15);
-	$msg = "$ref($mod)\n$msg";
-	return wrapi18n("", $spaces, sprintf($msg, @args))."\n";
+        $ref .= ": ";
+        my $spaces = " " x min(length($ref), 15);
+        $msg = "$ref($mod)\n$msg";
+        return wrapi18n("", $spaces, sprintf($msg, @args))."\n";
     }
 }
 

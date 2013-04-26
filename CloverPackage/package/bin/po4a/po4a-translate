@@ -115,7 +115,7 @@ Output some debugging information.
 
 To add some extra content to the generated document beside what you
 translated (like the name of the translator, or a "About this translation"
-section), you should use the B<--addendum> option.
+section), you should use the B<--addendum> option. 
 
 The first line of the addendum must be a header indicating where to put
 it in the document (it can be before or after a given part of the
@@ -289,3 +289,4 @@ if ($percent<$threshold)  {
 }
 
 1;
+

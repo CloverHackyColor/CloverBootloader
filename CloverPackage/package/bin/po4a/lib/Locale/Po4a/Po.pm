@@ -51,11 +51,38 @@ from this.
 
 =over 4
 
-=item B<porefs>
+=item B<porefs> I<type>[,B<wrap>|B<nowrap>]
 
-This specifies the reference format. It can be one of B<none> to not produce
-any reference, B<noline> to not specify the line number, and B<full> to
-include complete references.
+Specify the reference format. Argument I<type> can be one of B<none> to not
+produce any reference, B<noline> to not specify the line number (more
+accurately all line numbers are replaced by 1), B<counter> to replace line
+number by an increasing counter, and B<full> to include complete
+references.
+
+Argument can be followed by a comma and either B<wrap> or B<nowrap> keyword.
+References are written by default on a single line.  The B<wrap> option wraps
+references on several lines, to mimic B<gettext> tools (B<xgettext> and
+B<msgmerge>).  This option will become the default in a future release, because
+it is more sensible.  The B<nowrap> option is available so that users who want
+to keep the old behavior can do so.
+
+=item B<--msgid-bugs-address> I<email@address>
+
+Set the report address for msgid bugs. By default, the created POT files
+have no Report-Msgid-Bugs-To fields.
+
+=item B<--copyright-holder> I<string>
+
+Set the copyright holder in the POT header. The default value is
+"Free Software Foundation, Inc."
+
+=item B<--package-name> I<string>
+
+Set the package name for the POT header. The default is "PACKAGE".
+
+=item B<--package-version> I<string>
+
+Set the package version for the POT header. The default is "VERSION".
 
 =back
 
@@ -150,7 +177,7 @@ sub initialize {
     chomp $date;
 #    $options = ref($options) || $options;
 
-    $self->{options}{'porefs'}= 'full';
+    $self->{options}{'porefs'}= 'full,nowrap';
     $self->{options}{'msgid-bugs-address'}= undef;
     $self->{options}{'copyright-holder'}= "Free Software Foundation, Inc.";
     $self->{options}{'package-name'}= "PACKAGE";
@@ -163,12 +190,15 @@ sub initialize {
             $self->{options}{$opt} = $options->{$opt};
         }
     }
-    $self->{options}{'porefs'} =~ /^(full|noline|none)$/ ||
+    $self->{options}{'porefs'} =~ /^(full|counter|noline|none)(,(no)?wrap)?$/ ||
         die wrap_mod("po4a::po",
                      dgettext ("po4a",
                                "Invalid value for option 'porefs' ('%s' is ".
-                               "not one of 'full', 'noline' or 'none')"),
+                               "not one of 'full', 'counter', 'noline' or 'none')"),
                      $self->{options}{'porefs'});
+    if ($self->{options}{'porefs'} =~ m/^counter/) {
+        $self->{counter} = {};
+    }
 
     $self->{po}=();
     $self->{count}=0;  # number of msgids in the PO
@@ -429,9 +459,15 @@ sub write{
         $output .= format_comment($self->{po}{$msgid}{'type'},". type: ")
             if    defined($self->{po}{$msgid}{'type'})
                && length ($self->{po}{$msgid}{'type'});
-        $output .= format_comment($self->{po}{$msgid}{'reference'},": ")
-            if    defined($self->{po}{$msgid}{'reference'})
-               && length ($self->{po}{$msgid}{'reference'});
+        if (   defined($self->{po}{$msgid}{'reference'})
+            && length ($self->{po}{$msgid}{'reference'})) {
+            my $output_ref = $self->{po}{$msgid}{'reference'};
+            if ($self->{options}{'porefs'} =~ m/,wrap$/) {
+                $output_ref = wrap($output_ref);
+                $output_ref =~ s/\s+$//mg;
+            }
+            $output .= format_comment($output_ref,": ");
+        }
         $output .= "#, ". join(", ", sort split(/\s+/,$self->{po}{$msgid}{'flags'}))."\n"
             if    defined($self->{po}{$msgid}{'flags'})
                && length ($self->{po}{$msgid}{'flags'});
@@ -1221,10 +1257,23 @@ sub push_raw {
         return;
     }
 
-    if ($self->{options}{'porefs'} eq "none") {
+    if ($self->{options}{'porefs'} =~ m/^none/) {
         $reference = "";
-    } elsif ($self->{options}{'porefs'} eq "noline") {
-        $reference =~ s/:[0-9]*/:1/g;
+    } elsif ($self->{options}{'porefs'} =~ m/^counter/) {
+        if ($reference =~ m/^(.+?)(?=\S+:\d+)/g) {
+            my $new_ref = $1;
+            1 while $reference =~ s{  # x modifier is added to add formatting and improve readability
+              \G(\s*)(\S+):\d+        # \G is the last match in m//g (see also the (?=) syntax above)
+                                      # $2 is the file name
+            }{
+                 $self->{counter}{$2} ||= 0, # each file has its own counter
+                 ++$self->{counter}{$2},     # increment it
+                 $new_ref .= "$1$2:".$self->{counter}{$2} # replace line number by this counter
+            }gex && pos($reference);
+            $reference = $new_ref;
+        }
+    } elsif ($self->{options}{'porefs'} =~ m/^noline/) {
+        $reference =~ s/:\d+/:1/g;
     }
 
     if (defined($self->{po}{$msgid})) {
@@ -1275,7 +1324,7 @@ sub push_raw {
     if (defined $transref) {
         $self->{po}{$msgid}{'transref'} = $transref;
     }
-    if (defined $reference) {
+    if (defined($reference) && length($reference)) {
         if (defined $self->{po}{$msgid}{'reference'}) {
             $self->{po}{$msgid}{'reference'} .= " ".$reference;
         } else {

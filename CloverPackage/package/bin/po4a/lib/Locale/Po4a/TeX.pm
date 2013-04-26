@@ -730,7 +730,6 @@ sub translate_buffer {
         $buffer =~ s/($RE_PRE_COMMENT)$RE_COMMENT([^\n]*)(\n[ \t]*)/$1$end/s;
     }
 
-
     # translate leading commands.
     do {
         # keep the leading space to put them back after the translation of

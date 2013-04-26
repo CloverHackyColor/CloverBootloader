@@ -89,25 +89,25 @@ use vars qw(@ISA);
 @ISA = qw(Locale::Po4a::Xml);
 
 sub initialize {
-	my $self = shift;
-	my %options = @_;
+    my $self = shift;
+    my %options = @_;
 
-	$self->SUPER::initialize(%options);
-	$self->{options}{'nostrip'}=1;
-	$self->{options}{'_default_translated'}.=' <dia:string>';
-	$self->treat_options;
+    $self->SUPER::initialize(%options);
+    $self->{options}{'nostrip'}=1;
+    $self->{options}{'_default_translated'}.=' <dia:string>';
+    $self->treat_options;
 }
 
 sub found_string {
-	my ($self,$text,$ref,$options)=@_;
-	return $text if $text =~ m/^\s*$/s;
+    my ($self,$text,$ref,$options)=@_;
+    return $text if $text =~ m/^\s*$/s;
 
-	#We skip the paper type string
-	if ( $self->get_path() !~ /<dia:diagramdata>/ ) {
-		$text =~ /^#(.*)#$/s;
-		$text = "#".$self->translate($1,$ref,"String",
-			'wrap'=>$self->{options}{'wrap'})."#";
-	}
+    #We skip the paper type string
+    if ( $self->get_path() !~ /<dia:diagramdata>/ ) {
+        $text =~ /^#(.*)#$/s;
+        $text = "#".$self->translate($1,$ref,"String",
+            'wrap'=>$self->{options}{'wrap'})."#";
+    }
 
-	return $text;
+    return $text;
 }

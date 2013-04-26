@@ -11,7 +11,7 @@ use warnings;
 
 use subs qw(makespace);
 use vars qw($VERSION @ISA @EXPORT);
-$VERSION="0.41.1";
+$VERSION="0.44";
 @ISA = qw(DynaLoader);
 @EXPORT = qw(new process translate
              read write readpo writepo
@@ -131,28 +131,28 @@ of each paragraph.
        my $first=1;
        my ($line,$lref)=$self->shiftline();
        while (defined($line)) {
-	   if ($line =~ m/<p>/ && !$first--; ) {
-	       # Not the first time we see <p>.
-	       # Reput the current line in input,
-	       #  and put the built paragraph to output
-	       $self->unshiftline($line,$lref);
+           if ($line =~ m/<p>/ && !$first--; ) {
+               # Not the first time we see <p>.
+               # Reput the current line in input,
+               #  and put the built paragraph to output
+               $self->unshiftline($line,$lref);
 
-	       # Now that the document is formed, translate it:
-	       #   - Remove the leading tag
-	       $paragraph =~ s/^<p>//s;
+               # Now that the document is formed, translate it:
+               #   - Remove the leading tag
+               $paragraph =~ s/^<p>//s;
 
-	       #   - push to output the leading tag (untranslated) and the
-	       #     rest of the paragraph (translated)
-	       $self->pushline(  "<p>"
+               #   - push to output the leading tag (untranslated) and the
+               #     rest of the paragraph (translated)
+               $self->pushline(  "<p>"
                                . $document->translate($paragraph,$pararef)
                                );
 
-	       next PARAGRAPH;
-	   } else {
-	       # Append to the paragraph
-	       $paragraph .= $line;
-	       $pararef = $lref unless(length($pararef));
-	   }
+               next PARAGRAPH;
+           } else {
+               # Append to the paragraph
+               $paragraph .= $line;
+               $pararef = $lref unless(length($pararef));
+           }
 
            # Reinit the loop
            ($line,$lref)=$self->shiftline();
@@ -275,63 +275,63 @@ sub process {
     # Build the args for new()
     my %newparams = ();
     foreach (keys %params) {
-	next if ($_ eq 'po_in_name' ||
-		 $_ eq 'po_out_name' ||
-		 $_ eq 'file_in_name' ||
-		 $_ eq 'file_in_charset' ||
-		 $_ eq 'file_out_name' ||
-		 $_ eq 'file_out_charset' ||
-		 $_ eq 'addendum' ||
-		 $_ eq 'addendum_charset');
-	$newparams{$_}=$params{$_};
+        next if ($_ eq 'po_in_name' ||
+                 $_ eq 'po_out_name' ||
+                 $_ eq 'file_in_name' ||
+                 $_ eq 'file_in_charset' ||
+                 $_ eq 'file_out_name' ||
+                 $_ eq 'file_out_charset' ||
+                 $_ eq 'addendum' ||
+                 $_ eq 'addendum_charset');
+        $newparams{$_}=$params{$_};
     }
 
     $self->detected_charset($params{'file_in_charset'});
     $self->{TT}{'file_out_charset'}=$params{'file_out_charset'};
     if (defined($self->{TT}{'file_out_charset'}) and
-	length($self->{TT}{'file_out_charset'})) {
-	$self->{TT}{'file_out_encoder'} = find_encoding($self->{TT}{'file_out_charset'});
+        length($self->{TT}{'file_out_charset'})) {
+        $self->{TT}{'file_out_encoder'} = find_encoding($self->{TT}{'file_out_charset'});
     }
     $self->{TT}{'addendum_charset'}=$params{'addendum_charset'};
 
     chdir $params{'srcdir'}
-	if (defined $params{'srcdir'});
+        if (defined $params{'srcdir'});
     foreach my $file (@{$params{'po_in_name'}}) {
-	print STDERR "readpo($file)... " if $self->debug();
-	$self->readpo($file);
-	print STDERR "done.\n" if $self->debug()
+        print STDERR "readpo($file)... " if $self->debug();
+        $self->readpo($file);
+        print STDERR "done.\n" if $self->debug()
     }
     foreach my $file (@{$params{'file_in_name'}}) {
-	print STDERR "read($file)..." if $self->debug();
-	$self->read($file);
-	print STDERR "done.\n"  if $self->debug();
+        print STDERR "read($file)..." if $self->debug();
+        $self->read($file);
+        print STDERR "done.\n"  if $self->debug();
     }
     print STDERR "parse..." if $self->debug();
     $self->parse();
     print STDERR "done.\n" if $self->debug();
     foreach my $file (@{$params{'addendum'}}) {
-	print STDERR "addendum($file)..." if $self->debug();
-	$self->addendum($file) || die "An addendum failed\n";
-	print STDERR "done.\n" if $self->debug();
+        print STDERR "addendum($file)..." if $self->debug();
+        $self->addendum($file) || die "An addendum failed\n";
+        print STDERR "done.\n" if $self->debug();
     }
     chdir $params{'destdir'}
-	if (defined $params{'destdir'});
+        if (defined $params{'destdir'});
     if (defined $params{'file_out_name'}) {
-	print STDERR "write(".$params{'file_out_name'}.")... "
-	    if $self->debug();
-	$self->write($params{'file_out_name'});
-	print STDERR "done.\n" if $self->debug();
+        print STDERR "write(".$params{'file_out_name'}.")... "
+            if $self->debug();
+        $self->write($params{'file_out_name'});
+        print STDERR "done.\n" if $self->debug();
     }
     chdir $params{'srcdir'}
-	if (defined $params{'srcdir'});
+        if (defined $params{'srcdir'});
     if (defined $params{'po_out_name'}) {
-	print STDERR "writepo(".$params{'po_out_name'}.")... "
-	     if $self->debug();
-	$self->writepo($params{'po_out_name'});
-	print STDERR "done.\n" if $self->debug();
+        print STDERR "writepo(".$params{'po_out_name'}.")... "
+             if $self->debug();
+        $self->writepo($params{'po_out_name'});
+        print STDERR "done.\n" if $self->debug();
     }
     chdir $params{'calldir'}
-	if (defined $params{'calldir'});
+        if (defined $params{'calldir'});
     return $self;
 }
 
@@ -372,17 +372,16 @@ sub new {
     $self->{TT}{doc_in}=();
     $self->{TT}{doc_out}=();
     if (defined $options{'verbose'}) {
-	$self->{TT}{verbose}  =  $options{'verbose'};
+        $self->{TT}{verbose}  =  $options{'verbose'};
     }
     if (defined $options{'debug'}) {
-	$self->{TT}{debug}  =  $options{'debug'};
+        $self->{TT}{debug}  =  $options{'debug'};
     }
     # Input document is in ascii until we prove the opposite (in read())
     $self->{TT}{ascii_input}=1;
     # We try not to use utf unless it's forced from the outside (in case the
     # document isn't in ascii)
     $self->{TT}{utf_mode}=0;
-
 
     return $self;
 }
@@ -407,33 +406,33 @@ function when you're done with packing input files into the document.
 sub read() {
     my $self=shift;
     my $filename=shift
-	or croak wrap_msg(dgettext("po4a", "Can't read from file without having a filename"));
+        or croak wrap_msg(dgettext("po4a", "Can't read from file without having a filename"));
     my $linenum=0;
 
     open INPUT,"<$filename"
-	or croak wrap_msg(dgettext("po4a", "Can't read from %s: %s"), $filename, $!);
+        or croak wrap_msg(dgettext("po4a", "Can't read from %s: %s"), $filename, $!);
     while (defined (my $textline = <INPUT>)) {
-	$linenum++;
-	my $ref="$filename:$linenum";
-	$textline =~ s/\r$//;
-	my @entry=($textline,$ref);
-	push @{$self->{TT}{doc_in}}, @entry;
+        $linenum++;
+        my $ref="$filename:$linenum";
+        $textline =~ s/\r$//;
+        my @entry=($textline,$ref);
+        push @{$self->{TT}{doc_in}}, @entry;
 
-	if (!defined($self->{TT}{'file_in_charset'})) {
-	    # Detect if this file has non-ascii characters
-	    if($self->{TT}{ascii_input}) {
-		my $decoder = guess_encoding($textline);
-		if (!ref($decoder) or $decoder !~ /Encode::XS=/) {
-		    # We have detected a non-ascii line
-		    $self->{TT}{ascii_input} = 0;
-		    # Save the reference for future error message
-		    $self->{TT}{non_ascii_ref} ||= $ref;
-		}
-	    }
-	}
+        if (!defined($self->{TT}{'file_in_charset'})) {
+            # Detect if this file has non-ascii characters
+            if($self->{TT}{ascii_input}) {
+                my $decoder = guess_encoding($textline);
+                if (!ref($decoder) or $decoder !~ /Encode::XS=/) {
+                    # We have detected a non-ascii line
+                    $self->{TT}{ascii_input} = 0;
+                    # Save the reference for future error message
+                    $self->{TT}{non_ascii_ref} ||= $ref;
+                }
+            }
+        }
     }
     close INPUT
-	or croak wrap_msg(dgettext("po4a", "Can't close %s after reading: %s"), $filename, $!);
+        or croak wrap_msg(dgettext("po4a", "Can't close %s after reading: %s"), $filename, $!);
 
 }
 
@@ -446,29 +445,29 @@ Write the translated document to the given filename.
 sub write {
     my $self=shift;
     my $filename=shift
-	or croak wrap_msg(dgettext("po4a", "Can't write to a file without filename"));
+        or croak wrap_msg(dgettext("po4a", "Can't write to a file without filename"));
 
     my $fh;
     if ($filename eq '-') {
-	$fh=\*STDOUT;
+        $fh=\*STDOUT;
     } else {
-	# make sure the directory in which we should write the localized file exists
-	my $dir = $filename;
-	if ($dir =~ m|/|) {
-	    $dir =~ s|/[^/]*$||;
+        # make sure the directory in which we should write the localized file exists
+        my $dir = $filename;
+        if ($dir =~ m|/|) {
+            $dir =~ s|/[^/]*$||;
 
-	    File::Path::mkpath($dir, 0, 0755) # Croaks on error
-	      if (length ($dir) && ! -e $dir);
-	}
-	open $fh,">$filename"
-	    or croak wrap_msg(dgettext("po4a", "Can't write to %s: %s"), $filename, $!);
+            File::Path::mkpath($dir, 0, 0755) # Croaks on error
+              if (length ($dir) && ! -e $dir);
+        }
+        open $fh,">$filename"
+            or croak wrap_msg(dgettext("po4a", "Can't write to %s: %s"), $filename, $!);
     }
 
     map { print $fh $_ } $self->docheader();
     map { print $fh $_ } @{$self->{TT}{doc_out}};
 
     if ($filename ne '-') {
-	close $fh or croak wrap_msg(dgettext("po4a", "Can't close %s after writing: %s"), $filename, $!);
+        close $fh or croak wrap_msg(dgettext("po4a", "Can't close %s after writing: %s"), $filename, $!);
     }
 
 }
@@ -541,63 +540,65 @@ sub addendum_parse {
     my ($filename,$header)=shift;
 
     my ($errcode,$mode,$position,$boundary,$bmode,$content)=
-	(1,"","","","","");
+        (1,"","","","","");
 
     unless (open (INS, "<$filename")) {
-	warn wrap_msg(dgettext("po4a", "Can't read from %s: %s"), $filename, $!);
-	goto END_PARSE_ADDFILE;
+        warn wrap_msg(dgettext("po4a", "Can't read from %s: %s"), $filename, $!);
+        goto END_PARSE_ADDFILE;
     }
 
     unless (defined ($header=<INS>) && $header)  {
-	warn wrap_msg(dgettext("po4a", "Can't read po4a header from %s."), $filename);
-	goto END_PARSE_ADDFILE;
+        warn wrap_msg(dgettext("po4a", "Can't read po4a header from %s."), $filename);
+        goto END_PARSE_ADDFILE;
     }
 
     unless ($header =~ s/PO4A-HEADER://i) {
-	warn wrap_msg(dgettext("po4a", "First line of %s does not look like a po4a header."), $filename);
-	goto END_PARSE_ADDFILE;
+        warn wrap_msg(dgettext("po4a", "First line of %s does not look like a po4a header."), $filename);
+        goto END_PARSE_ADDFILE;
     }
     foreach my $part (split(/;/,$header)) {
-	unless ($part =~ m/^\s*([^=]*)=(.*)$/) {
-	    warn wrap_msg(dgettext("po4a", "Syntax error in po4a header of %s, near \"%s\""), $filename, $part);
-	    goto END_PARSE_ADDFILE;
-	}
-	my ($key,$value)=($1,$2);
-	$key=lc($key);
-	     if ($key eq 'mode')     {  $mode=lc($value);
-	} elsif ($key eq 'position') {  $position=$value;
-	} elsif ($key eq 'endboundary') {
-	    $boundary=$value;
-	    $bmode='after';
-	} elsif ($key eq 'beginboundary') {
-	    $boundary=$value;
-	    $bmode='before';
-	} else {
-	    warn wrap_msg(dgettext("po4a", "Invalid argument in the po4a header of %s: %s"), $filename, $key);
-	    goto END_PARSE_ADDFILE;
-	}
+        unless ($part =~ m/^\s*([^=]*)=(.*)$/) {
+            warn wrap_msg(dgettext("po4a", "Syntax error in po4a header of %s, near \"%s\""), $filename, $part);
+            goto END_PARSE_ADDFILE;
+        }
+        my ($key,$value)=($1,$2);
+        $key=lc($key);
+        if ($key eq 'mode') {
+            $mode=lc($value);
+        } elsif ($key eq 'position') {
+            $position=$value;
+        } elsif ($key eq 'endboundary') {
+            $boundary=$value;
+            $bmode='after';
+        } elsif ($key eq 'beginboundary') {
+            $boundary=$value;
+            $bmode='before';
+        } else {
+            warn wrap_msg(dgettext("po4a", "Invalid argument in the po4a header of %s: %s"), $filename, $key);
+            goto END_PARSE_ADDFILE;
+        }
     }
 
     unless (length($mode)) {
-	warn wrap_msg(dgettext("po4a", "The po4a header of %s does not define the mode."), $filename);
-	goto END_PARSE_ADDFILE;
+        warn wrap_msg(dgettext("po4a", "The po4a header of %s does not define the mode."), $filename);
+        goto END_PARSE_ADDFILE;
     }
     unless ($mode eq "before" || $mode eq "after") {
-	warn wrap_msg(dgettext("po4a", "Mode invalid in the po4a header of %s: should be 'before' or 'after' not %s."), $filename, $mode);
-	goto END_PARSE_ADDFILE;
+        warn wrap_msg(dgettext("po4a", "Mode invalid in the po4a header of %s: should be 'before' or 'after' not %s."), $filename, $mode);
+        goto END_PARSE_ADDFILE;
     }
 
     unless (length($position)) {
-	warn wrap_msg(dgettext("po4a", "The po4a header of %s does not define the position."), $filename);
-	goto END_PARSE_ADDFILE;
+        warn wrap_msg(dgettext("po4a", "The po4a header of %s does not define the position."), $filename);
+        goto END_PARSE_ADDFILE;
     }
     unless ($mode eq "before" || length($boundary)) {
-	warn wrap_msg(dgettext("po4a", "No ending boundary given in the po4a header, but mode=after."));
-	goto END_PARSE_ADDFILE;
+        warn wrap_msg(dgettext("po4a", "No ending boundary given in the po4a header, but mode=after."));
+        goto END_PARSE_ADDFILE;
     }
 
     while (defined(my $line = <INS>)) {
-	$content .= $line;
+        $content .= $line;
     }
     close INS;
 
@@ -617,15 +618,15 @@ sub addendum {
 
     print STDERR "Apply addendum $filename..." if $self->debug();
     unless ($filename) {
-	warn wrap_msg(dgettext("po4a",
-	    "Can't apply addendum when not given the filename"));
-	return 0;
+        warn wrap_msg(dgettext("po4a",
+            "Can't apply addendum when not given the filename"));
+        return 0;
     }
     die wrap_msg(dgettext("po4a", "Addendum %s does not exist."), $filename)
       unless -e $filename;
 
     my ($errcode,$mode,$position,$boundary,$bmode,$content)=
-	addendum_parse($filename);
+        addendum_parse($filename);
     return 0 if ($errcode);
 
     print STDERR "mode=$mode;pos=$position;bound=$boundary;bmode=$bmode;ctn=$content\n"
@@ -635,68 +636,68 @@ sub addendum {
     # suppose it's already in the output document's charset
     if (defined($self->{TT}{'addendum_charset'}) &&
         length($self->{TT}{'addendum_charset'})) {
-	Encode::from_to($content,$self->{TT}{'addendum_charset'},
-	    $self->get_out_charset);
+        Encode::from_to($content,$self->{TT}{'addendum_charset'},
+            $self->get_out_charset);
     }
 
     my $found = scalar grep { /$position/ } @{$self->{TT}{doc_out}};
     if ($found == 0) {
-	warn wrap_msg(dgettext("po4a",
-	    "No candidate position for the addendum %s."), $filename);
-	return 0;
+        warn wrap_msg(dgettext("po4a",
+            "No candidate position for the addendum %s."), $filename);
+        return 0;
     }
     if ($found > 1) {
-	warn wrap_msg(dgettext("po4a",
-	    "More than one candidate position found for the addendum %s."), $filename);
-	return 0;
+        warn wrap_msg(dgettext("po4a",
+            "More than one candidate position found for the addendum %s."), $filename);
+        return 0;
     }
 
     if ($mode eq "before") {
-	if ($self->verbose() > 1 || $self->debug() ) {
-	    map { print STDERR wrap_msg(dgettext("po4a", "Addendum '%s' applied before this line: %s"), $filename, $_) if (/$position/);
-	        } @{$self->{TT}{doc_out}};
-	}
-	@{$self->{TT}{doc_out}} = map { /$position/ ? ($content,$_) : $_
+        if ($self->verbose() > 1 || $self->debug() ) {
+            map { print STDERR wrap_msg(dgettext("po4a", "Addendum '%s' applied before this line: %s"), $filename, $_) if (/$position/);
+                } @{$self->{TT}{doc_out}};
+        }
+        @{$self->{TT}{doc_out}} = map { /$position/ ? ($content,$_) : $_
                                         }  @{$self->{TT}{doc_out}};
     } else {
-	my @newres=();
+        my @newres=();
 
-	do {
-	    # make sure it doesn't whine on empty document
-	    my $line = scalar @{$self->{TT}{doc_out}} ? shift @{$self->{TT}{doc_out}} : "";
-	    push @newres,$line;
-	    my $outline=mychomp($line);
-	    $outline =~ s/^[ \t]*//;
+        do {
+            # make sure it doesn't whine on empty document
+            my $line = scalar @{$self->{TT}{doc_out}} ? shift @{$self->{TT}{doc_out}} : "";
+            push @newres,$line;
+            my $outline=mychomp($line);
+            $outline =~ s/^[ \t]*//;
 
-	    if ($line =~ m/$position/) {
-		while ($line=shift @{$self->{TT}{doc_out}}) {
-		    last if ($line=~/$boundary/);
-		    push @newres,$line;
-		}
-		if (defined $line) {
-		    if ($bmode eq 'before') {
-			print wrap_msg(dgettext("po4a",
-			    "Addendum '%s' applied before this line: %s"),
-			    $filename, $outline)
-			  if ($self->verbose() > 1 || $self->debug());
-			push @newres,$content;
-			push @newres,$line;
-		    } else {
-			print wrap_msg(dgettext("po4a",
-			    "Addendum '%s' applied after the line: %s."),
-			    $filename, $outline)
-			  if ($self->verbose() > 1 || $self->debug());
-			push @newres,$line;
-			push @newres,$content;
-		    }
-		} else {
-		    print wrap_msg(dgettext("po4a", "Addendum '%s' applied at the end of the file."), $filename)
-		      if ($self->verbose() > 1 || $self->debug());
-		    push @newres,$content;
-		}
-	    }
-	} while (scalar @{$self->{TT}{doc_out}});
-	@{$self->{TT}{doc_out}} = @newres;
+            if ($line =~ m/$position/) {
+                while ($line=shift @{$self->{TT}{doc_out}}) {
+                    last if ($line=~/$boundary/);
+                    push @newres,$line;
+                }
+                if (defined $line) {
+                    if ($bmode eq 'before') {
+                        print wrap_msg(dgettext("po4a",
+                            "Addendum '%s' applied before this line: %s"),
+                            $filename, $outline)
+                          if ($self->verbose() > 1 || $self->debug());
+                        push @newres,$content;
+                        push @newres,$line;
+                    } else {
+                        print wrap_msg(dgettext("po4a",
+                            "Addendum '%s' applied after the line: %s."),
+                            $filename, $outline)
+                          if ($self->verbose() > 1 || $self->debug());
+                        push @newres,$line;
+                        push @newres,$content;
+                    }
+                } else {
+                    print wrap_msg(dgettext("po4a", "Addendum '%s' applied at the end of the file."), $filename)
+                      if ($self->verbose() > 1 || $self->debug());
+                    push @newres,$content;
+                }
+            }
+        } while (scalar @{$self->{TT}{doc_out}});
+        @{$self->{TT}{doc_out}} = @newres;
     }
     print STDERR "done.\n" if $self->debug();
     return 1;
@@ -739,12 +740,12 @@ Pop the last pushed line from the doc_out.
 
 sub shiftline   {
     my ($line,$ref)=(shift @{$_[0]->{TT}{doc_in}},
-		     shift @{$_[0]->{TT}{doc_in}});
+                     shift @{$_[0]->{TT}{doc_in}});
     return ($line,$ref);
 }
 sub unshiftline {
-	my $self = shift;
-	unshift @{$self->{TT}{doc_in}},@_;
+        my $self = shift;
+        unshift @{$self->{TT}{doc_in}},@_;
 }
 
 sub pushline    {  push @{$_[0]->{TT}{doc_out}}, $_[1] if defined $_[1]; }
@@ -782,7 +783,7 @@ This function can also take some extra arguments. They must be organized as
 a hash. For example:
 
   $self->translate("string","ref","type",
-		   'wrap' => 1);
+                   'wrap' => 1);
 
 =over
 
@@ -838,29 +839,29 @@ sub translate {
 
     # map { $validoption{$_}=1 } (split(/ /,$validoption));
     # foreach (keys %options) {
-    #	Carp::confess "internal error: translate() called with unknown arg $_. Valid options: $validoption"
-    #	    unless $validoption{$_};
+    #        Carp::confess "internal error: translate() called with unknown arg $_. Valid options: $validoption"
+    #            unless $validoption{$_};
     # }
 
     my $in_charset;
     if ($self->{TT}{ascii_input}) {
-	$in_charset = "ascii";
+        $in_charset = "ascii";
     } else {
-	if (defined($self->{TT}{'file_in_charset'}) and
-	    length($self->{TT}{'file_in_charset'}) and
-	    $self->{TT}{'file_in_charset'} !~ m/ascii/i) {
-	    $in_charset=$self->{TT}{'file_in_charset'};
-	} else {
-	    # FYI, the document charset have to be determined *before* we see the first
-	    # string to recode.
-	    die wrap_mod("po4a", dgettext("po4a", "Couldn't determine the input document's charset. Please specify it on the command line. (non-ASCII char at %s)"), $self->{TT}{non_ascii_ref})
-	}
+        if (defined($self->{TT}{'file_in_charset'}) and
+            length($self->{TT}{'file_in_charset'}) and
+            $self->{TT}{'file_in_charset'} !~ m/ascii/i) {
+            $in_charset=$self->{TT}{'file_in_charset'};
+        } else {
+            # FYI, the document charset have to be determined *before* we see the first
+            # string to recode.
+            die wrap_mod("po4a", dgettext("po4a", "Couldn't determine the input document's charset. Please specify it on the command line. (non-ASCII char at %s)"), $self->{TT}{non_ascii_ref})
+        }
     }
 
     if ($self->{TT}{po_in}->get_charset ne "CHARSET") {
-	$string = encode_from_to($string,
-	                         $self->{TT}{'file_in_encoder'},
-	                         $self->{TT}{po_in}{encoder});
+        $string = encode_from_to($string,
+                                 $self->{TT}{'file_in_encoder'},
+                                 $self->{TT}{po_in}{encoder});
     }
 
     if (defined $options{'wrapcol'} && $options{'wrapcol'} < 0) {
@@ -868,51 +869,51 @@ sub translate {
         $options{'wrapcol'} = 76 + $options{'wrapcol'};
     }
     my $transstring = $self->{TT}{po_in}->gettext($string,
-					'wrap'      => $options{'wrap'}||0,
-					'wrapcol'   => $options{'wrapcol'});
+                                        'wrap'      => $options{'wrap'}||0,
+                                        'wrapcol'   => $options{'wrapcol'});
 
     if ($self->{TT}{po_in}->get_charset ne "CHARSET") {
-	my $out_encoder = $self->{TT}{'file_out_encoder'};
-	unless (defined $out_encoder) {
-	    $out_encoder = find_encoding($self->get_out_charset)
-	}
-	$transstring = encode_from_to($transstring,
-	                              $self->{TT}{po_in}{encoder},
-	                              $out_encoder);
+        my $out_encoder = $self->{TT}{'file_out_encoder'};
+        unless (defined $out_encoder) {
+            $out_encoder = find_encoding($self->get_out_charset)
+        }
+        $transstring = encode_from_to($transstring,
+                                      $self->{TT}{po_in}{encoder},
+                                      $out_encoder);
     }
 
     # If the input document isn't completely in ascii, we should see what to
     # do with the current string
     unless ($self->{TT}{ascii_input}) {
         my $out_charset = $self->{TT}{po_out}->get_charset;
-	# We set the output po charset
+        # We set the output po charset
         if ($out_charset eq "CHARSET") {
-	    if ($self->{TT}{utf_mode}) {
-		$out_charset="UTF-8";
-	    } else {
-		$out_charset=$in_charset;
-	    }
-	    $self->{TT}{po_out}->set_charset($out_charset);
-	}
-	if ( $in_charset !~ /^$out_charset$/i ) {
-	    Encode::from_to($string,$in_charset,$out_charset);
-	    if (defined($options{'comment'}) and length($options{'comment'})) {
-		Encode::from_to($options{'comment'},$in_charset,$out_charset);
-	    }
-	}
+            if ($self->{TT}{utf_mode}) {
+                $out_charset="UTF-8";
+            } else {
+                $out_charset=$in_charset;
+            }
+            $self->{TT}{po_out}->set_charset($out_charset);
+        }
+        if ( $in_charset !~ /^$out_charset$/i ) {
+            Encode::from_to($string,$in_charset,$out_charset);
+            if (defined($options{'comment'}) and length($options{'comment'})) {
+                Encode::from_to($options{'comment'},$in_charset,$out_charset);
+            }
+        }
     }
 
     # the comments provided by the modules are automatic comments from the PO point of view
     $self->{TT}{po_out}->push('msgid'     => $string,
-			      'reference' => $ref,
-			      'type'      => $type,
-	                      'automatic' => $options{'comment'},
-			      'wrap'      => $options{'wrap'}||0,
-			      'wrapcol'   => $options{'wrapcol'});
+                              'reference' => $ref,
+                              'type'      => $type,
+                              'automatic' => $options{'comment'},
+                              'wrap'      => $options{'wrap'}||0,
+                              'wrapcol'   => $options{'wrapcol'});
 
 #    if ($self->{TT}{po_in}->get_charset ne "CHARSET") {
-#	Encode::from_to($transstring,$self->{TT}{po_in}->get_charset,
-#	    $self->get_out_charset);
+#        Encode::from_to($transstring,$self->{TT}{po_in}->get_charset,
+#            $self->get_out_charset);
 #    }
 
     if ($options{'wrap'}||0) {
@@ -938,9 +939,9 @@ TransTractor.
 
 sub verbose {
     if (defined $_[1]) {
-	$_[0]->{TT}{verbose} = $_[1];
+        $_[0]->{TT}{verbose} = $_[1];
     } else {
-	return $_[0]->{TT}{verbose} || 0; # undef and 0 have the same meaning, but one generates warnings
+        return $_[0]->{TT}{verbose} || 0; # undef and 0 have the same meaning, but one generates warnings
     }
 }
 
@@ -980,7 +981,7 @@ sub detected_charset {
     if (defined $self->{TT}{'file_in_charset'} and
         length $self->{TT}{'file_in_charset'} and
         $self->{TT}{'file_in_charset'} !~ m/ascii/i) {
-	$self->{TT}{ascii_input}=0;
+        $self->{TT}{ascii_input}=0;
     }
 }
 
@@ -1003,20 +1004,20 @@ sub get_out_charset {
 
     # Use the value specified at the command line
     if (defined($self->{TT}{'file_out_charset'}) and
-	length($self->{TT}{'file_out_charset'})) {
-	$charset=$self->{TT}{'file_out_charset'};
+        length($self->{TT}{'file_out_charset'})) {
+        $charset=$self->{TT}{'file_out_charset'};
     } else {
-	if ($self->{TT}{utf_mode} && $self->{TT}{ascii_input}) {
-	    $charset="UTF-8";
-	} else {
-	    $charset=$self->{TT}{po_in}->get_charset;
-	    $charset=$self->{TT}{'file_in_charset'}
-		if $charset eq "CHARSET" and
-		    defined($self->{TT}{'file_in_charset'}) and
-		    length($self->{TT}{'file_in_charset'});
-	    $charset="ascii"
-		if $charset eq "CHARSET";
-	}
+        if ($self->{TT}{utf_mode} && $self->{TT}{ascii_input}) {
+            $charset="UTF-8";
+        } else {
+            $charset=$self->{TT}{po_in}->get_charset;
+            $charset=$self->{TT}{'file_in_charset'}
+                if $charset eq "CHARSET" and
+                    defined($self->{TT}{'file_in_charset'}) and
+                    length($self->{TT}{'file_in_charset'});
+            $charset="ascii"
+                if $charset eq "CHARSET";
+        }
     }
     return $charset;
 }
@@ -1034,14 +1035,14 @@ be consistent with the global encoding.
 sub recode_skipped_text {
     my ($self,$text)=(shift,shift);
     unless ($self->{TT}{'ascii_input'}) {
-	if(defined($self->{TT}{'file_in_charset'}) and
-	    length($self->{TT}{'file_in_charset'}) ) {
-	    $text = encode_from_to($text,
-	                           $self->{TT}{'file_in_encoder'},
-	                           find_encoding($self->get_out_charset));
-	} else {
-	    die wrap_mod("po4a", dgettext("po4a", "Couldn't determine the input document's charset. Please specify it on the command line. (non-ASCII char at %s)"), $self->{TT}{non_ascii_ref})
-	}
+        if(defined($self->{TT}{'file_in_charset'}) and
+            length($self->{TT}{'file_in_charset'}) ) {
+            $text = encode_from_to($text,
+                                   $self->{TT}{'file_in_encoder'},
+                                   find_encoding($self->get_out_charset));
+        } else {
+            die wrap_mod("po4a", dgettext("po4a", "Couldn't determine the input document's charset. Please specify it on the command line. (non-ASCII char at %s)"), $self->{TT}{non_ascii_ref})
+        }
     }
     return $text;
 }
@@ -1104,8 +1105,8 @@ make a pushline_all function, which would make pushline of its content for
 all language, using a map-like syntax:
 
     $self->pushline_all({ "Description[".$langcode."]=".
-			  $self->translate($line,$ref,$langcode)
-		        });
+                          $self->translate($line,$ref,$langcode)
+                        });
 
 =back
 

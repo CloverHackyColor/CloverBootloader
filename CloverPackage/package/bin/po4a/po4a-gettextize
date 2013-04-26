@@ -186,7 +186,7 @@ my %opts = (
 
 my ($pofile)=('-');
 my (@masterfile,@locfile,$help_fmt,$help,$type,@options);
-my ($mastchar,$locchar);
+my ($mastchar,$locchar)=('ascii');
 Getopt::Long::config('bundling', 'no_getopt_compat', 'no_auto_abbrev');
 GetOptions(
 	'help|h'        => \$help,
@@ -238,7 +238,12 @@ foreach my $file (@masterfile) {
   $mastertt->read($file);
 }
 $mastertt->{TT}{utf_mode} = 1;
-$mastertt->{TT}{file_in_charset} = $mastchar;
+if ($mastertt->{TT}{ascii_input}) {
+    $mastertt->detected_charset('ascii');
+} else {
+    $mastertt->detected_charset($mastchar);
+    $mastertt->{TT}{po_in}->set_charset($mastchar);
+}
 $mastertt->parse;
 
 
@@ -253,7 +258,8 @@ unless (scalar @locfile >= 1) {
   }
   # We force the conversion to utf if the master document wasn't in ascii
   $transtt->{TT}{utf_mode} = !$mastertt->{TT}{ascii_input};
-  $transtt->{TT}{file_in_charset} = $locchar;
+  $transtt->detected_charset($locchar);
+  $transtt->{TT}{po_in}->set_charset($locchar);
   $transtt->parse;
 
   my $mergedpo = Locale::Po4a::Po->gettextize($mastertt->getpoout(),

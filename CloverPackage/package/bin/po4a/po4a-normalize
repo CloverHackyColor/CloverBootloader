@@ -178,3 +178,4 @@ $parser->write('po4a-normalize.output');
 $parser->writepo('po4a-normalize.po');
 
 __END__
+

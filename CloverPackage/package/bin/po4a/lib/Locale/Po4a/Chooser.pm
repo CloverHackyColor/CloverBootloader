@@ -45,9 +45,9 @@ sub new {
         if ($@) {
             my $error=$@;
             warn wrap_msg(gettext("Unknown format type: %s."), $module);
-	    warn wrap_mod("po4a::chooser",
-		gettext("Module loading error: %s"), $error)
-	      if defined $options{'verbose'} && $options{'verbose'} > 0;
+            warn wrap_mod("po4a::chooser",
+                gettext("Module loading error: %s"), $error)
+              if defined $options{'verbose'} && $options{'verbose'} > 0;
             list(1);
         }
     }
@@ -56,24 +56,23 @@ sub new {
 
 sub list {
     warn wrap_msg(gettext("List of valid formats:")
-#	."\n  - ".gettext("bibtex: BibTex bibliography format.")
-	."\n  - ".gettext("dia: uncompressed Dia diagrams.")
-	."\n  - ".gettext("docbook: DocBook XML.")
-	."\n  - ".gettext("guide: Gentoo Linux's XML documentation format.")
-#	."\n  - ".gettext("html: HTML documents (EXPERIMENTAL).")
-	."\n  - ".gettext("ini: INI format.")
-	."\n  - ".gettext("kernelhelp: Help messages of each kernel compilation option.")
-	."\n  - ".gettext("latex: LaTeX format.")
-	."\n  - ".gettext("man: Good old manual page format.")
-	."\n  - ".gettext("pod: Perl Online Documentation format.")
-	."\n  - ".gettext("sgml: either DebianDoc or DocBook DTD.")
-	."\n  - ".gettext("texinfo: The info page format.")
-	."\n  - ".gettext("tex: generic TeX documents (see also latex).")
-	."\n  - ".gettext("text: simple text document.")
-	."\n  - ".gettext("prop: Java property and OSX/NeXTSTEP strings files.")
-	."\n  - ".gettext("wml: WML documents.")
-	."\n  - ".gettext("xhtml: XHTML documents.")
-	."\n  - ".gettext("xml: generic XML documents (see also docbook).")
+#       ."\n  - ".gettext("bibtex: BibTex bibliography format.")
+        ."\n  - ".gettext("dia: uncompressed Dia diagrams.")
+        ."\n  - ".gettext("docbook: DocBook XML.")
+        ."\n  - ".gettext("guide: Gentoo Linux's XML documentation format.")
+#       ."\n  - ".gettext("html: HTML documents (EXPERIMENTAL).")
+        ."\n  - ".gettext("ini: INI format.")
+        ."\n  - ".gettext("kernelhelp: Help messages of each kernel compilation option.")
+        ."\n  - ".gettext("latex: LaTeX format.")
+        ."\n  - ".gettext("man: Good old manual page format.")
+        ."\n  - ".gettext("pod: Perl Online Documentation format.")
+        ."\n  - ".gettext("sgml: either DebianDoc or DocBook DTD.")
+        ."\n  - ".gettext("texinfo: The info page format.")
+        ."\n  - ".gettext("tex: generic TeX documents (see also latex).")
+        ."\n  - ".gettext("text: simple text document.")
+        ."\n  - ".gettext("wml: WML documents.")
+        ."\n  - ".gettext("xhtml: XHTML documents.")
+        ."\n  - ".gettext("xml: generic XML documents (see also docbook).")
     );
     exit shift;
 }
@@ -128,7 +127,6 @@ L<Locale::Po4a::Sgml(3pm)>,
 L<Locale::Po4a::TeX(3pm)>,
 L<Locale::Po4a::Texinfo(3pm)>,
 L<Locale::Po4a::Text(3pm)>,
-L<Locale::Po4a::Prop(3pm)>,
 L<Locale::Po4a::Wml(3pm)>.
 L<Locale::Po4a::Xhtml(3pm)>,
 L<Locale::Po4a::Xml(3pm)>,

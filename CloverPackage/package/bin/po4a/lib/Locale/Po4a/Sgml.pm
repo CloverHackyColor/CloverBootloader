@@ -219,10 +219,10 @@ if ($@) {
 use File::Temp;
 
 my %debug=('tag'      => 0,
-	   'generic'  => 0,
-	   'entities' => 0,
-	   'refs'     => 0,
-	   'nsgmls'   => 0);
+           'generic'  => 0,
+           'entities' => 0,
+           'refs'     => 0,
+           'nsgmls'   => 0);
 
 my $xmlprolog = undef; # the '<?xml ... ?>' line if existing
 
@@ -246,15 +246,15 @@ sub initialize {
     $self->{options}{'debug'}='';
 
     foreach my $opt (keys %options) {
-	if ($options{$opt}) {
-	    die wrap_mod("po4a::sgml", dgettext ("po4a", "Unknown option: %s"), $opt) unless exists $self->{options}{$opt};
-	    $self->{options}{$opt} = $options{$opt};
-	}
+        if ($options{$opt}) {
+            die wrap_mod("po4a::sgml", dgettext ("po4a", "Unknown option: %s"), $opt) unless exists $self->{options}{$opt};
+            $self->{options}{$opt} = $options{$opt};
+        }
     }
     if ($options{'debug'}) {
-	foreach (split /\s+/, $options{'debug'}) {
-	    $debug{$_} = 1;
-	}
+        foreach (split /\s+/, $options{'debug'}) {
+            $debug{$_} = 1;
+        }
     }
 }
 
@@ -280,17 +280,17 @@ sub translate {
 
     # don't translate entries composed of one entity
     if ( (($string =~ /^&[^;]*;$/) || ($options{'wrap'} && $string =~ /^\s*&[^;]*;\s*$/))
-	 && !($self->{options}{'include-all'}) ){
-	warn wrap_mod("po4a::sgml", dgettext("po4a", "msgid skipped to help translators (contains only an entity)"), $string)
-	    unless $self->verbose() <= 0;
-	return $string.($options{'wrap'}?"\n":"");
+         && !($self->{options}{'include-all'}) ){
+        warn wrap_mod("po4a::sgml", dgettext("po4a", "msgid skipped to help translators (contains only an entity)"), $string)
+            unless $self->verbose() <= 0;
+        return $string.($options{'wrap'}?"\n":"");
     }
     # don't translate entries composed of tags only
     if ( $string =~ /^(((<[^>]*>)|\s)*)$/
-	 && !($self->{options}{'include-all'}) ) {
-	warn wrap_mod("po4a::sgml", dgettext("po4a", "msgid skipped to help translators (contains only tags)"), $string)
-	       unless $self->verbose() <= 0;
-	return $string.($options{'wrap'}?"\n":"");
+         && !($self->{options}{'include-all'}) ) {
+        warn wrap_mod("po4a::sgml", dgettext("po4a", "msgid skipped to help translators (contains only tags)"), $string)
+               unless $self->verbose() <= 0;
+        return $string.($options{'wrap'}?"\n":"");
     }
 
     # don't translate entries composed of marked section tags only
@@ -336,7 +336,7 @@ sub set_tags_kind {
     my (%kinds)=@_;
 
     foreach (qw(translate empty section verbatim ignore attributes qualify)) {
-	$self->{SGML}->{k}{$_} = $self->{options}{$_} ? $self->{options}{$_}.' ' : '';
+        $self->{SGML}->{k}{$_} = $self->{options}{$_} ? $self->{options}{$_}.' ' : '';
         # Remove the default behavior for the tags defined with the
         # options.
         foreach my $k (keys %kinds) {
@@ -347,10 +347,10 @@ sub set_tags_kind {
     }
 
     foreach (keys %kinds) {
-	die "po4a::sgml: internal error: set_tags_kind called with unrecognized arg $_"
-	    if ($_ !~ /^(translate|empty|verbatim|ignore|indent|attributes|qualify)$/);
+        die "po4a::sgml: internal error: set_tags_kind called with unrecognized arg $_"
+            if ($_ !~ /^(translate|empty|verbatim|ignore|indent|attributes|qualify)$/);
 
-	$self->{SGML}->{k}{$_} .= $kinds{$_};
+        $self->{SGML}->{k}{$_} .= $kinds{$_};
     }
 }
 
@@ -392,45 +392,45 @@ sub parse_file {
     }
     # Detect the XML pre-prolog
     if ($origfile =~ s/^(\s*<\?xml[^?]*\?>)//) {
-	warn wrap_mod("po4a::sgml", dgettext("po4a",
-		"Trying to handle a XML document as a SGML one. ".
-		"Feel lucky if it works, help us implementing a proper XML backend if it does not."), $mastername)
-	  unless $self->verbose() <= 0;
-	$xmlprolog=$1;
+        warn wrap_mod("po4a::sgml", dgettext("po4a",
+                "Trying to handle a XML document as a SGML one. ".
+                "Feel lucky if it works, help us implementing a proper XML backend if it does not."), $mastername)
+          unless $self->verbose() <= 0;
+        $xmlprolog=$1;
     }
     # Get the prolog
     {
-	$prolog=$origfile;
-	my $lvl;    # number of '<' seen without matching '>'
-	my $pos = 0;  # where in the document (in chars) while detecting prolog boundaries
+        $prolog=$origfile;
+        my $lvl;    # number of '<' seen without matching '>'
+        my $pos = 0;  # where in the document (in chars) while detecting prolog boundaries
 
-	unless ($prolog =~ s/^(.*<!DOCTYPE).*$/$1/is) {
-	    die wrap_mod("po4a::sgml", dgettext("po4a",
-		"This file is not a master SGML document (no DOCTYPE). ".
-		"It may be a file to be included by another one, in which case it should not be passed to po4a directly. Text from included files is extracted/translated when handling the master file including them."));
-	}
-	$pos += length($prolog);
-	$lvl=1;
-	while ($lvl != 0) {
-	    # Eat comments in the prolog, since there may be some '>' or '<' in them.
-	    if ($origfile =~ m/^.{$pos}?(<!--.*?-->)/s) {
-		print "Found a comment in the prolog: $1\n" if ($debug{'generic'});
-		$pos += length($1);
-		# take care of the line numbers
-		my @a = split(/\n/,$1);
-		shift @a; # nb line - 1
-		while (defined(shift @a)) {
-		    $prolog .= "\n";
-		}
-		next;
-	    }
-	    # Search the closing '>'
-	    my ($c)=substr($origfile,$pos,1);
-	    $lvl++ if ($c eq '<');
-	    $lvl-- if ($c eq '>');
-	    $prolog = "$prolog$c";
-	    $pos++;
-	}
+        unless ($prolog =~ s/^(.*<!DOCTYPE).*$/$1/is) {
+            die wrap_mod("po4a::sgml", dgettext("po4a",
+                "This file is not a master SGML document (no DOCTYPE). ".
+                "It may be a file to be included by another one, in which case it should not be passed to po4a directly. Text from included files is extracted/translated when handling the master file including them."));
+        }
+        $pos += length($prolog);
+        $lvl=1;
+        while ($lvl != 0) {
+            # Eat comments in the prolog, since there may be some '>' or '<' in them.
+            if ($origfile =~ m/^.{$pos}?(<!--.*?-->)/s) {
+                print "Found a comment in the prolog: $1\n" if ($debug{'generic'});
+                $pos += length($1);
+                # take care of the line numbers
+                my @a = split(/\n/,$1);
+                shift @a; # nb line - 1
+                while (defined(shift @a)) {
+                    $prolog .= "\n";
+                }
+                next;
+            }
+            # Search the closing '>'
+            my ($c)=substr($origfile,$pos,1);
+            $lvl++ if ($c eq '<');
+            $lvl-- if ($c eq '>');
+            $prolog = "$prolog$c";
+            $pos++;
+        }
     }
 
     # Add the definition of new tags that will be used for the
@@ -443,96 +443,96 @@ sub parse_file {
 
     # Configure the tags for this dtd
     if ($prolog =~ /debiandoc/i) {
-	$self->set_tags_kind("translate" => "author version abstract title".
-			                    "date copyrightsummary heading p ".
-			                    "example tag title",
-			     "empty"     => "date ref manref url toc",
-			     "verbatim"  => "example",
-			     "ignore"    => "package prgn file tt em var ".
-					    "name email footnote po4aend po4abeg ".
-			                    "strong ftpsite ftppath qref",
-			     "indent"    => "appendix ".
-	                                    "book ".
-	                                    "chapt copyright ".
-			                    "debiandoc ".
-			                    "enumlist ".
-			                    "item ".
-			                    "list ".
-	                                    "sect sect1 sect2 sect3 sect4 ".
-			                    "tag taglist titlepag toc");
+        $self->set_tags_kind("translate" => "author version abstract title".
+                                            "date copyrightsummary heading p ".
+                                            "example tag title",
+                             "empty"     => "date ref manref url toc",
+                             "verbatim"  => "example",
+                             "ignore"    => "package prgn file tt em var ".
+                                            "name email footnote po4aend po4abeg ".
+                                            "strong ftpsite ftppath qref",
+                             "indent"    => "appendix ".
+                                            "book ".
+                                            "chapt copyright ".
+                                            "debiandoc ".
+                                            "enumlist ".
+                                            "item ".
+                                            "list ".
+                                            "sect sect1 sect2 sect3 sect4 ".
+                                            "tag taglist titlepag toc");
 
     } elsif ($prolog =~ /docbook/i) {
-	$self->set_tags_kind("translate" => "abbrev appendixinfo artheader attribution ".
-	                                    "biblioentry biblioset ".
-	                                    "chapterinfo collab collabname confdates confgroup conftitle ".
-	                                    "date ".
-	                                    "edition editor entry example ".
-	                                    "figure ".
-	                                    "glosssee glossseealso glossterm ".
-	                                    "holder ".
-	                                    "member msgaud msglevel msgorig ".
-	                                    "orgdiv orgname othername ".
-	                                    "pagenums para phrase pubdate publishername primary ".
-	                                    "refclass refdescriptor refentrytitle refmiscinfo refname refpurpose releaseinfo remark revnumber revremark ".
-	                                    "screeninfo seg secondary see seealso segtitle simpara substeps subtitle synopfragmentref synopsis ".
-	                                    "term tertiary title titleabbrev ".
-	                                    "contrib epigraph",
-	                     "empty"     => "audiodata colspec graphic imagedata textdata sbr spanspec videodata xref",
-	                     "indent"    => "abstract answer appendix article articleinfo audioobject author authorgroup ".
-	                                    "bibliodiv bibliography blockquote blockinfo book bookinfo bridgehead ".
-	                                    "callout calloutlist caption caution chapter copyright ".
-	                                    "dedication docinfo ".
-	                                    "entry ".
-	                                    "formalpara ".
-	                                    "glossary glossdef glossdiv glossentry glosslist group ".
-	                                    "imageobject important index indexterm informaltable itemizedlist ".
-	                                    "keyword keywordset ".
-	                                    "legalnotice listitem lot ".
-	                                    "mediaobject msg msgentry msginfo msgexplan msgmain msgrel msgsub msgtext ".
-	                                    "note ".
-	                                    "objectinfo orderedlist ".
-	                                    "part partintro preface procedure publisher ".
-	                                    "qandadiv qandaentry qandaset question ".
-	                                    "reference refentry refentryinfo refmeta refnamediv refsect1 refsect1info refsect2 refsect2info refsect3 refsect3info refsection refsectioninfo refsynopsisdiv refsynopsisdivinfo revision revdescription row ".
-	                                    "screenshot sect1 sect1info sect2 sect2info sect3 sect3info sect4 sect4info sect5 sect5info section sectioninfo seglistitem segmentedlist set setindex setinfo shortcut simplelist simplemsgentry simplesect step synopfragment ".
-	                                    "table tbody textobject tgroup thead tip toc ".
-	                                    "variablelist varlistentry videoobject ".
-	                                    "warning",
-	                     "verbatim"  => "address cmdsynopsis holder literallayout programlisting ".
-	                                    "refentrytitle refname refpurpose screen term title",
-	                     "ignore"    => "acronym action affiliation anchor application arg author authorinitials ".
-	                                    "city citation citerefentry citetitle classname co command computeroutput constant corpauthor country ".
-	                                    "database po4abeg po4aend ".
-	                                    "email emphasis envar errorcode errorname errortext errortype exceptionname ".
-	                                    "filename firstname firstterm footnote footnoteref foreignphrase function ".
-	                                    "glossterm guibutton guiicon guilabel guimenu guimenuitem guisubmenu ".
-	                                    "hardware ".
-	                                    "indexterm informalexample inlineequation inlinegraphic inlinemediaobject interface interfacename isbn ".
-	                                    "keycap keycode keycombo keysym ".
-	                                    "link lineannotation literal ".
-	                                    "manvolnum markup medialabel menuchoice methodname modespec mousebutton ".
-	                                    "nonterminal ".
-	                                    "olink ooclass ooexception oointerface option optional othercredit ".
-	                                    "parameter personname phrase productname productnumber prompt property pubsnumber ".
-	                                    "quote ".
-	                                    "remark replaceable returnvalue revhistory ".
-	                                    "sgmltag sidebar structfield structname subscript superscript surname symbol systemitem ".
-	                                    "token trademark type ".
-	                                    "ulink userinput ".
-	                                    "varname volumenum ".
-	                                    "wordasword ".
-	                                    "xref ".
-	                                    "year",
-	                     "attributes" =>"<(article|book)>lang");
+        $self->set_tags_kind("translate" => "abbrev appendixinfo artheader attribution ".
+                                            "biblioentry biblioset ".
+                                            "chapterinfo collab collabname confdates confgroup conftitle ".
+                                            "date ".
+                                            "edition editor entry example ".
+                                            "figure ".
+                                            "glosssee glossseealso glossterm ".
+                                            "holder ".
+                                            "member msgaud msglevel msgorig ".
+                                            "orgdiv orgname othername ".
+                                            "pagenums para phrase pubdate publishername primary ".
+                                            "refclass refdescriptor refentrytitle refmiscinfo refname refpurpose releaseinfo remark revnumber revremark ".
+                                            "screeninfo seg secondary see seealso segtitle simpara substeps subtitle synopfragmentref synopsis ".
+                                            "term tertiary title titleabbrev ".
+                                            "contrib epigraph",
+                             "empty"     => "audiodata colspec graphic imagedata textdata sbr spanspec videodata xref",
+                             "indent"    => "abstract answer appendix article articleinfo audioobject author authorgroup ".
+                                            "bibliodiv bibliography blockquote blockinfo book bookinfo bridgehead ".
+                                            "callout calloutlist caption caution chapter copyright ".
+                                            "dedication docinfo ".
+                                            "entry ".
+                                            "formalpara ".
+                                            "glossary glossdef glossdiv glossentry glosslist group ".
+                                            "imageobject important index indexterm informaltable itemizedlist ".
+                                            "keyword keywordset ".
+                                            "legalnotice listitem lot ".
+                                            "mediaobject msg msgentry msginfo msgexplan msgmain msgrel msgsub msgtext ".
+                                            "note ".
+                                            "objectinfo orderedlist ".
+                                            "part partintro preface procedure publisher ".
+                                            "qandadiv qandaentry qandaset question ".
+                                            "reference refentry refentryinfo refmeta refnamediv refsect1 refsect1info refsect2 refsect2info refsect3 refsect3info refsection refsectioninfo refsynopsisdiv refsynopsisdivinfo revision revdescription row ".
+                                            "screenshot sect1 sect1info sect2 sect2info sect3 sect3info sect4 sect4info sect5 sect5info section sectioninfo seglistitem segmentedlist set setindex setinfo shortcut simplelist simplemsgentry simplesect step synopfragment ".
+                                            "table tbody textobject tgroup thead tip toc ".
+                                            "variablelist varlistentry videoobject ".
+                                            "warning",
+                             "verbatim"  => "address cmdsynopsis holder literallayout programlisting ".
+                                            "refentrytitle refname refpurpose screen term title",
+                             "ignore"    => "acronym action affiliation anchor application arg author authorinitials ".
+                                            "city citation citerefentry citetitle classname co command computeroutput constant corpauthor country ".
+                                            "database po4abeg po4aend ".
+                                            "email emphasis envar errorcode errorname errortext errortype exceptionname ".
+                                            "filename firstname firstterm footnote footnoteref foreignphrase function ".
+                                            "glossterm guibutton guiicon guilabel guimenu guimenuitem guisubmenu ".
+                                            "hardware ".
+                                            "indexterm informalexample inlineequation inlinegraphic inlinemediaobject interface interfacename isbn ".
+                                            "keycap keycode keycombo keysym ".
+                                            "link lineannotation literal ".
+                                            "manvolnum markup medialabel menuchoice methodname modespec mousebutton ".
+                                            "nonterminal ".
+                                            "olink ooclass ooexception oointerface option optional othercredit ".
+                                            "parameter personname phrase productname productnumber prompt property pubsnumber ".
+                                            "quote ".
+                                            "remark replaceable returnvalue revhistory ".
+                                            "sgmltag sidebar structfield structname subscript superscript surname symbol systemitem ".
+                                            "token trademark type ".
+                                            "ulink userinput ".
+                                            "varname volumenum ".
+                                            "wordasword ".
+                                            "xref ".
+                                            "year",
+                             "attributes" =>"<(article|book)>lang");
 
     } else {
-	if ($self->{options}{'force'}) {
-	    warn wrap_mod("po4a::sgml", dgettext("po4a", "DTD of this file is unknown, but proceeding as requested."));
-	    $self->set_tags_kind();
-	} else {
-	    die wrap_mod("po4a::sgml", dgettext("po4a",
-		"DTD of this file is unknown. (supported: DebianDoc, DocBook). The prolog follows:")."\n$prolog");
-	}
+        if ($self->{options}{'force'}) {
+            warn wrap_mod("po4a::sgml", dgettext("po4a", "DTD of this file is unknown, but proceeding as requested."));
+            $self->set_tags_kind();
+        } else {
+            die wrap_mod("po4a::sgml", dgettext("po4a",
+                "DTD of this file is unknown. (supported: DebianDoc, DocBook). The prolog follows:")."\n$prolog");
+        }
     }
 
     # Hash of the file entities that won't be included
@@ -546,8 +546,8 @@ sub parse_file {
     my $length = ($origfile =~ tr/\n/\n/);
     print "XX Prepare reference indirection stuff\n" if $debug{'refs'};
     for (my $i=1; $i<=$length; $i++) {
-	push @refs,"$mastername:$i";
-	print "$mastername:$i\n" if $debug{'refs'};
+        push @refs,"$mastername:$i";
+        print "$mastername:$i\n" if $debug{'refs'};
     }
 
     # protect the conditional inclusions in the file
@@ -594,83 +594,83 @@ sub parse_file {
     my %prologentincl;
     my $moretodo=1;
     PROLOGENTITY: while ($moretodo) { # non trivial loop to deal with recursive inclusion
-	$moretodo = 0;
-	# Unprotect not yet defined inclusions
-	$prolog =~ s/{PO4A-percent}/%/sg;
+        $moretodo = 0;
+        # Unprotect not yet defined inclusions
+        $prolog =~ s/{PO4A-percent}/%/sg;
         print STDERR "prolog=>>>>$prolog<<<<\n"
-	      if ($debug{'entities'});
-	while ($prolog =~ /(.*?)<!ENTITY\s*%\s*(\S*)\s+SYSTEM\s*"([^>"]*)"\s*>(.*)$/is) {  #})"{ (Stupid editor)
-	    print STDERR "Seen the definition entity of prolog inclusion '$2' (=$3)\n"
-	      if ($debug{'entities'});
-	    # Preload the content of the entity.
-	    my $key = $2;
-	    my $filename=$3;
-	    my $origfilename = $filename;
-	    my ($begin, $end) = ($1, $4);
-	    if ($filename !~ m%^/% && $mastername =~ m%/%) {
-	        my $dir=$mastername;
-	        $dir =~ s%/[^/]*$%%;
-	        $filename="$dir/$filename";
-	        # origfile also needs to be fixed otherwise nsgmls won't
-	        # find the file.
-	        $origfile =~ s/(<!ENTITY\s*%\s*\Q$key\E\s+SYSTEM\s*")\Q$origfilename\E("\s*>)/$1$filename$2/gsi;
-	    }
-	    if (defined $ignored_inclusion{$key} or !-e $filename) {
-		# We won't expand this entity.
-		# And we avoid nsgmls to do so.
-		$prolog = "$begin<!--{PO4A-ent-beg-$key}$filename".
-		          "{PO4A-ent-end}-->$end";
-	    } else {
-	    $prolog = $begin.$end;
-	    (-e $filename && open IN,"<$filename")  ||
-	      die wrap_mod("po4a::sgml",
-	                   dgettext("po4a",
-	                       "Can't open %s (content of entity %s%s;): %s"),
-	                   $filename, '%', $key, $!);
-	    local $/ = undef;
-	    $prologentincl{$key} = <IN>;
-	    close IN;
-	    print STDERR "Content of \%$key; is $filename (".
-	                 ($prologentincl{$key} =~ tr/\n/\n/).
-	                 " lines long)\n"
-	      if ($debug{'entities'});
-	    print STDERR "content: ".$prologentincl{$key}."\n"
-	      if ($debug{'entities'});
-	    $moretodo = 1;
-	    next PROLOGENTITY;
-	    }
-	}
-	while ($prolog =~ /(.*?)<!ENTITY\s*%\s*(\S*)\s*"([^>"]*)"\s*>(.*)$/is) {  #})"{ (Stupid editor)
-	    print STDERR "Seen the definition entity of prolog definition '$2' (=$3)\n"
-	      if ($debug{'entities'});
-	    # Preload the content of the entity.
-	    my $key = $2;
-	    $prolog = $1.$4;
-	    $prologentincl{$key} = $3;
-	    print STDERR "content: ".$prologentincl{$key}."\n"
-	      if ($debug{'entities'});
-	    $moretodo = 1;
-	    next PROLOGENTITY;
-	}
+              if ($debug{'entities'});
+        while ($prolog =~ /(.*?)<!ENTITY\s*%\s*(\S*)\s+SYSTEM\s*"([^>"]*)"\s*>(.*)$/is) {  #})"{ (Stupid editor)
+            print STDERR "Seen the definition entity of prolog inclusion '$2' (=$3)\n"
+              if ($debug{'entities'});
+            # Preload the content of the entity.
+            my $key = $2;
+            my $filename=$3;
+            my $origfilename = $filename;
+            my ($begin, $end) = ($1, $4);
+            if ($filename !~ m%^/% && $mastername =~ m%/%) {
+                my $dir=$mastername;
+                $dir =~ s%/[^/]*$%%;
+                $filename="$dir/$filename";
+                # origfile also needs to be fixed otherwise nsgmls won't
+                # find the file.
+                $origfile =~ s/(<!ENTITY\s*%\s*\Q$key\E\s+SYSTEM\s*")\Q$origfilename\E("\s*>)/$1$filename$2/gsi;
+            }
+            if (defined $ignored_inclusion{$key} or !-e $filename) {
+                # We won't expand this entity.
+                # And we avoid nsgmls to do so.
+                $prolog = "$begin<!--{PO4A-ent-beg-$key}$filename".
+                          "{PO4A-ent-end}-->$end";
+            } else {
+            $prolog = $begin.$end;
+            (-e $filename && open IN,"<$filename")  ||
+              die wrap_mod("po4a::sgml",
+                           dgettext("po4a",
+                               "Can't open %s (content of entity %s%s;): %s"),
+                           $filename, '%', $key, $!);
+            local $/ = undef;
+            $prologentincl{$key} = <IN>;
+            close IN;
+            print STDERR "Content of \%$key; is $filename (".
+                         ($prologentincl{$key} =~ tr/\n/\n/).
+                         " lines long)\n"
+              if ($debug{'entities'});
+            print STDERR "content: ".$prologentincl{$key}."\n"
+              if ($debug{'entities'});
+            $moretodo = 1;
+            next PROLOGENTITY;
+            }
+        }
+        while ($prolog =~ /(.*?)<!ENTITY\s*%\s*(\S*)\s*"([^>"]*)"\s*>(.*)$/is) {  #})"{ (Stupid editor)
+            print STDERR "Seen the definition entity of prolog definition '$2' (=$3)\n"
+              if ($debug{'entities'});
+            # Preload the content of the entity.
+            my $key = $2;
+            $prolog = $1.$4;
+            $prologentincl{$key} = $3;
+            print STDERR "content: ".$prologentincl{$key}."\n"
+              if ($debug{'entities'});
+            $moretodo = 1;
+            next PROLOGENTITY;
+        }
         while ($prolog =~ /^(.*?)%([^;\s]*);(.*)$/s) {
-	    my ($pre,$ent,$post) = ($1,$2,$3);
-	    # Yeah, right, the content of the entity can be defined in a not yet loaded entity
-	    # It's easy to build a weird case where all that shit collapses poorly. But why the
-	    # hell are you using those strange constructs in your document, damn it?
-	    print STDERR "Seen prolog inclusion $ent\n" if ($debug{'entities'});
-	    if (defined ($prologentincl{$ent})) {
-		$prolog = $pre.$prologentincl{$ent}.$post;
-		print STDERR "Change \%$ent; to its content in the prolog\n"
-		  if $debug{'entities'};
-		$moretodo = 1;
-	    } else {
-		# AAAARGH stupid document using %bla; and having then defined in another inclusion!
-		# Protect it for this pass, and unprotect it on next one
-		print STDERR "entity $ent not defined yet ?!\n"
-		  if $debug{'entities'};
-		$prolog = "$pre".'{PO4A-percent}'."$ent;$post";
-	    }
-	}
+            my ($pre,$ent,$post) = ($1,$2,$3);
+            # Yeah, right, the content of the entity can be defined in a not yet loaded entity
+            # It's easy to build a weird case where all that shit collapses poorly. But why the
+            # hell are you using those strange constructs in your document, damn it?
+            print STDERR "Seen prolog inclusion $ent\n" if ($debug{'entities'});
+            if (defined ($prologentincl{$ent})) {
+                $prolog = $pre.$prologentincl{$ent}.$post;
+                print STDERR "Change \%$ent; to its content in the prolog\n"
+                  if $debug{'entities'};
+                $moretodo = 1;
+            } else {
+                # AAAARGH stupid document using %bla; and having then defined in another inclusion!
+                # Protect it for this pass, and unprotect it on next one
+                print STDERR "entity $ent not defined yet ?!\n"
+                  if $debug{'entities'};
+                $prolog = "$pre".'{PO4A-percent}'."$ent;$post";
+            }
+        }
     }
     $prolog =~ s/<!--{PO4A-ent-beg-(.*?)}(.*?){PO4A-ent-end}-->/<!ENTITY % $1 SYSTEM "$2">/g;
     # Unprotect undefined inclusions, and die of them
@@ -687,35 +687,35 @@ sub parse_file {
     my %entincl;
     my $searchprolog=$prolog;
     while ($searchprolog =~ /(.*?)<!ENTITY\s+(\S*)\s+SYSTEM\s*"([^>"]*)"\s*>(.*)$/is) {  #})"{
-	print STDERR "Seen the entity of inclusion $2 (=$3)\n"
-	  if ($debug{'entities'});
-	my $key = $2;
-	my $filename = $3;
-	my $origfilename = $filename;
-	$searchprolog = $4;
-	if ($filename !~ m%^/% && $mastername =~ m%/%) {
-	    my $dir=$mastername;
-	    $dir =~ s%/[^/]*$%%;
-	    $filename="$dir/$filename";
-	    # origfile also needs to be fixed otherwise nsgmls won't find
-	    # the file.
-	    $origfile =~ s/(<!ENTITY\s+$key\s+SYSTEM\s*")\Q$origfilename\E("\s*>)/$1$filename$2/gsi;
-	}
-	if ((not defined $ignored_inclusion{$2}) and (-e $filename)) {
-	    $entincl{$key}{'filename'}=$filename;
-	    # Preload the content of the entity
-	    (-e $filename && open IN,"<$filename")  ||
-		die wrap_mod("po4a::sgml",
-		       dgettext("po4a",
-		                "Can't open %s (content of entity %s%s;): %s"),
-		                $filename, '&', $key, $!);
-	    local $/ = undef;
-	    $entincl{$key}{'content'} = <IN>;
-	    close IN;
-	    $entincl{$key}{'length'} = ($entincl{$key}{'content'} =~ tr/\n/\n/);
-	    print STDERR "read $filename (content of \&$key;, $entincl{$key}{'length'} lines long)\n"
-		if ($debug{'entities'});
-	}
+        print STDERR "Seen the entity of inclusion $2 (=$3)\n"
+          if ($debug{'entities'});
+        my $key = $2;
+        my $filename = $3;
+        my $origfilename = $filename;
+        $searchprolog = $4;
+        if ($filename !~ m%^/% && $mastername =~ m%/%) {
+            my $dir=$mastername;
+            $dir =~ s%/[^/]*$%%;
+            $filename="$dir/$filename";
+            # origfile also needs to be fixed otherwise nsgmls won't find
+            # the file.
+            $origfile =~ s/(<!ENTITY\s+$key\s+SYSTEM\s*")\Q$origfilename\E("\s*>)/$1$filename$2/gsi;
+        }
+        if ((not defined $ignored_inclusion{$2}) and (-e $filename)) {
+            $entincl{$key}{'filename'}=$filename;
+            # Preload the content of the entity
+            (-e $filename && open IN,"<$filename")  ||
+                die wrap_mod("po4a::sgml",
+                       dgettext("po4a",
+                                "Can't open %s (content of entity %s%s;): %s"),
+                                $filename, '&', $key, $!);
+            local $/ = undef;
+            $entincl{$key}{'content'} = <IN>;
+            close IN;
+            $entincl{$key}{'length'} = ($entincl{$key}{'content'} =~ tr/\n/\n/);
+            print STDERR "read $filename (content of \&$key;, $entincl{$key}{'length'} lines long)\n"
+                if ($debug{'entities'});
+        }
     }
 
     #   Change the entities including files in the document
@@ -792,10 +792,10 @@ sub parse_file {
     }
 
     if ($debug{'refs'}) {
-	print "XX Resulting shifts\n";
-	for (my $i=0; $i<scalar @refs; $i++) {
-	    print "$mastername:".($i+1)." -> $refs[$i]\n";
-	}
+        print "XX Resulting shifts\n";
+        for (my $i=0; $i<scalar @refs; $i++) {
+            print "$mastername:".($i+1)." -> $refs[$i]\n";
+        }
     }
 
     my ($tmpfh,$tmpfile)=File::Temp::tempfile("po4a-XXXX",
@@ -814,26 +814,26 @@ sub parse_file {
     # The kind of tags
     my (%translate,%empty,%verbatim,%indent,%exist,%attribute,%qualify);
     foreach (split(/ /, ($self->{SGML}->{k}{'translate'}||'') )) {
-	$translate{uc $_} = 1;
-	$indent{uc $_} = 1;
-	$exist{uc $_} = 1;
+        $translate{uc $_} = 1;
+        $indent{uc $_} = 1;
+        $exist{uc $_} = 1;
     }
     foreach (split(/ /, ($self->{SGML}->{k}{'empty'}||'') )) {
-	$empty{uc $_} = 1;
-	$exist{uc $_} = 1;
+        $empty{uc $_} = 1;
+        $exist{uc $_} = 1;
     }
     foreach (split(/ /, ($self->{SGML}->{k}{'verbatim'}||'') )) {
-	$translate{uc $_} = 1;
-	$verbatim{uc $_} = 1;
-	$exist{uc $_} = 1;
+        $translate{uc $_} = 1;
+        $verbatim{uc $_} = 1;
+        $exist{uc $_} = 1;
     }
     foreach (split(/ /, ($self->{SGML}->{k}{'indent'}||'') )) {
-	$translate{uc $_} = 1;
-	$indent{uc $_} = 1;
-	$exist{uc $_} = 1;
+        $translate{uc $_} = 1;
+        $indent{uc $_} = 1;
+        $exist{uc $_} = 1;
     }
     foreach (split(/ /, ($self->{SGML}->{k}{'ignore'}) || '')) {
-	$exist{uc $_} = 1;
+        $exist{uc $_} = 1;
     }
     foreach (split(/ /, ($self->{SGML}->{k}{'attributes'} || ''))) {
         my ($attr, $tags);
@@ -865,21 +865,21 @@ sub parse_file {
     #  <!ENTITY myentity "definition_of_my_entity">
     # and push("<!ENTITY myentity \"".$self->translate("definition_of_my_entity")
     if ($prolog =~ m/(.*?\[)(.*)(\]>)/s) {
-	warn "Pre=~~$1~~;Post=~~$3~~\n" if ($debug{'entities'});
-	$self->pushline($1."\n") if (length($1));
-	$prolog=$2;
-	my ($post) = $3;
-	while ($prolog =~ m/^(.*?)<!ENTITY\s+(\S*)\s+"([^"]*)"\s*>(.*)$/is) { #" ){
-	   $self->pushline($1) if length($1);
-	   $self->pushline("<!ENTITY $2 \"".$self->translate($3,"","definition of entity \&$2;")."\">");
-	   warn "Seen text entity $2\n" if ($debug{'entities'});
-	   $prolog = $4;
-	}
-	$prolog .= $post;
-	$self->pushline($prolog."\n") if (length($prolog));
+        warn "Pre=~~$1~~;Post=~~$3~~\n" if ($debug{'entities'});
+        $self->pushline($1."\n") if (length($1));
+        $prolog=$2;
+        my ($post) = $3;
+        while ($prolog =~ m/^(.*?)<!ENTITY\s+(\S*)\s+"([^"]*)"\s*>(.*)$/is) { #" ){
+           $self->pushline($1) if length($1);
+           $self->pushline("<!ENTITY $2 \"".$self->translate($3,"","definition of entity \&$2;")."\">");
+           warn "Seen text entity $2\n" if ($debug{'entities'});
+           $prolog = $4;
+        }
+        $prolog .= $post;
+        $self->pushline($prolog."\n") if (length($prolog));
     } else {
-	warn "No entity declaration detected in ~~$prolog~~...\n" if ($debug{'entities'});
-	$self->pushline($prolog) if length($prolog);
+        warn "No entity declaration detected in ~~$prolog~~...\n" if ($debug{'entities'});
+        $self->pushline($prolog) if length($prolog);
     }
 
     # The parse object.
@@ -907,40 +907,40 @@ sub parse_file {
     my $empty_last_cdata=0;
     # run the appropriate handler for each event
     EVENT: while (my $event = $parse->next_event) {
-	# get the line reference to build po entries
-	if ($line != $parse->line) {
-	    # nsgmls informs us of that the line changed. Reset $adds and
-	    # $empty_last_cdata
-	    $adds = 0;
-	    $empty_last_cdata = 0;
-	    $line = $parse->line;
-	}
-	my $ref=$refs[$parse->line-1 + $adds - $empty_last_cdata];
-	# In verbatim mode, keep the current line reference.
-	if ($verb) {
-	    $ref=$refs[$parse->line-1];
-	}
-	my $type;
+        # get the line reference to build po entries
+        if ($line != $parse->line) {
+            # nsgmls informs us of that the line changed. Reset $adds and
+            # $empty_last_cdata
+            $adds = 0;
+            $empty_last_cdata = 0;
+            $line = $parse->line;
+        }
+        my $ref=$refs[$parse->line-1 + $adds - $empty_last_cdata];
+        # In verbatim mode, keep the current line reference.
+        if ($verb) {
+            $ref=$refs[$parse->line-1];
+        }
+        my $type;
 
-	if ($event->type eq 'start_element') {
-	    die wrap_ref_mod($ref, "po4a::sgml",
-	                     dgettext("po4a", "Unknown tag %s"),
-	                     $event->data->name)
-		unless $exist{$event->data->name};
+        if ($event->type eq 'start_element') {
+            die wrap_ref_mod($ref, "po4a::sgml",
+                             dgettext("po4a", "Unknown tag %s"),
+                             $event->data->name)
+                unless $exist{$event->data->name};
 
-	    $lastchar = ">";
+            $lastchar = ">";
 
-	    # Which tag did we see?
-	    my $tag='';
-	    $tag .= '<'.lc($event->data->name());
-	    while (my ($attr, $val) = each %{$event->data->attributes()}) {
-		my $value = $val->value();
-#		if ($val->type() eq 'IMPLIED') {
-#		    $tag .= ' '.lc($attr).'="'.lc($attr).'"';
-#		} els
+            # Which tag did we see?
+            my $tag='';
+            $tag .= '<'.lc($event->data->name());
+            while (my ($attr, $val) = each %{$event->data->attributes()}) {
+                my $value = $val->value();
+#                if ($val->type() eq 'IMPLIED') {
+#                    $tag .= ' '.lc($attr).'="'.lc($attr).'"';
+#                } els
                 if ($val->type() eq 'CDATA' ||
-		    $val->type() eq 'IMPLIED') {
-		    if (defined $value && length($value)) {
+                    $val->type() eq 'IMPLIED') {
+                    if (defined $value && length($value)) {
                         my $lattr=lc $attr;
                         my $uattr=uc $attr;
                         if (exists $attribute{$uattr}) {
@@ -965,218 +965,218 @@ sub parse_file {
                                 }
                             }
                         }
-			if ($value =~ m/\"/) {
-			    $value = "'".$value."'";
-			} else {
-			    $value = '"'.$value.'"';
-			}
-			$tag .= " $lattr=$value";
-		    }
-		} elsif ($val->type() eq 'NOTATION') {
-		} else {
-		    $tag .= ' '.lc($attr).'="'.lc($value).'"'
-			if (defined $value && length($value));
-		}
-	    }
-	    $tag .= '>';
+                        if ($value =~ m/\"/) {
+                            $value = "'".$value."'";
+                        } else {
+                            $value = '"'.$value.'"';
+                        }
+                        $tag .= " $lattr=$value";
+                    }
+                } elsif ($val->type() eq 'NOTATION') {
+                } else {
+                    $tag .= ' '.lc($attr).'="'.lc($value).'"'
+                        if (defined $value && length($value));
+                }
+            }
+            $tag .= '>';
 
 
-	    # debug
-	    print STDERR "Seen $tag, open level=".(scalar @open).", verb=$verb\n"
-		if ($debug{'tag'});
+            # debug
+            print STDERR "Seen $tag, open level=".(scalar @open).", verb=$verb\n"
+                if ($debug{'tag'});
 
-	    if ($event->data->name() eq 'FOOTNOTE') {
-		# we want to put the <para> inside the <footnote> in the same msgid
-		$seenfootnote = 1;
-	    }
+            if ($event->data->name() eq 'FOOTNOTE') {
+                # we want to put the <para> inside the <footnote> in the same msgid
+                $seenfootnote = 1;
+            }
 
-	    if ($seenfootnote) {
-		$buffer .= $tag;
-		next EVENT;
-	    }
-	    if ($translate{$event->data->name()}) {
-		# Build the type
-		if (scalar @open > 0) {
-		    $type=$open[$#open] . $tag;
-		} else {
-		    $type=$tag;
-		}
+            if ($seenfootnote) {
+                $buffer .= $tag;
+                next EVENT;
+            }
+            if ($translate{$event->data->name()}) {
+                # Build the type
+                if (scalar @open > 0) {
+                    $type=$open[$#open] . $tag;
+                } else {
+                    $type=$tag;
+                }
 
-		# do the job
-		if (@open > 0) {
-		    $self->end_paragraph($buffer,$ref,$type,$verb,$indent,
-					 @open);
-		} else {
-		    $self->pushline($buffer) if $buffer;
-		}
-		$buffer="";
-		push @open,$tag;
-	    } elsif ($indent{$event->data->name()}) {
-		die wrap_ref_mod($ref, "po4a::sgml", dgettext("po4a",
-		    "Closing tag for a translation container missing before %s"),$tag)
-		    if (scalar @open);
-	    }
+                # do the job
+                if (@open > 0) {
+                    $self->end_paragraph($buffer,$ref,$type,$verb,$indent,
+                                         @open);
+                } else {
+                    $self->pushline($buffer) if $buffer;
+                }
+                $buffer="";
+                push @open,$tag;
+            } elsif ($indent{$event->data->name()}) {
+                die wrap_ref_mod($ref, "po4a::sgml", dgettext("po4a",
+                    "Closing tag for a translation container missing before %s"),$tag)
+                    if (scalar @open);
+            }
 
-	    if ($verbatim{$event->data->name()}) {
-		$verb++;
-		# Keep a reference to the line that openned the verbatim
-		# section. This is needed to check if its data starts on
-		# the same line.
-		$verb_last_ref = $ref;
-	    }
-	    if ($verb) {
-		# Tag in a verbatim section. Check if it appeared at
-		# the same line than the previous data. If not, it
-		# means that an end of line must be added to the
-		# buffer.
-		if ($ref ne $verb_last_ref) {
-		    # FIXME: Does it work if $verb > 1
-		    $buffer .= "\n";
-		    $verb_last_ref = $ref;
-		}
-	    }
+            if ($verbatim{$event->data->name()}) {
+                $verb++;
+                # Keep a reference to the line that openned the verbatim
+                # section. This is needed to check if its data starts on
+                # the same line.
+                $verb_last_ref = $ref;
+            }
+            if ($verb) {
+                # Tag in a verbatim section. Check if it appeared at
+                # the same line than the previous data. If not, it
+                # means that an end of line must be added to the
+                # buffer.
+                if ($ref ne $verb_last_ref) {
+                    # FIXME: Does it work if $verb > 1
+                    $buffer .= "\n";
+                    $verb_last_ref = $ref;
+                }
+            }
 
-	    if ($indent{$event->data->name()}) {
-		# push the indenting space only if not in verb before that tag
-		# push trailing "\n" only if not in verbose afterward
-		$self->pushline( ($verb>1?"": (" " x $indent)).$tag.($verb?"":"\n"));
-		$indent ++ unless $empty{$event->data->name()} ;
-	    }  else {
-		$tag =~ s/<po4abeg name="([^"]+)">/<![ $1 [/; #"; Stupid emacs
-		$tag =~ s/<po4aend>/]]>/;
-		$buffer .= $tag;
-	    }
-	} # end of type eq 'start_element'
+            if ($indent{$event->data->name()}) {
+                # push the indenting space only if not in verb before that tag
+                # push trailing "\n" only if not in verbose afterward
+                $self->pushline( ($verb>1?"": (" " x $indent)).$tag.($verb?"":"\n"));
+                $indent ++ unless $empty{$event->data->name()} ;
+            }  else {
+                $tag =~ s/<po4abeg name="([^"]+)">/<![ $1 [/; #"; Stupid emacs
+                $tag =~ s/<po4aend>/]]>/;
+                $buffer .= $tag;
+            }
+        } # end of type eq 'start_element'
 
-	elsif ($event->type eq 'end_element') {
-	    my $tag = ($empty{$event->data->name()}
-		           ?
-		       ''
-		           :
-		       '</'.lc($event->data->name()).'>');
+        elsif ($event->type eq 'end_element') {
+            my $tag = ($empty{$event->data->name()}
+                           ?
+                       ''
+                           :
+                       '</'.lc($event->data->name()).'>');
 
-	    if ($verb) {
-		# Tag in a verbatim section. Check if it appeared at
-		# the same line than the previous data. If not, it
-		# means that an end of line must be added to the
-		# buffer.
-		if ($ref ne $verb_last_ref) {
-		    # FIXME: Does it work if $verb > 1
-		    $buffer .= "\n";
-		    $verb_last_ref = $ref;
-		}
-	    }
-	    print STDERR "Seen $tag, level=".(scalar @open).", verb=$verb\n"
-		if ($debug{'tag'});
+            if ($verb) {
+                # Tag in a verbatim section. Check if it appeared at
+                # the same line than the previous data. If not, it
+                # means that an end of line must be added to the
+                # buffer.
+                if ($ref ne $verb_last_ref) {
+                    # FIXME: Does it work if $verb > 1
+                    $buffer .= "\n";
+                    $verb_last_ref = $ref;
+                }
+            }
+            print STDERR "Seen $tag, level=".(scalar @open).", verb=$verb\n"
+                if ($debug{'tag'});
 
-	    $lastchar = ">";
+            $lastchar = ">";
 
-	    if ($event->data->name() eq 'FOOTNOTE') {
-		# we want to put the <para> inside the <footnote> in the same msgid
-		$seenfootnote = 0;
-	    }
+            if ($event->data->name() eq 'FOOTNOTE') {
+                # we want to put the <para> inside the <footnote> in the same msgid
+                $seenfootnote = 0;
+            }
 
-	    if ($seenfootnote) {
-		$buffer .= $tag;
-		next EVENT;
-	    }
-	    if ($translate{$event->data->name()}) {
-		$type = $open[$#open] . $tag;
-		$self->end_paragraph($buffer,$ref,$type,$verb,$indent,@open);
-		$buffer = "";
-		pop @open;
-		if (@open > 0) {
-		    pop @open;
-		    push @open,$tag;
-		}
-	    } elsif ($indent{$event->data->name()}) {
-		die wrap_ref_mod($ref, "po4a::sgml", dgettext("po4a",
+            if ($seenfootnote) {
+                $buffer .= $tag;
+                next EVENT;
+            }
+            if ($translate{$event->data->name()}) {
+                $type = $open[$#open] . $tag;
+                $self->end_paragraph($buffer,$ref,$type,$verb,$indent,@open);
+                $buffer = "";
+                pop @open;
+                if (@open > 0) {
+                    pop @open;
+                    push @open,$tag;
+                }
+            } elsif ($indent{$event->data->name()}) {
+                die wrap_ref_mod($ref, "po4a::sgml", dgettext("po4a",
            "Closing tag for a translation container missing before %s"), $tag)
-		    if (scalar @open);
-	    }
+                    if (scalar @open);
+            }
 
-	    unless ($event->data->name() =~ m/^(PO4ABEG|PO4AEND)$/si) {
-		if ($indent{$event->data->name()}) {
-		    $indent -- ;
-		    # add indenting space only when not in verbatim
-		    # add the tailing \n only if out of verbatim after that tag
-		    $self->pushline(($verb?"":(" " x $indent)).$tag.($verb>1?"":"\n"));
-		}  else {
-		    $buffer .= $tag;
-		}
-		$verb-- if $verbatim{$event->data->name()};
-	    }
-	} # end of type eq 'end_element'
+            unless ($event->data->name() =~ m/^(PO4ABEG|PO4AEND)$/si) {
+                if ($indent{$event->data->name()}) {
+                    $indent -- ;
+                    # add indenting space only when not in verbatim
+                    # add the tailing \n only if out of verbatim after that tag
+                    $self->pushline(($verb?"":(" " x $indent)).$tag.($verb>1?"":"\n"));
+                }  else {
+                    $buffer .= $tag;
+                }
+                $verb-- if $verbatim{$event->data->name()};
+            }
+        } # end of type eq 'end_element'
 
-	elsif ($event->type eq 'cdata') {
-	    my $cdata = $event->data;
-	    $empty_last_cdata=($cdata =~ m/^\s*$/);
-	    $cdata =~ s/{PO4A-lt}/</g;
-	    $cdata =~ s/{PO4A-gt}/>/g;
-	    $cdata =~ s/{PO4A-amp}/&/g;
+        elsif ($event->type eq 'cdata') {
+            my $cdata = $event->data;
+            $empty_last_cdata=($cdata =~ m/^\s*$/);
+            $cdata =~ s/{PO4A-lt}/</g;
+            $cdata =~ s/{PO4A-gt}/>/g;
+            $cdata =~ s/{PO4A-amp}/&/g;
             $cdata =~ s/{PO4A-end}/\]\]>/g;
             $cdata =~ s/{PO4A-beg-([^\}]+)}/<!\[$1\[/g;
-	    if ($verb) {
-		# Check if this line of data appear on the same line
-		# than the previous tag. If not, append an end of line
-		# to the buffer.
-		if ($ref ne $verb_last_ref) {
-		    $buffer .= "\n";
-		    $verb_last_ref = $ref;
-		}
-	    } else {
-		$cdata =~ s/\\t/ /g;
-		$cdata =~ s/\s+/ /g;
-		$cdata =~ s/^\s//s if $lastchar eq ' ';
-	    }
-	    $lastchar = substr($cdata, -1, 1);
-	    $buffer .= $cdata;
-	    if (defined($xmlprolog) && length($xmlprolog)) {
-		$buffer =~ s/>PO4A-close\}>/\/>/sg;
-		$buffer =~ s/PO4A-close\}>//sg; # This should not be necessary
-	    }
-	} # end of type eq 'cdata'
+            if ($verb) {
+                # Check if this line of data appear on the same line
+                # than the previous tag. If not, append an end of line
+                # to the buffer.
+                if ($ref ne $verb_last_ref) {
+                    $buffer .= "\n";
+                    $verb_last_ref = $ref;
+                }
+            } else {
+                $cdata =~ s/\\t/ /g;
+                $cdata =~ s/\s+/ /g;
+                $cdata =~ s/^\s//s if $lastchar eq ' ';
+            }
+            $lastchar = substr($cdata, -1, 1);
+            $buffer .= $cdata;
+            if (defined($xmlprolog) && length($xmlprolog)) {
+                $buffer =~ s/>PO4A-close\}>/\/>/sg;
+                $buffer =~ s/PO4A-close\}>//sg; # This should not be necessary
+            }
+        } # end of type eq 'cdata'
 
-	elsif ($event->type eq 'sdata') {
-	    my $sdata = $event->data;
-	    $sdata =~ s/^\[//;
-	    $sdata =~ s/\s*\]$//;
-	    $lastchar = substr($sdata, -1, 1);
-	    $buffer .= '&'.$sdata.';';
-	} # end of type eq 'sdata'
+        elsif ($event->type eq 'sdata') {
+            my $sdata = $event->data;
+            $sdata =~ s/^\[//;
+            $sdata =~ s/\s*\]$//;
+            $lastchar = substr($sdata, -1, 1);
+            $buffer .= '&'.$sdata.';';
+        } # end of type eq 'sdata'
 
-	elsif ($event->type eq 're') {
-	    # End of record, the line reference shall be incremented.
-	    $adds +=1;
-	    if ($verb) {
-		# Check if this line of data appear on the same line
-		# than the previous tag. If not, append an end of line
-		# to the buffer.
-		if ($ref ne $verb_last_ref) {
-		    $buffer .= "\n";
-		    $verb_last_ref = $ref;
-		}
-		$buffer .= "\n";
-	    } elsif ($lastchar ne ' ') {
-		$buffer .= " ";
-	    }
-	    $lastchar = ' ';
-	} #end of type eq 're'
+        elsif ($event->type eq 're') {
+            # End of record, the line reference shall be incremented.
+            $adds +=1;
+            if ($verb) {
+                # Check if this line of data appear on the same line
+                # than the previous tag. If not, append an end of line
+                # to the buffer.
+                if ($ref ne $verb_last_ref) {
+                    $buffer .= "\n";
+                    $verb_last_ref = $ref;
+                }
+                $buffer .= "\n";
+            } elsif ($lastchar ne ' ') {
+                $buffer .= " ";
+            }
+            $lastchar = ' ';
+        } #end of type eq 're'
 
-	elsif ($event->type eq 'conforming') {
+        elsif ($event->type eq 'conforming') {
 
-	}
+        }
 
-	elsif ($event->type eq 'pi') {
-	    my $pi = $event->data;
-	    $buffer .= "<?$pi>";
-	}
+        elsif ($event->type eq 'pi') {
+            my $pi = $event->data;
+            $buffer .= "<?$pi>";
+        }
 
-	else {
-	    die wrap_ref_mod($refs[$parse->line], "po4a::sgml",
-	                     dgettext("po4a","Unknown SGML event type: %s"),
-	                     $event->type);
-	}
+        else {
+            die wrap_ref_mod($refs[$parse->line], "po4a::sgml",
+                             dgettext("po4a","Unknown SGML event type: %s"),
+                             $event->type);
+        }
     }
 
     # What to do after parsing
@@ -1195,17 +1195,17 @@ sub parse_file {
 
 sub end_paragraph {
     my ($self, $para,$ref, $type,$verb,$indent)=
-	(shift,shift,shift,shift,shift,shift);
+        (shift,shift,shift,shift,shift,shift);
     my (@open)=@_;
     die "Internal error: no paragraph to end here!!"
-	unless scalar @open;
+        unless scalar @open;
 
     return unless defined($para) && length($para);
 
     if (($para =~ m/^\s*$/s) and (not $verb)) {
-	# In non-verbatim environments, a paragraph with only spaces is
-	# like an empty paragraph
-	return;
+        # In non-verbatim environments, a paragraph with only spaces is
+        # like an empty paragraph
+        return;
     }
 
     # unprotect &entities;
@@ -1218,20 +1218,20 @@ sub end_paragraph {
     # in verbatim environments.
     my ($leading_spaces, $trailing_spaces) = ("", "");
     if ($verb) {
-	# In the verbatim mode, we can ignore empty lines, but not the
-	# leading spaces or tabulations. Otherwise, the PO will look
-	# weird.
-	if ($para =~ m/^(\s*\n)(.*?)(\s*)$/s) {
-	    $leading_spaces = $1;
-	    $para = $2;
-	    $trailing_spaces = $3;
-	}
+        # In the verbatim mode, we can ignore empty lines, but not the
+        # leading spaces or tabulations. Otherwise, the PO will look
+        # weird.
+        if ($para =~ m/^(\s*\n)(.*?)(\s*)$/s) {
+            $leading_spaces = $1;
+            $para = $2;
+            $trailing_spaces = $3;
+        }
     } else {
-	if ($para =~ m/^(\s*)(.*?)(\s*)$/s) {
-	    $leading_spaces = $1;
-	    $para = $2;
-	    $trailing_spaces = $3;
-	}
+        if ($para =~ m/^(\s*)(.*?)(\s*)$/s) {
+            $leading_spaces = $1;
+            $para = $2;
+            $trailing_spaces = $3;
+        }
     }
 
     $para = $self->translate($para,$ref,$type,
@@ -1239,12 +1239,12 @@ sub end_paragraph {
                              'wrapcol' => (75 - $indent));
 
     if ($verb) {
-	$para = $leading_spaces.$para.$trailing_spaces;
+        $para = $leading_spaces.$para.$trailing_spaces;
     } else {
-	$para =~ s/^\s+//s;
-	my $toadd=" " x ($indent+1);
-	$para =~ s/^/$toadd/mg;
-	$para .= "\n";
+        $para =~ s/^\s+//s;
+        my $toadd=" " x ($indent+1);
+        $para =~ s/^/$toadd/mg;
+        $para .= "\n";
     }
 
     $self->pushline( $para );

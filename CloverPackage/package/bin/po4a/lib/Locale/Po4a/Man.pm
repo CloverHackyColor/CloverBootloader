@@ -845,9 +845,9 @@ sub pushline {
 # is overloaded
 sub unshiftline {
     die wrap_mod("po4a::man", dgettext("po4a",
-	"The unshiftline is not supported for the man module. ".
-	"Please send a bug report with the groff page that generated ".
-	"this error."));
+        "The unshiftline is not supported for the man module. ".
+        "Please send a bug report with the groff page that generated ".
+        "this error."));
 }
 
 ###############################################
@@ -856,43 +856,43 @@ sub unshiftline {
 sub pushmacro {
     my $self=shift;
     if (scalar @_) {
-	# Do quote the arguments containing spaces, as it should.
+        # Do quote the arguments containing spaces, as it should.
 
-	#  but do not do so if they already contain quotes and escaped spaces
-	# For example, cdrdao(1) uses:
-	# .IP CATALOG\ "ddddddddddddd" (Here, the quote have to be displayed)
-	# Adding extra quotes as in:
-	# .IP "CATALOG\ "ddddddddddddd""
-	# results in two args: 'CATALOG\ ' and 'ddddddddddddd""'
-	$self->pushline(join(" ",map {
-		# Replace double quotes by \(dq (double quotes could be
-		# taken as an argument delimiter).
-		# Only quotes not preceded by \ are taken into account
-		# (\" introduces a comment).
-		s/(?<!\\)"/\\\(dq/g if (defined $_);
+        #  but do not do so if they already contain quotes and escaped spaces
+        # For example, cdrdao(1) uses:
+        # .IP CATALOG\ "ddddddddddddd" (Here, the quote have to be displayed)
+        # Adding extra quotes as in:
+        # .IP "CATALOG\ "ddddddddddddd""
+        # results in two args: 'CATALOG\ ' and 'ddddddddddddd""'
+        $self->pushline(join(" ",map {
+                # Replace double quotes by \(dq (double quotes could be
+                # taken as an argument delimiter).
+                # Only quotes not preceded by \ are taken into account
+                # (\" introduces a comment).
+                s/(?<!\\)"/\\\(dq/g if (defined $_);
 
-		defined $_ ? (
-			length($_)?
-			    (m/([^\\] |^ )/ ? "\"$_\"" : "$_")
-			    # Quote arguments that contain a space.
-			    # (not needed for non breaknig spaces, i.e.
-			    # spaces preceded by '\')
-			    :'""' # empty argument
-		) : '' # no argument
-	    } @_)."\n");
+                defined $_ ? (
+                        length($_)?
+                            (m/([^\\] |^ )/ ? "\"$_\"" : "$_")
+                            # Quote arguments that contain a space.
+                            # (not needed for non breaknig spaces, i.e.
+                            # spaces preceded by '\')
+                            :'""' # empty argument
+                ) : '' # no argument
+            } @_)."\n");
     } else {
-	$self->pushline("\n");
+        $self->pushline("\n");
     }
 }
 sub this_macro_needs_args {
     my ($macroname,$ref,$args)=@_;
     unless (length($args)) {
-	die wrap_ref_mod($ref, "po4a::man", dgettext("po4a",
-		"macro %s called without arguments. ".
-		"Even if placing the macro arguments on the next line is authorized ".
-		"by man(7), handling this would make the po4a parser too complicate. ".
-		"Please simply put the macro args on the same line."
-		), $macroname);
+        die wrap_ref_mod($ref, "po4a::man", dgettext("po4a",
+                "macro %s called without arguments. ".
+                "Even if placing the macro arguments on the next line is authorized ".
+                "by man(7), handling this would make the po4a parser too complicate. ".
+                "Please simply put the macro args on the same line."
+                ), $macroname);
     }
 }
 
@@ -902,7 +902,7 @@ sub pre_trans {
     # strange chars
     my $origstr=$str;
     print STDERR "pre_trans($str)="
-	if ($debug{'pretrans'});
+        if ($debug{'pretrans'});
 
     # Do as few treatments as possible with the .de, .ie and .if sections
     if (defined $self->{type} && $self->{type} =~ m/^(ie|if|de)$/) {
@@ -917,7 +917,7 @@ sub pre_trans {
                    (?![ \t]*[.'])/$1$2/sgx;# not followed by a command (.')
     }
     die wrap_ref_mod($ref, "po4a::man", dgettext("po4a","Escape sequence \\c encountered. This is not completely handled yet."))
-	if ($str =~ /\\c/);
+        if ($str =~ /\\c/);
 
     $str =~ s/>/E<gt>/sg;
     $str =~ s/</E<lt>/sg;
@@ -989,7 +989,7 @@ sub post_trans {
     my $transstr=$str;
 
     print STDERR "post_trans($str)="
-	if ($debug{'postrans'});
+        if ($debug{'postrans'});
 
     # Do as few treatments as possible with the .de, .ie and .if sections
     if (defined $self->{type} && $self->{type} =~ m/^(ie|if|de)$/) {
@@ -1069,24 +1069,24 @@ sub post_trans {
     # Make sure we compute internal sequences right.
     # think about: B<AZE E<lt> EZA E<gt>>
     while ($str =~ m/^(.*)(CW|[RBI])<(.*)$/s) {
-	my ($done,$rest)=($1."\\f$2",$3);
-	$done =~ s/CW$/\(CW/;
-	my $lvl=1;
-	while (length $rest && $lvl > 0) {
-	    my $first=substr($rest,0,1);
-	    if ($first eq '<') {
-		$lvl++;
-	    } elsif ($first eq '>') {
-		$lvl--;
-	    }
-	    $done .= $first  if ($lvl > 0);
-	    $rest=substr($rest,1);
-	}
-	die wrap_ref_mod($ref||$self->{ref}, "po4a::man", dgettext("po4a","Unbalanced '<' and '>' in font modifier. Faulty message: %s"),$str)
-	    if ($lvl > 0);
-	# Return to the regular font
-	$done .= "\\fP$rest";
-	$str=$done;
+        my ($done,$rest)=($1."\\f$2",$3);
+        $done =~ s/CW$/\(CW/;
+        my $lvl=1;
+        while (length $rest && $lvl > 0) {
+            my $first=substr($rest,0,1);
+            if ($first eq '<') {
+                $lvl++;
+            } elsif ($first eq '>') {
+                $lvl--;
+            }
+            $done .= $first  if ($lvl > 0);
+            $rest=substr($rest,1);
+        }
+        die wrap_ref_mod($ref||$self->{ref}, "po4a::man", dgettext("po4a","Unbalanced '<' and '>' in font modifier. Faulty message: %s"),$str)
+            if ($lvl > 0);
+        # Return to the regular font
+        $done .= "\\fP$rest";
+        $str=$done;
     }
 
     while ($str =~ m/^(.*?)E<([.'][\t ]*.*?(?<!E<[gl]t))>(.*)$/s) {
@@ -1191,16 +1191,16 @@ sub translate {
     $options{'comment'} .= join('\n', @comments);
     # Translate this
     $str = $self->SUPER::translate($str,
-				   $ref||$self->{ref},
-				   $type || $self->{type},
-				   %options);
+                                   $ref||$self->{ref},
+                                   $type || $self->{type},
+                                   %options);
     if ($options{'wrap'}) {
-	my (@paragraph);
-	@paragraph=split (/\n/,$str);
-	if (defined ($paragraph[0]) && $paragraph[0] eq '') {
-	    shift @paragraph;
-	}
-	$str = join("\n",@paragraph)."\n";
+        my (@paragraph);
+        @paragraph=split (/\n/,$str);
+        if (defined ($paragraph[0]) && $paragraph[0] eq '') {
+            shift @paragraph;
+        }
+        $str = join("\n",@paragraph)."\n";
     }
     $str=post_trans($self,$str,$ref||$self->{ref},$type, $options{'wrap'});
     return $str;
@@ -1231,14 +1231,14 @@ sub do_paragraph {
 
     # Following needed because of 'ft' (at least, see ft macro below)
     unless ($paragraph =~ m/\n$/s) {
-	my @paragraph = split(/\n/,$paragraph);
+        my @paragraph = split(/\n/,$paragraph);
 
-	$paragraph .= "\n"
-	    unless scalar (@paragraph) == 1;
+        $paragraph .= "\n"
+            unless scalar (@paragraph) == 1;
     }
 
     $self->pushline( $self->translate($paragraph,$self->{ref},"Plain text",
-				      "wrap" => ($wrapped_mode eq 'YES') ) );
+                                      "wrap" => ($wrapped_mode eq 'YES') ) );
 }
 
 #############################
@@ -1265,139 +1265,139 @@ sub parse{
     ($line,$ref)=$self->shiftline();
 
     while (defined($line)) {
-#	print STDERR "line=$line;ref=$ref";
-	chomp($line);
-	$self->{ref}="$ref";
-#	print STDERR "LINE=$line<<\n";
+#        print STDERR "line=$line;ref=$ref";
+        chomp($line);
+        $self->{ref}="$ref";
+#        print STDERR "LINE=$line<<\n";
 
 
-	if ($line =~ /^[.']/) {
-	    die wrap_mod("po4a::man", dgettext("po4a", "Unparsable line: %s"), $line)
-		unless ($line =~ /^([.']+\\*?)(\\["#])(.*)/ ||
-			$line =~ /^([.'])(\S*)(.*)/);
-	    my $arg1=$1;
-	    $arg1 .= $2;
-	    my $macro=$2;
-	    my $arguments=$3;
+        if ($line =~ /^[.']/) {
+            die wrap_mod("po4a::man", dgettext("po4a", "Unparsable line: %s"), $line)
+                unless ($line =~ /^([.']+\\*?)(\\["#])(.*)/ ||
+                        $line =~ /^([.'])(\S*)(.*)/);
+            my $arg1=$1;
+            $arg1 .= $2;
+            my $macro=$2;
+            my $arguments=$3;
 
-	    if ($inline{$macro}) {
-		$paragraph .= "PO4A-INLINE:".$line.":PO4A-INLINE\n";
-		goto LINE;
-	    }
+            if ($inline{$macro}) {
+                $paragraph .= "PO4A-INLINE:".$line.":PO4A-INLINE\n";
+                goto LINE;
+            }
 
-	    # Split on spaces for arguments, but not spaces within double quotes
-	    my @args=();
-	    push @args,$arg1;
-	    if ($macro =~ /^(?:ta|TP|ie|if|de)$/) {
-		# The number of spaces may be critical for the 'ta' macro,
-		# and there is no need to split the arguments.
-		push @args, $arguments;
-	    } else {
-		push @args, splitargs($ref,$arguments);
-	    }
+            # Split on spaces for arguments, but not spaces within double quotes
+            my @args=();
+            push @args,$arg1;
+            if ($macro =~ /^(?:ta|TP|ie|if|de)$/) {
+                # The number of spaces may be critical for the 'ta' macro,
+                # and there is no need to split the arguments.
+                push @args, $arguments;
+            } else {
+                push @args, splitargs($ref,$arguments);
+            }
 
 
-	    if (length($paragraph)) {
-		do_paragraph($self,$paragraph,$wrapped_mode);
-		$paragraph="";
-		$wrapped_mode = $wrapped_mode eq 'NO' ? 'YES' : $wrapped_mode;
-	    }
+            if (length($paragraph)) {
+                do_paragraph($self,$paragraph,$wrapped_mode);
+                $paragraph="";
+                $wrapped_mode = $wrapped_mode eq 'NO' ? 'YES' : $wrapped_mode;
+            }
 
-	    # Special case: Don't change these lines
-	    #  .\"  => comments
-	    #  .\#  => comments
-	    #  ."   => comments
-	    #  .    => empty point on the line
-	    #  .tr abcd...
-	    #       => substitution like Perl's tr/ac/bd/ on output.
-	    if ($macro eq '\\"' || $macro eq '' || $macro eq 'tr' ||
-	        $macro eq '"'   || $macro eq '\\#') {
-		$self->pushline($self->r($line)."\n");
-		goto LINE;
-	    }
-	    # Special case:
-	    #  .nf => stop wrapped mode
-	    #  .fi => wrap again
-	    if ($no_wrap_begin{$macro} or $no_wrap_end{$macro}) {
-		if ($no_wrap_end{$macro}) {
-		    $wrapped_mode='YES';
-		} else {
-		    $wrapped_mode='MACRONO';
-		}
-		$self->pushline($self->r($line)."\n");
-		goto LINE;
-	    }
+            # Special case: Don't change these lines
+            #  .\"  => comments
+            #  .\#  => comments
+            #  ."   => comments
+            #  .    => empty point on the line
+            #  .tr abcd...
+            #       => substitution like Perl's tr/ac/bd/ on output.
+            if ($macro eq '\\"' || $macro eq '' || $macro eq 'tr' ||
+                $macro eq '"'   || $macro eq '\\#') {
+                $self->pushline($self->r($line)."\n");
+                goto LINE;
+            }
+            # Special case:
+            #  .nf => stop wrapped mode
+            #  .fi => wrap again
+            if ($no_wrap_begin{$macro} or $no_wrap_end{$macro}) {
+                if ($no_wrap_end{$macro}) {
+                    $wrapped_mode='YES';
+                } else {
+                    $wrapped_mode='MACRONO';
+                }
+                $self->pushline($self->r($line)."\n");
+                goto LINE;
+            }
 
-	    # SH resets the wrapping (in addition to starting a section)
-	    if ($macro eq 'SH') {
-		$wrapped_mode='YES';
-	    }
+            # SH resets the wrapping (in addition to starting a section)
+            if ($macro eq 'SH') {
+                $wrapped_mode='YES';
+            }
 
-	    unshift @args,$self;
-	    # Apply macro
-	    $self->{type}=$macro;
+            unshift @args,$self;
+            # Apply macro
+            $self->{type}=$macro;
 
-	    if (defined ($macro{$macro})) {
-		&{$macro{$macro}}(@args);
-	    } else {
-		if (defined $unknown_macros) {
-		    &{$unknown_macros}(@args);
-		} else {
-		$self->pushline($self->r($line)."\n");
-		die wrap_ref_mod($ref, "po4a::man", dgettext("po4a",
-		    "Unknown macro '%s'. Remove it from the document, or refer to the Locale::Po4a::Man manpage to see how po4a can handle new macros."), $line);
-		}
-	    }
+            if (defined ($macro{$macro})) {
+                &{$macro{$macro}}(@args);
+            } else {
+                if (defined $unknown_macros) {
+                    &{$unknown_macros}(@args);
+                } else {
+                $self->pushline($self->r($line)."\n");
+                die wrap_ref_mod($ref, "po4a::man", dgettext("po4a",
+                    "Unknown macro '%s'. Remove it from the document, or refer to the Locale::Po4a::Man manpage to see how po4a can handle new macros."), $line);
+                }
+            }
 
-	} elsif ($line =~ /^ +[^. ]/) {
-	    # (Lines containing only spaces are handled as empty lines)
-	    # Not a macro, but not a wrapped paragraph either
-	    $wrapped_mode = $wrapped_mode eq 'YES' ? 'NO' : $wrapped_mode;
-	    $paragraph .= $line."\n";
-	} elsif ($line =~ /^[^.].*/ && $line !~ /^ *$/) {
-	    # (Lines containing only spaces are handled latter as empty lines)
-	    if ($line =~ /^\\"/) {
-		# special case: the line is entirely a comment, keep the
-		# comment.
-		# NOTE: comment could also be found in the middle of a line.
-		# From info groff:
-		# Escape: \": Start a comment.  Everything to the end of the
-		# input line is ignored.
-		$self->pushline($self->r($line)."\n");
-		goto LINE;
-	    } elsif ($line =~ /^\\#/) {
-		# Special groff comment. Do not keep the new line
-		goto LINE;
-	    } else {
-		# Not a macro
-		# * first, try to handle some "output line continuation" (\c)
-		$paragraph =~ s/\\c *(($FONT_RE)?)\n?$/$1/s;
-		# * append the line to the current paragraph
-		$paragraph .= $line."\n";
-	    }
-	} else { #empty line, or line containing only spaces
-	    if (length($paragraph)) {
-	        do_paragraph($self,$paragraph,$wrapped_mode);
-	        $paragraph="";
-	    }
-	    $wrapped_mode = $wrapped_mode eq 'NO' ? 'YES' : $wrapped_mode;
-	    $self->pushline($line."\n");
-	}
+        } elsif ($line =~ /^ +[^. ]/) {
+            # (Lines containing only spaces are handled as empty lines)
+            # Not a macro, but not a wrapped paragraph either
+            $wrapped_mode = $wrapped_mode eq 'YES' ? 'NO' : $wrapped_mode;
+            $paragraph .= $line."\n";
+        } elsif ($line =~ /^[^.].*/ && $line !~ /^ *$/) {
+            # (Lines containing only spaces are handled latter as empty lines)
+            if ($line =~ /^\\"/) {
+                # special case: the line is entirely a comment, keep the
+                # comment.
+                # NOTE: comment could also be found in the middle of a line.
+                # From info groff:
+                # Escape: \": Start a comment.  Everything to the end of the
+                # input line is ignored.
+                $self->pushline($self->r($line)."\n");
+                goto LINE;
+            } elsif ($line =~ /^\\#/) {
+                # Special groff comment. Do not keep the new line
+                goto LINE;
+            } else {
+                # Not a macro
+                # * first, try to handle some "output line continuation" (\c)
+                $paragraph =~ s/\\c *(($FONT_RE)?)\n?$/$1/s;
+                # * append the line to the current paragraph
+                $paragraph .= $line."\n";
+            }
+        } else { #empty line, or line containing only spaces
+            if (length($paragraph)) {
+                do_paragraph($self,$paragraph,$wrapped_mode);
+                $paragraph="";
+            }
+            $wrapped_mode = $wrapped_mode eq 'NO' ? 'YES' : $wrapped_mode;
+            $self->pushline($line."\n");
+        }
 
-	# finally, we did not reach the end of the paragraph.  The comments
-	# belong to the current paragraph.
-	push @comments, @next_comments;
-	@next_comments = ();
+        # finally, we did not reach the end of the paragraph.  The comments
+        # belong to the current paragraph.
+        push @comments, @next_comments;
+        @next_comments = ();
 
-	# Reinit the loop
-	($line,$ref)=$self->shiftline();
-	undef $self->{type};
+        # Reinit the loop
+        ($line,$ref)=$self->shiftline();
+        undef $self->{type};
     }
 
     if (length($paragraph)) {
-	do_paragraph($self,$paragraph,$wrapped_mode);
-	$wrapped_mode = $wrapped_mode eq 'NO' ? 'YES' : $wrapped_mode;
-	$paragraph="";
+        do_paragraph($self,$paragraph,$wrapped_mode);
+        $wrapped_mode = $wrapped_mode eq 'NO' ? 'YES' : $wrapped_mode;
+        $paragraph="";
     }
 
     # flush the last comments
@@ -1405,7 +1405,7 @@ sub parse{
     @next_comments = @comments;
     @comments = ();
     for my $c (@next_comments) {
-	$self->pushline($self->r(".\\\"$c\n"));
+        $self->pushline($self->r(".\\\"$c\n"));
     }
 
     # reinitialize the module
@@ -1759,7 +1759,7 @@ sub translate_joined {
     #section# .S[HS] name
 
     $self->pushmacro($macroname,
-		     $self->t($macroarg));
+                     $self->t($macroarg));
 }
 
 # For macro taking several arguments, having to be translated separately
@@ -1772,7 +1772,7 @@ sub translate_each {
 sub noarg {
     my $self = shift;
     warn "Macro $_[0] does not accept any argument\n"
-	if (defined ($_[1]));
+        if (defined ($_[1]));
     $self->pushmacro(@_);
 }
 
@@ -1796,11 +1796,11 @@ $macro{'TH'}= sub {
     $self->push_docheader();
 
     $self->pushmacro($th,
-		     $self->t($title),
-		     $section,
-		     $self->t($date),
-		     $self->t($source),
-		     $self->t($manual));
+                     $self->t($title),
+                     $section,
+                     $self->t($date),
+                     $self->t($source),
+                     $self->t($manual));
 };
 
 # .SS t    Subheading t (like .SH, but used for a subsection inside a section).
@@ -1862,9 +1862,9 @@ sub parse_tp_tq {
     ($l2,$ref2) = $self->shiftline();
     chomp($l2);
     while ($l2 =~ /^\.PD/) {
-	$self->pushline($self->r($l2)."\n");
-	($l2,$ref2) = $self->shiftline();
-	chomp($l2);
+        $self->pushline($self->r($l2)."\n");
+        ($l2,$ref2) = $self->shiftline();
+        chomp($l2);
     }
     if ($l2 =~/^([.'][\t ]*([^\t ]*))(?:([\t ]+)(.*)$|$)/) {
         if ($inline{$2}) {
@@ -1883,7 +1883,7 @@ sub parse_tp_tq {
             $self->SUPER::unshiftline($l2,$ref2);
         }
     } else {
-	$self->pushline($self->t($l2, "wrap" => 0)."\n");
+        $self->pushline($self->t($l2, "wrap" => 0)."\n");
     }
 }
 
@@ -1905,7 +1905,7 @@ $macro{'TP'}=sub {
 #      paragraph.
 $macro{'TQ'}=sub {
     warn "Macro $_[1] does not accept any argument\n"
-	if (defined ($_[2]));
+        if (defined ($_[2]));
 
     parse_tp_tq(@_);
 };
@@ -1941,11 +1941,11 @@ $macro{'HP'}=sub {
 $macro{'IP'}=sub {
     my $self=shift;
     if (defined $_[2]) {
-	$self->pushmacro($_[0],$self->t($_[1]),$_[2]);
+        $self->pushmacro($_[0],$self->t($_[1]),$_[2]);
     } elsif (defined $_[1]) {
-	$self->pushmacro($_[0],$self->t($_[1]));
+        $self->pushmacro($_[0],$self->t($_[1]));
     } else {
-	$self->pushmacro(@_);
+        $self->pushmacro(@_);
     }
 
     # From info groff:
@@ -1968,12 +1968,8 @@ $macro{'IP'}=sub {
 #         corresponding UE  command.
 #         When generating HTML this should translate into the HTML command
 #         <A  NAME="u" id="u">&nbsp;</A>
-$macro{'UR'}=sub {
-    return untranslated(@_)
-	if (defined($_[2]) && $_[2] eq ':');
-    return translate_joined(@_);
-};
-$macro{'UE'}=\&noarg;
+$inline{'UR'}=1;
+$inline{'UE'}=1;
 $macro{'UN'}=\&translate_joined;
 
 # Miscellaneous Macros
@@ -2133,9 +2129,9 @@ $macro{'ig'}=sub {
     $end='' if ($end =~ m/^\\\"/);
     my ($line,$ref)=$self->shiftline();
     while (defined($line)) {
-	$self->pushline($self->r($line));
-	last if ($line =~ /^\.$end\./);
-	($line,$ref)=$self->shiftline();
+        $self->pushline($self->r($line));
+        last if ($line =~ /^\.$end\./);
+        ($line,$ref)=$self->shiftline();
     }
 };
 
@@ -2160,7 +2156,7 @@ $macro{'ps'}=\&untranslated;
 # .mso groff variant of .so (other search path)
 $macro{'so'}= $macro{'mso'} = sub {
     warn wrap_mod("po4a::man", dgettext("po4a",
-	"This page includes another file with '%s'. Do not forget to translate this file ('%s')."), $_[1], $_[2]);
+        "This page includes another file with '%s'. Do not forget to translate this file ('%s')."), $_[1], $_[2]);
     my $self = shift;
     $self->pushmacro(@_);
 };
@@ -2200,30 +2196,30 @@ $macro{'TS'}=sub {
     # Push table start
     $self->pushmacro(@_);
     while (defined($line)) {
-	if ($line =~ /^\.TE/) {
-	    # Table end
-	    $self->pushline($self->r($line));
-	    return;
-	}
-	if ($in_headers) {
-	    if ($line =~ /\.$/) {
-		$in_headers = 0;
-	    }
-	    $self->pushline($self->r($line));
-	} elsif ($line =~ /\\$/) {
-	    # Lines are continued on \ at the end of line
-	    $buffer .= $line;
-	} else {
-	    $buffer .= $line;
-	    # Arguments to translate are separated by \t
-	    $self->pushline(join("\t",
-				 map { $self->translate($buffer,
-							$ref,
-							'tbl table')
-				     } split (/\\t/,$line)));
-	    $buffer = "";
-	}
-	($line,$ref)=$self->shiftline();
+        if ($line =~ /^\.TE/) {
+            # Table end
+            $self->pushline($self->r($line));
+            return;
+        }
+        if ($in_headers) {
+            if ($line =~ /\.$/) {
+                $in_headers = 0;
+            }
+            $self->pushline($self->r($line));
+        } elsif ($line =~ /\\$/) {
+            # Lines are continued on \ at the end of line
+            $buffer .= $line;
+        } else {
+            $buffer .= $line;
+            # Arguments to translate are separated by \t
+            $self->pushline(join("\t",
+                                 map { $self->translate($buffer,
+                                                        $ref,
+                                                        'tbl table')
+                                     } split (/\\t/,$line)));
+            $buffer = "";
+        }
+        ($line,$ref)=$self->shiftline();
     }
 };
 
@@ -2276,10 +2272,10 @@ $macro{'ce'}=$macro{'ul'}=$macro{'cu'}=sub {
 # All of these are not handled yet because the number of line may change
 # during the translation
             die wrap_mod("po4a::man", dgettext("po4a",
-		"This page uses the '%s' request with the number of lines in argument. This is not supported yet."), $_[0]);
+                "This page uses the '%s' request with the number of lines in argument. This is not supported yet."), $_[0]);
         }
     } else {
-	$self->pushmacro($_[0]);
+        $self->pushmacro($_[0]);
     }
 };
 
@@ -2291,7 +2287,7 @@ $macro{'ec'}=sub {
     my $self=shift;
     if (defined $_[1]) {
         die wrap_mod("po4a::man", dgettext("po4a",
-	    "This page uses the '%s' request. This request is only supported when no argument is provided."), $_[0]);
+            "This page uses the '%s' request. This request is only supported when no argument is provided."), $_[0]);
     } else {
         $self->pushmacro($_[0]);
     }
@@ -2407,6 +2403,8 @@ sub define_mdoc_macros {
     $macro{'Ss'}=\&translate_mdoc;
     # .Pp   Paragraph Break.  Vertical space (one line).
     $macro{'Pp'}=\&noarg;
+    # .Lp   Same as .Pp
+    $macro{'Lp'}=\&noarg;
     # .D1   (D-one) Display-one Indent and display one text line.
     $macro{'D1'}=\&translate_mdoc;
     # .Dl   (D-ell) Display-one literal.
@@ -2427,6 +2425,8 @@ sub define_mdoc_macros {
     # FIXME: Maybe we could extract other modifiers
     #        as in .It Fl l Ar num
     $macro{'It'}=\&translate_mdoc;
+    # .Lk   html link
+    $macro{'Lk'}=\&untranslated;
 
     # Manual Domain Macros
     # ====================
@@ -2440,8 +2440,8 @@ sub define_mdoc_macros {
 
     # General Text Domain
     # ===================
-    foreach (qw(%A %B %C %D %J %N %O %P %R %T %V
-                Ac Ao Ap Aq At Bc Bf Bo Bq Bx Db Dc Do Dq Ec Ef Em Eo Fx No Ns
+    foreach (qw(%A %B %C %D %I %J %N %O %P %Q %R %T %U %V
+                Ac Ao Ap Aq At Bc Bf Bo Bq Brc Bro Brq Bx Db Dc Do Dq Ec Ef Em Eo Eq Fx No Ns
                 Pc Pf Po Pq Qc Ql Qo Qq Re Rs Rv Sc So Sq Sm Sx Sy Tn Ux Xc Xo)) {
         $inline{$_} = 1;
     }
@@ -2477,10 +2477,6 @@ sub define_mdoc_macros {
     $macro{'In'} = \&translate_mdoc;
     # NetBSD Macro
     $inline{'Nx'} = 1;
-    # Curly brackets
-    $inline{'Brq'} = 1;
-    # Corporate name
-    $inline{'%Q'} = 1;
     # Math symbol
     $inline{'Ms'} = 1;
     # Prints 'under development'

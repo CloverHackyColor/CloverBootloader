@@ -15,21 +15,22 @@ INSTALLATION
 
 To install this module type the following:
 
-   make
-   make install
+   perl Build.PL
+   ./Build
+   ./Build install
 
 
 USE WITHOUT INSTALLATION
 
 If you want to use a version without installing it (such as the CVS one),
 use the PERLLIB environment variable is such construction:
-
+ 
   PERLLIB=~/svn-checkouts/po4a/lib ~/svn-checkouts/po4a/po4a-gettextize [usual args]
 
 
 PO4A DEPENDENCIES
 
-  Locale::gettext (v1.01):
+  Locale::gettext (v1.01): 
     This module being itself internationalized, it needs the Locale::gettext
     library to translate its own messages.
     If it is not present, then po4a's messages won't be translated, but
@@ -53,10 +54,18 @@ SGML MODULE SPECIFIC DEPENDENCIES
   SGMLS (1.03ii):
     This is a set of Perl5 routines for processing the output from the sgmls
     and nsgmls SGML parsers.
-
+ 
   sp (1.3.4): James Clark's SGML parsing tools
     This is the parser we use.
     http://www.jclark.com/sp/
+
+
+TEXT MODULE SPECIFIC DEPENDENCIES
+
+  Unicode::GCString:
+    This module is used to compute text width; it is needed by AsciiDoc to
+    determine two line titles in encodings different from ASCII.
+    http://hatuka.nezumi.nu/repos/Unicode-LineBreak/
 
 
 PROJECT WEB PAGE
@@ -70,8 +79,9 @@ COPYRIGHT AND LICENSE
 
 This program is free software; you may redistribute it and/or modify it
 under the terms of GPL (see COPYING file).
-
-Copyright (C) 2002-2O10 by SPI, inc.
+       
+Copyright (C) 2002-2O12 by SPI, inc.
 Authors:
         Denis Barbier <barbier@linuxfr.org>
         Martin Quinson (mquinson#debian.org)
+

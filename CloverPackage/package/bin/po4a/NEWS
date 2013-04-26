@@ -2,10 +2,48 @@ po4a NEWS
 
 =======================================================================
 
-* Major changes in release 0.42 (UNRELEASED)
+* Major changes in release 0.43 (2012-10-17)
+
+po4a:
+ * Add --porefs option to change how file locations are written into
+   the POT file (and thus into the PO files also).
+
+po4a-updatepo po4a Po:
+ * Extend the --porefs option, add a new 'counter' value to replace
+   line number by an increasing counter.
+   An optional ",nowrap" or ",wrap" specifier can be added to tell
+   whether file locations are written on a single line or wrapped on
+   several lines.  Default is ",nowrap", it will be changed to ",wrap"
+   in a future release.
+
+Man:
+ * Make .UR/.UE macros inline.
+ * Add macros used in several NetBSD man pages: %I %U Brc Bro Lp Lk
+
+Text:
+ * Fix two line titles in AsciiDoc format.
+ * Let AsciiDoc format handle many more styles.
+ * Add support for automatic comments in AsciiDoc format.
+
+=======================================================================
+
+* Major changes in release 0.42 (2012-05-16)
+
+po4a:
+ * Allow adding command-line options after config file.
 
 Text:
  * Add support for control files.
+
+msguntypot:
+ * Do not remove obsolete entries from PO files.
+
+documentation translations:
+ * New German translations
+ * Updated Spanish translations
+ * Updated French translations
+ * Updated Japanese translations
+ * Updated Polish translations
 
 =======================================================================
 
@@ -23,7 +61,7 @@ Text:
  * Remove trailing newline in titles from PO files
 
 Packaging:
- * Remove Makefile, all processing is performed by Build.PL
+ * Remove Makefile, all processing is performed by Build.PL 
 
 =======================================================================
 
