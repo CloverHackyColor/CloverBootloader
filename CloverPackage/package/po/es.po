@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
-"POT-Creation-Date: 2013-04-25 13:54+0300\n"
+"POT-Creation-Date: 2013-04-27 17:01+0300\n"
 "PO-Revision-Date: 2013-04-26 19:45+0200\n"
 "Last-Translator: Maniac <emafrias@gmail.com>\n"
 "Language-Team: es <es@li.org>\n"
@@ -276,8 +276,7 @@ msgid ""
 "diskutil list\n"
 "newfs_msdos -v EFI -F 32 /dev/rdisk9s1"
 msgstr ""
-"Instala Clover en la partición ESP (EFI System Partition) del volumen "
-"seleccionado\n"
+"Instala Clover en la partición ESP (EFI System Partition) del volumen seleccionado\n"
 "\n"
 "Requiere formatear la partición ESP como Fat32 desde su Mac primero.\n"
 "\n"
@@ -303,8 +302,7 @@ msgstr ""
 "Clover EFI requiere tres archivos esenciales. (en términos simples)\n"
 "boot0 (En el MBR del disco) responsable de cargar boot1.\n"
 "boot1 (En el sector de arranque de la partición) para localizar boot2.\n"
-"boot2 (En el directorio raíz de la partición) para cargar "
-"/EFI/BOOT/CLOVERIA32.efi o CLOVERX64.efi, el kernel etc."
+"boot2 (En el directorio raíz de la partición) para cargar /EFI/BOOT/CLOVERIA32.efi o CLOVERX64.efi, el kernel etc."
 
 #. type: "boot0_title"
 #: Resources/templates/Localizable.strings:29
@@ -327,10 +325,7 @@ msgid ""
 "  5. diskutil mount /dev/rdisk9s1"
 msgstr ""
 "Usado para arranque BIOS en placas base con BIOS.\n"
-"Usa fdisk440 para instalar boot0 en los primeros 440 bits del MBR sin "
-"destruir alguna instalación de Windows existente, luego boot0 buscará "
-"boot1h2 en la primera partición HFS activa, o buscará boot1f32alt en la "
-"primera partición Fat32 activa.\n"
+"Usa fdisk440 para instalar boot0 en los primeros 440 bits del MBR sin destruir alguna instalación de Windows existente, luego boot0 buscará boot1h2 en la primera partición HFS activa, o buscará boot1f32alt en la primera partición Fat32 activa.\n"
 "Las particiones HFS y Fat32 seleccionadas serán activadas.\n"
 "Necesita formatear como Fat32 en Win o Mac de la siguiente forma.\n"
 "  1. Borrar como MS-DOS (FAT) desde la Utilidad de Discos primero.\n"
@@ -360,10 +355,7 @@ msgid ""
 "  5. diskutil mount /dev/rdisk9s1"
 msgstr ""
 "Usado para arranque BIOS en placa base con BIOS.\n"
-"Usa fdisk440 para instalar boot0 en los primeros 440 bits del MBR sin "
-"destruir alguna instalación de Windows existente, luego boot0 buscará "
-"boot1h2 en la primera partición HFS activa, o buscará boot1f32alt en la "
-"primera partición Fat32 activa.\n"
+"Usa fdisk440 para instalar boot0 en los primeros 440 bits del MBR sin destruir alguna instalación de Windows existente, luego boot0 buscará boot1h2 en la primera partición HFS activa, o buscará boot1f32alt en la primera partición Fat32 activa.\n"
 "No se activará la partición HFS seleccionada, pero si la partición Fat32.\n"
 "Necesita formatear como Fat32 en Win o Mac de la siguiente forma.\n"
 "  1. Borrar como MS-DOS (FAT) en la Utilidad de Discos primero.\n"
@@ -388,8 +380,7 @@ msgid ""
 msgstr ""
 "No instalar ningún archivo de arranque (boot0X, boot1X).\n"
 "Útil para placas base UEFI que no requieren los archivos de arranque.\n"
-"También puede ser usado si no quiere actualizar los sectores MBR o PBR en "
-"sistemas BIOS."
+"También puede ser usado si no quiere actualizar los sectores MBR o PBR en sistemas BIOS."
 
 #. type: "AltBoot_title"
 #: Resources/templates/Localizable.strings:56
@@ -404,8 +395,7 @@ msgid ""
 "Install alternative booting PBR with choice of boot with a key pressed.\n"
 "File to boot = boot{keypressed}"
 msgstr ""
-"Instalar arranque PBR alternativo con selección de boot al presionar una "
-"tecla.\n"
+"Instalar arranque PBR alternativo con selección de boot al presionar una tecla.\n"
 "Archivo boot a arrancar = boot{tecla_a_presionar}"
 
 #. type: "boot32_title"
@@ -495,26 +485,134 @@ msgstr "CloverEFI 64-bits BiosBlockIO"
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
 msgstr "CloverEFI 64-bits usando Bios Block I/O para acceder a discos"
 
-#. type: "Themes_title"
+#. type: "Ps2KeyboardDxe-32_description"
+#: Resources/templates/Localizable.strings:90
+#, no-wrap
+msgid "PS/2 keyboard driver, 32bit"
+msgstr ""
+
+#. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:91
+#, no-wrap
+msgid "Ps2MouseAbsolutePointerDxe-32_description"
+msgstr ""
+
+#. type: "Ps2MouseDxe-32_description"
+#: Resources/templates/Localizable.strings:92
+#, no-wrap
+msgid "PS/2 mouse driver, 32bit"
+msgstr ""
+
+#. type: "Ps2MouseDxe-64_description"
+#: Resources/templates/Localizable.strings:93
+#, no-wrap
+msgid "PS/2 mouse driver, 64bit"
+msgstr ""
+
+#. type: "UsbMouseDxe-32_description"
+#: Resources/templates/Localizable.strings:94
+#, no-wrap
+msgid "USB mouse driver, 32bit"
+msgstr ""
+
+#. type: "UsbMouseDxe-64_description"
+#: Resources/templates/Localizable.strings:95
+#, no-wrap
+msgid "USB mouse driver, 64bit"
+msgstr ""
+
+#. type: "VBoxExt2-32_description"
+#: Resources/templates/Localizable.strings:96
+#, no-wrap
+msgid "ext2/3 filesystem driver from virtualbox, 32bit"
+msgstr ""
+
+#. type: "VBoxExt2-64_description"
+#: Resources/templates/Localizable.strings:97
+#, no-wrap
+msgid "ext2/3 filesystem driver from virtualbox, 64bit"
+msgstr ""
+
+#. type: "VBoxExt4-32_description"
+#: Resources/templates/Localizable.strings:98
+#, no-wrap
+msgid "ext4 filesystem driver from virtualbox, 32bit"
+msgstr ""
+
+#. type: "VBoxExt4-64_description"
+#: Resources/templates/Localizable.strings:99
+#, no-wrap
+msgid "ext4 filesystem driver from virtualbox, 64bit"
+msgstr ""
+
+#. type: "XhciDxe-32_description"
+#: Resources/templates/Localizable.strings:100
+#, no-wrap
+msgid "XhciDxe-32_description"
+msgstr ""
+
+#. type: "XhciDxe-64_description"
+#: Resources/templates/Localizable.strings:101
+#, no-wrap
+msgid "XhciDxe-64_description"
+msgstr ""
+
+#. type: "CsmVideoDxe-64_description"
+#: Resources/templates/Localizable.strings:102
+#, no-wrap
+msgid "Video driver - provides a wide range of resolutions, 64bit"
+msgstr ""
+
+#. type: "DataHubDxe-64_description"
+#: Resources/templates/Localizable.strings:103
+#, no-wrap
+msgid "DataHubDxe-64_description"
+msgstr ""
+
+#. type: "EmuVariableUefi-64_description"
+#: Resources/templates/Localizable.strings:104
+#, no-wrap
+msgid "EmuVariableUefi-64_description"
+msgstr ""
+
+#. type: "OsxAptioFixDrv-64_description"
+#: Resources/templates/Localizable.strings:105
+#, no-wrap
+msgid "Fix for Aptio AMI, 64bit"
+msgstr ""
+
+#. type: "OsxLowMemFixDrv-64_description"
+#: Resources/templates/Localizable.strings:106
+#, no-wrap
+msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
+msgstr ""
+
+#. type: "PartitionDxe-64_description"
+#: Resources/templates/Localizable.strings:107
+#, no-wrap
+msgid "PartitionDxe-64_description"
+msgstr ""
+
+#. type: "Themes_title"
+#: Resources/templates/Localizable.strings:113
 #, no-wrap
 msgid "Themes"
 msgstr "Temas"
 
 #. type: "Themes_description"
-#: Resources/templates/Localizable.strings:92
+#: Resources/templates/Localizable.strings:114
 #, no-wrap
 msgid "Select to install themes."
 msgstr "Seleccione para instalar temas."
 
 #. type: "black_green_title"
-#: Resources/templates/Localizable.strings:94
+#: Resources/templates/Localizable.strings:116
 #, no-wrap
 msgid "black_green"
 msgstr "black_green"
 
 #. type: "black_green_description"
-#: Resources/templates/Localizable.strings:95
+#: Resources/templates/Localizable.strings:117
 #, no-wrap
 msgid ""
 "Default black_green theme from Blackosx,\n"
@@ -524,13 +622,13 @@ msgstr ""
 "Se instala en /EFI/CLOVER/themes/black_green."
 
 #. type: "AppleStyle_title"
-#: Resources/templates/Localizable.strings:98
+#: Resources/templates/Localizable.strings:120
 #, no-wrap
 msgid "AppleStyle"
 msgstr "AppleStyle"
 
 #. type: "AppleStyle_description"
-#: Resources/templates/Localizable.strings:99
+#: Resources/templates/Localizable.strings:121
 #, no-wrap
 msgid ""
 "AppleStyle theme from Eps,\n"
@@ -540,13 +638,13 @@ msgstr ""
 "Se instala en /EFI/CLOVER/themes/AppleStyle."
 
 #. type: "mrengles_title"
-#: Resources/templates/Localizable.strings:102
+#: Resources/templates/Localizable.strings:124
 #, no-wrap
 msgid "mrengles"
 msgstr "mrengles"
 
 #. type: "mrengles_description"
-#: Resources/templates/Localizable.strings:103
+#: Resources/templates/Localizable.strings:125
 #, no-wrap
 msgid ""
 "mrengles theme from mrengles,\n"
@@ -556,13 +654,13 @@ msgstr ""
 "Se instala en /EFI/CLOVER/themes/mrengles."
 
 #. type: "iClover_title"
-#: Resources/templates/Localizable.strings:106
+#: Resources/templates/Localizable.strings:128
 #, no-wrap
 msgid "iClover"
 msgstr "iClover"
 
 #. type: "iClover_description"
-#: Resources/templates/Localizable.strings:107
+#: Resources/templates/Localizable.strings:129
 #, no-wrap
 msgid ""
 "Grey style theme by winlog,\n"
@@ -572,13 +670,13 @@ msgstr ""
 "Se instala en /EFI/CLOVER/themes/iClover."
 
 #. type: "buttons_title"
-#: Resources/templates/Localizable.strings:110
+#: Resources/templates/Localizable.strings:132
 #, no-wrap
 msgid "buttons"
 msgstr "buttons"
 
 #. type: "buttons_description"
-#: Resources/templates/Localizable.strings:111
+#: Resources/templates/Localizable.strings:133
 #, no-wrap
 msgid ""
 "Buttons theme from Trauma,\n"
@@ -588,13 +686,13 @@ msgstr ""
 "Se instala en /EFI/CLOVER/themes/buttons."
 
 #. type: "hellfire_title"
-#: Resources/templates/Localizable.strings:114
+#: Resources/templates/Localizable.strings:136
 #, no-wrap
 msgid "hellfire"
 msgstr "hellfire"
 
 #. type: "hellfire_description"
-#: Resources/templates/Localizable.strings:115
+#: Resources/templates/Localizable.strings:137
 #, no-wrap
 msgid ""
 "Hellfire theme from lllevelll,\n"
@@ -604,13 +702,13 @@ msgstr ""
 "Se instala en /EFI/CLOVER/themes/hellfire."
 
 #. type: "metal_title"
-#: Resources/templates/Localizable.strings:118
+#: Resources/templates/Localizable.strings:140
 #, no-wrap
 msgid "metal"
 msgstr "metal"
 
 #. type: "metal_description"
-#: Resources/templates/Localizable.strings:119
+#: Resources/templates/Localizable.strings:141
 #, no-wrap
 msgid ""
 "The original metal theme from Slice,\n"
@@ -620,13 +718,13 @@ msgstr ""
 "Se instala en /EFI/CLOVER/themes/metal."
 
 #. type: "simple_gray_title"
-#: Resources/templates/Localizable.strings:122
+#: Resources/templates/Localizable.strings:144
 #, no-wrap
 msgid "simple_gray"
 msgstr "simple_gray"
 
 #. type: "simple_gray_description"
-#: Resources/templates/Localizable.strings:123
+#: Resources/templates/Localizable.strings:145
 #, no-wrap
 msgid ""
 "Simple_gray theme from hijeane,\n"
@@ -636,13 +734,13 @@ msgstr ""
 "Se instala en /EFI/CLOVER/themes/simple_gray."
 
 #. type: "wooden_title"
-#: Resources/templates/Localizable.strings:126
+#: Resources/templates/Localizable.strings:148
 #, no-wrap
 msgid "wooden"
 msgstr "wooden"
 
 #. type: "wooden_description"
-#: Resources/templates/Localizable.strings:127
+#: Resources/templates/Localizable.strings:149
 #, no-wrap
 msgid ""
 "Wooden theme from iROOTa,\n"
@@ -652,13 +750,13 @@ msgstr ""
 "Se instala en /EFI/CLOVER/themes/wooden."
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:133
+#: Resources/templates/Localizable.strings:155
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "Instala los scripts RC en el volumen seleccionado"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:134
+#: Resources/templates/Localizable.strings:156
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -668,29 +766,25 @@ msgstr ""
 "El volumen seleccionado debe ser una partición del sistema OSX iniciable."
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:136
+#: Resources/templates/Localizable.strings:158
 #, no-wrap
-#| msgid "Install all RC scripts on all bootable OSX volumes"
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "Instala todos los scripts RC en todo volumen OSX iniciable"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:137
+#: Resources/templates/Localizable.strings:159
 #, no-wrap
-#| msgid "Install all RC scripts on all internal bootable OSX volumes."
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "Instala todos los scripts RC en todo volumen OSX interno e iniciable."
 
 #. type: "Optional RC Scripts"
-#: Resources/templates/Localizable.strings:138
+#: Resources/templates/Localizable.strings:160
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "Scripts RC opcionales"
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:139
+#: Resources/templates/Localizable.strings:161
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
-msgstr ""
-"Desactivar el servicio mDNSResponder. Esto evitará que el sistema salga del "
-"reposo cada ciertas horas"
+msgstr "Desactivar el servicio mDNSResponder. Esto evitará que el sistema salga del reposo cada ciertas horas"

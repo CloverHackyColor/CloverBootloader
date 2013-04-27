@@ -7,16 +7,16 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
-"POT-Creation-Date: 2013-04-27 14:40+0300\n"
-"PO-Revision-Date: 2013-04-27 16:25+0200\n"
-"Last-Translator: k3nny <sascha_r@gmx.de>\n"
+"POT-Creation-Date: 2013-04-27 17:01+0300\n"
+"PO-Revision-Date: 2013-04-27 17:01+0100\n"
+"Last-Translator: JrCs\n"
 "Language-Team: en <en@li.org>\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Pootle 2.1.6\n"
+"X-Generator: Poedit 1.5.5\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -480,7 +480,7 @@ msgstr "CloverEFI 64-bits using Bios Block I/O to access drives"
 #. type: "Ps2KeyboardDxe-32_description"
 #: Resources/templates/Localizable.strings:90
 #, no-wrap
-msgid "Ps2KeyboardDxe-32_description"
+msgid "PS/2 keyboard driver, 32bit"
 msgstr "PS/2 keyboard driver, 32bit"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
@@ -492,56 +492,57 @@ msgstr ""
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:92
 #, no-wrap
-msgid "Ps2MouseDxe-32_description"
+msgid "PS/2 mouse driver, 32bit"
 msgstr "PS/2 mouse driver, 32bit"
 
-#. type: "UsbMouseDxe-32_description"
+#. type: "Ps2MouseDxe-64_description"
 #: Resources/templates/Localizable.strings:93
 #, no-wrap
-msgid "UsbMouseDxe-32_description"
-msgstr "USB mouse driver, 32bit"
+msgid "PS/2 mouse driver, 64bit"
+msgstr "PS/2 mouse driver, 64bit"
 
-#. type: "VBoxExt2-32_description"
+#. type: "UsbMouseDxe-32_description"
 #: Resources/templates/Localizable.strings:94
 #, no-wrap
-msgid "VBoxExt2-32_description"
-msgstr "ext2/3 filesystem driver for Linux EFI, 32bit"
+msgid "USB mouse driver, 32bit"
+msgstr "USB mouse driver, 32bit"
 
-#. type: "VBoxExt4-32_description"
+#. type: "UsbMouseDxe-64_description"
 #: Resources/templates/Localizable.strings:95
 #, no-wrap
-msgid "VBoxExt4-32_description"
-msgstr "ext4 filesystem driver for Linux EFI, 32bit"
+#| msgid "USB mouse driver, 364bit"
+msgid "USB mouse driver, 64bit"
+msgstr "USB mouse driver, 64bit"
+
+#. type: "VBoxExt2-32_description"
+#: Resources/templates/Localizable.strings:96
+#, no-wrap
+msgid "ext2/3 filesystem driver from virtualbox, 32bit"
+msgstr "ext2/3 filesystem driver from virtual box, 32bit"
+
+#. type: "VBoxExt2-64_description"
+#: Resources/templates/Localizable.strings:97
+#, no-wrap
+msgid "ext2/3 filesystem driver from virtualbox, 64bit"
+msgstr "ext2/3 filesystem driver from virtual box, 64bit"
+
+#. type: "VBoxExt4-32_description"
+#: Resources/templates/Localizable.strings:98
+#, no-wrap
+msgid "ext4 filesystem driver from virtualbox, 32bit"
+msgstr "ext4 filesystem driver from virtual box, 32bit"
+
+#. type: "VBoxExt4-64_description"
+#: Resources/templates/Localizable.strings:99
+#, no-wrap
+msgid "ext4 filesystem driver from virtualbox, 64bit"
+msgstr "ext4 filesystem driver from virtual box, 64bit"
 
 #. type: "XhciDxe-32_description"
-#: Resources/templates/Localizable.strings:96
+#: Resources/templates/Localizable.strings:100
 #, no-wrap
 msgid "XhciDxe-32_description"
 msgstr ""
-
-#. type: "Ps2MouseDxe-64_description"
-#: Resources/templates/Localizable.strings:97
-#, no-wrap
-msgid "Ps2MouseDxe-64_description"
-msgstr "PS/2 mouse driver, 64bit"
-
-#. type: "UsbMouseDxe-64_description"
-#: Resources/templates/Localizable.strings:98
-#, no-wrap
-msgid "UsbMouseDxe-64_description"
-msgstr "USB mouse driver, 64bit"
-
-#. type: "VBoxExt2-64_description"
-#: Resources/templates/Localizable.strings:99
-#, no-wrap
-msgid "VBoxExt2-64_description"
-msgstr "ext2/3 filesystem driver for Linux EFI, 64bit"
-
-#. type: "VBoxExt4-64_description"
-#: Resources/templates/Localizable.strings:100
-#, no-wrap
-msgid "VBoxExt4-64_description"
-msgstr "ext4 filesystem driver for Linux EFI, 64bit"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
@@ -552,7 +553,7 @@ msgstr ""
 #. type: "CsmVideoDxe-64_description"
 #: Resources/templates/Localizable.strings:102
 #, no-wrap
-msgid "CsmVideoDxe-64_description"
+msgid "Video driver - provides a wide range of resolutions, 64bit"
 msgstr "Video driver - provides a wide range of resolutions, 64bit"
 
 #. type: "DataHubDxe-64_description"
@@ -570,13 +571,13 @@ msgstr ""
 #. type: "OsxAptioFixDrv-64_description"
 #: Resources/templates/Localizable.strings:105
 #, no-wrap
-msgid "OsxAptioFixDrv-64_description"
+msgid "Fix for Aptio AMI, 64bit"
 msgstr "Fix for Aptio AMI, 64bit"
 
 #. type: "OsxLowMemFixDrv-64_description"
 #: Resources/templates/Localizable.strings:106
 #, no-wrap
-msgid "OsxLowMemFixDrv-64_description"
+msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
 msgstr "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
 
 #. type: "PartitionDxe-64_description"
@@ -780,3 +781,40 @@ msgstr "Optional RC Scripts"
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
+
+#~ msgid "Ps2KeyboardDxe-32_description"
+#~ msgstr "PS/2 keyboard driver, 32bit"
+
+#~ msgid "Ps2MouseDxe-32_description"
+#~ msgstr "PS/2 mouse driver, 32bit"
+
+#~ msgid "UsbMouseDxe-32_description"
+#~ msgstr "USB mouse driver, 32bit"
+
+#~ msgid "VBoxExt2-32_description"
+#~ msgstr "ext2/3 filesystem driver for Linux EFI, 32bit"
+
+#~ msgid "VBoxExt4-32_description"
+#~ msgstr "ext4 filesystem driver for Linux EFI, 32bit"
+
+#~ msgid "Ps2MouseDxe-64_description"
+#~ msgstr "PS/2 mouse driver, 64bit"
+
+#~ msgid "UsbMouseDxe-64_description"
+#~ msgstr "USB mouse driver, 64bit"
+
+#~ msgid "VBoxExt2-64_description"
+#~ msgstr "ext2/3 filesystem driver for Linux EFI, 64bit"
+
+#~ msgid "VBoxExt4-64_description"
+#~ msgstr "ext4 filesystem driver for Linux EFI, 64bit"
+
+#~ msgid "CsmVideoDxe-64_description"
+#~ msgstr "Video driver - provides a wide range of resolutions, 64bit"
+
+#~ msgid "OsxAptioFixDrv-64_description"
+#~ msgstr "Fix for Aptio AMI, 64bit"
+
+#~ msgid "OsxLowMemFixDrv-64_description"
+#~ msgstr ""
+#~ "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"

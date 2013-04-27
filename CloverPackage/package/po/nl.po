@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-27 14:40+0300\n"
+"POT-Creation-Date: 2013-04-27 17:01+0300\n"
 "PO-Revision-Date: 2013-04-27 16:34+0200\n"
 "Last-Translator: admin <admin@zetam.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -74,7 +74,8 @@ msgstr "Clover v2"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:17
-msgid "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgid ""
+"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
 msgstr ""
 
 #. type: Content of: <html><body><p><span>
@@ -107,7 +108,12 @@ msgid ""
 msgstr ""
 
 #. type: Content of: <html><body><p><span>
-#: Resources/templates/Description.html:23 Resources/templates/Description.html:24 Resources/templates/Description.html:29 Resources/templates/Description.html:31 Resources/templates/Description.html:32 Resources/templates/Description.html:33
+#: Resources/templates/Description.html:23
+#: Resources/templates/Description.html:24
+#: Resources/templates/Description.html:29
+#: Resources/templates/Description.html:31
+#: Resources/templates/Description.html:32
+#: Resources/templates/Description.html:33
 msgid " "
 msgstr ""
 
@@ -244,8 +250,7 @@ msgid ""
 "Clover EFI requires three essential files. (in simple terms)\n"
 "boot0 (On the drive's MBR) responsible for loading boot1.\n"
 "boot1 (On the partition's boot-sector) to finding boot2.\n"
-"boot2 (On the partition's root directory) for loading "
-"/EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
+"boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgstr ""
 
 #. type: "boot0_title"
@@ -259,10 +264,7 @@ msgstr ""
 #, no-wrap
 msgid ""
 "Used for BIOS booting on BIOS motherboards.\n"
-"Use fdisk440 to install boot0 to the first 440 bits of MBR without "
-"destroying any existing Windows installation if you have one, then boot0 "
-"will search first active HFS partition for boot1h2, or search first active "
-"Fat32 partition for boot1f32alt.\n"
+"Use fdisk440 to install boot0 to the first 440 bits of MBR without destroying any existing Windows installation if you have one, then boot0 will search first active HFS partition for boot1h2, or search first active Fat32 partition for boot1f32alt.\n"
 "It will setup selected HFS + Fat32 partitions to be active.\n"
 "Need to format as Fat32 on Win or on Mac as below.\n"
 "  1. Erase as MS-DOS (FAT) with Disk Utility first.\n"
@@ -283,12 +285,8 @@ msgstr ""
 #, no-wrap
 msgid ""
 "Used for BIOS booting on BIOS motherboards.\n"
-"Use fdisk440 to install boot0hfs to the first 440 bits of MBR without "
-"destroying any existing Windows installation if you have one, then boot0hfs "
-"will search first HFS partition for boot1h2, or search first active Fat32 "
-"partition for boot1f32alt.\n"
-"It will not setup selected HFS partition to be active, but will setup "
-"selected Fat32 partition to be active.\n"
+"Use fdisk440 to install boot0hfs to the first 440 bits of MBR without destroying any existing Windows installation if you have one, then boot0hfs will search first HFS partition for boot1h2, or search first active Fat32 partition for boot1f32alt.\n"
+"It will not setup selected HFS partition to be active, but will setup selected Fat32 partition to be active.\n"
 "Need to format as Fat32 on Win or on Mac as below.\n"
 "  1. Erase as MS-DOS (FAT) with Disk Utility first.\n"
 "  2. diskutil list\n"
@@ -373,7 +371,8 @@ msgid "Select the version of CloverEFI to install."
 msgstr ""
 
 #. type: "cloverEFI.32_description"
-#: Resources/templates/Localizable.strings:80 Resources/templates/Localizable.strings:81
+#: Resources/templates/Localizable.strings:80
+#: Resources/templates/Localizable.strings:81
 #, no-wrap
 msgid "CloverEFI 32-bits"
 msgstr "CloverEFI 32-bits"
@@ -405,7 +404,7 @@ msgstr ""
 #. type: "Ps2KeyboardDxe-32_description"
 #: Resources/templates/Localizable.strings:90
 #, no-wrap
-msgid "Ps2KeyboardDxe-32_description"
+msgid "PS/2 keyboard driver, 32bit"
 msgstr ""
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
@@ -417,55 +416,55 @@ msgstr ""
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:92
 #, no-wrap
-msgid "Ps2MouseDxe-32_description"
-msgstr ""
-
-#. type: "UsbMouseDxe-32_description"
-#: Resources/templates/Localizable.strings:93
-#, no-wrap
-msgid "UsbMouseDxe-32_description"
-msgstr ""
-
-#. type: "VBoxExt2-32_description"
-#: Resources/templates/Localizable.strings:94
-#, no-wrap
-msgid "VBoxExt2-32_description"
-msgstr ""
-
-#. type: "VBoxExt4-32_description"
-#: Resources/templates/Localizable.strings:95
-#, no-wrap
-msgid "VBoxExt4-32_description"
-msgstr ""
-
-#. type: "XhciDxe-32_description"
-#: Resources/templates/Localizable.strings:96
-#, no-wrap
-msgid "XhciDxe-32_description"
+msgid "PS/2 mouse driver, 32bit"
 msgstr ""
 
 #. type: "Ps2MouseDxe-64_description"
-#: Resources/templates/Localizable.strings:97
+#: Resources/templates/Localizable.strings:93
 #, no-wrap
-msgid "Ps2MouseDxe-64_description"
+msgid "PS/2 mouse driver, 64bit"
+msgstr ""
+
+#. type: "UsbMouseDxe-32_description"
+#: Resources/templates/Localizable.strings:94
+#, no-wrap
+msgid "USB mouse driver, 32bit"
 msgstr ""
 
 #. type: "UsbMouseDxe-64_description"
-#: Resources/templates/Localizable.strings:98
+#: Resources/templates/Localizable.strings:95
 #, no-wrap
-msgid "UsbMouseDxe-64_description"
+msgid "USB mouse driver, 64bit"
+msgstr ""
+
+#. type: "VBoxExt2-32_description"
+#: Resources/templates/Localizable.strings:96
+#, no-wrap
+msgid "ext2/3 filesystem driver from virtualbox, 32bit"
 msgstr ""
 
 #. type: "VBoxExt2-64_description"
-#: Resources/templates/Localizable.strings:99
+#: Resources/templates/Localizable.strings:97
 #, no-wrap
-msgid "VBoxExt2-64_description"
+msgid "ext2/3 filesystem driver from virtualbox, 64bit"
+msgstr ""
+
+#. type: "VBoxExt4-32_description"
+#: Resources/templates/Localizable.strings:98
+#, no-wrap
+msgid "ext4 filesystem driver from virtualbox, 32bit"
 msgstr ""
 
 #. type: "VBoxExt4-64_description"
+#: Resources/templates/Localizable.strings:99
+#, no-wrap
+msgid "ext4 filesystem driver from virtualbox, 64bit"
+msgstr ""
+
+#. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:100
 #, no-wrap
-msgid "VBoxExt4-64_description"
+msgid "XhciDxe-32_description"
 msgstr ""
 
 #. type: "XhciDxe-64_description"
@@ -477,7 +476,7 @@ msgstr ""
 #. type: "CsmVideoDxe-64_description"
 #: Resources/templates/Localizable.strings:102
 #, no-wrap
-msgid "CsmVideoDxe-64_description"
+msgid "Video driver - provides a wide range of resolutions, 64bit"
 msgstr ""
 
 #. type: "DataHubDxe-64_description"
@@ -495,13 +494,13 @@ msgstr ""
 #. type: "OsxAptioFixDrv-64_description"
 #: Resources/templates/Localizable.strings:105
 #, no-wrap
-msgid "OsxAptioFixDrv-64_description"
+msgid "Fix for Aptio AMI, 64bit"
 msgstr ""
 
 #. type: "OsxLowMemFixDrv-64_description"
 #: Resources/templates/Localizable.strings:106
 #, no-wrap
-msgid "OsxLowMemFixDrv-64_description"
+msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
 msgstr ""
 
 #. type: "PartitionDxe-64_description"
@@ -671,9 +670,7 @@ msgstr ""
 #. type: "rc.scripts.on.all.volumes_description"
 #: Resources/templates/Localizable.strings:159
 #, no-wrap
-msgid ""
-"Install all RC scripts on all internal bootable OSX volumes other than the "
-"target volume."
+msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr ""
 
 #. type: "Optional RC Scripts"
@@ -685,7 +682,5 @@ msgstr ""
 #. type: "disable_sleep_proxy_client_description"
 #: Resources/templates/Localizable.strings:161
 #, no-wrap
-msgid ""
-"Disable the mDNSResponder sleep proxy client service. This will prevent the "
-"system waking from sleep every hours"
+msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr ""

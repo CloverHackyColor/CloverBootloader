@@ -87,23 +87,23 @@ Press key 6 to boot6 = Clover EFI 64bit boot.";
 // ============================================================================
 // Drivers
 // ----------------------------------------------------------------------------
-"Ps2KeyboardDxe-32_description" = "Ps2KeyboardDxe-32_description";
+"Ps2KeyboardDxe-32_description" = "PS/2 keyboard driver, 32bit";
 "Ps2MouseAbsolutePointerDxe-32_description" = "Ps2MouseAbsolutePointerDxe-32_description";
-"Ps2MouseDxe-32_description" = "Ps2MouseDxe-32_description";
-"UsbMouseDxe-32_description" = "UsbMouseDxe-32_description";
-"VBoxExt2-32_description" = "VBoxExt2-32_description";
-"VBoxExt4-32_description" = "VBoxExt4-32_description";
+"Ps2MouseDxe-32_description" = "PS/2 mouse driver, 32bit";
+"Ps2MouseDxe-64_description" = "PS/2 mouse driver, 64bit";
+"UsbMouseDxe-32_description" = "USB mouse driver, 32bit";
+"UsbMouseDxe-64_description" = "USB mouse driver, 64bit";
+"VBoxExt2-32_description" = "ext2/3 filesystem driver from virtualbox, 32bit";
+"VBoxExt2-64_description" = "ext2/3 filesystem driver from virtualbox, 64bit";
+"VBoxExt4-32_description" = "ext4 filesystem driver from virtualbox, 32bit";
+"VBoxExt4-64_description" = "ext4 filesystem driver from virtualbox, 64bit";
 "XhciDxe-32_description" = "XhciDxe-32_description";
-"Ps2MouseDxe-64_description" = "Ps2MouseDxe-64_description";
-"UsbMouseDxe-64_description" = "UsbMouseDxe-64_description";
-"VBoxExt2-64_description" = "VBoxExt2-64_description";
-"VBoxExt4-64_description" = "VBoxExt4-64_description";
 "XhciDxe-64_description" = "XhciDxe-64_description";
-"CsmVideoDxe-64_description" = "CsmVideoDxe-64_description";
+"CsmVideoDxe-64_description" = "Video driver - provides a wide range of resolutions, 64bit";
 "DataHubDxe-64_description" = "DataHubDxe-64_description";
 "EmuVariableUefi-64_description" = "EmuVariableUefi-64_description";
-"OsxAptioFixDrv-64_description" = "OsxAptioFixDrv-64_description";
-"OsxLowMemFixDrv-64_description" = "OsxLowMemFixDrv-64_description";
+"OsxAptioFixDrv-64_description" = "Fix for Aptio AMI, 64bit";
+"OsxLowMemFixDrv-64_description" = "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)";
 "PartitionDxe-64_description" = "PartitionDxe-64_description";
 
 // ============================================================================
