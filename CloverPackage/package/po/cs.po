@@ -8,24 +8,24 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-04-25 13:54+0300\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2013-04-27 09:51+0200\n"
+"Last-Translator: admin <admin@zetam.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Translate Toolkit 1.9.0\n"
+"X-Generator: Pootle 2.1.6\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
 msgid "Clover EFI"
-msgstr ""
+msgstr "Clover EFI"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:22 Resources/templates/Conclusion.html:20
 msgid "%CLOVERVERSION% r%CLOVERREVISION%"
-msgstr ""
+msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:25
@@ -35,7 +35,7 @@ msgstr ""
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:26
 msgid "%DEVELOP%"
-msgstr ""
+msgstr "%DEVELOP%"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:28
@@ -45,7 +45,7 @@ msgstr ""
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:29
 msgid "%CREDITS%"
-msgstr ""
+msgstr "%CREDITS%"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:31
@@ -55,7 +55,7 @@ msgstr ""
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:32
 msgid "%PKGDEV%"
-msgstr ""
+msgstr "%PKGDEV%"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:34
@@ -65,12 +65,12 @@ msgstr ""
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:35 Resources/templates/Conclusion.html:25
 msgid "Copyright © %CPRYEAR%"
-msgstr ""
+msgstr "Copyright © %CPRYEAR%"
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:17
 msgid "Clover v2"
-msgstr ""
+msgstr "Clover v2"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:17
@@ -364,7 +364,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:78
 #, no-wrap
 msgid "CloverEFI"
-msgstr ""
+msgstr "CloverEFI"
 
 #. type: "CloverEFI_description"
 #: Resources/templates/Localizable.strings:79
@@ -376,13 +376,13 @@ msgstr ""
 #: Resources/templates/Localizable.strings:80 Resources/templates/Localizable.strings:81
 #, no-wrap
 msgid "CloverEFI 32-bits"
-msgstr ""
+msgstr "CloverEFI 32-bits"
 
 #. type: "cloverEFI.64.sata_title"
 #: Resources/templates/Localizable.strings:82
 #, no-wrap
 msgid "CloverEFI 64-bits SATA"
-msgstr ""
+msgstr "CloverEFI 64-bits SATA"
 
 #. type: "cloverEFI.64.sata_description"
 #: Resources/templates/Localizable.strings:83
@@ -394,7 +394,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:84
 #, no-wrap
 msgid "CloverEFI 64-bits BiosBlockIO"
-msgstr ""
+msgstr "CloverEFI 64-bits BiosBlockIO"
 
 #. type: "cloverEFI.64.blockio_description"
 #: Resources/templates/Localizable.strings:85
@@ -418,7 +418,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:94
 #, no-wrap
 msgid "black_green"
-msgstr ""
+msgstr "black_green"
 
 #. type: "black_green_description"
 #: Resources/templates/Localizable.strings:95
@@ -432,7 +432,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:98
 #, no-wrap
 msgid "AppleStyle"
-msgstr ""
+msgstr "AppleStyle"
 
 #. type: "AppleStyle_description"
 #: Resources/templates/Localizable.strings:99
@@ -446,7 +446,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:102
 #, no-wrap
 msgid "mrengles"
-msgstr ""
+msgstr "mrengles"
 
 #. type: "mrengles_description"
 #: Resources/templates/Localizable.strings:103
@@ -460,7 +460,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:106
 #, no-wrap
 msgid "iClover"
-msgstr ""
+msgstr "iClover"
 
 #. type: "iClover_description"
 #: Resources/templates/Localizable.strings:107
@@ -474,7 +474,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:110
 #, no-wrap
 msgid "buttons"
-msgstr ""
+msgstr "buttons"
 
 #. type: "buttons_description"
 #: Resources/templates/Localizable.strings:111
@@ -488,7 +488,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:114
 #, no-wrap
 msgid "hellfire"
-msgstr ""
+msgstr "hellfire"
 
 #. type: "hellfire_description"
 #: Resources/templates/Localizable.strings:115
@@ -502,7 +502,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:118
 #, no-wrap
 msgid "metal"
-msgstr ""
+msgstr "metal"
 
 #. type: "metal_description"
 #: Resources/templates/Localizable.strings:119
@@ -516,7 +516,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:122
 #, no-wrap
 msgid "simple_gray"
-msgstr ""
+msgstr "simple_gray"
 
 #. type: "simple_gray_description"
 #: Resources/templates/Localizable.strings:123
@@ -530,7 +530,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:126
 #, no-wrap
 msgid "wooden"
-msgstr ""
+msgstr "wooden"
 
 #. type: "wooden_description"
 #: Resources/templates/Localizable.strings:127
