@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "POT-Creation-Date: 2013-04-25 13:54+0300\n"
-"PO-Revision-Date: 2013-04-26 13:59+0200\n"
-"Last-Translator: admin <admin@zetam.org>\n"
+"PO-Revision-Date: 2013-04-27 15:47+0200\n"
+"Last-Translator: mackie100 <mackie.proj@yahoo.com>\n"
 "Language-Team: it <it@li.org>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
@@ -60,7 +60,7 @@ msgstr "%PKGDEV%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:34
 msgid "Supports Fat32, HFS+, ESP."
-msgstr "Supporto Fat32, HFS+, ESP."
+msgstr "Supporta Fat32, HFS+, ESP."
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:35 Resources/templates/Conclusion.html:25
@@ -193,7 +193,7 @@ msgstr "anch'esse personalizzabile."
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:33
 msgid "- USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
-msgstr "- USB fix (LegacyOff, Ownership, Builtin, clock-id) hasta USB 3.0"
+msgstr "- USB fix (LegacyOff, Ownership, Builtin, clock-id) fino a USB 3.0"
 
 #
 #. type: Content of: <html><body><p>
@@ -240,7 +240,7 @@ msgstr "- Salva il boot.log in OS e preboot.log dalla GUI premendo F2"
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
 msgid "Installation Complete!"
-msgstr "Installazione Completata!"
+msgstr "Installazione Completa!"
 
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
@@ -467,7 +467,7 @@ msgstr "CloverEFI 64-bit SATA"
 #: Resources/templates/Localizable.strings:83
 #, no-wrap
 msgid "CloverEFI 64-bits using SATA to access drives"
-msgstr "CloverEFI 64-bit per unità che utilizzano SATA controllers"
+msgstr "CloverEFI 64-bit per unità che utilizzano controller SATA"
 
 #. type: "cloverEFI.64.blockio_title"
 #: Resources/templates/Localizable.strings:84
@@ -480,8 +480,8 @@ msgstr "CloverEFI 64-bit BiosBlockIO"
 #, no-wrap
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
 msgstr ""
-"CloverEFI 64-bit per unità che utilizzano RAID controllers, JMicron, NForce "
-"ed altri controllers SATA/ATA/SCSI di terze parti"
+"CloverEFI 64-bit per unità che utilizzano controller RAID, JMicron, NForce "
+"ed altri controller SATA/ATA/SCSI di terze parti"
 
 #. type: "Themes_title"
 #: Resources/templates/Localizable.strings:91
@@ -524,7 +524,7 @@ msgid ""
 "AppleStyle theme from Eps,\n"
 "Install to /EFI/CLOVER/themes/AppleStyle."
 msgstr ""
-"AppleStyle theme di Eps,\n"
+"Tema AppleStyle di Eps,\n"
 "Installa in /EFI/CLOVER/themes/AppleStyle."
 
 #. type: "mrengles_title"
@@ -540,7 +540,7 @@ msgid ""
 "mrengles theme from mrengles,\n"
 "Install to /EFI/CLOVER/themes/mrengles."
 msgstr ""
-"mrengles theme di mrengles,\n"
+"Tema mrengles di mrengles,\n"
 "Installa in /EFI/CLOVER/themes/mrengles."
 
 #. type: "iClover_title"
@@ -556,7 +556,7 @@ msgid ""
 "Grey style theme by winlog,\n"
 "Install to /EFI/CLOVER/themes/iClover."
 msgstr ""
-"Grey style theme by winlog,\n"
+"Tema Grey style di winlog,\n"
 "Installa in /EFI/CLOVER/themes/iClover."
 
 #. type: "buttons_title"
@@ -604,7 +604,7 @@ msgid ""
 "The original metal theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/metal."
 msgstr ""
-"Il tema original metal di Slice,\n"
+"Tema originale metal di Slice,\n"
 "Installa in /EFI/CLOVER/themes/metal."
 
 #. type: "simple_gray_title"
@@ -660,14 +660,16 @@ msgstr ""
 #, no-wrap
 #| msgid "Install all RC scripts on all bootable OSX volumes"
 msgid "Install all RC scripts on all other bootable OSX volumes"
-msgstr "RC scripts su tutti i volumi avviabili"
+msgstr "RC scripts su tutti gli altri volumi OSX avviabili"
 
 #. type: "rc.scripts.on.all.volumes_description"
 #: Resources/templates/Localizable.strings:137
 #, no-wrap
 #| msgid "Install all RC scripts on all internal bootable OSX volumes."
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
-msgstr "Installa tutti gli RC scripts su tutti i volumi interni OSX avviabili."
+msgstr ""
+"Installa tutti gli RC scripts su tutti i volumi interni OSX avviabili "
+"diversi dal volume di destinazione."
 
 #. type: "Optional RC Scripts"
 #: Resources/templates/Localizable.strings:138

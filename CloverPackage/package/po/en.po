@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "POT-Creation-Date: 2013-04-27 14:40+0300\n"
-"PO-Revision-Date: 2013-04-25 14:11+0200\n"
-"Last-Translator: JrCs <d2t56xxptp@snkmail.com>\n"
+"PO-Revision-Date: 2013-04-27 16:25+0200\n"
+"Last-Translator: k3nny <sascha_r@gmx.de>\n"
 "Language-Team: en <en@li.org>\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
@@ -481,7 +481,7 @@ msgstr "CloverEFI 64-bits using Bios Block I/O to access drives"
 #: Resources/templates/Localizable.strings:90
 #, no-wrap
 msgid "Ps2KeyboardDxe-32_description"
-msgstr ""
+msgstr "PS/2 keyboard driver, 32bit"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:91
@@ -493,25 +493,25 @@ msgstr ""
 #: Resources/templates/Localizable.strings:92
 #, no-wrap
 msgid "Ps2MouseDxe-32_description"
-msgstr ""
+msgstr "PS/2 mouse driver, 32bit"
 
 #. type: "UsbMouseDxe-32_description"
 #: Resources/templates/Localizable.strings:93
 #, no-wrap
 msgid "UsbMouseDxe-32_description"
-msgstr ""
+msgstr "USB mouse driver, 32bit"
 
 #. type: "VBoxExt2-32_description"
 #: Resources/templates/Localizable.strings:94
 #, no-wrap
 msgid "VBoxExt2-32_description"
-msgstr ""
+msgstr "ext2/3 filesystem driver for Linux EFI, 32bit"
 
 #. type: "VBoxExt4-32_description"
 #: Resources/templates/Localizable.strings:95
 #, no-wrap
 msgid "VBoxExt4-32_description"
-msgstr ""
+msgstr "ext4 filesystem driver for Linux EFI, 32bit"
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:96
@@ -523,25 +523,25 @@ msgstr ""
 #: Resources/templates/Localizable.strings:97
 #, no-wrap
 msgid "Ps2MouseDxe-64_description"
-msgstr ""
+msgstr "PS/2 mouse driver, 64bit"
 
 #. type: "UsbMouseDxe-64_description"
 #: Resources/templates/Localizable.strings:98
 #, no-wrap
 msgid "UsbMouseDxe-64_description"
-msgstr ""
+msgstr "USB mouse driver, 64bit"
 
 #. type: "VBoxExt2-64_description"
 #: Resources/templates/Localizable.strings:99
 #, no-wrap
 msgid "VBoxExt2-64_description"
-msgstr ""
+msgstr "ext2/3 filesystem driver for Linux EFI, 64bit"
 
 #. type: "VBoxExt4-64_description"
 #: Resources/templates/Localizable.strings:100
 #, no-wrap
 msgid "VBoxExt4-64_description"
-msgstr ""
+msgstr "ext4 filesystem driver for Linux EFI, 64bit"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
@@ -553,7 +553,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:102
 #, no-wrap
 msgid "CsmVideoDxe-64_description"
-msgstr ""
+msgstr "Video driver - provides a wide range of resolutions, 64bit"
 
 #. type: "DataHubDxe-64_description"
 #: Resources/templates/Localizable.strings:103
@@ -571,13 +571,13 @@ msgstr ""
 #: Resources/templates/Localizable.strings:105
 #, no-wrap
 msgid "OsxAptioFixDrv-64_description"
-msgstr ""
+msgstr "Fix for Aptio AMI, 64bit"
 
 #. type: "OsxLowMemFixDrv-64_description"
 #: Resources/templates/Localizable.strings:106
 #, no-wrap
 msgid "OsxLowMemFixDrv-64_description"
-msgstr ""
+msgstr "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
 
 #. type: "PartitionDxe-64_description"
 #: Resources/templates/Localizable.strings:107
