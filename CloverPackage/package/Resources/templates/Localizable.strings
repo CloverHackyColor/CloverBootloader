@@ -85,6 +85,28 @@ Press key 6 to boot6 = Clover EFI 64bit boot.";
 "cloverEFI.64.blockio_description" = "CloverEFI 64-bits using Bios Block I/O to access drives";
 
 // ============================================================================
+// Drivers
+// ----------------------------------------------------------------------------
+"Ps2KeyboardDxe-32_description" = "Ps2KeyboardDxe-32_description";
+"Ps2MouseAbsolutePointerDxe-32_description" = "Ps2MouseAbsolutePointerDxe-32_description";
+"Ps2MouseDxe-32_description" = "Ps2MouseDxe-32_description";
+"UsbMouseDxe-32_description" = "UsbMouseDxe-32_description";
+"VBoxExt2-32_description" = "VBoxExt2-32_description";
+"VBoxExt4-32_description" = "VBoxExt4-32_description";
+"XhciDxe-32_description" = "XhciDxe-32_description";
+"Ps2MouseDxe-64_description" = "Ps2MouseDxe-64_description";
+"UsbMouseDxe-64_description" = "UsbMouseDxe-64_description";
+"VBoxExt2-64_description" = "VBoxExt2-64_description";
+"VBoxExt4-64_description" = "VBoxExt4-64_description";
+"XhciDxe-64_description" = "XhciDxe-64_description";
+"CsmVideoDxe-64_description" = "CsmVideoDxe-64_description";
+"DataHubDxe-64_description" = "DataHubDxe-64_description";
+"EmuVariableUefi-64_description" = "EmuVariableUefi-64_description";
+"OsxAptioFixDrv-64_description" = "OsxAptioFixDrv-64_description";
+"OsxLowMemFixDrv-64_description" = "OsxLowMemFixDrv-64_description";
+"PartitionDxe-64_description" = "PartitionDxe-64_description";
+
+// ============================================================================
 // Themes
 // ----------------------------------------------------------------------------
 

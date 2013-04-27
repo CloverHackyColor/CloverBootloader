@@ -747,7 +747,6 @@ if [[ "$add_ia32" -eq 1 ]]; then
                            --subst="INSTALLER_CHOICE=$packageRefId" MarkChoice
         buildpackage "$packageRefId" "${driverName}" "${PKG_BUILD_DIR}/${driverName}" "${driverDestDir}"
         addChoice --group="Drivers32" --title="$driverName"                                               \
-                  --description="Install to ${driverDestDir}/$driver"                                     \
                   --enabled="!choices['UEFI.only'].selected"                                              \
                   --start-selected="choicePreviouslySelected('$packageRefId')"                            \
                   --selected="!choices['UEFI.only'].selected &amp;&amp; choices['$driverName'].selected"  \
@@ -831,7 +830,6 @@ fi
                            --subst="INSTALLER_CHOICE=$packageRefId" MarkChoice
         buildpackage "$packageRefId" "${driverName}" "${PKG_BUILD_DIR}/${driverName}" "${driverDestDir}"
         addChoice --group="Drivers64" --title="$driverName"                                               \
-                  --description="Install to ${driverDestDir}/$driver"                                     \
                   --enabled="!choices['UEFI.only'].selected"                                              \
                   --start-selected="choicePreviouslySelected('$packageRefId')"                            \
                   --selected="!choices['UEFI.only'].selected &amp;&amp; choices['$driverName'].selected"  \
@@ -885,8 +883,9 @@ fi
         addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${driverName}" \
                            --subst="INSTALLER_CHOICE=$packageRefId" MarkChoice
         buildpackage "$packageRefId" "${driverName}" "${PKG_BUILD_DIR}/${driverName}" "${driverDestDir}"
-        addChoice --group="Drivers64UEFI"  --title="$driverName"  --description="Install to ${driverDestDir}/$driver" \
-         --start-selected="choicePreviouslySelected('$packageRefId')"  --pkg-refs="$packageRefId"  "${driverName}"
+        addChoice --group="Drivers64UEFI"  --title="$driverName"                \
+                  --start-selected="choicePreviouslySelected('$packageRefId')"  \
+                  --pkg-refs="$packageRefId"  "${driverName}"
         rm -R -f "${PKG_BUILD_DIR}/${driverName}"
     done
 # End build drivers-x64UEFI packages
