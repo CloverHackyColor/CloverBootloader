@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-04-27 17:01+0300\n"
-"PO-Revision-Date: 2013-04-27 16:34+0200\n"
-"Last-Translator: admin <admin@zetam.org>\n"
+"PO-Revision-Date: 2013-04-28 01:51+0200\n"
+"Last-Translator: beta992 <beta992@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -30,7 +30,7 @@ msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:25
 msgid "Developers:"
-msgstr ""
+msgstr "Ontwikkelaars:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:26
@@ -40,7 +40,7 @@ msgstr "%DEVELOP%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:28
 msgid "Source code credits to:"
-msgstr ""
+msgstr "Broncode credits naar:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:29
@@ -50,7 +50,7 @@ msgstr "%CREDITS%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:31
 msgid "Package credits to:"
-msgstr ""
+msgstr "Pakket credits naar:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:32
@@ -60,7 +60,7 @@ msgstr "%PKGDEV%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:34
 msgid "Supports Fat32, HFS+, ESP."
-msgstr ""
+msgstr "Ondersteunt FAT32, HFS+, ESP."
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:35 Resources/templates/Conclusion.html:25
@@ -77,21 +77,23 @@ msgstr "Clover v2"
 msgid ""
 "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
 msgstr ""
+"is open source gebaseerd op verschillende projecten: Clover, rEFIt, XNU, "
+"VirtualBox."
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:18
 msgid "The main is EDK2 latest revision."
-msgstr ""
+msgstr "EDK2 is onze hoofd recente revisie."
 
 #. type: Content of: <html><body><p><b>
 #: Resources/templates/Description.html:20
 msgid "Main features:"
-msgstr ""
+msgstr "Hoofdfuncties:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:21
 msgid "- boot into 10.4 - 10.8 OSX, Windows EFI and Linux EFI"
-msgstr ""
+msgstr "- Opstarten in 10.4-10.8 OSX, Windows EFI en Linux EFI"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:22
@@ -99,6 +101,8 @@ msgid ""
 "- It's EFI bootloader provides RuntimeServices for OS that impossible for "
 "Legacy Bootloaders"
 msgstr ""
+"- De EFI bootloader biedt RuntimeServices voor OS die onmogelijk zijn voor "
+"Legacy bootloaders"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:23
@@ -106,6 +110,8 @@ msgid ""
 "- mostly Clover do automatic detection of hardware and set all properties by "
 "default."
 msgstr ""
+"- Meestal doet Clover aan automatische detectie van hardware en stelt "
+"daarbij alle eigenschappen in."
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:23
@@ -120,37 +126,41 @@ msgstr ""
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:24
 msgid "But user can change them by config.plist"
-msgstr ""
+msgstr "Maar de gebruiker kan deze wijzigen in config.plist"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:25
 msgid "- with Clover you may restart into other OS from Startup Disk prefPane"
 msgstr ""
+"- Met Clover kun je herstarten in een andere besturingssysteem via de "
+"Startup Disk prefPane"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:26
 msgid "- UUID written into config.plist will be the same as in OS"
-msgstr ""
+msgstr "- UUID geschreven in config.plist zal hetzelfde zijn als in het OS"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:27
 msgid "- SMBIOS will be corrected to standard 2.6"
-msgstr ""
+msgstr "- SMBIOS zal worden gecorrigeerd tot de 2.6 standaard"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:28
 msgid "- ACPI will be corrected to standard 4.0."
-msgstr ""
+msgstr "- ACPI zal worden gecorrigeerd tot de 4.0 standaard."
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:29
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
 msgstr ""
+"Een aangepaste DSDT zal worden geladen vanaf de boot partitie of van de EFI "
+"map"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:30
 msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
-msgstr ""
+msgstr "- Aanpasbare RestartFix, sleep/wake correcties en PCIRootUID waarde"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:31
@@ -158,36 +168,38 @@ msgid ""
 "- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
 "supported cards."
 msgstr ""
+"- Grafisch Eigenschappen Injector voor ATI, NVidia en Intel voor een breed "
+"scala van ondersteunde kaarten."
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:32
 msgid "Also customizable."
-msgstr ""
+msgstr "Ook aanpasbaar."
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:33
 msgid "- USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
-msgstr ""
+msgstr "- USB correctie (LegacyOff, Ownership, Builtin, clock-id) tot USB 3.0"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:34
 msgid "- HDA injector and Ethernet builtin injector"
-msgstr ""
+msgstr "- HDA injector en Ethernet ingebouwd injector"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:35
 msgid "- CPU turbo and P- and C-states generator"
-msgstr ""
+msgstr "- CPU turbo en P-/C-states generator"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:36
 msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
-msgstr ""
+msgstr "- ACPI tabellen laden (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:37
 msgid "- extra kexts loading and security mode for FireWire"
-msgstr ""
+msgstr "- Extra kexts laden en veiligheidsmode voor FireWire"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:38
@@ -195,34 +207,37 @@ msgid ""
 "- default boot after timeout, customizable GUI , and saving screenshots from "
 "GUI typing F10"
 msgstr ""
+"- Standaard boot time-out, aanpasbare GUI en het opslaan van screenshots "
+"vanaf de GUI d.m.v. de F10-toets"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:39
 msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
 msgstr ""
+"- Opslaan van boot.log in OS en preboot.log vanaf de GUI d.m.v. de F2-toets"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
 msgid "Installation Complete!"
-msgstr ""
+msgstr "Installatie Compleet!"
 
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
 #, no-wrap
 msgid "Install for UEFI motherboards"
-msgstr ""
+msgstr "Installatie voor UEFI moederborden"
 
 #. type: "UEFI.only_description"
 #: Resources/templates/Localizable.strings:5
 #, no-wrap
 msgid "Install Clover to be used with UEFI motherboards only."
-msgstr ""
+msgstr "Installeer Clover voor alleen gebruik met UEFI moederborden."
 
 #. type: "Target.ESP_title"
 #: Resources/templates/Localizable.strings:10
 #, no-wrap
 msgid "Install Clover in the ESP"
-msgstr ""
+msgstr "Installeer Clover in de ESP"
 
 #. type: "Target.ESP_description"
 #: Resources/templates/Localizable.strings:11
@@ -236,12 +251,19 @@ msgid ""
 "diskutil list\n"
 "newfs_msdos -v EFI -F 32 /dev/rdisk9s1"
 msgstr ""
+"Installeer Clover in de ESP (EFI Systeem Partitie) of de doelvolume\n"
+"\n"
+"De ESP dient als eerst te worden geformatteerd in FAT32 op een Mac.\n"
+"\n"
+"Voor FAT32 kun je de volgende commando's gebruiken:\n"
+"diskutil list\n"
+"newfs_msdos -v EFI -F 32 /dev/rdisk9s1"
 
 #. type: "Bootloader_title"
 #: Resources/templates/Localizable.strings:23
 #, no-wrap
 msgid "Bootloader"
-msgstr ""
+msgstr "Opstartlader"
 
 #. type: "Bootloader_description"
 #: Resources/templates/Localizable.strings:24
@@ -252,12 +274,17 @@ msgid ""
 "boot1 (On the partition's boot-sector) to finding boot2.\n"
 "boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgstr ""
+"Clover EFI vereist drie essentiële bestanden. (in eenvoudige termen)\n"
+"boot0 (Op de MBR van de schijf) verantwoordelijk voor het laden van boot1.\n"
+"boot1 (Op de boot-sector van de partitie) voor het vinden van boot2.\n"
+"boot2 (Op de partitie hoofdmap) voor het laden van /EFI/BOOT/CLOVERIA32.efi "
+"of CLOVERX64.efi, kernel etc."
 
 #. type: "boot0_title"
 #: Resources/templates/Localizable.strings:29
 #, no-wrap
 msgid "BIOS MBR boot0 (HFS+Fat32)"
-msgstr ""
+msgstr "BIOS MBR boot0 (HFS+Fat32)"
 
 #. type: "boot0_description"
 #: Resources/templates/Localizable.strings:30
@@ -273,12 +300,25 @@ msgid ""
 "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
 "  5. diskutil mount /dev/rdisk9s1"
 msgstr ""
+"Gebruikt voor BIOS opstarten op BIOS-moederborden.\n"
+"Gebruik fdisk440 om boot0 te installeren naar de eerste 440 bits van de MBR "
+"zonder het vernietigen van de bestaande Windows-installatie als je deze "
+"hebt, daarna zal boot0 zoeken naar de eerst actieve HFS partitie van "
+"boot1h2, of zoeken naar de eerst actief Fat32 partitie voor boot1f32alt.\n"
+"Het zal installatie ingestelde HFS + Fat32 partities zetten als actief.\n"
+"Ze zullen geformatteerd moeten zijn als Fat32 op Windows of Mac als "
+"hieronder weergeven.\n"
+"1. Wis als MS-DOS (FAT) met Disk Utility eerst.\n"
+"2. diskutil list\n"
+"3. diskutil unmount /dev/rdisk9s1\n"
+"4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
+"5. diskutil mount /dev/rdisk9s1"
 
 #. type: "boot0hfs_title"
 #: Resources/templates/Localizable.strings:40
 #, no-wrap
 msgid "BIOS MBR boot0hfs (HFS+Fat32)"
-msgstr ""
+msgstr "BIOS MBR boot0hfs (HFS+Fat32)"
 
 #. type: "boot0hfs_description"
 #: Resources/templates/Localizable.strings:41
@@ -294,12 +334,26 @@ msgid ""
 "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
 "  5. diskutil mount /dev/rdisk9s1"
 msgstr ""
+"Gebruikt voor BIOS opstarten op BIOS-moederborden.\n"
+"Gebruik fdisk440 om boot0hfs te installeren naar de eerste 440 bits van de "
+"MBR zonder het vernietigen van de bestaande Windows-installatie als je deze "
+"hebt, daarna zal boot0hfs zoeken naar de eerst HFS partitie voor boot1h2, of "
+"zoeken naar de eerst actieve Fat32 partitie voor boot1f32alt.\n"
+"Het zal geen installatie geselecteerde HFS partities als actief markeren, "
+"maar het zal installatie geselecteerde Fat32 partities zetten naar actief.\n"
+"Ze zullen geformatteerd moeten zijn als Fat32 op Windows of Mac als "
+"hieronder weergeven.\n"
+"1. Wis als MS-DOS (FAT) met Disk Utility eerst.\n"
+"2. diskutil list\n"
+"3. diskutil unmount /dev/rdisk9s1\n"
+"4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
+"5. diskutil mount /dev/rdisk9s1"
 
 #. type: "bootNo_title"
 #: Resources/templates/Localizable.strings:51
 #, no-wrap
 msgid "Don't update MBR and PBR sectors"
-msgstr ""
+msgstr "MBR en PBR sectoren niet updaten"
 
 #. type: "bootNo_description"
 #: Resources/templates/Localizable.strings:52
@@ -309,12 +363,15 @@ msgid ""
 "Usefull for UEFI motherboards that don't need bootloader files.\n"
 "Can also be use if you don't want to upgrade MBR or PBR sectors."
 msgstr ""
+"Installeer geen enkele opstartlader (boot0X, boot1X).\n"
+"Nuttig bij UEFI moederborden die geen opstartbestanden nodig hebben.\n"
+"Kan ook gebruikt worden als je niet MBR of PBR sectoren wilt upgraden."
 
 #. type: "AltBoot_title"
 #: Resources/templates/Localizable.strings:56
 #, no-wrap
 msgid "Use alternative booting PBR"
-msgstr ""
+msgstr "Gebruik alternatieve opstarten PBR"
 
 #. type: "AltBoot_description"
 #: Resources/templates/Localizable.strings:57
@@ -323,12 +380,15 @@ msgid ""
 "Install alternative booting PBR with choice of boot with a key pressed.\n"
 "File to boot = boot{keypressed}"
 msgstr ""
+"Installeer alternatief PBR opstarten met de keuze opstarten bij een "
+"toetsslag.\n"
+"Bestand voor opstarten = boot{toetsslag}"
 
 #. type: "boot32_title"
 #: Resources/templates/Localizable.strings:61
 #, no-wrap
 msgid "Install & Start 32bit boot first"
-msgstr ""
+msgstr "Installeer & Start 32bit opstarten eerst"
 
 #. type: "boot32_description"
 #: Resources/templates/Localizable.strings:62
@@ -340,12 +400,17 @@ msgid ""
 "Press key 3 to boot3 = Clover EFI 32bit boot,\n"
 "Press key 6 to boot6 = Clover EFI 64bit boot."
 msgstr ""
+"Installeer opstart bestanden en zet 32bit opstarten eerst.\n"
+"Standaard opstart na opstarten = Clover EFI 32bit. Je kan..\n"
+"Drukken op toets 1 voor boot1 = Chameleon opstarten,\n"
+"Drukken op toets 3 voor boot3 = Clover EFI 32bit opstarten,\n"
+"Drukken op toets 6 voor boot6 = Clover EFI 64bit opstarten."
 
 #. type: "boot64_title"
 #: Resources/templates/Localizable.strings:68
 #, no-wrap
 msgid "Install & Start 64bit boot first"
-msgstr ""
+msgstr "Installeer & Start 64bit opstarten eerst"
 
 #. type: "boot64_description"
 #: Resources/templates/Localizable.strings:69
@@ -357,6 +422,11 @@ msgid ""
 "Press key 3 to boot3 = Clover EFI 32bit boot,\n"
 "Press key 6 to boot6 = Clover EFI 64bit boot."
 msgstr ""
+"Installeer opstart bestanden en zet 64bit opstarten eerst.\n"
+"Standaard opstart na opstarten = Clover EFI 64bit. Je kan..\n"
+"Drukken op toets 1 voor boot1 = Chameleon opstarten,\n"
+"Drukken op toets 3 voor boot3 = Clover EFI 32bit opstarten,\n"
+"Drukken op toets 6 voor boot6 = Clover EFI 64bit opstarten."
 
 #. type: "CloverEFI_title"
 #: Resources/templates/Localizable.strings:78
@@ -368,7 +438,7 @@ msgstr "CloverEFI"
 #: Resources/templates/Localizable.strings:79
 #, no-wrap
 msgid "Select the version of CloverEFI to install."
-msgstr ""
+msgstr "Selecteer de versie van CloverEFI voor installatie."
 
 #. type: "cloverEFI.32_description"
 #: Resources/templates/Localizable.strings:80
@@ -387,7 +457,7 @@ msgstr "CloverEFI 64-bits SATA"
 #: Resources/templates/Localizable.strings:83
 #, no-wrap
 msgid "CloverEFI 64-bits using SATA to access drives"
-msgstr ""
+msgstr "CloverEFI 64-bits in gebruik met SATA naar toegangsschijven"
 
 #. type: "cloverEFI.64.blockio_title"
 #: Resources/templates/Localizable.strings:84
@@ -399,133 +469,135 @@ msgstr "CloverEFI 64-bits BiosBlockIO"
 #: Resources/templates/Localizable.strings:85
 #, no-wrap
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
-msgstr ""
+msgstr "CloverEFI 64-bits gebruik met Bios Block I/O naar toegangsschijven"
 
 #. type: "Ps2KeyboardDxe-32_description"
 #: Resources/templates/Localizable.strings:90
 #, no-wrap
 msgid "PS/2 keyboard driver, 32bit"
-msgstr ""
+msgstr "PS/2 toetsenbord stuurprogramma, 32bit"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:91
 #, no-wrap
 msgid "Ps2MouseAbsolutePointerDxe-32_description"
-msgstr ""
+msgstr "Ps2MouseAbsolutePointerDxe-32_description"
 
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:92
 #, no-wrap
 msgid "PS/2 mouse driver, 32bit"
-msgstr ""
+msgstr "PS/2 muis stuurprogramma, 32bit"
 
 #. type: "Ps2MouseDxe-64_description"
 #: Resources/templates/Localizable.strings:93
 #, no-wrap
 msgid "PS/2 mouse driver, 64bit"
-msgstr ""
+msgstr "PS/2 muis stuurprogramma, 64bit"
 
 #. type: "UsbMouseDxe-32_description"
 #: Resources/templates/Localizable.strings:94
 #, no-wrap
 msgid "USB mouse driver, 32bit"
-msgstr ""
+msgstr "USB muis stuurprogramma, 32bit"
 
 #. type: "UsbMouseDxe-64_description"
 #: Resources/templates/Localizable.strings:95
 #, no-wrap
 msgid "USB mouse driver, 64bit"
-msgstr ""
+msgstr "USB muis stuurprogramma, 64bit"
 
 #. type: "VBoxExt2-32_description"
 #: Resources/templates/Localizable.strings:96
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 32bit"
-msgstr ""
+msgstr "ext2/3 bestandssysteem stuurprogramma van virtualbox, 32bit"
 
 #. type: "VBoxExt2-64_description"
 #: Resources/templates/Localizable.strings:97
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
-msgstr ""
+msgstr "ext2/3 bestandssysteem stuurprogramma van virtualbox, 64bit"
 
 #. type: "VBoxExt4-32_description"
 #: Resources/templates/Localizable.strings:98
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 32bit"
-msgstr ""
+msgstr "ext4 bestandssysteem stuurprogramma van virtualbox, 32bit"
 
 #. type: "VBoxExt4-64_description"
 #: Resources/templates/Localizable.strings:99
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 64bit"
-msgstr ""
+msgstr "ext4 bestandssysteem stuurprogramma van virtualbox, 64bit"
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:100
 #, no-wrap
 msgid "XhciDxe-32_description"
-msgstr ""
+msgstr "XhciDxe-32_description"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
 #, no-wrap
 msgid "XhciDxe-64_description"
-msgstr ""
+msgstr "XhciDxe-64_description"
 
 #. type: "CsmVideoDxe-64_description"
 #: Resources/templates/Localizable.strings:102
 #, no-wrap
 msgid "Video driver - provides a wide range of resolutions, 64bit"
-msgstr ""
+msgstr "Videostuurprogramma - biedt een breed scala van resoluties, 64bit"
 
 #. type: "DataHubDxe-64_description"
 #: Resources/templates/Localizable.strings:103
 #, no-wrap
 msgid "DataHubDxe-64_description"
-msgstr ""
+msgstr "DataHubDxe-64_description"
 
 #. type: "EmuVariableUefi-64_description"
 #: Resources/templates/Localizable.strings:104
 #, no-wrap
 msgid "EmuVariableUefi-64_description"
-msgstr ""
+msgstr "EmuVariableUefi-64_description"
 
 #. type: "OsxAptioFixDrv-64_description"
 #: Resources/templates/Localizable.strings:105
 #, no-wrap
 msgid "Fix for Aptio AMI, 64bit"
-msgstr ""
+msgstr "Correctie voor Aptio AMI, 64bit"
 
 #. type: "OsxLowMemFixDrv-64_description"
 #: Resources/templates/Localizable.strings:106
 #, no-wrap
 msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
 msgstr ""
+"Vereenvoudigde variant van OsxAptioFixDrv, 64bit (gebruik ze niet naast "
+"elkaar)"
 
 #. type: "PartitionDxe-64_description"
 #: Resources/templates/Localizable.strings:107
 #, no-wrap
 msgid "PartitionDxe-64_description"
-msgstr ""
+msgstr "PartitionDxe-64_description"
 
 #. type: "Themes_title"
 #: Resources/templates/Localizable.strings:113
 #, no-wrap
 msgid "Themes"
-msgstr ""
+msgstr "Thema's"
 
 #. type: "Themes_description"
 #: Resources/templates/Localizable.strings:114
 #, no-wrap
 msgid "Select to install themes."
-msgstr ""
+msgstr "Selecteer thema's om te installeren."
 
 #. type: "black_green_title"
 #: Resources/templates/Localizable.strings:116
 #, no-wrap
 msgid "black_green"
-msgstr "black_green"
+msgstr "donker_groen"
 
 #. type: "black_green_description"
 #: Resources/templates/Localizable.strings:117
@@ -534,12 +606,14 @@ msgid ""
 "Default black_green theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/black_green."
 msgstr ""
+"Standaard donker_groen thema van Blackosx,\n"
+"Installeert naar /EFI/CLOVER/themes/black_green."
 
 #. type: "AppleStyle_title"
 #: Resources/templates/Localizable.strings:120
 #, no-wrap
 msgid "AppleStyle"
-msgstr "AppleStyle"
+msgstr "AppleStijl"
 
 #. type: "AppleStyle_description"
 #: Resources/templates/Localizable.strings:121
@@ -548,6 +622,8 @@ msgid ""
 "AppleStyle theme from Eps,\n"
 "Install to /EFI/CLOVER/themes/AppleStyle."
 msgstr ""
+"AppleStijl thema van Eps,\n"
+"Installeert naar /EFI/CLOVER/themes/AppleStyle."
 
 #. type: "mrengles_title"
 #: Resources/templates/Localizable.strings:124
@@ -562,6 +638,8 @@ msgid ""
 "mrengles theme from mrengles,\n"
 "Install to /EFI/CLOVER/themes/mrengles."
 msgstr ""
+"mrengles thema van mrengles,\n"
+"Installeert naar /EFI/CLOVER/themes/mrengles."
 
 #. type: "iClover_title"
 #: Resources/templates/Localizable.strings:128
@@ -576,12 +654,14 @@ msgid ""
 "Grey style theme by winlog,\n"
 "Install to /EFI/CLOVER/themes/iClover."
 msgstr ""
+"Grijs thema stijl door winlog,\n"
+"Installeert naar /EFI/CLOVER/themes/iClover."
 
 #. type: "buttons_title"
 #: Resources/templates/Localizable.strings:132
 #, no-wrap
 msgid "buttons"
-msgstr "buttons"
+msgstr "knoppen"
 
 #. type: "buttons_description"
 #: Resources/templates/Localizable.strings:133
@@ -590,6 +670,8 @@ msgid ""
 "Buttons theme from Trauma,\n"
 "Install to /EFI/CLOVER/themes/buttons."
 msgstr ""
+"Knoppen thema door Trauma,\n"
+"Installeert naar /EFI/CLOVER/themes/buttons."
 
 #. type: "hellfire_title"
 #: Resources/templates/Localizable.strings:136
@@ -604,12 +686,14 @@ msgid ""
 "Hellfire theme from lllevelll,\n"
 "Install to /EFI/CLOVER/themes/hellfire."
 msgstr ""
+"Hellfire thema door lllevelll,\n"
+"Installeert naar /EFI/CLOVER/themes/hellfire."
 
 #. type: "metal_title"
 #: Resources/templates/Localizable.strings:140
 #, no-wrap
 msgid "metal"
-msgstr "metal"
+msgstr "metaal"
 
 #. type: "metal_description"
 #: Resources/templates/Localizable.strings:141
@@ -618,12 +702,14 @@ msgid ""
 "The original metal theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/metal."
 msgstr ""
+"De originele metaal thema door Slice,\n"
+"Installeert naar /EFI/CLOVER/themes/metal."
 
 #. type: "simple_gray_title"
 #: Resources/templates/Localizable.strings:144
 #, no-wrap
 msgid "simple_gray"
-msgstr "simple_gray"
+msgstr "simpel_grijs"
 
 #. type: "simple_gray_description"
 #: Resources/templates/Localizable.strings:145
@@ -632,12 +718,14 @@ msgid ""
 "Simple_gray theme from hijeane,\n"
 "Install to /EFI/CLOVER/themes/simple_gray."
 msgstr ""
+"Simpel_grijs thema door hijeane,\n"
+"Installeert naar /EFI/CLOVER/themes/simple_gray."
 
 #. type: "wooden_title"
 #: Resources/templates/Localizable.strings:148
 #, no-wrap
 msgid "wooden"
-msgstr "wooden"
+msgstr "houten"
 
 #. type: "wooden_description"
 #: Resources/templates/Localizable.strings:149
@@ -646,12 +734,14 @@ msgid ""
 "Wooden theme from iROOTa,\n"
 "Install to /EFI/CLOVER/themes/wooden."
 msgstr ""
+"Houten thema door iROOTa,\n"
+"Installeert naar /EFI/CLOVER/themes/wooden."
 
 #. type: "rc.scripts.on.target_title"
 #: Resources/templates/Localizable.strings:155
 #, no-wrap
 msgid "Install RC scripts on target volume"
-msgstr ""
+msgstr "Installeer RC scripts op de doelvolume"
 
 #. type: "rc.scripts.on.target_description"
 #: Resources/templates/Localizable.strings:156
@@ -660,27 +750,33 @@ msgid ""
 "Install all RC scripts on target volume.\n"
 "The target volume must be a bootable OSX system volume."
 msgstr ""
+"Installeer alle RC scripts op de doelvolume.\n"
+"De doelvolume moet een opstart mogelijk OSX systeem volume zijn."
 
 #. type: "rc.scripts.on.all.volumes_title"
 #: Resources/templates/Localizable.strings:158
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
-msgstr ""
+msgstr "Installeer alle RC scripts op alle andere opstart mogelijke OSX volumes"
 
 #. type: "rc.scripts.on.all.volumes_description"
 #: Resources/templates/Localizable.strings:159
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr ""
+"Installeer alle RC scripts op alle interne opstart mogelijke OSX volumes dan "
+"de doelvolume."
 
 #. type: "Optional RC Scripts"
 #: Resources/templates/Localizable.strings:160
 #, no-wrap
 msgid "Optional RC Scripts"
-msgstr ""
+msgstr "Optionele RC Scripts"
 
 #. type: "disable_sleep_proxy_client_description"
 #: Resources/templates/Localizable.strings:161
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr ""
+"Schakel de mDNSResponder sleep proxy client service uit. Dit voorkomt dat "
+"het systeem ontwaakt uit slaap elk uur"
