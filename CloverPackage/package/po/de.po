@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-04-25 13:54+0300\n"
-"PO-Revision-Date: 2013-04-26 16:02+0200\n"
+"PO-Revision-Date: 2013-04-26 19:02+0200\n"
 "Last-Translator: k3nny <sascha_r@gmx.de>\n"
 "Language-Team: ge <ge@li.org>\n"
 "Language: de\n"
@@ -85,7 +85,7 @@ msgstr ""
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:18
 msgid "The main is EDK2 latest revision."
-msgstr "Der Haupteil ist die letzte Version von EDK2."
+msgstr "Der Haupbestandteil ist EDK2 in der letzten Revision."
 
 #
 #. type: Content of: <html><body><p><b>
@@ -106,8 +106,8 @@ msgid ""
 "- It's EFI bootloader provides RuntimeServices for OS that impossible for "
 "Legacy Bootloaders"
 msgstr ""
-"- Es ist ein EFI Bootloader der RuntimeServices für OS bereitstellt, das für "
-"Legacy Bootloader nicht möglich ist"
+"- Der EFI Bootloader stellt RuntimeServices für das OS bereit, was mit "
+"Legacy Bootloadern nicht möglich ist"
 
 #
 #. type: Content of: <html><body><p>
@@ -115,7 +115,9 @@ msgstr ""
 msgid ""
 "- mostly Clover do automatic detection of hardware and set all properties by "
 "default."
-msgstr "- CLOVER kann die Standart Einstellungen selber konfigurieren."
+msgstr ""
+"- Clover ist größtenteils in der Lage die nötigen Einstellungen passend zur "
+"Hardware selbst vornehmen."
 
 #
 #. type: Content of: <html><body><p><span>
@@ -140,14 +142,14 @@ msgstr ""
 #: Resources/templates/Description.html:25
 msgid "- with Clover you may restart into other OS from Startup Disk prefPane"
 msgstr ""
-"- Mit CLOVER kann man direkt über Startvolume in den Systemeindtellungen in "
-"ein anderes OS neu starten"
+"- Mit Clover kann man direkt über Startvolume in den Systemeinstellungen in "
+"ein anderes OS booten"
 
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:26
 msgid "- UUID written into config.plist will be the same as in OS"
-msgstr "- Die in config.plist geschriebene UUID wird dieselbe im OS sein"
+msgstr "- Die in der config.plist eingestellte UUID wird im OS gleich bleiben"
 
 #
 #. type: Content of: <html><body><p>
@@ -163,14 +165,17 @@ msgstr "- ACPI wird auf Standard 4.0 korrigiert."
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:29
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr "DSDT wird von der gebooteden Partition geladen"
+msgstr ""
+"Die eigene DSDT wird von der gebooteden Partition oder vom EFI Ordner "
+"geladen"
 
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:30
 msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
 msgstr ""
-"- Anpassbare Festlegung von Neustart und Schlaf/Aufwach sowie PCIRootUID Wert"
+"- Anpassbare Korrekturen für den Neustart und Energiesparmodus, sowie den "
+"PCIRootUID Wert"
 
 #
 #. type: Content of: <html><body><p>
@@ -179,8 +184,8 @@ msgid ""
 "- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
 "supported cards."
 msgstr ""
-"- Graphik Injektor für ATI, NVidia und Intel für eine große Anzahl von "
-"unterstützten Karten."
+"- Injektor für Video-Eigenschaften für ATI, NVidia und Intel für eine große "
+"Anzahl von unterstützten Karten."
 
 #
 #. type: Content of: <html><body><p>
@@ -226,14 +231,14 @@ msgid ""
 "- default boot after timeout, customizable GUI , and saving screenshots from "
 "GUI typing F10"
 msgstr ""
-"- Standart boot mit Zeitverzögerung , anpassbare Oberfläche , sichern von "
-"Bildschirmfotos mit F10"
+"- Automatisches Booten nach Zeitüberschreitung, anpassbare Oberfläche, "
+"Sichern von Bildschirmfotos mit F10"
 
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:39
 msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
-msgstr "- Sichern von boot.log im OS und preboot.log mit F2"
+msgstr "- Sichern der boot.log im OS und der preboot.log mit F2"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
@@ -322,10 +327,14 @@ msgid ""
 "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
 "  5. diskutil mount /dev/rdisk9s1"
 msgstr ""
-"Zum BIOS booten eines  Computers.\n"
-"Mit fdisk440 wird boot0 in den ersten 440 Bits der MBR installiert, ohne eine eventuell vorhandene Windows Partition zu zerstören, boot0 sucht dann auf der ersten aktiven HFS Partition nach boot1h2,oder auf der ersten aktiven FAT32 Partition nach boot1f32alt. \n"
+"Zum BIOS booten eines Computers.\n"
+"Mit fdisk440 wird boot0 in den ersten 440 Bits der MBR installiert, ohne "
+"eine eventuell vorhandene Windows Partition zu zerstören, boot0 sucht dann "
+"auf der ersten aktiven HFS Partition nach boot1h2,oder auf der ersten "
+"aktiven FAT32 Partition nach boot1f32alt. \n"
 "Bei dieser Option werden die HFS+ und FAT32 Partition aktiviert.\n"
-"Dazu muss zuerst wie folgend in FAT32 formatiert werden ( x = die Festplatte auf der installiert werden soll ).\n"
+"Dazu muss zuerst wie folgend in FAT32 formatiert werden ( x = die Festplatte "
+"auf der installiert werden soll ).\n"
 "  1. zuerst MS-DOS (FAT) mit dem Festplattendienstprogramm löschen\n"
 "  2. diskutil list\n"
 "  3. diskutil unmount /dev/rdiskxs1\n"
@@ -352,10 +361,15 @@ msgid ""
 "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
 "  5. diskutil mount /dev/rdisk9s1"
 msgstr ""
-"Zum BIOS booten eines  Computers.\n"
-"Mit fdisk440 wird boot0hfs in den ersten 440 Bits der MBR installiert, ohne eine eventuell vorhandene Windows Partition zu zerstören, boot0 sucht dann auf der ersten aktiven HFS Partition nach boot1h2,oder auf der ersten aktiven FAT32 Partition nach boot1f32alt.\n"
-"Diese Option wird nicht die gewählte HFS Partition , sondern die gewählte FAT32 Partition, aktivieren.\n"
-"Dazu muss zuerst wie folgend in FAT32 formatiert werden ( x = die Festplatte auf der installiert werden soll ).\n"
+"Zum BIOS booten eines Computers.\n"
+"Mit fdisk440 wird boot0hfs in den ersten 440 Bits der MBR installiert, ohne "
+"eine eventuell vorhandene Windows Partition zu zerstören, boot0 sucht dann "
+"auf der ersten aktiven HFS Partition nach boot1h2,oder auf der ersten "
+"aktiven FAT32 Partition nach boot1f32alt.\n"
+"Diese Option wird nicht die gewählte HFS Partition , sondern die gewählte "
+"FAT32 Partition, aktivieren.\n"
+"Dazu muss zuerst wie folgend in FAT32 formatiert werden ( x = die Festplatte "
+"auf der installiert werden soll ).\n"
 "  1. zuerst MS-DOS (FAT) mit dem Festplattendienstprogramm löschen\n"
 "  2. diskutil list\n"
 "  3. diskutil unmount /dev/rdisxs1\n"
@@ -556,7 +570,7 @@ msgid ""
 "Grey style theme by winlog,\n"
 "Install to /EFI/CLOVER/themes/iClover."
 msgstr ""
-"Grey style theme by winlog,\n"
+"Grey style theme von winlog,\n"
 "Wird installiert in /EFI/CLOVER/themes/iClover."
 
 #. type: "buttons_title"
@@ -681,4 +695,6 @@ msgstr "Optionale RC Scripte"
 #: Resources/templates/Localizable.strings:139
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
-msgstr "Deaktiviere den mDNSResponder sleep proxy client service. Verhindert das aufwachen des Systems zu jeder Stunde"
+msgstr ""
+"Deaktiviere den mDNSResponder sleep proxy client Dienst. Verhindert das "
+"aufwachen des Systems zu jeder Stunde"
