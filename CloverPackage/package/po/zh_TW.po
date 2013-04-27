@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "POT-Creation-Date: 2013-04-25 13:54+0300\n"
-"PO-Revision-Date: 2013-04-26 17:08+0200\n"
+"PO-Revision-Date: 2013-04-26 17:26+0200\n"
 "Last-Translator: crazybirdy <>\n"
 "Language-Team: zh_TW <zh_TW@li.org>\n"
 "Language: zh_TW\n"
@@ -115,7 +115,7 @@ msgstr "- 預設 自動偵測大部份的硬體並設置所有屬性"
 #: Resources/templates/Description.html:32
 #: Resources/templates/Description.html:33
 msgid " "
-msgstr ""
+msgstr " "
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:24
@@ -194,35 +194,35 @@ msgstr "- 可加載額外 kexts 及 支持 FireWire 安全保密模式"
 msgid ""
 "- default boot after timeout, customizable GUI , and saving screenshots from "
 "GUI typing F10"
-msgstr ""
+msgstr "- 可按 F10 儲存 圖形用戶界面 GUI 的截圖，可設定預設開機區及客製化 GUI 圖形"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:39
 msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
-msgstr ""
+msgstr "- 可按 F2 儲存 OS 的紀錄 boot.log 及 GUI 的紀錄 preboot.log"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
 msgid "Installation Complete!"
-msgstr ""
+msgstr "安  裝  完  成"
 
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
 #, no-wrap
 msgid "Install for UEFI motherboards"
-msgstr "Install for UEFI motherboards"
+msgstr "僅安裝 UEFI 主機板專用版本"
 
 #. type: "UEFI.only_description"
 #: Resources/templates/Localizable.strings:5
 #, no-wrap
 msgid "Install Clover to be used with UEFI motherboards only."
-msgstr "Install Clover to be used with UEFI motherboards only."
+msgstr "僅安裝 UEFI 主機板專用的 Clover 版本"
 
 #. type: "Target.ESP_title"
 #: Resources/templates/Localizable.strings:10
 #, no-wrap
 msgid "Install Clover in the ESP"
-msgstr "Install Clover in the ESP"
+msgstr "安裝 Clover 到 EFI 系統區"
 
 #. type: "Target.ESP_description"
 #: Resources/templates/Localizable.strings:11
@@ -236,11 +236,11 @@ msgid ""
 "diskutil list\n"
 "newfs_msdos -v EFI -F 32 /dev/rdisk9s1"
 msgstr ""
-"Install Clover in the ESP (EFI System Partition) of the target volume\n"
+"安裝 Clover 到目標磁區的 EFI 系統區\n"
 "\n"
-"Need to format ESP as Fat32 on Mac first.\n"
+"需要在 Mac 下，先將 EFI 系統區 格式化為 Fat32 格式。\n"
 "\n"
-"For Fat32 use commands like:\n"
+"參考 Fat32 手動格式化指令:\n"
 "diskutil list\n"
 "newfs_msdos -v EFI -F 32 /dev/rdisk9s1"
 
@@ -327,7 +327,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:51
 #, no-wrap
 msgid "Don't update MBR and PBR sectors"
-msgstr "Don't update MBR and PBR sectors"
+msgstr "不更新 MBR 及 PBR 磁區"
 
 #. type: "bootNo_description"
 #: Resources/templates/Localizable.strings:52
@@ -337,15 +337,15 @@ msgid ""
 "Usefull for UEFI motherboards that don't need bootloader files.\n"
 "Can also be use if you don't want to upgrade MBR or PBR sectors."
 msgstr ""
-"Don't install any bootloader (boot0X, boot1X).\n"
-"Usefull for UEFI motherboards that don't need bootloader files.\n"
-"Can also be use if you don't want to upgrade MBR or PBR sectors."
+"不安裝任何引導檔案 (boot0X, boot1X)。\n"
+"適用於不需要任何引導檔案的 UEFI 主機板。\n"
+"適用於不需要更新 MBR(boot0X) 及 PBR(boot1X) 的4kb格式硬碟。"
 
 #. type: "AltBoot_title"
 #: Resources/templates/Localizable.strings:56
 #, no-wrap
 msgid "Use alternative booting PBR"
-msgstr "Use alternative booting PBR"
+msgstr "安裝 PBR 的多重開機選項"
 
 #. type: "AltBoot_description"
 #: Resources/templates/Localizable.strings:57
@@ -354,8 +354,8 @@ msgid ""
 "Install alternative booting PBR with choice of boot with a key pressed.\n"
 "File to boot = boot{keypressed}"
 msgstr ""
-"Install alternative booting PBR with choice of boot with a key pressed.\n"
-"File to boot = boot{keypressed}"
+"安裝 PBR 的多重開機選項，boot1=變色龍引導，boot6=64位 Clover 引導。\n"
+"可設定 開機 boot = boot{按鍵} 進行多重開機設定。"
 
 #. type: "boot32_title"
 #: Resources/templates/Localizable.strings:61
@@ -411,38 +411,38 @@ msgstr "CloverEFI"
 #: Resources/templates/Localizable.strings:79
 #, no-wrap
 msgid "Select the version of CloverEFI to install."
-msgstr "Select the version of CloverEFI to install."
+msgstr "選擇要安裝的 CloverEFI 版本。"
 
 #. type: "cloverEFI.32_description"
 #: Resources/templates/Localizable.strings:80
 #: Resources/templates/Localizable.strings:81
 #, no-wrap
 msgid "CloverEFI 32-bits"
-msgstr "CloverEFI 32-bits"
+msgstr "CloverEFI 32位版本"
 
 #. type: "cloverEFI.64.sata_title"
 #: Resources/templates/Localizable.strings:82
 #, no-wrap
 msgid "CloverEFI 64-bits SATA"
-msgstr "CloverEFI 64-bits SATA"
+msgstr "CloverEFI 64位 SATA"
 
 #. type: "cloverEFI.64.sata_description"
 #: Resources/templates/Localizable.strings:83
 #, no-wrap
 msgid "CloverEFI 64-bits using SATA to access drives"
-msgstr "CloverEFI 64-bits using SATA to access drives"
+msgstr "CloverEFI 64位版本，使用 SATA 模式存取硬碟。"
 
 #. type: "cloverEFI.64.blockio_title"
 #: Resources/templates/Localizable.strings:84
 #, no-wrap
 msgid "CloverEFI 64-bits BiosBlockIO"
-msgstr "CloverEFI 64-bits BiosBlockIO"
+msgstr "CloverEFI 64位 BiosBlockIO"
 
 #. type: "cloverEFI.64.blockio_description"
 #: Resources/templates/Localizable.strings:85
 #, no-wrap
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
-msgstr "CloverEFI 64-bits using Bios Block I/O to access drives"
+msgstr "CloverEFI 64位版本，使用 Bios Block I/O 模式存取硬碟。"
 
 #. type: "Themes_title"
 #: Resources/templates/Localizable.strings:91
@@ -460,7 +460,7 @@ msgstr "選擇安裝，開機時，顯示的背景主題。"
 #: Resources/templates/Localizable.strings:94
 #, no-wrap
 msgid "black_green"
-msgstr "黑綠主題"
+msgstr "BlackGreen墨綠風格"
 
 #. type: "black_green_description"
 #: Resources/templates/Localizable.strings:95
@@ -469,14 +469,14 @@ msgid ""
 "Default black_green theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/black_green."
 msgstr ""
-"預設安裝來自 Blackosx 的黑綠主題，。\n"
+"預設安裝來自 Blackosx 的 BlackGreen墨綠風格 主題。\n"
 "安裝位置 /EFI/CLOVER/themes/black_green。"
 
 #. type: "AppleStyle_title"
 #: Resources/templates/Localizable.strings:98
 #, no-wrap
 msgid "AppleStyle"
-msgstr "AppleStyle"
+msgstr "AppleStyle蘋果風格"
 
 #. type: "AppleStyle_description"
 #: Resources/templates/Localizable.strings:99
@@ -485,14 +485,14 @@ msgid ""
 "AppleStyle theme from Eps,\n"
 "Install to /EFI/CLOVER/themes/AppleStyle."
 msgstr ""
-"AppleStyle theme from Eps,\n"
-"安裝位置 /EFI/CLOVER/themes/AppleStyle."
+"選擇安裝來自 Eps 的 AppleStyle蘋果風格 主題。\n"
+"安裝位置 /EFI/CLOVER/themes/AppleStyle。"
 
 #. type: "mrengles_title"
 #: Resources/templates/Localizable.strings:102
 #, no-wrap
 msgid "mrengles"
-msgstr "mrengles"
+msgstr "mrengles風格"
 
 #. type: "mrengles_description"
 #: Resources/templates/Localizable.strings:103
@@ -501,14 +501,14 @@ msgid ""
 "mrengles theme from mrengles,\n"
 "Install to /EFI/CLOVER/themes/mrengles."
 msgstr ""
-"mrengles theme from mrengles,\n"
-"安裝位置 /EFI/CLOVER/themes/mrengles."
+"選擇安裝來自 mrengles 的 mrengles風格 主題。\n"
+"安裝位置 /EFI/CLOVER/themes/mrengles。"
 
 #. type: "iClover_title"
 #: Resources/templates/Localizable.strings:106
 #, no-wrap
 msgid "iClover"
-msgstr "iClover"
+msgstr "iClover灰色風格"
 
 #. type: "iClover_description"
 #: Resources/templates/Localizable.strings:107
@@ -517,14 +517,14 @@ msgid ""
 "Grey style theme by winlog,\n"
 "Install to /EFI/CLOVER/themes/iClover."
 msgstr ""
-"Grey style theme by winlog,\n"
-"安裝位置 /EFI/CLOVER/themes/iClover."
+"選擇安裝來自 winlog 的 iClover灰色風格 主題。\n"
+"安裝位置 /EFI/CLOVER/themes/iClover。"
 
 #. type: "buttons_title"
 #: Resources/templates/Localizable.strings:110
 #, no-wrap
 msgid "buttons"
-msgstr "按鈕主題"
+msgstr "buttons按鈕風格"
 
 #. type: "buttons_description"
 #: Resources/templates/Localizable.strings:111
@@ -533,14 +533,14 @@ msgid ""
 "Buttons theme from Trauma,\n"
 "Install to /EFI/CLOVER/themes/buttons."
 msgstr ""
-"選擇安裝來自 Trauma 的按鈕主題。\n"
+"選擇安裝來自 Trauma 的 buttons按鈕風格 主題。\n"
 "安裝位置 /EFI/CLOVER/themes/buttons。"
 
 #. type: "hellfire_title"
 #: Resources/templates/Localizable.strings:114
 #, no-wrap
 msgid "hellfire"
-msgstr "地獄火主題"
+msgstr "hellfire地獄火風格"
 
 #. type: "hellfire_description"
 #: Resources/templates/Localizable.strings:115
@@ -549,14 +549,14 @@ msgid ""
 "Hellfire theme from lllevelll,\n"
 "Install to /EFI/CLOVER/themes/hellfire."
 msgstr ""
-"選擇安裝來自 illevelll 的地獄火主題。\n"
+"選擇安裝來自 illevelll 的 hellfire地獄火風格 主題。\n"
 "安裝位置 /EFI/CLOVER/themes/hellfire。"
 
 #. type: "metal_title"
 #: Resources/templates/Localizable.strings:118
 #, no-wrap
 msgid "metal"
-msgstr "金屬主題"
+msgstr "metal金屬風格"
 
 #. type: "metal_description"
 #: Resources/templates/Localizable.strings:119
@@ -565,14 +565,14 @@ msgid ""
 "The original metal theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/metal."
 msgstr ""
-"原始預設安裝來自 Slice 的金屬主題，現已改由黑綠主題作為預設安裝。\n"
+"原始預設安裝來自 Slice 的 metal金屬風格 主題，現已改由 black_green墨綠風格 主題作為預設安裝。\n"
 "安裝位置 /EFI/CLOVER/themes/metal。"
 
 #. type: "simple_gray_title"
 #: Resources/templates/Localizable.strings:122
 #, no-wrap
 msgid "simple_gray"
-msgstr "簡灰主題"
+msgstr "simple_gray簡灰風格"
 
 #. type: "simple_gray_description"
 #: Resources/templates/Localizable.strings:123
@@ -588,7 +588,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:126
 #, no-wrap
 msgid "wooden"
-msgstr "原木主題"
+msgstr "wooden原木風格"
 
 #. type: "wooden_description"
 #: Resources/templates/Localizable.strings:127
@@ -597,14 +597,14 @@ msgid ""
 "Wooden theme from iROOTa,\n"
 "Install to /EFI/CLOVER/themes/wooden."
 msgstr ""
-"選擇安裝來自 iROOTa 的原木主題。\n"
-"安裝位置 /EFI/CLOVER/themes/wooden."
+"選擇安裝來自 iROOTa 的 wooden原木風格 主題。\n"
+"安裝位置 /EFI/CLOVER/themes/wooden。"
 
 #. type: "rc.scripts.on.target_title"
 #: Resources/templates/Localizable.strings:133
 #, no-wrap
 msgid "Install RC scripts on target volume"
-msgstr "Install RC scripts on target volume"
+msgstr "安裝 RC scripts 到目標磁區"
 
 #. type: "rc.scripts.on.target_description"
 #: Resources/templates/Localizable.strings:134
@@ -613,31 +613,31 @@ msgid ""
 "Install all RC scripts on target volume.\n"
 "The target volume must be a bootable OSX system volume."
 msgstr ""
-"Install all RC scripts on target volume.\n"
-"The target volume must be a bootable OSX system volume."
+"安裝全部 RC scripts 到目標磁區。\n"
+"目標磁區必須是 可開機的 OSX 磁區。"
 
 #. type: "rc.scripts.on.all.volumes_title"
 #: Resources/templates/Localizable.strings:136
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install all RC scripts on all bootable OSX volumes"
 msgid "Install all RC scripts on all other bootable OSX volumes"
-msgstr "Install all RC scripts on all bootable OSX volumes"
+msgstr "安裝全部 RC scripts 到全部可開機的 OSX 磁區"
 
 #. type: "rc.scripts.on.all.volumes_description"
 #: Resources/templates/Localizable.strings:137
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install all RC scripts on all internal bootable OSX volumes."
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
-msgstr "Install all RC scripts on all internal bootable OSX volumes."
+msgstr "安裝全部 RC scripts 到全部內置可開機的 OSX 磁區。"
 
 #. type: "Optional RC Scripts"
 #: Resources/templates/Localizable.strings:138
 #, no-wrap
 msgid "Optional RC Scripts"
-msgstr "Optional RC Scripts"
+msgstr "選擇安裝 RC Scripts"
 
 #. type: "disable_sleep_proxy_client_description"
 #: Resources/templates/Localizable.strings:139
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
-msgstr "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
+msgstr "停用 mDNSResponder 休眠 proxy client 服務，可以避免系統休眠時，每小時自動喚醒。"
