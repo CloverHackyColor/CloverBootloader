@@ -7,14 +7,14 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-04-28 11:52+0300\n"
-"PO-Revision-Date: 2013-04-28 12:19+0100\n"
-"Last-Translator: JrCs\n"
+"PO-Revision-Date: 2013-04-28 12:23+0200\n"
+"Last-Translator: real3x <alexbarre@eliptik.fr>\n"
 "Language-Team: fr <fr@li.org>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.5\n"
+"X-Generator: Pootle 2.1.6\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -592,7 +592,9 @@ msgstr "Variante simplifiée du driver 64 bits OsxAptioFixDrv (les 2 drivers ne 
 #: Resources/templates/Localizable.strings:113
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
-msgstr "Driver 64 bits permettant le support de tables de partition non usuelles telle que: hybrid GPT/MBR ou Apple Partition."
+msgstr ""
+"Driver 64 bits permettant le support de tables de partition non communes "
+"telle que: hybrid GPT/MBR ou Apple Partition."
 
 #. type: "Themes_title"
 #: Resources/templates/Localizable.strings:119
