@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "POT-Creation-Date: 2013-04-28 11:52+0300\n"
-"PO-Revision-Date: 2013-04-29 01:08+0200\n"
+"PO-Revision-Date: 2013-04-29 01:18+0200\n"
 "Last-Translator: archintosh <ardr_1109@yahoo.com>\n"
 "Language-Team: id <id@li.org>\n"
 "Language: id\n"
@@ -132,7 +132,7 @@ msgstr " "
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:24
 msgid "But user can change them by config.plist"
-msgstr "Tapi bisa dirubah lewat config.plist"
+msgstr "Tapi bisa diubah lewat config.plist"
 
 #
 #. type: Content of: <html><body><p>
@@ -233,7 +233,7 @@ msgstr ""
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:39
 msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
-msgstr "- Simpan boot.log dalam OS dan preboot.log dari GUI lewat tombol F2"
+msgstr "- Simpan boot.log dalam OS dan preboot.log dari GUI dengan tombol F2"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
@@ -296,7 +296,8 @@ msgstr ""
 "Clover EFI membutuhkan 3 file utama. (istilah yang sederhana)\n"
 "boot0 (pada sektor MBR) berfungsi untuk memuat boot1.\n"
 "boot1 (di bootsector partisi) berfungsi untuk mencari boot2.\n"
-"boot2 (di partisi direktori root) berfungsi untuk memuat /EFI/BOOT/CLOVERIA32.efi atau CLOVERX64.efi, kernel dan lainnya."
+"boot2 (di partisi direktori root) untuk memuat /EFI/BOOT/CLOVERIA32.efi atau "
+"CLOVERX64.efi, kernel dan lainnya."
 
 #. type: "boot0_title"
 #: Resources/templates/Localizable.strings:29
@@ -573,8 +574,8 @@ msgid ""
 "Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
 msgstr ""
 "Protokol DataHub merupakan support yang diperlukan oleh MacOSX.\n"
-"Biasanya sudah tersedia tapi kadang-kadang dapat terlewat. Kalau terlewat "
-"akan terlihat peringatan di layar."
+"Biasanya sudah tersedia tapi kadang-kadang terlewat. Kalau terlewat akan "
+"terlihat peringatan di layar."
 
 #. type: "EmuVariableUefi-64_description"
 #: Resources/templates/Localizable.strings:108
