@@ -1,4 +1,4 @@
-﻿// ============================================================================
+// ============================================================================
 // Installation
 // ----------------------------------------------------------------------------
 "UEFI.only_title" = "Install for UEFI motherboards";
@@ -99,12 +99,18 @@ Press key 6 to boot6 = Clover EFI 64bit boot.";
 "VBoxExt4-64_description" = "ext4 filesystem driver from virtualbox, 64bit";
 "XhciDxe-32_description" = "XhciDxe-32_description";
 "XhciDxe-64_description" = "XhciDxe-64_description";
-"CsmVideoDxe-64_description" = "Video driver - provides a wide range of resolutions, 64bit";
-"DataHubDxe-64_description" = "DataHubDxe-64_description";
-"EmuVariableUefi-64_description" = "EmuVariableUefi-64_description";
-"OsxAptioFixDrv-64_description" = "Fix for Aptio AMI, 64bit";
+"CsmVideoDxe-64_description" = "64bit video driver for Clover GUI allowing to choose more resolutions.
+It is based on CSM module in UEFI BIOS and required CSM will be enabled.
+Clover may not started with it and you may have wake problem in system.
+Use with precautions.";
+"DataHubDxe-64_description" = "This is DataHub protocol support mandatory for MacOSX.
+Usually it is already present but sometime it may be missed. In this case you should see warning on screen.";
+"EmuVariableUefi-64_description" = "64bit driver for support of NVRAM variables needed by MacOSX.
+Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed.
+Use it only if you have a problem without it";
+"OsxAptioFixDrv-64_description" = "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio";
 "OsxLowMemFixDrv-64_description" = "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)";
-"PartitionDxe-64_description" = "PartitionDxe-64_description";
+"PartitionDxe-64_description" = "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map.";
 
 // ============================================================================
 // Themes
