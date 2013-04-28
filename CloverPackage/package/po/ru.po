@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "POT-Creation-Date: 2013-04-28 11:52+0300\n"
-"PO-Revision-Date: 2013-04-28 10:48+0200\n"
+"PO-Revision-Date: 2013-04-28 21:05+0200\n"
 "Last-Translator: Slice <sergey.slice@gmail.com>\n"
 "Language-Team: ru <ru@li.org>\n"
 "Language: ru\n"
@@ -557,6 +557,12 @@ msgid ""
 "Clover may not started with it and you may have wake problem in system.\n"
 "Use with precautions."
 msgstr ""
+"Видео драйвер для Clover GUI позволяющий использовать большее разрешение "
+"экрана.\n"
+"Он основан на CSM модуле в BIOS и требует, чтобы CSM был включен\n"
+"Однако, Clover может не запуститься с этим драйвером, или система не будет "
+"пробуждаться после сна,\n"
+"поэтому, используйте с осторожностью."
 
 #. type: "DataHubDxe-64_description"
 #: Resources/templates/Localizable.strings:106
@@ -565,6 +571,9 @@ msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
 "Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
 msgstr ""
+"Продержка DataHub протокола, который строго необходим для запуска MacOSX.\n"
+"Обычно он и так присутствует, однако может и не быть, в этом случае увидите "
+"сообщение на экране."
 
 #. type: "EmuVariableUefi-64_description"
 #: Resources/templates/Localizable.strings:108
@@ -574,12 +583,17 @@ msgid ""
 "Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed.\n"
 "Use it only if you have a problem without it"
 msgstr ""
+"Драйвер для поддержки NVRAM переменных, необходимых для MacOSX.\n"
+"Чаще всего UEFI BIOS использует встроенный NVRAM, но иногда нет\n"
+"Используйте драйвер только если вы точно знаете, что он нужен."
 
 #. type: "OsxAptioFixDrv-64_description"
 #: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
 msgstr ""
+"Исправляет ошибки памяти, создаваемые AMI Aptio UEFi, и некоторыми другими "
+"BIOS."
 
 #. type: "OsxLowMemFixDrv-64_description"
 #: Resources/templates/Localizable.strings:112
@@ -592,6 +606,8 @@ msgstr "Упрощенный вариант драйвера OsxAptioFixDrv. Н�
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
 msgstr ""
+"Драйвер для поддержки необычных схем разделов как гибрид GPT/MBR и Apple "
+"Partition Map."
 
 #. type: "Themes_title"
 #: Resources/templates/Localizable.strings:119
