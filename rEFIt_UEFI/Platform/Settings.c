@@ -308,7 +308,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gLanguage = portuguese; 
         } else if (AsciiStrStr(prop->string, "pl")) {
           gLanguage = polish; 
-        } else if (AsciiStrStr(prop->string, "ge")) {
+        } else if (AsciiStrStr(prop->string, "de")) {
           gLanguage = german;
         } else if (AsciiStrStr(prop->string, "id")) {
           gLanguage = indonesian; 
@@ -318,7 +318,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gLanguage = french;
         } else if (AsciiStrStr(prop->string, "ua")) {
           gLanguage = ukrainian;
-        } else if (AsciiStrStr(prop->string, "cz")) {
+        } else if (AsciiStrStr(prop->string, "cs")) {
           gLanguage = czech;
         } else if (AsciiStrStr(prop->string, "hr")) {
           gLanguage = croatian;

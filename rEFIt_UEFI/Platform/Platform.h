@@ -891,7 +891,7 @@ typedef struct {
 typedef enum {
   english,  //en
   russian,  //ru
-  german,   //ge
+  german,   //de
   french,   //fr
   italian,  //it
   indonesian, //id
@@ -901,7 +901,7 @@ typedef enum {
   portuguese, //pt
   ukrainian, //ua
   croatian,  //hr
-  czech,     //cz
+  czech,     //cs
   chinese   //cn
   //something else? add, please
 } LANGUAGES;
