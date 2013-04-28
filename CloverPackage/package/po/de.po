@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-04-27 17:01+0300\n"
-"PO-Revision-Date: 2013-04-26 19:02+0200\n"
+"PO-Revision-Date: 2013-04-27 19:22+0200\n"
 "Last-Translator: k3nny <sascha_r@gmx.de>\n"
 "Language-Team: ge <ge@li.org>\n"
 "Language: de\n"
@@ -491,7 +491,7 @@ msgstr "CloverEFI 64-bits benutzt Bios Block I/O um auf die Festplatten zuzugrei
 #: Resources/templates/Localizable.strings:90
 #, no-wrap
 msgid "PS/2 keyboard driver, 32bit"
-msgstr ""
+msgstr "PS/2 Tastatur-Treiber, 32bit"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:91
@@ -503,49 +503,49 @@ msgstr ""
 #: Resources/templates/Localizable.strings:92
 #, no-wrap
 msgid "PS/2 mouse driver, 32bit"
-msgstr ""
+msgstr "PS/2 Maus-Treiber, 32bit"
 
 #. type: "Ps2MouseDxe-64_description"
 #: Resources/templates/Localizable.strings:93
 #, no-wrap
 msgid "PS/2 mouse driver, 64bit"
-msgstr ""
+msgstr "PS/2 Maus-Treiber, 64bit"
 
 #. type: "UsbMouseDxe-32_description"
 #: Resources/templates/Localizable.strings:94
 #, no-wrap
 msgid "USB mouse driver, 32bit"
-msgstr ""
+msgstr "USB Maus-Treiber, 32bit"
 
 #. type: "UsbMouseDxe-64_description"
 #: Resources/templates/Localizable.strings:95
 #, no-wrap
 msgid "USB mouse driver, 64bit"
-msgstr ""
+msgstr "USB Maus-Treiber, 64bit"
 
 #. type: "VBoxExt2-32_description"
 #: Resources/templates/Localizable.strings:96
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 32bit"
-msgstr ""
+msgstr "ext2/3 Dateisystem-Treiber aus VirtualBox, 32bit"
 
 #. type: "VBoxExt2-64_description"
 #: Resources/templates/Localizable.strings:97
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
-msgstr ""
+msgstr "ext2/3 Dateisystem-Treiber aus VirtualBox, 64bit"
 
 #. type: "VBoxExt4-32_description"
 #: Resources/templates/Localizable.strings:98
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 32bit"
-msgstr ""
+msgstr "ext4 Dateisystem-Treiber aus VirtualBox, 32bit"
 
 #. type: "VBoxExt4-64_description"
 #: Resources/templates/Localizable.strings:99
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 64bit"
-msgstr ""
+msgstr "ext4 Dateisystem-Treiber aus VirtualBox, 64bit"
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:100
@@ -563,7 +563,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:102
 #, no-wrap
 msgid "Video driver - provides a wide range of resolutions, 64bit"
-msgstr ""
+msgstr "Video-Treiber - stellt eine große Auswahl an Auflösungen bereit, 64bit"
 
 #. type: "DataHubDxe-64_description"
 #: Resources/templates/Localizable.strings:103
@@ -581,13 +581,15 @@ msgstr ""
 #: Resources/templates/Localizable.strings:105
 #, no-wrap
 msgid "Fix for Aptio AMI, 64bit"
-msgstr ""
+msgstr "Fix für Aptio AMI, 64bit"
 
 #. type: "OsxLowMemFixDrv-64_description"
 #: Resources/templates/Localizable.strings:106
 #, no-wrap
 msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
 msgstr ""
+"Einfachere Variante des OsxAptioFixDrv, 64bit (auf keinen Fall beide "
+"benutzen)"
 
 #. type: "PartitionDxe-64_description"
 #: Resources/templates/Localizable.strings:107

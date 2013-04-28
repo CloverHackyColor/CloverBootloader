@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "POT-Creation-Date: 2013-04-27 17:01+0300\n"
-"PO-Revision-Date: 2013-04-27 15:47+0200\n"
+"PO-Revision-Date: 2013-04-27 23:19+0200\n"
 "Last-Translator: mackie100 <mackie.proj@yahoo.com>\n"
 "Language-Team: it <it@li.org>\n"
 "Language: it\n"
@@ -40,7 +40,7 @@ msgstr "%DEVELOP%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:28
 msgid "Source code credits to:"
-msgstr "Codice sorgente credito a:"
+msgstr "Crediti del codice sorgente:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:29
@@ -50,7 +50,7 @@ msgstr "%CREDITS%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:31
 msgid "Package credits to:"
-msgstr "Pacchetto credito a:"
+msgstr "Crediti pacchetto installazione:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:32
@@ -155,7 +155,7 @@ msgstr "- UUID scritto nel config.plist sarà il medesimo di OS"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:27
 msgid "- SMBIOS will be corrected to standard 2.6"
-msgstr "- SMBIOS sarà corretto allo standard 2,6"
+msgstr "- SMBIOS sarà corretto allo standard 2.6"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:28
@@ -193,7 +193,7 @@ msgstr "anch'esse personalizzabile."
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:33
 msgid "- USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
-msgstr "- USB fix (LegacyOff, Ownership, Builtin, clock-id) fino a USB 3.0"
+msgstr "- USB fix (LegacyOff, Ownership, Builtin, clock-id) fino alla USB 3.0"
 
 #
 #. type: Content of: <html><body><p>
@@ -467,7 +467,7 @@ msgstr "CloverEFI 64-bit SATA"
 #: Resources/templates/Localizable.strings:83
 #, no-wrap
 msgid "CloverEFI 64-bits using SATA to access drives"
-msgstr "CloverEFI 64-bit per unità che utilizzano controller SATA"
+msgstr "CloverEFI 64-bit che usa SATA per accedere alle unità"
 
 #. type: "cloverEFI.64.blockio_title"
 #: Resources/templates/Localizable.strings:84
@@ -479,115 +479,133 @@ msgstr "CloverEFI 64-bit BiosBlockIO"
 #: Resources/templates/Localizable.strings:85
 #, no-wrap
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
-msgstr "CloverEFI 64-bit per unità che utilizzano controller RAID, JMicron, NForce ed altri controller SATA/ATA/SCSI di terze parti"
+msgstr "CloverEFI 64-bit che usa Bios Block I/O per accedere alle unità"
 
 #. type: "Ps2KeyboardDxe-32_description"
 #: Resources/templates/Localizable.strings:90
 #, no-wrap
 msgid "PS/2 keyboard driver, 32bit"
-msgstr ""
+msgstr "Driver a 32 bit per tastiere PS/2"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:91
 #, no-wrap
 msgid "Ps2MouseAbsolutePointerDxe-32_description"
-msgstr ""
+msgstr "Driver a 32 bit per Ps2MouseAbsolutePointer"
 
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:92
 #, no-wrap
 msgid "PS/2 mouse driver, 32bit"
-msgstr ""
+msgstr "Driver a 32 bit per mouse PS/2"
 
 #. type: "Ps2MouseDxe-64_description"
 #: Resources/templates/Localizable.strings:93
 #, no-wrap
 msgid "PS/2 mouse driver, 64bit"
-msgstr ""
+msgstr "Driver a 64 bit per mouse PS/2"
 
 #. type: "UsbMouseDxe-32_description"
 #: Resources/templates/Localizable.strings:94
 #, no-wrap
 msgid "USB mouse driver, 32bit"
-msgstr ""
+msgstr "Driver a 32 bit per mouse USB"
 
 #. type: "UsbMouseDxe-64_description"
 #: Resources/templates/Localizable.strings:95
 #, no-wrap
 msgid "USB mouse driver, 64bit"
-msgstr ""
+msgstr "Driver a 64 bit per mouse USB"
 
 #. type: "VBoxExt2-32_description"
 #: Resources/templates/Localizable.strings:96
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 32bit"
-msgstr ""
+msgstr "Driver a 32 bit per accedere a partizioni formattate in ext2/3"
 
 #. type: "VBoxExt2-64_description"
 #: Resources/templates/Localizable.strings:97
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
-msgstr ""
+msgstr "Driver a 64 bit per accedere a partizioni formattate in ext2/3"
 
 #. type: "VBoxExt4-32_description"
 #: Resources/templates/Localizable.strings:98
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 32bit"
-msgstr ""
+msgstr "Driver a 32 bit per accedere a partizioni formattate in ext4"
 
 #. type: "VBoxExt4-64_description"
 #: Resources/templates/Localizable.strings:99
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 64bit"
-msgstr ""
+msgstr "Driver a 64 bit per accedere a partizioni formattate in ext4"
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:100
 #, no-wrap
 msgid "XhciDxe-32_description"
 msgstr ""
+"Driver a 32 bit che aggiunge supporto alle porte USB 3.0 di terze parti."
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
 #, no-wrap
 msgid "XhciDxe-64_description"
 msgstr ""
+"Driver a 64 bit che aggiunge supporto alle porte USB 3.0 di terze parti."
 
 #. type: "CsmVideoDxe-64_description"
 #: Resources/templates/Localizable.strings:102
 #, no-wrap
 msgid "Video driver - provides a wide range of resolutions, 64bit"
 msgstr ""
+"Driver video a 64 bit che permette di sbloccare VBIOS e rende disponibili le "
+"risoluzioni \"nascoste\" per l'avvio UEFI."
 
 #. type: "DataHubDxe-64_description"
 #: Resources/templates/Localizable.strings:103
 #, no-wrap
 msgid "DataHubDxe-64_description"
 msgstr ""
+"Driver a 64 bit che permette di caricare i DataHub con informazioni di stato "
+"copiati dal PEI HOBs, necessario per alcuni BIOS."
 
 #. type: "EmuVariableUefi-64_description"
 #: Resources/templates/Localizable.strings:104
 #, no-wrap
 msgid "EmuVariableUefi-64_description"
-msgstr ""
+msgstr "Driver a 64 bit necessario durante l'avvio UEFI per BIOS Phoenix."
 
 #. type: "OsxAptioFixDrv-64_description"
 #: Resources/templates/Localizable.strings:105
 #, no-wrap
 msgid "Fix for Aptio AMI, 64bit"
 msgstr ""
+"Driver a 64 bit che permette, durante l'avvio UEFI, di riallocare gli "
+"indirizzi per boot.efi e quindi di avviare correttamente OS X Mountain Lion "
+"(10.8). Necessario per i proprietari AMI BIOS Aptio."
 
 #. type: "OsxLowMemFixDrv-64_description"
 #: Resources/templates/Localizable.strings:106
 #, no-wrap
 msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
 msgstr ""
+"Driver a 64 bit che permette, durante l'avvio UEFI, di riallocare gli "
+"indirizzi per boot.efi e quindi di avviare correttamente OS X Mountain Lion "
+"(10.8). E' una variante semplificata di OsxAptioFixDrv (non utilizzare "
+"entrambi insieme)."
 
 #. type: "PartitionDxe-64_description"
 #: Resources/templates/Localizable.strings:107
 #, no-wrap
 msgid "PartitionDxe-64_description"
 msgstr ""
+"Driver a 64 bit che permette di produrre da un dispositivo BlockIO fisico un "
+"dispositivo BlockIO logico. I dispositivi BlockIO logici sono basati sul "
+"formato dei dispositivi con supporti a blocco \"grezzo\" Raw. Attualmente \"CD-"
+"ROM El Torito\" e le partizioni MBR e GPT sono supportati. Necessario per "
+"alcuni BIOS. "
 
 #. type: "Themes_title"
 #: Resources/templates/Localizable.strings:113
@@ -605,7 +623,7 @@ msgstr "Seleziona per installare i temi."
 #: Resources/templates/Localizable.strings:116
 #, no-wrap
 msgid "black_green"
-msgstr "black_green"
+msgstr "Black green"
 
 #. type: "black_green_description"
 #: Resources/templates/Localizable.strings:117
@@ -614,7 +632,7 @@ msgid ""
 "Default black_green theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/black_green."
 msgstr ""
-"Tema di base black_green di Blackosx,\n"
+"Tema di base black green di Blackosx,\n"
 "Installa in /EFI/CLOVER/themes/black_green."
 
 #. type: "AppleStyle_title"
@@ -717,7 +735,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:144
 #, no-wrap
 msgid "simple_gray"
-msgstr "simple_gray"
+msgstr "Simple gray"
 
 #. type: "simple_gray_description"
 #: Resources/templates/Localizable.strings:145
@@ -771,7 +789,9 @@ msgstr "RC scripts su tutti gli altri volumi OSX avviabili"
 #: Resources/templates/Localizable.strings:159
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
-msgstr "Installa tutti gli RC scripts su tutti i volumi interni OSX avviabili diversi dal volume di destinazione."
+msgstr ""
+"Installa tutti gli RC scripts su tutti i volumi interni OSX avviabili oltre "
+"al volume di destinazione."
 
 #. type: "Optional RC Scripts"
 #: Resources/templates/Localizable.strings:160

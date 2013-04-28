@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "POT-Creation-Date: 2013-04-27 17:01+0300\n"
-"PO-Revision-Date: 2013-04-25 08:48+0100\n"
-"Last-Translator: JrCs\n"
+"PO-Revision-Date: 2013-04-28 11:21+0200\n"
+"Last-Translator: dao0312 <lcw000312@naver.com>\n"
 "Language-Team: ko <ko@li.org>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.5\n"
+"X-Generator: Pootle 2.1.6\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -30,7 +30,7 @@ msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:25
 msgid "Developers:"
-msgstr ""
+msgstr "개발자 : "
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:26
@@ -60,7 +60,7 @@ msgstr "%PKGDEV%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:34
 msgid "Supports Fat32, HFS+, ESP."
-msgstr ""
+msgstr "Fat32, HFS+, ESP를 지원합니다"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:35 Resources/templates/Conclusion.html:25
@@ -120,7 +120,7 @@ msgstr ""
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:24
 msgid "But user can change them by config.plist"
-msgstr ""
+msgstr "그러나 사용자들은 config.plist를 수정할 수 있습니다"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:25
@@ -459,7 +459,7 @@ msgstr "CloverEFI 64-bits using Bios Block I/O to access drives"
 #: Resources/templates/Localizable.strings:90
 #, no-wrap
 msgid "PS/2 keyboard driver, 32bit"
-msgstr ""
+msgstr "PS/2 키보드 드라이버(32bit)"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:91
