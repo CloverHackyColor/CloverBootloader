@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "POT-Creation-Date: 2013-04-27 17:01+0300\n"
-"PO-Revision-Date: 2013-04-27 01:40+0200\n"
+"PO-Revision-Date: 2013-04-28 03:04+0200\n"
 "Last-Translator: archintosh <ardr_1109@yahoo.com>\n"
 "Language-Team: id <id@li.org>\n"
 "Language: id\n"
@@ -115,7 +115,8 @@ msgid ""
 "- mostly Clover do automatic detection of hardware and set all properties by "
 "default."
 msgstr ""
-"- Clover mendeteksi hardware secara otomatis dan lmengaturnya langsung."
+"- Clover mendeteksi perangkat keras secara otomatis dan mengaturnya "
+"langsung."
 
 #
 #. type: Content of: <html><body><p><span>
@@ -319,7 +320,10 @@ msgid ""
 "  5. diskutil mount /dev/rdisk9s1"
 msgstr ""
 "Untuk BIOS booting pada mobo BIOS.\n"
-"Gunakan fdisk440 untuk menginstal boot0 ke 440 bits pertama dari MBR tanpa merusak instalasi Windows (kalau ada), kemudian boot0 akan mencari boot1h2 di partisi aktif pertama dalam partisi HFS, atau mencari boot1f32alt didalam partisi aktif pertama Fat32.\n"
+"Gunakan fdisk440 untuk install boot0 ke 440 bits pertama dari MBR tanpa "
+"merusak instalasi Windows kalau ada, kemudian boot0 mencari boot1h2 di "
+"partisi aktif pertama dalam partisi HFS, atau mencari boot1f32alt di partisi "
+"aktif pertama Fat32.\n"
 "Modus ini akan mengaktifkan HFS + Fat32 yang terpilih.\n"
 "Format partisi dalam format Fat32 pada Win atau Mac seperti berikut.\n"
 "  1. Pakai Disk Utility, format dalam format MS-DOS (FAT).\n"
@@ -349,8 +353,12 @@ msgid ""
 "  5. diskutil mount /dev/rdisk9s1"
 msgstr ""
 "Untuk BIOS booting pada motherboard BIOS.\n"
-"Gunakan fdisk440 untuk menginstal boot0hfs ke 440 bits pertama dari MBR tanpa merusak instalasi Windows (kalau ada), kemudian boot0hfs akan mencari boot1h2 di partisi aktif pertama dalam partisi HFS, atau mencari boot1f32alt didalam partisi aktif pertama Fat32.\n"
-"Modus ini tidak mengaktifkan partisi HFS yang terpilih, tapi akan mengaktifkan partisi Fat32 yang terpilih.\n"
+"Gunakan fdisk440 untuk install boot0hfs ke 440 bits pertama dari MBR tanpa "
+"merusak instalasi Windows kalau ada, kemudian boot0hfs mencari boot1h2 di "
+"partisi aktif pertama dalam partisi HFS, atau mencari boot1f32alt di partisi "
+"aktif pertama Fat32.\n"
+"Modus ini tidak mengaktifkan partisi HFS yang terpilih, tapi akan "
+"mengaktifkan partisi Fat32 yang terpilih.\n"
 "Format partisi dalam format Fat32 pada Win atau Mac seperti berikut.\n"
 "  1. Pakai Disk Utility, format dalam format MS-DOS (FAT).\n"
 "  2. diskutil list\n"
@@ -483,109 +491,109 @@ msgstr "CloverEFI 64-bits Bios Block I/O untuk akses drive"
 #: Resources/templates/Localizable.strings:90
 #, no-wrap
 msgid "PS/2 keyboard driver, 32bit"
-msgstr ""
+msgstr "Driver untuk keyboard PS/2, 32bit"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:91
 #, no-wrap
 msgid "Ps2MouseAbsolutePointerDxe-32_description"
-msgstr ""
+msgstr "Ps2MouseAbsolutePointerDxe-32_description"
 
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:92
 #, no-wrap
 msgid "PS/2 mouse driver, 32bit"
-msgstr ""
+msgstr "PS/2 mouse driver, 32bit"
 
 #. type: "Ps2MouseDxe-64_description"
 #: Resources/templates/Localizable.strings:93
 #, no-wrap
 msgid "PS/2 mouse driver, 64bit"
-msgstr ""
+msgstr "PS/2 mouse driver, 64bit"
 
 #. type: "UsbMouseDxe-32_description"
 #: Resources/templates/Localizable.strings:94
 #, no-wrap
 msgid "USB mouse driver, 32bit"
-msgstr ""
+msgstr "USB mouse driver, 32bit"
 
 #. type: "UsbMouseDxe-64_description"
 #: Resources/templates/Localizable.strings:95
 #, no-wrap
 msgid "USB mouse driver, 64bit"
-msgstr ""
+msgstr "USB mouse driver, 64bit"
 
 #. type: "VBoxExt2-32_description"
 #: Resources/templates/Localizable.strings:96
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 32bit"
-msgstr ""
+msgstr "driver untuk ext2/3 dari virtualbox, 32bit"
 
 #. type: "VBoxExt2-64_description"
 #: Resources/templates/Localizable.strings:97
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
-msgstr ""
+msgstr "driver untuk ext2/3 dari virtualbox, 64bit"
 
 #. type: "VBoxExt4-32_description"
 #: Resources/templates/Localizable.strings:98
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 32bit"
-msgstr ""
+msgstr "driver untuk ext4 dari virtualbox, 32bit"
 
 #. type: "VBoxExt4-64_description"
 #: Resources/templates/Localizable.strings:99
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 64bit"
-msgstr ""
+msgstr "driver untuk ext4 dari virtualbox, 64bit"
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:100
 #, no-wrap
 msgid "XhciDxe-32_description"
-msgstr ""
+msgstr "XhciDxe-32_description"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
 #, no-wrap
 msgid "XhciDxe-64_description"
-msgstr ""
+msgstr "XhciDxe-64_description"
 
 #. type: "CsmVideoDxe-64_description"
 #: Resources/templates/Localizable.strings:102
 #, no-wrap
 msgid "Video driver - provides a wide range of resolutions, 64bit"
-msgstr ""
+msgstr "Video driver - mendukung banyak resolusi, 64bit"
 
 #. type: "DataHubDxe-64_description"
 #: Resources/templates/Localizable.strings:103
 #, no-wrap
 msgid "DataHubDxe-64_description"
-msgstr ""
+msgstr "DataHubDxe-64_description"
 
 #. type: "EmuVariableUefi-64_description"
 #: Resources/templates/Localizable.strings:104
 #, no-wrap
 msgid "EmuVariableUefi-64_description"
-msgstr ""
+msgstr "EmuVariableUefi-64_description"
 
 #. type: "OsxAptioFixDrv-64_description"
 #: Resources/templates/Localizable.strings:105
 #, no-wrap
 msgid "Fix for Aptio AMI, 64bit"
-msgstr ""
+msgstr "Fix untuk Aptio AMI, 64bit"
 
 #. type: "OsxLowMemFixDrv-64_description"
 #: Resources/templates/Localizable.strings:106
 #, no-wrap
 msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
-msgstr ""
+msgstr "Varian sederhana OsxAptioFixDrv, 64bit (Jangan pakai bersamaan)"
 
 #. type: "PartitionDxe-64_description"
 #: Resources/templates/Localizable.strings:107
 #, no-wrap
 msgid "PartitionDxe-64_description"
-msgstr ""
+msgstr "PartitionDxe-64_description"
 
 #. type: "Themes_title"
 #: Resources/templates/Localizable.strings:113
