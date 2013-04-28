@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "POT-Creation-Date: 2013-04-27 17:01+0300\n"
-"PO-Revision-Date: 2013-04-28 00:35+0200\n"
+"PO-Revision-Date: 2013-04-28 10:27+0200\n"
 "Last-Translator: oswaldini <oswaldinimtb@gmail.com>\n"
 "Language-Team: pl <pl@li.org>\n"
 "Language: pl\n"
@@ -489,114 +489,117 @@ msgstr "CloverEFI 64 bity BiosBlockIO"
 #: Resources/templates/Localizable.strings:85
 #, no-wrap
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
-msgstr "CloverEFI 64 bity przy użyciu Bios Block I/O do uzyskania dostępu do dysków"
+msgstr ""
+"CloverEFI 64 bity przy użyciu Bios Block I/O do uzyskania dostępu do dysków."
 
 #. type: "Ps2KeyboardDxe-32_description"
 #: Resources/templates/Localizable.strings:90
 #, no-wrap
 msgid "PS/2 keyboard driver, 32bit"
-msgstr "Sterownik klawiatury na PS/2, 32 bity"
+msgstr "Sterownik (32 bitowy) klawiatury na PS/2."
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:91
 #, no-wrap
 msgid "Ps2MouseAbsolutePointerDxe-32_description"
 msgstr ""
-"Sterownik myszy na PS/2, 32 bity (wersja nieopisana przez developerów, "
-"proszę użyć jeśli nie działają pozostałe sterowniki do PS/2)"
+"Sterownik (32 bitowy) myszy na PS/2 (wersja nieopisana przez developerów, "
+"proszę użyć jeśli nie działają pozostałe sterowniki do PS/2)."
 
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:92
 #, no-wrap
 msgid "PS/2 mouse driver, 32bit"
-msgstr "Sterowniki myszy na PS/2, 32 bity"
+msgstr "Sterownik (32 bitowy) myszy na PS/2."
 
 #. type: "Ps2MouseDxe-64_description"
 #: Resources/templates/Localizable.strings:93
 #, no-wrap
 msgid "PS/2 mouse driver, 64bit"
-msgstr "Sterowniki myszy na PS/2, 64 bity"
+msgstr "Sterownik (64-ro bitowy) myszy na PS/2."
 
 #. type: "UsbMouseDxe-32_description"
 #: Resources/templates/Localizable.strings:94
 #, no-wrap
 msgid "USB mouse driver, 32bit"
-msgstr "Sterowniki myszy na USB, 32 bity"
+msgstr "Sterownik (32 bitowy) myszy na USB."
 
 #. type: "UsbMouseDxe-64_description"
 #: Resources/templates/Localizable.strings:95
 #, no-wrap
 msgid "USB mouse driver, 64bit"
-msgstr "Sterowniki myszy na USB, 64 bity"
+msgstr "Sterownik (64-ro bitowy) myszy na USB."
 
 #. type: "VBoxExt2-32_description"
 #: Resources/templates/Localizable.strings:96
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 32bit"
-msgstr "Sterowniki dla formatu ext2/3 z VirtualBox'a, 32 bity"
+msgstr "Sterowniki (32 bitowy) dla formatu ext2/3 z VirtualBox'a."
 
 #. type: "VBoxExt2-64_description"
 #: Resources/templates/Localizable.strings:97
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
-msgstr "Sterowniki dla formatu ext2/3 z VirtualBox'a, 64 bity"
+msgstr "Sterowniki (64-ro bitowy) dla formatu ext2/3 z VirtualBox'a."
 
 #. type: "VBoxExt4-32_description"
 #: Resources/templates/Localizable.strings:98
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 32bit"
-msgstr "Sterowniki dla formatu ext4 z VirtualBox'a, 32 bity"
+msgstr "Sterownik (32 bitowy) dla formatu ext4 z VirtualBox'a."
 
 #. type: "VBoxExt4-64_description"
 #: Resources/templates/Localizable.strings:99
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 64bit"
-msgstr "Sterowniki dla formatu ext4 z VirtualBox'a, 64 bity"
+msgstr "Sterownik (64-ro bitowy) dla formatu ext4 z VirtualBox'a."
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:100
 #, no-wrap
 msgid "XhciDxe-32_description"
-msgstr "Sterownik do obsługi USB w menu Clover'a, 32 bity"
+msgstr "Sterownik (32 bitowy) do obsługi USB w menu Clover'a."
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
 #, no-wrap
 msgid "XhciDxe-64_description"
-msgstr "Sterownik do obsługi USB w menu Clover'a, 64 bity"
+msgstr "Sterownik (64-ro bitowy) do obsługi USB w menu Clover'a."
 
 #. type: "CsmVideoDxe-64_description"
 #: Resources/templates/Localizable.strings:102
 #, no-wrap
 msgid "Video driver - provides a wide range of resolutions, 64bit"
 msgstr ""
-"Sterownik grafiki - aktywuje dodatkowe rozdzielczości w menu Clover'a, 64 "
-"bity"
+"Sterownik grafiki (64-ro bitowy) - aktywuje dodatkowe rozdzielczości w menu "
+"Clover'a."
 
 #. type: "DataHubDxe-64_description"
 #: Resources/templates/Localizable.strings:103
 #, no-wrap
 msgid "DataHubDxe-64_description"
 msgstr ""
-"Sterownik odpowiedzialny za załadowanie statusu DataHub z modułu PEI HOB - "
-"wymagany przy niektórych BIOSach, 64 bity"
+"Sterownik (64-ro bitowy) obligatoryjnie wymagany przez Mac OS X. Zwykle jest "
+"on obecny w BIOSie ale czasami go brakuje. Obecność tego sterownika jest "
+"zawsze bezpieczna."
 
 #. type: "EmuVariableUefi-64_description"
 #: Resources/templates/Localizable.strings:104
 #, no-wrap
 msgid "EmuVariableUefi-64_description"
 msgstr ""
-"Sterownik wymagany dla płyt głównych z BIOSem Phoenix w celu załadowania "
-"informacji z NVRAMu, 64 bity"
+"Sterownik (64-ro bitowy) wymagany dla płyt głównych z BIOSem Phoenix w celu "
+"załadowania informacji z NVRAMu. Należy użyć tylko w przypadku kiedy nie są "
+"ładowane parametry z NVRAM !"
 
 #. type: "OsxAptioFixDrv-64_description"
 #: Resources/templates/Localizable.strings:105
 #, no-wrap
 msgid "Fix for Aptio AMI, 64bit"
 msgstr ""
-"Sterownik odpowiedzialny za realokowanie adresów dla boot.efi w celu "
-"załadowania Mountain Liona (10.8) w trybie UEFI na płytach głównych z "
-"BIOSami AMI Aptio, 64 bity"
+"Sterownik (64-ro bitowy) odpowiedzialny za realokowanie adresów dla boot.efi "
+"w celu załadowania Mountain Liona (10.8) w trybie UEFI na płytach głównych "
+"z BIOSami AMI Aptio."
 
 #. type: "OsxLowMemFixDrv-64_description"
 #: Resources/templates/Localizable.strings:106
@@ -604,15 +607,16 @@ msgstr ""
 msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
 msgstr ""
 "Prostsza wersja sterownika OsxAptioFixDrv, 64 bity (NIE UŻYWAĆ OBU "
-"RÓWNOCZEŚNIE)"
+"RÓWNOCZEŚNIE)."
 
 #. type: "PartitionDxe-64_description"
 #: Resources/templates/Localizable.strings:107
 #, no-wrap
 msgid "PartitionDxe-64_description"
 msgstr ""
-"Sterownik odpowiedzialny za wytwarzanie urządzeń logicznych BlockIO z "
-"fizycznych urządzeń BlockIO, wymagany przez niektóre BIOSy, 64 bity"
+"Sterownik (64-ro bitowy) odpowiedzialny za mapę partycji typu: hybryda "
+"GPT/MBR lub Schemat Partycji Apple. Obecność tego sterownika jest zawsze "
+"bezpieczna."
 
 #. type: "Themes_title"
 #: Resources/templates/Localizable.strings:113
