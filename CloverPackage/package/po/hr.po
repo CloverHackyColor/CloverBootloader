@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "POT-Creation-Date: 2013-04-28 11:52+0300\n"
-"PO-Revision-Date: 2013-04-28 14:11+0200\n"
+"PO-Revision-Date: 2013-04-29 16:52+0200\n"
 "Last-Translator: Xpam.AmAdEuS <miljenkohalapir@outlook.com>\n"
 "Language-Team: hr <hr@li.org>\n"
 "Language: hr\n"
@@ -30,7 +30,7 @@ msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:25
 msgid "Developers:"
-msgstr "Developeri"
+msgstr "Developeri:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:26
@@ -129,7 +129,7 @@ msgstr ""
 #: Resources/templates/Description.html:32
 #: Resources/templates/Description.html:33
 msgid " "
-msgstr " "
+msgstr "Croatian "
 
 #
 #. type: Content of: <html><body><p>
@@ -521,14 +521,14 @@ msgstr "USB upravljački program za miša, 64 bitna verzija"
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 32bit"
 msgstr ""
-"ext2/3 filesystem upravljački program iz  virtualbox-a , 32 bitna verzija"
+"ext2/3 filesystem upravljački program iz virtualbox-a , 32 bitna verzija"
 
 #. type: "VBoxExt2-64_description"
 #: Resources/templates/Localizable.strings:97
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
 msgstr ""
-"ext2/3 filesystem upravljački program iz  virtualbox-a , 64 bitna verzija"
+"ext2/3 filesystem upravljački program iz virtualbox-a , 64 bitna verzija"
 
 #. type: "VBoxExt4-32_description"
 #: Resources/templates/Localizable.strings:98
@@ -577,6 +577,9 @@ msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
 "Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
 msgstr ""
+"Podrška za DataHub protokol,obavezna za MacOSX. \n"
+"Uglavnom bi trebala biti prisutna,u slučaju da je nema pojavit će se poruka "
+"upozorenja. "
 
 #. type: "EmuVariableUefi-64_description"
 #: Resources/templates/Localizable.strings:108
@@ -784,19 +787,19 @@ msgid ""
 "Install all RC scripts on target volume.\n"
 "The target volume must be a bootable OSX system volume."
 msgstr ""
-"Instalira sve  RC skripte na odabrani disk.\n"
+"Instalira sve RC skripte na odabrani disk.\n"
 "Mora biti odabran OSX bootabilni sistemski disk."
 
 #. type: "rc.scripts.on.all.volumes_title"
 #: Resources/templates/Localizable.strings:164
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install all RC scripts on all bootable OSX volumes"
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "Instaliraj sve RC skripte na sve OSX bootabilne diskove"
 
 #. type: "rc.scripts.on.all.volumes_description"
 #: Resources/templates/Localizable.strings:165
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install all RC scripts on all internal bootable OSX volumes."
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "Instalira sve RC skripte na sve interne OSX bootabilne diskove."
@@ -811,4 +814,6 @@ msgstr "Opcionalne RC skripte"
 #: Resources/templates/Localizable.strings:167
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
-msgstr "Isključuje  mDNSResponder spavajuči proxy client service. ovo sprečava da se sistem budi iz sleepa svakih nekoliko sati"
+msgstr ""
+"Isključuje mDNSResponder spavajuči proxy client service.Ovo sprečava da se "
+"sistem budi iz sleepa svakih nekoliko sati"
