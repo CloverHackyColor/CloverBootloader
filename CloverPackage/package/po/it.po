@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "POT-Creation-Date: 2013-04-28 11:52+0300\n"
-"PO-Revision-Date: 2013-04-28 19:19+0200\n"
+"PO-Revision-Date: 2013-04-29 14:19+0200\n"
 "Last-Translator: ErmaC <ErmaC@chameleon.org>\n"
 "Language-Team: it <it@li.org>\n"
 "Language: it\n"
@@ -30,7 +30,7 @@ msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:25
 msgid "Developers:"
-msgstr "Sviluppatori:"
+msgstr "Sviluppatori"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:26
@@ -155,7 +155,7 @@ msgstr "- UUID scritto nel config.plist sarà il medesimo di OS"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:27
 msgid "- SMBIOS will be corrected to standard 2.6"
-msgstr "- Il SMBIOS sarà corretto allo standard 2.6"
+msgstr "- SMBIOS sarà corretto allo standard 2.6"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:28
@@ -180,7 +180,7 @@ msgid ""
 "- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
 "supported cards."
 msgstr ""
-"- Proprietà di iniezione grafica per ATI, NVidia e Intel per una amplia "
+"- Proprietà di iniezione grafica per ATI, Nvidia e Intel per una amplia "
 "gamma di schede supportate."
 
 #
@@ -213,7 +213,7 @@ msgstr "- Generatore CPU turbo, P e C state"
 msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
 msgstr ""
 "- Caricamento delle tabelle ACPI (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, "
-"UEFI...)"
+"UEFI…)"
 
 #
 #. type: Content of: <html><body><p>
@@ -240,7 +240,7 @@ msgstr "- Salva il boot.log in OS e preboot.log dalla GUI premendo F2"
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
 msgid "Installation Complete!"
-msgstr "Installazione Completa!"
+msgstr "Installazione Completata!"
 
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
@@ -468,7 +468,7 @@ msgstr "CloverEFI 64-bit SATA"
 #: Resources/templates/Localizable.strings:83
 #, no-wrap
 msgid "CloverEFI 64-bits using SATA to access drives"
-msgstr "CloverEFI 64-bit che usa SATA per accedere alle unità"
+msgstr "CloverEFI 64-bit che utilizza interfaccia SATA per accedere alle unità"
 
 #. type: "cloverEFI.64.blockio_title"
 #: Resources/templates/Localizable.strings:84
@@ -480,7 +480,10 @@ msgstr "CloverEFI 64-bit BiosBlockIO"
 #: Resources/templates/Localizable.strings:85
 #, no-wrap
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
-msgstr "CloverEFI 64-bit che usa Bios Block I/O per accedere alle unità"
+msgstr ""
+"CloverEFI 64-bit che utilizza Bios Block I/O per accedere alle unità.\n"
+"Necessario anche per accedere ad unità che utilizzano controller RAID, "
+"JMicron, NForce ed altri controller SATA/ATA/SCSI di terze parti."
 
 #. type: "Ps2KeyboardDxe-32_description"
 #: Resources/templates/Localizable.strings:90
@@ -563,6 +566,13 @@ msgid ""
 "Clover may not started with it and you may have wake problem in system.\n"
 "Use with precautions."
 msgstr ""
+"Driver video a 64 bit per l'interfaccia grafica utente (GUI) di Clover che "
+"permette di scegliere più risoluzioni.\n"
+"Basato sul modulo CSM (Compatibility Support Module) dell UEFI BIOS e "
+"richiede che il CSM sia attivato.\n"
+"Clover potrebbe non avviarsi correttamente con questo driver o potrebbe "
+"causare problemi durante la fase di sonno/risveglio!\n"
+"Usare con cautela!"
 
 #. type: "DataHubDxe-64_description"
 #: Resources/templates/Localizable.strings:106
@@ -571,6 +581,11 @@ msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
 "Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
 msgstr ""
+"Driver a 64 bit aggiunge supporto al protocollo DataHub necessario per "
+"MacOSX.\n"
+"Questo protocollo è già presente nella maggior parte dei casi, ma può "
+"mancare in determinate configurazioni. In questo caso si dovrebbe ricevere "
+"un avviso sullo schermo."
 
 #. type: "EmuVariableUefi-64_description"
 #: Resources/templates/Localizable.strings:108
@@ -580,12 +595,18 @@ msgid ""
 "Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed.\n"
 "Use it only if you have a problem without it"
 msgstr ""
+"Driver a 64bit per il supporto delle variabili NVRAM necessarie per MacOSX.\n"
+"La maggior parte dei firmware UEFI utilizzano hardware NVRAM, ma in rari "
+"casi è necessario il driver.\n"
+"Usare solo se si ha un problema senza di questo driver."
 
 #. type: "OsxAptioFixDrv-64_description"
 #: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
 msgstr ""
+"Driver a 64 bit che risolve i problemi di memoria sul firmware UEFI come AMI "
+"Aptio bios."
 
 #. type: "OsxLowMemFixDrv-64_description"
 #: Resources/templates/Localizable.strings:112
@@ -598,6 +619,8 @@ msgstr "Driver a 64 bit che permette, durante l'avvio UEFI, di riallocare gli in
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
 msgstr ""
+"Driver a 64 bit che aggiunge supporto a tabelle di partizione non comuni "
+"come: GPT/MBR ibrido o Mappa Partizione Apple."
 
 #. type: "Themes_title"
 #: Resources/templates/Localizable.strings:119
