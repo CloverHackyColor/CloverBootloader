@@ -880,18 +880,21 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
 #endif
     
-    SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-    SubEntry->me.Title        = L"Boot Mac OS X (32-bit)";
-    SubEntry->me.Tag          = TAG_LOADER;
-    SubEntry->LoaderPath      = Entry->LoaderPath;
-    SubEntry->Volume          = Entry->Volume;
-    SubEntry->VolName         = Entry->VolName;
-    SubEntry->DevicePath      = Entry->DevicePath;
-    SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
-    SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"arch=i386");
-    SubEntry->LoaderType      = OSTYPE_OSX;
-    SubEntry->me.AtClick      = ActionEnter;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    if ((OSType != OSTYPE_COUGAR) &&
+        (OSType != OSTYPE_LYNX)) {
+      SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+      SubEntry->me.Title        = L"Boot Mac OS X (32-bit)";
+      SubEntry->me.Tag          = TAG_LOADER;
+      SubEntry->LoaderPath      = Entry->LoaderPath;
+      SubEntry->Volume          = Entry->Volume;
+      SubEntry->VolName         = Entry->VolName;
+      SubEntry->DevicePath      = Entry->DevicePath;
+      SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
+      SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"arch=i386");
+      SubEntry->LoaderType      = OSTYPE_OSX;
+      SubEntry->me.AtClick      = ActionEnter;
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);      
+    }
     
     if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_SINGLEUSER)) {
       
@@ -911,18 +914,34 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
 #endif
+
+      if ((OSType != OSTYPE_COUGAR) &&
+          (OSType != OSTYPE_LYNX)) {
+        SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+        SubEntry->me.Title        = L"Boot Mac OS X in verbose mode (32-bit)";
+        SubEntry->me.Tag          = TAG_LOADER;
+        SubEntry->LoaderPath      = Entry->LoaderPath;
+        SubEntry->Volume          = Entry->Volume;
+        SubEntry->VolName         = Entry->VolName;
+        SubEntry->DevicePath      = Entry->DevicePath;
+        SubEntry->UseGraphicsMode = FALSE;
+        TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
+        SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"arch=i386");
+        FreePool(TempOptions);
+        SubEntry->LoaderType      = OSTYPE_OSX;
+        SubEntry->me.AtClick      = ActionEnter;
+        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);        
+      }
       
       SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-      SubEntry->me.Title        = L"Boot Mac OS X in verbose mode (32-bit)";
+      SubEntry->me.Title        = L"Boot Mac OS X in safe mode";
       SubEntry->me.Tag          = TAG_LOADER;
       SubEntry->LoaderPath      = Entry->LoaderPath;
       SubEntry->Volume          = Entry->Volume;
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->UseGraphicsMode = FALSE;
-      TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
-      SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"arch=i386");
-      FreePool(TempOptions);
+      SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-x");
       SubEntry->LoaderType      = OSTYPE_OSX;
       SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
