@@ -867,22 +867,20 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   if (LoaderKind == 1) {          // entries for Mac OS X
 #if defined(MDE_CPU_X64)
     SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-    if ((OSType == OSTYPE_COUGAR) ||
-        (OSType == OSTYPE_LYNX)) {      
-      SubEntry->me.Title        = L"Boot Mac OS X";
-    } else {
+    if ((OSType != OSTYPE_COUGAR) &&
+        (OSType != OSTYPE_LYNX)) {      
       SubEntry->me.Title        = L"Boot Mac OS X (64-bit)";
+      SubEntry->me.Tag          = TAG_LOADER;
+      SubEntry->LoaderPath      = Entry->LoaderPath;
+      SubEntry->Volume          = Entry->Volume;
+      SubEntry->VolName         = Entry->VolName;
+      SubEntry->DevicePath      = Entry->DevicePath;
+      SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
+      SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"arch=x86_64");
+      SubEntry->LoaderType      = OSTYPE_OSX;
+      SubEntry->me.AtClick      = ActionEnter;
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);   
     }
-    SubEntry->me.Tag          = TAG_LOADER;
-    SubEntry->LoaderPath      = Entry->LoaderPath;
-    SubEntry->Volume          = Entry->Volume;
-    SubEntry->VolName         = Entry->VolName;
-    SubEntry->DevicePath      = Entry->DevicePath;
-    SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
-    SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"arch=x86_64");
-    SubEntry->LoaderType      = OSTYPE_OSX;
-    SubEntry->me.AtClick      = ActionEnter;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);    
 #endif
     
     if ((OSType != OSTYPE_COUGAR) &&
