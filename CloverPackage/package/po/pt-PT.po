@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "POT-Creation-Date: 2013-04-28 11:52+0300\n"
-"PO-Revision-Date: 2013-04-28 05:07+0200\n"
+"PO-Revision-Date: 2013-04-29 03:57+0200\n"
 "Last-Translator: kyndder <kyndder@icloud.com>\n"
 "Language-Team: pt <pt@li.org>\n"
 "Language: pt-PT\n"
@@ -567,6 +567,13 @@ msgid ""
 "Clover may not started with it and you may have wake problem in system.\n"
 "Use with precautions."
 msgstr ""
+"Driver de Vídeo 64bit para o GUI do Clover possibilitando a escolha de mais "
+"resoluções.\n"
+"Ele é baseado no módulo CSM existente em BIOS UEFI e é necessário que o modo "
+"esteja ativo.\n"
+"O Clover pode não iniciar enquanto usando este driver e ele também pode "
+"provocar problemas com o Sleep.\n"
+"Use com precaução."
 
 #. type: "DataHubDxe-64_description"
 #: Resources/templates/Localizable.strings:106
@@ -575,6 +582,9 @@ msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
 "Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
 msgstr ""
+"Este é o suporte ao protocolo DataHub que é obrigatório no OS X.\n"
+"Normalmente ele já está presente mas algumas vezes pode não estar. Neste "
+"caso você deverá ver um aviso na tela."
 
 #. type: "EmuVariableUefi-64_description"
 #: Resources/templates/Localizable.strings:108
@@ -584,12 +594,18 @@ msgid ""
 "Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed.\n"
 "Use it only if you have a problem without it"
 msgstr ""
+"Driver 64bit para o suporte a variáveis NVRAM necessário para o Mac OS X.\n"
+"Normalmente o boot UEFI usa o Hardware NVRAM mas em alguns casos raros este "
+"driver é necessário.\n"
+"Use-o somente se você tiver problemas quando não o estiver utilizando."
 
 #. type: "OsxAptioFixDrv-64_description"
 #: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
 msgstr ""
+"Driver de 64bit para corrigir problemas de Memória em Firmware UEFI como em "
+"AMI Aptio BIOS."
 
 #. type: "OsxLowMemFixDrv-64_description"
 #: Resources/templates/Localizable.strings:112
@@ -602,6 +618,8 @@ msgstr "Versão simplificada do OsxAptioFixDrv, 64bit (não use os dois juntos)"
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
 msgstr ""
+"Driver de 64bit para suportar Esquemas de Partição não comuns como Híbrido "
+"GPT/MBR ou Apple Partition Map."
 
 #. type: "Themes_title"
 #: Resources/templates/Localizable.strings:119

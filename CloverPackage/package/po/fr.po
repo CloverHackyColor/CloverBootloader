@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-04-25 16:44+0400\n"
-"PO-Revision-Date: 2013-04-25 14:08+0200\n"
+"PO-Revision-Date: 2013-04-28 13:01+0200\n"
 "Last-Translator: JrCs <d2t56xxptp@snkmail.com>\n"
 "Language-Team: fr <fr@li.org>\n"
 "Language: fr\n"
@@ -484,7 +484,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:92
 #, no-wrap
 msgid "PS/2 mouse driver, 32bit"
-msgstr "Driver 32bits pour sours PS/2"
+msgstr "Driver 32bits pour souris PS/2"
 
 #. type: "Ps2MouseDxe-64_description"
 #: Resources/templates/Localizable.strings:93
