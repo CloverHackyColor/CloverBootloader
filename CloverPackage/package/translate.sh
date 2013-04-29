@@ -22,18 +22,23 @@ declare -r CLOVER_VERSION='v2.0'
 declare -r CLOVER_REVISION=$( cat "$PKGROOT"/../../vers.txt )
 
 # ==== CHECK ENVIRONEMENT ====
-msgmerge_bin="/opt/local/bin/msgmerge"
-[[ ! -x "$msgmerge_bin" ]] && msgmerge_bin="$(type -P msgmerge)"
-if [[ -z "$msgmerge_bin" ]]; then
-    echo "" >&2
-    echo "ERROR: you need the gettext utilities to translate the package !" >&2
-    echo "" >&2
-    echo "You can download the package here: http://dropproxy.com/u/33A/Clover.Dev/gettext-0.18.2.1.mpkg" >&2
-    exit 1
+
+GETTEXT_PREFIX=${GETTEXT_PREFIX:-"${HOME}"/src/opt/local}
+
+# Check that the gettext utilities exists
+if [[ ! -x "$GETTEXT_PREFIX/bin/msgmerge" ]]; then
+    msgmerge_bin="$(type -P msgmerge)"
+    if [[ -x "$msgmerge_bin" ]]; then
+        export GETTEXT_PREFIX="${msgmerge_bin%/bin/msgmerge}"
+    else
+        build_gettext_script="$(cd "$PKGROOT"/../..; PWD -P)/buildgettext.sh"
+        echo "GNU gettext utilities is mandatory to build Clover package." >&2
+        echo "Use the $build_gettext_script script to build them." >&2
+        exit 1
+    fi
 fi
 
-msgmerge_bindir=$(dirname "$msgmerge_bin")
-export PATH="${PATH}:$msgmerge_bindir"
+export PATH="${PATH}:${GETTEXT_PREFIX}/bin"
 
 # ========== OPTIONS ===========
 UPDATE_PO=0
