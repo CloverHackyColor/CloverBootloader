@@ -867,7 +867,12 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   if (LoaderKind == 1) {          // entries for Mac OS X
 #if defined(MDE_CPU_X64)
     SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-    SubEntry->me.Title        = L"Boot Mac OS X (64-bit)";
+    if ((OSType == OSTYPE_COUGAR) ||
+        (OSType == OSTYPE_LYNX)) {      
+      SubEntry->me.Title        = L"Boot Mac OS X";
+    } else {
+      SubEntry->me.Title        = L"Boot Mac OS X (64-bit)";
+    }
     SubEntry->me.Tag          = TAG_LOADER;
     SubEntry->LoaderPath      = Entry->LoaderPath;
     SubEntry->Volume          = Entry->Volume;
@@ -877,7 +882,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"arch=x86_64");
     SubEntry->LoaderType      = OSTYPE_OSX;
     SubEntry->me.AtClick      = ActionEnter;
-    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+    AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);    
 #endif
     
     if ((OSType != OSTYPE_COUGAR) &&
@@ -899,20 +904,37 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_SINGLEUSER)) {
       
 #if defined(MDE_CPU_X64)
-      SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-      SubEntry->me.Title        = L"Boot Mac OS X in verbose mode (64-bit)";
-      SubEntry->me.Tag          = TAG_LOADER;
-      SubEntry->LoaderPath      = Entry->LoaderPath;
-      SubEntry->Volume          = Entry->Volume;
-      SubEntry->VolName         = Entry->VolName;
-      SubEntry->DevicePath      = Entry->DevicePath;
-      SubEntry->UseGraphicsMode = FALSE;
-      TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
-      SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"arch=x86_64");
-      FreePool(TempOptions);
-      SubEntry->LoaderType      = OSTYPE_OSX;
-      SubEntry->me.AtClick      = ActionEnter;
-      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      if ((OSType == OSTYPE_COUGAR) ||
+          (OSType == OSTYPE_LYNX)) {        
+        SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+        SubEntry->me.Title        = L"Boot Mac OS X in verbose mode";
+        SubEntry->me.Tag          = TAG_LOADER;
+        SubEntry->LoaderPath      = Entry->LoaderPath;
+        SubEntry->Volume          = Entry->Volume;
+        SubEntry->VolName         = Entry->VolName;
+        SubEntry->DevicePath      = Entry->DevicePath;
+        SubEntry->UseGraphicsMode = FALSE;
+        SubEntry->LoadOptions      = AddLoadOption(Entry->LoadOptions, L"-v");
+        SubEntry->LoaderType      = OSTYPE_OSX;
+        SubEntry->me.AtClick      = ActionEnter;
+        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      } else {        
+        SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+        SubEntry->me.Title        = L"Boot Mac OS X in verbose mode (64bit)";
+        SubEntry->me.Tag          = TAG_LOADER;
+        SubEntry->LoaderPath      = Entry->LoaderPath;
+        SubEntry->Volume          = Entry->Volume;
+        SubEntry->VolName         = Entry->VolName;
+        SubEntry->DevicePath      = Entry->DevicePath;
+        SubEntry->UseGraphicsMode = FALSE;
+        TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
+        SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"arch=x86_64");
+        FreePool(TempOptions);
+        SubEntry->LoaderType      = OSTYPE_OSX;
+        SubEntry->me.AtClick      = ActionEnter;
+        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);        
+      }
+
 #endif
 
       if ((OSType != OSTYPE_COUGAR) &&
@@ -1166,15 +1188,9 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
 
 static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume)
 {
-  // CHAR16            *FileName, *OSIconName;
-  // CHAR16            IconFileName[256];
-  // CHAR16            ShortcutLetter;
-  // UINTN             LoaderKind;
   LOADER_ENTRY      *Entry, *SubEntry;
   REFIT_MENU_SCREEN *SubScreen;
   EFI_STATUS        Status;
-  
-  // FileName = Basename(LoaderPath);
   
   // prepare the menu entry
   Entry = AllocateZeroPool(sizeof(LOADER_ENTRY));
