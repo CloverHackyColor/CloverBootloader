@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "POT-Creation-Date: 2013-04-28 11:52+0300\n"
-"PO-Revision-Date: 2013-04-28 19:30+0200\n"
+"PO-Revision-Date: 2013-04-29 15:06+0200\n"
 "Last-Translator: Maniac <emafrias@gmail.com>\n"
 "Language-Team: es <es@li.org>\n"
 "Language: es\n"
@@ -498,7 +498,7 @@ msgstr "Controlador para teclados PS/2, 32bit"
 #: Resources/templates/Localizable.strings:91
 #, no-wrap
 msgid "Ps2MouseAbsolutePointerDxe-32_description"
-msgstr ""
+msgstr "Controlador 32bit para Ps2MouseAbsolutePointer"
 
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:92
@@ -552,13 +552,13 @@ msgstr "Controlador para sistema de archivos ext4 de VirtualBox, 64bit"
 #: Resources/templates/Localizable.strings:100
 #, no-wrap
 msgid "XhciDxe-32_description"
-msgstr ""
+msgstr "Controlador 32bit que provee soporte para puertos USB 3.0 de terceros"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
 #, no-wrap
 msgid "XhciDxe-64_description"
-msgstr ""
+msgstr "Controlador 64bit que provee soporte para puertos USB 3.0 de terceros"
 
 #. type: "CsmVideoDxe-64_description"
 #: Resources/templates/Localizable.strings:102
