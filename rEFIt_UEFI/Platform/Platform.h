@@ -753,6 +753,9 @@ typedef struct {
   
   // Multi-config
   CHAR16  ConfigName[64];
+  //Drivers
+  INTN    BlackListCount;
+  CHAR16* BlackList[32];
 
   //SMC keys
   CHAR8  RPlt[8];
@@ -891,17 +894,18 @@ typedef struct {
 typedef enum {
   english,  //en
   russian,  //ru
-  german,   //de
   french,   //fr
+  german,   //de
+  dutch,    //nl
   italian,  //it
-  indonesian, //id
-  korean,   //ko
   spanish,  //es
-  polish,   //pl
   portuguese, //pt
+  polish,   //pl
   ukrainian, //ua
   croatian,  //hr
   czech,     //cs
+  indonesian, //id
+  korean,   //ko
   chinese   //cn
   //something else? add, please
 } LANGUAGES;

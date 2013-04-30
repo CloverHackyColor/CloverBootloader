@@ -225,7 +225,23 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"R - Neustart");
         AddMenuInfoLine(&HelpMenu, L"U - Ausschalten");
         break;		
-      case french:
+      case dutch:
+        AddMenuInfoLine(&HelpMenu, L"ESC - Verlaat submenu, Vernieuwen hoofdmenu");
+        AddMenuInfoLine(&HelpMenu, L"F1  - Onderdeel hulp");
+        AddMenuInfoLine(&HelpMenu, L"F2  - preboot.log opslaan (FAT32 only)");
+        AddMenuInfoLine(&HelpMenu, L"F4  - Opslaan oem DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F5  - Opslaan gepatchte DSDT in EFI/CLOVER/ACPI/origin/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F6  - Opslaan VideoBios in EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F10 - Opslaan schermafdruk in EFI/CLOVER/misc/ (FAT32)");
+        AddMenuInfoLine(&HelpMenu, L"F12 - Uitwerpen geselecteerd volume (DVD)");
+        AddMenuInfoLine(&HelpMenu, L"Spatie - Details over geselecteerd menuoptie");
+        AddMenuInfoLine(&HelpMenu, L"Cijfers 1-9 - Snelkoppeling naar menuoptie");
+        AddMenuInfoLine(&HelpMenu, L"A - Menu Over");
+        AddMenuInfoLine(&HelpMenu, L"O - Menu Opties");
+        AddMenuInfoLine(&HelpMenu, L"R - Soft Reset");
+        AddMenuInfoLine(&HelpMenu, L"U - Verlaten");
+        break;
+     case french:
         AddMenuInfoLine(&HelpMenu, L"ESC - Quitter sous-menu, Retour menu principal");
         AddMenuInfoLine(&HelpMenu, L"F1  - Aide");
         AddMenuInfoLine(&HelpMenu, L"F2  - Enregistrer preboot.log (FAT32 only)");
@@ -2022,7 +2038,8 @@ static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OU
   UINTN                   DriversArrSize;
   UINTN                   DriversArrNum;
   EFI_HANDLE              *DriversArr;
-  
+  INTN                    i;
+  BOOLEAN                 Skip;
   
   DriversArrSize = 0;
   DriversArrNum = 0;
@@ -2031,9 +2048,18 @@ static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OU
   // look through contents of the directory
   DirIterOpen(SelfRootDir, Path, &DirIter);
   while (DirIterNext(&DirIter, 2, L"*.EFI", &DirEntry)) {
-    if (DirEntry->FileName[0] == '.')
-      continue;   // skip this
-    
+    Skip = (DirEntry->FileName[0] == '.');
+//    if (DirEntry->FileName[0] == '.')
+//      continue;   // skip this    
+    for (i=0; i<gSettings.BlackListCount; i++) {
+      if (StrStr(DirEntry->FileName, gSettings.BlackList[i]) != NULL) {
+        Skip = TRUE;   // skip this
+        break;
+      }
+    }
+    if (Skip) {
+      continue;
+    }
     UnicodeSPrint(FileName, 512, L"%s\\%s", Path, DirEntry->FileName);
     Status = StartEFIImage(FileDevicePath(SelfLoadedImage->DeviceHandle, FileName),
                            L"", DirEntry->FileName, DirEntry->FileName, NULL, &DriverHandle);
@@ -2078,6 +2104,13 @@ static VOID ScanDriverDir(IN CHAR16 *Path, OUT EFI_HANDLE **DriversToConnect, OU
   if (DriversToConnectNum != NULL && DriversToConnect != NULL) {
     *DriversToConnectNum = DriversArrNum;
     *DriversToConnect = DriversArr;
+  }
+//release memory for BlackList
+  for (i=0; i<gSettings.BlackListCount; i++) {
+    if (gSettings.BlackList[i]) {
+      FreePool(gSettings.BlackList[i]);
+      gSettings.BlackList[i] = NULL;
+    }
   }
 }
 
@@ -2284,11 +2317,11 @@ UINT8* getCurrentEdid (VOID)
 
 VOID PatchVideoBios(UINT8 *Edid)
 {
-  
+
   if (gSettings.PatchVBiosBytesCount > 0 && gSettings.PatchVBiosBytes != NULL) {
     VideoBiosPatchBytes(gSettings.PatchVBiosBytes, gSettings.PatchVBiosBytesCount);
   }
-  
+
   if (gSettings.PatchVBios) {
     VideoBiosPatchNativeFromEdid(Edid);
   }
