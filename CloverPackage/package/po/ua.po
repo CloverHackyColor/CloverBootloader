@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "POT-Creation-Date: 2013-04-25 13:54+0300\n"
-"PO-Revision-Date: 2013-04-29 10:53+0200\n"
-"Last-Translator: Anonymous Pootle User\n"
+"PO-Revision-Date: 2013-04-30 08:16+0200\n"
+"Last-Translator: AlexKord <alexkord@lan.com.ua>\n"
 "Language-Team: ru <ru@li.org>\n"
 "Language: ua\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
 msgid "Clover EFI"
-msgstr "Clover EFI"
+msgstr "Кловер EFI"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:22 Resources/templates/Conclusion.html:20
@@ -30,7 +30,7 @@ msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:25
 msgid "Developers:"
-msgstr ""
+msgstr "Розробники:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:26
@@ -40,7 +40,7 @@ msgstr "%DEVELOP%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:28
 msgid "Source code credits to:"
-msgstr ""
+msgstr "Першоджерела:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:29
@@ -50,7 +50,7 @@ msgstr "%CREDITS%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:31
 msgid "Package credits to:"
-msgstr ""
+msgstr "Інсталятор зробили:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:32
@@ -60,18 +60,18 @@ msgstr "%PKGDEV%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:34
 msgid "Supports Fat32, HFS+, ESP."
-msgstr ""
+msgstr "Підтримка FAT32, HFS+, ESP."
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:35 Resources/templates/Conclusion.html:25
 msgid "Copyright © %CPRYEAR%"
-msgstr "Copyright © %CPRYEAR%"
+msgstr "Авторське Право © %CPRYEAR%"
 
 #
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:17
 msgid "Clover v2"
-msgstr "Clover v2"
+msgstr "Кловер версія 2"
 
 #
 #. type: Content of: <html><body><p>
@@ -79,15 +79,15 @@ msgstr "Clover v2"
 msgid ""
 "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
 msgstr ""
-"це UEFI завантажувач з відкритими кодами, заснований на зразках від "
-"Tianocore EDK2, і використовує технології проектів: Chameleon, rEFIt, XNU, "
-"VirtualBox."
+"Це УЕФІ завантажувач з відкритими вихідними кодами, заснований на зразках "
+"від Tianocore EDK2, і використовує технології проектів: Chameleon, rEFIt, "
+"XNU, VirtualBox."
 
 #
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:18
 msgid "The main is EDK2 latest revision."
-msgstr "The main is EDK2 latest revision."
+msgstr "В основі EDK2, з урахуванням останніх оновлень."
 
 #
 #. type: Content of: <html><body><p><b>
@@ -99,7 +99,7 @@ msgstr "Основні можливості:"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:21
 msgid "- boot into 10.4 - 10.8 OSX, Windows EFI and Linux EFI"
-msgstr "- завантаження систем OS X від 10.4 до 10.8, Windows EFI та Linux EFI"
+msgstr "- завантаження систем 10.4 - 10.8 OSX, Windows EFI та Linux EFI"
 
 #
 #. type: Content of: <html><body><p>
@@ -108,8 +108,8 @@ msgid ""
 "- It's EFI bootloader provides RuntimeServices for OS that impossible for "
 "Legacy Bootloaders"
 msgstr ""
-"- Clover EFI надає системі Runtime Services, що неможливо для завантажувачів "
-"на основі BIOS."
+"- Clover EFI надає системі RuntimeServices, що неможливо було колись для "
+"завантажувачів на основі БІОС."
 
 #
 #. type: Content of: <html><body><p>
@@ -118,8 +118,8 @@ msgid ""
 "- mostly Clover do automatic detection of hardware and set all properties by "
 "default."
 msgstr ""
-"- в основному Clover автоматично визначає склад комп'ютера і виставляє "
-"потрібні властивості за замовчанням,"
+"- переважно Clover автоматично визначає склад комп'ютера і вказує потрібні "
+"властивості за замовчуванням,"
 
 #
 #. type: Content of: <html><body><p><span>
@@ -137,45 +137,47 @@ msgstr " "
 #: Resources/templates/Description.html:24
 msgid "But user can change them by config.plist"
 msgstr ""
-"але при бажанні користувач може встановити свої властивості в config.plist"
+"Але при бажанні користувач в змозі встановити свої властивості в "
+"config.plist"
 
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:25
 msgid "- with Clover you may restart into other OS from Startup Disk prefPane"
 msgstr ""
-"- ви маєте можливість використовувати перезавантаження через Системні "
-"налаштування-> Стартовий Диск"
+"- ви маєте можливість використовувати перезавантаження в інші ОС, завдяки "
+"Системі Налаштування ->Завантажувальний Диск"
 
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:26
 msgid "- UUID written into config.plist will be the same as in OS"
 msgstr ""
-"- ви можете вказати свій UUID в config.plist, і будете впевнені, що саме "
-"його побачить система"
+"- вкажіть UUID вашого комп'ютера в config.plist, і ОС буде його "
+"використовувати "
 
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:27
 msgid "- SMBIOS will be corrected to standard 2.6"
-msgstr "- проводиться поправка таблиці SMBIOS до стандарту 2.6"
+msgstr "- виконується виправлення таблиці SMBIOS до стандарту 2.6"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:28
 msgid "- ACPI will be corrected to standard 4.0."
-msgstr "- проводиться поправка таблиць ACPI до стандарту 4.0."
+msgstr "- виконується виправлення таблиць ACPI до стандарту 4.0."
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:29
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr "Можна завантажити свою DSDT або з кореня завантажуваної системи,"
+msgstr ""
+"DSDT вашого ПК використовується з завантажувального розділу або з папки EFI"
 
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:30
 msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
-msgstr "- коректування проблем рестарту та сну/пробудження"
+msgstr "- коригування проблем рестарту і сну/пробудження та значення PCIRootUID"
 
 #
 #. type: Content of: <html><body><p>
@@ -183,45 +185,47 @@ msgstr "- коректування проблем рестарту та сну/�
 msgid ""
 "- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
 "supported cards."
-msgstr "- автоматичне підключення відеокарт від ATI, NVidia і Intel."
+msgstr "- Графік Інжектор для під'єднання відеокарт від: ATI, NVidia та Intel."
 
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:32
 msgid "Also customizable."
-msgstr "з можливістю налаштування"
+msgstr "Також з можливостями налаштування."
 
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:33
 msgid "- USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
-msgstr "- коректування проблем USB (до стандарту 3.0)"
+msgstr "- коригування USB1.0-USB3.0(LegacyOff, Ownership, Builtin, clock-id)"
 
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:34
 msgid "- HDA injector and Ethernet builtin injector"
-msgstr "- інжекція властивостей звукової та мережевої карт."
+msgstr "- Інжекція властивостей Аудіо та Мережевих карт."
 
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:35
 msgid "- CPU turbo and P- and C-states generator"
-msgstr "- управління живленням і частотами ЦПУ"
+msgstr "- керування живленням частотами ЦП (CPU: Turbo, P/C-states)"
 
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:36
 msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
 msgstr ""
-"- завантаження додаткових таблиць ACPI (SSDT-xx, APIC, BOOT, SLIC, SLIT, "
+"- довантаження додаткових таблиць ACPI (SSDT-xx, APIC, BOOT, SLIC, SLIT, "
 "SRAT, UEFI...)"
 
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:37
 msgid "- extra kexts loading and security mode for FireWire"
-msgstr "- завантаження додаткових kexts, встановлення режиму FireWire"
+msgstr ""
+"- довантаження додаткових драйверів (kexts), встановлення безпечного режиму "
+"для FireWire"
 
 #
 #. type: Content of: <html><body><p>
@@ -230,39 +234,39 @@ msgid ""
 "- default boot after timeout, customizable GUI , and saving screenshots from "
 "GUI typing F10"
 msgstr ""
-"- автозавантаження після паузи, налаштування зовнішнього вигляду (знімок "
-"екрану можно зберегти у файл по F10),"
+"- автозавантаження після затримки, GUI - налагоджування зовнішнього вигляду "
+"(якщо потрібно зберегти в файл, по F10),"
 
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:39
 msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
 msgstr ""
-"- збереження звітів як у системі, так і до запуску системи (по F2) для "
+"- збереження звітів: в ОС - boot.log, в GUI - preboot.log натиснути F2 для "
 "діагностики проблем."
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
 msgid "Installation Complete!"
-msgstr ""
+msgstr "Встановлення закінчено!"
 
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
 #, no-wrap
 msgid "Install for UEFI motherboards"
-msgstr "Install for UEFI motherboards"
+msgstr "Встановити завантаження для UEFI материнськiх плат"
 
 #. type: "UEFI.only_description"
 #: Resources/templates/Localizable.strings:5
 #, no-wrap
 msgid "Install Clover to be used with UEFI motherboards only."
-msgstr "Install Clover to be used with UEFI motherboards only."
+msgstr "Встановити Clover тільки для UEFI материнськіх плат."
 
 #. type: "Target.ESP_title"
 #: Resources/templates/Localizable.strings:10
 #, no-wrap
 msgid "Install Clover in the ESP"
-msgstr "Встановити Clover на ESP"
+msgstr "Встановити Clover на EFI розділ (ESP)"
 
 #. type: "Target.ESP_description"
 #: Resources/templates/Localizable.strings:11
@@ -276,23 +280,19 @@ msgid ""
 "diskutil list\n"
 "newfs_msdos -v EFI -F 32 /dev/rdisk9s1"
 msgstr ""
-"Встановлює Clover на ESP (системний прихований розділ EFI) на обраному диску\n"
+"Встановити Кловер на ESP (EFI System Partition) вказаного тому\n"
 "\n"
-"Спершу треба розмітити ESP в Fat32 (рекомендовано) чи HFS.\n"
+"Розділ ESP повинен бути відформатований в FAT32 (так воно і є спочатку)\n"
 "\n"
-"Для розмітки у Fat32 використовуйте команди у терминалі:\n"
+"Якщо ні, тоді з Терміналу зробити наступні накази:\n"
 "diskutil list\n"
-"newfs_msdos -v EFI -F 32 /dev/rdisk9s1\n"
-"\n"
-"Для розмітки у HFS використовуйте команди у терминалі:\n"
-"diskutil list\n"
-"newfs_hfs -v EFI /dev/rdisk9s1"
+"newfs_msdos -v EFI -F 32 /dev/rdisk9s1"
 
 #. type: "Bootloader_title"
 #: Resources/templates/Localizable.strings:23
 #, no-wrap
 msgid "Bootloader"
-msgstr "Bootloader"
+msgstr "Завантажувач"
 
 #. type: "Bootloader_description"
 #: Resources/templates/Localizable.strings:24
@@ -303,17 +303,17 @@ msgid ""
 "boot1 (On the partition's boot-sector) to finding boot2.\n"
 "boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgstr ""
-"Clover EFI потребує трьох основних файлів (спрощено)\n"
+"Clover EFI вимагає наявності трьох головних файлів. (спрощено)\n"
 "boot0 (головний завантажувальний запис) відповідає за завантаження boot1.\n"
 "boot1 (завантажувальний запис розділу) для завантаження boot.\n"
-"boot  (у корні обраного розділу) для пошуку /EFI/BOOT/CLOVERIA32.efi або "
+"boot  (в корені обраного розділу) для пошуку /EFI/CLOVER/CLOVERIA32.efi або "
 "CLOVERX64.efi"
 
 #. type: "boot0_title"
 #: Resources/templates/Localizable.strings:29
 #, no-wrap
 msgid "BIOS MBR boot0 (HFS+Fat32)"
-msgstr "BIOS завантаження за допомогою boot0"
+msgstr "BIOS MBR завантаження завдяки boot0 (HFS+Fat32)"
 
 #. type: "boot0_description"
 #: Resources/templates/Localizable.strings:30
@@ -330,10 +330,9 @@ msgid ""
 "  5. diskutil mount /dev/rdisk9s1"
 msgstr ""
 "Встановити boot0 який шукає активний розділ в MBR або перший "
-"завантажувальний розділ в GPT. Обраний розділ в MBR стане активним\n"
-"Розділ FAT32 повинен бути попередньо відформатований таким чином:\n"
-"  1. Стерти як MS-DOS (FAT) за допомогою Disk Utility.\n"
-"Потім ввесті наступні команди у терміналі:\n"
+"завантажувальний розділ в GPT. Обраний розділ в MBR буде активним\n"
+"Розділ FAT32 повинен бути спершу відформатований таким чином:\n"
+"  1. Зiтерти як MS-DOS (FAT) за допомогою Disk Utility.\n"
 "  2. diskutil list\n"
 "  3. diskutil unmount /dev/rdisk9s1\n"
 "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
@@ -343,7 +342,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:40
 #, no-wrap
 msgid "BIOS MBR boot0hfs (HFS+Fat32)"
-msgstr "BIOS завантаження за допомогою boot0hfs"
+msgstr "BIOS MBR завантаження завдяки boot0hfs (HFS+Fat32)"
 
 #. type: "boot0hfs_description"
 #: Resources/templates/Localizable.strings:41
@@ -364,7 +363,7 @@ msgstr "Встановити boot0hfs який запускає boot1h з пер
 #: Resources/templates/Localizable.strings:51
 #, no-wrap
 msgid "Don't update MBR and PBR sectors"
-msgstr "Don't update MBR and PBR sectors"
+msgstr "Не оновлювати сектори MBR та PBR"
 
 #. type: "bootNo_description"
 #: Resources/templates/Localizable.strings:52
@@ -374,15 +373,15 @@ msgid ""
 "Usefull for UEFI motherboards that don't need bootloader files.\n"
 "Can also be use if you don't want to upgrade MBR or PBR sectors."
 msgstr ""
-"Don't install any bootloader (boot0X, boot1X).\n"
-"Usefull for UEFI motherboards that don't need bootloader files.\n"
-"Can also be use if you don't want to upgrade MBR or PBR sectors."
+"Не встановлювати сектори для BIOS завантаження (boot0X, boot1X).\n"
+"Має сенс якщо у вас тільки UEFI завантаження,\n"
+"А також, якщо ви не маєте потреби змінювати існуючі сектори."
 
 #. type: "AltBoot_title"
 #: Resources/templates/Localizable.strings:56
 #, no-wrap
 msgid "Use alternative booting PBR"
-msgstr "Use alternative booting PBR"
+msgstr "Використовувати PBR з обраним завантаженням"
 
 #. type: "AltBoot_description"
 #: Resources/templates/Localizable.strings:57
@@ -391,8 +390,10 @@ msgid ""
 "Install alternative booting PBR with choice of boot with a key pressed.\n"
 "File to boot = boot{keypressed}"
 msgstr ""
-"Install alternative booting PBR with choice of boot with a key pressed.\n"
-"File to boot = boot{keypressed}"
+"Встановити альтернативний сектор boot1 який дає змогу\n"
+"вибрати різні завантажувачі (boot1, boot3, boot7) натисканням клавіші в "
+"затримці 2 секунд.\n"
+"Завантажити файл boot{цифра}"
 
 #. type: "boot32_title"
 #: Resources/templates/Localizable.strings:61
@@ -410,9 +411,9 @@ msgid ""
 "Press key 3 to boot3 = Clover EFI 32bit boot,\n"
 "Press key 6 to boot6 = Clover EFI 64bit boot."
 msgstr ""
-"Встановити файли та поставити 32 біта за замовчуванням.\n"
+"Встановити файли та призначити 32 біт за замовчуванням.\n"
 "За замовчуванням завантажується boot = Clover 32 після 2 секунд очікування "
-"клавіатури.\n"
+"на клавіатурі. \n"
 "Клавіша 1 для boot1 = Chameleon boot,\n"
 "Клавіша 3 для boot3 = Clover EFI 32bit boot,\n"
 "Клавіша 6 для boot6 = Clover EFI 64bit boot."
@@ -433,9 +434,9 @@ msgid ""
 "Press key 3 to boot3 = Clover EFI 32bit boot,\n"
 "Press key 6 to boot6 = Clover EFI 64bit boot."
 msgstr ""
-"Встановити файли та поставити 64 біта за замовчуванням.\n"
+"Встановити файли та призначити 64 біт за замовчуванням.\n"
 "За замовчуванням завантажується boot = Clover 64 після 2 секунд очікування "
-"клавіатури.\n"
+"на клавіатурі. \n"
 "Клавіша 1 для boot1 = Chameleon boot,\n"
 "Клавіша 3 для boot3 = Clover EFI 32bit boot,\n"
 "Клавіша 6 для boot6 = Clover EFI 64bit boot."
@@ -444,56 +445,58 @@ msgstr ""
 #: Resources/templates/Localizable.strings:78
 #, no-wrap
 msgid "CloverEFI"
-msgstr "CloverEFI"
+msgstr "Кловер EFI"
 
 #. type: "CloverEFI_description"
 #: Resources/templates/Localizable.strings:79
 #, no-wrap
 msgid "Select the version of CloverEFI to install."
-msgstr "Select the version of CloverEFI to install."
+msgstr "Вибрати варіант встановлення CloverEFI."
 
 #. type: "cloverEFI.32_description"
 #: Resources/templates/Localizable.strings:80
 #: Resources/templates/Localizable.strings:81
 #, no-wrap
 msgid "CloverEFI 32-bits"
-msgstr "CloverEFI 32-bits"
+msgstr "Кловер EFI 32-біту"
 
 #. type: "cloverEFI.64.sata_title"
 #: Resources/templates/Localizable.strings:82
 #, no-wrap
 msgid "CloverEFI 64-bits SATA"
-msgstr "CloverEFI 64-bits SATA"
+msgstr "Кловер EFI 64-біту SATA"
 
 #. type: "cloverEFI.64.sata_description"
 #: Resources/templates/Localizable.strings:83
 #, no-wrap
 msgid "CloverEFI 64-bits using SATA to access drives"
-msgstr "CloverEFI 64-bits using SATA to access drives"
+msgstr "CloverEFI 64-bits із використанням SATA драйверу "
 
 #. type: "cloverEFI.64.blockio_title"
 #: Resources/templates/Localizable.strings:84
 #, no-wrap
 msgid "CloverEFI 64-bits BiosBlockIO"
-msgstr "CloverEFI 64-bits BiosBlockIO"
+msgstr "Кловер EFI 64-біту із BiosBlockIO"
 
 #. type: "cloverEFI.64.blockio_description"
 #: Resources/templates/Localizable.strings:85
 #, no-wrap
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
-msgstr "CloverEFI 64-bits using Bios Block I/O to access drives"
+msgstr ""
+"CloverEFI 64-bits із використанням Bios Block I/O драйверу для доступу до "
+"дисків"
 
 #. type: "Themes_title"
 #: Resources/templates/Localizable.strings:91
 #, no-wrap
 msgid "Themes"
-msgstr "Теми завантажувача"
+msgstr "Оформлення Тем"
 
 #. type: "Themes_description"
 #: Resources/templates/Localizable.strings:92
 #, no-wrap
 msgid "Select to install themes."
-msgstr "Виберіть теми для встановлення."
+msgstr "Виберіть для встановлення теми."
 
 #. type: "black_green_title"
 #: Resources/templates/Localizable.strings:94
@@ -508,14 +511,14 @@ msgid ""
 "Default black_green theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/black_green."
 msgstr ""
-"Черна та зелена тема від Blackosx,\n"
+"Чорно-зелена тема від Blackosx,\n"
 "Встановити в /EFI/CLOVER/themes/black_green."
 
 #. type: "AppleStyle_title"
 #: Resources/templates/Localizable.strings:98
 #, no-wrap
 msgid "AppleStyle"
-msgstr "AppleStyle"
+msgstr "Стиль Apple"
 
 #. type: "AppleStyle_description"
 #: Resources/templates/Localizable.strings:99
@@ -524,7 +527,7 @@ msgid ""
 "AppleStyle theme from Eps,\n"
 "Install to /EFI/CLOVER/themes/AppleStyle."
 msgstr ""
-"AppleStyle тема від Eps,\n"
+"Тема в стилі Apple від Eps,\n"
 "Встановити в /EFI/CLOVER/themes/AppleStyle."
 
 #. type: "mrengles_title"
@@ -540,7 +543,7 @@ msgid ""
 "mrengles theme from mrengles,\n"
 "Install to /EFI/CLOVER/themes/mrengles."
 msgstr ""
-"mrengles тема від mrengles,\n"
+"Тема mrengles від Містера Енгельса,\n"
 "Встановити в /EFI/CLOVER/themes/mrengles."
 
 #. type: "iClover_title"
@@ -556,7 +559,7 @@ msgid ""
 "Grey style theme by winlog,\n"
 "Install to /EFI/CLOVER/themes/iClover."
 msgstr ""
-"Тема в сiрих тонах вiд winlog,\n"
+"Тема в сірих відтінках від winlog,\n"
 "Встановити в /EFI/CLOVER/themes/iClover."
 
 #. type: "buttons_title"
@@ -572,14 +575,14 @@ msgid ""
 "Buttons theme from Trauma,\n"
 "Install to /EFI/CLOVER/themes/buttons."
 msgstr ""
-"Тема з клавішами від Trauma,\n"
+"Клавіші від Trauma,\n"
 "Встановити в /EFI/CLOVER/themes/buttons."
 
 #. type: "hellfire_title"
 #: Resources/templates/Localizable.strings:114
 #, no-wrap
 msgid "hellfire"
-msgstr "Вогонь"
+msgstr "Пекельний Вогонь"
 
 #. type: "hellfire_description"
 #: Resources/templates/Localizable.strings:115
@@ -588,7 +591,7 @@ msgid ""
 "Hellfire theme from lllevelll,\n"
 "Install to /EFI/CLOVER/themes/hellfire."
 msgstr ""
-"Вогняна тема від lllevelll,\n"
+"Пекельна тема від lllevelll,\n"
 "Встановити в /EFI/CLOVER/themes/hellfire."
 
 #. type: "metal_title"
@@ -604,14 +607,14 @@ msgid ""
 "The original metal theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/metal."
 msgstr ""
-"Метал від Slice,\n"
+"Нержавійка від Slice,\n"
 "Встановити в /EFI/CLOVER/themes/metal."
 
 #. type: "simple_gray_title"
 #: Resources/templates/Localizable.strings:122
 #, no-wrap
 msgid "simple_gray"
-msgstr "Сіренька"
+msgstr "Проста Сіра"
 
 #. type: "simple_gray_description"
 #: Resources/templates/Localizable.strings:123
@@ -620,14 +623,14 @@ msgid ""
 "Simple_gray theme from hijeane,\n"
 "Install to /EFI/CLOVER/themes/simple_gray."
 msgstr ""
-"Проста сіренька тема від hijeane,\n"
+"Проста сіра тема від hijeane,\n"
 "Встановити в /EFI/CLOVER/themes/simple_gray."
 
 #. type: "wooden_title"
 #: Resources/templates/Localizable.strings:126
 #, no-wrap
 msgid "wooden"
-msgstr "Дерев'яшки"
+msgstr "Деревинки"
 
 #. type: "wooden_description"
 #: Resources/templates/Localizable.strings:127
@@ -636,14 +639,14 @@ msgid ""
 "Wooden theme from iROOTa,\n"
 "Install to /EFI/CLOVER/themes/wooden."
 msgstr ""
-"Дерев'яшки вiд iROOTa,\n"
+"Деревинки від iROOTa,\n"
 "Встановити в /EFI/CLOVER/themes/wooden."
 
 #. type: "rc.scripts.on.target_title"
 #: Resources/templates/Localizable.strings:133
 #, no-wrap
 msgid "Install RC scripts on target volume"
-msgstr "Встановити скрипти RC на обраний диск"
+msgstr "Встановити системні RC скріпти на головний розділ"
 
 #. type: "rc.scripts.on.target_description"
 #: Resources/templates/Localizable.strings:134
@@ -652,33 +655,35 @@ msgid ""
 "Install all RC scripts on target volume.\n"
 "The target volume must be a bootable OSX system volume."
 msgstr ""
-"Встановлює всі скрипти RC на обраний диск.\n"
-"Обраний диск повинен бути завантажувальним диском системи OSX."
+"Встановити всі RC скріпти на цільовий розділ.\n"
+"Розділ повинен бути завантажувальний в OSX."
 
 #. type: "rc.scripts.on.all.volumes_title"
 #: Resources/templates/Localizable.strings:136
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install all RC scripts on all bootable OSX volumes"
 msgid "Install all RC scripts on all other bootable OSX volumes"
-msgstr "Встановити скрипти RC на всі завантажувальні диски OSX"
+msgstr "Встановити скріпти RC на всі інші завантажувальні розділи OSX"
 
 #. type: "rc.scripts.on.all.volumes_description"
 #: Resources/templates/Localizable.strings:137
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install all RC scripts on all internal bootable OSX volumes."
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
-msgstr "Встанвлює скрипти RC на всі внутрішні завантажувальні диски OSX"
+msgstr ""
+"Встановити скріпти RC на всі внутрішні завантажувальні розділи OSX, крім "
+"цільового розділу"
 
 #. type: "Optional RC Scripts"
 #: Resources/templates/Localizable.strings:138
 #, no-wrap
 msgid "Optional RC Scripts"
-msgstr "Вибіркові скріпти RC"
+msgstr "Додаткові RC скріпти"
 
 #. type: "disable_sleep_proxy_client_description"
 #: Resources/templates/Localizable.strings:139
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr ""
-"Забороняється служба mDNSResponder sleep proxy client. Це може допомогти "
-"системі не просинатись кожну годину"
+"Заборонити mDNSResponder sleep proxy client service. Це запобігає "
+"пробудження системи кожної години"
