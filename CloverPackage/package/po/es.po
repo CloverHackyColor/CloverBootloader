@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "POT-Creation-Date: 2013-05-01 11:54+0300\n"
-"PO-Revision-Date: 2013-04-30 23:52+0000\n"
+"PO-Revision-Date: 2013-05-01 16:49+0000\n"
 "Last-Translator: Maniac <emafrias@gmail.com>\n"
 "Language-Team: es <es@li.org>\n"
 "Language: es\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1367365976.0\n"
+"X-POOTLE-MTIME: 1367426978.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -293,7 +293,7 @@ msgstr "Gestor de arranque"
 
 #. type: "Bootloader_description"
 #: Resources/templates/Localizable.strings:24
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Clover EFI requires three essential files. (in simple terms)\n"
 #| "boot0 (On the drive's MBR) responsible for loading boot1.\n"
@@ -308,7 +308,8 @@ msgstr ""
 "Clover EFI requiere tres archivos esenciales. (en términos simples)\n"
 "boot0 (En el MBR del disco) responsable de cargar boot1.\n"
 "boot1 (En el sector de arranque de la partición) para localizar boot2.\n"
-"boot2 (En el directorio raíz de la partición) para cargar /EFI/BOOT/CLOVERIA32.efi o CLOVERX64.efi, el kernel etc."
+"boot2 (En el directorio raíz de la partición) para cargar "
+"/EFI/CLOVER/CLOVERIA32.efi o CLOVERX64.efi, el kernel, etc."
 
 #. type: "boot0_title"
 #: Resources/templates/Localizable.strings:29
@@ -490,8 +491,8 @@ msgstr "CloverEFI 64-bits BiosBlockIO"
 #, no-wrap
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
 msgstr ""
-"CloverEFI 64-bits para acceder a unidades de disco con controladores RAID, JMicron, NForce\n"
-"y controladores alternativos SATA/ATA/SCSI de terceros"
+"CloverEFI 64-bits para acceder a unidades de disco con controladores RAID, "
+"JMicron, NForce y controladores alternativos SATA/ATA/SCSI de terceros"
 
 #. type: "Ps2KeyboardDxe-32_description"
 #: Resources/templates/Localizable.strings:90
@@ -501,10 +502,10 @@ msgstr "Controlador para teclados PS/2, 32bit"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:91
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "PS/2 keyboard driver, 32bit"
 msgid "PS/2 trackpad driver, 32bit"
-msgstr "Controlador para teclados PS/2, 32bit"
+msgstr "Controlador para trackpads PS/2, 32bit"
 
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:92
@@ -556,17 +557,17 @@ msgstr "Controlador para sistema de archivos ext4 de VirtualBox, 64bit"
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:100
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "USB mouse driver, 32bit"
 msgid "USB 3.0 driver, 32bit"
-msgstr "Controlador para ratones USB, 32bit"
+msgstr "Controlador USB 3.0, 32bit"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "USB mouse driver, 64bit"
 msgid "USB 3.0 driver, 64bit"
-msgstr "Controlador para ratones USB, 64bit"
+msgstr "Controlador USB 3.0, 64bit"
 
 #. type: "CsmVideoDxe-64_description"
 #: Resources/templates/Localizable.strings:102
