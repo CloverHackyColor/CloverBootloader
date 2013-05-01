@@ -8,14 +8,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "POT-Creation-Date: 2013-04-28 11:52+0300\n"
-"PO-Revision-Date: 2013-04-26 17:26+0200\n"
+"PO-Revision-Date: 2013-05-01 05:24+0000\n"
 "Last-Translator: crazybirdy <>\n"
 "Language-Team: zh_TW <zh_TW@li.org>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Pootle 2.1.6\n"
+"X-Generator: Pootle 2.5.0-rc1\n"
+"X-POOTLE-MTIME: 1367385859.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -30,7 +31,7 @@ msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:25
 msgid "Developers:"
-msgstr "開發者 :"
+msgstr "開發人員："
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:26
@@ -50,7 +51,7 @@ msgstr "%CREDITS%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:31
 msgid "Package credits to:"
-msgstr "封裝歸屬於 : "
+msgstr "封裝歸功於 : "
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:32
@@ -76,7 +77,7 @@ msgstr "Clover v2"
 #: Resources/templates/Description.html:17
 msgid ""
 "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
-msgstr "是基於  Clover, rEFIt, XNU, VirtualBox 等不同專案的開放源碼："
+msgstr "是基於 Clover, rEFIt, XNU, VirtualBox 等不同專案的開放源碼："
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:18
@@ -98,14 +99,14 @@ msgstr "- 支持 引導 10.4 - 10.8 OSX, Windows EFI 及 Linux EFI"
 msgid ""
 "- It's EFI bootloader provides RuntimeServices for OS that impossible for "
 "Legacy Bootloaders"
-msgstr "- EFI bootloader 提供 RuntimeServices 予 OS 運行 (傳統引導器無法提供)"
+msgstr "- EFI bootloader 提供 OS 運行 RuntimeServices。(傳統引導器無法提供)"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:23
 msgid ""
 "- mostly Clover do automatic detection of hardware and set all properties by "
 "default."
-msgstr "- 預設 自動偵測大部份的硬體並設置所有屬性"
+msgstr "- 預設 自動偵測大部份的硬體並設定所有屬性"
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:23
@@ -120,12 +121,12 @@ msgstr " "
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:24
 msgid "But user can change them by config.plist"
-msgstr "  但是用戶也可以在 config.plist 中修改"
+msgstr ". 但是用戶也可以在 config.plist 中修改"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:25
 msgid "- with Clover you may restart into other OS from Startup Disk prefPane"
-msgstr "- 支持 啓動磁碟 面板 設置其他 OS 重新開機"
+msgstr "- 支持 啓動磁碟 面板 設定其他 OS 重新開機"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:26
@@ -145,7 +146,7 @@ msgstr "- 修正 ACPI 至 standard 4.0 版本"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:29
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr "支持從 開機分區 或 EFI文件夾 加載 DSDT"
+msgstr ". 支持從 開機分割區 或 EFI文件夾 加載 DSDT"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:30
@@ -157,12 +158,12 @@ msgstr "- 支持 睡眠/喚醒 修復 並 支持 PCIRootUID 設置"
 msgid ""
 "- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
 "supported cards."
-msgstr "- 支持 ATI, NVidia 及 Intel  顯示卡啓用功能, "
+msgstr "- 支持 ATI, NVidia 及 Intel 顯示卡啓用功能, "
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:32
 msgid "Also customizable."
-msgstr "  並支持客制化參數設置"
+msgstr ". 並支持客制化參數設定"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:33
@@ -264,7 +265,7 @@ msgstr ""
 "簡而言之，Clover EFI 幸運草 需要三個必要的檔案。\n"
 "boot0 (在硬碟的 MBR) 負責載入 boot1。\n"
 "boot1 (在分割區的開機磁區 boot-sector) 搜尋 boot2。\n"
-"boot2 (在分割區的根目錄) 載入 /EFI/BOOT/CLOVERIA32.efi 或 CLOVERX64.efi 及系統核心等等。"
+"boot2 (在分割區的根目錄) 載入 /EFI/CLOVER/CLOVERIA32.efi 或 CLOVERX64.efi 及系統核心等等。"
 
 #. type: "boot0_title"
 #: Resources/templates/Localizable.strings:29
@@ -286,14 +287,15 @@ msgid ""
 "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
 "  5. diskutil mount /dev/rdisk9s1"
 msgstr ""
-"使用 fdisk440 將 boot0 寫入 MBR 的前 440 位元，避免損壞已經存在的 Windows 機碼，boot0 會在第一個 HFS 啟動 分割區開始搜尋 boot1h2，或在第一個 Fat32 啟動 分割區搜尋 boot1f32alt。\n"
+"使用 fdisk440 將 boot0 寫入 MBR 的前 440 位元，避免損壞已經存在的 Windows 機碼，boot0 會在第一個 HFS 啟動 "
+"分割區開始搜尋 boot1h2，或在第一個 Fat32 啟動 分割區搜尋 boot1f32alt。\n"
 "本安裝將 會 設定 HFS 及 Fat32 安裝分割區為啟動分割區。\n"
 "必須在 Win 先將分割區格式化為 Fat32 格式分割區，或在 Mac 操作如下\n"
-"  1. 先用 磁碟工具 清除 為 MS-DOS (FAT) 格式\n"
-"  2. diskutil list\n"
-"  3. diskutil unmount /dev/rdisk9s1\n"
-"  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
-"  5. diskutil mount /dev/rdisk9s1"
+" 1. 先用 磁碟工具 清除 為 MS-DOS (FAT) 格式\n"
+" 2. diskutil list\n"
+" 3. diskutil unmount /dev/rdisk9s1\n"
+" 4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
+" 5. diskutil mount /dev/rdisk9s1"
 
 #. type: "boot0hfs_title"
 #: Resources/templates/Localizable.strings:40
@@ -315,15 +317,16 @@ msgid ""
 "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
 "  5. diskutil mount /dev/rdisk9s1"
 msgstr ""
-"使用 fdisk440 將 boot0hfs 寫入 MBR 的前 440 位元，避免損壞已經存在的 Windows 機碼，boot0hfs 會在第一個 HFS 分割區開始搜尋 boot1h2，或在第一個 Fat32 啟動 分割區搜尋 boot1f32alt。\n"
+"使用 fdisk440 將 boot0hfs 寫入 MBR 的前 440 位元，避免損壞已經存在的 Windows 機碼，boot0hfs 會在第一個 "
+"HFS 分割區開始搜尋 boot1h2，或在第一個 Fat32 啟動 分割區搜尋 boot1f32alt。\n"
 "本安裝將 不會 設定 HFS 安裝分割區為啟動分割區，\n"
 "本安裝將 會 設定 Fat32 安裝分割區為啟動分割區。\n"
 "必須在 Win 先將分割區格式化為 Fat32 格式分割區，或在 Mac 操作如下\n"
-"  1. 先用 磁碟工具 清除 為 MS-DOS (FAT) 格式\n"
-"  2. diskutil list\n"
-"  3. diskutil unmount /dev/rdisk9s1\n"
-"  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
-"  5. diskutil mount /dev/rdisk9s1"
+" 1. 先用 磁碟工具 清除 為 MS-DOS (FAT) 格式\n"
+" 2. diskutil list\n"
+" 3. diskutil unmount /dev/rdisk9s1\n"
+" 4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
+" 5. diskutil mount /dev/rdisk9s1"
 
 #. type: "bootNo_title"
 #: Resources/templates/Localizable.strings:51
@@ -450,73 +453,73 @@ msgstr "CloverEFI 64位版本，使用 Bios Block I/O 模式存取硬碟。"
 #: Resources/templates/Localizable.strings:90
 #, no-wrap
 msgid "PS/2 keyboard driver, 32bit"
-msgstr ""
+msgstr "32位，PS/2 鍵盤 驅動。"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:91
 #, no-wrap
 msgid "Ps2MouseAbsolutePointerDxe-32_description"
-msgstr ""
+msgstr "32位，PS/2 滑鼠 驅動。"
 
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:92
 #, no-wrap
 msgid "PS/2 mouse driver, 32bit"
-msgstr ""
+msgstr "32位，PS/2 滑鼠 驅動。"
 
 #. type: "Ps2MouseDxe-64_description"
 #: Resources/templates/Localizable.strings:93
 #, no-wrap
 msgid "PS/2 mouse driver, 64bit"
-msgstr ""
+msgstr "64位，PS/2 滑鼠 驅動。"
 
 #. type: "UsbMouseDxe-32_description"
 #: Resources/templates/Localizable.strings:94
 #, no-wrap
 msgid "USB mouse driver, 32bit"
-msgstr ""
+msgstr "32位，USB 滑鼠 驅動。"
 
 #. type: "UsbMouseDxe-64_description"
 #: Resources/templates/Localizable.strings:95
 #, no-wrap
 msgid "USB mouse driver, 64bit"
-msgstr ""
+msgstr "64位，USB 滑鼠 驅動。"
 
 #. type: "VBoxExt2-32_description"
 #: Resources/templates/Localizable.strings:96
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 32bit"
-msgstr ""
+msgstr "32位，來自 Virtualbox 的 ext2/3 檔案系統驅動。"
 
 #. type: "VBoxExt2-64_description"
 #: Resources/templates/Localizable.strings:97
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
-msgstr ""
+msgstr "64位，來自 Virtualbox 的 ext2/3 檔案系統驅動。"
 
 #. type: "VBoxExt4-32_description"
 #: Resources/templates/Localizable.strings:98
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 32bit"
-msgstr ""
+msgstr "32位，來自 Virtualbox 的 ext4 檔案系統驅動。"
 
 #. type: "VBoxExt4-64_description"
 #: Resources/templates/Localizable.strings:99
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 64bit"
-msgstr ""
+msgstr "64位，來自 Virtualbox 的 ext4 檔案系統驅動。"
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:100
 #, no-wrap
 msgid "XhciDxe-32_description"
-msgstr ""
+msgstr "32位，XHCI 高速USB 3.0 驅動。"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
 #, no-wrap
 msgid "XhciDxe-64_description"
-msgstr ""
+msgstr "64位，XHCI 高速USB 3.0 驅動。"
 
 #. type: "CsmVideoDxe-64_description"
 #: Resources/templates/Localizable.strings:102
@@ -527,6 +530,9 @@ msgid ""
 "Clover may not started with it and you may have wake problem in system.\n"
 "Use with precautions."
 msgstr ""
+"64位，Clover GUI 圖形使用者介面的顯示驅動，允許選擇更多解析度。\n"
+"基於 UEFI BIOS 的 CSM module 模組，CSM 必須 Enabled 啓動。\n"
+"Clover 可能無法啓動，可能會發生 系統喚醒 的問題。使用時，請注意相關問題。"
 
 #. type: "DataHubDxe-64_description"
 #: Resources/templates/Localizable.strings:106
@@ -535,6 +541,8 @@ msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
 "Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
 msgstr ""
+"64位，此 DataHub 協定支持 Mac OS X 強制啓用。\n"
+"通常已啓用，但有時可能遺漏，可在螢幕 warning 中查看。"
 
 #. type: "EmuVariableUefi-64_description"
 #: Resources/templates/Localizable.strings:108
@@ -544,24 +552,29 @@ msgid ""
 "Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed.\n"
 "Use it only if you have a problem without it"
 msgstr ""
+"64位，支持 Mac OS X 需要的 NVRAM 變數。\n"
+"大多數的 UEFI boot 使用硬體 NVRAM，但是部份少見案例需要 EmuVariableUefi。\n"
+"建議只在 有問題時，才啓用 EmuVariableUefi。"
 
 #. type: "OsxAptioFixDrv-64_description"
 #: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
-msgstr ""
+msgstr "64位，提供 UEFI 韌體的 記憶體問題修正，如 AMI Aptio 等。"
 
 #. type: "OsxLowMemFixDrv-64_description"
 #: Resources/templates/Localizable.strings:112
 #, no-wrap
 msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
 msgstr ""
+"64位，提供 UEFI 韌體的 記憶體問題修正，如 AMI Aptio 等。\n"
+"為 OsxAptioFixDrv 的簡化版本，請勿與 OsxAptioFixDrv 同時使用。"
 
 #. type: "PartitionDxe-64_description"
 #: Resources/templates/Localizable.strings:113
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
-msgstr ""
+msgstr "64位，支持非常態的分割區配置，如 hybrid GPT/MBR 或 Apple Partition Map。"
 
 #. type: "Themes_title"
 #: Resources/templates/Localizable.strings:119
@@ -643,7 +656,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:138
 #, no-wrap
 msgid "buttons"
-msgstr "buttons按鈕風格"
+msgstr "Buttons按鈕風格"
 
 #. type: "buttons_description"
 #: Resources/templates/Localizable.strings:139
@@ -652,14 +665,14 @@ msgid ""
 "Buttons theme from Trauma,\n"
 "Install to /EFI/CLOVER/themes/buttons."
 msgstr ""
-"選擇安裝來自 Trauma 的 buttons按鈕風格 主題。\n"
+"選擇安裝來自 Trauma 的 Buttons按鈕風格 主題。\n"
 "安裝位置 /EFI/CLOVER/themes/buttons。"
 
 #. type: "hellfire_title"
 #: Resources/templates/Localizable.strings:142
 #, no-wrap
 msgid "hellfire"
-msgstr "hellfire地獄火風格"
+msgstr "Hellfire地獄火風格"
 
 #. type: "hellfire_description"
 #: Resources/templates/Localizable.strings:143
@@ -668,14 +681,14 @@ msgid ""
 "Hellfire theme from lllevelll,\n"
 "Install to /EFI/CLOVER/themes/hellfire."
 msgstr ""
-"選擇安裝來自 illevelll 的 hellfire地獄火風格 主題。\n"
+"選擇安裝來自 illevelll 的 Hellfire地獄火風格 主題。\n"
 "安裝位置 /EFI/CLOVER/themes/hellfire。"
 
 #. type: "metal_title"
 #: Resources/templates/Localizable.strings:146
 #, no-wrap
 msgid "metal"
-msgstr "metal金屬風格"
+msgstr "Metal金屬風格"
 
 #. type: "metal_description"
 #: Resources/templates/Localizable.strings:147
@@ -684,14 +697,14 @@ msgid ""
 "The original metal theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/metal."
 msgstr ""
-"原始預設安裝來自 Slice 的 metal金屬風格 主題，現已改由 black_green墨綠風格 主題作為預設安裝。\n"
+"原始預設安裝來自 Slice 的 Metal金屬風格 主題，現已改由 BlackGreen墨綠風格 主題作為預設安裝。\n"
 "安裝位置 /EFI/CLOVER/themes/metal。"
 
 #. type: "simple_gray_title"
 #: Resources/templates/Localizable.strings:150
 #, no-wrap
 msgid "simple_gray"
-msgstr "simple_gray簡灰風格"
+msgstr "SimpleGray簡灰風格"
 
 #. type: "simple_gray_description"
 #: Resources/templates/Localizable.strings:151
@@ -700,14 +713,14 @@ msgid ""
 "Simple_gray theme from hijeane,\n"
 "Install to /EFI/CLOVER/themes/simple_gray."
 msgstr ""
-"選擇安裝來自 hijeane 的簡灰主題。\n"
+"選擇安裝來自 hijeane 的 SimpleGray簡灰風格 主題。\n"
 "安裝位置 /EFI/CLOVER/themes/simple_gray."
 
 #. type: "wooden_title"
 #: Resources/templates/Localizable.strings:154
 #, no-wrap
 msgid "wooden"
-msgstr "wooden原木風格"
+msgstr "Wooden原木風格"
 
 #. type: "wooden_description"
 #: Resources/templates/Localizable.strings:155
@@ -716,7 +729,7 @@ msgid ""
 "Wooden theme from iROOTa,\n"
 "Install to /EFI/CLOVER/themes/wooden."
 msgstr ""
-"選擇安裝來自 iROOTa 的 wooden原木風格 主題。\n"
+"選擇安裝來自 iROOTa 的 Wooden原木風格 主題。\n"
 "安裝位置 /EFI/CLOVER/themes/wooden。"
 
 #. type: "rc.scripts.on.target_title"
