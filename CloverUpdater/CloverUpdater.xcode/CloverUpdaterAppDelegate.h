@@ -20,6 +20,6 @@
 @property (assign) IBOutlet NSWindow *window;
 - (IBAction)NeverButton:(id)sender;
 - (IBAction)NotNow:(id)sender;
-- (IBAction)OKButton:(id)sender;
+- (IBAction)UpdateButton:(id)sender;
 
 @end

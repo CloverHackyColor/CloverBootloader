@@ -20,7 +20,6 @@
 {
   [OldRevision setStringValue: [NSString stringWithFormat: @"%s", arg1]];
   [NewRevision setStringValue: [NSString stringWithFormat: @"%s", arg2]];
-  
 }
 
 - (IBAction)NeverButton:(id)sender {
@@ -31,10 +30,9 @@
 - (IBAction)NotNow:(id)sender {
   printf("0");
   exit(0);
-//   [OldRevision setStringValue: [NSString stringWithFormat: @"1477"]];
 }
 
-- (IBAction)OKButton:(id)sender {
+- (IBAction)UpdateButton:(id)sender {
   printf("1");
   exit(0);
 }

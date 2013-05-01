@@ -14,8 +14,7 @@ char* arg2;
 
 int main(int argc, char *argv[])
 {
-  arg1 = argv[1];
-  arg2 = argv[2];
-    
+    arg1 = argv[1];
+    arg2 = argv[2];
     return NSApplicationMain(argc,  (const char **) argv);
 }

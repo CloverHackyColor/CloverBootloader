@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# Prevent the script from doing bad things
+set -u  # Abort with unset variables
+
+declare -r CURL="/usr/bin/curl"
+declare -r SED="/usr/bin/sed"
+declare -r IOREG="/usr/sbin/ioreg"
+declare -r OPEN="/usr/bin/open"
+declare -r PLISTBUDDY="/usr/libexec/plistbuddy" 
+declare -r CLOVER_LAST_VERSION_URL="http://sourceforge.net/projects/cloverefiboot/files/latest/download"
+declare -r CLOVER_APP_SUPPORT="/Library/Application Support/Clover"
+declare -r CLOVER_UPDATER_PLIST="$HOME"/Library/Preferences/com.projectosx.clover.updater.plist
+
+# Check preferences
+allow_update=$($PLISTBUDDY -c "Print AllowUpdate" "$CLOVER_UPDATER_PLIST" 2>/dev/null)
+[[ "$allow_update" == false ]] && exit 1
+    
+last_revision=$(LC_ALL=C $CURL --silent --fail --connect-timeout 30 \
+ --max-time 60 "$CLOVER_LAST_VERSION_URL" 2>&1 |                    \
+ $SED -nE 's#^.*Installer/Clover_v2_r([0-9]+).*#\1#p')
+
+[[ -z "$last_revision" ]] && exit 1
+
+current_revision=$(LC_ALL=C $IOREG -l -pIODeviceTree | \
+ $SED -nE 's@.*boot-log.*<([0-9a-fA-F]*)>.*@\1@p'    | \
+ xxd -r -p                                           | \
+ $SED -nE 's/^.*Clover revision: *([0-9]+).*$/\1/p')
+
+[[ -z "$current_revision" ]] && exit 1
+[[ "$last_revision" -lt "$current_revision" ]] && exit 0
+
+choice=$("$CLOVER_APP_SUPPORT"/CloverUpdater.app/Contents/MacOS/CloverUpdater \
+ "$current_revision" "$last_revision")
+
+case "$choice" in
+    -1) "$PLISTBUDDY" -c "Delete AllowUpdate" "$CLOVER_UPDATER_PLIST" &>/dev/null
+        "$PLISTBUDDY" -c "Add AllowUpdate bool false" "$CLOVER_UPDATER_PLIST" &>/dev/null
+        ;;
+     1) open http://sourceforge.net/projects/cloverefiboot/files/Installer/Clover_v2_r${last_revision}.zip/download
+        ;;
+esac
+
+# Local Variables:      #
+# mode: ksh             #
+# tab-width: 4          #
+# indent-tabs-mode: nil #
+# End:                  #
+#
+# vi: set expandtab ts=4 sw=4 sts=4: #

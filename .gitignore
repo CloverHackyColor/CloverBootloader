@@ -43,3 +43,18 @@
 /rEFIt_UEFI/vers.txt
 rEFIt_UEFI/rEFIt_proj/rEFIt_proj.xcodeproj/project.xcworkspace/
 rEFIt_UEFI/rEFIt_proj/rEFIt_proj.xcodeproj/xcuserdata/
+
+# XCode files/directories
+*~.nib
+DerivedData/
+build/
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+!default.pbxuser
+!default.mode1v3
+!default.mode2v3
+!default.perspectivev3
+xcuserdata/
+
