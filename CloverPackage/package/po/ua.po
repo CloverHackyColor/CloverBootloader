@@ -7,15 +7,16 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
-"POT-Creation-Date: 2013-05-01 11:54+0300\n"
-"PO-Revision-Date: 2013-04-30 08:16+0200\n"
+"POT-Creation-Date: 2013-04-25 16:44+0400\n"
+"PO-Revision-Date: 2013-05-01 15:51+0200\n"
 "Last-Translator: AlexKord <alexkord@lan.com.ua>\n"
-"Language-Team: ru <ru@li.org>\n"
+"Language-Team: ua <ua@li.org>\n"
 "Language: ua\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Pootle 2.1.6\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.5.5\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -137,7 +138,8 @@ msgstr " "
 #: Resources/templates/Description.html:24
 msgid "But user can change them by config.plist"
 msgstr ""
-"Але при бажанні користувач в змозі встановити свої властивості в config.plist"
+"Але при бажанні користувач в змозі встановити свої властивості в "
+"config.plist"
 
 #
 #. type: Content of: <html><body><p>
@@ -176,8 +178,7 @@ msgstr ""
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:30
 msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
-msgstr ""
-"- коригування проблем рестарту і сну/пробудження та значення PCIRootUID"
+msgstr "- коригування проблем рестарту і сну/пробудження та значення PCIRootUID"
 
 #
 #. type: Content of: <html><body><p>
@@ -185,7 +186,8 @@ msgstr ""
 msgid ""
 "- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
 "supported cards."
-msgstr "- Графік Інжектор для під'єднання відеокарт від: ATI, NVidia та Intel."
+msgstr ""
+"- Графік Інжектор для під'єднання відеокарт від: ATI, NVidia та Intel."
 
 #
 #. type: Content of: <html><body><p>
@@ -296,28 +298,23 @@ msgstr "Завантажувач"
 
 #. type: "Bootloader_description"
 #: Resources/templates/Localizable.strings:24
-#, fuzzy, no-wrap
-#| msgid ""
-#| "Clover EFI requires three essential files. (in simple terms)\n"
-#| "boot0 (On the drive's MBR) responsible for loading boot1.\n"
-#| "boot1 (On the partition's boot-sector) to finding boot2.\n"
-#| "boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
+#, no-wrap
 msgid ""
 "Clover EFI requires three essential files. (in simple terms)\n"
 "boot0 (On the drive's MBR) responsible for loading boot1.\n"
 "boot1 (On the partition's boot-sector) to finding boot2.\n"
-"boot2 (On the partition's root directory) for loading /EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
+"boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgstr ""
 "Clover EFI вимагає наявності трьох головних файлів. (спрощено)\n"
 "boot0 (головний завантажувальний запис) відповідає за завантаження boot1.\n"
-"boot1 (завантажувальний запис розділу) для завантаження boot.\n"
-"boot  (в корені обраного розділу) для пошуку /EFI/CLOVER/CLOVERIA32.efi або CLOVERX64.efi"
+"boot1 (завантажувальний запис розділу) для завантаження boot2.\n"
+"boot2  (в корені обраного розділу) для пошуку /EFI/CLOVER/CLOVERIA32.efi або CLOVERX64.efi"
 
 #. type: "boot0_title"
 #: Resources/templates/Localizable.strings:29
 #, no-wrap
 msgid "BIOS MBR boot0 (HFS+Fat32)"
-msgstr "BIOS MBR завантаження завдяки boot0 (HFS+Fat32)"
+msgstr "BIOS MBR завантаження завдяки boot0 (HFS+ Fat32)"
 
 #. type: "boot0_description"
 #: Resources/templates/Localizable.strings:30
@@ -333,8 +330,10 @@ msgid ""
 "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
 "  5. diskutil mount /dev/rdisk9s1"
 msgstr ""
-"Встановити boot0 який шукає активний розділ в MBR або перший завантажувальний розділ в GPT. Обраний розділ в MBR буде активним\n"
-"Розділ FAT32 повинен бути спершу відформатований таким чином:\n"
+"Встановити BIOS завантаження для BIOS материнськіх плат.\n"
+"Використовується fdisk440, щоб встановити boot0 до першіх 440 біт з MBR, не руйнуючи існуючій встановлений Windows, тоді boot0 шукатиме перший активний HFS розділ для boot1h2, або шукатиме перший активний розділ в FAT32 для boot1f32alt.\n"
+"Обрані розділ HFS+ Fat32 в MBR будуть активними.\n"
+"Розділ FAT32 повинен бути спершу відформатований в OSX таким чином:\n"
 "  1. Зiтерти як MS-DOS (FAT) за допомогою Disk Utility.\n"
 "  2. diskutil list\n"
 "  3. diskutil unmount /dev/rdisk9s1\n"
@@ -345,7 +344,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:40
 #, no-wrap
 msgid "BIOS MBR boot0hfs (HFS+Fat32)"
-msgstr "BIOS MBR завантаження завдяки boot0hfs (HFS+Fat32)"
+msgstr "BIOS MBR завантаження завдяки boot0hfs (HFS+ Fat32)"
 
 #. type: "boot0hfs_description"
 #: Resources/templates/Localizable.strings:41
@@ -360,13 +359,22 @@ msgid ""
 "  3. diskutil unmount /dev/rdisk9s1\n"
 "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
 "  5. diskutil mount /dev/rdisk9s1"
-msgstr "Встановити boot0hfs який запускає boot1h з першого знайденого HFS розділу, навіть якщо він неактивний. Активним розділом може залишатися Windows."
+msgstr ""
+"Встановити BIOS завантаження для BIOS материнськіх плат.\n"
+"Використовується fdisk440, щоб встановити boot0hfs до першіх 440 біт з MBR, не руйнуючи існуючій встановлений Windows, тоді boot0hfs шукатиме перший HFS розділ для boot1h2, або шукатиме перший активний розділ в FAT32 для boot1f32alt.\n"
+"boot0hfs запускає boot1h2 з першого знайденого HFS розділу, навіть якщо він неактивний. Активним розділом може залишатися Windows."
+"Розділ FAT32 повинен бути спершу відформатований в OSX таким чином:\n"
+"  1. Зiтерти як MS-DOS (FAT) за допомогою Disk Utility.\n"
+"  2. diskutil list\n"
+"  3. diskutil unmount /dev/rdisk9s1\n"
+"  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
+"  5. diskutil mount /dev/rdisk9s1"
 
 #. type: "bootNo_title"
 #: Resources/templates/Localizable.strings:51
 #, no-wrap
 msgid "Don't update MBR and PBR sectors"
-msgstr "Не оновлювати сектори MBR та PBR"
+msgstr "Не оновлювати MBR та PBR сектори"
 
 #. type: "bootNo_description"
 #: Resources/templates/Localizable.strings:52
@@ -376,9 +384,9 @@ msgid ""
 "Usefull for UEFI motherboards that don't need bootloader files.\n"
 "Can also be use if you don't want to upgrade MBR or PBR sectors."
 msgstr ""
-"Не встановлювати сектори для BIOS завантаження (boot0X, boot1X).\n"
-"Має сенс якщо у вас тільки UEFI завантаження,\n"
-"А також, якщо ви не маєте потреби змінювати існуючі сектори."
+"Не встановлювати будь які завантажувальні BIOS сектори (boot0X, boot1X)!\n"
+"Використовувати тільки для завантаження UEFI материнськіх плат,\n"
+"а також, якщо ви не маєте потреби змінювати існуючі MBR або PBR сектори."
 
 #. type: "AltBoot_title"
 #: Resources/templates/Localizable.strings:56
@@ -393,8 +401,9 @@ msgid ""
 "Install alternative booting PBR with choice of boot with a key pressed.\n"
 "File to boot = boot{keypressed}"
 msgstr ""
-"Встановити альтернативний сектор boot1 який дає змогу\n"
-"вибрати різні завантажувачі (boot1, boot3, boot7) натисканням клавіші в затримці 2 секунд.\n"
+"Встановити альтернативний PBR завантажувальний сектор, який дає змогу\n"
+"вибрати різні завантажувачі (boot1, boot3, boot7) натисканням клавіші в "
+"затримці 2 секунд.\n"
 "Завантажити файл boot{цифра}"
 
 #. type: "boot32_title"
@@ -414,7 +423,8 @@ msgid ""
 "Press key 6 to boot6 = Clover EFI 64bit boot."
 msgstr ""
 "Встановити файли та призначити 32 біт за замовчуванням.\n"
-"За замовчуванням завантажується boot = Clover 32 після 2 секунд очікування на клавіатурі. \n"
+"За замовчуванням завантажується boot = Clover 32 після 2 секунд очікування "
+"на клавіатурі. \n"
 "Клавіша 1 для boot1 = Chameleon boot,\n"
 "Клавіша 3 для boot3 = Clover EFI 32bit boot,\n"
 "Клавіша 6 для boot6 = Clover EFI 64bit boot."
@@ -436,7 +446,8 @@ msgid ""
 "Press key 6 to boot6 = Clover EFI 64bit boot."
 msgstr ""
 "Встановити файли та призначити 64 біт за замовчуванням.\n"
-"За замовчуванням завантажується boot = Clover 64 після 2 секунд очікування на клавіатурі. \n"
+"За замовчуванням завантажується boot = Clover 64 після 2 секунд очікування "
+"на клавіатурі. \n"
 "Клавіша 1 для boot1 = Chameleon boot,\n"
 "Клавіша 3 для boot3 = Clover EFI 32bit boot,\n"
 "Клавіша 6 для boot6 = Clover EFI 64bit boot."
@@ -470,91 +481,91 @@ msgstr "Кловер EFI 64-біту SATA"
 #: Resources/templates/Localizable.strings:83
 #, no-wrap
 msgid "CloverEFI 64-bits using SATA to access drives"
-msgstr "CloverEFI 64-bits із використанням SATA драйверу "
+msgstr "Кловер EFI 64-біт із використанням SATA драйверу"
 
 #. type: "cloverEFI.64.blockio_title"
 #: Resources/templates/Localizable.strings:84
 #, no-wrap
 msgid "CloverEFI 64-bits BiosBlockIO"
-msgstr "Кловер EFI 64-біту із BiosBlockIO"
+msgstr "Кловер EFI 64-біту BiosBlockIO"
 
 #. type: "cloverEFI.64.blockio_description"
 #: Resources/templates/Localizable.strings:85
 #, no-wrap
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
-msgstr "CloverEFI 64-bits із використанням Bios Block I/O драйверу для доступу до дисків"
+msgstr "Кловер EFI 64-біту із використанням BiosBlockI/O драйверу для доступу до дисків"
 
 #. type: "Ps2KeyboardDxe-32_description"
 #: Resources/templates/Localizable.strings:90
 #, no-wrap
 msgid "PS/2 keyboard driver, 32bit"
-msgstr ""
+msgstr "32-бітний драйвер для PS/2 клавіатури (тiльки для Кловера, не для ОС!)"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:91
 #, no-wrap
-msgid "PS/2 trackpad driver, 32bit"
-msgstr ""
+msgid "Ps2MouseAbsolutePointerDxe-32_description"
+msgstr "32-бітний драйвер для PS2 тачпаду"
 
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:92
 #, no-wrap
 msgid "PS/2 mouse driver, 32bit"
-msgstr ""
+msgstr "32-бітний драйвер для PS/2 миші"
 
 #. type: "Ps2MouseDxe-64_description"
 #: Resources/templates/Localizable.strings:93
 #, no-wrap
 msgid "PS/2 mouse driver, 64bit"
-msgstr ""
+msgstr "64-бітний драйвер для PS/2 миші"
 
 #. type: "UsbMouseDxe-32_description"
 #: Resources/templates/Localizable.strings:94
 #, no-wrap
 msgid "USB mouse driver, 32bit"
-msgstr ""
+msgstr "32-бітний драйвер для USB миші"
 
 #. type: "UsbMouseDxe-64_description"
 #: Resources/templates/Localizable.strings:95
 #, no-wrap
 msgid "USB mouse driver, 64bit"
-msgstr ""
+msgstr "64-бітний драйвер для USB миші"
 
 #. type: "VBoxExt2-32_description"
 #: Resources/templates/Localizable.strings:96
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 32bit"
-msgstr ""
+msgstr "32-бітний драйвер для Linux EXT2/3 - файлової системи"
 
 #. type: "VBoxExt2-64_description"
 #: Resources/templates/Localizable.strings:97
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
-msgstr ""
+msgstr "64-бітний драйвер для Linux EXT2/3 - файлової системи"
 
 #. type: "VBoxExt4-32_description"
 #: Resources/templates/Localizable.strings:98
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 32bit"
-msgstr ""
+msgstr "32-бітний драйвер для Linux EXT4 - файлової системи"
 
 #. type: "VBoxExt4-64_description"
 #: Resources/templates/Localizable.strings:99
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 64bit"
-msgstr ""
+msgstr "64-бітний драйвер для Linux EXT4 - файлової системи"
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:100
 #, no-wrap
-msgid "USB 3.0 driver, 32bit"
-msgstr ""
+msgid "XhciDxe-32_description"
+msgstr "32-бітний драйвер для USB v3.0"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
 #, no-wrap
-msgid "USB 3.0 driver, 64bit"
-msgstr ""
+msgid "XhciDxe-64_description"
+msgstr "64-бітний драйвер для USB v3.0"
 
 #. type: "CsmVideoDxe-64_description"
 #: Resources/templates/Localizable.strings:102
@@ -565,6 +576,12 @@ msgid ""
 "Clover may not started with it and you may have wake problem in system.\n"
 "Use with precautions."
 msgstr ""
+"64-бітний відеодрайвер для Clover GUI дозволяє використовувати велику роздільну здатність"
+"экрану.\n"
+"Він грунтується на CSM модулі у BIOS та вимагає, щоб CSM був ввімкнений\n"
+"Проте, Clover може і не завантажитись з цим драйвером, або ж система не буде "
+"пробуджуватись після сну,\n"
+"тому, використовуйте з обережністю."
 
 #. type: "DataHubDxe-64_description"
 #: Resources/templates/Localizable.strings:106
@@ -573,6 +590,9 @@ msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
 "Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
 msgstr ""
+"Підтримка DataHub протоколу, який суворо необхідний для запуску MacOSX.\n"
+"Зазвичай він і так присутній, проте може і не бути, в цьому випадку ви побачите"
+"попередження на екрані."
 
 #. type: "EmuVariableUefi-64_description"
 #: Resources/templates/Localizable.strings:108
@@ -582,24 +602,27 @@ msgid ""
 "Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed.\n"
 "Use it only if you have a problem without it"
 msgstr ""
+"64-бітний драйвер для підтрімки NVRAM змінних, необхідних для MacOSX.\n"
+"Найчастіше UEFI використовує вбудований NVRAM, але іноді ні\n"
+"Використовуйте драйвер тільки якщо ви достеменно знаєте, що він потрібен."
 
 #. type: "OsxAptioFixDrv-64_description"
 #: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
-msgstr ""
+msgstr "64-бітний драйвер виправляє помилки пам'яті, створювані AMI Aptio UEFI"
 
 #. type: "OsxLowMemFixDrv-64_description"
 #: Resources/templates/Localizable.strings:112
 #, no-wrap
 msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
-msgstr ""
+msgstr "Спрощений варіант 64-бітного драйвера. Увага! Не використовувати спільно з OsxAptioFixDrv!"
 
 #. type: "PartitionDxe-64_description"
 #: Resources/templates/Localizable.strings:113
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
-msgstr ""
+msgstr "64-бітний драйвер для підтримки незвичайних схем розділів як гібрид GPT/MBR або Apple Partition Map."
 
 #. type: "Themes_title"
 #: Resources/templates/Localizable.strings:119
@@ -761,7 +784,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:161
 #, no-wrap
 msgid "Install RC scripts on target volume"
-msgstr "Встановити системні RC скріпти на головний розділ"
+msgstr "Встановити системні RC скріпти на цільовий розділ"
 
 #. type: "rc.scripts.on.target_description"
 #: Resources/templates/Localizable.strings:162
@@ -783,7 +806,9 @@ msgstr "Встановити скріпти RC на всі інші завант
 #: Resources/templates/Localizable.strings:165
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
-msgstr "Встановити скріпти RC на всі внутрішні завантажувальні розділи OSX, крім цільового розділу"
+msgstr ""
+"Встановити скріпти RC на всі внутрішні завантажувальні розділи OSX, окрім "
+"цільового розділу"
 
 #. type: "Optional RC Scripts"
 #: Resources/templates/Localizable.strings:166
@@ -795,4 +820,49 @@ msgstr "Додаткові RC скріпти"
 #: Resources/templates/Localizable.strings:167
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
-msgstr "Заборонити mDNSResponder sleep proxy client service. Це запобігає пробудження системи кожної години"
+msgstr ""
+"Заборонити mDNSResponder sleep proxy client service. Це запобігає "
+"пробудження системи кожної години"
+
+#~ msgid "Video driver - provides a wide range of resolutions, 64bit"
+#~ msgstr "Video driver - provides a wide range of resolutions, 64bit"
+
+#~ msgid "Fix for Aptio AMI, 64bit"
+#~ msgstr "Fix for Aptio AMI, 64bit"
+
+#~ msgid "Ps2KeyboardDxe-32_description"
+#~ msgstr "PS/2 keyboard driver, 32bit"
+
+#~ msgid "Ps2MouseDxe-32_description"
+#~ msgstr "PS/2 mouse driver, 32bit"
+
+#~ msgid "UsbMouseDxe-32_description"
+#~ msgstr "USB mouse driver, 32bit"
+
+#~ msgid "VBoxExt2-32_description"
+#~ msgstr "ext2/3 filesystem driver for Linux EFI, 32bit"
+
+#~ msgid "VBoxExt4-32_description"
+#~ msgstr "ext4 filesystem driver for Linux EFI, 32bit"
+
+#~ msgid "Ps2MouseDxe-64_description"
+#~ msgstr "PS/2 mouse driver, 64bit"
+
+#~ msgid "UsbMouseDxe-64_description"
+#~ msgstr "USB mouse driver, 64bit"
+
+#~ msgid "VBoxExt2-64_description"
+#~ msgstr "ext2/3 filesystem driver for Linux EFI, 64bit"
+
+#~ msgid "VBoxExt4-64_description"
+#~ msgstr "ext4 filesystem driver for Linux EFI, 64bit"
+
+#~ msgid "CsmVideoDxe-64_description"
+#~ msgstr "Video driver - provides a wide range of resolutions, 64bit"
+
+#~ msgid "OsxAptioFixDrv-64_description"
+#~ msgstr "Fix for Aptio AMI, 64bit"
+
+#~ msgid "OsxLowMemFixDrv-64_description"
+#~ msgstr ""
+#~ "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
