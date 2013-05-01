@@ -825,44 +825,48 @@ msgstr ""
 "пробудження системи кожної години"
 
 #~ msgid "Video driver - provides a wide range of resolutions, 64bit"
-#~ msgstr "Video driver - provides a wide range of resolutions, 64bit"
+#~ msgstr ""
+#~ "64-бітний драйвер відео стандарту БІОС з підтрімкою нативної розподіної здатності,"
+#~ "Обережно, якщо Кловер не завантажується, зітріть його!"
 
 #~ msgid "Fix for Aptio AMI, 64bit"
-#~ msgstr "Fix for Aptio AMI, 64bit"
+#~ msgstr ""
+#~ "Виправлення карти пам'яті для кривих UEFI BIOS, як наприклад, AMI Aptio. "
+#~ "64біт"
 
 #~ msgid "Ps2KeyboardDxe-32_description"
-#~ msgstr "PS/2 keyboard driver, 32bit"
+#~ msgstr "32-бітний драйвер для PS/2 клавіатури"
 
 #~ msgid "Ps2MouseDxe-32_description"
-#~ msgstr "PS/2 mouse driver, 32bit"
+#~ msgstr "32-бітний драйвер для PS/2 миші"
 
 #~ msgid "UsbMouseDxe-32_description"
-#~ msgstr "USB mouse driver, 32bit"
+#~ msgstr "32-бітний драйвер для USB миші"
 
 #~ msgid "VBoxExt2-32_description"
-#~ msgstr "ext2/3 filesystem driver for Linux EFI, 32bit"
+#~ msgstr "32-бітний драйвер для Linux EFI EXT2/3 - файлової системи"
 
 #~ msgid "VBoxExt4-32_description"
-#~ msgstr "ext4 filesystem driver for Linux EFI, 32bit"
+#~ msgstr "32-бітний драйвер для Linux EFI EXT4 - файлової системи"
 
 #~ msgid "Ps2MouseDxe-64_description"
-#~ msgstr "PS/2 mouse driver, 64bit"
+#~ msgstr "64-бітний драйвер для PS/2 миші"
 
 #~ msgid "UsbMouseDxe-64_description"
-#~ msgstr "USB mouse driver, 64bit"
+#~ msgstr "64-бітний драйвер для USB миші"
 
 #~ msgid "VBoxExt2-64_description"
-#~ msgstr "ext2/3 filesystem driver for Linux EFI, 64bit"
+#~ msgstr "64-бітний драйвер для Linux EFI EXT2/3 - файлової системи"
 
 #~ msgid "VBoxExt4-64_description"
-#~ msgstr "ext4 filesystem driver for Linux EFI, 64bit"
+#~ msgstr "64-бітний драйвер для Linux EFI EXT4 - файлової системи"
 
 #~ msgid "CsmVideoDxe-64_description"
-#~ msgstr "Video driver - provides a wide range of resolutions, 64bit"
+#~ msgstr "64-бітний відео драйвер - надає широкий діапазон рішень"
 
 #~ msgid "OsxAptioFixDrv-64_description"
-#~ msgstr "Fix for Aptio AMI, 64bit"
+#~ msgstr "Виправлення для Aptio AMI, 64біт"
 
 #~ msgid "OsxLowMemFixDrv-64_description"
 #~ msgstr ""
-#~ "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
+#~ "Спрощений варіант 64-бітного драйвера. Увага! Не використовувати спільно з OsxAptioFixDrv!"
