@@ -8,14 +8,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "POT-Creation-Date: 2013-05-01 11:54+0300\n"
-"PO-Revision-Date: 2013-04-29 03:57+0200\n"
+"PO-Revision-Date: 2013-05-01 19:46+0000\n"
 "Last-Translator: kyndder <kyndder@icloud.com>\n"
 "Language-Team: pt <pt@li.org>\n"
 "Language: pt-PT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Pootle 2.1.6\n"
+"X-Generator: Pootle 2.5.0-rc1\n"
+"X-POOTLE-MTIME: 1367437582.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -293,7 +294,7 @@ msgstr "Bootloader"
 
 #. type: "Bootloader_description"
 #: Resources/templates/Localizable.strings:24
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Clover EFI requires three essential files. (in simple terms)\n"
 #| "boot0 (On the drive's MBR) responsible for loading boot1.\n"
@@ -499,10 +500,10 @@ msgstr "Driver para Teclado PS/2, 32bit"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:91
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "PS/2 keyboard driver, 32bit"
 msgid "PS/2 trackpad driver, 32bit"
-msgstr "Driver para Teclado PS/2, 32bit"
+msgstr "Driver para Trackpad PS/2, 32bit"
 
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:92
@@ -554,17 +555,17 @@ msgstr "Driver para Sistema de Arquivos EXT4 do VirtualBox, 64bit"
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:100
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "USB mouse driver, 32bit"
 msgid "USB 3.0 driver, 32bit"
-msgstr "Driver para Mouse USB, 32bit"
+msgstr "Driver para Teclado PS/2, 32bit"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "USB mouse driver, 64bit"
 msgid "USB 3.0 driver, 64bit"
-msgstr "Driver para Mouse USB, 64bit"
+msgstr "Driver para USB 3.0, 64bit"
 
 #. type: "CsmVideoDxe-64_description"
 #: Resources/templates/Localizable.strings:102
