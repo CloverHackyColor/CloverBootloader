@@ -8,20 +8,23 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "POT-Creation-Date: 2013-05-01 11:54+0300\n"
-"PO-Revision-Date: 2013-04-29 09:49+0200\n"
+"PO-Revision-Date: 2013-05-01 12:52+0000\n"
 "Last-Translator: ceruns <ceruns@ymail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Pootle 2.1.6\n"
+"X-Generator: Pootle 2.5.0-rc1\n"
+"X-POOTLE-MTIME: 1367412769.0\n"
 
+# //Don't need change
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
 msgid "Clover EFI"
-msgstr "Clover EFI"
+msgstr "Clover EFI(한국어 번역 패키지)"
 
+# //Don't need change also
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:22 Resources/templates/Conclusion.html:20
 msgid "%CLOVERVERSION% r%CLOVERREVISION%"
@@ -30,7 +33,7 @@ msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:25
 msgid "Developers:"
-msgstr "개발자 : "
+msgstr "개발자:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:26
@@ -100,8 +103,6 @@ msgid ""
 "- It's EFI bootloader provides RuntimeServices for OS that impossible for "
 "Legacy Bootloaders"
 msgstr ""
-"레거시(구형) 부트로더 지원이 불가능한 OS를 위한 런타임 서비스를 지원하는 EFI "
-"부트로더입니다."
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:23
@@ -262,7 +263,7 @@ msgstr "부트로더"
 
 #. type: "Bootloader_description"
 #: Resources/templates/Localizable.strings:24
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Clover EFI requires three essential files. (in simple terms)\n"
 #| "boot0 (On the drive's MBR) responsible for loading boot1.\n"
@@ -274,10 +275,11 @@ msgid ""
 "boot1 (On the partition's boot-sector) to finding boot2.\n"
 "boot2 (On the partition's root directory) for loading /EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgstr ""
-"Clover EFI는 3개의 기본 파일이 필요합니다. (간단한 용어로 설명하였습니다.)\n"
-"boot0 (드라이브의 MBR에 위치)은 boot1을 읽어 들입니다.\n"
-"boot1 (파티션의 boot-sector에 위치)은 boot2를 찾습니다.\n"
-"boot2 (파티션의 root directory에 위치)는 /EFI/BOOT/CLOVERIA32.efi 또는 CLOVERX64.efi, 그리고 kernel 등을 읽어 들입니다."
+"간단히 설명하자면, Clover EFI는 3개의 필수 파일이 필요합니다.\n"
+"boot0(드라이브의 MBR에 위치)은 boot1을 읽어 들입니다.\n"
+"boot1(파티션의 boot-sector에 위치)은 boot2를 찾습니다.\n"
+"boot2(파티션의 root directory에 위치)는 /EFI/CLOVER/CLOVERIA32.efi 또는 CLOVERX64.efi, "
+"그리고 kernel 등을 읽어 들입니다."
 
 #. type: "boot0_title"
 #: Resources/templates/Localizable.strings:29
@@ -356,7 +358,7 @@ msgstr "MBR 또는 PBR 섹터를 업데이트 하지 마십시오."
 # It's too vague following words in English : Usefull for UEFI motherboards that don't need bootloader files.
 #. type: "bootNo_description"
 #: Resources/templates/Localizable.strings:52
-#, fuzzy, no-wrap
+#, no-wrap
 msgid ""
 "Don't install any bootloader (boot0X, boot1X).\n"
 "Usefull for UEFI motherboards that don't need bootloader files.\n"
@@ -364,7 +366,7 @@ msgid ""
 msgstr ""
 "어느 부트로더도 설치하지 마십시오(boot0X, boot1X).\n"
 "UEFI 메인보드는 부트로더 파일이 필요하지 않습니다.\n"
-"만약 MBR또는 PBR섹터를 업그레이드하고 싶으신경우 사용하실 수 있습니다. \n"
+"만약 MBR또는 PBR섹터를 업그레이드하고 싶으신경우 사용하실 수 있습니다."
 
 #. type: "AltBoot_title"
 #: Resources/templates/Localizable.strings:56
@@ -482,7 +484,7 @@ msgstr "PS/2 키보드 드라이버(32bit)"
 #, fuzzy, no-wrap
 #| msgid "PS/2 keyboard driver, 32bit"
 msgid "PS/2 trackpad driver, 32bit"
-msgstr "PS/2 키보드 드라이버(32bit)"
+msgstr "PS/2 키보드 드라이버, 32bit"
 
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:92
@@ -537,14 +539,14 @@ msgstr "Virtualbox 용 Ext4 파일시스템 드라이버, 64비트"
 #, fuzzy, no-wrap
 #| msgid "USB mouse driver, 32bit"
 msgid "USB 3.0 driver, 32bit"
-msgstr "USB 마우스 드라이버, 32비트"
+msgstr "USB 3.0 드라이버, 32비트"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
 #, fuzzy, no-wrap
 #| msgid "USB mouse driver, 64bit"
 msgid "USB 3.0 driver, 64bit"
-msgstr "USB 마우스 드라이버, 64비트"
+msgstr "USB 3.0 드라이버, 64비트"
 
 #. type: "CsmVideoDxe-64_description"
 #: Resources/templates/Localizable.strings:102
