@@ -7,16 +7,16 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
-"POT-Creation-Date: 2013-04-25 16:44+0400\n"
-"PO-Revision-Date: 2013-05-01 15:51+0200\n"
+"POT-Creation-Date: 2013-05-01 11:54+0300\n"
+"PO-Revision-Date: 2013-05-01 19:21+0000\n"
 "Last-Translator: AlexKord <alexkord@lan.com.ua>\n"
 "Language-Team: ua <ua@li.org>\n"
 "Language: ua\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.5.5\n"
+"X-Generator: Pootle 2.5.0-rc1\n"
+"X-POOTLE-MTIME: 1367414147.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -171,8 +171,7 @@ msgstr "- виконується виправлення таблиць ACPI до
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:29
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr ""
-"DSDT вашого ПК використовується з завантажувального розділу або з папки EFI"
+msgstr "DSDT вашого ПК використовується з завантажувального розділу або з папки EFI"
 
 #
 #. type: Content of: <html><body><p>
@@ -186,8 +185,7 @@ msgstr "- коригування проблем рестарту і сну/пр�
 msgid ""
 "- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
 "supported cards."
-msgstr ""
-"- Графік Інжектор для під'єднання відеокарт від: ATI, NVidia та Intel."
+msgstr "- Графік Інжектор для під'єднання відеокарт від: ATI, NVidia та Intel."
 
 #
 #. type: Content of: <html><body><p>
@@ -299,16 +297,21 @@ msgstr "Завантажувач"
 #. type: "Bootloader_description"
 #: Resources/templates/Localizable.strings:24
 #, no-wrap
+#| msgid ""
+#| "Clover EFI requires three essential files. (in simple terms)\n"
+#| "boot0 (On the drive's MBR) responsible for loading boot1.\n"
+#| "boot1 (On the partition's boot-sector) to finding boot2.\n"
+#| "boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgid ""
 "Clover EFI requires three essential files. (in simple terms)\n"
 "boot0 (On the drive's MBR) responsible for loading boot1.\n"
 "boot1 (On the partition's boot-sector) to finding boot2.\n"
-"boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
+"boot2 (On the partition's root directory) for loading /EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgstr ""
 "Clover EFI вимагає наявності трьох головних файлів. (спрощено)\n"
 "boot0 (головний завантажувальний запис) відповідає за завантаження boot1.\n"
 "boot1 (завантажувальний запис розділу) для завантаження boot2.\n"
-"boot2  (в корені обраного розділу) для пошуку /EFI/CLOVER/CLOVERIA32.efi або CLOVERX64.efi"
+"boot2 (в корені обраного розділу) для пошуку /EFI/CLOVER/CLOVERIA32.efi або CLOVERX64.efi"
 
 #. type: "boot0_title"
 #: Resources/templates/Localizable.strings:29
@@ -504,8 +507,10 @@ msgstr "32-бітний драйвер для PS/2 клавіатури (тiль
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:91
 #, no-wrap
-msgid "Ps2MouseAbsolutePointerDxe-32_description"
-msgstr "32-бітний драйвер для PS2 тачпаду"
+#| msgid "PS/2 keyboard driver, 32bit"
+msgid "PS/2 trackpad driver, 32bit"
+msgstr ""
+"32-бітний драйвер для PS2 тачпаду"
 
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:92
@@ -558,13 +563,15 @@ msgstr "64-бітний драйвер для Linux EXT4 - файлової си
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:100
 #, no-wrap
-msgid "XhciDxe-32_description"
+#| msgid "USB mouse driver, 32bit"
+msgid "USB 3.0 driver, 32bit"
 msgstr "32-бітний драйвер для USB v3.0"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
 #, no-wrap
-msgid "XhciDxe-64_description"
+#| msgid "USB mouse driver, 64bit"
+msgid "USB 3.0 driver, 64bit"
 msgstr "64-бітний драйвер для USB v3.0"
 
 #. type: "CsmVideoDxe-64_description"
@@ -806,9 +813,7 @@ msgstr "Встановити скріпти RC на всі інші завант
 #: Resources/templates/Localizable.strings:165
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
-msgstr ""
-"Встановити скріпти RC на всі внутрішні завантажувальні розділи OSX, окрім "
-"цільового розділу"
+msgstr "Встановити скріпти RC на всі внутрішні завантажувальні розділи OSX, окрім цільового розділу"
 
 #. type: "Optional RC Scripts"
 #: Resources/templates/Localizable.strings:166
@@ -820,53 +825,39 @@ msgstr "Додаткові RC скріпти"
 #: Resources/templates/Localizable.strings:167
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
-msgstr ""
-"Заборонити mDNSResponder sleep proxy client service. Це запобігає "
-"пробудження системи кожної години"
+msgstr "Заборонити mDNSResponder sleep proxy client service. Це запобігає пробудження системи кожної години"
+
+#~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
+#~ msgstr "32-бітний драйвер для PS2 тачпаду"
+
+#~ msgid "XhciDxe-32_description"
+#~ msgstr "32-бітний драйвер для USB v3.0"
+
+#~ msgid "XhciDxe-64_description"
+#~ msgstr "64-бітний драйвер для USB v3.0"
 
 #~ msgid "Video driver - provides a wide range of resolutions, 64bit"
 #~ msgstr ""
-#~ "64-бітний драйвер відео стандарту БІОС з підтрімкою нативної розподіної здатності,"
+#~ "64-бітний драйвер відео стандарту БІОС з підтрімкою нативної розподільної здатності,"
 #~ "Обережно, якщо Кловер не завантажується, зітріть його!"
+
+#~ msgid "DataHubDxe-64_description"
+#~ msgstr ""
+#~ "Підтримка DataHub протоколу, який суворо необхідний для запуску MacOSX."
+#~ "Зазвичай він і так присутній, проте може і не бути, в цьому випадку ви побачите"
+#~ "попередження на екрані."
+
+#~ msgid "EmuVariableUefi-64_description"
+#~ msgstr ""
+#~ "Підтримка протоколу NVRAM для тих UEFI, де це неправильно (HP "
+#~ "наприклад)"
 
 #~ msgid "Fix for Aptio AMI, 64bit"
 #~ msgstr ""
 #~ "Виправлення карти пам'яті для кривих UEFI BIOS, як наприклад, AMI Aptio. "
 #~ "64біт"
 
-#~ msgid "Ps2KeyboardDxe-32_description"
-#~ msgstr "32-бітний драйвер для PS/2 клавіатури"
-
-#~ msgid "Ps2MouseDxe-32_description"
-#~ msgstr "32-бітний драйвер для PS/2 миші"
-
-#~ msgid "UsbMouseDxe-32_description"
-#~ msgstr "32-бітний драйвер для USB миші"
-
-#~ msgid "VBoxExt2-32_description"
-#~ msgstr "32-бітний драйвер для Linux EFI EXT2/3 - файлової системи"
-
-#~ msgid "VBoxExt4-32_description"
-#~ msgstr "32-бітний драйвер для Linux EFI EXT4 - файлової системи"
-
-#~ msgid "Ps2MouseDxe-64_description"
-#~ msgstr "64-бітний драйвер для PS/2 миші"
-
-#~ msgid "UsbMouseDxe-64_description"
-#~ msgstr "64-бітний драйвер для USB миші"
-
-#~ msgid "VBoxExt2-64_description"
-#~ msgstr "64-бітний драйвер для Linux EFI EXT2/3 - файлової системи"
-
-#~ msgid "VBoxExt4-64_description"
-#~ msgstr "64-бітний драйвер для Linux EFI EXT4 - файлової системи"
-
-#~ msgid "CsmVideoDxe-64_description"
-#~ msgstr "64-бітний відео драйвер - надає широкий діапазон рішень"
-
-#~ msgid "OsxAptioFixDrv-64_description"
-#~ msgstr "Виправлення для Aptio AMI, 64біт"
-
-#~ msgid "OsxLowMemFixDrv-64_description"
+#~ msgid "PartitionDxe-64_description"
 #~ msgstr ""
-#~ "Спрощений варіант 64-бітного драйвера. Увага! Не використовувати спільно з OsxAptioFixDrv!"
+#~ "Драйвер для підтримки незвичайних схем розділів: гібридна MBR/GPT або "
+#~ "Apple Partition Map (зустрічається на OEM DVD)"
