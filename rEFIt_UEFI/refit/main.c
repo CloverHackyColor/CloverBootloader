@@ -178,6 +178,7 @@ static VOID HelpRefit(VOID)
         AddMenuInfoLine(&HelpMenu, L"U - Apagar");
         break;
       case portuguese:
+      case brasil:
         AddMenuInfoLine(&HelpMenu, L"ESC - Sai do submenu, atualiza o menu principal");
         AddMenuInfoLine(&HelpMenu, L"F1  - Esta ajuda");
         AddMenuInfoLine(&HelpMenu, L"F2  - Salva preboot.log (somente FAT32)");

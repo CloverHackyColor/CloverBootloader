@@ -900,6 +900,7 @@ typedef enum {
   italian,  //it
   spanish,  //es
   portuguese, //pt
+  brasil,   //br
   polish,   //pl
   ukrainian, //ua
   croatian,  //hr
