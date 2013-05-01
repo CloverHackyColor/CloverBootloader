@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
-"POT-Creation-Date: 2013-04-28 11:52+0300\n"
+"POT-Creation-Date: 2013-05-01 11:54+0300\n"
 "PO-Revision-Date: 2013-04-29 01:18+0200\n"
 "Last-Translator: archintosh <ardr_1109@yahoo.com>\n"
 "Language-Team: id <id@li.org>\n"
@@ -286,18 +286,22 @@ msgstr "Bootloader"
 
 #. type: "Bootloader_description"
 #: Resources/templates/Localizable.strings:24
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Clover EFI requires three essential files. (in simple terms)\n"
+#| "boot0 (On the drive's MBR) responsible for loading boot1.\n"
+#| "boot1 (On the partition's boot-sector) to finding boot2.\n"
+#| "boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgid ""
 "Clover EFI requires three essential files. (in simple terms)\n"
 "boot0 (On the drive's MBR) responsible for loading boot1.\n"
 "boot1 (On the partition's boot-sector) to finding boot2.\n"
-"boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
+"boot2 (On the partition's root directory) for loading /EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgstr ""
 "Clover EFI membutuhkan 3 file utama. (istilah yang sederhana)\n"
 "boot0 (pada sektor MBR) berfungsi untuk memuat boot1.\n"
 "boot1 (di bootsector partisi) berfungsi untuk mencari boot2.\n"
-"boot2 (di partisi direktori root) untuk memuat /EFI/BOOT/CLOVERIA32.efi atau "
-"CLOVERX64.efi, kernel dan lainnya."
+"boot2 (di partisi direktori root) untuk memuat /EFI/BOOT/CLOVERIA32.efi atau CLOVERX64.efi, kernel dan lainnya."
 
 #. type: "boot0_title"
 #: Resources/templates/Localizable.strings:29
@@ -488,9 +492,10 @@ msgstr "Driver untuk keyboard PS/2, 32bit"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:91
-#, no-wrap
-msgid "Ps2MouseAbsolutePointerDxe-32_description"
-msgstr "Ps2MouseAbsolutePointerDxe-32_description"
+#, fuzzy, no-wrap
+#| msgid "PS/2 keyboard driver, 32bit"
+msgid "PS/2 trackpad driver, 32bit"
+msgstr "Driver untuk keyboard PS/2, 32bit"
 
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:92
@@ -542,15 +547,17 @@ msgstr "driver untuk ext4 dari virtualbox, 64bit"
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:100
-#, no-wrap
-msgid "XhciDxe-32_description"
-msgstr "XhciDxe-32_description"
+#, fuzzy, no-wrap
+#| msgid "USB mouse driver, 32bit"
+msgid "USB 3.0 driver, 32bit"
+msgstr "USB mouse driver, 32bit"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
-#, no-wrap
-msgid "XhciDxe-64_description"
-msgstr "XhciDxe-64_description"
+#, fuzzy, no-wrap
+#| msgid "USB mouse driver, 64bit"
+msgid "USB 3.0 driver, 64bit"
+msgstr "USB mouse driver, 64bit"
 
 #. type: "CsmVideoDxe-64_description"
 #: Resources/templates/Localizable.strings:102
@@ -574,8 +581,7 @@ msgid ""
 "Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
 msgstr ""
 "Protokol DataHub merupakan support yang diperlukan oleh MacOSX.\n"
-"Biasanya sudah tersedia tapi kadang-kadang terlewat. Kalau terlewat akan "
-"terlihat peringatan di layar."
+"Biasanya sudah tersedia tapi kadang-kadang terlewat. Kalau terlewat akan terlihat peringatan di layar."
 
 #. type: "EmuVariableUefi-64_description"
 #: Resources/templates/Localizable.strings:108
@@ -586,16 +592,14 @@ msgid ""
 "Use it only if you have a problem without it"
 msgstr ""
 "Driver 64bit untuk dukungan variabel NVRAM yang dibutuhkan oleh MacOSX.\n"
-"Biasanya UEFI boot memakai hardware NVRAM tapi kadang-kadang driver ini "
-"masih dibutuhkan.\n"
+"Biasanya UEFI boot memakai hardware NVRAM tapi kadang-kadang driver ini masih dibutuhkan.\n"
 "Gunakan HANYA kalau ada masalah"
 
 #. type: "OsxAptioFixDrv-64_description"
 #: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
-msgstr ""
-"Driver 64bit yang membenahi masalah Memori pada UEFI seperti pada AMI Aptio"
+msgstr "Driver 64bit yang membenahi masalah Memori pada UEFI seperti pada AMI Aptio"
 
 #. type: "OsxLowMemFixDrv-64_description"
 #: Resources/templates/Localizable.strings:112
@@ -607,9 +611,7 @@ msgstr "Varian sederhana OsxAptioFixDrv, 64bit (Jangan pakai bersamaan)"
 #: Resources/templates/Localizable.strings:113
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
-msgstr ""
-"Driver 64bit yang mendukung partisi yang tidak umum seperti: hybrid GPT/MBR "
-"atau Apple Partition Map."
+msgstr "Driver 64bit yang mendukung partisi yang tidak umum seperti: hybrid GPT/MBR atau Apple Partition Map."
 
 #. type: "Themes_title"
 #: Resources/templates/Localizable.strings:119
@@ -806,6 +808,15 @@ msgstr "Opsional RC Skrip"
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "Mendisable mDNSResponder sleep proxy client service. Supaya system tidak terbangun setiap jam apabila system dalam mode sleep"
+
+#~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
+#~ msgstr "Ps2MouseAbsolutePointerDxe-32_description"
+
+#~ msgid "XhciDxe-32_description"
+#~ msgstr "XhciDxe-32_description"
+
+#~ msgid "XhciDxe-64_description"
+#~ msgstr "XhciDxe-64_description"
 
 #~ msgid "Video driver - provides a wide range of resolutions, 64bit"
 #~ msgstr "Video driver - mendukung banyak resolusi, 64bit"

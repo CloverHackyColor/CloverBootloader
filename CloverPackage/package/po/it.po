@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
-"POT-Creation-Date: 2013-04-28 11:52+0300\n"
+"POT-Creation-Date: 2013-05-01 11:54+0300\n"
 "PO-Revision-Date: 2013-04-29 14:19+0200\n"
 "Last-Translator: ErmaC <ErmaC@chameleon.org>\n"
 "Language-Team: it <it@li.org>\n"
@@ -288,12 +288,17 @@ msgstr "Bootloader"
 
 #. type: "Bootloader_description"
 #: Resources/templates/Localizable.strings:24
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Clover EFI requires three essential files. (in simple terms)\n"
+#| "boot0 (On the drive's MBR) responsible for loading boot1.\n"
+#| "boot1 (On the partition's boot-sector) to finding boot2.\n"
+#| "boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgid ""
 "Clover EFI requires three essential files. (in simple terms)\n"
 "boot0 (On the drive's MBR) responsible for loading boot1.\n"
 "boot1 (On the partition's boot-sector) to finding boot2.\n"
-"boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
+"boot2 (On the partition's root directory) for loading /EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgstr ""
 "Clover EFI richiede tre file essenziali. (in semplici termini)\n"
 "boot0 (Sul disco MBR) responsabile del caricamento del boot1.\n"
@@ -375,8 +380,7 @@ msgid ""
 "Can also be use if you don't want to upgrade MBR or PBR sectors."
 msgstr ""
 "Non installare nessun bootloader (boot0X, boot1X).\n"
-"Utile per schede madri con bios UEFI che non hanno bisogno dei file per il "
-"bootloader. \n"
+"Utile per schede madri con bios UEFI che non hanno bisogno dei file per il bootloader. \n"
 "Può essere usato anche se non si desidera aggiornare i settori MBR o PBR."
 
 #. type: "AltBoot_title"
@@ -482,8 +486,7 @@ msgstr "CloverEFI 64-bit BiosBlockIO"
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
 msgstr ""
 "CloverEFI 64-bit che utilizza Bios Block I/O per accedere alle unità.\n"
-"Necessario anche per accedere ad unità che utilizzano controller RAID, "
-"JMicron, NForce ed altri controller SATA/ATA/SCSI di terze parti."
+"Necessario anche per accedere ad unità che utilizzano controller RAID, JMicron, NForce ed altri controller SATA/ATA/SCSI di terze parti."
 
 #. type: "Ps2KeyboardDxe-32_description"
 #: Resources/templates/Localizable.strings:90
@@ -493,9 +496,10 @@ msgstr "Driver a 32 bit per tastiere PS/2"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:91
-#, no-wrap
-msgid "Ps2MouseAbsolutePointerDxe-32_description"
-msgstr "Driver a 32 bit per Ps2MouseAbsolutePointer"
+#, fuzzy, no-wrap
+#| msgid "PS/2 keyboard driver, 32bit"
+msgid "PS/2 trackpad driver, 32bit"
+msgstr "Driver a 32 bit per tastiere PS/2"
 
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:92
@@ -547,15 +551,17 @@ msgstr "Driver a 64 bit per accedere a partizioni formattate in ext4"
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:100
-#, no-wrap
-msgid "XhciDxe-32_description"
-msgstr "Driver a 32 bit che aggiunge supporto alle porte USB 3.0 di terze parti."
+#, fuzzy, no-wrap
+#| msgid "USB mouse driver, 32bit"
+msgid "USB 3.0 driver, 32bit"
+msgstr "Driver a 32 bit per mouse USB"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
-#, no-wrap
-msgid "XhciDxe-64_description"
-msgstr "Driver a 64 bit che aggiunge supporto alle porte USB 3.0 di terze parti."
+#, fuzzy, no-wrap
+#| msgid "USB mouse driver, 64bit"
+msgid "USB 3.0 driver, 64bit"
+msgstr "Driver a 64 bit per mouse USB"
 
 #. type: "CsmVideoDxe-64_description"
 #: Resources/templates/Localizable.strings:102
@@ -566,12 +572,9 @@ msgid ""
 "Clover may not started with it and you may have wake problem in system.\n"
 "Use with precautions."
 msgstr ""
-"Driver video a 64 bit per l'interfaccia grafica utente (GUI) di Clover che "
-"permette di scegliere più risoluzioni.\n"
-"Basato sul modulo CSM (Compatibility Support Module) dell UEFI BIOS e "
-"richiede che il CSM sia attivato.\n"
-"Clover potrebbe non avviarsi correttamente con questo driver o potrebbe "
-"causare problemi durante la fase di sonno/risveglio!\n"
+"Driver video a 64 bit per l'interfaccia grafica utente (GUI) di Clover che permette di scegliere più risoluzioni.\n"
+"Basato sul modulo CSM (Compatibility Support Module) dell UEFI BIOS e richiede che il CSM sia attivato.\n"
+"Clover potrebbe non avviarsi correttamente con questo driver o potrebbe causare problemi durante la fase di sonno/risveglio!\n"
 "Usare con cautela!"
 
 #. type: "DataHubDxe-64_description"
@@ -581,11 +584,8 @@ msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
 "Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
 msgstr ""
-"Driver a 64 bit aggiunge supporto al protocollo DataHub necessario per "
-"MacOSX.\n"
-"Questo protocollo è già presente nella maggior parte dei casi, ma può "
-"mancare in determinate configurazioni. In questo caso si dovrebbe ricevere "
-"un avviso sullo schermo."
+"Driver a 64 bit aggiunge supporto al protocollo DataHub necessario per MacOSX.\n"
+"Questo protocollo è già presente nella maggior parte dei casi, ma può mancare in determinate configurazioni. In questo caso si dovrebbe ricevere un avviso sullo schermo."
 
 #. type: "EmuVariableUefi-64_description"
 #: Resources/templates/Localizable.strings:108
@@ -596,17 +596,14 @@ msgid ""
 "Use it only if you have a problem without it"
 msgstr ""
 "Driver a 64bit per il supporto delle variabili NVRAM necessarie per MacOSX.\n"
-"La maggior parte dei firmware UEFI utilizzano hardware NVRAM, ma in rari "
-"casi è necessario il driver.\n"
+"La maggior parte dei firmware UEFI utilizzano hardware NVRAM, ma in rari casi è necessario il driver.\n"
 "Usare solo se si ha un problema senza di questo driver."
 
 #. type: "OsxAptioFixDrv-64_description"
 #: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
-msgstr ""
-"Driver a 64 bit che risolve i problemi di memoria sul firmware UEFI come AMI "
-"Aptio bios."
+msgstr "Driver a 64 bit che risolve i problemi di memoria sul firmware UEFI come AMI Aptio bios."
 
 #. type: "OsxLowMemFixDrv-64_description"
 #: Resources/templates/Localizable.strings:112
@@ -618,9 +615,7 @@ msgstr "Driver a 64 bit che permette, durante l'avvio UEFI, di riallocare gli in
 #: Resources/templates/Localizable.strings:113
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
-msgstr ""
-"Driver a 64 bit che aggiunge supporto a tabelle di partizione non comuni "
-"come: GPT/MBR ibrido o Mappa Partizione Apple."
+msgstr "Driver a 64 bit che aggiunge supporto a tabelle di partizione non comuni come: GPT/MBR ibrido o Mappa Partizione Apple."
 
 #. type: "Themes_title"
 #: Resources/templates/Localizable.strings:119
@@ -804,9 +799,7 @@ msgstr "Script RC su tutti gli altri volumi OSX avviabili"
 #: Resources/templates/Localizable.strings:165
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
-msgstr ""
-"Installa tutti gli script RC su tutti i volumi interni OSX avviabili oltre "
-"al volume di destinazione."
+msgstr "Installa tutti gli script RC su tutti i volumi interni OSX avviabili oltre al volume di destinazione."
 
 #. type: "Optional RC Scripts"
 #: Resources/templates/Localizable.strings:166
@@ -818,9 +811,18 @@ msgstr "Script RC Opzionali"
 #: Resources/templates/Localizable.strings:167
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
-msgstr ""
-"Script che disabilita il servizio BONJOUR (sleep proxy client). Eviterà che "
-"il sistema, in caso di standby, si risvegli a tutte le  ore."
+msgstr "Script che disabilita il servizio BONJOUR (sleep proxy client). Eviterà che il sistema, in caso di standby, si risvegli a tutte le  ore."
+
+#~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
+#~ msgstr "Driver a 32 bit per Ps2MouseAbsolutePointer"
+
+#~ msgid "XhciDxe-32_description"
+#~ msgstr ""
+#~ "Driver a 32 bit che aggiunge supporto alle porte USB 3.0 di terze parti."
+
+#~ msgid "XhciDxe-64_description"
+#~ msgstr ""
+#~ "Driver a 64 bit che aggiunge supporto alle porte USB 3.0 di terze parti."
 
 #~ msgid "Video driver - provides a wide range of resolutions, 64bit"
 #~ msgstr ""

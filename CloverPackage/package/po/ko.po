@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
-"POT-Creation-Date: 2013-04-28 11:52+0300\n"
+"POT-Creation-Date: 2013-05-01 11:54+0300\n"
 "PO-Revision-Date: 2013-04-29 09:49+0200\n"
 "Last-Translator: ceruns <ceruns@ymail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
@@ -76,7 +76,8 @@ msgstr "Clover v2"
 #: Resources/templates/Description.html:17
 msgid ""
 "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
-msgstr "각기 다른 프로젝트(Clover, rEFIt, XNY, VirtualBox)에 기반한 오픈소스입니다."
+msgstr ""
+"각기 다른 프로젝트(Clover, rEFIt, XNY, VirtualBox)에 기반한 오픈소스입니다."
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:18
@@ -98,14 +99,17 @@ msgstr "- OSX 10.4 ~ 10.8, Windows EFI, 그리고 Linux EFI로 부팅"
 msgid ""
 "- It's EFI bootloader provides RuntimeServices for OS that impossible for "
 "Legacy Bootloaders"
-msgstr "레거시(구형) 부트로더 지원이 불가능한 OS를 위한 런타임 서비스를 지원하는 EFI 부트로더입니다."
+msgstr ""
+"레거시(구형) 부트로더 지원이 불가능한 OS를 위한 런타임 서비스를 지원하는 EFI "
+"부트로더입니다."
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:23
 msgid ""
 "- mostly Clover do automatic detection of hardware and set all properties by "
 "default."
-msgstr "- 대체로 Clover는 모든 하드웨어를 자동으로 인식하고 기본 값으로 설정합니다."
+msgstr ""
+"- 대체로 Clover는 모든 하드웨어를 자동으로 인식하고 기본 값으로 설정합니다."
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:23
@@ -125,7 +129,9 @@ msgstr "그러나 사용자들은 config.plist를 수정할 수 있습니다"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:25
 msgid "- with Clover you may restart into other OS from Startup Disk prefPane"
-msgstr "- Clover로 시스템 환경설정의 시동 디스크 항목을 통해 다른 OS로 부팅할 수 있습니다."
+msgstr ""
+"- Clover로 시스템 환경설정의 시동 디스크 항목을 통해 다른 OS로 부팅할 수 있습"
+"니다."
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:26
@@ -150,7 +156,9 @@ msgstr "커스톰 DSDT는 부팅된 파티션 또는 EFI 폴더에서 읽혀집�
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:30
 msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
-msgstr "- 커스톰 가능한 RestartFix(재부팅 수정), sleep/wake fix(잠자기,깨어나기 수정), PCIRootUID 값"
+msgstr ""
+"- 커스톰 가능한 RestartFix(재부팅 수정), sleep/wake fix(잠자기,깨어나기 수"
+"정), PCIRootUID 값"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:31
@@ -194,7 +202,9 @@ msgstr "- FireWire를 위한 추가 kext 로딩 및 시큐리티 모드"
 msgid ""
 "- default boot after timeout, customizable GUI , and saving screenshots from "
 "GUI typing F10"
-msgstr "- 설정된 시간 직후 기본 값으로 부팅, 커스톰 가능한 GUI, GUI에서의 스크린샷 기능(F10키를 누르세요)"
+msgstr ""
+"- 설정된 시간 직후 기본 값으로 부팅, 커스톰 가능한 GUI, GUI에서의 스크린샷 기"
+"능(F10키를 누르세요)"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:39
@@ -252,12 +262,17 @@ msgstr "부트로더"
 
 #. type: "Bootloader_description"
 #: Resources/templates/Localizable.strings:24
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Clover EFI requires three essential files. (in simple terms)\n"
+#| "boot0 (On the drive's MBR) responsible for loading boot1.\n"
+#| "boot1 (On the partition's boot-sector) to finding boot2.\n"
+#| "boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgid ""
 "Clover EFI requires three essential files. (in simple terms)\n"
 "boot0 (On the drive's MBR) responsible for loading boot1.\n"
 "boot1 (On the partition's boot-sector) to finding boot2.\n"
-"boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
+"boot2 (On the partition's root directory) for loading /EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgstr ""
 "Clover EFI는 3개의 기본 파일이 필요합니다. (간단한 용어로 설명하였습니다.)\n"
 "boot0 (드라이브의 MBR에 위치)은 boot1을 읽어 들입니다.\n"
@@ -464,9 +479,10 @@ msgstr "PS/2 키보드 드라이버(32bit)"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:91
-#, no-wrap
-msgid "Ps2MouseAbsolutePointerDxe-32_description"
-msgstr "Ps2MouseAbsolutePointerDxe-32_description"
+#, fuzzy, no-wrap
+#| msgid "PS/2 keyboard driver, 32bit"
+msgid "PS/2 trackpad driver, 32bit"
+msgstr "PS/2 키보드 드라이버(32bit)"
 
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:92
@@ -518,15 +534,17 @@ msgstr "Virtualbox 용 Ext4 파일시스템 드라이버, 64비트"
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:100
-#, no-wrap
-msgid "XhciDxe-32_description"
-msgstr "XhciDxe-32_description"
+#, fuzzy, no-wrap
+#| msgid "USB mouse driver, 32bit"
+msgid "USB 3.0 driver, 32bit"
+msgstr "USB 마우스 드라이버, 32비트"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
-#, no-wrap
-msgid "XhciDxe-64_description"
-msgstr "XhciDxe-64_description"
+#, fuzzy, no-wrap
+#| msgid "USB mouse driver, 64bit"
+msgid "USB 3.0 driver, 64bit"
+msgstr "USB 마우스 드라이버, 64비트"
 
 #. type: "CsmVideoDxe-64_description"
 #: Resources/templates/Localizable.strings:102
@@ -757,14 +775,12 @@ msgstr ""
 #. type: "rc.scripts.on.all.volumes_title"
 #: Resources/templates/Localizable.strings:164
 #, no-wrap
-#| msgid "Install all RC scripts on all bootable OSX volumes"
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "모든 부팅 가능한 OSX 볼륨에 모든 RC scripts를 설치합니다."
 
 #. type: "rc.scripts.on.all.volumes_description"
 #: Resources/templates/Localizable.strings:165
 #, no-wrap
-#| msgid "Install all RC scripts on all internal bootable OSX volumes."
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "타겟 볼륨을 제외한 모든 내장 OSX 볼륨에 모든 RC scripts를 설치합니다."
 
@@ -778,5 +794,13 @@ msgstr "선택적 RC Scripts"
 #: Resources/templates/Localizable.strings:167
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
-msgstr ""
-"mDNSResponder 잠자기 프록시 클라이언트 서비스를 비활성화합니다. 매 시간 잠자기에서 깨어나는 문제를 방지할 수 있습니다."
+msgstr "mDNSResponder 잠자기 프록시 클라이언트 서비스를 비활성화합니다. 매 시간 잠자기에서 깨어나는 문제를 방지할 수 있습니다."
+
+#~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
+#~ msgstr "Ps2MouseAbsolutePointerDxe-32_description"
+
+#~ msgid "XhciDxe-32_description"
+#~ msgstr "XhciDxe-32_description"
+
+#~ msgid "XhciDxe-64_description"
+#~ msgstr "XhciDxe-64_description"

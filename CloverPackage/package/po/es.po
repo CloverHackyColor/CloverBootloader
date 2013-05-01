@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
-"POT-Creation-Date: 2013-04-28 11:52+0300\n"
+"POT-Creation-Date: 2013-05-01 11:54+0300\n"
 "PO-Revision-Date: 2013-04-30 23:52+0000\n"
 "Last-Translator: Maniac <emafrias@gmail.com>\n"
 "Language-Team: es <es@li.org>\n"
@@ -293,12 +293,17 @@ msgstr "Gestor de arranque"
 
 #. type: "Bootloader_description"
 #: Resources/templates/Localizable.strings:24
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Clover EFI requires three essential files. (in simple terms)\n"
+#| "boot0 (On the drive's MBR) responsible for loading boot1.\n"
+#| "boot1 (On the partition's boot-sector) to finding boot2.\n"
+#| "boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgid ""
 "Clover EFI requires three essential files. (in simple terms)\n"
 "boot0 (On the drive's MBR) responsible for loading boot1.\n"
 "boot1 (On the partition's boot-sector) to finding boot2.\n"
-"boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
+"boot2 (On the partition's root directory) for loading /EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgstr ""
 "Clover EFI requiere tres archivos esenciales. (en términos simples)\n"
 "boot0 (En el MBR del disco) responsable de cargar boot1.\n"
@@ -485,8 +490,7 @@ msgstr "CloverEFI 64-bits BiosBlockIO"
 #, no-wrap
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
 msgstr ""
-"CloverEFI 64-bits para acceder a unidades de disco con controladores RAID, "
-"JMicron, NForce\n"
+"CloverEFI 64-bits para acceder a unidades de disco con controladores RAID, JMicron, NForce\n"
 "y controladores alternativos SATA/ATA/SCSI de terceros"
 
 #. type: "Ps2KeyboardDxe-32_description"
@@ -497,9 +501,10 @@ msgstr "Controlador para teclados PS/2, 32bit"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:91
-#, no-wrap
-msgid "Ps2MouseAbsolutePointerDxe-32_description"
-msgstr "Controlador 32bit para Trackpads. Experimental."
+#, fuzzy, no-wrap
+#| msgid "PS/2 keyboard driver, 32bit"
+msgid "PS/2 trackpad driver, 32bit"
+msgstr "Controlador para teclados PS/2, 32bit"
 
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:92
@@ -551,15 +556,17 @@ msgstr "Controlador para sistema de archivos ext4 de VirtualBox, 64bit"
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:100
-#, no-wrap
-msgid "XhciDxe-32_description"
-msgstr "Controlador 32bit que provee soporte para puertos USB 3.0 de terceros"
+#, fuzzy, no-wrap
+#| msgid "USB mouse driver, 32bit"
+msgid "USB 3.0 driver, 32bit"
+msgstr "Controlador para ratones USB, 32bit"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
-#, no-wrap
-msgid "XhciDxe-64_description"
-msgstr "Controlador 64bit que provee soporte para puertos USB 3.0 de terceros"
+#, fuzzy, no-wrap
+#| msgid "USB mouse driver, 64bit"
+msgid "USB 3.0 driver, 64bit"
+msgstr "Controlador para ratones USB, 64bit"
 
 #. type: "CsmVideoDxe-64_description"
 #: Resources/templates/Localizable.strings:102
@@ -570,12 +577,9 @@ msgid ""
 "Clover may not started with it and you may have wake problem in system.\n"
 "Use with precautions."
 msgstr ""
-"Controlador de video 64bit para la interfaz gráfica de Clover, permite "
-"seleccionar mas resoluciones.\n"
-"Está basado en el módulo CSM de BIOS UEFI y requiere que CSM (Módulo de "
-"Soporte de Compatibilidad) esté activo.\n"
-"Clover puede no iniciar con este controlador y puede ocasionar problemas al "
-"salir de reposo en algunos sistemas.\n"
+"Controlador de video 64bit para la interfaz gráfica de Clover, permite seleccionar mas resoluciones.\n"
+"Está basado en el módulo CSM de BIOS UEFI y requiere que CSM (Módulo de Soporte de Compatibilidad) esté activo.\n"
+"Clover puede no iniciar con este controlador y puede ocasionar problemas al salir de reposo en algunos sistemas.\n"
 "Use con precaución."
 
 #. type: "DataHubDxe-64_description"
@@ -586,8 +590,7 @@ msgid ""
 "Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
 msgstr ""
 "Este controlador provee soporte del protocolo DataHub requerido por MacOSX.\n"
-"Usualmente esta presente pero puede faltar por algún motivo. En este caso "
-"debería ver una advertencia en pantalla."
+"Usualmente esta presente pero puede faltar por algún motivo. En este caso debería ver una advertencia en pantalla."
 
 #. type: "EmuVariableUefi-64_description"
 #: Resources/templates/Localizable.strings:108
@@ -597,19 +600,15 @@ msgid ""
 "Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed.\n"
 "Use it only if you have a problem without it"
 msgstr ""
-"Controlador 64bit que provee soporte de variables NVRAM necesarias para "
-"MacOSX.\n"
-"La mayoría de sistemas UEFI usan NVRAM por hardware pero en algunos casos "
-"excepcionales este controlador es necesario.\n"
+"Controlador 64bit que provee soporte de variables NVRAM necesarias para MacOSX.\n"
+"La mayoría de sistemas UEFI usan NVRAM por hardware pero en algunos casos excepcionales este controlador es necesario.\n"
 "Usar solamente si tiene problemas sin el"
 
 #. type: "OsxAptioFixDrv-64_description"
 #: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
-msgstr ""
-"Controlador 64bit para solucionar problemas de memoria en firmware UEFI como "
-"el caso de AMI Aptio"
+msgstr "Controlador 64bit para solucionar problemas de memoria en firmware UEFI como el caso de AMI Aptio"
 
 #. type: "OsxLowMemFixDrv-64_description"
 #: Resources/templates/Localizable.strings:112
@@ -621,9 +620,7 @@ msgstr "Variante simplificada de OsxAptioFixDrv, 64bit (no usar ambos simultáne
 #: Resources/templates/Localizable.strings:113
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
-msgstr ""
-"Controlador 64bit que provee soporte para mapas de partición inusuales como: "
-"GPT/MBR híbridos o Mapa de Partición de Apple."
+msgstr "Controlador 64bit que provee soporte para mapas de partición inusuales como: GPT/MBR híbridos o Mapa de Partición de Apple."
 
 #. type: "Themes_title"
 #: Resources/templates/Localizable.strings:119
@@ -820,6 +817,17 @@ msgstr "Scripts RC opcionales"
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "Desactivar el servicio mDNSResponder. Esto evitará que el sistema salga del reposo cada ciertas horas"
+
+#~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
+#~ msgstr "Controlador 32bit para Trackpads. Experimental."
+
+#~ msgid "XhciDxe-32_description"
+#~ msgstr ""
+#~ "Controlador 32bit que provee soporte para puertos USB 3.0 de terceros"
+
+#~ msgid "XhciDxe-64_description"
+#~ msgstr ""
+#~ "Controlador 64bit que provee soporte para puertos USB 3.0 de terceros"
 
 #~ msgid "Video driver - provides a wide range of resolutions, 64bit"
 #~ msgstr ""

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-04-28 11:52+0300\n"
+"POT-Creation-Date: 2013-05-01 11:54+0300\n"
 "PO-Revision-Date: 2013-04-30 12:01+0200\n"
 "Last-Translator: beta992 <beta992@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -267,12 +267,17 @@ msgstr "Opstartlader"
 
 #. type: "Bootloader_description"
 #: Resources/templates/Localizable.strings:24
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Clover EFI requires three essential files. (in simple terms)\n"
+#| "boot0 (On the drive's MBR) responsible for loading boot1.\n"
+#| "boot1 (On the partition's boot-sector) to finding boot2.\n"
+#| "boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgid ""
 "Clover EFI requires three essential files. (in simple terms)\n"
 "boot0 (On the drive's MBR) responsible for loading boot1.\n"
 "boot1 (On the partition's boot-sector) to finding boot2.\n"
-"boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
+"boot2 (On the partition's root directory) for loading /EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgstr ""
 "Clover EFI vereist drie essentiële bestanden. (in eenvoudige termen)\n"
 "boot0 (Op de MBR van de schijf) verantwoordelijk voor het laden van boot1.\n"
@@ -468,9 +473,10 @@ msgstr "PS/2 toetsenbord stuurprogramma, 32bit"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:91
-#, no-wrap
-msgid "Ps2MouseAbsolutePointerDxe-32_description"
-msgstr "Ps2MouseAbsolutePointerDxe-32_description"
+#, fuzzy, no-wrap
+#| msgid "PS/2 keyboard driver, 32bit"
+msgid "PS/2 trackpad driver, 32bit"
+msgstr "PS/2 toetsenbord stuurprogramma, 32bit"
 
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:92
@@ -522,15 +528,17 @@ msgstr "ext4 bestandssysteem stuurprogramma van virtualbox, 64bit"
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:100
-#, no-wrap
-msgid "XhciDxe-32_description"
-msgstr "XhciDxe-32_description"
+#, fuzzy, no-wrap
+#| msgid "USB mouse driver, 32bit"
+msgid "USB 3.0 driver, 32bit"
+msgstr "USB muis stuurprogramma, 32bit"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
-#, no-wrap
-msgid "XhciDxe-64_description"
-msgstr "XhciDxe-64_description"
+#, fuzzy, no-wrap
+#| msgid "USB mouse driver, 64bit"
+msgid "USB 3.0 driver, 64bit"
+msgstr "USB muis stuurprogramma, 64bit"
 
 #. type: "CsmVideoDxe-64_description"
 #: Resources/templates/Localizable.strings:102
@@ -541,12 +549,9 @@ msgid ""
 "Clover may not started with it and you may have wake problem in system.\n"
 "Use with precautions."
 msgstr ""
-"64bit video stuurprogramma voor de Clover GUI, voor ondersteuning van meer "
-"resoluties.\n"
-"Het is gebaseerd op de CSM module in UEFI BIOS en het vereist dat CSM wordt "
-"ingeschakeld.\n"
-"Clover kan mogelijk niet worden gestart en er kunnen problemen ontstaan bij "
-"het ontwaken van het systeem.\n"
+"64bit video stuurprogramma voor de Clover GUI, voor ondersteuning van meer resoluties.\n"
+"Het is gebaseerd op de CSM module in UEFI BIOS en het vereist dat CSM wordt ingeschakeld.\n"
+"Clover kan mogelijk niet worden gestart en er kunnen problemen ontstaan bij het ontwaken van het systeem.\n"
 "Voorzichtigheid geboden."
 
 #. type: "DataHubDxe-64_description"
@@ -557,8 +562,7 @@ msgid ""
 "Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
 msgstr ""
 "Dit is DataHub protocol ondersteuning verplicht voor MacOSX.\n"
-"Meestal is dit al aanwezig maar soms kan het ook missen. In dat geval zal je "
-"een waarschuwing zien op het scherm."
+"Meestal is dit al aanwezig maar soms kan het ook missen. In dat geval zal je een waarschuwing zien op het scherm."
 
 #. type: "EmuVariableUefi-64_description"
 #: Resources/templates/Localizable.strings:108
@@ -568,19 +572,15 @@ msgid ""
 "Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed.\n"
 "Use it only if you have a problem without it"
 msgstr ""
-"64bit stuurprogramma voor ondersteuning van NVRAM variabelen die nodig zijn "
-"voor MacOSX.\n"
-"Meestal gebruikt UEFI hardware NVRAM maar in sommige zeldzame gevallen is "
-"dit stuurprogramma nodig.\n"
+"64bit stuurprogramma voor ondersteuning van NVRAM variabelen die nodig zijn voor MacOSX.\n"
+"Meestal gebruikt UEFI hardware NVRAM maar in sommige zeldzame gevallen is dit stuurprogramma nodig.\n"
 "Gebruik dit alleen als je problemen hebt zonder het."
 
 #. type: "OsxAptioFixDrv-64_description"
 #: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
-msgstr ""
-"64bit stuurprogramma voor het corrigeren van Geheugen problemen op UEFI "
-"firmware zoals een AMI Aptio"
+msgstr "64bit stuurprogramma voor het corrigeren van Geheugen problemen op UEFI firmware zoals een AMI Aptio"
 
 #. type: "OsxLowMemFixDrv-64_description"
 #: Resources/templates/Localizable.strings:112
@@ -592,9 +592,7 @@ msgstr "Vereenvoudigde variant van OsxAptioFixDrv, 64bit (gebruik ze niet naast 
 #: Resources/templates/Localizable.strings:113
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
-msgstr ""
-"64bit stuurprogramma ter ondersteuning niet-gebruikelijke partition maps "
-"zoals: hybride GPT/MBR of Apple Partition Map"
+msgstr "64bit stuurprogramma ter ondersteuning niet-gebruikelijke partition maps zoals: hybride GPT/MBR of Apple Partition Map"
 
 #. type: "Themes_title"
 #: Resources/templates/Localizable.strings:119
@@ -791,6 +789,15 @@ msgstr "Optionele RC Scripts"
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "Schakel de mDNSResponder sleep proxy client service uit. Dit voorkomt dat het systeem ontwaakt uit slaap elk uur"
+
+#~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
+#~ msgstr "Ps2MouseAbsolutePointerDxe-32_description"
+
+#~ msgid "XhciDxe-32_description"
+#~ msgstr "XhciDxe-32_description"
+
+#~ msgid "XhciDxe-64_description"
+#~ msgstr "XhciDxe-64_description"
 
 #~ msgid "Video driver - provides a wide range of resolutions, 64bit"
 #~ msgstr "Videostuurprogramma - biedt een breed scala van resoluties, 64bit"

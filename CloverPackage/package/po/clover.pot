@@ -6,8 +6,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Clover v2-r1378\n"
-"POT-Creation-Date: 2013-04-25 16:44+0400\n"
+"Project-Id-Version: Clover v2.0-r1426\n"
+"POT-Creation-Date: 2013-05-01 11:54+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -244,7 +244,7 @@ msgid ""
 "boot0 (On the drive's MBR) responsible for loading boot1.\n"
 "boot1 (On the partition's boot-sector) to finding boot2.\n"
 "boot2 (On the partition's root directory) for loading "
-"/EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
+"/EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgstr ""
 
 #. type: "boot0_title"
@@ -410,7 +410,7 @@ msgstr ""
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:91
 #, no-wrap
-msgid "Ps2MouseAbsolutePointerDxe-32_description"
+msgid "PS/2 trackpad driver, 32bit"
 msgstr ""
 
 #. type: "Ps2MouseDxe-32_description"
@@ -464,13 +464,13 @@ msgstr ""
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:100
 #, no-wrap
-msgid "XhciDxe-32_description"
+msgid "USB 3.0 driver, 32bit"
 msgstr ""
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
 #, no-wrap
-msgid "XhciDxe-64_description"
+msgid "USB 3.0 driver, 64bit"
 msgstr ""
 
 #. type: "CsmVideoDxe-64_description"

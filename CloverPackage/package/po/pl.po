@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
-"POT-Creation-Date: 2013-04-28 11:52+0300\n"
+"POT-Creation-Date: 2013-05-01 11:54+0300\n"
 "PO-Revision-Date: 2013-04-28 19:17+0200\n"
 "Last-Translator: oswaldini <oswaldinimtb@gmail.com>\n"
 "Language-Team: pl <pl@li.org>\n"
@@ -298,12 +298,17 @@ msgstr "Bootloader"
 
 #. type: "Bootloader_description"
 #: Resources/templates/Localizable.strings:24
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Clover EFI requires three essential files. (in simple terms)\n"
+#| "boot0 (On the drive's MBR) responsible for loading boot1.\n"
+#| "boot1 (On the partition's boot-sector) to finding boot2.\n"
+#| "boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgid ""
 "Clover EFI requires three essential files. (in simple terms)\n"
 "boot0 (On the drive's MBR) responsible for loading boot1.\n"
 "boot1 (On the partition's boot-sector) to finding boot2.\n"
-"boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
+"boot2 (On the partition's root directory) for loading /EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgstr ""
 "Clover EFI wymaga trzech podstawowych plików. (w skrócie)\n"
 "boot0 (w głównym rekordzie startowym dysku) odpowiedzialny za ładowanie boot1.\n"
@@ -499,9 +504,10 @@ msgstr "Sterownik (32 bitowy) klawiatury na PS/2."
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:91
-#, no-wrap
-msgid "Ps2MouseAbsolutePointerDxe-32_description"
-msgstr "Sterownik (32 bitowy) myszy na PS/2 (wersja nieopisana przez developerów, proszę użyć jeśli nie działają pozostałe sterowniki do PS/2)."
+#, fuzzy, no-wrap
+#| msgid "PS/2 keyboard driver, 32bit"
+msgid "PS/2 trackpad driver, 32bit"
+msgstr "Sterownik (32 bitowy) klawiatury na PS/2."
 
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:92
@@ -553,15 +559,17 @@ msgstr "Sterownik (64-ro bitowy) dla formatu ext4 z VirtualBox'a."
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:100
-#, no-wrap
-msgid "XhciDxe-32_description"
-msgstr "Sterownik (32 bitowy) do obsługi USB w menu Clover'a."
+#, fuzzy, no-wrap
+#| msgid "USB mouse driver, 32bit"
+msgid "USB 3.0 driver, 32bit"
+msgstr "Sterownik (32 bitowy) myszy na USB."
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
-#, no-wrap
-msgid "XhciDxe-64_description"
-msgstr "Sterownik (64-ro bitowy) do obsługi USB w menu Clover'a."
+#, fuzzy, no-wrap
+#| msgid "USB mouse driver, 64bit"
+msgid "USB 3.0 driver, 64bit"
+msgstr "Sterownik (64-ro bitowy) myszy na USB."
 
 #. type: "CsmVideoDxe-64_description"
 #: Resources/templates/Localizable.strings:102
@@ -572,11 +580,9 @@ msgid ""
 "Clover may not started with it and you may have wake problem in system.\n"
 "Use with precautions."
 msgstr ""
-"Sterownik grafiki (64-ro bitowy) - aktywuje dodatkowe rozdzielczości w menu "
-"Clover'a.\n"
+"Sterownik grafiki (64-ro bitowy) - aktywuje dodatkowe rozdzielczości w menu Clover'a.\n"
 "Bazuje na module CSM pochodzącym z UEFI BIOS.\n"
-"Clover może nie wystartować z tym sterownikiem oraz może powodować problemy "
-"z wybudzeniem z uśpienia."
+"Clover może nie wystartować z tym sterownikiem oraz może powodować problemy z wybudzeniem z uśpienia."
 
 #. type: "DataHubDxe-64_description"
 #: Resources/templates/Localizable.strings:106
@@ -586,8 +592,7 @@ msgid ""
 "Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
 msgstr ""
 "Sterownik (64-ro bitowy) obligatoryjnie wymagany przez Mac OS X.\n"
-"Zwykle jest on obecny w BIOSie ale czasami go brakuje. W takiej sytuacji "
-"zostanie wyświetlony komunikat na ekranie.\n"
+"Zwykle jest on obecny w BIOSie ale czasami go brakuje. W takiej sytuacji zostanie wyświetlony komunikat na ekranie.\n"
 "Obecność tego sterownika jest zawsze bezpieczna."
 
 #. type: "EmuVariableUefi-64_description"
@@ -598,17 +603,14 @@ msgid ""
 "Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed.\n"
 "Use it only if you have a problem without it"
 msgstr ""
-"Sterownik (64-ro bitowy) wymagany dla płyt głównych z BIOSem Phoenix w celu "
-"załadowania informacji z NVRAMu.\n"
+"Sterownik (64-ro bitowy) wymagany dla płyt głównych z BIOSem Phoenix w celu załadowania informacji z NVRAMu.\n"
 "Należy użyć tylko w przypadku kiedy nie są ładowane parametry z NVRAM !"
 
 #. type: "OsxAptioFixDrv-64_description"
 #: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
-msgstr ""
-"Sterownik (64-ro bitowy) naprawiający problem z pamięcią w trybie UEFI na "
-"BIOSach AMI Aptio."
+msgstr "Sterownik (64-ro bitowy) naprawiający problem z pamięcią w trybie UEFI na BIOSach AMI Aptio."
 
 #. type: "OsxLowMemFixDrv-64_description"
 #: Resources/templates/Localizable.strings:112
@@ -621,8 +623,7 @@ msgstr "Prostsza wersja sterownika OsxAptioFixDrv, 64 bity (NIE UŻYWAĆ OBU RÓ
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
 msgstr ""
-"Sterownik (64-ro bitowy) odpowiedzialny za mapę partycji typu: hybryda "
-"GPT/MBR lub Schemat Partycji Apple.\n"
+"Sterownik (64-ro bitowy) odpowiedzialny za mapę partycji typu: hybryda GPT/MBR lub Schemat Partycji Apple.\n"
 "Obecność tego sterownika jest zawsze bezpieczna."
 
 #. type: "Themes_title"
@@ -820,6 +821,17 @@ msgstr "Opcjonalne skrypty RC"
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "Wyłącz mDNSResponder - usługi klienta proxy sleepu. Zapobiega to automatycznemu wybudzaniu ze sleepu co godzinę."
+
+#~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
+#~ msgstr ""
+#~ "Sterownik (32 bitowy) myszy na PS/2 (wersja nieopisana przez developerów, "
+#~ "proszę użyć jeśli nie działają pozostałe sterowniki do PS/2)."
+
+#~ msgid "XhciDxe-32_description"
+#~ msgstr "Sterownik (32 bitowy) do obsługi USB w menu Clover'a."
+
+#~ msgid "XhciDxe-64_description"
+#~ msgstr "Sterownik (64-ro bitowy) do obsługi USB w menu Clover'a."
 
 #~ msgid "Video driver - provides a wide range of resolutions, 64bit"
 #~ msgstr ""

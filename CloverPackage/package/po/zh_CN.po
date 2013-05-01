@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
-"POT-Creation-Date: 2013-04-28 11:52+0300\n"
+"POT-Creation-Date: 2013-05-01 11:54+0300\n"
 "PO-Revision-Date: 2013-05-01 05:25+0000\n"
 "Last-Translator: crazybirdy <>\n"
 "Language-Team: zh_CN <zh_CN@li.org>\n"
@@ -255,12 +255,17 @@ msgstr "Bootloader"
 
 #. type: "Bootloader_description"
 #: Resources/templates/Localizable.strings:24
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Clover EFI requires three essential files. (in simple terms)\n"
+#| "boot0 (On the drive's MBR) responsible for loading boot1.\n"
+#| "boot1 (On the partition's boot-sector) to finding boot2.\n"
+#| "boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgid ""
 "Clover EFI requires three essential files. (in simple terms)\n"
 "boot0 (On the drive's MBR) responsible for loading boot1.\n"
 "boot1 (On the partition's boot-sector) to finding boot2.\n"
-"boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
+"boot2 (On the partition's root directory) for loading /EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgstr ""
 "简而言之，Clover EFI 幸运草 需要三个必要的文件。\n"
 "boot0 (在硬盘的 MBR) 负责载入 boot1。\n"
@@ -287,8 +292,7 @@ msgid ""
 "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
 "  5. diskutil mount /dev/rdisk9s1"
 msgstr ""
-"使用 fdisk440 将 boot0 写入 MBR 的前 440 位元，避免损坏已经存在的 Windows 机码，boot0 会在第一个 HFS 激活 "
-"分区开始搜寻 boot1h2，或在第一个 Fat32 激活 分区搜寻 boot1f32alt。\n"
+"使用 fdisk440 将 boot0 写入 MBR 的前 440 位元，避免损坏已经存在的 Windows 机码，boot0 会在第一个 HFS 激活 分区开始搜寻 boot1h2，或在第一个 Fat32 激活 分区搜寻 boot1f32alt。\n"
 "本安装将 会 设置 HFS 及 Fat32 安装分区为激活分区。\n"
 "必须在 Win 先将分区格式化为 Fat32 格式分区，或在 Mac 操作如下\n"
 " 1. 先用 磁碟工具 抹掉 为 MS-DOS (FAT) 格式\n"
@@ -317,8 +321,7 @@ msgid ""
 "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
 "  5. diskutil mount /dev/rdisk9s1"
 msgstr ""
-"使用 fdisk440 将 boot0hfs 写入 MBR 的前 440 位元，避免损坏已经存在的 Windows 机码，boot0hfs 会在第一个 "
-"HFS 分区开始搜寻 boot1h2，或在第一个 Fat32 激活 分区搜寻 boot1f32alt。\n"
+"使用 fdisk440 将 boot0hfs 写入 MBR 的前 440 位元，避免损坏已经存在的 Windows 机码，boot0hfs 会在第一个 HFS 分区开始搜寻 boot1h2，或在第一个 Fat32 激活 分区搜寻 boot1f32alt。\n"
 "本安装将 不会 设置 HFS 安装分区为激活分区，\n"
 "本安装将 会 设置 Fat32 安装分区为激活分区。\n"
 "必须在 Win 先将分区格式化为 Fat32 格式分区，或在 Mac 操作如下\n"
@@ -457,9 +460,10 @@ msgstr "32位，PS/2 键盘 驱动。"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:91
-#, no-wrap
-msgid "Ps2MouseAbsolutePointerDxe-32_description"
-msgstr "32位，PS/2 鼠标 驱动。"
+#, fuzzy, no-wrap
+#| msgid "PS/2 keyboard driver, 32bit"
+msgid "PS/2 trackpad driver, 32bit"
+msgstr "32位，PS/2 键盘 驱动。"
 
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:92
@@ -511,15 +515,17 @@ msgstr "64位，来自 Virtualbox 的 ext4 文件系统驱动。"
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:100
-#, no-wrap
-msgid "XhciDxe-32_description"
-msgstr "32位，XHCI 高速USB 3.0 驱动。"
+#, fuzzy, no-wrap
+#| msgid "USB mouse driver, 32bit"
+msgid "USB 3.0 driver, 32bit"
+msgstr "32位，USB 鼠标 驱动。"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
-#, no-wrap
-msgid "XhciDxe-64_description"
-msgstr "64位，XHCI 高速USB 3.0 驱动。"
+#, fuzzy, no-wrap
+#| msgid "USB mouse driver, 64bit"
+msgid "USB 3.0 driver, 64bit"
+msgstr "64位，USB 鼠标 驱动。"
 
 #. type: "CsmVideoDxe-64_description"
 #: Resources/templates/Localizable.strings:102
@@ -771,3 +777,12 @@ msgstr "选择安装 RC Scripts"
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "停用 mDNSResponder 休眠 proxy client 服务，可以避免系统休眠时，每小时自动唤醒。"
+
+#~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
+#~ msgstr "32位，PS/2 鼠标 驱动。"
+
+#~ msgid "XhciDxe-32_description"
+#~ msgstr "32位，XHCI 高速USB 3.0 驱动。"
+
+#~ msgid "XhciDxe-64_description"
+#~ msgstr "64位，XHCI 高速USB 3.0 驱动。"

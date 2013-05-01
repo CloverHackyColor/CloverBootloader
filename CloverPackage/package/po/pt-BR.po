@@ -7,11 +7,11 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
-"POT-Creation-Date: 2013-04-28 11:52+0300\n"
+"POT-Creation-Date: 2013-05-01 11:54+0300\n"
 "PO-Revision-Date: 2013-04-29 03:57+0200\n"
 "Last-Translator: kyndder <kyndder@icloud.com>\n"
 "Language-Team: pt <pt@li.org>\n"
-"Language: pt-PT\n"
+"Language: pt-BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -120,7 +120,6 @@ msgstr ""
 "- Inicialmente Clover faz a detecção automática de hardware e configura "
 "todas as opções padrão."
 
-#
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:23
 #: Resources/templates/Description.html:24
@@ -128,8 +127,8 @@ msgstr ""
 #: Resources/templates/Description.html:31
 #: Resources/templates/Description.html:32
 #: Resources/templates/Description.html:33
-msgid " "
-msgstr " "
+msgid " "
+msgstr ""
 
 #
 #. type: Content of: <html><body><p>
@@ -293,12 +292,17 @@ msgstr "Bootloader"
 
 #. type: "Bootloader_description"
 #: Resources/templates/Localizable.strings:24
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Clover EFI requires three essential files. (in simple terms)\n"
+#| "boot0 (On the drive's MBR) responsible for loading boot1.\n"
+#| "boot1 (On the partition's boot-sector) to finding boot2.\n"
+#| "boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgid ""
 "Clover EFI requires three essential files. (in simple terms)\n"
 "boot0 (On the drive's MBR) responsible for loading boot1.\n"
 "boot1 (On the partition's boot-sector) to finding boot2.\n"
-"boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
+"boot2 (On the partition's root directory) for loading /EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgstr ""
 "Clover EFI necessita de três arquivos essênciais. (em termos simples)\n"
 "boot0 (No MBR do disco) responsável por carregar o boot1.\n"
@@ -494,9 +498,10 @@ msgstr "Driver para Teclado PS/2, 32bit"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:91
-#, no-wrap
-msgid "Ps2MouseAbsolutePointerDxe-32_description"
-msgstr "Ps2MouseAbsolutePointerDxe-32_description"
+#, fuzzy, no-wrap
+#| msgid "PS/2 keyboard driver, 32bit"
+msgid "PS/2 trackpad driver, 32bit"
+msgstr "Driver para Teclado PS/2, 32bit"
 
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:92
@@ -548,15 +553,17 @@ msgstr "Driver para Sistema de Arquivos EXT4 do VirtualBox, 64bit"
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:100
-#, no-wrap
-msgid "XhciDxe-32_description"
-msgstr "XhciDxe-32_description"
+#, fuzzy, no-wrap
+#| msgid "USB mouse driver, 32bit"
+msgid "USB 3.0 driver, 32bit"
+msgstr "Driver para Mouse USB, 32bit"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
-#, no-wrap
-msgid "XhciDxe-64_description"
-msgstr "XhciDxe-64_description"
+#, fuzzy, no-wrap
+#| msgid "USB mouse driver, 64bit"
+msgid "USB 3.0 driver, 64bit"
+msgstr "Driver para Mouse USB, 64bit"
 
 #. type: "CsmVideoDxe-64_description"
 #: Resources/templates/Localizable.strings:102
@@ -567,12 +574,9 @@ msgid ""
 "Clover may not started with it and you may have wake problem in system.\n"
 "Use with precautions."
 msgstr ""
-"Driver de Vídeo 64bit para o GUI do Clover possibilitando a escolha de mais "
-"resoluções.\n"
-"Ele é baseado no módulo CSM existente em BIOS UEFI e é necessário que o modo "
-"esteja ativo.\n"
-"O Clover pode não iniciar enquanto usando este driver e ele também pode "
-"provocar problemas com o Sleep.\n"
+"Driver de Vídeo 64bit para o GUI do Clover possibilitando a escolha de mais resoluções.\n"
+"Ele é baseado no módulo CSM existente em BIOS UEFI e é necessário que o modo esteja ativo.\n"
+"O Clover pode não iniciar enquanto usando este driver e ele também pode provocar problemas com o Sleep.\n"
 "Use com precaução."
 
 #. type: "DataHubDxe-64_description"
@@ -583,8 +587,7 @@ msgid ""
 "Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
 msgstr ""
 "Este é o suporte ao protocolo DataHub que é obrigatório no OS X.\n"
-"Normalmente ele já está presente mas algumas vezes pode não estar. Neste "
-"caso você deverá ver um aviso na tela."
+"Normalmente ele já está presente mas algumas vezes pode não estar. Neste caso você deverá ver um aviso na tela."
 
 #. type: "EmuVariableUefi-64_description"
 #: Resources/templates/Localizable.strings:108
@@ -595,17 +598,14 @@ msgid ""
 "Use it only if you have a problem without it"
 msgstr ""
 "Driver 64bit para o suporte a variáveis NVRAM necessário para o Mac OS X.\n"
-"Normalmente o boot UEFI usa o Hardware NVRAM mas em alguns casos raros este "
-"driver é necessário.\n"
+"Normalmente o boot UEFI usa o Hardware NVRAM mas em alguns casos raros este driver é necessário.\n"
 "Use-o somente se você tiver problemas quando não o estiver utilizando."
 
 #. type: "OsxAptioFixDrv-64_description"
 #: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
-msgstr ""
-"Driver de 64bit para corrigir problemas de Memória em Firmware UEFI como em "
-"AMI Aptio BIOS."
+msgstr "Driver de 64bit para corrigir problemas de Memória em Firmware UEFI como em AMI Aptio BIOS."
 
 #. type: "OsxLowMemFixDrv-64_description"
 #: Resources/templates/Localizable.strings:112
@@ -617,9 +617,7 @@ msgstr "Versão simplificada do OsxAptioFixDrv, 64bit (não use os dois juntos)"
 #: Resources/templates/Localizable.strings:113
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
-msgstr ""
-"Driver de 64bit para suportar Esquemas de Partição não comuns como Híbrido "
-"GPT/MBR ou Apple Partition Map."
+msgstr "Driver de 64bit para suportar Esquemas de Partição não comuns como Híbrido GPT/MBR ou Apple Partition Map."
 
 #. type: "Themes_title"
 #: Resources/templates/Localizable.strings:119
@@ -816,6 +814,19 @@ msgstr "Opcional RC Scripts"
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "Desabilita o serviço mDNSResponder sleep proxy client. Isso irá impedir que o systema retorne do Sleep a cada hora\";"
+
+#
+#~ msgid " "
+#~ msgstr " "
+
+#~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
+#~ msgstr "Ps2MouseAbsolutePointerDxe-32_description"
+
+#~ msgid "XhciDxe-32_description"
+#~ msgstr "XhciDxe-32_description"
+
+#~ msgid "XhciDxe-64_description"
+#~ msgstr "XhciDxe-64_description"
 
 #~ msgid "Video driver - provides a wide range of resolutions, 64bit"
 #~ msgstr "Driver de Vídeo - Oferece uma grande variedade de resoluções, 64bit"

@@ -24,7 +24,7 @@ newfs_msdos -v EFI -F 32 /dev/rdisk9s1";
 "Bootloader_description" = "Clover EFI requires three essential files. (in simple terms)
 boot0 (On the drive's MBR) responsible for loading boot1.
 boot1 (On the partition's boot-sector) to finding boot2.
-boot2 (On the partition's root directory) for loading /EFI/BOOT/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc.";
+boot2 (On the partition's root directory) for loading /EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc.";
 
 "boot0_title" = "BIOS MBR boot0 (HFS+Fat32)";
 "boot0_description" = "Used for BIOS booting on BIOS motherboards.
@@ -88,7 +88,7 @@ Press key 6 to boot6 = Clover EFI 64bit boot.";
 // Drivers
 // ----------------------------------------------------------------------------
 "Ps2KeyboardDxe-32_description" = "PS/2 keyboard driver, 32bit";
-"Ps2MouseAbsolutePointerDxe-32_description" = "Ps2MouseAbsolutePointerDxe-32_description";
+"Ps2MouseAbsolutePointerDxe-32_description" = "PS/2 trackpad driver, 32bit";
 "Ps2MouseDxe-32_description" = "PS/2 mouse driver, 32bit";
 "Ps2MouseDxe-64_description" = "PS/2 mouse driver, 64bit";
 "UsbMouseDxe-32_description" = "USB mouse driver, 32bit";
@@ -97,8 +97,8 @@ Press key 6 to boot6 = Clover EFI 64bit boot.";
 "VBoxExt2-64_description" = "ext2/3 filesystem driver from virtualbox, 64bit";
 "VBoxExt4-32_description" = "ext4 filesystem driver from virtualbox, 32bit";
 "VBoxExt4-64_description" = "ext4 filesystem driver from virtualbox, 64bit";
-"XhciDxe-32_description" = "XhciDxe-32_description";
-"XhciDxe-64_description" = "XhciDxe-64_description";
+"XhciDxe-32_description" = "USB 3.0 driver, 32bit";
+"XhciDxe-64_description" = "USB 3.0 driver, 64bit";
 "CsmVideoDxe-64_description" = "64bit video driver for Clover GUI allowing to choose more resolutions.
 It is based on CSM module in UEFI BIOS and required CSM will be enabled.
 Clover may not started with it and you may have wake problem in system.
