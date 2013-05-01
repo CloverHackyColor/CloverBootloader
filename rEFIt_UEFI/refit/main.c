@@ -525,6 +525,10 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   
   DBG("StartLoader() start\n");
   egClearScreen(&DarkBackgroundPixel);
+  MsgLog("Finally: Bus=%ldMHz CPU=%ldMHz\n",
+         DivU64x32(gCPUStructure.FSBFrequency, Mega),
+         gCPUStructure.MaxSpeed);
+
   MsgLog("Turbo=%c\n", gSettings.Turbo?'Y':'N');
 //  MsgLog("PatchAPIC=%c\n", gSettings.PatchNMI?'Y':'N');
 //  MsgLog("PatchVBios=%c\n", gSettings.PatchVBios?'Y':'N');
@@ -2305,7 +2309,7 @@ UINT8* getCurrentEdid (VOID)
   Edid = NULL;
   Status = gBS->LocateProtocol (&gEfiEdidActiveProtocolGuid, NULL, (VOID**)&EdidProtocol);
   if (!EFI_ERROR (Status)) {
-    DBG(" size=%d\n", EdidProtocol->SizeOfEdid);
+    DBG(" size=%d", EdidProtocol->SizeOfEdid);
     if (EdidProtocol->SizeOfEdid > 0) {
       Edid = AllocateCopyPool (EdidProtocol->SizeOfEdid, EdidProtocol->Edid);
     }

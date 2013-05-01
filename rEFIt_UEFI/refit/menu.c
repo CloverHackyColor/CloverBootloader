@@ -773,7 +773,7 @@ VOID ApplyInputs(VOID)
     }
   }
   gSettings.FixDsdt = k;
-  DBG("applied FixDsdt=%04x\n", k);
+ // DBG("applied FixDsdt=%04x\n", k);
   
   i = 70;
   if (InputItems[i].Valid) {

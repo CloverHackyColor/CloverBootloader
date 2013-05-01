@@ -83,16 +83,15 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN WantAlpha)
   
   NewImage = egLoadImage(ThemeDir, GlobalConfig.FontFileName, WantAlpha);
   if (NewImage) {
-      DBG("font loaded from themedir\n");
+      DBG("font %s loaded from themedir\n", GlobalConfig.FontFileName);
   } else {
     NewImage = egLoadImage(SelfRootDir, PoolPrint(L"EFI\\CLOVER\\font\\%s", GlobalConfig.FontFileName), WantAlpha);
-    DBG("font loaded from common font dir\n");
+    DBG("font %s loaded from common font dir\n", GlobalConfig.FontFileName);
     if (!NewImage) {
       DBG("Font %s is not loaded, using default \n", PoolPrint(L"\\EFI\\CLOVER\\font\\%s", GlobalConfig.FontFileName));
       return NULL;
     }
   }
-
 
   ImageWidth = NewImage->Width;
 //  DBG("ImageWidth=%d\n", ImageWidth);
@@ -141,7 +140,7 @@ VOID PrepareFont(VOID)
         FontImage = egPrepareEmbeddedImage(&egemb_font_gray, TRUE);
         break;
       case FONT_LOAD:
-        DBG("load font image\n");
+  //      DBG("load font image\n");
         FontImage = egLoadFontImage(TRUE);
         if (!FontImage) {
           ChangeFont = TRUE;

@@ -364,7 +364,7 @@ Done:
     gRT->SetVariable(L"BiosVideoBlockSwitchMode", &gEfiGlobalVariableGuid, EFI_VARIABLE_BOOTSERVICE_ACCESS, 1, &Status);
   }
   
-  DBG("BiosVideoDriverBindingStart - END: %r!\n", Status);
+//  DBG("BiosVideoDriverBindingStart - END: %r!\n", Status);
   return Status;
 }
 
@@ -394,7 +394,7 @@ BiosVideoDriverBindingStop (
   BOOLEAN                      AllChildrenStopped;
   UINTN                        Index;
   
-  DBG("BiosVideoDriverBindingStop!\n");
+//  DBG("BiosVideoDriverBindingStop!\n");
   if (NumberOfChildren == 0) {
     //
     // Close PCI I/O protocol on the controller handle

@@ -266,7 +266,7 @@ CHAR8 *devprop_generate_string(DevPropString *StringBuf)
 	CHAR8 *buffer = (CHAR8*)AllocatePool(len + 1);
 	CHAR8 *ptr = buffer;
 	
-   DBG("devprop_generate_string\n");
+//   DBG("devprop_generate_string\n");
 	if(!buffer)
 		return NULL;
 

@@ -737,11 +737,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
           gSettings.ResetAddr  = StrHexToUint64(UStr);
         }
+        DBG("Config set ResetAddr=%s\n", gSettings.ResetAddr);
         if (gSettings.ResetAddr  == 0x64) {
           gSettings.ResetVal = 0xFE;
         } else if  (gSettings.ResetAddr  == 0xCF9) {
           gSettings.ResetVal = 0x06;
         }
+        DBG("Config calc ResetVal=%s\n", gSettings.ResetVal);
       }
       prop = GetProperty(dictPointer, "ResetValue");
       if(prop) {
@@ -749,8 +751,9 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.ResetVal = (UINT8)(UINTN)prop->string;
         } else if (prop->type == kTagTypeString){
           AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-          gSettings.ResetVal = (UINT8)StrDecimalToUintn((CHAR16*)&UStr[0]);
+          gSettings.ResetVal = (UINT8)StrHexToUint64((CHAR16*)&UStr[0]);
         }
+        DBG("Config set ResetVal=%s\n", gSettings.ResetVal);
       }
       //other known pair is 0x0CF9/0x06. What about 0x92/0x01 ?
       
@@ -1398,6 +1401,7 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 		Volume->OSType = OSTYPE_LION;
 		Volume->OSIconName = L"mac";
     Volume->BootType = BOOTING_BY_EFI;
+    Volume->OSName = L"Install Lion";
     return EFI_SUCCESS;
 	}
 	/* Mac OS X Mountain Lion Installer */
@@ -1406,6 +1410,7 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 		Volume->OSType = OSTYPE_COUGAR;
 		Volume->OSIconName = L"mac";
     Volume->BootType = BOOTING_BY_EFI;
+    Volume->OSName = L"Install ML";
     return EFI_SUCCESS;
 	}
   
@@ -1427,6 +1432,7 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
         Volume->OSType = OSTYPE_TIGER;
         Volume->OSIconName = L"tiger";
         Volume->BootType = BOOTING_BY_EFI;
+        Volume->OSName = L"Tiger";
         Status = EFI_SUCCESS;
       } else
 			// Leopard
@@ -1434,6 +1440,7 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 				Volume->OSType = OSTYPE_LEO;
         Volume->OSIconName = L"leo";
         Volume->BootType = BOOTING_BY_EFI;
+        Volume->OSName = L"Leo";
         Status = EFI_SUCCESS;
       } else
 			// Snow Leopard
@@ -1441,6 +1448,7 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 				Volume->OSType = OSTYPE_SNOW;
         Volume->OSIconName = L"snow";
         Volume->BootType = BOOTING_BY_EFI;
+        Volume->OSName = L"Snow";
         Status = EFI_SUCCESS;
       } else
 			// Lion
@@ -1448,6 +1456,7 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 				Volume->OSType = OSTYPE_LION;
         Volume->OSIconName = L"lion";
         Volume->BootType = BOOTING_BY_EFI;
+        Volume->OSName = L"Lion";
         Status = EFI_SUCCESS;
       } else
       // Mountain Lion
@@ -1455,6 +1464,7 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 				Volume->OSType = OSTYPE_COUGAR;
         Volume->OSIconName = L"cougar";
         Volume->BootType = BOOTING_BY_EFI;
+        Volume->OSName = L"ML";
         Status = EFI_SUCCESS;
       } else
         // Lynx
@@ -1462,6 +1472,7 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
           Volume->OSType = OSTYPE_LYNX;
           Volume->OSIconName = L"lynx";
           Volume->BootType = BOOTING_BY_EFI;
+          Volume->OSName = L"Lynx";
           Status = EFI_SUCCESS;
         }
       MsgLog("  Booting OS %a\n", prop->string);
@@ -1934,10 +1945,11 @@ EFI_STATUS SaveSettings()
   }
   
   gCPUStructure.CPUFrequency = MultU64x64(gCPUStructure.MaxSpeed, Mega);
-  
+/*
   MsgLog("Finally: Bus=%ldMHz CPU=%ldMHz\n",
          DivU64x32(gCPUStructure.FSBFrequency, Mega),
          gCPUStructure.MaxSpeed);
+*/  
   return EFI_SUCCESS;
 }
 
@@ -2065,7 +2077,7 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
         MsgLog(", injecting kexts from: '%s'", SrcDir);
         InjectionNeeded = TRUE;
     } else {
-        MsgLog(", skipping kext injection (kexts folder not found)");
+        MsgLog(", skipping kext injection (kexts folder not found)\n");
     }
     
     // prepare list of kext that will be forced to load

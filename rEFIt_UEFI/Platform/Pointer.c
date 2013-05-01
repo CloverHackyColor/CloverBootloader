@@ -205,12 +205,12 @@ VOID PrintPointerVars(
                       )
 {
   EFI_SIMPLE_POINTER_MODE  *CurrentMode;
-  UINT64   Now;
+//  UINT64   Now;
   
   CurrentMode = gPointer.SimplePointerProtocol->Mode;
-  Now = AsmReadTsc();
+//  Now = AsmReadTsc();
   gST->ConOut->SetCursorPosition (gST->ConOut, 0, 0);
-  DBG("%ld                           \n", Now);
+//  DBG("%ld                           \n", Now);
   DBG("Resolution X, Y: %ld, %ld           \n", CurrentMode->ResolutionX, CurrentMode->ResolutionY);
   DBG("Relative X, Y: %d, %d (%ld, %ld millimeters)           \n",
         RelX, RelY,
@@ -280,7 +280,7 @@ VOID UpdatePointer()
     gPointer.newPlace.YPos += ScreenRelY;
     if (gPointer.newPlace.YPos < 0) gPointer.newPlace.YPos = 0;
     if (gPointer.newPlace.YPos > UGAHeight - 1) gPointer.newPlace.YPos = UGAHeight - 1;
-    
+ /*
     if (PrintCount < 1) {
       PrintPointerVars(gPointer.State.RelativeMovementX,
                        gPointer.State.RelativeMovementY,
@@ -294,7 +294,7 @@ VOID UpdatePointer()
       
       PrintCount++;
     }
-    
+ */   
     RedrawPointer();
   }
 //  return Status;
