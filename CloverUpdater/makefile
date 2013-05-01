@@ -1,6 +1,6 @@
 
 CloverUpdater:
-	/usr/bin/xcodebuild -project 'CloverUpdater.xcode/CloverUpdater.xcodeproj' \
+	/usr/bin/xcodebuild -project 'CloverUpdater.code/CloverUpdater.xcodeproj' \
 		-configuration 'Release' CONFIGURATION_BUILD_DIR=$(CURDIR)/build
 
 install:
