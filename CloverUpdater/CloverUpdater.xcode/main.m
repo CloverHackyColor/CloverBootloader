@@ -14,7 +14,7 @@ char* arg2;
 
 int main(int argc, char *argv[])
 {
-    arg1 = argv[1];
-    arg2 = argv[2];
+    arg1 = argc >= 2 ? argv[1] : "Unknown";
+    arg2 = argc >= 3 ? argv[2] : "Unknown";
     return NSApplicationMain(argc,  (const char **) argv);
 }
