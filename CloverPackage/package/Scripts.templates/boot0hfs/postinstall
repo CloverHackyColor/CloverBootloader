@@ -94,10 +94,10 @@ echo "" >> "$install_log"
 ### Stage 0 ###
 
 echo "Stage 0 - Written ${diskloader} to ${bootdisk}" >> "$install_log"
-echo "/usr/local/bin/fdisk440 -u -f ${DEST_VOL}/usr/standalone/i386/${diskloader} -y ${bootdisk}" >> "$install_log"
+echo "/usr/local/bin/fdisk440 -u -f /usr/standalone/i386/${diskloader} -y ${bootdisk}" >> "$install_log"
 echo " " >> "$install_log"
 
-/usr/local/bin/fdisk440 -u -f "${DEST_VOL}/usr/standalone/i386/${diskloader}" -y ${bootdisk}
+/usr/local/bin/fdisk440 -u -f "/usr/standalone/i386/${diskloader}" -y ${bootdisk}
 
 ### Stage 1 ###
 
@@ -106,10 +106,10 @@ if [ ${efiformat} = "hfs" ]; then
 
 	echo "Stage 1 - Written ${partitionloaderhfs} to ${bootrdev}" >> "$install_log"
 	echo "File system is HFS." >> "$install_log"
-	echo "dd if=${DEST_VOL}/usr/standalone/i386/${partitionloaderhfs} of=${bootrdev}" >> "$install_log"
+	echo "dd if=/usr/standalone/i386/${partitionloaderhfs} of=${bootrdev}" >> "$install_log"
 	echo " " >> "$install_log"
 
-	dd if="${DEST_VOL}/usr/standalone/i386/${partitionloaderhfs}" of=${bootrdev}
+	dd if="/usr/standalone/i386/${partitionloaderhfs}" of=${bootrdev}
 fi
 
 if [ ${efiformat} = "msdos" ]; then
@@ -123,8 +123,8 @@ if [ ${efiformat} = "msdos" ]; then
 	dd if=${bootrdev} count=1 bs=512 of=/tmp/origbs
 
 	# copy boot1f32 to newbs
-	echo "Executing command: cp ${DEST_VOL}/usr/standalone/i386/${partitionloaderfat} /tmp/newbs"
-	cp "${DEST_VOL}/usr/standalone/i386/${partitionloaderfat}" /tmp/newbs
+	echo "Executing command: cp /usr/standalone/i386/${partitionloaderfat} /tmp/newbs"
+	cp "/usr/standalone/i386/${partitionloaderfat}" /tmp/newbs
 	
 	# "merge" origbs into newbs
 	echo "Executing command: dd if=/tmp/origbs of=/tmp/newbs skip=3 seek=3 bs=1 count=87 conv=notrunc"
@@ -139,7 +139,7 @@ if [ ${efiformat} = "msdos" ]; then
 	echo "Stage 1 - Written ${partitionloaderfat} to ${bootrdev}" >> "$install_log"
 	echo "File system is Fat32." >> "$install_log"
 	echo "dd if=${bootrdev} count=1 bs=512 of=/tmp/origbs" >> "$install_log"
-	echo "cp ${DEST_VOL}/usr/standalone/i386/${partitionloaderfat} /tmp/newbs" >> "$install_log"
+	echo "cp /usr/standalone/i386/${partitionloaderfat} /tmp/newbs" >> "$install_log"
 	echo "dd if=/tmp/origbs of=/tmp/newbs skip=3 seek=3 bs=1 count=87 conv=notrunc" >> "$install_log"
 	echo "dd if=/tmp/newbs of=${bootrdev}" >> "$install_log"
 	echo " " >> "$install_log"

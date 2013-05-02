@@ -221,7 +221,7 @@ VOID PrintPointerVars(
   DBG("Y: %d + %d = %d -> %d               \n", YPosPrev, ScreenRelY, (YPosPrev + ScreenRelY), YPos);
 }
 
-// static INTN PrintCount = 0;
+//static INTN PrintCount = 0;
 
 VOID UpdatePointer()
 {

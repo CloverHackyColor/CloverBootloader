@@ -2,7 +2,6 @@
 //  Arguments.h
 //  CloverUpdate
 //
-//  Created by Sergey on 28.04.13.
 //  Copyright (c) 2013 Slice. All rights reserved.
 //
 

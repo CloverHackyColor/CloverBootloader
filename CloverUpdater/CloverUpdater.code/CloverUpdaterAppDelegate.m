@@ -2,8 +2,7 @@
 //  CloverUpdaterAppDelegate.m
 //  CloverUpdater
 //
-//  Created by Sergey on 29.04.13.
-//  Copyright 2013 Paritet. All rights reserved.
+//  Created by Slice on 29.04.13.
 //
 
 #import "CloverUpdaterAppDelegate.h"
