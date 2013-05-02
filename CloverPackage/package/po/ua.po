@@ -816,7 +816,7 @@ msgstr "Заборонити mDNSResponder sleep proxy client service. Це за
 #, fuzzy, no-wrap
 #| msgid "Install Clover in the ESP"
 msgid "Install CloverUpdater"
-msgstr "Встановити Clover на EFI розділ (ESP)"
+msgstr "Встановити CloverUpdater"
 
 #. type: "CloverUpdater_description"
 #: Resources/templates/Localizable.strings:173
@@ -824,7 +824,9 @@ msgstr "Встановити Clover на EFI розділ (ESP)"
 msgid ""
 "Install CloverUpdater on target volume.\n"
 "CloverUpdater notify you about Clover updates."
-msgstr ""
+msgstr "" 
+"Встановити CloverUpdater на цільовий розділ.\n"
+"Він буде повідомляти про оновлення Кловера."
 
 #~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
 #~ msgstr "32-бітний драйвер для PS2 тачпаду"
