@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-01 11:54+0300\n"
-"PO-Revision-Date: 2013-05-01 05:25+0000\n"
+"PO-Revision-Date: 2013-05-02 09:24+0000\n"
 "Last-Translator: crazybirdy <>\n"
 "Language-Team: zh_CN <zh_CN@li.org>\n"
 "Language: zh_CN\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1367385922.0\n"
+"X-POOTLE-MTIME: 1367486675.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -246,8 +246,7 @@ msgstr "Bootloader"
 
 #. type: "Bootloader_description"
 #: Resources/templates/Localizable.strings:24
-#, no-wrap
-#, fuzzy, no-wrap
+#, no-wrap, no-wrap
 msgid ""
 "Clover EFI requires three essential files. (in simple terms)\n"
 "boot0 (On the drive's MBR) responsible for loading boot1.\n"
@@ -456,8 +455,7 @@ msgstr "32位，PS/2 键盘 驱动。"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:91
-#, no-wrap
-#, fuzzy, no-wrap
+#, no-wrap, no-wrap
 msgid "PS/2 trackpad driver, 32bit"
 msgstr "32位，PS/2 键盘 驱动。"
 
@@ -511,15 +509,13 @@ msgstr "64位，来自 Virtualbox 的 ext4 文件系统驱动。"
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:100
-#, no-wrap
-#, fuzzy, no-wrap
+#, no-wrap, no-wrap
 msgid "USB 3.0 driver, 32bit"
 msgstr "32位，USB 鼠标 驱动。"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
-#, no-wrap
-#, fuzzy, no-wrap
+#, no-wrap, no-wrap
 msgid "USB 3.0 driver, 64bit"
 msgstr "64位，USB 鼠标 驱动。"
 
