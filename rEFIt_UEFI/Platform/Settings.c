@@ -1027,6 +1027,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
                  ((prop->type == kTagTypeString) &&
                   ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
                    gSettings.TrustSMBIOS = TRUE;
+                 }
       }
     }
     
