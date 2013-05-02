@@ -7,14 +7,15 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-01 11:54+0300\n"
-"PO-Revision-Date: 2013-04-29 14:19+0200\n"
-"Last-Translator: ErmaC <ErmaC@chameleon.org>\n"
+"PO-Revision-Date: 2013-05-02 09:25+0000\n"
+"Last-Translator: mackie100 <mackie.proj@yahoo.com>\n"
 "Language-Team: it <it@li.org>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Pootle 2.1.6\n"
+"X-Generator: Pootle 2.5.0-rc1\n"
+"X-POOTLE-MTIME: 1367486723.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -281,8 +282,7 @@ msgstr "Bootloader"
 
 #. type: "Bootloader_description"
 #: Resources/templates/Localizable.strings:24
-#, no-wrap
-#, fuzzy, no-wrap
+#, no-wrap, no-wrap
 msgid ""
 "Clover EFI requires three essential files. (in simple terms)\n"
 "boot0 (On the drive's MBR) responsible for loading boot1.\n"
@@ -294,7 +294,7 @@ msgstr ""
 "boot0 (Sul disco MBR) responsabile del caricamento del boot1.\n"
 "boot1 (Settore di avvio della partizione) per trovare il boot2.\n"
 "boot2 (Nella cartella principale della partizione) per caricare "
-"/EFI/BOOT/CLOVERIA32.efi o CLOVERX64.efi, e il kernel etc."
+"/EFI/CLOVER/CLOVERIA32.efi o CLOVERX64.efi, e il kernel etc."
 
 #. type: "boot0_title"
 #: Resources/templates/Localizable.strings:29
@@ -502,10 +502,9 @@ msgstr "Driver a 32 bit per tastiere PS/2"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:91
-#, no-wrap
-#, fuzzy, no-wrap
+#, no-wrap, no-wrap
 msgid "PS/2 trackpad driver, 32bit"
-msgstr "Driver a 32 bit per tastiere PS/2"
+msgstr "Driver a 32 bit per trackpad PS/2"
 
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:92
@@ -557,17 +556,15 @@ msgstr "Driver a 64 bit per accedere a partizioni formattate in ext4"
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:100
-#, no-wrap
-#, fuzzy, no-wrap
+#, no-wrap, no-wrap
 msgid "USB 3.0 driver, 32bit"
-msgstr "Driver a 32 bit per mouse USB"
+msgstr "Driver a 32 bit che aggiunge supporto USB 3.0"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
-#, no-wrap
-#, fuzzy, no-wrap
+#, no-wrap, no-wrap
 msgid "USB 3.0 driver, 64bit"
-msgstr "Driver a 64 bit per mouse USB"
+msgstr "Driver a 64 bit che aggiunge supporto USB 3.0"
 
 #. type: "CsmVideoDxe-64_description"
 #: Resources/templates/Localizable.strings:102
