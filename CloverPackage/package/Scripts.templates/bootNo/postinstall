@@ -26,7 +26,7 @@ echo " "
 echo "====================================================="
 
 # Mark that the option was selected
-/usr/libexec/plistbuddy -c "Add $installer_choice bool true" "$CLOVER_INSTALLER_PLIST_NEW" >/dev/null
+/usr/libexec/PlistBuddy -c "Add $installer_choice bool true" "$CLOVER_INSTALLER_PLIST_NEW" >/dev/null
 
 echo "======================================================" >> "$install_log"
 echo "Installing BootSectors/BootLoader" >> "$install_log"

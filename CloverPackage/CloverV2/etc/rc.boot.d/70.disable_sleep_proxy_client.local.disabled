@@ -20,7 +20,7 @@ fi
 
 # Variables
 mDNSResponderPList=/System/Library/LaunchDaemons/com.apple.mDNSResponder.plist
-pListBuddy=/usr/libexec/plistbuddy
+pListBuddy=/usr/libexec/PlistBuddy
 disableOption='-DisableSleepProxyClient'
 
 # Debug mode ?

@@ -6,7 +6,7 @@ DEST_VOL="${3}"
 EFI_ROOT_DIR=$(cd "${DEST_VOL}"/EFIROOTDIR; pwd -P)
 CLOVER_INSTALLER_PLIST_NEW="${DEST_VOL}@CLOVER_INSTALLER_PLIST_NEW@"
 install_log="${DEST_VOL}/Clover_Install_Log.txt"
-plistbuddy='/usr/libexec/plistbuddy'
+plistbuddy='/usr/libexec/PlistBuddy'
 installer_choice="@INSTALLER_CHOICE@"
 installer_altboot_refid='@INSTALLER_ALTBOOT_REFID@'
 
@@ -160,6 +160,6 @@ echo "New Active Partition: ${partitionactive}" >> "$install_log"
 echo "" >> "$install_log"
 
 # Mark that the option was selected
-/usr/libexec/plistbuddy -c "Add $installer_choice bool true" "$CLOVER_INSTALLER_PLIST_NEW" >/dev/null
+$plistbuddy -c "Add $installer_choice bool true" "$CLOVER_INSTALLER_PLIST_NEW" >/dev/null
 
 exit

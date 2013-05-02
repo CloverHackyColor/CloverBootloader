@@ -35,4 +35,4 @@ if [[ -f "${DEST_VOL}/usr/standalone/i386/$boottype/$cloverEFIFile" ]]; then
 fi
 
 # Mark that the option was selected
-/usr/libexec/plistbuddy -c "Add $installer_choice bool true" "$CLOVER_INSTALLER_PLIST_NEW" >/dev/null
+/usr/libexec/PlistBuddy -c "Add $installer_choice bool true" "$CLOVER_INSTALLER_PLIST_NEW" >/dev/null

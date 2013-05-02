@@ -24,7 +24,7 @@ install_log="${DEST_VOL}/Clover_Install_Log.txt"
 srcvolume="$DEST_VOL"
 destroot="$DEST_VOL"
 
-plistbuddy='/usr/libexec/plistbuddy'
+plistbuddy='/usr/libexec/PlistBuddy'
 installer_on_target_refid='@INSTALLER_ON_TARGET_REFID@'
 installer_on_all_volumes_refid='@INSTALLER_ON_ALL_VOLUMES_REFID@'
 

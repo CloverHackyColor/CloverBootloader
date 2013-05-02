@@ -21,7 +21,7 @@ EFI_ROOT_DIR=$(cd "${DEST_VOL}"/EFIROOTDIR; pwd -P)
 CLOVER_INSTALLER_PLIST_NEW="${DEST_VOL}@CLOVER_INSTALLER_PLIST_NEW@"
 install_log="${DEST_VOL}/Clover_Install_Log.txt"
 
-plistbuddy='/usr/libexec/plistbuddy'
+plistbuddy='/usr/libexec/PlistBuddy'
 installer_on_target_refid='@INSTALLER_ON_TARGET_REFID@'
 installer_on_all_volumes_refid='@INSTALLER_ON_ALL_VOLUMES_REFID@'
 installer_choice="@INSTALLER_CHOICE@"
