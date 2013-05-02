@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-02 16:05+0300\n"
-"PO-Revision-Date: 2013-05-01 19:21+0000\n"
+"PO-Revision-Date: 2013-05-02 16:34+0000\n"
 "Last-Translator: AlexKord <alexkord@lan.com.ua>\n"
 "Language-Team: ua <ua@li.org>\n"
 "Language: ua\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1367414147.0\n"
+"X-POOTLE-MTIME: 1367512469.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -813,7 +813,7 @@ msgstr "Заборонити mDNSResponder sleep proxy client service. Це за
 
 #. type: "CloverUpdater_title"
 #: Resources/templates/Localizable.strings:172
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install Clover in the ESP"
 msgid "Install CloverUpdater"
 msgstr "Встановити CloverUpdater"
@@ -824,7 +824,7 @@ msgstr "Встановити CloverUpdater"
 msgid ""
 "Install CloverUpdater on target volume.\n"
 "CloverUpdater notify you about Clover updates."
-msgstr "" 
+msgstr ""
 "Встановити CloverUpdater на цільовий розділ.\n"
 "Він буде повідомляти про оновлення Кловера."
 
