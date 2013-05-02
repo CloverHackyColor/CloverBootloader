@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-02 16:05+0300\n"
-"PO-Revision-Date: 2013-05-02 09:23+0000\n"
+"PO-Revision-Date: 2013-05-02 19:23+0000\n"
 "Last-Translator: crazybirdy <>\n"
 "Language-Team: zh_TW <zh_TW@li.org>\n"
 "Language: zh_TW\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1367486620.0\n"
+"X-POOTLE-MTIME: 1367522592.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -771,10 +771,10 @@ msgstr "停用 mDNSResponder 休眠 proxy client 服務，可以避免系統休�
 
 #. type: "CloverUpdater_title"
 #: Resources/templates/Localizable.strings:172
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install Clover in the ESP"
 msgid "Install CloverUpdater"
-msgstr "安裝 Clover 到 EFI 系統區"
+msgstr "安裝 Clover更新軟體"
 
 #. type: "CloverUpdater_description"
 #: Resources/templates/Localizable.strings:173
@@ -783,6 +783,8 @@ msgid ""
 "Install CloverUpdater on target volume.\n"
 "CloverUpdater notify you about Clover updates."
 msgstr ""
+"安裝 Clover更新軟體 到選擇磁區\n"
+"Clover更新軟體 會提醒 Clover 之更新訊息。"
 
 #~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
 #~ msgstr "32位，PS/2 滑鼠 驅動。"
