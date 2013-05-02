@@ -1019,10 +1019,14 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       }
       prop = GetProperty(dictPointer, "Trust");
       if (prop) {
-        if ((prop->type == kTagTypeTrue) ||
+        if ((prop->type == kTagTypeFalse) ||
             ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
-          gSettings.TrustSMBIOS = TRUE;
+             ((prop->string[0] == 'n') || (prop->string[0] == 'N'))))
+            gSettings.TrustSMBIOS = FALSE;
+        else if ((prop->type == kTagTypeTrue) ||
+                 ((prop->type == kTagTypeString) &&
+                  ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+                   gSettings.TrustSMBIOS = TRUE;
       }
     }
     
