@@ -975,6 +975,25 @@ fi
     done
 # End build optional rc scripts package
 
+# build CloverUpdater package
+    echo "==================== Clover Updater ===================="
+    packagesidentity="$clover_package_identity"
+    choiceId="CloverUpdater"
+    packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
+    local cloverUpdaterDir="${SRCROOT}"/../CloverUpdater
+    ditto --noextattr --noqtn "$cloverUpdaterDir"/CloverUpdaterUtility.plist  \
+     "${PKG_BUILD_DIR}/${choiceId}"/Root/Library/LaunchAgents/com.projectosx.Clover.Updater.plist
+    ditto --noextattr --noqtn "$cloverUpdaterDir"/CloverUpdaterUtility  \
+     "${PKG_BUILD_DIR}/${choiceId}/Root/Library/Application Support/Clover"/
+    ditto --noextattr --noqtn "$cloverUpdaterDir"/build/CloverUpdater.app  \
+     "${PKG_BUILD_DIR}/${choiceId}/Root/Library/Application Support/Clover"/CloverUpdater.app
+    addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" \
+                       --subst="INSTALLER_CHOICE=$packageRefId" MarkChoice
+    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
+    addChoice --start-selected="choicePreviouslySelected('$packageRefId')"  \
+              --pkg-refs="$packageRefId" "${choiceId}"
+# end CloverUpdater package
+
 # build post install package
     echo "================= Post ================="
     packagesidentity="${clover_package_identity}"

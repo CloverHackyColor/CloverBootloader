@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-01 11:54+0300\n"
+"POT-Creation-Date: 2013-05-02 16:05+0300\n"
 "PO-Revision-Date: 2013-05-01 13:07+0000\n"
 "Last-Translator: ceruns <ceruns@ymail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
@@ -76,8 +76,10 @@ msgstr "Clover v2"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:17
-msgid "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
-msgstr "각기 다른 프로젝트(Clover, rEFIt, XNU, VirtualBox)에 기반한 오픈소스입니다."
+msgid ""
+"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgstr ""
+"각기 다른 프로젝트(Clover, rEFIt, XNU, VirtualBox)에 기반한 오픈소스입니다."
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:18
@@ -106,10 +108,16 @@ msgstr ""
 msgid ""
 "- mostly Clover do automatic detection of hardware and set all properties by "
 "default."
-msgstr "- 대체로 Clover는 모든 하드웨어를 자동으로 인식하고 기본 값으로 설정합니다."
+msgstr ""
+"- 대체로 Clover는 모든 하드웨어를 자동으로 인식하고 기본 값으로 설정합니다."
 
 #. type: Content of: <html><body><p><span>
-#: Resources/templates/Description.html:23 Resources/templates/Description.html:24 Resources/templates/Description.html:29 Resources/templates/Description.html:31 Resources/templates/Description.html:32 Resources/templates/Description.html:33
+#: Resources/templates/Description.html:23
+#: Resources/templates/Description.html:24
+#: Resources/templates/Description.html:29
+#: Resources/templates/Description.html:31
+#: Resources/templates/Description.html:32
+#: Resources/templates/Description.html:33
 msgid " "
 msgstr ""
 
@@ -121,7 +129,9 @@ msgstr "그러나 사용자들은 config.plist를 수정할 수 있습니다"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:25
 msgid "- with Clover you may restart into other OS from Startup Disk prefPane"
-msgstr "- Clover로 시스템 환경설정의 시동 디스크 항목을 통해 다른 OS로 부팅할 수 있습니다"
+msgstr ""
+"- Clover로 시스템 환경설정의 시동 디스크 항목을 통해 다른 OS로 부팅할 수 있습"
+"니다"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:26
@@ -146,7 +156,9 @@ msgstr "커스톰 DSDT는 부팅된 파티션 또는 EFI 폴더에서 읽혀집�
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:30
 msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
-msgstr "- 커스톰 가능한 RestartFix(재부팅 수정), sleep/wake fix(잠자기,깨어나기 수정), PCIRootUID 값"
+msgstr ""
+"- 커스톰 가능한 RestartFix(재부팅 수정), sleep/wake fix(잠자기,깨어나기 수"
+"정), PCIRootUID 값"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:31
@@ -190,7 +202,9 @@ msgstr "- FireWire를 위한 추가 kext 로딩 및 시큐리티 모드"
 msgid ""
 "- default boot after timeout, customizable GUI , and saving screenshots from "
 "GUI typing F10"
-msgstr "- 설정된 시간 직후 기본 값으로 부팅, 커스톰 가능한 GUI, GUI에서의 스크린샷 기능(F10키를 누르세요)"
+msgstr ""
+"- 설정된 시간 직후 기본 값으로 부팅, 커스톰 가능한 GUI, GUI에서의 스크린샷 기"
+"능(F10키를 누르세요)"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:39
@@ -253,14 +267,12 @@ msgid ""
 "Clover EFI requires three essential files. (in simple terms)\n"
 "boot0 (On the drive's MBR) responsible for loading boot1.\n"
 "boot1 (On the partition's boot-sector) to finding boot2.\n"
-"boot2 (On the partition's root directory) for loading "
-"/EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
+"boot2 (On the partition's root directory) for loading /EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgstr ""
 "간단히 설명하자면, Clover EFI는 3개의 필수 파일이 필요합니다.\n"
 "boot0(드라이브의 MBR에 위치)은 boot1을 읽어 들입니다.\n"
 "boot1(파티션의 boot-sector에 위치)은 boot2를 찾습니다.\n"
-"boot2(파티션의 root directory에 위치)는 /EFI/CLOVER/CLOVERIA32.efi 또는 CLOVERX64.efi, "
-"그리고 kernel 등을 읽어 들입니다."
+"boot2(파티션의 root directory에 위치)는 /EFI/CLOVER/CLOVERIA32.efi 또는 CLOVERX64.efi, 그리고 kernel 등을 읽어 들입니다."
 
 #. type: "boot0_title"
 #: Resources/templates/Localizable.strings:29
@@ -273,10 +285,7 @@ msgstr "BIOS방식 MBR boot0 (HFS+Fat32)"
 #, no-wrap
 msgid ""
 "Used for BIOS booting on BIOS motherboards.\n"
-"Use fdisk440 to install boot0 to the first 440 bits of MBR without "
-"destroying any existing Windows installation if you have one, then boot0 "
-"will search first active HFS partition for boot1h2, or search first active "
-"Fat32 partition for boot1f32alt.\n"
+"Use fdisk440 to install boot0 to the first 440 bits of MBR without destroying any existing Windows installation if you have one, then boot0 will search first active HFS partition for boot1h2, or search first active Fat32 partition for boot1f32alt.\n"
 "It will setup selected HFS + Fat32 partitions to be active.\n"
 "Need to format as Fat32 on Win or on Mac as below.\n"
 "  1. Erase as MS-DOS (FAT) with Disk Utility first.\n"
@@ -286,9 +295,7 @@ msgid ""
 "  5. diskutil mount /dev/rdisk9s1"
 msgstr ""
 "BIOS방식 마더보드에서 BIOS 부팅을 할 경우 선택하십시오.\n"
-"이 패키지는 fdisk440을 사용하여 MBR의 맨 앞자리에 있는 440비트에 boot0을 설치합니다. Windows가 먼저 설치되어 "
-"있어도 지우지 않습니다. boot0가 설치되고 나면 boot0는 첫번째 활성 파티션에서 HFS 파티션이면 boot1h2를, Fat32 "
-"파티션이면 boot1f32alt를 각각 검색합니다.\n"
+"이 패키지는 fdisk440을 사용하여 MBR의 맨 앞자리에 있는 440비트에 boot0을 설치합니다. Windows가 먼저 설치되어 있어도 지우지 않습니다. boot0가 설치되고 나면 boot0는 첫번째 활성 파티션에서 HFS 파티션이면 boot1h2를, Fat32 파티션이면 boot1f32alt를 각각 검색합니다.\n"
 "\n"
 "이 패키지는 사용자가 선택한 HFS + Fat32 파티션을 활성 상태로 설정합니다.\n"
 "\n"
@@ -312,12 +319,8 @@ msgstr "BIOS방식 MBR boot0hfs (HFS+Fat32)"
 #, no-wrap
 msgid ""
 "Used for BIOS booting on BIOS motherboards.\n"
-"Use fdisk440 to install boot0hfs to the first 440 bits of MBR without "
-"destroying any existing Windows installation if you have one, then boot0hfs "
-"will search first HFS partition for boot1h2, or search first active Fat32 "
-"partition for boot1f32alt.\n"
-"It will not setup selected HFS partition to be active, but will setup "
-"selected Fat32 partition to be active.\n"
+"Use fdisk440 to install boot0hfs to the first 440 bits of MBR without destroying any existing Windows installation if you have one, then boot0hfs will search first HFS partition for boot1h2, or search first active Fat32 partition for boot1f32alt.\n"
+"It will not setup selected HFS partition to be active, but will setup selected Fat32 partition to be active.\n"
 "Need to format as Fat32 on Win or on Mac as below.\n"
 "  1. Erase as MS-DOS (FAT) with Disk Utility first.\n"
 "  2. diskutil list\n"
@@ -326,9 +329,7 @@ msgid ""
 "  5. diskutil mount /dev/rdisk9s1"
 msgstr ""
 "BIOS방식 마더보드에서 BIOS 부팅을 할 경우 선택하십시오.\n"
-"이 패키지는 fdisk440을 사용하여 MBR의 맨 앞자리에 있는 440비트에 boot0hfs를 설치합니다. Windows가 먼저 "
-"설치되어 있어도 지우지 않습니다. boot0가 설치되고 나면 boot0는 첫번째 활성 파티션에서 HFS 파티션이면 boot1h2를, "
-"Fat32 파티션이면 boot1f32alt를 각각 검색합니다.\n"
+"이 패키지는 fdisk440을 사용하여 MBR의 맨 앞자리에 있는 440비트에 boot0hfs를 설치합니다. Windows가 먼저 설치되어 있어도 지우지 않습니다. boot0가 설치되고 나면 boot0는 첫번째 활성 파티션에서 HFS 파티션이면 boot1h2를, Fat32 파티션이면 boot1f32alt를 각각 검색합니다.\n"
 "\n"
 "이 패키지는 사용자가 선택한 HFS 파티션은 활성 상태로 설정하지 않으며 Fat32 파티션은 활성 상태로 설정합니다.\n"
 "\n"
@@ -435,7 +436,8 @@ msgid "Select the version of CloverEFI to install."
 msgstr "설치할 CloverEFI를 선택하십시오."
 
 #. type: "cloverEFI.32_description"
-#: Resources/templates/Localizable.strings:80 Resources/templates/Localizable.strings:81
+#: Resources/templates/Localizable.strings:80
+#: Resources/templates/Localizable.strings:81
 #, no-wrap
 msgid "CloverEFI 32-bits"
 msgstr "CloverEFI 32비트"
@@ -555,8 +557,7 @@ msgstr ""
 #, no-wrap
 msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
-"Usually it is already present but sometime it may be missed. In this case "
-"you should see warning on screen."
+"Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
 msgstr ""
 "MacOSX에 필수적인 DataHub 프로토콜 지원입니다.\n"
 "대개 이미 존재하지만 간혹 없는 경우가 있습니다. 그러한 경우에는 화면에서 경고를 발견하실 수 있습니다."
@@ -566,8 +567,7 @@ msgstr ""
 #, no-wrap
 msgid ""
 "64bit driver for support of NVRAM variables needed by MacOSX.\n"
-"Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is "
-"needed.\n"
+"Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed.\n"
 "Use it only if you have a problem without it"
 msgstr ""
 "Mac OSX는 NVRAM 변수를 지원하는 64bit 드라이버를 필요로 합니다. \n"
@@ -589,9 +589,7 @@ msgstr "OsxAptioFixDrv의 간소화 형태(간소화되지 않는 버전과 함�
 #. type: "PartitionDxe-64_description"
 #: Resources/templates/Localizable.strings:113
 #, no-wrap
-msgid ""
-"64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or "
-"Apple Partition Map."
+msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
 msgstr "GPT/MBR 또는 Apple Partition Map과 같은 희귀 파티션맵을 지원하기 위한 64비트 드라이버."
 
 #. type: "Themes_title"
@@ -775,9 +773,7 @@ msgstr "모든 부팅 가능한 OSX 볼륨에 모든 RC scripts를 설치합니�
 #. type: "rc.scripts.on.all.volumes_description"
 #: Resources/templates/Localizable.strings:165
 #, no-wrap
-msgid ""
-"Install all RC scripts on all internal bootable OSX volumes other than the "
-"target volume."
+msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "타겟 볼륨을 제외한 모든 내장 OSX 볼륨에 모든 RC scripts를 설치합니다."
 
 #. type: "Optional RC Scripts"
@@ -789,11 +785,23 @@ msgstr "선택적 RC Scripts"
 #. type: "disable_sleep_proxy_client_description"
 #: Resources/templates/Localizable.strings:167
 #, no-wrap
+msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
+msgstr "mDNSResponder 잠자기 프록시 클라이언트 서비스를 비활성화합니다. 매 시간 잠자기에서 깨어나는 문제를 방지할 수 있습니다"
+
+#. type: "CloverUpdater_title"
+#: Resources/templates/Localizable.strings:172
+#, fuzzy, no-wrap
+#| msgid "Install Clover in the ESP"
+msgid "Install CloverUpdater"
+msgstr "ESP에 Clover 설치"
+
+#. type: "CloverUpdater_description"
+#: Resources/templates/Localizable.strings:173
+#, no-wrap
 msgid ""
-"Disable the mDNSResponder sleep proxy client service. This will prevent the "
-"system waking from sleep every hours"
+"Install CloverUpdater on target volume.\n"
+"CloverUpdater notify you about Clover updates."
 msgstr ""
-"mDNSResponder 잠자기 프록시 클라이언트 서비스를 비활성화합니다. 매 시간 잠자기에서 깨어나는 문제를 방지할 수 있습니다"
 
 #~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
 #~ msgstr "Ps2MouseAbsolutePointerDxe-32_description"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-01 11:54+0300\n"
+"POT-Creation-Date: 2013-05-02 16:05+0300\n"
 "PO-Revision-Date: 2013-05-01 22:57+0000\n"
 "Last-Translator: archintosh <ardr_1109@yahoo.com>\n"
 "Language-Team: id <id@li.org>\n"
@@ -76,7 +76,8 @@ msgstr "Clover v2"
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:17
-msgid "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgid ""
+"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
 msgstr "adalah kompilasi open source dari: Clover, rEFIt, XNU, VirtualBox."
 
 #
@@ -114,12 +115,16 @@ msgid ""
 "- mostly Clover do automatic detection of hardware and set all properties by "
 "default."
 msgstr ""
-"- Clover mendeteksi perangkat keras secara otomatis dan mengaturnya "
-"langsung."
+"- Clover mendeteksi perangkat keras secara otomatis dan mengaturnya langsung."
 
 #
 #. type: Content of: <html><body><p><span>
-#: Resources/templates/Description.html:23 Resources/templates/Description.html:24 Resources/templates/Description.html:29 Resources/templates/Description.html:31 Resources/templates/Description.html:32 Resources/templates/Description.html:33
+#: Resources/templates/Description.html:23
+#: Resources/templates/Description.html:24
+#: Resources/templates/Description.html:29
+#: Resources/templates/Description.html:31
+#: Resources/templates/Description.html:32
+#: Resources/templates/Description.html:33
 msgid " "
 msgstr " "
 
@@ -286,14 +291,12 @@ msgid ""
 "Clover EFI requires three essential files. (in simple terms)\n"
 "boot0 (On the drive's MBR) responsible for loading boot1.\n"
 "boot1 (On the partition's boot-sector) to finding boot2.\n"
-"boot2 (On the partition's root directory) for loading "
-"/EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
+"boot2 (On the partition's root directory) for loading /EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgstr ""
 "Clover EFI membutuhkan 3 file utama. (istilah yang sederhana)\n"
 "boot0 (pada sektor MBR) berfungsi untuk memuat boot1.\n"
 "boot1 (di bootsector partisi) berfungsi untuk mencari boot2.\n"
-"boot2 (di partisi direktori root) untuk memuat /EFI/CLOVER/CLOVERIA32.efi "
-"atau CLOVERX64.efi, kernel dan lainnya."
+"boot2 (di partisi direktori root) untuk memuat /EFI/CLOVER/CLOVERIA32.efi atau CLOVERX64.efi, kernel dan lainnya."
 
 #. type: "boot0_title"
 #: Resources/templates/Localizable.strings:29
@@ -306,10 +309,7 @@ msgstr "BIOS MBR boot0 (HFS+Fat32)"
 #, no-wrap
 msgid ""
 "Used for BIOS booting on BIOS motherboards.\n"
-"Use fdisk440 to install boot0 to the first 440 bits of MBR without "
-"destroying any existing Windows installation if you have one, then boot0 "
-"will search first active HFS partition for boot1h2, or search first active "
-"Fat32 partition for boot1f32alt.\n"
+"Use fdisk440 to install boot0 to the first 440 bits of MBR without destroying any existing Windows installation if you have one, then boot0 will search first active HFS partition for boot1h2, or search first active Fat32 partition for boot1f32alt.\n"
 "It will setup selected HFS + Fat32 partitions to be active.\n"
 "Need to format as Fat32 on Win or on Mac as below.\n"
 "  1. Erase as MS-DOS (FAT) with Disk Utility first.\n"
@@ -319,10 +319,7 @@ msgid ""
 "  5. diskutil mount /dev/rdisk9s1"
 msgstr ""
 "Untuk BIOS booting pada mobo BIOS.\n"
-"Gunakan fdisk440 untuk install boot0 ke 440 bits pertama dari MBR tanpa "
-"merusak instalasi Windows kalau ada, kemudian boot0 mencari boot1h2 di "
-"partisi aktif pertama dalam partisi HFS, atau mencari boot1f32alt di partisi "
-"aktif pertama Fat32.\n"
+"Gunakan fdisk440 untuk install boot0 ke 440 bits pertama dari MBR tanpa merusak instalasi Windows kalau ada, kemudian boot0 mencari boot1h2 di partisi aktif pertama dalam partisi HFS, atau mencari boot1f32alt di partisi aktif pertama Fat32.\n"
 "Modus ini akan mengaktifkan HFS + Fat32 yang terpilih.\n"
 "Format partisi dalam format Fat32 pada Win atau Mac seperti berikut.\n"
 "  1. Pakai Disk Utility, format dalam format MS-DOS (FAT).\n"
@@ -342,12 +339,8 @@ msgstr "BIOS MBR boot0hfs (HFS+Fat32)"
 #, no-wrap
 msgid ""
 "Used for BIOS booting on BIOS motherboards.\n"
-"Use fdisk440 to install boot0hfs to the first 440 bits of MBR without "
-"destroying any existing Windows installation if you have one, then boot0hfs "
-"will search first HFS partition for boot1h2, or search first active Fat32 "
-"partition for boot1f32alt.\n"
-"It will not setup selected HFS partition to be active, but will setup "
-"selected Fat32 partition to be active.\n"
+"Use fdisk440 to install boot0hfs to the first 440 bits of MBR without destroying any existing Windows installation if you have one, then boot0hfs will search first HFS partition for boot1h2, or search first active Fat32 partition for boot1f32alt.\n"
+"It will not setup selected HFS partition to be active, but will setup selected Fat32 partition to be active.\n"
 "Need to format as Fat32 on Win or on Mac as below.\n"
 "  1. Erase as MS-DOS (FAT) with Disk Utility first.\n"
 "  2. diskutil list\n"
@@ -356,12 +349,8 @@ msgid ""
 "  5. diskutil mount /dev/rdisk9s1"
 msgstr ""
 "Untuk BIOS booting pada motherboard BIOS.\n"
-"Gunakan fdisk440 untuk install boot0hfs ke 440 bits pertama dari MBR tanpa "
-"merusak instalasi Windows kalau ada, kemudian boot0hfs mencari boot1h2 di "
-"partisi aktif pertama dalam partisi HFS, atau mencari boot1f32alt di partisi "
-"aktif pertama Fat32.\n"
-"Modus ini tidak mengaktifkan partisi HFS yang terpilih, tapi akan "
-"mengaktifkan partisi Fat32 yang terpilih.\n"
+"Gunakan fdisk440 untuk install boot0hfs ke 440 bits pertama dari MBR tanpa merusak instalasi Windows kalau ada, kemudian boot0hfs mencari boot1h2 di partisi aktif pertama dalam partisi HFS, atau mencari boot1f32alt di partisi aktif pertama Fat32.\n"
+"Modus ini tidak mengaktifkan partisi HFS yang terpilih, tapi akan mengaktifkan partisi Fat32 yang terpilih.\n"
 "Format partisi dalam format Fat32 pada Win atau Mac seperti berikut.\n"
 "  1. Pakai Disk Utility, format dalam format MS-DOS (FAT).\n"
 "  2. diskutil list\n"
@@ -460,7 +449,8 @@ msgid "Select the version of CloverEFI to install."
 msgstr "Pilih versi CloverEFI yang mau di install."
 
 #. type: "cloverEFI.32_description"
-#: Resources/templates/Localizable.strings:80 Resources/templates/Localizable.strings:81
+#: Resources/templates/Localizable.strings:80
+#: Resources/templates/Localizable.strings:81
 #, no-wrap
 msgid "CloverEFI 32-bits"
 msgstr "CloverEFI 32-bits"
@@ -580,33 +570,28 @@ msgstr ""
 #, no-wrap
 msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
-"Usually it is already present but sometime it may be missed. In this case "
-"you should see warning on screen."
+"Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
 msgstr ""
 "Protokol DataHub merupakan support yang diperlukan oleh MacOSX.\n"
-"Biasanya sudah tersedia tapi kadang-kadang terlewat. Kalau terlewat akan "
-"terlihat peringatan di layar."
+"Biasanya sudah tersedia tapi kadang-kadang terlewat. Kalau terlewat akan terlihat peringatan di layar."
 
 #. type: "EmuVariableUefi-64_description"
 #: Resources/templates/Localizable.strings:108
 #, no-wrap
 msgid ""
 "64bit driver for support of NVRAM variables needed by MacOSX.\n"
-"Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is "
-"needed.\n"
+"Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed.\n"
 "Use it only if you have a problem without it"
 msgstr ""
 "Driver 64bit untuk dukungan variabel NVRAM yang dibutuhkan oleh MacOSX.\n"
-"Biasanya UEFI boot memakai hardware NVRAM tapi kadang-kadang driver ini "
-"masih dibutuhkan.\n"
+"Biasanya UEFI boot memakai hardware NVRAM tapi kadang-kadang driver ini masih dibutuhkan.\n"
 "Gunakan HANYA kalau ada masalah"
 
 #. type: "OsxAptioFixDrv-64_description"
 #: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
-msgstr ""
-"Driver 64bit yang membenahi masalah Memori pada UEFI seperti pada AMI Aptio"
+msgstr "Driver 64bit yang membenahi masalah Memori pada UEFI seperti pada AMI Aptio"
 
 #. type: "OsxLowMemFixDrv-64_description"
 #: Resources/templates/Localizable.strings:112
@@ -617,12 +602,8 @@ msgstr "Varian sederhana OsxAptioFixDrv, 64bit (Jangan pakai bersamaan)"
 #. type: "PartitionDxe-64_description"
 #: Resources/templates/Localizable.strings:113
 #, no-wrap
-msgid ""
-"64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or "
-"Apple Partition Map."
-msgstr ""
-"Driver 64bit yang mendukung partisi yang tidak umum seperti: hybrid GPT/MBR "
-"atau Apple Partition Map."
+msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
+msgstr "Driver 64bit yang mendukung partisi yang tidak umum seperti: hybrid GPT/MBR atau Apple Partition Map."
 
 #. type: "Themes_title"
 #: Resources/templates/Localizable.strings:119
@@ -805,12 +786,8 @@ msgstr "Install semua RC skrip pada semua bootable OSX volume"
 #. type: "rc.scripts.on.all.volumes_description"
 #: Resources/templates/Localizable.strings:165
 #, no-wrap
-msgid ""
-"Install all RC scripts on all internal bootable OSX volumes other than the "
-"target volume."
-msgstr ""
-"Install semua RC skrip pada semua internal bootable OSX volume selain volume "
-"target."
+msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
+msgstr "Install semua RC skrip pada semua internal bootable OSX volume selain volume target."
 
 #. type: "Optional RC Scripts"
 #: Resources/templates/Localizable.strings:166
@@ -821,12 +798,23 @@ msgstr "Opsional RC Skrip"
 #. type: "disable_sleep_proxy_client_description"
 #: Resources/templates/Localizable.strings:167
 #, no-wrap
+msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
+msgstr "Mendisable mDNSResponder sleep proxy client service. Supaya system tidak terbangun setiap jam apabila system dalam mode sleep"
+
+#. type: "CloverUpdater_title"
+#: Resources/templates/Localizable.strings:172
+#, fuzzy, no-wrap
+#| msgid "Install Clover in the ESP"
+msgid "Install CloverUpdater"
+msgstr "Instalasi Clover pada ESP"
+
+#. type: "CloverUpdater_description"
+#: Resources/templates/Localizable.strings:173
+#, no-wrap
 msgid ""
-"Disable the mDNSResponder sleep proxy client service. This will prevent the "
-"system waking from sleep every hours"
+"Install CloverUpdater on target volume.\n"
+"CloverUpdater notify you about Clover updates."
 msgstr ""
-"Mendisable mDNSResponder sleep proxy client service. Supaya system tidak "
-"terbangun setiap jam apabila system dalam mode sleep"
 
 #~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
 #~ msgstr "Ps2MouseAbsolutePointerDxe-32_description"

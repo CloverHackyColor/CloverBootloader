@@ -6,8 +6,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Clover v2.0-r1426\n"
-"POT-Creation-Date: 2013-05-01 11:54+0300\n"
+"Project-Id-Version: Clover v2.0-r1486\n"
+"POT-Creation-Date: 2013-05-02 16:05+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -700,4 +700,18 @@ msgstr ""
 msgid ""
 "Disable the mDNSResponder sleep proxy client service. This will prevent the "
 "system waking from sleep every hours"
+msgstr ""
+
+#. type: "CloverUpdater_title"
+#: Resources/templates/Localizable.strings:172
+#, no-wrap
+msgid "Install CloverUpdater"
+msgstr ""
+
+#. type: "CloverUpdater_description"
+#: Resources/templates/Localizable.strings:173
+#, no-wrap
+msgid ""
+"Install CloverUpdater on target volume.\n"
+"CloverUpdater notify you about Clover updates."
 msgstr ""

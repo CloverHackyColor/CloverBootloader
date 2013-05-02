@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-01 11:54+0300\n"
+"POT-Creation-Date: 2013-05-02 16:05+0300\n"
 "PO-Revision-Date: 2013-04-28 19:17+0200\n"
 "Last-Translator: oswaldini <oswaldinimtb@gmail.com>\n"
 "Language-Team: pl <pl@li.org>\n"
@@ -75,7 +75,8 @@ msgstr "Clover v2"
 #
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:17
-msgid "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgid ""
+"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
 msgstr ""
 "to bootloader typu open source bazujący na różnych projektach: Clover, "
 "rEFIt, XNU, VirtualBox."
@@ -115,12 +116,16 @@ msgid ""
 "- mostly Clover do automatic detection of hardware and set all properties by "
 "default."
 msgstr ""
-"- automatyczna detekcja sprzętu z możliwością ręcznej edycji ustawień w "
-"pliku"
+"- automatyczna detekcja sprzętu z możliwością ręcznej edycji ustawień w pliku"
 
 #
 #. type: Content of: <html><body><p><span>
-#: Resources/templates/Description.html:23 Resources/templates/Description.html:24 Resources/templates/Description.html:29 Resources/templates/Description.html:31 Resources/templates/Description.html:32 Resources/templates/Description.html:33
+#: Resources/templates/Description.html:23
+#: Resources/templates/Description.html:24
+#: Resources/templates/Description.html:29
+#: Resources/templates/Description.html:31
+#: Resources/templates/Description.html:32
+#: Resources/templates/Description.html:33
 msgid " "
 msgstr " "
 
@@ -196,8 +201,8 @@ msgstr "- poprawka dla USB (łącznie z obsługą USB 3.0)"
 #: Resources/templates/Description.html:34
 msgid "- HDA injector and Ethernet builtin injector"
 msgstr ""
-"- wstrzykiwanie ID dla karty dźwiękowej oraz informacji \"Built in\" dla karty "
-"sieciowej"
+"- wstrzykiwanie ID dla karty dźwiękowej oraz informacji \"Built in\" dla "
+"karty sieciowej"
 
 #
 #. type: Content of: <html><body><p>
@@ -211,7 +216,8 @@ msgstr ""
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:36
 msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
-msgstr "- ładowanie tabel ACPI (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
+msgstr ""
+"- ładowanie tabel ACPI (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
 
 #
 #. type: Content of: <html><body><p>
@@ -277,13 +283,11 @@ msgstr ""
 "\n"
 "Dla Fat32 w terminalu nalezy użyc komend:\n"
 "diskutil list\n"
-"newfs_msdos -v EFI -F 32 /dev/rdiskXsY (gdzie X to numer dysku a Y to numer "
-"partycji)\n"
+"newfs_msdos -v EFI -F 32 /dev/rdiskXsY (gdzie X to numer dysku a Y to numer partycji)\n"
 "\n"
 "Dla HFS w terminalu nalezy użyc komend:\n"
 "diskutil list\n"
-"newfs_hfs -v EFI /dev/rdiskXsY (gdzie X to numer dysku a Y to numer "
-"partycji)"
+"newfs_hfs -v EFI /dev/rdiskXsY (gdzie X to numer dysku a Y to numer partycji)"
 
 #. type: "Bootloader_title"
 #: Resources/templates/Localizable.strings:23
@@ -293,21 +297,17 @@ msgstr "Bootloader"
 
 #. type: "Bootloader_description"
 #: Resources/templates/Localizable.strings:24
-#, no-wrap
 #, fuzzy, no-wrap
 msgid ""
 "Clover EFI requires three essential files. (in simple terms)\n"
 "boot0 (On the drive's MBR) responsible for loading boot1.\n"
 "boot1 (On the partition's boot-sector) to finding boot2.\n"
-"boot2 (On the partition's root directory) for loading "
-"/EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
+"boot2 (On the partition's root directory) for loading /EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgstr ""
 "Clover EFI wymaga trzech podstawowych plików. (w skrócie)\n"
-"boot0 (w głównym rekordzie startowym dysku) odpowiedzialny za ładowanie "
-"boot1.\n"
+"boot0 (w głównym rekordzie startowym dysku) odpowiedzialny za ładowanie boot1.\n"
 "boot1 (w boot sektorze partycji) odpowiedzialny za odnajdowanie boot2.\n"
-"boot2 (w głównym katalogu partycji) odpowiedzialny za ładowanie "
-"/EFI/BOOT/CLOVERIA32.efi lub CLOVERX64.efi, kernel etc."
+"boot2 (w głównym katalogu partycji) odpowiedzialny za ładowanie /EFI/BOOT/CLOVERIA32.efi lub CLOVERX64.efi, kernel etc."
 
 #. type: "boot0_title"
 #: Resources/templates/Localizable.strings:29
@@ -320,10 +320,7 @@ msgstr "BIOS MBR boot0 (HFS+Fat32)"
 #, no-wrap
 msgid ""
 "Used for BIOS booting on BIOS motherboards.\n"
-"Use fdisk440 to install boot0 to the first 440 bits of MBR without "
-"destroying any existing Windows installation if you have one, then boot0 "
-"will search first active HFS partition for boot1h2, or search first active "
-"Fat32 partition for boot1f32alt.\n"
+"Use fdisk440 to install boot0 to the first 440 bits of MBR without destroying any existing Windows installation if you have one, then boot0 will search first active HFS partition for boot1h2, or search first active Fat32 partition for boot1f32alt.\n"
 "It will setup selected HFS + Fat32 partitions to be active.\n"
 "Need to format as Fat32 on Win or on Mac as below.\n"
 "  1. Erase as MS-DOS (FAT) with Disk Utility first.\n"
@@ -333,18 +330,12 @@ msgid ""
 "  5. diskutil mount /dev/rdisk9s1"
 msgstr ""
 "Opcja do ładowania systemu za pośrednictwem BIOSu.\n"
-"Używa pliku fdisk440 do instalacji boot0 do pierwszych 440 bitów głównego "
-"sektora rozruchowego bez uszkadzania istniejących systemów Windows, "
-"następnie boot0 wyszuka pierwszej aktywnej partycji HFS, boot1h2 lub "
-"pierwszą aktywną partycję Fat32 dla boot1f32alt.\n"
+"Używa pliku fdisk440 do instalacji boot0 do pierwszych 440 bitów głównego sektora rozruchowego bez uszkadzania istniejących systemów Windows, następnie boot0 wyszuka pierwszej aktywnej partycji HFS, boot1h2 lub pierwszą aktywną partycję Fat32 dla boot1f32alt.\n"
 "Opcja ta ustawi wybraną partycję HFS lub Fat32 jako aktywną.\n"
-"Wymagane jest sformatowanie partycji na Fat32 w Windowsie lub w Mac OS wg "
-"poniższej instrukcji.\n"
-"  1. Wymazanie partycji jako MS-DOS (FAT) w Narzędziu Dyskowym. Natępnie "
-"wykonanie poniższych komend w Terminalu:\n"
+"Wymagane jest sformatowanie partycji na Fat32 w Windowsie lub w Mac OS wg poniższej instrukcji.\n"
+"  1. Wymazanie partycji jako MS-DOS (FAT) w Narzędziu Dyskowym. Natępnie wykonanie poniższych komend w Terminalu:\n"
 "  2. diskutil list\n"
-"  3. diskutil unmount /dev/rdiskXsY (gdzie X to numer dysku a Y to numer "
-"partycji)\n"
+"  3. diskutil unmount /dev/rdiskXsY (gdzie X to numer dysku a Y to numer partycji)\n"
 "  4. newfs_msdos -v Fat32 -F 32 /dev/rdiskXsY\n"
 "  5. diskutil mount /dev/rdiskXsY"
 
@@ -359,12 +350,8 @@ msgstr "BIOS MBR boot0hfs (HFS+Fat32)"
 #, no-wrap
 msgid ""
 "Used for BIOS booting on BIOS motherboards.\n"
-"Use fdisk440 to install boot0hfs to the first 440 bits of MBR without "
-"destroying any existing Windows installation if you have one, then boot0hfs "
-"will search first HFS partition for boot1h2, or search first active Fat32 "
-"partition for boot1f32alt.\n"
-"It will not setup selected HFS partition to be active, but will setup "
-"selected Fat32 partition to be active.\n"
+"Use fdisk440 to install boot0hfs to the first 440 bits of MBR without destroying any existing Windows installation if you have one, then boot0hfs will search first HFS partition for boot1h2, or search first active Fat32 partition for boot1f32alt.\n"
+"It will not setup selected HFS partition to be active, but will setup selected Fat32 partition to be active.\n"
 "Need to format as Fat32 on Win or on Mac as below.\n"
 "  1. Erase as MS-DOS (FAT) with Disk Utility first.\n"
 "  2. diskutil list\n"
@@ -373,19 +360,12 @@ msgid ""
 "  5. diskutil mount /dev/rdisk9s1"
 msgstr ""
 "Opcja do ładowania systemu za pośrednictwem BIOSu.\n"
-"Używa pliku fdisk440 do instalacji boot0 do pierwszych 440 bitów głównego "
-"sektora rozruchowego bez uszkadzania istniejących systemów Windows, "
-"następnie boot0hfs wyszuka partycji HFS, boot1h2 lub pierwszą aktywną "
-"partycję Fat32 dla boot1f32alt.\n"
-"Opcja ta nie ustawi wybranej partycji HFS jako aktywnej jednak partycja "
-"Fat32 zostanie aktywowana.\n"
-"Wymagane jest sformatowanie partycji na Fat32 w Windowsie lub w Mac OS wg "
-"poniższej instrukcji.\n"
-"  1. Wymazanie partycji jako MS-DOS (FAT) w Narzędziu Dyskowym. Natępnie "
-"wykonanie poniższych komend w Terminalu:\n"
+"Używa pliku fdisk440 do instalacji boot0 do pierwszych 440 bitów głównego sektora rozruchowego bez uszkadzania istniejących systemów Windows, następnie boot0hfs wyszuka partycji HFS, boot1h2 lub pierwszą aktywną partycję Fat32 dla boot1f32alt.\n"
+"Opcja ta nie ustawi wybranej partycji HFS jako aktywnej jednak partycja Fat32 zostanie aktywowana.\n"
+"Wymagane jest sformatowanie partycji na Fat32 w Windowsie lub w Mac OS wg poniższej instrukcji.\n"
+"  1. Wymazanie partycji jako MS-DOS (FAT) w Narzędziu Dyskowym. Natępnie wykonanie poniższych komend w Terminalu:\n"
 "  2. diskutil list\n"
-"  3. diskutil unmount /dev/rdiskXsY (gdzie X to numer dysku a Y to numer "
-"partycji)\n"
+"  3. diskutil unmount /dev/rdiskXsY (gdzie X to numer dysku a Y to numer partycji)\n"
 "  4. newfs_msdos -v Fat32 -F 32 /dev/rdiskXsY\n"
 "  5. diskutil mount /dev/rdiskXsY"
 
@@ -420,8 +400,7 @@ msgid ""
 "Install alternative booting PBR with choice of boot with a key pressed.\n"
 "File to boot = boot{keypressed}"
 msgstr ""
-"Instaluj alternatywny sposób uruchamiania z PBR z opcją wyboru bootloader'a "
-"po wciśnięciu klawisza.\n"
+"Instaluj alternatywny sposób uruchamiania z PBR z opcją wyboru bootloader'a po wciśnięciu klawisza.\n"
 "Plik do uruchomienia = boot{wciśnięty_klawisz}"
 
 #. type: "boot32_title"
@@ -481,7 +460,8 @@ msgid "Select the version of CloverEFI to install."
 msgstr "Wybierz wersję CloverEFI do zainstalowania."
 
 #. type: "cloverEFI.32_description"
-#: Resources/templates/Localizable.strings:80 Resources/templates/Localizable.strings:81
+#: Resources/templates/Localizable.strings:80
+#: Resources/templates/Localizable.strings:81
 #, no-wrap
 msgid "CloverEFI 32-bits"
 msgstr "CloverEFI 32 bity"
@@ -496,8 +476,7 @@ msgstr "CloverEFI 64 bity SATA"
 #: Resources/templates/Localizable.strings:83
 #, no-wrap
 msgid "CloverEFI 64-bits using SATA to access drives"
-msgstr ""
-"CloverEFI 64 bity przy użyciu kontrolera SATA do uzyskania dostępu do dysków"
+msgstr "CloverEFI 64 bity przy użyciu kontrolera SATA do uzyskania dostępu do dysków"
 
 #. type: "cloverEFI.64.blockio_title"
 #: Resources/templates/Localizable.strings:84
@@ -509,8 +488,7 @@ msgstr "CloverEFI 64 bity BiosBlockIO"
 #: Resources/templates/Localizable.strings:85
 #, no-wrap
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
-msgstr ""
-"CloverEFI 64 bity przy użyciu Bios Block I/O do uzyskania dostępu do dysków."
+msgstr "CloverEFI 64 bity przy użyciu Bios Block I/O do uzyskania dostępu do dysków."
 
 #. type: "Ps2KeyboardDxe-32_description"
 #: Resources/templates/Localizable.strings:90
@@ -520,7 +498,6 @@ msgstr "Sterownik (32 bitowy) klawiatury na PS/2."
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:91
-#, no-wrap
 #, fuzzy, no-wrap
 msgid "PS/2 trackpad driver, 32bit"
 msgstr "Sterownik (32 bitowy) klawiatury na PS/2."
@@ -575,14 +552,12 @@ msgstr "Sterownik (64-ro bitowy) dla formatu ext4 z VirtualBox'a."
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:100
-#, no-wrap
 #, fuzzy, no-wrap
 msgid "USB 3.0 driver, 32bit"
 msgstr "Sterownik (32 bitowy) myszy na USB."
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
-#, no-wrap
 #, fuzzy, no-wrap
 msgid "USB 3.0 driver, 64bit"
 msgstr "Sterownik (64-ro bitowy) myszy na USB."
@@ -596,23 +571,19 @@ msgid ""
 "Clover may not started with it and you may have wake problem in system.\n"
 "Use with precautions."
 msgstr ""
-"Sterownik grafiki (64-ro bitowy) - aktywuje dodatkowe rozdzielczości w menu "
-"Clover'a.\n"
+"Sterownik grafiki (64-ro bitowy) - aktywuje dodatkowe rozdzielczości w menu Clover'a.\n"
 "Bazuje na module CSM pochodzącym z UEFI BIOS.\n"
-"Clover może nie wystartować z tym sterownikiem oraz może powodować problemy "
-"z wybudzeniem z uśpienia."
+"Clover może nie wystartować z tym sterownikiem oraz może powodować problemy z wybudzeniem z uśpienia."
 
 #. type: "DataHubDxe-64_description"
 #: Resources/templates/Localizable.strings:106
 #, no-wrap
 msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
-"Usually it is already present but sometime it may be missed. In this case "
-"you should see warning on screen."
+"Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
 msgstr ""
 "Sterownik (64-ro bitowy) obligatoryjnie wymagany przez Mac OS X.\n"
-"Zwykle jest on obecny w BIOSie ale czasami go brakuje. W takiej sytuacji "
-"zostanie wyświetlony komunikat na ekranie.\n"
+"Zwykle jest on obecny w BIOSie ale czasami go brakuje. W takiej sytuacji zostanie wyświetlony komunikat na ekranie.\n"
 "Obecność tego sterownika jest zawsze bezpieczna."
 
 #. type: "EmuVariableUefi-64_description"
@@ -620,39 +591,30 @@ msgstr ""
 #, no-wrap
 msgid ""
 "64bit driver for support of NVRAM variables needed by MacOSX.\n"
-"Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is "
-"needed.\n"
+"Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed.\n"
 "Use it only if you have a problem without it"
 msgstr ""
-"Sterownik (64-ro bitowy) wymagany dla płyt głównych z BIOSem Phoenix w celu "
-"załadowania informacji z NVRAMu.\n"
+"Sterownik (64-ro bitowy) wymagany dla płyt głównych z BIOSem Phoenix w celu załadowania informacji z NVRAMu.\n"
 "Należy użyć tylko w przypadku kiedy nie są ładowane parametry z NVRAM !"
 
 #. type: "OsxAptioFixDrv-64_description"
 #: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
-msgstr ""
-"Sterownik (64-ro bitowy) naprawiający problem z pamięcią w trybie UEFI na "
-"BIOSach AMI Aptio."
+msgstr "Sterownik (64-ro bitowy) naprawiający problem z pamięcią w trybie UEFI na BIOSach AMI Aptio."
 
 #. type: "OsxLowMemFixDrv-64_description"
 #: Resources/templates/Localizable.strings:112
 #, no-wrap
 msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
-msgstr ""
-"Prostsza wersja sterownika OsxAptioFixDrv, 64 bity (NIE UŻYWAĆ OBU "
-"RÓWNOCZEŚNIE)."
+msgstr "Prostsza wersja sterownika OsxAptioFixDrv, 64 bity (NIE UŻYWAĆ OBU RÓWNOCZEŚNIE)."
 
 #. type: "PartitionDxe-64_description"
 #: Resources/templates/Localizable.strings:113
 #, no-wrap
-msgid ""
-"64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or "
-"Apple Partition Map."
+msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
 msgstr ""
-"Sterownik (64-ro bitowy) odpowiedzialny za mapę partycji typu: hybryda "
-"GPT/MBR lub Schemat Partycji Apple.\n"
+"Sterownik (64-ro bitowy) odpowiedzialny za mapę partycji typu: hybryda GPT/MBR lub Schemat Partycji Apple.\n"
 "Obecność tego sterownika jest zawsze bezpieczna."
 
 #. type: "Themes_title"
@@ -831,19 +793,13 @@ msgstr ""
 #: Resources/templates/Localizable.strings:164
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
-msgstr ""
-"Instaluj wszystkie skrypty RC na wszystkich bootowalnych dyskach systemowych "
-"OSX."
+msgstr "Instaluj wszystkie skrypty RC na wszystkich bootowalnych dyskach systemowych OSX."
 
 #. type: "rc.scripts.on.all.volumes_description"
 #: Resources/templates/Localizable.strings:165
 #, no-wrap
-msgid ""
-"Install all RC scripts on all internal bootable OSX volumes other than the "
-"target volume."
-msgstr ""
-"Instaluj wszystkie skrypty RC na wszystkich wewnętrznych bootowalnych "
-"dyskach systemowych OSX."
+msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
+msgstr "Instaluj wszystkie skrypty RC na wszystkich wewnętrznych bootowalnych dyskach systemowych OSX."
 
 #. type: "Optional RC Scripts"
 #: Resources/templates/Localizable.strings:166
@@ -854,12 +810,23 @@ msgstr "Opcjonalne skrypty RC"
 #. type: "disable_sleep_proxy_client_description"
 #: Resources/templates/Localizable.strings:167
 #, no-wrap
+msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
+msgstr "Wyłącz mDNSResponder - usługi klienta proxy sleepu. Zapobiega to automatycznemu wybudzaniu ze sleepu co godzinę."
+
+#. type: "CloverUpdater_title"
+#: Resources/templates/Localizable.strings:172
+#, fuzzy, no-wrap
+#| msgid "Install Clover in the ESP"
+msgid "Install CloverUpdater"
+msgstr "Instaluj Clover'a na ESP"
+
+#. type: "CloverUpdater_description"
+#: Resources/templates/Localizable.strings:173
+#, no-wrap
 msgid ""
-"Disable the mDNSResponder sleep proxy client service. This will prevent the "
-"system waking from sleep every hours"
+"Install CloverUpdater on target volume.\n"
+"CloverUpdater notify you about Clover updates."
 msgstr ""
-"Wyłącz mDNSResponder - usługi klienta proxy sleepu. Zapobiega to "
-"automatycznemu wybudzaniu ze sleepu co godzinę."
 
 #~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
 #~ msgstr ""

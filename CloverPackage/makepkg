@@ -30,7 +30,9 @@ rm -rf sym
 # Create a new sym directory
 mkdir sym
 
-# Workspace = edk2/Clover/CloverPackage
+# Make CloverUpdater
+make -C "${SRCROOT}"/../CloverUpdater || exit $?
+
 # Start to build installer.
 
 package/buildpkg.sh "$SRCROOT" "sym" "$PKG_BUILD_DIR" || exit $?
