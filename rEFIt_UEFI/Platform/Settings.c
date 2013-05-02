@@ -200,7 +200,8 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
     prop = GetProperty(dictPointer, "PatchVBios");
     gSettings.PatchVBios = FALSE;
     if(prop) {
-      if ((prop->type == kTagTypeTrue) || (prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+      if ((prop->type == kTagTypeTrue) ||
+          (prop->string[0] == 'y') || (prop->string[0] == 'Y'))
         gSettings.PatchVBios = TRUE;
     }
     
@@ -271,7 +272,8 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
     prop = GetProperty(dictPointer, "InjectEDID");
     gSettings.InjectEDID = FALSE;
     if(prop) {
-      if ((prop->type == kTagTypeTrue) || (prop->string[0] == 'y') || (prop->string[0] == 'Y'))
+      if ((prop->type == kTagTypeTrue) ||
+          (prop->string[0] == 'y') || (prop->string[0] == 'Y'))
         gSettings.InjectEDID = TRUE;
     }
     prop = GetProperty(dictPointer, "CustomEDID");
@@ -360,7 +362,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gLanguage = polish; 
         } else if (AsciiStrStr(prop->string, "ua")) {
           gLanguage = ukrainian;
-        } else if (AsciiStrStr(prop->string, "cs")) {
+        } else if (AsciiStrStr(prop->string, "cz")) {
           gLanguage = czech;
         } else if (AsciiStrStr(prop->string, "hr")) {
           gLanguage = croatian;
@@ -388,19 +390,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       //BacklightLevel
       prop = GetProperty(dictPointer, "BacklightLevel");
       if(prop) {
-        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-        gSettings.BacklightLevel = (UINT16)StrHexToUint64((CHAR16*)&UStr[0]);	
+        if (prop->type == kTagTypeInteger) {
+          gSettings.BacklightLevel = (UINT16)(UINTN)prop->string;
+        } else if (prop->type == kTagTypeString){
+          AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+          gSettings.BacklightLevel = (UINT16)StrHexToUint64((CHAR16*)&UStr[0]);
+        }
       }
-      
-      // iCloudFix
-      /* not needed any more - does not fix iMessage any more
-      gSettings.iCloudFix = TRUE;
-      prop = GetProperty(dictPointer, "iCloudFix");
-      if(prop) {
-        if ((prop->string[0] == 'n') || (prop->string[0] == 'N'))
-          gSettings.iCloudFix = FALSE;
-      }
-       */
     }
 
     //Graphics
@@ -420,8 +416,12 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       }      
       prop = GetProperty(dictPointer, "VRAM");
       if(prop) {
-        AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-        gSettings.VRAM = LShiftU64(StrDecimalToUintn((CHAR16*)&UStr[0]), 20);  //bytes
+        if (prop->type == kTagTypeInteger) {
+          gSettings.VRAM = LShiftU64((UINTN)prop->string, 20);
+        } else if (prop->type == kTagTypeString){
+          AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
+          gSettings.VRAM = LShiftU64(StrDecimalToUintn((CHAR16*)&UStr[0]), 20);  //Mb -> bytes
+        }
       }
       
       prop = GetProperty(dictPointer, "LoadVBios");
@@ -556,23 +556,28 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       if(prop) {
         // enabled by default
         // syntax:
-        // - HDAInjection=No - disables injection
+        // - HDAInjection=No or 0 - disables injection
         // - HDAInjection=887 - injects layout-id 887 decimal (0x00000377)
         // - HDAInjection=0x377 - injects layout-id 887 decimal (0x00000377)
         // - HDAInjection=Detect - reads codec device id (eg. 0x0887)
         //   converts it to decimal 887 and injects this as layout-id.
         //   if hex device is cannot be converted to decimal, injects legacy value 12 decimal
         // - all other values are equal to HDAInjection=Detect
-        if ((prop->string[0] == 'n') || (prop->string[0] == 'N')) {
-          // if starts with n or N, then no HDA injection
-          gSettings.HDAInjection = FALSE;
-        } else if ((prop->string[0] == '0')  && 
-                   (prop->string[1] == 'x' || prop->string[1] == 'X')) {
-          // assume it's a hex layout id
-          gSettings.HDALayoutId = AsciiStrHexToUintn(prop->string);
-        } else {
-          // assume it's a decimal layout id
-          gSettings.HDALayoutId = AsciiStrDecimalToUintn(prop->string);
+        if (prop->type == kTagTypeInteger) {
+          gSettings.HDALayoutId = (UINTN)prop->string;
+          gSettings.HDAInjection = (gSettings.HDALayoutId > 0);
+        } else if (prop->type == kTagTypeString){
+          if ((prop->string[0] == 'n') || (prop->string[0] == 'N')) {
+            // if starts with n or N, then no HDA injection
+            gSettings.HDAInjection = FALSE;
+          } else if ((prop->string[0] == '0')  &&
+                     (prop->string[1] == 'x' || prop->string[1] == 'X')) {
+            // assume it's a hex layout id
+            gSettings.HDALayoutId = AsciiStrHexToUintn(prop->string);
+          } else {
+            // assume it's a decimal layout id
+            gSettings.HDALayoutId = AsciiStrDecimalToUintn(prop->string);
+          }
         }
       }
       // USB
@@ -670,7 +675,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
              ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
           gSettings.GenerateCStates = TRUE;
       }
-      gSettings.PLimitDict = 0;
+//      gSettings.PLimitDict = 0;
       prop = GetProperty(dictPointer, "PLimitDict");
       if(prop) {
         if (prop->type == kTagTypeInteger) {
@@ -680,7 +685,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.PLimitDict = (UINT8)StrDecimalToUintn((CHAR16*)&UStr[0]);	
         }
       }
-      gSettings.UnderVoltStep = 0;
+//      gSettings.UnderVoltStep = 0;
       prop = GetProperty(dictPointer, "UnderVoltStep");
       if(prop) {
         if (prop->type == kTagTypeInteger) {
@@ -785,7 +790,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           DBG(" C2 enabled\n");
         }
       }
-      gSettings.C3Latency = 0; //Usually it is 0x03e9, but if you want Turbo, you may set 0x00FA
+ //     gSettings.C3Latency = 0; //Usually it is 0x03e9, but if you want Turbo, you may set 0x00FA
       prop = GetProperty(dictPointer, "C3Latency");
       if(prop) {
         if (prop->type == kTagTypeInteger) {
@@ -820,7 +825,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         }
       }
       prop = GetProperty(dictPointer, "PatchAPIC");
-      gSettings.PatchNMI = FALSE;
+ //     gSettings.PatchNMI = FALSE;
       if(prop) {
         if ((prop->type == kTagTypeTrue) ||
             ((prop->type == kTagTypeString) &&
@@ -978,7 +983,11 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       
       prop = GetProperty(dictPointer,"Mobile");
       if(prop) {
-        if ((prop->type == kTagTypeTrue) ||
+        if ((prop->type == kTagTypeFalse) ||
+            ((prop->type == kTagTypeString) &&
+             ((prop->string[0] == 'n') || (prop->string[0] == 'N'))))
+          gSettings.Mobile = FALSE;
+        else if ((prop->type == kTagTypeTrue) ||
             ((prop->type == kTagTypeString) &&
              ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
           gSettings.Mobile = TRUE;
@@ -1003,7 +1012,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.ChassisType = (UINT8)(UINTN)prop->string;
         } else if (prop->type == kTagTypeString){
           AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-          gSettings.ChassisType = (UINT8)StrDecimalToUintn((CHAR16*)&UStr[0]);
+          gSettings.ChassisType = (UINT8)StrHexToUint64((CHAR16*)&UStr[0]);
         }
         DBG("Config set ChassisType=0x%x\n", gSettings.ChassisType);
       }
@@ -1014,7 +1023,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gFwFeatures = (UINT32)(UINTN)prop->string;
         } else if (prop->type == kTagTypeString){
           AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-          gFwFeatures = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);
+          gFwFeatures = (UINT32)StrHexToUint64((CHAR16*)&UStr[0]);
         }
       }
       prop = GetProperty(dictPointer, "Trust");
@@ -1062,10 +1071,10 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       prop = GetProperty(dictPointer,"CpuFrequencyMHz");
       if(prop) {
         if (prop->type == kTagTypeInteger) {
-          gSettings.CpuFreqMHz = (UINT16)(UINTN)prop->string;
+          gSettings.CpuFreqMHz = (UINT32)(UINTN)prop->string;
         } else if (prop->type == kTagTypeString){
           AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-          gSettings.CpuFreqMHz = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
+          gSettings.CpuFreqMHz = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);
         }
         DBG("Config set CpuFreq=%dMHz\n", gSettings.CpuFreqMHz);
       }
@@ -1084,10 +1093,10 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       prop = GetProperty(dictPointer,"BusSpeedkHz");
       if(prop) {
         if (prop->type == kTagTypeInteger) {
-          gSettings.BusSpeed = (UINT16)(UINTN)prop->string;
+          gSettings.BusSpeed = (UINT32)(UINTN)prop->string;
         } else if (prop->type == kTagTypeString){
           AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
-          gSettings.BusSpeed = (UINT16)StrDecimalToUintn((CHAR16*)&UStr[0]);
+          gSettings.BusSpeed = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);
         }
         DBG("Config set BusSpeed=%dkHz\n", gSettings.BusSpeed);
       }      
