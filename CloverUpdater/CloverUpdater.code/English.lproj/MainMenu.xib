@@ -1334,7 +1334,7 @@
 						<object class="NSTextField" id="640582718">
 							<reference key="NSNextResponder" ref="439893737"/>
 							<int key="NSvFlags">268</int>
-							<string key="NSFrame">{{17, 112}, {250, 17}}</string>
+							<string key="NSFrame">{{17, 112}, {236, 17}}</string>
 							<reference key="NSSuperview" ref="439893737"/>
 							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="512535206"/>
@@ -1535,7 +1535,7 @@
 					<reference key="NSWindow"/>
 					<reference key="NSNextKeyView" ref="640582718"/>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {1920, 1178}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1920, 1058}}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<bool key="NSWindowIsRestorable">YES</bool>
 			</object>
