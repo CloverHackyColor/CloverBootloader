@@ -12,10 +12,17 @@ declare -r CLOVER_LAST_VERSION_URL="http://sourceforge.net/projects/cloverefiboo
 declare -r CLOVER_APP_SUPPORT="/Library/Application Support/Clover"
 declare -r CLOVER_UPDATER_PLIST="$HOME"/Library/Preferences/com.projectosx.clover.updater.plist
 
-# Check preferences
-allow_update=$($PLISTBUDDY -c "Print AllowUpdate" "$CLOVER_UPDATER_PLIST" 2>/dev/null)
-[[ "$allow_update" == false ]] && exit 1
-    
+# Argument pass to script
+mode="${1:-}"
+
+# We need to check if we are allowed to update from preferences in case of
+# startup
+if [[ "$mode" == startup ]]; then
+    # Check preferences
+    allow_update=$($PLISTBUDDY -c "Print AllowUpdate" "$CLOVER_UPDATER_PLIST" 2>/dev/null)
+    [[ "$allow_update" == false ]] && exit 1
+fi
+
 last_revision=$(LC_ALL=C $CURL --silent --fail --connect-timeout 30 \
  --max-time 60 "$CLOVER_LAST_VERSION_URL" 2>&1 |                    \
  $SED -nE 's#^.*Installer/Clover_v2_r([0-9]+).*#\1#p')
@@ -33,9 +40,10 @@ current_revision=$(LC_ALL=C $IOREG -l -pIODeviceTree | \
 choice=$("$CLOVER_APP_SUPPORT"/CloverUpdater.app/Contents/MacOS/CloverUpdater \
  "$current_revision" "$last_revision")
 
+# Remove previous key
+"$PLISTBUDDY" -c "Delete AllowUpdate" "$CLOVER_UPDATER_PLIST" &>/dev/null
 case "$choice" in
-    -1) "$PLISTBUDDY" -c "Delete AllowUpdate" "$CLOVER_UPDATER_PLIST" &>/dev/null
-        "$PLISTBUDDY" -c "Add AllowUpdate bool false" "$CLOVER_UPDATER_PLIST" &>/dev/null
+    -1) "$PLISTBUDDY" -c "Add AllowUpdate bool false" "$CLOVER_UPDATER_PLIST" &>/dev/null
         ;;
      1) open http://sourceforge.net/projects/cloverefiboot/files/Installer/Clover_v2_r${last_revision}.zip/download
         ;;

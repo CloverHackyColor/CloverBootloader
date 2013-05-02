@@ -12,7 +12,8 @@
 	<string>/Library/Application Support/Clover/CloverUpdaterUtility</string>
 	<key>ProgramArguments</key>
 	<array>
-		<string>none</string>
+	    <string>/Library/Application Support/Clover/CloverUpdaterUtility</string>
+		<string>startup</string>
 	</array>
 	<key>RunAtLoad</key>
 	<true/>
