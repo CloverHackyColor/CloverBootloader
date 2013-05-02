@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-02 16:05+0300\n"
-"PO-Revision-Date: 2013-05-01 10:03+0000\n"
+"PO-Revision-Date: 2013-05-02 14:33+0000\n"
 "Last-Translator: JrCs <d2t56xxptp@snkmail.com>\n"
 "Language-Team: fr <fr@li.org>\n"
 "Language: fr\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1367402600.0\n"
+"X-POOTLE-MTIME: 1367505227.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -359,9 +359,10 @@ msgid ""
 "Usefull for UEFI motherboards that don't need bootloader files.\n"
 "Can also be use if you don't want to upgrade MBR or PBR sectors."
 msgstr ""
-"N'installe aucun bootloader (boot0X, boot1X).\n"
+"N'installe aucun secteur de démarrage (boot0X, boot1X).\n"
 "Utile pour les cartes mères UEFI qui n'ont pas besoin de bootloader.\n"
-"Cette option peut aussi être utilisée pour éviter la mise à jour des secteurs de boot (MBR et PBR)."
+"Cette option peut aussi être utilisée pour éviter la mise à jour des "
+"secteurs de boot (MBR et PBR)."
 
 #. type: "AltBoot_title"
 #: Resources/templates/Localizable.strings:56
@@ -603,7 +604,7 @@ msgstr "Thèmes"
 #: Resources/templates/Localizable.strings:120
 #, no-wrap
 msgid "Select to install themes."
-msgstr "Selectionner un theme pour l installation ."
+msgstr "Sélectionner un thème pour l'installation."
 
 #. type: "black_green_title"
 #: Resources/templates/Localizable.strings:122
@@ -791,10 +792,10 @@ msgstr "Script pour désactiver le service Bonjour 'sleep proxy client' afin d'�
 
 #. type: "CloverUpdater_title"
 #: Resources/templates/Localizable.strings:172
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install Clover in the ESP"
 msgid "Install CloverUpdater"
-msgstr "Installer Clover dans l'ESP"
+msgstr "Installation de CloverUpdater"
 
 #. type: "CloverUpdater_description"
 #: Resources/templates/Localizable.strings:173
@@ -803,6 +804,8 @@ msgid ""
 "Install CloverUpdater on target volume.\n"
 "CloverUpdater notify you about Clover updates."
 msgstr ""
+"Installe CloverUpdater sur le volume de destination.\n"
+"CloverUpdater vous notifie de nouvelles mises à jour de Clover."
 
 #~ msgid "Video driver - provides a wide range of resolutions, 64bit"
 #~ msgstr ""
