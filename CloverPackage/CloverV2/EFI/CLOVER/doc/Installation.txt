@@ -60,7 +60,7 @@ dd if=origbs of=newbs skip=3 seek=3 bs=1 count=87 conv=notrunc
 dd if=newbs of=/dev/rdisk0s1 count=1 bs=512
 cp BOOT /Volumes/EFI/  
 
-Enter fdisk and set EFI partitoin as active partition.
+Enter fdisk and set FAT partitoin as active partition. Don't do this for EFI!
 
 fdisk -e /dev/rdisk0
 >f 1
