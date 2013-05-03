@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-02 16:05+0300\n"
-"PO-Revision-Date: 2013-05-02 19:23+0000\n"
+"PO-Revision-Date: 2013-05-03 04:24+0000\n"
 "Last-Translator: crazybirdy <>\n"
 "Language-Team: zh_CN <zh_CN@li.org>\n"
 "Language: zh_CN\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1367522621.0\n"
+"X-POOTLE-MTIME: 1367555043.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -98,7 +98,7 @@ msgstr "- 支持 引导 10.4 - 10.8 OSX, Windows EFI 及 Linux EFI"
 msgid ""
 "- It's EFI bootloader provides RuntimeServices for OS that impossible for "
 "Legacy Bootloaders"
-msgstr "- EFI bootloader 提供 OS 运行 RuntimeServices。(传统引导器无法提供)"
+msgstr "- EFI bootloader 提供 OS 运行 RuntimeServices (传统引导器无法提供)"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:23
@@ -157,7 +157,7 @@ msgstr "- 支持 睡眠/唤醒 修复 并 支持 PCIRootUID 设置"
 msgid ""
 "- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
 "supported cards."
-msgstr "- 支持 ATI, NVidia 及 Intel 显示卡启用功能,"
+msgstr "- 支持 ATI, NVidia 及 Intel 显卡启用功能,"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:32
@@ -173,7 +173,7 @@ msgstr ""
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:34
 msgid "- HDA injector and Ethernet builtin injector"
-msgstr "- 支持 HDA 及 以太网路 属性内建功能"
+msgstr "- 支持 HDA 及 以太网卡 属性内建功能"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:35
@@ -456,7 +456,7 @@ msgstr "32位，PS/2 键盘 驱动。"
 #: Resources/templates/Localizable.strings:91
 #, no-wrap
 msgid "PS/2 trackpad driver, 32bit"
-msgstr "32位，PS/2 键盘 驱动。"
+msgstr "32位，PS/2 触控板 驱动。"
 
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:92
@@ -510,13 +510,13 @@ msgstr "64位，来自 Virtualbox 的 ext4 文件系统驱动。"
 #: Resources/templates/Localizable.strings:100
 #, no-wrap
 msgid "USB 3.0 driver, 32bit"
-msgstr "32位，USB 鼠标 驱动。"
+msgstr "32位，XHCI USB 3.0 驱动。"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
 #, no-wrap
 msgid "USB 3.0 driver, 64bit"
-msgstr "64位，USB 鼠标 驱动。"
+msgstr "64位，XHCI USB 3.0 驱动。"
 
 #. type: "CsmVideoDxe-64_description"
 #: Resources/templates/Localizable.strings:102
