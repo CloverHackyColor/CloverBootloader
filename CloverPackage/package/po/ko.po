@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-02 16:05+0300\n"
-"PO-Revision-Date: 2013-05-01 13:07+0000\n"
+"PO-Revision-Date: 2013-05-03 05:09+0000\n"
 "Last-Translator: ceruns <ceruns@ymail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
 "Language: ko\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1367413649.0\n"
+"X-POOTLE-MTIME: 1367557759.0\n"
 
 # //Don't need change
 #. type: Content of: <html><body><div><p>
@@ -101,7 +101,7 @@ msgstr "- OSX 10.4 ~ 10.8, Windows EFI, 그리고 Linux EFI로 부팅"
 msgid ""
 "- It's EFI bootloader provides RuntimeServices for OS that impossible for "
 "Legacy Bootloaders"
-msgstr ""
+msgstr "- 구식(Legacy) 부트로더가 지원할 수 없는 런타임 서비스들을 지원하는 EFI 부트로더입니다"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:23
@@ -790,10 +790,10 @@ msgstr "mDNSResponder 잠자기 프록시 클라이언트 서비스를 비활성
 
 #. type: "CloverUpdater_title"
 #: Resources/templates/Localizable.strings:172
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install Clover in the ESP"
 msgid "Install CloverUpdater"
-msgstr "ESP에 Clover 설치"
+msgstr "클로버 업데이터(CloverUpdater) 설치"
 
 #. type: "CloverUpdater_description"
 #: Resources/templates/Localizable.strings:173
@@ -802,6 +802,8 @@ msgid ""
 "Install CloverUpdater on target volume.\n"
 "CloverUpdater notify you about Clover updates."
 msgstr ""
+"타겟 볼륨에 클로버 업데이터를 설치합니다.\n"
+"클로버 업데이터는 클로버의 업데이트를 알려드립니다."
 
 #~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
 #~ msgstr "Ps2MouseAbsolutePointerDxe-32_description"
