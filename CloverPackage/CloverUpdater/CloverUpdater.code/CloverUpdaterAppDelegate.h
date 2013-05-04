@@ -10,15 +10,13 @@
 
 @interface CloverUpdaterAppDelegate : NSObject <NSApplicationDelegate> {
     NSWindow *window;
-  IBOutlet NSTextField *OldRevision;
-  
-  IBOutlet NSTextField *NewRevision;
-  
+    IBOutlet NSTextField *OldRevision;
+    IBOutlet NSTextField *NewRevision;
+    IBOutlet NSButton *updateButton;
 }
 
 @property (assign) IBOutlet NSWindow *window;
-- (IBAction)NeverButton:(id)sender;
 - (IBAction)NotNow:(id)sender;
-- (IBAction)UpdateButton:(id)sender;
+- (IBAction)Update:(id)sender;
 
 @end

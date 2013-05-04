@@ -9,17 +9,18 @@ cd "$(dirname $0)"
 declare -r CLOVER_UPDATER_DIR="$PWD"
 declare -r CLOVER_APP_SUPPORT="/Library/Application Support/Clover"
 
-sudo rm -f /Library/LaunchAgents/com.projectosx.Clover.Updater.plist
-
-# Build application if necessary
-make CloverUpdater || exit $?
 
 # Install files
-sudo cp "$CLOVER_UPDATER_DIR"/CloverUpdaterUtility.plist /Library/LaunchAgents/com.projectosx.Clover.Updater.plist
 sudo mkdir -p "$CLOVER_APP_SUPPORT"
 sudo cp -p "$CLOVER_UPDATER_DIR"/CloverUpdaterUtility "$CLOVER_APP_SUPPORT"/
 sudo chmod +rx "$CLOVER_UPDATER_DIR"/CloverUpdaterUtility
+
+# Build application if necessary
+make CloverUpdater || exit $?
 sudo cp -pr "$CLOVER_UPDATER_DIR"/build/CloverUpdater.app "$CLOVER_APP_SUPPORT"/
+
+rm -f "$HOME"/Library/LaunchAgents/com.projectosx.Clover.Updater.plist
+cp "$CLOVER_UPDATER_DIR"/CloverUpdaterUtility.plist "$HOME"/Library/LaunchAgents/com.projectosx.Clover.Updater.plist
 
 echo "CloverUpdater install successfully !"
 

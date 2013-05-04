@@ -22,11 +22,9 @@
 - (void) awakeFromNib {
     [OldRevision setStringValue: [NSString stringWithFormat: @"%s", arg1]];
     [NewRevision setStringValue: [NSString stringWithFormat: @"%s", arg2]];
-}
-
-- (IBAction)NeverButton:(id)sender {
-    printf("-1");
-    exit(0);
+    if ([OldRevision intValue] >= [NewRevision intValue]) {
+        [updateButton setEnabled:FALSE];
+    }
 }
 
 - (IBAction)NotNow:(id)sender {
@@ -34,7 +32,7 @@
     exit(0);
 }
 
-- (IBAction)UpdateButton:(id)sender {
+- (IBAction)Update:(id)sender {
     printf("1");
     exit(0);
 }

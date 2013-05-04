@@ -7,7 +7,7 @@
 	<key>KeepAlive</key>
 	<false/>
 	<key>Label</key>
-	<string>com.projectosx.clover.updater</string>
+	<string>com.projectosx.Clover.Updater</string>
 	<key>Program</key>
 	<string>/Library/Application Support/Clover/CloverUpdaterUtility</string>
 	<key>ProgramArguments</key>
