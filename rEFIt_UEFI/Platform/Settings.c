@@ -742,13 +742,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
           gSettings.ResetAddr  = StrHexToUint64(UStr);
         }
-        DBG("Config set ResetAddr=%s\n", gSettings.ResetAddr);
+        DBG("Config set ResetAddr=0x%x\n", gSettings.ResetAddr);
         if (gSettings.ResetAddr  == 0x64) {
           gSettings.ResetVal = 0xFE;
         } else if  (gSettings.ResetAddr  == 0xCF9) {
           gSettings.ResetVal = 0x06;
         }
-        DBG("Config calc ResetVal=%s\n", gSettings.ResetVal);
+        DBG("Config calc ResetVal=0x%x\n", gSettings.ResetVal);
       }
       prop = GetProperty(dictPointer, "ResetValue");
       if(prop) {
@@ -758,7 +758,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
           gSettings.ResetVal = (UINT8)StrHexToUint64((CHAR16*)&UStr[0]);
         }
-        DBG("Config set ResetVal=%s\n", gSettings.ResetVal);
+        DBG("Config set ResetVal=0x%x\n", gSettings.ResetVal);
       }
       //other known pair is 0x0CF9/0x06. What about 0x92/0x01 ?
       

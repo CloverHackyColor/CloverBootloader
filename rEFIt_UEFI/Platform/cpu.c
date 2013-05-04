@@ -299,16 +299,17 @@ VOID GetCPUProperties (VOID)
             }
 
             // This makes no sense and seems arbitrary - apianti
-            if ((gCPUStructure.Model != CPU_MODEL_NEHALEM_EX) &&
-                (gCPUStructure.Model != CPU_MODEL_WESTMERE_EX) &&
-                (gCPUStructure.Model != CPU_MODEL_FIELDS))
+            if (gCPUStructure.Turbo /* &&
+                (gCPUStructure.Model != CPU_MODEL_NEHALEM_EX) &&
+                (gCPUStructure.Model != CPU_MODEL_WESTMERE_EX)  &&
+                (gCPUStructure.Model != CPU_MODEL_FIELDS) */ )
             {
               msr = AsmReadMsr64(MSR_TURBO_RATIO_LIMIT);
-              
-            gCPUStructure.Turbo1 = (UINT8)(RShiftU64(msr, 0) & 0xff);
-            gCPUStructure.Turbo2 = (UINT8)(RShiftU64(msr, 8) & 0xff);
-            gCPUStructure.Turbo3 = (UINT8)(RShiftU64(msr, 16) & 0xff);
-            gCPUStructure.Turbo4 = (UINT8)(RShiftU64(msr, 24) & 0xff); //later
+
+              gCPUStructure.Turbo1 = (UINT8)(RShiftU64(msr, 0) & 0xff);
+              gCPUStructure.Turbo2 = (UINT8)(RShiftU64(msr, 8) & 0xff);
+              gCPUStructure.Turbo3 = (UINT8)(RShiftU64(msr, 16) & 0xff);
+              gCPUStructure.Turbo4 = (UINT8)(RShiftU64(msr, 24) & 0xff); //later
             }
             /* Not sure what this is here for - apianti
             } else {
@@ -797,6 +798,9 @@ MACHINE_TYPES GetDefaultModel()
 				DefaultType = MacPro41;
 				break;
 			case CPU_MODEL_FIELDS:
+        if(AsciiStrStr(gCPUStructure.BrandString, "Xeon")) {
+					DefaultType = MacPro41;
+					break;
 				DefaultType = iMac113;
 				break;
 			case CPU_MODEL_DALES: 
