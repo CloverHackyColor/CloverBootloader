@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-02 16:05+0300\n"
-"PO-Revision-Date: 2013-05-04 22:45+0000\n"
+"PO-Revision-Date: 2013-05-04 22:47+0000\n"
 "Last-Translator: JrCs <d2t56xxptp@snkmail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
 "Language: ko\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1367707518.0\n"
+"X-POOTLE-MTIME: 1367707676.0\n"
 
 # //Don't need change
 #. type: Content of: <html><body><div><p>
@@ -120,7 +120,7 @@ msgstr ""
 #: Resources/templates/Description.html:32
 #: Resources/templates/Description.html:33
 msgid " "
-msgstr ""
+msgstr " "
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:24
