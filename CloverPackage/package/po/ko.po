@@ -7,15 +7,15 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-02 16:05+0300\n"
-"PO-Revision-Date: 2013-05-03 05:09+0000\n"
-"Last-Translator: ceruns <ceruns@ymail.com>\n"
+"PO-Revision-Date: 2013-05-04 22:45+0000\n"
+"Last-Translator: JrCs <d2t56xxptp@snkmail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1367557759.0\n"
+"X-POOTLE-MTIME: 1367707518.0\n"
 
 # //Don't need change
 #. type: Content of: <html><body><div><p>
@@ -111,6 +111,7 @@ msgid ""
 msgstr ""
 "- 대체로 Clover는 모든 하드웨어를 자동으로 인식하고 기본 값으로 설정합니다."
 
+# It's good no need to change this
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:23
 #: Resources/templates/Description.html:24
@@ -218,7 +219,7 @@ msgstr "설치가 완료되었습니다!"
 
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
-#, no-wrap
+#, fuzzy, no-wrap
 msgid "Install for UEFI motherboards"
 msgstr "Install for UEFI motherboards"
 
