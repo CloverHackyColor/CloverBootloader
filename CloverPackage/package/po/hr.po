@@ -7,14 +7,15 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-02 16:05+0300\n"
-"PO-Revision-Date: 2013-04-29 16:52+0200\n"
+"PO-Revision-Date: 2013-05-04 20:58+0000\n"
 "Last-Translator: Xpam.AmAdEuS <miljenkohalapir@outlook.com>\n"
 "Language-Team: hr <hr@li.org>\n"
 "Language: hr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Pootle 2.1.6\n"
+"X-Generator: Pootle 2.5.0-rc1\n"
+"X-POOTLE-MTIME: 1367701094.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -286,7 +287,7 @@ msgstr "Bootloader"
 
 #. type: "Bootloader_description"
 #: Resources/templates/Localizable.strings:24
-#, fuzzy, no-wrap
+#, no-wrap
 msgid ""
 "Clover EFI requires three essential files. (in simple terms)\n"
 "boot0 (On the drive's MBR) responsible for loading boot1.\n"
@@ -487,7 +488,7 @@ msgstr "PS/2 upravljački program za tastature, 32 bitna verzija"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:91
-#, fuzzy, no-wrap
+#, no-wrap
 msgid "PS/2 trackpad driver, 32bit"
 msgstr "PS/2 upravljački program za tastature, 32 bitna verzija"
 
@@ -541,13 +542,13 @@ msgstr "ext4 filesystem upravljački program iz virtualbox-a , 64 bitna verzija"
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:100
-#, fuzzy, no-wrap
+#, no-wrap
 msgid "USB 3.0 driver, 32bit"
 msgstr "USB upravljački program za miša, 32 bitna verzija"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
-#, fuzzy, no-wrap
+#, no-wrap
 msgid "USB 3.0 driver, 64bit"
 msgstr "USB upravljački program za miša, 64 bitna verzija"
 
@@ -802,7 +803,7 @@ msgstr "Isključuje mDNSResponder spavajuči proxy client service.Ovo sprečava 
 
 #. type: "CloverUpdater_title"
 #: Resources/templates/Localizable.strings:172
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install Clover in the ESP"
 msgid "Install CloverUpdater"
 msgstr "Instaliraj Clover na EFI SYSTEM PARTICIJU"
@@ -813,7 +814,7 @@ msgstr "Instaliraj Clover na EFI SYSTEM PARTICIJU"
 msgid ""
 "Install CloverUpdater on target volume.\n"
 "CloverUpdater notify you about Clover updates."
-msgstr ""
+msgstr "Instaliraj CloverUpdater na odabrani disk"
 
 #~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
 #~ msgstr "Ps2MouseAbsolutePointerDxe-32_description"
