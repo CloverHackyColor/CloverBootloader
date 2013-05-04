@@ -302,8 +302,7 @@ VOID GetCPUProperties (VOID)
             if (gCPUStructure.Turbo /* &&
                 (gCPUStructure.Model != CPU_MODEL_NEHALEM_EX) &&
                 (gCPUStructure.Model != CPU_MODEL_WESTMERE_EX)  &&
-                (gCPUStructure.Model != CPU_MODEL_FIELDS) */ )
-            {
+                (gCPUStructure.Model != CPU_MODEL_FIELDS) */ ) {
               msr = AsmReadMsr64(MSR_TURBO_RATIO_LIMIT);
 
               gCPUStructure.Turbo1 = (UINT8)(RShiftU64(msr, 0) & 0xff);
@@ -575,6 +574,7 @@ VOID GetCPUProperties (VOID)
 
 //	return;
 }
+
 //PCI info
 /*
 typedef struct {
@@ -717,7 +717,6 @@ UINT16 GetAdvancedCpuType ()
 				}
 			}
 		}
-		
 	}
 	return GetStandardCpuType();
 }
@@ -801,6 +800,7 @@ MACHINE_TYPES GetDefaultModel()
         if(AsciiStrStr(gCPUStructure.BrandString, "Xeon")) {
 					DefaultType = MacPro41;
 					break;
+        }
 				DefaultType = iMac113;
 				break;
 			case CPU_MODEL_DALES: 
