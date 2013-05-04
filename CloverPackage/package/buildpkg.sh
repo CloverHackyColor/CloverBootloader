@@ -975,12 +975,13 @@ fi
     done
 # End build optional rc scripts package
 
+local cloverUpdaterDir="${SRCROOT}"/CloverUpdater
+if [[ -x "$cloverUpdaterDir"/build/CloverUpdater.app/Contents/MacOS/CloverUpdater ]]; then
 # build CloverUpdater package
     echo "==================== Clover Updater ===================="
     packagesidentity="$clover_package_identity"
     choiceId="CloverUpdater"
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
-    local cloverUpdaterDir="${SRCROOT}"/../CloverUpdater
     ditto --noextattr --noqtn "$cloverUpdaterDir"/CloverUpdaterUtility.plist  \
      "${PKG_BUILD_DIR}/${choiceId}"/Root/Library/LaunchAgents/com.projectosx.Clover.Updater.plist
     ditto --noextattr --noqtn "$cloverUpdaterDir"/CloverUpdaterUtility  \
@@ -990,9 +991,11 @@ fi
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" \
                        --subst="INSTALLER_CHOICE=$packageRefId" MarkChoice
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
-    addChoice --start-selected="choicePreviouslySelected('$packageRefId')"  \
+    addChoice --start-selected="checkFileExists('/bin/launchctl') &amp;&amp; choicePreviouslySelected('$packageRefId')" \
+              --start-enabled="checkFileExists('/bin/launchctl')"                                                       \
               --pkg-refs="$packageRefId" "${choiceId}"
 # end CloverUpdater package
+fi
 
 # build post install package
     echo "================= Post ================="

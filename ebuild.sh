@@ -261,6 +261,9 @@ MainBuildScript() {
     # Cleaning part of the script if we have told to do it
     if [[ "$TARGETRULE" == cleanpkg ]]; then
         # Make some house cleaning
+        echo "Cleaning CloverUpdater files..."
+        make -C "$WORKSPACE"/Clover/CloverPackage/CloverUpdater clean
+
         echo "Cleaning packaging files..."
         find  "$CLOVER_PKG_DIR"/Bootloaders/{ia32,x64}/ -mindepth 1 -not -path "**/.svn*" -delete
         if [[ -d "$CLOVER_PKG_DIR"/EFI/BOOT ]]; then
@@ -273,8 +276,10 @@ MainBuildScript() {
         fi
         find  "$CLOVER_PKG_DIR"/drivers-Off/drivers* -mindepth 1 -not -path "**/.svn*" -delete
         find  "$CLOVER_PKG_DIR"/EFI/CLOVER/ -name '*.efi' -maxdepth 1 -not -path "**/.svn*" -delete
+
         echo  "Done!"
         exit $?
+
     elif [[ "$TARGETRULE" == clean || "$TARGETRULE" == cleanall ]]; then
         build -p $PLATFORMFILE -a $TARGETARCH -b $BUILDTARGET \
          -t $TOOLCHAIN -n $BUILDTHREADS $TARGETRULE

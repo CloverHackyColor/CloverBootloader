@@ -30,8 +30,12 @@ rm -rf sym
 # Create a new sym directory
 mkdir sym
 
-# Make CloverUpdater
-make -C "${SRCROOT}"/../CloverUpdater || exit $?
+# Check that XCode is install properly
+xcode_path=$(/usr/bin/xcode-select --print-path 2>/dev/null)
+if [[ -n "$xcode_path" ]]; then
+  # Make CloverUpdater
+  make -C "${SRCROOT}"/CloverUpdater || exit $?
+fi
 
 # Start to build installer.
 
