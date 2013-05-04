@@ -7,15 +7,15 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-02 16:05+0300\n"
-"PO-Revision-Date: 2013-05-03 04:24+0000\n"
-"Last-Translator: crazybirdy <>\n"
+"PO-Revision-Date: 2013-05-04 22:57+0000\n"
+"Last-Translator: JrCs <d2t56xxptp@snkmail.com>\n"
 "Language-Team: zh_CN <zh_CN@li.org>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1367555043.0\n"
+"X-POOTLE-MTIME: 1367708228.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -107,6 +107,7 @@ msgid ""
 "default."
 msgstr "- 默认 自动侦测大部份的硬件并设置所有属性"
 
+# Don't change this ! It must be one space only !
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:23
 #: Resources/templates/Description.html:24
@@ -115,7 +116,7 @@ msgstr "- 默认 自动侦测大部份的硬件并设置所有属性"
 #: Resources/templates/Description.html:32
 #: Resources/templates/Description.html:33
 msgid " "
-msgstr ""
+msgstr " "
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:24
