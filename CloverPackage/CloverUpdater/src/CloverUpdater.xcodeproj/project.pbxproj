@@ -28,6 +28,9 @@
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		8D1107310486CEB800E47090 /* CloverUpdater-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "CloverUpdater-Info.plist"; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* CloverUpdater.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CloverUpdater.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A30F62B71736B1810012B429 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = es; path = es.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		A30F62B81736B18F0012B429 /* hr */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = hr; path = hr.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		A30F62B91736B1A30012B429 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ru; path = ru.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		A3298B0D1736975F000EFB93 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		A34F63E117369BA6001B81F1 /* translate_xib.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = translate_xib.sh; path = ../translate_xib.sh; sourceTree = "<group>"; };
 		A34F63E31736A153001B81F1 /* fr */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = fr; path = fr.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -170,6 +173,8 @@
 				ru,
 				en,
 				fr,
+				es,
+				hr,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CloverUpdater */;
 			projectDirPath = "";
@@ -228,6 +233,9 @@
 			children = (
 				A3298B0D1736975F000EFB93 /* en */,
 				A34F63E31736A153001B81F1 /* fr */,
+				A30F62B71736B1810012B429 /* es */,
+				A30F62B81736B18F0012B429 /* hr */,
+				A30F62B91736B1A30012B429 /* ru */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
