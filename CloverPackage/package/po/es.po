@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-05 16:23+0300\n"
-"PO-Revision-Date: 2013-05-05 15:20+0000\n"
+"PO-Revision-Date: 2013-05-05 16:51+0000\n"
 "Last-Translator: Maniac <emafrias@gmail.com>\n"
 "Language-Team: es <es@li.org>\n"
 "Language: es\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1367767215.0\n"
+"X-POOTLE-MTIME: 1367772702.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -868,7 +868,7 @@ msgstr "¿Quiere instalar la actualización?"
 #: ../CloverUpdater/CloverUpdater.strings:9
 #, no-wrap
 msgid "Not now"
-msgstr "No ahora"
+msgstr "Ahora no"
 
 #. type: "548.title"
 #: ../CloverUpdater/CloverUpdater.strings:10
@@ -923,7 +923,7 @@ msgstr "Mensualmente"
 #: ../CloverPrefpane/CloverPrefpane.strings:8
 #, no-wrap
 msgid "Schedule Check Updates Every:"
-msgstr "Comprobar actualizaciones cada:"
+msgstr "Comprobar actualizaciones:"
 
 #. type: "248.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:9
@@ -935,7 +935,7 @@ msgstr "Última comprobación:"
 #: ../CloverPrefpane/CloverPrefpane.strings:10
 #, no-wrap
 msgid "Check Now"
-msgstr "Comprobar ahora"
+msgstr "Comprobar ahora..."
 
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:11
