@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-05 16:23+0300\n"
-"PO-Revision-Date: 2013-05-02 23:41+0000\n"
+"PO-Revision-Date: 2013-05-05 15:20+0000\n"
 "Last-Translator: Maniac <emafrias@gmail.com>\n"
 "Language-Team: es <es@li.org>\n"
 "Language: es\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1367538111.0\n"
+"X-POOTLE-MTIME: 1367767215.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -827,121 +827,121 @@ msgstr ""
 #: ../CloverUpdater/CloverUpdater.strings:1
 #: ../CloverUpdater/CloverUpdater.strings:2
 #: ../CloverUpdater/CloverUpdater.strings:5
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install CloverUpdater"
 msgid "CloverUpdater"
-msgstr "Instalar CloverUpdater"
+msgstr "CloverUpdater"
 
 #. type: "58.title"
 #: ../CloverUpdater/CloverUpdater.strings:3
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install CloverUpdater"
 msgid "About CloverUpdater"
-msgstr "Instalar CloverUpdater"
+msgstr "Acerca de CloverUpdater"
 
 #. type: "136.title"
 #: ../CloverUpdater/CloverUpdater.strings:4
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install CloverUpdater"
 msgid "Quit CloverUpdater"
-msgstr "Instalar CloverUpdater"
+msgstr "Salir de CloverUpdater"
 
 #. type: "534.title"
 #: ../CloverUpdater/CloverUpdater.strings:6
 #, no-wrap
 msgid "Current local Clover revision:"
-msgstr ""
+msgstr "Revisión instalada:"
 
 #. type: "538.title"
 #: ../CloverUpdater/CloverUpdater.strings:7
 #, no-wrap
 msgid "Latest update revision:"
-msgstr ""
+msgstr "Última revisión:"
 
 #. type: "542.title"
 #: ../CloverUpdater/CloverUpdater.strings:8
 #, no-wrap
 msgid "Do you want to update ?"
-msgstr ""
+msgstr "¿Quiere instalar la actualización?"
 
 #. type: "546.title"
 #: ../CloverUpdater/CloverUpdater.strings:9
 #, no-wrap
 msgid "Not now"
-msgstr ""
+msgstr "No ahora"
 
 #. type: "548.title"
 #: ../CloverUpdater/CloverUpdater.strings:10
 #, no-wrap
 msgid "Update"
-msgstr ""
+msgstr "Actualizar"
 
 #. type: "12.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:1
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "iClover"
 msgid "Clover"
-msgstr "iClover"
+msgstr "Clover"
 
 #. type: "104.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:2
 #, no-wrap
 msgid "CLOVER"
-msgstr ""
+msgstr "CLOVER"
 
 #. type: "204.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:3
 #, no-wrap
 msgid "Never"
-msgstr ""
+msgstr "Nunca"
 
 #. type: "205.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:4
 #, no-wrap
 msgid "Daily"
-msgstr ""
+msgstr "Diariamente"
 
 #. type: "206.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:5
 #, no-wrap
 msgid "Weekly"
-msgstr ""
+msgstr "Semanalmente"
 
 #. type: "217.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:6
 #, no-wrap
 msgid "Hourly"
-msgstr ""
+msgstr "Cada hora"
 
 #. type: "239.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:7
 #, no-wrap
 msgid "Monthly"
-msgstr ""
+msgstr "Mensualmente"
 
 #. type: "243.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:8
 #, no-wrap
 msgid "Schedule Check Updates Every:"
-msgstr ""
+msgstr "Comprobar actualizaciones cada:"
 
 #. type: "248.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:9
 #, no-wrap
 msgid "Last check:"
-msgstr ""
+msgstr "Última comprobación:"
 
 #. type: "258.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:10
 #, no-wrap
 msgid "Check Now"
-msgstr ""
+msgstr "Comprobar ahora"
 
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:11
 #, no-wrap
 msgid "Copyright (c) 2013 JrCs"
-msgstr ""
+msgstr "Copyright (c) JrCs 2013"
 
 #~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
 #~ msgstr "Controlador 32bit para Trackpads. Experimental."
