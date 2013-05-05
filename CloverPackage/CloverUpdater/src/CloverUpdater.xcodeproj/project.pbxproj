@@ -11,7 +11,7 @@
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		A3298B0E1736975F000EFB93 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = A3298B0C1736975F000EFB93 /* MainMenu.xib */; };
-		A34F63E41736A153001B81F1 /* CloverUpdater-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8D1107310486CEB800E47090 /* CloverUpdater-Info.plist */; };
+		A3502EAE1736DA6C00F28732 /* CloverUpdater-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8D1107310486CEB800E47090 /* CloverUpdater-Info.plist */; };
 		A3E8C75F1731872100228CA8 /* clover.iconset in Resources */ = {isa = PBXBuildFile; fileRef = A3E8C75E1731872100228CA8 /* clover.iconset */; };
 		A3FEE1941736995100D18280 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A3FEE1921736995100D18280 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
@@ -34,6 +34,7 @@
 		A3298B0D1736975F000EFB93 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		A34F63E117369BA6001B81F1 /* translate_xib.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = translate_xib.sh; path = ../translate_xib.sh; sourceTree = "<group>"; };
 		A34F63E31736A153001B81F1 /* fr */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = fr; path = fr.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		A3502EAD1736DA6C00F28732 /* ua */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ua; path = ua.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		A3E8C75E1731872100228CA8 /* clover.iconset */ = {isa = PBXFileReference; lastKnownFileType = folder.iconset; path = clover.iconset; sourceTree = "<group>"; };
 		A3FEE1931736995100D18280 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -175,6 +176,7 @@
 				fr,
 				es,
 				hr,
+				ua,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CloverUpdater */;
 			projectDirPath = "";
@@ -193,7 +195,7 @@
 				A3E8C75F1731872100228CA8 /* clover.iconset in Resources */,
 				A3298B0E1736975F000EFB93 /* MainMenu.xib in Resources */,
 				A3FEE1941736995100D18280 /* InfoPlist.strings in Resources */,
-				A34F63E41736A153001B81F1 /* CloverUpdater-Info.plist in Resources */,
+				A3502EAE1736DA6C00F28732 /* CloverUpdater-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -212,6 +214,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
 			shellScript = "${PROJECT_DIR}/../translate_xib.sh";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -236,6 +239,7 @@
 				A30F62B71736B1810012B429 /* es */,
 				A30F62B81736B18F0012B429 /* hr */,
 				A30F62B91736B1A30012B429 /* ru */,
+				A3502EAD1736DA6C00F28732 /* ua */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";

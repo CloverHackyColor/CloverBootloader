@@ -405,7 +405,7 @@
 						<object class="NSTextField" id="547590090">
 							<reference key="NSNextResponder" ref="1037298196"/>
 							<int key="NSvFlags">268</int>
-							<string key="NSFrame">{{41, 14}, {106, 17}}</string>
+							<string key="NSFrame">{{14, 14}, {160, 17}}</string>
 							<reference key="NSSuperview" ref="1037298196"/>
 							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="625766961"/>
@@ -413,7 +413,7 @@
 							<bool key="NSEnabled">YES</bool>
 							<object class="NSTextFieldCell" key="NSCell" id="262436313">
 								<int key="NSCellFlags">68157504</int>
-								<int key="NSCellFlags2">272630784</int>
+								<int key="NSCellFlags2">138413056</int>
 								<string key="NSContents">Copyright (c) 2013 JrCs</string>
 								<object class="NSFont" key="NSSupport">
 									<string key="NSName">LucidaGrande</string>
