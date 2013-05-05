@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-05 16:23+0300\n"
-"PO-Revision-Date: 2013-05-05 15:09+0000\n"
+"PO-Revision-Date: 2013-05-05 15:22+0000\n"
 "Last-Translator: Xpam.AmAdEuS <miljenkohalapir@outlook.com>\n"
 "Language-Team: hr <hr@li.org>\n"
 "Language: hr\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1367766578.0\n"
+"X-POOTLE-MTIME: 1367767345.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -129,7 +129,7 @@ msgstr ""
 #: Resources/templates/Description.html:32
 #: Resources/templates/Description.html:33
 msgid " "
-msgstr "Croatian "
+msgstr ""
 
 #
 #. type: Content of: <html><body><p>
@@ -283,7 +283,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:23
 #, no-wrap
 msgid "Bootloader"
-msgstr "Bootloader"
+msgstr "Pokretač sustava"
 
 #. type: "Bootloader_description"
 #: Resources/templates/Localizable.strings:24
@@ -381,7 +381,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:56
 #, no-wrap
 msgid "Use alternative booting PBR"
-msgstr "Koristi alternativni način butanja PBR"
+msgstr "Koristi alternativni način pokretanja sustava PBR"
 
 #. type: "AltBoot_description"
 #: Resources/templates/Localizable.strings:57
@@ -597,7 +597,9 @@ msgstr "64 bitna verzija upravljačkog programa koji popravlja probleme alociran
 #: Resources/templates/Localizable.strings:112
 #, no-wrap
 msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
-msgstr "Jednostavna verzija OsxAptioFixDrv,64 bitna. ( nemojte koristiti obe verzije u isto vrijeme)"
+msgstr ""
+"Pojednostavljena verzija OsxAptioFixDrv,64 bitna. ( nemojte koristiti obe "
+"verzije u isto vrijeme)"
 
 #. type: "PartitionDxe-64_description"
 #: Resources/templates/Localizable.strings:113
@@ -805,7 +807,7 @@ msgstr "Isključuje mDNSResponder spavajuči proxy client service.Ovo sprečava 
 #: Resources/templates/Localizable.strings:172
 #, no-wrap
 msgid "Install CloverUpdater"
-msgstr "Instaliraj Clover na EFI SYSTEM PARTICIJU"
+msgstr "Instaliraj CloverUpdater"
 
 #. type: "CloverUpdater_description"
 #: Resources/templates/Localizable.strings:173
@@ -813,7 +815,9 @@ msgstr "Instaliraj Clover na EFI SYSTEM PARTICIJU"
 msgid ""
 "Install CloverUpdater on target volume.\n"
 "CloverUpdater notify you about Clover updates."
-msgstr "Instaliraj CloverUpdater na odabrani disk"
+msgstr ""
+"Instaliraj CloverUpdater na odabrani diskCloverUpdater vas obavještava o "
+"novim verzijama."
 
 #. type: "371.title"
 #: ../CloverUpdater/CloverUpdater.strings:1
