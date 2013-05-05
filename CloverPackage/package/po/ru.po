@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-05 16:23+0300\n"
-"PO-Revision-Date: 2013-05-02 14:49+0000\n"
+"PO-Revision-Date: 2013-05-05 15:12+0000\n"
 "Last-Translator: Slice <sergey.slice@gmail.com>\n"
 "Language-Team: ru <ru@li.org>\n"
 "Language: ru\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1367506152.0\n"
+"X-POOTLE-MTIME: 1367766742.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -818,121 +818,121 @@ msgstr ""
 #: ../CloverUpdater/CloverUpdater.strings:1
 #: ../CloverUpdater/CloverUpdater.strings:2
 #: ../CloverUpdater/CloverUpdater.strings:5
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install CloverUpdater"
 msgid "CloverUpdater"
-msgstr "Установить CloverUpdater"
+msgstr "Обновление Clover"
 
 #. type: "58.title"
 #: ../CloverUpdater/CloverUpdater.strings:3
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install CloverUpdater"
 msgid "About CloverUpdater"
-msgstr "Установить CloverUpdater"
+msgstr "О программе CloverUpdater"
 
 #. type: "136.title"
 #: ../CloverUpdater/CloverUpdater.strings:4
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install CloverUpdater"
 msgid "Quit CloverUpdater"
-msgstr "Установить CloverUpdater"
+msgstr "Завершить CloverUpdater"
 
 #. type: "534.title"
 #: ../CloverUpdater/CloverUpdater.strings:6
 #, no-wrap
 msgid "Current local Clover revision:"
-msgstr ""
+msgstr "Установлена ревизия Clover:"
 
 #. type: "538.title"
 #: ../CloverUpdater/CloverUpdater.strings:7
 #, no-wrap
 msgid "Latest update revision:"
-msgstr ""
+msgstr "Имеется обновление:"
 
 #. type: "542.title"
 #: ../CloverUpdater/CloverUpdater.strings:8
 #, no-wrap
 msgid "Do you want to update ?"
-msgstr ""
+msgstr "Хотите ли вы обновиться?"
 
 #. type: "546.title"
 #: ../CloverUpdater/CloverUpdater.strings:9
 #, no-wrap
 msgid "Not now"
-msgstr ""
+msgstr "Не сейчас"
 
 #. type: "548.title"
 #: ../CloverUpdater/CloverUpdater.strings:10
 #, no-wrap
 msgid "Update"
-msgstr ""
+msgstr "Ага!"
 
 #. type: "12.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:1
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "iClover"
 msgid "Clover"
-msgstr "iClover"
+msgstr "Clover"
 
 #. type: "104.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:2
 #, no-wrap
 msgid "CLOVER"
-msgstr ""
+msgstr "CLOVER"
 
 #. type: "204.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:3
 #, no-wrap
 msgid "Never"
-msgstr ""
+msgstr "Никогда!"
 
 #. type: "205.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:4
 #, no-wrap
 msgid "Daily"
-msgstr ""
+msgstr "Ежедневно"
 
 #. type: "206.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:5
 #, no-wrap
 msgid "Weekly"
-msgstr ""
+msgstr "Еженедельно"
 
 #. type: "217.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:6
 #, no-wrap
 msgid "Hourly"
-msgstr ""
+msgstr "Раз в час"
 
 #. type: "239.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:7
 #, no-wrap
 msgid "Monthly"
-msgstr ""
+msgstr "Каждый месяц"
 
 #. type: "243.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:8
 #, no-wrap
 msgid "Schedule Check Updates Every:"
-msgstr ""
+msgstr "Напоминать об обновлении:"
 
 #. type: "248.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:9
 #, no-wrap
 msgid "Last check:"
-msgstr ""
+msgstr "Последняя проверка:"
 
 #. type: "258.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:10
 #, no-wrap
 msgid "Check Now"
-msgstr ""
+msgstr "Проверить сейчас:"
 
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:11
 #, no-wrap
 msgid "Copyright (c) 2013 JrCs"
-msgstr ""
+msgstr "Copyright (c) 2013 JrCs"
 
 #~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
 #~ msgstr "Драйвер для PS2 тачпада, 32бита"
