@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-05 16:23+0300\n"
+"POT-Creation-Date: 2013-05-05 16:57+0300\n"
 "PO-Revision-Date: 2013-05-05 14:43+0000\n"
 "Last-Translator: JrCs <d2t56xxptp@snkmail.com>\n"
 "Language-Team: en <en@li.org>\n"
@@ -820,21 +820,18 @@ msgstr ""
 #: ../CloverUpdater/CloverUpdater.strings:2
 #: ../CloverUpdater/CloverUpdater.strings:5
 #, no-wrap
-#| msgid "Install CloverUpdater"
 msgid "CloverUpdater"
 msgstr "CloverUpdater"
 
 #. type: "58.title"
 #: ../CloverUpdater/CloverUpdater.strings:3
 #, no-wrap
-#| msgid "Install CloverUpdater"
 msgid "About CloverUpdater"
 msgstr "About CloverUpdater"
 
 #. type: "136.title"
 #: ../CloverUpdater/CloverUpdater.strings:4
 #, no-wrap
-#| msgid "Install CloverUpdater"
 msgid "Quit CloverUpdater"
 msgstr "Quit CloverUpdater"
 
@@ -871,7 +868,6 @@ msgstr "Update"
 #. type: "12.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:1
 #, no-wrap
-#| msgid "iClover"
 msgid "Clover"
 msgstr "Clover"
 

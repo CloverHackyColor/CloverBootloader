@@ -60,6 +60,9 @@ CLOVER_UPDATER_DIR="../CloverUpdater"
 CLOVER_PREFPANE_DIR="../CloverPrefpane"
 PODIR="po"
 
+# Update CloverUpdater.strings
+"$CLOVER_UPDATER_DIR"/translate_xib.sh --extract-only
+
 # Update CloverPrefpane.strings
 "$CLOVER_PREFPANE_DIR"/translate_xib.sh --extract-only
 
