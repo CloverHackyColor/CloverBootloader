@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-05 16:23+0300\n"
-"PO-Revision-Date: 2013-05-04 20:58+0000\n"
+"PO-Revision-Date: 2013-05-05 15:09+0000\n"
 "Last-Translator: Xpam.AmAdEuS <miljenkohalapir@outlook.com>\n"
 "Language-Team: hr <hr@li.org>\n"
 "Language: hr\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1367701094.0\n"
+"X-POOTLE-MTIME: 1367766578.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -30,7 +30,7 @@ msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:25
 msgid "Developers:"
-msgstr "Developeri:"
+msgstr "Autori:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:26
@@ -819,121 +819,121 @@ msgstr "Instaliraj CloverUpdater na odabrani disk"
 #: ../CloverUpdater/CloverUpdater.strings:1
 #: ../CloverUpdater/CloverUpdater.strings:2
 #: ../CloverUpdater/CloverUpdater.strings:5
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install CloverUpdater"
 msgid "CloverUpdater"
-msgstr "Instaliraj Clover na EFI SYSTEM PARTICIJU"
+msgstr "Provjera nove verzije"
 
 #. type: "58.title"
 #: ../CloverUpdater/CloverUpdater.strings:3
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install CloverUpdater"
 msgid "About CloverUpdater"
-msgstr "Instaliraj Clover na EFI SYSTEM PARTICIJU"
+msgstr "O CloverUpdater"
 
 #. type: "136.title"
 #: ../CloverUpdater/CloverUpdater.strings:4
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install CloverUpdater"
 msgid "Quit CloverUpdater"
-msgstr "Instaliraj Clover na EFI SYSTEM PARTICIJU"
+msgstr "Zatvori CloverUpdater "
 
 #. type: "534.title"
 #: ../CloverUpdater/CloverUpdater.strings:6
 #, no-wrap
 msgid "Current local Clover revision:"
-msgstr ""
+msgstr "Trenutno instalirana verzija:"
 
 #. type: "538.title"
 #: ../CloverUpdater/CloverUpdater.strings:7
 #, no-wrap
 msgid "Latest update revision:"
-msgstr ""
+msgstr "Posljednja dostupna verzija:"
 
 #. type: "542.title"
 #: ../CloverUpdater/CloverUpdater.strings:8
 #, no-wrap
 msgid "Do you want to update ?"
-msgstr ""
+msgstr "Da želite nadogradnju ?"
 
 #. type: "546.title"
 #: ../CloverUpdater/CloverUpdater.strings:9
 #, no-wrap
 msgid "Not now"
-msgstr ""
+msgstr "Ne sad"
 
 #. type: "548.title"
 #: ../CloverUpdater/CloverUpdater.strings:10
 #, no-wrap
 msgid "Update"
-msgstr ""
+msgstr "Nadogradi"
 
 #. type: "12.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:1
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "iClover"
 msgid "Clover"
-msgstr "iClover"
+msgstr "Clover"
 
 #. type: "104.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:2
 #, no-wrap
 msgid "CLOVER"
-msgstr ""
+msgstr "CLOVER"
 
 #. type: "204.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:3
 #, no-wrap
 msgid "Never"
-msgstr ""
+msgstr "Nikad"
 
 #. type: "205.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:4
 #, no-wrap
 msgid "Daily"
-msgstr ""
+msgstr "Svaki dan"
 
 #. type: "206.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:5
 #, no-wrap
 msgid "Weekly"
-msgstr ""
+msgstr "Svaki tjedan"
 
 #. type: "217.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:6
 #, no-wrap
 msgid "Hourly"
-msgstr ""
+msgstr "Svaki sat"
 
 #. type: "239.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:7
 #, no-wrap
 msgid "Monthly"
-msgstr ""
+msgstr "Mjesečno"
 
 #. type: "243.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:8
 #, no-wrap
 msgid "Schedule Check Updates Every:"
-msgstr ""
+msgstr "Podesi provjeru nadogradnje za:"
 
 #. type: "248.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:9
 #, no-wrap
 msgid "Last check:"
-msgstr ""
+msgstr "Posljednja provjera:"
 
 #. type: "258.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:10
 #, no-wrap
 msgid "Check Now"
-msgstr ""
+msgstr "Provjeri sad"
 
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:11
 #, no-wrap
 msgid "Copyright (c) 2013 JrCs"
-msgstr ""
+msgstr "Autorska prava (c) 2003 JrCs"
 
 #~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
 #~ msgstr "Ps2MouseAbsolutePointerDxe-32_description"
