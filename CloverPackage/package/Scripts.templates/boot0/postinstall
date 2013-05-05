@@ -145,14 +145,14 @@ if [ ${efiformat} = "msdos" ]; then
 	echo " " >> "$install_log"
 fi
 
-echo "Setup Active Partition to be : ${bootslice}" >> "$install_log"
-/usr/local/bin/fdisk440 -e ${bootrdisk} <<-MAKEACTIVE
-print
-flag ${bootslice}
-write
-y
-quit
-MAKEACTIVE
+#echo "Setup Active Partition to be : ${bootslice}" >> "$install_log"
+#/usr/local/bin/fdisk440 -e ${bootrdisk} <<-MAKEACTIVE
+#print
+#flag ${bootslice}
+#write
+#y
+#quit
+#MAKEACTIVE
 
 partitionactive=$( /usr/local/bin/fdisk440 -d ${bootrdisk} | grep -n "*" | awk -F: '{print $1}')
 echo "New Active Partition: ${partitionactive}" >> "$install_log"
