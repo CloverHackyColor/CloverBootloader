@@ -8,6 +8,6 @@ install:
 	@$(CURDIR)/install.sh
 
 clean:
-	@rm -rf build
+	@rm -rf build *~
 
 .PHONY: CloverPrefpane install clean

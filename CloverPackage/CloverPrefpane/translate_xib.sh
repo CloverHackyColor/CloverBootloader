@@ -3,9 +3,10 @@
 ##
 # adjust settings here
 ##
-src_locale="en"                   # this is the language you design in
-xib_file="CloverPrefpane.xib"     # the name of your XIB interface builder file
-strings_file="CloverPrefpane.strings"  # the name of your strings file
+application="Clover Preference Panel" # this is the name of the application
+src_locale="en"                       # this is the language you design in
+xib_file="CloverPrefpane.xib"         # the name of your XIB interface builder file
+strings_file="CloverPrefpane.strings" # the name of your strings file
 
 set -u
 
@@ -32,7 +33,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 # Extract source locale strings (use this to check if you added new strings to your xibs)
-echo -n "Updating "$src_locale" strings file... "
+echo -n "Updating '$src_locale' strings file for ${application}... "
 ibtool --generate-strings-file $strings_file.utf16 "$SOURCE_DIR/$src_locale.lproj/$xib_file"
 iconv -f utf-16 -t utf-8 $strings_file.utf16 | grep -vE '^\/\*.*\*\/$' | \
  grep -vE '^$' >$strings_file.new
