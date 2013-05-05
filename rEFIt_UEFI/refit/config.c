@@ -616,7 +616,7 @@ VOID ReadConfig(INTN What)
     } else if (StriCmp(TokenList[0], L"quiet") == 0) {
       GlobalConfig.Quiet = TRUE;
       
-    } else if (StriCmp(TokenList[0], L"nolegacy") == 0) {
+    } else if (StriCmp(TokenList[0], L"nolegacy") == 0  && !GlobalConfig.LegacyFirst) {
       GlobalConfig.NoLegacy = TRUE;
       
     } else if (StriCmp(TokenList[0], L"screen_resolution") == 0) {
