@@ -264,6 +264,9 @@ MainBuildScript() {
         echo "Cleaning CloverUpdater files..."
         make -C "$WORKSPACE"/Clover/CloverPackage/CloverUpdater clean
 
+        echo "Cleaning CloverPrefpane files..."
+        make -C "$WORKSPACE"/Clover/CloverPackage/CloverPrefpane clean
+
         echo "Cleaning packaging files..."
         find  "$CLOVER_PKG_DIR"/Bootloaders/{ia32,x64}/ -mindepth 1 -not -path "**/.svn*" -delete
         if [[ -d "$CLOVER_PKG_DIR"/EFI/BOOT ]]; then

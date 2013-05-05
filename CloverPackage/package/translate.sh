@@ -9,8 +9,8 @@ packagename="Clover"
 cd "$(dirname $0)"
 
 declare -r PKGROOT="$PWD"
-declare -r SYMROOT="$PKGROOT"/../sym
-declare -r PKG_BUILD_DIR="${SYMROOT}"/package
+declare -r SYMROOT=../sym
+declare -r PKG_RESOURCES_DIR="${SYMROOT}"/Resources
 
 # ====== LANGUAGE SETUP ======
 export LANG='en_US.UTF-8'
@@ -56,13 +56,19 @@ while [[ $# -gt 0 ]]; do
 done
 
 TEMPLATES_DIR="Resources/templates"
+CLOVER_UPDATER_DIR="../CloverUpdater"
+CLOVER_PREFPANE_DIR="../CloverPrefpane"
 PODIR="po"
+
+# Update CloverPrefpane.strings
+"$CLOVER_PREFPANE_DIR"/translate_xib.sh --extract-only
 
 # Check if pot and po files need to be updated
 IFS=$'\n' # '
 
 last_resources_update=0
-for file in "$TEMPLATES_DIR"/*.html "$TEMPLATES_DIR"/Localizable.strings; do
+for file in "$TEMPLATES_DIR"/*.html "$TEMPLATES_DIR"/Localizable.strings \
+ "$CLOVER_UPDATER_DIR"/CloverUpdater.strings "$CLOVER_PREFPANE_DIR"/CloverPrefpane.strings; do
     timestamp=$(stat -f %m "$file")
     [[ $timestamp -gt $last_resources_update ]] && last_resources_update=$timestamp
 done
@@ -78,14 +84,16 @@ if [[ "$UPDATE_PO" -ne 1 ]]; then
     PODIR="$po_tmpdir"
 fi
 
-PERLLIB=bin/po4a/lib                                               \
- bin/po4a/po4a                                                     \
- --package-name 'Clover'                                           \
- --package-version "${CLOVER_VERSION}-r${CLOVER_REVISION}"         \
- --msgmerge-opt '--lang=$lang --previous --width=79'               \
- --variable PODIR="$PODIR"                                         \
- --variable TEMPLATES_DIR="$TEMPLATES_DIR"                         \
- --variable OUTPUT_DIR="${PKG_BUILD_DIR}/${packagename}/Resources" \
+PERLLIB=bin/po4a/lib                                                   \
+ bin/po4a/po4a                                                         \
+ --package-name 'Clover'                                               \
+ --package-version "${CLOVER_VERSION}-r${CLOVER_REVISION}"             \
+ --msgmerge-opt '--lang=$lang --previous --width=79'                   \
+ --variable PODIR="$PODIR"                                             \
+ --variable TEMPLATES_DIR="$TEMPLATES_DIR"                             \
+ --variable CLOVER_UPDATER_DIR="$CLOVER_UPDATER_DIR"                   \
+ --variable CLOVER_PREFPANE_DIR="$CLOVER_PREFPANE_DIR"                 \
+ --variable OUTPUT_DIR="${PKG_RESOURCES_DIR}/${packagename}/Resources" \
  po4a-clover.cfg
 
 

@@ -58,3 +58,9 @@ build/
 !default.perspectivev3
 xcuserdata/
 
+# Translation files
+CloverUpdater.strings
+CloverPackage/CloverUpdater/src/*.lproj
+CloverPrefpane.strings
+CloverPackage/CloverPrefpane/src/*.lproj
+

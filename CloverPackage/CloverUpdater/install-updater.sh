@@ -9,7 +9,6 @@ cd "$(dirname $0)"
 declare -r CLOVER_UPDATER_DIR="$PWD"
 declare -r CLOVER_APP_SUPPORT="/Library/Application Support/Clover"
 
-
 # Install files
 sudo mkdir -p "$CLOVER_APP_SUPPORT"
 sudo cp -p "$CLOVER_UPDATER_DIR"/CloverUpdaterUtility "$CLOVER_APP_SUPPORT"/

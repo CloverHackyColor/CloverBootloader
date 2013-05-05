@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-02 16:05+0300\n"
+"POT-Creation-Date: 2013-05-05 16:23+0300\n"
 "PO-Revision-Date: 2013-05-02 21:17+0000\n"
 "Last-Translator: oswaldini <oswaldinimtb@gmail.com>\n"
 "Language-Team: pl <pl@li.org>\n"
@@ -817,7 +817,6 @@ msgstr "Wyłącz mDNSResponder - usługi klienta proxy sleepu. Zapobiega to auto
 #. type: "CloverUpdater_title"
 #: Resources/templates/Localizable.strings:172
 #, no-wrap
-#| msgid "Install Clover in the ESP"
 msgid "Install CloverUpdater"
 msgstr "Instaluj program do aktualizowania Clover'a (CloverUpdater)"
 
@@ -828,9 +827,128 @@ msgid ""
 "Install CloverUpdater on target volume.\n"
 "CloverUpdater notify you about Clover updates."
 msgstr ""
-"Instaluj program do aktualizowania Clover'a (CloverUpdater) na dysku "
-"docelowym.\n"
+"Instaluj program do aktualizowania Clover'a (CloverUpdater) na dysku docelowym.\n"
 "CloverUpdater poinformuje Cię o dostępnych aktualizacjach."
+
+#. type: "371.title"
+#: ../CloverUpdater/CloverUpdater.strings:1
+#: ../CloverUpdater/CloverUpdater.strings:2
+#: ../CloverUpdater/CloverUpdater.strings:5
+#, fuzzy, no-wrap
+#| msgid "Install CloverUpdater"
+msgid "CloverUpdater"
+msgstr "Instaluj program do aktualizowania Clover'a (CloverUpdater)"
+
+#. type: "58.title"
+#: ../CloverUpdater/CloverUpdater.strings:3
+#, fuzzy, no-wrap
+#| msgid "Install CloverUpdater"
+msgid "About CloverUpdater"
+msgstr "Instaluj program do aktualizowania Clover'a (CloverUpdater)"
+
+#. type: "136.title"
+#: ../CloverUpdater/CloverUpdater.strings:4
+#, fuzzy, no-wrap
+#| msgid "Install CloverUpdater"
+msgid "Quit CloverUpdater"
+msgstr "Instaluj program do aktualizowania Clover'a (CloverUpdater)"
+
+#. type: "534.title"
+#: ../CloverUpdater/CloverUpdater.strings:6
+#, no-wrap
+msgid "Current local Clover revision:"
+msgstr ""
+
+#. type: "538.title"
+#: ../CloverUpdater/CloverUpdater.strings:7
+#, no-wrap
+msgid "Latest update revision:"
+msgstr ""
+
+#. type: "542.title"
+#: ../CloverUpdater/CloverUpdater.strings:8
+#, no-wrap
+msgid "Do you want to update ?"
+msgstr ""
+
+#. type: "546.title"
+#: ../CloverUpdater/CloverUpdater.strings:9
+#, no-wrap
+msgid "Not now"
+msgstr ""
+
+#. type: "548.title"
+#: ../CloverUpdater/CloverUpdater.strings:10
+#, no-wrap
+msgid "Update"
+msgstr ""
+
+#. type: "12.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:1
+#, fuzzy, no-wrap
+#| msgid "iClover"
+msgid "Clover"
+msgstr "iClover"
+
+#. type: "104.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:2
+#, no-wrap
+msgid "CLOVER"
+msgstr ""
+
+#. type: "204.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:3
+#, no-wrap
+msgid "Never"
+msgstr ""
+
+#. type: "205.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:4
+#, no-wrap
+msgid "Daily"
+msgstr ""
+
+#. type: "206.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:5
+#, no-wrap
+msgid "Weekly"
+msgstr ""
+
+#. type: "217.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:6
+#, no-wrap
+msgid "Hourly"
+msgstr ""
+
+#. type: "239.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:7
+#, no-wrap
+msgid "Monthly"
+msgstr ""
+
+#. type: "243.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:8
+#, no-wrap
+msgid "Schedule Check Updates Every:"
+msgstr ""
+
+#. type: "248.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:9
+#, no-wrap
+msgid "Last check:"
+msgstr ""
+
+#. type: "258.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:10
+#, no-wrap
+msgid "Check Now"
+msgstr ""
+
+#. type: "262.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:11
+#, no-wrap
+msgid "Copyright (c) 2013 JrCs"
+msgstr ""
 
 #~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
 #~ msgstr ""

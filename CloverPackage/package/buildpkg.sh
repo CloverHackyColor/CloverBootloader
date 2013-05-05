@@ -976,18 +976,21 @@ fi
 # End build optional rc scripts package
 
 local cloverUpdaterDir="${SRCROOT}"/CloverUpdater
+local cloverPrefpaneDir="${SRCROOT}"/CloverPrefpane
 if [[ -x "$cloverUpdaterDir"/build/CloverUpdater.app/Contents/MacOS/CloverUpdater ]]; then
 # build CloverUpdater package
     echo "==================== Clover Updater ===================="
     packagesidentity="$clover_package_identity"
     choiceId="CloverUpdater"
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
-    ditto --noextattr --noqtn "$cloverUpdaterDir"/CloverUpdaterUtility.plist  \
-     "${PKG_BUILD_DIR}/${choiceId}"/Root/Library/LaunchAgents/com.projectosx.Clover.Updater.plist
+    # ditto --noextattr --noqtn "$cloverUpdaterDir"/CloverUpdaterUtility.plist  \
+    #  "${PKG_BUILD_DIR}/${choiceId}"/Root/Library/LaunchAgents/com.projectosx.Clover.Updater.plist
     ditto --noextattr --noqtn "$cloverUpdaterDir"/CloverUpdaterUtility  \
      "${PKG_BUILD_DIR}/${choiceId}/Root/Library/Application Support/Clover"/
     ditto --noextattr --noqtn "$cloverUpdaterDir"/build/CloverUpdater.app  \
      "${PKG_BUILD_DIR}/${choiceId}/Root/Library/Application Support/Clover"/CloverUpdater.app
+    ditto --noextattr --noqtn "$cloverPrefpaneDir"/build/Clover.prefPane  \
+     "${PKG_BUILD_DIR}/${choiceId}/Root/Library/PreferencePanes/"/Clover.prefPane
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" \
                        --subst="INSTALLER_CHOICE=$packageRefId" MarkChoice
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
@@ -1306,11 +1309,7 @@ makedistribution ()
 
     # Create the Resources directory
     ditto --noextattr --noqtn "${PKGROOT}/Resources/background.tiff" "${PKG_BUILD_DIR}/${packagename}"/Resources/
-
-    #   Make the translation
-    echo ""
-    echo "========= Translating Resources ========"
-    "$PKGROOT"/translate.sh || exit $?
+    ditto --noextattr --noqtn "${SYMROOT}/Resources/${packagename}"/ "${PKG_BUILD_DIR}/${packagename}"/
 
     # CleanUp the directory
     find "${PKG_BUILD_DIR}/${packagename}" \( -type d -name '.svn' \) -o -name '.DS_Store' -depth -exec rm -rf {} \;

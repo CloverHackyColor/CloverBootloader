@@ -1,0 +1,385 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A3340A5E1733DDF80065BC3F /* CloverPrefpane.m in Sources */ = {isa = PBXBuildFile; fileRef = A3340A5B1733DDF80065BC3F /* CloverPrefpane.m */; };
+		A3340A5F1733DDF80065BC3F /* CloverPrefpane.h in Headers */ = {isa = PBXBuildFile; fileRef = A3340A5C1733DDF80065BC3F /* CloverPrefpane.h */; };
+		A3340A601733DDF80065BC3F /* CloverPrefpane.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A3340A5D1733DDF80065BC3F /* CloverPrefpane.tiff */; };
+		A3340A74173418270065BC3F /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3340A72173417EF0065BC3F /* ServiceManagement.framework */; };
+		A35A6F3F17364640007B2103 /* CloverPrefpane-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = A35A6F3E17364640007B2103 /* CloverPrefpane-Prefix.pch */; };
+		A38BDC571733968700DE7DA1 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A38BDC561733968700DE7DA1 /* Cocoa.framework */; };
+		A38BDC591733968700DE7DA1 /* PreferencePanes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A38BDC581733968700DE7DA1 /* PreferencePanes.framework */; };
+		A38BDC631733968700DE7DA1 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A38BDC611733968700DE7DA1 /* InfoPlist.strings */; };
+		A3B4888217368F72009D8B76 /* CloverPrefpane.xib in Resources */ = {isa = PBXBuildFile; fileRef = A35A6F39173644AF007B2103 /* CloverPrefpane.xib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A3340A5B1733DDF80065BC3F /* CloverPrefpane.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CloverPrefpane.m; sourceTree = "<group>"; };
+		A3340A5C1733DDF80065BC3F /* CloverPrefpane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CloverPrefpane.h; sourceTree = "<group>"; };
+		A3340A5D1733DDF80065BC3F /* CloverPrefpane.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = CloverPrefpane.tiff; sourceTree = "<group>"; };
+		A3340A72173417EF0065BC3F /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = /System/Library/Frameworks/ServiceManagement.framework; sourceTree = "<absolute>"; };
+		A35A6F3A173644AF007B2103 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CloverPrefpane.xib; sourceTree = "<group>"; };
+		A35A6F3C17364583007B2103 /* CloverPrefpane-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "CloverPrefpane-Info.plist"; sourceTree = "<group>"; };
+		A35A6F3E17364640007B2103 /* CloverPrefpane-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CloverPrefpane-Prefix.pch"; sourceTree = "<group>"; };
+		A370D4521736522C006BD4D3 /* translate_xib.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = translate_xib.sh; path = ../translate_xib.sh; sourceTree = "<group>"; };
+		A38BDC531733968700DE7DA1 /* Clover.prefPane */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Clover.prefPane; sourceTree = BUILT_PRODUCTS_DIR; };
+		A38BDC561733968700DE7DA1 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		A38BDC581733968700DE7DA1 /* PreferencePanes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PreferencePanes.framework; path = System/Library/Frameworks/PreferencePanes.framework; sourceTree = SDKROOT; };
+		A38BDC5B1733968700DE7DA1 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		A38BDC5C1733968700DE7DA1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		A38BDC5D1733968700DE7DA1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		A38BDC621733968700DE7DA1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		A3B4887F17368F2D009D8B76 /* fr */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = fr; path = src/fr.lproj/CloverPrefpane.xib; sourceTree = "<group>"; };
+		A3B488831736903D009D8B76 /* fr */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = fr; path = fr.lproj/CloverPrefpane.xib; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A38BDC4E1733968700DE7DA1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A38BDC571733968700DE7DA1 /* Cocoa.framework in Frameworks */,
+				A38BDC591733968700DE7DA1 /* PreferencePanes.framework in Frameworks */,
+				A3340A74173418270065BC3F /* ServiceManagement.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A38BDC481733968700DE7DA1 = {
+			isa = PBXGroup;
+			children = (
+				A3B4887E17368F2D009D8B76 /* CloverPrefpane.xib */,
+				A38BDC5E1733968700DE7DA1 /* CloverPrefpane */,
+				A38BDC551733968700DE7DA1 /* Frameworks */,
+				A38BDC541733968700DE7DA1 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A38BDC541733968700DE7DA1 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A38BDC531733968700DE7DA1 /* Clover.prefPane */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A38BDC551733968700DE7DA1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A38BDC561733968700DE7DA1 /* Cocoa.framework */,
+				A38BDC581733968700DE7DA1 /* PreferencePanes.framework */,
+				A3340A72173417EF0065BC3F /* ServiceManagement.framework */,
+				A38BDC5A1733968700DE7DA1 /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A38BDC5A1733968700DE7DA1 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A38BDC5B1733968700DE7DA1 /* AppKit.framework */,
+				A38BDC5C1733968700DE7DA1 /* CoreData.framework */,
+				A38BDC5D1733968700DE7DA1 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		A38BDC5E1733968700DE7DA1 /* CloverPrefpane */ = {
+			isa = PBXGroup;
+			children = (
+				A3340A5C1733DDF80065BC3F /* CloverPrefpane.h */,
+				A3340A5B1733DDF80065BC3F /* CloverPrefpane.m */,
+				A35A6F39173644AF007B2103 /* CloverPrefpane.xib */,
+				A38BDC5F1733968700DE7DA1 /* Supporting Files */,
+			);
+			name = CloverPrefpane;
+			path = src;
+			sourceTree = "<group>";
+		};
+		A38BDC5F1733968700DE7DA1 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				A35A6F3E17364640007B2103 /* CloverPrefpane-Prefix.pch */,
+				A35A6F3C17364583007B2103 /* CloverPrefpane-Info.plist */,
+				A3340A5D1733DDF80065BC3F /* CloverPrefpane.tiff */,
+				A38BDC611733968700DE7DA1 /* InfoPlist.strings */,
+				A370D4521736522C006BD4D3 /* translate_xib.sh */,
+			);
+			name = "Supporting Files";
+			path = src;
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		A38BDC4F1733968700DE7DA1 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A3340A5F1733DDF80065BC3F /* CloverPrefpane.h in Headers */,
+				A35A6F3F17364640007B2103 /* CloverPrefpane-Prefix.pch in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		A38BDC521733968700DE7DA1 /* Clover */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A38BDC6F1733968700DE7DA1 /* Build configuration list for PBXNativeTarget "Clover" */;
+			buildPhases = (
+				A370D45417365314006BD4D3 /* ShellScript */,
+				A38BDC4D1733968700DE7DA1 /* Sources */,
+				A38BDC4E1733968700DE7DA1 /* Frameworks */,
+				A38BDC4F1733968700DE7DA1 /* Headers */,
+				A38BDC501733968700DE7DA1 /* Resources */,
+				A38BDC511733968700DE7DA1 /* Rez */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Clover;
+			productName = CloverPrefpane;
+			productReference = A38BDC531733968700DE7DA1 /* Clover.prefPane */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A38BDC491733968700DE7DA1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0460;
+				ORGANIZATIONNAME = ProjectOSX;
+			};
+			buildConfigurationList = A38BDC4C1733968700DE7DA1 /* Build configuration list for PBXProject "CloverPrefpane" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				fr,
+			);
+			mainGroup = A38BDC481733968700DE7DA1;
+			productRefGroup = A38BDC541733968700DE7DA1 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A38BDC521733968700DE7DA1 /* Clover */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A38BDC501733968700DE7DA1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A38BDC631733968700DE7DA1 /* InfoPlist.strings in Resources */,
+				A3340A601733DDF80065BC3F /* CloverPrefpane.tiff in Resources */,
+				A3B4888217368F72009D8B76 /* CloverPrefpane.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXRezBuildPhase section */
+		A38BDC511733968700DE7DA1 /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXRezBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		A370D45417365314006BD4D3 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = ./translate_xib.sh;
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A38BDC4D1733968700DE7DA1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A3340A5E1733DDF80065BC3F /* CloverPrefpane.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		A35A6F39173644AF007B2103 /* CloverPrefpane.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A35A6F3A173644AF007B2103 /* en */,
+				A3B488831736903D009D8B76 /* fr */,
+			);
+			name = CloverPrefpane.xib;
+			sourceTree = "<group>";
+		};
+		A38BDC611733968700DE7DA1 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A38BDC621733968700DE7DA1 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		A3B4887E17368F2D009D8B76 /* CloverPrefpane.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A3B4887F17368F2D009D8B76 /* fr */,
+			);
+			name = CloverPrefpane.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		A38BDC6D1733968700DE7DA1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEPLOYMENT_LOCATION = YES;
+				DSTROOT = /;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INSTALL_PATH = "$(USER_LIBRARY_DIR)/PreferencePanes";
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = "";
+			};
+			name = Debug;
+		};
+		A38BDC6E1733968700DE7DA1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEPLOYMENT_LOCATION = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				SDKROOT = "";
+			};
+			name = Release;
+		};
+		A38BDC701733968700DE7DA1 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
+				GCC_ENABLE_OBJC_GC = unsupported;
+				"GCC_ENABLE_OBJC_GC[arch=x86_64]" = supported;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "src/CloverPrefpane-Prefix.pch";
+				INFOPLIST_FILE = "src/CloverPrefpane-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = "";
+				STRIP_INSTALLED_PRODUCT = NO;
+				WRAPPER_EXTENSION = prefPane;
+			};
+			name = Debug;
+		};
+		A38BDC711733968700DE7DA1 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
+				GCC_ENABLE_OBJC_GC = unsupported;
+				"GCC_ENABLE_OBJC_GC[arch=x86_64]" = supported;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "src/CloverPrefpane-Prefix.pch";
+				INFOPLIST_FILE = "src/CloverPrefpane-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = "";
+				STRIP_INSTALLED_PRODUCT = YES;
+				WRAPPER_EXTENSION = prefPane;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A38BDC4C1733968700DE7DA1 /* Build configuration list for PBXProject "CloverPrefpane" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A38BDC6D1733968700DE7DA1 /* Debug */,
+				A38BDC6E1733968700DE7DA1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A38BDC6F1733968700DE7DA1 /* Build configuration list for PBXNativeTarget "Clover" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A38BDC701733968700DE7DA1 /* Debug */,
+				A38BDC711733968700DE7DA1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A38BDC491733968700DE7DA1 /* Project object */;
+}

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-02 16:05+0300\n"
+"POT-Creation-Date: 2013-05-05 16:23+0300\n"
 "PO-Revision-Date: 2013-05-04 18:14+0000\n"
 "Last-Translator: !Xabbu <holger_frey07@web.de>\n"
 "Language-Team: ge <ge@li.org>\n"
@@ -324,13 +324,9 @@ msgid ""
 "  5. diskutil mount /dev/rdisk9s1"
 msgstr ""
 "Zum BIOS booten eines Computers.\n"
-"Mit fdisk440 wird boot0 in den ersten 440 Bits der MBR installiert, ohne "
-"eine eventuell vorhandene Windows Partition zu zerstören, boot0 sucht dann "
-"auf der ersten aktiven HFS Partition nach boot1h2,oder auf der ersten "
-"aktiven FAT32 Partition nach boot1f32alt. \n"
+"Mit fdisk440 wird boot0 in den ersten 440 Bits der MBR installiert, ohne eine eventuell vorhandene Windows Partition zu zerstören, boot0 sucht dann auf der ersten aktiven HFS Partition nach boot1h2,oder auf der ersten aktiven FAT32 Partition nach boot1f32alt. \n"
 "Bei dieser Option werden die HFS+ und FAT32 Partition aktiviert.\n"
-"Dazu muss zuerst wie folgend in FAT32 formatiert werden ( x = die Festplatte "
-"auf der installiert werden soll ).\n"
+"Dazu muss zuerst wie folgend in FAT32 formatiert werden ( x = die Festplatte auf der installiert werden soll ).\n"
 "  1. zuerst MS-DOS (FAT) mit dem Festplattendienstprogramm löschen\n"
 "  2. diskutil list\n"
 "  3. diskutil umount /dev/rdiskxs1\n"
@@ -358,14 +354,9 @@ msgid ""
 "  5. diskutil mount /dev/rdisk9s1"
 msgstr ""
 "Zum BIOS booten eines Computers.\n"
-"Mit fdisk440 wird boot0hfs in den ersten 440 Bits der MBR installiert, ohne "
-"eine eventuell vorhandene Windows Partition zu zerstören, boot0 sucht dann "
-"auf der ersten aktiven HFS Partition nach boot1h2,oder auf der ersten "
-"aktiven FAT32 Partition nach boot1f32alt.\n"
-"Diese Option wird nicht die gewählte HFS Partition , sondern die gewählte "
-"FAT32 Partition, aktivieren.\n"
-"Dazu muss zuerst wie folgend in FAT32 formatiert werden ( x = die Festplatte "
-"auf der installiert werden soll ).\n"
+"Mit fdisk440 wird boot0hfs in den ersten 440 Bits der MBR installiert, ohne eine eventuell vorhandene Windows Partition zu zerstören, boot0 sucht dann auf der ersten aktiven HFS Partition nach boot1h2,oder auf der ersten aktiven FAT32 Partition nach boot1f32alt.\n"
+"Diese Option wird nicht die gewählte HFS Partition , sondern die gewählte FAT32 Partition, aktivieren.\n"
+"Dazu muss zuerst wie folgend in FAT32 formatiert werden ( x = die Festplatte auf der installiert werden soll ).\n"
 "  1. zuerst MS-DOS (FAT) mit dem Festplattendienstprogramm löschen\n"
 "  2. diskutil list\n"
 "  3. diskutil umount /dev/rdisxs1\n"
@@ -491,8 +482,7 @@ msgstr "CloverEFI 64Bit BiosBlockIO"
 #: Resources/templates/Localizable.strings:85
 #, no-wrap
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
-msgstr ""
-"CloverEFI 64-bits benützt Bios Block I/O um auf die Festplatten zuzugreifen"
+msgstr "CloverEFI 64-bits benützt Bios Block I/O um auf die Festplatten zuzugreifen"
 
 #. type: "Ps2KeyboardDxe-32_description"
 #: Resources/templates/Localizable.strings:90
@@ -575,11 +565,9 @@ msgid ""
 "Clover may not started with it and you may have wake problem in system.\n"
 "Use with precautions."
 msgstr ""
-"64Bit Video-Treiber für Clovers GUI, erlaubt die Auswahl von mehr "
-"Auflösungen.\n"
+"64Bit Video-Treiber für Clovers GUI, erlaubt die Auswahl von mehr Auflösungen.\n"
 "Basierend auf dem CSM-Modul des UEFI-Bios, CSM muss dort aktiviert werden.\n"
-"Eventuell startet Clover nicht, es kann auch Probleme beim Aufwachen des "
-"Systems geben.\n"
+"Eventuell startet Clover nicht, es kann auch Probleme beim Aufwachen des Systems geben.\n"
 "Bitte Vorsichtsmaßnahmen treffen."
 
 #. type: "DataHubDxe-64_description"
@@ -590,8 +578,7 @@ msgid ""
 "Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
 msgstr ""
 "Essentielle DataHub Protokoll Unterstützung für MacOSX.\n"
-"Normalerweise schon vorhanden, kann aber trotzdem manchmal fehlen. In diesem "
-"Fall solltest Du\n"
+"Normalerweise schon vorhanden, kann aber trotzdem manchmal fehlen. In diesem Fall solltest Du\n"
 "eine Fehlermeldung sehen."
 
 #. type: "EmuVariableUefi-64_description"
@@ -603,17 +590,14 @@ msgid ""
 "Use it only if you have a problem without it"
 msgstr ""
 "64Bit-Treiber zur Unterstützung der von MacOSX benötigten NVRAM Variablen.\n"
-"Meistens wird beim UEFI booten der Hardware NVRAM genutzt, aber in einigen "
-"wenigen Fällen wird dieser Treiber benötigt.\n"
+"Meistens wird beim UEFI booten der Hardware NVRAM genutzt, aber in einigen wenigen Fällen wird dieser Treiber benötigt.\n"
 "Diesen Treiber nur benutzen, wenn es ohne ihn Probleme gibt."
 
 #. type: "OsxAptioFixDrv-64_description"
 #: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
-msgstr ""
-"64Bit-Treiber um Memory Probleme in der UEFI-Firmware von AMI Aptio zu "
-"beheben."
+msgstr "64Bit-Treiber um Memory Probleme in der UEFI-Firmware von AMI Aptio zu beheben."
 
 #. type: "OsxLowMemFixDrv-64_description"
 #: Resources/templates/Localizable.strings:112
@@ -625,9 +609,7 @@ msgstr "Einfachere Variante des OsxAptioFixDrv, 64bit (auf keinen Fall beide ben
 #: Resources/templates/Localizable.strings:113
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
-msgstr ""
-"64Bit-Treiber um unübliche Partitionstabellen, wie z.B. GPT/MBR oder Apple "
-"Partirions Tabelle, zu unterstützen."
+msgstr "64Bit-Treiber um unübliche Partitionstabellen, wie z.B. GPT/MBR oder Apple Partirions Tabelle, zu unterstützen."
 
 #. type: "Themes_title"
 #: Resources/templates/Localizable.strings:119
@@ -828,7 +810,6 @@ msgstr "Deaktiviere den mDNSResponder sleep proxy client Dienst. Verhindert das 
 #. type: "CloverUpdater_title"
 #: Resources/templates/Localizable.strings:172
 #, no-wrap
-#| msgid "Install Clover in the ESP"
 msgid "Install CloverUpdater"
 msgstr "Installiere den CloverUpdater"
 
@@ -841,6 +822,126 @@ msgid ""
 msgstr ""
 "Installiere den CloverUpdater auf der Zielpartition.\n"
 "Der CloverUpdater wird dich auf Updates hinweisen."
+
+#. type: "371.title"
+#: ../CloverUpdater/CloverUpdater.strings:1
+#: ../CloverUpdater/CloverUpdater.strings:2
+#: ../CloverUpdater/CloverUpdater.strings:5
+#, fuzzy, no-wrap
+#| msgid "Install CloverUpdater"
+msgid "CloverUpdater"
+msgstr "Installiere den CloverUpdater"
+
+#. type: "58.title"
+#: ../CloverUpdater/CloverUpdater.strings:3
+#, fuzzy, no-wrap
+#| msgid "Install CloverUpdater"
+msgid "About CloverUpdater"
+msgstr "Installiere den CloverUpdater"
+
+#. type: "136.title"
+#: ../CloverUpdater/CloverUpdater.strings:4
+#, fuzzy, no-wrap
+#| msgid "Install CloverUpdater"
+msgid "Quit CloverUpdater"
+msgstr "Installiere den CloverUpdater"
+
+#. type: "534.title"
+#: ../CloverUpdater/CloverUpdater.strings:6
+#, no-wrap
+msgid "Current local Clover revision:"
+msgstr ""
+
+#. type: "538.title"
+#: ../CloverUpdater/CloverUpdater.strings:7
+#, no-wrap
+msgid "Latest update revision:"
+msgstr ""
+
+#. type: "542.title"
+#: ../CloverUpdater/CloverUpdater.strings:8
+#, no-wrap
+msgid "Do you want to update ?"
+msgstr ""
+
+#. type: "546.title"
+#: ../CloverUpdater/CloverUpdater.strings:9
+#, no-wrap
+msgid "Not now"
+msgstr ""
+
+#. type: "548.title"
+#: ../CloverUpdater/CloverUpdater.strings:10
+#, no-wrap
+msgid "Update"
+msgstr ""
+
+#. type: "12.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:1
+#, fuzzy, no-wrap
+#| msgid "iClover"
+msgid "Clover"
+msgstr "iClover"
+
+#. type: "104.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:2
+#, no-wrap
+msgid "CLOVER"
+msgstr ""
+
+#. type: "204.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:3
+#, no-wrap
+msgid "Never"
+msgstr ""
+
+#. type: "205.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:4
+#, no-wrap
+msgid "Daily"
+msgstr ""
+
+#. type: "206.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:5
+#, no-wrap
+msgid "Weekly"
+msgstr ""
+
+#. type: "217.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:6
+#, no-wrap
+msgid "Hourly"
+msgstr ""
+
+#. type: "239.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:7
+#, no-wrap
+msgid "Monthly"
+msgstr ""
+
+#. type: "243.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:8
+#, no-wrap
+msgid "Schedule Check Updates Every:"
+msgstr ""
+
+#. type: "248.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:9
+#, no-wrap
+msgid "Last check:"
+msgstr ""
+
+#. type: "258.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:10
+#, no-wrap
+msgid "Check Now"
+msgstr ""
+
+#. type: "262.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:11
+#, no-wrap
+msgid "Copyright (c) 2013 JrCs"
+msgstr ""
 
 #~ msgid "Video driver - provides a wide range of resolutions, 64bit"
 #~ msgstr ""

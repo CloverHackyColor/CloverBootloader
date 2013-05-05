@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-02 16:05+0300\n"
+"POT-Creation-Date: 2013-05-05 16:23+0300\n"
 "PO-Revision-Date: 2013-05-04 22:47+0000\n"
 "Last-Translator: JrCs <d2t56xxptp@snkmail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
@@ -101,7 +101,9 @@ msgstr "- OSX 10.4 ~ 10.8, Windows EFI, 그리고 Linux EFI로 부팅"
 msgid ""
 "- It's EFI bootloader provides RuntimeServices for OS that impossible for "
 "Legacy Bootloaders"
-msgstr "- 구식(Legacy) 부트로더가 지원할 수 없는 런타임 서비스들을 지원하는 EFI 부트로더입니다"
+msgstr ""
+"- 구식(Legacy) 부트로더가 지원할 수 없는 런타임 서비스들을 지원하는 EFI 부트"
+"로더입니다"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:23
@@ -792,7 +794,6 @@ msgstr "mDNSResponder 잠자기 프록시 클라이언트 서비스를 비활성
 #. type: "CloverUpdater_title"
 #: Resources/templates/Localizable.strings:172
 #, no-wrap
-#| msgid "Install Clover in the ESP"
 msgid "Install CloverUpdater"
 msgstr "클로버 업데이터(CloverUpdater) 설치"
 
@@ -805,6 +806,126 @@ msgid ""
 msgstr ""
 "타겟 볼륨에 클로버 업데이터를 설치합니다.\n"
 "클로버 업데이터는 클로버의 업데이트를 알려드립니다."
+
+#. type: "371.title"
+#: ../CloverUpdater/CloverUpdater.strings:1
+#: ../CloverUpdater/CloverUpdater.strings:2
+#: ../CloverUpdater/CloverUpdater.strings:5
+#, fuzzy, no-wrap
+#| msgid "Install CloverUpdater"
+msgid "CloverUpdater"
+msgstr "클로버 업데이터(CloverUpdater) 설치"
+
+#. type: "58.title"
+#: ../CloverUpdater/CloverUpdater.strings:3
+#, fuzzy, no-wrap
+#| msgid "Install CloverUpdater"
+msgid "About CloverUpdater"
+msgstr "클로버 업데이터(CloverUpdater) 설치"
+
+#. type: "136.title"
+#: ../CloverUpdater/CloverUpdater.strings:4
+#, fuzzy, no-wrap
+#| msgid "Install CloverUpdater"
+msgid "Quit CloverUpdater"
+msgstr "클로버 업데이터(CloverUpdater) 설치"
+
+#. type: "534.title"
+#: ../CloverUpdater/CloverUpdater.strings:6
+#, no-wrap
+msgid "Current local Clover revision:"
+msgstr ""
+
+#. type: "538.title"
+#: ../CloverUpdater/CloverUpdater.strings:7
+#, no-wrap
+msgid "Latest update revision:"
+msgstr ""
+
+#. type: "542.title"
+#: ../CloverUpdater/CloverUpdater.strings:8
+#, no-wrap
+msgid "Do you want to update ?"
+msgstr ""
+
+#. type: "546.title"
+#: ../CloverUpdater/CloverUpdater.strings:9
+#, no-wrap
+msgid "Not now"
+msgstr ""
+
+#. type: "548.title"
+#: ../CloverUpdater/CloverUpdater.strings:10
+#, no-wrap
+msgid "Update"
+msgstr ""
+
+#. type: "12.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:1
+#, fuzzy, no-wrap
+#| msgid "iClover"
+msgid "Clover"
+msgstr "iClover 테마"
+
+#. type: "104.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:2
+#, no-wrap
+msgid "CLOVER"
+msgstr ""
+
+#. type: "204.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:3
+#, no-wrap
+msgid "Never"
+msgstr ""
+
+#. type: "205.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:4
+#, no-wrap
+msgid "Daily"
+msgstr ""
+
+#. type: "206.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:5
+#, no-wrap
+msgid "Weekly"
+msgstr ""
+
+#. type: "217.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:6
+#, no-wrap
+msgid "Hourly"
+msgstr ""
+
+#. type: "239.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:7
+#, no-wrap
+msgid "Monthly"
+msgstr ""
+
+#. type: "243.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:8
+#, no-wrap
+msgid "Schedule Check Updates Every:"
+msgstr ""
+
+#. type: "248.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:9
+#, no-wrap
+msgid "Last check:"
+msgstr ""
+
+#. type: "258.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:10
+#, no-wrap
+msgid "Check Now"
+msgstr ""
+
+#. type: "262.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:11
+#, no-wrap
+msgid "Copyright (c) 2013 JrCs"
+msgstr ""
 
 #~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
 #~ msgstr "Ps2MouseAbsolutePointerDxe-32_description"
