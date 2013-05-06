@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-05 16:23+0300\n"
-"PO-Revision-Date: 2013-05-06 05:15+0000\n"
+"PO-Revision-Date: 2013-05-06 05:24+0000\n"
 "Last-Translator: cyrus <pmbok.solution@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: fa\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1367817300.0\n"
+"X-POOTLE-MTIME: 1367817893.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -77,17 +77,17 @@ msgstr "Clover v2"
 #: Resources/templates/Description.html:17
 msgid ""
 "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
-msgstr ""
+msgstr "متن باز است بر اساس پروژه های مختلف : Clover, rEFIt, XNU, VirtualBox."
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:18
 msgid "The main is EDK2 latest revision."
-msgstr ""
+msgstr "بخش اصلی آن آخرین ورژن EDK2  است."
 
 #. type: Content of: <html><body><p><b>
 #: Resources/templates/Description.html:20
 msgid "Main features:"
-msgstr ""
+msgstr "قابلیت های اصلی:"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:21
