@@ -24,6 +24,8 @@
     [NewRevision setStringValue: [NSString stringWithFormat: @"%s", arg2]];
     if ([OldRevision intValue] >= [NewRevision intValue]) {
         [updateButton setEnabled:FALSE];
+    } else {
+        [NewRevision setTextColor:[NSColor blueColor]];
     }
 }
 
