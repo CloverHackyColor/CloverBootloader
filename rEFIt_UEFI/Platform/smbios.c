@@ -1304,17 +1304,20 @@ VOID PatchTableType17()
       if (iStrLen(gRAM.SMBIOS[SMBIOSIndex].Vendor, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.SMBIOS[SMBIOSIndex].Vendor);
       } else {
-        newSmbiosTable.Type17->Manufacturer = 0;
+//        newSmbiosTable.Type17->Manufacturer = 0;
+        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, "unknown");
       }
       if (iStrLen(gRAM.SMBIOS[SMBIOSIndex].SerialNo, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, gRAM.SMBIOS[SMBIOSIndex].SerialNo);
       } else {
-        newSmbiosTable.Type17->SerialNumber = 0;
+//        newSmbiosTable.Type17->SerialNumber = 0;
+        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, "unknown");
       }
       if (iStrLen(gRAM.SMBIOS[SMBIOSIndex].PartNo, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gRAM.SMBIOS[SMBIOSIndex].PartNo);
       } else {
-        newSmbiosTable.Type17->PartNumber = 0;
+ //       newSmbiosTable.Type17->PartNumber = 0;
+        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber,  "unknown");
       }
     } else {
       ZeroMem((VOID*)newSmbiosTable.Type17, MAX_TABLE_SIZE);
@@ -1683,7 +1686,7 @@ VOID PatchSmbios(VOID) //continue
 	PatchTableType3();
 	PatchTableType7(); //we should know handles before patch Table4
 	PatchTableType4();		
-	PatchTableType6();
+//	PatchTableType6();
 	PatchTableType9();
  // PatchTableType11();
 	PatchTableTypeSome();
