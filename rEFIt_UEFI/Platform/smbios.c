@@ -1315,9 +1315,11 @@ VOID PatchTableType17()
       }
       if (iStrLen(gRAM.SMBIOS[SMBIOSIndex].PartNo, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gRAM.SMBIOS[SMBIOSIndex].PartNo);
+        DBG(" partNum=%a\n", gRAM.SMBIOS[SMBIOSIndex].PartNo);
       } else {
  //       newSmbiosTable.Type17->PartNumber = 0;
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber,  "unknown");
+        DBG(" partNum unknown\n");
       }
     } else {
       ZeroMem((VOID*)newSmbiosTable.Type17, MAX_TABLE_SIZE);
