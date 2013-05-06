@@ -16,6 +16,7 @@ set -u
 cd "$(dirname $0)"
 
 declare -r SOURCE_DIR="src"
+declare -r PO_DIR="../package/po"
 
 # ========== OPTIONS ===========
 EXTRACT_ONLY=0
@@ -51,22 +52,20 @@ echo "done"
 
 # Generate localized interfaces
 #for locale in $target_locales ; do
-for locale_dir in "$SOURCE_DIR/"*.lproj ; do
-    locale="${locale_dir%.lproj}"
-    locale="${locale#$SOURCE_DIR/}"
+for locale in "$PO_DIR"/*.po ; do
+    locale="${locale%.po}"
+    locale="${locale#$PO_DIR/}"
     [[ "$locale" == $src_locale ]] && continue
     echo -n "Generating "$locale" interface... "
-    if [ -d "$SOURCE_DIR/$locale.lproj" ] ; then
+    [[ ! -d "$SOURCE_DIR/$locale.lproj" ]] && mkdir -p "$SOURCE_DIR/$locale.lproj"
         if [ -f "$SOURCE_DIR/$locale.lproj/$strings_file" ] ; then
             ibtool --strings-file "$SOURCE_DIR/$locale.lproj/$strings_file" \
 			 --write "$SOURCE_DIR/$locale.lproj/$xib_file" "$SOURCE_DIR/$src_locale.lproj/$xib_file"
-            echo "done"
-        else
-            echo "strings file $SOURCE_DIR/$locale.lproj/$strings_file not found in locale dir $locale.lproj - skipping $locale locale"
-        fi
     else
-        echo "locale dir "$locale".lproj not found - skipping "$locale" locale"
+        echo -n "strings file $SOURCE_DIR/$locale.lproj/$strings_file not found in locale dir '$locale.lproj' - using '$src_locale' locale... "
+        cp -f "$SOURCE_DIR/$src_locale.lproj/$xib_file" "$SOURCE_DIR/$locale.lproj/$xib_file"
     fi
+    echo "done"
 done
 ##
 # end of script

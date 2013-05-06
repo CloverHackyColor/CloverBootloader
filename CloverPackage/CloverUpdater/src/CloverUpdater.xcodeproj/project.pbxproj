@@ -35,6 +35,13 @@
 		A34F63E117369BA6001B81F1 /* translate_xib.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = translate_xib.sh; path = ../translate_xib.sh; sourceTree = "<group>"; };
 		A34F63E31736A153001B81F1 /* fr */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = fr; path = fr.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		A38510D817378E88004D5DCC /* uk */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = uk; path = uk.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		A3BF851E1737CD1D000B99B1 /* br */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = br; path = br.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		A3BF851F1737CD2E000B99B1 /* cz */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = cz; path = cz.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		A3BF85201737CD37000B99B1 /* de */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = de; path = de.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		A3BF85211737CD42000B99B1 /* fa */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = fa; path = fa.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		A3BF85221737CD50000B99B1 /* ko */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ko; path = ko.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		A3BF85231737CD5C000B99B1 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = nl; path = nl.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		A3BF85241737CD68000B99B1 /* pt */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = pt; path = pt.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		A3C990571737BF0500636EF5 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = it; path = it.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		A3CAFF98173782F80024D5E1 /* id */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = id; path = id.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		A3CAFF99173783060024D5E1 /* pl */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = pl; path = pl.lproj/MainMenu.xib; sourceTree = "<group>"; };
@@ -184,6 +191,13 @@
 				pl,
 				uk,
 				it,
+				br,
+				cz,
+				de,
+				fa,
+				ko,
+				nl,
+				pt,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CloverUpdater */;
 			projectDirPath = "";
@@ -250,6 +264,13 @@
 				A3CAFF99173783060024D5E1 /* pl */,
 				A38510D817378E88004D5DCC /* uk */,
 				A3C990571737BF0500636EF5 /* it */,
+				A3BF851E1737CD1D000B99B1 /* br */,
+				A3BF851F1737CD2E000B99B1 /* cz */,
+				A3BF85201737CD37000B99B1 /* de */,
+				A3BF85211737CD42000B99B1 /* fa */,
+				A3BF85221737CD50000B99B1 /* ko */,
+				A3BF85231737CD5C000B99B1 /* nl */,
+				A3BF85241737CD68000B99B1 /* pt */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
