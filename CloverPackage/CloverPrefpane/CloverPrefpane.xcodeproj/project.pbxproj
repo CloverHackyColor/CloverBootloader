@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A30F62BC1736B2130012B429 /* translate_xib.sh in Resources */ = {isa = PBXBuildFile; fileRef = A370D4521736522C006BD4D3 /* translate_xib.sh */; };
 		A3340A5E1733DDF80065BC3F /* CloverPrefpane.m in Sources */ = {isa = PBXBuildFile; fileRef = A3340A5B1733DDF80065BC3F /* CloverPrefpane.m */; };
 		A3340A5F1733DDF80065BC3F /* CloverPrefpane.h in Headers */ = {isa = PBXBuildFile; fileRef = A3340A5C1733DDF80065BC3F /* CloverPrefpane.h */; };
 		A3340A601733DDF80065BC3F /* CloverPrefpane.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A3340A5D1733DDF80065BC3F /* CloverPrefpane.tiff */; };
@@ -27,11 +26,13 @@
 		A3340A5C1733DDF80065BC3F /* CloverPrefpane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CloverPrefpane.h; sourceTree = "<group>"; };
 		A3340A5D1733DDF80065BC3F /* CloverPrefpane.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = CloverPrefpane.tiff; sourceTree = "<group>"; };
 		A3340A72173417EF0065BC3F /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = /System/Library/Frameworks/ServiceManagement.framework; sourceTree = "<absolute>"; };
-		A3502EAC1736D8F200F28732 /* ua */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ua; path = ua.lproj/CloverPrefpane.xib; sourceTree = "<group>"; };
 		A35A6F3A173644AF007B2103 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CloverPrefpane.xib; sourceTree = "<group>"; };
 		A35A6F3C17364583007B2103 /* CloverPrefpane-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "CloverPrefpane-Info.plist"; sourceTree = "<group>"; };
 		A35A6F3E17364640007B2103 /* CloverPrefpane-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "CloverPrefpane-Prefix.pch"; sourceTree = "<group>"; };
 		A370D4521736522C006BD4D3 /* translate_xib.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = translate_xib.sh; path = ../translate_xib.sh; sourceTree = "<group>"; };
+		A38510DA17379148004D5DCC /* id */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = id; path = id.lproj/CloverPrefpane.xib; sourceTree = "<group>"; };
+		A38510DC17379156004D5DCC /* pl */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = pl; path = pl.lproj/CloverPrefpane.xib; sourceTree = "<group>"; };
+		A38510DD17379164004D5DCC /* uk */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = uk; path = uk.lproj/CloverPrefpane.xib; sourceTree = "<group>"; };
 		A38BDC531733968700DE7DA1 /* Clover.prefPane */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Clover.prefPane; sourceTree = BUILT_PRODUCTS_DIR; };
 		A38BDC561733968700DE7DA1 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		A38BDC581733968700DE7DA1 /* PreferencePanes.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PreferencePanes.framework; path = System/Library/Frameworks/PreferencePanes.framework; sourceTree = SDKROOT; };
@@ -174,6 +175,9 @@
 				hr,
 				ru,
 				ua,
+				id,
+				pl,
+				uk,
 			);
 			mainGroup = A38BDC481733968700DE7DA1;
 			productRefGroup = A38BDC541733968700DE7DA1 /* Products */;
@@ -193,7 +197,6 @@
 				A38BDC631733968700DE7DA1 /* InfoPlist.strings in Resources */,
 				A3340A601733DDF80065BC3F /* CloverPrefpane.tiff in Resources */,
 				A3B4888217368F72009D8B76 /* CloverPrefpane.xib in Resources */,
-				A30F62BC1736B2130012B429 /* translate_xib.sh in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -246,7 +249,9 @@
 				A30F62BA1736B2130012B429 /* es */,
 				A30F62BD1736B2200012B429 /* hr */,
 				A30F62BE1736B22C0012B429 /* ru */,
-				A3502EAC1736D8F200F28732 /* ua */,
+				A38510DA17379148004D5DCC /* id */,
+				A38510DC17379156004D5DCC /* pl */,
+				A38510DD17379164004D5DCC /* uk */,
 			);
 			name = CloverPrefpane.xib;
 			sourceTree = "<group>";

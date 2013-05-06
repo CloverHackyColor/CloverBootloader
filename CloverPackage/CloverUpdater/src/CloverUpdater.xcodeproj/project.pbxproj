@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -34,7 +34,9 @@
 		A3298B0D1736975F000EFB93 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		A34F63E117369BA6001B81F1 /* translate_xib.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; name = translate_xib.sh; path = ../translate_xib.sh; sourceTree = "<group>"; };
 		A34F63E31736A153001B81F1 /* fr */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = fr; path = fr.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		A3502EAD1736DA6C00F28732 /* ua */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ua; path = ua.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		A38510D817378E88004D5DCC /* uk */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = uk; path = uk.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		A3CAFF98173782F80024D5E1 /* id */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = id; path = id.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		A3CAFF99173783060024D5E1 /* pl */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = pl; path = pl.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		A3E8C75E1731872100228CA8 /* clover.iconset */ = {isa = PBXFileReference; lastKnownFileType = folder.iconset; path = clover.iconset; sourceTree = "<group>"; };
 		A3FEE1931736995100D18280 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -163,7 +165,7 @@
 				LastUpgradeCheck = 0460;
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "CloverUpdater" */;
-			compatibilityVersion = "Xcode 3.1";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -177,6 +179,9 @@
 				es,
 				hr,
 				ua,
+				id,
+				pl,
+				uk,
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* CloverUpdater */;
 			projectDirPath = "";
@@ -239,7 +244,9 @@
 				A30F62B71736B1810012B429 /* es */,
 				A30F62B81736B18F0012B429 /* hr */,
 				A30F62B91736B1A30012B429 /* ru */,
-				A3502EAD1736DA6C00F28732 /* ua */,
+				A3CAFF98173782F80024D5E1 /* id */,
+				A3CAFF99173783060024D5E1 /* pl */,
+				A38510D817378E88004D5DCC /* uk */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
