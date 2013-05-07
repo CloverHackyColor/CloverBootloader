@@ -72,7 +72,7 @@ VOID *GetNvramVariable(IN CHAR16 *VariableName, IN EFI_GUID *VendorGuid, OUT UIN
     
     Status = gRT->GetVariable(VariableName, VendorGuid, Attributes, &IntDataSize, NULL);
     if (Status == EFI_BUFFER_TOO_SMALL) {
-        Data = AllocateZeroPool(IntDataSize);
+        Data = AllocateZeroPool(IntDataSize+1);
         if (Data) {
             Status = gRT->GetVariable(VariableName, VendorGuid, Attributes, &IntDataSize, Data);
             if (EFI_ERROR(Status)) {

@@ -1327,7 +1327,21 @@ BOOLEAN isFirstRootUUID(REFIT_VOLUME *Volume)
     return TRUE;
 }
 
-static VOID ScanLoader(VOID)
+VOID reinitImages(VOID)
+{
+  UINTN                   VolumeIndex;
+  REFIT_VOLUME            *Volume;
+//  EFI_STATUS              Status;
+
+  DBG("reinitImages...\n");
+
+  for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
+    Volume = Volumes[VolumeIndex];
+    Volume->OSImage = egLoadIcon(ThemeDir, PoolPrint(L"icons\\os_%s.icns", Volume->OSIconName), 128);
+  }
+}
+
+VOID ScanLoader(VOID)
 {
   UINTN                   VolumeIndex;
   REFIT_VOLUME            *Volume;
@@ -1777,7 +1791,6 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Vo
       (GlobalConfig.HideBadges == HDBADGES_INT &&
        Volume->DiskKind != DISK_KIND_INTERNAL)) { //hide internal
     Entry->me.BadgeImage   = egCopyScaledImage(Volume->OSImage, 8);
-    //    Entry->me.BadgeImage   = egLoadIcon(ThemeDir, PoolPrint(L"icons\\os_%s.icns", Volume->OSIconName), 32);
   } else if (GlobalConfig.HideBadges == HDBADGES_SWAP) {
     Entry->me.BadgeImage   =  egCopyScaledImage(Volume->DriveImage, 4);
   }
@@ -2507,9 +2520,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   // read GUI configuration
   ReadConfig(0);
   //get theme from NVRAM in the case of UEFI boot
-  chosenTheme = GetNvramVariable(L"chosen-theme", &gEfiAppleBootGuid, NULL, &Size);
+  chosenTheme = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
   if (Size > 0) {
+    DBG("ChosenTheme at NVRAM %a\n|", chosenTheme);
     GlobalConfig.Theme = PoolPrint(L"%a", chosenTheme);
+    GlobalConfig.Theme[Size] = 0;
   }
   
   ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", GlobalConfig.Theme);
@@ -2682,9 +2697,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {
       PutNvramPlistToRtVars();
       //now there is an attempt to change theme
-      chosenTheme = GetNvramVariable(L"chosen-theme", &gEfiAppleBootGuid, NULL, &Size);
+      chosenTheme = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
       if (Size > 0) {
-        GlobalConfig.Theme = PoolPrint(L"%a", chosenTheme); 
+        DBG("ChosenTheme at plist %a\n|", chosenTheme);
+        GlobalConfig.Theme = PoolPrint(L"%a", chosenTheme);
+        GlobalConfig.Theme[Size] = 0;
         if (ThemePath) {
           FreePool(ThemePath);
         }
@@ -2703,6 +2720,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         }
         if (ThemeDir) {
           ReadConfig(1);
+          //changing theme we need to change Volumes Images
+          reinitImages();
         }
       }
     }
