@@ -379,7 +379,7 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
   
   // load banner on first call
   if (!Banner) {
-    if (!GlobalConfig.BannerFileName)
+    if (!GlobalConfig.BannerFileName || !ThemeDir)
       Banner = egPrepareEmbeddedImage(&egemb_refit_banner, FALSE);
     else
       Banner = egLoadImage(ThemeDir, GlobalConfig.BannerFileName, FALSE);

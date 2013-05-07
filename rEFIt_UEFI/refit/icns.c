@@ -152,7 +152,10 @@ EG_IMAGE * LoadIcns(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN Pi
 {
     if (GlobalConfig.TextOnly)      // skip loading if it's not used anyway
         return NULL;
+  if (BaseDir) {
     return egLoadIcon(BaseDir, FileName, PixelSize);
+  } 
+  return DummyImage(PixelSize);
 }
 
 static EG_PIXEL BlackPixel  = { 0x00, 0x00, 0x00, 0 };

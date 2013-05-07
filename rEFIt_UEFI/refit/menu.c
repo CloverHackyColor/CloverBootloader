@@ -1889,23 +1889,24 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         }
         EntriesPosY += TextHeight;  // also add a blank line
       }
-      
-      if (!ScrollbarBackgroundImage)
-        ScrollbarBackgroundImage = egLoadImage(ThemeDir, L"scrollbar\\bar_fill.png", FALSE);
-      if (!BarStartImage)
-        BarStartImage = egLoadImage(ThemeDir, L"scrollbar\\bar_start.png", TRUE);
-      if (!BarEndImage)
-        BarEndImage = egLoadImage(ThemeDir, L"scrollbar\\bar_end.png", TRUE);
-      if (!ScrollbarImage)
-        ScrollbarImage = egLoadImage(ThemeDir, L"scrollbar\\scroll_fill.png", FALSE);
-      if (!ScrollStartImage)
-        ScrollStartImage = egLoadImage(ThemeDir, L"scrollbar\\scroll_start.png", TRUE);
-      if (!ScrollEndImage)
-        ScrollEndImage = egLoadImage(ThemeDir, L"scrollbar\\scroll_end.png", TRUE);
-      if (!UpButtonImage)
-        UpButtonImage = egLoadImage(ThemeDir, L"scrollbar\\up_button.png", TRUE);
-      if (!DownButtonImage)
-        DownButtonImage = egLoadImage(ThemeDir, L"scrollbar\\down_button.png", TRUE);
+      if (ThemeDir) {
+        if (!ScrollbarBackgroundImage)
+          ScrollbarBackgroundImage = egLoadImage(ThemeDir, L"scrollbar\\bar_fill.png", FALSE);
+        if (!BarStartImage)
+          BarStartImage = egLoadImage(ThemeDir, L"scrollbar\\bar_start.png", TRUE);
+        if (!BarEndImage)
+          BarEndImage = egLoadImage(ThemeDir, L"scrollbar\\bar_end.png", TRUE);
+        if (!ScrollbarImage)
+          ScrollbarImage = egLoadImage(ThemeDir, L"scrollbar\\scroll_fill.png", FALSE);
+        if (!ScrollStartImage)
+          ScrollStartImage = egLoadImage(ThemeDir, L"scrollbar\\scroll_start.png", TRUE);
+        if (!ScrollEndImage)
+          ScrollEndImage = egLoadImage(ThemeDir, L"scrollbar\\scroll_end.png", TRUE);
+        if (!UpButtonImage)
+          UpButtonImage = egLoadImage(ThemeDir, L"scrollbar\\up_button.png", TRUE);
+        if (!DownButtonImage)
+          DownButtonImage = egLoadImage(ThemeDir, L"scrollbar\\down_button.png", TRUE);        
+      }
       
       break;
       
@@ -2105,8 +2106,12 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
   } else {
     MainImage = Entry->Image;
   }
-  if (!MainImage) {
-    MainImage = egLoadIcon(ThemeDir, L"icons\\osx.icns", 128);
+  if (!MainImage) {    
+    if (ThemeDir) {
+      MainImage = egLoadIcon(ThemeDir, L"icons\\osx.icns", 128);
+    } else {
+      MainImage = DummyImage(128);
+    }    
   }
   //  DBG("Entry title=%s; Width=%d\n", Entry->Title, MainImage->Width);
   BltImageCompositeBadge(SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],

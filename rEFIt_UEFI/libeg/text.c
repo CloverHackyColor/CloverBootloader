@@ -81,6 +81,11 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN WantAlpha)
   EG_PIXEL    *PixelPtr;
   EG_PIXEL    FirstPixel;
   
+  if (!ThemeDir) {
+    GlobalConfig.Font = FONT_GRAY;
+    return NULL;
+  }
+  
   NewImage = egLoadImage(ThemeDir, GlobalConfig.FontFileName, WantAlpha);
   if (NewImage) {
       DBG("font %s loaded from themedir\n", GlobalConfig.FontFileName);

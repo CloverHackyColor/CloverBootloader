@@ -622,43 +622,43 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //Set Entry->VolName to .disk_label.contentDetails if it exists
 static EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
 {
-    EFI_STATUS	Status = EFI_NOT_FOUND;
-    CHAR16* targetNameFile = L"System\\Library\\CoreServices\\.disk_label.contentDetails";
-    CHAR8* 	fileBuffer;
-    CHAR8*  targetString;
-    UINTN   fileLen = 0;
-    if(FileExists(Entry->Volume->RootDir, targetNameFile)) {
-        Status = egLoadFile(Entry->Volume->RootDir, targetNameFile, (UINT8 **)&fileBuffer, &fileLen);
-        if(!EFI_ERROR(Status)) {
-            CHAR16  *tmpName;
-            INTN i;
-            //Create null terminated string
-            targetString = (CHAR8*) AllocateZeroPool(fileLen+1);
-            CopyMem( (VOID*)targetString, (VOID*)fileBuffer, fileLen);
-            
-            if (Entry->Volume->OSType == OSTYPE_BOOT_OSX) {
-                //remove occurence number. eg: "vol_name 2" --> "vol_name"
-                i=fileLen-1;
-                while ((i>0) && (targetString[i]>='0') && (targetString[i]<='9')) {
-                    i--;
-                }
-                if (targetString[i] == ' ') {
-                    targetString[i] = 0;
-                }
-            }
-            
-            //Convert to Unicode
-            tmpName = (CHAR16*)AllocateZeroPool((fileLen+1)*2);
-            tmpName = AsciiStrToUnicodeStr(targetString, tmpName);
-            
-            Entry->VolName = EfiStrDuplicate(tmpName);
-            
-            FreePool(tmpName);
-            FreePool(fileBuffer);
-            FreePool(targetString);
+  EFI_STATUS	Status = EFI_NOT_FOUND;
+  CHAR16* targetNameFile = L"System\\Library\\CoreServices\\.disk_label.contentDetails";
+  CHAR8* 	fileBuffer;
+  CHAR8*  targetString;
+  UINTN   fileLen = 0;
+  if(FileExists(Entry->Volume->RootDir, targetNameFile)) {
+    Status = egLoadFile(Entry->Volume->RootDir, targetNameFile, (UINT8 **)&fileBuffer, &fileLen);
+    if(!EFI_ERROR(Status)) {
+      CHAR16  *tmpName;
+      INTN i;
+      //Create null terminated string
+      targetString = (CHAR8*) AllocateZeroPool(fileLen+1);
+      CopyMem( (VOID*)targetString, (VOID*)fileBuffer, fileLen);
+      
+      if (Entry->Volume->OSType == OSTYPE_BOOT_OSX) {
+        //remove occurence number. eg: "vol_name 2" --> "vol_name"
+        i=fileLen-1;
+        while ((i>0) && (targetString[i]>='0') && (targetString[i]<='9')) {
+          i--;
         }
+        if (targetString[i] == ' ') {
+          targetString[i] = 0;
+        }
+      }
+      
+      //Convert to Unicode
+      tmpName = (CHAR16*)AllocateZeroPool((fileLen+1)*2);
+      tmpName = AsciiStrToUnicodeStr(targetString, tmpName);
+      
+      Entry->VolName = EfiStrDuplicate(tmpName);
+      
+      FreePool(tmpName);
+      FreePool(fileBuffer);
+      FreePool(targetString);
     }
-    return Status;
+  }
+  return Status;
 }
 
 static CHAR16 *AddLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption)
@@ -2471,6 +2471,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //  UINT64            TscDiv;
 //  UINT64            TscRemainder = 0;
   LOADER_ENTRY      *LoaderEntry;
+  CHAR8             *chosenTheme;
   
   // CHAR16            *InputBuffer; //, *Y;
   //  EFI_INPUT_KEY Key;
@@ -2505,13 +2506,30 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   // read GUI configuration
   ReadConfig(0);
+  //get theme from NVRAM in the case of UEFI boot
+  chosenTheme = GetNvramVariable(L"chosen-theme", &gEfiAppleBootGuid, NULL, &Size);
+  if (Size > 0) {
+    GlobalConfig.Theme = PoolPrint(L"%a", chosenTheme);
+  }
   
   ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", GlobalConfig.Theme);
   Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
-  // if (EFI_ERROR (Status)) { return Status; }
-  DBG("Theme: %s Path: %s\n", GlobalConfig.Theme, ThemePath);
+  if (EFI_ERROR (Status)) { 
+    DBG("chosen theme %s is absent, using embedded\n", GlobalConfig.Theme);
+    GlobalConfig.Theme = NULL;
+    if (ThemePath) {
+      FreePool(ThemePath);
+    } 
+    ThemePath = NULL;
+    ThemeDir = NULL;
+  } else {
+    DBG("Theme: %s Path: %s\n", GlobalConfig.Theme, ThemePath);
+  }
+  
   MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
-  ReadConfig(1);
+  if (ThemeDir) {
+    ReadConfig(1);
+  }
   
   PrepatchSmbios();
 
@@ -2638,7 +2656,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
  //       DBG("GetUserSettings OK\n");
   
   //test font
-  PrepareFont();
+//  PrepareFont();
  //     DBG("PrepareFont OK\n");
   FillInputs();
   
@@ -2663,7 +2681,33 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     // as soon as we have Volumes, find lates nvram.plist and copy it to RT vars
     if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {
       PutNvramPlistToRtVars();
+      //now there is an attempt to change theme
+      chosenTheme = GetNvramVariable(L"chosen-theme", &gEfiAppleBootGuid, NULL, &Size);
+      if (Size > 0) {
+        GlobalConfig.Theme = PoolPrint(L"%a", chosenTheme); 
+        if (ThemePath) {
+          FreePool(ThemePath);
+        }
+        ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", GlobalConfig.Theme);
+        Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+        if (EFI_ERROR (Status)) { 
+          DBG("chosen theme %s is absent, using embedded\n", GlobalConfig.Theme);
+          GlobalConfig.Theme = NULL;
+          if (ThemePath) {
+            FreePool(ThemePath);
+          } 
+          ThemePath = NULL;
+          ThemeDir = NULL;
+        } else {
+          DBG("Change theme to: %s Path: %s\n", GlobalConfig.Theme, ThemePath);
+        }
+        if (ThemeDir) {
+          ReadConfig(1);
+        }
+      }
     }
+      
+    PrepareFont();
     
     // scan for loaders and tools, add then to the menu
     if (!GlobalConfig.NoLegacy && GlobalConfig.LegacyFirst && !gSettings.HVHideAllLegacy){
@@ -2787,7 +2831,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
           MainLoopRunning = FALSE;   // just in case we get this far
           break;
           
-        case TAG_SHUTDOWN: // Shut Down
+        case TAG_SHUTDOWN: // It is not Shut Down, it is Exit from Clover
           TerminateScreen();
  //         gRS->ResetSystem(EfiResetShutdown, EFI_SUCCESS, 0, NULL);
           MainLoopRunning = FALSE;   // just in case we get this far
