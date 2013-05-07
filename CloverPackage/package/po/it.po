@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-05 16:23+0300\n"
-"PO-Revision-Date: 2013-05-07 15:48+0000\n"
+"PO-Revision-Date: 2013-05-07 20:43+0000\n"
 "Last-Translator: mackie100 <mackie.proj@yahoo.com>\n"
 "Language-Team: it <it@li.org>\n"
 "Language: it\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1367941689.0\n"
+"X-POOTLE-MTIME: 1367959429.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -921,7 +921,7 @@ msgstr "Mensilmente"
 #: ../CloverPrefpane/CloverPrefpane.strings:8
 #, no-wrap
 msgid "Schedule Check Updates Every:"
-msgstr "Verifica disponibilità di aggiornamenti:"
+msgstr "Verifica disponibilità aggiornamenti:"
 
 #. type: "248.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:9
