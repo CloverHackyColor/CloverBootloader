@@ -579,7 +579,8 @@ main ()
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"     \
                        --subst="INSTALLER_CHOICE=$packageRefId"         \
                        --subst="INSTALLER_ALTBOOT_REFID=$altbootRefId"  \
-                       ${choiceId}
+                       --subst="MBR_SECTOR_FILE"=boot0                  \
+                       InstallBootsectors
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
     addChoice --group="Bootloader"                                         \
               --enabled="!choices['UEFI.only'].selected"                   \
@@ -594,7 +595,8 @@ main ()
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"     \
                        --subst="INSTALLER_CHOICE=$packageRefId"         \
                        --subst="INSTALLER_ALTBOOT_REFID=$altbootRefId"  \
-                       ${choiceId}
+                       --subst="MBR_SECTOR_FILE"=boot0hfs               \
+                       InstallBootsectors
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
     addChoice --group="Bootloader"                                          \
               --enabled="!choices['UEFI.only'].selected"                    \
