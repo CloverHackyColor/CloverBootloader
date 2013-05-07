@@ -10,7 +10,7 @@ BootSectors:
 
 boot0 - MBR sector that search for active partition in MBR table. Origin from Apple's boot132 project. This version of boot0 implements hybrid GUID/MBR partition scheme support. Written by Tamás Kosárszky on 2008-03-10
 
-boot0hfs - MBR sector that search for HFS+ partition even thou it is not active. Good for Windows that wants to have its partition active. (origin?)
+boot0hfs - MBR sector that search for partition with valid PBR signature even thou it is not active. Good for Windows that wants to have its partition active. (origin?)
 
 boot1h - PBR sector for HFS+ formatted partition. Search for file "boot" in the root of the partiton.  Origin from Apple's boot132 project. Written by Tamás Kosárszky on 2008-04-14. This is mod by Slice to support large boot file. Not 440kb as origin but 472k needed to boot Clover-64.
 

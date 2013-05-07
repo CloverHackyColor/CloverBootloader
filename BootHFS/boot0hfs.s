@@ -42,19 +42,21 @@
 ;
 ; This version of boot0 implements hybrid GUID/MBR partition scheme support
 ;
-; Written by Tamás Kosárszky on 2008-03-10
+; Written by Tam√°s Kos√°rszky on 2008-03-10
 ;
 ; Turbo added EFI System Partition boot support
 ;
 ; Added KillerJK's switchPass2 modifications
 ;
+; JrCs added FAT32 System Partition boot support on GPT pure partition scheme
+;
 
 ;
-; boot0 and boot0hfs share the same code except this HFSFIRST definition
-; boot0 - do not define HFSFIRST
-; boot0hfs - define HFSFIRST
+; boot0 and boot0hfs share the same code except this ACTIVEFIRST definition
+; boot0 - define ACTIVEFIRST
+; boot0hfs - do not define ACTIVEFIRST
 ;
-%define HFSFIRST
+;%define ACTIVEFIRST
 
 ;
 ; Set to 1 to enable obscure debug messages.
@@ -95,21 +97,24 @@ kGUIDLastDwordOffs	EQU  12				; last 4 byte offset of a GUID
 
 kPartCount			EQU  4				; number of paritions per table
 kPartTypeHFS		EQU  0xaf			; HFS+ Filesystem type
+kPartTypeFAT32		EQU  0x0c			; FAT32 Filesystem type
 kPartTypePMBR		EQU  0xee			; On all GUID Partition Table disks a Protective MBR (PMBR)
 										; in LBA 0 (that is, the first block) precedes the
 										; GUID Partition Table Header to maintain compatibility
 										; with existing tools that do not understand GPT partition structures.
-							  			; The Protective MBR has the same format as a legacy MBR 
-					  					; and contains one partition entry with an OSType set to 0xEE
+										; The Protective MBR has the same format as a legacy MBR
+										; and contains one partition entry with an OSType set to 0xEE
 										; reserving the entire space used on the disk by the GPT partitions,
 										; including all headers.
 
 kPartActive			EQU  0x80			; active flag enabled
 kPartInactive		EQU  0x00			; active flag disabled
-kHFSGUID			EQU  0x48465300		; first 4 bytes of Apple HFS Partition Type GUID.
 kAppleGUID			EQU  0xACEC4365		; last 4 bytes of Apple type GUIDs. 
 kEFISystemGUID		EQU  0x3BC93EC9		; last 4 bytes of EFI System Partition Type GUID:
 										; C12A7328-F81F-11D2-BA4B-00A0C93EC93B
+kBasicDataGUID		EQU  0xC79926B7		; last 4 bytes of Basic Data System Partition Type GUID:
+										; EBD0A0A2-B9E5-4433-87C0-68B6B72699C7
+
 
 %ifdef FLOPPY
 kDriveNumber		EQU  0x00
@@ -290,7 +295,7 @@ find_boot:
 										; to boot an inactive but boot1h aware HFS+ partition
 										; by scanning the MBR partition entries again.
 
-.start_scan:							
+.start_scan:
     mov     cx, kPartCount          	; number of partition entries per table
 
 .loop:
@@ -322,44 +327,42 @@ find_boot:
     jne	    .Pass2
 
 .Pass1:
-%ifdef HFSFIRST
-    cmp	    BYTE [si + part.type], kPartTypeHFS		; In pass 1 we're going to find a HFS+ partition
-                                                  ; equipped with boot1h in its boot record
-                                                  ; regardless if it's active or not.
-    jne     .continue
-  	mov		  dh, 1                									; Argument for loadBootSector to check HFS+ partition signature.
+%ifdef ACTIVEFIRST
+    jmp     SHORT .tryToBootIfActive
 %else
-    cmp     BYTE [si + part.bootid], kPartActive	; In pass 1 we are walking on the standard path
-                                                  ; by trying to hop on the active partition.
-    jne     .continue
-    xor	  	dh, dh               									; Argument for loadBootSector to skip HFS+ partition
-											                        		; signature check.
+    jmp     SHORT .tryToBootSupportedFS
 %endif
 
-    jmp    .tryToBoot
 
 .Pass2:    
-%ifdef HFSFIRST
-    cmp     BYTE [si + part.bootid], kPartActive	; In pass 2 we are walking on the standard path
-                                                  ; by trying to hop on the active partition.
-    jne     .continue
-    xor		  dh, dh               									; Argument for loadBootSector to skip HFS+ partition
-											                        		; signature check.
-%else
-    cmp	    BYTE [si + part.type], kPartTypeHFS		; In pass 2 we're going to find a HFS+ partition
-                                                  ; equipped with boot1h in its boot record
-                                                  ; regardless if it's active or not.
-    jne     .continue
-  	mov 		dh, 1                									; Argument for loadBootSector to check HFS+ partition signature.
+%ifdef ACTIVEFIRST
+    jmp     SHORT .tryToBootSupportedFS
 %endif
 
-    DebugChar('*')
+.tryToBootIfActive:
+    ; We're going to try to boot a partition if it is active
+    cmp     BYTE [si + part.bootid], kPartActive
+    jne     .continue
 
+    xor     dh, dh      ; Argument for loadBootSector to skip file system signature check.
+    jmp     SHORT .tryToBoot
+
+.tryToBootSupportedFS:
+    ; We're going to try to boot a partition with a supported filesystem
+    ; equipped with boot1x in its boot record regardless if it's active or not.
+
+    mov     dh, 1       ; Argument for loadBootSector to check file system signature.
+
+    cmp     BYTE [si + part.type], kPartTypeHFS
+    je      .tryToBoot
+
+    cmp     BYTE [si + part.type], kPartTypeFAT32
+    jne     .continue
+
+.tryToBoot:
     ;
     ; Found boot partition, read boot sector to memory.
     ;
-
-.tryToBoot:
 
     call    loadBootSector
     jne     .continue
@@ -455,7 +458,7 @@ checkGPT:
 
     ;
     ; Walk through GUID Partition Table Array
-    ; and load boot record from first available HFS+ partition.
+    ; and load boot record from first supported partition.
     ;
     ; If it has boot signature (0xAA55) then jump to it
     ; otherwise skip to next partition.
@@ -468,25 +471,30 @@ checkGPT:
 .gpt_loop:
 
     mov     eax, [si + gpta.PartitionTypeGUID + kGUIDLastDwordOffs]
-	
+
 	cmp		eax, kAppleGUID			; check current GUID Partition for Apple's GUID type
 	je		.gpt_ok
 
 	;
 	; Turbo - also try EFI System Partition
 	;
-
 	cmp		eax, kEFISystemGUID		; check current GUID Partition for EFI System Partition GUID type
+	je		.gpt_ok
+
+	;
+	; JrCs - also try FAT2 System Partition
+	;
+	cmp		eax, kBasicDataGUID		; check current GUID Partition for Basic Data Partition GUID type
 	jne		.gpt_continue
 
 .gpt_ok:
     ;
-    ; Found HFS Partition
+    ; Found a possible good partition try to boot it
     ;
 
     mov	    eax, [si + gpta.StartingLBA]			; load boot sector from StartingLBA
     mov	    [my_lba], eax		
-	mov		dh, 1									; Argument for loadBootSector to check HFS+ partition signature.
+	mov		dh, 1									; Argument for loadBootSector to check file system signature.
     call    loadBootSector
     jne	    .gpt_continue							; no boot loader signature
 
@@ -510,8 +518,8 @@ checkGPT:
 ;
 ; Arguments:
 ;   DL = drive number (0x80 + unit number)
-;   DH = 0 skip HFS+ partition signature checking
-;        1 enable HFS+ partition signature checking
+;   DH = 0 skip file system signature checking
+;        1 enable file system signature checking
 ;   [my_lba] = starting LBA.
 ;
 ; Returns:
@@ -543,7 +551,7 @@ loadBootSector:
 	je		.checkBootSignature
 	cmp		ax, kHFSPCaseSignature	; 'HX'
     je		.checkBootSignature
-	
+
 	;
 	; Looking for boot1f32 magic string.
 	;
@@ -786,8 +794,11 @@ getc:
 ;--------------------------------------------------------------------------
 ; NULL terminated strings.
 ;
-log_title_str		db  10, 13, 'boot0: ', 0
+log_title_str		db  0
+;log_title_str		db  10, 13, 'boot0: ', 0
 boot_error_str   	db  'error', 0
+jrcs_mbr db 'M ',0
+jrcs_gpt db 'G ',0
 
 %if VERBOSE
 gpt_str			db  'GPT', 0
