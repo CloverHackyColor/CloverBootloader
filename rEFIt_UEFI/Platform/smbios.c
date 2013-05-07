@@ -1062,6 +1062,9 @@ VOID GetTableType17()
 {
   // Memory Device
   //
+  INTN Index2;
+  BOOLEAN Found;
+  
 	// Get Table Type17 and count Size
    gRAMCount = 0;
 	for (Index = 0; Index < MAX_RAM_SLOTS; Index++) {
@@ -1079,7 +1082,42 @@ VOID GetTableType17()
         //  up the error handle and determine certain errors may
         //  be skipped where others may not but it seems easier
         //  to just skip all entries that have an error - apianti
-        continue;
+        // will try
+        Found = FALSE;
+        for (Index2 = 0; Index2 < MAX_RAM_SLOTS; Index2++) {
+          newSmbiosTable = GetSmbiosTableFromType (EntryPoint, EFI_SMBIOS_TYPE_32BIT_MEMORY_ERROR_INFORMATION, Index2);
+          if (newSmbiosTable.Raw == NULL) {
+            continue;
+          }
+          if (newSmbiosTable.Type18->Hdr.Handle == SmbiosTable.Type17->MemoryErrorInformationHandle) {
+            Found = TRUE;
+            DBG("Found error information in table 18/%d, type=0x%x, operation=0x%x syndrome=0x%x\n", Index2,
+                newSmbiosTable.Type18->ErrorType,
+                newSmbiosTable.Type18->ErrorOperation,
+                newSmbiosTable.Type18->VendorSyndrome);
+            switch (newSmbiosTable.Type18->ErrorType) {
+              case MemoryErrorOk:
+                DBG("...error type: OK\n");
+                break;
+              case MemoryErrorCorrected:
+                DBG("...error type: Corrected\n");
+                break;
+              case MemoryErrorChecksum:
+                DBG("...error type: Checksum\n");
+                break;
+              default:
+                DBG("...error type not shown\n");
+                break;
+            }
+            break;
+          }           
+        }
+        if (Found) {
+          if ((newSmbiosTable.Type18->ErrorType != MemoryErrorOk) &&
+              (newSmbiosTable.Type18->ErrorType != MemoryErrorCorrected)) {
+            continue;
+          }
+        }
       }
       // Determine if slot has size
       if (SmbiosTable.Type17->Size > 0) {
@@ -1338,12 +1376,18 @@ VOID PatchTableType17()
     if (gRAM.SPD[SPDIndex].InUse) {
       if (iStrLen(gRAM.SPD[SPDIndex].Vendor, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.SPD[SPDIndex].Vendor);
+      } else {
+        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, "unknown");
       }
       if (iStrLen(gRAM.SPD[SPDIndex].SerialNo, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, gRAM.SPD[SPDIndex].SerialNo);
+      } else {
+        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, "unknown");
       }
       if (iStrLen(gRAM.SPD[SPDIndex].PartNo, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gRAM.SPD[SPDIndex].PartNo);
+      } else {
+        UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, "unknown");
       }
       newSmbiosTable.Type17->Speed = (UINT16)gRAM.SPD[SPDIndex].Frequency;
       newSmbiosTable.Type17->Size = (UINT16)gRAM.SPD[SPDIndex].ModuleSize;
@@ -1354,11 +1398,12 @@ VOID PatchTableType17()
       DBG("Type17->Speed corrected by SMBIOS from %dMHz to %dMHz\n", newSmbiosTable.Type17->Speed, gRAM.SMBIOS[SMBIOSIndex].Frequency);
       newSmbiosTable.Type17->Speed = (UINT16)gRAM.SMBIOS[SMBIOSIndex].Frequency;
     }
+    
     // Assume DDR3 unless explicitly set to DDR2/DDR
     if ((newSmbiosTable.Type17->MemoryType != MemoryTypeDdr2) &&
         (newSmbiosTable.Type17->MemoryType != MemoryTypeDdr)) {
       newSmbiosTable.Type17->MemoryType = MemoryTypeDdr3;
-    }
+    }      
     
     //now I want to update deviceLocator and bankLocator
     if (isMacPro) {
@@ -1373,6 +1418,7 @@ VOID PatchTableType17()
     DBG("SMBIOS Type 17 Index = %d => %d %d:\n", gRAMCount, SMBIOSIndex, SPDIndex);
     if (newSmbiosTable.Type17->Size == 0) {
       DBG("%a %a EMPTY\n", bankLocator, deviceLocator);
+      newSmbiosTable.Type17->MemoryType = 0; //MemoryTypeUnknown;
     } else {
       insertingEmpty = FALSE;
       DBG("%a %a %dMHz %dMB\n", bankLocator, deviceLocator, newSmbiosTable.Type17->Speed, newSmbiosTable.Type17->Size);
@@ -1455,6 +1501,7 @@ VOID PatchTableType20 ()
 			if ((UINT32)(mMemory17[j] << 10) > newSmbiosTable.Type20->EndingAddress) {	
 				newSmbiosTable.Type20->MemoryDeviceHandle = mHandle17[j];
 				k = newSmbiosTable.Type20->EndingAddress;
+        m += mMemory17[j];
 				DBG("Type20[%d]->End = 0x%x, Type17[%d] = 0x%x\n",
 						Index, k, j, m);
 //				DBG(" MemoryDeviceHandle = 0x%x\n", newSmbiosTable.Type20->MemoryDeviceHandle);

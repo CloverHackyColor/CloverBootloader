@@ -97,6 +97,7 @@
 		123F097A164FA3AF008C1C1C /* BiosVideo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BiosVideo.h; sourceTree = "<group>"; };
 		123F097B164FA3AF008C1C1C /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
 		123F097D164FA3AF008C1C1C /* VideoDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VideoDxe.inf; sourceTree = "<group>"; };
+		124BA1691738D9EF006DA523 /* Smbios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Smbios.h; path = ../../MdePkg/Include/Protocol/Smbios.h; sourceTree = SOURCE_ROOT; };
 		124D76D51657A3E6008B5407 /* PiBootMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PiBootMode.h; sourceTree = "<group>"; };
 		124D76D61657A404008B5407 /* UefiHiiServicesLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UefiHiiServicesLib.h; sourceTree = "<group>"; };
 		124D76D81657A474008B5407 /* Reset.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Reset.c; sourceTree = "<group>"; };
@@ -1508,6 +1509,7 @@
 				12B816DA1644675800A433E7 /* Resolutions.h */,
 				12B816DB1644675800A433E7 /* Settings.c */,
 				12B816DC1644675800A433E7 /* smbios.c */,
+				124BA1691738D9EF006DA523 /* Smbios.h */,
 				12B816DE1644675800A433E7 /* spd.c */,
 				12B816DF1644675800A433E7 /* spd.h */,
 				12B816E01644675800A433E7 /* sse3_5_patcher.h */,

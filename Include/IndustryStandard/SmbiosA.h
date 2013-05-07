@@ -1573,10 +1573,10 @@ typedef struct {
   UINT8                     ErrorType;                  ///< The enumeration value from MEMORY_ERROR_TYPE.
   UINT8                     ErrorGranularity;           ///< The enumeration value from MEMORY_ERROR_GRANULARITY.
   UINT8                     ErrorOperation;             ///< The enumeration value from MEMORY_ERROR_OPERATION.
-  UINT32                VendorSyndrome;
-  UINT32                MemoryArrayErrorAddress;
-  UINT32                DeviceErrorAddress;
-  UINT32                ErrorResolution;
+  UINT32                    VendorSyndrome;
+  UINT32                    MemoryArrayErrorAddress;
+  UINT32                    DeviceErrorAddress;
+  UINT32                    ErrorResolution;
 } SMBIOS_TABLE_TYPE18;
 
 ///
