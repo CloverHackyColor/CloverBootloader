@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-05 16:23+0300\n"
-"PO-Revision-Date: 2013-05-01 21:53+0000\n"
+"PO-Revision-Date: 2013-05-07 02:41+0000\n"
 "Last-Translator: kyndder <kyndder@icloud.com>\n"
 "Language-Team: pt <pt@li.org>\n"
 "Language: pt\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1367445226.0\n"
+"X-POOTLE-MTIME: 1367894504.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -120,7 +120,7 @@ msgstr ""
 "- Inicialmente Clover faz a detecção automática de hardware e configura "
 "todas as opções padrão."
 
-#
+# Don't change this ! It must be one space only ! 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:23
 #: Resources/templates/Description.html:24
@@ -129,7 +129,7 @@ msgstr ""
 #: Resources/templates/Description.html:32
 #: Resources/templates/Description.html:33
 msgid " "
-msgstr " "
+msgstr " "
 
 #
 #. type: Content of: <html><body><p>
@@ -143,7 +143,7 @@ msgstr "Posteriormente o usuario pode altera-las no arquivo config.plist"
 msgid "- with Clover you may restart into other OS from Startup Disk prefPane"
 msgstr ""
 "- Com Clover você pode iniciar outro sistema operacional suportado através "
-"de \"Disco de Inicialização\" em Preferências do Sistema"
+"de Disco de Inicialização em Preferências do Sistema"
 
 #
 #. type: Content of: <html><body><p>
@@ -155,12 +155,12 @@ msgstr "- UUID definido no config.plist será o mesmo no sistema"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:27
 msgid "- SMBIOS will be corrected to standard 2.6"
-msgstr "- SMBIOS será corrigido para o padrão 2,6"
+msgstr "- SMBIOS será corrigido para o padrão 2.6"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:28
 msgid "- ACPI will be corrected to standard 4.0."
-msgstr "- ACPI será corrigido para o padrão 4.0"
+msgstr "- ACPI será corrigido para o padrão 4.0."
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:29
@@ -253,7 +253,7 @@ msgstr "Instalação para Placas Mãe UEFI"
 #: Resources/templates/Localizable.strings:5
 #, no-wrap
 msgid "Install Clover to be used with UEFI motherboards only."
-msgstr "Instala o Clover para ser usado somente em Placas Mãe UEFI. "
+msgstr "Instala o Clover para ser usado somente em Placas Mãe UEFI."
 
 #. type: "Target.ESP_title"
 #: Resources/templates/Localizable.strings:10
@@ -275,7 +275,7 @@ msgid ""
 msgstr ""
 "Instala o Clover na Partição ESP (Partição EFI do Sistema) do Volume alvo\n"
 "\n"
-"É necessário formatar a ESP como Fat32 pelo OS X primeiro.\n"
+"É necessário formatar a ESP como Fat32 (recomendado) ou HFS pelo OS X primeiro.\n"
 "\n"
 "Para Fat32 use os comandos abaixo:\n"
 "diskutil list\n"
@@ -299,7 +299,7 @@ msgstr ""
 "Clover EFI necessita de três arquivos essênciais. (em termos simples)\n"
 "boot0 (No MBR do disco) responsável por carregar o boot1.\n"
 "boot1 (No setor de boot da partição) para encontrar o boot2.\n"
-"boot2 (Na raiz da partição) para carregar /EFI/CLOVER/CLOVERIA32.efi ou CLOVERX64.efi, kernel, etc."
+"boot2 (Na raiz da partição) para carregar /EFI/CLOVER/CLOVERIA32.efi ou CLOVERX64.efi, e kernel etc."
 
 #. type: "boot0_title"
 #: Resources/templates/Localizable.strings:29
@@ -522,31 +522,31 @@ msgstr "Driver para Mouse USB, 64bit"
 #: Resources/templates/Localizable.strings:96
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 32bit"
-msgstr "Driver para Sistema de Arquivos EXT2/3 do VirtualBox, 32bit"
+msgstr "driver para sistema de arquivos ext2/3 do virtualbox, 32bit"
 
 #. type: "VBoxExt2-64_description"
 #: Resources/templates/Localizable.strings:97
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
-msgstr "Driver para Sistema de Arquivos EXT2/3 do VirtualBox, 64bit"
+msgstr "driver para sistema de arquivos ext2/3 do virtualbox, 64bit"
 
 #. type: "VBoxExt4-32_description"
 #: Resources/templates/Localizable.strings:98
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 32bit"
-msgstr "Driver para Sistema de Arquivos EXT4 do VirtualBox, 32bit"
+msgstr "driver para sistema de arquivos ext4 do virtualbox, 32bit"
 
 #. type: "VBoxExt4-64_description"
 #: Resources/templates/Localizable.strings:99
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 64bit"
-msgstr "Driver para Sistema de Arquivos EXT4 do VirtualBox, 64bit"
+msgstr "driver para sistema de arquivos ext4 do virtualbox, 64bit"
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:100
 #, no-wrap
 msgid "USB 3.0 driver, 32bit"
-msgstr "Driver para Teclado PS/2, 32bit"
+msgstr "Driver para USB 3.0, 32bit"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:101
@@ -588,13 +588,13 @@ msgid ""
 msgstr ""
 "Driver 64bit para o suporte a variáveis NVRAM necessário para o Mac OS X.\n"
 "Normalmente o boot UEFI usa o Hardware NVRAM mas em alguns casos raros este driver é necessário.\n"
-"Use-o somente se você tiver problemas quando não o estiver utilizando."
+"Use-o somente se você tiver problemas quando não o estiver utilizando"
 
 #. type: "OsxAptioFixDrv-64_description"
 #: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
-msgstr "Driver de 64bit para corrigir problemas de Memória em Firmware UEFI como em AMI Aptio BIOS."
+msgstr "Driver de 64bit para corrigir problemas de Memória em Firmware UEFI como em AMI Aptio BIOS"
 
 #. type: "OsxLowMemFixDrv-64_description"
 #: Resources/templates/Localizable.strings:112
@@ -802,14 +802,13 @@ msgstr "Opcional RC Scripts"
 #: Resources/templates/Localizable.strings:167
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
-msgstr "Desabilita o serviço mDNSResponder sleep proxy client. Isso irá impedir que o systema retorne do Sleep a cada hora\";"
+msgstr "Desabilita o serviço mDNSResponder sleep proxy client. Isso irá impedir que o systema retorne do Sleep a cada hora"
 
 #. type: "CloverUpdater_title"
 #: Resources/templates/Localizable.strings:172
-#, fuzzy, no-wrap
-#| msgid "Install Clover in the ESP"
+#, no-wrap
 msgid "Install CloverUpdater"
-msgstr "Instalar Clover na ESP"
+msgstr "Instalar Clover Updater"
 
 #. type: "CloverUpdater_description"
 #: Resources/templates/Localizable.strings:173
@@ -818,126 +817,132 @@ msgid ""
 "Install CloverUpdater on target volume.\n"
 "CloverUpdater notify you about Clover updates."
 msgstr ""
+"Instala o CloverUpdater no volume alvo.\n"
+"O CloverUpdater notificará você sobre atualizações do Clover."
 
 #. type: "371.title"
 #: ../CloverUpdater/CloverUpdater.strings:1
 #: ../CloverUpdater/CloverUpdater.strings:2
 #: ../CloverUpdater/CloverUpdater.strings:5
-#, fuzzy, no-wrap
-#| msgid "Install Clover in the ESP"
+#, no-wrap
+#| msgid "Install CloverUpdater"
 msgid "CloverUpdater"
-msgstr "Instalar Clover na ESP"
+msgstr "CloverUpdater"
 
 #. type: "58.title"
 #: ../CloverUpdater/CloverUpdater.strings:3
-#, fuzzy, no-wrap
-#| msgid "Install Clover in the ESP"
+#, no-wrap
+#| msgid "Install CloverUpdater"
 msgid "About CloverUpdater"
-msgstr "Instalar Clover na ESP"
+msgstr "Sobre o Clover Updater"
 
 #. type: "136.title"
 #: ../CloverUpdater/CloverUpdater.strings:4
-#, fuzzy, no-wrap
-#| msgid "Install Clover in the ESP"
+#, no-wrap
+#| msgid "Install CloverUpdater"
 msgid "Quit CloverUpdater"
-msgstr "Instalar Clover na ESP"
+msgstr "Sai do Clover Updater"
 
 #. type: "534.title"
 #: ../CloverUpdater/CloverUpdater.strings:6
 #, no-wrap
 msgid "Current local Clover revision:"
-msgstr ""
+msgstr "Versão local atual do Clover"
 
 #. type: "538.title"
 #: ../CloverUpdater/CloverUpdater.strings:7
 #, no-wrap
 msgid "Latest update revision:"
-msgstr ""
+msgstr "Última versão do update"
 
 #. type: "542.title"
 #: ../CloverUpdater/CloverUpdater.strings:8
 #, no-wrap
 msgid "Do you want to update ?"
-msgstr ""
+msgstr "Você gostaria de atualizar?"
 
 #. type: "546.title"
 #: ../CloverUpdater/CloverUpdater.strings:9
 #, no-wrap
 msgid "Not now"
-msgstr ""
+msgstr "Agora não"
 
 #. type: "548.title"
 #: ../CloverUpdater/CloverUpdater.strings:10
 #, no-wrap
 msgid "Update"
-msgstr ""
+msgstr "Atualizar"
 
 #. type: "12.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:1
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "iClover"
 msgid "Clover"
-msgstr "iClover"
+msgstr "Clover"
 
 #. type: "104.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:2
 #, no-wrap
 msgid "CLOVER"
-msgstr ""
+msgstr "CLOVER"
 
 #. type: "204.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:3
 #, no-wrap
 msgid "Never"
-msgstr ""
+msgstr "Nunca"
 
 #. type: "205.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:4
 #, no-wrap
 msgid "Daily"
-msgstr ""
+msgstr "Diariamente"
 
 #. type: "206.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:5
 #, no-wrap
 msgid "Weekly"
-msgstr ""
+msgstr "Semanalmente"
 
 #. type: "217.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:6
 #, no-wrap
 msgid "Hourly"
-msgstr ""
+msgstr "A cada hora"
 
 #. type: "239.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:7
 #, no-wrap
 msgid "Monthly"
-msgstr ""
+msgstr "Mesalmente"
 
 #. type: "243.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:8
 #, no-wrap
 msgid "Schedule Check Updates Every:"
-msgstr ""
+msgstr "Agendar a verificação a cada"
 
 #. type: "248.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:9
 #, no-wrap
 msgid "Last check:"
-msgstr ""
+msgstr "Última verificação"
 
 #. type: "258.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:10
 #, no-wrap
 msgid "Check Now"
-msgstr ""
+msgstr "Verificar agora"
 
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:11
 #, no-wrap
 msgid "Copyright (c) 2013 JrCs"
-msgstr ""
+msgstr "Copyright (c) 2013 JrCs"
+
+#
+#~ msgid " "
+#~ msgstr " "
 
 #~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
 #~ msgstr "Ps2MouseAbsolutePointerDxe-32_description"
