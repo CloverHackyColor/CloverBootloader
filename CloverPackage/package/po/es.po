@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-08 11:15+0300\n"
-"PO-Revision-Date: 2013-05-05 16:51+0000\n"
+"PO-Revision-Date: 2013-05-08 13:31+0000\n"
 "Last-Translator: Maniac <emafrias@gmail.com>\n"
 "Language-Team: es <es@li.org>\n"
 "Language: es\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1367772702.0\n"
+"X-POOTLE-MTIME: 1368019861.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -308,7 +308,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:29
 #, no-wrap
 msgid "Install boot0af in MBR"
-msgstr ""
+msgstr "Instalar boot0af en el MBR"
 
 #. type: "boot0af_description"
 #: Resources/templates/Localizable.strings:30
@@ -318,12 +318,18 @@ msgid ""
 "boot0af (boot0 Active First) bootloader try to boot the active partition defined in MBR. If there is no active partition, it will try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature.\n"
 "This choice will setup selected HFS/Fat32 partition to be active."
 msgstr ""
+"Usado para arranque BIOS en placas base con BIOS.\n"
+"boot0af (boot0 Active First - Activa Primero) intenta arrancar la partición "
+"activa definida en el MBR. Si no hay una partición activa, intentará "
+"arrancar la primer partición EFI/FAT32/HFS (definida en el MBR y luego en el "
+"GPT) con una firma PBR válida.\n"
+"Esta opción activará la partición HFS/FAT32 seleccionada."
 
 #. type: "boot0ss_title"
 #: Resources/templates/Localizable.strings:34
 #, no-wrap
 msgid "Install boot0ss in MBR"
-msgstr ""
+msgstr "Instalar boot0ss en el MBR"
 
 #. type: "boot0ss_description"
 #: Resources/templates/Localizable.strings:35
@@ -334,6 +340,14 @@ msgid ""
 "This bootloader is a good choice when you have Windows installed on the same disk because Windows wants to have its partition active.\n"
 "This choice will not activate any partition in MBR."
 msgstr ""
+"Usado para arranque BIOS en placas base con BIOS.\n"
+"boot0ss (boot0 Signature Scanning - Escaneo de Firma) intenta arrancar la "
+"primer partición EFI/FAT32/HFS (definida en el MBR y luego en el GPT) con "
+"una firma PBR válida. Si no encuentra ninguna partición intentará arrancar "
+"la partición activa definida en el MBR.\n"
+"Este gestor de arranque es una buena elección cuando tiene Windows instalado "
+"en el mismo disco porque este quiere tener su partición activa.\n"
+"Esta opción no activará ninguna partición en el MBR."
 
 #. type: "bootNo_title"
 #: Resources/templates/Localizable.strings:40
