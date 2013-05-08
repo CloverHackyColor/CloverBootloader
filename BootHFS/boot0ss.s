@@ -52,9 +52,9 @@
 ;
 
 ;
-; boot0 and boot0hfs share the same code except this ACTIVEFIRST definition
-; boot0 - define ACTIVEFIRST
-; boot0hfs - do not define ACTIVEFIRST
+; boot0af and boot0ss share the same code except this ACTIVEFIRST definition
+; boot0af - define ACTIVEFIRST
+; boot0ss - do not define ACTIVEFIRST
 ;
 ;%define ACTIVEFIRST
 
@@ -405,7 +405,6 @@ DebugChar('J')
 %if VERBOSE
     LogString(done_str)
 %endif
-
     jmp     kBoot0LoadAddr
 
     
@@ -794,17 +793,14 @@ getc:
 ;--------------------------------------------------------------------------
 ; NULL terminated strings.
 ;
-log_title_str		db  0
-;log_title_str		db  10, 13, 'boot0: ', 0
-boot_error_str   	db  'error', 0
-jrcs_mbr db 'M ',0
-jrcs_gpt db 'G ',0
 
 %if VERBOSE
 gpt_str			db  'GPT', 0
 test_str		db  'test', 0
 done_str		db  'done', 0
 %endif
+
+boot_error_str  db  'error', 0
 
 ;--------------------------------------------------------------------------
 ; Pad the rest of the 512 byte sized booter with zeroes. The last
@@ -818,7 +814,14 @@ done_str		db  'done', 0
 ;
 
 pad_boot:
-    times 440-($-$$) db 0
+		times  428-($-$$) db 0  ; 428 = 440 - len(log_title_str)
+
+log_title_str:
+        %ifdef ACTIVEFIRST
+        db  10, 13, 'boot0af: ', 0  ; can be use as signature
+        %else
+        db  10, 13, 'boot0ss: ', 0  ; can be use as signature
+        %endif
 
 pad_table_and_sig:
     times 510-($-$$) db 0

@@ -488,15 +488,19 @@ main ()
         ditto --noextattr --noqtn ${SRCROOT}/CloverV2/Bootloaders/ia32/boot? ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/ia32/
     fi
     ls "${SRCROOT}"/CloverV2/Bootloaders/x64/boot? &>/dev/null && \
-     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/Bootloaders/x64/boot?   ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/x64/
-    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot0       ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
+     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/Bootloaders/x64/boot?  ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/x64/
+    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot0af     ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot0md     ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
-    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot0hfs    ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
+    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot0ss     ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot1f32    ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot1f32alt ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot1h      ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/boot1h2     ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
     ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/fdisk440    ${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/
+    # Add some documentation
+    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/Description.txt  ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
+    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/Installation.txt ${PKG_BUILD_DIR}/${choiceId}/Root/usr/standalone/i386/
+    ditto --noextattr --noqtn ${SRCROOT}/CloverV2/BootSectors/Installation.txt ${PKG_BUILD_DIR}/${choiceId}/Root/EFIROOTDIR/EFI/CLOVER/doc/
 
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
     chmod 755 "${PKG_BUILD_DIR}/${choiceId}/Root/usr/local/bin/fdisk440"
@@ -552,7 +556,7 @@ main ()
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
     addChoice --start-selected="choicePreviouslySelected('$packageRefId')"                          \
               --selected="!choices['UEFI.only'].selected &amp;&amp; choices['$choiceId'].selected"  \
-              --visible="choices['boot0'].selected || choices['boot0hfs'].selected"                 \
+              --visible="choices['boot0'].selected || choices['boot0ss'].selected"                  \
               --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
 # End alternative booting package
 
@@ -572,37 +576,37 @@ main ()
               --pkg-refs="$packageRefId" "${choiceId}"
 # End build bootNo package
 
-# build boot0 package
-    choiceId="boot0"
+# build boot0af package
+    choiceId="boot0af"
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"     \
                        --subst="INSTALLER_CHOICE=$packageRefId"         \
                        --subst="INSTALLER_ALTBOOT_REFID=$altbootRefId"  \
-                       --subst="MBR_SECTOR_FILE"=boot0                  \
+                       --subst="MBR_SECTOR_FILE"=boot0af                \
                        InstallBootsectors
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
     addChoice --group="Bootloader"                                         \
               --enabled="!choices['UEFI.only'].selected"                   \
               --start-selected="choicePreviouslySelected('$packageRefId')" \
               --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
-# End build boot0 package
+# End build boot0af package
 
-# build boot0hfs package
-    choiceId="boot0hfs"
+# build boot0ss package
+    choiceId="boot0ss"
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}"     \
                        --subst="INSTALLER_CHOICE=$packageRefId"         \
                        --subst="INSTALLER_ALTBOOT_REFID=$altbootRefId"  \
-                       --subst="MBR_SECTOR_FILE"=boot0hfs               \
+                       --subst="MBR_SECTOR_FILE"=boot0ss                \
                        InstallBootsectors
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
     addChoice --group="Bootloader"                                          \
               --enabled="!choices['UEFI.only'].selected"                    \
               --start-selected="choicePreviouslySelected('$packageRefId')"  \
               --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
-# End build boot0hfs package
+# End build boot0ss package
 
 # Create CloverEFI Node
     echo "====================== CloverEFI ======================="

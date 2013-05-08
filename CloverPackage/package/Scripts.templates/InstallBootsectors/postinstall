@@ -152,7 +152,7 @@ fi
 
 echo "" >> "$install_log"
 
-if [[ "$bootdisk_partition_scheme" == mbr && "$diskloader" == boot0 ]]; then
+if [[ "$bootdisk_partition_scheme" == mbr && "$diskloader" == boot0af ]]; then
     echo "Setup Active Partition to be: ${bootslice}" >> "$install_log"
     "/usr/local/bin/fdisk440" -e ${bootrdisk} <<-MAKEACTIVE
 print

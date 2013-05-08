@@ -1,6 +1,6 @@
 BootSectors:
-	boot0
-	boot0hfs
+	boot0af
+	boot0ss
 	boot1altV3
 	boot1f32
 	boot1f32alt
@@ -8,9 +8,9 @@ BootSectors:
 	boot1h2
 	fdisk440
 
-boot0 - MBR sector that search for active partition in MBR table. Origin from Apple's boot132 project. This version of boot0 implements hybrid GUID/MBR partition scheme support. Written by Tamás Kosárszky on 2008-03-10
+boot0af (boot0 Active First) - MBR sector that search for active partition in MBR table (then GPT table). Origin from Apple's boot132 project. This version of boot0af implements hybrid GUID/MBR partition scheme support. Written by Tamás Kosárszky on 2008-03-10
 
-boot0hfs - MBR sector that search for partition with valid PBR signature even thou it is not active. Good for Windows that wants to have its partition active. (origin?)
+boot0ss (boot0 Signature Scanning) - MBR sector that search for partition with valid PBR signature regardless if it's active or not. Good for Windows that wants to have its partition active. It share the same code as boot0af. Only scanning is done in different order.
 
 boot1h - PBR sector for HFS+ formatted partition. Search for file "boot" in the root of the partiton.  Origin from Apple's boot132 project. Written by Tamás Kosárszky on 2008-04-14. This is mod by Slice to support large boot file. Not 440kb as origin but 472k needed to boot Clover-64.
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-05 16:23+0300\n"
+"POT-Creation-Date: 2013-05-08 11:15+0300\n"
 "PO-Revision-Date: 2013-05-06 05:24+0000\n"
 "Last-Translator: cyrus <pmbok.solution@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -254,56 +254,45 @@ msgid ""
 "boot2 (On the partition's root directory) for loading /EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgstr ""
 
-#. type: "boot0_title"
+#. type: "boot0af_title"
 #: Resources/templates/Localizable.strings:29
 #, no-wrap
-msgid "BIOS MBR boot0 (HFS+Fat32)"
+msgid "Install boot0af in MBR"
 msgstr ""
 
-#. type: "boot0_description"
+#. type: "boot0af_description"
 #: Resources/templates/Localizable.strings:30
 #, no-wrap
 msgid ""
 "Used for BIOS booting on BIOS motherboards.\n"
-"Use fdisk440 to install boot0 to the first 440 bits of MBR without destroying any existing Windows installation if you have one, then boot0 will search first active HFS partition for boot1h2, or search first active Fat32 partition for boot1f32alt.\n"
-"It will setup selected HFS + Fat32 partitions to be active.\n"
-"Need to format as Fat32 on Win or on Mac as below.\n"
-"  1. Erase as MS-DOS (FAT) with Disk Utility first.\n"
-"  2. diskutil list\n"
-"  3. diskutil unmount /dev/rdisk9s1\n"
-"  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
-"  5. diskutil mount /dev/rdisk9s1"
+"boot0af (boot0 Active First) bootloader try to boot the active partition defined in MBR. If there is no active partition, it will try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature.\n"
+"This choice will setup selected HFS/Fat32 partition to be active."
 msgstr ""
 
-#. type: "boot0hfs_title"
-#: Resources/templates/Localizable.strings:40
+#. type: "boot0ss_title"
+#: Resources/templates/Localizable.strings:34
 #, no-wrap
-msgid "BIOS MBR boot0hfs (HFS+Fat32)"
+msgid "Install boot0ss in MBR"
 msgstr ""
 
-#. type: "boot0hfs_description"
-#: Resources/templates/Localizable.strings:41
+#. type: "boot0ss_description"
+#: Resources/templates/Localizable.strings:35
 #, no-wrap
 msgid ""
 "Used for BIOS booting on BIOS motherboards.\n"
-"Use fdisk440 to install boot0hfs to the first 440 bits of MBR without destroying any existing Windows installation if you have one, then boot0hfs will search first HFS partition for boot1h2, or search first active Fat32 partition for boot1f32alt.\n"
-"It will not setup selected HFS partition to be active, but will setup selected Fat32 partition to be active.\n"
-"Need to format as Fat32 on Win or on Mac as below.\n"
-"  1. Erase as MS-DOS (FAT) with Disk Utility first.\n"
-"  2. diskutil list\n"
-"  3. diskutil unmount /dev/rdisk9s1\n"
-"  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
-"  5. diskutil mount /dev/rdisk9s1"
+"boot0ss (boot0 Signature Scanning) bootloader try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature. If no partition is found it will try to boot the active partition defined in MBR.\n"
+"This bootloader is a good choice when you have Windows installed on the same disk because Windows wants to have its partition active.\n"
+"This choice will not activate any partition in MBR."
 msgstr ""
 
 #. type: "bootNo_title"
-#: Resources/templates/Localizable.strings:51
+#: Resources/templates/Localizable.strings:40
 #, no-wrap
 msgid "Don't update MBR and PBR sectors"
 msgstr ""
 
 #. type: "bootNo_description"
-#: Resources/templates/Localizable.strings:52
+#: Resources/templates/Localizable.strings:41
 #, no-wrap
 msgid ""
 "Don't install any bootloader (boot0X, boot1X).\n"
@@ -312,13 +301,13 @@ msgid ""
 msgstr ""
 
 #. type: "AltBoot_title"
-#: Resources/templates/Localizable.strings:56
+#: Resources/templates/Localizable.strings:45
 #, no-wrap
 msgid "Use alternative booting PBR"
 msgstr ""
 
 #. type: "AltBoot_description"
-#: Resources/templates/Localizable.strings:57
+#: Resources/templates/Localizable.strings:46
 #, no-wrap
 msgid ""
 "Install alternative booting PBR with choice of boot with a key pressed.\n"
@@ -326,13 +315,13 @@ msgid ""
 msgstr ""
 
 #. type: "boot32_title"
-#: Resources/templates/Localizable.strings:61
+#: Resources/templates/Localizable.strings:50
 #, no-wrap
 msgid "Install & Start 32bit boot first"
 msgstr ""
 
 #. type: "boot32_description"
-#: Resources/templates/Localizable.strings:62
+#: Resources/templates/Localizable.strings:51
 #, no-wrap
 msgid ""
 "Install boot files and set to start 32bit first.\n"
@@ -343,13 +332,13 @@ msgid ""
 msgstr ""
 
 #. type: "boot64_title"
-#: Resources/templates/Localizable.strings:68
+#: Resources/templates/Localizable.strings:57
 #, no-wrap
 msgid "Install & Start 64bit boot first"
 msgstr ""
 
 #. type: "boot64_description"
-#: Resources/templates/Localizable.strings:69
+#: Resources/templates/Localizable.strings:58
 #, no-wrap
 msgid ""
 "Install boot files and set to start 64bit first.\n"
@@ -360,122 +349,122 @@ msgid ""
 msgstr ""
 
 #. type: "CloverEFI_title"
-#: Resources/templates/Localizable.strings:78
+#: Resources/templates/Localizable.strings:67
 #, no-wrap
 msgid "CloverEFI"
 msgstr ""
 
 #. type: "CloverEFI_description"
-#: Resources/templates/Localizable.strings:79
+#: Resources/templates/Localizable.strings:68
 #, no-wrap
 msgid "Select the version of CloverEFI to install."
 msgstr ""
 
 #. type: "cloverEFI.32_description"
-#: Resources/templates/Localizable.strings:80
-#: Resources/templates/Localizable.strings:81
+#: Resources/templates/Localizable.strings:69
+#: Resources/templates/Localizable.strings:70
 #, no-wrap
 msgid "CloverEFI 32-bits"
 msgstr ""
 
 #. type: "cloverEFI.64.sata_title"
-#: Resources/templates/Localizable.strings:82
+#: Resources/templates/Localizable.strings:71
 #, no-wrap
 msgid "CloverEFI 64-bits SATA"
 msgstr ""
 
 #. type: "cloverEFI.64.sata_description"
-#: Resources/templates/Localizable.strings:83
+#: Resources/templates/Localizable.strings:72
 #, no-wrap
 msgid "CloverEFI 64-bits using SATA to access drives"
 msgstr ""
 
 #. type: "cloverEFI.64.blockio_title"
-#: Resources/templates/Localizable.strings:84
+#: Resources/templates/Localizable.strings:73
 #, no-wrap
 msgid "CloverEFI 64-bits BiosBlockIO"
 msgstr ""
 
 #. type: "cloverEFI.64.blockio_description"
-#: Resources/templates/Localizable.strings:85
+#: Resources/templates/Localizable.strings:74
 #, no-wrap
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
 msgstr ""
 
 #. type: "Ps2KeyboardDxe-32_description"
-#: Resources/templates/Localizable.strings:90
+#: Resources/templates/Localizable.strings:79
 #, no-wrap
 msgid "PS/2 keyboard driver, 32bit"
 msgstr ""
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
-#: Resources/templates/Localizable.strings:91
+#: Resources/templates/Localizable.strings:80
 #, no-wrap
 msgid "PS/2 trackpad driver, 32bit"
 msgstr ""
 
 #. type: "Ps2MouseDxe-32_description"
-#: Resources/templates/Localizable.strings:92
+#: Resources/templates/Localizable.strings:81
 #, no-wrap
 msgid "PS/2 mouse driver, 32bit"
 msgstr ""
 
 #. type: "Ps2MouseDxe-64_description"
-#: Resources/templates/Localizable.strings:93
+#: Resources/templates/Localizable.strings:82
 #, no-wrap
 msgid "PS/2 mouse driver, 64bit"
 msgstr ""
 
 #. type: "UsbMouseDxe-32_description"
-#: Resources/templates/Localizable.strings:94
+#: Resources/templates/Localizable.strings:83
 #, no-wrap
 msgid "USB mouse driver, 32bit"
 msgstr ""
 
 #. type: "UsbMouseDxe-64_description"
-#: Resources/templates/Localizable.strings:95
+#: Resources/templates/Localizable.strings:84
 #, no-wrap
 msgid "USB mouse driver, 64bit"
 msgstr ""
 
 #. type: "VBoxExt2-32_description"
-#: Resources/templates/Localizable.strings:96
+#: Resources/templates/Localizable.strings:85
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 32bit"
 msgstr ""
 
 #. type: "VBoxExt2-64_description"
-#: Resources/templates/Localizable.strings:97
+#: Resources/templates/Localizable.strings:86
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
 msgstr ""
 
 #. type: "VBoxExt4-32_description"
-#: Resources/templates/Localizable.strings:98
+#: Resources/templates/Localizable.strings:87
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 32bit"
 msgstr ""
 
 #. type: "VBoxExt4-64_description"
-#: Resources/templates/Localizable.strings:99
+#: Resources/templates/Localizable.strings:88
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 64bit"
 msgstr ""
 
 #. type: "XhciDxe-32_description"
-#: Resources/templates/Localizable.strings:100
+#: Resources/templates/Localizable.strings:89
 #, no-wrap
 msgid "USB 3.0 driver, 32bit"
 msgstr ""
 
 #. type: "XhciDxe-64_description"
-#: Resources/templates/Localizable.strings:101
+#: Resources/templates/Localizable.strings:90
 #, no-wrap
 msgid "USB 3.0 driver, 64bit"
 msgstr ""
 
 #. type: "CsmVideoDxe-64_description"
-#: Resources/templates/Localizable.strings:102
+#: Resources/templates/Localizable.strings:91
 #, no-wrap
 msgid ""
 "64bit video driver for Clover GUI allowing to choose more resolutions.\n"
@@ -485,7 +474,7 @@ msgid ""
 msgstr ""
 
 #. type: "DataHubDxe-64_description"
-#: Resources/templates/Localizable.strings:106
+#: Resources/templates/Localizable.strings:95
 #, no-wrap
 msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
@@ -493,7 +482,7 @@ msgid ""
 msgstr ""
 
 #. type: "EmuVariableUefi-64_description"
-#: Resources/templates/Localizable.strings:108
+#: Resources/templates/Localizable.strings:97
 #, no-wrap
 msgid ""
 "64bit driver for support of NVRAM variables needed by MacOSX.\n"
@@ -502,43 +491,43 @@ msgid ""
 msgstr ""
 
 #. type: "OsxAptioFixDrv-64_description"
-#: Resources/templates/Localizable.strings:111
+#: Resources/templates/Localizable.strings:100
 #, no-wrap
 msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
 msgstr ""
 
 #. type: "OsxLowMemFixDrv-64_description"
-#: Resources/templates/Localizable.strings:112
+#: Resources/templates/Localizable.strings:101
 #, no-wrap
 msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
 msgstr ""
 
 #. type: "PartitionDxe-64_description"
-#: Resources/templates/Localizable.strings:113
+#: Resources/templates/Localizable.strings:102
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
 msgstr ""
 
 #. type: "Themes_title"
-#: Resources/templates/Localizable.strings:119
+#: Resources/templates/Localizable.strings:108
 #, no-wrap
 msgid "Themes"
 msgstr ""
 
 #. type: "Themes_description"
-#: Resources/templates/Localizable.strings:120
+#: Resources/templates/Localizable.strings:109
 #, no-wrap
 msgid "Select to install themes."
 msgstr ""
 
 #. type: "black_green_title"
-#: Resources/templates/Localizable.strings:122
+#: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "black_green"
 msgstr ""
 
 #. type: "black_green_description"
-#: Resources/templates/Localizable.strings:123
+#: Resources/templates/Localizable.strings:112
 #, no-wrap
 msgid ""
 "Default black_green theme from Blackosx,\n"
@@ -546,13 +535,13 @@ msgid ""
 msgstr ""
 
 #. type: "AppleStyle_title"
-#: Resources/templates/Localizable.strings:126
+#: Resources/templates/Localizable.strings:115
 #, no-wrap
 msgid "AppleStyle"
 msgstr ""
 
 #. type: "AppleStyle_description"
-#: Resources/templates/Localizable.strings:127
+#: Resources/templates/Localizable.strings:116
 #, no-wrap
 msgid ""
 "AppleStyle theme from Eps,\n"
@@ -560,13 +549,13 @@ msgid ""
 msgstr ""
 
 #. type: "mrengles_title"
-#: Resources/templates/Localizable.strings:130
+#: Resources/templates/Localizable.strings:119
 #, no-wrap
 msgid "mrengles"
 msgstr ""
 
 #. type: "mrengles_description"
-#: Resources/templates/Localizable.strings:131
+#: Resources/templates/Localizable.strings:120
 #, no-wrap
 msgid ""
 "mrengles theme from mrengles,\n"
@@ -574,13 +563,13 @@ msgid ""
 msgstr ""
 
 #. type: "iClover_title"
-#: Resources/templates/Localizable.strings:134
+#: Resources/templates/Localizable.strings:123
 #, no-wrap
 msgid "iClover"
 msgstr ""
 
 #. type: "iClover_description"
-#: Resources/templates/Localizable.strings:135
+#: Resources/templates/Localizable.strings:124
 #, no-wrap
 msgid ""
 "Grey style theme by winlog,\n"
@@ -588,13 +577,13 @@ msgid ""
 msgstr ""
 
 #. type: "buttons_title"
-#: Resources/templates/Localizable.strings:138
+#: Resources/templates/Localizable.strings:127
 #, no-wrap
 msgid "buttons"
 msgstr ""
 
 #. type: "buttons_description"
-#: Resources/templates/Localizable.strings:139
+#: Resources/templates/Localizable.strings:128
 #, no-wrap
 msgid ""
 "Buttons theme from Trauma,\n"
@@ -602,13 +591,13 @@ msgid ""
 msgstr ""
 
 #. type: "hellfire_title"
-#: Resources/templates/Localizable.strings:142
+#: Resources/templates/Localizable.strings:131
 #, no-wrap
 msgid "hellfire"
 msgstr ""
 
 #. type: "hellfire_description"
-#: Resources/templates/Localizable.strings:143
+#: Resources/templates/Localizable.strings:132
 #, no-wrap
 msgid ""
 "Hellfire theme from lllevelll,\n"
@@ -616,13 +605,13 @@ msgid ""
 msgstr ""
 
 #. type: "metal_title"
-#: Resources/templates/Localizable.strings:146
+#: Resources/templates/Localizable.strings:135
 #, no-wrap
 msgid "metal"
 msgstr ""
 
 #. type: "metal_description"
-#: Resources/templates/Localizable.strings:147
+#: Resources/templates/Localizable.strings:136
 #, no-wrap
 msgid ""
 "The original metal theme from Slice,\n"
@@ -630,13 +619,13 @@ msgid ""
 msgstr ""
 
 #. type: "simple_gray_title"
-#: Resources/templates/Localizable.strings:150
+#: Resources/templates/Localizable.strings:139
 #, no-wrap
 msgid "simple_gray"
 msgstr ""
 
 #. type: "simple_gray_description"
-#: Resources/templates/Localizable.strings:151
+#: Resources/templates/Localizable.strings:140
 #, no-wrap
 msgid ""
 "Simple_gray theme from hijeane,\n"
@@ -644,13 +633,13 @@ msgid ""
 msgstr ""
 
 #. type: "wooden_title"
-#: Resources/templates/Localizable.strings:154
+#: Resources/templates/Localizable.strings:143
 #, no-wrap
 msgid "wooden"
 msgstr ""
 
 #. type: "wooden_description"
-#: Resources/templates/Localizable.strings:155
+#: Resources/templates/Localizable.strings:144
 #, no-wrap
 msgid ""
 "Wooden theme from iROOTa,\n"
@@ -658,13 +647,13 @@ msgid ""
 msgstr ""
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:161
+#: Resources/templates/Localizable.strings:150
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr ""
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:162
+#: Resources/templates/Localizable.strings:151
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -672,37 +661,37 @@ msgid ""
 msgstr ""
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:164
+#: Resources/templates/Localizable.strings:153
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr ""
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:165
+#: Resources/templates/Localizable.strings:154
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr ""
 
 #. type: "Optional RC Scripts"
-#: Resources/templates/Localizable.strings:166
+#: Resources/templates/Localizable.strings:155
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr ""
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:167
+#: Resources/templates/Localizable.strings:156
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr ""
 
 #. type: "CloverUpdater_title"
-#: Resources/templates/Localizable.strings:172
+#: Resources/templates/Localizable.strings:161
 #, no-wrap
 msgid "Install CloverUpdater"
 msgstr ""
 
 #. type: "CloverUpdater_description"
-#: Resources/templates/Localizable.strings:173
+#: Resources/templates/Localizable.strings:162
 #, no-wrap
 msgid ""
 "Install CloverUpdater on target volume.\n"

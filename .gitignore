@@ -5,8 +5,8 @@
 *~
 
 # /BootHFS/
-/BootHFS/boot0
-/BootHFS/boot0hfs
+/BootHFS/boot0af
+/BootHFS/boot0ss
 /BootHFS/boot0ab
 /BootHFS/boot1h
 /BootHFS/boot1h2
@@ -16,13 +16,15 @@
 
 # /CloverPackage/
 /CloverPackage/Version.h
+/CloverPackage/CloverV2/BootSectors/boot0ab
+/CloverPackage/CloverV2/BootSectors/boot0af
+/CloverPackage/CloverV2/BootSectors/boot0ss
 /CloverPackage/CloverV2/BootSectors/boot1h
 /CloverPackage/CloverV2/BootSectors/boot1f32alt
 /CloverPackage/CloverV2/BootSectors/boot1f32
 /CloverPackage/CloverV2/BootSectors/boot1altV3
-/CloverPackage/CloverV2/BootSectors/boot0hfs
-/CloverPackage/CloverV2/BootSectors/boot0ab
-/CloverPackage/CloverV2/BootSectors/boot0
+/CloverPackage/CloverV2/BootSectors/Description.txt
+/CloverPackage/CloverV2/BootSectors/Installation.txt
 
 /CloverPackage/CloverV2/Bootloaders/
 /CloverPackage/CloverV2/EFI/BOOT/
