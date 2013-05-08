@@ -1338,6 +1338,7 @@ VOID reinitImages(VOID)
   for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
     Volume = Volumes[VolumeIndex];
     Volume->OSImage = egLoadIcon(ThemeDir, PoolPrint(L"icons\\os_%s.icns", Volume->OSIconName), 128);
+    Volume->DriveImage = ScanVolumeDefaultIcon(Volume);
   }
 }
 
