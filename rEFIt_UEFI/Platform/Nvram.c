@@ -602,8 +602,9 @@ VOID PutNvramPlistToRtVars(VOID)
       continue;
     }
     AsciiStrToUnicodeStr(Tag->string, KeyBuf);
-    DBG(" Adding Key: %s: ", KeyBuf);
-    
+    if (!GlobalConfig.SystemLog) {
+      DBG(" Adding Key: %s: ", KeyBuf);
+    }
     // process value tag
     
     if (ValTag->type == kTagTypeString) {
@@ -611,15 +612,18 @@ VOID PutNvramPlistToRtVars(VOID)
       // <string> element
       Value = ValTag->string;
       Size = AsciiStrLen(Value);
-      DBG("String: Size = %d, Val = '%a'", Size, Value);
+      if (!GlobalConfig.SystemLog) {
+        DBG("String: Size = %d, Val = '%a'", Size, Value);
+      }
       
     } else if (ValTag->type == kTagTypeData) {
       
       // <data> element
       Size = ValTag->dataLen;
       Value = ValTag->data;
-      DBG("Data: Size = %d", Size);
-      
+      if (!GlobalConfig.SystemLog) {
+        DBG("Data: Size = %d", Size);
+      }
     } else {
       DBG("ERROR: Unsupported tag type: %d\n", ValTag->type);
       continue;
@@ -632,7 +636,9 @@ VOID PutNvramPlistToRtVars(VOID)
                               Size,
                               Value
                               );
-    DBG(": %r\n", Status);
+    if (!GlobalConfig.SystemLog) {
+      DBG(": %r\n", Status);
+    }
   }
 }
 

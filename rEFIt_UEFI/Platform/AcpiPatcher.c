@@ -298,11 +298,15 @@ VOID DropTableFromRSDT (UINT32 Signature)
     sign[4] = 0;
     CopyMem((CHAR8*)&OTID, (CHAR8*)&TableEntry->OemTableId, 8);
     OTID[8] = 0;
-    DBG(" Found table: %a  %a\n", sign, OTID);
+    if (!GlobalConfig.SystemLog) {
+      DBG(" Found table: %a  %a\n", sign, OTID);
+    }
 	  if (TableEntry->Signature != Signature) {
 			continue;
     }
-    DBG(" ... dropped\n");
+    if (!GlobalConfig.SystemLog) {
+      DBG(" ... dropped\n");
+    }
     Ptr = EntryPtr;
     Ptr2 = Ptr + 1;
     for (Index2 = Index; Index2 < EntryCount-1; Index2++) {

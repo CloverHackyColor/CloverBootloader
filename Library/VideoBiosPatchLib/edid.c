@@ -48,6 +48,7 @@ broken_edid brokendb[] = {
 const UINT8 edid_v1_header[] = { 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00	};
 
 //----------------------------------------------------------------------------------
+/*
 INT32 edid_compare(UINT8 *edid1, UINT8 *edid2)
 {
 	INT32 x, result = 0;
@@ -70,7 +71,8 @@ INT32 edid_compare(UINT8 *edid1, UINT8 *edid2)
 	
 	return result;
 }
-
+ */
+/*
 INT32 check_edid(UINT8 *edid)
 {
 	UINT8 *block = edid + ID_MANUFACTURER_NAME, manufacturer[4];
@@ -84,7 +86,7 @@ INT32 check_edid(UINT8 *edid)
 	manufacturer[2] = (block[1] & 0x1f) + '@';
 	manufacturer[3] = 0;
 	model = block[2] + (block[3] << 8);
-/*	
+//	
 	for (i = 0; i < (int)ARRAY_SIZE(brokendb); i++) {
 		if (!strncmp((const CHAR8 *)manufacturer, brokendb[i].manufacturer, 4) &&
 			brokendb[i].model == model) {
@@ -111,12 +113,12 @@ INT32 check_edid(UINT8 *edid)
 				ret = fix;
 			break;
 	}
-*/	
+//	
 	return 0; //ret;
 }
-
+*/
 //----------------------------------------------------------------------------------
-
+/*
 static VOID fix_edid(UINT8 *edid, INT32 fix)
 {
 	UINT8 *b;
@@ -133,16 +135,13 @@ static VOID fix_edid(UINT8 *edid, INT32 fix)
 			edid[127] += 0x80;
 	}
 }
-
+*/
 //----------------------------------------------------------------------------------
 
 INT32 edid_checksum(UINT8 *edid)
 {
 	UINT8 i, csum = 0, all_null = 0;
-	INT32 err = 0, fix = check_edid(edid);
-	
-	if (fix)
-		fix_edid(edid, fix);
+	INT32 err = 0;
 	
 	for (i = 0; i < EDID_LENGTH; i++) {
 		csum += edid[i];
@@ -163,10 +162,7 @@ INT32 edid_checksum(UINT8 *edid)
 
 static INT32 edid_check_header(UINT8 *edid)
 {
-	INT32 i, err = 1, fix = check_edid(edid);
-	
-	if (fix)
-		fix_edid(edid, fix);
+	INT32 i, err = 1;
 	
 	for (i = 0; i < 8; i++) {
 		if (edid[i] != edid_v1_header[i])

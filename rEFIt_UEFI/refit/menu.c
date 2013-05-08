@@ -307,7 +307,11 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount++].SValue = gSettings.PointerMirror?L"[+]":L"[ ]";
   //reserve for mouse and continue 
   
-  InputItemsCount = 75;
+  InputItemsCount = 74;
+  InputItems[InputItemsCount].ItemType = BoolValue; //72
+  InputItems[InputItemsCount].BValue   = gSettings.USBFixOwnership;
+  InputItems[InputItemsCount++].SValue = gSettings.USBFixOwnership?L"[+]":L"[ ]";
+
   InputItems[InputItemsCount].ItemType = Hex;  //75
   InputItems[InputItemsCount++].SValue = PoolPrint(L"0x%04x", gSettings.C3Latency);
   InputItems[InputItemsCount].ItemType = Decimal;  //76
@@ -530,7 +534,11 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount++].SValue = gSettings.PointerMirror?L"[+]":L"[ ]";
   //reserve for mouse and continue
   
-  InputItemsCount = 75;
+  InputItemsCount = 74;
+  InputItems[InputItemsCount].ItemType = BoolValue; //88
+  InputItems[InputItemsCount].BValue   = gSettings.USBFixOwnership;
+  InputItems[InputItemsCount++].SValue = gSettings.USBFixOwnership?L"[+]":L"[ ]";
+
   InputItems[InputItemsCount].ItemType = Hex;  //75
   InputItems[InputItemsCount++].SValue = PoolPrint(L"0x%04x", gSettings.C3Latency);
   InputItems[InputItemsCount].ItemType = Decimal;  //76
@@ -596,6 +604,7 @@ VOID FillInputs(VOID)
 VOID ApplyInputs(VOID)
 {
   MACHINE_TYPES Model;
+  BOOLEAN NeedSave = TRUE;
   INTN i = 0;
   UINTN j;
   UINT16 k;
@@ -632,12 +641,12 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
 //    DBG("InputItems[i]: %s\n", InputItems[i].SValue);
     gSettings.PLimitDict = (UINT8)(StrDecimalToUintn(InputItems[i].SValue) & 0x7F);
-    DBG("Item 7=PLimitDict %d\n", gSettings.PLimitDict);
+//    DBG("Item 7=PLimitDict %d\n", gSettings.PLimitDict);
  }
   i++; //8
   if (InputItems[i].Valid) {
     gSettings.UnderVoltStep = (UINT8)(StrDecimalToUintn(InputItems[i].SValue) & 0x3F);
-    DBG("Item 8=UnderVoltStep %d\n", gSettings.UnderVoltStep);
+//    DBG("Item 8=UnderVoltStep %d\n", gSettings.UnderVoltStep);
   }
   i++; //9
   if (InputItems[i].Valid) {
@@ -662,7 +671,7 @@ VOID ApplyInputs(VOID)
   i++; //14
   if (InputItems[i].Valid) {
     gSettings.QPI = (UINT16)StrDecimalToUintn(InputItems[i].SValue);
-    DBG("Apply ProcessorInterconnectSpeed=%d\n", gSettings.QPI);
+ //   DBG("Apply ProcessorInterconnectSpeed=%d\n", gSettings.QPI);
   }
   i++; //15
   if (InputItems[i].Valid) {
@@ -703,9 +712,9 @@ VOID ApplyInputs(VOID)
         ZeroMem(AString, 255);
         AsciiSPrint(AString, 255, "%s", InputItems[i].SValue);
         hex2bin(AString, (UINT8*)&gSettings.Dcfg[0], 8);
-      } else if (gGraphics[j].Vendor == Intel) {
+      } /* else if (gGraphics[j].Vendor == Intel) {
         //nothing to do
-      }
+      } */
     }
     i++; //23
     if (InputItems[i].Valid) {
@@ -785,12 +794,12 @@ VOID ApplyInputs(VOID)
     if (Minus) {
       gSettings.PointerSpeed = -gSettings.PointerSpeed;
     }
-    DBG("Pointer Speed=%d\n", gSettings.PointerSpeed);
+//    DBG("Pointer Speed=%d\n", gSettings.PointerSpeed);
   }
   i++;
   if (InputItems[i].Valid) {
     gSettings.DoubleClickTime = StrDecimalToUintn(InputItems[i].SValue);
-    DBG("DoubleClickTime=%d ms\n", gSettings.DoubleClickTime);
+//    DBG("DoubleClickTime=%d ms\n", gSettings.DoubleClickTime);
   } 
   i++; //72
   if (InputItems[i].Valid) {
@@ -798,7 +807,11 @@ VOID ApplyInputs(VOID)
   }
   
 
-  i = 75; 
+  i = 74;
+  if (InputItems[i].Valid) {
+    gSettings.USBFixOwnership = InputItems[i].BValue;
+  }
+  i++; //75
   if (InputItems[i].Valid) {
     gSettings.C3Latency = (UINT16)StrHexToUint64(InputItems[i].SValue);
   }
@@ -873,7 +886,8 @@ VOID ApplyInputs(VOID)
     LoadUserSettings(SelfRootDir);
     GetUserSettings(SelfRootDir);
     RefillInputs();
-    return; //do not double SaveSettings() as it done by GetUserSettings()
+    NeedSave = FALSE;
+//    return; //do not double SaveSettings() as it done by GetUserSettings()
   }
   i++; //91
   if (InputItems[i].Valid) {
@@ -892,8 +906,10 @@ VOID ApplyInputs(VOID)
     gSettings.MountEFI = AllocateZeroPool(38); // make the room for at least a UUID
     AsciiSPrint(gSettings.MountEFI, 38, "%s", InputItems[i].SValue);
   }    
-  
-  SaveSettings(); 
+  if (NeedSave) {
+    SaveSettings(); 
+  }
+
 }
 
 
@@ -2602,15 +2618,6 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
   InputBootArgs->Entry.AtClick = ActionSelect;
   InputBootArgs->Entry.AtDoubleClick = ActionEnter;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-  /*AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);*/
   
   //15   
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
@@ -3217,29 +3224,25 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.AtClick = ActionSelect;
     InputBootArgs->Entry.AtDoubleClick = ActionEnter;
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-/*    
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"DoubleClick Time [ms]:");
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = StrLen(InputItems[71].SValue); //cursor
-    InputBootArgs->Entry.ShortcutLetter = 'D';
-    InputBootArgs->Item = &InputItems[71];
-    InputBootArgs->Entry.AtClick = ActionSelect;
-    InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-*/
     
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 255, L"Mirror move:");
-    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+    InputBootArgs->Entry.Title = PoolPrint(L"Mirror move:");
     InputBootArgs->Entry.Tag = TAG_INPUT;
     InputBootArgs->Entry.Row = 0xFFFF;
     InputBootArgs->Item = &InputItems[72];
     InputBootArgs->Entry.AtClick = ActionEnter;
     InputBootArgs->Entry.AtRightClick = ActionDetails;
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-        
-    
+
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    InputBootArgs->Entry.Title = PoolPrint(L"USBFixOwnership:");
+    InputBootArgs->Entry.Tag = TAG_INPUT;
+    InputBootArgs->Entry.Row = 0xFFFF;
+    InputBootArgs->Item = &InputItems[74];
+    InputBootArgs->Entry.AtClick = ActionEnter;
+    InputBootArgs->Entry.AtRightClick = ActionDetails;
+    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+
     DFIndex = OptionMenu.EntryCount;
     AddMenuEntry(&OptionMenu, SubMenuDropTables());
     AddMenuEntry(&OptionMenu, SubMenuDsdtFix());
