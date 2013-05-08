@@ -7,15 +7,15 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-08 11:15+0300\n"
-"PO-Revision-Date: 2013-05-05 16:21+0100\n"
-"Last-Translator: JrCs\n"
+"PO-Revision-Date: 2013-05-08 09:57+0000\n"
+"Last-Translator: JrCs <d2t56xxptp@snkmail.com>\n"
 "Language-Team: fr <fr@li.org>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.5\n"
-"X-POOTLE-MTIME: 1367505227.0\n"
+"X-Generator: Pootle 2.5.0-rc1\n"
+"X-POOTLE-MTIME: 1368007024.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -243,7 +243,7 @@ msgstr "Installation spécifique de Clover pour les cartes mères UEFI."
 #: Resources/templates/Localizable.strings:10
 #, no-wrap
 msgid "Install Clover in the ESP"
-msgstr "Installer Clover dans l'ESP"
+msgstr "Installe Clover dans l'ESP"
 
 #. type: "Target.ESP_description"
 #: Resources/templates/Localizable.strings:11
@@ -257,7 +257,7 @@ msgid ""
 "diskutil list\n"
 "newfs_msdos -v EFI -F 32 /dev/rdisk9s1"
 msgstr ""
-"Installer Clover dans l'ESP (EFI System Partition) du volume cible\n"
+"Installe Clover dans l'ESP (EFI System Partition) du volume cible\n"
 "\n"
 "L'ESP doit d'abord être formaté depuis le Mac en Fat32.\n"
 "\n"
@@ -289,7 +289,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:29
 #, no-wrap
 msgid "Install boot0af in MBR"
-msgstr ""
+msgstr "Installe boot0af dans le MBR"
 
 #. type: "boot0af_description"
 #: Resources/templates/Localizable.strings:30
@@ -299,12 +299,18 @@ msgid ""
 "boot0af (boot0 Active First) bootloader try to boot the active partition defined in MBR. If there is no active partition, it will try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature.\n"
 "This choice will setup selected HFS/Fat32 partition to be active."
 msgstr ""
+"Nécessaire pour démarrer depuis le BIOS.\n"
+"boot0af (boot0 Active First) bootloader essaie de démarrer la partition "
+"active définie dans le MBR. S'il n'y a pas de partition active, il va essayé "
+"de démarrer la première partition EFI/FAT32/HFS (définie dans le MBR puis "
+"dans le GPT) ayant une signature PBR valide.\n"
+"Ce choix va activer la partition HFS/FAT32 sélectionnée."
 
 #. type: "boot0ss_title"
 #: Resources/templates/Localizable.strings:34
 #, no-wrap
 msgid "Install boot0ss in MBR"
-msgstr ""
+msgstr "Installe boot0ss dans le MBR"
 
 #. type: "boot0ss_description"
 #: Resources/templates/Localizable.strings:35
@@ -315,6 +321,14 @@ msgid ""
 "This bootloader is a good choice when you have Windows installed on the same disk because Windows wants to have its partition active.\n"
 "This choice will not activate any partition in MBR."
 msgstr ""
+"Nécessaire pour démarrer depuis le BIOS.\n"
+"boot0ss (boot0 Signature Scanning) bootloader va d'abord essayé de démarrer "
+"la première partition EFI/FAT32/HFS (définie dans le MBR puis dans le GPT) "
+"ayant une signature PBR valide. Si aucune partition n'a été trouvée, il va "
+"essayé de démarrer la partition active définie dans le MBR.\n"
+"Ce bootloader est un bon choix quand vous avez Windows d'installé sur le "
+"même disque car Windows nécessite que sa partition soit active.\n"
+"Ce choix ne va activer aucune partition dans le MBR."
 
 #. type: "bootNo_title"
 #: Resources/templates/Localizable.strings:40
@@ -637,7 +651,7 @@ msgid ""
 "Grey style theme by winlog,\n"
 "Install to /EFI/CLOVER/themes/iClover."
 msgstr ""
-"Grey style thème by winlog,\n"
+"Grey style thème par winlog,\n"
 "Installer dans /EFI/CLOVER/themes/iClover."
 
 #. type: "buttons_title"
