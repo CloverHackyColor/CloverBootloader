@@ -2693,13 +2693,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     ScanVolumes();
  //   DBG("ScanVolumes()\n");
     
-    // as soon as we have Volumes, find lates nvram.plist and copy it to RT vars
+    // as soon as we have Volumes, find latest nvram.plist and copy it to RT vars
     if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {
       PutNvramPlistToRtVars();
       //now there is an attempt to change theme
       chosenTheme = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
-      if (Size > 0) {
-        DBG("ChosenTheme at plist %a\n|", chosenTheme);
+      if (chosenTheme != NULL) {
+        DBG("ChosenTheme at plist %a|\n", chosenTheme);
         GlobalConfig.Theme = PoolPrint(L"%a", chosenTheme);
         GlobalConfig.Theme[Size] = 0;
         if (ThemePath) {
@@ -2756,9 +2756,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }  
 
     if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
-      //            DBG("scan tools\n");
       ScanTool();
-      DBG("ScanTool()\n");
+//      DBG("ScanTool()\n");
     }
 //    DBG("ScanTool OK\n");
     
@@ -2776,7 +2775,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
  //   DBG("FinishTextScreen()\n");
     
     DefaultIndex = FindDefaultEntry();
-    DBG("FindDefaultEntry()\n");
+//    DBG("FindDefaultEntry()\n");
     //  DBG("DefaultIndex=%d and MainMenu.EntryCount=%d\n", DefaultIndex, MainMenu.EntryCount);
     if ((DefaultIndex >= 0) && (DefaultIndex < (INTN)MainMenu.EntryCount)) {
       DefaultEntry = MainMenu.Entries[DefaultIndex];

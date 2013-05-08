@@ -1077,7 +1077,7 @@ VOID GetTableType17()
 		//gDMI->CntMemorySlots++;
       if (SmbiosTable.Type17->MemoryErrorInformationHandle < 0xFFFE)
       {
-        DBG("Table has error information, skipping\n"); //why skipping?
+        DBG("Table has error information, checking\n"); //why skipping?
         // Why trust it if it has an error? I guess we could look
         //  up the error handle and determine certain errors may
         //  be skipped where others may not but it seems easier
@@ -1091,16 +1091,16 @@ VOID GetTableType17()
           }
           if (newSmbiosTable.Type18->Hdr.Handle == SmbiosTable.Type17->MemoryErrorInformationHandle) {
             Found = TRUE;
-            DBG("Found error information in table 18/%d, type=0x%x, operation=0x%x syndrome=0x%x\n", Index2,
+            DBG("Found memory information in table 18/%d, type=0x%x, operation=0x%x syndrome=0x%x\n", Index2,
                 newSmbiosTable.Type18->ErrorType,
                 newSmbiosTable.Type18->ErrorOperation,
                 newSmbiosTable.Type18->VendorSyndrome);
             switch (newSmbiosTable.Type18->ErrorType) {
               case MemoryErrorOk:
-                DBG("...error type: OK\n");
+                DBG("...memory OK\n");
                 break;
               case MemoryErrorCorrected:
-                DBG("...error type: Corrected\n");
+                DBG("...memory errors corrected\n");
                 break;
               case MemoryErrorChecksum:
                 DBG("...error type: Checksum\n");
@@ -1115,6 +1115,7 @@ VOID GetTableType17()
         if (Found) {
           if ((newSmbiosTable.Type18->ErrorType != MemoryErrorOk) &&
               (newSmbiosTable.Type18->ErrorType != MemoryErrorCorrected)) {
+            DBG("skipping wrong module\n");
             continue;
           }
         }

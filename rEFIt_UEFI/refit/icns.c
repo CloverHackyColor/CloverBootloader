@@ -138,8 +138,11 @@ EG_IMAGE * LoadOSIcon(IN CHAR16 *OSIconName OPTIONAL, IN CHAR16 *FallbackIconNam
     return Image;
   
   // try the fallback name with os_ instead of boot_
-  if (BootLogo)
-    return LoadOSIcon(NULL, FallbackIconName, FALSE);
+  if (BootLogo) {
+    Image = LoadOSIcon(NULL, FallbackIconName, FALSE);
+    if (Image != NULL)
+      return Image;
+  }
   
   return DummyImage(128);
 }
@@ -181,7 +184,7 @@ EG_IMAGE * DummyImage(IN UINTN PixelSize)
                 *Ptr++ = 0;
             } else {
                 *Ptr++ = 0;
-                *Ptr++ = 255;
+                *Ptr++ = 255; //yellow
                 *Ptr++ = 255;
             }
             *Ptr++ = 144;
