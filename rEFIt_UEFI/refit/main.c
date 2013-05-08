@@ -2521,7 +2521,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   ReadConfig(0);
   //get theme from NVRAM in the case of UEFI boot
   chosenTheme = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
-  if (Size > 0) {
+  if (chosenTheme) {
     DBG("ChosenTheme at NVRAM %a\n|", chosenTheme);
     GlobalConfig.Theme = PoolPrint(L"%a", chosenTheme);
     GlobalConfig.Theme[Size] = 0;
