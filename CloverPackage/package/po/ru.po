@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-08 11:15+0300\n"
-"PO-Revision-Date: 2013-05-08 10:58+0000\n"
+"PO-Revision-Date: 2013-05-08 17:16+0000\n"
 "Last-Translator: Slice <sergey.slice@gmail.com>\n"
 "Language-Team: ru <ru@li.org>\n"
 "Language: ru\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1368010704.0\n"
+"X-POOTLE-MTIME: 1368033374.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -309,7 +309,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:29
 #, no-wrap
 msgid "Install boot0af in MBR"
-msgstr "Установить boot9af на MBR"
+msgstr "Установить boot0af на MBR"
 
 #. type: "boot0af_description"
 #: Resources/templates/Localizable.strings:30
