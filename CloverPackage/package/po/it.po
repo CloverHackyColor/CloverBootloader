@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-08 11:15+0300\n"
-"PO-Revision-Date: 2013-05-07 20:43+0000\n"
+"PO-Revision-Date: 2013-05-08 10:48+0000\n"
 "Last-Translator: mackie100 <mackie.proj@yahoo.com>\n"
 "Language-Team: it <it@li.org>\n"
 "Language: it\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1367959429.0\n"
+"X-POOTLE-MTIME: 1368010109.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -304,7 +304,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:29
 #, no-wrap
 msgid "Install boot0af in MBR"
-msgstr ""
+msgstr "Installare boot0af su MBR"
 
 #. type: "boot0af_description"
 #: Resources/templates/Localizable.strings:30
@@ -314,12 +314,18 @@ msgid ""
 "boot0af (boot0 Active First) bootloader try to boot the active partition defined in MBR. If there is no active partition, it will try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature.\n"
 "This choice will setup selected HFS/Fat32 partition to be active."
 msgstr ""
+"Necessario per l'avvio da schede madri con BIOS.\n"
+"boot0af (boot0 active first) bootloader cerca di avviare la partizione "
+"attiva definita nella MBR. Se non vi è alcuna partizione attiva, tenterà di "
+"avviare la prima partizione EFI/FAT32/HFS (definita nella MBR e poi nella "
+"GPT) con una signature PBR valida.\n"
+"Se questo è selezionato la partizione HFS e Fat32 saranno attivate."
 
 #. type: "boot0ss_title"
 #: Resources/templates/Localizable.strings:34
 #, no-wrap
 msgid "Install boot0ss in MBR"
-msgstr ""
+msgstr "Installare boot0ss su MBR"
 
 #. type: "boot0ss_description"
 #: Resources/templates/Localizable.strings:35
@@ -330,6 +336,14 @@ msgid ""
 "This bootloader is a good choice when you have Windows installed on the same disk because Windows wants to have its partition active.\n"
 "This choice will not activate any partition in MBR."
 msgstr ""
+"Necessario per l'avvio da schede madri con BIOS.\n"
+"boot0ss (boot0 signature scanning) bootloader cerca di avviare la prima "
+"partizione EFI/FAT32/HFS (definita nella MBR e poi nella GPT) con una "
+"signature PBR valida. Se nessuna partizione è stata trovata, cercherà di "
+"avviare la partizione attiva definita nella MBR.\n"
+"Questa è una buona scelta quando si ha Windows installato sullo stesso disco "
+"perché Windows richiede che la partizione sia attiva.\n"
+"Questa scelta non attiverà alcuna partizione nella MBR."
 
 #. type: "bootNo_title"
 #: Resources/templates/Localizable.strings:40
