@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-08 11:15+0300\n"
+"POT-Creation-Date: 2013-05-09 17:52+0300\n"
 "PO-Revision-Date: 2013-05-08 09:57+0000\n"
 "Last-Translator: JrCs <d2t56xxptp@snkmail.com>\n"
 "Language-Team: fr <fr@li.org>\n"
@@ -300,10 +300,7 @@ msgid ""
 "This choice will setup selected HFS/Fat32 partition to be active."
 msgstr ""
 "Nécessaire pour démarrer depuis le BIOS.\n"
-"boot0af (boot0 Active First) bootloader essaie de démarrer la partition "
-"active définie dans le MBR. S'il n'y a pas de partition active, il va essayé "
-"de démarrer la première partition EFI/FAT32/HFS (définie dans le MBR puis "
-"dans le GPT) ayant une signature PBR valide.\n"
+"boot0af (boot0 Active First) bootloader essaie de démarrer la partition active définie dans le MBR. S'il n'y a pas de partition active, il va essayé de démarrer la première partition EFI/FAT32/HFS (définie dans le MBR puis dans le GPT) ayant une signature PBR valide.\n"
 "Ce choix va activer la partition HFS/FAT32 sélectionnée."
 
 #. type: "boot0ss_title"
@@ -322,12 +319,8 @@ msgid ""
 "This choice will not activate any partition in MBR."
 msgstr ""
 "Nécessaire pour démarrer depuis le BIOS.\n"
-"boot0ss (boot0 Signature Scanning) bootloader va d'abord essayé de démarrer "
-"la première partition EFI/FAT32/HFS (définie dans le MBR puis dans le GPT) "
-"ayant une signature PBR valide. Si aucune partition n'a été trouvée, il va "
-"essayé de démarrer la partition active définie dans le MBR.\n"
-"Ce bootloader est un bon choix quand vous avez Windows d'installé sur le "
-"même disque car Windows nécessite que sa partition soit active.\n"
+"boot0ss (boot0 Signature Scanning) bootloader va d'abord essayé de démarrer la première partition EFI/FAT32/HFS (définie dans le MBR puis dans le GPT) ayant une signature PBR valide. Si aucune partition n'a été trouvée, il va essayé de démarrer la partition active définie dans le MBR.\n"
+"Ce bootloader est un bon choix quand vous avez Windows d'installé sur le même disque car Windows nécessite que sa partition soit active.\n"
 "Ce choix ne va activer aucune partition dans le MBR."
 
 #. type: "bootNo_title"
@@ -882,29 +875,43 @@ msgstr "Heure"
 msgid "Monthly"
 msgstr "Mois"
 
-#. type: "243.title"
+#. type: "241.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:8
+#, fuzzy, no-wrap
+#| msgid "CloverUpdater"
+msgid "Check for Updates"
+msgstr "CloverUpdater"
+
+#. type: "243.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:9
 #, no-wrap
 msgid "Schedule Check Updates Every:"
 msgstr "Planifier une vérification chaque:"
 
 #. type: "248.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:9
+#: ../CloverPrefpane/CloverPrefpane.strings:10
 #, no-wrap
 msgid "Last check:"
 msgstr "Dernière vérification:"
 
 #. type: "258.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:10
+#: ../CloverPrefpane/CloverPrefpane.strings:11
 #, no-wrap
 msgid "Check Now"
 msgstr "Vérifier Maintenant"
 
 #. type: "262.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:11
+#: ../CloverPrefpane/CloverPrefpane.strings:12
 #, no-wrap
 msgid "Copyright (c) 2013 JrCs"
 msgstr "Copyright © 2013 JrCs"
+
+#. type: "292.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:13
+#, fuzzy, no-wrap
+#| msgid "Clover v2"
+msgid "Clover Theme"
+msgstr "Clover v2"
 
 #~ msgid ""
 #~ "Used for BIOS booting on BIOS motherboards.\n"

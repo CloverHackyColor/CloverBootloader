@@ -15,6 +15,9 @@
 		A38BDC571733968700DE7DA1 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A38BDC561733968700DE7DA1 /* Cocoa.framework */; };
 		A38BDC591733968700DE7DA1 /* PreferencePanes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A38BDC581733968700DE7DA1 /* PreferencePanes.framework */; };
 		A38BDC631733968700DE7DA1 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A38BDC611733968700DE7DA1 /* InfoPlist.strings */; };
+		A3958D71173BBC1500134638 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3958D6F173BBC1500134638 /* Security.framework */; };
+		A3958D72173BBC1500134638 /* SecurityInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3958D70173BBC1500134638 /* SecurityInterface.framework */; };
+		A3958D73173BD34300134638 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3958D6D173BABC000134638 /* IOKit.framework */; };
 		A3B4888217368F72009D8B76 /* CloverPrefpane.xib in Resources */ = {isa = PBXBuildFile; fileRef = A35A6F39173644AF007B2103 /* CloverPrefpane.xib */; };
 /* End PBXBuildFile section */
 
@@ -41,6 +44,9 @@
 		A38BDC5C1733968700DE7DA1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		A38BDC5D1733968700DE7DA1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A38BDC621733968700DE7DA1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		A3958D6D173BABC000134638 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = ../../../../../../../../System/Library/Frameworks/IOKit.framework; sourceTree = "<group>"; };
+		A3958D6F173BBC1500134638 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = ../../../../../../../../System/Library/Frameworks/Security.framework; sourceTree = "<group>"; };
+		A3958D70173BBC1500134638 /* SecurityInterface.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SecurityInterface.framework; path = ../../../../../../../../System/Library/Frameworks/SecurityInterface.framework; sourceTree = "<group>"; };
 		A395ACC91737C8D100406170 /* cz */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = cz; path = cz.lproj/CloverPrefpane.xib; sourceTree = "<group>"; };
 		A395ACCA1737C90100406170 /* de */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = de; path = de.lproj/CloverPrefpane.xib; sourceTree = "<group>"; };
 		A395ACCB1737C92A00406170 /* fa */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = fa; path = fa.lproj/CloverPrefpane.xib; sourceTree = "<group>"; };
@@ -56,6 +62,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A3958D73173BD34300134638 /* IOKit.framework in Frameworks */,
+				A3958D71173BBC1500134638 /* Security.framework in Frameworks */,
+				A3958D72173BBC1500134638 /* SecurityInterface.framework in Frameworks */,
 				A38BDC571733968700DE7DA1 /* Cocoa.framework in Frameworks */,
 				A38BDC591733968700DE7DA1 /* PreferencePanes.framework in Frameworks */,
 				A3340A74173418270065BC3F /* ServiceManagement.framework in Frameworks */,
@@ -68,6 +77,9 @@
 		A38BDC481733968700DE7DA1 = {
 			isa = PBXGroup;
 			children = (
+				A3958D6F173BBC1500134638 /* Security.framework */,
+				A3958D70173BBC1500134638 /* SecurityInterface.framework */,
+				A3958D6D173BABC000134638 /* IOKit.framework */,
 				A38BDC5E1733968700DE7DA1 /* CloverPrefpane */,
 				A3C990561737BE9800636EF5 /* Other files */,
 				A38BDC551733968700DE7DA1 /* Frameworks */,

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-08 11:15+0300\n"
+"POT-Creation-Date: 2013-05-09 17:52+0300\n"
 "PO-Revision-Date: 2013-05-08 13:31+0000\n"
 "Last-Translator: Maniac <emafrias@gmail.com>\n"
 "Language-Team: es <es@li.org>\n"
@@ -319,10 +319,7 @@ msgid ""
 "This choice will setup selected HFS/Fat32 partition to be active."
 msgstr ""
 "Usado para arranque BIOS en placas base con BIOS.\n"
-"boot0af (boot0 Active First - Activa Primero) intenta arrancar la partición "
-"activa definida en el MBR. Si no hay una partición activa, intentará "
-"arrancar la primer partición EFI/FAT32/HFS (definida en el MBR y luego en el "
-"GPT) con una firma PBR válida.\n"
+"boot0af (boot0 Active First - Activa Primero) intenta arrancar la partición activa definida en el MBR. Si no hay una partición activa, intentará arrancar la primer partición EFI/FAT32/HFS (definida en el MBR y luego en el GPT) con una firma PBR válida.\n"
 "Esta opción activará la partición HFS/FAT32 seleccionada."
 
 #. type: "boot0ss_title"
@@ -341,12 +338,8 @@ msgid ""
 "This choice will not activate any partition in MBR."
 msgstr ""
 "Usado para arranque BIOS en placas base con BIOS.\n"
-"boot0ss (boot0 Signature Scanning - Escaneo de Firma) intenta arrancar la "
-"primer partición EFI/FAT32/HFS (definida en el MBR y luego en el GPT) con "
-"una firma PBR válida. Si no encuentra ninguna partición intentará arrancar "
-"la partición activa definida en el MBR.\n"
-"Este gestor de arranque es una buena elección cuando tiene Windows instalado "
-"en el mismo disco porque este quiere tener su partición activa.\n"
+"boot0ss (boot0 Signature Scanning - Escaneo de Firma) intenta arrancar la primer partición EFI/FAT32/HFS (definida en el MBR y luego en el GPT) con una firma PBR válida. Si no encuentra ninguna partición intentará arrancar la partición activa definida en el MBR.\n"
+"Este gestor de arranque es una buena elección cuando tiene Windows instalado en el mismo disco porque este quiere tener su partición activa.\n"
 "Esta opción no activará ninguna partición en el MBR."
 
 #. type: "bootNo_title"
@@ -900,29 +893,44 @@ msgstr "Cada hora"
 msgid "Monthly"
 msgstr "Mensualmente"
 
-#. type: "243.title"
+#. type: "241.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:8
+#, fuzzy, no-wrap
+#| msgid "CloverUpdater"
+msgid "Check for Updates"
+msgstr "CloverUpdater"
+
+#. type: "243.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:9
 #, no-wrap
 msgid "Schedule Check Updates Every:"
 msgstr "Comprobar actualizaciones:"
 
 #. type: "248.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:9
+#: ../CloverPrefpane/CloverPrefpane.strings:10
 #, no-wrap
 msgid "Last check:"
 msgstr "Última comprobación:"
 
 #. type: "258.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:10
+#: ../CloverPrefpane/CloverPrefpane.strings:11
 #, no-wrap
 msgid "Check Now"
 msgstr "Comprobar ahora..."
 
 #. type: "262.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:11
+#: ../CloverPrefpane/CloverPrefpane.strings:12
 #, no-wrap
 msgid "Copyright (c) 2013 JrCs"
 msgstr "Copyright (c) JrCs 2013"
+
+#
+#. type: "292.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:13
+#, fuzzy, no-wrap
+#| msgid "Clover v2"
+msgid "Clover Theme"
+msgstr "Clover v2"
 
 #~ msgid ""
 #~ "Used for BIOS booting on BIOS motherboards.\n"

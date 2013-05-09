@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-08 11:15+0300\n"
+"POT-Creation-Date: 2013-05-09 17:52+0300\n"
 "PO-Revision-Date: 2013-04-27 09:51+0200\n"
 "Last-Translator: admin <admin@zetam.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -790,26 +790,40 @@ msgstr ""
 msgid "Monthly"
 msgstr ""
 
-#. type: "243.title"
+#. type: "241.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:8
+#, fuzzy, no-wrap
+#| msgid "iClover"
+msgid "Check for Updates"
+msgstr "iClover"
+
+#. type: "243.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:9
 #, no-wrap
 msgid "Schedule Check Updates Every:"
 msgstr ""
 
 #. type: "248.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:9
+#: ../CloverPrefpane/CloverPrefpane.strings:10
 #, no-wrap
 msgid "Last check:"
 msgstr ""
 
 #. type: "258.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:10
+#: ../CloverPrefpane/CloverPrefpane.strings:11
 #, no-wrap
 msgid "Check Now"
 msgstr ""
 
 #. type: "262.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:11
+#: ../CloverPrefpane/CloverPrefpane.strings:12
 #, no-wrap
 msgid "Copyright (c) 2013 JrCs"
 msgstr ""
+
+#. type: "292.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:13
+#, fuzzy, no-wrap
+#| msgid "Clover v2"
+msgid "Clover Theme"
+msgstr "Clover v2"

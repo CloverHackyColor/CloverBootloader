@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-08 11:15+0300\n"
+"POT-Creation-Date: 2013-05-09 17:52+0300\n"
 "PO-Revision-Date: 2013-05-08 11:03+0000\n"
 "Last-Translator: archintosh <ardr_1109@yahoo.com>\n"
 "Language-Team: id <id@li.org>\n"
@@ -313,10 +313,7 @@ msgid ""
 "This choice will setup selected HFS/Fat32 partition to be active."
 msgstr ""
 "Dipakai untuk BIOS booting pada BIOS mobo.\n"
-"boot0af (boot0 Active First) bootloader mencoba untuk boot partisi aktif "
-"yang ada di MBR. Jika tidak ada partisi aktif, maka akan mencoba untuk boot "
-"partisi pertama EFI/FAT32/HFS (yang ada di MBR dan kemudian di GPT) dengan "
-"signature PBR yang valid.\n"
+"boot0af (boot0 Active First) bootloader mencoba untuk boot partisi aktif yang ada di MBR. Jika tidak ada partisi aktif, maka akan mencoba untuk boot partisi pertama EFI/FAT32/HFS (yang ada di MBR dan kemudian di GPT) dengan signature PBR yang valid.\n"
 "Pilihan ini akan membuat partisi HFS/Fat32 yang terpilih menjadi aktif."
 
 #. type: "boot0ss_title"
@@ -335,12 +332,8 @@ msgid ""
 "This choice will not activate any partition in MBR."
 msgstr ""
 "Dipakai untuk BIOS booting pada BIOS mobo.\n"
-"boot0ss (boot0 Signature Scanning) bootloader mencoba untuk boot partisi "
-"pertama EFI/FAT32/HFS (yang ada di MBR dan kemudian di GPT) dengan signature "
-"PBR yang valid. Jika partisi tidak ditemukan maka akan mencoba untuk boot "
-"partisi aktif yang ada di MBR.\n"
-"Bootloader ini adalah pilihan yang baik bila Windows diinstall pada disk "
-"yang sama karena Windows butuh partisinya dalam keadaan aktif.\n"
+"boot0ss (boot0 Signature Scanning) bootloader mencoba untuk boot partisi pertama EFI/FAT32/HFS (yang ada di MBR dan kemudian di GPT) dengan signature PBR yang valid. Jika partisi tidak ditemukan maka akan mencoba untuk boot partisi aktif yang ada di MBR.\n"
+"Bootloader ini adalah pilihan yang baik bila Windows diinstall pada disk yang sama karena Windows butuh partisinya dalam keadaan aktif.\n"
 "Pilihan ini tidak membuat partisi pada MBR menjadi aktif."
 
 #. type: "bootNo_title"
@@ -894,29 +887,44 @@ msgstr "Tiap jam"
 msgid "Monthly"
 msgstr "Bulanan"
 
-#. type: "243.title"
+#. type: "241.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:8
+#, fuzzy, no-wrap
+#| msgid "CloverUpdater"
+msgid "Check for Updates"
+msgstr "CloverUpdater"
+
+#. type: "243.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:9
 #, no-wrap
 msgid "Schedule Check Updates Every:"
 msgstr "Jadwalkan Cek Updates Setiap:"
 
 #. type: "248.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:9
+#: ../CloverPrefpane/CloverPrefpane.strings:10
 #, no-wrap
 msgid "Last check:"
 msgstr "Cek terakhir:"
 
 #. type: "258.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:10
+#: ../CloverPrefpane/CloverPrefpane.strings:11
 #, no-wrap
 msgid "Check Now"
 msgstr "Cek Sekarang"
 
 #. type: "262.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:11
+#: ../CloverPrefpane/CloverPrefpane.strings:12
 #, no-wrap
 msgid "Copyright (c) 2013 JrCs"
 msgstr "Copyright (c) 2013 JrCs"
+
+#
+#. type: "292.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:13
+#, fuzzy, no-wrap
+#| msgid "Clover v2"
+msgid "Clover Theme"
+msgstr "Clover v2"
 
 #~ msgid ""
 #~ "Used for BIOS booting on BIOS motherboards.\n"

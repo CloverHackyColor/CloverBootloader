@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-08 11:15+0300\n"
+"POT-Creation-Date: 2013-05-09 17:52+0300\n"
 "PO-Revision-Date: 2013-05-05 15:22+0000\n"
 "Last-Translator: Xpam.AmAdEuS <miljenkohalapir@outlook.com>\n"
 "Language-Team: hr <hr@li.org>\n"
@@ -878,29 +878,44 @@ msgstr "Svaki sat"
 msgid "Monthly"
 msgstr "Mjesečno"
 
-#. type: "243.title"
+#. type: "241.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:8
+#, fuzzy, no-wrap
+#| msgid "CloverUpdater"
+msgid "Check for Updates"
+msgstr "Provjera nove verzije"
+
+#. type: "243.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:9
 #, no-wrap
 msgid "Schedule Check Updates Every:"
 msgstr "Podesi provjeru nadogradnje za:"
 
 #. type: "248.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:9
+#: ../CloverPrefpane/CloverPrefpane.strings:10
 #, no-wrap
 msgid "Last check:"
 msgstr "Posljednja provjera:"
 
 #. type: "258.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:10
+#: ../CloverPrefpane/CloverPrefpane.strings:11
 #, no-wrap
 msgid "Check Now"
 msgstr "Provjeri sad"
 
 #. type: "262.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:11
+#: ../CloverPrefpane/CloverPrefpane.strings:12
 #, no-wrap
 msgid "Copyright (c) 2013 JrCs"
 msgstr "Autorska prava (c) 2003 JrCs"
+
+#
+#. type: "292.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:13
+#, fuzzy, no-wrap
+#| msgid "Clover v2"
+msgid "Clover Theme"
+msgstr "Clover v2"
 
 #~ msgid ""
 #~ "Used for BIOS booting on BIOS motherboards.\n"

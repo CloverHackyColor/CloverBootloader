@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-08 11:15+0300\n"
+"POT-Creation-Date: 2013-05-09 17:52+0300\n"
 "PO-Revision-Date: 2013-05-08 10:48+0000\n"
 "Last-Translator: mackie100 <mackie.proj@yahoo.com>\n"
 "Language-Team: it <it@li.org>\n"
@@ -315,10 +315,7 @@ msgid ""
 "This choice will setup selected HFS/Fat32 partition to be active."
 msgstr ""
 "Necessario per l'avvio da schede madri con BIOS.\n"
-"boot0af (boot0 active first) bootloader cerca di avviare la partizione "
-"attiva definita nella MBR. Se non vi è alcuna partizione attiva, tenterà di "
-"avviare la prima partizione EFI/FAT32/HFS (definita nella MBR e poi nella "
-"GPT) con una signature PBR valida.\n"
+"boot0af (boot0 active first) bootloader cerca di avviare la partizione attiva definita nella MBR. Se non vi è alcuna partizione attiva, tenterà di avviare la prima partizione EFI/FAT32/HFS (definita nella MBR e poi nella GPT) con una signature PBR valida.\n"
 "Se questo è selezionato la partizione HFS e Fat32 saranno attivate."
 
 #. type: "boot0ss_title"
@@ -337,12 +334,8 @@ msgid ""
 "This choice will not activate any partition in MBR."
 msgstr ""
 "Necessario per l'avvio da schede madri con BIOS.\n"
-"boot0ss (boot0 signature scanning) bootloader cerca di avviare la prima "
-"partizione EFI/FAT32/HFS (definita nella MBR e poi nella GPT) con una "
-"signature PBR valida. Se nessuna partizione è stata trovata, cercherà di "
-"avviare la partizione attiva definita nella MBR.\n"
-"Questa è una buona scelta quando si ha Windows installato sullo stesso disco "
-"perché Windows richiede che la partizione sia attiva.\n"
+"boot0ss (boot0 signature scanning) bootloader cerca di avviare la prima partizione EFI/FAT32/HFS (definita nella MBR e poi nella GPT) con una signature PBR valida. Se nessuna partizione è stata trovata, cercherà di avviare la partizione attiva definita nella MBR.\n"
+"Questa è una buona scelta quando si ha Windows installato sullo stesso disco perché Windows richiede che la partizione sia attiva.\n"
 "Questa scelta non attiverà alcuna partizione nella MBR."
 
 #. type: "bootNo_title"
@@ -898,36 +891,54 @@ msgstr "Ogni ora"
 msgid "Monthly"
 msgstr "Mensilmente"
 
-#. type: "243.title"
+#. type: "241.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:8
+#, fuzzy, no-wrap
+#| msgid "CloverUpdater"
+msgid "Check for Updates"
+msgstr "CloverUpdater"
+
+#. type: "243.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:9
 #, no-wrap
 msgid "Schedule Check Updates Every:"
 msgstr "Verifica disponibilità aggiornamenti:"
 
 #. type: "248.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:9
+#: ../CloverPrefpane/CloverPrefpane.strings:10
 #, no-wrap
 msgid "Last check:"
 msgstr "Ultima verifica:"
 
 #. type: "258.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:10
+#: ../CloverPrefpane/CloverPrefpane.strings:11
 #, no-wrap
 msgid "Check Now"
 msgstr "Controlla ora"
 
 #. type: "262.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:11
+#: ../CloverPrefpane/CloverPrefpane.strings:12
 #, no-wrap
 msgid "Copyright (c) 2013 JrCs"
 msgstr "Copyright (c) 2013 JrCs"
+
+#
+#. type: "292.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:13
+#, fuzzy, no-wrap
+#| msgid "Clover v2"
+msgid "Clover Theme"
+msgstr "Clover v2"
 
 #~ msgid "BIOS MBR boot0 (HFS+Fat32)"
 #~ msgstr "BIOS MBR boot0 (HFS+Fat32)"
 
 #~ msgid ""
 #~ "Used for BIOS booting on BIOS motherboards.\n"
-#~ "Use fdisk440 to install boot0 to the first 440 bits of MBR without destroying any existing Windows installation if you have one, then boot0 will search first active HFS partition for boot1h2, or search first active Fat32 partition for boot1f32alt.\n"
+#~ "Use fdisk440 to install boot0 to the first 440 bits of MBR without "
+#~ "destroying any existing Windows installation if you have one, then boot0 "
+#~ "will search first active HFS partition for boot1h2, or search first "
+#~ "active Fat32 partition for boot1f32alt.\n"
 #~ "It will setup selected HFS + Fat32 partitions to be active.\n"
 #~ "Need to format as Fat32 on Win or on Mac as below.\n"
 #~ "  1. Erase as MS-DOS (FAT) with Disk Utility first.\n"
@@ -937,7 +948,10 @@ msgstr "Copyright (c) 2013 JrCs"
 #~ "  5. diskutil mount /dev/rdisk9s1"
 #~ msgstr ""
 #~ "Usato per l'avvio da BIOS nelle schede madri con BIOS.\n"
-#~ "Usa fdisk440 per installare il boot0 nei primi 440 bits del MBR senza alterare l'installazione Windows se possedute, quindi boot0 cercherà la prima partizione HFS attiva per boot1h2, o cercherà nella prima partizione attiva Fat32 per il boot1f32alt.\n"
+#~ "Usa fdisk440 per installare il boot0 nei primi 440 bits del MBR senza "
+#~ "alterare l'installazione Windows se possedute, quindi boot0 cercherà la "
+#~ "prima partizione HFS attiva per boot1h2, o cercherà nella prima "
+#~ "partizione attiva Fat32 per il boot1f32alt.\n"
 #~ "Se questo è selezionato la partizione HFS e Fat32 saranno attivate.\n"
 #~ "Bisogna formattare come Fat32 in Win o Mac nel seguente modo.\n"
 #~ "  1. Prima cancellare come MS-DOS (FAT) da Utilità Disco.\n"
@@ -951,8 +965,12 @@ msgstr "Copyright (c) 2013 JrCs"
 
 #~ msgid ""
 #~ "Used for BIOS booting on BIOS motherboards.\n"
-#~ "Use fdisk440 to install boot0hfs to the first 440 bits of MBR without destroying any existing Windows installation if you have one, then boot0hfs will search first HFS partition for boot1h2, or search first active Fat32 partition for boot1f32alt.\n"
-#~ "It will not setup selected HFS partition to be active, but will setup selected Fat32 partition to be active.\n"
+#~ "Use fdisk440 to install boot0hfs to the first 440 bits of MBR without "
+#~ "destroying any existing Windows installation if you have one, then "
+#~ "boot0hfs will search first HFS partition for boot1h2, or search first "
+#~ "active Fat32 partition for boot1f32alt.\n"
+#~ "It will not setup selected HFS partition to be active, but will setup "
+#~ "selected Fat32 partition to be active.\n"
 #~ "Need to format as Fat32 on Win or on Mac as below.\n"
 #~ "  1. Erase as MS-DOS (FAT) with Disk Utility first.\n"
 #~ "  2. diskutil list\n"
@@ -961,8 +979,12 @@ msgstr "Copyright (c) 2013 JrCs"
 #~ "  5. diskutil mount /dev/rdisk9s1"
 #~ msgstr ""
 #~ "Usato per l'avvio da BIOS nelle schede madri con BIOS.\n"
-#~ "Usa fdisk440 per installare il boot0 nei primi 440 bits del MBR senza inibire precedenti installazioni di Windows se possedute, quindi boot0 cercherà la prima partizione HFS attiva per boot1h2, o cercherà nella prima partizione attiva Fat32 per il boot1f32alt.\n"
-#~ "Se non si seleziona questo,la partizione HFS sarà attivata, però se è selezionata la partizione Fat32 sarà questa ad essere attivata.\n"
+#~ "Usa fdisk440 per installare il boot0 nei primi 440 bits del MBR senza "
+#~ "inibire precedenti installazioni di Windows se possedute, quindi boot0 "
+#~ "cercherà la prima partizione HFS attiva per boot1h2, o cercherà nella "
+#~ "prima partizione attiva Fat32 per il boot1f32alt.\n"
+#~ "Se non si seleziona questo,la partizione HFS sarà attivata, però se è "
+#~ "selezionata la partizione Fat32 sarà questa ad essere attivata.\n"
 #~ "Bisogna formattare come Fat32 in Win o Mac nel seguente modo.\n"
 #~ "  1. Prima cancellare come MS-DOS (FAT) da Utilità Disco.\n"
 #~ "  2. diskutil list\n"

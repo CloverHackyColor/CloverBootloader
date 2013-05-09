@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-08 11:15+0300\n"
+"POT-Creation-Date: 2013-05-09 17:52+0300\n"
 "PO-Revision-Date: 2013-05-08 22:00+0000\n"
 "Last-Translator: AlexKord <alexkord@lan.com.ua>\n"
 "Language-Team: ua <ua@li.org>\n"
@@ -323,9 +323,7 @@ msgid ""
 "This choice will setup selected HFS/Fat32 partition to be active."
 msgstr ""
 "Використовується для БІОС завантаження.\n"
-"boot0af (boot0af - Активується Першим) шукає активний розділ в MBR. Якщо "
-"його не знайдено, тоді завантажується перший розділ EFI/FAT32/HFS (спочатку "
-"в MBR, потім в GPT) з дійсною PBR сигнатурою.\n"
+"boot0af (boot0af - Активується Першим) шукає активний розділ в MBR. Якщо його не знайдено, тоді завантажується перший розділ EFI/FAT32/HFS (спочатку в MBR, потім в GPT) з дійсною PBR сигнатурою.\n"
 "З цим варіантом інсталяції обраний розділ HFS/Fat32 буде активним."
 
 #. type: "boot0ss_title"
@@ -344,11 +342,8 @@ msgid ""
 "This choice will not activate any partition in MBR."
 msgstr ""
 "Використовується для БІОС завантаження.\n"
-"boot0ss (boot0ss - Сканує Сигнатуру) шукає перший розділ EFI/FAT32/HFS "
-"(спочатку в MBR, потім в GPT) з дійсною PBR сигнатурою. Якщо розділ не "
-"знайдено, буде завантажено активний розділ з MBR.\n"
-"Цей варіант є добрим вибором, якщо Windows встановленно на тому ж диску, "
-"тому що Windows вимагає активний розділ.\n"
+"boot0ss (boot0ss - Сканує Сигнатуру) шукає перший розділ EFI/FAT32/HFS (спочатку в MBR, потім в GPT) з дійсною PBR сигнатурою. Якщо розділ не знайдено, буде завантажено активний розділ з MBR.\n"
+"Цей варіант є добрим вибором, якщо Windows встановленно на тому ж диску, тому що Windows вимагає активний розділ.\n"
 "З цим варіантом інсталяції жоден розділ не активується в MBR.  "
 
 #. type: "bootNo_title"
@@ -567,8 +562,7 @@ msgid ""
 "Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
 msgstr ""
 "Підтримка DataHub протоколу, який суворо необхідний для запуску MacOSX.\n"
-"Зазвичай він і так присутній, проте може і не бути, в цьому випадку ви "
-"побачите попередження на екрані."
+"Зазвичай він і так присутній, проте може і не бути, в цьому випадку ви побачите попередження на екрані."
 
 #. type: "EmuVariableUefi-64_description"
 #: Resources/templates/Localizable.strings:97
@@ -904,29 +898,44 @@ msgstr "щогодини"
 msgid "Monthly"
 msgstr "Щомісяця"
 
-#. type: "243.title"
+#. type: "241.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:8
+#, fuzzy, no-wrap
+#| msgid "CloverUpdater"
+msgid "Check for Updates"
+msgstr "Оновлення Clover"
+
+#. type: "243.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:9
 #, no-wrap
 msgid "Schedule Check Updates Every:"
 msgstr "Нагадувати про оновлення:"
 
 #. type: "248.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:9
+#: ../CloverPrefpane/CloverPrefpane.strings:10
 #, no-wrap
 msgid "Last check:"
 msgstr "Остання перевірка:"
 
 #. type: "258.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:10
+#: ../CloverPrefpane/CloverPrefpane.strings:11
 #, no-wrap
 msgid "Check Now"
 msgstr "Перевірити зараз:"
 
 #. type: "262.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:11
+#: ../CloverPrefpane/CloverPrefpane.strings:12
 #, no-wrap
 msgid "Copyright (c) 2013 JrCs"
 msgstr "Авторське право (c) 2013 JrCs"
+
+#
+#. type: "292.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:13
+#, fuzzy, no-wrap
+#| msgid "Clover v2"
+msgid "Clover Theme"
+msgstr "Кловер версія 2"
 
 #~ msgid ""
 #~ "Used for BIOS booting on BIOS motherboards.\n"
