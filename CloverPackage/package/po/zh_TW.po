@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-08 11:15+0300\n"
-"PO-Revision-Date: 2013-05-07 18:45+0000\n"
+"PO-Revision-Date: 2013-05-09 07:55+0000\n"
 "Last-Translator: crazybirdy <>\n"
 "Language-Team: zh_TW <zh_TW@li.org>\n"
 "Language: zh_TW\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1367952337.0\n"
+"X-POOTLE-MTIME: 1368086101.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -270,7 +270,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:29
 #, no-wrap
 msgid "Install boot0af in MBR"
-msgstr ""
+msgstr "BIOS 安裝 boot0af (HFS+Fat32)"
 
 #. type: "boot0af_description"
 #: Resources/templates/Localizable.strings:30
@@ -280,12 +280,22 @@ msgid ""
 "boot0af (boot0 Active First) bootloader try to boot the active partition defined in MBR. If there is no active partition, it will try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature.\n"
 "This choice will setup selected HFS/Fat32 partition to be active."
 msgstr ""
+"BIOS 主機板 之 BIOS 啓動 專用。\n"
+"使用 fdisk440 將 boot0af 寫入 MBR 的前 440 位元，避免損壞已經存在的 Windows 機碼，boot0af 優先引導 MBR "
+"的 啓動分割區，如果沒有啓動分割區，將引導第一個 EFI/FAT32/HFS 的 boot1 分區(優先引導MBR，其次引導GPT)。\n"
+"本安裝將 會 設定 HFS 及 Fat32 安裝分割區為啟動分割區。\n"
+"如須安裝在 Fat32 格式，必須在 Win 先將分割區格式化為 Fat32 格式分割區，或在 Mac 操作如下\n"
+" 1. 先用 磁碟工具 清除 為 MS-DOS (FAT) 格式\n"
+" 2. diskutil list\n"
+" 3. diskutil unmount /dev/rdisk9s1\n"
+" 4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
+" 5. diskutil mount /dev/rdisk9s1"
 
 #. type: "boot0ss_title"
 #: Resources/templates/Localizable.strings:34
 #, no-wrap
 msgid "Install boot0ss in MBR"
-msgstr ""
+msgstr "BIOS 安裝 boot0ss (HFS+Fat32)"
 
 #. type: "boot0ss_description"
 #: Resources/templates/Localizable.strings:35
@@ -296,6 +306,17 @@ msgid ""
 "This bootloader is a good choice when you have Windows installed on the same disk because Windows wants to have its partition active.\n"
 "This choice will not activate any partition in MBR."
 msgstr ""
+"BIOS 主機板 之 BIOS 啓動 專用。\n"
+"使用 fdisk440 將 boot0ss 寫入 MBR 的前 440 位元，避免損壞已經存在的 Windows 機碼，boot0ss 優先引導第一個 "
+"EFI/FAT32/HFS 的方割區的 boot1 分區(優先引導MBR，其次引導GPT)，如果沒有找到 boot1 分割區，將引導 MBR 的 "
+"啓動分割區。\n"
+"本安裝將 不會 設定 任何分區為啟動分區。\n"
+"如須安裝在 Fat32 格式，必須在 Win 先將分割區格式化為 Fat32 格式分割區，或在 Mac 操作如下\n"
+"1. 先用 磁碟工具 清除 為 MS-DOS (FAT) 格式\n"
+"2. diskutil list\n"
+"3. diskutil unmount /dev/rdisk9s1\n"
+"4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
+"5. diskutil mount /dev/rdisk9s1"
 
 #. type: "bootNo_title"
 #: Resources/templates/Localizable.strings:40
