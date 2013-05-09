@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-09 17:52+0300\n"
-"PO-Revision-Date: 2013-05-06 11:10+0000\n"
+"PO-Revision-Date: 2013-05-09 19:42+0000\n"
 "Last-Translator: !Xabbu <holger_frey07@web.de>\n"
 "Language-Team: ge <ge@li.org>\n"
 "Language: de\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1367838654.0\n"
+"X-POOTLE-MTIME: 1368128532.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -307,7 +307,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:29
 #, no-wrap
 msgid "Install boot0af in MBR"
-msgstr ""
+msgstr "Installiere boot0af in der MBR"
 
 #. type: "boot0af_description"
 #: Resources/templates/Localizable.strings:30
@@ -317,12 +317,18 @@ msgid ""
 "boot0af (boot0 Active First) bootloader try to boot the active partition defined in MBR. If there is no active partition, it will try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature.\n"
 "This choice will setup selected HFS/Fat32 partition to be active."
 msgstr ""
+"Zum BIOS booten von Computern.\n"
+"boot0af (boot0 Aktiv zuerst) versucht die erste als MBR definierte & "
+"aktivierte Partition zu booten. Ist keine aktive Partition vorhanden, "
+"versucht er die erste EFI/FAT32/HFS Partition mit gültiger PBR Signatur (in "
+"als MBR und dann in als GPT definierten) zu booten.\n"
+"Diese Auswahl wird die gewählte HFS/FAT32 Partition als aktiv setzen."
 
 #. type: "boot0ss_title"
 #: Resources/templates/Localizable.strings:34
 #, no-wrap
 msgid "Install boot0ss in MBR"
-msgstr ""
+msgstr "Installiere boot0ss in der MBR"
 
 #. type: "boot0ss_description"
 #: Resources/templates/Localizable.strings:35
@@ -333,6 +339,14 @@ msgid ""
 "This bootloader is a good choice when you have Windows installed on the same disk because Windows wants to have its partition active.\n"
 "This choice will not activate any partition in MBR."
 msgstr ""
+"Zum BIOS booten von Computern.\n"
+"boot0ss (boot0 Signatur scannen) versucht die erste /EFI/FAT32/HFS Partition "
+"mit gültiger PBR Signatur (in als MBR und dann in als GPT definierten) zu "
+"booten. Wird keine Partition gefunden versucht er die aktive im MBR "
+"definierte Partition zu booten.\n"
+"Er ist eine gute Wahl wenn Windows auf der selben Festplatte installiert "
+"ist, da Windows seine Partitionaktiv haben möchte.\n"
+"Diese Auswahl wird keine Partition im MBR aktivieren.\n"
 
 #. type: "bootNo_title"
 #: Resources/templates/Localizable.strings:40
@@ -888,10 +902,10 @@ msgstr "Monatlich"
 
 #. type: "241.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:8
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "CloverUpdater"
 msgid "Check for Updates"
-msgstr "CloverUpdater"
+msgstr "Suche nach Updates"
 
 #. type: "243.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:9
@@ -920,10 +934,10 @@ msgstr "Copyright (c) 2013 JrCs"
 #
 #. type: "292.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:13
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Clover v2"
 msgid "Clover Theme"
-msgstr "Clover v2"
+msgstr "Clover Thema"
 
 #~ msgid ""
 #~ "Used for BIOS booting on BIOS motherboards.\n"
