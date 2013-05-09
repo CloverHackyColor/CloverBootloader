@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-08 11:15+0300\n"
-"PO-Revision-Date: 2013-05-07 18:53+0000\n"
+"PO-Revision-Date: 2013-05-09 07:54+0000\n"
 "Last-Translator: crazybirdy <>\n"
 "Language-Team: zh_CN <zh_CN@li.org>\n"
 "Language: zh_CN\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1367952781.0\n"
+"X-POOTLE-MTIME: 1368086063.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -271,7 +271,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:29
 #, no-wrap
 msgid "Install boot0af in MBR"
-msgstr ""
+msgstr "BIOS 安装 boot0af (HFS+Fat32)"
 
 #. type: "boot0af_description"
 #: Resources/templates/Localizable.strings:30
@@ -281,12 +281,22 @@ msgid ""
 "boot0af (boot0 Active First) bootloader try to boot the active partition defined in MBR. If there is no active partition, it will try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature.\n"
 "This choice will setup selected HFS/Fat32 partition to be active."
 msgstr ""
+"BIOS 主板 之 BIOS 启动 专用。\n"
+"使用 fdisk440 将 boot0af 写入 MBR 的前 440 位元，避免损坏已经存在的 Windows 机码，boot0af 优先引导 MBR "
+"的 激活分区，如果没有激活分区，将引导第一个 EFI/FAT32/HFS 的 boot1 分区(优先引导MBR，其次引导GPT)。\n"
+"本安装将 会 设置 HFS 及 Fat32 安装分区为激活分区。\n"
+"如须安装在 Fat32 格式，必须在 Win 先将分区格式化为 Fat32 格式分区，或在 Mac 操作如下\n"
+"1. 先用 磁盘工具 清除 为 MS-DOS (FAT) 格式\n"
+"2. diskutil list\n"
+"3. diskutil unmount /dev/rdisk9s1\n"
+"4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
+"5. diskutil mount /dev/rdisk9s1"
 
 #. type: "boot0ss_title"
 #: Resources/templates/Localizable.strings:34
 #, no-wrap
 msgid "Install boot0ss in MBR"
-msgstr ""
+msgstr "BIOS 安装 boot0ss (HFS+Fat32)"
 
 #. type: "boot0ss_description"
 #: Resources/templates/Localizable.strings:35
@@ -297,6 +307,16 @@ msgid ""
 "This bootloader is a good choice when you have Windows installed on the same disk because Windows wants to have its partition active.\n"
 "This choice will not activate any partition in MBR."
 msgstr ""
+"BIOS 主板 之 BIOS 启动 专用。\n"
+"使用 fdisk440 将 boot0ss 写入 MBR 的前 440 位元，避免损坏已经存在的 Windows 机码，boot0ss 优先引导第一个 "
+"EFI/FAT32/HFS 的 boot1 分区(优先引导MBR，其次引导GPT)，如果没有找到 boot1 分区，将引导 MBR 的 激活分区。\n"
+"本安装将 不会 设置 任何分区为激活分区。\n"
+"如须安装在 Fat32 格式，必须在 Win 先将分区格式化为 Fat32 格式分区，或在 Mac 操作如下\n"
+"1. 先用 磁盘工具 清除 为 MS-DOS (FAT) 格式\n"
+"2. diskutil list\n"
+"3. diskutil unmount /dev/rdisk9s1\n"
+"4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
+"5. diskutil mount /dev/rdisk9s1"
 
 #. type: "bootNo_title"
 #: Resources/templates/Localizable.strings:40
