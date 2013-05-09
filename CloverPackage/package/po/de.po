@@ -7,15 +7,15 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-09 17:52+0300\n"
-"PO-Revision-Date: 2013-05-09 19:42+0000\n"
-"Last-Translator: !Xabbu <holger_frey07@web.de>\n"
+"PO-Revision-Date: 2013-05-09 19:43+0000\n"
+"Last-Translator: k3nny <sascha_r@gmx.de>\n"
 "Language-Team: ge <ge@li.org>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1368128532.0\n"
+"X-POOTLE-MTIME: 1368128595.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -167,7 +167,8 @@ msgstr "- ACPI wird auf Standard 4.0 korrigiert."
 #: Resources/templates/Description.html:29
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
 msgstr ""
-"Die eigene DSDT wird von der gebooteden Partition oder vom EFI Ordner geladen"
+"Die eigene DSDT wird von der gebooteten Partition oder vom EFI Ordner "
+"geladen"
 
 #
 #. type: Content of: <html><body><p>
@@ -222,7 +223,7 @@ msgstr ""
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:37
 msgid "- extra kexts loading and security mode for FireWire"
-msgstr "- Laden von zusätzlichen Kexten und Sicherheits Modus für FireWire"
+msgstr "- Laden von zusätzlichen Kexten und Sicherheitsmodus für FireWire"
 
 #
 #. type: Content of: <html><body><p>
