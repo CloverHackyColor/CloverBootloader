@@ -2486,6 +2486,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //  UINT64            TscRemainder = 0;
   LOADER_ENTRY      *LoaderEntry;
   CHAR8             *chosenTheme;
+  CHAR16            *themeFromRefit = NULL;
   
   // CHAR16            *InputBuffer; //, *Y;
   //  EFI_INPUT_KEY Key;
@@ -2523,7 +2524,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   //get theme from NVRAM in the case of UEFI boot
   chosenTheme = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
   if (chosenTheme) {
-    DBG("ChosenTheme at NVRAM %a\n|", chosenTheme);
+    DBG("ChosenTheme at NVRAM %a\n", chosenTheme);
+    themeFromRefit = GlobalConfig.Theme;
     GlobalConfig.Theme = PoolPrint(L"%a", chosenTheme);
     GlobalConfig.Theme[Size] = 0;
   }
@@ -2531,13 +2533,19 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", GlobalConfig.Theme);
   Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
   if (EFI_ERROR (Status)) { 
-    DBG("chosen theme %s is absent, using embedded\n", GlobalConfig.Theme);
-    GlobalConfig.Theme = NULL;
-    if (ThemePath) {
-      FreePool(ThemePath);
-    } 
-    ThemePath = NULL;
-    ThemeDir = NULL;
+    DBG("chosen theme %s is absent, using default %s\n", GlobalConfig.Theme, themeFromRefit);
+    GlobalConfig.Theme = themeFromRefit;
+    ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", GlobalConfig.Theme);
+    Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+    if (EFI_ERROR (Status)) {
+      DBG("default theme %s is absent, using embedded\n", GlobalConfig.Theme);
+      GlobalConfig.Theme = NULL;
+      if (ThemePath) {
+        FreePool(ThemePath);
+      } 
+      ThemePath = NULL;
+      ThemeDir = NULL;
+    }
   } else {
     DBG("Theme: %s Path: %s\n", GlobalConfig.Theme, ThemePath);
   }
@@ -2700,7 +2708,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       //now there is an attempt to change theme
       chosenTheme = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
       if (chosenTheme != NULL) {
-        DBG("ChosenTheme at plist %a|\n", chosenTheme);
+        DBG("ChosenTheme at plist %a\n", chosenTheme);
+        themeFromRefit = GlobalConfig.Theme;
         GlobalConfig.Theme = PoolPrint(L"%a", chosenTheme);
         GlobalConfig.Theme[Size] = 0;
         if (ThemePath) {
@@ -2708,14 +2717,20 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         }
         ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", GlobalConfig.Theme);
         Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
-        if (EFI_ERROR (Status)) { 
-          DBG("chosen theme %s is absent, using embedded\n", GlobalConfig.Theme);
-          GlobalConfig.Theme = NULL;
-          if (ThemePath) {
-            FreePool(ThemePath);
-          } 
-          ThemePath = NULL;
-          ThemeDir = NULL;
+        if (EFI_ERROR (Status)) {
+          DBG("chosen theme %s is absent, using default %s\n", GlobalConfig.Theme, themeFromRefit);
+          GlobalConfig.Theme = themeFromRefit;
+          ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", GlobalConfig.Theme);
+          Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+          if (EFI_ERROR (Status)) {
+            DBG("default theme %s is absent, using embedded\n", GlobalConfig.Theme);
+            GlobalConfig.Theme = NULL;
+            if (ThemePath) {
+              FreePool(ThemePath);
+            }
+            ThemePath = NULL;
+            ThemeDir = NULL;
+          }
         } else {
           DBG("Change theme to: %s Path: %s\n", GlobalConfig.Theme, ThemePath);
         }
