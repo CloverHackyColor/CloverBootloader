@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-09 17:52+0300\n"
-"PO-Revision-Date: 2013-05-08 13:31+0000\n"
+"PO-Revision-Date: 2013-05-09 19:19+0000\n"
 "Last-Translator: Maniac <emafrias@gmail.com>\n"
 "Language-Team: es <es@li.org>\n"
 "Language: es\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1368019861.0\n"
+"X-POOTLE-MTIME: 1368127168.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -895,10 +895,10 @@ msgstr "Mensualmente"
 
 #. type: "241.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:8
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "CloverUpdater"
 msgid "Check for Updates"
-msgstr "CloverUpdater"
+msgstr "Comprobar actualizaciones"
 
 #. type: "243.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:9
@@ -927,10 +927,10 @@ msgstr "Copyright (c) JrCs 2013"
 #
 #. type: "292.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:13
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Clover v2"
 msgid "Clover Theme"
-msgstr "Clover v2"
+msgstr "Tema de Clover"
 
 #~ msgid ""
 #~ "Used for BIOS booting on BIOS motherboards.\n"
