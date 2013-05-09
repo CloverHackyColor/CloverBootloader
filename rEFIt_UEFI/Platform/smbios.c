@@ -1233,14 +1233,9 @@ VOID PatchTableType17()
   }
   // Check for interleaved channels
   if (channels >= 2) {
-    if ((gRAM.SMBIOS[0].InUse != gRAM.SMBIOS[2].InUse) ||
-        (gRAM.SMBIOS[0].Frequency != gRAM.SMBIOS[2].Frequency) ||
-        (gRAM.SMBIOS[0].ModuleSize != gRAM.SMBIOS[2].ModuleSize)) {
-      wrongSMBIOSBanks = (gRAM.SMBIOS[0].InUse &&
-                          (gRAM.SMBIOS[0].InUse == gRAM.SMBIOS[1].InUse) &&
-                          (gRAM.SMBIOS[0].Frequency == gRAM.SMBIOS[1].Frequency) &&
-                          (gRAM.SMBIOS[0].ModuleSize == gRAM.SMBIOS[1].ModuleSize));
-    }
+     wrongSMBIOSBanks = ((gRAM.SMBIOS[1].InUse != gRAM.SPD[1].InUse) ||
+                         (gRAM.SMBIOS[1].Frequency != gRAM.SPD[1].Frequency) ||
+                         (gRAM.SMBIOS[1].ModuleSize != gRAM.SPD[1].ModuleSize));
   }
   if (wrongSMBIOSBanks) {
     DBG("Detected alternating SMBIOS channel banks\n");
