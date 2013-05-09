@@ -7,15 +7,15 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-09 17:52+0300\n"
-"PO-Revision-Date: 2013-05-04 22:50+0000\n"
-"Last-Translator: JrCs <d2t56xxptp@snkmail.com>\n"
+"PO-Revision-Date: 2013-05-09 18:06+0000\n"
+"Last-Translator: beta992 <beta992@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1367707830.0\n"
+"X-POOTLE-MTIME: 1368122804.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -268,7 +268,7 @@ msgstr "Opstartlader"
 
 #. type: "Bootloader_description"
 #: Resources/templates/Localizable.strings:24
-#, fuzzy, no-wrap
+#, no-wrap
 msgid ""
 "Clover EFI requires three essential files. (in simple terms)\n"
 "boot0 (On the drive's MBR) responsible for loading boot1.\n"
@@ -284,7 +284,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:29
 #, no-wrap
 msgid "Install boot0af in MBR"
-msgstr ""
+msgstr "Installeer boot0af in MBR"
 
 #. type: "boot0af_description"
 #: Resources/templates/Localizable.strings:30
@@ -294,12 +294,19 @@ msgid ""
 "boot0af (boot0 Active First) bootloader try to boot the active partition defined in MBR. If there is no active partition, it will try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature.\n"
 "This choice will setup selected HFS/Fat32 partition to be active."
 msgstr ""
+"Gebruikt voor BIOS opstarten op BIOS moederborden.\n"
+"boot0af (boot0 Active First) opstartlader proberen om de gedefinieerd "
+"actieve partitie in MBR op te starten. Bij geen actieve partitie, zal het "
+"proberen om de eerste EFI/FAT32/HFS partitie op te starten (gedefinieerd in "
+"de MBR en daarna vervolgens in GPT) met een geldige PBR handtekening.\n"
+"Bij deze keuze zal de geselecteerde HFS/Fat32 partitie omgezet worden naar "
+"actief."
 
 #. type: "boot0ss_title"
 #: Resources/templates/Localizable.strings:34
 #, no-wrap
 msgid "Install boot0ss in MBR"
-msgstr ""
+msgstr "Installeer boot0ss in MBR"
 
 #. type: "boot0ss_description"
 #: Resources/templates/Localizable.strings:35
@@ -310,6 +317,15 @@ msgid ""
 "This bootloader is a good choice when you have Windows installed on the same disk because Windows wants to have its partition active.\n"
 "This choice will not activate any partition in MBR."
 msgstr ""
+"Gebruikt voor BIOS opstarten op BIOS moederborden.\n"
+"boot0ss (boot0 Signature Scanning) opstartlader zal proberen de eerst "
+"EFI/FAT32/HFS partitie op te starten (gedefinieerd in de MBR en daarna de "
+"GPT) met een geldige PBR handtekening. Als er geen partitie is gevonden zal "
+"het proberen de eerst actieve partitie gedefinieerd in MBR op te starten.\n"
+"Deze opstartlader is een goede keuze als je Windows hebt geïnstalleerd op "
+"dezelfde hardeschijf, omdat Windows de partitie als partitie actief wilt "
+"hebben.\n"
+"Deze keuze zal geen enkele partitie activeren in MBR."
 
 #. type: "bootNo_title"
 #: Resources/templates/Localizable.strings:40
@@ -440,9 +456,9 @@ msgstr "PS/2 toetsenbord stuurprogramma, 32bit"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:80
-#, fuzzy, no-wrap
+#, no-wrap
 msgid "PS/2 trackpad driver, 32bit"
-msgstr "PS/2 toetsenbord stuurprogramma, 32bit"
+msgstr "PS/2 trackpad stuurprogramma, 32bit"
 
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:81
@@ -494,15 +510,15 @@ msgstr "ext4 bestandssysteem stuurprogramma van virtualbox, 64bit"
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:89
-#, fuzzy, no-wrap
+#, no-wrap
 msgid "USB 3.0 driver, 32bit"
-msgstr "USB muis stuurprogramma, 32bit"
+msgstr "USB 3.0 stuurprogramma, 32bit"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:90
-#, fuzzy, no-wrap
+#, no-wrap
 msgid "USB 3.0 driver, 64bit"
-msgstr "USB muis stuurprogramma, 64bit"
+msgstr "USB 3.0 stuurprogramma, 64bit"
 
 #. type: "CsmVideoDxe-64_description"
 #: Resources/templates/Localizable.strings:91
@@ -756,10 +772,10 @@ msgstr "Schakel de mDNSResponder sleep proxy client service uit. Dit voorkomt da
 
 #. type: "CloverUpdater_title"
 #: Resources/templates/Localizable.strings:161
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install Clover in the ESP"
 msgid "Install CloverUpdater"
-msgstr "Installeer Clover in de ESP"
+msgstr "Installeer CloverUpdater"
 
 #. type: "CloverUpdater_description"
 #: Resources/templates/Localizable.strings:162
@@ -768,140 +784,142 @@ msgid ""
 "Install CloverUpdater on target volume.\n"
 "CloverUpdater notify you about Clover updates."
 msgstr ""
+"Installeer CloverUpdater op het doelvolume.\n"
+"CloverUpdater geeft je meldingen over Clover updates."
 
 #. type: "371.title"
 #: ../CloverUpdater/CloverUpdater.strings:1
 #: ../CloverUpdater/CloverUpdater.strings:2
 #: ../CloverUpdater/CloverUpdater.strings:5
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install Clover in the ESP"
 msgid "CloverUpdater"
-msgstr "Installeer Clover in de ESP"
+msgstr "CloverUpdater"
 
 #. type: "58.title"
 #: ../CloverUpdater/CloverUpdater.strings:3
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install Clover in the ESP"
 msgid "About CloverUpdater"
-msgstr "Installeer Clover in de ESP"
+msgstr "Over CloverUpdater"
 
 #. type: "136.title"
 #: ../CloverUpdater/CloverUpdater.strings:4
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install Clover in the ESP"
 msgid "Quit CloverUpdater"
-msgstr "Installeer Clover in de ESP"
+msgstr "Sluit CloverUpdater"
 
 #. type: "534.title"
 #: ../CloverUpdater/CloverUpdater.strings:6
 #, no-wrap
 msgid "Current local Clover revision:"
-msgstr ""
+msgstr "Huidige lokale Clover herziening:"
 
 #. type: "538.title"
 #: ../CloverUpdater/CloverUpdater.strings:7
 #, no-wrap
 msgid "Latest update revision:"
-msgstr ""
+msgstr "Laatste update revisie:"
 
 #. type: "542.title"
 #: ../CloverUpdater/CloverUpdater.strings:8
 #, no-wrap
 msgid "Do you want to update ?"
-msgstr ""
+msgstr "Wil je bijwerken ?"
 
 #. type: "546.title"
 #: ../CloverUpdater/CloverUpdater.strings:9
 #, no-wrap
 msgid "Not now"
-msgstr ""
+msgstr "Niet nu"
 
 #. type: "548.title"
 #: ../CloverUpdater/CloverUpdater.strings:10
 #, no-wrap
 msgid "Update"
-msgstr ""
+msgstr "Bijwerken"
 
 #. type: "12.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:1
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "iClover"
 msgid "Clover"
-msgstr "iClover"
+msgstr "Clover"
 
 #. type: "104.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:2
 #, no-wrap
 msgid "CLOVER"
-msgstr ""
+msgstr "CLOVER"
 
 #. type: "204.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:3
 #, no-wrap
 msgid "Never"
-msgstr ""
+msgstr "Nooit"
 
 #. type: "205.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:4
 #, no-wrap
 msgid "Daily"
-msgstr ""
+msgstr "Dagelijks"
 
 #. type: "206.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:5
 #, no-wrap
 msgid "Weekly"
-msgstr ""
+msgstr "Wekelijks"
 
 #. type: "217.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:6
 #, no-wrap
 msgid "Hourly"
-msgstr ""
+msgstr "Ieder uur"
 
 #. type: "239.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:7
 #, no-wrap
 msgid "Monthly"
-msgstr ""
+msgstr "Maandelijks"
 
 #. type: "241.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:8
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install Clover in the ESP"
 msgid "Check for Updates"
-msgstr "Installeer Clover in de ESP"
+msgstr "Controleren op Updates"
 
 #. type: "243.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:9
 #, no-wrap
 msgid "Schedule Check Updates Every:"
-msgstr ""
+msgstr "Plan Controleer voor Updates Elke:"
 
 #. type: "248.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:10
 #, no-wrap
 msgid "Last check:"
-msgstr ""
+msgstr "Laatste controle:"
 
 #. type: "258.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:11
 #, no-wrap
 msgid "Check Now"
-msgstr ""
+msgstr "Nu Controleren"
 
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:12
 #, no-wrap
 msgid "Copyright (c) 2013 JrCs"
-msgstr ""
+msgstr "Copyright (c) 2013 JrCs"
 
 #. type: "292.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:13
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Clover v2"
 msgid "Clover Theme"
-msgstr "Clover v2"
+msgstr "Clover Thema"
 
 #~ msgid ""
 #~ "Used for BIOS booting on BIOS motherboards.\n"
