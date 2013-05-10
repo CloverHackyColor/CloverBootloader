@@ -44,7 +44,7 @@ current_revision=$(LC_ALL=C $IOREG -l -pIODeviceTree | \
 "$PLISTBUDDY" -c "Delete LastCheckTimestamp" "$CLOVER_UPDATER_PLIST" &>/dev/null
 "$PLISTBUDDY" -c "Add LastCheckTimestamp integer $now" "$CLOVER_UPDATER_PLIST" &>/dev/null
 
-[[ "$mode" == startup && "$last_revision" -lt "$current_revision" ]] && exit 0
+[[ "$mode" == startup && "$last_revision" -le "$current_revision" ]] && exit 0
 
 choice=$("$CLOVER_APP_SUPPORT"/CloverUpdater.app/Contents/MacOS/CloverUpdater \
  "$current_revision" "$last_revision")
