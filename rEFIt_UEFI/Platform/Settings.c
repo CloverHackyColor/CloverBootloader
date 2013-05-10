@@ -1295,8 +1295,14 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       
       //a set of variables needed to rc.local
       prop = GetProperty(dictPointer, "MountEFI");
-      if(prop && AsciiStrLen(prop->string) > 0) {
-		    gSettings.MountEFI = AllocateCopyPool(AsciiStrSize(prop->string), prop->string);
+      if (prop) {
+        if (prop->type == kTagTypeTrue) {
+          gSettings.MountEFI = "Yes";
+        } else if (prop->type == kTagTypeFalse) {
+          gSettings.MountEFI = "No";
+        } else if((prop->type ==  kTagTypeString)  && AsciiStrLen(prop->string) > 0) {
+          gSettings.MountEFI = AllocateCopyPool(AsciiStrSize(prop->string), prop->string);
+        }
       }
       prop = GetProperty(dictPointer, "LogLineCount");
       if(prop) {
@@ -1309,8 +1315,14 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
         DBG("Log line count=%d\n", gSettings.LogLineCount);
       }
       prop = GetProperty(dictPointer, "LogEveryBoot");
-      if(prop && AsciiStrLen(prop->string) > 0) {
-        gSettings.LogEveryBoot = AllocateCopyPool(AsciiStrSize(prop->string), prop->string);
+      if(prop) {
+        if (prop->type == kTagTypeTrue) {
+          gSettings.LogEveryBoot = "Yes";
+        } else if (prop->type == kTagTypeFalse) {
+          gSettings.LogEveryBoot = "No";
+        } else if ((prop->type ==  kTagTypeString) && AsciiStrLen(prop->string) > 0) {
+          gSettings.LogEveryBoot = AllocateCopyPool(AsciiStrSize(prop->string), prop->string);
+        }
       }
     }
     if (!gSettings.RtMLB) {
