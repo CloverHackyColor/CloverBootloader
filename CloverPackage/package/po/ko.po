@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-09 17:52+0300\n"
-"PO-Revision-Date: 2013-05-08 07:49+0000\n"
+"PO-Revision-Date: 2013-05-10 06:11+0000\n"
 "Last-Translator: ceruns <ceruns@ymail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
 "Language: ko\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1367999397.0\n"
+"X-POOTLE-MTIME: 1368166270.0\n"
 
 # //Don't need change
 #. type: Content of: <html><body><div><p>
@@ -281,7 +281,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:29
 #, no-wrap
 msgid "Install boot0af in MBR"
-msgstr ""
+msgstr "MBR에 boot0af 설치"
 
 #. type: "boot0af_description"
 #: Resources/templates/Localizable.strings:30
@@ -291,12 +291,16 @@ msgid ""
 "boot0af (boot0 Active First) bootloader try to boot the active partition defined in MBR. If there is no active partition, it will try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature.\n"
 "This choice will setup selected HFS/Fat32 partition to be active."
 msgstr ""
+"BIOS 메인보드에서 BIOS 부팅을 위해 사용됩니다.\n"
+"boot0af (boot0 첫번째 활성) 부트로더는 MBR의 활성화된 파티션으로 부트 시도합니다. 만약 활성 파티션이 없는 경우에는 "
+"첫번째 EFI/FAT32/HFS 파티션으로 유효한 PBR 시그내쳐로 부트 시도합니다. (먼저 MBR 그리고 GPT에 정의된 파티션)\n"
+"이 설정은 선택된 HFS/Fat32 파티션이 활성화 되게 설정합니다."
 
 #. type: "boot0ss_title"
 #: Resources/templates/Localizable.strings:34
 #, no-wrap
 msgid "Install boot0ss in MBR"
-msgstr ""
+msgstr "MBR에 boot0ss 설치"
 
 #. type: "boot0ss_description"
 #: Resources/templates/Localizable.strings:35
@@ -307,6 +311,10 @@ msgid ""
 "This bootloader is a good choice when you have Windows installed on the same disk because Windows wants to have its partition active.\n"
 "This choice will not activate any partition in MBR."
 msgstr ""
+"BIOS 메인보드에서 BIOS 부팅을 위해 사용됩니다.\n"
+"boot0ss (boot0 시그내쳐 스캐닝) 부트로더는 EFI/FAT32/HFS의 첫번째 파티션으로 부트 시도합니다.(먼저 MBR 그리고 "
+"GPT에 정의된 파티션) 만약 활성 파티션이 없는 경우에는 MBR의 활성화된 파티션으로 부트시도 합니다. \n"
+"이 설정은 Windows가 대체로 자신의 파티션이 활성화 되어야 하므로, Windows와 같은 디스크에 설치될 경우에 좋은 선택입니다."
 
 #. type: "bootNo_title"
 #: Resources/templates/Localizable.strings:40
@@ -896,10 +904,10 @@ msgstr "Copyright (c) 2013 JrCs"
 
 #. type: "292.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:13
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Clover v2"
 msgid "Clover Theme"
-msgstr "Clover v2"
+msgstr "Clover 테마"
 
 #~ msgid "BIOS MBR boot0 (HFS+Fat32)"
 #~ msgstr "BIOS방식 MBR boot0 (HFS+Fat32)"
