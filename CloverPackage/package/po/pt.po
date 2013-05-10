@@ -7,15 +7,15 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-09 17:52+0300\n"
-"PO-Revision-Date: 2013-05-07 02:41+0000\n"
-"Last-Translator: kyndder <kyndder@icloud.com>\n"
+"PO-Revision-Date: 2013-05-10 08:54+0000\n"
+"Last-Translator: artur_pt <artursimoes.pt@gmail.com>\n"
 "Language-Team: pt <pt@li.org>\n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1367894504.0\n"
+"X-POOTLE-MTIME: 1368176083.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -142,8 +142,8 @@ msgstr "Posteriormente o usuario pode altera-las no arquivo config.plist"
 #: Resources/templates/Description.html:25
 msgid "- with Clover you may restart into other OS from Startup Disk prefPane"
 msgstr ""
-"- Com Clover você pode iniciar outro sistema operacional suportado através "
-"de Disco de Inicialização em Preferências do Sistema"
+"- Com Clover você pode iniciar outro sistema operativo suportado através de "
+"Disco de Inicialização em Preferências do Sistema"
 
 #
 #. type: Content of: <html><body><p>
@@ -273,9 +273,11 @@ msgid ""
 "diskutil list\n"
 "newfs_msdos -v EFI -F 32 /dev/rdisk9s1"
 msgstr ""
-"Instala o Clover na Partição ESP (Partição EFI do Sistema) do Volume alvo\n"
+"Instala o Clover na Partição ESP (Partição EFI do Sistema) do Volume "
+"selecionado\n"
 "\n"
-"É necessário formatar a ESP como Fat32 (recomendado) ou HFS pelo OS X primeiro.\n"
+"É necessário formatar a ESP como Fat32 (recomendado) ou HFS pelo OS X "
+"primeiro.\n"
 "\n"
 "Para Fat32 use os comandos abaixo:\n"
 "diskutil list\n"
@@ -305,7 +307,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:29
 #, no-wrap
 msgid "Install boot0af in MBR"
-msgstr ""
+msgstr "Instalar bootaf na MBR"
 
 #. type: "boot0af_description"
 #: Resources/templates/Localizable.strings:30
@@ -315,12 +317,18 @@ msgid ""
 "boot0af (boot0 Active First) bootloader try to boot the active partition defined in MBR. If there is no active partition, it will try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature.\n"
 "This choice will setup selected HFS/Fat32 partition to be active."
 msgstr ""
+"Usado para o arranque em placas-mãe BIOS. \\ Nboot0af (boot0 ativo primeiro) "
+"bootloader tenta arrancar a partição ativa definida na MBR. Se não houver "
+"nenhuma partição ativa, ele vai tentar arrancar a primeira partição "
+"EFI/FAT32/HFS (definida na MBR e, em seguida, o GPT) com uma assinatura PBR "
+"válida. \\ NEsta escolha irá configurar partição HFS/Fat32 selecionada para "
+"ser ativa."
 
 #. type: "boot0ss_title"
 #: Resources/templates/Localizable.strings:34
 #, no-wrap
 msgid "Install boot0ss in MBR"
-msgstr ""
+msgstr "Instalar boot0ss na MBR"
 
 #. type: "boot0ss_description"
 #: Resources/templates/Localizable.strings:35
@@ -331,6 +339,13 @@ msgid ""
 "This bootloader is a good choice when you have Windows installed on the same disk because Windows wants to have its partition active.\n"
 "This choice will not activate any partition in MBR."
 msgstr ""
+"Usado para o arranque  em placas-mãe BIOS. \\ Nboot0ss (boot0 assinatura "
+"Scanning) bootloader tenta arrancar a primeira partição EFI/FAT32/HFS "
+"(definida na MBR e, em seguida, o GPT) com uma assinatura PBR válida. Se "
+"nenhuma partição for encontrada, ele tentará inicializar a partição ativa "
+"definida na MBR. \\ NEsse bootloader é uma boa opção quando você tiver o "
+"Windows instalado no mesmo disco, pois o Windows quer ter sua partição "
+"ativa. \\ NEsta opção não irá ativar qualquer partição na MBR."
 
 #. type: "bootNo_title"
 #: Resources/templates/Localizable.strings:40
@@ -557,9 +572,10 @@ msgid ""
 "Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed.\n"
 "Use it only if you have a problem without it"
 msgstr ""
-"Driver 64bit para o suporte a variáveis NVRAM necessário para o Mac OS X.\n"
-"Normalmente o boot UEFI usa o Hardware NVRAM mas em alguns casos raros este driver é necessário.\n"
-"Use-o somente se você tiver problemas quando não o estiver utilizando"
+"Driver 64bit para o suporte a variáveis NVRAM necessárias para o Mac OS X.\n"
+"Normalmente o boot UEFI usa o Hardware NVRAM mas em alguns casos raros este "
+"driver é necessário.\n"
+"Use somente se você tiver problemas quando não o estiver utilizando"
 
 #. type: "OsxAptioFixDrv-64_description"
 #: Resources/templates/Localizable.strings:100
@@ -773,7 +789,9 @@ msgstr "Opcional RC Scripts"
 #: Resources/templates/Localizable.strings:156
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
-msgstr "Desabilita o serviço mDNSResponder sleep proxy client. Isso irá impedir que o systema retorne do Sleep a cada hora"
+msgstr ""
+"Desabilita o serviço mDNSResponder sleep proxy client. Isso irá impedir que "
+"o sistema retorne do Sleep a cada hora"
 
 #. type: "CloverUpdater_title"
 #: Resources/templates/Localizable.strings:161
@@ -881,14 +899,14 @@ msgstr "A cada hora"
 #: ../CloverPrefpane/CloverPrefpane.strings:7
 #, no-wrap
 msgid "Monthly"
-msgstr "Mesalmente"
+msgstr "Mensalmente"
 
 #. type: "241.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:8
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "CloverUpdater"
 msgid "Check for Updates"
-msgstr "CloverUpdater"
+msgstr "AtualizarClover"
 
 #. type: "243.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:9
@@ -917,10 +935,10 @@ msgstr "Copyright (c) 2013 JrCs"
 #
 #. type: "292.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:13
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Clover v2"
 msgid "Clover Theme"
-msgstr "Clover v2"
+msgstr "Clover Tema"
 
 #~ msgid ""
 #~ "Used for BIOS booting on BIOS motherboards.\n"
