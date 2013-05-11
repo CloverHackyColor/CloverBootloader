@@ -10,18 +10,29 @@
 #include <mach/mach_error.h>
 
 // Global Variables
+CFStringRef dash=CFSTR("-");
 CFStringRef agentIdentifier=CFSTR("com.projectosx.Clover.Updater");
 CFStringRef agentExecutable=CFSTR("/Library/Application Support/Clover/CloverUpdaterUtility");
 CFStringRef checkIntervalKey=CFSTR("ScheduledCheckInterval");
 CFStringRef lastCheckTimestampKey=CFSTR("LastCheckTimestamp");
+CFStringRef cloverInstaller=CFSTR("com.projectosx.clover.installer");
 static const char *cloverThemeString="Clover.Theme";
+static const char *cloverMountEFIString="Clover.MountEFI";
+static const char *cloverNVRamDiskString="Clover.NVRamDisk";
+static const char *cloverLogLineCountString="Clover.LogLineCount";
+static const char *cloverLogEveryBootString="Clover.LogEveryBoot";
 static io_registry_entry_t gOptionsRef;
 
 @implementation CloverPrefpane
 
 @synthesize fileManager = fileManager;
 @synthesize plistPath   = plistPath;
-@synthesize cloverTheme = cloverTheme;
+@synthesize cloverTheme;
+@synthesize mountEFI;
+@synthesize nvRamDisk;
+@synthesize logLineCount;
+@synthesize logEveryBoot;
+
 
 // System Preferences calls this method when the pane is initialized.
 - (id)initWithBundle:(NSBundle *)bundle {
@@ -54,6 +65,44 @@ static io_registry_entry_t gOptionsRef;
 }
 
 - (void)mainViewDidLoad {
+    BOOL plistExists;
+
+    // Initialize revision fields
+    NSArray *searchPaths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSLocalDomainMask, YES);
+    NSString *preferenceFolder = [[searchPaths objectAtIndex:0] stringByAppendingPathComponent:@"Preferences"];
+    NSString *cloverInstallerPlist = [[preferenceFolder stringByAppendingPathComponent:(NSString *)cloverInstaller] stringByAppendingPathExtension:@"plist"];
+    plistExists = [fileManager fileExistsAtPath:cloverInstallerPlist];
+    NSString* installedRevision=(NSString*)dash;
+    if (plistExists) {
+        NSDictionary *dict = [[NSDictionary alloc]
+                              initWithContentsOfFile:cloverInstallerPlist];
+        NSNumber* revision = [dict objectForKey:@"CloverRevision"];
+        [dict release];
+        if (revision)
+            installedRevision = [revision stringValue];
+    }
+    [lastInstalledRevision setStringValue:installedRevision];
+
+    NSString* bootedRevision=(NSString*)dash;
+    io_registry_entry_t ioRegistryEFI = IORegistryEntryFromPath(kIOMasterPortDefault, "IODeviceTree:/efi/platform");
+    if (ioRegistryEFI) {
+        CFStringRef nameRef = CFStringCreateWithCString(kCFAllocatorDefault, "clovergui-revision",
+                                                        kCFStringEncodingUTF8);
+        if (nameRef) {
+            CFTypeRef valueRef = IORegistryEntryCreateCFProperty(ioRegistryEFI, nameRef, 0, 0);
+            CFRelease(nameRef);
+            if (valueRef) {
+                // Get the OF variable's type.
+                CFTypeID typeID = CFGetTypeID(valueRef);
+                if (typeID == CFDataGetTypeID())
+                    bootedRevision = [NSString stringWithFormat:@"%u",*((uint32_t*)CFDataGetBytePtr(valueRef))];
+                CFRelease(valueRef);
+            }
+        }
+        IOObjectRelease(ioRegistryEFI);
+    }
+    [lastBootedRevision setStringValue:bootedRevision];
+
     // Initialize popUpCheckInterval
     unsigned int checkInterval =
         [self getUIntPreferenceKey:checkIntervalKey forAppID:agentIdentifier withDefault:0];
@@ -63,7 +112,7 @@ static io_registry_entry_t gOptionsRef;
     unsigned int lastCheckTimestamp =
         [self getUIntPreferenceKey:lastCheckTimestampKey forAppID:agentIdentifier withDefault:0];
     if (lastCheckTimestamp == 0) {
-        [LastRunDate setStringValue:(NSString*)CFSTR("-")];
+        [LastRunDate setStringValue:(NSString*)dash];
     } else {
         NSDate *date = [NSDate dateWithTimeIntervalSince1970:lastCheckTimestamp];
         NSString *formattedDateString = [dateFormatter stringFromDate:date];
@@ -72,8 +121,8 @@ static io_registry_entry_t gOptionsRef;
     // Enable the checkNowButton if executable is present
     [checkNowButton setEnabled:[fileManager fileExistsAtPath:(NSString*)agentExecutable]];
     
-    // cloverTheme
-    self.cloverTheme=[self getNVRamKey:cloverThemeString];
+    // Init NVRam variables fields
+    [self initNVRamVariableFields];
 
     // Setup security.
 	AuthorizationItem items = {kAuthorizationRightExecute, 0, NULL, 0};
@@ -82,7 +131,7 @@ static io_registry_entry_t gOptionsRef;
 	authView.delegate = self;
 	[authView updateStatus:nil];
 
-    BOOL plistExists = [fileManager fileExistsAtPath:plistPath];
+    plistExists = [fileManager fileExistsAtPath:plistPath];
     if (plistExists && checkInterval == 0) {
         [fileManager removeItemAtPath:plistPath error:nil];
     }
@@ -138,11 +187,28 @@ static io_registry_entry_t gOptionsRef;
 }
 
 - (IBAction)updateTheme:(id)sender {
-    [self setNVRamKey:cloverThemeString withValue:[self.cloverTheme UTF8String]];
-    if (self.cloverTheme)
-        NSLog(@"Clover Theme Updated to: %@",self.cloverTheme);
-    else
-        NSLog(@"Clover Theme Removed");
+    if ([self setNVRamKey:cloverThemeString withValue:[self.cloverTheme UTF8String]])
+        [self initNVRamVariableFields];
+}
+
+- (IBAction)updateMountEFI:(id)sender {
+    if ([self setNVRamKey:cloverMountEFIString withValue:[self.mountEFI UTF8String]])
+        [self initNVRamVariableFields];
+}
+
+- (IBAction)updateNVRamDisk:(id)sender {
+    if([self setNVRamKey:cloverNVRamDiskString withValue:[self.nvRamDisk UTF8String]])
+        [self initNVRamVariableFields];
+}
+
+- (IBAction)updateLogLineCount:(id)sender {
+    if([self setNVRamKey:cloverLogLineCountString withValue:[self.logLineCount UTF8String]])
+        [self initNVRamVariableFields];
+}
+
+- (IBAction)updateLogEveryBoot:(id)sender {
+    if([self setNVRamKey:cloverLogEveryBootString withValue:[self.logEveryBoot UTF8String]])
+        [self initNVRamVariableFields];
 }
 
 - (BOOL)isUnlocked {
@@ -156,6 +222,15 @@ static io_registry_entry_t gOptionsRef;
 }
 
 - (void)authorizationViewDidDeauthorize:(SFAuthorizationView *)view {
+}
+
+
+-(void) initNVRamVariableFields {
+    self.cloverTheme=[self getNVRamKey:cloverThemeString];
+    self.mountEFI=[self getNVRamKey:cloverMountEFIString];
+    self.nvRamDisk=[self getNVRamKey:cloverNVRamDiskString];
+    self.logLineCount=[self getNVRamKey:cloverLogLineCountString];
+    self.logEveryBoot=[self getNVRamKey:cloverLogEveryBootString];
 }
 
 //

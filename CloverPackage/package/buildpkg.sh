@@ -983,11 +983,11 @@ fi
 
 local cloverUpdaterDir="${SRCROOT}"/CloverUpdater
 local cloverPrefpaneDir="${SRCROOT}"/CloverPrefpane
-if [[ -x "$cloverUpdaterDir"/build/CloverUpdater.app/Contents/MacOS/CloverUpdater ]]; then
-# build CloverUpdater package
-    echo "==================== Clover Updater ===================="
+if [[ -x "$cloverPrefpaneDir"/build/Clover.prefPane/Contents/MacOS/Clover ]]; then
+# build CloverPrefpane package
+    echo "==================== Clover Prefpane ==================="
     packagesidentity="$clover_package_identity"
-    choiceId="CloverUpdater"
+    choiceId="CloverPrefpane"
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
     # ditto --noextattr --noqtn "$cloverUpdaterDir"/CloverUpdaterUtility.plist  \
     #  "${PKG_BUILD_DIR}/${choiceId}"/Root/Library/LaunchAgents/com.projectosx.Clover.Updater.plist

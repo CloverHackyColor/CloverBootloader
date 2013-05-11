@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-09 17:52+0300\n"
+"POT-Creation-Date: 2013-05-11 21:16+0300\n"
 "PO-Revision-Date: 2013-05-09 15:56+0000\n"
 "Last-Translator: JrCs <d2t56xxptp@snkmail.com>\n"
 "Language-Team: en <en@li.org>\n"
@@ -777,18 +777,22 @@ msgstr "Optional RC Scripts"
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 
-#. type: "CloverUpdater_title"
+#. type: "CloverPrefpane_title"
 #: Resources/templates/Localizable.strings:161
-#, no-wrap
-msgid "Install CloverUpdater"
-msgstr "Install CloverUpdater"
+#, fuzzy, no-wrap
+#| msgid "Install Clover in the ESP"
+msgid "Install Clover Preference Pane"
+msgstr "Install Clover in the ESP"
 
-#. type: "CloverUpdater_description"
+#. type: "CloverPrefpane_description"
 #: Resources/templates/Localizable.strings:162
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Install CloverUpdater on target volume.\n"
+#| "CloverUpdater notify you about Clover updates."
 msgid ""
-"Install CloverUpdater on target volume.\n"
-"CloverUpdater notify you about Clover updates."
+"Install Clover Preference Pane on target volume.\n"
+"Include CloverUpdater that can notify you about Clover updates."
 msgstr ""
 "Install CloverUpdater on target volume.\n"
 "CloverUpdater notify you about Clover updates."
@@ -888,7 +892,6 @@ msgstr "Monthly"
 #. type: "241.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:8
 #, no-wrap
-#| msgid "CloverUpdater"
 msgid "Check for Updates"
 msgstr "Check for Updates"
 
@@ -916,13 +919,125 @@ msgstr "Check Now"
 msgid "Copyright (c) 2013 JrCs"
 msgstr "Copyright (c) 2013 JrCs"
 
-#
-#. type: "292.title"
+#. type: "267.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:13
 #, no-wrap
-#| msgid "Clover v2"
-msgid "Clover Theme"
-msgstr "Clover Theme"
+msgid "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined in refit.conf is use."
+msgstr ""
+
+#. type: "292.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:14
+#, no-wrap
+msgid "GUI Appearance"
+msgstr ""
+
+#. type: "294.label"
+#: ../CloverPrefpane/CloverPrefpane.strings:15
+#, no-wrap
+msgid "NVRam Variables"
+msgstr ""
+
+#. type: "295.label"
+#: ../CloverPrefpane/CloverPrefpane.strings:16
+#, no-wrap
+msgid "Informations"
+msgstr ""
+
+#. type: "298.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:17
+#, no-wrap
+msgid "Revisions"
+msgstr ""
+
+#. type: "300.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:18
+#, fuzzy, no-wrap
+#| msgid "Current local Clover revision:"
+msgid "Current booted revision:"
+msgstr "Current local Clover revision:"
+
+#. type: "302.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:19
+#, fuzzy, no-wrap
+#| msgid "Latest update revision:"
+msgid "Last installed revision:"
+msgstr "Latest update revision:"
+
+#. type: "309.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:20
+#, no-wrap
+msgid "Log Files"
+msgstr ""
+
+#. type: "311.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:21
+#, no-wrap
+msgid "LogLineCount:"
+msgstr ""
+
+#. type: "313.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:22
+#, no-wrap
+msgid "LogEveryBoot:"
+msgstr ""
+
+#. type: "314.ibShadowedToolTip"
+#: ../CloverPrefpane/CloverPrefpane.strings:23
+#, no-wrap
+msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
+msgstr ""
+
+#. type: "323.ibShadowedToolTip"
+#: ../CloverPrefpane/CloverPrefpane.strings:24
+#, no-wrap
+msgid "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* Yes: create a new timestamp boot.log file\\n* Number: where number is the number of timestamp boot.log files to keep.\\n\\nA blank value result in NO creation of timestamp boot.log file"
+msgstr ""
+
+#. type: "326.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:25
+#, fuzzy, no-wrap
+#| msgid "Themes"
+msgid "Theme:"
+msgstr "Themes"
+
+#. type: "327.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:26
+#, no-wrap
+msgid "Advanced Configurations"
+msgstr ""
+
+#. type: "329.ibShadowedToolTip"
+#: ../CloverPrefpane/CloverPrefpane.strings:27
+#, no-wrap
+msgid "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on the same disk drive as the system partition\\n* diskX: disk device\\n* GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on the same disk drive that the ESP partition\\n\\nEmpty value result in not mounting ESP partition on boot"
+msgstr ""
+
+#. type: "332.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:28
+#, no-wrap
+msgid "MountEFI:"
+msgstr ""
+
+#. type: "337.ibShadowedToolTip"
+#: ../CloverPrefpane/CloverPrefpane.strings:29
+#, no-wrap
+msgid "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram contents to disk\\n* diskXsY: device node of the volume where the nvram contents will be saved\\n\\nEmpty value save the nvram contents in the nvram.plist file in the root folder of the system partition."
+msgstr ""
+
+#. type: "339.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:30
+#, no-wrap
+msgid "NVRamDisk:"
+msgstr ""
+
+#
+#, fuzzy
+#~| msgid "Clover Theme"
+#~ msgid "Clover Theme:"
+#~ msgstr "Clover Theme"
+
+#~ msgid "Install CloverUpdater"
+#~ msgstr "Install CloverUpdater"
 
 #~ msgid ""
 #~ "Used for BIOS booting on BIOS motherboards.\n"

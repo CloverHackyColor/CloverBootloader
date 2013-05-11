@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-09 17:52+0300\n"
+"POT-Creation-Date: 2013-05-11 21:16+0300\n"
 "PO-Revision-Date: 2013-05-11 13:27+0000\n"
 "Last-Translator: artur_pt <artursimoes.pt@gmail.com>\n"
 "Language-Team: pt <pt@li.org>\n"
@@ -273,11 +273,9 @@ msgid ""
 "diskutil list\n"
 "newfs_msdos -v EFI -F 32 /dev/rdisk9s1"
 msgstr ""
-"Instala o Clover na Partição ESP (Partição EFI do Sistema) do Volume "
-"selecionado\n"
+"Instala o Clover na Partição ESP (Partição EFI do Sistema) do Volume selecionado\n"
 "\n"
-"É necessário formatar a ESP como Fat32 (recomendado) ou HFS pelo OS X "
-"primeiro.\n"
+"É necessário formatar a ESP como Fat32 (recomendado) ou HFS pelo OS X primeiro.\n"
 "\n"
 "Para Fat32 use os comandos abaixo:\n"
 "diskutil list\n"
@@ -316,13 +314,7 @@ msgid ""
 "Used for BIOS booting on BIOS motherboards.\n"
 "boot0af (boot0 Active First) bootloader try to boot the active partition defined in MBR. If there is no active partition, it will try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature.\n"
 "This choice will setup selected HFS/Fat32 partition to be active."
-msgstr ""
-"Usado para o arranque em placas-mãe BIOS. \\ Nboot0af (boot0 ativo primeiro) "
-"bootloader tenta arrancar a partição ativa definida no MBR. Se não houver "
-"nenhuma partição ativa, ele vai tentar arrancar a primeira partição "
-"EFI/FAT32/HFS (definida no MBR e, em seguida, o GPT) com uma assinatura PBR "
-"válida. \\ NEsta escolha irá configurar partição HFS/Fat32 selecionada para "
-"ser ativa."
+msgstr "Usado para o arranque em placas-mãe BIOS. \\ Nboot0af (boot0 ativo primeiro) bootloader tenta arrancar a partição ativa definida no MBR. Se não houver nenhuma partição ativa, ele vai tentar arrancar a primeira partição EFI/FAT32/HFS (definida no MBR e, em seguida, o GPT) com uma assinatura PBR válida. \\ NEsta escolha irá configurar partição HFS/Fat32 selecionada para ser ativa."
 
 #. type: "boot0ss_title"
 #: Resources/templates/Localizable.strings:34
@@ -338,14 +330,7 @@ msgid ""
 "boot0ss (boot0 Signature Scanning) bootloader try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature. If no partition is found it will try to boot the active partition defined in MBR.\n"
 "This bootloader is a good choice when you have Windows installed on the same disk because Windows wants to have its partition active.\n"
 "This choice will not activate any partition in MBR."
-msgstr ""
-"Usado para o arranque  em placas-mãe BIOS. \\ Nboot0ss (boot0 assinatura "
-"Scanning) bootloader tenta arrancar a primeira partição EFI/FAT32/HFS "
-"(definida no MBR e, em seguida, o GPT) com uma assinatura PBR válida. Se "
-"nenhuma partição for encontrada, ele tentará inicializar a partição ativa "
-"definida no MBR. \\ NEsse bootloader é uma boa opção quando você tiver o "
-"Windows instalado no mesmo disco, pois o Windows quer ter sua partição "
-"ativa. \\ NEsta opção não irá ativar qualquer partição no MBR."
+msgstr "Usado para o arranque  em placas-mãe BIOS. \\ Nboot0ss (boot0 assinatura Scanning) bootloader tenta arrancar a primeira partição EFI/FAT32/HFS (definida no MBR e, em seguida, o GPT) com uma assinatura PBR válida. Se nenhuma partição for encontrada, ele tentará inicializar a partição ativa definida no MBR. \\ NEsse bootloader é uma boa opção quando você tiver o Windows instalado no mesmo disco, pois o Windows quer ter sua partição ativa. \\ NEsta opção não irá ativar qualquer partição no MBR."
 
 #. type: "bootNo_title"
 #: Resources/templates/Localizable.strings:40
@@ -363,8 +348,7 @@ msgid ""
 msgstr ""
 "Não instala nenhum arquivo de boot (boot0X, boot1X).\n"
 "Utilizado por Placas-Mãe UEFI que não necessitam dos arquivos de boot.\n"
-"Também pode ser utilizado se você não quiser atualizar os setores de boot "
-"(MBR e PBR)."
+"Também pode ser utilizado se você não quiser atualizar os setores de boot (MBR e PBR)."
 
 #. type: "AltBoot_title"
 #: Resources/templates/Localizable.strings:45
@@ -550,12 +534,9 @@ msgid ""
 "Clover may not started with it and you may have wake problem in system.\n"
 "Use with precautions."
 msgstr ""
-"Driver de Vídeo 64bit para o GUI do Clover possibilitando a escolha de mais "
-"resoluções.\n"
-"Ele é baseado no módulo CSM existente em BIOS UEFI e é necessário que o modo "
-"esteja ativo.\n"
-"O Clover pode não iniciar enquanto usar este driver e ele também pode "
-"provocar problemas com o Sleep.\n"
+"Driver de Vídeo 64bit para o GUI do Clover possibilitando a escolha de mais resoluções.\n"
+"Ele é baseado no módulo CSM existente em BIOS UEFI e é necessário que o modo esteja ativo.\n"
+"O Clover pode não iniciar enquanto usar este driver e ele também pode provocar problemas com o Sleep.\n"
 "Use com precaução."
 
 #. type: "DataHubDxe-64_description"
@@ -577,8 +558,7 @@ msgid ""
 "Use it only if you have a problem without it"
 msgstr ""
 "Driver 64bit para o suporte a variáveis NVRAM necessárias para o Mac OS X.\n"
-"Normalmente o boot UEFI usa o Hardware NVRAM mas em alguns casos raros este "
-"driver é necessário.\n"
+"Normalmente o boot UEFI usa o Hardware NVRAM mas em alguns casos raros este driver é necessário.\n"
 "Use somente se você tiver problemas quando não o estiver utilizando"
 
 #. type: "OsxAptioFixDrv-64_description"
@@ -781,9 +761,7 @@ msgstr "Instala todos os RC scripts em todos os Volumes Inicializáveis do OSX"
 #: Resources/templates/Localizable.strings:154
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
-msgstr ""
-"Instala todos os RC scripts em todos os Volumes Internos Inicializáveis do "
-"OSX diferentes do Volume selecionado."
+msgstr "Instala todos os RC scripts em todos os Volumes Internos Inicializáveis do OSX diferentes do Volume selecionado."
 
 #. type: "Optional RC Scripts"
 #: Resources/templates/Localizable.strings:155
@@ -795,22 +773,24 @@ msgstr "RC Scripts Opcionais"
 #: Resources/templates/Localizable.strings:156
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
-msgstr ""
-"Desabilita o serviço mDNSResponder sleep proxy cliente. Isso irá impedir que "
-"o sistema retorne do Sleep a cada hora"
+msgstr "Desabilita o serviço mDNSResponder sleep proxy cliente. Isso irá impedir que o sistema retorne do Sleep a cada hora"
 
-#. type: "CloverUpdater_title"
+#. type: "CloverPrefpane_title"
 #: Resources/templates/Localizable.strings:161
-#, no-wrap
-msgid "Install CloverUpdater"
-msgstr "Instalar Clover Updater"
+#, fuzzy, no-wrap
+#| msgid "Install Clover in the ESP"
+msgid "Install Clover Preference Pane"
+msgstr "Instalar Clover na ESP"
 
-#. type: "CloverUpdater_description"
+#. type: "CloverPrefpane_description"
 #: Resources/templates/Localizable.strings:162
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Install CloverUpdater on target volume.\n"
+#| "CloverUpdater notify you about Clover updates."
 msgid ""
-"Install CloverUpdater on target volume.\n"
-"CloverUpdater notify you about Clover updates."
+"Install Clover Preference Pane on target volume.\n"
+"Include CloverUpdater that can notify you about Clover updates."
 msgstr ""
 "Instala o CloverUpdater no volume selecionado.\n"
 "O CloverUpdater notificará você sobre atualizações do Clover."
@@ -910,7 +890,6 @@ msgstr "Mensalmente"
 #. type: "241.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:8
 #, no-wrap
-#| msgid "CloverUpdater"
 msgid "Check for Updates"
 msgstr "AtualizarClover"
 
@@ -938,13 +917,125 @@ msgstr "Verificar agora"
 msgid "Copyright (c) 2013 JrCs"
 msgstr "Copyright (c) 2013 JrCs"
 
-#
-#. type: "292.title"
+#. type: "267.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:13
 #, no-wrap
-#| msgid "Clover v2"
-msgid "Clover Theme"
-msgstr "Clover Tema"
+msgid "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined in refit.conf is use."
+msgstr ""
+
+#. type: "292.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:14
+#, no-wrap
+msgid "GUI Appearance"
+msgstr ""
+
+#. type: "294.label"
+#: ../CloverPrefpane/CloverPrefpane.strings:15
+#, no-wrap
+msgid "NVRam Variables"
+msgstr ""
+
+#. type: "295.label"
+#: ../CloverPrefpane/CloverPrefpane.strings:16
+#, no-wrap
+msgid "Informations"
+msgstr ""
+
+#. type: "298.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:17
+#, no-wrap
+msgid "Revisions"
+msgstr ""
+
+#. type: "300.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:18
+#, fuzzy, no-wrap
+#| msgid "Current local Clover revision:"
+msgid "Current booted revision:"
+msgstr "Versão local atual do Clover"
+
+#. type: "302.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:19
+#, fuzzy, no-wrap
+#| msgid "Latest update revision:"
+msgid "Last installed revision:"
+msgstr "Última versão atualizada:"
+
+#. type: "309.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:20
+#, no-wrap
+msgid "Log Files"
+msgstr ""
+
+#. type: "311.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:21
+#, no-wrap
+msgid "LogLineCount:"
+msgstr ""
+
+#. type: "313.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:22
+#, no-wrap
+msgid "LogEveryBoot:"
+msgstr ""
+
+#. type: "314.ibShadowedToolTip"
+#: ../CloverPrefpane/CloverPrefpane.strings:23
+#, no-wrap
+msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
+msgstr ""
+
+#. type: "323.ibShadowedToolTip"
+#: ../CloverPrefpane/CloverPrefpane.strings:24
+#, no-wrap
+msgid "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* Yes: create a new timestamp boot.log file\\n* Number: where number is the number of timestamp boot.log files to keep.\\n\\nA blank value result in NO creation of timestamp boot.log file"
+msgstr ""
+
+#. type: "326.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:25
+#, fuzzy, no-wrap
+#| msgid "Themes"
+msgid "Theme:"
+msgstr "Temas"
+
+#. type: "327.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:26
+#, no-wrap
+msgid "Advanced Configurations"
+msgstr ""
+
+#. type: "329.ibShadowedToolTip"
+#: ../CloverPrefpane/CloverPrefpane.strings:27
+#, no-wrap
+msgid "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on the same disk drive as the system partition\\n* diskX: disk device\\n* GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on the same disk drive that the ESP partition\\n\\nEmpty value result in not mounting ESP partition on boot"
+msgstr ""
+
+#. type: "332.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:28
+#, no-wrap
+msgid "MountEFI:"
+msgstr ""
+
+#. type: "337.ibShadowedToolTip"
+#: ../CloverPrefpane/CloverPrefpane.strings:29
+#, no-wrap
+msgid "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram contents to disk\\n* diskXsY: device node of the volume where the nvram contents will be saved\\n\\nEmpty value save the nvram contents in the nvram.plist file in the root folder of the system partition."
+msgstr ""
+
+#. type: "339.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:30
+#, no-wrap
+msgid "NVRamDisk:"
+msgstr ""
+
+#
+#, fuzzy
+#~| msgid "Clover Theme"
+#~ msgid "Clover Theme:"
+#~ msgstr "Clover Tema"
+
+#~ msgid "Install CloverUpdater"
+#~ msgstr "Instalar Clover Updater"
 
 #~ msgid ""
 #~ "Used for BIOS booting on BIOS motherboards.\n"

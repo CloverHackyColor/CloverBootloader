@@ -315,7 +315,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -343,6 +343,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = "";
+				STRIP_INSTALLED_PRODUCT = NO;
+				VALID_ARCHS = x86_64;
 			};
 			name = Debug;
 		};
@@ -350,7 +352,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
@@ -368,6 +370,8 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				SDKROOT = "";
+				STRIP_INSTALLED_PRODUCT = YES;
+				VALID_ARCHS = x86_64;
 			};
 			name = Release;
 		};
@@ -386,7 +390,6 @@
 				INFOPLIST_FILE = "src/CloverPrefpane-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = "";
-				STRIP_INSTALLED_PRODUCT = NO;
 				WRAPPER_EXTENSION = prefPane;
 			};
 			name = Debug;
@@ -406,7 +409,6 @@
 				INFOPLIST_FILE = "src/CloverPrefpane-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = "";
-				STRIP_INSTALLED_PRODUCT = YES;
 				WRAPPER_EXTENSION = prefPane;
 			};
 			name = Release;

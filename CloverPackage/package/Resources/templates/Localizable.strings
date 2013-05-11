@@ -156,10 +156,10 @@ The target volume must be a bootable OSX system volume.";
 "disable_sleep_proxy_client_description" = "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours";
 
 // ============================================================================
-// Clover Update
+// Clover Preference Pane
 // ----------------------------------------------------------------------------
-"CloverUpdater_title" = "Install CloverUpdater";
-"CloverUpdater_description" = "Install CloverUpdater on target volume.
-CloverUpdater notify you about Clover updates.";
+"CloverPrefpane_title" = "Install Clover Preference Pane";
+"CloverPrefpane_description" = "Install Clover Preference Pane on target volume.
+Include CloverUpdater that can notify you about Clover updates.";
 
 // ----------------------------------------------------------------------------
