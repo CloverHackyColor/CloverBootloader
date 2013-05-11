@@ -33,6 +33,7 @@
  *******************************************************************************/
 //#include <Framework/FrameworkInternalFormRepresentation.h>
 #include "Platform.h"
+#include "Version.h"
 
 //#include "DataHubRecords.h"
 #include <Guid/DataHubRecords.h>
@@ -235,7 +236,15 @@ VOID SetupDataForOSX()
 	CHAR16*				productName			= AllocateZeroPool(64);
 	CHAR16*				serialNumber		= AllocateZeroPool(64);
 //  UINT32        Size;
-	
+  UINTN         revision;
+
+ //revision = StrDecimalToUintn(
+#ifdef FIRMWARE_REVISION
+  revision = StrDecimalToUintn(FIRMWARE_REVISION);
+#else
+  revision = StrDecimalToUintn(gST->FirmwareRevision);
+#endif
+
   //fool proof
   if ((FrontSideBus < (50 * Mega)) ||  (FrontSideBus > (500 * Mega))){
     DBG("Wrong FrontSideBus=%d\n", FrontSideBus);
@@ -262,6 +271,8 @@ VOID SetupDataForOSX()
       Status = LogDataHub(&gEfiMiscSubClassGuid, L"system-id", &gUuid, sizeof(EFI_GUID));
     }    		
 //		Status = LogDataHub(&gEfiMiscSubClassGuid, L"Clover", CloverVersion, StrSize(CloverVersion));
+
+    Status = LogDataHub(&gEfiProcessorSubClassGuid, L"clovergui-revision", &revision, sizeof(UINT32));
 
     //collect info about real hardware
     Status = LogDataHub(&gEfiMiscSubClassGuid, L"OEMVendor",  &gSettings.OEMVendor,  (UINT32)iStrLen(gSettings.OEMVendor, 64) + 1);
