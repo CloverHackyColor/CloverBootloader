@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-09 17:52+0300\n"
-"PO-Revision-Date: 2013-05-10 08:54+0000\n"
+"PO-Revision-Date: 2013-05-11 13:03+0000\n"
 "Last-Translator: artur_pt <artursimoes.pt@gmail.com>\n"
 "Language-Team: pt <pt@li.org>\n"
 "Language: pt\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1368176083.0\n"
+"X-POOTLE-MTIME: 1368277417.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -790,7 +790,7 @@ msgstr "Opcional RC Scripts"
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr ""
-"Desabilita o serviço mDNSResponder sleep proxy client. Isso irá impedir que "
+"Desabilita o serviço mDNSResponder sleep proxy cliente. Isso irá impedir que "
 "o sistema retorne do Sleep a cada hora"
 
 #. type: "CloverUpdater_title"
@@ -839,7 +839,7 @@ msgstr "Versão local atual do Clover"
 #: ../CloverUpdater/CloverUpdater.strings:7
 #, no-wrap
 msgid "Latest update revision:"
-msgstr "Última versão do update"
+msgstr "Última versão do atualizada:"
 
 #. type: "542.title"
 #: ../CloverUpdater/CloverUpdater.strings:8
@@ -912,13 +912,13 @@ msgstr "AtualizarClover"
 #: ../CloverPrefpane/CloverPrefpane.strings:9
 #, no-wrap
 msgid "Schedule Check Updates Every:"
-msgstr "Agendar a verificação a cada"
+msgstr "Agendar a verificação a cada:"
 
 #. type: "248.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:10
 #, no-wrap
 msgid "Last check:"
-msgstr "Última verificação"
+msgstr "Última verificação:"
 
 #. type: "258.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:11
