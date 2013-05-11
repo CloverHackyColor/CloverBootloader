@@ -24,6 +24,7 @@ bootervolumename="EFI"
 bootvolume="/Volumes/${bootervolumename}"
 install_log="${DEST_VOL}/Clover_Install_Log.txt"
 config_plist_file="${EFI_ROOT_DIR}"/EFI/CLOVER/config.plist
+plistbuddy='/usr/libexec/PlistBuddy'
 
 # Change config.plist if needed
 boottype=$( cat "${DEST_VOL}/boottype" )
@@ -32,6 +33,9 @@ case "${boottype}" in
 	ia32) perl -i -p -e "s/arch=x86_64/arch=i386/g" "${config_plist_file}" ;;
 	 x64) perl -i -p -e "s/arch=i386/arch=x86_64/g" "${config_plist_file}" ;;
 esac
+
+# Store last install revision
+$plistbuddy -c "Add CloverRevision integer %CLOVERREVISION%" "$CLOVER_INSTALLER_PLIST_NEW" >/dev/null
 
 echo "" >> "${install_log}"
 echo "======================================================" >> "${install_log}"
