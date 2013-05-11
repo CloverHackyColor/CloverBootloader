@@ -1320,6 +1320,9 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.LogEveryBoot = "Yes";
         } else if (prop->type == kTagTypeFalse) {
           gSettings.LogEveryBoot = "No";
+        } else if (prop->type == kTagTypeInteger) {
+          gSettings.LogEveryBoot = AllocateZeroPool(10); //ten digits will be enough :)
+          AsciiSPrint(gSettings.LogEveryBoot, 10, "%d", (UINTN)prop->string);
         } else if ((prop->type ==  kTagTypeString) && AsciiStrLen(prop->string) > 0) {
           gSettings.LogEveryBoot = AllocateCopyPool(AsciiStrSize(prop->string), prop->string);
         }
@@ -1333,6 +1336,9 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       gSettings.RtROMLen = 6;
     }
 
+    if (AsciiStrLen(gSettings.RtMLB) != 17) {
+      DBG("Warning! Your MLB is not suitable for iMessage!\n");
+    }
     
     // if CustomUUID and InjectSystemID are not specified
     // then use InjectSystemID=TRUE and SMBIOS UUID
