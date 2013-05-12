@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-11 21:16+0300\n"
-"PO-Revision-Date: 2013-05-11 23:52+0000\n"
+"PO-Revision-Date: 2013-05-12 00:27+0000\n"
 "Last-Translator: artur_pt <artursimoes.pt@gmail.com>\n"
 "Language-Team: pt <pt@li.org>\n"
 "Language: pt\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1368316352.0\n"
+"X-POOTLE-MTIME: 1368318445.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -780,7 +780,7 @@ msgstr "Desabilita o serviço mDNSResponder sleep proxy cliente. Isso irá imped
 #, no-wrap
 #| msgid "Install Clover in the ESP"
 msgid "Install Clover Preference Pane"
-msgstr "Instalar Clover na ESP"
+msgstr "Instalar Clover Painel Preferências"
 
 #. type: "CloverPrefpane_description"
 #: Resources/templates/Localizable.strings:162
@@ -979,7 +979,7 @@ msgstr "ContagemFicheirosEntrada:"
 #: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
 msgid "LogEveryBoot:"
-msgstr "FicheirosEntradaSempre:"
+msgstr "FicheirosEntrada:"
 
 #. type: "314.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:23
@@ -1034,10 +1034,10 @@ msgstr "MontarEFI:"
 #, no-wrap
 msgid "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram contents to disk\\n* diskXsY: device node of the volume where the nvram contents will be saved\\n\\nEmpty value save the nvram contents in the nvram.plist file in the root folder of the system partition."
 msgstr ""
-"Salve o conteúdo no disco nvram \\ \\ n \\ \\ nValue: \\ \\ n * No: não guardar o "
-"conteúdo para o disco nvram \\ \\ n * diskXsY: nó de dispositivo do volume "
-"onde o conteúdo nvram será salvo \\ \\ n \\ \\ valor nEmpty salvar o conteúdo "
-"nvram no arquivo nvram.plist na pasta raiz da partição do sistema."
+"Salvar o conteúdo nvram no disco  \\ \\ n \\ \\ nValue: \\ \\ n * No: não salvar o "
+"conteúdo nvram para o disco \\ \\ n * diskXsY: caminho de dispositivo do "
+"volume onde o conteúdo nvram será salvo \\ \\ n \\ \\ valor nEmpty salvar o "
+"conteúdo nvram no arquivo nvram.plist na pasta raiz da partição do sistema."
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:30
