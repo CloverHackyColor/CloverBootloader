@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-11 21:16+0300\n"
-"PO-Revision-Date: 2013-05-12 06:49+0000\n"
+"PO-Revision-Date: 2013-05-12 07:28+0000\n"
 "Last-Translator: Slice <sergey.slice@gmail.com>\n"
 "Language-Team: ru <ru@li.org>\n"
 "Language: ru\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1368341386.0\n"
+"X-POOTLE-MTIME: 1368343727.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -1017,7 +1017,7 @@ msgstr ""
 #, no-wrap
 #| msgid "Themes"
 msgid "Theme:"
-msgstr "Оформление"
+msgstr "Тема:"
 
 #. type: "327.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:26
