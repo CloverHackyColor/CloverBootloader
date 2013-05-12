@@ -13,7 +13,7 @@
 "267.ibShadowedToolTip" = "Theme to use in Clover GUI\nIf the value is empty, Clover theme defined in refit.conf is use.";
 "292.title" = "GUI Appearance";
 "294.label" = "NVRam Variables";
-"295.label" = "Informations";
+"295.label" = "General";
 "298.title" = "Revisions";
 "300.title" = "Current booted revision:";
 "302.title" = "Last installed revision:";

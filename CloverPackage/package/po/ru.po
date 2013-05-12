@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-11 21:16+0300\n"
+"POT-Creation-Date: 2013-05-12 14:19+0300\n"
 "PO-Revision-Date: 2013-05-12 07:28+0000\n"
 "Last-Translator: Slice <sergey.slice@gmail.com>\n"
 "Language-Team: ru <ru@li.org>\n"
@@ -788,16 +788,12 @@ msgstr "Запретить mDNSResponder sleep proxy client service. Это пр
 #. type: "CloverPrefpane_title"
 #: Resources/templates/Localizable.strings:161
 #, no-wrap
-#| msgid "Install Clover in the ESP"
 msgid "Install Clover Preference Pane"
 msgstr "Установить контрольную панель Clover "
 
 #. type: "CloverPrefpane_description"
 #: Resources/templates/Localizable.strings:162
 #, no-wrap
-#| msgid ""
-#| "Install CloverUpdater on target volume.\n"
-#| "CloverUpdater notify you about Clover updates."
 msgid ""
 "Install Clover Preference Pane on target volume.\n"
 "Include CloverUpdater that can notify you about Clover updates."
@@ -950,8 +946,8 @@ msgstr "Настройки загрузчика"
 #. type: "295.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:16
 #, no-wrap
-msgid "Informations"
-msgstr "Обновления"
+msgid "General"
+msgstr ""
 
 #. type: "298.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:17
@@ -962,14 +958,12 @@ msgstr "Ревизии"
 #. type: "300.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:18
 #, no-wrap
-#| msgid "Current local Clover revision:"
 msgid "Current booted revision:"
 msgstr "Текущая ревизия Clover:"
 
 #. type: "302.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:19
 #, no-wrap
-#| msgid "Latest update revision:"
 msgid "Last installed revision:"
 msgstr "Имеется обновление:"
 
@@ -995,9 +989,7 @@ msgstr "Отчет всегда:"
 #: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
-msgstr ""
-"Количество строк, которое должно сохраняться в файле system.log при "
-"добавлении новых."
+msgstr "Количество строк, которое должно сохраняться в файле system.log при добавлении новых."
 
 #. type: "323.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:24
@@ -1015,7 +1007,6 @@ msgstr ""
 #. type: "326.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:25
 #, no-wrap
-#| msgid "Themes"
 msgid "Theme:"
 msgstr "Тема:"
 
@@ -1035,8 +1026,7 @@ msgstr ""
 "Значение: Yes: монтировать тот ESP, который находится на текущем диске\n"
 "* diskX: диск номер\n"
 "* GUID: Уникальный GUID нужного раздела\n"
-"* Имя тома: Имя одного из разделов, который лежит на том же диске, что и "
-"нужный ESP\n"
+"* Имя тома: Имя одного из разделов, который лежит на том же диске, что и нужный ESP\n"
 "\n"
 " Пустое значение означает, что раздел не будет монтироваться."
 
@@ -1063,6 +1053,9 @@ msgstr ""
 #, no-wrap
 msgid "NVRamDisk:"
 msgstr "Диск для NVRAM:"
+
+#~ msgid "Informations"
+#~ msgstr "Обновления"
 
 #
 #, fuzzy

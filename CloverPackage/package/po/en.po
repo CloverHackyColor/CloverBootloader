@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-11 21:16+0300\n"
+"POT-Creation-Date: 2013-05-12 14:19+0300\n"
 "PO-Revision-Date: 2013-05-11 19:27+0000\n"
 "Last-Translator: JrCs <d2t56xxptp@snkmail.com>\n"
 "Language-Team: en <en@li.org>\n"
@@ -780,16 +780,12 @@ msgstr "Disable the mDNSResponder sleep proxy client service. This will prevent 
 #. type: "CloverPrefpane_title"
 #: Resources/templates/Localizable.strings:161
 #, no-wrap
-#| msgid "Install Clover in the ESP"
 msgid "Install Clover Preference Pane"
 msgstr "Install Clover Preference Pane"
 
 #. type: "CloverPrefpane_description"
 #: Resources/templates/Localizable.strings:162
 #, no-wrap
-#| msgid ""
-#| "Install CloverUpdater on target volume.\n"
-#| "CloverUpdater notify you about Clover updates."
 msgid ""
 "Install Clover Preference Pane on target volume.\n"
 "Include CloverUpdater that can notify you about Clover updates."
@@ -923,9 +919,7 @@ msgstr "Copyright (c) 2013 JrCs"
 #: ../CloverPrefpane/CloverPrefpane.strings:13
 #, no-wrap
 msgid "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined in refit.conf is use."
-msgstr ""
-"Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined in "
-"refit.conf is use."
+msgstr "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined in refit.conf is use."
 
 #. type: "292.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:14
@@ -942,8 +936,8 @@ msgstr "NVRam Variables"
 #. type: "295.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:16
 #, no-wrap
-msgid "Informations"
-msgstr "Informations"
+msgid "General"
+msgstr ""
 
 #. type: "298.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:17
@@ -954,14 +948,12 @@ msgstr "Revisions"
 #. type: "300.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:18
 #, no-wrap
-#| msgid "Current local Clover revision:"
 msgid "Current booted revision:"
 msgstr "Current booted revision:"
 
 #. type: "302.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:19
 #, no-wrap
-#| msgid "Latest update revision:"
 msgid "Last installed revision:"
 msgstr "Last installed revision:"
 
@@ -987,24 +979,17 @@ msgstr "LogEveryBoot:"
 #: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
-msgstr ""
-"Number of lines of history to keep in CloverEFI/system.log file in addition "
-"to the current CloverEFI/boot.log contents"
+msgstr "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
 
 #. type: "323.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* Yes: create a new timestamp boot.log file\\n* Number: where number is the number of timestamp boot.log files to keep.\\n\\nA blank value result in NO creation of timestamp boot.log file"
-msgstr ""
-"Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* Yes: "
-"create a new timestamp boot.log file\\n* Number: where number is the number "
-"of timestamp boot.log files to keep.\\n\\nA blank value result in NO creation "
-"of timestamp boot.log file"
+msgstr "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* Yes: create a new timestamp boot.log file\\n* Number: where number is the number of timestamp boot.log files to keep.\\n\\nA blank value result in NO creation of timestamp boot.log file"
 
 #. type: "326.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:25
 #, no-wrap
-#| msgid "Themes"
 msgid "Theme:"
 msgstr "Theme:"
 
@@ -1018,12 +1003,7 @@ msgstr "Advanced Configurations"
 #: ../CloverPrefpane/CloverPrefpane.strings:27
 #, no-wrap
 msgid "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on the same disk drive as the system partition\\n* diskX: disk device\\n* GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on the same disk drive that the ESP partition\\n\\nEmpty value result in not mounting ESP partition on boot"
-msgstr ""
-"Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on the "
-"same disk drive as the system partition\\n* diskX: disk device\\n* GUID: GUID "
-"of the ESP\\n* VolumeName: Volume name of a volume that is on the same disk "
-"drive that the ESP partition\\n\\nEmpty value result in not mounting ESP "
-"partition on boot"
+msgstr "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on the same disk drive as the system partition\\n* diskX: disk device\\n* GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on the same disk drive that the ESP partition\\n\\nEmpty value result in not mounting ESP partition on boot"
 
 #. type: "332.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:28
@@ -1035,17 +1015,16 @@ msgstr "MountEFI:"
 #: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
 msgid "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram contents to disk\\n* diskXsY: device node of the volume where the nvram contents will be saved\\n\\nEmpty value save the nvram contents in the nvram.plist file in the root folder of the system partition."
-msgstr ""
-"Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram "
-"contents to disk\\n* diskXsY: device node of the volume where the nvram "
-"contents will be saved\\n\\nEmpty value save the nvram contents in the "
-"nvram.plist file in the root folder of the system partition."
+msgstr "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram contents to disk\\n* diskXsY: device node of the volume where the nvram contents will be saved\\n\\nEmpty value save the nvram contents in the nvram.plist file in the root folder of the system partition."
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "NVRamDisk:"
 msgstr "NVRamDisk:"
+
+#~ msgid "Informations"
+#~ msgstr "Informations"
 
 #
 #, fuzzy

@@ -187,28 +187,38 @@ static io_registry_entry_t gOptionsRef;
 }
 
 - (IBAction)updateTheme:(id)sender {
-    if ([self setNVRamKey:cloverThemeString withValue:[self.cloverTheme UTF8String]])
-        [self initNVRamVariableFields];
+    NSString* nvRamValue=[self getNVRamKey:cloverThemeString];
+    if (self.cloverTheme != nvRamValue && ![self.cloverTheme isEqualToString:nvRamValue])
+        if ([self setNVRamKey:cloverThemeString withValue:[self.cloverTheme UTF8String]])
+            [self initNVRamVariableFields];
 }
 
 - (IBAction)updateMountEFI:(id)sender {
-    if ([self setNVRamKey:cloverMountEFIString withValue:[self.mountEFI UTF8String]])
-        [self initNVRamVariableFields];
+    NSString* nvRamValue=[self getNVRamKey:cloverMountEFIString];
+    if (self.mountEFI != nvRamValue && ![self.mountEFI isEqualToString:nvRamValue])
+        if ([self setNVRamKey:cloverMountEFIString withValue:[self.mountEFI UTF8String]])
+            [self initNVRamVariableFields];
 }
 
 - (IBAction)updateNVRamDisk:(id)sender {
-    if([self setNVRamKey:cloverNVRamDiskString withValue:[self.nvRamDisk UTF8String]])
-        [self initNVRamVariableFields];
+    NSString* nvRamValue=[self getNVRamKey:cloverNVRamDiskString];
+    if (self.nvRamDisk != nvRamValue && ![self.nvRamDisk isEqualToString:nvRamValue])
+        if([self setNVRamKey:cloverNVRamDiskString withValue:[self.nvRamDisk UTF8String]])
+            [self initNVRamVariableFields];
 }
 
 - (IBAction)updateLogLineCount:(id)sender {
-    if([self setNVRamKey:cloverLogLineCountString withValue:[self.logLineCount UTF8String]])
-        [self initNVRamVariableFields];
+    NSString* nvRamValue=[self getNVRamKey:cloverLogLineCountString];
+    if (self.logLineCount != nvRamValue && ![self.logLineCount isEqualToString:nvRamValue])
+        if([self setNVRamKey:cloverLogLineCountString withValue:[self.logLineCount UTF8String]])
+            [self initNVRamVariableFields];
 }
 
 - (IBAction)updateLogEveryBoot:(id)sender {
-    if([self setNVRamKey:cloverLogEveryBootString withValue:[self.logEveryBoot UTF8String]])
-        [self initNVRamVariableFields];
+    NSString* nvRamValue=[self getNVRamKey:cloverLogEveryBootString];
+    if (self.logEveryBoot != nvRamValue && ![self.logEveryBoot isEqualToString:nvRamValue])
+        if([self setNVRamKey:cloverLogEveryBootString withValue:[self.logEveryBoot UTF8String]])
+            [self initNVRamVariableFields];
 }
 
 - (BOOL)isUnlocked {

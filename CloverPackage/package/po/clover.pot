@@ -6,8 +6,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Clover v2.0-r1601\n"
-"POT-Creation-Date: 2013-05-11 21:16+0300\n"
+"Project-Id-Version: Clover v2.0-r1618\n"
+"POT-Creation-Date: 2013-05-12 14:19+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -848,7 +848,7 @@ msgstr ""
 #. type: "295.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:16
 #, no-wrap
-msgid "Informations"
+msgid "General"
 msgstr ""
 
 #. type: "298.title"

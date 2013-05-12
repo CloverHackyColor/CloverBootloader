@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-11 21:16+0300\n"
+"POT-Creation-Date: 2013-05-12 14:19+0300\n"
 "PO-Revision-Date: 2013-05-11 20:51+0000\n"
 "Last-Translator: oswaldini <oswaldinimtb@gmail.com>\n"
 "Language-Team: pl <pl@li.org>\n"
@@ -795,16 +795,12 @@ msgstr "Wyłącz mDNSResponder - usługi klienta proxy sleepu. Zapobiega to auto
 #. type: "CloverPrefpane_title"
 #: Resources/templates/Localizable.strings:161
 #, no-wrap
-#| msgid "Install Clover in the ESP"
 msgid "Install Clover Preference Pane"
 msgstr "Zainstaluj panel preferencji Clover"
 
 #. type: "CloverPrefpane_description"
 #: Resources/templates/Localizable.strings:162
 #, no-wrap
-#| msgid ""
-#| "Install CloverUpdater on target volume.\n"
-#| "CloverUpdater notify you about Clover updates."
 msgid ""
 "Install Clover Preference Pane on target volume.\n"
 "Include CloverUpdater that can notify you about Clover updates."
@@ -940,8 +936,7 @@ msgstr "Prawa autorskie : 2013 JrCs"
 msgid "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined in refit.conf is use."
 msgstr ""
 "Motywy do użycia w Clover GUI.\n"
-"Jeżeli wartość nie jest zdefiniowana Clover ładuje motyw zdefiniowany w "
-"refit.conf."
+"Jeżeli wartość nie jest zdefiniowana Clover ładuje motyw zdefiniowany w refit.conf."
 
 #. type: "292.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:14
@@ -958,8 +953,8 @@ msgstr "Zmienne NVRam"
 #. type: "295.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:16
 #, no-wrap
-msgid "Informations"
-msgstr "Informacje"
+msgid "General"
+msgstr ""
 
 #. type: "298.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:17
@@ -970,14 +965,12 @@ msgstr "Wersja"
 #. type: "300.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:18
 #, no-wrap
-#| msgid "Current local Clover revision:"
 msgid "Current booted revision:"
 msgstr "Aktualna wersja:"
 
 #. type: "302.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:19
 #, no-wrap
-#| msgid "Latest update revision:"
 msgid "Last installed revision:"
 msgstr "Ostatnia zainstalowana wersja:"
 
@@ -1003,9 +996,7 @@ msgstr "Utwórz dziennik podczas każdego uruchamiania:"
 #: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
-msgstr ""
-"Liczba wierszy historii do zapisania w CloverEFI/system.log w odniesieniu do "
-"obecnej zawartości CloverEFI/boot.log"
+msgstr "Liczba wierszy historii do zapisania w CloverEFI/system.log w odniesieniu do obecnej zawartości CloverEFI/boot.log"
 
 #. type: "323.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:24
@@ -1021,7 +1012,6 @@ msgstr ""
 #. type: "326.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:25
 #, no-wrap
-#| msgid "Themes"
 msgid "Theme:"
 msgstr "Motywy graficzne:"
 
@@ -1059,14 +1049,16 @@ msgstr ""
 "Wartość:\n"
 "No: nie zapisuje wartości nvram na dysku\n"
 "diskXsY: numer dysku i partycji na której ma zostać zapisana wartość nvram\n"
-"Brak wartości: zapisuje zawartość nvram do pliku nvram.plist na partycji "
-"systemowej."
+"Brak wartości: zapisuje zawartość nvram do pliku nvram.plist na partycji systemowej."
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "NVRamDisk:"
 msgstr "NVRamDisk:"
+
+#~ msgid "Informations"
+#~ msgstr "Informacje"
 
 #
 #, fuzzy
