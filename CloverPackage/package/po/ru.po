@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-11 21:16+0300\n"
-"PO-Revision-Date: 2013-05-12 02:55+0000\n"
+"PO-Revision-Date: 2013-05-12 06:43+0000\n"
 "Last-Translator: Slice <sergey.slice@gmail.com>\n"
 "Language-Team: ru <ru@li.org>\n"
 "Language: ru\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1368327308.0\n"
+"X-POOTLE-MTIME: 1368341038.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -593,13 +593,13 @@ msgstr "Драйвер для поддержки необычных схем р�
 #: Resources/templates/Localizable.strings:108
 #, no-wrap
 msgid "Themes"
-msgstr "Оформление"
+msgstr "Тема"
 
 #. type: "Themes_description"
 #: Resources/templates/Localizable.strings:109
 #, no-wrap
 msgid "Select to install themes."
-msgstr "Выберите для установки темы."
+msgstr "Выберите темы для установки."
 
 #. type: "black_green_title"
 #: Resources/templates/Localizable.strings:111
@@ -939,7 +939,7 @@ msgstr ""
 #: ../CloverPrefpane/CloverPrefpane.strings:14
 #, no-wrap
 msgid "GUI Appearance"
-msgstr "Тема загрузчика"
+msgstr "Оформление"
 
 #. type: "294.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:15
@@ -983,13 +983,13 @@ msgstr "Файлы отчетов"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "LogLineCount:"
-msgstr "LogLineCount:"
+msgstr "Длина отчета:"
 
 #. type: "313.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
 msgid "LogEveryBoot:"
-msgstr "LogEveryBoot:"
+msgstr "Отчет всегда:"
 
 #. type: "314.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:23
