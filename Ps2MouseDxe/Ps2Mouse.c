@@ -16,6 +16,9 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #include "Ps2Mouse.h"
 #include "CommPs2.h"
 
+#include "Version.h"
+CONST CHAR8* CloverRevision = REVISION_STR;
+
 ///
 /// DriverBinding Protocol Instance
 ///

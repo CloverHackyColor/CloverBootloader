@@ -39,6 +39,9 @@
 
 #include "fsw_core.h"
 
+#include "Version.h"
+CONST CHAR8* CloverRevision = REVISION_STR;
+
 
 // functions
 

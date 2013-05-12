@@ -40,6 +40,9 @@
 #define DBG(...)
 #endif
 
+#include "../Version.h"
+CONST CHAR8* CloverRevision = REVISION_STR;
+
 
 // the highest address that kernel will use
 #define KERNEL_TOP_ADDRESS		0x10000000		// 256MB

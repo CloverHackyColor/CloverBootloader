@@ -32,6 +32,8 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 #define DBG(...) MemLog(TRUE, 0, __VA_ARGS__)
 #endif
 
+#include "Version.h"
+CONST CHAR8* CloverRevision = REVISION_STR;
 
 
 EFI_DRIVER_BINDING_PROTOCOL gUsbMouseDriverBinding = {

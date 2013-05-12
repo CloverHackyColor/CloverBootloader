@@ -506,6 +506,47 @@
 		12DD324A16557FC200108DFC /* efiConsoleControl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = efiConsoleControl.h; sourceTree = "<group>"; };
 		12DD324B16557FCC00108DFC /* GenericBdsLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GenericBdsLib.h; sourceTree = "<group>"; };
 		12E727F916541E76005DDE3E /* VesaBiosExtensions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VesaBiosExtensions.h; sourceTree = "<group>"; };
+		12FA1569173F4E3B00F847F1 /* EmuVariable.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = EmuVariable.c; sourceTree = "<group>"; };
+		12FA156A173F4E3B00F847F1 /* EmuVariableRuntimeDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = EmuVariableRuntimeDxe.inf; sourceTree = "<group>"; };
+		12FA156B173F4E3B00F847F1 /* InitVariable.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = InitVariable.c; sourceTree = "<group>"; };
+		12FA156C173F4E3B00F847F1 /* Variable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Variable.h; sourceTree = "<group>"; };
+		12FA156E173F4E4900F847F1 /* FSInject.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = FSInject.c; sourceTree = "<group>"; };
+		12FA156F173F4E4900F847F1 /* FSInject.dec */ = {isa = PBXFileReference; lastKnownFileType = text; path = FSInject.dec; sourceTree = "<group>"; };
+		12FA1570173F4E4900F847F1 /* FSInject.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FSInject.h; sourceTree = "<group>"; };
+		12FA1571173F4E4900F847F1 /* FSInject.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = FSInject.inf; sourceTree = "<group>"; };
+		12FA1574173F4E4900F847F1 /* FSInjectProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FSInjectProtocol.h; sourceTree = "<group>"; };
+		12FA1575173F4E4900F847F1 /* Test.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Test.c; sourceTree = "<group>"; };
+		12FA1576173F4E4900F847F1 /* Test.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Test.h; sourceTree = "<group>"; };
+		12FA1578173F4E6A00F847F1 /* AsmFuncs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AsmFuncs.h; sourceTree = "<group>"; };
+		12FA1579173F4E6A00F847F1 /* BootArgs.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootArgs.c; sourceTree = "<group>"; };
+		12FA157A173F4E6A00F847F1 /* BootArgs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BootArgs.h; sourceTree = "<group>"; };
+		12FA157B173F4E6A00F847F1 /* BootFixes.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BootFixes.c; sourceTree = "<group>"; };
+		12FA157C173F4E6A00F847F1 /* BootFixes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BootFixes.h; sourceTree = "<group>"; };
+		12FA157D173F4E6A00F847F1 /* DecodedKernelCheck.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DecodedKernelCheck.c; sourceTree = "<group>"; };
+		12FA157E173F4E6A00F847F1 /* DecodedKernelCheck.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DecodedKernelCheck.h; sourceTree = "<group>"; };
+		12FA1580173F4E6A00F847F1 /* device_tree.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = device_tree.c; sourceTree = "<group>"; };
+		12FA1581173F4E6A00F847F1 /* device_tree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = device_tree.h; sourceTree = "<group>"; };
+		12FA1582173F4E6A00F847F1 /* Lib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Lib.c; sourceTree = "<group>"; };
+		12FA1583173F4E6A00F847F1 /* Lib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lib.h; sourceTree = "<group>"; };
+		12FA1585173F4E6A00F847F1 /* loader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = loader.h; sourceTree = "<group>"; };
+		12FA1586173F4E6A00F847F1 /* Mach-O.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "Mach-O.c"; sourceTree = "<group>"; };
+		12FA1587173F4E6A00F847F1 /* Mach-O.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Mach-O.h"; sourceTree = "<group>"; };
+		12FA1588173F4E6A00F847F1 /* UefiLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UefiLoader.h; sourceTree = "<group>"; };
+		12FA1589173F4E6A00F847F1 /* NVRAMDebug.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = NVRAMDebug.c; sourceTree = "<group>"; };
+		12FA158A173F4E6A00F847F1 /* NVRAMDebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVRAMDebug.h; sourceTree = "<group>"; };
+		12FA158B173F4E6A00F847F1 /* OsxAptioFixDrv.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OsxAptioFixDrv.c; sourceTree = "<group>"; };
+		12FA158C173F4E6A00F847F1 /* OsxAptioFixDrv.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OsxAptioFixDrv.inf; sourceTree = "<group>"; };
+		12FA158D173F4E6A00F847F1 /* VMem.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = VMem.c; sourceTree = "<group>"; };
+		12FA158E173F4E6A00F847F1 /* VMem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VMem.h; sourceTree = "<group>"; };
+		12FA1590173F4E6A00F847F1 /* AsmFuncsX64.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = AsmFuncsX64.asm; sourceTree = "<group>"; };
+		12FA1591173F4E6A00F847F1 /* AsmFuncsX64.S */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm; path = AsmFuncsX64.S; sourceTree = "<group>"; };
+		12FA1592173F4E6A00F847F1 /* TestAsm32.asm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.asm.asm; path = TestAsm32.asm; sourceTree = "<group>"; };
+		12FA1594173F4E7400F847F1 /* Lib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Lib.c; sourceTree = "<group>"; };
+		12FA1595173F4E7400F847F1 /* Lib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Lib.h; sourceTree = "<group>"; };
+		12FA1596173F4E7400F847F1 /* NVRAMDebug.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = NVRAMDebug.c; sourceTree = "<group>"; };
+		12FA1597173F4E7400F847F1 /* NVRAMDebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NVRAMDebug.h; sourceTree = "<group>"; };
+		12FA1598173F4E7400F847F1 /* OsxLowMemFixDrv.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = OsxLowMemFixDrv.c; sourceTree = "<group>"; };
+		12FA1599173F4E7400F847F1 /* OsxLowMemFixDrv.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = OsxLowMemFixDrv.inf; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1410,6 +1451,7 @@
 				12A1790E166BCC15005B0D63 /* SataControllerDxe */,
 				12896D8C16B3A10A00A2EC36 /* VBoxFsDxe */,
 				12DB2D8616522B2A00A8066D /* CloverX */,
+				12FA1567173F4E0200F847F1 /* UEFI */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1627,6 +1669,130 @@
 				12DD324916557F7B00108DFC /* VBoxPeCoffLib.inf */,
 			);
 			path = VBoxPeCoffLib;
+			sourceTree = "<group>";
+		};
+		12FA1567173F4E0200F847F1 /* UEFI */ = {
+			isa = PBXGroup;
+			children = (
+				12FA1568173F4E3B00F847F1 /* EmuVariableUefi */,
+				12FA156D173F4E4900F847F1 /* FSInject */,
+				12FA1577173F4E6A00F847F1 /* OsxAptioFixDrv */,
+				12FA1593173F4E7400F847F1 /* OsxLowMemFixDrv */,
+			);
+			name = UEFI;
+			sourceTree = "<group>";
+		};
+		12FA1568173F4E3B00F847F1 /* EmuVariableUefi */ = {
+			isa = PBXGroup;
+			children = (
+				12FA1569173F4E3B00F847F1 /* EmuVariable.c */,
+				12FA156A173F4E3B00F847F1 /* EmuVariableRuntimeDxe.inf */,
+				12FA156B173F4E3B00F847F1 /* InitVariable.c */,
+				12FA156C173F4E3B00F847F1 /* Variable.h */,
+			);
+			name = EmuVariableUefi;
+			path = ../EmuVariableUefi;
+			sourceTree = "<group>";
+		};
+		12FA156D173F4E4900F847F1 /* FSInject */ = {
+			isa = PBXGroup;
+			children = (
+				12FA156E173F4E4900F847F1 /* FSInject.c */,
+				12FA156F173F4E4900F847F1 /* FSInject.dec */,
+				12FA1570173F4E4900F847F1 /* FSInject.h */,
+				12FA1571173F4E4900F847F1 /* FSInject.inf */,
+				12FA1572173F4E4900F847F1 /* Include */,
+				12FA1575173F4E4900F847F1 /* Test.c */,
+				12FA1576173F4E4900F847F1 /* Test.h */,
+			);
+			name = FSInject;
+			path = ../FSInject;
+			sourceTree = "<group>";
+		};
+		12FA1572173F4E4900F847F1 /* Include */ = {
+			isa = PBXGroup;
+			children = (
+				12FA1573173F4E4900F847F1 /* Protocol */,
+			);
+			path = Include;
+			sourceTree = "<group>";
+		};
+		12FA1573173F4E4900F847F1 /* Protocol */ = {
+			isa = PBXGroup;
+			children = (
+				12FA1574173F4E4900F847F1 /* FSInjectProtocol.h */,
+			);
+			path = Protocol;
+			sourceTree = "<group>";
+		};
+		12FA1577173F4E6A00F847F1 /* OsxAptioFixDrv */ = {
+			isa = PBXGroup;
+			children = (
+				12FA1578173F4E6A00F847F1 /* AsmFuncs.h */,
+				12FA1579173F4E6A00F847F1 /* BootArgs.c */,
+				12FA157A173F4E6A00F847F1 /* BootArgs.h */,
+				12FA157B173F4E6A00F847F1 /* BootFixes.c */,
+				12FA157C173F4E6A00F847F1 /* BootFixes.h */,
+				12FA157D173F4E6A00F847F1 /* DecodedKernelCheck.c */,
+				12FA157E173F4E6A00F847F1 /* DecodedKernelCheck.h */,
+				12FA157F173F4E6A00F847F1 /* FlatDevTree */,
+				12FA1582173F4E6A00F847F1 /* Lib.c */,
+				12FA1583173F4E6A00F847F1 /* Lib.h */,
+				12FA1584173F4E6A00F847F1 /* Mach-O */,
+				12FA1589173F4E6A00F847F1 /* NVRAMDebug.c */,
+				12FA158A173F4E6A00F847F1 /* NVRAMDebug.h */,
+				12FA158B173F4E6A00F847F1 /* OsxAptioFixDrv.c */,
+				12FA158C173F4E6A00F847F1 /* OsxAptioFixDrv.inf */,
+				12FA158D173F4E6A00F847F1 /* VMem.c */,
+				12FA158E173F4E6A00F847F1 /* VMem.h */,
+				12FA158F173F4E6A00F847F1 /* X64 */,
+			);
+			name = OsxAptioFixDrv;
+			path = ../OsxAptioFixDrv;
+			sourceTree = "<group>";
+		};
+		12FA157F173F4E6A00F847F1 /* FlatDevTree */ = {
+			isa = PBXGroup;
+			children = (
+				12FA1580173F4E6A00F847F1 /* device_tree.c */,
+				12FA1581173F4E6A00F847F1 /* device_tree.h */,
+			);
+			path = FlatDevTree;
+			sourceTree = "<group>";
+		};
+		12FA1584173F4E6A00F847F1 /* Mach-O */ = {
+			isa = PBXGroup;
+			children = (
+				12FA1585173F4E6A00F847F1 /* loader.h */,
+				12FA1586173F4E6A00F847F1 /* Mach-O.c */,
+				12FA1587173F4E6A00F847F1 /* Mach-O.h */,
+				12FA1588173F4E6A00F847F1 /* UefiLoader.h */,
+			);
+			path = "Mach-O";
+			sourceTree = "<group>";
+		};
+		12FA158F173F4E6A00F847F1 /* X64 */ = {
+			isa = PBXGroup;
+			children = (
+				12FA1590173F4E6A00F847F1 /* AsmFuncsX64.asm */,
+				12FA1591173F4E6A00F847F1 /* AsmFuncsX64.S */,
+				12FA1592173F4E6A00F847F1 /* TestAsm32.asm */,
+			);
+			path = X64;
+			sourceTree = "<group>";
+		};
+		12FA1593173F4E7400F847F1 /* OsxLowMemFixDrv */ = {
+			isa = PBXGroup;
+			children = (
+				12FA1594173F4E7400F847F1 /* Lib.c */,
+				12FA1595173F4E7400F847F1 /* Lib.h */,
+				12FA1596173F4E7400F847F1 /* NVRAMDebug.c */,
+				12FA1597173F4E7400F847F1 /* NVRAMDebug.h */,
+				12FA1598173F4E7400F847F1 /* OsxLowMemFixDrv.c */,
+				12FA1599173F4E7400F847F1 /* OsxLowMemFixDrv.inf */,
+			);
+			name = OsxLowMemFixDrv;
+			path = ../OsxLowMemFixDrv;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
