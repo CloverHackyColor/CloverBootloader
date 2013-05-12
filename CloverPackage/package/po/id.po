@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-11 21:16+0300\n"
-"PO-Revision-Date: 2013-05-09 23:04+0000\n"
+"PO-Revision-Date: 2013-05-12 00:35+0000\n"
 "Last-Translator: archintosh <ardr_1109@yahoo.com>\n"
 "Language-Team: id <id@li.org>\n"
 "Language: id\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1368140647.0\n"
+"X-POOTLE-MTIME: 1368318909.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -781,14 +781,14 @@ msgstr "Mendisable mDNSResponder sleep proxy client service. Supaya system tidak
 
 #. type: "CloverPrefpane_title"
 #: Resources/templates/Localizable.strings:161
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install Clover in the ESP"
 msgid "Install Clover Preference Pane"
-msgstr "Instalasi Clover pada ESP"
+msgstr "Install Clover Panel Preference"
 
 #. type: "CloverPrefpane_description"
 #: Resources/templates/Localizable.strings:162
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Install CloverUpdater on target volume.\n"
 #| "CloverUpdater notify you about Clover updates."
@@ -796,8 +796,8 @@ msgid ""
 "Install Clover Preference Pane on target volume.\n"
 "Include CloverUpdater that can notify you about Clover updates."
 msgstr ""
-"Install CloverUpdater ke target volume.\n"
-"CloverUpdater memberitahu anda tentang update."
+"Install Clover Panel Preference ke target volume.\n"
+"dan CloverUpdater yang akan memberitahu anda tentang update Clover."
 
 #. type: "371.title"
 #: ../CloverUpdater/CloverUpdater.strings:1
@@ -926,111 +926,128 @@ msgstr "Copyright (c) 2013 JrCs"
 #, no-wrap
 msgid "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined in refit.conf is use."
 msgstr ""
+"Tema yang yang dipakai untuk Clover GUI\\nIf tidak terdeteksi, memakai tema "
+"Clover yang ada di refit.conf."
 
 #. type: "292.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:14
 #, no-wrap
 msgid "GUI Appearance"
-msgstr ""
+msgstr "Tampilan GUI"
 
 #. type: "294.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:15
 #, no-wrap
 msgid "NVRam Variables"
-msgstr ""
+msgstr "Variabel-variabel NVRam"
 
 #. type: "295.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:16
 #, no-wrap
 msgid "Informations"
-msgstr ""
+msgstr "Informasi"
 
 #. type: "298.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:17
 #, no-wrap
 msgid "Revisions"
-msgstr ""
+msgstr "Revisi"
 
 #. type: "300.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:18
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Current local Clover revision:"
 msgid "Current booted revision:"
-msgstr "Revisi Clover lokal saat ini:"
+msgstr "Revisi boot saat ini:"
 
 #. type: "302.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:19
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Latest update revision:"
 msgid "Last installed revision:"
-msgstr "Revisi update terbaru:"
+msgstr "Revisi terinstall terakhir:"
 
 #. type: "309.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
 msgid "Log Files"
-msgstr ""
+msgstr "Berkas log"
 
 #. type: "311.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "LogLineCount:"
-msgstr ""
+msgstr "LogLineCount:"
 
 #. type: "313.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
 msgid "LogEveryBoot:"
-msgstr ""
+msgstr "LogEveryBoot:"
 
 #. type: "314.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
 msgstr ""
+"Jumlah baris yang disimpan dalam berkas CloverEFI/system.log sebagai "
+"tambahan ke isi CloverEFI/boot.log yang sekarang"
 
 #. type: "323.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* Yes: create a new timestamp boot.log file\\n* Number: where number is the number of timestamp boot.log files to keep.\\n\\nA blank value result in NO creation of timestamp boot.log file"
 msgstr ""
+"Buat berkas timestamp CloverEFI/boot.log pada tiap boot\\n\\nValue:\\n* Ya: "
+"Buat berkas timestamp boot.log baru\\n* Jumlah: Banyaknya berkas timestamp "
+"boot.log yang disimpan.\\n\\nNilai kosong berarti TIDAK membuat berkas "
+"timestamp boot.log"
 
 #. type: "326.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:25
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Themes"
 msgid "Theme:"
-msgstr "Tematis"
+msgstr "Tema:"
 
 #. type: "327.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:26
 #, no-wrap
 msgid "Advanced Configurations"
-msgstr ""
+msgstr "Konfigurasi Lanjutan"
 
 #. type: "329.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:27
 #, no-wrap
 msgid "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on the same disk drive as the system partition\\n* diskX: disk device\\n* GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on the same disk drive that the ESP partition\\n\\nEmpty value result in not mounting ESP partition on boot"
 msgstr ""
+"Pasang partisi ESP pada saat boot.\\n\\nValue:\\n* Ya: pasang ESP pada disk "
+"drive yang sama dengan partisi sistem\\n* diskX: disk device\\n* GUID: GUID of "
+"the ESP\\n* VolumeName: Nama dari volume yang berada pada disk drive yang "
+"sama dengan partisi ESP\\n\\nNilai kosong berarti tidak memasang partisi ESP "
+"partition pada saat boot"
 
 #. type: "332.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
 msgid "MountEFI:"
-msgstr ""
+msgstr "MountEFI:"
 
 #. type: "337.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
 msgid "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram contents to disk\\n* diskXsY: device node of the volume where the nvram contents will be saved\\n\\nEmpty value save the nvram contents in the nvram.plist file in the root folder of the system partition."
 msgstr ""
+"Simpan isi nvram ke disk\\n\\nValue:\\n* Tidak: jangan simpan isi nvram ke "
+"disk\\n* diskXsY: device node dari volume dimana isi nvram akan "
+"disimpan\\n\\nNilai kosong berarti simpan isi nvram dalam berkas nvram.plist "
+"di folder root dari partisi sistem."
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "NVRamDisk:"
-msgstr ""
+msgstr "NVRamDisk:"
 
 #
 #, fuzzy
