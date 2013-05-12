@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-12 14:19+0300\n"
-"PO-Revision-Date: 2013-05-12 02:51+0000\n"
+"PO-Revision-Date: 2013-05-12 15:55+0000\n"
 "Last-Translator: kyndder <kyndder@icloud.com>\n"
 "Language-Team: pt <pt@li.org>\n"
 "Language: br\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1368327102.0\n"
+"X-POOTLE-MTIME: 1368374115.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -941,7 +941,7 @@ msgstr "Variáveis de NVRam"
 #: ../CloverPrefpane/CloverPrefpane.strings:16
 #, no-wrap
 msgid "General"
-msgstr ""
+msgstr "Geral"
 
 #. type: "298.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:17
