@@ -208,62 +208,64 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
     gSettings.PatchVBiosBytesCount = 0;
     dict2 = GetProperty(dictPointer,"PatchVBiosBytes");
     if (dict2) {
-      UINTN     Count = 0;
-      UINTN     Index = 0;
-      VBIOS_PATCH_BYTES *VBiosPatch;
-      UINTN     FindSize = 0;
-      UINTN     ReplaceSize = 0;
-      BOOLEAN   Valid;
+      UINTN Count = GetTagCount(dict2);
+      if (Count > 0) {
+        UINTN     Index = 0;
+        VBIOS_PATCH_BYTES *VBiosPatch;
+        UINTN     FindSize = 0;
+        UINTN     ReplaceSize = 0;
+        BOOLEAN   Valid;
       
-      // alloc space for up to 16 entries
-      gSettings.PatchVBiosBytes = AllocateZeroPool(Count * sizeof(VBIOS_PATCH_BYTES));
+        // alloc space for up to 16 entries
+        gSettings.PatchVBiosBytes = AllocateZeroPool(Count * sizeof(VBIOS_PATCH_BYTES));
       
-      // get all entries
-      Index = 0;
-      for (Index = 0; Index < Count; Index++) {
-        // Get the next entry
-        if (EFI_ERROR(GetElement(dict2, Index, &prop))) {
-           continue;
-        }
-        if (prop == NULL) {
-          break;
-        }
-        Valid = TRUE;
-        // read entry
-        VBiosPatch = &gSettings.PatchVBiosBytes[gSettings.PatchVBiosBytesCount];
-        VBiosPatch->Find = GetDataSetting(prop, "Find", &FindSize);
-        VBiosPatch->Replace = GetDataSetting(prop, "Replace", &ReplaceSize);
-        if (VBiosPatch->Find == NULL || FindSize == 0) {
-          Valid = FALSE;
-          DBG("PatchVBiosBytes[%d]: missing Find data\n", Index);
-        }
-        if (VBiosPatch->Replace == NULL || ReplaceSize == 0) {
-          Valid = FALSE;
-          DBG("PatchVBiosBytes[%d]: missing Replace data\n", Index);
-        }
-        if (FindSize != ReplaceSize) {
-          Valid = FALSE;
-          DBG("PatchVBiosBytes[%d]: Find and Replace data are not the same size\n", Index);
-        }
-        if (Valid) {
-          VBiosPatch->NumberOfBytes = FindSize;
-          // go to next entry
-          ++gSettings.PatchVBiosBytesCount;
-        } else {
-          // error - release mem
-          if (VBiosPatch->Find != NULL) {
-            FreePool(VBiosPatch->Find);
-            VBiosPatch->Find = NULL;
+        // get all entries
+        Index = 0;
+        for (Index = 0; Index < Count; Index++) {
+          // Get the next entry
+          if (EFI_ERROR(GetElement(dict2, Index, &prop))) {
+             continue;
           }
-          if (VBiosPatch->Replace != NULL) {
-            FreePool(VBiosPatch->Replace);
-            VBiosPatch->Replace = NULL;
+          if (prop == NULL) {
+            break;
+          }
+          Valid = TRUE;
+          // read entry
+          VBiosPatch = &gSettings.PatchVBiosBytes[gSettings.PatchVBiosBytesCount];
+          VBiosPatch->Find = GetDataSetting(prop, "Find", &FindSize);
+          VBiosPatch->Replace = GetDataSetting(prop, "Replace", &ReplaceSize);
+          if (VBiosPatch->Find == NULL || FindSize == 0) {
+            Valid = FALSE;
+            DBG("PatchVBiosBytes[%d]: missing Find data\n", Index);
+          }
+          if (VBiosPatch->Replace == NULL || ReplaceSize == 0) {
+            Valid = FALSE;
+            DBG("PatchVBiosBytes[%d]: missing Replace data\n", Index);
+          }
+          if (FindSize != ReplaceSize) {
+            Valid = FALSE;
+            DBG("PatchVBiosBytes[%d]: Find and Replace data are not the same size\n", Index);
+          }
+          if (Valid) {
+            VBiosPatch->NumberOfBytes = FindSize;
+            // go to next entry
+            ++gSettings.PatchVBiosBytesCount;
+          } else {
+            // error - release mem
+            if (VBiosPatch->Find != NULL) {
+              FreePool(VBiosPatch->Find);
+              VBiosPatch->Find = NULL;
+            }
+            if (VBiosPatch->Replace != NULL) {
+              FreePool(VBiosPatch->Replace);
+              VBiosPatch->Replace = NULL;
+            }
           }
         }
-      }
-      if (gSettings.PatchVBiosBytesCount == 0) {
-        FreePool(gSettings.PatchVBiosBytes);
-        gSettings.PatchVBiosBytes = NULL;
+        if (gSettings.PatchVBiosBytesCount == 0) {
+          FreePool(gSettings.PatchVBiosBytes);
+          gSettings.PatchVBiosBytes = NULL;
+        }
       }
     }
     
@@ -290,12 +292,14 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
   dictPointer = GetProperty(dict,"DisableDrivers");
   if(dictPointer) {
     INTN i, Count = GetTagCount(dictPointer);
-    gSettings.BlackListCount = 0;
-    gSettings.BlackList = AllocateZeroPool(Count * sizeof(CHAR16 *));
-    for (i = 0; i < Count; ++i) {
-      if (!EFI_ERROR(GetElement(dictPointer, i, &prop)) &&
-          prop && (prop->type == kTagTypeString)) {
-        gSettings.BlackList[gSettings.BlackListCount++] = PoolPrint(L"%a", prop->string);
+    if (Count > 0) {
+      gSettings.BlackListCount = 0;
+      gSettings.BlackList = AllocateZeroPool(Count * sizeof(CHAR16 *));
+      for (i = 0; i < Count; ++i) {
+        if (!EFI_ERROR(GetElement(dictPointer, i, &prop)) &&
+            prop && (prop->type == kTagTypeString)) {
+          gSettings.BlackList[gSettings.BlackListCount++] = PoolPrint(L"%a", prop->string);
+        }
       }
     }
   }
@@ -1194,86 +1198,90 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       
       prop = GetProperty(dictPointer,"KextsToPatch");
       if(prop) {
-        UINTN  j, Count = GetTagCount(prop);
-        gSettings.NrKexts = 0;
-        gSettings.KextPatches = AllocateZeroPool(Count * sizeof(KEXT_PATCH));
-        for (i = 0; i < Count; ++i) {
-          if (EFI_ERROR(GetElement(prop, i, &dictPointer))) {
-             continue;
-          }
-          if (!dictPointer) {
-            break;
-          }
-          gSettings.KextPatches[gSettings.NrKexts].Name = NULL;
-          gSettings.KextPatches[gSettings.NrKexts].Data = NULL;
-          gSettings.KextPatches[gSettings.NrKexts].Patch = NULL;
-          DBG("KextsToPatch %d:", i);
-          dict2 = GetProperty(dictPointer,"Name");
-          if (!dict2) {
-             continue;
-          }
-          gSettings.KextPatches[gSettings.NrKexts].Name = AllocateCopyPool(AsciiStrSize(dict2->string), dict2->string);
-          dict2 = GetProperty(dictPointer,"Comment");
-          if (dict2) {
-            DBG(" %a (%a)", gSettings.KextPatches[gSettings.NrKexts].Name, dict2->string);
-          } else {
-            DBG(" %a", gSettings.KextPatches[gSettings.NrKexts].Name);
-          }
-          gSettings.KPKextPatchesNeeded = TRUE;
-          
-          // check if this is Info.plist patch or kext binary patch
-          gSettings.KextPatches[gSettings.NrKexts].IsPlistPatch = FALSE;
-          dict2 = GetProperty(dictPointer, "InfoPlistPatch");
-          if(dict2) {
-            if ((dict2->type = kTagTypeTrue) ||
-                (dict2->string[0] == 'y') ||
-                (dict2->string[0] == 'Y'))
-              gSettings.KextPatches[gSettings.NrKexts].IsPlistPatch = TRUE;
-          }
-          
-          if (gSettings.KextPatches[gSettings.NrKexts].IsPlistPatch) {
-            // Info.plist
-            // Find and Replace should be in <string>...</string>
-            DBG(" Info.plist patch");
-            dict2 = GetProperty(dictPointer, "Find");
-            gSettings.KextPatches[gSettings.NrKexts].DataLen = 0;
-            if(dict2 && dict2->string) {
-              gSettings.KextPatches[gSettings.NrKexts].DataLen = AsciiStrLen(dict2->string);
-              gSettings.KextPatches[gSettings.NrKexts].Data = (UINT8*) AllocateCopyPool(gSettings.KextPatches[gSettings.NrKexts].DataLen + 1, dict2->string);
+        UINTN Count = GetTagCount(prop);
+        if (Count > 0) {
+          UINTN j = 0;
+          gSettings.NrKexts = 0;
+          gSettings.KextPatches = AllocateZeroPool(Count * sizeof(KEXT_PATCH));
+          DBG("KextsToPatch: %d requested", Count);
+          for (i = 0; i < Count; ++i) {
+            if (EFI_ERROR(GetElement(prop, i, &dictPointer))) {
+               continue;
             }
-            dict2 = GetProperty(dictPointer, "Replace");
-            j = 0;
-            if(dict2 && dict2->string) {
-              j = AsciiStrLen(dict2->string);
-              gSettings.KextPatches[gSettings.NrKexts].Patch = (UINT8*) AllocateCopyPool(j + 1, dict2->string);
+            if (!dictPointer) {
+              break;
             }
-          } else {
-            // kext binary patch
-            // Find and Replace should be in <data>...</data> or <string>...</string>
-            DBG(" Kext bin patch");
-            gSettings.KextPatches[gSettings.NrKexts].Data = GetDataSetting(dictPointer,"Find", &j);
-            gSettings.KextPatches[gSettings.NrKexts].DataLen = j;
-            gSettings.KextPatches[gSettings.NrKexts].Patch = GetDataSetting(dictPointer,"Replace", &j);
-          }
-          
-          if (gSettings.KextPatches[gSettings.NrKexts].DataLen != j || j == 0) {
-            DBG(" - invalid Find/Replace data - skipping!\n");
-            if (gSettings.KextPatches[gSettings.NrKexts].Name != NULL) {
-              FreePool(gSettings.KextPatches[gSettings.NrKexts].Name); //just erase name
-              gSettings.KextPatches[gSettings.NrKexts].Name = NULL;
+            gSettings.KextPatches[gSettings.NrKexts].Name = NULL;
+            gSettings.KextPatches[gSettings.NrKexts].Data = NULL;
+            gSettings.KextPatches[gSettings.NrKexts].Patch = NULL;
+            DBG("KextsToPatch %d:", i);
+            dict2 = GetProperty(dictPointer,"Name");
+            if (!dict2) {
+               continue;
             }
-            if (gSettings.KextPatches[gSettings.NrKexts].Data != NULL) {
-               FreePool(gSettings.KextPatches[gSettings.NrKexts].Data); //just erase data
-               gSettings.KextPatches[gSettings.NrKexts].Data = NULL;
+            gSettings.KextPatches[gSettings.NrKexts].Name = AllocateCopyPool(AsciiStrSize(dict2->string), dict2->string);
+            dict2 = GetProperty(dictPointer,"Comment");
+            if (dict2) {
+              DBG(" %a (%a)", gSettings.KextPatches[gSettings.NrKexts].Name, dict2->string);
+            } else {
+              DBG(" %a", gSettings.KextPatches[gSettings.NrKexts].Name);
             }
-            if (gSettings.KextPatches[gSettings.NrKexts].Patch != NULL) {
-               FreePool(gSettings.KextPatches[gSettings.NrKexts].Patch); //just erase patch
-               gSettings.KextPatches[gSettings.NrKexts].Patch = NULL;
+            gSettings.KPKextPatchesNeeded = TRUE;
+        
+            // check if this is Info.plist patch or kext binary patch
+            gSettings.KextPatches[gSettings.NrKexts].IsPlistPatch = FALSE;
+            dict2 = GetProperty(dictPointer, "InfoPlistPatch");
+            if(dict2) {
+              if ((dict2->type == kTagTypeTrue) ||
+                  (dict2->string[0] == 'y') ||
+                  (dict2->string[0] == 'Y'))
+                gSettings.KextPatches[gSettings.NrKexts].IsPlistPatch = TRUE;
             }
-            continue; //same i
-          }
+            
+            if (gSettings.KextPatches[gSettings.NrKexts].IsPlistPatch) {
+              // Info.plist
+              // Find and Replace should be in <string>...</string>
+              DBG(" Info.plist patch");
+              dict2 = GetProperty(dictPointer, "Find");
+              gSettings.KextPatches[gSettings.NrKexts].DataLen = 0;
+              if(dict2 && dict2->string) {
+                gSettings.KextPatches[gSettings.NrKexts].DataLen = AsciiStrLen(dict2->string);
+                gSettings.KextPatches[gSettings.NrKexts].Data = (UINT8*) AllocateCopyPool(gSettings.KextPatches[gSettings.NrKexts].DataLen + 1, dict2->string);
+              }
+              dict2 = GetProperty(dictPointer, "Replace");
+              j = 0;
+              if(dict2 && dict2->string) {
+                j = AsciiStrLen(dict2->string);
+                gSettings.KextPatches[gSettings.NrKexts].Patch = (UINT8*) AllocateCopyPool(j + 1, dict2->string);
+              }
+            } else {
+              // kext binary patch
+              // Find and Replace should be in <data>...</data> or <string>...</string>
+              DBG(" Kext bin patch");
+              gSettings.KextPatches[gSettings.NrKexts].Data = GetDataSetting(dictPointer,"Find", &j);
+              gSettings.KextPatches[gSettings.NrKexts].DataLen = j;
+              gSettings.KextPatches[gSettings.NrKexts].Patch = GetDataSetting(dictPointer,"Replace", &j);
+            }
+        
+            if (gSettings.KextPatches[gSettings.NrKexts].DataLen != j || j == 0) {
+              DBG(" - invalid Find/Replace data - skipping!\n");
+              if (gSettings.KextPatches[gSettings.NrKexts].Name != NULL) {
+                FreePool(gSettings.KextPatches[gSettings.NrKexts].Name); //just erase name
+                gSettings.KextPatches[gSettings.NrKexts].Name = NULL;
+              }
+              if (gSettings.KextPatches[gSettings.NrKexts].Data != NULL) {
+                 FreePool(gSettings.KextPatches[gSettings.NrKexts].Data); //just erase data
+                 gSettings.KextPatches[gSettings.NrKexts].Data = NULL;
+              }
+              if (gSettings.KextPatches[gSettings.NrKexts].Patch != NULL) {
+                 FreePool(gSettings.KextPatches[gSettings.NrKexts].Patch); //just erase patch
+                 gSettings.KextPatches[gSettings.NrKexts].Patch = NULL;
+              }
+              continue; //same i
+            }
 
-          DBG(", data len: %d\n", gSettings.KextPatches[gSettings.NrKexts++].DataLen);
+            DBG(", data len: %d\n", gSettings.KextPatches[gSettings.NrKexts++].DataLen);
+          }
         }
         //gSettings.NrKexts = (INT32)i;
         //there is one moment. This data is allocated in BS memory but will be used 

@@ -153,22 +153,23 @@ INTN GetTagCount( TagPtr dict )
 }
 
 EFI_STATUS GetElement( TagPtr dict, INTN id,  TagPtr * dict1)
-{    
+{
   INTN element = 0;
+  TagPtr child;
   
-	if(dict->type != kTagTypeArray) {
-    return EFI_UNSUPPORTED;        
+  if(!dict || dict->type != kTagTypeArray) {
+    return EFI_UNSUPPORTED;
   }
-	
-	*dict1 = dict->tag;
-	while(element < id)
-	{
-		element++;
-		*dict1 = dict->tagNext;
-	}
-	
-	return EFI_SUCCESS;
-}           
+  
+  child = dict->tag;
+  while(element < id)
+  {
+    element++;
+    child = child->tagNext;
+  }
+  *dict1 = child;
+  return EFI_SUCCESS;
+}
 
 // Expects to see one dictionary in the XML file, the final pos will be returned
 // If the pos is not equal to the strlen, then there are multiple dicts
@@ -382,55 +383,64 @@ EFI_STATUS XMLParseNextTag(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr)
 
 EFI_STATUS ParseTagList( CHAR8* buffer, TagPtr * tag, UINT32 type, UINT32 empty, UINT32* lenPtr)
 {
-	EFI_STATUS	Status = EFI_SUCCESS;
-	UINT32		pos;
-	TagPtr		tagList;
-	TagPtr		tmpTag;
-	UINT32		length = 0;
+  EFI_STATUS  Status = EFI_SUCCESS;
+  UINT32    pos;
+  TagPtr    tagList;
+  TagPtr    tagTail;
+  TagPtr    tmpTag;
+  UINT32    length = 0;
   
-	tagList = NULL;
-	pos = 0;
+  tagList = NULL;
+  tagTail = NULL;
+  pos = 0;
   
-	if (!empty)
-	{
-		while (TRUE)
-		{
-			Status = XMLParseNextTag(buffer + pos, &tmpTag, &length);
-			if (EFI_ERROR(Status)) {
+  if (!empty)
+  {
+    while (TRUE)
+    {
+      Status = XMLParseNextTag(buffer + pos, &tmpTag, &length);
+      if (EFI_ERROR(Status)) {
         break;
       }
       
-			pos += length;
+      pos += length;
       
-			if (tmpTag == NULL) {
+      if (tmpTag == NULL) {
         break;
       }
       
-			tmpTag->tagNext = tagList;
-			tagList = tmpTag;
-		}
+      if (tagTail) {
+        tagTail = tagTail->tagNext = tmpTag;
+      } else {
+        tagList = tagTail = tmpTag;
+      }
+    }
     
-		if (EFI_ERROR(Status)) {
-			FreeTag(tagList);
-			return Status;
-		}
-	}
+    if (EFI_ERROR(Status)) {
+      if (tagList) {
+        FreeTag(tagList);
+      }
+      return Status;
+    }
+  }
   
-	tmpTag = NewTag();
-	if (tmpTag == NULL) {
-		FreeTag(tagList);
-		return EFI_OUT_OF_RESOURCES;
-	}
+  tmpTag = NewTag();
+  if (tmpTag == NULL) {
+    if (tagList) {
+      FreeTag(tagList);
+    }
+    return EFI_OUT_OF_RESOURCES;
+  }
   
-	tmpTag->type = type;
-	tmpTag->string = 0;
-	tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start : 0);
-	tmpTag->tag = tagList;
-	tmpTag->tagNext = 0;
+  tmpTag->type = type;
+  tmpTag->string = 0;
+  tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start : 0);
+  tmpTag->tag = tagList;
+  tmpTag->tagNext = 0;
   
-	*tag = tmpTag;
-	*lenPtr=pos;
-	return Status;
+  *tag = tmpTag;
+  *lenPtr=pos;
+  return Status;
 }
 
 //==========================================================================
