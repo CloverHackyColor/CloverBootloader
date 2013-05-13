@@ -1203,9 +1203,11 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           UINTN j = 0;
           gSettings.NrKexts = 0;
           gSettings.KextPatches = AllocateZeroPool(Count * sizeof(KEXT_PATCH));
-          DBG("KextsToPatch: %d requested", Count);
+          DBG("KextsToPatch: %d requested\n", Count);
           for (i = 0; i < Count; ++i) {
-            if (EFI_ERROR(GetElement(prop, i, &dictPointer))) {
+          Status = GetElement(prop, i, &dictPointer);
+          if (EFI_ERROR(Status)) {
+            DBG("error %r getting next element at index %d\n", Status, i);
                continue;
             }
             if (!dictPointer) {
@@ -1214,7 +1216,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             gSettings.KextPatches[gSettings.NrKexts].Name = NULL;
             gSettings.KextPatches[gSettings.NrKexts].Data = NULL;
             gSettings.KextPatches[gSettings.NrKexts].Patch = NULL;
-            DBG("KextsToPatch %d:", i);
+            DBG("KextToPatch %d:", i);
             dict2 = GetProperty(dictPointer,"Name");
             if (!dict2) {
                continue;
@@ -1222,7 +1224,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
             gSettings.KextPatches[gSettings.NrKexts].Name = AllocateCopyPool(AsciiStrSize(dict2->string), dict2->string);
             dict2 = GetProperty(dictPointer,"Comment");
             if (dict2) {
-              DBG(" %a (%a)", gSettings.KextPatches[gSettings.NrKexts].Name, dict2->string);
+            DBG(" %a (%a)", gSettings.KextPatches[gSettings.NrKexts].Name, dict2->string);
             } else {
               DBG(" %a", gSettings.KextPatches[gSettings.NrKexts].Name);
             }
@@ -1279,8 +1281,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
               }
               continue; //same i
             }
-
-            DBG(", data len: %d\n", gSettings.KextPatches[gSettings.NrKexts++].DataLen);
+            gSettings.NrKexts++;
+            DBG(", data len: %d\n", gSettings.KextPatches[gSettings.NrKexts].DataLen);
           }
         }
         //gSettings.NrKexts = (INT32)i;

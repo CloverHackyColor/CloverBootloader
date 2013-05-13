@@ -30,6 +30,19 @@
 //Slice - rewrite for UEFI with more functions like Copyright (c) 2003 Apple Computer 
 #include "Platform.h"
 
+#ifndef DEBUG_ALL
+#define DEBUG_PLIST 0
+#else
+#define DEBUG_PLIST DEBUG_ALL
+#endif
+
+#if DEBUG_PLIST == 0
+#define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_PLIST, __VA_ARGS__)
+#endif
+
+
 SymbolPtr	gSymbolsHead = NULL;
 TagPtr		gTagsFree = NULL;
 CHAR8* buffer_start = NULL;
@@ -42,9 +55,9 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr);
 EFI_STATUS ParseTagData(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr);
 EFI_STATUS ParseTagDate(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr);
 EFI_STATUS ParseTagBoolean(CHAR8* buffer, TagPtr * tag, UINT32 type,UINT32* lenPtr);
-
-EFI_STATUS GetElement( TagPtr dict, INTN id,  TagPtr *dict1);
-INTN GetTagCount( TagPtr dict );
+//defined in Platform.h
+//EFI_STATUS GetElement( TagPtr dict, INTN id,  TagPtr *dict1);
+//INTN GetTagCount( TagPtr dict );
 
 TagPtr     NewTag( void );
 EFI_STATUS FixDataMatchingTag( CHAR8* buffer, CHAR8* tag,UINT32* lenPtr);
@@ -201,6 +214,7 @@ EFI_STATUS ParseXML(const CHAR8* buffer, TagPtr * dict)
 	{
 		Status = XMLParseNextTag(configBuffer + pos, &tag, &length);
 		if (EFI_ERROR(Status)) {
+      DBG("error parsing next tag\n");
 			break;            
     }
     
@@ -279,8 +293,9 @@ EFI_STATUS XMLParseNextTag(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr)
 
 	Status = GetNextTag((UINT8*)buffer, &tagName, 0, &length);
 	if (EFI_ERROR(Status)) {
-        return Status;
-    }
+    DBG("NextTag error %r\n", Status);
+    return Status;
+  }
 
 	pos = length;
 	if (!AsciiStrnCmp(tagName, kXMLTagPList, 6))
@@ -291,24 +306,29 @@ EFI_STATUS XMLParseNextTag(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr)
 		/***** dict ****/
 	else if (!AsciiStrCmp(tagName, kXMLTagDict))
 	{
+    DBG("begin dict len=%d\n", length);
 		Status = ParseTagList(buffer + pos, tag, kTagTypeDict, 0, &length);
 	}
 	else if (!AsciiStrCmp(tagName, kXMLTagDict "/"))
 	{
+    DBG("end dict len=%d\n", length);
 		Status = ParseTagList(buffer + pos, tag, kTagTypeDict, 1, &length);
 	}
 	else if (!AsciiStrCmp(tagName, kXMLTagDict " "))
 	{
+    DBG("space dict len=%d\n", length);
 		Status = ParseTagList(buffer + pos, tag, kTagTypeDict, 0, &length);
 	}
 	/***** key ****/
 	else if (!AsciiStrCmp(tagName, kXMLTagKey))
 	{
-		Status = ParseTagKey(buffer + pos, tag,&length);
+    DBG("parse key\n");
+		Status = ParseTagKey(buffer + pos, tag, &length);
 	}
 	/***** string ****/
 	else if (!AsciiStrCmp(tagName, kXMLTagString))
 	{
+    DBG("parse String\n");
 		Status = ParseTagString(buffer + pos, tag, &length);
 	}
 	/***** integer ****/
@@ -352,10 +372,12 @@ EFI_STATUS XMLParseNextTag(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr)
 	}
 	else if (!AsciiStrCmp(tagName, kXMLTagArray " "))
 	{
+    DBG("begin array len=%d\n", length);
 		Status = ParseTagList(buffer + pos, tag, kTagTypeArray, 0, &length);
 	}
 	else if (!AsciiStrCmp(tagName, kXMLTagArray "/"))
 	{
+    DBG("end array len=%d\n", length);
 		Status = ParseTagList(buffer + pos, tag, kTagTypeArray, 1, &length);
 	}
 		/***** unknown ****/
@@ -366,15 +388,16 @@ EFI_STATUS XMLParseNextTag(CHAR8* buffer, TagPtr * tag, UINT32* lenPtr)
 	}
 
 	if (EFI_ERROR(Status)) {
-        return Status;
-    }
+    return Status;
+  }
     
-    if (length == -1) {
-        return EFI_UNSUPPORTED;
-    }
+  if (length == -1) {
+    DBG("(length == -1)\n");
+    return EFI_UNSUPPORTED;
+  }
 
-	*lenPtr=pos + length;
-
+	*lenPtr = pos + length;
+  DBG("  len after success parse next tag %d\n", *lenPtr);
 	return EFI_SUCCESS;
 }
 
@@ -390,6 +413,11 @@ EFI_STATUS ParseTagList( CHAR8* buffer, TagPtr * tag, UINT32 type, UINT32 empty,
   TagPtr    tmpTag;
   UINT32    length = 0;
   
+  if (type == kTagTypeArray) {
+    DBG("parsing array len=%d\n", *lenPtr);
+  } else if (type == kTagTypeDict) {
+    DBG("parsing dict len=%d\n", *lenPtr); 
+  }
   tagList = NULL;
   tagTail = NULL;
   pos = 0;
@@ -400,6 +428,7 @@ EFI_STATUS ParseTagList( CHAR8* buffer, TagPtr * tag, UINT32 type, UINT32 empty,
     {
       Status = XMLParseNextTag(buffer + pos, &tmpTag, &length);
       if (EFI_ERROR(Status)) {
+        DBG("error XMLParseNextTag in array: %r\n", Status);
         break;
       }
       
@@ -429,6 +458,7 @@ EFI_STATUS ParseTagList( CHAR8* buffer, TagPtr * tag, UINT32 type, UINT32 empty,
     if (tagList) {
       FreeTag(tagList);
     }
+    DBG("next tag is NULL\n");
     return EFI_OUT_OF_RESOURCES;
   }
   
@@ -440,6 +470,7 @@ EFI_STATUS ParseTagList( CHAR8* buffer, TagPtr * tag, UINT32 type, UINT32 empty,
   
   *tag = tmpTag;
   *lenPtr=pos;
+  DBG(" return from ParseTagList with len=%d\n", *lenPtr);
   return Status;
 }
 
@@ -449,13 +480,14 @@ EFI_STATUS ParseTagList( CHAR8* buffer, TagPtr * tag, UINT32 type, UINT32 empty,
 EFI_STATUS ParseTagKey( char * buffer, TagPtr * tag, UINT32* lenPtr)
 {
 	EFI_STATUS	Status;
-	UINT32		length;
-	UINT32		length2;
+	UINT32		length = 0;
+	UINT32		length2 = 0;
 	CHAR8*		tmpString;
 	TagPtr		tmpTag;
 	TagPtr		subTag;
   
 	Status = FixDataMatchingTag(buffer, kXMLTagKey, &length);
+  DBG("fixing key len=%d status=%r\n", length, Status);
 	if (EFI_ERROR(Status)){
     return Status;
   }
@@ -484,8 +516,8 @@ EFI_STATUS ParseTagKey( char * buffer, TagPtr * tag, UINT32* lenPtr)
 	tmpTag->tagNext = 0;
   
 	*tag = tmpTag;
-	*lenPtr=length + length2;
-  
+	*lenPtr = length + length2;
+  DBG("parse key success len=%d\n",  *lenPtr);
   return EFI_SUCCESS;
 }
 
@@ -495,11 +527,11 @@ EFI_STATUS ParseTagKey( char * buffer, TagPtr * tag, UINT32* lenPtr)
 EFI_STATUS ParseTagString(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 {
 	EFI_STATUS	Status;
-	UINT32		length;
+	UINT32		length = 0;
 	CHAR8*		tmpString;
 	TagPtr		tmpTag;
   
-	Status = FixDataMatchingTag(buffer, kXMLTagString,&length);
+	Status = FixDataMatchingTag(buffer, kXMLTagString, &length);
 	if (EFI_ERROR(Status)) {
 		return Status;
 	}
@@ -523,7 +555,7 @@ EFI_STATUS ParseTagString(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 	tmpTag->tagNext = NULL;
 	tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
 	*tag = tmpTag;
-	*lenPtr=length;
+	*lenPtr = length;
   
 	return EFI_SUCCESS;
 }
@@ -534,7 +566,7 @@ EFI_STATUS ParseTagString(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 {
 	EFI_STATUS	Status;
-	UINT32		length; 
+	UINT32		length = 0; 
 	UINT32		integer;
 	UINT32		size;
 	BOOLEAN		negative = FALSE;
@@ -614,7 +646,7 @@ EFI_STATUS ParseTagInteger(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 	tmpTag->tagNext = NULL;
   
 	*tag = tmpTag;
-	*lenPtr=length;
+	*lenPtr = length;
 	return EFI_SUCCESS;
 }
 
@@ -661,7 +693,7 @@ EFI_STATUS ParseTagData(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 EFI_STATUS ParseTagDate(CHAR8* buffer, TagPtr * tag,UINT32* lenPtr)
 {
 	EFI_STATUS	Status;
-	UINT32		length;
+	UINT32		length = 0;
 	TagPtr		tmpTag;
 	
 	Status = FixDataMatchingTag(buffer, kXMLTagDate,&length);
@@ -706,14 +738,14 @@ EFI_STATUS ParseTagBoolean(CHAR8* buffer, TagPtr * tag, UINT32 type,UINT32* lenP
 	tmpTag->offset = (UINT32)(buffer_start ? buffer - buffer_start: 0);
 
 	*tag = tmpTag;
-	*lenPtr=0;
+	*lenPtr = 0;
 	return EFI_SUCCESS;
 }
 
 //==========================================================================
 // GetNextTag
 
-EFI_STATUS GetNextTag( UINT8* buffer, CHAR8** tag, UINT32* start,UINT32* length)
+EFI_STATUS GetNextTag( UINT8* buffer, CHAR8** tag, UINT32* start, UINT32* length)
 {
 	UINT32 cnt, cnt2;
 
@@ -728,6 +760,7 @@ EFI_STATUS GetNextTag( UINT8* buffer, CHAR8** tag, UINT32* start,UINT32* length)
 	}
 
 	if (buffer[cnt] == '\0') {
+    DBG("empty buffer at cnt=%d\n", cnt);
 		return EFI_UNSUPPORTED;
 	}
 
@@ -738,6 +771,7 @@ EFI_STATUS GetNextTag( UINT8* buffer, CHAR8** tag, UINT32* start,UINT32* length)
 	}
 
 	if (buffer[cnt2] == '\0') {
+    DBG("empty buffer at cnt2=%d\n", cnt2);
 		return EFI_UNSUPPORTED;
 	}
 
@@ -748,9 +782,10 @@ EFI_STATUS GetNextTag( UINT8* buffer, CHAR8** tag, UINT32* start,UINT32* length)
 		*start = cnt;
 	}
 
-	*length = cnt2 + 1;
+	*length = cnt2 + 1;  //unreal to be -1. This is UINT32
     
   if (*length == -1) {
+    DBG("GetNextTag with *length == -1\n");
     return EFI_UNSUPPORTED;
   }
 
@@ -783,7 +818,7 @@ EFI_STATUS FixDataMatchingTag( CHAR8* buffer, CHAR8* tag,UINT32* lenPtr)
     }
 		start += length;
 	}
-
+  DBG("fix buffer at pos=%d\n", start + stop);
 	buffer[start + stop] = '\0';
 	*lenPtr = start + length;
     

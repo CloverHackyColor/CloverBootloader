@@ -455,36 +455,33 @@ VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPl
     if (   AsciiStrStr(InfoPlist, ATIKextBoundleId[0]) != NULL  // ATI boundle id
         || AsciiStrStr(InfoPlist, ATIKextBoundleId[1]) != NULL  // AMD boundle id
         || AsciiStrStr(InfoPlist, "com.apple.kext.ATIFramebuffer") != NULL // SnowLeo
-        )
-    {
+        ) {
       ATIConnectorsPatch(Driver, DriverSize, InfoPlist, InfoPlistSize);
       return;
     }
   }
     
-  if (gSettings.KPAsusAICPUPM
-           && AsciiStrStr(InfoPlist, "<string>com.apple.driver.AppleIntelCPUPowerManagement</string>") != NULL)
-  {
+  if (gSettings.KPAsusAICPUPM &&
+      (AsciiStrStr(InfoPlist,
+                   "<string>com.apple.driver.AppleIntelCPUPowerManagement</string>") != NULL)) {
     //
     // AsusAICPUPM
     //
     AsusAICPUPMPatch(Driver, DriverSize, InfoPlist, InfoPlistSize);
-  }
-  else
-    if (gSettings.KPAppleRTC
-           && AsciiStrStr(InfoPlist, "com.apple.driver.AppleRTC") != NULL)
-  {
+  } else if (gSettings.KPAppleRTC &&
+             (AsciiStrStr(InfoPlist, "com.apple.driver.AppleRTC") != NULL)) {
     //
     // AppleRTC
     //
     AppleRTCPatch(Driver, DriverSize, InfoPlist, InfoPlistSize);
-  }
-  else {
+  } else {
     //
     //others
     //
     for (i = 0; i < gSettings.NrKexts; i++) {
-      if ((gSettings.KextPatches[i].DataLen > 0) && (AsciiStrStr(InfoPlist, gSettings.KextPatches[i].Name) != NULL)) {
+      if ((gSettings.KextPatches[i].DataLen > 0) &&
+          (AsciiStrStr(InfoPlist, gSettings.KextPatches[i].Name) != NULL)) {
+        DBG_RT("patch kext %a\n", gSettings.KextPatches[i].Name);
         AnyKextPatch(Driver, DriverSize, InfoPlist, InfoPlistSize, i);
       }
     }    
