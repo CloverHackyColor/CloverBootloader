@@ -477,6 +477,7 @@ VOID ReadConfig(INTN What)
         }
       }
     } else if (StriCmp(TokenList[0], L"hidevolumes") == 0) {
+      INT32 Size = 0;
       for (i = 1; i < TokenCount; i++) {
         if (StriCmp(TokenList[i], L"osx") == 0)
           gSettings.HVHideAllOSX = TRUE;
@@ -512,9 +513,27 @@ VOID ReadConfig(INTN What)
           gSettings.HVHideExternalUEFI = TRUE;
         else if (StriCmp(TokenList[i], L"legacy") == 0)
           gSettings.HVHideAllLegacy = TRUE;
-        else if (gSettings.HVCount<100) {
-          gSettings.HVHideStrings[(gSettings.HVCount)++] = EfiStrDuplicate(TokenList[i]);
-          DBG("Hiding volume with string %s\n", gSettings.HVHideStrings[gSettings.HVCount-1]);
+        else {
+          // Grow the buffer if needed
+          if (gSettings.HVCount >= Size) {
+             CHAR16 **NewStrings;
+             if (Size == 0) {
+                Size = 8;
+             }
+             while (gSettings.HVCount >= Size) {
+                Size *= 2;
+             }
+             NewStrings = AllocateZeroPool(Size * sizeof(CHAR16 *));
+             if (!NewStrings) {
+                break;
+             }
+             CopyMem(NewStrings, gSettings.HVHideStrings, Size * sizeof(CHAR16 *));
+             FreePool(gSettings.HVHideStrings);
+             gSettings.HVHideStrings = NewStrings;
+          }
+          // Set the next string
+          gSettings.HVHideStrings[gSettings.HVCount] = EfiStrDuplicate(TokenList[i]);
+          DBG("Hiding volume with string %s\n", gSettings.HVHideStrings[gSettings.HVCount++]);
         }
       }
       

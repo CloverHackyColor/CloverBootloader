@@ -573,6 +573,15 @@ typedef struct {
   UINT8   Data4[8];
 } GUID;
 */
+
+typedef struct {
+   CHAR8   *Name;
+   BOOLEAN  IsPlistPatch;
+   UINTN    DataLen;
+   UINT8   *Data;
+   UINT8   *Patch;
+} KEXT_PATCH;
+
 typedef struct {
   
 	// SMBIOS TYPE0
@@ -710,11 +719,7 @@ typedef struct {
   UINTN   KPATIConnectorsDataLen;
   UINT8   *KPATIConnectorsPatch;
   INT32   NrKexts;
-  CHAR8*  AnyKext[100];
-  BOOLEAN AnyKextInfoPlistPatch[100];
-  UINTN   AnyKextDataLen[100];
-  UINT8   *AnyKextData[100];
-  UINT8   *AnyKextPatch[100];
+  KEXT_PATCH *KextPatches;
   //Volumes hiding
   BOOLEAN HVHideAllOSX;
   BOOLEAN HVHideAllOSXInstall;
@@ -734,7 +739,7 @@ typedef struct {
   BOOLEAN HVHideInternalUEFI;
   BOOLEAN HVHideExternalUEFI;
   BOOLEAN HVHideAllLegacy;
-  CHAR16  *HVHideStrings[100];
+  CHAR16 **HVHideStrings;
   INT32   HVCount;
   
   //Pointer
@@ -754,8 +759,8 @@ typedef struct {
   // Multi-config
   CHAR16  ConfigName[64];
   //Drivers
-  INTN    BlackListCount;
-  CHAR16* BlackList[32];
+  INTN     BlackListCount;
+  CHAR16 **BlackList;
 
   //SMC keys
   CHAR8  RPlt[8];

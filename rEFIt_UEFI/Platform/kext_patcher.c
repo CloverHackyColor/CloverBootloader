@@ -381,29 +381,29 @@ VOID AnyKextPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 Inf
   UINTN   Num = 0;
   
   DBG_RT("\nAnyKextPatch %d: driverAddr = %x, driverSize = %x\nAnyKext = %a\n",
-      N, Driver, DriverSize, gSettings.AnyKext[N]);
+      N, Driver, DriverSize, gSettings.KextPatches[N].Name);
   if (gSettings.KPDebug) {
     ExtractKextBoundleIdentifier(InfoPlist);
   }
   DBG_RT("Kext: %a\n", gKextBoundleIdentifier);
   
-  if (!gSettings.AnyKextInfoPlistPatch[N]) {
+  if (!gSettings.KextPatches[N].IsPlistPatch) {
     // kext binary patch
     DBG_RT("Binary patch\n");
     Num = SearchAndReplace(Driver,
                            DriverSize,
-                           gSettings.AnyKextData[N],
-                           gSettings.AnyKextDataLen[N],
-                           gSettings.AnyKextPatch[N],
+                           gSettings.KextPatches[N].Data,
+                           gSettings.KextPatches[N].DataLen,
+                           gSettings.KextPatches[N].Patch,
                            -1);
   } else {
     // Info plist patch
-    DBG_RT("Info.plist patch: '%a' -> '%a'\n", gSettings.AnyKextData[N], gSettings.AnyKextPatch[N]);
+    DBG_RT("Info.plist patch: '%a' -> '%a'\n", gSettings.KextPatches[N].Data, gSettings.KextPatches[N].Patch);
     Num = SearchAndReplace((UINT8*)InfoPlist,
                            InfoPlistSize,
-                           gSettings.AnyKextData[N],
-                           gSettings.AnyKextDataLen[N],
-                           gSettings.AnyKextPatch[N],
+                           gSettings.KextPatches[N].Data,
+                           gSettings.KextPatches[N].DataLen,
+                           gSettings.KextPatches[N].Patch,
                            -1);
   }
   
@@ -432,7 +432,7 @@ VOID KextPatcherRegisterKexts(FSINJECTION_PROTOCOL *FSInject, FSI_STRING_LIST *F
   for (i = 0; i < gSettings.NrKexts; i++) {
     FSInject->AddStringToList(ForceLoadKexts,
                               PoolPrint(L"\\%a.kext\\Contents\\Info.plist",
-                              gSettings.AnyKext[i]) );        
+                              gSettings.KextPatches[i].Name) );        
   }
 
 }
@@ -484,7 +484,7 @@ VOID PatchKext(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 InfoPl
     //others
     //
     for (i = 0; i < gSettings.NrKexts; i++) {
-      if ((gSettings.AnyKextDataLen[i] > 0) && (AsciiStrStr(InfoPlist, gSettings.AnyKext[i]) != NULL)) {
+      if ((gSettings.KextPatches[i].DataLen > 0) && (AsciiStrStr(InfoPlist, gSettings.KextPatches[i].Name) != NULL)) {
         AnyKextPatch(Driver, DriverSize, InfoPlist, InfoPlistSize, i);
       }
     }    
