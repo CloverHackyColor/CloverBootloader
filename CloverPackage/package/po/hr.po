@@ -922,7 +922,7 @@ msgstr "Autorska prava (c) 2003 JrCs"
 #. type: "267.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:13
 #, no-wrap
-msgid "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined in refit.conf is use."
+msgid "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined in config.plist is use."
 msgstr ""
 
 #. type: "292.title"

@@ -10,7 +10,7 @@
 "248.title" = "Last check:";
 "258.title" = "Check Now";
 "262.title" = "Copyright (c) 2013 JrCs";
-"267.ibShadowedToolTip" = "Theme to use in Clover GUI\nIf the value is empty, Clover theme defined in refit.conf is use.";
+"267.ibShadowedToolTip" = "Theme to use in Clover GUI\nIf the value is empty, Clover theme defined in config.plist is use.";
 "292.title" = "GUI Appearance";
 "294.label" = "NVRam Variables";
 "295.label" = "General";

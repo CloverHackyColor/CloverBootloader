@@ -23,8 +23,3 @@ if [[ ! -f "${EFI_ROOT_DIR}/EFI/CLOVER/config.plist" ]]; then
 fi
 # Don't keep config-sample.plist
 rm -f "${EFI_ROOT_DIR}/EFI/CLOVER/config-sample.plist"
-
-# refit.conf
-if [[ ! -f "${EFI_ROOT_DIR}/EFI/CLOVER/refit.conf" ]]; then
-    cp -fv "${EFI_ROOT_DIR}/EFI/CLOVER/refit-default.conf" "${EFI_ROOT_DIR}/EFI/CLOVER/refit.conf"
-fi

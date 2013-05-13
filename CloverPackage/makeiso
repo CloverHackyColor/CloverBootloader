@@ -94,8 +94,6 @@ if [ ${IMAGE_WITH_IA32} -eq 1 ]; then
 fi
 # echo "CP font"
 # cp -r -f ${CLOVERROOT}/EFI/BOOT/font ${IMGROOT}/EFI/BOOT/
-# echo "CP refit.conf"
-cp -f ${CLOVERROOT}/EFI/CLOVER/refit.conf ${IMGROOT}/EFI/CLOVER/
 # echo "CP config.plist"
 cp -f ${CLOVERROOT}/EFI/CLOVER/config-sample.plist ${IMGROOT}/EFI/CLOVER/config.plist
 echo "[CP] drivers64"

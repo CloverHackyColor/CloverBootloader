@@ -922,8 +922,8 @@ msgstr "Copyright (c) 2013 JrCs"
 #. type: "267.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:13
 #, no-wrap
-msgid "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined in refit.conf is use."
-msgstr "Tema a ser usado no GUI do Clover\\nlf valor vazio, o tema do Clover em uso está definido no refit.conf."
+msgid "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined in config.plist is use."
+msgstr "Tema a ser usado no GUI do Clover\\nlf valor vazio, o tema do Clover em uso está definido no config.plist."
 
 #. type: "292.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:14

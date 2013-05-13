@@ -935,10 +935,10 @@ msgstr "Авторське право (c) 2013 JrCs"
 #. type: "267.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:13
 #, no-wrap
-msgid "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined in refit.conf is use."
+msgid "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined in config.plist is use."
 msgstr ""
 "Оформлення теми завантажника.\n"
-"якщо значення відсутнє, тему вказувати у файлі refit.conf"
+"якщо значення відсутнє, тему вказувати у файлі config.plist"
 
 #. type: "292.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:14

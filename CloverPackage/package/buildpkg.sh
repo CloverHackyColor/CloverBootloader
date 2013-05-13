@@ -527,9 +527,6 @@ main ()
     [[ "$add_ia32" -ne 1 ]] && rm -rf ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/drivers32
     # config.plist
     rm -f ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/CLOVER/config.plist &>/dev/null
-    # refit.conf
-    mv -f ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/CLOVER/refit.conf \
-     ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/CLOVER/refit-default.conf
     fixperms "${PKG_BUILD_DIR}/${choiceId}/Root/"
 
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
@@ -684,7 +681,7 @@ fi
     local artwork="${SRCROOT}/CloverV2/themespkg/"
     local themes=($( find "${artwork}" -type d -depth 1 -not -name '.svn' ))
     local themeDestDir='/EFIROOTDIR/EFI/CLOVER/themes'
-    local defaultTheme=$(trim $(sed -n 's/^theme *//p' "${SRCROOT}"/CloverV2/EFI/CLOVER/refit.conf))
+    local defaultTheme=  # $(trim $(sed -n 's/^theme *//p' "${SRCROOT}"/CloverV2/EFI/CLOVER/refit.conf))
     for (( i = 0 ; i < ${#themes[@]} ; i++ )); do
         local themeName=${themes[$i]##*/}
         mkdir -p "${PKG_BUILD_DIR}/${themeName}/Root/"
@@ -699,7 +696,7 @@ fi
 
         # local selectTheme="checkFileExists('${themeDestDir}/$themeName/icons/func_clover.png')"
         local selectTheme="choicePreviouslySelected('$packageRefId')"
-        # Select the default theme (get from refit.conf)
+        # Select the default theme
         [[ "$themeName" == "$defaultTheme" ]] && selectTheme='true'
         addChoice --group="Themes"  --start-selected="$selectTheme"  --pkg-refs="$packageRefId"  "${themeName}"
     done
