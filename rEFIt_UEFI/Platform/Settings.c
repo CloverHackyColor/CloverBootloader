@@ -1225,7 +1225,9 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.KextPatches[gSettings.NrKexts].IsPlistPatch = FALSE;
           dict2 = GetProperty(dictPointer, "InfoPlistPatch");
           if(dict2) {
-            if ((dict2->string[0] == 'y') || (dict2->string[0] == 'Y'))
+            if ((dict2->type = kTagTypeTrue) ||
+                (dict2->string[0] == 'y') ||
+                (dict2->string[0] == 'Y'))
               gSettings.KextPatches[gSettings.NrKexts].IsPlistPatch = TRUE;
           }
           
