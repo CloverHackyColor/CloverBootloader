@@ -1281,8 +1281,9 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
               }
               continue; //same i
             }
-            gSettings.NrKexts++;
+            
             DBG(", data len: %d\n", gSettings.KextPatches[gSettings.NrKexts].DataLen);
+            gSettings.NrKexts++; //must be out of DBG because it may be empty compiled
           }
         }
         //gSettings.NrKexts = (INT32)i;
