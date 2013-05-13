@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-12 14:19+0300\n"
-"PO-Revision-Date: 2013-05-13 11:24+0000\n"
+"PO-Revision-Date: 2013-05-13 17:49+0000\n"
 "Last-Translator: artur_pt <artursimoes.pt@gmail.com>\n"
 "Language-Team: pt <pt@li.org>\n"
 "Language: pt\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1368444256.0\n"
+"X-POOTLE-MTIME: 1368467388.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -107,7 +107,7 @@ msgid ""
 "- It's EFI bootloader provides RuntimeServices for OS that impossible for "
 "Legacy Bootloaders"
 msgstr ""
-"- É um gerênciador de boot EFI que oferece RuntimeServices para o sistema "
+"- É um gerenciador de boot EFI que oferece RuntimeServices para o sistema "
 "operacional que é impossível com os bootloaders antigos"
 
 #
@@ -135,7 +135,7 @@ msgstr " "
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:24
 msgid "But user can change them by config.plist"
-msgstr "Posteriormente o usuario pode alterar no arquivo config.plist"
+msgstr "Posteriormente o utilizador pode alterar no arquivo config.plist"
 
 #
 #. type: Content of: <html><body><p>
@@ -959,19 +959,19 @@ msgstr "Última versão atualizada:"
 #: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
 msgid "Log Files"
-msgstr "Ficheiros de Entrada"
+msgstr "Ficheiros de Log"
 
 #. type: "311.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "LogLineCount:"
-msgstr "ContagemFicheirosEntrada:"
+msgstr "ContagemFicheirosLog:"
 
 #. type: "313.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
 msgid "LogEveryBoot:"
-msgstr "FicheirosEntrada:"
+msgstr "FicheirosLogSempre:"
 
 #. type: "314.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:23
@@ -983,7 +983,11 @@ msgstr "Numero de linhas a guardar em CloverEFI/system.log relativo ao contido C
 #: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* Yes: create a new timestamp boot.log file\\n* Number: where number is the number of timestamp boot.log files to keep.\\n\\nA blank value result in NO creation of timestamp boot.log file"
-msgstr "Criar arquivo CloverEFI / boot.log em cada boot \\ \\ n \\ \\ nValue: \\ \\ n * Yes: Criar um novo arquivo boot.log  \\ \\ n * Número: onde é o número de  boot.log arquivos a manter. \\ \\ n \\ nA resultado valor \\ em branco NO criação de arquivo boot.log"
+msgstr ""
+"Criar arquivo CloverEFI / boot.log em cada boot \\ \\ n \\ \\ nValue: \\ \\ n * "
+"Yes: Criar um novo ficheiro boot.log  \\ \\ n * Número: é o número de  "
+"boot.log ficheiros a manter. \\ \\ n \\ nA resultado valor \\ em branco NO Não "
+"criação de ficheiro boot.log"
 
 #. type: "326.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:25
