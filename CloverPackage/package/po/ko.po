@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-12 14:19+0300\n"
-"PO-Revision-Date: 2013-05-10 06:11+0000\n"
+"PO-Revision-Date: 2013-05-13 07:08+0000\n"
 "Last-Translator: ceruns <ceruns@ymail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
 "Language: ko\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1368166270.0\n"
+"X-POOTLE-MTIME: 1368428925.0\n"
 
 # //Don't need change
 #. type: Content of: <html><body><div><p>
@@ -762,10 +762,10 @@ msgstr "mDNSResponder 잠자기 프록시 클라이언트 서비스를 비활성
 
 #. type: "CloverPrefpane_title"
 #: Resources/templates/Localizable.strings:161
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install Clover in the ESP"
 msgid "Install Clover Preference Pane"
-msgstr "ESP에 Clover 설치"
+msgstr "클로버 환경설정 패널 설치"
 
 #. type: "CloverPrefpane_description"
 #: Resources/templates/Localizable.strings:162
@@ -777,8 +777,8 @@ msgid ""
 "Install Clover Preference Pane on target volume.\n"
 "Include CloverUpdater that can notify you about Clover updates."
 msgstr ""
-"타겟 볼륨에 클로버 업데이터를 설치합니다.\n"
-"클로버 업데이터는 클로버의 업데이트를 알려드립니다."
+"타겟 볼륨에 클로버 환설설정 패널을 설치합니다.\n"
+"포함된 클로버 업데이터는 클로버의 업데이트를 알려드립니다."
 
 #. type: "371.title"
 #: ../CloverUpdater/CloverUpdater.strings:1
@@ -878,7 +878,7 @@ msgstr "매달"
 #, fuzzy, no-wrap
 #| msgid "CloverUpdater"
 msgid "Check for Updates"
-msgstr "클로버 업데이터"
+msgstr "업데이트 확인"
 
 #. type: "243.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:9
@@ -908,112 +908,121 @@ msgstr "Copyright (c) 2013 JrCs"
 #: ../CloverPrefpane/CloverPrefpane.strings:13
 #, no-wrap
 msgid "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined in refit.conf is use."
-msgstr ""
+msgstr "클로버 GUI를 이용하기 위한 테마\\n만약 값이 비어있다면 refit.conf 에 정의된 테마가 사용됩니다."
 
 #. type: "292.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:14
 #, no-wrap
 msgid "GUI Appearance"
-msgstr ""
+msgstr "GUI 모양새"
 
 #. type: "294.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:15
 #, no-wrap
 msgid "NVRam Variables"
-msgstr ""
+msgstr "NVRam 변수"
 
 #. type: "295.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:16
 #, no-wrap
 msgid "General"
-msgstr ""
+msgstr "일반"
 
 #. type: "298.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:17
 #, no-wrap
 msgid "Revisions"
-msgstr ""
+msgstr "리비전"
 
 #. type: "300.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:18
 #, fuzzy, no-wrap
 #| msgid "Current local Clover revision:"
 msgid "Current booted revision:"
-msgstr "현재 로컬 Clover revision:"
+msgstr "현재 부팅된 리비전:"
 
 #. type: "302.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:19
 #, fuzzy, no-wrap
 #| msgid "Latest update revision:"
 msgid "Last installed revision:"
-msgstr "최신 업데이트 revision:"
+msgstr "최근 설치된 리비전:"
 
 #. type: "309.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
 msgid "Log Files"
-msgstr ""
+msgstr "로그 파일"
 
 #. type: "311.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "LogLineCount:"
-msgstr ""
+msgstr "로그 라인 카운트:"
 
 #. type: "313.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
 msgid "LogEveryBoot:"
-msgstr ""
+msgstr "부트마다 로그작성:"
 
 #. type: "314.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
-msgstr ""
+msgstr "현재 CloverEFI/boot.log 내용과는 별개로 CloverEFI/system.log 에 저장된 히스토리 라인 수"
 
 #. type: "323.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* Yes: create a new timestamp boot.log file\\n* Number: where number is the number of timestamp boot.log files to keep.\\n\\nA blank value result in NO creation of timestamp boot.log file"
 msgstr ""
+"매 부트마다 CloverEFI/boot.log 파일에 타임스탬프를 생성합니다.\\n\\n값:\\n* Yes: 새로운 타임스탬프 boot.log "
+"파일 생성\\n* Number: boot.log 파일에 유지할 타임스탬프의 개수.\\n\\n공백은 타임스탬프 boot.log 파일을 생성하지 "
+"않게 합니다"
 
 #. type: "326.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:25
 #, fuzzy, no-wrap
 #| msgid "Themes"
 msgid "Theme:"
-msgstr "테마"
+msgstr "테마:"
 
 #. type: "327.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:26
 #, no-wrap
 msgid "Advanced Configurations"
-msgstr ""
+msgstr "고급 설정"
 
 #. type: "329.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:27
 #, no-wrap
 msgid "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on the same disk drive as the system partition\\n* diskX: disk device\\n* GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on the same disk drive that the ESP partition\\n\\nEmpty value result in not mounting ESP partition on boot"
 msgstr ""
+"부트시에 ESP 파티션을 마운트합니다.\\n\\n값:\\n* Yes: 시스템 파티션과 같은 드라이브에 있는 ESP 마운트\\n* diskX: "
+"디스크 장치\\n* GUID: ESP의 GUID\\n* VolumeName: ESP 파티션과 같은 디스크 드라이브에 있는 볼륨의 "
+"이름\\n\\n공백은 부트시에 파티션이 마운트 되지 않게 합니다"
 
 #. type: "332.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
 msgid "MountEFI:"
-msgstr ""
+msgstr "EFI마운트:"
 
 #. type: "337.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
 msgid "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram contents to disk\\n* diskXsY: device node of the volume where the nvram contents will be saved\\n\\nEmpty value save the nvram contents in the nvram.plist file in the root folder of the system partition."
 msgstr ""
+"nvram 내용을 디스크에 저장합니다\\n\\n값:\\n* No: nvram 내용을 디스크에 저장하지 않습니다\\n* diskXsY: "
+"nvram내용이 저장될 디바이스 노드\\n\\n공백은 시스템 파티션의 루트 디렉토리 내부 nvram.plist 에 nvram 내용을 저장하게 "
+"합니다."
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "NVRamDisk:"
-msgstr ""
+msgstr "NVRam디스크:"
 
 #, fuzzy
 #~| msgid "Clover Theme"
