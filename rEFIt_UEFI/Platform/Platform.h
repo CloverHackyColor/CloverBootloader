@@ -738,9 +738,8 @@ typedef struct {
   BOOLEAN HVHideOpticalUEFI;
   BOOLEAN HVHideInternalUEFI;
   BOOLEAN HVHideExternalUEFI;
-  BOOLEAN HVHideAllLegacy;
   CHAR16 **HVHideStrings;
-  INT32   HVCount;
+  INTN    HVCount;
   
   //Pointer
   BOOLEAN PointerEnabled;
@@ -1076,6 +1075,7 @@ EFI_STATUS      GetOSVersion(IN REFIT_VOLUME *Volume);
 EFI_STATUS      GetRootUUID(IN REFIT_VOLUME *Volume);
 EFI_STATUS      GetEarlyUserSettings(IN EFI_FILE *RootDir);
 EFI_STATUS      GetUserSettings(IN EFI_FILE *RootDir);
+EFI_STATUS      GetThemeSettings(VOID);
 EFI_STATUS      GetEdid(VOID);
 EFI_STATUS      SetFSInjection(IN LOADER_ENTRY *Entry);
 CHAR16*         GetExtraKextsDir(REFIT_VOLUME *Volume);

@@ -36,7 +36,7 @@
   Platform/DevicePath.c #included into GenericBdsLib
   Platform/BdsConnect.c #included into GenericBdsLib
   refit/main.c
-  refit/config.c
+#  refit/config.c
   refit/icns.c
   refit/lib.c
   refit/menu.c

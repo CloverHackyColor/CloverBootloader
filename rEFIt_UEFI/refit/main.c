@@ -755,12 +755,13 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
 
   // Ignore this loader if it's self path
   CHAR16 *FilePathAsString = FileDevicePathToStr(SelfLoadedImage->FilePath);
-  if (StrCmp(FilePathAsString, LoaderPath) == 0)
-  {
-     FreePool(FilePathAsString);
-     return NULL;
+  if (FilePathAsString) {
+    INTN Comparison = StrCmp(FilePathAsString, LoaderPath);
+    FreePool(FilePathAsString);
+    if (Comparison == 0) {
+      return NULL;
+    }
   }
-  FreePool(FilePathAsString);
   
   FileName = Basename(LoaderPath);
   
@@ -2485,8 +2486,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //  UINT64            TscDiv;
 //  UINT64            TscRemainder = 0;
   LOADER_ENTRY      *LoaderEntry;
-  CHAR8             *chosenTheme;
-  CHAR16            *themeFromRefit = NULL;
   
   // CHAR16            *InputBuffer; //, *Y;
   //  EFI_INPUT_KEY Key;
@@ -2516,47 +2515,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   gBS->SetWatchdogTimer(0x0000, 0x0000, 0x0000, NULL);
   ZeroMem((VOID*)&gSettings, sizeof(SETTINGS_DATA));
   
-  InitAnime(); // why here? not in graphics mode yet
   InitializeUnicodeCollationProtocol();
   
-  // read GUI configuration
-  ReadConfig(0);
-  //get theme from NVRAM in the case of UEFI boot
-  chosenTheme = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
-  if (chosenTheme) {
-    DBG("ChosenTheme at NVRAM %a\n", chosenTheme);
-    themeFromRefit = GlobalConfig.Theme;
-    GlobalConfig.Theme = PoolPrint(L"%a", chosenTheme);
-    GlobalConfig.Theme[Size] = 0;
-  }
-  
-  ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", GlobalConfig.Theme);
-  Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
-  if (EFI_ERROR (Status)) { 
-    DBG("chosen theme %s is absent, using default %s\n", GlobalConfig.Theme, themeFromRefit);
-    GlobalConfig.Theme = themeFromRefit;
-    ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", GlobalConfig.Theme);
-    Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
-    if (EFI_ERROR (Status)) {
-      DBG("default theme %s is absent, using embedded\n", GlobalConfig.Theme);
-      GlobalConfig.Theme = NULL;
-      if (ThemePath) {
-        FreePool(ThemePath);
-      } 
-      ThemePath = NULL;
-      ThemeDir = NULL;
-    }
-  } else {
-    DBG("Theme: %s Path: %s\n", GlobalConfig.Theme, ThemePath);
-  }
-  
-  MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
-  if (ThemeDir) {
-    ReadConfig(1);
-  }
-  
-  PrepatchSmbios();
-
 #ifdef REVISION_STR
   MsgLog(REVISION_STR); 
 #endif
@@ -2587,8 +2547,19 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   } else {
     OEMPath = L"EFI\\CLOVER";
   }
-  
-	Status = GetEarlyUserSettings(SelfRootDir);
+
+  gSettings.PointerEnabled = TRUE;
+  gSettings.PointerSpeed = 2;
+  gSettings.DoubleClickTime = 500;
+  if (EFI_ERROR(Status = GetEarlyUserSettings(SelfRootDir))) {
+    DBG("Early settings: %r\n", Status);
+  }
+
+  PrepatchSmbios();
+
+  if (EFI_ERROR(Status = GetThemeSettings())) {
+    DBG("Theme settings: %r\n", Status);
+  }
   
   // further bootstrap (now with config available)
   //  SetupScreen();
@@ -2624,13 +2595,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     DebugLog(2, " %r", Status);
     PauseForKey(L"Error reinit refit\n");
     return Status;
-  }
-  Status = SelfRootDir->Open(SelfRootDir,
-                             &OemThemeDir,
-                             PoolPrint(L"%s\\themes\\%s", OEMPath, GlobalConfig.Theme),
-                             EFI_FILE_MODE_READ, 0);
-  if (OemThemeDir && !EFI_ERROR(Status)) {
-    ReadConfig(2);
   }
   
 //        DBG("reinit OK\n");
@@ -2705,47 +2669,17 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     // as soon as we have Volumes, find latest nvram.plist and copy it to RT vars
     if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {
       PutNvramPlistToRtVars();
-      //now there is an attempt to change theme
-      chosenTheme = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
-      if (chosenTheme != NULL) {
-        DBG("ChosenTheme at plist %a\n", chosenTheme);
-        themeFromRefit = GlobalConfig.Theme;
-        GlobalConfig.Theme = PoolPrint(L"%a", chosenTheme);
-        GlobalConfig.Theme[Size] = 0;
-        if (ThemePath) {
-          FreePool(ThemePath);
-        }
-        ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", GlobalConfig.Theme);
-        Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
-        if (EFI_ERROR (Status)) {
-          DBG("chosen theme %s is absent, using default %s\n", GlobalConfig.Theme, themeFromRefit);
-          GlobalConfig.Theme = themeFromRefit;
-          ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", GlobalConfig.Theme);
-          Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
-          if (EFI_ERROR (Status)) {
-            DBG("default theme %s is absent, using embedded\n", GlobalConfig.Theme);
-            GlobalConfig.Theme = NULL;
-            if (ThemePath) {
-              FreePool(ThemePath);
-            }
-            ThemePath = NULL;
-            ThemeDir = NULL;
-          }
-        } else {
-          DBG("Change theme to: %s Path: %s\n", GlobalConfig.Theme, ThemePath);
-        }
-        if (ThemeDir) {
-          ReadConfig(1);
-          //changing theme we need to change Volumes Images
-          reinitImages();
-        }
-      }
     }
-      
+    if (EFI_ERROR(Status = GetThemeSettings())) {
+      DBG("Theme settings: %r\n", Status);
+    }
+    //changing theme we need to change Volumes Images
+    reinitImages();
+    
     PrepareFont();
     
     // scan for loaders and tools, add then to the menu
-    if (!GlobalConfig.NoLegacy && GlobalConfig.LegacyFirst && !gSettings.HVHideAllLegacy){
+    if (!GlobalConfig.NoLegacy && GlobalConfig.LegacyFirst){
       //DBG("scan legacy first\n");
       ScanLegacy();
 //      DBG("ScanLegacy()\n");
@@ -2753,7 +2687,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     ScanLoader();
 //    DBG("ScanLoader()\n");
 //          DBG("ScanLoader OK\n");
-    if (!GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst && !gSettings.HVHideAllLegacy){
+    if (!GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst){
 //      DBG("scan legacy second\n");
       ScanLegacy();
       //DBG("ScanLegacy()\n");

@@ -439,10 +439,11 @@ EFI_STATUS ParseTagList( CHAR8* buffer, TagPtr * tag, UINT32 type, UINT32 empty,
       }
       
       if (tagTail) {
-        tagTail = tagTail->tagNext = tmpTag;
+        tagTail->tagNext = tmpTag;
       } else {
-        tagList = tagTail = tmpTag;
+        tagList = tmpTag;
       }
+      tagTail = tmpTag;
     }
     
     if (EFI_ERROR(Status)) {

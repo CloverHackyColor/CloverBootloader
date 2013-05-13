@@ -594,27 +594,19 @@ VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG
     GraphicsScreenDirty = TRUE;
 }
 
-VOID InitAnime()
-{
-  /*
-  // dmazar: original init code is here:
-  INTN i;
-  for (i=0; i<MAX_ANIME; i++){
-    AnimeName[i] = NULL;
-    AnimeFrames[i] = 0;
-    AnimeFrameTime[i] = 100;
-  }
-  // but MS compiler optimizes this with memset() RTL function and causes linker error.
-  // note: setting AnimeFrameTime elements to 100 depends on them
-  // being UINTN or INTN with following code
-  */
-  ZeroMem (AnimeName, MAX_ANIME * sizeof(AnimeName[0]));  
-  ZeroMem (AnimeFrames, MAX_ANIME * sizeof(AnimeFrames[0]));  
-  SetMemN(AnimeFrameTime, MAX_ANIME, 100);  
-}
-
 static EG_IMAGE    *CompImage = NULL;
 #define MAX_SIZE_ANIME 256
+
+VOID FreeAnime(GUI_ANIME *Anime)
+{
+   if (Anime) {
+     if (Anime->Path) {
+       FreePool(Anime->Path);
+       Anime->Path = NULL;
+     }
+     FreePool(Anime);
+   }
+}
 
 VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
 {
@@ -665,13 +657,22 @@ BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
   INTN        i, N;
   EG_IMAGE    *p = NULL;
   EG_IMAGE    *Last = NULL;
+  GUI_ANIME   *Anime;
   
   if (!Screen) return FALSE;
   
+  for (Anime = GuiAnime; Anime != NULL; Anime = Anime->Next) {
+    if (Anime->ID == Screen->ID) {
+      break;
+    }
+  }
+  if (Anime == NULL) {
+    return FALSE;
+  }
   // look through contents of the directory
-  Path = AnimeName[Screen->ID];
+  Path = Anime->Path;
   if (!Path) return FALSE;
-  N = AnimeFrames[Screen->ID];
+  N = Anime->Frames;
   DBG("Use anime=%s frames=%d\n", Path, N);
   Screen->Film = (EG_IMAGE**)AllocateZeroPool(N * sizeof(VOID*));
   for (i=0; i<N; i++){
@@ -693,11 +694,11 @@ BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
     //Create background frame
   Screen->Film[i] = egCreateImage(Screen->Film[0]->Width, Screen->Film[0]->Height, FALSE);
 
-  Screen->FrameTime = AnimeFrameTime[Screen->ID];
+  Screen->FrameTime = Anime->FrameTime;
   DBG(" found %d frames of the anime\n", i);
   Screen->CurrentFrame = 0;
   Screen->LastDraw = 0;
-  Screen->Once = AnimeOnce[Screen->ID];
+  Screen->Once = Anime->Once;
   return TRUE;
 }
 

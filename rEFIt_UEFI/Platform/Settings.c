@@ -40,29 +40,15 @@ BOOLEAN                         gFirmwareClover = FALSE;
 UINTN                           gEvent;
 UINT16                          gBacklightLevel;
 
-/*
-CHAR8* PossibleBlackList[] = {
-    "CsmVideoDxe",
-    "DataHubDxe",
-    "EmuVariableUefi",
-    "OsxAptioFixDrv",
-    "OsxLowMemFixDrv",
-    "PartitionDxe",
-    "VBoxHFS",
-    "VBoxExt2",
-    "VBoxExt4",
-    "Ps2MouseDxe",
-    "Ps2MouseAbsolutePointerDxe",
-    "UsbMouseDxe",
-    "XhciDxe",
-    "NTFS",
-    "HFSPlusIM",
-    "HFSPlusMP",
-    "FSInject-64.efi",
-    ""
-};
-*/
+GUI_ANIME *GuiAnime = NULL;
 
+extern INTN ScrollWidth;
+extern INTN ScrollButtonsHeight;
+extern INTN ScrollBarDecorationsHeight;
+extern INTN ScrollScrollDecorationsHeight;
+
+// global configuration with default values
+REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, FALSE, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, None };
 
 VOID __inline WaitForSts(VOID) {
 	UINT32 inline_timeout = 100000;
@@ -194,6 +180,127 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
   // это не переносится в refit.conf, потому что оно загружается только один раз
   
   dict = gConfigDict;
+  dictPointer = GetProperty(dict, "GUI");
+  if (dictPointer) {
+    prop = GetProperty(dictPointer, "Timeout");
+    if (prop) {
+      if (prop->type == kTagTypeInteger) {
+        GlobalConfig.Timeout = (INTN)prop->string;
+      } else if ((prop->type == kTagTypeString) && prop->string) {
+        if (prop->string[0] == '-') {
+          GlobalConfig.Timeout = -1;
+        } else {
+          GlobalConfig.Timeout = (INTN)AsciiStrDecimalToUintn(prop->string);
+        }
+      }
+    }
+    prop = GetProperty(dictPointer, "Theme");
+    if (prop) {
+      if ((prop->type == kTagTypeString) && prop->string) {
+        GlobalConfig.Theme = PoolPrint(L"%a", prop->string);
+      }
+    }
+    prop = GetProperty(dictPointer, "SystemLog");
+    if (prop) {
+      if ((prop->type == kTagTypeTrue) ||
+          ((prop->type == kTagTypeString) && prop->string &&
+           ((prop->string[0] == 'Y') || (prop->string[0] == 'y')))) {
+        GlobalConfig.SystemLog = TRUE;
+      }
+    }
+    prop = GetProperty(dictPointer, "ScreenResolution");
+    if (prop) {
+      if ((prop->type == kTagTypeString) && prop->string) {
+        GlobalConfig.ScreenResolution = PoolPrint(L"%a", prop->string);
+      }
+    }
+    prop = GetProperty(dictPointer, "Mouse");
+    if (prop) {
+      dict2 = GetProperty(prop, "Enabled");
+      if (dict2) {
+        if ((prop->type == kTagTypeFalse) ||
+            ((prop->type == kTagTypeString) && prop->string &&
+             ((prop->string[0] == 'N') || (prop->string[0] == 'n')))) {
+          gSettings.PointerEnabled = FALSE;
+        }
+      }
+      dict2 = GetProperty(prop, "Speed");
+      if (dict2) {
+        if (dict2->type == kTagTypeInteger) {
+          gSettings.PointerSpeed = (INTN)dict2->string;
+          if (gSettings.PointerSpeed < 0) {
+            gSettings.PointerSpeed = -gSettings.PointerSpeed;
+          }
+        } else if ((dict2->type == kTagTypeString) && dict2->string) {
+          gSettings.DoubleClickTime = (UINT16)AsciiStrDecimalToUintn(prop->string + ((dict2->string[0] == '-') ? 1 : 0));
+        }
+        gSettings.PointerEnabled = (gSettings.PointerSpeed > 0);
+      }
+      dict2 = GetProperty(prop, "Mirror");
+      if (dict2) {
+        if ((prop->type == kTagTypeTrue) ||
+            ((prop->type == kTagTypeString) && prop->string &&
+            ((prop->string[0] == 'Y') || (prop->string[0] == 'y')))) {
+          gSettings.PointerMirror = TRUE;
+        }
+      }
+      dict2 = GetProperty(prop, "DoubleClickTime");
+      if (dict2) {
+        if (prop->type == kTagTypeInteger) {
+          gSettings.DoubleClickTime = (UINTN)prop->string;
+        } else if (prop->type == kTagTypeString) {
+          gSettings.DoubleClickTime = (UINT16)AsciiStrDecimalToUintn(prop->string + ((dict2->string[0] == '-') ? 1 : 0));
+        }
+      }
+    }
+    // Hide volumes
+    prop = GetProperty(dictPointer, "Volumes");
+    if (prop) {
+      dict2 = GetProperty(prop, "Legacy");
+      if (dict2) {
+         if (dict2->type == kTagTypeFalse) {
+           GlobalConfig.NoLegacy = TRUE;
+         }
+         else if ((dict2->type == kTagTypeString) && dict2->string) {
+           if ((dict2->string[0] == 'N') || (dict2->string[0] == 'n')) {
+             GlobalConfig.NoLegacy = TRUE;
+           } else if ((dict2->string[0] == 'F') || (dict2->string[0] == 'f')) {
+             GlobalConfig.LegacyFirst = TRUE;
+           }
+         }
+      }
+      // hide by name/uuid
+      dict2 = GetProperty(prop, "Hide");
+      if (dict2) {
+         INTN i, Count = GetTagCount(dict2);
+         if (Count > 0) {
+           gSettings.HVCount = 0;
+           gSettings.HVHideStrings = AllocateZeroPool(Count * sizeof(CHAR16 *));
+           if (gSettings.HVHideStrings) {
+             for (i = 0; i < Count; ++i) {
+               if (EFI_ERROR(GetElement(dict2, i, &dictPointer))) {
+                 continue;
+               }
+               if (dictPointer == NULL) {
+                 break;
+               }
+               if ((dictPointer->type == kTagTypeString) && dictPointer->string) {
+                 gSettings.HVHideStrings[gSettings.HVCount] = PoolPrint(L"%a", dictPointer->string);
+                 if (gSettings.HVHideStrings[gSettings.HVCount]) {
+                   DBG("Hiding volume with string %s\n", gSettings.HVHideStrings[gSettings.HVCount++]);
+                 }
+               }
+             }
+           }
+         }
+      }
+    }
+    // Hide ui
+    prop = GetProperty(dictPointer, "Hide");
+    if (prop) {
+      //
+    }
+  }
   dictPointer = GetProperty(dict, "Graphics");
   if (dictPointer) {
     
@@ -304,6 +411,341 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
     }
   }
 
+  return Status;
+}
+#define CONFIG_THEME_PATH L"theme.plist"
+
+STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
+{
+  TagPtr dict, dict2;
+  if (dictPointer == NULL) {
+    return EFI_INVALID_PARAMETER;
+  }
+  dict = GetProperty(dictPointer, "Background");
+  if (dict) {
+    dict2 = GetProperty(dict, "Type");
+    if (dict2) {
+      if ((dict2->type == kTagTypeString) && dict2->string) {
+        if ((dict2->string[0] == 'C') || (dict2->string[0] == 'c')) {
+          GlobalConfig.BackgroundScale = Crop;
+        } else if ((dict2->string[0] == 'S') || (dict2->string[0] == 's')) {
+          GlobalConfig.BackgroundScale = Scale;
+        } else if ((dict2->string[0] == 'T') || (dict2->string[0] == 't')) {
+          GlobalConfig.BackgroundScale = Tile;
+        }
+      }
+    }
+    dict2 = GetProperty(dict, "Path");
+    if (dict2) {
+      if ((dict2->type == kTagTypeString) && dict2->string) {
+        if (GlobalConfig.BackgroundName) {
+          FreePool(GlobalConfig.BackgroundName);
+        }
+        GlobalConfig.BackgroundName = PoolPrint(L"%a", dict2->string);
+      }
+    }
+  }
+  dict = GetProperty(dictPointer, "Banner");
+  if (dict) {
+    if ((dict->type == kTagTypeString) && dict->string) {
+      if (GlobalConfig.BannerFileName) {
+        FreePool(GlobalConfig.BannerFileName);
+      }
+      GlobalConfig.BannerFileName = PoolPrint(L"%a", dict->string);
+    }
+  }
+  dict = GetProperty(dictPointer, "Selection");
+  if (dict) {
+    dict2 = GetProperty(dict, "Color");
+    if (dict2) {
+      if (dict2->type == kTagTypeInteger) {
+         GlobalConfig.SelectionColor = (UINTN)dict2->string;
+      } else if ((dict2->type == kTagTypeString) && dict2->string) {
+        GlobalConfig.SelectionColor = AsciiStrHexToUintn(dict2->string);
+      }
+    }
+    dict2 = GetProperty(dict, "Small");
+    if (dict2) {
+      if ((dict2->type == kTagTypeString) && dict2->string) {
+        if (GlobalConfig.SelectionSmallFileName) {
+          FreePool(GlobalConfig.SelectionSmallFileName);
+        }
+        GlobalConfig.SelectionSmallFileName = PoolPrint(L"%a", dict2->string);
+      }
+    }
+    dict2 = GetProperty(dict, "Big");
+    if (dict2) {
+      if ((dict2->type == kTagTypeString) && dict2->string) {
+        if (GlobalConfig.SelectionBigFileName) {
+          FreePool(GlobalConfig.SelectionBigFileName);
+        }
+        GlobalConfig.SelectionBigFileName = PoolPrint(L"%a", dict2->string);
+      }
+    }
+    dict2 = GetProperty(dict, "Default");
+    if (dict2) {
+      if ((dict2->type == kTagTypeString) && dict2->string) {
+        if (GlobalConfig.DefaultSelection) {
+          FreePool(GlobalConfig.DefaultSelection);
+        }
+        GlobalConfig.DefaultSelection = PoolPrint(L"%a", dict2->string);
+      }
+    }
+  }
+  dict = GetProperty(dictPointer, "Scroll");
+  if (dict) {
+    dict2 = GetProperty(dict, "Width");
+    if (dict2) {
+      if (dict2->type == kTagTypeInteger) {
+         ScrollWidth = (UINTN)dict2->string;
+      } else if ((dict2->type == kTagTypeString) && dict2->string) {
+        ScrollWidth = AsciiStrDecimalToUintn(dict2->string);
+      }
+    }
+    dict2 = GetProperty(dict, "Height");
+    if (dict2) {
+      if (dict2->type == kTagTypeInteger) {
+         ScrollButtonsHeight = (UINTN)dict2->string;
+      } else if ((dict2->type == kTagTypeString) && dict2->string) {
+        ScrollButtonsHeight = AsciiStrDecimalToUintn(dict2->string);
+      }
+    }
+    dict2 = GetProperty(dict, "BarHeight");
+    if (dict2) {
+      if (dict2->type == kTagTypeInteger) {
+         ScrollBarDecorationsHeight = (UINTN)dict2->string;
+      } else if ((dict2->type == kTagTypeString) && dict2->string) {
+        ScrollBarDecorationsHeight = AsciiStrDecimalToUintn(dict2->string);
+      }
+    }
+    dict2 = GetProperty(dict, "ScrollHeight");
+    if (dict2) {
+      if (dict2->type == kTagTypeInteger) {
+         ScrollScrollDecorationsHeight = (UINTN)dict2->string;
+      } else if ((dict2->type == kTagTypeString) && dict2->string) {
+        ScrollScrollDecorationsHeight = AsciiStrDecimalToUintn(dict2->string);
+      }
+    }
+  }
+  dict = GetProperty(dictPointer, "Font");
+  if (dict) {
+    dict2 = GetProperty(dict, "Type");
+    if (dict2) {
+       if ((dict2->type == kTagTypeString) && dict2->string) {
+          if ((dict2->string[0] == 'A') || (dict2->string[0] == 'a')) {
+            GlobalConfig.Font = FONT_ALFA;
+          } else if ((dict2->string[0] == 'G') || (dict2->string[0] == 'g')) {
+            GlobalConfig.Font = FONT_GRAY;
+          } else if ((dict2->string[0] == 'L') || (dict2->string[0] == 'l')) {
+            GlobalConfig.Font = FONT_LOAD;
+          }
+       }
+    }
+    dict2 = GetProperty(dict, "Path");
+    if (dict2) {
+      if ((dict2->type == kTagTypeString) && dict2->string) {
+        if (GlobalConfig.FontFileName) {
+          FreePool(GlobalConfig.FontFileName);
+        }
+        GlobalConfig.FontFileName = PoolPrint(L"%a", dict2->string);
+      }
+    }
+    dict2 = GetProperty(dict, "CharWidth");
+    if (dict2) {
+      if (dict2->type == kTagTypeInteger) {
+         GlobalConfig.CharWidth = (UINTN)dict2->string;
+      } else if ((dict2->type == kTagTypeString) && dict2->string) {
+        GlobalConfig.CharWidth = AsciiStrDecimalToUintn(dict2->string);
+      }
+    }
+  }
+  dict = GetProperty(dictPointer, "Anime");
+  if (dict) {
+    INTN i, Count = GetTagCount(dict);
+    for (i = 0; i < Count; ++i) {
+      GUI_ANIME *Anime;
+      if (EFI_ERROR(GetElement(dict, i, &dictPointer))) {
+        continue;
+      }
+      if (dictPointer == NULL) {
+        break;
+      }
+      Anime = AllocateZeroPool(sizeof(GUI_ANIME));
+      if (Anime == NULL) {
+        break;
+      }
+      dict2 = GetProperty(dictPointer, "ID");
+      if (dict2) {
+        if (dict2->type == kTagTypeInteger) {
+          Anime->ID = (UINTN)dict2->string;
+        } else if ((dict2->type == kTagTypeString) && dict2->string) {
+          Anime->ID = AsciiStrDecimalToUintn(dict2->string);
+        }
+      }
+      dict2 = GetProperty(dictPointer, "Path");
+      if (dict2) {
+        if ((dict2->type == kTagTypeString) && dict2->string) {
+          if (Anime->Path) {
+            FreePool(Anime->Path);
+          }
+          Anime->Path = PoolPrint(L"%a", dict2->string);
+        }
+      }
+      dict2 = GetProperty(dictPointer, "Frames");
+      if (dict2) {
+        if (dict2->type == kTagTypeInteger) {
+          Anime->Frames = (UINTN)dict2->string;
+        } else if ((dict2->type == kTagTypeString) && dict2->string) {
+          Anime->Frames = AsciiStrDecimalToUintn(dict2->string);
+        }
+      }
+      dict2 = GetProperty(dictPointer, "FrameTime");
+      if (dict2) {
+        if (dict2->type == kTagTypeInteger) {
+          Anime->FrameTime = (UINTN)dict2->string;
+        } else if ((dict2->type == kTagTypeString) && dict2->string) {
+          Anime->FrameTime = AsciiStrDecimalToUintn(dict2->string);
+        }
+      }
+      dict2 = GetProperty(dictPointer, "Once");
+      if (dict2) {
+        if ((dict2->type == kTagTypeTrue) ||
+            ((dict2->type == kTagTypeString) && dict2->string &&
+             ((dict2->string[0] == 'Y') || (dict2->string[0] == 'y')))) {
+          Anime->Once = TRUE;
+        }
+      }
+      // Add the anime to the list
+      if (Anime) {
+        if ((Anime->ID == 0) || (Anime->Path == NULL)) {
+          FreePool(Anime);
+        } else if (GuiAnime) {
+          if (GuiAnime->ID == Anime->ID) {
+            Anime->Next = GuiAnime->Next;
+            FreeAnime(GuiAnime);
+            GuiAnime = Anime;
+          } else {
+            GUI_ANIME *Ptr = GuiAnime;
+            while (Ptr->Next) {
+              if (Ptr->Next->ID == Anime->ID) {
+                GUI_ANIME *Next = Ptr->Next;
+                Ptr->Next = Next->Next;
+                FreeAnime(Next);
+                break;
+              }
+              Ptr = Ptr->Next;
+            }
+            Anime->Next = GuiAnime;
+            GuiAnime = Anime;
+          }
+        } else {
+           GuiAnime = Anime;
+        }
+      }
+    }
+  }
+  return EFI_SUCCESS;
+}
+
+EFI_STATUS GetThemeSettings(VOID)
+{
+  EFI_STATUS Status = EFI_NOT_FOUND;
+  //get theme from NVRAM in the case of UEFI boot
+  UINTN   Size = 0;
+  TagPtr  ThemeDict = NULL;
+  CHAR8  *ThemePtr = NULL;
+  CHAR8  *chosenTheme = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
+  if (chosenTheme) {
+    ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%a", chosenTheme);
+    if (ThemePath) {
+      Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+      if (!EFI_ERROR(Status)) {
+        Status = egLoadFile(SelfRootDir, CONFIG_THEME_PATH, (UINT8**)&ThemePtr, &Size);
+        if (!EFI_ERROR(Status) &&
+            ((ThemePtr == NULL) || (Size == 0))) {
+          Status = EFI_NOT_FOUND;
+        } else {
+           Status = ParseXML((const CHAR8*)ThemePtr, &ThemeDict);
+           if (!EFI_ERROR(Status) && (ThemeDict == NULL)) {
+              Status = EFI_UNSUPPORTED;
+           }
+        }
+      }
+    }
+  }
+  // Try to get theme from settings
+  if (EFI_ERROR(Status)) {
+    if (GlobalConfig.Theme) {
+      if (chosenTheme) {
+        DBG("theme %s chosen from nvram is absent, using default\n", chosenTheme);
+      }
+      if (ThemePath) {
+        FreePool(ThemePath);
+      }
+      ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", GlobalConfig.Theme);
+      if (ThemePath) {
+        if (ThemeDir) {
+          ThemeDir->Close(ThemeDir);
+          ThemeDir = NULL;
+        }
+        Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+        if (!EFI_ERROR(Status)) {
+           Status = egLoadFile(SelfRootDir, CONFIG_THEME_PATH, (UINT8**)&ThemePtr, &Size);
+           if (!EFI_ERROR(Status) &&
+              ((ThemePtr == NULL) || (Size == 0))) {
+                 Status = EFI_NOT_FOUND;
+           } else {
+              Status = ParseXML((const CHAR8*)ThemePtr, &ThemeDict);
+              if (!EFI_ERROR(Status) && (ThemeDict == NULL)) {
+                 Status = EFI_UNSUPPORTED;
+              }
+           }
+        }
+      }
+      if (EFI_ERROR(Status)) {
+        DBG("default theme %s is absent, using embedded\n", GlobalConfig.Theme);
+      }
+    } else if (chosenTheme) {
+      DBG("theme %s chosen from nvram is absent, using embedded\n", chosenTheme);
+    } else {
+      DBG("no default theme, using embedded\n", chosenTheme);
+    }
+  }
+  // Read defaults from config
+  if (gConfigDict) {
+    TagPtr dictPointer = GetProperty(gConfigDict, "Theme");
+    if (dictPointer) {
+      EFI_STATUS S = GetThemeTagSettings(dictPointer);
+      if (EFI_ERROR(S)) {
+         DBG("Config theme error: %r\n", S);
+      }
+    }
+  }
+  // Check for fall back to embedded theme
+  if (EFI_ERROR(Status) || (ThemeDict == NULL)) {
+    if (GlobalConfig.Theme) {
+      FreePool(GlobalConfig.Theme);
+    }
+    GlobalConfig.Theme = NULL;
+    if (ThemePath) {
+      FreePool(ThemePath);
+    }
+    ThemePath = NULL;
+    if (ThemeDir) {
+      ThemeDir->Close(ThemeDir);
+    }
+    ThemeDir = NULL;
+  } else {
+    TagPtr dictPointer = GetProperty(ThemeDict, "Theme");
+    DBG("Theme: %s Path: %s\n", GlobalConfig.Theme, ThemePath);
+    // read theme settings
+    if (dictPointer) {
+      Status = GetThemeTagSettings(dictPointer);
+    }
+  }
+  if (ThemeDict) {
+    FreeTag(ThemeDict);
+  }
   return Status;
 }
 

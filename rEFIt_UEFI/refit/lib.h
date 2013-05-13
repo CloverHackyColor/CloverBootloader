@@ -385,6 +385,17 @@ typedef struct {
   CHAR16           *LoadOptions;
 } LEGACY_ENTRY;
 
+#define ANIME_INFINITE (UINTN)-1
+
+typedef struct GUI_ANIME GUI_ANIME;
+struct GUI_ANIME {
+  UINTN      ID;
+  CHAR16    *Path;
+  UINTN      Frames;
+  UINTN      FrameTime;
+  BOOLEAN    Once;
+  GUI_ANIME *Next;
+};
 
 extern EFI_HANDLE       SelfImageHandle;
 extern EFI_HANDLE       SelfDeviceHandle;
@@ -399,11 +410,7 @@ extern EFI_FILE         *OEMDir;
 extern CHAR16           *OEMPath;
 extern EFI_FILE         *OemThemeDir;
 
-extern CHAR16*          AnimeName[];     
-extern INTN             AnimeFrames[];   
-extern UINTN            AnimeFrameTime[];
-extern BOOLEAN          AnimeOnce[];
-
+extern GUI_ANIME        *GuiAnime;
 
 extern REFIT_VOLUME     *SelfVolume;
 extern REFIT_VOLUME     **Volumes;
@@ -513,7 +520,7 @@ VOID BltImageAlpha(IN EG_IMAGE *Image, IN INTN XPos, IN INTN YPos, IN EG_PIXEL *
 VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XPos, IN INTN YPos);
 VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG_IMAGE *BadgeImage, IN INTN XPos, IN INTN YPos);
 
-VOID    InitAnime(VOID);
+VOID    FreeAnime(GUI_ANIME *Anime);
 VOID    UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place);
 BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen);
 //
