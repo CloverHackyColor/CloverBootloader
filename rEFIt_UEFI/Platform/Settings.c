@@ -219,9 +219,9 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
     if (prop) {
       dict2 = GetProperty(prop, "Enabled");
       if (dict2) {
-        if ((prop->type == kTagTypeFalse) ||
-            ((prop->type == kTagTypeString) && prop->string &&
-             ((prop->string[0] == 'N') || (prop->string[0] == 'n')))) {
+        if ((dict2->type == kTagTypeFalse) ||
+            ((dict2->type == kTagTypeString) && dict2->string &&
+             ((dict2->string[0] == 'N') || (dict2->string[0] == 'n')))) {
           gSettings.PointerEnabled = FALSE;
         }
       }
@@ -295,11 +295,6 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
            }
          }
       }
-    }
-    // Hide ui
-    prop = GetProperty(dictPointer, "Hide");
-    if (prop) {
-      //
     }
   }
   dictPointer = GetProperty(dict, "Graphics");
@@ -1654,8 +1649,8 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.KextPatches = AllocateZeroPool(Count * sizeof(KEXT_PATCH));
           DBG("KextsToPatch: %d requested\n", Count);
           for (i = 0; i < Count; ++i) {
-          Status = GetElement(prop, i, &dictPointer);
-          if (EFI_ERROR(Status)) {
+            Status = GetElement(prop, i, &dictPointer);
+            if (EFI_ERROR(Status)) {
             DBG("error %r getting next element at index %d\n", Status, i);
                continue;
             }
