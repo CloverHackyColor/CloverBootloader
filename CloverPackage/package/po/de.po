@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-12 14:19+0300\n"
-"PO-Revision-Date: 2013-05-14 09:43+0000\n"
+"PO-Revision-Date: 2013-05-14 20:05+0000\n"
 "Last-Translator: !Xabbu <holger_frey07@web.de>\n"
 "Language-Team: ge <ge@li.org>\n"
 "Language: de\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1368524613.0\n"
+"X-POOTLE-MTIME: 1368561905.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -932,6 +932,8 @@ msgstr "Copyright (c) 2013 JrCs"
 #, no-wrap
 msgid "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined in config.plist is use."
 msgstr ""
+"Thema der Clover GUI\\n. Ist nichts angegeben, wird das in der config.plist "
+"gewählte Thema benutzt."
 
 #. type: "292.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:14
