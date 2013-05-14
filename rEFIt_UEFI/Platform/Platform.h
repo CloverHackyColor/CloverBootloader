@@ -142,6 +142,7 @@ Headers collection for procedures
 #define LEGBOOT_LOG L"EFI\\CLOVER\\misc\\legacy_boot.log"
 #define BOOT_LOG L"EFI\\CLOVER\\misc\\boot.log"
 #define SYSTEM_LOG L"EFI\\CLOVER\\misc\\system.log"
+#define DEBUG_LOG L"EFI\\CLOVER\\misc\\debug.log"
 //#define MsgLog(x...) {AsciiSPrint(msgCursor, MSG_LOG_SIZE, x); while(*msgCursor){msgCursor++;}}
 //#define MsgLog(...) {AsciiSPrint(msgCursor, (MSG_LOG_SIZE-(msgCursor-msgbuf)), __VA_ARGS__); while(*msgCursor){msgCursor++;}}
 #ifndef DEBUG_ALL

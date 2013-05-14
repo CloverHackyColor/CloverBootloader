@@ -195,6 +195,12 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
         }
       }
     }
+    
+    prop = GetProperty(dictPointer, "DefaultBootVolume");
+    if(prop) {
+      AsciiStrToUnicodeStr(prop->string, gSettings.DefaultBoot);
+    }
+
     prop = GetProperty(dictPointer, "Theme");
     if (prop) {
       if ((prop->type == kTagTypeString) && prop->string) {
@@ -202,12 +208,12 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
         DBG("Default theme: %s\n", GlobalConfig.Theme);
       }
     }
-    prop = GetProperty(dictPointer, "SystemLog");
+    prop = GetProperty(dictPointer, "DebugLog");
     if (prop) {
       if ((prop->type == kTagTypeTrue) ||
           ((prop->type == kTagTypeString) && prop->string &&
            ((prop->string[0] == 'Y') || (prop->string[0] == 'y')))) {
-        GlobalConfig.SystemLog = TRUE;
+        GlobalConfig.DebugLog = TRUE;
       }
     }
     prop = GetProperty(dictPointer, "ScreenResolution");
@@ -2148,7 +2154,7 @@ EFI_STATUS GetEdid(VOID)
       gSettings.CustomEDID = gEDID; //copy pointer but data if no CustomEDID
     }
     CopyMem(gEDID, EdidDiscovered->Edid, N);
-    if (!GlobalConfig.SystemLog) {
+    if (!GlobalConfig.DebugLog) {
       for (i=0; i<N; i+=10) {
         MsgLog("%02d | ", i);
         for (j=0; j<10; j++) {

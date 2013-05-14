@@ -602,7 +602,7 @@ VOID PutNvramPlistToRtVars(VOID)
       continue;
     }
     AsciiStrToUnicodeStr(Tag->string, KeyBuf);
-    if (!GlobalConfig.SystemLog) {
+    if (!GlobalConfig.DebugLog) {
       DBG(" Adding Key: %s: ", KeyBuf);
     }
     // process value tag
@@ -612,7 +612,7 @@ VOID PutNvramPlistToRtVars(VOID)
       // <string> element
       Value = ValTag->string;
       Size = AsciiStrLen(Value);
-      if (!GlobalConfig.SystemLog) {
+      if (!GlobalConfig.DebugLog) {
         DBG("String: Size = %d, Val = '%a'", Size, Value);
       }
       
@@ -621,7 +621,7 @@ VOID PutNvramPlistToRtVars(VOID)
       // <data> element
       Size = ValTag->dataLen;
       Value = ValTag->data;
-      if (!GlobalConfig.SystemLog) {
+      if (!GlobalConfig.DebugLog) {
         DBG("Data: Size = %d", Size);
       }
     } else {
@@ -636,7 +636,7 @@ VOID PutNvramPlistToRtVars(VOID)
                               Size,
                               Value
                               );
-    if (!GlobalConfig.SystemLog) {
+    if (!GlobalConfig.DebugLog) {
       DBG(": %r\n", Status);
     }
   }

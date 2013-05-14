@@ -15,7 +15,7 @@
 extern  EFI_GUID  gEfiMiscSubClassGuid;
 
 
-EFI_FILE_PROTOCOL* GetSystemLogFile(BOOLEAN FirstTimeSave)
+EFI_FILE_PROTOCOL* GetDebugLogFile(BOOLEAN FirstTimeSave)
 {
   EFI_STATUS          Status;
   EFI_LOADED_IMAGE    *LoadedImage;
@@ -33,7 +33,7 @@ EFI_FILE_PROTOCOL* GetSystemLogFile(BOOLEAN FirstTimeSave)
   }
   
   // Open log file from current root
-  Status = RootDir->Open(RootDir, &LogFile, SYSTEM_LOG,
+  Status = RootDir->Open(RootDir, &LogFile, DEBUG_LOG,
                          EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
   /*
   if (FirstTimeSave && Status == EFI_SUCCESS) {
@@ -43,7 +43,7 @@ EFI_FILE_PROTOCOL* GetSystemLogFile(BOOLEAN FirstTimeSave)
    */
   // If the log file is not found try to create it
   if (Status == EFI_NOT_FOUND) {
-    Status = RootDir->Open(RootDir, &LogFile, SYSTEM_LOG,
+    Status = RootDir->Open(RootDir, &LogFile, DEBUG_LOG,
                            EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
   }
   RootDir->Close(RootDir);
@@ -53,7 +53,7 @@ EFI_FILE_PROTOCOL* GetSystemLogFile(BOOLEAN FirstTimeSave)
     // try on first EFI partition
     Status = egFindESP(&RootDir);
     if (!EFI_ERROR(Status)) {
-      Status = RootDir->Open(RootDir, &LogFile, SYSTEM_LOG,
+      Status = RootDir->Open(RootDir, &LogFile, DEBUG_LOG,
                              EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE, 0);
       /*
       if (FirstTimeSave && Status == EFI_SUCCESS) {
@@ -63,7 +63,7 @@ EFI_FILE_PROTOCOL* GetSystemLogFile(BOOLEAN FirstTimeSave)
        */
       // If the log file is not found try to create it
       if (Status == EFI_NOT_FOUND) {
-        Status = RootDir->Open(RootDir, &LogFile, SYSTEM_LOG,
+        Status = RootDir->Open(RootDir, &LogFile, DEBUG_LOG,
                                EFI_FILE_MODE_READ | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_CREATE, 0);
       }
       RootDir->Close(RootDir);
@@ -79,7 +79,7 @@ EFI_FILE_PROTOCOL* GetSystemLogFile(BOOLEAN FirstTimeSave)
 }
 
 
-VOID SaveMessageToSystemLogFile(IN CHAR8 *LastMessage)
+VOID SaveMessageToDebugLogFile(IN CHAR8 *LastMessage)
 {
   static BOOLEAN          FirstTimeSave = TRUE;
   CHAR8                   *MemLogBuffer;
@@ -94,7 +94,7 @@ VOID SaveMessageToSystemLogFile(IN CHAR8 *LastMessage)
   TextLen = AsciiStrLen(LastMessage);
 
   
-  LogFile = GetSystemLogFile(FirstTimeSave);
+  LogFile = GetDebugLogFile(FirstTimeSave);
   // Write to the log file
   if (LogFile != NULL)
   {
@@ -124,16 +124,16 @@ VOID EFIAPI MemLogCallback(IN INTN DebugMode, IN CHAR8 *LastMessage)
     AsciiPrint(LastMessage);
   }
   
-  if ((DebugMode >= 1) && GlobalConfig.SystemLog) {
-    SaveMessageToSystemLogFile(LastMessage);
+  if ((DebugMode >= 1) && GlobalConfig.DebugLog) {
+    SaveMessageToDebugLogFile(LastMessage);
   }
 }
 
 // Changed MsgLog(...) it now calls this function
 //  with DebugMode == 0. - apianti
 // DebugMode==0 Prints to msg log, only output to log on SaveBooterLog
-// DebugMode==1 Prints to msg log and SYSTEM_LOG
-// DebugMode==2 Prints to msg log, SYSTEM_LOG and display console
+// DebugMode==1 Prints to msg log and DEBUG_LOG
+// DebugMode==2 Prints to msg log, DEBUG_LOG and display console
 VOID DebugLog(IN INTN DebugMode, IN CONST CHAR8 *FormatString, ...)
 {
    VA_LIST Marker;
@@ -173,7 +173,7 @@ EFI_STATUS SetupBooterLog(VOID)
   
   // Save BOOT_LOG only once on successful boot
   /*
-  if (GlobalConfig.SystemLog){
+  if (GlobalConfig.DebugLog){
     Status = SaveBooterLog(SelfRootDir, BOOT_LOG);
     if (EFI_ERROR(Status)) {
       Status = SaveBooterLog(NULL, BOOT_LOG);
