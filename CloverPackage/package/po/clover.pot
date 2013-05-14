@@ -6,8 +6,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Clover v2.0-r1618\n"
-"POT-Creation-Date: 2013-05-12 14:19+0300\n"
+"Project-Id-Version: Clover v2.0-r1635\n"
+"POT-Creation-Date: 2013-05-13 17:32+0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -825,7 +825,7 @@ msgstr ""
 msgid "Copyright (c) 2013 JrCs"
 msgstr ""
 
-#. type: "267.ibShadowedToolTip"
+#. type: "267.gToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:13
 #, no-wrap
 msgid ""
@@ -887,7 +887,7 @@ msgstr ""
 msgid "LogEveryBoot:"
 msgstr ""
 
-#. type: "314.ibShadowedToolTip"
+#. type: "314.gToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
 msgid ""
@@ -895,7 +895,7 @@ msgid ""
 "to the current CloverEFI/boot.log contents"
 msgstr ""
 
-#. type: "323.ibShadowedToolTip"
+#. type: "323.gToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
 msgid ""
@@ -917,7 +917,7 @@ msgstr ""
 msgid "Advanced Configurations"
 msgstr ""
 
-#. type: "329.ibShadowedToolTip"
+#. type: "329.gToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:27
 #, no-wrap
 msgid ""
@@ -934,7 +934,7 @@ msgstr ""
 msgid "MountEFI:"
 msgstr ""
 
-#. type: "337.ibShadowedToolTip"
+#. type: "337.gToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
 msgid ""

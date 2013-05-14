@@ -186,6 +186,7 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
     if (prop) {
       if (prop->type == kTagTypeInteger) {
         GlobalConfig.Timeout = (INTN)prop->string;
+        DBG("timeout set to %d\n", GlobalConfig.Timeout);
       } else if ((prop->type == kTagTypeString) && prop->string) {
         if (prop->string[0] == '-') {
           GlobalConfig.Timeout = -1;
@@ -254,6 +255,75 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
         }
       }
     }
+            // Hide entries
+    prop = GetProperty(dictPointer, "HideEntries");
+    if (prop) {
+      DBG("configure Hide entries\n");
+      dict2 = GetProperty(prop, "OSXInstall");
+      if (dict2) {
+        if (dict2->type == kTagTypeTrue) {
+          gSettings.HVHideAllOSXInstall = TRUE;
+        }
+      }
+      dict2 = GetProperty(prop, "Recovery");
+      if (dict2) {
+        if (dict2->type == kTagTypeTrue) {
+          gSettings.HVHideAllRecovery = TRUE;
+        }
+      }
+      dict2 = GetProperty(prop, "Duplicate");
+      if (dict2) {
+        if (dict2->type == kTagTypeTrue) {
+          gSettings.HVHideDuplicatedBootTarget = TRUE;
+        }
+      }
+      dict2 = GetProperty(prop, "WindowsEFI");
+      if (dict2) {
+        if (dict2->type == kTagTypeTrue) {
+          gSettings.HVHideAllWindowsEFI = TRUE;
+        }
+      }
+      dict2 = GetProperty(prop, "Grub");
+      if (dict2) {
+        if (dict2->type == kTagTypeTrue) {
+          gSettings.HVHideAllGrub = TRUE;
+        }
+      }
+      dict2 = GetProperty(prop, "Gentoo");
+      if (dict2) {
+        if (dict2->type == kTagTypeTrue) {
+          gSettings.HVHideAllGentoo = TRUE;
+        }
+      }
+      dict2 = GetProperty(prop, "Ubuntu");
+      if (dict2) {
+        if (dict2->type == kTagTypeTrue) {
+          gSettings.HVHideAllUbuntu = TRUE;
+        }
+      }
+      dict2 = GetProperty(prop, "OpticalUEFI");
+      if (dict2) {
+        if (dict2->type == kTagTypeTrue) {
+          gSettings.HVHideOpticalUEFI = TRUE;
+        }
+      }
+      dict2 = GetProperty(prop, "InternalUEFI");
+      if (dict2) {
+        DBG("hide InternalUEFI\n");
+        if (dict2->type == kTagTypeTrue) {
+          DBG("....true\n");
+          gSettings.HVHideInternalUEFI = TRUE;
+        } else {
+          DBG("....false\n");
+        }
+      }
+      dict2 = GetProperty(prop, "ExternalUEFI");
+      if (dict2) {
+        if (dict2->type == kTagTypeTrue) {
+          gSettings.HVHideExternalUEFI = TRUE;
+        }
+      }
+    }
     // Hide volumes
     prop = GetProperty(dictPointer, "Volumes");
     if (prop) {
@@ -288,7 +358,8 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
               if ((dictPointer->type == kTagTypeString) && dictPointer->string) {
                 gSettings.HVHideStrings[gSettings.HVCount] = PoolPrint(L"%a", dictPointer->string);
                 if (gSettings.HVHideStrings[gSettings.HVCount]) {
-                  DBG("Hiding volume with string %s\n", gSettings.HVHideStrings[gSettings.HVCount++]);
+                  DBG("Hiding volume with string %s\n", gSettings.HVHideStrings[gSettings.HVCount]);
+                  gSettings.HVCount++;
                 }
               }
             }
@@ -296,6 +367,7 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
         }
       }
     }
+
   }
   dictPointer = GetProperty(dict, "Graphics");
   if (dictPointer) {
@@ -452,28 +524,25 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
   }
   dict = GetProperty(dictPointer, "Badges");
   if (dict) {
-    if (dict->type == kTagTypeTrue) {
-      GlobalConfig.HideBadges = 0;
-    } else if (dict->type == kTagTypeFalse) {
-      GlobalConfig.HideBadges = 2;
-    } else if ((dict->type == kTagTypeString) && dict->string) {
-      if ((dict->string[0] == 'I') || (dict->string[0] == 'i')) {
-        // internal
-        GlobalConfig.HideBadges = 4;
-      } else if ((dict->string[0] == 'S') || (dict->string[0] == 's')) {
-        // swap
-        GlobalConfig.HideBadges = 3;
-      } else if ((dict->string[0] == 'E') || (dict->string[0] == 'e')) {
-        // drive
-        GlobalConfig.HideBadges = 1;
-      } else if ((dict->string[0] == 'N') || (dict->string[0] == 'n')) {
-        // none
-        GlobalConfig.HideBadges = 2;
-      } else {
-        // all
-        GlobalConfig.HideBadges = 0;
+    dict2 = GetProperty(dict, "Swap");
+    if (dict2) {
+      if (dict2->type == kTagTypeTrue) {
+        GlobalConfig.HideBadges |= HDBADGES_SWAP;
+        DBG("OS main and drive as badge\n");
       }
-    }
+    }    
+    dict2 = GetProperty(dict, "Show");
+    if (dict2) {
+      if (dict2->type == kTagTypeTrue) {
+        GlobalConfig.HideBadges |= HDBADGES_SHOW;
+      }
+    }    
+    dict2 = GetProperty(dict, "Inline");
+    if (dict2) {
+      if (dict2->type == kTagTypeTrue) {
+        GlobalConfig.HideBadges |= HDBADGES_INLINE;
+      }
+    }    
   }
   dict = GetProperty(dictPointer, "Selection");
   if (dict) {
@@ -503,7 +572,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
         GlobalConfig.SelectionBigFileName = PoolPrint(L"%a", dict2->string);
       }
     }
-    dict2 = GetProperty(dict, "Default");
+/*    dict2 = GetProperty(dict, "Default");
     if (dict2) {
       if ((dict2->type == kTagTypeString) && dict2->string) {
         if (GlobalConfig.DefaultSelection) {
@@ -511,7 +580,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
         }
         GlobalConfig.DefaultSelection = PoolPrint(L"%a", dict2->string);
       }
-    }
+    } */
   }
   dict = GetProperty(dictPointer, "Scroll");
   if (dict) {

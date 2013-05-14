@@ -2116,7 +2116,7 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
   LOADER_ENTRY* LEntry = (LOADER_ENTRY*)Entry;
     
   if (((Entry->Tag == TAG_LOADER) || (Entry->Tag == TAG_LEGACY)) &&
-        (GlobalConfig.HideBadges < 3) &&
+        !(GlobalConfig.HideBadges & HDBADGES_SWAP) &&
       (Entry->Row == 0)){
     MainImage = LEntry->Volume->DriveImage;
   } else {
@@ -2164,33 +2164,33 @@ static   INTN OldTextWidth = 0;
 static   UINTN OldRow = 0;
 static VOID DrawMainMenuLabel(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State)
 {
-    INTN TextWidth;
-    
-    egMeasureText(Text, &TextWidth, NULL);
-    if (OldTextWidth > TextWidth) {
-        //Clear old text
-        FillRectAreaOfScreen(OldX, OldY,
-                             OldTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
-    }
-    if ((GlobalConfig.HideBadges == HDBADGES_ALL) && (!OldRow) && (OldTextWidth) && (OldTextWidth != TextWidth)) {
-        //Clear badge
-        BltImageAlpha(NULL, (OldX - (OldTextWidth >> 1) - (BADGE_DIMENSION + 16)),
-                      (OldY - ((BADGE_DIMENSION - TextHeight) >> 1)), &MenuBackgroundPixel, BADGE_DIMENSION >> 3);
-    }
-    DrawTextXY(Text, XPos, YPos, X_IS_CENTER);
-
-        //show badge
-    if ((GlobalConfig.HideBadges == HDBADGES_ALL) &&
-          (Screen->Entries[State->CurrentSelection]->Row == 0))
-        {
-            BltImageAlpha(((LOADER_ENTRY*)Screen->Entries[State->CurrentSelection])->Volume->OSImage,
-                          (XPos - (TextWidth >> 1) - (BADGE_DIMENSION + 16)),
-                          (YPos - ((BADGE_DIMENSION - TextHeight) >> 1)), &MenuBackgroundPixel, BADGE_DIMENSION >> 3);
-        }
-    OldX = XPos;
-    OldY = YPos;
-    OldTextWidth = TextWidth;
-    OldRow = Screen->Entries[State->CurrentSelection]->Row;
+  INTN TextWidth;
+  
+  egMeasureText(Text, &TextWidth, NULL);
+  if (OldTextWidth > TextWidth) {
+    //Clear old text
+    FillRectAreaOfScreen(OldX, OldY,
+                         OldTextWidth, TextHeight, &MenuBackgroundPixel, X_IS_CENTER);
+  }
+  if ((GlobalConfig.HideBadges & HDBADGES_INLINE) && (!OldRow) && (OldTextWidth) && (OldTextWidth != TextWidth)) {
+    //Clear badge
+    BltImageAlpha(NULL, (OldX - (OldTextWidth >> 1) - (BADGE_DIMENSION + 16)),
+                  (OldY - ((BADGE_DIMENSION - TextHeight) >> 1)), &MenuBackgroundPixel, BADGE_DIMENSION >> 3);
+  }
+  DrawTextXY(Text, XPos, YPos, X_IS_CENTER);
+  
+  //show badge
+  if ((GlobalConfig.HideBadges & HDBADGES_INLINE) &&
+      (Screen->Entries[State->CurrentSelection]->Row == 0))
+  {
+    BltImageAlpha(((LOADER_ENTRY*)Screen->Entries[State->CurrentSelection])->Volume->OSImage,
+                  (XPos - (TextWidth >> 1) - (BADGE_DIMENSION + 16)),
+                  (YPos - ((BADGE_DIMENSION - TextHeight) >> 1)), &MenuBackgroundPixel, BADGE_DIMENSION >> 3);
+  }
+  OldX = XPos;
+  OldY = YPos;
+  OldTextWidth = TextWidth;
+  OldRow = Screen->Entries[State->CurrentSelection]->Row;
 }
 
 static   INTN OldTimeoutTextWidth = 0;
@@ -2327,7 +2327,7 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
       break;
       
     case MENU_FUNCTION_PAINT_TIMEOUT:
-      i = (GlobalConfig.HideBadges == HDBADGES_ALL)?3:1;
+      i = (GlobalConfig.HideBadges & HDBADGES_INLINE)?3:1;
       HidePointer();
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_LABEL)){
         FillRectAreaOfScreen((UGAWidth >> 1), textPosY + TextHeight * i,

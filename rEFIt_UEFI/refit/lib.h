@@ -326,12 +326,16 @@ typedef struct {
 #define HIDEUI_FLAG_LABEL       (0x0004)
 #define HIDEUI_FLAG_REVISION    (0x0008)
 #define HIDEUI_ALL              (0xffff)
-
+/*
 #define HDBADGES_NONE   0
 #define HDBADGES_INT    1
 #define HDBADGES_ALL    2
 #define HDBADGES_SWAP   3
 #define HDBADGES_DRIVE  4
+ */
+#define HDBADGES_SWAP   (1<<0)
+#define HDBADGES_SHOW   (1<<1)
+#define HDBADGES_INLINE (1<<2)
 
 typedef enum {
   None,

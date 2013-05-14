@@ -449,7 +449,6 @@
 		12B816E31644675800A433E7 /* StateGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StateGenerator.h; sourceTree = "<group>"; };
 		12B816E41644675800A433E7 /* stringTable.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = stringTable.c; sourceTree = "<group>"; };
 		12B816E51644675800A433E7 /* usbfix.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = usbfix.c; sourceTree = "<group>"; };
-		12B816EB1644675800A433E7 /* config.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = config.c; sourceTree = "<group>"; };
 		12B816EE1644675800A433E7 /* icns.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = icns.c; sourceTree = "<group>"; };
 		12B816EF1644675800A433E7 /* IO.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = IO.c; sourceTree = "<group>"; };
 		12B816F01644675800A433E7 /* IO.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IO.h; sourceTree = "<group>"; };
@@ -1567,7 +1566,6 @@
 		12B816EA1644675800A433E7 /* refit */ = {
 			isa = PBXGroup;
 			children = (
-				12B816EB1644675800A433E7 /* config.c */,
 				12B816EE1644675800A433E7 /* icns.c */,
 				12B816EF1644675800A433E7 /* IO.c */,
 				12B816F01644675800A433E7 /* IO.h */,

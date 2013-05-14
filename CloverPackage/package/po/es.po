@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-12 14:19+0300\n"
+"POT-Creation-Date: 2013-05-13 17:32+0400\n"
 "PO-Revision-Date: 2013-05-12 20:27+0000\n"
 "Last-Translator: Maniac <emafrias@gmail.com>\n"
 "Language-Team: es <es@li.org>\n"
@@ -923,7 +923,7 @@ msgstr "Comprobar ahora..."
 msgid "Copyright (c) 2013 JrCs"
 msgstr "Copyright (c) JrCs 2013"
 
-#. type: "267.ibShadowedToolTip"
+#. type: "267.gToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:13
 #, no-wrap
 msgid "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined in config.plist is use."
@@ -985,13 +985,13 @@ msgstr "LogLineCount:"
 msgid "LogEveryBoot:"
 msgstr "LogEveryBoot:"
 
-#. type: "314.ibShadowedToolTip"
+#. type: "314.gToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
 msgstr "Número de lineas de historial a mantener en el archivo CloverEFI/system.log en adición al contenido del archivo CloverEFI/boot.log"
 
-#. type: "323.ibShadowedToolTip"
+#. type: "323.gToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* Yes: create a new timestamp boot.log file\\n* Number: where number is the number of timestamp boot.log files to keep.\\n\\nA blank value result in NO creation of timestamp boot.log file"
@@ -1009,7 +1009,7 @@ msgstr "Tema:"
 msgid "Advanced Configurations"
 msgstr "Configuración Avanzada"
 
-#. type: "329.ibShadowedToolTip"
+#. type: "329.gToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:27
 #, no-wrap
 msgid "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on the same disk drive as the system partition\\n* diskX: disk device\\n* GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on the same disk drive that the ESP partition\\n\\nEmpty value result in not mounting ESP partition on boot"
@@ -1021,7 +1021,7 @@ msgstr "Montado de la partición ESP en el arranque.\\n\\nValores:\\n* Yes: mont
 msgid "MountEFI:"
 msgstr "MountEFI:"
 
-#. type: "337.ibShadowedToolTip"
+#. type: "337.gToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
 msgid "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram contents to disk\\n* diskXsY: device node of the volume where the nvram contents will be saved\\n\\nEmpty value save the nvram contents in the nvram.plist file in the root folder of the system partition."

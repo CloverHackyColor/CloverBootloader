@@ -775,13 +775,23 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
 
   Entry->me.Row          = 0;
   Entry->Volume = Volume;
-//  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
+  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
+  if (GlobalConfig.HideBadges & HDBADGES_SHOW) {
+    if (GlobalConfig.HideBadges & HDBADGES_SWAP) { 
+      Entry->me.BadgeImage   = egCopyScaledImage(Volume->DriveImage, 4);
+      DBG("Show badge as drive\n");
+    } else {
+      Entry->me.BadgeImage   = egCopyScaledImage(Volume->OSImage, 8);
+      DBG("Show badge as OSImage\n");
+    }
+  }
+  /*
   if ((GlobalConfig.HideBadges == HDBADGES_NONE) || 
       (GlobalConfig.HideBadges == HDBADGES_INT && Volume->DiskKind != DISK_KIND_INTERNAL)){
     Entry->me.BadgeImage   = egCopyScaledImage(Volume->OSImage, 8);
   } else if (GlobalConfig.HideBadges == HDBADGES_SWAP) { 
     Entry->me.BadgeImage   =  egCopyScaledImage(Volume->DriveImage, 4);
-  }
+  } */
   Entry->LoaderPath      = EfiStrDuplicate(LoaderPath);
   Entry->VolName         = Volume->VolName;
   Entry->DevicePath      = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
@@ -1351,7 +1361,7 @@ VOID ScanLoader(VOID)
   LOADER_ENTRY            *Entry;
   EFI_STATUS              Status;
   
-  DBG("Scanning loaders...\n");
+  DBG("Scanning loaders... HideUEFI=%a\n", gSettings.HVHideInternalUEFI?"Yes":"No");
   
   for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
     Volume = Volumes[VolumeIndex];
@@ -1667,7 +1677,7 @@ VOID ScanLoader(VOID)
           //      Volume->OSType = OSTYPE_VAR;
           Volume->BootType = BOOTING_BY_EFI;
           if (!gSettings.HVHideOpticalUEFI)
-              AddLoaderEntry(FileName, L"UEFI boot menu", Volume, OSTYPE_VAR);
+              AddLoaderEntry(FileName, L"UEFI optical", Volume, OSTYPE_VAR);
           //      continue;
       }
       
@@ -1676,7 +1686,7 @@ VOID ScanLoader(VOID)
           //      Volume->OSType = OSTYPE_VAR;
           Volume->BootType = BOOTING_BY_EFI;
           if (!gSettings.HVHideInternalUEFI)
-              AddLoaderEntry(FileName, L"UEFI boot menu", Volume, OSTYPE_VAR);
+              AddLoaderEntry(FileName, L"UEFI internal", Volume, OSTYPE_VAR);
           //      continue;
       }
 
@@ -1685,7 +1695,7 @@ VOID ScanLoader(VOID)
           //      Volume->OSType = OSTYPE_VAR;
           Volume->BootType = BOOTING_BY_EFI;
           if (!gSettings.HVHideExternalUEFI)
-              AddLoaderEntry(FileName, L"UEFI boot menu", Volume, OSTYPE_VAR);
+              AddLoaderEntry(FileName, L"UEFI external", Volume, OSTYPE_VAR);
           //      continue;
     }
   }
@@ -1788,7 +1798,15 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Vo
   Entry->me.AtClick = ActionSelect;
   Entry->me.AtDoubleClick = ActionEnter;
   Entry->me.AtRightClick = ActionDetails;
-  
+
+  if (GlobalConfig.HideBadges & HDBADGES_SHOW) {
+    if (GlobalConfig.HideBadges & HDBADGES_SWAP) { 
+      Entry->me.BadgeImage   = egCopyScaledImage(Volume->DriveImage, 4);
+    } else {
+      Entry->me.BadgeImage   = egCopyScaledImage(Volume->OSImage, 8);
+    }
+  }
+/*  
   if ((GlobalConfig.HideBadges == HDBADGES_NONE) ||
       (GlobalConfig.HideBadges == HDBADGES_INT &&
        Volume->DiskKind != DISK_KIND_INTERNAL)) { //hide internal
@@ -1796,6 +1814,7 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Vo
   } else if (GlobalConfig.HideBadges == HDBADGES_SWAP) {
     Entry->me.BadgeImage   =  egCopyScaledImage(Volume->DriveImage, 4);
   }
+ */
   Entry->Volume          = Volume;
   Entry->LoadOptions     = (Volume->DiskKind == DISK_KIND_OPTICAL) ? L"CD" :
   ((Volume->DiskKind == DISK_KIND_EXTERNAL) ? L"USB" : L"HD");
@@ -2684,17 +2703,14 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     if (!GlobalConfig.NoLegacy && GlobalConfig.LegacyFirst){
       //DBG("scan legacy first\n");
       ScanLegacy();
-//      DBG("ScanLegacy()\n");
     }
     ScanLoader();
-//    DBG("ScanLoader()\n");
 //          DBG("ScanLoader OK\n");
     if (!GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst){
 //      DBG("scan legacy second\n");
       ScanLegacy();
       //DBG("ScanLegacy()\n");
     }
-//    DBG("ScanLegacy OK\n");
     // fixed other menu entries
 //               DBG("FillInputs OK\n");
     if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
@@ -2711,7 +2727,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       ScanTool();
 //      DBG("ScanTool()\n");
     }
-//    DBG("ScanTool OK\n");
     
     if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.EntryCount == 0) {
       MenuEntryReset.Image = BuiltinIcon(BUILTIN_ICON_FUNC_RESET);
@@ -2734,7 +2749,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     } else {
       DefaultEntry = NULL;
     }
-    
+//    MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
     MainMenu.AnimeRun = GetAnime(&MainMenu);
     // PauseForKey(L"Enter main loop");
     MainLoopRunning = TRUE;
