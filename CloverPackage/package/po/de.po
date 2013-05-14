@@ -7,15 +7,15 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-12 14:19+0300\n"
-"PO-Revision-Date: 2013-05-09 19:43+0000\n"
-"Last-Translator: k3nny <sascha_r@gmx.de>\n"
+"PO-Revision-Date: 2013-05-14 09:43+0000\n"
+"Last-Translator: !Xabbu <holger_frey07@web.de>\n"
 "Language-Team: ge <ge@li.org>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1368128595.0\n"
+"X-POOTLE-MTIME: 1368524613.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -787,14 +787,14 @@ msgstr "Deaktiviere den mDNSResponder sleep proxy client Dienst. Verhindert das 
 
 #. type: "CloverPrefpane_title"
 #: Resources/templates/Localizable.strings:161
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install Clover in the ESP"
 msgid "Install Clover Preference Pane"
-msgstr "Installiere Clover in der ESP"
+msgstr "Installiere Clover Preference Pane"
 
 #. type: "CloverPrefpane_description"
 #: Resources/templates/Localizable.strings:162
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Install CloverUpdater on target volume.\n"
 #| "CloverUpdater notify you about Clover updates."
@@ -802,8 +802,8 @@ msgid ""
 "Install Clover Preference Pane on target volume.\n"
 "Include CloverUpdater that can notify you about Clover updates."
 msgstr ""
-"Installiere den CloverUpdater auf der Zielpartition.\n"
-"Der CloverUpdater wird dich auf Updates hinweisen."
+"Installiere die Clover Preference Pane auf der Zielpartition.\n"
+"Den CloverUpdater hinzufügen, er kann dich auf Updates hinweisen."
 
 #. type: "371.title"
 #: ../CloverUpdater/CloverUpdater.strings:1
@@ -937,73 +937,79 @@ msgstr ""
 #: ../CloverPrefpane/CloverPrefpane.strings:14
 #, no-wrap
 msgid "GUI Appearance"
-msgstr ""
+msgstr "Aussehen der GUI"
 
 #. type: "294.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:15
 #, no-wrap
 msgid "NVRam Variables"
-msgstr ""
+msgstr "NVRAM Variablen"
 
 #. type: "295.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:16
 #, no-wrap
 msgid "General"
-msgstr ""
+msgstr "Allgemein"
 
 #. type: "298.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:17
 #, no-wrap
 msgid "Revisions"
-msgstr ""
+msgstr "Versionen"
 
 #. type: "300.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:18
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Current local Clover revision:"
 msgid "Current booted revision:"
-msgstr "Aktuell installierte Version von Clover:"
+msgstr "Aktuell gebootete Version von Clover:"
 
 #. type: "302.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:19
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Latest update revision:"
 msgid "Last installed revision:"
-msgstr "Neueste Update Version"
+msgstr "Zuletzt installierte Version"
 
 #. type: "309.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
 msgid "Log Files"
-msgstr ""
+msgstr "Log Dateien"
 
 #. type: "311.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "LogLineCount:"
-msgstr ""
+msgstr "Log Zeilenanzahl"
 
 #. type: "313.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
 msgid "LogEveryBoot:"
-msgstr ""
+msgstr "Log bei jedem Rechnerstart:"
 
 #. type: "314.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
 msgstr ""
+"Zu behaltente Zeilenanzahl in der CloverEFI/system.log Datei, zusätzlich zum "
+"aktuellenCloverEFI/boot.log Inhalt."
 
 #. type: "323.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* Yes: create a new timestamp boot.log file\\n* Number: where number is the number of timestamp boot.log files to keep.\\n\\nA blank value result in NO creation of timestamp boot.log file"
 msgstr ""
+"Erstelle einen CloverEFI/boot.log Zeitstempel für jeden boot\\n\\nWert:\\n* Ja: "
+"Erstelle einen neuen boot.log Datei\\n*  Nummer Zeitstempel: Nummer ist die "
+"zu behaltente Anzahl der boot.log Zeitstempel Dateien. \\n\\nA Wird keine "
+"Angabe gemacht wird kein Zeitstempel erstellt."
 
 #. type: "326.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:25
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Themes"
 msgid "Theme:"
 msgstr "Themen"
@@ -1012,7 +1018,7 @@ msgstr "Themen"
 #: ../CloverPrefpane/CloverPrefpane.strings:26
 #, no-wrap
 msgid "Advanced Configurations"
-msgstr ""
+msgstr "Erweiterte Einstellungen"
 
 #. type: "329.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:27
@@ -1024,7 +1030,7 @@ msgstr ""
 #: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
 msgid "MountEFI:"
-msgstr ""
+msgstr "EFI anzeigen"
 
 #. type: "337.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:29
@@ -1036,7 +1042,7 @@ msgstr ""
 #: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "NVRamDisk:"
-msgstr ""
+msgstr "NVRamDisk:"
 
 #
 #, fuzzy
