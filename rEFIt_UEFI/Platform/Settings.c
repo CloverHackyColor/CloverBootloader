@@ -198,6 +198,7 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
     if (prop) {
       if ((prop->type == kTagTypeString) && prop->string) {
         GlobalConfig.Theme = PoolPrint(L"%a", prop->string);
+        DBG("Default theme: %s\n", GlobalConfig.Theme);
       }
     }
     prop = GetProperty(dictPointer, "SystemLog");
@@ -660,15 +661,15 @@ EFI_STATUS GetThemeSettings(VOID)
     if (ThemePath) {
       Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
       if (!EFI_ERROR(Status)) {
-        Status = egLoadFile(SelfRootDir, CONFIG_THEME_PATH, (UINT8**)&ThemePtr, &Size);
+        Status = egLoadFile(ThemeDir, CONFIG_THEME_PATH, (UINT8**)&ThemePtr, &Size);
         if (!EFI_ERROR(Status) &&
             ((ThemePtr == NULL) || (Size == 0))) {
           Status = EFI_NOT_FOUND;
         } else {
-           Status = ParseXML((const CHAR8*)ThemePtr, &ThemeDict);
-           if (!EFI_ERROR(Status) && (ThemeDict == NULL)) {
-              Status = EFI_UNSUPPORTED;
-           }
+          Status = ParseXML((const CHAR8*)ThemePtr, &ThemeDict);
+          if (!EFI_ERROR(Status) && (ThemeDict == NULL)) {
+            Status = EFI_UNSUPPORTED;
+          }
         }
       }
     }
@@ -678,6 +679,7 @@ EFI_STATUS GetThemeSettings(VOID)
     if (GlobalConfig.Theme) {
       if (chosenTheme) {
         DBG("theme %s chosen from nvram is absent, using default\n", chosenTheme);
+        chosenTheme = NULL;
       }
       if (ThemePath) {
         FreePool(ThemePath);
@@ -690,7 +692,7 @@ EFI_STATUS GetThemeSettings(VOID)
         }
         Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
         if (!EFI_ERROR(Status)) {
-           Status = egLoadFile(SelfRootDir, CONFIG_THEME_PATH, (UINT8**)&ThemePtr, &Size);
+           Status = egLoadFile(ThemeDir, CONFIG_THEME_PATH, (UINT8**)&ThemePtr, &Size);
            if (!EFI_ERROR(Status) &&
               ((ThemePtr == NULL) || (Size == 0))) {
                  Status = EFI_NOT_FOUND;
@@ -707,8 +709,9 @@ EFI_STATUS GetThemeSettings(VOID)
       }
     } else if (chosenTheme) {
       DBG("theme %s chosen from nvram is absent, using embedded\n", chosenTheme);
+      chosenTheme = NULL;
     } else {
-      DBG("no default theme, using embedded\n", chosenTheme);
+      DBG("no default theme, using embedded\n");
     }
   }
   // Read defaults from config
@@ -737,7 +740,11 @@ EFI_STATUS GetThemeSettings(VOID)
     ThemeDir = NULL;
   } else {
     TagPtr dictPointer = GetProperty(ThemeDict, "Theme");
-    DBG("Theme: %s Path: %s\n", GlobalConfig.Theme, ThemePath);
+    if (chosenTheme) {
+      DBG("Theme: %a Path: %s\n", chosenTheme, ThemePath);
+    } else {
+      DBG("Theme: %s Path: %s\n", GlobalConfig.Theme, ThemePath);
+    }
     // read theme settings
     if (dictPointer) {
       Status = GetThemeTagSettings(dictPointer);
