@@ -48,7 +48,7 @@ extern INTN ScrollBarDecorationsHeight;
 extern INTN ScrollScrollDecorationsHeight;
 
 // global configuration with default values
-REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, FALSE, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, None };
+REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, None };
 
 VOID __inline WaitForSts(VOID) {
 	UINT32 inline_timeout = 100000;
