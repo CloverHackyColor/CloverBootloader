@@ -254,31 +254,6 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
         }
       }
     }
-    prop = GetProperty(dictPointer, "Badges");
-    if (prop) {
-      if (prop->type == kTagTypeTrue) {
-        GlobalConfig.HideBadges = 0;
-      } else if (prop->type == kTagTypeFalse) {
-        GlobalConfig.HideBadges = 2;
-      } else if ((prop->type == kTagTypeString) && prop->string) {
-        if ((prop->string[0] == 'I') || (prop->string[0] == 'i')) {
-          // internal
-          GlobalConfig.HideBadges = 4;
-        } else if ((prop->string[0] == 'S') || (prop->string[0] == 's')) {
-          // swap
-          GlobalConfig.HideBadges = 3;
-        } else if ((prop->string[0] == 'E') || (prop->string[0] == 'e')) {
-          // drive
-          GlobalConfig.HideBadges = 1;
-        } else if ((prop->string[0] == 'N') || (prop->string[0] == 'n')) {
-          // none
-          GlobalConfig.HideBadges = 2;
-        } else {
-          // all
-          GlobalConfig.HideBadges = 0;
-        }
-      }
-    }
     // Hide volumes
     prop = GetProperty(dictPointer, "Volumes");
     if (prop) {
@@ -473,6 +448,31 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
         FreePool(GlobalConfig.BannerFileName);
       }
       GlobalConfig.BannerFileName = PoolPrint(L"%a", dict->string);
+    }
+  }
+  dict = GetProperty(dictPointer, "Badges");
+  if (dict) {
+    if (dict->type == kTagTypeTrue) {
+      GlobalConfig.HideBadges = 0;
+    } else if (dict->type == kTagTypeFalse) {
+      GlobalConfig.HideBadges = 2;
+    } else if ((dict->type == kTagTypeString) && dict->string) {
+      if ((dict->string[0] == 'I') || (dict->string[0] == 'i')) {
+        // internal
+        GlobalConfig.HideBadges = 4;
+      } else if ((dict->string[0] == 'S') || (dict->string[0] == 's')) {
+        // swap
+        GlobalConfig.HideBadges = 3;
+      } else if ((dict->string[0] == 'E') || (dict->string[0] == 'e')) {
+        // drive
+        GlobalConfig.HideBadges = 1;
+      } else if ((dict->string[0] == 'N') || (dict->string[0] == 'n')) {
+        // none
+        GlobalConfig.HideBadges = 2;
+      } else {
+        // all
+        GlobalConfig.HideBadges = 0;
+      }
     }
   }
   dict = GetProperty(dictPointer, "Selection");
