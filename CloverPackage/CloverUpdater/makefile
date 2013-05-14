@@ -1,13 +1,24 @@
 
+XCODE_VERSION_GE_4 := $(shell expr `xcodebuild -version | sed -nE 's/^Xcode ([0-9]).*/\1/p'` \>= 4)
+
+XCODEBUILD_OPTIONS=-project 'src/CloverUpdater.xcodeproj' CONFIGURATION_BUILD_DIR=$(CURDIR)/build DEPLOYMENT_LOCATION=NO
+
+ifeq "$(XCODE_VERSION_GE_4)" "1"
+	XCODEBUILD_OPTIONS += -scheme 'CloverUpdater'
+	BUILD_ACTION=archive
+else
+	XCODEBUILD_OPTIONS += -configuration 'Release'
+endif
+
 CloverUpdater:
 	@echo "Building CloverUpdater application..."
-	@/usr/bin/xcodebuild -project 'src/CloverUpdater.xcodeproj' \
-		-configuration 'Release' CONFIGURATION_BUILD_DIR=$(CURDIR)/build
+	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) $(BUILD_ACTION)
 
 install:
 	@$(CURDIR)/install-updater.sh
 
 clean:
+	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) clean
 	@rm -rf build *~
 
 .PHONY: CloverUpdater install clean

@@ -17,6 +17,7 @@ cd "$(dirname $0)"
 
 declare -r SOURCE_DIR="src"
 declare -r PO_DIR="../package/po"
+declare -r XCODE_MAJOR_VERSION="$(xcodebuild -version | sed -nE 's/^Xcode ([0-9]).*/\1/p')"
 
 # ========== OPTIONS ===========
 EXTRACT_ONLY=0
@@ -33,20 +34,25 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Extract source locale strings (use this to check if you added new strings to your xibs)
-echo -n "Updating '$src_locale' strings file for ${application}... "
-ibtool --generate-strings-file $strings_file.utf16 "$SOURCE_DIR/$src_locale.lproj/$xib_file"
-iconv -f utf-16 -t utf-8 $strings_file.utf16 | grep -vE '^\/\*.*\*\/$' | \
- grep -vE '^$' >$strings_file.new
-rm -f $strings_file.utf16
-cmp --silent $strings_file $strings_file.new
-if [[ $? -eq 0 ]]; then
-    # No change
-    rm -f $strings_file.new
+# Only extract source locale strings if XCode version > 4
+if [[ "$XCODE_MAJOR_VERSION" -ge 4 ]]; then
+    # Extract source locale strings (use this to check if you added new strings to your xibs)
+    echo -n "Updating '$src_locale' strings file for ${application}... "
+    ibtool --generate-strings-file $strings_file.utf16 "$SOURCE_DIR/$src_locale.lproj/$xib_file"
+    iconv -f utf-16 -t utf-8 $strings_file.utf16 | grep -vE '^\/\*.*\*\/$' | \
+     grep -vE '^$' >$strings_file.new
+    rm -f $strings_file.utf16
+    cmp --silent $strings_file $strings_file.new
+    if [[ $? -eq 0 ]]; then
+        # No change
+        rm -f $strings_file.new
+    else
+        mv -f $strings_file.new $strings_file
+    fi
+    echo "done"
 else
-    mv -f $strings_file.new $strings_file
+    echo "XCode version too old. Don't extracting locale strings from source XIB file"
 fi
-echo "done"
 
 [[ "$EXTRACT_ONLY" -eq 1 ]] && exit 0
 
@@ -67,6 +73,7 @@ for locale in "$PO_DIR"/*.po ; do
     fi
     echo "done"
 done
+
 ##
 # end of script
 ##
