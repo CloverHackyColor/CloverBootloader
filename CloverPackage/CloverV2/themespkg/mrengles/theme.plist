@@ -4,6 +4,15 @@
 <dict>
 	<key>Theme</key>
 	<dict>
+		<key>Badges</key>
+		<dict>
+			<key>Show</key>
+			<false/>
+			<key>Inline</key>
+			<true/>
+			<key>Swap</key>
+			<false/>
+		</dict>
 		<key>Background</key>
 		<dict>
 			<key>Path</key>
