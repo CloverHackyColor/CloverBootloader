@@ -2516,6 +2516,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   ZeroMem((VOID*)&gSettings, sizeof(SETTINGS_DATA));
   
   InitializeUnicodeCollationProtocol();
+  PrepatchSmbios();
   
 #ifdef REVISION_STR
   MsgLog(REVISION_STR); 
@@ -2554,8 +2555,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (EFI_ERROR(Status = GetEarlyUserSettings(SelfRootDir))) {
     DBG("Early settings: %r\n", Status);
   }
-
-  PrepatchSmbios();
 
   if (EFI_ERROR(Status = GetThemeSettings())) {
     DBG("Theme settings: %r\n", Status);
