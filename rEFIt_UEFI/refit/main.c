@@ -2555,6 +2555,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (EFI_ERROR(Status = GetEarlyUserSettings(SelfRootDir))) {
     DBG("Early settings: %r\n", Status);
   }
+  if (GlobalConfig.Timeout >= 0) {
+    MainMenu.TimeoutSeconds = GlobalConfig.Timeout;
+  }
 
   if (EFI_ERROR(Status = GetThemeSettings())) {
     DBG("Theme settings: %r\n", Status);

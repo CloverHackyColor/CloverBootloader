@@ -254,46 +254,71 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
         }
       }
     }
+    prop = GetProperty(dictPointer, "Badges");
+    if (prop) {
+      if (prop->type == kTagTypeTrue) {
+        GlobalConfig.HideBadges = 0;
+      } else if (prop->type == kTagTypeFalse) {
+        GlobalConfig.HideBadges = 2;
+      } else if ((prop->type == kTagTypeString) && prop->string) {
+        if ((prop->string[0] == 'I') || (prop->string[0] == 'i')) {
+          // internal
+          GlobalConfig.HideBadges = 4;
+        } else if ((prop->string[0] == 'S') || (prop->string[0] == 's')) {
+          // swap
+          GlobalConfig.HideBadges = 3;
+        } else if ((prop->string[0] == 'E') || (prop->string[0] == 'e')) {
+          // drive
+          GlobalConfig.HideBadges = 1;
+        } else if ((prop->string[0] == 'N') || (prop->string[0] == 'n')) {
+          // none
+          GlobalConfig.HideBadges = 2;
+        } else {
+          // all
+          GlobalConfig.HideBadges = 0;
+        }
+      }
+    }
     // Hide volumes
     prop = GetProperty(dictPointer, "Volumes");
     if (prop) {
       dict2 = GetProperty(prop, "Legacy");
       if (dict2) {
-         if (dict2->type == kTagTypeFalse) {
-           GlobalConfig.NoLegacy = TRUE;
-         }
-         else if ((dict2->type == kTagTypeString) && dict2->string) {
-           if ((dict2->string[0] == 'N') || (dict2->string[0] == 'n')) {
-             GlobalConfig.NoLegacy = TRUE;
-           } else if ((dict2->string[0] == 'F') || (dict2->string[0] == 'f')) {
-             GlobalConfig.LegacyFirst = TRUE;
-           }
-         }
+        if (dict2->type == kTagTypeFalse) {
+          GlobalConfig.NoLegacy = TRUE;
+        }
+        else if ((dict2->type == kTagTypeString) && dict2->string) {
+          if ((dict2->string[0] == 'N') || (dict2->string[0] == 'n')) {
+            GlobalConfig.NoLegacy = TRUE;
+          } else if ((dict2->string[0] == 'F') || (dict2->string[0] == 'f')) {
+            GlobalConfig.LegacyFirst = TRUE;
+          }
+        }
       }
       // hide by name/uuid
       dict2 = GetProperty(prop, "Hide");
       if (dict2) {
-         INTN i, Count = GetTagCount(dict2);
-         if (Count > 0) {
-           gSettings.HVCount = 0;
-           gSettings.HVHideStrings = AllocateZeroPool(Count * sizeof(CHAR16 *));
-           if (gSettings.HVHideStrings) {
-             for (i = 0; i < Count; ++i) {
-               if (EFI_ERROR(GetElement(dict2, i, &dictPointer))) {
-                 continue;
-               }
-               if (dictPointer == NULL) {
-                 break;
-               }
-               if ((dictPointer->type == kTagTypeString) && dictPointer->string) {
-                 gSettings.HVHideStrings[gSettings.HVCount] = PoolPrint(L"%a", dictPointer->string);
-                 if (gSettings.HVHideStrings[gSettings.HVCount]) {
-                   DBG("Hiding volume with string %s\n", gSettings.HVHideStrings[gSettings.HVCount++]);
-                 }
-               }
-             }
-           }
-         }
+        INTN i, Count = GetTagCount(dict2);
+        if (Count > 0) {
+          gSettings.HVCount = 0;
+          gSettings.HVHideStrings = AllocateZeroPool(Count * sizeof(CHAR16 *));
+          if (gSettings.HVHideStrings) {
+            for (i = 0; i < Count; ++i) {
+              if (EFI_ERROR(GetElement(dict2, i, &dictPointer))) {
+                continue;
+              }
+              if (dictPointer == NULL) {
+                break;
+              }
+              if ((dictPointer->type == kTagTypeString) && dictPointer->string) {
+                gSettings.HVHideStrings[gSettings.HVCount] = PoolPrint(L"%a", dictPointer->string);
+                if (gSettings.HVHideStrings[gSettings.HVCount]) {
+                  DBG("Hiding volume with string %s\n", gSettings.HVHideStrings[gSettings.HVCount++]);
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
