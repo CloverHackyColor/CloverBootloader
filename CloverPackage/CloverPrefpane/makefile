@@ -12,7 +12,7 @@ endif
 
 CloverPrefpane:
 	@echo "Building CloverPrefpane preference..."
-	/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) $(BUILD_ACTION)
+	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) $(BUILD_ACTION)
 
 install:
 	@$(CURDIR)/install.sh

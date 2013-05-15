@@ -2484,6 +2484,29 @@ INTN FindDefaultEntry(VOID)
   return -1;
 }
 
+VOID SetVariablesFromNvram()
+{
+  CHAR16  UStr[80];
+  CHAR8  *tmpString;
+  UINTN   Size = 0;
+  
+  tmpString = GetNvramVariable(L"Clover.LogLineCount", &gEfiAppleBootGuid, NULL, &Size);
+  ZeroMem(UStr, 10);
+  if (tmpString) {
+    AsciiStrToUnicodeStr(tmpString, (CHAR16*)&UStr[0]);
+    gSettings.LogLineCount = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);
+  }
+  
+  tmpString = GetNvramVariable(L"Clover.MountEFI", &gEfiAppleBootGuid, NULL, &Size);
+  if (tmpString) {
+    gSettings.MountEFI = AllocateCopyPool(AsciiStrSize(tmpString), tmpString);
+  }
+  
+  tmpString = GetNvramVariable(L"Clover.LogEveryBoot", &gEfiAppleBootGuid, NULL, &Size);
+  if (tmpString) {
+    gSettings.LogEveryBoot = AllocateCopyPool(AsciiStrSize(tmpString), tmpString);
+  }  
+}
 //
 // main entry point
 //
@@ -2695,10 +2718,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       DBG("Theme settings: %r\n", Status);
     }
     //changing theme we need to change Volumes Images
-    reinitImages();
-    
+    reinitImages();    
     PrepareFont();
     
+    //now it is a time to set RtVariables
+    SetVariablesFromNvram();
+
     // scan for loaders and tools, add then to the menu
     if (!GlobalConfig.NoLegacy && GlobalConfig.LegacyFirst){
       //DBG("scan legacy first\n");

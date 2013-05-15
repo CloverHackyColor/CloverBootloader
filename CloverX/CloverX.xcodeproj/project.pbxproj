@@ -430,15 +430,12 @@
 		12B816CF1644675800A433E7 /* nvidia.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = nvidia.c; sourceTree = "<group>"; };
 		12B816D01644675800A433E7 /* nvidia.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = nvidia.h; sourceTree = "<group>"; };
 		12B816D11644675800A433E7 /* Nvram.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Nvram.c; sourceTree = "<group>"; };
-		12B816D21644675800A433E7 /* pci.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = pci.c; sourceTree = "<group>"; };
 		12B816D31644675800A433E7 /* picopng.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = picopng.c; sourceTree = "<group>"; };
 		12B816D41644675800A433E7 /* picopng.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = picopng.h; sourceTree = "<group>"; };
 		12B816D51644675800A433E7 /* Platform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Platform.h; sourceTree = "<group>"; };
 		12B816D61644675800A433E7 /* platformdata.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = platformdata.c; sourceTree = "<group>"; };
 		12B816D71644675800A433E7 /* plist.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = plist.c; sourceTree = "<group>"; };
 		12B816D81644675800A433E7 /* Pointer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Pointer.c; sourceTree = "<group>"; };
-		12B816D91644675800A433E7 /* Resolutions.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Resolutions.c; sourceTree = "<group>"; };
-		12B816DA1644675800A433E7 /* Resolutions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Resolutions.h; sourceTree = "<group>"; };
 		12B816DB1644675800A433E7 /* Settings.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = Settings.c; sourceTree = "<group>"; };
 		12B816DC1644675800A433E7 /* smbios.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = smbios.c; sourceTree = "<group>"; };
 		12B816DE1644675800A433E7 /* spd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = spd.c; sourceTree = "<group>"; };
@@ -447,7 +444,6 @@
 		12B816E11644675800A433E7 /* sse3_patcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = sse3_patcher.h; sourceTree = "<group>"; };
 		12B816E21644675800A433E7 /* StateGenerator.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = StateGenerator.c; sourceTree = "<group>"; };
 		12B816E31644675800A433E7 /* StateGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StateGenerator.h; sourceTree = "<group>"; };
-		12B816E41644675800A433E7 /* stringTable.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = stringTable.c; sourceTree = "<group>"; };
 		12B816E51644675800A433E7 /* usbfix.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = usbfix.c; sourceTree = "<group>"; };
 		12B816EE1644675800A433E7 /* icns.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = icns.c; sourceTree = "<group>"; };
 		12B816EF1644675800A433E7 /* IO.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = IO.c; sourceTree = "<group>"; };
@@ -1539,15 +1535,12 @@
 				12B816CF1644675800A433E7 /* nvidia.c */,
 				12B816D01644675800A433E7 /* nvidia.h */,
 				12B816D11644675800A433E7 /* Nvram.c */,
-				12B816D21644675800A433E7 /* pci.c */,
 				12B816D31644675800A433E7 /* picopng.c */,
 				12B816D41644675800A433E7 /* picopng.h */,
 				12B816D51644675800A433E7 /* Platform.h */,
 				12B816D61644675800A433E7 /* platformdata.c */,
 				12B816D71644675800A433E7 /* plist.c */,
 				12B816D81644675800A433E7 /* Pointer.c */,
-				12B816D91644675800A433E7 /* Resolutions.c */,
-				12B816DA1644675800A433E7 /* Resolutions.h */,
 				12B816DB1644675800A433E7 /* Settings.c */,
 				12B816DC1644675800A433E7 /* smbios.c */,
 				124BA1691738D9EF006DA523 /* Smbios.h */,
@@ -1557,7 +1550,6 @@
 				12B816E11644675800A433E7 /* sse3_patcher.h */,
 				12B816E21644675800A433E7 /* StateGenerator.c */,
 				12B816E31644675800A433E7 /* StateGenerator.h */,
-				12B816E41644675800A433E7 /* stringTable.c */,
 				12B816E51644675800A433E7 /* usbfix.c */,
 			);
 			path = Platform;
