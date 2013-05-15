@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-12 14:19+0300\n"
-"PO-Revision-Date: 2013-05-12 13:09+0000\n"
+"PO-Revision-Date: 2013-05-15 10:31+0000\n"
 "Last-Translator: oswaldini <oswaldinimtb@gmail.com>\n"
 "Language-Team: pl <pl@li.org>\n"
 "Language: pl\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1368364154.0\n"
+"X-POOTLE-MTIME: 1368613872.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -1013,7 +1013,7 @@ msgstr ""
 #: ../CloverPrefpane/CloverPrefpane.strings:25
 #, no-wrap
 msgid "Theme:"
-msgstr "Motywy graficzne:"
+msgstr "Motyw graficzny:"
 
 #. type: "327.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:26
