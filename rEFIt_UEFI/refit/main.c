@@ -2690,7 +2690,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   //test font
 //  PrepareFont();
  //     DBG("PrepareFont OK\n");
-  FillInputs();
+ // FillInputs();
   
   if (!gFirmwareClover && !gDriversFlags.EmuVariableLoaded &&
       GlobalConfig.Timeout == 0 && !ReadAllKeyStrokes()) {
@@ -2723,7 +2723,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     
     //now it is a time to set RtVariables
     SetVariablesFromNvram();
-
+    FillInputs();
     // scan for loaders and tools, add then to the menu
     if (!GlobalConfig.NoLegacy && GlobalConfig.LegacyFirst){
       //DBG("scan legacy first\n");
