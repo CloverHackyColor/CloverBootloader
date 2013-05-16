@@ -284,6 +284,8 @@ VOID SetupDataForOSX()
     Status = LogDataHub(&gEfiMiscSubClassGuid, L"EPCI", &gSettings.EPCI, 4);
     Status = LogDataHub(&gEfiMiscSubClassGuid, L"REV",  &gSettings.REV,  6);
     Status = LogDataHub(&gEfiMiscSubClassGuid, L"BEMB", &gSettings.Mobile, 1);
+    //all current settings
+    Status = LogDataHub(&gEfiMiscSubClassGuid, L"Settings", &gSettings, sizeof(gSettings));
 
 	}
   else {
