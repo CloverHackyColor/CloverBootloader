@@ -157,9 +157,13 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue; //2
   InputItems[InputItemsCount].BValue = gSettings.DropSSDT; //iCloudFix;
   InputItems[InputItemsCount++].SValue = gSettings.DropSSDT?L"[+]":L"[ ]"; //iCloudFix?L"[+]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = BoolValue; //3 
-  InputItems[InputItemsCount].BValue = gSettings.StringInjector;
-  InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[+]":L"[ ]";
+//  InputItems[InputItemsCount].ItemType = BoolValue; //3 
+//  InputItems[InputItemsCount].BValue = gSettings.StringInjector;
+//  InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[+]":L"[ ]";
+  //GlobalConfig.Theme
+  InputItems[InputItemsCount].ItemType = UNIString; //3
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", GlobalConfig.Theme);
+  
   InputItems[InputItemsCount].ItemType = BoolValue; //4 
   InputItems[InputItemsCount].BValue = gSettings.DropSSDT;
   InputItems[InputItemsCount++].SValue = gSettings.DropSSDT?L"[+]":L"[ ]";
@@ -378,11 +382,14 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].SValue = AllocateZeroPool(63);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", gSettings.DsdtName);
   InputItems[InputItemsCount++].ItemType = BoolValue; //2
-//  InputItems[InputItemsCount].BValue = gSettings.iCloudFix;
+//  InputItems[InputItemsCount].BValue = gSettings.iCloudFix; //2
 //  InputItems[InputItemsCount++].SValue = gSettings.iCloudFix?L"[+]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = BoolValue; //3
-  InputItems[InputItemsCount].BValue = gSettings.StringInjector;
-  InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[+]":L"[ ]";
+//  InputItems[InputItemsCount].ItemType = BoolValue; //3
+//  InputItems[InputItemsCount].BValue = gSettings.StringInjector;
+//  InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].ItemType = UNIString; //3
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", GlobalConfig.Theme);
+
   InputItems[InputItemsCount].ItemType = BoolValue; //4
   InputItems[InputItemsCount].BValue = gSettings.DropSSDT;
   InputItems[InputItemsCount++].SValue = gSettings.DropSSDT?L"[+]":L"[ ]";
@@ -603,6 +610,7 @@ VOID FillInputs(VOID)
 
 VOID ApplyInputs(VOID)
 {
+  EFI_STATUS Status = EFI_NOT_FOUND;
   MACHINE_TYPES Model;
   BOOLEAN NeedSave = TRUE;
   INTN i = 0;
@@ -623,7 +631,14 @@ VOID ApplyInputs(VOID)
   }
   i++; //3
   if (InputItems[i].Valid) {
-    gSettings.StringInjector = InputItems[i].BValue;
+//    gSettings.StringInjector = InputItems[i].BValue;
+    if (GlobalConfig.Theme) {
+      FreePool(GlobalConfig.Theme);
+    }
+    GlobalConfig.Theme = PoolPrint(L"%s", InputItems[i].SValue);
+    if (EFI_ERROR(Status = GetThemeSettings())) {
+      DBG("New theme settings: %r\n", Status);
+    }    
   }
   i++; //4
   if (InputItems[i].Valid) {
@@ -3204,16 +3219,16 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.AtDoubleClick = ActionEnter;
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
     //3  
-/*    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 255, L"String Injection:");
+    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+    UnicodeSPrint(Flags, 255, L"Theme:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = 0xFFFF;
+    InputBootArgs->Entry.Row = StrLen(InputItems[0].SValue);
     InputBootArgs->Item = &InputItems[3];  
-    InputBootArgs->Entry.AtClick = ActionEnter;
-    InputBootArgs->Entry.AtRightClick = ActionDetails;
+    InputBootArgs->Entry.AtClick = ActionSelect;
+    InputBootArgs->Entry.AtRightClick = ActionEnter;
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-*/
+
     
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs->Entry.Title = PoolPrint(L"Pointer speed:");

@@ -516,6 +516,8 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
           FreePool(GlobalConfig.BackgroundName);
         }
         GlobalConfig.BackgroundName = PoolPrint(L"%a", dict2->string);
+      } else if (!GlobalConfig.BackgroundName) {
+        GlobalConfig.BackgroundName = L"background.png";
       }
     }
   }
@@ -526,6 +528,8 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
         FreePool(GlobalConfig.BannerFileName);
       }
       GlobalConfig.BannerFileName = PoolPrint(L"%a", dict->string);
+    } else if (!GlobalConfig.BannerFileName) {
+      GlobalConfig.BannerFileName = L"logo.png";
     }
   }
   dict = GetProperty(dictPointer, "Badges");
@@ -558,7 +562,9 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
          GlobalConfig.SelectionColor = (UINTN)dict2->string;
       } else if ((dict2->type == kTagTypeString) && dict2->string) {
         GlobalConfig.SelectionColor = AsciiStrHexToUintn(dict2->string);
-      }
+      } 
+    } else if (!GlobalConfig.SelectionColor) {
+      GlobalConfig.SelectionColor = 0x80808080;
     }
     dict2 = GetProperty(dict, "Small");
     if (dict2) {
@@ -568,6 +574,8 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
         }
         GlobalConfig.SelectionSmallFileName = PoolPrint(L"%a", dict2->string);
       }
+    } else if (!GlobalConfig.SelectionSmallFileName) {
+      GlobalConfig.SelectionSmallFileName = L"selection_small.png";
     }
     dict2 = GetProperty(dict, "Big");
     if (dict2) {
@@ -577,6 +585,8 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
         }
         GlobalConfig.SelectionBigFileName = PoolPrint(L"%a", dict2->string);
       }
+    } else if (!GlobalConfig.SelectionBigFileName) {
+      GlobalConfig.SelectionBigFileName = L"selection_big.png";
     }
 /*    dict2 = GetProperty(dict, "Default");
     if (dict2) {
@@ -833,6 +843,9 @@ EFI_STATUS GetThemeSettings(VOID)
       ThemeDir->Close(ThemeDir);
     }
     ThemeDir = NULL;
+    //fill some fields
+    GlobalConfig.SelectionColor = 0x80808080;
+    GlobalConfig.Font = FONT_LOAD; //to be inverted
   } else {
     TagPtr dictPointer = GetProperty(ThemeDict, "Theme");
     if (chosenTheme) {

@@ -135,11 +135,16 @@ EG_IMAGE * egLoadFontImage(IN BOOLEAN WantAlpha)
 VOID PrepareFont(VOID)
 {
   BOOLEAN ChangeFont = FALSE;
+//  EG_PIXEL *FontPixelData;
+  EG_PIXEL *p;
+  INTN      Width;
+  INTN      Height;
+
   // load the font
   if (FontImage == NULL){
     switch (GlobalConfig.Font) {
       case FONT_ALFA:
-        FontImage = egPrepareEmbeddedImage(&egemb_font, TRUE);
+        FontImage = egPrepareEmbeddedImage(&egemb_font, TRUE);        
         break;
       case FONT_GRAY:
         FontImage = egPrepareEmbeddedImage(&egemb_font_gray, TRUE);
@@ -150,6 +155,16 @@ VOID PrepareFont(VOID)
         if (!FontImage) {
           ChangeFont = TRUE;
           FontImage = egPrepareEmbeddedImage(&egemb_font, TRUE);
+          //invert the font
+          p = FontImage->PixelData;
+          for (Height = 0; Height < FontImage->Height; Height++){
+            for (Width = 0; Width < FontImage->Width; Width++, p++){
+              p->b ^= 0xFF;
+              p->g ^= 0xFF;
+              p->r ^= 0xFF;
+      //        p->a = 0xFF;    //huh!          
+            }
+          }
         }
         break;
       default:

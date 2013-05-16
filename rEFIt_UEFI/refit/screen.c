@@ -70,9 +70,10 @@ BOOLEAN AllowGraphicsMode;
 
 EG_RECT  BannerPlace = {0, 0, 0, 0};
 
-EG_PIXEL StdBackgroundPixel   = { 0xbf, 0xbf, 0xbf, 0x00};
+EG_PIXEL StdBackgroundPixel   = { 0xbf, 0xbf, 0xbf, 0xff};
 EG_PIXEL MenuBackgroundPixel  = { 0x00, 0x00, 0x00, 0x00};
 EG_PIXEL InputBackgroundPixel = { 0xcf, 0xcf, 0xcf, 0x80};
+EG_PIXEL BlueBackgroundPixel  = { 0x7f, 0x0f, 0x0f, 0xff};
 
 EG_IMAGE *BackgroundImage = NULL;
 
@@ -393,7 +394,7 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
   if (!BigBack && (GlobalConfig.BackgroundName != NULL)) {
     BigBack = egLoadImage(ThemeDir, GlobalConfig.BackgroundName, FALSE);
   }
-  BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, FALSE, &MenuBackgroundPixel);
+  BackgroundImage = egCreateFilledImage(UGAWidth, UGAHeight, FALSE, &BlueBackgroundPixel);
 
     if (BigBack != NULL) {
       switch (GlobalConfig.BackgroundScale) {
@@ -447,7 +448,7 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
     if (BackgroundImage) {
       BltImage(BackgroundImage, 0, 0); //if NULL then do nothing
     } else {
-      egClearScreen(&MenuBackgroundPixel);
+      egClearScreen(&StdBackgroundPixel);
     }
 
     if (Banner != NULL){
