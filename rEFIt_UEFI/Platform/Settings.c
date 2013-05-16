@@ -495,14 +495,22 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
   if (dictPointer == NULL) {
     return EFI_INVALID_PARAMETER;
   }
+  //fill default to have an ability change theme
+  GlobalConfig.BannerFileName = L"logo.png";
+  GlobalConfig.BackgroundName = L"background.png";
+  GlobalConfig.BackgroundScale = Crop;
+  GlobalConfig.HideBadges = 0;
+  GlobalConfig.SelectionColor = 0x80808080;
+  GlobalConfig.SelectionSmallFileName = L"selection_small.png";
+  GlobalConfig.SelectionBigFileName = L"selection_big.png";
+  GlobalConfig.Font = FONT_LOAD;
+
   dict = GetProperty(dictPointer, "Background");
-  if (dict) {
+  if (dict) {    
     dict2 = GetProperty(dict, "Type");
     if (dict2) {
       if ((dict2->type == kTagTypeString) && dict2->string) {
-        if ((dict2->string[0] == 'C') || (dict2->string[0] == 'c')) {
-          GlobalConfig.BackgroundScale = Crop;
-        } else if ((dict2->string[0] == 'S') || (dict2->string[0] == 's')) {
+        if ((dict2->string[0] == 'S') || (dict2->string[0] == 's')) {
           GlobalConfig.BackgroundScale = Scale;
         } else if ((dict2->string[0] == 'T') || (dict2->string[0] == 't')) {
           GlobalConfig.BackgroundScale = Tile;
@@ -516,8 +524,6 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
           FreePool(GlobalConfig.BackgroundName);
         }
         GlobalConfig.BackgroundName = PoolPrint(L"%a", dict2->string);
-      } else if (!GlobalConfig.BackgroundName) {
-        GlobalConfig.BackgroundName = L"background.png";
       }
     }
   }
@@ -528,9 +534,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
         FreePool(GlobalConfig.BannerFileName);
       }
       GlobalConfig.BannerFileName = PoolPrint(L"%a", dict->string);
-    } else if (!GlobalConfig.BannerFileName) {
-      GlobalConfig.BannerFileName = L"logo.png";
-    }
+    } 
   }
   dict = GetProperty(dictPointer, "Badges");
   if (dict) {
@@ -563,8 +567,6 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
       } else if ((dict2->type == kTagTypeString) && dict2->string) {
         GlobalConfig.SelectionColor = AsciiStrHexToUintn(dict2->string);
       } 
-    } else if (!GlobalConfig.SelectionColor) {
-      GlobalConfig.SelectionColor = 0x80808080;
     }
     dict2 = GetProperty(dict, "Small");
     if (dict2) {
@@ -574,9 +576,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
         }
         GlobalConfig.SelectionSmallFileName = PoolPrint(L"%a", dict2->string);
       }
-    } else if (!GlobalConfig.SelectionSmallFileName) {
-      GlobalConfig.SelectionSmallFileName = L"selection_small.png";
-    }
+    } 
     dict2 = GetProperty(dict, "Big");
     if (dict2) {
       if ((dict2->type == kTagTypeString) && dict2->string) {
@@ -585,18 +585,7 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
         }
         GlobalConfig.SelectionBigFileName = PoolPrint(L"%a", dict2->string);
       }
-    } else if (!GlobalConfig.SelectionBigFileName) {
-      GlobalConfig.SelectionBigFileName = L"selection_big.png";
     }
-/*    dict2 = GetProperty(dict, "Default");
-    if (dict2) {
-      if ((dict2->type == kTagTypeString) && dict2->string) {
-        if (GlobalConfig.DefaultSelection) {
-          FreePool(GlobalConfig.DefaultSelection);
-        }
-        GlobalConfig.DefaultSelection = PoolPrint(L"%a", dict2->string);
-      }
-    } */
   }
   dict = GetProperty(dictPointer, "Scroll");
   if (dict) {
@@ -783,7 +772,7 @@ EFI_STATUS GetThemeSettings(VOID)
   if (EFI_ERROR(Status)) {
     if (GlobalConfig.Theme) {
       if (chosenTheme) {
-        DBG("theme %s chosen from nvram is absent, using default\n", chosenTheme);
+        DBG("theme %a chosen from nvram is absent, using default\n", chosenTheme);
         chosenTheme = NULL;
       }
       if (ThemePath) {
@@ -813,14 +802,14 @@ EFI_STATUS GetThemeSettings(VOID)
         DBG("default theme %s is absent, using embedded\n", GlobalConfig.Theme);
       }
     } else if (chosenTheme) {
-      DBG("theme %s chosen from nvram is absent, using embedded\n", chosenTheme);
+      DBG("theme %a chosen from nvram is absent, using embedded\n", chosenTheme);
       chosenTheme = NULL;
     } else {
       DBG("no default theme, using embedded\n");
     }
   }
   // Read defaults from config
-  if (gConfigDict) {
+  if (gConfigDict && !chosenTheme) {
     TagPtr dictPointer = GetProperty(gConfigDict, "Theme");
     if (dictPointer) {
       EFI_STATUS S = GetThemeTagSettings(dictPointer);
@@ -849,10 +838,9 @@ EFI_STATUS GetThemeSettings(VOID)
   } else {
     TagPtr dictPointer = GetProperty(ThemeDict, "Theme");
     if (chosenTheme) {
-      DBG("Theme: %a Path: %s\n", chosenTheme, ThemePath);
-    } else {
-      DBG("Theme: %s Path: %s\n", GlobalConfig.Theme, ThemePath);
+      GlobalConfig.Theme = PoolPrint(L"%a", chosenTheme);
     }
+    DBG("Theme: %s Path: %s\n", GlobalConfig.Theme, ThemePath);
     // read theme settings
     if (dictPointer) {
       Status = GetThemeTagSettings(dictPointer);

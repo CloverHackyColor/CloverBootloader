@@ -586,7 +586,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY  **ChosenEntry);
 // config module
 //
 
-
+extern BUILTIN_ICON BuiltinIconTable[];
 extern REFIT_CONFIG GlobalConfig;
 
 VOID ReadConfig(INTN What);

@@ -1340,14 +1340,17 @@ BOOLEAN isFirstRootUUID(REFIT_VOLUME *Volume)
 
 VOID reinitImages(VOID)
 {
-  UINTN                   VolumeIndex;
+  UINTN                   Index;
   REFIT_VOLUME            *Volume;
 //  EFI_STATUS              Status;
 
   DBG("reinitImages...\n");
+  for (Index = 0; Index < BUILTIN_ICON_COUNT; Index++) {
+    BuiltinIconTable[Index].Image = NULL;
+  }
 
-  for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
-    Volume = Volumes[VolumeIndex];
+  for (Index = 0; Index < VolumesCount; Index++) {
+    Volume = Volumes[Index];
     Volume->OSImage = egLoadIcon(ThemeDir, PoolPrint(L"icons\\os_%s.icns", Volume->OSIconName), 128);
     Volume->DriveImage = ScanVolumeDefaultIcon(Volume);
   }
@@ -2701,22 +2704,26 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     GetEfiBootDeviceFromNvram();
 //    DBG("GetEfiBootDeviceFromNvram()\n");
   }
-  
+  AfterTool = FALSE;
   do {
 //     PauseForKey(L"Enter main cycle");
 //    DBG("Enter main cycle\n");
-    AfterTool = FALSE;
+    
     MainMenu.EntryCount = 0;
     ScanVolumes();
  //   DBG("ScanVolumes()\n");
     
     // as soon as we have Volumes, find latest nvram.plist and copy it to RT vars
-    if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {
-      PutNvramPlistToRtVars();
+    if (!AfterTool) {
+      if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {
+        PutNvramPlistToRtVars();
+      }
     }
-    if (EFI_ERROR(Status = GetThemeSettings())) {
+    Status = GetThemeSettings();
+    if (EFI_ERROR(Status)) {
       DBG("Theme settings: %r\n", Status);
     }
+
     //changing theme we need to change Volumes Images
     reinitImages();    
     PrepareFont();
@@ -2778,6 +2785,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     MainMenu.AnimeRun = GetAnime(&MainMenu);
     // PauseForKey(L"Enter main loop");
     MainLoopRunning = TRUE;
+    AfterTool = FALSE;
     gEvent = 0; //clear to cancel loop
     while (MainLoopRunning) {
       if (GlobalConfig.Timeout == 0 && DefaultEntry != NULL && !ReadAllKeyStrokes()) {
@@ -2829,6 +2837,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
             
       // We don't allow exiting the main menu with the Escape key.
       if (MenuExit == MENU_EXIT_ESCAPE){
+        AfterTool = TRUE;
         break;   //refresh main menu
       //           continue;
       }

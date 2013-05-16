@@ -31,10 +31,14 @@
 			<dict>
 				<key>Name</key>
 				<string>AppleHDAController</string>
+				<key>Comment</key>
+				<string>Patch_to_not_load_this_driver</string>
+				<key>InfoPlistPatch</key>
+				<true/>
 				<key>Find</key>
-				<data>TA==</data>
+				<string>0x04020000</string>
 				<key>Replace</key>
-				<data>TA==</data>
+				<string>0x44220000</string>
 			</dict>
 			<dict>
 				<key>Name</key>

@@ -40,12 +40,6 @@
 // well-known icons
 //
 
-typedef struct {
-    EG_IMAGE    *Image;
-    CHAR16      *Path;
-    UINTN       PixelSize;
-} BUILTIN_ICON;
-
 BUILTIN_ICON BuiltinIconTable[BUILTIN_ICON_COUNT] = {
   { NULL, L"icons\\func_about.png",          48 },
   { NULL, L"icons\\func_options.png",        48 },

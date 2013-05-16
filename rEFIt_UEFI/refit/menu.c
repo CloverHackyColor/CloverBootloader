@@ -388,7 +388,7 @@ VOID FillInputs(VOID)
 //  InputItems[InputItemsCount].BValue = gSettings.StringInjector;
 //  InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = UNIString; //3
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", GlobalConfig.Theme);
+  InputItems[InputItemsCount++].SValue = PoolPrint(L"%s", GlobalConfig.Theme);
 
   InputItems[InputItemsCount].ItemType = BoolValue; //4
   InputItems[InputItemsCount].BValue = gSettings.DropSSDT;

@@ -196,6 +196,14 @@ typedef struct {
     UINTN       DataLength;
 } EG_EMBEDDED_IMAGE;
 
+
+typedef struct {
+  EG_IMAGE    *Image;
+  CHAR16      *Path;
+  UINTN       PixelSize;
+} BUILTIN_ICON;
+
+
 /* functions */
 
 VOID    egInitScreen(IN BOOLEAN SetMaxResolution);
