@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-12 14:19+0300\n"
-"PO-Revision-Date: 2013-05-14 17:40+0000\n"
+"PO-Revision-Date: 2013-05-16 19:05+0000\n"
 "Last-Translator: kantok <kawakamikazumi@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: ja\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1368553255.0\n"
+"X-POOTLE-MTIME: 1368731143.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -61,7 +61,7 @@ msgstr "%PKGDEV%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:34
 msgid "Supports Fat32, HFS+, ESP."
-msgstr "Supports Fat32, HFS+, ESP."
+msgstr "対応フォーマット：Fat32、HFS+ および GPT EFI パーティション"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:35 Resources/templates/Conclusion.html:25
@@ -167,7 +167,7 @@ msgstr "- USB fix (LegacyOff, Ownership, Builtin, clock-id) はUSB 3.0対応。"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:34
 msgid "- HDA injector and Ethernet builtin injector"
-msgstr "- HDA（サウンド）インジェクターとEthernetビルトインインジェクター。"
+msgstr "- HDA (サウンド) インジェクターとEthernetビルトインインジェクター。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:35
@@ -177,12 +177,12 @@ msgstr "- CPUターボブーストとP/Cステートジェネレーター。"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:36
 msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
-msgstr "- ACPIテーブルをロード (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)。"
+msgstr "- ACPIテーブルをロード (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFIなど)。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:37
 msgid "- extra kexts loading and security mode for FireWire"
-msgstr "- 追加ドライバ（kext）のロードとFireWireセキュリティモード。"
+msgstr "- 追加ドライバ (kext) のロードとFireWireセキュリティモード。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:38
@@ -194,7 +194,7 @@ msgstr "- デフォルトではタイムアウト後にブートします。GUI�
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:39
 msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
-msgstr "- boot.log（OS）と preboot.log（GUI）の保存は［F2キー］を押下してください。"
+msgstr "- boot.log (OS) と preboot.log (GUI) の保存は［F2キー］を押下してください。"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
@@ -243,7 +243,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:23
 #, no-wrap
 msgid "Bootloader"
-msgstr "Bootloader（ブートローダー）"
+msgstr "Bootloader (ブートローダー)"
 
 #. type: "Bootloader_description"
 #: Resources/templates/Localizable.strings:24
@@ -281,7 +281,7 @@ msgstr ""
 "BIOSマザーボードでのBIOSブートに。\n"
 "boot0af (boot0 Active First) ブートローダーは、まずMBRのアクティブパーティションを参照して起動を試みます。もしMBRのア"
 "クティブパーティションがなければ、EFI/FAT32/HFSの第一パーティションから有効なPBRシグネチャーを参照して起動を試みます "
-"(MBR→GPTの順) 。\n"
+"(MBR→GPTの順)。\n"
 "この設定では、選択されたHFS/Fat32パーティションがアクティブになります。"
 
 #. type: "boot0ss_title"
@@ -304,10 +304,11 @@ msgid ""
 "This choice will not activate any partition in MBR."
 msgstr ""
 "BIOSマザーボードでのBIOSブートに。\n"
-"boot0af (boot0 Active First) ブートローダーは、まずMBRのアクティブパーティションを参照して起動を試みます。もしMBRのア"
-"クティブパーティションがなければ、EFI/FAT32/HFSの第一パーティションから有効なPBRシグネチャーを参照して起動を試みます "
-"(MBR→GPTの順) 。\n"
-"この設定では、選択されたHFS/Fat32パーティションがアクティブになります。"
+"boot0ss (boot0 Signature Scanning) "
+"ブートローダーは、まずEFI/FAT32/HFSパーティションから有効なPBRシグネチャーを参照して (MBR→GPTの順) "
+"起動します。もしEFI/FAT32/HFSにアクティブパーティションがなければ、MBRをから起動します。\n"
+"Windowsでは起動ディスクのアクティブ化が好ましいため、このオプションはWindowsがインストールされているディスクへのインストールに有効です。\n"
+"この設定では、MBRのどのパーティションもアクティブ化しません。"
 
 #. type: "bootNo_title"
 #: Resources/templates/Localizable.strings:40
@@ -340,8 +341,8 @@ msgid ""
 "Install alternative booting PBR with choice of boot with a key pressed.\n"
 "File to boot = boot{keypressed}"
 msgstr ""
-"キー押下により、代替ブートPBRから起動を可能にするオプション。\n"
-"File to boot = boot{keypressed}"
+"boot1の代替起動セクター (boot1、boot3、boot7) は選択可能。\n"
+"起動セクター選択 = 起動中に {キー連打}"
 
 #. type: "boot32_title"
 #: Resources/templates/Localizable.strings:50
@@ -433,73 +434,73 @@ msgstr "Bios Block I/O接続のドライブにCloverEFI 64ビット版をイン�
 #: Resources/templates/Localizable.strings:79
 #, no-wrap
 msgid "PS/2 keyboard driver, 32bit"
-msgstr "PS/2キーボードドライバ（32bit）"
+msgstr "PS/2キーボードドライバ (32bit)"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:80
 #, no-wrap
 msgid "PS/2 trackpad driver, 32bit"
-msgstr "PS/2トラックパッドドライバ（32bit）"
+msgstr "PS/2トラックパッドドライバ (32bit)"
 
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:81
 #, no-wrap
 msgid "PS/2 mouse driver, 32bit"
-msgstr "PS/2マウスドライバ（32bit）"
+msgstr "PS/2マウスドライバ (32bit)"
 
 #. type: "Ps2MouseDxe-64_description"
 #: Resources/templates/Localizable.strings:82
 #, no-wrap
 msgid "PS/2 mouse driver, 64bit"
-msgstr "PS/2マウスドライバ（64bit）"
+msgstr "PS/2マウスドライバ (64bit)"
 
 #. type: "UsbMouseDxe-32_description"
 #: Resources/templates/Localizable.strings:83
 #, no-wrap
 msgid "USB mouse driver, 32bit"
-msgstr "USBマウスドライバ（32bit）"
+msgstr "USBマウスドライバ (32bit)"
 
 #. type: "UsbMouseDxe-64_description"
 #: Resources/templates/Localizable.strings:84
 #, no-wrap
 msgid "USB mouse driver, 64bit"
-msgstr "USBマウスドライバ（64bit）"
+msgstr "USBマウスドライバ (64bit)"
 
 #. type: "VBoxExt2-32_description"
 #: Resources/templates/Localizable.strings:85
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 32bit"
-msgstr "ext2/3ファイルシステムドライバ（virtual boxより - 32bit）"
+msgstr "ext2/3ファイルシステムドライバ (virtual boxより - 32bit)"
 
 #. type: "VBoxExt2-64_description"
 #: Resources/templates/Localizable.strings:86
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
-msgstr "ext2/3ファイルシステムドライバ（virtual boxより - 64bit）"
+msgstr "ext2/3ファイルシステムドライバ (virtual boxより - 64bit)"
 
 #. type: "VBoxExt4-32_description"
 #: Resources/templates/Localizable.strings:87
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 32bit"
-msgstr "ext4ファイルシステムドライバ（virtual boxより - 32bit）"
+msgstr "ext4ファイルシステムドライバ (virtual boxより - 32bit)"
 
 #. type: "VBoxExt4-64_description"
 #: Resources/templates/Localizable.strings:88
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 64bit"
-msgstr "ext4ファイルシステムドライバ（virtual boxより - 64bit）"
+msgstr "ext4ファイルシステムドライバ (virtual boxより - 64bit)"
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:89
 #, no-wrap
 msgid "USB 3.0 driver, 32bit"
-msgstr "USB 3.0ドライバ（32bit）"
+msgstr "USB 3.0ドライバ (32bit)"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:90
 #, no-wrap
 msgid "USB 3.0 driver, 64bit"
-msgstr "USB 3.0ドライバ（64bit）"
+msgstr "USB 3.0ドライバ (64bit)"
 
 #. type: "CsmVideoDxe-64_description"
 #: Resources/templates/Localizable.strings:91
@@ -536,7 +537,7 @@ msgid ""
 "Use it only if you have a problem without it"
 msgstr ""
 "MacOSXのNVRAM変数をサポートするための64ビットドライバ。\n"
-"UEFI起動では、通常はハードウェアNVRAM（不揮発性メモリ）を使用しますが、まれにこのドライバが必要になることがあります。\n"
+"UEFI起動では、通常はハードウェアNVRAM (不揮発性メモリ) を使用しますが、まれにこのドライバが必要になることがあります。\n"
 "システムの動作に問題がある場合にのみ使用してください。"
 
 #. type: "OsxAptioFixDrv-64_description"
@@ -563,7 +564,7 @@ msgstr "ハイブリッドGPT/MBRやアップルパーティションマップ�
 #: Resources/templates/Localizable.strings:108
 #, no-wrap
 msgid "Themes"
-msgstr "Themes（テーマ）"
+msgstr "Themes (テーマ)"
 
 #. type: "Themes_description"
 #: Resources/templates/Localizable.strings:109
@@ -584,7 +585,7 @@ msgid ""
 "Default black_green theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/black_green."
 msgstr ""
-"Blackosx制作『black_green』（デフォルト）を\n"
+"Blackosx制作『black_green』(デフォルト) を\n"
 "/EFI/CLOVER/themes/black_greenにインストール。"
 
 #. type: "AppleStyle_title"
@@ -680,7 +681,7 @@ msgid ""
 "The original metal theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/metal."
 msgstr ""
-"Slice制作の元祖オリジナルテーマ『metal』を\n"
+"Slice制作のオリジナルテーマ『metal』を\n"
 "/EFI/CLOVER/themes/metalにインストール。"
 
 #. type: "simple_gray_title"
@@ -749,7 +750,7 @@ msgstr "すべてのRCスクリプトを、ターゲットボリューム以外�
 #: Resources/templates/Localizable.strings:155
 #, no-wrap
 msgid "Optional RC Scripts"
-msgstr "RC Scripts（オプション）"
+msgstr "RC Scripts (オプション)"
 
 #. type: "disable_sleep_proxy_client_description"
 #: Resources/templates/Localizable.strings:156
@@ -1003,8 +1004,8 @@ msgid ""
 "ESP partition on boot"
 msgstr ""
 "ESPパーティションをマウントします。\\n\\n設定値：\\n・Yes：システムパーティションと同じドライブのESPをマウントします。\\n・diskX：ディ"
-"スクXのESPをマウントします。\\・GUID：該当GUIDのESPをマウントします。\\n・VolumeName（ボリューム名）：設定したボリューム名と同"
-"じボリュームのESPをマウントします。\\n\\n空欄の場合はESPはマウントされません。"
+"スクXのESPをマウントします。\\・GUID：該当GUIDのESPをマウントします。\\n・VolumeName "
+"(ボリューム名)：設定したボリューム名と同じボリュームのESPをマウントします。\\n\\n空欄の場合はESPはマウントされません。"
 
 #. type: "332.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:28
