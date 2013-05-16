@@ -346,7 +346,6 @@
 																<int key="NSvFlags">268</int>
 																<string key="NSFrame">{{237, 12}, {213, 14}}</string>
 																<reference key="NSSuperview" ref="17258500"/>
-																<reference key="NSNextKeyView" ref="85958111"/>
 																<string key="NSReuseIdentifierKey">_NS:1535</string>
 																<bool key="NSEnabled">YES</bool>
 																<object class="NSTextFieldCell" key="NSCell" id="118120589">
@@ -853,7 +852,7 @@
 																<string key="NSFrame">{{87, 14}, {198, 22}}</string>
 																<reference key="NSSuperview" ref="1001080782"/>
 																<reference key="NSWindow"/>
-																<reference key="NSNextKeyView" ref="572699567"/>
+																<reference key="NSNextKeyView" ref="85958111"/>
 																<string key="NSReuseIdentifierKey">_NS:9</string>
 																<bool key="NSEnabled">YES</bool>
 																<object class="NSTextFieldCell" key="NSCell" id="784943365">
@@ -1035,52 +1034,12 @@
 					<int key="connectionID">238</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">updateTheme:</string>
-						<reference key="source" ref="294453543"/>
-						<reference key="destination" ref="617016731"/>
-					</object>
-					<int key="connectionID">279</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">authView</string>
 						<reference key="source" ref="294453543"/>
 						<reference key="destination" ref="85958111"/>
 					</object>
 					<int key="connectionID">286</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">updateMountEFI:</string>
-						<reference key="source" ref="294453543"/>
-						<reference key="destination" ref="362605365"/>
-					</object>
-					<int key="connectionID">340</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">updateNVRamDisk:</string>
-						<reference key="source" ref="294453543"/>
-						<reference key="destination" ref="174721314"/>
-					</object>
-					<int key="connectionID">344</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">updateLogLineCount:</string>
-						<reference key="source" ref="294453543"/>
-						<reference key="destination" ref="774116593"/>
-					</object>
-					<int key="connectionID">348</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">updateLogEveryBoot:</string>
-						<reference key="source" ref="294453543"/>
-						<reference key="destination" ref="1023678559"/>
-					</object>
-					<int key="connectionID">350</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -1099,100 +1058,84 @@
 					<int key="connectionID">361</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: self.cloverTheme</string>
-						<reference key="source" ref="617016731"/>
-						<reference key="destination" ref="294453543"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="617016731"/>
-							<reference key="NSDestination" ref="294453543"/>
-							<string key="NSLabel">value: self.cloverTheme</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">self.cloverTheme</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
+					<object class="IBActionConnection" key="connection">
+						<string key="label">simpleNvramVariableChanged:</string>
+						<reference key="source" ref="294453543"/>
+						<reference key="destination" ref="174721314"/>
 					</object>
-					<int key="connectionID">278</int>
+					<int key="connectionID">362</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: self.logLineCount</string>
-						<reference key="source" ref="774116593"/>
-						<reference key="destination" ref="294453543"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="774116593"/>
-							<reference key="NSDestination" ref="294453543"/>
-							<string key="NSLabel">value: self.logLineCount</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">self.logLineCount</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
+					<object class="IBActionConnection" key="connection">
+						<string key="label">simpleNvramVariableChanged:</string>
+						<reference key="source" ref="294453543"/>
+						<reference key="destination" ref="617016731"/>
 					</object>
-					<int key="connectionID">356</int>
+					<int key="connectionID">363</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: self.logEveryBoot</string>
-						<reference key="source" ref="1023678559"/>
-						<reference key="destination" ref="294453543"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="1023678559"/>
-							<reference key="NSDestination" ref="294453543"/>
-							<string key="NSLabel">value: self.logEveryBoot</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">self.logEveryBoot</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
+					<object class="IBActionConnection" key="connection">
+						<string key="label">simpleNvramVariableChanged:</string>
+						<reference key="source" ref="294453543"/>
+						<reference key="destination" ref="774116593"/>
 					</object>
-					<int key="connectionID">359</int>
+					<int key="connectionID">364</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: self.mountEFI</string>
-						<reference key="source" ref="362605365"/>
-						<reference key="destination" ref="294453543"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="362605365"/>
-							<reference key="NSDestination" ref="294453543"/>
-							<string key="NSLabel">value: self.mountEFI</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">self.mountEFI</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
+					<object class="IBActionConnection" key="connection">
+						<string key="label">simpleNvramVariableChanged:</string>
+						<reference key="source" ref="294453543"/>
+						<reference key="destination" ref="1023678559"/>
 					</object>
-					<int key="connectionID">353</int>
+					<int key="connectionID">365</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: self.mountEFI</string>
-						<reference key="source" ref="442549674"/>
-						<reference key="destination" ref="294453543"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="442549674"/>
-							<reference key="NSDestination" ref="294453543"/>
-							<string key="NSLabel">value: self.mountEFI</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">self.mountEFI</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
+					<object class="IBActionConnection" key="connection">
+						<string key="label">simpleNvramVariableChanged:</string>
+						<reference key="source" ref="294453543"/>
+						<reference key="destination" ref="362605365"/>
 					</object>
-					<int key="connectionID">343</int>
+					<int key="connectionID">366</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: self.nvRamDisk</string>
-						<reference key="source" ref="174721314"/>
-						<reference key="destination" ref="294453543"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="174721314"/>
-							<reference key="NSDestination" ref="294453543"/>
-							<string key="NSLabel">value: self.nvRamDisk</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">self.nvRamDisk</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_themeTextField</string>
+						<reference key="source" ref="294453543"/>
+						<reference key="destination" ref="617016731"/>
 					</object>
-					<int key="connectionID">347</int>
+					<int key="connectionID">369</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_logLineCountTextField</string>
+						<reference key="source" ref="294453543"/>
+						<reference key="destination" ref="774116593"/>
+					</object>
+					<int key="connectionID">370</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_logEveryBootTextField</string>
+						<reference key="source" ref="294453543"/>
+						<reference key="destination" ref="1023678559"/>
+					</object>
+					<int key="connectionID">371</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_mountEFITextField</string>
+						<reference key="source" ref="294453543"/>
+						<reference key="destination" ref="362605365"/>
+					</object>
+					<int key="connectionID">372</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">_nvRamDiskTextField</string>
+						<reference key="source" ref="294453543"/>
+						<reference key="destination" ref="174721314"/>
+					</object>
+					<int key="connectionID">373</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -1735,6 +1678,7 @@ bWUgZGVmaW5lZCBpbiBjb25maWcucGxpc3QgaXMgdXNlLg</string>
 					</object>
 				</object>
 				<string key="267.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="267.userInterfaceItemIdentifier">Clover.Theme</string>
 				<string key="268.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="280.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="292.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1774,6 +1718,7 @@ bWUgZGVmaW5lZCBpbiBjb25maWcucGxpc3QgaXMgdXNlLg</string>
 					</object>
 				</object>
 				<string key="314.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="314.userInterfaceItemIdentifier">Clover.LogLineCount</string>
 				<string key="315.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<object class="NSMutableDictionary" key="323.IBAttributePlaceholdersKey">
 					<string key="NS.key.0">ToolTip</string>
@@ -1788,6 +1733,7 @@ ZmlsZQ</string>
 					</object>
 				</object>
 				<string key="323.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="323.userInterfaceItemIdentifier">Clover.LogEveryBoot</string>
 				<string key="324.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="325.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="326.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1806,6 +1752,7 @@ biBib290A</string>
 					</object>
 				</object>
 				<string key="329.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="329.userInterfaceItemIdentifier">Clover.MountEFI</string>
 				<dictionary class="NSMutableDictionary" key="331.IBAttributePlaceholdersKey"/>
 				<string key="331.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="332.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1824,6 +1771,7 @@ b2YgdGhlIHN5c3RlbSBwYXJ0aXRpb24uA</string>
 					</object>
 				</object>
 				<string key="337.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
+				<string key="337.userInterfaceItemIdentifier">Clover.RamDisk</string>
 				<string key="338.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="339.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
 				<string key="6.IBPluginDependency">com.apple.InterfaceBuilder.CocoaPlugin</string>
@@ -1832,7 +1780,7 @@ b2YgdGhlIHN5c3RlbSBwYXJ0aXRpb24uA</string>
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">361</int>
+			<int key="maxID">373</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -1842,11 +1790,7 @@ b2YgdGhlIHN5c3RlbSBwYXJ0aXRpb24uA</string>
 					<dictionary class="NSMutableDictionary" key="actions">
 						<string key="checkNow:">id</string>
 						<string key="configureAutomaticUpdates:">id</string>
-						<string key="updateLogEveryBoot:">id</string>
-						<string key="updateLogLineCount:">id</string>
-						<string key="updateMountEFI:">id</string>
-						<string key="updateNVRamDisk:">id</string>
-						<string key="updateTheme:">id</string>
+						<string key="simpleNvramVariableChanged:">id</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="actionInfosByName">
 						<object class="IBActionInfo" key="checkNow:">
@@ -1857,29 +1801,18 @@ b2YgdGhlIHN5c3RlbSBwYXJ0aXRpb24uA</string>
 							<string key="name">configureAutomaticUpdates:</string>
 							<string key="candidateClassName">id</string>
 						</object>
-						<object class="IBActionInfo" key="updateLogEveryBoot:">
-							<string key="name">updateLogEveryBoot:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="updateLogLineCount:">
-							<string key="name">updateLogLineCount:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="updateMountEFI:">
-							<string key="name">updateMountEFI:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="updateNVRamDisk:">
-							<string key="name">updateNVRamDisk:</string>
-							<string key="candidateClassName">id</string>
-						</object>
-						<object class="IBActionInfo" key="updateTheme:">
-							<string key="name">updateTheme:</string>
+						<object class="IBActionInfo" key="simpleNvramVariableChanged:">
+							<string key="name">simpleNvramVariableChanged:</string>
 							<string key="candidateClassName">id</string>
 						</object>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
 						<string key="LastRunDate">NSTextField</string>
+						<string key="_logEveryBootTextField">NSTextField</string>
+						<string key="_logLineCountTextField">NSTextField</string>
+						<string key="_mountEFITextField">NSTextField</string>
+						<string key="_nvRamDiskTextField">NSTextField</string>
+						<string key="_themeTextField">NSTextField</string>
 						<string key="authView">SFAuthorizationView</string>
 						<string key="checkNowButton">NSButton</string>
 						<string key="dateFormatter">NSDateFormatter</string>
@@ -1890,6 +1823,26 @@ b2YgdGhlIHN5c3RlbSBwYXJ0aXRpb24uA</string>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
 						<object class="IBToOneOutletInfo" key="LastRunDate">
 							<string key="name">LastRunDate</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="_logEveryBootTextField">
+							<string key="name">_logEveryBootTextField</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="_logLineCountTextField">
+							<string key="name">_logLineCountTextField</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="_mountEFITextField">
+							<string key="name">_mountEFITextField</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="_nvRamDiskTextField">
+							<string key="name">_nvRamDiskTextField</string>
+							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="_themeTextField">
+							<string key="name">_themeTextField</string>
 							<string key="candidateClassName">NSTextField</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="authView">

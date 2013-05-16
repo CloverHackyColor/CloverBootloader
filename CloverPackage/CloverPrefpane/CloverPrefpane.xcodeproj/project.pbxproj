@@ -25,8 +25,8 @@
 		A30F62BA1736B2130012B429 /* es */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = es; path = es.lproj/CloverPrefpane.xib; sourceTree = "<group>"; };
 		A30F62BD1736B2200012B429 /* hr */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = hr; path = hr.lproj/CloverPrefpane.xib; sourceTree = "<group>"; };
 		A30F62BE1736B22C0012B429 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ru; path = ru.lproj/CloverPrefpane.xib; sourceTree = "<group>"; };
-		A3340A5B1733DDF80065BC3F /* CloverPrefpane.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CloverPrefpane.m; sourceTree = "<group>"; };
-		A3340A5C1733DDF80065BC3F /* CloverPrefpane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CloverPrefpane.h; sourceTree = "<group>"; };
+		A3340A5B1733DDF80065BC3F /* CloverPrefpane.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = CloverPrefpane.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		A3340A5C1733DDF80065BC3F /* CloverPrefpane.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CloverPrefpane.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		A3340A5D1733DDF80065BC3F /* CloverPrefpane.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = CloverPrefpane.tiff; sourceTree = "<group>"; };
 		A3340A72173417EF0065BC3F /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = /System/Library/Frameworks/ServiceManagement.framework; sourceTree = "<absolute>"; };
 		A34C365D1737C83F009AD818 /* br */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = br; path = br.lproj/CloverPrefpane.xib; sourceTree = "<group>"; };
