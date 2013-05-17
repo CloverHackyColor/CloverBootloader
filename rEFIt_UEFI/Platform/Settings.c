@@ -772,13 +772,14 @@ EFI_STATUS GetThemeSettings(BOOLEAN check)
         Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
         if (!EFI_ERROR(Status)) {
           Status = egLoadFile(ThemeDir, CONFIG_THEME_PATH, (UINT8**)&ThemePtr, &Size);
-          if (!EFI_ERROR(Status) &&
-              ((ThemePtr == NULL) || (Size == 0))) {
+          if (EFI_ERROR(Status) || (ThemePtr == NULL) || (Size == 0)) {
             Status = EFI_NOT_FOUND;
           } else {
             Status = ParseXML((const CHAR8*)ThemePtr, &ThemeDict);
-            if (!EFI_ERROR(Status) && (ThemeDict == NULL)) {
+            if (EFI_ERROR(Status) || (ThemeDict == NULL)) {
               Status = EFI_UNSUPPORTED;
+            } else {
+              DBG("theme from NVRAM, theme.plist found and parsed\n");
             }
           }
         }
@@ -805,10 +806,9 @@ EFI_STATUS GetThemeSettings(BOOLEAN check)
         Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
         if (!EFI_ERROR(Status)) {
            Status = egLoadFile(ThemeDir, CONFIG_THEME_PATH, (UINT8**)&ThemePtr, &Size);
-           if (!EFI_ERROR(Status) &&
-              ((ThemePtr == NULL) || (Size == 0))) {
+           if (EFI_ERROR(Status) || (ThemePtr == NULL) || (Size == 0)) {
                  Status = EFI_NOT_FOUND;
-             DBG("theme.plist not found\n");
+             DBG("GlobalConfig: theme.plist not found\n");
            } else {
               Status = ParseXML((const CHAR8*)ThemePtr, &ThemeDict);
               if (EFI_ERROR(Status) || (ThemeDict == NULL)) {
@@ -856,7 +856,7 @@ EFI_STATUS GetThemeSettings(BOOLEAN check)
     }
     ThemeDir = NULL;
     //fill some fields
-    GlobalConfig.SelectionColor = 0x80808080;
+    GlobalConfig.SelectionColor = 0xA0A0A080;
     GlobalConfig.Font = FONT_ALFA; //to be inverted later
   } else {
     TagPtr dictPointer = GetProperty(ThemeDict, "Theme");

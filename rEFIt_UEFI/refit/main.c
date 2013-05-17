@@ -2600,13 +2600,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (EFI_ERROR(Status = GetEarlyUserSettings(SelfRootDir))) {
     DBG("Early settings: %r\n", Status);
   }
-  if (GlobalConfig.Timeout >= 0) {
-    MainMenu.TimeoutSeconds = GlobalConfig.Timeout;
-  }
-
-  if (EFI_ERROR(Status = GetThemeSettings(TRUE))) {
-    DBG("Theme settings: %r\n", Status);
-  }
+  MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
+ // if (EFI_ERROR(Status = GetThemeSettings(TRUE))) {
+//    DBG("Theme settings: %r\n", Status);
+ // }
   
   // further bootstrap (now with config available)
   //  SetupScreen();
@@ -2690,18 +2687,18 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	Status = GetUserSettings(SelfRootDir);  
  //       DBG("GetUserSettings OK\n");
   
-  //test font
+//test font
 //  PrepareFont();
- //     DBG("PrepareFont OK\n");
- // FillInputs();
+//     DBG("PrepareFont OK\n");
+// FillInputs();
   
   if (!gFirmwareClover && !gDriversFlags.EmuVariableLoaded &&
       GlobalConfig.Timeout == 0 && !ReadAllKeyStrokes()) {
-    // UEFI boot: get gEfiBootDeviceGuid from NVRAM.
-    // if present, ScanVolumes() will skip scanning other volumes
-    // in the first run.
-    // this speeds up loading of default OSX volume.
-    GetEfiBootDeviceFromNvram();
+// UEFI boot: get gEfiBootDeviceGuid from NVRAM.
+// if present, ScanVolumes() will skip scanning other volumes
+// in the first run.
+// this speeds up loading of default OSX volume.
+     GetEfiBootDeviceFromNvram();
 //    DBG("GetEfiBootDeviceFromNvram()\n");
   }
   AfterTool = FALSE;

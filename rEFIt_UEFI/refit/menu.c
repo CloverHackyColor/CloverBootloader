@@ -162,8 +162,9 @@ VOID RefillInputs(VOID)
 //  InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[+]":L"[ ]";
   //GlobalConfig.Theme
   InputItems[InputItemsCount].ItemType = UNIString; //3
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 63, L"%s", GlobalConfig.Theme);
-  
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 23, L"%s",
+                (GlobalConfig.Theme == NULL)?L"embedded":GlobalConfig.Theme);
+
   InputItems[InputItemsCount].ItemType = BoolValue; //4 
   InputItems[InputItemsCount].BValue = gSettings.DropSSDT;
   InputItems[InputItemsCount++].SValue = gSettings.DropSSDT?L"[+]":L"[ ]";
