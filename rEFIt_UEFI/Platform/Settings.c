@@ -48,7 +48,7 @@ extern INTN ScrollBarDecorationsHeight;
 extern INTN ScrollScrollDecorationsHeight;
 
 // global configuration with default values
-REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, None };
+REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, None };
 
 VOID __inline WaitForSts(VOID) {
 	UINT32 inline_timeout = 100000;
@@ -222,16 +222,17 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
         GlobalConfig.ScreenResolution = PoolPrint(L"%a", prop->string);
       }
     }
+    prop = GetProperty(dictPointer, "FastBoot");
+    if (prop) {
+      if ((prop->type == kTagTypeTrue) ||
+          ((prop->type == kTagTypeString) && prop->string &&
+           ((prop->string[0] == 'Y') || (prop->string[0] == 'y')))) {
+            GlobalConfig.FastBoot = TRUE;
+          }
+    }
+    
     prop = GetProperty(dictPointer, "Mouse");
     if (prop) {
-      dict2 = GetProperty(prop, "Enabled");
-      if (dict2) {
-        if ((dict2->type == kTagTypeFalse) ||
-            ((dict2->type == kTagTypeString) && dict2->string &&
-             ((dict2->string[0] == 'N') || (dict2->string[0] == 'n')))) {
-          gSettings.PointerEnabled = FALSE;
-        }
-      }
       dict2 = GetProperty(prop, "Speed");
       if (dict2) {
         if (dict2->type == kTagTypeInteger) {
@@ -242,7 +243,16 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
         } else if ((dict2->type == kTagTypeString) && dict2->string) {
           gSettings.DoubleClickTime = (UINT16)AsciiStrDecimalToUintn(prop->string + ((dict2->string[0] == '-') ? 1 : 0));
         }
-        gSettings.PointerEnabled = (gSettings.PointerSpeed > 0);
+        gSettings.PointerEnabled = (gSettings.PointerSpeed != 0);
+      }
+      //but we can disable mouse even if there was positive speed
+      dict2 = GetProperty(prop, "Enabled");
+      if (dict2) {
+        if ((dict2->type == kTagTypeFalse) ||
+            ((dict2->type == kTagTypeString) && dict2->string &&
+             ((dict2->string[0] == 'N') || (dict2->string[0] == 'n')))) {
+              gSettings.PointerEnabled = FALSE;
+            }
       }
       dict2 = GetProperty(prop, "Mirror");
       if (dict2) {
@@ -504,6 +514,10 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
   GlobalConfig.SelectionSmallFileName = L"selection_small.png";
   GlobalConfig.SelectionBigFileName = L"selection_big.png";
   GlobalConfig.Font = FONT_LOAD;
+  
+  BigBack = NULL;
+  Banner  = NULL;  
+  FontImage = NULL;
 
   dict = GetProperty(dictPointer, "Background");
   if (dict) {    
@@ -742,27 +756,30 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
   return EFI_SUCCESS;
 }
 
-EFI_STATUS GetThemeSettings(VOID)
+EFI_STATUS GetThemeSettings(BOOLEAN check)
 {
   EFI_STATUS Status = EFI_NOT_FOUND;
   //get theme from NVRAM in the case of UEFI boot
   UINTN   Size = 0;
   TagPtr  ThemeDict = NULL;
   CHAR8  *ThemePtr = NULL;
-  CHAR8  *chosenTheme = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
-  if (chosenTheme) {
-    ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%a", chosenTheme);
-    if (ThemePath) {
-      Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
-      if (!EFI_ERROR(Status)) {
-        Status = egLoadFile(ThemeDir, CONFIG_THEME_PATH, (UINT8**)&ThemePtr, &Size);
-        if (!EFI_ERROR(Status) &&
-            ((ThemePtr == NULL) || (Size == 0))) {
-          Status = EFI_NOT_FOUND;
-        } else {
-          Status = ParseXML((const CHAR8*)ThemePtr, &ThemeDict);
-          if (!EFI_ERROR(Status) && (ThemeDict == NULL)) {
-            Status = EFI_UNSUPPORTED;
+  CHAR8  *chosenTheme = NULL;
+  if (check) {
+    chosenTheme = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
+    if (chosenTheme){
+      ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%a", chosenTheme);
+      if (ThemePath) {
+        Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+        if (!EFI_ERROR(Status)) {
+          Status = egLoadFile(ThemeDir, CONFIG_THEME_PATH, (UINT8**)&ThemePtr, &Size);
+          if (!EFI_ERROR(Status) &&
+              ((ThemePtr == NULL) || (Size == 0))) {
+            Status = EFI_NOT_FOUND;
+          } else {
+            Status = ParseXML((const CHAR8*)ThemePtr, &ThemeDict);
+            if (!EFI_ERROR(Status) && (ThemeDict == NULL)) {
+              Status = EFI_UNSUPPORTED;
+            }
           }
         }
       }
@@ -781,6 +798,7 @@ EFI_STATUS GetThemeSettings(VOID)
       ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", GlobalConfig.Theme);
       if (ThemePath) {
         if (ThemeDir) {
+          DBG("Have no ThemeDir\n");
           ThemeDir->Close(ThemeDir);
           ThemeDir = NULL;
         }
@@ -790,11 +808,16 @@ EFI_STATUS GetThemeSettings(VOID)
            if (!EFI_ERROR(Status) &&
               ((ThemePtr == NULL) || (Size == 0))) {
                  Status = EFI_NOT_FOUND;
+             DBG("theme.plist not found\n");
            } else {
               Status = ParseXML((const CHAR8*)ThemePtr, &ThemeDict);
-              if (!EFI_ERROR(Status) && (ThemeDict == NULL)) {
+              if (EFI_ERROR(Status) || (ThemeDict == NULL)) {
                  Status = EFI_UNSUPPORTED;
+                DBG("xml theme.plist not parsed\n");
+              } else {
+                gConfigDict = ThemeDict;
               }
+
            }
         }
       }
@@ -834,7 +857,7 @@ EFI_STATUS GetThemeSettings(VOID)
     ThemeDir = NULL;
     //fill some fields
     GlobalConfig.SelectionColor = 0x80808080;
-    GlobalConfig.Font = FONT_LOAD; //to be inverted
+    GlobalConfig.Font = FONT_ALFA; //to be inverted later
   } else {
     TagPtr dictPointer = GetProperty(ThemeDict, "Theme");
     if (chosenTheme) {

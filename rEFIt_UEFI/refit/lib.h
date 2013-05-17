@@ -355,6 +355,7 @@ typedef struct {
   BOOLEAN     LegacyFirst;
   BOOLEAN     NoLegacy;
   BOOLEAN     DebugLog;
+  BOOLEAN     FastBoot;
 //  BOOLEAN     DriveImage;
   FONT_TYPE   Font;
   INTN        CharWidth;
@@ -419,6 +420,11 @@ extern GUI_ANIME        *GuiAnime;
 extern REFIT_VOLUME     *SelfVolume;
 extern REFIT_VOLUME     **Volumes;
 extern UINTN            VolumesCount;
+
+extern EG_IMAGE         *Banner;
+extern EG_IMAGE         *BigBack;
+extern EG_IMAGE         *FontImage;
+
 
 
 

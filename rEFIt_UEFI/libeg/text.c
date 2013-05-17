@@ -53,7 +53,7 @@
 #endif
 
 
-static EG_IMAGE *FontImage = NULL;
+EG_IMAGE *FontImage = NULL;
 INTN FontWidth = 7;
 INTN FontHeight = 12;
 INTN TextHeight;
@@ -177,7 +177,7 @@ VOID PrepareFont(VOID)
     GlobalConfig.CharWidth = 7;
   }
   TextHeight = FontHeight + TEXT_YMARGIN * 2;
-  DBG("Font prepared WxH=%dx%d CharWidth=%d\n", FontWidth, FontHeight, GlobalConfig.CharWidth);
+  DBG("Font %d prepared WxH=%dx%d CharWidth=%d\n", GlobalConfig.Font, FontWidth, FontHeight, GlobalConfig.CharWidth);
 }
 
 VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
@@ -204,7 +204,11 @@ VOID egRenderText(IN CHAR16 *Text, IN OUT EG_IMAGE *CompImage,
       TextLength = (CompImage->Width - PosX) / GlobalConfig.CharWidth;
     } else
       TextLength = (CompImage->Width - PosX) / FontWidth;
-  }  
+  }
+  if (!FontImage) {
+    GlobalConfig.Font = FONT_LOAD;
+    PrepareFont();
+  }
   
 //  DBG("TextLength =%d PosX=%d PosY=%d\n", TextLength, PosX, PosY);
   // render it

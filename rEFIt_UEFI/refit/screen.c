@@ -367,8 +367,8 @@ typedef struct {
 } EG_RECT;
 */
 
-static EG_IMAGE *Banner = NULL;
-static EG_IMAGE *BigBack = NULL;
+EG_IMAGE *Banner = NULL;
+EG_IMAGE *BigBack = NULL;
 
 
 VOID BltClearScreen(IN BOOLEAN ShowBanner)

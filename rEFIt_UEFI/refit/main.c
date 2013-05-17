@@ -2604,7 +2604,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     MainMenu.TimeoutSeconds = GlobalConfig.Timeout;
   }
 
-  if (EFI_ERROR(Status = GetThemeSettings())) {
+  if (EFI_ERROR(Status = GetThemeSettings(TRUE))) {
     DBG("Theme settings: %r\n", Status);
   }
   
@@ -2719,9 +2719,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         PutNvramPlistToRtVars();
       }
     }
-    Status = GetThemeSettings();
+    Status = GetThemeSettings(TRUE);
     if (EFI_ERROR(Status)) {
-      DBG("Theme settings: %r\n", Status);
+      DBG("Theme settings in main cycle: %r\n", Status);
     }
 
     //changing theme we need to change Volumes Images
