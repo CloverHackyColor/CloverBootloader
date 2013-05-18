@@ -21,11 +21,18 @@
     IBOutlet NSTextField *lastBootedRevision;
     IBOutlet NSTextField *lastInstalledRevision;
 
-    IBOutlet NSTextField *_themeTextField;
     IBOutlet NSTextField *_logLineCountTextField;
     IBOutlet NSTextField *_logEveryBootTextField;
     IBOutlet NSTextField *_mountEFITextField;
     IBOutlet NSTextField *_nvRamDiskTextField;
+
+    IBOutlet NSPathControl *_EFIPathControl;
+    IBOutlet NSComboBox *_cloverThemeComboBox;
+    IBOutlet NSImageView *_themePreview;
+    IBOutlet NSTextField *_themeAuthor;
+    IBOutlet NSTextField *_themeYear;
+    IBOutlet NSTextField *_themeInformations;
+    IBOutlet NSTextField *_themeWarning;
 }
 
 - (id) initWithBundle:(NSBundle *)bundle;
@@ -33,6 +40,8 @@
 - (IBAction) checkNow:(id)sender;
 - (IBAction) configureAutomaticUpdates:(id)sender;
 - (IBAction) simpleNvramVariableChanged:(id)sender;
+- (IBAction) showPathOpenPanel:(id)sender;
+- (IBAction) themeComboBox:(NSComboBox*)sender;
 
 - (BOOL)isUnlocked;
 
@@ -42,4 +51,11 @@
 - (void) setPreferenceKey:(CFStringRef)key
                  forAppID:(CFStringRef)appID
                   fromInt:(int)value;
+- (NSString *)getStringPreferenceKey:(CFStringRef)key
+                            forAppID:(CFStringRef)appID
+                         withDefault:(CFStringRef)defaultValue;
+- (void) setPreferenceKey:(CFStringRef)key
+                 forAppID:(CFStringRef)appID
+                fromString:(CFStringRef)value;
+
 @end

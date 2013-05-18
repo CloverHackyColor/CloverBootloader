@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-12 14:19+0300\n"
+"POT-Creation-Date: 2013-05-18 13:33+0300\n"
 "PO-Revision-Date: 2013-05-16 19:05+0000\n"
 "Last-Translator: kantok <kawakamikazumi@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -75,8 +75,10 @@ msgstr "Clover バージョン2"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:17
-msgid "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
-msgstr "は、Clover、rEFIt、XNU、VirtualBoxベースのオープンソースプロジェクトです。"
+msgid ""
+"is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
+msgstr ""
+"は、Clover、rEFIt、XNU、VirtualBoxベースのオープンソースプロジェクトです。"
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:18
@@ -98,17 +100,25 @@ msgstr "- OSX 10.4 - 10.8、Windows EFIとLinux EFIのブートをサポート�
 msgid ""
 "- It's EFI bootloader provides RuntimeServices for OS that impossible for "
 "Legacy Bootloaders"
-msgstr "- これまでのブートローダーでは非対応の、OSのランタイムサービスをサポートしたEFIブートローダーです。"
+msgstr ""
+"- これまでのブートローダーでは非対応の、OSのランタイムサービスをサポートした"
+"EFIブートローダーです。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:23
 msgid ""
 "- mostly Clover do automatic detection of hardware and set all properties by "
 "default."
-msgstr "- ハードウェアをほぼ自動で認識し、デフォルトで各プロパティを設定します。"
+msgstr ""
+"- ハードウェアをほぼ自動で認識し、デフォルトで各プロパティを設定します。"
 
 #. type: Content of: <html><body><p><span>
-#: Resources/templates/Description.html:23 Resources/templates/Description.html:24 Resources/templates/Description.html:29 Resources/templates/Description.html:31 Resources/templates/Description.html:32 Resources/templates/Description.html:33
+#: Resources/templates/Description.html:23
+#: Resources/templates/Description.html:24
+#: Resources/templates/Description.html:29
+#: Resources/templates/Description.html:31
+#: Resources/templates/Description.html:32
+#: Resources/templates/Description.html:33
 msgid " "
 msgstr " "
 
@@ -140,12 +150,14 @@ msgstr "- ACPIはstandard 4.0に更新されます。"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:29
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr "カスタムDSDTはブートパーティションまたはEFIフォルダからロードされます。"
+msgstr ""
+"カスタムDSDTはブートパーティションまたはEFIフォルダからロードされます。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:30
 msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
-msgstr "- RestartFix、sleep/wake fixesおよびPCIRootUID値はカスタマイズ可能です。"
+msgstr ""
+"- RestartFix、sleep/wake fixesおよびPCIRootUID値はカスタマイズ可能です。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:31
@@ -177,7 +189,8 @@ msgstr "- CPUターボブーストとP/Cステートジェネレーター。"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:36
 msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
-msgstr "- ACPIテーブルをロード (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFIなど)。"
+msgstr ""
+"- ACPIテーブルをロード (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFIなど)。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:37
@@ -189,12 +202,15 @@ msgstr "- 追加ドライバ (kext) のロードとFireWireセキュリティモ
 msgid ""
 "- default boot after timeout, customizable GUI , and saving screenshots from "
 "GUI typing F10"
-msgstr "- デフォルトではタイムアウト後にブートします。GUIはカスタマイズ可能。スクリーンショット機能［F10キー］。"
+msgstr ""
+"- デフォルトではタイムアウト後にブートします。GUIはカスタマイズ可能。スクリー"
+"ンショット機能［F10キー］。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:39
 msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
-msgstr "- boot.log (OS) と preboot.log (GUI) の保存は［F2キー］を押下してください。"
+msgstr ""
+"- boot.log (OS) と preboot.log (GUI) の保存は［F2キー］を押下してください。"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
@@ -252,14 +268,12 @@ msgid ""
 "Clover EFI requires three essential files. (in simple terms)\n"
 "boot0 (On the drive's MBR) responsible for loading boot1.\n"
 "boot1 (On the partition's boot-sector) to finding boot2.\n"
-"boot2 (On the partition's root directory) for loading "
-"/EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
+"boot2 (On the partition's root directory) for loading /EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgstr ""
 "Clover EFIは、主に以下の3ファイルを参照します。\n"
 "boot0 (ドライブのMBR上)：boot1をロードします。\n"
 "boot1 (パーティションのbootセクタ上)：boot2を参照します。\n"
-"boot2 (パーティションのrootディレクトリ上)：/EFI/CLOVER/CLOVERIA32.efiまたはCLOVERX64.efi、およびke"
-"rnel等をロードします。"
+"boot2 (パーティションのrootディレクトリ上)：/EFI/CLOVER/CLOVERIA32.efiまたはCLOVERX64.efi、およびkernel等をロードします。"
 
 #. type: "boot0af_title"
 #: Resources/templates/Localizable.strings:29
@@ -272,16 +286,11 @@ msgstr "boot0afをMBRにインストール"
 #, no-wrap
 msgid ""
 "Used for BIOS booting on BIOS motherboards.\n"
-"boot0af (boot0 Active First) bootloader try to boot the active partition "
-"defined in MBR. If there is no active partition, it will try to boot the "
-"first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a "
-"valid PBR signature.\n"
+"boot0af (boot0 Active First) bootloader try to boot the active partition defined in MBR. If there is no active partition, it will try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature.\n"
 "This choice will setup selected HFS/Fat32 partition to be active."
 msgstr ""
 "BIOSマザーボードでのBIOSブートに。\n"
-"boot0af (boot0 Active First) ブートローダーは、まずMBRのアクティブパーティションを参照して起動を試みます。もしMBRのア"
-"クティブパーティションがなければ、EFI/FAT32/HFSの第一パーティションから有効なPBRシグネチャーを参照して起動を試みます "
-"(MBR→GPTの順)。\n"
+"boot0af (boot0 Active First) ブートローダーは、まずMBRのアクティブパーティションを参照して起動を試みます。もしMBRのアクティブパーティションがなければ、EFI/FAT32/HFSの第一パーティションから有効なPBRシグネチャーを参照して起動を試みます (MBR→GPTの順)。\n"
 "この設定では、選択されたHFS/Fat32パーティションがアクティブになります。"
 
 #. type: "boot0ss_title"
@@ -295,18 +304,12 @@ msgstr "boot0ssをMBRにインストール"
 #, no-wrap
 msgid ""
 "Used for BIOS booting on BIOS motherboards.\n"
-"boot0ss (boot0 Signature Scanning) bootloader try to boot the first "
-"EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid "
-"PBR signature. If no partition is found it will try to boot the active "
-"partition defined in MBR.\n"
-"This bootloader is a good choice when you have Windows installed on the same "
-"disk because Windows wants to have its partition active.\n"
+"boot0ss (boot0 Signature Scanning) bootloader try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature. If no partition is found it will try to boot the active partition defined in MBR.\n"
+"This bootloader is a good choice when you have Windows installed on the same disk because Windows wants to have its partition active.\n"
 "This choice will not activate any partition in MBR."
 msgstr ""
 "BIOSマザーボードでのBIOSブートに。\n"
-"boot0ss (boot0 Signature Scanning) "
-"ブートローダーは、まずEFI/FAT32/HFSパーティションから有効なPBRシグネチャーを参照して (MBR→GPTの順) "
-"起動します。もしEFI/FAT32/HFSにアクティブパーティションがなければ、MBRをから起動します。\n"
+"boot0ss (boot0 Signature Scanning) ブートローダーは、まずEFI/FAT32/HFSパーティションから有効なPBRシグネチャーを参照して (MBR→GPTの順) 起動します。もしEFI/FAT32/HFSにアクティブパーティションがなければ、MBRをから起動します。\n"
 "Windowsでは起動ディスクのアクティブ化が好ましいため、このオプションはWindowsがインストールされているディスクへのインストールに有効です。\n"
 "この設定では、MBRのどのパーティションもアクティブ化しません。"
 
@@ -401,7 +404,8 @@ msgid "Select the version of CloverEFI to install."
 msgstr "インストールするCloverEFIのバージョンを選択"
 
 #. type: "cloverEFI.32_description"
-#: Resources/templates/Localizable.strings:69 Resources/templates/Localizable.strings:70
+#: Resources/templates/Localizable.strings:69
+#: Resources/templates/Localizable.strings:70
 #, no-wrap
 msgid "CloverEFI 32-bits"
 msgstr "CloverEFI 32ビット版"
@@ -521,8 +525,7 @@ msgstr ""
 #, no-wrap
 msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
-"Usually it is already present but sometime it may be missed. In this case "
-"you should see warning on screen."
+"Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
 msgstr ""
 "MacOSXで必要なデータハブプロトコルをサポート。\n"
 "通常これはすでにシステムに実装されていますが、場合によっては読み込みに失敗します。この際、アラートが表示されます。"
@@ -532,8 +535,7 @@ msgstr ""
 #, no-wrap
 msgid ""
 "64bit driver for support of NVRAM variables needed by MacOSX.\n"
-"Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is "
-"needed.\n"
+"Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed.\n"
 "Use it only if you have a problem without it"
 msgstr ""
 "MacOSXのNVRAM変数をサポートするための64ビットドライバ。\n"
@@ -555,9 +557,7 @@ msgstr "OsxAptioFixDrvの簡易版。64ビット (OsxAptioFixDrvとの同時使�
 #. type: "PartitionDxe-64_description"
 #: Resources/templates/Localizable.strings:102
 #, no-wrap
-msgid ""
-"64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or "
-"Apple Partition Map."
+msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
 msgstr "ハイブリッドGPT/MBRやアップルパーティションマップなど、特殊なパーティションマップをサポートする64ビットドライバ。"
 
 #. type: "Themes_title"
@@ -741,9 +741,7 @@ msgstr "RCスクリプトを他のすべてのOSXボリュームにインスト�
 #. type: "rc.scripts.on.all.volumes_description"
 #: Resources/templates/Localizable.strings:154
 #, no-wrap
-msgid ""
-"Install all RC scripts on all internal bootable OSX volumes other than the "
-"target volume."
+msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "すべてのRCスクリプトを、ターゲットボリューム以外の起動可能な内蔵OSXボリュームにインストールします。"
 
 #. type: "Optional RC Scripts"
@@ -755,12 +753,8 @@ msgstr "RC Scripts (オプション)"
 #. type: "disable_sleep_proxy_client_description"
 #: Resources/templates/Localizable.strings:156
 #, no-wrap
-msgid ""
-"Disable the mDNSResponder sleep proxy client service. This will prevent the "
-"system waking from sleep every hours"
-msgstr ""
-"mDNSResponder sleep proxy client "
-"serviceを無効化します。これにより、1時間ごとにスリープから復帰する問題を解決します。"
+msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
+msgstr "mDNSResponder sleep proxy client serviceを無効化します。これにより、1時間ごとにスリープから復帰する問題を解決します。"
 
 #. type: "CloverPrefpane_title"
 #: Resources/templates/Localizable.strings:161
@@ -779,7 +773,9 @@ msgstr ""
 "CloverUpdaterはCloverのアップデートをお知らせします。"
 
 #. type: "371.title"
-#: ../CloverUpdater/CloverUpdater.strings:1 ../CloverUpdater/CloverUpdater.strings:2 ../CloverUpdater/CloverUpdater.strings:5
+#: ../CloverUpdater/CloverUpdater.strings:1
+#: ../CloverUpdater/CloverUpdater.strings:2
+#: ../CloverUpdater/CloverUpdater.strings:5
 #, no-wrap
 msgid "CloverUpdater"
 msgstr "CloverUpdater"
@@ -898,135 +894,142 @@ msgstr "いまチェックする"
 msgid "Copyright (c) 2013 JrCs"
 msgstr "Copyright (c) 2013 JrCs"
 
-#. type: "267.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:13
-#, no-wrap
-msgid ""
-"Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined in "
-"config.plist is use."
-msgstr "テーマはCloverのGUIで使用されます。\\n空欄の場合はconfig.plistの設定が反映されます。"
-
-#. type: "292.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:14
-#, no-wrap
-msgid "GUI Appearance"
-msgstr "GUIの外観"
-
 #. type: "294.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:15
+#: ../CloverPrefpane/CloverPrefpane.strings:13
 #, no-wrap
 msgid "NVRam Variables"
 msgstr "NVRam変数"
 
 #. type: "295.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:16
+#: ../CloverPrefpane/CloverPrefpane.strings:14
 #, no-wrap
 msgid "General"
 msgstr "一般"
 
 #. type: "298.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:17
+#: ../CloverPrefpane/CloverPrefpane.strings:15
 #, no-wrap
 msgid "Revisions"
 msgstr "リビジョン"
 
 #. type: "300.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:18
+#: ../CloverPrefpane/CloverPrefpane.strings:16
 #, no-wrap
 msgid "Current booted revision:"
 msgstr "ブート中のリビジョン："
 
 #. type: "302.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:19
+#: ../CloverPrefpane/CloverPrefpane.strings:17
 #, no-wrap
 msgid "Last installed revision:"
 msgstr "最後にインストールしたリビジョン："
 
 #. type: "309.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:20
+#: ../CloverPrefpane/CloverPrefpane.strings:18
 #, no-wrap
 msgid "Log Files"
 msgstr "ログファイル"
 
 #. type: "311.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:21
+#: ../CloverPrefpane/CloverPrefpane.strings:19
 #, no-wrap
 msgid "LogLineCount:"
 msgstr "ログの行数："
 
 #. type: "313.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:22
+#: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
 msgid "LogEveryBoot:"
 msgstr "ブートごとにログ保存："
 
 #. type: "314.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:23
+#: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
-msgid ""
-"Number of lines of history to keep in CloverEFI/system.log file in addition "
-"to the current CloverEFI/boot.log contents"
+msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
 msgstr "CloverEFI/boot.logに加えて、CloverEFI/system.logに残すブートログの行数"
 
 #. type: "323.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:24
+#: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
-msgid ""
-"Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* Yes: "
-"create a new timestamp boot.log file\\n* Number: where number is the number "
-"of timestamp boot.log files to keep.\\n\\nA blank value result in NO "
-"creation of timestamp boot.log file"
-msgstr ""
-"ブートするごとにCloverEFI/boot.logファイルにタイムスタンプを記録します。\\n\\n設定値:\\n・Yes: "
-"タイムスタンプをboot.logファイルに新たに記録します。\\n・数値: "
-"boot.logファイルで保持する記録数。\\n\\n空欄にした場合はboot.logにタイムスタンプは記録されません。"
-
-#. type: "326.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:25
-#, no-wrap
-msgid "Theme:"
-msgstr "テーマ："
+msgid "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* Yes: create a new timestamp boot.log file\\n* Number: where number is the number of timestamp boot.log files to keep.\\n\\nA blank value result in NO creation of timestamp boot.log file"
+msgstr "ブートするごとにCloverEFI/boot.logファイルにタイムスタンプを記録します。\\n\\n設定値:\\n・Yes: タイムスタンプをboot.logファイルに新たに記録します。\\n・数値: boot.logファイルで保持する記録数。\\n\\n空欄にした場合はboot.logにタイムスタンプは記録されません。"
 
 #. type: "327.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:26
+#: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
 msgid "Advanced Configurations"
 msgstr "高度な設定"
 
 #. type: "329.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:27
+#: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
-msgid ""
-"Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on "
-"the same disk drive as the system partition\\n* diskX: disk device\\n* GUID: "
-"GUID of the ESP\\n* VolumeName: Volume name of a volume that is on the same "
-"disk drive that the ESP partition\\n\\nEmpty value result in not mounting "
-"ESP partition on boot"
-msgstr ""
-"ESPパーティションをマウントします。\\n\\n設定値：\\n・Yes：システムパーティションと同じドライブのESPをマウントします。\\n・diskX：ディ"
-"スクXのESPをマウントします。\\・GUID：該当GUIDのESPをマウントします。\\n・VolumeName "
-"(ボリューム名)：設定したボリューム名と同じボリュームのESPをマウントします。\\n\\n空欄の場合はESPはマウントされません。"
+msgid "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on the same disk drive as the system partition\\n* diskX: disk device\\n* GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on the same disk drive that the ESP partition\\n\\nEmpty value result in not mounting ESP partition on boot"
+msgstr "ESPパーティションをマウントします。\\n\\n設定値：\\n・Yes：システムパーティションと同じドライブのESPをマウントします。\\n・diskX：ディスクXのESPをマウントします。\\・GUID：該当GUIDのESPをマウントします。\\n・VolumeName (ボリューム名)：設定したボリューム名と同じボリュームのESPをマウントします。\\n\\n空欄の場合はESPはマウントされません。"
 
 #. type: "332.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:28
+#: ../CloverPrefpane/CloverPrefpane.strings:25
 #, no-wrap
 msgid "MountEFI:"
 msgstr "EFIマウント："
 
 #. type: "337.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:29
+#: ../CloverPrefpane/CloverPrefpane.strings:26
 #, no-wrap
-msgid ""
-"Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram "
-"contents to disk\\n* diskXsY: device node of the volume where the nvram "
-"contents will be saved\\n\\nEmpty value save the nvram contents in the "
-"nvram.plist file in the root folder of the system partition."
-msgstr ""
-"nvramの内容をディスクに保存します。\\n\\n設定値：\\n・No：nvramの内容は保存されません。\\n・diskXsY：diskXsYにnvramの"
-"内容を保存します。\\n\\n空欄の場合、nvramの内容はシステムパーティションのrootフォルダにあるnvram.plistに保存されます。"
+msgid "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram contents to disk\\n* diskXsY: device node of the volume where the nvram contents will be saved\\n\\nEmpty value save the nvram contents in the nvram.plist file in the root folder of the system partition."
+msgstr "nvramの内容をディスクに保存します。\\n\\n設定値：\\n・No：nvramの内容は保存されません。\\n・diskXsY：diskXsYにnvramの内容を保存します。\\n\\n空欄の場合、nvramの内容はシステムパーティションのrootフォルダにあるnvram.plistに保存されます。"
 
 #. type: "339.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:30
+#: ../CloverPrefpane/CloverPrefpane.strings:27
 #, no-wrap
 msgid "NVRamDisk:"
 msgstr "NVRamディスク："
+
+#. type: "374.label"
+#: ../CloverPrefpane/CloverPrefpane.strings:28
+#, fuzzy, no-wrap
+#| msgid "Themes"
+msgid "Theme"
+msgstr "Themes (テーマ)"
+
+#. type: "392.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:29
+#, fuzzy, no-wrap
+#| msgid "Clover v2"
+msgid "Clover Theme"
+msgstr "Clover バージョン2"
+
+#. type: "399.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:30
+#, no-wrap
+msgid "Author:"
+msgstr ""
+
+#. type: "401.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:31
+#, no-wrap
+msgid "Year:"
+msgstr ""
+
+#. type: "405.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:32
+#, no-wrap
+msgid "EFI Folder Path:"
+msgstr ""
+
+#. type: "423.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:33
+#, no-wrap
+msgid "To see previews of themes you must select the path to the EFI folder above."
+msgstr ""
+
+#. type: "426.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:34
+#, no-wrap
+msgid "Theme:"
+msgstr "テーマ："
+
+#~ msgid "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined in config.plist is use."
+#~ msgstr "テーマはCloverのGUIで使用されます。\\n空欄の場合はconfig.plistの設定が反映されます。"
+
+#~ msgid "GUI Appearance"
+#~ msgstr "GUIの外観"

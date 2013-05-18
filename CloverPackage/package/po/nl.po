@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-12 14:19+0300\n"
+"POT-Creation-Date: 2013-05-18 13:33+0300\n"
 "PO-Revision-Date: 2013-05-14 18:09+0000\n"
 "Last-Translator: beta992 <beta992@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -278,8 +278,7 @@ msgstr ""
 "Clover EFI vereist drie essentiële bestanden. (in eenvoudige termen)\n"
 "boot0 (Op de MBR van de schijf) verantwoordelijk voor het laden van boot1.\n"
 "boot1 (Op de boot-sector van de partitie) voor het vinden van boot2.\n"
-"boot2 (Op de partitie hoofdmap) voor het laden van /EFI/BOOT/CLOVERIA32.efi "
-"of CLOVERX64.efi, de kernel etc."
+"boot2 (Op de partitie hoofdmap) voor het laden van /EFI/BOOT/CLOVERIA32.efi of CLOVERX64.efi, de kernel etc."
 
 #. type: "boot0af_title"
 #: Resources/templates/Localizable.strings:29
@@ -544,10 +543,8 @@ msgid ""
 "Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed.\n"
 "Use it only if you have a problem without it"
 msgstr ""
-"64bit stuurprogramma voor ondersteuning van NVRAM variabelen die nodig zijn "
-"voor MacOSX.\n"
-"Meestal gebruikt UEFI hardware NVRAM maar in sommige zeldzame gevallen is "
-"dit stuurprogramma nodig.\n"
+"64bit stuurprogramma voor ondersteuning van NVRAM variabelen die nodig zijn voor MacOSX.\n"
+"Meestal gebruikt UEFI hardware NVRAM maar in sommige zeldzame gevallen is dit stuurprogramma nodig.\n"
 "Gebruik dit alleen als je problemen hebt zonder het"
 
 #. type: "OsxAptioFixDrv-64_description"
@@ -566,9 +563,7 @@ msgstr "Vereenvoudigde variant van OsxAptioFixDrv, 64bit (gebruik ze niet naast 
 #: Resources/templates/Localizable.strings:102
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
-msgstr ""
-"64bit stuurprogramma ter ondersteuning niet-gebruikelijke partition maps "
-"zoals: hybride GPT/MBR of Apple Partition Map."
+msgstr "64bit stuurprogramma ter ondersteuning niet-gebruikelijke partition maps zoals: hybride GPT/MBR of Apple Partition Map."
 
 #. type: "Themes_title"
 #: Resources/templates/Localizable.strings:108
@@ -769,16 +764,12 @@ msgstr "Schakel de mDNSResponder sleep proxy client service uit. Dit voorkomt da
 #. type: "CloverPrefpane_title"
 #: Resources/templates/Localizable.strings:161
 #, no-wrap
-#| msgid "Install Clover in the ESP"
 msgid "Install Clover Preference Pane"
 msgstr "Installeer Clover Voorkeur Paneel"
 
 #. type: "CloverPrefpane_description"
 #: Resources/templates/Localizable.strings:162
 #, no-wrap
-#| msgid ""
-#| "Install CloverUpdater on target volume.\n"
-#| "CloverUpdater notify you about Clover updates."
 msgid ""
 "Install Clover Preference Pane on target volume.\n"
 "Include CloverUpdater that can notify you about Clover updates."
@@ -908,140 +899,147 @@ msgstr "Nu Controleren"
 msgid "Copyright (c) 2013 JrCs"
 msgstr "Copyright (c) 2013 JrCs"
 
-#. type: "267.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:13
-#, no-wrap
-msgid "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined in config.plist is use."
-msgstr ""
-"Thema te gebruiken voor Clover GUI\n"
-"Als de waarde leeg is, wordt Clover thema gedefinieerd in config.plist "
-"gebruikt."
-
-#. type: "292.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:14
-#, no-wrap
-msgid "GUI Appearance"
-msgstr "GUI Uiterlijk"
-
 #. type: "294.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:15
+#: ../CloverPrefpane/CloverPrefpane.strings:13
 #, no-wrap
 msgid "NVRam Variables"
 msgstr "NVRam Variabelen"
 
 #. type: "295.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:16
+#: ../CloverPrefpane/CloverPrefpane.strings:14
 #, no-wrap
 msgid "General"
 msgstr "Algemeen"
 
 #. type: "298.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:17
+#: ../CloverPrefpane/CloverPrefpane.strings:15
 #, no-wrap
 msgid "Revisions"
 msgstr "Revisies"
 
 #. type: "300.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:18
+#: ../CloverPrefpane/CloverPrefpane.strings:16
 #, no-wrap
-#| msgid "Current local Clover revision:"
 msgid "Current booted revision:"
 msgstr "Huidige opgestarte revisie:"
 
 #. type: "302.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:19
+#: ../CloverPrefpane/CloverPrefpane.strings:17
 #, no-wrap
-#| msgid "Latest update revision:"
 msgid "Last installed revision:"
 msgstr "Laatst geïnstalleerde revisie:"
 
 #. type: "309.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:20
+#: ../CloverPrefpane/CloverPrefpane.strings:18
 #, no-wrap
 msgid "Log Files"
 msgstr "Log Bestanden"
 
 #. type: "311.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:21
+#: ../CloverPrefpane/CloverPrefpane.strings:19
 #, no-wrap
 msgid "LogLineCount:"
 msgstr "LogLijnTelling:"
 
 #. type: "313.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:22
+#: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
 msgid "LogEveryBoot:"
 msgstr "LogIedereOpstart:"
 
 #. type: "314.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:23
+#: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
-msgstr ""
-"Aantal lijnen van de geschiedenis in CloverEFI/system.log bestand te houden "
-"in aanvulling op de huidige CloverEFI/boot.log inhoud"
+msgstr "Aantal lijnen van de geschiedenis in CloverEFI/system.log bestand te houden in aanvulling op de huidige CloverEFI/boot.log inhoud"
 
 #. type: "323.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:24
+#: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* Yes: create a new timestamp boot.log file\\n* Number: where number is the number of timestamp boot.log files to keep.\\n\\nA blank value result in NO creation of timestamp boot.log file"
-msgstr ""
-"Maak tijdstempel CloverEFI/boot.log bestand bij elke opstart\\n\\nWaarde:\\n* "
-"Yes: maak een nieuw tijdstempel boot.log bestand\\n* Nummer: waar nummer is "
-"het aantal tijdstempel boot.log bestanden te behouden.\\n\\nEen leeg waarde "
-"resulteert in GEEN aanmaak van tijdstempel boot.log bestand"
-
-#. type: "326.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:25
-#, no-wrap
-#| msgid "Themes"
-msgid "Theme:"
-msgstr "Thema:"
+msgstr "Maak tijdstempel CloverEFI/boot.log bestand bij elke opstart\\n\\nWaarde:\\n* Yes: maak een nieuw tijdstempel boot.log bestand\\n* Nummer: waar nummer is het aantal tijdstempel boot.log bestanden te behouden.\\n\\nEen leeg waarde resulteert in GEEN aanmaak van tijdstempel boot.log bestand"
 
 #. type: "327.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:26
+#: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
 msgid "Advanced Configurations"
 msgstr "Geavanceerde Configuraties"
 
 #. type: "329.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:27
+#: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
 msgid "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on the same disk drive as the system partition\\n* diskX: disk device\\n* GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on the same disk drive that the ESP partition\\n\\nEmpty value result in not mounting ESP partition on boot"
-msgstr ""
-"Mounten van de ESP partitie bij opstarten.\\n\\nWaarde:\\n* Ja: mount de ESP op "
-"dezelfde hardeschijf als de systeem partitie\\n* diskX: disk device\\n* GUID: "
-"GUID van de ESP\\n* VolumeNaam: Volume naam van de volume dat is op dezelfde "
-"schijf van de ESP partitie\\n\\nLeeg waarde resulteert in het niet mounten "
-"van ESP partitie tijdens opstarten"
+msgstr "Mounten van de ESP partitie bij opstarten.\\n\\nWaarde:\\n* Ja: mount de ESP op dezelfde hardeschijf als de systeem partitie\\n* diskX: disk device\\n* GUID: GUID van de ESP\\n* VolumeNaam: Volume naam van de volume dat is op dezelfde schijf van de ESP partitie\\n\\nLeeg waarde resulteert in het niet mounten van ESP partitie tijdens opstarten"
 
 #. type: "332.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:28
+#: ../CloverPrefpane/CloverPrefpane.strings:25
 #, no-wrap
 msgid "MountEFI:"
 msgstr "MountEFI:"
 
 #. type: "337.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:29
+#: ../CloverPrefpane/CloverPrefpane.strings:26
 #, no-wrap
 msgid "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram contents to disk\\n* diskXsY: device node of the volume where the nvram contents will be saved\\n\\nEmpty value save the nvram contents in the nvram.plist file in the root folder of the system partition."
-msgstr ""
-"Sla de inhoud nvram naar de schijf\\n\\nWaarde:\\n* No: niet de inhoud nvram "
-"naar schijf niet schrijven\\n* diskXsY: apparaat knooppunt van het volume "
-"waar de nvram inhoud wordt opgeslagen\\n\\nLeeg waarde resulteert in opslaan "
-"van de nvram inhoud in nvram.plist bestand in de hoofdmap van de systeem "
-"partitie."
+msgstr "Sla de inhoud nvram naar de schijf\\n\\nWaarde:\\n* No: niet de inhoud nvram naar schijf niet schrijven\\n* diskXsY: apparaat knooppunt van het volume waar de nvram inhoud wordt opgeslagen\\n\\nLeeg waarde resulteert in opslaan van de nvram inhoud in nvram.plist bestand in de hoofdmap van de systeem partitie."
 
 #. type: "339.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:30
+#: ../CloverPrefpane/CloverPrefpane.strings:27
 #, no-wrap
 msgid "NVRamDisk:"
 msgstr "NVRamDisk:"
 
-#, fuzzy
-#~| msgid "Clover Theme"
-#~ msgid "Clover Theme:"
-#~ msgstr "Clover Thema"
+#. type: "374.label"
+#: ../CloverPrefpane/CloverPrefpane.strings:28
+#, fuzzy, no-wrap
+#| msgid "Themes"
+msgid "Theme"
+msgstr "Thema's"
+
+#. type: "392.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:29
+#, fuzzy, no-wrap
+#| msgid "Clover Theme"
+msgid "Clover Theme"
+msgstr "Clover Thema"
+
+#. type: "399.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:30
+#, no-wrap
+msgid "Author:"
+msgstr ""
+
+#. type: "401.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:31
+#, no-wrap
+msgid "Year:"
+msgstr ""
+
+#. type: "405.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:32
+#, no-wrap
+msgid "EFI Folder Path:"
+msgstr ""
+
+#. type: "423.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:33
+#, no-wrap
+msgid "To see previews of themes you must select the path to the EFI folder above."
+msgstr ""
+
+#. type: "426.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:34
+#, no-wrap
+msgid "Theme:"
+msgstr "Thema:"
+
+#~ msgid "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined in config.plist is use."
+#~ msgstr ""
+#~ "Thema te gebruiken voor Clover GUI\n"
+#~ "Als de waarde leeg is, wordt Clover thema gedefinieerd in config.plist gebruikt."
+
+#~ msgid "GUI Appearance"
+#~ msgstr "GUI Uiterlijk"
 
 #~| msgid "Install Clover in the ESP"
 #~ msgid "Install CloverUpdater"

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Default Themes</key>
+	<array>
+		<string>AppleStyle</string>
+		<string>black_green</string>
+		<string>iClover</string>
+		<string>metal</string>
+		<string>mrengles</string>
+	</array>
+</dict>
+</plist>

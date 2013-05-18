@@ -6,15 +6,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-12 14:19+0300\n"
-"PO-Revision-Date: 2013-05-18 11:26+0000\n"
-"Last-Translator: JrCs <d2t56xxptp@snkmail.com>\n"
+"POT-Creation-Date: 2013-05-18 13:33+0300\n"
+"PO-Revision-Date: 2013-05-18 14:01+0100\n"
+"Last-Translator: JrCs\n"
 "Language-Team: fr <fr@li.org>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Pootle 2.5.0-rc1\n"
+"X-Generator: Poedit 1.5.5\n"
 "X-POOTLE-MTIME: 1368876413.0\n"
 
 #. type: Content of: <html><body><div><p>
@@ -905,130 +905,152 @@ msgstr "Vérifier Maintenant"
 msgid "Copyright (c) 2013 JrCs"
 msgstr "Copyright © 2013 JrCs"
 
-#. type: "267.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:13
-#, no-wrap
-msgid "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined in config.plist is use."
-msgstr "Thème utilisé par l'interface graphique de Clover\\nSi la valeur est vide, le thème défini dans le fichier config.plist est utilisé."
-
-#. type: "292.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:14
-#, no-wrap
-msgid "GUI Appearance"
-msgstr "Interface Graphique"
-
 #. type: "294.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:15
+#: ../CloverPrefpane/CloverPrefpane.strings:13
 #, no-wrap
 msgid "NVRam Variables"
 msgstr "Variables NVRam"
 
 #. type: "295.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:16
+#: ../CloverPrefpane/CloverPrefpane.strings:14
 #, no-wrap
 msgid "General"
 msgstr "Général"
 
 #. type: "298.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:17
+#: ../CloverPrefpane/CloverPrefpane.strings:15
 #, no-wrap
 msgid "Revisions"
 msgstr "Révisions"
 
 #. type: "300.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:18
+#: ../CloverPrefpane/CloverPrefpane.strings:16
 #, no-wrap
 msgid "Current booted revision:"
 msgstr "Révision utilisée lors du dernier démarrage:"
 
 #. type: "302.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:19
+#: ../CloverPrefpane/CloverPrefpane.strings:17
 #, no-wrap
 msgid "Last installed revision:"
 msgstr "Dernière révision installée:"
 
 #. type: "309.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:20
+#: ../CloverPrefpane/CloverPrefpane.strings:18
 #, no-wrap
 msgid "Log Files"
 msgstr "Fichiers de Log"
 
 #. type: "311.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:21
+#: ../CloverPrefpane/CloverPrefpane.strings:19
 #, no-wrap
 msgid "LogLineCount:"
 msgstr "LogLineCount:"
 
 #. type: "313.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:22
+#: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
 msgid "LogEveryBoot:"
 msgstr "LogEveryBoot:"
 
 #. type: "314.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:23
+#: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
-msgstr ""
-"Nombre de lignes d'historique à garder dans le fichier CloverEFI/system.log, "
-"en addition du contenu de CloverEFI/boot.log"
+msgstr "Nombre de lignes d'historique à garder dans le fichier CloverEFI/system.log, en addition du contenu de CloverEFI/boot.log"
 
 #. type: "323.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:24
+#: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* Yes: create a new timestamp boot.log file\\n* Number: where number is the number of timestamp boot.log files to keep.\\n\\nA blank value result in NO creation of timestamp boot.log file"
-msgstr ""
-"Crée un fichier CloverEFI/boot.log horodaté à chaque démarrage\\n\\nValeur:\\n* "
-"Yes: crée un nouveau fichier boot.log horodaté\\n* Nombre: où Nombre est le "
-"nombre de fichiers boot.log à garder.\\n\\nUne valeur vide indique qu'AUCUN "
-"fichier boot.log horodaté ne doit être créé"
-
-#. type: "326.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:25
-#, no-wrap
-msgid "Theme:"
-msgstr "Theme:"
+msgstr "Crée un fichier CloverEFI/boot.log horodaté à chaque démarrage\\n\\nValeur:\\n* Yes: crée un nouveau fichier boot.log horodaté\\n* Nombre: où Nombre est le nombre de fichiers boot.log à garder.\\n\\nUne valeur vide indique qu'AUCUN fichier boot.log horodaté ne doit être créé"
 
 #. type: "327.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:26
+#: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
 msgid "Advanced Configurations"
 msgstr "Configurations Avancées"
 
 #. type: "329.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:27
+#: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
 msgid "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on the same disk drive as the system partition\\n* diskX: disk device\\n* GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on the same disk drive that the ESP partition\\n\\nEmpty value result in not mounting ESP partition on boot"
-msgstr ""
-"Monte la partition ESP au démarrage.\\n\\nValeur:\\n* Yes: monte l'ESP sur le "
-"même disque que celui contenant le système.\\n* diskX: device disque\\n* GUID: "
-"GUID de l'ESP\\n* NomDeVolume: Nom d'un volume sur le même disque que la "
-"partition ESP\\n\\nUne valeur vide indique qu'il ne faut pas monter la "
-"partition ESP au démarrage"
+msgstr "Monte la partition ESP au démarrage.\\n\\nValeur:\\n* Yes: monte l'ESP sur le même disque que celui contenant le système.\\n* diskX: device disque\\n* GUID: GUID de l'ESP\\n* NomDeVolume: Nom d'un volume sur le même disque que la partition ESP\\n\\nUne valeur vide indique qu'il ne faut pas monter la partition ESP au démarrage"
 
 #. type: "332.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:28
+#: ../CloverPrefpane/CloverPrefpane.strings:25
 #, no-wrap
 msgid "MountEFI:"
 msgstr "MountEFI:"
 
 #. type: "337.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:29
+#: ../CloverPrefpane/CloverPrefpane.strings:26
 #, no-wrap
 msgid "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram contents to disk\\n* diskXsY: device node of the volume where the nvram contents will be saved\\n\\nEmpty value save the nvram contents in the nvram.plist file in the root folder of the system partition."
 msgstr "Sauve le contenu de la nvram sur disque\\n\\nValeur:\\n* No: ne sauve pas le contenu de la nvram sur disque\\n* diskXsY: partition où sera stocké le contenu de la nvram\\n\\nUne valeur vide indique que le contenu de la nvram sera sauvegardé dans un fichier nvram.plist à la racine de la partition système."
 
 #. type: "339.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:30
+#: ../CloverPrefpane/CloverPrefpane.strings:27
 #, no-wrap
 msgid "NVRamDisk:"
 msgstr "NVRamDisk:"
 
+#. type: "374.label"
+#: ../CloverPrefpane/CloverPrefpane.strings:28
+#, no-wrap
+#| msgid "Themes"
+msgid "Theme"
+msgstr "Thème"
+
+#. type: "392.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:29
+#, no-wrap
+#| msgid "Clover Theme:"
+msgid "Clover Theme"
+msgstr "Thème de Clover"
+
+#. type: "399.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:30
+#, no-wrap
+msgid "Author:"
+msgstr "Auteur:"
+
+#. type: "401.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:31
+#, no-wrap
+msgid "Year:"
+msgstr "Année:"
+
+#. type: "405.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:32
+#, no-wrap
+msgid "EFI Folder Path:"
+msgstr "Répertoire EFI:"
+
+#. type: "423.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:33
+#, no-wrap
+msgid "To see previews of themes you must select the path to the EFI folder above."
+msgstr "Pour voir les aperçus des thèmes, vous devez sélectionner le chemin d'accès au dossier EFI."
+
+#. type: "426.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:34
+#, no-wrap
+msgid "Theme:"
+msgstr "Theme:"
+
+#~ msgid ""
+#~ "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined "
+#~ "in config.plist is use."
+#~ msgstr ""
+#~ "Thème utilisé par l'interface graphique de Clover\\nSi la valeur est "
+#~ "vide, le thème défini dans le fichier config.plist est utilisé."
+
+#~ msgid "GUI Appearance"
+#~ msgstr "Interface Graphique"
+
 #~ msgid "Informations"
 #~ msgstr "Informations"
-
-#~ msgid "Clover Theme:"
-#~ msgstr "Thème:"
 
 #~ msgid "Install CloverUpdater"
 #~ msgstr "Installation de CloverUpdater"

@@ -16,15 +16,14 @@ static const CFStringRef agentIdentifier=CFSTR("com.projectosx.Clover.Updater");
 static const CFStringRef agentExecutable=CFSTR("/Library/Application Support/Clover/CloverUpdaterUtility");
 static const CFStringRef checkIntervalKey=CFSTR("ScheduledCheckInterval");
 static const CFStringRef lastCheckTimestampKey=CFSTR("LastCheckTimestamp");
+static const CFStringRef efiDirPathKey=CFSTR("EFI Directory Path");
 
 @implementation CloverPrefpane
+
 
 // System Preferences calls this method when the pane is initialized.
 - (id)initWithBundle:(NSBundle *)bundle {
     if ( ( self = [super initWithBundle:bundle] ) != nil ) {
-        // Get a ressource from bundle
-        // NSString* path = [self.bundle pathForResource:@"CloverPrefpane" ofType:@"tiff"];
-        
         NSArray *searchPaths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
         NSString *agentsFolder = [[searchPaths objectAtIndex:0] stringByAppendingPathComponent:@"LaunchAgents"];
         [[NSFileManager defaultManager] createDirectoryAtPath:agentsFolder withIntermediateDirectories:YES attributes:nil error:nil];
@@ -106,6 +105,13 @@ static const CFStringRef lastCheckTimestampKey=CFSTR("LastCheckTimestamp");
     // Init NVRam variables fields
     [self initNVRamVariableFields];
 
+    // Get EFI Path
+    NSString* efiDir=[self getStringPreferenceKey:efiDirPathKey
+                                         forAppID:(CFStringRef)[self.bundle bundleIdentifier]
+                                      withDefault:CFSTR("/")];
+    [_EFIPathControl setURL:[NSURL fileURLWithPath:efiDir]];
+    [self initThemeTab:efiDir];
+
     // Setup security.
 	AuthorizationItem items = {kAuthorizationRightExecute, 0, NULL, 0};
 	AuthorizationRights rights = {1, &items};
@@ -119,6 +125,25 @@ static const CFStringRef lastCheckTimestampKey=CFSTR("LastCheckTimestamp");
     }
 }
 
+-(void) initNVRamVariableFields {
+    NSString *value;
+
+    value = [self getNVRamKey:[[_logLineCountTextField identifier] UTF8String]];
+    [_logLineCountTextField setStringValue:value];
+
+    value = [self getNVRamKey:[[_logEveryBootTextField identifier] UTF8String]];
+    [_logEveryBootTextField setStringValue:value];
+
+    value = [self getNVRamKey:[[_mountEFITextField identifier] UTF8String]];
+    [_mountEFITextField setStringValue:value];
+
+    value = [self getNVRamKey:[[_nvRamDiskTextField identifier] UTF8String]];
+    [_nvRamDiskTextField setStringValue:value];
+}
+
+
+#pragma mark -
+#pragma mark General Tab Methods
 - (IBAction) configureAutomaticUpdates:(id)sender {
     CFDictionaryRef launchInfo = SMJobCopyDictionary(kSMDomainUserLaunchd, agentIdentifier);
     if (launchInfo != NULL) {
@@ -168,6 +193,14 @@ static const CFStringRef lastCheckTimestampKey=CFSTR("LastCheckTimestamp");
     [[NSWorkspace sharedWorkspace] launchApplication:(NSString*)agentExecutable];
 }
 
+
+- (BOOL)isUnlocked {
+	return [authView authorizationState] == SFAuthorizationViewUnlockedState;
+}
+
+#pragma mark -
+#pragma mark NVRam Tab Methods
+
 - (IBAction)simpleNvramVariableChanged:(id)sender {
     NSString *oldValue = [self getNVRamKey:[[sender identifier] UTF8String]];
     NSString *newValue = [sender stringValue];
@@ -177,9 +210,146 @@ static const CFStringRef lastCheckTimestampKey=CFSTR("LastCheckTimestamp");
     }
 }
 
-- (BOOL)isUnlocked {
-	return [authView authorizationState] == SFAuthorizationViewUnlockedState;
+#pragma mark -
+#pragma mark Theme Tab Methods
+
+- (void) initThemeTab:(NSString*) efiDir {
+
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    BOOL isDir = NO;
+
+    [_cloverThemeComboBox removeAllItems]; // Remove all theme names if exists
+    [_themePreview setImage:nil];
+
+    NSString *themesDir = [efiDir stringByAppendingPathComponent:@"CLOVER/Themes"];
+    [fileManager fileExistsAtPath:themesDir isDirectory:(&isDir)];
+    [_themeWarning setHidden:isDir];
+
+    // get the list of all files and directories
+    NSMutableArray *themes = [[NSMutableArray alloc] init];
+
+    NSArray *fileList = [fileManager contentsOfDirectoryAtPath:themesDir error:nil];
+    if (fileList) {
+        for(NSString *file in fileList) {
+            NSString *path = [[themesDir stringByAppendingPathComponent:file]
+                               stringByAppendingPathComponent:@"theme.plist"];
+            if ([fileManager fileExistsAtPath:path]) {
+                [themes addObject:file];
+            }
+        }
+    }
+    else {
+        // Try to get installed themes
+        NSArray *searchPaths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSLocalDomainMask, YES);
+        NSString *preferenceFolder = [[searchPaths objectAtIndex:0] stringByAppendingPathComponent:@"Preferences"];
+        NSString *cloverInstallerPlist = [[preferenceFolder stringByAppendingPathComponent:kCloverInstaller] stringByAppendingPathExtension:@"plist"];
+        NSDictionary *dict = [[[NSDictionary alloc]
+                              initWithContentsOfFile:cloverInstallerPlist] autorelease];
+        if (dict) {
+            NSArray *installedThemes = [dict objectForKey:@"InstalledThemes"];
+            [themes addObjectsFromArray:installedThemes];
+        }
+        else {
+            // Get default themes from bundle
+            NSString* defaultThemePlistPath = [self.bundle pathForResource:@"DefaultThemes" ofType:@"plist"];
+            NSDictionary *dict = [[NSDictionary alloc]
+                                  initWithContentsOfFile:defaultThemePlistPath];
+            NSArray *defaultThemes = [dict objectForKey:@"Default Themes"];
+            if (dict)
+                [dict release];
+
+            [themes addObjectsFromArray:defaultThemes];
+        }
+    }
+
+    NSString* currentTheme = [self getNVRamKey:"Clover.Theme"];
+    if (currentTheme && [themes indexOfObject:currentTheme] == NSNotFound)
+        [themes addObject:currentTheme];
+
+    NSArray *sortedThemes = [themes sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+    [themes release];
+    [_cloverThemeComboBox addItemsWithObjectValues:sortedThemes];
+    if (currentTheme) {
+        [_cloverThemeComboBox selectItemWithObjectValue:currentTheme];
+        [self updateThemeTab:currentTheme];
+    }
 }
+
+- (void) updateThemeTab:(NSString*) themeName {
+    NSString *efiDir    = [[_EFIPathControl URL] path];
+    NSString *themeDir  = [[efiDir stringByAppendingPathComponent:@"CLOVER/Themes"]
+                           stringByAppendingPathComponent:themeName];
+    NSString *imagePath = [themeDir stringByAppendingPathComponent:@"screenshot.png"];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:imagePath])
+        imagePath = [self.bundle pathForResource:@"NoPreview" ofType:@"png"];
+
+    NSImage *image = [[[NSImage alloc] initWithContentsOfFile:imagePath] autorelease];
+    [_themePreview setImage:image];
+
+    // Load the theme.plist file
+    NSString *themePlistPath = [themeDir stringByAppendingPathComponent:@"theme.plist"];
+    NSDictionary *dict = [[[NSDictionary alloc]
+                           initWithContentsOfFile:themePlistPath] autorelease];
+    NSString* author = [dict objectForKey:@"Author"];
+    NSString* Year   = [dict objectForKey:@"Year"];
+    NSString* Informations = [dict objectForKey:@"Informations"];
+    [_themeAuthor setStringValue: author ? author : @"Unknown"];
+    [_themeYear   setStringValue: Year ? Year : @"Unknown"];
+    [_themeInformations setStringValue: Informations ? Informations : @"No informations"];
+
+    NSString *oldValue = [self getNVRamKey:"Clover.Theme"];
+    if ((oldValue.length != 0 || themeName.length != 0) &&
+        ![oldValue isEqualToString:themeName]) {
+        if ([self setNVRamKey:"Clover.Theme" Value:[themeName UTF8String]] != 0) {
+            [_cloverThemeComboBox setStringValue:oldValue];
+            [self updateThemeTab:oldValue];
+        }
+    }
+}
+
+- (IBAction)showPathOpenPanel:(id)sender {
+    NSOpenPanel *panel = [NSOpenPanel openPanel];
+    [panel setAllowsMultipleSelection:NO];
+    [panel setCanChooseDirectories:YES];
+    [panel setCanChooseFiles:NO];
+    [panel setResolvesAliases:YES];
+
+    NSString *panelTitle = NSLocalizedString(@"Select the EFI directory", @"Title for the open panel");
+    [panel setTitle:panelTitle];
+
+    NSString *promptString = NSLocalizedString(@"Set EFI directory", @"Prompt for the open panel prompt");
+    [panel setPrompt:promptString];
+
+    [panel beginSheetModalForWindow:[sender window] completionHandler:^(NSInteger result) {
+
+        // Hide the open panel.
+        [panel orderOut:self];
+
+        // If the return code wasn't OK, don't do anything.
+        if (result != NSOKButton) {
+            return;
+        }
+        // Get the first URL returned from the Open Panel and set it at the first path component of the control.
+        NSURL *url = [[panel URLs] objectAtIndex:0];
+        [_EFIPathControl setURL:url];
+
+        NSString *efiDir = [url path];
+        [self setPreferenceKey:efiDirPathKey
+                      forAppID:(CFStringRef)[self.bundle bundleIdentifier]
+                    fromString:(CFStringRef)efiDir];
+        CFPreferencesAppSynchronize((CFStringRef)[self.bundle bundleIdentifier]); // Force the preferences to be save to disk
+
+        [self initThemeTab:efiDir];
+    }];
+}
+
+- (IBAction)themeComboBox:(NSComboBox*)sender {
+    NSString *themeName = [sender stringValue];
+    [self updateThemeTab:themeName];
+}
+
+#pragma mark -
+#pragma mark Authorization delegates
 
 //
 // SFAuthorization delegates
@@ -191,27 +361,11 @@ static const CFStringRef lastCheckTimestampKey=CFSTR("LastCheckTimestamp");
 }
 
 
--(void) initNVRamVariableFields {
-    NSString *value;
-    value = [self getNVRamKey:[[_themeTextField identifier] UTF8String]];
-    [_themeTextField setStringValue:value];
-
-    value = [self getNVRamKey:[[_logLineCountTextField identifier] UTF8String]];
-    [_logLineCountTextField setStringValue:value];
-
-    value = [self getNVRamKey:[[_logEveryBootTextField identifier] UTF8String]];
-    [_logEveryBootTextField setStringValue:value];
-
-    value = [self getNVRamKey:[[_mountEFITextField identifier] UTF8String]];
-    [_mountEFITextField setStringValue:value];
-
-    value = [self getNVRamKey:[[_nvRamDiskTextField identifier] UTF8String]];
-    [_nvRamDiskTextField setStringValue:value];
-}
-
 //
 // NVRAM methods
 //
+#pragma mark -
+#pragma mark NVRam methods
 
 // Get NVRAM value
 -(NSString*) getNVRamKey:(const char *)key {
@@ -269,6 +423,12 @@ static const CFStringRef lastCheckTimestampKey=CFSTR("LastCheckTimestamp");
     return processError;
 }
 
+//
+// Preferences methods
+//
+#pragma mark -
+#pragma mark Preferences methods
+
 // get and set preference keys functions idea taken from:
 // http://svn.perian.org/branches/perian-1.1/CPFPerianPrefPaneController.m
 - (unsigned int)getUIntPreferenceKey:(CFStringRef)key
@@ -296,5 +456,32 @@ static const CFStringRef lastCheckTimestampKey=CFSTR("LastCheckTimestamp");
 	CFPreferencesSetAppValue(key, numRef, appID);
 	CFRelease(numRef);
 }
+
+- (NSString *)getStringPreferenceKey:(CFStringRef)key
+                            forAppID:(CFStringRef)appID
+                         withDefault:(CFStringRef)defaultValue
+{
+	CFPropertyListRef value;
+	NSString *ret = nil;
+
+	value = CFPreferencesCopyAppValue(key, appID);
+	if(value && CFGetTypeID(value) == CFStringGetTypeID())
+		ret = [NSString stringWithString:(NSString *)value];
+    else
+        ret = [NSString stringWithString:(NSString *)defaultValue];
+
+	if(value)
+		CFRelease(value);
+
+	return ret;
+}
+
+- (void)setPreferenceKey:(CFStringRef)key
+                forAppID:(CFStringRef)appID
+              fromString:(CFStringRef)value
+{
+	CFPreferencesSetAppValue(key, value, appID);
+}
+
 
 @end
