@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-18 13:33+0300\n"
-"PO-Revision-Date: 2013-05-12 07:28+0000\n"
+"PO-Revision-Date: 2013-05-18 16:13+0000\n"
 "Last-Translator: Slice <sergey.slice@gmail.com>\n"
 "Language-Team: ru <ru@li.org>\n"
 "Language: ru\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1368343727.0\n"
+"X-POOTLE-MTIME: 1368893621.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -933,7 +933,7 @@ msgstr "Настройки загрузчика"
 #: ../CloverPrefpane/CloverPrefpane.strings:14
 #, no-wrap
 msgid "General"
-msgstr ""
+msgstr "Обновления"
 
 #. type: "298.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:15
@@ -1036,42 +1036,42 @@ msgstr "Диск для NVRAM:"
 
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:28
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Themes"
 msgid "Theme"
-msgstr "Тема"
+msgstr "Стиль"
 
 #
 #. type: "392.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:29
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Clover Theme"
 msgid "Clover Theme"
-msgstr "Тема для Кловера"
+msgstr "Оформление"
 
 #. type: "399.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "Author:"
-msgstr ""
+msgstr "Автор:"
 
 #. type: "401.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:31
 #, no-wrap
 msgid "Year:"
-msgstr ""
+msgstr "Год:"
 
 #. type: "405.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "EFI Folder Path:"
-msgstr ""
+msgstr "Путь к папке EFI:"
 
 #. type: "423.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
 msgid "To see previews of themes you must select the path to the EFI folder above."
-msgstr ""
+msgstr "Для предпросмотра тем выберите путь к папке EFI."
 
 #. type: "426.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
