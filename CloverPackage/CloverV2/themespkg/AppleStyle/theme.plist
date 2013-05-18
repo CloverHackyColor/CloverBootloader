@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>Author</key>
+	<string>Eps</string>
+	<key>Year</key>
+	<string>2012</string>
+	<key>Description</key>
+	<string>Apple Style</string>
 	<key>Theme</key>
 	<dict>
 		<key>Badges</key>
