@@ -1928,7 +1928,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
     }
 
     if (AsciiStrLen(gSettings.RtMLB) != 17) {
-      DBG("Warning! Your MLB is not suitable for iMessage!\n");
+      DBG("Warning! Your MLB is not suitable for iMessage (must be 17 chars long) !\n");
     }
     
     // if CustomUUID and InjectSystemID are not specified
