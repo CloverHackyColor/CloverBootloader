@@ -292,10 +292,10 @@ static const CFStringRef efiDirPathKey=CFSTR("EFI Directory Path");
                            initWithContentsOfFile:themePlistPath] autorelease];
     NSString* author = [dict objectForKey:@"Author"];
     NSString* Year   = [dict objectForKey:@"Year"];
-    NSString* Informations = [dict objectForKey:@"Informations"];
+    NSString* Description = [dict objectForKey:@"Description"];
     [_themeAuthor setStringValue: author ? author : @"Unknown"];
     [_themeYear   setStringValue: Year ? Year : @"Unknown"];
-    [_themeInformations setStringValue: Informations ? Informations : @"No informations"];
+    [_themeDescription setStringValue: Description ? Description : @"No description"];
 
     NSString *oldValue = [self getNVRamKey:"Clover.Theme"];
     if ((oldValue.length != 0 || themeName.length != 0) &&

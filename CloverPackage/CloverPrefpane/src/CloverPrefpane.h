@@ -31,7 +31,7 @@
     IBOutlet NSImageView *_themePreview;
     IBOutlet NSTextField *_themeAuthor;
     IBOutlet NSTextField *_themeYear;
-    IBOutlet NSTextField *_themeInformations;
+    IBOutlet NSTextField *_themeDescription;
     IBOutlet NSTextField *_themeWarning;
 }
 
