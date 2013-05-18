@@ -7,15 +7,15 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-12 14:19+0300\n"
-"PO-Revision-Date: 2013-05-11 21:22+0100\n"
-"Last-Translator: JrCs\n"
+"PO-Revision-Date: 2013-05-18 11:26+0000\n"
+"Last-Translator: JrCs <d2t56xxptp@snkmail.com>\n"
 "Language-Team: fr <fr@li.org>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.5\n"
-"X-POOTLE-MTIME: 1368115225.0\n"
+"X-Generator: Pootle 2.5.0-rc1\n"
+"X-POOTLE-MTIME: 1368876413.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -927,7 +927,7 @@ msgstr "Variables NVRam"
 #: ../CloverPrefpane/CloverPrefpane.strings:16
 #, no-wrap
 msgid "General"
-msgstr ""
+msgstr "Général"
 
 #. type: "298.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:17
@@ -970,12 +970,18 @@ msgstr "LogEveryBoot:"
 #, no-wrap
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
 msgstr ""
+"Nombre de lignes d'historique à garder dans le fichier CloverEFI/system.log, "
+"en addition du contenu de CloverEFI/boot.log"
 
 #. type: "323.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* Yes: create a new timestamp boot.log file\\n* Number: where number is the number of timestamp boot.log files to keep.\\n\\nA blank value result in NO creation of timestamp boot.log file"
 msgstr ""
+"Crée un fichier CloverEFI/boot.log horodaté à chaque démarrage\\n\\nValeur:\\n* "
+"Yes: crée un nouveau fichier boot.log horodaté\\n* Nombre: où Nombre est le "
+"nombre de fichiers boot.log à garder.\\n\\nUne valeur vide indique qu'AUCUN "
+"fichier boot.log horodaté ne doit être créé"
 
 #. type: "326.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:25
@@ -994,6 +1000,11 @@ msgstr "Configurations Avancées"
 #, no-wrap
 msgid "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on the same disk drive as the system partition\\n* diskX: disk device\\n* GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on the same disk drive that the ESP partition\\n\\nEmpty value result in not mounting ESP partition on boot"
 msgstr ""
+"Monte la partition ESP au démarrage.\\n\\nValeur:\\n* Yes: monte l'ESP sur le "
+"même disque que celui contenant le système.\\n* diskX: device disque\\n* GUID: "
+"GUID de l'ESP\\n* NomDeVolume: Nom d'un volume sur le même disque que la "
+"partition ESP\\n\\nUne valeur vide indique qu'il ne faut pas monter la "
+"partition ESP au démarrage"
 
 #. type: "332.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:28
