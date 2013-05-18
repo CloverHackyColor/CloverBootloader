@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-18 13:33+0300\n"
-"PO-Revision-Date: 2013-05-12 15:55+0000\n"
+"PO-Revision-Date: 2013-05-18 19:09+0000\n"
 "Last-Translator: kyndder <kyndder@icloud.com>\n"
 "Language-Team: pt <pt@li.org>\n"
 "Language: br\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1368374115.0\n"
+"X-POOTLE-MTIME: 1368904176.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -821,13 +821,13 @@ msgstr "Sai do Clover Updater"
 #: ../CloverUpdater/CloverUpdater.strings:6
 #, no-wrap
 msgid "Current local Clover revision:"
-msgstr "Versão local atual do Clover"
+msgstr "Versão local atual do Clover:"
 
 #. type: "538.title"
 #: ../CloverUpdater/CloverUpdater.strings:7
 #, no-wrap
 msgid "Latest update revision:"
-msgstr "Última versão do update"
+msgstr "Última versão do update:"
 
 #. type: "542.title"
 #: ../CloverUpdater/CloverUpdater.strings:8
@@ -899,13 +899,13 @@ msgstr "Verificar Atualizações"
 #: ../CloverPrefpane/CloverPrefpane.strings:9
 #, no-wrap
 msgid "Schedule Check Updates Every:"
-msgstr "Agendar a verificação a cada"
+msgstr "Agendar a verificação a cada:"
 
 #. type: "248.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:10
 #, no-wrap
 msgid "Last check:"
-msgstr "Última verificação"
+msgstr "Última verificação:"
 
 #. type: "258.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:11
@@ -1011,42 +1011,44 @@ msgstr "NVRamDisk:"
 
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:28
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Themes"
 msgid "Theme"
-msgstr "Temas"
+msgstr "Tema"
 
 #
 #. type: "392.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:29
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Clover Theme"
 msgid "Clover Theme"
-msgstr "Temas Clover"
+msgstr "Tema do Clover"
 
 #. type: "399.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "Author:"
-msgstr ""
+msgstr "Autor:"
 
 #. type: "401.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:31
 #, no-wrap
 msgid "Year:"
-msgstr ""
+msgstr "Ano:"
 
 #. type: "405.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "EFI Folder Path:"
-msgstr ""
+msgstr "Caminho para a pasta EFI:"
 
 #. type: "423.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
 msgid "To see previews of themes you must select the path to the EFI folder above."
 msgstr ""
+"Para ver os previews dos temas você deve especificar o caminho para a pasta "
+"EFI acima."
 
 #. type: "426.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
