@@ -37,6 +37,16 @@ esac
 # Store last install revision
 $plistbuddy -c "Add CloverRevision integer %CLOVERREVISION%" "$CLOVER_INSTALLER_PLIST_NEW" >/dev/null
 
+# Store installed themes
+$plistbuddy -c "Add InstalledThemes array" "$CLOVER_INSTALLER_PLIST_NEW" >/dev/null
+index=0
+while read -r -u3 theme_plist; do
+    theme=${theme_plist%/*}
+    theme=${theme##*/}
+    $plistbuddy -c "Add InstalledThemes:$index string $theme" "$CLOVER_INSTALLER_PLIST_NEW" >/dev/null
+	index=$((index + 1))
+done 3< <(find "/Volumes/BootLoader/EFI/CLOVER/themes" -iname 'theme.plist')
+
 echo "" >> "${install_log}"
 echo "======================================================" >> "${install_log}"
 echo "=========== Clover EFI Installation Finish ===========" >> "${install_log}"
