@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>Author</key>
+	<string>Robert (Mrengles)</string>
+	<key>Year</key>
+	<string>2013</string>
+	<key>Description</key>
+	<string>Elegant and simple Bootcamp styled theme with tons of extra artwork and icons to choose from for easy customization.</string>
 	<key>Theme</key>
 	<dict>
 		<key>Badges</key>
@@ -40,6 +46,8 @@
 			<key>Small</key>
 			<string>Selection_Small.png</string>
 		</dict>
+		<key>Anime</key>
+		<array/>
 	</dict>
 </dict>
 </plist>
