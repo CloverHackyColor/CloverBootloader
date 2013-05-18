@@ -1209,7 +1209,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
     //      gSettings.EnableC6        = TRUE;
           gSettings.PluginType      = 1;
           gSettings.MinMultiplier   = 7;
-          gSettings.DoubleFirstState = TRUE;
+          gSettings.DoubleFirstState = FALSE;
           gSettings.DropSSDT        = TRUE;
           gSettings.C3Latency       = 0x3E7;
         }

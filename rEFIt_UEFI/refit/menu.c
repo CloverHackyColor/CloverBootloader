@@ -3230,7 +3230,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     UnicodeSPrint(Flags, 255, L"Theme:");
     InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
     InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = StrLen(InputItems[0].SValue);
+    InputBootArgs->Entry.Row = StrLen(InputItems[3].SValue);
     InputBootArgs->Item = &InputItems[3];  
     InputBootArgs->Entry.AtClick = ActionSelect;
     InputBootArgs->Entry.AtRightClick = ActionEnter;

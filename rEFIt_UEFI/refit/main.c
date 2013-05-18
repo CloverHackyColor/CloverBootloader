@@ -2549,9 +2549,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   gFirmwareClover = StrCmp(gST->FirmwareVendor, L"CLOVER") == 0;
   
   InitializeConsoleSim();
-	InitBooterLog();
-  DBG("\n");
-  DBG("Starting rEFIt rev %s on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
+  if (!GlobalConfig.FastBoot) {
+    InitBooterLog();
+    DBG("\n");
+    DBG("Starting rEFIt rev %s on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
+  }
   Status = InitRefitLib(gImageHandle);
   if (EFI_ERROR(Status))
     return Status;
@@ -2624,7 +2626,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (gEmuVariableControl != NULL) {
     gEmuVariableControl->InstallEmulation(gEmuVariableControl);
   }
-  
+
+  if (!GlobalConfig.FastBoot) {
   // init screen and dump video modes to log
   if (gDriversFlags.VideoLoaded) {
     InitScreen(FALSE);
@@ -2632,6 +2635,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     InitScreen(!gFirmwareClover); // ? FALSE : TRUE);
   }
 //  DBG("InitScreen\n");
+  }
   
   //Now we have to reinit handles
   Status = ReinitSelfLib();
@@ -2658,9 +2662,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //  DBG("GetCPUProperties OK\n");
   GetDevices();
  //     DBG("GetDevices OK\n");
+  if (!GlobalConfig.FastBoot) {
   DBG("ScanSPD() start\n");
   ScanSPD();
   DBG("ScanSPD() end\n");
+  }
  //       DBG("ScanSPD OK\n");
   SetPrivateVarProto();
 //        DBG("SetPrivateVarProto OK\n");
@@ -2716,60 +2722,65 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         PutNvramPlistToRtVars();
       }
     }
-    Status = GetThemeSettings(TRUE);
-    if (EFI_ERROR(Status)) {
-      DBG("Theme settings in main cycle: %r\n", Status);
-    }
+    if (!GlobalConfig.FastBoot) {
+      Status = GetThemeSettings(TRUE);
+      if (EFI_ERROR(Status)) {
+        DBG("Theme settings in main cycle: %r\n", Status);
+      }
+      //changing theme we need to change Volumes Images
+      reinitImages();
+      PrepareFont();
 
-    //changing theme we need to change Volumes Images
-    reinitImages();    
-    PrepareFont();
-    
-    //now it is a time to set RtVariables
-    SetVariablesFromNvram();
-    FillInputs();
-    // scan for loaders and tools, add then to the menu
-    if (!GlobalConfig.NoLegacy && GlobalConfig.LegacyFirst){
-      //DBG("scan legacy first\n");
-      ScanLegacy();
-    }
+      //now it is a time to set RtVariables
+      SetVariablesFromNvram();
+      FillInputs();
+      // scan for loaders and tools, add then to the menu
+      if (!GlobalConfig.NoLegacy && GlobalConfig.LegacyFirst){
+        //DBG("scan legacy first\n");
+        ScanLegacy();
+      }
+   }
+
     ScanLoader();
 //          DBG("ScanLoader OK\n");
-    if (!GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst){
+    if (!GlobalConfig.FastBoot && !GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst){
 //      DBG("scan legacy second\n");
       ScanLegacy();
       //DBG("ScanLegacy()\n");
     }
-    // fixed other menu entries
-//               DBG("FillInputs OK\n");
-    if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
-      MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
-      AddMenuEntry(&MainMenu, &MenuEntryAbout);
-    }
-    
-    if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
-      MenuEntryOptions.Image = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
-      AddMenuEntry(&MainMenu, &MenuEntryOptions);
-    }  
 
-    if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
-      ScanTool();
-//      DBG("ScanTool()\n");
+    if (!GlobalConfig.FastBoot) {
+      // fixed other menu entries
+      //               DBG("FillInputs OK\n");
+      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
+        MenuEntryAbout.Image = BuiltinIcon(BUILTIN_ICON_FUNC_ABOUT);
+        AddMenuEntry(&MainMenu, &MenuEntryAbout);
+      }
+
+      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
+        MenuEntryOptions.Image = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
+        AddMenuEntry(&MainMenu, &MenuEntryOptions);
+      }
+
+      if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_TOOLS)) {
+        ScanTool();
+        //      DBG("ScanTool()\n");
+      }
+
+      if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.EntryCount == 0) {
+        MenuEntryReset.Image = BuiltinIcon(BUILTIN_ICON_FUNC_RESET);
+        //    DBG("Reset.Image->Width=%d\n", MenuEntryReset.Image->Width);
+        AddMenuEntry(&MainMenu, &MenuEntryReset);
+        MenuEntryShutdown.Image = BuiltinIcon(BUILTIN_ICON_FUNC_SHUTDOWN);
+        //    DBG("Shutdown.Image->Width=%d\n", MenuEntryShutdown.Image->Width);
+        AddMenuEntry(&MainMenu, &MenuEntryShutdown);
+      }
+
+      // wait for user ACK when there were errors
+      FinishTextScreen(FALSE);
+      //   DBG("FinishTextScreen()\n");
+
     }
-    
-    if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS) || MainMenu.EntryCount == 0) {
-      MenuEntryReset.Image = BuiltinIcon(BUILTIN_ICON_FUNC_RESET);
-      //    DBG("Reset.Image->Width=%d\n", MenuEntryReset.Image->Width);
-      AddMenuEntry(&MainMenu, &MenuEntryReset);
-      MenuEntryShutdown.Image = BuiltinIcon(BUILTIN_ICON_FUNC_SHUTDOWN);
-      //    DBG("Shutdown.Image->Width=%d\n", MenuEntryShutdown.Image->Width);
-      AddMenuEntry(&MainMenu, &MenuEntryShutdown);
-    }
-        
-    // wait for user ACK when there were errors
-    FinishTextScreen(FALSE);
- //   DBG("FinishTextScreen()\n");
-    
     DefaultIndex = FindDefaultEntry();
 //    DBG("FindDefaultEntry()\n");
     //  DBG("DefaultIndex=%d and MainMenu.EntryCount=%d\n", DefaultIndex, MainMenu.EntryCount);
@@ -2779,9 +2790,17 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       DefaultEntry = NULL;
     }
 //    MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
-    MainMenu.AnimeRun = GetAnime(&MainMenu);
-    // PauseForKey(L"Enter main loop");
-    MainLoopRunning = TRUE;
+    if (!GlobalConfig.FastBoot || !DefaultEntry) {
+      MainMenu.AnimeRun = GetAnime(&MainMenu);
+      MainLoopRunning = TRUE;
+    } else {
+      StartLoader((LOADER_ENTRY *)DefaultEntry);
+      MainLoopRunning = FALSE;
+      GlobalConfig.FastBoot = FALSE; //Hmm... will never be here
+    }
+      // PauseForKey(L"Enter main loop");
+    
+
     AfterTool = FALSE;
     gEvent = 0; //clear to cancel loop
     while (MainLoopRunning) {

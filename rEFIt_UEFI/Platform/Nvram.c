@@ -499,6 +499,11 @@ EFI_STATUS LoadLatestNvramPlist(VOID)
             DBG(" - no nvram.plist - skipping!\n");
             continue;
         }
+
+      if (GlobalConfig.FastBoot) {
+        VolumeWithLatestNvramPlist = Volume;
+        break;
+      }
         
         // get nvram.plist modification date
         FileInfo = EfiLibFileInfo(FileHandle);

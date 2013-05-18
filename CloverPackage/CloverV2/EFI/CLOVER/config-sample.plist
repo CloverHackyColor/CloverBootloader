@@ -25,6 +25,8 @@
 			<dict>
 				<key>Name</key>
 				<string>AppleAHCIPort</string>
+				<key>Comment</key>
+				<string>External icons patch</string>
 				<key>Find</key>
 				<data>RXh0ZXJuYWw=</data>
 				<key>Replace</key>

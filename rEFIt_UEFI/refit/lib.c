@@ -880,6 +880,10 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   /*  else {
    DBG("HD path is not found\n"); //master volume!
    }*/
+
+  if (GlobalConfig.FastBoot) {
+    return EFI_SUCCESS;
+  }
   
   if (!Bootable) {
 #if REFIT_DEBUG > 0
@@ -1085,7 +1089,9 @@ VOID ScanVolumes(VOID)
   for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
     
     // for quick default volume boot - skip volumes other then self volume and GPT volume with gEfiBootDeviceGuid
-    if (GlobalConfig.Timeout == 0 && gEfiBootDeviceGuid != NULL && Handles[HandleIndex] != SelfDeviceHandle) {
+    if ((GlobalConfig.FastBoot || GlobalConfig.Timeout == 0) &&
+        gEfiBootDeviceGuid != NULL &&
+        Handles[HandleIndex] != SelfDeviceHandle) {
       VolumeDevicePath = DevicePathFromHandle(Handles[HandleIndex]);
       Guid = FindGPTPartitionGuidInDevicePath(VolumeDevicePath);
       if (!Guid || !CompareGuid(Guid, gEfiBootDeviceGuid)) {
