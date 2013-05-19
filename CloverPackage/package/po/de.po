@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 11:49+0300\n"
-"PO-Revision-Date: 2013-05-16 14:53+0000\n"
+"PO-Revision-Date: 2013-05-19 17:18+0000\n"
 "Last-Translator: !Xabbu <holger_frey07@web.de>\n"
 "Language-Team: ge <ge@li.org>\n"
 "Language: de\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1368716017.0\n"
+"X-POOTLE-MTIME: 1368983908.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -1015,15 +1015,15 @@ msgstr "NVRamDisk:"
 
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:28
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Themes"
 msgid "Theme"
-msgstr "Themen"
+msgstr "Thema"
 
 #
 #. type: "392.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:29
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Clover Theme"
 msgid "Clover Theme"
 msgstr "Clover Thema"
@@ -1032,25 +1032,26 @@ msgstr "Clover Thema"
 #: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "Author:"
-msgstr ""
+msgstr "Autor:"
 
 #. type: "401.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:31
 #, no-wrap
 msgid "Year:"
-msgstr ""
+msgstr "Jahr:"
 
 #. type: "405.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "EFI Folder Path:"
-msgstr ""
+msgstr "EFI Ordnerpfad:"
 
 #. type: "423.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
 msgid "To see previews of themes you must select the path to the EFI folder."
 msgstr ""
+"Für eine Vorschau der Themen muss der Pfad zum EFI Ordner angegeben werden."
 
 #. type: "426.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
@@ -1062,7 +1063,7 @@ msgstr "Themen"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
 #, no-wrap
 msgid "No Preview Available"
-msgstr ""
+msgstr "Keine Vorschau verfügbar"
 
 #~ msgid ""
 #~ "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined "
