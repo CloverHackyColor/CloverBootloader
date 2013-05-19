@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 11:49+0300\n"
-"PO-Revision-Date: 2013-05-18 15:20+0000\n"
-"Last-Translator: blackosx <blackosx@gmail.com>\n"
+"PO-Revision-Date: 2013-05-19 09:52+0000\n"
+"Last-Translator: JrCs <d2t56xxptp@snkmail.com>\n"
 "Language-Team: en <en@li.org>\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1368890428.0\n"
+"X-POOTLE-MTIME: 1368957151.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -1037,10 +1037,10 @@ msgstr "EFI Folder Path:"
 
 #. type: "423.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:33
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "To see previews of themes you must select the path to the EFI folder above."
 msgid "To see previews of themes you must select the path to the EFI folder."
-msgstr "To see previews of themes you must select the path to the EFI folder above."
+msgstr "To see previews of themes you must select the path to the EFI folder."
 
 #. type: "426.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
@@ -1052,7 +1052,7 @@ msgstr "Theme:"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
 #, no-wrap
 msgid "No Preview Available"
-msgstr ""
+msgstr "No Preview Available"
 
 #~ msgid ""
 #~ "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined "
