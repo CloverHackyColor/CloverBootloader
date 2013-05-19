@@ -6,8 +6,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Clover v2.0-r1671\n"
-"POT-Creation-Date: 2013-05-18 13:33+0300\n"
+"Project-Id-Version: Clover v2.0-r1676\n"
+"POT-Creation-Date: 2013-05-19 11:49+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -963,11 +963,17 @@ msgstr ""
 #. type: "423.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
-msgid "To see previews of themes you must select the path to the EFI folder above."
+msgid "To see previews of themes you must select the path to the EFI folder."
 msgstr ""
 
 #. type: "426.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
 #, no-wrap
 msgid "Theme:"
+msgstr ""
+
+#. type: "429.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:35
+#, no-wrap
+msgid "No Preview Available"
 msgstr ""

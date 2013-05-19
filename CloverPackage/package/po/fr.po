@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-18 13:33+0300\n"
-"PO-Revision-Date: 2013-05-18 14:01+0100\n"
+"POT-Creation-Date: 2013-05-19 11:41+0300\n"
+"PO-Revision-Date: 2013-05-19 11:49+0100\n"
 "Last-Translator: JrCs\n"
 "Language-Team: fr <fr@li.org>\n"
 "Language: fr\n"
@@ -998,14 +998,12 @@ msgstr "NVRamDisk:"
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
-#| msgid "Themes"
 msgid "Theme"
 msgstr "Thème"
 
 #. type: "392.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
-#| msgid "Clover Theme:"
 msgid "Clover Theme"
 msgstr "Thème de Clover"
 
@@ -1030,14 +1028,21 @@ msgstr "Répertoire EFI:"
 #. type: "423.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
-msgid "To see previews of themes you must select the path to the EFI folder above."
-msgstr "Pour voir les aperçus des thèmes, vous devez sélectionner le chemin d'accès au dossier EFI."
+#| msgid "To see previews of themes you must select the path to the EFI folder above."
+msgid "To see previews of themes you must select the path to the EFI folder."
+msgstr "Pour voir les aperçus des thèmes, vous devez sélectionner le chemin d'accès au répertoire EFI."
 
 #. type: "426.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
 #, no-wrap
 msgid "Theme:"
 msgstr "Theme:"
+
+#. type: "429.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:35
+#, no-wrap
+msgid "No Preview Available"
+msgstr "Aucun Aperçu Disponible"
 
 #~ msgid ""
 #~ "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined "

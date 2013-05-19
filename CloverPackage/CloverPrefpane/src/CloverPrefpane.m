@@ -280,8 +280,12 @@ static const CFStringRef efiDirPathKey=CFSTR("EFI Directory Path");
     NSString *themeDir  = [[efiDir stringByAppendingPathComponent:@"CLOVER/Themes"]
                            stringByAppendingPathComponent:themeName];
     NSString *imagePath = [themeDir stringByAppendingPathComponent:@"screenshot.png"];
-    if (![[NSFileManager defaultManager] fileExistsAtPath:imagePath])
+    if (![[NSFileManager defaultManager] fileExistsAtPath:imagePath]) {
         imagePath = [self.bundle pathForResource:@"NoPreview" ofType:@"png"];
+        [_noPreviewLabel setHidden:NO];
+    }
+    else
+        [_noPreviewLabel setHidden:YES];
 
     NSImage *image = [[[NSImage alloc] initWithContentsOfFile:imagePath] autorelease];
     [_themePreview setImage:image];

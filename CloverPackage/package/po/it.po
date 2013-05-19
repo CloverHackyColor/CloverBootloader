@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-18 13:33+0300\n"
+"POT-Creation-Date: 2013-05-19 11:49+0300\n"
 "PO-Revision-Date: 2013-05-18 17:40+0000\n"
 "Last-Translator: mackie100 <mackie.proj@yahoo.com>\n"
 "Language-Team: it <it@li.org>\n"
@@ -1014,7 +1014,6 @@ msgstr "NVRamDisk:"
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
-#| msgid "Themes"
 msgid "Theme"
 msgstr "Tema"
 
@@ -1022,7 +1021,6 @@ msgstr "Tema"
 #. type: "392.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
-#| msgid "Clover Theme"
 msgid "Clover Theme"
 msgstr "Tema Clover"
 
@@ -1046,11 +1044,10 @@ msgstr "Percorso cartella EFI:"
 
 #. type: "423.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:33
-#, no-wrap
-msgid "To see previews of themes you must select the path to the EFI folder above."
-msgstr ""
-"Per vedere le anteprime dei temi è necessario selezionare sopra il percorso "
-"della cartella EFI."
+#, fuzzy, no-wrap
+#| msgid "To see previews of themes you must select the path to the EFI folder above."
+msgid "To see previews of themes you must select the path to the EFI folder."
+msgstr "Per vedere le anteprime dei temi è necessario selezionare sopra il percorso della cartella EFI."
 
 #. type: "426.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
@@ -1058,8 +1055,18 @@ msgstr ""
 msgid "Theme:"
 msgstr "Tema"
 
-#~ msgid "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined in config.plist is use."
-#~ msgstr "Tema utilizzato per l'interfaccia grafica di Clover\\nSe il valore è vuoto, verrà utilizzato il tema definito sul file config.plist"
+#. type: "429.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:35
+#, no-wrap
+msgid "No Preview Available"
+msgstr ""
+
+#~ msgid ""
+#~ "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined "
+#~ "in config.plist is use."
+#~ msgstr ""
+#~ "Tema utilizzato per l'interfaccia grafica di Clover\\nSe il valore è "
+#~ "vuoto, verrà utilizzato il tema definito sul file config.plist"
 
 #~ msgid "GUI Appearance"
 #~ msgstr "Interfaccia Grafica"

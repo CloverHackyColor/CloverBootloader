@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-18 13:33+0300\n"
+"POT-Creation-Date: 2013-05-19 11:49+0300\n"
 "PO-Revision-Date: 2013-05-09 17:58+0000\n"
 "Last-Translator: crazybirdy <>\n"
 "Language-Team: zh_CN <zh_CN@li.org>\n"
@@ -1029,7 +1029,7 @@ msgstr ""
 #. type: "423.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
-msgid "To see previews of themes you must select the path to the EFI folder above."
+msgid "To see previews of themes you must select the path to the EFI folder."
 msgstr ""
 
 #. type: "426.title"
@@ -1038,6 +1038,12 @@ msgstr ""
 #| msgid "Themes"
 msgid "Theme:"
 msgstr "开机主题"
+
+#. type: "429.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:35
+#, no-wrap
+msgid "No Preview Available"
+msgstr ""
 
 #~ msgid "Install CloverUpdater"
 #~ msgstr "安装 Clover更新软件"

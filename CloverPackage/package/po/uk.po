@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-18 13:33+0300\n"
+"POT-Creation-Date: 2013-05-19 11:49+0300\n"
 "PO-Revision-Date: 2013-05-18 15:35+0000\n"
 "Last-Translator: AlexKord <alexkord@lan.com.ua>\n"
 "Language-Team: ua <ua@li.org>\n"
@@ -1041,7 +1041,6 @@ msgstr "NVRamDisk:"
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
-#| msgid "Themes"
 msgid "Theme"
 msgstr "Тема"
 
@@ -1049,7 +1048,6 @@ msgstr "Тема"
 #. type: "392.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
-#| msgid "Clover Theme"
 msgid "Clover Theme"
 msgstr "Тема Кловера"
 
@@ -1073,8 +1071,9 @@ msgstr "Шлях до папки EFI:"
 
 #. type: "423.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:33
-#, no-wrap
-msgid "To see previews of themes you must select the path to the EFI folder above."
+#, fuzzy, no-wrap
+#| msgid "To see previews of themes you must select the path to the EFI folder above."
+msgid "To see previews of themes you must select the path to the EFI folder."
 msgstr "Щоб побачити превью теми необхідно вибрати шлях до папки EFI вище."
 
 #. type: "426.title"
@@ -1083,7 +1082,15 @@ msgstr "Щоб побачити превью теми необхідно виб�
 msgid "Theme:"
 msgstr "Тема:"
 
-#~ msgid "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined in config.plist is use."
+#. type: "429.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:35
+#, no-wrap
+msgid "No Preview Available"
+msgstr ""
+
+#~ msgid ""
+#~ "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined "
+#~ "in config.plist is use."
 #~ msgstr ""
 #~ "Оформлення теми завантажника.\n"
 #~ "якщо значення відсутнє, тему вказувати у файлі config.plist"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-18 13:33+0300\n"
+"POT-Creation-Date: 2013-05-19 11:49+0300\n"
 "PO-Revision-Date: 2013-05-15 10:31+0000\n"
 "Last-Translator: oswaldini <oswaldinimtb@gmail.com>\n"
 "Language-Team: pl <pl@li.org>\n"
@@ -1073,7 +1073,7 @@ msgstr ""
 #. type: "423.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
-msgid "To see previews of themes you must select the path to the EFI folder above."
+msgid "To see previews of themes you must select the path to the EFI folder."
 msgstr ""
 
 #. type: "426.title"
@@ -1082,10 +1082,19 @@ msgstr ""
 msgid "Theme:"
 msgstr "Motyw graficzny:"
 
-#~ msgid "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined in config.plist is use."
+#. type: "429.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:35
+#, no-wrap
+msgid "No Preview Available"
+msgstr ""
+
+#~ msgid ""
+#~ "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined "
+#~ "in config.plist is use."
 #~ msgstr ""
 #~ "Motywy do użycia w Clover GUI.\n"
-#~ "Jeżeli wartość nie jest zdefiniowana Clover ładuje motyw zdefiniowany w config.plist."
+#~ "Jeżeli wartość nie jest zdefiniowana Clover ładuje motyw zdefiniowany w "
+#~ "config.plist."
 
 #~ msgid "GUI Appearance"
 #~ msgstr "Wygląd GUI"

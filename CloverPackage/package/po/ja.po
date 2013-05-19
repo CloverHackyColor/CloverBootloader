@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-18 13:33+0300\n"
+"POT-Creation-Date: 2013-05-19 11:49+0300\n"
 "PO-Revision-Date: 2013-05-16 19:05+0000\n"
 "Last-Translator: kantok <kawakamikazumi@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1019,7 +1019,7 @@ msgstr ""
 #. type: "423.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
-msgid "To see previews of themes you must select the path to the EFI folder above."
+msgid "To see previews of themes you must select the path to the EFI folder."
 msgstr ""
 
 #. type: "426.title"
@@ -1028,8 +1028,18 @@ msgstr ""
 msgid "Theme:"
 msgstr "テーマ："
 
-#~ msgid "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined in config.plist is use."
-#~ msgstr "テーマはCloverのGUIで使用されます。\\n空欄の場合はconfig.plistの設定が反映されます。"
+#. type: "429.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:35
+#, no-wrap
+msgid "No Preview Available"
+msgstr ""
+
+#~ msgid ""
+#~ "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined "
+#~ "in config.plist is use."
+#~ msgstr ""
+#~ "テーマはCloverのGUIで使用されます。\\n空欄の場合はconfig.plistの設定が反映"
+#~ "されます。"
 
 #~ msgid "GUI Appearance"
 #~ msgstr "GUIの外観"

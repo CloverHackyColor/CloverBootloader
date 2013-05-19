@@ -30,5 +30,6 @@
 "399.title" = "Author:";
 "401.title" = "Year:";
 "405.title" = "EFI Folder Path:";
-"423.title" = "To see previews of themes you must select the path to the EFI folder above.";
+"423.title" = "To see previews of themes you must select the path to the EFI folder.";
 "426.title" = "Theme:";
+"429.title" = "No Preview Available";
