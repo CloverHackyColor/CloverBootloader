@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 11:49+0300\n"
-"PO-Revision-Date: 2013-05-15 22:18+0000\n"
+"PO-Revision-Date: 2013-05-19 10:55+0000\n"
 "Last-Translator: Mill <ceruns@ymail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
 "Language: ko\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1368656337.0\n"
+"X-POOTLE-MTIME: 1368960936.0\n"
 
 # //Don't need change
 #. type: Content of: <html><body><div><p>
@@ -991,41 +991,41 @@ msgstr "NVRam디스크:"
 
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:28
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Themes"
 msgid "Theme"
 msgstr "테마"
 
 #. type: "392.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:29
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Clover Theme"
 msgid "Clover Theme"
 msgstr "Clover 테마"
 
 #. type: "399.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:30
-#, no-wrap
+#, fuzzy, no-wrap
 msgid "Author:"
-msgstr ""
+msgstr "저작자:"
 
 #. type: "401.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:31
-#, no-wrap
+#, fuzzy, no-wrap
 msgid "Year:"
-msgstr ""
+msgstr "연도:"
 
 #. type: "405.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "EFI Folder Path:"
-msgstr ""
+msgstr "EFI 폴더 경로:"
 
 #. type: "423.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
 msgid "To see previews of themes you must select the path to the EFI folder."
-msgstr ""
+msgstr "테마의 미리보기를 보기 위해서는 EFI 폴더의 경로를 선택하여야 합니다."
 
 #. type: "426.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
@@ -1037,7 +1037,7 @@ msgstr "테마:"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
 #, no-wrap
 msgid "No Preview Available"
-msgstr ""
+msgstr "미리 볼 수 없습니다"
 
 #~ msgid ""
 #~ "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined "
