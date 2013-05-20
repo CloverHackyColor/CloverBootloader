@@ -2492,6 +2492,8 @@ VOID SetVariablesFromNvram()
   CHAR16  UStr[80];
   CHAR8  *tmpString;
   UINTN   Size = 0;
+  INTN   index = 0, index2, len, i;
+  CHAR8  *arg = NULL;
   
   tmpString = GetNvramVariable(L"Clover.LogLineCount", &gEfiAppleBootGuid, NULL, &Size);
   ZeroMem(UStr, 10);
@@ -2508,7 +2510,38 @@ VOID SetVariablesFromNvram()
   tmpString = GetNvramVariable(L"Clover.LogEveryBoot", &gEfiAppleBootGuid, NULL, &Size);
   if (tmpString) {
     gSettings.LogEveryBoot = AllocateCopyPool(AsciiStrSize(tmpString), tmpString);
-  }  
+  }
+
+  tmpString = GetNvramVariable(L"boot-args", &gEfiAppleBootGuid, NULL, &Size);
+  if (tmpString) {
+    arg = AllocatePool(Size);
+    //first we will find new args that is not present in main args
+    index = 0;
+    while (index < Size) {
+      ZeroMem(arg, Size);
+      index2 = 0;
+      if (tmpString[index] != '\"') {
+        while ((tmpString[index] != 0x20) && (tmpString[index] != 0x0)) {
+          arg[index2++] = tmpString[index++];
+        }
+      } else {
+        index++;
+        while ((tmpString[index] != '\"') && (tmpString[index] != 0x0)) {
+          arg[index2++] = tmpString[index++];
+        }        
+      }
+      if (!AsciiStrStr(gSettings.BootArgs, arg)) {
+        //this arg is not present will add
+        len = iStrLen(gSettings.BootArgs, 256);
+        gSettings.BootArgs[len++] = 0x20;
+        for (i = 0; i < index2; i++) {
+          gSettings.BootArgs[len++] = arg[i];
+        }
+        gSettings.BootArgs[len++] = 0x20;
+      }
+    }
+    FreePool(arg);
+  }
 }
 //
 // main entry point
