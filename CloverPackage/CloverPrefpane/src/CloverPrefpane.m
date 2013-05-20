@@ -55,10 +55,9 @@ static const CFStringRef efiDirPathKey=CFSTR("EFI Directory Path");
     plistExists = [[NSFileManager defaultManager] fileExistsAtPath:cloverInstallerPlist];
     NSString* installedRevision = @"-";
     if (plistExists) {
-        NSDictionary *dict = [[NSDictionary alloc]
-                              initWithContentsOfFile:cloverInstallerPlist];
+        NSDictionary *dict = [[[NSDictionary alloc]
+                              initWithContentsOfFile:cloverInstallerPlist] autorelease];
         NSNumber* revision = [dict objectForKey:@"CloverRevision"];
-        [dict release];
         if (revision)
             installedRevision = [revision stringValue];
     }
@@ -226,7 +225,7 @@ static const CFStringRef efiDirPathKey=CFSTR("EFI Directory Path");
     [_themeWarning setHidden:isDir];
 
     // get the list of all files and directories
-    NSMutableArray *themes = [[NSMutableArray alloc] init];
+    NSMutableArray *themes = [[[NSMutableArray alloc] init] autorelease];
 
     NSArray *fileList = [fileManager contentsOfDirectoryAtPath:themesDir error:nil];
     if (fileList) {
@@ -252,13 +251,13 @@ static const CFStringRef efiDirPathKey=CFSTR("EFI Directory Path");
         else {
             // Get default themes from bundle
             NSString* defaultThemePlistPath = [self.bundle pathForResource:@"DefaultThemes" ofType:@"plist"];
-            NSDictionary *dict = [[NSDictionary alloc]
-                                  initWithContentsOfFile:defaultThemePlistPath];
-            NSArray *defaultThemes = [dict objectForKey:@"Default Themes"];
-            if (dict)
-                [dict release];
-
-            [themes addObjectsFromArray:defaultThemes];
+            NSDictionary *dict = [[[NSDictionary alloc]
+                                  initWithContentsOfFile:defaultThemePlistPath] autorelease];
+            if (dict) {
+                NSArray *defaultThemes = [dict objectForKey:@"Default Themes"];
+                if (defaultThemes)
+                    [themes addObjectsFromArray:defaultThemes];
+            }
         }
     }
 
@@ -267,7 +266,6 @@ static const CFStringRef efiDirPathKey=CFSTR("EFI Directory Path");
         [themes addObject:currentTheme];
 
     NSArray *sortedThemes = [themes sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
-    [themes release];
     [_cloverThemeComboBox addItemsWithObjectValues:sortedThemes];
     if (currentTheme) {
         [_cloverThemeComboBox selectItemWithObjectValue:currentTheme];
