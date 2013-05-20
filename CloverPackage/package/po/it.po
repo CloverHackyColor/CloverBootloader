@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-19 11:49+0300\n"
-"PO-Revision-Date: 2013-05-18 17:40+0000\n"
+"PO-Revision-Date: 2013-05-20 12:46+0000\n"
 "Last-Translator: mackie100 <mackie.proj@yahoo.com>\n"
 "Language-Team: it <it@li.org>\n"
 "Language: it\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1368898834.0\n"
+"X-POOTLE-MTIME: 1369053964.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -1044,10 +1044,12 @@ msgstr "Percorso cartella EFI:"
 
 #. type: "423.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:33
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "To see previews of themes you must select the path to the EFI folder above."
 msgid "To see previews of themes you must select the path to the EFI folder."
-msgstr "Per vedere le anteprime dei temi è necessario selezionare sopra il percorso della cartella EFI."
+msgstr ""
+"Per vedere l'anteprima dei temi è necessario selezionare il percorso della "
+"cartella EFI."
 
 #. type: "426.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
@@ -1059,7 +1061,7 @@ msgstr "Tema"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
 #, no-wrap
 msgid "No Preview Available"
-msgstr ""
+msgstr "Nessuna anteprima disponibile"
 
 #~ msgid ""
 #~ "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined "
