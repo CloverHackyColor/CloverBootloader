@@ -862,6 +862,16 @@ EFI_STATUS GetThemeSettings(BOOLEAN check)
     TagPtr dictPointer = GetProperty(ThemeDict, "Theme");
     if (chosenTheme) {
       GlobalConfig.Theme = PoolPrint(L"%a", chosenTheme);
+      ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", GlobalConfig.Theme);
+      if (ThemePath) {
+        if (ThemeDir) {
+          ThemeDir->Close(ThemeDir);
+        }
+        Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
+        if (!EFI_ERROR(Status)) {
+          DBG("theme reinitialized\n");
+        }
+      }
     }
     DBG("Theme: %s Path: %s\n", GlobalConfig.Theme, ThemePath);
     // read theme settings

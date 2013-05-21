@@ -685,6 +685,9 @@ typedef struct {
   BOOLEAN PatchVBios;
   VBIOS_PATCH_BYTES   *PatchVBiosBytes;
   UINTN   PatchVBiosBytesCount;
+#if defined(MDE_CPU_IA32)
+  UINT32  align1;
+#endif
   BOOLEAN InjectEDID;
   UINT8   *CustomEDID;
   CHAR16  FBName[16];
@@ -698,6 +701,9 @@ typedef struct {
   // HDA
   BOOLEAN HDAInjection;
   UINTN   HDALayoutId;
+#if defined(MDE_CPU_IA32)
+  UINT32  align2;
+#endif
   
   // USB DeviceTree injection
   BOOLEAN USBInjection;
@@ -718,6 +724,9 @@ typedef struct {
   CHAR16  *KPATIConnectorsController;
   UINT8   *KPATIConnectorsData;
   UINTN   KPATIConnectorsDataLen;
+#if defined(MDE_CPU_IA32)
+  UINT32  align3;
+#endif
   UINT8   *KPATIConnectorsPatch;
   INT32   NrKexts;
   KEXT_PATCH *KextPatches;
@@ -741,10 +750,16 @@ typedef struct {
   BOOLEAN HVHideExternalUEFI;
   CHAR16 **HVHideStrings;
   INTN    HVCount;
+#if defined(MDE_CPU_IA32)
+  UINT32  align4;
+#endif
   
   //Pointer
   BOOLEAN PointerEnabled;
   INTN    PointerSpeed;
+#if defined(MDE_CPU_IA32)
+  UINT32  align5;
+#endif
   UINT64  DoubleClickTime;
   BOOLEAN PointerMirror;
   
@@ -752,6 +767,9 @@ typedef struct {
   CHAR8   *RtMLB;
   UINT8   *RtROM;
   UINTN   RtROMLen;
+#if defined(MDE_CPU_IA32)
+  UINT32  align6;
+#endif
   CHAR8   *MountEFI;
   UINT32  LogLineCount;
   CHAR8   *LogEveryBoot;
@@ -760,6 +778,9 @@ typedef struct {
   CHAR16  ConfigName[64];
   //Drivers
   INTN     BlackListCount;
+#if defined(MDE_CPU_IA32)
+  UINT32  align7;
+#endif
   CHAR16 **BlackList;
 
   //SMC keys

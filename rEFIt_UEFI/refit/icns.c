@@ -263,17 +263,21 @@ BUILTIN_ICON BuiltinIconTable[BUILTIN_ICON_COUNT] = {
 
 EG_IMAGE * BuiltinIcon(IN UINTN Id)
 {
-  INTN      Size = BuiltinIconTable[Id].PixelSize;
+  INTN      Size;
   EG_IMAGE  *TextBuffer = NULL;
   CHAR16    *p;
   CHAR16    *Text;
-  if (Id >= BUILTIN_ICON_COUNT)
-    return NULL;
   
+  if (!ThemeDir || (Id >= BUILTIN_ICON_COUNT)) {
+    return NULL;
+  }
+  
+  Size = BuiltinIconTable[Id].PixelSize;
   if (BuiltinIconTable[Id].Image == NULL) {
     BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, BuiltinIconTable[Id].Path, Size);
     if (!BuiltinIconTable[Id].Image){
       DebugLog(1, "  Icon %d (%s) not found\n", Id, BuiltinIconTable[Id].Path);
+      DebugLog(1, "  Theme path %s, ThemeDir=%p\n", ThemePath, ThemeDir);
     }
     if (!BuiltinIconTable[Id].Image && (Id >= BUILTIN_ICON_VOL_INTERNAL)) {
       BuiltinIconTable[Id].Image = LoadIcnsFallback(ThemeDir, BuiltinIconTable[BUILTIN_ICON_VOL_INTERNAL].Path, Size);

@@ -250,7 +250,7 @@ static const CFStringRef efiDirPathKey=CFSTR("EFI Directory Path");
         }
         else {
             // Get default themes from bundle
-            NSString* defaultThemePlistPath = [self.bundle pathForResource:@"DefaultThemes" ofType:@"plist"];
+            NSString* defaultThemePlistPath = [self.bundle pathForResource:@"DefaultThemes.plist" ofType:@"plist"];
             NSDictionary *dict = [[[NSDictionary alloc]
                                   initWithContentsOfFile:defaultThemePlistPath] autorelease];
             if (dict) {
@@ -279,7 +279,7 @@ static const CFStringRef efiDirPathKey=CFSTR("EFI Directory Path");
                            stringByAppendingPathComponent:themeName];
     NSString *imagePath = [themeDir stringByAppendingPathComponent:@"screenshot.png"];
     if (![[NSFileManager defaultManager] fileExistsAtPath:imagePath]) {
-        imagePath = [self.bundle pathForResource:@"NoPreview" ofType:@"png"];
+        imagePath = [self.bundle pathForResource:@"NoPreview.png" ofType:@"png"];
         [_noPreviewLabel setHidden:NO];
     }
     else

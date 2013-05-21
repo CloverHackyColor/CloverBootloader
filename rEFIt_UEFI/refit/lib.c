@@ -1129,7 +1129,9 @@ VOID ScanVolumes(VOID)
       Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
       DBG("  Volume '%s', OS '%s', GUID = %g\n",
           Volume->VolName, Volume->OSName ? Volume->OSName : L"", Guid);
-      if (SelfVolume == Volume)  DBG("  This is SelfVolume !!\n");
+      if (SelfVolume == Volume) {
+        DBG("  This is SelfVolume !!\n");
+      }
       
     } else {
       DBG("wrong volume Nr%d?!\n", HandleIndex);

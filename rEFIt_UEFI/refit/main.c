@@ -2513,7 +2513,8 @@ VOID SetVariablesFromNvram()
   }
 
   tmpString = GetNvramVariable(L"boot-args", &gEfiAppleBootGuid, NULL, &Size);
-  if (tmpString) {
+  if (tmpString && (Size <= 0x1000)) {
+    DBG("found boot-args in NVRAM:%a, size=%d\n", tmpString, Size);
     arg = AllocatePool(Size);
     //first we will find new args that is not present in main args
     index = 0;
@@ -2521,18 +2522,33 @@ VOID SetVariablesFromNvram()
       ZeroMem(arg, Size);
       index2 = 0;
       if (tmpString[index] != '\"') {
-        while ((tmpString[index] != 0x20) && (tmpString[index] != 0x0)) {
+ //       DBG("search space index=%d\n", index);
+        while ((tmpString[index] != 0x20) && (tmpString[index] != 0x0) && (index < Size)) {
           arg[index2++] = tmpString[index++];
         }
+        DBG("...found arg=%a\n", arg);
       } else {
         index++;
-        while ((tmpString[index] != '\"') && (tmpString[index] != 0x0)) {
+//        DBG("search quote index=%d\n", index);
+        while ((tmpString[index] != '\"') && (tmpString[index] != 0x0) && (index < Size)) {
           arg[index2++] = tmpString[index++];
-        }        
+        }     
+        if (tmpString[index] == '\"') {
+          index++;
+        }
+        DBG("...found quoted arg\n", arg);
+      }
+      while (tmpString[index] == 0x20) {
+        index++;
       }
       if (!AsciiStrStr(gSettings.BootArgs, arg)) {
         //this arg is not present will add
+        DBG("adding arg:%a\n", arg); 
         len = iStrLen(gSettings.BootArgs, 256);
+        if (len + index2 > 256) {
+          DBG("boot-args oveflow... bytes=%d+%d\n", len, index2);
+          break;
+        }
         gSettings.BootArgs[len++] = 0x20;
         for (i = 0; i < index2; i++) {
           gSettings.BootArgs[len++] = arg[i];
