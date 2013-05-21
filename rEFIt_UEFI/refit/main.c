@@ -2526,7 +2526,7 @@ VOID SetVariablesFromNvram()
         while ((tmpString[index] != 0x20) && (tmpString[index] != 0x0) && (index < Size)) {
           arg[index2++] = tmpString[index++];
         }
-        DBG("...found arg=%a\n", arg);
+        DBG("...found arg:%a\n", arg);
       } else {
         index++;
 //        DBG("search quote index=%d\n", index);
@@ -2536,14 +2536,14 @@ VOID SetVariablesFromNvram()
         if (tmpString[index] == '\"') {
           index++;
         }
-        DBG("...found quoted arg\n", arg);
+        DBG("...found quoted arg:\n", arg);
       }
       while (tmpString[index] == 0x20) {
         index++;
       }
       if (!AsciiStrStr(gSettings.BootArgs, arg)) {
         //this arg is not present will add
-        DBG("adding arg:%a\n", arg); 
+        DBG("...adding arg:%a\n", arg); 
         len = iStrLen(gSettings.BootArgs, 256);
         if (len + index2 > 256) {
           DBG("boot-args oveflow... bytes=%d+%d\n", len, index2);

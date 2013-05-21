@@ -140,7 +140,7 @@ static const CFStringRef efiDirPathKey=CFSTR("EFI Directory Path");
     [_mountEFITextField setStringValue:value];
 
 //    value = [self getNVRamKey:[[_nvRamDiskTextField identifier] UTF8String]];
-  value = [self getNVRamKey:"Clover.nvRamDisk"];
+  value = [self getNVRamKey:"Clover.RamDisk"];
     [_nvRamDiskTextField setStringValue:value];
 }
 
