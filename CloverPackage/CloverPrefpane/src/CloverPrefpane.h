@@ -36,13 +36,18 @@
     IBOutlet NSTextField *_themeWarning;
 }
 
-- (id) initWithBundle:(NSBundle *)bundle;
-- (void) mainViewDidLoad;
-- (IBAction) checkNow:(id)sender;
-- (IBAction) configureAutomaticUpdates:(id)sender;
-- (IBAction) simpleNvramVariableChanged:(id)sender;
-- (IBAction) showPathOpenPanel:(id)sender;
-- (IBAction) themeComboBox:(NSComboBox*)sender;
+- (id)        initWithBundle:(NSBundle *)bundle;
+- (void)      mainViewDidLoad;
+- (IBAction)  checkNow:(id)sender;
+- (void)      initNVRamVariableFields:(id)sender;
+- (IBAction)  configureAutomaticUpdates:(id)sender;
+- (IBAction)  simpleNvramVariableChanged:(id)sender;
+- (IBAction)  showPathOpenPanel:(id)sender;
+- (IBAction)  themeComboBox:(NSComboBox*)sender;
+- (void)      initThemeTab:(NSString*)efiDir;
+- (NSString*) getNVRamKey:(const char *)key;
+- (OSErr)     setNVRamKey:(const char *)key Value:(const char *)value;
+- (void)      updateThemeTab:(NSString*) themeName;
 
 - (BOOL)isUnlocked;
 

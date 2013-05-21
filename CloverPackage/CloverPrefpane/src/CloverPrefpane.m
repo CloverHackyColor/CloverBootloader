@@ -124,7 +124,7 @@ static const CFStringRef efiDirPathKey=CFSTR("EFI Directory Path");
     }
 }
 
--(void) initNVRamVariableFields {
+-(void) initNVRamVariableFields:(id)sender {
     NSString *value;
 
     value = [self getNVRamKey:[[_logLineCountTextField identifier] UTF8String]];
