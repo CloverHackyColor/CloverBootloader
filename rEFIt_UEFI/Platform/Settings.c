@@ -2272,6 +2272,7 @@ VOID GetDevices(VOID)
               AsciiSPrint(gGraphics[NGFX].Model, 64, "%a", info->model_name);
               AsciiSPrint(gGraphics[NGFX].Config, 64, "%a", card_configs[info->cfg_name].name);
               gGraphics[NGFX].Ports = card_configs[info->cfg_name].ports;
+              DBG("Found Radeon model=%a\n", gGraphics[NGFX].Model);
               break;
             case 0x8086:
               gGraphics[NGFX].Vendor = Intel;

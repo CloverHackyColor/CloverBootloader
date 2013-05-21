@@ -182,12 +182,15 @@ static struct net_chipsets_t NetChipsets[] = {
   { 0x80861209, "Intel 8255x Ethernet" },
   { 0x80861227, "Intel 8255x Ethernet" },
   { 0x80861228, "Intel 8255x Ethernet" },
-  { 0x80861229, "Intel 8255x Ethernet" },   
+  { 0x80861229, "Intel 8255x Ethernet" },  
+  { 0x80861503, "Intel 82579V Gigabit Network Controller" },
   { 0x80862449, "Intel 8255x Ethernet" },
   { 0x80862459, "Intel 8255x Ethernet" },
   { 0x8086245D, "Intel 8255x Ethernet" },
   { 0x80861091, "Intel 8255x Ethernet" }, 
   { 0x80861060, "Intel 8255x Ethernet" },
+  // Atheros AR8151 Ethernet  
+  { 0x19691083, "Qualcomm Atheros AR8151 v2.0 Gigabit Ethernet" },
 };
 
 struct ide_chipsets_t {
