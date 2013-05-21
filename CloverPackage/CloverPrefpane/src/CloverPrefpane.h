@@ -39,7 +39,7 @@
 - (id)        initWithBundle:(NSBundle *)bundle;
 - (void)      mainViewDidLoad;
 - (IBAction)  checkNow:(id)sender;
-- (void)      initNVRamVariableFields:(id)sender;
+- (void)      initNVRamVariableFields; //:(id)sender;
 - (IBAction)  configureAutomaticUpdates:(id)sender;
 - (IBAction)  simpleNvramVariableChanged:(id)sender;
 - (IBAction)  showPathOpenPanel:(id)sender;

@@ -124,19 +124,23 @@ static const CFStringRef efiDirPathKey=CFSTR("EFI Directory Path");
     }
 }
 
--(void) initNVRamVariableFields:(id)sender {
+-(void) initNVRamVariableFields /*:(id)sender*/ {
     NSString *value;
 
-    value = [self getNVRamKey:[[_logLineCountTextField identifier] UTF8String]];
+//    value = [self getNVRamKey:[[_logLineCountTextField identifier] UTF8String]];
+  value = [self getNVRamKey:"Clover.LogLineCount"];
     [_logLineCountTextField setStringValue:value];
 
-    value = [self getNVRamKey:[[_logEveryBootTextField identifier] UTF8String]];
+//    value = [self getNVRamKey:[[_logEveryBootTextField identifier] UTF8String]];
+  value = [self getNVRamKey:"Clover.LogEveryBoot"];
     [_logEveryBootTextField setStringValue:value];
 
-    value = [self getNVRamKey:[[_mountEFITextField identifier] UTF8String]];
+//    value = [self getNVRamKey:[[_mountEFITextField identifier] UTF8String]];
+  value = [self getNVRamKey:"Clover.MountEFI"];
     [_mountEFITextField setStringValue:value];
 
-    value = [self getNVRamKey:[[_nvRamDiskTextField identifier] UTF8String]];
+//    value = [self getNVRamKey:[[_nvRamDiskTextField identifier] UTF8String]];
+  value = [self getNVRamKey:"Clover.nvRamDisk"];
     [_nvRamDiskTextField setStringValue:value];
 }
 
