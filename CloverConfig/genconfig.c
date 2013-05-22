@@ -132,8 +132,6 @@ typedef struct {
 	CHAR8	VersionNr[64];
 	CHAR8	SerialNr[64];
   EFI_GUID SmUUID;
-  //	CHAR8	Uuid[64];
-  //	CHAR8	SKUNumber[64];
 	CHAR8	FamilyName[64];
   CHAR8 OEMProduct[64];
   CHAR8 OEMVendor[64];
@@ -310,8 +308,6 @@ typedef struct {
 #pragma pack(pop)
 
 // Prototypes
-//static void UsageMessage(char *message);
-//static void ParseFile(char *fileName);
 static kern_return_t GetOFVariable(char *name, CFStringRef *nameRef,
                                    CFTypeRef *valueRef);
 
@@ -325,17 +321,16 @@ static void printCloseSubDict();
 static void printString(char *Name, char *Value);
 static void printUString(char *Name, CHAR16 *Value);
 static void printInteger(char *Name, int Value);
+static void printInteger3(char *Name, int Value);
 static void printHex(char *Name, int Value);
 static void printBoolean(char *Name, BOOLEAN Value);
+static void printBoolean3(char *Name, BOOLEAN Value);
 static void printUUID(char *Name, EFI_GUID *g);
 static void printIntArray(char *Name, UINT8 *Value, int num);
 
 
 // Global Variables
-//static char                *gToolName;
 static io_registry_entry_t gPlatform;
-//static bool                gUseXML;
-//static SETTINGS_DATA       gSettings;
 
 int main(int argc, char **argv)
 {
@@ -396,16 +391,10 @@ static kern_return_t GetOFVariable(char *name, CFStringRef *nameRef,
 
 static void PrintConfig(const void *key, const void *value)
 {
-//  long          cnt, cnt2;
   CFIndex       nameLen;
   char          *nameBuffer = 0;
   const char    *nameString;
-//  char          numberBuffer[10];
   const uint8_t *dataPtr = NULL;
-//  uint8_t       dataChar;
-//  char          *dataBuffer = 0;
-//  CFIndex       valueLen;
-//  char          *valueBuffer = 0;
   const char    *valueString = 0;
   uint32_t      length = 0;
   CFTypeID      typeID;
@@ -427,20 +416,7 @@ static void PrintConfig(const void *key, const void *value)
     length = CFDataGetLength(value);
     if (length == 0) valueString = "";
     else {
-//      dataBuffer = malloc(length * 3 + 1);
-//      if (dataBuffer != 0) {
         dataPtr = CFDataGetBytePtr(value);
- /*       for (cnt = cnt2 = 0; cnt < length; cnt++) {
-          dataChar = dataPtr[cnt];
-          if (isprint(dataChar)) dataBuffer[cnt2++] = dataChar;
-          else {
-            sprintf(dataBuffer + cnt2, "%%%02x", dataChar);
-            cnt2 += 3;
-          }
-        }
-        dataBuffer[cnt2] = '\0';
-        valueString = dataBuffer; */
-//      }
     }
   } else {
     printf("<INVALID> settings\n");
@@ -480,25 +456,25 @@ static void PrintConfig(const void *key, const void *value)
   printUString("DefaultBootVolume", s->DefaultBoot);
   printBoolean("DebugLog", s->Debug);
   printSubDict("Mouse");
-  printf("\t"); printBoolean("Enabled", s->PointerEnabled);
-  printf("\t"); printInteger("Speed", s->PointerSpeed);
-  printf("\t"); printInteger("DoubleClick", s->DoubleClickTime);
-  printf("\t"); printBoolean("Mirror", s->PointerMirror);
+  printBoolean3("Enabled", s->PointerEnabled);
+  printInteger3("Speed", s->PointerSpeed);
+  printInteger3("DoubleClick", s->DoubleClickTime);
+  printBoolean3("Mirror", s->PointerMirror);
   printCloseSubDict();
   printSubDict("Volume");
-  printf("\t"); printInteger("Hide Count", s->HVCount);
+  printInteger3("Hide Count", s->HVCount);
   printCloseSubDict();
   printSubDict("HideEntries");
-  printf("\t"); printBoolean("OSXInstall", s->HVHideAllOSXInstall);
-  printf("\t"); printBoolean("Recovery", s->HVHideAllRecovery);
-  printf("\t"); printBoolean("Duplicate", s->HVHideDuplicatedBootTarget);
-  printf("\t"); printBoolean("WindowsEFI", s->HVHideAllWindowsEFI);
-  printf("\t"); printBoolean("Ubuntu", s->HVHideAllUbuntu);
-  printf("\t"); printBoolean("Grub", s->HVHideAllGrub);
-  printf("\t"); printBoolean("Gentoo", s->HVHideAllGentoo);
-  printf("\t"); printBoolean("OpticalUEFI", s->HVHideOpticalUEFI);
-  printf("\t"); printBoolean("InternalUEFI", s->HVHideInternalUEFI);
-  printf("\t"); printBoolean("ExternalUEFI", s->HVHideExternalUEFI);
+  printBoolean3("OSXInstall", s->HVHideAllOSXInstall);
+  printBoolean3("Recovery", s->HVHideAllRecovery);
+  printBoolean3("Duplicate", s->HVHideDuplicatedBootTarget);
+  printBoolean3("WindowsEFI", s->HVHideAllWindowsEFI);
+  printBoolean3("Ubuntu", s->HVHideAllUbuntu);
+  printBoolean3("Grub", s->HVHideAllGrub);
+  printBoolean3("Gentoo", s->HVHideAllGentoo);
+  printBoolean3("OpticalUEFI", s->HVHideOpticalUEFI);
+  printBoolean3("InternalUEFI", s->HVHideInternalUEFI);
+  printBoolean3("ExternalUEFI", s->HVHideExternalUEFI);
   printCloseSubDict();
   printCloseDict();
 
@@ -687,6 +663,11 @@ static void printInteger(char *Name, int Value)
   printf("\t\t<key>%s</key>\n\t\t<integer>%d</integer>\n", Name, Value);
 }
 
+static void printInteger3(char *Name, int Value)
+{
+  printf("\t\t\t<key>%s</key>\n\t\t\t<integer>%d</integer>\n", Name, Value);
+}
+
 static void printHex(char *Name, int Value)
 {
   printf("\t\t<key>%s</key>\n\t\t<string>0x%x</string>\n", Name, Value);
@@ -698,6 +679,15 @@ static void printBoolean(char *Name, BOOLEAN Value)
     printf("\t\t<key>%s</key>\n\t\t<true/>\n", Name);
   } else {
     printf("\t\t<key>%s</key>\n\t\t<false/>\n", Name);
+  }
+}
+
+static void printBoolean3(char *Name, BOOLEAN Value)
+{
+  if (Value) {
+    printf("\t\t\t<key>%s</key>\n\t\t\t<true/>\n", Name);
+  } else {
+    printf("\t\t\t<key>%s</key>\n\t\t\t<false/>\n", Name);
   }
 }
 
