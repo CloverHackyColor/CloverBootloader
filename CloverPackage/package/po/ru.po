@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-22 09:45+0300\n"
-"PO-Revision-Date: 2013-05-22 12:05+0000\n"
+"PO-Revision-Date: 2013-05-22 13:43+0000\n"
 "Last-Translator: Slice <sergey.slice@gmail.com>\n"
 "Language-Team: ru <ru@li.org>\n"
 "Language: ru\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1369224324.0\n"
+"X-POOTLE-MTIME: 1369230228.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -644,7 +644,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:119
 #, no-wrap
 msgid "Bluemac"
-msgstr ""
+msgstr "Bluemac"
 
 #. type: "bluemac_description"
 #: Resources/templates/Localizable.strings:120
@@ -663,7 +663,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:123
 #, no-wrap
 msgid "BootCamp"
-msgstr ""
+msgstr "BootCamp"
 
 #. type: "bootcamp_description"
 #: Resources/templates/Localizable.strings:124
@@ -701,7 +701,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:131
 #, no-wrap
 msgid "Magnifico"
-msgstr ""
+msgstr "Magnifico"
 
 #. type: "magnifico_description"
 #: Resources/templates/Localizable.strings:132
@@ -758,7 +758,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:143
 #, no-wrap
 msgid "Orange"
-msgstr ""
+msgstr "Orange"
 
 #. type: "orange_description"
 #: Resources/templates/Localizable.strings:144
@@ -777,7 +777,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:147
 #, no-wrap
 msgid "OS Box"
-msgstr ""
+msgstr "OS Box"
 
 #. type: "os_box_description"
 #: Resources/templates/Localizable.strings:148
@@ -796,7 +796,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:151
 #, no-wrap
 msgid "OS One"
-msgstr ""
+msgstr "OS One"
 
 #. type: "os_one_description"
 #: Resources/templates/Localizable.strings:152
@@ -815,7 +815,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:155
 #, no-wrap
 msgid "ThinkPad"
-msgstr ""
+msgstr "ThinkPad"
 
 #. type: "thinkpad_description"
 #: Resources/templates/Localizable.strings:156
