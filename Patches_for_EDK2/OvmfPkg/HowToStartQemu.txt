@@ -1,1 +1,8 @@
 qemu-system-x86_64 -L ~/src/edk2/Build/OvmfX64/RELEASE_GCC47/QEMU -hda QEMU-Clover.img
+
+qemu -L ~/src/edk2/Build/OvmfX64/RELEASE_GCC47/QEMU -bios OVMF.fd -hda ~/Desktop/NewFolder/QEMU-Clover.img 
+
+The folder QEMU must contains
+kvmvapic.bin
+vgabios-cirrus.bin
+pxe-e1000.rom
