@@ -108,21 +108,53 @@ Use it only if you have a problem without it";
 "Themes_title" = "Themes";
 "Themes_description" = "Select to install themes.";
 
-"black_green_title" = "black_green";
-"black_green_description" = "Default black_green theme from Blackosx,
-Install to /EFI/CLOVER/themes/black_green.";
+"applestyle_title" = "AppleStyle";
+"applestyle_description" = "AppleStyle theme from Eps,
+Install to /EFI/CLOVER/themes/applestyle";
 
-"AppleStyle_title" = "AppleStyle";
-"AppleStyle_description" = "AppleStyle theme from Eps,
-Install to /EFI/CLOVER/themes/AppleStyle.";
+"black_green_title" = "Black_Green";
+"black_green_description" = "Default black_green theme from Blackosx,
+Install to /EFI/CLOVER/themes/black_green";
+
+"bluemac_title" = "Bluemac";
+"bluemac_description" = "Bluemac theme from FowZiey,
+Install to /EFI/CLOVER/themes/bluemac";
+
+"bootcamp_title" = "BootCamp";
+"bootcamp_description" = "Bootcamp theme from Bijo,
+Install to /EFI/CLOVER/themes/bootcamp";
+
+"iclover_title" = "iClover";
+"iclover_description" = "Grey style theme by winlog,
+Install to /EFI/CLOVER/themes/iclover";
+
+"magnifico_title" = "Magnifico";
+"magnifico_description" = "Magnifico theme from Magnifico,
+Install to /EFI/CLOVER/themes/magnifico";
+
+"metal_title" = "metal";
+"metal_description" = "The original metal theme from Slice,
+Install to /EFI/CLOVER/themes/metal";
 
 "mrengles_title" = "mrengles";
 "mrengles_description" = "mrengles theme from mrengles,
-Install to /EFI/CLOVER/themes/mrengles.";
+Install to /EFI/CLOVER/themes/mrengles";
 
-"iClover_title" = "iClover";
-"iClover_description" = "Grey style theme by winlog,
-Install to /EFI/CLOVER/themes/iClover.";
+"orange_title" = "Orange";
+"orange_description" = "Orange theme from dwm,
+Install to /EFI/CLOVER/themes/orange";
+
+"os_box_title" = "OS Box";
+"os_box_description" = "OS Box theme from Kyndder,
+Install to /EFI/CLOVER/themes/os_box";
+
+"os_one_title" = "OS One";
+"os_one_description" = "OS One theme from Kyndder,
+Install to /EFI/CLOVER/themes/os_box";
+
+"thinkpad_title" = "ThinkPad";
+"thinkpad_description" = "ThinkPad theme from Kogen Mantis,
+Install to /EFI/CLOVER/themes/thinkpad";
 
 "buttons_title" = "buttons";
 "buttons_description" = "Buttons theme from Trauma,
@@ -131,10 +163,6 @@ Install to /EFI/CLOVER/themes/buttons.";
 "hellfire_title" = "hellfire";
 "hellfire_description" = "Hellfire theme from lllevelll,
 Install to /EFI/CLOVER/themes/hellfire.";
-
-"metal_title" = "metal";
-"metal_description" = "The original metal theme from Slice,
-Install to /EFI/CLOVER/themes/metal.";
 
 "simple_gray_title" = "simple_gray";
 "simple_gray_description" = "Simple_gray theme from hijeane,

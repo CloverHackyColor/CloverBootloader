@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Author</key>
+	<string>Bijo</string>
+	<key>Year</key>
+	<string>2013</string>
+	<key>Description</key>
+	<string>BootCamp looking theme</string>
+	<key>Theme</key>
+	<dict>
+		<key>Badges</key>
+		<dict>
+			<key>Show</key>
+			<true/>
+			<key>Inline</key>
+			<false/>
+			<key>Swap</key>
+			<false/>
+		</dict>
+		<key>Background</key>
+		<dict>
+			<key>Path</key>
+			<string>bootcamp.png</string>
+			<key>Type</key>
+			<string>Crop</string>
+		</dict>
+		<key>Banner</key>
+		<string>logo-trans.png</string>
+		<key>Font</key>
+		<dict>
+			<key>Type</key>
+			<string>alfa</string>
+		</dict>
+		<key>Selection</key>
+		<dict>
+			<key>Big</key>
+			<string>Select_trans_big.png</string>
+			<key>Color</key>
+			<string>0xF3F3F380</string>
+			<key>Small</key>
+			<string>Select_trans_small.png</string>
+		</dict>
+		<key>Anime</key>
+		<array>
+			<dict>
+				<key>ID</key>
+				<integer>1</integer>
+				<key>Path</key>
+				<string>logo_3D</string>
+				<key>Frames</key>
+				<integer>50</integer>
+				<key>FrameTime</key>
+				<integer>100</integer>
+			</dict>
+		</array>
+	</dict>
+</dict>
+</plist>

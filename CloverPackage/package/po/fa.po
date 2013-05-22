@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-19 11:49+0300\n"
+"POT-Creation-Date: 2013-05-22 09:45+0300\n"
 "PO-Revision-Date: 2013-05-06 05:24+0000\n"
 "Last-Translator: cyrus <pmbok.solution@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -520,88 +520,88 @@ msgstr ""
 msgid "Select to install themes."
 msgstr ""
 
-#. type: "black_green_title"
+#. type: "applestyle_title"
 #: Resources/templates/Localizable.strings:111
-#, no-wrap
-msgid "black_green"
-msgstr ""
-
-#. type: "black_green_description"
-#: Resources/templates/Localizable.strings:112
-#, no-wrap
-msgid ""
-"Default black_green theme from Blackosx,\n"
-"Install to /EFI/CLOVER/themes/black_green."
-msgstr ""
-
-#. type: "AppleStyle_title"
-#: Resources/templates/Localizable.strings:115
 #, no-wrap
 msgid "AppleStyle"
 msgstr ""
 
-#. type: "AppleStyle_description"
-#: Resources/templates/Localizable.strings:116
+#. type: "applestyle_description"
+#: Resources/templates/Localizable.strings:112
 #, no-wrap
 msgid ""
 "AppleStyle theme from Eps,\n"
-"Install to /EFI/CLOVER/themes/AppleStyle."
+"Install to /EFI/CLOVER/themes/applestyle"
 msgstr ""
 
-#. type: "mrengles_title"
+#. type: "black_green_title"
+#: Resources/templates/Localizable.strings:115
+#, no-wrap
+msgid "Black_Green"
+msgstr ""
+
+#. type: "black_green_description"
+#: Resources/templates/Localizable.strings:116
+#, no-wrap
+msgid ""
+"Default black_green theme from Blackosx,\n"
+"Install to /EFI/CLOVER/themes/black_green"
+msgstr ""
+
+#. type: "bluemac_title"
 #: Resources/templates/Localizable.strings:119
 #, no-wrap
-msgid "mrengles"
+msgid "Bluemac"
 msgstr ""
 
-#. type: "mrengles_description"
+#. type: "bluemac_description"
 #: Resources/templates/Localizable.strings:120
 #, no-wrap
 msgid ""
-"mrengles theme from mrengles,\n"
-"Install to /EFI/CLOVER/themes/mrengles."
+"Bluemac theme from FowZiey,\n"
+"Install to /EFI/CLOVER/themes/bluemac"
 msgstr ""
 
-#. type: "iClover_title"
+#. type: "bootcamp_title"
 #: Resources/templates/Localizable.strings:123
+#, no-wrap
+msgid "BootCamp"
+msgstr ""
+
+#. type: "bootcamp_description"
+#: Resources/templates/Localizable.strings:124
+#, no-wrap
+msgid ""
+"Bootcamp theme from Bijo,\n"
+"Install to /EFI/CLOVER/themes/bootcamp"
+msgstr ""
+
+#. type: "iclover_title"
+#: Resources/templates/Localizable.strings:127
 #, no-wrap
 msgid "iClover"
 msgstr ""
 
-#. type: "iClover_description"
-#: Resources/templates/Localizable.strings:124
-#, no-wrap
-msgid ""
-"Grey style theme by winlog,\n"
-"Install to /EFI/CLOVER/themes/iClover."
-msgstr ""
-
-#. type: "buttons_title"
-#: Resources/templates/Localizable.strings:127
-#, no-wrap
-msgid "buttons"
-msgstr ""
-
-#. type: "buttons_description"
+#. type: "iclover_description"
 #: Resources/templates/Localizable.strings:128
 #, no-wrap
 msgid ""
-"Buttons theme from Trauma,\n"
-"Install to /EFI/CLOVER/themes/buttons."
+"Grey style theme by winlog,\n"
+"Install to /EFI/CLOVER/themes/iclover"
 msgstr ""
 
-#. type: "hellfire_title"
+#. type: "magnifico_title"
 #: Resources/templates/Localizable.strings:131
 #, no-wrap
-msgid "hellfire"
+msgid "Magnifico"
 msgstr ""
 
-#. type: "hellfire_description"
+#. type: "magnifico_description"
 #: Resources/templates/Localizable.strings:132
 #, no-wrap
 msgid ""
-"Hellfire theme from lllevelll,\n"
-"Install to /EFI/CLOVER/themes/hellfire."
+"Magnifico theme from Magnifico,\n"
+"Install to /EFI/CLOVER/themes/magnifico"
 msgstr ""
 
 #. type: "metal_title"
@@ -615,17 +615,115 @@ msgstr ""
 #, no-wrap
 msgid ""
 "The original metal theme from Slice,\n"
-"Install to /EFI/CLOVER/themes/metal."
+"Install to /EFI/CLOVER/themes/metal"
+msgstr ""
+
+#. type: "mrengles_title"
+#: Resources/templates/Localizable.strings:139
+#, no-wrap
+msgid "mrengles"
+msgstr ""
+
+#. type: "mrengles_description"
+#: Resources/templates/Localizable.strings:140
+#, no-wrap
+msgid ""
+"mrengles theme from mrengles,\n"
+"Install to /EFI/CLOVER/themes/mrengles"
+msgstr ""
+
+#. type: "orange_title"
+#: Resources/templates/Localizable.strings:143
+#, no-wrap
+msgid "Orange"
+msgstr ""
+
+#. type: "orange_description"
+#: Resources/templates/Localizable.strings:144
+#, no-wrap
+msgid ""
+"Orange theme from dwm,\n"
+"Install to /EFI/CLOVER/themes/orange"
+msgstr ""
+
+#. type: "os_box_title"
+#: Resources/templates/Localizable.strings:147
+#, no-wrap
+msgid "OS Box"
+msgstr ""
+
+#. type: "os_box_description"
+#: Resources/templates/Localizable.strings:148
+#, no-wrap
+msgid ""
+"OS Box theme from Kyndder,\n"
+"Install to /EFI/CLOVER/themes/os_box"
+msgstr ""
+
+#. type: "os_one_title"
+#: Resources/templates/Localizable.strings:151
+#, no-wrap
+msgid "OS One"
+msgstr ""
+
+#. type: "os_one_description"
+#: Resources/templates/Localizable.strings:152
+#, no-wrap
+msgid ""
+"OS One theme from Kyndder,\n"
+"Install to /EFI/CLOVER/themes/os_box"
+msgstr ""
+
+#. type: "thinkpad_title"
+#: Resources/templates/Localizable.strings:155
+#, no-wrap
+msgid "ThinkPad"
+msgstr ""
+
+#. type: "thinkpad_description"
+#: Resources/templates/Localizable.strings:156
+#, no-wrap
+msgid ""
+"ThinkPad theme from Kogen Mantis,\n"
+"Install to /EFI/CLOVER/themes/thinkpad"
+msgstr ""
+
+#. type: "buttons_title"
+#: Resources/templates/Localizable.strings:159
+#, no-wrap
+msgid "buttons"
+msgstr ""
+
+#. type: "buttons_description"
+#: Resources/templates/Localizable.strings:160
+#, no-wrap
+msgid ""
+"Buttons theme from Trauma,\n"
+"Install to /EFI/CLOVER/themes/buttons."
+msgstr ""
+
+#. type: "hellfire_title"
+#: Resources/templates/Localizable.strings:163
+#, no-wrap
+msgid "hellfire"
+msgstr ""
+
+#. type: "hellfire_description"
+#: Resources/templates/Localizable.strings:164
+#, no-wrap
+msgid ""
+"Hellfire theme from lllevelll,\n"
+"Install to /EFI/CLOVER/themes/hellfire."
 msgstr ""
 
 #. type: "simple_gray_title"
-#: Resources/templates/Localizable.strings:139
+#: Resources/templates/Localizable.strings:167
 #, no-wrap
 msgid "simple_gray"
 msgstr ""
 
 #. type: "simple_gray_description"
-#: Resources/templates/Localizable.strings:140
+#: Resources/templates/Localizable.strings:168
 #, no-wrap
 msgid ""
 "Simple_gray theme from hijeane,\n"
@@ -633,13 +731,13 @@ msgid ""
 msgstr ""
 
 #. type: "wooden_title"
-#: Resources/templates/Localizable.strings:143
+#: Resources/templates/Localizable.strings:171
 #, no-wrap
 msgid "wooden"
 msgstr ""
 
 #. type: "wooden_description"
-#: Resources/templates/Localizable.strings:144
+#: Resources/templates/Localizable.strings:172
 #, no-wrap
 msgid ""
 "Wooden theme from iROOTa,\n"
@@ -647,13 +745,13 @@ msgid ""
 msgstr ""
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:150
+#: Resources/templates/Localizable.strings:178
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr ""
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:151
+#: Resources/templates/Localizable.strings:179
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -661,37 +759,37 @@ msgid ""
 msgstr ""
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:153
+#: Resources/templates/Localizable.strings:181
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr ""
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:154
+#: Resources/templates/Localizable.strings:182
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr ""
 
 #. type: "Optional RC Scripts"
-#: Resources/templates/Localizable.strings:155
+#: Resources/templates/Localizable.strings:183
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr ""
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:156
+#: Resources/templates/Localizable.strings:184
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr ""
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:161
+#: Resources/templates/Localizable.strings:189
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr ""
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:162
+#: Resources/templates/Localizable.strings:190
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"

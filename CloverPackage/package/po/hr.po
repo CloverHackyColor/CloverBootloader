@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-19 11:49+0300\n"
+"POT-Creation-Date: 2013-05-22 09:45+0300\n"
 "PO-Revision-Date: 2013-05-19 17:06+0000\n"
 "Last-Translator: Xpam.AmAdEuS <miljenkohalapir@outlook.com>\n"
 "Language-Team: hr <hr@li.org>\n"
@@ -595,101 +595,120 @@ msgstr "Teme"
 msgid "Select to install themes."
 msgstr "Odaberi za instalaciju teme."
 
-#. type: "black_green_title"
+#. type: "applestyle_title"
 #: Resources/templates/Localizable.strings:111
-#, no-wrap
-msgid "black_green"
-msgstr "black_green"
-
-#. type: "black_green_description"
-#: Resources/templates/Localizable.strings:112
-#, no-wrap
-msgid ""
-"Default black_green theme from Blackosx,\n"
-"Install to /EFI/CLOVER/themes/black_green."
-msgstr ""
-"Glavna tema od kreatora Blackosx,\n"
-"Install to /EFI/CLOVER/themes/black_green."
-
-#. type: "AppleStyle_title"
-#: Resources/templates/Localizable.strings:115
 #, no-wrap
 msgid "AppleStyle"
 msgstr "AppleStyle"
 
-#. type: "AppleStyle_description"
-#: Resources/templates/Localizable.strings:116
-#, no-wrap
+#. type: "applestyle_description"
+#: Resources/templates/Localizable.strings:112
+#, fuzzy, no-wrap
+#| msgid ""
+#| "AppleStyle theme from Eps,\n"
+#| "Install to /EFI/CLOVER/themes/AppleStyle."
 msgid ""
 "AppleStyle theme from Eps,\n"
-"Install to /EFI/CLOVER/themes/AppleStyle."
+"Install to /EFI/CLOVER/themes/applestyle"
 msgstr ""
 "AppleStyle od kreatora Eps,\n"
 "Install to /EFI/CLOVER/themes/AppleStyle."
 
-#. type: "mrengles_title"
+#. type: "black_green_title"
+#: Resources/templates/Localizable.strings:115
+#, fuzzy, no-wrap
+#| msgid "black_green"
+msgid "Black_Green"
+msgstr "black_green"
+
+#. type: "black_green_description"
+#: Resources/templates/Localizable.strings:116
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Default black_green theme from Blackosx,\n"
+#| "Install to /EFI/CLOVER/themes/black_green."
+msgid ""
+"Default black_green theme from Blackosx,\n"
+"Install to /EFI/CLOVER/themes/black_green"
+msgstr ""
+"Glavna tema od kreatora Blackosx,\n"
+"Install to /EFI/CLOVER/themes/black_green."
+
+#. type: "bluemac_title"
 #: Resources/templates/Localizable.strings:119
 #, no-wrap
-msgid "mrengles"
-msgstr "mrengles"
-
-#. type: "mrengles_description"
-#: Resources/templates/Localizable.strings:120
-#, no-wrap
-msgid ""
-"mrengles theme from mrengles,\n"
-"Install to /EFI/CLOVER/themes/mrengles."
+msgid "Bluemac"
 msgstr ""
-"mrengles tema od kreatora mrengles,\n"
-"Install to /EFI/CLOVER/themes/mrengles."
 
-#. type: "iClover_title"
+#. type: "bluemac_description"
+#: Resources/templates/Localizable.strings:120
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Simple_gray theme from hijeane,\n"
+#| "Install to /EFI/CLOVER/themes/simple_gray."
+msgid ""
+"Bluemac theme from FowZiey,\n"
+"Install to /EFI/CLOVER/themes/bluemac"
+msgstr ""
+"Jednostavna siva od kreatora hijeane,\n"
+"Install to /EFI/CLOVER/themes/simple_gray."
+
+#. type: "bootcamp_title"
 #: Resources/templates/Localizable.strings:123
+#, no-wrap
+msgid "BootCamp"
+msgstr ""
+
+#. type: "bootcamp_description"
+#: Resources/templates/Localizable.strings:124
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Wooden theme from iROOTa,\n"
+#| "Install to /EFI/CLOVER/themes/wooden."
+msgid ""
+"Bootcamp theme from Bijo,\n"
+"Install to /EFI/CLOVER/themes/bootcamp"
+msgstr ""
+"Tema drva od kreatora iROOTa,\n"
+"Install to /EFI/CLOVER/themes/wooden."
+
+#. type: "iclover_title"
+#: Resources/templates/Localizable.strings:127
 #, no-wrap
 msgid "iClover"
 msgstr "iClover"
 
-#. type: "iClover_description"
-#: Resources/templates/Localizable.strings:124
-#, no-wrap
+#. type: "iclover_description"
+#: Resources/templates/Localizable.strings:128
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Grey style theme by winlog,\n"
+#| "Install to /EFI/CLOVER/themes/iClover."
 msgid ""
 "Grey style theme by winlog,\n"
-"Install to /EFI/CLOVER/themes/iClover."
+"Install to /EFI/CLOVER/themes/iclover"
 msgstr ""
 "Siva tema kreatora winlog,\n"
 "Install to /EFI/CLOVER/themes/iClover."
 
-#. type: "buttons_title"
-#: Resources/templates/Localizable.strings:127
-#, no-wrap
-msgid "buttons"
-msgstr "Gumbići"
-
-#. type: "buttons_description"
-#: Resources/templates/Localizable.strings:128
-#, no-wrap
-msgid ""
-"Buttons theme from Trauma,\n"
-"Install to /EFI/CLOVER/themes/buttons."
-msgstr ""
-"Gumbići od kreatora Trauma,\n"
-"Install to /EFI/CLOVER/themes/buttons."
-
-#. type: "hellfire_title"
+#. type: "magnifico_title"
 #: Resources/templates/Localizable.strings:131
 #, no-wrap
-msgid "hellfire"
-msgstr "hellfire"
-
-#. type: "hellfire_description"
-#: Resources/templates/Localizable.strings:132
-#, no-wrap
-msgid ""
-"Hellfire theme from lllevelll,\n"
-"Install to /EFI/CLOVER/themes/hellfire."
+msgid "Magnifico"
 msgstr ""
-"Vatra iz pakla od kreatora lllevelll,\n"
-"Install to /EFI/CLOVER/themes/hellfire."
+
+#. type: "magnifico_description"
+#: Resources/templates/Localizable.strings:132
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Wooden theme from iROOTa,\n"
+#| "Install to /EFI/CLOVER/themes/wooden."
+msgid ""
+"Magnifico theme from Magnifico,\n"
+"Install to /EFI/CLOVER/themes/magnifico"
+msgstr ""
+"Tema drva od kreatora iROOTa,\n"
+"Install to /EFI/CLOVER/themes/wooden."
 
 #. type: "metal_title"
 #: Resources/templates/Localizable.strings:135
@@ -699,22 +718,152 @@ msgstr "metal"
 
 #. type: "metal_description"
 #: Resources/templates/Localizable.strings:136
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid ""
+#| "The original metal theme from Slice,\n"
+#| "Install to /EFI/CLOVER/themes/metal."
 msgid ""
 "The original metal theme from Slice,\n"
-"Install to /EFI/CLOVER/themes/metal."
+"Install to /EFI/CLOVER/themes/metal"
 msgstr ""
 "Originalna početna tema od kreatora Slice,\n"
 "Install to /EFI/CLOVER/themes/metal."
 
-#. type: "simple_gray_title"
+#. type: "mrengles_title"
 #: Resources/templates/Localizable.strings:139
+#, no-wrap
+msgid "mrengles"
+msgstr "mrengles"
+
+#. type: "mrengles_description"
+#: Resources/templates/Localizable.strings:140
+#, fuzzy, no-wrap
+#| msgid ""
+#| "mrengles theme from mrengles,\n"
+#| "Install to /EFI/CLOVER/themes/mrengles."
+msgid ""
+"mrengles theme from mrengles,\n"
+"Install to /EFI/CLOVER/themes/mrengles"
+msgstr ""
+"mrengles tema od kreatora mrengles,\n"
+"Install to /EFI/CLOVER/themes/mrengles."
+
+#. type: "orange_title"
+#: Resources/templates/Localizable.strings:143
+#, no-wrap
+msgid "Orange"
+msgstr ""
+
+#. type: "orange_description"
+#: Resources/templates/Localizable.strings:144
+#, fuzzy, no-wrap
+#| msgid ""
+#| "mrengles theme from mrengles,\n"
+#| "Install to /EFI/CLOVER/themes/mrengles."
+msgid ""
+"Orange theme from dwm,\n"
+"Install to /EFI/CLOVER/themes/orange"
+msgstr ""
+"mrengles tema od kreatora mrengles,\n"
+"Install to /EFI/CLOVER/themes/mrengles."
+
+#. type: "os_box_title"
+#: Resources/templates/Localizable.strings:147
+#, no-wrap
+msgid "OS Box"
+msgstr ""
+
+#. type: "os_box_description"
+#: Resources/templates/Localizable.strings:148
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Buttons theme from Trauma,\n"
+#| "Install to /EFI/CLOVER/themes/buttons."
+msgid ""
+"OS Box theme from Kyndder,\n"
+"Install to /EFI/CLOVER/themes/os_box"
+msgstr ""
+"Gumbići od kreatora Trauma,\n"
+"Install to /EFI/CLOVER/themes/buttons."
+
+#. type: "os_one_title"
+#: Resources/templates/Localizable.strings:151
+#, no-wrap
+msgid "OS One"
+msgstr ""
+
+#. type: "os_one_description"
+#: Resources/templates/Localizable.strings:152
+#, fuzzy, no-wrap
+#| msgid ""
+#| "Buttons theme from Trauma,\n"
+#| "Install to /EFI/CLOVER/themes/buttons."
+msgid ""
+"OS One theme from Kyndder,\n"
+"Install to /EFI/CLOVER/themes/os_box"
+msgstr ""
+"Gumbići od kreatora Trauma,\n"
+"Install to /EFI/CLOVER/themes/buttons."
+
+#. type: "thinkpad_title"
+#: Resources/templates/Localizable.strings:155
+#, no-wrap
+msgid "ThinkPad"
+msgstr ""
+
+#. type: "thinkpad_description"
+#: Resources/templates/Localizable.strings:156
+#, fuzzy, no-wrap
+#| msgid ""
+#| "The original metal theme from Slice,\n"
+#| "Install to /EFI/CLOVER/themes/metal."
+msgid ""
+"ThinkPad theme from Kogen Mantis,\n"
+"Install to /EFI/CLOVER/themes/thinkpad"
+msgstr ""
+"Originalna početna tema od kreatora Slice,\n"
+"Install to /EFI/CLOVER/themes/metal."
+
+#. type: "buttons_title"
+#: Resources/templates/Localizable.strings:159
+#, no-wrap
+msgid "buttons"
+msgstr "Gumbići"
+
+#. type: "buttons_description"
+#: Resources/templates/Localizable.strings:160
+#, no-wrap
+msgid ""
+"Buttons theme from Trauma,\n"
+"Install to /EFI/CLOVER/themes/buttons."
+msgstr ""
+"Gumbići od kreatora Trauma,\n"
+"Install to /EFI/CLOVER/themes/buttons."
+
+#. type: "hellfire_title"
+#: Resources/templates/Localizable.strings:163
+#, no-wrap
+msgid "hellfire"
+msgstr "hellfire"
+
+#. type: "hellfire_description"
+#: Resources/templates/Localizable.strings:164
+#, no-wrap
+msgid ""
+"Hellfire theme from lllevelll,\n"
+"Install to /EFI/CLOVER/themes/hellfire."
+msgstr ""
+"Vatra iz pakla od kreatora lllevelll,\n"
+"Install to /EFI/CLOVER/themes/hellfire."
+
+#. type: "simple_gray_title"
+#: Resources/templates/Localizable.strings:167
 #, no-wrap
 msgid "simple_gray"
 msgstr "simple_gray"
 
 #. type: "simple_gray_description"
-#: Resources/templates/Localizable.strings:140
+#: Resources/templates/Localizable.strings:168
 #, no-wrap
 msgid ""
 "Simple_gray theme from hijeane,\n"
@@ -724,13 +873,13 @@ msgstr ""
 "Install to /EFI/CLOVER/themes/simple_gray."
 
 #. type: "wooden_title"
-#: Resources/templates/Localizable.strings:143
+#: Resources/templates/Localizable.strings:171
 #, no-wrap
 msgid "wooden"
 msgstr "wooden"
 
 #. type: "wooden_description"
-#: Resources/templates/Localizable.strings:144
+#: Resources/templates/Localizable.strings:172
 #, no-wrap
 msgid ""
 "Wooden theme from iROOTa,\n"
@@ -740,13 +889,13 @@ msgstr ""
 "Install to /EFI/CLOVER/themes/wooden."
 
 #. type: "rc.scripts.on.target_title"
-#: Resources/templates/Localizable.strings:150
+#: Resources/templates/Localizable.strings:178
 #, no-wrap
 msgid "Install RC scripts on target volume"
 msgstr "Instaliraj RC skripte na odabrani disk"
 
 #. type: "rc.scripts.on.target_description"
-#: Resources/templates/Localizable.strings:151
+#: Resources/templates/Localizable.strings:179
 #, no-wrap
 msgid ""
 "Install all RC scripts on target volume.\n"
@@ -756,37 +905,37 @@ msgstr ""
 "Mora biti odabran OSX bootabilni sistemski disk."
 
 #. type: "rc.scripts.on.all.volumes_title"
-#: Resources/templates/Localizable.strings:153
+#: Resources/templates/Localizable.strings:181
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
 msgstr "Instaliraj sve RC skripte na sve OSX bootabilne diskove"
 
 #. type: "rc.scripts.on.all.volumes_description"
-#: Resources/templates/Localizable.strings:154
+#: Resources/templates/Localizable.strings:182
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
 msgstr "Instalira sve RC skripte na sve interne OSX bootabilne diskove."
 
 #. type: "Optional RC Scripts"
-#: Resources/templates/Localizable.strings:155
+#: Resources/templates/Localizable.strings:183
 #, no-wrap
 msgid "Optional RC Scripts"
 msgstr "Opcionalne RC skripte"
 
 #. type: "disable_sleep_proxy_client_description"
-#: Resources/templates/Localizable.strings:156
+#: Resources/templates/Localizable.strings:184
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
 msgstr "Isključuje mDNSResponder spavajuči proxy client service.Ovo sprečava da se sistem budi iz sleepa svakih nekoliko sati"
 
 #. type: "CloverPrefpane_title"
-#: Resources/templates/Localizable.strings:161
+#: Resources/templates/Localizable.strings:189
 #, no-wrap
 msgid "Install Clover Preference Pane"
 msgstr "Instaliraj Clover Preference Pane"
 
 #. type: "CloverPrefpane_description"
-#: Resources/templates/Localizable.strings:162
+#: Resources/templates/Localizable.strings:190
 #, no-wrap
 msgid ""
 "Install Clover Preference Pane on target volume.\n"
@@ -1010,7 +1159,6 @@ msgstr "NVRamDisk:"
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
-#| msgid "Themes"
 msgid "Theme"
 msgstr "Tema"
 
@@ -1018,7 +1166,6 @@ msgstr "Tema"
 #. type: "392.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
-#| msgid "Clover Theme"
 msgid "Clover Theme"
 msgstr "Clover Tema"
 

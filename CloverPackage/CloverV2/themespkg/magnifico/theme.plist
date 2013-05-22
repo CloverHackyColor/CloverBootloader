@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Author</key>
+	<string>Magnifico</string>
+	<key>Description</key>
+	<string>Magnifico theme</string>
+	<key>Theme</key>
+	<dict>
+		<key>Background</key>
+		<dict>
+			<key>Path</key>
+			<string>bg_block_192px.png</string>
+			<key>Type</key>
+			<string>Tile</string>
+		</dict>
+		<key>Badges</key>
+		<dict>
+			<key>Inline</key>
+			<true/>
+			<key>Show</key>
+			<true/>
+			<key>Swap</key>
+			<false/>
+		</dict>
+		<key>Banner</key>
+		<string>logo.png</string>
+		<key>Font</key>
+		<dict>
+			<key>CharWidth</key>
+			<integer>10</integer>
+			<key>Path</key>
+			<string>WoB_PTMono_10W_grey.png</string>
+			<key>Type</key>
+			<string>Load</string>
+		</dict>
+		<key>Selection</key>
+		<dict>
+			<key>Big</key>
+			<string>selection_big.png</string>
+			<key>Color</key>
+			<string>0xF3F3F380</string>
+			<key>Small</key>
+			<string>selection_small.png</string>
+		</dict>
+	</dict>
+	<key>Year</key>
+	<string>2012</string>
+</dict>
+</plist>
