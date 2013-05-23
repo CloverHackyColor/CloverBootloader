@@ -171,9 +171,11 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue;  //5
   InputItems[InputItemsCount].BValue = gSettings.GeneratePStates;
   InputItems[InputItemsCount++].SValue = gSettings.GeneratePStates?L"[+]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = BoolValue;  //6
-  InputItems[InputItemsCount].BValue = gSettings.Turbo;
-  InputItems[InputItemsCount++].SValue = gSettings.Turbo?L"[+]":L"[ ]";
+  //no more used
+//  InputItems[InputItemsCount].ItemType = BoolValue;  //6
+//  InputItems[InputItemsCount].BValue = gSettings.Turbo;
+//  InputItems[InputItemsCount++].SValue = gSettings.Turbo?L"[+]":L"[ ]";
+  InputItemsCount++;
   InputItems[InputItemsCount].ItemType = Decimal;  //7
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gSettings.PLimitDict);
   InputItems[InputItemsCount].ItemType = Decimal;  //8
@@ -403,9 +405,10 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue;  //5
   InputItems[InputItemsCount].BValue = gSettings.GeneratePStates;
   InputItems[InputItemsCount++].SValue = gSettings.GeneratePStates?L"[+]":L"[ ]";
-  InputItems[InputItemsCount].ItemType = BoolValue;  //6
-  InputItems[InputItemsCount].BValue = gSettings.Turbo;
-  InputItems[InputItemsCount++].SValue = gSettings.Turbo?L"[+]":L"[ ]";
+//  InputItems[InputItemsCount].ItemType = BoolValue;  //6
+//  InputItems[InputItemsCount].BValue = gSettings.Turbo;
+//  InputItems[InputItemsCount++].SValue = gSettings.Turbo?L"[+]":L"[ ]";
+  InputItemsCount++;
   InputItems[InputItemsCount].ItemType = Decimal;  //7
   InputItems[InputItemsCount++].SValue = PoolPrint(L"%02d", gSettings.PLimitDict);
   InputItems[InputItemsCount].ItemType = Decimal;  //8
@@ -650,8 +653,10 @@ VOID ApplyInputs(VOID)
     GlobalConfig.Theme = PoolPrint(L"%s", InputItems[i].SValue);
     if (EFI_ERROR(Status = GetThemeSettings(FALSE))) {
       DBG("New theme settings: %r\n", Status);
-      PrepareFont();
-      reinitImages();    
+ //will change theme after ESC   
+      gThemeChanged = TRUE;
+//      PrepareFont();
+//      reinitImages();    
     }    
   }
   i++; //4
@@ -663,9 +668,9 @@ VOID ApplyInputs(VOID)
     gSettings.GeneratePStates = InputItems[i].BValue;
   }
   i++; //6
-  if (InputItems[i].Valid) {
+/*  if (InputItems[i].Valid) {
     gSettings.Turbo = InputItems[i].BValue;
-  }
+  } */
   i++; //7
   if (InputItems[i].Valid) {
 //    DBG("InputItems[i]: %s\n", InputItems[i].SValue);
@@ -2158,9 +2163,17 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
   if (!MainImage) {    
     if (ThemeDir) {
       MainImage = egLoadIcon(ThemeDir, L"icons\\osx.icns", 128);
-    } else {
+    } 
+    if (!MainImage) {
       MainImage = DummyImage(128);
-    }    
+    }
+  }
+  if (!MainImage) {
+    Entry->Place.XPos = XPos;
+    Entry->Place.YPos = YPos;
+    Entry->Place.Width = 48;
+    Entry->Place.Height = 48;
+    return;
   }
   //  DBG("Entry title=%s; Width=%d\n", Entry->Title, MainImage->Width);
   BltImageCompositeBadge(SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
@@ -2531,7 +2544,7 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-  
+/*  
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"Turbo:");
   InputBootArgs->Entry.Tag = TAG_INPUT;
@@ -2541,7 +2554,7 @@ REFIT_MENU_ENTRY  *SubMenuSpeedStep()
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
-  
+*/  
   InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
   InputBootArgs->Entry.Title = PoolPrint(L"PLimitDict:");
   InputBootArgs->Entry.Tag = TAG_INPUT;

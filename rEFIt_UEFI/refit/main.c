@@ -529,7 +529,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
          DivU64x32(gCPUStructure.FSBFrequency, Mega),
          gCPUStructure.MaxSpeed);
 
-  MsgLog("Turbo=%c\n", gSettings.Turbo?'Y':'N');
+//  MsgLog("Turbo=%c\n", gSettings.Turbo?'Y':'N');
 //  MsgLog("PatchAPIC=%c\n", gSettings.PatchNMI?'Y':'N');
 //  MsgLog("PatchVBios=%c\n", gSettings.PatchVBios?'Y':'N');
 //  DBG("KillMouse\n");
@@ -541,7 +541,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     // but before ACPI patch we need smbios patch
 //    DBG("PatchSmbios\n");
     
-    ApplySettings();
+//    ApplySettings();
     PatchSmbios();
 //    DBG("PatchACPI\n");
     PatchACPI(Entry->Volume);
@@ -2648,9 +2648,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   gSettings.PointerEnabled = TRUE;
   gSettings.PointerSpeed = 2;
   gSettings.DoubleClickTime = 500;
-  if (EFI_ERROR(Status = GetEarlyUserSettings(SelfRootDir))) {
+  Status = GetEarlyUserSettings(SelfRootDir);
+  if (EFI_ERROR(Status)) {
     DBG("Early settings: %r\n", Status);
   }
+  gThemeChanged = TRUE;
   MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
  // if (EFI_ERROR(Status = GetThemeSettings(TRUE))) {
 //    DBG("Theme settings: %r\n", Status);
@@ -2677,14 +2679,16 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
 
   if (!GlobalConfig.FastBoot) {
-  // init screen and dump video modes to log
-  if (gDriversFlags.VideoLoaded) {
-    InitScreen(FALSE);
+    // init screen and dump video modes to log
+    if (gDriversFlags.VideoLoaded) {
+      InitScreen(FALSE);
+    } else {
+      InitScreen(!gFirmwareClover); // ? FALSE : TRUE);
+    }
+    //  DBG("InitScreen\n");
   } else {
-    InitScreen(!gFirmwareClover); // ? FALSE : TRUE);
-  }
-//  DBG("InitScreen\n");
-  }
+    InitScreen(FALSE);
+  }  
   
   //Now we have to reinit handles
   Status = ReinitSelfLib();
@@ -2701,8 +2705,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //  DumpBiosMemoryMap();
 
   GuiEventsInitialize();
-//  DBG("GuiEventsInitialize OK\n");
-  
   
   GetCPUProperties();
   if (!gSettings.EnabledCores) {
@@ -2772,9 +2774,12 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       }
     }
     if (!GlobalConfig.FastBoot) {
-      Status = GetThemeSettings(TRUE);
-      if (EFI_ERROR(Status)) {
-        DBG("Theme settings in main cycle: %r\n", Status);
+      if (gThemeChanged) {
+        Status = GetThemeSettings(TRUE);
+        if (EFI_ERROR(Status)) {
+          DBG("Theme settings in main cycle: %r\n", Status);
+        }
+        gThemeChanged = FALSE;
       }
       //changing theme we need to change Volumes Images
       reinitImages();
@@ -2788,7 +2793,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         //DBG("scan legacy first\n");
         ScanLegacy();
       }
-   }
+    }
 
     ScanLoader();
 //          DBG("ScanLoader OK\n");

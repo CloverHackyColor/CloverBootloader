@@ -424,6 +424,7 @@ extern UINTN            VolumesCount;
 extern EG_IMAGE         *Banner;
 extern EG_IMAGE         *BigBack;
 extern EG_IMAGE         *FontImage;
+extern BOOLEAN          gThemeChanged;
 
 
 

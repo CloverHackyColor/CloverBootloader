@@ -59,6 +59,7 @@ CHAR16           *SelfDirPath;
 EFI_DEVICE_PATH  *SelfDevicePath;
 EFI_FILE         *ThemeDir = NULL;
 CHAR16           *ThemePath;
+BOOLEAN          gThemeChanged;
 EFI_FILE         *OEMDir;
 CHAR16           *OEMPath;
 EFI_FILE         *OemThemeDir = NULL;

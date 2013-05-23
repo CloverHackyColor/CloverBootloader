@@ -1617,7 +1617,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
     //CPU
     dictPointer = GetProperty(dict,"CPU");
     if (dictPointer) {
-      prop = GetProperty(dictPointer,"Turbo");
+/*      prop = GetProperty(dictPointer,"Turbo");
  //     gSettings.Turbo = FALSE;
       if(prop) {
         if ((prop->type == kTagTypeFalse) ||
@@ -1631,6 +1631,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           DBG("Config set Turbo\n");
         }
       }
+ */
       prop = GetProperty(dictPointer,"QPI");
       gSettings.QPI = (UINT16)gCPUStructure.ProcessorInterconnectSpeed; //MHz
       if(prop) {
@@ -2522,7 +2523,7 @@ VOID SetDevices(VOID)
   
 	MsgLog("CurrentMode: Width=%d Height=%d\n", UGAWidth, UGAHeight);  
 }
-
+/*
 EFI_STATUS ApplySettings()
 {
   UINT64  msr;
@@ -2551,7 +2552,7 @@ EFI_STATUS ApplySettings()
      }
      //Slice: I disable this until to be clear why it should be disabled any way
      // moreover ISS is not EIST, I may enable or not ISS but I always want EIST.
-   /*  if (gSettings.EnableISS != ((msr & (1ULL<<16)) != 0)){
+ */  /*  if (gSettings.EnableISS != ((msr & (1ULL<<16)) != 0)){
       //attempt to speedstep
       msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
       DBG("MSR_IA32_MISC_ENABLE = %lx\n", msr);
@@ -2563,10 +2564,10 @@ EFI_STATUS ApplySettings()
       DBG("Set speedstep: MSR_IA32_MISC_ENABLE = %lx\n", msr);
       }
    */
-  }
+/*  }
   return EFI_SUCCESS;
 }
-
+*/
 EFI_STATUS SaveSettings()
 {
   // TODO: SetVariable()..
