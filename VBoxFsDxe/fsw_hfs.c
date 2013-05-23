@@ -595,7 +595,8 @@ fsw_hfs_btree_search (struct fsw_hfs_btree * btree,
   fsw_u8* buffer = NULL;
   int match;
   fsw_u32 count;
-  int cmp;
+  int cmp = 0;
+  fsw_u32 *pointer;
   
   currnode = btree->root_node;
   status = fsw_alloc(btree->node_size, &buffer);
@@ -638,12 +639,9 @@ fsw_hfs_btree_search (struct fsw_hfs_btree * btree,
           //                goto done;
           break;
         }
-      } else if (node->kind == kBTIndexNode) {
-        fsw_u32 *pointer;
-        
+      } else if (node->kind == kBTIndexNode) {                
         if (cmp > 0)
-          break;
-        
+          break;        
         pointer = (fsw_u32 *) ((CHAR8 *)currkey
                                + be16_to_cpu (currkey->length16)
                                + 2);
@@ -654,7 +652,7 @@ fsw_hfs_btree_search (struct fsw_hfs_btree * btree,
     if (status == FSW_SUCCESS) {
       break;
     }
-    if (node->kind == kBTLeafNode && cmp < 0 && node->fLink) {
+    if (node->kind == kBTLeafNode && (cmp < 0) && node->fLink) {
       currnode = be32_to_cpu(node->fLink);
       //          goto readnode; //continue
     } else if (!match) {
@@ -1058,13 +1056,13 @@ static fsw_status_t fsw_hfs_get_extent(struct fsw_hfs_volume * vol,
   
   return status;
 }
-
+/*
 static const fsw_u16* g_blacklist[] =
 {
     //L"AppleIntelCPUPowerManagement.kext",
     NULL
 };
-
+*/
 
 //#define HFS_FILE_INJECTION
 
@@ -1133,7 +1131,7 @@ static fsw_status_t fsw_hfs_dir_lookup(struct fsw_hfs_volume * vol,
   fsw_u16                    rec_type;
   BTNodeDescriptor *         node = NULL;
   struct fsw_string          rec_name;
-  int                        free_data = 0, i;
+  int                        free_data = 0; //, i;
   HFSPlusCatalogKey*         file_key;
   file_info_t                file_info;
   fsw_u8*                    base;
