@@ -363,6 +363,10 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].ItemType = ASString;  //93
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 76, L"%a",
                 gSettings.MountEFI ? gSettings.MountEFI : "");
+  InputItems[InputItemsCount].ItemType = BoolValue; //94
+  InputItems[InputItemsCount].BValue = gSettings.KPLapicPanic;
+  InputItems[InputItemsCount++].SValue = gSettings.KPLapicPanic?L"[+]":L"[ ]";
+  
 }
 
 VOID FillInputs(VOID)
@@ -610,6 +614,9 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].SValue   = AllocateZeroPool(64);
   UnicodeSPrint(InputItems[InputItemsCount++].SValue, 76, L"%a",
                 gSettings.MountEFI ? gSettings.MountEFI : "");
+  InputItems[InputItemsCount].ItemType = BoolValue; //94
+  InputItems[InputItemsCount].BValue = gSettings.KPLapicPanic;
+  InputItems[InputItemsCount++].SValue = gSettings.KPLapicPanic?L"[+]":L"[ ]";
 }
 
 
@@ -928,6 +935,10 @@ VOID ApplyInputs(VOID)
     gSettings.MountEFI = AllocateZeroPool(38); // make the room for at least a UUID
     AsciiSPrint(gSettings.MountEFI, 38, "%s", InputItems[i].SValue);
   }    
+  i++; //94
+  if (InputItems[i].Valid) {
+    gSettings.KPLapicPanic = InputItems[i].BValue;
+  }
   if (NeedSave) {
     SaveSettings(); 
   }
@@ -2691,6 +2702,15 @@ REFIT_MENU_ENTRY  *SubMenuBinaries()
   InputBootArgs->Entry.Tag = TAG_INPUT;
   InputBootArgs->Entry.Row = 0xFFFF; //cursor
   InputBootArgs->Item = &InputItems[45];    
+  InputBootArgs->Entry.AtClick = ActionEnter;
+  InputBootArgs->Entry.AtRightClick = ActionDetails;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Kernel Lapic Patch:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF; //cursor
+  InputBootArgs->Item = &InputItems[94];    
   InputBootArgs->Entry.AtClick = ActionEnter;
   InputBootArgs->Entry.AtRightClick = ActionDetails;
   AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);

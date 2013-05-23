@@ -1698,8 +1698,9 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
     }
 */
     // KernelAndKextPatches
-    gSettings.KPKernelCpu = TRUE; // enabled by default
+//xxx    gSettings.KPKernelCpu = TRUE; // enabled by default
     gSettings.KPKextPatchesNeeded = FALSE;
+    gSettings.KPLapicPanic = FALSE; // disabled by default
     dictPointer = GetProperty(dict,"KernelAndKextPatches");
     if (dictPointer) {
       gSettings.KPDebug = FALSE;
@@ -1713,12 +1714,20 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       }
       prop = GetProperty(dictPointer,"KernelCpu");
       if(prop) {
-        gSettings.KPKernelCpu = FALSE;
+        gSettings.KPKernelCpu = FALSE; //as we said it is enabled by default why disabled here?
         if ((prop->type == kTagTypeTrue) ||
             ((prop->type == kTagTypeString) &&
              ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))){
           gSettings.KPKernelCpu = TRUE;
         }
+      }
+      prop = GetProperty(dictPointer,"KernelLapic");
+      if(prop) {
+        if ((prop->type == kTagTypeTrue) ||
+            ((prop->type == kTagTypeString) &&
+             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))){
+              gSettings.KPLapicPanic = TRUE;
+            }
       }
       prop = GetProperty(dictPointer,"ATIConnectorsController");
       if(prop) {
@@ -2261,10 +2270,8 @@ VOID GetDevices(VOID)
             case 0x1002:
               info = NULL;
               gGraphics[NGFX].Vendor = Ati;
-              for (i = 0; radeon_cards[i].device_id ; i++)
-              {
-                if (radeon_cards[i].device_id == Pci.Hdr.DeviceId)
-                {
+              for (i = 0; radeon_cards[i].device_id ; i++) {
+                if (radeon_cards[i].device_id == Pci.Hdr.DeviceId) {
                   info = &radeon_cards[i];
                   break;
                 }
@@ -2295,8 +2302,7 @@ VOID GetDevices(VOID)
           NGFX++;
         }   //if gfx    
         else if((Pci.Hdr.ClassCode[2] == PCI_CLASS_NETWORK) &&
-                (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_OTHER))
-        {
+                (Pci.Hdr.ClassCode[1] == PCI_CLASS_NETWORK_OTHER)) {
  //         DBG("Found AirPort. Landing enabled...\n");
           Arpt.SegmentGroupNum = (UINT16)Segment;
           Arpt.BusNum = (UINT8)Bus;

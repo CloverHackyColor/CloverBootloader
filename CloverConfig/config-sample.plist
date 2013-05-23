@@ -8,6 +8,8 @@
 		<false/>
 		<key>KernelCpu</key>
 		<false/>
+		<key>KernelLapic</key>
+		<false/>
 		<key>ATIConnectorsController</key>
 		<string>6000</string>
 		<key>ATIConnectorsData</key>

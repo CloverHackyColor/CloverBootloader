@@ -717,6 +717,7 @@ typedef struct {
   // KernelAndKextPatches
   BOOLEAN KPDebug;
   BOOLEAN KPKernelCpu;
+  BOOLEAN KPLapicPanic;
   BOOLEAN KPKextPatchesNeeded;
   BOOLEAN KPAsusAICPUPM;
   BOOLEAN KPAppleRTC;
