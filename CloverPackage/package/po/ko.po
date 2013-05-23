@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-23 08:46+0300\n"
-"PO-Revision-Date: 2013-05-19 10:55+0000\n"
+"PO-Revision-Date: 2013-05-23 09:55+0000\n"
 "Last-Translator: Mill <ceruns@ymail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
 "Language: ko\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1368960936.0\n"
+"X-POOTLE-MTIME: 1369302941.0\n"
 
 # //Don't need change
 #. type: Content of: <html><body><div><p>
@@ -585,7 +585,7 @@ msgstr "애플스타일"
 
 #. type: "applestyle_description"
 #: Resources/templates/Localizable.strings:112
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "AppleStyle theme from Eps,\n"
 #| "Install to /EFI/CLOVER/themes/AppleStyle."
@@ -594,14 +594,14 @@ msgid ""
 "Install to /EFI/CLOVER/themes/applestyle"
 msgstr ""
 "Eps의 애플 스타일 테마,\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/AppleStyle."
+"다음에 설치합니다: /EFI/CLOVER/themes/AppleStyle"
 
 #. type: "black_green_title"
 #: Resources/templates/Localizable.strings:115
 #, fuzzy, no-wrap
 #| msgid "black_green"
 msgid "Black_Green"
-msgstr "black_green"
+msgstr "Black_Green"
 
 #. type: "black_green_description"
 #: Resources/templates/Localizable.strings:116
@@ -614,13 +614,13 @@ msgid ""
 "Install to /EFI/CLOVER/themes/black_green"
 msgstr ""
 "Blackosx의 흑녹색조 기본 테마,\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/black_green."
+"다음에 설치합니다: /EFI/CLOVER/themes/black_green"
 
 #. type: "bluemac_title"
 #: Resources/templates/Localizable.strings:119
 #, no-wrap
 msgid "Bluemac"
-msgstr ""
+msgstr "Bluemac"
 
 #. type: "bluemac_description"
 #: Resources/templates/Localizable.strings:120
@@ -632,14 +632,14 @@ msgid ""
 "Bluemac theme from FowZiey,\n"
 "Install to /EFI/CLOVER/themes/bluemac"
 msgstr ""
-"hijeane의 Simple_gray 테마,\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/simple_gray."
+"FowZiey의 Bluemac 테마,\n"
+"다음에 설치합니다: /EFI/CLOVER/themes/bluemac"
 
 #. type: "bootcamp_title"
 #: Resources/templates/Localizable.strings:123
 #, no-wrap
 msgid "BootCamp"
-msgstr ""
+msgstr "BootCamp"
 
 #. type: "bootcamp_description"
 #: Resources/templates/Localizable.strings:124
@@ -651,8 +651,8 @@ msgid ""
 "Bootcamp theme from Bijo,\n"
 "Install to /EFI/CLOVER/themes/bootcamp"
 msgstr ""
-"iROOTa의 Wooden 테마,\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/wooden."
+"Bijo의 부트캠ㅍ므 테마,\n"
+"다음에 설치합니다: /EFI/CLOVER/themes/bootcamp"
 
 #. type: "iclover_title"
 #: Resources/templates/Localizable.strings:127
@@ -671,13 +671,13 @@ msgid ""
 "Install to /EFI/CLOVER/themes/iclover"
 msgstr ""
 "winlog의 회색조 테마,\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/iClover."
+"다음에 설치합니다: /EFI/CLOVER/themes/iClover"
 
 #. type: "magnifico_title"
 #: Resources/templates/Localizable.strings:131
 #, no-wrap
 msgid "Magnifico"
-msgstr ""
+msgstr "Magnifico"
 
 #. type: "magnifico_description"
 #: Resources/templates/Localizable.strings:132
@@ -689,8 +689,8 @@ msgid ""
 "Magnifico theme from Magnifico,\n"
 "Install to /EFI/CLOVER/themes/magnifico"
 msgstr ""
-"iROOTa의 Wooden 테마,\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/wooden."
+"Magnifico의 Magnifoco 테마,\n"
+"다음에 설치합니다: /EFI/CLOVER/themes/magnifico"
 
 #. type: "metal_title"
 #: Resources/templates/Localizable.strings:135
@@ -708,7 +708,7 @@ msgid ""
 "The original metal theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/metal"
 msgstr ""
-"Slice의 The original metal 테마.\n"
+"Slice의 The original metal 테마,\n"
 "다음에 설치합니다: /EFI/CLOVER/themes/metal"
 
 #. type: "mrengles_title"
@@ -728,13 +728,13 @@ msgid ""
 "Install to /EFI/CLOVER/themes/mrengles"
 msgstr ""
 "mrengles의 mrengles테마,\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/mrengles."
+"다음에 설치합니다: /EFI/CLOVER/themes/mrengles"
 
 #. type: "orange_title"
 #: Resources/templates/Localizable.strings:143
 #, no-wrap
 msgid "Orange"
-msgstr ""
+msgstr "Orange"
 
 #. type: "orange_description"
 #: Resources/templates/Localizable.strings:144
@@ -746,14 +746,14 @@ msgid ""
 "Orange theme from dwm,\n"
 "Install to /EFI/CLOVER/themes/orange"
 msgstr ""
-"mrengles의 mrengles테마,\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/mrengles."
+"dwm의 Orange테마,\n"
+"다음에 설치합니다: /EFI/CLOVER/themes/orange"
 
 #. type: "os_box_title"
 #: Resources/templates/Localizable.strings:147
 #, no-wrap
 msgid "OS Box"
-msgstr ""
+msgstr "OS Box"
 
 #. type: "os_box_description"
 #: Resources/templates/Localizable.strings:148
@@ -765,14 +765,14 @@ msgid ""
 "OS Box theme from Kyndder,\n"
 "Install to /EFI/CLOVER/themes/os_box"
 msgstr ""
-"Trauma의 Buttons 테마,\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/buttons."
+"Kyndder의 OS Box 테마,\n"
+"다음에 설치합니다: /EFI/CLOVER/themes/os_box"
 
 #. type: "os_one_title"
 #: Resources/templates/Localizable.strings:151
 #, no-wrap
 msgid "OS One"
-msgstr ""
+msgstr "OS One"
 
 #. type: "os_one_description"
 #: Resources/templates/Localizable.strings:152
@@ -784,14 +784,14 @@ msgid ""
 "OS One theme from Kyndder,\n"
 "Install to /EFI/CLOVER/themes/os_one"
 msgstr ""
-"Trauma의 Buttons 테마,\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/buttons."
+"Kyndder의 OS One 테마,\n"
+"다음에 설치합니다: /EFI/CLOVER/themes/os_one"
 
 #. type: "thinkpad_title"
 #: Resources/templates/Localizable.strings:155
 #, no-wrap
 msgid "ThinkPad"
-msgstr ""
+msgstr "ThinkPad"
 
 #. type: "thinkpad_description"
 #: Resources/templates/Localizable.strings:156
@@ -803,8 +803,8 @@ msgid ""
 "ThinkPad theme from Kogen Mantis,\n"
 "Install to /EFI/CLOVER/themes/thinkpad"
 msgstr ""
-"Slice의 The original metal 테마.\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/metal"
+"Kogen Mantis의 TinkPad 테마.\n"
+"다음에 설치합니다: /EFI/CLOVER/themes/thinkpad"
 
 #. type: "buttons_title"
 #: Resources/templates/Localizable.strings:159
