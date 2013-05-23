@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-23 08:46+0300\n"
-"PO-Revision-Date: 2013-05-22 14:40+0000\n"
+"PO-Revision-Date: 2013-05-23 21:53+0000\n"
 "Last-Translator: oswaldini <oswaldinimtb@gmail.com>\n"
 "Language-Team: pl <pl@li.org>\n"
 "Language: pl\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1369233620.0\n"
+"X-POOTLE-MTIME: 1369345993.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -776,7 +776,7 @@ msgstr "OS One"
 
 #. type: "os_one_description"
 #: Resources/templates/Localizable.strings:152
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "OS One theme from Kyndder,\n"
 #| "Install to /EFI/CLOVER/themes/os_box"
@@ -785,7 +785,7 @@ msgid ""
 "Install to /EFI/CLOVER/themes/os_one"
 msgstr ""
 "Motyw OS One od Kyndder,\n"
-"Lokalizacja instalacji motywu: /EFI/CLOVER/themes/os_box"
+"Lokalizacja instalacji motywu: /EFI/CLOVER/themes/os_one"
 
 #. type: "thinkpad_title"
 #: Resources/templates/Localizable.strings:155
