@@ -1408,7 +1408,7 @@ VOID PatchTableType17()
     //now I want to update deviceLocator and bankLocator
     if (isMacPro) {
       AsciiSPrint(deviceLocator, 10, "DIMM%d", gRAMCount + 1);
-      AsciiSPrint(bankLocator, 10, "");
+      AsciiSPrint(bankLocator, 10, "   ");
     } else {
       AsciiSPrint(deviceLocator, 10, "DIMM%d", bank);
       AsciiSPrint(bankLocator, 10, "BANK%d", Index % channels);
