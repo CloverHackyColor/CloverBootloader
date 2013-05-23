@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-22 09:45+0300\n"
-"PO-Revision-Date: 2013-05-22 09:50+0100\n"
+"POT-Creation-Date: 2013-05-23 08:46+0300\n"
+"PO-Revision-Date: 2013-05-23 08:48+0100\n"
 "Last-Translator: JrCs\n"
 "Language-Team: en <en@li.org>\n"
 "Language: en\n"
@@ -579,9 +579,6 @@ msgstr "AppleStyle"
 #. type: "applestyle_description"
 #: Resources/templates/Localizable.strings:112
 #, no-wrap
-#| msgid ""
-#| "AppleStyle theme from Eps,\n"
-#| "Install to /EFI/CLOVER/themes/AppleStyle."
 msgid ""
 "AppleStyle theme from Eps,\n"
 "Install to /EFI/CLOVER/themes/applestyle"
@@ -592,16 +589,12 @@ msgstr ""
 #. type: "black_green_title"
 #: Resources/templates/Localizable.strings:115
 #, no-wrap
-#| msgid "black_green"
 msgid "Black_Green"
 msgstr "Black_Green"
 
 #. type: "black_green_description"
 #: Resources/templates/Localizable.strings:116
 #, no-wrap
-#| msgid ""
-#| "Default black_green theme from Blackosx,\n"
-#| "Install to /EFI/CLOVER/themes/black_green."
 msgid ""
 "Default black_green theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/black_green"
@@ -618,9 +611,6 @@ msgstr "Bluemac"
 #. type: "bluemac_description"
 #: Resources/templates/Localizable.strings:120
 #, no-wrap
-#| msgid ""
-#| "Simple_gray theme from hijeane,\n"
-#| "Install to /EFI/CLOVER/themes/simple_gray."
 msgid ""
 "Bluemac theme from FowZiey,\n"
 "Install to /EFI/CLOVER/themes/bluemac"
@@ -637,9 +627,6 @@ msgstr "BootCamp"
 #. type: "bootcamp_description"
 #: Resources/templates/Localizable.strings:124
 #, no-wrap
-#| msgid ""
-#| "Wooden theme from iROOTa,\n"
-#| "Install to /EFI/CLOVER/themes/wooden."
 msgid ""
 "Bootcamp theme from Bijo,\n"
 "Install to /EFI/CLOVER/themes/bootcamp"
@@ -656,9 +643,6 @@ msgstr "iClover"
 #. type: "iclover_description"
 #: Resources/templates/Localizable.strings:128
 #, no-wrap
-#| msgid ""
-#| "Grey style theme by winlog,\n"
-#| "Install to /EFI/CLOVER/themes/iClover."
 msgid ""
 "Grey style theme by winlog,\n"
 "Install to /EFI/CLOVER/themes/iclover"
@@ -675,9 +659,6 @@ msgstr "Magnifico"
 #. type: "magnifico_description"
 #: Resources/templates/Localizable.strings:132
 #, no-wrap
-#| msgid ""
-#| "Wooden theme from iROOTa,\n"
-#| "Install to /EFI/CLOVER/themes/wooden."
 msgid ""
 "Magnifico theme from Magnifico,\n"
 "Install to /EFI/CLOVER/themes/magnifico"
@@ -694,9 +675,6 @@ msgstr "metal"
 #. type: "metal_description"
 #: Resources/templates/Localizable.strings:136
 #, no-wrap
-#| msgid ""
-#| "The original metal theme from Slice,\n"
-#| "Install to /EFI/CLOVER/themes/metal."
 msgid ""
 "The original metal theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/metal"
@@ -713,9 +691,6 @@ msgstr "mrengles"
 #. type: "mrengles_description"
 #: Resources/templates/Localizable.strings:140
 #, no-wrap
-#| msgid ""
-#| "mrengles theme from mrengles,\n"
-#| "Install to /EFI/CLOVER/themes/mrengles."
 msgid ""
 "mrengles theme from mrengles,\n"
 "Install to /EFI/CLOVER/themes/mrengles"
@@ -732,9 +707,6 @@ msgstr "Orange"
 #. type: "orange_description"
 #: Resources/templates/Localizable.strings:144
 #, no-wrap
-#| msgid ""
-#| "mrengles theme from mrengles,\n"
-#| "Install to /EFI/CLOVER/themes/mrengles."
 msgid ""
 "Orange theme from dwm,\n"
 "Install to /EFI/CLOVER/themes/orange"
@@ -751,9 +723,6 @@ msgstr "OS Box"
 #. type: "os_box_description"
 #: Resources/templates/Localizable.strings:148
 #, no-wrap
-#| msgid ""
-#| "Buttons theme from Trauma,\n"
-#| "Install to /EFI/CLOVER/themes/buttons."
 msgid ""
 "OS Box theme from Kyndder,\n"
 "Install to /EFI/CLOVER/themes/os_box"
@@ -770,15 +739,12 @@ msgstr "OS One"
 #. type: "os_one_description"
 #: Resources/templates/Localizable.strings:152
 #, no-wrap
-#| msgid ""
-#| "Buttons theme from Trauma,\n"
-#| "Install to /EFI/CLOVER/themes/buttons."
 msgid ""
 "OS One theme from Kyndder,\n"
-"Install to /EFI/CLOVER/themes/os_box"
+"Install to /EFI/CLOVER/themes/os_one"
 msgstr ""
 "OS One theme from Kyndder,\n"
-"Install to /EFI/CLOVER/themes/os_box"
+"Install to /EFI/CLOVER/themes/os_one"
 
 #. type: "thinkpad_title"
 #: Resources/templates/Localizable.strings:155
@@ -789,9 +755,6 @@ msgstr "ThinkPad"
 #. type: "thinkpad_description"
 #: Resources/templates/Localizable.strings:156
 #, no-wrap
-#| msgid ""
-#| "The original metal theme from Slice,\n"
-#| "Install to /EFI/CLOVER/themes/metal."
 msgid ""
 "ThinkPad theme from Kogen Mantis,\n"
 "Install to /EFI/CLOVER/themes/thinkpad"

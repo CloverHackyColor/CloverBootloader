@@ -6,8 +6,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Clover v2.0-r1717\n"
-"POT-Creation-Date: 2013-05-22 09:45+0300\n"
+"Project-Id-Version: Clover v2.0-r1720\n"
+"POT-Creation-Date: 2013-05-23 08:46+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -674,7 +674,7 @@ msgstr ""
 #, no-wrap
 msgid ""
 "OS One theme from Kyndder,\n"
-"Install to /EFI/CLOVER/themes/os_box"
+"Install to /EFI/CLOVER/themes/os_one"
 msgstr ""
 
 #. type: "thinkpad_title"

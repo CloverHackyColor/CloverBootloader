@@ -150,7 +150,7 @@ Install to /EFI/CLOVER/themes/os_box";
 
 "os_one_title" = "OS One";
 "os_one_description" = "OS One theme from Kyndder,
-Install to /EFI/CLOVER/themes/os_box";
+Install to /EFI/CLOVER/themes/os_one";
 
 "thinkpad_title" = "ThinkPad";
 "thinkpad_description" = "ThinkPad theme from Kogen Mantis,
