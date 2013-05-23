@@ -939,6 +939,7 @@ KernelAndKextsPatcherStart(VOID)
   
   DBG_RT("\nKernelLapic patch: ");
   if (gSettings.KPLapicPanic) {
+    BOOLEAN patchedOk;
     KernelAndKextPatcherInit();
     if (KernelData == NULL) {
       if (gSettings.KPDebug) {
@@ -947,8 +948,7 @@ KernelAndKextsPatcherStart(VOID)
       }
       return;
     }
-    BOOLEAN patchedOk;
-    
+
     if(is64BitKernel) {
       DBG_RT("64-bit patch ...");
       patchedOk = KernelLapicPatch_64(KernelData);

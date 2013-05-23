@@ -2492,7 +2492,7 @@ VOID SetVariablesFromNvram()
   CHAR16  UStr[80];
   CHAR8  *tmpString;
   UINTN   Size = 0;
-  INTN   index = 0, index2, len, i;
+  UINTN   index = 0, index2, len, i;
   CHAR8  *arg = NULL;
   
   tmpString = GetNvramVariable(L"Clover.LogLineCount", &gEfiAppleBootGuid, NULL, &Size);

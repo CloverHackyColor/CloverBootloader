@@ -1190,7 +1190,11 @@ VOID PatchTableType17()
           } else if (gRAM.SPDInUse == 1) {
             // The SMBIOS may contain table for built-in module
             if (gRAM.SMBIOSInUse <= 2) {
-              channels = 1;
+              if (!gRAM.SMBIOS[0].InUse || !gRAM.SPD[2].InUse ||
+                  (gRAM.SMBIOS[0].Frequency != gRAM.SPD[2].Frequency) ||
+                  (gRAM.SMBIOS[0].ModuleSize != gRAM.SPD[2].ModuleSize)) {
+                channels = 1;
+              }
             } else {
               trustSMBIOS = FALSE;
             }
@@ -1404,13 +1408,13 @@ VOID PatchTableType17()
     //now I want to update deviceLocator and bankLocator
     if (isMacPro) {
       AsciiSPrint(deviceLocator, 10, "DIMM%d", gRAMCount + 1);
-      UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
+      AsciiSPrint(bankLocator, 10, "");
     } else {
       AsciiSPrint(deviceLocator, 10, "DIMM%d", bank);
       AsciiSPrint(bankLocator, 10, "BANK%d", Index % channels);
-      UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
-      UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, (CHAR8*)&bankLocator[0]);
     }
+    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
+    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, (CHAR8*)&bankLocator[0]);
     DBG("SMBIOS Type 17 Index = %d => %d %d:\n", gRAMCount, SMBIOSIndex, SPDIndex);
     if (newSmbiosTable.Type17->Size == 0) {
       DBG("%a %a EMPTY\n", bankLocator, deviceLocator);
