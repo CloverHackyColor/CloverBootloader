@@ -20,6 +20,7 @@
 		122489CD16A93FD300A0DB6B /* ComponentName.c in Sources */ = {isa = PBXBuildFile; fileRef = 122489C816A93FD300A0DB6B /* ComponentName.c */; };
 		122489CE16A93FD300A0DB6B /* MouseHid.c in Sources */ = {isa = PBXBuildFile; fileRef = 122489C916A93FD300A0DB6B /* MouseHid.c */; };
 		122489CF16A93FD300A0DB6B /* UsbMouse.c in Sources */ = {isa = PBXBuildFile; fileRef = 122489CA16A93FD300A0DB6B /* UsbMouse.c */; };
+		12283DC8174F7B3C00AD8A95 /* genconfig.c in Sources */ = {isa = PBXBuildFile; fileRef = 12283DC6174F7B3C00AD8A95 /* genconfig.c */; };
 		12D7546E1657CDD700376797 /* BdsConnect.c in Sources */ = {isa = PBXBuildFile; fileRef = 12D7546D1657CDD700376797 /* BdsConnect.c */; };
 		12D754711657CDE800376797 /* DevicePath.c in Sources */ = {isa = PBXBuildFile; fileRef = 12D754701657CDE800376797 /* DevicePath.c */; };
 		12DD321A16557F2E00108DFC /* BmLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 12DD321916557F2E00108DFC /* BmLib.c */; };
@@ -67,6 +68,11 @@
 		122489CA16A93FD300A0DB6B /* UsbMouse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = UsbMouse.c; sourceTree = "<group>"; };
 		122489CB16A93FD300A0DB6B /* UsbMouse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbMouse.h; sourceTree = "<group>"; };
 		122489CC16A93FD300A0DB6B /* UsbMouseDxe.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UsbMouseDxe.inf; sourceTree = "<group>"; };
+		12283DC3174F7B3C00AD8A95 /* config-sample-old.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "config-sample-old.plist"; sourceTree = "<group>"; };
+		12283DC4174F7B3C00AD8A95 /* config-sample.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "config-sample.plist"; sourceTree = "<group>"; };
+		12283DC5174F7B3C00AD8A95 /* genconfig */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = genconfig; sourceTree = "<group>"; };
+		12283DC6174F7B3C00AD8A95 /* genconfig.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = genconfig.c; sourceTree = "<group>"; };
+		12283DC7174F7B3C00AD8A95 /* Readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Readme.txt; sourceTree = "<group>"; };
 		123F0954164F96D0008C1C1C /* MemLogLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MemLogLib.c; sourceTree = "<group>"; };
 		123F0955164F96D0008C1C1C /* MemLogLibDefault.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = MemLogLibDefault.inf; sourceTree = "<group>"; };
 		123F0958164F96DB008C1C1C /* EfiFlashMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EfiFlashMap.h; sourceTree = "<group>"; };
@@ -601,6 +607,19 @@
 			);
 			name = UsbMouseDxe;
 			path = ../Patches_for_EDK2/UsbMouseDxe;
+			sourceTree = SOURCE_ROOT;
+		};
+		12283DC2174F7B3C00AD8A95 /* CloverConfig */ = {
+			isa = PBXGroup;
+			children = (
+				12283DC3174F7B3C00AD8A95 /* config-sample-old.plist */,
+				12283DC4174F7B3C00AD8A95 /* config-sample.plist */,
+				12283DC5174F7B3C00AD8A95 /* genconfig */,
+				12283DC6174F7B3C00AD8A95 /* genconfig.c */,
+				12283DC7174F7B3C00AD8A95 /* Readme.txt */,
+			);
+			name = CloverConfig;
+			path = ../CloverConfig;
 			sourceTree = SOURCE_ROOT;
 		};
 		123F0952164F96D0008C1C1C /* Library */ = {
@@ -1434,6 +1453,7 @@
 			isa = PBXGroup;
 			children = (
 				124D76E11657A4B9008B5407 /* CopiedFromEDK */,
+				12283DC2174F7B3C00AD8A95 /* CloverConfig */,
 				124D76D71657A474008B5407 /* AcpiReset */,
 				123F096F164F9C00008C1C1C /* BiosVideo */,
 				124D76DA1657A47E008B5407 /* BiosKeyboard */,
@@ -1854,6 +1874,7 @@
 				122489CD16A93FD300A0DB6B /* ComponentName.c in Sources */,
 				122489CE16A93FD300A0DB6B /* MouseHid.c in Sources */,
 				122489CF16A93FD300A0DB6B /* UsbMouse.c in Sources */,
+				12283DC8174F7B3C00AD8A95 /* genconfig.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

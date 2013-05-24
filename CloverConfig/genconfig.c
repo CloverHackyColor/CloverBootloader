@@ -246,6 +246,7 @@ typedef struct {
   // KernelAndKextPatches
   BOOLEAN KPDebug;
   BOOLEAN KPKernelCpu;
+  BOOLEAN KPLapicPanic;
   BOOLEAN KPKextPatchesNeeded;
   BOOLEAN KPAsusAICPUPM;
   BOOLEAN KPAppleRTC;
@@ -587,6 +588,7 @@ static void PrintConfig(const void *key, const void *value)
   printDict("KernelAndKextPatches");
   printBoolean("Debug", s->KPDebug);
   printBoolean("KernelCpu", s->KPKernelCpu);
+  printBoolean("KernelLapic", s->KPLapicPanic);
   printBoolean("AppleRTC", s->KPAppleRTC);
   printBoolean("AsusAICPUPM", s->KPAsusAICPUPM);
   printBoolean("KextPatchesAllowed", s->KextPatchesAllowed);
