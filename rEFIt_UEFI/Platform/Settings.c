@@ -1414,7 +1414,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
           gSettings.FixDsdt  = (UINT32)StrHexToUint64(UStr); 
         }
-        DBG("Config set Fix DSDT mask=%04x\n", gSettings.FixDsdt);
+        DBG("Config set Fix DSDT mask=%08x\n", gSettings.FixDsdt);
       }
       prop = GetProperty(dictPointer, "DropAPIC");
       gSettings.bDropAPIC = FALSE;

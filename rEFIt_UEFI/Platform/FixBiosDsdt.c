@@ -1052,12 +1052,21 @@ VOID ReplaceName(UINT8 *dsdt, UINT32 len, CONST CHAR8 *OldName, CONST CHAR8 *New
 {
   UINTN i;
   for (i=30; i<len; i++) {
+    if ((dsdt[i+0] == NewName[0]) && (dsdt[i+1] == NewName[1]) &&
+        (dsdt[i+2] == NewName[2]) && (dsdt[i+3] == NewName[3])) {
+      DBG("Name %a already present, renaming impossibble\n", NewName);
+      return;
+    }
+  }
+  
+  for (i=30; i<len; i++) {
     if ((dsdt[i+0] == OldName[0]) && (dsdt[i+1] == OldName[1]) &&
         (dsdt[i+2] == OldName[2]) && (dsdt[i+3] == OldName[3])) {
+      DBG("Name %a present at 0x%x, renaming to %a\n", OldName, i, NewName);
       dsdt[i+0] = NewName[0];
       dsdt[i+1] = NewName[1];
       dsdt[i+2] = NewName[2];
-      dsdt[i+3] = NewName[3];
+      dsdt[i+3] = NewName[3];      
     }       
   }
 }
@@ -4139,7 +4148,7 @@ VOID FixBiosDsdt (UINT8* temp)
   USBIDFIX = TRUE;  
   
   DsdtLen = ((EFI_ACPI_DESCRIPTION_HEADER*)temp)->Length;
-  if ((DsdtLen < 20) || (DsdtLen > 200000)) { //fool proof
+  if ((DsdtLen < 20) || (DsdtLen > 400000)) { //fool proof (some ASUS dsdt > 300kb?)
     DBG("DSDT length out of range\n");
     return;
   }
@@ -4307,6 +4316,12 @@ VOID FixBiosDsdt (UINT8* temp)
     DsdtLen = DeleteDevice("FDC0", temp, DsdtLen);
     DsdtLen = DeleteDevice("ECP1", temp, DsdtLen);
     DsdtLen = DeleteDevice("LPT1", temp, DsdtLen);
+    
+    ReplaceName(temp, DsdtLen, "ACST", "OCST");
+    ReplaceName(temp, DsdtLen, "ACSS", "OCSS");
+    ReplaceName(temp, DsdtLen, "APSS", "OPSS");
+    ReplaceName(temp, DsdtLen, "APSN", "OPSN");
+    ReplaceName(temp, DsdtLen, "APLF", "OPLF");
     
     if (gMobile) {
       DsdtLen = AddPNLF(temp, DsdtLen);

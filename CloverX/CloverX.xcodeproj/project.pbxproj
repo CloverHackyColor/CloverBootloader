@@ -68,7 +68,6 @@
 		122489CA16A93FD300A0DB6B /* UsbMouse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = UsbMouse.c; sourceTree = "<group>"; };
 		122489CB16A93FD300A0DB6B /* UsbMouse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbMouse.h; sourceTree = "<group>"; };
 		122489CC16A93FD300A0DB6B /* UsbMouseDxe.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UsbMouseDxe.inf; sourceTree = "<group>"; };
-		12283DC3174F7B3C00AD8A95 /* config-sample-old.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "config-sample-old.plist"; sourceTree = "<group>"; };
 		12283DC4174F7B3C00AD8A95 /* config-sample.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "config-sample.plist"; sourceTree = "<group>"; };
 		12283DC5174F7B3C00AD8A95 /* genconfig */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = genconfig; sourceTree = "<group>"; };
 		12283DC6174F7B3C00AD8A95 /* genconfig.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = genconfig.c; sourceTree = "<group>"; };
@@ -612,7 +611,6 @@
 		12283DC2174F7B3C00AD8A95 /* CloverConfig */ = {
 			isa = PBXGroup;
 			children = (
-				12283DC3174F7B3C00AD8A95 /* config-sample-old.plist */,
 				12283DC4174F7B3C00AD8A95 /* config-sample.plist */,
 				12283DC5174F7B3C00AD8A95 /* genconfig */,
 				12283DC6174F7B3C00AD8A95 /* genconfig.c */,

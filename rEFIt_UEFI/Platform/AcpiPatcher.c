@@ -1248,10 +1248,6 @@ VOID        SaveOemDsdt(BOOLEAN FullPatch)
   }
 }
 
-VOID PatchNMI()
-{
-}
-
 EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
 {
 	EFI_STATUS										Status = EFI_SUCCESS;
@@ -1534,6 +1530,9 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     } else if (gSettings.EnableC4) {
       newFadt->PLvl3Lat = 0x3E9;
     }
+    if (gSettings.C3Latency == 0) {
+      gSettings.C3Latency = newFadt->PLvl3Lat;
+    }
     newFadt->IaPcBootArch = 0x3;
     newFadt->Flags |= 0x400; //Reset Register Supported
     XDsdt = newFadt->XDsdt; //save values if present
@@ -1563,8 +1562,10 @@ EFI_STATUS PatchACPI(IN REFIT_VOLUME *Volume)
     Facs->Version = EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE_VERSION;
     //
     if ((gSettings.ResetAddr == 0) && ((oldLength < 0x80) || (newFadt->ResetReg.Address == 0))) {
-      newFadt->ResetReg.Address    = 0x64; 
-      newFadt->ResetValue          = 0xFE;       
+      newFadt->ResetReg.Address   = 0x64; 
+      newFadt->ResetValue         = 0xFE; 
+      gSettings.ResetAddr         = 0x64;
+      gSettings.ResetVal          = 0xFE;
     } else if (gSettings.ResetAddr != 0) {
       newFadt->ResetReg.Address    = gSettings.ResetAddr; 
       newFadt->ResetValue          = gSettings.ResetVal; 
