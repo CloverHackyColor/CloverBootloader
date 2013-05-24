@@ -1408,13 +1408,17 @@ VOID PatchTableType17()
     //now I want to update deviceLocator and bankLocator
     if (isMacPro) {
       AsciiSPrint(deviceLocator, 10, "DIMM%d", gRAMCount + 1);
-      AsciiSPrint(bankLocator, 10, "   ");
+      AsciiSPrint(bankLocator, 10, "");
     } else {
       AsciiSPrint(deviceLocator, 10, "DIMM%d", bank);
       AsciiSPrint(bankLocator, 10, "BANK%d", Index % channels);
     }
     UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
-    UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, (CHAR8*)&bankLocator[0]);
+    if (isMacPro) {
+      newSmbiosTable.Type17->BankLocator = 0; //like in MacPro5,1
+    } else {
+      UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, (CHAR8*)&bankLocator[0]);
+    }
     DBG("SMBIOS Type 17 Index = %d => %d %d:\n", gRAMCount, SMBIOSIndex, SPDIndex);
     if (newSmbiosTable.Type17->Size == 0) {
       DBG("%a %a EMPTY\n", bankLocator, deviceLocator);
