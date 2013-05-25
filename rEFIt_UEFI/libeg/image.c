@@ -101,48 +101,51 @@ EG_IMAGE * egCopyImage(IN EG_IMAGE *Image)
   return NewImage;
 }
 
-EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *Image, IN INTN Ratio) //will be N/16
+//Scaling functions 
+EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *OldImage, IN INTN Ratio) //will be N/16
 {
+  //(c)Slice 2012
   EG_IMAGE    *NewImage;
   INTN        x, x0, x1, x2, y, y0, y1, y2;
   INTN        NewH, NewW;
   EG_PIXEL    *Dest;
-  if (!Image) {
+  EG_PIXEL    *Src; 
+  INTN        OldW;
+
+  if (!OldImage) {
     return NULL;
   }
-  
+  Src = OldImage->PixelData;
+  OldW = OldImage->Width;
   
   if (Ratio == 16) {    
-    return egCopyImage(Image);
+    return egCopyImage(OldImage);
   }
 
-  NewW = (Image->Width * Ratio) >> 4;
-  NewH = (Image->Height * Ratio) >> 4;
+  NewW = (OldImage->Width * Ratio) >> 4;
+  NewH = (OldImage->Height * Ratio) >> 4;
   
-  NewImage = egCreateImage(NewW, NewH, Image->HasAlpha);
+  NewImage = egCreateImage(NewW, NewH, OldImage->HasAlpha);
   if (NewImage == NULL)
     return NULL;
   
   Dest = NewImage->PixelData;
   for (y = 0; y < NewH; y++) {
     y1 = (y << 4) / Ratio;
-    y0 = ((y1 > 0)?(y1-1):y1) * Image->Width;
-    y2 = ((y1 < (Image->Height - 1))?(y1+1):y1) * Image->Width;
-    y1 *= Image->Width;
+    y0 = ((y1 > 0)?(y1-1):y1) * OldW;
+    y2 = ((y1 < (OldImage->Height - 1))?(y1+1):y1) * OldW;
+    y1 *= OldW;
     for (x = 0; x < NewW; x++) {
       x1 = (x << 4) / Ratio;
       x0 = (x1 > 0)?(x1-1):x1;
-      x2 = (x1 < (Image->Width - 1))?(x1+1):x1;
-      Dest->b = (UINT8)(((INTN)Image->PixelData[x1+y1].b * 2 +
-                        Image->PixelData[x0+y1].b + Image->PixelData[x2+y1].b +
-                        Image->PixelData[x1+y0].b + Image->PixelData[x1+y2].b) / 6);
-      Dest->g = (UINT8)(((INTN)Image->PixelData[x1+y1].g * 2 +
-                        Image->PixelData[x0+y1].g + Image->PixelData[x2+y1].g +
-                        Image->PixelData[x1+y0].g + Image->PixelData[x1+y2].g) / 6);
-      Dest->r = (UINT8)(((INTN)Image->PixelData[x1+y1].r * 2 +
-                        Image->PixelData[x0+y1].r + Image->PixelData[x2+y1].r +
-                        Image->PixelData[x1+y0].r + Image->PixelData[x1+y2].r) / 6);
-      Dest->a = Image->PixelData[x1+y1].a;
+      x2 = (x1 < (OldW - 1))?(x1+1):x1;
+      Dest->b = (UINT8)(((INTN)Src[x1+y1].b * 2 + Src[x0+y1].b + 
+                        Src[x2+y1].b + Src[x1+y0].b + Src[x1+y2].b) / 6);
+      Dest->g = (UINT8)(((INTN)Src[x1+y1].g * 2 + Src[x0+y1].g + 
+                        Src[x2+y1].g + Src[x1+y0].g + Src[x1+y2].g) / 6);
+      Dest->r = (UINT8)(((INTN)Src[x1+y1].r * 2 + Src[x0+y1].r +
+                        Src[x2+y1].r + Src[x1+y0].r + Src[x1+y2].r) / 6);
+      Dest->a = Src[x1+y1].a;
       Dest++;
     }
   }
@@ -150,6 +153,122 @@ EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *Image, IN INTN Ratio) //will be N/16
   return NewImage;
 }
 
+BOOLEAN BigDiff(UINT8 a, UINT8 b)
+{
+  if (a > b) {
+    return (a - b) > 0x85;
+  } else
+    return (b - a) > 0x85;
+}
+//(c)Slice 2013
+#define EDGE(P) \
+do { \
+  if (BigDiff(a11.P, a10.P)) { \
+    if (!BigDiff(a11.P, a01.P) && !BigDiff(a11.P, a21.P)) { \
+      a10.P = a11.P; \
+    } else if (BigDiff(a11.P, a01.P)) { \
+      if ((dx + dy) < cell) { \
+        a11.P = (a10.P * (cell - dy) + a01.P * (cell - dx)) / (cell * 2 - dx - dy); \
+      } else { \
+        a10.P = a01.P = a11.P; \
+      } \
+    } else if (BigDiff(a11.P, a21.P)) { \
+      if (dx > dy) { \
+        a11.P = (a10.P * (cell - dy) + a21.P * dx) / (cell + dx - dy); \
+      }else { \
+        a10.P = a21.P = a11.P; \
+      } \
+    } \
+  } else if (BigDiff(a11.P, a21.P)) { \
+    if (!BigDiff(a11.P, a12.P)){ \
+      a21.P = a11.P; \
+    } else { \
+      if ((dx + dy) > cell) { \
+        a11.P = (a21.P * dx + a12.P * dy) / (dx + dy); \
+      } else { \
+        a21.P = a12.P = a11.P; \
+      } \
+    } \
+  } else if (BigDiff(a11.P, a01.P)) { \
+    if (!BigDiff(a11.P, a12.P)){ \
+      a01.P = a11.P; \
+    } else { \
+      if (dx < dy) { \
+        a11.P = (a01.P * (cell - dx) + a12.P * dy) / (cell + dy - dx); \
+      } else { \
+        a01.P = a12.P = a11.P; \
+      } \
+    } \
+  } else if (BigDiff(a11.P, a12.P)) { \
+    a12.P = a11.P; \
+  } \
+} while(0)
+
+#define SMOOTH(P) \
+do { \
+  norm = (INTN)a01.P + a10.P + 2 * a11.P + a12.P + a21.P; \
+  if (norm == 0) { \
+    Dest->P = 0; \
+  } else { \
+    Dest->P = a11.P * 3 * (a01.P * (cell - dx) + a10.P * (cell - dy) + \
+               a21.P * dx + a12.P * dy + a11.P * 2 * cell) / (cell * 2 * norm); \
+  } \
+} while(0)
+
+VOID  ScaleImage(OUT EG_IMAGE *NewImage, IN EG_IMAGE *OldImage)
+{
+  INTN      W1, W2, H1, H2, i, j, f, cell;
+  INTN      x, dx, y, y1, dy, norm;
+  EG_PIXEL  a10, a11, a12, a01, a21;
+  EG_PIXEL  *Src = OldImage->PixelData;
+  EG_PIXEL  *Dest = NewImage->PixelData;
+  
+  W1 = OldImage->Width;
+  H1 = OldImage->Height;
+  W2 = NewImage->Width;
+  H2 = NewImage->Height;
+  if (H1 * W2 < H2 * W1) {
+    f = (H1 << 12) / H2;
+  } else {
+    f = (W1 << 12) / W2;
+  }
+  if (f == 0) return;
+  cell = (1 << 12) / f;
+  if (cell == 0) cell = 1;
+
+  for (j = 0; j < H2; j++) {
+    y = (j * f) >> 12;
+    y1 = y * W1;
+    dy = j - (y << 12) / f;
+    
+    for (i = 0; i < W2; i++) {
+      x = (i * f) >> 12;
+      dx = i - (x << 12) / f;
+      a11 = Src[x + y1];
+      a10 = (y == 0)?a11: Src[x + y1 - W1];
+      a01 = (x == 0)?a11: Src[x + y1 - 1];
+      a21 = (x >= W1)?a11: Src[x + y1 + 1];
+      a12 = (y >= H1)?a11: Src[x + y1 + W1];
+
+      if (a11.a == 0) {
+        Dest->r = Dest->g = Dest->b = 0x55;
+      } else {
+
+        EDGE(r);
+        EDGE(g);
+        EDGE(b);
+
+        SMOOTH(r);
+        SMOOTH(g);
+        SMOOTH(b);
+      }
+
+      Dest->a = 0xFF;
+      Dest++;
+    }
+  }
+}
+//
 
 VOID egFreeImage(IN EG_IMAGE *Image)
 {

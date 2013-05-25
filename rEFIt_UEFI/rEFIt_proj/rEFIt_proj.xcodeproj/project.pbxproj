@@ -114,7 +114,6 @@
 		122336BC13377E050033F008 /* load_icns.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = load_icns.c; sourceTree = "<group>"; };
 		122336BF13377E050033F008 /* libscreen.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.c; path = libscreen.c; sourceTree = "<group>"; tabWidth = 4; };
 		122336C013377E050033F008 /* text.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = text.c; sourceTree = "<group>"; };
-		122336C213377E150033F008 /* config.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = config.c; sourceTree = "<group>"; };
 		122336C413377E150033F008 /* icns.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = icns.c; sourceTree = "<group>"; };
 		122336C513377E150033F008 /* lib.c */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = lib.c; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; xcLanguageSpecificationIdentifier = xcode.lang.c; };
 		122336C613377E150033F008 /* lib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lib.h; sourceTree = "<group>"; };
@@ -3123,7 +3122,6 @@
 		12D6308714CEA05E00E5898F /* spd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spd.h; sourceTree = "<group>"; };
 		12D6308814CEA05E00E5898F /* StateGenerator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = StateGenerator.c; sourceTree = "<group>"; };
 		12D6308914CEA05E00E5898F /* StateGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StateGenerator.h; sourceTree = "<group>"; };
-		12D6308A14CEA05E00E5898F /* stringTable.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stringTable.c; sourceTree = "<group>"; };
 		12D6308B14CEA05E00E5898F /* usbfix.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = usbfix.c; sourceTree = "<group>"; };
 		12DD321216557C8400108DFC /* BmLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = BmLib.c; sourceTree = "<group>"; };
 		12E06DFA15CBC24D0069E011 /* kext_inject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kext_inject.c; sourceTree = "<group>"; usesTabs = 1; };
@@ -3558,7 +3556,6 @@
 		122336C113377E150033F008 /* refit */ = {
 			isa = PBXGroup;
 			children = (
-				122336C213377E150033F008 /* config.c */,
 				122336C413377E150033F008 /* icns.c */,
 				12CB91AB14276D8E009EDAF2 /* IO.h */,
 				12CB917114276985009EDAF2 /* IO.c */,
@@ -10663,7 +10660,6 @@
 				122B6221157E817C00D06F37 /* sse3_patcher.h */,
 				12D6308814CEA05E00E5898F /* StateGenerator.c */,
 				12D6308914CEA05E00E5898F /* StateGenerator.h */,
-				12D6308A14CEA05E00E5898F /* stringTable.c */,
 				12D6308B14CEA05E00E5898F /* usbfix.c */,
 				122B621C157E814100D06F37 /* kernel_patcher.h */,
 				122B621D157E814100D06F37 /* kext_patcher.c */,

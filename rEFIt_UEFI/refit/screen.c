@@ -398,9 +398,9 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
 
     if (BigBack != NULL) {
       switch (GlobalConfig.BackgroundScale) {
-          //TODO - make scale
-        case Scale: //not for now
-        case None:
+        case Scale:
+          ScaleImage(BackgroundImage, BigBack);
+          break;
         case Crop:
           x = UGAWidth - BigBack->Width;
           if (x >= 0) {
@@ -437,7 +437,9 @@ VOID BltClearScreen(IN BOOLEAN ShowBanner)
             }
           }
           break;
+        case None:
         default:
+          // already scaled
           break;
       }
     }

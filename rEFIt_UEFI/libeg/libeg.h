@@ -227,6 +227,7 @@ EG_IMAGE * egCreateFilledImage(IN INTN Width, IN INTN Height, IN BOOLEAN HasAlph
 EG_IMAGE * egCopyImage(IN EG_IMAGE *Image);
 EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *Image, IN INTN Ratio);
 VOID       egFreeImage(IN EG_IMAGE *Image);
+VOID      ScaleImage(OUT EG_IMAGE *NewImage, IN EG_IMAGE *OldImage);
 
 EG_IMAGE * egLoadImage(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN BOOLEAN WantAlpha);
 EG_IMAGE * egLoadIcon(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN UINTN IconSize);
