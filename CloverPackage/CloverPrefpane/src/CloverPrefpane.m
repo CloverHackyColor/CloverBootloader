@@ -20,14 +20,15 @@ static const CFStringRef efiDirPathKey=CFSTR("EFI Directory Path");
 
 @implementation CloverPrefpane
 
-
 // System Preferences calls this method when the pane is initialized.
 - (id)initWithBundle:(NSBundle *)bundle {
     if ( ( self = [super initWithBundle:bundle] ) != nil ) {
         NSArray *searchPaths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
         NSString *agentsFolder = [[searchPaths objectAtIndex:0] stringByAppendingPathComponent:@"LaunchAgents"];
         [[NSFileManager defaultManager] createDirectoryAtPath:agentsFolder withIntermediateDirectories:YES attributes:nil error:nil];
-        agentPlistPath = [[agentsFolder stringByAppendingPathComponent:(NSString *)agentIdentifier] stringByAppendingPathExtension:@"plist"];
+        agentPlistPath = [[NSString alloc]
+                          initWithString:[[agentsFolder stringByAppendingPathComponent:(NSString *)agentIdentifier]
+                                          stringByAppendingPathExtension:@"plist"]];
 
         // Allocate object for accessing IORegistry
         mach_port_t   masterPort;
@@ -161,19 +162,20 @@ static const CFStringRef efiDirPathKey=CFSTR("EFI Directory Path");
 	NSInteger checkInterval = [sender tag];
 	[self setPreferenceKey:checkIntervalKey forAppID:agentIdentifier fromInt:(int)checkInterval];
 
+
     if (checkInterval > 0 && [[NSFileManager defaultManager] fileExistsAtPath:(NSString*)agentExecutable]) {
         // Create a new plist
-         NSArray* call = [NSArray arrayWithObjects:
+        NSArray* call = [NSArray arrayWithObjects:
                          (NSString *)agentExecutable,
                          @"startup",
                          nil];
-        NSMutableDictionary *plist = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                      (NSString *)agentIdentifier, @"Label",
-                                      [NSNumber numberWithInteger:checkInterval], @"StartInterval",
-                                      [NSNumber numberWithBool:YES], @"RunAtLoad",
-                                      (NSString *)agentExecutable, @"Program",
-                                      call, @"ProgramArguments",
-                                      nil];
+        NSDictionary *plist = [NSDictionary dictionaryWithObjectsAndKeys:
+                               (NSString *)agentIdentifier, @"Label",
+                               [NSNumber numberWithInteger:checkInterval], @"StartInterval",
+                               [NSNumber numberWithBool:YES], @"RunAtLoad",
+                               (NSString *)agentExecutable, @"Program",
+                               call, @"ProgramArguments",
+                               nil];
         [plist writeToFile:agentPlistPath atomically:YES];
 
 		CFErrorRef error = NULL;
