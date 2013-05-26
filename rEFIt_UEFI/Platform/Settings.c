@@ -48,7 +48,7 @@ extern INTN ScrollBarDecorationsHeight;
 extern INTN ScrollScrollDecorationsHeight;
 
 // global configuration with default values
-REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, None, 0 };
+REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, None, 0, FALSE };
 
 VOID __inline WaitForSts(VOID) {
 	UINT32 inline_timeout = 100000;
@@ -548,7 +548,11 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
         GlobalConfig.BackgroundSharp = AsciiStrHexToUintn(dict2->string);
       }
     }
-  }
+    dict2 = GetProperty(dict, "Dark");
+    if (dict2) {
+       GlobalConfig.BackgroundDark = (dict2->type == kTagTypeTrue);
+    }
+  } 
   dict = GetProperty(dictPointer, "Banner");
   if (dict) {
     if ((dict->type == kTagTypeString) && dict->string) {

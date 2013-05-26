@@ -156,9 +156,13 @@ EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *OldImage, IN INTN Ratio) //will be N/1
 BOOLEAN BigDiff(UINT8 a, UINT8 b)
 {
   if (a > b) {
-    return (a - b) > 0xFF - GlobalConfig.BackgroundSharp;
-  } else
-    return 0; //(b - a) > 0x85;
+    if (!GlobalConfig.BackgroundDark) {
+      return (a - b) > 0xFF - GlobalConfig.BackgroundSharp;
+    }
+  } else if (GlobalConfig.BackgroundDark) {
+    return (b - a) > 0xFF - GlobalConfig.BackgroundSharp;
+  }
+  return 0;
 }
 //(c)Slice 2013
 #define EDGE(P) \
@@ -168,13 +172,13 @@ do { \
       a10.P = a11.P; \
     } else if (BigDiff(a11.P, a01.P)) { \
       if ((dx + dy) < cell) { \
-        a11.P = a21.P = a12.P = (a10.P * (cell - dy) + a01.P * (cell - dx)) / (cell * 2 - dx - dy); \
+        a11.P = a21.P = a12.P = (a10.P * (cell - dy + dx) + a01.P * (cell - dx + dy)) / (cell * 2); \
       } else { \
         a10.P = a01.P = a11.P; \
       } \
     } else if (BigDiff(a11.P, a21.P)) { \
       if (dx > dy) { \
-        a11.P = a01.P = a12.P = (a10.P * (cell - dy) + a21.P * dx) / (cell + dx - dy); \
+        a11.P = a01.P = a12.P = (a10.P * (cell * 2 - dy - dx) + a21.P * (dx + dy)) / (cell * 2); \
       }else { \
         a10.P = a21.P = a11.P; \
       } \
@@ -184,7 +188,7 @@ do { \
       a21.P = a11.P; \
     } else { \
       if ((dx + dy) > cell) { \
-        a11.P = a01.P = a10.P = (a21.P * dx + a12.P * dy) / (dx + dy); \
+        a11.P = a01.P = a10.P = (a21.P * (cell + dx - dy) + a12.P * (cell - dx + dy)) / (cell * 2); \
       } else { \
         a21.P = a12.P = a11.P; \
       } \
@@ -194,7 +198,7 @@ do { \
       a01.P = a11.P; \
     } else { \
       if (dx < dy) { \
-        a11.P = a21.P = a10.P = (a01.P * (cell - dx) + a12.P * dy) / (cell + dy - dx); \
+        a11.P = a21.P = a10.P = (a01.P * (cell * 2 - dx - dy) + a12.P * (dy + dx )) / (cell * 2); \
       } else { \
         a01.P = a12.P = a11.P; \
       } \
@@ -206,19 +210,26 @@ do { \
 
 #define SMOOTH(P) \
 do { \
-  norm = (INTN)a01.P + a10.P + 2 * a11.P + a12.P + a21.P; \
+  norm = (INTN)a01.P + a10.P + 4 * a11.P + a12.P + a21.P; \
   if (norm == 0) { \
     Dest->P = 0; \
   } else { \
-    Dest->P = a11.P * 3 * (a01.P * (cell - dx) + a10.P * (cell - dy) + \
-               a21.P * dx + a12.P * dy + a11.P * 2 * cell) / (cell * 2 * norm); \
+    Dest->P = a11.P * 2 * (a01.P * (cell - dx) + a10.P * (cell - dy) + \
+               a21.P * dx + a12.P * dy + a11.P * 2 * cell) / (cell * norm); \
   } \
 } while(0)
+
+#define SMOOTH2(P) \
+do { \
+     Dest->P = (a01.P * (cell - dx) * 3 + a10.P * (cell - dy) * 3 + \
+        a21.P * dx * 3 + a12.P * dy * 3 + a11.P * 2 * cell) / (cell * 8); \
+} while(0)
+
 
 VOID  ScaleImage(OUT EG_IMAGE *NewImage, IN EG_IMAGE *OldImage)
 {
   INTN      W1, W2, H1, H2, i, j, f, cell;
-  INTN      x, dx, y, y1, dy, norm;
+  INTN      x, dx, y, y1, dy; //, norm;
   EG_PIXEL  a10, a11, a12, a01, a21;
   EG_PIXEL  *Src = OldImage->PixelData;
   EG_PIXEL  *Dest = NewImage->PixelData;
@@ -228,22 +239,21 @@ VOID  ScaleImage(OUT EG_IMAGE *NewImage, IN EG_IMAGE *OldImage)
   W2 = NewImage->Width;
   H2 = NewImage->Height;
   if (H1 * W2 < H2 * W1) {
-    f = (H1 << 12) / H2;
+    f = (H2 << 12) / H1;
   } else {
-    f = (W1 << 12) / W2;
+    f = (W2 << 12) / W1;
   }
   if (f == 0) return;
-  cell = (1 << 12) / f;
-  if (cell == 0) cell = 1;
+  cell = ((f - 1) >> 12) + 1;
 
   for (j = 0; j < H2; j++) {
-    y = (j * f) >> 12;
+    y = (j << 12) / f;
     y1 = y * W1;
-    dy = j - (y << 12) / f;
+    dy = j - ((y * f) >> 12);
     
     for (i = 0; i < W2; i++) {
-      x = (i * f) >> 12;
-      dx = i - (x << 12) / f;
+      x = (i << 12) / f;
+      dx = i - ((x * f) >> 12);
       a11 = Src[x + y1];
       a10 = (y == 0)?a11: Src[x + y1 - W1];
       a01 = (x == 0)?a11: Src[x + y1 - 1];
@@ -258,9 +268,9 @@ VOID  ScaleImage(OUT EG_IMAGE *NewImage, IN EG_IMAGE *OldImage)
         EDGE(g);
         EDGE(b);
 
-        SMOOTH(r);
-        SMOOTH(g);
-        SMOOTH(b);
+        SMOOTH2(r);
+        SMOOTH2(g);
+        SMOOTH2(b);
       }
 
       Dest->a = 0xFF;

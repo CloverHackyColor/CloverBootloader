@@ -369,6 +369,7 @@ typedef struct {
   CHAR16      *BackgroundName;
   SCALING     BackgroundScale;
   UINTN       BackgroundSharp;
+  BOOLEAN     BackgroundDark;
 } REFIT_CONFIG;
 
 // types
