@@ -156,9 +156,9 @@ EG_IMAGE * egCopyScaledImage(IN EG_IMAGE *OldImage, IN INTN Ratio) //will be N/1
 BOOLEAN BigDiff(UINT8 a, UINT8 b)
 {
   if (a > b) {
-    return (a - b) > 0x85;
+    return (a - b) > 0xFF - GlobalConfig.BackgroundSharp;
   } else
-    return (b - a) > 0x85;
+    return 0; //(b - a) > 0x85;
 }
 //(c)Slice 2013
 #define EDGE(P) \
@@ -168,13 +168,13 @@ do { \
       a10.P = a11.P; \
     } else if (BigDiff(a11.P, a01.P)) { \
       if ((dx + dy) < cell) { \
-        a11.P = (a10.P * (cell - dy) + a01.P * (cell - dx)) / (cell * 2 - dx - dy); \
+        a11.P = a21.P = a12.P = (a10.P * (cell - dy) + a01.P * (cell - dx)) / (cell * 2 - dx - dy); \
       } else { \
         a10.P = a01.P = a11.P; \
       } \
     } else if (BigDiff(a11.P, a21.P)) { \
       if (dx > dy) { \
-        a11.P = (a10.P * (cell - dy) + a21.P * dx) / (cell + dx - dy); \
+        a11.P = a01.P = a12.P = (a10.P * (cell - dy) + a21.P * dx) / (cell + dx - dy); \
       }else { \
         a10.P = a21.P = a11.P; \
       } \
@@ -184,7 +184,7 @@ do { \
       a21.P = a11.P; \
     } else { \
       if ((dx + dy) > cell) { \
-        a11.P = (a21.P * dx + a12.P * dy) / (dx + dy); \
+        a11.P = a01.P = a10.P = (a21.P * dx + a12.P * dy) / (dx + dy); \
       } else { \
         a21.P = a12.P = a11.P; \
       } \
@@ -194,7 +194,7 @@ do { \
       a01.P = a11.P; \
     } else { \
       if (dx < dy) { \
-        a11.P = (a01.P * (cell - dx) + a12.P * dy) / (cell + dy - dx); \
+        a11.P = a21.P = a10.P = (a01.P * (cell - dx) + a12.P * dy) / (cell + dy - dx); \
       } else { \
         a01.P = a12.P = a11.P; \
       } \

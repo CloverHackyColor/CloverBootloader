@@ -356,7 +356,6 @@ typedef struct {
   BOOLEAN     NoLegacy;
   BOOLEAN     DebugLog;
   BOOLEAN     FastBoot;
-//  BOOLEAN     DriveImage;
   FONT_TYPE   Font;
   INTN        CharWidth;
   UINTN       SelectionColor;
@@ -369,6 +368,7 @@ typedef struct {
   CHAR16      *ScreenResolution;
   CHAR16      *BackgroundName;
   SCALING     BackgroundScale;
+  UINTN       BackgroundSharp;
 } REFIT_CONFIG;
 
 // types
