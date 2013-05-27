@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-23 08:46+0300\n"
-"PO-Revision-Date: 2013-05-23 09:55+0000\n"
+"PO-Revision-Date: 2013-05-27 11:07+0000\n"
 "Last-Translator: Mill <ceruns@ymail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
 "Language: ko\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1369302941.0\n"
+"X-POOTLE-MTIME: 1369652876.0\n"
 
 # //Don't need change
 #. type: Content of: <html><body><div><p>
@@ -598,14 +598,14 @@ msgstr ""
 
 #. type: "black_green_title"
 #: Resources/templates/Localizable.strings:115
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "black_green"
 msgid "Black_Green"
 msgstr "Black_Green"
 
 #. type: "black_green_description"
 #: Resources/templates/Localizable.strings:116
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Default black_green theme from Blackosx,\n"
 #| "Install to /EFI/CLOVER/themes/black_green."
@@ -624,7 +624,7 @@ msgstr "Bluemac"
 
 #. type: "bluemac_description"
 #: Resources/templates/Localizable.strings:120
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Simple_gray theme from hijeane,\n"
 #| "Install to /EFI/CLOVER/themes/simple_gray."
@@ -643,7 +643,7 @@ msgstr "BootCamp"
 
 #. type: "bootcamp_description"
 #: Resources/templates/Localizable.strings:124
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Wooden theme from iROOTa,\n"
 #| "Install to /EFI/CLOVER/themes/wooden."
@@ -651,7 +651,7 @@ msgid ""
 "Bootcamp theme from Bijo,\n"
 "Install to /EFI/CLOVER/themes/bootcamp"
 msgstr ""
-"Bijo의 부트캠ㅍ므 테마,\n"
+"Bijo의 부트캠프 테마,\n"
 "다음에 설치합니다: /EFI/CLOVER/themes/bootcamp"
 
 #. type: "iclover_title"
@@ -662,7 +662,7 @@ msgstr "iClover 테마"
 
 #. type: "iclover_description"
 #: Resources/templates/Localizable.strings:128
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Grey style theme by winlog,\n"
 #| "Install to /EFI/CLOVER/themes/iClover."
@@ -671,7 +671,7 @@ msgid ""
 "Install to /EFI/CLOVER/themes/iclover"
 msgstr ""
 "winlog의 회색조 테마,\n"
-"다음에 설치합니다: /EFI/CLOVER/themes/iClover"
+"다음에 설치합니다: /EFI/CLOVER/themes/iclover"
 
 #. type: "magnifico_title"
 #: Resources/templates/Localizable.strings:131
@@ -681,7 +681,7 @@ msgstr "Magnifico"
 
 #. type: "magnifico_description"
 #: Resources/templates/Localizable.strings:132
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Wooden theme from iROOTa,\n"
 #| "Install to /EFI/CLOVER/themes/wooden."
@@ -700,7 +700,7 @@ msgstr "금속 테마"
 
 #. type: "metal_description"
 #: Resources/templates/Localizable.strings:136
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "The original metal theme from Slice,\n"
 #| "Install to /EFI/CLOVER/themes/metal."
@@ -719,7 +719,7 @@ msgstr "mrengles 테마"
 
 #. type: "mrengles_description"
 #: Resources/templates/Localizable.strings:140
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "mrengles theme from mrengles,\n"
 #| "Install to /EFI/CLOVER/themes/mrengles."
@@ -738,7 +738,7 @@ msgstr "Orange"
 
 #. type: "orange_description"
 #: Resources/templates/Localizable.strings:144
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "mrengles theme from mrengles,\n"
 #| "Install to /EFI/CLOVER/themes/mrengles."
@@ -757,7 +757,7 @@ msgstr "OS Box"
 
 #. type: "os_box_description"
 #: Resources/templates/Localizable.strings:148
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Buttons theme from Trauma,\n"
 #| "Install to /EFI/CLOVER/themes/buttons."
@@ -776,7 +776,7 @@ msgstr "OS One"
 
 #. type: "os_one_description"
 #: Resources/templates/Localizable.strings:152
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Buttons theme from Trauma,\n"
 #| "Install to /EFI/CLOVER/themes/buttons."
@@ -795,7 +795,7 @@ msgstr "ThinkPad"
 
 #. type: "thinkpad_description"
 #: Resources/templates/Localizable.strings:156
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "The original metal theme from Slice,\n"
 #| "Install to /EFI/CLOVER/themes/metal."
@@ -1152,13 +1152,13 @@ msgstr "Clover 테마"
 
 #. type: "399.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:30
-#, fuzzy, no-wrap
+#, no-wrap
 msgid "Author:"
 msgstr "저작자:"
 
 #. type: "401.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:31
-#, fuzzy, no-wrap
+#, no-wrap
 msgid "Year:"
 msgstr "연도:"
 
