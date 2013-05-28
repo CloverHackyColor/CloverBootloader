@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-28 10:48+0300\n"
-"PO-Revision-Date: 2013-05-23 21:53+0000\n"
+"PO-Revision-Date: 2013-05-28 15:59+0000\n"
 "Last-Translator: oswaldini <oswaldinimtb@gmail.com>\n"
 "Language-Team: pl <pl@li.org>\n"
 "Language: pl\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1369345993.0\n"
+"X-POOTLE-MTIME: 1369756775.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -1038,10 +1038,10 @@ msgstr "Sprawdź teraz"
 
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:12
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Copyright (c) 2013 JrCs"
 msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
-msgstr "Prawa autorskie : 2013 JrCs"
+msgstr "Prawa autorskie 2013 JrCs, kozlek\\nWszelkie prawa zastrzeżone"
 
 #. type: "294.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:13
@@ -1179,68 +1179,68 @@ msgstr "Podgląd niedostępny"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
 #, no-wrap
 msgid "Mounting the ESP partition on boot"
-msgstr ""
+msgstr "Montowanie partycji ESP podczas uruchamiania"
 
 #. type: "452.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
 #, no-wrap
 msgid "Where to save the nvram contents"
-msgstr ""
+msgstr "Lokalizacja zapisu nvram"
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:1
 #, no-wrap
 msgid "Boot Volume"
-msgstr ""
+msgstr "Dysk startowy"
 
 #. type: "Default"
 #: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
 msgid "Default"
-msgstr ""
+msgstr "Domyślne"
 
 #. type: "ESP on [%@] %@"
 #: ../CloverPrefpane/Localizable.strings:3
 #, no-wrap
 msgid "ESP on [%1$@] %2$@"
-msgstr ""
+msgstr "ESP na [%1$@] %2$@"
 
 #. type: "No"
 #: ../CloverPrefpane/Localizable.strings:4
 #, no-wrap
 msgid "No"
-msgstr ""
+msgstr "Nie"
 
 #. type: "No description"
 #: ../CloverPrefpane/Localizable.strings:5
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "XhciDxe-32_description"
 msgid "No description"
-msgstr "Sterownik (32 bitowy) do obsługi USB w menu Clover'a."
+msgstr "Brak opisu"
 
 #. type: "Nowhere"
 #: ../CloverPrefpane/Localizable.strings:6
 #, no-wrap
 msgid "Nowhere"
-msgstr ""
+msgstr "Nigdzie"
 
 #. type: "Select the EFI directory"
 #: ../CloverPrefpane/Localizable.strings:7
 #, no-wrap
 msgid "Select the EFI directory"
-msgstr ""
+msgstr "Wybierz folder EFI"
 
 #. type: "Set EFI directory"
 #: ../CloverPrefpane/Localizable.strings:8
 #, no-wrap
 msgid "Set EFI directory"
-msgstr ""
+msgstr "Ustaw lokalizację EFI"
 
 #. type: "Unknown"
 #: ../CloverPrefpane/Localizable.strings:9
 #, no-wrap
 msgid "Unknown"
-msgstr ""
+msgstr "Nieznany"
 
 #~ msgid "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on the same disk drive as the system partition\\n* diskX: disk device\\n* GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on the same disk drive that the ESP partition\\n\\nEmpty value result in not mounting ESP partition on boot"
 #~ msgstr ""
