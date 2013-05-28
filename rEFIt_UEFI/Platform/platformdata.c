@@ -485,7 +485,7 @@ VOID GetDefaultSettings(VOID)
 //  gSettings.FixDsdt  = 0x00; //No fixes as we apply patches even for patched DSDT
   
   gSettings.GraphicsInjector = !(((gGraphics[0].Vendor == Ati) &&
-                                  ((gGraphics[0].DeviceID & 0xF000) == 0x6000)) ||
+                                 ((gGraphics[0].DeviceID & 0xF000) == 0x6000)) ||
                                  ((gGraphics[0].Vendor == Nvidia) &&
                                   (gGraphics[0].DeviceID > 0x1080)));
 //  gSettings.CustomEDID = NULL; //no sense to assign 0 as the structure is zeroed
@@ -496,10 +496,23 @@ VOID GetDefaultSettings(VOID)
   StrCpy(gSettings.DsdtName, L"DSDT.aml");
   gSettings.BacklightLevel = 0xFFFF; //0x0503; -- the value from MBA52
   gSettings.LogLineCount = 500;
-  gSettings.LogEveryBoot = NULL;
-  gSettings.MountEFI = NULL;
+//  gSettings.LogEveryBoot = NULL;
+//  gSettings.MountEFI = NULL;
   gSettings.TrustSMBIOS = TRUE;
   
+  if (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE) {
+    gSettings.GeneratePStates = TRUE;
+    gSettings.GenerateCStates = TRUE;
+    // gSettings.EnableISS       = FALSE;
+    //      gSettings.EnableC2        = TRUE;
+    //      gSettings.EnableC6        = TRUE;
+    gSettings.PluginType      = 1;
+    gSettings.MinMultiplier   = 7;
+//    gSettings.DoubleFirstState = FALSE;
+    gSettings.DropSSDT        = TRUE;
+    gSettings.C3Latency       = 0x3E7;
+
+  }
 //  gSettings.PointerSpeed = 2;
 //  gSettings.DoubleClickTime = 500;
 //  gSettings.PointerMirror = FALSE;
@@ -509,7 +522,7 @@ VOID GetDefaultSettings(VOID)
   t1 = AsmReadTsc();
   gCPUStructure.TSCCalibr = MultU64x32((t1 - t0), 10); //ticks for 1second
 */
-  gSettings.EnableISS = FALSE; //((gCPUStructure.CPUID[CPUID_1][ECX] & (1<<7)) != 0);
+//  gSettings.EnableISS = FALSE; //((gCPUStructure.CPUID[CPUID_1][ECX] & (1<<7)) != 0);
   gSettings.Turbo = gCPUStructure.Turbo;
 //  MsgLog("Turbo default value: %a\n", gCPUStructure.Turbo?"Yes":"No");
 //  msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
