@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-23 08:46+0300\n"
+"POT-Creation-Date: 2013-05-28 10:48+0300\n"
 "PO-Revision-Date: 2013-05-24 03:28+0000\n"
 "Last-Translator: kyndder <kyndder@icloud.com>\n"
 "Language-Team: pt <pt@li.org>\n"
@@ -606,9 +606,6 @@ msgstr "AppleStyle"
 #. type: "applestyle_description"
 #: Resources/templates/Localizable.strings:112
 #, no-wrap
-#| msgid ""
-#| "AppleStyle theme from Eps,\n"
-#| "Install to /EFI/CLOVER/themes/AppleStyle."
 msgid ""
 "AppleStyle theme from Eps,\n"
 "Install to /EFI/CLOVER/themes/applestyle"
@@ -619,16 +616,12 @@ msgstr ""
 #. type: "black_green_title"
 #: Resources/templates/Localizable.strings:115
 #, no-wrap
-#| msgid "black_green"
 msgid "Black_Green"
 msgstr "Black_Green"
 
 #. type: "black_green_description"
 #: Resources/templates/Localizable.strings:116
 #, no-wrap
-#| msgid ""
-#| "Default black_green theme from Blackosx,\n"
-#| "Install to /EFI/CLOVER/themes/black_green."
 msgid ""
 "Default black_green theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/black_green"
@@ -645,9 +638,6 @@ msgstr "Bluemac"
 #. type: "bluemac_description"
 #: Resources/templates/Localizable.strings:120
 #, no-wrap
-#| msgid ""
-#| "Simple_gray theme from hijeane,\n"
-#| "Install to /EFI/CLOVER/themes/simple_gray."
 msgid ""
 "Bluemac theme from FowZiey,\n"
 "Install to /EFI/CLOVER/themes/bluemac"
@@ -664,9 +654,6 @@ msgstr "BootCamp"
 #. type: "bootcamp_description"
 #: Resources/templates/Localizable.strings:124
 #, no-wrap
-#| msgid ""
-#| "Wooden theme from iROOTa,\n"
-#| "Install to /EFI/CLOVER/themes/wooden."
 msgid ""
 "Bootcamp theme from Bijo,\n"
 "Install to /EFI/CLOVER/themes/bootcamp"
@@ -683,9 +670,6 @@ msgstr "iClover"
 #. type: "iclover_description"
 #: Resources/templates/Localizable.strings:128
 #, no-wrap
-#| msgid ""
-#| "Grey style theme by winlog,\n"
-#| "Install to /EFI/CLOVER/themes/iClover."
 msgid ""
 "Grey style theme by winlog,\n"
 "Install to /EFI/CLOVER/themes/iclover"
@@ -702,9 +686,6 @@ msgstr "Magnifico"
 #. type: "magnifico_description"
 #: Resources/templates/Localizable.strings:132
 #, no-wrap
-#| msgid ""
-#| "Wooden theme from iROOTa,\n"
-#| "Install to /EFI/CLOVER/themes/wooden."
 msgid ""
 "Magnifico theme from Magnifico,\n"
 "Install to /EFI/CLOVER/themes/magnifico"
@@ -721,9 +702,6 @@ msgstr "metal"
 #. type: "metal_description"
 #: Resources/templates/Localizable.strings:136
 #, no-wrap
-#| msgid ""
-#| "The original metal theme from Slice,\n"
-#| "Install to /EFI/CLOVER/themes/metal."
 msgid ""
 "The original metal theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/metal"
@@ -740,9 +718,6 @@ msgstr "mrengles"
 #. type: "mrengles_description"
 #: Resources/templates/Localizable.strings:140
 #, no-wrap
-#| msgid ""
-#| "mrengles theme from mrengles,\n"
-#| "Install to /EFI/CLOVER/themes/mrengles."
 msgid ""
 "mrengles theme from mrengles,\n"
 "Install to /EFI/CLOVER/themes/mrengles"
@@ -759,9 +734,6 @@ msgstr "Orange"
 #. type: "orange_description"
 #: Resources/templates/Localizable.strings:144
 #, no-wrap
-#| msgid ""
-#| "mrengles theme from mrengles,\n"
-#| "Install to /EFI/CLOVER/themes/mrengles."
 msgid ""
 "Orange theme from dwm,\n"
 "Install to /EFI/CLOVER/themes/orange"
@@ -778,9 +750,6 @@ msgstr "OS Box"
 #. type: "os_box_description"
 #: Resources/templates/Localizable.strings:148
 #, no-wrap
-#| msgid ""
-#| "Buttons theme from Trauma,\n"
-#| "Install to /EFI/CLOVER/themes/buttons."
 msgid ""
 "OS Box theme from Kyndder,\n"
 "Install to /EFI/CLOVER/themes/os_box"
@@ -797,9 +766,6 @@ msgstr "OS One"
 #. type: "os_one_description"
 #: Resources/templates/Localizable.strings:152
 #, no-wrap
-#| msgid ""
-#| "Buttons theme from Trauma,\n"
-#| "Install to /EFI/CLOVER/themes/buttons."
 msgid ""
 "OS One theme from Kyndder,\n"
 "Install to /EFI/CLOVER/themes/os_one"
@@ -816,9 +782,6 @@ msgstr "ThinkPad"
 #. type: "thinkpad_description"
 #: Resources/templates/Localizable.strings:156
 #, no-wrap
-#| msgid ""
-#| "The original metal theme from Slice,\n"
-#| "Install to /EFI/CLOVER/themes/metal."
 msgid ""
 "ThinkPad theme from Kogen Mantis,\n"
 "Install to /EFI/CLOVER/themes/thinkpad"
@@ -1064,8 +1027,9 @@ msgstr "Verificar agora"
 
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:12
-#, no-wrap
-msgid "Copyright (c) 2013 JrCs"
+#, fuzzy, no-wrap
+#| msgid "Copyright (c) 2013 JrCs"
+msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
 msgstr "Copyright (c) 2013 JrCs"
 
 #. type: "294.label"
@@ -1134,78 +1098,139 @@ msgstr "Cria uma linha do tempo no arquivo CloverEFI/boot.log a cada boot\\n\\nV
 msgid "Advanced Configurations"
 msgstr "Configurações Avançadas"
 
-#. type: "329.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:24
-#, no-wrap
-msgid "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on the same disk drive as the system partition\\n* diskX: disk device\\n* GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on the same disk drive that the ESP partition\\n\\nEmpty value result in not mounting ESP partition on boot"
-msgstr "Montando a partição ESP ao iniciar.\\n\\nValor:\\n8 Sim: monta a ESP no mesmo disco da partição do sistema\\n* diskX:disk device\\n8 GUID: GUID da ESP\\n8 VolumeName: O nome de um volume que está no mesmo disco da partição ESP\\n\\nQuando sem valor o resultado é a não montagem da partição ESP durante a inicialização"
-
 #. type: "332.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:25
+#: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
 msgid "MountEFI:"
 msgstr "MountEFI:"
 
-#. type: "337.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:26
-#, no-wrap
-msgid "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram contents to disk\\n* diskXsY: device node of the volume where the nvram contents will be saved\\n\\nEmpty value save the nvram contents in the nvram.plist file in the root folder of the system partition."
-msgstr "Salva o conteúdo da nvram no disco\\n\\nValor:\\n* Não: não salva o conteúdo da nvram no disco\\n* diskXsY: definição do volume onde o conteúdo da nvram será salvo\\n\\nQuando sem valor o conteúdo da nvram será salvo no arquivo nvram.plist na raiz da partição do sistema."
-
 #. type: "339.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:27
+#: ../CloverPrefpane/CloverPrefpane.strings:25
 #, no-wrap
 msgid "NVRamDisk:"
 msgstr "NVRamDisk:"
 
 #. type: "374.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:28
+#: ../CloverPrefpane/CloverPrefpane.strings:26
 #, no-wrap
 msgid "Theme"
 msgstr "Tema"
 
 #
 #. type: "392.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:29
+#: ../CloverPrefpane/CloverPrefpane.strings:27
 #, no-wrap
 msgid "Clover Theme"
 msgstr "Tema do Clover"
 
 #. type: "399.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:30
+#: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
 msgid "Author:"
 msgstr "Autor:"
 
 #. type: "401.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:31
+#: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
 msgid "Year:"
 msgstr "Ano:"
 
 #. type: "405.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:32
+#: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "EFI Folder Path:"
 msgstr "Caminho para a pasta EFI:"
 
 #. type: "423.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:33
+#: ../CloverPrefpane/CloverPrefpane.strings:31
 #, no-wrap
 msgid "To see previews of themes you must select the path to the EFI folder."
 msgstr "Para ver os previews dos temas você deve especificar o caminho para a pasta EFI no campo acima."
 
 #. type: "426.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:34
+#: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "Theme:"
 msgstr "Temas:"
 
 #. type: "429.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:35
+#: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
 msgid "No Preview Available"
 msgstr "Nenhum Preview Disponível"
+
+#. type: "431.ibShadowedToolTip"
+#: ../CloverPrefpane/CloverPrefpane.strings:34
+#, no-wrap
+msgid "Mounting the ESP partition on boot"
+msgstr ""
+
+#. type: "452.ibShadowedToolTip"
+#: ../CloverPrefpane/CloverPrefpane.strings:35
+#, no-wrap
+msgid "Where to save the nvram contents"
+msgstr ""
+
+#. type: "Boot Volume"
+#: ../CloverPrefpane/Localizable.strings:1
+#, no-wrap
+msgid "Boot Volume"
+msgstr ""
+
+#. type: "Default"
+#: ../CloverPrefpane/Localizable.strings:2
+#, no-wrap
+msgid "Default"
+msgstr ""
+
+#. type: "ESP on [%@] %@"
+#: ../CloverPrefpane/Localizable.strings:3
+#, no-wrap
+msgid "ESP on [%1$@] %2$@"
+msgstr ""
+
+#. type: "No"
+#: ../CloverPrefpane/Localizable.strings:4
+#, no-wrap
+msgid "No"
+msgstr ""
+
+#. type: "No description"
+#: ../CloverPrefpane/Localizable.strings:5
+#, fuzzy, no-wrap
+#| msgid "XhciDxe-32_description"
+msgid "No description"
+msgstr "XhciDxe-32_description"
+
+#. type: "Nowhere"
+#: ../CloverPrefpane/Localizable.strings:6
+#, no-wrap
+msgid "Nowhere"
+msgstr ""
+
+#. type: "Select the EFI directory"
+#: ../CloverPrefpane/Localizable.strings:7
+#, no-wrap
+msgid "Select the EFI directory"
+msgstr ""
+
+#. type: "Set EFI directory"
+#: ../CloverPrefpane/Localizable.strings:8
+#, no-wrap
+msgid "Set EFI directory"
+msgstr ""
+
+#. type: "Unknown"
+#: ../CloverPrefpane/Localizable.strings:9
+#, no-wrap
+msgid "Unknown"
+msgstr ""
+
+#~ msgid "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on the same disk drive as the system partition\\n* diskX: disk device\\n* GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on the same disk drive that the ESP partition\\n\\nEmpty value result in not mounting ESP partition on boot"
+#~ msgstr "Montando a partição ESP ao iniciar.\\n\\nValor:\\n8 Sim: monta a ESP no mesmo disco da partição do sistema\\n* diskX:disk device\\n8 GUID: GUID da ESP\\n8 VolumeName: O nome de um volume que está no mesmo disco da partição ESP\\n\\nQuando sem valor o resultado é a não montagem da partição ESP durante a inicialização"
+
+#~ msgid "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram contents to disk\\n* diskXsY: device node of the volume where the nvram contents will be saved\\n\\nEmpty value save the nvram contents in the nvram.plist file in the root folder of the system partition."
+#~ msgstr "Salva o conteúdo da nvram no disco\\n\\nValor:\\n* Não: não salva o conteúdo da nvram no disco\\n* diskXsY: definição do volume onde o conteúdo da nvram será salvo\\n\\nQuando sem valor o conteúdo da nvram será salvo no arquivo nvram.plist na raiz da partição do sistema."
 
 #~ msgid ""
 #~ "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined "
@@ -1293,9 +1318,6 @@ msgstr "Nenhum Preview Disponível"
 
 #~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
 #~ msgstr "Ps2MouseAbsolutePointerDxe-32_description"
-
-#~ msgid "XhciDxe-32_description"
-#~ msgstr "XhciDxe-32_description"
 
 #~ msgid "XhciDxe-64_description"
 #~ msgstr "XhciDxe-64_description"

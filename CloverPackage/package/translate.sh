@@ -65,13 +65,15 @@ PODIR="po"
 
 # Update CloverPrefpane.strings
 "$CLOVER_PREFPANE_DIR"/translate_xib.sh --extract-only
+"$CLOVER_PREFPANE_DIR"/translate_source.sh --extract-only
 
 # Check if pot and po files need to be updated
 IFS=$'\n' # '
 
 last_resources_update=0
 for file in "$TEMPLATES_DIR"/*.html "$TEMPLATES_DIR"/Localizable.strings \
- "$CLOVER_UPDATER_DIR"/CloverUpdater.strings "$CLOVER_PREFPANE_DIR"/CloverPrefpane.strings; do
+ "$CLOVER_UPDATER_DIR"/CloverUpdater.strings \
+ "$CLOVER_PREFPANE_DIR"/CloverPrefpane.strings "$CLOVER_PREFPANE_DIR"/Localizable.strings; do
     timestamp=$(stat -f %m "$file")
     [[ $timestamp -gt $last_resources_update ]] && last_resources_update=$timestamp
 done

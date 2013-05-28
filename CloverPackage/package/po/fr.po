@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-23 08:46+0300\n"
-"PO-Revision-Date: 2013-05-23 08:47+0100\n"
+"POT-Creation-Date: 2013-05-28 10:48+0300\n"
+"PO-Revision-Date: 2013-05-28 10:53+0100\n"
 "Last-Translator: JrCs\n"
 "Language-Team: fr <fr@li.org>\n"
 "Language: fr\n"
@@ -1014,8 +1014,8 @@ msgstr "Vérifier Maintenant"
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:12
 #, no-wrap
-msgid "Copyright (c) 2013 JrCs"
-msgstr "Copyright © 2013 JrCs"
+msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
+msgstr "Copyright © 2013 JrCs, kozlek\\nAll Rights Reserved"
 
 #. type: "294.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:13
@@ -1083,77 +1083,156 @@ msgstr "Crée un fichier CloverEFI/boot.log horodaté à chaque démarrage\\n\\n
 msgid "Advanced Configurations"
 msgstr "Configurations Avancées"
 
-#. type: "329.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:24
-#, no-wrap
-msgid "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on the same disk drive as the system partition\\n* diskX: disk device\\n* GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on the same disk drive that the ESP partition\\n\\nEmpty value result in not mounting ESP partition on boot"
-msgstr "Monte la partition ESP au démarrage.\\n\\nValeur:\\n* Yes: monte l'ESP sur le même disque que celui contenant le système.\\n* diskX: device disque\\n* GUID: GUID de l'ESP\\n* NomDeVolume: Nom d'un volume sur le même disque que la partition ESP\\n\\nUne valeur vide indique qu'il ne faut pas monter la partition ESP au démarrage"
-
 #. type: "332.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:25
+#: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
 msgid "MountEFI:"
 msgstr "MountEFI:"
 
-#. type: "337.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:26
-#, no-wrap
-msgid "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram contents to disk\\n* diskXsY: device node of the volume where the nvram contents will be saved\\n\\nEmpty value save the nvram contents in the nvram.plist file in the root folder of the system partition."
-msgstr "Sauve le contenu de la nvram sur disque\\n\\nValeur:\\n* No: ne sauve pas le contenu de la nvram sur disque\\n* diskXsY: partition où sera stocké le contenu de la nvram\\n\\nUne valeur vide indique que le contenu de la nvram sera sauvegardé dans un fichier nvram.plist à la racine de la partition système."
-
 #. type: "339.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:27
+#: ../CloverPrefpane/CloverPrefpane.strings:25
 #, no-wrap
 msgid "NVRamDisk:"
 msgstr "NVRamDisk:"
 
 #. type: "374.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:28
+#: ../CloverPrefpane/CloverPrefpane.strings:26
 #, no-wrap
 msgid "Theme"
 msgstr "Thème"
 
 #. type: "392.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:29
+#: ../CloverPrefpane/CloverPrefpane.strings:27
 #, no-wrap
 msgid "Clover Theme"
 msgstr "Thème de Clover"
 
 #. type: "399.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:30
+#: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
 msgid "Author:"
 msgstr "Auteur:"
 
 #. type: "401.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:31
+#: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
 msgid "Year:"
 msgstr "Année:"
 
 #. type: "405.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:32
+#: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "EFI Folder Path:"
 msgstr "Répertoire EFI:"
 
 #. type: "423.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:33
+#: ../CloverPrefpane/CloverPrefpane.strings:31
 #, no-wrap
 msgid "To see previews of themes you must select the path to the EFI folder."
 msgstr "Pour voir les aperçus des thèmes, vous devez sélectionner le chemin d'accès au répertoire EFI."
 
 #. type: "426.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:34
+#: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "Theme:"
-msgstr "Theme:"
+msgstr "Thème:"
 
 #. type: "429.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:35
+#: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
 msgid "No Preview Available"
 msgstr "Aucun Aperçu Disponible"
+
+#. type: "431.ibShadowedToolTip"
+#: ../CloverPrefpane/CloverPrefpane.strings:34
+#, no-wrap
+msgid "Mounting the ESP partition on boot"
+msgstr "Monter la partition ESP au démarrage"
+
+#. type: "452.ibShadowedToolTip"
+#: ../CloverPrefpane/CloverPrefpane.strings:35
+#, no-wrap
+msgid "Where to save the nvram contents"
+msgstr "Où sauver le contenu de la nvram"
+
+#. type: "Boot Volume"
+#: ../CloverPrefpane/Localizable.strings:1
+#, no-wrap
+msgid "Boot Volume"
+msgstr "Volume de démarrage"
+
+#. type: "Default"
+#: ../CloverPrefpane/Localizable.strings:2
+#, no-wrap
+msgid "Default"
+msgstr "Défaut"
+
+#. type: "ESP on [%@] %@"
+#: ../CloverPrefpane/Localizable.strings:3
+#, no-wrap
+msgid "ESP on [%1$@] %2$@"
+msgstr "ESP sur [%1$@] %2$@"
+
+#. type: "No"
+#: ../CloverPrefpane/Localizable.strings:4
+#, no-wrap
+msgid "No"
+msgstr "Non"
+
+#. type: "No description"
+#: ../CloverPrefpane/Localizable.strings:5
+#, no-wrap
+msgid "No description"
+msgstr "Pas de description"
+
+#. type: "Nowhere"
+#: ../CloverPrefpane/Localizable.strings:6
+#, no-wrap
+msgid "Nowhere"
+msgstr "Nul part"
+
+#. type: "Select the EFI directory"
+#: ../CloverPrefpane/Localizable.strings:7
+#, no-wrap
+msgid "Select the EFI directory"
+msgstr "Sélectionnez le répertoire EFI"
+
+#. type: "Set EFI directory"
+#: ../CloverPrefpane/Localizable.strings:8
+#, no-wrap
+msgid "Set EFI directory"
+msgstr "Définir le répertoire EFI"
+
+#. type: "Unknown"
+#: ../CloverPrefpane/Localizable.strings:9
+#, no-wrap
+msgid "Unknown"
+msgstr "Inconnu"
+
+#~ msgid ""
+#~ "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram "
+#~ "contents to disk\\n* diskXsY: device node of the volume where the nvram "
+#~ "contents will be saved\\n\\nEmpty value save the nvram contents in the "
+#~ "nvram.plist file in the root folder of the system partition."
+#~ msgstr ""
+#~ "Sauve le contenu de la nvram sur disque\\n\\nValeur:\\n* No: ne sauve pas "
+#~ "le contenu de la nvram sur disque\\n* diskXsY: partition où sera stocké "
+#~ "le contenu de la nvram\\n\\nUne valeur vide indique que le contenu de la "
+#~ "nvram sera sauvegardé dans un fichier nvram.plist à la racine de la "
+#~ "partition système."
+
+#~ msgid ""
+#~ "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on "
+#~ "the same disk drive as the system partition\\n* diskX: disk device\\n* "
+#~ "GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on "
+#~ "the same disk drive that the ESP partition\\n\\nEmpty value result in not "
+#~ "mounting ESP partition on boot"
+#~ msgstr ""
+#~ "Monte la partition ESP au démarrage.\\n\\nValeur:\\n* Yes: monte l'ESP "
+#~ "sur le même disque que celui contenant le système.\\n* diskX: device "
+#~ "disque\\n* GUID: GUID de l'ESP\\n* NomDeVolume: Nom d'un volume sur le "
+#~ "même disque que la partition ESP\\n\\nUne valeur vide indique qu'il ne "
+#~ "faut pas monter la partition ESP au démarrage"
 
 #~ msgid ""
 #~ "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined "

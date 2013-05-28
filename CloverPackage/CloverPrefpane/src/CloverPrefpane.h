@@ -13,6 +13,11 @@
 @interface CloverPrefpane : NSPreferencePane {
     io_registry_entry_t _ioRegEntryRef;
     NSString* agentPlistPath;
+    NSDictionary *_diskutilList;
+    NSArray *_efiPartitions;
+    NSString *_cloverMountEfiPartition;
+    NSArray *_nvRamPartitions;
+    NSString *_cloverNvRamDisk;
 
     IBOutlet NSPopUpButton *popUpCheckInterval;
     IBOutlet NSTextField *LastRunDate;
@@ -23,8 +28,6 @@
 
     IBOutlet NSTextField *_logLineCountTextField;
     IBOutlet NSTextField *_logEveryBootTextField;
-    IBOutlet NSTextField *_mountEFITextField;
-    IBOutlet NSTextField *_nvRamDiskTextField;
 
     IBOutlet NSPathControl *_EFIPathControl;
     IBOutlet NSComboBox *_cloverThemeComboBox;
@@ -36,6 +39,13 @@
     IBOutlet NSTextField *_themeWarning;
 }
 
+@property (readonly) IBOutlet NSDictionary* diskutilList;
+@property (readonly) IBOutlet NSArray* efiPartitions;
+@property (nonatomic, copy) IBOutlet NSString* cloverMountEfiPartition;
+@property (readonly) IBOutlet NSArray* nvRamPartitions;
+@property (nonatomic, copy) IBOutlet NSString* cloverNvRamDisk;
+
+
 - (id)        initWithBundle:(NSBundle *)bundle;
 - (void)      mainViewDidLoad;
 - (IBAction)  checkNow:(id)sender;
@@ -46,11 +56,12 @@
 - (IBAction)  themeComboBox:(NSComboBox*)sender;
 - (void)      initThemeTab:(NSString*)efiDir;
 - (NSString*) getNVRamKey:(const char *)key;
-- (OSErr)     setNVRamKey:(const char *)key Value:(const char *)value;
+- (OSErr)     setNVRamKey:(NSString*)key Value:(NSString*)value;
 - (void)      updateThemeTab:(NSString*) themeName;
 
 - (BOOL)isUnlocked;
 
+- (NSDictionary*) getPartitionProperties:(NSString*)bsdName;
 - (unsigned int) getUIntPreferenceKey:(CFStringRef)key
                              forAppID:(CFStringRef)appID
                           withDefault:(unsigned int)defaultValue;
