@@ -2586,6 +2586,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   
   // get TSC freq and init MemLog if needed
   gCPUStructure.TSCCalibr = GetMemLogTscTicksPerSecond(); //ticks for 1second
+  //GlobalConfig.TextOnly = TRUE;
   
   // bootstrap
 	gST				= SystemTable;
@@ -2659,7 +2660,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
  // }
   
   // further bootstrap (now with config available)
-  //  SetupScreen();
+  
   
   DBG("LoadDrivers() start\n");
   LoadDrivers();
@@ -2688,7 +2689,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     //  DBG("InitScreen\n");
   } else {
     InitScreen(FALSE);
-  }  
+  }
+  SetupScreen();
   
   //Now we have to reinit handles
   Status = ReinitSelfLib();

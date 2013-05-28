@@ -216,6 +216,14 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
         GlobalConfig.DebugLog = TRUE;
       }
     }
+    prop = GetProperty(dictPointer, "TextOnly");
+    if (prop) {
+      if ((prop->type == kTagTypeTrue) ||
+          ((prop->type == kTagTypeString) && prop->string &&
+           ((prop->string[0] == 'Y') || (prop->string[0] == 'y')))) {
+        GlobalConfig.TextOnly = TRUE;
+      }
+    }
     prop = GetProperty(dictPointer, "ScreenResolution");
     if (prop) {
       if ((prop->type == kTagTypeString) && prop->string) {
