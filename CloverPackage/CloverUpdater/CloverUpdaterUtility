@@ -10,6 +10,7 @@ declare -r OPEN="/usr/bin/open"
 declare -r PLISTBUDDY="/usr/libexec/PlistBuddy"
 declare -r CLOVER_LAST_VERSION_URL="http://sourceforge.net/projects/cloverefiboot/files/latest/download"
 declare -r CLOVER_APP_SUPPORT="/Library/Application Support/Clover"
+declare -r CLOVER_INSTALLER_PLIST=/Library/Preferences/com.projectosx.clover.installer.plist
 declare -r CLOVER_UPDATER_PLIST="$HOME"/Library/Preferences/com.projectosx.clover.updater.plist
 
 # Argument pass to script
@@ -38,6 +39,11 @@ current_revision=$(LC_ALL=C $IOREG -l -pIODeviceTree | \
  $SED -nE 's@.*boot-log.*<([0-9a-fA-F]*)>.*@\1@p'    | \
  xxd -r -p                                           | \
  $SED -nE 's/^.*Clover revision: *([0-9]+).*$/\1/p')
+
+installed_revision=$($PLISTBUDDY -c "PrintCloverRevision" "$CLOVER_INSTALLER_PLIST" 2>/dev/null)
+
+[[ -n "$installed_revision" && "$installed_revision" -gt "$current_revision" ]] && \
+ current_revision="$installed_revision"
 
 [[ -z "$current_revision" ]] && exit 1
 
