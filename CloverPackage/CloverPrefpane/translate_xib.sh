@@ -64,6 +64,11 @@ for locale in "$PO_DIR"/*.po ; do
     echo -n "Generating "$locale" interface... "
     [[ ! -d "$SOURCE_DIR/$locale.lproj" ]] && mkdir -p "$SOURCE_DIR/$locale.lproj"
     if [ -f "$SOURCE_DIR/$locale.lproj/$strings_file" ] ; then
+        if [[ "$XCODE_MAJOR_VERSION" -lt 4 ]]; then
+            # XCode before version 4 doesn't recognize ibShadowedToolTip OID
+            # try to change to the old OID: gToolTip
+            sed -i '' -e 's/\.ibShadowedToolTip/\.gToolTip/g' "$SOURCE_DIR/$locale.lproj/$strings_file"
+        fi
         ibtool --strings-file "$SOURCE_DIR/$locale.lproj/$strings_file" \
             --write "$SOURCE_DIR/$locale.lproj/$xib_file" "$SOURCE_DIR/$src_locale.lproj/$xib_file"
     else
