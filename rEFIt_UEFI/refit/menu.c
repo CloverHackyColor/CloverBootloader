@@ -1686,9 +1686,9 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
 
 static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
-    INTN i = 0, j;
-    UINTN MenuWidth = 50, ItemWidth, MenuHeight;
-    static UINTN MenuPosY;
+    INTN i = 0, j = 0;
+    static UINTN MenuWidth = 0, ItemWidth = 0, MenuHeight = 0;
+    static UINTN MenuPosY = 0;
     //static CHAR16 **DisplayStrings;
     CHAR16 *TimeoutMessage;
 	CHAR16 ResultString[256];
@@ -1724,15 +1724,7 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
             // TODO: account for double-width characters
             */    
             // initial painting
-            BeginTextScreen(Screen->Title);
-            if (Screen->InfoLineCount > 0) {
-                gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
-                for (i = 0; i < (INTN)Screen->InfoLineCount; i++) {
-                    gST->ConOut->SetCursorPosition (gST->ConOut, 3, 4 + i);
-                    gST->ConOut->OutputString (gST->ConOut, Screen->InfoLines[i]);
-                }
-            }
-            
+                        
             break;
             
         case MENU_FUNCTION_CLEANUP:
@@ -1744,6 +1736,21 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
             
         case MENU_FUNCTION_PAINT_ALL:
             // paint the whole screen (initially and after scrolling)
+			gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
+			for (i = 0; i < MenuHeight; i++) {
+				gST->ConOut->SetCursorPosition (gST->ConOut, 0, MenuPosY + i);
+				gST->ConOut->OutputString (gST->ConOut, BlankLine);
+			}
+			
+			BeginTextScreen(Screen->Title);
+            if (Screen->InfoLineCount > 0) {
+                gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
+                for (i = 0; i < (INTN)Screen->InfoLineCount; i++) {
+                    gST->ConOut->SetCursorPosition (gST->ConOut, 3, 4 + i);
+                    gST->ConOut->OutputString (gST->ConOut, Screen->InfoLines[i]);
+                }
+            }
+				
             for (i = State->FirstVisible; i <= State->LastVisible && i <= State->MaxIndex; i++) {
 				gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (i - State->FirstVisible));
 				if (i == State->CurrentSelection)
