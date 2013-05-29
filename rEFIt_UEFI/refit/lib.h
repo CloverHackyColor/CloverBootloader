@@ -370,6 +370,7 @@ typedef struct {
   SCALING     BackgroundScale;
   UINTN       BackgroundSharp;
   BOOLEAN     BackgroundDark;
+  BOOLEAN     CustomIcons;
 } REFIT_CONFIG;
 
 // types

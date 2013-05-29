@@ -48,7 +48,7 @@ extern INTN ScrollBarDecorationsHeight;
 extern INTN ScrollScrollDecorationsHeight;
 
 // global configuration with default values
-REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, None, 0, FALSE };
+REFIT_CONFIG   GlobalConfig = { FALSE, -1, 0, 0, 0, TRUE, FALSE, FALSE, FALSE, FALSE, FONT_ALFA, 7, 0xFFFFFF80, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, None, 0, FALSE, FALSE };
 
 VOID __inline WaitForSts(VOID) {
 	UINT32 inline_timeout = 100000;
@@ -208,6 +208,16 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
         DBG("Default theme: %s\n", GlobalConfig.Theme);
       }
     }
+    //CustomIcons
+    prop = GetProperty(dictPointer, "CustomIcons");
+    if (prop) {
+      if ((prop->type == kTagTypeTrue) ||
+          ((prop->type == kTagTypeString) && prop->string &&
+           ((prop->string[0] == 'Y') || (prop->string[0] == 'y')))) {
+        GlobalConfig.CustomIcons = TRUE;
+      }
+    }
+
     prop = GetProperty(dictPointer, "DebugLog");
     if (prop) {
       if ((prop->type == kTagTypeTrue) ||
