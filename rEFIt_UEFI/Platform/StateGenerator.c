@@ -81,6 +81,9 @@ SSDT_TABLE *generate_pss_ssdt(UINT8 FirstID, UINTN Number)
       break;
     }
   }
+  if (gSettings.MinMultiplier == 7) {
+    Aplf++;
+  }
 
 	if (Number > 0)
 	{

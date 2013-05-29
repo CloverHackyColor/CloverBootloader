@@ -866,6 +866,7 @@ typedef enum {
 	iMac121,
   iMac122,
   iMac131,
+  iMac132,
 	MacPro31,
 	MacPro41,
 	MacPro51,
