@@ -1686,11 +1686,12 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
 
 static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
-    INTN i;
-    UINTN MenuWidth, ItemWidth, MenuHeight;
+    INTN i = 0, j;
+    UINTN MenuWidth = 50, ItemWidth, MenuHeight;
     static UINTN MenuPosY;
-    static CHAR16 **DisplayStrings;
+    //static CHAR16 **DisplayStrings;
     CHAR16 *TimeoutMessage;
+	CHAR16 ResultString[256];
     
     switch (Function) {
         
@@ -1705,7 +1706,7 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
             InitScroll(State, Screen->EntryCount, Screen->EntryCount, MenuHeight);
             
             // determine width of the menu
-            MenuWidth = 20;  // minimum
+            MenuWidth = 50;  // minimum
             for (i = 0; i <= State->MaxIndex; i++) {
                 ItemWidth = StrLen(Screen->Entries[i]->Title);
                 if (MenuWidth < ItemWidth)
@@ -1715,13 +1716,13 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
                 MenuWidth = ConWidth - 6;
             
             // prepare strings for display
-            DisplayStrings = AllocatePool(sizeof(CHAR16 *) * Screen->EntryCount);
+            /*DisplayStrings = AllocatePool(sizeof(CHAR16 *) * Screen->EntryCount);
             for (i = 0; i <= State->MaxIndex; i++)
                 DisplayStrings[i] = PoolPrint(L" %-.*s ", MenuWidth, Screen->Entries[i]->Title);
             // TODO: shorten strings that are too long (PoolPrint doesn't do that...)
             // TODO: use more elaborate techniques for shortening too long strings (ellipses in the middle)
             // TODO: account for double-width characters
-                
+            */    
             // initial painting
             BeginTextScreen(Screen->Title);
             if (Screen->InfoLineCount > 0) {
@@ -1736,22 +1737,27 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
             
         case MENU_FUNCTION_CLEANUP:
             // release temporary memory
-            for (i = 0; i <= State->MaxIndex; i++)
+            /*for (i = 0; i <= State->MaxIndex; i++)
                 FreePool(DisplayStrings[i]);
-            FreePool(DisplayStrings);
+            FreePool(DisplayStrings);*/
             break;
             
         case MENU_FUNCTION_PAINT_ALL:
             // paint the whole screen (initially and after scrolling)
-            for (i = 0; i <= State->MaxIndex; i++) {
-                if (i >= State->FirstVisible && i <= State->LastVisible) {
-                    gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (i - State->FirstVisible));
-                    if (i == State->CurrentSelection)
-                        gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_CURRENT);
-                    else
-                        gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
-                    gST->ConOut->OutputString (gST->ConOut, DisplayStrings[i]);
-                }
+            for (i = State->FirstVisible; i <= State->LastVisible && i <= State->MaxIndex; i++) {
+				gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (i - State->FirstVisible));
+				if (i == State->CurrentSelection)
+					gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_CURRENT);
+				else
+					gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
+				
+				StrCpy(ResultString, Screen->Entries[i]->Title);
+				if (Screen->Entries[i]->Tag == TAG_INPUT)
+					StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->SValue);
+				for (j = StrLen(ResultString); j < MenuWidth; j++)
+					ResultString[j] = L' ';
+				ResultString[j] = 0;
+				gST->ConOut->OutputString (gST->ConOut, ResultString);
             }
             // scrolling indicators
             gST->ConOut->SetAttribute (gST->ConOut, ATTR_SCROLLARROW);
@@ -1771,10 +1777,27 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
             // redraw selection cursor
             gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (State->LastSelection - State->FirstVisible));
             gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
-            gST->ConOut->OutputString (gST->ConOut, DisplayStrings[State->LastSelection]);
-            gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (State->CurrentSelection - State->FirstVisible));
+            //gST->ConOut->OutputString (gST->ConOut, DisplayStrings[State->LastSelection]);
+			StrCpy(ResultString, Screen->Entries[State->LastSelection]->Title);
+            if (Screen->Entries[State->LastSelection]->Tag == TAG_INPUT)
+				StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->SValue);
+			for (j = StrLen(ResultString); j < MenuWidth; j++)
+				ResultString[j] = L' ';
+			ResultString[j] = 0;
+			gST->ConOut->OutputString (gST->ConOut, ResultString);
+			
+			
+			
+			gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (State->CurrentSelection - State->FirstVisible));
             gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_CURRENT);
-            gST->ConOut->OutputString (gST->ConOut, DisplayStrings[State->CurrentSelection]);
+			StrCpy(ResultString, Screen->Entries[State->CurrentSelection]->Title);
+			if (Screen->Entries[State->CurrentSelection]->Tag == TAG_INPUT)
+				StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->SValue);
+			for (j = StrLen(ResultString); j < MenuWidth; j++)
+				ResultString[j] = L' ';
+			ResultString[j] = 0;
+			gST->ConOut->OutputString (gST->ConOut, ResultString);
+            //gST->ConOut->OutputString (gST->ConOut, DisplayStrings[State->CurrentSelection]);
             break;
             
         case MENU_FUNCTION_PAINT_TIMEOUT:
@@ -1881,7 +1904,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
   EG_PIXEL EmptyPixel = { 0, 0, 0, 0 };
 
 
-  CHAR16 ResultString[255];
+  CHAR16 ResultString[256];
   
   switch (Function) {
       
