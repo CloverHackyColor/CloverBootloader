@@ -1238,7 +1238,6 @@ VOID PatchTableType17()
   // Check for interleaved channels
   if (channels >= 2) {
      wrongSMBIOSBanks = ((gRAM.SMBIOS[1].InUse != gRAM.SPD[1].InUse) ||
-                         (gRAM.SMBIOS[1].Frequency != gRAM.SPD[1].Frequency) ||
                          (gRAM.SMBIOS[1].ModuleSize != gRAM.SPD[1].ModuleSize));
   }
   if (wrongSMBIOSBanks) {
