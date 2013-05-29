@@ -2686,11 +2686,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     } else {
       InitScreen(!gFirmwareClover); // ? FALSE : TRUE);
     }
+    SetupScreen();
     //  DBG("InitScreen\n");
   } else {
     InitScreen(FALSE);
   }
-  SetupScreen();
   
   //Now we have to reinit handles
   Status = ReinitSelfLib();

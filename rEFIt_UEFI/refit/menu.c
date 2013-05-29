@@ -1737,8 +1737,8 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
         case MENU_FUNCTION_PAINT_ALL:
             // paint the whole screen (initially and after scrolling)
 			gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
-			for (i = 0; i < MenuHeight; i++) {
-				gST->ConOut->SetCursorPosition (gST->ConOut, 0, MenuPosY + i);
+			for (i = 0; i < ConHeight - 4; i++) {
+				gST->ConOut->SetCursorPosition (gST->ConOut, 0, 4 + i);
 				gST->ConOut->OutputString (gST->ConOut, BlankLine);
 			}
 			
