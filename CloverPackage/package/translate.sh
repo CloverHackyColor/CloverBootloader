@@ -65,6 +65,7 @@ PODIR="po"
 
 # Update CloverPrefpane.strings
 "$CLOVER_PREFPANE_DIR"/translate_xib.sh --extract-only
+# Update Localizable.strings
 "$CLOVER_PREFPANE_DIR"/translate_source.sh --extract-only
 
 # Check if pot and po files need to be updated

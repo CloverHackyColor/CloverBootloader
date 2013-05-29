@@ -53,11 +53,11 @@ fi
 
 [[ "$EXTRACT_ONLY" -eq 1 ]] && exit 0
 
-# Generate localized interfaces
+# Generate localized strings
 for locale in "$PO_DIR"/*.po ; do
      locale="${locale%.po}"
      locale="${locale#$PO_DIR/}"
-     echo -n "Generating "$locale" interface... "
+     echo -n "Check "$locale" strings... "
      [[ ! -d "$SOURCE_DIR/$locale.lproj" ]] && mkdir -p "$SOURCE_DIR/$locale.lproj"
      if [ ! -f "$SOURCE_DIR/$locale.lproj/$string_file" ] ; then
          echo -n "strings file $SOURCE_DIR/$locale.lproj/$string_file not found in locale dir '$locale.lproj' - using template file... "

@@ -14,7 +14,6 @@
 		A3340A601733DDF80065BC3F /* CloverPrefpane.tiff in Resources */ = {isa = PBXBuildFile; fileRef = A3340A5D1733DDF80065BC3F /* CloverPrefpane.tiff */; };
 		A3340A74173418270065BC3F /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3340A72173417EF0065BC3F /* ServiceManagement.framework */; };
 		A356D7491753ED280047BAC4 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A356D74B1753ED280047BAC4 /* Localizable.strings */; };
-		A356D75D175403C10047BAC4 /* translate_source.sh in Resources */ = {isa = PBXBuildFile; fileRef = A356D75C175403C10047BAC4 /* translate_source.sh */; };
 		A35A6F3F17364640007B2103 /* CloverPrefpane-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = A35A6F3E17364640007B2103 /* CloverPrefpane-Prefix.pch */; };
 		A38BDC571733968700DE7DA1 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A38BDC561733968700DE7DA1 /* Cocoa.framework */; };
 		A38BDC591733968700DE7DA1 /* PreferencePanes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A38BDC581733968700DE7DA1 /* PreferencePanes.framework */; };
@@ -36,23 +35,23 @@
 		A3340A5D1733DDF80065BC3F /* CloverPrefpane.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = CloverPrefpane.tiff; sourceTree = "<group>"; };
 		A3340A72173417EF0065BC3F /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = /System/Library/Frameworks/ServiceManagement.framework; sourceTree = "<absolute>"; };
 		A34C365D1737C83F009AD818 /* br */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = br; path = br.lproj/CloverPrefpane.xib; sourceTree = "<group>"; };
-		A356D74A1753ED280047BAC4 /* en */ = {isa = PBXFileReference; lastKnownFileType = file; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A356D74A1753ED280047BAC4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A356D74E1754032B0047BAC4 /* fr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fr; path = fr.lproj/Localizable.strings; sourceTree = "<group>"; };
-		A356D74F1754032C0047BAC4 /* es */ = {isa = PBXFileReference; lastKnownFileType = file; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
-		A356D7501754032F0047BAC4 /* hr */ = {isa = PBXFileReference; lastKnownFileType = file; name = hr; path = hr.lproj/Localizable.strings; sourceTree = "<group>"; };
-		A356D751175403300047BAC4 /* ru */ = {isa = PBXFileReference; lastKnownFileType = file; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
-		A356D752175403310047BAC4 /* id */ = {isa = PBXFileReference; lastKnownFileType = file; name = id; path = id.lproj/Localizable.strings; sourceTree = "<group>"; };
-		A356D753175403320047BAC4 /* pl */ = {isa = PBXFileReference; lastKnownFileType = file; name = pl; path = pl.lproj/Localizable.strings; sourceTree = "<group>"; };
-		A356D754175403330047BAC4 /* uk */ = {isa = PBXFileReference; lastKnownFileType = file; name = uk; path = uk.lproj/Localizable.strings; sourceTree = "<group>"; };
-		A356D755175403340047BAC4 /* it */ = {isa = PBXFileReference; lastKnownFileType = file; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
-		A356D756175403350047BAC4 /* br */ = {isa = PBXFileReference; lastKnownFileType = file; name = br; path = br.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A356D74F1754032C0047BAC4 /* es */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = es; path = es.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A356D7501754032F0047BAC4 /* hr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = hr; path = hr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A356D751175403300047BAC4 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A356D752175403310047BAC4 /* id */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = id; path = id.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A356D753175403320047BAC4 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pl; path = pl.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A356D754175403330047BAC4 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = uk; path = uk.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A356D755175403340047BAC4 /* it */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = it; path = it.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A356D756175403350047BAC4 /* br */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = br; path = br.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A356D75C175403C10047BAC4 /* translate_source.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = translate_source.sh; sourceTree = "<group>"; };
-		A356D75F1754134E0047BAC4 /* cz */ = {isa = PBXFileReference; lastKnownFileType = file; name = cz; path = cz.lproj/Localizable.strings; sourceTree = "<group>"; };
-		A356D760175413500047BAC4 /* de */ = {isa = PBXFileReference; lastKnownFileType = file; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
-		A356D761175413510047BAC4 /* fa */ = {isa = PBXFileReference; lastKnownFileType = file; name = fa; path = fa.lproj/Localizable.strings; sourceTree = "<group>"; };
-		A356D762175413510047BAC4 /* ko */ = {isa = PBXFileReference; lastKnownFileType = file; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
-		A356D763175413520047BAC4 /* nl */ = {isa = PBXFileReference; lastKnownFileType = file; name = nl; path = nl.lproj/Localizable.strings; sourceTree = "<group>"; };
-		A356D764175413530047BAC4 /* pt */ = {isa = PBXFileReference; lastKnownFileType = file; name = pt; path = pt.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A356D75F1754134E0047BAC4 /* cz */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = cz; path = cz.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A356D760175413500047BAC4 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A356D761175413510047BAC4 /* fa */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = fa; path = fa.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A356D762175413510047BAC4 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A356D763175413520047BAC4 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A356D764175413530047BAC4 /* pt */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt; path = pt.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A35A6F3A173644AF007B2103 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/CloverPrefpane.xib; sourceTree = "<group>"; };
 		A35A6F3C17364583007B2103 /* CloverPrefpane-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "CloverPrefpane-Info.plist"; sourceTree = "<group>"; };
 		A35A6F3E17364640007B2103 /* CloverPrefpane-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "CloverPrefpane-Prefix.pch"; path = "src/CloverPrefpane-Prefix.pch"; sourceTree = "<group>"; };
@@ -263,7 +262,6 @@
 				A33207141746DB6700939AFB /* DefaultThemes.plist in Resources */,
 				A3340A601733DDF80065BC3F /* CloverPrefpane.tiff in Resources */,
 				A33207161746E96300939AFB /* NoPreview.png in Resources */,
-				A356D75D175403C10047BAC4 /* translate_source.sh in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

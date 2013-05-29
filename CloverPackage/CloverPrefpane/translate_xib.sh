@@ -57,7 +57,6 @@ fi
 [[ "$EXTRACT_ONLY" -eq 1 ]] && exit 0
 
 # Generate localized interfaces
-#for locale in $target_locales ; do
 for locale in "$PO_DIR"/*.po ; do
     locale="${locale%.po}"
     locale="${locale#$PO_DIR/}"
