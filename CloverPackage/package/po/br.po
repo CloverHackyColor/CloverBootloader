@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-28 10:48+0300\n"
-"PO-Revision-Date: 2013-05-24 03:28+0000\n"
+"PO-Revision-Date: 2013-05-29 00:00+0000\n"
 "Last-Translator: kyndder <kyndder@icloud.com>\n"
 "Language-Team: pt <pt@li.org>\n"
 "Language: br\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1369366104.0\n"
+"X-POOTLE-MTIME: 1369785638.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -1027,10 +1027,10 @@ msgstr "Verificar agora"
 
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:12
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Copyright (c) 2013 JrCs"
 msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
-msgstr "Copyright (c) 2013 JrCs"
+msgstr "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
 
 #. type: "294.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:13
@@ -1163,68 +1163,68 @@ msgstr "Nenhum Preview Disponível"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
 #, no-wrap
 msgid "Mounting the ESP partition on boot"
-msgstr ""
+msgstr "Montando a partição ESP durante o boot"
 
 #. type: "452.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
 #, no-wrap
 msgid "Where to save the nvram contents"
-msgstr ""
+msgstr "Local para salvar o conteúdo da nvram"
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:1
 #, no-wrap
 msgid "Boot Volume"
-msgstr ""
+msgstr "Volume de Boot"
 
 #. type: "Default"
 #: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
 msgid "Default"
-msgstr ""
+msgstr "Padrão"
 
 #. type: "ESP on [%@] %@"
 #: ../CloverPrefpane/Localizable.strings:3
 #, no-wrap
 msgid "ESP on [%1$@] %2$@"
-msgstr ""
+msgstr "ESP no [%1$@] %2$@"
 
 #. type: "No"
 #: ../CloverPrefpane/Localizable.strings:4
 #, no-wrap
 msgid "No"
-msgstr ""
+msgstr "Não"
 
 #. type: "No description"
 #: ../CloverPrefpane/Localizable.strings:5
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "XhciDxe-32_description"
 msgid "No description"
-msgstr "XhciDxe-32_description"
+msgstr "Sem descrição"
 
 #. type: "Nowhere"
 #: ../CloverPrefpane/Localizable.strings:6
 #, no-wrap
 msgid "Nowhere"
-msgstr ""
+msgstr "Em nenhum lugar"
 
 #. type: "Select the EFI directory"
 #: ../CloverPrefpane/Localizable.strings:7
 #, no-wrap
 msgid "Select the EFI directory"
-msgstr ""
+msgstr "Selecione a pasta EFI"
 
 #. type: "Set EFI directory"
 #: ../CloverPrefpane/Localizable.strings:8
 #, no-wrap
 msgid "Set EFI directory"
-msgstr ""
+msgstr "Definir a pasta EFI"
 
 #. type: "Unknown"
 #: ../CloverPrefpane/Localizable.strings:9
 #, no-wrap
 msgid "Unknown"
-msgstr ""
+msgstr "Desconhecido"
 
 #~ msgid "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on the same disk drive as the system partition\\n* diskX: disk device\\n* GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on the same disk drive that the ESP partition\\n\\nEmpty value result in not mounting ESP partition on boot"
 #~ msgstr "Montando a partição ESP ao iniciar.\\n\\nValor:\\n8 Sim: monta a ESP no mesmo disco da partição do sistema\\n* diskX:disk device\\n8 GUID: GUID da ESP\\n8 VolumeName: O nome de um volume que está no mesmo disco da partição ESP\\n\\nQuando sem valor o resultado é a não montagem da partição ESP durante a inicialização"
