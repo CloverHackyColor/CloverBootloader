@@ -22,6 +22,7 @@ static const CFStringRef efiDirPathKey=CFSTR("EFI Directory Path");
 
 @synthesize diskutilList  = _diskutilList;
 @synthesize efiPartitions = _efiPartitions;
+@synthesize nvRamPartitions = _nvRamPartitions;
 @synthesize cloverMountEfiPartition = _cloverMountEfiPartition;
 @synthesize cloverNvRamDisk = _cloverNvRamDisk;
 

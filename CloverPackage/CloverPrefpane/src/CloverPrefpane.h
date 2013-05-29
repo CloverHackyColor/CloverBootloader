@@ -13,11 +13,6 @@
 @interface CloverPrefpane : NSPreferencePane {
     io_registry_entry_t _ioRegEntryRef;
     NSString* agentPlistPath;
-    NSDictionary *_diskutilList;
-    NSArray *_efiPartitions;
-    NSString *_cloverMountEfiPartition;
-    NSArray *_nvRamPartitions;
-    NSString *_cloverNvRamDisk;
 
     IBOutlet NSPopUpButton *popUpCheckInterval;
     IBOutlet NSTextField *LastRunDate;
@@ -39,11 +34,11 @@
     IBOutlet NSTextField *_themeWarning;
 }
 
-@property (readonly) IBOutlet NSDictionary* diskutilList;
-@property (readonly) IBOutlet NSArray* efiPartitions;
-@property (nonatomic, copy) IBOutlet NSString* cloverMountEfiPartition;
-@property (readonly) IBOutlet NSArray* nvRamPartitions;
-@property (nonatomic, copy) IBOutlet NSString* cloverNvRamDisk;
+@property (nonatomic,readonly,copy) IBOutlet NSDictionary* diskutilList;
+@property (nonatomic,readonly,copy) IBOutlet NSArray* efiPartitions;
+@property (nonatomic,readonly,copy) IBOutlet NSArray* nvRamPartitions;
+@property (nonatomic,copy) IBOutlet NSString* cloverMountEfiPartition;
+@property (nonatomic,copy) IBOutlet NSString* cloverNvRamDisk;
 
 
 - (id)        initWithBundle:(NSBundle *)bundle;
