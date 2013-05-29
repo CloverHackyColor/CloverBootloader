@@ -1250,8 +1250,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       if(prop) {
         if ((prop->type == kTagTypeTrue) ||
             ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
+             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
           gSettings.DropSSDT = TRUE;
+        } else if ((prop->type == kTagTypeFalse) ||
+                   ((prop->type == kTagTypeString) &&
+                    ((prop->string[0] == 'n') || (prop->string[0] == 'N')))) {
+          gSettings.DropSSDT = FALSE;
+        }
       }
       prop = GetProperty(dictPointer, "GeneratePStates");
 //      gSettings.GeneratePStates = FALSE;
