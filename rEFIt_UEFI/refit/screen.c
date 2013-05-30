@@ -213,22 +213,43 @@ VOID TerminateScreen(VOID)
 
 static VOID DrawScreenHeader(IN CHAR16 *Title)
 {
-    UINTN y;
+    UINTN i;
+	CHAR16* BannerLine = AllocatePool((ConWidth + 1) * sizeof(CHAR16));
+    BannerLine[ConWidth] = 0;
     
+	
     // clear to black background
     gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
 //    gST->ConOut->ClearScreen (gST->ConOut);
     
     // paint header background
     gST->ConOut->SetAttribute (gST->ConOut, ATTR_BANNER);
-    for (y = 0; y < 3; y++) {
-        gST->ConOut->SetCursorPosition (gST->ConOut, 0, y);
-        Print(BlankLine);
-    }
+    for (i = 1; i < ConWidth-1; i++)
+        BannerLine[i] = BOXDRAW_HORIZONTAL;
+	BannerLine[0] = BOXDRAW_UP_RIGHT;
+	BannerLine[ConWidth-1] = BOXDRAW_UP_LEFT;
+    gST->ConOut->SetCursorPosition (gST->ConOut, 0, 0);
+	Print(BannerLine);
+	
+	for (i = 1; i < ConWidth-1; i++)
+        BannerLine[i] = ' ';
+	BannerLine[0] = BOXDRAW_VERTICAL;
+	BannerLine[ConWidth-1] = BOXDRAW_VERTICAL;
+    gST->ConOut->SetCursorPosition (gST->ConOut, 0, 1);
+	Print(BannerLine);
+	
+	for (i = 1; i < ConWidth-1; i++)
+        BannerLine[i] = BOXDRAW_HORIZONTAL;
+	BannerLine[0] = BOXDRAW_DOWN_RIGHT;
+	BannerLine[ConWidth-1] = BOXDRAW_DOWN_LEFT;
+    gST->ConOut->SetCursorPosition (gST->ConOut, 0, 2);
+	Print(BannerLine);
+	
+	FreePool(BannerLine);
     
     // print header text
     gST->ConOut->SetCursorPosition (gST->ConOut, 3, 1);
-    Print(L"rEFIt - %s", Title);
+    Print(L"Clover - %s", Title);
     
     // reposition cursor
     gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);

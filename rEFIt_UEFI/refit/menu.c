@@ -3288,36 +3288,38 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.AtClick = ActionSelect;
     InputBootArgs->Entry.AtDoubleClick = ActionEnter;
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-    //3  
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    UnicodeSPrint(Flags, 255, L"Theme:");
-    InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = StrLen(InputItems[3].SValue);
-    InputBootArgs->Item = &InputItems[3];  
-    InputBootArgs->Entry.AtClick = ActionSelect;
-    InputBootArgs->Entry.AtRightClick = ActionEnter;
-    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+    //3
+	if (AllowGraphicsMode) {
+		InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+		UnicodeSPrint(Flags, 255, L"Theme:");
+		InputBootArgs->Entry.Title = EfiStrDuplicate(Flags);
+		InputBootArgs->Entry.Tag = TAG_INPUT;
+		InputBootArgs->Entry.Row = StrLen(InputItems[3].SValue);
+		InputBootArgs->Item = &InputItems[3];  
+		InputBootArgs->Entry.AtClick = ActionSelect;
+		InputBootArgs->Entry.AtRightClick = ActionEnter;
+		AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
 
     
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"Pointer speed:");
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = StrLen(InputItems[70].SValue); //cursor
-    InputBootArgs->Entry.ShortcutLetter = 'P';
-    InputBootArgs->Item = &InputItems[70];    
-    InputBootArgs->Entry.AtClick = ActionSelect;
-    InputBootArgs->Entry.AtDoubleClick = ActionEnter;
-    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-    
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"Mirror move:");
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = 0xFFFF;
-    InputBootArgs->Item = &InputItems[72];
-    InputBootArgs->Entry.AtClick = ActionEnter;
-    InputBootArgs->Entry.AtRightClick = ActionDetails;
-    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+		InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+		InputBootArgs->Entry.Title = PoolPrint(L"Pointer speed:");
+		InputBootArgs->Entry.Tag = TAG_INPUT;
+		InputBootArgs->Entry.Row = StrLen(InputItems[70].SValue); //cursor
+		InputBootArgs->Entry.ShortcutLetter = 'P';
+		InputBootArgs->Item = &InputItems[70];    
+		InputBootArgs->Entry.AtClick = ActionSelect;
+		InputBootArgs->Entry.AtDoubleClick = ActionEnter;
+		AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+		
+		InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+		InputBootArgs->Entry.Title = PoolPrint(L"Mirror move:");
+		InputBootArgs->Entry.Tag = TAG_INPUT;
+		InputBootArgs->Entry.Row = 0xFFFF;
+		InputBootArgs->Item = &InputItems[72];
+		InputBootArgs->Entry.AtClick = ActionEnter;
+		InputBootArgs->Entry.AtRightClick = ActionDetails;
+		AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
+	}
 
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
     InputBootArgs->Entry.Title = PoolPrint(L"USBFixOwnership:");
