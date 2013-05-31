@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-28 10:48+0300\n"
-"PO-Revision-Date: 2013-05-09 17:58+0000\n"
+"PO-Revision-Date: 2013-05-31 09:59+0000\n"
 "Last-Translator: crazybirdy <>\n"
 "Language-Team: zh_CN <zh_CN@li.org>\n"
 "Language: zh_CN\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1368122292.0\n"
+"X-POOTLE-MTIME: 1369994384.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -580,11 +580,11 @@ msgstr "选择安装，开机时，显示的背景主题。"
 #: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "AppleStyle"
-msgstr "AppleStyle苹果风格"
+msgstr "AppleStyle"
 
 #. type: "applestyle_description"
 #: Resources/templates/Localizable.strings:112
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "AppleStyle theme from Eps,\n"
 #| "Install to /EFI/CLOVER/themes/AppleStyle."
@@ -592,19 +592,19 @@ msgid ""
 "AppleStyle theme from Eps,\n"
 "Install to /EFI/CLOVER/themes/applestyle"
 msgstr ""
-"选择安装来自 Eps 的 AppleStyle苹果风格 主题。\n"
+"选择安装来自 Eps 的 AppleStyle 主题。\n"
 "安装位置 /EFI/CLOVER/themes/AppleStyle。"
 
 #. type: "black_green_title"
 #: Resources/templates/Localizable.strings:115
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "black_green"
 msgid "Black_Green"
-msgstr "BlackGreen墨绿风格"
+msgstr "BlackGreen"
 
 #. type: "black_green_description"
 #: Resources/templates/Localizable.strings:116
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Default black_green theme from Blackosx,\n"
 #| "Install to /EFI/CLOVER/themes/black_green."
@@ -612,18 +612,18 @@ msgid ""
 "Default black_green theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/black_green"
 msgstr ""
-"默认安装来自 Blackosx 的 BlackGreen墨绿风格 主题。\n"
+"选择安装来自 Blackosx 的 BlackGreen主题。\n"
 "安装位置 /EFI/CLOVER/themes/black_green。"
 
 #. type: "bluemac_title"
 #: Resources/templates/Localizable.strings:119
 #, no-wrap
 msgid "Bluemac"
-msgstr ""
+msgstr "Bluemac"
 
 #. type: "bluemac_description"
 #: Resources/templates/Localizable.strings:120
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Simple_gray theme from hijeane,\n"
 #| "Install to /EFI/CLOVER/themes/simple_gray."
@@ -631,18 +631,18 @@ msgid ""
 "Bluemac theme from FowZiey,\n"
 "Install to /EFI/CLOVER/themes/bluemac"
 msgstr ""
-"选择安装来自 hijeane 的 SimpleGray简灰风格 主题。\n"
-"安装位置 /EFI/CLOVER/themes/simple_gray。"
+"选择安装来自 FowZiey 的 Bluemac 主题。\n"
+"安装位置 /EFI/CLOVER/themes/bluemac。"
 
 #. type: "bootcamp_title"
 #: Resources/templates/Localizable.strings:123
 #, no-wrap
 msgid "BootCamp"
-msgstr ""
+msgstr "BootCamp"
 
 #. type: "bootcamp_description"
 #: Resources/templates/Localizable.strings:124
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Wooden theme from iROOTa,\n"
 #| "Install to /EFI/CLOVER/themes/wooden."
@@ -650,18 +650,18 @@ msgid ""
 "Bootcamp theme from Bijo,\n"
 "Install to /EFI/CLOVER/themes/bootcamp"
 msgstr ""
-"选择安装来自 iROOTa 的 Wooden原木风格 主题。\n"
-"安装位置 /EFI/CLOVER/themes/wooden。"
+"选择安装来自 Bijo 的 BootCamp 主题。\n"
+"安装位置 /EFI/CLOVER/themes/bootcamp。"
 
 #. type: "iclover_title"
 #: Resources/templates/Localizable.strings:127
 #, no-wrap
 msgid "iClover"
-msgstr "iClover灰色风格"
+msgstr "iClover"
 
 #. type: "iclover_description"
 #: Resources/templates/Localizable.strings:128
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Grey style theme by winlog,\n"
 #| "Install to /EFI/CLOVER/themes/iClover."
@@ -669,18 +669,18 @@ msgid ""
 "Grey style theme by winlog,\n"
 "Install to /EFI/CLOVER/themes/iclover"
 msgstr ""
-"选择安装来自 winlog 的 iClover灰色风格 主题。\n"
-"安装位置 /EFI/CLOVER/themes/iClover。"
+"选择安装来自 winlog 的 iClover 主题。\n"
+"安装位置 /EFI/CLOVER/themes/iclover。"
 
 #. type: "magnifico_title"
 #: Resources/templates/Localizable.strings:131
 #, no-wrap
 msgid "Magnifico"
-msgstr ""
+msgstr "Magnifico"
 
 #. type: "magnifico_description"
 #: Resources/templates/Localizable.strings:132
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Wooden theme from iROOTa,\n"
 #| "Install to /EFI/CLOVER/themes/wooden."
@@ -688,18 +688,18 @@ msgid ""
 "Magnifico theme from Magnifico,\n"
 "Install to /EFI/CLOVER/themes/magnifico"
 msgstr ""
-"选择安装来自 iROOTa 的 Wooden原木风格 主题。\n"
-"安装位置 /EFI/CLOVER/themes/wooden。"
+"选择安装来自 Magnifico 的 Magnifico 主题。\n"
+"安装位置 /EFI/CLOVER/themes/magnifico。"
 
 #. type: "metal_title"
 #: Resources/templates/Localizable.strings:135
 #, no-wrap
 msgid "metal"
-msgstr "Metal金属风格"
+msgstr "Metal"
 
 #. type: "metal_description"
 #: Resources/templates/Localizable.strings:136
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "The original metal theme from Slice,\n"
 #| "Install to /EFI/CLOVER/themes/metal."
@@ -707,18 +707,18 @@ msgid ""
 "The original metal theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/metal"
 msgstr ""
-"原始默认安装来自 Slice 的 Metal金属风格 主题，现已改由 BlackGreen墨绿风格 主题作为默认安装。\n"
+"选择安装来自 Slice 的原始 Metal 主题。\n"
 "安装位置 /EFI/CLOVER/themes/metal。"
 
 #. type: "mrengles_title"
 #: Resources/templates/Localizable.strings:139
 #, no-wrap
 msgid "mrengles"
-msgstr "mrengles风格"
+msgstr "Mrengles"
 
 #. type: "mrengles_description"
 #: Resources/templates/Localizable.strings:140
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "mrengles theme from mrengles,\n"
 #| "Install to /EFI/CLOVER/themes/mrengles."
@@ -726,18 +726,18 @@ msgid ""
 "mrengles theme from mrengles,\n"
 "Install to /EFI/CLOVER/themes/mrengles"
 msgstr ""
-"选择安装来自 mrengles 的 mrengles风格 主题。\n"
+"选择安装来自 mrengles 的 Mrengles 主题。\n"
 "安装位置 /EFI/CLOVER/themes/mrengles。"
 
 #. type: "orange_title"
 #: Resources/templates/Localizable.strings:143
 #, no-wrap
 msgid "Orange"
-msgstr ""
+msgstr "Orange"
 
 #. type: "orange_description"
 #: Resources/templates/Localizable.strings:144
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "mrengles theme from mrengles,\n"
 #| "Install to /EFI/CLOVER/themes/mrengles."
@@ -745,18 +745,18 @@ msgid ""
 "Orange theme from dwm,\n"
 "Install to /EFI/CLOVER/themes/orange"
 msgstr ""
-"选择安装来自 mrengles 的 mrengles风格 主题。\n"
-"安装位置 /EFI/CLOVER/themes/mrengles。"
+"选择安装来自 dwm 的 Orange 主题。\n"
+"安装位置 /EFI/CLOVER/themes/orange。"
 
 #. type: "os_box_title"
 #: Resources/templates/Localizable.strings:147
 #, no-wrap
 msgid "OS Box"
-msgstr ""
+msgstr "OS Box"
 
 #. type: "os_box_description"
 #: Resources/templates/Localizable.strings:148
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Buttons theme from Trauma,\n"
 #| "Install to /EFI/CLOVER/themes/buttons."
@@ -764,18 +764,18 @@ msgid ""
 "OS Box theme from Kyndder,\n"
 "Install to /EFI/CLOVER/themes/os_box"
 msgstr ""
-"选择安装来自 Trauma 的 Buttons按钮风格 主题。\n"
-"安装位置 /EFI/CLOVER/themes/buttons。"
+"选择安装来自 Kyndder 的 OS Box 主题。\n"
+"安装位置 /EFI/CLOVER/themes/os_box。"
 
 #. type: "os_one_title"
 #: Resources/templates/Localizable.strings:151
 #, no-wrap
 msgid "OS One"
-msgstr ""
+msgstr "OS One"
 
 #. type: "os_one_description"
 #: Resources/templates/Localizable.strings:152
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Buttons theme from Trauma,\n"
 #| "Install to /EFI/CLOVER/themes/buttons."
@@ -783,18 +783,18 @@ msgid ""
 "OS One theme from Kyndder,\n"
 "Install to /EFI/CLOVER/themes/os_one"
 msgstr ""
-"选择安装来自 Trauma 的 Buttons按钮风格 主题。\n"
-"安装位置 /EFI/CLOVER/themes/buttons。"
+"选择安装来自 Kyndder 的 OS One 主题。\n"
+"安装位置 /EFI/CLOVER/themes/os_one。"
 
 #. type: "thinkpad_title"
 #: Resources/templates/Localizable.strings:155
 #, no-wrap
 msgid "ThinkPad"
-msgstr ""
+msgstr "ThinkPad"
 
 #. type: "thinkpad_description"
 #: Resources/templates/Localizable.strings:156
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "The original metal theme from Slice,\n"
 #| "Install to /EFI/CLOVER/themes/metal."
@@ -802,14 +802,14 @@ msgid ""
 "ThinkPad theme from Kogen Mantis,\n"
 "Install to /EFI/CLOVER/themes/thinkpad"
 msgstr ""
-"原始默认安装来自 Slice 的 Metal金属风格 主题，现已改由 BlackGreen墨绿风格 主题作为默认安装。\n"
-"安装位置 /EFI/CLOVER/themes/metal。"
+"选择安装来自 Kogen Mantis 的 ThinkPad 主题。\n"
+"安装位置 /EFI/CLOVER/themes/thinkpad。"
 
 #. type: "buttons_title"
 #: Resources/templates/Localizable.strings:159
 #, no-wrap
 msgid "buttons"
-msgstr "Buttons按钮风格"
+msgstr "Buttons"
 
 #. type: "buttons_description"
 #: Resources/templates/Localizable.strings:160
@@ -818,14 +818,14 @@ msgid ""
 "Buttons theme from Trauma,\n"
 "Install to /EFI/CLOVER/themes/buttons."
 msgstr ""
-"选择安装来自 Trauma 的 Buttons按钮风格 主题。\n"
+"选择安装来自 Trauma 的 Buttons 主题。\n"
 "安装位置 /EFI/CLOVER/themes/buttons。"
 
 #. type: "hellfire_title"
 #: Resources/templates/Localizable.strings:163
 #, no-wrap
 msgid "hellfire"
-msgstr "Hellfire地狱火风格"
+msgstr "Hellfire"
 
 #. type: "hellfire_description"
 #: Resources/templates/Localizable.strings:164
@@ -834,14 +834,14 @@ msgid ""
 "Hellfire theme from lllevelll,\n"
 "Install to /EFI/CLOVER/themes/hellfire."
 msgstr ""
-"选择安装来自 illevelll 的 Hellfire地狱火风格 主题。\n"
+"选择安装来自 illevelll 的 Hellfire 主题。\n"
 "安装位置 /EFI/CLOVER/themes/hellfire。"
 
 #. type: "simple_gray_title"
 #: Resources/templates/Localizable.strings:167
 #, no-wrap
 msgid "simple_gray"
-msgstr "SimpleGray简灰风格"
+msgstr "SimpleGray"
 
 #. type: "simple_gray_description"
 #: Resources/templates/Localizable.strings:168
@@ -850,14 +850,14 @@ msgid ""
 "Simple_gray theme from hijeane,\n"
 "Install to /EFI/CLOVER/themes/simple_gray."
 msgstr ""
-"选择安装来自 hijeane 的 SimpleGray简灰风格 主题。\n"
+"选择安装来自 hijeane 的 SimpleGray 主题。\n"
 "安装位置 /EFI/CLOVER/themes/simple_gray。"
 
 #. type: "wooden_title"
 #: Resources/templates/Localizable.strings:171
 #, no-wrap
 msgid "wooden"
-msgstr "Wooden原木风格"
+msgstr "Wooden"
 
 #. type: "wooden_description"
 #: Resources/templates/Localizable.strings:172
@@ -866,7 +866,7 @@ msgid ""
 "Wooden theme from iROOTa,\n"
 "Install to /EFI/CLOVER/themes/wooden."
 msgstr ""
-"选择安装来自 iROOTa 的 Wooden原木风格 主题。\n"
+"选择安装来自 iROOTa 的 Wooden 主题。\n"
 "安装位置 /EFI/CLOVER/themes/wooden。"
 
 #. type: "rc.scripts.on.target_title"
@@ -911,14 +911,14 @@ msgstr "停用 mDNSResponder 休眠 proxy client 服务，可以避免系统休�
 
 #. type: "CloverPrefpane_title"
 #: Resources/templates/Localizable.strings:189
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Install Clover in the ESP"
 msgid "Install Clover Preference Pane"
-msgstr "安装 Clover 到 EFI 系统区"
+msgstr "安装 Clover 系统偏好设置 面板"
 
 #. type: "CloverPrefpane_description"
 #: Resources/templates/Localizable.strings:190
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Install CloverUpdater on target volume.\n"
 #| "CloverUpdater notify you about Clover updates."
@@ -926,8 +926,8 @@ msgid ""
 "Install Clover Preference Pane on target volume.\n"
 "Include CloverUpdater that can notify you about Clover updates."
 msgstr ""
-"安装 Clover更新软件 到选择磁区\n"
-"Clover更新软件 会提醒 Clover 之更新信息。"
+"安装 Clover 系统偏好设置 面板 到选择磁区。 \n"
+"包含可提醒 Clover 更新信息的 Clover 更新软体。"
 
 #. type: "371.title"
 #: ../CloverUpdater/CloverUpdater.strings:1
@@ -1047,101 +1047,110 @@ msgstr "立刻检查"
 
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:12
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Copyright (c) 2013 JrCs"
 msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
-msgstr "版权所有 (C) 2013 JrCs"
+msgstr ""
+"版权所有 (C) 2013 JrCs, kozlek\n"
+"保留所有权利"
 
 #. type: "294.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:13
 #, no-wrap
 msgid "NVRam Variables"
-msgstr ""
+msgstr "NVRam 变量"
 
 #. type: "295.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:14
 #, no-wrap
 msgid "General"
-msgstr ""
+msgstr "常规"
 
 #. type: "298.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:15
 #, no-wrap
 msgid "Revisions"
-msgstr ""
+msgstr "修订版本"
 
 #. type: "300.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:16
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Current local Clover revision:"
 msgid "Current booted revision:"
-msgstr "当前本地 Clover 修订版本："
+msgstr "当前启动的修订版本："
 
 #. type: "302.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:17
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Latest update revision:"
 msgid "Last installed revision:"
-msgstr "最近更新之修订版本："
+msgstr "最近安装的修订版本："
 
 #. type: "309.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:18
 #, no-wrap
 msgid "Log Files"
-msgstr ""
+msgstr "纪录文件"
 
 #. type: "311.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:19
 #, no-wrap
 msgid "LogLineCount:"
-msgstr ""
+msgstr "纪录行数："
 
 #. type: "313.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
 msgid "LogEveryBoot:"
-msgstr ""
+msgstr "纪录每次开机："
 
 #. type: "314.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
-msgstr ""
+msgstr "现有 CloverEFI/boot.log 内容以外，保存在 CloverEFI/system.log 的行数历史纪录"
 
 #. type: "323.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* Yes: create a new timestamp boot.log file\\n* Number: where number is the number of timestamp boot.log files to keep.\\n\\nA blank value result in NO creation of timestamp boot.log file"
 msgstr ""
+"每次开机创建 CloverEFI/boot.log 文件\n"
+"\n"
+"Value:\n"
+"* Yes: 创建新的 boot.log 文件\n"
+"* Number: 保存 boot.log 文件的数量。\n"
+"\n"
+"空白表示不创建 boot.log 文件"
 
 #. type: "327.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
 msgid "Advanced Configurations"
-msgstr ""
+msgstr "高级配置"
 
 #. type: "332.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
 msgid "MountEFI:"
-msgstr ""
+msgstr "MountEFI:"
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:25
 #, no-wrap
 msgid "NVRamDisk:"
-msgstr ""
+msgstr "NVRamDisk:"
 
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:26
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Themes"
 msgid "Theme"
 msgstr "开机主题"
 
 #. type: "392.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:27
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Clover Theme"
 msgid "Clover Theme"
 msgstr "Clover 主题"
@@ -1150,29 +1159,29 @@ msgstr "Clover 主题"
 #: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
 msgid "Author:"
-msgstr ""
+msgstr "作者："
 
 #. type: "401.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
 msgid "Year:"
-msgstr ""
+msgstr "年份："
 
 #. type: "405.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "EFI Folder Path:"
-msgstr ""
+msgstr "EFI 文件夹路径："
 
 #. type: "423.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:31
 #, no-wrap
 msgid "To see previews of themes you must select the path to the EFI folder."
-msgstr ""
+msgstr "必须选择EFI 文件夹路径，才能预览开机主题"
 
 #. type: "426.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:32
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Themes"
 msgid "Theme:"
 msgstr "开机主题"
@@ -1181,74 +1190,74 @@ msgstr "开机主题"
 #: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
 msgid "No Preview Available"
-msgstr ""
+msgstr "没有可用的预览"
 
 #. type: "431.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
 #, no-wrap
 msgid "Mounting the ESP partition on boot"
-msgstr ""
+msgstr "开机时，装载 ESP 分区。"
 
 #. type: "452.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
 #, no-wrap
 msgid "Where to save the nvram contents"
-msgstr ""
+msgstr "储存 nvram 内容的位置"
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:1
 #, no-wrap
 msgid "Boot Volume"
-msgstr ""
+msgstr "开机磁区"
 
 #. type: "Default"
 #: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
 msgid "Default"
-msgstr ""
+msgstr "默认"
 
 #. type: "ESP on [%@] %@"
 #: ../CloverPrefpane/Localizable.strings:3
 #, no-wrap
 msgid "ESP on [%1$@] %2$@"
-msgstr ""
+msgstr "在 [%1$@] %2$@ 的ESP"
 
 #. type: "No"
 #: ../CloverPrefpane/Localizable.strings:4
 #, no-wrap
 msgid "No"
-msgstr ""
+msgstr "否"
 
 #. type: "No description"
 #: ../CloverPrefpane/Localizable.strings:5
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "XhciDxe-32_description"
 msgid "No description"
-msgstr "32位，XHCI 高速USB 3.0 驱动。"
+msgstr "无描述"
 
 #. type: "Nowhere"
 #: ../CloverPrefpane/Localizable.strings:6
 #, no-wrap
 msgid "Nowhere"
-msgstr ""
+msgstr "不显示"
 
 #. type: "Select the EFI directory"
 #: ../CloverPrefpane/Localizable.strings:7
 #, no-wrap
 msgid "Select the EFI directory"
-msgstr ""
+msgstr "选择 EFI 目录"
 
 #. type: "Set EFI directory"
 #: ../CloverPrefpane/Localizable.strings:8
 #, no-wrap
 msgid "Set EFI directory"
-msgstr ""
+msgstr "设置 EFI 目录"
 
 #. type: "Unknown"
 #: ../CloverPrefpane/Localizable.strings:9
 #, no-wrap
 msgid "Unknown"
-msgstr ""
+msgstr "未知"
 
 #~ msgid "Install CloverUpdater"
 #~ msgstr "安装 Clover更新软件"
