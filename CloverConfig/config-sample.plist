@@ -249,6 +249,8 @@
 		<string>metal</string>
 		<key>Timeout</key>
 		<integer>5</integer>
+		<key>TextOnly</key>
+		<false/>
 		<key>DebugLog</key>
 		<false/>
 		<key>DefaultBootVolume</key>

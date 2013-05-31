@@ -2866,6 +2866,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       } else {
         //    DBG("Enter main loop\n");
  //       DBG("RunMainMenu() start\n");
+        MainMenu.AnimeRun = TRUE;
         MenuExit = RunMainMenu(&MainMenu, DefaultIndex, &ChosenEntry);
  //       DBG("RunMainMenu() end\n");
       }
