@@ -2599,11 +2599,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   gFirmwareClover = StrCmp(gST->FirmwareVendor, L"CLOVER") == 0;
   
   InitializeConsoleSim();
-  if (!GlobalConfig.FastBoot) {
+//  if (!GlobalConfig.FastBoot) {
     InitBooterLog();
     DBG("\n");
     DBG("Starting rEFIt rev %s on %s EFI\n", FIRMWARE_REVISION, gST->FirmwareVendor);
-  }
+//  }
   Status = InitRefitLib(gImageHandle);
   if (EFI_ERROR(Status))
     return Status;
@@ -2805,7 +2805,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       //DBG("ScanLegacy()\n");
     }
 
-    if (!GlobalConfig.FastBoot) {
+ //   if (!GlobalConfig.FastBoot) {
       // fixed other menu entries
       //               DBG("FillInputs OK\n");
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
@@ -2836,7 +2836,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       FinishTextScreen(FALSE);
       //   DBG("FinishTextScreen()\n");
 
-    }
+//    }
     DefaultIndex = FindDefaultEntry();
 //    DBG("FindDefaultEntry()\n");
     //  DBG("DefaultIndex=%d and MainMenu.EntryCount=%d\n", DefaultIndex, MainMenu.EntryCount);
@@ -2846,16 +2846,15 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       DefaultEntry = NULL;
     }
 //    MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
-    if (!GlobalConfig.FastBoot || !DefaultEntry) {
-      MainMenu.AnimeRun = GetAnime(&MainMenu);
-      MainLoopRunning = TRUE;
-    } else {
+    if (GlobalConfig.FastBoot && DefaultEntry) {
       StartLoader((LOADER_ENTRY *)DefaultEntry);
       MainLoopRunning = FALSE;
-      GlobalConfig.FastBoot = FALSE; //Hmm... will never be here
+      GlobalConfig.FastBoot = FALSE; //Hmm... will never be here      
     }
-      // PauseForKey(L"Enter main loop");
+    MainMenu.AnimeRun = GetAnime(&MainMenu);
+    MainLoopRunning = TRUE;
     
+// PauseForKey(L"Enter main loop");    
 
     AfterTool = FALSE;
     gEvent = 0; //clear to cancel loop

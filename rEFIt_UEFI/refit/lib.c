@@ -882,9 +882,9 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
    DBG("HD path is not found\n"); //master volume!
    }*/
 
-  if (GlobalConfig.FastBoot) {
-    return EFI_SUCCESS;
-  }
+//  if (GlobalConfig.FastBoot) {
+//    return EFI_SUCCESS;
+//  }
   
   if (!Bootable) {
 #if REFIT_DEBUG > 0
@@ -1073,7 +1073,7 @@ VOID ScanVolumes(VOID)
   UINTN                   PartitionIndex;
   UINT8                   *SectorBuffer1, *SectorBuffer2;
   UINTN                   SectorSum, i;
-  EFI_DEVICE_PATH_PROTOCOL  *VolumeDevicePath;
+//  EFI_DEVICE_PATH_PROTOCOL  *VolumeDevicePath;
   EFI_GUID                *Guid;
   //  EFI_INPUT_KEY Key;
   CHAR16                  *VolumeDevPath;
@@ -1090,7 +1090,8 @@ VOID ScanVolumes(VOID)
   for (HandleIndex = 0; HandleIndex < HandleCount; HandleIndex++) {
     
     // for quick default volume boot - skip volumes other then self volume and GPT volume with gEfiBootDeviceGuid
-    if ((GlobalConfig.FastBoot || GlobalConfig.Timeout == 0) &&
+    //Slice - no! selfVolume = EFI, defaultVolume is not set yet.
+ /*   if ((GlobalConfig.Timeout == 0) &&
         gEfiBootDeviceGuid != NULL &&
         Handles[HandleIndex] != SelfDeviceHandle) {
       VolumeDevicePath = DevicePathFromHandle(Handles[HandleIndex]);
@@ -1099,7 +1100,7 @@ VOID ScanVolumes(VOID)
         // not self volume and not default volume - skip it
         continue;
       }
-    }
+    } */
     
     Volume = AllocateZeroPool(sizeof(REFIT_VOLUME));
     Volume->DeviceHandle = Handles[HandleIndex];
