@@ -2715,11 +2715,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //  DBG("GetCPUProperties OK\n");
   GetDevices();
  //     DBG("GetDevices OK\n");
-  if (!GlobalConfig.FastBoot) {
+ // if (!GlobalConfig.FastBoot) {
   DBG("ScanSPD() start\n");
   ScanSPD();
   DBG("ScanSPD() end\n");
-  }
+ // }
  //       DBG("ScanSPD OK\n");
   SetPrivateVarProto();
 //        DBG("SetPrivateVarProto OK\n");
