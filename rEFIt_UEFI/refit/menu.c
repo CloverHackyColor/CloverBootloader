@@ -919,10 +919,12 @@ VOID ApplyInputs(VOID)
   i++; //90
   if (InputItems[i].Valid) {
     UnicodeSPrint(gSettings.ConfigName, 64, L"%s", InputItems[i].SValue);
-    LoadUserSettings(SelfRootDir);
-    GetUserSettings(SelfRootDir);
-    RefillInputs();
-    NeedSave = FALSE;
+    Status = LoadUserSettings(SelfRootDir);
+    if (!EFI_ERROR(Status)) {
+      GetUserSettings(SelfRootDir);
+      RefillInputs();
+      NeedSave = FALSE;
+    }
 //    return; //do not double SaveSettings() as it done by GetUserSettings()
   }
   i++; //91
@@ -1423,12 +1425,11 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
       break;
 
     case MENU_EXIT_ESCAPE:
-      Item->Valid = FALSE;
       UnicodeSPrint(Item->SValue, SVALUE_MAX_SIZE, L"%s", Backup);
       StyleFunc(Screen, State, MENU_FUNCTION_PAINT_SELECTION, NULL);
       break;
   }
-
+  Item->Valid = FALSE;
   FreePool(Backup);
   MsgLog("EDITED: %s\n", Item->SValue);
 
@@ -1437,35 +1438,35 @@ static UINTN InputDialog(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC  Style
 
 UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc, IN OUT INTN *DefaultEntryIndex, OUT REFIT_MENU_ENTRY **ChosenEntry)
 {
-    SCROLL_STATE  State;
-    EFI_STATUS    Status;
-    EFI_INPUT_KEY key;
-//    UINTN         Index;
-    INTN          ShortcutEntry;
-    BOOLEAN       HaveTimeout = FALSE;
-    UINTN         TimeoutCountdown = 0;
-    CHAR16        *TimeoutMessage;
-    UINTN         MenuExit;
-    //UINTN         LogSize;
-  
-    //no default - no timeout!
-    if ((*DefaultEntryIndex != -1) && (Screen->TimeoutSeconds > 0)) {
-//      DBG("have timeout\n");
-      HaveTimeout = TRUE;
-      TimeoutCountdown = Screen->TimeoutSeconds;
-    }
-    MenuExit = 0;
-    
-    StyleFunc(Screen, &State, MENU_FUNCTION_INIT, NULL);
-//  DBG("scroll inited\n");
-    // override the starting selection with the default index, if any
-    if (*DefaultEntryIndex >= 0 && *DefaultEntryIndex <= State.MaxIndex) {
-        State.CurrentSelection = *DefaultEntryIndex;
-        UpdateScroll(&State, SCROLL_NONE);
-    }
-//  DBG("RunGenericMenu CurrentSelection=%d MenuExit=%d\n",
-//      State.CurrentSelection, MenuExit);
-  
+  SCROLL_STATE  State;
+  EFI_STATUS    Status;
+  EFI_INPUT_KEY key;
+  //    UINTN         Index;
+  INTN          ShortcutEntry;
+  BOOLEAN       HaveTimeout = FALSE;
+  UINTN         TimeoutCountdown = 0;
+  CHAR16        *TimeoutMessage;
+  UINTN         MenuExit;
+  //UINTN         LogSize;
+
+  //no default - no timeout!
+  if ((*DefaultEntryIndex != -1) && (Screen->TimeoutSeconds > 0)) {
+    //      DBG("have timeout\n");
+    HaveTimeout = TRUE;
+    TimeoutCountdown = Screen->TimeoutSeconds;
+  }
+  MenuExit = 0;
+
+  StyleFunc(Screen, &State, MENU_FUNCTION_INIT, NULL);
+  //  DBG("scroll inited\n");
+  // override the starting selection with the default index, if any
+  if (*DefaultEntryIndex >= 0 && *DefaultEntryIndex <= State.MaxIndex) {
+    State.CurrentSelection = *DefaultEntryIndex;
+    UpdateScroll(&State, SCROLL_NONE);
+  }
+  //  DBG("RunGenericMenu CurrentSelection=%d MenuExit=%d\n",
+  //      State.CurrentSelection, MenuExit);
+
   // exhaust key buffer and be sure no key is pressed to prevent option selection
   // when coming with a key press from timeout=0, for example
   while (ReadAllKeyStrokes()) gBS->Stall(500 * 1000);
@@ -1478,14 +1479,14 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
       StyleFunc(Screen, &State, MENU_FUNCTION_PAINT_SELECTION, NULL);
       State.PaintSelection = FALSE;
     }
-    
+
     if (HaveTimeout) {
       TimeoutMessage = PoolPrint(L"%s in %d seconds", Screen->TimeoutText, TimeoutCountdown);
       StyleFunc(Screen, &State, MENU_FUNCTION_PAINT_TIMEOUT, TimeoutMessage);
       FreePool(TimeoutMessage);
     }
-    
-    if (gEvent) { //for now used at CD eject. 
+
+    if (gEvent) { //for now used at CD eject.
       MenuExit = MENU_EXIT_ESCAPE;
       State.PaintAll = TRUE;
       break;
@@ -1500,17 +1501,17 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
     if (Status == EFI_TIMEOUT) {
       if (HaveTimeout) {
         if (TimeoutCountdown == 0) {
-        // timeout expired
+          // timeout expired
           MenuExit = MENU_EXIT_TIMEOUT;
           break;
         } else {
-   //     gBS->Stall(100000);
+          //     gBS->Stall(100000);
           TimeoutCountdown--;
         }
       }
       continue;
     }
-    
+
     switch (gAction) {
       case ActionSelect:
         State.LastSelection = State.CurrentSelection;
@@ -1534,17 +1535,17 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         State.LastSelection = State.CurrentSelection;
         State.CurrentSelection = gItemID;
         MenuExit = MENU_EXIT_OPTIONS;
-        break;        
+        break;
       case ActionDetails:
         State.LastSelection = State.CurrentSelection;
-       // Index = State.CurrentSelection;
+        // Index = State.CurrentSelection;
         State.CurrentSelection = gItemID;
         if ((Screen->Entries[gItemID])->Tag == TAG_INPUT){
           MenuExit = InputDialog(Screen, StyleFunc, &State);
         } else {
           MenuExit = MENU_EXIT_DETAILS;
         }
-      //  State.CurrentSelection = Index;
+        //  State.CurrentSelection = Index;
         break;
       case ActionDeselect:
         State.LastSelection = State.CurrentSelection;
@@ -1566,8 +1567,8 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
       default:
         break;
     }
-    
-    
+
+
     // read key press (and wait for it if applicable)
     Status = gST->ConIn->ReadKeyStroke (gST->ConIn, &key);
     if ((Status == EFI_NOT_READY) && (gAction == ActionNone)) {
@@ -1582,7 +1583,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
       HidePointer(); //ycr.ru
       HaveTimeout = FALSE;
     }
-    
+
     gAction = ActionNone; //do action once
     // react to key press
     switch (key.ScanCode) {
@@ -1601,12 +1602,12 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         UpdateScroll(&State, SCROLL_LAST);
         break;
       case SCAN_PAGE_UP:
-  //      UpdateScroll(&State, SCROLL_PAGE_UP);
+        //      UpdateScroll(&State, SCROLL_PAGE_UP);
         SetNextScreenMode(1);
         StyleFunc(Screen, &State, MENU_FUNCTION_INIT, NULL);
         break;
       case SCAN_PAGE_DOWN:
-//        UpdateScroll(&State, SCROLL_PAGE_DOWN);
+        //        UpdateScroll(&State, SCROLL_PAGE_DOWN);
         SetNextScreenMode(-1);
         StyleFunc(Screen, &State, MENU_FUNCTION_INIT, NULL);
         break;
@@ -1616,7 +1617,7 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
       case SCAN_INSERT:
         MenuExit = MENU_EXIT_OPTIONS;
         break;
-        
+
       case SCAN_F1:
         MenuExit = MENU_EXIT_HELP;
         break;
@@ -1645,15 +1646,15 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
         MenuExit = MENU_EXIT_EJECT;
         State.PaintAll = TRUE;
         break;
-        
+
     }
     switch (key.UnicodeChar) {
       case CHAR_LINEFEED:
       case CHAR_CARRIAGE_RETURN:
         if ((Screen->Entries[State.CurrentSelection])->Tag == TAG_INPUT){
-          MenuExit = InputDialog(Screen, StyleFunc, &State);          
+          MenuExit = InputDialog(Screen, StyleFunc, &State);
         } else if ((Screen->Entries[State.CurrentSelection])->Tag == TAG_CLOVER){
-            MenuExit = MENU_EXIT_DETAILS;
+          MenuExit = MENU_EXIT_DETAILS;
         } else {
           MenuExit = MENU_EXIT_ENTER;
         }
@@ -1661,11 +1662,11 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
       case ' ':
         if ((Screen->Entries[State.CurrentSelection])->Tag == TAG_INPUT){
           MenuExit = InputDialog(Screen, StyleFunc, &State);
-        } else {  
+        } else {
           MenuExit = MENU_EXIT_DETAILS;
         }
         break;
-        
+
       default:
         ShortcutEntry = FindMenuShortcutEntry(Screen, key.UnicodeChar);
         if (ShortcutEntry >= 0) {
@@ -1688,78 +1689,78 @@ UINTN RunGenericMenu(IN REFIT_MENU_SCREEN *Screen, IN MENU_STYLE_FUNC StyleFunc,
 
 static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, IN UINTN Function, IN CHAR16 *ParamText)
 {
-    INTN i = 0, j = 0;
-    static UINTN MenuWidth = 0, ItemWidth = 0, MenuHeight = 0;
-    static UINTN MenuPosY = 0;
-    //static CHAR16 **DisplayStrings;
-    CHAR16 *TimeoutMessage;
+  INTN i = 0, j = 0;
+  static UINTN MenuWidth = 0, ItemWidth = 0, MenuHeight = 0;
+  static UINTN MenuPosY = 0;
+  //static CHAR16 **DisplayStrings;
+  CHAR16 *TimeoutMessage;
 	CHAR16 ResultString[256];
-    
-    switch (Function) {
-        
-        case MENU_FUNCTION_INIT:
-            // vertical layout
-            MenuPosY = 4;
-            if (Screen->InfoLineCount > 0)
-                MenuPosY += Screen->InfoLineCount + 1;
-            MenuHeight = ConHeight - MenuPosY;
-            if (Screen->TimeoutSeconds > 0)
-                MenuHeight -= 2;
-            InitScroll(State, Screen->EntryCount, Screen->EntryCount, MenuHeight);
-            
-            // determine width of the menu
-            MenuWidth = 50;  // minimum
-            for (i = 0; i <= State->MaxIndex; i++) {
-                ItemWidth = StrLen(Screen->Entries[i]->Title);
-                if (MenuWidth < ItemWidth)
-                    MenuWidth = ItemWidth;
-            }
-            if (MenuWidth > ConWidth - 6)
-                MenuWidth = ConWidth - 6;
-            
-            // prepare strings for display
-            /*DisplayStrings = AllocatePool(sizeof(CHAR16 *) * Screen->EntryCount);
-            for (i = 0; i <= State->MaxIndex; i++)
-                DisplayStrings[i] = PoolPrint(L" %-.*s ", MenuWidth, Screen->Entries[i]->Title);
-            // TODO: shorten strings that are too long (PoolPrint doesn't do that...)
-            // TODO: use more elaborate techniques for shortening too long strings (ellipses in the middle)
-            // TODO: account for double-width characters
-            */    
-            // initial painting
-                        
-            break;
-            
-        case MENU_FUNCTION_CLEANUP:
-            // release temporary memory
-            /*for (i = 0; i <= State->MaxIndex; i++)
-                FreePool(DisplayStrings[i]);
-            FreePool(DisplayStrings);*/
-            break;
-            
-        case MENU_FUNCTION_PAINT_ALL:
-            // paint the whole screen (initially and after scrolling)
+
+  switch (Function) {
+
+    case MENU_FUNCTION_INIT:
+      // vertical layout
+      MenuPosY = 4;
+      if (Screen->InfoLineCount > 0)
+        MenuPosY += Screen->InfoLineCount + 1;
+      MenuHeight = ConHeight - MenuPosY;
+      if (Screen->TimeoutSeconds > 0)
+        MenuHeight -= 2;
+      InitScroll(State, Screen->EntryCount, Screen->EntryCount, MenuHeight);
+
+      // determine width of the menu
+      MenuWidth = 50;  // minimum
+      for (i = 0; i <= State->MaxIndex; i++) {
+        ItemWidth = StrLen(Screen->Entries[i]->Title);
+        if (MenuWidth < ItemWidth)
+          MenuWidth = ItemWidth;
+      }
+      if (MenuWidth > ConWidth - 6)
+        MenuWidth = ConWidth - 6;
+
+      // prepare strings for display
+      /*DisplayStrings = AllocatePool(sizeof(CHAR16 *) * Screen->EntryCount);
+       for (i = 0; i <= State->MaxIndex; i++)
+       DisplayStrings[i] = PoolPrint(L" %-.*s ", MenuWidth, Screen->Entries[i]->Title);
+       // TODO: shorten strings that are too long (PoolPrint doesn't do that...)
+       // TODO: use more elaborate techniques for shortening too long strings (ellipses in the middle)
+       // TODO: account for double-width characters
+       */
+      // initial painting
+
+      break;
+
+    case MENU_FUNCTION_CLEANUP:
+      // release temporary memory
+      /*for (i = 0; i <= State->MaxIndex; i++)
+       FreePool(DisplayStrings[i]);
+       FreePool(DisplayStrings);*/
+      break;
+
+    case MENU_FUNCTION_PAINT_ALL:
+      // paint the whole screen (initially and after scrolling)
 			gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
 			for (i = 0; i < ConHeight - 4; i++) {
 				gST->ConOut->SetCursorPosition (gST->ConOut, 0, 4 + i);
 				gST->ConOut->OutputString (gST->ConOut, BlankLine);
 			}
-			
+
 			BeginTextScreen(Screen->Title);
-            if (Screen->InfoLineCount > 0) {
-                gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
-                for (i = 0; i < (INTN)Screen->InfoLineCount; i++) {
-                    gST->ConOut->SetCursorPosition (gST->ConOut, 3, 4 + i);
-                    gST->ConOut->OutputString (gST->ConOut, Screen->InfoLines[i]);
-                }
-            }
-				
-            for (i = State->FirstVisible; i <= State->LastVisible && i <= State->MaxIndex; i++) {
+      if (Screen->InfoLineCount > 0) {
+        gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
+        for (i = 0; i < (INTN)Screen->InfoLineCount; i++) {
+          gST->ConOut->SetCursorPosition (gST->ConOut, 3, 4 + i);
+          gST->ConOut->OutputString (gST->ConOut, Screen->InfoLines[i]);
+        }
+      }
+
+      for (i = State->FirstVisible; i <= State->LastVisible && i <= State->MaxIndex; i++) {
 				gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (i - State->FirstVisible));
 				if (i == State->CurrentSelection)
 					gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_CURRENT);
 				else
 					gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
-				
+
 				StrCpy(ResultString, Screen->Entries[i]->Title);
 				if (Screen->Entries[i]->Tag == TAG_INPUT)
 					StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->SValue);
@@ -1767,38 +1768,38 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 					ResultString[j] = L' ';
 				ResultString[j] = 0;
 				gST->ConOut->OutputString (gST->ConOut, ResultString);
-            }
-            // scrolling indicators
-            gST->ConOut->SetAttribute (gST->ConOut, ATTR_SCROLLARROW);
-            gST->ConOut->SetCursorPosition (gST->ConOut, 0, MenuPosY);
-            if (State->FirstVisible > 0)
-                gST->ConOut->OutputString (gST->ConOut, ArrowUp);
-            else
-                gST->ConOut->OutputString (gST->ConOut, L" ");
-            gST->ConOut->SetCursorPosition (gST->ConOut, 0, MenuPosY + State->MaxVisible);
-            if (State->LastVisible < State->MaxIndex)
-                gST->ConOut->OutputString (gST->ConOut, ArrowDown);
-            else
-                gST->ConOut->OutputString (gST->ConOut, L" ");
-            break;
-            
-        case MENU_FUNCTION_PAINT_SELECTION:
-            // redraw selection cursor
-            gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (State->LastSelection - State->FirstVisible));
-            gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
-            //gST->ConOut->OutputString (gST->ConOut, DisplayStrings[State->LastSelection]);
+      }
+      // scrolling indicators
+      gST->ConOut->SetAttribute (gST->ConOut, ATTR_SCROLLARROW);
+      gST->ConOut->SetCursorPosition (gST->ConOut, 0, MenuPosY);
+      if (State->FirstVisible > 0)
+        gST->ConOut->OutputString (gST->ConOut, ArrowUp);
+      else
+        gST->ConOut->OutputString (gST->ConOut, L" ");
+      gST->ConOut->SetCursorPosition (gST->ConOut, 0, MenuPosY + State->MaxVisible);
+      if (State->LastVisible < State->MaxIndex)
+        gST->ConOut->OutputString (gST->ConOut, ArrowDown);
+      else
+        gST->ConOut->OutputString (gST->ConOut, L" ");
+      break;
+
+    case MENU_FUNCTION_PAINT_SELECTION:
+      // redraw selection cursor
+      gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (State->LastSelection - State->FirstVisible));
+      gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
+      //gST->ConOut->OutputString (gST->ConOut, DisplayStrings[State->LastSelection]);
 			StrCpy(ResultString, Screen->Entries[State->LastSelection]->Title);
-            if (Screen->Entries[State->LastSelection]->Tag == TAG_INPUT)
+      if (Screen->Entries[State->LastSelection]->Tag == TAG_INPUT)
 				StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->SValue);
 			for (j = StrLen(ResultString); j < MenuWidth; j++)
 				ResultString[j] = L' ';
 			ResultString[j] = 0;
 			gST->ConOut->OutputString (gST->ConOut, ResultString);
-			
-			
-			
+
+
+
 			gST->ConOut->SetCursorPosition (gST->ConOut, 2, MenuPosY + (State->CurrentSelection - State->FirstVisible));
-            gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_CURRENT);
+      gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_CURRENT);
 			StrCpy(ResultString, Screen->Entries[State->CurrentSelection]->Title);
 			if (Screen->Entries[State->CurrentSelection]->Tag == TAG_INPUT)
 				StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->SValue);
@@ -1806,26 +1807,26 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 				ResultString[j] = L' ';
 			ResultString[j] = 0;
 			gST->ConOut->OutputString (gST->ConOut, ResultString);
-            //gST->ConOut->OutputString (gST->ConOut, DisplayStrings[State->CurrentSelection]);
-            break;
-            
-        case MENU_FUNCTION_PAINT_TIMEOUT:
-            if (ParamText[0] == 0) {
-                // clear message
-                gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
-                gST->ConOut->SetCursorPosition (gST->ConOut, 0, ConHeight - 1);
-                gST->ConOut->OutputString (gST->ConOut, BlankLine + 1);
-            } else {
-                // paint or update message
-                gST->ConOut->SetAttribute (gST->ConOut, ATTR_ERROR);
-                gST->ConOut->SetCursorPosition (gST->ConOut, 3, ConHeight - 1);
-                TimeoutMessage = PoolPrint(L"%s  ", ParamText);
-                gST->ConOut->OutputString (gST->ConOut, TimeoutMessage);
-                FreePool(TimeoutMessage);
-            }
-            break;
-            
-    }
+      //gST->ConOut->OutputString (gST->ConOut, DisplayStrings[State->CurrentSelection]);
+      break;
+
+    case MENU_FUNCTION_PAINT_TIMEOUT:
+      if (ParamText[0] == 0) {
+        // clear message
+        gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
+        gST->ConOut->SetCursorPosition (gST->ConOut, 0, ConHeight - 1);
+        gST->ConOut->OutputString (gST->ConOut, BlankLine + 1);
+      } else {
+        // paint or update message
+        gST->ConOut->SetAttribute (gST->ConOut, ATTR_ERROR);
+        gST->ConOut->SetCursorPosition (gST->ConOut, 3, ConHeight - 1);
+        TimeoutMessage = PoolPrint(L"%s  ", ParamText);
+        gST->ConOut->OutputString (gST->ConOut, TimeoutMessage);
+        FreePool(TimeoutMessage);
+      }
+      break;
+
+  }
 }
 
 //
@@ -1836,14 +1837,14 @@ INTN DrawTextXY(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN UINT8 XAlign)
 {
   INTN TextWidth;
   EG_IMAGE *TextBufferXY = NULL;
-  
+
   if (!Text) return 0;
-  
+
   egMeasureText(Text, &TextWidth, NULL);
   TextBufferXY = egCreateImage(TextWidth, TextHeight, TRUE);
-  
+
   egFillImage(TextBufferXY, &MenuBackgroundPixel);
-  
+
   // render the text
   egRenderText(Text, TextBufferXY, 0, 0, 0xFFFF); //input only
   BltImageAlpha(TextBufferXY, (XPos - (TextWidth >> XAlign)), YPos,  &MenuBackgroundPixel, 16);
@@ -3255,7 +3256,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   MENU_STYLE_FUNC   SubStyle;
   INTN              EntryIndex = 0;
   INTN              SubMenuIndex;
-  INTN              DFIndex = 9;
+//  INTN              DFIndex = 9;
   REFIT_INPUT_DIALOG* InputBootArgs;
   
   if (AllowGraphicsMode)
@@ -3332,7 +3333,7 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
     InputBootArgs->Entry.AtRightClick = ActionDetails;
     AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
 
-    DFIndex = OptionMenu.EntryCount;
+ //   DFIndex = OptionMenu.EntryCount;
     AddMenuEntry(&OptionMenu, SubMenuDropTables());
     AddMenuEntry(&OptionMenu, SubMenuDsdtFix());
     AddMenuEntry(&OptionMenu, SubMenuSmbios());
