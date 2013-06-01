@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-28 10:48+0300\n"
-"PO-Revision-Date: 2013-05-27 11:07+0000\n"
+"PO-Revision-Date: 2013-06-01 07:11+0000\n"
 "Last-Translator: Mill <ceruns@ymail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
 "Language: ko\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1369652876.0\n"
+"X-POOTLE-MTIME: 1370070699.0\n"
 
 # //Don't need change
 #. type: Content of: <html><body><div><p>
@@ -1007,10 +1007,10 @@ msgstr "지금 확인"
 
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:12
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Copyright (c) 2013 JrCs"
 msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
-msgstr "Copyright (c) 2013 JrCs"
+msgstr "Copyright (c) 2013 JrCs, kozlek\\n 모든 권리 보유"
 
 #. type: "294.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:13
@@ -1142,68 +1142,68 @@ msgstr "미리 볼 수 없습니다"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
 #, no-wrap
 msgid "Mounting the ESP partition on boot"
-msgstr ""
+msgstr "부팅시 ESP 파티션 마운트"
 
 #. type: "452.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
 #, no-wrap
 msgid "Where to save the nvram contents"
-msgstr ""
+msgstr "nvram 내용을 저장할 곳"
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:1
 #, no-wrap
 msgid "Boot Volume"
-msgstr ""
+msgstr "부트 볼륨"
 
 #. type: "Default"
 #: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
 msgid "Default"
-msgstr ""
+msgstr "기본값"
 
 #. type: "ESP on [%@] %@"
 #: ../CloverPrefpane/Localizable.strings:3
 #, no-wrap
 msgid "ESP on [%1$@] %2$@"
-msgstr ""
+msgstr "[%1$@] %2$@ 에 ESP"
 
 #. type: "No"
 #: ../CloverPrefpane/Localizable.strings:4
 #, no-wrap
 msgid "No"
-msgstr ""
+msgstr "아니오"
 
 #. type: "No description"
 #: ../CloverPrefpane/Localizable.strings:5
 #, fuzzy, no-wrap
 #| msgid "XhciDxe-32_description"
 msgid "No description"
-msgstr "XhciDxe-32_description"
+msgstr "설명 없음"
 
 #. type: "Nowhere"
 #: ../CloverPrefpane/Localizable.strings:6
 #, no-wrap
 msgid "Nowhere"
-msgstr ""
+msgstr "없음"
 
 #. type: "Select the EFI directory"
 #: ../CloverPrefpane/Localizable.strings:7
 #, no-wrap
 msgid "Select the EFI directory"
-msgstr ""
+msgstr "EFI 디렉터리를 선택하세요"
 
 #. type: "Set EFI directory"
 #: ../CloverPrefpane/Localizable.strings:8
 #, no-wrap
 msgid "Set EFI directory"
-msgstr ""
+msgstr "EFI 디렉터리를 설정하세요"
 
 #. type: "Unknown"
 #: ../CloverPrefpane/Localizable.strings:9
 #, no-wrap
 msgid "Unknown"
-msgstr ""
+msgstr "알 수 없음"
 
 #~ msgid "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on the same disk drive as the system partition\\n* diskX: disk device\\n* GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on the same disk drive that the ESP partition\\n\\nEmpty value result in not mounting ESP partition on boot"
 #~ msgstr "부트시에 ESP 파티션을 마운트합니다.\\n\\n값:\\n* Yes: 시스템 파티션과 같은 드라이브에 있는 ESP 마운트\\n* diskX: 디스크 장치\\n* GUID: ESP의 GUID\\n* VolumeName: ESP 파티션과 같은 디스크 드라이브에 있는 볼륨의 이름\\n\\n공백은 부트시에 파티션이 마운트 되지 않게 합니다"
