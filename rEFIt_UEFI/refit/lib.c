@@ -926,7 +926,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     } else {
       Volume->OSImage = DummyImage(128);
     }
-    
+
     return EFI_SUCCESS;
   }
   
@@ -995,8 +995,9 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
   }
   
   // get custom volume icon if present
-  if (GlobalConfig.CustomIcons && FileExists(Volume->RootDir, L".VolumeIcon.icns")){
-    Volume->OSImage = LoadIcns(Volume->RootDir, L".VolumeIcon.icns", 128);
+  if (GlobalConfig.CustomIcons && FileExists(Volume->RootDir, L"VolumeIcon.icns")){
+    Volume->OSImage = LoadIcns(Volume->RootDir, L"VolumeIcon.icns", 128);
+    DBG("image from Volume loaded\n");
   }
   return EFI_SUCCESS;
 }

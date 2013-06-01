@@ -213,47 +213,47 @@ VOID TerminateScreen(VOID)
 
 static VOID DrawScreenHeader(IN CHAR16 *Title)
 {
-    UINTN i;
+  UINTN i;
 	CHAR16* BannerLine = AllocatePool((ConWidth + 1) * sizeof(CHAR16));
-    BannerLine[ConWidth] = 0;
-    
-	
-    // clear to black background
-    gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
-//    gST->ConOut->ClearScreen (gST->ConOut);
-    
-    // paint header background
-    gST->ConOut->SetAttribute (gST->ConOut, ATTR_BANNER);
-    for (i = 1; i < ConWidth-1; i++)
-        BannerLine[i] = BOXDRAW_HORIZONTAL;
-	BannerLine[0] = BOXDRAW_UP_RIGHT;
-	BannerLine[ConWidth-1] = BOXDRAW_UP_LEFT;
-    gST->ConOut->SetCursorPosition (gST->ConOut, 0, 0);
-	Print(BannerLine);
-	
-	for (i = 1; i < ConWidth-1; i++)
-        BannerLine[i] = ' ';
-	BannerLine[0] = BOXDRAW_VERTICAL;
-	BannerLine[ConWidth-1] = BOXDRAW_VERTICAL;
-    gST->ConOut->SetCursorPosition (gST->ConOut, 0, 1);
-	Print(BannerLine);
-	
-	for (i = 1; i < ConWidth-1; i++)
-        BannerLine[i] = BOXDRAW_HORIZONTAL;
+  BannerLine[ConWidth] = 0;
+
+
+  // clear to black background
+  gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
+  //    gST->ConOut->ClearScreen (gST->ConOut);
+
+  // paint header background
+  gST->ConOut->SetAttribute (gST->ConOut, ATTR_BANNER);
+  for (i = 1; i < ConWidth-1; i++)
+    BannerLine[i] = BOXDRAW_HORIZONTAL;
 	BannerLine[0] = BOXDRAW_DOWN_RIGHT;
 	BannerLine[ConWidth-1] = BOXDRAW_DOWN_LEFT;
-    gST->ConOut->SetCursorPosition (gST->ConOut, 0, 2);
+  gST->ConOut->SetCursorPosition (gST->ConOut, 0, 0);
 	Print(BannerLine);
-	
+
+	for (i = 1; i < ConWidth-1; i++)
+    BannerLine[i] = ' ';
+	BannerLine[0] = BOXDRAW_VERTICAL;
+	BannerLine[ConWidth-1] = BOXDRAW_VERTICAL;
+  gST->ConOut->SetCursorPosition (gST->ConOut, 0, 1);
+	Print(BannerLine);
+
+	for (i = 1; i < ConWidth-1; i++)
+    BannerLine[i] = BOXDRAW_HORIZONTAL;
+ 	BannerLine[0] = BOXDRAW_UP_RIGHT;
+	BannerLine[ConWidth-1] = BOXDRAW_UP_LEFT;
+  gST->ConOut->SetCursorPosition (gST->ConOut, 0, 2);
+	Print(BannerLine);
+
 	FreePool(BannerLine);
-    
-    // print header text
-    gST->ConOut->SetCursorPosition (gST->ConOut, 3, 1);
-    Print(L"Clover - %s", Title);
-    
-    // reposition cursor
-    gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
-    gST->ConOut->SetCursorPosition (gST->ConOut, 0, 4);
+
+  // print header text
+  gST->ConOut->SetCursorPosition (gST->ConOut, 3, 1);
+  Print(L"Clover - %s", Title);
+
+  // reposition cursor
+  gST->ConOut->SetAttribute (gST->ConOut, ATTR_BASIC);
+  gST->ConOut->SetCursorPosition (gST->ConOut, 0, 4);
 }
 
 //
@@ -580,42 +580,42 @@ VOID BltImageComposite(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN INTN XP
 
 VOID BltImageCompositeBadge(IN EG_IMAGE *BaseImage, IN EG_IMAGE *TopImage, IN EG_IMAGE *BadgeImage, IN INTN XPos, IN INTN YPos)
 {
-    INTN TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY;
-    EG_IMAGE *CompImage;
-    
+  INTN TotalWidth, TotalHeight, CompWidth, CompHeight, OffsetX, OffsetY;
+  EG_IMAGE *CompImage;
+
   if (!BaseImage || !TopImage) {
     return;
   }
-  
+
   // initialize buffer with base image
-    CompImage = egCopyImage(BaseImage);
-    TotalWidth  = BaseImage->Width;
-    TotalHeight = BaseImage->Height;
-//  DBG("BaseImage: Width=%d Height=%d Alfa=%d\n", TotalWidth, TotalHeight, CompImage->HasAlpha);
-    // place the top image
-    CompWidth = TopImage->Width;
-    if (CompWidth > TotalWidth)
-        CompWidth = TotalWidth;
-    OffsetX = (TotalWidth - CompWidth) >> 1;
-//  DBG("TopImage: Width=%d Height=%d\n", TopImage->Width, TopImage->Height);
-    CompHeight = TopImage->Height;
-    if (CompHeight > TotalHeight)
-        CompHeight = TotalHeight;
-    OffsetY = (TotalHeight - CompHeight) >> 1;
-    egComposeImage(CompImage, TopImage, OffsetX, OffsetY);
-    
-    // place the badge image
-    if (BadgeImage != NULL && (BadgeImage->Width + 8) < CompWidth && (BadgeImage->Height + 8) < CompHeight) {
-        OffsetX += CompWidth  - 8 - BadgeImage->Width;
-        OffsetY += CompHeight - 8 - BadgeImage->Height;
-        egComposeImage(CompImage, BadgeImage, OffsetX, OffsetY);
-    }
-    
-    // blit to screen and clean up
-//    egDrawImageArea(CompImage, 0, 0, TotalWidth, TotalHeight, XPos, YPos);
+  CompImage = egCopyImage(BaseImage);
+  TotalWidth  = BaseImage->Width;
+  TotalHeight = BaseImage->Height;
+  //  DBG("BaseImage: Width=%d Height=%d Alfa=%d\n", TotalWidth, TotalHeight, CompImage->HasAlpha);
+  // place the top image
+  CompWidth = TopImage->Width;
+  if (CompWidth > TotalWidth)
+    CompWidth = TotalWidth;
+  OffsetX = (TotalWidth - CompWidth) >> 1;
+  //  DBG("TopImage: Width=%d Height=%d\n", TopImage->Width, TopImage->Height);
+  CompHeight = TopImage->Height;
+  if (CompHeight > TotalHeight)
+    CompHeight = TotalHeight;
+  OffsetY = (TotalHeight - CompHeight) >> 1;
+  egComposeImage(CompImage, TopImage, OffsetX, OffsetY);
+
+  // place the badge image
+  if (BadgeImage != NULL && (BadgeImage->Width + 8) < CompWidth && (BadgeImage->Height + 8) < CompHeight) {
+    OffsetX += CompWidth  - 8 - BadgeImage->Width;
+    OffsetY += CompHeight - 8 - BadgeImage->Height;
+    egComposeImage(CompImage, BadgeImage, OffsetX, OffsetY);
+  }
+
+  // blit to screen and clean up
+  //    egDrawImageArea(CompImage, 0, 0, TotalWidth, TotalHeight, XPos, YPos);
   BltImageAlpha(CompImage, XPos, YPos, &MenuBackgroundPixel, 16);
-    egFreeImage(CompImage);
-    GraphicsScreenDirty = TRUE;
+  egFreeImage(CompImage);
+  GraphicsScreenDirty = TRUE;
 }
 
 static EG_IMAGE    *CompImage = NULL;
@@ -636,7 +636,7 @@ VOID UpdateAnime(REFIT_MENU_SCREEN *Screen, EG_RECT *Place)
 {
   UINT64      Now;
   INTN   x, y;
-  if (!Screen || !Screen->AnimeRun) return;
+  if (!Screen || !Screen->AnimeRun || GlobalConfig.TextOnly) return;
   if (!CompImage ||
       (CompImage->Width != Screen->Film[0]->Width) ||
       (CompImage->Height != Screen->Film[0]->Height)){

@@ -122,8 +122,6 @@
 	</dict>
 	<key>CPU</key>
 	<dict>
-		<key>Turbo</key>
-		<false/>
 		<key>ProcessorType</key>
 		<string>0x0201</string>
 		<key>CpuFrequencyMHz</key>

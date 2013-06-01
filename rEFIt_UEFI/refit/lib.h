@@ -417,6 +417,7 @@ extern EFI_FILE         *OEMDir;
 extern CHAR16           *OEMPath;
 extern EFI_FILE         *OemThemeDir;
 
+extern BOOLEAN          MainAnime;
 extern GUI_ANIME        *GuiAnime;
 
 extern REFIT_VOLUME     *SelfVolume;

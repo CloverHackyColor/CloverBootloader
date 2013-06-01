@@ -94,6 +94,8 @@ typedef VOID (*MENU_STYLE_FUNC)(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *S
 static CHAR16 ArrowUp[2]   = { ARROW_UP, 0 };
 static CHAR16 ArrowDown[2] = { ARROW_DOWN, 0 };
 
+BOOLEAN MainAnime = FALSE;
+
 BOOLEAN ScrollEnabled = FALSE;
 EG_RECT UpButton;
 EG_RECT DownButton;
@@ -3415,34 +3417,35 @@ UINTN RunMenu(IN REFIT_MENU_SCREEN *Screen, OUT REFIT_MENU_ENTRY **ChosenEntry)
 
 UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT REFIT_MENU_ENTRY **ChosenEntry)
 {
-    MENU_STYLE_FUNC Style = TextMenuStyle;
-    MENU_STYLE_FUNC MainStyle = TextMenuStyle;
-    REFIT_MENU_ENTRY *TempChosenEntry = 0;
-    UINTN MenuExit = 0;
-    INTN DefaultEntryIndex = DefaultSelection;
-    INTN SubMenuIndex;
-    
-    if (AllowGraphicsMode) {
-        Style = GraphicsMenuStyle;
-        MainStyle = MainMenuStyle;
+  MENU_STYLE_FUNC Style = TextMenuStyle;
+  MENU_STYLE_FUNC MainStyle = TextMenuStyle;
+  REFIT_MENU_ENTRY *TempChosenEntry = 0;
+  UINTN MenuExit = 0;
+  INTN DefaultEntryIndex = DefaultSelection;
+  INTN SubMenuIndex;
+
+  if (AllowGraphicsMode) {
+    Style = GraphicsMenuStyle;
+    MainStyle = MainMenuStyle;
+  }
+
+  while (!MenuExit) {
+    Screen->AnimeRun = MainAnime;
+    MenuExit = RunGenericMenu(Screen, MainStyle, &DefaultEntryIndex, &TempChosenEntry);
+    Screen->TimeoutSeconds = 0;
+
+    if (MenuExit == MENU_EXIT_DETAILS && TempChosenEntry->SubScreen != NULL) {
+      SubMenuIndex = -1;
+      MenuExit = RunGenericMenu(TempChosenEntry->SubScreen, Style, &SubMenuIndex, &TempChosenEntry);
+      if (MenuExit == MENU_EXIT_ENTER && TempChosenEntry->Tag == TAG_LOADER) {
+        AsciiSPrint(gSettings.BootArgs, 255, "%s", ((LOADER_ENTRY*)TempChosenEntry)->LoadOptions);
+      }
+      if (MenuExit == MENU_EXIT_ESCAPE || TempChosenEntry->Tag == TAG_RETURN)
+        MenuExit = 0;
     }
-    
-    while (!MenuExit) {
-        MenuExit = RunGenericMenu(Screen, MainStyle, &DefaultEntryIndex, &TempChosenEntry);
-        Screen->TimeoutSeconds = 0;
-        
-        if (MenuExit == MENU_EXIT_DETAILS && TempChosenEntry->SubScreen != NULL) {
-            SubMenuIndex = -1;
-            MenuExit = RunGenericMenu(TempChosenEntry->SubScreen, Style, &SubMenuIndex, &TempChosenEntry);
-            if (MenuExit == MENU_EXIT_ENTER && TempChosenEntry->Tag == TAG_LOADER) {
-              AsciiSPrint(gSettings.BootArgs, 255, "%s", ((LOADER_ENTRY*)TempChosenEntry)->LoadOptions);
-            }
-            if (MenuExit == MENU_EXIT_ESCAPE || TempChosenEntry->Tag == TAG_RETURN)
-                MenuExit = 0;
-        }
-    }
-    
-    if (ChosenEntry)
-        *ChosenEntry = TempChosenEntry;
+  }
+
+  if (ChosenEntry)
+    *ChosenEntry = TempChosenEntry;
     return MenuExit;
 }

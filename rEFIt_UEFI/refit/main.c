@@ -2725,13 +2725,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 //        DBG("SetPrivateVarProto OK\n");
   GetDefaultSettings();
   DBG("Calibrated TSC frequency =%ld =%ldMHz\n", gCPUStructure.TSCCalibr, DivU64x32(gCPUStructure.TSCCalibr, Mega));
-/*  DBG("CPU calculated TSC frequency =%ld\n", gCPUStructure.TSCFrequency);
-  if (gCPUStructure.TSCFrequency > gCPUStructure.TSCCalibr) {
-    TscDiv = DivU64x64Remainder(gCPUStructure.TSCFrequency, gCPUStructure.TSCCalibr, &TscRemainder);
-  } else {
-    TscDiv = DivU64x64Remainder(gCPUStructure.TSCCalibr, gCPUStructure.TSCFrequency, &TscRemainder);
-  }
-*/
   if (gCPUStructure.TSCCalibr > 200000000ULL) {  //200MHz
     gCPUStructure.TSCFrequency = gCPUStructure.TSCCalibr;
   }
@@ -2762,13 +2755,13 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   }
   AfterTool = FALSE;
   do {
-//     PauseForKey(L"Enter main cycle");
-//    DBG("Enter main cycle\n");
-    
+    //     PauseForKey(L"Enter main cycle");
+    //    DBG("Enter main cycle\n");
+
     MainMenu.EntryCount = 0;
     ScanVolumes();
- //   DBG("ScanVolumes()\n");
-    
+    //   DBG("ScanVolumes()\n");
+
     // as soon as we have Volumes, find latest nvram.plist and copy it to RT vars
     if (!AfterTool) {
       if (gFirmwareClover || gDriversFlags.EmuVariableLoaded) {
@@ -2798,14 +2791,14 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     }
 
     ScanLoader();
-//          DBG("ScanLoader OK\n");
+    //        DBG("ScanLoader OK\n");
     if (!GlobalConfig.FastBoot && !GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst){
-//      DBG("scan legacy second\n");
+      //      DBG("scan legacy second\n");
       ScanLegacy();
-      //DBG("ScanLegacy()\n");
+      //      DBG("ScanLegacy()\n");
     }
 
- //   if (!GlobalConfig.FastBoot) {
+    if (!GlobalConfig.FastBoot) {
       // fixed other menu entries
       //               DBG("FillInputs OK\n");
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
@@ -2831,30 +2824,29 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         //    DBG("Shutdown.Image->Width=%d\n", MenuEntryShutdown.Image->Width);
         AddMenuEntry(&MainMenu, &MenuEntryShutdown);
       }
+    }
+    // wait for user ACK when there were errors
+    FinishTextScreen(FALSE);
+    //   DBG("FinishTextScreen()\n");
 
-      // wait for user ACK when there were errors
-      FinishTextScreen(FALSE);
-      //   DBG("FinishTextScreen()\n");
-
-//    }
     DefaultIndex = FindDefaultEntry();
-//    DBG("FindDefaultEntry()\n");
+    //    DBG("FindDefaultEntry()\n");
     //  DBG("DefaultIndex=%d and MainMenu.EntryCount=%d\n", DefaultIndex, MainMenu.EntryCount);
     if ((DefaultIndex >= 0) && (DefaultIndex < (INTN)MainMenu.EntryCount)) {
       DefaultEntry = MainMenu.Entries[DefaultIndex];
     } else {
       DefaultEntry = NULL;
     }
-//    MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
+    //    MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
     if (GlobalConfig.FastBoot && DefaultEntry) {
       StartLoader((LOADER_ENTRY *)DefaultEntry);
       MainLoopRunning = FALSE;
-      GlobalConfig.FastBoot = FALSE; //Hmm... will never be here      
+      GlobalConfig.FastBoot = FALSE; //Hmm... will never be here
     }
-    MainMenu.AnimeRun = GetAnime(&MainMenu);
+    MainAnime = GetAnime(&MainMenu);
     MainLoopRunning = TRUE;
-    
-// PauseForKey(L"Enter main loop");    
+
+    // PauseForKey(L"Enter main loop");
 
     AfterTool = FALSE;
     gEvent = 0; //clear to cancel loop
@@ -2864,14 +2856,14 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         MenuExit = MENU_EXIT_TIMEOUT;
       } else {
         //    DBG("Enter main loop\n");
- //       DBG("RunMainMenu() start\n");
-        MainMenu.AnimeRun = TRUE;
+        //       DBG("RunMainMenu() start\n");
+        MainMenu.AnimeRun = MainAnime;
         MenuExit = RunMainMenu(&MainMenu, DefaultIndex, &ChosenEntry);
- //       DBG("RunMainMenu() end\n");
+        //       DBG("RunMainMenu() end\n");
       }
       // disable default boot - have sense only in the first run
       GlobalConfig.Timeout = -1;
-      
+
       //    DBG("out from menu\n");
       if ((DefaultEntry != NULL) && (MenuExit == MENU_EXIT_TIMEOUT)) {
         //      DBG("boot by timeout\n");
@@ -2883,18 +2875,18 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         // if something goes wrong - break main loop to reinit volumes
         break;
       }
-      
+
       if (MenuExit == MENU_EXIT_OPTIONS){
         OptionsMenu(&OptionEntry);
         //ApplyInputs();
         continue;
       }
-      
+
       if (MenuExit == MENU_EXIT_HELP){
         HelpRefit();
         continue;
       }
-      
+
       //EjectVolume
       if (MenuExit == MENU_EXIT_EJECT){
         if ((ChosenEntry->Tag == TAG_LOADER) ||
@@ -2903,50 +2895,50 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
           if (!EFI_ERROR(Status)) {
             break; //main loop is broken so Reinit all
           }
-        }      
+        }
         continue;
       }
-            
+
       // We don't allow exiting the main menu with the Escape key.
       if (MenuExit == MENU_EXIT_ESCAPE){
         AfterTool = TRUE;
         break;   //refresh main menu
-      //           continue;
+        //           continue;
       }
-      
+
       switch (ChosenEntry->Tag) {
-          
+
         case TAG_RESET:    // Restart
           TerminateScreen();
           gRS->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
           MainLoopRunning = FALSE;   // just in case we get this far
           break;
-          
+
         case TAG_SHUTDOWN: // It is not Shut Down, it is Exit from Clover
           TerminateScreen();
- //         gRS->ResetSystem(EfiResetShutdown, EFI_SUCCESS, 0, NULL);
+          //         gRS->ResetSystem(EfiResetShutdown, EFI_SUCCESS, 0, NULL);
           MainLoopRunning = FALSE;   // just in case we get this far
           ReinitDesktop = FALSE;
           AfterTool = TRUE;
           break;
-          
+
         case TAG_OPTIONS:    // Options like KernelFlags, DSDTname etc.
           OptionsMenu(&OptionEntry);
           //ApplyInputs();
           break;
-          
+
         case TAG_ABOUT:    // About rEFIt
           AboutRefit();
           break;
-          
+
         case TAG_LOADER:   // Boot OS via .EFI loader
           StartLoader((LOADER_ENTRY *)ChosenEntry);
           break;
-          
+
         case TAG_LEGACY:   // Boot legacy OS
           StartLegacy((LEGACY_ENTRY *)ChosenEntry);
           break;
-          
+
         case TAG_TOOL:     // Start a EFI tool
           StartTool((LOADER_ENTRY *)ChosenEntry);
           TerminateScreen(); //does not happen
@@ -2956,15 +2948,15 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
           MainLoopRunning = FALSE;
           AfterTool = TRUE;
           break;
-          
+
         case TAG_CLOVER:     // Clover options
           LoaderEntry = (LOADER_ENTRY *)ChosenEntry;
           if (LoaderEntry->LoadOptions != NULL) {
-            
+
             if (gEmuVariableControl != NULL) {
               gEmuVariableControl->UninstallEmulation(gEmuVariableControl);
             }
-            
+
             if (StrStr(LoaderEntry->LoadOptions, L"BO-ADD") != NULL) {
               PrintBootOptions(FALSE);
               Status = AddBootOptionForFile (LoaderEntry->Volume->DeviceHandle,
@@ -2989,7 +2981,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
             } else if (StrStr(LoaderEntry->LoadOptions, L"BO-PRINT") != NULL) {
               PrintBootOptions(TRUE);
             }
-            
+
             if (gEmuVariableControl != NULL) {
               gEmuVariableControl->InstallEmulation(gEmuVariableControl);
             }
@@ -2997,7 +2989,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
           MainLoopRunning = FALSE;
           AfterTool = TRUE;
           break;
-          
+
       } //switch
     } //MainLoopRunning
     UninitRefitLib();
@@ -3012,10 +3004,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         BdsLibConnectAllDriversToAllControllers();
       }
       //  ReinitRefitLib();
-      //    PauseForKey(L"After ReinitRefitLib");      
+      //    PauseForKey(L"After ReinitRefitLib");
     }
     ReinitSelfLib();
-//    PauseForKey(L"After ReinitSelfLib"); 
+    //    PauseForKey(L"After ReinitSelfLib");
   } while (ReinitDesktop);
   
   // If we end up here, things have gone wrong. Try to reboot, and if that

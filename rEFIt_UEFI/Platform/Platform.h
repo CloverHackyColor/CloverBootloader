@@ -65,12 +65,6 @@ Headers collection for procedures
 #include "boot.h"
 //#include "PiBootMode.h"
 #include "IO.h"
-
-//#include "BiosVideo.h"
-//#include "Bmp.h"
-//#include "SmBios.h"
-//#include "EfiLib/GenericBdsLib.h"
-
 #include "device_inject.h"
 #include "kext_inject.h"
 
