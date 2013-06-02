@@ -214,7 +214,7 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
     if (_cloverNvRamDisk != value) {
         [_cloverNvRamDisk release];
         _cloverNvRamDisk = [value copy];
-        [self setNVRamKey:@"Clover.RamDisk" Value:value];
+        [self setNVRamKey:@"Clover.NVRamDisk" Value:value];
     }
 }
 
@@ -380,7 +380,7 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
     self.cloverMountEfiPartition = value;
 
     //    value = [self getNVRamKey:[[_nvRamDiskTextField identifier] UTF8String]];
-    value = [self getNVRamKey:"Clover.RamDisk"];
+    value = [self getNVRamKey:"Clover.NVRamDisk"];
     self.cloverNvRamDisk = value;
 }
 
