@@ -2102,7 +2102,7 @@ BiosVideoSetModeWorker (
 						IN  EFI_DEVICE_PATH_PROTOCOL     *DevicePath
 						)
 {
-	EFI_STATUS              Status;
+//	EFI_STATUS              Status;
 	IA32_REGISTER_SET   Regs;
 	
 	if (BiosVideoPrivate->LineBuffer != NULL) {
@@ -2170,7 +2170,7 @@ BiosVideoSetModeWorker (
 		//
 		// Initialize the state of the VbeFrameBuffer
 		//
-		Status = BiosVideoPrivate->PciIo->Mem.Read (
+/*		Status = BiosVideoPrivate->PciIo->Mem.Read (
 													BiosVideoPrivate->PciIo,
 													EfiPciIoWidthUint32,
 													EFI_PCI_IO_PASS_THROUGH_BAR,
@@ -2180,7 +2180,7 @@ BiosVideoSetModeWorker (
 													);
 		if (EFI_ERROR (Status)) {
 			return Status;
-		}
+		} */
 	}
 	
 	return EFI_SUCCESS;
@@ -2594,11 +2594,12 @@ BiosVideoGraphicsOutputVbeBlt (
           ((Blt->Blue & Mode->Blue.Mask) << Mode->Blue.Position);
 
     for (Index = 0; Index < Width; Index++) {
-      CopyMem (
+ /*     CopyMem (
             VbeBuffer,
             &Pixel,
             VbePixelWidth
-            );
+            ); */
+		*(UINT32*)VbeBuffer = Pixel;
       VbeBuffer += VbePixelWidth;
     }
 
@@ -2638,11 +2639,12 @@ BiosVideoGraphicsOutputVbeBlt (
         Pixel = ((Blt->Red & Mode->Red.Mask) << Mode->Red.Position) |
           ((Blt->Green & Mode->Green.Mask) << Mode->Green.Position) |
             ((Blt->Blue & Mode->Blue.Mask) << Mode->Blue.Position);
-        CopyMem (
+  /*      CopyMem (
               VbeBuffer,
               &Pixel,
               VbePixelWidth
-              );
+              ); */
+		  *(UINT32*)VbeBuffer = Pixel; //I think vbebuffer is always 4bytes aligned
         Blt++;
         VbeBuffer += VbePixelWidth;
       }
@@ -2773,13 +2775,13 @@ VgaReadBitPlanes (
 
 /**
 
-  Internal routine to convert VGA color to Grahpics Output color
+  Internal routine to convert VGA color to Graphics Output color
 
 
   @param MemoryBuffer    - Buffer containing VGA color
   @param X               - The X coordinate of pixel on screen
   @param Y               - The Y coordinate of pixel on screen
-  @param BltBuffer       - Buffer to contain converted Grahpics Output color
+  @param BltBuffer       - Buffer to contain converted Graphics Output color
 
   @return None
 
@@ -2809,10 +2811,10 @@ VgaConvertToGraphicsOutputColor (
 
 /**
 
-  Internal routine to convert Grahpics Output color to VGA color
+  Internal routine to convert Graphics Output color to VGA color
 
 
-  @param BltBuffer       - buffer containing Grahpics Output color
+  @param BltBuffer       - buffer containing Graphics Output color
 
   @return Converted VGA color
 
