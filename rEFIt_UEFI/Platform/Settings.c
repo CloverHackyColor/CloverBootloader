@@ -1273,16 +1273,26 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       if(prop) {
         if ((prop->type == kTagTypeTrue) ||
             ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
+             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
           gSettings.GeneratePStates = TRUE;
+        } else if ((prop->type == kTagTypeFalse) ||
+                   ((prop->type == kTagTypeString) &&
+                    ((prop->string[0] == 'n') || (prop->string[0] == 'N')))) {
+          gSettings.GeneratePStates = FALSE;
+        }
       }
       prop = GetProperty(dictPointer, "GenerateCStates");
 //      gSettings.GenerateCStates = FALSE;
       if(prop) {
         if ((prop->type == kTagTypeTrue) ||
             ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
+             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
           gSettings.GenerateCStates = TRUE;
+        } else if ((prop->type == kTagTypeFalse) ||
+                   ((prop->type == kTagTypeString) &&
+                    ((prop->string[0] == 'n') || (prop->string[0] == 'N')))) {
+          gSettings.GenerateCStates = FALSE;
+        }
       }
 //      gSettings.PLimitDict = 0;
       prop = GetProperty(dictPointer, "PLimitDict");
@@ -1309,8 +1319,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       if(prop) {
         if ((prop->type == kTagTypeTrue) ||
             ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
+             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
           gSettings.DoubleFirstState = TRUE;
+        } else if ((prop->type == kTagTypeFalse) ||
+                   ((prop->type == kTagTypeString) &&
+                    ((prop->string[0] == 'n') || (prop->string[0] == 'N')))) {
+          gSettings.DoubleFirstState = FALSE;
+        }
       }
       prop = GetProperty(dictPointer,"MinMultiplier");
       if(prop) {
@@ -1376,8 +1391,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       if(prop) {
         if ((prop->type == kTagTypeTrue) ||
             ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
+             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
           gSettings.EnableC6 = TRUE;
+        } else if ((prop->type == kTagTypeFalse) ||
+                   ((prop->type == kTagTypeString) &&
+                    ((prop->string[0] == 'n') || (prop->string[0] == 'N')))) {
+          gSettings.EnableC6 = FALSE;
+        }
       }
       
       prop = GetProperty(dictPointer, "EnableC4");
@@ -1385,8 +1405,13 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       if(prop) {
         if ((prop->type == kTagTypeTrue) ||
             ((prop->type == kTagTypeString) &&
-             ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
+             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
           gSettings.EnableC4 = TRUE;
+        } else if ((prop->type == kTagTypeFalse) ||
+                 ((prop->type == kTagTypeString) &&
+                  ((prop->string[0] == 'n') || (prop->string[0] == 'N')))) {
+                   gSettings.EnableC4 = FALSE;
+        }
       }
       
       prop = GetProperty(dictPointer, "EnableC2");
@@ -1397,6 +1422,10 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
              ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
           gSettings.EnableC2 = TRUE;
           DBG(" C2 enabled\n");
+        } else if ((prop->type == kTagTypeFalse) ||
+                   ((prop->type == kTagTypeString) &&
+                    ((prop->string[0] == 'n') || (prop->string[0] == 'N')))) {
+          gSettings.EnableC2 = FALSE;
         }
       }
  //     gSettings.C3Latency = 0; //Usually it is 0x03e9, but if you want Turbo, you may set 0x00FA
