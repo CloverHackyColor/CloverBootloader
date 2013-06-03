@@ -7,15 +7,16 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-28 10:48+0300\n"
-"PO-Revision-Date: 2013-05-19 13:43+0000\n"
-"Last-Translator: beta992 <beta992@gmail.com>\n"
+"PO-Revision-Date: 2013-06-03 12:02+0000\n"
+"Last-Translator: admin <admin@zetam.org>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1368971001.0\n"
+"X-POOTLE-MTIME: 1370260957.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -581,7 +582,7 @@ msgstr "Selecteer thema's om te installeren."
 #: Resources/templates/Localizable.strings:111
 #, no-wrap
 msgid "AppleStyle"
-msgstr "AppleStijl"
+msgstr "AppleStyle"
 
 #. type: "applestyle_description"
 #: Resources/templates/Localizable.strings:112
@@ -598,10 +599,10 @@ msgstr ""
 
 #. type: "black_green_title"
 #: Resources/templates/Localizable.strings:115
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "black_green"
 msgid "Black_Green"
-msgstr "donker_groen"
+msgstr "Black_Green"
 
 #. type: "black_green_description"
 #: Resources/templates/Localizable.strings:116
@@ -620,7 +621,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:119
 #, no-wrap
 msgid "Bluemac"
-msgstr ""
+msgstr "Bluemac"
 
 #. type: "bluemac_description"
 #: Resources/templates/Localizable.strings:120
@@ -639,7 +640,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:123
 #, no-wrap
 msgid "BootCamp"
-msgstr ""
+msgstr "BootCamp"
 
 #. type: "bootcamp_description"
 #: Resources/templates/Localizable.strings:124
@@ -677,7 +678,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:131
 #, no-wrap
 msgid "Magnifico"
-msgstr ""
+msgstr "Magnifico"
 
 #. type: "magnifico_description"
 #: Resources/templates/Localizable.strings:132
@@ -734,7 +735,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:143
 #, no-wrap
 msgid "Orange"
-msgstr ""
+msgstr "Orange"
 
 #. type: "orange_description"
 #: Resources/templates/Localizable.strings:144
@@ -753,7 +754,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:147
 #, no-wrap
 msgid "OS Box"
-msgstr ""
+msgstr "OS Box"
 
 #. type: "os_box_description"
 #: Resources/templates/Localizable.strings:148
@@ -772,7 +773,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:151
 #, no-wrap
 msgid "OS One"
-msgstr ""
+msgstr "OS One"
 
 #. type: "os_one_description"
 #: Resources/templates/Localizable.strings:152
@@ -791,7 +792,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:155
 #, no-wrap
 msgid "ThinkPad"
-msgstr ""
+msgstr "ThinkPad"
 
 #. type: "thinkpad_description"
 #: Resources/templates/Localizable.strings:156
@@ -810,7 +811,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:159
 #, no-wrap
 msgid "buttons"
-msgstr "knoppen"
+msgstr "buttons"
 
 #. type: "buttons_description"
 #: Resources/templates/Localizable.strings:160
@@ -842,7 +843,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:167
 #, no-wrap
 msgid "simple_gray"
-msgstr "simpel_grijs"
+msgstr "simple_gray"
 
 #. type: "simple_gray_description"
 #: Resources/templates/Localizable.strings:168
@@ -858,7 +859,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:171
 #, no-wrap
 msgid "wooden"
-msgstr "houten"
+msgstr "wooden"
 
 #. type: "wooden_description"
 #: Resources/templates/Localizable.strings:172
@@ -1044,10 +1045,10 @@ msgstr "Nu Controleren"
 
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:12
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Copyright (c) 2013 JrCs"
 msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
-msgstr "Copyright (c) 2013 JrCs"
+msgstr "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
 
 #. type: "294.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:13
