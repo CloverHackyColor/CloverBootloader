@@ -489,8 +489,12 @@ SataControllerStart (
     }
     //Slice - read PI and store into EFI_SATA_CONTROLLER_PRIVATE_DATA
     Data32 = AhciReadReg (PciIo, R_AHCI_PI);
+#ifdef ONLY_SATA_0
+//#warning "ONLY_SATA_0"
+    SataPrivateData->IPorts = 1;
+#else
     SataPrivateData->IPorts = Data32;
-
+#endif
     for (Port = 0; Data32 != 0; Data32 >>= 1) {
       Port++;
     }

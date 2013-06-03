@@ -2163,7 +2163,7 @@ BiosVideoSetModeWorker (
   IN  EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   )
 {
-  EFI_STATUS              Status;
+ // EFI_STATUS              Status;
   EFI_IA32_REGISTER_SET   Regs;
 
   if (BiosVideoPrivate->LineBuffer != NULL) {
@@ -2229,7 +2229,7 @@ BiosVideoSetModeWorker (
     //
     // Initialize the state of the VbeFrameBuffer
     //
-    Status = BiosVideoPrivate->PciIo->Mem.Read (
+/*    Status = BiosVideoPrivate->PciIo->Mem.Read (
                                             BiosVideoPrivate->PciIo,
                                             EfiPciIoWidthUint32,
                                             EFI_PCI_IO_PASS_THROUGH_BAR,
@@ -2239,7 +2239,7 @@ BiosVideoSetModeWorker (
                                             );
     if (EFI_ERROR (Status)) {
       return Status;
-    }
+    }*/
   }
 
   return EFI_SUCCESS;
@@ -2267,7 +2267,7 @@ BiosVideoGraphicsOutputSetMode (
   EFI_STATUS              Status;
   BIOS_VIDEO_DEV          *BiosVideoPrivate;
   BIOS_VIDEO_MODE_DATA    *ModeData;
-  EFI_GRAPHICS_OUTPUT_BLT_PIXEL Background;
+//  EFI_GRAPHICS_OUTPUT_BLT_PIXEL Background;
   UINTN                   DataSize;
 
   if (This == NULL) {
@@ -2301,7 +2301,7 @@ BiosVideoGraphicsOutputSetMode (
     //
     // Clear screen to black
     //    
-    ZeroMem (&Background, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
+/*    ZeroMem (&Background, sizeof (EFI_GRAPHICS_OUTPUT_BLT_PIXEL));
     BiosVideoGraphicsOutputVbeBlt (
                         This,
                         &Background,
@@ -2314,7 +2314,7 @@ BiosVideoGraphicsOutputSetMode (
                         ModeData->VerticalResolution,
                         0
     );
-    DBG(" - already set\n");
+    DBG(" - already set\n"); */
     return EFI_SUCCESS;
   }
 
@@ -2647,11 +2647,12 @@ BiosVideoVbeBltWorker (
           ((Blt->Blue & Mode->Blue.Mask) << Mode->Blue.Position);
 
     for (Index = 0; Index < Width; Index++) {
-      gBS->CopyMem (
+ /*     gBS->CopyMem (
             VbeBuffer,
             &Pixel,
             VbePixelWidth
-            );
+            ); */
+      *(UINT32*)VbeBuffer = Pixel;
       VbeBuffer += VbePixelWidth;
     }
 
@@ -2692,11 +2693,12 @@ BiosVideoVbeBltWorker (
         Pixel = ((Blt->Red & Mode->Red.Mask) << Mode->Red.Position) |
           ((Blt->Green & Mode->Green.Mask) << Mode->Green.Position) |
             ((Blt->Blue & Mode->Blue.Mask) << Mode->Blue.Position);
-        gBS->CopyMem (
+   /*     gBS->CopyMem (
               VbeBuffer,
               &Pixel,
               VbePixelWidth
-              );
+              ); */
+        *(UINT32*)VbeBuffer = Pixel;
         Blt++;
         VbeBuffer += VbePixelWidth;
       }

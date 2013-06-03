@@ -2225,8 +2225,11 @@ AhciModeInitialization (
   // Get the bit map of those ports exposed by this HBA.
   // It indicates which ports that the HBA supports are available for software to use. 
   //
+#ifdef ONLY_SATA_0
+  PortImplementBitMap  = 1;
+#else
   PortImplementBitMap  = Data; //AhciReadReg(PciIo, EFI_AHCI_PI_OFFSET);
-  
+#endif  
   AhciRegisters = &Instance->AhciRegisters;
   Status = AhciCreateTransferDescriptor (PciIo, AhciRegisters);
 

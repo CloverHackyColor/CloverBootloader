@@ -219,8 +219,8 @@ PartitionDriverBindingStart (
 {
   EFI_STATUS                Status;
   EFI_STATUS                OpenStatus;
-  EFI_BLOCK_IO_PROTOCOL     *BlockIo;
-  EFI_DISK_IO_PROTOCOL      *DiskIo;
+  EFI_BLOCK_IO_PROTOCOL     *BlockIo = NULL;
+  EFI_DISK_IO_PROTOCOL      *DiskIo = NULL;
   EFI_DEVICE_PATH_PROTOCOL  *ParentDevicePath;
   PARTITION_DETECT_ROUTINE  *Routine;
   BOOLEAN                   MediaPresent;
