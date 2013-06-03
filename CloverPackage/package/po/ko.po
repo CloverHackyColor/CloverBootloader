@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-28 10:48+0300\n"
-"PO-Revision-Date: 2013-06-01 07:11+0000\n"
+"PO-Revision-Date: 2013-06-03 07:10+0000\n"
 "Last-Translator: Mill <ceruns@ymail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
 "Language: ko\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1370070699.0\n"
+"X-POOTLE-MTIME: 1370243456.0\n"
 
 # //Don't need change
 #. type: Content of: <html><body><div><p>
@@ -1176,7 +1176,7 @@ msgstr "아니오"
 
 #. type: "No description"
 #: ../CloverPrefpane/Localizable.strings:5
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "XhciDxe-32_description"
 msgid "No description"
 msgstr "설명 없음"
