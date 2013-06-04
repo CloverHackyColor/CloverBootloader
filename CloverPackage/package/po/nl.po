@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-05-28 10:48+0300\n"
-"PO-Revision-Date: 2013-06-03 12:02+0000\n"
-"Last-Translator: admin <admin@zetam.org>\n"
+"PO-Revision-Date: 2013-06-04 09:32+0000\n"
+"Last-Translator: beta992 <beta992@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: nl\n"
 "MIME-Version: 1.0\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1370260957.0\n"
+"X-POOTLE-MTIME: 1370338362.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -134,7 +134,7 @@ msgstr "Maar de gebruiker kan deze wijzigen in config.plist"
 #: Resources/templates/Description.html:25
 msgid "- with Clover you may restart into other OS from Startup Disk prefPane"
 msgstr ""
-"- met Clover kun je herstarten in een andere besturingssysteem via de "
+"- met Clover kun je herstarten in een andere besturingssysteem via het "
 "Startup Disk voorkeurPaneel"
 
 #. type: Content of: <html><body><p>
@@ -586,7 +586,7 @@ msgstr "AppleStyle"
 
 #. type: "applestyle_description"
 #: Resources/templates/Localizable.strings:112
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "AppleStyle theme from Eps,\n"
 #| "Install to /EFI/CLOVER/themes/AppleStyle."
@@ -594,19 +594,17 @@ msgid ""
 "AppleStyle theme from Eps,\n"
 "Install to /EFI/CLOVER/themes/applestyle"
 msgstr ""
-"AppleStijl thema van Eps,\n"
-"Installeert naar /EFI/CLOVER/themes/AppleStyle."
 
 #. type: "black_green_title"
 #: Resources/templates/Localizable.strings:115
 #, no-wrap
 #| msgid "black_green"
 msgid "Black_Green"
-msgstr "Black_Green"
+msgstr ""
 
 #. type: "black_green_description"
 #: Resources/templates/Localizable.strings:116
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Default black_green theme from Blackosx,\n"
 #| "Install to /EFI/CLOVER/themes/black_green."
@@ -614,8 +612,6 @@ msgid ""
 "Default black_green theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/black_green"
 msgstr ""
-"Standaard donker_groen thema van Blackosx,\n"
-"Installeert naar /EFI/CLOVER/themes/black_green."
 
 #. type: "bluemac_title"
 #: Resources/templates/Localizable.strings:119
@@ -625,7 +621,7 @@ msgstr "Bluemac"
 
 #. type: "bluemac_description"
 #: Resources/templates/Localizable.strings:120
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Simple_gray theme from hijeane,\n"
 #| "Install to /EFI/CLOVER/themes/simple_gray."
@@ -633,8 +629,6 @@ msgid ""
 "Bluemac theme from FowZiey,\n"
 "Install to /EFI/CLOVER/themes/bluemac"
 msgstr ""
-"Simpel_grijs thema door hijeane,\n"
-"Installeert naar /EFI/CLOVER/themes/simple_gray."
 
 #. type: "bootcamp_title"
 #: Resources/templates/Localizable.strings:123
@@ -644,7 +638,7 @@ msgstr "BootCamp"
 
 #. type: "bootcamp_description"
 #: Resources/templates/Localizable.strings:124
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Wooden theme from iROOTa,\n"
 #| "Install to /EFI/CLOVER/themes/wooden."
@@ -652,8 +646,6 @@ msgid ""
 "Bootcamp theme from Bijo,\n"
 "Install to /EFI/CLOVER/themes/bootcamp"
 msgstr ""
-"Houten thema door iROOTa,\n"
-"Installeert naar /EFI/CLOVER/themes/wooden."
 
 #. type: "iclover_title"
 #: Resources/templates/Localizable.strings:127
@@ -663,7 +655,7 @@ msgstr "iClover"
 
 #. type: "iclover_description"
 #: Resources/templates/Localizable.strings:128
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Grey style theme by winlog,\n"
 #| "Install to /EFI/CLOVER/themes/iClover."
@@ -671,8 +663,6 @@ msgid ""
 "Grey style theme by winlog,\n"
 "Install to /EFI/CLOVER/themes/iclover"
 msgstr ""
-"Grijs thema stijl door winlog,\n"
-"Installeert naar /EFI/CLOVER/themes/iClover."
 
 #. type: "magnifico_title"
 #: Resources/templates/Localizable.strings:131
@@ -682,7 +672,7 @@ msgstr "Magnifico"
 
 #. type: "magnifico_description"
 #: Resources/templates/Localizable.strings:132
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Wooden theme from iROOTa,\n"
 #| "Install to /EFI/CLOVER/themes/wooden."
@@ -690,8 +680,6 @@ msgid ""
 "Magnifico theme from Magnifico,\n"
 "Install to /EFI/CLOVER/themes/magnifico"
 msgstr ""
-"Houten thema door iROOTa,\n"
-"Installeert naar /EFI/CLOVER/themes/wooden."
 
 #. type: "metal_title"
 #: Resources/templates/Localizable.strings:135
@@ -701,7 +689,7 @@ msgstr "metaal"
 
 #. type: "metal_description"
 #: Resources/templates/Localizable.strings:136
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "The original metal theme from Slice,\n"
 #| "Install to /EFI/CLOVER/themes/metal."
@@ -709,8 +697,6 @@ msgid ""
 "The original metal theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/metal"
 msgstr ""
-"De originele metaal thema door Slice,\n"
-"Installeert naar /EFI/CLOVER/themes/metal."
 
 #. type: "mrengles_title"
 #: Resources/templates/Localizable.strings:139
@@ -720,7 +706,7 @@ msgstr "mrengles"
 
 #. type: "mrengles_description"
 #: Resources/templates/Localizable.strings:140
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "mrengles theme from mrengles,\n"
 #| "Install to /EFI/CLOVER/themes/mrengles."
@@ -728,8 +714,6 @@ msgid ""
 "mrengles theme from mrengles,\n"
 "Install to /EFI/CLOVER/themes/mrengles"
 msgstr ""
-"mrengles thema van mrengles,\n"
-"Installeert naar /EFI/CLOVER/themes/mrengles."
 
 #. type: "orange_title"
 #: Resources/templates/Localizable.strings:143
@@ -739,7 +723,7 @@ msgstr "Orange"
 
 #. type: "orange_description"
 #: Resources/templates/Localizable.strings:144
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "mrengles theme from mrengles,\n"
 #| "Install to /EFI/CLOVER/themes/mrengles."
@@ -747,8 +731,6 @@ msgid ""
 "Orange theme from dwm,\n"
 "Install to /EFI/CLOVER/themes/orange"
 msgstr ""
-"mrengles thema van mrengles,\n"
-"Installeert naar /EFI/CLOVER/themes/mrengles."
 
 #. type: "os_box_title"
 #: Resources/templates/Localizable.strings:147
@@ -758,7 +740,7 @@ msgstr "OS Box"
 
 #. type: "os_box_description"
 #: Resources/templates/Localizable.strings:148
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Buttons theme from Trauma,\n"
 #| "Install to /EFI/CLOVER/themes/buttons."
@@ -766,8 +748,6 @@ msgid ""
 "OS Box theme from Kyndder,\n"
 "Install to /EFI/CLOVER/themes/os_box"
 msgstr ""
-"Knoppen thema door Trauma,\n"
-"Installeert naar /EFI/CLOVER/themes/buttons."
 
 #. type: "os_one_title"
 #: Resources/templates/Localizable.strings:151
@@ -777,7 +757,7 @@ msgstr "OS One"
 
 #. type: "os_one_description"
 #: Resources/templates/Localizable.strings:152
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "Buttons theme from Trauma,\n"
 #| "Install to /EFI/CLOVER/themes/buttons."
@@ -785,8 +765,6 @@ msgid ""
 "OS One theme from Kyndder,\n"
 "Install to /EFI/CLOVER/themes/os_one"
 msgstr ""
-"Knoppen thema door Trauma,\n"
-"Installeert naar /EFI/CLOVER/themes/buttons."
 
 #. type: "thinkpad_title"
 #: Resources/templates/Localizable.strings:155
@@ -796,7 +774,7 @@ msgstr "ThinkPad"
 
 #. type: "thinkpad_description"
 #: Resources/templates/Localizable.strings:156
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid ""
 #| "The original metal theme from Slice,\n"
 #| "Install to /EFI/CLOVER/themes/metal."
@@ -804,8 +782,6 @@ msgid ""
 "ThinkPad theme from Kogen Mantis,\n"
 "Install to /EFI/CLOVER/themes/thinkpad"
 msgstr ""
-"De originele metaal thema door Slice,\n"
-"Installeert naar /EFI/CLOVER/themes/metal."
 
 #. type: "buttons_title"
 #: Resources/templates/Localizable.strings:159
@@ -1180,68 +1156,68 @@ msgstr "Geen Preview Beschikbaar"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
 #, no-wrap
 msgid "Mounting the ESP partition on boot"
-msgstr ""
+msgstr "Mounten van de ESP partitie tijdens boot"
 
 #. type: "452.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
 #, no-wrap
 msgid "Where to save the nvram contents"
-msgstr ""
+msgstr "Waar inhoud van nvram opslaan"
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:1
 #, no-wrap
 msgid "Boot Volume"
-msgstr ""
+msgstr "Boot Volume"
 
 #. type: "Default"
 #: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
 msgid "Default"
-msgstr ""
+msgstr "Standaard"
 
 #. type: "ESP on [%@] %@"
 #: ../CloverPrefpane/Localizable.strings:3
 #, no-wrap
 msgid "ESP on [%1$@] %2$@"
-msgstr ""
+msgstr "ESP op [%1$@] %2$@"
 
 #. type: "No"
 #: ../CloverPrefpane/Localizable.strings:4
 #, no-wrap
 msgid "No"
-msgstr ""
+msgstr "Nee"
 
 #. type: "No description"
 #: ../CloverPrefpane/Localizable.strings:5
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "XhciDxe-32_description"
 msgid "No description"
-msgstr "XhciDxe-32_description"
+msgstr "Geen omschrijving"
 
 #. type: "Nowhere"
 #: ../CloverPrefpane/Localizable.strings:6
 #, no-wrap
 msgid "Nowhere"
-msgstr ""
+msgstr "Nergens"
 
 #. type: "Select the EFI directory"
 #: ../CloverPrefpane/Localizable.strings:7
 #, no-wrap
 msgid "Select the EFI directory"
-msgstr ""
+msgstr "Selecteer de EFI map"
 
 #. type: "Set EFI directory"
 #: ../CloverPrefpane/Localizable.strings:8
 #, no-wrap
 msgid "Set EFI directory"
-msgstr ""
+msgstr "Instellen EFI map"
 
 #. type: "Unknown"
 #: ../CloverPrefpane/Localizable.strings:9
 #, no-wrap
 msgid "Unknown"
-msgstr ""
+msgstr "Onbekend"
 
 #~ msgid "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on the same disk drive as the system partition\\n* diskX: disk device\\n* GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on the same disk drive that the ESP partition\\n\\nEmpty value result in not mounting ESP partition on boot"
 #~ msgstr "Mounten van de ESP partitie bij opstarten.\\n\\nWaarde:\\n* Ja: mount de ESP op dezelfde hardeschijf als de systeem partitie\\n* diskX: disk device\\n* GUID: GUID van de ESP\\n* VolumeNaam: Volume naam van de volume dat is op dezelfde schijf van de ESP partitie\\n\\nLeeg waarde resulteert in het niet mounten van ESP partitie tijdens opstarten"
