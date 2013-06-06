@@ -6,16 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-28 10:48+0300\n"
-"PO-Revision-Date: 2013-05-28 09:00+0000\n"
-"Last-Translator: JrCs <d2t56xxptp@snkmail.com>\n"
+"POT-Creation-Date: 2013-06-06 20:25+0300\n"
+"PO-Revision-Date: 2013-06-06 20:29+0100\n"
+"Last-Translator: JrCs\n"
 "Language-Team: en <en@li.org>\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Pootle 2.5.0-rc1\n"
+"X-Generator: Poedit 1.5.5\n"
 "X-POOTLE-MTIME: 1369731627.0\n"
 
 #. type: Content of: <html><body><div><p>
@@ -1001,7 +1001,6 @@ msgstr "Check Now"
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:12
 #, no-wrap
-#| msgid "Copyright (c) 2013 JrCs"
 msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
 msgstr "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
 
@@ -1041,108 +1040,114 @@ msgstr "Last installed revision:"
 msgid "Log Files"
 msgstr "Log Files"
 
-#. type: "311.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:19
-#, no-wrap
-msgid "LogLineCount:"
-msgstr "LogLineCount:"
-
-#. type: "313.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:20
-#, no-wrap
-msgid "LogEveryBoot:"
-msgstr "LogEveryBoot:"
-
 #. type: "314.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:21
+#: ../CloverPrefpane/CloverPrefpane.strings:19
 #, no-wrap
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
 msgstr "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
 
 #. type: "323.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:22
+#: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
-msgid "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* Yes: create a new timestamp boot.log file\\n* Number: where number is the number of timestamp boot.log files to keep.\\n\\nA blank value result in NO creation of timestamp boot.log file"
-msgstr "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* Yes: create a new timestamp boot.log file\\n* Number: where number is the number of timestamp boot.log files to keep.\\n\\nA blank value result in NO creation of timestamp boot.log file"
+msgid "Number of timestamp boot.log files to keep."
+msgstr "Number of timestamp boot.log files to keep."
 
 #. type: "327.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:23
+#: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "Advanced Configurations"
 msgstr "Advanced Configurations"
 
 #. type: "332.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:24
+#: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
-msgid "MountEFI:"
-msgstr "MountEFI:"
+msgid "Force mount selected ESP at startup:"
+msgstr "Force mount selected ESP at startup:"
 
 #. type: "339.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:25
+#: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
-msgid "NVRamDisk:"
-msgstr "NVRamDisk:"
+msgid "Save NVRAM contents to partition:"
+msgstr "Save NVRAM contents to partition:"
 
 #. type: "374.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:26
+#: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
 msgid "Theme"
 msgstr "Theme"
 
 #
 #. type: "392.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:27
+#: ../CloverPrefpane/CloverPrefpane.strings:25
 #, no-wrap
 msgid "Clover Theme"
 msgstr "Clover Theme"
 
 #. type: "399.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:28
+#: ../CloverPrefpane/CloverPrefpane.strings:26
 #, no-wrap
 msgid "Author:"
 msgstr "Author:"
 
 #. type: "401.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:29
+#: ../CloverPrefpane/CloverPrefpane.strings:27
 #, no-wrap
 msgid "Year:"
 msgstr "Year:"
 
 #. type: "405.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:30
+#: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
 msgid "EFI Folder Path:"
 msgstr "EFI Folder Path:"
 
 #. type: "423.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:31
+#: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
 msgid "To see previews of themes you must select the path to the EFI folder."
 msgstr "To see previews of themes you must select the path to the EFI folder."
 
 #. type: "426.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:32
+#: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "Theme:"
 msgstr "Theme:"
 
 #. type: "429.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:33
+#: ../CloverPrefpane/CloverPrefpane.strings:31
 #, no-wrap
 msgid "No Preview Available"
 msgstr "No Preview Available"
 
 #. type: "431.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:34
+#: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "Mounting the ESP partition on boot"
 msgstr "Mounting the ESP partition on boot"
 
 #. type: "452.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:35
+#: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
 msgid "Where to save the nvram contents"
 msgstr "Where to save the nvram contents"
+
+#. type: "483.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:34
+#, no-wrap
+msgid "Number of history boot log lines to keep:"
+msgstr "Number of history boot log lines to keep:"
+
+#. type: "522.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:35
+#, no-wrap
+msgid "Create timestamp CloverEFI/boot.log file on every boot"
+msgstr "Create timestamp CloverEFI/boot.log file on every boot"
+
+#. type: "525.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:36
+#, no-wrap
+msgid "Maximum timestamp log files allowed:"
+msgstr "Maximum timestamp log files allowed:"
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:1
@@ -1171,7 +1176,6 @@ msgstr "No"
 #. type: "No description"
 #: ../CloverPrefpane/Localizable.strings:5
 #, no-wrap
-#| msgid "VBoxExt2-32_description"
 msgid "No description"
 msgstr "No description"
 
@@ -1199,11 +1203,52 @@ msgstr "Set EFI directory"
 msgid "Unknown"
 msgstr "Unknown"
 
-#~ msgid "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on the same disk drive as the system partition\\n* diskX: disk device\\n* GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on the same disk drive that the ESP partition\\n\\nEmpty value result in not mounting ESP partition on boot"
-#~ msgstr "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on the same disk drive as the system partition\\n* diskX: disk device\\n* GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on the same disk drive that the ESP partition\\n\\nEmpty value result in not mounting ESP partition on boot"
+#~ msgid ""
+#~ "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* "
+#~ "Yes: create a new timestamp boot.log file\\n* Number: where number is the "
+#~ "number of timestamp boot.log files to keep.\\n\\nA blank value result in "
+#~ "NO creation of timestamp boot.log file"
+#~ msgstr ""
+#~ "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* "
+#~ "Yes: create a new timestamp boot.log file\\n* Number: where number is the "
+#~ "number of timestamp boot.log files to keep.\\n\\nA blank value result in "
+#~ "NO creation of timestamp boot.log file"
 
-#~ msgid "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram contents to disk\\n* diskXsY: device node of the volume where the nvram contents will be saved\\n\\nEmpty value save the nvram contents in the nvram.plist file in the root folder of the system partition."
-#~ msgstr "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram contents to disk\\n* diskXsY: device node of the volume where the nvram contents will be saved\\n\\nEmpty value save the nvram contents in the nvram.plist file in the root folder of the system partition."
+#~ msgid "LogLineCount:"
+#~ msgstr "LogLineCount:"
+
+#~ msgid "LogEveryBoot:"
+#~ msgstr "LogEveryBoot:"
+
+#~ msgid "MountEFI:"
+#~ msgstr "MountEFI:"
+
+#~ msgid "NVRamDisk:"
+#~ msgstr "NVRamDisk:"
+
+#~ msgid ""
+#~ "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on "
+#~ "the same disk drive as the system partition\\n* diskX: disk device\\n* "
+#~ "GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on "
+#~ "the same disk drive that the ESP partition\\n\\nEmpty value result in not "
+#~ "mounting ESP partition on boot"
+#~ msgstr ""
+#~ "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on "
+#~ "the same disk drive as the system partition\\n* diskX: disk device\\n* "
+#~ "GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on "
+#~ "the same disk drive that the ESP partition\\n\\nEmpty value result in not "
+#~ "mounting ESP partition on boot"
+
+#~ msgid ""
+#~ "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram "
+#~ "contents to disk\\n* diskXsY: device node of the volume where the nvram "
+#~ "contents will be saved\\n\\nEmpty value save the nvram contents in the "
+#~ "nvram.plist file in the root folder of the system partition."
+#~ msgstr ""
+#~ "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram "
+#~ "contents to disk\\n* diskXsY: device node of the volume where the nvram "
+#~ "contents will be saved\\n\\nEmpty value save the nvram contents in the "
+#~ "nvram.plist file in the root folder of the system partition."
 
 #~ msgid ""
 #~ "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined "

@@ -6,16 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-28 10:48+0300\n"
-"PO-Revision-Date: 2013-06-03 10:13+0000\n"
-"Last-Translator: admin <admin@zetam.org>\n"
+"POT-Creation-Date: 2013-06-06 20:25+0300\n"
+"PO-Revision-Date: 2013-06-06 20:19+0100\n"
+"Last-Translator: JrCs\n"
 "Language-Team: fr <fr@li.org>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Pootle 2.5.0-rc1\n"
+"X-Generator: Poedit 1.5.5\n"
 "X-POOTLE-MTIME: 1370254422.0\n"
 
 #. type: Content of: <html><body><div><p>
@@ -1054,107 +1054,113 @@ msgstr "Dernière révision installée:"
 msgid "Log Files"
 msgstr "Fichiers de Log"
 
-#. type: "311.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:19
-#, no-wrap
-msgid "LogLineCount:"
-msgstr "LogLineCount:"
-
-#. type: "313.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:20
-#, no-wrap
-msgid "LogEveryBoot:"
-msgstr "LogEveryBoot:"
-
 #. type: "314.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:21
+#: ../CloverPrefpane/CloverPrefpane.strings:19
 #, no-wrap
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
 msgstr "Nombre de lignes d'historique à garder dans le fichier CloverEFI/system.log, en addition du contenu de CloverEFI/boot.log"
 
 #. type: "323.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:22
+#: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
-msgid "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* Yes: create a new timestamp boot.log file\\n* Number: where number is the number of timestamp boot.log files to keep.\\n\\nA blank value result in NO creation of timestamp boot.log file"
-msgstr "Crée un fichier CloverEFI/boot.log horodaté à chaque démarrage\\n\\nValeur:\\n* Yes: crée un nouveau fichier boot.log horodaté\\n* Nombre: où Nombre est le nombre de fichiers boot.log à garder.\\n\\nUne valeur vide indique qu'AUCUN fichier boot.log horodaté ne doit être créé"
+msgid "Number of timestamp boot.log files to keep."
+msgstr "Nombre de lignes d'historique des fichiers boot.log à garder:"
 
 #. type: "327.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:23
+#: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "Advanced Configurations"
 msgstr "Configurations Avancées"
 
 #. type: "332.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:24
+#: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
-msgid "MountEFI:"
-msgstr "MountEFI:"
+msgid "Force mount selected ESP at startup:"
+msgstr "Forcer le montage de l'ESP sélectionné au démarrage:"
 
 #. type: "339.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:25
+#: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
-msgid "NVRamDisk:"
-msgstr "NVRamDisk:"
+msgid "Save NVRAM contents to partition:"
+msgstr "Sauvegarder le contenu de la NVRAM dans la partition:"
 
 #. type: "374.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:26
+#: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
 msgid "Theme"
 msgstr "Thème"
 
 #. type: "392.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:27
+#: ../CloverPrefpane/CloverPrefpane.strings:25
 #, no-wrap
 msgid "Clover Theme"
 msgstr "Thème de Clover"
 
 #. type: "399.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:28
+#: ../CloverPrefpane/CloverPrefpane.strings:26
 #, no-wrap
 msgid "Author:"
 msgstr "Auteur:"
 
 #. type: "401.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:29
+#: ../CloverPrefpane/CloverPrefpane.strings:27
 #, no-wrap
 msgid "Year:"
 msgstr "Année:"
 
 #. type: "405.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:30
+#: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
 msgid "EFI Folder Path:"
 msgstr "Répertoire EFI:"
 
 #. type: "423.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:31
+#: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
 msgid "To see previews of themes you must select the path to the EFI folder."
 msgstr "Pour voir les aperçus des thèmes, vous devez sélectionner le chemin d'accès au répertoire EFI."
 
 #. type: "426.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:32
+#: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "Theme:"
 msgstr "Thème:"
 
 #. type: "429.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:33
+#: ../CloverPrefpane/CloverPrefpane.strings:31
 #, no-wrap
 msgid "No Preview Available"
 msgstr "Aucun Aperçu Disponible"
 
 #. type: "431.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:34
+#: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "Mounting the ESP partition on boot"
 msgstr "Monter la partition ESP au démarrage"
 
 #. type: "452.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:35
+#: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
 msgid "Where to save the nvram contents"
 msgstr "Où sauver le contenu de la nvram"
+
+#. type: "483.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:34
+#, no-wrap
+msgid "Number of history boot log lines to keep:"
+msgstr "Nombre de lignes d'historique des fichiers boot.log à garder:"
+
+#. type: "522.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:35
+#, no-wrap
+msgid "Create timestamp CloverEFI/boot.log file on every boot"
+msgstr "Crée un fichier CloverEFI/boot.log horodaté à chaque démarrage"
+
+#. type: "525.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:36
+#, no-wrap
+msgid "Maximum timestamp log files allowed:"
+msgstr "Nombre maximum de fichiers de log horodaté autorisés:"
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:1
@@ -1209,6 +1215,35 @@ msgstr "Définir le répertoire EFI"
 #, no-wrap
 msgid "Unknown"
 msgstr "Inconnu"
+
+#~ msgid "None"
+#~ msgstr "Aucun"
+
+#~ msgid "0"
+#~ msgstr "0"
+
+#~ msgid ""
+#~ "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* "
+#~ "Yes: create a new timestamp boot.log file\\n* Number: where number is the "
+#~ "number of timestamp boot.log files to keep.\\n\\nA blank value result in "
+#~ "NO creation of timestamp boot.log file"
+#~ msgstr ""
+#~ "Crée un fichier CloverEFI/boot.log horodaté à chaque démarrage\\n"
+#~ "\\nValeur:\\n* Yes: crée un nouveau fichier boot.log horodaté\\n* Nombre: "
+#~ "où Nombre est le nombre de fichiers boot.log à garder.\\n\\nUne valeur "
+#~ "vide indique qu'AUCUN fichier boot.log horodaté ne doit être créé"
+
+#~ msgid "LogLineCount:"
+#~ msgstr "LogLineCount:"
+
+#~ msgid "LogEveryBoot:"
+#~ msgstr "LogEveryBoot:"
+
+#~ msgid "MountEFI:"
+#~ msgstr "MountEFI:"
+
+#~ msgid "NVRamDisk:"
+#~ msgstr "NVRamDisk:"
 
 #~ msgid ""
 #~ "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram "

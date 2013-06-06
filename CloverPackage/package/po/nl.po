@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-28 10:48+0300\n"
+"POT-Creation-Date: 2013-06-06 20:25+0300\n"
 "PO-Revision-Date: 2013-06-04 09:32+0000\n"
 "Last-Translator: beta992 <beta992@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -587,9 +587,6 @@ msgstr "AppleStyle"
 #. type: "applestyle_description"
 #: Resources/templates/Localizable.strings:112
 #, no-wrap
-#| msgid ""
-#| "AppleStyle theme from Eps,\n"
-#| "Install to /EFI/CLOVER/themes/AppleStyle."
 msgid ""
 "AppleStyle theme from Eps,\n"
 "Install to /EFI/CLOVER/themes/applestyle"
@@ -598,16 +595,12 @@ msgstr ""
 #. type: "black_green_title"
 #: Resources/templates/Localizable.strings:115
 #, no-wrap
-#| msgid "black_green"
 msgid "Black_Green"
 msgstr ""
 
 #. type: "black_green_description"
 #: Resources/templates/Localizable.strings:116
 #, no-wrap
-#| msgid ""
-#| "Default black_green theme from Blackosx,\n"
-#| "Install to /EFI/CLOVER/themes/black_green."
 msgid ""
 "Default black_green theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/black_green"
@@ -622,9 +615,6 @@ msgstr "Bluemac"
 #. type: "bluemac_description"
 #: Resources/templates/Localizable.strings:120
 #, no-wrap
-#| msgid ""
-#| "Simple_gray theme from hijeane,\n"
-#| "Install to /EFI/CLOVER/themes/simple_gray."
 msgid ""
 "Bluemac theme from FowZiey,\n"
 "Install to /EFI/CLOVER/themes/bluemac"
@@ -639,9 +629,6 @@ msgstr "BootCamp"
 #. type: "bootcamp_description"
 #: Resources/templates/Localizable.strings:124
 #, no-wrap
-#| msgid ""
-#| "Wooden theme from iROOTa,\n"
-#| "Install to /EFI/CLOVER/themes/wooden."
 msgid ""
 "Bootcamp theme from Bijo,\n"
 "Install to /EFI/CLOVER/themes/bootcamp"
@@ -656,9 +643,6 @@ msgstr "iClover"
 #. type: "iclover_description"
 #: Resources/templates/Localizable.strings:128
 #, no-wrap
-#| msgid ""
-#| "Grey style theme by winlog,\n"
-#| "Install to /EFI/CLOVER/themes/iClover."
 msgid ""
 "Grey style theme by winlog,\n"
 "Install to /EFI/CLOVER/themes/iclover"
@@ -673,9 +657,6 @@ msgstr "Magnifico"
 #. type: "magnifico_description"
 #: Resources/templates/Localizable.strings:132
 #, no-wrap
-#| msgid ""
-#| "Wooden theme from iROOTa,\n"
-#| "Install to /EFI/CLOVER/themes/wooden."
 msgid ""
 "Magnifico theme from Magnifico,\n"
 "Install to /EFI/CLOVER/themes/magnifico"
@@ -690,9 +671,6 @@ msgstr "metaal"
 #. type: "metal_description"
 #: Resources/templates/Localizable.strings:136
 #, no-wrap
-#| msgid ""
-#| "The original metal theme from Slice,\n"
-#| "Install to /EFI/CLOVER/themes/metal."
 msgid ""
 "The original metal theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/metal"
@@ -707,9 +685,6 @@ msgstr "mrengles"
 #. type: "mrengles_description"
 #: Resources/templates/Localizable.strings:140
 #, no-wrap
-#| msgid ""
-#| "mrengles theme from mrengles,\n"
-#| "Install to /EFI/CLOVER/themes/mrengles."
 msgid ""
 "mrengles theme from mrengles,\n"
 "Install to /EFI/CLOVER/themes/mrengles"
@@ -724,9 +699,6 @@ msgstr "Orange"
 #. type: "orange_description"
 #: Resources/templates/Localizable.strings:144
 #, no-wrap
-#| msgid ""
-#| "mrengles theme from mrengles,\n"
-#| "Install to /EFI/CLOVER/themes/mrengles."
 msgid ""
 "Orange theme from dwm,\n"
 "Install to /EFI/CLOVER/themes/orange"
@@ -741,9 +713,6 @@ msgstr "OS Box"
 #. type: "os_box_description"
 #: Resources/templates/Localizable.strings:148
 #, no-wrap
-#| msgid ""
-#| "Buttons theme from Trauma,\n"
-#| "Install to /EFI/CLOVER/themes/buttons."
 msgid ""
 "OS Box theme from Kyndder,\n"
 "Install to /EFI/CLOVER/themes/os_box"
@@ -758,9 +727,6 @@ msgstr "OS One"
 #. type: "os_one_description"
 #: Resources/templates/Localizable.strings:152
 #, no-wrap
-#| msgid ""
-#| "Buttons theme from Trauma,\n"
-#| "Install to /EFI/CLOVER/themes/buttons."
 msgid ""
 "OS One theme from Kyndder,\n"
 "Install to /EFI/CLOVER/themes/os_one"
@@ -775,9 +741,6 @@ msgstr "ThinkPad"
 #. type: "thinkpad_description"
 #: Resources/templates/Localizable.strings:156
 #, no-wrap
-#| msgid ""
-#| "The original metal theme from Slice,\n"
-#| "Install to /EFI/CLOVER/themes/metal."
 msgid ""
 "ThinkPad theme from Kogen Mantis,\n"
 "Install to /EFI/CLOVER/themes/thinkpad"
@@ -1022,7 +985,6 @@ msgstr "Nu Controleren"
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:12
 #, no-wrap
-#| msgid "Copyright (c) 2013 JrCs"
 msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
 msgstr "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
 
@@ -1062,107 +1024,113 @@ msgstr "Laatst geïnstalleerde revisie:"
 msgid "Log Files"
 msgstr "Log Bestanden"
 
-#. type: "311.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:19
-#, no-wrap
-msgid "LogLineCount:"
-msgstr "LogLijnTelling:"
-
-#. type: "313.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:20
-#, no-wrap
-msgid "LogEveryBoot:"
-msgstr "LogIedereOpstart:"
-
 #. type: "314.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:21
+#: ../CloverPrefpane/CloverPrefpane.strings:19
 #, no-wrap
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
 msgstr "Aantal lijnen van de geschiedenis in CloverEFI/system.log bestand te houden in aanvulling op de huidige CloverEFI/boot.log inhoud"
 
 #. type: "323.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:22
+#: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
-msgid "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* Yes: create a new timestamp boot.log file\\n* Number: where number is the number of timestamp boot.log files to keep.\\n\\nA blank value result in NO creation of timestamp boot.log file"
-msgstr "Maak tijdstempel CloverEFI/boot.log bestand bij elke opstart\\n\\nWaarde:\\n* Yes: maak een nieuw tijdstempel boot.log bestand\\n* Nummer: waar nummer is het aantal tijdstempel boot.log bestanden te behouden.\\n\\nEen leeg waarde resulteert in GEEN aanmaak van tijdstempel boot.log bestand"
+msgid "Number of timestamp boot.log files to keep."
+msgstr ""
 
 #. type: "327.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:23
+#: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "Advanced Configurations"
 msgstr "Geavanceerde Configuraties"
 
 #. type: "332.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:24
+#: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
-msgid "MountEFI:"
-msgstr "MountEFI:"
+msgid "Force mount selected ESP at startup:"
+msgstr ""
 
 #. type: "339.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:25
+#: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
-msgid "NVRamDisk:"
-msgstr "NVRamDisk:"
+msgid "Save NVRAM contents to partition:"
+msgstr ""
 
 #. type: "374.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:26
+#: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
 msgid "Theme"
 msgstr "Thema"
 
 #. type: "392.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:27
+#: ../CloverPrefpane/CloverPrefpane.strings:25
 #, no-wrap
 msgid "Clover Theme"
 msgstr "Clover Thema"
 
 #. type: "399.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:28
+#: ../CloverPrefpane/CloverPrefpane.strings:26
 #, no-wrap
 msgid "Author:"
 msgstr "Auteur:"
 
 #. type: "401.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:29
+#: ../CloverPrefpane/CloverPrefpane.strings:27
 #, no-wrap
 msgid "Year:"
 msgstr "Jaar:"
 
 #. type: "405.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:30
+#: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
 msgid "EFI Folder Path:"
 msgstr "EFI Pad Map:"
 
 #. type: "423.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:31
+#: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
 msgid "To see previews of themes you must select the path to the EFI folder."
 msgstr "Om previews van thema's te zien moet je het pad naar de EFI map selecteren."
 
 #. type: "426.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:32
+#: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "Theme:"
 msgstr "Thema:"
 
 #. type: "429.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:33
+#: ../CloverPrefpane/CloverPrefpane.strings:31
 #, no-wrap
 msgid "No Preview Available"
 msgstr "Geen Preview Beschikbaar"
 
 #. type: "431.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:34
+#: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "Mounting the ESP partition on boot"
 msgstr "Mounten van de ESP partitie tijdens boot"
 
 #. type: "452.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:35
+#: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
 msgid "Where to save the nvram contents"
 msgstr "Waar inhoud van nvram opslaan"
+
+#. type: "483.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:34
+#, no-wrap
+msgid "Number of history boot log lines to keep:"
+msgstr ""
+
+#. type: "522.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:35
+#, no-wrap
+msgid "Create timestamp CloverEFI/boot.log file on every boot"
+msgstr ""
+
+#. type: "525.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:36
+#, no-wrap
+msgid "Maximum timestamp log files allowed:"
+msgstr ""
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:1
@@ -1191,7 +1159,6 @@ msgstr "Nee"
 #. type: "No description"
 #: ../CloverPrefpane/Localizable.strings:5
 #, no-wrap
-#| msgid "XhciDxe-32_description"
 msgid "No description"
 msgstr "Geen omschrijving"
 
@@ -1219,11 +1186,53 @@ msgstr "Instellen EFI map"
 msgid "Unknown"
 msgstr "Onbekend"
 
-#~ msgid "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on the same disk drive as the system partition\\n* diskX: disk device\\n* GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on the same disk drive that the ESP partition\\n\\nEmpty value result in not mounting ESP partition on boot"
-#~ msgstr "Mounten van de ESP partitie bij opstarten.\\n\\nWaarde:\\n* Ja: mount de ESP op dezelfde hardeschijf als de systeem partitie\\n* diskX: disk device\\n* GUID: GUID van de ESP\\n* VolumeNaam: Volume naam van de volume dat is op dezelfde schijf van de ESP partitie\\n\\nLeeg waarde resulteert in het niet mounten van ESP partitie tijdens opstarten"
+#~ msgid ""
+#~ "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* "
+#~ "Yes: create a new timestamp boot.log file\\n* Number: where number is the "
+#~ "number of timestamp boot.log files to keep.\\n\\nA blank value result in "
+#~ "NO creation of timestamp boot.log file"
+#~ msgstr ""
+#~ "Maak tijdstempel CloverEFI/boot.log bestand bij elke opstart\\n\\nWaarde:"
+#~ "\\n* Yes: maak een nieuw tijdstempel boot.log bestand\\n* Nummer: waar "
+#~ "nummer is het aantal tijdstempel boot.log bestanden te behouden.\\n\\nEen "
+#~ "leeg waarde resulteert in GEEN aanmaak van tijdstempel boot.log bestand"
 
-#~ msgid "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram contents to disk\\n* diskXsY: device node of the volume where the nvram contents will be saved\\n\\nEmpty value save the nvram contents in the nvram.plist file in the root folder of the system partition."
-#~ msgstr "Sla de inhoud nvram naar de schijf\\n\\nWaarde:\\n* No: niet de inhoud nvram naar schijf niet schrijven\\n* diskXsY: apparaat knooppunt van het volume waar de nvram inhoud wordt opgeslagen\\n\\nLeeg waarde resulteert in opslaan van de nvram inhoud in nvram.plist bestand in de hoofdmap van de systeem partitie."
+#~ msgid "LogLineCount:"
+#~ msgstr "LogLijnTelling:"
+
+#~ msgid "LogEveryBoot:"
+#~ msgstr "LogIedereOpstart:"
+
+#~ msgid "MountEFI:"
+#~ msgstr "MountEFI:"
+
+#~ msgid "NVRamDisk:"
+#~ msgstr "NVRamDisk:"
+
+#~ msgid ""
+#~ "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on "
+#~ "the same disk drive as the system partition\\n* diskX: disk device\\n* "
+#~ "GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on "
+#~ "the same disk drive that the ESP partition\\n\\nEmpty value result in not "
+#~ "mounting ESP partition on boot"
+#~ msgstr ""
+#~ "Mounten van de ESP partitie bij opstarten.\\n\\nWaarde:\\n* Ja: mount de "
+#~ "ESP op dezelfde hardeschijf als de systeem partitie\\n* diskX: disk device"
+#~ "\\n* GUID: GUID van de ESP\\n* VolumeNaam: Volume naam van de volume dat "
+#~ "is op dezelfde schijf van de ESP partitie\\n\\nLeeg waarde resulteert in "
+#~ "het niet mounten van ESP partitie tijdens opstarten"
+
+#~ msgid ""
+#~ "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram "
+#~ "contents to disk\\n* diskXsY: device node of the volume where the nvram "
+#~ "contents will be saved\\n\\nEmpty value save the nvram contents in the "
+#~ "nvram.plist file in the root folder of the system partition."
+#~ msgstr ""
+#~ "Sla de inhoud nvram naar de schijf\\n\\nWaarde:\\n* No: niet de inhoud "
+#~ "nvram naar schijf niet schrijven\\n* diskXsY: apparaat knooppunt van het "
+#~ "volume waar de nvram inhoud wordt opgeslagen\\n\\nLeeg waarde resulteert "
+#~ "in opslaan van de nvram inhoud in nvram.plist bestand in de hoofdmap van "
+#~ "de systeem partitie."
 
 #~ msgid ""
 #~ "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined "

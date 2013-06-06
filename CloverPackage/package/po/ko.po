@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-28 10:48+0300\n"
+"POT-Creation-Date: 2013-06-06 20:25+0300\n"
 "PO-Revision-Date: 2013-06-03 07:10+0000\n"
 "Last-Translator: Mill <ceruns@ymail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
@@ -1008,7 +1008,6 @@ msgstr "지금 확인"
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:12
 #, no-wrap
-#| msgid "Copyright (c) 2013 JrCs"
 msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
 msgstr "Copyright (c) 2013 JrCs, kozlek\\n 모든 권리 보유"
 
@@ -1048,107 +1047,113 @@ msgstr "최근 설치된 리비전:"
 msgid "Log Files"
 msgstr "로그 파일"
 
-#. type: "311.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:19
-#, no-wrap
-msgid "LogLineCount:"
-msgstr "로그 라인 카운트:"
-
-#. type: "313.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:20
-#, no-wrap
-msgid "LogEveryBoot:"
-msgstr "부트마다 로그작성:"
-
 #. type: "314.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:21
+#: ../CloverPrefpane/CloverPrefpane.strings:19
 #, no-wrap
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
 msgstr "현재 CloverEFI/boot.log 내용과는 별개로 CloverEFI/system.log 에 저장된 히스토리 라인 수"
 
 #. type: "323.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:22
+#: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
-msgid "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* Yes: create a new timestamp boot.log file\\n* Number: where number is the number of timestamp boot.log files to keep.\\n\\nA blank value result in NO creation of timestamp boot.log file"
-msgstr "매 부트마다 CloverEFI/boot.log 파일에 타임스탬프를 생성합니다.\\n\\n값:\\n* Yes: 새로운 타임스탬프 boot.log 파일 생성\\n* Number: boot.log 파일에 유지할 타임스탬프의 개수.\\n\\n공백은 타임스탬프 boot.log 파일을 생성하지 않게 합니다"
+msgid "Number of timestamp boot.log files to keep."
+msgstr ""
 
 #. type: "327.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:23
+#: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "Advanced Configurations"
 msgstr "고급 설정"
 
 #. type: "332.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:24
+#: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
-msgid "MountEFI:"
-msgstr "EFI마운트:"
+msgid "Force mount selected ESP at startup:"
+msgstr ""
 
 #. type: "339.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:25
+#: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
-msgid "NVRamDisk:"
-msgstr "NVRam디스크:"
+msgid "Save NVRAM contents to partition:"
+msgstr ""
 
 #. type: "374.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:26
+#: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
 msgid "Theme"
 msgstr "테마"
 
 #. type: "392.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:27
+#: ../CloverPrefpane/CloverPrefpane.strings:25
 #, no-wrap
 msgid "Clover Theme"
 msgstr "Clover 테마"
 
 #. type: "399.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:28
+#: ../CloverPrefpane/CloverPrefpane.strings:26
 #, no-wrap
 msgid "Author:"
 msgstr "저작자:"
 
 #. type: "401.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:29
+#: ../CloverPrefpane/CloverPrefpane.strings:27
 #, no-wrap
 msgid "Year:"
 msgstr "연도:"
 
 #. type: "405.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:30
+#: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
 msgid "EFI Folder Path:"
 msgstr "EFI 폴더 경로:"
 
 #. type: "423.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:31
+#: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
 msgid "To see previews of themes you must select the path to the EFI folder."
 msgstr "테마의 미리보기를 보기 위해서는 EFI 폴더의 경로를 선택하여야 합니다."
 
 #. type: "426.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:32
+#: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "Theme:"
 msgstr "테마:"
 
 #. type: "429.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:33
+#: ../CloverPrefpane/CloverPrefpane.strings:31
 #, no-wrap
 msgid "No Preview Available"
 msgstr "미리 볼 수 없습니다"
 
 #. type: "431.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:34
+#: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "Mounting the ESP partition on boot"
 msgstr "부팅시 ESP 파티션 마운트"
 
 #. type: "452.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:35
+#: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
 msgid "Where to save the nvram contents"
 msgstr "nvram 내용을 저장할 곳"
+
+#. type: "483.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:34
+#, no-wrap
+msgid "Number of history boot log lines to keep:"
+msgstr ""
+
+#. type: "522.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:35
+#, no-wrap
+msgid "Create timestamp CloverEFI/boot.log file on every boot"
+msgstr ""
+
+#. type: "525.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:36
+#, no-wrap
+msgid "Maximum timestamp log files allowed:"
+msgstr ""
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:1
@@ -1177,7 +1182,6 @@ msgstr "아니오"
 #. type: "No description"
 #: ../CloverPrefpane/Localizable.strings:5
 #, no-wrap
-#| msgid "XhciDxe-32_description"
 msgid "No description"
 msgstr "설명 없음"
 
@@ -1205,11 +1209,51 @@ msgstr "EFI 디렉터리를 설정하세요"
 msgid "Unknown"
 msgstr "알 수 없음"
 
-#~ msgid "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on the same disk drive as the system partition\\n* diskX: disk device\\n* GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on the same disk drive that the ESP partition\\n\\nEmpty value result in not mounting ESP partition on boot"
-#~ msgstr "부트시에 ESP 파티션을 마운트합니다.\\n\\n값:\\n* Yes: 시스템 파티션과 같은 드라이브에 있는 ESP 마운트\\n* diskX: 디스크 장치\\n* GUID: ESP의 GUID\\n* VolumeName: ESP 파티션과 같은 디스크 드라이브에 있는 볼륨의 이름\\n\\n공백은 부트시에 파티션이 마운트 되지 않게 합니다"
+#~ msgid ""
+#~ "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* "
+#~ "Yes: create a new timestamp boot.log file\\n* Number: where number is the "
+#~ "number of timestamp boot.log files to keep.\\n\\nA blank value result in "
+#~ "NO creation of timestamp boot.log file"
+#~ msgstr ""
+#~ "매 부트마다 CloverEFI/boot.log 파일에 타임스탬프를 생성합니다.\\n\\n값:"
+#~ "\\n* Yes: 새로운 타임스탬프 boot.log 파일 생성\\n* Number: boot.log 파일"
+#~ "에 유지할 타임스탬프의 개수.\\n\\n공백은 타임스탬프 boot.log 파일을 생성하"
+#~ "지 않게 합니다"
 
-#~ msgid "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram contents to disk\\n* diskXsY: device node of the volume where the nvram contents will be saved\\n\\nEmpty value save the nvram contents in the nvram.plist file in the root folder of the system partition."
-#~ msgstr "nvram 내용을 디스크에 저장합니다\\n\\n값:\\n* No: nvram 내용을 디스크에 저장하지 않습니다\\n* diskXsY: nvram내용이 저장될 디바이스 노드\\n\\n공백은 시스템 파티션의 루트 디렉토리 내부 nvram.plist 에 nvram 내용을 저장하게 합니다."
+#~ msgid "LogLineCount:"
+#~ msgstr "로그 라인 카운트:"
+
+#~ msgid "LogEveryBoot:"
+#~ msgstr "부트마다 로그작성:"
+
+#~ msgid "MountEFI:"
+#~ msgstr "EFI마운트:"
+
+#~ msgid "NVRamDisk:"
+#~ msgstr "NVRam디스크:"
+
+#~ msgid ""
+#~ "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on "
+#~ "the same disk drive as the system partition\\n* diskX: disk device\\n* "
+#~ "GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on "
+#~ "the same disk drive that the ESP partition\\n\\nEmpty value result in not "
+#~ "mounting ESP partition on boot"
+#~ msgstr ""
+#~ "부트시에 ESP 파티션을 마운트합니다.\\n\\n값:\\n* Yes: 시스템 파티션과 같"
+#~ "은 드라이브에 있는 ESP 마운트\\n* diskX: 디스크 장치\\n* GUID: ESP의 GUID"
+#~ "\\n* VolumeName: ESP 파티션과 같은 디스크 드라이브에 있는 볼륨의 이름\\n"
+#~ "\\n공백은 부트시에 파티션이 마운트 되지 않게 합니다"
+
+#~ msgid ""
+#~ "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram "
+#~ "contents to disk\\n* diskXsY: device node of the volume where the nvram "
+#~ "contents will be saved\\n\\nEmpty value save the nvram contents in the "
+#~ "nvram.plist file in the root folder of the system partition."
+#~ msgstr ""
+#~ "nvram 내용을 디스크에 저장합니다\\n\\n값:\\n* No: nvram 내용을 디스크에 저"
+#~ "장하지 않습니다\\n* diskXsY: nvram내용이 저장될 디바이스 노드\\n\\n공백은 "
+#~ "시스템 파티션의 루트 디렉토리 내부 nvram.plist 에 nvram 내용을 저장하게 합"
+#~ "니다."
 
 #~ msgid ""
 #~ "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined "

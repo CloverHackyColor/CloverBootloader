@@ -6,8 +6,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Clover v2.0-r1749\n"
-"POT-Creation-Date: 2013-05-28 10:48+0300\n"
+"Project-Id-Version: Clover v2.0-r1804\n"
+"POT-Creation-Date: 2013-06-06 20:25+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -959,20 +959,8 @@ msgstr ""
 msgid "Log Files"
 msgstr ""
 
-#. type: "311.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:19
-#, no-wrap
-msgid "LogLineCount:"
-msgstr ""
-
-#. type: "313.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:20
-#, no-wrap
-msgid "LogEveryBoot:"
-msgstr ""
-
 #. type: "314.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:21
+#: ../CloverPrefpane/CloverPrefpane.strings:19
 #, no-wrap
 msgid ""
 "Number of lines of history to keep in CloverEFI/system.log file in addition "
@@ -980,91 +968,105 @@ msgid ""
 msgstr ""
 
 #. type: "323.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:22
+#: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
-msgid ""
-"Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* Yes: "
-"create a new timestamp boot.log file\\n* Number: where number is the number "
-"of timestamp boot.log files to keep.\\n\\nA blank value result in NO "
-"creation of timestamp boot.log file"
+msgid "Number of timestamp boot.log files to keep."
 msgstr ""
 
 #. type: "327.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:23
+#: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "Advanced Configurations"
 msgstr ""
 
 #. type: "332.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:24
+#: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
-msgid "MountEFI:"
+msgid "Force mount selected ESP at startup:"
 msgstr ""
 
 #. type: "339.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:25
+#: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
-msgid "NVRamDisk:"
+msgid "Save NVRAM contents to partition:"
 msgstr ""
 
 #. type: "374.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:26
+#: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
 msgid "Theme"
 msgstr ""
 
 #. type: "392.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:27
+#: ../CloverPrefpane/CloverPrefpane.strings:25
 #, no-wrap
 msgid "Clover Theme"
 msgstr ""
 
 #. type: "399.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:28
+#: ../CloverPrefpane/CloverPrefpane.strings:26
 #, no-wrap
 msgid "Author:"
 msgstr ""
 
 #. type: "401.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:29
+#: ../CloverPrefpane/CloverPrefpane.strings:27
 #, no-wrap
 msgid "Year:"
 msgstr ""
 
 #. type: "405.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:30
+#: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
 msgid "EFI Folder Path:"
 msgstr ""
 
 #. type: "423.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:31
+#: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
 msgid "To see previews of themes you must select the path to the EFI folder."
 msgstr ""
 
 #. type: "426.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:32
+#: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "Theme:"
 msgstr ""
 
 #. type: "429.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:33
+#: ../CloverPrefpane/CloverPrefpane.strings:31
 #, no-wrap
 msgid "No Preview Available"
 msgstr ""
 
 #. type: "431.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:34
+#: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "Mounting the ESP partition on boot"
 msgstr ""
 
 #. type: "452.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:35
+#: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
 msgid "Where to save the nvram contents"
+msgstr ""
+
+#. type: "483.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:34
+#, no-wrap
+msgid "Number of history boot log lines to keep:"
+msgstr ""
+
+#. type: "522.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:35
+#, no-wrap
+msgid "Create timestamp CloverEFI/boot.log file on every boot"
+msgstr ""
+
+#. type: "525.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:36
+#, no-wrap
+msgid "Maximum timestamp log files allowed:"
 msgstr ""
 
 #. type: "Boot Volume"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-28 10:48+0300\n"
+"POT-Creation-Date: 2013-06-06 20:25+0300\n"
 "PO-Revision-Date: 2013-05-28 12:38+0000\n"
 "Last-Translator: AlexKord <alexkord@lan.com.ua>\n"
 "Language-Team: ua <ua@li.org>\n"
@@ -774,9 +774,6 @@ msgstr "OS One"
 #. type: "os_one_description"
 #: Resources/templates/Localizable.strings:152
 #, no-wrap
-#| msgid ""
-#| "OS One theme from Kyndder,\n"
-#| "Install to /EFI/CLOVER/themes/os_box"
 msgid ""
 "OS One theme from Kyndder,\n"
 "Install to /EFI/CLOVER/themes/os_one"
@@ -1039,7 +1036,6 @@ msgstr "Перевірити зараз:"
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:12
 #, no-wrap
-#| msgid "Copyright (c) 2013 JrCs"
 msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
 msgstr "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
 
@@ -1079,114 +1075,114 @@ msgstr "Останнє оновлення:"
 msgid "Log Files"
 msgstr "Файли звітів"
 
-#. type: "311.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:19
-#, no-wrap
-msgid "LogLineCount:"
-msgstr "Довжина звіту:"
-
-#. type: "313.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:20
-#, no-wrap
-msgid "LogEveryBoot:"
-msgstr "Звіт завжди:"
-
 #. type: "314.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:21
+#: ../CloverPrefpane/CloverPrefpane.strings:19
 #, no-wrap
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
 msgstr "Кількість рядків, які повинні зберігатися у файлі system.log під час додавання нових."
 
 #. type: "323.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:22
+#: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
-msgid "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* Yes: create a new timestamp boot.log file\\n* Number: where number is the number of timestamp boot.log files to keep.\\n\\nA blank value result in NO creation of timestamp boot.log file"
+msgid "Number of timestamp boot.log files to keep."
 msgstr ""
-"Створювати тимчасовий файл boot.log під час кожного завантаження.\n"
-"\n"
-"Значення:* Yes: створювати новий файл \n"
-"* Число: яку кількість тимчасових файлів зберігати \n"
-"\n"
-"Порожньо: не створювати"
 
 #. type: "327.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:23
+#: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "Advanced Configurations"
 msgstr "Розширене Налаштування"
 
 #. type: "332.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:24
+#: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
-msgid "MountEFI:"
-msgstr "Побачити EFI:"
+msgid "Force mount selected ESP at startup:"
+msgstr ""
 
 #. type: "339.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:25
+#: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
-msgid "NVRamDisk:"
-msgstr "NVRamDisk:"
+msgid "Save NVRAM contents to partition:"
+msgstr ""
 
 #. type: "374.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:26
+#: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
 msgid "Theme"
 msgstr "Тема"
 
 #
 #. type: "392.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:27
+#: ../CloverPrefpane/CloverPrefpane.strings:25
 #, no-wrap
 msgid "Clover Theme"
 msgstr "Тема Кловера"
 
 #. type: "399.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:28
+#: ../CloverPrefpane/CloverPrefpane.strings:26
 #, no-wrap
 msgid "Author:"
 msgstr "Автор:"
 
 #. type: "401.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:29
+#: ../CloverPrefpane/CloverPrefpane.strings:27
 #, no-wrap
 msgid "Year:"
 msgstr "Рік:"
 
 #. type: "405.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:30
+#: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
 msgid "EFI Folder Path:"
 msgstr "Шлях до папки EFI:"
 
 #. type: "423.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:31
+#: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
 msgid "To see previews of themes you must select the path to the EFI folder."
 msgstr "Щоб побачити превью теми необхідно вибрати шлях до папки EFI."
 
 #. type: "426.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:32
+#: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "Theme:"
 msgstr "Тема:"
 
 #. type: "429.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:33
+#: ../CloverPrefpane/CloverPrefpane.strings:31
 #, no-wrap
 msgid "No Preview Available"
 msgstr "Перегляд недоступний"
 
 #. type: "431.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:34
+#: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "Mounting the ESP partition on boot"
 msgstr "Підключення розділу ESP під час завантаження"
 
 #. type: "452.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:35
+#: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
 msgid "Where to save the nvram contents"
 msgstr "Куди зберегти вміст NVRAM"
+
+#. type: "483.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:34
+#, no-wrap
+msgid "Number of history boot log lines to keep:"
+msgstr ""
+
+#. type: "522.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:35
+#, no-wrap
+msgid "Create timestamp CloverEFI/boot.log file on every boot"
+msgstr ""
+
+#. type: "525.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:36
+#, no-wrap
+msgid "Maximum timestamp log files allowed:"
+msgstr ""
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:1
@@ -1215,7 +1211,6 @@ msgstr "No"
 #. type: "No description"
 #: ../CloverPrefpane/Localizable.strings:5
 #, no-wrap
-#| msgid "XhciDxe-32_description"
 msgid "No description"
 msgstr "Без опису"
 
@@ -1243,18 +1238,53 @@ msgstr "Встановити EFI каталог"
 msgid "Unknown"
 msgstr "Невідомий"
 
-#~ msgid "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on the same disk drive as the system partition\\n* diskX: disk device\\n* GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on the same disk drive that the ESP partition\\n\\nEmpty value result in not mounting ESP partition on boot"
+#~ msgid ""
+#~ "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* "
+#~ "Yes: create a new timestamp boot.log file\\n* Number: where number is the "
+#~ "number of timestamp boot.log files to keep.\\n\\nA blank value result in "
+#~ "NO creation of timestamp boot.log file"
+#~ msgstr ""
+#~ "Створювати тимчасовий файл boot.log під час кожного завантаження.\n"
+#~ "\n"
+#~ "Значення:* Yes: створювати новий файл \n"
+#~ "* Число: яку кількість тимчасових файлів зберігати \n"
+#~ "\n"
+#~ "Порожньо: не створювати"
+
+#~ msgid "LogLineCount:"
+#~ msgstr "Довжина звіту:"
+
+#~ msgid "LogEveryBoot:"
+#~ msgstr "Звіт завжди:"
+
+#~ msgid "MountEFI:"
+#~ msgstr "Побачити EFI:"
+
+#~ msgid "NVRamDisk:"
+#~ msgstr "NVRamDisk:"
+
+#~ msgid ""
+#~ "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on "
+#~ "the same disk drive as the system partition\\n* diskX: disk device\\n* "
+#~ "GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on "
+#~ "the same disk drive that the ESP partition\\n\\nEmpty value result in not "
+#~ "mounting ESP partition on boot"
 #~ msgstr ""
 #~ "Монтувати EFI-розділ (ESP) під час кожного завантаження\n"
 #~ "\n"
 #~ "Значення: Yes: монтувати ESP, який знаходиться на поточному диску\n"
 #~ "* diskX: диск номер\n"
 #~ "* GUID: Унікальний GUID потрібного розділу\n"
-#~ "* Ім'я тому: Ім'я одного з розділів, який знаходиться на тому ж диску, що і потрібний ESP\n"
+#~ "* Ім'я тому: Ім'я одного з розділів, який знаходиться на тому ж диску, що "
+#~ "і потрібний ESP\n"
 #~ "\n"
 #~ "Порожнє значення означає, що розділ не буде монтуватися."
 
-#~ msgid "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram contents to disk\\n* diskXsY: device node of the volume where the nvram contents will be saved\\n\\nEmpty value save the nvram contents in the nvram.plist file in the root folder of the system partition."
+#~ msgid ""
+#~ "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram "
+#~ "contents to disk\\n* diskXsY: device node of the volume where the nvram "
+#~ "contents will be saved\\n\\nEmpty value save the nvram contents in the "
+#~ "nvram.plist file in the root folder of the system partition."
 #~ msgstr ""
 #~ "Зберігати весь вміст NVRAM на диску.\n"
 #~ "\n"

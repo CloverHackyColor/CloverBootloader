@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-28 10:48+0300\n"
+"POT-Creation-Date: 2013-06-06 20:25+0300\n"
 "PO-Revision-Date: 2013-06-01 00:54+0000\n"
 "Last-Translator: kantok <kawakamikazumi@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -100,7 +100,9 @@ msgstr "- OSX 10.4 - 10.8、Windows EFIとLinux EFIのブートをサポート"
 msgid ""
 "- It's EFI bootloader provides RuntimeServices for OS that impossible for "
 "Legacy Bootloaders"
-msgstr "- これまでのブートローダーでは非対応の、OSのランタイムサービスをサポートしたEFIブートローダーです"
+msgstr ""
+"- これまでのブートローダーでは非対応の、OSのランタイムサービスをサポートした"
+"EFIブートローダーです"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:23
@@ -184,7 +186,8 @@ msgstr "- CPUターボブーストとP/Cステートジェネレーター"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:36
 msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
-msgstr "- ACPIテーブルをロード (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFIなど)"
+msgstr ""
+"- ACPIテーブルをロード (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFIなど)"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:37
@@ -196,12 +199,15 @@ msgstr "- 追加ドライバ (kext) のロードとFireWireセキュリティモ
 msgid ""
 "- default boot after timeout, customizable GUI , and saving screenshots from "
 "GUI typing F10"
-msgstr "- デフォルトではタイムアウト後にブートします。GUIはカスタマイズ可能。スクリーンショット機能［F10キー］"
+msgstr ""
+"- デフォルトではタイムアウト後にブートします。GUIはカスタマイズ可能。スクリー"
+"ンショット機能［F10キー］"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:39
 msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
-msgstr "- boot.log (OS) とpreboot.log (GUI) の保存は［F2キー］を押下してください"
+msgstr ""
+"- boot.log (OS) とpreboot.log (GUI) の保存は［F2キー］を押下してください"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
@@ -264,8 +270,7 @@ msgstr ""
 "Clover EFI は、主に以下の3ファイルを参照します。\n"
 "boot0 (ドライブのMBR上)：boot1をロードします。\n"
 "boot1 (パーティションのbootセクタ上)：boot2を参照します。\n"
-"boot2 (パーティションのrootディレクトリ上)：/EFI/CLOVER/CLOVERIA32.efiまたはCLOVERX64.efi、およびke"
-"rnel等をロードします。"
+"boot2 (パーティションのrootディレクトリ上)：/EFI/CLOVER/CLOVERIA32.efiまたはCLOVERX64.efi、およびkernel等をロードします。"
 
 #. type: "boot0af_title"
 #: Resources/templates/Localizable.strings:29
@@ -282,9 +287,7 @@ msgid ""
 "This choice will setup selected HFS/Fat32 partition to be active."
 msgstr ""
 "BIOSマザーボードでのBIOSブートに。\n"
-"boot0af (boot0 Active First) ブートローダーは、まずMBRのアクティブパーティションを参照して起動を試みます。もしMBRのア"
-"クティブパーティションがなければ、EFI/FAT32/HFSの第一パーティションから有効なPBRシグネチャーを参照して起動を試みます "
-"(MBR→GPTの順)。\n"
+"boot0af (boot0 Active First) ブートローダーは、まずMBRのアクティブパーティションを参照して起動を試みます。もしMBRのアクティブパーティションがなければ、EFI/FAT32/HFSの第一パーティションから有効なPBRシグネチャーを参照して起動を試みます (MBR→GPTの順)。\n"
 "この設定では選択されたHFS/Fat32パーティションがアクティブになります。"
 
 #. type: "boot0ss_title"
@@ -303,9 +306,7 @@ msgid ""
 "This choice will not activate any partition in MBR."
 msgstr ""
 "BIOSマザーボードでのBIOSブートに。\n"
-"boot0ss (boot0 Signature Scanning) "
-"ブートローダーはEFI/FAT32/HFSの第一パーティションから有効なPBRシグネチャーを参照して (MBR→GPTの順) "
-"起動します。もしシグネチャーが見つからない場合はMBRのアクティブパーティションから起動します。\n"
+"boot0ss (boot0 Signature Scanning) ブートローダーはEFI/FAT32/HFSの第一パーティションから有効なPBRシグネチャーを参照して (MBR→GPTの順) 起動します。もしシグネチャーが見つからない場合はMBRのアクティブパーティションから起動します。\n"
 "Windowsでは起動ディスクのアクティブ化が必要なため、このオプションはWindowsがインストールされているディスクへのインストールに有効です。\n"
 "この設定では、MBRのどのパーティションもアクティブ化しません。"
 
@@ -577,9 +578,6 @@ msgstr "AppleStyle"
 #. type: "applestyle_description"
 #: Resources/templates/Localizable.strings:112
 #, no-wrap
-#| msgid ""
-#| "AppleStyle theme from Eps,\n"
-#| "Install to /EFI/CLOVER/themes/AppleStyle."
 msgid ""
 "AppleStyle theme from Eps,\n"
 "Install to /EFI/CLOVER/themes/applestyle"
@@ -590,16 +588,12 @@ msgstr ""
 #. type: "black_green_title"
 #: Resources/templates/Localizable.strings:115
 #, no-wrap
-#| msgid "black_green"
 msgid "Black_Green"
 msgstr "Black_Green"
 
 #. type: "black_green_description"
 #: Resources/templates/Localizable.strings:116
 #, no-wrap
-#| msgid ""
-#| "Default black_green theme from Blackosx,\n"
-#| "Install to /EFI/CLOVER/themes/black_green."
 msgid ""
 "Default black_green theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/black_green"
@@ -616,9 +610,6 @@ msgstr "Bluemac"
 #. type: "bluemac_description"
 #: Resources/templates/Localizable.strings:120
 #, no-wrap
-#| msgid ""
-#| "Simple_gray theme from hijeane,\n"
-#| "Install to /EFI/CLOVER/themes/simple_gray."
 msgid ""
 "Bluemac theme from FowZiey,\n"
 "Install to /EFI/CLOVER/themes/bluemac"
@@ -635,9 +626,6 @@ msgstr "BootCamp"
 #. type: "bootcamp_description"
 #: Resources/templates/Localizable.strings:124
 #, no-wrap
-#| msgid ""
-#| "Wooden theme from iROOTa,\n"
-#| "Install to /EFI/CLOVER/themes/wooden."
 msgid ""
 "Bootcamp theme from Bijo,\n"
 "Install to /EFI/CLOVER/themes/bootcamp"
@@ -654,9 +642,6 @@ msgstr "iClover"
 #. type: "iclover_description"
 #: Resources/templates/Localizable.strings:128
 #, no-wrap
-#| msgid ""
-#| "Grey style theme by winlog,\n"
-#| "Install to /EFI/CLOVER/themes/iClover."
 msgid ""
 "Grey style theme by winlog,\n"
 "Install to /EFI/CLOVER/themes/iclover"
@@ -673,9 +658,6 @@ msgstr "Magnifico"
 #. type: "magnifico_description"
 #: Resources/templates/Localizable.strings:132
 #, no-wrap
-#| msgid ""
-#| "Wooden theme from iROOTa,\n"
-#| "Install to /EFI/CLOVER/themes/wooden."
 msgid ""
 "Magnifico theme from Magnifico,\n"
 "Install to /EFI/CLOVER/themes/magnifico"
@@ -692,9 +674,6 @@ msgstr "metal"
 #. type: "metal_description"
 #: Resources/templates/Localizable.strings:136
 #, no-wrap
-#| msgid ""
-#| "The original metal theme from Slice,\n"
-#| "Install to /EFI/CLOVER/themes/metal."
 msgid ""
 "The original metal theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/metal"
@@ -711,9 +690,6 @@ msgstr "mrengles"
 #. type: "mrengles_description"
 #: Resources/templates/Localizable.strings:140
 #, no-wrap
-#| msgid ""
-#| "mrengles theme from mrengles,\n"
-#| "Install to /EFI/CLOVER/themes/mrengles."
 msgid ""
 "mrengles theme from mrengles,\n"
 "Install to /EFI/CLOVER/themes/mrengles"
@@ -730,9 +706,6 @@ msgstr "Orange"
 #. type: "orange_description"
 #: Resources/templates/Localizable.strings:144
 #, no-wrap
-#| msgid ""
-#| "mrengles theme from mrengles,\n"
-#| "Install to /EFI/CLOVER/themes/mrengles."
 msgid ""
 "Orange theme from dwm,\n"
 "Install to /EFI/CLOVER/themes/orange"
@@ -749,9 +722,6 @@ msgstr "OS Box"
 #. type: "os_box_description"
 #: Resources/templates/Localizable.strings:148
 #, no-wrap
-#| msgid ""
-#| "Buttons theme from Trauma,\n"
-#| "Install to /EFI/CLOVER/themes/buttons."
 msgid ""
 "OS Box theme from Kyndder,\n"
 "Install to /EFI/CLOVER/themes/os_box"
@@ -768,9 +738,6 @@ msgstr "OS One"
 #. type: "os_one_description"
 #: Resources/templates/Localizable.strings:152
 #, no-wrap
-#| msgid ""
-#| "Buttons theme from Trauma,\n"
-#| "Install to /EFI/CLOVER/themes/buttons."
 msgid ""
 "OS One theme from Kyndder,\n"
 "Install to /EFI/CLOVER/themes/os_one"
@@ -787,9 +754,6 @@ msgstr "ThinkPad"
 #. type: "thinkpad_description"
 #: Resources/templates/Localizable.strings:156
 #, no-wrap
-#| msgid ""
-#| "The original metal theme from Slice,\n"
-#| "Install to /EFI/CLOVER/themes/metal."
 msgid ""
 "ThinkPad theme from Kogen Mantis,\n"
 "Install to /EFI/CLOVER/themes/thinkpad"
@@ -1036,7 +1000,6 @@ msgstr "いまチェックする"
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:12
 #, no-wrap
-#| msgid "Copyright (c) 2013 JrCs"
 msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
 msgstr "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
 
@@ -1076,109 +1039,113 @@ msgstr "最後にインストールしたリビジョン:"
 msgid "Log Files"
 msgstr "ログファイル"
 
-#. type: "311.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:19
-#, no-wrap
-msgid "LogLineCount:"
-msgstr "ログの行数:"
-
-#. type: "313.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:20
-#, no-wrap
-msgid "LogEveryBoot:"
-msgstr "ブートごとにログ保存:"
-
 #. type: "314.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:21
+#: ../CloverPrefpane/CloverPrefpane.strings:19
 #, no-wrap
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
 msgstr "CloverEFI/boot.logの内容をCloverEFI/system.logに保存する行数"
 
 #. type: "323.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:22
+#: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
-msgid "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* Yes: create a new timestamp boot.log file\\n* Number: where number is the number of timestamp boot.log files to keep.\\n\\nA blank value result in NO creation of timestamp boot.log file"
-msgstr "ブートするごとにCloverEFI/boot.logファイルにタイムスタンプを記録します。\\n\\n設定値:\\n・Yes: タイムスタンプをboot.logファイルに新たに記録します。\\n・数値: boot.logファイルで保持する記録数。\\n\\n空欄にした場合はboot.logにタイムスタンプは記録されません。"
+msgid "Number of timestamp boot.log files to keep."
+msgstr ""
 
 #. type: "327.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:23
+#: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "Advanced Configurations"
 msgstr "高度な設定"
 
 #. type: "332.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:24
+#: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
-msgid "MountEFI:"
-msgstr "EFIマウント:"
+msgid "Force mount selected ESP at startup:"
+msgstr ""
 
 #. type: "339.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:25
+#: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
-msgid "NVRamDisk:"
-msgstr "NVRamディスク:"
+msgid "Save NVRAM contents to partition:"
+msgstr ""
 
 #. type: "374.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:26
+#: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
-#| msgid "Themes"
 msgid "Theme"
 msgstr "Theme＜テーマ＞"
 
 #. type: "392.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:27
+#: ../CloverPrefpane/CloverPrefpane.strings:25
 #, no-wrap
-#| msgid "Clover v2"
 msgid "Clover Theme"
 msgstr "Clover テーマ"
 
 #. type: "399.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:28
+#: ../CloverPrefpane/CloverPrefpane.strings:26
 #, no-wrap
 msgid "Author:"
 msgstr "作者:"
 
 #. type: "401.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:29
+#: ../CloverPrefpane/CloverPrefpane.strings:27
 #, no-wrap
 msgid "Year:"
 msgstr "制作年:"
 
 #. type: "405.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:30
+#: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
 msgid "EFI Folder Path:"
 msgstr "EFIフォルダのパス:"
 
 #. type: "423.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:31
+#: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
 msgid "To see previews of themes you must select the path to the EFI folder."
 msgstr "プレビューの表示は、EFIフォルダのパスを指定してください。"
 
 #. type: "426.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:32
+#: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "Theme:"
 msgstr "テーマ:"
 
 #. type: "429.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:33
+#: ../CloverPrefpane/CloverPrefpane.strings:31
 #, no-wrap
 msgid "No Preview Available"
 msgstr "プレビューは利用できません"
 
 #. type: "431.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:34
+#: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "Mounting the ESP partition on boot"
 msgstr "起動時にESPパーティションをマウント"
 
 #. type: "452.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:35
+#: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
 msgid "Where to save the nvram contents"
 msgstr "nvramの保存場所"
+
+#. type: "483.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:34
+#, no-wrap
+msgid "Number of history boot log lines to keep:"
+msgstr ""
+
+#. type: "522.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:35
+#, no-wrap
+msgid "Create timestamp CloverEFI/boot.log file on every boot"
+msgstr ""
+
+#. type: "525.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:36
+#, no-wrap
+msgid "Maximum timestamp log files allowed:"
+msgstr ""
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:1
@@ -1234,11 +1201,52 @@ msgstr "EFIディレクトリを設定"
 msgid "Unknown"
 msgstr "不明"
 
-#~ msgid "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on the same disk drive as the system partition\\n* diskX: disk device\\n* GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on the same disk drive that the ESP partition\\n\\nEmpty value result in not mounting ESP partition on boot"
-#~ msgstr "ESPパーティションをマウントします。\\n\\n設定値：\\n・Yes：システムパーティションと同じドライブのESPをマウントします。\\n・diskX：ディスクXのESPをマウントします。\\・GUID：該当GUIDのESPをマウントします。\\n・VolumeName (ボリューム名)：設定したボリューム名と同じボリュームのESPをマウントします。\\n\\n空欄の場合はESPはマウントされません。"
+#~ msgid ""
+#~ "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* "
+#~ "Yes: create a new timestamp boot.log file\\n* Number: where number is the "
+#~ "number of timestamp boot.log files to keep.\\n\\nA blank value result in "
+#~ "NO creation of timestamp boot.log file"
+#~ msgstr ""
+#~ "ブートするごとにCloverEFI/boot.logファイルにタイムスタンプを記録しま"
+#~ "す。\\n\\n設定値:\\n・Yes: タイムスタンプをboot.logファイルに新たに記録し"
+#~ "ます。\\n・数値: boot.logファイルで保持する記録数。\\n\\n空欄にした場合は"
+#~ "boot.logにタイムスタンプは記録されません。"
 
-#~ msgid "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram contents to disk\\n* diskXsY: device node of the volume where the nvram contents will be saved\\n\\nEmpty value save the nvram contents in the nvram.plist file in the root folder of the system partition."
-#~ msgstr "nvramの内容をディスクに保存します。\\n\\n設定値：\\n・No：nvramの内容は保存されません。\\n・diskXsY：diskXsYにnvramの内容を保存します。\\n\\n空欄の場合、nvramの内容はシステムパーティションのrootフォルダにあるnvram.plistに保存されます。"
+#~ msgid "LogLineCount:"
+#~ msgstr "ログの行数:"
+
+#~ msgid "LogEveryBoot:"
+#~ msgstr "ブートごとにログ保存:"
+
+#~ msgid "MountEFI:"
+#~ msgstr "EFIマウント:"
+
+#~ msgid "NVRamDisk:"
+#~ msgstr "NVRamディスク:"
+
+#~ msgid ""
+#~ "Mounting the ESP partition on boot.\\n\\nValue:\\n* Yes: mount the ESP on "
+#~ "the same disk drive as the system partition\\n* diskX: disk device\\n* "
+#~ "GUID: GUID of the ESP\\n* VolumeName: Volume name of a volume that is on "
+#~ "the same disk drive that the ESP partition\\n\\nEmpty value result in not "
+#~ "mounting ESP partition on boot"
+#~ msgstr ""
+#~ "ESPパーティションをマウントします。\\n\\n設定値：\\n・Yes：システムパー"
+#~ "ティションと同じドライブのESPをマウントします。\\n・diskX：ディスクXのESP"
+#~ "をマウントします。\\・GUID：該当GUIDのESPをマウントします。\\n・"
+#~ "VolumeName (ボリューム名)：設定したボリューム名と同じボリュームのESPをマウ"
+#~ "ントします。\\n\\n空欄の場合はESPはマウントされません。"
+
+#~ msgid ""
+#~ "Save the nvram contents to disk\\n\\nValue:\\n* No: don't save the nvram "
+#~ "contents to disk\\n* diskXsY: device node of the volume where the nvram "
+#~ "contents will be saved\\n\\nEmpty value save the nvram contents in the "
+#~ "nvram.plist file in the root folder of the system partition."
+#~ msgstr ""
+#~ "nvramの内容をディスクに保存します。\\n\\n設定値：\\n・No：nvramの内容は保"
+#~ "存されません。\\n・diskXsY：diskXsYにnvramの内容を保存します。\\n\\n空欄の"
+#~ "場合、nvramの内容はシステムパーティションのrootフォルダにあるnvram.plistに"
+#~ "保存されます。"
 
 #~ msgid ""
 #~ "Theme to use in Clover GUI\\nIf the value is empty, Clover theme defined "

@@ -21,11 +21,8 @@
     IBOutlet NSTextField *lastBootedRevision;
     IBOutlet NSTextField *lastInstalledRevision;
 
-    IBOutlet NSTextField *_logLineCountTextField;
-    IBOutlet NSTextField *_logEveryBootTextField;
-
     IBOutlet NSPathControl *_EFIPathControl;
-    IBOutlet NSComboBox *_cloverThemeComboBox;
+    IBOutlet NSComboBox  *_cloverThemeComboBox;
     IBOutlet NSImageView *_themePreview;
     IBOutlet NSTextField *_noPreviewLabel;
     IBOutlet NSTextField *_themeAuthor;
@@ -33,6 +30,10 @@
     IBOutlet NSTextField *_themeDescription;
     IBOutlet NSTextField *_themeWarning;
 }
+
+@property (nonatomic,retain) IBOutlet NSNumber* cloverLogLineCount;
+@property (nonatomic,retain) IBOutlet NSNumber* cloverLogEveryBootEnabled;
+@property (nonatomic,retain) IBOutlet NSNumber* cloverLogEveryBootLimit;
 
 @property (nonatomic,readonly,copy) IBOutlet NSDictionary* diskutilList;
 @property (nonatomic,readonly,copy) IBOutlet NSArray* efiPartitions;

@@ -16,13 +16,11 @@
 "300.title" = "Current booted revision:";
 "302.title" = "Last installed revision:";
 "309.title" = "Log Files";
-"311.title" = "LogLineCount:";
-"313.title" = "LogEveryBoot:";
 "314.ibShadowedToolTip" = "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents";
-"323.ibShadowedToolTip" = "Create timestamp CloverEFI/boot.log file on every boot\n\nValue:\n* Yes: create a new timestamp boot.log file\n* Number: where number is the number of timestamp boot.log files to keep.\n\nA blank value result in NO creation of timestamp boot.log file";
+"323.ibShadowedToolTip" = "Number of timestamp boot.log files to keep.";
 "327.title" = "Advanced Configurations";
-"332.title" = "MountEFI:";
-"339.title" = "NVRamDisk:";
+"332.title" = "Force mount selected ESP at startup:";
+"339.title" = "Save NVRAM contents to partition:";
 "374.label" = "Theme";
 "392.title" = "Clover Theme";
 "399.title" = "Author:";
@@ -33,3 +31,6 @@
 "429.title" = "No Preview Available";
 "431.ibShadowedToolTip" = "Mounting the ESP partition on boot";
 "452.ibShadowedToolTip" = "Where to save the nvram contents";
+"483.title" = "Number of history boot log lines to keep:";
+"522.title" = "Create timestamp CloverEFI/boot.log file on every boot";
+"525.title" = "Maximum timestamp log files allowed:";

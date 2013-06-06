@@ -20,6 +20,10 @@ static const CFStringRef efiDirPathKey=CFSTR("EFI Directory Path");
 
 @implementation CloverPrefpane
 
+@synthesize cloverLogLineCount = _cloverLogLineCount;
+@synthesize cloverLogEveryBootEnabled = _cloverLogEveryBootEnabled;
+@synthesize cloverLogEveryBootLimit   = _cloverLogEveryBootLimit;
+
 @synthesize diskutilList  = _diskutilList;
 @synthesize efiPartitions = _efiPartitions;
 @synthesize nvRamPartitions = _nvRamPartitions;
@@ -200,6 +204,54 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
     return _nvRamPartitions;
 }
 
+-(void)setCloverLogLineCount:(NSNumber *)value
+{
+    if (!value)
+        value=@0;
+    if (![self.cloverLogLineCount isEqualToNumber:value]) {
+        [_cloverLogLineCount release];
+        _cloverLogLineCount = [value retain];
+
+        [self setNVRamKey:@"Clover.LogLineCount"
+                    Value:[NSString stringWithFormat:@"%ld", [value longValue]]];
+    }
+}
+
+-(void)updateCloverLogEveryBoot
+{
+    NSString* logEveryBoot;
+    if ([self.cloverLogEveryBootEnabled boolValue] == YES) {
+        unsigned int logEveryBootLimit = [self.cloverLogEveryBootLimit unsignedIntValue];
+        if (logEveryBootLimit > 0) {
+            logEveryBoot = [NSString stringWithFormat:@"%d", logEveryBootLimit];
+        }
+        else
+            logEveryBoot=@"Yes";
+    }
+    else
+        logEveryBoot=@"";
+
+    [self setNVRamKey:@"Clover.LogEveryBoot" Value:logEveryBoot];
+}
+
+- (void)setCloverLogEveryBootEnabled:(NSNumber *)value
+{
+    if (![_cloverLogEveryBootEnabled isEqualToNumber:value]) {
+        [_cloverLogEveryBootEnabled release];
+        _cloverLogEveryBootEnabled = [value retain];
+        [self updateCloverLogEveryBoot];
+    }
+}
+
+- (void)setCloverLogEveryBootLimit:(NSNumber *)value
+{
+    if (![self.cloverLogEveryBootLimit isEqualToNumber:value]) {
+        [_cloverLogEveryBootLimit release];
+        _cloverLogEveryBootLimit = [value retain];
+        [self updateCloverLogEveryBoot];
+    }
+}
+
 -(void)setCloverMountEfiPartition:(NSString *)value
 {
     if (_cloverMountEfiPartition != value) {
@@ -280,6 +332,10 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
         }
 
         _diskutilList = nil;
+
+        // Init NVRam variables fields
+        [self initNVRamVariableFields];
+
     }
     return self;
 }
@@ -340,9 +396,6 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
     // Enable the checkNowButton if executable is present
     [checkNowButton setEnabled:[[NSFileManager defaultManager] fileExistsAtPath:(NSString*)agentExecutable]];
     
-    // Init NVRam variables fields
-    [self initNVRamVariableFields];
-
     // Get EFI Path
     NSString* efiDir=[self getStringPreferenceKey:efiDirPathKey
                                          forAppID:(CFStringRef)[self.bundle bundleIdentifier]
@@ -369,12 +422,18 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
 
     //    value = [self getNVRamKey:[[_logLineCountTextField identifier] UTF8String]];
     value = [self getNVRamKey:"Clover.LogLineCount"];
-    [_logLineCountTextField setStringValue:value];
+    _cloverLogLineCount = [[NSNumber numberWithLong:[value longLongValue]] retain];
 
     //    value = [self getNVRamKey:[[_logEveryBootTextField identifier] UTF8String]];
     value = [self getNVRamKey:"Clover.LogEveryBoot"];
-    [_logEveryBootTextField setStringValue:value];
-
+    if ([value length] == 0) {
+        _cloverLogEveryBootEnabled = @NO;
+        _cloverLogEveryBootLimit  = @0;
+    }
+    else {
+        _cloverLogEveryBootEnabled = [([value isCaseInsensitiveLike:@"No"] ? @NO : @YES) retain];
+        _cloverLogEveryBootLimit   = [[NSNumber numberWithInteger:[value integerValue]] retain];
+    }
     //    value = [self getNVRamKey:[[_mountEFITextField identifier] UTF8String]];
     value = [self getNVRamKey:"Clover.MountEFI"];
     self.cloverMountEfiPartition = value;

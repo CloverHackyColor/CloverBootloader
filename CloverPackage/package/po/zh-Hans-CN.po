@@ -6,11 +6,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-05-28 10:48+0300\n"
+"POT-Creation-Date: 2013-06-06 20:25+0300\n"
 "PO-Revision-Date: 2013-05-31 09:59+0000\n"
 "Last-Translator: crazybirdy <>\n"
 "Language-Team: zh_CN <zh_CN@li.org>\n"
-"Language: zh_CN\n"
+"Language: zh-Hans-CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -585,9 +585,6 @@ msgstr "AppleStyle"
 #. type: "applestyle_description"
 #: Resources/templates/Localizable.strings:112
 #, no-wrap
-#| msgid ""
-#| "AppleStyle theme from Eps,\n"
-#| "Install to /EFI/CLOVER/themes/AppleStyle."
 msgid ""
 "AppleStyle theme from Eps,\n"
 "Install to /EFI/CLOVER/themes/applestyle"
@@ -598,16 +595,12 @@ msgstr ""
 #. type: "black_green_title"
 #: Resources/templates/Localizable.strings:115
 #, no-wrap
-#| msgid "black_green"
 msgid "Black_Green"
 msgstr "BlackGreen"
 
 #. type: "black_green_description"
 #: Resources/templates/Localizable.strings:116
 #, no-wrap
-#| msgid ""
-#| "Default black_green theme from Blackosx,\n"
-#| "Install to /EFI/CLOVER/themes/black_green."
 msgid ""
 "Default black_green theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/black_green"
@@ -624,9 +617,6 @@ msgstr "Bluemac"
 #. type: "bluemac_description"
 #: Resources/templates/Localizable.strings:120
 #, no-wrap
-#| msgid ""
-#| "Simple_gray theme from hijeane,\n"
-#| "Install to /EFI/CLOVER/themes/simple_gray."
 msgid ""
 "Bluemac theme from FowZiey,\n"
 "Install to /EFI/CLOVER/themes/bluemac"
@@ -643,9 +633,6 @@ msgstr "BootCamp"
 #. type: "bootcamp_description"
 #: Resources/templates/Localizable.strings:124
 #, no-wrap
-#| msgid ""
-#| "Wooden theme from iROOTa,\n"
-#| "Install to /EFI/CLOVER/themes/wooden."
 msgid ""
 "Bootcamp theme from Bijo,\n"
 "Install to /EFI/CLOVER/themes/bootcamp"
@@ -662,9 +649,6 @@ msgstr "iClover"
 #. type: "iclover_description"
 #: Resources/templates/Localizable.strings:128
 #, no-wrap
-#| msgid ""
-#| "Grey style theme by winlog,\n"
-#| "Install to /EFI/CLOVER/themes/iClover."
 msgid ""
 "Grey style theme by winlog,\n"
 "Install to /EFI/CLOVER/themes/iclover"
@@ -681,9 +665,6 @@ msgstr "Magnifico"
 #. type: "magnifico_description"
 #: Resources/templates/Localizable.strings:132
 #, no-wrap
-#| msgid ""
-#| "Wooden theme from iROOTa,\n"
-#| "Install to /EFI/CLOVER/themes/wooden."
 msgid ""
 "Magnifico theme from Magnifico,\n"
 "Install to /EFI/CLOVER/themes/magnifico"
@@ -700,9 +681,6 @@ msgstr "Metal"
 #. type: "metal_description"
 #: Resources/templates/Localizable.strings:136
 #, no-wrap
-#| msgid ""
-#| "The original metal theme from Slice,\n"
-#| "Install to /EFI/CLOVER/themes/metal."
 msgid ""
 "The original metal theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/metal"
@@ -719,9 +697,6 @@ msgstr "Mrengles"
 #. type: "mrengles_description"
 #: Resources/templates/Localizable.strings:140
 #, no-wrap
-#| msgid ""
-#| "mrengles theme from mrengles,\n"
-#| "Install to /EFI/CLOVER/themes/mrengles."
 msgid ""
 "mrengles theme from mrengles,\n"
 "Install to /EFI/CLOVER/themes/mrengles"
@@ -738,9 +713,6 @@ msgstr "Orange"
 #. type: "orange_description"
 #: Resources/templates/Localizable.strings:144
 #, no-wrap
-#| msgid ""
-#| "mrengles theme from mrengles,\n"
-#| "Install to /EFI/CLOVER/themes/mrengles."
 msgid ""
 "Orange theme from dwm,\n"
 "Install to /EFI/CLOVER/themes/orange"
@@ -757,9 +729,6 @@ msgstr "OS Box"
 #. type: "os_box_description"
 #: Resources/templates/Localizable.strings:148
 #, no-wrap
-#| msgid ""
-#| "Buttons theme from Trauma,\n"
-#| "Install to /EFI/CLOVER/themes/buttons."
 msgid ""
 "OS Box theme from Kyndder,\n"
 "Install to /EFI/CLOVER/themes/os_box"
@@ -776,9 +745,6 @@ msgstr "OS One"
 #. type: "os_one_description"
 #: Resources/templates/Localizable.strings:152
 #, no-wrap
-#| msgid ""
-#| "Buttons theme from Trauma,\n"
-#| "Install to /EFI/CLOVER/themes/buttons."
 msgid ""
 "OS One theme from Kyndder,\n"
 "Install to /EFI/CLOVER/themes/os_one"
@@ -795,9 +761,6 @@ msgstr "ThinkPad"
 #. type: "thinkpad_description"
 #: Resources/templates/Localizable.strings:156
 #, no-wrap
-#| msgid ""
-#| "The original metal theme from Slice,\n"
-#| "Install to /EFI/CLOVER/themes/metal."
 msgid ""
 "ThinkPad theme from Kogen Mantis,\n"
 "Install to /EFI/CLOVER/themes/thinkpad"
@@ -912,16 +875,12 @@ msgstr "停用 mDNSResponder 休眠 proxy client 服务，可以避免系统休�
 #. type: "CloverPrefpane_title"
 #: Resources/templates/Localizable.strings:189
 #, no-wrap
-#| msgid "Install Clover in the ESP"
 msgid "Install Clover Preference Pane"
 msgstr "安装 Clover 系统偏好设置 面板"
 
 #. type: "CloverPrefpane_description"
 #: Resources/templates/Localizable.strings:190
 #, no-wrap
-#| msgid ""
-#| "Install CloverUpdater on target volume.\n"
-#| "CloverUpdater notify you about Clover updates."
 msgid ""
 "Install Clover Preference Pane on target volume.\n"
 "Include CloverUpdater that can notify you about Clover updates."
@@ -1048,7 +1007,6 @@ msgstr "立刻检查"
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:12
 #, no-wrap
-#| msgid "Copyright (c) 2013 JrCs"
 msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
 msgstr ""
 "版权所有 (C) 2013 JrCs, kozlek\n"
@@ -1075,14 +1033,12 @@ msgstr "修订版本"
 #. type: "300.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:16
 #, no-wrap
-#| msgid "Current local Clover revision:"
 msgid "Current booted revision:"
 msgstr "当前启动的修订版本："
 
 #. type: "302.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:17
 #, no-wrap
-#| msgid "Latest update revision:"
 msgid "Last installed revision:"
 msgstr "最近安装的修订版本："
 
@@ -1092,117 +1048,113 @@ msgstr "最近安装的修订版本："
 msgid "Log Files"
 msgstr "纪录文件"
 
-#. type: "311.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:19
-#, no-wrap
-msgid "LogLineCount:"
-msgstr "纪录行数："
-
-#. type: "313.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:20
-#, no-wrap
-msgid "LogEveryBoot:"
-msgstr "纪录每次开机："
-
 #. type: "314.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:21
+#: ../CloverPrefpane/CloverPrefpane.strings:19
 #, no-wrap
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
 msgstr "现有 CloverEFI/boot.log 内容以外，保存在 CloverEFI/system.log 的行数历史纪录"
 
 #. type: "323.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:22
+#: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
-msgid "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* Yes: create a new timestamp boot.log file\\n* Number: where number is the number of timestamp boot.log files to keep.\\n\\nA blank value result in NO creation of timestamp boot.log file"
+msgid "Number of timestamp boot.log files to keep."
 msgstr ""
-"每次开机创建 CloverEFI/boot.log 文件\n"
-"\n"
-"Value:\n"
-"* Yes: 创建新的 boot.log 文件\n"
-"* Number: 保存 boot.log 文件的数量。\n"
-"\n"
-"空白表示不创建 boot.log 文件"
 
 #. type: "327.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:23
+#: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "Advanced Configurations"
 msgstr "高级配置"
 
 #. type: "332.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:24
+#: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
-msgid "MountEFI:"
-msgstr "MountEFI:"
+msgid "Force mount selected ESP at startup:"
+msgstr ""
 
 #. type: "339.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:25
+#: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
-msgid "NVRamDisk:"
-msgstr "NVRamDisk:"
+msgid "Save NVRAM contents to partition:"
+msgstr ""
 
 #. type: "374.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:26
+#: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
-#| msgid "Themes"
 msgid "Theme"
 msgstr "开机主题"
 
 #. type: "392.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:27
+#: ../CloverPrefpane/CloverPrefpane.strings:25
 #, no-wrap
-#| msgid "Clover Theme"
 msgid "Clover Theme"
 msgstr "Clover 主题"
 
 #. type: "399.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:28
+#: ../CloverPrefpane/CloverPrefpane.strings:26
 #, no-wrap
 msgid "Author:"
 msgstr "作者："
 
 #. type: "401.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:29
+#: ../CloverPrefpane/CloverPrefpane.strings:27
 #, no-wrap
 msgid "Year:"
 msgstr "年份："
 
 #. type: "405.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:30
+#: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
 msgid "EFI Folder Path:"
 msgstr "EFI 文件夹路径："
 
 #. type: "423.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:31
+#: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
 msgid "To see previews of themes you must select the path to the EFI folder."
 msgstr "必须选择EFI 文件夹路径，才能预览开机主题"
 
 #. type: "426.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:32
+#: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
-#| msgid "Themes"
 msgid "Theme:"
 msgstr "开机主题"
 
 #. type: "429.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:33
+#: ../CloverPrefpane/CloverPrefpane.strings:31
 #, no-wrap
 msgid "No Preview Available"
 msgstr "没有可用的预览"
 
 #. type: "431.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:34
+#: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "Mounting the ESP partition on boot"
 msgstr "开机时，装载 ESP 分区。"
 
 #. type: "452.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:35
+#: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
 msgid "Where to save the nvram contents"
 msgstr "储存 nvram 内容的位置"
+
+#. type: "483.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:34
+#, no-wrap
+msgid "Number of history boot log lines to keep:"
+msgstr ""
+
+#. type: "522.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:35
+#, no-wrap
+msgid "Create timestamp CloverEFI/boot.log file on every boot"
+msgstr ""
+
+#. type: "525.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:36
+#, no-wrap
+msgid "Maximum timestamp log files allowed:"
+msgstr ""
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:1
@@ -1231,7 +1183,6 @@ msgstr "否"
 #. type: "No description"
 #: ../CloverPrefpane/Localizable.strings:5
 #, no-wrap
-#| msgid "XhciDxe-32_description"
 msgid "No description"
 msgstr "无描述"
 
@@ -1258,6 +1209,32 @@ msgstr "设置 EFI 目录"
 #, no-wrap
 msgid "Unknown"
 msgstr "未知"
+
+#~ msgid ""
+#~ "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* "
+#~ "Yes: create a new timestamp boot.log file\\n* Number: where number is the "
+#~ "number of timestamp boot.log files to keep.\\n\\nA blank value result in "
+#~ "NO creation of timestamp boot.log file"
+#~ msgstr ""
+#~ "每次开机创建 CloverEFI/boot.log 文件\n"
+#~ "\n"
+#~ "Value:\n"
+#~ "* Yes: 创建新的 boot.log 文件\n"
+#~ "* Number: 保存 boot.log 文件的数量。\n"
+#~ "\n"
+#~ "空白表示不创建 boot.log 文件"
+
+#~ msgid "LogLineCount:"
+#~ msgstr "纪录行数："
+
+#~ msgid "LogEveryBoot:"
+#~ msgstr "纪录每次开机："
+
+#~ msgid "MountEFI:"
+#~ msgstr "MountEFI:"
+
+#~ msgid "NVRamDisk:"
+#~ msgstr "NVRamDisk:"
 
 #~ msgid "Install CloverUpdater"
 #~ msgstr "安装 Clover更新软件"
