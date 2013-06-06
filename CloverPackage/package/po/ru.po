@@ -7,15 +7,17 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-06 20:25+0300\n"
-"PO-Revision-Date: 2013-05-29 06:12+0000\n"
+"PO-Revision-Date: 2013-06-06 19:05+0000\n"
 "Last-Translator: Slice <sergey.slice@gmail.com>\n"
 "Language-Team: ru <ru@li.org>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1369807925.0\n"
+"X-POOTLE-MTIME: 1370545546.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -1063,7 +1065,7 @@ msgstr "Система запущена с:"
 #: ../CloverPrefpane/CloverPrefpane.strings:17
 #, no-wrap
 msgid "Last installed revision:"
-msgstr "Имеется обновление:"
+msgstr "Установлена:"
 
 #. type: "309.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:18
@@ -1081,7 +1083,7 @@ msgstr "Количество строк, которое должно сохра�
 #: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
 msgid "Number of timestamp boot.log files to keep."
-msgstr ""
+msgstr "Количество файлов boot.log для истории"
 
 #. type: "327.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
@@ -1093,13 +1095,13 @@ msgstr "Расширенная настройка"
 #: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
 msgid "Force mount selected ESP at startup:"
-msgstr ""
+msgstr "Монтировать выбранный ESP на старте"
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
 msgid "Save NVRAM contents to partition:"
-msgstr ""
+msgstr "Сохранять содержимое NVRAM на раздел:"
 
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:24
@@ -1166,19 +1168,19 @@ msgstr "Где хранить содержимое NVRAM"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
 #, no-wrap
 msgid "Number of history boot log lines to keep:"
-msgstr ""
+msgstr "Число строк в общем boot.log:"
 
 #. type: "522.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot"
-msgstr ""
+msgstr "Создавать копию boot.log при каждой загрузке"
 
 #. type: "525.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:36
 #, no-wrap
 msgid "Maximum timestamp log files allowed:"
-msgstr ""
+msgstr "Максимальное число логов:"
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:1
