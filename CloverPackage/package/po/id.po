@@ -7,15 +7,16 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-06 20:25+0300\n"
-"PO-Revision-Date: 2013-05-28 12:42+0000\n"
+"PO-Revision-Date: 2013-06-06 22:55+0000\n"
 "Last-Translator: archintosh <ardr_1109@yahoo.com>\n"
 "Language-Team: id <id@li.org>\n"
 "Language: id\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1369744964.0\n"
+"X-POOTLE-MTIME: 1370559339.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -1075,7 +1076,7 @@ msgstr "Jumlah baris yang disimpan dalam berkas CloverEFI/system.log sebagai tam
 #: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
 msgid "Number of timestamp boot.log files to keep."
-msgstr ""
+msgstr "Jumlah file timestamp boot.log yang disimpan."
 
 #. type: "327.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
@@ -1087,13 +1088,13 @@ msgstr "Konfigurasi Lanjutan"
 #: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
 msgid "Force mount selected ESP at startup:"
-msgstr ""
+msgstr "Pasang paksa ESP yang dipilih saat startup:"
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
 msgid "Save NVRAM contents to partition:"
-msgstr ""
+msgstr "Simpan isi NVRAM ke partisi:"
 
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:24
@@ -1160,19 +1161,19 @@ msgstr "Tempat simpan isi nvram"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
 #, no-wrap
 msgid "Number of history boot log lines to keep:"
-msgstr ""
+msgstr "Jumlah baris history boot log yang disimpan:"
 
 #. type: "522.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot"
-msgstr ""
+msgstr "Buat file timestamp CloverEFI/boot.log pada setiap boot"
 
 #. type: "525.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:36
 #, no-wrap
 msgid "Maximum timestamp log files allowed:"
-msgstr ""
+msgstr "Maximum file timestamp log yang diperbolehkan:"
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:1
