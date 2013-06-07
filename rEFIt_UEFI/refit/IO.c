@@ -1345,58 +1345,6 @@ WaitFor2EventWithTsc (
 	return Status; 
 }  
 
-EFI_STATUS
-WaitForSingleEvent2 (
-                     IN  EFI_EVENT        Event1,
-                     IN  EFI_EVENT        Event2,
-                     IN  UINT64           Timeout OPTIONAL
-                     )
-{
-  EFI_STATUS					Status;
-  UINTN						Index;
-  
-  EFI_EVENT					WaitList[3];
-  EFI_EVENT					TimerEvent;
-  
-  if (Timeout != 0)
-  {
-    //
-    // Create a timer event
-    //
-    Status = gBS->CreateEvent(EVT_TIMER, 0, NULL, NULL, &TimerEvent);
-    if (!EFI_ERROR (Status))
-    {
-      //
-      // Set the timer event
-      //
-      gBS->SetTimer(TimerEvent, TimerRelative, Timeout);
-      
-      //
-      // Wait for the original event or the timer
-      //
-      WaitList[0] = TimerEvent;
-      WaitList[1] = Event1;
-      WaitList[2] = Event2;
-      
-      Status = gBS->WaitForEvent(3, WaitList, &Index);
-      gBS->CloseEvent (TimerEvent);
-      if (!EFI_ERROR (Status) && Index == 0)
-      {
-        Status = EFI_TIMEOUT;
-      }
-    }
-  }
-  else
-  {
-    WaitList[0] = Event1;
-    WaitList[1] = Event2;
-    Status = gBS->WaitForEvent (2, WaitList, &Index);
-  }
-  return Status;
-}
-
-
-
 BOOLEAN
 SetPageBreak (
   IN OUT PRINT_STATE     *ps

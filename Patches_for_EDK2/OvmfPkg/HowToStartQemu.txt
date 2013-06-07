@@ -8,3 +8,5 @@ The folder QEMU must contains
 kvmvapic.bin
 vgabios-cirrus.bin
 pxe-e1000.rom
+
+qemu-system-x86_64 -L ~/src/edk2/Build/OvmfX64/DEBUG_XCLANG/QEMU -m 2048 -bios OVMF.fd -hda ~/Desktop/test/QEMU-Clover.img
