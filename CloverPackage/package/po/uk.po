@@ -7,15 +7,17 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-06 20:25+0300\n"
-"PO-Revision-Date: 2013-05-28 12:38+0000\n"
+"PO-Revision-Date: 2013-06-07 01:13+0000\n"
 "Last-Translator: AlexKord <alexkord@lan.com.ua>\n"
 "Language-Team: ua <ua@li.org>\n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1369744738.0\n"
+"X-POOTLE-MTIME: 1370567616.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -1085,7 +1087,7 @@ msgstr "Кількість рядків, які повинні зберігат�
 #: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
 msgid "Number of timestamp boot.log files to keep."
-msgstr ""
+msgstr "Кількість файлів boot.log для зберiгання в історії."
 
 #. type: "327.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
@@ -1097,13 +1099,13 @@ msgstr "Розширене Налаштування"
 #: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
 msgid "Force mount selected ESP at startup:"
-msgstr ""
+msgstr "Змонтувати обраний ESP під час запуску"
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
 msgid "Save NVRAM contents to partition:"
-msgstr ""
+msgstr "Зберігати вміст NVRAM на розділ:"
 
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:24
@@ -1170,19 +1172,19 @@ msgstr "Куди зберегти вміст NVRAM"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
 #, no-wrap
 msgid "Number of history boot log lines to keep:"
-msgstr ""
+msgstr "Кількість рядків для зберігання boot.log: "
 
 #. type: "522.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot"
-msgstr ""
+msgstr "Створювати копію CloverEFI/boot.log під час кожного завантаження"
 
 #. type: "525.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:36
 #, no-wrap
 msgid "Maximum timestamp log files allowed:"
-msgstr ""
+msgstr "Максимальна кількість .log файлiв:"
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:1
