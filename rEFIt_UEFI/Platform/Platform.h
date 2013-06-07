@@ -294,6 +294,9 @@ Headers collection for procedures
 #define MSR_FSB_FREQ                0x00CD	 /* limited use - not for i7						*/
 #define	MSR_PLATFORM_INFO           0x00CE   /* limited use - MinRatio for i7 but Max for Yonah	*/
                                              /* turbo for penryn */
+//haswell
+//Low Frequency Mode. LFM is Pn in the P-state table. It can be read at MSR CEh [47:40].
+//Minimum Frequency Mode. MFM is the minimum ratio supported by the processor and can be read from MSR CEh [55:48].
 #define MSR_PKG_CST_CONFIG_CONTROL  0x00E2   /* sandy and ivy */
 #define IA32_MPERF                  0x00E7   /* TSC in C0 only */
 #define IA32_APERF                  0x00E8   /* actual clocks in C0 */
@@ -305,14 +308,15 @@ Headers collection for procedures
 #define MSR_IA32_CLOCK_MODULATION   0x019A
 #define MSR_THERMAL_STATUS          0x019C
 #define MSR_IA32_MISC_ENABLE        0x01A0
-#define MSR_THERMAL_TARGET          0x01A2	 /* limited use - not for Penryn or older			*/
+#define MSR_THERMAL_TARGET          0x01A2	 /* TjMax limited use - not for Penryn or older			*/
 #define MSR_TURBO_RATIO_LIMIT       0x01AD	 /* limited use - not for Penryn or older			*/
 
 
-#define IA32_ENERGY_PERF_BIAS		0x01B0
+#define IA32_ENERGY_PERF_BIAS       0x01B0
 //MSR 000001B0                                      0000-0000-0000-0005
+#define MSR_PACKAGE_THERM_STATUS    0x01B1
 //MSR 000001B1                                      0000-0000-8838-0000
-#define IA32_PLATFORM_DCA_CAP		0x01F8
+#define IA32_PLATFORM_DCA_CAP       0x01F8
 //MSR 000001FC                                      0000-0000-0004-005F
 
 
