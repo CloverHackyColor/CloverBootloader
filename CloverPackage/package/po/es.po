@@ -7,15 +7,16 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-06 20:25+0300\n"
-"PO-Revision-Date: 2013-05-29 00:13+0000\n"
+"PO-Revision-Date: 2013-06-07 02:02+0000\n"
 "Last-Translator: Maniac <emafrias@gmail.com>\n"
 "Language-Team: es <es@li.org>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1369786435.0\n"
+"X-POOTLE-MTIME: 1370570571.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -1081,7 +1082,7 @@ msgstr "Número de lineas de historial a mantener en el archivo CloverEFI/system
 #: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
 msgid "Number of timestamp boot.log files to keep."
-msgstr ""
+msgstr "Cantidad de boot.log con estampa de tiempo a mantener."
 
 #. type: "327.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
@@ -1093,13 +1094,13 @@ msgstr "Configuración Avanzada"
 #: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
 msgid "Force mount selected ESP at startup:"
-msgstr ""
+msgstr "Montar la partición ESP seleccionada al arrancar:"
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
 msgid "Save NVRAM contents to partition:"
-msgstr ""
+msgstr "Guardar el contenido de NVRAM en la partición:"
 
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:24
@@ -1166,19 +1167,19 @@ msgstr "Guardar el contenido de nvram"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
 #, no-wrap
 msgid "Number of history boot log lines to keep:"
-msgstr ""
+msgstr "Cantidad de líneas en el registro boot log a mantener:"
 
 #. type: "522.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot"
-msgstr ""
+msgstr "Crear archivo CloverEFI/boot.log con estampa de tiempo en cada arranque"
 
 #. type: "525.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:36
 #, no-wrap
 msgid "Maximum timestamp log files allowed:"
-msgstr ""
+msgstr "Cantidad máxima de archivos log con estampa de tiempo permitidos:"
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:1
