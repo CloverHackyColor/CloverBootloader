@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-06 20:25+0300\n"
-"PO-Revision-Date: 2013-06-07 02:02+0000\n"
+"PO-Revision-Date: 2013-06-07 02:13+0000\n"
 "Last-Translator: Maniac <emafrias@gmail.com>\n"
 "Language-Team: es <es@li.org>\n"
 "Language: es\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1370570571.0\n"
+"X-POOTLE-MTIME: 1370571185.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -1094,13 +1094,13 @@ msgstr "Configuración Avanzada"
 #: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
 msgid "Force mount selected ESP at startup:"
-msgstr "Montar la partición ESP seleccionada al arrancar:"
+msgstr "Montar la partición ESP al arrancar:"
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
 msgid "Save NVRAM contents to partition:"
-msgstr "Guardar el contenido de NVRAM en la partición:"
+msgstr "Guardar el contenido de NVRAM en:"
 
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:24
@@ -1167,19 +1167,19 @@ msgstr "Guardar el contenido de nvram"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
 #, no-wrap
 msgid "Number of history boot log lines to keep:"
-msgstr "Cantidad de líneas en el registro boot log a mantener:"
+msgstr "Cantidad de líneas de registro a mantener:"
 
 #. type: "522.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot"
-msgstr "Crear archivo CloverEFI/boot.log con estampa de tiempo en cada arranque"
+msgstr "Crear CloverEFI/boot.log con estampa de tiempo en cada arranque"
 
 #. type: "525.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:36
 #, no-wrap
 msgid "Maximum timestamp log files allowed:"
-msgstr "Cantidad máxima de archivos log con estampa de tiempo permitidos:"
+msgstr "Cantidad máxima de archivos log a mantener:"
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:1
