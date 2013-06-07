@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-07 13:48+0300\n"
-"PO-Revision-Date: 2013-06-06 22:55+0000\n"
+"PO-Revision-Date: 2013-06-07 14:13+0000\n"
 "Last-Translator: archintosh <ardr_1109@yahoo.com>\n"
 "Language-Team: id <id@li.org>\n"
 "Language: id\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1370559339.0\n"
+"X-POOTLE-MTIME: 1370614430.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -1159,7 +1159,7 @@ msgstr "Buat file timestamp CloverEFI/boot.log pada setiap boot"
 
 #. type: "525.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Number of timestamp boot.log files to keep."
 msgid "Number of timestamp boot.log files to keep:"
 msgstr "Jumlah file timestamp boot.log yang disimpan."
@@ -1168,27 +1168,27 @@ msgstr "Jumlah file timestamp boot.log yang disimpan."
 #: ../CloverPrefpane/CloverPrefpane.strings:35
 #, no-wrap
 msgid "Backup"
-msgstr ""
+msgstr "Backup"
 
 #. type: "557.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:36
 #, no-wrap
 msgid "On install backup EFI folder to destination volume"
-msgstr ""
+msgstr "Pada install backup folder EFI di volume tujuan"
 
 #. type: "560.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:37
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Number of history boot log lines to keep:"
 msgid "Number of backups to keep:"
-msgstr "Jumlah baris history boot log yang disimpan:"
+msgstr "Jumlah backup yang disimpan:"
 
 #. type: "567.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:38
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "EFI Folder Path:"
 msgid "EFI Folder path"
-msgstr "Lokasi Folder EFI:"
+msgstr "Lokasi Folder EFI"
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:1
