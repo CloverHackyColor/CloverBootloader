@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-07 13:48+0300\n"
-"PO-Revision-Date: 2013-06-06 20:38+0000\n"
+"PO-Revision-Date: 2013-06-07 15:11+0000\n"
 "Last-Translator: artur_pt <artursimoes.pt@gmail.com>\n"
 "Language-Team: pt <pt@li.org>\n"
 "Language: pt\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1370551086.0\n"
+"X-POOTLE-MTIME: 1370617874.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -1155,33 +1155,33 @@ msgstr "Criar CloverEFI/boot.log em todos os boot"
 
 #. type: "525.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Number of timestamp boot.log files to keep."
 msgid "Number of timestamp boot.log files to keep:"
-msgstr "Numero de boot.log a manter."
+msgstr "Numero de boot.log a manter:"
 
 #. type: "555.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
 #, no-wrap
 msgid "Backup"
-msgstr ""
+msgstr "Cópia de segurança"
 
 #. type: "557.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:36
 #, no-wrap
 msgid "On install backup EFI folder to destination volume"
-msgstr ""
+msgstr "Na instalação copiar pasta EFI para volume destino"
 
 #. type: "560.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:37
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Number of history boot log lines to keep:"
 msgid "Number of backups to keep:"
-msgstr "Historico de linhas boot log a manter"
+msgstr "Número de cópias de segurança a manter:"
 
 #. type: "567.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:38
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "EFI Folder Path:"
 msgid "EFI Folder path"
 msgstr "Caminho da Pasta EFI"
