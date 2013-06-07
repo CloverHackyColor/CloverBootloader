@@ -7,17 +7,17 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-07 13:48+0300\n"
-"PO-Revision-Date: 2013-06-07 01:13+0000\n"
+"PO-Revision-Date: 2013-06-07 18:59+0000\n"
 "Last-Translator: AlexKord <alexkord@lan.com.ua>\n"
 "Language-Team: ua <ua@li.org>\n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1370567616.0\n"
+"X-POOTLE-MTIME: 1370631585.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -1170,33 +1170,33 @@ msgstr "Створювати копію CloverEFI/boot.log під час кож�
 
 #. type: "525.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Number of timestamp boot.log files to keep."
 msgid "Number of timestamp boot.log files to keep:"
-msgstr "Кількість файлів boot.log для зберiгання в історії."
+msgstr "Кількість файлів boot.log для зберiгання в історії:"
 
 #. type: "555.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
 #, no-wrap
 msgid "Backup"
-msgstr ""
+msgstr "Резервування"
 
 #. type: "557.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:36
 #, no-wrap
 msgid "On install backup EFI folder to destination volume"
-msgstr ""
+msgstr "При інсталяції зберігати стару папку EFI на системному томі"
 
 #. type: "560.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:37
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Number of history boot log lines to keep:"
 msgid "Number of backups to keep:"
 msgstr "Кількість рядків для зберігання boot.log: "
 
 #. type: "567.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:38
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "EFI Folder Path:"
 msgid "EFI Folder path"
 msgstr "Шлях до папки EFI:"
