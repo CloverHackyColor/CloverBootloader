@@ -7,16 +7,16 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-07 11:36+0300\n"
-"PO-Revision-Date: 2013-06-07 13:18+0100\n"
-"Last-Translator: JrCs\n"
+"PO-Revision-Date: 2013-06-07 11:34+0000\n"
+"Last-Translator: JrCs <d2t56xxptp@snkmail.com>\n"
 "Language-Team: fr <fr@li.org>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 1.5.5\n"
-"X-POOTLE-MTIME: 1370543619.0\n"
+"X-Generator: Pootle 2.5.0-rc1\n"
+"X-POOTLE-MTIME: 1370604844.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -1058,7 +1058,7 @@ msgstr "Nombre de lignes d'historique à garder dans le fichier CloverEFI/system
 #: ../CloverPrefpane/CloverPrefpane.strings:19
 #, no-wrap
 msgid "Number of timestamp boot.log files to keep."
-msgstr "Nombre de lignes d'historique des fichiers boot.log à garder."
+msgstr "Nombre de lignes d'historique des fichiers boot.log à conserver."
 
 #. type: "327.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:20
@@ -1136,7 +1136,7 @@ msgstr "Où sauver le contenu de la nvram"
 #: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "Number of history boot log lines to keep:"
-msgstr "Nombre de lignes d'historique des fichiers boot.log à garder:"
+msgstr "Nombre de lignes d'historique des fichiers boot.log à conserver:"
 
 #. type: "522.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:33
@@ -1167,7 +1167,7 @@ msgstr "Sauvegarder le répertoire EFI sur le volume de destination lors de l'in
 #, no-wrap
 #| msgid "Number of history boot log lines to keep:"
 msgid "Number of backups to keep:"
-msgstr "Nombre de sauvegardes à garder:"
+msgstr "Nombre de sauvegardes à conserver:"
 
 #. type: "567.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:38
