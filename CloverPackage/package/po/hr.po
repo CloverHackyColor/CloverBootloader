@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-07 11:36+0300\n"
+"POT-Creation-Date: 2013-06-07 13:48+0300\n"
 "PO-Revision-Date: 2013-06-06 23:54+0000\n"
 "Last-Translator: Xpam.AmAdEuS <miljenkohalapir@outlook.com>\n"
 "Language-Team: hr <hr@li.org>\n"
@@ -1160,9 +1160,10 @@ msgstr "Stvoraj CloverEFI/bootlog po datumu prilikom svakog podizanja"
 
 #. type: "525.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
-#, no-wrap
-msgid "Maximum timestamp log files allowed:"
-msgstr "Maksimalni broj dopuštenih log datoteka: "
+#, fuzzy, no-wrap
+#| msgid "Number of timestamp boot.log files to keep."
+msgid "Number of timestamp boot.log files to keep:"
+msgstr "Određen broj za spremanje boot.log datoteka prema datumu."
 
 #. type: "555.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
@@ -1243,6 +1244,14 @@ msgstr "Odaberi EFI direktorij"
 #, no-wrap
 msgid "Unknown"
 msgstr "Nepoznat"
+
+#, fuzzy
+#~| msgid "Number of timestamp boot.log files to keep."
+#~ msgid "Number of timestamp log files to keep:"
+#~ msgstr "Određen broj za spremanje boot.log datoteka prema datumu."
+
+#~ msgid "Maximum timestamp log files allowed:"
+#~ msgstr "Maksimalni broj dopuštenih log datoteka: "
 
 #~ msgid "CLOVER"
 #~ msgstr "CLOVER"

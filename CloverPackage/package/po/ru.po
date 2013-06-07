@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-07 11:36+0300\n"
+"POT-Creation-Date: 2013-06-07 13:48+0300\n"
 "PO-Revision-Date: 2013-06-06 19:05+0000\n"
 "Last-Translator: Slice <sergey.slice@gmail.com>\n"
 "Language-Team: ru <ru@li.org>\n"
@@ -1166,9 +1166,10 @@ msgstr "Создавать копию boot.log при каждой загруз�
 
 #. type: "525.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
-#, no-wrap
-msgid "Maximum timestamp log files allowed:"
-msgstr "Максимальное число логов:"
+#, fuzzy, no-wrap
+#| msgid "Number of timestamp boot.log files to keep."
+msgid "Number of timestamp boot.log files to keep:"
+msgstr "Количество файлов boot.log для истории"
 
 #. type: "555.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
@@ -1249,6 +1250,14 @@ msgstr "Установить папку EFI"
 #, no-wrap
 msgid "Unknown"
 msgstr "Неизвестно"
+
+#, fuzzy
+#~| msgid "Number of timestamp boot.log files to keep."
+#~ msgid "Number of timestamp log files to keep:"
+#~ msgstr "Количество файлов boot.log для истории"
+
+#~ msgid "Maximum timestamp log files allowed:"
+#~ msgstr "Максимальное число логов:"
 
 #~ msgid "CLOVER"
 #~ msgstr "CLOVER"

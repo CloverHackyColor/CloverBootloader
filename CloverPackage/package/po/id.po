@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-07 11:36+0300\n"
+"POT-Creation-Date: 2013-06-07 13:48+0300\n"
 "PO-Revision-Date: 2013-06-06 22:55+0000\n"
 "Last-Translator: archintosh <ardr_1109@yahoo.com>\n"
 "Language-Team: id <id@li.org>\n"
@@ -1159,9 +1159,10 @@ msgstr "Buat file timestamp CloverEFI/boot.log pada setiap boot"
 
 #. type: "525.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
-#, no-wrap
-msgid "Maximum timestamp log files allowed:"
-msgstr "Maximum file timestamp log yang diperbolehkan:"
+#, fuzzy, no-wrap
+#| msgid "Number of timestamp boot.log files to keep."
+msgid "Number of timestamp boot.log files to keep:"
+msgstr "Jumlah file timestamp boot.log yang disimpan."
 
 #. type: "555.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
@@ -1242,6 +1243,14 @@ msgstr "Set direktori EFI"
 #, no-wrap
 msgid "Unknown"
 msgstr "Tidak diketahui"
+
+#, fuzzy
+#~| msgid "Number of timestamp boot.log files to keep."
+#~ msgid "Number of timestamp log files to keep:"
+#~ msgstr "Jumlah file timestamp boot.log yang disimpan."
+
+#~ msgid "Maximum timestamp log files allowed:"
+#~ msgstr "Maximum file timestamp log yang diperbolehkan:"
 
 #~ msgid "CLOVER"
 #~ msgstr "CLOVER"

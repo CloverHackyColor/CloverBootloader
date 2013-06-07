@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-07 11:36+0300\n"
+"POT-Creation-Date: 2013-06-07 13:48+0300\n"
 "PO-Revision-Date: 2013-06-07 02:13+0000\n"
 "Last-Translator: Maniac <emafrias@gmail.com>\n"
 "Language-Team: es <es@li.org>\n"
@@ -1165,9 +1165,10 @@ msgstr "Crear CloverEFI/boot.log con estampa de tiempo en cada arranque"
 
 #. type: "525.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
-#, no-wrap
-msgid "Maximum timestamp log files allowed:"
-msgstr "Cantidad máxima de archivos log a mantener:"
+#, fuzzy, no-wrap
+#| msgid "Number of timestamp boot.log files to keep."
+msgid "Number of timestamp boot.log files to keep:"
+msgstr "Cantidad de boot.log con estampa de tiempo a mantener."
 
 #. type: "555.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
@@ -1248,6 +1249,14 @@ msgstr "Defina la carpeta EFI"
 #, no-wrap
 msgid "Unknown"
 msgstr "Desconocido"
+
+#, fuzzy
+#~| msgid "Number of timestamp boot.log files to keep."
+#~ msgid "Number of timestamp log files to keep:"
+#~ msgstr "Cantidad de boot.log con estampa de tiempo a mantener."
+
+#~ msgid "Maximum timestamp log files allowed:"
+#~ msgstr "Cantidad máxima de archivos log a mantener:"
 
 #~ msgid "CLOVER"
 #~ msgstr "CLOVER"

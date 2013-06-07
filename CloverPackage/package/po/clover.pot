@@ -6,8 +6,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Clover v2.0-r1815\n"
-"POT-Creation-Date: 2013-06-07 11:36+0300\n"
+"Project-Id-Version: Clover v2.0-r1819\n"
+"POT-Creation-Date: 2013-06-07 13:48+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1054,7 +1054,7 @@ msgstr ""
 #. type: "525.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
 #, no-wrap
-msgid "Maximum timestamp log files allowed:"
+msgid "Number of timestamp boot.log files to keep:"
 msgstr ""
 
 #. type: "555.title"

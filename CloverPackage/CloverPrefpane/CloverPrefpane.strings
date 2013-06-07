@@ -31,7 +31,7 @@
 "452.ibShadowedToolTip" = "Where to save the nvram contents";
 "483.title" = "Number of history boot log lines to keep:";
 "522.title" = "Create timestamp CloverEFI/boot.log file on every boot";
-"525.title" = "Maximum timestamp log files allowed:";
+"525.title" = "Number of timestamp boot.log files to keep:";
 "555.title" = "Backup";
 "557.title" = "On install backup EFI folder to destination volume";
 "560.title" = "Number of backups to keep:";
