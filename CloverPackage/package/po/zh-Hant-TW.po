@@ -7,15 +7,16 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-07 13:48+0300\n"
-"PO-Revision-Date: 2013-05-31 09:46+0000\n"
+"PO-Revision-Date: 2013-06-07 18:26+0000\n"
 "Last-Translator: crazybirdy <>\n"
 "Language-Team: zh_TW <zh_TW@li.org>\n"
 "Language: zh-Hant-TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1369993605.0\n"
+"X-POOTLE-MTIME: 1370629587.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -1049,7 +1050,7 @@ msgstr "現有 CloverEFI/boot.log 內容以外，保存在 CloverEFI/system.log 
 #: ../CloverPrefpane/CloverPrefpane.strings:19
 #, no-wrap
 msgid "Number of timestamp boot.log files to keep."
-msgstr ""
+msgstr "保存的 時間戳 boot.log 的檔案數量"
 
 #. type: "327.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:20
@@ -1061,13 +1062,13 @@ msgstr "進階組態設定"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "Force mount selected ESP at startup:"
-msgstr ""
+msgstr "啓動時 強制裝載選定的 ESP 磁區:"
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
 msgid "Save NVRAM contents to partition:"
-msgstr ""
+msgstr "儲存 NVRAM 內容到磁區:"
 
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:23
@@ -1127,41 +1128,41 @@ msgstr "儲存 nvram 內容的位置"
 #: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "Number of history boot log lines to keep:"
-msgstr ""
+msgstr "保存的歷史開機紀錄行數:"
 
 #. type: "522.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot"
-msgstr ""
+msgstr "每次開機時 建立 CloverEFI/boot.log 檔案的時間戳"
 
 #. type: "525.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
 #, no-wrap
 msgid "Number of timestamp boot.log files to keep:"
-msgstr ""
+msgstr "保存時間戳 boot.log 檔案的數量:"
 
 #. type: "555.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
 #, no-wrap
 msgid "Backup"
-msgstr ""
+msgstr "備份"
 
 #. type: "557.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:36
 #, no-wrap
 msgid "On install backup EFI folder to destination volume"
-msgstr ""
+msgstr "安裝時 備份 EFI 資料夾到目標磁區"
 
 #. type: "560.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:37
 #, no-wrap
 msgid "Number of backups to keep:"
-msgstr ""
+msgstr "保存的備份數量:"
 
 #. type: "567.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:38
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "EFI Folder Path:"
 msgid "EFI Folder path"
 msgstr "EFI 資料夾路徑："
