@@ -1,5 +1,4 @@
 "12.title" = "Clover";
-"104.title" = "CLOVER";
 "204.title" = "Never";
 "205.title" = "Daily";
 "206.title" = "Weekly";
@@ -25,7 +24,6 @@
 "392.title" = "Clover Theme";
 "399.title" = "Author:";
 "401.title" = "Year:";
-"405.title" = "EFI Folder Path:";
 "423.title" = "To see previews of themes you must select the path to the EFI folder.";
 "426.title" = "Theme:";
 "429.title" = "No Preview Available";
@@ -34,3 +32,7 @@
 "483.title" = "Number of history boot log lines to keep:";
 "522.title" = "Create timestamp CloverEFI/boot.log file on every boot";
 "525.title" = "Maximum timestamp log files allowed:";
+"555.title" = "Backup";
+"557.title" = "On install backup EFI folder to destination volume";
+"560.title" = "Number of backups to keep:";
+"567.title" = "EFI Folder path";

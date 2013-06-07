@@ -22,6 +22,8 @@
 		A3958D72173BBC1500134638 /* SecurityInterface.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3958D70173BBC1500134638 /* SecurityInterface.framework */; };
 		A3958D73173BD34300134638 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3958D6D173BABC000134638 /* IOKit.framework */; };
 		A3B4888217368F72009D8B76 /* CloverPrefpane.xib in Resources */ = {isa = PBXBuildFile; fileRef = A35A6F39173644AF007B2103 /* CloverPrefpane.xib */; };
+		A3BF1F411761CE340074D488 /* CloverLogo.png in Resources */ = {isa = PBXBuildFile; fileRef = A3BF1F401761CE340074D488 /* CloverLogo.png */; };
+		A3BF1F431761D02B0074D488 /* CloverTitle.png in Resources */ = {isa = PBXBuildFile; fileRef = A3BF1F421761D02B0074D488 /* CloverTitle.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -78,6 +80,8 @@
 		A395ACCE1737C96100406170 /* pt */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = pt; path = pt.lproj/CloverPrefpane.xib; sourceTree = "<group>"; };
 		A3A92AAE175CA76100C765C8 /* ja */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = ja; path = ja.lproj/CloverPrefpane.xib; sourceTree = "<group>"; };
 		A3B488831736903D009D8B76 /* fr */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = fr; path = fr.lproj/CloverPrefpane.xib; sourceTree = "<group>"; };
+		A3BF1F401761CE340074D488 /* CloverLogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CloverLogo.png; sourceTree = "<group>"; };
+		A3BF1F421761D02B0074D488 /* CloverTitle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CloverTitle.png; sourceTree = "<group>"; };
 		A3C990531737BD9200636EF5 /* it */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = it; path = it.lproj/CloverPrefpane.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -155,10 +159,12 @@
 		A38BDC5F1733968700DE7DA1 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				A3BF1F421761D02B0074D488 /* CloverTitle.png */,
 				A356D74B1753ED280047BAC4 /* Localizable.strings */,
 				A33207151746E96300939AFB /* NoPreview.png */,
 				A35A6F3C17364583007B2103 /* CloverPrefpane-Info.plist */,
 				A3340A5D1733DDF80065BC3F /* CloverPrefpane.tiff */,
+				A3BF1F401761CE340074D488 /* CloverLogo.png */,
 				A38BDC611733968700DE7DA1 /* InfoPlist.strings */,
 				A33207131746DB6700939AFB /* DefaultThemes.plist */,
 			);
@@ -267,7 +273,9 @@
 				A356D7491753ED280047BAC4 /* Localizable.strings in Resources */,
 				A33207141746DB6700939AFB /* DefaultThemes.plist in Resources */,
 				A3340A601733DDF80065BC3F /* CloverPrefpane.tiff in Resources */,
+				A3BF1F411761CE340074D488 /* CloverLogo.png in Resources */,
 				A33207161746E96300939AFB /* NoPreview.png in Resources */,
+				A3BF1F431761D02B0074D488 /* CloverTitle.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

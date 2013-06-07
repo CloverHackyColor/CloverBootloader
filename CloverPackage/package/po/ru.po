@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-06 20:25+0300\n"
+"POT-Creation-Date: 2013-06-07 11:36+0300\n"
 "PO-Revision-Date: 2013-06-06 19:05+0000\n"
 "Last-Translator: Slice <sergey.slice@gmail.com>\n"
 "Language-Team: ru <ru@li.org>\n"
@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
-"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
 "X-POOTLE-MTIME: 1370545546.0\n"
 
@@ -971,216 +971,230 @@ msgstr "Ага!"
 msgid "Clover"
 msgstr "Clover"
 
-#. type: "104.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:2
-#, no-wrap
-msgid "CLOVER"
-msgstr "CLOVER"
-
 #. type: "204.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:3
+#: ../CloverPrefpane/CloverPrefpane.strings:2
 #, no-wrap
 msgid "Never"
 msgstr "Никогда!"
 
 #. type: "205.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:4
+#: ../CloverPrefpane/CloverPrefpane.strings:3
 #, no-wrap
 msgid "Daily"
 msgstr "Ежедневно"
 
 #. type: "206.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:5
+#: ../CloverPrefpane/CloverPrefpane.strings:4
 #, no-wrap
 msgid "Weekly"
 msgstr "Еженедельно"
 
 #. type: "217.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:6
+#: ../CloverPrefpane/CloverPrefpane.strings:5
 #, no-wrap
 msgid "Hourly"
 msgstr "Раз в час"
 
 #. type: "239.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:7
+#: ../CloverPrefpane/CloverPrefpane.strings:6
 #, no-wrap
 msgid "Monthly"
 msgstr "Каждый месяц"
 
 #. type: "241.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:8
+#: ../CloverPrefpane/CloverPrefpane.strings:7
 #, no-wrap
 msgid "Check for Updates"
 msgstr "Проверить наличие обновлений"
 
 #. type: "243.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:9
+#: ../CloverPrefpane/CloverPrefpane.strings:8
 #, no-wrap
 msgid "Schedule Check Updates Every:"
 msgstr "Напоминать об обновлении:"
 
 #. type: "248.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:10
+#: ../CloverPrefpane/CloverPrefpane.strings:9
 #, no-wrap
 msgid "Last check:"
 msgstr "Последняя проверка:"
 
 #. type: "258.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:11
+#: ../CloverPrefpane/CloverPrefpane.strings:10
 #, no-wrap
 msgid "Check Now"
 msgstr "Проверить сейчас:"
 
 #. type: "262.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:12
+#: ../CloverPrefpane/CloverPrefpane.strings:11
 #, no-wrap
 msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
 msgstr "Copyright (c) 2013 JrCs, kozlek\\nВсе права зарезервированы"
 
 #. type: "294.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:13
+#: ../CloverPrefpane/CloverPrefpane.strings:12
 #, no-wrap
 msgid "NVRam Variables"
 msgstr "Настройки загрузчика"
 
 #. type: "295.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:14
+#: ../CloverPrefpane/CloverPrefpane.strings:13
 #, no-wrap
 msgid "General"
 msgstr "Обновления"
 
 #. type: "298.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:15
+#: ../CloverPrefpane/CloverPrefpane.strings:14
 #, no-wrap
 msgid "Revisions"
 msgstr "Ревизии"
 
 #. type: "300.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:16
+#: ../CloverPrefpane/CloverPrefpane.strings:15
 #, no-wrap
 msgid "Current booted revision:"
 msgstr "Система запущена с:"
 
 #. type: "302.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:17
+#: ../CloverPrefpane/CloverPrefpane.strings:16
 #, no-wrap
 msgid "Last installed revision:"
 msgstr "Установлена:"
 
 #. type: "309.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:18
+#: ../CloverPrefpane/CloverPrefpane.strings:17
 #, no-wrap
 msgid "Log Files"
 msgstr "Файлы отчетов"
 
 #. type: "314.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:19
+#: ../CloverPrefpane/CloverPrefpane.strings:18
 #, no-wrap
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
 msgstr "Количество строк, которое должно сохраняться в файле system.log при добавлении новых."
 
 #. type: "323.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:20
+#: ../CloverPrefpane/CloverPrefpane.strings:19
 #, no-wrap
 msgid "Number of timestamp boot.log files to keep."
 msgstr "Количество файлов boot.log для истории"
 
 #. type: "327.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:21
+#: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
 msgid "Advanced Configurations"
 msgstr "Расширенная настройка"
 
 #. type: "332.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:22
+#: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "Force mount selected ESP at startup:"
 msgstr "Монтировать выбранный ESP на старте"
 
 #. type: "339.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:23
+#: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
 msgid "Save NVRAM contents to partition:"
 msgstr "Сохранять содержимое NVRAM на раздел:"
 
 #. type: "374.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:24
+#: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
 msgid "Theme"
 msgstr "Стиль"
 
 #
 #. type: "392.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:25
+#: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
 msgid "Clover Theme"
 msgstr "Оформление"
 
 #. type: "399.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:26
+#: ../CloverPrefpane/CloverPrefpane.strings:25
 #, no-wrap
 msgid "Author:"
 msgstr "Автор:"
 
 #. type: "401.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:27
+#: ../CloverPrefpane/CloverPrefpane.strings:26
 #, no-wrap
 msgid "Year:"
 msgstr "Год:"
 
-#. type: "405.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:28
-#, no-wrap
-msgid "EFI Folder Path:"
-msgstr "Путь к папке EFI:"
-
 #. type: "423.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:29
+#: ../CloverPrefpane/CloverPrefpane.strings:27
 #, no-wrap
 msgid "To see previews of themes you must select the path to the EFI folder."
 msgstr "Для предпросмотра тем выберите путь к папке EFI."
 
 #. type: "426.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:30
+#: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
 msgid "Theme:"
 msgstr "Тема:"
 
 #. type: "429.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:31
+#: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
 msgid "No Preview Available"
 msgstr "Просмотр недоступен"
 
 #. type: "431.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:32
+#: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "Mounting the ESP partition on boot"
 msgstr "Монтировать раздел ESP при старте системы"
 
 #. type: "452.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:33
+#: ../CloverPrefpane/CloverPrefpane.strings:31
 #, no-wrap
 msgid "Where to save the nvram contents"
 msgstr "Где хранить содержимое NVRAM"
 
 #. type: "483.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:34
+#: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "Number of history boot log lines to keep:"
 msgstr "Число строк в общем boot.log:"
 
 #. type: "522.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:35
+#: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot"
 msgstr "Создавать копию boot.log при каждой загрузке"
 
 #. type: "525.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:36
+#: ../CloverPrefpane/CloverPrefpane.strings:34
 #, no-wrap
 msgid "Maximum timestamp log files allowed:"
 msgstr "Максимальное число логов:"
+
+#. type: "555.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:35
+#, no-wrap
+msgid "Backup"
+msgstr ""
+
+#. type: "557.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:36
+#, no-wrap
+msgid "On install backup EFI folder to destination volume"
+msgstr ""
+
+#. type: "560.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:37
+#, fuzzy, no-wrap
+#| msgid "Number of history boot log lines to keep:"
+msgid "Number of backups to keep:"
+msgstr "Число строк в общем boot.log:"
+
+#. type: "567.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:38
+#, fuzzy, no-wrap
+#| msgid "EFI Folder Path:"
+msgid "EFI Folder path"
+msgstr "Путь к папке EFI:"
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:1
@@ -1235,6 +1249,9 @@ msgstr "Установить папку EFI"
 #, no-wrap
 msgid "Unknown"
 msgstr "Неизвестно"
+
+#~ msgid "CLOVER"
+#~ msgstr "CLOVER"
 
 #~ msgid ""
 #~ "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* "

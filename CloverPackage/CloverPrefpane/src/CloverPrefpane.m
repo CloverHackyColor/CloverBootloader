@@ -18,11 +18,20 @@ static const CFStringRef checkIntervalKey=CFSTR("ScheduledCheckInterval");
 static const CFStringRef lastCheckTimestampKey=CFSTR("LastCheckTimestamp");
 static const CFStringRef efiDirPathKey=CFSTR("EFI Directory Path");
 
+static const NSString* kLogLineCount = @"Clover.LogLineCount";
+static const NSString* kLogEveryBoot = @"Clover.LogEveryBoot";
+static const NSString* kBackupDirOnDestVol = @"Clover.BackupDirOnDestVol";
+static const NSString* kKeepBackupLimit = @"Clover.KeepBackupLimit";
+static const NSString* kMountEFI = @"Clover.MountEFI";
+static const NSString* kNVRamDisk = @"Clover.NVRamDisk";
+
 @implementation CloverPrefpane
 
-@synthesize cloverLogLineCount = _cloverLogLineCount;
+@synthesize cloverLogLineCount        = _cloverLogLineCount;
 @synthesize cloverLogEveryBootEnabled = _cloverLogEveryBootEnabled;
 @synthesize cloverLogEveryBootLimit   = _cloverLogEveryBootLimit;
+@synthesize cloverBackupDirOnDestVol  = _cloverBackupDirOnDestVol;
+@synthesize cloverKeepBackupLimit     = _cloverKeepBackupLimit;
 
 @synthesize diskutilList  = _diskutilList;
 @synthesize efiPartitions = _efiPartitions;
@@ -212,7 +221,7 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
         [_cloverLogLineCount release];
         _cloverLogLineCount = [value retain];
 
-        [self setNVRamKey:@"Clover.LogLineCount"
+        [self setNVRamKey:kLogLineCount
                     Value:[NSString stringWithFormat:@"%ld", [value longValue]]];
     }
 }
@@ -231,7 +240,7 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
     else
         logEveryBoot=@"";
 
-    [self setNVRamKey:@"Clover.LogEveryBoot" Value:logEveryBoot];
+    [self setNVRamKey:kLogEveryBoot Value:logEveryBoot];
 }
 
 - (void)setCloverLogEveryBootEnabled:(NSNumber *)value
@@ -252,12 +261,38 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
     }
 }
 
+-(void)setCloverBackupDirOnDestVol:(NSNumber *)value
+{
+    if (!value)
+        value=@NO;
+    if (![self.cloverBackupDirOnDestVol isEqualToNumber:value]) {
+        [_cloverBackupDirOnDestVol release];
+        _cloverBackupDirOnDestVol = [value retain];
+        NSString *backupDirOnDestVol = [value boolValue] ? @"Yes" : @"";
+        [self setNVRamKey:kBackupDirOnDestVol
+                    Value:backupDirOnDestVol];
+    }
+}
+
+- (void)setCloverKeepBackupLimit:(NSNumber *)value
+{
+    if (!value)
+        value=@0;
+    if (![self.cloverKeepBackupLimit isEqualToNumber:value]) {
+        [_cloverKeepBackupLimit release];
+        _cloverKeepBackupLimit = [value retain];
+        [self setNVRamKey:kKeepBackupLimit
+                    Value:[NSString stringWithFormat:@"%@", value]];
+    }
+}
+
+
 -(void)setCloverMountEfiPartition:(NSString *)value
 {
     if (_cloverMountEfiPartition != value) {
         [_cloverMountEfiPartition release];
         _cloverMountEfiPartition = [value copy];
-        [self setNVRamKey:@"Clover.MountEFI" Value:value];
+        [self setNVRamKey:kMountEFI Value:value];
     }
 }
 
@@ -266,7 +301,7 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
     if (_cloverNvRamDisk != value) {
         [_cloverNvRamDisk release];
         _cloverNvRamDisk = [value copy];
-        [self setNVRamKey:@"Clover.NVRamDisk" Value:value];
+        [self setNVRamKey:kNVRamDisk Value:value];
     }
 }
 
@@ -420,12 +455,10 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
 {
     NSString *value;
 
-    //    value = [self getNVRamKey:[[_logLineCountTextField identifier] UTF8String]];
-    value = [self getNVRamKey:"Clover.LogLineCount"];
+    value = [self getNVRamKey:kLogLineCount];
     _cloverLogLineCount = [[NSNumber numberWithLong:[value longLongValue]] retain];
 
-    //    value = [self getNVRamKey:[[_logEveryBootTextField identifier] UTF8String]];
-    value = [self getNVRamKey:"Clover.LogEveryBoot"];
+    value = [self getNVRamKey:kLogEveryBoot];
     if ([value length] == 0) {
         _cloverLogEveryBootEnabled = @NO;
         _cloverLogEveryBootLimit  = @0;
@@ -434,12 +467,21 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
         _cloverLogEveryBootEnabled = [([value isCaseInsensitiveLike:@"No"] ? @NO : @YES) retain];
         _cloverLogEveryBootLimit   = [[NSNumber numberWithInteger:[value integerValue]] retain];
     }
-    //    value = [self getNVRamKey:[[_mountEFITextField identifier] UTF8String]];
-    value = [self getNVRamKey:"Clover.MountEFI"];
+
+    value = [self getNVRamKey:kBackupDirOnDestVol];
+    _cloverBackupDirOnDestVol = [([value isCaseInsensitiveLike:@"Yes"] ? @YES : @NO) retain];
+
+    value = [self getNVRamKey:kKeepBackupLimit];
+    if ([value length] == 0)
+        _cloverKeepBackupLimit = @0;
+    else
+        _cloverKeepBackupLimit = [[NSNumber numberWithInteger:[value integerValue]] retain];
+
+
+    value = [self getNVRamKey:kMountEFI];
     self.cloverMountEfiPartition = value;
 
-    //    value = [self getNVRamKey:[[_nvRamDiskTextField identifier] UTF8String]];
-    value = [self getNVRamKey:"Clover.NVRamDisk"];
+    value = [self getNVRamKey:kNVRamDisk];
     self.cloverNvRamDisk = value;
 }
 
@@ -502,13 +544,6 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
 }
 
 #pragma mark -
-#pragma mark NVRam Tab Methods
-
-- (IBAction)simpleNvramVariableChanged:(id)sender {
-    [self setNVRamKey:[sender identifier] Value:[sender stringValue]];
-}
-
-#pragma mark -
 #pragma mark Theme Tab Methods
 
 - (void) initThemeTab:(NSString*) efiDir {
@@ -560,7 +595,7 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
         }
     }
 
-    NSString* currentTheme = [self getNVRamKey:"Clover.Theme"];
+    NSString* currentTheme = [self getNVRamKey:@"Clover.Theme"];
     if (currentTheme && [themes indexOfObject:currentTheme] == NSNotFound)
         [themes addObject:currentTheme];
 
@@ -578,7 +613,7 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
                            stringByAppendingPathComponent:themeName];
     NSString *imagePath = [themeDir stringByAppendingPathComponent:@"screenshot.png"];
     if (![[NSFileManager defaultManager] fileExistsAtPath:imagePath]) {
-        imagePath = [self.bundle pathForResource:@"NoPreview.png" ofType:@"png"];
+        imagePath = [self.bundle pathForResource:@"NoPreview" ofType:@"png"];
         [_noPreviewLabel setHidden:NO];
     }
     else
@@ -598,7 +633,7 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
     [_themeYear   setStringValue: Year ? Year : GetLocalizedString(@"Unknown",nil)];
     [_themeDescription setStringValue: Description ? Description : GetLocalizedString(@"No description",nil)];
 
-    NSString *oldValue = [self getNVRamKey:"Clover.Theme"];
+    NSString *oldValue = [self getNVRamKey:@"Clover.Theme"];
     if ((oldValue.length != 0 || themeName.length != 0) &&
         ![oldValue isEqualToString:themeName]) {
         if ([self setNVRamKey:@"Clover.Theme" Value:themeName] != 0) {
@@ -669,18 +704,10 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
 #pragma mark NVRam methods
 
 // Get NVRAM value
--(NSString*) getNVRamKey:(const char *)key {
+-(NSString*) getNVRamKey:(const NSString*)key {
     NSString*   result = @"";
 
-    CFStringRef nameRef = CFStringCreateWithCString(kCFAllocatorDefault, key,
-                                                    kCFStringEncodingUTF8);
-    if (nameRef == 0) {
-        NSLog(@"Error creating CFString for key %s", key);
-        return result;
-    }
-
-    CFTypeRef valueRef = IORegistryEntryCreateCFProperty(_ioRegEntryRef, nameRef, 0, 0);
-    CFRelease(nameRef);
+    CFTypeRef valueRef = IORegistryEntryCreateCFProperty(_ioRegEntryRef, (CFStringRef)key, 0, 0);
     if (valueRef == 0) return result;
 
     // Get the OF variable's type.
@@ -695,14 +722,14 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
 }
 
 // Set NVRAM key/value pair
--(OSErr) setNVRamKey:(NSString*)key Value:(NSString*)value {
+-(OSErr) setNVRamKey:(const NSString*)key Value:(NSString*)value {
 
     OSErr processError = 0;
 
     if (key) {
         if (!value)
             value=@"";
-        NSString *oldValue = [self getNVRamKey:[key UTF8String]];
+        NSString *oldValue = [self getNVRamKey:key];
         if ((oldValue.length != 0 || value.length != 0) &&
             ![oldValue isEqualToString:value]) {
 

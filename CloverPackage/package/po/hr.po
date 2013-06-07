@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-06 20:25+0300\n"
+"POT-Creation-Date: 2013-06-07 11:36+0300\n"
 "PO-Revision-Date: 2013-06-06 23:54+0000\n"
 "Last-Translator: Xpam.AmAdEuS <miljenkohalapir@outlook.com>\n"
 "Language-Team: hr <hr@li.org>\n"
@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
-"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
 "X-POOTLE-MTIME: 1370562886.0\n"
 
@@ -965,216 +965,230 @@ msgstr "Nadogradi"
 msgid "Clover"
 msgstr "Clover"
 
-#. type: "104.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:2
-#, no-wrap
-msgid "CLOVER"
-msgstr "CLOVER"
-
 #. type: "204.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:3
+#: ../CloverPrefpane/CloverPrefpane.strings:2
 #, no-wrap
 msgid "Never"
 msgstr "Nikad"
 
 #. type: "205.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:4
+#: ../CloverPrefpane/CloverPrefpane.strings:3
 #, no-wrap
 msgid "Daily"
 msgstr "Svaki dan"
 
 #. type: "206.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:5
+#: ../CloverPrefpane/CloverPrefpane.strings:4
 #, no-wrap
 msgid "Weekly"
 msgstr "Svaki tjedan"
 
 #. type: "217.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:6
+#: ../CloverPrefpane/CloverPrefpane.strings:5
 #, no-wrap
 msgid "Hourly"
 msgstr "Svaki sat"
 
 #. type: "239.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:7
+#: ../CloverPrefpane/CloverPrefpane.strings:6
 #, no-wrap
 msgid "Monthly"
 msgstr "Mjesečno"
 
 #. type: "241.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:8
+#: ../CloverPrefpane/CloverPrefpane.strings:7
 #, no-wrap
 msgid "Check for Updates"
 msgstr "Provjera nove verzije"
 
 #. type: "243.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:9
+#: ../CloverPrefpane/CloverPrefpane.strings:8
 #, no-wrap
 msgid "Schedule Check Updates Every:"
 msgstr "Podesi provjeru nadogradnje za:"
 
 #. type: "248.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:10
+#: ../CloverPrefpane/CloverPrefpane.strings:9
 #, no-wrap
 msgid "Last check:"
 msgstr "Posljednja provjera:"
 
 #. type: "258.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:11
+#: ../CloverPrefpane/CloverPrefpane.strings:10
 #, no-wrap
 msgid "Check Now"
 msgstr "Provjeri sad"
 
 #. type: "262.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:12
+#: ../CloverPrefpane/CloverPrefpane.strings:11
 #, no-wrap
 msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
 msgstr "Autorska prava (c) 2003 JrCs, kozlek\\nSva prava pridržana"
 
 #. type: "294.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:13
+#: ../CloverPrefpane/CloverPrefpane.strings:12
 #, no-wrap
 msgid "NVRam Variables"
 msgstr "NVRAM Varijable"
 
 #. type: "295.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:14
+#: ../CloverPrefpane/CloverPrefpane.strings:13
 #, no-wrap
 msgid "General"
 msgstr "Generalno"
 
 #. type: "298.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:15
+#: ../CloverPrefpane/CloverPrefpane.strings:14
 #, no-wrap
 msgid "Revisions"
 msgstr "Revizije"
 
 #. type: "300.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:16
+#: ../CloverPrefpane/CloverPrefpane.strings:15
 #, no-wrap
 msgid "Current booted revision:"
 msgstr "Trenutno instalirana verzija:"
 
 #. type: "302.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:17
+#: ../CloverPrefpane/CloverPrefpane.strings:16
 #, no-wrap
 msgid "Last installed revision:"
 msgstr "Posljednja dostupna verzija:"
 
 #. type: "309.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:18
+#: ../CloverPrefpane/CloverPrefpane.strings:17
 #, no-wrap
 msgid "Log Files"
 msgstr "Log datoteke"
 
 #. type: "314.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:19
+#: ../CloverPrefpane/CloverPrefpane.strings:18
 #, no-wrap
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
 msgstr "Broj linija povijesti za čuvaje u CloverEFI/system.log datoteci iz  CloverEFI/boot.log sadržaja"
 
 #. type: "323.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:20
+#: ../CloverPrefpane/CloverPrefpane.strings:19
 #, no-wrap
 msgid "Number of timestamp boot.log files to keep."
 msgstr "Određen broj za spremanje boot.log datoteka prema datumu."
 
 #. type: "327.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:21
+#: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
 msgid "Advanced Configurations"
 msgstr "Napredne postavke"
 
 #. type: "332.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:22
+#: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "Force mount selected ESP at startup:"
 msgstr "Prisilno montiraj odabrani ESP pri podizanju:"
 
 #. type: "339.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:23
+#: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
 msgid "Save NVRAM contents to partition:"
 msgstr "Spremi NVRAM sadržaj na particiju:"
 
 #. type: "374.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:24
+#: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
 msgid "Theme"
 msgstr "Tema"
 
 #
 #. type: "392.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:25
+#: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
 msgid "Clover Theme"
 msgstr "Clover Tema"
 
 #. type: "399.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:26
+#: ../CloverPrefpane/CloverPrefpane.strings:25
 #, no-wrap
 msgid "Author:"
 msgstr "Autor:"
 
 #. type: "401.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:27
+#: ../CloverPrefpane/CloverPrefpane.strings:26
 #, no-wrap
 msgid "Year:"
 msgstr "Godina:"
 
-#. type: "405.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:28
-#, no-wrap
-msgid "EFI Folder Path:"
-msgstr "EFI putanja:"
-
 #. type: "423.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:29
+#: ../CloverPrefpane/CloverPrefpane.strings:27
 #, no-wrap
 msgid "To see previews of themes you must select the path to the EFI folder."
 msgstr "Za pregled tema morate izabrati put to EFI foldera."
 
 #. type: "426.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:30
+#: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
 msgid "Theme:"
 msgstr "Teme:"
 
 #. type: "429.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:31
+#: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
 msgid "No Preview Available"
 msgstr "Pregled nije dostupan"
 
 #. type: "431.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:32
+#: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "Mounting the ESP partition on boot"
 msgstr "Montiranje ESP praticije kod podizanja sistema"
 
 #. type: "452.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:33
+#: ../CloverPrefpane/CloverPrefpane.strings:31
 #, no-wrap
 msgid "Where to save the nvram contents"
 msgstr "Lokacija za spremanje nvram sadržaja "
 
 #. type: "483.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:34
+#: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "Number of history boot log lines to keep:"
 msgstr "Broj boot log linija za spremanje:"
 
 #. type: "522.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:35
+#: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot"
 msgstr "Stvoraj CloverEFI/bootlog po datumu prilikom svakog podizanja"
 
 #. type: "525.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:36
+#: ../CloverPrefpane/CloverPrefpane.strings:34
 #, no-wrap
 msgid "Maximum timestamp log files allowed:"
 msgstr "Maksimalni broj dopuštenih log datoteka: "
+
+#. type: "555.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:35
+#, no-wrap
+msgid "Backup"
+msgstr ""
+
+#. type: "557.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:36
+#, no-wrap
+msgid "On install backup EFI folder to destination volume"
+msgstr ""
+
+#. type: "560.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:37
+#, fuzzy, no-wrap
+#| msgid "Number of history boot log lines to keep:"
+msgid "Number of backups to keep:"
+msgstr "Broj boot log linija za spremanje:"
+
+#. type: "567.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:38
+#, fuzzy, no-wrap
+#| msgid "EFI Folder Path:"
+msgid "EFI Folder path"
+msgstr "EFI putanja:"
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:1
@@ -1229,6 +1243,9 @@ msgstr "Odaberi EFI direktorij"
 #, no-wrap
 msgid "Unknown"
 msgstr "Nepoznat"
+
+#~ msgid "CLOVER"
+#~ msgstr "CLOVER"
 
 #~ msgid ""
 #~ "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* "

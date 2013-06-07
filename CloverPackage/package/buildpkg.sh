@@ -553,7 +553,7 @@ main ()
     buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
     addChoice --start-selected="choicePreviouslySelected('$packageRefId')"                          \
               --selected="!choices['UEFI.only'].selected &amp;&amp; choices['$choiceId'].selected"  \
-              --visible="choices['boot0'].selected || choices['boot0ss'].selected"                  \
+              --visible="choices['boot0af'].selected || choices['boot0ss'].selected"                \
               --pkg-refs="$packageBiosBootRefId $packageRefId" "${choiceId}"
 # End alternative booting package
 

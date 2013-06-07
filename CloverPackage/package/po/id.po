@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-06 20:25+0300\n"
+"POT-Creation-Date: 2013-06-07 11:36+0300\n"
 "PO-Revision-Date: 2013-06-06 22:55+0000\n"
 "Last-Translator: archintosh <ardr_1109@yahoo.com>\n"
 "Language-Team: id <id@li.org>\n"
@@ -964,216 +964,230 @@ msgstr "Perbaharui"
 msgid "Clover"
 msgstr "Clover"
 
-#. type: "104.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:2
-#, no-wrap
-msgid "CLOVER"
-msgstr "CLOVER"
-
 #. type: "204.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:3
+#: ../CloverPrefpane/CloverPrefpane.strings:2
 #, no-wrap
 msgid "Never"
 msgstr "Jangan pernah"
 
 #. type: "205.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:4
+#: ../CloverPrefpane/CloverPrefpane.strings:3
 #, no-wrap
 msgid "Daily"
 msgstr "Harian"
 
 #. type: "206.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:5
+#: ../CloverPrefpane/CloverPrefpane.strings:4
 #, no-wrap
 msgid "Weekly"
 msgstr "Mingguan"
 
 #. type: "217.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:6
+#: ../CloverPrefpane/CloverPrefpane.strings:5
 #, no-wrap
 msgid "Hourly"
 msgstr "Tiap jam"
 
 #. type: "239.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:7
+#: ../CloverPrefpane/CloverPrefpane.strings:6
 #, no-wrap
 msgid "Monthly"
 msgstr "Bulanan"
 
 #. type: "241.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:8
+#: ../CloverPrefpane/CloverPrefpane.strings:7
 #, no-wrap
 msgid "Check for Updates"
 msgstr "Periksa Pembaharuan"
 
 #. type: "243.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:9
+#: ../CloverPrefpane/CloverPrefpane.strings:8
 #, no-wrap
 msgid "Schedule Check Updates Every:"
 msgstr "Jadwalkan Cek Updates Setiap:"
 
 #. type: "248.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:10
+#: ../CloverPrefpane/CloverPrefpane.strings:9
 #, no-wrap
 msgid "Last check:"
 msgstr "Cek terakhir:"
 
 #. type: "258.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:11
+#: ../CloverPrefpane/CloverPrefpane.strings:10
 #, no-wrap
 msgid "Check Now"
 msgstr "Cek Sekarang"
 
 #. type: "262.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:12
+#: ../CloverPrefpane/CloverPrefpane.strings:11
 #, no-wrap
 msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
 msgstr "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
 
 #. type: "294.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:13
+#: ../CloverPrefpane/CloverPrefpane.strings:12
 #, no-wrap
 msgid "NVRam Variables"
 msgstr "Variabel-variabel NVRam"
 
 #. type: "295.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:14
+#: ../CloverPrefpane/CloverPrefpane.strings:13
 #, no-wrap
 msgid "General"
 msgstr "Secara Menyeluruh"
 
 #. type: "298.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:15
+#: ../CloverPrefpane/CloverPrefpane.strings:14
 #, no-wrap
 msgid "Revisions"
 msgstr "Revisi"
 
 #. type: "300.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:16
+#: ../CloverPrefpane/CloverPrefpane.strings:15
 #, no-wrap
 msgid "Current booted revision:"
 msgstr "Revisi boot saat ini:"
 
 #. type: "302.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:17
+#: ../CloverPrefpane/CloverPrefpane.strings:16
 #, no-wrap
 msgid "Last installed revision:"
 msgstr "Revisi terinstall terakhir:"
 
 #. type: "309.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:18
+#: ../CloverPrefpane/CloverPrefpane.strings:17
 #, no-wrap
 msgid "Log Files"
 msgstr "Berkas log"
 
 #. type: "314.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:19
+#: ../CloverPrefpane/CloverPrefpane.strings:18
 #, no-wrap
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
 msgstr "Jumlah baris yang disimpan dalam berkas CloverEFI/system.log sebagai tambahan ke isi CloverEFI/boot.log yang sekarang"
 
 #. type: "323.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:20
+#: ../CloverPrefpane/CloverPrefpane.strings:19
 #, no-wrap
 msgid "Number of timestamp boot.log files to keep."
 msgstr "Jumlah file timestamp boot.log yang disimpan."
 
 #. type: "327.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:21
+#: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
 msgid "Advanced Configurations"
 msgstr "Konfigurasi Lanjutan"
 
 #. type: "332.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:22
+#: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "Force mount selected ESP at startup:"
 msgstr "Pasang paksa ESP yang dipilih saat startup:"
 
 #. type: "339.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:23
+#: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
 msgid "Save NVRAM contents to partition:"
 msgstr "Simpan isi NVRAM ke partisi:"
 
 #. type: "374.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:24
+#: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
 msgid "Theme"
 msgstr "Tematik"
 
 #
 #. type: "392.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:25
+#: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
 msgid "Clover Theme"
 msgstr "Tematik Clover"
 
 #. type: "399.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:26
+#: ../CloverPrefpane/CloverPrefpane.strings:25
 #, no-wrap
 msgid "Author:"
 msgstr "Pembuat:"
 
 #. type: "401.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:27
+#: ../CloverPrefpane/CloverPrefpane.strings:26
 #, no-wrap
 msgid "Year:"
 msgstr "Tahun:"
 
-#. type: "405.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:28
-#, no-wrap
-msgid "EFI Folder Path:"
-msgstr "Lokasi Folder EFI:"
-
 #. type: "423.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:29
+#: ../CloverPrefpane/CloverPrefpane.strings:27
 #, no-wrap
 msgid "To see previews of themes you must select the path to the EFI folder."
 msgstr "Untuk melihat preview dari tema anda harus memilih lokasi folder EFI."
 
 #. type: "426.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:30
+#: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
 msgid "Theme:"
 msgstr "Tema:"
 
 #. type: "429.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:31
+#: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
 msgid "No Preview Available"
 msgstr "Preview tidak tersedia."
 
 #. type: "431.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:32
+#: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "Mounting the ESP partition on boot"
 msgstr "Pasang partisi ESP pada saat boot"
 
 #. type: "452.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:33
+#: ../CloverPrefpane/CloverPrefpane.strings:31
 #, no-wrap
 msgid "Where to save the nvram contents"
 msgstr "Tempat simpan isi nvram"
 
 #. type: "483.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:34
+#: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "Number of history boot log lines to keep:"
 msgstr "Jumlah baris history boot log yang disimpan:"
 
 #. type: "522.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:35
+#: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot"
 msgstr "Buat file timestamp CloverEFI/boot.log pada setiap boot"
 
 #. type: "525.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:36
+#: ../CloverPrefpane/CloverPrefpane.strings:34
 #, no-wrap
 msgid "Maximum timestamp log files allowed:"
 msgstr "Maximum file timestamp log yang diperbolehkan:"
+
+#. type: "555.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:35
+#, no-wrap
+msgid "Backup"
+msgstr ""
+
+#. type: "557.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:36
+#, no-wrap
+msgid "On install backup EFI folder to destination volume"
+msgstr ""
+
+#. type: "560.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:37
+#, fuzzy, no-wrap
+#| msgid "Number of history boot log lines to keep:"
+msgid "Number of backups to keep:"
+msgstr "Jumlah baris history boot log yang disimpan:"
+
+#. type: "567.title"
+#: ../CloverPrefpane/CloverPrefpane.strings:38
+#, fuzzy, no-wrap
+#| msgid "EFI Folder Path:"
+msgid "EFI Folder path"
+msgstr "Lokasi Folder EFI:"
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:1
@@ -1228,6 +1242,9 @@ msgstr "Set direktori EFI"
 #, no-wrap
 msgid "Unknown"
 msgstr "Tidak diketahui"
+
+#~ msgid "CLOVER"
+#~ msgstr "CLOVER"
 
 #~ msgid ""
 #~ "Create timestamp CloverEFI/boot.log file on every boot\\n\\nValue:\\n* "
