@@ -2,8 +2,6 @@
    This is secret service for Clover to obtain temporary setting that user made in Options menu.
    It will work with Clover rev 1680+.
    It will not work for other bootloaders.
- 
-   To make it working with EFI32 it is needed to change lines 92, 93
 
     (c) Slice 2013
  
@@ -321,21 +319,22 @@ static void printSubDict(char *Name);
 static void printCloseSubDict();
 static void printString(char *Name, char *Value);
 static void printUString(char *Name, CHAR16 *Value);
-static void printInteger(char *Name, int Value);
-static void printInteger3(char *Name, int Value);
-static void printHex(char *Name, int Value);
+static void printInteger(char *Name, INTN Value);
+static void printInteger3(char *Name, INTN Value);
+static void printHex(char *Name, INTN Value);
 static void printBoolean(char *Name, BOOLEAN Value);
 static void printBoolean3(char *Name, BOOLEAN Value);
 static void printUUID(char *Name, EFI_GUID *g);
-static void printIntArray(char *Name, UINT8 *Value, int num);
+static void printIntArray(char *Name, UINT8 *Value, INTN num);
 
 
 // Global Variables
 static io_registry_entry_t gPlatform;
+static mach_port_t         masterPort;
 
 int main(int argc, char **argv)
 {
-  mach_port_t         masterPort;
+  
   CFStringRef         nameRef;
   CFTypeRef           valueRef;
   kern_return_t       result;
@@ -594,10 +593,15 @@ static void PrintConfig(const void *key, const void *value)
   printBoolean("KextPatchesAllowed", s->KextPatchesAllowed);
   printInteger("Number_of_KextsToPatch", s->NrKexts);
   printCloseDict();
-
+  
+  //TODO
+  // here we can get LogEveryBoot and MountEFI from
+  //gPlatform = IORegistryEntryFromPath(masterPort, "IODeviceTree:/options");
+  //GetOFVariable("MountEFI" ... and so on
   printDict("RtVariables");
   printString("MountEFI", "_NOT_SHOWN_");
   printInteger("LogLineCount", s->LogLineCount);
+  printString("LogEveryBoot", "_NOT_SHOWN_");
   printCloseDict();
 
   printf("</dict>\n"
@@ -649,7 +653,7 @@ static void printUString(char *Name, CHAR16 *Value)
   printCloseString();
 }
 
-static void printIntArray(char *Name, UINT8 *Value, int num)
+static void printIntArray(char *Name, UINT8 *Value, INTN num)
 {
   int i = 0;
   printf("\t\t<key>%s</key>\n\t\t<string>", Name);
@@ -660,19 +664,19 @@ static void printIntArray(char *Name, UINT8 *Value, int num)
 }
 
 
-static void printInteger(char *Name, int Value)
+static void printInteger(char *Name, INTN Value)
 {
-  printf("\t\t<key>%s</key>\n\t\t<integer>%d</integer>\n", Name, Value);
+  printf("\t\t<key>%s</key>\n\t\t<integer>%lld</integer>\n", Name, Value);
 }
 
-static void printInteger3(char *Name, int Value)
+static void printInteger3(char *Name, INTN Value)
 {
-  printf("\t\t\t<key>%s</key>\n\t\t\t<integer>%d</integer>\n", Name, Value);
+  printf("\t\t\t<key>%s</key>\n\t\t\t<integer>%lld</integer>\n", Name, Value);
 }
 
-static void printHex(char *Name, int Value)
+static void printHex(char *Name, INTN Value)
 {
-  printf("\t\t<key>%s</key>\n\t\t<string>0x%x</string>\n", Name, Value);
+  printf("\t\t<key>%s</key>\n\t\t<string>0x%llx</string>\n", Name, Value);
 }
 
 static void printBoolean(char *Name, BOOLEAN Value)
