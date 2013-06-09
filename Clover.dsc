@@ -432,6 +432,8 @@
   #
   MdeModulePkg/Application/HelloWorld/HelloWorld.inf
   #MdeModulePkg/Application/VariableInfo/VariableInfo.inf
+  Clover/Sample/Application/Sample.inf
+  
 !ifdef DEBUG_ON_SERIAL_PORT
 
 	Clover/rEFIt_UEFI/refit.inf {

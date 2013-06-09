@@ -128,7 +128,6 @@
   DxeServicesLib
   DxeServicesTableLib
   HobLib
-  MemoryAllocationLib
   IoLib
 #  HiiLib
   EfiFileLib

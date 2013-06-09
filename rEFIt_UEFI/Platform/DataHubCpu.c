@@ -247,9 +247,14 @@ VOID SetupDataForOSX()
 
   //fool proof
   if ((FrontSideBus < (50 * Mega)) ||  (FrontSideBus > (500 * Mega))){
-    DBG("Wrong FrontSideBus=%d\n", FrontSideBus);
+    DBG("Wrong FrontSideBus=%d, set to 100MHz\n", FrontSideBus);
     FrontSideBus = 100 * Mega;
   }
+
+  //Save values into gSettings for the genconfig aim
+  gSettings.BusSpeed = (UINT32)DivU64x32(FrontSideBus, kilo);
+  gSettings.CpuFreqMHz = (UINT32)DivU64x32(CpuSpeed, Mega);
+  
   
 	// Locate DataHub Protocol
 	Status = gBS->LocateProtocol(&gEfiDataHubProtocolGuid, NULL, (VOID**)&gDataHub);

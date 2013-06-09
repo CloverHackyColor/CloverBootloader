@@ -990,7 +990,10 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       prop = GetProperty(dictPointer, "LegacyBoot");
       if(prop)  {
         AsciiStrToUnicodeStr(prop->string, gSettings.LegacyBoot);
+      } else {
+        UnicodeSPrint(gSettings.LegacyBoot, 32, L"PBR");
       }
+        
       //BacklightLevel
       prop = GetProperty(dictPointer, "BacklightLevel");
       if(prop) {
@@ -2652,11 +2655,6 @@ EFI_STATUS SaveSettings()
   }
   
   gCPUStructure.CPUFrequency = MultU64x64(gCPUStructure.MaxSpeed, Mega);
-/*
-  MsgLog("Finally: Bus=%ldMHz CPU=%ldMHz\n",
-         DivU64x32(gCPUStructure.FSBFrequency, Mega),
-         gCPUStructure.MaxSpeed);
-*/  
   return EFI_SUCCESS;
 }
 

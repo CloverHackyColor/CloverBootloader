@@ -1340,24 +1340,27 @@ VOID PatchTableType17()
       newSmbiosTable.Type17->AssetTag = 0;
       if (iStrLen(gRAM.SMBIOS[SMBIOSIndex].Vendor, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.SMBIOS[SMBIOSIndex].Vendor);
+        AsciiSPrint(gSettings.MemoryManufacturer, 64, "%a", gRAM.SMBIOS[SMBIOSIndex].Vendor);
       } else {
 //        newSmbiosTable.Type17->Manufacturer = 0;
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, "unknown");
       }
       if (iStrLen(gRAM.SMBIOS[SMBIOSIndex].SerialNo, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, gRAM.SMBIOS[SMBIOSIndex].SerialNo);
+        AsciiSPrint(gSettings.MemorySerialNumber, 64, "%a", gRAM.SMBIOS[SMBIOSIndex].SerialNo);
       } else {
 //        newSmbiosTable.Type17->SerialNumber = 0;
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, "unknown");
       }
       if (iStrLen(gRAM.SMBIOS[SMBIOSIndex].PartNo, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gRAM.SMBIOS[SMBIOSIndex].PartNo);
+        AsciiSPrint(gSettings.MemoryPartNumber, 64, "%a", gRAM.SMBIOS[SMBIOSIndex].PartNo);
         DBG(" partNum=%a\n", gRAM.SMBIOS[SMBIOSIndex].PartNo);
       } else {
  //       newSmbiosTable.Type17->PartNumber = 0;
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber,  "unknown");
         DBG(" partNum unknown\n");
-      }
+      }      
     } else {
       ZeroMem((VOID*)newSmbiosTable.Type17, MAX_TABLE_SIZE);
       newSmbiosTable.Type17->Hdr.Type = EFI_SMBIOS_TYPE_MEMORY_DEVICE;
@@ -1375,16 +1378,19 @@ VOID PatchTableType17()
     if (gRAM.SPD[SPDIndex].InUse) {
       if (iStrLen(gRAM.SPD[SPDIndex].Vendor, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.SPD[SPDIndex].Vendor);
+        AsciiSPrint(gSettings.MemoryManufacturer, 64, "%a", gRAM.SPD[SPDIndex].Vendor);
       } else {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, "unknown");
       }
       if (iStrLen(gRAM.SPD[SPDIndex].SerialNo, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, gRAM.SPD[SPDIndex].SerialNo);
+        AsciiSPrint(gSettings.MemorySerialNumber, 64, "%a", gRAM.SPD[SPDIndex].SerialNo);
       } else {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, "unknown");
       }
       if (iStrLen(gRAM.SPD[SPDIndex].PartNo, 64) > 0) {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gRAM.SPD[SPDIndex].PartNo);
+        AsciiSPrint(gSettings.MemoryPartNumber, 64, "%a", gRAM.SPD[SPDIndex].PartNo);
       } else {
         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, "unknown");
       }
@@ -1397,6 +1403,8 @@ VOID PatchTableType17()
       DBG("Type17->Speed corrected by SMBIOS from %dMHz to %dMHz\n", newSmbiosTable.Type17->Speed, gRAM.SMBIOS[SMBIOSIndex].Frequency);
       newSmbiosTable.Type17->Speed = (UINT16)gRAM.SMBIOS[SMBIOSIndex].Frequency;
     }
+
+    AsciiSPrint(gSettings.MemorySpeed, 64, "%d", newSmbiosTable.Type17->Speed);
     
     // Assume DDR3 unless explicitly set to DDR2/DDR
     if ((newSmbiosTable.Type17->MemoryType != MemoryTypeDdr2) &&

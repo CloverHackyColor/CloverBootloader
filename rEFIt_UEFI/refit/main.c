@@ -525,8 +525,8 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
   
   DBG("StartLoader() start\n");
   egClearScreen(&DarkBackgroundPixel);
-  MsgLog("Finally: Bus=%ldMHz CPU=%ldMHz\n",
-         DivU64x32(gCPUStructure.FSBFrequency, Mega),
+  MsgLog("Finally: Bus=%ldkHz CPU=%ldMHz\n",
+         DivU64x32(gCPUStructure.FSBFrequency, kilo),
          gCPUStructure.MaxSpeed);
 
 //  MsgLog("Turbo=%c\n", gSettings.Turbo?'Y':'N');
