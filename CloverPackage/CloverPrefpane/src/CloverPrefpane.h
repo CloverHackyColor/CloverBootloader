@@ -23,13 +23,10 @@
 
     IBOutlet NSPathControl *_EFIPathControl;
     IBOutlet NSComboBox  *_cloverThemeComboBox;
-    IBOutlet NSImageView *_themePreview;
-    IBOutlet NSTextField *_noPreviewLabel;
-    IBOutlet NSTextField *_themeAuthor;
-    IBOutlet NSTextField *_themeYear;
-    IBOutlet NSTextField *_themeDescription;
     IBOutlet NSTextField *_themeWarning;
 }
+
+@property (nonatomic,retain) IBOutlet NSMutableDictionary *themeInfo;
 
 @property (nonatomic,retain) IBOutlet NSNumber* cloverLogLineCount;
 @property (nonatomic,retain) IBOutlet NSNumber* cloverLogEveryBootEnabled;

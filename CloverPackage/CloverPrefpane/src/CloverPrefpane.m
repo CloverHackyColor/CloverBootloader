@@ -552,7 +552,6 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
     BOOL isDir = NO;
 
     [_cloverThemeComboBox removeAllItems]; // Remove all theme names if exists
-    [_themePreview setImage:nil];
 
     NSString *themesDir = [efiDir stringByAppendingPathComponent:@"CLOVER/Themes"];
     [fileManager fileExistsAtPath:themesDir isDirectory:(&isDir)];
@@ -611,28 +610,35 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
     NSString *efiDir    = [[_EFIPathControl URL] path];
     NSString *themeDir  = [[efiDir stringByAppendingPathComponent:@"CLOVER/Themes"]
                            stringByAppendingPathComponent:themeName];
-    NSString *imagePath = [themeDir stringByAppendingPathComponent:@"screenshot.png"];
-    if (![[NSFileManager defaultManager] fileExistsAtPath:imagePath]) {
-        imagePath = [self.bundle pathForResource:@"NoPreview" ofType:@"png"];
-        [_noPreviewLabel setHidden:NO];
-    }
-    else
-        [_noPreviewLabel setHidden:YES];
-
-    NSImage *image = [[[NSImage alloc] initWithContentsOfFile:imagePath] autorelease];
-    [_themePreview setImage:image];
-
     // Load the theme.plist file
     NSString *themePlistPath = [themeDir stringByAppendingPathComponent:@"theme.plist"];
-    NSDictionary *dict = [[[NSDictionary alloc]
-                           initWithContentsOfFile:themePlistPath] autorelease];
-    NSString* author = [dict objectForKey:@"Author"];
-    NSString* Year   = [dict objectForKey:@"Year"];
-    NSString* Description = [dict objectForKey:@"Description"];
-    [_themeAuthor setStringValue: author ? author : GetLocalizedString(@"Unknown",nil)];
-    [_themeYear   setStringValue: Year ? Year : GetLocalizedString(@"Unknown",nil)];
-    [_themeDescription setStringValue: Description ? Description : GetLocalizedString(@"No description",nil)];
 
+    NSMutableDictionary *newThemeInfo = [NSMutableDictionary dictionaryWithContentsOfFile:themePlistPath];
+    if (newThemeInfo)
+        self.themeInfo = newThemeInfo;
+    else
+        self.themeInfo = [NSMutableDictionary dictionaryWithCapacity:16]; // 16 entries for the moment
+
+    NSString *imagePath = [themeDir stringByAppendingPathComponent:@"screenshot.png"];
+    NSNumber *previewAvailable = @YES;
+    if (![[NSFileManager defaultManager] fileExistsAtPath:imagePath]) {
+        imagePath = [self.bundle pathForResource:@"NoPreview" ofType:@"png"];
+        previewAvailable = @NO;
+    }
+    [self.themeInfo setObject:previewAvailable forKey:@"PreviewAvailable"];
+
+    [self.themeInfo setObject:[[NSImage alloc] initWithContentsOfFile:imagePath] forKey:@"Preview"];
+
+    if (![self.themeInfo objectForKey:@"Author"])
+        [self.themeInfo setObject:GetLocalizedString(@"Unknown",nil) forKey:@"Author"];
+
+    if (![self.themeInfo objectForKey:@"Year"])
+        [self.themeInfo setObject:GetLocalizedString(@"Unknown",nil) forKey:@"Year"];
+
+    if (![self.themeInfo objectForKey:@"Description"])
+        [self.themeInfo setObject:GetLocalizedString(@"No description available",nil) forKey:@"Description"];
+
+    // Update NVRam
     NSString *oldValue = [self getNVRamKey:@"Clover.Theme"];
     if ((oldValue.length != 0 || themeName.length != 0) &&
         ![oldValue isEqualToString:themeName]) {

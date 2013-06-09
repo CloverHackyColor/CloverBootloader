@@ -2,7 +2,7 @@
 "Default" = "Default";
 "ESP on [%@] %@" = "ESP on [%1$@] %2$@";
 "No" = "No";
-"No description" = "No description";
+"No description available" = "No description available";
 "Nowhere" = "Nowhere";
 "Select the EFI directory" = "Select the EFI directory";
 "Set EFI directory" = "Set EFI directory";

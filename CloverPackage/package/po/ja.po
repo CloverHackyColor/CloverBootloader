@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-07 13:48+0300\n"
+"POT-Creation-Date: 2013-06-09 16:06+0300\n"
 "PO-Revision-Date: 2013-06-09 06:08+0000\n"
 "Last-Translator: kantok <kawakamikazumi@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -101,14 +101,17 @@ msgstr "- OSX 10.4 - 10.8、Windows EFIとLinux EFIのブートをサポート�
 msgid ""
 "- It's EFI bootloader provides RuntimeServices for OS that impossible for "
 "Legacy Bootloaders"
-msgstr "- これまでのブートローダーでは非対応の、OSのランタイムサービスをサポートしたEFIブートローダーです。"
+msgstr ""
+"- これまでのブートローダーでは非対応の、OSのランタイムサービスをサポートした"
+"EFIブートローダーです。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:23
 msgid ""
 "- mostly Clover do automatic detection of hardware and set all properties by "
 "default."
-msgstr "- ハードウェアをほぼ自動で認識し、デフォルトで各プロパティを設定します。"
+msgstr ""
+"- ハードウェアをほぼ自動で認識し、デフォルトで各プロパティを設定します。"
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:23
@@ -148,12 +151,14 @@ msgstr "- ACPIはstandard 4.0に更新されます。"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:29
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr "カスタムDSDTはブートパーティションまたはEFIフォルダからロードされます。"
+msgstr ""
+"カスタムDSDTはブートパーティションまたはEFIフォルダからロードされます。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:30
 msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
-msgstr "- RestartFix、sleep/wake fixesおよびPCIRootUID値はカスタマイズ可能です。"
+msgstr ""
+"- RestartFix、sleep/wake fixesおよびPCIRootUID値はカスタマイズ可能です。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:31
@@ -185,7 +190,9 @@ msgstr "- CPUターボブーストとP/Cステートジェネレーター。"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:36
 msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
-msgstr "- ACPIテーブルをロードします (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFIなど)。"
+msgstr ""
+"- ACPIテーブルをロードします (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFIな"
+"ど)。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:37
@@ -197,12 +204,15 @@ msgstr "- 追加kextのロードとFireWireセキュリティモード。"
 msgid ""
 "- default boot after timeout, customizable GUI , and saving screenshots from "
 "GUI typing F10"
-msgstr "- デフォルトではタイムアウト後にブートします。GUIはカスタマイズ可能。GUI上でF10押下でスクリーンショットを保存します。"
+msgstr ""
+"- デフォルトではタイムアウト後にブートします。GUIはカスタマイズ可能。GUI上で"
+"F10押下でスクリーンショットを保存します。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:39
 msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
-msgstr "- boot.log (OS) とpreboot.log (GUI) の保存は［F2キー］を押下してください。"
+msgstr ""
+"- boot.log (OS) とpreboot.log (GUI) の保存は［F2キー］を押下してください。"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
@@ -1034,124 +1044,117 @@ msgstr "ログファイル"
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
 msgstr "CloverEFI/system.logに保持された履歴をCloverEFI/boot.logコンテンツに追加する行数"
 
-#. type: "323.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:19
-#, no-wrap
-msgid "Number of timestamp boot.log files to keep."
-msgstr "boot.logが保持するタイムスタンプの数。"
-
 #. type: "327.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:20
+#: ../CloverPrefpane/CloverPrefpane.strings:19
 #, no-wrap
 msgid "Advanced Configurations"
 msgstr "高度な設定"
 
 #. type: "332.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:21
+#: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
 msgid "Force mount selected ESP at startup:"
 msgstr "スタートアップ時に強制マウントするESP:"
 
 #. type: "339.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:22
+#: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "Save NVRAM contents to partition:"
 msgstr "NVRAMコンテンツを保存するパーティション:"
 
 #. type: "374.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:23
+#: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
 msgid "Theme"
 msgstr "Theme＜テーマ＞"
 
 #. type: "392.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:24
+#: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
 msgid "Clover Theme"
 msgstr "Clover テーマ"
 
 #. type: "399.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:25
+#: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
 msgid "Author:"
 msgstr "作者:"
 
 #. type: "401.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:26
+#: ../CloverPrefpane/CloverPrefpane.strings:25
 #, no-wrap
 msgid "Year:"
 msgstr "制作年:"
 
 #. type: "423.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:27
+#: ../CloverPrefpane/CloverPrefpane.strings:26
 #, no-wrap
 msgid "To see previews of themes you must select the path to the EFI folder."
 msgstr "プレビューの表示は、EFIフォルダのパスを指定してください。"
 
 #. type: "426.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:28
+#: ../CloverPrefpane/CloverPrefpane.strings:27
 #, no-wrap
 msgid "Theme:"
 msgstr "テーマ:"
 
 #. type: "429.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:29
+#: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
 msgid "No Preview Available"
 msgstr "プレビューは利用できません"
 
 #. type: "431.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:30
+#: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
 msgid "Mounting the ESP partition on boot"
 msgstr "起動時にESPパーティションをマウント"
 
 #. type: "452.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:31
+#: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "Where to save the nvram contents"
 msgstr "nvramコンテンツの保存場所"
 
 #. type: "483.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:32
+#: ../CloverPrefpane/CloverPrefpane.strings:31
 #, no-wrap
 msgid "Number of history boot log lines to keep:"
 msgstr "ブートログで保持する履歴の行数:"
 
 #. type: "522.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:33
+#: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot"
 msgstr "起動時にCloverEFI/boot.logファイルにタイムスタンプを記録する"
 
 #. type: "525.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:34
+#: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
 msgid "Number of timestamp boot.log files to keep:"
 msgstr "boot.logファイルが保持するタイムスタンプの数:"
 
 #. type: "555.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:35
+#: ../CloverPrefpane/CloverPrefpane.strings:34
 #, no-wrap
 msgid "Backup"
 msgstr "バックアップ"
 
 #. type: "557.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:36
+#: ../CloverPrefpane/CloverPrefpane.strings:35
 #, no-wrap
 msgid "On install backup EFI folder to destination volume"
 msgstr "インストール時にEFIフォルダのバックアップする"
 
 #. type: "560.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:37
+#: ../CloverPrefpane/CloverPrefpane.strings:36
 #, no-wrap
 msgid "Number of backups to keep:"
 msgstr "保持するバックアップの数:"
 
 #. type: "567.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:38
+#: ../CloverPrefpane/CloverPrefpane.strings:37
 #, no-wrap
-#| msgid "EFI Folder Path:"
 msgid "EFI Folder path"
 msgstr "EFIフォルダのパス"
 
@@ -1179,10 +1182,11 @@ msgstr "[%1$@] のESP %2$@"
 msgid "No"
 msgstr "マウントしない"
 
-#. type: "No description"
+#. type: "No description available"
 #: ../CloverPrefpane/Localizable.strings:5
-#, no-wrap
-msgid "No description"
+#, fuzzy, no-wrap
+#| msgid "No description"
+msgid "No description available"
 msgstr "詳細はありません"
 
 #. type: "Nowhere"
@@ -1208,6 +1212,9 @@ msgstr "EFIディレクトリを設定"
 #, no-wrap
 msgid "Unknown"
 msgstr "不明"
+
+#~ msgid "Number of timestamp boot.log files to keep."
+#~ msgstr "boot.logが保持するタイムスタンプの数。"
 
 #~ msgid "CLOVER"
 #~ msgstr "CLOVER"

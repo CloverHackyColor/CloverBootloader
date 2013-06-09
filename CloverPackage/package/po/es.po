@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-07 13:48+0300\n"
+"POT-Creation-Date: 2013-06-09 16:06+0300\n"
 "PO-Revision-Date: 2013-06-07 14:30+0000\n"
 "Last-Translator: Maniac <emafrias@gmail.com>\n"
 "Language-Team: es <es@li.org>\n"
@@ -1072,127 +1072,118 @@ msgstr "Archivos de Registro"
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
 msgstr "Número de lineas de historial a mantener en el archivo CloverEFI/system.log en adición al contenido del archivo CloverEFI/boot.log"
 
-#. type: "323.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:19
-#, no-wrap
-msgid "Number of timestamp boot.log files to keep."
-msgstr "Cantidad de boot.log con estampa de tiempo a mantener."
-
 #. type: "327.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:20
+#: ../CloverPrefpane/CloverPrefpane.strings:19
 #, no-wrap
 msgid "Advanced Configurations"
 msgstr "Configuración Avanzada"
 
 #. type: "332.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:21
+#: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
 msgid "Force mount selected ESP at startup:"
 msgstr "Montar la partición ESP al arrancar:"
 
 #. type: "339.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:22
+#: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "Save NVRAM contents to partition:"
 msgstr "Guardar el contenido de NVRAM en:"
 
 #. type: "374.label"
-#: ../CloverPrefpane/CloverPrefpane.strings:23
+#: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
 msgid "Theme"
 msgstr "Tema"
 
 #
 #. type: "392.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:24
+#: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
 msgid "Clover Theme"
 msgstr "Tema de Clover"
 
 #. type: "399.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:25
+#: ../CloverPrefpane/CloverPrefpane.strings:24
 #, no-wrap
 msgid "Author:"
 msgstr "Autor:"
 
 #. type: "401.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:26
+#: ../CloverPrefpane/CloverPrefpane.strings:25
 #, no-wrap
 msgid "Year:"
 msgstr "Año:"
 
 #. type: "423.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:27
+#: ../CloverPrefpane/CloverPrefpane.strings:26
 #, no-wrap
 msgid "To see previews of themes you must select the path to the EFI folder."
 msgstr "Para ver imágenes previas de los temas debes seleccionar la ruta a la carpeta EFI."
 
 #. type: "426.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:28
+#: ../CloverPrefpane/CloverPrefpane.strings:27
 #, no-wrap
 msgid "Theme:"
 msgstr "Tema:"
 
 #. type: "429.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:29
+#: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
 msgid "No Preview Available"
 msgstr "Vista previa no disponible"
 
 #. type: "431.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:30
+#: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
 msgid "Mounting the ESP partition on boot"
 msgstr "Montar la partición ESP al arrancar"
 
 #. type: "452.ibShadowedToolTip"
-#: ../CloverPrefpane/CloverPrefpane.strings:31
+#: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "Where to save the nvram contents"
 msgstr "Guardar el contenido de nvram"
 
 #. type: "483.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:32
+#: ../CloverPrefpane/CloverPrefpane.strings:31
 #, no-wrap
 msgid "Number of history boot log lines to keep:"
 msgstr "Número de líneas de registro a mantener:"
 
 #. type: "522.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:33
+#: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot"
 msgstr "Crear CloverEFI/boot.log con estampa de tiempo en cada arranque"
 
 #. type: "525.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:34
+#: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
-#| msgid "Number of timestamp boot.log files to keep."
 msgid "Number of timestamp boot.log files to keep:"
 msgstr "Número de boot.log con estampa de tiempo a mantener:"
 
 #. type: "555.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:35
+#: ../CloverPrefpane/CloverPrefpane.strings:34
 #, no-wrap
 msgid "Backup"
 msgstr "Copias de seguridad"
 
 #. type: "557.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:36
+#: ../CloverPrefpane/CloverPrefpane.strings:35
 #, no-wrap
 msgid "On install backup EFI folder to destination volume"
 msgstr "Al instalar, respaldar la carpeta EFI en el volumen destino"
 
 #. type: "560.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:37
+#: ../CloverPrefpane/CloverPrefpane.strings:36
 #, no-wrap
-#| msgid "Number of history boot log lines to keep:"
 msgid "Number of backups to keep:"
 msgstr "Número de copias de respaldo a guardar:"
 
 #. type: "567.title"
-#: ../CloverPrefpane/CloverPrefpane.strings:38
+#: ../CloverPrefpane/CloverPrefpane.strings:37
 #, no-wrap
-#| msgid "EFI Folder Path:"
 msgid "EFI Folder path"
 msgstr "Ruta a carpeta EFI:"
 
@@ -1220,10 +1211,11 @@ msgstr "ESP en [%1$@] %2$@"
 msgid "No"
 msgstr "No"
 
-#. type: "No description"
+#. type: "No description available"
 #: ../CloverPrefpane/Localizable.strings:5
-#, no-wrap
-msgid "No description"
+#, fuzzy, no-wrap
+#| msgid "No description"
+msgid "No description available"
 msgstr "Sin descripción"
 
 #. type: "Nowhere"
@@ -1249,6 +1241,9 @@ msgstr "Defina la carpeta EFI"
 #, no-wrap
 msgid "Unknown"
 msgstr "Desconocido"
+
+#~ msgid "Number of timestamp boot.log files to keep."
+#~ msgstr "Cantidad de boot.log con estampa de tiempo a mantener."
 
 #, fuzzy
 #~| msgid "Number of timestamp boot.log files to keep."

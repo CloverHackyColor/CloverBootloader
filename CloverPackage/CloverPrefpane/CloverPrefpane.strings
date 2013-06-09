@@ -16,7 +16,6 @@
 "302.title" = "Last installed revision:";
 "309.title" = "Log Files";
 "314.ibShadowedToolTip" = "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents";
-"323.ibShadowedToolTip" = "Number of timestamp boot.log files to keep.";
 "327.title" = "Advanced Configurations";
 "332.title" = "Force mount selected ESP at startup:";
 "339.title" = "Save NVRAM contents to partition:";
