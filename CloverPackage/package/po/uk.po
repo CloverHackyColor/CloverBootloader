@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-09 16:06+0300\n"
-"PO-Revision-Date: 2013-06-09 18:09+0000\n"
+"PO-Revision-Date: 2013-06-09 19:21+0000\n"
 "Last-Translator: AlexKord <alexkord@lan.com.ua>\n"
 "Language-Team: ua <ua@li.org>\n"
 "Language: uk\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
 "10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1370801347.0\n"
+"X-POOTLE-MTIME: 1370805684.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -467,7 +467,10 @@ msgstr "Кловер EFI 64-біту BiosBlockIO"
 #: Resources/templates/Localizable.strings:74
 #, no-wrap
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
-msgstr "Кловер EFI 64-біту із використанням BiosBlockI/O драйверу для доступу до дисків"
+msgstr ""
+"Кловер EFI 64-біту із використанням BiosBlockI/O драйверу для доступу до "
+"дисків.\n"
+"Використовувати якщо маєте чипсет NVIDIA NForce. "
 
 #. type: "Ps2KeyboardDxe-32_description"
 #: Resources/templates/Localizable.strings:79
