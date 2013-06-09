@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-07 13:48+0300\n"
-"PO-Revision-Date: 2013-06-07 18:59+0000\n"
+"PO-Revision-Date: 2013-06-09 13:43+0000\n"
 "Last-Translator: AlexKord <alexkord@lan.com.ua>\n"
 "Language-Team: ua <ua@li.org>\n"
 "Language: uk\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
 "10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1370631585.0\n"
+"X-POOTLE-MTIME: 1370785393.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -1142,13 +1142,13 @@ msgstr "Тема:"
 #: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
 msgid "No Preview Available"
-msgstr "Перегляд недоступний"
+msgstr "Перегляд неможливий"
 
 #. type: "431.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "Mounting the ESP partition on boot"
-msgstr "Підключення розділу ESP під час завантаження"
+msgstr "Змонтувати розділ ESP під час завантаження"
 
 #. type: "452.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:31
@@ -1192,7 +1192,7 @@ msgstr "При інсталяції зберігати стару папку EFI
 #, no-wrap
 #| msgid "Number of history boot log lines to keep:"
 msgid "Number of backups to keep:"
-msgstr "Кількість рядків для зберігання boot.log: "
+msgstr "Зберегти кількість резервних копій: "
 
 #. type: "567.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:38
@@ -1223,7 +1223,7 @@ msgstr "ESP в [%1$@] %2$@"
 #: ../CloverPrefpane/Localizable.strings:4
 #, no-wrap
 msgid "No"
-msgstr "No"
+msgstr "Нi"
 
 #. type: "No description"
 #: ../CloverPrefpane/Localizable.strings:5
@@ -1253,7 +1253,7 @@ msgstr "Встановити EFI каталог"
 #: ../CloverPrefpane/Localizable.strings:9
 #, no-wrap
 msgid "Unknown"
-msgstr "Невідомий"
+msgstr "Невідомо"
 
 #, fuzzy
 #~| msgid "Number of timestamp boot.log files to keep."
