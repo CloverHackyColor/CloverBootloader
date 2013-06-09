@@ -8,15 +8,16 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-07 13:48+0300\n"
-"PO-Revision-Date: 2013-06-01 00:54+0000\n"
+"PO-Revision-Date: 2013-06-09 06:08+0000\n"
 "Last-Translator: kantok <kawakamikazumi@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1370048091.0\n"
+"X-POOTLE-MTIME: 1370758114.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -61,7 +62,7 @@ msgstr "%PKGDEV%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:34
 msgid "Supports Fat32, HFS+, ESP."
-msgstr "対応フォーマット：Fat32、HFS+ および ESP。"
+msgstr "対応フォーマット：Fat32、HFS+ および ESP"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:35 Resources/templates/Conclusion.html:25
@@ -93,23 +94,21 @@ msgstr "おもな特徴:"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:21
 msgid "- boot into 10.4 - 10.8 OSX, Windows EFI and Linux EFI"
-msgstr "- OSX 10.4 - 10.8、Windows EFIとLinux EFIのブートをサポート"
+msgstr "- OSX 10.4 - 10.8、Windows EFIとLinux EFIのブートをサポート。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:22
 msgid ""
 "- It's EFI bootloader provides RuntimeServices for OS that impossible for "
 "Legacy Bootloaders"
-msgstr ""
-"- これまでのブートローダーでは非対応の、OSのランタイムサービスをサポートした"
-"EFIブートローダーです"
+msgstr "- これまでのブートローダーでは非対応の、OSのランタイムサービスをサポートしたEFIブートローダーです。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:23
 msgid ""
 "- mostly Clover do automatic detection of hardware and set all properties by "
 "default."
-msgstr "- ハードウェアをほぼ自動で認識し、デフォルトで各プロパティを設定します"
+msgstr "- ハードウェアをほぼ自動で認識し、デフォルトで各プロパティを設定します。"
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:23
@@ -124,37 +123,37 @@ msgstr " "
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:24
 msgid "But user can change them by config.plist"
-msgstr "また、config.plist上で、設定を変更することも可能です"
+msgstr "また、config.plist上で、設定を変更することも可能です。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:25
 msgid "- with Clover you may restart into other OS from Startup Disk prefPane"
-msgstr "- システム環境設定の起動ディスクから、リスタートするOSを選択可能"
+msgstr "- システム環境設定の起動ディスクから、リスタートするOSを選択可能。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:26
 msgid "- UUID written into config.plist will be the same as in OS"
-msgstr "- config.plistで設定したUUIDはOSにそのまま反映されます"
+msgstr "- config.plistで設定したUUIDはOSにそのまま反映されます。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:27
 msgid "- SMBIOS will be corrected to standard 2.6"
-msgstr "- SMBIOSはstandard 2.6に更新されます"
+msgstr "- SMBIOSはstandard 2.6に更新されます。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:28
 msgid "- ACPI will be corrected to standard 4.0."
-msgstr "- ACPIはstandard 4.0に更新されます"
+msgstr "- ACPIはstandard 4.0に更新されます。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:29
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr "カスタムDSDTはブートパーティションまたはEFIフォルダからロードされます"
+msgstr "カスタムDSDTはブートパーティションまたはEFIフォルダからロードされます。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:30
 msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
-msgstr "- RestartFix、sleep/wake fixesおよびPCIRootUID値はカスタマイズ可能です"
+msgstr "- RestartFix、sleep/wake fixesおよびPCIRootUID値はカスタマイズ可能です。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:31
@@ -166,48 +165,44 @@ msgstr "- ATI・Nvidia・Intelと、幅広く対応するグラフィックス�
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:32
 msgid "Also customizable."
-msgstr "カスタマイズ可能"
+msgstr "カスタマイズ可能です。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:33
 msgid "- USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
-msgstr "- USB fix (LegacyOff, Ownership, Builtin, clock-id) はUSB 3.0対応"
+msgstr "- USB fix (LegacyOff, Ownership, Builtin, clock-id) はUSB 3.0対応。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:34
 msgid "- HDA injector and Ethernet builtin injector"
-msgstr "- HDAインジェクターとEthernetビルトインインジェクター"
+msgstr "- HDAインジェクターとEthernetビルトインインジェクター。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:35
 msgid "- CPU turbo and P- and C-states generator"
-msgstr "- CPUターボブーストとP/Cステートジェネレーター"
+msgstr "- CPUターボブーストとP/Cステートジェネレーター。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:36
 msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
-msgstr ""
-"- ACPIテーブルをロード (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFIなど)"
+msgstr "- ACPIテーブルをロードします (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFIなど)。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:37
 msgid "- extra kexts loading and security mode for FireWire"
-msgstr "- 追加ドライバ (kext) のロードとFireWireセキュリティモード"
+msgstr "- 追加kextのロードとFireWireセキュリティモード。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:38
 msgid ""
 "- default boot after timeout, customizable GUI , and saving screenshots from "
 "GUI typing F10"
-msgstr ""
-"- デフォルトではタイムアウト後にブートします。GUIはカスタマイズ可能。スクリー"
-"ンショット機能［F10キー］"
+msgstr "- デフォルトではタイムアウト後にブートします。GUIはカスタマイズ可能。GUI上でF10押下でスクリーンショットを保存します。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:39
 msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
-msgstr ""
-"- boot.log (OS) とpreboot.log (GUI) の保存は［F2キー］を押下してください"
+msgstr "- boot.log (OS) とpreboot.log (GUI) の保存は［F2キー］を押下してください。"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
@@ -244,7 +239,7 @@ msgid ""
 "diskutil list\n"
 "newfs_msdos -v EFI -F 32 /dev/rdisk9s1"
 msgstr ""
-"ターゲットボリュームのESP (EFI System Partition) にインストール。\n"
+"ターゲットボリュームのESP (EFI System Partition) にインストール\n"
 "\n"
 "※ESPは、あらかじめMac上でFat32にてフォーマットする必要があります。\n"
 "\n"
@@ -1037,13 +1032,13 @@ msgstr "ログファイル"
 #: ../CloverPrefpane/CloverPrefpane.strings:18
 #, no-wrap
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
-msgstr "CloverEFI/boot.logの内容をCloverEFI/system.logに保存する行数"
+msgstr "CloverEFI/system.logに保持された履歴をCloverEFI/boot.logコンテンツに追加する行数"
 
 #. type: "323.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:19
 #, no-wrap
 msgid "Number of timestamp boot.log files to keep."
-msgstr ""
+msgstr "boot.logが保持するタイムスタンプの数。"
 
 #. type: "327.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:20
@@ -1055,13 +1050,13 @@ msgstr "高度な設定"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "Force mount selected ESP at startup:"
-msgstr ""
+msgstr "スタートアップ時に強制マウントするESP:"
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
 msgid "Save NVRAM contents to partition:"
-msgstr ""
+msgstr "NVRAMコンテンツを保存するパーティション:"
 
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:23
@@ -1115,50 +1110,50 @@ msgstr "起動時にESPパーティションをマウント"
 #: ../CloverPrefpane/CloverPrefpane.strings:31
 #, no-wrap
 msgid "Where to save the nvram contents"
-msgstr "nvramの保存場所"
+msgstr "nvramコンテンツの保存場所"
 
 #. type: "483.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "Number of history boot log lines to keep:"
-msgstr ""
+msgstr "ブートログで保持する履歴の行数:"
 
 #. type: "522.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot"
-msgstr ""
+msgstr "起動時にCloverEFI/boot.logファイルにタイムスタンプを記録する"
 
 #. type: "525.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
 #, no-wrap
 msgid "Number of timestamp boot.log files to keep:"
-msgstr ""
+msgstr "boot.logファイルが保持するタイムスタンプの数:"
 
 #. type: "555.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
 #, no-wrap
 msgid "Backup"
-msgstr ""
+msgstr "バックアップ"
 
 #. type: "557.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:36
 #, no-wrap
 msgid "On install backup EFI folder to destination volume"
-msgstr ""
+msgstr "インストール時にEFIフォルダのバックアップする"
 
 #. type: "560.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:37
 #, no-wrap
 msgid "Number of backups to keep:"
-msgstr ""
+msgstr "保持するバックアップの数:"
 
 #. type: "567.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:38
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "EFI Folder Path:"
 msgid "EFI Folder path"
-msgstr "EFIフォルダのパス:"
+msgstr "EFIフォルダのパス"
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:1
