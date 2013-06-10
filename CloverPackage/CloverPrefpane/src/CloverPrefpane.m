@@ -60,8 +60,10 @@ static const NSString* kNVRamDisk = @"Clover.NVRamDisk";
 
         NSData *data = [file readDataToEndOfFile];
 
-        _diskutilList = CFPropertyListCreateWithData(kCFAllocatorDefault, (CFDataRef)data, kCFPropertyListImmutable, NULL, NULL);
-
+        _diskutilList = (NSDictionary*) CFPropertyListCreateWithData(kCFAllocatorDefault,
+                                                                     (CFDataRef)data,
+                                                                     kCFPropertyListImmutable,
+                                                                     NULL, NULL);
         [task release];
     }
 
@@ -216,7 +218,7 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
 -(void)setCloverLogLineCount:(NSNumber *)value
 {
     if (!value)
-        value=@0;
+        value = [NSNumber numberWithInt:0];
     if (![self.cloverLogLineCount isEqualToNumber:value]) {
         [_cloverLogLineCount release];
         _cloverLogLineCount = [value retain];
@@ -264,7 +266,7 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
 -(void)setCloverBackupDirOnDestVol:(NSNumber *)value
 {
     if (!value)
-        value=@NO;
+        value = [NSNumber numberWithBool:NO];
     if (![self.cloverBackupDirOnDestVol isEqualToNumber:value]) {
         [_cloverBackupDirOnDestVol release];
         _cloverBackupDirOnDestVol = [value retain];
@@ -277,7 +279,7 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
 - (void)setCloverKeepBackupLimit:(NSNumber *)value
 {
     if (!value)
-        value=@0;
+        value = [NSNumber numberWithInt:0];
     if (![self.cloverKeepBackupLimit isEqualToNumber:value]) {
         [_cloverKeepBackupLimit release];
         _cloverKeepBackupLimit = [value retain];
@@ -460,20 +462,24 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
 
     value = [self getNVRamKey:kLogEveryBoot];
     if ([value length] == 0) {
-        _cloverLogEveryBootEnabled = @NO;
-        _cloverLogEveryBootLimit  = @0;
+        _cloverLogEveryBootEnabled = [NSNumber numberWithBool:NO];
+        _cloverLogEveryBootLimit   = [NSNumber numberWithInt:0];
     }
     else {
-        _cloverLogEveryBootEnabled = [([value isCaseInsensitiveLike:@"No"] ? @NO : @YES) retain];
+        _cloverLogEveryBootEnabled = [([value boolValue] ?
+                                       [NSNumber numberWithBool:NO] :
+                                       [NSNumber numberWithBool:YES]) retain];
         _cloverLogEveryBootLimit   = [[NSNumber numberWithInteger:[value integerValue]] retain];
     }
 
     value = [self getNVRamKey:kBackupDirOnDestVol];
-    _cloverBackupDirOnDestVol = [([value isCaseInsensitiveLike:@"Yes"] ? @YES : @NO) retain];
+    _cloverBackupDirOnDestVol = [([value boolValue] ?
+                                  [NSNumber numberWithBool:YES] :
+                                  [NSNumber numberWithBool:NO]) retain];
 
     value = [self getNVRamKey:kKeepBackupLimit];
     if ([value length] == 0)
-        _cloverKeepBackupLimit = @0;
+        _cloverKeepBackupLimit = [NSNumber numberWithInt:0];
     else
         _cloverKeepBackupLimit = [[NSNumber numberWithInteger:[value integerValue]] retain];
 
@@ -620,14 +626,15 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
         self.themeInfo = [NSMutableDictionary dictionaryWithCapacity:16]; // 16 entries for the moment
 
     NSString *imagePath = [themeDir stringByAppendingPathComponent:@"screenshot.png"];
-    NSNumber *previewAvailable = @YES;
+    NSNumber *previewAvailable = [NSNumber numberWithBool:YES];
     if (![[NSFileManager defaultManager] fileExistsAtPath:imagePath]) {
         imagePath = [self.bundle pathForResource:@"NoPreview" ofType:@"png"];
-        previewAvailable = @NO;
+        previewAvailable = [NSNumber numberWithBool:NO];
     }
     [self.themeInfo setObject:previewAvailable forKey:@"PreviewAvailable"];
 
-    [self.themeInfo setObject:[[NSImage alloc] initWithContentsOfFile:imagePath] forKey:@"Preview"];
+    NSImage* preview = [[[NSImage alloc] initWithContentsOfFile:imagePath] autorelease];
+    [self.themeInfo setObject:preview forKey:@"Preview"];
 
     if (![self.themeInfo objectForKey:@"Author"])
         [self.themeInfo setObject:GetLocalizedString(@"Unknown",nil) forKey:@"Author"];
