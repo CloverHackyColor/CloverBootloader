@@ -7,16 +7,16 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-09 16:06+0300\n"
-"PO-Revision-Date: 2013-06-07 18:26+0000\n"
+"PO-Revision-Date: 2013-06-07 18:44+0000\n"
 "Last-Translator: crazybirdy <>\n"
-"Language-Team: zh_TW <zh_TW@li.org>\n"
-"Language: zh-Hant-TW\n"
+"Language-Team: zh_CN <zh_CN@li.org>\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1370629587.0\n"
+"X-POOTLE-MTIME: 1370630658.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -31,7 +31,7 @@ msgstr "%CLOVERVERSION% r%CLOVERREVISION%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:25
 msgid "Developers:"
-msgstr "開發人員："
+msgstr "开发人员："
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:26
@@ -41,7 +41,7 @@ msgstr "%DEVELOP%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:28
 msgid "Source code credits to:"
-msgstr "源碼歸屬於 : "
+msgstr "源码归属于 :"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:29
@@ -51,7 +51,7 @@ msgstr "%CREDITS%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:31
 msgid "Package credits to:"
-msgstr "封裝歸功於 : "
+msgstr "封装归功于 :"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:32
@@ -61,7 +61,7 @@ msgstr "%PKGDEV%"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:34
 msgid "Supports Fat32, HFS+, ESP."
-msgstr "支持 Fat32 , HFS+ , 及 GPT EFI 分割區。"
+msgstr "支持 Fat32 , HFS+ 及 GPT EFI 分区。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Welcome.html:35 Resources/templates/Conclusion.html:25
@@ -77,12 +77,12 @@ msgstr "Clover v2"
 #: Resources/templates/Description.html:17
 msgid ""
 "is open source based on different projects: Clover, rEFIt, XNU, VirtualBox."
-msgstr "是基於 Clover, rEFIt, XNU, VirtualBox 等不同專案的開放源碼："
+msgstr "是基于 Clover, rEFIt, XNU, VirtualBox 等不同专案的开放源码："
 
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:18
 msgid "The main is EDK2 latest revision."
-msgstr "主要基於 EDK2 最新修正版。"
+msgstr "主要基于 EDK2 最新修正版。"
 
 #. type: Content of: <html><body><p><b>
 #: Resources/templates/Description.html:20
@@ -92,22 +92,23 @@ msgstr "主要功能："
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:21
 msgid "- boot into 10.4 - 10.8 OSX, Windows EFI and Linux EFI"
-msgstr "- 支持 引導 10.4 - 10.8 OSX, Windows EFI 及 Linux EFI"
+msgstr "- 支持 引导 10.4 - 10.8 OSX, Windows EFI 及 Linux EFI"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:22
 msgid ""
 "- It's EFI bootloader provides RuntimeServices for OS that impossible for "
 "Legacy Bootloaders"
-msgstr "- EFI bootloader 提供 OS 運行 RuntimeServices (傳統引導器無法提供)"
+msgstr "- EFI bootloader 提供 OS 运行 RuntimeServices (传统引导器无法提供)"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:23
 msgid ""
 "- mostly Clover do automatic detection of hardware and set all properties by "
 "default."
-msgstr "- 預設 自動偵測大部份的硬體並設定所有屬性"
+msgstr "- 默认 自动侦测大部份的硬件并设置所有属性"
 
+# Don't change this ! It must be one space only !
 #. type: Content of: <html><body><p><span>
 #: Resources/templates/Description.html:23
 #: Resources/templates/Description.html:24
@@ -121,17 +122,17 @@ msgstr " "
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:24
 msgid "But user can change them by config.plist"
-msgstr ". 但是用戶也可以在 config.plist 中修改"
+msgstr ". 但是用户也可以在 config.plist 中修改"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:25
 msgid "- with Clover you may restart into other OS from Startup Disk prefPane"
-msgstr "- 支持 啓動磁碟 面板 設定其他 OS 重新開機"
+msgstr "- 支持 启动磁盘 面板 设置其他 OS 重新开机"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:26
 msgid "- UUID written into config.plist will be the same as in OS"
-msgstr "- 寫入與 OS 相同的 UUID 到 config.plist 設定檔案"
+msgstr "- 写入与 OS 相同的 UUID 到 config.plist 设置文件"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:27
@@ -146,50 +147,50 @@ msgstr "- 修正 ACPI 至 standard 4.0 版本"
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:29
 msgid "Custom DSDT will be loaded from booted partition or from EFI folder"
-msgstr ". 支持從 開機分割區 或 EFI文件夾 加載 DSDT"
+msgstr ". 支持从 开机分区 或 EFI文件夹 加载 DSDT"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:30
 msgid "- customizable RestartFix and sleep/wake fixes and PCIRootUID value"
-msgstr "- 支持 睡眠/喚醒 修復 並 支持 PCIRootUID 設置"
+msgstr "- 支持 睡眠/唤醒 修复 并 支持 PCIRootUID 设置"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:31
 msgid ""
 "- Graphics Properties Injector for ATI, NVidia and Intel for wide range of "
 "supported cards."
-msgstr "- 支持 ATI, NVidia 及 Intel 顯示卡啓用功能, "
+msgstr "- 支持 ATI, NVidia 及 Intel 显卡启用功能,"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:32
 msgid "Also customizable."
-msgstr ". 並支持客制化參數設定"
+msgstr ". 并支持客制化参数设置"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:33
 msgid "- USB fix (LegacyOff, Ownership, Builtin, clock-id) up to USB 3.0"
 msgstr ""
-"- 支持 USB 及 USB 3.0 的修復 (LegacyOff, Ownership, Builtin, clock-id) "
+"- 支持 USB 及 USB 3.0 的修复 (LegacyOff, Ownership, Builtin, clock-id) "
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:34
 msgid "- HDA injector and Ethernet builtin injector"
-msgstr "- 支持 HDA 及 乙太網路 屬性內建功能"
+msgstr "- 支持 HDA 及 以太网卡 属性内建功能"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:35
 msgid "- CPU turbo and P- and C-states generator"
-msgstr "- 支持 開啓 CPU turbo 及 自動生成 P-State 及 C-State 的功能"
+msgstr "- 支持 开启 CPU turbo 及 自动生成 P-State 及 C-State 的功能"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:36
 msgid "- ACPI tables loading (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
-msgstr "- 支持 ACPI 表單加載 (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
+msgstr "- 支持 ACPI 表单加载 (SSDT-xx, APIC, BOOT, SLIC, SLIT, SRAT, UEFI...)"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:37
 msgid "- extra kexts loading and security mode for FireWire"
-msgstr "- 可加載額外 kexts 及 支持 FireWire 安全保密模式"
+msgstr "- 可加载额外 kexts 及 支持 FireWire 安全保密模式"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:38
@@ -197,35 +198,35 @@ msgid ""
 "- default boot after timeout, customizable GUI , and saving screenshots from "
 "GUI typing F10"
 msgstr ""
-"- 可按 F10 儲存 圖形用戶界面 GUI 的截圖，可設定預設開機區及客製化 GUI 圖形"
+"- 可按 F10 储存 图形用户界面 GUI 的截图，可设定默认开机区及客制化 GUI 图形"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:39
 msgid "- saving boot.log in OS and preboot.log from GUI by typing F2"
-msgstr "- 可按 F2 儲存 OS 的紀錄 boot.log 及 GUI 的紀錄 preboot.log"
+msgstr "- 可按 F2 储存 OS 的纪录 boot.log 及 GUI 的纪录 preboot.log"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Conclusion.html:22
 msgid "Installation Complete!"
-msgstr "安  裝  完  成"
+msgstr "安  装  完  成"
 
 #. type: "UEFI.only_title"
 #: Resources/templates/Localizable.strings:4
 #, no-wrap
 msgid "Install for UEFI motherboards"
-msgstr "僅安裝 UEFI 主機板專用版本"
+msgstr "仅安装 UEFI 主板专用版本"
 
 #. type: "UEFI.only_description"
 #: Resources/templates/Localizable.strings:5
 #, no-wrap
 msgid "Install Clover to be used with UEFI motherboards only."
-msgstr "僅安裝 UEFI 主機板專用的 Clover 版本"
+msgstr "仅安装 UEFI 主板专用的 Clover 版本。"
 
 #. type: "Target.ESP_title"
 #: Resources/templates/Localizable.strings:10
 #, no-wrap
 msgid "Install Clover in the ESP"
-msgstr "安裝 Clover 到 EFI 系統區"
+msgstr "安装 Clover 到 EFI 系统区"
 
 #. type: "Target.ESP_description"
 #: Resources/templates/Localizable.strings:11
@@ -239,11 +240,11 @@ msgid ""
 "diskutil list\n"
 "newfs_msdos -v EFI -F 32 /dev/rdisk9s1"
 msgstr ""
-"安裝 Clover 到目標磁區的 EFI 系統區\n"
+"安装 Clover 到目标磁区的 EFI 系统区\n"
 "\n"
-"需要在 Mac 下，先將 EFI 系統區 格式化為 Fat32 格式。\n"
+"需要在 Mac 下，先将 EFI 系统区 格式化为 Fat32 格式。\n"
 "\n"
-"參考 Fat32 手動格式化指令:\n"
+"参考 Fat32 手动格式化指令:\n"
 "diskutil list\n"
 "newfs_msdos -v EFI -F 32 /dev/rdisk9s1"
 
@@ -262,16 +263,16 @@ msgid ""
 "boot1 (On the partition's boot-sector) to finding boot2.\n"
 "boot2 (On the partition's root directory) for loading /EFI/CLOVER/CLOVERIA32.efi or CLOVERX64.efi, and kernel etc."
 msgstr ""
-"簡而言之，Clover EFI 幸運草 需要三個必要的檔案。\n"
-"boot0 (在硬碟的 MBR) 負責載入 boot1。\n"
-"boot1 (在分割區的開機磁區 boot-sector) 搜尋 boot2。\n"
-"boot2 (在分割區的根目錄) 載入 /EFI/CLOVER/CLOVERIA32.efi 或 CLOVERX64.efi 及系統核心等等。"
+"简而言之，Clover EFI 幸运草 需要三个必要的文件。\n"
+"boot0 (在硬盘的 MBR) 负责载入 boot1。\n"
+"boot1 (在分区的开机磁区 boot-sector) 搜寻 boot2。\n"
+"boot2 (在分区的根目录) 载入 /EFI/CLOVER/CLOVERIA32.efi 或 CLOVERX64.efi 及系统核心等等。"
 
 #. type: "boot0af_title"
 #: Resources/templates/Localizable.strings:29
 #, no-wrap
 msgid "Install boot0af in MBR"
-msgstr "BIOS 安裝 boot0af (HFS+Fat32)"
+msgstr "BIOS 安装 boot0af (HFS+Fat32)"
 
 #. type: "boot0af_description"
 #: Resources/templates/Localizable.strings:30
@@ -281,21 +282,21 @@ msgid ""
 "boot0af (boot0 Active First) bootloader try to boot the active partition defined in MBR. If there is no active partition, it will try to boot the first EFI/FAT32/HFS partition (defined in the MBR and then the GPT) with a valid PBR signature.\n"
 "This choice will setup selected HFS/Fat32 partition to be active."
 msgstr ""
-"BIOS 主機板 之 BIOS 啓動 專用。\n"
-"使用 fdisk440 將 boot0af 寫入 MBR 的前 440 位元，避免損壞已經存在的 Windows 機碼，boot0af 優先引導 MBR 的 啓動分割區，如果沒有啓動分割區，將引導第一個 EFI/FAT32/HFS 的 boot1 分區(優先引導MBR，其次引導GPT)。\n"
-"本安裝將 會 設定 HFS 及 Fat32 安裝分割區為啟動分割區。\n"
-"如須安裝在 Fat32 格式，必須在 Win 先將分割區格式化為 Fat32 格式分割區，或在 Mac 操作如下\n"
-" 1. 先用 磁碟工具 清除 為 MS-DOS (FAT) 格式\n"
-" 2. diskutil list\n"
-" 3. diskutil unmount /dev/rdisk9s1\n"
-" 4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
-" 5. diskutil mount /dev/rdisk9s1"
+"BIOS 主板 之 BIOS 启动 专用。\n"
+"使用 fdisk440 将 boot0af 写入 MBR 的前 440 位元，避免损坏已经存在的 Windows 机码，boot0af 优先引导 MBR 的 激活分区，如果没有激活分区，将引导第一个 EFI/FAT32/HFS 的 boot1 分区(优先引导MBR，其次引导GPT)。\n"
+"本安装将 会 设置 HFS 及 Fat32 安装分区为激活分区。\n"
+"如须安装在 Fat32 格式，必须在 Win 先将分区格式化为 Fat32 格式分区，或在 Mac 操作如下\n"
+"1. 先用 磁盘工具 清除 为 MS-DOS (FAT) 格式\n"
+"2. diskutil list\n"
+"3. diskutil unmount /dev/rdisk9s1\n"
+"4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
+"5. diskutil mount /dev/rdisk9s1"
 
 #. type: "boot0ss_title"
 #: Resources/templates/Localizable.strings:34
 #, no-wrap
 msgid "Install boot0ss in MBR"
-msgstr "BIOS 安裝 boot0ss (HFS+Fat32)"
+msgstr "BIOS 安装 boot0ss (HFS+Fat32)"
 
 #. type: "boot0ss_description"
 #: Resources/templates/Localizable.strings:35
@@ -306,11 +307,11 @@ msgid ""
 "This bootloader is a good choice when you have Windows installed on the same disk because Windows wants to have its partition active.\n"
 "This choice will not activate any partition in MBR."
 msgstr ""
-"BIOS 主機板 之 BIOS 啓動 專用。\n"
-"使用 fdisk440 將 boot0ss 寫入 MBR 的前 440 位元，避免損壞已經存在的 Windows 機碼，boot0ss 優先引導第一個 EFI/FAT32/HFS 的方割區的 boot1 分區(優先引導MBR，其次引導GPT)，如果沒有找到 boot1 分割區，將引導 MBR 的 啓動分割區。\n"
-"本安裝將 不會 設定 任何分區為啟動分區。\n"
-"如須安裝在 Fat32 格式，必須在 Win 先將分割區格式化為 Fat32 格式分割區，或在 Mac 操作如下\n"
-"1. 先用 磁碟工具 清除 為 MS-DOS (FAT) 格式\n"
+"BIOS 主板 之 BIOS 启动 专用。\n"
+"使用 fdisk440 将 boot0ss 写入 MBR 的前 440 位元，避免损坏已经存在的 Windows 机码，boot0ss 优先引导第一个 EFI/FAT32/HFS 的 boot1 分区(优先引导MBR，其次引导GPT)，如果没有找到 boot1 分区，将引导 MBR 的 激活分区。\n"
+"本安装将 不会 设置 任何分区为激活分区。\n"
+"如须安装在 Fat32 格式，必须在 Win 先将分区格式化为 Fat32 格式分区，或在 Mac 操作如下\n"
+"1. 先用 磁盘工具 清除 为 MS-DOS (FAT) 格式\n"
 "2. diskutil list\n"
 "3. diskutil unmount /dev/rdisk9s1\n"
 "4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
@@ -320,7 +321,7 @@ msgstr ""
 #: Resources/templates/Localizable.strings:40
 #, no-wrap
 msgid "Don't update MBR and PBR sectors"
-msgstr "不更新 MBR 及 PBR 磁區"
+msgstr "不更新 MBR 及 PBR 磁区"
 
 #. type: "bootNo_description"
 #: Resources/templates/Localizable.strings:41
@@ -330,15 +331,15 @@ msgid ""
 "Usefull for UEFI motherboards that don't need bootloader files.\n"
 "Can also be use if you don't want to upgrade MBR or PBR sectors."
 msgstr ""
-"不安裝任何引導檔案 (boot0X, boot1X)。\n"
-"適用於不需要任何引導檔案的 UEFI 主機板。\n"
-"適用於不需要更新 MBR(boot0X) 及 PBR(boot1X) 的4kb格式硬碟。"
+"不安装任何引导文件 (boot0X, boot1X)。\n"
+"适用于不需要任何引导文件的 UEFI 主板。\n"
+"适用于不需要更新 MBR(boot0X) 及 PBR(boot1X) 的4kb格式硬盘。"
 
 #. type: "AltBoot_title"
 #: Resources/templates/Localizable.strings:45
 #, no-wrap
 msgid "Use alternative booting PBR"
-msgstr "安裝 PBR 的多重開機選項"
+msgstr "安装 PBR 的多重开机选项"
 
 #. type: "AltBoot_description"
 #: Resources/templates/Localizable.strings:46
@@ -347,14 +348,14 @@ msgid ""
 "Install alternative booting PBR with choice of boot with a key pressed.\n"
 "File to boot = boot{keypressed}"
 msgstr ""
-"安裝 PBR 的多重開機選項，boot1=變色龍引導，boot6=64位 Clover 引導。\n"
-"可設定 開機 boot = boot{按鍵} 進行多重開機設定。"
+"安装 PBR 的多重开机选项，boot1=变色龙引导，boot6=64位 Clover 引导。\n"
+"可设定 开机 boot = boot{按键} 进行多重开机设置。"
 
 #. type: "boot32_title"
 #: Resources/templates/Localizable.strings:50
 #, no-wrap
 msgid "Install & Start 32bit boot first"
-msgstr "安裝 boot 32位 優先啟動"
+msgstr "安装 boot 32位 优先启动"
 
 #. type: "boot32_description"
 #: Resources/templates/Localizable.strings:51
@@ -366,17 +367,17 @@ msgid ""
 "Press key 3 to boot3 = Clover EFI 32bit boot,\n"
 "Press key 6 to boot6 = Clover EFI 64bit boot."
 msgstr ""
-"安裝 32位+64位 boot 文件，並優先啟用 32位系統。\n"
-"預設啟動 boot = Clover boot 32位，可在 test done 的 2 秒內，\n"
-"按 1 選 boot1 = 變色龍 boot，\n"
-"按 3 選 boot3 = Clover boot 32位，\n"
-"按 6 選 boot6 = Clover boot 64位。"
+"安装 32位+64位 boot 文件，并优先启用 32位系统。\n"
+"默认启动 boot = Clover boot 32位，可在 test done 的 2 秒内，\n"
+"按 1 选 boot1 = 变色龙 boot，\n"
+"按 3 选 boot3 = Clover boot 32位，\n"
+"按 6 选 boot6 = Clover boot 64位。"
 
 #. type: "boot64_title"
 #: Resources/templates/Localizable.strings:57
 #, no-wrap
 msgid "Install & Start 64bit boot first"
-msgstr "安裝 boot 64位 優先啟動"
+msgstr "安装 boot 64位 优先启动"
 
 #. type: "boot64_description"
 #: Resources/templates/Localizable.strings:58
@@ -388,11 +389,11 @@ msgid ""
 "Press key 3 to boot3 = Clover EFI 32bit boot,\n"
 "Press key 6 to boot6 = Clover EFI 64bit boot."
 msgstr ""
-"安裝 32位+64位 boot 文件，並優先啟用 64位系統。\n"
-"預設啟動 boot = Clover boot 64位，可在 test done 的 2 秒內，\n"
-"按 1 選 boot1 = 變色龍 boot，\n"
-"按 3 選 boot3 = Clover boot 32位，\n"
-"按 6 選 boot6 = Clover boot 64位。"
+"安装 32位+64位 boot 文件，并优先启用 64位系统。\n"
+"默认启动 boot = Clover boot 64位，可在 test done 的 2 秒内，\n"
+"按 1 选 boot1 = 变色龙 boot，\n"
+"按 3 选 boot3 = Clover boot 32位，\n"
+"按 6 选 boot6 = Clover boot 64位。"
 
 #. type: "CloverEFI_title"
 #: Resources/templates/Localizable.strings:67
@@ -404,7 +405,7 @@ msgstr "CloverEFI"
 #: Resources/templates/Localizable.strings:68
 #, no-wrap
 msgid "Select the version of CloverEFI to install."
-msgstr "選擇要安裝的 CloverEFI 版本。"
+msgstr "选择要安装的 CloverEFI 版本。"
 
 #. type: "cloverEFI.32_description"
 #: Resources/templates/Localizable.strings:69
@@ -423,7 +424,7 @@ msgstr "CloverEFI 64位 SATA"
 #: Resources/templates/Localizable.strings:72
 #, no-wrap
 msgid "CloverEFI 64-bits using SATA to access drives"
-msgstr "CloverEFI 64位版本，使用 SATA 模式存取硬碟。"
+msgstr "CloverEFI 64位版本，使用 SATA 模式存取硬盘。"
 
 #. type: "cloverEFI.64.blockio_title"
 #: Resources/templates/Localizable.strings:73
@@ -435,79 +436,79 @@ msgstr "CloverEFI 64位 BiosBlockIO"
 #: Resources/templates/Localizable.strings:74
 #, no-wrap
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
-msgstr "CloverEFI 64位版本，使用 Bios Block I/O 模式存取硬碟。"
+msgstr "CloverEFI 64位版本，使用 Bios Block I/O 模式存取硬盘。"
 
 #. type: "Ps2KeyboardDxe-32_description"
 #: Resources/templates/Localizable.strings:79
 #, no-wrap
 msgid "PS/2 keyboard driver, 32bit"
-msgstr "32位，PS/2 鍵盤 驅動。"
+msgstr "32位，PS/2 键盘 驱动。"
 
 #. type: "Ps2MouseAbsolutePointerDxe-32_description"
 #: Resources/templates/Localizable.strings:80
 #, no-wrap
 msgid "PS/2 trackpad driver, 32bit"
-msgstr "32位，PS/2 觸控板 驅動。"
+msgstr "32位，PS/2 触控板 驱动。"
 
 #. type: "Ps2MouseDxe-32_description"
 #: Resources/templates/Localizable.strings:81
 #, no-wrap
 msgid "PS/2 mouse driver, 32bit"
-msgstr "32位，PS/2 滑鼠 驅動。"
+msgstr "32位，PS/2 鼠标 驱动。"
 
 #. type: "Ps2MouseDxe-64_description"
 #: Resources/templates/Localizable.strings:82
 #, no-wrap
 msgid "PS/2 mouse driver, 64bit"
-msgstr "64位，PS/2 滑鼠 驅動。"
+msgstr "64位，PS/2 鼠标 驱动。"
 
 #. type: "UsbMouseDxe-32_description"
 #: Resources/templates/Localizable.strings:83
 #, no-wrap
 msgid "USB mouse driver, 32bit"
-msgstr "32位，USB 滑鼠 驅動。"
+msgstr "32位，USB 鼠标 驱动。"
 
 #. type: "UsbMouseDxe-64_description"
 #: Resources/templates/Localizable.strings:84
 #, no-wrap
 msgid "USB mouse driver, 64bit"
-msgstr "64位，USB 滑鼠 驅動。"
+msgstr "64位，USB 鼠标 驱动。"
 
 #. type: "VBoxExt2-32_description"
 #: Resources/templates/Localizable.strings:85
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 32bit"
-msgstr "32位，來自 Virtualbox 的 ext2/3 檔案系統驅動。"
+msgstr "32位，来自 Virtualbox 的 ext2/3 文件系统驱动。"
 
 #. type: "VBoxExt2-64_description"
 #: Resources/templates/Localizable.strings:86
 #, no-wrap
 msgid "ext2/3 filesystem driver from virtualbox, 64bit"
-msgstr "64位，來自 Virtualbox 的 ext2/3 檔案系統驅動。"
+msgstr "64位，来自 Virtualbox 的 ext2/3 文件系统驱动。"
 
 #. type: "VBoxExt4-32_description"
 #: Resources/templates/Localizable.strings:87
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 32bit"
-msgstr "32位，來自 Virtualbox 的 ext4 檔案系統驅動。"
+msgstr "32位，来自 Virtualbox 的 ext4 文件系统驱动。"
 
 #. type: "VBoxExt4-64_description"
 #: Resources/templates/Localizable.strings:88
 #, no-wrap
 msgid "ext4 filesystem driver from virtualbox, 64bit"
-msgstr "64位，來自 Virtualbox 的 ext4 檔案系統驅動。"
+msgstr "64位，来自 Virtualbox 的 ext4 文件系统驱动。"
 
 #. type: "XhciDxe-32_description"
 #: Resources/templates/Localizable.strings:89
 #, no-wrap
 msgid "USB 3.0 driver, 32bit"
-msgstr "32位，XHCI USB 3.0 驅動。"
+msgstr "32位，XHCI USB 3.0 驱动。"
 
 #. type: "XhciDxe-64_description"
 #: Resources/templates/Localizable.strings:90
 #, no-wrap
 msgid "USB 3.0 driver, 64bit"
-msgstr "64位，XHCI USB 3.0 驅動。"
+msgstr "64位，XHCI USB 3.0 驱动。"
 
 #. type: "CsmVideoDxe-64_description"
 #: Resources/templates/Localizable.strings:91
@@ -518,9 +519,9 @@ msgid ""
 "Clover may not started with it and you may have wake problem in system.\n"
 "Use with precautions."
 msgstr ""
-"64位，Clover GUI 圖形使用者介面的顯示驅動，允許選擇更多解析度。\n"
-"基於 UEFI BIOS 的 CSM module 模組，CSM 必須 Enabled 啓動。\n"
-"Clover 可能無法啓動，可能會發生 系統喚醒 的問題。使用時，請注意相關問題。"
+"64位，Clover GUI 图形使用者介面的显示驱动，允许选择更多分辨率。\n"
+"基于 UEFI BIOS 的 CSM module 模组，CSM 必须 Enabled 启动。\n"
+"Clover 可能无法启动，可能会发生 系统唤醒 的问题。使用时，请注意相关问题。"
 
 #. type: "DataHubDxe-64_description"
 #: Resources/templates/Localizable.strings:95
@@ -529,8 +530,8 @@ msgid ""
 "This is DataHub protocol support mandatory for MacOSX.\n"
 "Usually it is already present but sometime it may be missed. In this case you should see warning on screen."
 msgstr ""
-"64位，此 DataHub 協定支持 Mac OS X 強制啓用。\n"
-"通常已啓用，但有時可能遺漏，可在螢幕 warning 中查看。"
+"64位，此 DataHub 协定支持 Mac OS X 强制启用。\n"
+"通常已启用，但有时可能遗漏，可在屏幕 warning 中查看。"
 
 #. type: "EmuVariableUefi-64_description"
 #: Resources/templates/Localizable.strings:97
@@ -540,41 +541,41 @@ msgid ""
 "Mostly UEFI boot uses hardware NVRAM but in some rare cases this driver is needed.\n"
 "Use it only if you have a problem without it"
 msgstr ""
-"64位，支持 Mac OS X 需要的 NVRAM 變數。\n"
-"大多數的 UEFI boot 使用硬體 NVRAM，但是部份少見案例需要 EmuVariableUefi。\n"
-"建議只在 有問題時，才啓用 EmuVariableUefi。"
+"64位，支持 Mac OS X 需要的 NVRAM 变数。\n"
+"大多数的 UEFI boot 使用硬件NVRAM，但是部份少见案例需要 EmuVariableUefi。\n"
+"建议只在 有问题时，才启用 EmuVariableUefi。"
 
 #. type: "OsxAptioFixDrv-64_description"
 #: Resources/templates/Localizable.strings:100
 #, no-wrap
 msgid "64bit driver to fix Memory problems on UEFI firmware such as AMI Aptio"
-msgstr "64位，提供 UEFI 韌體的 記憶體問題修正，如 AMI Aptio 等。"
+msgstr "64位，提供 UEFI 固件的 内存问题修正，如 AMI Aptio 等。"
 
 #. type: "OsxLowMemFixDrv-64_description"
 #: Resources/templates/Localizable.strings:101
 #, no-wrap
 msgid "Simplified variant of OsxAptioFixDrv, 64bit (do not use both together)"
 msgstr ""
-"64位，提供 UEFI 韌體的 記憶體問題修正，如 AMI Aptio 等。\n"
-"為 OsxAptioFixDrv 的簡化版本，請勿與 OsxAptioFixDrv 同時使用。"
+"64位，提供 UEFI 固件的 内存问题修正，如 AMI Aptio 等。\n"
+"为 OsxAptioFixDrv 的简化版本，请勿与 OsxAptioFixDrv 同时使用。"
 
 #. type: "PartitionDxe-64_description"
 #: Resources/templates/Localizable.strings:102
 #, no-wrap
 msgid "64bit driver to support non-usual partition maps such as: hybrid GPT/MBR or Apple Partition Map."
-msgstr "64位，支持非常態的分割區配置，如 hybrid GPT/MBR 或 Apple Partition Map。"
+msgstr "64位，支持非常态的分区配置，如 hybrid GPT/MBR 或 Apple Partition Map。"
 
 #. type: "Themes_title"
 #: Resources/templates/Localizable.strings:108
 #, no-wrap
 msgid "Themes"
-msgstr "開機主題"
+msgstr "开机主题"
 
 #. type: "Themes_description"
 #: Resources/templates/Localizable.strings:109
 #, no-wrap
 msgid "Select to install themes."
-msgstr "選擇安裝，開機時，顯示的背景主題。"
+msgstr "选择安装，开机时，显示的背景主题。"
 
 #. type: "applestyle_title"
 #: Resources/templates/Localizable.strings:111
@@ -589,8 +590,8 @@ msgid ""
 "AppleStyle theme from Eps,\n"
 "Install to /EFI/CLOVER/themes/applestyle"
 msgstr ""
-"選擇安裝來自 Eps 的 AppleStyle 主題。\n"
-"安裝位置 /EFI/CLOVER/themes/AppleStyle。"
+"选择安装来自 Eps 的 AppleStyle 主题。\n"
+"安装位置 /EFI/CLOVER/themes/AppleStyle。"
 
 #. type: "black_green_title"
 #: Resources/templates/Localizable.strings:115
@@ -605,8 +606,8 @@ msgid ""
 "Default black_green theme from Blackosx,\n"
 "Install to /EFI/CLOVER/themes/black_green"
 msgstr ""
-"選擇安裝來自 Blackosx 的 BlackGreen 主題。\n"
-"安裝位置 /EFI/CLOVER/themes/black_green。"
+"选择安装来自 Blackosx 的 BlackGreen主题。\n"
+"安装位置 /EFI/CLOVER/themes/black_green。"
 
 #. type: "bluemac_title"
 #: Resources/templates/Localizable.strings:119
@@ -621,8 +622,8 @@ msgid ""
 "Bluemac theme from FowZiey,\n"
 "Install to /EFI/CLOVER/themes/bluemac"
 msgstr ""
-"選擇安裝來自 FowZiey 的 Bluemac 主題。\n"
-"安裝位置 /EFI/CLOVER/themes/bluemac。"
+"选择安装来自 FowZiey 的 Bluemac 主题。\n"
+"安装位置 /EFI/CLOVER/themes/bluemac。"
 
 #. type: "bootcamp_title"
 #: Resources/templates/Localizable.strings:123
@@ -637,8 +638,8 @@ msgid ""
 "Bootcamp theme from Bijo,\n"
 "Install to /EFI/CLOVER/themes/bootcamp"
 msgstr ""
-"選擇安裝來自 Bijo 的 BootCamp 主題。\n"
-"安裝位置 /EFI/CLOVER/themes/bootcamp。"
+"选择安装来自 Bijo 的 BootCamp 主题。\n"
+"安装位置 /EFI/CLOVER/themes/bootcamp。"
 
 #. type: "iclover_title"
 #: Resources/templates/Localizable.strings:127
@@ -653,8 +654,8 @@ msgid ""
 "Grey style theme by winlog,\n"
 "Install to /EFI/CLOVER/themes/iclover"
 msgstr ""
-"選擇安裝來自 winlog 的 iClover 主題。\n"
-"安裝位置 /EFI/CLOVER/themes/iclover。"
+"选择安装来自 winlog 的 iClover 主题。\n"
+"安装位置 /EFI/CLOVER/themes/iclover。"
 
 #. type: "magnifico_title"
 #: Resources/templates/Localizable.strings:131
@@ -669,8 +670,8 @@ msgid ""
 "Magnifico theme from Magnifico,\n"
 "Install to /EFI/CLOVER/themes/magnifico"
 msgstr ""
-"選擇安裝來自 Magnifico 的 Magnifico 主題。\n"
-"安裝位置 /EFI/CLOVER/themes/magnifico。"
+"选择安装来自 Magnifico 的 Magnifico 主题。\n"
+"安装位置 /EFI/CLOVER/themes/magnifico。"
 
 #. type: "metal_title"
 #: Resources/templates/Localizable.strings:135
@@ -685,8 +686,8 @@ msgid ""
 "The original metal theme from Slice,\n"
 "Install to /EFI/CLOVER/themes/metal"
 msgstr ""
-"選擇安裝來自 Slice 的原始 Metal 主題。\n"
-"安裝位置 /EFI/CLOVER/themes/metal。"
+"选择安装来自 Slice 的原始 Metal 主题。\n"
+"安装位置 /EFI/CLOVER/themes/metal。"
 
 #. type: "mrengles_title"
 #: Resources/templates/Localizable.strings:139
@@ -701,8 +702,8 @@ msgid ""
 "mrengles theme from mrengles,\n"
 "Install to /EFI/CLOVER/themes/mrengles"
 msgstr ""
-"選擇安裝來自 mrengles 的 Mrengles 主題。\n"
-"安裝位置 /EFI/CLOVER/themes/mrengles。"
+"选择安装来自 mrengles 的 Mrengles 主题。\n"
+"安装位置 /EFI/CLOVER/themes/mrengles。"
 
 #. type: "orange_title"
 #: Resources/templates/Localizable.strings:143
@@ -717,8 +718,8 @@ msgid ""
 "Orange theme from dwm,\n"
 "Install to /EFI/CLOVER/themes/orange"
 msgstr ""
-"選擇安裝來自 dwm 的 Orange 主題。\n"
-"安裝位置 /EFI/CLOVER/themes/orange。"
+"选择安装来自 dwm 的 Orange 主题。\n"
+"安装位置 /EFI/CLOVER/themes/orange。"
 
 #. type: "os_box_title"
 #: Resources/templates/Localizable.strings:147
@@ -733,8 +734,8 @@ msgid ""
 "OS Box theme from Kyndder,\n"
 "Install to /EFI/CLOVER/themes/os_box"
 msgstr ""
-"選擇安裝來自 Kyndder 的 OS Box 主題。\n"
-"安裝位置 /EFI/CLOVER/themes/os_box。"
+"选择安装来自 Kyndder 的 OS Box 主题。\n"
+"安装位置 /EFI/CLOVER/themes/os_box。"
 
 #. type: "os_one_title"
 #: Resources/templates/Localizable.strings:151
@@ -749,8 +750,8 @@ msgid ""
 "OS One theme from Kyndder,\n"
 "Install to /EFI/CLOVER/themes/os_one"
 msgstr ""
-"選擇安裝來自 Kyndder 的 OS One 主題。\n"
-"安裝位置 /EFI/CLOVER/themes/os_one。"
+"选择安装来自 Kyndder 的 OS One 主题。\n"
+"安装位置 /EFI/CLOVER/themes/os_one。"
 
 #. type: "thinkpad_title"
 #: Resources/templates/Localizable.strings:155
@@ -765,8 +766,8 @@ msgid ""
 "ThinkPad theme from Kogen Mantis,\n"
 "Install to /EFI/CLOVER/themes/thinkpad"
 msgstr ""
-"選擇安裝來自 Kogen Mantis 的 ThinkPad 主題。\n"
-"安裝位置 /EFI/CLOVER/themes/thinkpad。"
+"选择安装来自 Kogen Mantis 的 ThinkPad 主题。\n"
+"安装位置 /EFI/CLOVER/themes/thinkpad。"
 
 #. type: "buttons_title"
 #: Resources/templates/Localizable.strings:159
@@ -781,8 +782,8 @@ msgid ""
 "Buttons theme from Trauma,\n"
 "Install to /EFI/CLOVER/themes/buttons."
 msgstr ""
-"選擇安裝來自 Trauma 的 Buttons 主題。\n"
-"安裝位置 /EFI/CLOVER/themes/buttons。"
+"选择安装来自 Trauma 的 Buttons 主题。\n"
+"安装位置 /EFI/CLOVER/themes/buttons。"
 
 #. type: "hellfire_title"
 #: Resources/templates/Localizable.strings:163
@@ -797,8 +798,8 @@ msgid ""
 "Hellfire theme from lllevelll,\n"
 "Install to /EFI/CLOVER/themes/hellfire."
 msgstr ""
-"選擇安裝來自 illevelll 的 Hellfire 主題。\n"
-"安裝位置 /EFI/CLOVER/themes/hellfire。"
+"选择安装来自 illevelll 的 Hellfire 主题。\n"
+"安装位置 /EFI/CLOVER/themes/hellfire。"
 
 #. type: "simple_gray_title"
 #: Resources/templates/Localizable.strings:167
@@ -813,8 +814,8 @@ msgid ""
 "Simple_gray theme from hijeane,\n"
 "Install to /EFI/CLOVER/themes/simple_gray."
 msgstr ""
-"選擇安裝來自 hijeane 的 SimpleGray 主題。\n"
-"安裝位置 /EFI/CLOVER/themes/simple_gray."
+"选择安装来自 hijeane 的 SimpleGray 主题。\n"
+"安装位置 /EFI/CLOVER/themes/simple_gray。"
 
 #. type: "wooden_title"
 #: Resources/templates/Localizable.strings:171
@@ -829,14 +830,14 @@ msgid ""
 "Wooden theme from iROOTa,\n"
 "Install to /EFI/CLOVER/themes/wooden."
 msgstr ""
-"選擇安裝來自 iROOTa 的 Wooden 主題。\n"
-"安裝位置 /EFI/CLOVER/themes/wooden。"
+"选择安装来自 iROOTa 的 Wooden 主题。\n"
+"安装位置 /EFI/CLOVER/themes/wooden。"
 
 #. type: "rc.scripts.on.target_title"
 #: Resources/templates/Localizable.strings:178
 #, no-wrap
 msgid "Install RC scripts on target volume"
-msgstr "安裝 RC scripts 到目標磁區"
+msgstr "安装 RC scripts 到目标磁区"
 
 #. type: "rc.scripts.on.target_description"
 #: Resources/templates/Localizable.strings:179
@@ -845,38 +846,38 @@ msgid ""
 "Install all RC scripts on target volume.\n"
 "The target volume must be a bootable OSX system volume."
 msgstr ""
-"安裝全部 RC scripts 到目標磁區。\n"
-"目標磁區必須是 可開機的 OSX 磁區。"
+"安装全部 RC scripts 到目标磁区。\n"
+"目标磁区必须是 可开机的 OSX 磁区。"
 
 #. type: "rc.scripts.on.all.volumes_title"
 #: Resources/templates/Localizable.strings:181
 #, no-wrap
 msgid "Install all RC scripts on all other bootable OSX volumes"
-msgstr "安裝全部 RC scripts 到全部可開機的 OSX 磁區"
+msgstr "安装全部 RC scripts 到全部可开机的 OSX 磁区"
 
 #. type: "rc.scripts.on.all.volumes_description"
 #: Resources/templates/Localizable.strings:182
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
-msgstr "安裝全部 RC scripts 到全部內置可開機的 OSX 磁區。"
+msgstr "安装全部 RC scripts 到全部内置可开机的 OSX 磁区。"
 
 #. type: "Optional RC Scripts"
 #: Resources/templates/Localizable.strings:183
 #, no-wrap
 msgid "Optional RC Scripts"
-msgstr "選擇安裝 RC Scripts"
+msgstr "选择安装 RC Scripts"
 
 #. type: "disable_sleep_proxy_client_description"
 #: Resources/templates/Localizable.strings:184
 #, no-wrap
 msgid "Disable the mDNSResponder sleep proxy client service. This will prevent the system waking from sleep every hours"
-msgstr "停用 mDNSResponder 休眠 proxy client 服務，可以避免系統休眠時，每小時自動喚醒。"
+msgstr "停用 mDNSResponder 休眠 proxy client 服务，可以避免系统休眠时，每小时自动唤醒。"
 
 #. type: "CloverPrefpane_title"
 #: Resources/templates/Localizable.strings:189
 #, no-wrap
 msgid "Install Clover Preference Pane"
-msgstr "安裝 Clover 系統偏好設定 面板"
+msgstr "安装 Clover 系统偏好设置 面板"
 
 #. type: "CloverPrefpane_description"
 #: Resources/templates/Localizable.strings:190
@@ -885,8 +886,8 @@ msgid ""
 "Install Clover Preference Pane on target volume.\n"
 "Include CloverUpdater that can notify you about Clover updates."
 msgstr ""
-"安裝 Clover 系統偏好設定 面板 到選擇磁區。\n"
-"包含 可提醒 Clover 更新訊息的 Clover 更新軟體。"
+"安装 Clover 系统偏好设置 面板 到选择磁区。 \n"
+"包含可提醒 Clover 更新信息的 Clover 更新软体。"
 
 #. type: "371.title"
 #: ../CloverUpdater/CloverUpdater.strings:1
@@ -894,43 +895,43 @@ msgstr ""
 #: ../CloverUpdater/CloverUpdater.strings:5
 #, no-wrap
 msgid "CloverUpdater"
-msgstr "Clover 更新軟體"
+msgstr "Clover 更新软件"
 
 #. type: "58.title"
 #: ../CloverUpdater/CloverUpdater.strings:3
 #, no-wrap
 msgid "About CloverUpdater"
-msgstr "關於 Clover 更新軟體"
+msgstr "关于 Clover 更新软件"
 
 #. type: "136.title"
 #: ../CloverUpdater/CloverUpdater.strings:4
 #, no-wrap
 msgid "Quit CloverUpdater"
-msgstr "離開 Clover 更新軟體"
+msgstr "离开 Clover 更新软件"
 
 #. type: "534.title"
 #: ../CloverUpdater/CloverUpdater.strings:6
 #, no-wrap
 msgid "Current local Clover revision:"
-msgstr "目前本地 Clover 修訂版本："
+msgstr "当前本地 Clover 修订版本："
 
 #. type: "538.title"
 #: ../CloverUpdater/CloverUpdater.strings:7
 #, no-wrap
 msgid "Latest update revision:"
-msgstr "最近更新之修訂版本："
+msgstr "最近更新之修订版本："
 
 #. type: "542.title"
 #: ../CloverUpdater/CloverUpdater.strings:8
 #, no-wrap
 msgid "Do you want to update ?"
-msgstr "您想要更新嗎？"
+msgstr "您想要更新吗？"
 
 #. type: "546.title"
 #: ../CloverUpdater/CloverUpdater.strings:9
 #, no-wrap
 msgid "Not now"
-msgstr "暫時不要"
+msgstr "暂时不要"
 
 #. type: "548.title"
 #: ../CloverUpdater/CloverUpdater.strings:10
@@ -948,7 +949,7 @@ msgstr "Clover"
 #: ../CloverPrefpane/CloverPrefpane.strings:2
 #, no-wrap
 msgid "Never"
-msgstr "永遠不要"
+msgstr "永远不要"
 
 #. type: "205.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:3
@@ -960,13 +961,13 @@ msgstr "每日"
 #: ../CloverPrefpane/CloverPrefpane.strings:4
 #, no-wrap
 msgid "Weekly"
-msgstr "每週"
+msgstr "每周"
 
 #. type: "217.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:5
 #, no-wrap
 msgid "Hourly"
-msgstr "每小時"
+msgstr "每小时"
 
 #. type: "239.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:6
@@ -978,103 +979,105 @@ msgstr "每月"
 #: ../CloverPrefpane/CloverPrefpane.strings:7
 #, no-wrap
 msgid "Check for Updates"
-msgstr "檢查更新"
+msgstr "检查更新"
 
 #. type: "243.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:8
 #, no-wrap
 msgid "Schedule Check Updates Every:"
-msgstr "檢查更新排程："
+msgstr "检查更新排程："
 
 #. type: "248.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:9
 #, no-wrap
 msgid "Last check:"
-msgstr "最近檢查："
+msgstr "最近检查："
 
 #. type: "258.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:10
 #, no-wrap
 msgid "Check Now"
-msgstr "立刻檢查"
+msgstr "立刻检查"
 
 #. type: "262.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:11
 #, no-wrap
 msgid "Copyright (c) 2013 JrCs, kozlek\\nAll Rights Reserved"
-msgstr "版權所有 (C) 2013 JrCs, kozlek\\n保留所有權利"
+msgstr ""
+"版权所有 (C) 2013 JrCs, kozlek\n"
+"保留所有权利"
 
 #. type: "294.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:12
 #, no-wrap
 msgid "NVRam Variables"
-msgstr "NVRam 變數"
+msgstr "NVRam 变量"
 
 #. type: "295.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:13
 #, no-wrap
 msgid "General"
-msgstr "一般設定"
+msgstr "常规"
 
 #. type: "298.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:14
 #, no-wrap
 msgid "Revisions"
-msgstr "修訂版本"
+msgstr "修订版本"
 
 #. type: "300.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:15
 #, no-wrap
 msgid "Current booted revision:"
-msgstr "目前啓動的修訂版本："
+msgstr "当前启动的修订版本："
 
 #. type: "302.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:16
 #, no-wrap
 msgid "Last installed revision:"
-msgstr "最近安裝的修訂版本："
+msgstr "最近安装的修订版本："
 
 #. type: "309.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:17
 #, no-wrap
 msgid "Log Files"
-msgstr "紀錄檔案"
+msgstr "纪录文件"
 
 #. type: "314.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:18
 #, no-wrap
 msgid "Number of lines of history to keep in CloverEFI/system.log file in addition to the current CloverEFI/boot.log contents"
-msgstr "現有 CloverEFI/boot.log 內容以外，保存在 CloverEFI/system.log 的行數歷史紀錄"
+msgstr "现有 CloverEFI/boot.log 内容以外，保存在 CloverEFI/system.log 的行数历史纪录"
 
 #. type: "327.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:19
 #, no-wrap
 msgid "Advanced Configurations"
-msgstr "進階組態設定"
+msgstr "高级配置"
 
 #. type: "332.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
 msgid "Force mount selected ESP at startup:"
-msgstr "啓動時 強制裝載選定的 ESP 磁區:"
+msgstr "启动时 强制装载选定的 ESP 磁区:"
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "Save NVRAM contents to partition:"
-msgstr "儲存 NVRAM 內容到磁區:"
+msgstr "储存 NVRAM 内容到磁区:"
 
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:22
 #, no-wrap
 msgid "Theme"
-msgstr "開機主題"
+msgstr "开机主题"
 
 #. type: "392.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:23
 #, no-wrap
 msgid "Clover Theme"
-msgstr "Clover 主題"
+msgstr "Clover 主题"
 
 #. type: "399.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:24
@@ -1092,85 +1095,85 @@ msgstr "年份："
 #: ../CloverPrefpane/CloverPrefpane.strings:26
 #, no-wrap
 msgid "To see previews of themes you must select the path to the EFI folder."
-msgstr "必須選擇 EFI 資料夾路徑，才能預覽開機主題"
+msgstr "必须选择EFI 文件夹路径，才能预览开机主题"
 
 #. type: "426.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:27
 #, no-wrap
 msgid "Theme:"
-msgstr "開機主題"
+msgstr "开机主题"
 
 #. type: "429.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:28
 #, no-wrap
 msgid "No Preview Available"
-msgstr "沒有可用的預覽"
+msgstr "没有可用的预览"
 
 #. type: "431.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:29
 #, no-wrap
 msgid "Mounting the ESP partition on boot"
-msgstr "開機時，裝載 ESP 分割區。"
+msgstr "开机时，装载 ESP 分区。"
 
 #. type: "452.ibShadowedToolTip"
 #: ../CloverPrefpane/CloverPrefpane.strings:30
 #, no-wrap
 msgid "Where to save the nvram contents"
-msgstr "儲存 nvram 內容的位置"
+msgstr "储存 nvram 内容的位置"
 
 #. type: "483.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:31
 #, no-wrap
 msgid "Number of history boot log lines to keep:"
-msgstr "保存的歷史開機紀錄行數:"
+msgstr "保存的历史开机日志行数:"
 
 #. type: "522.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot"
-msgstr "每次開機時 建立 CloverEFI/boot.log 檔案的時間戳"
+msgstr "每次开机时建立CloverEFI/boot.log 文件的时间戳"
 
 #. type: "525.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
 msgid "Number of timestamp boot.log files to keep:"
-msgstr "保存時間戳 boot.log 檔案的數量:"
+msgstr "保存时间戳 boot.log 文件的数量:"
 
 #. type: "555.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
 #, no-wrap
 msgid "Backup"
-msgstr "備份"
+msgstr "备份"
 
 #. type: "557.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
 #, no-wrap
 msgid "On install backup EFI folder to destination volume"
-msgstr "安裝時 備份 EFI 資料夾到目標磁區"
+msgstr "安装时 备份 EFI 文件夹到目标磁区"
 
 #. type: "560.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:36
 #, no-wrap
 msgid "Number of backups to keep:"
-msgstr "保存的備份數量:"
+msgstr "保存的备份数量:"
 
 #. type: "567.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:37
 #, no-wrap
 msgid "EFI Folder path"
-msgstr "EFI 資料夾路徑："
+msgstr "EFI 文件夹路径："
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:1
 #, no-wrap
 msgid "Boot Volume"
-msgstr "開機磁區"
+msgstr "开机磁区"
 
 #. type: "Default"
 #: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
 msgid "Default"
-msgstr "預設"
+msgstr "默认"
 
 #. type: "ESP on [%@] %@"
 #: ../CloverPrefpane/Localizable.strings:3
@@ -1189,25 +1192,25 @@ msgstr "否"
 #, fuzzy, no-wrap
 #| msgid "No description"
 msgid "No description available"
-msgstr "未有描述"
+msgstr "无描述"
 
 #. type: "Nowhere"
 #: ../CloverPrefpane/Localizable.strings:6
 #, no-wrap
 msgid "Nowhere"
-msgstr "不顯示"
+msgstr "不显示"
 
 #. type: "Select the EFI directory"
 #: ../CloverPrefpane/Localizable.strings:7
 #, no-wrap
 msgid "Select the EFI directory"
-msgstr "選擇 EFI 資料夾"
+msgstr "选择 EFI 目录"
 
 #. type: "Set EFI directory"
 #: ../CloverPrefpane/Localizable.strings:8
 #, no-wrap
 msgid "Set EFI directory"
-msgstr "設定 EFI 資料夾"
+msgstr "设置 EFI 目录"
 
 #. type: "Unknown"
 #: ../CloverPrefpane/Localizable.strings:9
@@ -1216,7 +1219,7 @@ msgid "Unknown"
 msgstr "未知"
 
 #~ msgid "Number of timestamp boot.log files to keep."
-#~ msgstr "保存的 時間戳 boot.log 的檔案數量"
+#~ msgstr "保存时间戳 boot.log 文件的数量:"
 
 #~ msgid "CLOVER"
 #~ msgstr "CLOVER"
@@ -1227,15 +1230,19 @@ msgstr "未知"
 #~ "number of timestamp boot.log files to keep.\\n\\nA blank value result in "
 #~ "NO creation of timestamp boot.log file"
 #~ msgstr ""
-#~ "每次開機建立 CloverEFI/boot.log 檔案\\n\\nValue:\\n* Yes: 建立新的 boot."
-#~ "log 檔案\\n* Number: 保存 boot.log 檔案的數量。\\n\\n空白表示不建立 boot."
-#~ "log 檔案"
+#~ "每次开机创建 CloverEFI/boot.log 文件\n"
+#~ "\n"
+#~ "Value:\n"
+#~ "* Yes: 创建新的 boot.log 文件\n"
+#~ "* Number: 保存 boot.log 文件的数量。\n"
+#~ "\n"
+#~ "空白表示不创建 boot.log 文件"
 
 #~ msgid "LogLineCount:"
-#~ msgstr "紀錄行數："
+#~ msgstr "纪录行数："
 
 #~ msgid "LogEveryBoot:"
-#~ msgstr "紀錄每次開機："
+#~ msgstr "纪录每次开机："
 
 #~ msgid "MountEFI:"
 #~ msgstr "MountEFI:"
@@ -1244,10 +1251,10 @@ msgstr "未知"
 #~ msgstr "NVRamDisk:"
 
 #~ msgid "Install CloverUpdater"
-#~ msgstr "安裝 Clover更新軟體"
+#~ msgstr "安装 Clover更新软件"
 
 #~ msgid "BIOS MBR boot0 (HFS+Fat32)"
-#~ msgstr "BIOS 安裝 boot0 (HFS+Fat32)"
+#~ msgstr "BIOS 安装 boot0 (HFS+Fat32)"
 
 #~ msgid ""
 #~ "Used for BIOS booting on BIOS motherboards.\n"
@@ -1263,19 +1270,19 @@ msgstr "未知"
 #~ "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
 #~ "  5. diskutil mount /dev/rdisk9s1"
 #~ msgstr ""
-#~ "使用 fdisk440 將 boot0 寫入 MBR 的前 440 位元，避免損壞已經存在的 Windows "
-#~ "機碼，boot0 會在第一個 HFS 啟動 分割區開始搜尋 boot1h2，或在第一個 Fat32 "
-#~ "啟動 分割區搜尋 boot1f32alt。\n"
-#~ "本安裝將 會 設定 HFS 及 Fat32 安裝分割區為啟動分割區。\n"
-#~ "必須在 Win 先將分割區格式化為 Fat32 格式分割區，或在 Mac 操作如下\n"
-#~ " 1. 先用 磁碟工具 清除 為 MS-DOS (FAT) 格式\n"
+#~ "使用 fdisk440 将 boot0 写入 MBR 的前 440 位元，避免损坏已经存在的 Windows "
+#~ "机码，boot0 会在第一个 HFS 激活 分区开始搜寻 boot1h2，或在第一个 Fat32 激"
+#~ "活 分区搜寻 boot1f32alt。\n"
+#~ "本安装将 会 设置 HFS 及 Fat32 安装分区为激活分区。\n"
+#~ "必须在 Win 先将分区格式化为 Fat32 格式分区，或在 Mac 操作如下\n"
+#~ " 1. 先用 磁碟工具 抹掉 为 MS-DOS (FAT) 格式\n"
 #~ " 2. diskutil list\n"
 #~ " 3. diskutil unmount /dev/rdisk9s1\n"
 #~ " 4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
 #~ " 5. diskutil mount /dev/rdisk9s1"
 
 #~ msgid "BIOS MBR boot0hfs (HFS+Fat32)"
-#~ msgstr "BIOS 安裝 boot0hfs (HFS+Fat32)"
+#~ msgstr "BIOS 安装 boot0hfs (HFS+Fat32)"
 
 #~ msgid ""
 #~ "Used for BIOS booting on BIOS motherboards.\n"
@@ -1292,20 +1299,20 @@ msgstr "未知"
 #~ "  4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
 #~ "  5. diskutil mount /dev/rdisk9s1"
 #~ msgstr ""
-#~ "使用 fdisk440 將 boot0hfs 寫入 MBR 的前 440 位元，避免損壞已經存在的 "
-#~ "Windows 機碼，boot0hfs 會在第一個 HFS 分割區開始搜尋 boot1h2，或在第一個 "
-#~ "Fat32 啟動 分割區搜尋 boot1f32alt。\n"
-#~ "本安裝將 不會 設定 HFS 安裝分割區為啟動分割區，\n"
-#~ "本安裝將 會 設定 Fat32 安裝分割區為啟動分割區。\n"
-#~ "必須在 Win 先將分割區格式化為 Fat32 格式分割區，或在 Mac 操作如下\n"
-#~ " 1. 先用 磁碟工具 清除 為 MS-DOS (FAT) 格式\n"
+#~ "使用 fdisk440 将 boot0hfs 写入 MBR 的前 440 位元，避免损坏已经存在的 "
+#~ "Windows 机码，boot0hfs 会在第一个 HFS 分区开始搜寻 boot1h2，或在第一个 "
+#~ "Fat32 激活 分区搜寻 boot1f32alt。\n"
+#~ "本安装将 不会 设置 HFS 安装分区为激活分区，\n"
+#~ "本安装将 会 设置 Fat32 安装分区为激活分区。\n"
+#~ "必须在 Win 先将分区格式化为 Fat32 格式分区，或在 Mac 操作如下\n"
+#~ " 1. 先用 磁碟工具 抹掉 为 MS-DOS (FAT) 格式\n"
 #~ " 2. diskutil list\n"
 #~ " 3. diskutil unmount /dev/rdisk9s1\n"
 #~ " 4. newfs_msdos -v Fat32 -F 32 /dev/rdisk9s1\n"
 #~ " 5. diskutil mount /dev/rdisk9s1"
 
 #~ msgid "Ps2MouseAbsolutePointerDxe-32_description"
-#~ msgstr "32位，PS/2 滑鼠 驅動。"
+#~ msgstr "32位，PS/2 鼠标 驱动。"
 
 #~ msgid "XhciDxe-64_description"
-#~ msgstr "64位，XHCI 高速USB 3.0 驅動。"
+#~ msgstr "64位，XHCI 高速USB 3.0 驱动。"
