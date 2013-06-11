@@ -28,17 +28,14 @@
 
 @property (nonatomic,retain) IBOutlet NSMutableDictionary *themeInfo;
 
-@property (nonatomic,retain) IBOutlet NSNumber* cloverLogLineCount;
+@property (nonatomic,retain) IBOutlet NSMutableDictionary* nvram;
+
 @property (nonatomic,retain) IBOutlet NSNumber* cloverLogEveryBootEnabled;
 @property (nonatomic,retain) IBOutlet NSNumber* cloverLogEveryBootLimit;
-@property (nonatomic,retain) IBOutlet NSNumber* cloverBackupDirOnDestVol;
-@property (nonatomic,retain) IBOutlet NSNumber* cloverKeepBackupLimit;
 
 @property (nonatomic,readonly,copy) IBOutlet NSDictionary* diskutilList;
 @property (nonatomic,readonly,copy) IBOutlet NSArray* efiPartitions;
 @property (nonatomic,readonly,copy) IBOutlet NSArray* nvRamPartitions;
-@property (nonatomic,copy) IBOutlet NSString* cloverMountEfiPartition;
-@property (nonatomic,copy) IBOutlet NSString* cloverNvRamDisk;
 
 
 - (id)        initWithBundle:(NSBundle *)bundle;
@@ -49,9 +46,12 @@
 - (IBAction)  showPathOpenPanel:(id)sender;
 - (IBAction)  themeComboBox:(NSComboBox*)sender;
 - (void)      initThemeTab:(NSString*)efiDir;
+- (NSString*) getCloverNVRam:(const NSString*)key;
 - (NSString*) getNVRamKey:(const NSString*)key;
 - (OSErr)     setNVRamKey:(const NSString*)key Value:(NSString*)value;
 - (void)      updateThemeTab:(NSString*) themeName;
+- (IBAction)  updateCloverLogEveryBoot:(id)sender;
+- (IBAction)  updateCloverNVRamVariables:(id)sender;
 
 - (BOOL)isUnlocked;
 

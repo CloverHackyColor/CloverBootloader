@@ -18,26 +18,21 @@ static const CFStringRef checkIntervalKey=CFSTR("ScheduledCheckInterval");
 static const CFStringRef lastCheckTimestampKey=CFSTR("LastCheckTimestamp");
 static const CFStringRef efiDirPathKey=CFSTR("EFI Directory Path");
 
-static const NSString* kLogLineCount = @"Clover.LogLineCount";
-static const NSString* kLogEveryBoot = @"Clover.LogEveryBoot";
-static const NSString* kBackupDirOnDestVol = @"Clover.BackupDirOnDestVol";
-static const NSString* kKeepBackupLimit = @"Clover.KeepBackupLimit";
-static const NSString* kMountEFI = @"Clover.MountEFI";
-static const NSString* kNVRamDisk = @"Clover.NVRamDisk";
+static NSString* kLogLineCount = @"LogLineCount";
+static NSString* kLogEveryBoot = @"LogEveryBoot";
+static NSString* kBackupDirOnDestVol = @"BackupDirOnDestVol";
+static NSString* kKeepBackupLimit = @"KeepBackupLimit";
+static NSString* kMountEFI = @"MountEFI";
+static NSString* kNVRamDisk = @"NVRamDisk";
 
 @implementation CloverPrefpane
 
-@synthesize cloverLogLineCount        = _cloverLogLineCount;
 @synthesize cloverLogEveryBootEnabled = _cloverLogEveryBootEnabled;
 @synthesize cloverLogEveryBootLimit   = _cloverLogEveryBootLimit;
-@synthesize cloverBackupDirOnDestVol  = _cloverBackupDirOnDestVol;
-@synthesize cloverKeepBackupLimit     = _cloverKeepBackupLimit;
 
-@synthesize diskutilList  = _diskutilList;
-@synthesize efiPartitions = _efiPartitions;
+@synthesize diskutilList    = _diskutilList;
+@synthesize efiPartitions   = _efiPartitions;
 @synthesize nvRamPartitions = _nvRamPartitions;
-@synthesize cloverMountEfiPartition = _cloverMountEfiPartition;
-@synthesize cloverNvRamDisk = _cloverNvRamDisk;
 
 #pragma mark Properties
 
@@ -215,20 +210,7 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
     return _nvRamPartitions;
 }
 
--(void)setCloverLogLineCount:(NSNumber *)value
-{
-    if (!value)
-        value = [NSNumber numberWithInt:0];
-    if (![self.cloverLogLineCount isEqualToNumber:value]) {
-        [_cloverLogLineCount release];
-        _cloverLogLineCount = [value retain];
-
-        [self setNVRamKey:kLogLineCount
-                    Value:[NSString stringWithFormat:@"%ld", [value longValue]]];
-    }
-}
-
--(void)updateCloverLogEveryBoot
+-(IBAction)updateCloverLogEveryBoot:(id)sender
 {
     NSString* logEveryBoot;
     if ([self.cloverLogEveryBootEnabled boolValue] == YES) {
@@ -242,68 +224,21 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
     else
         logEveryBoot=@"";
 
-    [self setNVRamKey:kLogEveryBoot Value:logEveryBoot];
+    [self.nvram setValue:logEveryBoot forKey:kLogEveryBoot];
+    [self updateCloverNVRamVariables:nil];
 }
 
-- (void)setCloverLogEveryBootEnabled:(NSNumber *)value
-{
-    if (![_cloverLogEveryBootEnabled isEqualToNumber:value]) {
-        [_cloverLogEveryBootEnabled release];
-        _cloverLogEveryBootEnabled = [value retain];
-        [self updateCloverLogEveryBoot];
-    }
-}
+- (IBAction)updateCloverNVRamVariables:(id)sender {
+    Class boolClass = [[NSNumber numberWithBool:YES] class];
 
-- (void)setCloverLogEveryBootLimit:(NSNumber *)value
-{
-    if (![self.cloverLogEveryBootLimit isEqualToNumber:value]) {
-        [_cloverLogEveryBootLimit release];
-        _cloverLogEveryBootLimit = [value retain];
-        [self updateCloverLogEveryBoot];
-    }
-}
-
--(void)setCloverBackupDirOnDestVol:(NSNumber *)value
-{
-    if (!value)
-        value = [NSNumber numberWithBool:NO];
-    if (![self.cloverBackupDirOnDestVol isEqualToNumber:value]) {
-        [_cloverBackupDirOnDestVol release];
-        _cloverBackupDirOnDestVol = [value retain];
-        NSString *backupDirOnDestVol = [value boolValue] ? @"Yes" : @"";
-        [self setNVRamKey:kBackupDirOnDestVol
-                    Value:backupDirOnDestVol];
-    }
-}
-
-- (void)setCloverKeepBackupLimit:(NSNumber *)value
-{
-    if (!value)
-        value = [NSNumber numberWithInt:0];
-    if (![self.cloverKeepBackupLimit isEqualToNumber:value]) {
-        [_cloverKeepBackupLimit release];
-        _cloverKeepBackupLimit = [value retain];
-        [self setNVRamKey:kKeepBackupLimit
-                    Value:[NSString stringWithFormat:@"%@", value]];
-    }
-}
-
-
--(void)setCloverMountEfiPartition:(NSString *)value
-{
-    if (_cloverMountEfiPartition != value) {
-        [_cloverMountEfiPartition release];
-        _cloverMountEfiPartition = [value copy];
-        [self setNVRamKey:kMountEFI Value:value];
-    }
-}
-
--(void)setCloverNvRamDisk:(NSString *)value
-{
-    if (_cloverNvRamDisk != value) {
-        [_cloverNvRamDisk release];
-        _cloverNvRamDisk = [value copy];
-        [self setNVRamKey:kNVRamDisk Value:value];
+    for (id key in [self.nvram allKeys]) {
+        id value = [self.nvram valueForKey:key];
+        if ([value isKindOfClass:boolClass])
+            value = [value  boolValue] ? @"Yes" : @"No";
+        else
+            value = [NSString stringWithFormat:@"%@",value];
+        [self setNVRamKey:[NSString stringWithFormat:@"Clover.%@", key]
+                    Value:value];
     }
 }
 
@@ -453,42 +388,45 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
     }
 }
 
+
 -(void) initNVRamVariableFields
 {
     NSString *value;
+    self.nvram = [NSMutableDictionary dictionaryWithCapacity:16]; // 16 entries for the moment
 
-    value = [self getNVRamKey:kLogLineCount];
-    _cloverLogLineCount = [[NSNumber numberWithLong:[value longLongValue]] retain];
+    value = [self getCloverNVRam:kLogLineCount];
+    [self.nvram setValue:value forKey:kLogLineCount];
 
-    value = [self getNVRamKey:kLogEveryBoot];
+    value = [self getCloverNVRam:kLogEveryBoot];
+    [self.nvram setValue:value
+                  forKey:kLogEveryBoot];
+
     if ([value length] == 0) {
-        _cloverLogEveryBootEnabled = [NSNumber numberWithBool:NO];
-        _cloverLogEveryBootLimit   = [NSNumber numberWithInt:0];
+        self.cloverLogEveryBootEnabled = [NSNumber numberWithBool:NO];
+        self.cloverLogEveryBootLimit   = [NSNumber numberWithInt:0];
     }
     else {
-        _cloverLogEveryBootEnabled = [([value boolValue] ?
-                                       [NSNumber numberWithBool:NO] :
-                                       [NSNumber numberWithBool:YES]) retain];
-        _cloverLogEveryBootLimit   = [[NSNumber numberWithInteger:[value integerValue]] retain];
+        self.cloverLogEveryBootEnabled = [value boolValue] ?
+                                         [NSNumber numberWithBool:YES] :
+                                         [NSNumber numberWithBool:NO];
+        self.cloverLogEveryBootLimit   = [NSNumber numberWithInteger:[value integerValue]];
     }
 
-    value = [self getNVRamKey:kBackupDirOnDestVol];
-    _cloverBackupDirOnDestVol = [([value boolValue] ?
-                                  [NSNumber numberWithBool:YES] :
-                                  [NSNumber numberWithBool:NO]) retain];
+    value = [self getCloverNVRam:kBackupDirOnDestVol];
+    [self.nvram setValue:value
+                  forKey:kBackupDirOnDestVol];
 
-    value = [self getNVRamKey:kKeepBackupLimit];
+    value = [self getCloverNVRam:kKeepBackupLimit];
     if ([value length] == 0)
-        _cloverKeepBackupLimit = [NSNumber numberWithInt:0];
-    else
-        _cloverKeepBackupLimit = [[NSNumber numberWithInteger:[value integerValue]] retain];
+        value = @"0";
+    [self.nvram setValue:value
+                  forKey:kKeepBackupLimit];
 
+    value = [self getCloverNVRam:kMountEFI];
+    [self.nvram setValue:value forKey:kMountEFI];
 
-    value = [self getNVRamKey:kMountEFI];
-    self.cloverMountEfiPartition = value;
-
-    value = [self getNVRamKey:kNVRamDisk];
-    self.cloverNvRamDisk = value;
+    value = [self getCloverNVRam:kNVRamDisk];
+    [self.nvram setValue:value forKey:kNVRamDisk];
 }
 
 
@@ -715,6 +653,11 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
 //
 #pragma mark -
 #pragma mark NVRam methods
+
+// Get Clover NVRAM variable
+-(NSString*) getCloverNVRam:(const NSString*)key {
+    return [self getNVRamKey:[NSString stringWithFormat:@"Clover.%@",key]];
+}
 
 // Get NVRAM value
 -(NSString*) getNVRamKey:(const NSString*)key {
