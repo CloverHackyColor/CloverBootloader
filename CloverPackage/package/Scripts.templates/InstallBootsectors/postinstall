@@ -72,7 +72,7 @@ echo "==============================================="
 echo "Check partition scheme"
 echo "==============================================="
 bootdisk_partition_scheme=$(LC_ALL=C diskutil info "$bootdisk" 2>/dev/null | \
- sed -n 's/.*Content (IOContent): *//p')
+ sed -nE 's/.*(Partition Type|Content \(IOContent\)): *//p')
 
 case "$bootdisk_partition_scheme" in
     FDisk_partition_scheme)
