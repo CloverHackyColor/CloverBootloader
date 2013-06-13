@@ -818,7 +818,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     case OSTYPE_SNOW:
     case OSTYPE_LION:
     case OSTYPE_COUGAR:
-    case OSTYPE_LYNX:
+    case OSTYPE_MAV:
     case OSTYPE_RECOVERY:
     case OSTYPE_BOOT_OSX:
       OSIconName = Volume->OSIconName;
@@ -900,7 +900,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
 #if defined(MDE_CPU_X64)
     SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
     if ((OSType != OSTYPE_COUGAR) &&
-        (OSType != OSTYPE_LYNX)) {      
+        (OSType != OSTYPE_MAV)) {      
       SubEntry->me.Title        = L"Boot Mac OS X (64-bit)";
       SubEntry->me.Tag          = TAG_LOADER;
       SubEntry->LoaderPath      = Entry->LoaderPath;
@@ -916,7 +916,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
 #endif
     
     if ((OSType != OSTYPE_COUGAR) &&
-        (OSType != OSTYPE_LYNX)) {
+        (OSType != OSTYPE_MAV)) {
       SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
       SubEntry->me.Title        = L"Boot Mac OS X (32-bit)";
       SubEntry->me.Tag          = TAG_LOADER;
@@ -935,7 +935,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       
 #if defined(MDE_CPU_X64)
       if ((OSType == OSTYPE_COUGAR) ||
-          (OSType == OSTYPE_LYNX)) {        
+          (OSType == OSTYPE_MAV)) {        
         SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
         SubEntry->me.Title        = L"Boot Mac OS X in verbose mode";
         SubEntry->me.Tag          = TAG_LOADER;
@@ -968,7 +968,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
 #endif
 
       if ((OSType != OSTYPE_COUGAR) &&
-          (OSType != OSTYPE_LYNX)) {
+          (OSType != OSTYPE_MAV)) {
         SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
         SubEntry->me.Title        = L"Boot Mac OS X in verbose mode (32-bit)";
         SubEntry->me.Tag          = TAG_LOADER;

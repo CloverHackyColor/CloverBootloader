@@ -114,7 +114,7 @@ typedef struct {
 #define OSTYPE_SNOW             (16)
 #define OSTYPE_LION             (17)
 #define OSTYPE_COUGAR           (18)
-#define OSTYPE_LYNX             (19)
+#define OSTYPE_MAV             (19)
 #define OSTYPE_HIDE             (100)
 
 

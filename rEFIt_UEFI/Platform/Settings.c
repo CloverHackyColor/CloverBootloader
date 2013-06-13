@@ -2177,12 +2177,12 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
         Volume->OSName = L"ML";
         Status = EFI_SUCCESS;
       } else
-        // Lynx
+        // Mavericks
         if(AsciiStrStr(prop->string, "10.9") != 0){
-          Volume->OSType = OSTYPE_LYNX;
-          Volume->OSIconName = L"lynx";
+          Volume->OSType = OSTYPE_MAV;
+          Volume->OSIconName = L"mav";
           Volume->BootType = BOOTING_BY_EFI;
-          Volume->OSName = L"Lynx";
+          Volume->OSName = L"Mavericks";
           Status = EFI_SUCCESS;
         }
       MsgLog("  Booting OS %a\n", prop->string);
@@ -2686,7 +2686,7 @@ CHAR16* GetExtraKextsDir(REFIT_VOLUME *Volume)
       OSTypeStr = L"10.8";
       break;
       
-    case OSTYPE_LYNX:
+    case OSTYPE_MAV:
       OSTypeStr = L"10.9";
       break;
 

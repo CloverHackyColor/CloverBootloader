@@ -442,41 +442,41 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel)
   UINTN   NumLion_X64 = 0;
   UINTN   NumLion_i386 = 0;
   UINTN   NumML = 0;
-  
+
   DBG_RT("\nPatching kernel for injected kexts\n");
-  
+
   if (is64BitKernel) {
-	NumLion_X64 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBELionSearch_X64, sizeof(KBELionSearch_X64));
-	NumML = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMLSearch, sizeof(KBEMLSearch));
+    NumLion_X64 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBELionSearch_X64, sizeof(KBELionSearch_X64));
+    NumML = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMLSearch, sizeof(KBEMLSearch));
   } else {
-	NumLion_i386 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBELionSearch_i386, sizeof(KBELionSearch_i386));
+    NumLion_i386 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBELionSearch_i386, sizeof(KBELionSearch_i386));
   }
-  
+
   if (NumLion_X64 + NumLion_i386 + NumML > 1) {
-	// more then one pattern found - we do not know what to do with it
-	// and we'll skipp it
-	AsciiPrint("\nERROR patching kernel for injected kexts:\nmultiple patterns found (LionX64: %d, Lioni386: %d, ML: %d) - skipping patching!\n",
-		NumLion_X64, NumLion_i386, NumML);
-	gBS->Stall(10000000);
-	return;
+    // more then one pattern found - we do not know what to do with it
+    // and we'll skipp it
+	  AsciiPrint("\nERROR patching kernel for injected kexts:\nmultiple patterns found (LionX64: %d, Lioni386: %d, ML: %d) - skipping patching!\n",
+               NumLion_X64, NumLion_i386, NumML);
+	  gBS->Stall(10000000);
+	  return;
   }
-  
+
   if (NumLion_X64 == 1) {
-	Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearch_X64, sizeof(KBELionSearch_X64), KBELionReplace_X64, 1);
-	DBG_RT("==> Lion X64: %d replaces done.\n", Num);
+	  Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearch_X64, sizeof(KBELionSearch_X64), KBELionReplace_X64, 1);
+	  DBG_RT("==> Lion X64: %d replaces done.\n", Num);
   }
   else if (NumLion_i386 == 1) {
-	Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearch_i386, sizeof(KBELionSearch_i386), KBELionReplace_i386, 1);
-	DBG_RT("==> Lion i386: %d replaces done.\n", Num);
+	  Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearch_i386, sizeof(KBELionSearch_i386), KBELionReplace_i386, 1);
+    DBG_RT("==> Lion i386: %d replaces done.\n", Num);
   }
   else if (NumML == 1) {
-	Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMLSearch, sizeof(KBEMLSearch), KBEMLReplace, 1);
-	DBG_RT("==> MountainLion X64: %d replaces done.\n", Num);
+    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMLSearch, sizeof(KBEMLSearch), KBEMLReplace, 1);
+    DBG_RT("==> MountainLion X64: %d replaces done.\n", Num);
   }
   else {
-	DBG_RT("==> ERROR: NOT patched - unknown kernel.\n");
+    DBG_RT("==> ERROR: NOT patched - unknown kernel.\n");
   }
-  
+
   if (gSettings.KPDebug) {
     DBG_RT("Pausing 5 secs ...\n");
     gBS->Stall(5000000);
