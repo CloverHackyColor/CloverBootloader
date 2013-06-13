@@ -254,7 +254,8 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
 	}
 	if (gSettings.USBFixOwnership) {
 		// Note: blocks on Aptio
-		DisableUsbLegacySupport();
+//		DisableUsbLegacySupport();
+    FixOwnership();
 	}
 }
 

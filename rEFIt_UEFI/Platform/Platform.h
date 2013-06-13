@@ -1175,7 +1175,7 @@ EFI_STATUS  PrepatchSmbios(VOID);
 VOID        PatchSmbios(VOID);
 VOID        FinalizeSmbios(VOID);
 
-EFI_STATUS  DisableUsbLegacySupport(VOID);
+EFI_STATUS  FixOwnership(VOID);
 
 UINT8		    *Base64Decode(IN CHAR8 *EncodedData, OUT UINTN *DecodedSize);
 

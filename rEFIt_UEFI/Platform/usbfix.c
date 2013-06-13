@@ -29,9 +29,7 @@
 #define OHCI_INTRSTATUS		0x0c
 
 EFI_STATUS
-DisableUsbLegacySupport(
-						VOID
-						)
+FixOwnership(VOID)
 /*++
  
  Routine Description:
