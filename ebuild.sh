@@ -26,6 +26,7 @@ export BUILDTHREADS=$(( NUMBER_OF_CPUS + 1 ))
 export WORKSPACE=${WORKSPACE:-}
 
 VBIOSPATCHCLOVEREFI=0
+ONLYSATA0PATCH=0
 USE_BIOS_BLOCKIO=0
 
 # Bash options
@@ -132,6 +133,7 @@ usage() {
     echo "Options:"
     print_option_help "-D MACRO, --define=MACRO" "Macro: \"Name[=Value]\"."
     print_option_help "--vbios-patch-cloverefi" "activate vbios patch in CloverEFI"
+    print_option_help "--only-sata0" "activate only SATA0 patch"
     echo
     echo "Report bugs to http://www.projectosx.com/forum/index.php?showtopic=2490"
 }
@@ -197,6 +199,9 @@ checkCmdlineArguments() {
                 ;;
             --vbios-patch-cloverefi)
                 VBIOSPATCHCLOVEREFI=1
+                ;;
+            --only-sata0)
+                ONLYSATA0PATCH=1
                 ;;
             -h | -\? | -help | --help)
                 usage && exit 0
@@ -309,6 +314,7 @@ MainBuildScript() {
     # Apply options
     [[ "$USE_BIOS_BLOCKIO" -ne 0 ]]    && addEdk2BuildMacro 'USE_BIOS_BLOCKIO'
     [[ "$VBIOSPATCHCLOVEREFI" -ne 0 ]] && addEdk2BuildMacro 'ENABLE_VBIOS_PATCH_CLOVEREFI'
+    [[ "$ONLYSATA0PATCH" -ne 0 ]] && addEdk2BuildMacro 'ONLY_SATA_0'
 
     local cmd="build ${EDK2_BUILD_OPTIONS[@]}"
     cmd="$cmd -p $PLATFORMFILE -a $TARGETARCH -b $BUILDTARGET"
