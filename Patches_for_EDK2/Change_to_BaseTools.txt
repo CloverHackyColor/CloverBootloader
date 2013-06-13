@@ -1,0 +1,16 @@
+Some changes are necessary to compile EDK2 BaseTools in Mavericks with XCode 5 DP:
+
+1. BaseTools/Source/C/VfrCompile/VrfFormPkg.cpp
+[code]IN UINT32 BufferSize = 4096[/code]
+to 
+[code]IN UINT32 BufferSize[/code]
+2. BaseTools/Source/C/VfrCompile/VrfFormPkg.h
+[code]CFormPkg (IN UINT32 BufferSize);[/code] 
+to
+[code]CFormPkg (IN UINT32 BufferSize = 4096);[/code]
+3. BaseTools/Source/C/Makefiles/header.makefile
+[code]CFLAGS = -MD -fshort-wchar -fno-strict-aliasing -fno-merge-constants -nostdlib -Wall -Werror -c -g[/code]
+to
+[code]CFLAGS = -MD -fshort-wchar -fno-strict-aliasing -nostdlib -Wall -Werror -c -g -Wno-tautological-compare -Wno-self-assign -Wno-deprecated-declarations[/code]
+
+PS: Thanks pene for the support. :P
