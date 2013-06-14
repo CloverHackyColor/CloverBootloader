@@ -37,10 +37,10 @@
 		A3340A5D1733DDF80065BC3F /* CloverPrefpane.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = CloverPrefpane.tiff; sourceTree = "<group>"; };
 		A3340A72173417EF0065BC3F /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = /System/Library/Frameworks/ServiceManagement.framework; sourceTree = "<absolute>"; };
 		A34A279E175CA91C005E486D /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
-		A34A27A5175CAB0C005E486D /* zh_TW */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "zh_TW"; path = "zh_TW.lproj/CloverPrefpane.xib"; sourceTree = "<group>"; };
-		A34A27A6175CAB0C005E486D /* zh_TW */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh_TW"; path = "zh_TW.lproj/Localizable.strings"; sourceTree = "<group>"; };
-		A34A27A8175CAC90005E486D /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "zh_CN"; path = "zh_CN.lproj/CloverPrefpane.xib"; sourceTree = "<group>"; };
-		A34A27A9175CAC90005E486D /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh_CN"; path = "zh_CN.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		A34A27A5175CAB0C005E486D /* zh_TW */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = zh_TW; path = zh_TW.lproj/CloverPrefpane.xib; sourceTree = "<group>"; };
+		A34A27A6175CAB0C005E486D /* zh_TW */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh_TW; path = zh_TW.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A34A27A8175CAC90005E486D /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = zh_CN; path = zh_CN.lproj/CloverPrefpane.xib; sourceTree = "<group>"; };
+		A34A27A9175CAC90005E486D /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh_CN; path = zh_CN.lproj/Localizable.strings; sourceTree = "<group>"; };
 		A34F4988175CB7D500790888 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = "pt-BR"; path = "pt-BR.lproj/CloverPrefpane.xib"; sourceTree = "<group>"; };
 		A34F4989175CB7D500790888 /* pt-BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "pt-BR"; path = "pt-BR.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		A356D74A1753ED280047BAC4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -250,8 +250,8 @@
 				pt,
 				"pt-BR",
 				ja,
-				"zh_TW",
-				"zh_CN",
+				zh_TW,
+				zh_CN,
 			);
 			mainGroup = A38BDC481733968700DE7DA1;
 			productRefGroup = A38BDC541733968700DE7DA1 /* Products */;

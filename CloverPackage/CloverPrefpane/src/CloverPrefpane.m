@@ -34,6 +34,9 @@ static NSString* kNVRamDisk = @"NVRamDisk";
 @synthesize efiPartitions   = _efiPartitions;
 @synthesize nvRamPartitions = _nvRamPartitions;
 
+@synthesize nvram = _nvram;
+@synthesize themeInfo = _themeInfo;
+
 #pragma mark Properties
 
 - (NSDictionary *)diskutilList

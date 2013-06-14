@@ -416,15 +416,23 @@ EFI_STATUS InjectKexts(/*IN EFI_MEMORY_DESCRIPTOR *Desc*/ IN UINT32 deviceTreeP,
 // KernelBooterExtensionsPatch to load extra kexts besides kernelcache
 //
 // 
+UINT8   KBESnowSearch_i386[]   = { 0xE8, 0xED, 0xF9, 0xFF, 0xFF, 0xEB, 0x08, 0x89, 0x1C, 0x24 }; 
+UINT8   KBESnowReplace_i386[]  = { 0xE8, 0xED, 0xF9, 0xFF, 0xFF, 0x90, 0x90, 0x89, 0x1C, 0x24 }; 
+//E8 5A FB FF FF EB 08 48 89 DF 
+UINT8   KBESnowSearch_X64[]    = { 0xE8, 0x5A, 0xFB, 0xFF, 0xFF, 0xEB, 0x08, 0x48, 0x89, 0xDF };
+UINT8   KBESnowReplace_X64[]   = { 0xE8, 0x5A, 0xFB, 0xFF, 0xFF, 0x90, 0x90, 0x48, 0x89, 0xDF };
 
-UINT8   KBELionSearch_X64[]  = { 0xE8, 0x0C, 0xFD, 0xFF, 0xFF, 0xEB, 0x08, 0x48, 0x89, 0xDF };
-UINT8   KBELionReplace_X64[] = { 0xE8, 0x0C, 0xFD, 0xFF, 0xFF, 0x90, 0x90, 0x48, 0x89, 0xDF };
 
-UINT8   KBELionSearch_i386[]  = { 0xE8, 0xAA, 0xFB, 0xFF, 0xFF, 0xEB, 0x08, 0x89, 0x34, 0x24 };
-UINT8   KBELionReplace_i386[] = { 0xE8, 0xAA, 0xFB, 0xFF, 0xFF, 0x90, 0x90, 0x89, 0x34, 0x24 };
+UINT8   KBELionSearch_i386[]   = { 0xE8, 0xAA, 0xFB, 0xFF, 0xFF, 0xEB, 0x08, 0x89, 0x34, 0x24 };
+UINT8   KBELionReplace_i386[]  = { 0xE8, 0xAA, 0xFB, 0xFF, 0xFF, 0x90, 0x90, 0x89, 0x34, 0x24 };
+
+UINT8   KBELionSearch_X64[]    = { 0xE8, 0x0C, 0xFD, 0xFF, 0xFF, 0xEB, 0x08, 0x48, 0x89, 0xDF };
+UINT8   KBELionReplace_X64[]   = { 0xE8, 0x0C, 0xFD, 0xFF, 0xFF, 0x90, 0x90, 0x48, 0x89, 0xDF };
 
 UINT8   KBEMLSearch[]  = { 0xC6, 0xE8, 0x30, 0x00, 0x00, 0x00, 0xEB, 0x08, 0x48, 0x89, 0xDF };
 UINT8   KBEMLReplace[] = { 0xC6, 0xE8, 0x30, 0x00, 0x00, 0x00, 0x90, 0x90, 0x48, 0x89, 0xDF };
+
+
 
 //
 // We can not rely on OSVersion global variable for OS version detection,
@@ -439,6 +447,8 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel)
 {
 
   UINTN   Num = 0;
+  UINTN   NumSnow_X64 = 0;
+  UINTN   NumSnow_i386 = 0;
   UINTN   NumLion_X64 = 0;
   UINTN   NumLion_i386 = 0;
   UINTN   NumML = 0;
@@ -447,12 +457,14 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel)
 
   if (is64BitKernel) {
     NumLion_X64 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBELionSearch_X64, sizeof(KBELionSearch_X64));
+    NumSnow_X64 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESnowSearch_X64, sizeof(KBESnowSearch_X64));
     NumML = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBEMLSearch, sizeof(KBEMLSearch));
   } else {
     NumLion_i386 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBELionSearch_i386, sizeof(KBELionSearch_i386));
+    NumSnow_i386 = SearchAndCount(Kernel, KERNEL_MAX_SIZE, KBESnowSearch_i386, sizeof(KBESnowSearch_i386));
   }
 
-  if (NumLion_X64 + NumLion_i386 + NumML > 1) {
+  if (NumSnow_X64 + NumSnow_i386 + NumLion_X64 + NumLion_i386 + NumML > 1) {
     // more then one pattern found - we do not know what to do with it
     // and we'll skipp it
 	  AsciiPrint("\nERROR patching kernel for injected kexts:\nmultiple patterns found (LionX64: %d, Lioni386: %d, ML: %d) - skipping patching!\n",
@@ -461,17 +473,25 @@ VOID EFIAPI KernelBooterExtensionsPatch(IN UINT8 *Kernel)
 	  return;
   }
 
-  if (NumLion_X64 == 1) {
-	  Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearch_X64, sizeof(KBELionSearch_X64), KBELionReplace_X64, 1);
-	  DBG_RT("==> Lion X64: %d replaces done.\n", Num);
+  if (NumML == 1) {
+    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMLSearch, sizeof(KBEMLSearch), KBEMLReplace, 1);
+    DBG_RT("==> kernel OS X64: %d replaces done.\n", Num);
   }
   else if (NumLion_i386 == 1) {
 	  Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearch_i386, sizeof(KBELionSearch_i386), KBELionReplace_i386, 1);
     DBG_RT("==> Lion i386: %d replaces done.\n", Num);
   }
-  else if (NumML == 1) {
-    Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBEMLSearch, sizeof(KBEMLSearch), KBEMLReplace, 1);
-    DBG_RT("==> MountainLion X64: %d replaces done.\n", Num);
+  else if (NumLion_X64 == 1) {
+	  Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBELionSearch_X64, sizeof(KBELionSearch_X64), KBELionReplace_X64, 1);
+    DBG_RT("==> Lion X64: %d replaces done.\n", Num);
+  }
+  else if (NumSnow_X64 == 1) {
+	  Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESnowSearch_X64, sizeof(KBESnowSearch_X64), KBESnowReplace_X64, 1);
+	  DBG_RT("==> Snow X64: %d replaces done.\n", Num);
+  }
+  else if (NumSnow_i386 == 1) {
+	  Num = SearchAndReplace(Kernel, KERNEL_MAX_SIZE, KBESnowSearch_i386, sizeof(KBESnowSearch_i386), KBESnowReplace_i386, 1);
+    DBG_RT("==> Snow i386: %d replaces done.\n", Num);
   }
   else {
     DBG_RT("==> ERROR: NOT patched - unknown kernel.\n");
