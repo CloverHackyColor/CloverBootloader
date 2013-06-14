@@ -3476,7 +3476,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 	UINT32				boot_display = 0;
 	INT32				nvPatch = 0;
 	CHAR8				*model = NULL;
-	CHAR16				FileName[24];
+	CHAR16				FileName[64];
 	UINT8				*buffer;
 	UINTN				bufferLen;
 	UINTN				j, n_ports = 0;
@@ -3521,12 +3521,12 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
       nvCardType, nvda_dev->vendor_id, nvda_dev->device_id);
 
 	if (load_vbios){
-		UnicodeSPrint(FileName, 48, L"ROM\\10de_%04x.rom", nvda_dev->device_id);
+		UnicodeSPrint(FileName, 128, L"ROM\\10de_%04x.rom", nvda_dev->device_id);
 	if (FileExists(OEMDir, FileName)){
 		Status = egLoadFile(OEMDir, FileName, &buffer, &bufferLen);
 	}
 	if (EFI_ERROR(Status)) {
-		UnicodeSPrint(FileName, 48, L"\\EFI\\CLOVER\\ROM\\10de_%04x.rom", nvda_dev->device_id);
+		UnicodeSPrint(FileName, 128, L"\\EFI\\CLOVER\\ROM\\10de_%04x.rom", nvda_dev->device_id);
 		if (FileExists(SelfRootDir, FileName)){
 			Status = egLoadFile(SelfRootDir, FileName, &buffer, &bufferLen);
 		}
@@ -3685,5 +3685,6 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 
 //	gDeviceProperties = (VOID*)devprop_generate_string(string);
 //	gBS->Stall(2000000);
+  FreePool(version_str);
 	return TRUE;
 }

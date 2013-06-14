@@ -967,19 +967,19 @@ BOOLEAN load_vbios_file(UINT16 vendor_id, UINT16 device_id)
 {
   EFI_STATUS            Status = EFI_NOT_FOUND;
 	UINTN bufferLen = 0;
-	CHAR16 FileName[24];
+	CHAR16 FileName[64];
   UINT8*  buffer = 0;
 
 	//if we are here then TRUE
 //	if (!gSettings.LoadVBios)
 //		return FALSE;
 	
-	UnicodeSPrint(FileName, 48, L"\\ROM\\%04x_%04x.rom", vendor_id, device_id);
+	UnicodeSPrint(FileName, 128, L"\\ROM\\%04x_%04x.rom", vendor_id, device_id);
   if (FileExists(OEMDir, FileName)){
     Status = egLoadFile(OEMDir, FileName, &buffer, &bufferLen);
   }
   if (EFI_ERROR(Status)) {
-    UnicodeSPrint(FileName, 48, L"\\EFI\\CLOVER\\ROM\\%04x_%04x.rom", vendor_id, device_id);
+    UnicodeSPrint(FileName, 128, L"\\EFI\\CLOVER\\ROM\\%04x_%04x.rom", vendor_id, device_id);
     if (FileExists(SelfRootDir, FileName)){
       Status = egLoadFile(SelfRootDir, FileName, &buffer, &bufferLen);
     }
