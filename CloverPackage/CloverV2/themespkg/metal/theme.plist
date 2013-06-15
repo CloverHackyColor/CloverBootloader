@@ -22,9 +22,13 @@
 		<key>Background</key>
 		<dict>
 			<key>Path</key>
-			<string>logo_metal4.png</string>
+			<string>MetalDragon.png</string>
 			<key>Type</key>
 			<string>Scale</string>
+			<key>Dark</key>
+			<false/>
+			<key>Sharp</key>
+			<string>0x80</string>
 		</dict>
 		<key>Banner</key>
 		<string>logo-trans.png</string>
