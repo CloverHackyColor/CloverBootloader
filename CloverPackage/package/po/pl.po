@@ -7,15 +7,17 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-09 16:06+0300\n"
-"PO-Revision-Date: 2013-05-28 15:59+0000\n"
+"PO-Revision-Date: 2013-06-16 12:39+0000\n"
 "Last-Translator: oswaldini <oswaldinimtb@gmail.com>\n"
 "Language-Team: pl <pl@li.org>\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
+"|| n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1369756775.0\n"
+"X-POOTLE-MTIME: 1371386389.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -1088,13 +1090,13 @@ msgstr "Konfiguracja zaawansowana"
 #: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
 msgid "Force mount selected ESP at startup:"
-msgstr ""
+msgstr "Wymuś montowanie ESP na starcie:"
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
 msgid "Save NVRAM contents to partition:"
-msgstr ""
+msgstr "Zapisz NVRAM na partycji:"
 
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:22
@@ -1155,41 +1157,42 @@ msgstr "Lokalizacja zapisu nvram"
 #: ../CloverPrefpane/CloverPrefpane.strings:31
 #, no-wrap
 msgid "Number of history boot log lines to keep:"
-msgstr ""
+msgstr "Ilość linii w historii boot.log"
 
 #. type: "522.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:32
 #, no-wrap
 msgid "Create timestamp CloverEFI/boot.log file on every boot"
 msgstr ""
+"Utwórz znacznik czasu w CloverEFI/boot.log podczas każdego uruchamiania:"
 
 #. type: "525.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:33
 #, no-wrap
 msgid "Number of timestamp boot.log files to keep:"
-msgstr ""
+msgstr "Ilość znaczników czasowych w boot.log:"
 
 #. type: "555.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:34
 #, no-wrap
 msgid "Backup"
-msgstr ""
+msgstr "Kopia zapasowa"
 
 #. type: "557.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
 #, no-wrap
 msgid "On install backup EFI folder to destination volume"
-msgstr ""
+msgstr "Instaluj kopię zapasową folderu EFI na dysku docelowym"
 
 #. type: "560.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:36
 #, no-wrap
 msgid "Number of backups to keep:"
-msgstr ""
+msgstr "Liczba zachowywanych kopii zapasowych:"
 
 #. type: "567.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:37
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "EFI Folder Path:"
 msgid "EFI Folder path"
 msgstr "Ścieżka katalogu EFI:"
@@ -1220,7 +1223,7 @@ msgstr "Nie"
 
 #. type: "No description available"
 #: ../CloverPrefpane/Localizable.strings:5
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "No description"
 msgid "No description available"
 msgstr "Brak opisu"
