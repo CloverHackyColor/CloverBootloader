@@ -31,6 +31,9 @@
         [updateView setHidden:NO];
         [noUpdateView setHidden:YES];
     }
+    // Position the noUpdateView in the same place as updateView
+    noUpdateView.frame = updateView.frame;
+    [[updateView superview] addSubview:noUpdateView]; // Add the view
 }
 
 - (IBAction)DontUpdate:(id)sender {
