@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-09 16:06+0300\n"
+"POT-Creation-Date: 2013-06-16 14:57+0300\n"
 "PO-Revision-Date: 2013-06-07 18:44+0000\n"
 "Last-Translator: crazybirdy <>\n"
 "Language-Team: zh_CN <zh_CN@li.org>\n"
@@ -938,6 +938,19 @@ msgstr "暂时不要"
 #, no-wrap
 msgid "Update"
 msgstr "更新"
+
+#. type: "585.title"
+#: ../CloverUpdater/CloverUpdater.strings:11
+#, fuzzy, no-wrap
+#| msgid "No description"
+msgid "No update available !"
+msgstr "无描述"
+
+#. type: "586.title"
+#: ../CloverUpdater/CloverUpdater.strings:12
+#, no-wrap
+msgid "Ok"
+msgstr ""
 
 #. type: "12.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:1

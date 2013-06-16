@@ -13,6 +13,8 @@
 		A3298B0E1736975F000EFB93 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = A3298B0C1736975F000EFB93 /* MainMenu.xib */; };
 		A3502EAE1736DA6C00F28732 /* CloverUpdater-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8D1107310486CEB800E47090 /* CloverUpdater-Info.plist */; };
 		A3E8C75F1731872100228CA8 /* clover.iconset in Resources */ = {isa = PBXBuildFile; fileRef = A3E8C75E1731872100228CA8 /* clover.iconset */; };
+		A3FE43AD176DEF6100D74133 /* CloverLogo.png in Resources */ = {isa = PBXBuildFile; fileRef = A3FE43AC176DEF6100D74133 /* CloverLogo.png */; };
+		A3FE43AF176DF39C00D74133 /* CloverTitle.png in Resources */ = {isa = PBXBuildFile; fileRef = A3FE43AE176DF39C00D74133 /* CloverTitle.png */; };
 		A3FEE1941736995100D18280 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A3FEE1921736995100D18280 /* InfoPlist.strings */; };
 /* End PBXBuildFile section */
 
@@ -47,6 +49,8 @@
 		A3CAFF98173782F80024D5E1 /* id */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = id; path = id.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		A3CAFF99173783060024D5E1 /* pl */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = pl; path = pl.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		A3E8C75E1731872100228CA8 /* clover.iconset */ = {isa = PBXFileReference; lastKnownFileType = folder.iconset; path = clover.iconset; sourceTree = "<group>"; };
+		A3FE43AC176DEF6100D74133 /* CloverLogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CloverLogo.png; sourceTree = "<group>"; };
+		A3FE43AE176DF39C00D74133 /* CloverTitle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = CloverTitle.png; sourceTree = "<group>"; };
 		A3FEE1931736995100D18280 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -129,6 +133,8 @@
 				8D1107310486CEB800E47090 /* CloverUpdater-Info.plist */,
 				A3FEE1921736995100D18280 /* InfoPlist.strings */,
 				A3E8C75E1731872100228CA8 /* clover.iconset */,
+				A3FE43AC176DEF6100D74133 /* CloverLogo.png */,
+				A3FE43AE176DF39C00D74133 /* CloverTitle.png */,
 			);
 			name = Resources;
 			path = ../src;
@@ -222,6 +228,8 @@
 				A3298B0E1736975F000EFB93 /* MainMenu.xib in Resources */,
 				A3FEE1941736995100D18280 /* InfoPlist.strings in Resources */,
 				A3502EAE1736DA6C00F28732 /* CloverUpdater-Info.plist in Resources */,
+				A3FE43AD176DEF6100D74133 /* CloverLogo.png in Resources */,
+				A3FE43AF176DF39C00D74133 /* CloverTitle.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -6,8 +6,8 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Clover v2.0-r1819\n"
-"POT-Creation-Date: 2013-06-09 16:06+0300\n"
+"Project-Id-Version: Clover v2.0-r1860\n"
+"POT-Creation-Date: 2013-06-16 14:57+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -849,6 +849,18 @@ msgstr ""
 #: ../CloverUpdater/CloverUpdater.strings:10
 #, no-wrap
 msgid "Update"
+msgstr ""
+
+#. type: "585.title"
+#: ../CloverUpdater/CloverUpdater.strings:11
+#, no-wrap
+msgid "No update available !"
+msgstr ""
+
+#. type: "586.title"
+#: ../CloverUpdater/CloverUpdater.strings:12
+#, no-wrap
+msgid "Ok"
 msgstr ""
 
 #. type: "12.title"

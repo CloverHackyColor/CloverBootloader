@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-09 16:06+0300\n"
+"POT-Creation-Date: 2013-06-16 14:57+0300\n"
 "PO-Revision-Date: 2013-06-10 06:59+0000\n"
 "Last-Translator: Mill <ceruns@ymail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
@@ -940,6 +940,19 @@ msgstr "지금은 괜찮습니다"
 msgid "Update"
 msgstr "업데이트"
 
+#. type: "585.title"
+#: ../CloverUpdater/CloverUpdater.strings:11
+#, fuzzy, no-wrap
+#| msgid "No description available"
+msgid "No update available !"
+msgstr "설명 없음"
+
+#. type: "586.title"
+#: ../CloverUpdater/CloverUpdater.strings:12
+#, no-wrap
+msgid "Ok"
+msgstr ""
+
 #. type: "12.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:1
 #, no-wrap
@@ -1159,7 +1172,6 @@ msgstr "유지할 백업 수:"
 #. type: "567.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:37
 #, no-wrap
-#| msgid "EFI Folder Path:"
 msgid "EFI Folder path"
 msgstr "EFI 폴더 경로"
 
@@ -1190,7 +1202,6 @@ msgstr "아니오"
 #. type: "No description available"
 #: ../CloverPrefpane/Localizable.strings:5
 #, no-wrap
-#| msgid "No description"
 msgid "No description available"
 msgstr "설명 없음"
 

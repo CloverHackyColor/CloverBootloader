@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-09 16:06+0300\n"
+"POT-Creation-Date: 2013-06-16 14:57+0300\n"
 "PO-Revision-Date: 2013-06-09 19:21+0000\n"
 "Last-Translator: AlexKord <alexkord@lan.com.ua>\n"
 "Language-Team: ua <ua@li.org>\n"
@@ -14,8 +14,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
-"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
 "X-POOTLE-MTIME: 1370805684.0\n"
 
@@ -468,8 +468,7 @@ msgstr "Кловер EFI 64-біту BiosBlockIO"
 #, no-wrap
 msgid "CloverEFI 64-bits using Bios Block I/O to access drives"
 msgstr ""
-"Кловер EFI 64-біту із використанням BiosBlockI/O драйверу для доступу до "
-"дисків.\n"
+"Кловер EFI 64-біту із використанням BiosBlockI/O драйверу для доступу до дисків.\n"
 "Використовувати якщо маєте чипсет NVIDIA NForce. "
 
 #. type: "Ps2KeyboardDxe-32_description"
@@ -972,6 +971,19 @@ msgstr "Не зараз"
 msgid "Update"
 msgstr "Звісно так!"
 
+#. type: "585.title"
+#: ../CloverUpdater/CloverUpdater.strings:11
+#, fuzzy, no-wrap
+#| msgid "No description available"
+msgid "No update available !"
+msgstr "Опису немає"
+
+#. type: "586.title"
+#: ../CloverUpdater/CloverUpdater.strings:12
+#, no-wrap
+msgid "Ok"
+msgstr ""
+
 #. type: "12.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:1
 #, no-wrap
@@ -1222,7 +1234,6 @@ msgstr "Нi"
 #. type: "No description available"
 #: ../CloverPrefpane/Localizable.strings:5
 #, no-wrap
-#| msgid "No description"
 msgid "No description available"
 msgstr "Опису немає"
 

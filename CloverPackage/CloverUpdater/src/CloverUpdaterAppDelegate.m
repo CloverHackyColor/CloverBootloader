@@ -3,6 +3,7 @@
 //  CloverUpdater
 //
 //  Created by Slice on 29.04.13.
+//  Modified by JrCs
 //
 
 #import "CloverUpdaterAppDelegate.h"
@@ -12,7 +13,7 @@
 @synthesize window;
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
-	// Insert code here to initialize your application 
+	// Insert code here to initialize your application
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication {
@@ -23,13 +24,16 @@
     [OldRevision setStringValue: [NSString stringWithFormat: @"%s", arg1]];
     [NewRevision setStringValue: [NSString stringWithFormat: @"%s", arg2]];
     if ([OldRevision intValue] >= [NewRevision intValue]) {
-        [updateButton setEnabled:FALSE];
+        [updateView setHidden:YES];
+        [noUpdateView setHidden:NO];
     } else {
         [NewRevision setTextColor:[NSColor blueColor]];
+        [updateView setHidden:NO];
+        [noUpdateView setHidden:YES];
     }
 }
 
-- (IBAction)NotNow:(id)sender {
+- (IBAction)DontUpdate:(id)sender {
     printf("0");
     exit(0);
 }
