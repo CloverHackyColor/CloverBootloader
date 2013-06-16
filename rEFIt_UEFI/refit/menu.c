@@ -1740,7 +1740,7 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
     case MENU_FUNCTION_PAINT_ALL:
       // paint the whole screen (initially and after scrolling)
 			gST->ConOut->SetAttribute (gST->ConOut, ATTR_CHOICE_BASIC);
-			for (i = 0; i < ConHeight - 4; i++) {
+			for (i = 0; i < (INTN)ConHeight - 4; i++) {
 				gST->ConOut->SetCursorPosition (gST->ConOut, 0, 4 + i);
 				gST->ConOut->OutputString (gST->ConOut, BlankLine);
 			}
@@ -1764,7 +1764,7 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 				StrCpy(ResultString, Screen->Entries[i]->Title);
 				if (Screen->Entries[i]->Tag == TAG_INPUT)
 					StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[i]))->Item->SValue);
-				for (j = StrLen(ResultString); j < MenuWidth; j++)
+				for (j = StrLen(ResultString); j < (INTN)MenuWidth; j++)
 					ResultString[j] = L' ';
 				ResultString[j] = 0;
 				gST->ConOut->OutputString (gST->ConOut, ResultString);
@@ -1791,7 +1791,7 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 			StrCpy(ResultString, Screen->Entries[State->LastSelection]->Title);
       if (Screen->Entries[State->LastSelection]->Tag == TAG_INPUT)
 				StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->LastSelection]))->Item->SValue);
-			for (j = StrLen(ResultString); j < MenuWidth; j++)
+			for (j = StrLen(ResultString); j < (INTN)MenuWidth; j++)
 				ResultString[j] = L' ';
 			ResultString[j] = 0;
 			gST->ConOut->OutputString (gST->ConOut, ResultString);
@@ -1803,7 +1803,7 @@ static VOID TextMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
 			StrCpy(ResultString, Screen->Entries[State->CurrentSelection]->Title);
 			if (Screen->Entries[State->CurrentSelection]->Tag == TAG_INPUT)
 				StrCat(ResultString, ((REFIT_INPUT_DIALOG*)(Screen->Entries[State->CurrentSelection]))->Item->SValue);
-			for (j = StrLen(ResultString); j < MenuWidth; j++)
+			for (j = StrLen(ResultString); j < (INTN)MenuWidth; j++)
 				ResultString[j] = L' ';
 			ResultString[j] = 0;
 			gST->ConOut->OutputString (gST->ConOut, ResultString);
@@ -3440,6 +3440,8 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
       MenuExit = RunGenericMenu(TempChosenEntry->SubScreen, Style, &SubMenuIndex, &TempChosenEntry);
       if (MenuExit == MENU_EXIT_ENTER && TempChosenEntry->Tag == TAG_LOADER) {
         AsciiSPrint(gSettings.BootArgs, 255, "%s", ((LOADER_ENTRY*)TempChosenEntry)->LoadOptions);
+        gSettings.WithKexts = OSFLAG_ENABLED(((LOADER_ENTRY*)TempChosenEntry)->Flags, OSFLAG_WITHKEXTS);
+        gSettings.NoCaches = OSFLAG_ENABLED(((LOADER_ENTRY*)TempChosenEntry)->Flags, OSFLAG_NOCACHES);
       }
       if (MenuExit == MENU_EXIT_ESCAPE || TempChosenEntry->Tag == TAG_RETURN)
         MenuExit = 0;

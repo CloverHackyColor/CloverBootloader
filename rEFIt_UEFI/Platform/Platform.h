@@ -675,6 +675,8 @@ typedef struct {
   //Injections
   BOOLEAN StringInjector;
   BOOLEAN InjectSystemID;
+  BOOLEAN NoCaches;
+  BOOLEAN WithKexts;
   
   //Graphics
   UINT16  PCIRootUID;

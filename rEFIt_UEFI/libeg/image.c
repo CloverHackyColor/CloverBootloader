@@ -157,10 +157,10 @@ BOOLEAN BigDiff(UINT8 a, UINT8 b)
 {
   if (a > b) {
     if (!GlobalConfig.BackgroundDark) {
-      return (a - b) > 0xFF - GlobalConfig.BackgroundSharp;
+      return (a - b) > (UINT8)(0xFF - GlobalConfig.BackgroundSharp);
     }
   } else if (GlobalConfig.BackgroundDark) {
-    return (b - a) > 0xFF - GlobalConfig.BackgroundSharp;
+    return (b - a) > (UINT8)(0xFF - GlobalConfig.BackgroundSharp);
   }
   return 0;
 }
@@ -172,13 +172,13 @@ do { \
       a10.P = a11.P; \
     } else if (BigDiff(a11.P, a01.P)) { \
       if ((dx + dy) < cell) { \
-        a11.P = a21.P = a12.P = (a10.P * (cell - dy + dx) + a01.P * (cell - dx + dy)) / (cell * 2); \
+        a11.P = a21.P = a12.P = (UINT8)((a10.P * (cell - dy + dx) + a01.P * (cell - dx + dy)) / (cell * 2)); \
       } else { \
         a10.P = a01.P = a11.P; \
       } \
     } else if (BigDiff(a11.P, a21.P)) { \
       if (dx > dy) { \
-        a11.P = a01.P = a12.P = (a10.P * (cell * 2 - dy - dx) + a21.P * (dx + dy)) / (cell * 2); \
+        a11.P = a01.P = a12.P = (UINT8)((a10.P * (cell * 2 - dy - dx) + a21.P * (dx + dy)) / (cell * 2)); \
       }else { \
         a10.P = a21.P = a11.P; \
       } \
@@ -188,7 +188,7 @@ do { \
       a21.P = a11.P; \
     } else { \
       if ((dx + dy) > cell) { \
-        a11.P = a01.P = a10.P = (a21.P * (cell + dx - dy) + a12.P * (cell - dx + dy)) / (cell * 2); \
+        a11.P = a01.P = a10.P = (UINT8)((a21.P * (cell + dx - dy) + a12.P * (cell - dx + dy)) / (cell * 2)); \
       } else { \
         a21.P = a12.P = a11.P; \
       } \
@@ -198,7 +198,7 @@ do { \
       a01.P = a11.P; \
     } else { \
       if (dx < dy) { \
-        a11.P = a21.P = a10.P = (a01.P * (cell * 2 - dx - dy) + a12.P * (dy + dx )) / (cell * 2); \
+        a11.P = a21.P = a10.P = (UINT8)((a01.P * (cell * 2 - dx - dy) + a12.P * (dy + dx )) / (cell * 2)); \
       } else { \
         a01.P = a12.P = a11.P; \
       } \
@@ -214,15 +214,15 @@ do { \
   if (norm == 0) { \
     Dest->P = 0; \
   } else { \
-    Dest->P = a11.P * 2 * (a01.P * (cell - dx) + a10.P * (cell - dy) + \
-               a21.P * dx + a12.P * dy + a11.P * 2 * cell) / (cell * norm); \
+    Dest->P = (UINT8)(a11.P * 2 * (a01.P * (cell - dx) + a10.P * (cell - dy) + \
+                      a21.P * dx + a12.P * dy + a11.P * 2 * cell) / (cell * norm)); \
   } \
 } while(0)
 
 #define SMOOTH2(P) \
 do { \
-     Dest->P = (a01.P * (cell - dx) * 3 + a10.P * (cell - dy) * 3 + \
-        a21.P * dx * 3 + a12.P * dy * 3 + a11.P * 2 * cell) / (cell * 8); \
+     Dest->P = (UINT8)((a01.P * (cell - dx) * 3 + a10.P * (cell - dy) * 3 + \
+                        a21.P * dx * 3 + a12.P * dy * 3 + a11.P * 2 * cell) / (cell * 8)); \
 } while(0)
 
 

@@ -1001,9 +1001,7 @@ KernelAndKextsPatcherStart(VOID)
   //
   // Kext add
   //
-  if (gSettings.BootArgs != NULL
-      && (AsciiStrStr(gSettings.BootArgs, "WithKexts") != NULL)
-      ) {
+  if (gSettings.WithKexts) {
     UINT32      deviceTreeP;
     UINT32      deviceTreeLength;
     EFI_STATUS  Status;

@@ -535,7 +535,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //  DBG("KillMouse\n");
   KillMouse();
 //    DBG("BeginExternalScreen\n");
-  BeginExternalScreen(Entry->UseGraphicsMode, L"Booting OS");
+  BeginExternalScreen(OSFLAG_ENABLED(Entry->Flags, OSFLAG_USEGRAPHICS), L"Booting OS");
   if (Entry->LoaderType == OSTYPE_OSX) {
     // first patchACPI and find PCIROOT and RTC
     // but before ACPI patch we need smbios patch
@@ -795,7 +795,15 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   Entry->LoaderPath      = EfiStrDuplicate(LoaderPath);
   Entry->VolName         = Volume->VolName;
   Entry->DevicePath      = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
-  Entry->UseGraphicsMode = FALSE;
+  Entry->Flags           = 0;
+  if (gSettings.WithKexts)
+  {
+     Entry->Flags = OSFLAG_ENABLE(Entry->Flags, OSFLAG_WITHKEXTS);
+  }
+  if (gSettings.NoCaches)
+  {
+     Entry->Flags = OSFLAG_ENABLE(Entry->Flags, OSFLAG_NOCACHES);
+  }
   Entry->LoadOptions     = PoolPrint(L"%a", gSettings.BootArgs);
 //  Entry->LoadOptions     = InputItems[0].SValue;
 
@@ -824,7 +832,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       OSIconName = Volume->OSIconName;
       if (Entry->LoadOptions == NULL || (StrStr(Entry->LoadOptions, L"-v") == NULL && StrStr(Entry->LoadOptions, L"-V") == NULL)) {
         // OSX is not booting verbose, so we can set console to graphics mode
-        Entry->UseGraphicsMode = TRUE;
+        Entry->Flags = OSFLAG_ENABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
       }
       LoaderKind = 1;
       ShortcutLetter = 'M';    
@@ -889,7 +897,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   SubEntry->Volume          = Entry->Volume;
   SubEntry->VolName         = Entry->VolName;
   SubEntry->DevicePath      = Entry->DevicePath;
-  SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
+  SubEntry->Flags           = Entry->Flags;
   SubEntry->LoadOptions     = PoolPrint(L"%a", gSettings.BootArgs);
   SubEntry->LoaderType      = Entry->LoaderType;
   SubEntry->me.AtClick      = ActionEnter;
@@ -907,7 +915,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->Volume          = Entry->Volume;
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
-      SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
+      SubEntry->Flags           = Entry->Flags;
       SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"arch=x86_64");
       SubEntry->LoaderType      = OSTYPE_OSX;
       SubEntry->me.AtClick      = ActionEnter;
@@ -924,7 +932,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->Volume          = Entry->Volume;
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
-      SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
+      SubEntry->Flags           = Entry->Flags;
       SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"arch=i386");
       SubEntry->LoaderType      = OSTYPE_OSX;
       SubEntry->me.AtClick      = ActionEnter;
@@ -943,8 +951,8 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
         SubEntry->Volume          = Entry->Volume;
         SubEntry->VolName         = Entry->VolName;
         SubEntry->DevicePath      = Entry->DevicePath;
-        SubEntry->UseGraphicsMode = FALSE;
-        SubEntry->LoadOptions      = AddLoadOption(Entry->LoadOptions, L"-v");
+        SubEntry->Flags           = OSFLAG_DISABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
+        SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
         SubEntry->LoaderType      = OSTYPE_OSX;
         SubEntry->me.AtClick      = ActionEnter;
         AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
@@ -956,7 +964,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
         SubEntry->Volume          = Entry->Volume;
         SubEntry->VolName         = Entry->VolName;
         SubEntry->DevicePath      = Entry->DevicePath;
-        SubEntry->UseGraphicsMode = FALSE;
+        SubEntry->Flags           = OSFLAG_DISABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
         TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
         SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"arch=x86_64");
         FreePool(TempOptions);
@@ -976,7 +984,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
         SubEntry->Volume          = Entry->Volume;
         SubEntry->VolName         = Entry->VolName;
         SubEntry->DevicePath      = Entry->DevicePath;
-        SubEntry->UseGraphicsMode = FALSE;
+        SubEntry->Flags           = OSFLAG_DISABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
         TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
         SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"arch=i386");
         FreePool(TempOptions);
@@ -992,7 +1000,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->Volume          = Entry->Volume;
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
-      SubEntry->UseGraphicsMode = FALSE;
+      SubEntry->Flags           = OSFLAG_DISABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
       SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-x");
       SubEntry->LoaderType      = OSTYPE_OSX;
       SubEntry->me.AtClick      = ActionEnter;
@@ -1005,7 +1013,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->Volume          = Entry->Volume;
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
-      SubEntry->UseGraphicsMode = FALSE;
+      SubEntry->Flags           = OSFLAG_DISABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
       TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
       SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"-s");
       FreePool(TempOptions);
@@ -1014,80 +1022,97 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
       
       SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-      SubEntry->me.Title        = L"Boot Mac OS X without caches";
+      SubEntry->me.Title        = OSFLAG_ENABLED(Entry->Flags, OSFLAG_NOCACHES) ?
+                                    L"Boot Mac OS X with caches" :
+                                    L"Boot Mac OS X without caches";
       SubEntry->me.Tag          = TAG_LOADER;
       SubEntry->LoaderPath      = Entry->LoaderPath;
       SubEntry->Volume          = Entry->Volume;
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
-      SubEntry->UseGraphicsMode = FALSE;
-      SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"NoCaches");
+      SubEntry->Flags           = OSFLAG_TOGGLE(Entry->Flags, OSFLAG_NOCACHES);
+      SubEntry->LoadOptions     = Entry->LoadOptions;
       SubEntry->LoaderType      = OSTYPE_OSX;
       SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
 
-      if (StrStr(Entry->LoadOptions, L"WithKexts") != NULL)
-      {
-         // Entry->LoadOptions contains WithKexts
-         SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-         SubEntry->me.Title        = L"Boot Mac OS X without extra kexts";
-         SubEntry->me.Tag          = TAG_LOADER;
-         SubEntry->LoaderPath      = Entry->LoaderPath;
-         SubEntry->Volume          = Entry->Volume;
-         SubEntry->VolName         = Entry->VolName;
-         SubEntry->DevicePath      = Entry->DevicePath;
-         SubEntry->UseGraphicsMode = FALSE;
-         SubEntry->LoadOptions     = RemoveLoadOption(Entry->LoadOptions, L"WithKexts");
-         //DBG("NewLoadOptions: '%s'\n", SubEntry->LoadOptions);
-         SubEntry->LoaderType      = OSTYPE_OSX;
-         SubEntry->me.AtClick      = ActionEnter;
-         AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+      SubEntry->me.Title        = OSFLAG_ENABLED(Entry->Flags, OSFLAG_WITHKEXTS) ?
+                                    L"Boot Mac OS X without injected kexts" :
+                                    L"Boot Mac OS X with injected kexts";
+      SubEntry->me.Tag          = TAG_LOADER;
+      SubEntry->LoaderPath      = Entry->LoaderPath;
+      SubEntry->Volume          = Entry->Volume;
+      SubEntry->VolName         = Entry->VolName;
+      SubEntry->DevicePath      = Entry->DevicePath;
+      SubEntry->Flags           = OSFLAG_TOGGLE(Entry->Flags, OSFLAG_WITHKEXTS);
+      SubEntry->LoadOptions     = Entry->LoadOptions;
+      SubEntry->LoaderType      = OSTYPE_OSX;
+      SubEntry->me.AtClick      = ActionEnter;
+      AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
 
-         SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-         SubEntry->me.Title        = L"Boot Mac OS X without caches and without extra kexts";
-         SubEntry->me.Tag          = TAG_LOADER;
-         SubEntry->LoaderPath      = Entry->LoaderPath;
-         SubEntry->Volume          = Entry->Volume;
-         SubEntry->VolName         = Entry->VolName;
-         SubEntry->DevicePath      = Entry->DevicePath;
-         SubEntry->UseGraphicsMode = FALSE;
-         TempOptions = AddLoadOption(Entry->LoadOptions, L"NoCaches");
-         SubEntry->LoadOptions     = RemoveLoadOption(TempOptions, L"WithKexts"); 
-         //DBG("NewLoadOptions: '%s'\n", SubEntry->LoadOptions);
-         FreePool(TempOptions);
-         SubEntry->LoaderType      = OSTYPE_OSX;
-         SubEntry->me.AtClick      = ActionEnter;
-         AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+      if (OSFLAG_ENABLED(Entry->Flags, OSFLAG_WITHKEXTS))
+      {
+        if (OSFLAG_ENABLED(Entry->Flags, OSFLAG_NOCACHES))
+        {
+          SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+          SubEntry->me.Title        = L"Boot Mac OS X with caches and without injected kexts";
+          SubEntry->me.Tag          = TAG_LOADER;
+          SubEntry->LoaderPath      = Entry->LoaderPath;
+          SubEntry->Volume          = Entry->Volume;
+          SubEntry->VolName         = Entry->VolName;
+          SubEntry->DevicePath      = Entry->DevicePath;
+          SubEntry->Flags           = OSFLAG_DISABLE(OSFLAG_DISABLE(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
+          SubEntry->LoadOptions     = Entry->LoadOptions;
+          SubEntry->LoaderType      = OSTYPE_OSX;
+          SubEntry->me.AtClick      = ActionEnter;
+          AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+        }
+        else
+        {
+          SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+          SubEntry->me.Title        = L"Boot Mac OS X without caches and without injected kexts";
+          SubEntry->me.Tag          = TAG_LOADER;
+          SubEntry->LoaderPath      = Entry->LoaderPath;
+          SubEntry->Volume          = Entry->Volume;
+          SubEntry->VolName         = Entry->VolName;
+          SubEntry->DevicePath      = Entry->DevicePath;
+          SubEntry->Flags           = OSFLAG_DISABLE(OSFLAG_ENABLE(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
+          SubEntry->LoadOptions     = Entry->LoadOptions;
+          SubEntry->LoaderType      = OSTYPE_OSX;
+          SubEntry->me.AtClick      = ActionEnter;
+          AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+        }
+      }
+      else if (OSFLAG_ENABLED(Entry->Flags, OSFLAG_NOCACHES))
+      {
+        SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+        SubEntry->me.Title        = L"Boot Mac OS X with caches and with injected kexts";
+        SubEntry->me.Tag          = TAG_LOADER;
+        SubEntry->LoaderPath      = Entry->LoaderPath;
+        SubEntry->Volume          = Entry->Volume;
+        SubEntry->VolName         = Entry->VolName;
+        SubEntry->DevicePath      = Entry->DevicePath;
+        SubEntry->Flags           = OSFLAG_ENABLE(OSFLAG_DISABLE(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
+        SubEntry->LoadOptions     = Entry->LoadOptions;
+        SubEntry->LoaderType      = OSTYPE_OSX;
+        SubEntry->me.AtClick      = ActionEnter;
+        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
       }
       else
       {
-         SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-         SubEntry->me.Title        = L"Boot Mac OS X with extra kexts";
-         SubEntry->me.Tag          = TAG_LOADER;
-         SubEntry->LoaderPath      = Entry->LoaderPath;
-         SubEntry->Volume          = Entry->Volume;
-         SubEntry->VolName         = Entry->VolName;
-         SubEntry->DevicePath      = Entry->DevicePath;
-         SubEntry->UseGraphicsMode = FALSE;
-         SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"WithKexts");
-         SubEntry->LoaderType      = OSTYPE_OSX;
-         SubEntry->me.AtClick      = ActionEnter;
-         AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
-
-         SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-         SubEntry->me.Title        = L"Boot Mac OS X without caches and with extra kexts";
-         SubEntry->me.Tag          = TAG_LOADER;
-         SubEntry->LoaderPath      = Entry->LoaderPath;
-         SubEntry->Volume          = Entry->Volume;
-         SubEntry->VolName         = Entry->VolName;
-         SubEntry->DevicePath      = Entry->DevicePath;
-         SubEntry->UseGraphicsMode = FALSE;
-         TempOptions = AddLoadOption(Entry->LoadOptions, L"NoCaches");
-         SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"WithKexts");
-         FreePool(TempOptions);
-         SubEntry->LoaderType      = OSTYPE_OSX;
-         SubEntry->me.AtClick      = ActionEnter;
-         AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
+        SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
+        SubEntry->me.Title        = L"Boot Mac OS X without caches and with injected kexts";
+        SubEntry->me.Tag          = TAG_LOADER;
+        SubEntry->LoaderPath      = Entry->LoaderPath;
+        SubEntry->Volume          = Entry->Volume;
+        SubEntry->VolName         = Entry->VolName;
+        SubEntry->DevicePath      = Entry->DevicePath;
+        SubEntry->Flags           = OSFLAG_ENABLE(OSFLAG_ENABLE(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
+        SubEntry->LoadOptions     = Entry->LoadOptions;
+        SubEntry->LoaderType      = OSTYPE_OSX;
+        SubEntry->me.AtClick      = ActionEnter;
+        AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
       }
     }
     
@@ -1103,7 +1128,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->Volume          = Entry->Volume;
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = FileDevicePath(Volume->DeviceHandle, SubEntry->LoaderPath);
-      SubEntry->UseGraphicsMode = TRUE;
+      SubEntry->Flags           = OSFLAG_ENABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
       SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
     }
@@ -1116,7 +1141,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
-    SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
+    SubEntry->Flags           = Entry->Flags;
     SubEntry->LoadOptions     = L"-p";
     SubEntry->LoaderType      = OSTYPE_LIN;
     SubEntry->me.AtClick      = ActionEnter;
@@ -1129,7 +1154,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
-    SubEntry->UseGraphicsMode = TRUE;
+    SubEntry->Flags           = OSFLAG_ENABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
     SubEntry->LoadOptions     = L"-d 0 i17";
     SubEntry->LoaderType      = OSTYPE_LIN;
     SubEntry->me.AtClick      = ActionEnter;
@@ -1142,7 +1167,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
-    SubEntry->UseGraphicsMode = TRUE;
+    SubEntry->Flags           = OSFLAG_ENABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
     SubEntry->LoadOptions     = L"-d 0 i20";
     SubEntry->LoaderType      = OSTYPE_LIN;
     SubEntry->me.AtClick      = ActionEnter;
@@ -1155,7 +1180,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
-    SubEntry->UseGraphicsMode = TRUE;
+    SubEntry->Flags           = OSFLAG_ENABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
     SubEntry->LoadOptions     = L"-d 0 mini";
     SubEntry->LoaderType      = OSTYPE_LIN;
     SubEntry->me.AtClick      = ActionEnter;
@@ -1175,7 +1200,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
-    SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
+    SubEntry->Flags           = Entry->Flags;
     SubEntry->LoadOptions     = L"-s -h";
     SubEntry->LoaderType      = OSTYPE_WIN;
     SubEntry->me.AtClick      = ActionEnter;
@@ -1188,7 +1213,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
-    SubEntry->UseGraphicsMode = Entry->UseGraphicsMode;
+    SubEntry->Flags           = Entry->Flags;
     SubEntry->LoadOptions     = L"-s -c";
     SubEntry->LoaderType      = OSTYPE_WIN;
     SubEntry->me.AtClick      = ActionEnter;
@@ -1201,7 +1226,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
-    SubEntry->UseGraphicsMode = FALSE;
+    SubEntry->Flags           = OSFLAG_DISABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
     SubEntry->LoadOptions     = L"-v";
     SubEntry->LoaderType      = OSTYPE_VAR;
     SubEntry->me.AtClick      = ActionEnter;
@@ -1233,7 +1258,7 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   Entry->LoaderPath      = EfiStrDuplicate(LoaderPath);
   Entry->VolName         = Volume->VolName;
   Entry->DevicePath      = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
-  Entry->UseGraphicsMode = FALSE;
+  Entry->Flags           = 0;
   Entry->LoadOptions     = NULL;
   
   //actions
@@ -1269,7 +1294,7 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
-    SubEntry->UseGraphicsMode = FALSE;
+    SubEntry->Flags           = Entry->Flags;
     SubEntry->LoadOptions     = L"BO-REMOVE";
     SubEntry->LoaderType      = OSTYPE_VAR;
     SubEntry->me.AtClick      = ActionEnter;
@@ -1282,7 +1307,7 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     SubEntry->Volume          = Entry->Volume;
     SubEntry->VolName         = Entry->VolName;
     SubEntry->DevicePath      = Entry->DevicePath;
-    SubEntry->UseGraphicsMode = FALSE;
+    SubEntry->Flags           = Entry->Flags;
     SubEntry->LoadOptions     = L"BO-ADD";
     SubEntry->LoaderType      = OSTYPE_VAR;
     SubEntry->me.AtClick      = ActionEnter;
@@ -1296,7 +1321,7 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   SubEntry->Volume          = Entry->Volume;
   SubEntry->VolName         = Entry->VolName;
   SubEntry->DevicePath      = Entry->DevicePath;
-  SubEntry->UseGraphicsMode = FALSE;
+  SubEntry->Flags           = Entry->Flags;
   SubEntry->LoadOptions     = L"BO-REMOVE-ALL";
   SubEntry->LoaderType      = OSTYPE_VAR;
   SubEntry->me.AtClick      = ActionEnter;
@@ -1309,7 +1334,7 @@ static LOADER_ENTRY * AddCloverEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   SubEntry->Volume          = Entry->Volume;
   SubEntry->VolName         = Entry->VolName;
   SubEntry->DevicePath      = Entry->DevicePath;
-  SubEntry->UseGraphicsMode = FALSE;
+  SubEntry->Flags           = Entry->Flags;
   SubEntry->LoadOptions     = L"BO-PRINT";
   SubEntry->LoaderType      = OSTYPE_VAR;
   SubEntry->me.AtClick      = ActionEnter;
@@ -1923,7 +1948,7 @@ static VOID ScanLegacy(VOID)
 static VOID StartTool(IN LOADER_ENTRY *Entry)
 {
   egClearScreen(&DarkBackgroundPixel);
-    BeginExternalScreen(Entry->UseGraphicsMode, Entry->me.Title + 6);  // assumes "Start <title>" as assigned below
+    BeginExternalScreen(OSFLAG_ENABLED(Entry->Flags, OSFLAG_USEGRAPHICS), Entry->me.Title + 6);  // assumes "Start <title>" as assigned below
     StartEFIImage(Entry->DevicePath, Entry->LoadOptions, Basename(Entry->LoaderPath),
                   Basename(Entry->LoaderPath), NULL, NULL);
     FinishExternalScreen();
@@ -1932,7 +1957,7 @@ static VOID StartTool(IN LOADER_ENTRY *Entry)
 
 static LOADER_ENTRY * AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle,
                                    IN EG_IMAGE *Image,
-                                   IN CHAR16 ShortcutLetter, IN BOOLEAN UseGraphicsMode)
+                                   IN CHAR16 ShortcutLetter)
 {
   LOADER_ENTRY *Entry;
   
@@ -1945,7 +1970,6 @@ static LOADER_ENTRY * AddToolEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle
   Entry->me.Image = Image;
   Entry->LoaderPath = EfiStrDuplicate(LoaderPath);
   Entry->DevicePath = FileDevicePath(SelfDeviceHandle, Entry->LoaderPath);
-  Entry->UseGraphicsMode = UseGraphicsMode;
   //actions
   Entry->me.AtClick = ActionSelect;
   Entry->me.AtDoubleClick = ActionEnter;
@@ -2010,25 +2034,25 @@ static VOID ScanTool(VOID)
 #if defined(MDE_CPU_IA32)
     StrCpy(FileName, L"\\EFI\\CLOVER\\tools\\Shell32.efi");
     if (FileExists(SelfRootDir, FileName)) {
-      Entry = AddToolEntry(FileName, L"EFI Shell 32", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
+      Entry = AddToolEntry(FileName, L"EFI Shell 32", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
       DBG("found tools\\Shell32.efi\n");
     }
 #elif defined(MDE_CPU_X64)
    if (gFirmwareClover) {
       StrCpy(FileName, L"\\EFI\\CLOVER\\tools\\Shell64.efi");
       if (FileExists(SelfRootDir, FileName)) {
-         Entry = AddToolEntry(FileName, L"EFI Shell 64", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
+         Entry = AddToolEntry(FileName, L"EFI Shell 64", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
          DBG("found tools\\Shell64.efi\n");
       }
    } else {
      StrCpy(FileName, L"\\EFI\\CLOVER\\tools\\Shell64U.efi");
      if (FileExists(SelfRootDir, FileName)) {
-       Entry = AddToolEntry(FileName, L"UEFI Shell 64", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
+       Entry = AddToolEntry(FileName, L"UEFI Shell 64", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
        DBG("found tools\\Shell64U.efi\n");
      } else {
        StrCpy(FileName, L"\\EFI\\CLOVER\\tools\\Shell64.efi");
        if (FileExists(SelfRootDir, FileName)) {
-          Entry = AddToolEntry(FileName, L"EFI Shell 64", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
+          Entry = AddToolEntry(FileName, L"EFI Shell 64", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
           DBG("found tools\\Shell64.efi\n");
        }
      }
@@ -2036,7 +2060,7 @@ static VOID ScanTool(VOID)
 #else //what else? ARM?
     UnicodeSPrint(FileName, 512, L"\\EFI\\CLOVER\\tools\\shell.efi");
     if (FileExists(SelfRootDir, FileName)) {
-      Entry = AddToolEntry(FileName, L"EFI Shell", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S', FALSE);
+      Entry = AddToolEntry(FileName, L"EFI Shell", BuiltinIcon(BUILTIN_ICON_TOOL_SHELL), 'S');
       DBG("found apps\\shell.efi\n");
     }
 #endif
@@ -2047,13 +2071,13 @@ static VOID ScanTool(VOID)
   // look for the GPT/MBR sync tool
   /*    StrCpy(FileName, L"\\efi\\CLOVER\\tools\\gptsync.efi");
    if (FileExists(SelfRootDir, FileName)) {
-   Entry = AddToolEntry(FileName, L"Partitioning Tool", BuiltinIcon(BUILTIN_ICON_TOOL_PART), 'P', FALSE);
+   Entry = AddToolEntry(FileName, L"Partitioning Tool", BuiltinIcon(BUILTIN_ICON_TOOL_PART), 'P');
    }*/
   /*    
    // look for rescue Linux
    StrCpy(FileName, L"\\efi\\rescue\\elilo.efi");
    if (SelfVolume != NULL && FileExists(SelfRootDir, FileName)) {
-   Entry = AddToolEntry(FileName, L"Rescue Linux", BuiltinIcon(BUILTIN_ICON_TOOL_RESCUE), 0, FALSE);
+   Entry = AddToolEntry(FileName, L"Rescue Linux", BuiltinIcon(BUILTIN_ICON_TOOL_RESCUE), 0);
    
    if (UGAWidth == 1440 && UGAHeight == 900)
    Entry->LoadOptions = L"-d 0 i17";

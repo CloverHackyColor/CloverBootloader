@@ -223,7 +223,7 @@ EFI_STATUS LoadKexts(IN LOADER_ENTRY *Entry)
 	UINTN					extra_size;
 	VOID					*extra;
 
-	if (gSettings.BootArgs == NULL || AsciiStrStr(gSettings.BootArgs, "WithKexts") == NULL) {
+	if (!gSettings.WithKexts) {
 		return EFI_NOT_STARTED;
 	}
 

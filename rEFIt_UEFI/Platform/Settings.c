@@ -1004,6 +1004,26 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.BacklightLevel = (UINT16)StrHexToUint64((CHAR16*)&UStr[0]);
         }
       }
+
+      // Inject kexts
+      prop = GetProperty(dictPointer, "InjectKexts");
+      if(prop) {
+        if ((prop->type == kTagTypeTrue) ||
+            ((prop->type == kTagTypeString) &&
+            ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+          gSettings.WithKexts = TRUE;
+        }
+      }
+
+      // No caches
+      prop = GetProperty(dictPointer, "NoCaches");
+      if(prop) {
+        if ((prop->type == kTagTypeTrue) ||
+            ((prop->type == kTagTypeString) &&
+            ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+          gSettings.NoCaches = TRUE;
+        }
+      }
     }
 
     //Graphics
@@ -2755,7 +2775,7 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
     }
     
     // check if blocking of caches is needed
-    if (Entry->LoadOptions != NULL && StrStr(Entry->LoadOptions, L"NoCaches") != NULL) {
+    if (OSFLAG_ENABLED(Entry->Flags, OSFLAG_NOCACHES)) {
         MsgLog(" blocking caches");
         BlockCaches = TRUE;
         // add caches to blacklist
@@ -2774,7 +2794,7 @@ EFI_STATUS SetFSInjection(IN LOADER_ENTRY *Entry)
     // check if kext injection is needed
     // (will be done only if caches are blocked or if boot.efi refuses to load kernelcache)
     SrcDir = NULL;
-    if (Entry->LoadOptions != NULL && StrStr(Entry->LoadOptions, L"WithKexts") != NULL) {
+    if (OSFLAG_ENABLED(Entry->Flags, OSFLAG_WITHKEXTS)) {
         SrcDir = GetExtraKextsDir(Volume);
         if (SrcDir != NULL) {
           // we have found it - injection will be done

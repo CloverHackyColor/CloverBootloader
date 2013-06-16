@@ -117,6 +117,14 @@ typedef struct {
 #define OSTYPE_MAV             (19)
 #define OSTYPE_HIDE             (100)
 
+#define OSFLAG_ENABLED(flags, flag) ((flags & flag) != 0)
+#define OSFLAG_DISABLED(flags, flag) ((flags & flag) == 0)
+#define OSFLAG_ENABLE(flags, flag) (flags | flag)
+#define OSFLAG_DISABLE(flags, flag) (flags & (~flag))
+#define OSFLAG_TOGGLE(flags, flag) (flags ^ flag)
+#define OSFLAG_USEGRAPHICS   (1 << 0)
+#define OSFLAG_WITHKEXTS     (1 << 1)
+#define OSFLAG_NOCACHES      (1 << 2)
 
 #define IS_EXTENDED_PART_TYPE(type) ((type) == 0x05 || (type) == 0x0f || (type) == 0x85)
 
@@ -382,7 +390,7 @@ typedef struct {
   CHAR16           *LoaderPath;
   CHAR16           *VolName;
   EFI_DEVICE_PATH  *DevicePath;
-  BOOLEAN          UseGraphicsMode;
+  UINT8            Flags;
   UINT8            LoaderType;  
 } LOADER_ENTRY;
 
