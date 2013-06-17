@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-16 14:57+0300\n"
-"PO-Revision-Date: 2013-06-09 17:26+0000\n"
+"PO-Revision-Date: 2013-06-17 02:44+0000\n"
 "Last-Translator: Maniac <emafrias@gmail.com>\n"
 "Language-Team: es <es@li.org>\n"
 "Language: es\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1370798815.0\n"
+"X-POOTLE-MTIME: 1371437077.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -966,16 +966,16 @@ msgstr "Actualizar"
 
 #. type: "585.title"
 #: ../CloverUpdater/CloverUpdater.strings:11
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "No description available"
 msgid "No update available !"
-msgstr "Descripción no disponible"
+msgstr "Ninguna actualización disponible!"
 
 #. type: "586.title"
 #: ../CloverUpdater/CloverUpdater.strings:12
 #, no-wrap
 msgid "Ok"
-msgstr ""
+msgstr "Aceptar"
 
 #. type: "12.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:1
