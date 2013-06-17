@@ -182,7 +182,7 @@ OnExitBootServices(IN EFI_EVENT Event, IN VOID *Context)
 	//
 	// Patch kernel and kexts if needed
 	//
-	KernelAndKextsPatcherStart();
+	KernelAndKextsPatcherStart((LOADER_ENTRY *)Context);
 	
 //    gBS->Stall(2000000);
 	//PauseForKey(L"press any key to MemoryFix");
@@ -328,7 +328,7 @@ GuiEventsInitialize ()
 }  
 
 EFI_STATUS
-EventsInitialize ()
+EventsInitialize (IN LOADER_ENTRY *Entry)
 {
 	EFI_STATUS			Status;
 	VOID*           Registration = NULL;
@@ -350,7 +350,7 @@ EventsInitialize ()
 	Status = gBS->CreateEvent (EVT_SIGNAL_EXIT_BOOT_SERVICES,
 							   TPL_CALLBACK,
 							   OnExitBootServices, 
-							   NULL,
+							   Entry,
 							   &ExitBootServiceEvent);
   
 	if(!EFI_ERROR(Status))

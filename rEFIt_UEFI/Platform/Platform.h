@@ -1150,7 +1150,7 @@ BOOLEAN     tableSign(CHAR8 *table, CONST CHAR8 *sgn);
 VOID        SaveOemDsdt(BOOLEAN FullPatch);
 VOID		    SaveOemTables(VOID);
 
-EFI_STATUS  EventsInitialize(VOID);
+EFI_STATUS  EventsInitialize(IN LOADER_ENTRY *Entry);
 EFI_STATUS  EjectVolume(IN REFIT_VOLUME *Volume);
 
 EFI_STATUS  bootElTorito(IN REFIT_VOLUME*	volume);

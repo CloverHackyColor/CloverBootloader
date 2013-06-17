@@ -3440,8 +3440,6 @@ UINTN RunMainMenu(IN REFIT_MENU_SCREEN *Screen, IN INTN DefaultSelection, OUT RE
       MenuExit = RunGenericMenu(TempChosenEntry->SubScreen, Style, &SubMenuIndex, &TempChosenEntry);
       if (MenuExit == MENU_EXIT_ENTER && TempChosenEntry->Tag == TAG_LOADER) {
         AsciiSPrint(gSettings.BootArgs, 255, "%s", ((LOADER_ENTRY*)TempChosenEntry)->LoadOptions);
-        gSettings.WithKexts = OSFLAG_ENABLED(((LOADER_ENTRY*)TempChosenEntry)->Flags, OSFLAG_WITHKEXTS);
-        gSettings.NoCaches = OSFLAG_ENABLED(((LOADER_ENTRY*)TempChosenEntry)->Flags, OSFLAG_NOCACHES);
       }
       if (MenuExit == MENU_EXIT_ESCAPE || TempChosenEntry->Tag == TAG_RETURN)
         MenuExit = 0;

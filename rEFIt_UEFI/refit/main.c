@@ -557,7 +557,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 //    DBG("SetVariablesForOSX\n");
     SetVariablesForOSX();
 //    DBG("SetVariablesForOSX\n");
-    EventsInitialize();
+    EventsInitialize(Entry);
 //    DBG("FinalizeSmbios\n");
     FinalizeSmbios();
 //    DBG("SetupDataForOSX\n");

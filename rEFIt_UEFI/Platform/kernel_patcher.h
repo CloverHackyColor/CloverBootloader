@@ -107,7 +107,7 @@ VOID Patcher_SSE3_5(VOID* kernelData);
 VOID Patcher_SSE3_6(VOID* kernelData);
 VOID Patcher_SSE3_7(VOID* kernelData);
 
-VOID KernelAndKextsPatcherStart(VOID);
+VOID KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry);
 
 //VOID register_kernel_symbol(CONST CHAR8* name);
 //UINT64 symbol_handler(CHAR8* symbolName, UINT64 addr);

@@ -895,7 +895,7 @@ KernelAndKextPatcherInit(VOID)
 }
 
 VOID
-KernelAndKextsPatcherStart(VOID)
+KernelAndKextsPatcherStart(IN LOADER_ENTRY *Entry)
 {  
   // we will call KernelAndKextPatcherInit() only if needed
   
@@ -1001,7 +1001,7 @@ KernelAndKextsPatcherStart(VOID)
   //
   // Kext add
   //
-  if (gSettings.WithKexts) {
+  if ((Entry != 0) && OSFLAG_ENABLED(Entry->Flags, OSFLAG_WITHKEXTS)) {
     UINT32      deviceTreeP;
     UINT32      deviceTreeLength;
     EFI_STATUS  Status;
