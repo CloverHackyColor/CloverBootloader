@@ -210,6 +210,9 @@ typedef struct {
   //Injections
   BOOLEAN StringInjector;
   BOOLEAN InjectSystemID;
+  BOOLEAN NoCaches;
+  BOOLEAN WithKexts;
+
 
   //Graphics
   UINT16  PCIRootUID;
@@ -447,6 +450,8 @@ static void PrintConfig(const void *key, const void *value)
   printString("prev-lang:kbd", s->Language);
   printUString("CustomUUID", s->CustomUuid);
   printBoolean("InjectSystemID", s->InjectSystemID);
+  printBoolean("NoCaches", s->NoCaches);
+  printBoolean("InjectKexts", s->WithKexts);
   printHex("BacklightLevel", s->BacklightLevel);
   printUString("LegacyBoot", s->LegacyBoot);
   printUString("ConfigName", s->ConfigName);
