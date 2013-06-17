@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-16 14:57+0300\n"
-"PO-Revision-Date: 2013-06-16 15:01+0100\n"
+"POT-Creation-Date: 2013-06-17 17:14+0300\n"
+"PO-Revision-Date: 2013-06-17 13:51+0100\n"
 "Last-Translator: JrCs\n"
 "Language-Team: fr <fr@li.org>\n"
 "Language: fr\n"
@@ -949,7 +949,6 @@ msgstr "Mise à jour"
 #. type: "585.title"
 #: ../CloverUpdater/CloverUpdater.strings:11
 #, no-wrap
-#| msgid "No description available"
 msgid "No update available !"
 msgstr "Aucune mise à jour disponible !"
 
@@ -965,8 +964,9 @@ msgstr "Ok"
 msgid "Clover"
 msgstr "Clover"
 
-#. type: "204.title"
+#. type: "Never"
 #: ../CloverPrefpane/CloverPrefpane.strings:2
+#: ../CloverPrefpane/Localizable.strings:5
 #, no-wrap
 msgid "Never"
 msgstr "Jamais"
@@ -1082,8 +1082,8 @@ msgstr "Forcer le montage de l'ESP sélectionné au démarrage:"
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
 #, no-wrap
-msgid "Save NVRAM contents to partition:"
-msgstr "Sauvegarder le contenu de la NVRAM dans la partition:"
+msgid "Save NVRAM contents to disk:"
+msgstr "Sauvegarder le contenu de la NVRAM sur disque:"
 
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:22
@@ -1181,59 +1181,61 @@ msgstr "Nombre de sauvegardes à conserver:"
 msgid "EFI Folder path"
 msgstr "Répertoire EFI"
 
-#. type: "Boot Volume"
-#: ../CloverPrefpane/Localizable.strings:1
-#, no-wrap
-msgid "Boot Volume"
-msgstr "Volume de démarrage"
-
-#. type: "Default"
+#. type: "Auto"
+#: ../CloverPrefpane/CloverPrefpane.strings:38
 #: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
-msgid "Default"
-msgstr "Défaut"
-
-#. type: "ESP on [%@] %@"
-#: ../CloverPrefpane/Localizable.strings:3
-#, no-wrap
-msgid "ESP on [%1$@] %2$@"
-msgstr "ESP sur [%1$@] %2$@"
+msgid "Auto"
+msgstr "Auto"
 
 #. type: "No"
-#: ../CloverPrefpane/Localizable.strings:4
+#: ../CloverPrefpane/CloverPrefpane.strings:39
+#: ../CloverPrefpane/Localizable.strings:6
 #, no-wrap
 msgid "No"
 msgstr "Non"
 
+#. type: "Always"
+#: ../CloverPrefpane/Localizable.strings:1
+#, no-wrap
+msgid "Always"
+msgstr "Toujours"
+
+#. type: "Boot Volume"
+#: ../CloverPrefpane/Localizable.strings:3
+#, no-wrap
+msgid "Boot Volume"
+msgstr "Volume de démarrage"
+
+#. type: "ESP on [%@] %@"
+#: ../CloverPrefpane/Localizable.strings:4
+#, no-wrap
+msgid "ESP on [%1$@] %2$@"
+msgstr "ESP sur [%1$@] %2$@"
+
 #. type: "No description available"
-#: ../CloverPrefpane/Localizable.strings:5
+#: ../CloverPrefpane/Localizable.strings:7
 #, no-wrap
 msgid "No description available"
 msgstr "Aucune description disponible"
 
-#. type: "Nowhere"
-#: ../CloverPrefpane/Localizable.strings:6
-#, no-wrap
-msgid "Nowhere"
-msgstr "Nul part"
-
 #. type: "Select the EFI directory"
-#: ../CloverPrefpane/Localizable.strings:7
+#: ../CloverPrefpane/Localizable.strings:8
 #, no-wrap
 msgid "Select the EFI directory"
 msgstr "Sélectionnez le répertoire EFI"
 
 #. type: "Set EFI directory"
-#: ../CloverPrefpane/Localizable.strings:8
+#: ../CloverPrefpane/Localizable.strings:9
 #, no-wrap
 msgid "Set EFI directory"
 msgstr "Définir le répertoire EFI"
 
 #. type: "Unknown"
-#: ../CloverPrefpane/Localizable.strings:9
+#: ../CloverPrefpane/Localizable.strings:10
 #, no-wrap
 msgid "Unknown"
 msgstr "Inconnu"
 
-#~ msgid "Number of timestamp boot.log files to keep."
-#~ msgstr "Nombre de fichiers boot.log horodatés à conserver."
+#~ msgid "Nowhere"
+#~ msgstr "Nul part"

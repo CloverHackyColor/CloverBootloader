@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-16 14:57+0300\n"
+"POT-Creation-Date: 2013-06-17 17:14+0300\n"
 "PO-Revision-Date: 2013-06-09 06:08+0000\n"
 "Last-Translator: kantok <kawakamikazumi@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -955,8 +955,9 @@ msgstr ""
 msgid "Clover"
 msgstr "Clover"
 
-#. type: "204.title"
+#. type: "Never"
 #: ../CloverPrefpane/CloverPrefpane.strings:2
+#: ../CloverPrefpane/Localizable.strings:5
 #, no-wrap
 msgid "Never"
 msgstr "しない"
@@ -1071,8 +1072,9 @@ msgstr "スタートアップ時に強制マウントするESP:"
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
-#, no-wrap
-msgid "Save NVRAM contents to partition:"
+#, fuzzy, no-wrap
+#| msgid "Save NVRAM contents to partition:"
+msgid "Save NVRAM contents to disk:"
 msgstr "NVRAMコンテンツを保存するパーティション:"
 
 #. type: "374.label"
@@ -1171,60 +1173,73 @@ msgstr "保持するバックアップの数:"
 msgid "EFI Folder path"
 msgstr "EFIフォルダのパス"
 
-#. type: "Boot Volume"
-#: ../CloverPrefpane/Localizable.strings:1
-#, no-wrap
-msgid "Boot Volume"
-msgstr "ブートボリューム"
-
-#. type: "Default"
+#. type: "Auto"
+#: ../CloverPrefpane/CloverPrefpane.strings:38
 #: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
-msgid "Default"
-msgstr "デフォルト"
-
-#. type: "ESP on [%@] %@"
-#: ../CloverPrefpane/Localizable.strings:3
-#, no-wrap
-msgid "ESP on [%1$@] %2$@"
-msgstr "[%1$@] のESP %2$@"
+msgid "Auto"
+msgstr ""
 
 #. type: "No"
-#: ../CloverPrefpane/Localizable.strings:4
+#: ../CloverPrefpane/CloverPrefpane.strings:39
+#: ../CloverPrefpane/Localizable.strings:6
 #, no-wrap
 msgid "No"
 msgstr "マウントしない"
 
+#. type: "Always"
+#: ../CloverPrefpane/Localizable.strings:1
+#, no-wrap
+msgid "Always"
+msgstr ""
+
+#. type: "Boot Volume"
+#: ../CloverPrefpane/Localizable.strings:3
+#, no-wrap
+msgid "Boot Volume"
+msgstr "ブートボリューム"
+
+#. type: "ESP on [%@] %@"
+#: ../CloverPrefpane/Localizable.strings:4
+#, no-wrap
+msgid "ESP on [%1$@] %2$@"
+msgstr "[%1$@] のESP %2$@"
+
 #. type: "No description available"
-#: ../CloverPrefpane/Localizable.strings:5
+#: ../CloverPrefpane/Localizable.strings:7
 #, fuzzy, no-wrap
 #| msgid "No description"
 msgid "No description available"
 msgstr "詳細はありません"
 
-#. type: "Nowhere"
-#: ../CloverPrefpane/Localizable.strings:6
-#, no-wrap
-msgid "Nowhere"
-msgstr "保存しない"
-
 #. type: "Select the EFI directory"
-#: ../CloverPrefpane/Localizable.strings:7
+#: ../CloverPrefpane/Localizable.strings:8
 #, no-wrap
 msgid "Select the EFI directory"
 msgstr "EFIディレクトリを選択"
 
 #. type: "Set EFI directory"
-#: ../CloverPrefpane/Localizable.strings:8
+#: ../CloverPrefpane/Localizable.strings:9
 #, no-wrap
 msgid "Set EFI directory"
 msgstr "EFIディレクトリを設定"
 
 #. type: "Unknown"
-#: ../CloverPrefpane/Localizable.strings:9
+#: ../CloverPrefpane/Localizable.strings:10
 #, no-wrap
 msgid "Unknown"
 msgstr "不明"
+
+#~ msgid "Nowhere"
+#~ msgstr "保存しない"
+
+#, fuzzy
+#~| msgid "OS Box"
+#~ msgid "Box"
+#~ msgstr "OS Box"
+
+#~ msgid "Default"
+#~ msgstr "デフォルト"
 
 #~ msgid "Number of timestamp boot.log files to keep."
 #~ msgstr "boot.logが保持するタイムスタンプの数。"

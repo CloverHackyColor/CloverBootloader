@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-16 14:57+0300\n"
+"POT-Creation-Date: 2013-06-17 17:14+0300\n"
 "PO-Revision-Date: 2013-06-10 06:59+0000\n"
 "Last-Translator: Mill <ceruns@ymail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
@@ -959,8 +959,9 @@ msgstr ""
 msgid "Clover"
 msgstr "클로버"
 
-#. type: "204.title"
+#. type: "Never"
 #: ../CloverPrefpane/CloverPrefpane.strings:2
+#: ../CloverPrefpane/Localizable.strings:5
 #, no-wrap
 msgid "Never"
 msgstr "사용 안 함"
@@ -1075,8 +1076,9 @@ msgstr "시동시 선택된 ESP 강제 마운트:"
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
-#, no-wrap
-msgid "Save NVRAM contents to partition:"
+#, fuzzy, no-wrap
+#| msgid "Save NVRAM contents to partition:"
+msgid "Save NVRAM contents to disk:"
 msgstr "파티션에 NVRAM 내용 저장:"
 
 #. type: "374.label"
@@ -1175,59 +1177,72 @@ msgstr "유지할 백업 수:"
 msgid "EFI Folder path"
 msgstr "EFI 폴더 경로"
 
-#. type: "Boot Volume"
-#: ../CloverPrefpane/Localizable.strings:1
-#, no-wrap
-msgid "Boot Volume"
-msgstr "부트 볼륨"
-
-#. type: "Default"
+#. type: "Auto"
+#: ../CloverPrefpane/CloverPrefpane.strings:38
 #: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
-msgid "Default"
-msgstr "기본값"
-
-#. type: "ESP on [%@] %@"
-#: ../CloverPrefpane/Localizable.strings:3
-#, no-wrap
-msgid "ESP on [%1$@] %2$@"
-msgstr "[%1$@] %2$@ 에 ESP"
+msgid "Auto"
+msgstr ""
 
 #. type: "No"
-#: ../CloverPrefpane/Localizable.strings:4
+#: ../CloverPrefpane/CloverPrefpane.strings:39
+#: ../CloverPrefpane/Localizable.strings:6
 #, no-wrap
 msgid "No"
 msgstr "아니오"
 
+#. type: "Always"
+#: ../CloverPrefpane/Localizable.strings:1
+#, no-wrap
+msgid "Always"
+msgstr ""
+
+#. type: "Boot Volume"
+#: ../CloverPrefpane/Localizable.strings:3
+#, no-wrap
+msgid "Boot Volume"
+msgstr "부트 볼륨"
+
+#. type: "ESP on [%@] %@"
+#: ../CloverPrefpane/Localizable.strings:4
+#, no-wrap
+msgid "ESP on [%1$@] %2$@"
+msgstr "[%1$@] %2$@ 에 ESP"
+
 #. type: "No description available"
-#: ../CloverPrefpane/Localizable.strings:5
+#: ../CloverPrefpane/Localizable.strings:7
 #, no-wrap
 msgid "No description available"
 msgstr "설명 없음"
 
-#. type: "Nowhere"
-#: ../CloverPrefpane/Localizable.strings:6
-#, no-wrap
-msgid "Nowhere"
-msgstr "없음"
-
 #. type: "Select the EFI directory"
-#: ../CloverPrefpane/Localizable.strings:7
+#: ../CloverPrefpane/Localizable.strings:8
 #, no-wrap
 msgid "Select the EFI directory"
 msgstr "EFI 디렉터리를 선택하세요"
 
 #. type: "Set EFI directory"
-#: ../CloverPrefpane/Localizable.strings:8
+#: ../CloverPrefpane/Localizable.strings:9
 #, no-wrap
 msgid "Set EFI directory"
 msgstr "EFI 디렉터리를 설정하세요"
 
 #. type: "Unknown"
-#: ../CloverPrefpane/Localizable.strings:9
+#: ../CloverPrefpane/Localizable.strings:10
 #, no-wrap
 msgid "Unknown"
 msgstr "알 수 없음"
+
+#~ msgid "Nowhere"
+#~ msgstr "없음"
+
+#, fuzzy
+#~| msgid "OS Box"
+#~ msgid "Box"
+#~ msgstr "OS Box"
+
+#~ msgid "Default"
+#~ msgstr "기본값"
 
 #~ msgid "CLOVER"
 #~ msgstr "CLOVER"

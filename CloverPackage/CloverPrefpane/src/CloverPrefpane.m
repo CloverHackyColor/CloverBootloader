@@ -73,18 +73,18 @@ static NSString* kNVRamDisk = @"NVRamDisk";
 String(key, comment)    NSLocalized\
 StringFromTableInBundle(key, nil, self.bundle, comment)
 
-#define AddMenuItemToSourceList(list, title, value) \
+#define AddKeyValueToList(list, title, value) \
 [list addObject:[NSDictionary dictionaryWithObjectsAndKeys: \
 (title), @"Title", \
-(value), @"Value", nil]]
+(value ? value : [NSNull null]), @"Value", nil]]
 
 - (NSArray*)efiPartitions
 {
     if (_efiPartitions == nil) {
         NSMutableArray *list = [[NSMutableArray alloc] init];
 
-        AddMenuItemToSourceList(list, GetLocalizedString(@"No",@"Not mounting EFI partition"), @"No");
-        AddMenuItemToSourceList(list, GetLocalizedString(@"Boot Volume",@"EFI partition from boot volume"), @"Yes");
+        AddKeyValueToList(list, GetLocalizedString(@"No",@"Not mounting EFI partition"), nil);
+        AddKeyValueToList(list, GetLocalizedString(@"Boot Volume",@"EFI partition from boot volume"), @"Yes");
 
         NSArray *disksAndPartitions = [[self diskutilList] objectForKey:@"AllDisksAndPartitions"];
         if (disksAndPartitions != nil) {
@@ -130,7 +130,7 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
                             if (espIdentifier) {
                                 NSString *name = [NSString stringWithFormat:GetLocalizedString(@"ESP on [%@] %@", nil),
                                                   diskIdentifier, [volumeNames componentsJoinedByString:@", "]];
-                                AddMenuItemToSourceList(list, name, espIdentifier);
+                                AddKeyValueToList(list, name, espIdentifier);
                             }
 
                             [volumeNames release];
@@ -151,60 +151,9 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
     if (nil == _nvRamPartitions) {
         NSMutableArray *list = [[NSMutableArray alloc] init];
 
-        AddMenuItemToSourceList(list, GetLocalizedString(@"Nowhere",nil), @"No");
-        AddMenuItemToSourceList(list, GetLocalizedString(@"Default",nil), @"Yes");
-
-        NSArray *disksAndPartitions = [[self diskutilList] objectForKey:@"AllDisksAndPartitions"];
-
-        if (disksAndPartitions != nil) {
-            for (NSDictionary *diskEntry in disksAndPartitions) {
-
-                NSString *content = [diskEntry objectForKey:@"Content"];
-
-                if (content != nil) {
-                    // Disk has partitions
-                    if ([content isEqualToString:@"GUID_partition_scheme"] || [content isEqualToString:@"FDisk_partition_scheme"]) {
-
-                        NSArray *partitions = [diskEntry objectForKey:@"Partitions"];
-
-                        if (partitions != nil) {
-                            for (NSDictionary *partitionEntry in partitions) {
-
-                                NSString *content = [partitionEntry objectForKey:@"Content"];
-
-                                if (content != nil && ([content isEqualToString:@"Apple_HFS"]  ||
-                                                       [content isEqualToString:@"Apple_Boot"] ||
-                                                       [content isEqualToString:@"EFI"])) {
-
-                                    NSString *identifier = [partitionEntry objectForKey:@"DeviceIdentifier"];
-
-                                    if (identifier != nil) {
-                                        NSDictionary *partitionProperties = [self getPartitionProperties:identifier];
-
-                                        if (partitionProperties) {
-
-                                            NSNumber *writable = [partitionProperties objectForKey:@"Writable"];
-
-                                            if (writable != nil && [writable boolValue] == YES) {
-
-                                                NSString *volumeName = [partitionEntry objectForKey:@"VolumeName"];
-                                                if (volumeName == nil || [volumeName length] == 0) {
-                                                    volumeName = [content isEqualToString:@"EFI"] ? @"ESP" : @"";
-                                                }
-
-                                                NSString *title = [NSString stringWithFormat:@"[%@] %@", identifier, volumeName];
-
-                                                AddMenuItemToSourceList(list, title, identifier);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        AddKeyValueToList(list, GetLocalizedString(@"Never",nil),  @"No");
+        AddKeyValueToList(list, GetLocalizedString(@"Auto",nil),   [NSNull null]);
+        AddKeyValueToList(list, GetLocalizedString(@"Always",nil), @"Yes");
 
         _nvRamPartitions = [NSArray arrayWithArray:list];
         [list release];
@@ -233,11 +182,14 @@ StringFromTableInBundle(key, nil, self.bundle, comment)
 
 - (IBAction)updateCloverNVRamVariables:(id)sender {
     Class boolClass = [[NSNumber numberWithBool:YES] class];
+    Class nullClass = [NSNull class];
 
     for (id key in [self.nvram allKeys]) {
         id value = [self.nvram valueForKey:key];
         if ([value isKindOfClass:boolClass])
             value = [value  boolValue] ? @"Yes" : @"No";
+        else if ([value isKindOfClass:nullClass])
+            value = @"";
         else
             value = [NSString stringWithFormat:@"%@",value];
         [self setNVRamKey:[NSString stringWithFormat:@"Clover.%@", key]

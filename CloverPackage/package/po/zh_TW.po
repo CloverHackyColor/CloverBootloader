@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-06-16 14:57+0300\n"
+"POT-Creation-Date: 2013-06-17 17:14+0300\n"
 "PO-Revision-Date: 2013-06-17 00:32+0000\n"
 "Last-Translator: crazybirdy <>\n"
 "Language-Team: zh_TW <zh_TW@li.org>\n"
@@ -941,7 +941,6 @@ msgstr "更新"
 #. type: "585.title"
 #: ../CloverUpdater/CloverUpdater.strings:11
 #, no-wrap
-#| msgid "No description"
 msgid "No update available !"
 msgstr "沒有可用的更新"
 
@@ -957,8 +956,9 @@ msgstr "確定"
 msgid "Clover"
 msgstr "Clover"
 
-#. type: "204.title"
+#. type: "Never"
 #: ../CloverPrefpane/CloverPrefpane.strings:2
+#: ../CloverPrefpane/Localizable.strings:5
 #, no-wrap
 msgid "Never"
 msgstr "永遠不要"
@@ -1073,8 +1073,9 @@ msgstr "啓動時 強制裝載選定的 ESP 磁區:"
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
-#, no-wrap
-msgid "Save NVRAM contents to partition:"
+#, fuzzy, no-wrap
+#| msgid "Save NVRAM contents to partition:"
+msgid "Save NVRAM contents to disk:"
 msgstr "儲存 NVRAM 內容到磁區:"
 
 #. type: "374.label"
@@ -1173,60 +1174,72 @@ msgstr "保存的備份數量:"
 msgid "EFI Folder path"
 msgstr "EFI 資料夾路徑："
 
-#. type: "Boot Volume"
-#: ../CloverPrefpane/Localizable.strings:1
-#, no-wrap
-msgid "Boot Volume"
-msgstr "開機磁區"
-
-#. type: "Default"
+#. type: "Auto"
+#: ../CloverPrefpane/CloverPrefpane.strings:38
 #: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
-msgid "Default"
-msgstr "預設"
-
-#. type: "ESP on [%@] %@"
-#: ../CloverPrefpane/Localizable.strings:3
-#, no-wrap
-msgid "ESP on [%1$@] %2$@"
-msgstr "在 [%1$@] %2$@ 的ESP"
+msgid "Auto"
+msgstr ""
 
 #. type: "No"
-#: ../CloverPrefpane/Localizable.strings:4
+#: ../CloverPrefpane/CloverPrefpane.strings:39
+#: ../CloverPrefpane/Localizable.strings:6
 #, no-wrap
 msgid "No"
 msgstr "否"
 
-#. type: "No description available"
-#: ../CloverPrefpane/Localizable.strings:5
+#. type: "Always"
+#: ../CloverPrefpane/Localizable.strings:1
 #, no-wrap
-#| msgid "No description"
+msgid "Always"
+msgstr ""
+
+#. type: "Boot Volume"
+#: ../CloverPrefpane/Localizable.strings:3
+#, no-wrap
+msgid "Boot Volume"
+msgstr "開機磁區"
+
+#. type: "ESP on [%@] %@"
+#: ../CloverPrefpane/Localizable.strings:4
+#, no-wrap
+msgid "ESP on [%1$@] %2$@"
+msgstr "在 [%1$@] %2$@ 的ESP"
+
+#. type: "No description available"
+#: ../CloverPrefpane/Localizable.strings:7
+#, no-wrap
 msgid "No description available"
 msgstr "沒有描述"
 
-#. type: "Nowhere"
-#: ../CloverPrefpane/Localizable.strings:6
-#, no-wrap
-msgid "Nowhere"
-msgstr "不顯示"
-
 #. type: "Select the EFI directory"
-#: ../CloverPrefpane/Localizable.strings:7
+#: ../CloverPrefpane/Localizable.strings:8
 #, no-wrap
 msgid "Select the EFI directory"
 msgstr "選擇 EFI 資料夾"
 
 #. type: "Set EFI directory"
-#: ../CloverPrefpane/Localizable.strings:8
+#: ../CloverPrefpane/Localizable.strings:9
 #, no-wrap
 msgid "Set EFI directory"
 msgstr "設定 EFI 資料夾"
 
 #. type: "Unknown"
-#: ../CloverPrefpane/Localizable.strings:9
+#: ../CloverPrefpane/Localizable.strings:10
 #, no-wrap
 msgid "Unknown"
 msgstr "未知"
+
+#~ msgid "Nowhere"
+#~ msgstr "不顯示"
+
+#, fuzzy
+#~| msgid "OS Box"
+#~ msgid "Box"
+#~ msgstr "OS Box"
+
+#~ msgid "Default"
+#~ msgstr "預設"
 
 #~ msgid "Number of timestamp boot.log files to keep."
 #~ msgstr "保存的 時間戳 boot.log 的檔案數量"
