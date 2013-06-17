@@ -676,6 +676,7 @@ static CHAR16 *AddLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption)
    return PoolPrint(L"%s %s", LoadOptions, LoadOption);
 }
 
+/*
 static CHAR16 *RemoveLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption)
 {
   CHAR16 *Placement;
@@ -740,6 +741,8 @@ static CHAR16 *RemoveLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption)
   //return PoolPrint(L"%*s%s", Offset, LoadOptions, Placement + OptionLength + 1);
   
 }
+
+// */
 
 static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Volume, UINT8 OSType)
 {
