@@ -7,17 +7,17 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-17 17:14+0300\n"
-"PO-Revision-Date: 2013-06-17 09:44+0000\n"
+"PO-Revision-Date: 2013-06-17 18:07+0000\n"
 "Last-Translator: Slice <sergey.slice@gmail.com>\n"
 "Language-Team: ru <ru@li.org>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1371462279.0\n"
+"X-POOTLE-MTIME: 1371492450.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -1100,7 +1100,7 @@ msgstr "Монтировать выбранный ESP на старте"
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Save NVRAM contents to partition:"
 msgid "Save NVRAM contents to disk:"
 msgstr "Сохранять содержимое NVRAM на раздел:"
@@ -1207,7 +1207,7 @@ msgstr "Путь к папке EFI:"
 #: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
 msgid "Auto"
-msgstr ""
+msgstr "Автоматически"
 
 #. type: "No"
 #: ../CloverPrefpane/CloverPrefpane.strings:39
@@ -1220,7 +1220,7 @@ msgstr "Нет"
 #: ../CloverPrefpane/Localizable.strings:1
 #, no-wrap
 msgid "Always"
-msgstr ""
+msgstr "Всегда"
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:3
