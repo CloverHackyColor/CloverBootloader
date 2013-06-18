@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-17 17:14+0300\n"
-"PO-Revision-Date: 2013-06-10 16:24+0000\n"
+"PO-Revision-Date: 2013-06-18 18:37+0000\n"
 "Last-Translator: mackie100 <mackie.proj@yahoo.com>\n"
 "Language-Team: it <it@li.org>\n"
 "Language: it\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1370881466.0\n"
+"X-POOTLE-MTIME: 1371580672.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -964,16 +964,16 @@ msgstr "Aggiorna"
 
 #. type: "585.title"
 #: ../CloverUpdater/CloverUpdater.strings:11
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "No description available"
 msgid "No update available !"
-msgstr "Nessuna descrizione disponibile"
+msgstr "Nessun aggiornamento disponibile!"
 
 #. type: "586.title"
 #: ../CloverUpdater/CloverUpdater.strings:12
 #, no-wrap
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 #. type: "12.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:1
@@ -1094,14 +1094,14 @@ msgstr "Configurazioni Avanzate"
 #: ../CloverPrefpane/CloverPrefpane.strings:20
 #, no-wrap
 msgid "Force mount selected ESP at startup:"
-msgstr "Forzare il mount all'avvio della ESP selezionata:"
+msgstr "All'avvio forzare il mount della ESP selezionata:"
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Save NVRAM contents to partition:"
 msgid "Save NVRAM contents to disk:"
-msgstr "Salva il contenuto della NVRAM nella partizione:"
+msgstr "Salva il contenuto della NVRAM nel disco:"
 
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:22
@@ -1205,7 +1205,7 @@ msgstr "Percorso cartella EFI:"
 #: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
 msgid "Auto"
-msgstr ""
+msgstr "Auto"
 
 #. type: "No"
 #: ../CloverPrefpane/CloverPrefpane.strings:39
@@ -1218,7 +1218,7 @@ msgstr "No"
 #: ../CloverPrefpane/Localizable.strings:1
 #, no-wrap
 msgid "Always"
-msgstr ""
+msgstr "Sempre"
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:3
