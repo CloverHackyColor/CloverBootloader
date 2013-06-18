@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-17 17:14+0300\n"
-"PO-Revision-Date: 2013-06-18 00:16+0000\n"
+"PO-Revision-Date: 2013-06-18 00:20+0000\n"
 "Last-Translator: AlexKord <alexkord@lan.com.ua>\n"
 "Language-Team: ua <ua@li.org>\n"
 "Language: uk\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
 "10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1371514617.0\n"
+"X-POOTLE-MTIME: 1371514800.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -1109,7 +1109,7 @@ msgstr "Змонтувати обраний ESP під час запуску"
 #, no-wrap
 #| msgid "Save NVRAM contents to partition:"
 msgid "Save NVRAM contents to disk:"
-msgstr "Зберігати вміст NVRAM на розділ:"
+msgstr "Зберегти вміст NVRAM на розділ:"
 
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:22
