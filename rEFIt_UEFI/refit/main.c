@@ -517,6 +517,21 @@ NullConOutOutputString(IN EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL *This, IN CHAR16 *Stri
 //
 EG_PIXEL DarkBackgroundPixel  = { 0x0, 0x0, 0x0, 0xFF };
 
+static CHAR16 *AddLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption)
+{
+  // If either option strings are null nothing to do
+  if (LoadOptions == NULL)
+  {
+    if (LoadOption == NULL) return NULL;
+    // Duplicate original options as nothing to add
+    return EfiStrDuplicate(LoadOption);
+  }
+  // If there is no option or it is already present duplicate original
+  else if ((LoadOption == NULL) || StrStr(LoadOptions, LoadOption)) return EfiStrDuplicate(LoadOptions);
+  // Otherwise add option
+  return PoolPrint(L"%s %s", LoadOptions, LoadOption);
+}
+
 static VOID StartLoader(IN LOADER_ENTRY *Entry)
 {
   EFI_STATUS              Status;
@@ -547,8 +562,19 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     PatchACPI(Entry->Volume);
 //DBG("GetOSVersion\n");
     Status = GetOSVersion(Entry->Volume);
-    
-    Entry->LoadOptions     = PoolPrint(L"%a", gSettings.BootArgs); //moved here, before using Entry ;)
+
+    // Prepare boot arguments
+    Entry->LoadOptions = PoolPrint(L"%a", gSettings.BootArgs);
+    if (((StrCmp(gST->FirmwareVendor, L"CLOVER") == 0) ||
+         (StrCmp(gST->FirmwareVendor, L"EDKII") == 0)) &&
+        ((Entry->Volume->OSType == OSTYPE_COUGAR) ||
+         (Entry->Volume->OSType == OSTYPE_MAV))) {
+      // Add slide=0 argument for ML and Mavericks if not present
+      CHAR16 *TempOptions = AddLoadOption(Entry->LoadOptions, L"slide=0");
+      FreePool(Entry->LoadOptions);
+      Entry->LoadOptions = TempOptions;
+    }
+
 //    DBG("SetDevices\n");
     SetDevices();
 //    DBG("SetFSInjection\n");
@@ -659,21 +685,6 @@ static EFI_STATUS GetOSXVolumeName(LOADER_ENTRY *Entry)
     }
   }
   return Status;
-}
-
-static CHAR16 *AddLoadOption(IN CHAR16 *LoadOptions, IN CHAR16 *LoadOption)
-{
-   // If either option strings are null nothing to do
-   if (LoadOptions == NULL)
-   {
-      if (LoadOption == NULL) return NULL;
-      // Duplicate original options as nothing to add
-      return EfiStrDuplicate(LoadOption);
-   }
-   // If there is no option or it is already present duplicate original
-   else if ((LoadOption == NULL) || StrStr(LoadOptions, LoadOption)) return EfiStrDuplicate(LoadOptions);
-   // Otherwise add option
-   return PoolPrint(L"%s %s", LoadOptions, LoadOption);
 }
 
 /*
