@@ -174,12 +174,14 @@ EFI_STATUS SetVariablesForOSX()
                             sizeof(EFI_GUID), &gUuid);
   
 
-  // options variables
-  // note: some gEfiAppleBootGuid vars present in nvram.plist are already set by PutNvramPlistToRtVars()
-  // we should think how to handle those vars from nvram.plist and ones set here from gSettings
-	Status = gRS->SetVariable(L"boot-args", &gEfiAppleBootGuid,
-                                         /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
-                                         AsciiStrLen(gSettings.BootArgs), &gSettings.BootArgs);
+    // options variables
+    // note: some gEfiAppleBootGuid vars present in nvram.plist are already set by PutNvramPlistToRtVars()
+    // we should think how to handle those vars from nvram.plist and ones set here from gSettings
+
+    // Don't overwrite boot-args var as it was already set by PutNvramPlistToRtVars()
+    // boot-args nvram var contain ONLY parameters to be merged with the boot-args global variable
+
+
 	Status = gRS->SetVariable(L"security-mode", &gEfiAppleBootGuid,
                                          /*   EFI_VARIABLE_NON_VOLATILE |*/ EFI_VARIABLE_BOOTSERVICE_ACCESS | EFI_VARIABLE_RUNTIME_ACCESS,
                                          AsciiStrLen(None), (VOID*)None);

@@ -2573,7 +2573,7 @@ VOID SetVariablesFromNvram()
         DBG("...adding arg:%a\n", arg); 
         len = iStrLen(gSettings.BootArgs, 256);
         if (len + index2 > 256) {
-          DBG("boot-args oveflow... bytes=%d+%d\n", len, index2);
+          DBG("boot-args overflow... bytes=%d+%d\n", len, index2);
           break;
         }
         gSettings.BootArgs[len++] = 0x20;
@@ -2586,6 +2586,7 @@ VOID SetVariablesFromNvram()
     FreePool(arg);
   }
 }
+
 //
 // main entry point
 //
