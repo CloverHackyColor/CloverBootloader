@@ -466,7 +466,7 @@ static void PrintConfig(const void *key, const void *value)
   printInteger3("DoubleClick", s->DoubleClickTime);
   printBoolean3("Mirror", s->PointerMirror);
   printCloseSubDict();
-  printSubDict("Volume");
+  printSubDict("Volumes");
   printInteger3("Hide Count", s->HVCount);
   printCloseSubDict();
   printSubDict("HideEntries");

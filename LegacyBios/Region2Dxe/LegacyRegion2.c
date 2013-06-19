@@ -691,7 +691,8 @@ DetectChipset (
       
     case 0x01608086: // 3rd Generation Core Processor Family DRAM Controller
     case 0x01648086: // 3rd Generation Core Processor Family DRAM Controller
-  
+//???
+    case 0x0C008086: // 4rd Generation Core Processor Family DRAM Controller
       DBG(" 3rd Generation Core processors (PAM 0x80-0x86)\n");
       mRegisterValues = mRegisterValuesCP;
       break;
