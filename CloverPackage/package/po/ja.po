@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-17 17:14+0300\n"
-"PO-Revision-Date: 2013-06-09 06:08+0000\n"
+"PO-Revision-Date: 2013-06-19 16:27+0000\n"
 "Last-Translator: kantok <kawakamikazumi@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: ja\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1370758114.0\n"
+"X-POOTLE-MTIME: 1371659237.0\n"
 
 #. type: Content of: <html><body><div><p>
 #: Resources/templates/Welcome.html:21 Resources/templates/Conclusion.html:19
@@ -204,9 +204,7 @@ msgstr "- 追加kextのロードとFireWireセキュリティモード。"
 msgid ""
 "- default boot after timeout, customizable GUI , and saving screenshots from "
 "GUI typing F10"
-msgstr ""
-"- デフォルトではタイムアウト後にブートします。GUIはカスタマイズ可能。GUI上で"
-"F10押下でスクリーンショットを保存します。"
+msgstr "- デフォルトではタイムアウト後にブートします。GUIはカスタマイズ可能。GUI上でF10の押下によりスクリーンショットを保存します。"
 
 #. type: Content of: <html><body><p>
 #: Resources/templates/Description.html:39
@@ -856,7 +854,7 @@ msgstr "RCスクリプトを他のすべてのOSXボリュームにインスト�
 #: Resources/templates/Localizable.strings:182
 #, no-wrap
 msgid "Install all RC scripts on all internal bootable OSX volumes other than the target volume."
-msgstr "すべてのRCスクリプトを、ターゲットボリューム以外の起動可能な内蔵OSXボリュームにインストールします。"
+msgstr "RCスクリプトを、ターゲットボリューム以外のOSXを起動可能なすべての内蔵ボリュームにインストールします。"
 
 #. type: "Optional RC Scripts"
 #: Resources/templates/Localizable.strings:183
@@ -938,16 +936,16 @@ msgstr "アップデート"
 
 #. type: "585.title"
 #: ../CloverUpdater/CloverUpdater.strings:11
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "No description"
 msgid "No update available !"
-msgstr "詳細はありません"
+msgstr "アップデートはありません。"
 
 #. type: "586.title"
 #: ../CloverUpdater/CloverUpdater.strings:12
 #, no-wrap
 msgid "Ok"
-msgstr ""
+msgstr "OK"
 
 #. type: "12.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:1
@@ -1072,10 +1070,10 @@ msgstr "スタートアップ時に強制マウントするESP:"
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Save NVRAM contents to partition:"
 msgid "Save NVRAM contents to disk:"
-msgstr "NVRAMコンテンツを保存するパーティション:"
+msgstr "NVRAMコンテンツをディスクに保存:"
 
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:22
@@ -1178,7 +1176,7 @@ msgstr "EFIフォルダのパス"
 #: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
 msgid "Auto"
-msgstr ""
+msgstr "オート"
 
 #. type: "No"
 #: ../CloverPrefpane/CloverPrefpane.strings:39
@@ -1191,7 +1189,7 @@ msgstr "マウントしない"
 #: ../CloverPrefpane/Localizable.strings:1
 #, no-wrap
 msgid "Always"
-msgstr ""
+msgstr "常に"
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:3
@@ -1207,10 +1205,10 @@ msgstr "[%1$@] のESP %2$@"
 
 #. type: "No description available"
 #: ../CloverPrefpane/Localizable.strings:7
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "No description"
 msgid "No description available"
-msgstr "詳細はありません"
+msgstr "説明文なし"
 
 #. type: "Select the EFI directory"
 #: ../CloverPrefpane/Localizable.strings:8
