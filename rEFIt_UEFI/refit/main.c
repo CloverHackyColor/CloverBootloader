@@ -565,8 +565,8 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
 
     // Prepare boot arguments
     Entry->LoadOptions = PoolPrint(L"%a", gSettings.BootArgs);
-    if (((StrCmp(gST->FirmwareVendor, L"CLOVER") == 0) ||
-         (StrCmp(gST->FirmwareVendor, L"EDKII") == 0)) &&
+    if ((StrCmp(gST->FirmwareVendor, L"CLOVER") != 0) &&
+        (StrCmp(gST->FirmwareVendor, L"EDKII") != 0) &&
         ((Entry->Volume->OSType == OSTYPE_COUGAR) ||
          (Entry->Volume->OSType == OSTYPE_MAV))) {
       // Add slide=0 argument for ML and Mavericks if not present
