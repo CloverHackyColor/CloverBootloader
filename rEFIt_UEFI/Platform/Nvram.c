@@ -66,96 +66,95 @@ UINT64 GetEfiTimeInMs(IN EFI_TIME *T)
 /** Reads and returns value of NVRAM variable. */
 VOID *GetNvramVariable(IN CHAR16 *VariableName, IN EFI_GUID *VendorGuid, OUT UINT32 *Attributes OPTIONAL, OUT UINTN *DataSize OPTIONAL)
 {
-    EFI_STATUS      Status;
-    VOID            *Data = NULL;
-    UINTN           IntDataSize = 0;
-    
-    Status = gRT->GetVariable(VariableName, VendorGuid, Attributes, &IntDataSize, NULL);
-    if (Status == EFI_BUFFER_TOO_SMALL) {
-        Data = AllocateZeroPool(IntDataSize+1);
-        if (Data) {
-            Status = gRT->GetVariable(VariableName, VendorGuid, Attributes, &IntDataSize, Data);
-            if (EFI_ERROR(Status)) {
-              FreePool(Data);
-              Data = NULL;
-            } else {
-              if (DataSize != NULL) {
-                *DataSize = IntDataSize;
-              }
-            }
+  EFI_STATUS      Status;
+  VOID            *Data = NULL;
+  UINTN           IntDataSize = 0;
+  
+  Status = gRT->GetVariable(VariableName, VendorGuid, Attributes, &IntDataSize, NULL);
+  if (!IntDataSize) {
+    return NULL;
+  }
+  if (Status == EFI_BUFFER_TOO_SMALL) {
+    Data = AllocateZeroPool(IntDataSize+1);
+    if (Data) {
+      Status = gRT->GetVariable(VariableName, VendorGuid, Attributes, &IntDataSize, Data);
+      if (EFI_ERROR(Status)) {
+        FreePool(Data);
+        Data = NULL;
+      } else {
+        if (DataSize != NULL) {
+          *DataSize = IntDataSize;
         }
+      }
     }
-    return Data;
+  }
+  return Data;
 }
 
 
 /** Sets NVRAM variable. Does nothing if variable with the same data and attributes already exists. */
 EFI_STATUS SetNvramVariable(IN CHAR16 *VariableName, IN EFI_GUID *VendorGuid, IN UINT32 Attributes, IN UINTN DataSize, IN VOID *Data)
 {
-    EFI_STATUS      Status;
-    VOID            *OldData;
-    UINTN           OldDataSize;
-    UINT32          OldAttributes;
-    
-    //DBG("SetNvramVariable(%s, guid, 0x%x, %d):", VariableName, Attributes, DataSize);
-    OldData = GetNvramVariable(VariableName, VendorGuid, &OldAttributes, &OldDataSize);
-    if (OldData != NULL) {
-        // var already exists - check if it equal to new value
-        //DBG(" exists(0x%x, %d)", OldAttributes, OldDataSize);
-        if (OldAttributes == Attributes && OldDataSize == DataSize && CompareMem(OldData, Data, DataSize) == 0) {
-            // it's the same - do nothing
-            //DBG(", equal -> not writing again.\n");
-            FreePool(OldData);
-            return EFI_SUCCESS;
-        }
-        //DBG(", not equal");
-        
-        FreePool(OldData);
-        
-        // not the same - delete previous one if attributes are different
-        if (OldAttributes != Attributes) {
-            Status = gRT->SetVariable(VariableName, VendorGuid, 0, 0, NULL);
-            //DBG(", diff. attr: deleting old (%r)", Status);
-        }
+  EFI_STATUS      Status;
+  VOID            *OldData;
+  UINTN           OldDataSize;
+  UINT32          OldAttributes;
+  
+  //DBG("SetNvramVariable(%s, guid, 0x%x, %d):", VariableName, Attributes, DataSize);
+  OldData = GetNvramVariable(VariableName, VendorGuid, &OldAttributes, &OldDataSize);
+  if (OldData != NULL) {
+    // var already exists - check if it equal to new value
+    //DBG(" exists(0x%x, %d)", OldAttributes, OldDataSize);
+    if (OldAttributes == Attributes && OldDataSize == DataSize && CompareMem(OldData, Data, DataSize) == 0) {
+      // it's the same - do nothing
+      //DBG(", equal -> not writing again.\n");
+      FreePool(OldData);
+      return EFI_SUCCESS;
     }
+    //DBG(", not equal");
     
-    //
-    // set new value
-    //
-    Status = gRT->SetVariable(VariableName, VendorGuid, Attributes, DataSize, Data);
-    //DBG(" -> writing new (%r)\n", Status);
+    FreePool(OldData);
     
-    return Status;
+    // not the same - delete previous one if attributes are different
+    if (OldAttributes != Attributes) {
+      Status = gRT->SetVariable(VariableName, VendorGuid, 0, 0, NULL);
+      //DBG(", diff. attr: deleting old (%r)", Status);
+    }
+  }
+  
+  //
+  // set new value
+  //
+  Status = gRT->SetVariable(VariableName, VendorGuid, Attributes, DataSize, Data);
+  //DBG(" -> writing new (%r)\n", Status);
+  
+  return Status;
 }
 
 
 /** Searches for GPT HDD dev path node and return pointer to partition GUID or NULL. */
 EFI_GUID *FindGPTPartitionGuidInDevicePath(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath)
 {
-    HARDDRIVE_DEVICE_PATH   *HDDDevPath;
-    EFI_GUID                *Guid = NULL;
-    
-    if (DevicePath == NULL) {
-        return NULL;
+  HARDDRIVE_DEVICE_PATH   *HDDDevPath;
+  EFI_GUID                *Guid = NULL;
+  
+  if (DevicePath == NULL) {
+    return NULL;
+  }
+  
+  while (!IsDevicePathEndType(DevicePath) &&
+         !(DevicePathType(DevicePath) == MEDIA_DEVICE_PATH && DevicePathSubType(DevicePath) == MEDIA_HARDDRIVE_DP)) {
+    DevicePath = NextDevicePathNode(DevicePath);
+  }
+  
+  if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH &&
+      DevicePathSubType(DevicePath) == MEDIA_HARDDRIVE_DP) {
+    HDDDevPath = (HARDDRIVE_DEVICE_PATH*)DevicePath;
+    if (HDDDevPath->SignatureType == SIGNATURE_TYPE_GUID) {
+      Guid = (EFI_GUID*)HDDDevPath->Signature;
     }
-    
-    while (!IsDevicePathEndType(DevicePath)
-           &&
-           !(DevicePathType(DevicePath) == MEDIA_DEVICE_PATH && DevicePathSubType(DevicePath) == MEDIA_HARDDRIVE_DP)
-           )
-    {
-        DevicePath = NextDevicePathNode(DevicePath);
-    }
-    
-    if (DevicePathType(DevicePath) == MEDIA_DEVICE_PATH
-        && DevicePathSubType(DevicePath) == MEDIA_HARDDRIVE_DP)
-    {
-        HDDDevPath = (HARDDRIVE_DEVICE_PATH*)DevicePath;
-        if (HDDDevPath->SignatureType == SIGNATURE_TYPE_GUID) {
-            Guid = (EFI_GUID*)HDDDevPath->Signature;
-        }
-    }
-    return Guid;
+  }
+  return Guid;
 }
 
 
@@ -170,134 +169,130 @@ BootVolumeDevicePathEqual (
     IN  EFI_DEVICE_PATH_PROTOCOL    *DevicePath2
     )
 {
-    BOOLEAN         Equal;
-    UINT8           Type1;
-    UINT8           SubType1;
-    UINT8           Type2;
-    UINTN           Len1;
-    UINT8           SubType2;
-    UINTN           Len2;
-    SATA_DEVICE_PATH    *SataNode1;
-    SATA_DEVICE_PATH    *SataNode2;
-    BOOLEAN         ForceEqualNodes;
+  BOOLEAN         Equal;
+  UINT8           Type1;
+  UINT8           SubType1;
+  UINT8           Type2;
+  UINTN           Len1;
+  UINT8           SubType2;
+  UINTN           Len2;
+  SATA_DEVICE_PATH    *SataNode1;
+  SATA_DEVICE_PATH    *SataNode2;
+  BOOLEAN         ForceEqualNodes;
+  
+  
+  DBG_DP("   BootVolumeDevicePathEqual:\n    %s\n    %s\n", DevicePathToStr (DevicePath1), DevicePathToStr (DevicePath2));
+  DBG_DP("    N1: (Type, Subtype, Len) N2: (Type, Subtype, Len)\n");
+  
+  Equal = FALSE;
+  while (TRUE) {
     
+    Type1 = DevicePathType (DevicePath1);
+    SubType1 = DevicePathSubType (DevicePath1);
+    Len1 = DevicePathNodeLength (DevicePath1);
     
-    DBG_DP("   BootVolumeDevicePathEqual:\n    %s\n    %s\n", DevicePathToStr (DevicePath1), DevicePathToStr (DevicePath2));
-    DBG_DP("    N1: (Type, Subtype, Len) N2: (Type, Subtype, Len)\n");
+    Type2 = DevicePathType (DevicePath2);
+    SubType2 = DevicePathSubType (DevicePath2);
+    Len2 = DevicePathNodeLength (DevicePath2);
     
-    Equal = FALSE;
-    while (TRUE) {
-        
-        Type1 = DevicePathType (DevicePath1);
-        SubType1 = DevicePathSubType (DevicePath1);
-        Len1 = DevicePathNodeLength (DevicePath1);
-        
-        Type2 = DevicePathType (DevicePath2);
-        SubType2 = DevicePathSubType (DevicePath2);
-        Len2 = DevicePathNodeLength (DevicePath2);
-        
-        ForceEqualNodes = FALSE;
-        
-         DBG_DP("    N1: (%d, %d, %d)", Type1, SubType1, Len1);
-         DBG_DP(" N2: (%d, %d, %d)", Type2, SubType2, Len2);
-        /*
-         DBG_DP("%s\n", DevicePathToStr(DevicePath1));
-         DBG_DP("%s\n", DevicePathToStr(DevicePath2));
-         */
-        
-        //
-        // Some eSata device can have path:
-        //  PciRoot(0x0)/Pci(0x1C,0x5)/Pci(0x0,0x0)/VenHw(CF31FAC5-C24E-11D2-85F3-00A0C93EC93B,80)
-        // while OSX can set it as
-        //  PciRoot(0x0)/Pci(0x1C,0x5)/Pci(0x0,0x0)/Sata(0x0,0x0,0x0)
-        // we'll assume VenHw and Sata nodes to be equal to cover that
-        //
-        if (Type1 == MESSAGING_DEVICE_PATH && SubType1 == MSG_SATA_DP) {
-            if (   (Type2 == HARDWARE_DEVICE_PATH && SubType2 == HW_VENDOR_DP)
-                || (Type2 == MESSAGING_DEVICE_PATH && SubType2 == MSG_VENDOR_DP) //no it is UART?
-               )
-            {
-                ForceEqualNodes = TRUE;
-            }
-        } else if (Type2 == MESSAGING_DEVICE_PATH && SubType2 == MSG_SATA_DP) {
-            if (   (Type1 == HARDWARE_DEVICE_PATH && SubType1 == HW_VENDOR_DP)
-                || (Type1 == MESSAGING_DEVICE_PATH && SubType1 == MSG_VENDOR_DP)
-                )
-            {
-                ForceEqualNodes = TRUE;
-            }
-        }
-        
-        //
-        // UEFI can see it as PcieRoot, while OSX could generate PciRoot
-        // we'll assume Acpi dev path nodes to be equal to cover that
-        //
-        if (Type1 == ACPI_DEVICE_PATH && Type2 == ACPI_DEVICE_PATH) {
-            ForceEqualNodes = TRUE;
-        }
-        
-        if (ForceEqualNodes) {
-            // assume equal nodes
-            DBG_DP(" - forcing equal nodes\n");
-            DevicePath1 =  NextDevicePathNode (DevicePath1);
-            DevicePath2 =  NextDevicePathNode (DevicePath2);
-            continue;
-        }
-        
-        if (Type1 != Type2 || SubType1 != SubType2 || Len1 != Len2) {
-            // Not equal
-            DBG_DP(" - not equal\n");
-            break;
-        }
-        
-        //
-        // Same type/subtype/len ...
-        //
-        
-        if (IsDevicePathEnd (DevicePath1)) {
-            // END node - they are the same
-            Equal = TRUE;
-            DBG_DP(" - END = equal\n");
-            break;
-        }
-        
-        //
-        // Do mem compare of nodes or special compare for selected types/subtypes
-        //
-        if (Type1 == MESSAGING_DEVICE_PATH && SubType1 == MSG_SATA_DP) {
-            //
-            // Ignore 
-            //
-            SataNode1 = (SATA_DEVICE_PATH *)DevicePath1;
-            SataNode2 = (SATA_DEVICE_PATH *)DevicePath2;
-            if (SataNode1->HBAPortNumber != SataNode2->HBAPortNumber) {
-                // not equal
-                DBG_DP(" - not equal SataNode.HBAPortNumber\n");
-                break;
-            }
-            if (SataNode1->Lun != SataNode2->Lun) {
-                // not equal
-                DBG_DP(" - not equal SataNode.Lun\n");
-                break;
-            }
-            DBG_DP(" - forcing equal nodes");
-        } else {
-            if (CompareMem(DevicePath1, DevicePath2, DevicePathNodeLength (DevicePath1)) != 0) {
-                // Not equal
-                DBG_DP(" - not equal\n");
-                break;
-            }
-        }
-        
-        DBG_DP("\n");
-        //
-        // Advance to next node
-        //
-        DevicePath1 =  NextDevicePathNode (DevicePath1);
-        DevicePath2 =  NextDevicePathNode (DevicePath2);
+    ForceEqualNodes = FALSE;
+    
+    DBG_DP("    N1: (%d, %d, %d)", Type1, SubType1, Len1);
+    DBG_DP(" N2: (%d, %d, %d)", Type2, SubType2, Len2);
+    /*
+     DBG_DP("%s\n", DevicePathToStr(DevicePath1));
+     DBG_DP("%s\n", DevicePathToStr(DevicePath2));
+     */
+    
+    //
+    // Some eSata device can have path:
+    //  PciRoot(0x0)/Pci(0x1C,0x5)/Pci(0x0,0x0)/VenHw(CF31FAC5-C24E-11D2-85F3-00A0C93EC93B,80)
+    // while OSX can set it as
+    //  PciRoot(0x0)/Pci(0x1C,0x5)/Pci(0x0,0x0)/Sata(0x0,0x0,0x0)
+    // we'll assume VenHw and Sata nodes to be equal to cover that
+    //
+    if (Type1 == MESSAGING_DEVICE_PATH && SubType1 == MSG_SATA_DP) {
+      if (   (Type2 == HARDWARE_DEVICE_PATH && SubType2 == HW_VENDOR_DP)
+          || (Type2 == MESSAGING_DEVICE_PATH && SubType2 == MSG_VENDOR_DP)) { //no it is UART?               
+        ForceEqualNodes = TRUE;
+      }
+    } else if (Type2 == MESSAGING_DEVICE_PATH && SubType2 == MSG_SATA_DP) {
+      if (   (Type1 == HARDWARE_DEVICE_PATH && SubType1 == HW_VENDOR_DP)
+          || (Type1 == MESSAGING_DEVICE_PATH && SubType1 == MSG_VENDOR_DP)) {
+        ForceEqualNodes = TRUE;
+      }
     }
     
-    return Equal;
+    //
+    // UEFI can see it as PcieRoot, while OSX could generate PciRoot
+    // we'll assume Acpi dev path nodes to be equal to cover that
+    //
+    if (Type1 == ACPI_DEVICE_PATH && Type2 == ACPI_DEVICE_PATH) {
+      ForceEqualNodes = TRUE;
+    }
+    
+    if (ForceEqualNodes) {
+      // assume equal nodes
+      DBG_DP(" - forcing equal nodes\n");
+      DevicePath1 =  NextDevicePathNode (DevicePath1);
+      DevicePath2 =  NextDevicePathNode (DevicePath2);
+      continue;
+    }
+    
+    if (Type1 != Type2 || SubType1 != SubType2 || Len1 != Len2) {
+      // Not equal
+      DBG_DP(" - not equal\n");
+      break;
+    }
+    
+    //
+    // Same type/subtype/len ...
+    //
+    
+    if (IsDevicePathEnd (DevicePath1)) {
+      // END node - they are the same
+      Equal = TRUE;
+      DBG_DP(" - END = equal\n");
+      break;
+    }
+    
+    //
+    // Do mem compare of nodes or special compare for selected types/subtypes
+    //
+    if (Type1 == MESSAGING_DEVICE_PATH && SubType1 == MSG_SATA_DP) {
+      //
+      // Ignore 
+      //
+      SataNode1 = (SATA_DEVICE_PATH *)DevicePath1;
+      SataNode2 = (SATA_DEVICE_PATH *)DevicePath2;
+      if (SataNode1->HBAPortNumber != SataNode2->HBAPortNumber) {
+        // not equal
+        DBG_DP(" - not equal SataNode.HBAPortNumber\n");
+        break;
+      }
+      if (SataNode1->Lun != SataNode2->Lun) {
+        // not equal
+        DBG_DP(" - not equal SataNode.Lun\n");
+        break;
+      }
+      DBG_DP(" - forcing equal nodes");
+    } else {
+      if (CompareMem(DevicePath1, DevicePath2, DevicePathNodeLength (DevicePath1)) != 0) {
+        // Not equal
+        DBG_DP(" - not equal\n");
+        break;
+      }
+    }
+    
+    DBG_DP("\n");
+    //
+    // Advance to next node
+    //
+    DevicePath1 =  NextDevicePathNode (DevicePath1);
+    DevicePath2 =  NextDevicePathNode (DevicePath2);
+  }
+  
+  return Equal;
 }
 
 
@@ -333,74 +328,73 @@ BootVolumeMediaDevicePathNodesEqual (
  */
 EFI_STATUS GetEfiBootDeviceFromNvram(VOID)
 {
-    UINTN                       Size;
-    EFI_GUID                    *Guid;
-    FILEPATH_DEVICE_PATH        *FileDevPath;
-
-
-    DBG("GetEfiBootDeviceFromNvram:");
-    
-    if (gEfiBootDeviceData != NULL) {
-        DBG("already parsed\n");
-        return EFI_SUCCESS;
-    }
-    
-    gEfiBootDeviceData = GetNvramVariable(L"efi-boot-device-data", &gEfiAppleBootGuid, NULL, &Size);
-    if (gEfiBootDeviceData == NULL) {
-        DBG(" efi-boot-device-data not found\n");
-        return EFI_NOT_FOUND;
-    }
-    
-    DBG("\n");
-    DBG(" efi-boot-device-data: %s\n", DevicePathToStr(gEfiBootDeviceData));
-    
-    gEfiBootVolume = gEfiBootDeviceData;
-    
-    //
-    // if gEfiBootDeviceData starts with MemoryMapped node,
-    // then Startup Disk sets BootCampHD to Win disk dev path.
-    //
-    if (DevicePathType(gEfiBootDeviceData) == HARDWARE_DEVICE_PATH && DevicePathSubType(gEfiBootDeviceData) == HW_MEMMAP_DP) {
-        gBootCampHD = GetNvramVariable(L"BootCampHD", &gEfiAppleBootGuid, NULL, &Size);
-        gEfiBootVolume = gBootCampHD;
-        if (gBootCampHD == NULL) {
-            DBG(" Error: BootCampHD not found\n");
-            return EFI_NOT_FOUND;
-        }
-        DBG(" BootCampHD: %s\n", DevicePathToStr(gBootCampHD));
-    }
-    
-    //
-    // if gEfiBootVolume contains FilePathNode, then split them into gEfiBootVolume dev path and gEfiBootLoaderPath
-    //
-    gEfiBootLoaderPath = NULL;
-    FileDevPath = (FILEPATH_DEVICE_PATH *)FindDevicePathNodeWithType(gEfiBootVolume, MEDIA_DEVICE_PATH, MEDIA_FILEPATH_DP);
-    if (FileDevPath != NULL) {
-        gEfiBootLoaderPath = AllocateCopyPool(StrSize(FileDevPath->PathName), FileDevPath->PathName);
-        // copy DevPath and write end of path node after in place of file path node
-        gEfiBootVolume = DuplicateDevicePath(gEfiBootVolume);
-        FileDevPath = (FILEPATH_DEVICE_PATH *)FindDevicePathNodeWithType(gEfiBootVolume, MEDIA_DEVICE_PATH, MEDIA_FILEPATH_DP);
-        SetDevicePathEndNode(FileDevPath);
-        // gEfiBootVolume now contains only Volume path
-    }
-    DBG( " Volume: '%s'\n", DevicePathToStr(gEfiBootVolume));
-    DBG( " LoaderPath: '%s'\n", gEfiBootLoaderPath);
-    
-    //
-    // if this is GPT disk, extract GUID
-    // gEfiBootDeviceGuid can be used as a flag for GPT disk then
-    //
-    Guid = FindGPTPartitionGuidInDevicePath(gEfiBootVolume);
-    if (Guid != NULL) {
-        gEfiBootDeviceGuid = AllocatePool(sizeof(EFI_GUID));
-        if (gEfiBootDeviceGuid != NULL) {
-            CopyMem(gEfiBootDeviceGuid, Guid, sizeof(EFI_GUID));
-            DBG(" Guid = %g\n", gEfiBootDeviceGuid);
-        }
-    }
-    
-    
+  UINTN                       Size;
+  EFI_GUID                    *Guid;
+  FILEPATH_DEVICE_PATH        *FileDevPath;
+  
+  
+  DBG("GetEfiBootDeviceFromNvram:");
+  
+  if (gEfiBootDeviceData != NULL) {
+    DBG("already parsed\n");
     return EFI_SUCCESS;
+  }
+  
+  gEfiBootDeviceData = GetNvramVariable(L"efi-boot-device-data", &gEfiAppleBootGuid, NULL, &Size);
+  if (gEfiBootDeviceData == NULL) {
+    DBG(" efi-boot-device-data not found\n");
+    return EFI_NOT_FOUND;
+  }
+  
+  DBG("\n");
+  DBG(" efi-boot-device-data: %s\n", DevicePathToStr(gEfiBootDeviceData));
+  
+  gEfiBootVolume = gEfiBootDeviceData;
+  
+  //
+  // if gEfiBootDeviceData starts with MemoryMapped node,
+  // then Startup Disk sets BootCampHD to Win disk dev path.
+  //
+  if (DevicePathType(gEfiBootDeviceData) == HARDWARE_DEVICE_PATH && DevicePathSubType(gEfiBootDeviceData) == HW_MEMMAP_DP) {
+    gBootCampHD = GetNvramVariable(L"BootCampHD", &gEfiAppleBootGuid, NULL, &Size);
+    gEfiBootVolume = gBootCampHD;
+    if (gBootCampHD == NULL) {
+      DBG(" Error: BootCampHD not found\n");
+      return EFI_NOT_FOUND;
+    }
+    DBG(" BootCampHD: %s\n", DevicePathToStr(gBootCampHD));
+  }
+  
+  //
+  // if gEfiBootVolume contains FilePathNode, then split them into gEfiBootVolume dev path and gEfiBootLoaderPath
+  //
+  gEfiBootLoaderPath = NULL;
+  FileDevPath = (FILEPATH_DEVICE_PATH *)FindDevicePathNodeWithType(gEfiBootVolume, MEDIA_DEVICE_PATH, MEDIA_FILEPATH_DP);
+  if (FileDevPath != NULL) {
+    gEfiBootLoaderPath = AllocateCopyPool(StrSize(FileDevPath->PathName), FileDevPath->PathName);
+    // copy DevPath and write end of path node after in place of file path node
+    gEfiBootVolume = DuplicateDevicePath(gEfiBootVolume);
+    FileDevPath = (FILEPATH_DEVICE_PATH *)FindDevicePathNodeWithType(gEfiBootVolume, MEDIA_DEVICE_PATH, MEDIA_FILEPATH_DP);
+    SetDevicePathEndNode(FileDevPath);
+    // gEfiBootVolume now contains only Volume path
+  }
+  DBG( " Volume: '%s'\n", DevicePathToStr(gEfiBootVolume));
+  DBG( " LoaderPath: '%s'\n", gEfiBootLoaderPath);
+  
+  //
+  // if this is GPT disk, extract GUID
+  // gEfiBootDeviceGuid can be used as a flag for GPT disk then
+  //
+  Guid = FindGPTPartitionGuidInDevicePath(gEfiBootVolume);
+  if (Guid != NULL) {
+    gEfiBootDeviceGuid = AllocatePool(sizeof(EFI_GUID));
+    if (gEfiBootDeviceGuid != NULL) {
+      CopyMem(gEfiBootDeviceGuid, Guid, sizeof(EFI_GUID));
+      DBG(" Guid = %g\n", gEfiBootDeviceGuid);
+    }
+  }
+  
+  return EFI_SUCCESS;
 }
 
 
@@ -448,107 +442,107 @@ EFI_STATUS LoadNvramPlist(IN EFI_FILE *RootDir, IN CHAR16* NVRAMPlistPath)
 /** Searches all volumes for the most recent nvram.plist and loads it into gNvramDict. */
 EFI_STATUS LoadLatestNvramPlist(VOID)
 {
-    EFI_STATUS          Status;
-    UINTN               Index;
-    REFIT_VOLUME        *Volume;
-    EFI_GUID            *Guid;
-    EFI_FILE_HANDLE     FileHandle;
-    EFI_FILE_INFO       *FileInfo;
-    UINT64              LastModifTimeMs;
-    UINT64              ModifTimeMs;
-    REFIT_VOLUME        *VolumeWithLatestNvramPlist;
+  EFI_STATUS          Status;
+  UINTN               Index;
+  REFIT_VOLUME        *Volume;
+  EFI_GUID            *Guid;
+  EFI_FILE_HANDLE     FileHandle;
+  EFI_FILE_INFO       *FileInfo;
+  UINT64              LastModifTimeMs;
+  UINT64              ModifTimeMs;
+  REFIT_VOLUME        *VolumeWithLatestNvramPlist;
+  
+  
+  DBG("Searching volumes for latest nvram.plist ...");
+  
+  //
+  // skip loading if already loaded
+  //
+  if (gNvramDict != NULL) {
+    DBG(" already loaded\n");
+    return EFI_SUCCESS;
+  }
+  DBG("\n");
+  
+  //
+  // find latest nvram.plist
+  //
+  
+  LastModifTimeMs = 0;
+  VolumeWithLatestNvramPlist = NULL;
+  
+  // search all volumes
+  for (Index = 0; Index < VolumesCount; Index++) {
+    Volume = Volumes[Index];
     
-    
-    DBG("Searching volumes for latest nvram.plist ...");
-
-    //
-    // skip loading if already loaded
-    //
-    if (gNvramDict != NULL) {
-        DBG(" already loaded\n");
-        return EFI_SUCCESS;
-    }
-    DBG("\n");
-    
-    //
-    // find latest nvram.plist
-    //
-    
-    LastModifTimeMs = 0;
-    VolumeWithLatestNvramPlist = NULL;
-    
-    // search all volumes
-    for (Index = 0; Index < VolumesCount; Index++) {
-        Volume = Volumes[Index];
-        
-        if (!Volume->RootDir) {
-            continue;
-        }
-        
-        Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
-        
-        DBG(" %2d. Volume '%s', GUID = %g", Index, Volume->VolName, Guid);
-        if (Guid == NULL) {
-            // not a GUID partition
-            DBG(" - not GPT");
-        }
-        
-        // check if nvram.plist exists
-        Status = Volume->RootDir->Open(Volume->RootDir, &FileHandle, L"nvram.plist", EFI_FILE_MODE_READ, 0);
-        if (EFI_ERROR(Status)) {
-            DBG(" - no nvram.plist - skipping!\n");
-            continue;
-        }
-
-      if (GlobalConfig.FastBoot) {
-        VolumeWithLatestNvramPlist = Volume;
-        break;
-      }
-        
-        // get nvram.plist modification date
-        FileInfo = EfiLibFileInfo(FileHandle);
-        if (FileInfo == NULL) {
-            DBG(" - no nvram.plist file info - skipping!\n");
-            FileHandle->Close(FileHandle);
-            continue;
-        }
-        
-        DBG(" Modified = ");
-        ModifTimeMs = GetEfiTimeInMs(&FileInfo->ModificationTime);
-        DBG("%d-%d-%d %d:%d:%d (%ld ms)",
-            FileInfo->ModificationTime.Year, FileInfo->ModificationTime.Month, FileInfo->ModificationTime.Day,
-            FileInfo->ModificationTime.Hour, FileInfo->ModificationTime.Minute, FileInfo->ModificationTime.Second,
-            ModifTimeMs);
-        FreePool(FileInfo);
-        FileHandle->Close(FileHandle);
-        
-        // check if newer
-        if (LastModifTimeMs < ModifTimeMs) {
-            
-            DBG(" - newer - will use this one\n");
-            VolumeWithLatestNvramPlist = Volume;
-            LastModifTimeMs = ModifTimeMs;
-            
-        } else {
-            DBG(" - older - skipping!\n");
-        }
+    if (!Volume->RootDir) {
+      continue;
     }
     
-    Status = EFI_NOT_FOUND;
+    Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
     
-    //
-    // if we have nvram.plist - load it
-    //
-    if (VolumeWithLatestNvramPlist != NULL) {
-        
-        DBG("Loading nvram.plist from Vol '%s' -", VolumeWithLatestNvramPlist->VolName);
-        Status = LoadNvramPlist(VolumeWithLatestNvramPlist->RootDir, L"nvram.plist");
-        
+    DBG(" %2d. Volume '%s', GUID = %g", Index, Volume->VolName, Guid);
+    if (Guid == NULL) {
+      // not a GUID partition
+      DBG(" - not GPT");
+    }
+    
+    // check if nvram.plist exists
+    Status = Volume->RootDir->Open(Volume->RootDir, &FileHandle, L"nvram.plist", EFI_FILE_MODE_READ, 0);
+    if (EFI_ERROR(Status)) {
+      DBG(" - no nvram.plist - skipping!\n");
+      continue;
+    }
+    
+    if (GlobalConfig.FastBoot) {
+      VolumeWithLatestNvramPlist = Volume;
+      break;
+    }
+    
+    // get nvram.plist modification date
+    FileInfo = EfiLibFileInfo(FileHandle);
+    if (FileInfo == NULL) {
+      DBG(" - no nvram.plist file info - skipping!\n");
+      FileHandle->Close(FileHandle);
+      continue;
+    }
+    
+    DBG(" Modified = ");
+    ModifTimeMs = GetEfiTimeInMs(&FileInfo->ModificationTime);
+    DBG("%d-%d-%d %d:%d:%d (%ld ms)",
+        FileInfo->ModificationTime.Year, FileInfo->ModificationTime.Month, FileInfo->ModificationTime.Day,
+        FileInfo->ModificationTime.Hour, FileInfo->ModificationTime.Minute, FileInfo->ModificationTime.Second,
+        ModifTimeMs);
+    FreePool(FileInfo);
+    FileHandle->Close(FileHandle);
+    
+    // check if newer
+    if (LastModifTimeMs < ModifTimeMs) {
+      
+      DBG(" - newer - will use this one\n");
+      VolumeWithLatestNvramPlist = Volume;
+      LastModifTimeMs = ModifTimeMs;
+      
     } else {
-        DBG(" nvram.plist not found!\n");
+      DBG(" - older - skipping!\n");
     }
+  }
+  
+  Status = EFI_NOT_FOUND;
+  
+  //
+  // if we have nvram.plist - load it
+  //
+  if (VolumeWithLatestNvramPlist != NULL) {
     
-    return Status;
+    DBG("Loading nvram.plist from Vol '%s' -", VolumeWithLatestNvramPlist->VolName);
+    Status = LoadNvramPlist(VolumeWithLatestNvramPlist->RootDir, L"nvram.plist");
+    
+  } else {
+    DBG(" nvram.plist not found!\n");
+  }
+  
+  return Status;
 }
 
 
@@ -631,6 +625,10 @@ VOID PutNvramPlistToRtVars(VOID)
       }
     } else {
       DBG("ERROR: Unsupported tag type: %d\n", ValTag->type);
+      continue;
+    }
+    
+    if (!Size || !Value) {
       continue;
     }
     
