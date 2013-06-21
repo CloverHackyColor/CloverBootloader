@@ -1637,6 +1637,20 @@ VOID ScanLoader(VOID)
 //      continue;
     }
     
+    // check for kubuntu boot loader/menu
+#if defined(MDE_CPU_X64)
+    StrCpy(FileName, L"\\EFI\\kubuntu\\grubx64.efi");
+#else
+    StrCpy(FileName, L"\\EFI\\kubuntu\\grub.efi");
+#endif
+    if (FileExists(Volume->RootDir, FileName)) {
+      //      Volume->OSType = OSTYPE_LIN;
+      Volume->BootType = BOOTING_BY_EFI;
+      if (!gSettings.HVHideAllUbuntu)
+        Entry = AddLoaderEntry(FileName, L"kubuntu EFI boot menu", Volume, OSTYPE_LIN);
+      //      continue;
+    }
+    
     // check for Linux Mint boot loader/menu
 #if defined(MDE_CPU_X64)
     StrCpy(FileName, L"\\EFI\\Linuxmint\\grubx64.efi");
