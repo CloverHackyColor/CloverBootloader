@@ -671,6 +671,7 @@ DetectChipset (
     case 0x2e408086: // B43 Base
     case 0x2e908086: // B43 Soft Sku
     case 0x81008086: // 500
+    case 0xA0008086: // 3150
       DBG(" Intel Series 4 and similar (PAM 0x90-0x96)\n");
       mRegisterValues = mRegisterValuesS4;
       break;
