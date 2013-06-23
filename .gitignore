@@ -16,6 +16,7 @@
 
 # /CloverPackage/
 /CloverPackage/Version.h
+/CloverPackage/sym/
 /CloverPackage/CloverV2/BootSectors/boot0ab
 /CloverPackage/CloverV2/BootSectors/boot0af
 /CloverPackage/CloverV2/BootSectors/boot0ss
@@ -25,7 +26,6 @@
 /CloverPackage/CloverV2/BootSectors/boot1altV3
 /CloverPackage/CloverV2/BootSectors/Description.txt
 /CloverPackage/CloverV2/BootSectors/Installation.txt
-
 /CloverPackage/CloverV2/Bootloaders/
 /CloverPackage/CloverV2/EFI/BOOT/
 /CloverPackage/CloverV2/EFI/CLOVER/CLOVERX64.efi
