@@ -1168,6 +1168,98 @@ VOID PatchTableType17()
   if ((Model == MacPro31) || (Model == MacPro41) || (Model == MacPro51)) {
     isMacPro = TRUE;
   }
+  // Inject user memory tables
+  if (gSettings.InjectMemoryTables) {
+    DBG("Injecting user memory modules to SMBIOS\n");
+    if (gRAM.UserInUse == 0) {
+      DBG("User SMBIOS contains no memory modules\n");
+      return;
+    }
+    // Check channels
+    if ((gRAM.UserChannels == 0) || (gRAM.UserChannels > 4)) {
+       gRAM.UserChannels = 1;
+    }
+    if (gRAM.UserInUse >= MAX_RAM_SLOTS) {
+      gRAM.UserInUse = MAX_RAM_SLOTS;
+    }
+    DBG("Channels: %d\n", gRAM.UserChannels);
+    // Setup interleaved channel map
+    if (channels >= 2) {
+       UINT8 doubleChannels = (UINT8)gRAM.UserChannels << 1;
+       for (Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
+          channelMap[Index] = (UINT8)(((Index / doubleChannels) * doubleChannels) +
+             ((Index / gRAM.UserChannels) % 2) + ((Index % gRAM.UserChannels) << 1));
+       }
+    } else {
+       for (Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
+          channelMap[Index] = (UINT8)Index;
+       }
+    }
+    DBG("Interleave:");
+    for (Index = 0; Index < MAX_RAM_SLOTS; ++Index) {
+       DBG(" %d", channelMap[Index]);
+    }
+    DBG("\n");
+    // Memory Device
+    //
+    gRAMCount = 0;
+    // Inject tables
+    for (Index = 0; Index < gRAM.UserInUse; Index++) {
+      UINTN UserIndex = channelMap[Index];
+      UINT8 bank = (UINT8)Index / gRAM.UserChannels;
+      ZeroMem((VOID*)newSmbiosTable.Type17, MAX_TABLE_SIZE);
+      newSmbiosTable.Type17->Hdr.Type = EFI_SMBIOS_TYPE_MEMORY_DEVICE;
+      newSmbiosTable.Type17->Hdr.Length = sizeof(SMBIOS_TABLE_TYPE17);
+      newSmbiosTable.Type17->TotalWidth = 0xFFFF;
+      newSmbiosTable.Type17->DataWidth = 0xFFFF;
+      newSmbiosTable.Type17->Hdr.Handle = (UINT16)(0x1100 + UserIndex);
+      newSmbiosTable.Type17->FormFactor = gMobile ? MemoryFormFactorSodimm : MemoryFormFactorDimm;
+      newSmbiosTable.Type17->TypeDetail.Synchronous = TRUE;
+      newSmbiosTable.Type17->DeviceSet = bank + 1;
+      newSmbiosTable.Type17->MemoryArrayHandle = mHandle16;
+      if (isMacPro) {
+         AsciiSPrint(deviceLocator, 10, "DIMM%d", gRAMCount + 1);
+      } else {
+         AsciiSPrint(deviceLocator, 10, "DIMM%d", bank);
+         AsciiSPrint(bankLocator, 10, "BANK%d", Index % channels);
+         UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->BankLocator, (CHAR8*)&bankLocator[0]);
+      }
+      UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->DeviceLocator, (CHAR8*)&deviceLocator[0]);
+      if ((gRAM.User[UserIndex].InUse) && (gRAM.User[UserIndex].ModuleSize > 0)) {
+        if (iStrLen(gRAM.User[UserIndex].Vendor, 64) > 0) {
+          UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, gRAM.User[UserIndex].Vendor);
+        } else {
+          UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->Manufacturer, "unknown");
+        }
+        if (iStrLen(gRAM.User[UserIndex].SerialNo, 64) > 0) {
+          UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, gRAM.User[UserIndex].SerialNo);
+        } else {
+          UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->SerialNumber, "unknown");
+        }
+        if (iStrLen(gRAM.User[UserIndex].PartNo, 64) > 0) {
+          UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, gRAM.User[UserIndex].PartNo);
+        } else {
+          UpdateSmbiosString(newSmbiosTable, &newSmbiosTable.Type17->PartNumber, "unknown");
+        }
+        newSmbiosTable.Type17->Speed = (UINT16)gRAM.User[UserIndex].Frequency;
+        newSmbiosTable.Type17->Size = (UINT16)gRAM.User[UserIndex].ModuleSize;
+        newSmbiosTable.Type17->MemoryType = gRAM.User[UserIndex].Type;
+        if ((newSmbiosTable.Type17->MemoryType != MemoryTypeDdr2) &&
+            (newSmbiosTable.Type17->MemoryType != MemoryTypeDdr)) {
+          newSmbiosTable.Type17->MemoryType = MemoryTypeDdr3;
+        }
+        DBG("%a %a %dMHz %dMB\n", bankLocator, deviceLocator, newSmbiosTable.Type17->Speed, newSmbiosTable.Type17->Size);
+        mTotalSystemMemory += newSmbiosTable.Type17->Size; //Mb
+        mMemory17[gRAMCount] = (UINT16)mTotalSystemMemory;
+        DBG("mTotalSystemMemory = %d\n", mTotalSystemMemory);
+      } else {
+        DBG("%a %a EMPTY\n", bankLocator, deviceLocator);
+      }
+      newSmbiosTable.Type17->MemoryErrorInformationHandle = 0xFFFF;
+      mHandle17[gRAMCount++] = LogSmbiosTable(newSmbiosTable);
+    }
+    return;
+  }
   // Prevent inserting empty tables
   if ((gRAM.SPDInUse == 0) && (gRAM.SMBIOSInUse == 0)) {
     DBG("SMBIOS and SPD contain no modules in use\n");

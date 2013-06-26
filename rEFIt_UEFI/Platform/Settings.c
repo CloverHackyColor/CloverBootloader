@@ -40,6 +40,8 @@ BOOLEAN                         gFirmwareClover = FALSE;
 UINTN                           gEvent;
 UINT16                          gBacklightLevel;
 
+extern MEM_STRUCTURE            gRAM;
+
 GUI_ANIME *GuiAnime = NULL;
 
 extern INTN ScrollWidth;
@@ -1698,6 +1700,112 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
                   ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
                    gSettings.TrustSMBIOS = TRUE;
                  }
+      }
+      // Inject memory tables into SMBIOS
+      prop = GetProperty(dictPointer, "Memory");
+      if (prop){
+        // Get memory table count
+        TagPtr prop2 = GetProperty(prop, "SlotCount");
+        gRAM.UserInUse = MAX_RAM_SLOTS;
+        if (prop2) {
+          if (prop2->type == kTagTypeString) {
+            gRAM.UserInUse = (UINT8)AsciiStrDecimalToUintn(prop2->string);
+          } else if (prop2->type == kTagTypeInteger) {
+            gRAM.UserInUse = (UINT8)(UINTN)prop2->string;
+          }
+        }
+        // Get memory channels
+        prop2 = GetProperty(prop, "Channels");
+        if (prop2) {
+          if (prop2->type == kTagTypeString) {
+            gRAM.UserChannels = (UINT8)AsciiStrDecimalToUintn(prop2->string);
+          } else if (prop2->type == kTagTypeInteger) {
+            gRAM.UserChannels = (UINT8)(UINTN)prop2->string;
+          }
+        }
+        // Get memory tables
+        prop2 = GetProperty(prop, "Modules");
+        if (prop2) {
+          INTN   i, Count = GetTagCount(prop2);
+          TagPtr prop3 = NULL;
+          for (i = 0; i < Count; ++i) {
+            UINTN Slot = MAX_RAM_SLOTS;
+            if (EFI_ERROR(GetElement(prop2, i, &prop3))) {
+              continue;
+            }
+            if (prop3 == NULL) {
+              break;
+            }
+            // Get memory slot
+            dict2 = GetProperty(prop3, "Slot");
+            if (dict2 == NULL) {
+              continue;
+            }
+            if (dict2->type == kTagTypeString) {
+              Slot = AsciiStrDecimalToUintn(dict2->string);
+            } else if (dict2->type == kTagTypeInteger) {
+              Slot = (UINTN)dict2->string;
+            } else {
+              continue;
+            }
+            if (Slot >= MAX_RAM_SLOTS) {
+              continue;
+            }
+            // Get memory size
+            dict2 = GetProperty(prop3, "Size");
+            if (dict2) {
+              if (dict2->type == kTagTypeString) {
+                gRAM.User[Slot].ModuleSize = (UINT32)AsciiStrDecimalToUintn(dict2->string);
+              } else if (dict2->type == kTagTypeInteger) {
+                gRAM.User[Slot].ModuleSize = (UINT32)(UINTN)dict2->string;
+              }
+            }
+            // Get memory frequency
+            dict2 = GetProperty(prop3, "Frequency");
+            if (dict2) {
+               if (dict2->type == kTagTypeString) {
+                  gRAM.User[Slot].Frequency = (UINT32)AsciiStrDecimalToUintn(dict2->string);
+               } else if (dict2->type == kTagTypeInteger) {
+                  gRAM.User[Slot].Frequency = (UINT32)(UINTN)dict2->string;
+               }
+            }
+            // Get memory vendor
+            dict2 = GetProperty(prop3, "Vendor");
+            if (dict2) {
+              if (dict2->type == kTagTypeString) {
+                gRAM.User[Slot].Vendor = dict2->string;
+              }
+            }
+            // Get memory part number
+            dict2 = GetProperty(prop3, "Part");
+            if (dict2) {
+              if (dict2->type == kTagTypeString) {
+                gRAM.User[Slot].PartNo = dict2->string;
+              }
+            }
+            // Get memory serial number
+            dict2 = GetProperty(prop3, "Serial");
+            if (dict2) {
+              if (dict2->type == kTagTypeString) {
+                gRAM.User[Slot].SerialNo = dict2->string;
+              }
+            }
+            // Get memory type
+            gRAM.User[Slot].Type = MemoryTypeDdr3;
+            dict2 = GetProperty(prop3, "Type");
+            if (dict2) {
+              if (dict2->type == kTagTypeString) {
+                if (AsciiStriCmp(dict2->string, "DDR2") == 0) {
+                  gRAM.User[Slot].Type = MemoryTypeDdr2;
+                } else if (AsciiStriCmp(dict2->string, "DDR") == 0) {
+                  gRAM.User[Slot].Type = MemoryTypeDdr;
+                }
+              }
+            }
+            gRAM.User[Slot].InUse = (gRAM.User[Slot].ModuleSize > 0);
+          }
+        }
+        gSettings.InjectMemoryTables = TRUE;
       }
     }
     

@@ -632,6 +632,7 @@ typedef struct {
   // SMBIOS TYPE132
   UINT16	QPI;
   BOOLEAN TrustSMBIOS;
+  BOOLEAN InjectMemoryTables;
   
 	// OS parameters
 	CHAR8 	Language[16];
@@ -908,9 +909,12 @@ typedef struct {
   UINT8  Type;
   UINT8  SPDInUse;
   UINT8  SMBIOSInUse;
+  UINT8  UserInUse;
+  UINT8  UserChannels;
 
   RAM_SLOT_INFO SPD[MAX_RAM_SLOTS];
   RAM_SLOT_INFO SMBIOS[MAX_RAM_SLOTS];
+  RAM_SLOT_INFO User[MAX_RAM_SLOTS];
 
 } MEM_STRUCTURE;
 //unused
