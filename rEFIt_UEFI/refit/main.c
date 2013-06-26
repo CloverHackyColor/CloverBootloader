@@ -1015,7 +1015,8 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->Flags           = OSFLAG_DISABLE(Entry->Flags, OSFLAG_USEGRAPHICS);
-      SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-x");
+      TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
+      SubEntry->LoadOptions     = AddLoadOption(TempOptions, L"-x");
       SubEntry->LoaderType      = OSTYPE_OSX;
       SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
@@ -1045,7 +1046,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->Flags           = OSFLAG_TOGGLE(Entry->Flags, OSFLAG_NOCACHES);
-      SubEntry->LoadOptions     = Entry->LoadOptions;
+      SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
       SubEntry->LoaderType      = OSTYPE_OSX;
       SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
@@ -1060,7 +1061,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       SubEntry->VolName         = Entry->VolName;
       SubEntry->DevicePath      = Entry->DevicePath;
       SubEntry->Flags           = OSFLAG_TOGGLE(Entry->Flags, OSFLAG_WITHKEXTS);
-      SubEntry->LoadOptions     = Entry->LoadOptions;
+      SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
       SubEntry->LoaderType      = OSTYPE_OSX;
       SubEntry->me.AtClick      = ActionEnter;
       AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
@@ -1077,7 +1078,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
           SubEntry->VolName         = Entry->VolName;
           SubEntry->DevicePath      = Entry->DevicePath;
           SubEntry->Flags           = OSFLAG_DISABLE(OSFLAG_DISABLE(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
-          SubEntry->LoadOptions     = Entry->LoadOptions;
+          SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
           SubEntry->LoaderType      = OSTYPE_OSX;
           SubEntry->me.AtClick      = ActionEnter;
           AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
@@ -1092,7 +1093,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
           SubEntry->VolName         = Entry->VolName;
           SubEntry->DevicePath      = Entry->DevicePath;
           SubEntry->Flags           = OSFLAG_DISABLE(OSFLAG_ENABLE(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
-          SubEntry->LoadOptions     = Entry->LoadOptions;
+          SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
           SubEntry->LoaderType      = OSTYPE_OSX;
           SubEntry->me.AtClick      = ActionEnter;
           AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
@@ -1108,7 +1109,8 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
         SubEntry->VolName         = Entry->VolName;
         SubEntry->DevicePath      = Entry->DevicePath;
         SubEntry->Flags           = OSFLAG_ENABLE(OSFLAG_DISABLE(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
-        SubEntry->LoadOptions     = Entry->LoadOptions;
+        SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
+//        SubEntry->LoadOptions     = Entry->LoadOptions;
         SubEntry->LoaderType      = OSTYPE_OSX;
         SubEntry->me.AtClick      = ActionEnter;
         AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
@@ -1123,7 +1125,8 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
         SubEntry->VolName         = Entry->VolName;
         SubEntry->DevicePath      = Entry->DevicePath;
         SubEntry->Flags           = OSFLAG_ENABLE(OSFLAG_ENABLE(Entry->Flags, OSFLAG_NOCACHES), OSFLAG_WITHKEXTS);
-        SubEntry->LoadOptions     = Entry->LoadOptions;
+        SubEntry->LoadOptions     = AddLoadOption(Entry->LoadOptions, L"-v");
+ //       SubEntry->LoadOptions     = Entry->LoadOptions;
         SubEntry->LoaderType      = OSTYPE_OSX;
         SubEntry->me.AtClick      = ActionEnter;
         AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY *)SubEntry);
@@ -2592,6 +2595,11 @@ VOID SetVariablesFromNvram()
       }
       while (tmpString[index] == 0x20) {
         index++;
+      }
+      if ((AsciiStrCmp(arg, "-v") == 0) ||
+          (AsciiStrCmp(arg, "-s") == 0) ||
+          (AsciiStrCmp(arg, "-x") == 0)) {
+        continue;
       }
       if (!AsciiStrStr(gSettings.BootArgs, arg)) {
         //this arg is not present will add

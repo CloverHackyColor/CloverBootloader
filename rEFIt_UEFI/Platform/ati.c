@@ -1356,9 +1356,11 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
     // if (card->cfg_name > 0) // do we want 0 ports if fb is kNull or mistyped ?
 	
 		// else, match cfg_name with card_configs list and retrive default nr of ports.
-		for (i = 0; i < kCfgEnd; i++)
-			if (AsciiStrCmp(card->cfg_name, card_configs[i].name) == 0)
+		for (i = 0; i < kCfgEnd; i++) {
+			if (AsciiStrCmp(card->cfg_name, card_configs[i].name) == 0) {
 				card->ports = card_configs[i].ports; // default
+      }
+    }
 		
 		DBG("Nr of ports set to framebuffer's default: %d\n", card->ports);
 	}
