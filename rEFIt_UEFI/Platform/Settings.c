@@ -2118,7 +2118,6 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           AsciiStrToUnicodeStr(prop->string, (CHAR16*)&UStr[0]);
           gSettings.LogLineCount = (UINT32)StrDecimalToUintn((CHAR16*)&UStr[0]);
         }
-        DBG("Log line count=%d\n", gSettings.LogLineCount);
       }
       prop = GetProperty(dictPointer, "LogEveryBoot");
       if(prop) {
