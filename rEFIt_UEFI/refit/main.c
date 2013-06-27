@@ -873,7 +873,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
       Entry->LoaderType = OSTYPE_WINEFI;
       break;
     case OSTYPE_LIN:
-      OSIconName = L"linux";
+      OSIconName = Volume->OSIconName != NULL ? Volume->OSIconName : L"linux";
       LoaderKind = 2;
       ShortcutLetter = 'L';
       Entry->LoaderType = OSTYPE_LIN;
@@ -1575,31 +1575,31 @@ VOID ScanLoader(VOID)
 
     // check for grub boot loader/menu
 #if defined(MDE_CPU_X64)
-      StrCpy(FileName, L"\\EFI\\grub\\grubx64.efi");
+    StrCpy(FileName, L"\\EFI\\grub\\grubx64.efi");
 #else
-      StrCpy(FileName, L"\\EFI\\grub\\grub.efi");
+    StrCpy(FileName, L"\\EFI\\grub\\grub.efi");
 #endif
-      
-      if (FileExists(Volume->RootDir, FileName)) {
-        Volume->OSType = OSTYPE_LIN;
-        Volume->BootType = BOOTING_BY_EFI;
-        Volume->DriveImage = ScanVolumeDefaultIcon(Volume);  
-        if (!gSettings.HVHideAllGrub) {
-          Entry = AddLoaderEntry(FileName, L"Grub EFI boot menu", Volume, OSTYPE_LIN);
- //     continue;
-        }
+    if (FileExists(Volume->RootDir, FileName)) {
+      Volume->OSType = OSTYPE_LIN;
+      Volume->OSIconName = L"grub,linux";
+      Volume->BootType = BOOTING_BY_EFI;
+      Volume->DriveImage = ScanVolumeDefaultIcon(Volume);
+      if (!gSettings.HVHideAllGrub)
+        Entry = AddLoaderEntry(FileName, L"Grub EFI boot menu", Volume, OSTYPE_LIN);
     }
-      // check for Gentoo boot loader/menu
+
+    // check for Gentoo boot loader/menu
 #if defined(MDE_CPU_X64)
-      StrCpy(FileName, L"\\EFI\\Gentoo\\grubx64.efi");
+    StrCpy(FileName, L"\\EFI\\Gentoo\\grubx64.efi");
 #else
-      StrCpy(FileName, L"\\EFI\\Gentoo\\grub.efi");
+    StrCpy(FileName, L"\\EFI\\Gentoo\\grub.efi");
 #endif
-      if (FileExists(Volume->RootDir, FileName)) {
-          Volume->BootType = BOOTING_BY_EFI;
-          if (!gSettings.HVHideAllGentoo)
-          Entry = AddLoaderEntry(FileName, L"Gentoo EFI boot menu", Volume, OSTYPE_LIN);
-      }
+    if (FileExists(Volume->RootDir, FileName)) {
+      Volume->OSIconName = L"gentoo,linux";
+      Volume->BootType = BOOTING_BY_EFI;
+      if (!gSettings.HVHideAllGentoo)
+        Entry = AddLoaderEntry(FileName, L"Gentoo EFI boot menu", Volume, OSTYPE_LIN);
+    }
     
     // check for Gentoo kernel
 #if defined(MDE_CPU_X64)
@@ -1608,29 +1608,23 @@ VOID ScanLoader(VOID)
     StrCpy(FileName, L"\\EFI\\Gentoo\\kernel.efi");
 #endif
     if (FileExists(Volume->RootDir, FileName)) {
+      Volume->OSIconName = L"gentoo,linux";
       Volume->BootType = BOOTING_BY_EFI;
       if (!gSettings.HVHideAllGentoo)
-      Entry = AddLoaderEntry(FileName, L"Gentoo EFI kernel", Volume, OSTYPE_LIN);
+        Entry = AddLoaderEntry(FileName, L"Gentoo EFI kernel", Volume, OSTYPE_LIN);
     }
     
     // check for Redhat boot loader/menu
-    StrCpy(FileName, L"\\EFI\\RedHat\\grub.efi");
-    if (FileExists(Volume->RootDir, FileName)) {
- //     Volume->OSType = OSTYPE_LIN;
-      Volume->BootType = BOOTING_BY_EFI;
-      if (!gSettings.HVHideAllRedHat)
-      Entry = AddLoaderEntry(FileName, L"RedHat EFI boot menu", Volume, OSTYPE_LIN);
-//      continue;
-    }
-
-    // check for Redhat boot loader/menu
+#if defined(MDE_CPU_X64)
     StrCpy(FileName, L"\\EFI\\RedHat\\grubx64.efi");
+#else
+    StrCpy(FileName, L"\\EFI\\Gentoo\\grub.efi");
+#endif
     if (FileExists(Volume->RootDir, FileName)) {
-//      Volume->OSType = OSTYPE_LIN;
+      Volume->OSIconName = L"redhat,linux";
       Volume->BootType = BOOTING_BY_EFI;
       if (!gSettings.HVHideAllRedHat)
-      Entry = AddLoaderEntry(FileName, L"RedHat EFI boot menu", Volume, OSTYPE_LIN);
- //     continue;
+        Entry = AddLoaderEntry(FileName, L"RedHat EFI boot menu", Volume, OSTYPE_LIN);
     }
     
     // check for Ubuntu boot loader/menu
@@ -1640,11 +1634,10 @@ VOID ScanLoader(VOID)
     StrCpy(FileName, L"\\EFI\\Ubuntu\\grub.efi");
 #endif
     if (FileExists(Volume->RootDir, FileName)) {
-//      Volume->OSType = OSTYPE_LIN;
+      Volume->OSIconName = L"ubuntu,linux";
       Volume->BootType = BOOTING_BY_EFI;
       if (!gSettings.HVHideAllUbuntu)
-      Entry = AddLoaderEntry(FileName, L"Ubuntu EFI boot menu", Volume, OSTYPE_LIN);
-//      continue;
+        Entry = AddLoaderEntry(FileName, L"Ubuntu EFI boot menu", Volume, OSTYPE_LIN);
     }
     
     // check for kubuntu boot loader/menu
@@ -1654,11 +1647,10 @@ VOID ScanLoader(VOID)
     StrCpy(FileName, L"\\EFI\\kubuntu\\grub.efi");
 #endif
     if (FileExists(Volume->RootDir, FileName)) {
-      //      Volume->OSType = OSTYPE_LIN;
+      Volume->OSIconName = L"kubuntu,linux";
       Volume->BootType = BOOTING_BY_EFI;
       if (!gSettings.HVHideAllUbuntu)
         Entry = AddLoaderEntry(FileName, L"kubuntu EFI boot menu", Volume, OSTYPE_LIN);
-      //      continue;
     }
     
     // check for Linux Mint boot loader/menu
@@ -1668,47 +1660,44 @@ VOID ScanLoader(VOID)
     StrCpy(FileName, L"\\EFI\\Linuxmint\\grub.efi");
 #endif
     if (FileExists(Volume->RootDir, FileName)) {
-      //      Volume->OSType = OSTYPE_LIN;
+      Volume->OSIconName = L"mint,linux";
       Volume->BootType = BOOTING_BY_EFI;
       if (!gSettings.HVHideAllLinuxMint)
         Entry = AddLoaderEntry(FileName, L"Linux Mint EFI boot menu", Volume, OSTYPE_LIN);
-      //      continue;
     }
     
-      // check for Fedora boot loader/menu
+    // check for Fedora boot loader/menu
 #if defined(MDE_CPU_X64)
-      StrCpy(FileName, L"\\EFI\\Fedora\\grubx64.efi");
+    StrCpy(FileName, L"\\EFI\\Fedora\\grubx64.efi");
 #else
-      StrCpy(FileName, L"\\EFI\\Fedora\\grub.efi");
+    StrCpy(FileName, L"\\EFI\\Fedora\\grub.efi");
 #endif
-      if (FileExists(Volume->RootDir, FileName)) {
-          //      Volume->OSType = OSTYPE_LIN;
-          Volume->BootType = BOOTING_BY_EFI;
-          if (!gSettings.HVHideAllFedora)
-              Entry = AddLoaderEntry(FileName, L"Fedora EFI boot menu", Volume, OSTYPE_LIN);
-          //      continue;
-      }
+    if (FileExists(Volume->RootDir, FileName)) {
+      Volume->OSIconName = L"fedora,linux";
+      Volume->BootType = BOOTING_BY_EFI;
+      if (!gSettings.HVHideAllFedora)
+        Entry = AddLoaderEntry(FileName, L"Fedora EFI boot menu", Volume, OSTYPE_LIN);
+    }
     
     // check for OpenSuse boot loader/menu
     StrCpy(FileName, L"\\EFI\\SuSe\\elilo.efi");
     if (FileExists(Volume->RootDir, FileName)) {
-//      Volume->OSType = OSTYPE_LIN;
+      Volume->OSIconName = L"suse,linux";
       Volume->BootType = BOOTING_BY_EFI;
       if (!gSettings.HVHideAllSuSe)
-      Entry = AddLoaderEntry(FileName, L"OpenSuse EFI boot menu", Volume, OSTYPE_LIN);
-//      continue;
+        Entry = AddLoaderEntry(FileName, L"OpenSuse EFI boot menu", Volume, OSTYPE_LIN);
     }
+
 #if defined(MDE_CPU_X64)
     StrCpy(FileName, L"\\EFI\\opensuse\\grubx64.efi");
 #else
     StrCpy(FileName, L"\\EFI\\opensuse\\grub.efi");
 #endif
     if (FileExists(Volume->RootDir, FileName)) {
-//      Volume->OSType = OSTYPE_LIN;
+      Volume->OSIconName = L"suse,linux";
       Volume->BootType = BOOTING_BY_EFI;
       if (!gSettings.HVHideAllSuSe)
-      Entry = AddLoaderEntry(FileName, L"OpenSuse EFI boot menu", Volume, OSTYPE_LIN);
-//      continue;
+        Entry = AddLoaderEntry(FileName, L"OpenSuse EFI boot menu", Volume, OSTYPE_LIN);
     }
     
     // check for archlinux boot loader/menu
@@ -1718,19 +1707,22 @@ VOID ScanLoader(VOID)
     StrCpy(FileName, L"\\EFI\\arch\\grub.efi");
 #endif
     if (FileExists(Volume->RootDir, FileName)) {
-       Volume->BootType = BOOTING_BY_EFI;
-       if (!gSettings.HVHideAllArch)
-          Entry = AddLoaderEntry(FileName, L"ArchLinux EFI boot menu", Volume, OSTYPE_LIN);
+      Volume->OSIconName = L"arch,linux";
+      Volume->BootType = BOOTING_BY_EFI;
+      if (!gSettings.HVHideAllArch)
+        Entry = AddLoaderEntry(FileName, L"ArchLinux EFI boot menu", Volume, OSTYPE_LIN);
     }
+
 #if defined(MDE_CPU_X64)
     StrCpy(FileName, L"\\EFI\\arch_grub\\grubx64.efi");
 #else
     StrCpy(FileName, L"\\EFI\\arch_grub\\grub.efi");
 #endif
     if (FileExists(Volume->RootDir, FileName)) {
-       Volume->BootType = BOOTING_BY_EFI;
-       if (!gSettings.HVHideAllArch)
-          Entry = AddLoaderEntry(FileName, L"ArchLinux EFI boot menu", Volume, OSTYPE_LIN);
+      Volume->OSIconName = L"arch,linux";
+      Volume->BootType = BOOTING_BY_EFI;
+      if (!gSettings.HVHideAllArch)
+        Entry = AddLoaderEntry(FileName, L"ArchLinux EFI boot menu", Volume, OSTYPE_LIN);
     }
 
 #if defined(MDE_CPU_X64)
