@@ -575,6 +575,13 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
       Entry->LoadOptions = TempOptions;
     }
 
+    // If KPDebug is true boot in verbose mode to see the debug messages
+    if (gSettings.KPDebug) {
+      CHAR16 *TempOptions = AddLoadOption(Entry->LoadOptions, L"-v");
+      FreePool(Entry->LoadOptions);
+      Entry->LoadOptions = TempOptions;
+    }
+
 //    DBG("SetDevices\n");
     SetDevices();
 //    DBG("SetFSInjection\n");
