@@ -455,10 +455,12 @@ main ()
     packagesidentity="$clover_package_identity"
     choiceId="UEFI.only"
     packageRefId=$(getPackageRefId "${packagesidentity}" "${choiceId}")
-    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root
+    mkdir -p ${PKG_BUILD_DIR}/${choiceId}/Root/EFI
+    rsync -r --exclude=.svn --exclude="*~" --exclude='drivers*'   \
+     ${SRCROOT}/CloverV2/EFI/BOOT ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/
     addTemplateScripts --pkg-rootdir="${PKG_BUILD_DIR}/${choiceId}" \
                        --subst="INSTALLER_CHOICE=$packageRefId" MarkChoice
-    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/"
+    buildpackage "$packageRefId" "${choiceId}" "${PKG_BUILD_DIR}/${choiceId}" "/EFIROOTDIR"
     addChoice --start-visible="true" --start-selected="choicePreviouslySelected('$packageRefId')"  \
               --pkg-refs="$packageRefId" "${choiceId}"
 # End UEFI only
@@ -540,7 +542,7 @@ main ()
                        --subst="INSTALLER_TARGET_ESP_REFID=$installer_target_esp_refid" \
                        ${choiceId}
     rsync -r --exclude=.svn --exclude="*~" --exclude='drivers*'   \
-     ${SRCROOT}/CloverV2/EFI/ ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/
+     ${SRCROOT}/CloverV2/EFI/CLOVER ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/
     [[ "$add_ia32" -ne 1 ]] && rm -rf ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/drivers32
     # config.plist
     rm -f ${PKG_BUILD_DIR}/${choiceId}/Root/EFI/CLOVER/config.plist &>/dev/null
