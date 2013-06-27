@@ -300,11 +300,14 @@ UINT8   LionReplace_i386[] = { 0xeb, 0x3d, 0x8b, 0x75, 0x08 };
 
 UINT8   MLSearch[]  = { 0x75, 0x30, 0x89, 0xd8 };
 UINT8   MLReplace[] = { 0xeb, 0x30, 0x89, 0xd8 };
-
+//SunKi
+//752e0fb6 -> eb2e0fb6
+UINT8   MavSearch[]  = { 0x75, 0x2e, 0x0f, 0xb6 };
+UINT8   MavReplace[] = { 0xeb, 0x2e, 0x0f, 0xb6};
 //
 // We can not rely on OSVersion global variable for OS version detection,
 // since in some cases it is not correct (install of ML from Lion, for example).
-// So, we'll use "brute-force" method - just try to pacth.
+// So, we'll use "brute-force" method - just try to patch.
 // Actually, we'll at least check that if we can find only one instance of code that
 // we are planning to patch.
 //
@@ -316,6 +319,7 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 In
   UINTN   NumLion_X64 = 0;
   UINTN   NumLion_i386 = 0;
   UINTN   NumML = 0;
+  UINTN   NumMav = 0;
   
   DBG_RT("\nAppleRTCPatch: driverAddr = %x, driverSize = %x\n", Driver, DriverSize);
   if (gSettings.KPDebug) {
@@ -325,16 +329,17 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 In
   
   if (is64BitKernel) {
     NumLion_X64 = SearchAndCount(Driver, DriverSize, LionSearch_X64, sizeof(LionSearch_X64));
-    NumML = SearchAndCount(Driver, DriverSize, MLSearch, sizeof(MLSearch));
+    NumML  = SearchAndCount(Driver, DriverSize, MLSearch,  sizeof(MLSearch));
+    NumMav = SearchAndCount(Driver, DriverSize, MavSearch, sizeof(MavSearch));
   } else {
     NumLion_i386 = SearchAndCount(Driver, DriverSize, LionSearch_i386, sizeof(LionSearch_i386));
   }
   
-  if (NumLion_X64 + NumLion_i386 + NumML > 1) {
+  if (NumLion_X64 + NumLion_i386 + NumML + NumMav > 1) {
     // more then one pattern found - we do not know what to do with it
     // and we'll skipp it
-    Print(L"AppleRTCPatch: ERROR: multiple patterns found (LionX64: %d, Lioni386: %d, ML: %d) - skipping patching!\n",
-        NumLion_X64, NumLion_i386, NumML);
+    Print(L"AppleRTCPatch: ERROR: multiple patterns found (LionX64: %d, Lioni386: %d, ML: %d, Mav: %d) - skipping patching!\n",
+        NumLion_X64, NumLion_i386, NumML, NumMav);
     gBS->Stall(5000000);
     return;
   }
@@ -350,6 +355,10 @@ VOID AppleRTCPatch(UINT8 *Driver, UINT32 DriverSize, CHAR8 *InfoPlist, UINT32 In
   else if (NumML == 1) {
     Num = SearchAndReplace(Driver, DriverSize, MLSearch, sizeof(MLSearch), MLReplace, 1);
     DBG_RT("==> MountainLion X64: %d replaces done.\n", Num);
+  }
+  else if (NumMav == 1) {
+    Num = SearchAndReplace(Driver, DriverSize, MavSearch, sizeof(MavSearch), MavReplace, 1);
+    DBG_RT("==> Mavericks X64: %d replaces done.\n", Num);
   }
   else {
     DBG_RT("==> Patterns not found - patching NOT done.\n");
