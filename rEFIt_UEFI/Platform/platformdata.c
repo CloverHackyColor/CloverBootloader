@@ -482,6 +482,7 @@ MACHINE_TYPES GetModelFromString(CHAR8 *ProductName)
 VOID GetDefaultSettings(VOID)
 {
   MACHINE_TYPES   Model;
+  UINT64 msr = 0;
   
   gLanguage         = english;
   Model             = GetDefaultModel();
@@ -536,7 +537,10 @@ VOID GetDefaultSettings(VOID)
 //  gSettings.EnableISS = FALSE; //((gCPUStructure.CPUID[CPUID_1][ECX] & (1<<7)) != 0);
   gSettings.Turbo = gCPUStructure.Turbo;
 //  MsgLog("Turbo default value: %a\n", gCPUStructure.Turbo?"Yes":"No");
-//  msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
+  msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
+  //force enable EIST
+  msr |= (1<<16);
+//  AsmWriteMsr64(MSR_IA32_MISC_ENABLE, msr);
 //  gSettings.Turbo = ((msr & (1ULL<<38)) == 0);
 //  gSettings.EnableISS = ((msr & (1ULL<<16)) != 0);
 }

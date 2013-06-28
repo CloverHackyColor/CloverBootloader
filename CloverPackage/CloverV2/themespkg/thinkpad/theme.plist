@@ -5,7 +5,7 @@
 	<key>Author</key>
 	<string>Kogen Mantis</string>
 	<key>Description</key>
-	<string>ThinkPad</string>
+	<string>Custom OEM theme for Lenovo ThinkPad&apos;s. Based on bluemac theme.</string>
 	<key>Theme</key>
 	<dict>
 		<key>Background</key>
@@ -38,14 +38,14 @@
 		<key>Selection</key>
 		<dict>
 			<key>Big</key>
-			<string>selection_big.png</string>
+			<string>Selection_big.png</string>
 			<key>Color</key>
-			<string>0x6495ED10</string>
+			<string>0x2A3f5590</string>
 			<key>Small</key>
-			<string>selection_small.png</string>
+			<string>Selection_small.png</string>
 		</dict>
 	</dict>
 	<key>Year</key>
-	<string>2012</string>
+	<string>2013</string>
 </dict>
 </plist>
