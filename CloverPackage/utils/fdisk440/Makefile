@@ -1,7 +1,7 @@
 SRCROOT = $(abspath $(CURDIR)/..)
-OBJROOT = $(abspath $(CURDIR)/../../sym/fdisk)
+OBJROOT = $(abspath $(CURDIR)/../../sym/fdisk440)
 
-DIR = fdisk
+DIR = fdisk440
 
 include ${SRCROOT}/Make.rules
 
@@ -22,9 +22,9 @@ DIRS_NEEDED = $(OBJROOT)
 all: $(PROGRAM)
 
 $(PROGRAM): $(DIRS_NEEDED) $(OBJS)
-	@echo "\t[LD32] $@_32"
+	@echo "\t[LD32] $(@F)_32"
 	@$(CC) $(CFLAGS) $(LDFLAGS) $(DEFINES) -arch i386 -o $@_32 $(filter %.o32,$^)
-	@echo "\t[LD64] $@_64"
+	@echo "\t[LD64] $(@F)_64"
 	@$(CC) $(CFLAGS) $(LDFLAGS) $(DEFINES) -arch x86_64 -o $@_64 $(filter %.o64,$^)
 	@echo "\t[LIPO] $@"
 	@lipo -create -arch i386 $@_32 -arch x86_64 $@_64 -output $@

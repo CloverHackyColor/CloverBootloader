@@ -1,10 +1,11 @@
 SRCROOT = $(abspath $(CURDIR)/..)
-OBJROOT = $(abspath $(CURDIR)/../../sym/bdmesg)
+OBJROOT = $(abspath $(CURDIR)/../../sym/clover-genconfig)
 
 include ${SRCROOT}/Make.rules
 
-PROGRAMS := bdmesg
+PROGRAMS := clover-genconfig
 
+CFLAGS	:= $(CFLAGS) -Wall -Wno-unused-function
 LDFLAGS := $(LDFLAGS) -framework IOKit -framework CoreFoundation -mmacosx-version-min=10.5
 
 OBJS := $(addprefix $(OBJROOT)/, $(addsuffix .o32, $(PROGRAMS)) $(addsuffix .o64, $(PROGRAMS)))
