@@ -1012,7 +1012,7 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       if(prop) {
         if ((prop->type == kTagTypeTrue) ||
             ((prop->type == kTagTypeString) &&
-            ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
           gSettings.WithKexts = TRUE;
         }
       }
@@ -1022,8 +1022,31 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       if(prop) {
         if ((prop->type == kTagTypeTrue) ||
             ((prop->type == kTagTypeString) &&
-            ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
+             ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
           gSettings.NoCaches = TRUE;
+        }
+      }
+
+      // XMP memory profiles
+      prop = GetProperty(dictPointer, "XMPDetection");
+      if (prop) {
+        gSettings.XMPDetection = 0;
+        if (prop->type == kTagTypeFalse) {
+          gSettings.XMPDetection = -1;
+        } else if (prop->type == kTagTypeString) {
+          if ((prop->string[0] == 'n') ||
+              (prop->string[0] == 'N') ||
+              (prop->string[0] == '-')) {
+            gSettings.XMPDetection = -1;
+          } else {
+            gSettings.XMPDetection = (INT8)AsciiStrDecimalToUintn(prop->string);
+          }
+        } else if (prop->type == kTagTypeInteger) {
+          gSettings.XMPDetection = (INT8)(INTN)prop->string;
+        }
+        // Check that the setting value is sane
+        if ((gSettings.XMPDetection < -1) || (gSettings.XMPDetection > 2)) {
+          gSettings.XMPDetection = -1;
         }
       }
     }

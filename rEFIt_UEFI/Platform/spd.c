@@ -212,73 +212,114 @@ CHAR8* getVendorName(RAM_SLOT_INFO* slot, UINT8 *spd, UINT32 base, UINT8 slot_nu
 /** Get Default Memory Module Speed (no overclocking handled) */
 UINT16 getDDRspeedMhz(UINT8 * spd)
 {
-    if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR3) { 
-       /*
-        switch(spd[12])  {
-        case 0x0f:
-            return 1066;
-        case 0x0c:
-            return 1333;
-        case 0x0a:
-            return 1600;
-        case 0x14:
-        default:
-            return 800;
-        }
-        */
-       // This should be multiples of MTB converted to MHz- apianti
-       UINT16 divisor = spd[10];
-       UINT16 dividend = spd[11];
-       UINT16 ratio = spd[12];
-       // Check if an XMP profile is enabled
-       if ((spd[SPD_XMP_SIG1] == SPD_XMP_SIG1_VALUE) &&
-           (spd[SPD_XMP_SIG2] == SPD_XMP_SIG2_VALUE) &&
-           ((spd[SPD_XMP_PROFILES] & 3) != 0))
-       {
-          if ((spd[SPD_XMP_PROFILES] & 3) == 1)
-          {
-            DBG("Using XMP Profile1, dropping previous frequency %dMHz\n",
-                ((dividend != 0) && (divisor != 0) && (ratio != 0)) ?
-                 ((2000 * dividend) / (divisor * ratio)) : 0);
-            // Use first profile
-            divisor = spd[SPD_XMP_PROF1_DIVISOR];
-            dividend = spd[SPD_XMP_PROF1_DIVIDEND];
-            ratio = spd[SPD_XMP_PROF1_RATIO];
-          }
-          else
-          {
-            DBG("Using XMP Profile2, dropping previous frequency %dMHz\n",
-                ((dividend != 0) && (divisor != 0) && (ratio != 0)) ?
-                 ((2000 * dividend) / (divisor * ratio)) : 0);
-            // Use second profile
-            divisor = spd[SPD_XMP_PROF2_DIVISOR];
-            dividend = spd[SPD_XMP_PROF2_DIVIDEND];
-            ratio = spd[SPD_XMP_PROF2_RATIO];
-          }
-       }
-       // Check values are sane
-       if ((dividend != 0) && (divisor != 0) && (ratio != 0))
-       {
-          // Convert to MHz from nanoseconds - 2 * (1000 / nanoseconds)
-          return ((2000 * dividend) / (divisor * ratio));
-       }
-    } 
-    else if (spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR2 || spd[SPD_MEMORY_TYPE]==SPD_MEMORY_TYPE_SDRAM_DDR)  {
-       switch(spd[9]) {
-        case 0x50:
-            return 400;
-        case 0x3d:
-            return 533;
-        case 0x30:
-            return 667;
-        case 0x25:
-        default:
-            return 800;
-        case 0x1E:
-            return 1066;
-        }
+  if ((spd[SPD_MEMORY_TYPE] == SPD_MEMORY_TYPE_SDRAM_DDR2) ||
+      (spd[SPD_MEMORY_TYPE] == SPD_MEMORY_TYPE_SDRAM_DDR)) {
+    switch(spd[9]) {
+      case 0x50:
+        return 400;
+      case 0x3d:
+        return 533;
+      case 0x30:
+        return 667;
+      case 0x25:
+      default:
+        return 800;
+      case 0x1E:
+        return 1066;
     }
-    return 0; // default freq for unknown types //shit! DDR1 = 533
+  } else if (spd[SPD_MEMORY_TYPE] == SPD_MEMORY_TYPE_SDRAM_DDR3) { 
+    // This should be multiples of MTB converted to MHz- apianti
+    UINT16 xmpFrequency1 = 0, xmpFrequency2 = 0;
+    UINT16 divisor = spd[10];
+    UINT16 dividend = spd[11];
+    UINT16 ratio = spd[12];
+    UINT16 frequency = (((dividend != 0) && (divisor != 0) && (ratio != 0)) ?
+                        ((2000 * dividend) / (divisor * ratio)) : 0);
+    // Check if module supports XMP
+    if ((spd[SPD_XMP_SIG1] == SPD_XMP_SIG1_VALUE) &&
+        (spd[SPD_XMP_SIG2] == SPD_XMP_SIG2_VALUE) &&
+        ((spd[SPD_XMP_PROFILES] & 3) != 0)) {
+      // Check if an XMP profile is enabled
+      switch (gSettings.XMPDetection) {
+      case 0:
+        // Detect the better XMP profile
+        if ((spd[SPD_XMP_PROFILES] & 1) == 1) {
+          // Check the first profile
+          divisor = spd[SPD_XMP_PROF1_DIVISOR];
+          dividend = spd[SPD_XMP_PROF1_DIVIDEND];
+          ratio = spd[SPD_XMP_PROF1_RATIO];
+          xmpFrequency1 = (((dividend != 0) && (divisor != 0) && (ratio != 0)) ?
+                           ((2000 * dividend) / (divisor * ratio)) : 0);
+        }
+        if ((spd[SPD_XMP_PROFILES] & 2) == 2) {
+          // Check the second profile
+          divisor = spd[SPD_XMP_PROF2_DIVISOR];
+          dividend = spd[SPD_XMP_PROF2_DIVIDEND];
+          ratio = spd[SPD_XMP_PROF2_RATIO];
+          xmpFrequency2 = (((dividend != 0) && (divisor != 0) && (ratio != 0)) ?
+                           ((2000 * dividend) / (divisor * ratio)) : 0);
+        }
+        if (xmpFrequency1 >= xmpFrequency2) {
+          if (xmpFrequency1 >= frequency) {
+            DBG("Using XMP Profile1 instead of standard frequency %dMHz\n", frequency);
+            frequency = xmpFrequency1;
+          }
+        } else if (xmpFrequency2 >= frequency) {
+          DBG("Using XMP Profile2 instead of standard frequency %dMHz\n", frequency);
+          frequency = xmpFrequency2;
+        }
+        break;
+
+      case 1:
+         // Use first profile if present
+         if ((spd[SPD_XMP_PROFILES] & 1) == 1) {
+           DBG("Using XMP Profile1 instead of standard frequency %dMHz\n", frequency);
+           divisor = spd[SPD_XMP_PROF1_DIVISOR];
+           dividend = spd[SPD_XMP_PROF1_DIVIDEND];
+           ratio = spd[SPD_XMP_PROF1_RATIO];
+           frequency = (((dividend != 0) && (divisor != 0) && (ratio != 0)) ?
+                        ((2000 * dividend) / (divisor * ratio)) : 0);
+         } else {
+           DBG("Not using XMP Profile1 because it is not present\n");
+         }
+         break;
+
+      case 2:
+         // Use second profile
+         if ((spd[SPD_XMP_PROFILES] & 2) == 2) {
+           DBG("Using XMP Profile2 instead of standard frequency %dMHz\n", frequency);
+           divisor = spd[SPD_XMP_PROF2_DIVISOR];
+           dividend = spd[SPD_XMP_PROF2_DIVIDEND];
+           ratio = spd[SPD_XMP_PROF2_RATIO];
+           frequency = (((dividend != 0) && (divisor != 0) && (ratio != 0)) ?
+                        ((2000 * dividend) / (divisor * ratio)) : 0);
+         } else {
+           DBG("Not using XMP Profile2 because it is not present\n");
+         }
+         break;
+
+      default:
+        break;
+      }
+    } else {
+       // Print out XMP not detected
+      switch (gSettings.XMPDetection) {
+      case 0:
+         DBG("Not using XMP because it is not present\n");
+         break;
+
+      case 1:
+      case 2:
+        DBG("Not using XMP Profile%d because it is not present\n", gSettings.XMPDetection);
+        break;
+
+      default:
+         break;
+      }
+    }
+    return frequency;
+  }
+  return 0; // default freq for unknown types //shit! DDR1 = 533
 }
 
 #define SMST(a) ((UINT8)((spd[a] & 0xf0) >> 4))

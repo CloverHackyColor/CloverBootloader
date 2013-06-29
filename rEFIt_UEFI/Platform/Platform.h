@@ -633,6 +633,7 @@ typedef struct {
   UINT16	QPI;
   BOOLEAN TrustSMBIOS;
   BOOLEAN InjectMemoryTables;
+  INT8    XMPDetection;
   
 	// OS parameters
 	CHAR8 	Language[16];
