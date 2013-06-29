@@ -163,6 +163,7 @@ typedef struct {
   // SMBIOS TYPE132
   UINT16	QPI;
   BOOLEAN TrustSMBIOS;
+  BOOLEAN InjectMemoryTables;
 
 	// OS parameters
 	CHAR8 	Language[16];
@@ -321,6 +322,7 @@ static void printCloseDict();
 static void printSubDict(char *Name);
 static void printCloseSubDict();
 static void printString(char *Name, char *Value);
+static void printString3(char *Name, char *Value);
 static void printUString(char *Name, CHAR16 *Value);
 static void printInteger(char *Name, INTN Value);
 static void printInteger3(char *Name, INTN Value);
@@ -509,11 +511,16 @@ static void PrintConfig(const void *key, const void *value)
   printBoolean("Mobile", s->Mobile);
   printString("Comment", "SMBIOS TYPE17");
   printBoolean("Trust", s->TrustSMBIOS);
-  printString("Comment", "these values read only");
-  printString("MemoryManufacturer", s->MemoryManufacturer);
-  printString("MemorySerialNumber", s->MemorySerialNumber);
-  printString("MemoryPartNumber", s->MemoryPartNumber);
-  printString("MemorySpeed", s->MemorySpeed);
+//  printString("Comment", "these values read only");
+  if (s->InjectMemoryTables) {
+    printSubDict("Memory");
+    printString3("Comment", "there are wrong keys with some values");
+    printString3("MemoryManufacturer", s->MemoryManufacturer);
+    printString3("MemorySerialNumber", s->MemorySerialNumber);
+    printString3("MemoryPartNumber", s->MemoryPartNumber);
+    printString3("MemorySpeed", s->MemorySpeed);
+    printCloseSubDict();
+  }
   printString("OEMProduct", s->OEMProduct);
   printString("OEMVendor", s->OEMVendor);
   printString("OEMBoard", s->OEMBoard);
@@ -646,6 +653,11 @@ static void printCloseSubDict()
 static void printString(char *Name, char *Value)
 {
   printf("\t\t<key>%s</key>\n\t\t<string>%s</string>\n", Name, Value);
+}
+
+static void printString3(char *Name, char *Value)
+{
+  printf("\t\t\t<key>%s</key>\n\t\t\t<string>%s</string>\n", Name, Value);
 }
 
 static void printUString(char *Name, CHAR16 *Value)
