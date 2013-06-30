@@ -357,7 +357,7 @@ typedef struct {
 typedef struct {
   SMBIOS_TABLE_HEADER   Hdr;
   SMBIOS_TABLE_STRING   Manufacturer;
-  UINT8                 Type;
+  UINT8                 Type;    // MISC_CHASSIS_TYPE
   SMBIOS_TABLE_STRING   Version;
   SMBIOS_TABLE_STRING   SerialNumber;
   SMBIOS_TABLE_STRING   AssetTag;

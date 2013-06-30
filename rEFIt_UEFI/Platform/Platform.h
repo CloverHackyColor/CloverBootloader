@@ -634,6 +634,7 @@ typedef struct {
   BOOLEAN TrustSMBIOS;
   BOOLEAN InjectMemoryTables;
   INT8    XMPDetection;
+  INT8    reserved;
   
 	// OS parameters
 	CHAR8 	Language[16];

@@ -164,6 +164,8 @@ typedef struct {
   UINT16	QPI;
   BOOLEAN TrustSMBIOS;
   BOOLEAN InjectMemoryTables;
+  INT8    XMPDetection;
+  INT8    reserved;
 
 	// OS parameters
 	CHAR8 	Language[16];
@@ -511,6 +513,7 @@ static void PrintConfig(const void *key, const void *value)
   printBoolean("Mobile", s->Mobile);
   printString("Comment", "SMBIOS TYPE17");
   printBoolean("Trust", s->TrustSMBIOS);
+  printInteger("XMPDetection", s->XMPDetection);
 //  printString("Comment", "these values read only");
   if (s->InjectMemoryTables) {
     printSubDict("Memory");

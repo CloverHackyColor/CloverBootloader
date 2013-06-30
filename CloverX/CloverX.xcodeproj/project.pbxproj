@@ -20,7 +20,6 @@
 		122489CD16A93FD300A0DB6B /* ComponentName.c in Sources */ = {isa = PBXBuildFile; fileRef = 122489C816A93FD300A0DB6B /* ComponentName.c */; };
 		122489CE16A93FD300A0DB6B /* MouseHid.c in Sources */ = {isa = PBXBuildFile; fileRef = 122489C916A93FD300A0DB6B /* MouseHid.c */; };
 		122489CF16A93FD300A0DB6B /* UsbMouse.c in Sources */ = {isa = PBXBuildFile; fileRef = 122489CA16A93FD300A0DB6B /* UsbMouse.c */; };
-		12283DC8174F7B3C00AD8A95 /* genconfig.c in Sources */ = {isa = PBXBuildFile; fileRef = 12283DC6174F7B3C00AD8A95 /* genconfig.c */; };
 		12D7546E1657CDD700376797 /* BdsConnect.c in Sources */ = {isa = PBXBuildFile; fileRef = 12D7546D1657CDD700376797 /* BdsConnect.c */; };
 		12D754711657CDE800376797 /* DevicePath.c in Sources */ = {isa = PBXBuildFile; fileRef = 12D754701657CDE800376797 /* DevicePath.c */; };
 		12DD321A16557F2E00108DFC /* BmLib.c in Sources */ = {isa = PBXBuildFile; fileRef = 12DD321916557F2E00108DFC /* BmLib.c */; };
@@ -68,10 +67,6 @@
 		122489CA16A93FD300A0DB6B /* UsbMouse.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = UsbMouse.c; sourceTree = "<group>"; };
 		122489CB16A93FD300A0DB6B /* UsbMouse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UsbMouse.h; sourceTree = "<group>"; };
 		122489CC16A93FD300A0DB6B /* UsbMouseDxe.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UsbMouseDxe.inf; sourceTree = "<group>"; };
-		12283DC4174F7B3C00AD8A95 /* config-sample.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "config-sample.plist"; sourceTree = "<group>"; };
-		12283DC5174F7B3C00AD8A95 /* genconfig */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = genconfig; sourceTree = "<group>"; };
-		12283DC6174F7B3C00AD8A95 /* genconfig.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = genconfig.c; sourceTree = "<group>"; };
-		12283DC7174F7B3C00AD8A95 /* Readme.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Readme.txt; sourceTree = "<group>"; };
 		123F0954164F96D0008C1C1C /* MemLogLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = MemLogLib.c; sourceTree = "<group>"; };
 		123F0955164F96D0008C1C1C /* MemLogLibDefault.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = MemLogLibDefault.inf; sourceTree = "<group>"; };
 		123F0958164F96DB008C1C1C /* EfiFlashMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EfiFlashMap.h; sourceTree = "<group>"; };
@@ -459,10 +454,39 @@
 		12B816F41644675800A433E7 /* menu.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = menu.c; sourceTree = "<group>"; };
 		12B816F51644675800A433E7 /* screen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = screen.c; sourceTree = "<group>"; };
 		12B816F71644675800A433E7 /* refit.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = refit.inf; sourceTree = "<group>"; };
-		12C44608174DE24F000D39A5 /* config-sample.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "config-sample.plist"; path = "../CloverConfig/config-sample.plist"; sourceTree = SOURCE_ROOT; };
 		12D7546D1657CDD700376797 /* BdsConnect.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BdsConnect.c; sourceTree = "<group>"; };
 		12D754701657CDE800376797 /* DevicePath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DevicePath.c; sourceTree = "<group>"; };
-		12DB2D8616522B2A00A8066D /* CloverX */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CloverX; sourceTree = BUILT_PRODUCTS_DIR; };
+		12DB2D8616522B2A00A8066D /* CloverX */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = CloverX; path = /Users/slice/src/edk2/Clover/CloverX/build/Release/CloverX; sourceTree = "<absolute>"; };
+		12DCF7BA177FE41400D2BE8F /* bdmesg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bdmesg.c; sourceTree = "<group>"; };
+		12DCF7BB177FE41400D2BE8F /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		12DCF7BD177FE41400D2BE8F /* clover-genconfig.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "clover-genconfig.c"; sourceTree = "<group>"; };
+		12DCF7BE177FE41400D2BE8F /* config-sample-old.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "config-sample-old.plist"; sourceTree = "<group>"; };
+		12DCF7BF177FE41400D2BE8F /* config-sample.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "config-sample.plist"; sourceTree = "<group>"; };
+		12DCF7C0177FE41400D2BE8F /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		12DCF7C1177FE41400D2BE8F /* Readme.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = Readme.txt; sourceTree = "<group>"; };
+		12DCF7C3177FE41400D2BE8F /* auto.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = auto.c; sourceTree = "<group>"; };
+		12DCF7C4177FE41400D2BE8F /* auto.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = auto.h; sourceTree = "<group>"; };
+		12DCF7C5177FE41400D2BE8F /* cmd.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = cmd.c; sourceTree = "<group>"; };
+		12DCF7C6177FE41400D2BE8F /* cmd.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cmd.h; sourceTree = "<group>"; };
+		12DCF7C7177FE41400D2BE8F /* disk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = disk.c; sourceTree = "<group>"; };
+		12DCF7C8177FE41400D2BE8F /* disk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = disk.h; sourceTree = "<group>"; };
+		12DCF7C9177FE41400D2BE8F /* fdisk.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = fdisk.c; sourceTree = "<group>"; };
+		12DCF7CA177FE41400D2BE8F /* fdisk440.8 */ = {isa = PBXFileReference; lastKnownFileType = text; path = fdisk440.8; sourceTree = "<group>"; };
+		12DCF7CB177FE41400D2BE8F /* getrawpartition.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = getrawpartition.c; sourceTree = "<group>"; };
+		12DCF7CC177FE41400D2BE8F /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
+		12DCF7CD177FE41400D2BE8F /* mbr.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = mbr.c; sourceTree = "<group>"; };
+		12DCF7CE177FE41400D2BE8F /* mbr.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mbr.h; sourceTree = "<group>"; };
+		12DCF7CF177FE41400D2BE8F /* mbrcode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mbrcode.h; sourceTree = "<group>"; };
+		12DCF7D0177FE41400D2BE8F /* misc.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = misc.c; sourceTree = "<group>"; };
+		12DCF7D1177FE41400D2BE8F /* misc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = misc.h; sourceTree = "<group>"; };
+		12DCF7D2177FE41400D2BE8F /* opendev.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = opendev.c; sourceTree = "<group>"; };
+		12DCF7D3177FE41400D2BE8F /* part.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = part.c; sourceTree = "<group>"; };
+		12DCF7D4177FE41400D2BE8F /* part.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = part.h; sourceTree = "<group>"; };
+		12DCF7D5177FE41400D2BE8F /* user.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = user.c; sourceTree = "<group>"; };
+		12DCF7D6177FE41400D2BE8F /* user.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = user.h; sourceTree = "<group>"; };
+		12DCF7D7177FE41400D2BE8F /* util.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = util.h; sourceTree = "<group>"; };
+		12DCF7D8177FE41400D2BE8F /* Make.rules */ = {isa = PBXFileReference; lastKnownFileType = text; path = Make.rules; sourceTree = "<group>"; };
+		12DCF7D9177FE41400D2BE8F /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		12DD321916557F2E00108DFC /* BmLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BmLib.c; sourceTree = "<group>"; };
 		12DD321C16557F6F00108DFC /* DuetTimerLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = DuetTimerLib.inf; sourceTree = "<group>"; };
 		12DD321D16557F6F00108DFC /* X86TimerLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = X86TimerLib.c; sourceTree = "<group>"; };
@@ -606,18 +630,6 @@
 			);
 			name = UsbMouseDxe;
 			path = ../Patches_for_EDK2/UsbMouseDxe;
-			sourceTree = SOURCE_ROOT;
-		};
-		12283DC2174F7B3C00AD8A95 /* CloverConfig */ = {
-			isa = PBXGroup;
-			children = (
-				12283DC4174F7B3C00AD8A95 /* config-sample.plist */,
-				12283DC5174F7B3C00AD8A95 /* genconfig */,
-				12283DC6174F7B3C00AD8A95 /* genconfig.c */,
-				12283DC7174F7B3C00AD8A95 /* Readme.txt */,
-			);
-			name = CloverConfig;
-			path = ../CloverConfig;
 			sourceTree = SOURCE_ROOT;
 		};
 		123F0952164F96D0008C1C1C /* Library */ = {
@@ -1451,7 +1463,6 @@
 			isa = PBXGroup;
 			children = (
 				124D76E11657A4B9008B5407 /* CopiedFromEDK */,
-				12283DC2174F7B3C00AD8A95 /* CloverConfig */,
 				124D76D71657A474008B5407 /* AcpiReset */,
 				123F096F164F9C00008C1C1C /* BiosVideo */,
 				124D76DA1657A47E008B5407 /* BiosKeyboard */,
@@ -1464,8 +1475,7 @@
 				123F0978164FA3AF008C1C1C /* VideoDxe */,
 				12A1790E166BCC15005B0D63 /* SataControllerDxe */,
 				12896D8C16B3A10A00A2EC36 /* VBoxFsDxe */,
-				12DB2D8616522B2A00A8066D /* CloverX */,
-				12C44608174DE24F000D39A5 /* config-sample.plist */,
+				12DCF7B8177FE41400D2BE8F /* utils */,
 				12FA1567173F4E0200F847F1 /* UEFI */,
 			);
 			sourceTree = "<group>";
@@ -1588,6 +1598,68 @@
 				12B816F51644675800A433E7 /* screen.c */,
 			);
 			path = refit;
+			sourceTree = "<group>";
+		};
+		12DCF7B8177FE41400D2BE8F /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				12DCF7B9177FE41400D2BE8F /* bdmesg */,
+				12DCF7BC177FE41400D2BE8F /* clover-genconfig */,
+				12DCF7C2177FE41400D2BE8F /* fdisk440 */,
+				12DCF7D8177FE41400D2BE8F /* Make.rules */,
+				12DCF7D9177FE41400D2BE8F /* Makefile */,
+			);
+			name = utils;
+			path = ../CloverPackage/utils;
+			sourceTree = "<group>";
+		};
+		12DCF7B9177FE41400D2BE8F /* bdmesg */ = {
+			isa = PBXGroup;
+			children = (
+				12DCF7BA177FE41400D2BE8F /* bdmesg.c */,
+				12DCF7BB177FE41400D2BE8F /* Makefile */,
+			);
+			path = bdmesg;
+			sourceTree = "<group>";
+		};
+		12DCF7BC177FE41400D2BE8F /* clover-genconfig */ = {
+			isa = PBXGroup;
+			children = (
+				12DCF7BD177FE41400D2BE8F /* clover-genconfig.c */,
+				12DCF7BE177FE41400D2BE8F /* config-sample-old.plist */,
+				12DCF7BF177FE41400D2BE8F /* config-sample.plist */,
+				12DCF7C0177FE41400D2BE8F /* Makefile */,
+				12DCF7C1177FE41400D2BE8F /* Readme.txt */,
+			);
+			path = "clover-genconfig";
+			sourceTree = "<group>";
+		};
+		12DCF7C2177FE41400D2BE8F /* fdisk440 */ = {
+			isa = PBXGroup;
+			children = (
+				12DCF7C3177FE41400D2BE8F /* auto.c */,
+				12DCF7C4177FE41400D2BE8F /* auto.h */,
+				12DCF7C5177FE41400D2BE8F /* cmd.c */,
+				12DCF7C6177FE41400D2BE8F /* cmd.h */,
+				12DCF7C7177FE41400D2BE8F /* disk.c */,
+				12DCF7C8177FE41400D2BE8F /* disk.h */,
+				12DCF7C9177FE41400D2BE8F /* fdisk.c */,
+				12DCF7CA177FE41400D2BE8F /* fdisk440.8 */,
+				12DCF7CB177FE41400D2BE8F /* getrawpartition.c */,
+				12DCF7CC177FE41400D2BE8F /* Makefile */,
+				12DCF7CD177FE41400D2BE8F /* mbr.c */,
+				12DCF7CE177FE41400D2BE8F /* mbr.h */,
+				12DCF7CF177FE41400D2BE8F /* mbrcode.h */,
+				12DCF7D0177FE41400D2BE8F /* misc.c */,
+				12DCF7D1177FE41400D2BE8F /* misc.h */,
+				12DCF7D2177FE41400D2BE8F /* opendev.c */,
+				12DCF7D3177FE41400D2BE8F /* part.c */,
+				12DCF7D4177FE41400D2BE8F /* part.h */,
+				12DCF7D5177FE41400D2BE8F /* user.c */,
+				12DCF7D6177FE41400D2BE8F /* user.h */,
+				12DCF7D7177FE41400D2BE8F /* util.h */,
+			);
+			path = fdisk440;
 			sourceTree = "<group>";
 		};
 		12DD321B16557F6F00108DFC /* DuetTimerLib */ = {
@@ -1872,7 +1944,6 @@
 				122489CD16A93FD300A0DB6B /* ComponentName.c in Sources */,
 				122489CE16A93FD300A0DB6B /* MouseHid.c in Sources */,
 				122489CF16A93FD300A0DB6B /* UsbMouse.c in Sources */,
-				12283DC8174F7B3C00AD8A95 /* genconfig.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
