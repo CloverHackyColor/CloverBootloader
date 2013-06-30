@@ -459,6 +459,7 @@ static void PrintConfig(const void *key, const void *value)
   printHex("BacklightLevel", s->BacklightLevel);
   printUString("LegacyBoot", s->LegacyBoot);
   printUString("ConfigName", s->ConfigName);
+  printInteger("XMPDetection", s->XMPDetection);
   printCloseDict();
 
   printDict("GUI");
@@ -513,7 +514,6 @@ static void PrintConfig(const void *key, const void *value)
   printBoolean("Mobile", s->Mobile);
   printString("Comment", "SMBIOS TYPE17");
   printBoolean("Trust", s->TrustSMBIOS);
-  printInteger("XMPDetection", s->XMPDetection);
 //  printString("Comment", "these values read only");
   if (s->InjectMemoryTables) {
     printSubDict("Memory");
