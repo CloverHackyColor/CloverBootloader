@@ -39,17 +39,17 @@ function mountESP {
 
     if [[ "$arg" == Yes ]]; then
         ESPDevice=$(LC_ALL=C diskutil info / 2>/dev/null | \
-         sed -n 's/.*Part of Whole: *//p')
+         sed -n 's/.*Part [Oo]f Whole: *//p')
     elif [[ "$arg" =~ $guidRegExp ]]; then
         ESPDevice=$(LC_ALL=C diskutil info "$arg" 2>/dev/null | \
-         sed -n 's/.*Part of Whole: *//p')
+         sed -n 's/.*Part [Oo]f Whole: *//p')
         if [[ -z "$ESPDevice" ]]; then
             echo "Can't find partition with UUID $arg"
             return 1
         fi
     elif [[ ! "$arg" =~ ^(/dev/)?disk[0-9]+ ]]; then
         ESPDevice=$(LC_ALL=C diskutil info "$arg" 2>/dev/null | \
-         sed -n 's/.*Part of Whole: *//p')
+         sed -n 's/.*Part [Oo]f Whole: *//p')
         if [[ -z "$ESPDevice" ]]; then
             echo "Can't find volume with the name $arg"
             return 1
