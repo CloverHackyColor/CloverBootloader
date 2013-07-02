@@ -39,688 +39,599 @@ cc -o genconfig genconfig.c -framework CoreFoundation -framework IOKit -Wall -Wn
 #include <err.h>
 #include <mach/mach_error.h>
 
-///
-/// 8-byte unsigned value.
-///
-typedef unsigned long long  UINT64;
-///
-/// 8-byte signed value.
-///
-typedef long long           INT64;
-///
-/// 4-byte unsigned value.
-///
-typedef unsigned int        UINT32;
-///
-/// 4-byte signed value.
-///
-typedef int                 INT32;
-///
-/// 2-byte unsigned value.
-///
-typedef unsigned short      UINT16;
-///
-/// 2-byte Character.  Unless otherwise specified all strings are stored in the
-/// UTF-16 encoding format as defined by Unicode 2.1 and ISO/IEC 10646 standards.
-///
-typedef unsigned short      CHAR16;
-///
-/// 2-byte signed value.
-///
-typedef short               INT16;
-///
-/// Logical Boolean.  1-byte value containing 0 for FALSE or a 1 for TRUE.  Other
-/// values are undefined.
-///
-typedef unsigned char       BOOLEAN;
-///
-/// 1-byte unsigned value.
-///
-typedef unsigned char       UINT8;
-///
-/// 1-byte Character
-///
-typedef char                CHAR8;
-///
-/// 1-byte signed value
-///
-typedef signed char         INT8;
-
-//depending on arch of EFI but for now I will propose to use only EFI64
-typedef long long                 INTN;
-typedef unsigned long long        UINTN;
-
-#define VERIFY_SIZE_OF(TYPE, Size) extern UINT8 _VerifySizeof##TYPE[(sizeof(TYPE) == (Size)) / (sizeof(TYPE) == (Size))]
+#define VERIFY_SIZE_OF(TYPE, Size) extern UInt8 _VerifySizeof##TYPE[(sizeof(TYPE) == (Size)) / (sizeof(TYPE) == (Size))]
 
 //
 // Verify that ProcessorBind.h produced UEFI Data Types that are compliant with
 // Section 2.3.1 of the UEFI 2.3 Specification.
 //
-VERIFY_SIZE_OF (BOOLEAN, 1);
-VERIFY_SIZE_OF (INT8, 1);
-VERIFY_SIZE_OF (UINT8, 1);
-VERIFY_SIZE_OF (INT16, 2);
-VERIFY_SIZE_OF (UINT16, 2);
-VERIFY_SIZE_OF (INT32, 4);
-VERIFY_SIZE_OF (UINT32, 4);
-VERIFY_SIZE_OF (INT64, 8);
-VERIFY_SIZE_OF (UINT64, 8);
-VERIFY_SIZE_OF (CHAR8, 1);
-VERIFY_SIZE_OF (CHAR16, 2);
+VERIFY_SIZE_OF (Boolean, 1);
+VERIFY_SIZE_OF (SInt8, 1);
+VERIFY_SIZE_OF (UInt8, 1);
+VERIFY_SIZE_OF (SInt16, 2);
+VERIFY_SIZE_OF (UInt16, 2);
+VERIFY_SIZE_OF (SInt32, 4);
+VERIFY_SIZE_OF (UInt32, 4);
+VERIFY_SIZE_OF (SInt64, 8);
+VERIFY_SIZE_OF (UInt64, 8);
+VERIFY_SIZE_OF (char, 1);
+VERIFY_SIZE_OF (UniChar, 2);
 
 #pragma pack(push)
 #pragma pack(1)
 
 typedef struct {
-  UINT32  Data1;
-  UINT16  Data2;
-  UINT16  Data3;
-  UINT8   Data4[8];
+    UInt32  Data1;
+    UInt16  Data2;
+    UInt16  Data3;
+    UInt8   Data4[8];
 } EFI_GUID;
 
 typedef struct {
 
 	// SMBIOS TYPE0
-	CHAR8	VendorName[64];
-	CHAR8	RomVersion[64];
-	CHAR8	ReleaseDate[64];
+	char VendorName[64];
+	char RomVersion[64];
+	char ReleaseDate[64];
 	// SMBIOS TYPE1
-	CHAR8	ManufactureName[64];
-	CHAR8	ProductName[64];
-	CHAR8	VersionNr[64];
-	CHAR8	SerialNr[64];
-  EFI_GUID SmUUID;
-	CHAR8	FamilyName[64];
-  CHAR8 OEMProduct[64];
-  CHAR8 OEMVendor[64];
+	char ManufactureName[64];
+	char ProductName[64];
+	char VersionNr[64];
+	char SerialNr[64];
+    EFI_GUID SmUUID;
+	char FamilyName[64];
+    char OEMProduct[64];
+    char OEMVendor[64];
 	// SMBIOS TYPE2
-	CHAR8	BoardManufactureName[64];
-	CHAR8	BoardSerialNumber[64];
-	CHAR8	BoardNumber[64]; //Board-ID
-	CHAR8	LocationInChassis[64];
-  CHAR8 BoardVersion[64];
-  CHAR8 OEMBoard[64];
-  UINT8 BoardType;
-  UINT8 Pad1;
+	char BoardManufactureName[64];
+	char BoardSerialNumber[64];
+	char BoardNumber[64]; //Board-ID
+	char LocationInChassis[64];
+    char BoardVersion[64];
+    char OEMBoard[64];
+    UInt8 BoardType;
+    UInt8 Pad1;
 	// SMBIOS TYPE3
-  BOOLEAN Mobile;
-  UINT8 ChassisType;
-	CHAR8	ChassisManufacturer[64];
-	CHAR8	ChassisAssetTag[64];
+    Boolean Mobile;
+    UInt8 ChassisType;
+	char	ChassisManufacturer[64];
+	char	ChassisAssetTag[64];
 	// SMBIOS TYPE4
-	UINT32	CpuFreqMHz;
-	UINT32	BusSpeed; //in kHz
-  BOOLEAN Turbo;
-  UINT8   EnabledCores;
-  UINT8   Pad2[2];
+	UInt32	CpuFreqMHz;
+	UInt32	BusSpeed; //in kHz
+    Boolean Turbo;
+    UInt8   EnabledCores;
+    UInt8   Pad2[2];
 	// SMBIOS TYPE17
-	CHAR8	MemoryManufacturer[64];
-	CHAR8	MemorySerialNumber[64];
-	CHAR8	MemoryPartNumber[64];
-	CHAR8	MemorySpeed[64];
+	char	MemoryManufacturer[64];
+	char	MemorySerialNumber[64];
+	char	MemoryPartNumber[64];
+	char	MemorySpeed[64];
 	// SMBIOS TYPE131
-	UINT16	CpuType;
-  // SMBIOS TYPE132
-  UINT16	QPI;
-  BOOLEAN TrustSMBIOS;
-  BOOLEAN InjectMemoryTables;
-  INT8    XMPDetection;
-  INT8    reserved;
+	UInt16	CpuType;
+    // SMBIOS TYPE132
+    UInt16	QPI;
+    Boolean TrustSMBIOS;
+    Boolean InjectMemoryTables;
+    SInt8    XMPDetection;
+    SInt8    reserved;
 
 	// OS parameters
-	CHAR8 	Language[16];
-	CHAR8   BootArgs[256];
-	CHAR16	CustomUuid[40];
-  CHAR16  DefaultBoot[40];
-  UINT16  BacklightLevel;
-  BOOLEAN MemoryFix;
+	char 	Language[16];
+	char   BootArgs[256];
+	UniChar	CustomUuid[40];
+    UniChar  DefaultBoot[40];
+    UInt16  BacklightLevel;
+    Boolean MemoryFix;
 
 	// GUI parameters
-	BOOLEAN	Debug;
+	Boolean	Debug;
 
 	//ACPI
-	UINT64	ResetAddr;
-	UINT8 	ResetVal;
-	BOOLEAN	UseDSDTmini;
-	BOOLEAN	DropSSDT;
-	BOOLEAN	GeneratePStates;
-  BOOLEAN	GenerateCStates;
-  UINT8   PLimitDict;
-  UINT8   UnderVoltStep;
-  BOOLEAN DoubleFirstState;
-  BOOLEAN LpcTune;
-  BOOLEAN EnableC2;
-  BOOLEAN EnableC4;
-  BOOLEAN EnableC6;
-  BOOLEAN EnableISS;
-  UINT16  C3Latency;
-	BOOLEAN	smartUPS;
-  BOOLEAN PatchNMI;
-	CHAR16	DsdtName[60];
-  UINT32  FixDsdt;
-  BOOLEAN bDropAPIC;
-  BOOLEAN bDropMCFG;
-  BOOLEAN bDropHPET;
-  BOOLEAN bDropECDT;
-  BOOLEAN bDropDMAR;
-  BOOLEAN bDropBGRT;
-  //  BOOLEAN RememberBIOS;
-  UINT8   MinMultiplier;
-  UINT8   MaxMultiplier;
-  UINT8   PluginType;
+	UInt64	ResetAddr;
+	UInt8 	ResetVal;
+	Boolean	UseDSDTmini;
+	Boolean	DropSSDT;
+	Boolean	GeneratePStates;
+    Boolean	GenerateCStates;
+    UInt8   PLimitDict;
+    UInt8   UnderVoltStep;
+    Boolean DoubleFirstState;
+    Boolean LpcTune;
+    Boolean EnableC2;
+    Boolean EnableC4;
+    Boolean EnableC6;
+    Boolean EnableISS;
+    UInt16  C3Latency;
+	Boolean	smartUPS;
+    Boolean PatchNMI;
+	UniChar	DsdtName[60];
+    UInt32  FixDsdt;
+    Boolean bDropAPIC;
+    Boolean bDropMCFG;
+    Boolean bDropHPET;
+    Boolean bDropECDT;
+    Boolean bDropDMAR;
+    Boolean bDropBGRT;
+    //  Boolean RememberBIOS;
+    UInt8   MinMultiplier;
+    UInt8   MaxMultiplier;
+    UInt8   PluginType;
 
 
-  //Injections
-  BOOLEAN StringInjector;
-  BOOLEAN InjectSystemID;
-  BOOLEAN NoCaches;
-  BOOLEAN WithKexts;
+    //Injections
+    Boolean StringInjector;
+    Boolean InjectSystemID;
+    Boolean NoCaches;
+    Boolean WithKexts;
 
 
-  //Graphics
-  UINT16  PCIRootUID;
-  BOOLEAN GraphicsInjector;
-  BOOLEAN LoadVBios;
-  BOOLEAN PatchVBios;
-  void   *PatchVBiosBytes; //VBIOS_PATCH_BYTES
-  UINTN   PatchVBiosBytesCount;
-  BOOLEAN InjectEDID;
-  UINT8   *CustomEDID;
-  CHAR16  FBName[16];
-  UINT16  VideoPorts;
-  UINT64  VRAM;
-  UINT8   Dcfg[8];
-  UINT8   NVCAP[20];
-  UINT32  DualLink;
-  UINT32  IgPlatform;
+    //Graphics
+    UInt16  PCIRootUID;
+    Boolean GraphicsInjector;
+    Boolean LoadVBios;
+    Boolean PatchVBios;
+    void   *PatchVBiosBytes; //VBIOS_PATCH_BYTES
+    UInt64   PatchVBiosBytesCount;
+    Boolean InjectEDID;
+    UInt8   *CustomEDID;
+    UniChar  FBName[16];
+    UInt16  VideoPorts;
+    UInt64  VRAM;
+    UInt8   Dcfg[8];
+    UInt8   NVCAP[20];
+    UInt32  DualLink;
+    UInt32  IgPlatform;
 
-  // HDA
-  BOOLEAN HDAInjection;
-  UINTN   HDALayoutId;
+    // HDA
+    Boolean HDAInjection;
+    UInt64   HDALayoutId;
 
-  // USB DeviceTree injection
-  BOOLEAN USBInjection;
-  // USB ownership fix
-  BOOLEAN USBFixOwnership;
-  BOOLEAN InjectClockID;
+    // USB DeviceTree injection
+    Boolean USBInjection;
+    // USB ownership fix
+    Boolean USBFixOwnership;
+    Boolean InjectClockID;
 
-  // LegacyBoot
-  CHAR16  LegacyBoot[32];
+    // LegacyBoot
+    UniChar  LegacyBoot[32];
 
-  // KernelAndKextPatches
-  BOOLEAN KPDebug;
-  BOOLEAN KPKernelCpu;
-  BOOLEAN KPLapicPanic;
-  BOOLEAN KPKextPatchesNeeded;
-  BOOLEAN KPAsusAICPUPM;
-  BOOLEAN KPAppleRTC;
-  BOOLEAN KextPatchesAllowed;
-  CHAR16  *KPATIConnectorsController;
-  UINT8   *KPATIConnectorsData;
-  UINTN   KPATIConnectorsDataLen;
-  UINT8   *KPATIConnectorsPatch;
-  INT32   NrKexts;
-  void *KextPatches; //KEXT_PATCH
-  //Volumes hiding
-  BOOLEAN HVHideAllOSX;
-  BOOLEAN HVHideAllOSXInstall;
-  BOOLEAN HVHideAllRecovery;
-  BOOLEAN HVHideDuplicatedBootTarget;
-  BOOLEAN HVHideAllWindowsEFI;
-  BOOLEAN HVHideAllGrub;
-  BOOLEAN HVHideAllGentoo;
-  BOOLEAN HVHideAllRedHat;
-  BOOLEAN HVHideAllUbuntu;
-  BOOLEAN HVHideAllLinuxMint;
-  BOOLEAN HVHideAllFedora;
-  BOOLEAN HVHideAllSuSe;
-  BOOLEAN HVHideAllArch;
-  //BOOLEAN HVHideAllUEFI;
-  BOOLEAN HVHideOpticalUEFI;
-  BOOLEAN HVHideInternalUEFI;
-  BOOLEAN HVHideExternalUEFI;
-  CHAR16 **HVHideStrings;
-  INTN    HVCount;
+    // KernelAndKextPatches
+    Boolean KPDebug;
+    Boolean KPKernelCpu;
+    Boolean KPLapicPanic;
+    Boolean KPKextPatchesNeeded;
+    Boolean KPAsusAICPUPM;
+    Boolean KPAppleRTC;
+    Boolean KextPatchesAllowed;
+    UniChar  *KPATIConnectorsController;
+    UInt8   *KPATIConnectorsData;
+    UInt64   KPATIConnectorsDataLen;
+    UInt8   *KPATIConnectorsPatch;
+    SInt32   NrKexts;
+    void *KextPatches; //KEXT_PATCH
+    //Volumes hiding
+    Boolean HVHideAllOSX;
+    Boolean HVHideAllOSXInstall;
+    Boolean HVHideAllRecovery;
+    Boolean HVHideDuplicatedBootTarget;
+    Boolean HVHideAllWindowsEFI;
+    Boolean HVHideAllGrub;
+    Boolean HVHideAllGentoo;
+    Boolean HVHideAllRedHat;
+    Boolean HVHideAllUbuntu;
+    Boolean HVHideAllLinuxMint;
+    Boolean HVHideAllFedora;
+    Boolean HVHideAllSuSe;
+    Boolean HVHideAllArch;
+    //Boolean HVHideAllUEFI;
+    Boolean HVHideOpticalUEFI;
+    Boolean HVHideInternalUEFI;
+    Boolean HVHideExternalUEFI;
+    UniChar **HVHideStrings;
+    SInt64    HVCount;
 
-  //Pointer
-  BOOLEAN PointerEnabled;
-  INTN    PointerSpeed;
-  UINT64  DoubleClickTime;
-  BOOLEAN PointerMirror;
+    //Pointer
+    Boolean PointerEnabled;
+    SInt64    PointerSpeed;
+    UInt64  DoubleClickTime;
+    Boolean PointerMirror;
 
-  // RtVariables
-  CHAR8   *RtMLB;
-  UINT8   *RtROM;
-  UINTN   RtROMLen;
-  CHAR8   *MountEFI;
-  UINT32  LogLineCount;
-  CHAR8   *LogEveryBoot;
+    // RtVariables
+    char   *RtMLB;
+    UInt8   *RtROM;
+    UInt64   RtROMLen;
+    char   *MountEFI;
+    UInt32  LogLineCount;
+    char   *LogEveryBoot;
 
-  // Multi-config
-  CHAR16  ConfigName[64];
-  //Drivers
-  INTN     BlackListCount;
-  CHAR16 **BlackList;
+    // Multi-config
+    UniChar  ConfigName[64];
+    //Drivers
+    SInt64     BlackListCount;
+    UniChar **BlackList;
 
-  //SMC keys
-  CHAR8  RPlt[8];
-  CHAR8  RBr[8];
-  UINT8  EPCI[4];
-  UINT8  REV[6];
+    //SMC keys
+    char  RPlt[8];
+    char  RBr[8];
+    UInt8  EPCI[4];
+    UInt8  REV[6];
 
 } SETTINGS_DATA;
 
 #pragma pack(pop)
 
 // Prototypes
-static kern_return_t GetOFVariable(char *name, CFStringRef *nameRef,
-                                   CFTypeRef *valueRef);
-
-static void PrintConfig(CFTypeRef message, CFTypeRef valueRef);
-static void printOpenString();
-static void printCloseString();
-static void printDict(char *Name);
-static void printCloseDict();
-static void printSubDict(char *Name);
-static void printCloseSubDict();
-static void printString(char *Name, char *Value);
-static void printString3(char *Name, char *Value);
-static void printUString(char *Name, CHAR16 *Value);
-static void printInteger(char *Name, INTN Value);
-static void printInteger3(char *Name, INTN Value);
-static void printHex(char *Name, INTN Value);
-static void printBoolean(char *Name, BOOLEAN Value);
-static void printBoolean3(char *Name, BOOLEAN Value);
-static void printUUID(char *Name, EFI_GUID *g);
-static void printIntArray(char *Name, UINT8 *Value, INTN num);
-
+static kern_return_t GetOFVariable(const char *name, CFTypeRef *valueRef);
 
 // Global Variables
 static io_registry_entry_t gPlatform;
 static mach_port_t         masterPort;
 
-int main(int argc, char **argv)
+CFMutableDictionaryRef addDict(CFMutableDictionaryRef dest, CFStringRef key) {
+    assert(dest);
+    CFMutableDictionaryRef dict = CFDictionaryCreateMutable (
+                                                             kCFAllocatorDefault,
+                                                             0,
+                                                             &kCFTypeDictionaryKeyCallBacks,
+                                                             &kCFTypeDictionaryValueCallBacks
+                                                             );
+    if (!dict)
+        errx(1,"Error can't allocate dictionnary for key '%s'",
+             CFStringGetCStringPtr( key, kCFStringEncodingMacRoman ));
+
+    CFDictionaryAddValue( dest, key, dict );
+    return dict;
+}
+
+void addString(CFMutableDictionaryRef dest, CFStringRef key, const char* value) {
+    assert(dest);
+    CFStringRef strValue = CFStringCreateWithCString(kCFAllocatorDefault,
+                                                     value,
+                                                     kCFStringEncodingMacRoman);
+    assert(strValue);
+    CFDictionaryAddValue( dest, key, strValue );
+    CFRelease(strValue);
+}
+
+void addUString(CFMutableDictionaryRef dest, CFStringRef key, const UniChar* value) {
+    assert(dest);
+    CFStringRef strValue = CFStringCreateWithFormat(kCFAllocatorDefault, NULL, CFSTR("%S"), value);
+    assert(strValue);
+    CFDictionaryAddValue( dest, key, strValue );
+    CFRelease(strValue);
+}
+
+void addHex(CFMutableDictionaryRef dest, CFStringRef key, UInt64 value) {
+    assert(dest);
+    CFStringRef strValue = CFStringCreateWithFormat(kCFAllocatorDefault, NULL, CFSTR("0x%llx"), value);
+    assert(strValue);
+    CFDictionaryAddValue( dest, key, strValue );
+    CFRelease(strValue);
+}
+
+void addBoolean(CFMutableDictionaryRef dest, CFStringRef key, Boolean value) {
+    assert(dest);
+    CFBooleanRef boolValue = value ? kCFBooleanTrue : kCFBooleanFalse;
+    CFDictionaryAddValue( dest, key, boolValue );
+}
+
+void addInteger(CFMutableDictionaryRef dest, CFStringRef key, UInt64 value) {
+    assert(dest);
+    CFNumberRef valueRef = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &value);
+    assert(valueRef);
+    CFDictionaryAddValue( dest, key, valueRef );
+    CFRelease(valueRef);
+}
+
+void addUUID(CFMutableDictionaryRef dest, CFStringRef key, EFI_GUID *uuid)
 {
-  
-  CFStringRef         nameRef;
-  CFTypeRef           valueRef;
-  kern_return_t       result;
-   
-  result = IOMasterPort(bootstrap_port, &masterPort);
-  if (result != KERN_SUCCESS) {
-    errx(1, "Error getting the IOMaster port: %s",
-        mach_error_string(result));
-  }
-  
-  gPlatform = IORegistryEntryFromPath(masterPort, "IODeviceTree:/efi/platform");
-  if (gPlatform == 0) {
-    errx(1, "EFI is not supported on this system");
-  }
+    assert(dest);
+    CFStringRef strValue = CFStringCreateWithFormat(kCFAllocatorDefault, NULL,
+                                                    CFSTR("%08tx-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x"),
+                                                    uuid->Data1, uuid->Data2, uuid->Data3,
+                                                    uuid->Data4[0], uuid->Data4[1],
+                                                    uuid->Data4[2], uuid->Data4[3], uuid->Data4[4], uuid->Data4[5], uuid->Data4[6], uuid->Data4[7]);
+    assert(strValue);
+    CFDictionaryAddValue( dest, key, strValue );
+    CFRelease(strValue);
+}
 
-  result = GetOFVariable("Settings", &nameRef, &valueRef);
-  if (result != KERN_SUCCESS) {
-    errx(1, "Clover absent or too old : %s",
-         mach_error_string(result));
-  }
-  
-  PrintConfig(nameRef, valueRef);
-  CFRelease(nameRef);
-  CFRelease(valueRef);
+void addIntArray(CFMutableDictionaryRef dest, CFStringRef key, UInt8 *Value, SInt64 num)
+{
+    SInt64 i = 0;
+    CFMutableStringRef strValue = CFStringCreateMutable (kCFAllocatorDefault, 0);
 
-  IOObjectRelease(gPlatform);
-  
-  return 0;
+    for (i = 0; i < num; i++) {
+        CFStringAppendFormat(strValue, NULL, CFSTR("%02x"), Value[i]);
+    }
+    CFDictionaryAddValue( dest, key, strValue );
+    CFRelease(strValue);
+}
+
+void dump_plist(CFMutableDictionaryRef properties) {
+    CFWriteStreamRef stdoutStream = NULL;
+    CFURLRef devStdout = CFURLCreateWithFileSystemPath(
+                                                       NULL,
+                                                       CFSTR("/dev/stdout"),
+                                                       kCFURLPOSIXPathStyle,
+                                                       false
+                                                       );
+    stdoutStream = CFWriteStreamCreateWithFile(NULL, devStdout);
+    CFRelease(devStdout);
+    if (stdoutStream == NULL)
+        errx(1,"cannot create CFWriteStream for /dev/stdout");
+    if (!CFWriteStreamOpen(stdoutStream))
+        errx(1,"cannot open CFWriteStream for /dev/stdout");
+
+    CFPropertyListWrite(
+                        properties,
+                        stdoutStream,
+                        kCFPropertyListXMLFormat_v1_0,
+                        0,
+                        NULL
+                        );
+    CFWriteStreamClose(stdoutStream);
+    CFRelease(stdoutStream);
 }
 
 
-// GetOFVariable(name, nameRef, valueRef)
+// GetOFVariable(name, valueRef)
 //
 //   Get the named firmware variable.
-//   Return it and it's symbol in valueRef and nameRef.
+//   Return the value in valueRef.
 //
-static kern_return_t GetOFVariable(char *name, CFStringRef *nameRef,
-				   CFTypeRef *valueRef)
+static kern_return_t GetOFVariable(const char *name, CFTypeRef *valueRef)
 {
-  *nameRef = CFStringCreateWithCString(kCFAllocatorDefault, name,
-				       kCFStringEncodingUTF8);
-  if (*nameRef == 0) {
-    errx(1, "Error creating CFString for key %s", name);
-  }
-  
-  *valueRef = IORegistryEntryCreateCFProperty(gPlatform, *nameRef, 0, 0);
-  if (*valueRef == 0){
-    printf("value not found\n");
-    return kIOReturnNotFound;
-  }
-  
-  return KERN_SUCCESS;
-}
-
-static void PrintConfig(const void *key, const void *value)
-{
-  CFIndex       nameLen;
-  char          *nameBuffer = 0;
-  const char    *nameString;
-  const uint8_t *dataPtr = NULL;
-  const char    *valueString = 0;
-  uint32_t      length = 0;
-  CFTypeID      typeID;
-
-  // Get the OF variable's name.
-  nameLen = CFStringGetLength(key) + 1;
-  nameBuffer = malloc(nameLen);
-  if( nameBuffer && CFStringGetCString(key, nameBuffer, nameLen, kCFStringEncodingUTF8) )
-    nameString = nameBuffer;
-  else {
-    warnx("Unable to convert property name to C string");
-    nameString = "<UNPRINTABLE>";
-  }
-
-  // Get the OF variable's type.
-  typeID = CFGetTypeID(value);
-
-  if (typeID == CFDataGetTypeID()) {
-    length = CFDataGetLength(value);
-    if (length == 0) valueString = "";
-    else {
-        dataPtr = CFDataGetBytePtr(value);
+    CFStringRef nameRef = CFStringCreateWithCString(kCFAllocatorDefault, name,
+                                                    kCFStringEncodingUTF8);
+    if (!nameRef) {
+        errx(1, "Error creating CFString for key %s", name);
     }
-  } else {
-    printf("<INVALID> settings\n");
-    return;
-  }
-  //dump to debug
-  /*
-   int i,j;
-   UINT8 *p = (UINT8 *)s;
-   for (i=0; i<16; i++){
-     for (j=0; j<16; j++) {
-       printf("%02x ", p[i*16 +j]);
-     }
-     printf("\n");
-   } */
 
-//  printf("%s\n", nameString);
-//  printf("typesize=%ld valuelength=%ld\n", sizeof(SETTINGS_DATA), (long)length);
+    *valueRef = IORegistryEntryCreateCFProperty(gPlatform, nameRef, 0, 0);
+    CFRelease(nameRef);
+    if (!*valueRef) {
+        printf("value not found\n");
+        return kIOReturnNotFound;
+    }
 
-  SETTINGS_DATA *s = (SETTINGS_DATA*)dataPtr;
-  
-  printf("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-         "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n"
-         "<plist version=\"1.0\">\n"
-         "<dict>\n");
-  printDict("SystemParameters");
-  printString("boot-args", s->BootArgs);
-  printString("prev-lang:kbd", s->Language);
-  printUString("CustomUUID", s->CustomUuid);
-  printBoolean("InjectSystemID", s->InjectSystemID);
-  printBoolean("NoCaches", s->NoCaches);
-  printBoolean("InjectKexts", s->WithKexts);
-  printHex("BacklightLevel", s->BacklightLevel);
-  printUString("LegacyBoot", s->LegacyBoot);
-  printUString("ConfigName", s->ConfigName);
-  printInteger("XMPDetection", s->XMPDetection);
-  printCloseDict();
-
-  printDict("GUI");
-  printUString("DefaultBootVolume", s->DefaultBoot);
-  printBoolean("DebugLog", s->Debug);
-  printSubDict("Mouse");
-  printBoolean3("Enabled", s->PointerEnabled);
-  printInteger3("Speed", s->PointerSpeed);
-  printInteger3("DoubleClick", s->DoubleClickTime);
-  printBoolean3("Mirror", s->PointerMirror);
-  printCloseSubDict();
-  printSubDict("Volumes");
-  printInteger3("Hide Count", s->HVCount);
-  printCloseSubDict();
-  printSubDict("HideEntries");
-  printBoolean3("OSXInstall", s->HVHideAllOSXInstall);
-  printBoolean3("Recovery", s->HVHideAllRecovery);
-  printBoolean3("Duplicate", s->HVHideDuplicatedBootTarget);
-  printBoolean3("WindowsEFI", s->HVHideAllWindowsEFI);
-  printBoolean3("Ubuntu", s->HVHideAllUbuntu);
-  printBoolean3("Grub", s->HVHideAllGrub);
-  printBoolean3("Gentoo", s->HVHideAllGentoo);
-  printBoolean3("OpticalUEFI", s->HVHideOpticalUEFI);
-  printBoolean3("InternalUEFI", s->HVHideInternalUEFI);
-  printBoolean3("ExternalUEFI", s->HVHideExternalUEFI);
-  printCloseSubDict();
-  printCloseDict();
-
-  printDict("SMBIOS");
-  printString("Comment", "SMBIOS TYPE0");
-  printString("BiosVendor", s->VendorName);
-  printString("BiosVersion", s->RomVersion);
-  printString("BiosReleaseDate", s->ReleaseDate);
-  printString("Comment", "SMBIOS TYPE1");
-  printString("Manufacturer", s->ManufactureName);
-  printString("ProductName", s->ProductName);
-  printString("Version", s->VersionNr);
-  printString("SerialNumber", s->SerialNr);
-  printUUID("SmUUID", &s->SmUUID);
-  printString("Family", s->FamilyName);
-  printString("Comment", "SMBIOS TYPE2");
-  printString("BoardManufacturer", s->BoardManufactureName);
-  printString("BoardSerialNumber", s->BoardSerialNumber);
-  printString("Board-ID", s->BoardNumber);
-  printString("BoardVersion", s->BoardVersion);
-  printInteger("BoardType", s->BoardType);
-  printString("LocationInChassis", s->LocationInChassis);
-  printString("Comment", "SMBIOS TYPE3");
-  printString("ChassisManufacturer", s->ChassisManufacturer);
-  printString("ChassisAssetTag", s->ChassisAssetTag);
-  printHex("ChassisType", s->ChassisType);
-  printBoolean("Mobile", s->Mobile);
-  printString("Comment", "SMBIOS TYPE17");
-  printBoolean("Trust", s->TrustSMBIOS);
-//  printString("Comment", "these values read only");
-  if (s->InjectMemoryTables) {
-    printSubDict("Memory");
-    printString3("Comment", "there are wrong keys with some values");
-    printString3("MemoryManufacturer", s->MemoryManufacturer);
-    printString3("MemorySerialNumber", s->MemorySerialNumber);
-    printString3("MemoryPartNumber", s->MemoryPartNumber);
-    printString3("MemorySpeed", s->MemorySpeed);
-    printCloseSubDict();
-  }
-  printString("OEMProduct", s->OEMProduct);
-  printString("OEMVendor", s->OEMVendor);
-  printString("OEMBoard", s->OEMBoard);
-  printCloseDict();
-
-  printDict("CPU");
-  printBoolean("Turbo", s->Turbo);
-  printInteger("CpuFrequencyMHz", s->CpuFreqMHz);
-  printInteger("BusSpeedkHz", s->BusSpeed);
-  printInteger("QPI", s->QPI);
-  printString("Comment", "these values read only");
-  printHex("EnabledCores", s->EnabledCores);
-  printCloseDict();
-
-  printDict("PCI");
-  printBoolean("StringInjector", s->StringInjector);
-  printString("DeviceProperties", "_NOT_SHOWN_");
-  printInteger("PCIRootUID", s->PCIRootUID);
-  if (s->HDAInjection) {
-    printInteger("HDAInjection", s->HDALayoutId);
-  } else printBoolean("HDAInjection", s->HDAInjection);
-  printBoolean("USBInjection", s->USBInjection);
-  printBoolean("USBFixOwnership", s->USBFixOwnership);
-  printBoolean("InjectClockID", s->InjectClockID);
-  printBoolean("LpcTune", s->LpcTune);
-  printCloseDict();
-
-  printDict("Graphics");
-  printBoolean("GraphicsInjector", s->GraphicsInjector);
-  printBoolean("LoadVBios", s->LoadVBios);
-  printBoolean("InjectEDID", s->InjectEDID);
-  printString("CustomEDID", "_NOT_SHOWN_");
-  printBoolean("PatchVBios", s->PatchVBios);
-  printInteger("PatchVBios Manual Count", s->PatchVBiosBytesCount);
-  printInteger("VideoPorts", s->VideoPorts);
-  printInteger("VRAM", s->VRAM);
-  printBoolean("DualLink", s->DualLink);
-  printString("Comment", "ATI specific");
-  printUString("FBName", s->FBName);
-  printString("Comment", "NVIDIA specific");
-  printIntArray("display-cfg", &s->Dcfg[0], 8);
-  printIntArray("NVCAP", &s->NVCAP[0], 20);
-  printString("Comment", "INTEL specific");
-  printHex("ig-platform-id", s->IgPlatform);
-  printCloseDict();
-
-  printDict("ACPI");
-  printUString("DsdtName", s->DsdtName);
-  printHex("FixDsdtMask", s->FixDsdt);
-  printBoolean("DropOemSSDT", s->DropSSDT);
-  printBoolean("DropAPIC", s->bDropAPIC);
-  printBoolean("PatchAPIC", s->PatchNMI);
-  printBoolean("DropMCFG", s->bDropMCFG);
-  printBoolean("DropHPET", s->bDropHPET);
-  printBoolean("DropECDT", s->bDropECDT);
-  printBoolean("DropDMAR", s->bDropDMAR);
-  printBoolean("DropBGRT", s->bDropBGRT);
-  printBoolean("GeneratePStates", s->GeneratePStates);
-  printBoolean("GenerateCStates", s->GenerateCStates);
-  printBoolean("DoubleFirstState", s->DoubleFirstState);
-  printBoolean("EnableC2", s->EnableC2);
-  printHex("C3Latency", s->C3Latency);
-  printBoolean("EnableC4", s->EnableC4);
-  printBoolean("EnableC6", s->EnableC6);
-  printBoolean("EnableISS", s->EnableISS);
-  printInteger("PLimitDict", s->PLimitDict);
-  printInteger("UnderVoltStep", s->UnderVoltStep);
-  printInteger("MinMultiplier", s->MinMultiplier);
-  printInteger("MaxMultiplier", s->MaxMultiplier);
-  printInteger("PluginType", s->PluginType);
-  printBoolean("smartUPS", s->smartUPS);
-  printHex("ResetAddress", s->ResetAddr);
-  printHex("ResetValue", s->ResetVal);
-  printCloseDict();
-
-  printDict("KernelAndKextPatches");
-  printBoolean("Debug", s->KPDebug);
-  printBoolean("KernelCpu", s->KPKernelCpu);
-  printBoolean("KernelLapic", s->KPLapicPanic);
-  printBoolean("AppleRTC", s->KPAppleRTC);
-  printBoolean("AsusAICPUPM", s->KPAsusAICPUPM);
-  printBoolean("KextPatchesAllowed", s->KextPatchesAllowed);
-  printInteger("Number_of_KextsToPatch", s->NrKexts);
-  printCloseDict();
-  
-  //TODO
-  // here we can get LogEveryBoot and MountEFI from
-  //gPlatform = IORegistryEntryFromPath(masterPort, "IODeviceTree:/options");
-  //GetOFVariable("MountEFI" ... and so on
-  printDict("RtVariables");
-  printString("MountEFI", "_NOT_SHOWN_");
-  printInteger("LogLineCount", s->LogLineCount);
-  printString("LogEveryBoot", "_NOT_SHOWN_");
-  printCloseDict();
-
-  printf("</dict>\n"
-         "</plist>\n");
+    return KERN_SUCCESS;
 }
 
-static void printOpenString()
+void PrintConfig(CFTypeRef data)
 {
-  printf("\t\t<string>");
+    const Byte *dataPtr = NULL;
+    CFIndex    length = 0;
+    CFTypeID   typeID;
+
+    // Get the OF variable's type.
+    typeID = CFGetTypeID(data);
+
+    if (typeID == CFDataGetTypeID()) {
+        length = CFDataGetLength(data);
+        if (length == 0)
+            return;
+        else
+            dataPtr = CFDataGetBytePtr(data);
+    } else {
+        printf("<INVALID> settings\n");
+        return;
+    }
+
+    if (length != sizeof(SETTINGS_DATA)) {
+        errx(1, "Error the version of clover-genconfig didn't match current booted clover version");
+    }
+
+    SETTINGS_DATA *s = (SETTINGS_DATA*)dataPtr;
+
+    CFMutableDictionaryRef dict = CFDictionaryCreateMutable (
+                                                             kCFAllocatorDefault,
+                                                             0,
+                                                             &kCFTypeDictionaryKeyCallBacks,
+                                                             &kCFTypeDictionaryValueCallBacks
+                                                             );
+
+    // SystemParameters
+    CFMutableDictionaryRef systemParametersDict = addDict(dict, CFSTR("SystemParameters"));
+    addString(systemParametersDict, CFSTR("boot-args"), s->BootArgs);
+    addString(systemParametersDict, CFSTR("prev-lang:kbd"), s->Language);
+    addUString(systemParametersDict, CFSTR("CustomUUID"), s->CustomUuid);
+    addBoolean(systemParametersDict, CFSTR("InjectSystemID"), s->InjectSystemID);
+    addBoolean(systemParametersDict, CFSTR("NoCaches"), s->NoCaches);
+    addBoolean(systemParametersDict, CFSTR("InjectKexts"), s->WithKexts);
+    addHex(systemParametersDict, CFSTR("BacklightLevel"),s->BacklightLevel);
+    addUString(systemParametersDict, CFSTR("LegacyBoot"), s->LegacyBoot);
+    addUString(systemParametersDict, CFSTR("ConfigName"), s->ConfigName);
+    addInteger(systemParametersDict, CFSTR("XMPDetection"), s->XMPDetection);
+
+    // GUI
+    CFMutableDictionaryRef guiDict = addDict(dict, CFSTR("GUI"));
+    addUString(guiDict,CFSTR("DefaultBootVolume"), s->DefaultBoot);
+    addBoolean(guiDict,CFSTR("DebugLog"), s->Debug);
+
+    CFMutableDictionaryRef mouseDict = addDict(guiDict, CFSTR("Mouse"));
+    addBoolean(mouseDict, CFSTR("Enabled"), s->PointerEnabled);
+    addInteger(mouseDict, CFSTR("Speed"), s->PointerSpeed);
+    addInteger(mouseDict, CFSTR("DoubleClick"), s->DoubleClickTime);
+    addBoolean(mouseDict, CFSTR("Mirror"), s->PointerMirror);
+
+    CFMutableDictionaryRef volumesDict = addDict(guiDict, CFSTR("Volumes"));
+    addInteger(volumesDict, CFSTR("Hide Count"), s->HVCount);
+
+    CFMutableDictionaryRef hideEntriesDict = addDict(guiDict, CFSTR("HideEntries"));
+    addBoolean(hideEntriesDict, CFSTR("OSXInstall"), s->HVHideAllOSXInstall);
+    addBoolean(hideEntriesDict, CFSTR("Recovery"), s->HVHideAllRecovery);
+    addBoolean(hideEntriesDict, CFSTR("Duplicate"), s->HVHideDuplicatedBootTarget);
+    addBoolean(hideEntriesDict, CFSTR("WindowsEFI"), s->HVHideAllWindowsEFI);
+    addBoolean(hideEntriesDict, CFSTR("Ubuntu"), s->HVHideAllUbuntu);
+    addBoolean(hideEntriesDict, CFSTR("Grub"), s->HVHideAllGrub);
+    addBoolean(hideEntriesDict, CFSTR("Gentoo"), s->HVHideAllGentoo);
+    addBoolean(hideEntriesDict, CFSTR("OpticalUEFI"), s->HVHideOpticalUEFI);
+    addBoolean(hideEntriesDict, CFSTR("InternalUEFI"), s->HVHideInternalUEFI);
+    addBoolean(hideEntriesDict, CFSTR("ExternalUEFI"), s->HVHideExternalUEFI);
+
+    // SMBIOS
+    CFMutableDictionaryRef smbiosDict = addDict(dict, CFSTR("SMBIOS"));
+    // SMBIOS TYPE0
+    addString(smbiosDict, CFSTR("BiosVendor"), s->VendorName);
+    addString(smbiosDict, CFSTR("BiosVersion"), s->RomVersion);
+    addString(smbiosDict, CFSTR("BiosReleaseDate"), s->ReleaseDate);
+    // SMBIOS TYPE1
+    addString(smbiosDict, CFSTR("Manufacturer"), s->ManufactureName);
+    addString(smbiosDict, CFSTR("ProductName"), s->ProductName);
+    addString(smbiosDict, CFSTR("Version"), s->VersionNr);
+    addString(smbiosDict, CFSTR("SerialNumber"), s->SerialNr);
+
+    addUUID(smbiosDict, CFSTR("SmUUID"), &s->SmUUID);
+    addString(smbiosDict, CFSTR("Family"), s->FamilyName);
+    // SMBIOS TYPE2
+    addString(smbiosDict, CFSTR("BoardManufacturer"), s->BoardManufactureName);
+    addString(smbiosDict, CFSTR("BoardSerialNumber"), s->BoardSerialNumber);
+    addString(smbiosDict, CFSTR("Board-ID"), s->BoardNumber);
+    addString(smbiosDict, CFSTR("BoardVersion"), s->BoardVersion);
+    addInteger(smbiosDict, CFSTR("BoardType"), s->BoardType);
+    addString(smbiosDict, CFSTR("LocationInChassis"), s->LocationInChassis);
+    addString(smbiosDict, CFSTR("ChassisManufacturer"), s->ChassisManufacturer);
+    addString(smbiosDict, CFSTR("ChassisAssetTag"), s->ChassisAssetTag);
+    addHex(smbiosDict, CFSTR("ChassisType"), s->ChassisType);
+    addBoolean(smbiosDict, CFSTR("Mobile"), s->Mobile);
+    // SMBIOS TYPE17
+    addBoolean(smbiosDict, CFSTR("Trust"), s->TrustSMBIOS);
+
+    addString(smbiosDict, CFSTR("OEMProduct"), s->OEMProduct);
+    addString(smbiosDict, CFSTR("OEMVendor"), s->OEMVendor);
+    addString(smbiosDict, CFSTR("OEMBoard"), s->OEMBoard);
+
+    if (s->InjectMemoryTables) {
+        CFMutableDictionaryRef memoryDict = addDict(smbiosDict, CFSTR("Memory"));
+        // there are wrong keys with some values
+        addString(memoryDict, CFSTR("MemoryManufacturer"), s->MemoryManufacturer);
+        addString(memoryDict, CFSTR("MemorySerialNumber"), s->MemorySerialNumber);
+        addString(memoryDict, CFSTR("MemoryPartNumber"), s->MemoryPartNumber);
+        addString(memoryDict, CFSTR("MemorySpeed"), s->MemorySpeed);
+    }
+
+    // CPU
+    CFMutableDictionaryRef cpuDict = addDict(dict, CFSTR("CPU"));
+    addBoolean(cpuDict, CFSTR("Turbo"), s->Turbo);
+    addInteger(cpuDict, CFSTR("CpuFrequencyMHz"), s->CpuFreqMHz);
+    addInteger(cpuDict, CFSTR("BusSpeedkHz"), s->BusSpeed);
+    addInteger(cpuDict, CFSTR("QPI"), s->QPI);
+    // these values read only
+    addHex(cpuDict, CFSTR("EnabledCores"), s->EnabledCores);
+
+    // PCI
+    CFMutableDictionaryRef pciDict = addDict(dict, CFSTR("PCI"));
+    addBoolean(pciDict, CFSTR("StringInjector"), s->StringInjector);
+    addString(pciDict, CFSTR("DeviceProperties"), "_NOT_SHOWN_");
+    addInteger(pciDict, CFSTR("PCIRootUID"), s->PCIRootUID);
+    if (s->HDAInjection)
+        addInteger(pciDict, CFSTR("HDAInjection"), s->HDALayoutId);
+    else
+        addBoolean(pciDict, CFSTR("HDAInjection"), s->HDAInjection);
+    addBoolean(pciDict, CFSTR("USBInjection"), s->USBInjection);
+    addBoolean(pciDict, CFSTR("USBFixOwnership"), s->USBFixOwnership);
+    addBoolean(pciDict, CFSTR("InjectClockID"), s->InjectClockID);
+    addBoolean(pciDict, CFSTR("LpcTune"), s->LpcTune);
+
+    // Graphics
+    CFMutableDictionaryRef graphicsDict = addDict(dict, CFSTR("Graphics"));
+    addBoolean(graphicsDict, CFSTR("GraphicsInjector"), s->GraphicsInjector);
+    addBoolean(graphicsDict, CFSTR("LoadVBios"), s->LoadVBios);
+    addBoolean(graphicsDict, CFSTR("InjectEDID"), s->InjectEDID);
+    addString(graphicsDict, CFSTR("CustomEDID"), "_NOT_SHOWN_");
+    addBoolean(graphicsDict, CFSTR("PatchVBios"), s->PatchVBios);
+    addInteger(graphicsDict, CFSTR("PatchVBios Manual Count"), s->PatchVBiosBytesCount);
+    addInteger(graphicsDict, CFSTR("VideoPorts"), s->VideoPorts);
+    addInteger(graphicsDict, CFSTR("VRAM"), s->VRAM);
+    addBoolean(graphicsDict, CFSTR("DualLink"), s->DualLink);
+    // ATI specific"
+    addUString(graphicsDict, CFSTR("FBName"), s->FBName);
+    // NVIDIA specific
+    addIntArray(graphicsDict, CFSTR("display-cfg"), &s->Dcfg[0], 8);
+    addIntArray(graphicsDict, CFSTR("NVCAP"), &s->NVCAP[0], 20);
+    // INTEL specific
+    addHex(graphicsDict, CFSTR("ig-platform-id"), s->IgPlatform);
+
+    //ACPI
+    CFMutableDictionaryRef acpiDict = addDict(dict, CFSTR("ACPI"));
+    addUString(acpiDict, CFSTR("DsdtName"), s->DsdtName);
+    addHex(acpiDict, CFSTR("FixDsdtMask"), s->FixDsdt);
+    addBoolean(acpiDict, CFSTR("DropOemSSDT"), s->DropSSDT);
+    addBoolean(acpiDict, CFSTR("DropAPIC"), s->bDropAPIC);
+    addBoolean(acpiDict, CFSTR("PatchAPIC"), s->PatchNMI);
+    addBoolean(acpiDict, CFSTR("DropMCFG"), s->bDropMCFG);
+    addBoolean(acpiDict, CFSTR("DropHPET"), s->bDropHPET);
+    addBoolean(acpiDict, CFSTR("DropECDT"), s->bDropECDT);
+    addBoolean(acpiDict, CFSTR("DropDMAR"), s->bDropDMAR);
+    addBoolean(acpiDict, CFSTR("DropBGRT"), s->bDropBGRT);
+    addBoolean(acpiDict, CFSTR("GeneratePStates"), s->GeneratePStates);
+    addBoolean(acpiDict, CFSTR("GenerateCStates"), s->GenerateCStates);
+    addBoolean(acpiDict, CFSTR("DoubleFirstState"), s->DoubleFirstState);
+    addBoolean(acpiDict, CFSTR("EnableC2"), s->EnableC2);
+    addHex(acpiDict, CFSTR("C3Latency"), s->C3Latency);
+    addBoolean(acpiDict, CFSTR("EnableC4"), s->EnableC4);
+    addBoolean(acpiDict, CFSTR("EnableC6"), s->EnableC6);
+    addBoolean(acpiDict, CFSTR("EnableISS"), s->EnableISS);
+    addBoolean(acpiDict, CFSTR("PLimitDict"), s->PLimitDict);
+    addBoolean(acpiDict, CFSTR("UnderVoltStep"), s->UnderVoltStep);
+    addBoolean(acpiDict, CFSTR("MinMultiplier"), s->MinMultiplier);
+    addBoolean(acpiDict, CFSTR("MaxMultiplier"), s->MaxMultiplier);
+    addBoolean(acpiDict, CFSTR("PluginType"), s->PluginType);
+    addBoolean(acpiDict, CFSTR("smartUPS"), s->smartUPS);
+    addHex(acpiDict, CFSTR("ResetAddress"), s->ResetAddr);
+    addHex(acpiDict, CFSTR("ResetValue"), s->ResetVal);
+
+    // KernelAndKextPatches
+    CFMutableDictionaryRef KernelAndKextPatchesDict = addDict(dict, CFSTR("KernelAndKextPatches"));
+    addBoolean(KernelAndKextPatchesDict, CFSTR("Debug"), s->KPDebug);
+    addBoolean(KernelAndKextPatchesDict, CFSTR("KernelCpu"), s->KPKernelCpu);
+    addBoolean(KernelAndKextPatchesDict, CFSTR("KernelLapic"), s->KPLapicPanic);
+    addBoolean(KernelAndKextPatchesDict, CFSTR("AppleRTC"), s->KPAppleRTC);
+    addBoolean(KernelAndKextPatchesDict, CFSTR("AsusAICPUPM"), s->KPAsusAICPUPM);
+    addBoolean(KernelAndKextPatchesDict, CFSTR("KextPatchesAllowed"), s->KextPatchesAllowed);
+    addInteger(KernelAndKextPatchesDict, CFSTR("Number_of_KextsToPatch"), s->NrKexts);
+
+    //TODO
+    // here we can get LogEveryBoot and MountEFI from
+    //gPlatform = IORegistryEntryFromPath(masterPort, "IODeviceTree:/options");
+    //GetOFVariable("MountEFI" ... and so on
+    CFMutableDictionaryRef rtVariablesDict = addDict(dict, CFSTR("RtVariables"));
+    addString(rtVariablesDict, CFSTR("MountEFI"), "_NOT_SHOWN_");
+    addInteger(rtVariablesDict, CFSTR("LogLineCount"), s->LogLineCount);
+    addString(rtVariablesDict, CFSTR("LogEveryBoot"), "_NOT_SHOWN_");
+
+    dump_plist(dict);
+
 }
 
-static void printCloseString()
+int main(int argc, char **argv)
 {
-  printf("</string>\n");
+    kern_return_t       result;
+
+    result = IOMasterPort(bootstrap_port, &masterPort);
+    if (result != KERN_SUCCESS) {
+        errx(1, "Error getting the IOMaster port: %s",
+             mach_error_string(result));
+    }
+
+    gPlatform = IORegistryEntryFromPath(masterPort, "IODeviceTree:/efi/platform");
+    if (gPlatform == 0) {
+        errx(1, "EFI is not supported on this system");
+    }
+
+    CFTypeRef data;
+    result = GetOFVariable("Settings", &data);
+    if (result != KERN_SUCCESS) {
+        errx(1, "Clover absent or too old : %s",
+             mach_error_string(result));
+    }
+
+    PrintConfig(data);
+    CFRelease(data);
+
+    IOObjectRelease(gPlatform);
+
+    return 0;
 }
-
-static void printDict(char *Name)
-{
-  printf("\t<key>%s</key>\n\t<dict>\n", Name);
-}
-
-static void printCloseDict()
-{
-  printf("\t</dict>\n");
-}
-
-static void printSubDict(char *Name)
-{
-  printf("\t\t<key>%s</key>\n\t\t<dict>\n", Name);
-}
-
-static void printCloseSubDict()
-{
-  printf("\t\t</dict>\n");
-}
-
-static void printString(char *Name, char *Value)
-{
-  printf("\t\t<key>%s</key>\n\t\t<string>%s</string>\n", Name, Value);
-}
-
-static void printString3(char *Name, char *Value)
-{
-  printf("\t\t\t<key>%s</key>\n\t\t\t<string>%s</string>\n", Name, Value);
-}
-
-static void printUString(char *Name, CHAR16 *Value)
-{
-  int i = 0;
-  printf("\t\t<key>%s</key>\n\t\t<string>", Name);
-  while (Value[i]) {
-    printf("%c", (char)(Value[i++] & 0xFF));
-  }
-  printCloseString();
-}
-
-static void printIntArray(char *Name, UINT8 *Value, INTN num)
-{
-  int i = 0;
-  printf("\t\t<key>%s</key>\n\t\t<string>", Name);
-  for (i=0; i<num; i++) {
-    printf("%02x", Value[i]);
-  }
-  printCloseString();
-}
-
-
-static void printInteger(char *Name, INTN Value)
-{
-  printf("\t\t<key>%s</key>\n\t\t<integer>%lld</integer>\n", Name, Value);
-}
-
-static void printInteger3(char *Name, INTN Value)
-{
-  printf("\t\t\t<key>%s</key>\n\t\t\t<integer>%lld</integer>\n", Name, Value);
-}
-
-static void printHex(char *Name, INTN Value)
-{
-  printf("\t\t<key>%s</key>\n\t\t<string>0x%llx</string>\n", Name, Value);
-}
-
-static void printBoolean(char *Name, BOOLEAN Value)
-{
-  if (Value) {
-    printf("\t\t<key>%s</key>\n\t\t<true/>\n", Name);
-  } else {
-    printf("\t\t<key>%s</key>\n\t\t<false/>\n", Name);
-  }
-}
-
-static void printBoolean3(char *Name, BOOLEAN Value)
-{
-  if (Value) {
-    printf("\t\t\t<key>%s</key>\n\t\t\t<true/>\n", Name);
-  } else {
-    printf("\t\t\t<key>%s</key>\n\t\t\t<false/>\n", Name);
-  }
-}
-
-static void printUUID(char *Name, EFI_GUID *g)
-{
-  printf("\t\t<key>%s</key>\n\t\t<string>%08x-%04x-%04x-%02x%02x-%02x%02x%02x%02x%02x%02x</string>\n", Name,
-         g->Data1, g->Data2, g->Data3,
-         g->Data4[0], g->Data4[1], g->Data4[2], g->Data4[3], g->Data4[4], g->Data4[5], g->Data4[6], g->Data4[7]);
-}
-
