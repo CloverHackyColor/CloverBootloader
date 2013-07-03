@@ -62,6 +62,7 @@ typedef UINT64	__uint64_t;
 // From xnu/osfmk/mach/i386/_structs.h:
 //
 
+#ifndef _STRUCT_X86_THREAD_STATE32
 #define	_STRUCT_X86_THREAD_STATE32	struct __darwin_i386_thread_state
 _STRUCT_X86_THREAD_STATE32
 {
@@ -84,6 +85,14 @@ _STRUCT_X86_THREAD_STATE32
     UINT32	gs;
 };
 
+//
+// From xnu/osfmk/mach/i386/thread_status.h:
+//
+typedef _STRUCT_X86_THREAD_STATE32 i386_thread_state_t;
+
+#endif
+
+#ifndef _STRUCT_X86_THREAD_STATE64
 #define	_STRUCT_X86_THREAD_STATE64	struct __darwin_x86_thread_state64
 _STRUCT_X86_THREAD_STATE64
 {
@@ -113,8 +122,10 @@ _STRUCT_X86_THREAD_STATE64
 //
 // From xnu/osfmk/mach/i386/thread_status.h:
 //
-typedef _STRUCT_X86_THREAD_STATE32 i386_thread_state_t;
 typedef _STRUCT_X86_THREAD_STATE64 x86_thread_state64_t;
+
+#endif
+
 
 
 

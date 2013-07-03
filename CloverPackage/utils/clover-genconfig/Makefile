@@ -3,31 +3,29 @@ OBJROOT = $(abspath $(CURDIR)/../../sym/clover-genconfig)
 
 include ${SRCROOT}/Make.rules
 
+XCODE_VERSION_GE_4 := $(shell expr `xcodebuild -version | sed -nE 's/^Xcode ([0-9]).*/\1/p'` \>= 4)
+
+XCODEBUILD_OPTIONS=-project 'clover-genconfig.xcodeproj' OBJROOT=$(OBJROOT) CONFIGURATION_BUILD_DIR=$(OBJROOT) DEPLOYMENT_LOCATION=NO
+
+ifeq "$(XCODE_VERSION_GE_4)" "1"
+	XCODEBUILD_OPTIONS += -scheme 'clover-genconfig'
+	BUILD_ACTION=archive
+else
+	XCODEBUILD_OPTIONS += -configuration 'Release'
+endif
+
+DIRS_NEEDED := $(OBJROOT)
 PROGRAMS := clover-genconfig
-
-CFLAGS	:= $(CFLAGS) -Wall -Wno-unused-function
-LDFLAGS := $(LDFLAGS) -framework IOKit -framework CoreFoundation -mmacosx-version-min=10.5
-
-OBJS := $(addprefix $(OBJROOT)/, $(addsuffix .o32, $(PROGRAMS)) $(addsuffix .o64, $(PROGRAMS)))
 PROG := $(addprefix $(OBJROOT)/, $(PROGRAMS))
-
-DIRS_NEEDED = $(OBJROOT)
 
 all: $(PROG)
 
-$(PROG): $(DIRS_NEEDED) $(OBJS)
-	@echo "\t[LD32] $(@F)_32"
-	@$(CC) $(CFLAGS) $(LDFLAGS) $(DEFINES) -arch i386 -o $(OBJROOT)/$(@F)_32 $(OBJROOT)/$(@F).o32
-	@echo "\t[LD64] $(@F)_64"
-	@$(CC) $(CFLAGS) $(LDFLAGS) $(DEFINES) -arch x86_64 -o $(OBJROOT)/$(@F)_64 $(OBJROOT)/$(@F).o64
-	@echo "\t[LIPO] $@"
-	@lipo -create -arch i386 $(OBJROOT)/$(@F)_32 -arch x86_64 $(OBJROOT)/$(@F)_64 -output $@
-	@strip $@
-	@$(RM) $(OBJROOT)/$(@F)_32 $(OBJROOT)/$(@F)_64
+$(PROG):
+	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) $(BUILD_ACTION)
 
 install-local: $(PROG)
 	@sudo install -d -g 0 -o 0 /usr/local/bin
 	@sudo install -psv -g 0 -o 0 $(PROG) /usr/local/bin
 
 clean-local:
-	@$(RM) -f $(PROG) $(OBJS)
+	@/usr/bin/xcodebuild $(XCODEBUILD_OPTIONS) clean

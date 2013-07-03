@@ -180,6 +180,15 @@
 		A3DA39BC178324D7008B64B2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					../../../../MdePkg/Include/X64,
+					"../../../../MdePkg/**",
+					../../../../MdeModulePkg/Include,
+					../../../../IntelFrameworkPkg/Include,
+					../../../rEFIt_UEFI/refit,
+					../../../rEFIt_UEFI/libeg,
+					../../../include,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -187,6 +196,15 @@
 		A3DA39BD178324D7008B64B2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					../../../../MdePkg/Include/X64,
+					"../../../../MdePkg/**",
+					../../../../MdeModulePkg/Include,
+					../../../../IntelFrameworkPkg/Include,
+					../../../rEFIt_UEFI/refit,
+					../../../rEFIt_UEFI/libeg,
+					../../../include,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -210,6 +228,7 @@
 				A3DA39BD178324D7008B64B2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
