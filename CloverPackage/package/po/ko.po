@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-17 17:14+0300\n"
-"PO-Revision-Date: 2013-06-10 06:59+0000\n"
+"PO-Revision-Date: 2013-07-05 15:42+0000\n"
 "Last-Translator: Mill <ceruns@ymail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
 "Language: ko\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1370847546.0\n"
+"X-POOTLE-MTIME: 1373038967.0\n"
 
 # //Don't need change
 #. type: Content of: <html><body><div><p>
@@ -942,16 +942,16 @@ msgstr "업데이트"
 
 #. type: "585.title"
 #: ../CloverUpdater/CloverUpdater.strings:11
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "No description available"
 msgid "No update available !"
-msgstr "설명 없음"
+msgstr "가능한 업데이트가 없습니다 !"
 
 #. type: "586.title"
 #: ../CloverUpdater/CloverUpdater.strings:12
-#, no-wrap
+#, fuzzy, no-wrap
 msgid "Ok"
-msgstr ""
+msgstr "OK"
 
 #. type: "12.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:1
@@ -1182,7 +1182,7 @@ msgstr "EFI 폴더 경로"
 #: ../CloverPrefpane/Localizable.strings:2
 #, no-wrap
 msgid "Auto"
-msgstr ""
+msgstr "자동"
 
 #. type: "No"
 #: ../CloverPrefpane/CloverPrefpane.strings:39
@@ -1195,7 +1195,7 @@ msgstr "아니오"
 #: ../CloverPrefpane/Localizable.strings:1
 #, no-wrap
 msgid "Always"
-msgstr ""
+msgstr "항상"
 
 #. type: "Boot Volume"
 #: ../CloverPrefpane/Localizable.strings:3
