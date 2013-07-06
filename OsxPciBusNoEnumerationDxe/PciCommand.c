@@ -21,7 +21,8 @@ Revision History
 
 --*/
 
-#include "PciBus.h"
+#include <IndustryStandard/PciBus.h>
+#include <IndustryStandard/PciCommand.h>
 
 
 EFI_STATUS 

@@ -21,7 +21,9 @@ Revision History
 
 --*/
 
-#include "PciBus.h"
+#include <IndustryStandard/PciBus.h>
+#include "PciEnumeratorSupport.h"
+#include "PciDriverOverride.h"
 
 typedef struct {
   EFI_HANDLE  ImageHandle;

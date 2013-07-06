@@ -207,15 +207,14 @@ extern BOOLEAN                     gFullEnumeration;
 extern UINT64                      gAllOne;
 extern UINT64                      gAllZero;
 
-#include "PciIo.h"
-#include <IndustryStandard/PciCommand.h>
-#include "PciDeviceSupport.h"
-#include "PciEnumerator.h"
-#include "PciEnumeratorSupport.h"
-#include "PciDriverOverride.h"
-#include "PciRomTable.h"
-#include "PciOptionRomSupport.h"
-#include "PciPowerManagement.h"
+//#include "PciCommand.h"
+//#include "PciDeviceSupport.h"
+//#include "PciEnumerator.h"
+//#include "PciEnumeratorSupport.h"
+//#include "PciDriverOverride.h"
+//#include "PciRomTable.h"
+//#include "PciOptionRomSupport.h"
+//#include "PciPowerManagement.h"
 
 
 #define IS_ISA_BRIDGE(_p)       IS_CLASS2 (_p, PCI_CLASS_BRIDGE, PCI_CLASS_BRIDGE_ISA)  

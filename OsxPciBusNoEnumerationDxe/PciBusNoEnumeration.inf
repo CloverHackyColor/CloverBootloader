@@ -40,9 +40,9 @@
   MemLogLib
 
 [Sources]
-  PciBus.h
+#  PciBus.h
   PciIo.h
-  PciCommand.h
+#  PciCommand.h
   PciDeviceSupport.h
   PciEnumerator.h
   PciEnumeratorSupport.h

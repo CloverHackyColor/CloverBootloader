@@ -24,7 +24,7 @@ Revision History
 #ifndef _EFI_PCI_DRIVER_OVERRRIDE_H
 #define _EFI_PCI_DRIVER_OVERRRIDE_H
 
-#include "PciBus.h"
+#include <IndustryStandard/PciBus.h>
 
 #define DRIVER_OVERRIDE_SIGNATURE SIGNATURE_32 ('d', 'r', 'o', 'v')
 

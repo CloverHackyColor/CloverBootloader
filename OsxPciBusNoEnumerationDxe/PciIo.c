@@ -21,7 +21,16 @@ Revision History
 
 --*/
 
-#include "PciBus.h"
+#include <IndustryStandard/PciBus.h>
+#include <IndustryStandard/PciCommand.h>
+#include <Protocol/PciIoImp.h>
+#include "PciDeviceSupport.h"
+#include "PciEnumerator.h"
+#include "PciEnumeratorSupport.h"
+#include "PciDriverOverride.h"
+#include "PciRomTable.h"
+#include "PciOptionRomSupport.h"
+#include "PciPowerManagement.h"
 
 //
 // PCI I/O Support Function Prototypes
@@ -297,7 +306,8 @@ EFI_PCI_IO_PROTOCOL  PciIoInterface = {
 };
 
 
-EFI_STATUS
+//EFI_STATUS
+VOID
 InitializePciIoInstance (
   PCI_IO_DEVICE  *PciIoDevice
   )
@@ -317,7 +327,7 @@ Returns:
 
 {
   CopyMem (&PciIoDevice->PciIo, &PciIoInterface, sizeof (EFI_PCI_IO_PROTOCOL));
-  return EFI_SUCCESS;
+//  return EFI_SUCCESS;
 }
 
 EFI_STATUS

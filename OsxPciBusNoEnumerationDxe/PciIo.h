@@ -24,6 +24,8 @@ Revision History
 #ifndef _EFI_PCI_IO_PROTOCOL_H
 #define _EFI_PCI_IO_PROTOCOL_H
 
+#include <IndustryStandard/PciBus.h>
+
 EFI_STATUS
 InitializePciIoInstance (
   PCI_IO_DEVICE  *PciIoDevice

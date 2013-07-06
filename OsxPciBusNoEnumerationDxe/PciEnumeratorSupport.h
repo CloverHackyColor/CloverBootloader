@@ -24,7 +24,7 @@ Revision History
 #ifndef _EFI_PCI_ENUMERATOR_SUPPORT_H
 #define _EFI_PCI_ENUMERATOR_SUPPORT_H
 
-#include "PciBus.h"
+#include <IndustryStandard/PciBus.h>
 
 EFI_STATUS
 PciPciDeviceInfoCollector (

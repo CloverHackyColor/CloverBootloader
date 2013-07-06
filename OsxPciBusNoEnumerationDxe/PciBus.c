@@ -21,7 +21,16 @@ Revision History
  
 --*/
 
-#include "PciBus.h"
+#include <IndustryStandard/PciBus.h>
+#include <IndustryStandard/PciCommand.h>
+#include <Protocol/PciIoImp.h>
+#include "PciDeviceSupport.h"
+#include "PciEnumerator.h"
+#include "PciEnumeratorSupport.h"
+#include "PciDriverOverride.h"
+#include "PciRomTable.h"
+#include "PciOptionRomSupport.h"
+#include "PciPowerManagement.h"
 
 //
 // PCI Bus Support Function Prototypes

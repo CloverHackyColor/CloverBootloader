@@ -16,7 +16,7 @@ Abstract:
 
 --*/
 
-#include "PciBus.h"
+#include <IndustryStandard/PciBus.h>
 
 //
 // EFI Component Name Functions

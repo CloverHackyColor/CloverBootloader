@@ -21,10 +21,13 @@ Revision History
 
 --*/
 
-#include "PciBus.h"
+#include <IndustryStandard/PciBus.h>
+#include <IndustryStandard/PciCommand.h>
 
 #include <Library/MemLogLib.h>
 #include <Library/PrintLib.h>
+
+#include "PciDeviceSupport.h"
 
 //
 // This device structure is serviced as a header.
