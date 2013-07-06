@@ -1121,7 +1121,6 @@ EFI_STATUS      GetEdid(VOID);
 EFI_STATUS      SetFSInjection(IN LOADER_ENTRY *Entry);
 CHAR16*         GetExtraKextsDir(REFIT_VOLUME *Volume);
 EFI_STATUS      LoadKexts(IN LOADER_ENTRY *Entry);
-VOID            reinitImages(VOID);
 
 //
 // Nvram.c

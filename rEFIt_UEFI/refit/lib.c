@@ -399,7 +399,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
   Volume->OSName = NULL;
   Volume->BootType = 0;
   *Bootable = FALSE;
-  
+
   if ((Volume->BlockIO == NULL) || (!Volume->BlockIO->Media->MediaPresent))
     return;
   ZeroMem((CHAR8*)&tmp[0], 64);
@@ -512,11 +512,10 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
         Volume->OSName = L"Linux";
         Volume->OSType = OSTYPE_LIN;
         Volume->BootType = BOOTING_BY_PBR;
-        
-        
+
       } else if (FindMem(SectorBuffer, 512, "Geom\0Hard Disk\0Read\0 Error", 26) >= 0) {   // GRUB
         Volume->HasBootCode = TRUE;
-        Volume->OSIconName = L"linux";
+        Volume->OSIconName = L"grub,linux";
         Volume->OSName = L"Linux";
         
       } else if ((*((UINT32 *)(SectorBuffer)) == 0x4d0062e9 &&
@@ -567,7 +566,7 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
         
       } else if (FindMem(SectorBuffer, 2048, "BOOTMGR", 7) >= 0) {
         Volume->HasBootCode = TRUE;
-        Volume->OSIconName = L"vista";
+        Volume->OSIconName = L"vista,win";
         Volume->OSName = L"Windows";
         Volume->OSType = OSTYPE_WIN;
         Volume->BootType = BOOTING_BY_PBR;
@@ -612,19 +611,10 @@ static VOID ScanVolumeBootcode(IN OUT REFIT_VOLUME *Volume, OUT BOOLEAN *Bootabl
       }
     }
     
-    if (Volume->OSIconName) {
-      if (ThemeDir) {
-        Volume->OSImage = egLoadIcon(ThemeDir, PoolPrint(L"icons\\os_%s.icns", Volume->OSIconName), 128);
-      } else {
-        Volume->OSImage = DummyImage(128);
-      }
-    }
-    
-    
     // NOTE: If you add an operating system with a name that starts with 'W' or 'L', you
     //  need to fix AddLegacyEntry in main.c.
     
-#if 0 //  REFIT_DEBUG > 0
+#if REFIT_DEBUG > 0
     DBG("  Result of bootcode detection: %s %s (%s)\n",
         Volume->HasBootCode ? L"bootable" : L"non-bootable",
         Volume->OSName, Volume->OSIconName);
@@ -665,7 +655,7 @@ EG_IMAGE* ScanVolumeDefaultIcon(REFIT_VOLUME *Volume) //IN UINT8 DiskKind)
         case OSTYPE_LEO:
         case OSTYPE_SNOW:
         case OSTYPE_LION:
-        case OSTYPE_COUGAR:
+        case OSTYPE_ML:
         case OSTYPE_MAV:
           IconNum = BUILTIN_ICON_VOL_INTERNAL_HFS;
           break;
@@ -909,27 +899,21 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     //Slice - there is LegacyBoot volume
     //properties are set before
     //    DBG("LegacyBoot volume\n");
-    
+
     if (HdPath) {
       tmpName = (CHAR16*)AllocateZeroPool(60);
- //           DBG("Create legacyName\n");
       UnicodeSPrint(tmpName, 60, L"Legacy HD%d", HdPath->PartitionNumber);
       Volume->VolName = EfiStrDuplicate(tmpName);
       FreePool(tmpName);
     } else if (!Volume->VolName) {
-//      DBG("MasterVolume\n");
       Volume->VolName =  L"Whole Disc Boot";
     }
-    //
-    if (ThemeDir) {
-      Volume->OSImage = egLoadIcon(ThemeDir, PoolPrint(L"icons\\os_legacy.icns"), 128);
-    } else {
-      Volume->OSImage = DummyImage(128);
-    }
+    if (!Volume->OSIconName)
+      Volume->OSIconName = L"legacy";
 
     return EFI_SUCCESS;
   }
-  
+
   // get volume name
   if (!Volume->VolName) {
     FileSystemInfoPtr = EfiLibFileSystemInfo(Volume->RootDir);
@@ -984,21 +968,8 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
     }
   }
   
-  //  DBG("GetOSVersion\n");
-  Status = GetOSVersion(Volume); //here we set tiger,leo,snow,lion and cougar
-  if (!EFI_ERROR(Status)) {
-    if (ThemeDir) {
-      Volume->OSImage = egLoadIcon(ThemeDir, PoolPrint(L"icons\\os_%s.icns", Volume->OSIconName), 128);
-    } else {
-      Volume->OSImage = DummyImage(128);
-    }
-  }
+  Status = GetOSVersion(Volume); //here we set Volume->IconName (tiger,leo,snow,lion,cougar, etc)
   
-  // get custom volume icon if present
-  if (GlobalConfig.CustomIcons && FileExists(Volume->RootDir, L"VolumeIcon.icns")){
-    Volume->OSImage = LoadIcns(Volume->RootDir, L"VolumeIcon.icns", 128);
-    DBG("image from Volume loaded\n");
-  }
   return EFI_SUCCESS;
 }
 
@@ -1130,8 +1101,8 @@ VOID ScanVolumes(VOID)
       FreePool(VolumeDevPath);
 
       Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
-      DBG("  Volume '%s', OS '%s', GUID = %g\n",
-          Volume->VolName, Volume->OSName ? Volume->OSName : L"", Guid);
+      DBG("  Volume '%s', OS '%s', Icon(s) '%s', GUID = %g\n",
+          Volume->VolName, Volume->OSName ? Volume->OSName : L"", Volume->OSIconName, Guid);
       if (SelfVolume == Volume) {
         DBG("  This is SelfVolume !!\n");
       }
@@ -1157,11 +1128,11 @@ VOID ScanVolumes(VOID)
     //   AddListElement((VOID ***) &Volumes, &VolumesCount, SelfVolume);
     //    DBG("SelfVolume Nr %d created\n", VolumesCount);
   }
-  
+
   // second pass: relate partitions and whole disk devices
   for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
     Volume = Volumes[VolumeIndex];
-    
+
     // check MBR partition table for extended partitions
     if (Volume->BlockIO != NULL && Volume->WholeDiskBlockIO != NULL &&
         Volume->BlockIO == Volume->WholeDiskBlockIO && Volume->BlockIOOffset == 0 &&
@@ -1190,7 +1161,7 @@ VOID ScanVolumes(VOID)
       MbrTable = WholeDiskVolume->MbrPartitionTable;
       SectorBuffer1 = AllocateAlignedPages (EFI_SIZE_TO_PAGES (512), 16);
       SectorBuffer2 = AllocateAlignedPages (EFI_SIZE_TO_PAGES (512), 16);
-      
+
       for (PartitionIndex = 0; PartitionIndex < 4; PartitionIndex++) {
         // check size
         if ((UINT64)(MbrTable[PartitionIndex].Size) != Volume->BlockIO->Media->LastBlock + 1)

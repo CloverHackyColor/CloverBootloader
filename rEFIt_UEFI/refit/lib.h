@@ -109,12 +109,13 @@ typedef struct {
 #define OSTYPE_WINEFI           (6)
 #define OSTYPE_BOOT_OSX         (9)
 #define OSTYPE_RECOVERY         (10)
+#define OSTYPE_OSX_INSTALLER    (11)
 #define OSTYPE_TIGER            (14)
 #define OSTYPE_LEO              (15)
 #define OSTYPE_SNOW             (16)
 #define OSTYPE_LION             (17)
-#define OSTYPE_COUGAR           (18)
-#define OSTYPE_MAV             (19)
+#define OSTYPE_ML               (18)
+#define OSTYPE_MAV              (19)
 #define OSTYPE_HIDE             (100)
 
 #define OSFLAG_ENABLED(flags, flag) ((flags & flag) != 0)
@@ -133,7 +134,6 @@ typedef struct {
   EFI_HANDLE          DeviceHandle;
   EFI_FILE            *RootDir;
   CHAR16              *VolName;
-  EG_IMAGE            *OSImage;
   EG_IMAGE            *DriveImage;
   UINT8               DiskKind;
   UINT8               OSType;
@@ -436,8 +436,6 @@ extern EG_IMAGE         *Banner;
 extern EG_IMAGE         *BigBack;
 extern EG_IMAGE         *FontImage;
 extern BOOLEAN          gThemeChanged;
-
-
 
 
 EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle);

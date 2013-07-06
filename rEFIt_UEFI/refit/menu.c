@@ -658,7 +658,6 @@ VOID ApplyInputs(VOID)
  //will change theme after ESC   
       gThemeChanged = TRUE;
 //      PrepareFont();
-//      reinitImages();    
     }    
   }
   i++; //4
@@ -2258,14 +2257,16 @@ static VOID DrawMainMenuLabel(IN CHAR16 *Text, IN INTN XPos, IN INTN YPos, IN RE
   }
   DrawTextXY(Text, XPos, YPos, X_IS_CENTER);
   
-  //show badge
-  if ((GlobalConfig.HideBadges & HDBADGES_INLINE) &&
+  //show inline badge
+   if ((GlobalConfig.HideBadges & HDBADGES_INLINE) &&
       (Screen->Entries[State->CurrentSelection]->Row == 0))
   {
-    BltImageAlpha(((LOADER_ENTRY*)Screen->Entries[State->CurrentSelection])->Volume->OSImage,
+    // Display Inline Badge: small icon before the text
+    BltImageAlpha(((LOADER_ENTRY*)Screen->Entries[State->CurrentSelection])->me.Image,
                   (XPos - (TextWidth >> 1) - (BADGE_DIMENSION + 16)),
                   (YPos - ((BADGE_DIMENSION - TextHeight) >> 1)), &MenuBackgroundPixel, BADGE_DIMENSION >> 3);
   }
+
   OldX = XPos;
   OldY = YPos;
   OldTextWidth = TextWidth;

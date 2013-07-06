@@ -688,7 +688,7 @@ INTN FindStartupDiskVolume(REFIT_MENU_SCREEN *MainMenu)
   // PciRoot(0x0)/.../Sata(...)/HD(...)/\EFI\BOOT\XXX.EFI - set by Clover
   //
   if (gEfiBootLoaderPath != NULL) {
-    DBG(" searching for that partition and loader\n  '%s'\n", gEfiBootLoaderPath);
+    DBG(" searching for that partition and loader '%s'\n", gEfiBootLoaderPath);
     for (Index = 0; ((Index < (INTN)MainMenu->EntryCount) && (MainMenu->Entries[Index]->Row == 0)); Index++) {
       if (MainMenu->Entries[Index]->Tag == TAG_LOADER) {
         LoaderEntry = (LOADER_ENTRY *)MainMenu->Entries[Index];

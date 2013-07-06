@@ -36,6 +36,18 @@
 
 #include "Platform.h"
 
+#ifndef DEBUG_ALL
+#define DEBUG_ICNS 1
+#else
+#define DEBUG_ICNS DEBUG_ALL
+#endif
+
+#if DEBUG_ICNS == 0
+#define DBG(...)
+#else
+#define DBG(...) DebugLog(DEBUG_ICNS, __VA_ARGS__)
+#endif
+
 UINT8 emb_pointer[] =
 {0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
   0x00, 0x00, 0x00, 0x20, 0x00, 0x00, 0x00, 0x20, 0x08, 0x06, 0x00, 0x00, 0x00, 0x73, 0x7A, 0x7A,
@@ -419,7 +431,7 @@ EG_IMAGE * LoadIcnsFallback(IN EFI_FILE_HANDLE BaseDir, IN CHAR16 *FileName, IN 
     
     if (GlobalConfig.TextOnly)      // skip loading if it's not used anyway
         return NULL;
-    
+
     Image = egLoadIcon(BaseDir, FileName, PixelSize);
 //    if (Image == NULL)
 //        Image = DummyImage(PixelSize);

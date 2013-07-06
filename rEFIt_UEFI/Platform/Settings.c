@@ -2249,9 +2249,9 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
   if (!Volume) {
     return EFI_NOT_FOUND;
   }
-  
-	/* Mac OS X */ 
-	if(FileExists(Volume->RootDir, SystemPlist)) 
+
+	/* Mac OS X */
+	if(FileExists(Volume->RootDir, SystemPlist))
 	{
 		Status = egLoadFile(Volume->RootDir, SystemPlist, (UINT8 **)&plistBuffer, &plistLen);
 	}
@@ -2267,7 +2267,7 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 	/* Mac OS X Lion Installer */
   else if(FileExists(Volume->RootDir, InstallLionPlist))
 	{
-		Volume->OSType = OSTYPE_LION;
+		Volume->OSType = OSTYPE_OSX_INSTALLER;
 		Volume->OSIconName = L"mac";
     Volume->BootType = BOOTING_BY_EFI;
     Volume->OSName = L"Install Lion";
@@ -2276,7 +2276,7 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 	/* Mac OS X Mountain Lion Installer */
   else if(FileExists(Volume->RootDir, InstallMountainPlist))
 	{
-		Volume->OSType = OSTYPE_COUGAR;
+		Volume->OSType = OSTYPE_OSX_INSTALLER;
 		Volume->OSIconName = L"mac";
     Volume->BootType = BOOTING_BY_EFI;
     Volume->OSName = L"Install ML";
@@ -2292,62 +2292,58 @@ EFI_STATUS GetOSVersion(IN REFIT_VOLUME *Volume)
 		}
     
 		prop = GetProperty(dict, "ProductVersion");
-		if(prop != NULL)
-		{
-		    OSVersion = AllocateCopyPool(AsciiStrSize(prop->string), prop->string);
 
-			// Tiger
-			if(AsciiStrStr(prop->string, "10.4") != 0){
+    if(prop != NULL) {
+      OSVersion = AllocateCopyPool(AsciiStrSize(prop->string), prop->string);
+
+			if (AsciiStrStr(prop->string, "10.4") != 0) {
+        // Tiger
         Volume->OSType = OSTYPE_TIGER;
-        Volume->OSIconName = L"tiger";
+        Volume->OSIconName = L"tiger,mac";
         Volume->BootType = BOOTING_BY_EFI;
         Volume->OSName = L"Tiger";
         Status = EFI_SUCCESS;
-      } else
-			// Leopard
-      if(AsciiStrStr(prop->string, "10.5") != 0){
-				Volume->OSType = OSTYPE_LEO;
-        Volume->OSIconName = L"leo";
+      } else if (AsciiStrStr(prop->string, "10.5") != 0) {
+        // Leopard
+        Volume->OSType = OSTYPE_LEO;
+        Volume->OSIconName = L"leo,mac";
         Volume->BootType = BOOTING_BY_EFI;
         Volume->OSName = L"Leo";
         Status = EFI_SUCCESS;
-      } else
-			// Snow Leopard
-			if(AsciiStrStr(prop->string, "10.6") != 0){
-				Volume->OSType = OSTYPE_SNOW;
-        Volume->OSIconName = L"snow";
+      } else if (AsciiStrStr(prop->string, "10.6") != 0) {
+        // Snow Leopard
+        Volume->OSType = OSTYPE_SNOW;
+        Volume->OSIconName = L"snow,mac";
         Volume->BootType = BOOTING_BY_EFI;
         Volume->OSName = L"Snow";
         Status = EFI_SUCCESS;
-      } else
-			// Lion
-			if(AsciiStrStr(prop->string, "10.7") != 0){
-				Volume->OSType = OSTYPE_LION;
-        Volume->OSIconName = L"lion";
+      } else if (AsciiStrStr(prop->string, "10.7") != 0) {
+        // Lion
+        Volume->OSType = OSTYPE_LION;
+        Volume->OSIconName = L"lion,mac";
         Volume->BootType = BOOTING_BY_EFI;
         Volume->OSName = L"Lion";
         Status = EFI_SUCCESS;
-      } else
-      // Mountain Lion
-      if(AsciiStrStr(prop->string, "10.8") != 0){
-				Volume->OSType = OSTYPE_COUGAR;
-        Volume->OSIconName = L"cougar";
+      } else if (AsciiStrStr(prop->string, "10.8") != 0) {
+        // Mountain Lion
+        Volume->OSType = OSTYPE_ML;
+        Volume->OSIconName = L"cougar,mac";
         Volume->BootType = BOOTING_BY_EFI;
         Volume->OSName = L"ML";
         Status = EFI_SUCCESS;
-      } else
+      } else if (AsciiStrStr(prop->string, "10.9") != 0) {
         // Mavericks
-        if(AsciiStrStr(prop->string, "10.9") != 0){
-          Volume->OSType = OSTYPE_MAV;
-          Volume->OSIconName = L"mav";
-          Volume->BootType = BOOTING_BY_EFI;
-          Volume->OSName = L"Mavericks";
-          Status = EFI_SUCCESS;
-        }
+        Volume->OSType = OSTYPE_MAV;
+        Volume->OSIconName = L"mav,mac";
+        Volume->BootType = BOOTING_BY_EFI;
+        Volume->OSName = L"Mavericks";
+        Status = EFI_SUCCESS;
+      }
+
       MsgLog("  Booting OS %a\n", prop->string);
-    } 
+    }
 	}
-	
+
 	return Status;
 }
 
@@ -2841,7 +2837,7 @@ CHAR16* GetExtraKextsDir(REFIT_VOLUME *Volume)
       OSTypeStr = L"10.7";
       break;
       
-    case OSTYPE_COUGAR:
+    case OSTYPE_ML:
       OSTypeStr = L"10.8";
       break;
       

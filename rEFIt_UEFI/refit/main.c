@@ -567,7 +567,7 @@ static VOID StartLoader(IN LOADER_ENTRY *Entry)
     Entry->LoadOptions = PoolPrint(L"%a", gSettings.BootArgs);
     if ((StrCmp(gST->FirmwareVendor, L"CLOVER") != 0) &&
         (StrCmp(gST->FirmwareVendor, L"EDKII") != 0) &&
-        ((Entry->Volume->OSType == OSTYPE_COUGAR) ||
+        ((Entry->Volume->OSType == OSTYPE_ML) ||
          (Entry->Volume->OSType == OSTYPE_MAV))) {
       // Add slide=0 argument for ML and Mavericks if not present
       CHAR16 *TempOptions = AddLoadOption(Entry->LoadOptions, L"slide=0");
@@ -796,23 +796,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
 
   Entry->me.Row          = 0;
   Entry->Volume = Volume;
-  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
-  if (GlobalConfig.HideBadges & HDBADGES_SHOW) {
-    if (GlobalConfig.HideBadges & HDBADGES_SWAP) { 
-      Entry->me.BadgeImage   = egCopyScaledImage(Volume->DriveImage, 4);
-      DBG("Show badge as drive\n");
-    } else {
-      Entry->me.BadgeImage   = egCopyScaledImage(Volume->OSImage, 8);
-      DBG("Show badge as OSImage\n");
-    }
-  }
-  /*
-  if ((GlobalConfig.HideBadges == HDBADGES_NONE) || 
-      (GlobalConfig.HideBadges == HDBADGES_INT && Volume->DiskKind != DISK_KIND_INTERNAL)){
-    Entry->me.BadgeImage   = egCopyScaledImage(Volume->OSImage, 8);
-  } else if (GlobalConfig.HideBadges == HDBADGES_SWAP) { 
-    Entry->me.BadgeImage   =  egCopyScaledImage(Volume->DriveImage, 4);
-  } */
+
   Entry->LoaderPath      = EfiStrDuplicate(LoaderPath);
   Entry->VolName         = Volume->VolName;
   Entry->DevicePath      = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
@@ -846,7 +830,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     case OSTYPE_LEO:
     case OSTYPE_SNOW:
     case OSTYPE_LION:
-    case OSTYPE_COUGAR:
+    case OSTYPE_ML:
     case OSTYPE_MAV:
     case OSTYPE_RECOVERY:
     case OSTYPE_BOOT_OSX:
@@ -893,9 +877,26 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
 
   Entry->me.Title        = PoolPrint(L"Boot %s from %s", (LoaderTitle != NULL) ? LoaderTitle : LoaderPath + 1, Entry->VolName);
   Entry->me.ShortcutLetter = ShortcutLetter;
-//  if (Entry->me.Image == NULL)
-  Entry->me.Image = LoadOSIcon(OSIconName, L"unknown", FALSE);
-  
+
+  // get custom volume icon if present
+  if (GlobalConfig.CustomIcons && FileExists(Volume->RootDir, L"VolumeIcon.icns")){
+      Entry->me.Image = LoadIcns(Volume->RootDir, L"VolumeIcon.icns", 128);
+      DBG("using VolumeIcon.icns image from Volume\n");
+  } else {
+      Entry->me.Image = LoadOSIcon(OSIconName, L"unknown", FALSE);
+  }
+
+  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
+  if (GlobalConfig.HideBadges & HDBADGES_SHOW) {
+      if (GlobalConfig.HideBadges & HDBADGES_SWAP) {
+          Entry->me.BadgeImage   = egCopyScaledImage(Volume->DriveImage, 4);
+          DBG("Show badge as Drive\n");
+      } else {
+          Entry->me.BadgeImage   = egCopyScaledImage(Entry->me.Image, 8);
+          DBG("Show badge as OSImage\n");
+      }
+  }
+
   // create the submenu
   SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
   SubScreen->Title = PoolPrint(L"Boot Options for %s on %s", (LoaderTitle != NULL) ? LoaderTitle : FileName, Entry->VolName);
@@ -928,7 +929,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   if (LoaderKind == 1) {          // entries for Mac OS X
 #if defined(MDE_CPU_X64)
     SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
-    if ((OSType != OSTYPE_COUGAR) &&
+    if ((OSType != OSTYPE_ML) &&
         (OSType != OSTYPE_MAV)) {      
       SubEntry->me.Title        = L"Boot Mac OS X (64-bit)";
       SubEntry->me.Tag          = TAG_LOADER;
@@ -944,7 +945,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     }
 #endif
     
-    if ((OSType != OSTYPE_COUGAR) &&
+    if ((OSType != OSTYPE_ML) &&
         (OSType != OSTYPE_MAV)) {
       SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
       SubEntry->me.Title        = L"Boot Mac OS X (32-bit)";
@@ -963,7 +964,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
     if (!(GlobalConfig.DisableFlags & DISABLE_FLAG_SINGLEUSER)) {
       
 #if defined(MDE_CPU_X64)
-      if ((OSType == OSTYPE_COUGAR) ||
+      if ((OSType == OSTYPE_ML) ||
           (OSType == OSTYPE_MAV)) {        
         SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
         SubEntry->me.Title        = L"Boot Mac OS X in verbose mode";
@@ -996,7 +997,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
 
 #endif
 
-      if ((OSType != OSTYPE_COUGAR) &&
+      if ((OSType != OSTYPE_ML) &&
           (OSType != OSTYPE_MAV)) {
         SubEntry = AllocateZeroPool(sizeof(LOADER_ENTRY));
         SubEntry->me.Title        = L"Boot Mac OS X in verbose mode (32-bit)";
@@ -1387,24 +1388,6 @@ BOOLEAN isFirstRootUUID(REFIT_VOLUME *Volume)
     return TRUE;
 }
 
-VOID reinitImages(VOID)
-{
-  UINTN                   Index;
-  REFIT_VOLUME            *Volume;
-//  EFI_STATUS              Status;
-
-  DBG("reinitImages...\n");
-  for (Index = 0; Index < BUILTIN_ICON_COUNT; Index++) {
-    BuiltinIconTable[Index].Image = NULL;
-  }
-
-  for (Index = 0; Index < VolumesCount; Index++) {
-    Volume = Volumes[Index];
-    Volume->OSImage = egLoadIcon(ThemeDir, PoolPrint(L"icons\\os_%s.icns", Volume->OSIconName), 128);
-    Volume->DriveImage = ScanVolumeDefaultIcon(Volume);
-  }
-}
-
 VOID ScanLoader(VOID)
 {
   UINTN                   VolumeIndex;
@@ -1466,7 +1449,7 @@ VOID ScanLoader(VOID)
     StrCpy(FileName, L"\\OS X Install Data\\boot.efi");
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->BootType = BOOTING_BY_EFI;
-      Volume->OSType = OSTYPE_COUGAR;
+      Volume->OSType = OSTYPE_ML;
       Volume->OSIconName = L"cougar";
       if (!gSettings.HVHideAllOSXInstall)
       Entry = AddLoaderEntry(FileName, L"OS X Install", Volume, Volume->OSType);
@@ -1490,7 +1473,7 @@ VOID ScanLoader(VOID)
     StrCpy(FileName, L"\\.IABootFiles\\boot.efi");
     if (FileExists(Volume->RootDir, FileName)) {
       Volume->BootType = BOOTING_BY_EFI;
-      Volume->OSType = OSTYPE_COUGAR;
+      Volume->OSType = OSTYPE_ML;
       Volume->OSIconName = L"cougar";
       if (!gSettings.HVHideAllOSXInstall) {
         Entry = AddLoaderEntry(FileName, L"OS X Install", Volume, Volume->OSType);
@@ -1828,7 +1811,7 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Vo
   REFIT_MENU_SCREEN       *SubScreen;
   CHAR16                  *VolDesc;
   CHAR16                  ShortcutLetter = 0;
-  
+
   if (LoaderTitle == NULL) {
     if (Volume->OSName != NULL) {
       LoaderTitle = Volume->OSName;
@@ -1848,7 +1831,7 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Vo
   Entry->me.Tag          = TAG_LEGACY;
   Entry->me.Row          = 0;
   Entry->me.ShortcutLetter = ShortcutLetter;
-  Entry->me.Image        = LoadOSIcon(Volume->OSIconName, L"legacy", FALSE);
+  Entry->me.Image = LoadOSIcon(Volume->OSIconName, L"legacy", FALSE);
   //  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
   //  DBG("Title=%s OSName=%s OSIconName=%s\n", LoaderTitle, Volume->OSName, Volume->OSIconName);
   
@@ -1858,17 +1841,17 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Vo
   Entry->me.AtRightClick = ActionDetails;
 
   if (GlobalConfig.HideBadges & HDBADGES_SHOW) {
-    if (GlobalConfig.HideBadges & HDBADGES_SWAP) { 
+    if (GlobalConfig.HideBadges & HDBADGES_SWAP) {
       Entry->me.BadgeImage   = egCopyScaledImage(Volume->DriveImage, 4);
     } else {
-      Entry->me.BadgeImage   = egCopyScaledImage(Volume->OSImage, 8);
+      Entry->me.BadgeImage   = egCopyScaledImage(Entry->me.Image, 8);
     }
   }
 /*  
   if ((GlobalConfig.HideBadges == HDBADGES_NONE) ||
       (GlobalConfig.HideBadges == HDBADGES_INT &&
        Volume->DiskKind != DISK_KIND_INTERNAL)) { //hide internal
-    Entry->me.BadgeImage   = egCopyScaledImage(Volume->OSImage, 8);
+    Entry->me.BadgeImage   = egCopyScaledImage(Entry->me.Image, 8);
   } else if (GlobalConfig.HideBadges == HDBADGES_SWAP) {
     Entry->me.BadgeImage   =  egCopyScaledImage(Volume->DriveImage, 4);
   }
@@ -1909,7 +1892,7 @@ static VOID ScanLegacy(VOID)
     
     for (VolumeIndex = 0; VolumeIndex < VolumesCount; VolumeIndex++) {
         Volume = Volumes[VolumeIndex];
-        DBG("%2d: '%s'", VolumeIndex, Volume->VolName);
+        DBG("%2d: '%s' (%s)", VolumeIndex, Volume->VolName, Volume->OSIconName);
 
 #if 0 // REFIT_DEBUG > 0
         DBG(" %d %s\n  %d %d %s %d %s\n",
@@ -1964,6 +1947,7 @@ static VOID ScanLegacy(VOID)
         }
         
         if (ShowVolume && (Volume->OSType != OSTYPE_HIDE)){
+            DBG(" add legacy\n");
             AddLegacyEntry(NULL, Volume);
         } else {
           DBG(" hidden\n");
@@ -2714,6 +2698,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     DBG("Early settings: %r\n", Status);
   }
   gThemeChanged = TRUE;
+
   MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
  // if (EFI_ERROR(Status = GetThemeSettings(TRUE))) {
 //    DBG("Theme settings: %r\n", Status);
@@ -2834,11 +2819,9 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         if (EFI_ERROR(Status)) {
           DBG("Theme settings in main cycle: %r\n", Status);
         }
+        PrepareFont();
         gThemeChanged = FALSE;
       }
-      //changing theme we need to change Volumes Images
-      reinitImages();
-      PrepareFont();
 
       //now it is a time to set RtVariables
       SetVariablesFromNvram();
@@ -2852,13 +2835,15 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
     ScanLoader();
     //        DBG("ScanLoader OK\n");
-    if (!GlobalConfig.FastBoot && !GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst){
-      //      DBG("scan legacy second\n");
-      ScanLegacy();
-      //      DBG("ScanLegacy()\n");
-    }
 
     if (!GlobalConfig.FastBoot) {
+
+      if (!GlobalConfig.NoLegacy && !GlobalConfig.LegacyFirst) {
+        //      DBG("scan legacy second\n");
+        ScanLegacy();
+        //      DBG("ScanLegacy()\n");
+      }
+
       // fixed other menu entries
       //               DBG("FillInputs OK\n");
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_FUNCS)) {
@@ -2897,6 +2882,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     } else {
       DefaultEntry = NULL;
     }
+
     //    MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
     if (GlobalConfig.FastBoot && DefaultEntry) {
       StartLoader((LOADER_ENTRY *)DefaultEntry);
