@@ -1585,7 +1585,37 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
           gSettings.RememberBIOS = TRUE;
       }
  */
-      
+      prop = GetProperty(dictPointer,"PatchesDSDT");
+      if(prop) {
+        UINTN Count = GetTagCount(prop);
+        if (Count > 0) {
+          gSettings.PatchDsdtNum = Count;
+          gSettings.PatchDsdtFind = AllocateZeroPool(Count * sizeof(UINT8*));
+          gSettings.PatchDsdtReplace = AllocateZeroPool(Count * sizeof(UINT8*));
+          gSettings.LenToFind = AllocateZeroPool(Count * sizeof(UINT32));
+          gSettings.LenToReplace = AllocateZeroPool(Count * sizeof(UINT32));
+          DBG("PatchesDSDT: %d requested\n", Count);
+          for (i = 0; i < Count; ++i) {
+            UINTN Size = 0;
+            Status = GetElement(prop, i, &dictPointer);
+            if (EFI_ERROR(Status)) {
+              DBG("error %r getting next element of PatchesDSDT at index %d\n", Status, i);
+              continue;
+            }
+            if (!dictPointer) {
+              break;
+            }
+            DBG(" DSDT bin patch #%d ", i);
+            gSettings.PatchDsdtFind[i] = GetDataSetting(dictPointer,"Find", &Size);
+            DBG(" lenToFind=%d ", Size);
+            gSettings.LenToFind[i] = Size;
+            gSettings.PatchDsdtReplace[i] = GetDataSetting(dictPointer,"Replace", &Size);
+            DBG(" lenToReplace=%d\n", Size);
+            gSettings.LenToReplace[i] = Size;
+          }
+        } //if count > 0
+      } //if prop PatchesDSDT
+
     }
     
     //*** SMBIOS ***//
@@ -1895,27 +1925,6 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
       }      
     }
 
-    //Disable drivers - move to early settings
-/*    dictPointer = GetProperty(dict,"DisableDrivers");
-    if(dictPointer) {
-      INTN i = 0;
-      do {
-        CHAR8* PB = PossibleBlackList[i++];
-        if (AsciiStrLen(PB) < 2) break;
-        prop = GetProperty(dictPointer, PB);
-        if (prop) {
-          if ((prop->type == kTagTypeTrue) ||
-              ((prop->type == kTagTypeString) &&
-               ((prop->string[0] == 'y') || (prop->string[0] == 'Y')))) {
-            gSettings.BlackList[gSettings.BlackListCount++] = PoolPrint(L"%a", PB);
-            if (gSettings.BlackListCount > 32) {
-              break;
-            }
-          }
-        }
-      } while (1);
-    }
-*/
     // KernelAndKextPatches
 //xxx    gSettings.KPKernelCpu = TRUE; // enabled by default
     gSettings.KPKextPatchesNeeded = FALSE;

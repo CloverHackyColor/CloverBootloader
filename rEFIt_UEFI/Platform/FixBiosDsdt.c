@@ -533,6 +533,9 @@ VOID GetPciADR(IN EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINT32 *Addr1, OUT U
   return;
 }
 
+/* Discussion
+ Native USB mean for those chipsets IOUSBFamily set some "errata"
+ for example native 0x1cXX has no such errata */
 BOOLEAN NativeUSB(UINT16 DID)
 {
   UINT16 d = DID & 0xFF00;
@@ -930,7 +933,7 @@ INT32 write_size(UINT32 adr, UINT8* buffer, UINT32 len, INT32 sizeoffset)
 }
 
 //the procedure can find array CHAR8 sizeof N inside part of large array "dsdt" size of len
-INT32 FindBin (UINT8 *dsdt, UINT32 len, CHAR8* bin, UINTN N)
+INT32 FindBin (UINT8 *dsdt, UINT32 len, UINT8* bin, UINTN N)
 {
   UINT32 i, j;
   BOOLEAN eq;
@@ -974,6 +977,10 @@ UINT32 CorrectOuters (UINT8 *dsdt, UINT32 len, UINT32 adr,  INT32 shift)
   UINT32   size = 0;
   INT32  offset = 0;
   UINT32   SBSIZE = 0, SBADR = 0;
+
+  if (shift == 0) {
+    return len;
+  }
   
   i = adr; //usually adr = @5B - 1 = sizefield - 3
   while (i>0x20) {  //find devices that previous to adr
@@ -1106,7 +1113,7 @@ BOOLEAN CmpPNP (UINT8 *dsdt, UINT32 j, UINT16 PNP)
           (dsdt[j + 9] == ((PNP & 0x00ff) >> 0)));
 }
 
-//the procedure seach nearest "Device" code before given address
+//the procedure search nearest "Device" code before given address
 //should restrict the search by 6 bytes... OK, 10
 UINT32 devFind(UINT8 *dsdt, UINT32 address)
 {
@@ -1250,7 +1257,7 @@ UINT32 FixADP1 (UINT8* dsdt, UINT32 len)
   INT32 sizeoffset, shift;
   CHAR8 Name[4];
   DBG("Start ADP1 fix\n");
-  shift = FindBin(dsdt, len, acpi3, sizeof(acpi3));
+  shift = FindBin(dsdt, len, (UINT8*)acpi3, sizeof(acpi3));
   if (shift < 0) {
     // not found - create new one or do nothing
     DBG("no device(AC) exists\n");
@@ -1269,20 +1276,42 @@ UINT32 FixADP1 (UINT8* dsdt, UINT32 len)
   } 
   ReplaceName(dsdt, len, Name, "ADP1");  
   //find PRW
-  if(FindBin(dsdt+adr, size, prw1c, 8) >= 0){
+  if(FindBin(dsdt+adr, size, (UINT8*)prw1c, 8) >= 0){
     DBG("_prw is present\n");
     return len;
   }  
   j = adr + size;
   sizeoffset = sizeof(prw1c);
   len = move_data(j, dsdt, len, sizeoffset);
-  CopyMem(dsdt+j, prw1c, sizeoffset);
+  CopyMem(dsdt + j, prw1c, sizeoffset);
   shift = write_size(adr, dsdt, len, sizeoffset);
   sizeoffset += shift;
   len += shift;
-  len = CorrectOuters(dsdt, len, adr-3, sizeoffset);
+  len = CorrectOuters(dsdt, len, adr - 3, sizeoffset);
   return len;
 }
+
+UINT32 FixAny (UINT8* dsdt, UINT32 len, UINT8* ToFind, UINT32 LenTF, UINT8* ToReplace, UINT32 LenTR)
+{
+  INT32 sizeoffset, adr;
+  UINT32 i;
+  DBG("Patch DSDT %01x%01x%01x%01x\n", ToFind[0], ToFind[1], ToFind[2], ToFind[3]);
+  sizeoffset = LenTR - LenTF;
+  for (i = 20; i < len; i++) {
+    adr = FindBin(dsdt + i, len, ToFind, LenTF);
+    if (adr < 0) {
+      DBG("  bin not found\n");
+      return len;
+    }
+    DBG("  Patch at %x\n", adr);
+    len = move_data(adr + i, dsdt, len, sizeoffset);
+    CopyMem(dsdt + adr + i, ToReplace, LenTR);
+    len = CorrectOuters(dsdt, len, adr + i - 3, sizeoffset);
+  }
+
+  return len;
+}
+
 
 UINT32 FIXDarwin (UINT8* dsdt, UINT32 len)
 {
@@ -1317,7 +1346,7 @@ UINT32 AddPNLF (UINT8 *dsdt, UINT32 len)
   UINT32  adr  = 0;
   DBG("Start PNLF Fix\n");
 
-  if (FindBin(dsdt, len, app2, 10) >= 0) {
+  if (FindBin(dsdt, len, (UINT8*)app2, 10) >= 0) {
     return len; //the device already exists
   }
   //search  PWRB PNP0C0C
@@ -4064,6 +4093,16 @@ VOID FixBiosDsdt (UINT8* temp)
   
   // First check hardware address: GetPciADR(DevicePath, &NetworkADR1, &NetworkADR2);
   CheckHardware();
+
+  //arbitrary fixes
+  if (gSettings.PatchDsdtNum > 0) {
+    INT32 i;
+    for (i = 0; i < gSettings.PatchDsdtNum; i++) {
+      DsdtLen = FixAny(temp, DsdtLen,
+                       gSettings.PatchDsdtFind[i], gSettings.LenToFind[i],
+                       gSettings.PatchDsdtReplace[i], gSettings.LenToReplace[i]);
+    }
+  }
   
   // find ACPI CPU name and hardware address
   findCPU(temp, DsdtLen);
@@ -4084,7 +4123,7 @@ VOID FixBiosDsdt (UINT8* temp)
   
   // Fix RTC
   if ((gSettings.FixDsdt & FIX_HPET) != 0) {
-//    DBG("patch RTC in DSDT \n");
+    DBG("patch RTC in DSDT \n");
     DsdtLen = FixRTC(temp, DsdtLen);
   }
   
@@ -4108,7 +4147,7 @@ VOID FixBiosDsdt (UINT8* temp)
   
   // Fix LPC if don't had HPET don't need to inject LPC??
   if (LPCBFIX && (gCPUStructure.Family == 0x06)  && (gSettings.FixDsdt & FIX_LPC)) {
-//    DBG("patch LPC in DSDT \n");
+    DBG("patch LPC in DSDT \n");
     DsdtLen = FIXLPCB(temp, DsdtLen);
   }
   

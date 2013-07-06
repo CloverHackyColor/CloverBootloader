@@ -271,7 +271,7 @@ Headers collection for procedures
  * returned in %ecx:%edx to a CPUID request with %eax of 0x80000001: 
  */
 #define CPUID_EXTFEATURE_SYSCALL   _Bit(11)	/* SYSCALL/sysret */
-#define CPUID_EXTFEATURE_XD		   _Bit(20)	/* eXecute Disable */
+#define CPUID_EXTFEATURE_XD		     _Bit(20)	/* eXecute Disable */
 #define CPUID_EXTFEATURE_1GBPAGE   _Bit(26)     /* 1G-Byte Page support */
 #define CPUID_EXTFEATURE_RDTSCP	   _Bit(27)	/* RDTSCP */
 #define CPUID_EXTFEATURE_EM64T	   _Bit(29)	/* Extended Mem 64 Technology */
@@ -795,8 +795,15 @@ typedef struct {
   CHAR8  RPlt[8];
   CHAR8  RBr[8];
   UINT8  EPCI[4];
-  UINT8  REV[6];  
-  
+  UINT8  REV[6];
+
+  //Patch DSDT arbitrary
+  UINT32 PatchDsdtNum;
+  UINT8  **PatchDsdtFind;
+  UINT32 *LenToFind;
+  UINT8  **PatchDsdtReplace;
+  UINT32 *LenToReplace;
+
 } SETTINGS_DATA;
 
 typedef struct {

@@ -240,6 +240,21 @@
 		<false/>
 		<key>FixDsdtMask</key>
 		<string>0xFFFF</string>
+		<key>PatchesDSDT</key>
+		<array>
+			<dict>
+				<key>Find</key>
+				<data>W4IeQkFUMQhfSElEDEHQDAoIX1VJRAEUCF9TVEEApAA=</data>
+				<key>Replace</key>
+				<data></data>
+			</dict>
+			<dict>
+				<key>Find</key>
+				<data>UFhTWAhfQURSAAhfUFJXEgYC</data>
+				<key>Replace</key>
+				<data>UFhTWAhfQURSAAhfU1VOCgQIX1BSVxIGAg==</data>
+			</dict>
+		</array>
 	</dict>
 	<key>GUI</key>
 	<dict>
