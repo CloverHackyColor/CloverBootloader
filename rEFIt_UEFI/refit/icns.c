@@ -309,9 +309,9 @@ EG_IMAGE * BuiltinIcon(IN UINTN Id)
           *(--p) = L'\0';
         } */
         egRenderText(Text, TextBuffer, 0, 0, 0xFFFF);
-        FreePool(Text);
         BuiltinIconTable[Id].Image = TextBuffer;
         DebugLog(1, "Text <%s> rendered\n", Text);
+        FreePool(Text);
       }
     }
   }
