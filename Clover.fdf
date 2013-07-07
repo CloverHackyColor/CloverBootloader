@@ -96,7 +96,7 @@ INF  Clover/UefiCpuPkg/CpuIo2Dxe/CpuIo2Dxe.inf
 #INF  IntelFrameworkModulePkg/Universal/CpuIoDxe/CpuIoDxe.inf
 INF  Clover/CpuDxe/Cpu.inf
 
-	#DataHub
+    # DataHub
 #INF  Clover/VBoxAppleSim/VBoxAppleSim.inf
 INF IntelFrameworkModulePkg/Universal/DataHubDxe/DataHubDxe.inf
 #INF IntelFrameworkModulePkg/Universal/DataHubStdErrDxe/DataHubStdErrDxe.inf
@@ -124,7 +124,7 @@ INF  Clover/OsxPciBusNoEnumerationDxe/PciBusNoEnumeration.inf
 #INF  MdeModulePkg/Bus/Pci/PciBusDxe/PciBusDxe.inf
 #INF  Clover/PciBusDxe/PciBusDxe.inf
 
-#Video
+    # Video
 #INF  IntelFrameworkModulePkg/Bus/Pci/VgaMiniPortDxe/VgaMiniPortDxe.inf
 #INF  Clover/VBoxVgaMiniPort/VgaMiniPortDxe.inf
 #INF  IntelFrameworkModulePkg/Universal/Console/VgaClassDxe/VgaClassDxe.inf
@@ -135,7 +135,7 @@ INF  Clover/BiosVideo/BiosVideo.inf
 #INF  Clover/IntelGmaDxe/Gop.inf
 #INF  Clover/LegacyBios/VideoDxe/VideoDxe.inf
 
-# BIOS CSM
+    # BIOS CSM
 #INF  IntelFrameworkModulePkg/Csm/LegacyBiosDxe/LegacyBiosDxe.inf
 #INF  IntelFrameworkModulePkg/Csm/BiosThunk/BlockIoDxe/BlockIoDxe.inf
 #INF  IntelFrameworkModulePkg/Csm/BiosThunk/KeyboardDxe/KeyboardDxe.inf
@@ -146,7 +146,7 @@ INF  Clover/BiosKeyboard/KeyboardDxe.inf
 INF   Clover/LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
 #INF  IntelFrameworkModulePkg/Csm/BiosThunk/VideoDxe/VideoDxe.inf
 
-# IDE/AHCI Support
+    # IDE/AHCI Support
 !ifdef USE_BIOS_BLOCKIO
   INF  Clover/LegacyBios/BlockIoDxe/BlockIoDxe.inf
 !else
@@ -164,17 +164,19 @@ INF   Clover/LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
   #INF  IntelFrameworkModulePkg/Bus/Pci/IdeBusDxe/IdeBusDxe.inf
 !endif
 
-# Usb Support
-INF  MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
-INF  MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
-#INF  MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
-INF  MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
-#INF  Clover/Patches_for_EDK2/UsbBusDxe/UsbBusDxe.inf
-INF  MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
-INF  MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
-INF  MdeModulePkg/Bus/Usb/UsbMouseDxe/UsbMouseDxe.inf
+    # Usb Support
+!ifdef DISABLE_USB_SUPPORT
+  INF  MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
+  INF  MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
+  #INF  MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
+  INF  MdeModulePkg/Bus/Usb/UsbBusDxe/UsbBusDxe.inf
+  #INF  Clover/Patches_for_EDK2/UsbBusDxe/UsbBusDxe.inf
+  INF  MdeModulePkg/Bus/Usb/UsbKbDxe/UsbKbDxe.inf
+  INF  MdeModulePkg/Bus/Usb/UsbMassStorageDxe/UsbMassStorageDxe.inf
+  INF  MdeModulePkg/Bus/Usb/UsbMouseDxe/UsbMouseDxe.inf
+!endif
 
-  # ISA Support
+    # ISA Support
 INF  PcAtChipsetPkg/IsaAcpiDxe/IsaAcpi.inf
 INF  IntelFrameworkModulePkg/Bus/Isa/IsaBusDxe/IsaBusDxe.inf
 #INF  IntelFrameworkModulePkg/Bus/Isa/IsaSerialDxe/IsaSerialDxe.inf
@@ -186,13 +188,13 @@ INF  MdeModulePkg/Universal/Disk/UnicodeCollation/EnglishDxe/EnglishDxe.inf
 #INF  MdeModulePkg/Universal/Disk/PartitionDxe/PartitionDxe.inf
 INF  Clover/PartitionDxe/PartitionDxe.inf
 
-  # ACPI Support
+    # ACPI Support
 #INF  MdeModulePkg/Universal/Acpi/AcpiTableDxe/AcpiTableDxe.inf
 INF  Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
 #INF  MdeModulePkg/Universal/Acpi/AcpiPlatformDxe/AcpiPlatformDxe.inf
 #INF  Clover/OsxAcpiPlatformDxe/AcpiPlatformDxe.inf
 
-  #FD
+    # FD
 #INF  IntelFrameworkModulePkg/Universal/Acpi/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
 #INF  Clover/SaveResume/AcpiS3SaveDxe/AcpiS3SaveDxe.inf
 #INF  MdeModulePkg/Universal/Acpi/S3SaveStateDxe/S3SaveStateDxe.inf
@@ -201,10 +203,10 @@ INF  Clover/OsxAcpiTableDxe/AcpiTableDxe.inf
 #INF  Clover/SaveResume/BootScriptExecutorDxe/BootScriptExecutorDxe.inf
 #INF  UefiCpuPkg/Universal/Acpi/S3Resume2Pei/S3Resume2Pei.inf
 
-  #Misc
+    # Misc
 INF  Clover/MsgLog/MsgLog.inf
 
-  # Binary INF file to support toggle among different CPU architectures.
+    # Binary INF file to support toggle among different CPU architectures.
 INF  RuleOverride=BINARY FatBinPkg/EnhancedFatDxe/Fat.inf
 
 FILE FREEFORM = PCD(gEfiIntelFrameworkModulePkgTokenSpaceGuid.PcdLogoFile) {
