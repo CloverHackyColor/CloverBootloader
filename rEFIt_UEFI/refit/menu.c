@@ -126,7 +126,7 @@ static EG_IMAGE *SelectionImages[4] = { NULL, NULL, NULL, NULL };
 static EG_IMAGE *TextBuffer = NULL;
 
 EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //non-trasparent
-EG_PIXEL TransBackgroundPixel = {0, 0, 0, 0};
+//EG_PIXEL TransBackgroundPixel = {0, 0, 0, 0};
 
 static INTN row0Count, row0PosX, row0PosXRunning;
 static INTN row1Count, row1PosX, row1PosXRunning;
@@ -317,7 +317,7 @@ VOID RefillInputs(VOID)
   //reserve for mouse and continue 
   
   InputItemsCount = 74;
-  InputItems[InputItemsCount].ItemType = BoolValue; //72
+  InputItems[InputItemsCount].ItemType = BoolValue; //74
   InputItems[InputItemsCount].BValue   = gSettings.USBFixOwnership;
   InputItems[InputItemsCount++].SValue = gSettings.USBFixOwnership?L"[+]":L"[ ]";
 
@@ -370,7 +370,14 @@ VOID RefillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue; //94
   InputItems[InputItemsCount].BValue = gSettings.KPLapicPanic;
   InputItems[InputItemsCount++].SValue = gSettings.KPLapicPanic?L"[+]":L"[ ]";
-  
+
+  InputItems[InputItemsCount].ItemType = BoolValue; //95
+  InputItems[InputItemsCount].BValue   = gSettings.USBInjection;
+  InputItems[InputItemsCount++].SValue = gSettings.USBInjection?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].ItemType = BoolValue; //96
+  InputItems[InputItemsCount].BValue   = gSettings.InjectClockID;
+  InputItems[InputItemsCount++].SValue = gSettings.InjectClockID?L"[+]":L"[ ]";
+
 }
 
 VOID FillInputs(VOID)
@@ -556,7 +563,7 @@ VOID FillInputs(VOID)
   //reserve for mouse and continue
   
   InputItemsCount = 74;
-  InputItems[InputItemsCount].ItemType = BoolValue; //88
+  InputItems[InputItemsCount].ItemType = BoolValue; //74
   InputItems[InputItemsCount].BValue   = gSettings.USBFixOwnership;
   InputItems[InputItemsCount++].SValue = gSettings.USBFixOwnership?L"[+]":L"[ ]";
 
@@ -622,6 +629,13 @@ VOID FillInputs(VOID)
   InputItems[InputItemsCount].ItemType = BoolValue; //94
   InputItems[InputItemsCount].BValue = gSettings.KPLapicPanic;
   InputItems[InputItemsCount++].SValue = gSettings.KPLapicPanic?L"[+]":L"[ ]";
+
+  InputItems[InputItemsCount].ItemType = BoolValue; //95
+  InputItems[InputItemsCount].BValue   = gSettings.USBInjection;
+  InputItems[InputItemsCount++].SValue = gSettings.USBInjection?L"[+]":L"[ ]";
+  InputItems[InputItemsCount].ItemType = BoolValue; //96
+  InputItems[InputItemsCount].BValue   = gSettings.InjectClockID;
+  InputItems[InputItemsCount++].SValue = gSettings.InjectClockID?L"[+]":L"[ ]";
 }
 
 
@@ -947,6 +961,14 @@ VOID ApplyInputs(VOID)
   if (InputItems[i].Valid) {
     gSettings.KPLapicPanic = InputItems[i].BValue;
   }
+  i++; //95
+  if (InputItems[i].Valid) {
+    gSettings.USBInjection = InputItems[i].BValue;
+  }
+  i++; //96
+  if (InputItems[i].Valid) {
+    gSettings.InjectClockID = InputItems[i].BValue;
+  }
   if (NeedSave) {
     SaveSettings(); 
   }
@@ -1034,8 +1056,8 @@ static VOID InitSelection(VOID)
   }
   // non-selected background images
   //TODO FALSE -> TRUE
-  SelectionImages[1] = egCreateFilledImage(ROW0_TILESIZE, ROW0_TILESIZE, TRUE, &TransBackgroundPixel);
-  SelectionImages[3] = egCreateFilledImage(ROW1_TILESIZE, ROW1_TILESIZE, TRUE, &TransBackgroundPixel);
+  SelectionImages[1] = egCreateFilledImage(ROW0_TILESIZE, ROW0_TILESIZE, TRUE, &MenuBackgroundPixel);
+  SelectionImages[3] = egCreateFilledImage(ROW1_TILESIZE, ROW1_TILESIZE, TRUE, &MenuBackgroundPixel);
 }
 
 //
@@ -1910,7 +1932,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
   static EG_RECT ScrollEnd;
   static EG_RECT ScrollTotal;
   
-  EG_PIXEL EmptyPixel = { 0, 0, 0, 0 };
+ // EG_PIXEL EmptyPixel = { 0, 0, 0, 0 };
 
 
   CHAR16 ResultString[256];
@@ -2056,7 +2078,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         ScrollEnabled = TRUE;
       if (ScrollEnabled) {
         //VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN PosX, IN INTN PosY)
-        Total = egCreateFilledImage(ScrollTotal.Width, ScrollTotal.Height, TRUE, &EmptyPixel);
+        Total = egCreateFilledImage(ScrollTotal.Width, ScrollTotal.Height, TRUE, &MenuBackgroundPixel);
         for (i = 0; i < ScrollbarBackground.Height; i++)
           egComposeImage(Total, ScrollbarBackgroundImage, ScrollbarBackground.XPos - ScrollTotal.XPos, ScrollbarBackground.YPos + i - ScrollTotal.YPos);
         
@@ -2118,7 +2140,7 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
         ScrollEnabled = TRUE;
       if (ScrollEnabled) {
         //VOID egComposeImage(IN OUT EG_IMAGE *CompImage, IN EG_IMAGE *TopImage, IN INTN PosX, IN INTN PosY)
-        Total = egCreateFilledImage(ScrollTotal.Width, ScrollTotal.Height, TRUE, &EmptyPixel);
+        Total = egCreateFilledImage(ScrollTotal.Width, ScrollTotal.Height, TRUE, &MenuBackgroundPixel);
         for (i = 0; i < ScrollbarBackground.Height; i++)
           egComposeImage(Total, ScrollbarBackgroundImage, ScrollbarBackground.XPos - ScrollTotal.XPos, ScrollbarBackground.YPos + i - ScrollTotal.YPos);
         
@@ -3246,6 +3268,60 @@ REFIT_MENU_ENTRY  *SubMenuRcScripts()
   return Entry;
 }
 
+REFIT_MENU_ENTRY  *SubMenuUSB()
+{
+  REFIT_MENU_ENTRY   *Entry;
+  REFIT_MENU_SCREEN  *SubScreen;
+  REFIT_INPUT_DIALOG *InputBootArgs;
+  CHAR16*           Flags;
+  Flags = AllocateZeroPool(255);
+
+  Entry = AllocateZeroPool(sizeof(REFIT_MENU_ENTRY));
+  Entry->Title = PoolPrint(L"USB settings ->");
+  Entry->Image =  OptionMenu.TitleImage;
+  Entry->Tag = TAG_OPTIONS;
+  Entry->AtClick = ActionEnter;
+
+  // create the submenu
+  SubScreen = AllocateZeroPool(sizeof(REFIT_MENU_SCREEN));
+  SubScreen->Title = Entry->Title;
+  SubScreen->TitleImage = Entry->Image;
+  SubScreen->ID = SCREEN_USB;
+  SubScreen->AnimeRun = GetAnime(SubScreen);
+
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Fix Ownership:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF;
+  InputBootArgs->Item = &InputItems[74];
+  InputBootArgs->Entry.AtClick = ActionEnter;
+  InputBootArgs->Entry.AtRightClick = ActionDetails;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"DSM Injection:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF;
+  InputBootArgs->Item = &InputItems[95];
+  InputBootArgs->Entry.AtClick = ActionEnter;
+  InputBootArgs->Entry.AtRightClick = ActionDetails;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+  InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
+  InputBootArgs->Entry.Title = PoolPrint(L"Inject ClockID:");
+  InputBootArgs->Entry.Tag = TAG_INPUT;
+  InputBootArgs->Entry.Row = 0xFFFF;
+  InputBootArgs->Item = &InputItems[96];
+  InputBootArgs->Entry.AtClick = ActionEnter;
+  InputBootArgs->Entry.AtRightClick = ActionDetails;
+  AddMenuEntry(SubScreen, (REFIT_MENU_ENTRY*)InputBootArgs);
+
+  AddMenuEntry(SubScreen, &MenuEntryReturn);
+  Entry->SubScreen = SubScreen;
+  return Entry;
+}
+
+
 VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
 {
   REFIT_MENU_ENTRY  *TmpChosenEntry = NULL;
@@ -3325,19 +3401,11 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
 		AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
 	}
 
-    InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
-    InputBootArgs->Entry.Title = PoolPrint(L"USBFixOwnership:");
-    InputBootArgs->Entry.Tag = TAG_INPUT;
-    InputBootArgs->Entry.Row = 0xFFFF;
-    InputBootArgs->Item = &InputItems[74];
-    InputBootArgs->Entry.AtClick = ActionEnter;
-    InputBootArgs->Entry.AtRightClick = ActionDetails;
-    AddMenuEntry(&OptionMenu, (REFIT_MENU_ENTRY*)InputBootArgs);
-
  //   DFIndex = OptionMenu.EntryCount;
     AddMenuEntry(&OptionMenu, SubMenuDropTables());
     AddMenuEntry(&OptionMenu, SubMenuDsdtFix());
     AddMenuEntry(&OptionMenu, SubMenuSmbios());
+    AddMenuEntry(&OptionMenu, SubMenuUSB());
     AddMenuEntry(&OptionMenu, SubMenuSpeedStep());
     AddMenuEntry(&OptionMenu, SubMenuGraphics());
     AddMenuEntry(&OptionMenu, SubMenuBinaries());

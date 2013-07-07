@@ -263,6 +263,7 @@ extern INTN ScrollbarYMovement;
 #define SCREEN_SMBIOS     10
 #define SCREEN_TABLES     11
 #define SCREEN_RC_SCRIPTS 12
+#define SCREEN_USB        13
 
 #define MAX_ANIME  40
 
@@ -507,7 +508,7 @@ extern BOOLEAN AllowGraphicsMode;
 extern EG_PIXEL StdBackgroundPixel;
 extern EG_PIXEL MenuBackgroundPixel;
 extern EG_PIXEL InputBackgroundPixel;
-extern EG_PIXEL TransBackgroundPixel;
+//extern EG_PIXEL TransBackgroundPixel;
 extern EG_PIXEL DarkBackgroundPixel;
 
 extern EG_RECT  BannerPlace;

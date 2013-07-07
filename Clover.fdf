@@ -165,7 +165,7 @@ INF   Clover/LegacyBios/Region2Dxe/LegacyRegion2Dxe.inf
 !endif
 
     # Usb Support
-!ifdef DISABLE_USB_SUPPORT
+!ifndef DISABLE_USB_SUPPORT
   INF  MdeModulePkg/Bus/Pci/UhciDxe/UhciDxe.inf
   INF  MdeModulePkg/Bus/Pci/EhciDxe/EhciDxe.inf
   #INF  MdeModulePkg/Bus/Pci/XhciDxe/XhciDxe.inf
