@@ -2205,16 +2205,16 @@ static   EG_IMAGE* MainImage;
 
 static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XPos, INTN YPos)
 {
-  LOADER_ENTRY* LEntry = (LOADER_ENTRY*)Entry;
-    
-  if (((Entry->Tag == TAG_LOADER) || (Entry->Tag == TAG_LEGACY)) &&
+
+ if (((Entry->Tag == TAG_LOADER) || (Entry->Tag == TAG_LEGACY)) &&
         !(GlobalConfig.HideBadges & HDBADGES_SWAP) &&
-      (Entry->Row == 0)){
-    MainImage = LEntry->Volume->DriveImage;
+      (Entry->Row == 0)) {
+    MainImage = Entry->DriveImage;
   } else {
     MainImage = Entry->Image;
   }
-  if (!MainImage) {    
+
+  if (!MainImage) {
     if (ThemeDir) {
       MainImage = egLoadIcon(ThemeDir, L"icons\\osx.icns", 128);
     } 

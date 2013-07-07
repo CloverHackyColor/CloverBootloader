@@ -134,7 +134,6 @@ typedef struct {
   EFI_HANDLE          DeviceHandle;
   EFI_FILE            *RootDir;
   CHAR16              *VolName;
-  EG_IMAGE            *DriveImage;
   UINT8               DiskKind;
   UINT8               OSType;
   UINT8               BootType;
@@ -276,6 +275,7 @@ typedef struct _refit_menu_entry {
   CHAR16      ShortcutDigit;
   CHAR16      ShortcutLetter;
   EG_IMAGE    *Image;
+  EG_IMAGE    *DriveImage;
   EG_IMAGE    *BadgeImage;
   EG_RECT     Place;
   ACTION      AtClick;

@@ -64,11 +64,11 @@ EFI_BOOT_SERVICES*		  gBS;
 EFI_RUNTIME_SERVICES*	  gRS;
 EFI_DXE_SERVICES*       gDS;
 
-static REFIT_MENU_ENTRY MenuEntryOptions  = { L"Options", TAG_OPTIONS, 1, 0, 'O', NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone, NULL };
-static REFIT_MENU_ENTRY MenuEntryAbout    = { L"About rEFIt", TAG_ABOUT, 1, 0, 'A', NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone,  NULL };
-static REFIT_MENU_ENTRY MenuEntryReset    = { L"Restart Computer", TAG_RESET, 1, 0, 'R', NULL, NULL, {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone,  NULL };
-static REFIT_MENU_ENTRY MenuEntryShutdown = { L"Exit Clover", TAG_SHUTDOWN, 1, 0, 'U', NULL, NULL, {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone,  NULL };
-REFIT_MENU_ENTRY MenuEntryReturn   = { L"Return to Main Menu", TAG_RETURN, 0, 0, 0, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone,  NULL };
+static REFIT_MENU_ENTRY MenuEntryOptions  = { L"Options", TAG_OPTIONS, 1, 0, 'O', NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone, NULL };
+static REFIT_MENU_ENTRY MenuEntryAbout    = { L"About rEFIt", TAG_ABOUT, 1, 0, 'A', NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone,  NULL };
+static REFIT_MENU_ENTRY MenuEntryReset    = { L"Restart Computer", TAG_RESET, 1, 0, 'R', NULL, NULL, NULL, {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone,  NULL };
+static REFIT_MENU_ENTRY MenuEntryShutdown = { L"Exit Clover", TAG_SHUTDOWN, 1, 0, 'U', NULL, NULL, NULL, {0, 0, 0, 0}, ActionSelect, ActionEnter, ActionNone,  NULL };
+REFIT_MENU_ENTRY MenuEntryReturn   = { L"Return to Main Menu", TAG_RETURN, 0, 0, 0, NULL, NULL, NULL, {0, 0, 0, 0}, ActionEnter, ActionEnter, ActionNone,  NULL };
 
 static REFIT_MENU_SCREEN MainMenu    = {1, L"Main Menu", NULL, 0, NULL, 0, NULL, 0, L"Automatic boot", FALSE, FALSE, 0, 0, 0,
   0, {0, 0, 0, 0}, NULL};
@@ -880,21 +880,23 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
 
   // get custom volume icon if present
   if (GlobalConfig.CustomIcons && FileExists(Volume->RootDir, L"VolumeIcon.icns")){
-      Entry->me.Image = LoadIcns(Volume->RootDir, L"VolumeIcon.icns", 128);
-      DBG("using VolumeIcon.icns image from Volume\n");
+    Entry->me.Image = LoadIcns(Volume->RootDir, L"VolumeIcon.icns", 128);
+    DBG("using VolumeIcon.icns image from Volume\n");
   } else {
-      Entry->me.Image = LoadOSIcon(OSIconName, L"unknown", FALSE);
+    Entry->me.Image = LoadOSIcon(OSIconName, L"unknown", FALSE);
   }
+  // Load DriveImage
+  Entry->me.DriveImage = ScanVolumeDefaultIcon(Volume);
 
   DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
   if (GlobalConfig.HideBadges & HDBADGES_SHOW) {
-      if (GlobalConfig.HideBadges & HDBADGES_SWAP) {
-          Entry->me.BadgeImage   = egCopyScaledImage(Volume->DriveImage, 4);
-          DBG("Show badge as Drive\n");
-      } else {
-          Entry->me.BadgeImage   = egCopyScaledImage(Entry->me.Image, 8);
-          DBG("Show badge as OSImage\n");
-      }
+    if (GlobalConfig.HideBadges & HDBADGES_SWAP) {
+      Entry->me.BadgeImage = egCopyScaledImage(Entry->me.DriveImage, 4);
+      DBG("Show badge as Drive\n");
+    } else {
+      Entry->me.BadgeImage = egCopyScaledImage(Entry->me.Image, 8);
+      DBG("Show badge as OSImage\n");
+    }
   }
 
   // create the submenu
@@ -1429,7 +1431,6 @@ VOID ScanLoader(VOID)
     if (FileExists(Volume->RootDir, FileName)) {
       //     Print(L"  - Mac OS X boot file found\n");
       Volume->BootType = BOOTING_BY_EFI;
-      Volume->DriveImage = ScanVolumeDefaultIcon(Volume);
         // check for Mac OS X Boot target
         Status = GetRootUUID(Volume);
         if(!EFI_ERROR(Status)) {
@@ -1488,7 +1489,6 @@ VOID ScanLoader(VOID)
       Volume->BootType = BOOTING_BY_EFI;
       Volume->OSType = OSTYPE_RECOVERY;
       Volume->OSIconName = L"mac";
-      Volume->DriveImage = ScanVolumeDefaultIcon(Volume);
       if (!gSettings.HVHideAllRecovery) {
         Entry = AddLoaderEntry(FileName, L"Recovery", Volume, Volume->OSType);
         continue; //boot recovery only
@@ -1504,7 +1504,6 @@ VOID ScanLoader(VOID)
       //     Print(L"  - Microsoft boot menu found\n");
       Volume->OSType = OSTYPE_WINEFI;
       Volume->BootType = BOOTING_BY_EFI;
-      Volume->DriveImage = ScanVolumeDefaultIcon(Volume);
       if (!gSettings.HVHideAllWindowsEFI){
         Entry = AddLoaderEntry(FileName, L"Microsoft EFI boot menu", Volume, OSTYPE_WINEFI);
         //     continue;
@@ -1520,7 +1519,6 @@ VOID ScanLoader(VOID)
         //     Print(L"  - Microsoft boot menu found\n");
         Volume->OSType = OSTYPE_WINEFI;
         Volume->BootType = BOOTING_BY_EFI;
-        Volume->DriveImage = ScanVolumeDefaultIcon(Volume);
         if (!gSettings.HVHideAllWindowsEFI){
           Entry = AddLoaderEntry(FileName, L"Microsoft EFI boot menu", Volume, OSTYPE_WINEFI);
           //     continue;
@@ -1535,7 +1533,6 @@ VOID ScanLoader(VOID)
       //     Print(L"  - Microsoft boot menu found\n");
       Volume->OSType = OSTYPE_WINEFI;
       Volume->BootType = BOOTING_BY_EFI;
-      Volume->DriveImage = ScanVolumeDefaultIcon(Volume);
       if (!gSettings.HVHideAllWindowsEFI){
         Entry = AddLoaderEntry(FileName, L"Microsoft EFI boot menu", Volume, OSTYPE_WINEFI);
         continue;
@@ -1548,7 +1545,6 @@ VOID ScanLoader(VOID)
       //     Print(L"  - Microsoft boot menu found\n");
       Volume->OSType = OSTYPE_WINEFI;
       Volume->BootType = BOOTING_BY_EFI;
-      Volume->DriveImage = ScanVolumeDefaultIcon(Volume);
       if (!gSettings.HVHideAllWindowsEFI){
         Entry = AddLoaderEntry(FileName, L"Microsoft EFI boot menu", Volume, OSTYPE_WINEFI);
         continue;
@@ -1566,7 +1562,6 @@ VOID ScanLoader(VOID)
       Volume->OSType = OSTYPE_LIN;
       Volume->OSIconName = L"grub,linux";
       Volume->BootType = BOOTING_BY_EFI;
-      Volume->DriveImage = ScanVolumeDefaultIcon(Volume);
       if (!gSettings.HVHideAllGrub)
         Entry = AddLoaderEntry(FileName, L"Grub EFI boot menu", Volume, OSTYPE_LIN);
     }
@@ -1832,6 +1827,7 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Vo
   Entry->me.Row          = 0;
   Entry->me.ShortcutLetter = ShortcutLetter;
   Entry->me.Image = LoadOSIcon(Volume->OSIconName, L"legacy", FALSE);
+  Entry->me.DriveImage = ScanVolumeDefaultIcon(Volume);
   //  DBG("HideBadges=%d Volume=%s\n", GlobalConfig.HideBadges, Volume->VolName);
   //  DBG("Title=%s OSName=%s OSIconName=%s\n", LoaderTitle, Volume->OSName, Volume->OSIconName);
   
@@ -1842,20 +1838,12 @@ static LEGACY_ENTRY * AddLegacyEntry(IN CHAR16 *LoaderTitle, IN REFIT_VOLUME *Vo
 
   if (GlobalConfig.HideBadges & HDBADGES_SHOW) {
     if (GlobalConfig.HideBadges & HDBADGES_SWAP) {
-      Entry->me.BadgeImage   = egCopyScaledImage(Volume->DriveImage, 4);
+      Entry->me.BadgeImage = egCopyScaledImage(Entry->me.DriveImage, 4);
     } else {
-      Entry->me.BadgeImage   = egCopyScaledImage(Entry->me.Image, 8);
+      Entry->me.BadgeImage = egCopyScaledImage(Entry->me.Image, 8);
     }
   }
-/*  
-  if ((GlobalConfig.HideBadges == HDBADGES_NONE) ||
-      (GlobalConfig.HideBadges == HDBADGES_INT &&
-       Volume->DiskKind != DISK_KIND_INTERNAL)) { //hide internal
-    Entry->me.BadgeImage   = egCopyScaledImage(Entry->me.Image, 8);
-  } else if (GlobalConfig.HideBadges == HDBADGES_SWAP) {
-    Entry->me.BadgeImage   =  egCopyScaledImage(Volume->DriveImage, 4);
-  }
- */
+
   Entry->Volume          = Volume;
   Entry->LoadOptions     = (Volume->DiskKind == DISK_KIND_OPTICAL) ? L"CD" :
   ((Volume->DiskKind == DISK_KIND_EXTERNAL) ? L"USB" : L"HD");

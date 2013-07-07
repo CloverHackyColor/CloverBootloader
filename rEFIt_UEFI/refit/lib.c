@@ -886,10 +886,7 @@ static EFI_STATUS ScanVolume(IN OUT REFIT_VOLUME *Volume)
 #endif
     Volume->HasBootCode = FALSE;
   }
-//    DBG("default volume icon based on disk kind\n");
-  // default volume icon based on disk kind
-  Volume->DriveImage = ScanVolumeDefaultIcon(Volume); //->DiskKind);
-  //  DBG("default volume icon OK\n");
+
   // open the root directory of the volume
   Volume->RootDir = EfiLibOpenRoot(Volume->DeviceHandle);
   //  DBG("Volume->RootDir OK\n");
@@ -1025,7 +1022,6 @@ static VOID ScanExtendedPartition(REFIT_VOLUME *WholeDiskVolume, MBR_PARTITION_I
                 if (!Bootable)
                     Volume->HasBootCode = FALSE;
                 
-              Volume->DriveImage = ScanVolumeDefaultIcon(Volume); //->DiskKind);                
                 AddListElement((VOID ***) &Volumes, &VolumesCount, Volume);                
             }
         }
