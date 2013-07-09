@@ -688,6 +688,9 @@ typedef struct {
   //Graphics
   UINT16  PCIRootUID;
   BOOLEAN GraphicsInjector;
+  BOOLEAN InjectIntel;
+  BOOLEAN InjectATI;
+  BOOLEAN InjectNVidia;
   BOOLEAN LoadVBios;
   BOOLEAN PatchVBios;
   VBIOS_PATCH_BYTES   *PatchVBiosBytes;

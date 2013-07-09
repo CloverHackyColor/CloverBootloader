@@ -135,6 +135,12 @@
 	<dict>
 		<key>GraphicsInjector</key>
 		<true/>
+		<key>InjectIntel</key>
+		<true/>
+		<key>InjectATI</key>
+		<true/>
+		<key>InjectNVidia</key>
+		<true/>
 		<key>InjectEDID</key>
 		<true/>
 		<key>CustomEDID</key>

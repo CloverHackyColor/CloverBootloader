@@ -290,9 +290,9 @@ radeon_card_info_t radeon_cards[] = {
 	
 	{ 0x9540,	0x00000000, CHIP_FAMILY_RV710,	"ATI Radeon HD 4550",           kFlicker		},
 	{ 0x954F,	0x00000000, CHIP_FAMILY_RV710,	"ATI Radeon HD 4350",           kFlicker		},
-	{ 0x9552,	0x00000000, CHIP_FAMILY_RV710,	"ATI Mobility Radeon HD 4330",	kShrike     },
-	{ 0x9553,	0x00000000, CHIP_FAMILY_RV710,	"ATI Mobility Radeon HD 4570",	kShrike     },
-  { 0x9555,	0x00000000, CHIP_FAMILY_RV710,	"ATI Mobility Radeon HD 530v",	kShrike     },
+	{ 0x9552,	0x00000000, CHIP_FAMILY_RV710,	"ATI Mobility Radeon HD 4330", 	kShrike     },
+	{ 0x9553,	0x00000000, CHIP_FAMILY_RV710,	"ATI Mobility Radeon HD 4570", 	kShrike     },
+  { 0x9555,	0x00000000, CHIP_FAMILY_RV710,	"ATI Mobility Radeon HD 4550", 	kShrike     },
   //9583, 9588 - Lamna, Hypoprion HD2600
   { 0x9581,	0x00000000, CHIP_FAMILY_RV630,	"ATI Radeon HD 2600 XT",        kHypoprion  },
   { 0x9583,	0x00000000, CHIP_FAMILY_RV630,	"ATI Radeon HD 2600 XT",        kHypoprion  },

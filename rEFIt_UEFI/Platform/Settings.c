@@ -1065,7 +1065,47 @@ EFI_STATUS GetUserSettings(IN EFI_FILE *RootDir)
                  ((prop->type == kTagTypeString) &&
                  ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
           gSettings.GraphicsInjector = TRUE;
-      }      
+      }
+      prop = GetProperty(dictPointer, "InjectIntel");
+      if(prop) {
+        if ((prop->type == kTagTypeFalse) ||
+            ((prop->type == kTagTypeString) &&
+             ((prop->string[0] == 'n') || (prop->string[0] == 'N'))))
+          gSettings.InjectIntel = FALSE;
+        else if ((prop->type == kTagTypeTrue) ||
+                 ((prop->type == kTagTypeString) &&
+                  ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
+          gSettings.InjectIntel = TRUE;
+      } else {
+        gSettings.InjectIntel = gSettings.GraphicsInjector;
+      }
+      prop = GetProperty(dictPointer, "InjectATI");
+      if(prop) {
+        if ((prop->type == kTagTypeFalse) ||
+            ((prop->type == kTagTypeString) &&
+             ((prop->string[0] == 'n') || (prop->string[0] == 'N'))))
+          gSettings.InjectATI = FALSE;
+        else if ((prop->type == kTagTypeTrue) ||
+                 ((prop->type == kTagTypeString) &&
+                  ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
+          gSettings.InjectATI = TRUE;
+      } else {
+        gSettings.InjectATI = gSettings.GraphicsInjector;
+      }
+      prop = GetProperty(dictPointer, "InjectNVidia");
+      if(prop) {
+        if ((prop->type == kTagTypeFalse) ||
+            ((prop->type == kTagTypeString) &&
+             ((prop->string[0] == 'n') || (prop->string[0] == 'N'))))
+          gSettings.InjectNVidia = FALSE;
+        else if ((prop->type == kTagTypeTrue) ||
+                 ((prop->type == kTagTypeString) &&
+                  ((prop->string[0] == 'y') || (prop->string[0] == 'Y'))))
+          gSettings.InjectNVidia = TRUE;
+      } else {
+        gSettings.InjectNVidia = gSettings.GraphicsInjector;
+      }
+
       prop = GetProperty(dictPointer, "VRAM");
       if(prop) {
         if (prop->type == kTagTypeInteger) {
@@ -2584,7 +2624,7 @@ VOID SetDevices(VOID)
         PCIdevice.subsys_id.subsys.vendor_id = Pci.Device.SubsystemVendorID;
         PCIdevice.subsys_id.subsys.device_id = Pci.Device.SubsystemID;
         // GFX
-        if (gSettings.GraphicsInjector &&
+        if (/* gSettings.GraphicsInjector && */
             (Pci.Hdr.ClassCode[2] == PCI_CLASS_DISPLAY) &&
             (Pci.Hdr.ClassCode[1] == PCI_CLASS_DISPLAY_VGA)) {
           
@@ -2595,22 +2635,30 @@ VOID SetDevices(VOID)
               //             gGraphics.Vendor = Ati;
               //              MsgLog("ATI GFX found\n");
               //can't do in one step because of C-conventions
-              TmpDirty = setup_ati_devprop(&PCIdevice);
-              StringDirty |=  TmpDirty;
-              
+              if (gSettings.InjectATI) {
+                TmpDirty = setup_ati_devprop(&PCIdevice);
+                StringDirty |=  TmpDirty;
+              } else {
+                MsgLog("ATI injection not set\n");
+              }
               break;
             case 0x8086:
-              
-              TmpDirty = setup_gma_devprop(&PCIdevice);
-              StringDirty |=  TmpDirty;
-              //              MsgLog("Intel GFX device_id =0x%x\n", PCIdevice.device_id);
-              MsgLog("Intel GFX revision  =0x%x\n", PCIdevice.revision);
+              if (gSettings.InjectIntel) {
+                TmpDirty = setup_gma_devprop(&PCIdevice);
+                StringDirty |=  TmpDirty;
+                MsgLog("Intel GFX revision  =0x%x\n", PCIdevice.revision);
+              } else {
+                MsgLog("Intel GFX injection not set\n");
+              }
+
               break;
             case 0x10de:
-              //              gGraphics.Vendor = Nvidia;
-              //              MsgLog("nVidia GFX found\n");
-              TmpDirty = setup_nvidia_devprop(&PCIdevice);
-              StringDirty |=  TmpDirty;
+              if (gSettings.InjectNVidia) {
+                TmpDirty = setup_nvidia_devprop(&PCIdevice);
+                StringDirty |=  TmpDirty;
+              } else {
+                MsgLog("NVidia GFX injection not set\n");
+              }
               break;
             default:
               break;

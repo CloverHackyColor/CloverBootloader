@@ -2772,6 +2772,7 @@ static nvidia_card_info_t nvidia_cards[] = {
 	// 1180 - 118F
 	{ 0x10DE1180,	NV_SUB_IDS,	"GeForce GTX 680" },
 	{ 0x10DE1183,	NV_SUB_IDS,	"GeForce GTX 660 Ti" },
+  { 0x10DE1184,	NV_SUB_IDS,	"GeForce GTX 770" },
 	{ 0x10DE1185,	NV_SUB_IDS,	"GeForce GTX 660" },
 	{ 0x10DE1188,	NV_SUB_IDS,	"GeForce GTX 690" },
 	{ 0x10DE1189,	NV_SUB_IDS,	"GeForce GTX 670" },
@@ -2779,7 +2780,7 @@ static nvidia_card_info_t nvidia_cards[] = {
   { 0x10DE118F,	NV_SUB_IDS,	"Tesla K10" },
 	// 1190 - 119F
 	// 11A0 - 11AF
-	{ 0x10DE11A0,	NV_SUB_IDS,	"GeForce GTX 680M" },
+	{ 0x10DE11A0,	NV_SUB_IDS,	"GeForce GTX 680M" }, //optimus
 	{ 0x10DE11A1,	NV_SUB_IDS,	"GeForce GTX 670MX" },
 	{ 0x10DE11A7,	NV_SUB_IDS,	"GeForce GTX 675MX" },
 	// 11B0 - 11BF
@@ -2790,6 +2791,7 @@ static nvidia_card_info_t nvidia_cards[] = {
 	// 11C0 - 11CF
   { 0x10DE11C0,	NV_SUB_IDS,	"GeForce GTX 660" },
 	{ 0x10DE11C6,	NV_SUB_IDS,	"GeForce GTX 650" },
+  { 0x10DE11D0, NV_SUB_IDS,	"GK106-INT353" },
 	// 11D0 - 11DF
 	// 11E0 - 11EF
 	// 11F0 - 11FF
@@ -2823,6 +2825,9 @@ static nvidia_card_info_t nvidia_cards[] = {
 	// 1260 - 126F
 	// 1270 - 127F
 	// 1280 - 128F
+  { 0x10DE1280,	NV_SUB_IDS,	"GeForce GT 635" },
+  { 0x10DE1282,	NV_SUB_IDS,	"GeForce GT 640" },
+  { 0x10DE1284,	NV_SUB_IDS,	"GeForce GT 630" },
 	// 1290 - 129F
 	// 12A0 - 12AF
 	// 12B0 - 12BF

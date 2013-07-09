@@ -482,7 +482,7 @@ MACHINE_TYPES GetModelFromString(CHAR8 *ProductName)
 VOID GetDefaultSettings(VOID)
 {
   MACHINE_TYPES   Model;
-  UINT64 msr = 0;
+//  UINT64 msr = 0;
   
   gLanguage         = english;
   Model             = GetDefaultModel();
@@ -491,15 +491,16 @@ VOID GetDefaultSettings(VOID)
   SetDMISettingsForModel(Model);
  
   gSettings.KextPatchesAllowed = TRUE;
-//  gSettings.NrKexts = 0;
-//  gSettings.ResetAddr  = 0;  //0x64; //I wish it will be default
-//  gSettings.ResetVal = 0;  //0xFE;
-//  gSettings.FixDsdt  = 0x00; //No fixes as we apply patches even for patched DSDT
+
+  //default values will be overritten by config.plist
+  //use explicitly settings TRUE or FALSE (Yes or No)
+  gSettings.InjectIntel = (gGraphics[0].Vendor == Intel) || (gGraphics[1].Vendor == Intel);
+  gSettings.InjectATI = (((gGraphics[0].Vendor == Ati) && ((gGraphics[0].DeviceID & 0xF000) < 0x5000)) ||
+                         ((gGraphics[1].Vendor == Ati) && ((gGraphics[1].DeviceID & 0xF000) < 0x5000)));
+  gSettings.InjectNVidia = (((gGraphics[0].Vendor == Nvidia) && (gGraphics[0].DeviceID < 0x1080)) ||
+                            ((gGraphics[1].Vendor == Nvidia) && (gGraphics[1].DeviceID < 0x1080)));
   
-  gSettings.GraphicsInjector = !(((gGraphics[0].Vendor == Ati) &&
-                                 ((gGraphics[0].DeviceID & 0xF000) == 0x6000)) ||
-                                 ((gGraphics[0].Vendor == Nvidia) &&
-                                  (gGraphics[0].DeviceID > 0x1080)));
+  gSettings.GraphicsInjector = gSettings.InjectATI || gSettings.InjectNVidia;
 //  gSettings.CustomEDID = NULL; //no sense to assign 0 as the structure is zeroed
   gSettings.DualLink = 1;
   gSettings.HDAInjection = TRUE;
@@ -508,38 +509,27 @@ VOID GetDefaultSettings(VOID)
   StrCpy(gSettings.DsdtName, L"DSDT.aml");
   gSettings.BacklightLevel = 0xFFFF; //0x0503; -- the value from MBA52
   gSettings.LogLineCount = 500;
-//  gSettings.LogEveryBoot = NULL;
-//  gSettings.MountEFI = NULL;
   gSettings.TrustSMBIOS = TRUE;
   
   if (gCPUStructure.Model == CPU_MODEL_IVY_BRIDGE) {
     gSettings.GeneratePStates = TRUE;
     gSettings.GenerateCStates = TRUE;
     // gSettings.EnableISS       = FALSE;
-    //      gSettings.EnableC2        = TRUE;
-    //      gSettings.EnableC6        = TRUE;
+    // gSettings.EnableC2        = TRUE;
+    // gSettings.EnableC6        = TRUE;
     gSettings.PluginType      = 1;
     gSettings.MinMultiplier   = 7;
-//    gSettings.DoubleFirstState = FALSE;
+    // gSettings.DoubleFirstState = FALSE;
     gSettings.DropSSDT        = TRUE;
     gSettings.C3Latency       = 0x3E7;
 
   }
-//  gSettings.PointerSpeed = 2;
-//  gSettings.DoubleClickTime = 500;
-//  gSettings.PointerMirror = FALSE;
-/*  
-  t0 = AsmReadTsc();
-  gBS->Stall(100000); //100ms
-  t1 = AsmReadTsc();
-  gCPUStructure.TSCCalibr = MultU64x32((t1 - t0), 10); //ticks for 1second
-*/
 //  gSettings.EnableISS = FALSE; //((gCPUStructure.CPUID[CPUID_1][ECX] & (1<<7)) != 0);
   gSettings.Turbo = gCPUStructure.Turbo;
 //  MsgLog("Turbo default value: %a\n", gCPUStructure.Turbo?"Yes":"No");
-  msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
+//  msr = AsmReadMsr64(MSR_IA32_MISC_ENABLE);
   //force enable EIST
-  msr |= (1<<16);
+//  msr |= (1<<16);
 //  AsmWriteMsr64(MSR_IA32_MISC_ENABLE, msr);
 //  gSettings.Turbo = ((msr & (1ULL<<38)) == 0);
 //  gSettings.EnableISS = ((msr & (1ULL<<16)) != 0);

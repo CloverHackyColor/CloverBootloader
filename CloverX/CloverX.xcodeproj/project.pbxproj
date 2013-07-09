@@ -97,6 +97,7 @@
 		123F097A164FA3AF008C1C1C /* BiosVideo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BiosVideo.h; sourceTree = "<group>"; };
 		123F097B164FA3AF008C1C1C /* ComponentName.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = ComponentName.c; sourceTree = "<group>"; };
 		123F097D164FA3AF008C1C1C /* VideoDxe.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = VideoDxe.inf; sourceTree = "<group>"; };
+		1247C23B178ADE2100A521A1 /* CloverX */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CloverX; sourceTree = BUILT_PRODUCTS_DIR; };
 		124BA1691738D9EF006DA523 /* Smbios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Smbios.h; path = ../../MdePkg/Include/Protocol/Smbios.h; sourceTree = SOURCE_ROOT; };
 		124D76D51657A3E6008B5407 /* PiBootMode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PiBootMode.h; sourceTree = "<group>"; };
 		124D76D61657A404008B5407 /* UefiHiiServicesLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UefiHiiServicesLib.h; sourceTree = "<group>"; };
@@ -456,7 +457,6 @@
 		12B816F71644675800A433E7 /* refit.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = refit.inf; sourceTree = "<group>"; };
 		12D7546D1657CDD700376797 /* BdsConnect.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = BdsConnect.c; sourceTree = "<group>"; };
 		12D754701657CDE800376797 /* DevicePath.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = DevicePath.c; sourceTree = "<group>"; };
-		12DB2D8616522B2A00A8066D /* CloverX */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = CloverX; path = /Users/slice/src/edk2/Clover/CloverX/build/Release/CloverX; sourceTree = "<absolute>"; };
 		12DCF7BA177FE41400D2BE8F /* bdmesg.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bdmesg.c; sourceTree = "<group>"; };
 		12DCF7BB177FE41400D2BE8F /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		12DCF7BD177FE41400D2BE8F /* clover-genconfig.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = "clover-genconfig.c"; sourceTree = "<group>"; };
@@ -1477,6 +1477,7 @@
 				12896D8C16B3A10A00A2EC36 /* VBoxFsDxe */,
 				12DCF7B8177FE41400D2BE8F /* utils */,
 				12FA1567173F4E0200F847F1 /* UEFI */,
+				1247C23B178ADE2100A521A1 /* CloverX */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1894,7 +1895,7 @@
 			);
 			name = CloverX;
 			productName = CloverX;
-			productReference = 12DB2D8616522B2A00A8066D /* CloverX */;
+			productReference = 1247C23B178ADE2100A521A1 /* CloverX */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
