@@ -58,6 +58,7 @@
 
 //static CHAR8 FirmwareRevisionStr[] = FIRMWARE_REVISION_STR;
 
+BOOLEAN                 gThemeNeedInit = TRUE;
 EFI_HANDLE              gImageHandle;
 EFI_SYSTEM_TABLE*       gST;
 EFI_BOOT_SERVICES*		  gBS; 
@@ -2685,15 +2686,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
   if (EFI_ERROR(Status)) {
     DBG("Early settings: %r\n", Status);
   }
-  gThemeChanged = TRUE;
 
   MainMenu.TimeoutSeconds = GlobalConfig.Timeout >= 0 ? GlobalConfig.Timeout : 0;
- // if (EFI_ERROR(Status = GetThemeSettings(TRUE))) {
-//    DBG("Theme settings: %r\n", Status);
- // }
-  
-  // further bootstrap (now with config available)
-  
   
   DBG("LoadDrivers() start\n");
   LoadDrivers();
@@ -2772,11 +2766,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	Status = GetUserSettings(SelfRootDir);  
  //       DBG("GetUserSettings OK\n");
   
-//test font
-//  PrepareFont();
-//     DBG("PrepareFont OK\n");
-// FillInputs();
-  
   if (!gFirmwareClover && !gDriversFlags.EmuVariableLoaded &&
       GlobalConfig.Timeout == 0 && !ReadAllKeyStrokes()) {
 // UEFI boot: get gEfiBootDeviceGuid from NVRAM.
@@ -2801,15 +2790,15 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         PutNvramPlistToRtVars();
       }
     }
+
     if (!GlobalConfig.FastBoot) {
-      if (gThemeChanged) {
-        Status = GetThemeSettings(TRUE);
-        if (EFI_ERROR(Status)) {
-          DBG("Theme settings in main cycle: %r\n", Status);
-        }
-        PrepareFont();
-        gThemeChanged = FALSE;
+      if (gThemeNeedInit) {
+        InitTheme(TRUE);
+        gThemeNeedInit = FALSE;
+      } else if (gThemeChanged) {
+        InitTheme(FALSE);
       }
+      gThemeChanged = FALSE;
 
       //now it is a time to set RtVariables
       SetVariablesFromNvram();

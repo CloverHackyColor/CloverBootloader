@@ -517,7 +517,7 @@ EFI_STATUS GetEarlyUserSettings(IN EFI_FILE *RootDir)
 
   return Status;
 }
-#define CONFIG_THEME_PATH L"theme.plist"
+#define CONFIG_THEME_FILENAME L"theme.plist"
 
 STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
 {
@@ -788,22 +788,30 @@ STATIC EFI_STATUS GetThemeTagSettings(TagPtr dictPointer)
   return EFI_SUCCESS;
 }
 
-EFI_STATUS GetThemeSettings(BOOLEAN check)
+EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam)
 {
   EFI_STATUS Status = EFI_NOT_FOUND;
   //get theme from NVRAM in the case of UEFI boot
   UINTN   Size = 0;
+  UINTN   Index;
   TagPtr  ThemeDict = NULL;
   CHAR8  *ThemePtr = NULL;
   CHAR8  *chosenTheme = NULL;
-  if (check) {
+
+  // Invalidated BuiltinIcons
+  DBG("Invalidating BuiltinIcons...\n");
+  for (Index = 0; Index < BUILTIN_ICON_COUNT; Index++) {
+    BuiltinIconTable[Index].Image = NULL;
+  }
+
+  if (useThemeDefinedInNVRam) {
     chosenTheme = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
     if (chosenTheme){
       ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%a", chosenTheme);
       if (ThemePath) {
         Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
         if (!EFI_ERROR(Status)) {
-          Status = egLoadFile(ThemeDir, CONFIG_THEME_PATH, (UINT8**)&ThemePtr, &Size);
+          Status = egLoadFile(ThemeDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
           if (EFI_ERROR(Status) || (ThemePtr == NULL) || (Size == 0)) {
             Status = EFI_NOT_FOUND;
           } else {
@@ -811,18 +819,19 @@ EFI_STATUS GetThemeSettings(BOOLEAN check)
             if (EFI_ERROR(Status) || (ThemeDict == NULL)) {
               Status = EFI_UNSUPPORTED;
             } else {
-              DBG("theme from NVRAM, theme.plist found and parsed\n");
+              DBG("theme %s defined in NVRAM found and %s parsed\n", chosenTheme, CONFIG_THEME_FILENAME);
             }
           }
         }
       }
     }
   }
+
   // Try to get theme from settings
   if (EFI_ERROR(Status)) {
     if (GlobalConfig.Theme) {
       if (chosenTheme) {
-        DBG("theme %a chosen from nvram is absent, using default\n", chosenTheme);
+        DBG("theme %a chosen from nvram is absent, using theme defined in config: %s\n", chosenTheme, GlobalConfig.Theme);
         chosenTheme = NULL;
       }
       if (ThemePath) {
@@ -831,26 +840,25 @@ EFI_STATUS GetThemeSettings(BOOLEAN check)
       ThemePath = PoolPrint(L"EFI\\CLOVER\\themes\\%s", GlobalConfig.Theme);
       if (ThemePath) {
         if (ThemeDir) {
-          DBG("Have no ThemeDir\n");
           ThemeDir->Close(ThemeDir);
           ThemeDir = NULL;
         }
         Status = SelfRootDir->Open(SelfRootDir, &ThemeDir, ThemePath, EFI_FILE_MODE_READ, 0);
         if (!EFI_ERROR(Status)) {
-           Status = egLoadFile(ThemeDir, CONFIG_THEME_PATH, (UINT8**)&ThemePtr, &Size);
-           if (EFI_ERROR(Status) || (ThemePtr == NULL) || (Size == 0)) {
-                 Status = EFI_NOT_FOUND;
-             DBG("GlobalConfig: theme.plist not found\n");
-           } else {
-              Status = ParseXML((const CHAR8*)ThemePtr, &ThemeDict);
-              if (EFI_ERROR(Status) || (ThemeDict == NULL)) {
-                 Status = EFI_UNSUPPORTED;
-                DBG("xml theme.plist not parsed\n");
-              } else {
-                gConfigDict = ThemeDict;
-              }
+          Status = egLoadFile(ThemeDir, CONFIG_THEME_FILENAME, (UINT8**)&ThemePtr, &Size);
+          if (EFI_ERROR(Status) || (ThemePtr == NULL) || (Size == 0)) {
+            Status = EFI_NOT_FOUND;
+            DBG("GlobalConfig: %s not found\n", CONFIG_THEME_FILENAME);
+          } else {
+            Status = ParseXML((const CHAR8*)ThemePtr, &ThemeDict);
+            if (EFI_ERROR(Status) || (ThemeDict == NULL)) {
+              Status = EFI_UNSUPPORTED;
+              DBG("xml file %s not parsed\n", CONFIG_THEME_FILENAME);
+            } else {
+              gConfigDict = ThemeDict;
+            }
 
-           }
+          }
         }
       }
       if (EFI_ERROR(Status)) {
@@ -863,6 +871,7 @@ EFI_STATUS GetThemeSettings(BOOLEAN check)
       DBG("no default theme, using embedded\n");
     }
   }
+
   // Read defaults from config
   if (gConfigDict && !chosenTheme) {
     TagPtr dictPointer = GetProperty(gConfigDict, "Theme");
@@ -873,6 +882,7 @@ EFI_STATUS GetThemeSettings(BOOLEAN check)
       }
     }
   }
+
   // Check for fall back to embedded theme
   if (EFI_ERROR(Status) || (ThemeDict == NULL)) {
     if (GlobalConfig.Theme) {
@@ -905,7 +915,7 @@ EFI_STATUS GetThemeSettings(BOOLEAN check)
         }
       }
     }
-    DBG("Theme: %s Path: %s\n", GlobalConfig.Theme, ThemePath);
+    DBG("Using theme '%s' (%s)\n", GlobalConfig.Theme, ThemePath);
     // read theme settings
     if (dictPointer) {
       Status = GetThemeTagSettings(dictPointer);
@@ -914,6 +924,9 @@ EFI_STATUS GetThemeSettings(BOOLEAN check)
   if (ThemeDict) {
     FreeTag(ThemeDict);
   }
+
+  PrepareFont();
+
   return Status;
 }
 

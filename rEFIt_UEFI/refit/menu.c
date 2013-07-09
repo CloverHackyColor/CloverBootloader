@@ -685,12 +685,8 @@ VOID ApplyInputs(VOID)
       FreePool(GlobalConfig.Theme);
     }
     GlobalConfig.Theme = PoolPrint(L"%s", InputItems[i].SValue);
-    if (EFI_ERROR(Status = GetThemeSettings(FALSE))) {
-      DBG("New theme settings: %r\n", Status);
- //will change theme after ESC   
-      gThemeChanged = TRUE;
-//      PrepareFont();
-    }    
+    //will change theme after ESC
+    gThemeChanged = TRUE;
   }
   i++; //4
   if (InputItems[i].Valid) {

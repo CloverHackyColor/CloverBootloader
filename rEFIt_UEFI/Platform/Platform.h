@@ -1119,7 +1119,7 @@ EFI_STATUS      GetOSVersion(IN REFIT_VOLUME *Volume);
 EFI_STATUS      GetRootUUID(IN REFIT_VOLUME *Volume);
 EFI_STATUS      GetEarlyUserSettings(IN EFI_FILE *RootDir);
 EFI_STATUS      GetUserSettings(IN EFI_FILE *RootDir);
-EFI_STATUS      GetThemeSettings(BOOLEAN check);
+EFI_STATUS      InitTheme(BOOLEAN useThemeDefinedInNVRam);
 EFI_STATUS      GetEdid(VOID);
 EFI_STATUS      SetFSInjection(IN LOADER_ENTRY *Entry);
 CHAR16*         GetExtraKextsDir(REFIT_VOLUME *Volume);
