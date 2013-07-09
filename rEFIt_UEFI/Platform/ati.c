@@ -1043,6 +1043,7 @@ void get_vram_size(void)
       }
     }
   }	
+  gSettings.VRAM = card->vram_size; 
   DBG("ATI: get_vram_size returned 0x%x\n", card->vram_size);
 }
 

@@ -3508,6 +3508,7 @@ BOOLEAN setup_nvidia_devprop(pci_dt_t *nvda_dev)
 		videoRam = gSettings.VRAM;
 	} else {
 		videoRam = mem_detect(nvCardType, nvda_dev);
+    gSettings.VRAM = videoRam;
 	}
 
 	model = get_nvidia_model(((nvda_dev->vendor_id << 16) | nvda_dev->device_id),((nvda_dev->subsys_id.subsys.vendor_id << 16) | nvda_dev->subsys_id.subsys.device_id));

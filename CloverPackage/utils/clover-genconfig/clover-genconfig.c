@@ -305,7 +305,7 @@ void PrintConfig(CFTypeRef data)
     addInteger(cpuDict, CFSTR("BusSpeedkHz"), s->BusSpeed);
     addInteger(cpuDict, CFSTR("QPI"), s->QPI);
     // these values read only
-    addHex(cpuDict, CFSTR("EnabledCores"), s->EnabledCores);
+    addInteger(cpuDict, CFSTR("EnabledCores"), s->EnabledCores);
 
     // PCI
     CFMutableDictionaryRef pciDict = addDict(dict, CFSTR("PCI"));
@@ -324,6 +324,9 @@ void PrintConfig(CFTypeRef data)
     // Graphics
     CFMutableDictionaryRef graphicsDict = addDict(dict, CFSTR("Graphics"));
     addBoolean(graphicsDict, CFSTR("GraphicsInjector"), s->GraphicsInjector);
+    addBoolean(graphicsDict, CFSTR("InjectATI"), s->InjectATI);
+    addBoolean(graphicsDict, CFSTR("InjectNVidia"), s->InjectNVidia);
+    addBoolean(graphicsDict, CFSTR("InjectIntel"), s->InjectIntel);
     addBoolean(graphicsDict, CFSTR("LoadVBios"), s->LoadVBios);
     addBoolean(graphicsDict, CFSTR("InjectEDID"), s->InjectEDID);
     addString(graphicsDict, CFSTR("CustomEDID"), "_NOT_SHOWN_");
@@ -331,7 +334,7 @@ void PrintConfig(CFTypeRef data)
     addInteger(graphicsDict, CFSTR("PatchVBios Manual Count"), s->PatchVBiosBytesCount);
     addInteger(graphicsDict, CFSTR("VideoPorts"), s->VideoPorts);
     addInteger(graphicsDict, CFSTR("VRAM"), s->VRAM);
-    addBoolean(graphicsDict, CFSTR("DualLink"), s->DualLink);
+    addInteger(graphicsDict, CFSTR("DualLink"), s->DualLink);
     // ATI specific"
     addUString(graphicsDict, CFSTR("FBName"), s->FBName);
     // NVIDIA specific
@@ -360,11 +363,11 @@ void PrintConfig(CFTypeRef data)
     addBoolean(acpiDict, CFSTR("EnableC4"), s->EnableC4);
     addBoolean(acpiDict, CFSTR("EnableC6"), s->EnableC6);
     addBoolean(acpiDict, CFSTR("EnableISS"), s->EnableISS);
-    addBoolean(acpiDict, CFSTR("PLimitDict"), s->PLimitDict);
-    addBoolean(acpiDict, CFSTR("UnderVoltStep"), s->UnderVoltStep);
-    addBoolean(acpiDict, CFSTR("MinMultiplier"), s->MinMultiplier);
-    addBoolean(acpiDict, CFSTR("MaxMultiplier"), s->MaxMultiplier);
-    addBoolean(acpiDict, CFSTR("PluginType"), s->PluginType);
+    addInteger(acpiDict, CFSTR("PLimitDict"), s->PLimitDict);
+    addInteger(acpiDict, CFSTR("UnderVoltStep"), s->UnderVoltStep);
+    addInteger(acpiDict, CFSTR("MinMultiplier"), s->MinMultiplier);
+    addInteger(acpiDict, CFSTR("MaxMultiplier"), s->MaxMultiplier);
+    addInteger(acpiDict, CFSTR("PluginType"), s->PluginType);
     addBoolean(acpiDict, CFSTR("smartUPS"), s->smartUPS);
     addHex(acpiDict, CFSTR("ResetAddress"), s->ResetAddr);
     addHex(acpiDict, CFSTR("ResetValue"), s->ResetVal);
