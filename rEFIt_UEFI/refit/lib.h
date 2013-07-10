@@ -436,7 +436,9 @@ extern UINTN            VolumesCount;
 extern EG_IMAGE         *Banner;
 extern EG_IMAGE         *BigBack;
 extern EG_IMAGE         *FontImage;
+extern EG_IMAGE         *SelectionImages[];
 extern BOOLEAN          gThemeChanged;
+extern POINTERS         gPointer;
 
 
 EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle);

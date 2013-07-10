@@ -2853,7 +2853,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
     DefaultIndex = FindDefaultEntry();
     //    DBG("FindDefaultEntry()\n");
-    //  DBG("DefaultIndex=%d and MainMenu.EntryCount=%d\n", DefaultIndex, MainMenu.EntryCount);
+      DBG("DefaultIndex=%d and MainMenu.EntryCount=%d\n", DefaultIndex, MainMenu.EntryCount);
     if ((DefaultIndex >= 0) && (DefaultIndex < (INTN)MainMenu.EntryCount)) {
       DefaultEntry = MainMenu.Entries[DefaultIndex];
     } else {
@@ -2879,10 +2879,10 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         MenuExit = MENU_EXIT_TIMEOUT;
       } else {
         //    DBG("Enter main loop\n");
-        //       DBG("RunMainMenu() start\n");
+           DBG("RunMainMenu() start\n");
         MainMenu.AnimeRun = MainAnime;
         MenuExit = RunMainMenu(&MainMenu, DefaultIndex, &ChosenEntry);
-        //       DBG("RunMainMenu() end\n");
+           DBG("RunMainMenu() end\n");
       }
       // disable default boot - have sense only in the first run
       GlobalConfig.Timeout = -1;

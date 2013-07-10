@@ -801,9 +801,22 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam)
   // Invalidated BuiltinIcons
   DBG("Invalidating BuiltinIcons...\n");
   for (Index = 0; Index < BUILTIN_ICON_COUNT; Index++) {
-    BuiltinIconTable[Index].Image = NULL;
+    if (BuiltinIconTable[Index].Image) {
+      egFreeImage(BuiltinIconTable[Index].Image);
+      BuiltinIconTable[Index].Image = NULL;
+    }    
   }
-
+  for (Index = 0; Index <= 3; Index++) {
+    if (SelectionImages[Index]) {
+      egFreeImage(SelectionImages[Index]);
+      SelectionImages[Index] = NULL;
+    }
+  } 
+  if (GuiAnime) {
+    FreeAnime(GuiAnime);
+  }
+  gPointer.SimplePointerProtocol = NULL;
+  
   if (useThemeDefinedInNVRam) {
     chosenTheme = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
     if (chosenTheme){
@@ -819,7 +832,7 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam)
             if (EFI_ERROR(Status) || (ThemeDict == NULL)) {
               Status = EFI_UNSUPPORTED;
             } else {
-              DBG("theme %s defined in NVRAM found and %s parsed\n", chosenTheme, CONFIG_THEME_FILENAME);
+              DBG("theme %a defined in NVRAM found and %s parsed\n", chosenTheme, CONFIG_THEME_FILENAME);
             }
           }
         }

@@ -122,7 +122,7 @@ INTN ScrollbarYMovement;
 #define TILE_YSPACING (24)
 #define ROW0_SCROLLSIZE (100)
 
-static EG_IMAGE *SelectionImages[4] = { NULL, NULL, NULL, NULL };
+EG_IMAGE *SelectionImages[4] = { NULL, NULL, NULL, NULL };
 static EG_IMAGE *TextBuffer = NULL;
 
 EG_PIXEL SelectionBackgroundPixel = { 0xef, 0xef, 0xef, 0xff }; //non-trasparent
@@ -1018,14 +1018,12 @@ static VOID InitSelection(VOID)
   
   if (!AllowGraphicsMode)
     return;
-  
   SelectionBackgroundPixel.r = (GlobalConfig.SelectionColor >> 24) & 0xFF;
   SelectionBackgroundPixel.g = (GlobalConfig.SelectionColor >> 16) & 0xFF;
   SelectionBackgroundPixel.b = (GlobalConfig.SelectionColor >> 8) & 0xFF;
   SelectionBackgroundPixel.a = (GlobalConfig.SelectionColor >> 0) & 0xFF;
   if (SelectionImages[0] != NULL)
     return;
-  
   // load small selection image
   if (GlobalConfig.SelectionSmallFileName != NULL){
     SelectionImages[2] = egLoadImage(ThemeDir, GlobalConfig.SelectionSmallFileName, FALSE);
@@ -1037,7 +1035,6 @@ static VOID InitSelection(VOID)
                                          ROW1_TILESIZE, ROW1_TILESIZE, &MenuBackgroundPixel);
   if (SelectionImages[2] == NULL)
     return;
-  
   // load big selection image
   if (GlobalConfig.SelectionBigFileName != NULL) {
     SelectionImages[0] = egLoadImage(ThemeDir, GlobalConfig.SelectionBigFileName, FALSE);
@@ -1052,7 +1049,6 @@ static VOID InitSelection(VOID)
       SelectionImages[2] = NULL;
       return;
     }
-    
     DestPtr = SelectionImages[0]->PixelData;
     SrcPtr  = SelectionImages[2]->PixelData;
     for (y = 0; y < ROW0_TILESIZE; y++) {
@@ -2250,7 +2246,7 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
     Entry->Place.Height = 48;
     return;
   }
-  //  DBG("Entry title=%s; Width=%d\n", Entry->Title, MainImage->Width);
+  DBG("Entry title=%s; Width=%d\n", Entry->Title, MainImage->Width);
   BltImageCompositeBadge(SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
                          MainImage, (Entry->Row == 0) ? Entry->BadgeImage:NULL, XPos, YPos);
   Entry->Place.XPos = XPos;
@@ -2375,13 +2371,13 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
  //         DBG("next item in row1 at x=%d\n", row1PosXRunning);
         }
       }
-      
+ //     DBG("InitSelection\n");
       // initial painting
       InitSelection();
 	  
 	  // structV1 = structV2 causes MS compiler to insert memcpy() RTL call -> replaced with CopyMem()
       //Screen->FilmPlace = BannerPlace;
-	  CopyMem(&Screen->FilmPlace, &BannerPlace, sizeof(Screen->FilmPlace)); 
+	  CopyMem(&Screen->FilmPlace, &BannerPlace, sizeof(BannerPlace)); 
       
  //     DBG("main menu inited\n");
       break;
@@ -2408,6 +2404,7 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
           DrawMainMenuLabel(Screen->Entries[State->CurrentSelection]->Title,
                             (UGAWidth >> 1), textPosY, Screen, State);
       }
+      DBG("DrawRevision\n");
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION)){
 #ifdef FIRMWARE_REVISION
         DrawTextXY(FIRMWARE_REVISION, (UGAWidth - 2), UGAHeight - 5 - TextHeight, X_IS_RIGHT);
@@ -3368,8 +3365,12 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   
   //remember, if you extended this menu then change procedures
   // FillInputs and ApplyInputs
-  if (OptionMenu.EntryCount == 0) {
+  if (gThemeChanged || (OptionMenu.EntryCount == 0)) {
     OptionMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
+  }
+  
+  if (OptionMenu.EntryCount == 0) {
+    
     OptionMenu.AnimeRun = FALSE;
     Flags = AllocateZeroPool(255);
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));

@@ -629,6 +629,7 @@ VOID FreeAnime(GUI_ANIME *Anime)
        Anime->Path = NULL;
      }
      FreePool(Anime);
+     Anime = NULL;
    }
 }
 
@@ -683,7 +684,7 @@ BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
   EG_IMAGE    *Last = NULL;
   GUI_ANIME   *Anime;
   
-  if (!Screen) return FALSE;
+  if (!Screen || !GuiAnime) return FALSE;
   
   for (Anime = GuiAnime; Anime != NULL; Anime = Anime->Next) {
     if (Anime->ID == Screen->ID) {
@@ -712,7 +713,10 @@ BOOLEAN GetAnime(REFIT_MENU_SCREEN *Screen)
     }
     Screen->Film[i] = p;    
   }
-  if (Screen->Film[0] == NULL)  return FALSE;
+  if (Screen->Film[0] == NULL) {
+    DBG("Film[0] == NULL\n");
+    return FALSE;
+  }
 
   Screen->Frames = i;
     //Create background frame

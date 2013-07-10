@@ -495,8 +495,8 @@ VOID GetDefaultSettings(VOID)
   //default values will be overritten by config.plist
   //use explicitly settings TRUE or FALSE (Yes or No)
   gSettings.InjectIntel = (gGraphics[0].Vendor == Intel) || (gGraphics[1].Vendor == Intel);
-  gSettings.InjectATI = (((gGraphics[0].Vendor == Ati) && ((gGraphics[0].DeviceID & 0xF000) == 0x6000)) ||
-                         ((gGraphics[1].Vendor == Ati) && ((gGraphics[1].DeviceID & 0xF000) == 0x6000)));
+  gSettings.InjectATI = (((gGraphics[0].Vendor == Ati) && ((gGraphics[0].DeviceID & 0xF000) != 0x6000)) ||
+                         ((gGraphics[1].Vendor == Ati) && ((gGraphics[1].DeviceID & 0xF000) != 0x6000)));
   gSettings.InjectNVidia = (((gGraphics[0].Vendor == Nvidia) && (gGraphics[0].DeviceID < 0x1080)) ||
                             ((gGraphics[1].Vendor == Nvidia) && (gGraphics[1].DeviceID < 0x1080)));
   

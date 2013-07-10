@@ -1168,6 +1168,7 @@ UINT8       Checksum8(VOID * startPtr, UINT32 len);
 BOOLEAN     tableSign(CHAR8 *table, CONST CHAR8 *sgn);
 VOID        SaveOemDsdt(BOOLEAN FullPatch);
 VOID		    SaveOemTables(VOID);
+EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE* GetFadt();
 
 EFI_STATUS  EventsInitialize(IN LOADER_ENTRY *Entry);
 EFI_STATUS  EjectVolume(IN REFIT_VOLUME *Volume);

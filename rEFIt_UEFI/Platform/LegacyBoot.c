@@ -604,6 +604,8 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
   UINT8                       *ptr;
  // UINT32                      MBRCRC32;
   //UINTN         LogSize;
+  EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE		  *FadtPointer = NULL;
+  EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE	*Facs = NULL;
 	
 	IA32_REGISTER_SET   Regs;
 	gBS->SetMem (&Regs, sizeof (Regs), 0);
@@ -688,11 +690,24 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
 	pMBR->StartLBA = LbaOffset;
 	pMBR->Size = LbaSize;
   
+  FadtPointer = GetFadt();
+  if (FadtPointer == NULL) {
+    return EFI_NOT_FOUND;
+  }
+  Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)(FadtPointer->FirmwareCtrl);
+  Facs->FirmwareWakingVector = 0x7F00;
+  
+  gRS->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
+  
+  
+/*  
 	Regs.X.DX = BiosDriveNum;
 	Regs.X.SI = 0x07BE;
 	//Regs.X.ES = EFI_SEGMENT((UINT32) pBootSector);
 	//Regs.X.BX = EFI_OFFSET ((UINT32) pBootSector);
 	LegacyBiosFarCall86(0, 0x7F00, &Regs); //0x7c00
+*/ 
+ 
   //if not success then save legacyboot.log
   Status = SaveBooterLog(SelfRootDir, LEGBOOT_LOG);
   if (EFI_ERROR(Status)) {
@@ -703,6 +718,17 @@ EFI_STATUS bootPBRtest(REFIT_VOLUME* volume)
 	return EFI_SUCCESS;	
 	
 }
+
+/*
+EFI_ACPI_2_0_FIXED_ACPI_DESCRIPTION_TABLE		*FadtPointer = GetFadt();
+if (FadtPointer == NULL) {
+  return;
+}
+Facs = (EFI_ACPI_4_0_FIRMWARE_ACPI_CONTROL_STRUCTURE*)(UINTN)(FadtPointer->FirmwareCtrl);
+Facs->FirmwareWakingVector = 0x7F00;
+
+gRS->ResetSystem(EfiResetWarm, EFI_SUCCESS, 0, NULL);
+ */
 
 #define EFI_CPU_EFLAGS_IF 0x200
 
