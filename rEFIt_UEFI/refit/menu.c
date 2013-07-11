@@ -2246,7 +2246,7 @@ static VOID DrawMainMenuEntry(REFIT_MENU_ENTRY *Entry, BOOLEAN selected, INTN XP
     Entry->Place.Height = 48;
     return;
   }
-  DBG("Entry title=%s; Width=%d\n", Entry->Title, MainImage->Width);
+//  DBG("Entry title=%s; Width=%d\n", Entry->Title, MainImage->Width);
   BltImageCompositeBadge(SelectionImages[((Entry->Row == 0) ? 0 : 2) + (selected ? 0 : 1)],
                          MainImage, (Entry->Row == 0) ? Entry->BadgeImage:NULL, XPos, YPos);
   Entry->Place.XPos = XPos;

@@ -773,6 +773,7 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   LOADER_ENTRY      *Entry, *SubEntry;
   REFIT_MENU_SCREEN *SubScreen;
   UINT64            VolumeSize;
+  EFI_GUID          *Guid = NULL;
   BOOLEAN           UsesSlideArg;
 
   // Ignore this loader if it's self path
@@ -802,12 +803,10 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   Entry->VolName         = Volume->VolName;
   Entry->DevicePath      = FileDevicePath(Volume->DeviceHandle, Entry->LoaderPath);
   Entry->Flags           = 0;
-  if (gSettings.WithKexts)
-  {
+  if (gSettings.WithKexts) {
      Entry->Flags = OSFLAG_ENABLE(Entry->Flags, OSFLAG_WITHKEXTS);
   }
-  if (gSettings.NoCaches)
-  {
+  if (gSettings.NoCaches) {
      Entry->Flags = OSFLAG_ENABLE(Entry->Flags, OSFLAG_NOCACHES);
   }
   Entry->LoadOptions     = PoolPrint(L"%a", gSettings.BootArgs);
@@ -909,7 +908,16 @@ static LOADER_ENTRY * AddLoaderEntry(IN CHAR16 *LoaderPath, IN CHAR16 *LoaderTit
   SubScreen->AnimeRun = GetAnime(SubScreen);
   VolumeSize = RShiftU64(MultU64x32(Volume->BlockIO->Media->LastBlock, Volume->BlockIO->Media->BlockSize), 20);
   AddMenuInfoLine(SubScreen, PoolPrint(L"Volume size: %dMb", VolumeSize));
-  
+  AddMenuInfoLine(SubScreen, DevicePathToStr(Entry->DevicePath));
+  Guid = FindGPTPartitionGuidInDevicePath(Volume->DevicePath);
+  if (Guid) {
+    CHAR8 *GuidStr = AllocateZeroPool(50);
+    AsciiSPrint(GuidStr, 50, "%g", Guid);
+    AddMenuInfoLine(SubScreen, PoolPrint(L"UUID: %a", GuidStr));
+    FreePool(GuidStr);
+  }
+
+ 
   // Aptio UEFI ML boot requires slide=0
   // if user have it in BootArgs, then propagate it to submenu entries
   UsesSlideArg = AsciiStrStr(gSettings.BootArgs, "slide=0") != 0;

@@ -108,7 +108,7 @@ EFI_STATUS MouseBirth()
   }
   
   if (gPointer.SimplePointerProtocol) { //do not double
-    DBG("DrawPointer\n");
+ //   DBG("DrawPointer\n");
     DrawPointer();
     return EFI_SUCCESS;
   }
