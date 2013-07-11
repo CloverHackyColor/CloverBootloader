@@ -815,7 +815,7 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam)
   if (GuiAnime) {
     FreeAnime(GuiAnime);
   }
-  gPointer.SimplePointerProtocol = NULL;
+  KillMouse();
   
   if (useThemeDefinedInNVRam) {
     chosenTheme = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);

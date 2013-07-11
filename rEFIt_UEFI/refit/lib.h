@@ -438,7 +438,7 @@ extern EG_IMAGE         *BigBack;
 extern EG_IMAGE         *FontImage;
 extern EG_IMAGE         *SelectionImages[];
 extern BOOLEAN          gThemeChanged;
-extern POINTERS         gPointer;
+//extern POINTERS         gPointer;
 extern REFIT_MENU_SCREEN OptionMenu;
 
 
