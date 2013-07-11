@@ -439,6 +439,7 @@ extern EG_IMAGE         *FontImage;
 extern EG_IMAGE         *SelectionImages[];
 extern BOOLEAN          gThemeChanged;
 extern POINTERS         gPointer;
+extern REFIT_MENU_SCREEN OptionMenu;
 
 
 EFI_STATUS InitRefitLib(IN EFI_HANDLE ImageHandle);

@@ -2781,6 +2781,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
     //    DBG("Enter main cycle\n");
 
     MainMenu.EntryCount = 0;
+    OptionMenu.EntryCount = 0;
     ScanVolumes();
     //   DBG("ScanVolumes()\n");
 
@@ -2797,6 +2798,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         gThemeNeedInit = FALSE;
       } else if (gThemeChanged) {
         InitTheme(FALSE);
+        FreeMenu(&OptionMenu);
       }
       gThemeChanged = FALSE;
 

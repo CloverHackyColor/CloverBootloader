@@ -2404,7 +2404,7 @@ static VOID MainMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *State, 
           DrawMainMenuLabel(Screen->Entries[State->CurrentSelection]->Title,
                             (UGAWidth >> 1), textPosY, Screen, State);
       }
-      DBG("DrawRevision\n");
+//      DBG("DrawRevision\n");
       if (!(GlobalConfig.HideUIFlags & HIDEUI_FLAG_REVISION)){
 #ifdef FIRMWARE_REVISION
         DrawTextXY(FIRMWARE_REVISION, (UGAWidth - 2), UGAHeight - 5 - TextHeight, X_IS_RIGHT);
@@ -3365,12 +3365,12 @@ VOID  OptionsMenu(OUT REFIT_MENU_ENTRY **ChosenEntry)
   
   //remember, if you extended this menu then change procedures
   // FillInputs and ApplyInputs
-  if (gThemeChanged || (OptionMenu.EntryCount == 0)) {
-    OptionMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
-  }
+ // if (gThemeChanged || (OptionMenu.EntryCount == 0)) {
+//    OptionMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
+//  }
   
   if (OptionMenu.EntryCount == 0) {
-    
+    OptionMenu.TitleImage = BuiltinIcon(BUILTIN_ICON_FUNC_OPTIONS);
     OptionMenu.AnimeRun = FALSE;
     Flags = AllocateZeroPool(255);
     InputBootArgs = AllocateZeroPool(sizeof(REFIT_INPUT_DIALOG));
