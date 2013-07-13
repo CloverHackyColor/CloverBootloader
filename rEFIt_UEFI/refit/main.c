@@ -2887,13 +2887,11 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       if (GlobalConfig.Timeout == 0 && DefaultEntry != NULL && !ReadAllKeyStrokes()) {
         // go strait to DefaultVolume loading
         MenuExit = MENU_EXIT_TIMEOUT;
-      } else {
-        //    DBG("Enter main loop\n");
-           DBG("RunMainMenu() start\n");
+      } else {;
         MainMenu.AnimeRun = MainAnime;
         MenuExit = RunMainMenu(&MainMenu, DefaultIndex, &ChosenEntry);
-           DBG("RunMainMenu() end\n");
       }
+
       // disable default boot - have sense only in the first run
       GlobalConfig.Timeout = -1;
 
@@ -2911,7 +2909,6 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
       if (MenuExit == MENU_EXIT_OPTIONS){
         OptionsMenu(&OptionEntry);
-        //ApplyInputs();
         continue;
       }
 
@@ -2920,7 +2917,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
         continue;
       }
 
-      //EjectVolume
+      // EjectVolume
       if (MenuExit == MENU_EXIT_EJECT){
         if ((ChosenEntry->Tag == TAG_LOADER) ||
             (ChosenEntry->Tag == TAG_LEGACY)) {
@@ -2957,7 +2954,8 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 
         case TAG_OPTIONS:    // Options like KernelFlags, DSDTname etc.
           OptionsMenu(&OptionEntry);
-          //ApplyInputs();
+          if (gThemeChanged) // If theme has changed reinit the desktop
+            MainLoopRunning = FALSE;
           break;
 
         case TAG_ABOUT:    // About rEFIt
