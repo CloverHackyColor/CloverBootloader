@@ -11,6 +11,10 @@
 #include <Library/MemLogLib.h>
 #include <Library/DebugLib.h>
 
+#include <Library/IoLib.h>
+#include <Library/PciLib.h>
+#include "GenericIch.h"
+
 //
 // Mem log sizes
 //
@@ -102,8 +106,11 @@ MemLogInit (
   )
 {
   EFI_STATUS      Status;
-  UINT64          T0;
-  UINT64          T1;
+  UINT32          TimerAddr = 0;
+  UINT64          Tsc0, Tsc1;
+  UINT64          AcpiTick0, AcpiTick1, AcpiTicksDelta;
+  UINT32          AcpiTicksTarget;
+  CHAR8           InitError[50];
   
   if (mMemLog != NULL) {
     return  EFI_SUCCESS;
@@ -135,12 +142,63 @@ MemLogInit (
   //
   // Calibrate TSC for timings
   //
-  T0 = AsmReadTsc();
-  gBS->Stall(100000); //100ms
-  T1 = AsmReadTsc();
-  mMemLog->TscFreqSec = MultU64x32((T1 - T0), 10);
-  mMemLog->TscStart = T0;
-  mMemLog->TscLast = T0;
+  InitError[0]='\0';
+
+  // We will try to calibrate TSC frequency according to the ACPI Power Management Timer.
+  // The ACPI PM Timer is running at a universal known frequency of 3579545Hz.
+  // So, we wait 357954 clocks of the ACPI timer (100ms), and compare with how much TSC advanced.
+  // This seems to provide a much more accurate calibration than using gBS->Stall(), especially on UEFI machines, and is important as this value is used later to calculate FSBFrequency.
+
+  // Check if we can use the timer - we need to be on Intel ICH, get ACPI PM Timer Address from PCI, and check that it's sane
+  if ((PciRead16 (PCI_ICH_LPC_ADDRESS (0))) != 0x8086) { // Intel ICH device was not found
+    AsciiSPrint(InitError, sizeof(InitError), "Intel ICH device was not found.");
+  } else if ((PciRead8 (PCI_ICH_LPC_ADDRESS (R_ICH_LPC_ACPI_CNT)) & B_ICH_LPC_ACPI_CNT_ACPI_EN) == 0) { // ACPI I/O space is not enabled
+    AsciiSPrint(InitError, sizeof(InitError), "ACPI I/O space is not enabled.");
+  } else if ((TimerAddr = ((PciRead16 (PCI_ICH_LPC_ADDRESS (R_ICH_LPC_ACPI_BASE))) & B_ICH_LPC_ACPI_BASE_BAR) + R_ACPI_PM1_TMR) == 0) { // Timer address can't be obtained
+    AsciiSPrint(InitError, sizeof(InitError), "Timer address can't be obtained.");
+  } else {
+    // Check that Timer is advancing
+    AcpiTick0 = IoRead32 (TimerAddr);
+    gBS->Stall(1000); // 1ms
+    AcpiTick1 = IoRead32(TimerAddr);
+    if (AcpiTick0 == AcpiTick1) { // Timer is not advancing
+      TimerAddr = 0; // Flag it as not working
+      AsciiSPrint(InitError, sizeof(InitError), "Timer is not advancing.");
+    }
+  }
+
+  // We prefer to use the ACPI PM Timer when possible. If it is not available we fallback to old method.
+  if (TimerAddr != 0) { // ACPI PM Timer seems to be working
+
+    // ACPI PM timers are usually of 24-bit length, but there are some less common cases of 32-bit length also. When the maximal number is reached, it overflows.
+    // The code below can handle overflow with AcpiTicksTarget of up to 24-bit size, on both available sizes of ACPI PM Timers (24-bit and 32-bit).
+
+    AcpiTicksTarget = V_ACPI_TMR_FREQUENCY/10; // 357954 clocks of ACPI timer (100ms)
+
+    AcpiTick0 = IoRead32 (TimerAddr); // read ACPI tick
+    Tsc0 = AsmReadTsc(); // read TSC
+    do {
+      CpuPause();
+      // check how many AcpiTicks passed since we started
+      AcpiTick1 = IoRead32 (TimerAddr);
+      if (AcpiTick0 <= AcpiTick1) { // no overflow
+        AcpiTicksDelta = AcpiTick1 - AcpiTick0;
+      } else if (AcpiTick0 - AcpiTick1 <= 0x00FFFFFF) { // overflow, 24-bit timer
+        AcpiTicksDelta = (0x00FFFFFF - AcpiTick0) + AcpiTick1;
+      } else { // overflow, 32-bit timer
+        AcpiTicksDelta = (0xFFFFFFFF - AcpiTick0) + AcpiTick1;
+      }
+    } while (AcpiTicksDelta < AcpiTicksTarget); // keep checking Acpi ticks until target is reached
+    Tsc1 = AsmReadTsc(); // we're done, get another TSC
+  } else { 
+    // ACPI PM Timer is not working, fallback to old method
+    Tsc0 = AsmReadTsc();
+    gBS->Stall(100000); // 100ms
+    Tsc1 = AsmReadTsc();
+  }
+  mMemLog->TscFreqSec = MultU64x32((Tsc1 - Tsc0), 10);
+  mMemLog->TscStart = Tsc0;
+  mMemLog->TscLast = Tsc0;
 
   //
   // Install (publish) MEM_LOG
@@ -152,6 +210,9 @@ MemLogInit (
                                                    NULL
                                                    );
   MemLog(TRUE, 1, "MemLog inited, TSC freq: %ld\n", mMemLog->TscFreqSec);
+  if (InitError[0] != '\0') {
+    MemLog(TRUE, 1, "MemLog was calibrated without ACPI PM Timer: %a\n", InitError);
+  }
   return Status;
 }
 

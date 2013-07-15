@@ -29,4 +29,5 @@
   MemoryAllocationLib
   UefiBootServicesTableLib
   DebugLib
-
+  PciLib
+  IoLib
