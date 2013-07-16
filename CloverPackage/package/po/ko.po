@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Clover 2.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-06-17 17:14+0300\n"
-"PO-Revision-Date: 2013-07-05 15:42+0000\n"
+"PO-Revision-Date: 2013-07-16 06:08+0000\n"
 "Last-Translator: Mill <ceruns@ymail.com>\n"
 "Language-Team: ko <ko@li.org>\n"
 "Language: ko\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Pootle 2.5.0-rc1\n"
-"X-POOTLE-MTIME: 1373038967.0\n"
+"X-POOTLE-MTIME: 1373954920.0\n"
 
 # //Don't need change
 #. type: Content of: <html><body><div><p>
@@ -1076,10 +1076,10 @@ msgstr "시동시 선택된 ESP 강제 마운트:"
 
 #. type: "339.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:21
-#, fuzzy, no-wrap
+#, no-wrap
 #| msgid "Save NVRAM contents to partition:"
 msgid "Save NVRAM contents to disk:"
-msgstr "파티션에 NVRAM 내용 저장:"
+msgstr "디스크에 NVRAM 내용 저장:"
 
 #. type: "374.label"
 #: ../CloverPrefpane/CloverPrefpane.strings:22
@@ -1163,7 +1163,7 @@ msgstr "백업"
 #: ../CloverPrefpane/CloverPrefpane.strings:35
 #, fuzzy, no-wrap
 msgid "On install backup EFI folder to destination volume"
-msgstr "설치시 해당 볼륨에 백업 EFI 폴더 설치"
+msgstr "설치시 해당 볼륨에 EFI 폴더 백업"
 
 #. type: "560.title"
 #: ../CloverPrefpane/CloverPrefpane.strings:36
