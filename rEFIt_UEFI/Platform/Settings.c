@@ -812,10 +812,14 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam)
       SelectionImages[Index] = NULL;
     }
   } 
-  if (GuiAnime) {
-    FreeAnime(GuiAnime);
-  }
+
   KillMouse();
+
+  while (GuiAnime) {
+    GUI_ANIME *NextAnime=GuiAnime->Next;
+    FreeAnime(GuiAnime);
+    GuiAnime=NextAnime;
+  }
   
   if (useThemeDefinedInNVRam) {
     chosenTheme = GetNvramVariable(L"Clover.Theme", &gEfiAppleBootGuid, NULL, &Size);
@@ -913,6 +917,9 @@ EFI_STATUS InitTheme(BOOLEAN useThemeDefinedInNVRam)
     //fill some fields
     GlobalConfig.SelectionColor = 0xA0A0A080;
     GlobalConfig.Font = FONT_ALFA; //to be inverted later
+    FontImage = NULL;
+    BigBack = NULL;
+    Banner  = NULL;
   } else {
     TagPtr dictPointer = GetProperty(ThemeDict, "Theme");
     if (chosenTheme) {

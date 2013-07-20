@@ -148,9 +148,11 @@ VOID PrepareFont(VOID)
   if (FontImage == NULL){
     switch (GlobalConfig.Font) {
       case FONT_ALFA:
+        ChangeFont = TRUE;
         FontImage = egPrepareEmbeddedImage(&egemb_font, TRUE);        
         break;
       case FONT_GRAY:
+        ChangeFont = TRUE;
         FontImage = egPrepareEmbeddedImage(&egemb_font_gray, TRUE);
         break;
       case FONT_LOAD:
@@ -158,6 +160,7 @@ VOID PrepareFont(VOID)
         FontImage = egLoadFontImage(TRUE);
         if (!FontImage) {
           ChangeFont = TRUE;
+          GlobalConfig.Font = FONT_ALFA;
           FontImage = egPrepareEmbeddedImage(&egemb_font, TRUE);
           //invert the font
           p = FontImage->PixelData;
@@ -177,8 +180,10 @@ VOID PrepareFont(VOID)
     }    
   }
   if (ChangeFont) {
-    GlobalConfig.Font = FONT_ALFA;
+    // set default values
     GlobalConfig.CharWidth = 7;
+    FontWidth = GlobalConfig.CharWidth;
+    FontHeight = 12;
   }
   TextHeight = FontHeight + TEXT_YMARGIN * 2;
   DBG("Font %d prepared WxH=%dx%d CharWidth=%d\n", GlobalConfig.Font, FontWidth, FontHeight, GlobalConfig.CharWidth);
