@@ -164,7 +164,7 @@ VOID RefillInputs(VOID)
 //  InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[+]":L"[ ]";
   //GlobalConfig.Theme
   InputItems[InputItemsCount].ItemType = UNIString; //3
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 23, L"%s",
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 53, L"%s",
                 (GlobalConfig.Theme == NULL)?L"embedded":GlobalConfig.Theme);
 
   InputItems[InputItemsCount].ItemType = BoolValue; //4 
@@ -414,8 +414,8 @@ VOID FillInputs(VOID)
 //  InputItems[InputItemsCount].BValue = gSettings.StringInjector;
 //  InputItems[InputItemsCount++].SValue = gSettings.StringInjector?L"[+]":L"[ ]";
   InputItems[InputItemsCount].ItemType = UNIString; //3
-  InputItems[InputItemsCount].SValue = AllocateZeroPool(23);
-  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 23, L"%s",
+  InputItems[InputItemsCount].SValue = AllocateZeroPool(53);
+  UnicodeSPrint(InputItems[InputItemsCount++].SValue, 53, L"%s",
                 (GlobalConfig.Theme == NULL)?L"embedded":GlobalConfig.Theme);
 
   InputItems[InputItemsCount].ItemType = BoolValue; //4
