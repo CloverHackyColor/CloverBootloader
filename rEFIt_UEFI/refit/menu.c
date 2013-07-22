@@ -2000,9 +2000,9 @@ static VOID GraphicsMenuStyle(IN REFIT_MENU_SCREEN *Screen, IN SCROLL_STATE *Sta
       // initial painting
       egMeasureText(Screen->Title, &ItemWidth, NULL);
       DrawMenuText(Screen->Title, 0, ((UGAWidth - ItemWidth) >> 1) - TEXT_XMARGIN, EntriesPosY - TextHeight * 2, 0xFFFF);
-      Screen->FilmPlace.XPos = (INTN)(EntriesPosX - (Screen->TitleImage->Width + TITLEICON_SPACING));
-      Screen->FilmPlace.YPos = (INTN)EntriesPosY;
       if (Screen->TitleImage) {
+        Screen->FilmPlace.XPos = (INTN)(EntriesPosX - (Screen->TitleImage->Width + TITLEICON_SPACING));
+        Screen->FilmPlace.YPos = (INTN)EntriesPosY;
         Screen->FilmPlace.Width = Screen->TitleImage->Width;
         Screen->FilmPlace.Height = Screen->TitleImage->Height;
         BltImageAlpha(Screen->TitleImage, Screen->FilmPlace.XPos, Screen->FilmPlace.YPos, &MenuBackgroundPixel, 16);
