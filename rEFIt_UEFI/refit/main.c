@@ -2550,10 +2550,10 @@ VOID SetVariablesFromNvram()
   tmpString = GetNvramVariable(L"boot-args", &gEfiAppleBootGuid, NULL, &Size);
   if (tmpString && (Size <= 0x1000) && (Size > 0)) {
     DBG("found boot-args in NVRAM:%a, size=%d\n", tmpString, Size);
-    arg = AllocatePool(Size);
+    arg = AllocatePool(AsciiStrSize(tmpString));
     //first we will find new args that is not present in main args
     index = 0;
-    while (index < Size) {
+    while ((index < Size) && (tmpString[index] != 0x0)) { // some EFI implementations include '\0' in Size, and others don't
       ZeroMem(arg, Size);
       index2 = 0;
       if (tmpString[index] != '\"') {
