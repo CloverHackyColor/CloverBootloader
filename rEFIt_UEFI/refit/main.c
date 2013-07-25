@@ -2550,22 +2550,23 @@ VOID SetVariablesFromNvram()
   tmpString = GetNvramVariable(L"boot-args", &gEfiAppleBootGuid, NULL, &Size);
   if (tmpString && (Size <= 0x1000) && (Size > 0)) {
     DBG("found boot-args in NVRAM:%a, size=%d\n", tmpString, Size);
-    arg = AllocatePool(AsciiStrSize(tmpString));
+    Size = AsciiStrLen(tmpString); // some EFI implementations include '\0' in Size, and others don't, so update Size to string length
+    arg = AllocatePool(Size+1);
     //first we will find new args that is not present in main args
     index = 0;
-    while ((index < Size) && (tmpString[index] != 0x0)) { // some EFI implementations include '\0' in Size, and others don't
-      ZeroMem(arg, Size);
+    while ((index < Size) && (tmpString[index] != 0x0)) {
+      ZeroMem(arg, Size+1);
       index2 = 0;
       if (tmpString[index] != '\"') {
  //       DBG("search space index=%d\n", index);
-        while ((tmpString[index] != 0x20) && (tmpString[index] != 0x0) && (index < Size)) {
+        while ((index < Size) && (tmpString[index] != 0x20) && (tmpString[index] != 0x0)) {
           arg[index2++] = tmpString[index++];
         }
         DBG("...found arg:%a\n", arg);
       } else {
         index++;
 //        DBG("search quote index=%d\n", index);
-        while ((tmpString[index] != '\"') && (tmpString[index] != 0x0) && (index < Size)) {
+        while ((index < Size) && (tmpString[index] != '\"') && (tmpString[index] != 0x0)) {
           arg[index2++] = tmpString[index++];
         }     
         if (tmpString[index] == '\"') {
