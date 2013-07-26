@@ -151,7 +151,7 @@ BOOLEAN IsValidGuidAsciiString(IN CHAR8 *Str)
  @retval EFI_SUCCESS    The string was successfully converted to the buffer.
  
  **/
-EFI_STATUS
+static EFI_STATUS
 StrToBuf (
           OUT UINT8    *Buf,
           IN  UINTN    BufferLength,
@@ -270,6 +270,7 @@ StrToGuidLE (
   return EFI_SUCCESS;
 }
 
+/*
 EFI_STATUS
 StrToGuid (
 		   IN  CHAR16   *Str,
@@ -336,7 +337,7 @@ StrToGuid (
 	
 	return EFI_SUCCESS;
 }
-
+*/
 
 
 #if TEST
