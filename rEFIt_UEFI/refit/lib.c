@@ -86,6 +86,25 @@ BOOLEAN MetaiMatch (
 			IN CHAR16   *Pattern
 			);
 
+/**
+ This function converts an input device structure to a Unicode string.
+
+ @param DevPath                  A pointer to the device path structure.
+
+ @return A new allocated Unicode string that represents the device path.
+
+ **/
+CHAR16 *
+EFIAPI
+DevicePathToStr (
+                 IN EFI_DEVICE_PATH_PROTOCOL     *DevPath
+                 )
+{
+  return ConvertDevicePathToText (DevPath, TRUE, TRUE);
+}
+
+
+
 EFI_STATUS GetRootFromPath(IN EFI_DEVICE_PATH_PROTOCOL* DevicePath, OUT EFI_FILE **Root)
 {
   EFI_STATUS  Status;
