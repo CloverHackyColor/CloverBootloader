@@ -144,7 +144,7 @@
 	<key>SystemParameters</key>
 	<dict>
 		<key>boot-args</key>
-		<string>-v npci=0x2000 arch=i386</string>
+		<string>-v npci=0x2000</string>
 		<key>prev-lang:kbd</key>
 		<string>en:0</string>
 		<key>InjectSystemID</key>
