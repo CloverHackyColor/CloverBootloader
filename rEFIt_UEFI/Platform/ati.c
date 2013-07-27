@@ -555,7 +555,6 @@ AtiDevProp ati_devprop_list[] = {
   //	{FLAGTRUE,	FALSE,	"@0,ATY,EFIDisplay",		NULL,					STRVAL("TMDSA")			},
 	
   //{FLAGTRUE,	TRUE,	"@0,AAPL,vram-memory",		get_vrammemory_val,		NULVAL				},
-  //later I wish to find the better application for the key. For now disabled
   {FLAGTRUE,	TRUE,	"AAPL00,override-no-connect",		get_edid_val,       NULVAL        },
   {FLAGTRUE,	TRUE,	"@0,compatible",              get_name_val,       NULVAL				},
 //  {FLAGTRUE,	TRUE,	"@0,connector-type",          get_conntype_val,		NULVAL        },
@@ -572,8 +571,8 @@ AtiDevProp ati_devprop_list[] = {
   
 //  {FLAGTRUE,	TRUE,	"@0,display-type",          NULL,					STRVAL("NONE")			},
 	{FLAGTRUE,	TRUE,	"@0,name",                    get_name_val,			NULVAL          },
-//  {FLAGTRUE,	TRUE,	"@0,VRAM,memsize",			get_vrammemsize_val,	NULVAL          },
-  {FLAGTRUE,	TRUE,	"@0,ATY,memsize",			get_vrammemsize_val,	NULVAL          },
+  {FLAGTRUE,	TRUE,	"@0,VRAM,memsize",			get_vrammemsize_val,	NULVAL          },
+//  {FLAGTRUE,	TRUE,	"@0,ATY,memsize",		  	get_vrammemsize_val,	NULVAL          },
 	
   {FLAGTRUE,	FALSE,	"AAPL,aux-power-connected", NULL,					DWRVAL(1)		},
   {FLAGTRUE,	FALSE,	"AAPL00,DualLink",          get_dual_link_val,			NULVAL 	},
@@ -585,6 +584,7 @@ AtiDevProp ati_devprop_list[] = {
 	{FLAGTRUE,	FALSE,	"ATY,Copyright",	NULL,	STRVAL("Copyright AMD Inc. All Rights Reserved. 2005-2011") },
   {FLAGTRUE,	FALSE,	"ATY,EFIVersion",	NULL,	STRVAL("01.00.3180")                  },
 	{FLAGTRUE,	FALSE,	"ATY,Card#",			get_romrevision_val,	NULVAL                },
+//  {FLAGTRUE,	FALSE,	"ATY,Rom#",	NULL,	STRVAL("www.amd.com")                  },
 	{FLAGTRUE,	FALSE,	"ATY,VendorID",		NULL,					WRDVAL(0x1002)        },
 	{FLAGTRUE,	FALSE,	"ATY,DeviceID",		get_deviceid_val,		NULVAL                  },
 	
@@ -597,7 +597,7 @@ AtiDevProp ati_devprop_list[] = {
 	{FLAGTRUE,	FALSE,	"name",						get_nameparent_val,     NULVAL							},
 	{FLAGTRUE,	FALSE,	"device_type",		get_nameparent_val,     NULVAL							},
 	{FLAGTRUE,	FALSE,	"model",					get_model_val,          STRVAL("ATI Radeon")},
-  {FLAGTRUE,	FALSE,	"VRAM,totalsize",	get_vramtotalsize_val,	NULVAL              },
+//  {FLAGTRUE,	FALSE,	"VRAM,totalsize",	get_vramtotalsize_val,	NULVAL              },
 	
 	{FLAGTRUE,	FALSE,	NULL,	NULL,	NULVAL}
 };

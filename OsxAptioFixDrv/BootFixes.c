@@ -362,6 +362,10 @@ AssignVirtualAddressesToMemMap(VOID *pBootArgs)
 	GetCurrentPageTable(&PageTable, &Flags);
 	
 	for (Index = 0; Index < NumEntries; Index++) {
+    if ((Desc->PhysicalStart >= 0x9e000) && (Desc->PhysicalStart < 0xa0000)) {
+      Desc->Type = EfiACPIMemoryNVS;
+      Desc->Attribute = 0;
+    }
 		
 		// assign virtual addresses to all EFI_MEMORY_RUNTIME marked pages (including MMIO)
 		if ((Desc->Attribute & EFI_MEMORY_RUNTIME) != 0) {

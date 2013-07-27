@@ -2636,10 +2636,25 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
 	gBS				= SystemTable->BootServices;
 	gRS				= SystemTable->RuntimeServices;
 	Status = EfiGetSystemConfigurationTable (&gEfiDxeServicesTableGuid, (VOID **) &gDS);
-	
+
   // firmware detection
   gFirmwareClover = StrCmp(gST->FirmwareVendor, L"CLOVER") == 0;
-  
+/* no effect
+  if (!gFirmwareClover) {
+    Status = gDS->FreeMemorySpace (
+                                //  EfiGcdMemoryTypeReserved,
+                                  0x9e000,
+                                  LShiftU64 (2, EFI_PAGE_SHIFT)
+                              //    EFI_MEMORY_UC
+                                  );
+    DBG("Free memory space status=%r/n", Status);
+    Status = gDS->RemoveMemorySpace (
+                                   0x9e000,
+                                   LShiftU64 (2, EFI_PAGE_SHIFT)
+                                   );
+    DBG("Remove memory space status=%r/n", Status);
+  }
+*/  
   InitializeConsoleSim();
 //  if (!GlobalConfig.FastBoot) {
     InitBooterLog();

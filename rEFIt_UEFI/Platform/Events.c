@@ -130,7 +130,16 @@ VOID CorrectMemoryMap(IN UINT32 memMap,
     }
     //
   }
-  
+    //step 6. Reserve for 9E
+  memDescriptor = (EfiMemoryRange *)((UINTN)memDescriptor + memDescriptorSize);
+  memDescriptor->Type = EfiReservedMemoryType;
+  memDescriptor->PhysicalStart = 0x9e000;
+  memDescriptor->VirtualStart = 0x9e000;
+  memDescriptor->NumberOfPages = 2;
+  memDescriptor->Attribute = 0;
+  *memMapSize += memDescriptorSize;
+
+
 	if(MEM_DEB) {
     gST->ConOut->OutputString (gST->ConOut, L"press any key to dump MemoryMap\r\n");
 //    gBS->Stall(2000000);
