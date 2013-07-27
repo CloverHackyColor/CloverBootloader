@@ -80,6 +80,8 @@
 	</dict>
 	<key>GUI</key>
 	<dict>
+		<key>TextOnly</key>
+		<false/>
 		<key>Theme</key>
 		<string>metal</string>
 		<key>Timeout</key>
@@ -142,7 +144,7 @@
 	<key>SystemParameters</key>
 	<dict>
 		<key>boot-args</key>
-		<string>-v npci=0x2000 slide=0 WithKexts</string>
+		<string>-v npci=0x2000 arch=i386</string>
 		<key>prev-lang:kbd</key>
 		<string>en:0</string>
 		<key>InjectSystemID</key>

@@ -124,6 +124,8 @@ BOOLEAN IsValidGuidAsciiString(IN CHAR8 *Str)
   return TRUE;
 }
 
+#if 1
+// it is in edk2/MdePkg/Library/UefiDevicePathLib/DevicePathFromText.c
 /**
  Copyed from DevicePathFromText.c 
  Copyright (c) 2006 - 2011, Intel Corporation. All rights reserved.<BR>
@@ -152,7 +154,7 @@ BOOLEAN IsValidGuidAsciiString(IN CHAR8 *Str)
  
  **/
 static EFI_STATUS
-StrToBuf (
+StrHToBuf (
           OUT UINT8    *Buf,
           IN  UINTN    BufferLength,
           IN  CHAR16   *Str
@@ -199,7 +201,7 @@ StrToBuf (
   
   return EFI_SUCCESS;
 }
-
+#endif
 /**
  Converts a string to GUID value.
  Guid Format is xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
@@ -220,7 +222,7 @@ StrToGuidLE (
            )
 {
   UINT8 GuidLE[16];
-  StrToBuf (&GuidLE[0], 4, Str);
+  StrHToBuf (&GuidLE[0], 4, Str);
 	while (!IS_HYPHEN (*Str) && !IS_NULL (*Str)) {
 		Str ++;
 	}
@@ -231,7 +233,7 @@ StrToGuidLE (
 		return EFI_UNSUPPORTED;
 	}
 	
-  StrToBuf (&GuidLE[4], 2, Str);
+  StrHToBuf (&GuidLE[4], 2, Str);
 	while (!IS_HYPHEN (*Str) && !IS_NULL (*Str)) {
 		Str ++;
 	}
@@ -242,7 +244,7 @@ StrToGuidLE (
 		return EFI_UNSUPPORTED;
 	}
 	
-  StrToBuf (&GuidLE[6], 2, Str);
+  StrHToBuf (&GuidLE[6], 2, Str);
 	while (!IS_HYPHEN (*Str) && !IS_NULL (*Str)) {
 		Str ++;
 	}
@@ -253,7 +255,7 @@ StrToGuidLE (
 		return EFI_UNSUPPORTED;
 	}
 
-  StrToBuf (&GuidLE[8], 2, Str);
+  StrHToBuf (&GuidLE[8], 2, Str);
 	while (!IS_HYPHEN (*Str) && !IS_NULL (*Str)) {
 		Str ++;
 	}
@@ -264,13 +266,13 @@ StrToGuidLE (
 		return EFI_UNSUPPORTED;
 	}
   
-  StrToBuf (&GuidLE[10], 6, Str);
+  StrHToBuf (&GuidLE[10], 6, Str);
 
   CopyMem((UINT8*)Guid, &GuidLE[0], 16);
   return EFI_SUCCESS;
 }
 
-/*
+#if 0
 EFI_STATUS
 StrToGuid (
 		   IN  CHAR16   *Str,
@@ -322,7 +324,7 @@ StrToGuid (
 	//
 	// Get the following 8 bytes data
 	//  
-	StrToBuf (&Guid->Data4[0], 2, Str);
+	StrHToBuf (&Guid->Data4[0], 2, Str);
 	//
 	// Skip 2 byte hex chars
 	//
@@ -333,11 +335,11 @@ StrToGuid (
 	} else {
 		return EFI_UNSUPPORTED;
 	}
-	StrToBuf (&Guid->Data4[2], 6, Str);
+	StrHToBuf (&Guid->Data4[2], 6, Str);
 	
 	return EFI_SUCCESS;
 }
-*/
+#endif
 
 
 #if TEST

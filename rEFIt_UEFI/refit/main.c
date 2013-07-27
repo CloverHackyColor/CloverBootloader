@@ -2888,7 +2888,7 @@ RefitMain (IN EFI_HANDLE           ImageHandle,
       if (GlobalConfig.Timeout == 0 && DefaultEntry != NULL && !ReadAllKeyStrokes()) {
         // go strait to DefaultVolume loading
         MenuExit = MENU_EXIT_TIMEOUT;
-      } else {;
+      } else {
         MainMenu.AnimeRun = MainAnime;
         MenuExit = RunMainMenu(&MainMenu, DefaultIndex, &ChosenEntry);
       }

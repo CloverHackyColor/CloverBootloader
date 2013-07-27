@@ -680,7 +680,10 @@ ConvertBmpToGopBlt (
         ColorMapNum = 0;
         break;
       }
-    if (BmpHeader->ImageOffset - sizeof (BMP_IMAGE_HEADER) != sizeof (BMP_COLOR_MAP) * ColorMapNum) {
+    //
+    // BMP file may has padding data between the bmp header section and the bmp data section.
+    //
+    if (BmpHeader->ImageOffset - sizeof (BMP_IMAGE_HEADER) < sizeof (BMP_COLOR_MAP) * ColorMapNum) {
       return EFI_INVALID_PARAMETER;
     }
   }

@@ -33,7 +33,7 @@
 [Sources]
 #  EfiLib/GenericBdsLib.h
 #  EfiLib/BmLib.c
-  Platform/DevicePath.c #included into GenericBdsLib
+#  Platform/DevicePath.c #included into GenericBdsLib
   Platform/BdsConnect.c #included into GenericBdsLib
   refit/main.c
 #  refit/config.c
@@ -106,7 +106,7 @@
 	Platform/kext_patcher.c
 	Platform/kext_inject.c
 	Platform/Nvram.c
-        Platform/card_vlist.c
+    Platform/card_vlist.c
     Platform/PlatformDriverOverride.c
 
 [Packages]

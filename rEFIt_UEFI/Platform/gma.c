@@ -23,34 +23,35 @@
 extern CHAR8*						gDeviceProperties;
 
 //Slice - corrected all values, still not sure
-UINT8 GMAX3100_vals[27][4] = {
-	{ 0x01,0x00,0x00,0x00 },	//0 "AAPL,HasPanel"
-	{ 0x01,0x00,0x00,0x00 },	//1 "AAPL,SelfRefreshSupported"
-	{ 0x01,0x00,0x00,0x00 },	//2 "AAPL,aux-power-connected"
-	{ 0x01,0x00,0x00,0x08 },	//3 "AAPL,backlight-control"
-	{ 0x00,0x00,0x00,0x00 },	//4 "AAPL00,blackscreen-preferences"
-	{ 0x56,0x00,0x00,0x08 },	//5 "AAPL01,BacklightIntensity"
-	{ 0x00,0x00,0x00,0x00 },	//6 "AAPL01,blackscreen-preferences"
-	{ 0x01,0x00,0x00,0x00 },	//7 "AAPL01,DataJustify"
-	{ 0x20,0x00,0x00,0x00 },	//8 "AAPL01,Depth"
-	{ 0x01,0x00,0x00,0x00 },	//9 "AAPL01,Dither"
-	{ 0x20,0x03,0x00,0x00 },	//10 "AAPL01,Height"
-	{ 0x00,0x00,0x00,0x00 },	//11 "AAPL01,Interlace"
-	{ 0x00,0x00,0x00,0x00 },	//12 "AAPL01,Inverter"
-	{ 0x08,0x52,0x00,0x00 },	//13 "AAPL01,InverterCurrent"
-	{ 0x00,0x00,0x00,0x00 },	//14 "AAPL01,LinkFormat"
-	{ 0x00,0x00,0x00,0x00 },	//15 "AAPL01,LinkType"
-	{ 0x01,0x00,0x00,0x00 },	//16 "AAPL01,Pipe"
-	{ 0x01,0x00,0x00,0x00 },	//17 "AAPL01,PixelFormat"
-	{ 0x01,0x00,0x00,0x00 },	//18 "AAPL01,Refresh"
-	{ 0x3B,0x00,0x00,0x00 },	//19 "AAPL01,Stretch"
-	{ 0xc8,0x95,0x00,0x00 },	//20 "AAPL01,InverterFrequency"
-	{ 0x6B,0x10,0x00,0x00 },	//21 "subsystem-vendor-id"
-	{ 0xA2,0x00,0x00,0x00 },	//22 "subsystem-id"
-  { 0x05,0x00,0x62,0x01 },    //23 "AAPL,ig-platform-id" HD4000 //STLVNUB
-  { 0x06,0x00,0x62,0x01 },    //24 "AAPL,ig-platform-id" HD4000 iMac
-  { 0x09,0x00,0x66,0x01 },    //25 "AAPL,ig-platform-id" HD4000
-  { 0x00,0x00,0x62,0x01 }   //26 - automatic solution
+UINT8 GMAX3100_vals[28][4] = {
+	{ 0x01, 0x00, 0x00, 0x00 },	//0 "AAPL,HasPanel"
+	{ 0x01, 0x00, 0x00, 0x00 },	//1 "AAPL,SelfRefreshSupported"
+	{ 0x01, 0x00, 0x00, 0x00 },	//2 "AAPL,aux-power-connected"
+	{ 0x01, 0x00, 0x00, 0x08 },	//3 "AAPL,backlight-control"
+	{ 0x00, 0x00, 0x00, 0x00 },	//4 "AAPL00,blackscreen-preferences"
+	{ 0x56, 0x00, 0x00, 0x08 },	//5 "AAPL01,BacklightIntensity"
+	{ 0x00, 0x00, 0x00, 0x00 },	//6 "AAPL01,blackscreen-preferences"
+	{ 0x01, 0x00, 0x00, 0x00 },	//7 "AAPL01,DataJustify"
+	{ 0x20, 0x00, 0x00, 0x00 },	//8 "AAPL01,Depth"
+	{ 0x01, 0x00, 0x00, 0x00 },	//9 "AAPL01,Dither"
+	{ 0x20, 0x03, 0x00, 0x00 },	//10 "AAPL01,Height"
+	{ 0x00, 0x00, 0x00, 0x00 },	//11 "AAPL01,Interlace"
+	{ 0x00, 0x00, 0x00, 0x00 },	//12 "AAPL01,Inverter"
+	{ 0x08, 0x52, 0x00, 0x00 },	//13 "AAPL01,InverterCurrent"
+	{ 0x00, 0x00, 0x00, 0x00 },	//14 "AAPL01,LinkFormat"
+	{ 0x00, 0x00, 0x00, 0x00 },	//15 "AAPL01,LinkType"
+	{ 0x01, 0x00, 0x00, 0x00 },	//16 "AAPL01,Pipe"
+	{ 0x01, 0x00, 0x00, 0x00 },	//17 "AAPL01,PixelFormat"
+	{ 0x01, 0x00, 0x00, 0x00 },	//18 "AAPL01,Refresh"
+	{ 0x3B, 0x00, 0x00, 0x00 },	//19 "AAPL01,Stretch"
+	{ 0xc8, 0x95, 0x00, 0x00 },	//20 "AAPL01,InverterFrequency"
+	{ 0x6B, 0x10, 0x00, 0x00 },	//21 "subsystem-vendor-id"
+	{ 0xA2, 0x00, 0x00, 0x00 },	//22 "subsystem-id"
+  { 0x05, 0x00, 0x62, 0x01 },    //23 "AAPL,ig-platform-id" HD4000 //STLVNUB
+  { 0x06, 0x00, 0x62, 0x01 },    //24 "AAPL,ig-platform-id" HD4000 iMac
+  { 0x09, 0x00, 0x66, 0x01 },    //25 "AAPL,ig-platform-id" HD4000
+  { 0x03, 0x00, 0x22, 0x0d },    //26 "AAPL,ig-platform-id" HD4600 //bcc9 http://www.insanelymac.com/forum/topic/290783-intel-hd-graphics-4600-haswell-working-displayport/
+  { 0x00, 0x00, 0x62, 0x01 }   //27 - automatic solution
 };
 // 5 - 32Mb 6 - 48Mb 9 - 64Mb, 0 - 96Mb
 
@@ -92,6 +93,7 @@ static struct gma_gpu_t KnownGPUS[] = {
   { 0x0152, "Intel HD Graphics 4000"  },  //iMac
   { 0x0156, "Intel HD Graphics 4000"  },  //MacBook
   { 0x016a, "Intel HD Graphics P4000" },  //Xeon E3-1245
+  { 0x0412, "Intel HD Graphics 4600"  },  //Haswell
 };
 
 CHAR8 *get_gma_model(UINT16 id) {
@@ -161,6 +163,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
   devprop_add_value(device, "model", (UINT8*)model, (UINT32)AsciiStrLen(model));
 	devprop_add_value(device, "device_type", (UINT8*)"display", 7);	
   devprop_add_value(device, "subsystem-vendor-id", GMAX3100_vals[21], 4);
+  devprop_add_value(device, "hda-gfx", (UINT8*)"onboard-1", 9);
   switch (gma_dev->device_id) {
     case 0x0102: 
       devprop_add_value(device, "class-code",	ClassFix, 4);
@@ -175,6 +178,7 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
     case 0x0162:
     case 0x0166:
     case 0x016a:
+    case 0x0412:
       if (!gSettings.IgPlatform) {
         if ((gma_dev->device_id == 0x162) ||
             (gma_dev->device_id == 0x16a)) {
@@ -187,6 +191,8 @@ BOOLEAN setup_gma_devprop(pci_dt_t *gma_dev)
           devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[24], 4);
         else if (gma_dev->device_id == 0x156)
           devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[25], 4);
+        else if (gma_dev->device_id == 0x412)
+          devprop_add_value(device, "AAPL,ig-platform-id", GMAX3100_vals[26], 4);
 
         /*    IG_ID[0] = gma_dev->revision;
          IG_ID[2] |= gma_dev->device_id & 0x0f;

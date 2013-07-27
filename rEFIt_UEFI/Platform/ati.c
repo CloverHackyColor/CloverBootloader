@@ -322,6 +322,7 @@ radeon_card_info_t radeon_cards[] = {
 	{ 0x9714,	0x00000000, CHIP_FAMILY_RS880,	"ATI Radeon HD 4290",           kNull       },
   
  // 0x9804 - AMD HD6250
+
   
   //X2000.kext
   //0x94001002 0x94011002 0x94021002 0x94031002 0x95811002 0x95831002 0x95881002 0x94c81002 0x94c91002
@@ -596,7 +597,7 @@ AtiDevProp ati_devprop_list[] = {
 	{FLAGTRUE,	FALSE,	"name",						get_nameparent_val,     NULVAL							},
 	{FLAGTRUE,	FALSE,	"device_type",		get_nameparent_val,     NULVAL							},
 	{FLAGTRUE,	FALSE,	"model",					get_model_val,          STRVAL("ATI Radeon")},
-//  {FLAGTRUE,	FALSE,	"VRAM,totalsize",	get_vramtotalsize_val,	NULVAL              },
+  {FLAGTRUE,	FALSE,	"VRAM,totalsize",	get_vramtotalsize_val,	NULVAL              },
 	
 	{FLAGTRUE,	FALSE,	NULL,	NULL,	NULVAL}
 };

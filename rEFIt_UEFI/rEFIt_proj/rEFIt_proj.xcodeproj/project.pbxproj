@@ -56,6 +56,14 @@
 		120DE0961622C47800BA4C14 /* PciRootBridgeIo.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = PciRootBridgeIo.c; sourceTree = "<group>"; };
 		120DE0981622C47800BA4C14 /* IoFifo.asm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm.asm; path = IoFifo.asm; sourceTree = "<group>"; };
 		120DE0991622C47800BA4C14 /* IoFifo.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = IoFifo.S; sourceTree = "<group>"; };
+		1211C02517A2D9D20022EC0B /* DevicePathFromText.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DevicePathFromText.c; sourceTree = "<group>"; };
+		1211C02617A2D9D20022EC0B /* DevicePathToText.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DevicePathToText.c; sourceTree = "<group>"; };
+		1211C02717A2D9D20022EC0B /* DevicePathUtilities.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DevicePathUtilities.c; sourceTree = "<group>"; };
+		1211C02817A2D9D20022EC0B /* UefiDevicePathLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UefiDevicePathLib.c; sourceTree = "<group>"; };
+		1211C02917A2D9D20022EC0B /* UefiDevicePathLib.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UefiDevicePathLib.h; sourceTree = "<group>"; };
+		1211C02A17A2D9D20022EC0B /* UefiDevicePathLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = UefiDevicePathLib.inf; sourceTree = "<group>"; };
+		1211C02B17A2D9D20022EC0B /* UefiDevicePathLibOptionalDevicePathProtocol.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UefiDevicePathLibOptionalDevicePathProtocol.c; sourceTree = "<group>"; };
+		1211C02C17A2D9D20022EC0B /* UefiDevicePathLibOptionalDevicePathProtocol.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = UefiDevicePathLibOptionalDevicePathProtocol.inf; sourceTree = "<group>"; };
 		121394EC165A15A100BA0708 /* AtomBios.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AtomBios.h; sourceTree = "<group>"; };
 		121E4A2916551908000C2392 /* DuetTimerLib.inf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DuetTimerLib.inf; sourceTree = "<group>"; };
 		121E4A2A16551908000C2392 /* X86TimerLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = X86TimerLib.c; sourceTree = "<group>"; };
@@ -2836,8 +2844,6 @@
 		12B7060715F9225000177D35 /* UefiDebugLibConOut.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = UefiDebugLibConOut.inf; sourceTree = "<group>"; };
 		12B7060915F9225000177D35 /* DebugLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DebugLib.c; sourceTree = "<group>"; };
 		12B7060A15F9225000177D35 /* UefiDebugLibStdErr.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = UefiDebugLibStdErr.inf; sourceTree = "<group>"; };
-		12B7060C15F9225000177D35 /* UefiDevicePathLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UefiDevicePathLib.c; sourceTree = "<group>"; };
-		12B7060D15F9225000177D35 /* UefiDevicePathLib.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = UefiDevicePathLib.inf; sourceTree = "<group>"; };
 		12B7060F15F9225000177D35 /* UefiDevicePathLib.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = UefiDevicePathLib.c; sourceTree = "<group>"; };
 		12B7061015F9225000177D35 /* UefiDevicePathLibDevicePathProtocol.inf */ = {isa = PBXFileReference; lastKnownFileType = text; path = UefiDevicePathLibDevicePathProtocol.inf; sourceTree = "<group>"; };
 		12B7061215F9225000177D35 /* DriverEntryPoint.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = DriverEntryPoint.c; sourceTree = "<group>"; };
@@ -3429,6 +3435,21 @@
 				120DE0991622C47800BA4C14 /* IoFifo.S */,
 			);
 			path = X64;
+			sourceTree = "<group>";
+		};
+		1211C02417A2D9D20022EC0B /* UefiDevicePathLib */ = {
+			isa = PBXGroup;
+			children = (
+				1211C02517A2D9D20022EC0B /* DevicePathFromText.c */,
+				1211C02617A2D9D20022EC0B /* DevicePathToText.c */,
+				1211C02717A2D9D20022EC0B /* DevicePathUtilities.c */,
+				1211C02817A2D9D20022EC0B /* UefiDevicePathLib.c */,
+				1211C02917A2D9D20022EC0B /* UefiDevicePathLib.h */,
+				1211C02A17A2D9D20022EC0B /* UefiDevicePathLib.inf */,
+				1211C02B17A2D9D20022EC0B /* UefiDevicePathLibOptionalDevicePathProtocol.c */,
+				1211C02C17A2D9D20022EC0B /* UefiDevicePathLibOptionalDevicePathProtocol.inf */,
+			);
+			path = UefiDevicePathLib;
 			sourceTree = "<group>";
 		};
 		121E4A2816551908000C2392 /* DuetTimerLib */ = {
@@ -8024,8 +8045,8 @@
 				12B705FF15F9225000177D35 /* UefiApplicationEntryPoint */,
 				12B7060215F9225000177D35 /* UefiBootServicesTableLib */,
 				12B7060515F9225000177D35 /* UefiDebugLibConOut */,
+				1211C02417A2D9D20022EC0B /* UefiDevicePathLib */,
 				12B7060815F9225000177D35 /* UefiDebugLibStdErr */,
-				12B7060B15F9225000177D35 /* UefiDevicePathLib */,
 				12B7060E15F9225000177D35 /* UefiDevicePathLibDevicePathProtocol */,
 				12B7061115F9225000177D35 /* UefiDriverEntryPoint */,
 				12B7061415F9225000177D35 /* UefiLib */,
@@ -9826,15 +9847,6 @@
 				12B7060A15F9225000177D35 /* UefiDebugLibStdErr.inf */,
 			);
 			path = UefiDebugLibStdErr;
-			sourceTree = "<group>";
-		};
-		12B7060B15F9225000177D35 /* UefiDevicePathLib */ = {
-			isa = PBXGroup;
-			children = (
-				12B7060C15F9225000177D35 /* UefiDevicePathLib.c */,
-				12B7060D15F9225000177D35 /* UefiDevicePathLib.inf */,
-			);
-			path = UefiDevicePathLib;
 			sourceTree = "<group>";
 		};
 		12B7060E15F9225000177D35 /* UefiDevicePathLibDevicePathProtocol */ = {

@@ -13,9 +13,27 @@ WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
 
 **/
 
-#include <Library/GenericBdsLib.h>
+//#include <Library/GenericBdsLib.h>
 #include "InternalBdsLib.h"
 
+/**
+  This function converts an input device structure to a Unicode string.
+
+  @param DevPath                  A pointer to the device path structure.
+
+  @return A new allocated Unicode string that represents the device path.
+
+**/
+CHAR16 *
+EFIAPI
+DevicePathToStr (
+  IN EFI_DEVICE_PATH_PROTOCOL     *DevPath
+  )
+{
+  return ConvertDevicePathToText (DevPath, TRUE, TRUE);
+}
+
+#if 0
 /**
   Concatenates a formatted unicode string to allocated pool.
   The caller must free the resulting buffer.
@@ -1576,3 +1594,4 @@ Done:
   Str.Str[Str.Len] = 0;
   return Str.Str;
 }
+#endif

@@ -1,7 +1,7 @@
 /** @file
   BDS Lib functions which relate with connect the device
 
-Copyright (c) 2004 - 2008, Intel Corporation. All rights reserved.<BR>
+Copyright (c) 2004 - 2013, Intel Corporation. All rights reserved.<BR>
 This program and the accompanying materials
 are licensed and made available under the terms and conditions of the BSD License
 which accompanies this distribution.  The full text of the license may be found at
@@ -97,10 +97,13 @@ BdsLibConnectDevicePath (
   EFI_HANDLE                Handle;
   EFI_HANDLE                PreviousHandle;
   UINTN                     Size;
+  EFI_TPL                   CurrentTpl;
 
   if (DevicePathToConnect == NULL) {
     return EFI_SUCCESS;
   }
+
+  CurrentTpl  = EfiGetCurrentTpl ();
 
   DevicePath        = DuplicateDevicePath (DevicePathToConnect);
   if (DevicePath == NULL) {
@@ -150,7 +153,18 @@ BdsLibConnectDevicePath (
           // Status == EFI_SUCCESS means a driver was dispatched
           // Status == EFI_NOT_FOUND means no new drivers were dispatched
           //
+          if (CurrentTpl == TPL_APPLICATION) {
+            //
+            // Dispatch calls LoadImage/StartImage which cannot run at TPL > TPL_APPLICATION
+            //
           Status = gDS->Dispatch ();
+          } else {
+            //
+            // Always return EFI_NOT_FOUND here
+            // to prevent dead loop when control handle is found but connection failded case
+            //
+            Status = EFI_NOT_FOUND;
+          }
         }
 
         if (!EFI_ERROR (Status)) {
