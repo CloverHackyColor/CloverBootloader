@@ -45,7 +45,7 @@ extern EFI_PHYSICAL_ADDRESS gRelocBase;
 EFI_STATUS PrepareJumpFromKernel(VOID);
 EFI_STATUS KernelEntryPatchJump(UINT32 KernelEntry);
 EFI_STATUS KernelEntryFromMachOPatchJump(VOID);
-EFI_STATUS KernelEntryPatchJumpFill(VOID);
+//EFI_STATUS KernelEntryPatchJumpFill(VOID);
 EFI_STATUS KernelEntryPatchHalt(UINT32 KernelEntry);
 EFI_STATUS KernelEntryPatchZero(UINT32 KernelEntry);
 

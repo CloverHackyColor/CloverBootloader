@@ -13,12 +13,18 @@
 ASM_GLOBAL ASM_PFX(SavedCR3)
 ASM_GLOBAL ASM_PFX(SavedGDTR)
 ASM_GLOBAL ASM_PFX(SavedIDTR)
+
+# addresses of relocated MyAsmCopyAndJumpToKernel code - filled by PrepareJumpFromKernel()
+ASM_GLOBAL ASM_PFX(MyAsmCopyAndJumpToKernel32Addr)
+ASM_GLOBAL ASM_PFX(MyAsmCopyAndJumpToKernel64Addr)
+
+# kernel entry address - filled by KernelEntryPatchJump()
 ASM_GLOBAL ASM_PFX(AsmKernelEntry)
 
+# params for kernel image relocation - filled by KernelEntryPatchJumpBack()
 ASM_GLOBAL ASM_PFX(AsmKernelImageStartReloc)
 ASM_GLOBAL ASM_PFX(AsmKernelImageStart)
 ASM_GLOBAL ASM_PFX(AsmKernelImageSize)
-ASM_GLOBAL ASM_PFX(MyAsmCopyAndJumpToKernel32Addr)
 
 	.data
 # variables accessed from both 32 and 64 bit code
@@ -33,6 +39,8 @@ ASM_PFX(SavedGDTR):		.word 0
 SavedIDTROff =		. - DataBase
 ASM_PFX(SavedIDTR):		.word 0
 						.quad 0
+
+	.align 8
 
 SavedCR3Off =			. - DataBase
 ASM_PFX(SavedCR3):		.quad 0
@@ -61,32 +69,38 @@ SavedDS32:				.word 0
 SavedESP32Off =			. - DataBase
 SavedESP32:				.long 0
 
-# kernel entry - 32 bit
+	.align 8
+
+# address of relocated MyAsmCopyAndJumpToKernel32 - 64 bit
+MyAsmCopyAndJumpToKernel32AddrOff =			. - DataBase
+ASM_PFX(MyAsmCopyAndJumpToKernel32Addr):	.quad 0
+
+# address of relocated MyAsmCopyAndJumpToKernel64 - 64 bit
+MyAsmCopyAndJumpToKernel64AddrOff =			. - DataBase
+ASM_PFX(MyAsmCopyAndJumpToKernel64Addr):	.quad 0
+
+# kernel entry - 64 bit
 AsmKernelEntryOff =			. - DataBase
-ASM_PFX(AsmKernelEntry):	.long 0
+ASM_PFX(AsmKernelEntry):					.quad 0
 
 #
 # for copying kernel image from reloc block to proper mem place
 #
 
-# kernel image start in reloc block (source) - 32 bit
+# kernel image start in reloc block (source) - 64 bit
 AsmKernelImageStartRelocOff =				. - DataBase
-ASM_PFX(AsmKernelImageStartReloc):			.long 0
+ASM_PFX(AsmKernelImageStartReloc):			.quad 0
 
-# kernel image start (destination) - 32 bit
+# kernel image start (destination) - 64 bit
 AsmKernelImageStartOff =					. - DataBase
-ASM_PFX(AsmKernelImageStart):				.long 0
+ASM_PFX(AsmKernelImageStart):				.quad 0
 
-# kernel image size - 32 bit
+# kernel image size - 64 bit
 AsmKernelImageSizeOff =						. - DataBase
-ASM_PFX(AsmKernelImageSize):				.long 0
-
-# address of relocated MyAsmCopyAndJumpToKernel32 - 32 bit
-MyAsmCopyAndJumpToKernel32AddrOff =						. - DataBase
-ASM_PFX(MyAsmCopyAndJumpToKernel32Addr):				.long 0
+ASM_PFX(AsmKernelImageSize):				.quad 0
 
 
-	.align 2
+	.align 8
 
 # GDT not used since we are reusing UEFI state
 # but left here in case will be needed.
@@ -175,38 +189,97 @@ ASM_PFX(MyAsmPrepareJumpFromKernel):
 	lea		DataBase(%rip), %rax
 	movl	%eax, DataBaseAdr(%rip)
 
+	# prepare MyAsmEntryPatchCode:
+	# patch MyAsmEntryPatchCode with address of MyAsmJumpFromKernel
+	lea		ASM_PFX(MyAsmJumpFromKernel)(%rip), %rax
+	movl	%eax, MyAsmEntryPatchCodeJumpFromKernelPlaceholder(%rip)
+
 	ret
 
 #------------------------------------------------------------------------------
-# sample code that is used for patching kernel entry
-# this compiles in 64 bit, but gives correct opcode for 32 bit
-# (kernel starts in 32 bit)
+# Code that is used for patching kernel entry to jump back
+# to our code (to MyAsmJumpFromKernel):
+# - load ecx (rcx) with address to MyAsmJumpFromKernel
+# - jump to MyAsmJumpFromKernel
+# The same generated opcode must run properly in both 32 and 64 bit.
+# 64 bit:
+# - we must set rcx to 0 (upper 4 bytes) before loading ecx with address (lower 4 bytes of rcx)
+# - this requires xor %rcx, %rcx
+# - and that opcode contains 0x48 in front of 32 bit xor %ecx, %ecx
+# 32 bit:
+# - 0x48 opcode is dec %eax in 32 bit
+# - and then we must inc %eax later if 32 bit is detected in MyAsmJumpFromKernel
+#
+# This code is patched with address of MyAsmJumpFromKernel
+# (into MyAsmEntryPatchCodeJumpFromKernelPlaceholder)
+# and then copied to kernel entry address by KernelEntryPatchJump()
 #------------------------------------------------------------------------------
-ASM_GLOBAL ASM_PFX(MyAsmEntryPatchCodeSample32)
-ASM_PFX(MyAsmEntryPatchCodeSample32):
+ASM_GLOBAL ASM_PFX(MyAsmEntryPatchCode)
+ASM_PFX(MyAsmEntryPatchCode):
 
 	.code32
+	dec		%eax								# -> 48
+	xor		%ecx, %ecx							# -> 31 C9
+	.byte	0xb9								# movl	$0x11223344, %ecx -> B9 44 33 22 11
+MyAsmEntryPatchCodeJumpFromKernelPlaceholder:
+	.long	0x11223344
+	call	*%ecx								# -> FF D1
+#	jmp		*%ecx									# -> FF E1
 
-	movl	$0x11223344, %ecx					# -> B9 44 33 22 11
-	#jmp		ecx								# jmp ecx -> FF E1
-	call	*%ecx								# call ecx -> FF D1
+#	.code64
+#	xor		%rcx, %rcx							# -> 48 31 C9
+#	movl	$0x11223344, %ecx					# -> B9 44 33 22 11
+#	call	*%rcx								# -> FF D1
+#	#jmp	*%rcx								# -> FF E1
+ASM_GLOBAL ASM_PFX(MyAsmEntryPatchCodeEnd)
+ASM_PFX(MyAsmEntryPatchCodeEnd):
+
+
+#------------------------------------------------------------------------------
+# MyAsmJumpFromKernel
+# 
+# Callback from boot.efi - this is where we jump when boot.efi jumps to kernel.
+#
+# - test if we are in 32 bit or in 64 bit
+# - if 64 bit, then jump to MyAsmJumpFromKernel64
+# - else just continue with MyAsmJumpFromKernel32
+#------------------------------------------------------------------------------
+ASM_GLOBAL ASM_PFX(MyAsmJumpFromKernel)
+ASM_PFX(MyAsmJumpFromKernel):
+
+	# writing in 32 bit, but code must run in 64 bit also
+	.code32
+	push	%eax					# save bootArgs pointer to stack
+	movl 	$0xc0000080, %ecx		# EFER MSR number.
+	rdmsr							# Read EFER.
+	bt		$8, %eax				# Check if LME==1 -> CF=1.
+	pop		%eax
+	jc		MyAsmJumpFromKernel64	# LME==1 -> jump to 64 bit code
+	# otherwise, continue with MyAsmJumpFromKernel32
+	# but first add 1 to it since it was decremented in 32 bit
+	# in MyAsmEntryPatchCode
+	inc		%eax
+
+	# test the above code in 64 bit - above 32 bit code gives opcode
+	# that is equivalent to following in 64 bit
+#.code64
+#	push	%rax					# save bootArgs pointer to stack
+#	movl 	$0xc0000080, %ecx		# EFER MSR number.
+#	rdmsr							# Read EFER.
+#	bt		$8, %eax				# Check if LME==1 -> CF=1.
+#	pop		%rax
+#	jnc		MyAsmJumpFromKernel64	# LME==1 -> jump to 64 bit code
+
 
 #------------------------------------------------------------------------------
 # MyAsmJumpFromKernel32
 # 
-# Callback from boot.efi - this is where we jump when boot.efi jumps to kernel.
+# Callback from boot.efi in 32 bit mode.
 # State is prepared for kernel: 32 bit, no paging, pointer to bootArgs in eax.
-#
-# Port from MS code - maybe some things could be better written for GCC.
 #------------------------------------------------------------------------------
-
-
-ASM_GLOBAL ASM_PFX(MyAsmJumpFromKernel32)
-ASM_PFX(MyAsmJumpFromKernel32):
+MyAsmJumpFromKernel32:
 
 	.code32
-
-	#hlt	# uncomment to stop here for test
 
 	# save bootArgs pointer to edi
 	mov		%eax, %edi
@@ -217,13 +290,15 @@ DataBaseAdr:	.long 0
 	
 	# let's find out kernel entry point - we'll need it to jump back.
 	# we are called with
+	#   dec		%eax
+	#   xor		%ecx, %ecx
 	#   mov ecx, 0x11223344
 	#   call ecx
 	# and that left return addr on stack. those instructions
-	# are 7 bytes long, and if we take address from stack and
-	# substitute 7 from it, we will get kernel entry point.
+	# are 10 bytes long, and if we take address from stack and
+	# substitute 10 from it, we will get kernel entry point.
 	pop		%ecx
-	sub		$7, %ecx
+	sub		$10, %ecx
 	# and save it
 	movl	%ecx, AsmKernelEntryOff(%ebx)
 	
@@ -276,7 +351,7 @@ DataBaseAdr:	.long 0
 	
 	#hlt	# uncomment to stop here for test
 
-	# set segmens
+	# set segments
 	movw	SavedDSOff(%rbx), %ax
 	movw	%ax, %ds
 	# set up stack ...
@@ -287,9 +362,22 @@ DataBaseAdr:	.long 0
 	andq	$0xfffffffffffffff8, %rax
 	movq	%rax, %rsp
 	
-	# call our C code with bootArgs as first arg (in rcx)
+	# call our C code
+	# (calling conv.: always reserve place for 4 args on stack)
+	# KernelEntryPatchJumpBack (rcx = rax = bootArgs, rdx = 0 = 32 bit kernel jump)
 	movq	%rdi, %rcx
+	xor		%rdx, %rdx
+	push	%rdx
+	push	%rdx
+	push	%rdx
 	push	%rcx
+
+# TEST 64 bit jump
+#	movq	%rdi, %rax
+#	movq	ASM_PFX(AsmKernelEntry)(%rip), %rdx
+#	jmp		*%rdx
+# TEST end
+
 	# KernelEntryPatchJumpBack should be EFIAPI
 	# and rbx should not be changed by EFIAPI calling convention
 	call	KernelEntryPatchJumpBack
@@ -370,15 +458,73 @@ _RETF64:
 _RETF32:
 	lret
 
-
-	
 #------------------------------------------------------------------------------
-# MyAsmCopyAndJumpToKernel32
+# MyAsmJumpFromKernel64
+#
+# Callback from boot.efi in 64 bit mode.
+# State is prepared for kernel: 64 bit, pointer to bootArgs in rax.
+#------------------------------------------------------------------------------
+MyAsmJumpFromKernel64:
+
+.code64
+	# let's find out kernel entry point - we'll need it to jump back.
+	pop		%rcx
+	sub		$10, %rcx
+	# and save it
+	movq	%rcx, ASM_PFX(AsmKernelEntry)(%rip)
+
+	# call our C code
+	# (calling conv.: always reserve place for 4 args on stack)
+	# KernelEntryPatchJumpBack (rcx = rax = bootArgs, rdx = 1 = 64 bit kernel jump)
+	movq	%rax, %rcx
+	xor		%rdx, %rdx
+	inc		%edx
+	push	%rdx
+	push	%rdx
+	push	%rdx
+	push	%rcx
+	# KernelEntryPatchJumpBack should be EFIAPI
+	call	KernelEntryPatchJumpBack
+	#hlt	# uncomment to stop here for test
+	# return value in rax is bootArgs pointer
+
+	#
+	# prepare vars for copying kernel to proper mem
+	# and jump to kernel: set registers as needed
+	# by MyAsmCopyAndJumpToKernel64
+	#
+
+	# kernel entry point
+	movq	ASM_PFX(AsmKernelEntry)(%rip), %rdx
+
+	# source, destination and size for kernel copy
+	movq	ASM_PFX(AsmKernelImageStartReloc)(%rip), %rsi
+	movq	ASM_PFX(AsmKernelImageStart)(%rip), %rdi
+	movq	ASM_PFX(AsmKernelImageSize)(%rip), %rcx
+	
+	# address of relocated MyAsmCopyAndJumpToKernel64
+	movq	ASM_PFX(MyAsmCopyAndJumpToKernel64Addr)(%rip), %rbx
+
+	#
+	# jump to MyAsmCopyAndJumpToKernel64
+	#
+	jmp		*%rbx
+	ret
+
+	.align 8
+#------------------------------------------------------------------------------
+# MyAsmCopyAndJumpToKernel 
 # 
 # This is the last part of the code - it will copy kernel image from reloc
 # block to proper mem place and jump to kernel.
-# It's 32 bit code and runs after switching back to 32 bit.
+# There are separate versions for 32 and 64 bit.
 # This code will be relocated (copied) to higher mem by PrepareJumpFromKernel().
+#------------------------------------------------------------------------------
+ASM_GLOBAL ASM_PFX(MyAsmCopyAndJumpToKernel)
+ASM_PFX(MyAsmCopyAndJumpToKernel):
+
+#------------------------------------------------------------------------------
+# MyAsmCopyAndJumpToKernel32
 #
 # Expects:
 # EAX = address of boot args (proper address, not from reloc block)
@@ -417,5 +563,48 @@ ASM_PFX(MyAsmCopyAndJumpToKernel32):
 	#
 	jmp		*%edx
 
-ASM_GLOBAL ASM_PFX(MyAsmCopyAndJumpToKernel32End)
-ASM_PFX(MyAsmCopyAndJumpToKernel32End):
+
+#------------------------------------------------------------------------------
+# MyAsmCopyAndJumpToKernel64
+#
+# Expects:
+# RAX = address of boot args (proper address, not from reloc block)
+# RDX = kernel entry point
+# RSI = start of kernel image in reloc block (source)
+# RDI = proper start of kernel image (destination)
+# RCX = kernel image size in bytes
+#------------------------------------------------------------------------------
+	.align 8
+ASM_GLOBAL ASM_PFX(MyAsmCopyAndJumpToKernel64)
+ASM_PFX(MyAsmCopyAndJumpToKernel64):
+	.code64
+
+	#
+	# we will move quad words (8 bytes)
+	# so ajust RCX to number of double words.
+	# just in case RCX is not multiple of 8 - inc by 1
+	#
+	shr	$3, %rcx
+	inc	%rcx
+
+	#
+	# copy kernel image from reloc block to proper mem place.
+	# all params should be already set:
+	# RCX = number of double words
+	# RSI = source
+	# RDI = destination
+	#
+	cld								# direction is up
+	rep movsq
+
+	#
+	# and finally jump to kernel:
+	# RAX already contains bootArgs pointer,
+	# and RDX contains kernel entry point
+	#
+	# hlt
+	jmp		*%rdx
+
+ASM_GLOBAL ASM_PFX(MyAsmCopyAndJumpToKernelEnd)
+ASM_PFX(MyAsmCopyAndJumpToKernelEnd):
+

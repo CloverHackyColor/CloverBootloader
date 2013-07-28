@@ -392,11 +392,6 @@ MOExitBootServices (
 	UINTN					 	NewMapKey;
 	//VOID						*BootArgs;
 	
-	
-	
-	// we'll try to resolve the need for kernel entry point
-	// with KernelEntryPatchJumpFill(). see this func for details.
-	
 	//CheckDecodedKernel();
 	
     /*

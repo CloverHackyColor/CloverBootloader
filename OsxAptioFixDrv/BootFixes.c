@@ -82,12 +82,12 @@ PrepareJumpFromKernel(VOID)
 	MyAsmPrepareJumpFromKernel();
 	
 	//
-	// allocate higher memory for MyAsmCopyAndJumpToKernel32 code
+	// allocate higher memory for MyAsmCopyAndJumpToKernel code
 	//
 	HigherMem = 0x100000000;
 	Status = AllocatePagesFromTop(EfiBootServicesCode, 1, &HigherMem);
 	if (Status != EFI_SUCCESS) {
-		Print(L"OsxAptioFixDrv: PrepareJumpFromKernel(): can not allocate mem for MyAsmCopyAndJumpToKernel32 (0x%x pages on mem top): %r\n",
+		Print(L"OsxAptioFixDrv: PrepareJumpFromKernel(): can not allocate mem for MyAsmCopyAndJumpToKernel (0x%x pages on mem top): %r\n",
 			  1, Status);
 		return Status;
 	}
@@ -95,57 +95,53 @@ PrepareJumpFromKernel(VOID)
 	//
 	// and relocate it to higher mem
 	//
-	MyAsmCopyAndJumpToKernel32Addr = (UINT32)HigherMem;
+	MyAsmCopyAndJumpToKernel32Addr = HigherMem + ( (UINT8*)(UINTN)&MyAsmCopyAndJumpToKernel32 - (UINT8*)(UINTN)&MyAsmCopyAndJumpToKernel );
+	MyAsmCopyAndJumpToKernel64Addr = HigherMem + ( (UINT8*)(UINTN)&MyAsmCopyAndJumpToKernel64 - (UINT8*)(UINTN)&MyAsmCopyAndJumpToKernel );
 	
-	Size = (UINT8*)&MyAsmCopyAndJumpToKernel32End - (UINT8*)&MyAsmCopyAndJumpToKernel32;
+	Size = (UINT8*)&MyAsmCopyAndJumpToKernelEnd - (UINT8*)&MyAsmCopyAndJumpToKernel;
 	if (Size > EFI_PAGES_TO_SIZE(1)) {
 		Print(L"Size of MyAsmCopyAndJumpToKernel32 code is too big\n");
 		return EFI_BUFFER_TOO_SMALL;
 	}
 	
-	CopyMem((VOID *)(UINTN)MyAsmCopyAndJumpToKernel32Addr, (VOID *)&MyAsmCopyAndJumpToKernel32, Size);
+	CopyMem((VOID *)(UINTN)HigherMem, (VOID *)&MyAsmCopyAndJumpToKernel, Size);
 	
-	/*
-	Print(L"PrepareJumpFromKernel(): MyAsmCopyAndJumpToKernel32 relocated from %p, to %x, size = %x\n",
-		&MyAsmCopyAndJumpToKernel32, MyAsmCopyAndJumpToKernel32Addr, Size);
-	gBS->Stall(10*1000000);
-	*/
-	
-	DBG("PrepareJumpFromKernel(): MyAsmCopyAndJumpToKernel32 relocated from %p, to %x, size = %x\n",
-		&MyAsmCopyAndJumpToKernel32, MyAsmCopyAndJumpToKernel32Addr, Size);
+	DBG("PrepareJumpFromKernel(): MyAsmCopyAndJumpToKernel relocated from %p, to %x, size = %x\n",
+		&MyAsmCopyAndJumpToKernel, HigherMem, Size);
+	DBG(" MyAsmCopyAndJumpToKernel32 relocated from %p, to %x\n",
+		&MyAsmCopyAndJumpToKernel32, MyAsmCopyAndJumpToKernel32Addr);
+	DBG(" MyAsmCopyAndJumpToKernel64 relocated from %p, to %x\n",
+		&MyAsmCopyAndJumpToKernel64, MyAsmCopyAndJumpToKernel64Addr);
 	DBG("SavedCR3 = %x, SavedGDTR = %x, SavedIDTR = %x\n", SavedCR3, SavedGDTR, SavedIDTR);
-	DBGnvr("PrepareJumpFromKernel(): MyAsmCopyAndJumpToKernel32 relocated from %p, to %x, size = %x\n",
-		&MyAsmCopyAndJumpToKernel32, MyAsmCopyAndJumpToKernel32Addr, Size);
+	
+	DBGnvr("PrepareJumpFromKernel(): MyAsmCopyAndJumpToKernel relocated from %p, to %x, size = %x\n",
+		&MyAsmCopyAndJumpToKernel, HigherMem, Size);
 	
 	return Status;
 }
 
-/** Patches kernel entry point with jump to MyAsmJumpFromKernel32 (AsmFuncsX64). This will then call KernelEntryPatchJumpBack. */
+/** Patches kernel entry point with jump to MyAsmJumpFromKernel (AsmFuncsX64). This will then call KernelEntryPatchJumpBack. */
 EFI_STATUS
 KernelEntryPatchJump(UINT32 KernelEntry)
 {
 	EFI_STATUS				Status;
-	unsigned char			*p;
-	UINTN					MyAsmJumpFromKernel32Addr;
+    UINTN                   Size;
 	
 	Status = EFI_SUCCESS;
 
 	DBG("KernelEntryPatchJump KernelEntry (reloc): %lx (%lx)\n", KernelEntry, KernelEntry + gRelocBase);
 	
-	// patch real KernelEntry with 32 bit opcode for:
-	//   mov ecx, MyAsmJumpFromKernel32
-	//   call ecx
-	// = B9, <4 bytes address of MyAsmJumpFromKernel32>, FF, D1
-	// note: KernelEntry + gRelocBase is not patched - no need for this
-	p = (UINT8 *)(UINTN) KernelEntry;
-	p[0] = 0xB9;
-	MyAsmJumpFromKernel32Addr = (UINTN)MyAsmJumpFromKernel32;
-	CopyMem((VOID *) (p + 1), (VOID *)&MyAsmJumpFromKernel32Addr, 4);
-	p[5] = 0xFF; p[6] = 0xD1;
-	//p[5] = 0xF4; //HLT - works
+    // Size of MyAsmEntryPatchCode code
+    Size = (UINT8*)&MyAsmEntryPatchCodeEnd - (UINT8*)&MyAsmEntryPatchCode;
+    
+	DBG("MyAsmEntryPatchCode: %p, Size: %d, MyAsmJumpFromKernel: %p\n", &MyAsmEntryPatchCode, Size, &MyAsmJumpFromKernel);
+    
+    // Copy MyAsmEntryPatchCode code to kernel entry address
+    CopyMem((VOID *)(UINTN)KernelEntry, (VOID *)&MyAsmEntryPatchCode, Size);
 
-	DBG("\nEntry point %p is now: ", KernelEntry);
-	PrintSample2(p, 12);
+	DBG("Entry point %p is now: ", KernelEntry);
+	PrintSample2((UINT8 *)(UINTN) KernelEntry, 12);
+	DBG("\n");
 	
 	// pass KernelEntry to assembler funcs
 	AsmKernelEntry = KernelEntry;
@@ -153,7 +149,7 @@ KernelEntryPatchJump(UINT32 KernelEntry)
 	return Status;
 }
 
-/** Reads kernel entry from Mach-O load command and patches it with jump to MyAsmJumpFromKernel32. */
+/** Reads kernel entry from Mach-O load command and patches it with jump to MyAsmJumpFromKernel. */
 EFI_STATUS
 KernelEntryFromMachOPatchJump(VOID)
 {
@@ -173,7 +169,7 @@ KernelEntryFromMachOPatchJump(VOID)
 	return KernelEntryPatchJump((UINT32)KernelEntry);
 }
 
-/** Fills every 8 bytes from 0x10.0000 - 0x40.0000 with jump to MyAsmJumpFromKernel32 (AsmFuncsX64).
+/** Fills every 8 bytes from 0x10.0000 - 0x40.0000 with jump to MyAsmJumpFromKernel (AsmFuncsX64).
   * This will then call KernelEntryPatchJumpBack.
   *
   * Note: This is a trick that covers different OSXes, but may not work in general.
@@ -181,6 +177,7 @@ KernelEntryFromMachOPatchJump(VOID)
   * that it is 8-byte aligned. Kernel sources ususally have this entry
   * forced to be 4-byte aligned, but in practice it seems that they are 8-byte aligned.
   */
+/* not working any more and not needed
 EFI_STATUS
 KernelEntryPatchJumpFill(VOID)
 {
@@ -189,18 +186,18 @@ KernelEntryPatchJumpFill(VOID)
 	UINT8					*p;
 	UINTN					Length =  0x300000;
 	UINT64					JumpCode;
-	UINTN					MyAsmJumpFromKernel32Addr;
+	UINTN					MyAsmJumpFromKernelAddr;
 	
 	DBG("KernelEntryPatchJumpFill: %p - %p\n", Start, Start + Length);
 	
 	// patch with 32 bit opcode for:
-	//   mov ecx, MyAsmJumpFromKernel32
+	//   mov ecx, MyAsmJumpFromKernel
 	//   call ecx	
-	// = B9, <4 bytes address of MyAsmJumpFromKernel32>, FF, D1
+	// = B9, <4 bytes address of MyAsmJumpFromKernel>, FF, D1
 	p = (UINT8*)Start;
 	p[0] = 0xB9;
-	MyAsmJumpFromKernel32Addr = (UINTN)MyAsmJumpFromKernel32;
-	CopyMem((VOID *) (p + 1), (VOID *)&MyAsmJumpFromKernel32Addr, 4);
+	MyAsmJumpFromKernelAddr = (UINTN)MyAsmJumpFromKernel;
+	CopyMem((VOID *) (p + 1), (VOID *)&MyAsmJumpFromKernelAddr, 4);
 	p[5] = 0xFF; p[6] = 0xD1;
 	
 	// pick up jump code in JumpCode and spread it around
@@ -209,7 +206,7 @@ KernelEntryPatchJumpFill(VOID)
 	
 	return Status;
 }
-
+*/
 /** Patches kernel entry point HLT - used for testing to cause system halt. */
 EFI_STATUS
 KernelEntryPatchHalt(UINT32 KernelEntry)
@@ -628,7 +625,7 @@ DevTreeFix(VOID *pBootArgs)
 /** Callback called when boot.efi jumps to kernel. */
 UINTN
 EFIAPI
-KernelEntryPatchJumpBack(UINTN bootArgs)
+KernelEntryPatchJumpBack(UINTN bootArgs, BOOLEAN ModeX64)
 {
 	VOID 				*pBootArgs = (VOID*)bootArgs;
 	BootArgs1			*BA1 = pBootArgs;
@@ -640,8 +637,8 @@ KernelEntryPatchJumpBack(UINTN bootArgs)
 	UINT32					DescriptorVersion;
 	
 	
-	DBG("BACK FROM KERNEL: BootArgs = %x, KernelEntry: %x\n", bootArgs, AsmKernelEntry);
-	DBGnvr("BACK FROM KERNEL: BootArgs = %x, KernelEntry: %x\n", bootArgs, AsmKernelEntry);
+	DBG("\nBACK FROM KERNEL: BootArgs = %x, KernelEntry: %x, Kernel called in %s bit mode\n", bootArgs, AsmKernelEntry, (ModeX64 ? L"64" : L"32"));
+	DBGnvr("\nBACK FROM KERNEL: BootArgs = %x, KernelEntry: %x, Kernel called in %s bit mode\n", bootArgs, AsmKernelEntry, (ModeX64 ? L"64" : L"32"));
 	BootArgsPrint(pBootArgs);
 	
 	if (gRelocBase > 0) {
@@ -705,7 +702,7 @@ KernelEntryPatchJumpBack(UINTN bootArgs)
 		pBootArgs = (VOID*)bootArgs;
 		
 		// set vars for copying kernel
-		AsmKernelImageStartReloc = (UINT32) (gRelocBase + kaddr);
+		AsmKernelImageStartReloc = gRelocBase + kaddr;
 		AsmKernelImageStart = kaddr;
 		AsmKernelImageSize = ksize;
 	}
