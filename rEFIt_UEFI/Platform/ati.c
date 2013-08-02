@@ -455,7 +455,7 @@ radeon_card_info_t radeon_cards[] = {
   { 0x6849,	0x00000000, CHIP_FAMILY_LOMBOK,		"AMD Radeon HD 7600m Series",   kPondweed	},
   { 0x6850,	0x00000000, CHIP_FAMILY_LOMBOK,		"AMD Radeon HD 7600m Series",   kPondweed	},
   { 0x6859,	0x00000000, CHIP_FAMILY_LOMBOK,		"AMD Radeon HD 7600m Series",   kPondweed	},
-	{ 0x0000,	0x00000000, CHIP_FAMILY_UNKNOW,		NULL,								kNull		}
+	{ 0x0000,	0x00000000, CHIP_FAMILY_UNKNOW,		"AMD Unknown",								kNull		}
 };
 
 //native ID for 10.8.3
@@ -1262,11 +1262,8 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
 	
 	for (i = 0; radeon_cards[i].device_id ; i++)
 	{
-		if (radeon_cards[i].device_id == pci_dev->device_id)
-		{
-			card->info = &radeon_cards[i];
-			break;
-		}
+    card->info = &radeon_cards[i];
+		if (radeon_cards[i].device_id == pci_dev->device_id) break;
 	}
   
   for (j = 0; j < NGFX; j++) {    
@@ -1279,7 +1276,7 @@ static BOOLEAN init_card(pci_dt_t *pci_dev)
     }
   }  
 	
-	if (!card->info->device_id || !card->info->cfg_name)
+	if (!card->info || !card->info->device_id || !card->info->cfg_name)
 	{
 		DBG("Unsupported ATI card! Device ID: [%04x:%04x] Subsystem ID: [%08x] \n", 
 				pci_dev->vendor_id, pci_dev->device_id, pci_dev->subsys_id);

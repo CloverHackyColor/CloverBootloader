@@ -2567,9 +2567,9 @@ VOID GetDevices(VOID)
               info = NULL;
               gGraphics[NGFX].Vendor = Ati;
               for (i = 0; radeon_cards[i].device_id ; i++) {
+                info = &radeon_cards[i];
                 if (radeon_cards[i].device_id == Pci.Hdr.DeviceId) {
-                  info = &radeon_cards[i];
-                  break;
+                   break;
                 }
               }
               AsciiSPrint(gGraphics[NGFX].Model, 64, "%a", info->model_name);
